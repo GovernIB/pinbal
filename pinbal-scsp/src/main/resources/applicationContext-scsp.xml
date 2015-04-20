@@ -1,0 +1,260 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans
+	xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="
+			http://www.springframework.org/schema/beans 
+	   		http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+	   		http://www.springframework.org/schema/context
+	   		http://www.springframework.org/schema/context/spring-context-3.0.xsd
+			http://www.springframework.org/schema/util
+			http://www.springframework.org/schema/util/spring-util-3.0.xsd">
+
+	<!-- Este fichero contiene la configuracion de Spring de las librerias    -->
+	<!-- SCSP V3. Evite realizar modificaciones en este fichero ya que la     -->
+	<!-- configuracion se debera realizar a traves de base de datos.          -->
+
+	<context:annotation-config />
+
+	<context:component-scan base-package="es.scsp">
+		<context:exclude-filter type="regex" expression="es\.scsp\.common\.dao\.SecuenciaIdPeticionDao"/>
+		<context:exclude-filter type="regex" expression="es\.scsp\.common\.dao\.SecuenciaIdTransmisionDao"/>
+	</context:component-scan>
+
+	<!-- ==================================================================== -->
+	<!-- Gestores de configuración                                            -->
+	<!-- ==================================================================== -->
+	<!--bean class="es.scsp.common.utils.ScspPropertyPlaceholderConfigurer">
+		<property name="location" value="classpath:/scsp-service.properties"></property>
+		<property name="placeholderPrefix" value="${config:" />
+		<property name="tableName" value="core_parametro_configuracion" />
+		<property name="keyColumnName" value="nombre" />
+		<property name="valueColumnName" value="valor" />
+	</bean-->
+
+	<!-- ==================================================================== -->
+	<!-- Configuracion de cliente de las librerias                            -->
+	<!-- ==================================================================== -->
+
+	<bean id="clienteUnico" class="es.scsp.client.ClienteUnico">
+		<constructor-arg index="0" ref="serviceManager" />
+		<constructor-arg index="1" ref="idGenerator" />
+		<constructor-arg index="2" ref="bindingConfiguration" />
+		<constructor-arg index="3" ref="jibxMarshaller" />
+		<constructor-arg index="4" ref="jibxMarshaller" />
+		<constructor-arg index="5">
+			<bean class="es.scsp.client.BasicServiceClient">
+				<constructor-arg index="0" ref="clavePrivadaDao" />
+				<constructor-arg index="1" ref="clavePublicaDao" />
+				<constructor-arg index="2">
+					<bean class="es.scsp.common.security.PolicyBuilder">
+						<constructor-arg index="0" value="/scsp-ws-policy.xml" />
+					</bean>
+				</constructor-arg>
+				<!--constructor-arg index="3" value="${config:axis2.client.xml}" />
+				<constructor-arg index="4" value="${config:axis2.client.repository}" /-->
+				<constructor-arg index="3" value="${config:es.caib.pinbal.scsp.axis2.client.xml}" />
+				<constructor-arg index="4" value="${config:es.caib.pinbal.scsp.axis2.client.repository}" />
+				<constructor-arg index="5" ref="peticionRespuestaDao" />
+				<constructor-arg index="6" ref="serviceManager" />
+			</bean>
+		</constructor-arg>
+		<constructor-arg index="6" ref="justificanteMaker" />
+		<constructor-arg index="7" ref="justificantePosterioriMaker" />
+		<constructor-arg index="8" ref="messageRecover" />
+		<constructor-arg index="9" ref="peticionRespuestaDao" />
+	</bean>
+	<alias name="clienteUnico" alias="clienteUnicoProvisional" />
+
+	<!-- ==================================================================== -->
+	<!-- Configuracion de binding.                                            -->
+	<!-- ==================================================================== -->
+
+	<bean id="jibxMarshaller" class="es.scsp.common.binding.JibxMarshaller" />
+	<alias name="jibxMarshaller" alias="marshaller" />
+	<alias name="jibxMarshaller" alias="unmarshaller" />
+
+	<bean id="mappingJibx" class="java.util.LinkedHashMap">
+		<constructor-arg>
+			<util:map map-class="java.util.LinkedHashMap">
+				<entry key="V2">
+					<bean class="java.util.LinkedHashMap">
+						<constructor-arg>
+							<util:map map-class="java.util.LinkedHashMap">
+								<entry key="Peticion" value="PeticionGenericV2" />
+								<entry key="Respuesta" value="RespuestaGenericV2" />
+								<entry key="ConfirmacionPeticion" value="ConfirmacionPeticionGenericV2" />
+								<entry key="SolicitudRespuesta" value="SolicitudRespuestaGenericV2" />
+							</util:map>
+						</constructor-arg>
+					</bean>
+				</entry>
+				<entry key="V3">
+					<bean class="java.util.LinkedHashMap">
+						<constructor-arg>
+							<util:map map-class="java.util.LinkedHashMap">
+								<entry key="Peticion" value="PeticionGenericV3" />
+								<entry key="Respuesta" value="RespuestaGenericV3" />
+								<entry key="ConfirmacionPeticion" value="ConfirmacionPeticionGenericV3" />
+								<entry key="SolicitudRespuesta" value="SolicitudRespuestaGenericV3" />
+							</util:map>
+						</constructor-arg>
+					</bean>
+				</entry>
+				<entry key="DomicilioFiscalV2">
+					<bean class="java.util.LinkedHashMap">
+						<constructor-arg>
+							<util:map map-class="java.util.LinkedHashMap">
+								<entry key="Peticion" value="PeticionGenericV2" />
+								<entry key="Respuesta" value="RespuestaDomicilioFiscalV2" />
+								<entry key="ConfirmacionPeticion" value="ConfirmacionPeticionGenericV2" />
+								<entry key="SolicitudRespuesta" value="SolicitudRespuestaGenericV2" />
+							</util:map>
+						</constructor-arg>
+					</bean>
+				</entry>
+			</util:map>
+		</constructor-arg>
+	</bean>
+
+	<bean id="bindingConfiguration" class="es.scsp.common.config.BindingConfiguration">
+		<constructor-arg index="0" ref="servicioDao" />
+		<constructor-arg index="1" ref="mappingJibx" />
+	</bean>
+
+	<!-- ==================================================================== -->
+	<!-- Configuracion de acceso base de datos.                               -->
+	<!-- ==================================================================== -->
+
+	<!-- bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
+		<property name="driverClassName" value="${config:dataSource.driverClassName}" />
+		<property name="url" value="${config:dataSource.url}" />
+		<property name="username" value="${config:dataSource.username}" />
+		<property name="password" value="${config:dataSource.password}" />
+                            <property name="validationQuery" value="select 1" />
+	</bean-->
+	<bean id="sessionFactory" class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">
+		<property name="dataSource" ref="dataSource" />
+		<property name="mappingResources">
+			<list>
+				<value>/es/scsp/common/domain/Aplicacion.hbm.xml</value>
+				<value>/es/scsp/common/domain/AutoridadCertificacion.hbm.xml</value>
+				<value>/es/scsp/common/domain/AutorizacionCertificado.hbm.xml</value> 
+				<value>/es/scsp/common/domain/CacheCertificado.hbm.xml</value>
+				<value>/es/scsp/common/domain/ClavePrivada.hbm.xml</value>
+				<value>/es/scsp/common/domain/ClavePublica.hbm.xml</value>
+				<value>/es/scsp/common/domain/CodigoError.hbm.xml</value>
+				<value>/es/scsp/common/domain/CodigoErrorSecundario.hbm.xml</value>
+				<value>/es/scsp/common/domain/EmisorBackOffice.hbm.xml</value>
+				<value>/es/scsp/common/domain/EmisorCertificado.hbm.xml</value>
+				<value>/es/scsp/common/domain/EstadoPeticion.hbm.xml</value>
+				<value>/es/scsp/common/domain/Modulo.hbm.xml</value>
+				<value>/es/scsp/common/domain/ModuloConfiguracion.hbm.xml</value>
+				<value>/es/scsp/common/domain/Organismo.hbm.xml</value>
+				<value>/es/scsp/common/domain/ParametroConfiguracion.hbm.xml</value>
+				<value>/es/scsp/common/domain/PeticionRespuesta.hbm.xml</value>
+				<value>/es/scsp/common/domain/SecuenciaIdPeticion.hbm.xml</value>
+				<value>/es/scsp/common/domain/SecuenciaIdTransmision.hbm.xml</value>
+				<value>/es/scsp/common/domain/Servicio.hbm.xml</value>
+				<value>/es/scsp/common/domain/Token.hbm.xml</value>
+				<value>/es/scsp/common/domain/TipoMensaje.hbm.xml</value>
+				<value>/es/scsp/common/domain/Transmision.hbm.xml</value>
+			</list>
+		</property>
+		<property name="hibernateProperties">
+			<value>
+				hibernate.dialect=${config:es.caib.pinbal.hibernate.dialect}
+				connection.useUnicode=true
+				connection.characterEncoding=UTF-8
+				current_session_context_class=thread
+				hibernate.transaction.factory_class=org.hibernate.transaction.JDBCTransactionFactory
+				hibernate.show_sql=false
+				hibernate.current_session_context_class=thread
+				hibernate.c3p0.min_size=2
+				hibernate.c3p0.max_size=5
+				hibernate.c3p0.timeout=10
+				#hibernate.hbm2ddl.auto=${config:es.caib.pinbal.hibernate.hbm2ddl.auto}
+      		</value>
+		</property>
+	</bean>
+
+	<!-- ==================================================================== -->
+	<!-- Recursos adicionales.                                                -->
+	<!-- ==================================================================== -->
+
+	<bean id="dateFormater" class="java.text.SimpleDateFormat">
+		<constructor-arg value="yyyy-MM-dd'T'HH:mm:ss.SSSZ" />
+	</bean>
+	<bean id="fileRepositoryManager" class="es.scsp.common.utils.FileRepositoryManager">
+		<property name="repositoryFolder" value="${config:es.caib.pinbal.scsp.almacenamiento.ficheros}" />
+		<property name="fileExtension" value=".xml" />
+		<property name="filenameSize" value="30" />
+	</bean>
+	<bean id="revocationManager" class="es.scsp.common.certificates.revocation.BasicRevocationManager">
+		<constructor-arg index="0" ref="afirmaValidator" />
+		<constructor-arg index="1" value="${config:es.caib.pinbal.scsp.afirma.enabled}" />
+		<constructor-arg index="2" value="${config:es.caib.pinbal.scsp.custom.cert.validation.class}" />
+	</bean>
+
+	<!-- ==================================================================== -->
+	<!-- Cliente Spring de Afirma                                             -->
+	<!-- ==================================================================== -->
+
+	<bean id="messageFactory" class="org.springframework.ws.soap.axiom.AxiomSoapMessageFactory" />
+
+	<bean id="afirmaValidator" class="es.scsp.common.afirma.AFirmaCertificateValidator">
+		<constructor-arg index="0">
+			<bean class="es.scsp.common.afirma.AfirmaClient">
+				<property name="webServiceTemplate">
+					<bean class="org.springframework.ws.client.core.WebServiceTemplate">
+						<constructor-arg ref="messageFactory" />
+						<property name="defaultUri" value="${config:es.caib.pinbal.scsp.afirma.url}" />
+						<property name="interceptors">
+							<list>
+								<bean class="es.scsp.common.afirma.AfirmaWssInterceptor">
+									<constructor-arg index="0" ref="afirmaWssHandler" />
+									<constructor-arg index="1" ref="parametroConfiguracionDao" />
+									<constructor-arg index="2" ref="clavePrivadaDao" />
+								</bean>
+							</list>
+						</property>
+					</bean>
+				</property>
+			</bean>
+		</constructor-arg>
+		<constructor-arg index="1" value="${config:es.caib.pinbal.scsp.afirma.idAplicacion}" />
+		<constructor-arg index="2" value="${config:es.caib.pinbal.scsp.afirma.modoValidacion}" />
+	</bean>
+	<bean id="afirmaWssHandler" class="org.springframework.ws.soap.security.wss4j.Wss4jSecurityInterceptor">
+		<property name="securementActions" value="Signature" />
+		<property name="securementSignatureKeyIdentifier" value="DirectReference" />
+		<property name="securementMustUnderstand" value="false" />
+		<property name="securementSignatureCrypto">
+			<bean class="org.springframework.ws.soap.security.wss4j.support.CryptoFactoryBean">
+				<property name="keyStorePassword" value="${config:es.caib.pinbal.scsp.keystorePass}" />
+				<property name="keyStoreLocation" value="${config:es.caib.pinbal.scsp.keystoreFile}" />
+			</bean>
+		</property>
+	</bean>
+
+	<!-- ==================================================================== -->
+	<!-- Servicio de polling                                                  -->
+	<!-- ==================================================================== -->
+
+	<bean id="pollingTask" class="es.scsp.common.task.ScheduledTaskExecutor">
+		<constructor-arg>
+			<bean class="es.scsp.common.task.PollingTask">
+				<constructor-arg index="0" ref="clienteUnico" />
+				<constructor-arg index="1" ref="peticionRespuestaDao" />
+				<constructor-arg index="2" ref="parametroConfiguracionDao" />
+				<constructor-arg index="3" ref="dateFormater" />
+			</bean>
+		</constructor-arg>
+		<property name="period" value="${config:es.caib.pinbal.scsp.task.polling.intervalo}" />
+		<property name="delay" value="${config:es.caib.pinbal.scsp.task.polling.espera}" />
+		<property name="enabled" value="${config:es.caib.pinbal.scsp.polling.enabled}" />
+	</bean>
+
+</beans>

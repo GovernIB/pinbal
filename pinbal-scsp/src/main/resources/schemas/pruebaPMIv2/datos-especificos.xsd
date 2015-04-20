@@ -1,0 +1,420 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns="http://www.map.es/scsp/esquemas/datosespecificos"
+        xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.map.es/scsp/esquemas/datosespecificos"
+        elementFormDefault="qualified" attributeFormDefault="unqualified">
+        <xs:element name="DatosEspecificos" type="DatosEspecificos" />
+        <xs:complexType name="DatosEspecificos">
+			<xs:all>
+				<xs:element ref="Solicitud" />
+				<xs:element ref="Resultados" minOccurs="0"/>
+                <xs:element ref="Estado" minOccurs="0"/>
+            </xs:all>
+        </xs:complexType>
+        <xs:element name="Estado">
+			<xs:complexType>
+				<xs:all>
+					<xs:element ref="CodigoEstado" minOccurs="0" />
+					<xs:element ref="CodigoEstadoSecundario" minOccurs="0" />
+					<xs:element ref="LiteralError" minOccurs="0" />
+				</xs:all>
+			</xs:complexType>
+        </xs:element>
+        <xs:element name="CodigoEstado">
+			<xs:simpleType>
+				<xs:restriction base="xs:string">
+					<xs:maxLength value="4" />
+				</xs:restriction>
+			</xs:simpleType>
+        </xs:element>
+        <xs:element name="CodigoEstadoSecundario">
+			<xs:simpleType>
+				<xs:restriction base="xs:string">
+					<xs:maxLength value="16" />
+				</xs:restriction>
+			</xs:simpleType>
+        </xs:element>
+        <xs:element name="LiteralError">
+			<xs:simpleType>
+				<xs:restriction base="xs:string">
+					<xs:maxLength value="255" />
+				</xs:restriction>
+			</xs:simpleType>
+        </xs:element>
+        <xs:element name="Solicitud">
+			<xs:complexType>
+				<xs:all>
+					<xs:element ref="Tutor" />
+					<xs:element ref="Provincia" />
+					<xs:element ref="Municipio" />
+					<xs:element ref="FechaNacimiento" minOccurs="0" />
+					<xs:element ref="Nombre" minOccurs="0" />
+					<xs:element ref="Apellido1" minOccurs="0" />
+					<xs:element ref="Apellido2" minOccurs="0" />
+				</xs:all>
+			</xs:complexType>
+        </xs:element>
+        <xs:element name="Tutor">
+			<xs:simpleType>
+				<xs:restriction base="xs:string">
+					<xs:enumeration value="SI" />
+					<xs:enumeration value="NO" />
+				</xs:restriction>
+			</xs:simpleType>
+        </xs:element>
+        <xs:element name="Provincia">
+			<xs:complexType>
+				<xs:all>
+					<xs:element name="Codigo">
+						<xs:simpleType>
+							<xs:restriction base="xs:string">
+								<xs:maxLength value="2" />
+							</xs:restriction>
+						</xs:simpleType>
+					</xs:element>
+					<xs:element name="Nombre">
+						<xs:simpleType>
+							<xs:restriction base="xs:string">
+								<xs:maxLength value="70" />
+							</xs:restriction>
+						</xs:simpleType>
+					</xs:element>
+				</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Municipio">
+		<xs:complexType>
+			<xs:all>
+		        <xs:element name="Codigo">
+					<xs:simpleType>
+						<xs:restriction base="xs:string">
+							<xs:maxLength value="3" />
+						</xs:restriction>
+					</xs:simpleType>
+		        </xs:element>
+				<xs:element name="Nombre">
+					<xs:simpleType>
+						<xs:restriction base="xs:string">
+							<xs:maxLength value="70" />
+						</xs:restriction>
+					</xs:simpleType>
+				</xs:element>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="FechaNacimiento">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:maxLength value="8"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Nombre">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:maxLength value="70"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Apellido1">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:maxLength value="40"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Apellido2">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:maxLength value="40"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Resultados">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="Resultado" maxOccurs="unbounded"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	 <xs:element name="Resultado">
+			<xs:complexType>
+				<xs:all>
+					<xs:element ref="TipoDocumentacion" minOccurs="0"/>
+					<xs:element ref="Documentacion" minOccurs="0"/>
+					<xs:element ref="Nombre" />
+					<xs:element ref="Apellido1" />
+					<xs:element ref="Apellido2" />
+					<xs:element ref="NombreCompleto" />
+					<xs:element ref="Domicilios" />									
+				</xs:all>
+			</xs:complexType>
+        </xs:element>
+	<xs:element name="TipoDocumentacion">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:enumeration value="NIF"/>
+				<xs:enumeration value="DNI"/>
+				<xs:enumeration value="Pasaporte"/>
+				<xs:enumeration value="NIE"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Documentacion">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:maxLength value="14"/>
+				<xs:whiteSpace value="collapse"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="NombreCompleto">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:maxLength value="150"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>	
+	<xs:element name="Domicilios">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="Domicilio" minOccurs="1" maxOccurs="unbounded"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Domicilio" >
+		<xs:complexType>
+			<xs:all>
+				<xs:element ref="Desde" />
+				<xs:element ref="Hasta" />
+				<xs:element ref="Provincia" />
+				<xs:element ref="Municipio" />
+				<xs:element ref="EntColectiva" />
+				<xs:element ref="EntSingular" />
+				<xs:element ref="Nucleo" />
+				<xs:element ref="CodUnidadPoblacional" />
+				<xs:element ref="Direccion" />						
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Desde">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:maxLength value="8"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Hasta">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:maxLength value="8"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="EntColectiva">
+		<xs:complexType>
+			<xs:all>
+				<xs:element name="Codigo">
+					<xs:simpleType>
+						<xs:restriction base="xs:string">
+							<xs:maxLength value="2"/>
+						</xs:restriction>
+					</xs:simpleType>
+				</xs:element>
+				<xs:element name="Nombre">
+					<xs:simpleType>
+						<xs:restriction base="xs:string">
+							<xs:maxLength value="70"/>
+						</xs:restriction>
+					</xs:simpleType>
+				</xs:element>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="EntSingular">
+		<xs:complexType>
+			<xs:all>
+				<xs:element name="Codigo">
+					<xs:simpleType>
+						<xs:restriction base="xs:string">
+							<xs:maxLength value="2"/>
+						</xs:restriction>
+					</xs:simpleType>
+				</xs:element>
+				<xs:element name="Nombre">
+					<xs:simpleType>
+						<xs:restriction base="xs:string">
+							<xs:maxLength value="70"/>
+						</xs:restriction>
+					</xs:simpleType>
+				</xs:element>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Nucleo">
+		<xs:complexType>
+			<xs:all>
+				<xs:element name="Codigo">
+					<xs:simpleType>
+						<xs:restriction base="xs:string">
+							<xs:maxLength value="2"/>
+						</xs:restriction>
+					</xs:simpleType>
+				</xs:element>
+				<xs:element name="Nombre">
+					<xs:simpleType>
+						<xs:restriction base="xs:string">
+							<xs:maxLength value="70"/>
+						</xs:restriction>
+					</xs:simpleType>
+				</xs:element>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="CodUnidadPoblacional">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+			<xs:maxLength value="7"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Direccion">
+		<xs:complexType>
+			<xs:all>
+				<xs:element ref="Via" minOccurs="0"/>
+				<xs:element ref="Numero" minOccurs="0"/>
+				<xs:element ref="NumeroSuperior" minOccurs="0"/>
+				<xs:element ref="Kmt" minOccurs="0"/>
+				<xs:element ref="Hmt" minOccurs="0"/>
+				<xs:element ref="Bloque" minOccurs="0"/>
+				<xs:element ref="Portal" minOccurs="0"/>
+				<xs:element ref="Escalera" minOccurs="0"/>
+				<xs:element ref="Planta" minOccurs="0"/>
+				<xs:element ref="Puerta" minOccurs="0"/>
+				<xs:element ref="CodPostal" minOccurs="0"/>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Via">
+		<xs:complexType>
+			<xs:all>
+				<xs:element name="Codigo">
+					<xs:simpleType>
+						<xs:restriction base="xs:string">
+							<xs:maxLength value="5"/>
+						</xs:restriction>
+					</xs:simpleType>
+				</xs:element>
+				<xs:element name="Tipo">
+					<xs:simpleType>
+						<xs:restriction base="xs:string">
+							<xs:maxLength value="5"/>
+						</xs:restriction>
+					</xs:simpleType>
+				</xs:element>
+				<xs:element name="Nombre">
+					<xs:simpleType>
+						<xs:restriction base="xs:string">
+							<xs:maxLength value="70"/>
+						</xs:restriction>
+					</xs:simpleType>
+				</xs:element>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Numero">
+		<xs:complexType>
+			<xs:all>
+				<xs:element name="Calificador">
+					<xs:simpleType>
+						<xs:restriction base="xs:string">
+							<xs:maxLength value="1"/>
+						</xs:restriction>
+					</xs:simpleType>
+				</xs:element>
+			<xs:element name="Valor">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="4"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+		</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="NumeroSuperior">
+		<xs:complexType>
+			<xs:all>
+				<xs:element name="Calificador">
+					<xs:simpleType>
+						<xs:restriction base="xs:string">
+							<xs:maxLength value="1"/>
+						</xs:restriction>
+					</xs:simpleType>
+				</xs:element>
+				<xs:element name="Valor">
+					<xs:simpleType>
+						<xs:restriction base="xs:string">
+							<xs:maxLength value="4"/>
+						</xs:restriction>
+					</xs:simpleType>
+				</xs:element>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Kmt">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:maxLength value="3"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Hmt">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:maxLength value="1"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Bloque">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:maxLength value="2"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Portal">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:maxLength value="2"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Escalera">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:maxLength value="2"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Planta">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:maxLength value="3"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Puerta">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:maxLength value="4"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="CodPostal">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:maxLength value="5"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+</xs:schema>

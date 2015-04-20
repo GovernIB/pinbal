@@ -1,0 +1,15 @@
+<decorators defaultdir="/WEB-INF/jsp/decorators">
+	<excludes>
+		<pattern>/js*</pattern>
+		<pattern>/css*</pattern>
+		<pattern>/img*</pattern>
+		<pattern>/ico*</pattern>
+		<pattern>/ws*</pattern>
+	</excludes>
+	<decorator name="default" page="default.jsp">
+		<pattern>/*</pattern>
+	</decorator>
+	<decorator name="modal" page="modal.jsp">
+		<pattern>/modal*</pattern>
+	</decorator>
+</decorators>
