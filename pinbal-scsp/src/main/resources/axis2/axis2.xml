@@ -1,0 +1,185 @@
+<axisconfig name="AxisJava2.0">
+
+	<parameter name="hotdeployment">true</parameter>
+	<parameter name="hotupdate">false</parameter>
+	<parameter name="enableMTOM">false</parameter>
+	<parameter name="EnableChildFirstClassLoading">false</parameter>
+	<parameter name="enableSwA">false</parameter>
+	<parameter name="ConfigContextTimeoutInterval">30000</parameter>
+	<parameter name="sendStacktraceDetailsWithFaults">false</parameter>
+	<parameter name="DrillDownToRootCauseForFaultReason">false</parameter>
+	<parameter name="userName">admin</parameter>
+	<parameter name="password">axis2</parameter>
+	<parameter name="disableREST" locked="false">false</parameter>
+	<parameter name="disableSOAP12" locked="true">false</parameter>
+
+	<deployer extension=".class" directory="pojo" class="org.apache.axis2.deployment.POJODeployer" />
+	<deployer extension=".jar" directory="transports" class="org.apache.axis2.deployment.TransportDeployer" />
+
+	<threadContextMigrators>
+		<threadContextMigrator listId="JAXWS-ThreadContextMigrator-List" class="org.apache.axis2.jaxws.addressing.migrator.EndpointContextMapMigrator" />
+	</threadContextMigrators>
+
+	<messageReceivers>
+		<messageReceiver mep="http://www.w3.org/2004/08/wsdl/in-only" class="org.apache.axis2.receivers.RawXMLINOnlyMessageReceiver" />
+		<messageReceiver mep="http://www.w3.org/2004/08/wsdl/in-out" class="org.apache.axis2.receivers.RawXMLINOutMessageReceiver" />
+		<messageReceiver mep="http://www.w3.org/2006/01/wsdl/in-only" class="org.apache.axis2.receivers.RawXMLINOnlyMessageReceiver" />
+		<messageReceiver mep="http://www.w3.org/2006/01/wsdl/in-out" class="org.apache.axis2.receivers.RawXMLINOutMessageReceiver" />
+		<messageReceiver mep="http://www.w3.org/ns/wsdl/in-only" class="org.apache.axis2.receivers.RawXMLINOnlyMessageReceiver" />
+		<messageReceiver mep="http://www.w3.org/ns/wsdl/in-out" class="org.apache.axis2.receivers.RawXMLINOutMessageReceiver" />
+	</messageReceivers>
+
+	<messageFormatters>
+		<messageFormatter contentType="application/x-www-form-urlencoded" class="org.apache.axis2.transport.http.XFormURLEncodedFormatter" />
+		<messageFormatter contentType="multipart/form-data" class="org.apache.axis2.transport.http.MultipartFormDataFormatter" />
+		<messageFormatter contentType="application/xml" class="org.apache.axis2.transport.http.ApplicationXMLFormatter" />
+		<messageFormatter contentType="text/xml" class="org.apache.axis2.transport.http.SOAPMessageFormatter" />
+		<messageFormatter contentType="application/soap+xml" class="org.apache.axis2.transport.http.SOAPMessageFormatter" />
+	</messageFormatters>
+
+	<messageFormatters>
+		<messageFormatter contentType="application/x-www-form-urlencoded" class="org.apache.axis2.transport.http.XFormURLEncodedFormatter" />
+		<messageFormatter contentType="multipart/form-data" class="org.apache.axis2.transport.http.MultipartFormDataFormatter" />
+		<messageFormatter contentType="application/xml" class="org.apache.axis2.transport.http.ApplicationXMLFormatter" />
+		<messageFormatter contentType="text/xml" class="org.apache.axis2.transport.http.SOAPMessageFormatter" />
+		<messageFormatter contentType="application/soap+xml" class="org.apache.axis2.transport.http.SOAPMessageFormatter" />
+	</messageFormatters>
+
+	<messageBuilders>
+		<messageBuilder contentType="application/xml" class="org.apache.axis2.builder.ApplicationXMLBuilder" />
+		<messageBuilder contentType="application/x-www-form-urlencoded" class="org.apache.axis2.builder.XFormURLEncodedBuilder" />
+		<messageBuilder contentType="multipart/form-data" class="org.apache.axis2.builder.MultipartFormDataBuilder" />
+	</messageBuilders>
+
+	<transportReceiver name="http" class="org.apache.axis2.transport.http.SimpleHTTPServer">
+		<parameter name="port">8080</parameter>
+	</transportReceiver>
+
+	<!--
+		Como se han detectado problemas en determinados proxys para procesar HTTP 1.1 se utiliza la version 1.0 aunque se recomienda probar el funcionamiento de la
+		1.1
+	-->
+	<transportSender name="http" class="org.apache.axis2.transport.http.CommonsHTTPTransportSender">
+		<parameter name="PROTOCOL">HTTP/1.1</parameter>
+		<parameter name="Transfer-Encoding">chunked</parameter>
+	</transportSender>
+	<transportSender name="https" class="org.apache.axis2.transport.http.CommonsHTTPTransportSender">
+		<parameter name="PROTOCOL">HTTP/1.1</parameter>
+		<parameter name="Transfer-Encoding">chunked</parameter>
+	</transportSender>
+
+	<!-- module ref="addressing" / -->
+	<module ref="rampart" />
+
+	<module ref="scspGlobal" />
+	<module ref="scspAlmacenarMensaje" />
+	<module ref="scspAlmacenarMensajeFichero" />
+	<module ref="scspAlmacenarMensajeFicheroPlain" />
+	<module ref="scspValidarEsquema" />
+	<module ref="scspValidarCertificado" />
+
+	<parameter name="requirente" locked="true">true</parameter>
+
+	<phaseOrder type="InFlow">
+  	<phase name="ScspInitContext" />
+		<phase name="ScspAlmacenarFichero" />
+		<phase name="ScspValidateContent" />
+		<phase name="Transport">
+			<handler name="RequestURIBasedDispatcher" class="org.apache.axis2.dispatchers.RequestURIBasedDispatcher">
+				<order phase="Transport" />
+			</handler>
+			<handler name="SOAPActionBasedDispatcher" class="org.apache.axis2.dispatchers.SOAPActionBasedDispatcher">
+				<order phase="Transport" />
+			</handler>
+		</phase>
+		<phase name="Addressing">
+			<handler name="AddressingBasedDispatcher" class="org.apache.axis2.dispatchers.AddressingBasedDispatcher">
+				<order phase="Addressing" />
+			</handler>
+		</phase>
+		<phase name="PreSecurity" />
+		<phase name="Security" />
+		<phase name="PreDispatch" />
+		<phase name="ScspAlmacenarFicheroPlain" />
+		<phase name="ScspValidarEsquema" />
+		<phase name="ScspLoadMessageContext" />		
+		<phase name="ScspValidarCertificado" />
+		<phase name="ScspAlmacenarBBDD" />
+		<phase name="Dispatch" class="org.apache.axis2.engine.DispatchPhase">
+			<handler name="RequestURIBasedDispatcher" class="org.apache.axis2.dispatchers.RequestURIBasedDispatcher" />
+			<handler name="SOAPActionBasedDispatcher" class="org.apache.axis2.dispatchers.SOAPActionBasedDispatcher" />
+			<handler name="RequestURIOperationDispatcher" class="org.apache.axis2.dispatchers.RequestURIOperationDispatcher" />
+			<handler name="SOAPMessageBodyBasedDispatcher" class="org.apache.axis2.dispatchers.SOAPMessageBodyBasedDispatcher" />
+			<handler name="HTTPLocationBasedDispatcher" class="org.apache.axis2.dispatchers.HTTPLocationBasedDispatcher" />
+			<handler name="GenericProviderDispatcher" class="org.apache.axis2.jaxws.dispatchers.GenericProviderDispatcher" />
+			<handler name="MustUnderstandValidationDispatcher" class="org.apache.axis2.jaxws.dispatchers.MustUnderstandValidationDispatcher" />
+		</phase>
+		<phase name="RMPhase" />
+		<phase name="OperationInPhase">
+			<handler name="MustUnderstandChecker" class="org.apache.axis2.jaxws.dispatchers.MustUnderstandChecker">
+				<order phase="OperationInPhase" />
+			</handler>
+		</phase>
+		<phase name="soapmonitorPhase" />
+	</phaseOrder>
+
+	<phaseOrder type="OutFlow">
+  	<phase name="ScspInitContext" />
+		<phase name="ScspAlmacenarFicheroPlain" />
+		<phase name="ScspLoadContex" />
+		<phase name="ScspValidarEsquema" />
+		<phase name="soapmonitorPhase" />
+		<phase name="OperationOutPhase" />
+		<phase name="RMPhase" />
+		<phase name="PolicyDetermination" />
+		<phase name="MessageOut" />
+		<phase name="PreSecurity" />
+		<phase name="Security" />
+		<phase name="ScspAlmacenarBBDD" />
+		<phase name="ScspAlmacenarFichero" />
+	</phaseOrder>
+
+	<phaseOrder type="InFaultFlow">
+  		<phase name="ScspInitContext" />
+		<phase name="ScspAlmacenarFichero" />
+		<phase name="ScspAlmacenarBBDD" />
+		<phase name="ScspErrorPhase" />
+		<phase name="Addressing">
+			<handler name="AddressingBasedDispatcher" class="org.apache.axis2.dispatchers.AddressingBasedDispatcher">
+				<order phase="Addressing" />
+			</handler>
+		</phase>
+		<phase name="Security" />
+		<phase name="PreDispatch" />
+		<phase name="Dispatch" class="org.apache.axis2.engine.DispatchPhase">
+			<handler name="RequestURIBasedDispatcher" class="org.apache.axis2.dispatchers.RequestURIBasedDispatcher" />
+			<handler name="SOAPActionBasedDispatcher" class="org.apache.axis2.dispatchers.SOAPActionBasedDispatcher" />
+			<handler name="RequestURIOperationDispatcher" class="org.apache.axis2.dispatchers.RequestURIOperationDispatcher" />
+			<handler name="SOAPMessageBodyBasedDispatcher" class="org.apache.axis2.dispatchers.SOAPMessageBodyBasedDispatcher" />
+			<handler name="HTTPLocationBasedDispatcher" class="org.apache.axis2.dispatchers.HTTPLocationBasedDispatcher" />
+			<handler name="GenericProviderDispatcher" class="org.apache.axis2.jaxws.dispatchers.GenericProviderDispatcher" />
+			<handler name="MustUnderstandValidationDispatcher" class="org.apache.axis2.jaxws.dispatchers.MustUnderstandValidationDispatcher" />
+		</phase>
+		<phase name="RMPhase" />
+		<phase name="OperationInFaultPhase" />
+		<phase name="soapmonitorPhase" />
+		<phase name="LoggingPhase" />
+		<phase name="ScspLoggingPhase" />
+	</phaseOrder>
+
+	<phaseOrder type="OutFaultFlow">
+		<phase name="ScspLoggingPhase" />
+    <phase name="ScspInitContext" />
+		<phase name="ScspErrorPhase" />
+		<phase name="soapmonitorPhase" />
+		<phase name="OperationOutFaultPhase" />
+		<phase name="RMPhase" />
+		<phase name="PolicyDetermination" />
+		<phase name="MessageOut" />
+		<phase name="Security" />
+		<phase name="ScspAlmacenarBBDD" />
+		<phase name="ScspAlmacenarFichero" />
+	</phaseOrder>
+
+</axisconfig>
+

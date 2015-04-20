@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<wsp:Policy wsu:Id="SigEncr" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd" xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy"
+	xmlns:sp="http://schemas.xmlsoap.org/ws/2005/07/securitypolicy" xmlns:ramp="http://ws.apache.org/rampart/policy">
+	<wsp:ExactlyOne>
+		<wsp:All>
+			<sp:AsymmetricBinding>
+				<wsp:Policy>
+					<sp:InitiatorToken>
+						<wsp:Policy>
+							<sp:X509Token sp:IncludeToken="http://schemas.xmlsoap.org/ws/2005/07/securitypolicy/IncludeToken/AlwaysToRecipient">
+								<wsp:Policy>
+									<sp:RequireThumbprintReference />
+									<sp:WssX509V1Token10 />
+								</wsp:Policy>
+							</sp:X509Token>
+						</wsp:Policy>
+					</sp:InitiatorToken>
+					<sp:RecipientToken>
+						<wsp:Policy>
+							<sp:X509Token sp:IncludeToken="http://schemas.xmlsoap.org/ws/2005/07/securitypolicy/IncludeToken/Never">
+								<wsp:Policy>
+									<sp:RequireThumbprintReference />
+									<sp:WssX509V3Token10 />
+								</wsp:Policy>
+							</sp:X509Token>
+						</wsp:Policy>
+					</sp:RecipientToken>
+					<sp:AlgorithmSuite>
+						<wsp:Policy>
+							<sp:Basic128Rsa15 />
+							<!-- sp:TripleDesRsa15 / -->
+							<!-- sp:Basic256Rsa15 / -->
+						</wsp:Policy>
+					</sp:AlgorithmSuite>
+					<sp:Layout>
+						<wsp:Policy>
+							<sp:Strict />
+						</wsp:Policy>
+					</sp:Layout>
+					<sp:EncryptBeforeSigning />
+
+				</wsp:Policy>
+			</sp:AsymmetricBinding>
+			<sp:Wss10>
+				<wsp:Policy>
+					<sp:MustSupportRefKeyIdentifier />
+					<sp:MustSupportRefIssuerSerial />
+				</wsp:Policy>
+			</sp:Wss10>
+			<sp:SignedParts>
+				<sp:Body />
+			</sp:SignedParts>
+			<sp:EncryptedElements>
+				<sp:XPath>//*[local-name()='DatosEspecificos']</sp:XPath>
+				<!--   <sp:XPath xmlns:de="http://intermediacion.redsara.es/scsp/esquemas/datosespecificos">//de:DatosEspecificos</sp:XPath>-->
+			</sp:EncryptedElements>
+			<ramp:RampartConfig>
+				<ramp:user>$</ramp:user>
+				<ramp:encryptionUser>$</ramp:encryptionUser>
+				<ramp:passwordCallbackClass>es.scsp.common.security.PasswordCallbackHandler</ramp:passwordCallbackClass>
+				<ramp:signatureCrypto>
+					<ramp:crypto provider="es.scsp.common.security.ScspCryptoProperties">
+					</ramp:crypto>
+				</ramp:signatureCrypto>
+				<ramp:encryptionCypto>
+					<ramp:crypto provider="es.scsp.common.security.ScspCryptoProperties">
+					</ramp:crypto>
+				</ramp:encryptionCypto>
+			</ramp:RampartConfig>
+		</wsp:All>
+	</wsp:ExactlyOne>
+</wsp:Policy>

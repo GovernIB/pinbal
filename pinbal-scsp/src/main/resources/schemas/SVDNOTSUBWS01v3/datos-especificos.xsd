@@ -1,0 +1,378 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns="http://intermediacion.redsara.es/scsp/esquemas/datosespecificos" xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://intermediacion.redsara.es/scsp/esquemas/datosespecificos" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<xs:include schemaLocation="comun.xsd"/>
+	<xs:element name="DatosEspecificos" type="DatosEspecificos"/>
+	<xs:complexType name="DatosEspecificos">
+		<xs:choice>
+			<xs:element name="Consulta">
+				<xs:annotation>
+					<xs:documentation>Bloque que contiene información sobre la consulta de la petición.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="APODERAMIENTO" type="APODERAMIENTO_CONSULTAType">
+							<xs:annotation>
+								<xs:documentation>Bloque que contiene información sobre los datos del apoderamiento.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="Retorno">
+				<xs:annotation>
+					<xs:documentation>Bloque que contiene información sobre los datos de la respuesta.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:all>
+						<xs:element name="Estado">
+							<xs:annotation>
+								<xs:documentation>Bloque que contiene información sobre el estado del retorno del servicio.</xs:documentation>
+							</xs:annotation>
+							<xs:complexType>
+								<xs:all>
+									<xs:element name="CodigoEstado">
+										<xs:annotation>
+											<xs:documentation>Código de retorno del servicio, es representado mediante un valor númerico.</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="4"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="CodigoEstadoSecundario" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>Código numérico que identifica con más detalle el retorno del servicio.</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="16"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="LiteralError">
+										<xs:annotation>
+											<xs:documentation>Descripcion de la respuesta</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="255"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+								</xs:all>
+							</xs:complexType>
+						</xs:element>
+						<xs:element name="APODERAMIENTO" type="APODERAMIENTO_RETORNOType" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Bloque que contiene información sobre los datos del apoderamiento.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="DATOS_PROTOCOLO" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Bloque que contiene información sobre escrituras revocadoras.</xs:documentation>
+							</xs:annotation>
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element name="PROTOCOLO" type="DATOS_PROTOCOLOType" maxOccurs="unbounded">
+										<xs:annotation>
+											<xs:documentation>Datos identificativos de la escritura revocadora.</xs:documentation>
+										</xs:annotation>
+									</xs:element>
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
+					</xs:all>
+				</xs:complexType>
+			</xs:element>
+		</xs:choice>
+		<xs:attribute name="Id" type="xs:string" use="optional"/>
+	</xs:complexType>
+	<xs:complexType name="APODERAMIENTO_CONSULTAType">
+		<xs:sequence>
+			<xs:choice>
+				<xs:element name="ID_ESCRITURA" type="ID_ESCRITURA_CONSULTAType">
+					<xs:annotation>
+						<xs:documentation>Elemento con información referente a la escritura</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="CSV" type="CSVType">
+					<xs:annotation>
+						<xs:documentation>Código Seguro de Verificación. Formato: Fecha de autorización (8 posiciones) + 16 primeros caracteres resultados de truncar el MD5 formado por Número de protocolo (6 posiciones) + Número de protocolo BIS (3 posiciones) + código catastro (9 posiciones) +  código últimas voluntades (7 posiciones) + secuencial (3 posiciones)</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+			</xs:choice>
+			<xs:element name="ALERTA" type="ALERTAType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Datos identificativos del aviso de alerta</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="APODERAMIENTO_RETORNOType">
+		<xs:sequence>
+			<xs:choice>
+				<xs:element name="ID_ESCRITURA" type="ID_ESCRITURA_RETORNOType">
+					<xs:annotation>
+						<xs:documentation>Elemento con información referente a la escritura</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="CSV" type="CSVType">
+					<xs:annotation>
+						<xs:documentation>Código Seguro de Verificación. Formato: Fecha de autorización (8 posiciones) + 16 primeros caracteres resultados de truncar el MD5 formado por Número de protocolo (6 posiciones) + Número de protocolo BIS (3 posiciones) + código catastro (9 posiciones) +  código últimas voluntades (7 posiciones) + secuencial (3 posiciones)</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+			</xs:choice>
+			<xs:element name="VIGENCIA_PODER" type="VIGENCIA_PODERType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Vigencia del poder (1 - subsistente, 2 - parcialmente revocado, 3 - revocado)</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="ID_ESCRITURA_CONSULTAType">
+		<xs:annotation>
+			<xs:documentation>Datos identificativos de la escritura</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="COD_NOTARIO" type="CODIGO_NOTARIOType">
+				<xs:annotation>
+					<xs:documentation>Identificacion del Notario</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="COD_NOTARIA" type="CODIGO_NOTARIAType">
+				<xs:annotation>
+					<xs:documentation>Identificacion unica de la Notaria</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="NUM_PROTOCOLO" type="NUMERO_DOCUMENTOType">
+				<xs:annotation>
+					<xs:documentation>Numero  de protocolo de la escritura</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="NUM_BIS" type="NUMERO_DOCUMENTO_BISType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Numero de Bis del protocolo</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="FECHA_AUTORIZACION" type="FECHAType">
+				<xs:annotation>
+					<xs:documentation>Fecha de autorizacion de la escritura. Se informará en los envíos de copia</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="ID_ESCRITURA_RETORNOType">
+		<xs:annotation>
+			<xs:documentation>Datos identificativos de la escritura</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="COD_NOTARIO" type="CODIGO_NOTARIOType">
+				<xs:annotation>
+					<xs:documentation>Identificacion del Notario</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="NOTARIO" type="STRINGType" minOccurs="0"/>
+			<xs:element name="COD_NOTARIA" type="CODIGO_NOTARIAType">
+				<xs:annotation>
+					<xs:documentation>Identificacion unica de la Notaria</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="NOTARIA" type="STRINGType" minOccurs="0"/>
+			<xs:element name="NUM_PROTOCOLO" type="NUMERO_DOCUMENTOType">
+				<xs:annotation>
+					<xs:documentation>Numero  de protocolo de la escritura</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="NUM_BIS" type="NUMERO_DOCUMENTO_BISType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Numero de Bis del protocolo</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="FECHA_AUTORIZACION" type="FECHAType">
+				<xs:annotation>
+					<xs:documentation>Fecha de autorizacion de la escritura. Se informará en los envíos de copia</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="ALERTAType">
+		<xs:annotation>
+			<xs:documentation>Datos identificativos de la persona</xs:documentation>
+		</xs:annotation>
+		<xs:all>
+			<xs:element name="ID_APLICACION" type="ID_APLICACIONType">
+				<xs:annotation>
+					<xs:documentation>Identificador de aplicación para la gestión de avisos</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="FECHA_AVISO" type="FECHAType">
+				<xs:annotation>
+					<xs:documentation>Fecha hasta la que se desean recibir alertas si el poder cambia</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="EMAIL" type="EmailType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Correo electrónico al que se quiere recibir el aviso de cambio</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="SMS" type="SMSType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Número de móvil 9 posiciones al que se quiere recibir el aviso de cambio</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:all>
+	</xs:complexType>
+	<xs:complexType name="DATOS_PROTOCOLOType">
+		<xs:annotation>
+			<xs:documentation>Datos identificativos de la escritura</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="CSV" type="CSVType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Código Seguro de Verificación. Formato: Fecha de autorización (8 posiciones) + 16 primeros caracteres resultados de truncar el MD5 formado por Número de protocolo (6 posiciones) + Número de protocolo BIS (3 posiciones) + código catastro (9 posiciones) +  código últimas voluntades (7 posiciones) + secuencial (3 posiciones)</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="CODIGO_NOTARIO" type="CODIGO_NOTARIOType">
+				<xs:annotation>
+					<xs:documentation>Identificacion del Notario</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="NOTARIO" type="STRINGType" minOccurs="0"/>
+			<xs:element name="CODIGO_NOTARIA" type="CODIGO_NOTARIAType">
+				<xs:annotation>
+					<xs:documentation>Identificacion unica de la Notaria</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="NOTARIA" type="STRINGType" minOccurs="0"/>
+			<xs:element name="NUM_PROTOCOLO" type="NUMERO_DOCUMENTOType">
+				<xs:annotation>
+					<xs:documentation>Numero  de protocolo de la escritura</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="NUM_BIS" type="NUMERO_DOCUMENTO_BISType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Numero de Bis del protocolo</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="FECHA_AUTORIZACION" type="FECHAType">
+				<xs:annotation>
+					<xs:documentation>Fecha de autorizacion de la escritura. Se informará en los envíos de copia</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ACTO_JURIDICO" type="ACTO_JURIDICOType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Acto juridico segun codificacion del NIU.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="DESCRIPCION_ACTO_JURIDICO" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Descripción acto jurídico</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="STRINGType">
+						<xs:maxLength value="200"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="DATOS_APODERADO" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Bloque que contiene los datos de los apoderados.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="APODERADO" type="SUJETOType" maxOccurs="unbounded">
+							<xs:annotation>
+								<xs:documentation>Elemento con la información de un apoderado.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="DATOS_PODERDANTE" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Bloque que contiene los datos de los poderdantes.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="PODERDANTE" type="SUJETOType" maxOccurs="unbounded">
+							<xs:annotation>
+								<xs:documentation>Elemento con la información de un poderdante.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="DOCUMENTO_IDENTIDADType">
+		<xs:sequence>
+			<xs:element name="TIP_DOC_IDE" type="TIPO_DOCUMENTO_IDENTIDADType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Tipo de documento de identidad ("1" NIF/CIF, "2" NIE, "3" Pasaporte, "4" Menores de edad que carezcan de dicho número, "5" Entidad recién constituida que carece de NIF, 
+					"6" Falta de aportación del NIF o NIF aportado pero no válido, "7" Cónyuge cotitular que no interviene, "8" Documento de identificación de extranjero, "9" Documento de persona jurídica extranjera,
+					"10" Falta de aportación de NIF o NIE, "11" Falta de aportación de NIF, "12" Tarjeta de residencia, "15" Documento de identificación distinto o ausencia de cualquiera de ellos)</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="CIR_AUS" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Circunstancias concretas concurrentes de la ausencia del documento de identidad</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="3000"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="NUM_DOC_IDE" type="NUMERO_DOCUMENTO_IDENTIDADType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Número del documento de identidad</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="SUJETOType">
+		<xs:sequence>
+			<xs:element name="SUJETO_ID" type="xs:integer">
+				<xs:annotation>
+					<xs:documentation>Identificador interno del sujeto</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="DOC_IDE" type="DOCUMENTO_IDENTIDADType">
+				<xs:annotation>
+					<xs:documentation>Documento de identidad del sujeto</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="NOM" type="NOMBRE_PERSONAType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Nombre</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="APE1_RAZ_SOC" type="APELLIDOS_PERSONAType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Primer apellido o razón social</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="APE2" type="APELLIDOS_PERSONAType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Segundo apellido</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="NAC" type="CODIGO_PAISType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Código de país, según la codificación oficial de Países y Territorios aprobada por OM 9-12-99</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="DESCRIPCION_NAC" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Nacionalidad</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="STRINGType">
+						<xs:maxLength value="100"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+</xs:schema>

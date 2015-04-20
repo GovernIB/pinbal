@@ -1,0 +1,372 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://intermediacion.redsara.es/scsp/esquemas/datosespecificos" xmlns:ns1="http://justicia.es/esb/comun/xsd-schemas/V1" targetNamespace="http://intermediacion.redsara.es/scsp/esquemas/datosespecificos" elementFormDefault="qualified" attributeFormDefault="unqualified">	
+	<xs:element name="DatosEspecificos" type="DatosEspecificos"/>
+	<xs:complexType name="DatosEspecificos">
+		<xs:choice>
+			<xs:element ref="Consulta">
+				<xs:annotation>
+					<xs:documentation>Solo en el mensaje de PETICION</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element ref="Retorno">
+				<xs:annotation>
+					<xs:documentation>Solo en el mensaje RESPUESTA</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:choice>
+		<xs:attribute name="Id" type="xs:string" use="optional"/>
+	</xs:complexType>
+	<xs:element name="Consulta">
+		<xs:complexType>
+			<xs:sequence>				
+				<xs:element ref="DatosAdicionalesTitularConsulta">
+					<xs:annotation>
+						<xs:documentation>
+					Entidad que representa los datos extendidos del Titular para que cuadren con los del Inscrito.
+					* Obligatorio: Fecha del Hecho, Ausencia Segundo Apellido
+					</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:choice>
+					<xs:element ref="ConsultaPorDatosRegistrales" minOccurs="0"/>
+					<xs:element ref="ConsultaPorOtrosDatos" minOccurs="0"/>
+				</xs:choice>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="DatosAdicionalesTitularConsulta">
+		<xs:complexType>
+			<xs:annotation>
+				<xs:documentation>Datos Extra de Titular que se adjuntan a los Datos del Titular.</xs:documentation>
+			</xs:annotation>
+			<xs:sequence>				
+				<xs:element name="FechaHechoRegistral" type="xs:date">
+					<xs:annotation>
+						<xs:documentation>Fecha del Hecho Registral</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="AusenciaSegundoApellido" type="xs:boolean" default="false">
+					<xs:annotation>
+						<xs:documentation>Flag que especifica si el ciudadano tiene segundo apellido, en cuyo caso, sera obligatorio introducir el segundo apellido</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="ConsultaPorDatosRegistrales">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="RegistroCivil"/>
+				<xs:element ref="Tomo"/>
+				<xs:element ref="Pagina"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="ConsultaPorOtrosDatos">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="PoblacionHechoRegistral"/>
+				<xs:element ref="FechaNacimiento"/>
+				<xs:element name="PoblacionNacimiento" type="Poblacion" minOccurs="0"/>
+				<xs:element name="NombrePadre" type="Nombre" minOccurs="0"/>
+				<xs:element name="NombreMadre" type="Nombre" minOccurs="0"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Retorno">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="DatosAdicionalesTitularRetorno" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>Opcional si Estado no es un ERROR</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element ref="DatosHechoRegistral" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>Opcional si Estado no es un ERROR</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element ref="DatosRegistrales" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>Opcional si Estado no es un ERROR</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element ref="DatosProgenitores" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>Opcional si Estado no es un ERROR</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="FechaConfirmacion" type="xs:date">
+					<xs:annotation>
+						<xs:documentation>Fecha de Confirmacion que permite identificar univocamente a la misma</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element ref="Estado" minOccurs="0"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="DatosAdicionalesTitularRetorno">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="Sexo" type="Sexo" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>Sexo del Individuo</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element ref="FechaNacimiento" minOccurs="0"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="DatosHechoRegistral">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="FechaHechoRegistral" minOccurs="0"/>
+				<xs:element ref="PoblacionHechoRegistral" minOccurs="0"/>
+				<xs:element name="PaisHechoRegistral" type="Pais" minOccurs="0"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="DatosRegistrales">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="RegistroCivil"/>
+				<xs:element ref="Tomo"/>
+				<xs:element ref="Pagina"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="DatosProgenitores">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="Progenitor" minOccurs="0" maxOccurs="2"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Progenitor">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="DocumentoIdentificativo" type="DocumentoIdentificadorType" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>Documento identificador del Individuo (NIF, NIE o Pasaporte)</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="Nombre" type="Nombre">
+					<xs:annotation>
+						<xs:documentation>Nombre Apellido del Individuo</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="PrimerApellido" type="Apellido">
+					<xs:annotation>
+						<xs:documentation>Primer Apellido del Individuo</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="SegundoApellido" type="Apellido" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>Segundo Apellido del Individuo</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element ref="Sexo" minOccurs="0"/>
+				<xs:element ref="FechaNacimiento" minOccurs="0"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Estado">
+		<xs:complexType>
+			<xs:all>
+				<xs:element ref="CodigoEstado" minOccurs="0"/>
+				<xs:element ref="CodigoEstadoSecundario" minOccurs="0"/>
+				<xs:element ref="LiteralError" minOccurs="0"/>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="RegistroCivil" type="IdentificadorRegistro">
+		<xs:annotation>
+			<xs:documentation>Identificador de Registro Civil</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="Tomo" type="IdentificadorTomo">
+		<xs:annotation>
+			<xs:documentation>Tomo o Libro del Registro</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="Pagina" type="IdentificadorPagina">
+		<xs:annotation>
+			<xs:documentation>Folio o pagina del Registro</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="FechaHechoRegistral" type="xs:date">
+		<xs:annotation>
+			<xs:documentation>Fecha en la que se ha producido el hecho Registral</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="PoblacionHechoRegistral" type="Poblacion">
+		<xs:annotation>
+			<xs:documentation>Poblacion en la que se ha producido el hecho Registral. Codigo INE (En el caso de consultados 00 + Codiggo del Ministerio de Asuntos Exteriores)</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="FechaNacimiento" type="xs:date">
+		<xs:annotation>
+			<xs:documentation>Fecha de Nacimiento</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:complexType name="DocumentoIdentificadorType">
+		<xs:annotation>
+			<xs:documentation>
+				Esquema de Consulta por Documento Identificador: DNI o Pasaporte o NIE
+			</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:choice>
+				<xs:element name="NIF" type="NIFType">
+					<xs:annotation>
+						<xs:documentation>Alternativa 1.A: Consulta por DNI</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="NIE" type="NIEType">
+					<xs:annotation>
+						<xs:documentation>Alternativa 1.B: Consulta por NIE</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="Pasaporte" type="PasaporteType">
+					<xs:annotation>
+						<xs:documentation>Alternativa 1.C: Consulta por Pasaporte</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+			</xs:choice>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:simpleType name="NIFType">
+		<xs:annotation>
+			<xs:documentation>Documento identificativo para ciudadanos espanoles</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:token">
+			<xs:minLength value="1"/>
+			<xs:maxLength value="9"/>
+			<xs:pattern value="[L,K,M,l,k,m]*[0]{1}[0-9]+[a-zA-Z]{1}"/>
+			<xs:pattern value="[L,K,M,l,k,m]*[0-9]+[a-zA-Z]{1}"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="NIEType">
+		<xs:annotation>
+			<xs:documentation>Documento identificativo para ciudadanos extranjeros</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:token">
+			<xs:minLength value="1"/>
+			<xs:maxLength value="9"/>
+			<xs:pattern value="[x-zX-Z]{1}[0-9]+[a-zA-Z]{1}"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="PasaporteType">
+		<xs:annotation>
+			<xs:documentation>Documento identificativo de pasaporte</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:token">
+			<xs:minLength value="1"/>
+			<xs:maxLength value="25"/>
+			<xs:pattern value="[a-zA-Z0-9]*"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:element name="Sexo" type="Sexo">
+		<xs:annotation>
+			<xs:documentation>Sexo del Individuo</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="CodigoEstado">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:maxLength value="4"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="CodigoEstadoSecundario">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:maxLength value="16"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="LiteralError">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:maxLength value="255"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:simpleType name="IdentificadorRegistro">
+		<xs:annotation>
+			<xs:documentation>Codigo del Registro Civil</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:length value="12"/>
+			<xs:pattern value="\d*"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="IdentificadorTomo">
+		<xs:annotation>
+			<xs:documentation>Identificador de Tomo o Libro del Registro</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:maxLength value="10"/>
+			<xs:pattern value="([0-9]{5})([ ]|[_]|\w)*"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="IdentificadorPagina">
+		<xs:annotation>
+			<xs:documentation>Folio o pagina del Registro</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:maxLength value="10"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="Nombre">
+		<xs:restriction base="xs:string">
+			<xs:minLength value="1"/>
+			<xs:maxLength value="50"/>
+			<xs:pattern value="[A-Za-zÁáÉéÍíÓóÚúüÑñÀàÈèÌìÒòÙùÄäËëÏïÖöÜüÂâÊêÎîÔôÛûÇç·'\-\s,.()/\\]+"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="Apellido">
+		<xs:restriction base="xs:string">
+			<xs:minLength value="1"/>
+			<xs:maxLength value="50"/>
+			<xs:pattern value="[A-Za-zÁáÉéÍíÓóÚúüÑñÀàÈèÌìÒòÙùÄäËëÏïÖöÜüÂâÊêÎîÔôÛûÇç·'\-\s,.()/\\]+"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="Poblacion">
+		<xs:annotation>
+			<xs:documentation>
+			Codigo Poblacion INE
+			(En caso de un consulado: 00 + Codigo del Ministerio de Asuntos Exteriores)
+			</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:pattern value="\d{5}"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="Pais">
+		<xs:annotation>
+			<xs:documentation>Codigo Pais ISO3166</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:maxLength value="3"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="Sexo">
+		<xs:annotation>
+			<xs:documentation>Varon (V) o Mujer (M)</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:length value="1"/>
+			<xs:enumeration value="V">
+				<xs:annotation>
+					<xs:documentation>Varon</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="M">
+				<xs:annotation>
+					<xs:documentation>Mujer</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+		</xs:restriction>
+	</xs:simpleType>
+</xs:schema>

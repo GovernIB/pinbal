@@ -1,0 +1,100 @@
+﻿<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<xs:schema xmlns="http://www.map.es/scsp/esquemas/V2/solicitudRespuesta" xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.map.es/scsp/esquemas/V2/solicitudRespuesta" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<xs:element name="CodigoCertificado">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:enumeration value="VDRSFWS02"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="CodigoEstado">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:maxLength value="4"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<!-- Añadido reunion 24/11/2005 BURKE-->
+	<xs:element name="CodigoEstadoSecundario">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:maxLength value="16"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Estado">
+		<xs:complexType>
+			<xs:all>
+				<xs:element ref="CodigoEstado" minOccurs="0"/>
+				<!-- Añadido reunion 24/11/2005 BURKE-->
+				<xs:element ref="CodigoEstadoSecundario" minOccurs="0"/>
+				<xs:element ref="LiteralError" minOccurs="0"/>
+				<xs:element ref="TiempoEstimadoRespuesta" minOccurs="0"/>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="IdPeticion">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:maxLength value="16"/>
+				<xs:minLength value="1"/>
+				<xs:whiteSpace value="collapse"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="LiteralError">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:maxLength value="255"/>
+				<!-- Ampliado de 100 a 255 reunion 24/11/2005 BURKE-->
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="NumElementos">
+		<xs:simpleType>
+			<xs:restriction base="xs:int">
+				<xs:totalDigits value="4"/>
+				<xs:minInclusive value="0"/>
+				<xs:maxInclusive value="1000"/>
+			</xs:restriction>
+			<!-- Cambiado de tipo xs:string a xs:int reunion 24/11/2005 BURKE-->
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="SolicitudRespuesta">
+		<xs:complexType>
+			<xs:all>
+				<xs:element ref="Atributos"/>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="TiempoEstimadoRespuesta">
+		<xs:simpleType>
+			<xs:restriction base="xs:int">
+				<xs:totalDigits value="4"/>
+				<xs:minInclusive  value="0"/>
+			</xs:restriction>
+			<!-- Cambiado de tipo xs:string a xs:int reunion 24/11/2005 BURKE-->
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="TimeStamp">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="29"/>
+				<xs:whiteSpace value="collapse"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Atributos">
+		<xs:complexType>
+			<xs:all>
+				<xs:element ref="IdPeticion"/>
+				<xs:element ref="NumElementos"/>
+				<xs:element ref="TimeStamp"/>
+				<xs:element ref="Estado" minOccurs="0"/>
+				<!-- Cambiado el nombre de CodCertificado a CodigoCertificado reunion 24/11/2005 BURKE-->
+				<xs:element ref="CodigoCertificado"/>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+</xs:schema>

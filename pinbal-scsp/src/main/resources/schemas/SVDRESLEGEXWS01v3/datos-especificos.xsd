@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns="http://intermediacion.redsara.es/scsp/esquemas/datosespecificos" xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://intermediacion.redsara.es/scsp/esquemas/datosespecificos" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<xs:element name="DatosEspecificos" type="DatosEspecificos"/>
+	<xs:complexType name="DatosEspecificos">
+		<xs:choice>
+			<xs:element name="DatosPeticion" minOccurs="0">
+				<xs:complexType>
+					<xs:all>
+						<xs:element name="AnioNacimiento" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>formato yyyy</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:int">
+									<xs:totalDigits value="4"/>
+									<xs:minInclusive value="0"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="Nacionalidad" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Maximo 3 carácteres: Codificacion en ISO 3166-1 alfa-3</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="3"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+					</xs:all>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="DatosRespuesta">
+				<xs:complexType>
+					<xs:all>
+						<xs:element name="Estado">
+							<xs:complexType>
+								<xs:all>
+									<xs:element name="CodigoEstado">
+										<xs:annotation>
+											<xs:documentation>Codigo de estado de 4 digitos - 0000 Consta Autorizacion Estancia o residencia 0001 No consta Autorizacion Resto (otros errores SCSP)</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="4"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="CodigoEstadoSecundario" minOccurs="0">
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="16"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="LiteralError">
+										<xs:annotation>
+											<xs:documentation>Descripcion de la respuesta</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="255"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+								</xs:all>
+							</xs:complexType>
+						</xs:element>
+						<xs:element name="EstadoSituacion" minOccurs="0">
+							<xs:complexType>
+								<xs:all>
+									<xs:element name="Residencia" type="xs:integer">
+										<xs:annotation>
+											<xs:documentation>Tipo de autorizacion de Residencia: (0) Sin permiso (1) Comunitario, (2) Familiar de comunitario, (3) Extracomunitario   </xs:documentation>
+										</xs:annotation>
+									</xs:element>
+									<xs:element name="DescripcionAutorizacion">
+										<xs:annotation>
+											<xs:documentation>Descripcion de la autorizacion en vigor</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="500"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="FechaResolucion">
+										<xs:annotation>
+											<xs:documentation>Fecha de la resolucion de la solicitud actual</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="10"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="FechaCaducidad">
+										<xs:annotation>
+											<xs:documentation>Fecha de caducidad del permiso actual</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="10"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+									<xs:element name="Renovacion" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>Informacion sobre solicitud de renovacion</xs:documentation>
+										</xs:annotation>
+										<xs:complexType>
+											<xs:sequence>
+												<xs:element name="FechaSolicitudRenovacion">
+													<xs:annotation>
+														<xs:documentation>Fecha de la solicitud de la renovacion. Formato (dd/mm/yyyy)</xs:documentation>
+													</xs:annotation>
+													<xs:simpleType>
+														<xs:restriction base="xs:string">
+															<xs:maxLength value="10"/>
+														</xs:restriction>
+													</xs:simpleType>
+												</xs:element>
+											</xs:sequence>
+										</xs:complexType>
+									</xs:element>
+									<xs:element name="EstanciaEspecial" type="xs:integer" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>Art 37 RD 557/2011 Reglamento Extranjería. (1) Estudios, (2) Investigacion o Formacion, (3) Movilidad de Alumnos, (4) Prácticas No Laborales, (5) Servicios de voluntariado</xs:documentation>
+										</xs:annotation>
+									</xs:element>
+								</xs:all>
+							</xs:complexType>
+						</xs:element>
+					</xs:all>
+				</xs:complexType>
+			</xs:element>
+		</xs:choice>
+	</xs:complexType>
+</xs:schema>

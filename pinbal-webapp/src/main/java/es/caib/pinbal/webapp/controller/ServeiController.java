@@ -1,0 +1,526 @@
+/**
+ * 
+ */
+package es.caib.pinbal.webapp.controller;
+
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.propertyeditors.CustomDateEditor;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.InitBinder;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+
+import es.caib.pinbal.core.dto.ArbreDto;
+import es.caib.pinbal.core.dto.DadaEspecificaDto;
+import es.caib.pinbal.core.dto.ProcedimentDto;
+import es.caib.pinbal.core.dto.ServeiBusDto;
+import es.caib.pinbal.core.dto.ServeiCampDto;
+import es.caib.pinbal.core.dto.ServeiDto;
+import es.caib.pinbal.core.service.EntitatService;
+import es.caib.pinbal.core.service.ProcedimentService;
+import es.caib.pinbal.core.service.ServeiService;
+import es.caib.pinbal.core.service.exception.EntitatNotFoundException;
+import es.caib.pinbal.core.service.exception.ScspException;
+import es.caib.pinbal.core.service.exception.ServeiAmbConsultesException;
+import es.caib.pinbal.core.service.exception.ServeiBusNotFoundException;
+import es.caib.pinbal.core.service.exception.ServeiCampGrupNotFoundException;
+import es.caib.pinbal.core.service.exception.ServeiCampNotFoundException;
+import es.caib.pinbal.core.service.exception.ServeiNotFoundException;
+import es.caib.pinbal.webapp.command.ServeiBusCommand;
+import es.caib.pinbal.webapp.command.ServeiCampCommand;
+import es.caib.pinbal.webapp.command.ServeiCampGrupCommand;
+import es.caib.pinbal.webapp.command.ServeiCommand;
+import es.caib.pinbal.webapp.command.ServeiJustificantCampCommand;
+import es.caib.pinbal.webapp.common.AlertHelper;
+
+/**
+ * Controlador per al manteniment de serveis.
+ * 
+ * @author Limit Tecnologies <limit@limit.es>
+ */
+@Controller
+@RequestMapping("/servei")
+public class ServeiController extends BaseController {
+ 
+	@Autowired
+	private ServeiService serveiService;
+	@Autowired
+	private EntitatService entitatService;
+	@Autowired
+	private ProcedimentService procedimentService;
+
+
+	@RequestMapping(method = RequestMethod.GET)
+	public String get(
+			HttpServletRequest request,
+			HttpServletResponse response,
+			Model model) {
+		model.addAttribute("serveis", serveiService.findActius());
+		return "serveiList";
+	}
+
+	@RequestMapping(value = "/new", method = RequestMethod.GET)
+	public String get(Model model) throws ServeiNotFoundException {
+		return get(null, model);
+	}
+	@RequestMapping(value = "/{serveiCodi}", method = RequestMethod.GET)
+	public String get(
+			@PathVariable String serveiCodi,
+			Model model) throws ServeiNotFoundException {
+		ServeiDto servei = null;
+		if (serveiCodi != null)
+			servei = serveiService.findAmbCodiPerAdminORepresentant(serveiCodi);
+		if (servei != null) {
+			model.addAttribute(ServeiCommand.asCommand(servei));
+		} else {
+			model.addAttribute(new ServeiCommand(true));
+		}
+		model.addAttribute("emisors", serveiService.findEmisorAll());
+		model.addAttribute("clausPubliques", serveiService.findClauPublicaAll());
+		model.addAttribute("clausPrivades", serveiService.findClauPrivadaAll());
+		if (servei != null)
+			model.addAttribute("serveisBus", serveiService.findServeisBus(servei.getCodi()));
+		return "serveiForm";
+	}
+
+	@RequestMapping(method = RequestMethod.POST)
+	public String save(
+			HttpServletRequest request,
+			@Valid ServeiCommand command,
+			BindingResult bindingResult,
+			Model model) throws ServeiNotFoundException {
+		if (bindingResult.hasErrors()) {
+			model.addAttribute("emisors", serveiService.findEmisorAll());
+			model.addAttribute("clausPubliques", serveiService.findClauPublicaAll());
+			model.addAttribute("clausPrivades", serveiService.findClauPrivadaAll());
+			return "serveiForm";
+		}
+		serveiService.save(ServeiCommand.asDto(command));
+		if (command.isCreacio()) {
+			AlertHelper.success(
+					request, 
+					getMessage(
+							request, 
+							"servei.controller.servei.creat.ok"));
+		} else {
+			AlertHelper.success(
+					request, 
+					getMessage(
+							request, 
+							"servei.controller.servei.modificat.ok"));
+		}
+		return "redirect:servei";
+	}
+
+	@RequestMapping(value = "/{serveiCodi}/delete", method = RequestMethod.GET)
+	public String delete(
+			HttpServletRequest request,
+			@PathVariable String serveiCodi) throws ServeiNotFoundException {
+		try {
+			serveiService.delete(serveiCodi);
+			AlertHelper.success(
+					request, 
+					getMessage(
+							request, 
+							"servei.controller.servei.esborrat.ok"));
+		} catch (ServeiAmbConsultesException e) {
+			AlertHelper.error(
+					request, 
+					getMessage(
+							request, 
+							"servei.controller.servei.amb.consultes"));
+		}
+		return "redirect:../../servei";
+	}
+
+	@RequestMapping(value = "/{serveiCodi}/camp", method = RequestMethod.GET)
+	public String serveiCamp(
+			HttpServletRequest request,
+			@PathVariable String serveiCodi,
+			Model model)  throws ServeiNotFoundException, ScspException {
+		model.addAttribute(
+				"servei",
+				serveiService.findAmbCodiPerAdminORepresentant(serveiCodi));
+		model.addAttribute(
+				"arbreDadesEspecifiques",
+				serveiService.generarArbreDadesEspecifiques(serveiCodi));
+		List<ServeiCampDto> camps = serveiService.findServeiCamps(serveiCodi);
+		model.addAttribute("camps", camps);
+		Map<Long, List<ServeiCampDto>> campsAgrupats = new HashMap<Long, List<ServeiCampDto>>();
+		for (ServeiCampDto camp: camps) {
+			Long clau = (camp.getGrup() != null) ? camp.getGrup().getId() : null;
+			if (campsAgrupats.get(clau) == null) {
+				campsAgrupats.put(clau, new ArrayList<ServeiCampDto>());
+			}
+			campsAgrupats.get(clau).add(camp);
+		}
+		model.addAttribute("campsAgrupats", campsAgrupats);
+		model.addAttribute(
+				"grups",
+				serveiService.findServeiCampGrups(serveiCodi));
+		return "serveiCamp";
+	}
+
+	@RequestMapping(value = "/{serveiCodi}/camp/add", method = RequestMethod.POST)
+	public String serveiCampAdd(
+			HttpServletRequest request,
+			@PathVariable String serveiCodi,
+			@Valid ServeiCampCommand command,
+			BindingResult bindingResult) throws ServeiNotFoundException {
+		if (bindingResult.hasErrors()) {
+			return "redirect:../camp";
+		}
+		serveiService.createServeiCamp(command.getServei(), command.getPath());
+		return "redirect:../camp";
+	}
+
+	@RequestMapping(value = "/{serveiCodi}/camp/update", method = RequestMethod.POST)
+	public String serveiCampUpdate(
+			HttpServletRequest request,
+			@PathVariable String serveiCodi,
+			@Valid ServeiCampCommand command,
+			BindingResult bindingResult) throws ServeiCampNotFoundException {
+		if (bindingResult.hasErrors()) {
+			return "redirect:../camp";
+		}
+		omplirCampEnumDescripcions(request, command);
+		serveiService.updateServeiCamp(ServeiCampCommand.asDto(command));
+		AlertHelper.success(
+				request, 
+				getMessage(
+						request, 
+						"servei.controller.camp.modificat.ok"));
+		return "redirect:../camp";
+	}
+
+	@RequestMapping(value = "/{serveiCodi}/camp/{serveiCampId}/delete", method = RequestMethod.GET)
+	public String serveiCampDelete(
+			HttpServletRequest request,
+			@PathVariable String serveiCodi,
+			@PathVariable Long serveiCampId) throws ServeiCampNotFoundException {
+		serveiService.deleteServeiCamp(serveiCampId);
+		AlertHelper.success(
+				request,
+				getMessage(
+						request, 
+						"servei.controller.camp.esborrat.ok"));
+		return "redirect:../../camp";
+	}
+
+	@RequestMapping(value = "/{serveiCodi}/camp/move/{serveiCampId}/{indexDesti}", method = RequestMethod.GET)
+	public String serveiCampMove(
+			HttpServletRequest request,
+			@PathVariable String serveiCodi,
+			@PathVariable Long serveiCampId,
+			@PathVariable int indexDesti) throws ServeiCampNotFoundException {
+		serveiService.moveServeiCamp(serveiCodi, serveiCampId, indexDesti);
+		return "redirect:../../../camp";
+	}
+
+	@RequestMapping(value = "/{serveiCodi}/camp/{serveiCampId}/agrupar/{serveiCampGrupId}", method = RequestMethod.GET)
+	public String serveiCampAgrupar(
+			HttpServletRequest request,
+			@PathVariable String serveiCodi,
+			@PathVariable Long serveiCampId,
+			@PathVariable Long serveiCampGrupId) throws ServeiCampNotFoundException, ServeiCampGrupNotFoundException {
+		serveiService.agrupaServeiCamp(serveiCampId, serveiCampGrupId);
+		return "redirect:../../../camp";
+	}
+
+	@RequestMapping(value = "/{serveiCodi}/camp/{serveiCampId}/desagrupar", method = RequestMethod.GET)
+	public String serveiCampDesagrupar(
+			HttpServletRequest request,
+			@PathVariable String serveiCodi,
+			@PathVariable Long serveiCampId) throws ServeiCampNotFoundException, ServeiCampGrupNotFoundException {
+		serveiService.agrupaServeiCamp(serveiCampId, null);
+		return "redirect:../../camp";
+	}
+
+	@RequestMapping(value = "/{serveiCodi}/preview", method = RequestMethod.GET)
+	public String serveiPreview(
+			HttpServletRequest request,
+			@PathVariable String serveiCodi,
+			Model model) throws ServeiNotFoundException, ScspException {
+		model.addAttribute(
+				"servei",
+				serveiService.findAmbCodiPerAdminORepresentant(serveiCodi));
+		model.addAttribute(
+				"llistaArbreDadesEspecifiques",
+				serveiService.generarArbreDadesEspecifiques(serveiCodi).toList());
+		List<ServeiCampDto> camps = serveiService.findServeiCamps(serveiCodi);
+		model.addAttribute("campsDadesEspecifiques", camps);
+		Map<Long, List<ServeiCampDto>> campsAgrupats = new HashMap<Long, List<ServeiCampDto>>();
+		for (ServeiCampDto camp: camps) {
+			Long clau = (camp.getGrup() != null) ? camp.getGrup().getId() : null;
+			if (campsAgrupats.get(clau) == null) {
+				campsAgrupats.put(clau, new ArrayList<ServeiCampDto>());
+			}
+			campsAgrupats.get(clau).add(camp);
+		}
+		model.addAttribute("campsDadesEspecifiquesAgrupats", campsAgrupats);
+		model.addAttribute(
+				"grups",
+				serveiService.findServeiCampGrups(serveiCodi));
+		return "serveiPreview";
+	}
+
+	@RequestMapping(value = "/{serveiCodi}/campGrup/add", method = RequestMethod.POST)
+	public String serveiCampGrupAdd(
+			HttpServletRequest request,
+			@PathVariable String serveiCodi,
+			@Valid ServeiCampGrupCommand command,
+			BindingResult bindingResult) throws ServeiNotFoundException {
+		if (bindingResult.hasErrors()) {
+			AlertHelper.error(
+					request, 
+					getMessage(
+							request, 
+							"servei.controller.camp.grup.creat.error"));
+			return "redirect:../camp";
+		}
+		serveiService.createServeiCampGrup(
+				ServeiCampGrupCommand.asDto(command));
+		AlertHelper.success(
+				request, 
+				getMessage(
+						request, 
+						"servei.controller.camp.grup.creat.ok"));
+		return "redirect:../camp";
+	}
+
+	@RequestMapping(value = "/{serveiCodi}/campGrup/update", method = RequestMethod.POST)
+	public String serveiCampGrupUpdate(
+			HttpServletRequest request,
+			@PathVariable String serveiCodi,
+			@Valid ServeiCampGrupCommand command,
+			BindingResult bindingResult) throws ServeiCampGrupNotFoundException {
+		if (bindingResult.hasErrors()) {
+			AlertHelper.error(
+					request, 
+					getMessage(
+							request, 
+							"servei.controller.camp.grup.modificat.error"));
+			return "redirect:../camp";
+		}
+		serveiService.updateServeiCampGrup(ServeiCampGrupCommand.asDto(command));
+		AlertHelper.success(
+				request, 
+				getMessage(
+						request, 
+						"servei.controller.camp.grup.modificat.ok"));
+		return "redirect:../camp";
+	}
+
+	@RequestMapping(value = "/{serveiCodi}/campGrup/{serveiCampGrupId}/delete", method = RequestMethod.GET)
+	public String serveiCampGrupDelete(
+			HttpServletRequest request,
+			@PathVariable String serveiCodi,
+			@PathVariable Long serveiCampGrupId) throws ServeiCampGrupNotFoundException {
+		serveiService.deleteServeiCampGrup(serveiCampGrupId);
+		AlertHelper.success(
+				request,
+				getMessage(
+						request, 
+						"servei.controller.camp.grup.esborrat.ok"));
+		return "redirect:../../camp";
+	}
+
+	@RequestMapping(value = "/{serveiCodi}/campGrup/{serveiCampGrupId}/up", method = RequestMethod.GET)
+	public String serveiCampGrupUp(
+			HttpServletRequest request,
+			@PathVariable String serveiCodi,
+			@PathVariable Long serveiCampGrupId) throws ServeiCampGrupNotFoundException {
+		serveiService.moveServeiCampGrup(serveiCampGrupId, true);
+		return "redirect:../../camp";
+	}
+
+	@RequestMapping(value = "/{serveiCodi}/campGrup/{serveiCampGrupId}/down", method = RequestMethod.GET)
+	public String serveiCampGrupDown(
+			HttpServletRequest request,
+			@PathVariable String serveiCodi,
+			@PathVariable Long serveiCampGrupId) throws ServeiCampGrupNotFoundException {
+		serveiService.moveServeiCampGrup(serveiCampGrupId, false);
+		return "redirect:../../camp";
+	}
+
+	@RequestMapping(value = "/{serveiCodi}/justificant", method = RequestMethod.GET)
+	public String serveiJustificant(
+			HttpServletRequest request,
+			@PathVariable String serveiCodi,
+			Model model) throws ServeiNotFoundException, ScspException {
+		omplirModelTraduccio(serveiCodi, model);
+		return "serveiJustificant";
+	}
+
+	@RequestMapping(value = "/{serveiCodi}/justificant", method = RequestMethod.POST)
+	public String serveiJustificantPost(
+			HttpServletRequest request,
+			@PathVariable String serveiCodi,
+			@Valid ServeiJustificantCampCommand command,
+			BindingResult bindingResult,
+			Model model) throws ServeiNotFoundException, ScspException {
+		if (bindingResult.hasErrors()) {
+			AlertHelper.error(
+					request, 
+					getMessage(
+							request, 
+							"servei.controller.traduccio.camp.error"));
+			omplirModelTraduccio(serveiCodi, model);
+			return "serveiJustificant";
+		}
+		serveiService.addServeiJustificantCamp(ServeiJustificantCampCommand.asDto(command));
+		AlertHelper.success(
+				request, 
+				getMessage(
+						request, 
+						"servei.controller.traduccio.camp.ok"));
+		return "redirect:justificant";
+	}
+
+	@RequestMapping(value = "/{serveiCodi}/redir/new", method = RequestMethod.GET)
+	public String redirGet(
+			HttpServletRequest request,
+			@PathVariable String serveiCodi,
+			Model model) throws ServeiNotFoundException, ServeiBusNotFoundException {
+		return redirGet(request, serveiCodi, null, model);
+	}
+	@RequestMapping(value = "/{serveiCodi}/redir/{serveiBusId}", method = RequestMethod.GET)
+	public String redirGet(
+			HttpServletRequest request,
+			@PathVariable String serveiCodi,
+			@PathVariable Long serveiBusId,
+			Model model) throws ServeiNotFoundException, ServeiBusNotFoundException {
+		ServeiDto servei = serveiService.findAmbCodiPerAdminORepresentant(serveiCodi);
+		model.addAttribute("servei", servei);
+		model.addAttribute(
+				"entitats",
+				entitatService.findDisponiblesPerRedireccionsBus(servei.getCodi()));
+		if (serveiBusId == null) {
+			model.addAttribute(
+					new ServeiBusCommand(serveiCodi));
+		} else {
+			ServeiBusDto serveiBus = serveiService.findServeiBusById(serveiBusId);
+			model.addAttribute(
+					ServeiBusCommand.asCommand(serveiBus));
+		}
+		return "serveiBus";
+	}
+	@RequestMapping(value = "/{serveiCodi}/redir/save", method = RequestMethod.POST)
+	public String redirPost(
+			HttpServletRequest request,
+			@PathVariable String serveiCodi,
+			@Valid ServeiBusCommand command,
+			BindingResult bindingResult,
+			Model model) throws EntitatNotFoundException, ServeiNotFoundException, ServeiBusNotFoundException {
+		if (bindingResult.hasErrors()) {
+			ServeiDto servei = serveiService.findAmbCodiPerAdminORepresentant(serveiCodi);
+			model.addAttribute("servei", servei);
+			model.addAttribute(
+					"entitats",
+					entitatService.findDisponiblesPerRedireccionsBus(servei.getCodi()));
+			return "serveiBus";
+		}
+		if (command.getId() == null) {
+			serveiService.createServeiBus(ServeiBusCommand.asDto(command));
+			AlertHelper.success(
+					request, 
+					getMessage(
+							request, 
+							"servei.controller.servei.bus.creat.ok"));
+		} else {
+			serveiService.updateServeiBus(ServeiBusCommand.asDto(command));
+			AlertHelper.success(
+					request, 
+					getMessage(
+							request, 
+							"servei.controller.servei.bus.modificat.ok"));
+		}
+		model.addAttribute("reloadPage", new Boolean(true));
+		return "serveiBus";
+	}
+
+	@RequestMapping(value = "/{serveiCodi}/redir/{serveiBusId}/delete", method = RequestMethod.GET)
+	public String delete(
+			HttpServletRequest request,
+			@PathVariable String serveiCodi,
+			@PathVariable Long serveiBusId) throws ServeiBusNotFoundException {
+		serveiService.deleteServeiBus(serveiBusId);
+		AlertHelper.success(
+				request, 
+				getMessage(
+						request, 
+						"servei.controller.servei.bus.esborrat.ok"));
+		return "redirect:../../../" + serveiCodi;
+	}
+
+	@RequestMapping(value = "/{serveiCodi}/procediments", method = RequestMethod.GET)
+	public String procediemnts(
+			@PathVariable String serveiCodi,
+			Model model) throws ServeiNotFoundException {
+		List<ProcedimentDto> procediments = procedimentService.findAmbServeiCodi(serveiCodi);
+		Map<String, List<ProcedimentDto>> procedimentsEntitat = new HashMap<String, List<ProcedimentDto>>();
+		
+		for (ProcedimentDto procediment: procediments) {
+			List<ProcedimentDto> pe = null;
+			if (procedimentsEntitat.containsKey(procediment.getEntitatNom())) {
+				pe = procedimentsEntitat.get(procediment.getEntitatNom());
+			} else {
+				pe = new ArrayList<ProcedimentDto>();
+			}
+			pe.add(procediment);
+			procedimentsEntitat.put(procediment.getEntitatNom(), pe);
+		}
+		model.addAttribute("procedimentsEntitat", procedimentsEntitat);
+		return "serveiProcedimentList";
+	}
+	
+	@InitBinder
+	public void initBinder(WebDataBinder binder) {
+	    SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+	    dateFormat.setLenient(false);
+	    binder.registerCustomEditor(Date.class, new CustomDateEditor(dateFormat, true));
+	}
+
+
+
+	private void omplirModelTraduccio(
+			String serveiCodi,
+			Model model) throws ServeiNotFoundException, ScspException {
+		model.addAttribute(
+				"servei",
+				serveiService.findAmbCodiPerAdminORepresentant(serveiCodi));
+		ArbreDto<DadaEspecificaDto> arbreDadesEspecifiques = serveiService.generarArbreDadesEspecifiques(serveiCodi);
+		model.addAttribute(
+				"arbreDadesEspecifiques",
+				arbreDadesEspecifiques);
+		model.addAttribute(
+				"llistaDadesEspecifiques",
+				arbreDadesEspecifiques.toList());
+		model.addAttribute(
+				"traduccions",
+				serveiService.findServeiJustificantCamps(serveiCodi));
+	}
+
+	private void omplirCampEnumDescripcions(
+			HttpServletRequest request,
+			ServeiCampCommand command) {
+		String parametreDescripcio = "descripcio-" + command.getId();
+		command.setEnumDescripcions(request.getParameterValues(parametreDescripcio));
+	}
+
+}

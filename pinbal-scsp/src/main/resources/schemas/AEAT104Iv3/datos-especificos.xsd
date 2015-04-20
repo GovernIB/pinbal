@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://intermediacion.redsara.es/scsp/esquemas/datosespecificos" targetNamespace="http://intermediacion.redsara.es/scsp/esquemas/datosespecificos">
+	<xs:element name="DatosEspecificos">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="CodRespuesta"/>
+				<xs:element ref="DescRespuesta"/>
+				<xs:element ref="Referencia"/>
+				<xs:element ref="FechaProceso"/>
+			</xs:sequence>
+			<xs:attribute name="Id" type="xs:string"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="CodRespuesta">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:maxLength value="4"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="DescRespuesta">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:maxLength value="250"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Referencia">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:maxLength value="11"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="FechaProceso">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:maxLength value="10"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+</xs:schema>

@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://intermediacion.redsara.es/scsp/esquemas/datosespecificos" targetNamespace="http://intermediacion.redsara.es/scsp/esquemas/datosespecificos" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<xs:element name="DatosEspecificos" type="DatosEspecificosAseguradoras"/>
+	<xs:complexType name="DatosEspecificosAseguradoras">
+		<xs:choice>
+			<xs:element name="Consulta" type="ConsultaAseguradoras"/>
+			<xs:element name="Retorno" type="RetornoAseguradoras"/>
+		</xs:choice>
+	<xs:attribute name="Id" type="xs:string" use="optional"/>
+	</xs:complexType>
+	<xs:complexType name="ConsultaAseguradoras">
+		<xs:sequence>
+			<xs:element ref="ClaveAdministrativa"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="RetornoAseguradoras">
+		<xs:sequence>
+			<xs:element ref="ClaveAdministrativa" minOccurs="0"/>
+			<xs:element name="EstadoEntidad" type="EstadoEntidad" minOccurs="0"/>
+			<xs:element name="FiguraInscrita" type="FiguraInscrita" minOccurs="0"/>
+			<xs:element name="FechaInscripcion" type="Fecha" minOccurs="0"/>
+			<xs:element name="AmbitoTerritorial" type="xs:string" minOccurs="0"/>
+			<xs:element ref="Gestora" minOccurs="0"/>
+			<xs:element name="DomicilioSocial" type="xs:string" minOccurs="0"/>
+			<xs:element name="FechaCancelacion" type="Fecha" minOccurs="0"/>
+			<xs:element name="FechaRevocacion" type="Fecha" minOccurs="0"/>
+			<xs:element name="FechaIntervencion" type="Fecha" minOccurs="0"/>
+			<xs:element name="RamosAutorizados" minOccurs="0">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element ref="Ramo" maxOccurs="unbounded"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:choice>
+				<xs:element name="AltosCargos" minOccurs="0">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element ref="DatosR" maxOccurs="unbounded"/>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="RepresentantesActivos" minOccurs="0">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element ref="DatosR" maxOccurs="unbounded"/>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+			</xs:choice>
+			<xs:element name="pdf" type="xs:base64Binary" minOccurs="0"/>
+			<xs:element ref="Estado"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:element name="ClaveAdministrativa">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="5"/>
+				<xs:maxLength value="7"/>
+				<xs:pattern value="([A-Z]|[a-z]|[0-9]|-){5,7}"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:simpleType name="EstadoEntidad">
+		<xs:restriction base="xs:string">
+			<xs:maxLength value="255"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="FiguraInscrita">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="SI"/>
+			<xs:enumeration value="NO"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="Fecha">
+		<xs:annotation>
+			<xs:documentation>Formato: DD/MM/AAAA</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:minLength value="10"/>
+			<xs:maxLength value="10"/>
+			<xs:pattern value="\d{2}/\d{2}/\d{4}"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:element name="Gestora">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:length value="5"/>
+				<xs:pattern value="[Gg]\d{4}"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Ramo">
+		<xs:complexType>
+			<xs:all>
+				<xs:element name="CodigoRamo" type="xs:string"/>
+				<xs:element name="sRamo" type="xs:string"/>
+				<xs:element name="Modalidad" type="xs:string"/>
+				<xs:element name="Estado" type="xs:string"/>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="DatosR">
+		<xs:complexType>
+			<xs:all>
+				<xs:element name="Nombre" type="xs:string"/>
+				<xs:element name="Cargo" type="xs:string"/>
+				<xs:element name="FechaAlta" type="Fecha"/>
+				<xs:element name="FechaCese" type="Fecha" minOccurs="0"/>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Estado">
+		<xs:complexType>
+			<xs:all>
+				<xs:element ref="CodigoEstado" minOccurs="0"/>
+				<xs:element ref="CodigoEstadoSecundario" minOccurs="0"/>
+				<xs:element ref="LiteralError" minOccurs="0"/>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="CodigoEstado">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:maxLength value="4"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="CodigoEstadoSecundario">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:maxLength value="16"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="LiteralError">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:maxLength value="255"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+</xs:schema>

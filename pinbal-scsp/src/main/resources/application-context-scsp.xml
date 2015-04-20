@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans
+	xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="
+			http://www.springframework.org/schema/beans 
+	   		http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+	   		http://www.springframework.org/schema/context
+	   		http://www.springframework.org/schema/context/spring-context-3.0.xsd
+			http://www.springframework.org/schema/util
+			http://www.springframework.org/schema/util/spring-util-3.0.xsd">
+
+	<!-- Este fichero contiene la configuracion de Spring de las librerias    -->
+	<!-- SCSP V3. Evite realizar modificaciones en este fichero ya que la     -->
+	<!-- configuracion se debera realizar a traves de base de datos.          -->
+
+	<!-- Modificacions PINBAL:                                                -->
+	<!--     1.- Substituir el scspPropertyPlaceholderConfigurer per un altre -->
+	<!--         que agafa la configuració dels properties de PINBAL.         -->
+	<!--     2.- Canviar les propietats de ${config: a                        -->
+	<!--         ${config:es.caib.pinbal.scsp                                 -->
+	<!--     3.- Modificar el sessionFactory per agafar el mateix dataSource  -->
+	<!--         que te PINBAL.                                               -->
+	<!--     4.- Desactivar el proxyManager comentant properties.             -->
+
+	<context:annotation-config />
+	<context:component-scan base-package="es.scsp" />
+
+	<!-- ==================================================================== -->
+	<!-- Gestores de configuración                                            -->
+	<!-- ==================================================================== -->
+	<alias name="propertyPlaceholderConfigurer" alias="scspPropertyPlaceholderConfigurer" />
+	<bean class="es.scsp.common.security.PolicyBuilder">
+		<constructor-arg index="0" value="/scsp-ws-policy.xml" />
+	</bean>
+	<alias name="clienteUnico" alias="clienteUnicoProvisional" />
+
+	<!-- ==================================================================== -->
+	<!-- Configuracion de binding.                                            -->
+	<!-- ==================================================================== -->
+	<alias name="jibxMarshaller" alias="marshaller" />
+	<alias name="jibxMarshaller" alias="unmarshaller" />
+
+	<!-- ==================================================================== -->
+	<!-- Configuracion de acceso base de datos.                               -->
+	<!-- ==================================================================== -->
+	<bean id="sessionFactory" class="es.scsp.common.core.SessionFactoryManager">
+		<property name="dataSource" ref="dataSource" />
+		<property name="mappingResources">
+			<list>
+				<value>/es/scsp/common/domain/CacheCertificado.hbm.xml</value>
+				<value>/es/scsp/common/domain/ClavePrivada.hbm.xml</value>
+				<value>/es/scsp/common/domain/ClavePublica.hbm.xml</value>
+				<value>/es/scsp/common/domain/CodigoError.hbm.xml</value> 
+				<value>/es/scsp/common/domain/EmisorCertificado.hbm.xml</value>
+				<value>/es/scsp/common/domain/EstadoPeticion.hbm.xml</value>
+				<value>/es/scsp/common/domain/Modulo.hbm.xml</value>
+				<value>/es/scsp/common/domain/ModuloConfiguracion.hbm.xml</value> 
+				<value>/es/scsp/common/domain/OrganismoCesionario.hbm.xml</value>
+				<value>/es/scsp/common/domain/ParametroConfiguracion.hbm.xml</value>
+				<value>/es/scsp/common/domain/PeticionRespuesta.hbm.xml</value>
+				<value>/es/scsp/common/domain/SecuenciaIdPeticion.hbm.xml</value>
+				<value>/es/scsp/common/domain/ServicioOrganismoCesionario.hbm.xml</value>
+				<value>/es/scsp/common/domain/Servicio.hbm.xml</value>
+				<value>/es/scsp/common/domain/Token.hbm.xml</value>
+				<value>/es/scsp/common/domain/TipoMensaje.hbm.xml</value>
+				<value>/es/scsp/common/domain/Transmision.hbm.xml</value>
+			</list>
+		</property>
+		<property name="hibernateProperties">
+			<value>
+				hibernate.dialect=${config:es.caib.pinbal.hibernate.dialect}
+				hibernate.current_session_context_class=org.springframework.orm.hibernate3.SpringSessionContext
+			</value>
+		</property>
+	</bean>
+
+	<!-- ==================================================================== -->
+	<!-- Recursos adicionales.                                                -->
+	<!-- ==================================================================== -->
+	<bean id="dateFormater" class="java.text.SimpleDateFormat">
+		<constructor-arg value="yyyy-MM-dd'T'HH:mm:ss.SSSZ" />
+	</bean>
+
+	<!-- ==================================================================== -->
+	<!-- Cliente Spring de Afirma                                             -->
+	<!-- ==================================================================== -->
+	<bean id="messageFactory" class="org.springframework.ws.soap.axiom.AxiomSoapMessageFactory" />
+	<bean id="afirmaWssHandler" class="org.springframework.ws.soap.security.wss4j.Wss4jSecurityInterceptor">
+		<property name="securementActions" value="Signature" />
+		<property name="securementSignatureKeyIdentifier" value="DirectReference" />
+		<property name="securementMustUnderstand" value="false" />
+		<property name="securementSignatureCrypto">
+			<bean class="org.springframework.ws.soap.security.wss4j.support.CryptoFactoryBean">
+				<property name="keyStorePassword" value="${config:es.caib.pinbal.scsp.keystorePass}" />
+				<property name="keyStoreLocation" value="${config:es.caib.pinbal.scsp.keystoreFile}" />
+			</bean>
+		</property>
+	</bean>
+	<bean id="proxyManager" class="es.scsp.common.utils.ProxyManager">
+		<!--property name="host"  value="${config:es.caib.pinbal.scsp.proxy.host}" />
+		<property name="port"  value="${config:es.caib.pinbal.scsp.proxy.port}" /> 
+		<property name="user"  value="${config:es.caib.pinbal.scsp.proxy.user}" /> 
+		<property name="password"  value="${config:es.caib.pinbal.scsp.proxy.password}" />
+		<property name="domain"  value="${config:es.caib.pinbal.scsp.proxy.domain}" />
+		<property name="nonHostsProxy"  value="${config:es.caib.pinbal.scsp.proxy.non.proxy.hosts}" /-->
+	</bean>
+
+</beans>

@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions xmlns="http://schemas.xmlsoap.org/wsdl/"
+	xmlns:apachesoap="http://xml.apache.org/xml-soap" xmlns:impl="http://www.map.es/xml-schemas"
+	xmlns:ns="http://intermediacion.redsara.es/scsp/esquemas/datosespecificos"
+	xmlns:ns1="http://intermediacion.redsara.es/scsp/esquemas/V3/peticion"
+	xmlns:ns2="http://intermediacion.redsara.es/scsp/esquemas/V3/respuesta"
+	xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+	xmlns:wsdlsoap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+	targetNamespace="http://www.map.es/xml-schemas">
+	<wsdl:types>
+		<schema targetNamespace="http://www.map.es/xml-schemas" xmlns="http://www.w3.org/2001/XMLSchema">
+			<import namespace="http://intermediacion.redsara.es/scsp/esquemas/V3/peticion"
+				schemaLocation="peticion.xsd" />
+			<import namespace="http://intermediacion.redsara.es/scsp/esquemas/V3/respuesta"
+				schemaLocation="respuesta.xsd" />
+		</schema>
+	</wsdl:types>
+	<wsdl:message name="PeticionReq">
+		<wsdl:part name="peticion" element="ns1:Peticion" />
+	</wsdl:message>
+	<wsdl:message name="PeticionRes">
+		<wsdl:part name="respuesta" element="ns2:Respuesta" />
+	</wsdl:message>
+	<wsdl:portType name="PeticionPortType">
+		<wsdl:operation name="peticionSincrona">
+			<wsdl:input name="Peticion" message="impl:PeticionReq" />
+			<wsdl:output name="Respuesta" message="impl:PeticionRes" />
+		</wsdl:operation>
+	</wsdl:portType>
+	<wsdl:binding name="PeticionConsultaIAEBinding" type="impl:PeticionPortType">
+		<wsdlsoap:binding style="document"
+			transport="http://schemas.xmlsoap.org/soap/http" />
+		<wsdl:operation name="peticionSincrona">
+			<wsdlsoap:operation soapAction="peticionSincrona"
+				style="document" />
+			<wsdl:input>
+				<wsdlsoap:body parts="peticion" use="literal" />
+			</wsdl:input>
+			<wsdl:output>
+				<wsdlsoap:body parts="respuesta" use="literal" />
+			</wsdl:output>
+		</wsdl:operation>
+	</wsdl:binding>
+	<wsdl:service name="ConsultaIAE">
+		<wsdl:port name="CertificadoConsultaIAE" binding="impl:PeticionConsultaIAEBinding">
+			<wsdlsoap:address
+				location="https://intermediacion.redsara.es/Navarra/services/ConsultaIAE" />
+		</wsdl:port>
+
+	</wsdl:service>
+</wsdl:definitions>

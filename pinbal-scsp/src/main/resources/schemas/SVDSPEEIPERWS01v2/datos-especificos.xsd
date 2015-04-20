@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://www.map.es/scsp/esquemas/datosespecificos" targetNamespace="http://www.map.es/scsp/esquemas/datosespecificos" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<xs:element name="DatosEspecificos" type="DatosEspecificos">
+		<xs:annotation>
+			<xs:documentation>Datos para intercambio de informacion entre organismos</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:complexType name="DatosEspecificos">
+		<xs:all>
+			<!--
+			<xs:element ref="SolicitanteDatos" minOccurs="0"/>
+		-->
+			<xs:element ref="EstadoResultado" minOccurs="0"/>
+			<xs:element ref="DatosImportePeriodo" minOccurs="0"/>
+		</xs:all>
+	</xs:complexType>
+	<xs:element name="CodigoEstado">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:maxLength value="4"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="CodigoEstadoSecundario">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:maxLength value="16"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="LiteralError">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:maxLength value="255"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="EstadoResultado">
+		<xs:complexType>
+			<xs:all>
+				<xs:element ref="CodigoEstado" minOccurs="0"/>
+				<xs:element ref="CodigoEstadoSecundario" minOccurs="0"/>
+				<xs:element ref="LiteralError" minOccurs="0"/>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="SolicitanteDatos">
+		<xs:complexType>
+			<xs:all>
+				<xs:element ref="Tipo" minOccurs="0"/>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Tipo">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:enumeration value="app"/>
+				<xs:enumeration value="fun"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="DatosImportePeriodo">
+		<xs:complexType>
+			<xs:all>
+				<xs:element ref="IPF" minOccurs="0"/>
+				<xs:element ref="FXINICIO" minOccurs="0"/>
+				<xs:element ref="FXFINAL" minOccurs="0"/>
+				<xs:element ref="IMPBRUTO" minOccurs="0"/>
+				<xs:element ref="IMPREASS" minOccurs="0"/>
+				<xs:element ref="IMPIRPF" minOccurs="0"/>
+				<xs:element ref="IMPSEGSOC" minOccurs="0"/>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="IPF">
+		<xs:annotation>
+			<xs:documentation>Identificador de persona fisica del SPEE-INEM</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:maxLength value="12"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="FXINICIO">
+		<xs:annotation>
+			<xs:documentation>Fecha de inicio del periodo actual del derecho</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:maxLength value="7"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="FXFINAL">
+		<xs:annotation>
+			<xs:documentation>Fecha de fin del periodo actual del derecho</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:maxLength value="7"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="IMPBRUTO">
+		<xs:annotation>
+			<xs:documentation>Cuantia del importe bruto</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:maxLength value="12"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="IMPREASS">
+		<xs:annotation>
+			<xs:documentation>Importe de la cuota fija del REASS</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:maxLength value="12"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="IMPIRPF">
+		<xs:annotation>
+			<xs:documentation>Importe de la retencion  a efectos del I.R.P.F.</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:maxLength value="12"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="IMPSEGSOC">
+		<xs:annotation>
+			<xs:documentation>Importe descuento de la seguridad social</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:maxLength value="12"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+</xs:schema>

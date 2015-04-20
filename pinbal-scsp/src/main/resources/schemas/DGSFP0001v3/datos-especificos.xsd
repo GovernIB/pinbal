@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://intermediacion.redsara.es/scsp/esquemas/datosespecificos" targetNamespace="http://intermediacion.redsara.es/scsp/esquemas/datosespecificos" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<xs:element name="DatosEspecificos" type="DatosEspecificosMediadores"/>
+	<xs:complexType name="DatosEspecificosMediadores">
+		<xs:choice>
+			<xs:element name="Consulta" type="ConsultaMediadores"/>
+			<xs:element name="Retorno" type="RetornoMediadores"/>
+		</xs:choice>
+		<xs:attribute name="Id" type="xs:string" use="optional"/>
+	</xs:complexType>
+	<xs:complexType name="ConsultaMediadores">
+		<xs:choice>
+			<xs:element ref="ConsultaClave"/>
+			<xs:element ref="ConsultaDiploma"/>
+		</xs:choice>
+	</xs:complexType>
+	<xs:element name="ConsultaClave">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="ClaveAdministrativa" type="ClaveAdministrativa"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="ConsultaDiploma">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="NumDiploma" type="NumDiploma"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:complexType name="RetornoMediadores">
+		<xs:sequence>
+			<xs:choice>
+				<xs:element name="RetornoClave" type="RetornoClave" minOccurs="0"/>
+				<xs:element name="RetornoDiploma" type="RetornoDiploma" minOccurs="0"/>
+			</xs:choice>
+			<xs:element ref="Estado"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="RetornoClave">
+		<xs:sequence>
+			<xs:element name="ClaveAdministrativa" type="ClaveAdministrativa" minOccurs="0"/>
+			<xs:element name="NifCif" type="NifCif" minOccurs="0"/>
+			<xs:element name="EstadoEntidad" type="EstadoEntidad" minOccurs="0"/>
+			<xs:element name="FiguraInscrita" type="FiguraInscrita" minOccurs="0"/>
+			<xs:element name="TipoOperador" type="TipoOperador" minOccurs="0"/>
+			<xs:element name="NombreDenominacion" type="Texto" minOccurs="0"/>
+			<xs:element name="FechaAlta" type="Fecha" minOccurs="0"/>
+			<xs:element name="FechaBaja" type="Fecha" minOccurs="0"/>
+			<xs:element name="pdf" type="xs:base64Binary" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="RetornoDiploma">
+		<xs:sequence>
+			<xs:element name="NumDiploma" type="NumDiploma" minOccurs="0"/>
+			<xs:element name="NifCif" type="NifCif" minOccurs="0"/>
+			<xs:element name="NombreCompleto" type="Texto" minOccurs="0"/>
+			<xs:element name="FechaConcesion" type="Fecha" minOccurs="0"/>
+			<xs:element name="ExpedConcesion" type="Texto" minOccurs="0"/>
+			<xs:element name="Motivo" type="Texto" minOccurs="0"/>
+			<xs:element name="pdf" type="xs:base64Binary" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:simpleType name="ClaveAdministrativa">
+		<xs:restriction base="xs:string">
+			<xs:minLength value="5"/>
+			<xs:maxLength value="15"/>
+			<xs:pattern value="([A-Z]|[a-z]|[0-9]|-){5,15}"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="NifCif">
+		<xs:restriction base="xs:string">
+			<xs:maxLength value="10"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="NumDiploma">
+		<xs:restriction base="xs:string">
+			<xs:maxLength value="7"/>
+			<xs:pattern value="\d{0,7}"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="EstadoEntidad">
+		<xs:restriction base="xs:string">
+			<xs:maxLength value="255"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="Fecha">
+		<xs:annotation>
+			<xs:documentation>Formato: DD/MM/AAAA</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:minLength value="10"/>
+			<xs:maxLength value="10"/>
+			<xs:pattern value="\d{2}/\d{2}/\d{4}"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="TipoOperador">
+		<xs:restriction base="xs:string">
+			<xs:maxLength value="255"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="FiguraInscrita">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="SI"/>
+			<xs:enumeration value="NO"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="Texto">
+		<xs:restriction base="xs:string">
+			<xs:maxLength value="255"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:element name="Estado">
+		<xs:complexType>
+			<xs:all>
+				<xs:element ref="CodigoEstado" minOccurs="0"/>
+				<xs:element ref="CodigoEstadoSecundario" minOccurs="0"/>
+				<xs:element ref="LiteralError" minOccurs="0"/>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="CodigoEstado">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:maxLength value="4"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="CodigoEstadoSecundario">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:maxLength value="16"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="LiteralError">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:maxLength value="255"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+</xs:schema>

@@ -1,0 +1,257 @@
+<xs:schema targetNamespace="http://www.red.es/padron" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:ds="http://www.w3.org/2000/09/xmldsig#" xmlns="http://www.red.es/padron">
+	<!-- Otros schemas -->
+	<xs:import namespace="http://www.w3.org/2000/09/xmldsig#" schemaLocation="xmldsig-core-schema.xsd"/>
+	<xs:include schemaLocation="VolanteEmpadronamientoTipos.xsd"/>
+	<!-- Element -->
+	<xs:element name="VolanteEmpadronamiento">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="VolanteEmpadronamientoDatosFirmados"/>
+				<xs:element ref="ds:Signature "  minOccurs="0"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<!-- Elementos Referenciados-->
+	<xs:element name="VolanteEmpadronamientoDatosFirmados">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="FechaExpedicion"/>
+				<xs:element ref="DatosPersonales"/>
+				<xs:element ref="DireccionEmpadronamiento"/>
+			</xs:sequence>
+			<xs:attribute name="Id" type="tipo_id" use="required"/>
+			<xs:attribute name="Version" type="tipo_version" use="required" fixed="02.00"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Bloque">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:maxLength value="2"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="CalificadorNumero">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:maxLength value="1"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="CalificadorNumeroSuperior">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:maxLength value="1"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="CodigoMunicipio" type="tipo_codigoMunicipio"/>
+	<xs:element name="CodigoMunicipioNacimiento" type="tipo_codigoMunicipio"/>
+	<xs:element name="CodigoNacionalidad">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:pattern value="\d{1,3}"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="CodigoPostal">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="5"/>
+				<xs:maxLength value="5"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="CodigoProvincia" type="tipo_codigoProvincia"/>
+	<xs:element name="CodigoProvinciaNacimiento" type="tipo_codigoProvincia"/>
+	<xs:element name="CodigoUnidadPoblacional">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:pattern value="\d{1,7}"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="DatosPersonales">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="Nombre"/>
+				<xs:element ref="PrimerApellido"/>
+				<xs:element ref="ParticulaPrimerApellido"/>
+				<xs:element ref="SegundoApellido"/>
+				<xs:element ref="ParticulaSegundoApellido"/>
+				<xs:element ref="FechaNacimiento"/>
+				<xs:element ref="CodigoMunicipioNacimiento"/>
+				<xs:element ref="CodigoProvinciaNacimiento"/>
+				<xs:element ref="Sexo"/>
+				<xs:element ref="CodigoNacionalidad"/>
+				<xs:element ref="TipoDocumentacion"/>
+				<xs:element ref="Documentacion"/>
+				<xs:element ref="FechaAltaPadron"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="DireccionEmpadronamiento">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="Localidad"/>
+				<xs:element ref="CodigoPostal"/>
+				<xs:element ref="Via"/>
+				<xs:element ref="Numeracion"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Documentacion">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:maxLength value="20"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Escalera">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:maxLength value="2"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="FechaExpedicion" type="tipo_fecha"/>
+	<xs:element name="FechaAltaPadron" type="tipo_fecha"/>
+	<xs:element name="FechaNacimiento" type="tipo_fecha"/>
+	<xs:element name="Hectometro">
+		<xs:simpleType>
+			<xs:restriction base="xs:integer">
+				<xs:totalDigits value="1"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Kilometro">
+		<xs:simpleType>
+			<xs:restriction base="xs:integer">
+				<xs:totalDigits value="3"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Localidad">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="CodigoProvincia"/>
+				<xs:element ref="CodigoMunicipio"/>
+				<xs:element ref="CodigoUnidadPoblacional"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Nombre">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:maxLength value="40"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="NombreVia">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:maxLength value="50"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Numeracion">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="Numero"/>
+				<xs:element ref="CalificadorNumero"/>
+				<xs:element ref="NumeroSuperior"/>
+				<xs:element ref="CalificadorNumeroSuperior"/>
+				<xs:element ref="Kilometro"/>
+				<xs:element ref="Hectometro"/>
+				<xs:element ref="Bloque"/>
+				<xs:element ref="Portal"/>
+				<xs:element ref="Escalera"/>
+				<xs:element ref="Planta"/>
+				<xs:element ref="Puerta"/>
+				<xs:element ref="TipoLocal"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Numero">
+		<xs:simpleType>
+			<xs:restriction base="xs:integer">
+				<xs:totalDigits value="4"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="NumeroSuperior">
+		<xs:simpleType>
+			<xs:restriction base="xs:integer">
+				<xs:totalDigits value="4"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="ParticulaPrimerApellido" type="tipo_particulaApellido"/>
+	<xs:element name="ParticulaSegundoApellido" type="tipo_particulaApellido"/>
+	<xs:element name="Planta">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:maxLength value="3"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Portal">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:maxLength value="2"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="PrimerApellido">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:maxLength value="40"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Pseudovia">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:maxLength value="50"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Puerta">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:maxLength value="4"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="SegundoApellido">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:maxLength value="40"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Sexo" type="tipo_sexo"/>
+	<xs:element name="TipoDocumentacion" type="tipo_tipoDocumentacion"/>
+	<xs:element name="TipoLocal">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:maxLength value="1"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="TipoVia">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:maxLength value="5"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Via">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="TipoVia"/>
+				<xs:element ref="NombreVia"/>
+				<xs:element ref="Pseudovia"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+</xs:schema>

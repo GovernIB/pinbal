@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns="http://intermediacion.redsara.es/scsp/esquemas/datosespecificos" xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://intermediacion.redsara.es/scsp/esquemas/datosespecificos" elementFormDefault="qualified" attributeFormDefault="unqualified">
+  <xs:element name="DatosEspecificos" type="DatosEspecificos"/>
+  <xs:complexType name="DatosEspecificos">
+    <xs:choice>
+      <xs:element ref="Solicitud">
+	<xs:annotation>
+	  <xs:documentation>Solo en el mensaje PETICION</xs:documentation>
+	</xs:annotation>
+      </xs:element>
+      <xs:element ref="Respuesta">
+	<xs:annotation>
+	  <xs:documentation>Solo en el mensaje RESPUESTA</xs:documentation>
+	</xs:annotation>
+      </xs:element>
+    </xs:choice>
+  </xs:complexType>
+  <xs:element name="Solicitud">
+    <xs:complexType>	
+      <xs:all>		
+	<xs:annotation>
+	  <xs:documentation>
+	    FechaNacimientoTitular. Informar este campo permite aumentar las posibilidades de identificación del titular, 
+	    cuando no se dispone del documento de identidad del mismo.
+	  </xs:documentation>
+	</xs:annotation>
+	<xs:element ref="FechaNacimientoTitular" minOccurs="0"/>		
+	<xs:element ref="IdTutor" minOccurs="0"/>
+      </xs:all>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="Respuesta">
+    <xs:complexType>
+      <xs:all>					
+	<xs:annotation>
+	  <xs:documentation>
+	    CursMatriculaVigent.Informa los años asociados al curso en el que está matriculado el alumno.
+	    CursMatriculaFutura.Informa los años asociados al curso en el que está próximamente estará matriculado el alumno.
+	  </xs:documentation>
+	</xs:annotation>
+	<xs:element ref="DatosAlumno" minOccurs="0"/>				
+	<xs:element ref="CodRespuesta" minOccurs="1"/>
+	<xs:element ref="DescRespuesta" minOccurs="1"/>												
+	<xs:element ref="CursoMatriculaVigente" minOccurs="0"/>
+	<xs:element ref="CursoMatriculaFutura" minOccurs="0"/>
+	<xs:element ref="FechaProceso" minOccurs="1"/>
+      </xs:all>
+    </xs:complexType>
+  </xs:element>
+  <xs:simpleType name="Fecha">
+    <xs:annotation>
+      <xs:documentation>Format de la data: DD/MM/AAAA</xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:string">
+      <xs:minLength value="10"/>
+      <xs:maxLength value="10"/>
+      <xs:whiteSpace value="collapse"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:element name="FechaNacimientoTitular" type="Fecha"/>
+  <xs:element name="IdTutor">
+    <xs:complexType>
+      <xs:all>
+	<xs:element ref="TipoDocumentacion" minOccurs="0" />
+	<xs:element ref="Documentacion" minOccurs="0" />
+      </xs:all>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="DatosAlumno">
+    <xs:complexType>
+      <xs:all>
+	<xs:element ref="IdTitular" minOccurs="0" />
+	<xs:element ref="Nombre" minOccurs="1" />
+	<xs:element ref="Apellido1" minOccurs="1" />
+	<xs:element ref="Apellido2" minOccurs="0" />
+	<xs:element ref="FechaNacimiento" minOccurs="1" />
+      </xs:all>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="IdTitular">
+    <xs:complexType>
+      <xs:all>
+	<xs:element ref="TipoDocumentacion" minOccurs="0" />
+	<xs:element ref="Documentacion" minOccurs="0" />
+      </xs:all>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="TipoDocumentacion">
+    <xs:simpleType>
+      <xs:restriction base="xs:string">
+	<xs:enumeration value="NIF"/>
+	<xs:enumeration value="NIE"/>
+	<xs:enumeration value="Passaport"/>
+	<xs:enumeration value="Document comunitari"/>	
+	</xs:restriction>
+    </xs:simpleType>
+  </xs:element>
+  <xs:element name="Documentacion">
+    <xs:simpleType>
+      <xs:restriction base="xs:string">
+	<xs:minLength value="1"/>
+	<xs:maxLength value="16"/>
+	<xs:whiteSpace value="collapse"/>
+      </xs:restriction>
+    </xs:simpleType>
+  </xs:element>
+  <xs:element name="Nombre">
+    <xs:simpleType>
+      <xs:restriction base="xs:string">
+	<xs:maxLength value="40"/>
+	<xs:whiteSpace value="collapse"/>
+      </xs:restriction>
+    </xs:simpleType>
+  </xs:element>
+  <xs:element name="Apellido1">
+    <xs:simpleType>
+      <xs:restriction base="xs:string">
+	<xs:maxLength value="40"/>
+	<xs:whiteSpace value="collapse"/>
+      </xs:restriction>
+    </xs:simpleType>
+  </xs:element>
+  <xs:element name="Apellido2">
+    <xs:simpleType>
+      <xs:restriction base="xs:string">
+	<xs:maxLength value="40"/>
+	<xs:whiteSpace value="collapse"/>
+      </xs:restriction>
+    </xs:simpleType>
+  </xs:element>
+  <xs:element name="FechaNacimiento" type="Fecha"/>	
+  <xs:element name="CodRespuesta">
+    <xs:simpleType>
+      <xs:restriction base="xs:string">
+	<xs:maxLength value="1"/>
+	<xs:minLength value="1"/>
+      </xs:restriction>
+    </xs:simpleType>
+  </xs:element>
+  <xs:element name="DescRespuesta">
+    <xs:simpleType>
+      <xs:restriction base="xs:string">
+	<xs:maxLength value="250"/>
+	<xs:minLength value="1"/>
+	<xs:whiteSpace value="collapse"/>
+      </xs:restriction>
+    </xs:simpleType>
+  </xs:element>	
+  <xs:element name="CursoMatriculaVigente" type="CursoMatricula"/>
+  <xs:element name="CursoMatriculaFutura" type="CursoMatricula"/>	
+  <xs:simpleType name="CursoMatricula">
+    <xs:annotation>
+      <xs:documentation>Formato:AAAA/AAAA p.e. 2015/2016</xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:string">
+      <xs:minLength value="9"/>
+      <xs:maxLength value="9"/>
+      <xs:whiteSpace value="collapse"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:element name="FechaProceso" type="Fecha"/>	
+</xs:schema>
