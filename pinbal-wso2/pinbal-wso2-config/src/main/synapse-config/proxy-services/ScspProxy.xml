@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<proxy xmlns="http://ws.apache.org/ns/synapse" name="ScspProxy"
+    statistics="disable" trace="disable" transports="https,http">
+    <target>
+        <inSequence>
+            <dblookup>
+                <connection>
+                    <pool>
+                        <dsName>PINBAL_DB</dsName>
+                    </pool>
+                </connection>
+                <statement>
+                    <sql>select condicio_bus_class from pbl_servei_config where servei_id=? or servei_id=?</sql>
+                    <parameter
+                        expression="$body/p:Peticion/p:Atributos/p:CodigoCertificado"
+                        type="VARCHAR" xmlns:p="http://www.map.es/scsp/esquemas/V2/peticion"/>
+                    <parameter
+                        expression="$body/p:Peticion/p:Atributos/p:CodigoCertificado"
+                        type="VARCHAR" xmlns:p="http://intermediacion.redsara.es/scsp/esquemas/V3/peticion"/>
+                    <result column="condicio_bus_class" name="condicioBusClass"/>
+                </statement>
+            </dblookup>
+            <log category="INFO" level="custom" separator=",">
+                <property expression="get-property('condicioBusClass')" name="class"/>
+            </log>
+            <class name="es.caib.pinbal.wso2.mediator.EntitatResolverMediator">
+                <property name="classProperty" value="condicioBusClass"/>
+                <property name="entitatProperty" value="entitatDesti"/>
+            </class>
+            <log category="INFO" level="custom" separator=",">
+                <property expression="get-property('entitatDesti')" name="entitat"/>
+            </log>
+            <dblookup>
+                <connection>
+                    <pool>
+                        <dsName>PINBAL_DB</dsName>
+                    </pool>
+                </connection>
+                <statement>
+                    <sql>select url_desti from pbl_servei_bus sb, pbl_entitat en where (sb.servei_id=? or sb.servei_id=?) and sb.entitat_id=en.id and en.codi=?</sql>
+                    <parameter
+                        expression="$body/p:Peticion/p:Atributos/p:CodigoCertificado"
+                        type="VARCHAR" xmlns:p="http://www.map.es/scsp/esquemas/V2/peticion"/>
+                    <parameter
+                        expression="$body/p:Peticion/p:Atributos/p:CodigoCertificado"
+                        type="VARCHAR" xmlns:p="http://intermediacion.redsara.es/scsp/esquemas/V3/peticion"/>
+                    <parameter expression="get-property('entitatDesti')" type="VARCHAR"/>
+                    <result column="url_desti" name="urlDesti"/>
+                </statement>
+            </dblookup>
+            <log category="INFO" level="custom" separator=",">
+                <property expression="get-property('urlDesti')" name="url"/>
+            </log>
+            <switch source="get-property('urlDesti')">
+                <case regex=".*+">
+                    <log category="INFO" level="custom" separator=",">
+                        <property name="switch" value="case"/>
+                    </log>
+                    <script language="js"><![CDATA[mc.setTo(mc.getProperty('urlDesti'));]]></script>
+                </case>
+                <default>
+                    <log category="INFO" level="custom" separator=",">
+                        <property name="switch" value="default"/>
+                    </log>
+                    <makefault version="soap11">
+                        <code value="soap11Env:Server" xmlns:soap11Env="http://schemas.xmlsoap.org/soap/envelope/"/>
+                        <reason value="No s'ha trobat cap url per a redirigir aquesta peticio"/>
+                        <role/>
+                        <detail>fault_detail</detail>
+                    </makefault>
+                </default>
+            </switch>
+            <send/>
+        </inSequence>
+        <outSequence>
+            <send/>
+        </outSequence>
+        <faultSequence>
+            <log category="INFO" level="custom" separator=",">
+                <property expression="get-property('ERROR_MESSAGE')" name="message"/>
+                <property expression="get-property('ERROR_CODE')" name="code"/>
+                <property expression="get-property('ERROR_DETAIL')" name="detail"/>
+                <property expression="get-property('ERROR_EXCEPTION')" name="exception"/>
+            </log>
+            <makefault version="soap11">
+                <code value="soap11Env:Server" xmlns:soap11Env="http://schemas.xmlsoap.org/soap/envelope/"/>
+                <reason expression="get-property('ERROR_MESSAGE')"/>
+                <role/>
+                <detail expression="get-property('customErrorDetail')"/>
+            </makefault>
+            <send/>
+        </faultSequence>
+    </target>
+</proxy>
