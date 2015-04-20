@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:jpa="http://www.springframework.org/schema/data/jpa"
+	xmlns:cache="http://www.springframework.org/schema/cache"
+	xmlns:task="http://www.springframework.org/schema/task"
+	xsi:schemaLocation="
+		http://www.springframework.org/schema/beans
+		http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+		http://www.springframework.org/schema/tx
+		http://www.springframework.org/schema/tx/spring-tx-3.1.xsd
+		http://www.springframework.org/schema/context
+		http://www.springframework.org/schema/context/spring-context-3.1.xsd
+		http://www.springframework.org/schema/data/jpa
+		http://www.springframework.org/schema/data/jpa/spring-jpa.xsd
+		http://www.springframework.org/schema/cache
+		http://www.springframework.org/schema/cache/spring-cache.xsd
+		http://www.springframework.org/schema/task
+		http://www.springframework.org/schema/task/spring-task-3.1.xsd">
+
+	<bean id="propertyPlaceholderConfigurer" class="es.scsp.common.utils.ScspPropertyPlaceholderConfigurer">
+		<property name="location" value="${es.caib.pinbal.properties.path}" />
+		<property name="placeholderPrefix" value="${config:" />
+		<property name="ignoreResourceNotFound" value="true" />
+		<property name="systemPropertiesModeName" value="SYSTEM_PROPERTIES_MODE_OVERRIDE"/>
+	</bean>
+
+	<bean id="dataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
+		<property name="resourceRef" value="true" />
+		<property name="jndiName" value="${config:es.caib.pinbal.datasource.jndi}" />
+	</bean>
+
+	<context:annotation-config />
+
+	<context:component-scan base-package="es.caib.pinbal.core.service" />
+	<context:component-scan base-package="es.caib.pinbal.core.ws" />
+	<context:component-scan base-package="es.caib.pinbal.core.helper" />
+
+	<jpa:repositories base-package="es.caib.pinbal.core.repository" />
+
+	<bean name="auditorAwareBean" class="es.caib.pinbal.core.audit.BasicAuditorAware" factory-method="getInstance" />
+	<!--jpa:auditing auditor-aware-ref="auditorAwareBean" /-->
+
+	<bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+		<property name="dataSource" ref="dataSource" />
+		<property name="packagesToScan">
+			<list>
+				<value>es.caib.pinbal.core.model</value>
+			</list>
+		</property>
+		<property name="jpaDialect">
+			<bean class="org.springframework.orm.jpa.vendor.HibernateJpaDialect" />
+		</property>
+		<property name="jpaVendorAdapter">
+			<bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter" />
+		</property>
+		<property name="jpaProperties">
+			<props>
+				<prop key="hibernate.dialect">${config:es.caib.pinbal.hibernate.dialect}</prop>
+				<prop key="hibernate.show_sql">${config:es.caib.pinbal.hibernate.show_sql}</prop>
+				<prop key="hibernate.hbm2ddl.auto">${config:es.caib.pinbal.hibernate.hbm2ddl.auto}</prop>
+			</props>
+		</property>
+	</bean>
+
+	<bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
+		<property name="entityManagerFactory" ref="entityManagerFactory" />
+	</bean>
+	<tx:annotation-driven transaction-manager="transactionManager" />
+
+	<bean id="dtoMappingHelper" class="es.caib.pinbal.core.helper.DtoMappingHelper"/>
+	<bean id="pluginHelper" class="es.caib.pinbal.core.helper.PluginHelper"/>
+	<bean id="justificantPlantillaHelper" class="es.caib.pinbal.core.helper.JustificantPlantillaHelper"/>
+	<bean id="conversioTipusDocumentHelper" class="es.caib.pinbal.core.helper.ConversioTipusDocumentHelper"/>
+	<bean id="transaccioHelper" class="es.caib.pinbal.core.helper.TransaccioHelper"/>
+	<bean id="usuariHelper" class="es.caib.pinbal.core.helper.UsuariHelper"/>
+	<bean id="serveiHelper" class="es.caib.pinbal.core.helper.ServeiHelper"/>
+	<bean id="scspHelper" class="es.caib.pinbal.scsp.ScspHelper"/>
+
+	<bean id="cacheManager" class="org.springframework.cache.ehcache.EhCacheCacheManager">
+		<property name="cacheManager">
+			<bean class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean">
+				<property name="configLocation" value="classpath:es/caib/pinbal/core/context/ehcache.xml" />
+		    </bean>
+		</property>
+	</bean>
+	<cache:annotation-driven proxy-target-class="true"/>
+
+	<task:scheduled-tasks>
+        <task:scheduled ref="consultaServiceImpl" method="revisarEstatPeticionsMultiplesPendents" fixed-rate="${config:es.caib.pinbal.tasca.auto.comprovacio.repeticio}"/>
+    </task:scheduled-tasks>
+
+	<!-- Context llibreries SCSP -->
+	<import resource="classpath:application-context-scsp.xml" />
+
+	<!-- ACL -->
+	<bean id="aclService" class="org.springframework.security.acls.jdbc.JdbcMutableAclService">
+		<constructor-arg ref="dataSource" />
+		<constructor-arg ref="lookupStrategy" />
+		<constructor-arg ref="aclCache" />
+		<!-- Oracle -->
+		<property name="sidIdentityQuery">
+            <value>SELECT ACL_SID_SEQ.CURRVAL FROM DUAL</value>
+        </property>
+        <property name="classIdentityQuery">
+            <value>SELECT ACL_CLASS_SEQ.CURRVAL FROM DUAL</value>
+        </property>
+        <!-- Postgres -->
+		<!--property name="classIdentityQuery">
+			<value>currval(pg_get_serial_sequence('acl_class', 'id'))</value>
+		<property name="sidIdentityQuery">
+			<value>select currval(pg_get_serial_sequence('acl_sid', 'id'))</value>
+		</property-->
+	</bean>
+	<bean id="lookupStrategy" class="org.springframework.security.acls.jdbc.BasicLookupStrategy">
+		<constructor-arg ref="dataSource" />
+		<constructor-arg ref="aclCache" />
+		<constructor-arg ref="aclAuthorizationStrategy" />
+		<constructor-arg ref="auditLogger" />
+	</bean>
+	<bean id="aclCache" class="org.springframework.security.acls.domain.EhCacheBasedAclCache">
+		<constructor-arg>
+			<bean class="org.springframework.cache.ehcache.EhCacheFactoryBean">
+				<property name="cacheManager">
+					<bean class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean" />
+				</property>
+				<property name="cacheName" value="aclCache" />
+			</bean>
+		</constructor-arg>
+	</bean>
+	<bean id="aclAuthorizationStrategy" class="org.springframework.security.acls.domain.AclAuthorizationStrategyImpl">
+		<constructor-arg>
+			<list>
+				<bean class="org.springframework.security.core.authority.GrantedAuthorityImpl">
+					<constructor-arg value="ROLE_ADMIN" />
+				</bean>
+				<bean class="org.springframework.security.core.authority.GrantedAuthorityImpl">
+					<constructor-arg value="ROLE_ADMIN" />
+				</bean>
+				<bean class="org.springframework.security.core.authority.GrantedAuthorityImpl">
+					<constructor-arg value="ROLE_ADMIN" />
+				</bean>
+			</list>
+		</constructor-arg>
+	</bean>
+	<bean id="auditLogger" class="org.springframework.security.acls.domain.ConsoleAuditLogger" />
+	<!-- /ACL -->
+
+</beans>
