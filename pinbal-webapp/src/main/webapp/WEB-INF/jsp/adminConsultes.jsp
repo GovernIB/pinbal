@@ -7,6 +7,12 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
 
+<%
+	request.setAttribute(
+			"consultaEstats",
+			es.caib.pinbal.core.dto.ConsultaDto.EstatTipus.sortedValues());
+%>
+
 <html>
 <head>
 	<title><spring:message code="admin.consulta.list.titol"/></title>

@@ -10,7 +10,7 @@
 <%
 	pageContext.setAttribute(
 			"consultaEstats",
-			es.caib.pinbal.core.dto.ConsultaDto.EstatTipus.values());
+			es.caib.pinbal.core.dto.ConsultaDto.EstatTipus.sortedValues());
 	pageContext.setAttribute(
 			"agrupacioValors",
 			es.caib.pinbal.core.dto.EstadistiquesFiltreDto.EstadistiquesAgrupacioDto.values());

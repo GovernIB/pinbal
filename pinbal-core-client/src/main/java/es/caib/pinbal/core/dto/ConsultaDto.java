@@ -20,7 +20,15 @@ public class ConsultaDto implements Serializable {
 		Pendent,
 		Processant,
 		Tramitada,
-		Error
+		Error;
+		
+		public static EstatTipus[] sortedValues() {
+			return new EstatTipus[] {
+					EstatTipus.Error,
+					EstatTipus.Pendent,
+					EstatTipus.Processant,
+					EstatTipus.Tramitada};
+		}
 	}
 	public enum Consentiment {
 		Si,

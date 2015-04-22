@@ -113,7 +113,7 @@ public class ProcedimentServiceImpl implements ProcedimentService {
 		if (entitat == null)
 			throw new EntitatNotFoundException();
 		return dtoMappingHelper.getMapperFacade().mapAsList(
-				procedimentRepository.findByEntitat(entitat),
+				procedimentRepository.findByEntitatOrderByNomAsc(entitat),
         		ProcedimentDto.class);
 	}
 

@@ -159,6 +159,12 @@ public class ProcedimentServiceBean implements ProcedimentService {
 				entitatId,
 				serveiCodi);
 	}
+	
+	@Override
+	@RolesAllowed("tothom")
+	public List<ProcedimentDto> findAmbServeiCodi(String serveiCodi) {
+		return delegate.findAmbServeiCodi(serveiCodi);
+	}
 
 	@Override
 	@RolesAllowed("PBL_ADMIN")

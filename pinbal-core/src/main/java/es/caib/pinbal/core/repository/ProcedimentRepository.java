@@ -25,7 +25,7 @@ public interface ProcedimentRepository extends JpaRepository<Procediment, Long> 
 
 	Procediment findByCodi(String codi);
 
-	List<Procediment> findByEntitat(Entitat entitat);
+	List<Procediment> findByEntitatOrderByNomAsc(Entitat entitat);
 
 	Procediment findByEntitatAndCodi(Entitat entitat, String codi);
 

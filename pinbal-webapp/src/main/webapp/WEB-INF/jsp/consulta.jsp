@@ -9,7 +9,7 @@
 <%
 	request.setAttribute(
 			"consultaEstats",
-			es.caib.pinbal.core.dto.ConsultaDto.EstatTipus.values());
+			es.caib.pinbal.core.dto.ConsultaDto.EstatTipus.sortedValues());
 %>
 
 <html>
