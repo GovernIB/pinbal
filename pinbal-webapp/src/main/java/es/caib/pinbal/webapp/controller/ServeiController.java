@@ -110,7 +110,14 @@ public class ServeiController extends BaseController {
 			model.addAttribute("clausPrivades", serveiService.findClauPrivadaAll());
 			return "serveiForm";
 		}
-		serveiService.save(ServeiCommand.asDto(command));
+		ServeiDto servei = ServeiCommand.asDto(command);
+		if (command.getFitxerAjuda() != null && servei.getFitxerAjudaContingut() == null)
+			AlertHelper.warning(
+					request, 
+					getMessage(
+							request, 
+							"servei.controller.servei.fitxer.ajuda.ko"));
+		serveiService.save(servei);
 		if (command.isCreacio()) {
 			AlertHelper.success(
 					request, 
@@ -123,6 +130,34 @@ public class ServeiController extends BaseController {
 					getMessage(
 							request, 
 							"servei.controller.servei.modificat.ok"));
+		}
+		return "redirect:servei";
+	}
+	
+	@RequestMapping(value = "/{serveiCodi}/downloadAjuda", method = RequestMethod.GET)
+	public String downloadAjuda(
+			HttpServletRequest request,
+			HttpServletResponse response,
+			@PathVariable String serveiCodi) throws ServeiNotFoundException {
+		try {
+			ServeiDto servei = null;
+			if (serveiCodi != null)
+				servei = serveiService.findAmbCodiPerAdminORepresentant(serveiCodi);
+			
+			response.setHeader("Pragma", "");
+			response.setHeader("Expires", "");
+			response.setHeader("Cache-Control", "");
+			response.setHeader("Content-Disposition", "attachment; filename=\"" + servei.getFitxerAjudaNom() + "\"");
+			response.setContentType(servei.getFitxerAjudaMimeType());
+			response.getOutputStream().write(servei.getFitxerAjudaContingut());
+			
+			return null;
+		} catch (Exception e) {
+			AlertHelper.error(
+					request, 
+					getMessage(
+							request, 
+							"servei.controller.servei.download.ajuda"));
 		}
 		return "redirect:servei";
 	}

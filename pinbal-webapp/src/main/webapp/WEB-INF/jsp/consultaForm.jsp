@@ -361,7 +361,9 @@
 		<div class="well">
 			<button type="submit" class="btn btn-primary"><spring:message code="comu.boto.enviar"/></button>
 			<a href="<c:url value="/consulta"/>" class="btn"><spring:message code="comu.boto.cancelar"/></a>
-			<a href="#modalAjuda" class="btn pull-right" data-toggle="modal"><spring:message code="comu.boto.ajuda"/></a>
+			<c:if test="${not empty servei.ajuda or not empty servei.fitxerAjudaNom}">
+				<a href="#modalAjuda" class="btn pull-right" data-toggle="modal"><spring:message code="comu.boto.ajuda"/></a>
+			</c:if>
 		</div>
 	</form:form>
 	
@@ -372,9 +374,13 @@
 	    	<h3 id="myModalLabel"><spring:message code="comu.boto.ajuda"/></h3>
 	  	</div>
 	  	<div class="modal-body">
-	    	${servei.ajudaHtml}
+	  		${servei.ajuda}
+<%-- 	    	${servei.ajudaHtml} --%>
 	  	</div>
 	  	<div class="modal-footer">
+	  		<c:if test="${not empty servei.fitxerAjudaNom}">
+	  			<a href="<c:url value='/consulta/${servei.codi}/downloadAjuda'/>" class="btn btn-primary pull-left"><i class='icon-download-alt icon-white'></i> <spring:message code="comu.boto.document.ajuda"/></a>
+	  		</c:if>
 	    	<button class="btn" data-dismiss="modal" aria-hidden="true"><spring:message code="comu.boto.tancar"/></button>
 	  	</div>
 	</div>

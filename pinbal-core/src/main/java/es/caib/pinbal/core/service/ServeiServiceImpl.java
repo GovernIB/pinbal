@@ -142,7 +142,10 @@ public class ServeiServiceImpl implements ServeiService {
 					toEntitatTipus(servei.getPinbalEntitatTipus()),
 					toJustificantTipus(servei.getPinbalJustificantTipus()),
 					servei.getPinbalJustificantXpath(),
-					servei.getAjuda()).build();
+					servei.getAjuda(),
+					servei.getFitxerAjudaNom(),
+					servei.getFitxerAjudaMimeType(),
+					servei.getFitxerAjudaContingut()).build();
 			serveiConfigRepository.save(serveiConfig);
 		} else {
 			// Si ja està creat l'actualitza
@@ -166,7 +169,10 @@ public class ServeiServiceImpl implements ServeiService {
 					servei.isPinbalActiuCampDocument(),
 					servei.isPinbalDocumentObligatori(),
 					servei.isPinbalComprovarDocument(),
-					servei.getAjuda());
+					servei.getAjuda(),
+					servei.getFitxerAjudaNom(),
+					servei.getFitxerAjudaMimeType(),
+					servei.getFitxerAjudaContingut());
 		}
 		// Refresca els permisos per accedir al servei
 		if (rolAntic != null && !rolAntic.isEmpty()) {
@@ -1094,6 +1100,9 @@ public class ServeiServiceImpl implements ServeiService {
 			dto.setPinbalDocumentObligatori(serveiConfig.isDocumentObligatori());
 			dto.setPinbalComprovarDocument(serveiConfig.isComprovarDocument());
 			dto.setAjuda(serveiConfig.getAjuda());
+			dto.setFitxerAjudaNom(serveiConfig.getFitxerAjudaNom());
+			dto.setFitxerAjudaMimeType(serveiConfig.getFitxerAjudaMimeType());
+			dto.setFitxerAjudaContingut(serveiConfig.getFitxerAjudaContingut());
 		}
 //		Long numeroProcedimentsAssociats = procedimentRepository.countByServei(servicio.getCodCertificado());
 //		dto.setNumeroProcedimentsAssociats(numeroProcedimentsAssociats == null ? 0 : numeroProcedimentsAssociats);

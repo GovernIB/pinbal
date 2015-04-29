@@ -71,6 +71,10 @@ public class ServeiDto implements Serializable {
 	private boolean pinbalComprovarDocument;
 	
 	private String ajuda;
+	private String fitxerAjudaNom;
+	private String fitxerAjudaMimeType;
+	private byte[] fitxerAjudaContingut;
+	
 	private Long numeroProcedimentsAssociats;
 
 
@@ -363,6 +367,25 @@ public class ServeiDto implements Serializable {
 		}
 		return ajudaHtml;
 	}
+	public String getFitxerAjudaNom() {
+		return fitxerAjudaNom;
+	}
+	public void setFitxerAjudaNom(String fitxerAjudaNom) {
+		this.fitxerAjudaNom = fitxerAjudaNom;
+	}
+	public String getFitxerAjudaMimeType() {
+		return fitxerAjudaMimeType;
+	}
+	public void setFitxerAjudaMimeType(String fitxerAjudaMimeType) {
+		this.fitxerAjudaMimeType = fitxerAjudaMimeType;
+	}
+	public byte[] getFitxerAjudaContingut() {
+		return fitxerAjudaContingut;
+	}
+	public void setFitxerAjudaContingut(byte[] fitxerAjudaContingut) {
+		this.fitxerAjudaContingut = fitxerAjudaContingut;
+	}
+
 	public Long getNumeroProcedimentsAssociats() {
 		return numeroProcedimentsAssociats;
 	}

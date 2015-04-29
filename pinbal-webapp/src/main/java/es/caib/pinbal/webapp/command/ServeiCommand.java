@@ -3,6 +3,7 @@
  */
 package es.caib.pinbal.webapp.command;
 
+import java.io.IOException;
 import java.util.Date;
 
 import javax.validation.constraints.NotNull;
@@ -10,6 +11,7 @@ import javax.validation.constraints.Size;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.hibernate.validator.constraints.NotEmpty;
+import org.springframework.web.multipart.MultipartFile;
 
 import es.caib.pinbal.core.dto.ClauPrivadaDto;
 import es.caib.pinbal.core.dto.ClauPublicaDto;
@@ -103,6 +105,8 @@ public class ServeiCommand {
 	private boolean creacio;
 	
 	private String ajuda;
+	private String fitxerAjudaNom;
+	private MultipartFile fitxerAjuda;
 
 
 
@@ -397,6 +401,18 @@ public class ServeiCommand {
 	public void setAjuda(String ajuda) {
 		this.ajuda = ajuda;
 	}
+	public String getFitxerAjudaNom() {
+		return fitxerAjudaNom;
+	}
+	public void setFitxerAjudaNom(String fitxerAjudaNom) {
+		this.fitxerAjudaNom = fitxerAjudaNom;
+	}
+	public MultipartFile getFitxerAjuda() {
+		return fitxerAjuda;
+	}
+	public void setFitxerAjuda(MultipartFile fitxerAjuda) {
+		this.fitxerAjuda = fitxerAjuda;
+	}
 
 	
 	public static ServeiCommand asCommand(ServeiDto dto) {
@@ -437,6 +453,13 @@ public class ServeiCommand {
 			dto.setScspClaveCifrado(clauPublica);
 		} else {
 			dto.setScspClaveCifrado(null);
+		}
+		if (command.getFitxerAjuda() != null) {
+			dto.setFitxerAjudaNom(command.getFitxerAjuda().getOriginalFilename());
+			dto.setFitxerAjudaMimeType(command.getFitxerAjuda().getContentType());
+			try {
+				dto.setFitxerAjudaContingut(command.getFitxerAjuda().getBytes());
+			} catch (IOException e) {}
 		}
 		return dto;
 	}

@@ -126,6 +126,7 @@ small { font-size:11px; font-style:italic; color:#999999;}
 /* Generic */
 .floLeft { float:left;}
 .floRight { float:right;}
+.omple { width:100% !important;'}
 .clearfix:after {
     clear: both !important;
     content: ".";

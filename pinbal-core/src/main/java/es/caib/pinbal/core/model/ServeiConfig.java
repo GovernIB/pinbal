@@ -73,9 +73,18 @@ public class ServeiConfig extends PinbalAuditable<Long> {
 	@Column(name = "comprovar_document")
 	private boolean comprovarDocument = true;
 	
+	// Ajuda
 	@Lob
 	@Column(name = "ajuda")
 	private String ajuda;
+	
+	@Column(name = "fitxer_ajuda_nom")
+	private String fitxerAjudaNom;
+	@Column(name = "fitxer_ajuda_mime")
+	private String fitxerAjudaMimeType;
+	@Lob
+	@Column(name = "fitxer_ajuda_contingut")
+	private byte[] fitxerAjudaContingut;
 
 	@Version
 	private long version = 0;
@@ -111,7 +120,10 @@ public class ServeiConfig extends PinbalAuditable<Long> {
 			EntitatTipus entitatTipus,
 			JustificantTipus justificantTipus,
 			String justificantXpath,
-			String ajuda) {
+			String ajuda,
+			String fitxerAjudaNom,
+			String fitxerAjudaMimeType,
+			byte[] fitxerAjudaContingut) {
 		return new Builder(
 				servei,
 				custodiaCodi,
@@ -120,7 +132,10 @@ public class ServeiConfig extends PinbalAuditable<Long> {
 				entitatTipus,
 				justificantTipus,
 				justificantXpath,
-				ajuda);
+				ajuda,
+				fitxerAjudaNom,
+				fitxerAjudaMimeType,
+				fitxerAjudaContingut);
 	}
 
 	public String getServei() {
@@ -186,6 +201,24 @@ public class ServeiConfig extends PinbalAuditable<Long> {
 	public void setAjuda(String ajuda) {
 		this.ajuda = ajuda;
 	}
+	public String getFitxerAjudaNom() {
+		return fitxerAjudaNom;
+	}
+	public void setFitxerAjudaNom(String fitxerAjudaNom) {
+		this.fitxerAjudaNom = fitxerAjudaNom;
+	}
+	public String getFitxerAjudaMimeType() {
+		return fitxerAjudaMimeType;
+	}
+	public void setFitxerAjudaMimeType(String fitxerAjudaMimeType) {
+		this.fitxerAjudaMimeType = fitxerAjudaMimeType;
+	}
+	public byte[] getFitxerAjudaContingut() {
+		return fitxerAjudaContingut;
+	}
+	public void setFitxerAjudaContingut(byte[] fitxerAjudaContingut) {
+		this.fitxerAjudaContingut = fitxerAjudaContingut;
+	}
 
 	public long getVersion() {
 		return version;
@@ -210,7 +243,10 @@ public class ServeiConfig extends PinbalAuditable<Long> {
 			boolean actiuCampDocument,
 			boolean documentObligatori,
 			boolean comprovarDocument,
-			String ajuda) {
+			String ajuda,
+			String fitxerAjudaNom,
+			String fitxerAjudaMimeType,
+			byte[] fitxerAjudaContingut) {
 		this.custodiaCodi = custodiaCodi;
 		this.roleName = roleName;
 		this.condicioBusClass = condicioBusClass;
@@ -230,6 +266,9 @@ public class ServeiConfig extends PinbalAuditable<Long> {
 		this.documentObligatori = documentObligatori;
 		this.comprovarDocument = comprovarDocument;
 		this.ajuda = ajuda;
+		this.fitxerAjudaNom = fitxerAjudaNom;
+		this.fitxerAjudaMimeType = fitxerAjudaMimeType;
+		this.fitxerAjudaContingut = fitxerAjudaContingut;
 	}
 
 	/**
@@ -261,7 +300,10 @@ public class ServeiConfig extends PinbalAuditable<Long> {
 				EntitatTipus entitatTipus,
 				JustificantTipus justificantTipus,
 				String justificantXpath,
-				String ajuda) {
+				String ajuda,
+				String fitxerAjudaNom,
+				String fitxerAjudaMimeType,
+				byte[] fitxerAjudaContingut) {
 			built = new ServeiConfig();
 			built.servei = servei;
 			built.custodiaCodi = custodiaCodi;
@@ -271,6 +313,9 @@ public class ServeiConfig extends PinbalAuditable<Long> {
 			built.justificantTipus = justificantTipus;
 			built.justificantXpath = justificantXpath;
 			built.ajuda = ajuda;
+			built.fitxerAjudaNom = fitxerAjudaNom;
+			built.fitxerAjudaMimeType = fitxerAjudaMimeType;
+			built.fitxerAjudaContingut = fitxerAjudaContingut;
 		}
 		/**
 		 * Construeix el nou objecte de tipus ServeiConfig.

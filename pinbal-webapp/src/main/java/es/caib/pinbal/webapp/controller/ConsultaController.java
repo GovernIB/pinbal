@@ -486,6 +486,36 @@ public class ConsultaController extends BaseController {
 			return "redirect:../../../index";
 		}
 	}
+	
+	@RequestMapping(value = "/{serveiCodi}/downloadAjuda", method = RequestMethod.GET)
+	public String downloadAjuda(
+			HttpServletRequest request,
+			HttpServletResponse response,
+			@PathVariable String serveiCodi) throws ServeiNotFoundException {
+		try {
+			ServeiDto servei = null;
+			if (serveiCodi != null)
+				servei = serveiService.findAmbCodiPerDelegat(
+						EntitatHelper.getEntitatActual(request, entitatService).getId(),
+						serveiCodi);
+			
+			response.setHeader("Pragma", "");
+			response.setHeader("Expires", "");
+			response.setHeader("Cache-Control", "");
+			response.setHeader("Content-Disposition", "attachment; filename=\"" + servei.getFitxerAjudaNom() + "\"");
+			response.setContentType(servei.getFitxerAjudaMimeType());
+			response.getOutputStream().write(servei.getFitxerAjudaContingut());
+			
+			return null;
+		} catch (Exception e) {
+			AlertHelper.error(
+					request, 
+					getMessage(
+							request, 
+							"servei.controller.servei.download.ajuda"));
+		}
+		return "redirect:servei";
+	}
 
 	@InitBinder
 	public void initBinder(WebDataBinder binder) {

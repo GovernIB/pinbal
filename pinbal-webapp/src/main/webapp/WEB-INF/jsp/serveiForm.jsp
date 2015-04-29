@@ -26,6 +26,10 @@
 	<script type="text/javascript" src="<c:url value="/js/jquery.jmesa.min.js"/>"></script>
 	<script type="text/javascript" src="<c:url value="/js/jmesa.min.js"/>"></script>
 	<script src="<c:url value="/js/jquery.maskedinput.js"/>"></script>
+	<script type="text/javascript" src="<c:url value="/js/jHtmlArea/scripts/jHtmlArea-0.8.min.js"/>"></script>
+	<script type="text/javascript" src="<c:url value="/js/jHtmlArea/scripts/jHtmlArea.ColorPickerMenu-0.8.min.js"/>"></script>
+    <link rel="Stylesheet" type="text/css" href="<c:url value="/js/jHtmlArea/style/jHtmlArea.css"/>"/>
+    <link rel="Stylesheet" type="text/css" href="<c:url value="/js/jHtmlArea/style/jHtmlArea.ColorPickerMenu.css"/>"/>
 <script>
 $(document).ready(function() {
 	$('#modal-boto-submit').click(function() {
@@ -35,6 +39,52 @@ $(document).ready(function() {
 	});
 	$('.confirm-esborrar').click(function() {
 		  return confirm("<spring:message code="servei.form.bus.confirmacio.esborrar"/>");
+	});
+	$('#ajuda').htmlarea({
+        toolbar: [
+					["html"],
+                   	["bold", "italic", "underline", "strikethrough", "|", "forecolor"],
+                   	["subscript", "superscript", "|" , "increasefontsize", "decreasefontsize"],
+                   	["orderedList", "unorderedList"],
+                   	["indent", "outdent"],
+                   	["justifyleft", "justifycenter", "justifyright"],
+                   	["link", "unlink", "image", "horizontalrule"],
+                   	[ "p", "h1", "h2", "h3", "h4", "h5", "h6"],
+                   	["cut", "copy", "paste"]
+				],
+		toolbarText: $.extend({}, jHtmlArea.defaultOptions.toolbarText, {
+					"html": "Mostra/Oculta el codi HTML",
+			        "bold": "Negreta",
+			        "italic": "Cursiva",
+			        "underline": "Subrallat",
+			        "strikethrough": "Ratllat",
+			        "forecolor": "Color del text",
+			        "subscript": "Subíndex", 
+			        "superscript": "Superíndex", 
+			        "increasefontsize": "Augmenta la mida de la font", 
+			        "decreasefontsize": "Disminueix la mida de la font",
+                   	"orderedlist": "Insereix una llista ordenada", 
+                   	"unorderedlist": "Insereix una llista no ordenada",
+                   	"indent": "Augmenta el sagnat", 
+                   	"outdent": "Disminueix el sagnat",
+                   	"justifyleft": "Alinea a l'esquerra", 
+                   	"justifycenter": "Alinea al centre", 
+                   	"justifyright": "Alinea a la dreta",
+                   	"link": "Insereix un enllaç", 
+                   	"unlink": "Elimina un enllaç", 
+                   	"image": "Insereix una imatge", 
+                   	"horizontalrule": "Insereix una separació horitzontal",
+                   	"p": "Paràgraf", 
+                   	"h1": "Capçalera 1", 
+                   	"h2": "Capçalera 2", 
+                   	"h3": "Capçalera 3", 
+                   	"h4": "Capçalera 4", 
+                   	"h5": "Capçalera 5", 
+                   	"h6": "Capçalera 6",
+                   	"cut": "Retalla", 
+                   	"copy": "Còpia", 
+                   	"paste": "Enganxa"
+			    })
 	});
 });
 function showModalRedir(element) {
@@ -53,7 +103,7 @@ function showModalRedir(element) {
 <body>
 
 	<c:url value="/servei" var="formAction"/>
-	<form:form action="${formAction}" method="post" cssClass="form-horizontal" commandName="serveiCommand">
+	<form:form action="${formAction}" method="post" cssClass="form-horizontal" commandName="serveiCommand" enctype="multipart/form-data">
 		<form:hidden path="creacio"/>
 		<fieldset>
 			<div class="row-fluid">
@@ -202,13 +252,104 @@ function showModalRedir(element) {
 				<c:set var="campPath" value="ajuda"/>
 				<c:set var="campErrors"><form:errors path="${campPath}"/></c:set>
 				<div class="control-group<c:if test="${not empty campErrors}"> error</c:if>">
-					<label class="control-label" for="${campPath}"><spring:message code="servei.form.camp.ajuda"/> *</label>
+					<label class="control-label" for="${campPath}"><spring:message code="servei.form.camp.ajuda"/></label>
 					<div class="controls">
 						<form:textarea rows="8" path="${campPath}" cssClass="span12" id="${campPath}"/>
 						<form:errors path="${campPath}" cssClass="help-inline"/>
 					</div>
 				</div>
 			</div>
+			
+			<div class="row-fluid">
+				<div class="span12">
+					<c:set var="campPath" value="fitxerAjuda"/>
+					<c:set var="campErrors"><form:errors path="${campPath}"/></c:set>
+					<div class="control-group<c:if test="${not empty campErrors}"> error</c:if>">
+						<label class="control-label" for="${campPath}"><spring:message code="servei.form.camp.fitxer.ajuda"/></label>
+						<div class="controls input-append" style="margin-left:20px;width:calc(100% - 180px);">
+							<input type="text" id="${campPath}_txt" class="form-control ajuda_file" value="${serveiCommand.fitxerAjudaNom}" style="width:calc(100% - 92px);"/>
+							<span id="ajuda_clean" class="btn btn-default btn-file-clean"><i class='icon-trash'></i></span>
+							<span id="ajuda_file" class="btn btn-default btn-file ajuda_file"><i class='icon-file'></i></span>
+						</div>
+						<form:input type="file" path="${campPath}" cssClass="hide" id="${campPath}" title="" />
+						<form:errors path="${campPath}" cssClass="help-inline"/>
+					</div>
+				</div>
+			</div>
+			
+			<script>
+				$(document).ready(function() {
+				
+					var fileTextInput = $('#fitxerAjuda_txt');
+						
+					if (!$('#fitxerAjuda_txt').val()) {
+						$('#ajuda_clean').attr('disabled', 'disabled');
+						$("#ajuda_file").click(function() {
+							if (!$('#fitxerAjuda_txt').val())
+								$('#fitxerAjuda').trigger('click');
+						});
+					} else {
+						$('#fitxerAjuda_txt').attr('disabled', 'disabled');
+						$('#ajuda_file i').removeClass("icon-file").addClass("icon-download-alt");
+						$('#ajuda_file').click(function() {
+							location.href = "<c:url value='/servei/${serveiCommand.codi}/downloadAjuda'/>";
+						});
+					}
+					
+					$("#fitxerAjuda").change(
+						function() {
+							var input = $(this),
+							numFiles = input.get(0).files ? input.get(0).files.length : 1,
+							label = input.val().replace(/\\/g, '/').replace(/.*\//, '');
+							input.trigger('fileselect', [numFiles, label]);
+						}
+					);
+					$("#fitxerAjuda_txt").click(
+						function() {
+							if (!$('#fitxerAjuda_txt').val())
+								$('#fitxerAjuda').trigger('click');
+						}	
+					);
+					$('label[for="fitxerAjuda"]').click(
+						function(e) { 
+					    	e.preventDefault();
+						}	
+					);
+					$("#ajuda_clean").click(
+						function() {
+							// Nomes s'ha d'actualitzar l'input de tipus text!!!
+							$('#fitxerAjuda_txt').val('');
+							$('#fitxerAjuda_txt').removeAttr('disabled');
+							$('#ajuda_clean').attr('disabled', 'disabled');
+							if ($('#ajuda_file i').hasClass("icon-download-alt")) {
+								$('#ajuda_file i').removeClass("icon-download-alt").addClass("icon-file");
+								$("#ajuda_file").unbind("click");
+								$("#ajuda_file").bind("click", function() {
+									if (!$('#fitxerAjuda_txt').val())
+										$('#fitxerAjuda').trigger('click');
+								});
+							} else {
+								$('#ajuda_file').removeAttr('disabled');
+								$('#fitxerAjuda').val('');
+							}
+						}
+					);
+					$('#fitxerAjuda').on('fileselect', function (event, numFiles, label) {
+						if (label) {
+							$('#ajuda_clean').removeAttr('disabled');
+							$('#ajuda_file').attr('disabled', 'disabled');
+							// Nomes s'ha d'actualitzar l'input de tipus text!!!
+							$('#fitxerAjuda_txt').val(label);
+							$('#fitxerAjuda_txt').attr('disabled', 'disabled');
+							$('#fitxerAjuda_txt').change();
+						}
+				    });
+				});
+				
+				
+			</script>
+
+				
 		</fieldset>
 		<c:if test="${not empty serveiCommand.codi}">
 			<fieldset>
