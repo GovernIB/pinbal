@@ -253,25 +253,21 @@ public class PermisosHelper {
 			Permission[] permissions,
 			MutableAclService aclService) throws NotFoundException {
 		ObjectIdentity oid = new ObjectIdentityImpl(objectClass, objectIdentifier);
-		try {
-			MutableAcl acl = (MutableAcl)aclService.readAclById(oid);
-			List<Integer> indexosPerEsborrar = new ArrayList<Integer>();
-			int aceIndex = 0;
-			for (AccessControlEntry ace: acl.getEntries()) {
-				if (ace.getSid().equals(sid)) {
-					for (Permission p: permissions) {
-						if (p.equals(ace.getPermission()))
-							indexosPerEsborrar.add(aceIndex);
-					}
+		MutableAcl acl = (MutableAcl)aclService.readAclById(oid);
+		List<Integer> indexosPerEsborrar = new ArrayList<Integer>();
+		int aceIndex = 0;
+		for (AccessControlEntry ace: acl.getEntries()) {
+			if (ace.getSid().equals(sid)) {
+				for (Permission p: permissions) {
+					if (p.equals(ace.getPermission()))
+						indexosPerEsborrar.add(aceIndex);
 				}
-				aceIndex++;
 			}
-			for (Integer index: indexosPerEsborrar)
-				acl.deleteAce(index);
-			aclService.updateAcl(acl);
-		} catch (NotFoundException nfex) {
-			// Si no troba l'ACL no fa res
+			aceIndex++;
 		}
+		for (Integer index: indexosPerEsborrar)
+			acl.deleteAce(index);
+		aclService.updateAcl(acl);
 	}
 
 	private static boolean[] verificarPermisos(

@@ -259,7 +259,10 @@ public class ProcedimentServiceImpl implements ProcedimentService {
 			Long id,
 			String serveiCodi,
 			String usuariCodi) throws ProcedimentNotFoundException, ProcedimentServeiNotFoundException, EntitatUsuariNotFoundException {
-		LOGGER.debug("Esborrant servei (codi=" + serveiCodi + ") del procediment (id= " + id + ")");
+		LOGGER.debug("Donant permis d'accés a un servei d'un procediment(" +
+				"id=" + id + ", " +
+				"serveiCodi=" + serveiCodi + ", " +
+				"usuariCodi=" + usuariCodi + ")");
 		Procediment procediment = procedimentRepository.findOne(id);
 		if (procediment == null) {
 			LOGGER.debug("No s'ha trobat cap procediment (id= " + id + ")");

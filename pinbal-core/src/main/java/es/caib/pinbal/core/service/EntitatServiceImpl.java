@@ -158,8 +158,8 @@ public class EntitatServiceImpl implements EntitatService {
 				modificada.getCif(),
 				EntitatTipus.valueOf(modificada.getTipus().toString()));
 		scspHelper.organismoCesionarioSave(
-				entitat.getNom(),
 				entitat.getCif(),
+				entitat.getNom(),
 				entitat.getCreatedDate().toDate(),
 				null,
 				!modificada.isActiva());

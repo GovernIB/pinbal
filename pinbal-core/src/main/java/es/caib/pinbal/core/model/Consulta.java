@@ -330,6 +330,7 @@ public class Consulta extends PinbalAuditable<Long> {
 		public Consulta build() {
 			return built;
 		}
+
 	}
 
 	public void configurarIdPerTest(Long id) {
