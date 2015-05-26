@@ -26,6 +26,7 @@ import javax.annotation.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.acls.domain.PrincipalSid;
 import org.springframework.security.acls.model.AccessControlEntry;
@@ -1655,6 +1656,9 @@ public class ConsultaServiceImpl implements ConsultaService {
 		mapeigPropietats.put("titularNomSencer", "titularNom");
 		mapeigPropietats.put("titularDocumentAmbTipus", "titularDocumentNum");
 		mapeigPropietats.put("funcionariNomAmbDocument", "funcionariNom");
+		Pageable pageable = PaginacioHelper.toSpringDataPageable(
+				paginacioAmbOrdre,
+				mapeigPropietats);
 		Page<Consulta> paginaConsultes;
 		if (filtre == null) {
 			paginaConsultes = consultaRepository.findByProcedimentServeiProcedimentEntitatIdAndCreatedBy(
@@ -1663,9 +1667,7 @@ public class ConsultaServiceImpl implements ConsultaService {
 					(usuariCodi != null) ? usuariRepository.findOne(usuariCodi) : null,
 					multiple,
 					nomesSensePare,
-					PaginacioHelper.toSpringDataPageable(
-							paginacioAmbOrdre,
-							mapeigPropietats));
+					pageable);
 		} else {
 			paginaConsultes = consultaRepository.findByCreatedByAndFiltrePaginat(
 					entitat.getId(),
@@ -1691,9 +1693,7 @@ public class ConsultaServiceImpl implements ConsultaService {
 					filtre.getFuncionariDocument(),
 					multiple,
 					nomesSensePare,
-					PaginacioHelper.toSpringDataPageable(
-							paginacioAmbOrdre,
-							mapeigPropietats));
+					pageable);
 		}
 		PaginaLlistatDto<ConsultaDto> resposta = PaginacioHelper.toPaginaLlistatDto(
 				paginaConsultes,

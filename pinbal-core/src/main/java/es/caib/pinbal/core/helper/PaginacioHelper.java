@@ -31,7 +31,7 @@ public class PaginacioHelper {
 			PaginacioAmbOrdreDto dto,
 			Map<String, String> mapeigPropietatsOrdenacio) {
 		List<Order> orders = new ArrayList<Order>();
-		if (dto.getOrdres() != null) {
+		if (dto.getOrdres() != null && !dto.getOrdres().isEmpty()) {
 			for (OrdreDto ordre: dto.getOrdres()) {
 				Direction direccio = OrdreDireccio.DESCENDENT.equals(ordre.getDireccio()) ? Sort.Direction.DESC : Sort.Direction.ASC;
 				String propietat = ordre.getCamp();
@@ -44,6 +44,9 @@ public class PaginacioHelper {
 						direccio,
 						propietat));
 			}
+			orders.add(new Order(
+					Sort.Direction.ASC,
+					"id"));
 		}
 		return new PageRequest(
 				dto.getPaginaNum(),
