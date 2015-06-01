@@ -152,6 +152,7 @@ public class EntitatServiceImpl implements EntitatService {
 			LOGGER.debug("No s'ha trobat l'entitat (id=" + modificada.getId() + ")");
 			throw new EntitatNotFoundException();
 		}
+		scspHelper.organismoCesionarioDelete(entitat.getCif());
 		entitat.update(
 				modificada.getCodi(),
 				modificada.getNom(),
@@ -163,6 +164,7 @@ public class EntitatServiceImpl implements EntitatService {
 				entitat.getCreatedDate().toDate(),
 				null,
 				!modificada.isActiva());
+		actualitzarServeisScspActiusEntitat(entitat);
 		return dtoMappingHelper.getMapperFacade().map(
 				entitat,
 				EntitatDto.class);
