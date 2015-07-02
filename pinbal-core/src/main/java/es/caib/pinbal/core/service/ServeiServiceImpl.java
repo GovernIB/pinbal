@@ -169,10 +169,13 @@ public class ServeiServiceImpl implements ServeiService {
 					servei.isPinbalActiuCampDocument(),
 					servei.isPinbalDocumentObligatori(),
 					servei.isPinbalComprovarDocument(),
-					servei.getAjuda(),
-					servei.getFitxerAjudaNom(),
-					servei.getFitxerAjudaMimeType(),
-					servei.getFitxerAjudaContingut());
+					servei.getAjuda());
+			if (servei.getFitxerAjudaNom() != null && !servei.getFitxerAjudaNom().isEmpty()) {
+				serveiConfig.updateFitxerAjuda(
+						servei.getFitxerAjudaNom(),
+						servei.getFitxerAjudaMimeType(),
+						servei.getFitxerAjudaContingut());
+			}
 		}
 		// Refresca els permisos per accedir al servei
 		if (rolAntic != null && !rolAntic.isEmpty()) {

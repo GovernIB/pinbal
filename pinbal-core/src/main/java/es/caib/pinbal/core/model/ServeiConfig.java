@@ -243,10 +243,7 @@ public class ServeiConfig extends PinbalAuditable<Long> {
 			boolean actiuCampDocument,
 			boolean documentObligatori,
 			boolean comprovarDocument,
-			String ajuda,
-			String fitxerAjudaNom,
-			String fitxerAjudaMimeType,
-			byte[] fitxerAjudaContingut) {
+			String ajuda) {
 		this.custodiaCodi = custodiaCodi;
 		this.roleName = roleName;
 		this.condicioBusClass = condicioBusClass;
@@ -266,6 +263,11 @@ public class ServeiConfig extends PinbalAuditable<Long> {
 		this.documentObligatori = documentObligatori;
 		this.comprovarDocument = comprovarDocument;
 		this.ajuda = ajuda;
+	}
+	public void updateFitxerAjuda(
+			String fitxerAjudaNom,
+			String fitxerAjudaMimeType,
+			byte[] fitxerAjudaContingut) {
 		this.fitxerAjudaNom = fitxerAjudaNom;
 		this.fitxerAjudaMimeType = fitxerAjudaMimeType;
 		this.fitxerAjudaContingut = fitxerAjudaContingut;

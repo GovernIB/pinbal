@@ -16,7 +16,7 @@ import org.springframework.stereotype.Service;
 public class VersioServiceImpl implements VersioService {
 
 	private static final MajorVersion MAJOR_VERSION = MajorVersion.V1_3;
-	private static final int MINOR_VERSION = 10;
+	private static final int MINOR_VERSION = 11;
 
 	private enum MajorVersion {
 		V1_0,

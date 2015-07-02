@@ -158,7 +158,7 @@ public class ConsultaMultipleController extends BaseController {
 						getMessage(
 								request, 
 								"consulta.controller.justificant.error") + ": " + ex.getMessage());
-				return "redirect:../../consulta";
+				return "redirect:../../../consulta/multiple";
 			}
 		} else {
 			AlertHelper.error(
@@ -166,7 +166,7 @@ public class ConsultaMultipleController extends BaseController {
 					getMessage(
 							request, 
 							"comu.error.no.entitat"));
-			return "redirect:../../index";
+			return "redirect:../../../index";
 		}
 	}
 
@@ -195,7 +195,7 @@ public class ConsultaMultipleController extends BaseController {
 						getMessage(
 								request, 
 								"consulta.controller.justificant.error") + ": " + ex.getMessage());
-				return "redirect:../../consulta";
+				return "redirect:../../../consulta/multiple";
 			}
 		} else {
 			AlertHelper.error(
@@ -203,7 +203,7 @@ public class ConsultaMultipleController extends BaseController {
 					getMessage(
 							request, 
 							"comu.error.no.entitat"));
-			return "redirect:../../index";
+			return "redirect:../../../index";
 		}
 	}
 
