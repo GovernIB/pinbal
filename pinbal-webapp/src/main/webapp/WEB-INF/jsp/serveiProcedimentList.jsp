@@ -17,7 +17,8 @@
 		<c:set var="procediments" value="${procedimentEntitat.value}"/>
 		
 		<h3><spring:message code="entitat.miques.entitat" arguments="${entitat}"/></h3>
-		<jmesa:tableModel	
+		<jmesa:tableModel
+				maxRows="1000"
 				id="procediments_${entitat}" 
 				items="${procediments}"
 				toolbar="es.caib.pinbal.webapp.jmesa.BootstrapToolbar"
@@ -25,10 +26,10 @@
 				var="registre">
 			<jmesa:htmlTable>
 				<jmesa:htmlRow>
-					<jmesa:htmlColumn property="codi" titleKey="servei.procediment.list.taula.columna.codi"/>
-					<jmesa:htmlColumn property="nom" titleKey="servei.procediment.list.taula.columna.nom"/>
-					<jmesa:htmlColumn property="departament" titleKey="servei.procediment.list.taula.columna.departament"/>
-					<jmesa:htmlColumn property="actiu" titleKey="servei.procediment.list.taula.columna.actiu">
+					<jmesa:htmlColumn property="codi" titleKey="servei.procediment.list.taula.columna.codi" width="25%"/>
+					<jmesa:htmlColumn property="nom" titleKey="servei.procediment.list.taula.columna.nom" width="50%"/>
+					<jmesa:htmlColumn property="departament" titleKey="servei.procediment.list.taula.columna.departament" width="20%"/>
+					<jmesa:htmlColumn property="actiu" titleKey="servei.procediment.list.taula.columna.actiu" width="5%">
 						<c:if test="${registre.actiu}"><i class="icon-ok"></i></c:if>
 					</jmesa:htmlColumn>
 	            </jmesa:htmlRow>

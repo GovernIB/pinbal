@@ -63,10 +63,10 @@ public interface ProcedimentRepository extends JpaRepository<Procediment, Long> 
 			"    p.departament")
 	public List<Procediment> findAllOrderByEntitatAndDepartament();
 	
-	@Query("select ps.procediment from ProcedimentServei ps where ps.servei = ?1 order by ps.procediment.entitat.nom")
+	@Query("select ps.procediment from ProcedimentServei ps where ps.servei = ?1 and ps.actiu = true order by ps.procediment.entitat.nom, ps.procediment.codi asc")
 	public List<Procediment> findAllByServei(String servei);
 	
-	@Query("select count(*) from ProcedimentServei ps where ps.servei = ?1")
+	@Query("select count(*) from ProcedimentServei ps where ps.servei = ?1 and ps.actiu = true")
 	public long countByServei(String servei);
 
 }
