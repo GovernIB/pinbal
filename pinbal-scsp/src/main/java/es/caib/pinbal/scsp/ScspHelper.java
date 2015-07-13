@@ -24,6 +24,9 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
 import org.apache.commons.lang.ObjectUtils;
+import org.hibernate.Criteria;
+import org.hibernate.Session;
+import org.hibernate.criterion.Restrictions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
@@ -507,8 +510,7 @@ public class ScspHelper implements ApplicationContextAware, MessageSourceAware {
 				"fechaAlta=" + fechaAlta + ", " +
 				"fechaBaja=" + fechaBaja + ", " + 
 				"bloqueado=" + bloqueado + ")");
-		OrganismoCesionario organismoCesionario = getOrganismoCesionarioDao().select(
-				cif);
+		OrganismoCesionario organismoCesionario = getOrganismoCesionarioAmbCif(cif);
 		if (organismoCesionario == null) {
 			organismoCesionario = new OrganismoCesionario();
 			organismoCesionario.setCif(cif);
@@ -541,8 +543,7 @@ public class ScspHelper implements ApplicationContextAware, MessageSourceAware {
 		LOGGER.debug("Guardant organismo cesionario (" +
 				"cif=" + cif + ", " +
 				"activos=" + Arrays.toString(activos) + ")");
-		OrganismoCesionario organismoCesionario = getOrganismoCesionarioDao().select(
-				cif);
+		OrganismoCesionario organismoCesionario = getOrganismoCesionarioAmbCif(cif);
 		List<ServicioOrganismoCesionario> servicios = getServicioOrganismoCesionarioDao().selectHistorico(
 				organismoCesionario);
 		// Actualitza el camp bloqueado dels serveis existents
@@ -873,6 +874,16 @@ public class ScspHelper implements ApplicationContextAware, MessageSourceAware {
 			return transmision.getXmlTransmision();
 		else
 			return null;
+	}
+
+	private OrganismoCesionario getOrganismoCesionarioAmbCif(
+			String cif) {
+		Session session = getOrganismoCesionarioDao().getSessionFactory().getCurrentSession();
+		Criteria c = session.createCriteria(OrganismoCesionario.class);
+	    c.add(Restrictions.eq("cif", cif));
+	    @SuppressWarnings("unchecked")
+		List<OrganismoCesionario> orgs = c.list();
+		return (orgs.size() > 0) ? orgs.get(0) : null;
 	}
 
 	private ServicioDao getServicioDao() {

@@ -18,12 +18,12 @@
 		
 		<h3><spring:message code="entitat.miques.entitat" arguments="${entitat}"/></h3>
 		<jmesa:tableModel
-				maxRows="1000"
 				id="procediments_${entitat}" 
 				items="${procediments}"
 				toolbar="es.caib.pinbal.webapp.jmesa.BootstrapToolbar"
 				view="es.caib.pinbal.webapp.jmesa.BootstrapView"
-				var="registre">
+				var="registre"
+				maxRows="${fn:length(procediments)}">
 			<jmesa:htmlTable>
 				<jmesa:htmlRow>
 					<jmesa:htmlColumn property="codi" titleKey="servei.procediment.list.taula.columna.codi" width="25%"/>
@@ -35,9 +35,6 @@
 	            </jmesa:htmlRow>
 	        </jmesa:htmlTable>
 		</jmesa:tableModel>
-		
 	</c:forEach>
-	
-
 </body>
 </html>

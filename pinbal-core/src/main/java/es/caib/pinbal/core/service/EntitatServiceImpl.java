@@ -71,7 +71,7 @@ public class EntitatServiceImpl implements EntitatService {
 				creada.getNom(),
 				new Date(),
 				null,
-				!creada.isActiva());
+				!entitat.isActiva());
 		return dtoMappingHelper.getMapperFacade().map(
 				entitatRepository.save(entitat),
 				EntitatDto.class);
@@ -181,8 +181,8 @@ public class EntitatServiceImpl implements EntitatService {
 		}
 		entitat.updateActiva(activa);
 		scspHelper.organismoCesionarioSave(
-				entitat.getNom(),
 				entitat.getCif(),
+				entitat.getNom(),
 				entitat.getCreatedDate().toDate(),
 				null,
 				!activa);
