@@ -524,8 +524,7 @@ public class ScspHelper implements ApplicationContextAware, MessageSourceAware {
 	public void organismoCesionarioDelete(String cif) {
 		LOGGER.debug("Esborrant organismo cesionario (" +
 				"cif=" + cif + ")");
-		OrganismoCesionario organismoCesionario = getOrganismoCesionarioDao().select(
-				cif);
+		OrganismoCesionario organismoCesionario = getOrganismoCesionarioAmbCif(cif);
 		List<ServicioOrganismoCesionario> servicios = getServicioOrganismoCesionarioDao().selectHistorico(organismoCesionario);
 		for (ServicioOrganismoCesionario servicio: servicios) {
 			getPinbalDao().delete(servicio);
@@ -535,7 +534,7 @@ public class ScspHelper implements ApplicationContextAware, MessageSourceAware {
 	public OrganismoCesionario organismoCesionarioFindByCif(String cif) {
 		LOGGER.debug("Consulta organismo cesionario (" +
 				"cif=" + cif + ")");
-		return getOrganismoCesionarioDao().select(cif);
+		return getOrganismoCesionarioAmbCif(cif);
 	}
 	public void actualitzarServiciosActivosOrganismoCesionario(
 			String cif,
