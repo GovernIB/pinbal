@@ -44,7 +44,7 @@ $(document).ready(function() {
 		    dataType: 'json',
 		    success: function(json) {
 		    	$('#select-servei').empty();
-	        	$('#select-servei').append($('<option>').text('<spring:message code="consulta.list.filtre.servei"/>:'));
+	        	$('#select-servei').append($('<option value="">').text('<spring:message code="consulta.list.filtre.servei"/>:'));
 		        $.each(json, function(i, value) {
 		            $('#select-servei').append($('<option>').text(value.descripcio).attr('value', value.codi));
 		        });
