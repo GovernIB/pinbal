@@ -51,6 +51,10 @@ $(document).ready(function() {
 		    }
 		});
 	});
+	$('.justificant-reintentar').click(function() {
+		var $link = $(this);
+		setTimeout(function(){$link.attr('href', '#')}, 100);
+	});
 });
 </script>
 </head>
@@ -181,15 +185,27 @@ $(document).ready(function() {
 							${registre.estat}
 						</span>
 					</jmesa:htmlColumn>
-					<jmesa:htmlColumn property="ACCIO_detalls" title="&nbsp;" style="white-space:nowrap;" sortable="false">
-						<a href="consulta/${registre.id}" class="btn"><i class="icon-zoom-in"></i>&nbsp;<spring:message code="consulta.list.taula.detalls"/></a>
-					</jmesa:htmlColumn>
-					<jmesa:htmlColumn property="ACCIO_descarregar" title="&nbsp;" style="width:16px;" sortable="false">
-						<c:if test="${registre.estatTramitada}">
-							<a href="consulta/${registre.id}/justificant">
-								<img src="<c:url value="/img/pdf-icon.png"/>" width="16" height="16" alt="<spring:message code="consulta.list.taula.descarregar.pdf"/>"/>
+					<jmesa:htmlColumn property="ACCIO_justificant" title="&nbsp;" style="width:16px;" sortable="false">
+						<c:if test="${registre.justificantEstatPendent}">
+							<i class="icon-time" title="<spring:message code="consulta.list.taula.justif.pendent"/>"></i>
+						</c:if>
+						<c:if test="${registre.justificantEstatOk}">
+							<a class="btn btn-small" href="consulta/${registre.id}/justificant">
+								<i class="icon-"><img src="<c:url value="/img/pdf-icon.png"/>" width="16" height="16" title="<spring:message code="consulta.list.taula.descarregar.pdf"/>" alt="<spring:message code="consulta.list.taula.descarregar.pdf"/>"/></i>
 							</a>
 						</c:if>
+						<c:if test="${registre.justificantEstatError}">
+							<div class="btn-group">
+								<a class="btn btn-small dropdown-toggle" data-toggle="dropdown" href="#"><i class="icon-"><img src="<c:url value="/img/error_icon.png"/>" width="16" height="15" title="<spring:message code="consulta.list.taula.justif.error"/>" alt="<spring:message code="consulta.list.taula.justif.error"/>"/></i>&nbsp;<span class="caret"></span></a>
+								<ul class="dropdown-menu">
+									<li><a href="consulta/${registre.id}/justificantError" data-toggle="modal" data-target="#modal-justificant-error-${registre.id}"><i class="icon-info-sign"></i>&nbsp;<spring:message code="consulta.list.taula.justif.error.veure"/></a></li>
+									<li><a href="consulta/${registre.id}/justificantReintentar" class="justificant-reintentar"><i class="icon-repeat"></i>&nbsp;<spring:message code="consulta.list.taula.justif.error.reintentar"/></a></li>
+								</ul>
+							</div>
+						</c:if>
+					</jmesa:htmlColumn>
+					<jmesa:htmlColumn property="ACCIO_detalls" title="&nbsp;" style="white-space:nowrap;" sortable="false">
+						<a href="consulta/${registre.id}" class="btn"><i class="icon-zoom-in"></i>&nbsp;<spring:message code="consulta.list.taula.detalls"/></a>
 					</jmesa:htmlColumn>
 				</jmesa:htmlRow>
 			</jmesa:htmlTable>
@@ -201,6 +217,22 @@ $(document).ready(function() {
 			createHiddenInputFieldsForLimitAndSubmit(id);
 		}
 	</script>
+
+	<c:forEach var="consulta" items="${consultes}">
+		<c:if test="${consulta.justificantEstatError}">
+			<div class="modal hide fade" id="modal-justificant-error-${consulta.id}" style="width:900px;margin-left:-450px;">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+					<h3><spring:message code="consulta.list.taula.justif.error"/></h3>
+				</div>
+				<div class="modal-body">
+					<textarea style="width:98%" rows="18">${consulta.justificantError}</textarea>
+				</div>
+				<div class="modal-footer">
+				</div>
+			</div>
+		</c:if>
+	</c:forEach>
 
 </body>
 </html>

@@ -21,7 +21,6 @@ public class ConsultaDto implements Serializable {
 		Processant,
 		Tramitada,
 		Error;
-		
 		public static EstatTipus[] sortedValues() {
 			return new EstatTipus[] {
 					EstatTipus.Error,
@@ -29,6 +28,13 @@ public class ConsultaDto implements Serializable {
 					EstatTipus.Processant,
 					EstatTipus.Tramitada};
 		}
+	}
+	public enum JustificantEstat {
+		PENDENT, // Hi ha justificant però encara no s'ha pogut generar/custodiar
+		OK, // Hi ha justificant i ja està generat i custodiat
+		ERROR, // Hi ha justificant però hi ha hagut errors al generar o custodiar
+		NO_DISPONIBLE, // Aquesta consulta no te justificant associat
+		OK_NO_CUSTODIA // Hi ha justificant i la custòdia està deshabilitada
 	}
 	public enum Consentiment {
 		Si,
@@ -82,6 +88,11 @@ public class ConsultaDto implements Serializable {
 
 	private boolean recobriment;
 	private boolean multiple;
+
+	private JustificantEstat justificantEstat;
+	private boolean custodiat = false;
+	private String custodiaUrl;
+	private String justificantError;
 
 	private boolean hiHaPeticio = false;
 	private String peticioXml;
@@ -297,6 +308,30 @@ public class ConsultaDto implements Serializable {
 	public void setMultiple(boolean multiple) {
 		this.multiple = multiple;
 	}
+	public JustificantEstat getJustificantEstat() {
+		return justificantEstat;
+	}
+	public void setJustificantEstat(JustificantEstat justificantEstat) {
+		this.justificantEstat = justificantEstat;
+	}
+	public boolean isCustodiat() {
+		return custodiat;
+	}
+	public void setCustodiat(boolean custodiat) {
+		this.custodiat = custodiat;
+	}
+	public String getCustodiaUrl() {
+		return custodiaUrl;
+	}
+	public void setCustodiaUrl(String custodiaUrl) {
+		this.custodiaUrl = custodiaUrl;
+	}
+	public String getJustificantError() {
+		return justificantError;
+	}
+	public void setJustificantError(String justificantError) {
+		this.justificantError = justificantError;
+	}
 	public boolean isHiHaPeticio() {
 		return hiHaPeticio;
 	}
@@ -413,6 +448,19 @@ public class ConsultaDto implements Serializable {
 	}
 	public boolean isEstatError() {
 		return estat.equals(EstatTipus.Error.name());
+	}
+
+	public boolean isJustificantEstatPendent() {
+		return justificantEstat.equals(JustificantEstat.PENDENT);
+	}
+	public boolean isJustificantEstatOk() {
+		return justificantEstat.equals(JustificantEstat.OK) || justificantEstat.equals(JustificantEstat.OK_NO_CUSTODIA);
+	}
+	public boolean isJustificantEstatError() {
+		return justificantEstat.equals(JustificantEstat.ERROR);
+	}
+	public boolean isJustificantEstatNoDisponible() {
+		return justificantEstat.equals(JustificantEstat.NO_DISPONIBLE);
 	}
 
 	public static DocumentTipus[] getDocumentTipusValorsPerFormulari() {

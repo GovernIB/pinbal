@@ -40,13 +40,21 @@ import es.caib.pinbal.core.audit.PinbalAuditingEntityListener;
 @EntityListeners(PinbalAuditingEntityListener.class)
 public class Consulta extends PinbalAuditable<Long> {
 
-	public static final int ERROR_MAX_LENGTH = 4000;
+	public static final int ERROR_SCSP_MAX_LENGTH = 4000;
+	public static final int ERROR_JUSTIFICANT_MAX_LENGTH = 1000;
 
 	public enum EstatTipus {
-		Pendent,
-		Processant,
-		Tramitada,
-		Error
+		Pendent, // 0
+		Processant, // 1
+		Tramitada, // 2
+		Error // 3
+	}
+	public enum JustificantEstat {
+		PENDENT, // 0 - Hi ha justificant però encara no s'ha pogut generar/custodiar
+		OK, // 1 - Hi ha justificant i ja està generat i custodiat
+		ERROR, // 2 - Hi ha justificant però hi ha hagut errors al generar o custodiar
+		NO_DISPONIBLE, // 3 - Aquesta consulta no te justificant associat
+		OK_NO_CUSTODIA // 4 - Hi ha justificant i la custòdia està deshabilitada
 	}
 
 	private static final long serialVersionUID = -6657066865382086237L;
@@ -79,7 +87,7 @@ public class Consulta extends PinbalAuditable<Long> {
 	@Column(name = "estat", nullable = false)
 	private EstatTipus estat;
 
-	@Column(name = "error", length = ERROR_MAX_LENGTH)
+	@Column(name = "error", length = ERROR_SCSP_MAX_LENGTH)
 	private String error;
 
 	@Column(name = "recobriment")
@@ -87,8 +95,14 @@ public class Consulta extends PinbalAuditable<Long> {
 	@Column(name = "multiple")
 	private boolean multiple = false;
 
+	@Column(name = "justificant_estat", nullable = false)
+	private JustificantEstat justificantEstat;
 	@Column(name = "custodiat")
 	private boolean custodiat = false;
+	@Column(name = "custodia_url", length = 255)
+	private String custodiaUrl;
+	@Column(name = "justificant_error", length = ERROR_JUSTIFICANT_MAX_LENGTH)
+	private String justificantError;
 
 	@ManyToOne(optional=true, fetch=FetchType.LAZY)
 	@JoinColumn(name="pare_id")
@@ -224,6 +238,15 @@ public class Consulta extends PinbalAuditable<Long> {
 	public boolean isCustodiat() {
 		return custodiat;
 	}
+	public JustificantEstat getJustificantEstat() {
+		return justificantEstat;
+	}
+	public String getCustodiaUrl() {
+		return custodiaUrl;
+	}
+	public String getJustificantError() {
+		return justificantError;
+	}
 	public Consulta getPare() {
 		return pare;
 	}
@@ -236,15 +259,27 @@ public class Consulta extends PinbalAuditable<Long> {
 	}
 	public void updateEstatError(String error) {
 		this.estat = EstatTipus.Error;
-		if (error != null && error.length() > ERROR_MAX_LENGTH) {
+		if (error != null && error.length() > ERROR_SCSP_MAX_LENGTH) {
 			String tokenFinal = " [...]";
-			this.error = error.substring(0, (ERROR_MAX_LENGTH + tokenFinal.length())) + tokenFinal;
+			this.error = error.substring(0, (ERROR_SCSP_MAX_LENGTH + tokenFinal.length())) + tokenFinal;
 		} else {
 			this.error = error;
 		}
 	}
-	public void updateCustodiat(boolean custodiat) {
+	public void updateJustificantEstat(
+			JustificantEstat justificantEstat,
+			boolean custodiat,
+			String custodiaUrl,
+			String justificantError) {
+		this.justificantEstat = justificantEstat;
 		this.custodiat = custodiat;
+		this.custodiaUrl = custodiaUrl;
+		if (justificantError != null && justificantError.length() > ERROR_JUSTIFICANT_MAX_LENGTH) {
+			String tokenFinal = " [...]";
+			this.justificantError = justificantError.substring(0, (ERROR_JUSTIFICANT_MAX_LENGTH + tokenFinal.length())) + tokenFinal;
+		} else {
+			this.justificantError = justificantError;
+		}
 	}
 	public void updateScspSolicitudId(String scspSolicitudId) {
 		this.scspSolicitudId = scspSolicitudId;

@@ -383,6 +383,40 @@ public class ConsultaController extends BaseController {
 		}
 	}
 
+	@RequestMapping(value = "/{consultaId}/justificantReintentar", method = RequestMethod.GET)
+	public String justificantReintentar(
+			HttpServletRequest request,
+			HttpServletResponse response,
+			@PathVariable Long consultaId) throws ConsultaNotFoundException {
+		if (!EntitatHelper.isDelegatEntitatActual(request))
+			return "delegatNoAutoritzat";
+		EntitatDto entitat = EntitatHelper.getEntitatActual(request, entitatService);
+		if (entitat != null) {
+			try {
+				consultaService.reintentarGeneracioJustificant(consultaId);
+				AlertHelper.success(
+						request,
+						getMessage(
+								request, 
+								"consulta.controller.justificant.regenerat"));
+			} catch (Exception ex) {
+				AlertHelper.error(
+						request,
+						getMessage(
+								request, 
+								"consulta.controller.justificant.error") + ": " + ex.getMessage());
+			}
+			return "redirect:../../consulta";
+		} else {
+			AlertHelper.error(
+					request,
+					getMessage(
+							request, 
+							"comu.error.no.entitat"));
+			return "redirect:../../index";
+		}
+	}
+
 	@RequestMapping(value = "/{consultaId}/xmlPeticio", method = RequestMethod.GET)
 	public String xmlPeticio(
 			HttpServletRequest request,

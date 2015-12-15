@@ -33,7 +33,6 @@ import es.caib.pinbal.core.service.ConsultaService;
 import es.caib.pinbal.core.service.EntitatService;
 import es.caib.pinbal.core.service.ProcedimentService;
 import es.caib.pinbal.core.service.ServeiService;
-import es.caib.pinbal.core.service.UsuariService;
 import es.caib.pinbal.core.service.exception.ConsultaNotFoundException;
 import es.caib.pinbal.core.service.exception.ScspException;
 import es.caib.pinbal.core.service.exception.ServeiNotFoundException;
@@ -63,11 +62,6 @@ public class ConsultaMultipleController extends BaseController {
 	private ServeiService serveiService;
 	@Autowired
 	private ConsultaService consultaService;
-	@Autowired
-	private UsuariService usuariService;
-
-	@Autowired(required = true)
-	private javax.validation.Validator validator;
 
 	@RequestMapping(method = RequestMethod.GET)
 	public String get(

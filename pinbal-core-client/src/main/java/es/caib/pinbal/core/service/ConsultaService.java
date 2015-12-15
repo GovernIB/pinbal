@@ -239,8 +239,8 @@ public interface ConsultaService {
 	 * @return l'arxiu amb el document generat.
 	 * @throws ConsultaNotFoundException
 	 *            Si la consulta no és accessible per aquest usuari.
-	 * @throws ScspException
-	 *            Si es produeixen errors al accedir al SCSP.
+	 * @throws JustificantGeneracioException
+	 *            Si es produeixen errors al generar el justificant.
 	 */
 	@PreAuthorize("hasRole('ROLE_DELEG')")
 	public ArxiuDto obtenirJustificant(
@@ -255,8 +255,8 @@ public interface ConsultaService {
 	 * @return l'arxiu amb el document generat.
 	 * @throws ConsultaNotFoundException
 	 *            Si la consulta no és accessible per aquest usuari.
-	 * @throws ScspException
-	 *            Si es produeixen errors al accedir al SCSP.
+	 * @throws JustificantGeneracioException
+	 *            Si es produeixen errors al generar el justificant.
 	 */
 	@PreAuthorize("hasRole('ROLE_DELEG')")
 	public ArxiuDto obtenirJustificantMultipleConcatenat(
@@ -271,11 +271,26 @@ public interface ConsultaService {
 	 * @return l'arxiu amb el document generat.
 	 * @throws ConsultaNotFoundException
 	 *            Si la consulta no és accessible per aquest usuari.
-	 * @throws ScspException
-	 *            Si es produeixen errors al accedir al SCSP.
+	 * @throws JustificantGeneracioException
+	 *            Si es produeixen errors al generar el justificant.
 	 */
 	@PreAuthorize("hasRole('ROLE_DELEG')")
 	public ArxiuDto obtenirJustificantMultipleZip(
+			Long id) throws ConsultaNotFoundException, JustificantGeneracioException;
+
+	/**
+	 * Torna a intentar la generació i custòdia del justificant.
+	 * 
+	 * @param id
+	 *            Atribut id de la consulta.
+	 * @return l'arxiu amb el document generat.
+	 * @throws ConsultaNotFoundException
+	 *            Si la consulta no és accessible per aquest usuari.
+	 * @throws JustificantGeneracioException
+	 *            Si es produeixen errors al generar el justificant.
+	 */
+	@PreAuthorize("hasRole('ROLE_DELEG')")
+	public void reintentarGeneracioJustificant(
 			Long id) throws ConsultaNotFoundException, JustificantGeneracioException;
 
 	/**

@@ -5,6 +5,8 @@ package es.caib.pinbal.core.service;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -69,6 +71,7 @@ import es.caib.pinbal.core.helper.TransaccioHelper;
 import es.caib.pinbal.core.helper.UsuariHelper;
 import es.caib.pinbal.core.model.Consulta;
 import es.caib.pinbal.core.model.Consulta.EstatTipus;
+import es.caib.pinbal.core.model.Consulta.JustificantEstat;
 import es.caib.pinbal.core.model.Entitat;
 import es.caib.pinbal.core.model.EntitatUsuari;
 import es.caib.pinbal.core.model.Procediment;
@@ -146,7 +149,7 @@ public class ConsultaServiceImpl implements ConsultaService {
 	private ServeiHelper serveiHelper;
 	@Resource
 	private ScspHelper scspHelper;
-	
+
 	@Resource
 	private MutableAclService aclService;
 
@@ -211,6 +214,9 @@ public class ConsultaServiceImpl implements ConsultaService {
 					solicituds);
 			updateEstatConsulta(c, resultat, true);
 			c.updateScspSolicitudId(resultat.getIdsSolicituds()[0]);
+			if (EstatTipus.Tramitada.equals(c.getEstat())) {
+				generarCustodiarJustificant(c);
+			}
 			Consulta saved = consultaRepository.save(c);
 			return dtoMappingHelper.getMapperFacade().map(
 					saved,
@@ -220,6 +226,7 @@ public class ConsultaServiceImpl implements ConsultaService {
 			LOGGER.error("Excepció al realitzar consulta SCSP (id=" + idPeticion + ", servei=" + consulta.getServeiCodi() + ", usuari=" + auth.getName() + ")", ex);
 			throw new ScspException(ex.getMessage(), ex);
 		}
+		// Generació del justificant
 	}
 
 	@Transactional(rollbackFor = {ProcedimentServeiNotFoundException.class, ServeiNotAllowedException.class, ScspException.class})
@@ -320,6 +327,9 @@ public class ConsultaServiceImpl implements ConsultaService {
 					consulta.getScspPeticionId());
 			updateEstatConsulta(consulta, resultat, true);
 			consulta.updateScspSolicitudId(resultat.getIdsSolicituds()[0]);
+			if (EstatTipus.Tramitada.equals(consulta.getEstat())) {
+				generarCustodiarJustificant(consulta);
+			}
 			return dtoMappingHelper.getMapperFacade().map(
 					consulta,
 					ConsultaDto.class);
@@ -515,11 +525,14 @@ public class ConsultaServiceImpl implements ConsultaService {
 			ConsultaDto resposta = dtoMappingHelper.getMapperFacade().map(
 					saved,
 					ConsultaDto.class);
-			// Si la petició ha produit un error ompl els camps per permetre
-			// al recobriment generar el missatge amb informació de l'error.
 			if (resultat.isError()) {
+				// Si la petició ha produit un error ompl els camps per permetre
+				// al recobriment generar el missatge amb informació de l'error.
 				resposta.setRespostaEstadoCodigo(resultat.getErrorCodi());
 				resposta.setRespostaEstadoError(resultat.getErrorDescripcio());
+			} else {
+				// Si no hi ha error genera el justificant
+				generarCustodiarJustificant(saved);
 			}
 			return resposta;
 		} catch (Exception ex) {
@@ -657,6 +670,9 @@ public class ConsultaServiceImpl implements ConsultaService {
 			ResultatEnviamentPeticio resultat = scspHelper.recuperarResultatEnviamentPeticio(consulta.getScspPeticionId());
 			updateEstatConsulta(consulta, resultat, true);
 			consulta.updateScspSolicitudId(resultat.getIdsSolicituds()[0]);
+			if (EstatTipus.Tramitada.equals(consulta.getEstat())) {
+				generarCustodiarJustificant(consulta);
+			}
 			return dtoMappingHelper.getMapperFacade().map(
 					consulta,
 					ConsultaDto.class);
@@ -829,11 +845,9 @@ public class ConsultaServiceImpl implements ConsultaService {
 			throw new ConsultaNotFoundException();
 		}
 		try {
-			return obtenirJustificantConsulta(
-					consulta,
-					false);
+			return obtenirJustificantConsulta(consulta);
 		} catch (Exception ex) {
-			LOGGER.error("Error al generar justificant per a la consulta (id=" + id + ")", ex);
+			LOGGER.error("Error al obtenir el justificant de la consulta (id=" + id + ")", ex);
 			throw new JustificantGeneracioException(ex.getMessage(), ex);
 		}
 	}
@@ -937,6 +951,46 @@ public class ConsultaServiceImpl implements ConsultaService {
 		} catch (Exception ex) {
 			LOGGER.error("Error al generar justificant ZIP per a la consulta múltiple (id=" + id + ")", ex);
 			throw new JustificantGeneracioException(ex.getMessage(), ex);
+		}
+	}
+
+	@Transactional(readOnly = true)
+	@Override
+	public void reintentarGeneracioJustificant(
+			Long id) throws ConsultaNotFoundException, JustificantGeneracioException {
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		LOGGER.debug("Reintentant generació del justificant per a la consulta (id=" + id + ")");
+		copiarPropertiesToDb();
+		Consulta consulta = consultaRepository.findOne(id);
+		if (consulta == null) {
+			LOGGER.error("No s'ha trobat la consulta (id=" + id + ")");
+			throw new ConsultaNotFoundException();
+		}
+		if (!auth.getName().equals(consulta.getCreatedBy().getCodi())) {
+			LOGGER.error("La consulta (id=" + id + ") no pertany a aquest usuari");
+			throw new ConsultaNotFoundException();
+		}
+		ResultatEnviamentPeticio resultat;
+		try {
+			resultat = scspHelper.recuperarResultatEnviamentPeticio(consulta.getScspPeticionId());
+		} catch (Exception ex) {
+			LOGGER.error("No s'ha pogut recuperar l'estat de la consulta (id=" + id + ")", ex);
+			throw new JustificantGeneracioException();
+		}
+		if (resultat.isError()) {
+			LOGGER.error("La consulta (id=" + id + ") conté errors");
+			throw new ConsultaNotFoundException();
+		}
+		if (EstatTipus.Tramitada.equals(consulta.getEstat())) {
+			try {
+				generarCustodiarJustificant(consulta);
+			} catch (Exception ex) {
+				LOGGER.error("Error al generar el justificant de la consulta (id=" + id + ")", ex);
+				throw new JustificantGeneracioException(ex.getMessage(), ex);
+			}
+		} else {
+			LOGGER.error("La consulta no està en estat TRAMITADA (id=" + id + ")");
+			throw new JustificantGeneracioException();
 		}
 	}
 
@@ -1722,14 +1776,29 @@ public class ConsultaServiceImpl implements ConsultaService {
 	}
 
 	private ArxiuDto obtenirJustificantConsulta(
-			Consulta consulta,
-			boolean deshabilitarSignaturaICustodia) throws Exception {
+			Consulta consulta) throws Exception {
+		if (JustificantEstat.PENDENT.equals(consulta.getJustificantEstat())) {
+			LOGGER.error("L'estat del justificant de la consulta és PENDENT (" +
+					"id=" + consulta.getId() + ")");
+			throw new JustificantGeneracioException("L'estat del justificant de la consulta és PENDENT");
+		}
+		if (JustificantEstat.ERROR.equals(consulta.getJustificantEstat())) {
+			LOGGER.error("L'estat del justificant de la consulta és ERROR (" +
+					"id=" + consulta.getId() + ")");
+			throw new JustificantGeneracioException("L'estat del justificant de la consulta és ERROR");
+		}
+		if (JustificantEstat.NO_DISPONIBLE.equals(consulta.getJustificantEstat())) {
+			LOGGER.error("L'estat del justificant de la consulta és NO_DISPONIBLE (" +
+					"id=" + consulta.getId() + ")");
+			throw new JustificantGeneracioException("L'estat del justificant de la consulta és NO_DISPONIBLE");
+		}
 		String serveiCodi = consulta.getProcedimentServei().getServei();
 		String peticionId = consulta.getScspPeticionId();
 		String solicitudId = consulta.getScspSolicitudId();
 		ServeiConfig serveiConfig = serveiConfigRepository.findByServei(serveiCodi);
 		ArxiuDto arxiuDto = new ArxiuDto();
 		if (serveiConfig.getJustificantTipus() != null && JustificantTipus.ADJUNT_PDF_BASE64.equals(serveiConfig.getJustificantTipus())) {
+			LOGGER.debug("El justificant de la consulta (id=" + consulta.getId() + ") està inclòs a dins la resposta");
 			Map<String, String> dadesEspecifiques = scspHelper.getDadesEspecifiquesResposta(
 					peticionId,
 					solicitudId);
@@ -1743,22 +1812,26 @@ public class ConsultaServiceImpl implements ConsultaService {
 				// es retornarà el justificant genèric.
 			}
 		}
-		// Generam el justificant a partir de la resposta SCSP
 		arxiuDto.setNom(
 				conversioTipusDocumentHelper.nomArxiuConvertit(
 						justificantPlantillaHelper.getNomArxiuGenerat(
 								consulta.getScspPeticionId(),
 								consulta.getScspSolicitudId()),
 						getExtensioSortida()));
-		if (consulta.isCustodiat()) {
+		if (JustificantEstat.OK.equals(consulta.getJustificantEstat())) {
+			arxiuDto.setContingut(
+					pluginHelper.custodiaObtenirDocument(peticionId));
+		} else if (JustificantEstat.OK_NO_CUSTODIA.equals(consulta.getJustificantEstat())) {
+			arxiuDto.setContingut(
+					generarJustificantAmbPlantilla(consulta));
+		}
+		return arxiuDto;
+		/*if (consulta.isCustodiat()) {
 			LOGGER.debug("El justificant per a la consulta (id=" + consulta.getId() + ") ja està custodiat");
 			arxiuDto.setContingut(
 					pluginHelper.custodiaObtenirDocument(peticionId));
 			return arxiuDto;
 		} else {
-			/*// Genera el certificat SCSP original
-			ByteArrayOutputStream baosGeneracio = scspHelper.generaJustificanteTransmision(
-					documentId);*/
 			// Genera el justificant emprant la plantilla
 			byte[] justificant = generarJustificantAmbPlantilla(consulta);
 			// Només signa i custòdia el document si és un PDF i si està
@@ -1798,6 +1871,82 @@ public class ConsultaServiceImpl implements ConsultaService {
 				arxiuDto.setContingut(justificant);
 			}
 			return arxiuDto;
+		}*/
+	}
+
+	private void generarCustodiarJustificant(
+			Consulta consulta) throws Exception {
+		String serveiCodi = consulta.getProcedimentServei().getServei();
+		String peticionId = consulta.getScspPeticionId();
+		ServeiConfig serveiConfig = serveiConfigRepository.findByServei(serveiCodi);
+		String arxiuNom = conversioTipusDocumentHelper.nomArxiuConvertit(
+				justificantPlantillaHelper.getNomArxiuGenerat(
+						consulta.getScspPeticionId(),
+						consulta.getScspSolicitudId()),
+						getExtensioSortida());
+		// Només signa i custòdia si està activat per paràmetre i 
+		// si encara no està custodiat
+		if (isSignarICustodiarJustificant() && !consulta.isCustodiat()) {
+			/*// Genera el certificat SCSP original
+			ByteArrayOutputStream baosGeneracio = scspHelper.generaJustificanteTransmision(
+					documentId);*/
+			// Genera el justificant emprant la plantilla
+			byte[] justificant = generarJustificantAmbPlantilla(consulta);
+			// Només signa i custòdia el document si és un PDF
+			if ("pdf".equalsIgnoreCase(getExtensioSortida())) {
+				boolean custodiat = false;
+				JustificantEstat justificantEstat = JustificantEstat.PENDENT;
+				String custodiaUrl = consulta.getCustodiaUrl();
+				String custodiaError = null;
+				try {
+					LOGGER.debug("Inici del procés de signatura i custodia del justificant de la consulta (id=" + consulta.getId() + ")");
+					String documentTipus = null;
+					if (serveiConfig != null)
+						documentTipus = serveiConfig.getCustodiaCodi();
+					if (custodiaUrl == null || custodiaUrl.isEmpty()) {
+						// Obté la URL de comprovació de signatura
+						LOGGER.debug("Sol·licitud de URL per a la custòdia del justificant de la consulta (id=" + consulta.getId() + ")");
+						custodiaUrl = pluginHelper.custodiaObtenirUrlVerificacioDocument(peticionId);
+						LOGGER.debug("Obtinguda URL per a la custòdia del justificant de la consulta (id=" + consulta.getId() + ", custodiaUrl=" + custodiaUrl + ")");
+					}
+					// Signa el justificant
+					LOGGER.debug("Signatura del justificant de la consulta (id=" + consulta.getId() + ")");
+					ByteArrayOutputStream signedStream = new ByteArrayOutputStream();
+					pluginHelper.signaturaSignarEstamparPdf(
+							new ByteArrayInputStream(justificant),
+							signedStream,
+							custodiaUrl);
+					// Envia el justificant a custòdia
+					LOGGER.debug("Custodia del justificant de la consulta (id=" + consulta.getId() + ")");
+					byte[] arxiuSignat = signedStream.toByteArray();
+					pluginHelper.custodiaEnviarPdfSignat(
+							peticionId,
+							arxiuNom,
+							arxiuSignat,
+							documentTipus);
+					justificantEstat = JustificantEstat.OK;
+					custodiat = true;
+				} catch (Exception ex) {
+					justificantEstat = JustificantEstat.ERROR;
+					StringWriter sw = new StringWriter();
+					ex.printStackTrace(new PrintWriter(sw));
+					custodiaError =  sw.toString();
+				} finally {
+					consulta.updateJustificantEstat(
+							justificantEstat,
+							custodiat,
+							custodiaUrl,
+							custodiaError);
+				}
+			} else {
+				throw new Exception("Només es poden signar i custodiar arxius PDF.");
+			}
+		} else {
+			consulta.updateJustificantEstat(
+					JustificantEstat.OK_NO_CUSTODIA,
+					false,
+					null,
+					null);
 		}
 	}
 

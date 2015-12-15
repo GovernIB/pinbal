@@ -153,6 +153,13 @@ public class ConsultaServiceBean implements ConsultaService {
 
 	@Override
 	@RolesAllowed("tothom")
+	public void reintentarGeneracioJustificant(
+			Long id) throws ConsultaNotFoundException, JustificantGeneracioException {
+		delegate.reintentarGeneracioJustificant(id);
+	}
+
+	@Override
+	@RolesAllowed("tothom")
 	public PaginaLlistatDto<ConsultaDto> findSimplesByFiltrePaginatPerDelegat(
 			Long entitatId,
 			ConsultaFiltreDto filtre,
