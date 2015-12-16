@@ -96,7 +96,7 @@ public class Consulta extends PinbalAuditable<Long> {
 	private boolean multiple = false;
 
 	@Column(name = "justificant_estat", nullable = false)
-	private JustificantEstat justificantEstat;
+	private JustificantEstat justificantEstat = JustificantEstat.PENDENT;
 	@Column(name = "custodiat")
 	private boolean custodiat = false;
 	@Column(name = "custodia_url", length = 255)
