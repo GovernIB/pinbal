@@ -216,8 +216,8 @@ $('#dadesPeticio').on('shown', function () {
 								</td>
 								<c:if test="${consulta.estatTramitada}">
 									<td>
-										<a href="../${filla.id}/justificant">
-											<img src="<c:url value="/img/pdf-icon.png"/>" width="16" height="16" alt="<spring:message code="consulta.list.taula.descarregar.pdf"/>"/>
+										<a class="btn btn-small" href="../${filla.id}/justificant">
+											<i class="icon-"><img src="<c:url value="/img/pdf-icon.png"/>" width="16" height="16" alt="<spring:message code="consulta.list.taula.descarregar.pdf"/>"/></i>
 										</a>
 									</td>
 								</c:if>

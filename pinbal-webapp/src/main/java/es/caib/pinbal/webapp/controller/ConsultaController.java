@@ -32,6 +32,7 @@ import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.supercsv.io.CsvListReader;
 import org.supercsv.io.ICsvListReader;
@@ -387,7 +388,8 @@ public class ConsultaController extends BaseController {
 	public String justificantReintentar(
 			HttpServletRequest request,
 			HttpServletResponse response,
-			@PathVariable Long consultaId) throws ConsultaNotFoundException {
+			@PathVariable Long consultaId,
+			@RequestParam(value = "info", required = false) Boolean info) throws ConsultaNotFoundException {
 		if (!EntitatHelper.isDelegatEntitatActual(request))
 			return "delegatNoAutoritzat";
 		EntitatDto entitat = EntitatHelper.getEntitatActual(request, entitatService);
@@ -406,7 +408,11 @@ public class ConsultaController extends BaseController {
 								request, 
 								"consulta.controller.justificant.error") + ": " + ex.getMessage());
 			}
-			return "redirect:../../consulta";
+			if (info != null && info.booleanValue()) {
+				return "redirect:../../consulta/" + consultaId;
+			} else {
+				return "redirect:../../consulta";
+			}
 		} else {
 			AlertHelper.error(
 					request,
