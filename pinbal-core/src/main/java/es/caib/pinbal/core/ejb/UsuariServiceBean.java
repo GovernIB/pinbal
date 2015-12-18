@@ -18,6 +18,7 @@ import es.caib.pinbal.core.service.UsuariService;
 import es.caib.pinbal.core.service.exception.EntitatNotFoundException;
 import es.caib.pinbal.core.service.exception.EntitatUsuariNotFoundException;
 import es.caib.pinbal.core.service.exception.EntitatUsuariProtegitException;
+import es.caib.pinbal.core.service.exception.UsuariExternNotFoundException;
 
 /**
  * Implementació de UsuariService que empra una clase delegada per accedir a la
@@ -63,7 +64,7 @@ public class UsuariServiceBean implements UsuariService {
 			boolean delegat,
 			boolean auditor,
 			boolean aplicacio,
-			boolean afegir) throws EntitatNotFoundException {
+			boolean afegir) throws EntitatNotFoundException, UsuariExternNotFoundException {
 		delegate.actualitzarDadesAdmin(id, codi, nif, departament, representant, delegat, auditor, aplicacio, afegir);
 	}
 
@@ -77,7 +78,7 @@ public class UsuariServiceBean implements UsuariService {
 			boolean representant,
 			boolean delegat,
 			boolean aplicacio,
-			boolean afegir) throws EntitatNotFoundException, EntitatUsuariProtegitException {
+			boolean afegir) throws EntitatNotFoundException, EntitatUsuariProtegitException, UsuariExternNotFoundException {
 		delegate.actualitzarDadesRepresentant(id, codi, nif, departament, representant, delegat, aplicacio, afegir);
 	}
 
@@ -88,7 +89,7 @@ public class UsuariServiceBean implements UsuariService {
 			String codi,
 			String nif,
 			boolean auditor,
-			boolean afegir) throws EntitatNotFoundException, EntitatUsuariProtegitException {
+			boolean afegir) throws EntitatNotFoundException, EntitatUsuariProtegitException, UsuariExternNotFoundException {
 		delegate.actualitzarDadesAuditor(id, codi, nif, auditor, afegir);
 	}
 

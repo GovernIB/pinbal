@@ -12,6 +12,7 @@ import es.caib.pinbal.core.dto.UsuariDto;
 import es.caib.pinbal.core.service.exception.EntitatNotFoundException;
 import es.caib.pinbal.core.service.exception.EntitatUsuariNotFoundException;
 import es.caib.pinbal.core.service.exception.EntitatUsuariProtegitException;
+import es.caib.pinbal.core.service.exception.UsuariExternNotFoundException;
 
 /**
  * Declaració dels mètodes per al manteniment dels usuaris.
@@ -73,6 +74,8 @@ public interface UsuariService {
 	 *            true s'han d'afegir.
 	 * @throws EntitatNotFoundException
 	 *            Si no hi ha cap entitat amb l'id especificat.
+	 * @throws UsuariExternNotFoundException
+	 *            Si l'usuari no existeix al sistema extern.
 	 */
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public void actualitzarDadesAdmin(
@@ -84,7 +87,7 @@ public interface UsuariService {
 			boolean delegat,
 			boolean auditor,
 			boolean aplicacio,
-			boolean afegir) throws EntitatNotFoundException;
+			boolean afegir) throws EntitatNotFoundException, UsuariExternNotFoundException;
 
 	/**
 	 * Actualitza les dades d'un usuari per a un representant.
@@ -110,6 +113,8 @@ public interface UsuariService {
 	 *            Si no hi ha cap entitat amb l'id especificat.
 	 * @throws EntitatUsuariProtegitException
 	 *            Si s'intenta modificar un usuari principal.
+	 * @throws UsuariExternNotFoundException
+	 *            Si l'usuari no existeix al sistema extern.
 	 */
 	@PreAuthorize("hasRole('ROLE_REPRES')")
 	public void actualitzarDadesRepresentant(
@@ -120,7 +125,7 @@ public interface UsuariService {
 			boolean representant,
 			boolean delegat,
 			boolean aplicacio,
-			boolean afegir) throws EntitatNotFoundException, EntitatUsuariProtegitException;
+			boolean afegir) throws EntitatNotFoundException, EntitatUsuariProtegitException, UsuariExternNotFoundException;
 
 	/**
 	 * Actualitza les dades d'un usuari per a un auditor.
@@ -140,6 +145,8 @@ public interface UsuariService {
 	 *            Si no hi ha cap entitat amb l'id especificat.
 	 * @throws EntitatUsuariProtegitException
 	 *            Si s'intenta modificar un usuari principal.
+	 * @throws UsuariExternNotFoundException
+	 *            Si l'usuari no existeix al sistema extern.
 	 */
 	@PreAuthorize("hasRole('ROLE_AUDIT')")
 	public void actualitzarDadesAuditor(
@@ -147,7 +154,7 @@ public interface UsuariService {
 			String codi,
 			String nif,
 			boolean auditor,
-			boolean afegir) throws EntitatNotFoundException, EntitatUsuariProtegitException;
+			boolean afegir) throws EntitatNotFoundException, EntitatUsuariProtegitException, UsuariExternNotFoundException;
 
 	/**
 	 * Configura un usuari com a principal de l'entitat.

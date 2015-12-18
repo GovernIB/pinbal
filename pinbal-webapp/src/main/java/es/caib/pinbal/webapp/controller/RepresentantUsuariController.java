@@ -27,6 +27,7 @@ import es.caib.pinbal.core.service.ProcedimentService;
 import es.caib.pinbal.core.service.ServeiService;
 import es.caib.pinbal.core.service.UsuariService;
 import es.caib.pinbal.core.service.exception.EntitatNotFoundException;
+import es.caib.pinbal.core.service.exception.UsuariExternNotFoundException;
 import es.caib.pinbal.webapp.command.EntitatUsuariCommand;
 import es.caib.pinbal.webapp.command.EntitatUsuariCommand.Existent;
 import es.caib.pinbal.webapp.command.EntitatUsuariCommand.TipusCodi;
@@ -150,28 +151,36 @@ public class RepresentantUsuariController extends BaseController {
 						model);
 				return "representantUsuaris";
 			}
-			usuariService.actualitzarDadesRepresentant(
-					command.getId(),
-					command.getCodi(),
-					command.getNif(),
-					command.getDepartament(),
-					command.isRolRepresentant(),
-					command.isRolDelegat(),
-					command.isRolAplicacio(),
-					command.isAfegir());
-			String nomUsuari = command.getNif();
-			for (EntitatUsuariDto usuari: entitat.getUsuaris()) {
-				if (usuari.getUsuari().getNif() != null && usuari.getUsuari().getNif() != null && usuari.getUsuari().getNif().equalsIgnoreCase(command.getNif())) {
-					nomUsuari = usuari.getUsuari().getDescripcio();
-					break;
+			try {
+				usuariService.actualitzarDadesRepresentant(
+						command.getId(),
+						command.getCodi(),
+						command.getNif(),
+						command.getDepartament(),
+						command.isRolRepresentant(),
+						command.isRolDelegat(),
+						command.isRolAplicacio(),
+						command.isAfegir());
+				String nomUsuari = command.getNif();
+				for (EntitatUsuariDto usuari: entitat.getUsuaris()) {
+					if (usuari.getUsuari().getNif() != null && usuari.getUsuari().getNif() != null && usuari.getUsuari().getNif().equalsIgnoreCase(command.getNif())) {
+						nomUsuari = usuari.getUsuari().getDescripcio();
+						break;
+					}
 				}
+				AlertHelper.success(
+						request,
+						getMessage(
+								request, 
+								"representant.controller.usuari.actualitzat",
+								new Object[] {nomUsuari}));
+			} catch (UsuariExternNotFoundException ex) {
+				AlertHelper.error(
+						request,
+						getMessage(
+								request, 
+								"representant.controller.usuari.extern.no.existeix"));
 			}
-			AlertHelper.success(
-					request,
-					getMessage(
-							request, 
-							"representant.controller.usuari.actualitzat",
-							new Object[] {nomUsuari}));
 			return "redirect:../usuari";
 		} else {
 			AlertHelper.error(

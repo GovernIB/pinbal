@@ -27,7 +27,6 @@ import es.caib.pinbal.core.service.exception.EntitatNotFoundException;
 import es.caib.pinbal.core.service.exception.ProcedimentNotFoundException;
 import es.caib.pinbal.core.service.exception.ProcedimentServeiNotFoundException;
 import es.caib.pinbal.core.service.exception.ServeiNotAllowedException;
-import es.caib.pinbal.scsp.ScspHelper;
 import es.scsp.bean.common.Atributos;
 import es.scsp.bean.common.ConfirmacionPeticion;
 import es.scsp.bean.common.DatosGenericos;
@@ -56,8 +55,6 @@ public class RecobrimentImpl implements Recobriment {
 
 	@Autowired
 	private ConsultaService consultaService;
-	@Autowired
-	private ScspHelper scspHelper;
 
 
 

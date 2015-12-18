@@ -31,6 +31,7 @@ import es.caib.pinbal.core.repository.UsuariRepository;
 import es.caib.pinbal.core.service.exception.EntitatNotFoundException;
 import es.caib.pinbal.core.service.exception.EntitatUsuariNotFoundException;
 import es.caib.pinbal.core.service.exception.EntitatUsuariProtegitException;
+import es.caib.pinbal.core.service.exception.UsuariExternNotFoundException;
 import es.caib.pinbal.plugins.DadesUsuari;
 import es.caib.pinbal.plugins.SistemaExternException;
 
@@ -102,7 +103,7 @@ public class UsuariServiceImpl implements UsuariService {
 			boolean delegat,
 			boolean auditor,
 			boolean aplicacio,
-			boolean afegir) throws EntitatNotFoundException {
+			boolean afegir) throws EntitatNotFoundException, UsuariExternNotFoundException {
 		LOGGER.debug("Actualitzant dades no auditor de l'usuari (codi=" + codi + ", nif=" + nif + ") a l'entitat (id=" + id + ")");
 		Entitat entitat = entitatRepository.findOne(id);
 		if (entitat == null) {
@@ -135,7 +136,7 @@ public class UsuariServiceImpl implements UsuariService {
 			boolean representant,
 			boolean delegat,
 			boolean aplicacio,
-			boolean afegir) throws EntitatNotFoundException, EntitatUsuariProtegitException {
+			boolean afegir) throws EntitatNotFoundException, EntitatUsuariProtegitException, UsuariExternNotFoundException {
 		LOGGER.debug("Actualitzant dades no auditor de l'usuari (codi=" + codi + ", nif=" + nif + ") a l'entitat (id=" + id + ")");
 		Entitat entitat = entitatRepository.findOne(id);
 		if (entitat == null) {
@@ -179,7 +180,7 @@ public class UsuariServiceImpl implements UsuariService {
 			String codi,
 			String nif,
 			boolean auditor,
-			boolean afegir) throws EntitatNotFoundException, EntitatUsuariProtegitException {
+			boolean afegir) throws EntitatNotFoundException, EntitatUsuariProtegitException, UsuariExternNotFoundException {
 		LOGGER.debug("Actualitzant dades auditor de l'usuari (codi=" + codi + ", nif=" + nif + ") a l'entitat (id=" + id + ")");
 		Entitat entitat = entitatRepository.findOne(id);
 		if (entitat == null) {
@@ -271,7 +272,7 @@ public class UsuariServiceImpl implements UsuariService {
 			boolean auditor,
 			boolean canviarAplicacio,
 			boolean aplicacio,
-			boolean afegir) {
+			boolean afegir) throws UsuariExternNotFoundException {
 		boolean idPerNif = (codi == null || codi.isEmpty());
 		Usuari usuari;
 		if (idPerNif) {
@@ -287,12 +288,14 @@ public class UsuariServiceImpl implements UsuariService {
 					dadesUsuari = externHelper.dadesUsuariConsultarAmbUsuariNif(nif);
 				} catch (SistemaExternException ex) {
 					LOGGER.warn("No s'han trobat les dades de l'usuari (nif=" + nif + ") al sistema extern");
+					throw new UsuariExternNotFoundException();
 				}
 			} else {
 				try {
 					dadesUsuari = externHelper.dadesUsuariConsultarAmbUsuariCodi(codi);
 				} catch (SistemaExternException ex) {
 					LOGGER.warn("No s'han trobat les dades de l'usuari (codi=" + codi + ") al sistema extern");
+					throw new UsuariExternNotFoundException();
 				}
 			}
 			if (usuari == null) {
