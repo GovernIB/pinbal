@@ -13,7 +13,7 @@
 <script>
 $(document).ready(function() {
 	$('#netejar-filtre').click(function() {
-		$(':input', $('#entitatFiltreCommand')).each (function() {
+		$(':input', $('#form-filtre')).each (function() {
 			var type = this.type, tag = this.tagName.toLowerCase();
 			if (type == 'text' || type == 'password' || tag == 'textarea')
 				this.value = '';
@@ -22,7 +22,7 @@ $(document).ready(function() {
 			else if (tag == 'select')
 				this.selectedIndex = 0;
 		});
-		return true;
+		$('#form-filtre').submit();
 	});
 	$('.confirm-esborrar').click(function() {
 		  return confirm("<spring:message code="entitat.list.confirmacio.esborrar"/>");
@@ -33,14 +33,14 @@ $(document).ready(function() {
 <body>
 
 	<c:url value="/entitat" var="formAction"/>
-	<form:form action="${formAction}" method="post" cssClass="well form-inline" commandName="entitatFiltreCommand">
+	<form:form id="form-filtre" action="${formAction}" method="post" cssClass="well form-inline" commandName="entitatFiltreCommand">
 		<c:set var="campPath" value="codi"/>
 		<spring:message var="placeholderCodi" code="entitat.list.filtre.camp.codi"/>
 		<form:input path="${campPath}" cssClass="input-medium" id="${campPath}" placeholder="${placeholderCodi}"/>
 		<c:set var="campPath" value="nom"/>
 		<spring:message var="placeholderNom" code="entitat.list.filtre.camp.nom"/>
 		<form:input path="${campPath}" cssClass="input-medium" id="${campPath}" placeholder="${placeholderNom}"/>
-		<button id="netejar-filtre" class="btn" type="submit"><spring:message code="comu.boto.netejar"/></button>
+		<button id="netejar-filtre" class="btn" type="button"><spring:message code="comu.boto.netejar"/></button>
 		<button type="submit" class="btn btn-primary"><spring:message code="comu.boto.filtrar"/></button>
 	</form:form>
 

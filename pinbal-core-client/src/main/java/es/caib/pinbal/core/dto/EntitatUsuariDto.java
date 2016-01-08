@@ -18,6 +18,9 @@ public class EntitatUsuariDto implements Serializable {
 	private boolean delegat;
 	private boolean auditor;
 	private boolean aplicacio;
+	
+	// Propietat per a mostrar el check amb accés permés als llistats
+	private Boolean acces = false;
 
 	public EntitatUsuariDto(
 			UsuariDto usuari,
@@ -77,6 +80,13 @@ public class EntitatUsuariDto implements Serializable {
 	}
 	public void setAplicacio(boolean aplicacio) {
 		this.aplicacio = aplicacio;
+	}
+
+	public Boolean getAcces() {
+		return acces;
+	}
+	public void setAcces(Boolean acces) {
+		this.acces = acces;
 	}
 
 	@Override

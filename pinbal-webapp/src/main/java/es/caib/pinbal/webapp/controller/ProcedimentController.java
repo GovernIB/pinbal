@@ -266,9 +266,19 @@ public class ProcedimentController extends BaseController {
 			if (procediment != null) {
 				model.addAttribute("entitat", entitat);
 				model.addAttribute("procediment", procediment);
+				
+				List<ServeiDto> serveisActius = serveiService.findAmbEntitat(entitat.getId());
+				for (ServeiDto servei: serveisActius) {
+					for (String serveiActiu: procediment.getServeisActius()) {
+						if (servei.getCodi().equals(serveiActiu)) {
+							servei.setActiu(true);
+							break;
+						}
+					}
+				}
 				model.addAttribute(
 						"serveisActius",
-						serveiService.findAmbEntitat(entitat.getId()));
+						serveisActius);
 				return "procedimentServeis";
 			} else {
 				AlertHelper.error(
@@ -389,7 +399,18 @@ public class ProcedimentController extends BaseController {
 					model.addAttribute("entitat", entitat);
 					model.addAttribute("procediment", procediment);
 					model.addAttribute("servei", serveiService.findAmbCodiPerAdminORepresentant(serveiCodi));
-					model.addAttribute("usuarisAmbPermis", procedimentService.findUsuarisAmbPermisPerServei(procedimentId, serveiCodi));
+					List<String> usuarisAmbPermis = procedimentService.findUsuarisAmbPermisPerServei(procedimentId, serveiCodi);
+					model.addAttribute("usuarisAmbPermis", usuarisAmbPermis);
+					
+					for (EntitatUsuariDto usuari: entitat.getUsuarisRepresentant()) {
+						for (String usuariAmbPermis: usuarisAmbPermis) {
+							if (usuari.getUsuari().getCodi().equals(usuariAmbPermis)) {
+								usuari.setAcces(true);
+								break;
+							}
+						}
+					}
+					
 					return "procedimentServeiPermisos";
 				} else {
 					AlertHelper.error(

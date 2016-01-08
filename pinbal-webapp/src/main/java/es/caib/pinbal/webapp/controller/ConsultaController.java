@@ -41,8 +41,10 @@ import org.supercsv.prefs.CsvPreference;
 import es.caib.pinbal.core.dto.ArxiuDto;
 import es.caib.pinbal.core.dto.ConsultaDto;
 import es.caib.pinbal.core.dto.ConsultaDto.DocumentTipus;
+import es.caib.pinbal.core.dto.DadaEspecificaDto;
 import es.caib.pinbal.core.dto.EntitatDto;
 import es.caib.pinbal.core.dto.EntitatUsuariDto;
+import es.caib.pinbal.core.dto.NodeDto;
 import es.caib.pinbal.core.dto.OrdreDto;
 import es.caib.pinbal.core.dto.OrdreDto.OrdreDireccio;
 import es.caib.pinbal.core.dto.PaginaLlistatDto;
@@ -688,9 +690,10 @@ public class ConsultaController extends BaseController {
 	private void omplirModelAmbDadesEspecifiques(
 			String serveiCodi,
 			Model model) throws ScspException, ServeiNotFoundException {
+		List<NodeDto<DadaEspecificaDto>> llistaArbreDadesEspecifiques = serveiService.generarArbreDadesEspecifiques(serveiCodi).toList();
 		model.addAttribute(
 				"llistaArbreDadesEspecifiques",
-				serveiService.generarArbreDadesEspecifiques(serveiCodi).toList());
+				llistaArbreDadesEspecifiques);
 		List<ServeiCampDto> camps = serveiService.findServeiCamps(serveiCodi);
 		model.addAttribute("campsDadesEspecifiques", camps);
 		Map<Long, List<ServeiCampDto>> campsAgrupats = new HashMap<Long, List<ServeiCampDto>>();

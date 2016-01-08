@@ -77,7 +77,8 @@ public class ServeiDto implements Serializable {
 	
 	private Long numeroProcedimentsAssociats;
 
-
+	// Propietat per a mostrar el check actiu als llistats
+	private Boolean actiu = false;
 
 	public ServeiDto() {
 	}
@@ -409,6 +410,13 @@ public class ServeiDto implements Serializable {
 	}
 	public boolean isConsultaMultiplePermesa() {
 		return (scspUrlAsincrona != null && !scspUrlAsincrona.isEmpty());
+	}
+
+	public boolean getActiu() {
+		return actiu;
+	}
+	public void setActiu(boolean actiu) {
+		this.actiu = actiu;
 	}
 
 	@Override

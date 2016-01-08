@@ -29,7 +29,7 @@ $(document).ready(function() {
 			else if (tag == 'select')
 				this.selectedIndex = 0;
 		});
-		return true;
+		$('#form-filtre').submit();
 	});
 	$('#select-procediment').change(function() {
 		var targetUrl;
@@ -168,7 +168,7 @@ $(document).ready(function() {
 				</div>
 				<div class="span4" style="text-align:right">
 					<label>&nbsp;</label>
-					<button id="netejar-filtre" class="btn" type="submit"><spring:message code="comu.boto.netejar"/></button>
+					<button id="netejar-filtre" class="btn" type="button"><spring:message code="comu.boto.netejar"/></button>
 					<button class="btn btn-primary" type="submit"><spring:message code="comu.boto.filtrar"/></button>
 				</div>
 			</div>

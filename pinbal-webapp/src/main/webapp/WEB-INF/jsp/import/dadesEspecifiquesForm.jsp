@@ -7,19 +7,24 @@
 <c:if test="${empty dadesEspecifiquesDisabled}"><c:set var="dadesEspecifiquesDisabled" value="${false}"/></c:if>
 <c:set var="numColumnes" value="${2}"/>
 <c:set var="indexCamp" value="${0}"/>
+
 <c:forEach var="camp" items="${campsPerMostrar}" varStatus="status">
 	<c:set var="campId" value="camp_${camp.id}"/>
 	<c:set var="campCommandPath" value="dadesEspecifiques[${camp.path}]"/>
 	<c:set var="campError"><form:errors path="${campCommandPath}"/></c:set>
-	<c:if test="${not dadesEspecifiquesDisabled}">
-		<c:set var="campValorDefecte">${camp.valorPerDefecte}</c:set>
-	</c:if>
+	
+	<c:set var="ruta" value="/${camp.path}"></c:set>
+	<c:set var="valorDadaEspecifica" value="${dadesEspecifiquesValors[ruta]}"/>
+	
+	<c:if test="${not dadesEspecifiquesDisabled}"><c:set var="campValorDefecte">${camp.valorPerDefecte}</c:set></c:if>
+	<c:if test="${dadesEspecifiquesDisabled}"><c:set var="campValorDefecte">${valorDadaEspecifica}</c:set></c:if>
 	<c:if test="${pageContext.request.method == 'POST'}"><c:set var="campValorDefecte">${param[campId]}</c:set></c:if>
+
 	<c:set var="dadaEspecifica" value="${null}"/>
 	<c:forEach var="nodeDadaEspecifica" items="${llistaArbreDadesEspecifiques}">
 		<c:if test="${nodeDadaEspecifica.dades.pathAmbSeparadorDefault == camp.path}"><c:set var="dadaEspecifica" value="${nodeDadaEspecifica.dades}"/></c:if>
 	</c:forEach>
-	<c:set var="valorDadaEspecifica" value="${dadesEspecifiquesValors[camp.path]}"/>
+	
 	<c:choose>
 		<c:when test="${camp.visible}">
 			<c:if test="${indexCamp == 0 or (indexCamp % numColumnes) == 0}">
@@ -157,6 +162,9 @@
 	   									<c:set var="selectValue" value="${valorDadaEspecifica}"/>
 	   									<c:if test="${empty selectValue}"><c:set var="selectValue" value="${camp.valorPerDefecte}"/></c:if>
 	   									<select id="${campId}" name="${campId}"<c:if test="${dadesEspecifiquesDisabled}"> disabled="disabled"</c:if> class="span12">
+	   										<c:if test="${dadesEspecifiquesDisabled or not camp.obligatori}">
+	   											<option value=""><spring:message code="comu.opcio.sense.definir"/></option>
+	   										</c:if>
 	   										<c:forEach var="enumeracioValor" items="${dadaEspecifica.enumeracioValors}" varStatus="status">
 	   											<option value="${enumeracioValor}"<c:if test="${enumeracioValor == selectValue}"> selected="selected"</c:if>>${camp.enumDescripcions[status.index]}</option>
 	   										</c:forEach>

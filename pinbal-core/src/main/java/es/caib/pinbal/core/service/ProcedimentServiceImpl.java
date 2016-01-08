@@ -251,6 +251,13 @@ public class ProcedimentServiceImpl implements ProcedimentService {
 			throw new ProcedimentServeiNotFoundException();
 		}
 		procedimentServei.updateActiu(false);
+		
+		// Esborrar permisos assignats al servei
+		PermisosHelper.revocarPermisosServei(
+				ProcedimentServei.class,
+				procedimentServei.getId(),
+				aclService);
+//				BasePermission.READ);
 	}
 
 	@Transactional(rollbackFor = {ProcedimentNotFoundException.class, ProcedimentServeiNotFoundException.class, EntitatUsuariNotFoundException.class})

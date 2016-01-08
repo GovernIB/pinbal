@@ -31,7 +31,7 @@
 <script>
 $(document).ready(function() {
 	$('#netejar-filtre').click(function() {
-		$(':input', $('#usuariFiltreCommand')).each (function() {
+		$(':input', $('#form-filtre')).each (function() {
 			var type = this.type, tag = this.tagName.toLowerCase();
 			if (type == 'text' || type == 'password' || tag == 'textarea')
 				this.value = '';
@@ -40,7 +40,7 @@ $(document).ready(function() {
 			else if (tag == 'select')
 				this.selectedIndex = 0;
 		});
-		return true;
+		$('#form-filtre').submit();
 	});
 	$('select[name="tipus"]', $('form#modal-form')).change(function() {
 		if (this.value == '${caracterTipusNif}') {
@@ -117,7 +117,7 @@ function showModalEditar(
 <body>
 
 	<c:url value="/representant/usuari" var="formAction"/>
-	<form:form action="${formAction}" method="post" cssClass="well form-inline" commandName="usuariFiltreCommand">
+	<form:form id="form-filtre" action="${formAction}" method="post" cssClass="well form-inline" commandName="usuariFiltreCommand">
 		<c:set var="campPath" value="codi"/>
 		<spring:message var="placeholderCodi" code="representant.usuaris.filtre.camp.codi"/>
 		<form:input path="${campPath}" cssClass="input-medium" id="${campPath}" placeholder="${placeholderCodi}"/>
@@ -130,7 +130,7 @@ function showModalEditar(
 		<c:set var="campPath" value="departament"/>
 		<spring:message var="placeholderDepartament" code="representant.usuaris.filtre.camp.departament"/>
 		<form:input path="${campPath}" cssClass="input-medium" id="${campPath}" placeholder="${placeholderDepartament}"/>
-		<button id="netejar-filtre" class="btn" type="submit"><spring:message code="comu.boto.netejar"/></button>
+		<button id="netejar-filtre" class="btn" type="button"><spring:message code="comu.boto.netejar"/></button>
 		<button type="submit" class="btn btn-primary"><spring:message code="comu.boto.filtrar"/></button>
 	</form:form>
 

@@ -28,7 +28,7 @@ public class ProcedimentCommand {
 
 	@NotEmpty @Size(max=20)
 	private String codi;
-	@NotEmpty @Size(max=255)
+	@NotEmpty @Size(max=100)
 	private String nom;
 	@Size(max=64)
 	private String departament;
