@@ -47,7 +47,27 @@ public class DadesExternesServiceImpl implements DadesExternesService {
 			httpConnection.setRequestMethod("GET");
 			httpConnection.setDoInput(true);
 			httpConnection.setDoOutput(true);
-			return IOUtils.toByteArray(httpConnection.getInputStream());
+			String resposta = new String(
+					IOUtils.toByteArray(
+							httpConnection.getInputStream()));
+			boolean afegirCodiProvincia = false;
+			String tokenInici = "<municipi><codi>";
+			String tokenFi = "</codi>";
+			if (resposta.indexOf(tokenInici) != -1) {
+				int indexInici = resposta.indexOf(tokenInici);
+				int indexFi = resposta.indexOf(tokenFi, indexInici);
+				String codi = resposta.substring(indexInici + tokenInici.length(), indexFi);
+				if (codi.length() < 5) {
+					afegirCodiProvincia = true;
+				}
+			}
+			if (afegirCodiProvincia) {
+				return resposta.replace(
+						"<municipi><codi>",
+						"<municipi><codi>" + provinciaCodi).getBytes();
+			} else {
+				return resposta.getBytes();
+			}
 		} catch (Exception ex) {
 			LOGGER.error("Error al obtenir les províncies de la font externa", ex);
 			return null;
