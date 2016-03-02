@@ -18,3 +18,25 @@ La Plataforma d'Interoperabilitat de les Illes Balears (PINBAL) és una solució
 * Translations: Catalan & Spanish
 * User Interface: Web-based
 
+
+
+**Captures de pantalla**
+
+![Consultes Simples](https://raw.githubusercontent.com/GovernIB/pinbal/binaris/projectinfo_Attachments/screenshots/PINBAL_1.png)<br/>
+Consultes Simples
+
+
+![Verificació de dades d'identitat](https://raw.githubusercontent.com/GovernIB/pinbal/binaris/projectinfo_Attachments/screenshots/PINBAL_2.png)<br/>
+Verificació de dades d'identitat
+
+
+![Gestió de procediments](https://raw.githubusercontent.com/GovernIB/pinbal/binaris/projectinfo_Attachments/screenshots/PINBAL_3.png)<br/>
+Gestió de procediments
+
+
+![Gestió d'entitats](https://raw.githubusercontent.com/GovernIB/pinbal/binaris/projectinfo_Attachments/screenshots/PINBAL_4.png)<br/>
+Gestió d'entitats
+
+
+
+
