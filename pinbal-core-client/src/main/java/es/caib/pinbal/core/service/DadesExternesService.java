@@ -5,8 +5,6 @@ package es.caib.pinbal.core.service;
 
 import org.springframework.security.access.prepost.PreAuthorize;
 
-
-
 /**
  * Mètodes per a obtenir dades de fonts externes.
  * 
@@ -33,5 +31,13 @@ public interface DadesExternesService {
 	 */
 	@PreAuthorize("hasRole('ROLE_DELEG')")
 	public byte[] findMunicipisPerProvincia(String provinciaCodi);
+
+	/**
+	 * Retorna el llistat de tots els països en format
+	 * JSON.
+	 * 
+	 * @return el llistat de països.
+	 */
+	public byte[] findPaisos();
 
 }

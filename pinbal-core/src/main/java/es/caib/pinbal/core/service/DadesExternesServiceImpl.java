@@ -74,6 +74,22 @@ public class DadesExternesServiceImpl implements DadesExternesService {
 		}
 	}
 
+	@Override
+	public byte[] findPaisos() {
+		LOGGER.debug("Cercant tots els paisos");
+		try {
+			URL url = new URL(getDadesComunesBaseUrl() + "/services/paisos/format/JSON/idioma/ca");
+			HttpURLConnection httpConnection = (HttpURLConnection)url.openConnection();
+			httpConnection.setRequestMethod("GET");
+			httpConnection.setDoInput(true);
+			httpConnection.setDoOutput(true);
+			return IOUtils.toByteArray(httpConnection.getInputStream());
+		} catch (Exception ex) {
+			LOGGER.error("Error al obtenir les províncies de la font externa", ex);
+			return null;
+		}
+	}
+
 
 
 	private String getDadesComunesBaseUrl() {

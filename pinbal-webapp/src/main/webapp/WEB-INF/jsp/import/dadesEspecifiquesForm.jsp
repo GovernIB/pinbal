@@ -155,6 +155,35 @@
 	});
 	</script>
 											</c:when>
+											<c:when test="${camp.tipus == 'PAIS'}">
+												<c:set var="campFillId" value=""/>
+												<c:forEach var="candidatFill" items="${campsPerMostrar}">
+													<c:if test="${not empty candidatFill.campPare and candidatFill.campPare.id == camp.id}"><c:set var="campFillId" value="camp_${candidatFill.campPare.id}"/></c:if>
+												</c:forEach>
+												<select id="${campId}" name="${campId}" <c:if test="${dadesEspecifiquesDisabled}"> disabled="disabled"</c:if> class="span12">
+													<option value=""><spring:message code="comu.opcio.carregant"/></option>
+												</select>
+	<script>
+	$.ajax({
+	    url:'<c:url value="/dades/paisos"/>',
+	    type:'GET',
+	    dataType: 'json',
+	    success: function(json) {
+	    	$('#${campId}').empty();
+	    	$('#${campId}').append($('<option value="">').text('<spring:message code="comu.opcio.sense.definir"/>'));
+	        $.each(json, function(i, value) {
+	        	var valorPerDefecte = '${campValorDefecte}';
+	        	if (value.alpha3 == valorPerDefecte) {
+	            	$('#${campId}').append($('<option selected="selected">').text(value.nom).attr('value', value.alpha3));
+	            	<c:if test="${not empty campFillId}">$('#${campFillId}').trigger('change', valorPerDefecte);</c:if>
+	        	} else {
+	        		$('#${campId}').append($('<option>').text(value.nom).attr('value', value.alpha3));
+	        	}
+	        });
+	    }
+	});
+	</script>
+											</c:when>
 											<c:when test="${camp.tipus == 'ETIQUETA'}"></c:when>
 										</c:choose>
 									</c:when>

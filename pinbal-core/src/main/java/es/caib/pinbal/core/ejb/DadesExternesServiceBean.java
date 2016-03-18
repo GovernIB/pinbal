@@ -39,4 +39,10 @@ public class DadesExternesServiceBean implements DadesExternesService {
 		return delegate.findMunicipisPerProvincia(provinciaCodi);
 	}
 
+	@Override
+	@RolesAllowed("tothom")
+	public byte[] findPaisos() {
+		return delegate.findPaisos();
+	}
+
 }

@@ -225,8 +225,8 @@ $(document).ready(function() {
 		</div>
 	</div>
     <div class="container row-fluid">
-    	<div class="pull-left colophon"><p>Pinbal v${versioActual}</p></div>
-        <div class="pull-right govern-footer"><p><img src="<c:url value="/img/govern-logo-neg.png"/>" width="129" height="30" alt="<spring:message code="decorator.govern"/>" /></p></div>
+    	<div class="pull-left colophon versio-footer" style="margin: 10px 0 0 40px"><p>Pinbal v${versioActual}</p></div>
+        <div class="pull-right govern-footer" style="margin: 10px 40px 0 0"><p><img src="<c:url value="/img/govern-logo-neg.png"/>" width="129" height="30" alt="<spring:message code="decorator.govern"/>" /></p></div>
     </div>
 
     <script src="<c:url value="/js/bootstrap.min.js"/>"></script>

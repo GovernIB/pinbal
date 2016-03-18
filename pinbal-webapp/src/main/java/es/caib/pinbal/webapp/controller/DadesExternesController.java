@@ -26,6 +26,13 @@ public class DadesExternesController {
 	@Autowired
 	private DadesExternesService dadesExternesService;
 
+	@RequestMapping("/paisos")
+	public void paisos(
+			HttpServletResponse response) throws IOException {
+		response.getOutputStream().write(
+				dadesExternesService.findPaisos());
+	}
+
 	@RequestMapping("/provincies")
 	public void provincies(
 			HttpServletResponse response) throws IOException {
