@@ -1554,13 +1554,29 @@ public class ConsultaServiceImpl implements ConsultaService {
 	
 	@Transactional(readOnly = true)
 	@Override
-	public List<InformeGeneralEstatDto> informeGeneralEstat() {
+	public List<InformeGeneralEstatDto> informeGeneralEstat(Date dataInici, Date dataFi) {
+		
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(dataInici);
+		cal.set(Calendar.HOUR_OF_DAY,0);
+		cal.set(Calendar.MINUTE,0);
+		cal.set(Calendar.SECOND,0);
+		cal.set(Calendar.MILLISECOND,0);
+		dataInici = cal.getTime();
+		
+		cal.setTime(dataFi);
+		cal.set(Calendar.HOUR_OF_DAY,23);
+		cal.set(Calendar.MINUTE,59);
+		cal.set(Calendar.SECOND,59);
+		cal.set(Calendar.MILLISECOND,999);
+		dataFi = cal.getTime();
+		
 		LOGGER.debug("Obtenint informe general d'estats");
 		List<InformeGeneralEstatDto> resposta = new ArrayList<InformeGeneralEstatDto>();
 		
 		List<ProcedimentServei> serveis = procedimentServeiRepository.findAll(
 				new Sort(Sort.Direction.ASC, "procediment.entitat.nom", "procediment.codi", "servei"));
-		List<Object[]> consultes = consultaRepository.countGroupByProcedimentServeiEstat();
+		List<Object[]> consultes = consultaRepository.countGroupByProcedimentServeiEstat(dataInici, dataFi);
 		
 		for (ProcedimentServei servei : serveis) {
 			resposta.add(toInformeGeneralEstatDto(servei, consultes));

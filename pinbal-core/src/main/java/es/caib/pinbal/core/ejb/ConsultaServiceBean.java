@@ -328,8 +328,8 @@ public class ConsultaServiceBean implements ConsultaService {
 	
 	@Override
 	@RolesAllowed("PBL_ADMIN")
-	public List<InformeGeneralEstatDto> informeGeneralEstat() {
-		return delegate.informeGeneralEstat();
+	public List<InformeGeneralEstatDto> informeGeneralEstat(Date dataInici, Date dataFi) {
+		return delegate.informeGeneralEstat(dataInici, dataFi);
 	}
 
 }

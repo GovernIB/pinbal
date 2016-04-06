@@ -3,18 +3,23 @@
  */
 package es.caib.pinbal.webapp.controller;
 
+import java.util.Date;
+
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import es.caib.pinbal.core.service.ConsultaService;
 import es.caib.pinbal.core.service.ProcedimentService;
 import es.caib.pinbal.core.service.ServeiService;
 import es.caib.pinbal.core.service.UsuariService;
+import es.caib.pinbal.webapp.common.AlertHelper;
 
 /**
  * Controlador pels informes.
@@ -23,7 +28,7 @@ import es.caib.pinbal.core.service.UsuariService;
  */
 @Controller
 @RequestMapping("/informe")
-public class InformeController {
+public class InformeController extends BaseController {
 
 	@Autowired
 	private ProcedimentService procedimentService;
@@ -76,11 +81,23 @@ public class InformeController {
 	@RequestMapping(value = "/generalEstat", method = RequestMethod.GET)
 	public String general(
 			HttpServletRequest request,
+			@RequestParam("dataInici") @DateTimeFormat(pattern="dd/MM/yyyy") Date dataInici,
+			@RequestParam("dataFi") @DateTimeFormat(pattern="dd/MM/yyyy") Date dataFi,
 			Model model) {
-		model.addAttribute(
-				"informeDades",
-				consultaService.informeGeneralEstat());
-		return "informeGeneralEstatExcelView";
+
+		if (dataInici != null && dataFi != null) {
+			model.addAttribute(
+					"informeDades",
+					consultaService.informeGeneralEstat(dataInici, dataFi));
+			return "informeGeneralEstatExcelView";
+		} else {
+			AlertHelper.warning(
+					request, 
+					getMessage(
+							request, 
+							"informe.missatges.dates.buides"));
+			return "redirect:../informe";
+		}
 	}
 
 }
