@@ -265,6 +265,9 @@ public interface ConsultaRepository extends JpaRepository<Consulta, Long> {
 			"    count(*) " +
 			"from " +
 			"    Consulta c " +
+			"where " +
+			"    c.dataCreacio >= :dataInici " +
+			"and c.dataCreacio <= :dataFi " +
 			"group by " +
 			"    c.procedimentServei.procediment.entitat.id, " +
 			"    c.procedimentServei.procediment.id, " +
@@ -275,7 +278,9 @@ public interface ConsultaRepository extends JpaRepository<Consulta, Long> {
 			"    c.procedimentServei.procediment.id asc, " +
 			"    c.procedimentServei.servei asc, " +
 			"    c.estat asc")
-	public List<Object[]> countGroupByProcedimentServeiEstat();
+	public List<Object[]> countGroupByProcedimentServeiEstat(
+			@Param("dataInici") Date dataInici,
+			@Param("dataFi") Date dataFi);
 	
 
 }
