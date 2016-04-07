@@ -248,7 +248,7 @@ public class RepresentantUsuariController extends BaseController {
 								"representant.controller.permis.atorgat",
 								new Object[] {
 										servei.getDescripcio(),
-										usuari.getNom()}));
+										usuari.getDescripcio()}));
 			} else {
 				AlertHelper.error(
 						request,
@@ -292,7 +292,7 @@ public class RepresentantUsuariController extends BaseController {
 								"representant.controller.permis.denegat",
 								new Object[] {
 										servei.getDescripcio(),
-										usuari.getNom()}));
+										usuari.getDescripcio()}));
 			} else {
 				AlertHelper.error(
 						request,
@@ -308,6 +308,36 @@ public class RepresentantUsuariController extends BaseController {
 							request, 
 							"representant.controller.entitat.no.existeix"));
 			return "redirect:../index";
+		}
+	}
+	
+	@RequestMapping(value = "/usuari/{usuariCodi}/permis/deny/all", method = RequestMethod.GET)
+	public String permisDenegarTots(
+			HttpServletRequest request,
+			@PathVariable String usuariCodi,
+			Model model) throws Exception {
+		EntitatDto entitat = EntitatHelper.getEntitatActual(request);
+		if (entitat != null) {
+			if (!EntitatHelper.isRepresentantEntitatActual(request))
+				return "representantNoAutoritzat";
+			procedimentService.serveiPermisDenyAll(
+					usuariCodi,
+					entitat.getId());
+			UsuariDto usuari = usuariService.getDades(usuariCodi);
+			AlertHelper.success(
+					request, 
+					getMessage(
+							request,
+							"representant.controller.permis.all.denegat",
+							new Object[] {usuari.getDescripcio()}));
+			return "redirect:../../permis";
+		} else {
+			AlertHelper.error(
+					request,
+					getMessage(
+							request, 
+							"representant.controller.entitat.no.existeix"));
+			return "redirect:/index";
 		}
 	}
 

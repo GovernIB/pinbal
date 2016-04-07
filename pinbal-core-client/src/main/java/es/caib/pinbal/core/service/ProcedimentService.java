@@ -204,6 +204,20 @@ public interface ProcedimentService {
 	public void serveiPermisDeny(Long id, String serveiCodi, String usuariCodi) throws ProcedimentNotFoundException, ProcedimentServeiNotFoundException, EntitatUsuariNotFoundException;
 
 	/**
+	 * Denega el permís per a accedir a tots els procediemtn-servei d'un usuari
+	 * 
+	 * @param usuariCodi
+	 *            Codi de l'usuari a qui es deneguen els permisos.
+	 * @param entitatId
+	 *            Atribut id de l'entitat.
+	 * @throws EntitatUsuariNotFoundException
+	 *            Si l'usuari no està lligat a l'entitat.
+	 * @param entitatId 
+	 */
+	@PreAuthorize("hasRole('ROLE_REPRES')")
+	public void serveiPermisDenyAll(String usuariCodi, Long entitatId) throws EntitatUsuariNotFoundException;
+	
+	/**
 	 * Consulta d'usuaris amb permisos per a accedir a un servei determinat.
 	 * 
 	 * @param id
