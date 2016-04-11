@@ -149,6 +149,23 @@ public interface ProcedimentService {
 	 */
 	@PreAuthorize("hasRole('ROLE_REPRES')")
 	public void serveiEnable(Long id, String serveiCodi) throws ProcedimentNotFoundException, ServeiNotFoundException;
+	
+	/**
+	 * Insereix un codi de procediment adicional
+	 * 
+	 * @param procedimentId
+	 *            Atribut id del procediment.
+	 * @param serveiCodi
+	 *            Codi del servei.
+	 * @param procedimentCodi
+	 *            Codi adicional de procediment.
+	 * @throws ProcedimentNotFoundException
+	 *            Si no hi ha cap procediment amb l'id especificat.
+	 * @throws ServeiNotFoundException
+	 *            Si no hi ha cap servei disponible amb el codi especificat.
+	 */
+	@PreAuthorize("hasRole('ROLE_REPRES')")
+	public boolean putProcedimentCodi(Long procedimentId,String serveiCodi,String procedimentCodi) throws ProcedimentNotFoundException, ServeiNotFoundException;
 
 	/**
 	 * Desactiva un servei d'un procediment.

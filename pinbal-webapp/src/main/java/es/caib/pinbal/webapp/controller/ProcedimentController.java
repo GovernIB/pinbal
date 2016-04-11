@@ -3,6 +3,7 @@
  */
 package es.caib.pinbal.webapp.controller;
 
+import java.io.IOException;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -16,6 +17,8 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import es.caib.pinbal.core.dto.EntitatDto;
 import es.caib.pinbal.core.dto.EntitatUsuariDto;
@@ -24,6 +27,7 @@ import es.caib.pinbal.core.dto.OrdreDto.OrdreDireccio;
 import es.caib.pinbal.core.dto.PaginaLlistatDto;
 import es.caib.pinbal.core.dto.PaginacioAmbOrdreDto;
 import es.caib.pinbal.core.dto.ProcedimentDto;
+import es.caib.pinbal.core.dto.ProcedimentServeiSimpleDto;
 import es.caib.pinbal.core.dto.ServeiDto;
 import es.caib.pinbal.core.service.EntitatService;
 import es.caib.pinbal.core.service.ProcedimentService;
@@ -269,9 +273,10 @@ public class ProcedimentController extends BaseController {
 				
 				List<ServeiDto> serveisActius = serveiService.findAmbEntitat(entitat.getId());
 				for (ServeiDto servei: serveisActius) {
-					for (String serveiActiu: procediment.getServeisActius()) {
-						if (servei.getCodi().equals(serveiActiu)) {
-							servei.setActiu(true);
+					for (ProcedimentServeiSimpleDto serveiActiu: procediment.getServeisActius()) {
+						if (servei.getCodi().equals(serveiActiu.getServeiCodi())) {
+							servei.setActiu(serveiActiu.isActiu());
+							servei.setProcedimentCodi(serveiActiu.getProcedimentCodi());
 							break;
 						}
 					}
@@ -395,31 +400,32 @@ public class ProcedimentController extends BaseController {
 			if (procedimentId != null)
 				procediment = procedimentService.findById(procedimentId);
 			if (procediment != null) {
-				if (procediment.getServeisActius().contains(serveiCodi)) {
-					model.addAttribute("entitat", entitat);
-					model.addAttribute("procediment", procediment);
-					model.addAttribute("servei", serveiService.findAmbCodiPerAdminORepresentant(serveiCodi));
-					List<String> usuarisAmbPermis = procedimentService.findUsuarisAmbPermisPerServei(procedimentId, serveiCodi);
-					model.addAttribute("usuarisAmbPermis", usuarisAmbPermis);
-					
-					for (EntitatUsuariDto usuari: entitat.getUsuarisRepresentant()) {
-						for (String usuariAmbPermis: usuarisAmbPermis) {
-							if (usuari.getUsuari().getCodi().equals(usuariAmbPermis)) {
-								usuari.setAcces(true);
-								break;
+				for (ProcedimentServeiSimpleDto serveiActiu: procediment.getServeisActius()){
+					if (serveiActiu.getServeiCodi().equalsIgnoreCase(serveiCodi)) {
+						model.addAttribute("entitat", entitat);
+						model.addAttribute("procediment", procediment);
+						model.addAttribute("servei", serveiService.findAmbCodiPerAdminORepresentant(serveiCodi));
+						List<String> usuarisAmbPermis = procedimentService.findUsuarisAmbPermisPerServei(procedimentId, serveiCodi);
+						model.addAttribute("usuarisAmbPermis", usuarisAmbPermis);
+						
+						for (EntitatUsuariDto usuari: entitat.getUsuarisRepresentant()) {
+							for (String usuariAmbPermis: usuarisAmbPermis) {
+								if (usuari.getUsuari().getCodi().equals(usuariAmbPermis)) {
+									usuari.setAcces(true);
+									break;
+								}
 							}
 						}
+						
+						return "procedimentServeiPermisos";
 					}
-					
-					return "procedimentServeiPermisos";
-				} else {
-					AlertHelper.error(
-							request,
-							getMessage(
-									request,
-									"procediment.controller.servei.no.pertany.procediment"));
-					return "redirect:../../../../procediment";
 				}
+				AlertHelper.error(
+						request,
+						getMessage(
+								request,
+								"procediment.controller.servei.no.pertany.procediment"));
+				return "redirect:../../../../procediment";
 			} else {
 				AlertHelper.error(
 						request, 
@@ -540,7 +546,40 @@ public class ProcedimentController extends BaseController {
 		}
 	}
 
-
+	@ResponseBody
+	@RequestMapping(value = "/{procedimentId}/servei/{serveiCodi}/procedimentCodi", method = RequestMethod.GET)
+	public String putProcedimentCodi(
+			HttpServletRequest request,
+			HttpServletResponse response,
+			@PathVariable Long procedimentId,
+			@PathVariable String serveiCodi,
+			@RequestParam String procedimentCodi,
+			Model model) throws IOException, EntitatNotFoundException, ProcedimentNotFoundException, ProcedimentServeiNotFoundException, EntitatUsuariNotFoundException, ServeiNotFoundException {
+		
+		if (!EntitatHelper.isRepresentantEntitatActual(request))
+			return "representantNoAutoritzat";
+		EntitatDto entitat = EntitatHelper.getEntitatActual(request, entitatService);
+		if (entitat != null) {
+			ProcedimentDto procediment = null;
+			if (procedimentId != null)
+				procediment = procedimentService.findById(procedimentId);
+			if (procediment != null) {
+				procedimentService.putProcedimentCodi(procedimentId, serveiCodi, procedimentCodi);
+//				ServeiDto servei = serveiService.findAmbCodiPerAdminORepresentant(serveiCodi);
+//				AlertHelper.success(
+//						request, 
+//						getMessage(
+//								request,
+//								"procediment.controller.servei.activat",
+//								new Object[] {servei.getDescripcio()}));
+				return "true";
+			} else {
+				return "false";
+			}
+		} else {
+			return "false";
+		}
+	}
 
 	private void omplirModelPerMostrarLlistat(
 			HttpServletRequest request,

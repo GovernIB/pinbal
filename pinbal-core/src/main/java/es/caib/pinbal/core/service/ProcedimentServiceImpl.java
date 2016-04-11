@@ -233,6 +233,39 @@ public class ProcedimentServiceImpl implements ProcedimentService {
 			procedimentServeiRepository.save(procedimentServei);
 		}
 	}
+	
+	@Transactional(rollbackFor = {ProcedimentNotFoundException.class, ServeiNotFoundException.class})
+	@Override
+	public boolean putProcedimentCodi(
+			Long procedimentId,
+			String serveiCodi,
+			String procedimentCodi) throws ProcedimentNotFoundException, ServeiNotFoundException {
+		LOGGER.debug("Afegint codi adicional (codi=" + serveiCodi + ") al servei (serveiCodi= " + serveiCodi + ") al procediment (procedimentId= " + procedimentId + ")");
+		Procediment procediment = procedimentRepository.findOne(procedimentId);
+		if (procediment == null) {
+			LOGGER.debug("No s'ha trobat cap procediment (id= " + procedimentId + ")");
+			throw new ProcedimentNotFoundException();
+		}
+		EntitatServei entitatServei = entitatServeiRepository.findByEntitatIdAndServei(
+				procediment.getEntitat().getId(),
+				serveiCodi);
+		if (entitatServei == null) {
+			LOGGER.debug("El servei (codi=" + serveiCodi + ") no està actiu per a l'entitat (id= " + procediment.getEntitat().getId() + ")");
+			throw new ServeiNotFoundException();
+		}
+		ProcedimentServei procedimentServei = procedimentServeiRepository.findByProcedimentIdAndServei(procedimentId, serveiCodi);
+		if (procedimentServei != null) {
+			procedimentServei.updateProcedimentCodi(procedimentCodi);
+		} else {
+			procedimentServei = ProcedimentServei.getBuilder(
+					procediment,
+					serveiCodi).build();
+			procedimentServei.updateProcedimentCodi(procedimentCodi);
+			procedimentServeiRepository.save(procedimentServei);
+		}
+		
+		return true;
+	}
 
 	@Transactional(rollbackFor = {ProcedimentNotFoundException.class, ProcedimentServeiNotFoundException.class})
 	@Override

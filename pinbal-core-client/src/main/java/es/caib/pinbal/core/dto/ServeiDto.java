@@ -50,6 +50,7 @@ public class ServeiDto implements Serializable {
 	private String scspXpathLiteralError;
 	private String scspXpathCodigoError;
 	private int scspTimeout;
+	private String procedimentCodi;
 
 	private String pinbalCustodiaCodi;
 	private String pinbalRoleName;
@@ -245,6 +246,14 @@ public class ServeiDto implements Serializable {
 	public void setScspTimeout(int scspTimeout) {
 		this.scspTimeout = scspTimeout;
 	}
+	public String getProcedimentCodi() {
+		return procedimentCodi;
+	}
+
+	public void setProcedimentCodi(String procedimentCodi) {
+		this.procedimentCodi = procedimentCodi;
+	}
+
 	public String getPinbalCustodiaCodi() {
 		return pinbalCustodiaCodi;
 	}

@@ -49,6 +49,9 @@ public class ProcedimentServei extends PinbalAuditable<Long> {
 
 	@Column(name = "actiu")
 	private boolean actiu;
+	
+	@Column(name = "PROCEDIMENT_CODI")
+	private String procedimentCodi;
 
 	@Version
 	private long version = 0;
@@ -78,6 +81,14 @@ public class ProcedimentServei extends PinbalAuditable<Long> {
 
 	public boolean isActiu() {
 		return actiu;
+	}
+	
+	public String getProcedimentCodi() {
+		return procedimentCodi;
+	}
+	
+	public void updateProcedimentCodi(String procedimentCodi) {
+		this.procedimentCodi = procedimentCodi;
 	}
 
 	public long getVersion() {

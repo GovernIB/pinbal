@@ -172,4 +172,13 @@ public class ProcedimentServiceBean implements ProcedimentService {
 		return delegate.informeProcedimentsAgrupatsEntitatDepartament();
 	}
 
+	@Override
+	@RolesAllowed("PBL_REPRES")
+	public boolean putProcedimentCodi(Long procedimentId, String serveiCodi,
+			String procedimentCodi) throws ProcedimentNotFoundException,
+			ServeiNotFoundException {
+		return delegate.putProcedimentCodi(procedimentId, serveiCodi, procedimentCodi);
+		
+	}
+
 }

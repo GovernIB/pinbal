@@ -39,6 +39,12 @@ $(document).ready(function() {
 					<jmesa:htmlColumn property="actiu" titleKey="procediment.serveis.taula.columna.actiu">
 						<c:if test="${registre.actiu}"><i class="icon-ok"></i></c:if>
 					</jmesa:htmlColumn>
+					<jmesa:htmlColumn property="procedimentCodi" titleKey="procediment.serveis.taula.columna.procediment.codi.adicional">
+						<div class="input-append">
+						  <input class="span9" id="procedimentCodi_${registre.codi}" type="text" value="${registre.procedimentCodi}" disabled>
+						  <button class="btn edit-codi-procediment" type="button" data-codi-servei="${registre.codi}"><i class="icon-pencil"></i></button>
+						</div>
+					</jmesa:htmlColumn>
 					<jmesa:htmlColumn property="ACCIO_activar" title="&nbsp;" sortable="false">
 						<c:choose>
 							<c:when test="${not registre.actiu}"><a href="servei/${registre.codi}/enable" class="btn"><i class="icon-ok"></i>&nbsp;<spring:message code="comu.boto.activar"/></a></c:when>
@@ -60,13 +66,45 @@ $(document).ready(function() {
 		</jmesa:tableModel>
 	</form>
 <script>
+$(document).ready(function() {
+	$('button.edit-codi-procediment').click(function() {
+		var servei_codi = $(this).data('codi-servei');
+		var $input = $('#procedimentCodi_' + servei_codi);
+		if ($input.prop('disabled')) {
+			$input.prop('disabled',false);
+			$input.next().html('<i class="icon-ok"></i>');
+			$input.focus();
+			$input.select();
+		} else {
+			actualitzaCodiProcediment(servei_codi,$input.val());
+			$input.prop('disabled',true);
+			$input.next().html('<i class="icon-pencil"></i>');
+		}
+	});
+});
+
 $('#confirm-remove').click(function() {
 	  return confirm("<spring:message code="procediment.serveis.confirmacio.desactivacio.servei.procediment"/>");
 });
+
 function onInvokeAction(id) {
 	setExportToLimit(id, '');
 	createHiddenInputFieldsForLimitAndSubmit(id);
 }
+
+function actualitzaCodiProcediment(servei_codi, codi_procediment) {
+	$.ajax({
+	    url:'<c:url value="servei/' + servei_codi + '/procedimentCodi"/>',
+	    type:'GET',
+	    dataType: 'json',
+	    data: {procedimentCodi: codi_procediment},
+	    success: function(result) {
+		    if (result)
+	    		console.log(result);
+	    }
+	});	
+}
+
 </script>
 	<div>
 		<a href="<c:url value="/procediment"/>" class="btn pull-right"><spring:message code="comu.boto.tornar"/></a>

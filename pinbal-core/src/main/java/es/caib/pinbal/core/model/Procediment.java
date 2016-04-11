@@ -25,6 +25,7 @@ import org.hibernate.annotations.Index;
 
 import es.caib.pinbal.core.audit.PinbalAuditable;
 import es.caib.pinbal.core.audit.PinbalAuditingEntityListener;
+import es.caib.pinbal.core.dto.ProcedimentServeiSimpleDto;
 
 /**
  * Classe de model de dades que conté la informació d'un procediment.
@@ -115,11 +116,16 @@ public class Procediment extends PinbalAuditable<Long> {
 		return entitat;
 	}
 
-	public List<String> getServeisActius() {
-		List<String> resposta = new ArrayList<String>();
-		for (ProcedimentServei servei: serveis)
-			if (servei.isActiu())
-				resposta.add(servei.getServei());
+	public List<ProcedimentServeiSimpleDto> getServeisActius() {
+		List<ProcedimentServeiSimpleDto> resposta = new ArrayList<ProcedimentServeiSimpleDto>();
+		for (ProcedimentServei servei: serveis) {
+			ProcedimentServeiSimpleDto nodeProcedimentServei = new ProcedimentServeiSimpleDto();
+			nodeProcedimentServei.setProcedimentCodi(servei.getProcedimentCodi());
+			nodeProcedimentServei.setServeiCodi(servei.getServei());
+			nodeProcedimentServei.setActiu(servei.isActiu());
+			
+			resposta.add(nodeProcedimentServei);
+		}
 		return resposta;
 	}
 

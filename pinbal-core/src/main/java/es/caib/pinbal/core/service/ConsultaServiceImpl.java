@@ -208,7 +208,7 @@ public class ConsultaServiceImpl implements ConsultaService {
 					consulta.getServeiCodi(),
 					consulta.getDadesEspecifiques());
 			List<Solicitud> solicituds = new ArrayList<Solicitud>();
-			solicituds.add(convertirEnSolicitud(consulta));
+			solicituds.add(convertirEnSolicitud(consulta,procedimentServei));
 			ResultatEnviamentPeticio resultat = scspHelper.enviarPeticionSincrona(
 					idPeticion,
 					solicituds);
@@ -287,8 +287,15 @@ public class ConsultaServiceImpl implements ConsultaService {
 	@Override
 	public void novaConsultaEnviament(
 			Long consultaId,
-			ConsultaDto consulta) throws ConsultaNotFoundException, ScspException {
+			ConsultaDto consulta) throws ProcedimentServeiNotFoundException, ConsultaNotFoundException, ScspException {
 		LOGGER.debug("Executant consulta del servei (enviament) (consultaId=" + consultaId + ")");
+		ProcedimentServei procedimentServei = procedimentServeiRepository.findByProcedimentIdAndServei(
+				consulta.getProcedimentId(),
+				consulta.getServeiCodi());
+		if (procedimentServei == null || !procedimentServei.isActiu()) {
+			LOGGER.debug("No s'ha trobat el servei (codi=" + consulta.getServeiCodi() + ") del procediment (id=" + consulta.getProcedimentId() + ")");
+			throw new ProcedimentServeiNotFoundException();
+		}
 		try {
 			processarDadesEspecifiquesSegonsCamps(
 					consulta.getServeiCodi(),
@@ -303,7 +310,7 @@ public class ConsultaServiceImpl implements ConsultaService {
 			throw new ConsultaNotFoundException();
 		}
 		List<Solicitud> solicituds = new ArrayList<Solicitud>();
-		solicituds.add(convertirEnSolicitud(consulta));
+		solicituds.add(convertirEnSolicitud(consulta,procedimentServei));
 		ResultatEnviamentPeticio resultat = scspHelper.enviarPeticionSincrona(
 				c.getScspPeticionId(),
 				solicituds);
@@ -385,7 +392,7 @@ public class ConsultaServiceImpl implements ConsultaService {
 					true,
 					null).build();
 			c.updateEstat(EstatTipus.Pendent);
-			List<Solicitud> solicituds = convertirEnMultiplesSolicituds(consulta);
+			List<Solicitud> solicituds = convertirEnMultiplesSolicituds(consulta,procedimentServei);
 			ResultatEnviamentPeticio resultat = scspHelper.enviarPeticionAsincrona(
 					idPeticion,
 					solicituds);
@@ -506,7 +513,8 @@ public class ConsultaServiceImpl implements ConsultaService {
 					solicitud.getExpedientId(),
 					scspHelper.copiarDadesEspecifiquesRecobriment(
 							serveiCodi,
-							solicitud.getDadesEspecifiques()));
+							solicitud.getDadesEspecifiques()),
+					procedimentServei);
 			List<Solicitud> solicituds = new ArrayList<Solicitud>();
 			solicituds.add(solicitudEnviar);
 			ResultatEnviamentPeticio resultat = scspHelper.enviarPeticionSincrona(
@@ -645,7 +653,8 @@ public class ConsultaServiceImpl implements ConsultaService {
 				solicitud.getConsentiment(),
 				solicitud.getDepartamentNom(),
 				solicitud.getExpedientId(),
-				copiaDadesEspecifiques);
+				copiaDadesEspecifiques,
+				procedimentServei);
 		List<Solicitud> solicituds = new ArrayList<Solicitud>();
 		solicituds.add(solicitudEnviar);
 		ResultatEnviamentPeticio resultat = scspHelper.enviarPeticionSincrona(
@@ -768,7 +777,8 @@ public class ConsultaServiceImpl implements ConsultaService {
 						solicitud.getExpedientId(),
 						scspHelper.copiarDadesEspecifiquesRecobriment(
 								serveiCodi,
-								solicitud.getDadesEspecifiques()));
+								solicitud.getDadesEspecifiques()),
+						procedimentServei);
 				solicitudsEnviar.add(solicitudEnviar);
 			}
 			ResultatEnviamentPeticio resultat = scspHelper.enviarPeticionSincrona(
@@ -2018,11 +2028,15 @@ public class ConsultaServiceImpl implements ConsultaService {
 	}
 
 	private Solicitud convertirEnSolicitud(
-			ConsultaDto consulta) {
+			ConsultaDto consulta,
+			ProcedimentServei procedimentServei) {
 		Solicitud solicitud = new Solicitud();
 		solicitud.setServeiCodi(consulta.getServeiCodi());
-		Procediment procediment = procedimentRepository.findOne(consulta.getProcedimentId());
-		solicitud.setProcedimentCodi(procediment.getCodi());
+		Procediment procediment = procedimentRepository.findOne(procedimentServei.getProcediment().getId());
+		solicitud.setProcedimentCodi(
+				(procedimentServei.getProcedimentCodi() != null && !("".equalsIgnoreCase(procedimentServei.getProcedimentCodi())) ? 
+						procedimentServei.getProcedimentCodi() : 
+						procediment.getCodi()));
 		solicitud.setProcedimentNom(procediment.getNom());
 		solicitud.setSolicitantIdentificacio(consulta.getEntitatCif());
 		solicitud.setSolicitantNom(consulta.getEntitatNom());
@@ -2063,10 +2077,14 @@ public class ConsultaServiceImpl implements ConsultaService {
 			Consentiment consentiment,
 			String departamentNom,
 			String expedientId,
-			Element dadesEspecifiques) {
+			Element dadesEspecifiques,
+			ProcedimentServei procedimentServei) {
 		Solicitud solicitud = new Solicitud();
 		solicitud.setServeiCodi(serveiCodi);
-		solicitud.setProcedimentCodi(procediment.getCodi());
+		solicitud.setProcedimentCodi(
+				(procedimentServei.getProcedimentCodi() != null && !("".equalsIgnoreCase(procedimentServei.getProcedimentCodi())) ? 
+						procedimentServei.getProcedimentCodi() : 
+						procediment.getCodi()));
 		solicitud.setProcedimentNom(procediment.getNom());
 		solicitud.setSolicitantIdentificacio(entitat.getCif());
 		solicitud.setSolicitantNom(entitat.getNom());
@@ -2088,7 +2106,8 @@ public class ConsultaServiceImpl implements ConsultaService {
 		return solicitud;
 	}
 	private List<Solicitud> convertirEnMultiplesSolicituds(
-			ConsultaDto consulta) throws ParseException {
+			ConsultaDto consulta,
+			ProcedimentServei procedimentServei) throws ParseException {
 		List<ServeiCamp> serveiCamps = serveiCampRepository.findByServeiOrderByGrupOrdreAsc(
 				consulta.getServeiCodi());
 		List<Solicitud> solicituds = new ArrayList<Solicitud>();

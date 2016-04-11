@@ -86,7 +86,7 @@ public interface ConsultaService {
 	@PreAuthorize("hasRole('ROLE_DELEG')")
 	public void novaConsultaEnviament(
 			Long consultaId,
-			ConsultaDto consulta) throws ConsultaNotFoundException, ScspException;
+			ConsultaDto consulta) throws ProcedimentServeiNotFoundException, ConsultaNotFoundException, ScspException;
 
 	/**
 	 * Realitza una consulta mitjançant les llibreries SCSP. Tercera passa

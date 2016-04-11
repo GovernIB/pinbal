@@ -23,7 +23,7 @@ public class ProcedimentDto implements Serializable {
 	private Long entitatId;
 	private String entitatNom;
 
-	private List<String> serveisActius = new ArrayList<String>();
+	private List<ProcedimentServeiSimpleDto> serveisActius = new ArrayList<ProcedimentServeiSimpleDto>();
 
 	public ProcedimentDto() {
 
@@ -72,10 +72,10 @@ public class ProcedimentDto implements Serializable {
 		this.entitatNom = entitatNom;
 	}
 
-	public List<String> getServeisActius() {
+	public List<ProcedimentServeiSimpleDto> getServeisActius() {
 		return serveisActius;
 	}
-	public void setServeisActius(List<String> serveisActius) {
+	public void setServeisActius(List<ProcedimentServeiSimpleDto> serveisActius) {
 		this.serveisActius = serveisActius;
 	}
 

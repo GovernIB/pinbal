@@ -67,7 +67,7 @@ public class ConsultaServiceBean implements ConsultaService {
 	@RolesAllowed("tothom")
 	public void novaConsultaEnviament(
 			Long consultaId,
-			ConsultaDto consulta) throws ConsultaNotFoundException, ScspException {
+			ConsultaDto consulta) throws ProcedimentServeiNotFoundException, ConsultaNotFoundException, ScspException {
 		delegate.novaConsultaEnviament(consultaId, consulta);
 	}
 
