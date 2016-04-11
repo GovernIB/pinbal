@@ -134,6 +134,13 @@ public class ProcedimentServiceBean implements ProcedimentService {
 			ProcedimentServeiNotFoundException, EntitatUsuariNotFoundException {
 		delegate.serveiPermisDeny(id, serveiCodi, usuariCodi);
 	}
+	
+	@Override
+	@RolesAllowed("PBL_REPRES")
+	public void serveiPermisDenyAll(String usuariCodi, Long entitatId) 
+			throws EntitatUsuariNotFoundException {
+		delegate.serveiPermisDenyAll(usuariCodi, entitatId);
+	}
 
 	@Override
 	@RolesAllowed("PBL_REPRES")

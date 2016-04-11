@@ -29,6 +29,7 @@ import es.caib.pinbal.core.helper.DtoMappingHelper;
 import es.caib.pinbal.core.helper.PaginacioHelper;
 import es.caib.pinbal.core.helper.PermisosHelper;
 import es.caib.pinbal.core.helper.PermisosHelper.ObjectIdentifierExtractor;
+import es.caib.pinbal.core.helper.UsuariHelper;
 import es.caib.pinbal.core.model.Entitat;
 import es.caib.pinbal.core.model.EntitatServei;
 import es.caib.pinbal.core.model.EntitatUsuari;
@@ -70,6 +71,8 @@ public class ProcedimentServiceImpl implements ProcedimentService {
 
 	@Resource
 	private MutableAclService aclService;
+	@Resource
+	private UsuariHelper usuariHelper;
 
 
 
@@ -358,6 +361,44 @@ public class ProcedimentServiceImpl implements ProcedimentService {
 				procedimentServei.getId(),
 				BasePermission.READ,
 				aclService);
+	}
+	
+	@Transactional(rollbackFor = {ProcedimentNotFoundException.class, ProcedimentServeiNotFoundException.class, EntitatUsuariNotFoundException.class})
+	@Override
+	public void serveiPermisDenyAll(
+			String usuariCodi,
+			Long entitatId) throws EntitatUsuariNotFoundException {
+		EntitatUsuari entitatUsuari = entitatUsuariRepository.findByEntitatIdAndUsuariCodi(
+				entitatId,
+				usuariCodi);
+		if (entitatUsuari == null) {
+			LOGGER.debug("L'entitat (id=" + entitatId + ") no té cap usuari (codi=" + usuariCodi + ")");
+			throw new EntitatUsuariNotFoundException();
+		}
+		List<ProcedimentServei> procedimentServeis = procedimentServeiRepository.findByEntitatId(entitatId);
+		PermisosHelper.filterGrantedAll(
+				procedimentServeis,
+				new ObjectIdentifierExtractor<ProcedimentServei>() {
+					public Long getObjectIdentifier(ProcedimentServei object) {
+						return object.getId();
+					}
+				},
+				ProcedimentServei.class,
+				new Permission[] {BasePermission.READ},
+				aclService,
+				usuariHelper.generarUsuariAutenticat(
+						usuariCodi,
+						false));
+		if (!procedimentServeis.isEmpty()) {
+			for (ProcedimentServei procedimentServei: procedimentServeis) {
+				PermisosHelper.revocarPermisUsuari(
+						usuariCodi, 
+						ProcedimentServei.class, 
+						procedimentServei.getId(), 
+						BasePermission.READ, 
+						aclService);
+			}
+		}
 	}
 
 	@Transactional(readOnly = true)
