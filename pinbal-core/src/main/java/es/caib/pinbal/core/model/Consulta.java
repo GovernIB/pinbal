@@ -4,7 +4,6 @@
 package es.caib.pinbal.core.model;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -68,9 +67,6 @@ public class Consulta extends PinbalAuditable<Long> {
 	@Column(name = "departament", length = 64, nullable = false)
 	private String departamentNom;
 	
-	@Column(name = "CREATEDDATE", length = 6)
-	private Date dataCreacio;
-
 	@Column(name = "funcionari_nom", length = 128)
 	private String funcionariNom;
 	@Column(name = "funcionari_docnum", length = 16)
@@ -229,9 +225,6 @@ public class Consulta extends PinbalAuditable<Long> {
 	}
 	public String getDepartamentNom() {
 		return departamentNom;
-	}
-	public Date getDataCreacio() {
-		return dataCreacio;
 	}
 	public String getError() {
 		return error;

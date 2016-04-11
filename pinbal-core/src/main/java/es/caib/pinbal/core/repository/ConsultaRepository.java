@@ -266,8 +266,8 @@ public interface ConsultaRepository extends JpaRepository<Consulta, Long> {
 			"from " +
 			"    Consulta c " +
 			"where " +
-			"    c.dataCreacio >= :dataInici " +
-			"and c.dataCreacio <= :dataFi " +
+			"    c.createdDate >= :dataInici " +
+			"and c.createdDate <= :dataFi " +
 			"group by " +
 			"    c.procedimentServei.procediment.entitat.id, " +
 			"    c.procedimentServei.procediment.id, " +
