@@ -51,8 +51,8 @@ public class DadesExternesServiceImpl implements DadesExternesService {
 					IOUtils.toByteArray(
 							httpConnection.getInputStream()));
 			boolean afegirCodiProvincia = false;
-			String tokenInici = "<municipi><codi>";
-			String tokenFi = "</codi>";
+			String tokenInici = "{\"codi\":\""; // {"codi":"
+			String tokenFi = "\","; // ",
 			if (resposta.indexOf(tokenInici) != -1) {
 				int indexInici = resposta.indexOf(tokenInici);
 				int indexFi = resposta.indexOf(tokenFi, indexInici);
@@ -63,8 +63,8 @@ public class DadesExternesServiceImpl implements DadesExternesService {
 			}
 			if (afegirCodiProvincia) {
 				return resposta.replace(
-						"<municipi><codi>",
-						"<municipi><codi>" + provinciaCodi).getBytes();
+						tokenInici,
+						tokenInici + provinciaCodi).getBytes();
 			} else {
 				return resposta.getBytes();
 			}
