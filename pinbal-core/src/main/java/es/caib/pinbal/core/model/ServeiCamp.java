@@ -50,11 +50,12 @@ public class ServeiCamp extends PinbalAuditable<Long> {
 		DATA,
 		ENUM,
 		PROVINCIA,
-		MUNICIPI,
+		MUNICIPI_5,
 		ETIQUETA,
 		BOOLEA,
 		DOC_IDENT,
-		PAIS
+		PAIS,
+		MUNICIPI_3,
 	}
 
 	private static final long serialVersionUID = -6657066865382086237L;

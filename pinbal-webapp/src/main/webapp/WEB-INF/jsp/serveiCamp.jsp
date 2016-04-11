@@ -85,7 +85,7 @@ function initModalCamp(id, path, tipus, etiqueta, defecte, comentari, dataFormat
 	$('#modal-input-data-format').val(dataFormat);
 	$('#modal-select-camp-pare').val(campPareId);
 	$('#modal-input-valor-pare').val(valorPare);
-	if ($('#modal-select-tipus').val() == 'MUNICIPI') {
+	if ($('#modal-select-tipus').val().indexOf('MUNICIPI') == 0) {
 		$('#modal-select-camp-pare').removeAttr('disabled');
 		$('#modal-input-valor-pare').removeAttr('disabled');
 	} else if ($('#modal-select-tipus').val() == 'DOC_IDENT') {
@@ -120,7 +120,7 @@ function initModalCamp(id, path, tipus, etiqueta, defecte, comentari, dataFormat
 		} else {
 			$('#modal-input-data-format').attr('disabled', 'disabled');
 		}
-		if ($('#modal-select-tipus').val() == 'MUNICIPI') {
+		if ($('#modal-select-tipus').val().indexOf('MUNICIPI') == 0) {
 			$('#modal-select-camp-pare').removeAttr('disabled');
 			$('#modal-input-valor-pare').removeAttr('disabled');
 		} else if ($('#modal-select-tipus').val() == 'DOC_IDENT') {

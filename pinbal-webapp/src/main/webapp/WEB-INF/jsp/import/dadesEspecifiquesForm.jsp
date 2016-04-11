@@ -62,7 +62,8 @@
 												<input type="checkbox" id="${campId}" name="${campId}"<c:if test="${campChecked}"> checked="checked"</c:if><c:if test="${dadesEspecifiquesDisabled}"> disabled="disabled"</c:if> class="span12"/>
 												<input type="hidden" name="${campId}" value="off"/>
 											</c:when>
-											<c:when test="${camp.tipus == 'MUNICIPI'}">
+											<c:when test="${camp.tipus == 'MUNICIPI_3' or camp.tipus == 'MUNICIPI_5'}">
+												<c:set var="codiMunicipiSenseCodiProvincia" value="${camp.tipus == 'MUNICIPI_3'}"/>
 												<select id="${campId}" name="${campId}"<c:if test="${dadesEspecifiquesDisabled}"> disabled="disabled"</c:if> class="span12">
 													<option value=""><spring:message code="comu.opcio.sense.definir"/></option>
 												</select>
@@ -82,14 +83,16 @@
 			    	$('#${campId}').empty();
 		        	$('#${campId}').append($('<option value="">').text('<spring:message code="comu.opcio.sense.definir"/>'));
 			        $.each(json, function(i, value) {
+			        	var valueCodi = value.codi;
+			        	<c:if test="${codiMunicipiSenseCodiProvincia}">valueCodi = value.codi.substring(2);</c:if>
 			        	if ( $('#${campId}').data('defecte-processat')) {
-			            	$('#${campId}').append($('<option>').text(value.nom).attr('value', value.codi));
+			            	$('#${campId}').append($('<option>').text(value.nom).attr('value', valueCodi));
 			        	} else {
 			        		var valorPerDefecte = '${campValorDefecte}';
 				        	if (value.codi == valorPerDefecte) {
-				        		$('#${campId}').append($('<option selected="selected">').text(value.nom).attr('value', value.codi));
+				        		$('#${campId}').append($('<option selected="selected">').text(value.nom).attr('value', valueCodi));
 				        	} else {
-				        		$('#${campId}').append($('<option>').text(value.nom).attr('value', value.codi));
+				        		$('#${campId}').append($('<option>').text(value.nom).attr('value', valueCodi));
 				        	}
 			        	}
 			        });

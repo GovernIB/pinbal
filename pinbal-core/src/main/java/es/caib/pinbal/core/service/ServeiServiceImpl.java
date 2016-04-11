@@ -1191,8 +1191,10 @@ public class ServeiServiceImpl implements ServeiService {
 			return ServeiCampTipus.ENUM;
 		} else if (ServeiCampDtoTipus.PROVINCIA.equals(dtoTipus)) {
 			return ServeiCampTipus.PROVINCIA;
-		} else if (ServeiCampDtoTipus.MUNICIPI.equals(dtoTipus)) {
-			return ServeiCampTipus.MUNICIPI;
+		} else if (ServeiCampDtoTipus.MUNICIPI_3.equals(dtoTipus)) {
+			return ServeiCampTipus.MUNICIPI_3;
+		} else if (ServeiCampDtoTipus.MUNICIPI_5.equals(dtoTipus)) {
+			return ServeiCampTipus.MUNICIPI_5;
 		} else if (ServeiCampDtoTipus.ETIQUETA.equals(dtoTipus)) {
 			return ServeiCampTipus.ETIQUETA;
 		} else if (ServeiCampDtoTipus.BOOLEA.equals(dtoTipus)) {
