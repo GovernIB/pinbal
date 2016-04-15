@@ -3,17 +3,32 @@
  */
 package es.caib.pinbal.core.ws;
 
+import java.io.IOException;
+import java.io.StringReader;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.jws.WebService;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
+import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
 
 import es.caib.pinbal.core.dto.ConsultaDto;
 import es.caib.pinbal.core.dto.ConsultaDto.Consentiment;
@@ -37,6 +52,7 @@ import es.scsp.bean.common.Solicitante;
 import es.scsp.bean.common.SolicitudTransmision;
 import es.scsp.bean.common.Titular;
 import es.scsp.bean.common.Transmision;
+import es.scsp.bean.common.TransmisionDatos;
 import es.scsp.common.exceptions.ScspException;
 
 /**
@@ -45,11 +61,12 @@ import es.scsp.common.exceptions.ScspException;
  * 
  * @author Limit Tecnologies <limit@limit.es>
  */
-@Component
+@Service
 @WebService(
 		name = "Recobriment",
 		serviceName = "RecobrimentService",
 		portName = "RecobrimentServicePort",
+		endpointInterface = "es.caib.pinbal.core.ws.Recobriment",
 		targetNamespace = "http://www.caib.es/pinbal/ws/recobriment")
 public class RecobrimentImpl implements Recobriment {
 
@@ -86,7 +103,9 @@ public class RecobrimentImpl implements Recobriment {
 			}
 			LOGGER.debug("Recuperant resposta SCSP per retornar al client (" +
 					"peticionId=" + consulta.getScspPeticionId() + ")");
-			return recuperarRespuestaScsp(consulta.getScspPeticionId());
+			Respuesta respuesta = recuperarRespuestaScsp(consulta.getScspPeticionId());
+			processarDatosEspecificos(respuesta);
+			return respuesta;
 		} catch (EntitatNotFoundException ex) {
 			throw getErrorValidacio(
 					"0227",
@@ -374,6 +393,61 @@ public class RecobrimentImpl implements Recobriment {
 			String codi,
 			String missatge) {
 		return new ScspException(missatge, codi);
+	}
+
+	private static final String XMLNS_DATOS_ESPECIFICOS_V2 = "http://www.map.es/scsp/esquemas/datosespecificos";
+	private static final String XMLNS_DATOS_ESPECIFICOS_V3 = "http://intermediacion.redsara.es/scsp/esquemas/datosespecificos";
+	private void processarDatosEspecificos(
+			Respuesta respuesta) throws TransformerException, ParserConfigurationException, SAXException, IOException {
+		if (respuesta != null && respuesta.getTransmisiones() != null) {
+			List<TransmisionDatos> transmisiones = respuesta.getTransmisiones().getTransmisionDatos();
+			for (TransmisionDatos transmisionDatos: transmisiones) {
+				Object datespObj = transmisionDatos.getDatosEspecificos();
+				if (datespObj instanceof Element) {
+					Element datosEspecificos = (Element)datespObj;
+					String datosEspecificosStr = elementToString(datosEspecificos);
+					String datosEspecificosSenseNs = removeXmlStringNamespaceAndPreamble(datosEspecificosStr);
+					String xmlns;
+					if (datosEspecificosStr.contains(XMLNS_DATOS_ESPECIFICOS_V2)) {
+						xmlns = "xmlns=\"" + XMLNS_DATOS_ESPECIFICOS_V2 + "\"";
+					} else if (datosEspecificosStr.contains(XMLNS_DATOS_ESPECIFICOS_V3)) {
+						xmlns = "xmlns=\"" + XMLNS_DATOS_ESPECIFICOS_V3 + "\"";
+					} else {
+						xmlns = "";
+					}
+					transmisionDatos.setDatosEspecificos(
+							stringToElement(
+									datosEspecificosSenseNs.substring(0, "<DatosEspecificos ".length()) +
+									xmlns + 
+									datosEspecificosSenseNs.substring("<DatosEspecificos ".length())));
+				}
+			}
+		}
+	}
+	private String removeXmlStringNamespaceAndPreamble(String xml) {
+		return xml.replaceAll("(<\\?[^<]*\\?>)?", ""). /* remove preamble */
+				replaceAll("xmlns.*?(\"|\').*?(\"|\')", ""). /* remove xmlns declaration */
+				replaceAll("(<)(\\w+:)(.*?>)", "$1$3"). /* remove opening tag prefix */
+				replaceAll("(</)(\\w+:)(.*?>)", "$1$3"); /* remove closing tags prefix */
+	}
+	private Element stringToElement(String xml) throws TransformerException, ParserConfigurationException, SAXException, IOException {
+		DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+		dbFactory.setNamespaceAware(false);
+		DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+		StringReader reader = new StringReader(xml);
+		InputSource inputSource = new InputSource(reader);
+		Document doc = dBuilder.parse(inputSource);
+		return doc.getDocumentElement();
+	}
+	private String elementToString(Element element) throws TransformerException {
+		TransformerFactory transFactory = TransformerFactory.newInstance();
+		Transformer transformer = transFactory.newTransformer();
+		StringWriter buffer = new StringWriter();
+		transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
+		transformer.transform(
+				new DOMSource(element),
+				new StreamResult(buffer));
+		return buffer.toString();
 	}
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(RecobrimentImpl.class);

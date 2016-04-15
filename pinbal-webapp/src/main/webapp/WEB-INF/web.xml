@@ -67,26 +67,8 @@
 		<url-pattern>/</url-pattern>
 	</servlet-mapping>
 
-	<!--${enable.tomcat.cxf.start}
-	<servlet>
-		<servlet-name>CXFServlet</servlet-name>
-		<servlet-class>es.caib.pinbal.webapp.cxf.PinbalCxfServlet</servlet-class>
-		<load-on-startup>2</load-on-startup>
-	</servlet>
-	<servlet>
-		<servlet-name>EndpointPublisherServlet</servlet-name>
-		<servlet-class>es.caib.pinbal.webapp.cxf.EndpointPublisherServlet</servlet-class>
-		<load-on-startup>3</load-on-startup>
-	</servlet>
-	<servlet-mapping>
-		<servlet-name>CXFServlet</servlet-name>
-		<url-pattern>/ws/*</url-pattern>
-	</servlet-mapping>
-	${enable.tomcat.cxf.end}-->
-
 	<login-config>
 		<auth-method>BASIC</auth-method>
-		<!--auth-method>CLIENT-CERT</auth-method-->
 		<realm-name>Govern de les Illes Balears</realm-name>
 	</login-config>
 
@@ -112,7 +94,7 @@
 	<security-constraint>
 		<web-resource-collection>
 			<web-resource-name>Public areas</web-resource-name>
-			<url-pattern>/ws/*</url-pattern>
+			<url-pattern>/ws/recobriment</url-pattern>
 		</web-resource-collection>
 	</security-constraint>
 	<security-constraint>

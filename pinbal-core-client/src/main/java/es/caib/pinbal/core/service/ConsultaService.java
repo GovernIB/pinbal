@@ -594,6 +594,8 @@ public interface ConsultaService {
 	public boolean isOptimitzarTransaccionsNovaConsulta();
 
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
-	public List<InformeGeneralEstatDto> informeGeneralEstat(Date dataInici, Date dataFi);
-	
+	public List<InformeGeneralEstatDto> informeGeneralEstat(
+			Date dataInici,
+			Date dataFi);
+
 }

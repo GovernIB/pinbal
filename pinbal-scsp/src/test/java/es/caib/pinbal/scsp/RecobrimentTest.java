@@ -38,7 +38,7 @@ public class RecobrimentTest {
 	//private static final String RECOBRIMENT_URL = "http://localhost:8180/pinbalrec/ws";
 	private static final String RECOBRIMENT_URL = "http://localhost:8080/pinbal/ws/recobriment";
 	private static final String RECOBRIMENT_AUTH_USERNAME = "tomeud";
-	private static final String RECOBRIMENT_AUTH_PASSWORD = "tomeud";
+	private static final String RECOBRIMENT_AUTH_PASSWORD = "tomeud15";
 
 
 
