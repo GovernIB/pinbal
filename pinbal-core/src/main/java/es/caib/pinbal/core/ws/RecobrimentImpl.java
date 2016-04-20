@@ -415,11 +415,11 @@ public class RecobrimentImpl implements Recobriment {
 					} else {
 						xmlns = "";
 					}
+					String datosEspecificosProcessat =  datosEspecificosSenseNs.substring(0, "<DatosEspecificos ".length()) +
+							xmlns + 
+							datosEspecificosSenseNs.substring("<DatosEspecificos ".length());
 					transmisionDatos.setDatosEspecificos(
-							stringToElement(
-									datosEspecificosSenseNs.substring(0, "<DatosEspecificos ".length()) +
-									xmlns + 
-									datosEspecificosSenseNs.substring("<DatosEspecificos ".length())));
+							stringToElement(datosEspecificosProcessat));
 				}
 			}
 		}
@@ -432,7 +432,7 @@ public class RecobrimentImpl implements Recobriment {
 	}
 	private Element stringToElement(String xml) throws TransformerException, ParserConfigurationException, SAXException, IOException {
 		DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
-		dbFactory.setNamespaceAware(false);
+		dbFactory.setNamespaceAware(true);
 		DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
 		StringReader reader = new StringReader(xml);
 		InputSource inputSource = new InputSource(reader);
