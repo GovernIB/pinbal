@@ -1542,6 +1542,9 @@ public class ConsultaServiceImpl implements ConsultaService {
 				updateEstatConsulta(pendent, resultat, false);
 				for (Consulta filla: pendent.getFills()) {
 					updateEstatConsulta(filla, resultat, false);
+					if (EstatTipus.Tramitada.equals(filla.getEstat())) {
+						generarCustodiarJustificant(filla);
+					}
 				}
 			} catch (Exception ex) {
 				LOGGER.error("No s'ha pogut obtenir l'estat de la consulta SCSP (peticionId=" + pendent.getScspPeticionId() + ")", ex);
@@ -1804,9 +1807,13 @@ public class ConsultaServiceImpl implements ConsultaService {
 	private ArxiuDto obtenirJustificantConsulta(
 			Consulta consulta) throws Exception {
 		if (JustificantEstat.PENDENT.equals(consulta.getJustificantEstat())) {
-			LOGGER.error("L'estat del justificant de la consulta és PENDENT (" +
+			// Si el justificant està pendent de generar intenta generar-lo
+			generarCustodiarJustificant(consulta);
+		}
+		if (JustificantEstat.PENDENT.equals(consulta.getJustificantEstat())) {
+			LOGGER.error("S'ha intentat generar el justificant d'una consulta PENDENT però l'estat segueix essent PENDENT (" +
 					"id=" + consulta.getId() + ")");
-			throw new JustificantGeneracioException("L'estat del justificant de la consulta és PENDENT");
+			throw new JustificantGeneracioException("S'ha intentat generar el justificant d'una consulta PENDENT però l'estat segueix essent PENDENT");
 		}
 		if (JustificantEstat.ERROR.equals(consulta.getJustificantEstat())) {
 			LOGGER.error("L'estat del justificant de la consulta és ERROR (" +
@@ -1852,52 +1859,6 @@ public class ConsultaServiceImpl implements ConsultaService {
 					generarJustificantAmbPlantilla(consulta));
 		}
 		return arxiuDto;
-		/*if (consulta.isCustodiat()) {
-			LOGGER.debug("El justificant per a la consulta (id=" + consulta.getId() + ") ja està custodiat");
-			arxiuDto.setContingut(
-					pluginHelper.custodiaObtenirDocument(peticionId));
-			return arxiuDto;
-		} else {
-			// Genera el justificant emprant la plantilla
-			byte[] justificant = generarJustificantAmbPlantilla(consulta);
-			// Només signa i custòdia el document si és un PDF i si està
-			// activat per paràmetre.
-			if (!deshabilitarSignaturaICustodia && isSignarICustodiarJustificant()) {
-				if ("pdf".equalsIgnoreCase(getExtensioSortida())) {
-					LOGGER.debug("Inici del procés de signatura i custodia del justificant de la consulta (id=" + consulta.getId() + ")");
-					String documentTipus = null;
-					if (serveiConfig != null)
-						documentTipus = serveiConfig.getCustodiaCodi();
-					// Obté la URL de comprovació de signatura
-					LOGGER.debug("Sol·licitud de URL per a la custòdia del justificant de la consulta (id=" + consulta.getId() + ")");
-					String url = pluginHelper.custodiaObtenirUrlVerificacioDocument(peticionId);
-					LOGGER.debug("Obtinguda URL per a la custòdia del justificant de la consulta (id=" + consulta.getId() + ", url=" + url + ")");
-					// Signa el justificant
-					LOGGER.debug("Signatura del justificant de la consulta (id=" + consulta.getId() + ")");
-					ByteArrayOutputStream signedStream = new ByteArrayOutputStream();
-					pluginHelper.signaturaSignarEstamparPdf(
-							new ByteArrayInputStream(justificant),
-							signedStream,
-							url);
-					// Envia el justificant a custòdia
-					LOGGER.debug("Custodia del justificant de la consulta (id=" + consulta.getId() + ")");
-					byte[] arxiuSignat = signedStream.toByteArray();
-					pluginHelper.custodiaEnviarPdfSignat(
-							peticionId,
-							arxiuDto.getNom(),
-							arxiuSignat,
-							documentTipus);
-					consulta.updateCustodiat(true);
-					arxiuDto.setContingut(arxiuSignat);
-				} else {
-					throw new Exception("Només es poden signar i custodiar arxius PDF.");
-				}
-			} else {
-				LOGGER.debug("Signatura i custòdia desactivada per a la consulta (id=" + consulta.getId() + ")");
-				arxiuDto.setContingut(justificant);
-			}
-			return arxiuDto;
-		}*/
 	}
 
 	private void generarCustodiarJustificant(
