@@ -5,6 +5,7 @@ package es.caib.pinbal.core.service;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.text.ParseException;
@@ -24,6 +25,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 import javax.annotation.Resource;
+import javax.xml.parsers.ParserConfigurationException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,6 +42,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.w3c.dom.Element;
 
 import com.lowagie.text.Document;
+import com.lowagie.text.DocumentException;
 import com.lowagie.text.pdf.PdfCopy;
 import com.lowagie.text.pdf.PdfReader;
 import com.lowagie.text.pdf.codec.Base64;
@@ -105,6 +108,7 @@ import es.caib.pinbal.scsp.Solicitud;
 import es.scsp.bean.common.Respuesta;
 import es.scsp.common.domain.EmisorCertificado;
 import es.scsp.common.domain.Servicio;
+import net.sf.jooreports.templates.DocumentTemplateException;
 
 /**
  * Implementació dels mètodes per a gestionar les consultes al SCSP.
@@ -113,6 +117,8 @@ import es.scsp.common.domain.Servicio;
  */
 @Service
 public class ConsultaServiceImpl implements ConsultaService {
+
+	private static final String JUSTIFICANT_EXTENSIO_SORTIDA = "pdf";
 
 	@Resource
 	private ConsultaRepository consultaRepository;
@@ -1862,7 +1868,7 @@ public class ConsultaServiceImpl implements ConsultaService {
 	}
 
 	private void generarCustodiarJustificant(
-			Consulta consulta) throws Exception {
+			Consulta consulta) {
 		String serveiCodi = consulta.getProcedimentServei().getServei();
 		String peticionId = consulta.getScspPeticionId();
 		ServeiConfig serveiConfig = serveiConfigRepository.findByServei(serveiCodi);
@@ -1870,63 +1876,58 @@ public class ConsultaServiceImpl implements ConsultaService {
 				justificantPlantillaHelper.getNomArxiuGenerat(
 						consulta.getScspPeticionId(),
 						consulta.getScspSolicitudId()),
-						getExtensioSortida());
+						JUSTIFICANT_EXTENSIO_SORTIDA);
 		// Només signa i custòdia si està activat per paràmetre i 
 		// si encara no està custodiat
 		if (isSignarICustodiarJustificant() && !consulta.isCustodiat()) {
-			/*// Genera el certificat SCSP original
-			ByteArrayOutputStream baosGeneracio = scspHelper.generaJustificanteTransmision(
-					documentId);*/
-			// Genera el justificant emprant la plantilla
-			byte[] justificant = generarJustificantAmbPlantilla(consulta);
-			// Només signa i custòdia el document si és un PDF
-			if ("pdf".equalsIgnoreCase(getExtensioSortida())) {
-				boolean custodiat = false;
-				JustificantEstat justificantEstat = JustificantEstat.PENDENT;
-				String custodiaUrl = consulta.getCustodiaUrl();
-				String custodiaError = null;
-				try {
-					LOGGER.debug("Inici del procés de signatura i custodia del justificant de la consulta (id=" + consulta.getId() + ")");
-					String documentTipus = null;
-					if (serveiConfig != null)
-						documentTipus = serveiConfig.getCustodiaCodi();
-					if (custodiaUrl == null || custodiaUrl.isEmpty()) {
-						// Obté la URL de comprovació de signatura
-						LOGGER.debug("Sol·licitud de URL per a la custòdia del justificant de la consulta (id=" + consulta.getId() + ")");
-						custodiaUrl = pluginHelper.custodiaObtenirUrlVerificacioDocument(peticionId);
-						LOGGER.debug("Obtinguda URL per a la custòdia del justificant de la consulta (id=" + consulta.getId() + ", custodiaUrl=" + custodiaUrl + ")");
-					}
-					// Signa el justificant
-					LOGGER.debug("Signatura del justificant de la consulta (id=" + consulta.getId() + ")");
-					ByteArrayOutputStream signedStream = new ByteArrayOutputStream();
-					pluginHelper.signaturaSignarEstamparPdf(
-							new ByteArrayInputStream(justificant),
-							signedStream,
-							custodiaUrl);
-					// Envia el justificant a custòdia
-					LOGGER.debug("Custodia del justificant de la consulta (id=" + consulta.getId() + ")");
-					byte[] arxiuSignat = signedStream.toByteArray();
-					pluginHelper.custodiaEnviarPdfSignat(
-							peticionId,
-							arxiuNom,
-							arxiuSignat,
-							documentTipus);
-					justificantEstat = JustificantEstat.OK;
-					custodiat = true;
-				} catch (Exception ex) {
-					justificantEstat = JustificantEstat.ERROR;
-					StringWriter sw = new StringWriter();
-					ex.printStackTrace(new PrintWriter(sw));
-					custodiaError =  sw.toString();
-				} finally {
-					consulta.updateJustificantEstat(
-							justificantEstat,
-							custodiat,
-							custodiaUrl,
-							custodiaError);
+			String custodiaUrl = consulta.getCustodiaUrl();
+			JustificantEstat justificantEstat = JustificantEstat.PENDENT;
+			String custodiaError = null;
+			boolean custodiat = false;
+			try {
+				/*// Genera el certificat SCSP original
+				ByteArrayOutputStream baosGeneracio = scspHelper.generaJustificanteTransmision(
+						documentId);*/
+				// Genera el justificant emprant la plantilla
+				byte[] justificant = generarJustificantAmbPlantilla(consulta);
+				LOGGER.debug("Inici del procés de signatura i custodia del justificant de la consulta (id=" + consulta.getId() + ")");
+				String documentTipus = null;
+				if (serveiConfig != null)
+					documentTipus = serveiConfig.getCustodiaCodi();
+				if (custodiaUrl == null || custodiaUrl.isEmpty()) {
+					// Obté la URL de comprovació de signatura
+					LOGGER.debug("Sol·licitud de URL per a la custòdia del justificant de la consulta (id=" + consulta.getId() + ")");
+					custodiaUrl = pluginHelper.custodiaObtenirUrlVerificacioDocument(peticionId);
+					LOGGER.debug("Obtinguda URL per a la custòdia del justificant de la consulta (id=" + consulta.getId() + ", custodiaUrl=" + custodiaUrl + ")");
 				}
-			} else {
-				throw new Exception("Només es poden signar i custodiar arxius PDF.");
+				// Signa el justificant
+				LOGGER.debug("Signatura del justificant de la consulta (id=" + consulta.getId() + ")");
+				ByteArrayOutputStream signedStream = new ByteArrayOutputStream();
+				pluginHelper.signaturaSignarEstamparPdf(
+						new ByteArrayInputStream(justificant),
+						signedStream,
+						custodiaUrl);
+				// Envia el justificant a custòdia
+				LOGGER.debug("Custodia del justificant de la consulta (id=" + consulta.getId() + ")");
+				byte[] arxiuSignat = signedStream.toByteArray();
+				pluginHelper.custodiaEnviarPdfSignat(
+						peticionId,
+						arxiuNom,
+						arxiuSignat,
+						documentTipus);
+				justificantEstat = JustificantEstat.OK;
+				custodiat = true;
+			} catch (Exception ex) {
+				justificantEstat = JustificantEstat.ERROR;
+				StringWriter sw = new StringWriter();
+				ex.printStackTrace(new PrintWriter(sw));
+				custodiaError = sw.toString();
+			} finally {
+				consulta.updateJustificantEstat(
+						justificantEstat,
+						custodiat,
+						custodiaUrl,
+						custodiaError);
 			}
 		} else {
 			consulta.updateJustificantEstat(
@@ -1938,7 +1939,7 @@ public class ConsultaServiceImpl implements ConsultaService {
 	}
 
 	private byte[] generarJustificantAmbPlantilla(
-			Consulta consulta) throws Exception {
+			Consulta consulta) throws IOException, DocumentTemplateException, ParserConfigurationException, DocumentException {
 		String arxiuNom = justificantPlantillaHelper.getNomArxiuGenerat(
 				consulta.getScspPeticionId(),
 				consulta.getScspSolicitudId());

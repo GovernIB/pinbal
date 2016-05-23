@@ -3,11 +3,14 @@
  */
 package es.caib.pinbal.core.helper;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.ConnectException;
 
 import javax.activation.MimetypesFileTypeMap;
 
+import org.odftoolkit.odfdom.converter.core.ODFConverterException;
 import org.odftoolkit.odfdom.converter.pdf.PdfConverter;
 import org.odftoolkit.odfdom.converter.pdf.PdfOptions;
 import org.odftoolkit.odfdom.doc.OdfTextDocument;
@@ -20,6 +23,7 @@ import com.artofsolving.jodconverter.openoffice.connection.OpenOfficeConnection;
 import com.artofsolving.jodconverter.openoffice.connection.SocketOpenOfficeConnection;
 import com.artofsolving.jodconverter.openoffice.converter.StreamOpenOfficeDocumentConverter;
 import com.lowagie.text.Document;
+import com.lowagie.text.DocumentException;
 import com.lowagie.text.Image;
 import com.lowagie.text.pdf.PdfArray;
 import com.lowagie.text.pdf.PdfDictionary;
@@ -48,7 +52,7 @@ public class ConversioTipusDocumentHelper {
 			String arxiuNom,
 			InputStream arxiuContingut,
 			String extensioSortida,
-			OutputStream sortida) throws Exception {
+			OutputStream sortida) throws ODFConverterException, IOException {
 		String extensioEntrada = extensioPerNomArxiu(arxiuNom);
 		boolean copiarEntradaSortida = true;
 		if (	extensioEntrada != null &&
@@ -67,9 +71,13 @@ public class ConversioTipusDocumentHelper {
 					isConversioTipusXdocreport() &&
 					"odt".equalsIgnoreCase(extensioEntrada) &&
 					"pdf".equalsIgnoreCase(extensioSortida)) {
-				OdfTextDocument document = OdfTextDocument.loadDocument(arxiuContingut);
-				PdfOptions options = PdfOptions.create();
-				PdfConverter.getInstance().convert(document, sortida, options);
+				try {
+					OdfTextDocument document = OdfTextDocument.loadDocument(arxiuContingut);
+					PdfOptions options = PdfOptions.create();
+					PdfConverter.getInstance().convert(document, sortida, options);
+				} catch (Exception ex) {
+					throw new RuntimeException("Error convertint amb XDOCReport", ex);
+				}
 				copiarEntradaSortida = false;
 			}
 		}
@@ -102,7 +110,7 @@ public class ConversioTipusDocumentHelper {
 
 	public void convertirPdfToPdfa(
 			InputStream original,
-			OutputStream sortida) throws Exception {
+			OutputStream sortida) throws DocumentException, IOException {
         PdfReader reader = new PdfReader(original);
         PdfStamper stamper = new PdfStamper(
         		reader,
@@ -163,7 +171,7 @@ public class ConversioTipusDocumentHelper {
 			InputStream in,
 			DocumentFormat inputFormat,
 			OutputStream out,
-			DocumentFormat outputFormat) throws Exception {
+			DocumentFormat outputFormat) throws ConnectException {
 		String host = getOpenOfficeHost();
 		String port = getOpenOfficePort();
 		OpenOfficeConnection connection = null;

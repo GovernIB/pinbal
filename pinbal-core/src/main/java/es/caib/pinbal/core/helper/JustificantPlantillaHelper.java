@@ -17,6 +17,7 @@ import java.util.Locale;
 import java.util.Map;
 
 import net.sf.jooreports.templates.DocumentTemplate;
+import net.sf.jooreports.templates.DocumentTemplateException;
 import net.sf.jooreports.templates.DocumentTemplateFactory;
 
 import org.springframework.context.MessageSource;
@@ -48,7 +49,7 @@ public class JustificantPlantillaHelper implements MessageSourceAware {
 			String serveiDescripcio,
 			List<ServeiJustificantCamp> traduccions,
 			Locale locale,
-			OutputStream out) throws Exception {
+			OutputStream out) throws IOException, DocumentTemplateException {
 		generarAmbPlantillaFreemarker(
 				arbre,
 				serveiDescripcio,
@@ -62,7 +63,7 @@ public class JustificantPlantillaHelper implements MessageSourceAware {
 			String serveiDescripcio,
 			List<ServeiJustificantCamp> traduccions,
 			Locale locale,
-			OutputStream out) throws Exception {
+			OutputStream out) throws IOException, DocumentTemplateException {
 		DocumentTemplateFactory documentTemplateFactory = new DocumentTemplateFactory();
 		documentTemplateFactory.getFreemarkerConfiguration().setTemplateExceptionHandler(new TemplateExceptionHandler() {
 			public void handleTemplateException(TemplateException te, Environment env, Writer out) throws TemplateException {

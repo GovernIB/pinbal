@@ -17,6 +17,7 @@ import java.util.Properties;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
@@ -204,7 +205,7 @@ public class ScspHelper implements ApplicationContextAware, MessageSourceAware {
 	public ElementArbre generarArbreJustificant(
 			String idPeticion,
 			String idSolicitud,
-			Locale locale) throws Exception {
+			Locale locale) throws ScspException, ParserConfigurationException {
 		LOGGER.debug("Generant arbre pel justificant de transmissió SCSP (idPeticion=" + idPeticion + ", locale=" + locale + ")");
 		Respuesta respuesta = getClienteUnico().recuperaRespuesta(idPeticion);
 		TransmisionDatos transmisionDatos = null;

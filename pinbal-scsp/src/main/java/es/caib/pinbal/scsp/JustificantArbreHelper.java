@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Locale;
 
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,7 +38,7 @@ public class JustificantArbreHelper implements MessageSourceAware {
 	public ElementArbre generarArbre(
 			TransmisionDatos transmision,
 			String idPeticion,
-			Locale locale) throws Exception {
+			Locale locale) throws ParserConfigurationException {
 		ElementArbre arrel = new ElementArbre("/");
 		ElementArbre elementSolicitud = new ElementArbre(
 				messageSource.getMessage(
@@ -231,7 +232,11 @@ public class JustificantArbreHelper implements MessageSourceAware {
 
 
 
-	protected void afegirDadesEspecifiques(ElementArbre pare, Element doc, String codigoCertificado, Locale locale) throws Exception {
+	protected void afegirDadesEspecifiques(
+			ElementArbre pare,
+			Element doc,
+			String codigoCertificado,
+			Locale locale) throws ParserConfigurationException {
 		if (doc.getElementsByTagNameNS("*", "DatosEspecificos") != null) {
 			NodeList datosEspecificos = doc.getChildNodes();
 			if (!teVarisNivells(doc)) {
