@@ -76,9 +76,11 @@ public class PluginHelper {
 	}
 
 	public String custodiaObtenirUrlVerificacioDocument(
-			String documentId) throws SistemaExternException {
+			String documentId,
+			String solicitudId) throws SistemaExternException {
 		try {
-			return getCustodiaPlugin().obtenirUrlVerificacioDocument(documentId);
+			return getCustodiaPlugin().obtenirUrlVerificacioDocument(
+					documentId + "#" + solicitudId);
 		} catch (SistemaExternException ex) {
 			LOGGER.error("Error en el plugin de custodia", ex);
 			throw ex;

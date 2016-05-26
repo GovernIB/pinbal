@@ -1897,7 +1897,9 @@ public class ConsultaServiceImpl implements ConsultaService {
 				if (custodiaUrl == null || custodiaUrl.isEmpty()) {
 					// Obté la URL de comprovació de signatura
 					LOGGER.debug("Sol·licitud de URL per a la custòdia del justificant de la consulta (id=" + consulta.getId() + ")");
-					custodiaUrl = pluginHelper.custodiaObtenirUrlVerificacioDocument(peticionId);
+					custodiaUrl = pluginHelper.custodiaObtenirUrlVerificacioDocument(
+							consulta.getScspPeticionId(),
+							consulta.getScspSolicitudId());
 					LOGGER.debug("Obtinguda URL per a la custòdia del justificant de la consulta (id=" + consulta.getId() + ", custodiaUrl=" + custodiaUrl + ")");
 				}
 				// Signa el justificant
