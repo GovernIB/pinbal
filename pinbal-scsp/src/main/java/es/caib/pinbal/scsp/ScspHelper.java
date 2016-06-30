@@ -722,6 +722,8 @@ public class ScspHelper implements ApplicationContextAware, MessageSourceAware {
 			datosGenericos.getTitular().setApellido1(solicitud.getTitularLlinatge1());
 		if (solicitud.getTitularLlinatge2() != null && solicitud.getTitularLlinatge2().length() > 0)
 			datosGenericos.getTitular().setApellido2(solicitud.getTitularLlinatge2());
+		if (solicitud.getTitularNomComplet() != null && solicitud.getTitularNomComplet().length() > 0)
+			datosGenericos.getTitular().setNombreCompleto(solicitud.getTitularNomComplet());
 		datosGenericos.setTransmision(new Transmision());
 		datosGenericos.getTransmision().setCodigoCertificado(solicitud.getServeiCodi());
 		String timeStamp = DateUtils.parseISO8601(new Date());
