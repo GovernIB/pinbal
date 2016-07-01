@@ -41,7 +41,7 @@ import es.caib.pinbal.core.audit.PinbalAuditingEntityListener;
 public class Consulta extends PinbalAuditable<Long> {
 
 	public static final int ERROR_SCSP_MAX_LENGTH = 4000;
-	public static final int ERROR_JUSTIFICANT_MAX_LENGTH = 1000;
+	public static final int ERROR_JUSTIFICANT_MAX_LENGTH = 2000;
 
 	public enum EstatTipus {
 		Pendent, // 0
@@ -261,7 +261,7 @@ public class Consulta extends PinbalAuditable<Long> {
 		this.estat = EstatTipus.Error;
 		if (error != null && error.length() > ERROR_SCSP_MAX_LENGTH) {
 			String tokenFinal = " [...]";
-			this.error = error.substring(0, (ERROR_SCSP_MAX_LENGTH + tokenFinal.length())) + tokenFinal;
+			this.error = error.substring(0, (ERROR_SCSP_MAX_LENGTH - tokenFinal.length())) + tokenFinal;
 		} else {
 			this.error = error;
 		}
@@ -276,7 +276,7 @@ public class Consulta extends PinbalAuditable<Long> {
 		this.custodiaUrl = custodiaUrl;
 		if (justificantError != null && justificantError.length() > ERROR_JUSTIFICANT_MAX_LENGTH) {
 			String tokenFinal = " [...]";
-			this.justificantError = justificantError.substring(0, (ERROR_JUSTIFICANT_MAX_LENGTH + tokenFinal.length())) + tokenFinal;
+			this.justificantError = justificantError.substring(0, (ERROR_JUSTIFICANT_MAX_LENGTH - tokenFinal.length())) + tokenFinal;
 		} else {
 			this.justificantError = justificantError;
 		}
