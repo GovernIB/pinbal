@@ -84,27 +84,22 @@ public class PermisosHelper {
 				new Permission[] {permission},
 				aclService);
 	}
-	
+
 	public static void revocarPermisosServei(
 			Class<?> objectClass,
 			Long objectIdentifier,
 			MutableAclService aclService) {
-//			Permission permission) {
 		ObjectIdentity oid = new ObjectIdentityImpl(objectClass, objectIdentifier);
-		MutableAcl acl = (MutableAcl)aclService.readAclById(oid);
-		
-//		List<Integer> indexosPerEsborrar = new ArrayList<Integer>();
-		List<AccessControlEntry> aces = acl.getEntries();
-		for (int aceIndex = aces.size() - 1; aceIndex >= 0; aceIndex--) {
-//			if (permission.equals(aces.get(aceIndex).getPermission())) {
-//				indexosPerEsborrar.add(aceIndex);
-//			}
-			acl.deleteAce(aceIndex);
+		try {
+			MutableAcl acl = (MutableAcl)aclService.readAclById(oid);
+			List<AccessControlEntry> aces = acl.getEntries();
+			for (int aceIndex = aces.size() - 1; aceIndex >= 0; aceIndex--) {
+				acl.deleteAce(aceIndex);
+			}
+			aclService.updateAcl(acl);
+		} catch (NotFoundException ex) {
+			// Si no troba cap permis per al servei no fa res
 		}
-		
-//		for (Integer index: indexosPerEsborrar)
-//			acl.deleteAce(index);
-		aclService.updateAcl(acl);
 	}
 
 	public static void mourePermisUsuari(
