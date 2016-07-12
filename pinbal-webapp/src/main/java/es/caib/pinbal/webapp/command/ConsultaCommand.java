@@ -34,7 +34,7 @@ public class ConsultaCommand {
 	@NotEmpty @Size(max=64)
 	private String serveiCodi;
 
-	@Size(max=122)
+	@NotEmpty @Size(max=122)
 	private String funcionariNom;
 	@Size(max=10)
 	private String funcionariNif;

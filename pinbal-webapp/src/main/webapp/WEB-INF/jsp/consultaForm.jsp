@@ -76,7 +76,7 @@
 					<div class="control-group<c:if test="${not empty campErrors}"> error</c:if>">
 						<label class="control-label" for="${campPath}"><spring:message code="consulta.form.camp.funcionari.nom"/> *</label>
 						<div class="controls">
-							<form:input path="${campPath}" cssClass="span12" id="${campPath}" disabled="true"/>
+							<form:input path="${campPath}" cssClass="span12" id="${campPath}"/>
 							<form:errors path="${campPath}" cssClass="help-inline"/>
 						</div>
 					</div>
