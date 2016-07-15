@@ -86,9 +86,7 @@ public class XmlHelper {
 					null,
 					path,
 					schema,
-					datosEspecificosElement,
-					datosEspecificosElement.getMinOccurs(),
-					datosEspecificosElement.getMaxOccurs());
+					datosEspecificosElement);
 		}
 		return tree;
 	}
@@ -210,9 +208,9 @@ public class XmlHelper {
 			Node<DadesEspecifiquesNode> pare,
 			List<String> path,
 			XmlSchema schema,
-			XmlSchemaElement element,
-			long minOccurs,
-			long maxOccurs) {
+			XmlSchemaElement element) {
+		long minOccurs = element.getMinOccurs();
+		long maxOccurs = element.getMaxOccurs();
 		DadesEspecifiquesNode dadesNode = new DadesEspecifiquesNode();
 		Node<DadesEspecifiquesNode> node = new Node<DadesEspecifiquesNode>(dadesNode);
 		if (!path.isEmpty())
@@ -241,17 +239,18 @@ public class XmlHelper {
 					Object item = iti.next();
 					if (item instanceof XmlSchemaElement) {
 						XmlSchemaElement elementPerAfegir = (XmlSchemaElement)item;
-						if (elementPerAfegir.getRefName() != null)
+						if (elementPerAfegir.getRefName() != null) {
 							elementPerAfegir = schema.getElementByName(elementPerAfegir.getRefName());
-						afegirElement(
-								servicio,
-								tree,
-								node,
-								path,
-								schema,
-								elementPerAfegir,
-								elementPerAfegir.getMinOccurs(),
-								elementPerAfegir.getMaxOccurs());
+						}
+						if (elementPerAfegir != null) {
+							afegirElement(
+									servicio,
+									tree,
+									node,
+									path,
+									schema,
+									elementPerAfegir);
+						}
 					} else if (item instanceof XmlSchemaSequence) {
 						XmlSchemaSequence seq = (XmlSchemaSequence)item;
 						for (int i = 0; i < seq.getItems().getCount(); i++) {
@@ -266,9 +265,7 @@ public class XmlHelper {
 										node,
 										path,
 										schema,
-										elementPerAfegir,
-										elementPerAfegir.getMinOccurs(),
-										elementPerAfegir.getMaxOccurs());
+										elementPerAfegir);
 							} else {
 								LOGGER.error("No s'ha pogut processar element dins seqüència de les dades específiques (servei=" + servicio.getCodCertificado() + ", className=" + itemn.getClass().getName() + ")");
 							}
@@ -287,9 +284,7 @@ public class XmlHelper {
 										node,
 										path,
 										schema,
-										elementPerAfegir,
-										elementPerAfegir.getMinOccurs(),
-										elementPerAfegir.getMaxOccurs());
+										elementPerAfegir);
 							} else {
 								LOGGER.error("No s'ha pogut processar element dins choice de les dades específiques (servei=" + servicio.getCodCertificado() + ", className=" + itemn.getClass().getName() + ")");
 							}
