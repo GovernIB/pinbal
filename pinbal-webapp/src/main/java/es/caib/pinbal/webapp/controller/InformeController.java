@@ -77,7 +77,7 @@ public class InformeController extends BaseController {
 				serveiService.findActius());
 		return "informeServeisExcelView";
 	}
-	
+
 	@RequestMapping(value = "/generalEstat", method = RequestMethod.GET)
 	public String general(
 			HttpServletRequest request,

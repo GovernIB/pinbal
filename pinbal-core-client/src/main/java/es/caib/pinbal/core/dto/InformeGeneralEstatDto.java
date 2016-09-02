@@ -22,6 +22,7 @@ public class InformeGeneralEstatDto implements Serializable {
 	private Integer serveiUsuaris;
 	private Integer peticionsCorrectes;
 	private Integer peticionsErronees;
+	private Integer peticionsPendents;
 
 
 	public InformeGeneralEstatDto() {
@@ -88,12 +89,17 @@ public class InformeGeneralEstatDto implements Serializable {
 	public void setPeticionsCorrectes(Integer peticionsCorrectes) {
 		this.peticionsCorrectes = peticionsCorrectes;
 	}
-
 	public Integer getPeticionsErronees() {
 		return peticionsErronees;
 	}
 	public void setPeticionsErronees(Integer peticionsErronees) {
 		this.peticionsErronees = peticionsErronees;
+	}
+	public Integer getPeticionsPendents() {
+		return peticionsPendents;
+	}
+	public void setPeticionsPendents(Integer peticionsPendents) {
+		this.peticionsPendents = peticionsPendents;
 	}
 
 	@Override
