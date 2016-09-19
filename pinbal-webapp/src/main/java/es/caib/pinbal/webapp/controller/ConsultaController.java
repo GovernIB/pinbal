@@ -165,7 +165,8 @@ public class ConsultaController extends BaseController {
 					request,
 					command,
 					serveiCodi,
-					entitat);
+					entitat,
+					true);
 			model.addAttribute(command);
 			return "consultaForm";
 		} else {
@@ -200,7 +201,8 @@ public class ConsultaController extends BaseController {
 						request,
 						command,
 						serveiCodi,
-						entitat);
+						entitat,
+						false);
 				return "consultaForm";
 			} else {
 				List<Class<?>> grups = new ArrayList<Class<?>>();
@@ -230,7 +232,8 @@ public class ConsultaController extends BaseController {
 							request,
 							command,
 							serveiCodi,
-							entitat);
+							entitat,
+							false);
 					new DadesEspecifiquesValidator(
 							serveiService.findServeiCamps(serveiCodi)).validate(
 									command,
@@ -265,7 +268,8 @@ public class ConsultaController extends BaseController {
 							request,
 							command,
 							serveiCodi,
-							entitat);
+							entitat,
+							false);
 				}
 				if (bindingResult.hasErrors()) {
 					omplirModelPerMostrarFormulari(
@@ -572,12 +576,15 @@ public class ConsultaController extends BaseController {
 			HttpServletRequest request,
 			ConsultaCommand command,
 			String serveiCodi,
-			EntitatDto entitat) throws AccesExternException, ServeiNotFoundException, ScspException {
+			EntitatDto entitat,
+			boolean inicialitzacioCommand) throws AccesExternException, ServeiNotFoundException, ScspException {
 		command.setServeiCodi(serveiCodi);
-		UsuariDto dadesUsuari = usuariService.getDades();
-		if (dadesUsuari != null) {
-			command.setFuncionariNom(dadesUsuari.getNom());
-			command.setFuncionariNif(dadesUsuari.getNif());
+		if (inicialitzacioCommand) {
+			UsuariDto dadesUsuari = usuariService.getDades();
+			if (dadesUsuari != null) {
+				command.setFuncionariNom(dadesUsuari.getNom());
+				command.setFuncionariNif(dadesUsuari.getNif());
+			}
 		}
 		command.setEntitatNom(entitat.getNom());
 		command.setEntitatCif(entitat.getCif());
