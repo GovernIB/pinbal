@@ -1570,11 +1570,10 @@ public class ConsultaServiceImpl implements ConsultaService {
 		LOGGER.debug("Recuperant resposta SCSP per recobriment(peticionId=" + peticionId + ")");
 		return scspHelper.recuperarRespuestaScsp(peticionId);
 	}
-	
+
 	@Transactional(readOnly = true)
 	@Override
 	public List<InformeGeneralEstatDto> informeGeneralEstat(Date dataInici, Date dataFi) {
-		
 		Calendar cal = Calendar.getInstance();
 		cal.setTime(dataInici);
 		cal.set(Calendar.HOUR_OF_DAY,0);
@@ -1582,25 +1581,20 @@ public class ConsultaServiceImpl implements ConsultaService {
 		cal.set(Calendar.SECOND,0);
 		cal.set(Calendar.MILLISECOND,0);
 		dataInici = cal.getTime();
-		
 		cal.setTime(dataFi);
 		cal.set(Calendar.HOUR_OF_DAY,23);
 		cal.set(Calendar.MINUTE,59);
 		cal.set(Calendar.SECOND,59);
 		cal.set(Calendar.MILLISECOND,999);
 		dataFi = cal.getTime();
-		
 		LOGGER.debug("Obtenint informe general d'estats");
 		List<InformeGeneralEstatDto> resposta = new ArrayList<InformeGeneralEstatDto>();
-		
 		List<ProcedimentServei> serveis = procedimentServeiRepository.findAll(
 				new Sort(Sort.Direction.ASC, "procediment.entitat.nom", "procediment.codi", "servei"));
 		List<Object[]> consultes = consultaRepository.countGroupByProcedimentServeiEstat(dataInici, dataFi);
-		
 		for (ProcedimentServei servei : serveis) {
 			resposta.add(toInformeGeneralEstatDto(servei, consultes));
 		}
-		
 		return resposta;
 	}
 
@@ -1682,7 +1676,6 @@ public class ConsultaServiceImpl implements ConsultaService {
 		
 		return dto;
 	}
-
 
 	private ConsultaDto toConsultaDto(
 			Long entitatId,
@@ -1859,7 +1852,8 @@ public class ConsultaServiceImpl implements ConsultaService {
 						getExtensioSortida()));
 		if (JustificantEstat.OK.equals(consulta.getJustificantEstat())) {
 			arxiuDto.setContingut(
-					pluginHelper.custodiaObtenirDocument(peticionId));
+					pluginHelper.custodiaObtenirDocument(
+							custodiaObtenirId(consulta)));
 		} else if (JustificantEstat.OK_NO_CUSTODIA.equals(consulta.getJustificantEstat())) {
 			arxiuDto.setContingut(
 					generarJustificantAmbPlantilla(consulta));
@@ -1870,7 +1864,7 @@ public class ConsultaServiceImpl implements ConsultaService {
 	private void generarCustodiarJustificant(
 			Consulta consulta) {
 		String serveiCodi = consulta.getProcedimentServei().getServei();
-		String peticionId = consulta.getScspPeticionId();
+		//String peticionId = consulta.getScspPeticionId();
 		ServeiConfig serveiConfig = serveiConfigRepository.findByServei(serveiCodi);
 		String arxiuNom = conversioTipusDocumentHelper.nomArxiuConvertit(
 				justificantPlantillaHelper.getNomArxiuGenerat(
@@ -1884,6 +1878,7 @@ public class ConsultaServiceImpl implements ConsultaService {
 			JustificantEstat justificantEstat = JustificantEstat.PENDENT;
 			String custodiaError = null;
 			boolean custodiat = false;
+			String custodiaId = custodiaObtenirId(consulta);
 			try {
 				/*// Genera el certificat SCSP original
 				ByteArrayOutputStream baosGeneracio = scspHelper.generaJustificanteTransmision(
@@ -1897,9 +1892,7 @@ public class ConsultaServiceImpl implements ConsultaService {
 				if (custodiaUrl == null || custodiaUrl.isEmpty()) {
 					// Obté la URL de comprovació de signatura
 					LOGGER.debug("Sol·licitud de URL per a la custòdia del justificant de la consulta (id=" + consulta.getId() + ")");
-					custodiaUrl = pluginHelper.custodiaObtenirUrlVerificacioDocument(
-							consulta.getScspPeticionId(),
-							consulta.getScspSolicitudId());
+					custodiaUrl = pluginHelper.custodiaObtenirUrlVerificacioDocument(custodiaId);
 					LOGGER.debug("Obtinguda URL per a la custòdia del justificant de la consulta (id=" + consulta.getId() + ", custodiaUrl=" + custodiaUrl + ")");
 				}
 				// Signa el justificant
@@ -1913,7 +1906,7 @@ public class ConsultaServiceImpl implements ConsultaService {
 				LOGGER.debug("Custodia del justificant de la consulta (id=" + consulta.getId() + ")");
 				byte[] arxiuSignat = signedStream.toByteArray();
 				pluginHelper.custodiaEnviarPdfSignat(
-						peticionId,
+						custodiaId,
 						arxiuNom,
 						arxiuSignat,
 						documentTipus);
@@ -1928,6 +1921,7 @@ public class ConsultaServiceImpl implements ConsultaService {
 				consulta.updateJustificantEstat(
 						justificantEstat,
 						custodiat,
+						custodiaId,
 						custodiaUrl,
 						custodiaError);
 			}
@@ -1936,7 +1930,21 @@ public class ConsultaServiceImpl implements ConsultaService {
 					JustificantEstat.OK_NO_CUSTODIA,
 					false,
 					null,
+					null,
 					null);
+		}
+	}
+
+	private String custodiaObtenirId(
+			Consulta consulta) {
+		if (consulta.getCustodiaId() != null) {
+			return consulta.getCustodiaId();
+		} else {
+			if (consulta.isCustodiat()) {
+				return consulta.getScspPeticionId();
+			} else {
+				return consulta.getScspPeticionId() + "#" + consulta.getScspSolicitudId();
+			}
 		}
 	}
 
@@ -2322,7 +2330,7 @@ public class ConsultaServiceImpl implements ConsultaService {
 	private boolean isConvertirPdfaJustificant() {
 		return PropertiesHelper.getProperties().getAsBoolean("es.caib.pinbal.justificant.convertir.pdfa");
 	}
-	
+
 	private static final Logger LOGGER = LoggerFactory.getLogger(ConsultaServiceImpl.class);
 
 }

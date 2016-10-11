@@ -99,6 +99,8 @@ public class Consulta extends PinbalAuditable<Long> {
 	private JustificantEstat justificantEstat = JustificantEstat.PENDENT;
 	@Column(name = "custodiat")
 	private boolean custodiat = false;
+	@Column(name = "custodia_id", length = 255)
+	private String custodiaId;
 	@Column(name = "custodia_url", length = 255)
 	private String custodiaUrl;
 	@Column(name = "justificant_error", length = ERROR_JUSTIFICANT_MAX_LENGTH)
@@ -238,11 +240,14 @@ public class Consulta extends PinbalAuditable<Long> {
 	public boolean isCustodiat() {
 		return custodiat;
 	}
-	public JustificantEstat getJustificantEstat() {
-		return justificantEstat;
+	public String getCustodiaId() {
+		return custodiaId;
 	}
 	public String getCustodiaUrl() {
 		return custodiaUrl;
+	}
+	public JustificantEstat getJustificantEstat() {
+		return justificantEstat;
 	}
 	public String getJustificantError() {
 		return justificantError;
@@ -269,10 +274,12 @@ public class Consulta extends PinbalAuditable<Long> {
 	public void updateJustificantEstat(
 			JustificantEstat justificantEstat,
 			boolean custodiat,
+			String custodiaId,
 			String custodiaUrl,
 			String justificantError) {
 		this.justificantEstat = justificantEstat;
 		this.custodiat = custodiat;
+		this.custodiaId = custodiaId;
 		this.custodiaUrl = custodiaUrl;
 		if (justificantError != null && justificantError.length() > ERROR_JUSTIFICANT_MAX_LENGTH) {
 			String tokenFinal = " [...]";
