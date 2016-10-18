@@ -579,12 +579,12 @@ public class ConsultaController extends BaseController {
 			EntitatDto entitat,
 			boolean inicialitzacioCommand) throws AccesExternException, ServeiNotFoundException, ScspException {
 		command.setServeiCodi(serveiCodi);
-		if (inicialitzacioCommand) {
-			UsuariDto dadesUsuari = usuariService.getDades();
-			if (dadesUsuari != null) {
+		UsuariDto dadesUsuari = usuariService.getDades();
+		if (dadesUsuari != null) {
+			if (inicialitzacioCommand) {
 				command.setFuncionariNom(dadesUsuari.getNom());
-				command.setFuncionariNif(dadesUsuari.getNif());
 			}
+			command.setFuncionariNif(dadesUsuari.getNif());
 		}
 		command.setEntitatNom(entitat.getNom());
 		command.setEntitatCif(entitat.getCif());
