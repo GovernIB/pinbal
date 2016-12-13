@@ -19,6 +19,7 @@ import es.caib.pinbal.core.dto.ConsultaFiltreDto;
  */
 public class ConsultaFiltreCommand {
 
+	private String scspPeticionId;
 	private Long procediment;
 	@Size(max=64)
 	private String servei;
@@ -30,6 +31,12 @@ public class ConsultaFiltreCommand {
 	private String funcionariNom;
 	private String funcionariDocument;
 
+	public String getScspPeticionId() {
+		return scspPeticionId;
+	}
+	public void setScspPeticionId(String scspPeticionId) {
+		this.scspPeticionId = scspPeticionId;
+	}
 	public Long getProcediment() {
 		return procediment;
 	}

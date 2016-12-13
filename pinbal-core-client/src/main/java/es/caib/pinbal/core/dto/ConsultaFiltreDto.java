@@ -14,6 +14,7 @@ import es.caib.pinbal.core.dto.ConsultaDto.EstatTipus;
  */
 public class ConsultaFiltreDto implements Serializable {
 
+	private String scspPeticionId;
 	private Long procedimentId;
 	private String serveiCodi;
 	private EstatTipus estat;
@@ -24,6 +25,14 @@ public class ConsultaFiltreDto implements Serializable {
 	private String funcionariNom;
 	private String funcionariDocument;
 
+
+
+	public String getScspPeticionId() {
+		return scspPeticionId;
+	}
+	public void setScspPeticionId(String scspPeticionId) {
+		this.scspPeticionId = scspPeticionId;
+	}
 	public Long getProcedimentId() {
 		return procedimentId;
 	}

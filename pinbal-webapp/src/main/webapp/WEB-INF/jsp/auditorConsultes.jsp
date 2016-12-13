@@ -58,7 +58,16 @@ $(document).ready(function() {
 	<form:form id="form-filtre" action="" method="post" cssClass="well formbox" commandName="filtreCommand">
 		<div class="page-header"><spring:message code="auditor.list.filtre.titol"/></div>
 		<div class="row-fluid">
-			<div class="span4">
+			<div class="span3">
+				<c:set var="campPath" value="scspPeticionId"/>
+				<c:set var="campErrors"><form:errors path="${campPath}"/></c:set>
+				<div class="control-group<c:if test="${not empty campErrors}"> error</c:if>">
+					<spring:bind path="${campPath}">
+						<input type="text" id="${campPath}" name="${campPath}"<c:if test="${not empty status.value}"> value="${status.value}"</c:if> class="span12" placeholder="<spring:message code="auditor.list.filtre.peticion.id"/>">
+					</spring:bind>
+				</div>
+			</div>
+			<div class="span3">
 				<c:set var="campPath" value="procediment"/>
 				<c:set var="campErrors"><form:errors path="${campPath}"/></c:set>
 				<div class="control-group<c:if test="${not empty campErrors}"> error</c:if>">
@@ -68,7 +77,7 @@ $(document).ready(function() {
 					</form:select>
 				</div>
 			</div>
-			<div class="span4">
+			<div class="span3">
 				<c:set var="campPath" value="servei"/>
 				<c:set var="campErrors"><form:errors path="${campPath}"/></c:set>
 				<div class="control-group<c:if test="${not empty campErrors}"> error</c:if>">
@@ -78,7 +87,7 @@ $(document).ready(function() {
 					</form:select>
 				</div>
 			</div>
-			<div class="span4">
+			<div class="span3">
 				<c:set var="campPath" value="estat"/>
 				<c:set var="campErrors"><form:errors path="${campPath}"/></c:set>
 				<div class="control-group<c:if test="${not empty campErrors}"> error</c:if>">

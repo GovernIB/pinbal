@@ -1755,6 +1755,8 @@ public class ConsultaServiceImpl implements ConsultaService {
 					entitat.getId(),
 					usuariCodi == null,
 					(usuariCodi != null) ? usuariRepository.findOne(usuariCodi) : null,
+					filtre.getScspPeticionId() == null || filtre.getScspPeticionId().isEmpty(),
+					filtre.getScspPeticionId(),
 					filtre.getProcedimentId() == null,
 					filtre.getProcedimentId(),
 					filtre.getServeiCodi() == null || filtre.getServeiCodi().isEmpty(),

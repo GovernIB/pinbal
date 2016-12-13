@@ -165,6 +165,7 @@ public interface ConsultaRepository extends JpaRepository<Consulta, Long> {
 			"where " +
 			"    c.procedimentServei.procediment.entitat.id = :entitatId " +
 			"and (:esNullCreatedBy = true or c.createdBy = :createdBy) " +
+			"and (:esNullScspPeticionId = true or c.scspPeticionId = :scspPeticionId) " +
 			"and (:esNullProcedimentId = true or c.procedimentServei.procediment.id = :procedimentId) " +
 			"and (:esNullServeiCodi = true or c.procedimentServei.servei = :serveiCodi) " +
 			"and (:esNullEstat = true or c.estat = :estat) " +
@@ -180,6 +181,8 @@ public interface ConsultaRepository extends JpaRepository<Consulta, Long> {
 			@Param("entitatId") Long entitatId,
 			@Param("esNullCreatedBy") boolean esNullCreatedBy,
 			@Param("createdBy") Usuari createdBy,
+			@Param("esNullScspPeticionId") boolean esNullScspPeticionId,
+			@Param("scspPeticionId") String scspPeticionId,
 			@Param("esNullProcedimentId") boolean esNullProcedimentId,
 			@Param("procedimentId") Long procedimentId,
 			@Param("esNullServeiCodi") boolean esNullServeiCodi,
