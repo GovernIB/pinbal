@@ -413,6 +413,9 @@ public class XmlHelper {
 		if (is == null)
 			return null;
 		XmlSchemaCollection schemaCol = new XmlSchemaCollection();
+		schemaCol.setSchemaResolver(new SchemaUriResolver(
+				servicio.getCodCertificado(), 
+				servicio.getVersionEsquema()));
 		XmlSchema schema = schemaCol.read(new StreamSource(is), null);
 		XmlSchemaElement datosEspecificosElement = schema.getElementByName("DatosEspecificos");
 		return datosEspecificosElement.getQName().getNamespaceURI();
