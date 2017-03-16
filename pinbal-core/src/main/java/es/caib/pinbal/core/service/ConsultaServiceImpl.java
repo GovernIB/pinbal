@@ -643,13 +643,14 @@ public class ConsultaServiceImpl implements ConsultaService {
 			LOGGER.error("Error al copiar les dades específiques de la consulta (consultaId=" + consultaId + ")", ex);
 			throw new ScspException(ex.getMessage(), ex);
 		}
+		DocumentTipus documentTipus = (consulta.getTitularDocumentTipus() != null) ? DocumentTipus.valueOf(consulta.getTitularDocumentTipus()) : null;
 		Solicitud solicitudEnviar = convertirEnSolicitud(
 				procedimentServei.getProcediment().getEntitat(),
 				procedimentServei.getProcediment(),
 				procedimentServei.getServei(),
 				consulta.getFuncionariNom(),
 				consulta.getFuncionariDocumentNum(),
-				DocumentTipus.valueOf(consulta.getTitularDocumentTipus()),
+				documentTipus,
 				consulta.getTitularDocumentNum(),
 				consulta.getTitularNom(),
 				consulta.getTitularLlinatge1(),
