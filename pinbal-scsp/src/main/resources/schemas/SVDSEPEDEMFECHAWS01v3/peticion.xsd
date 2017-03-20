@@ -156,8 +156,8 @@
 	<xs:element name="Procedimiento">
 		<xs:complexType>
 			<xs:sequence>
-				<xs:element ref="CodProcedimiento" minOccurs="0"/>
-				<xs:element ref="NombreProcedimiento" minOccurs="0"/>
+				<xs:element ref="CodProcedimiento"/>
+				<xs:element ref="NombreProcedimiento"/>
 			</xs:sequence>
 		</xs:complexType>
 	</xs:element>
@@ -288,7 +288,7 @@
 				<xs:element ref="IdentificadorSolicitante"/>
 				<xs:element ref="NombreSolicitante"/>
 				<xs:element ref="UnidadTramitadora" minOccurs="0"/>
-				<xs:element ref="Procedimiento" minOccurs="0"/>
+				<xs:element ref="Procedimiento"/>
 				<xs:element ref="Finalidad"/>
 				<xs:element ref="Consentimiento"/>
 				<xs:element ref="Funcionario"/>
