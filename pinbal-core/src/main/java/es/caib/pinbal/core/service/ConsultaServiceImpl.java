@@ -2065,8 +2065,10 @@ public class ConsultaServiceImpl implements ConsultaService {
 		solicitud.setSolicitantNom(entitat.getNom());
 		solicitud.setFuncionariNom(funcionariNom);
 		solicitud.setFuncionariNif(funcionariNif);
-		solicitud.setTitularDocumentTipus(
-				es.caib.pinbal.scsp.DocumentTipus.valueOf(titularDocumentTipus.toString()));
+		if (titularDocumentTipus != null) {
+			solicitud.setTitularDocumentTipus(
+					es.caib.pinbal.scsp.DocumentTipus.valueOf(titularDocumentTipus.toString()));
+		}
 		solicitud.setTitularDocument(titularDocumentNum);
 		solicitud.setTitularNom(titularNom);
 		solicitud.setTitularLlinatge1(titularLlinatge1);
