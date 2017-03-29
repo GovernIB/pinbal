@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- edited with XMLSpy v2009 sp1 (http://www.altova.com) by PC Corporativo (AGENCIA TRIBUTARIA) -->
 <xs:schema xmlns="http://intermediacion.redsara.es/scsp/esquemas/datosespecificos" xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://intermediacion.redsara.es/scsp/esquemas/datosespecificos" elementFormDefault="qualified" attributeFormDefault="unqualified">
 	<xs:element name="DatosEspecificos">
 		<xs:complexType>
@@ -15,10 +14,9 @@
 							<xs:sequence>
 								<xs:element name="CodRet">
 									<xs:simpleType>
-										<xs:restriction base="xs:long">
-											<xs:minInclusive value="0"/>
-											<xs:maxInclusive value="9999"/>
-											<xs:totalDigits value="4"/>
+										<xs:restriction base="xs:string">
+											<xs:minLength value="1"/>
+											<xs:maxLength value="4"/>
 										</xs:restriction>
 									</xs:simpleType>
 								</xs:element>
@@ -76,7 +74,7 @@
 										</xs:restriction>
 									</xs:simpleType>
 								</xs:element>
-								<xs:element name="DatosEconomicos" minOccurs="0" maxOccurs="10">
+								<xs:element name="DatosEconomicos" minOccurs="0" maxOccurs="100">
 									<xs:complexType>
 										<xs:sequence>
 											<xs:element name="Literal">

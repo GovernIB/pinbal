@@ -46,6 +46,13 @@
 			</xs:restriction>
 		</xs:simpleType>
 	</xs:element>
+	<xs:element name="LiteralErrorSec">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:maxLength value="255"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
 	<xs:element name="NumElementos">
 		<xs:simpleType>
 			<xs:restriction base="xs:int">
@@ -75,6 +82,7 @@
 				<xs:element ref="CodigoEstado" minOccurs="0"/>
 				<xs:element ref="CodigoEstadoSecundario" minOccurs="0"/>
 				<xs:element ref="LiteralError" minOccurs="0"/>
+				<xs:element ref="LiteralErrorSec" minOccurs="0"/>
 				<xs:element ref="TiempoEstimadoRespuesta" minOccurs="0"/>
 			</xs:all>
 		</xs:complexType>

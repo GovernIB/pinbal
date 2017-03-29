@@ -1156,7 +1156,7 @@
 					<xs:documentation>NIF</xs:documentation>
 				</xs:annotation>
 			</xs:element>
-			<xs:element name="nom" type="nom">
+			<xs:element name="nom" type="nom" minOccurs="0">
 				<xs:annotation>
 					<xs:documentation>Apellidos y Nombre o Razón Social</xs:documentation>
 				</xs:annotation>
@@ -2992,6 +2992,7 @@
 			<xs:enumeration value="T"/>
 			<xs:enumeration value="A"/>
 			<xs:enumeration value="D"/>
+			<xs:enumeration value="L"/>
 		</xs:restriction>
 	</xs:simpleType>
 	<xs:simpleType name="modlspr">
@@ -3265,6 +3266,9 @@
 			<xs:enumeration value="RDL 1/2004 8.2b"/>
 			<xs:enumeration value="RDL 1/2004 8.2c"/>
 			<xs:enumeration value="RDL 1/2004 8.2d"/>
+			<xs:enumeration value="Almacen agrario"/>
+			<xs:enumeration value="Industrial agrario"/>
+			<xs:enumeration value="Agrario"/>
 		</xs:restriction>
 	</xs:simpleType>
 	<xs:simpleType name="ia">
