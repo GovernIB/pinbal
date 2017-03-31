@@ -10,10 +10,10 @@
 		<xs:attribute name="Id" type="xs:string" use="optional"/>
 	</xs:complexType>
 	<xs:complexType name="DatosEntrada">
-		<xs:sequence>
-			<xs:element name="referenciaCatastral" type="rcl" minOccurs="0"/>
-			<xs:element name="referenciaRustica" type="rrl" minOccurs="0"/>
-		</xs:sequence>
+		<xs:choice>
+			<xs:element name="referenciaCatastral" type="rcl"/>
+			<xs:element name="referenciaRustica" type="rrl"/>
+		</xs:choice>
 	</xs:complexType>
 	<xs:complexType name="loine">
 		<xs:annotation>
@@ -3013,6 +3013,7 @@
 			<xs:enumeration value="T"/>
 			<xs:enumeration value="A"/>
 			<xs:enumeration value="D"/>
+			<xs:enumeration value="L"/>
 		</xs:restriction>
 	</xs:simpleType>
 	<xs:simpleType name="modlspr">
@@ -3286,6 +3287,9 @@
 			<xs:enumeration value="RDL 1/2004 8.2b"/>
 			<xs:enumeration value="RDL 1/2004 8.2c"/>
 			<xs:enumeration value="RDL 1/2004 8.2d"/>
+			<xs:enumeration value="Almacen agrario"/>
+			<xs:enumeration value="Industrial agrario"/>
+			<xs:enumeration value="Agrario"/>
 		</xs:restriction>
 	</xs:simpleType>
 	<xs:simpleType name="ia">
