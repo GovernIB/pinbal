@@ -19,12 +19,17 @@
 	<xs:element name="Consulta">
 		<xs:complexType>
 			<xs:all>
-				<xs:element ref="NumeroSoporte" minOccurs="1">
+				<xs:element ref="NumeroSoporte" minOccurs="0">
 					<xs:annotation>
 						<xs:documentation>- Ciudadano español: Es el campo Ides del DNIe. Su codificación es 3 caracteres alfanuméricos + 6 dígitos (i.e. AAA123456)
 - Ciudadano extranjero comunitario: Su codificación es ‘C’+ 8 dígitos correspondiendo este número de soporte con el Certificado Comunitario
 - Ciudadano extranjero: Su codificación es ‘E’+ 8 dígitos (estos 8 dígitos coinciden con el número de tarjeta de identificación de extranjero). 
 </xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element ref="AnioNacimiento" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>Año de Nacimiento del Titular. Formato YYYY. Debe ser mayor a 1900</xs:documentation>
 					</xs:annotation>
 				</xs:element>
 			</xs:all>
@@ -33,7 +38,7 @@
 	<xs:element name="Retorno">
 		<xs:complexType>
 			<xs:all>
-				<xs:element ref="Estado" minOccurs="1"/>
+				<xs:element ref="Estado"/>
 				<xs:element ref="DatosTitular" minOccurs="0"/>
 			</xs:all>
 		</xs:complexType>
@@ -71,9 +76,9 @@
 		</xs:annotation>
 		<xs:complexType>
 			<xs:all>
-				<xs:element ref="CodigoEstado" minOccurs="1"/>
+				<xs:element ref="CodigoEstado"/>
 				<xs:element ref="CodigoEstadoSecundario" minOccurs="0"/>
-				<xs:element ref="LiteralError" minOccurs="1"/>
+				<xs:element ref="LiteralError"/>
 			</xs:all>
 		</xs:complexType>
 	</xs:element>
@@ -89,7 +94,7 @@
 - Ciudadano extranjero comunitario: Su codificación es ‘C’+ 8 dígitos correspondiendo este número de soporte con el Certificado Comunitario
 - Caso ciudadano extranjero: Su codificación es ‘E’+ 8 dígitos (estos 8 dígitos coinciden con el número de tarjeta de extranjería). </xs:documentation>
 					</xs:annotation>
-				</xs:element>				
+				</xs:element>
 				<xs:element ref="Nombre" minOccurs="0">
 					<xs:annotation>
 						<xs:documentation>Nombre del ciudadano para el que se realiza la consulta.
@@ -220,6 +225,14 @@ En el caso de consultar por un NIE la FechaCaducidad se devolverá vacia puesto 
 			</xs:restriction>
 		</xs:simpleType>
 	</xs:element>
+	<xs:element name="AnioNacimiento">
+		<xs:simpleType>
+			<xs:restriction base="xs:int">
+				<xs:totalDigits value="4"/>
+				<xs:minExclusive value="1900"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
 	<xs:element name="DatosNacimiento">
 		<xs:complexType>
 			<xs:all>
@@ -230,7 +243,7 @@ En el caso de consultar por un NIE la FechaCaducidad se devolverá vacia puesto 
 				</xs:element>
 				<xs:element ref="Localidad" minOccurs="0">
 					<xs:annotation>
-						<xs:documentation>Localidad de Nacimiento del ciudadano consultado. Si la localidad tiene mas de 40 caracteres, esta vendrá truncada a 40.</xs:documentation>
+						<xs:documentation>Localidad de Nacimiento del ciudadano consultado. Si la localidad tiene mas de 60 caracteres, esta vendrá truncada a 60.</xs:documentation>
 					</xs:annotation>
 				</xs:element>
 				<xs:element ref="Provincia" minOccurs="0">
@@ -278,7 +291,7 @@ En el caso de consultar por un NIE la FechaCaducidad se devolverá vacia puesto 
 	<xs:element name="Localidad">
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
-				<xs:maxLength value="40"/>
+				<xs:maxLength value="60"/>
 				<xs:minLength value="1"/>
 				<xs:whiteSpace value="collapse"/>
 			</xs:restriction>
