@@ -30,7 +30,7 @@
 				<xs:element ref="Estado"/>
 			</xs:sequence>
 		</xs:complexType>
-	</xs:element>	
+	</xs:element>
 	<xs:element name="CodigoComunidadAutonoma">
 		<xs:annotation>
 			<xs:documentation>Utilizar los 2 dígitos del código INE.		
@@ -40,8 +40,8 @@
 · 04 - ISLAS BALEARES
 · 05 - CANARIAS
 · 06 - CANTABRIA
-· 07 - CASTILLA-LA MANCHA
-· 08 - CASTILLA y LEÓN
+· 07 - CASTILLA y LEÓN
+· 08 - CASTILLA-LA MANCHA
 · 09 - CATALUÑA
 · 10 - COMUNIDAD VALENCIANA
 · 11 - EXTREMADURA
@@ -92,7 +92,7 @@
 			<xs:minLength value="2"/>
 			<xs:maxLength value="2"/>
 		</xs:restriction>
-	</xs:simpleType>	
+	</xs:simpleType>
 	<xs:element name="Estado">
 		<xs:complexType>
 			<xs:all>
