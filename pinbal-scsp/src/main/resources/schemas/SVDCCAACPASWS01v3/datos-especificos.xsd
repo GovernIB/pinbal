@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- edited with XMLSpy v2011 sp1 (http://www.altova.com) by End User (free.org) -->
 <xs:schema xmlns="http://intermediacion.redsara.es/scsp/esquemas/datosespecificos" xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://intermediacion.redsara.es/scsp/esquemas/datosespecificos" elementFormDefault="qualified" attributeFormDefault="unqualified">
 	<xs:element name="DatosEspecificos" type="DatosEspecificos"/>
 	<xs:complexType name="DatosEspecificos">
@@ -19,66 +20,26 @@
 	<xs:element name="Consulta">
 		<xs:complexType>
 			<xs:sequence>
-				<xs:element ref="CodigoComunidadAutonoma"/>
 				<xs:element ref="CodigoProvincia" minOccurs="0"/>
 			</xs:sequence>
 		</xs:complexType>
 	</xs:element>
 	<xs:element name="Retorno">
 		<xs:complexType>
-			<xs:sequence>
+			<xs:all>
 				<xs:element ref="Estado"/>
-			</xs:sequence>
+			</xs:all>
 		</xs:complexType>
 	</xs:element>
-	<xs:element name="CodigoComunidadAutonoma">
+	<xs:simpleType name="Fecha">
 		<xs:annotation>
-			<xs:documentation>Utilizar los 2 dígitos del código INE.		
-· 01 - ANDALUCÍA
-· 02 - ARAGÓN
-· 03 - PRINCIPADO DE ASTURIAS
-· 04 - ISLAS BALEARES
-· 05 - CANARIAS
-· 06 - CANTABRIA
-· 07 - CASTILLA y LEÓN
-· 08 - CASTILLA-LA MANCHA
-· 09 - CATALUÑA
-· 10 - COMUNIDAD VALENCIANA
-· 11 - EXTREMADURA
-· 12 - GALICIA
-· 13 - MADRID
-· 14 - REGIÓN DE MURCIA
-· 15 - NAVARRA
-· 16 - PAÍS VASCO
-· 17 - LA RIOJA
-· 18 - CIUDAD DE CEUTA
-· 19 - CIUDAD DE MELILLA			
-			</xs:documentation>
+			<xs:documentation>Formato: DD/MM/AAAA</xs:documentation>
 		</xs:annotation>
-		<xs:simpleType>
-			<xs:restriction base="xs:string">
-				<xs:enumeration value="01"/>
-				<xs:enumeration value="02"/>
-				<xs:enumeration value="03"/>
-				<xs:enumeration value="04"/>
-				<xs:enumeration value="05"/>
-				<xs:enumeration value="06"/>
-				<xs:enumeration value="07"/>
-				<xs:enumeration value="08"/>
-				<xs:enumeration value="09"/>
-				<xs:enumeration value="10"/>
-				<xs:enumeration value="11"/>
-				<xs:enumeration value="12"/>
-				<xs:enumeration value="13"/>
-				<xs:enumeration value="14"/>
-				<xs:enumeration value="15"/>
-				<xs:enumeration value="16"/>
-				<xs:enumeration value="17"/>
-				<xs:enumeration value="18"/>
-				<xs:enumeration value="19"/>
-			</xs:restriction>
-		</xs:simpleType>
-	</xs:element>
+		<xs:restriction base="xs:string">
+			<xs:minLength value="10"/>
+			<xs:maxLength value="10"/>
+		</xs:restriction>
+	</xs:simpleType>
 	<xs:element name="CodigoProvincia" type="Codigo2DigitosINE">
 		<xs:annotation>
 			<xs:documentation>Utilizar los 2 dígitos del código INE</xs:documentation>
