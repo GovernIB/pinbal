@@ -20,12 +20,13 @@ public class ServeiCampDto implements Serializable {
 		DATA,
 		ENUM,
 		PROVINCIA,
-		MUNICIPI_3,
 		MUNICIPI_5,
 		ETIQUETA,
 		BOOLEA,
 		DOC_IDENT,
-		PAIS
+		PAIS,
+		MUNICIPI_3,
+		ADJUNT
 	}
 
 	private Long id;

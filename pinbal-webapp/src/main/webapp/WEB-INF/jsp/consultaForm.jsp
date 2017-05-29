@@ -23,7 +23,6 @@
 <html>
 <head>
 	<title><spring:message code="consulta.form.titol" arguments="${servei.descripcio}"/></title>
-<%-- 	<script src="<c:url value="/js/bootstrap.min.js"/>"></script> --%>
 	<script src="<c:url value="/js/bootstrap.file-input.js"/>"></script>
 	<script src="<c:url value="/js/jquery.maskedinput.js"/>"></script>
 	<c:if test="${serveiMultiple}">
@@ -375,7 +374,6 @@
 	  	</div>
 	  	<div class="modal-body">
 	  		${servei.ajuda}
-<%-- 	    	${servei.ajudaHtml} --%>
 	  	</div>
 	  	<div class="modal-footer">
 	  		<c:if test="${not empty servei.fitxerAjudaNom}">

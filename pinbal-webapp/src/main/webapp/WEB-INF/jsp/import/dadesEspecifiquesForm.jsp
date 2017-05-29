@@ -187,6 +187,64 @@
 	});
 	</script>
 											</c:when>
+											<c:when test="${camp.tipus == 'ADJUNT'}">
+												<c:choose>
+													<c:when test="${dadesEspecifiquesDisabled}">
+														<input type="text" id="${campId}" name="${campId}" disabled="disabled"<c:if test="${not empty valorDadaEspecifica}"> value="${valorDadaEspecifica}"</c:if> class="span12"/>
+													</c:when>
+													<c:otherwise>
+														<div class="input-append">
+															<input type="text" id="${campId}-file-helper" value="${serveiCommand.fitxerAjudaNom}" style="width:110%"/>
+															<span id="${campId}-file-helper-clean" class="btn btn-default"><i class='icon-trash'></i></span>
+															<span id="${campId}-file-helper-file" class="btn btn-default"><i class='icon-file'></i></span>
+														</div>
+														<input type="file" id="${campId}" name="${campId}" class="hide"/>
+	<script>
+	$(document).ready(function() {
+		var $fileHelper = $('#${campId}-file-helper');
+		var $fileHelperClean = $('#${campId}-file-helper-clean');
+		var $fileHelperFile = $('#${campId}-file-helper-file');
+		var fileClick = function() {
+			if (!$fileHelper.val()) {
+				$('#${campId}').trigger('click');
+			}
+		}
+		if (!$fileHelper.val()) {
+			$fileHelperClean.attr('disabled', 'disabled');
+		} else {
+			var path = $fileHelper.val();
+			$fileHelperClean.removeAttr('disabled');
+			$fileHelperFile.attr('disabled', 'disabled');
+			$fileHelper.val(path);
+			$fileHelper.attr('disabled', 'disabled');
+			$fileHelper.change();
+		}
+		$fileHelperFile.click(fileClick);
+		$fileHelper.click(fileClick);
+		$fileHelperClean.click(function() {
+			$fileHelper.val('');
+			$fileHelper.removeAttr('disabled');
+			$fileHelperClean.attr('disabled', 'disabled');
+			var $fileHelperFileIcon = $('i', $fileHelperFile);
+			$fileHelperFile.removeAttr('disabled');
+			$('#${campId}').val('');
+		});
+		$('#${campId}').change(function(e) {
+			var path = $(this).val();
+			var path = e.target.files[0].name;
+			if (path) {
+				$fileHelperClean.removeAttr('disabled');
+				$fileHelperFile.attr('disabled', 'disabled');
+				$fileHelper.val(path);
+				$fileHelper.attr('disabled', 'disabled');
+				$fileHelper.change();
+			}
+	    });
+	});
+	</script>
+													</c:otherwise>
+												</c:choose>
+											</c:when>
 											<c:when test="${camp.tipus == 'ETIQUETA'}"></c:when>
 										</c:choose>
 									</c:when>

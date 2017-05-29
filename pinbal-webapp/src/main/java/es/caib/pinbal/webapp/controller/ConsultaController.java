@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -18,6 +19,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
+import org.apache.commons.codec.binary.Base64;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +36,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.supercsv.io.CsvListReader;
 import org.supercsv.io.ICsvListReader;
 import org.supercsv.prefs.CsvPreference;
@@ -151,7 +154,7 @@ public class ConsultaController extends BaseController {
 	public String newGet(
 			HttpServletRequest request,
 			@PathVariable String serveiCodi,
-			Model model) throws AccesExternException, ServeiNotFoundException, ScspException, EntitatNotFoundException {
+			Model model) throws AccesExternException, ServeiNotFoundException, ScspException, EntitatNotFoundException, IOException {
 		if (!EntitatHelper.isDelegatEntitatActual(request))
 			return "delegatNoAutoritzat";
 		EntitatDto entitat = EntitatHelper.getEntitatActual(request, entitatService);
@@ -185,7 +188,7 @@ public class ConsultaController extends BaseController {
 			@PathVariable String serveiCodi,
 			@Valid ConsultaCommand command,
 			BindingResult bindingResult,
-			Model model) throws AccesExternException, ProcedimentServeiNotFoundException, ServeiNotFoundException, ConsultaNotFoundException, ServeiNotAllowedException, ScspException, EntitatNotFoundException, ValidacioDadesPeticioException {
+			Model model) throws AccesExternException, ProcedimentServeiNotFoundException, ServeiNotFoundException, ConsultaNotFoundException, ServeiNotAllowedException, ScspException, EntitatNotFoundException, ValidacioDadesPeticioException, IOException {
 		if (!EntitatHelper.isDelegatEntitatActual(request))
 			return "delegatNoAutoritzat";
 		EntitatDto entitat = EntitatHelper.getEntitatActual(request, entitatService);
@@ -577,7 +580,7 @@ public class ConsultaController extends BaseController {
 			ConsultaCommand command,
 			String serveiCodi,
 			EntitatDto entitat,
-			boolean inicialitzacioCommand) throws AccesExternException, ServeiNotFoundException, ScspException {
+			boolean inicialitzacioCommand) throws AccesExternException, ServeiNotFoundException, ScspException, IOException {
 		command.setServeiCodi(serveiCodi);
 		UsuariDto dadesUsuari = usuariService.getDades();
 		if (dadesUsuari != null) {
@@ -607,8 +610,7 @@ public class ConsultaController extends BaseController {
 	@SuppressWarnings("unchecked")
 	private Map<String, String> getDadesEspecifiques(
 			HttpServletRequest request,
-			String serveiCodi) throws ScspException, ServeiNotFoundException {
-		//List<NodeDto<DadaEspecificaDto>> arbreDadesEspecifiques = serveiService.generarArbreDadesEspecifiques(serveiCodi).toList();
+			String serveiCodi) throws ScspException, ServeiNotFoundException, IOException {
 		List<ServeiCampDto> serveiCamps = serveiService.findServeiCamps(serveiCodi);
 		Map<String, String> resposta = new HashMap<String, String>();
 		Enumeration<String> paramNames = request.getParameterNames();
@@ -635,6 +637,24 @@ public class ConsultaController extends BaseController {
 									request.getParameter(paramName));
 						}
 						break;
+					}
+				}
+			}
+		}
+		if (request instanceof MultipartHttpServletRequest) {
+			MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest)request;
+			Iterator<String> fileNamesIt = multipartRequest.getFileNames();
+			while (fileNamesIt.hasNext()) {
+				String fileName = fileNamesIt.next();
+				if (fileName.startsWith(PREFIX_CAMP_DADES_ESPECIFIQUES)) {
+					String campId = fileName.substring(PREFIX_CAMP_DADES_ESPECIFIQUES.length());
+					for (ServeiCampDto serveiCamp: serveiCamps) {
+						if (ServeiCampDtoTipus.ADJUNT.equals(serveiCamp.getTipus()) && serveiCamp.getId().equals(new Long(campId))) {
+							MultipartFile multipartFile = multipartRequest.getFile(fileName);
+							resposta.put(
+									serveiCamp.getPath(),
+									new String(Base64.encodeBase64(multipartFile.getBytes())));
+						}
 					}
 				}
 			}
