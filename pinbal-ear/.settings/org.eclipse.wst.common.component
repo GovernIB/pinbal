@@ -362,10 +362,16 @@
         <dependent-module archiveName="itext-2.1.7.jar" deploy-path="/" handle="module:/classpath/var/M2_REPO/com/lowagie/itext/2.1.7/itext-2.1.7.jar">
             <dependency-type>uses</dependency-type>
         </dependent-module>
-        <dependent-module archiveName="scsp-core-3.5.0.jar" deploy-path="/" handle="module:/classpath/var/M2_REPO/es/scsp/scsp-core/3.5.0/scsp-core-3.5.0.jar">
+        <dependent-module archiveName="bcprov-jdk15-1.46.jar" deploy-path="/" handle="module:/classpath/var/M2_REPO/org/bouncycastle/bcprov-jdk15/1.46/bcprov-jdk15-1.46.jar">
             <dependency-type>uses</dependency-type>
         </dependent-module>
-        <dependent-module archiveName="scsp-beans-3.3.1.jar" deploy-path="/" handle="module:/classpath/var/M2_REPO/es/scsp/scsp-beans/3.3.1/scsp-beans-3.3.1.jar">
+        <dependent-module archiveName="bcmail-jdk15-1.46.jar" deploy-path="/" handle="module:/classpath/var/M2_REPO/org/bouncycastle/bcmail-jdk15/1.46/bcmail-jdk15-1.46.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="scsp-core-3.5.7.jar" deploy-path="/" handle="module:/classpath/var/M2_REPO/es/scsp/scsp-core/3.5.7/scsp-core-3.5.7.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="scsp-beans-3.3.2.jar" deploy-path="/" handle="module:/classpath/var/M2_REPO/es/scsp/scsp-beans/3.3.2/scsp-beans-3.3.2.jar">
             <dependency-type>uses</dependency-type>
         </dependent-module>
         <dependent-module archiveName="scsp-rampart-core-1.4.jar" deploy-path="/" handle="module:/classpath/var/M2_REPO/es/scsp/scsp-rampart-core/1.4/scsp-rampart-core-1.4.jar">

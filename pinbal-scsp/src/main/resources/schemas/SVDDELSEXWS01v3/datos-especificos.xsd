@@ -140,12 +140,12 @@
 · 00/MM/AAAA
 · 00/00/AAAA
  Donde AAAA indica el año, MM indica el mes, DD indica el día
- Solo se permiten fecha igual o superior a 1920</xs:documentation>
+ 			</xs:documentation>
 		</xs:annotation>
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
 				<xs:length value="10"/>
-				<xs:pattern value="([0-2][0-9]|[3][0-1])/([0][0-9]|[1][0-2])/([1][9][2-9][0-9]|[2][0-9]{3})"/>
+				<xs:pattern value="([0-2][0-9]|[3][0-1])/([0][0-9]|[1][0-2])/([1-9][0-9]{3})"/>
 			</xs:restriction>
 		</xs:simpleType>
 	</xs:element>
@@ -162,8 +162,7 @@
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
 				<xs:whiteSpace value="collapse"/>
-				<xs:minLength value="1"/>
-				<xs:maxLength value="15"/>
+				<xs:pattern value="(\+)?[0-9]{1,12}"/>
 			</xs:restriction>
 		</xs:simpleType>
 	</xs:element>

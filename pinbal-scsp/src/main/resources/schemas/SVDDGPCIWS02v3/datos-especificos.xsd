@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- edited with XMLSpy v2008 sp1 (http://www.altova.com) by Daniel (Particular) -->
 <xs:schema xmlns="http://intermediacion.redsara.es/scsp/esquemas/datosespecificos" xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://intermediacion.redsara.es/scsp/esquemas/datosespecificos" elementFormDefault="qualified" attributeFormDefault="unqualified">
 	<xs:element name="DatosEspecificos" type="DatosEspecificos"/>
 	<xs:complexType name="DatosEspecificos">
@@ -243,7 +244,7 @@ En el caso de consultar por un NIE la FechaCaducidad se devolverá vacia puesto 
 				</xs:element>
 				<xs:element ref="Localidad" minOccurs="0">
 					<xs:annotation>
-						<xs:documentation>Localidad de Nacimiento del ciudadano consultado. Si la localidad tiene mas de 60 caracteres, esta vendrá truncada a 60.</xs:documentation>
+						<xs:documentation>Localidad de Nacimiento del ciudadano consultado. Si la localidad tiene mas de 40 caracteres, esta vendrá truncada a 40.</xs:documentation>
 					</xs:annotation>
 				</xs:element>
 				<xs:element ref="Provincia" minOccurs="0">
@@ -291,7 +292,7 @@ En el caso de consultar por un NIE la FechaCaducidad se devolverá vacia puesto 
 	<xs:element name="Localidad">
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
-				<xs:maxLength value="60"/>
+				<xs:maxLength value="40"/>
 				<xs:minLength value="1"/>
 				<xs:whiteSpace value="collapse"/>
 			</xs:restriction>

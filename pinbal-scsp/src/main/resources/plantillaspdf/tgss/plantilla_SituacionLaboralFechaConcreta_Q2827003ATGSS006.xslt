@@ -34,7 +34,7 @@
 	<xsl:param name="consentimiento"/>
 	<xsl:param name="idExpediente"/>
 	<xsl:param name="finalidad"/>
-	<xsl:param name="DatosEspecificosFECHA"/>
+	<xsl:param name="FECHA"/>
 	
 	<xsl:template match="/">
 		<fo:root>
@@ -360,8 +360,8 @@
 						</fo:table-cell>							
 						<fo:table-cell padding="2pt" display-align="center">						
 								<fo:block font-size="8pt" text-align="left" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after" >
-									<xsl:if test="$DatosEspecificosFECHA != ''">
-									<xsl:value-of select="concat(substring(string($DatosEspecificosFECHA),1,2),'/',substring(string($DatosEspecificosFECHA),3,2),'/',substring(string($DatosEspecificosFECHA),5,4))"/>
+									<xsl:if test="$FECHA != ''">
+									<xsl:value-of select="concat(substring(string($FECHA),1,2),'/',substring(string($FECHA),3,2),'/',substring(string($FECHA),5,4))"/>
 									</xsl:if>	
 								</fo:block>										
 						</fo:table-cell>

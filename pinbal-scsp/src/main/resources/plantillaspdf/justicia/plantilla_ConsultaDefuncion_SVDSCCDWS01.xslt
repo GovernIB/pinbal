@@ -35,18 +35,18 @@
 	<xsl:param name="finalidad"/>
 	
 		
-	<xsl:param name="DatosAdicionalesTitularConsultaFechaHechoRegistral"/>
-	<xsl:param name="DatosAdicionalesTitularConsultaAusenciaSegundoApellido"/>
+	<xsl:param name="ConsultaDatosAdicionalesTitularConsultaFechaHechoRegistral"/>
+	<xsl:param name="ConsultaDatosAdicionalesTitularConsultaAusenciaSegundoApellido"/>
 
-	<xsl:param name="ConsultaPorDatosRegistralesRegistroCivil"/>
-	<xsl:param name="ConsultaPorDatosRegistralesTomo"/>
-	<xsl:param name="ConsultaPorDatosRegistralesPagina"/>
+	<xsl:param name="ConsultaConsultaPorDatosRegistralesRegistroCivil"/>
+	<xsl:param name="ConsultaConsultaPorDatosRegistralesTomo"/>
+	<xsl:param name="ConsultaConsultaPorDatosRegistralesPagina"/>
 
-	<xsl:param name="ConsultaPorOtrosDatosPoblacionHechoRegistral"/>
-	<xsl:param name="ConsultaPorOtrosDatosFechaNacimiento"/>
-	<xsl:param name="ConsultaPorOtrosDatosPoblacionNacimiento"/>
-	<xsl:param name="ConsultaPorOtrosDatosNombrePadre"/>
-	<xsl:param name="ConsultaPorOtrosDatosNombreMadre"/>
+	<xsl:param name="ConsultaConsultaPorOtrosDatosPoblacionHechoRegistral"/>
+	<xsl:param name="ConsultaConsultaPorOtrosDatosFechaNacimiento"/>
+	<xsl:param name="ConsultaConsultaPorOtrosDatosPoblacionNacimiento"/>
+	<xsl:param name="ConsultaConsultaPorOtrosDatosNombrePadre"/>
+	<xsl:param name="ConsultaConsultaPorOtrosDatosNombreMadre"/>
 	<!-- Para provocar salto de linea cuando un texto es demasiado largo -->
 	<xsl:template name="intersperse-with-zero-spaces">
 		<xsl:param name="str"/>
@@ -394,8 +394,8 @@
 									<fo:inline font-weight="bold">
 										<xsl:text>Fecha Hecho Registral:     </xsl:text>
 									</fo:inline>
-									<xsl:if test="$DatosAdicionalesTitularConsultaFechaHechoRegistral != ''">
-										<xsl:value-of select="concat(substring(string($DatosAdicionalesTitularConsultaFechaHechoRegistral),9,2),'/',substring(string($DatosAdicionalesTitularConsultaFechaHechoRegistral),6,2),'/',substring(string($DatosAdicionalesTitularConsultaFechaHechoRegistral),1,4))"/>
+									<xsl:if test="$ConsultaDatosAdicionalesTitularConsultaFechaHechoRegistral != ''">
+										<xsl:value-of select="concat(substring(string($ConsultaDatosAdicionalesTitularConsultaFechaHechoRegistral),9,2),'/',substring(string($ConsultaDatosAdicionalesTitularConsultaFechaHechoRegistral),6,2),'/',substring(string($ConsultaDatosAdicionalesTitularConsultaFechaHechoRegistral),1,4))"/>
 									</xsl:if>
 								</fo:block>													
 						</fo:table-cell>	
@@ -413,7 +413,7 @@
 			</fo:table>		
 		
 			<!-- SE HA CONSULTADO POR DATOS REGISTRALES -->
-            <xsl:if test="$ConsultaPorDatosRegistralesRegistroCivil != '' and $ConsultaPorDatosRegistralesTomo != '' and $ConsultaPorDatosRegistralesPagina != ''">
+            <xsl:if test="$ConsultaConsultaPorDatosRegistralesRegistroCivil != '' and $ConsultaConsultaPorDatosRegistralesTomo != '' and $ConsultaConsultaPorDatosRegistralesPagina != ''">
 				<fo:table table-layout="fixed" border-spacing="5pt" space-before="0mm">				
 					<fo:table-body start-indent="0pt">
 						<fo:table-row>
@@ -423,7 +423,7 @@
 										<fo:inline font-weight="bold">
 											<xsl:text>Registro Civil:     </xsl:text>
 										</fo:inline>
-										<xsl:value-of select="$ConsultaPorDatosRegistralesRegistroCivil"/>
+										<xsl:value-of select="$ConsultaConsultaPorDatosRegistralesRegistroCivil"/>
 									</fo:block>													
 							</fo:table-cell>	
 							<!-- Tomo -->
@@ -432,7 +432,7 @@
 										<fo:inline font-weight="bold">
 											<xsl:text>Tomo:     </xsl:text>
 										</fo:inline>
-										<xsl:value-of select="$ConsultaPorDatosRegistralesTomo"/>
+										<xsl:value-of select="$ConsultaConsultaPorDatosRegistralesTomo"/>
 									</fo:block>													
 							</fo:table-cell>	
 							<!-- Pagina -->
@@ -441,7 +441,7 @@
 										<fo:inline font-weight="bold">
 											<xsl:text>Página:     </xsl:text>
 										</fo:inline>
-										<xsl:value-of select="$ConsultaPorDatosRegistralesPagina"/>
+										<xsl:value-of select="$ConsultaConsultaPorDatosRegistralesPagina"/>
 									</fo:block>													
 							</fo:table-cell>	
 						</fo:table-row>					
@@ -450,7 +450,7 @@
 			</xsl:if>	
 		
 			<!-- SE HA CONSULTADO POR OTROS DATOS -->
-            <xsl:if test="$ConsultaPorOtrosDatosPoblacionHechoRegistral != '' and $ConsultaPorOtrosDatosFechaNacimiento != '' ">
+            <xsl:if test="$ConsultaConsultaPorOtrosDatosPoblacionHechoRegistral != '' and $ConsultaConsultaPorOtrosDatosFechaNacimiento != '' ">
 				<fo:table table-layout="fixed" border-spacing="5pt" space-before="0mm">				
 					<fo:table-body start-indent="0pt">
 						<fo:table-row>
@@ -460,7 +460,7 @@
 										<fo:inline font-weight="bold">
 											<xsl:text>Población Hecho Registral:     </xsl:text>
 										</fo:inline>
-										<xsl:value-of select="$ConsultaPorOtrosDatosPoblacionHechoRegistral"/>
+										<xsl:value-of select="$ConsultaConsultaPorOtrosDatosPoblacionHechoRegistral"/>
 									</fo:block>													
 							</fo:table-cell>	
 							<!-- Fecha Nacimiento -->
@@ -469,8 +469,8 @@
 										<fo:inline font-weight="bold">
 											<xsl:text>Fecha Nacimiento:     </xsl:text>
 										</fo:inline>
-										<xsl:if test="$ConsultaPorOtrosDatosFechaNacimiento != ''">
-											<xsl:value-of select="concat(substring(string($ConsultaPorOtrosDatosFechaNacimiento),9,2),'/',substring(string($ConsultaPorOtrosDatosFechaNacimiento),6,2),'/',substring(string($ConsultaPorOtrosDatosFechaNacimiento),1,4))"/>
+										<xsl:if test="$ConsultaConsultaPorOtrosDatosFechaNacimiento != ''">
+											<xsl:value-of select="concat(substring(string($ConsultaConsultaPorOtrosDatosFechaNacimiento),9,2),'/',substring(string($ConsultaConsultaPorOtrosDatosFechaNacimiento),6,2),'/',substring(string($ConsultaConsultaPorOtrosDatosFechaNacimiento),1,4))"/>
 										</xsl:if>
 									</fo:block>													
 							</fo:table-cell>	
@@ -480,7 +480,7 @@
 										<fo:inline font-weight="bold">
 											<xsl:text>Población Nacimiento:     </xsl:text>
 										</fo:inline>
-										<xsl:value-of select="$ConsultaPorOtrosDatosPoblacionNacimiento"/>
+										<xsl:value-of select="$ConsultaConsultaPorOtrosDatosPoblacionNacimiento"/>
 									</fo:block>													
 							</fo:table-cell>	
 						</fo:table-row>	
@@ -491,7 +491,7 @@
 										<fo:inline font-weight="bold">
 											<xsl:text>Nombre Padre:     </xsl:text>
 										</fo:inline>
-										<xsl:value-of select="$ConsultaPorOtrosDatosNombrePadre"/>
+										<xsl:value-of select="$ConsultaConsultaPorOtrosDatosNombrePadre"/>
 									</fo:block>													
 							</fo:table-cell>	
 							<!-- Nombre Madre -->
@@ -500,7 +500,7 @@
 										<fo:inline font-weight="bold">
 											<xsl:text>Nombre Madre:     </xsl:text>
 										</fo:inline>
-										<xsl:value-of select="$ConsultaPorOtrosDatosNombreMadre"/>
+										<xsl:value-of select="$ConsultaConsultaPorOtrosDatosNombreMadre"/>
 									</fo:block>													
 							</fo:table-cell>	
 						</fo:table-row>				

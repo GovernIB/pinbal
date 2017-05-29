@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2008 sp1 (http://www.altova.com) by eee (eee) -->
 <xs:schema xmlns="http://intermediacion.redsara.es/scsp/esquemas/datosespecificos" xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://intermediacion.redsara.es/scsp/esquemas/datosespecificos" elementFormDefault="qualified">
 	<xs:element name="DatosEspecificos" type="DatosEspecificos"/>
 	<xs:complexType name="DatosEspecificos">
@@ -107,7 +108,7 @@
 		</xs:annotation>
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
-				<xs:maxLength value="40"/>
+				<xs:maxLength value="100"/>
 			</xs:restriction>
 		</xs:simpleType>
 	</xs:element>
@@ -128,7 +129,7 @@
 		</xs:annotation>
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
-				<xs:maxLength value="30"/>
+				<xs:maxLength value="100"/>
 			</xs:restriction>
 		</xs:simpleType>
 	</xs:element>
@@ -138,7 +139,7 @@
 		</xs:annotation>
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
-				<xs:maxLength value="50"/>
+				<xs:maxLength value="100"/>
 			</xs:restriction>
 		</xs:simpleType>
 	</xs:element>
@@ -148,7 +149,7 @@
 		</xs:annotation>
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
-				<xs:maxLength value="50"/>
+				<xs:maxLength value="100"/>
 			</xs:restriction>
 		</xs:simpleType>
 	</xs:element>
@@ -251,7 +252,7 @@
 		</xs:annotation>
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
-				<xs:maxLength value="15"/>
+				<xs:maxLength value="11"/>
 			</xs:restriction>
 		</xs:simpleType>
 	</xs:element>
@@ -261,7 +262,7 @@
 		</xs:annotation>
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
-				<xs:maxLength value="100"/>
+				<xs:maxLength value="1000"/>
 			</xs:restriction>
 		</xs:simpleType>
 	</xs:element>
@@ -281,7 +282,7 @@
 		</xs:annotation>
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
-				<xs:maxLength value="15"/>
+				<xs:maxLength value="100"/>
 			</xs:restriction>
 		</xs:simpleType>
 	</xs:element>
@@ -305,7 +306,7 @@
 		</xs:annotation>
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
-				<xs:maxLength value="40"/>
+				<xs:maxLength value="250"/>
 			</xs:restriction>
 		</xs:simpleType>
 	</xs:element>
@@ -315,7 +316,7 @@
 		</xs:annotation>
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
-				<xs:maxLength value="10"/>
+				<xs:maxLength value="100"/>
 			</xs:restriction>
 		</xs:simpleType>
 	</xs:element>
@@ -325,7 +326,7 @@
 		</xs:annotation>
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
-				<xs:maxLength value="40"/>
+				<xs:maxLength value="100"/>
 			</xs:restriction>
 		</xs:simpleType>
 	</xs:element>
@@ -335,7 +336,7 @@
 		</xs:annotation>
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
-				<xs:maxLength value="2"/>
+				<xs:maxLength value="100"/>
 			</xs:restriction>
 		</xs:simpleType>
 	</xs:element>
@@ -395,7 +396,7 @@
 		</xs:annotation>
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
-				<xs:maxLength value="15"/>
+				<xs:maxLength value="100"/>
 			</xs:restriction>
 		</xs:simpleType>
 	</xs:element>
@@ -405,7 +406,7 @@
 		</xs:annotation>
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
-				<xs:maxLength value="15"/>
+				<xs:maxLength value="100"/>
 			</xs:restriction>
 		</xs:simpleType>
 	</xs:element>
@@ -427,7 +428,7 @@
 		</xs:annotation>
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
-				<xs:maxLength value="6"/>
+				<xs:maxLength value="100"/>
 			</xs:restriction>
 		</xs:simpleType>
 	</xs:element>
@@ -437,7 +438,7 @@
 		</xs:annotation>
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
-				<xs:maxLength value="6"/>
+				<xs:maxLength value="100"/>
 			</xs:restriction>
 		</xs:simpleType>
 	</xs:element>
@@ -447,7 +448,7 @@
 		</xs:annotation>
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
-				<xs:maxLength value="4"/>
+				<xs:maxLength value="100"/>
 			</xs:restriction>
 		</xs:simpleType>
 	</xs:element>

@@ -14,10 +14,9 @@
 							<xs:sequence>
 								<xs:element name="CodRet">
 									<xs:simpleType>
-										<xs:restriction base="xs:long">
-											<xs:minInclusive value="0"/>
-											<xs:maxInclusive value="9999"/>
-											<xs:totalDigits value="4"/>
+										<xs:restriction base="xs:string">
+											<xs:minLength value="1"/>
+											<xs:maxLength value="4"/>
 										</xs:restriction>
 									</xs:simpleType>
 								</xs:element>
@@ -75,7 +74,7 @@
 										</xs:restriction>
 									</xs:simpleType>
 								</xs:element>
-								<xs:element name="DatosEconomicos" minOccurs="0" maxOccurs="10">
+								<xs:element name="DatosEconomicos" minOccurs="0" maxOccurs="100">
 									<xs:complexType>
 										<xs:sequence>
 											<xs:element name="Texto">

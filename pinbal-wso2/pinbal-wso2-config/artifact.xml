@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<artifacts>
-    <artifact name="ScspProxy" groupId="es.caib.proxy-service" version="1.0.0" type="synapse/proxy-service" serverRole="EnterpriseServiceBus">
-        <file>src/main/synapse-config/proxy-services/ScspProxy.xml</file>
-    </artifact>
-    </artifacts>

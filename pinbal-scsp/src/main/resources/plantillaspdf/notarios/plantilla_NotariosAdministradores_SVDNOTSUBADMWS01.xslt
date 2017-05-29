@@ -34,15 +34,15 @@
 	<xsl:param name="idExpediente"/>
 	<xsl:param name="finalidad"/>
 	
-	<xsl:param name="ID_ESCRITURACOD_NOTARIO"/>
-	<xsl:param name="ID_ESCRITURACOD_NOTARIA"/>
-	<xsl:param name="ID_ESCRITURANUM_PROTOCOLO"/>
-	<xsl:param name="ID_ESCRITURANUM_BIS"/>
-	<xsl:param name="ID_ESCRITURAFECHA_AUTORIZACION"/>
-	<xsl:param name="ALERTAID_APLICACION"/>
-	<xsl:param name="ALERTAFECHA_AVISO"/>
-	<xsl:param name="ALERTAEMAIL"/>
-	<xsl:param name="ALERTASMS"/>
+	<xsl:param name="ConsultaDATOS_PROTOCOLOID_ESCRITURACOD_NOTARIO"/>
+	<xsl:param name="ConsultaDATOS_PROTOCOLOID_ESCRITURACOD_NOTARIA"/>
+	<xsl:param name="ConsultaDATOS_PROTOCOLOID_ESCRITURANUM_PROTOCOLO"/>
+	<xsl:param name="ConsultaDATOS_PROTOCOLOID_ESCRITURANUM_BIS"/>
+	<xsl:param name="ConsultaDATOS_PROTOCOLOID_ESCRITURAFECHA_AUTORIZACION"/>
+	<xsl:param name="ConsultaDATOS_PROTOCOLOALERTAID_APLICACION"/>
+	<xsl:param name="ConsultaDATOS_PROTOCOLOALERTAFECHA_AVISO"/>
+	<xsl:param name="ConsultaDATOS_PROTOCOLOALERTAEMAIL"/>
+	<xsl:param name="ConsultaDATOS_PROTOCOLOALERTASMS"/>
 
 	
 	<xsl:template match="/">
@@ -243,110 +243,6 @@
 		</fo:block>
 		
 		<fo:block border-style="solid" border="1px 0 0 0" text-indent="3mm" font-family="Arial,sans-serif" font-size="10pt" space-after="1mm">
-			
-			<fo:table table-layout="fixed" width="100%" border-spacing="5pt" space-after="2mm">
-				<fo:table-body start-indent="0pt">
-					<fo:table-row>
-						<fo:table-cell padding="3pt" display-align="center" background-color="#B0C4DE">
-							<fo:block>
-								<fo:inline font-weight="bold" display-align="after">
-									<xsl:text>Datos del Administrador</xsl:text>
-								</fo:inline>
-							</fo:block>
-						</fo:table-cell>
-					</fo:table-row>
-				</fo:table-body>
-			</fo:table>
-			<fo:table table-layout="fixed" border-spacing="5pt" space-before="2mm">
-				<fo:table-column column-width="proportional-column-width(0.8)"/>
-				<fo:table-column column-width="proportional-column-width(0.8)"/>
-				<fo:table-column column-width="proportional-column-width(0.85)"/>
-				<fo:table-column column-width="proportional-column-width(0.75)"/>	
-				<fo:table-column column-width="proportional-column-width(1.15)"/>
-				<fo:table-column column-width="proportional-column-width(2.3)"/>
-				<fo:table-body start-indent="0pt">
-					<fo:table-row>
-					   <!-- TIPO DOCUMENTACION -->
-						<fo:table-cell padding="2pt" display-align="center">						
-								<fo:block font-size="8pt" text-align="left" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after" >
-									<fo:inline font-weight="bold">
-										<xsl:text>Tipo Doc:</xsl:text>
-									</fo:inline>
-								</fo:block>							
-						</fo:table-cell>
-						<fo:table-cell padding="2pt" display-align="center">						
-								<fo:block font-size="8pt" text-align="left" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after" >
-									<xsl:value-of select="$tipoDocPeticion"/>
-								</fo:block>							
-						</fo:table-cell>
-						
-						 <!-- DOCUMENTACION -->
-						<fo:table-cell padding="2pt" display-align="center">							
-								<fo:block font-size="8pt" text-align="left" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after" >
-									<fo:inline font-weight="bold">
-										<xsl:text>Documentación:</xsl:text>
-									</fo:inline>
-								</fo:block>							
-						</fo:table-cell>
-						<fo:table-cell padding="2pt" display-align="center">						
-								<fo:block font-size="8pt" text-align="left" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after" >
-									<xsl:value-of select="$docPeticion"/>	
-								</fo:block>							
-						</fo:table-cell>
-						
-						<!-- NOMBRE Y APELLIDOS -->
-						<fo:table-cell padding="2pt" display-align="center">						
-								<fo:block font-size="8pt" text-align="left" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after" >
-									<fo:inline font-weight="bold">
-										<xsl:text>Nombre y Apellidos:</xsl:text>
-									</fo:inline>
-								</fo:block>							
-						</fo:table-cell>
-						<fo:table-cell padding="2pt" display-align="center">						
-								<fo:block font-size="8pt" text-align="left" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after" >
-										<xsl:value-of select="$nomApellidosPeticion"/>								
-								</fo:block>							
-						</fo:table-cell>
-					</fo:table-row>
-				</fo:table-body>
-			</fo:table>
-			
-			<fo:table table-layout="auto" border-spacing="5pt" space-before="0mm">
-				<fo:table-body start-indent="0pt">
-					<fo:table-row>
-						<fo:table-cell padding="2pt" display-align="center">
-							<fo:block font-size="8pt" text-align="left" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after">
-								<fo:inline font-weight="bold">
-									<xsl:text>Nº Expediente:           </xsl:text>
-								</fo:inline>
-								<xsl:value-of select="$idExpediente"/>
-							</fo:block>
-						</fo:table-cell>
-					</fo:table-row>
-					<fo:table-row>
-						<fo:table-cell padding="2pt" display-align="center">
-							<fo:block font-size="8pt" text-align="left" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after">
-								<fo:inline font-weight="bold">
-									<xsl:text>Finalidad:               </xsl:text>
-								</fo:inline>
-								<xsl:value-of select="$finalidad"/>
-							</fo:block>
-						</fo:table-cell>
-					</fo:table-row>
-					<fo:table-row>
-						<!-- Código Procedimiento -->
-						<fo:table-cell padding="2pt" display-align="center">
-							<fo:block font-size="8pt" text-align="left" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after">
-								<fo:inline font-weight="bold">
-									<xsl:text>Cod. Procedimiento:       </xsl:text>
-								</fo:inline>
-								<xsl:value-of select="$codProcedimiento"/>
-							</fo:block>
-						</fo:table-cell>
-					</fo:table-row>
-				</fo:table-body>
-			</fo:table>
-		
 			<fo:table table-layout="fixed" width="100%" border-spacing="5pt" space-after="2mm">
 					<fo:table-body start-indent="0pt">
 						<fo:table-row>
@@ -377,7 +273,7 @@
 							</fo:table-cell>
 							<fo:table-cell padding="2pt" display-align="center">						
 									<fo:block font-size="8pt" text-align="left" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after" >										
-											<xsl:value-of select="$ID_ESCRITURACOD_NOTARIO"/>
+											<xsl:value-of select="$ConsultaDATOS_PROTOCOLOID_ESCRITURACOD_NOTARIO"/>
 									</fo:block>	
 							</fo:table-cell>
 						
@@ -390,7 +286,7 @@
 							</fo:table-cell>
 							<fo:table-cell padding="2pt" display-align="center">						
 									<fo:block font-size="8pt" text-align="left" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after" >										
-										 <xsl:value-of select="$ID_ESCRITURACOD_NOTARIA"/>
+										 <xsl:value-of select="$ConsultaDATOS_PROTOCOLOID_ESCRITURACOD_NOTARIA"/>
 									</fo:block>	
 							</fo:table-cell>
 						</fo:table-row>	
@@ -404,7 +300,7 @@
 							</fo:table-cell>
 							<fo:table-cell padding="2pt" display-align="center">						
 									<fo:block font-size="8pt" text-align="left" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after" >
-										<xsl:value-of select="$ID_ESCRITURANUM_PROTOCOLO"/>
+										<xsl:value-of select="$ConsultaDATOS_PROTOCOLOID_ESCRITURANUM_PROTOCOLO"/>
 									</fo:block>	
 							</fo:table-cell>
 							
@@ -417,7 +313,7 @@
 							</fo:table-cell>
 							<fo:table-cell padding="2pt" display-align="center">						
 									<fo:block font-size="8pt" text-align="left" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after" >
-										<xsl:value-of select="$ID_ESCRITURANUM_BIS"/>
+										<xsl:value-of select="$ConsultaDATOS_PROTOCOLOID_ESCRITURANUM_BIS"/>
 									</fo:block>	
 							</fo:table-cell>						
 						</fo:table-row>
@@ -431,8 +327,8 @@
 							</fo:table-cell>
 							<fo:table-cell padding="2pt" display-align="center">						
 									<fo:block font-size="8pt" text-align="left" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after" >
-										<xsl:if test="$ID_ESCRITURAFECHA_AUTORIZACION != ''">
-											<xsl:value-of select="concat(substring(string($ID_ESCRITURAFECHA_AUTORIZACION),9,2),'/',substring(string($ID_ESCRITURAFECHA_AUTORIZACION),6,2),'/',substring(string($ID_ESCRITURAFECHA_AUTORIZACION),1,4))"/>
+										<xsl:if test="$ConsultaDATOS_PROTOCOLOID_ESCRITURAFECHA_AUTORIZACION != ''">
+											<xsl:value-of select="concat(substring(string($ConsultaDATOS_PROTOCOLOID_ESCRITURAFECHA_AUTORIZACION),9,2),'/',substring(string($ConsultaDATOS_PROTOCOLOID_ESCRITURAFECHA_AUTORIZACION),6,2),'/',substring(string($ConsultaDATOS_PROTOCOLOID_ESCRITURAFECHA_AUTORIZACION),1,4))"/>
 										</xsl:if>
 									</fo:block>	
 							</fo:table-cell>
@@ -477,7 +373,7 @@
 							</fo:table-cell>
 							<fo:table-cell padding="2pt" display-align="center">						
 									<fo:block font-size="8pt" text-align="left" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after" >
-										<xsl:value-of select="$ALERTAFECHA_AVISO"/>
+										<xsl:value-of select="$ConsultaDATOS_PROTOCOLOALERTAFECHA_AVISO"/>
 									</fo:block>	
 							</fo:table-cell>
 						</fo:table-row>
@@ -491,7 +387,7 @@
 							</fo:table-cell>
 							<fo:table-cell padding="2pt" display-align="center">						
 									<fo:block font-size="8pt" text-align="left" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after" >
-										<xsl:value-of select="$ALERTAEMAIL"/>
+										<xsl:value-of select="$ConsultaDATOS_PROTOCOLOALERTAEMAIL"/>
 									</fo:block>	
 							</fo:table-cell>
 						</fo:table-row>
@@ -505,7 +401,7 @@
 							</fo:table-cell>
 							<fo:table-cell padding="2pt" display-align="center">						
 									<fo:block font-size="8pt" text-align="left" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after" >
-										<xsl:value-of select="$ALERTASMS"/>
+										<xsl:value-of select="$ConsultaDATOS_PROTOCOLOALERTASMS"/>
 									</fo:block>	
 							</fo:table-cell>
 						</fo:table-row>
@@ -517,7 +413,11 @@
 		
 			<xsl:choose>
 				<!-- Miramos el Codigo de Error de la etiqueta Atributos -->
-				<xsl:when test="$datosEspecificos/*[local-name()='Estado']/*[local-name()='CodigoEstado'] != '0003' ">
+				<xsl:when test="$datosEspecificos/*[local-name()='Estado']/*[local-name()='CodigoEstado'] != '0003' and
+			 $datosEspecificos/*[local-name()='Estado']/*[local-name()='CodigoEstado'] != '0227' and  
+			 $datosEspecificos/*[local-name()='Estado']/*[local-name()='CodigoEstado'] != '5' and 
+			 $datosEspecificos/*[local-name()='Estado']/*[local-name()='CodigoEstado'] != '7'  ">
+				<xsl:variable name="estado" select="$datosEspecificos/*[local-name()='Estado']"/>
 					<xsl:variable name="estado" select="$datosEspecificos/*[local-name()='Estado']"/>
 					<fo:block margin-top="40pt" text-align="center" font-family="Arial,sans-serif" font-size="10pt" line-height="10pt" space-after.optimum="1pt" display-align="after">
 						<fo:inline font-weight="bold">
@@ -529,7 +429,7 @@
 					</fo:block>
 				</xsl:when>
 					<!-- FIN Miramos el Codigo de Error de la etiqueta Atributos -->
-				<xsl:when test="$datosEspecificos/*[local-name()='Estado']/*[local-name()='CodigoEstado'] = '0003'">
+				<xsl:otherwise>
 					<fo:block text-align="left" margin-top="25pt">
 						<fo:block font-size="8pt" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after">
 							<fo:inline font-weight="bold">
@@ -571,18 +471,16 @@
 									</fo:table>
 									<!-- Tabla con los datos genericos de datos protocolo -->
 									<fo:table table-layout="fixed" width="100%" border-spacing="5pt" space-after="2mm">
-										<fo:table-column column-width="proportional-column-width(1)"/>
-										<fo:table-column column-width="proportional-column-width(1)"/>
-										<fo:table-column column-width="proportional-column-width(1)"/>
-										<fo:table-column column-width="proportional-column-width(1)"/>
+										<fo:table-column column-width="proportional-column-width(0.75)"/>
+										<fo:table-column column-width="proportional-column-width(4.25)"/>
 										<fo:table-body start-indent="0pt">
 											<!-- Fila 1 Hijo -->
 											<fo:table-row>
 												<fo:table-cell padding="2pt" display-align="center">
-													<fo:block text-align="left" margin="0pt">
+													<fo:block text-align="left" margin="0pt"  >
 														<fo:block font-size="8pt" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after">
 															<fo:inline font-weight="bold">
-																<xsl:text>Cod. Notario:</xsl:text>
+																<xsl:text>Notario:</xsl:text>
 															</fo:inline>
 														</fo:block>
 													</fo:block>
@@ -591,37 +489,19 @@
 													<fo:block text-align="left" margin="0pt">
 														<fo:block font-size="8pt" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after">
 															<fo:inline font-weight="normal">
-																 <xsl:value-of select="$protocolo/*[local-name()='DATOS_PROTOCOLO']/*[local-name()='CODIGO_NOTARIO']"/>
-															</fo:inline>
-														</fo:block>
-													</fo:block>
-												</fo:table-cell>
-												<fo:table-cell padding="2pt" display-align="center">
-													<fo:block text-align="left" margin="0pt">
-														<fo:block font-size="8pt" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after">
-															<fo:inline font-weight="bold">
-																<xsl:text>Cod. Notaría:</xsl:text>
-															</fo:inline>
-														</fo:block>
-													</fo:block>
-												</fo:table-cell>
-												<fo:table-cell padding="2pt" display-align="center">
-													<fo:block text-align="left" margin="0pt">
-														<fo:block font-size="8pt" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after">
-															<fo:inline font-weight="normal">
-																 <xsl:value-of select="$protocolo/*[local-name()='DATOS_PROTOCOLO']/*[local-name()='CODIGO_NOTARIA']"/>
+																 <xsl:value-of select="$protocolo/*[local-name()='DATOS_PROTOCOLO']/*[local-name()='NOTARIO']"/>
 															</fo:inline>
 														</fo:block>
 													</fo:block>
 												</fo:table-cell>
 											</fo:table-row>
-											<!-- Fila 2 Hijo -->
+											<!-- Fila  -->
 											<fo:table-row>
 												<fo:table-cell padding="2pt" display-align="center">
 													<fo:block text-align="left" margin="0pt">
-														<fo:block font-size="8pt" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after">
+														<fo:block font-size="8pt" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after" >
 															<fo:inline font-weight="bold">
-																<xsl:text>Nº Protocolo:</xsl:text>
+																<xsl:text>Notaría:</xsl:text>
 															</fo:inline>
 														</fo:block>
 													</fo:block>
@@ -630,66 +510,78 @@
 													<fo:block text-align="left" margin="0pt">
 														<fo:block font-size="8pt" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after">
 															<fo:inline font-weight="normal">
-																 <xsl:value-of select="$protocolo/*[local-name()='DATOS_PROTOCOLO']/*[local-name()='NUM_PROTOCOLO']"/>
-															</fo:inline>
-														</fo:block>
-													</fo:block>
-												</fo:table-cell>
-												<fo:table-cell padding="2pt" display-align="center">
-													<fo:block text-align="left" margin="0pt">
-														<fo:block font-size="8pt" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after">
-															<fo:inline font-weight="bold">
-																<xsl:text>Nº Protocolo Bis:</xsl:text>
-															</fo:inline>
-														</fo:block>
-													</fo:block>
-												</fo:table-cell>
-												<fo:table-cell padding="2pt" display-align="center">
-													<fo:block text-align="left" margin="0pt">
-														<fo:block font-size="8pt" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after">
-															<fo:inline font-weight="normal">
-																 <xsl:value-of select="$protocolo/*[local-name()='DATOS_PROTOCOLO']/*[local-name()='NUM_BIS']"/>
+																 <xsl:value-of select="$protocolo/*[local-name()='DATOS_PROTOCOLO']/*[local-name()='NOTARIA']"/>
 															</fo:inline>
 														</fo:block>
 													</fo:block>
 												</fo:table-cell>
 											</fo:table-row>
-											<!-- Fila 3 Hijo -->
+										</fo:table-body>
+									</fo:table>
+									
+									<fo:table table-layout="fixed" width="100%" border-spacing="5pt" space-after="2mm">
+										<fo:table-column column-width="proportional-column-width(0.9)"/>
+										<fo:table-column column-width="proportional-column-width(0.6)"/>
+										<fo:table-column column-width="proportional-column-width(1.5)"/>
+										<fo:table-column column-width="proportional-column-width(0.5)"/>
+										<fo:table-column column-width="proportional-column-width(1.25)"/>	
+										<fo:table-column column-width="proportional-column-width(1.25)"/>								
+										<fo:table-body start-indent="0pt">	
+											<!-- Fila -->
 											<fo:table-row>
 												<fo:table-cell padding="2pt" display-align="center">
 													<fo:block text-align="left" margin="0pt">
 														<fo:block font-size="8pt" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after">
 															<fo:inline font-weight="bold">
-																<xsl:text>Fecha Autorización:</xsl:text>
-															</fo:inline>
+																<xsl:text>Nº Protocolo: </xsl:text>																
+															</fo:inline>															
 														</fo:block>
 													</fo:block>
-												</fo:table-cell>
+												</fo:table-cell>												
 												<fo:table-cell padding="2pt" display-align="center">
 													<fo:block text-align="left" margin="0pt">
 														<fo:block font-size="8pt" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after">
+																<fo:inline font-weight="normal">
+																	 <xsl:value-of select="$protocolo/*[local-name()='DATOS_PROTOCOLO']/*[local-name()='NUM_PROTOCOLO']"/>
+																</fo:inline>							
+														</fo:block>
+													</fo:block>
+												</fo:table-cell>												
+												<fo:table-cell padding="2pt" display-align="center">
+													<fo:block text-align="left" margin="0pt">
+														<fo:block font-size="8pt" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after">
+																<fo:inline font-weight="bold">
+																	<xsl:text>Nº Protocolo Bis:</xsl:text>
+																</fo:inline>							
+														</fo:block>
+													</fo:block>
+												</fo:table-cell>												
+												<fo:table-cell padding="2pt" display-align="center">
+													<fo:block text-align="left" margin="0pt">
+														<fo:block font-size="8pt" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after">
+																<fo:inline font-weight="normal">
+																	 <xsl:value-of select="$protocolo/*[local-name()='DATOS_PROTOCOLO']/*[local-name()='NUM_BIS']"/>
+																</fo:inline>						
+														</fo:block>
+													</fo:block>
+												</fo:table-cell>												
+												<fo:table-cell padding="2pt" display-align="center">
+													<fo:block text-align="left" margin="0pt">
+														<fo:block font-size="8pt" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after" >
+																<fo:inline font-weight="bold">
+																	<xsl:text>Fecha Autorización:</xsl:text>
+																</fo:inline>							
+														</fo:block>
+													</fo:block>
+												</fo:table-cell>												
+												<fo:table-cell padding="2pt" display-align="center">
+													<fo:block text-align="left" margin="0pt">
+														<fo:block font-size="8pt" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after"  >
 															<fo:inline font-weight="normal">
 																<xsl:if test="$protocolo/*[local-name()='DATOS_PROTOCOLO']/*[local-name()='FECHA_AUTORIZACION'] != ''">	
-																	<xsl:value-of select="concat(substring(string($protocolo/*[local-name()='DATOS_PROTOCOLO']/*[local-name()='FECHA_AUTORIZACION']),9,2),'/',substring(string($protocolo/*[local-name()='DATOS_PROTOCOLO']/*[local-name()='FECHA_AUTORIZACION']),6,2),'/',substring(string($protocolo/*[local-name()='DATOS_PROTOCOLO']/*[local-name()='FECHA_AUTORIZACION']),1,4))"/>
-																</xsl:if>
-															</fo:inline>
-														</fo:block>
-													</fo:block>
-												</fo:table-cell>
-												<fo:table-cell padding="2pt" display-align="center">
-													<fo:block text-align="left" margin="0pt">
-														<fo:block font-size="8pt" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after">
-															<fo:inline font-weight="bold">
-																<xsl:text></xsl:text>
-															</fo:inline>
-														</fo:block>
-													</fo:block>
-												</fo:table-cell>
-												<fo:table-cell padding="2pt" display-align="center">
-													<fo:block text-align="left" margin="0pt">
-														<fo:block font-size="8pt" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after">
-															<fo:inline font-weight="normal">																 
-															</fo:inline>
+																		<xsl:value-of select="concat(substring(string($protocolo/*[local-name()='DATOS_PROTOCOLO']/*[local-name()='FECHA_AUTORIZACION']),9,2),'/',substring(string($protocolo/*[local-name()='DATOS_PROTOCOLO']/*[local-name()='FECHA_AUTORIZACION']),6,2),'/',substring(string($protocolo/*[local-name()='DATOS_PROTOCOLO']/*[local-name()='FECHA_AUTORIZACION']),1,4))"/>
+																	</xsl:if>
+															</fo:inline>							
 														</fo:block>
 													</fo:block>
 												</fo:table-cell>
@@ -872,339 +764,337 @@
 					</fo:block>
 					 
 					 <!-- DOCUMENTOS RELACIONADOS -->
-					<fo:block border-style="solid" border-width="1px 1px 1px 1px">
-						<fo:block text-indent="3mm" margin-top="2pt" margin-left="2pt" margin-right="2pt" font-family="Arial,sans-serif" font-size="10pt" space-before="1mm" space-after="4mm">
-								<fo:table table-layout="fixed" width="100%" border-spacing="5pt" space-after="2mm">
-										<fo:table-body start-indent="0pt">
-											<fo:table-row>
-												<fo:table-cell padding="3pt" display-align="center" background-color="#B0C4DE">
-													<fo:block>
-														<fo:inline font-weight="bold" display-align="after">
-															<xsl:text>Documentos Relacionados</xsl:text>
-														</fo:inline>
-													</fo:block>
-												</fo:table-cell>
-											</fo:table-row>
-										</fo:table-body>
-									</fo:table>
-								<xsl:for-each select="$documentosRelacionados/*[local-name()='DOCUMENTO_RELACIONADO']">
-									<xsl:variable name="documento" select="current()"/>
+					 <xsl:if test="//*[local-name()='DatosEspecificos']/*[local-name()='Retorno']/*[local-name()='DOCUMENTOS_RELACIONADOS']"> 	
+						<fo:block border-style="solid" border-width="1px 1px 1px 1px">
+							<fo:block text-indent="3mm" margin-top="2pt" margin-left="2pt" margin-right="2pt" font-family="Arial,sans-serif" font-size="10pt" space-before="1mm" space-after="4mm">
 									<fo:table table-layout="fixed" width="100%" border-spacing="5pt" space-after="2mm">
-										<fo:table-body start-indent="0pt">
-											<fo:table-row>
-												<fo:table-cell padding="3pt" display-align="center" background-color="#B0C4DE">
-													<fo:block>
-														<fo:inline font-weight="bold" display-align="after">
-															<xsl:text>Documento</xsl:text>
-														</fo:inline>
-													</fo:block>
-												</fo:table-cell>
-											</fo:table-row>
-										</fo:table-body>
-									</fo:table>
-									<!-- Tabla con los datos genericos de datos documento -->
-									<fo:table table-layout="fixed" width="100%" border-spacing="5pt" space-after="2mm">
-										<fo:table-column column-width="proportional-column-width(1)"/>
-										<fo:table-column column-width="proportional-column-width(1)"/>
-										<fo:table-column column-width="proportional-column-width(1)"/>
-										<fo:table-column column-width="proportional-column-width(1)"/>
-										<fo:table-body start-indent="0pt">
-											<!-- Fila 1 Hijo -->
-											<fo:table-row>
-												<fo:table-cell padding="2pt" display-align="center">
-													<fo:block text-align="left" margin="0pt">
-														<fo:block font-size="8pt" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after">
-															<fo:inline font-weight="bold">
-																<xsl:text>Cod. Notario:</xsl:text>
+											<fo:table-body start-indent="0pt">
+												<fo:table-row>
+													<fo:table-cell padding="3pt" display-align="center" background-color="#B0C4DE">
+														<fo:block>
+															<fo:inline font-weight="bold" display-align="after">
+																<xsl:text>Documentos Relacionados</xsl:text>
 															</fo:inline>
 														</fo:block>
-													</fo:block>
-												</fo:table-cell>
-												<fo:table-cell padding="2pt" display-align="center">
-													<fo:block text-align="left" margin="0pt">
-														<fo:block font-size="8pt" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after">
-															<fo:inline font-weight="normal">
-																 <xsl:value-of select="$documento/*[local-name()='CODIGO_NOTARIO']"/>
+													</fo:table-cell>
+												</fo:table-row>
+											</fo:table-body>
+										</fo:table>
+									<xsl:for-each select="$documentosRelacionados/*[local-name()='DOCUMENTO_RELACIONADO']">
+										<xsl:variable name="documento" select="current()"/>
+										<fo:table table-layout="fixed" width="100%" border-spacing="5pt" space-after="2mm">
+											<fo:table-body start-indent="0pt">
+												<fo:table-row>
+													<fo:table-cell padding="3pt" display-align="center" background-color="#B0C4DE">
+														<fo:block>
+															<fo:inline font-weight="bold" display-align="after">
+																<xsl:text>Documento</xsl:text>
 															</fo:inline>
 														</fo:block>
-													</fo:block>
-												</fo:table-cell>
-												<fo:table-cell padding="2pt" display-align="center">
-													<fo:block text-align="left" margin="0pt">
-														<fo:block font-size="8pt" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after">
-															<fo:inline font-weight="bold">
-																<xsl:text>Cod. Notaría:</xsl:text>
-															</fo:inline>
-														</fo:block>
-													</fo:block>
-												</fo:table-cell>
-												<fo:table-cell padding="2pt" display-align="center">
-													<fo:block text-align="left" margin="0pt">
-														<fo:block font-size="8pt" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after">
-															<fo:inline font-weight="normal">
-																 <xsl:value-of select="$documento/*[local-name()='CODIGO_NOTARIA']"/>
-															</fo:inline>
-														</fo:block>
-													</fo:block>
-												</fo:table-cell>
-											</fo:table-row>
-											<!-- Fila 2 Hijo -->
-											<fo:table-row>
-												<fo:table-cell padding="2pt" display-align="center">
-													<fo:block text-align="left" margin="0pt">
-														<fo:block font-size="8pt" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after">
-															<fo:inline font-weight="bold">
-																<xsl:text>Nº Protocolo:</xsl:text>
-															</fo:inline>
-														</fo:block>
-													</fo:block>
-												</fo:table-cell>
-												<fo:table-cell padding="2pt" display-align="center">
-													<fo:block text-align="left" margin="0pt">
-														<fo:block font-size="8pt" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after">
-															<fo:inline font-weight="normal">
-																 <xsl:value-of select="$documento/*[local-name()='NUM_PROTOCOLO']"/>
-															</fo:inline>
-														</fo:block>
-													</fo:block>
-												</fo:table-cell>
-												<fo:table-cell padding="2pt" display-align="center">
-													<fo:block text-align="left" margin="0pt">
-														<fo:block font-size="8pt" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after">
-															<fo:inline font-weight="bold">
-																<xsl:text>Nº Protocolo Bis:</xsl:text>
-															</fo:inline>
-														</fo:block>
-													</fo:block>
-												</fo:table-cell>
-												<fo:table-cell padding="2pt" display-align="center">
-													<fo:block text-align="left" margin="0pt">
-														<fo:block font-size="8pt" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after">
-															<fo:inline font-weight="normal">
-																 <xsl:value-of select="$documento/*[local-name()='NUM_BIS']"/>
-															</fo:inline>
-														</fo:block>
-													</fo:block>
-												</fo:table-cell>
-											</fo:table-row>
-											<!-- Fila 3 Hijo -->
-											<fo:table-row>
-												<fo:table-cell padding="2pt" display-align="center">
-													<fo:block text-align="left" margin="0pt">
-														<fo:block font-size="8pt" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after">
-															<fo:inline font-weight="bold">
-																<xsl:text>Fecha Autorización:</xsl:text>
-															</fo:inline>
-														</fo:block>
-													</fo:block>
-												</fo:table-cell>
-												<fo:table-cell padding="2pt" display-align="center">
-													<fo:block text-align="left" margin="0pt">
-														<fo:block font-size="8pt" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after">
-															<fo:inline font-weight="normal">
-																<xsl:if test="$documento/*[local-name()='FECHA_AUTORIZACION'] != ''">	
-																	<xsl:value-of select="concat(substring(string($documento/*[local-name()='FECHA_AUTORIZACION']),9,2),'/',substring(string($documento/*[local-name()='FECHA_AUTORIZACION']),6,2),'/',substring(string($documento/*[local-name()='FECHA_AUTORIZACION']),1,4))"/>
-																</xsl:if>
-															</fo:inline>
-														</fo:block>
-													</fo:block>
-												</fo:table-cell>
-												<fo:table-cell padding="2pt" display-align="center">
-													<fo:block text-align="left" margin="0pt">
-														<fo:block font-size="8pt" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after">
-															<fo:inline font-weight="bold">
-																<xsl:text></xsl:text>
-															</fo:inline>
-														</fo:block>
-													</fo:block>
-												</fo:table-cell>
-												<fo:table-cell padding="2pt" display-align="center">
-													<fo:block text-align="left" margin="0pt">
-														<fo:block font-size="8pt" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after">
-															<fo:inline font-weight="normal">																 
-															</fo:inline>
-														</fo:block>
-													</fo:block>
-												</fo:table-cell>
-											</fo:table-row>
-										</fo:table-body>
-									</fo:table>
-										
-									<!-- FOR EACH DE OPERACIONES -->
-									<xsl:for-each select="$documento/*[local-name()='OPES']/*[local-name()='OPE']">
-											<xsl:variable name="operacion" select="current()"/>
-											<fo:table table-layout="fixed" width="100%" border-spacing="5pt" space-after="2mm">
-												<fo:table-body start-indent="10pt">
-													<fo:table-row>
-														<fo:table-cell padding="3pt" display-align="center" background-color="#C0C0C0">
-															<fo:block>
-																<fo:inline font-weight="bold" display-align="after">
-																	<xsl:text>Operación</xsl:text>
+													</fo:table-cell>
+												</fo:table-row>
+											</fo:table-body>
+										</fo:table>
+										<!-- Tabla con los datos genericos de datos documento -->
+										<fo:table table-layout="fixed" width="100%" border-spacing="5pt" space-after="2mm">
+											<fo:table-column column-width="proportional-column-width(0.75)"/>
+										<fo:table-column column-width="proportional-column-width(4.25)"/>
+											<fo:table-body start-indent="0pt">
+												<!-- Fila 1 Hijo -->
+												<fo:table-row>
+													<fo:table-cell padding="2pt" display-align="center">
+														<fo:block text-align="left" margin="0pt">
+															<fo:block font-size="8pt" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after">
+																<fo:inline font-weight="bold">
+																	<xsl:text>Notario:</xsl:text>
 																</fo:inline>
 															</fo:block>
-														</fo:table-cell>
-													</fo:table-row>
-												</fo:table-body>
-											</fo:table>
-											<!-- Tabla con los datos de operación -->
-											<fo:table table-layout="fixed" width="100%" border-spacing="5pt" space-after="2mm">
-												<fo:table-column column-width="proportional-column-width(1)"/>
-												<fo:table-column column-width="proportional-column-width(4)"/>
-												<fo:table-body start-indent="20pt">
-													<!-- Fila 1 Hijo -->
-													<fo:table-row>
-														<fo:table-cell padding="2pt" display-align="center">
-															<fo:block text-align="left" margin="0pt">
-																<fo:block font-size="8pt" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after">
-																	<fo:inline font-weight="bold">
-																		<xsl:text>Acto Jurídico:</xsl:text>
-																	</fo:inline>
-																</fo:block>
-															</fo:block>
-														</fo:table-cell>
-														<fo:table-cell padding="2pt" display-align="center">
-															<fo:block text-align="left" margin="0pt">
-																<fo:block font-size="8pt" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after">
-																	<fo:inline font-weight="normal">
-																		 <xsl:value-of select="$operacion/*[local-name()='DESCRIPCION_ACTO_JURIDICO']"/>
-																	</fo:inline>
-																</fo:block>
-															</fo:block>
-														</fo:table-cell>
-													</fo:table-row>
-													<!-- Fila 2 Hijo -->
-													<fo:table-row>
-														<fo:table-cell padding="2pt" display-align="center">
-															<fo:block text-align="left" margin="0pt">
-																<fo:block font-size="8pt" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after">
-																	<fo:inline font-weight="bold">
-																		<xsl:text>CIF Sociedad:</xsl:text>
-																	</fo:inline>
-																</fo:block>
-															</fo:block>
-														</fo:table-cell>
-														<fo:table-cell padding="2pt" display-align="center">
-															<fo:block text-align="left" margin="0pt">
-																<fo:block font-size="8pt" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after">
-																	<fo:inline font-weight="normal">
-																		 <xsl:value-of select="$operacion/*[local-name()='SOCIEDAD']/*[local-name()='CIF']"/>
-																	</fo:inline>
-																</fo:block>
-															</fo:block>
-														</fo:table-cell>
-													</fo:table-row>
-													<!-- Fila 3 Hijo -->
-													<fo:table-row>
-														<fo:table-cell padding="2pt" display-align="center">
-															<fo:block text-align="left" margin="0pt">
-																<fo:block font-size="8pt" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after">
-																	<fo:inline font-weight="bold">
-																		<xsl:text>Razón Social:</xsl:text>
-																	</fo:inline>
-																</fo:block>
-															</fo:block>
-														</fo:table-cell>
-														<fo:table-cell padding="2pt" display-align="center">
-															<fo:block text-align="left" margin="0pt">
-																<fo:block font-size="8pt" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after">
-																	<fo:inline font-weight="normal">
-																		 <xsl:value-of select="$operacion/*[local-name()='SOCIEDAD']/*[local-name()='RAZON_SOCIAL']"/>
-																	</fo:inline>
-																</fo:block>
-															</fo:block>
-														</fo:table-cell>
-													</fo:table-row>											
-												</fo:table-body>
-											</fo:table>
-											
-											<fo:table table-layout="fixed" width="100%" border-spacing="5pt" space-after="2mm">
-												<fo:table-body start-indent="20pt">
-													<fo:table-row>
-														<fo:table-cell padding="3pt" display-align="center" background-color="#C0C0C0">
-															<fo:block>
-																<fo:inline font-weight="bold" display-align="after">
-																	<xsl:text>Administradores</xsl:text>
+														</fo:block>
+													</fo:table-cell>
+													<fo:table-cell padding="2pt" display-align="center">
+														<fo:block text-align="left" margin="0pt">
+															<fo:block font-size="8pt" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after">
+																<fo:inline font-weight="normal">
+																	 <xsl:value-of select="$documento/*[local-name()='NOTARIO']"/>
 																</fo:inline>
 															</fo:block>
-														</fo:table-cell>
-													</fo:table-row>
-												</fo:table-body>
-											</fo:table>
+														</fo:block>
+													</fo:table-cell>
+												</fo:table-row>
+												<!-- Fila  -->
+												<fo:table-row>
+													<fo:table-cell padding="2pt" display-align="center">
+														<fo:block text-align="left" margin="0pt">
+															<fo:block font-size="8pt" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after">
+																<fo:inline font-weight="bold">
+																	<xsl:text>Notaría:</xsl:text>
+																</fo:inline>
+															</fo:block>
+														</fo:block>
+													</fo:table-cell>											
+													<fo:table-cell padding="2pt" display-align="center">
+														<fo:block text-align="left" margin="0pt">
+															<fo:block font-size="8pt" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after">
+																<fo:inline font-weight="normal">
+																	 <xsl:value-of select="$documento/*[local-name()='NOTARIA']"/>
+																</fo:inline>
+															</fo:block>
+														</fo:block>
+													</fo:table-cell>
+												</fo:table-row>
+											</fo:table-body>
+										</fo:table>
+									
+										<fo:table table-layout="fixed" width="100%" border-spacing="5pt" space-after="2mm">
+											<fo:table-column column-width="proportional-column-width(0.9)"/>
+											<fo:table-column column-width="proportional-column-width(0.6)"/>
+											<fo:table-column column-width="proportional-column-width(1.5)"/>
+											<fo:table-column column-width="proportional-column-width(0.5)"/>
+											<fo:table-column column-width="proportional-column-width(1.25)"/>	
+											<fo:table-column column-width="proportional-column-width(1.25)"/>							
+											<fo:table-body start-indent="0pt">	
+												<!-- Fila -->
+												<fo:table-row>
+													<fo:table-cell padding="2pt" display-align="center">
+														<fo:block text-align="left" margin="0pt">
+															<fo:block font-size="8pt" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after">
+																<fo:inline font-weight="bold">
+																	<xsl:text>Nº Protocolo:</xsl:text>
+																</fo:inline>
+															</fo:block>
+														</fo:block>
+													</fo:table-cell>												
 													
-											<!-- FOR EACH DE ADMINISTRADORES QUE ESTÁ DENTRO DEL DE OPERACIONES -->
-											<xsl:for-each select="$operacion/*[local-name()='ADMINISTRADORES']/*[local-name()='ADMINISTRADOR']">
-													<xsl:variable name="admin" select="current()"/>													
-													<!-- Tabla con los datos de operación -->
-													<fo:table table-layout="fixed" width="100%" border-spacing="5pt" space-after="2mm">
-														<fo:table-column column-width="proportional-column-width(1.65)"/>
-														<fo:table-column column-width="proportional-column-width(4.15)"/>
-														<fo:table-column column-width="proportional-column-width(3.65)"/>
-														<xsl:if test="position() = 1">
-															<fo:table-header  start-indent="20pt">
-																<fo:table-cell display-align="after" padding="6px"
-																	height="17pt" background-color="#C0C0C0">
-																	<fo:block font-weight="bold" font-size="8pt"
-																		font-family="Arial,Helvetica,sans-serif">Documentación</fo:block>
-																</fo:table-cell>
-																<fo:table-cell display-align="after" padding="6px"
-																	height="17pt" background-color="#C0C0C0">
-																	<fo:block font-weight="bold" font-size="8pt"
-																		font-family="Arial,Helvetica,sans-serif">Nombre y Apellidos</fo:block>
-																</fo:table-cell>
-																<fo:table-cell display-align="after" padding="6px"
-																	height="17pt" background-color="#C0C0C0">
-																	<fo:block font-weight="bold" font-size="8pt"
-																		font-family="Arial,Helvetica,sans-serif">Tipo Administración</fo:block>
-																</fo:table-cell>
-															</fo:table-header>
-														</xsl:if>
-														<fo:table-body start-indent="20pt">															
-															<fo:table-row>
-																<fo:table-cell padding="6pt" display-align="center">
-																	<fo:block text-align="left" margin="0pt">
-																		<fo:block font-size="8pt" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after">
-																			<fo:inline font-weight="normal">
-																				 <xsl:value-of select="$admin/*[local-name()='NIF']"/>
-																			</fo:inline>
-																		</fo:block>
+													<fo:table-cell padding="2pt" display-align="center">
+														<fo:block text-align="left" margin="0pt">
+															<fo:block font-size="8pt" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after">
+																<fo:inline font-weight="normal">
+																	 <xsl:value-of select="$documento/*[local-name()='NUM_PROTOCOLO']"/>
+																</fo:inline>
+															</fo:block>
+														</fo:block>
+													</fo:table-cell>
+													
+													<fo:table-cell padding="2pt" display-align="center">
+														<fo:block text-align="left" margin="0pt">
+															<fo:block font-size="8pt" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after">
+																<fo:inline font-weight="bold">
+																	<xsl:text>Nº Protocolo Bis:</xsl:text>
+																</fo:inline>
+															</fo:block>
+														</fo:block>
+													</fo:table-cell>
+													
+													<fo:table-cell padding="2pt" display-align="center">
+														<fo:block text-align="left" margin="0pt">
+															<fo:block font-size="8pt" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after">
+																<fo:inline font-weight="normal">
+																	 <xsl:value-of select="$documento/*[local-name()='NUM_BIS']"/>
+																</fo:inline>
+															</fo:block>
+														</fo:block>
+													</fo:table-cell>
+													
+													<fo:table-cell padding="2pt" display-align="center">
+														<fo:block text-align="left" margin="0pt">
+															<fo:block font-size="8pt" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after">
+																<fo:inline font-weight="bold">
+																	<xsl:text>Fecha Autorización:          </xsl:text>
+																</fo:inline>
+															</fo:block>
+														</fo:block>
+													</fo:table-cell>
+													
+													<fo:table-cell padding="2pt" display-align="center">
+														<fo:block text-align="left" margin="0pt">
+															<fo:block font-size="8pt" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after">
+																<fo:inline font-weight="normal">
+																	 <xsl:if test="$documento/*[local-name()='FECHA_AUTORIZACION'] != ''">	
+																		<xsl:value-of select="concat(substring(string($documento/*[local-name()='FECHA_AUTORIZACION']),9,2),'/',substring(string($documento/*[local-name()='FECHA_AUTORIZACION']),6,2),'/',substring(string($documento/*[local-name()='FECHA_AUTORIZACION']),1,4))"/>
+																	</xsl:if>
+																</fo:inline>
+															</fo:block>
+														</fo:block>
+													</fo:table-cell>
+												</fo:table-row>										
+											</fo:table-body>
+										</fo:table>
+											
+										<!-- FOR EACH DE OPERACIONES -->
+										<xsl:for-each select="$documento/*[local-name()='OPES']/*[local-name()='OPE']">
+												<xsl:variable name="operacion" select="current()"/>
+												<fo:table table-layout="fixed" width="100%" border-spacing="5pt" space-after="2mm">
+													<fo:table-body start-indent="10pt">
+														<fo:table-row>
+															<fo:table-cell padding="3pt" display-align="center" background-color="#C0C0C0">
+																<fo:block>
+																	<fo:inline font-weight="bold" display-align="after">
+																		<xsl:text>Operación</xsl:text>
+																	</fo:inline>
+																</fo:block>
+															</fo:table-cell>
+														</fo:table-row>
+													</fo:table-body>
+												</fo:table>
+												<!-- Tabla con los datos de operación -->
+												<fo:table table-layout="fixed" width="100%" border-spacing="5pt" space-after="2mm">
+													<fo:table-column column-width="proportional-column-width(1)"/>
+													<fo:table-column column-width="proportional-column-width(4)"/>
+													<fo:table-body start-indent="20pt">
+														<!-- Fila 1 Hijo -->
+														<fo:table-row>
+															<fo:table-cell padding="2pt" display-align="center">
+																<fo:block text-align="left" margin="0pt">
+																	<fo:block font-size="8pt" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after">
+																		<fo:inline font-weight="bold">
+																			<xsl:text>Acto Jurídico:</xsl:text>
+																		</fo:inline>
 																	</fo:block>
-																</fo:table-cell>
-																
-																<fo:table-cell padding="6pt" display-align="center">
-																	<fo:block text-align="left" margin="0pt">
-																		<fo:block font-size="8pt" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after">
-																			<fo:inline font-weight="normal">
-																				 <xsl:value-of select="$admin/*[local-name()='NOMBRE']"/><xsl:text> </xsl:text>
-																				 <xsl:if test="$admin/*[local-name()='APELLIDO1']!=''"> 
-																					 <xsl:value-of select="$admin/*[local-name()='APELLIDO1']"/><xsl:text> </xsl:text>
-																				 </xsl:if>
-																				 <xsl:if test="$admin/*[local-name()='APELLIDO2']!=''">
-																					 <xsl:value-of select="$admin/*[local-name()='APELLIDO2']"/>
-																				</xsl:if>
-																			</fo:inline>
-																		</fo:block>
+																</fo:block>
+															</fo:table-cell>
+															<fo:table-cell padding="2pt" display-align="center">
+																<fo:block text-align="left" margin="0pt">
+																	<fo:block font-size="8pt" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after">
+																		<fo:inline font-weight="normal">
+																			 <xsl:value-of select="$operacion/*[local-name()='DESCRIPCION_ACTO_JURIDICO']"/>
+																		</fo:inline>
 																	</fo:block>
-																</fo:table-cell>
-																
-																<fo:table-cell padding="6pt" display-align="center">
-																	<fo:block text-align="left" margin="0pt">
-																		<fo:block font-size="8pt" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after">
-																			<fo:inline font-weight="normal">
-																				 <xsl:value-of select="$admin/*[local-name()='TIPO_ADMINISTRACION']"/>
-																			</fo:inline>
-																		</fo:block>
+																</fo:block>
+															</fo:table-cell>
+														</fo:table-row>
+														<!-- Fila 2 Hijo -->
+														<fo:table-row>
+															<fo:table-cell padding="2pt" display-align="center">
+																<fo:block text-align="left" margin="0pt">
+																	<fo:block font-size="8pt" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after">
+																		<fo:inline font-weight="bold">
+																			<xsl:text>CIF Sociedad:</xsl:text>
+																		</fo:inline>
 																	</fo:block>
-																</fo:table-cell>
-															</fo:table-row>											
-														</fo:table-body>
-													</fo:table>
-												</xsl:for-each><!-- fin FOR EACH DE ADMINISTRADORES -->
-									</xsl:for-each><!-- fin FOR EACH DE OPERACIONES -->									
-								</xsl:for-each> <!-- PROTOCOLO_CONSTITUCION -->															
+																</fo:block>
+															</fo:table-cell>
+															<fo:table-cell padding="2pt" display-align="center">
+																<fo:block text-align="left" margin="0pt">
+																	<fo:block font-size="8pt" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after">
+																		<fo:inline font-weight="normal">
+																			 <xsl:value-of select="$operacion/*[local-name()='SOCIEDAD']/*[local-name()='CIF']"/>
+																		</fo:inline>
+																	</fo:block>
+																</fo:block>
+															</fo:table-cell>
+														</fo:table-row>
+														<!-- Fila 3 Hijo -->
+														<fo:table-row>
+															<fo:table-cell padding="2pt" display-align="center">
+																<fo:block text-align="left" margin="0pt">
+																	<fo:block font-size="8pt" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after">
+																		<fo:inline font-weight="bold">
+																			<xsl:text>Razón Social:</xsl:text>
+																		</fo:inline>
+																	</fo:block>
+																</fo:block>
+															</fo:table-cell>
+															<fo:table-cell padding="2pt" display-align="center">
+																<fo:block text-align="left" margin="0pt">
+																	<fo:block font-size="8pt" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after">
+																		<fo:inline font-weight="normal">
+																			 <xsl:value-of select="$operacion/*[local-name()='SOCIEDAD']/*[local-name()='RAZON_SOCIAL']"/>
+																		</fo:inline>
+																	</fo:block>
+																</fo:block>
+															</fo:table-cell>
+														</fo:table-row>											
+													</fo:table-body>
+												</fo:table>
+												
+												<fo:table table-layout="fixed" width="100%" border-spacing="5pt" space-after="2mm">
+													<fo:table-body start-indent="20pt">
+														<fo:table-row>
+															<fo:table-cell padding="3pt" display-align="center" background-color="#C0C0C0">
+																<fo:block>
+																	<fo:inline font-weight="bold" display-align="after">
+																		<xsl:text>Administradores</xsl:text>
+																	</fo:inline>
+																</fo:block>
+															</fo:table-cell>
+														</fo:table-row>
+													</fo:table-body>
+												</fo:table>
+														
+												<!-- FOR EACH DE ADMINISTRADORES QUE ESTÁ DENTRO DEL DE OPERACIONES -->
+												<xsl:for-each select="$operacion/*[local-name()='ADMINISTRADORES']/*[local-name()='ADMINISTRADOR']">
+														<xsl:variable name="admin" select="current()"/>													
+														<!-- Tabla con los datos de operación -->
+														<fo:table table-layout="fixed" width="100%" border-spacing="5pt" space-after="2mm">
+															<fo:table-column column-width="proportional-column-width(1.65)"/>
+															<fo:table-column column-width="proportional-column-width(4.15)"/>
+															<fo:table-column column-width="proportional-column-width(3.65)"/>
+															<xsl:if test="position() = 1">
+																<fo:table-header  start-indent="20pt">
+																	<fo:table-cell display-align="after" padding="6px"
+																		height="17pt" background-color="#C0C0C0">
+																		<fo:block font-weight="bold" font-size="8pt"
+																			font-family="Arial,Helvetica,sans-serif">Documentación</fo:block>
+																	</fo:table-cell>
+																	<fo:table-cell display-align="after" padding="6px"
+																		height="17pt" background-color="#C0C0C0">
+																		<fo:block font-weight="bold" font-size="8pt"
+																			font-family="Arial,Helvetica,sans-serif">Nombre y Apellidos</fo:block>
+																	</fo:table-cell>
+																	<fo:table-cell display-align="after" padding="6px"
+																		height="17pt" background-color="#C0C0C0">
+																		<fo:block font-weight="bold" font-size="8pt"
+																			font-family="Arial,Helvetica,sans-serif">Tipo Administración</fo:block>
+																	</fo:table-cell>
+																</fo:table-header>
+															</xsl:if>
+															<fo:table-body start-indent="20pt">															
+																<fo:table-row>
+																	<fo:table-cell padding="6pt" display-align="center">
+																		<fo:block text-align="left" margin="0pt">
+																			<fo:block font-size="8pt" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after">
+																				<fo:inline font-weight="normal">
+																					 <xsl:value-of select="$admin/*[local-name()='NIF']"/>
+																				</fo:inline>
+																			</fo:block>
+																		</fo:block>
+																	</fo:table-cell>
+																	
+																	<fo:table-cell padding="6pt" display-align="center">
+																		<fo:block text-align="left" margin="0pt">
+																			<fo:block font-size="8pt" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after">
+																				<fo:inline font-weight="normal">
+																					 <xsl:value-of select="$admin/*[local-name()='NOMBRE']"/><xsl:text> </xsl:text>
+																					 <xsl:if test="$admin/*[local-name()='APELLIDO1']!=''"> 
+																						 <xsl:value-of select="$admin/*[local-name()='APELLIDO1']"/><xsl:text> </xsl:text>
+																					 </xsl:if>
+																					 <xsl:if test="$admin/*[local-name()='APELLIDO2']!=''">
+																						 <xsl:value-of select="$admin/*[local-name()='APELLIDO2']"/>
+																					</xsl:if>
+																				</fo:inline>
+																			</fo:block>
+																		</fo:block>
+																	</fo:table-cell>
+																	
+																	<fo:table-cell padding="6pt" display-align="center">
+																		<fo:block text-align="left" margin="0pt">
+																			<fo:block font-size="8pt" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after">
+																				<fo:inline font-weight="normal">
+																					 <xsl:value-of select="$admin/*[local-name()='TIPO_ADMINISTRACION']"/>
+																				</fo:inline>
+																			</fo:block>
+																		</fo:block>
+																	</fo:table-cell>
+																</fo:table-row>											
+															</fo:table-body>
+														</fo:table>
+													</xsl:for-each><!-- fin FOR EACH DE ADMINISTRADORES -->
+										</xsl:for-each><!-- fin FOR EACH DE OPERACIONES -->									
+									</xsl:for-each> <!-- PROTOCOLO_CONSTITUCION -->															
+							</fo:block>
 						</fo:block>
-					</fo:block>
-				
-				 </xsl:when>
+					</xsl:if>
+				 </xsl:otherwise>
 			</xsl:choose>
 		</xsl:template>
 	</xsl:stylesheet>

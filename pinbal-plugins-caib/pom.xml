@@ -2,10 +2,9 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
+		<groupId>es.caib.pinbal</groupId>
 		<artifactId>pinbal</artifactId>
-		<groupId>es.caib</groupId>
-		<version>1.3</version>
-		<relativePath>..</relativePath>
+		<version>1.4</version>
 	</parent>
 	<artifactId>pinbal-plugins-caib</artifactId>
 	<dependencies>
@@ -85,9 +84,9 @@
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
-			<groupId>es.caib</groupId>
+			<groupId>${project.groupId}</groupId>
 			<artifactId>pinbal-plugins</artifactId>
-			<version>1.3</version>
+			<version>${project.version}</version>
 			<scope>provided</scope>
 		</dependency>
 	</dependencies>

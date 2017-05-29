@@ -1,0 +1,301 @@
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           xmlns="http://intermediacion.redsara.es/scsp/esquemas/datosespecificos"
+           xmlns:personaV50="http://intermediacion.redsara.es/scsp/esquemas/datosespecificos"
+           attributeFormDefault="unqualified"
+           elementFormDefault="qualified"
+           targetNamespace="http://intermediacion.redsara.es/scsp/esquemas/datosespecificos">
+   <xs:element name="DatosEspecificos">
+      <xs:complexType>
+         <xs:sequence>
+            <xs:element ref="Retorno"/>
+         </xs:sequence>
+         <xs:attribute name="Id" type="xs:string" use="optional"/>
+      </xs:complexType>
+   </xs:element>
+   <xs:element name="Retorno">
+      <xs:complexType>
+         <xs:sequence>
+            <xs:element ref="Estado"/>
+            <xs:element minOccurs="0" ref="DatosPersona">
+               <xs:annotation>
+                  <xs:documentation>XML con los datos de la persona (XML decodificado devuelto por DGT)</xs:documentation>
+               </xs:annotation>
+            </xs:element>
+         </xs:sequence>
+      </xs:complexType>
+   </xs:element>
+   <xs:element name="FechaNacimiento" type="Fecha">
+      <xs:annotation>
+         <xs:documentation>Formato DD/MM/YYYY</xs:documentation>
+      </xs:annotation>
+   </xs:element>
+   <xs:element name="AnioNacimiento" type="Anio">
+      <xs:annotation>
+         <xs:documentation>Formato: AAAA</xs:documentation>
+      </xs:annotation>
+   </xs:element>
+   <xs:element name="DatosPersona" type="persona">
+      <xs:annotation>
+         <xs:documentation>XML con los datos del vehículo (a la espera de schema de la DGT)</xs:documentation>
+      </xs:annotation>
+   </xs:element>
+   <xs:element name="Estado">
+      <xs:complexType>
+         <xs:all>
+            <xs:element name="CodigoEstado">
+               <xs:annotation>
+                  <xs:documentation>Codigo de estado: 0 - Tramitado, 1 - Error</xs:documentation>
+               </xs:annotation>
+               <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                     <xs:enumeration value="0"/>
+                     <xs:enumeration value="1"/>
+                  </xs:restriction>
+               </xs:simpleType>
+            </xs:element>
+            <xs:element minOccurs="0" name="CodigoEstadoSecundario">
+               <xs:annotation>
+                  <xs:documentation>Codigo devuelto por DGT en caso de error</xs:documentation>
+               </xs:annotation>
+               <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                     <xs:maxLength value="255"/>
+                     <xs:minLength value="1"/>
+                  </xs:restriction>
+               </xs:simpleType>
+            </xs:element>
+            <xs:element name="Literal">
+               <xs:annotation>
+                  <xs:documentation>Descripcion del estado</xs:documentation>
+               </xs:annotation>
+               <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                     <xs:maxLength value="255"/>
+                     <xs:minLength value="1"/>
+                  </xs:restriction>
+               </xs:simpleType>
+            </xs:element>
+         </xs:all>
+      </xs:complexType>
+   </xs:element>
+   <xs:simpleType name="Fecha">
+      <xs:annotation>
+         <xs:documentation>Formato: DD/MM/AAAA</xs:documentation>
+      </xs:annotation>
+      <xs:restriction base="xs:string">
+         <xs:minLength value="10"/>
+         <xs:maxLength value="10"/>
+         <xs:pattern value="([0][1-9]|[1,2][0-9]|[3][0,1])/([0][1-9]|[1][0-2])/[1-2][0-9]{3}"/>
+      </xs:restriction>
+   </xs:simpleType>
+   <xs:simpleType name="Anio">
+      <xs:annotation>
+         <xs:documentation>Formato: AAAA</xs:documentation>
+      </xs:annotation>
+      <xs:restriction base="xs:string">
+         <xs:minLength value="4"/>
+         <xs:maxLength value="4"/>
+         <xs:pattern value="[1-2][0-9]{3}"/>
+      </xs:restriction>
+   </xs:simpleType>
+   <xs:complexType name="persona">
+      <xs:all>
+         <xs:element minOccurs="0" name="datosPersona" type="datosPersona"/>
+         <xs:element minOccurs="0" name="datosGenerales" type="datosGenerales"/>
+         <xs:element minOccurs="0" name="listaExamenes" type="datosExamenes"/>
+         <xs:element minOccurs="0" name="listaTramites" type="tramites"/>
+         <xs:element minOccurs="0" name="listaIncidencias" type="datosIncidencia"/>
+         <xs:element minOccurs="0" name="listaSanciones" type="datosSancion"/>
+      </xs:all>
+   </xs:complexType>
+   <xs:complexType name="datosPersona">
+      <xs:all>
+         <xs:element minOccurs="0" name="identificacionPFisica" type="personaFisica"/>
+         <xs:element minOccurs="0" name="identificacionPJuridica" type="personaJuridica"/>
+      </xs:all>
+   </xs:complexType>
+   <xs:complexType name="personaFisica">
+      <xs:all>
+         <xs:element minOccurs="0" name="apellido1" type="xs:string"/>
+         <xs:element minOccurs="0" name="apellido2" type="xs:string"/>
+         <xs:element minOccurs="0" name="dirElectronicaVial" type="xs:string"/>
+         <xs:element minOccurs="0" name="fechaNacimiento" type="xs:dateTime"/>
+         <xs:element minOccurs="0" name="idDocumento" type="xs:string"/>
+         <xs:element minOccurs="0" name="indicadorDevPF" type="xs:boolean"/>
+         <xs:element minOccurs="0" name="nombre" type="xs:string"/>
+         <xs:element minOccurs="0" name="sexo" type="xs:string"/>
+         <xs:element minOccurs="0" name="tipoPersona" type="xs:string"/>
+      </xs:all>
+   </xs:complexType>
+   <xs:complexType name="personaJuridica">
+      <xs:all>
+         <xs:element minOccurs="0" name="cif" type="xs:string"/>
+         <xs:element minOccurs="0" name="indicadorDevPJ" type="xs:boolean"/>
+         <xs:element minOccurs="0" name="razonSocial" type="xs:string"/>
+         <xs:element minOccurs="0" name="tipoPersona" type="xs:string"/>
+      </xs:all>
+   </xs:complexType>
+   <xs:complexType name="datosGenerales">
+      <xs:all>
+         <xs:element minOccurs="0" name="domicilio" type="domicilio"/>
+         <xs:element minOccurs="0" name="indicadores" type="indicador"/>
+         <xs:element minOccurs="0" name="listaPermisosVigentes" nillable="true" type="permisos"/>
+         <xs:element minOccurs="0" name="listaVehiculos" nillable="true" type="matriculas"/>
+      </xs:all>
+   </xs:complexType>
+   <xs:complexType name="domicilio">
+      <xs:all>
+         <xs:element minOccurs="0" name="calle" type="xs:string"/>
+         <xs:element minOccurs="0" name="codPostal" type="xs:string"/>
+         <xs:element minOccurs="0" name="municipio" type="xs:string"/>
+         <xs:element minOccurs="0" name="provincia" type="tipoDescrito"/>
+         <xs:element minOccurs="0" name="pueblo" type="xs:string"/>
+      </xs:all>
+   </xs:complexType>
+   <xs:complexType name="tipoDescrito">
+      <xs:all>
+         <xs:element minOccurs="0" name="codigo" type="xs:string"/>
+         <xs:element minOccurs="0" name="descripcion" type="xs:string"/>
+      </xs:all>
+   </xs:complexType>
+   <xs:complexType name="indicador">
+      <xs:all>
+         <xs:element minOccurs="0" name="autorizadoMercanciasPeligrosas" type="xs:boolean"/>
+         <xs:element minOccurs="0" name="autorizadoTransporteEscolar" type="xs:boolean"/>
+         <xs:element minOccurs="0" name="condicionRestrictiva" type="xs:boolean"/>
+         <xs:element minOccurs="0" name="funcionAutoescuela" type="tipoDescrito"/>
+         <xs:element name="indicadorDev" type="xs:boolean"/>
+         <xs:element minOccurs="0" name="lentes" type="xs:boolean"/>
+      </xs:all>
+   </xs:complexType>
+   <xs:complexType name="permisos">
+      <xs:sequence>
+         <xs:element maxOccurs="unbounded" minOccurs="0" name="permiso" type="permiso"/>
+      </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name="permiso">
+      <xs:all>
+         <xs:element minOccurs="0" name="fechaFin" type="xs:dateTime"/>
+         <xs:element minOccurs="0" name="fechaInicio" type="xs:dateTime"/>
+         <xs:element minOccurs="0" name="tipoPermiso" type="tipoDescrito"/>
+         <xs:element minOccurs="0" name="vigencia" type="xs:dateTime"/>
+      </xs:all>
+   </xs:complexType>
+   <xs:complexType name="matriculas">
+      <xs:sequence>
+         <xs:element maxOccurs="unbounded" minOccurs="0" name="matricula" type="matricula"/>
+      </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name="matricula">
+      <xs:all>
+         <xs:element minOccurs="0" name="matricula" type="xs:string"/>
+      </xs:all>
+   </xs:complexType>
+   <xs:complexType name="datosExamenes">
+      <xs:sequence>
+         <xs:element maxOccurs="unbounded" minOccurs="0" name="datosExamen" nillable="true"
+                     type="datosExamen"/>
+      </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name="datosExamen">
+      <xs:sequence>
+         <xs:element maxOccurs="unbounded" minOccurs="0" name="solicitudExamen" nillable="true"
+                     type="solicitudExamen"/>
+      </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name="solicitudExamen">
+      <xs:sequence>
+         <xs:element minOccurs="0" name="autoescuela" type="xs:string"/>
+         <xs:element minOccurs="0" name="centroMedico" type="xs:string"/>
+         <xs:element minOccurs="0" name="fecha" type="xs:dateTime"/>
+         <xs:element minOccurs="0" name="jefatura" type="tipoDescrito"/>
+         <xs:element maxOccurs="unbounded" minOccurs="0" name="resultados" nillable="true"
+                     type="resultadosExamenes"/>
+         <xs:element minOccurs="0" name="situacion" type="xs:string"/>
+         <xs:element minOccurs="0" name="sucursal" type="tipoDescrito"/>
+         <xs:element minOccurs="0" name="tipoPermiso" type="tipoDescrito"/>
+      </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name="resultadosExamenes">
+      <xs:sequence>
+         <xs:element maxOccurs="unbounded" minOccurs="0" name="resultadoExamen" nillable="true"
+                     type="resultadoExamen"/>
+      </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name="resultadoExamen">
+      <xs:all>
+         <xs:element minOccurs="0" name="calificacion" type="tipoDescrito"/>
+         <xs:element minOccurs="0" name="fecha" type="xs:dateTime"/>
+         <xs:element minOccurs="0" name="tipoExamen" type="tipoDescrito"/>
+      </xs:all>
+   </xs:complexType>
+   <xs:complexType name="tramites">
+      <xs:sequence>
+         <xs:element maxOccurs="unbounded" minOccurs="0" name="tramite" nillable="true"
+                     type="tramite"/>
+      </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name="tramite">
+      <xs:all>
+         <xs:element minOccurs="0" name="centroMedico" type="xs:string"/>
+         <xs:element minOccurs="0" name="claseAfectacion" type="xs:string"/>
+         <xs:element minOccurs="0" name="concesionObligada" type="xs:string"/>
+         <xs:element minOccurs="0" name="fecha" type="xs:dateTime"/>
+         <xs:element minOccurs="0" name="jefatura" type="tipoDescrito"/>
+         <xs:element minOccurs="0" name="sucursal" type="tipoDescrito"/>
+         <xs:element minOccurs="0" name="tipoTramite" type="tipoTramite"/>
+         <xs:element minOccurs="0" name="tipoPermiso" type="tipoDescrito"/>
+      </xs:all>
+   </xs:complexType>
+   <xs:complexType name="datosIncidencia">
+      <xs:sequence>
+         <xs:element maxOccurs="unbounded" minOccurs="0" name="datosIncidencias" nillable="true"
+                     type="datosIncidencias"/>
+      </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name="datosIncidencias">
+      <xs:all>
+         <xs:element minOccurs="0" name="anotacion" type="xs:string"/>
+         <xs:element minOccurs="0" name="documento" type="xs:string"/>
+         <xs:element minOccurs="0" name="fecha" type="xs:dateTime"/>
+         <xs:element minOccurs="0" name="jefatura" type="tipoDescrito"/>
+         <xs:element minOccurs="0" name="sucursal" type="tipoDescrito"/>
+         <xs:element minOccurs="0" name="tipo" type="tipoDescrito"/>
+      </xs:all>
+   </xs:complexType>
+   <xs:complexType name="datosSancion">
+      <xs:sequence>
+         <xs:element maxOccurs="unbounded" minOccurs="0" name="datosSanciones" nillable="true"
+                     type="datosSanciones"/>
+      </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name="datosSanciones">
+      <xs:all>
+         <xs:element minOccurs="0" name="anotacion" type="xs:string"/>
+         <xs:element minOccurs="0" name="autoridadSancionadora" type="tipoDescrito"/>
+         <xs:element minOccurs="0" name="duracion" type="xs:int"/>
+         <xs:element minOccurs="0" name="expediente" type="xs:string"/>
+         <xs:element minOccurs="0" name="fecha" type="xs:dateTime"/>
+         <xs:element minOccurs="0" name="fechaFin" type="xs:dateTime"/>
+         <xs:element minOccurs="0" name="motivo" type="tipoDescrito"/>
+         <xs:element minOccurs="0" name="tipoSancion" type="tipoDescrito"/>
+      </xs:all>
+   </xs:complexType>
+   <xs:complexType name="tipoTramite">
+      <xs:all>
+         <xs:element minOccurs="0" name="codigo" type="xs:string"/>
+         <xs:element minOccurs="0" name="descripcion" type="xs:string"/>
+         <xs:element name="tipo" type="enumTipoTramite"/>
+      </xs:all>
+   </xs:complexType>
+   <xs:simpleType name="enumTipoTramite">
+      <xs:annotation>
+         <xs:documentation>DUPLICADO, EXPEDICION, PRORROGA</xs:documentation>
+      </xs:annotation>
+      <xs:restriction base="xs:string">
+         <xs:enumeration value="DUPLICADO"/>
+         <xs:enumeration value="EXPEDICION"/>
+         <xs:enumeration value="PRORROGA"/>
+      </xs:restriction>
+   </xs:simpleType>
+</xs:schema>

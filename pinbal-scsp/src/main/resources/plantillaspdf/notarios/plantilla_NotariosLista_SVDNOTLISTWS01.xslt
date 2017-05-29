@@ -30,13 +30,16 @@
 	<xsl:param name="consentimiento"/>
 	<xsl:param name="idExpediente"/>
 	<xsl:param name="finalidad"/>
-	<xsl:param name="APODERAMIENTOCSV"/>
-	<xsl:param name="ALERTAID_APLICACION"/>
-	<xsl:param name="ALERTAFECHA_AVISO"/>
-	<xsl:param name="ALERTAEMAIL"/>
-	<xsl:param name="ALERTASMS"/>
+	<xsl:param name="ConsultaNOTARIACODIGO_POSTAL"/>
+	<xsl:param name="ConsultaNOTARIACOD_INE_MUN"/>
+	<xsl:param name="ConsultaNOTARIACOD_INE_PROV"/>
+	<xsl:param name="ConsultaNOTARIADIRECCION"/>
+	<xsl:param name="ConsultaNOTARIAPLAZA"/>
+	<xsl:param name="ConsultaNOTARIACOD_NOTARIA"/>
+	<xsl:param name="ConsultaFECHA_ACTO"/>
+	<xsl:param name="ConsultaNOTARIOCOD_NOTARIO"/>
 	<xsl:template match="/">
-		<fo:root>
+		<fo:root> 
 			<fo:layout-master-set>
 				<fo:simple-page-master master-name="default-page" page-height="11in" page-width="9.5in" margin-top="0.2in" margin-right="0.9in" margin-left="0.8in">
 					<fo:region-body margin-top="82" margin-bottom="120" margin-left="0.2in"/>
@@ -295,7 +298,22 @@
 								<xsl:value-of select="$nomApellidosPeticion"/>
 							</fo:block>
 						</fo:table-cell>
-					</fo:table-row>				
+					</fo:table-row>	
+					<fo:table-row>
+						<!-- TIPO DOCUMENTACION -->
+						<fo:table-cell padding="2pt" display-align="center">
+							<fo:block font-size="8pt" text-align="left" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after">
+								<fo:inline font-weight="bold">
+									<xsl:text>Código:</xsl:text>
+								</fo:inline>
+							</fo:block>
+						</fo:table-cell>
+						<fo:table-cell padding="2pt" display-align="center" number-columns-spanned="5">
+							<fo:block font-size="8pt" text-align="left" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after">
+								<xsl:value-of select="$ConsultaNOTARIOCOD_NOTARIO"/>
+							</fo:block>
+						</fo:table-cell>
+					</fo:table-row>		
 				</fo:table-body>
 			</fo:table>
 			
@@ -360,7 +378,7 @@
 						</fo:table-cell>
 						<fo:table-cell padding="2pt" display-align="center">
 							<fo:block font-size="8pt" text-align="left" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after">
-								<xsl:value-of select="$APODERAMIENTOCSV"/>
+								<xsl:value-of select="$ConsultaNOTARIACOD_INE_PROV"/>
 							</fo:block>
 						</fo:table-cell>
 					</fo:table-row>
@@ -374,11 +392,38 @@
 						</fo:table-cell>
 						<fo:table-cell padding="2pt" display-align="center">
 							<fo:block font-size="8pt" text-align="left" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after">
-								<xsl:value-of select="$APODERAMIENTOCSV"/>
+								<xsl:value-of select="$ConsultaNOTARIACOD_INE_MUN"/>
 							</fo:block>
 						</fo:table-cell>
 					</fo:table-row>
-					
+						<fo:table-row>
+						<fo:table-cell padding="2pt" display-align="center">
+							<fo:block font-size="8pt" text-align="left" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after">
+								<fo:inline font-weight="bold">
+									<xsl:text>Dirección:</xsl:text>
+								</fo:inline>
+							</fo:block>
+						</fo:table-cell>
+						<fo:table-cell padding="2pt" display-align="center">
+							<fo:block font-size="8pt" text-align="left" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after">
+								<xsl:value-of select="$ConsultaNOTARIADIRECCION"/>
+							</fo:block>
+						</fo:table-cell>
+					</fo:table-row>
+					<fo:table-row>
+						<fo:table-cell padding="2pt" display-align="center">
+							<fo:block font-size="8pt" text-align="left" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after">
+								<fo:inline font-weight="bold">
+									<xsl:text>Unidad poblacional:</xsl:text>
+								</fo:inline>
+							</fo:block>
+						</fo:table-cell>
+						<fo:table-cell padding="2pt" display-align="center">
+							<fo:block font-size="8pt" text-align="left" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after">
+								<xsl:value-of select="$ConsultaNOTARIAPLAZA"/>
+							</fo:block>
+						</fo:table-cell>
+					</fo:table-row>
 					<fo:table-row>
 						<fo:table-cell padding="2pt" display-align="center">
 							<fo:block font-size="8pt" text-align="left" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after">
@@ -389,7 +434,7 @@
 						</fo:table-cell>
 						<fo:table-cell padding="2pt" display-align="center">
 							<fo:block font-size="8pt" text-align="left" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after">
-								<xsl:value-of select="$APODERAMIENTOCSV"/>
+								<xsl:value-of select="$ConsultaFECHA_ACTO"/>
 							</fo:block>
 						</fo:table-cell>
 					</fo:table-row>	
@@ -403,7 +448,7 @@
 						</fo:table-cell>
 						<fo:table-cell padding="2pt" display-align="center">
 							<fo:block font-size="8pt" text-align="left" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after">
-								<xsl:value-of select="$APODERAMIENTOCSV"/>
+								<xsl:value-of select="$ConsultaNOTARIACODIGO_POSTAL"/>
 							</fo:block>
 						</fo:table-cell>
 					</fo:table-row>

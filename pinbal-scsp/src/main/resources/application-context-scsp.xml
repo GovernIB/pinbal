@@ -35,6 +35,7 @@
 	<bean class="es.scsp.common.security.PolicyBuilder">
 		<constructor-arg index="0" value="/scsp-ws-policy.xml" />
 	</bean>
+	<bean id="parametroConfiguracionDao" class="es.scsp.common.dao.ParametroConfiguracionDao"/> 
 	<alias name="clienteUnico" alias="clienteUnicoProvisional" />
 
 	<!-- ==================================================================== -->

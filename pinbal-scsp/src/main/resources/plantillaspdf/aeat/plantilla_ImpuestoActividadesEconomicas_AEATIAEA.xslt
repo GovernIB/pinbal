@@ -373,13 +373,11 @@ contains($spacechars, $c2))">
 			</fo:table>
 		</fo:block>
 		<!-- DATOS DE LA RESPUESTA -->
-		<xsl:choose>
-			<!-- Miramos el Codigo de Error de la etiqueta Atributos -->
-			<xsl:when test="$datosEspecificos/*[local-name()='Cabecera']/*[local-name()='CodRet'] != '1000' ">
-				
+		<xsl:choose>			
+			<xsl:when test="$datosEspecificos/*[local-name()='Cabecera']/*[local-name()='CodRet'] != '1000'">				
 				<fo:block margin-top="40pt" text-align="center" font-family="Arial,sans-serif" font-size="10pt" line-height="10pt" space-after.optimum="1pt" display-align="after">
 					<fo:inline font-weight="bold">
-						<xsl:text>RESULTADO DE LA CONSULTA:      </xsl:text>
+						<xsl:text>RESULTADO DE LA CONSULTA:</xsl:text>
 						<xsl:value-of select="$datosEspecificos/*[local-name()='Cabecera']/*[local-name()='CodRet']"/>
 						<xsl:text>  -  </xsl:text>
 						<xsl:value-of select="$datosEspecificos/*[local-name()='Cabecera']/*[local-name()='DescripcionError']"/>

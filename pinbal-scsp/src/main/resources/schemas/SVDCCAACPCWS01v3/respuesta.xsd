@@ -5,6 +5,8 @@
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
 				<xs:maxLength value="40"/>
+				<xs:minLength value="1"/>
+				<xs:whiteSpace value="collapse"/>
 			</xs:restriction>
 		</xs:simpleType>
 	</xs:element>
@@ -12,6 +14,8 @@
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
 				<xs:maxLength value="40"/>
+				<xs:minLength value="1"/>
+				<xs:whiteSpace value="collapse"/>
 			</xs:restriction>
 		</xs:simpleType>
 	</xs:element>
@@ -30,6 +34,7 @@
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
 				<xs:enumeration value="SVDCCAACPCWS01"/>
+				<xs:enumeration value="SVDCCAACPASWS01"/>
 			</xs:restriction>
 		</xs:simpleType>
 	</xs:element>
@@ -68,9 +73,9 @@
 	<xs:element name="Documentacion">
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
-				<xs:minLength value="1"/>
 				<xs:maxLength value="14"/>
 				<xs:whiteSpace value="collapse"/>
+				<xs:minLength value="1"/>
 			</xs:restriction>
 		</xs:simpleType>
 	</xs:element>
@@ -130,6 +135,8 @@
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
 				<xs:maxLength value="100"/>
+				<xs:minLength value="1"/>
+				<xs:whiteSpace value="collapse"/>
 			</xs:restriction>
 		</xs:simpleType>
 	</xs:element>
@@ -152,8 +159,8 @@
 	<xs:element name="Procedimiento">
 		<xs:complexType>
 			<xs:sequence>
-				<xs:element ref="CodProcedimiento" minOccurs="0"/>
-				<xs:element ref="NombreProcedimiento" minOccurs="0"/>
+				<xs:element ref="CodProcedimiento"/>
+				<xs:element ref="NombreProcedimiento"/>
 			</xs:sequence>
 		</xs:complexType>
 	</xs:element>
@@ -204,7 +211,7 @@
 	<xs:element name="NifEmisor">
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
-				<xs:enumeration value="S0711001H"/>
+				<xs:enumeration value="S2833002E"/>
 			</xs:restriction>
 		</xs:simpleType>
 	</xs:element>
@@ -222,6 +229,8 @@
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
 				<xs:maxLength value="40"/>
+				<xs:minLength value="1"/>
+				<xs:whiteSpace value="collapse"/>
 			</xs:restriction>
 		</xs:simpleType>
 	</xs:element>
@@ -229,6 +238,8 @@
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
 				<xs:maxLength value="122"/>
+				<xs:minLength value="1"/>
+				<xs:whiteSpace value="collapse"/>
 			</xs:restriction>
 		</xs:simpleType>
 	</xs:element>
@@ -237,6 +248,7 @@
 			<xs:restriction base="xs:string">
 				<xs:maxLength value="122"/>
 				<xs:whiteSpace value="collapse"/>
+				<xs:minLength value="1"/>
 			</xs:restriction>
 		</xs:simpleType>
 	</xs:element>
@@ -244,6 +256,8 @@
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
 				<xs:maxLength value="50"/>
+				<xs:minLength value="1"/>
+				<xs:whiteSpace value="collapse"/>
 			</xs:restriction>
 		</xs:simpleType>
 	</xs:element>
@@ -269,7 +283,6 @@
 		<xs:complexType>
 			<xs:sequence>
 				<xs:element ref="Atributos"/>
-				<!-- Las transmisiones son opcionales en caso de que la repuesta no este preparada y se devuelva un TER -->
 				<xs:element ref="Transmisiones" minOccurs="0"/>
 			</xs:sequence>
 		</xs:complexType>
@@ -280,7 +293,7 @@
 				<xs:element ref="IdentificadorSolicitante"/>
 				<xs:element ref="NombreSolicitante"/>
 				<xs:element ref="UnidadTramitadora" minOccurs="0"/>
-				<xs:element ref="Procedimiento" minOccurs="0"/>
+				<xs:element ref="Procedimiento"/>
 				<xs:element ref="Finalidad"/>
 				<xs:element ref="Consentimiento"/>
 				<xs:element ref="Funcionario"/>
@@ -299,7 +312,9 @@
 	<xs:element name="TimeStamp">
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
 				<xs:maxLength value="29"/>
+				<xs:whiteSpace value="collapse"/>
 			</xs:restriction>
 		</xs:simpleType>
 	</xs:element>
@@ -309,7 +324,6 @@
 				<xs:enumeration value="CIF"/>
 				<xs:enumeration value="NIF"/>
 				<xs:enumeration value="DNI"/>
-				<xs:enumeration value="Pasaporte"/>
 				<xs:enumeration value="NIE"/>
 			</xs:restriction>
 		</xs:simpleType>
@@ -344,10 +358,6 @@
 			</xs:all>
 		</xs:complexType>
 	</xs:element>
-	<!-- 
-  Las transmisiones son opcionales en caso de devolver en la respuesta un nuevo TER.
-  
-  -->
 	<xs:element name="Transmisiones" nillable="false">
 		<xs:complexType>
 			<xs:sequence>

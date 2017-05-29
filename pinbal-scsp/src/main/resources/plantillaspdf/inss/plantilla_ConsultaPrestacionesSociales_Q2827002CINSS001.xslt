@@ -351,9 +351,11 @@
 		</fo:block>
       
 	     <!-- DATOS DE LA RESPUESTA -->		     
-		<xsl:choose>
+<xsl:choose>
+			<xsl:when test="$retorno/*[local-name()='Codigo'] = '0000' or $retorno/*[local-name()='Codigo'] = '0005' or $retorno/*[local-name()='Codigo'] = '0004'  or $retorno/*[local-name()='Codigo'] = '0006'">
+					<xsl:choose>
 			<!-- Miramos el Codigo de Error de la etiqueta Atributos -->
-			<xsl:when test="$retorno/*[local-name()='Codigo'] = '0001' or $retorno/*[local-name()='Codigo'] = '0002'  or $retorno/*[local-name()='Codigo'] = '0003'">
+			<xsl:when test="$retorno/*[local-name()='Codigo'] != '0000'">
 				<!-- ********* xsl:variable name="estado" select="$datosEspecificos/*[local-name()='EstadoResultado']"/ -->
 				<fo:block margin-top="40pt" text-align="center" font-family="Arial,sans-serif" font-size="10pt" line-height="10pt" space-after.optimum="1pt" display-align="after">
 					<fo:inline font-weight="bold">
@@ -366,8 +368,7 @@
 					</fo:inline>
 				</fo:block>
 			</xsl:when>
-			
-			<xsl:when test="$retorno/*[local-name()='Codigo'] = '0000' or $retorno/*[local-name()='Codigo'] = '0004'  or $retorno/*[local-name()='Codigo'] = '0005'">
+	</xsl:choose>				
 				<fo:block text-align="left" margin-top="25pt">
 					<fo:block font-size="8pt" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after">
 						<fo:inline font-weight="bold">
@@ -761,6 +762,7 @@
 						</xsl:for-each>
 				</fo:block>
 				
+				<!--
 				<xsl:if test="$retorno/*[local-name()='Codigo'] = '0004' or $retorno/*[local-name()='Codigo'] = '0005' ">
 					<fo:block margin-top="20pt" text-align="center" font-family="Arial,sans-serif" font-size="10pt" line-height="10pt" space-after.optimum="1pt" display-align="after">
 						<fo:inline font-weight="bold">
@@ -773,7 +775,20 @@
 						</fo:inline>
 					</fo:block>
 				</xsl:if>
+				-->
 			</xsl:when>
+			<xsl:otherwise>
+				<fo:block margin-top="20pt" text-align="center" font-family="Arial,sans-serif" font-size="10pt" line-height="10pt" space-after.optimum="1pt" display-align="after">
+						<fo:inline font-weight="bold">
+							<xsl:text>RESULTADO DE LA CONSULTA:      </xsl:text>
+							<xsl:value-of select="$retorno/*[local-name()='Codigo']"/>
+							<xsl:if test="$retorno/*[local-name()='Descripcion']!= ''">
+								<xsl:text>  -  </xsl:text>
+								<xsl:value-of select="$retorno/*[local-name()='Descripcion']"/>
+							</xsl:if>
+						</fo:inline>
+					</fo:block>
+			</xsl:otherwise>
 		</xsl:choose>
 	</xsl:template>
 </xsl:stylesheet>

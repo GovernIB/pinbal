@@ -33,7 +33,7 @@
 	<xsl:param name="consentimiento"/>
 	<xsl:param name="idExpediente"/>
 	<xsl:param name="finalidad"/>
-	<xsl:param name="DatosEspecificosEjercicio"/>
+	<xsl:param name="Ejercicio"/>
 	
 	<!-- Para provocar salto de linea cuando un texto es demasiado largo -->
 	<xsl:template name="intersperse-with-zero-spaces">
@@ -368,7 +368,7 @@ contains($spacechars, $c2))">
 								<fo:inline font-weight="bold">
 									<xsl:text>Periodo Consulta:     </xsl:text>
 								</fo:inline>
-								<xsl:value-of select="$DatosEspecificosEjercicio"/>
+								<xsl:value-of select="$Ejercicio"/>
 							</fo:block>
 						</fo:table-cell>
 					</fo:table-row>

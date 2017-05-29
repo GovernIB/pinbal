@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- edited with XMLSpy v2008 sp1 (http://www.altova.com) by Daniel (Particular) -->
+<!-- edited with XMLSpy v2011 sp1 (http://www.altova.com) by End User (free.org) -->
 <xs:schema xmlns="http://intermediacion.redsara.es/scsp/esquemas/datosespecificos" xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://intermediacion.redsara.es/scsp/esquemas/datosespecificos" elementFormDefault="qualified">
 	<xs:element name="DatosEspecificos" type="DatosEspecificos"/>
 	<xs:complexType name="DatosEspecificos">
@@ -118,8 +118,8 @@
 · 04 - ISLAS BALEARES
 · 05 - CANARIAS
 · 06 - CANTABRIA
-· 07 - CASTILLA y LEÓN
-· 08 - CASTILLA-LA MANCHA
+· 07 - CASTILLA-LA MANCHA
+· 08 - CASTILLA y LEÓN
 · 09 - CATALUÑA
 · 10 - COMUNIDAD VALENCIANA
 · 11 - EXTREMADURA
@@ -174,7 +174,7 @@
 	<xs:element name="DatosAdicionalesTitular" type="DatosAdicionalesTitular"/>
 	<xs:complexType name="DatosAdicionalesTitular">
 		<xs:sequence>
-			<xs:element ref="FechaNacimiento"/>
+			<xs:element ref="FechaNacimiento" minOccurs="1"/>
 		</xs:sequence>
 	</xs:complexType>
 	<xs:complexType name="BeneficiarioRetorno">

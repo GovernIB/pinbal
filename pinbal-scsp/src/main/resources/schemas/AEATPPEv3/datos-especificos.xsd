@@ -18,10 +18,9 @@
 							<xs:sequence>
 								<xs:element name="CodRet">
 									<xs:simpleType>
-										<xs:restriction base="xs:long">
-											<xs:minInclusive value="0"/>
-											<xs:maxInclusive value="9999"/>
-											<xs:totalDigits value="4"/>
+										<xs:restriction base="xs:string">
+											<xs:minLength value="0"/>
+											<xs:maxLength value="4"/>
 										</xs:restriction>
 									</xs:simpleType>
 								</xs:element>

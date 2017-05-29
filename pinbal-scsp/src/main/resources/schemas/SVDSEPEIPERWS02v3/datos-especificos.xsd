@@ -10,7 +10,6 @@
 			<xs:element ref="EstadoResultado" minOccurs="0"/>
 			<xs:element ref="DatosImportePeriodo"/>
 		</xs:all>
-		<xs:attribute name="Id" type="xs:string" use="optional"/>
 	</xs:complexType>
 	<xs:element name="CodigoEstado">
 		<xs:simpleType>

@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns="http://intermediacion.redsara.es/scsp/esquemas/datosespecificos" xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://intermediacion.redsara.es/scsp/esquemas/datosespecificos" elementFormDefault="qualified">
+	<xs:element name="DatosEspecificos" type="DatosEspecificos"/>
+	<xs:complexType name="DatosEspecificos">
+		<xs:choice>
+			<xs:element ref="Consulta"/>
+			<xs:element ref="Retorno"/>
+		</xs:choice>
+		<xs:attribute name="Id" type="xs:string" use="optional"/>
+	</xs:complexType>
+	<xs:element name="Retorno">
+		<xs:annotation>
+			<xs:documentation>Solo en el mensaje RESPUESTA</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="Estado"/>
+				<xs:element ref="ResultadosCalificaciones" minOccurs="0"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<!-- Consulta -->
+	<xs:element name="Consulta">
+		<xs:annotation>
+			<xs:documentation>Solo en el mensaje PETICION</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="TipoCertificacion" minOccurs="0"/>
+				<xs:element ref="CodigoInscripcion" minOccurs="0"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="TipoCertificacion">
+		<xs:annotation>
+			<xs:documentation>Tipo de certificación. Valores:
+- DELE    
+- CCSE 
+			</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:enumeration value="DELE"/>
+				<xs:enumeration value="CCSE"/>
+				<xs:enumeration value=""/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="CodigoInscripcion">
+		<xs:annotation>
+			<xs:documentation>Código de la inscripción del candidato</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="0"/>
+				<xs:whiteSpace value="collapse"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<!-- Retorno -->
+	<xs:element name="Estado">
+		<xs:complexType>
+			<xs:all>
+				<xs:element ref="CodigoEstado"/>
+				<xs:element ref="LiteralError"/>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="CodigoEstado">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:maxLength value="4"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="LiteralError">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:maxLength value="255"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="ResultadosCalificaciones">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="ResultadoCalificaciones" minOccurs="0" maxOccurs="unbounded"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="ResultadoCalificaciones">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="CalificacionObtenida" minOccurs="0"/>
+				<xs:element ref="TipoCertificacion" minOccurs="0"/>
+				<xs:element ref="CodigoInscripcion" minOccurs="0"/>
+				<xs:element name="FechaActaCalificacion" type="xs:dateTime" minOccurs="0"/>
+				<xs:element name="FechaExamen" type="xs:dateTime" minOccurs="0"/>
+				<xs:element name="FechaNacimiento" type="xs:dateTime" minOccurs="0"/>
+				<xs:element name="FechaValidez" type="xs:dateTime" minOccurs="0"/>
+				<xs:element ref="Genero" minOccurs="0"/>
+				<xs:element ref="LugarNacimiento" minOccurs="0"/>
+				<xs:element ref="NivelObtenido" minOccurs="0"/>
+				<xs:element ref="CodigoPaisNacimiento" minOccurs="0"/>
+				<xs:element ref="PaisNacimiento" minOccurs="0"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="CalificacionObtenida">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:enumeration value="APTO"/>
+				<xs:enumeration value="NO APTO"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Genero">
+		<xs:annotation>
+			<xs:documentation>(String 1 caracter) Código del género, valores válidos:
+· H – Hombre
+· M – Mujer
+			</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:enumeration value="H"/>
+				<xs:enumeration value="M"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="LugarNacimiento">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:whiteSpace value="collapse"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="NivelObtenido">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:whiteSpace value="collapse"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="CodigoPaisNacimiento">
+		<xs:annotation>
+			<xs:documentation>(String 3 caracteres) Código de país de nacimiento (codificación de 3 digitos ISO3166)</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:whiteSpace value="collapse"/>
+				<xs:pattern value="[0-9]{3}"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="PaisNacimiento">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="40"/>
+				<xs:whiteSpace value="collapse"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+</xs:schema>

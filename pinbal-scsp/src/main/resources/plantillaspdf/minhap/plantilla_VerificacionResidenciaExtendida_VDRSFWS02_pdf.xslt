@@ -35,11 +35,11 @@
 	<xsl:param name="finalidad"/>
 	
 	<xsl:param name="SolicitudEspanol"/>
-	<xsl:param name="NacimientoFecha"/>
-	<xsl:param name="NacimientoProvincia"/>
-	<xsl:param name="NacimientoMunicipio"/>
-	<xsl:param name="ResidenciaMunicipio"/>
-	<xsl:param name="ResidenciaProvincia"/>
+	<xsl:param name="SolicitudNacimientoFecha"/>
+	<xsl:param name="SolicitudNacimientoProvincia"/>
+	<xsl:param name="SolicitudNacimientoMunicipio"/>
+	<xsl:param name="SolicitudResidenciaMunicipio"/>
+	<xsl:param name="SolicitudResidenciaProvincia"/>
 	
 	<xsl:template match="/">
 		<fo:root>
@@ -361,7 +361,7 @@
 			</fo:table>
 			
 			
-			<!--xsl:if test="$NacimientoFecha != '' or $NacimientoProvincia != ''" -->
+			<!--xsl:if test="$SolicitudNacimientoFecha != '' or $SolicitudNacimientoProvincia != ''" -->
 				<fo:table table-layout="fixed" width="100%" border-spacing="5pt" space-after="2mm">
 					<fo:table-body start-indent="0pt">
 						<fo:table-row>
@@ -394,8 +394,8 @@
 							</fo:table-cell>
 							<fo:table-cell padding="2pt" display-align="center">						
 									<fo:block font-size="8pt" text-align="left" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after" >
-										<xsl:if test="$NacimientoFecha != '' ">
-											<xsl:value-of select="concat(substring(string($NacimientoFecha),7,2),'/',substring(string($NacimientoFecha),5,2),'/',substring(string($NacimientoFecha),1,4))"/>
+										<xsl:if test="$SolicitudNacimientoFecha != '' ">
+											<xsl:value-of select="concat(substring(string($SolicitudNacimientoFecha),7,2),'/',substring(string($SolicitudNacimientoFecha),5,2),'/',substring(string($SolicitudNacimientoFecha),1,4))"/>
 										</xsl:if>
 									</fo:block>	
 							</fo:table-cell>
@@ -409,7 +409,7 @@
 							</fo:table-cell>
 							<fo:table-cell padding="2pt" display-align="center">						
 									<fo:block font-size="8pt" text-align="left" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after" >
-										<xsl:value-of select="$NacimientoProvincia"/>
+										<xsl:value-of select="$SolicitudNacimientoProvincia"/>
 									</fo:block>	
 							</fo:table-cell>
 							<!-- Municipio Nacimiento -->
@@ -418,7 +418,7 @@
 										<fo:inline font-weight="bold">
 											<xsl:text>Municipio:     </xsl:text>
 										</fo:inline>
-										<xsl:value-of select="$NacimientoMunicipio"/>
+										<xsl:value-of select="$SolicitudNacimientoMunicipio"/>
 									</fo:block>	
 							</fo:table-cell>
 							<fo:table-cell padding="2pt" display-align="center">						
@@ -431,7 +431,7 @@
 				</fo:table>	
 			<!-- /xsl:if -->
 
-			<!-- xsl:if test="$ResidenciaMunicipio != '' or $ResidenciaProvincia != ''" -->
+			<!-- xsl:if test="$SolicitudResidenciaMunicipio != '' or $SolicitudResidenciaProvincia != ''" -->
 				<fo:table table-layout="fixed" width="100%" border-spacing="5pt" space-after="2mm">
 					<fo:table-body start-indent="0pt">
 						<fo:table-row>
@@ -464,7 +464,7 @@
 							</fo:table-cell>
 							<fo:table-cell padding="2pt" display-align="center">						
 									<fo:block font-size="8pt" text-align="left" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after" >
-										<xsl:value-of select="$ResidenciaProvincia"/>
+										<xsl:value-of select="$SolicitudResidenciaProvincia"/>
 									</fo:block>	
 							</fo:table-cell>
 							<!-- Municipio Residencia -->
@@ -477,7 +477,7 @@
 							</fo:table-cell>
 							<fo:table-cell padding="2pt" display-align="center">						
 									<fo:block font-size="8pt" text-align="left" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after" >
-										<xsl:value-of select="$ResidenciaMunicipio"/>
+										<xsl:value-of select="$SolicitudResidenciaMunicipio"/>
 									</fo:block>	
 							</fo:table-cell>
 						</fo:table-row>

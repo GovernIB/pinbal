@@ -1,0 +1,418 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2008 sp1 (http://www.altova.com) by eee (eee) -->
+<xs:schema xmlns="http://intermediacion.redsara.es/scsp/esquemas/datosespecificos" xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://intermediacion.redsara.es/scsp/esquemas/datosespecificos" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<!--Definición de tipos complejos-->
+	<xs:complexType name="DatosEspecificos">
+		<xs:choice>
+			<xs:element name="DatosEntrada" type="DatosEntrada">
+				<xs:annotation>
+					<xs:documentation>Sólo en el mensaje de PETICION.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="DatosSalida" type="DatosSalida">
+				<xs:annotation>
+					<xs:documentation>Sólo en el mensaje de RESPUESTA.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:choice>
+		<xs:attribute name="Id" type="xs:string" use="optional"/>
+	</xs:complexType>
+	<xs:complexType name="DatosEntrada">
+		<xs:annotation>
+			<xs:documentation>Bloque de campos que
+representan los datos
+introducidos por el usuario en la petición. Sólo en el mensaje de PETICION.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element ref="AuditCifSolicitante"/>
+			<xs:element ref="AuditCodigoProcedimiento" minOccurs="0"/>
+			<xs:element ref="AuditFechaDesde"/>
+			<xs:element ref="AuditFechaHasta"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="DatosSalida">
+		<xs:sequence>
+			<xs:element ref="EstadoRpta"/>
+			<xs:element name="DatosBusqueda" type="DatosBusqueda">
+				<xs:annotation>
+					<xs:documentation>Bloque que contendrá el número de producto por el que se ha buscado.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ListaConsultas" type="ListaConsultas" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Lista de todas aquellas consultas que cumplen con los criterios de búsqueda.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="EstadoRpta">
+		<xs:annotation>
+			<xs:documentation>Bloque que contendrá el estado de la respuesta.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element ref="Codigo"/>
+			<xs:element ref="Descripcion"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="DatosBusqueda">
+		<xs:annotation>
+			<xs:documentation>Bloque que contendrá los campos que el usuario ha informado para realizar la búsqueda por producto.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element ref="AuditCifSolicitante"/>
+			<xs:element ref="AuditCodigoProcedimiento" minOccurs="0"/>
+			<xs:element ref="AuditFechaDesde"/>
+			<xs:element ref="AuditFechaHasta"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="ListaConsultas">
+		<xs:annotation>
+			<xs:documentation>Bloque que contiene toda la información de la consulta realizada al FTF.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="Consulta" maxOccurs="unbounded">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element ref="AuditRptaIdentificadorSolicitante"/>
+						<xs:element ref="AuditRptaNombreSolicitante"/>
+						<xs:element ref="AuditRptaUnidadTramitadora"/>
+						<xs:element ref="AuditRptaCodProcedimiento"/>
+						<xs:element ref="AuditRptaNombreProcedimiento"/>
+						<xs:element ref="AuditRptaFinalidad"/>
+						<xs:element ref="AuditRptaConsentimiento"/>
+						<xs:element ref="AuditRptaNifFuncionario"/>
+						<xs:element ref="AuditRptaNombreCompletoFuncionario"/>
+						<xs:element ref="AuditRptaIdUsuarioSolicitante"/>
+						<xs:element ref="AuditRptaIdExpediente"/>
+						<xs:element ref="AuditRptaCodResolucionJudFis"/>
+						<xs:element ref="AuditRptaNombreResolucionJudFis"/>
+						<xs:element ref="AuditRptaIdResolucionJudFis"/>
+						<xs:element ref="AuditRptaFechaGeneracion"/>
+						<xs:choice>
+							<xs:element ref="NumProducto"/>
+							<xs:sequence>
+								<xs:element ref="NifEspanol" minOccurs="0"/>
+								<xs:element ref="NumDocId" minOccurs="0"/>
+								<xs:element ref="NombreCompletoRS" minOccurs="0"/>
+								<xs:element ref="FechaNacConst" minOccurs="0"/>
+							</xs:sequence>
+						</xs:choice>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<!--Definición de elementos.-->
+	<xs:element name="DatosEspecificos" type="DatosEspecificos"/>
+	<xs:element name="Codigo">
+		<xs:annotation>
+			<xs:documentation>Código de estado de respuesta de negocio.</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:maxLength value="4"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Descripcion">
+		<xs:annotation>
+			<xs:documentation> Descripción de estado de respuesta de negocio.</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:maxLength value="255"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="NumProducto">
+		<xs:annotation>
+			<xs:documentation>Número del producto financiero sobre el que se realiza la consulta.</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:maxLength value="38"/>
+				<xs:minLength value="9"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="NumDocId">
+		<xs:annotation>
+			<xs:documentation>Número del documento identificativo del interviniente.</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:maxLength value="30"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="NombreCompletoRS">
+		<xs:annotation>
+			<xs:documentation>Nombre completo o razón social del interviniente.</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:maxLength value="178"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="FechaNacConst">
+		<xs:annotation>
+			<xs:documentation>Fecha de nacimiento o de constitución. Ej: 11/04/1974.</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:maxLength value="10"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="EstadoRpta" type="EstadoRpta">
+		<xs:annotation>
+			<xs:documentation>Estado de la respuesta de negocio.</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="CodResolucionJudFis">
+		<xs:annotation>
+			<xs:documentation>Código de resolución judicial o fiscal que autoriza al usuario a realizar la consulta.</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:maxLength value="100"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="NombreResolucionJudFis">
+		<xs:annotation>
+			<xs:documentation>Nombre de la resolución judicial o fiscal que autoriza al usuario a realizar la consulta.</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:maxLength value="100"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="IdResolucionJudFis">
+		<xs:annotation>
+			<xs:documentation>Identificador de la resolución judicial o fiscal que autoriza al usuario a realizar la consulta.</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:maxLength value="25"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="IdUsuarioSolicitante">
+		<xs:annotation>
+			<xs:documentation>Código único y personal del usuario del organismo que ha solicitado la consulta.</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:maxLength value="9"/>
+				<xs:minLength value="1"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="AuditCifSolicitante">
+		<xs:annotation>
+			<xs:documentation>CIF del Organismo al que pertenece la persona o aplicación que solicita los datos.</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:maxLength value="9"/>
+				<xs:minLength value="1"/>
+				<xs:pattern value="((([a-z]|[A-Z])[0-9]{7}([a-z]|[A-Z]))|([0-9]{8}([a-z]|[A-Z])))"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="AuditCodigoProcedimiento">
+		<xs:annotation>
+			<xs:documentation>Codigo del Procedimiento que autoriza al usuario a realizar la consulta.</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:maxLength value="20"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="AuditFechaDesde">
+		<xs:annotation>
+			<xs:documentation>Fecha desde la cual se procede a consultar los accesos y consultas al FTF.</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:maxLength value="10"/>
+				<xs:minLength value="10"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="AuditFechaHasta">
+		<xs:annotation>
+			<xs:documentation>Fecha hasta la cual se procede a consultar los accesos y consultas al FTF.</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:maxLength value="10"/>
+				<xs:minLength value="10"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="AuditRptaIdentificadorSolicitante">
+		<xs:annotation>
+			<xs:documentation>NIF del organismo solicitante.</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:maxLength value="10"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="AuditRptaNombreSolicitante">
+		<xs:annotation>
+			<xs:documentation>Nombre o razón social del organismo al que pertenece la persona o aplicación que solicita los datos.</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:maxLength value="50"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="AuditRptaUnidadTramitadora">
+		<xs:annotation>
+			<xs:documentation>Identificador de carácter representativo para el organismo que realiza la petición.</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:maxLength value="250"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="AuditRptaCodProcedimiento">
+		<xs:annotation>
+			<xs:documentation>Código del Procedimiento que autoriza al usuario a realizar la consulta.</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:maxLength value="20"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="AuditRptaNombreProcedimiento">
+		<xs:annotation>
+			<xs:documentation>Nombre del Procedimiento que autoriza al usuario a realizar la consulta.</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:maxLength value="100"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="AuditRptaFinalidad">
+		<xs:annotation>
+			<xs:documentation>Contiene el motivo o causa por la que se necesita realizar la consulta de los datos.</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:maxLength value="250"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="AuditRptaConsentimiento">
+		<xs:annotation>
+			<xs:documentation>Contendrá siempre el valor "Ley".</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:maxLength value="3"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="AuditRptaNifFuncionario">
+		<xs:annotation>
+			<xs:documentation>Contendrá el NIF del empleado público que realiza la consulta.</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:maxLength value="10"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="AuditRptaNombreCompletoFuncionario">
+		<xs:annotation>
+			<xs:documentation>Contendrá el nombre completo del empleado público que realiza la consulta.</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:maxLength value="122"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="AuditRptaIdUsuarioSolicitante">
+		<xs:annotation>
+			<xs:documentation>Contendrá el código único y personal dle usuario del organismo que ha solicitado la consulta.</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:maxLength value="50"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="AuditRptaIdExpediente">
+		<xs:annotation>
+			<xs:documentation>Identificador del Expediente que justifica la consulta.</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:maxLength value="25"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="AuditRptaCodResolucionJudFis">
+		<xs:annotation>
+			<xs:documentation>Código de la resolución judicial o fiscal que autoriza al usuario a realizar la consulta.</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:maxLength value="100"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="AuditRptaNombreResolucionJudFis">
+		<xs:annotation>
+			<xs:documentation>Nombre de la resolución judicial o fiscal que autoriza al usuario a realizar la consulta.</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:maxLength value="100"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="AuditRptaIdResolucionJudFis">
+		<xs:annotation>
+			<xs:documentation>Identificador de la resolución judicial o fiscal que autoriza al usuario a realizar la consulta.</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:maxLength value="25"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="AuditRptaFechaGeneracion">
+		<xs:annotation>
+			<xs:documentation>Fecha de generacion de la consulta realizada.</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:maxLength value="29"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="NifEspanol">
+		<xs:annotation>
+			<xs:documentation>DNI, NIE o CIF vinculado con el interviniente a buscar.</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:maxLength value="9"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+</xs:schema>

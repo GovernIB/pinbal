@@ -50,7 +50,7 @@ public class CertificatResidencia {
 	public static void main(String[] args) {
 		try {
 			ClienteUnico clienteUnico = getClienteUnico();
-			String certificado = "VDRSFWS02";
+			String certificado = "pruebaPMI";
 			String solicitanteCif = "G07896004";
 			String solicitanteNombre = "FUNDACIO IBIT";
 			String procedimentCodi = "IBIT_20101223_PRUEBA";
@@ -75,9 +75,8 @@ public class CertificatResidencia {
 					new ArrayList<SolicitudTransmision>());
 			SolicitudTransmision st = new SolicitudTransmision();
 			DatosGenericos datosGenericos = new DatosGenericos();
-			Element datosEspecificos = createDatosEspecificos();
 			st.setDatosGenericos(datosGenericos);
-			st.setDatosEspecificos(datosEspecificos);
+			//st.setDatosEspecificos(createDatosEspecificos());
 			Emisor beanEmisor = new Emisor();
 			beanEmisor.setNifEmisor(getCifEmisor(certificado));
 			beanEmisor.setNombreEmisor(getNombreEmisor(certificado));

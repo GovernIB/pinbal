@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- edited with XMLSpy v2011 sp1 (http://www.altova.com) by End User (free.org) -->
 <xs:schema xmlns="http://intermediacion.redsara.es/scsp/esquemas/datosespecificos" xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://intermediacion.redsara.es/scsp/esquemas/datosespecificos" elementFormDefault="qualified">
 	<xs:element name="DatosEspecificos" type="DatosEspecificos"/>
 	<xs:complexType name="DatosEspecificos">
@@ -31,6 +30,16 @@
 				<xs:element name="PDF" type="xs:base64Binary" minOccurs="0">
 					<xs:annotation>
 						<xs:documentation>PDF en base64</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="TipoDocumento" type="xs:string" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>Tipo documento</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="DescripcionDocumento" type="xs:string" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>Descripción del documento</xs:documentation>
 					</xs:annotation>
 				</xs:element>
 			</xs:all>
