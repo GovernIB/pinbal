@@ -77,7 +77,7 @@ public class ConsultaDto implements Serializable {
 	private String[] campsPeticioMultiple;
 	private String[][] dadesPeticioMultiple;
 
-	private Map<String, String> dadesEspecifiques;
+	private Map<String, Object> dadesEspecifiques;
 
 	private String serveiDescripcio;
 	private String procedimentNom;
@@ -251,10 +251,10 @@ public class ConsultaDto implements Serializable {
 	public void setExpedientId(String expedientId) {
 		this.expedientId = expedientId;
 	}
-	public Map<String, String> getDadesEspecifiques() {
+	public Map<String, Object> getDadesEspecifiques() {
 		return dadesEspecifiques;
 	}
-	public void setDadesEspecifiques(Map<String, String> dadesEspecifiques) {
+	public void setDadesEspecifiques(Map<String, Object> dadesEspecifiques) {
 		this.dadesEspecifiques = dadesEspecifiques;
 	}
 	public String getServeiDescripcio() {

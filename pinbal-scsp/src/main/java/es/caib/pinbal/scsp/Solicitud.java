@@ -34,7 +34,7 @@ public class Solicitud {
 	private String expedientId;
 
 	private Element dadesEspecifiquesElement;
-	private Map<String, String> dadesEspecifiquesMap;
+	private Map<String, Object> dadesEspecifiquesMap;
 
 	public String getServeiCodi() {
 		return serveiCodi;
@@ -145,10 +145,10 @@ public class Solicitud {
 	public void setDadesEspecifiquesElement(Element dadesEspecifiquesElement) {
 		this.dadesEspecifiquesElement = dadesEspecifiquesElement;
 	}
-	public Map<String, String> getDadesEspecifiquesMap() {
+	public Map<String, Object> getDadesEspecifiquesMap() {
 		return dadesEspecifiquesMap;
 	}
-	public void setDadesEspecifiquesMap(Map<String, String> dadesEspecifiquesMap) {
+	public void setDadesEspecifiquesMap(Map<String, Object> dadesEspecifiquesMap) {
 		this.dadesEspecifiquesMap = dadesEspecifiquesMap;
 	}
 

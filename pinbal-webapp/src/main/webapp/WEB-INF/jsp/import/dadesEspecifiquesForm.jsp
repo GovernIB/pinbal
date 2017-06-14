@@ -187,7 +187,7 @@
 	});
 	</script>
 											</c:when>
-											<c:when test="${camp.tipus == 'ADJUNT'}">
+											<c:when test="${camp.tipus == 'ADJUNT_BINARI' or camp.tipus == 'ADJUNT_XML'}">
 												<c:choose>
 													<c:when test="${dadesEspecifiquesDisabled}">
 														<input type="text" id="${campId}" name="${campId}" disabled="disabled"<c:if test="${not empty valorDadaEspecifica}"> value="${valorDadaEspecifica}"</c:if> class="span12"/>

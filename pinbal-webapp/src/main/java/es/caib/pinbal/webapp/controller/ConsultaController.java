@@ -4,6 +4,7 @@
 package es.caib.pinbal.webapp.controller;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.text.SimpleDateFormat;
@@ -18,6 +19,9 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.commons.codec.binary.Base64;
 import org.slf4j.Logger;
@@ -40,6 +44,8 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.supercsv.io.CsvListReader;
 import org.supercsv.io.ICsvListReader;
 import org.supercsv.prefs.CsvPreference;
+import org.w3c.dom.Document;
+import org.xml.sax.SAXException;
 
 import es.caib.pinbal.core.dto.ArxiuDto;
 import es.caib.pinbal.core.dto.ConsultaDto;
@@ -154,7 +160,7 @@ public class ConsultaController extends BaseController {
 	public String newGet(
 			HttpServletRequest request,
 			@PathVariable String serveiCodi,
-			Model model) throws AccesExternException, ServeiNotFoundException, ScspException, EntitatNotFoundException, IOException {
+			Model model) throws AccesExternException, ServeiNotFoundException, ScspException, EntitatNotFoundException, IOException, ParserConfigurationException, SAXException {
 		if (!EntitatHelper.isDelegatEntitatActual(request))
 			return "delegatNoAutoritzat";
 		EntitatDto entitat = EntitatHelper.getEntitatActual(request, entitatService);
@@ -188,7 +194,7 @@ public class ConsultaController extends BaseController {
 			@PathVariable String serveiCodi,
 			@Valid ConsultaCommand command,
 			BindingResult bindingResult,
-			Model model) throws AccesExternException, ProcedimentServeiNotFoundException, ServeiNotFoundException, ConsultaNotFoundException, ServeiNotAllowedException, ScspException, EntitatNotFoundException, ValidacioDadesPeticioException, IOException {
+			Model model) throws AccesExternException, ProcedimentServeiNotFoundException, ServeiNotFoundException, ConsultaNotFoundException, ServeiNotAllowedException, ScspException, EntitatNotFoundException, ValidacioDadesPeticioException, IOException, ParserConfigurationException, SAXException {
 		if (!EntitatHelper.isDelegatEntitatActual(request))
 			return "delegatNoAutoritzat";
 		EntitatDto entitat = EntitatHelper.getEntitatActual(request, entitatService);
@@ -580,7 +586,7 @@ public class ConsultaController extends BaseController {
 			ConsultaCommand command,
 			String serveiCodi,
 			EntitatDto entitat,
-			boolean inicialitzacioCommand) throws AccesExternException, ServeiNotFoundException, ScspException, IOException {
+			boolean inicialitzacioCommand) throws AccesExternException, ServeiNotFoundException, ScspException, IOException, ParserConfigurationException, SAXException {
 		command.setServeiCodi(serveiCodi);
 		UsuariDto dadesUsuari = usuariService.getDades();
 		if (dadesUsuari != null) {
@@ -608,11 +614,11 @@ public class ConsultaController extends BaseController {
 	}
 
 	@SuppressWarnings("unchecked")
-	private Map<String, String> getDadesEspecifiques(
+	private Map<String, Object> getDadesEspecifiques(
 			HttpServletRequest request,
-			String serveiCodi) throws ScspException, ServeiNotFoundException, IOException {
+			String serveiCodi) throws ScspException, ServeiNotFoundException, IOException, ParserConfigurationException, SAXException {
 		List<ServeiCampDto> serveiCamps = serveiService.findServeiCamps(serveiCodi);
-		Map<String, String> resposta = new HashMap<String, String>();
+		Map<String, Object> resposta = new HashMap<String, Object>();
 		Enumeration<String> paramNames = request.getParameterNames();
 		while (paramNames.hasMoreElements()) {
 			String paramName = paramNames.nextElement();
@@ -649,11 +655,33 @@ public class ConsultaController extends BaseController {
 				if (fileName.startsWith(PREFIX_CAMP_DADES_ESPECIFIQUES)) {
 					String campId = fileName.substring(PREFIX_CAMP_DADES_ESPECIFIQUES.length());
 					for (ServeiCampDto serveiCamp: serveiCamps) {
-						if (ServeiCampDtoTipus.ADJUNT.equals(serveiCamp.getTipus()) && serveiCamp.getId().equals(new Long(campId))) {
+						// ARXIU BINARI
+						if (ServeiCampDtoTipus.ADJUNT_BINARI.equals(serveiCamp.getTipus()) && serveiCamp.getId().equals(new Long(campId))) {
 							MultipartFile multipartFile = multipartRequest.getFile(fileName);
 							resposta.put(
 									serveiCamp.getPath(),
 									new String(Base64.encodeBase64(multipartFile.getBytes())));
+						}
+						
+						// ARXIU XML
+						if (ServeiCampDtoTipus.ADJUNT_XML.equals(serveiCamp.getTipus()) && serveiCamp.getId().equals(new Long(campId))) {
+							MultipartFile multipartFile = multipartRequest.getFile(fileName);
+							
+							String contentType = multipartFile.getContentType();
+							
+							if (!"text/xml".equalsIgnoreCase(contentType) && !"application/xml".equalsIgnoreCase(contentType))
+								throw new IOException(getMessage(request, "consulta.fitxer.camp.document.xml"));
+							
+							////////////
+						    DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+						    DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+						    InputStream inputStream = multipartFile.getInputStream();
+						    Document docXml = dBuilder.parse(inputStream);
+							////////////
+							
+							resposta.put(
+									serveiCamp.getPath(),
+									docXml);
 						}
 					}
 				}
@@ -749,9 +777,9 @@ public class ConsultaController extends BaseController {
 		public void validate(Object obj, Errors errors) {
 			ConsultaCommand command = (ConsultaCommand)obj;
 			SimpleDateFormat sdf = new SimpleDateFormat(FORMAT_DATA_DADES_ESPECIFIQUES);
-			Map<String, String> dadesEspecifiquesValors = command.getDadesEspecifiques();
+			Map<String, Object> dadesEspecifiquesValors = command.getDadesEspecifiques();
 			for (ServeiCampDto camp: camps) {
-				if (dadesEspecifiquesValors.get(camp.getPath()) == null || dadesEspecifiquesValors.get(camp.getPath()).isEmpty()) {
+				if (dadesEspecifiquesValors.get(camp.getPath()) == null || (dadesEspecifiquesValors.get(camp.getPath()) instanceof String && ((String)dadesEspecifiquesValors.get(camp.getPath())).isEmpty())) {
 					if (camp.isObligatori())
 						errors.rejectValue(
 								"dadesEspecifiques[" + camp.getPath() + "]",
@@ -759,7 +787,7 @@ public class ConsultaController extends BaseController {
 								"Aquest camp és obligatori");
 				} else {
 					if (ServeiCampDtoTipus.DATA.equals(camp.getTipus())) {
-						String dataText = dadesEspecifiquesValors.get(camp.getPath());
+						String dataText = (String)dadesEspecifiquesValors.get(camp.getPath());
 						try {
 							Date dataDate = sdf.parse(dataText);
 							if (!sdf.format(dataDate).equals(dataText))

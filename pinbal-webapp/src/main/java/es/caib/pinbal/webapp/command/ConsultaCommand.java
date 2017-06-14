@@ -71,7 +71,7 @@ public class ConsultaCommand {
 	@Size(max=25)
 	private String expedientId;
 
-	private Map<String, String> dadesEspecifiques;
+	private Map<String, Object> dadesEspecifiques;
 
 	private boolean multiple = false;
 	@ArxiuNoBuit(groups=ConsultaCommandMultiple.class)
@@ -182,10 +182,10 @@ public class ConsultaCommand {
 	public void setExpedientId(String expedientId) {
 		this.expedientId = expedientId;
 	}
-	public Map<String, String> getDadesEspecifiques() {
+	public Map<String, Object> getDadesEspecifiques() {
 		return dadesEspecifiques;
 	}
-	public void setDadesEspecifiques(Map<String, String> dadesEspecifiques) {
+	public void setDadesEspecifiques(Map<String, Object> dadesEspecifiques) {
 		this.dadesEspecifiques = dadesEspecifiques;
 	}
 	public boolean isMultiple() {
