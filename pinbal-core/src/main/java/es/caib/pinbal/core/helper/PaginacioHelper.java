@@ -53,6 +53,30 @@ public class PaginacioHelper {
 				dto.getPaginaTamany(),
 				new Sort(orders));
 	}
+	
+	public static Pageable toSpringDataPageableWithoutId(
+			PaginacioAmbOrdreDto dto,
+			Map<String, String> mapeigPropietatsOrdenacio) {
+		List<Order> orders = new ArrayList<Order>();
+		if (dto.getOrdres() != null && !dto.getOrdres().isEmpty()) {
+			for (OrdreDto ordre: dto.getOrdres()) {
+				Direction direccio = OrdreDireccio.DESCENDENT.equals(ordre.getDireccio()) ? Sort.Direction.DESC : Sort.Direction.ASC;
+				String propietat = ordre.getCamp();
+				if (mapeigPropietatsOrdenacio != null) {
+					String mapeig = mapeigPropietatsOrdenacio.get(ordre.getCamp());
+					if (mapeig != null)
+						propietat = mapeig;
+				}
+				orders.add(new Order(
+						direccio,
+						propietat));
+			}
+		}
+		return new PageRequest(
+				dto.getPaginaNum(),
+				dto.getPaginaTamany(),
+				new Sort(orders));
+	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public static PaginaLlistatDto toPaginaLlistatDto(

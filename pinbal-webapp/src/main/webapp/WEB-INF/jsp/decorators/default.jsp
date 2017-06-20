@@ -172,6 +172,10 @@ $(document).ready(function() {
 						<a href="<c:url value="/estadistiques"/>" class="btn btn-primary"><spring:message code="decorator.menu.estadistiques"/></a>
 						<a href="<c:url value="/informe"/>" class="btn btn-primary"><spring:message code="decorator.menu.informes"/></a>
 						<a href="<c:url value="/admin/consulta"/>" class="btn btn-primary"><spring:message code="decorator.menu.consultes"/></a>
+						<button data-toggle="dropdown" class="btn btn-primary dropdown-toggle"><spring:message code="decorator.menu.scsp"/>&nbsp;<span class="caret caret-white"></span></button>
+						<ul class="dropdown-menu">
+							<li><a href="<c:url value="/scsp/paramconf"/>"><spring:message code="decorator.menu.scsp.parametres.configuracio"/></a></li>
+						</ul>
 					</c:when>
 					<c:when test="${isRolActualRepresentant}">
 						<c:if test="${isRepresentantEntitatActual}">

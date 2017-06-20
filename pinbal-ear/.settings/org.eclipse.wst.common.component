@@ -2,13 +2,10 @@
     <wb-module deploy-name="pinbal">
         <wb-resource deploy-path="/" source-path="/target/m2e-wtp/ear-resources"/>
         <wb-resource deploy-path="/" source-path="/src/main/application" tag="defaultRootSource"/>
-        <dependent-module archiveName="pinbal.jar" deploy-path="/" handle="module:/resource/pinbal-core/pinbal-core">
-            <dependency-type>uses</dependency-type>
-        </dependent-module>
-        <dependent-module archiveName="pinbal.war" deploy-path="/" handle="module:/resource/pinbal-webapp/pinbal-webapp">
-            <dependency-type>uses</dependency-type>
-        </dependent-module>
         <dependent-module archiveName="hibernate-validator-legacy-4.0.2.GA.jar" deploy-path="/" handle="module:/classpath/var/M2_REPO/org/hibernate/hibernate-validator-legacy/4.0.2.GA/hibernate-validator-legacy-4.0.2.GA.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="pinbal-core-1.4.jar" deploy-path="/" handle="module:/classpath/var/M2_REPO/es/caib/pinbal/pinbal-core/1.4/pinbal-core-1.4.jar">
             <dependency-type>uses</dependency-type>
         </dependent-module>
         <dependent-module archiveName="hibernate-core-3.6.5.Final.jar" deploy-path="/" handle="module:/classpath/var/M2_REPO/org/hibernate/hibernate-core/3.6.5.Final/hibernate-core-3.6.5.Final.jar">
@@ -194,7 +191,7 @@
         <dependent-module archiveName="fr.opensagres.xdocreport.itext.extension-1.0.3.jar" deploy-path="/" handle="module:/classpath/var/M2_REPO/fr/opensagres/xdocreport/fr.opensagres.xdocreport.itext.extension/1.0.3/fr.opensagres.xdocreport.itext.extension-1.0.3.jar">
             <dependency-type>uses</dependency-type>
         </dependent-module>
-        <dependent-module archiveName="pinbal-scsp-1.3.jar" deploy-path="/" handle="module:/resource/pinbal-scsp/pinbal-scsp">
+        <dependent-module archiveName="pinbal-scsp-1.4.jar" deploy-path="/" handle="module:/classpath/var/M2_REPO/es/caib/pinbal/pinbal-scsp/1.4/pinbal-scsp-1.4.jar">
             <dependency-type>uses</dependency-type>
         </dependent-module>
         <dependent-module archiveName="spring-webmvc-3.1.1.RELEASE.jar" deploy-path="/" handle="module:/classpath/var/M2_REPO/org/springframework/spring-webmvc/3.1.1.RELEASE/spring-webmvc-3.1.1.RELEASE.jar">
@@ -380,13 +377,13 @@
         <dependent-module archiveName="signer-1.1.jar" deploy-path="/" handle="module:/classpath/var/M2_REPO/es/gob/afirma/signer/1.1/signer-1.1.jar">
             <dependency-type>uses</dependency-type>
         </dependent-module>
-        <dependent-module archiveName="pinbal-core-client-1.3.jar" deploy-path="/" handle="module:/resource/pinbal-core-client/pinbal-core-client">
+        <dependent-module archiveName="pinbal-core-client-1.4.jar" deploy-path="/" handle="module:/classpath/var/M2_REPO/es/caib/pinbal/pinbal-core-client/1.4/pinbal-core-client-1.4.jar">
             <dependency-type>uses</dependency-type>
         </dependent-module>
-        <dependent-module archiveName="pinbal-plugins-1.3.jar" deploy-path="/" handle="module:/resource/pinbal-plugins/pinbal-plugins">
+        <dependent-module archiveName="pinbal-plugins-1.4.jar" deploy-path="/" handle="module:/classpath/var/M2_REPO/es/caib/pinbal/pinbal-plugins/1.4/pinbal-plugins-1.4.jar">
             <dependency-type>uses</dependency-type>
         </dependent-module>
-        <dependent-module archiveName="pinbal-plugins-caib-1.3.jar" deploy-path="/" handle="module:/resource/pinbal-plugins-caib/pinbal-plugins-caib">
+        <dependent-module archiveName="pinbal-plugins-caib-1.4.jar" deploy-path="/" handle="module:/classpath/var/M2_REPO/es/caib/pinbal/pinbal-plugins-caib/1.4/pinbal-plugins-caib-1.4.jar">
             <dependency-type>uses</dependency-type>
         </dependent-module>
         <dependent-module archiveName="axis-1.4.jar" deploy-path="/" handle="module:/classpath/var/M2_REPO/axis/axis/1.4/axis-1.4.jar">
@@ -399,6 +396,9 @@
             <dependency-type>uses</dependency-type>
         </dependent-module>
         <dependent-module archiveName="valcert-sar-axis-1.5.jar" deploy-path="/" handle="module:/classpath/var/M2_REPO/es/caib/valcert-sar-axis/1.5/valcert-sar-axis-1.5.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="pinbal-webapp-1.4.war" deploy-path="/" handle="module:/classpath/var/M2_REPO/es/caib/pinbal/pinbal-webapp/1.4/pinbal-webapp-1.4.war">
             <dependency-type>uses</dependency-type>
         </dependent-module>
     </wb-module>
