@@ -175,6 +175,7 @@ $(document).ready(function() {
 						<button data-toggle="dropdown" class="btn btn-primary dropdown-toggle"><spring:message code="decorator.menu.scsp"/>&nbsp;<span class="caret caret-white"></span></button>
 						<ul class="dropdown-menu">
 							<li><a href="<c:url value="/scsp/paramconf"/>"><spring:message code="decorator.menu.scsp.parametres.configuracio"/></a></li>
+							<li><a href="<c:url value="/scsp/emissorcert"/>"><spring:message code="decorator.menu.scsp.emissor.certificat"/></a></li>
 						</ul>
 					</c:when>
 					<c:when test="${isRolActualRepresentant}">

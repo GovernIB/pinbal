@@ -39,7 +39,7 @@ public class NomParamConfNoRepetitValidator implements ConstraintValidator<NomPa
 		try {
 			ParamConfCommand command = (ParamConfCommand) value;
 			final String nom = BeanUtils.getProperty(value, campNom);
-			ParamConfDto dto = scspService.findByNom(nom);
+			ParamConfDto dto = scspService.findParamConfByNom(nom);
 			if (dto == null) {
 				return true;
 			} else {

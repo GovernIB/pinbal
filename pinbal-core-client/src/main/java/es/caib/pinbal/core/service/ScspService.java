@@ -7,18 +7,21 @@ import java.util.List;
 
 import org.springframework.security.access.prepost.PreAuthorize;
 
-import es.caib.pinbal.core.dto.PaginaLlistatDto;
-import es.caib.pinbal.core.dto.PaginacioAmbOrdreDto;
+import es.caib.pinbal.core.dto.EmissorCertDto;
 import es.caib.pinbal.core.dto.ParamConfDto;
+import es.caib.pinbal.core.service.exception.EmissorCertNotFoundException;
 import es.caib.pinbal.core.service.exception.ParamConfNotFoundException;
 
 /**
  * Declaració dels mètodes per a obtenir i modificar
- * informació d'un paràmetre de configuració.
+ * informació de les taules SCSP
  * 
  * @author Limit Tecnologies <limit@limit.es>
  */
 public interface ScspService {
+	
+	
+	// Funcions de la taula de paràmetres de configuració.
 	
 	/**
 	 * Consulta una entitat donat el seu id.
@@ -29,7 +32,7 @@ public interface ScspService {
 	 * @return	El paràmetre de configuració trobat. Si no s'ha trobat cap retorna null.
 	 */
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
-	public ParamConfDto findByNom(String nom);
+	public ParamConfDto findParamConfByNom(String nom);
 	
 	/**
 	 * Crea un nou paràmetre de configuració.
@@ -40,7 +43,7 @@ public interface ScspService {
 	 * @return El paràmetre de configuració creat.
 	 */
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
-	public ParamConfDto create(ParamConfDto dto);
+	public ParamConfDto createParamConf(ParamConfDto dto);
 
 	/**
 	 * Actualitza la informació d'un paràmetre de configuració.
@@ -48,14 +51,14 @@ public interface ScspService {
 	 * @param dto
 	 *            Informació del paràmetre de configuració a modificar.
 	 *            
-	 * @return El paràmetre de configuració modificada.
+	 * @return El paràmetre de configuració modificat.
 	 * 
 	 * @throws ParamConfNotFoundException
 	 *             Si no s'ha trobat troba cap paràmetre de configuració
 	 *             amb el nom especificat.
 	 */
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
-	public ParamConfDto update(ParamConfDto dto) throws ParamConfNotFoundException;
+	public ParamConfDto updateParamConf(ParamConfDto dto) throws ParamConfNotFoundException;
 
 	/**
 	 * Esborra un paràmetre de configuració.
@@ -70,7 +73,7 @@ public interface ScspService {
 	 *             amb el nom especificat.
 	 */
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
-	public ParamConfDto delete(String nom) throws ParamConfNotFoundException;
+	public ParamConfDto deleteParamConf(String nom) throws ParamConfNotFoundException;
 
 	/**
 	 * Llistat amb tots els paràmetres de configuració.
@@ -78,15 +81,69 @@ public interface ScspService {
 	 * @return Un llistat de paràmetres de configuració.
 	 */
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
-	public List<ParamConfDto> findAll();
+	public List<ParamConfDto> findAllParamConf();
+	
+	
+	// Funcions de la taula de emissor certificat.
 	
 	/**
-	 * Llistat amb tots els paràmetres de configuració paginats.
+	 * Consulta un emissor certificat donat el seu id.
 	 * 
-	 * @return Un llistat de paràmetres de configuració paginats.
+	 * @param id
+	 * 			L'dentificador del emissor certificat a trobar.
+	 *            
+	 * @return	El emissor certificat trobat. Si no s'ha trobat cap retorna null.
 	 */
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
-	public PaginaLlistatDto<ParamConfDto> findAllPaginat(
-			PaginacioAmbOrdreDto paginacioAmbOrdre);
+	public EmissorCertDto findEmissorCertById(Long id);
+	
+	/**
+	 * Crea un nou emissor certificat.
+	 * 
+	 * @param dto
+	 *            La informació per crear un nou emissor certificat.
+	 *            
+	 * @return El emissor certificat creat.
+	 */
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	public EmissorCertDto createEmissorCert(EmissorCertDto dto);
+
+	/**
+	 * Actualitza la informació d'un emissor certificat.
+	 * 
+	 * @param dto
+	 *            Informació del emissor certificat a modificar.
+	 *            
+	 * @return El emissor certificat modificat.
+	 * 
+	 * @throws EmissorCertNotFoundException
+	 *             Si no s'ha trobat troba cap emissor certificat
+	 *             amb el id especificat.
+	 */
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	public EmissorCertDto updateEmissorCert(EmissorCertDto dto) throws EmissorCertNotFoundException;
+
+	/**
+	 * Esborra un emissor certificat.
+	 * 
+	 * @param id
+	 *            L'dentificador del emissor certificat a esborrar.
+	 *            
+	 * @return El emissor certificat esborrat.
+	 * 
+	 * @throws EmissorCertNotFoundException
+	 *             Si no s'ha trobat cap emissor certificat
+	 *             amb el nom especificat.
+	 */
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	public EmissorCertDto deleteEmissorCert(Long id) throws EmissorCertNotFoundException;
+
+	/**
+	 * Llistat amb tots els emissors certificats.
+	 * 
+	 * @return Un llistat de emissors certificats.
+	 */
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	public List<EmissorCertDto> findAllEmissorCert();
 	
 }

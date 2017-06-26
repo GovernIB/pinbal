@@ -52,7 +52,7 @@ public class ParamConfController extends BaseController {
 			HttpServletRequest request,
 			Model model) throws Exception {
 		
-		model.addAttribute( "llistaParametres", scspService.findAll());
+		model.addAttribute( "llistaParametres", scspService.findAllParamConf());
 //		omplirModelPerMostrarLlistat(request, model);
 		
 		return "paramConfList";
@@ -61,7 +61,7 @@ public class ParamConfController extends BaseController {
 	@RequestMapping(value = "/new", method = RequestMethod.GET)
 	public String get(Model model) {
 		
-		model.addAttribute( "paramconf", ParamConfCommand.commandForCreate() );
+		model.addAttribute( ParamConfCommand.commandForCreate() );
 		
 		return "paramConfForm";
 	}
@@ -73,12 +73,12 @@ public class ParamConfController extends BaseController {
 		
 		ParamConfDto dto = null;
 		if (paramConfNom != null)
-			dto = scspService.findByNom(paramConfNom);
+			dto = scspService.findParamConfByNom(paramConfNom);
 		
 		if (dto != null)
-			model.addAttribute( "paramconf", ParamConfCommand.asCommandForUpdate(dto) );
+			model.addAttribute( ParamConfCommand.asCommandForUpdate(dto) );
 		else
-			model.addAttribute( "paramconf", ParamConfCommand.commandForCreate() );
+			model.addAttribute( ParamConfCommand.commandForCreate() );
 		
 		return "paramConfForm";
 	}
@@ -91,19 +91,18 @@ public class ParamConfController extends BaseController {
 			BindingResult bindingResult) throws ParamConfNotFoundException {
 		
 		if (bindingResult.hasErrors()) {
-			model.addAttribute( "paramconf", command );
 			return "paramConfForm";
 		}
 		
 		if (command.isForcreate()) {
-			scspService.create(ParamConfCommand.asDto(command));
+			scspService.createParamConf(ParamConfCommand.asDto(command));
 			AlertHelper.success(
 					request, 
 					getMessage(
 							request, 
 							"paramconf.controller.creat.ok"));
 		} else {
-			scspService.update(ParamConfCommand.asDto(command));
+			scspService.updateParamConf(ParamConfCommand.asDto(command));
 			AlertHelper.success(
 					request, 
 					getMessage(
@@ -119,7 +118,7 @@ public class ParamConfController extends BaseController {
 			HttpServletRequest request,
 			@PathVariable String paramConfNom) throws ParamConfNotFoundException {
 		
-		scspService.delete(paramConfNom);
+		scspService.deleteParamConf(paramConfNom);
 		
 		AlertHelper.success(
 				request, 
@@ -128,36 +127,6 @@ public class ParamConfController extends BaseController {
 						"paramconf.controller.esborrat.ok"));
 		
 		return "redirect:../";
-	}
-	
-	
-	private void omplirModelPerMostrarLlistat(
-			HttpServletRequest request,
-			Model model) throws Exception {
-		
-		List<?> pagina = JMesaGridHelper.consultarPaginaIActualitzarLimit(
-				"entitats",
-				request,
-				new ConsultaPaginaParamConf(scspService),
-				new OrdreDto("nom", OrdreDireccio.DESCENDENT));
-		model.addAttribute("llistaParametres", pagina);
-	}
-	
-	public class ConsultaPaginaParamConf implements ConsultaPagina<ParamConfDto> {
-		
-		ScspService scspService;
-		
-		public ConsultaPaginaParamConf(
-				ScspService scspService) {
-			this.scspService = scspService;
-		}
-		
-		public PaginaLlistatDto<ParamConfDto> consultar(
-				PaginacioAmbOrdreDto paginacioAmbOrdre) throws Exception {
-			
-			return scspService.findAllPaginat(paginacioAmbOrdre);
-		}
-		
 	}
 	
 }

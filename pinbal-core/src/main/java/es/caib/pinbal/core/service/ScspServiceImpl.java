@@ -9,18 +9,17 @@ import javax.annotation.Resource;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import es.caib.pinbal.core.dto.PaginaLlistatDto;
-import es.caib.pinbal.core.dto.PaginacioAmbOrdreDto;
+import es.caib.pinbal.core.dto.EmissorCertDto;
 import es.caib.pinbal.core.dto.ParamConfDto;
 import es.caib.pinbal.core.helper.DtoMappingHelper;
-import es.caib.pinbal.core.helper.PaginacioHelper;
+import es.caib.pinbal.core.model.EmissorCert;
 import es.caib.pinbal.core.model.ParamConf;
+import es.caib.pinbal.core.repository.EmissorCertRepository;
 import es.caib.pinbal.core.repository.ParamConfRepository;
+import es.caib.pinbal.core.service.exception.EmissorCertNotFoundException;
 import es.caib.pinbal.core.service.exception.ParamConfNotFoundException;
 
 /**
@@ -35,12 +34,16 @@ public class ScspServiceImpl implements ScspService {
 	@Resource
 	private ParamConfRepository paramConfRepository;
 	@Resource
+	private EmissorCertRepository emissorCertRepository;
+	@Resource
 	private DtoMappingHelper dtoMappingHelper;
 	
 	
+	// Funcions de la taula de emissor de paràmetres de configuració.
+	
 	@Override
 	@Transactional(readOnly = true)
-	public ParamConfDto findByNom(String nom) {
+	public ParamConfDto findParamConfByNom(String nom) {
 		
 		LOGGER.debug("Consulta un paràmetre de configuració (nom = " + nom + ")");
 		
@@ -51,7 +54,7 @@ public class ScspServiceImpl implements ScspService {
 
 	@Override
 	@Transactional
-	public ParamConfDto create(ParamConfDto dto) {
+	public ParamConfDto createParamConf(ParamConfDto dto) {
 		
 		LOGGER.debug("Creant una nou paràmetre de configuració : " + dto);
 		
@@ -67,7 +70,7 @@ public class ScspServiceImpl implements ScspService {
 
 	@Override
 	@Transactional
-	public ParamConfDto update(ParamConfDto dto) throws ParamConfNotFoundException {
+	public ParamConfDto updateParamConf(ParamConfDto dto) throws ParamConfNotFoundException {
 		
 		LOGGER.debug("Actualitzant el paràmetre de configuració (nom = " + dto.getNom() +
 					 ") amb la informació: " + dto);
@@ -89,7 +92,7 @@ public class ScspServiceImpl implements ScspService {
 
 	@Override
 	@Transactional
-	public ParamConfDto delete(String nom) throws ParamConfNotFoundException {
+	public ParamConfDto deleteParamConf(String nom) throws ParamConfNotFoundException {
 		
 		LOGGER.debug("Esborrant el paràmetre de configuració (nom =" + nom + ")");
 		
@@ -108,7 +111,7 @@ public class ScspServiceImpl implements ScspService {
 
 	@Override
 	@Transactional(readOnly = true)
-	public List<ParamConfDto> findAll() {
+	public List<ParamConfDto> findAllParamConf() {
 		
 		LOGGER.debug("Consulta de tots els paràmetre de configuració");
 		
@@ -119,22 +122,89 @@ public class ScspServiceImpl implements ScspService {
 				ParamConfDto.class);
 	}
 	
+	
+	// Funcions de la taula de emissor de certificat.
+	
 	@Override
 	@Transactional(readOnly = true)
-	public PaginaLlistatDto<ParamConfDto> findAllPaginat(
-			PaginacioAmbOrdreDto paginacioAmbOrdre) {
+	public EmissorCertDto findEmissorCertById(Long id) {
+
+		LOGGER.debug("Consulta un emissor certificat (id = " + id + ")");
 		
-		LOGGER.debug("Consulta de tots els paràmetre de configuració paginats.");
+		return dtoMappingHelper.getMapperFacade().map(
+				emissorCertRepository.findById(id),
+				EmissorCertDto.class);
+	}
+
+	@Override
+	@Transactional
+	public EmissorCertDto createEmissorCert(EmissorCertDto dto) {
+
+		LOGGER.debug("Creant una nou emissor de certificat : " + dto);
 		
-		Pageable pageable = PaginacioHelper.toSpringDataPageableWithoutId(
-				paginacioAmbOrdre,
-				null);
-		Page<ParamConf> llista = paramConfRepository.findAll(pageable);
+		EmissorCert entity = EmissorCert.getBuilder(
+				dto.getNom(),
+				dto.getCif(),
+				dto.getDataBaixa()).build();
 		
-		return PaginacioHelper.toPaginaLlistatDto(
+		return dtoMappingHelper.getMapperFacade().map(
+				emissorCertRepository.save(entity),
+				EmissorCertDto.class);
+	}
+
+	@Override
+	@Transactional
+	public EmissorCertDto updateEmissorCert(EmissorCertDto dto) throws EmissorCertNotFoundException {
+
+		LOGGER.debug("Actualitzant el emissor certificat (id = " + dto.getId() +
+					 ") amb la informació: " + dto);
+		
+		EmissorCert entity = emissorCertRepository.findById(dto.getId());
+		if (entity == null) {
+			LOGGER.debug("No s'ha trobat el emissor certificat (id = " + dto.getId() + ")");
+			throw new EmissorCertNotFoundException();
+		}
+		
+		entity.update(
+				dto.getNom(),
+				dto.getCif(),
+				dto.getDataBaixa());
+		
+		return dtoMappingHelper.getMapperFacade().map(
+				entity,
+				EmissorCertDto.class);
+	}
+
+	@Override
+	@Transactional
+	public EmissorCertDto deleteEmissorCert(Long id) throws EmissorCertNotFoundException {
+
+		LOGGER.debug("Esborrant el emissor certificat (id =" + id + ")");
+		
+		EmissorCert entity = emissorCertRepository.findById(id);
+		if (entity == null) {
+			LOGGER.debug("No s'ha trobat el emissor certificat (id = " + id + ")");
+			throw new EmissorCertNotFoundException();
+		}
+		
+		emissorCertRepository.delete(entity);
+		
+		return dtoMappingHelper.getMapperFacade().map(
+				entity,
+				EmissorCertDto.class);
+	}
+
+	@Override
+	@Transactional(readOnly = true)
+	public List<EmissorCertDto> findAllEmissorCert() {
+
+		LOGGER.debug("Consulta de tots els emissors certificats");
+		
+		List<EmissorCert> llista = emissorCertRepository.findAll();
+		
+		return dtoMappingHelper.getMapperFacade().mapAsList(
 				llista,
-				dtoMappingHelper,
-				ParamConfDto.class);
+				EmissorCertDto.class);
 	}
 	
 	

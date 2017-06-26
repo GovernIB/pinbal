@@ -27,8 +27,11 @@
 	<bean name="informeUsuarisExcelView" class="es.caib.pinbal.webapp.view.InformeUsuarisExcelView"/>
 	<bean name="informeServeisExcelView" class="es.caib.pinbal.webapp.view.InformeServeisExcelView"/>
 	<bean name="informeGeneralEstatExcelView" class="es.caib.pinbal.webapp.view.InformeGeneralEstatExcelView"/>
-
+	
+	<mvc:resources mapping="/webjars/**" location="classpath:/META-INF/resources/webjars/"/>
+	
 	<mvc:interceptors>
+		<bean class="es.caib.pinbal.webapp.interceptor.IdiomaInterceptor"/>
 		<bean class="es.caib.pinbal.webapp.interceptor.UsuariInterceptor"/>
 		<bean class="es.caib.pinbal.webapp.interceptor.SeleccioEntitatInterceptor"/>
 		<bean class="es.caib.pinbal.webapp.interceptor.SeleccioRolInterceptor"/>

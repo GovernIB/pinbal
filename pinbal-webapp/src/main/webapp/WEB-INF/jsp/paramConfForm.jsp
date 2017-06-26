@@ -8,7 +8,7 @@
 <head>
 	<title>
 		<c:choose>
-			<c:when test="${empty paramconf.nom}"><spring:message code="paramconf.form.titol.crear"/></c:when>
+			<c:when test="${paramConfCommand.forcreate}"><spring:message code="paramconf.form.titol.crear"/></c:when>
 			<c:otherwise><spring:message code="paramconf.form.titol.modificar"/></c:otherwise>
 		</c:choose>
 	</title>
@@ -16,14 +16,14 @@
 <body>
 
 	<c:url value="/scsp/paramconf/save" var="formAction"/>
-	<form:form action="${formAction}" method="post" cssClass="form-horizontal" commandName="paramconf">
+	<form:form action="${formAction}" method="post" cssClass="form-horizontal" commandName="paramConfCommand">
 	
 		<form:hidden path="forcreate"/>
 		
 		<fieldset class="well">
 		
 			<c:set var="campPath" value="nom"/>
-			<c:set var="forcreate" value="${paramconf.forcreate}"/>
+			<c:set var="forcreate" value="${paramConfCommand.forcreate}"/>
 			<c:set var="campErrors"><form:errors path="${campPath}"/></c:set>
 			<div class="control-group<c:if test="${not empty campErrors}"> error</c:if>">
 				<label class="control-label" for="${campPath}"><spring:message code="paramconf.form.camp.nom"/> *</label>
