@@ -7,7 +7,7 @@
 
 <html>
 <head>
-	<title><spring:message code="emissorcert.list.titol"/></title>
+	<title><spring:message code="claupublica.list.titol"/></title>
 	<script type="text/javascript" src="<c:url value="/js/jquery.jmesa.min.js"/>"></script>
 	<script type="text/javascript" src="<c:url value="/js/jmesa.min.js"/>"></script>
 	
@@ -26,7 +26,7 @@
 			$('#form-filtre').submit();
 		}); */
 		$('.confirm-esborrar').click(function() {
-			  return confirm("<spring:message code="emissorcert.list.confirmacio.esborrar"/>");
+			  return confirm("<spring:message code="claupublica.list.confirmacio.esborrar"/>");
 		});
 	});
 	</script>
@@ -36,31 +36,33 @@
 
 	<div class="row-fluid">
 		<div class="span12">
-			<a class="btn pull-right" href="<c:url value="/scsp/emissorcert/new"/>"><i class="icon-plus"></i>&nbsp;<spring:message code="emissorcert.list.boto.nou.registre"/></a>
+			<a class="btn pull-right" href="<c:url value="/scsp/claupublica/new"/>"><i class="icon-plus"></i>&nbsp;<spring:message code="claupublica.list.boto.nou.registre"/></a>
 		</div>
 		<div class="clearfix"></div>
 	</div>
 
 	<form>
 		<jmesa:tableModel
-				id="emissorcert" 
-				items="${llistaEmissors}"
+				id="claupublica" 
+				items="${llistaClausPubliques}"
 				toolbar="es.caib.pinbal.webapp.jmesa.BootstrapToolbar"
 				view="es.caib.pinbal.webapp.jmesa.BootstrapView"
 				var="registre">
 			<jmesa:htmlTable>
 				<jmesa:htmlRow>
 				
-					<jmesa:htmlColumn property="nom" titleKey="emissorcert.list.taula.columna.nom" style="width:50%;"/>
-					<jmesa:htmlColumn property="cif" titleKey="emissorcert.list.taula.columna.cif" style="width:20%;"/>
-					<jmesa:htmlColumn property="dataBaixa" titleKey="emissorcert.list.taula.columna.databaixa" style="width:20%;"/>
+					<jmesa:htmlColumn property="alies" titleKey="claupublica.list.taula.columna.alies" style="width:20%;"/>
+					<jmesa:htmlColumn property="nom" titleKey="claupublica.list.taula.columna.nom" style="width:20%;"/>
+					<jmesa:htmlColumn property="numSerie" titleKey="claupublica.list.taula.columna.numserie" style="width:20%;"/>
+					<jmesa:htmlColumn property="dataAlta" titleKey="claupublica.list.taula.columna.dataalta" style="width:10%;"/>
+					<jmesa:htmlColumn property="dataBaixa" titleKey="claupublica.list.taula.columna.databaixa" style="width:10%;"/>
 					
 					<jmesa:htmlColumn property="ACCIO_accions" title="&nbsp;" sortable="false" style="width:10%;white-space:nowrap;">
 						<div class="btn-group">
 							<a class="btn dropdown-toggle" data-toggle="dropdown" href="#"><i class="icon-cog"></i>&nbsp;<spring:message code="comu.accions"/>&nbsp;<span class="caret"></span></a>
 							<ul class="dropdown-menu">
-								<li><a href="<c:url value="/scsp/emissorcert/${registre.id}"/>" ><i class="icon-pencil"></i>&nbsp;<spring:message code="comu.boto.modificar"/></a></li>
-								<li><a href="<c:url value="/scsp/emissorcert/${registre.id}/delete"/>" class="confirm-esborrar"><i class="icon-trash"></i>&nbsp;<spring:message code="comu.boto.esborrar"/></a></li>
+								<li><a href="<c:url value="/scsp/claupublica/${registre.id}"/>" ><i class="icon-pencil"></i>&nbsp;<spring:message code="comu.boto.modificar"/></a></li>
+								<li><a href="<c:url value="/scsp/claupublica/${registre.id}/delete"/>" class="confirm-esborrar"><i class="icon-trash"></i>&nbsp;<spring:message code="comu.boto.esborrar"/></a></li>
 							</ul>
 						</div>
 					</jmesa:htmlColumn>

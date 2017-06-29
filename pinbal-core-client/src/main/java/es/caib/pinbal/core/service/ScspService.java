@@ -9,6 +9,8 @@ import org.springframework.security.access.prepost.PreAuthorize;
 
 import es.caib.pinbal.core.dto.EmissorCertDto;
 import es.caib.pinbal.core.dto.ParamConfDto;
+import es.caib.pinbal.core.dto.ClauPublicaDto;
+import es.caib.pinbal.core.service.exception.ClauPublicaNotFoundException;
 import es.caib.pinbal.core.service.exception.EmissorCertNotFoundException;
 import es.caib.pinbal.core.service.exception.ParamConfNotFoundException;
 
@@ -145,5 +147,68 @@ public interface ScspService {
 	 */
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public List<EmissorCertDto> findAllEmissorCert();
+	
+	
+	// Funcions de la taula de claus públiques.
+	
+	/**
+	 * Consulta una clau pública donat el seu id.
+	 * 
+	 * @param id
+	 * 			L'dentificador de la clau pública a trobar.
+	 *            
+	 * @return	La clau pública trobada. Si no s'ha trobat cap retorna null.
+	 */
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	public ClauPublicaDto findClauPublicaById(Long id);
+	
+	/**
+	 * Crea una nova clau pública.
+	 * 
+	 * @param dto
+	 *            La informació per crear una nova clau pública.
+	 *            
+	 * @return El clau pública creat.
+	 */
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	public ClauPublicaDto createClauPublica(ClauPublicaDto dto);
+
+	/**
+	 * Actualitza la informació d'una clau pública.
+	 * 
+	 * @param dto
+	 *            Informació de la clau pública a modificar.
+	 *            
+	 * @return El clau pública modificada.
+	 * 
+	 * @throws ClauPublicaNotFoundException
+	 *             Si no s'ha trobat troba cap clau pública
+	 *             amb el id especificat.
+	 */
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	public ClauPublicaDto updateClauPublica(ClauPublicaDto dto) throws ClauPublicaNotFoundException;
+
+	/**
+	 * Esborra una clau pública.
+	 * 
+	 * @param id
+	 *            L'identificador de la clau pública a esborrar.
+	 *            
+	 * @return El clau pública esborrada.
+	 * 
+	 * @throws ClauPublicaNotFoundException
+	 *             Si no s'ha trobat cap clau pública
+	 *             amb el nom especificat.
+	 */
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	public ClauPublicaDto deleteClauPublica(Long id) throws ClauPublicaNotFoundException;
+
+	/**
+	 * Llistat amb totes les claus públiques.
+	 * 
+	 * @return Un llistat de claus públiques.
+	 */
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	public List<ClauPublicaDto> findAllClauPublica();
 	
 }

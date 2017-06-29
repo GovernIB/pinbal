@@ -176,6 +176,7 @@ $(document).ready(function() {
 						<ul class="dropdown-menu">
 							<li><a href="<c:url value="/scsp/paramconf"/>"><spring:message code="decorator.menu.scsp.parametres.configuracio"/></a></li>
 							<li><a href="<c:url value="/scsp/emissorcert"/>"><spring:message code="decorator.menu.scsp.emissor.certificat"/></a></li>
+							<li><a href="<c:url value="/scsp/claupublica"/>"><spring:message code="decorator.menu.scsp.claus.publiques"/></a></li>
 						</ul>
 					</c:when>
 					<c:when test="${isRolActualRepresentant}">
