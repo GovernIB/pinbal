@@ -21,6 +21,18 @@
 		</c:choose>
 	</title>
 	
+	<script>
+		var eyeEnabled = true;
+		
+		$(document).ready(function() {
+			
+			$('#btn-calendar-baixa').click(function() {
+				$('#dataBaixa').focus();
+			});
+			
+		});
+	</script>
+	
 </head>
 <body>
 
@@ -30,42 +42,53 @@
 		<form:hidden path="id"/>
 		
 		<fieldset class="well">
-		
-			<c:set var="campPath" value="nom"/>
-			<c:set var="campErrors"><form:errors path="${campPath}"/></c:set>
-			<div class="control-group<c:if test="${not empty campErrors}"> error</c:if>">
-				<label class="control-label" for="${campPath}"><spring:message code="emissorcert.form.camp.nom"/> *</label>
-				<div class="controls">
-					<form:input path="${campPath}" cssClass="input-xlarge" id="${campPath}"/>
-					<form:errors path="${campPath}" cssClass="help-inline"/>
+			
+			<div class="span12"></div>
+			
+			<div class="span5">
+				<c:set var="campPath" value="nom"/>
+				<c:set var="campErrors"><form:errors path="${campPath}"/></c:set>
+				<div class="control-group<c:if test="${not empty campErrors}"> error</c:if>">
+					<label class="control-label" for="${campPath}"><spring:message code="emissorcert.form.camp.nom"/> *</label>
+					<div class="controls">
+						<form:input path="${campPath}" cssClass="input-xlarge" id="${campPath}"/>
+						<form:errors path="${campPath}" cssClass="help-inline"/>
+					</div>
 				</div>
 			</div>
 			
-			<c:set var="campPath" value="cif"/>
-			<c:set var="campErrors"><form:errors path="${campPath}"/></c:set>
-			<div class="control-group<c:if test="${not empty campErrors}"> error</c:if>">
-				<label class="control-label" for="${campPath}"><spring:message code="emissorcert.form.camp.cif"/> *</label>
-				<div class="controls">
-					<form:input path="${campPath}" cssClass="input-xlarge" id="${campPath}"/>
-					<form:errors path="${campPath}" cssClass="help-inline"/>
+			<div class="span5">
+				<c:set var="campPath" value="dataBaixa"/>
+				<c:set var="campErrors"><form:errors path="${campPath}"/></c:set>
+				<c:set var="idioma"><%=org.springframework.web.servlet.support.RequestContextUtils.getLocale(request).getLanguage()%></c:set>
+				<div class="control-group<c:if test="${not empty campErrors}"> error</c:if>">
+					<label class="control-label" for="${campPath}"><spring:message code="emissorcert.form.camp.data.baixa"/>  </label>
+					<div class="controls">
+						<div class="input-append" style="width: 100%;">
+							<form:input
+								path="${campPath}"
+								cssClass="form-control datepicker"
+								id="${campPath}"
+								disabled="false"
+								data-toggle="datepicker"
+								data-idioma="${idioma}"
+								style="width: calc(100% - 40px);"/>
+							<button id="btn-calendar-baixa" class="btn" type="button"><i class="icon-calendar"></i></button>
+						</div>
+						<form:errors path="${campPath}" cssClass="help-inline"/>
+					</div>
 				</div>
 			</div>
 			
-			<c:set var="campPath" value="dataBaixa"/>
-			<c:set var="campErrors"><form:errors path="${campPath}"/></c:set>
-			<c:set var="idioma"><%=org.springframework.web.servlet.support.RequestContextUtils.getLocale(request).getLanguage()%></c:set>
-			<div class="control-group<c:if test="${not empty campErrors}"> error</c:if>">
-				<label class="control-label" for="${campPath}"><spring:message code="emissorcert.form.camp.data.baixa"/>  </label>
-				<div class="controls">
-					<form:input
-						path="${campPath}"
-						cssClass="form-control datepicker my-datepicker"
-						id="${campPath}"
-						disabled="false"
-						data-toggle="datepicker"
-						data-idioma="${idioma}"/>
-					<span class="input-group-addon" style="width:100%"><i class="icon-calendar"></i></span>
-					<form:errors path="${campPath}" cssClass="help-inline"/>
+			<div class="span5">
+				<c:set var="campPath" value="cif"/>
+				<c:set var="campErrors"><form:errors path="${campPath}"/></c:set>
+				<div class="control-group<c:if test="${not empty campErrors}"> error</c:if>">
+					<label class="control-label" for="${campPath}"><spring:message code="emissorcert.form.camp.cif"/> *</label>
+					<div class="controls">
+						<form:input path="${campPath}" cssClass="input-xlarge" id="${campPath}"/>
+						<form:errors path="${campPath}" cssClass="help-inline"/>
+					</div>
 				</div>
 			</div>
 			

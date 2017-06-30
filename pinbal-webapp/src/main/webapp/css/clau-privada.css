@@ -1,0 +1,14 @@
+@CHARSET "UTF-8";
+
+.my-label {
+	display:inline-block;
+	vertical-align:sub;
+}
+
+.my-checkbox {
+	vertical-align:sub;
+}
+
+.my-field {
+	margin-left: -60px;
+}

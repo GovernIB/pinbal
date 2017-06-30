@@ -22,34 +22,42 @@
 		
 		<fieldset class="well">
 		
-			<c:set var="campPath" value="nom"/>
-			<c:set var="forcreate" value="${paramConfCommand.forcreate}"/>
-			<c:set var="campErrors"><form:errors path="${campPath}"/></c:set>
-			<div class="control-group<c:if test="${not empty campErrors}"> error</c:if>">
-				<label class="control-label" for="${campPath}"><spring:message code="paramconf.form.camp.nom"/> *</label>
-				<div class="controls">
-					<form:input path="${campPath}" cssClass="input-xlarge" id="${campPath}" readonly="${!forcreate}"/>
-					<form:errors path="${campPath}" cssClass="help-inline"/>
+			<div class="span12"></div>
+			
+			<div class="span5"> 
+				<c:set var="campPath" value="nom"/>
+				<c:set var="forcreate" value="${paramConfCommand.forcreate}"/>
+				<c:set var="campErrors"><form:errors path="${campPath}"/></c:set>
+				<div class="control-group<c:if test="${not empty campErrors}"> error</c:if>">
+					<label class="control-label" for="${campPath}"><spring:message code="paramconf.form.camp.nom"/> *</label>
+					<div class="controls">
+						<form:input path="${campPath}" cssClass="input-xlarge" id="${campPath}" readonly="${!forcreate}"/>
+						<form:errors path="${campPath}" cssClass="help-inline"/>
+					</div>
 				</div>
 			</div>
 			
-			<c:set var="campPath" value="valor"/>
-			<c:set var="campErrors"><form:errors path="${campPath}"/></c:set>
-			<div class="control-group<c:if test="${not empty campErrors}"> error</c:if>">
-				<label class="control-label" for="${campPath}"><spring:message code="paramconf.form.camp.valor"/> *</label>
-				<div class="controls">
-					<form:input path="${campPath}" cssClass="input-xlarge" id="${campPath}"/>
-					<form:errors path="${campPath}" cssClass="help-inline"/>
+			<div class="span10">
+				<c:set var="campPath" value="valor"/>
+				<c:set var="campErrors"><form:errors path="${campPath}"/></c:set>
+				<div class="control-group<c:if test="${not empty campErrors}"> error</c:if>">
+					<label class="control-label" for="${campPath}"><spring:message code="paramconf.form.camp.valor"/> *</label>
+					<div class="controls">
+						<form:input path="${campPath}" cssClass="input-xlarge" id="${campPath}" style="width: calc(100% - 40px);"/>
+						<form:errors path="${campPath}" cssClass="help-inline"/>
+					</div>
 				</div>
 			</div>
 			
-			<c:set var="campPath" value="descripcio"/>
-			<c:set var="campErrors"><form:errors path="${campPath}"/></c:set>
-			<div class="control-group<c:if test="${not empty campErrors}"> error</c:if>">
-				<label class="control-label" for="${campPath}"><spring:message code="paramconf.form.camp.descripcio"/>  </label>
-				<div class="controls">
-					<form:input path="${campPath}" cssClass="input-xlarge" id="${campPath}"/>
-					<form:errors path="${campPath}" cssClass="help-inline"/>
+			<div class="span10">
+				<c:set var="campPath" value="descripcio"/>
+				<c:set var="campErrors"><form:errors path="${campPath}"/></c:set>
+				<div class="control-group<c:if test="${not empty campErrors}"> error</c:if>">
+					<label class="control-label" for="${campPath}"><spring:message code="paramconf.form.camp.descripcio"/>  </label>
+					<div class="controls">
+						<form:input path="${campPath}" cssClass="input-xlarge" id="${campPath}" style="width: calc(100% - 40px);"/>
+						<form:errors path="${campPath}" cssClass="help-inline"/>
+					</div>
 				</div>
 			</div>
 			

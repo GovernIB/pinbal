@@ -12,13 +12,20 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import es.caib.pinbal.core.dto.ClauPrivadaDto;
 import es.caib.pinbal.core.dto.EmissorCertDto;
+import es.caib.pinbal.core.dto.OrganismeCessionariDto;
 import es.caib.pinbal.core.dto.ParamConfDto;
 import es.caib.pinbal.core.helper.DtoMappingHelper;
+import es.caib.pinbal.core.model.ClauPrivada;
 import es.caib.pinbal.core.model.EmissorCert;
+import es.caib.pinbal.core.model.OrganismeCessionari;
 import es.caib.pinbal.core.model.ParamConf;
+import es.caib.pinbal.core.repository.ClauPrivadaRepository;
 import es.caib.pinbal.core.repository.EmissorCertRepository;
+import es.caib.pinbal.core.repository.OrganismeCessionariRepository;
 import es.caib.pinbal.core.repository.ParamConfRepository;
+import es.caib.pinbal.core.service.exception.ClauPrivadaNotFoundException;
 import es.caib.pinbal.core.service.exception.EmissorCertNotFoundException;
 import es.caib.pinbal.core.service.exception.ParamConfNotFoundException;
 
@@ -35,6 +42,10 @@ public class ScspServiceImpl implements ScspService {
 	private ParamConfRepository paramConfRepository;
 	@Resource
 	private EmissorCertRepository emissorCertRepository;
+	@Resource
+	private ClauPrivadaRepository clauPrivadaRepository;
+	@Resource
+	private OrganismeCessionariRepository organismeCessionariRepository;
 	@Resource
 	private DtoMappingHelper dtoMappingHelper;
 	
@@ -205,6 +216,121 @@ public class ScspServiceImpl implements ScspService {
 		return dtoMappingHelper.getMapperFacade().mapAsList(
 				llista,
 				EmissorCertDto.class);
+	}
+	
+	
+	// Funcions de la taula de claus privades
+	
+	@Override
+	@Transactional(readOnly = true)
+	public ClauPrivadaDto findClauPrivadaById(Long id) {
+
+		LOGGER.debug("Consulta una clau privada (id = " + id + ")");
+		
+		return dtoMappingHelper.getMapperFacade().map(
+				clauPrivadaRepository.findById(id),
+				ClauPrivadaDto.class);
+	}
+
+	@Override
+	@Transactional
+	public ClauPrivadaDto createClauPrivada(ClauPrivadaDto dto) {
+
+		LOGGER.debug("Creant una nova clau privada : " + dto);
+		
+		OrganismeCessionari organisme = organismeCessionariRepository.findById(
+				dto.getOrganisme());
+		ClauPrivada entity = ClauPrivada.getBuilder(
+				dto.getAlies(),
+				dto.getNom(),
+				dto.getPassword(),
+				dto.getNumSerie(),
+				dto.getDataBaixa(),
+				dto.getDataAlta(),
+				dto.getInteroperabilitat(),
+				organisme).build();
+		
+		return dtoMappingHelper.getMapperFacade().map(
+				clauPrivadaRepository.save(entity),
+				ClauPrivadaDto.class);
+	}
+
+	@Override
+	@Transactional
+	public ClauPrivadaDto updateClauPrivada(ClauPrivadaDto dto) throws ClauPrivadaNotFoundException {
+
+		LOGGER.debug("Actualitzant la clau privada (id = " + dto.getId() +
+					 ") amb la informació: " + dto);
+		
+		ClauPrivada entity = clauPrivadaRepository.findById(dto.getId());
+		if (entity == null) {
+			LOGGER.debug("No s'ha trobat la clau privada (id = " + dto.getId() + ")");
+			throw new ClauPrivadaNotFoundException();
+		}
+		
+		OrganismeCessionari organisme = organismeCessionariRepository.findById(
+				dto.getOrganisme());
+		entity.update(
+				dto.getAlies(),
+				dto.getNom(),
+				dto.getPassword(),
+				dto.getNumSerie(),
+				dto.getDataBaixa(),
+				dto.getDataAlta(),
+				dto.getInteroperabilitat(),
+				organisme);
+		
+		return dtoMappingHelper.getMapperFacade().map(
+				entity,
+				ClauPrivadaDto.class);
+	}
+
+	@Override
+	@Transactional
+	public ClauPrivadaDto deleteClauPrivada(Long id) throws ClauPrivadaNotFoundException {
+
+		LOGGER.debug("Esborrant la clau privada (id =" + id + ")");
+		
+		ClauPrivada entity = clauPrivadaRepository.findById(id);
+		if (entity == null) {
+			LOGGER.debug("No s'ha trobat la clau privada (id = " + id + ")");
+			throw new ClauPrivadaNotFoundException();
+		}
+		
+		clauPrivadaRepository.delete(entity);
+		
+		return dtoMappingHelper.getMapperFacade().map(
+				entity,
+				ClauPrivadaDto.class);
+	}
+
+	@Override
+	@Transactional(readOnly = true)
+	public List<ClauPrivadaDto> findAllClauPrivada() {
+
+		LOGGER.debug("Consulta de tots les claus privades");
+		
+		List<ClauPrivada> llista = clauPrivadaRepository.findAll();
+		
+		return dtoMappingHelper.getMapperFacade().mapAsList(
+				llista,
+				ClauPrivadaDto.class);
+	}
+	
+	
+	// Funcions dels organismes cessionaris
+	
+	@Override
+	@Transactional(readOnly = true)
+	public List<OrganismeCessionariDto> findAllOrganismeCessionari() {
+
+		LOGGER.debug("Consulta de tots els organismes cessionaris");
+		
+		List<OrganismeCessionari> llista = organismeCessionariRepository.findAll();
+		
+		return dtoMappingHelper.getMapperFacade().mapAsList(
+				llista,
+				OrganismeCessionariDto.class);
 	}
 	
 	

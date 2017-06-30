@@ -5,15 +5,9 @@ package es.caib.pinbal.core.helper;
 
 import java.util.Date;
 
-import ma.glasnost.orika.CustomConverter;
-import ma.glasnost.orika.MapperFacade;
-import ma.glasnost.orika.MapperFactory;
-import ma.glasnost.orika.impl.DefaultMapperFactory;
-import ma.glasnost.orika.metadata.ClassMapBuilder;
-import ma.glasnost.orika.metadata.Type;
-
 import org.joda.time.DateTime;
 
+import es.caib.pinbal.core.dto.ClauPrivadaDto;
 import es.caib.pinbal.core.dto.ConsultaDto;
 import es.caib.pinbal.core.dto.EntitatDto;
 import es.caib.pinbal.core.dto.EntitatUsuariDto;
@@ -21,11 +15,18 @@ import es.caib.pinbal.core.dto.InformeUsuariDto;
 import es.caib.pinbal.core.dto.ProcedimentDto;
 import es.caib.pinbal.core.dto.ServeiCampDto;
 import es.caib.pinbal.core.dto.UsuariDto;
+import es.caib.pinbal.core.model.ClauPrivada;
 import es.caib.pinbal.core.model.Consulta;
 import es.caib.pinbal.core.model.Entitat;
 import es.caib.pinbal.core.model.EntitatUsuari;
 import es.caib.pinbal.core.model.Procediment;
 import es.caib.pinbal.core.model.ServeiCamp;
+import ma.glasnost.orika.CustomConverter;
+import ma.glasnost.orika.MapperFacade;
+import ma.glasnost.orika.MapperFactory;
+import ma.glasnost.orika.impl.DefaultMapperFactory;
+import ma.glasnost.orika.metadata.ClassMapBuilder;
+import ma.glasnost.orika.metadata.Type;
 
 /**
  * Helper per al mapeig de classes del model a DTOs.
@@ -107,6 +108,12 @@ public class DtoMappingHelper {
 		mapperFactory.registerClassMap(
 				ClassMapBuilder.map(
 						ServeiCamp.class, ServeiCampDto.class).
+						byDefault().toClassMap());
+		// Mapeig de camps de organismes cessionaris
+		mapperFactory.registerClassMap(
+				ClassMapBuilder.map(
+						ClauPrivada.class, ClauPrivadaDto.class).
+						field("organisme.id", "organisme").
 						byDefault().toClassMap());
 		mapperFactory.build();
 	}

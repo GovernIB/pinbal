@@ -1,29 +1,46 @@
 /**
  * 
  */
-package es.caib.pinbal.core.dto;
+package es.caib.pinbal.webapp.command;
 
-import java.io.Serializable;
 import java.util.Date;
 
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+
 import org.apache.commons.lang.builder.ToStringBuilder;
+import org.hibernate.validator.constraints.NotEmpty;
+
+import es.caib.pinbal.core.dto.ClauPrivadaDto;
+import es.caib.pinbal.core.dto.EntitatDto;
+import es.caib.pinbal.core.model.OrganismeCessionari;
+import es.caib.pinbal.webapp.validation.CodiEntitatNoRepetit;
 
 /**
- * Informació d'una ClauPrivada SCSP.
+ * Command per al manteniment d'entitats
  * 
  * @author Limit Tecnologies <limit@limit.es>
  */
-public class ClauPrivadaDto implements Serializable {
+public class ClauPrivadaCommand {
 	
 	private Long id;
+	@NotEmpty @Size(max=256)
 	private String alies;
+	@NotEmpty @Size(max=256)
 	private String nom;
+	@NotEmpty @Size(max=256)
 	private String password;
+	@NotEmpty @Size(max=256)
 	private String numSerie;
+	
 	private Date dataBaixa;
+	@NotNull
 	private Date dataAlta;
+	
 	private boolean interoperabilitat;
+	@NotNull
 	private Long organisme;
+	
 	
 	public Long getId() {
 		return id;
@@ -89,11 +106,22 @@ public class ClauPrivadaDto implements Serializable {
 	}
 	
 	
+	public static ClauPrivadaCommand asCommand(ClauPrivadaDto dto) {
+		return CommandMappingHelper.getMapperFacade().map(
+				dto,
+				ClauPrivadaCommand.class);
+	}
+	
+	public static ClauPrivadaDto asDto(ClauPrivadaCommand command) {
+		return CommandMappingHelper.getMapperFacade().map(
+				command,
+				ClauPrivadaDto.class);
+	}
+	
+	
 	@Override
 	public String toString() {
 		return ToStringBuilder.reflectionToString(this);
 	}
-
-	private static final long serialVersionUID = -8620175604318725073L;
-
+	
 }
