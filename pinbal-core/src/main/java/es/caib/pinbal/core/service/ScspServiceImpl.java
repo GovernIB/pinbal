@@ -13,19 +13,23 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import es.caib.pinbal.core.dto.ClauPrivadaDto;
+import es.caib.pinbal.core.dto.ClauPublicaDto;
 import es.caib.pinbal.core.dto.EmissorCertDto;
 import es.caib.pinbal.core.dto.OrganismeCessionariDto;
 import es.caib.pinbal.core.dto.ParamConfDto;
 import es.caib.pinbal.core.helper.DtoMappingHelper;
 import es.caib.pinbal.core.model.ClauPrivada;
+import es.caib.pinbal.core.model.ClauPublica;
 import es.caib.pinbal.core.model.EmissorCert;
 import es.caib.pinbal.core.model.OrganismeCessionari;
 import es.caib.pinbal.core.model.ParamConf;
 import es.caib.pinbal.core.repository.ClauPrivadaRepository;
+import es.caib.pinbal.core.repository.ClauPublicaRepository;
 import es.caib.pinbal.core.repository.EmissorCertRepository;
 import es.caib.pinbal.core.repository.OrganismeCessionariRepository;
 import es.caib.pinbal.core.repository.ParamConfRepository;
 import es.caib.pinbal.core.service.exception.ClauPrivadaNotFoundException;
+import es.caib.pinbal.core.service.exception.ClauPublicaNotFoundException;
 import es.caib.pinbal.core.service.exception.EmissorCertNotFoundException;
 import es.caib.pinbal.core.service.exception.ParamConfNotFoundException;
 
@@ -46,6 +50,9 @@ public class ScspServiceImpl implements ScspService {
 	private ClauPrivadaRepository clauPrivadaRepository;
 	@Resource
 	private OrganismeCessionariRepository organismeCessionariRepository;
+	@Resource
+	private ClauPublicaRepository clauPublicaRepository;
+
 	@Resource
 	private DtoMappingHelper dtoMappingHelper;
 	
@@ -331,6 +338,93 @@ public class ScspServiceImpl implements ScspService {
 		return dtoMappingHelper.getMapperFacade().mapAsList(
 				llista,
 				OrganismeCessionariDto.class);
+
+	// Funcions de la taula de emissor de certificat.
+	
+	@Override
+	@Transactional(readOnly = true)
+	public ClauPublicaDto findClauPublicaById(Long id) {
+
+		LOGGER.debug("Consulta un clau publica (id = " + id + ")");
+		
+		return dtoMappingHelper.getMapperFacade().map(
+				clauPublicaRepository.findById(id),
+				ClauPublicaDto.class);
+	}
+
+	@Override
+	@Transactional
+	public ClauPublicaDto createClauPublica(ClauPublicaDto dto) {
+
+		LOGGER.debug("Creant una nou emissor de certificat : " + dto);
+		
+		ClauPublica entity = ClauPublica.getBuilder(
+				dto.getAlies(),
+				dto.getNom(),
+				dto.getNumSerie(),
+				dto.getDataAlta(),
+				dto.getDataBaixa()).build();
+		
+		return dtoMappingHelper.getMapperFacade().map(
+				clauPublicaRepository.save(entity),
+				ClauPublicaDto.class);
+	}
+
+	@Override
+	@Transactional
+	public ClauPublicaDto updateClauPublica(ClauPublicaDto dto) throws ClauPublicaNotFoundException {
+
+		LOGGER.debug("Actualitzant el clau publica (id = " + dto.getId() +
+					 ") amb la informació: " + dto);
+		
+		ClauPublica entity = clauPublicaRepository.findById(dto.getId());
+		if (entity == null) {
+			LOGGER.debug("No s'ha trobat el clau publica (id = " + dto.getId() + ")");
+			throw new ClauPublicaNotFoundException();
+		}
+		
+		entity.update(
+				dto.getAlies(),
+				dto.getNom(),
+				dto.getNumSerie(),
+				dto.getDataAlta(),
+				dto.getDataBaixa());
+		
+		return dtoMappingHelper.getMapperFacade().map(
+				entity,
+				ClauPublicaDto.class);
+	}
+
+	@Override
+	@Transactional
+	public ClauPublicaDto deleteClauPublica(Long id) throws ClauPublicaNotFoundException {
+
+		LOGGER.debug("Esborrant el clau publica (id =" + id + ")");
+		
+		ClauPublica entity = clauPublicaRepository.findById(id);
+		if (entity == null) {
+			LOGGER.debug("No s'ha trobat el clau publica (id = " + id + ")");
+			throw new ClauPublicaNotFoundException();
+		}
+		
+		clauPublicaRepository.delete(entity);
+		
+		return dtoMappingHelper.getMapperFacade().map(
+				entity,
+				ClauPublicaDto.class);
+	}
+
+	@Override
+	@Transactional(readOnly = true)
+	public List<ClauPublicaDto> findAllClauPublica() {
+
+		LOGGER.debug("Consulta de tots els claus públiques");
+		
+		List<ClauPublica> llista = clauPublicaRepository.findAll();
+		
+		return dtoMappingHelper.getMapperFacade().mapAsList(
+				llista,
+				ClauPublicaDto.class);
 	}
 	
 	
