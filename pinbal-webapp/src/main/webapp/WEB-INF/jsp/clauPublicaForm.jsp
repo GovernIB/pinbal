@@ -21,6 +21,20 @@
 		</c:choose>
 	</title>
 	
+	<script>
+		var eyeEnabled = true;
+		
+		$(document).ready(function() {
+			$('#btn-calendar-alta').click(function() {
+				$('#dataAlta').focus();
+			});
+			
+			$('#btn-calendar-baixa').click(function() {
+				$('#dataBaixa').focus();
+			});
+		});
+	</script>
+	
 </head>
 <body>
 
@@ -31,70 +45,87 @@
 		
 		<fieldset class="well">
 		
-			<c:set var="campPath" value="alies"/>
-			<c:set var="campErrors"><form:errors path="${campPath}"/></c:set>
-			<div class="control-group<c:if test="${not empty campErrors}"> error</c:if>">
-				<label class="control-label" for="${campPath}"><spring:message code="claupublica.form.camp.alies"/> *</label>
-				<div class="controls">
-					<form:input path="${campPath}" cssClass="input-xlarge" id="${campPath}"/>
-					<form:errors path="${campPath}" cssClass="help-inline"/>
+			<div class="span12"></div>
+			
+			<div class="span10">
+				<c:set var="campPath" value="alies"/>
+				<c:set var="campErrors"><form:errors path="${campPath}"/></c:set>
+				<div class="control-group<c:if test="${not empty campErrors}"> error</c:if>">
+					<label class="control-label" for="${campPath}"><spring:message code="claupublica.form.camp.alies"/> *</label>
+					<div class="controls">
+						<form:input path="${campPath}" cssClass="input-xlarge" id="${campPath}" style="width: 100%;"/>
+						<form:errors path="${campPath}" cssClass="help-inline"/>
+					</div>
 				</div>
 			</div>
 			
-			<c:set var="campPath" value="nom"/>
-			<c:set var="campErrors"><form:errors path="${campPath}"/></c:set>
-			<div class="control-group<c:if test="${not empty campErrors}"> error</c:if>">
-				<label class="control-label" for="${campPath}"><spring:message code="claupublica.form.camp.nom"/> *</label>
-				<div class="controls">
-					<form:input path="${campPath}" cssClass="input-xlarge" id="${campPath}"/>
-					<form:errors path="${campPath}" cssClass="help-inline"/>
-				</div>
-			</div>
-
-			<c:set var="campPath" value="numSerie"/>
-			<c:set var="campErrors"><form:errors path="${campPath}"/></c:set>
-			<div class="control-group<c:if test="${not empty campErrors}"> error</c:if>">
-				<label class="control-label" for="${campPath}"><spring:message code="claupublica.form.camp.numserie"/> *</label>
-				<div class="controls">
-					<form:input path="${campPath}" cssClass="input-xlarge" id="${campPath}"/>
-					<form:errors path="${campPath}" cssClass="help-inline"/>
+			<div class="span10">
+				<c:set var="campPath" value="nom"/>
+				<c:set var="campErrors"><form:errors path="${campPath}"/></c:set>
+				<div class="control-group<c:if test="${not empty campErrors}"> error</c:if>">
+					<label class="control-label" for="${campPath}"><spring:message code="claupublica.form.camp.nom"/> *</label>
+					<div class="controls">
+						<form:input path="${campPath}" cssClass="input-xlarge" id="${campPath}" style="width: 100%;"/>
+						<form:errors path="${campPath}" cssClass="help-inline"/>
+					</div>
 				</div>
 			</div>
 			
-						
-			<c:set var="campPath" value="dataAlta"/>
-			<c:set var="campErrors"><form:errors path="${campPath}"/></c:set>
-			<c:set var="idioma"><%=org.springframework.web.servlet.support.RequestContextUtils.getLocale(request).getLanguage()%></c:set>
-			<div class="control-group<c:if test="${not empty campErrors}"> error</c:if>">
-				<label class="control-label" for="${campPath}"><spring:message code="claupublica.form.camp.dataalta"/> *</label>
-				<div class="controls">
-					<form:input
-						path="${campPath}"
-						cssClass="form-control datepicker my-datepicker"
-						id="${campPath}"
-						disabled="false"
-						data-toggle="datepicker"
-						data-idioma="${idioma}"/>
-					<span class="input-group-addon" style="width:100%"><i class="icon-calendar"></i></span>
-					<form:errors path="${campPath}" cssClass="help-inline"/>
+			<div class="span10">
+				<c:set var="campPath" value="numSerie"/>
+				<c:set var="campErrors"><form:errors path="${campPath}"/></c:set>
+				<div class="control-group<c:if test="${not empty campErrors}"> error</c:if>">
+					<label class="control-label" for="${campPath}"><spring:message code="claupublica.form.camp.numserie"/> *</label>
+					<div class="controls">
+						<form:input path="${campPath}" cssClass="input-xlarge" id="${campPath}" style="width: 100%;"/>
+						<form:errors path="${campPath}" cssClass="help-inline"/>
+					</div>
 				</div>
 			</div>
-
-			<c:set var="campPath" value="dataBaixa"/>
-			<c:set var="campErrors"><form:errors path="${campPath}"/></c:set>
-			<c:set var="idioma"><%=org.springframework.web.servlet.support.RequestContextUtils.getLocale(request).getLanguage()%></c:set>
-			<div class="control-group<c:if test="${not empty campErrors}"> error</c:if>">
-				<label class="control-label" for="${campPath}"><spring:message code="claupublica.form.camp.databaixa"/>  </label>
-				<div class="controls">
-					<form:input
-						path="${campPath}"
-						cssClass="form-control datepicker my-datepicker"
-						id="${campPath}"
-						disabled="false"
-						data-toggle="datepicker"
-						data-idioma="${idioma}"/>
-					<span class="input-group-addon" style="width:100%"><i class="icon-calendar"></i></span>
-					<form:errors path="${campPath}" cssClass="help-inline"/>
+			
+			<div class="span5">
+				<c:set var="campPath" value="dataAlta"/>
+				<c:set var="campErrors"><form:errors path="${campPath}"/></c:set>
+				<c:set var="idioma"><%=org.springframework.web.servlet.support.RequestContextUtils.getLocale(request).getLanguage()%></c:set>
+				<div class="control-group<c:if test="${not empty campErrors}"> error</c:if>">
+					<label class="control-label" for="${campPath}"><spring:message code="claupublica.form.camp.dataalta"/> *</label>
+					<div class="controls">
+						<div class="input-append" style="width: 100%;">
+							<form:input
+								path="${campPath}"
+								cssClass="form-control datepicker"
+								id="${campPath}"
+								disabled="false"
+								data-toggle="datepicker"
+								data-idioma="${idioma}"
+								style="width: calc(100% - 40px);"/>
+							<button id="btn-calendar-alta" class="btn" type="button"><i class="icon-calendar"></i></button>
+						</div>
+						<form:errors path="${campPath}" cssClass="help-inline"/>
+					</div>
+				</div>
+			</div>
+			
+			<div class="span5">
+				<c:set var="campPath" value="dataBaixa"/>
+				<c:set var="campErrors"><form:errors path="${campPath}"/></c:set>
+				<c:set var="idioma"><%=org.springframework.web.servlet.support.RequestContextUtils.getLocale(request).getLanguage()%></c:set>
+				<div class="control-group<c:if test="${not empty campErrors}"> error</c:if>">
+					<label class="control-label" for="${campPath}"><spring:message code="claupublica.form.camp.databaixa"/>  </label>
+					<div class="controls">
+						<div class="input-append" style="width: 100%;">
+							<form:input
+								path="${campPath}"
+								cssClass="form-control datepicker"
+								id="${campPath}"
+								disabled="false"
+								data-toggle="datepicker"
+								data-idioma="${idioma}"
+								style="width: calc(100% - 40px);"/>
+							<button id="btn-calendar-baixa" class="btn" type="button"><i class="icon-calendar"></i></button>
+						</div>
+						<form:errors path="${campPath}" cssClass="help-inline"/>
+					</div>
 				</div>
 			</div>
 			

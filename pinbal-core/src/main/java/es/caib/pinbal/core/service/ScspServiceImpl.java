@@ -338,7 +338,9 @@ public class ScspServiceImpl implements ScspService {
 		return dtoMappingHelper.getMapperFacade().mapAsList(
 				llista,
 				OrganismeCessionariDto.class);
-
+	}
+	
+	
 	// Funcions de la taula de emissor de certificat.
 	
 	@Override
