@@ -12,9 +12,6 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import es.caib.pinbal.core.dto.ClauPrivadaDto;
-import es.caib.pinbal.core.dto.EntitatDto;
-import es.caib.pinbal.core.model.OrganismeCessionari;
-import es.caib.pinbal.webapp.validation.CodiEntitatNoRepetit;
 
 /**
  * Command per al manteniment d'entitats
