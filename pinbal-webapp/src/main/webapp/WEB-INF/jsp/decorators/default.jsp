@@ -233,7 +233,14 @@ $(document).ready(function() {
 	</div>
     <div class="container row-fluid">
     	<div class="pull-left colophon versio-footer" style="margin: 10px 0 0 40px"><p>Pinbal v${versioActual}</p></div>
-        <div class="pull-right govern-footer" style="margin: 10px 40px 0 0"><p><img src="<c:url value="/img/govern-logo-neg.png"/>" width="129" height="30" alt="<spring:message code="decorator.govern"/>" /></p></div>
+        <div class="pull-right govern-footer" style="margin: 10px 40px 0 0">
+        	<p>
+        		<img src="<c:url value="/img/govern-logo-neg.png"/>" width="129" style="height:30px" alt="<spring:message code="decorator.govern"/>" />
+	        	<img src="<c:url value="/img/una_manera.png"/>" 	 hspace="5"  style="height:30px" alt="<spring:message code='decorator.logo.manera'/>" />
+	        	<img src="<c:url value="/img/feder7.png"/>" 	     hspace="5"  style="height:35px" alt="<spring:message code='decorator.logo.feder'/>" />
+	        	<img src="<c:url value="/img/uenegroma.png"/>"	     hspace="5"  style="height:50px" alt="<spring:message code='decorator.logo.ue'/>" />
+        	</p>
+        </div>
     </div>
 
     <script src="<c:url value="/js/bootstrap.min.js"/>"></script>
