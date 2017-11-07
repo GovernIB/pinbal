@@ -23,9 +23,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import es.caib.pinbal.core.dto.ClauPrivadaDto;
 import es.caib.pinbal.core.service.ScspService;
 import es.caib.pinbal.core.service.exception.ClauPrivadaNotFoundException;
-import es.caib.pinbal.core.service.exception.ParamConfNotFoundException;
 import es.caib.pinbal.webapp.command.ClauPrivadaCommand;
-import es.caib.pinbal.webapp.command.ParamConfCommand;
 import es.caib.pinbal.webapp.common.AlertHelper;
 
 /**

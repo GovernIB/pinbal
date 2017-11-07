@@ -37,6 +37,10 @@
 			jndi-name="pinbal/DadesExternesServiceBean/local"
 			business-interface="es.caib.pinbal.core.service.DadesExternesService"/>
 	<jee:local-slsb
+			id="scspService"
+			jndi-name="pinbal/ScspServiceBean/local"
+			business-interface="es.caib.pinbal.core.service.ScspService"/>
+	<jee:local-slsb
 			id="versioService"
 			jndi-name="pinbal/VersioServiceBean/local"
 			business-interface="es.caib.pinbal.core.service.VersioService"/>
