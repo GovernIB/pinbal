@@ -3,6 +3,8 @@ package es.caib.pinbal.webapp.view;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -21,15 +23,20 @@ import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.odftoolkit.simple.SpreadsheetDocument;
+import org.odftoolkit.simple.table.Table;
+import org.supercsv.io.CsvListReader;
+import org.supercsv.io.ICsvListReader;
+import org.supercsv.prefs.CsvPreference;
 
-public class ExcelHssfGet {
+public class SpreadSheetReader {
 
 	/**
 	 * This method is used to read the data's from an excel file.
 	 * @param fileInputStream - Excel file in InputStream content.
 	 * @throws IOException 
 	 */
-	public List<String[]> readExcelFileInputStream(InputStream fileInputStream, String version) throws IOException{
+	public static List<String[]> readExcelFileInputStream(InputStream fileInputStream, String version) throws IOException{
 		
 		List<String[]> cellDataList = new ArrayList<String[]>();
 		SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
@@ -136,7 +143,7 @@ public class ExcelHssfGet {
 		return cellDataList;
 	}
 	
-	private int getNumCols(Sheet sheet) {
+	private static int getNumCols(Sheet sheet) {
 		int maxCols = 0;
 		Iterator<Row> rowIterator = sheet.rowIterator();
 		while (rowIterator.hasNext()) {
@@ -151,7 +158,7 @@ public class ExcelHssfGet {
 	 * @return
 	 * @throws IOException 
 	 */
-	public List<String[]> readExcelByteArray(byte[] byteArray) throws IOException{
+	public static List<String[]> getLinesFromXls(byte[] byteArray) throws IOException{
 		InputStream is = new ByteArrayInputStream(byteArray);
 		List<String[]> llistat = readExcelFileInputStream(is, "2003");
 		if (llistat.size() == 0){
@@ -160,6 +167,63 @@ public class ExcelHssfGet {
 		}
 		
 		return llistat;
+	}
+	
+	
+	public static List<String[]> getLinesFromOds (InputStream inputStream) throws Exception {
+		List<String[]> cellDataList = new ArrayList<String[]>();
+		SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+		
+		SpreadsheetDocument odsDocument = SpreadsheetDocument.loadDocument(inputStream);
+		if (odsDocument != null && odsDocument.getTableList().size() > 0) {
+			Table table = odsDocument.getTableList().get(0);
+			for (org.odftoolkit.simple.table.Row row: table.getRowList()) {
+				String line[] = new String[row.getCellCount()];
+				for (int i = 0; i < row.getCellCount(); i++) {
+					org.odftoolkit.simple.table.Cell cell = row.getCellByIndex(i);
+					String cellType = cell.getValueType();
+					String finalValue = null;
+					if ("float".equalsIgnoreCase(cellType) || 
+						"currency".equalsIgnoreCase(cellType) ||
+						"percentage".equalsIgnoreCase(cellType)) {
+						finalValue = String.valueOf(cell.getDoubleValue());
+					} else if ("date".equalsIgnoreCase(cellType) ||
+							   "time".equalsIgnoreCase(cellType)) {
+						finalValue = dateFormat.format(cell.getTimeValue());
+					} else if ("date".equalsIgnoreCase(cellType)) {
+						finalValue = dateFormat.format(cell.getDateValue());
+					} else {
+						finalValue = cell.getStringValue();
+					}
+					
+					if (finalValue.isEmpty())
+						finalValue = null;
+					
+					line[i] = finalValue;
+				}
+				cellDataList.add(line);
+			}
+		}
+		
+		return cellDataList;
+	}
+	
+	public static List<String[]> getLinesFromCsv (InputStream inputStream) throws Exception {
+		ICsvListReader listReader = null;
+		List<String[]> cellDataList = new ArrayList<String[]>();
+		try {
+			Reader reader = new InputStreamReader(inputStream); 
+            listReader = new CsvListReader(reader, CsvPreference.STANDARD_PREFERENCE);
+            List<String> linia;
+            while( (linia = listReader.read()) != null ) {
+            	cellDataList.add(linia.toArray(new String[]{}));
+            }
+		}
+        finally {
+            if( listReader != null )
+            	listReader.close();
+        }
+		return cellDataList;
 	}
 	
 }

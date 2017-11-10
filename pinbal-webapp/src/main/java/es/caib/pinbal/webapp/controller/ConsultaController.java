@@ -5,8 +5,6 @@ package es.caib.pinbal.webapp.controller;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -41,9 +39,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
-import org.supercsv.io.CsvListReader;
-import org.supercsv.io.ICsvListReader;
-import org.supercsv.prefs.CsvPreference;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
@@ -91,7 +86,7 @@ import es.caib.pinbal.webapp.common.RequestSessionHelper;
 import es.caib.pinbal.webapp.common.ValidationHelper;
 import es.caib.pinbal.webapp.jmesa.JMesaGridHelper;
 import es.caib.pinbal.webapp.jmesa.JMesaGridHelper.ConsultaPagina;
-import es.caib.pinbal.webapp.view.ExcelHssfGet;
+import es.caib.pinbal.webapp.view.SpreadSheetReader;
 
 /**
  * Controlador per a la pàgina de consultes.
@@ -862,25 +857,14 @@ public class ConsultaController extends BaseController {
 			Errors errors) throws Exception {
 		List<String[]> linies = new ArrayList<String[]>();
 		// Obtenir dades del fitxer
-		if ("application/vnd.ms-excel".equals(fitxer.getContentType()) ||
-				"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet".equals(fitxer.getContentType())) {
-			ExcelHssfGet excelGet = new ExcelHssfGet();
-			linies = excelGet.readExcelByteArray(fitxer.getBytes());
-		} else if ("text/csv".equals(fitxer.getContentType())) {
-			ICsvListReader listReader = null;
-			try {
-				Reader reader = new InputStreamReader(fitxer.getInputStream()); 
-                listReader = new CsvListReader(reader, CsvPreference.STANDARD_PREFERENCE);
-                List<String> linia;
-                while( (linia = listReader.read()) != null ) {
-                	linies.add(linia.toArray(new String[]{}));
-                }
-			}
-	        finally {
-                if( listReader != null )
-                	listReader.close();
-	        }
-		} else {
+		if ("text/csv".equals(fitxer.getContentType()) || fitxer.getOriginalFilename().endsWith(".csv")) {
+			linies = SpreadSheetReader.getLinesFromCsv(fitxer.getInputStream());
+		} else if ("application/vnd.ms-excel".equals(fitxer.getContentType()) ||
+			"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet".equals(fitxer.getContentType())) {
+			linies = SpreadSheetReader.getLinesFromXls(fitxer.getBytes());
+		} else if ("application/vnd.oasis.opendocument.spreadsheet".equals(fitxer.getContentType())) {
+			linies = SpreadSheetReader.getLinesFromOds(fitxer.getInputStream());
+		} else {	
 			errors.rejectValue(
 					"multipleFitxer", 
 					"PeticioMultiple.fitxer.tipus", 
@@ -897,6 +881,7 @@ public class ConsultaController extends BaseController {
 		}
 		return linies;
 	}
+	
 	private void validatePeticioMultipleFile(
 			HttpServletRequest request,
 			List<String[]> linies,
