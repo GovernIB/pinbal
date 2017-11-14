@@ -517,6 +517,7 @@ public class ConsultaController extends BaseController {
 			@PathVariable String serveiCodi,
 			@PathVariable String tipusPlantilla,
 			Model model) throws ScspException, ServeiNotFoundException, EntitatNotFoundException {
+		
 		if (!EntitatHelper.isDelegatEntitatActual(request))
 			return "delegatNoAutoritzat";
 		EntitatDto entitat = EntitatHelper.getEntitatActual(request, entitatService);
@@ -525,6 +526,8 @@ public class ConsultaController extends BaseController {
 			model.addAttribute("campsDadesEspecifiques", serveiService.findServeiCamps(serveiCodi));
 			if ("CSV".equals(tipusPlantilla)) {
 				return "peticioMultiplePlantillaCsvView";
+			} else if ("ODS".equals(tipusPlantilla)) {
+				return "peticioMultiplePlantillaOdsView";
 			}
 			return "peticioMultiplePlantillaExcelView";
 		} else {

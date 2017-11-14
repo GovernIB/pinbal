@@ -24,10 +24,10 @@
 	<import resource="classpath:es/caib/pinbal/core/context/application-context-webapp.xml" />
 	<import resource="classpath:es/caib/pinbal/webapp/context/application-context-security.xml" />
 
-	<wss:binding url="/ws/recobriment">
+	<!--wss:binding url="/ws/recobriment">
 		<wss:service>
 			<ws:service bean="#recobrimentImpl"/>
 		</wss:service>
-	</wss:binding>
+	</wss:binding-->
 
 </beans>
