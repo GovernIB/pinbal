@@ -23,6 +23,7 @@
 	<bean name="auditorGenerarExcelView" class="es.caib.pinbal.webapp.view.AuditorGenerarExcelView"/>
 	<bean name="peticioMultiplePlantillaExcelView" class="es.caib.pinbal.webapp.view.PeticioMultiplePlantillaExcelView"/>
 	<bean name="peticioMultiplePlantillaCsvView" class="es.caib.pinbal.webapp.view.PeticioMultiplePlantillaCsvView"/>
+	<bean name="peticioMultiplePlantillaOdsView" class="es.caib.pinbal.webapp.view.PeticioMultiplePlantillaOdsView"/>
 	<bean name="informeProcedimentsExcelView" class="es.caib.pinbal.webapp.view.InformeProcedimentsExcelView"/>
 	<bean name="informeUsuarisExcelView" class="es.caib.pinbal.webapp.view.InformeUsuarisExcelView"/>
 	<bean name="informeServeisExcelView" class="es.caib.pinbal.webapp.view.InformeServeisExcelView"/>

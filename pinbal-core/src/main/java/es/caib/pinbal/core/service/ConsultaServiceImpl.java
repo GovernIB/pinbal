@@ -1834,10 +1834,10 @@ public class ConsultaServiceImpl implements ConsultaService {
 		ArxiuDto arxiuDto = new ArxiuDto();
 		if (serveiConfig.getJustificantTipus() != null && JustificantTipus.ADJUNT_PDF_BASE64.equals(serveiConfig.getJustificantTipus())) {
 			LOGGER.debug("El justificant de la consulta (id=" + consulta.getId() + ") està inclòs a dins la resposta");
-			Map<String, String> dadesEspecifiques = scspHelper.getDadesEspecifiquesResposta(
+			Map<String, Object> dadesEspecifiques = scspHelper.getDadesEspecifiquesResposta(
 					peticionId,
 					solicitudId);
-			String justificantB64 = dadesEspecifiques.get(serveiConfig.getJustificantXpath());
+			String justificantB64 = (String)dadesEspecifiques.get(serveiConfig.getJustificantXpath());
 			arxiuDto.setNom("PBL_" + peticionId + ".pdf");
 			if (justificantB64 != null) {
 				arxiuDto.setContingut(Base64.decode(justificantB64));
@@ -2143,7 +2143,7 @@ public class ConsultaServiceImpl implements ConsultaService {
 							"DatosGenericos",
 							consulta.getCampsPeticioMultiple(),
 							dades));
-			Map<String, String> dadesEspecifiques = getDadesEspecifiquesPeticioMultiple(
+			Map<String, Object> dadesEspecifiques = getDadesEspecifiquesPeticioMultiple(
 					serveiCamps,
 					consulta.getCampsPeticioMultiple(),
 					dades);
@@ -2158,7 +2158,7 @@ public class ConsultaServiceImpl implements ConsultaService {
 
 	private void processarDadesEspecifiquesSegonsCamps(
 			String serveiCodi,
-			Map<String, String> dadesEspecifiques) throws ParseException {
+			Map<String, Object> dadesEspecifiques) throws ParseException {
 		SimpleDateFormat sdfComu = new SimpleDateFormat("dd/MM/yyyy");
 		List<ServeiCamp> camps = serveiCampRepository.findByServeiOrderByGrupOrdreAsc(serveiCodi);
 		// Conversió de format
@@ -2166,7 +2166,7 @@ public class ConsultaServiceImpl implements ConsultaService {
 			for (ServeiCamp camp: camps) {
 				if (camp.getPath().equals(path)) {
 					if (camp.getTipus().equals(ServeiCampTipus.DATA)) {
-						String str = dadesEspecifiques.get(path);
+						String str = (String)dadesEspecifiques.get(path);
 						if (str != null && !str.isEmpty()) {
 							Date data = sdfComu.parse(str);
 							SimpleDateFormat sdfCamp = null;
@@ -2179,7 +2179,7 @@ public class ConsultaServiceImpl implements ConsultaService {
 							dadesEspecifiques.put(path, null);
 						}
 					} else if (camp.getTipus().equals(ServeiCampTipus.BOOLEA)) {
-						String str = dadesEspecifiques.get(path);
+						String str = (String)dadesEspecifiques.get(path);
 						if (str != null && !str.isEmpty()) {
 							boolean valor =
 									"true".equalsIgnoreCase(str) ||
@@ -2200,7 +2200,7 @@ public class ConsultaServiceImpl implements ConsultaService {
 			if (camp.getTipus().equals(ServeiCampTipus.DOC_IDENT)) {
 				// Elimina el tipus de document de les dades específiques
 				// si no s'especifica el número de document
-				String valor = dadesEspecifiques.get(camp.getPath());
+				String valor = (String)dadesEspecifiques.get(camp.getPath());
 				if (valor == null || valor.isEmpty()) {
 					ServeiCamp campTipusDocument = camp.getCampPare();
 					if (campTipusDocument != null)
@@ -2210,11 +2210,11 @@ public class ConsultaServiceImpl implements ConsultaService {
 		}
 	}
 
-	private Map<String, String> getDadesEspecifiquesPeticioMultiple(
+	private Map<String, Object> getDadesEspecifiquesPeticioMultiple(
 			List<ServeiCamp> serveiCamps,
 			String[] camps,
 			String[] dades) {
-		Map<String, String> dadesEspecifiques = new HashMap<String, String>();
+		Map<String, Object> dadesEspecifiques = new HashMap<String, Object>();
 		for (ServeiCamp serveiCamp: serveiCamps) {
 			for (int i = 0; i < camps.length; i++) {
 				if (camps[i].equals(serveiCamp.getPath())) {

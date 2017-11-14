@@ -227,7 +227,7 @@ public class ScspHelper implements ApplicationContextAware, MessageSourceAware {
 		}
 	}
 
-	public Map<String, String> getDadesEspecifiquesPeticio(
+	public Map<String, Object> getDadesEspecifiquesPeticio(
 			String idPeticion,
 			String idSolicitud) throws Exception {
 		LOGGER.debug("Consulta map de dades específiques petició (" +
@@ -238,7 +238,7 @@ public class ScspHelper implements ApplicationContextAware, MessageSourceAware {
 						idPeticion,
 						idSolicitud));
 	}
-	public Map<String, String> getDadesEspecifiquesResposta(
+	public Map<String, Object> getDadesEspecifiquesResposta(
 			String idPeticion,
 			String idSolicitud) throws Exception {
 		LOGGER.debug("Consulta map de dades específiques resposta (" +

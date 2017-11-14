@@ -91,9 +91,9 @@ public class XmlHelper {
 		return tree;
 	}
 
-	public Map<String, String> getDadesEspecifiquesXml(
+	public Map<String, Object> getDadesEspecifiquesXml(
 			String xmlPeticion) throws Exception {
-		Map<String, String> dades = new HashMap<String, String>();
+		Map<String, Object> dades = new HashMap<String, Object>();
 		if (xmlPeticion != null) {
 			Document doc = xmlToDocument(
 					new ByteArrayInputStream(xmlPeticion.getBytes()));
@@ -112,7 +112,7 @@ public class XmlHelper {
 
 	public Element crearDadesEspecifiques(
 			Servicio servicio,
-			Map<String, String> dadesEspecifiques) throws Exception {
+			Map<String, Object> dadesEspecifiques) throws Exception {
 		DocumentBuilderFactory fac = DocumentBuilderFactory.newInstance();
 		fac.setNamespaceAware(true);
 		Document doc = fac.newDocumentBuilder().newDocument();
@@ -123,31 +123,62 @@ public class XmlHelper {
 		if (dadesEspecifiques != null) {
 			for (Node<DadesEspecifiquesNode> node: getArbrePerDadesEspecifiques(servicio).toList()) {
 				String path = node.getData().getPath().substring(1);
-				String valor = dadesEspecifiques.get(path);
-				if (valor != null && valor.length() > 0) {
-					String[] pathParts = path.substring("DatosEspecificos/".length()).split("/");
-					Element elementActual = datosEspecificos;
-					for (String pathPart: pathParts) {
-						NodeList nodeList = elementActual.getElementsByTagName(pathPart);
-						Element elementTrobat = null;
-						if (nodeList.getLength() > 0) {
-							for (int i = 0; i < nodeList.getLength(); i++) {
-								org.w3c.dom.Node n = nodeList.item(i);
-								if (n.getParentNode().equals(elementActual)) {
-									elementTrobat = (Element)n;
-									break;
+				Object preValor = dadesEspecifiques.get(path);
+				if (preValor instanceof String) {
+					String valor = (String)preValor;
+					if (valor != null && valor.length() > 0) {
+						String[] pathParts = path.substring("DatosEspecificos/".length()).split("/");
+						Element elementActual = datosEspecificos;
+						for (String pathPart: pathParts) {
+							NodeList nodeList = elementActual.getElementsByTagName(pathPart);
+							Element elementTrobat = null;
+							if (nodeList.getLength() > 0) {
+								for (int i = 0; i < nodeList.getLength(); i++) {
+									org.w3c.dom.Node n = nodeList.item(i);
+									if (n.getParentNode().equals(elementActual)) {
+										elementTrobat = (Element)n;
+										break;
+									}
 								}
 							}
+							if (elementTrobat == null) {
+								Element nou = doc.createElement(pathPart);
+								elementActual.appendChild(nou);
+								elementActual = nou;
+							} else {
+								elementActual = elementTrobat;
+							}
 						}
-						if (elementTrobat == null) {
-							Element nou = doc.createElement(pathPart);
-							elementActual.appendChild(nou);
-							elementActual = nou;
-						} else {
-							elementActual = elementTrobat;
-						}
+						elementActual.setTextContent(valor);
 					}
-					elementActual.setTextContent(valor);
+				} else if (preValor instanceof Document){
+					if (preValor != null) {
+						Document valor = (Document)preValor;
+						String[] pathParts = path.substring("DatosEspecificos/".length()).split("/");
+						Element elementActual = datosEspecificos;
+						for (String pathPart: pathParts) {
+							NodeList nodeList = elementActual.getElementsByTagName(pathPart);
+							Element elementTrobat = null;
+							if (nodeList.getLength() > 0) {
+								for (int i = 0; i < nodeList.getLength(); i++) {
+									org.w3c.dom.Node n = nodeList.item(i);
+									if (n.getParentNode().equals(elementActual)) {
+										elementTrobat = (Element)n;
+										break;
+									}
+								}
+							}
+							if (elementTrobat == null) {
+								Element nou = doc.createElement(pathPart);
+								elementActual.appendChild(nou);
+								elementActual = nou;
+							} else {
+								elementActual = elementTrobat;
+							}
+						}
+						org.w3c.dom.Node auxNode = (org.w3c.dom.Node) doc.importNode(valor.getDocumentElement(), true);
+						elementActual.appendChild(auxNode);
+					}
 				}
 			}
 		}
@@ -326,7 +357,7 @@ public class XmlHelper {
 	private void recorrerDocument(
 			org.w3c.dom.Node node,
 			List<String> path,
-			Map<String, String> dades,
+			Map<String, Object> dades,
 			boolean incloureAlPath) {
 		if (incloureAlPath) {
 			if (node.getPrefix() != null) {
