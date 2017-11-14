@@ -33,7 +33,7 @@ public class GeneracioDadesEspecifiquesTest {
 		Servicio servicio = new Servicio();
 		servicio.setCodCertificado("AEATIAE");
 		servicio.setVersionEsquema("V3");
-		Map<String, String> dades = new HashMap<String, String>();
+		Map<String, Object> dades = new HashMap<String, Object>();
 		dades.put(
 				"DatosEspecificos/Solicitud/Titular/Documentacion/Tipo",
 				"NIF");

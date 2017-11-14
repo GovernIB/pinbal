@@ -45,6 +45,7 @@
 
 	<c:url value="/consulta/${servei.codi}/plantilla/Excel" var="downloadPlantillaExcelUrl"/>
 	<c:url value="/consulta/${servei.codi}/plantilla/CSV" var="downloadPlantillaCsvUrl"/>
+	<c:url value="/consulta/${servei.codi}/plantilla/ODS" var="downloadPlantillaOdsUrl"/>
 	<c:url value="/consulta/${servei.codi}/new" var="formAction"/>
 	<form:form action="${formAction}" method="post" cssClass="form-horizontal" commandName="consultaCommand" enctype="multipart/form-data">
 		<form:hidden path="serveiCodi"/>
@@ -334,6 +335,9 @@
 								</a>
 								<a href="${downloadPlantillaCsvUrl}" class="btn btn-default btn-editar" title="<spring:message code="consulta.form.camp.multiple.plantilla.csv" />">
 									<i class="icon-download-alt"></i> <spring:message code="consulta.form.camp.multiple.fitxer.csv" />
+								</a>
+								<a href="${downloadPlantillaOdsUrl}" class="btn btn-default btn-editar" title="<spring:message code="consulta.form.camp.multiple.plantilla.ods" />">
+									<i class="icon-download-alt"></i> <spring:message code="consulta.form.camp.multiple.fitxer.ods" />
 								</a>
 							</div>
 						</div>
