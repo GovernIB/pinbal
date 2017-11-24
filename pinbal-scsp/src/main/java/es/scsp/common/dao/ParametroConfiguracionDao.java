@@ -13,7 +13,7 @@ import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Component;
 
 import es.caib.pinbal.scsp.PropertiesHelper;
-import es.scsp.common.domain.ParametroConfiguracion;
+import es.scsp.common.domain.core.ParametroConfiguracion;
 
 /**
  * Dao per a obtenir els paràmetres de la configuració de PINBAL amb

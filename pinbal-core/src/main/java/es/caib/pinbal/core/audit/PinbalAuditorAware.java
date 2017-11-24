@@ -21,21 +21,16 @@ import es.caib.pinbal.core.repository.UsuariRepository;
  * 
  * @author Limit Tecnologies <limit@limit.es>
  */
-public class BasicAuditorAware implements AuditorAware<Usuari> {
-
-	private static final BasicAuditorAware _inst = new BasicAuditorAware();
-
-	public static BasicAuditorAware getInstance() {
-		return _inst;
-	}
+public class PinbalAuditorAware implements AuditorAware<Usuari> {
 
 	@Resource
 	private UsuariRepository usuariRepository;
 
 	@Override
 	public Usuari getCurrentAuditor() {
-		String auditorActual = getCurrentUserName();
-		LOGGER.debug("Obtenint l'usuari auditor per a l'usuari (codi=" + getCurrentUserName() + ")");
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		String auditorActual = (auth != null) ? auth.getName() : null;
+		LOGGER.debug("Obtenint l'usuari auditor per a l'usuari (codi=" + auditorActual + ")");
 		if (auditorActual == null) {
 			LOGGER.debug("Auditor actual: null");
 			return null;
@@ -45,11 +40,6 @@ public class BasicAuditorAware implements AuditorAware<Usuari> {
 		}
 	}
 
-	private String getCurrentUserName() {
-		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-		return (auth != null) ? auth.getName() : null;
-	}
-
-	private static final Logger LOGGER = LoggerFactory.getLogger(BasicAuditorAware.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(PinbalAuditorAware.class);
 
 }

@@ -6,6 +6,7 @@ package es.caib.pinbal.core.helper;
 import java.util.Date;
 
 import org.joda.time.DateTime;
+import org.springframework.stereotype.Component;
 
 import es.caib.pinbal.core.dto.ClauPrivadaDto;
 import es.caib.pinbal.core.dto.ConsultaDto;
@@ -33,6 +34,7 @@ import ma.glasnost.orika.metadata.Type;
  * 
  * @author Limit Tecnologies <limit@limit.es>
  */
+@Component
 public class DtoMappingHelper {
 
 	private MapperFactory mapperFactory;

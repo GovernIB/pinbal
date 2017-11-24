@@ -9,6 +9,6 @@
         </dependent-module>
         <property name="java-output-path" value="/pinbal-webapp/target/classes"/>
         <property name="context-root" value="pinbal"/>
-        <property name="component.exclusion.patterns" value="META-INF/context.xml"/>
+        <property name="component.exclusion.patterns" value="META-INF/context.xml,WEB-INF/classes/log4j.xml"/>
     </wb-module>
 </project-modules>

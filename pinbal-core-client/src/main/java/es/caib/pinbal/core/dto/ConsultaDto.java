@@ -45,7 +45,9 @@ public class ConsultaDto implements Serializable {
 		NIF,
 		DNI,
 		Passaport,
-		NIE
+		NIE,
+		NombreIdentificacio,
+		Altres
 	}
 
 	private Long id;

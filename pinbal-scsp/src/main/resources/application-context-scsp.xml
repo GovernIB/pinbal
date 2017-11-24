@@ -47,34 +47,29 @@
 	<!-- ==================================================================== -->
 	<!-- Configuracion de acceso base de datos.                               -->
 	<!-- ==================================================================== -->
-	<bean id="sessionFactory" class="es.scsp.common.core.SessionFactoryManager">
+	<bean id="sessionFactory" class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
 		<property name="dataSource" ref="dataSource" />
-		<property name="mappingResources">
-			<list>
-				<value>/es/scsp/common/domain/CacheCertificado.hbm.xml</value>
-				<value>/es/scsp/common/domain/ClavePrivada.hbm.xml</value>
-				<value>/es/scsp/common/domain/ClavePublica.hbm.xml</value>
-				<value>/es/scsp/common/domain/CodigoError.hbm.xml</value> 
-				<value>/es/scsp/common/domain/EmisorCertificado.hbm.xml</value>
-				<value>/es/scsp/common/domain/EstadoPeticion.hbm.xml</value>
-				<value>/es/scsp/common/domain/Modulo.hbm.xml</value>
-				<value>/es/scsp/common/domain/ModuloConfiguracion.hbm.xml</value> 
-				<value>/es/scsp/common/domain/OrganismoCesionario.hbm.xml</value>
-				<value>/es/scsp/common/domain/ParametroConfiguracion.hbm.xml</value>
-				<value>/es/scsp/common/domain/PeticionRespuesta.hbm.xml</value>
-				<value>/es/scsp/common/domain/SecuenciaIdPeticion.hbm.xml</value>
-				<value>/es/scsp/common/domain/ServicioOrganismoCesionario.hbm.xml</value>
-				<value>/es/scsp/common/domain/Servicio.hbm.xml</value>
-				<value>/es/scsp/common/domain/Token.hbm.xml</value>
-				<value>/es/scsp/common/domain/TipoMensaje.hbm.xml</value>
-				<value>/es/scsp/common/domain/Transmision.hbm.xml</value>
-			</list>
-		</property>
+		<property name="packagesToScan" value="es.scsp.common.domain.core.**,es.scsp.common.domain.req.**,es.scsp.common.domain.id.**" />
 		<property name="hibernateProperties">
 			<value>
 				hibernate.dialect=${config:es.caib.pinbal.hibernate.dialect}
-				hibernate.current_session_context_class=org.springframework.orm.hibernate3.SpringSessionContext
-			</value>
+				hibernate.hbm2ddl.auto=${config:es.caib.pinbal.hibernate.hbm2ddl.auto}
+				hibernate.show_sql=${config:es.caib.pinbal.hibernate.show_sql}
+				hibernate.transaction.factory_class=org.hibernate.transaction.JDBCTransactionFactory
+				hibernate.current_session_context_class=thread
+				hibernate.dbcp.enabled=false
+				hibernate.dbcp.initialSize=10
+				hibernate.dbcp.maxActive=50
+				hibernate.dbcp.minIdle=15
+				hibernate.dbcp.maxIdle=50
+				hibernate.dbcp.maxWait=5000
+				hibernate.c3p0.idle_test_period=300
+				hibernate.c3p0.timeout=500
+				hibernate.c3p0.max_size=25
+				hibernate.c3p0.min_size=3
+				hibernate.c3p0.validate.in=true
+				hibernate.c3p0.validate.out=true
+      		</value>
 		</property>
 	</bean>
 

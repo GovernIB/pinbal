@@ -10,16 +10,16 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
+import javax.persistence.Index;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import javax.persistence.Table;
 import javax.persistence.Version;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
-import org.hibernate.annotations.Index;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import es.caib.pinbal.core.audit.PinbalAuditable;
-import es.caib.pinbal.core.audit.PinbalAuditingEntityListener;
 
 /**
  * Classe de model de dades que conté la informació d'un camp per
@@ -28,12 +28,11 @@ import es.caib.pinbal.core.audit.PinbalAuditingEntityListener;
  * @author Limit Tecnologies <limit@limit.es>
  */
 @Entity
-@Table(name = "pbl_servei_camp_grup")
-@org.hibernate.annotations.Table(
-		appliesTo = "pbl_servei_camp_grup",
+@Table(
+		name = "pbl_servei_camp_grup",
 		indexes = {
-				@Index(name = "pbl_servei_campgr_servei_i", columnNames = {"servei_id"})})
-@EntityListeners(PinbalAuditingEntityListener.class)
+				@Index(name = "pbl_servei_campgr_servei_i", columnList = "servei_id")})
+@EntityListeners(AuditingEntityListener.class)
 public class ServeiCampGrup extends PinbalAuditable<Long> {
 
 	private static final long serialVersionUID = -6657066865382086237L;

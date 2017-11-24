@@ -6,7 +6,7 @@ package es.caib.pinbal.scsp;
 import es.caib.pinbal.scsp.XmlHelper.DadesEspecifiquesNode;
 import es.caib.pinbal.scsp.tree.Node;
 import es.caib.pinbal.scsp.tree.Tree;
-import es.scsp.common.domain.Servicio;
+import es.scsp.common.domain.core.Servicio;
 
 
 /**

@@ -7,6 +7,8 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
 import javax.persistence.FetchType;
+import javax.persistence.ForeignKey;
+import javax.persistence.Index;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
@@ -14,11 +16,9 @@ import javax.persistence.UniqueConstraint;
 import javax.persistence.Version;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
-import org.hibernate.annotations.ForeignKey;
-import org.hibernate.annotations.Index;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import es.caib.pinbal.core.audit.PinbalAuditable;
-import es.caib.pinbal.core.audit.PinbalAuditingEntityListener;
 
 /**
  * Classe de model de dades que conté la informació d'una parella procediment-servei.
@@ -28,20 +28,19 @@ import es.caib.pinbal.core.audit.PinbalAuditingEntityListener;
 @Entity
 @Table(	name = "pbl_procediment_servei",
 		uniqueConstraints = {
-				@UniqueConstraint(columnNames={"procediment_id", "servei_id"})})
-@org.hibernate.annotations.Table(
-		appliesTo = "pbl_procediment_servei",
+				@UniqueConstraint(columnNames={"procediment_id", "servei_id"})},
 		indexes = {
-				@Index(name = "pbl_procserv_proced_i", columnNames = {"procediment_id"}),
-				@Index(name = "pbl_procserv_servei_i", columnNames = {"servei_id"})})
-@EntityListeners(PinbalAuditingEntityListener.class)
+				@Index(name = "pbl_procserv_proced_i", columnList = "procediment_id"),
+				@Index(name = "pbl_procserv_servei_i", columnList = "servei_id")})
+@EntityListeners(AuditingEntityListener.class)
 public class ProcedimentServei extends PinbalAuditable<Long> {
 
 	private static final long serialVersionUID = -6657066865382086237L;
 
-	@ManyToOne(optional=false, fetch=FetchType.EAGER)
-	@JoinColumn(name="procediment_id")
-	@ForeignKey(name="pbl_proced_procserv_fk")
+	@ManyToOne(optional = false, fetch = FetchType.EAGER)
+	@JoinColumn(
+			name = "procediment_id",
+			foreignKey = @ForeignKey(name = "pbl_proced_procserv_fk"))
 	private Procediment procediment;
 
 	@Column(name = "servei_id", length = 64)

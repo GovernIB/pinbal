@@ -12,7 +12,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.ls.DOMImplementationLS;
 import org.w3c.dom.ls.LSSerializer;
 
-import es.scsp.common.domain.Servicio;
+import es.scsp.common.domain.core.Servicio;
 
 /**
  * Test per a fer consultes amb xpath de les dades dels DatosEspecificos.

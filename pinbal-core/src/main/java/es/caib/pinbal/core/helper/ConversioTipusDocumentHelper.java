@@ -14,6 +14,7 @@ import org.odftoolkit.odfdom.converter.core.ODFConverterException;
 import org.odftoolkit.odfdom.converter.pdf.PdfConverter;
 import org.odftoolkit.odfdom.converter.pdf.PdfOptions;
 import org.odftoolkit.odfdom.doc.OdfTextDocument;
+import org.springframework.stereotype.Component;
 
 import com.artofsolving.jodconverter.DefaultDocumentFormatRegistry;
 import com.artofsolving.jodconverter.DocumentConverter;
@@ -39,6 +40,7 @@ import com.lowagie.text.pdf.PdfWriter;
  * 
  * @author Limit Tecnologies <limit@limit.es>
  */
+@Component
 public class ConversioTipusDocumentHelper {
 
 	private static final String CONVERSIO_TIPUS_OPENOFFICE = "openoffice";

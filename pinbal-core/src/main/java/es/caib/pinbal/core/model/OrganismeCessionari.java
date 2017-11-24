@@ -22,8 +22,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
-
-import es.caib.pinbal.core.audit.PinbalAuditingEntityListener;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 /**
  * Classe de model de dades que conté la informació d'un
@@ -33,7 +32,7 @@ import es.caib.pinbal.core.audit.PinbalAuditingEntityListener;
  */
 @Entity
 @Table(name = "organismo_cesionario")
-@EntityListeners(PinbalAuditingEntityListener.class)
+@EntityListeners(AuditingEntityListener.class)
 public class OrganismeCessionari implements Serializable {
 	
 	@Id

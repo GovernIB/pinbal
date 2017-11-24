@@ -21,8 +21,7 @@ import javax.persistence.TemporalType;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.hibernate.annotations.ForeignKey;
-
-import es.caib.pinbal.core.audit.PinbalAuditingEntityListener;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 /**
  * Classe de model de dades que conté la informació d'una
@@ -32,7 +31,7 @@ import es.caib.pinbal.core.audit.PinbalAuditingEntityListener;
  */
 @Entity
 @Table(name = "core_clave_privada")
-@EntityListeners(PinbalAuditingEntityListener.class)
+@EntityListeners(AuditingEntityListener.class)
 public class ClauPrivada implements Serializable {
 	
 	@Id

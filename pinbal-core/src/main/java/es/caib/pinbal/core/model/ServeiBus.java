@@ -4,17 +4,17 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
 import javax.persistence.FetchType;
+import javax.persistence.ForeignKey;
+import javax.persistence.Index;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Version;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
-import org.hibernate.annotations.ForeignKey;
-import org.hibernate.annotations.Index;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import es.caib.pinbal.core.audit.PinbalAuditable;
-import es.caib.pinbal.core.audit.PinbalAuditingEntityListener;
 
 /**
  * Configuració per al bus de serveis per a redireccionar
@@ -23,12 +23,11 @@ import es.caib.pinbal.core.audit.PinbalAuditingEntityListener;
  * @author Limit Tecnologies <limit@limit.es>
  */
 @Entity
-@Table(	name = "pbl_servei_bus" )
-@org.hibernate.annotations.Table(
-		appliesTo = "pbl_servei_bus",
+@Table(
+		name = "pbl_servei_bus",
 		indexes = {
-				@Index(name = "pbl_servei_bus_servei_i", columnNames = {"servei_id"})})
-@EntityListeners(PinbalAuditingEntityListener.class)
+				@Index(name = "pbl_servei_bus_servei_i", columnList = "servei_id")})
+@EntityListeners(AuditingEntityListener.class)
 public class ServeiBus extends PinbalAuditable<Long> {
 
 	private static final long serialVersionUID = -348876812591122748L;
@@ -39,9 +38,10 @@ public class ServeiBus extends PinbalAuditable<Long> {
 	@Column(name = "url_desti", length = 255, nullable = false)
 	private String urlDesti;
 
-	@ManyToOne(optional=false, fetch=FetchType.EAGER)
-	@JoinColumn(name="entitat_id")
-	@ForeignKey(name="pbl_entitat_servbus_fk")
+	@ManyToOne(optional = false, fetch = FetchType.EAGER)
+	@JoinColumn(
+			name = "entitat_id",
+			foreignKey = @ForeignKey(name = "pbl_entitat_servbus_fk"))
 	private Entitat entitat;
 
 	@Version

@@ -16,12 +16,9 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import net.sf.jooreports.templates.DocumentTemplate;
-import net.sf.jooreports.templates.DocumentTemplateException;
-import net.sf.jooreports.templates.DocumentTemplateFactory;
-
 import org.springframework.context.MessageSource;
 import org.springframework.context.MessageSourceAware;
+import org.springframework.stereotype.Component;
 
 import es.caib.pinbal.core.model.ServeiJustificantCamp;
 import es.caib.pinbal.scsp.JustificantArbreHelper.ElementArbre;
@@ -30,12 +27,16 @@ import freemarker.core.NonStringException;
 import freemarker.template.TemplateException;
 import freemarker.template.TemplateExceptionHandler;
 import freemarker.template.TemplateModelException;
+import net.sf.jooreports.templates.DocumentTemplate;
+import net.sf.jooreports.templates.DocumentTemplateException;
+import net.sf.jooreports.templates.DocumentTemplateFactory;
 
 /**
  * Helper per a generar el justificant.
  * 
  * @author Limit Tecnologies <limit@limit.es>
  */
+@Component
 public class JustificantPlantillaHelper implements MessageSourceAware {
 
 	private static final String PLANTILLA_ODT_RESOURCE = "/es/caib/pinbal/core/template/justificant.odt";

@@ -30,12 +30,9 @@ import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.BeansException;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.MessageSource;
-import org.springframework.context.MessageSourceAware;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
@@ -70,16 +67,16 @@ import es.scsp.common.dao.ServicioOrganismoCesionarioDao;
 import es.scsp.common.dao.TipoMensajeDao;
 import es.scsp.common.dao.TokenDao;
 import es.scsp.common.dao.TransmisionDao;
-import es.scsp.common.domain.ClavePrivada;
-import es.scsp.common.domain.ClavePublica;
-import es.scsp.common.domain.EmisorCertificado;
-import es.scsp.common.domain.OrganismoCesionario;
-import es.scsp.common.domain.ParametroConfiguracion;
-import es.scsp.common.domain.PeticionRespuesta;
-import es.scsp.common.domain.Servicio;
-import es.scsp.common.domain.ServicioOrganismoCesionario;
-import es.scsp.common.domain.TipoMensaje;
-import es.scsp.common.domain.Token;
+import es.scsp.common.domain.core.ClavePrivada;
+import es.scsp.common.domain.core.ClavePublica;
+import es.scsp.common.domain.core.EmisorCertificado;
+import es.scsp.common.domain.core.OrganismoCesionario;
+import es.scsp.common.domain.core.ParametroConfiguracion;
+import es.scsp.common.domain.core.PeticionRespuesta;
+import es.scsp.common.domain.core.Servicio;
+import es.scsp.common.domain.core.TipoMensaje;
+import es.scsp.common.domain.core.Token;
+import es.scsp.common.domain.req.ServicioOrganismoCesionario;
 import es.scsp.common.exceptions.ScspException;
 import es.scsp.common.utils.DateUtils;
 import es.scsp.common.utils.StaticContextSupport;
@@ -89,7 +86,7 @@ import es.scsp.common.utils.StaticContextSupport;
  * 
  * @author Limit Tecnologies <limit@limit.es>
  */
-public class ScspHelper implements ApplicationContextAware, MessageSourceAware {
+public class ScspHelper {
 
 	private JustificantArbreHelper justificantArbrehelper;
 	private XmlHelper xmlHelper;
@@ -101,6 +98,12 @@ public class ScspHelper implements ApplicationContextAware, MessageSourceAware {
 	private EntityManager entityManager;
 
 
+
+	public ScspHelper(ApplicationContext applicationContext, MessageSource messageSource) {
+		super();
+		this.applicationContext = applicationContext;
+		this.messageSource = messageSource;
+	}
 
 	public String generarIdPeticion(
 			String serveiCodi) throws ScspException {
@@ -194,7 +197,7 @@ public class ScspHelper implements ApplicationContextAware, MessageSourceAware {
 			String idPeticion,
 			String idSolicitud) throws ScspException {
 		LOGGER.debug("Generant justificant de transmissió SCSP (idPeticion=" + idPeticion + ")");
-		es.scsp.common.domain.Transmision transmision = getTransmision(
+		es.scsp.common.domain.core.Transmision transmision = getTransmision(
 				idPeticion,
 				idSolicitud);
 		return getClienteUnico().generaJustificanteTransmision(
@@ -277,7 +280,7 @@ public class ScspHelper implements ApplicationContextAware, MessageSourceAware {
 				idPeticion);
 		if (peticionRespuesta != null) {
 			resposta.setRespostaData(peticionRespuesta.getFechaRespuesta());
-			es.scsp.common.domain.Transmision transmision = null;
+			es.scsp.common.domain.core.Transmision transmision = null;
 			if (!multiple) {
 				transmision = getTransmision(
 						idPeticion,
@@ -625,16 +628,6 @@ public class ScspHelper implements ApplicationContextAware, MessageSourceAware {
 		return buffer.toString();
 	}
 
-	@Override
-	public void setApplicationContext(
-			ApplicationContext applicationContext) throws BeansException {
-		this.applicationContext = applicationContext;
-	}
-	@Override
-	public void setMessageSource(MessageSource messageSource) {
-		this.messageSource = messageSource;
-	}
-
 
 
 	private Peticion crearPeticion(
@@ -774,13 +767,14 @@ public class ScspHelper implements ApplicationContextAware, MessageSourceAware {
 	}
 
 	private String getCifEmisor(String certificado) {
-		ServicioDao servicioDao = (ServicioDao)StaticContextSupport.getContextInstance().getBean("servicioDao");
+		configurarAccesScsp();
+		ServicioDao servicioDao = (ServicioDao)applicationContext.getBean("servicioDao");
 		Servicio servicio = servicioDao.select(certificado);
 		return servicio.getEmisor().getCif();
 	}
 	private String getNombreEmisor(String certificado) {
 		String cifEmisor = getCifEmisor(certificado);
-		EmisorCertificadoDao emisorCertificadoDao = (EmisorCertificadoDao)StaticContextSupport.getContextInstance().getBean("emisorCertificadoDao");
+		EmisorCertificadoDao emisorCertificadoDao = (EmisorCertificadoDao)applicationContext.getBean("emisorCertificadoDao");
 		EmisorCertificado emisorCertificado = emisorCertificadoDao.selectByCif(cifEmisor);
 		return emisorCertificado.getNombre();
 	}
@@ -803,11 +797,11 @@ public class ScspHelper implements ApplicationContextAware, MessageSourceAware {
 		resultat.setEstatCodi(peticionRespuesta.getEstado());
 		resultat.setErrorRecepcio(!peticionRespuesta.getEstado().startsWith("00"));
 		resultat.setEstatDescripcio(peticionRespuesta.getError());
-		List<es.scsp.common.domain.Transmision> transmisiones = getTransmisionDao().select(peticionRespuesta);
+		List<es.scsp.common.domain.core.Transmision> transmisiones = getTransmisionDao().select(peticionRespuesta);
 		if (transmisiones != null) {
 			String[] idsSolicituds = new String[transmisiones.size()];
 			int i = 0;
-			for (es.scsp.common.domain.Transmision transmision: transmisiones) {
+			for (es.scsp.common.domain.core.Transmision transmision: transmisiones) {
 				idsSolicituds[i++] = transmision.getIdSolicitud();
 			}
 			resultat.setIdsSolicituds(idsSolicituds);
@@ -815,20 +809,20 @@ public class ScspHelper implements ApplicationContextAware, MessageSourceAware {
 		return resultat;
 	}
 
-	private es.scsp.common.domain.Transmision getTransmision(
+	private es.scsp.common.domain.core.Transmision getTransmision(
 			String idPeticion,
 			String idSolicitud) throws ScspException {
 		PeticionRespuesta peticionRespuesta = getPeticionRespuestaDao().select(idPeticion);
-		es.scsp.common.domain.Transmision transmision = getTransmisionDao().select(
+		es.scsp.common.domain.core.Transmision transmision = getTransmisionDao().select(
 				peticionRespuesta,
 				idSolicitud);
 		return transmision;
 	}
 
-	private es.scsp.common.domain.Transmision getPrimeraTransmision(
+	private es.scsp.common.domain.core.Transmision getPrimeraTransmision(
 			String idPeticion) throws ScspException {
 		PeticionRespuesta peticionRespuesta = getPeticionRespuestaDao().select(idPeticion);
-		List<es.scsp.common.domain.Transmision> transmisions = getTransmisionDao().select(peticionRespuesta);
+		List<es.scsp.common.domain.core.Transmision> transmisions = getTransmisionDao().select(peticionRespuesta);
 		if (transmisions != null && !transmisions.isEmpty())
 			return transmisions.get(0);
 		else
@@ -869,7 +863,7 @@ public class ScspHelper implements ApplicationContextAware, MessageSourceAware {
 	private String getXmlTransmisionDatos(
 			String idPeticion,
 			String idSolicitud) throws ScspException {
-		es.scsp.common.domain.Transmision transmision = getTransmision(
+		es.scsp.common.domain.core.Transmision transmision = getTransmision(
 				idPeticion,
 				idSolicitud);
 		if (transmision != null)
@@ -955,8 +949,8 @@ public class ScspHelper implements ApplicationContextAware, MessageSourceAware {
 		return xmlHelper;
 	}
 
-	private boolean accesScspConfigurat = false;
-	private void configurarAccesScsp() {
+	private static boolean accesScspConfigurat = false;
+	private synchronized void configurarAccesScsp() {
 		try {
 			if (!accesScspConfigurat) {
 				// Configuració del StaticContextSupport
@@ -964,7 +958,8 @@ public class ScspHelper implements ApplicationContextAware, MessageSourceAware {
 				accesScspConfigurat = true;
 			}
 		} catch (ScspException ex) {
-			LOGGER.error("No s'ha pogut configurar el StaticContextSupport", ex);
+			// StaticContextSupport ja estava configurat
+			accesScspConfigurat = true;
 		}
 	}
 

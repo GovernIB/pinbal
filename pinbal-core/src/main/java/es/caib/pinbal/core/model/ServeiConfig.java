@@ -8,9 +8,9 @@ import javax.persistence.Table;
 import javax.persistence.Version;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import es.caib.pinbal.core.audit.PinbalAuditable;
-import es.caib.pinbal.core.audit.PinbalAuditingEntityListener;
 
 /**
  * Dades d'un camp per al formulari de configuracio d'un servei.
@@ -19,7 +19,7 @@ import es.caib.pinbal.core.audit.PinbalAuditingEntityListener;
  */
 @Entity
 @Table(	name = "pbl_servei_config" )
-@EntityListeners(PinbalAuditingEntityListener.class)
+@EntityListeners(AuditingEntityListener.class)
 public class ServeiConfig extends PinbalAuditable<Long> {
 
 	public enum EntitatTipus {

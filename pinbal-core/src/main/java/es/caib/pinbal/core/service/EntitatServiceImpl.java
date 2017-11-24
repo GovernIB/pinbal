@@ -11,6 +11,11 @@ import javax.annotation.Resource;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeansException;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
+import org.springframework.context.MessageSource;
+import org.springframework.context.MessageSourceAware;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -32,7 +37,7 @@ import es.caib.pinbal.core.service.exception.EntitatNotFoundException;
 import es.caib.pinbal.core.service.exception.EntitatServeiNotFoundException;
 import es.caib.pinbal.core.service.exception.ServeiNotFoundException;
 import es.caib.pinbal.scsp.ScspHelper;
-import es.scsp.common.domain.Servicio;
+import es.scsp.common.domain.core.Servicio;
 
 /**
  * Implementació de EntitatService que es comunica amb la base de dades emprant
@@ -41,7 +46,7 @@ import es.scsp.common.domain.Servicio;
  * @author Limit Tecnologies <limit@limit.es>
  */
 @Service
-public class EntitatServiceImpl implements EntitatService {
+public class EntitatServiceImpl implements EntitatService, ApplicationContextAware, MessageSourceAware {
 
 	@Resource
 	private EntitatRepository entitatRepository;
@@ -52,7 +57,9 @@ public class EntitatServiceImpl implements EntitatService {
 
 	@Resource
 	private DtoMappingHelper dtoMappingHelper;
-	@Resource
+
+	private ApplicationContext applicationContext;
+	private MessageSource messageSource;
 	private ScspHelper scspHelper;
 
 
@@ -66,7 +73,7 @@ public class EntitatServiceImpl implements EntitatService {
 				creada.getNom(),
 				creada.getCif(),
 				EntitatTipus.valueOf(creada.getTipus().toString())).build();
-		scspHelper.organismoCesionarioSave(
+		getScspHelper().organismoCesionarioSave(
 				creada.getCif(),
 				creada.getNom(),
 				new Date(),
@@ -86,7 +93,7 @@ public class EntitatServiceImpl implements EntitatService {
 			LOGGER.debug("No s'ha trobat l'entitat (id=" + entitatId + ")");
 			throw new EntitatNotFoundException();
 		}
-		scspHelper.organismoCesionarioDelete(esborrada.getCif());
+		getScspHelper().organismoCesionarioDelete(esborrada.getCif());
 		entitatRepository.delete(esborrada);
 		return dtoMappingHelper.getMapperFacade().map(
 				esborrada,
@@ -152,13 +159,13 @@ public class EntitatServiceImpl implements EntitatService {
 			LOGGER.debug("No s'ha trobat l'entitat (id=" + modificada.getId() + ")");
 			throw new EntitatNotFoundException();
 		}
-		scspHelper.organismoCesionarioDelete(entitat.getCif());
+		getScspHelper().organismoCesionarioDelete(entitat.getCif());
 		entitat.update(
 				modificada.getCodi(),
 				modificada.getNom(),
 				modificada.getCif(),
 				EntitatTipus.valueOf(modificada.getTipus().toString()));
-		scspHelper.organismoCesionarioSave(
+		getScspHelper().organismoCesionarioSave(
 				entitat.getCif(),
 				entitat.getNom(),
 				entitat.getCreatedDate().toDate(),
@@ -180,7 +187,7 @@ public class EntitatServiceImpl implements EntitatService {
 			throw new EntitatNotFoundException();
 		}
 		entitat.updateActiva(activa);
-		scspHelper.organismoCesionarioSave(
+		getScspHelper().organismoCesionarioSave(
 				entitat.getCif(),
 				entitat.getNom(),
 				entitat.getCreatedDate().toDate(),
@@ -200,7 +207,7 @@ public class EntitatServiceImpl implements EntitatService {
 			LOGGER.debug("No s'ha trobat l'entitat (id=" + id + ")");
 			throw new EntitatNotFoundException();
 		}
-		if (scspHelper.getServicio(serveiCodi) == null) {
+		if (getScspHelper().getServicio(serveiCodi) == null) {
 			LOGGER.debug("No s'ha trobat el servei (codi=" + serveiCodi + ")");
 			throw new ServeiNotFoundException();
 		}
@@ -242,7 +249,7 @@ public class EntitatServiceImpl implements EntitatService {
 	@Override
 	public List<EntitatDto> findDisponiblesPerRedireccionsBus(String serveiCodi) throws ServeiNotFoundException {
 		LOGGER.debug("Consulta de les entitats disponibles per a configurar les redireccions del bus (serveiCodi=" + serveiCodi + ")");
-		Servicio servicio = scspHelper.getServicio(serveiCodi);
+		Servicio servicio = getScspHelper().getServicio(serveiCodi);
 		if (servicio == null) {
 			LOGGER.debug("No s'ha trobat el servicio (codi=" + serveiCodi + ")");
 			throw new ServeiNotFoundException();
@@ -279,6 +286,16 @@ public class EntitatServiceImpl implements EntitatService {
 		this.entitatServeiRepository = entitatServeiRepository;
 	}
 
+	@Override
+	public void setApplicationContext(
+			ApplicationContext applicationContext) throws BeansException {
+		this.applicationContext = applicationContext;
+	}
+	@Override
+	public void setMessageSource(MessageSource messageSource) {
+		this.messageSource = messageSource;
+	}
+
 
 
 	private void actualitzarServeisScspActiusEntitat(
@@ -289,9 +306,18 @@ public class EntitatServiceImpl implements EntitatService {
 		for (int i = 0; i < serveisActius.length; i++) {
 			serveisActius[i] = entitatServeis.get(i).getServei();
 		}
-		scspHelper.actualitzarServiciosActivosOrganismoCesionario(
+		getScspHelper().actualitzarServiciosActivosOrganismoCesionario(
 				entitat.getCif(),
 				serveisActius);
+	}
+
+	private ScspHelper getScspHelper() {
+		if (scspHelper == null) {
+			scspHelper = new ScspHelper(
+					applicationContext,
+					messageSource);
+		}
+		return scspHelper;
 	}
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(EntitatServiceImpl.class);

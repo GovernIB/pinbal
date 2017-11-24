@@ -24,9 +24,10 @@ import es.scsp.client.ClienteUnico;
 import es.scsp.common.dao.ParametroConfiguracionDao;
 import es.scsp.common.dao.PeticionRespuestaDao;
 import es.scsp.common.dao.ServicioDao;
-import es.scsp.common.domain.ParametroConfiguracion;
-import es.scsp.common.domain.PeticionRespuesta;
-import es.scsp.common.domain.Servicio;
+import es.scsp.common.domain.core.ParametroConfiguracion;
+import es.scsp.common.domain.core.PeticionRespuesta;
+import es.scsp.common.domain.core.Servicio;
+import es.scsp.common.exceptions.ScspException;
 
 /**
  * Modificació del PollingTask de les llibreries SCSP per a
@@ -170,6 +171,26 @@ import es.scsp.common.domain.Servicio;
 		log.error("Mensaje: " + e.getMessage());
 		log.error("StackTrace", e);
 		log.error("=========================================================");
+		try {
+			PeticionRespuesta peticionRespuestaaux = this.peticionRespuestaDao.select(peticionRespuesta.getIdPeticion());
+			if ((e instanceof ScspException)) {
+				ScspException se = (ScspException)e;
+				if (se.getScspCode().equals("0002")) {
+					log.warn("La excepción recibida posee estado 0002, implica un error en comunicaciones y reseteo posterior de estado.");
+				} else {
+					peticionRespuestaaux.setError(se.getMessage());
+				}
+				peticionRespuestaaux.setEstado(se.getScspCode());
+			} else {
+				peticionRespuestaaux.setError("0502");
+			}
+			this.peticionRespuestaDao.save(peticionRespuestaaux);
+		} catch (ScspException ex) {
+			log.error("=========================================================");
+			log.error("Error al actualizar en base de datos el estado de error de la peticion: ");
+			log.error(ex);
+			log.error("=========================================================");
+		}
 	}
 
 }

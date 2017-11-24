@@ -11,6 +11,11 @@ import javax.annotation.Resource;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeansException;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
+import org.springframework.context.MessageSource;
+import org.springframework.context.MessageSourceAware;
 import org.springframework.security.acls.domain.BasePermission;
 import org.springframework.security.acls.model.MutableAclService;
 import org.springframework.security.acls.model.Permission;
@@ -74,10 +79,10 @@ import es.caib.pinbal.scsp.ScspHelper;
 import es.caib.pinbal.scsp.XmlHelper.DadesEspecifiquesNode;
 import es.caib.pinbal.scsp.tree.Node;
 import es.caib.pinbal.scsp.tree.Tree;
-import es.scsp.common.domain.ClavePrivada;
-import es.scsp.common.domain.ClavePublica;
-import es.scsp.common.domain.EmisorCertificado;
-import es.scsp.common.domain.Servicio;
+import es.scsp.common.domain.core.ClavePrivada;
+import es.scsp.common.domain.core.ClavePublica;
+import es.scsp.common.domain.core.EmisorCertificado;
+import es.scsp.common.domain.core.Servicio;
 
 /**
  * Implementació dels mètodes per a interactuar amb les funcionalitats SCSP.
@@ -85,7 +90,7 @@ import es.scsp.common.domain.Servicio;
  * @author Limit Tecnologies <limit@limit.es>
  */
 @Service
-public class ServeiServiceImpl implements ServeiService {
+public class ServeiServiceImpl implements ServeiService, ApplicationContextAware, MessageSourceAware {
 
 	public static final Locale DEFAULT_TRADUCCIO_LOCALE = new Locale("ca", "ES");
 
@@ -111,8 +116,6 @@ public class ServeiServiceImpl implements ServeiService {
 	@Resource
 	private ServeiHelper serveiHelper;
 	@Resource
-	private ScspHelper scspHelper;
-	@Resource
 	private PluginHelper pluginHelper;
 	@Resource
 	private DtoMappingHelper dtoMappingHelper;
@@ -122,13 +125,17 @@ public class ServeiServiceImpl implements ServeiService {
 	@Resource
 	private MutableAclService aclService;
 
+	private ApplicationContext applicationContext;
+	private MessageSource messageSource;
+	private ScspHelper scspHelper;
+
 
 
 	@Transactional
 	@Override
 	public ServeiDto save(ServeiDto servei) {
 		LOGGER.debug("Guardant dades per al servicio SCSP (codi=" + servei.getCodi() + ")");
-		scspHelper.saveServicio(toServicioScsp(servei));
+		getScspHelper().saveServicio(toServicioScsp(servei));
 		ServeiConfig serveiConfig = serveiConfigRepository.findByServei(servei.getCodi());
 		// Actualitza la configuració del servei
 		String rolAntic = null;
@@ -203,17 +210,17 @@ public class ServeiServiceImpl implements ServeiService {
 	@Override
 	public ServeiDto delete(String serveiCodi) throws ServeiNotFoundException, ServeiAmbConsultesException {
 		LOGGER.debug("Esborrant dades per al servicio SCSP (codi=" + serveiCodi + ")");
-		Servicio servicio = scspHelper.getServicio(serveiCodi);
+		Servicio servicio = getScspHelper().getServicio(serveiCodi);
 		if (servicio == null) {
 			LOGGER.debug("No s'ha trobat el servicio SCSP (codi=" + serveiCodi + ")");
 			throw new ServeiNotFoundException();
 		}
-		if (scspHelper.servicioHasConsultes(serveiCodi)) {
+		if (getScspHelper().servicioHasConsultes(serveiCodi)) {
 			LOGGER.debug("El servicio SCSP te consultes realitzades (codi=" + serveiCodi + ")");
 			throw new ServeiAmbConsultesException();
 		}
 		ServeiDto servei = toServeiDto(servicio);
-		scspHelper.deleteServicio(serveiCodi);
+		getScspHelper().deleteServicio(serveiCodi);
 		ServeiConfig serveiConfig = serveiConfigRepository.findByServei(serveiCodi);
 		if (serveiConfig != null)
 			serveiConfigRepository.delete(serveiConfig);
@@ -225,7 +232,7 @@ public class ServeiServiceImpl implements ServeiService {
 	public ServeiDto findAmbCodiPerAdminORepresentant(
 			String serveiCodi) throws ServeiNotFoundException {
 		LOGGER.debug("Obtenint informació del servicio (codi=" + serveiCodi + ") per a administrador o representant");
-		Servicio servicio = scspHelper.getServicio(serveiCodi);
+		Servicio servicio = getScspHelper().getServicio(serveiCodi);
 		if (servicio != null) {
 			return toServeiDto(servicio);
 		} else {
@@ -240,7 +247,7 @@ public class ServeiServiceImpl implements ServeiService {
 			Long entitatId,
 			String serveiCodi) throws ServeiNotFoundException {
 		LOGGER.debug("Obtenint informació del servicio (codi=" + serveiCodi + ") per al delegat");
-		Servicio servicio = scspHelper.getServicio(serveiCodi);
+		Servicio servicio = getScspHelper().getServicio(serveiCodi);
 		if (servicio != null) {
 			ServeiConfig serveiConfig = serveiConfigRepository.findByServei(serveiCodi);
 			if (serveiConfig != null && serveiConfig.getRoleName() != null && !serveiConfig.getRoleName().isEmpty()) {
@@ -272,7 +279,7 @@ public class ServeiServiceImpl implements ServeiService {
 	public List<ServeiDto> findActius() {
 		LOGGER.debug("Cercant els servicios actius");
 		List<ServeiDto> resposta = new ArrayList<ServeiDto>();
-		List<Servicio> servicios = scspHelper.findServicioAll();
+		List<Servicio> servicios = getScspHelper().findServicioAll();
 		for (Servicio servicio : servicios)
 			resposta.add(toServeiDto(servicio));
 		return resposta;
@@ -290,7 +297,7 @@ public class ServeiServiceImpl implements ServeiService {
 			throw new EntitatNotFoundException();
 		}
 		List<ServeiDto> resposta = new ArrayList<ServeiDto>();
-		List<Servicio> servicios = scspHelper.findServicioAll();
+		List<Servicio> servicios = getScspHelper().findServicioAll();
 		for (Servicio servicio : servicios) {
 			boolean trobat = false;
 			for (String servei : entitat.getServeis()) {
@@ -325,7 +332,7 @@ public class ServeiServiceImpl implements ServeiService {
 				entitatId,
 				procedimentId);
 		List<ServeiDto> resposta = new ArrayList<ServeiDto>();
-		List<Servicio> servicios = scspHelper.findServicioAll();
+		List<Servicio> servicios = getScspHelper().findServicioAll();
 		for (Servicio servicio : servicios) {
 			boolean trobat = false;
 			for (ProcedimentServei procedimentServei : procedimentServeis) {
@@ -376,7 +383,7 @@ public class ServeiServiceImpl implements ServeiService {
 			        		ProcedimentDto.class));
 			psd.setServei(
 					toServeiDto(
-							scspHelper.getServicio(
+							getScspHelper().getServicio(
 									procedimentServei.getServei())));
 			resposta.add(psd);
 		}
@@ -414,7 +421,7 @@ public class ServeiServiceImpl implements ServeiService {
 				auth);
 		List<ServeiDto> resposta = new ArrayList<ServeiDto>();
 		for (String servei: permesos)
-			resposta.add(toServeiDto(scspHelper.getServicio(servei)));
+			resposta.add(toServeiDto(getScspHelper().getServicio(servei)));
 		return resposta;
 	}
 
@@ -423,7 +430,7 @@ public class ServeiServiceImpl implements ServeiService {
 	public List<EmisorDto> findEmisorAll() {
 		LOGGER.debug("Obtenint llistat d'emisors SCSP");
 		List<EmisorDto> resposta = new ArrayList<EmisorDto>();
-		for (EmisorCertificado emisor: scspHelper.findEmisorCertificadoAll()) {
+		for (EmisorCertificado emisor: getScspHelper().findEmisorCertificadoAll()) {
 			EmisorDto dto = new EmisorDto();
 			dto.setNom(emisor.getNombre());
 			dto.setCif(emisor.getCif());
@@ -437,7 +444,7 @@ public class ServeiServiceImpl implements ServeiService {
 	public List<ClauPublicaDto> findClauPublicaAll() {
 		LOGGER.debug("Obtenint llistat de claus públiques SCSP");
 		List<ClauPublicaDto> resposta = new ArrayList<ClauPublicaDto>();
-		for (ClavePublica clavePublica: scspHelper.findClavePublicaAll()) {
+		for (ClavePublica clavePublica: getScspHelper().findClavePublicaAll()) {
 			if (clavePublica != null) {
 				ClauPublicaDto dto = new ClauPublicaDto();
 				dto.setAlies(clavePublica.getAlias());
@@ -454,7 +461,7 @@ public class ServeiServiceImpl implements ServeiService {
 	public List<ClauPrivadaDto> findClauPrivadaAll() {
 		LOGGER.debug("Obtenint llistat de claus privades SCSP");
 		List<ClauPrivadaDto> resposta = new ArrayList<ClauPrivadaDto>();
-		for (ClavePrivada clavePrivada: scspHelper.findClavePrivadaAll()) {
+		for (ClavePrivada clavePrivada: getScspHelper().findClavePrivadaAll()) {
 			if (clavePrivada != null) {
 				ClauPrivadaDto dto = new ClauPrivadaDto();
 				dto.setAlies(clavePrivada.getAlias());
@@ -471,14 +478,14 @@ public class ServeiServiceImpl implements ServeiService {
 	public ArbreDto<DadaEspecificaDto> generarArbreDadesEspecifiques(
 			String serveiCodi) throws ServeiNotFoundException, ScspException {
 		LOGGER.debug("Generant arbre de dades específiques per al servei (codi=" + serveiCodi + ")");
-		Servicio servicio = scspHelper.getServicio(serveiCodi);
+		Servicio servicio = getScspHelper().getServicio(serveiCodi);
 		if (servicio == null) {
 			LOGGER.debug("No s'ha trobat el servicio (codi=" + serveiCodi + ")");
 			throw new ServeiNotFoundException();
 		}
 		try {
 			ArbreDto<DadaEspecificaDto> arbre = new ArbreDto<DadaEspecificaDto>();
-			Tree<DadesEspecifiquesNode> tree = scspHelper.generarArbreDadesEspecifiques(serveiCodi);
+			Tree<DadesEspecifiquesNode> tree = getScspHelper().generarArbreDadesEspecifiques(serveiCodi);
 			if (tree != null && tree.getRootElement() != null) {
 				NodeDto<DadaEspecificaDto> arrel = new NodeDto<DadaEspecificaDto>();
 				copiarArbreDadesEspecifiques(
@@ -504,7 +511,7 @@ public class ServeiServiceImpl implements ServeiService {
 			String serveiCodi,
 			String path) throws ServeiNotFoundException {
 		LOGGER.debug("Creant camp per al servei (codi=" + serveiCodi + ")");
-		Servicio servicio = scspHelper.getServicio(serveiCodi);
+		Servicio servicio = getScspHelper().getServicio(serveiCodi);
 		if (servicio == null) {
 			LOGGER.debug("No s'ha trobat el servicio (codi=" + serveiCodi + ")");
 			throw new ServeiNotFoundException();
@@ -532,7 +539,7 @@ public class ServeiServiceImpl implements ServeiService {
 				// Configura les descripcions de les opcions del enumerat
 				// amb els valor per defecte.
 				try {
-					Tree<DadesEspecifiquesNode> tree = scspHelper.generarArbreDadesEspecifiques(serveiCodi);
+					Tree<DadesEspecifiquesNode> tree = getScspHelper().generarArbreDadesEspecifiques(serveiCodi);
 					DadesEspecifiquesNode nodeEnum = trobarNodeAmbPath(
 							tree.getRootElement(),
 							path,
@@ -691,7 +698,7 @@ public class ServeiServiceImpl implements ServeiService {
 	@Override
 	public List<ServeiCampDto> findServeiCamps(String serveiCodi) throws ServeiNotFoundException {
 		LOGGER.debug("Cercant els camps pel servicio (codi=" + serveiCodi + ")");
-		Servicio servicio = scspHelper.getServicio(serveiCodi);
+		Servicio servicio = getScspHelper().getServicio(serveiCodi);
 		if (servicio == null) {
 			LOGGER.debug("No s'ha trobat el servicio (codi=" + serveiCodi + ")");
 			throw new ServeiNotFoundException();
@@ -706,7 +713,7 @@ public class ServeiServiceImpl implements ServeiService {
 	@Override
 	public ServeiCampGrupDto createServeiCampGrup(ServeiCampGrupDto serveiCampGrup) throws ServeiNotFoundException {
 		LOGGER.debug("Creant nou grup de camps (serveiCodi=" + serveiCampGrup.getServei() + ", nom=" + serveiCampGrup.getNom() + ")");
-		Servicio servicio = scspHelper.getServicio(serveiCampGrup.getServei());
+		Servicio servicio = getScspHelper().getServicio(serveiCampGrup.getServei());
 		if (servicio == null) {
 			LOGGER.debug("No s'ha trobat el servicio (codi=" + serveiCampGrup.getServei() + ")");
 			throw new ServeiNotFoundException();
@@ -787,7 +794,7 @@ public class ServeiServiceImpl implements ServeiService {
 	@Override
 	public List<ServeiCampGrupDto> findServeiCampGrups(String serveiCodi) throws ServeiNotFoundException {
 		LOGGER.debug("Cercant els grups de camps pel servicio (codi=" + serveiCodi + ")");
-		Servicio servicio = scspHelper.getServicio(serveiCodi);
+		Servicio servicio = getScspHelper().getServicio(serveiCodi);
 		if (servicio == null) {
 			LOGGER.debug("No s'ha trobat el servicio (codi=" + serveiCodi + ")");
 			throw new ServeiNotFoundException();
@@ -802,7 +809,7 @@ public class ServeiServiceImpl implements ServeiService {
 	public ServeiBusDto createServeiBus(
 			ServeiBusDto creat) throws ServeiNotFoundException, EntitatNotFoundException {
 		LOGGER.debug("Creant redirecció del bus pel servicio (codi=" + creat.getServei() + ")");
-		Servicio servicio = scspHelper.getServicio(creat.getServei());
+		Servicio servicio = getScspHelper().getServicio(creat.getServei());
 		if (servicio == null) {
 			LOGGER.debug("No s'ha trobat el servicio (codi=" + creat.getServei() + ")");
 			throw new ServeiNotFoundException();
@@ -880,7 +887,7 @@ public class ServeiServiceImpl implements ServeiService {
 	@Override
 	public List<ServeiBusDto> findServeisBus(String serveiCodi) throws ServeiNotFoundException {
 		LOGGER.debug("Obtenint les redireccions del bus pel servicio (codi=" + serveiCodi + ")");
-		Servicio servicio = scspHelper.getServicio(serveiCodi);
+		Servicio servicio = getScspHelper().getServicio(serveiCodi);
 		if (servicio == null) {
 			LOGGER.debug("No s'ha trobat el servicio (codi=" + serveiCodi + ")");
 			throw new ServeiNotFoundException();
@@ -895,7 +902,7 @@ public class ServeiServiceImpl implements ServeiService {
 	public void addServeiJustificantCamp(
 			ServeiJustificantCampDto camp) throws ServeiNotFoundException {
 		LOGGER.debug("Traducció del camp de dades específiques (codi=" + camp.getServei() + ", campPath=" + camp.getXpath() + ")");
-		Servicio servicio = scspHelper.getServicio(camp.getServei());
+		Servicio servicio = getScspHelper().getServicio(camp.getServei());
 		if (servicio == null) {
 			LOGGER.debug("No s'ha trobat el servicio (codi=" + camp.getServei() + ")");
 			throw new ServeiNotFoundException();
@@ -928,7 +935,7 @@ public class ServeiServiceImpl implements ServeiService {
 	public List<ServeiJustificantCampDto> findServeiJustificantCamps(
 			String serveiCodi) throws ServeiNotFoundException {
 		LOGGER.debug("Obtenint els camps de dades específiques traduits pel servei (codi=" + serveiCodi + ")");
-		Servicio servicio = scspHelper.getServicio(serveiCodi);
+		Servicio servicio = getScspHelper().getServicio(serveiCodi);
 		if (servicio == null) {
 			LOGGER.debug("No s'ha trobat el servicio (codi=" + serveiCodi + ")");
 			throw new ServeiNotFoundException();
@@ -961,11 +968,21 @@ public class ServeiServiceImpl implements ServeiService {
 		System.out.println(">>> " + baos.toString());*/
 		return resposta;
 	}
-	
+
+	@Override
+	public void setApplicationContext(
+			ApplicationContext applicationContext) throws BeansException {
+		this.applicationContext = applicationContext;
+	}
+	@Override
+	public void setMessageSource(MessageSource messageSource) {
+		this.messageSource = messageSource;
+	}
+
 
 
 	private Servicio toServicioScsp(ServeiDto dto) {
-		Servicio servicio = scspHelper.getServicio(dto.getCodi());
+		Servicio servicio = getScspHelper().getServicio(dto.getCodi());
 		if (servicio == null) {
 			servicio = new Servicio();
 		}
@@ -973,7 +990,7 @@ public class ServeiServiceImpl implements ServeiService {
 		servicio.setDescripcion(dto.getDescripcio());
 		if (dto.getScspEmisor() != null && dto.getScspEmisor().getCif() != null) {
 			EmisorDto emisor = dto.getScspEmisor();
-			for (EmisorCertificado emisorCertificado: scspHelper.findEmisorCertificadoAll()) {
+			for (EmisorCertificado emisorCertificado: getScspHelper().findEmisorCertificadoAll()) {
 				if (emisor.getCif().equals(emisorCertificado.getCif())) {
 					servicio.setEmisor(emisorCertificado);
 					break;
@@ -992,7 +1009,7 @@ public class ServeiServiceImpl implements ServeiService {
 		servicio.setTipoSeguridad(dto.getScspTipoSeguridad());
 		if (dto.getScspClaveFirma() != null && dto.getScspClaveFirma().getAlies() != null) {
 			ClauPrivadaDto clauPrivada = dto.getScspClaveFirma();
-			for (ClavePrivada clavePrivada: scspHelper.findClavePrivadaAll()) {
+			for (ClavePrivada clavePrivada: getScspHelper().findClavePrivadaAll()) {
 				if (clauPrivada.getAlies().equals(clavePrivada.getAlias())) {
 					servicio.setClaveFirma(clavePrivada);
 					break;
@@ -1001,7 +1018,7 @@ public class ServeiServiceImpl implements ServeiService {
 		}
 		if (dto.getScspClaveCifrado() != null && dto.getScspClaveCifrado().getAlies() != null) {
 			ClauPublicaDto clauPublica = dto.getScspClaveCifrado();
-			for (ClavePublica clavePublica: scspHelper.findClavePublicaAll()) {
+			for (ClavePublica clavePublica: getScspHelper().findClavePublicaAll()) {
 				if (clauPublica.getAlies().equals(clavePublica.getAlias())) {
 					servicio.setClaveCifrado(clavePublica);
 					break;
@@ -1031,7 +1048,7 @@ public class ServeiServiceImpl implements ServeiService {
 			EmisorCertificado emisorCertificado = servicio.getEmisor();
 			emisor.setCif(emisorCertificado.getCif());
 			emisor.setNom(
-					scspHelper.getEmisorNombre(emisorCertificado.getCif()));
+					getScspHelper().getEmisorNombre(emisorCertificado.getCif()));
 			dto.setScspEmisor(emisor);
 		}
 		dto.setScspFechaAlta(servicio.getFechaAlta());
@@ -1049,9 +1066,9 @@ public class ServeiServiceImpl implements ServeiService {
 			ClavePrivada clavePrivada = servicio.getClaveFirma();
 			clauPrivada.setAlies(clavePrivada.getAlias());
 			clauPrivada.setNom(
-					scspHelper.getClavePrivadaNombre(clavePrivada.getAlias()));
+					getScspHelper().getClavePrivadaNombre(clavePrivada.getAlias()));
 			clauPrivada.setNumSerie(
-					scspHelper.getClavePrivadaNumeroSerie(clavePrivada.getAlias()));
+					getScspHelper().getClavePrivadaNumeroSerie(clavePrivada.getAlias()));
 			dto.setScspClaveFirma(clauPrivada);
 		}
 		if (servicio.getClaveCifrado() != null) {
@@ -1059,9 +1076,9 @@ public class ServeiServiceImpl implements ServeiService {
 			ClavePublica clavePublica = servicio.getClaveCifrado();
 			clauPublica.setAlies(clavePublica.getAlias());
 			clauPublica.setNom(
-					scspHelper.getClavePublicaNombre(clavePublica.getAlias()));
+					getScspHelper().getClavePublicaNombre(clavePublica.getAlias()));
 			clauPublica.setNumSerie(
-					scspHelper.getClavePublicaNumeroSerie(clavePublica.getAlias()));
+					getScspHelper().getClavePublicaNumeroSerie(clavePublica.getAlias()));
 			dto.setScspClaveCifrado(clauPublica);
 		}
 		dto.setScspXpathCifradoSincrono(servicio.getXpathCifradoSincrono());
@@ -1223,6 +1240,15 @@ public class ServeiServiceImpl implements ServeiService {
 			return JustificantTipus.ADJUNT_PDF_BASE64;
 		}
 		return null;
+	}
+
+	private ScspHelper getScspHelper() {
+		if (scspHelper == null) {
+			scspHelper = new ScspHelper(
+					applicationContext,
+					messageSource);
+		}
+		return scspHelper;
 	}
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(ServeiServiceImpl.class);

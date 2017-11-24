@@ -9,8 +9,6 @@
 	<artifactId>pinbal-ear</artifactId>
 	<packaging>ear</packaging>
 	<dependencies>
-		<!-- Còpia de les dependències de pinbal-webapp -->
-		<!--/ Còpia de les dependències de pinbal-webapp -->
 		<dependency>
 			<groupId>org.hibernate</groupId>
 			<artifactId>hibernate-validator-legacy</artifactId>
@@ -68,12 +66,6 @@
 									<artifactId>pinbal-webapp</artifactId>
 									<contextRoot>/pinbal</contextRoot>
 									<bundleFileName>pinbal.war</bundleFileName>
-								</webModule>
-								<webModule>
-									<groupId>${project.groupId}</groupId>
-									<artifactId>pinbal-rec-web</artifactId>
-									<contextRoot>/pinbalrec</contextRoot>
-									<bundleFileName>pinbalrec.war</bundleFileName>
 								</webModule>
 							</modules>
 						</configuration>

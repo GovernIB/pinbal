@@ -11,6 +11,8 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
 import javax.persistence.FetchType;
+import javax.persistence.ForeignKey;
+import javax.persistence.Index;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
@@ -20,11 +22,9 @@ import javax.persistence.UniqueConstraint;
 import javax.persistence.Version;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
-import org.hibernate.annotations.ForeignKey;
-import org.hibernate.annotations.Index;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import es.caib.pinbal.core.audit.PinbalAuditable;
-import es.caib.pinbal.core.audit.PinbalAuditingEntityListener;
 import es.caib.pinbal.core.dto.ProcedimentServeiSimpleDto;
 
 /**
@@ -35,12 +35,10 @@ import es.caib.pinbal.core.dto.ProcedimentServeiSimpleDto;
 @Entity
 @Table(	name = "pbl_procediment",
 		uniqueConstraints = {
-			@UniqueConstraint(columnNames={"entitat_id", "codi"})})
-@org.hibernate.annotations.Table(
-		appliesTo = "pbl_procediment",
+			@UniqueConstraint(columnNames = {"entitat_id", "codi"})},
 		indexes = {
-				@Index(name = "pbl_procediment_entitat_i", columnNames = {"entitat_id"})})
-@EntityListeners(PinbalAuditingEntityListener.class)
+				@Index(name = "pbl_procediment_entitat_i", columnList = "entitat_id")})
+@EntityListeners(AuditingEntityListener.class)
 public class Procediment extends PinbalAuditable<Long> {
 
 	private static final long serialVersionUID = -6657066865382086237L;
@@ -57,12 +55,13 @@ public class Procediment extends PinbalAuditable<Long> {
 	@Column(name = "actiu")
 	private boolean actiu = true;
 
-	@ManyToOne(optional=false, fetch=FetchType.EAGER)
-	@JoinColumn(name="entitat_id")
-	@ForeignKey(name="pbl_entitat_procediment_fk")
+	@ManyToOne(optional = false, fetch = FetchType.EAGER)
+	@JoinColumn(
+			name = "entitat_id",
+			foreignKey = @ForeignKey(name = "pbl_entitat_procediment_fk"))
 	private Entitat entitat;
 
-	@OneToMany(mappedBy="procediment", cascade={CascadeType.ALL})
+	@OneToMany(mappedBy = "procediment", cascade = {CascadeType.ALL})
 	@OrderBy("servei asc")
 	private List<ProcedimentServei> serveis = new ArrayList<ProcedimentServei>();
 

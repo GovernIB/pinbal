@@ -45,7 +45,7 @@ import org.xml.sax.InputSource;
 
 import es.caib.pinbal.scsp.tree.Node;
 import es.caib.pinbal.scsp.tree.Tree;
-import es.scsp.common.domain.Servicio;
+import es.scsp.common.domain.core.Servicio;
 
 /**
  * Mètodes d'ajuda per a la gestió de dades específiques.

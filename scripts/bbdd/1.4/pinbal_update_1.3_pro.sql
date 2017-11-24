@@ -104,3 +104,158 @@ UPDATE core_servicio SET descripcion = 'Obtención de documentos por CSV' WHERE 
 UPDATE core_servicio SET descripcion = 'Consulta de Bienes Inmuebles' WHERE codcertificado LIKE 'SVDCBIWS02';
 
 UPDATE core_servicio SET plantillaXSLT = '/plantillaspdf/minhap/plantilla_CambioDomicilio_SVDSCDWS01_pdf.xslt' where codcertificado like 'SVDSCDWS01';
+
+
+/*                            */
+/* Actualització a SCSP 4.0.0 */
+/*                            */
+
+/* Requirente_01.sql */
+UPDATE CORE_PARAMETRO_CONFIGURACION SET VALOR='4.0.0' WHERE NOMBRE='version.datamodel.scsp'; 
+RENAME SCSP_CODIGO_ERROR TO CORE_CODIGO_ERROR;
+RENAME ORGANISMO_CESIONARIO TO CORE_ORGANISMO_CESIONARIO;
+RENAME SCSP_ESTADO_PETICION TO CORE_ESTADO_PETICION; 
+RENAME CORE_SECUENCIA_IDPETICION TO CORE_REQ_SECUENCIA_IDPETICION;
+RENAME SERVICIO_AUTORIZADO_CESIONARIO TO CORE_REQ_CESIONARIOS_SERVICIOS;
+commit;
+ALTER TABLE    CORE_REQ_SECUENCIA_IDPETICION MODIFY    (  PREFIJO  varchar2(9)  );
+ALTER TABLE    CORE_SERVICIO MODIFY    (  PREFIJOPETICION  VARCHAR2(9)  );
+ALTER TABLE    CORE_SERVICIO MODIFY    (  PREFIJOIDTRANSMISION  VARCHAR2(9)  ); 
+UPDATE CORE_SERVICIO SET DESCRIPCION = 'Obtención de cuentas corrientes (ejercicio 2012)' WHERE CODCERTIFICADO = 'AEATCCC1';
+commit;
+CREATE  TABLE  CORE_REQ_MODULO_PDF(
+  NOMBRE VARCHAR2(256 char) NOT NULL , 
+  ACTIVO  NUMBER(1,0) DEFAULT '0' NOT NULL,
+  ORDEN  NUMBER(1,0)  NOT NULL,
+  PRIMARY KEY (NOMBRE) );
+COMMIT;
+INSERT INTO CORE_REQ_MODULO_PDF (NOMBRE,ACTIVO,ORDEN) VALUES ('handlerPdfHideFuncionario',0,2);
+INSERT INTO CORE_REQ_MODULO_PDF (NOMBRE,ACTIVO,ORDEN) VALUES ('handlerPdfSign',1,0);
+INSERT INTO CORE_REQ_MODULO_PDF (NOMBRE,ACTIVO,ORDEN) VALUES ('handlerPdfXsltTransform',1,1);
+COMMIT;
+CREATE  TABLE  CORE_REQ_MODULO_PDF_CESIONARIO (
+  MODULO VARCHAR2(256 char) NOT NULL ,
+  SERVICIO  NUMBER(19,0) NOT NULL ,
+  ORGANISMO  NUMBER(19,0) NOT NULL ,
+  ACTIVO  NUMBER(1,0) DEFAULT '0' NOT NULL,
+  ORDEN   NUMBER(1,0)  NOT NULL,
+  PRIMARY KEY (MODULO, SERVICIO, ORGANISMO));
+COMMIT;
+ALTER TABLE "CORE_REQ_MODULO_PDF_CESIONARIO" ADD CONSTRAINT "FK_MODULO_MOD_PDF" FOREIGN KEY ("MODULO")
+	  REFERENCES "CORE_REQ_MODULO_PDF" ("NOMBRE") ENABLE;
+ALTER TABLE "CORE_REQ_MODULO_PDF_CESIONARIO" ADD CONSTRAINT "FK_SERVICIO_MOD_PDF" FOREIGN KEY ("SERVICIO")
+	  REFERENCES "CORE_SERVICIO" ("ID") ENABLE;
+ALTER TABLE "CORE_REQ_MODULO_PDF_CESIONARIO" ADD CONSTRAINT "FK_ORG_CESIONARIO_MOD_PDF" FOREIGN KEY ("ORGANISMO")
+	  REFERENCES "CORE_ORGANISMO_CESIONARIO" ("ID") ENABLE;
+commit;	 
+DROP PROCEDURE GETSECUENCIAIDPETICION;
+COMMIT;
+CREATE OR REPLACE PROCEDURE "GETSECUENCIAIDPETICION"  (  prefijo_param in varchar2, on_Secuencial out number)as  rRegistro ROWID;
+begin  
+    select ROWID, SECUENCIA+1 into rRegistro, on_Secuencial from CORE_REQ_SECUENCIA_IDPETICION where PREFIJO = prefijo_param for update;
+    update CORE_REQ_SECUENCIA_IDPETICION  set SECUENCIA = on_Secuencial, FECHAGENERACION=sysdate  where rowid = rRegistro;  
+	commit; 
+    exception when no_data_found then on_Secuencial := 1;    
+    insert into CORE_REQ_SECUENCIA_IDPETICION (PREFIJO, SECUENCIA,FECHAGENERACION) values (prefijo_param, on_Secuencial,(SELECT SYSDATE FROM DUAL)); 
+commit; 
+end;
+
+/* Requirente_02.sql */
+update CORE_SERVICIO set PLANTILLAXSLT='/plantillaspdf/aeat/plantilla_ConsultaRentaAgraria_AEATIREA.xslt'  WHERE CODCERTIFICADO='AEATIREA';
+update CORE_SERVICIO set PLANTILLAXSLT='/plantillaspdf/aeat/plantilla_ConsultaRenta_AEATIR01.xslt' WHERE CODCERTIFICADO='AEATIR01';
+UPDATE CORE_SERVICIO SET DESCRIPCION = 'Consulta de cuentas bancarias' WHERE CODCERTIFICADO = 'AEATCCC1';  
+UPDATE CORE_SERVICIO SET DESCRIPCION = 'Consulta del impuesto sobre actividades económicas (IAE)' WHERE CODCERTIFICADO = 'AEATIAE';
+UPDATE CORE_SERVICIO SET DESCRIPCION = 'Consulta del impuesto sobre la renta de las personas físicas (IRPF)' WHERE CODCERTIFICADO = 'AEATIR01';
+UPDATE CORE_SERVICIO SET DESCRIPCION = 'Consulta del impuesto sobre la renta agraria' WHERE CODCERTIFICADO = 'AEATIREA';
+UPDATE CORE_SERVICIO SET DESCRIPCION = 'Consulta de pensiones públicas exentas' WHERE CODCERTIFICADO = 'AEATPPE';
+UPDATE CORE_SERVICIO SET DESCRIPCION = 'Consulta de rendimientos de trabajo' WHERE CODCERTIFICADO = 'AEATRDT1';
+UPDATE CORE_SERVICIO SET DESCRIPCION = 'Consulta de mediadores de seguros y corredores de reaseguros' WHERE CODCERTIFICADO = 'DGSFP0001';
+UPDATE CORE_SERVICIO SET DESCRIPCION = 'Consulta de entidades aseguradoras y reaseguros' WHERE CODCERTIFICADO = 'DGSFP0002';
+UPDATE CORE_SERVICIO SET DESCRIPCION = 'Consulta de planes y fondos de pensiones' WHERE CODCERTIFICADO = 'DGSFP0003';
+UPDATE CORE_SERVICIO SET DESCRIPCION = 'Consulta de datos de solvencia' WHERE CODCERTIFICADO = 'DGSFP0005'; 
+UPDATE CORE_SERVICIO SET DESCRIPCION = 'Obtención del domicilio fiscal' WHERE CODCERTIFICADO = 'DOMFISC';
+UPDATE CORE_SERVICIO SET DESCRIPCION = 'Estar al corriente de obligaciones tributarias para contratación con las administraciones públicas con indicación de incumplimientos' WHERE CODCERTIFICADO = 'ECOT101I';
+UPDATE CORE_SERVICIO SET DESCRIPCION = 'Estar al corriente de obligaciones tributarias para obtención de licencias de transporte con indicación de incumplimientos' WHERE CODCERTIFICADO = 'ECOT102I';
+UPDATE CORE_SERVICIO SET DESCRIPCION = 'Estar al corriente de obligaciones tributarias para solicitud de subvenciones y ayudas con indicación de incumplimientos' WHERE CODCERTIFICADO = 'ECOT103I';
+UPDATE CORE_SERVICIO SET DESCRIPCION = 'Estar al corriente de obligaciones tributarias para permisos de residencia y trabajo para extranjeros con indicación de incumplimientos' WHERE CODCERTIFICADO = 'ECOT104I';
+UPDATE CORE_SERVICIO SET DESCRIPCION = 'Estar al corriente de obligaciones tributarias  genérico' WHERE CODCERTIFICADO = 'ECOTGENI';
+UPDATE CORE_SERVICIO SET DESCRIPCION = 'Consulta de datos sobre el  impuesto de actividades económicas (Navarra)' WHERE CODCERTIFICADO = 'HTNIAE';
+UPDATE CORE_SERVICIO SET DESCRIPCION = 'Consulta del impuesto sobre actividades económicas 10 epígrafes (IAE)' WHERE CODCERTIFICADO = 'IAE10';
+UPDATE CORE_SERVICIO SET DESCRIPCION = 'Consulta del nivel de renta' WHERE CODCERTIFICADO = 'NIVRENTI';
+UPDATE CORE_SERVICIO SET DESCRIPCION = 'Consulta de las prestaciones del registro de prestaciones sociales públicas, incapacidad temporal y maternidad' WHERE CODCERTIFICADO = 'Q2827002CINSS001';
+UPDATE CORE_SERVICIO SET DESCRIPCION = 'Estar al corriente de pago con la Seguridad Social' WHERE CODCERTIFICADO = 'Q2827003ATGSS001';
+UPDATE CORE_SERVICIO SET DESCRIPCION = 'Situación laboral en una fecha concreta' WHERE CODCERTIFICADO = 'Q2827003ATGSS006'; 
+UPDATE CORE_SERVICIO SET DESCRIPCION = 'Consulta del Fichero de Titularidades Financieras por interviniente' WHERE CODCERTIFICADO = 'S2800665HFTF0001';
+UPDATE CORE_SERVICIO SET DESCRIPCION = 'Consulta del Fichero de Titularidades Financieras por producto' WHERE CODCERTIFICADO = 'S2800665HFTF0002';
+UPDATE CORE_SERVICIO SET DESCRIPCION = 'Auditoría de consultas al Fichero de Titularidades Financieras' WHERE CODCERTIFICADO = 'S2800665HFTF0003';
+UPDATE CORE_SERVICIO SET DESCRIPCION = 'Consulta de calificaciones de la prueba de conocimientos constitucionales y socioculturales de España (CCSE) y de los diplomas de español (DELE)' WHERE CODCERTIFICADO = 'SVDAPTNACIWS01';
+UPDATE CORE_SERVICIO SET DESCRIPCION = 'Consulta de la condición de becado' WHERE CODCERTIFICADO = 'SVDBECAWS01';
+UPDATE CORE_SERVICIO SET DESCRIPCION = 'Consulta de bienes e inmuebles' WHERE CODCERTIFICADO = 'SVDCBIWS02';
+UPDATE CORE_SERVICIO SET DESCRIPCION = 'Estar al corriente de obligaciones tributarias para solicitud de subvenciones y ayudas' WHERE CODCERTIFICADO = 'SVDCCAACPASWS01';
+UPDATE CORE_SERVICIO SET DESCRIPCION = 'Estar al corriente de obligaciones tributarias para contratación con las administraciones públicas' WHERE CODCERTIFICADO = 'SVDCCAACPCWS01';
+UPDATE CORE_SERVICIO SET DESCRIPCION = 'Obtención de documentos por CSV' WHERE CODCERTIFICADO = 'SVDCCSVWS01';
+UPDATE CORE_SERVICIO SET DESCRIPCION = 'Consulta de datos catastrales' WHERE CODCERTIFICADO = 'SVDCDATWS02';
+UPDATE CORE_SERVICIO SET DESCRIPCION = 'Consulta del nivel y grado de dependencia' WHERE CODCERTIFICADO = 'SVDCDEPENWS01';
+UPDATE CORE_SERVICIO SET DESCRIPCION = 'Obtención de certificación descriptiva y gráfica' WHERE CODCERTIFICADO = 'SVDCDYGWS02';
+UPDATE CORE_SERVICIO SET DESCRIPCION = 'Obtención de certificación de titularidad' WHERE CODCERTIFICADO = 'SVDCTITWS02';
+UPDATE CORE_SERVICIO SET DESCRIPCION = 'Consulta de datos de identidad' WHERE CODCERTIFICADO = 'SVDDGPCIWS02';
+UPDATE CORE_SERVICIO SET DESCRIPCION = 'Verificación de datos de identidad' WHERE CODCERTIFICADO = 'SVDDGPVIWS02';
+UPDATE CORE_SERVICIO SET DESCRIPCION = 'Consulta de títulos no universitarios por datos de filiación' WHERE CODCERTIFICADO = 'SVDLSTTNUWS01';
+UPDATE CORE_SERVICIO SET DESCRIPCION = 'Consulta de títulos universitarios por datos de filiación' WHERE CODCERTIFICADO = 'SVDLSTTUWS01';
+UPDATE CORE_SERVICIO SET DESCRIPCION = 'Consulta de firmas para legalización diplomática de documentos públicos extranjeros' WHERE CODCERTIFICADO = 'SVDMAECWS01';
+UPDATE CORE_SERVICIO SET DESCRIPCION = 'Consulta de datos de matrícula' WHERE CODCERTIFICADO = 'SVDMATUNIVWS01';
+UPDATE CORE_SERVICIO SET DESCRIPCION = 'Certificado de datos de abonos' WHERE CODCERTIFICADO = 'SVDMUFABSWS01';
+UPDATE CORE_SERVICIO SET DESCRIPCION = 'Consulta de datos de abonos' WHERE CODCERTIFICADO = 'SVDMUFABSXMLWS01';
+UPDATE CORE_SERVICIO SET DESCRIPCION = 'Certificado de datos de afiliación' WHERE CODCERTIFICADO = 'SVDMUFAFIWS01';
+UPDATE CORE_SERVICIO SET DESCRIPCION = 'Consulta de datos de afiliación' WHERE CODCERTIFICADO = 'SVDMUFAFIXMLWS01';
+UPDATE CORE_SERVICIO SET DESCRIPCION = 'Certificado de datos de prestaciones de pago único recibidas' WHERE CODCERTIFICADO = 'SVDMUFPRESTAWS01';
+UPDATE CORE_SERVICIO SET DESCRIPCION = 'Consulta de datos de prestaciones de pago único recibidas' WHERE CODCERTIFICADO = 'SVDMUFPRESTAXMLWS01';
+UPDATE CORE_SERVICIO SET DESCRIPCION = 'Consulta de la copia simple de un poder notarial' WHERE CODCERTIFICADO = 'SVDNOTCOPSIMWS01';
+UPDATE CORE_SERVICIO SET DESCRIPCION = 'Consulta de notarios y notarías' WHERE CODCERTIFICADO = 'SVDNOTLISTWS01';
+UPDATE CORE_SERVICIO SET DESCRIPCION = 'Consulta de la subsistencia de los administradores de una sociedad' WHERE CODCERTIFICADO = 'SVDNOTSUBADMWS01'; 
+UPDATE CORE_SERVICIO SET DESCRIPCION = 'Consulta de la subsistencia de un poder notarial' WHERE CODCERTIFICADO = 'SVDNOTSUBWS01';
+UPDATE CORE_SERVICIO SET DESCRIPCION = 'Consulta del permiso de explotación marisquera' WHERE CODCERTIFICADO = 'SVDPERMEXWS01';
+UPDATE CORE_SERVICIO SET DESCRIPCION = 'Consulta de datos sobre el  impuesto de actividades económicas (País Vasco)' WHERE CODCERTIFICADO = 'SVDPVIAEWS01';
+UPDATE CORE_SERVICIO SET DESCRIPCION = 'Estar inscrito en el Registro Central de Personal' WHERE CODCERTIFICADO = 'SVDRCPINSCRITOWS01';
+UPDATE CORE_SERVICIO SET DESCRIPCION = 'Consulta de datos de residencia legal' WHERE CODCERTIFICADO = 'SVDRESLEGEXWS01';
+UPDATE CORE_SERVICIO SET DESCRIPCION = 'Consulta de datos de residencia con fecha de última variación para la supresión del volante de empadronamiento' WHERE CODCERTIFICADO = 'SVDREXTFECHAWS01';
+UPDATE CORE_SERVICIO SET DESCRIPCION = 'Verificación del ámbito territorial de residencia' WHERE CODCERTIFICADO = 'SVDRWS01';
+UPDATE CORE_SERVICIO SET DESCRIPCION = 'Consulta de defunción' WHERE CODCERTIFICADO = 'SVDSCCDWS01';
+UPDATE CORE_SERVICIO SET DESCRIPCION = 'Consulta de matrimonio' WHERE CODCERTIFICADO = 'SVDSCCMWS01';
+UPDATE CORE_SERVICIO SET DESCRIPCION = 'Consulta de nacimiento' WHERE CODCERTIFICADO = 'SVDSCCNWS01';
+UPDATE CORE_SERVICIO SET DESCRIPCION = 'Consulta de los datos de discapacidad' WHERE CODCERTIFICADO = 'SVDSCDDWS01';
+UPDATE CORE_SERVICIO SET DESCRIPCION = 'Comunicación del cambio de domicilio' WHERE CODCERTIFICADO = 'SVDSCDWS01';
+UPDATE CORE_SERVICIO SET DESCRIPCION = 'Consulta de los datos de familia numerosa' WHERE CODCERTIFICADO = 'SVDSCTFNWS01';
+UPDATE CORE_SERVICIO SET DESCRIPCION = 'Consulta de datos de residencia con fecha de última variación para finalidades distintas a la supresión del volante de empadronamiento' WHERE CODCERTIFICADO = 'SVDSECOPA01WS01';
+UPDATE CORE_SERVICIO SET DESCRIPCION = 'Consulta de estar inscrito como demandante de empleo a fecha concreta' WHERE CODCERTIFICADO = 'SVDSEPEDEMFECHAWS01';
+UPDATE CORE_SERVICIO SET DESCRIPCION = 'Consulta de estar inscrito como demandante de empleo a fecha actual' WHERE CODCERTIFICADO = 'SVDSEPEDEMWS01';
+UPDATE CORE_SERVICIO SET DESCRIPCION = 'Consulta de los importes de las prestaciones percibidas a fecha actual' WHERE CODCERTIFICADO = 'SVDSEPEIACTWS02';
+UPDATE CORE_SERVICIO SET DESCRIPCION = 'Consulta de los importes de las prestaciones percibidas en un periodo' WHERE CODCERTIFICADO = 'SVDSEPEIPERWS02';
+UPDATE CORE_SERVICIO SET DESCRIPCION = 'Consulta de la situación actual de desempleo' WHERE CODCERTIFICADO = 'SVDSEPESITWS02';
+UPDATE CORE_SERVICIO SET DESCRIPCION = 'Consulta de títulos no universitarios por documentación' WHERE CODCERTIFICADO = 'SVDTNUWS03';
+UPDATE CORE_SERVICIO SET DESCRIPCION = 'Consulta de títulos universitarios por documentación' WHERE CODCERTIFICADO = 'SVDTUWS03';
+UPDATE CORE_SERVICIO SET DESCRIPCION = 'Validación del NIF de un contribuyente ' WHERE CODCERTIFICADO = 'VALNIF'; 
+UPDATE CORE_SERVICIO SET DESCRIPCION = 'Consulta de datos de un vehículo' WHERE CODCERTIFICADO = 'SVDDGTVEHICULOWS01';
+UPDATE CORE_SERVICIO SET DESCRIPCION = 'Consulta de datos de un conductor' WHERE CODCERTIFICADO = 'SVDDGTCONDUCTORWS01';
+UPDATE CORE_SERVICIO SET DESCRIPCION = 'Consulta de títulos no universitarios por datos de filiación' WHERE CODCERTIFICADO = 'SVDLSTTNUWS01'; 
+UPDATE CORE_SERVICIO SET DESCRIPCION = 'Consulta de inexistencia de delitos sexuales por datos de filiación' WHERE CODCERTIFICADO = 'SVDDELSEXWS01';
+UPDATE CORE_SERVICIO SET DESCRIPCION = 'Consulta de inexistencia de delitos sexuales por documentación' WHERE CODCERTIFICADO = 'SVDDELSEXCDIWS01';
+UPDATE CORE_SERVICIO SET DESCRIPCION = 'Consulta de inexistencia de antecedentes penales por datos de filiación' WHERE CODCERTIFICADO = 'SVDCAPWS01';
+UPDATE CORE_SERVICIO SET DESCRIPCION = 'Consulta de inexistencia de antecedentes penales por documentación' WHERE CODCERTIFICADO = 'SVDCAPCDIWS01';
+
+/* Requirente_03.sql */
+--ALTER TABLE CORE_LOG MODIFY (MENSAJE CLOB );
+ALTER TABLE CORE_ORGANISMO_CESIONARIO MODIFY ( LOGO BLOB );  
+ALTER TABLE CORE_REQ_MODULO_PDF MODIFY ( ACTIVO  DEFAULT 1);
+ALTER TABLE CORE_REQ_MODULO_PDF_CESIONARIO MODIFY ( ACTIVO  DEFAULT 1); 
+--ALTER TABLE CORE_TOKEN_DATA MODIFY ( DATOS CLOB ); 
+--ALTER TABLE CORE_TRANSMISION MODIFY ( XMLTRANSMISION CLOB ); 
+COMMIT;
+DECLARE
+    cursor cnombre Is select index_name from user_indexes where status='UNUSABLE';
+BEGIN 
+    FOR rNOMBRE IN cnombre LOOP 
+		execute immediate 'ALTER INDEX ' || rNOMBRE.index_name || ' REBUILD ';
+    END LOOP;
+	COMMIT;
+END;

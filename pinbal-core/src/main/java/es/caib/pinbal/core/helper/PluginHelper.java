@@ -8,6 +8,7 @@ import java.io.OutputStream;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 
 import es.caib.pinbal.plugins.CustodiaPlugin;
 import es.caib.pinbal.plugins.DadesUsuari;
@@ -20,6 +21,7 @@ import es.caib.pinbal.plugins.SistemaExternException;
  * 
  * @author Limit Tecnologies <limit@limit.es>
  */
+@Component
 public class PluginHelper {
 
 	private DadesUsuariPlugin dadesUsuariPlugin;

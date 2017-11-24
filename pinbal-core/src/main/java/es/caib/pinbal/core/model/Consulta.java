@@ -11,6 +11,8 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
 import javax.persistence.FetchType;
+import javax.persistence.ForeignKey;
+import javax.persistence.Index;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
@@ -19,11 +21,9 @@ import javax.persistence.Table;
 import javax.persistence.Version;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
-import org.hibernate.annotations.ForeignKey;
-import org.hibernate.annotations.Index;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import es.caib.pinbal.core.audit.PinbalAuditable;
-import es.caib.pinbal.core.audit.PinbalAuditingEntityListener;
 
 /**
  * Classe de model de dades que conté la informació d'una consulta.
@@ -31,13 +31,12 @@ import es.caib.pinbal.core.audit.PinbalAuditingEntityListener;
  * @author Limit Tecnologies <limit@limit.es>
  */
 @Entity
-@Table(name = "pbl_consulta")
-@org.hibernate.annotations.Table(
-		appliesTo = "pbl_consulta",
+@Table(
+		name = "pbl_consulta",
 		indexes = {
-				@Index(name = "pbl_consulta_procserv_i", columnNames = {"procserv_id"}),
-				@Index(name = "pbl_consulta_createdby_i", columnNames = {"createdby_codi"})})
-@EntityListeners(PinbalAuditingEntityListener.class)
+				@Index(name = "pbl_consulta_procserv_i", columnList = "procserv_id"),
+				@Index(name = "pbl_consulta_createdby_i", columnList = "createdby_codi")})
+@EntityListeners(AuditingEntityListener.class)
 public class Consulta extends PinbalAuditable<Long> {
 
 	public static final int ERROR_SCSP_MAX_LENGTH = 4000;
@@ -106,17 +105,19 @@ public class Consulta extends PinbalAuditable<Long> {
 	@Column(name = "justificant_error", length = ERROR_JUSTIFICANT_MAX_LENGTH)
 	private String justificantError;
 
-	@ManyToOne(optional=true, fetch=FetchType.LAZY)
-	@JoinColumn(name="pare_id")
-	@ForeignKey(name="pbl_consulta_pare_fk")
+	@ManyToOne(optional=true, fetch = FetchType.LAZY)
+	@JoinColumn(
+			name = "pare_id",
+			foreignKey = @ForeignKey(name = "pbl_consulta_pare_fk"))
 	private Consulta pare;
-	@OneToMany(mappedBy="pare", cascade={CascadeType.ALL})
+	@OneToMany(mappedBy = "pare", cascade = {CascadeType.ALL})
 	@OrderBy("scspSolicitudId asc")
 	private List<Consulta> fills = new ArrayList<Consulta>();
 
-	@ManyToOne(optional=false, fetch=FetchType.EAGER)
-	@JoinColumn(name="procserv_id")
-	@ForeignKey(name="pbl_procserv_consulta_fk")
+	@ManyToOne(optional = false, fetch = FetchType.EAGER)
+	@JoinColumn(
+			name = "procserv_id",
+			foreignKey = @ForeignKey(name = "pbl_procserv_consulta_fk"))
 	private ProcedimentServei procedimentServei;
 
 	@Version

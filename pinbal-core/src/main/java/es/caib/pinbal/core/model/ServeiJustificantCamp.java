@@ -6,15 +6,15 @@ package es.caib.pinbal.core.model;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
+import javax.persistence.Index;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.persistence.Version;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
-import org.hibernate.annotations.Index;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import es.caib.pinbal.core.audit.PinbalAuditable;
-import es.caib.pinbal.core.audit.PinbalAuditingEntityListener;
 
 /**
  * Classe de model de dades que conté la traducció d'un camp de
@@ -23,14 +23,13 @@ import es.caib.pinbal.core.audit.PinbalAuditingEntityListener;
  * @author Limit Tecnologies <limit@limit.es>
  */
 @Entity
-@Table(name = "pbl_servei_justif_camp",
+@Table(
+		name = "pbl_servei_justif_camp",
 		uniqueConstraints = {
-				@UniqueConstraint(columnNames={"servei_id", "xpath"})})
-@org.hibernate.annotations.Table(
-		appliesTo = "pbl_servei_justif_camp",
+				@UniqueConstraint(columnNames = {"servei_id", "xpath"})},
 		indexes = {
-				@Index(name = "pbl_servei_juscam_servei_i", columnNames = {"servei_id"})})
-@EntityListeners(PinbalAuditingEntityListener.class)
+				@Index(name = "pbl_servei_juscam_servei_i", columnList = "servei_id")})
+@EntityListeners(AuditingEntityListener.class)
 public class ServeiJustificantCamp extends PinbalAuditable<Long> {
 
 	private static final long serialVersionUID = -6657066865382086237L;

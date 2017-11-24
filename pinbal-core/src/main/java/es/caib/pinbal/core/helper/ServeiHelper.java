@@ -15,6 +15,7 @@ import org.springframework.security.acls.domain.BasePermission;
 import org.springframework.security.acls.model.MutableAclService;
 import org.springframework.security.acls.model.Permission;
 import org.springframework.security.core.Authentication;
+import org.springframework.stereotype.Component;
 
 import es.caib.pinbal.core.helper.PermisosHelper.ObjectIdentifierExtractor;
 import es.caib.pinbal.core.model.EntitatServei;
@@ -30,6 +31,7 @@ import es.caib.pinbal.core.repository.ServeiConfigRepository;
  * 
  * @author Limit Tecnologies <limit@limit.es>
  */
+@Component
 public class ServeiHelper {
 
 	@Resource

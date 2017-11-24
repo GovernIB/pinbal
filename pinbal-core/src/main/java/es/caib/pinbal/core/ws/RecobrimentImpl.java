@@ -337,6 +337,12 @@ public class RecobrimentImpl implements Recobriment {
 					case Pasaporte:
 						solicitud.setTitularDocumentTipus(DocumentTipus.Passaport);
 						break;
+					case NumeroIdentificacion:
+						solicitud.setTitularDocumentTipus(DocumentTipus.NombreIdentificacio);
+						break;
+					case Otros:
+						solicitud.setTitularDocumentTipus(DocumentTipus.Altres);
+						break;
 					}
 				}
 				solicitud.setTitularNom(titular.getNombre());

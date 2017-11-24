@@ -16,9 +16,9 @@ import javax.persistence.Table;
 import javax.persistence.Version;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import es.caib.pinbal.core.audit.PinbalAuditable;
-import es.caib.pinbal.core.audit.PinbalAuditingEntityListener;
 
 /**
  * Classe de model de dades que conté la informació d'una entitat.
@@ -27,7 +27,7 @@ import es.caib.pinbal.core.audit.PinbalAuditingEntityListener;
  */
 @Entity
 @Table(name = "pbl_entitat")
-@EntityListeners(PinbalAuditingEntityListener.class)
+@EntityListeners(AuditingEntityListener.class)
 public class Entitat extends PinbalAuditable<Long> {
 
 	public enum EntitatTipus {
@@ -54,19 +54,19 @@ public class Entitat extends PinbalAuditable<Long> {
 	@Column(name = "activa")
 	private boolean activa = true;
 
-	@OneToMany(mappedBy="entitat", cascade={CascadeType.ALL})
+	@OneToMany(mappedBy = "entitat", cascade = {CascadeType.ALL})
 	@OrderBy("servei asc")
 	private List<EntitatServei> serveis = new ArrayList<EntitatServei>();
 
-	@OneToMany(mappedBy="entitat", cascade={CascadeType.ALL})
+	@OneToMany(mappedBy = "entitat", cascade = {CascadeType.ALL})
 	@OrderBy("id asc")
 	private List<ServeiBus> serveisBus = new ArrayList<ServeiBus>();
 
-	@OneToMany(mappedBy="entitat", cascade={CascadeType.ALL})
+	@OneToMany(mappedBy ="entitat", cascade = {CascadeType.ALL})
 	@OrderBy("usuari asc")
 	private List<EntitatUsuari> usuaris = new ArrayList<EntitatUsuari>();
 
-	@OneToMany(mappedBy="entitat", cascade={CascadeType.ALL})
+	@OneToMany(mappedBy = "entitat", cascade = {CascadeType.ALL})
 	@OrderBy("nom asc")
 	private List<Procediment> procediments = new ArrayList<Procediment>();
 

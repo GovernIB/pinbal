@@ -84,13 +84,19 @@
 		</dependency>
 		<dependency>
 			<groupId>org.apache.axis2</groupId>
-			<artifactId>axis2</artifactId>
-			<version>1.5.4</version>
+			<artifactId>axis2-kernel</artifactId>
+			<version>${axis2.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>javax.servlet</groupId>
+					<artifactId>servlet-api</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.axis2</groupId>
 			<artifactId>axis2-transport-local</artifactId>
-			<version>1.5.4</version>
+			<version>${axis2.version}</version>
 			<exclusions>
 				<exclusion>
 					<artifactId>geronimo-jta_1.1_spec</artifactId>
@@ -123,12 +129,12 @@
 		<dependency>
 			<groupId>org.apache.axis2</groupId>
 			<artifactId>axis2-transport-http</artifactId>
-			<version>1.5.4</version>
+			<version>${axis2.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.axis2</groupId>
 			<artifactId>axis2-jibx</artifactId>
-			<version>1.5.4</version>
+			<version>${axis2.version}</version>
 			<exclusions>
 				<exclusion>
 					<artifactId>
@@ -141,7 +147,7 @@
 		<dependency>
 			<groupId>org.apache.rampart</groupId>
 			<artifactId>rampart-policy</artifactId>
-			<version>1.5</version>
+			<version>${rampart.version}</version>
 			<exclusions>
 				<exclusion>
 					<artifactId>slf4j-jdk14</artifactId>
@@ -196,7 +202,7 @@
 		<dependency>
 			<groupId>org.apache.rampart</groupId>
 			<artifactId>rampart-trust</artifactId>
-			<version>1.5</version>
+			<version>${rampart.version}</version>
 			<exclusions>
 				<exclusion>
 					<artifactId>slf4j-jdk14</artifactId>
@@ -206,12 +212,24 @@
 					<artifactId>bcprov-jdk14</artifactId>
 					<groupId>bouncycastle</groupId>
 				</exclusion>
+				<exclusion>
+					<groupId>xml-apis</groupId>
+					<artifactId>xml-apis</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>xerces</groupId>
+					<artifactId>xercesImpl</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.slf4j</groupId>
+					<artifactId>slf4j-api</artifactId>
+				</exclusion>
 			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.ws.commons.axiom</groupId>
 			<artifactId>axiom-dom</artifactId>
-			<version>1.2.10</version>
+			<version>${axiom.version}</version>
 			<exclusions>
 				<exclusion>
 					<artifactId>
@@ -236,7 +254,7 @@
 		<dependency>
 			<groupId>org.apache.ws.commons.axiom</groupId>
 			<artifactId>axiom-impl</artifactId>
-			<version>1.2.10</version>
+			<version>${axiom.version}</version>
 			<exclusions>
 				<exclusion>
 					<artifactId>
@@ -261,8 +279,7 @@
 		<dependency>
 			<groupId>org.aspectj</groupId>
 			<artifactId>aspectjweaver</artifactId>
-			<version>1.6.2</version>
-			<type>jar</type>
+			<version>1.7.4</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
@@ -278,7 +295,7 @@
 		<dependency>
 			<groupId>org.jibx</groupId>
 			<artifactId>jibx-extras</artifactId>
-			<version>1.2.2</version>
+			<version>1.2.3</version>
 		</dependency>
 		<dependency>
 			<groupId>com.lowagie</groupId>
@@ -319,11 +336,6 @@
 			<version>${slf4j.version}</version>
 			<scope>provided</scope>
 		</dependency>
-		<!--dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-jcl</artifactId>
-			<version>${slf4j.version}</version>
-		</dependency-->
 		<dependency>
 			<groupId>commons-logging</groupId>
 			<artifactId>commons-logging</artifactId>
@@ -333,17 +345,17 @@
 		<dependency>
 			<groupId>es.scsp</groupId>
 			<artifactId>scsp-core</artifactId>
-			<version>3.5.7</version>
+			<version>${scsp.core.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>es.scsp</groupId>
 			<artifactId>scsp-beans</artifactId>
-			<version>3.3.2</version>
+			<version>${scsp.beans.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>es.scsp</groupId>
 			<artifactId>scsp-rampart-core</artifactId>
-			<version>1.4</version>
+			<version>${scsp.rampart.core.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>es.gob.afirma</groupId>

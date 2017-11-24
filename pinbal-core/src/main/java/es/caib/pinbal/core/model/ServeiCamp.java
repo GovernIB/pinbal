@@ -10,6 +10,8 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
 import javax.persistence.FetchType;
+import javax.persistence.ForeignKey;
+import javax.persistence.Index;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
@@ -18,11 +20,9 @@ import javax.persistence.UniqueConstraint;
 import javax.persistence.Version;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
-import org.hibernate.annotations.ForeignKey;
-import org.hibernate.annotations.Index;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import es.caib.pinbal.core.audit.PinbalAuditable;
-import es.caib.pinbal.core.audit.PinbalAuditingEntityListener;
 
 /**
  * Classe de model de dades que conté la informació d'un camp per
@@ -33,12 +33,10 @@ import es.caib.pinbal.core.audit.PinbalAuditingEntityListener;
 @Entity
 @Table(name = "pbl_servei_camp",
 		uniqueConstraints = {
-				@UniqueConstraint(columnNames={"servei_id", "path"})})
-@org.hibernate.annotations.Table(
-		appliesTo = "pbl_servei_camp",
+				@UniqueConstraint(columnNames = {"servei_id", "path"})},
 		indexes = {
-				@Index(name = "pbl_servei_camp_servei_i", columnNames = {"servei_id"})})
-@EntityListeners(PinbalAuditingEntityListener.class)
+				@Index(name = "pbl_servei_camp_servei_i", columnList = "servei_id")})
+@EntityListeners(AuditingEntityListener.class)
 public class ServeiCamp extends PinbalAuditable<Long> {
 
 	private static final int ENUM_DESC_MAX_LENGTH = 1024;
@@ -78,9 +76,10 @@ public class ServeiCamp extends PinbalAuditable<Long> {
 	private String enumDescripcions;
 	@Column(name = "data_format", length = 32)
 	private String dataFormat;
-	@ManyToOne(optional=true, fetch=FetchType.EAGER)
-	@JoinColumn(name="camp_pare_id")
-	@ForeignKey(name="pbl_pare_servcamp_fk")
+	@ManyToOne(optional = true, fetch = FetchType.EAGER)
+	@JoinColumn(
+			name = "camp_pare_id",
+			foreignKey = @ForeignKey(name = "pbl_pare_servcamp_fk"))
 	private ServeiCamp campPare;
 	@Column(name = "valor_pare", length = 64)
 	private String valorPare;
@@ -93,9 +92,10 @@ public class ServeiCamp extends PinbalAuditable<Long> {
 	@Column(name = "ordre")
 	private int ordre;
 
-	@ManyToOne(optional=true, fetch=FetchType.EAGER)
-	@JoinColumn(name="grup_id")
-	@ForeignKey(name="pbl_srcgrup_srvcamp_fk")
+	@ManyToOne(optional = true, fetch = FetchType.EAGER)
+	@JoinColumn(
+			name = "grup_id",
+			foreignKey = @ForeignKey(name = "pbl_srcgrup_srvcamp_fk"))
 	private ServeiCampGrup grup;
 
 	@OneToMany(mappedBy="campPare")

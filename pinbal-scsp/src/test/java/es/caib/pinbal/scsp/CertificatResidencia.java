@@ -31,8 +31,8 @@ import es.scsp.bean.common.Transmision;
 import es.scsp.client.ClienteUnico;
 import es.scsp.common.dao.EmisorCertificadoDao;
 import es.scsp.common.dao.ServicioDao;
-import es.scsp.common.domain.EmisorCertificado;
-import es.scsp.common.domain.Servicio;
+import es.scsp.common.domain.core.EmisorCertificado;
+import es.scsp.common.domain.core.Servicio;
 import es.scsp.common.utils.DateUtils;
 import es.scsp.common.utils.StaticContextSupport;
 
@@ -133,6 +133,7 @@ public class CertificatResidencia {
 		return emisorCertificado.getNombre();
 	}
 
+	@SuppressWarnings("unused")
 	private static Element createDatosEspecificos() throws Exception {
 		DocumentBuilderFactory fac = DocumentBuilderFactory.newInstance();
 		fac.setNamespaceAware(true);

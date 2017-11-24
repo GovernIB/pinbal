@@ -88,10 +88,10 @@ public class PaginacioHelper {
 		dto.setTamany(page.getSize());
 		dto.setTotal(page.getTotalPages());
 		dto.setElementsTotal(page.getTotalElements());
-		dto.setAnteriors(page.hasPreviousPage());
-		dto.setPrimera(page.isFirstPage());
-		dto.setPosteriors(page.hasNextPage());
-		dto.setDarrera(page.isLastPage());
+		dto.setAnteriors(page.hasPrevious());
+		dto.setPrimera(page.isFirst());
+		dto.setPosteriors(page.hasNext());
+		dto.setDarrera(page.isLast());
 		if (page.hasContent()) {
 			if (targetClass != null)
 				dto.setContingut(

@@ -7,6 +7,8 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
 import javax.persistence.FetchType;
+import javax.persistence.ForeignKey;
+import javax.persistence.Index;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
@@ -14,11 +16,9 @@ import javax.persistence.UniqueConstraint;
 import javax.persistence.Version;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
-import org.hibernate.annotations.ForeignKey;
-import org.hibernate.annotations.Index;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import es.caib.pinbal.core.audit.PinbalAuditable;
-import es.caib.pinbal.core.audit.PinbalAuditingEntityListener;
 
 /**
  * Classe de model de dades que conté la informació d'una parella entitat-servei.
@@ -28,20 +28,20 @@ import es.caib.pinbal.core.audit.PinbalAuditingEntityListener;
 @Entity
 @Table(	name = "pbl_entitat_servei",
 		uniqueConstraints = {
-				@UniqueConstraint(columnNames={"entitat_id", "servei_id"})})
-@org.hibernate.annotations.Table(
-		appliesTo = "pbl_entitat_servei",
+				@UniqueConstraint(columnNames = {"entitat_id", "servei_id"})},
 		indexes = {
-				@Index(name = "pbl_entiserv_entitat_i", columnNames = {"entitat_id"}),
-				@Index(name = "pbl_entiserv_servei_i", columnNames = {"servei_id"})})
-@EntityListeners(PinbalAuditingEntityListener.class)
+				@Index(name = "pbl_entiserv_entitat_i", columnList = "entitat_id"),
+				@Index(name = "pbl_entiserv_servei_i", columnList = "servei_id")
+		})
+@EntityListeners(AuditingEntityListener.class)
 public class EntitatServei extends PinbalAuditable<Long> {
 
 	private static final long serialVersionUID = -6657066865382086237L;
 
 	@ManyToOne(optional=false, fetch=FetchType.EAGER)
-	@JoinColumn(name="entitat_id")
-	@ForeignKey(name="pbl_entitat_entiserv_fk")
+	@JoinColumn(
+			name = "entitat_id",
+			foreignKey = @ForeignKey(name="pbl_entitat_entiserv_fk"))
 	private Entitat entitat;
 
 	@Column(name = "servei_id", length = 64)
