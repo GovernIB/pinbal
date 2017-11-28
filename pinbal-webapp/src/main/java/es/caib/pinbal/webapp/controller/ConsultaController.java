@@ -253,6 +253,18 @@ public class ConsultaController extends BaseController {
 					if (!bindingResult.hasErrors()) {
 						try {
 							liniesFitxer = readFile(fitxer, bindingResult);
+							int numPeticions = liniesFitxer.size() - 1;
+							if (servei.getScspMaxSolicitudesPeticion() > 0 && 
+									numPeticions > servei.getScspMaxSolicitudesPeticion()) {
+								LOGGER.error(
+										"Error al processar dades de la petició múltiple",
+										"El fitxer excedeix el màxim de sol·licituds permeses pel servei");
+								bindingResult.rejectValue(
+										"multipleFitxer", 
+										"PeticioMultiple.fitxer.massa.peticions", 
+										"El fitxer excedeix el màxim de sol·licituds permeses pel servei");
+							}
+							
 							if (!bindingResult.hasErrors()) {
 								List<String> errorsValidacio = new ArrayList<String>();
 								validatePeticioMultipleFile(request, liniesFitxer, servei, camps, bindingResult, errorsValidacio);

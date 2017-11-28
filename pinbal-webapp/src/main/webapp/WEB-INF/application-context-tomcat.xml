@@ -24,11 +24,7 @@
 	<import resource="classpath:es/caib/pinbal/core/context/application-context-webapp.xml" />
 	<import resource="classpath:es/caib/pinbal/webapp/context/application-context-security.xml" />
 
-<<<<<<< HEAD
 	<!-- wss:binding url="/ws/recobriment">
-=======
-	<!--wss:binding url="/ws/recobriment">
->>>>>>> refs/heads/task_28-Error_format_plantilla
 		<wss:service>
 			<ws:service bean="#recobrimentImpl"/>
 		</wss:service>
