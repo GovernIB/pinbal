@@ -224,6 +224,10 @@
 					<groupId>org.slf4j</groupId>
 					<artifactId>slf4j-api</artifactId>
 				</exclusion>
+				<exclusion>
+					<groupId>org.bouncycastle</groupId>
+					<artifactId>bcprov-jdk15</artifactId>
+				</exclusion>
 			</exclusions>
 		</dependency>
 		<dependency>
@@ -322,13 +326,13 @@
 		</dependency>
 		<dependency>
 			<groupId>org.bouncycastle</groupId>
-			<artifactId>bcprov-jdk15</artifactId>
-			<version>1.46</version>
+			<artifactId>bcprov-jdk15on</artifactId>
+			<version>1.49</version>
 		</dependency>
 		<dependency>
 			<groupId>org.bouncycastle</groupId>
-			<artifactId>bcmail-jdk15</artifactId>
-			<version>1.46</version>
+			<artifactId>bcmail-jdk15on</artifactId>
+			<version>1.49</version>
 		</dependency>
 		<dependency>
 			<groupId>org.slf4j</groupId>
