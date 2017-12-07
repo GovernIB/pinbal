@@ -76,10 +76,15 @@ public class ParametroConfiguracionDao extends BaseDao {
 
 
 	private ParametroConfiguracion getParametroConfiguracionProperties(String propKey) {
-		ParametroConfiguracion param = new ParametroConfiguracion();
-		param.setNombre(propKey.substring(PROP_PREFIX.length()));
-		param.setValor(PropertiesHelper.getProperties().getProperty(propKey));
-		return param;
+		String propValor = PropertiesHelper.getProperties().getProperty(propKey);
+		if (propValor != null) {
+			ParametroConfiguracion param = new ParametroConfiguracion();
+			param.setNombre(propKey.substring(PROP_PREFIX.length()));
+			param.setValor(PropertiesHelper.getProperties().getProperty(propKey));
+			return param;
+		} else {
+			return null;
+		}
 	}
 
 }

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metadata>
+  <groupId>org.apache.axis2</groupId>
+  <artifactId>mex</artifactId>
+  <versioning>
+    <release>1.6.4-impl</release>
+    <versions>
+      <version>1.6.4-impl</version>
+    </versions>
+    <lastUpdated>20180215095038</lastUpdated>
+  </versioning>
+</metadata>
