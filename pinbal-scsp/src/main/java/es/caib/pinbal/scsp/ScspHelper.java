@@ -25,9 +25,6 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
 import org.apache.commons.lang.ObjectUtils;
-import org.hibernate.Criteria;
-import org.hibernate.Session;
-import org.hibernate.criterion.Restrictions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cache.annotation.Cacheable;
@@ -874,12 +871,13 @@ public class ScspHelper {
 
 	private OrganismoCesionario getOrganismoCesionarioAmbCif(
 			String cif) {
-		Session session = getOrganismoCesionarioDao().getSessionFactory().getCurrentSession();
-		Criteria c = session.createCriteria(OrganismoCesionario.class);
-	    c.add(Restrictions.eq("cif", cif));
-	    @SuppressWarnings("unchecked")
-		List<OrganismoCesionario> orgs = c.list();
-		return (orgs.size() > 0) ? orgs.get(0) : null;
+		List<OrganismoCesionario> organismos = getOrganismoCesionarioDao().getAll();
+		for (OrganismoCesionario organismo: organismos) {
+			if (cif.equals(organismo.getCif())) {
+				return organismo;
+			}
+		}
+		return null;
 	}
 
 	private ServicioDao getServicioDao() {

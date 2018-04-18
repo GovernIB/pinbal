@@ -218,6 +218,16 @@
 			<version>2.2.0</version>
 		</dependency>
 		<dependency>
+			<groupId>org.webjars.bower</groupId>
+			<artifactId>bootstrap-datepicker</artifactId>
+			<version>1.6.1</version>
+		</dependency>
+		<dependency>
+		    <groupId>org.apache.odftoolkit</groupId>
+		    <artifactId>simple-odf</artifactId>
+		    <version>0.8.2-incubating</version>
+		</dependency>
+		<dependency>
 			<groupId>commons-io</groupId>
 			<artifactId>commons-io</artifactId>
 			<version>1.3.1</version>
@@ -233,19 +243,6 @@
 			<artifactId>pinbal-core-client</artifactId>
 			<version>${project.version}</version>
 		</dependency>
-		
-		<dependency>
-			<groupId>org.webjars.bower</groupId>
-			<artifactId>bootstrap-datepicker</artifactId>
-			<version>1.6.1</version>
-		</dependency>
-		
-		<dependency>
-		    <groupId>org.apache.odftoolkit</groupId>
-		    <artifactId>simple-odf</artifactId>
-		    <version>0.8.2-incubating</version>
-		</dependency>
-		
 	</dependencies>
 	<profiles>
 		<profile>
@@ -281,6 +278,16 @@
 							<artifactId>spring-web</artifactId>
 						</exclusion>
 					</exclusions>
+				</dependency>
+				<dependency>
+					<groupId>org.bouncycastle</groupId>
+					<artifactId>bcmail-jdk15on</artifactId>
+					<version>1.49</version>
+				</dependency>
+				<dependency>
+					<groupId>org.bouncycastle</groupId>
+					<artifactId>bcprov-jdk15on</artifactId>
+					<version>1.49</version>
 				</dependency>
 				<dependency>
 					<groupId>${project.groupId}</groupId>
