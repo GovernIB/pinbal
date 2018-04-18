@@ -300,7 +300,6 @@
 	<xs:element name="TipoDocumentacion">
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
-				<xs:enumeration value="CIF"/>
 				<xs:enumeration value="NIF"/>
 				<xs:enumeration value="DNI"/>
 				<xs:enumeration value="Pasaporte"/>

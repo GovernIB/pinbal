@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema targetNamespace="http://intermediacion.redsara.es/scsp/esquemas/datosespecificos" elementFormDefault="qualified" attributeFormDefault="unqualified" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://intermediacion.redsara.es/scsp/esquemas/datosespecificos">
+	<xs:element name="DatosEspecificos" type="DatosEspecificos"/>
+	<xs:complexType name="DatosEspecificos">
+		<xs:choice>
+			<xs:element ref="Entrada"/>
+			<xs:element ref="Salida"/>
+		</xs:choice>
+		<xs:attribute name="Id" type="xs:string" use="optional"/>
+	</xs:complexType>
+	<xs:element name="Entrada">
+		<xs:complexType>
+			<xs:all>
+				<xs:element ref="FechaDesde"/>
+				<xs:element ref="FechaHasta"/>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Salida">
+		<xs:complexType>
+			<xs:all>
+				<xs:element ref="Estado"/>
+				<xs:element ref="FechaConsulta" minOccurs="0"/>
+				<xs:element ref="DocumentoIdentificativoUnivoco" minOccurs="0"/>
+				<xs:element ref="NumeroPrestacionesEncontradas" minOccurs="0"/>
+				<xs:element ref="prestaciones" minOccurs="0"/>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Estado">
+		<xs:complexType>
+			<xs:all>
+				<xs:element ref="CodigoEstado"/>
+				<xs:element ref="CodigoEstadoSecundario" minOccurs="0"/>
+				<xs:element ref="LiteralError"/>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="FechaDesde" nillable="true">
+		<xs:simpleType>
+			<xs:restriction base="xs:date"/>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="FechaHasta" nillable="true">
+		<xs:simpleType>
+			<xs:restriction base="xs:date"/>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="FechaConsulta" nillable="true" type="xs:date"/>
+	<xs:element name="DocumentoIdentificativoUnivoco" nillable="true">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:enumeration value="S"/>
+				<xs:enumeration value="N"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="NumeroPrestacionesEncontradas" nillable="true">
+		<xs:simpleType>
+			<xs:restriction base="xs:integer">
+				<xs:maxExclusive value="99"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="prestaciones">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="Prestacion" maxOccurs="35"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Prestacion">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="CodigoPrestacion"/>
+				<xs:element ref="LiteralPrestacion"/>
+				<xs:element ref="TipoPrestacion"/>
+				<xs:element ref="CodigoEntidad"/>
+				<xs:element ref="LiteralEntidad"/>
+				<xs:element ref="ImporteBruto"/>
+				<xs:element ref="ImporteLiquido"/>
+				<xs:element ref="FechadeEfectos" minOccurs="0"/>
+				<xs:element ref="FechaFin"/>
+				<xs:element ref="FechaHechoCausante"/>
+				<xs:element ref="BaseReguladora"/>
+				<xs:element ref="TipodePago"/>
+				<xs:element ref="Pagos" minOccurs="0"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="CodigoPrestacion" nillable="true">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:maxLength value="2"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="LiteralPrestacion" nillable="true">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:maxLength value="40"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="TipoPrestacion" nillable="true">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:maxLength value="40"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="CodigoEntidad" nillable="true">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:maxLength value="3"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="LiteralEntidad" nillable="true">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:maxLength value="40"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="ImporteBruto" nillable="true">
+		<xs:simpleType>
+			<xs:restriction base="xs:integer">
+				<xs:maxExclusive value="9999999"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="ImporteLiquido" nillable="true">
+		<xs:simpleType>
+			<xs:restriction base="xs:integer">
+				<xs:maxExclusive value="9999999"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="FechadeEfectos" nillable="true" type="xs:date"/>
+	<xs:element name="FechaFin" nillable="true" type="xs:date"/>
+	<xs:element name="FechaHechoCausante" nillable="true" type="xs:date"/>
+	<xs:element name="BaseReguladora" nillable="true">
+		<xs:simpleType>
+			<xs:restriction base="xs:integer">
+				<xs:maxExclusive value="9999999"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="TipodePago" nillable="true">
+		<xs:simpleType>
+			<xs:restriction base="xs:integer">
+				<xs:maxExclusive value="9"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Pagos" nillable="true">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="Pago" minOccurs="0" maxOccurs="24"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Pago">
+		<xs:complexType>
+			<xs:all>
+				<xs:element ref="Periododelpago" minOccurs="0"/>
+				<xs:element ref="ImporteBrutoenelmes" minOccurs="0"/>
+				<xs:element ref="ImporteLiquidoenelmes" minOccurs="0"/>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Periododelpago" nillable="true" type="xs:date"/>
+	<xs:element name="ImporteBrutoenelmes" nillable="true">
+		<xs:simpleType>
+			<xs:restriction base="xs:integer">
+				<xs:maxExclusive value="9999999"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="ImporteLiquidoenelmes" nillable="true">
+		<xs:simpleType>
+			<xs:restriction base="xs:integer">
+				<xs:maxExclusive value="9999999"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="CodigoEstado" nillable="true">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:length value="4"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="CodigoEstadoSecundario" nillable="true" type="xs:string"/>
+	<xs:element name="LiteralError" nillable="true" type="xs:string"/>
+</xs:schema>

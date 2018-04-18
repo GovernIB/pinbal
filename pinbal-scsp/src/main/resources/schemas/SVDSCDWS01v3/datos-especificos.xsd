@@ -1,4 +1,5 @@
-<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://intermediacion.redsara.es/scsp/esquemas/datosespecificos" xmlns:v="http://www.red.es/padron" targetNamespace="http://intermediacion.redsara.es/scsp/esquemas/datosespecificos" elementFormDefault="qualified" attributeFormDefault="unqualified">
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:v="http://www.red.es/padron" xmlns="http://intermediacion.redsara.es/scsp/esquemas/datosespecificos" targetNamespace="http://intermediacion.redsara.es/scsp/esquemas/datosespecificos" elementFormDefault="qualified" attributeFormDefault="unqualified">
 	<xs:import namespace="http://www.red.es/padron" schemaLocation="VolanteEmpadronamiento.xsd"/>
 	<xs:element name="DatosEspecificos" type="DatosEspecificos">
 		<xs:annotation>
@@ -107,7 +108,7 @@
 									<xs:element name="Movil" minOccurs="0">
 										<xs:simpleType>
 											<xs:restriction base="xs:string">
-												<xs:length value="9"/>
+												<xs:pattern value="\d{9}|\+34\d{9}|0034\d{9}"/>
 											</xs:restriction>
 										</xs:simpleType>
 									</xs:element>
@@ -179,7 +180,7 @@
 	</xs:element>
 	<xs:simpleType name="OrganismoType">
 		<xs:restriction base="xs:string">
-			<xs:pattern value="DGP|DGT|TGSS|INSS|AEAT|(ASTURIAS_.+)"/>
+			<xs:pattern value="DGP|DGT|TGSS|INSS|AEAT|(ASTURIAS_.+)|(RIOJA_.+)|(BALEARES_.+)|(ANDALUCIA_.+)"/>
 		</xs:restriction>
 	</xs:simpleType>
 </xs:schema>

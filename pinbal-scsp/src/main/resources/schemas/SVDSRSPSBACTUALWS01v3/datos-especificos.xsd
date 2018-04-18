@@ -1,0 +1,444 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns="http://intermediacion.redsara.es/scsp/esquemas/datosespecificos" xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://intermediacion.redsara.es/scsp/esquemas/datosespecificos" elementFormDefault="qualified">
+	<xs:element name="DatosEspecificos" type="DatosEspecificos"/>
+	<xs:complexType name="DatosEspecificos">
+		<xs:choice>
+			<xs:element ref="Consulta">
+				<xs:annotation>
+					<xs:documentation>Solo en el mensaje PETICION</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element ref="Retorno">
+				<xs:annotation>
+					<xs:documentation>Solo en el mensaje RESPUESTA</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:choice>
+		<xs:attribute name="Id" type="xs:string" use="optional"/>
+	</xs:complexType>
+	<xs:element name="Consulta">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="CodigoComunidadAutonoma"/>
+				<xs:element ref="DatosAdicionalesTitular" minOccurs="0"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Retorno">
+		<xs:complexType>
+			<xs:all>
+				<xs:element ref="Estado"/>
+				<xs:element ref="DatosImportes" minOccurs="0"/>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:simpleType name="Fecha">
+		<xs:annotation>
+			<xs:documentation>Formato: DD/MM/AAAA</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:minLength value="10"/>
+			<xs:maxLength value="10"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="Importe">
+		<xs:restriction base="xs:decimal">
+			<xs:fractionDigits value="2"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:element name="CodigoError" type="xs:string"/>
+	<xs:element name="DescripcionError" type="xs:string"/>
+	<xs:element name="ImporteRSPSB" type="Importe">
+		<xs:annotation>
+			<xs:documentation>Importe de pago de la renta salario prestacion social básica</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="ImportePCV" type="Importe">
+		<xs:annotation>
+			<xs:documentation>Importe del pago de la prestación complementaria de vivienda</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="ImporteSUM" type="Importe">
+		<xs:annotation>
+			<xs:documentation>Importe de pago del complemento monoparental</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="FechaNacimiento" type="Fecha">
+		<xs:annotation>
+			<xs:documentation>Fecha de nacimiento del titular de la consulta 
+											Formato: DD/MM/AAAA</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="CodigoComunidadAutonoma">
+		<xs:annotation>
+			<xs:documentation>Utilizar los 2 dígitos del código INE.		
+· 01 - ANDALUCÍA
+· 02 - ARAGÓN
+· 03 - PRINCIPADO DE ASTURIAS
+· 04 - ISLAS BALEARES
+· 05 - CANARIAS
+· 06 - CANTABRIA
+· 07 - CASTILLA y LEÓN
+· 08 - CASTILLA-LA MANCHA
+· 09 - CATALUÑA
+· 10 - COMUNIDAD VALENCIANA
+· 11 - EXTREMADURA
+· 12 - GALICIA
+· 13 - MADRID
+· 14 - REGIÓN DE MURCIA
+· 15 - NAVARRA
+· 16 - PAÍS VASCO
+· 17 - LA RIOJA
+· 18 - CIUDAD DE CEUTA
+· 19 - CIUDAD DE MELILLA			
+			</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:enumeration value="01"/>
+				<xs:enumeration value="02"/>
+				<xs:enumeration value="03"/>
+				<xs:enumeration value="04"/>
+				<xs:enumeration value="05"/>
+				<xs:enumeration value="06"/>
+				<xs:enumeration value="07"/>
+				<xs:enumeration value="08"/>
+				<xs:enumeration value="09"/>
+				<xs:enumeration value="10"/>
+				<xs:enumeration value="11"/>
+				<xs:enumeration value="12"/>
+				<xs:enumeration value="13"/>
+				<xs:enumeration value="14"/>
+				<xs:enumeration value="15"/>
+				<xs:enumeration value="16"/>
+				<xs:enumeration value="17"/>
+				<xs:enumeration value="18"/>
+				<xs:enumeration value="19"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="DatosAdicionalesTitular" type="DatosAdicionalesTitular"/>
+	<xs:complexType name="DatosAdicionalesTitular">
+		<xs:sequence>
+			<xs:element ref="FechaNacimiento" minOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Fecha de nacimiento del titular de la consulta 						Formato: DD/MM/AAAA</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="Solicitud">
+		<xs:sequence>
+			<xs:element ref="TipoSolicitud" minOccurs="0"/>
+			<xs:element ref="FechaEntrada" minOccurs="0"/>
+			<xs:element ref="Expediente" minOccurs="0"/>
+			<xs:element ref="EstadoExpediente" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:element name="Importes">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="ImportePCV" minOccurs="0"/>
+				<xs:element ref="ImporteRSPSB"/>
+				<xs:element ref="ImporteSUM" minOccurs="0"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="ImportesUltimoPago">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="ImporteUltimoPagoPCV" minOccurs="0"/>
+				<xs:element ref="ImporteUltimoPagoRSPSB"/>
+				<xs:element ref="ImporteUltimoPagoSUM" minOccurs="0"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="ImportesAnuales">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="ImporteAnualPCV" minOccurs="0"/>
+				<xs:element ref="ImporteAnualRSPSB"/>
+				<xs:element ref="ImporteAnualSUM" minOccurs="0"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="DatosExpediente">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="Expediente"/>
+				<xs:element ref="SituacionExpediente"/>
+				<xs:element ref="CausaEstadoExpediente" minOccurs="0"/>
+				<xs:element ref="MotivoEstadoExpediente" minOccurs="0"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="DatosImportes">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="FechaNacimiento">
+					<xs:annotation>
+						<xs:documentation>Fecha de nacimiento del titular de la consulta Formato: DD/MM/AAAA</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element ref="TipoMiembro"/>
+				<xs:element ref="TipoPrestacion"/>
+				<xs:element ref="Pensionista" minOccurs="0"/>
+				<xs:element ref="Importes" minOccurs="0"/>
+				<xs:element ref="ImportesUltimoPago" minOccurs="0"/>
+				<xs:element ref="ImportesAnuales" minOccurs="0"/>
+				<xs:element ref="IngresosTrabajo"/>
+				<xs:element ref="MesUltimoPago" minOccurs="0"/>
+				<xs:element ref="AnioUltimoPago" minOccurs="0"/>
+				<xs:element ref="FechaInicioEfectosRSPSB"/>
+				<xs:element ref="FechaInicioEfectosPCV" minOccurs="0"/>
+				<xs:element ref="FechaInicioRSPSB"/>
+				<xs:element ref="FechaInicioPCV" minOccurs="0"/>
+				<xs:element ref="NumeroMiembros"/>
+				<xs:element ref="NumeroPrestacionesDomicilio"/>
+				<xs:element ref="DatosExpediente"/>
+				<xs:element ref="ListaDatosSolicitud" minOccurs="0"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Expediente">
+		<xs:annotation>
+			<xs:documentation>Expediente del titular de la consulta</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="65"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="SituacionExpediente">
+		<xs:annotation>
+			<xs:documentation>Situación del expediente RSPSB</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:enumeration value="Concedido"/>
+				<xs:enumeration value="Suspendido"/>
+				<xs:enumeration value="Denegado"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Pensionista">
+		<xs:annotation>
+			<xs:documentation>Indica si es titular es o no pensionista</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:enumeration value="S"/>
+				<xs:enumeration value="N"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="TipoMiembro">
+		<xs:annotation>
+			<xs:documentation>Indica si es titular de la prestación o beneficiario</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:enumeration value="Titular"/>
+				<xs:enumeration value="Miembro UC"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="TipoPrestacion">
+		<xs:annotation>
+			<xs:documentation>Tipo de prestación obtenida</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:enumeration value="RSPSB"/>
+				<xs:enumeration value="RSPSB/PCV"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="IngresosTrabajo">
+		<xs:annotation>
+			<xs:documentation>Indica si tiene ingresos por rendimientos de trabajo</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:enumeration value="S"/>
+				<xs:enumeration value="N"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="MesUltimoPago">
+		<xs:annotation>
+			<xs:documentation>Último mes en el que se ha realizado el pago</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:int">
+				<xs:minInclusive value="1"/>
+				<xs:maxInclusive value="12"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="AnioUltimoPago">
+		<xs:annotation>
+			<xs:documentation>Último año en el que se ha realizado el pago Formato: AAAA</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:gYear"/>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="ImporteUltimoPagoRSPSB" type="Importe">
+		<xs:annotation>
+			<xs:documentation>Importe de la renta salario prestacion social básica del último pago</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="ImporteUltimoPagoSUM" type="Importe">
+		<xs:annotation>
+			<xs:documentation>Importe SUM del último pago</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="ImporteUltimoPagoPCV" type="Importe">
+		<xs:annotation>
+			<xs:documentation>Importe PCV del último pago</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="ImporteAnualRSPSB" type="Importe">
+		<xs:annotation>
+			<xs:documentation>Importe acumulado de la renta salario prestacion social básica desde Enero del año en curso hasta el mes anterior a la fecha de consulta</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="ImporteAnualPCV" type="Importe">
+		<xs:annotation>
+			<xs:documentation>Importe acumulado de PCV desde Enero del año en curso hasta el mes anterior a la fecha de consulta</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="ImporteAnualSUM" type="Importe">
+		<xs:annotation>
+			<xs:documentation>Importe acumulado de SUM desde Enero del año en curso hasta el mes anterior a la fecha de consulta</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="FechaInicioEfectosRSPSB" type="Fecha">
+		<xs:annotation>
+			<xs:documentation>Fecha efectiva de concesión del expediente de la renta salario prestacion social básica</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="FechaInicioEfectosPCV" type="Fecha">
+		<xs:annotation>
+			<xs:documentation>Fecha efectiva de concesión del expediente PCV</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="FechaInicioRSPSB" type="Fecha">
+		<xs:annotation>
+			<xs:documentation>Fecha de inicio de la situación actual y de pago de la renta salario prestacion social básica</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="FechaInicioPCV" type="Fecha">
+		<xs:annotation>
+			<xs:documentation>Fecha de inicio de la situación actual y de pago de la renta salario prestacion social básica</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="NumeroMiembros">
+		<xs:annotation>
+			<xs:documentation>Número de miembros en la unidad familiar o domicilio</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:int">
+				<xs:minInclusive value="0"/>
+				<xs:maxInclusive value="20"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="NumeroPrestacionesDomicilio">
+		<xs:annotation>
+			<xs:documentation>Número de prestaciones recibidas por domicilio</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:int">
+				<xs:minInclusive value="0"/>
+				<xs:maxInclusive value="50"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="CausaEstadoExpediente">
+		<xs:annotation>
+			<xs:documentation>Causa del estado del expediente</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:maxLength value="255"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="MotivoEstadoExpediente">
+		<xs:annotation>
+			<xs:documentation>Motivo del estado del expediente</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:maxLength value="255"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="ListaDatosSolicitud">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="DatosSolicitud" type="Solicitud" maxOccurs="unbounded"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="TipoSolicitud">
+		<xs:annotation>
+			<xs:documentation>Tipo de solicitud realizada por el titular</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:maxLength value="100"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="FechaEntrada" type="Fecha">
+		<xs:annotation>
+			<xs:documentation>Fecha en la que el titular realizó la solicitud</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="EstadoExpediente">
+		<xs:annotation>
+			<xs:documentation>Estado de la solicitud Valores posibles: 1 a 13</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:int">
+				<xs:minInclusive value="1"/>
+				<xs:maxInclusive value="13"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Estado">
+		<xs:complexType>
+			<xs:all>
+				<xs:element ref="CodigoEstado"/>
+				<xs:element ref="CodigoEstadoSecundario" minOccurs="0"/>
+				<xs:element ref="LiteralError"/>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="CodigoEstado">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:maxLength value="4"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="CodigoEstadoSecundario">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:maxLength value="16"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="LiteralError">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:maxLength value="255"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+</xs:schema>

@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <wsp:Policy wsu:Id="SigEncr" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd" xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy"
-	xmlns:sp="http://schemas.xmlsoap.org/ws/2005/07/securitypolicy" xmlns:ramp="http://ws.apache.org/rampart/policy">
+	xmlns:sp="http://schemas.xmlsoap.org/ws/2005/07/securitypolicy"
+	xmlns:wspol="http://docs.oasis-open.org/ws-sx/ws-securitypolicy/200702" 
+    xmlns:ramp="http://ws.apache.org/rampart/policy">
 	<wsp:ExactlyOne>
 		<wsp:All>
 			<sp:AsymmetricBinding>
@@ -27,7 +29,8 @@
 					</sp:RecipientToken>
 					<sp:AlgorithmSuite>
 						<wsp:Policy>
-							<sp:Basic128Rsa15 />
+							<sp:algorimoEncriptacion />
+							<!-- <sp:Basic128Rsa15 />-->
 							<!-- sp:TripleDesRsa15 / -->
 							<!-- sp:Basic256Rsa15 / -->
 						</wsp:Policy>
@@ -50,11 +53,12 @@
 			<sp:SignedParts>
 				<sp:Body />
 			</sp:SignedParts>
-			<sp:EncryptedElements>
-				<sp:XPath>//*[local-name()='DatosEspecificos']</sp:XPath>
+			<wspol:ContentEncryptedElements>
+				<wspol:XPath>//*[local-name()='DatosEspecificos']</wspol:XPath>
 				<!--   <sp:XPath xmlns:de="http://intermediacion.redsara.es/scsp/esquemas/datosespecificos">//de:DatosEspecificos</sp:XPath>-->
-			</sp:EncryptedElements>
+			</wspol:ContentEncryptedElements>
 			<ramp:RampartConfig>
+				<ramp:policyValidatorCbClass>es.scsp.modules.CustomPolicyBasedResultsValidator</ramp:policyValidatorCbClass>
 				<ramp:user>$</ramp:user>
 				<ramp:encryptionUser>$</ramp:encryptionUser>
 				<ramp:passwordCallbackClass>es.scsp.common.security.PasswordCallbackHandler</ramp:passwordCallbackClass>
@@ -65,7 +69,7 @@
 				<ramp:encryptionCypto>
 					<ramp:crypto provider="es.scsp.common.security.ScspCryptoProperties">
 					</ramp:crypto>
-				</ramp:encryptionCypto>
+				</ramp:encryptionCypto> 
 			</ramp:RampartConfig>
 		</wsp:All>
 	</wsp:ExactlyOne>

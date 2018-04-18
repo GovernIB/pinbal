@@ -3,7 +3,7 @@
 	<xs:element name="DatosEspecificos" type="DatosEspecificos"/>
 	<xs:complexType name="DatosEspecificos">
 		<xs:choice>
-			<xs:element ref="Consulta" minOccurs="1">
+			<xs:element ref="Consulta">
 				<xs:annotation>
 					<xs:documentation>Solo en el mensaje PETICION</xs:documentation>
 				</xs:annotation>
@@ -183,10 +183,6 @@
 			</xs:restriction>
 		</xs:simpleType>
 	</xs:element>
-	
-	
-	
-	
 	<xs:element name="Estado">
 		<xs:complexType>
 			<xs:all>

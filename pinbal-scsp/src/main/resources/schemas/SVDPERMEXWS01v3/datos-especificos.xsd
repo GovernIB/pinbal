@@ -1,5 +1,7 @@
-<?xml version='1.0' encoding='utf-8'?><xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified" targetNamespace="http://intermediacion.redsara.es/scsp/esquemas/datosespecificos" xmlns="http://intermediacion.redsara.es/scsp/esquemas/datosespecificos" xmlns:xs="http://www.w3.org/2001/XMLSchema">
-	<xs:element name="DatosEspecificos" type="DatosEspecificos"></xs:element>
+<?xml version="1.0" encoding="utf-8"?>
+<!-- edited with XMLSpy v2011 sp1 (http://www.altova.com) by End User (free.org) -->
+<xs:schema xmlns="http://intermediacion.redsara.es/scsp/esquemas/datosespecificos" xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://intermediacion.redsara.es/scsp/esquemas/datosespecificos" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<xs:element name="DatosEspecificos" type="DatosEspecificos"/>
 	<xs:complexType name="DatosEspecificos">
 		<xs:choice>
 			<xs:element ref="Consulta">
@@ -13,7 +15,7 @@
 				</xs:annotation>
 			</xs:element>
 		</xs:choice>
-		<xs:attribute name="Id" type="xs:string" use="optional"></xs:attribute>
+		<xs:attribute name="Id" type="xs:string" use="optional"/>
 	</xs:complexType>
 	<xs:element name="Consulta">
 		<xs:complexType>
@@ -25,8 +27,8 @@
 	<xs:element name="Retorno">
 		<xs:complexType>
 			<xs:all>
-				<xs:element minOccurs="1" ref="Estado"/>
-				<xs:element minOccurs="0" ref="Permisos"/>
+				<xs:element ref="Estado" minOccurs="1"/>
+				<xs:element ref="Permisos" minOccurs="0"/>
 			</xs:all>
 		</xs:complexType>
 	</xs:element>
@@ -63,16 +65,16 @@
 		</xs:annotation>
 		<xs:complexType>
 			<xs:all>
-				<xs:element minOccurs="1" ref="CodigoEstado"/>
-				<xs:element minOccurs="0" ref="CodigoEstadoSecundario"/>
-				<xs:element minOccurs="1" ref="LiteralError"/>
+				<xs:element ref="CodigoEstado" minOccurs="1"/>
+				<xs:element ref="CodigoEstadoSecundario" minOccurs="0"/>
+				<xs:element ref="LiteralError" minOccurs="1"/>
 			</xs:all>
 		</xs:complexType>
 	</xs:element>
 	<xs:element name="Permisos">
 		<xs:complexType>
 			<xs:sequence>
-				<xs:element maxOccurs="unbounded" minOccurs="0" ref="Permiso"/>
+				<xs:element ref="Permiso" minOccurs="1" maxOccurs="unbounded"/>
 			</xs:sequence>
 		</xs:complexType>
 	</xs:element>
@@ -80,13 +82,13 @@
 		<xs:complexType>
 			<xs:all>
 				<xs:element ref="Procedimiento"/>
-				<xs:element ref="Cofradia"/>
+				<xs:element ref="Cofradia" minOccurs="0"/>
 				<xs:element ref="TipoPermiso"/>
 				<xs:element ref="FechaInicioPermiso"/>
 				<xs:element ref="FechaFinalPermiso"/>
-				<xs:element minOccurs="0" ref="Suspension"/>
-				<xs:element minOccurs="0" ref="FechaInicioSuspension"/>
-				<xs:element minOccurs="0" ref="FechaFinalSuspension"/>
+				<xs:element ref="Suspension" minOccurs="0"/>
+				<xs:element ref="FechaInicioSuspension" minOccurs="0"/>
+				<xs:element ref="FechaFinalSuspension" minOccurs="0"/>
 			</xs:all>
 		</xs:complexType>
 	</xs:element>
@@ -187,7 +189,6 @@
 			</xs:restriction>
 		</xs:simpleType>
 	</xs:element>
-	
 	<xs:element name="CodigoComunidadAutonoma">
 		<xs:annotation>
 			<xs:documentation>Utilizar los 2 dígitos del código INE.		

@@ -21,13 +21,11 @@
 			<xs:all>
 				<xs:element ref="NPIE" minOccurs="0"/>
 				<xs:element ref="NumeroAfiliacion" minOccurs="0"/>
-				<xs:element ref="Exento" minOccurs="0"/>
 				<xs:element ref="Ejercicio">
 					<xs:annotation>
 						<xs:documentation>Año en formato: AAAA</xs:documentation>
 					</xs:annotation>
 				</xs:element>
-				<xs:element ref="Idioma" minOccurs="0"/>
 			</xs:all>
 		</xs:complexType>
 	</xs:element>
@@ -43,7 +41,7 @@
 	<xs:element name="Estado">
 		<xs:complexType>
 			<xs:all>
-				<xs:element ref="CodigoEstado"/>				
+				<xs:element ref="CodigoEstado"/>
 				<xs:element ref="LiteralError"/>
 			</xs:all>
 		</xs:complexType>
@@ -54,7 +52,7 @@
 				<xs:maxLength value="4"/>
 			</xs:restriction>
 		</xs:simpleType>
-	</xs:element>	
+	</xs:element>
 	<xs:element name="LiteralError">
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
@@ -69,17 +67,6 @@
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
 				<xs:pattern value="[1-2]{1}[0-9]{3}"/>
-			</xs:restriction>
-		</xs:simpleType>
-	</xs:element>
-	<xs:element name="Exento">
-		<xs:annotation>
-			<xs:documentation>Formato: S o N</xs:documentation>
-		</xs:annotation>
-		<xs:simpleType>
-			<xs:restriction base="xs:string">
-				<xs:enumeration value="S"/>
-				<xs:enumeration value="N"/>
 			</xs:restriction>
 		</xs:simpleType>
 	</xs:element>
@@ -120,22 +107,5 @@
 		<xs:annotation>
 			<xs:documentation>PDF en base64</xs:documentation>
 		</xs:annotation>
-	</xs:element>
-	<xs:element name="Idioma">
-		<xs:annotation>
-			<xs:documentation>Formato: 
-· 1 - CASTELLANO
-· 2 - CATALAN
-· 3 - EUSKERA
-· 4 - GALLEGO</xs:documentation>
-		</xs:annotation>
-		<xs:simpleType>
-			<xs:restriction base="xs:integer">
-				<xs:enumeration value="1"/>
-				<xs:enumeration value="2"/>
-				<xs:enumeration value="3"/>
-				<xs:enumeration value="4"/>
-			</xs:restriction>
-		</xs:simpleType>
 	</xs:element>
 </xs:schema>

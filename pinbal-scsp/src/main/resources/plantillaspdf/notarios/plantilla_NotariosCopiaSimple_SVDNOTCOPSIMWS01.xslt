@@ -205,7 +205,7 @@
 		</fo:block>
 		<fo:block margin-top="2pt" text-align="center" font-family="Arial,sans-serif" font-size="8pt" line-height="10pt" space-after.optimum="1pt" display-align="after" color="#2F4F4F">
 			<fo:inline font-weight="bold">
-				<xsl:text>Identificador de Petición:</xsl:text>
+				<xsl:text>Identificador de petición:</xsl:text>
 			</fo:inline>
 			<fo:inline font-weight="bold">
 				<xsl:value-of select="$idPeticion"/>
@@ -213,7 +213,7 @@
 		</fo:block>
 		<fo:block text-align="center" font-family="Arial,sans-serif" font-size="8pt" line-height="10pt" space-after.optimum="1pt" display-align="after" color="#2F4F4F">
 			<fo:inline font-weight="bold">
-				<xsl:text>Identificador de Transmisión:</xsl:text>
+				<xsl:text>Identificador de transmisión:</xsl:text>
 			</fo:inline>
 			<fo:inline font-weight="bold">
 				<xsl:value-of select="$idTransmision"/>
@@ -223,7 +223,7 @@
 			<fo:block text-align="left" margin-top="20pt">
 				<fo:block font-size="8pt" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after">
 					<fo:inline font-weight="bold">
-						<xsl:text>Datos de Consulta</xsl:text>
+						<xsl:text>Datos de consulta</xsl:text>
 					</fo:inline>
 				</fo:block>
 			</fo:block>
@@ -285,7 +285,7 @@
 				<fo:block text-align="left" margin-top="25pt">
 					<fo:block font-size="8pt" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after">
 						<fo:inline font-weight="bold">
-							<xsl:text>Datos de Respuesta</xsl:text>
+							<xsl:text>Datos de respuesta</xsl:text>
 						</fo:inline>
 					</fo:block>
 				</fo:block>
@@ -390,7 +390,7 @@
 										<fo:block text-align="left" margin="0pt">
 											<fo:block font-size="8pt" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after" >
 												<fo:inline font-weight="bold">
-													<xsl:text>Nº Protocolo Bis:</xsl:text>
+													<xsl:text>Nº protocolo bis:</xsl:text>
 												</fo:inline>											
 											</fo:block>
 										</fo:block>
@@ -410,7 +410,7 @@
 										<fo:block text-align="left" margin="0pt">
 											<fo:block font-size="8pt" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after">
 												<fo:inline font-weight="bold">
-													<xsl:text>Fecha Autorización:</xsl:text>
+													<xsl:text>Fecha autorización:</xsl:text>
 												</fo:inline>											
 											</fo:block>
 										</fo:block>
@@ -462,7 +462,7 @@
 										<fo:block text-align="left" margin="0pt">
 											<fo:block font-size="8pt" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after">
 												<fo:inline font-weight="bold">
-													<xsl:text>Acto Jurídico:</xsl:text>
+													<xsl:text>Acto jurídico:</xsl:text>
 												</fo:inline>
 											</fo:block>
 										</fo:block>
@@ -506,7 +506,7 @@
 											<fo:block text-align="left" margin="0pt">
 												<fo:block font-size="8pt" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after">
 													<fo:inline font-weight="bold">
-														<xsl:text>Nombre/Razón Social:</xsl:text>
+														<xsl:text>Nombre/Razón social:</xsl:text>
 													</fo:inline>
 												</fo:block>
 											</fo:block>
@@ -593,7 +593,7 @@
 											<fo:block text-align="left" margin="0pt">
 												<fo:block font-size="8pt" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after">
 													<fo:inline font-weight="bold">
-														<xsl:text>Nombre/Razón Social:</xsl:text>
+														<xsl:text>Nombre/Razón social:</xsl:text>
 													</fo:inline>
 												</fo:block>
 											</fo:block>
@@ -663,7 +663,7 @@
 									<fo:table-cell padding="3pt" display-align="center" background-color="#B0C4DE">
 										<fo:block>
 											<fo:inline font-weight="bold" display-align="after">
-												<xsl:text>Copia Simple</xsl:text>
+												<xsl:text>Copia simple</xsl:text>
 											</fo:inline>
 										</fo:block>
 									</fo:table-cell>
@@ -681,7 +681,7 @@
 										<fo:block text-align="left" margin="0pt">
 											<fo:block font-size="8pt" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after">
 												<fo:inline font-weight="bold">
-													<xsl:text>Fecha Documento:</xsl:text>
+													<xsl:text>Fecha documento:</xsl:text>
 												</fo:inline>
 											</fo:block>
 										</fo:block>
@@ -767,7 +767,7 @@
 										<fo:block text-align="left" margin="0pt">
 											<fo:block font-size="8pt" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after">
 												<fo:inline font-weight="bold">
-													<xsl:text>Firma Fichero:</xsl:text>
+													<xsl:text>Firma fichero:</xsl:text>
 												</fo:inline>
 											</fo:block>
 										</fo:block>

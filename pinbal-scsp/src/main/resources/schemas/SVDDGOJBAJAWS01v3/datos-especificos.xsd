@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns="http://intermediacion.redsara.es/scsp/esquemas/datosespecificos" xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://intermediacion.redsara.es/scsp/esquemas/datosespecificos" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<xs:element name="DatosEspecificos">
+		<xs:complexType>
+			<xs:choice>
+				<xs:element ref="Consulta"/>
+				<xs:element ref="Retorno"/>
+			</xs:choice>
+			<xs:attribute name="Id" type="xs:string" use="optional"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Consulta">
+		<xs:complexType>
+			<xs:all>
+				<xs:element name="SolicitudBaja" type="SolicitudBajaType"/>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Retorno">
+		<xs:complexType>
+			<xs:all>
+				<xs:element ref="Estado"/>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:complexType name="SolicitudBajaType">
+		<xs:sequence>
+			<xs:element ref="Observaciones" minOccurs="0"/>
+			<xs:element name="Documentacion" minOccurs="0">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="Documento" type="DocumentoAdjuntoType" minOccurs="1" maxOccurs="10"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:element name="Observaciones">
+		<xs:annotation>
+			<xs:documentation>Observaciones para añadir comentarios sobre el trámite</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:maxLength value="500"/>
+				<xs:minLength value="1"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:complexType name="DocumentoAdjuntoType">
+		<xs:sequence>
+			<xs:element ref="Documento">
+				<xs:annotation>
+					<xs:documentation>Documento adjunto en base64</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element ref="TipoDocumento"/>
+			<xs:element ref="Descripcion"/>
+			<xs:element ref="Clasificacion"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:element name="Documento">
+		<xs:annotation>
+			<xs:documentation>Documento adjunot en base64</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:base64Binary"/>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="TipoDocumento">
+		<xs:annotation>
+			<xs:documentation>Indica el tipo de documento adjunto, "doc", "docx", "odt", "pdf", "jpg", "png", "txt", "zip", "rar"</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:enumeration value="doc"/>
+				<xs:enumeration value="docx"/>
+				<xs:enumeration value="odt"/>
+				<xs:enumeration value="pdf"/>
+				<xs:enumeration value="jpg"/>
+				<xs:enumeration value="png"/>
+				<xs:enumeration value="txt"/>
+				<xs:enumeration value="zip"/>
+				<xs:enumeration value="rar"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Descripcion">
+		<xs:annotation>
+			<xs:documentation>Descripción sobre el contenido del documento, debe permitir identificar el documento sin necesidad de abrirlo</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:maxLength value="250"/>
+				<xs:minLength value="1"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Clasificacion">
+		<xs:annotation>
+			<xs:documentation>Indica el tipo de documento adjunto</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:enumeration value="DNI"/>
+				<xs:enumeration value="NIE"/>
+				<xs:enumeration value="Pasaporte"/>
+				<xs:enumeration value="Otro"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Estado">
+		<xs:complexType>
+			<xs:all>
+				<xs:element ref="CodigoEstado"/>
+				<xs:element ref="CodigoEstadoSecundario" minOccurs="0"/>
+				<xs:element ref="LiteralError"/>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="CodigoEstado">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:maxLength value="4"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="CodigoEstadoSecundario">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:maxLength value="16"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="LiteralError">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:maxLength value="255"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+</xs:schema>

@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- edited with XMLSpy v2011 sp1 (http://www.altova.com) by End User (free.org) -->
 <xs:schema xmlns="http://intermediacion.redsara.es/scsp/esquemas/datosespecificos" xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://intermediacion.redsara.es/scsp/esquemas/datosespecificos" elementFormDefault="qualified" attributeFormDefault="unqualified">
 	<xs:element name="DatosEspecificos" type="DatosEspecificos"/>
 	<xs:complexType name="DatosEspecificos">
@@ -23,8 +22,8 @@
 			<xs:documentation>Tipo de Datos Específicos de Petición de Confirmación de Inexistencia de Antecedentes Penales de Servicio de SIRAJ_AntecedentesPenales</xs:documentation>
 		</xs:annotation>
 		<xs:sequence>
-			<!-- <xs:element ref="PaisNacimiento" minOccurs="0"/>  -->
 			<xs:element ref="AnioNacimiento" minOccurs="0"/>
+			<xs:element ref="NumeroSoporte" minOccurs="0"/>
 			<xs:element ref="Mail" minOccurs="0"/>
 			<xs:element ref="Telefono" minOccurs="0"/>
 		</xs:sequence>
@@ -33,10 +32,6 @@
 	<xs:complexType name="Retorno">
 		<xs:sequence>
 			<xs:element ref="Estado"/>
-			<!--
-			<xs:element name="Codigo" type="xs:int"/>
-			<xs:element name="Descripcion" type="xs:string" minOccurs="0"/>
-			-->
 			<xs:element ref="CSV" minOccurs="0"/>
 			<xs:element ref="URL" minOccurs="0"/>
 		</xs:sequence>
@@ -52,6 +47,21 @@
 			<xs:pattern value="[0-9]{3}"/>
 		</xs:restriction>
 	</xs:simpleType>
+	<xs:element name="NumeroSoporte">
+			<xs:annotation>
+						<xs:documentation>- Ciudadano español: Es el campo Ides del DNIe. Su codificación es 3 caracteres alfanuméricos + 6 dígitos (i.e. AAA123456)
+- Ciudadano extranjero comunitario: Su codificación es ‘C’+ 8 dígitos correspondiendo este número de soporte con el Certificado Comunitario
+- Ciudadano extranjero: Su codificación es ‘E’+ 8 dígitos (estos 8 dígitos coinciden con el número de tarjeta de identificación de extranjero). 
+</xs:documentation>
+					</xs:annotation>
+			<xs:simpleType>
+				<xs:restriction base="xs:string">
+					<xs:maxLength value="9"/>
+					<xs:minLength value="9"/>
+					<xs:whiteSpace value="collapse"/>
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:element>
 	<xs:element name="AnioNacimiento">
 		<xs:annotation>
 			<xs:documentation>Año de Nacimiento del Titular. Formato YYYY. Debe ser mayor a 1900. OBLIGATORIO si no se informa el campo Titular/Apellido1</xs:documentation>

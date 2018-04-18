@@ -250,7 +250,7 @@ contains($spacechars, $c2))">
 			font-size="8pt" line-height="10pt" space-after.optimum="1pt"
 			display-align="after" color="#2F4F4F">
 			<fo:inline font-weight="bold">
-				<xsl:text>Identificador de Petición:</xsl:text>				
+				<xsl:text>Identificador de petición:</xsl:text>				
 			</fo:inline>
 			<fo:inline font-weight="bold">				
 				<xsl:value-of select="$idPeticion" />
@@ -260,7 +260,7 @@ contains($spacechars, $c2))">
 			font-size="8pt" line-height="10pt" space-after.optimum="1pt"
 			display-align="after" color="#2F4F4F">
 			<fo:inline font-weight="bold">
-				<xsl:text>Identificador de Transmisión:</xsl:text>				
+				<xsl:text>Identificador de transmisión:</xsl:text>				
 			</fo:inline>
 			<fo:inline font-weight="bold">				
 				<xsl:value-of select="$idTransmision" />
@@ -272,25 +272,25 @@ contains($spacechars, $c2))">
 			<fo:block font-size="8pt" font-family="Arial,Helvetica,sans-serif"
 			line-height="10pt" space-after.optimum="1pt" display-align="after">
 				<fo:inline font-weight="bold">
-					<xsl:text>Datos de Consulta</xsl:text>
+					<xsl:text>Datos de consulta</xsl:text>
 				</fo:inline>
 			</fo:block>
 		</fo:block>
 		<fo:block border-style="solid" border="1px 0 0 0" text-indent="3mm" font-family="Arial,sans-serif" font-size="10pt" space-after="1mm">
 			<fo:table table-layout="fixed" border-spacing="5pt" space-before="2mm">
-				<fo:table-column column-width="proportional-column-width(0.8)"/>
-				<fo:table-column column-width="proportional-column-width(0.8)"/>
-				<fo:table-column column-width="proportional-column-width(0.85)"/>
+				<fo:table-column column-width="proportional-column-width(1)"/>
+				<fo:table-column column-width="proportional-column-width(0.7)"/>
+				<fo:table-column column-width="proportional-column-width(1)"/>
 				<fo:table-column column-width="proportional-column-width(0.75)"/>	
-				<fo:table-column column-width="proportional-column-width(1.15)"/>
-				<fo:table-column column-width="proportional-column-width(2.3)"/>
+				<fo:table-column column-width="proportional-column-width(1.1)"/>
+				<fo:table-column column-width="proportional-column-width(2.1)"/>
 				<fo:table-body start-indent="0pt">
 					<fo:table-row>
 					   <!-- TIPO DOCUMENTACION -->
 						<fo:table-cell padding="2pt" display-align="center" >							
 								<fo:block font-size="8pt" text-align="left" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after" >
 									<fo:inline font-weight="bold">
-										<xsl:text>Tipo Doc:</xsl:text>
+										<xsl:text>Tipo Doc.:</xsl:text>
 									</fo:inline>
 								</fo:block>							
 						</fo:table-cell>
@@ -318,7 +318,7 @@ contains($spacechars, $c2))">
 						<fo:table-cell padding="2pt" display-align="center" >							
 								<fo:block font-size="8pt" text-align="left" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after" >
 									<fo:inline font-weight="bold">
-										<xsl:text>Nombre y Apellidos:</xsl:text>
+										<xsl:text>Nombre y apellidos:</xsl:text>
 									</fo:inline>
 								</fo:block>							
 						</fo:table-cell>
@@ -348,48 +348,52 @@ contains($spacechars, $c2))">
 						<fo:table-cell padding="2pt" display-align="center" >							
 								<fo:block font-size="8pt" text-align="left" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after" >
 									<fo:inline font-weight="bold">
-										<xsl:text>Nº Expediente:</xsl:text>
+										<xsl:text>Nº expediente:</xsl:text>
 									</fo:inline>
 								</fo:block>							
 						</fo:table-cell>
-						<fo:table-cell padding="2pt" display-align="center" >							
+						<fo:table-cell padding="2pt" display-align="center" number-columns-spanned="3">							
 								<fo:block font-size="8pt" text-align="left" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after" >
 									<xsl:value-of select="$idExpediente"/>
 								</fo:block>							
 						</fo:table-cell>
 						
+						 </fo:table-row>
+					
+					<fo:table-row>
+						<!-- Código Procedimiento -->
+						<fo:table-cell padding="2pt" display-align="center">						
+								<fo:block font-size="8pt" text-align="left" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after" >
+									<fo:inline font-weight="bold">
+										<xsl:text>Procedimiento:     </xsl:text>
+									</fo:inline>
+									
+								</fo:block>													
+						</fo:table-cell>		
+						<fo:table-cell padding="2pt" display-align="center" number-columns-spanned="5">						
+								<fo:block font-size="8pt" text-align="left" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after" >
+									<xsl:value-of select="$nomProcedimiento"/>
+								</fo:block>													
+						</fo:table-cell>			
+					</fo:table-row>
+						
+					<fo:table-row> 
 						<!-- FINALIDAD -->
-						<fo:table-cell padding="2pt" display-align="center" >							
+						<fo:table-cell padding="2pt" display-align="center">						
 								<fo:block font-size="8pt" text-align="left" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after" >
 									<fo:inline font-weight="bold">
 										<xsl:text>Finalidad:</xsl:text>
 									</fo:inline>
 								</fo:block>							
 						</fo:table-cell>
-						<fo:table-cell padding="2pt" display-align="center" >							
+						<fo:table-cell padding="2pt" display-align="center" number-columns-spanned="5">						
 								<fo:block font-size="8pt" text-align="left" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after" >
 										<xsl:value-of select="$finalidad"/>								
 								</fo:block>							
 						</fo:table-cell>
-					</fo:table-row>
+					</fo:table-row> 
 				</fo:table-body>
-			</fo:table>
-			
-		<fo:table table-layout="fixed" border-spacing="5pt" space-before="0mm">				
-				<fo:table-body start-indent="0pt">
-					<fo:table-row>
-					   <!-- Código Procedimiento -->
-						<fo:table-cell padding="2pt" display-align="center" >							
-								<fo:block font-size="8pt" text-align="left" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after" >
-									<fo:inline font-weight="bold">
-										<xsl:text>Cod. Procedimiento:     </xsl:text>
-									</fo:inline>
-									<xsl:value-of select="$codProcedimiento"/>
-								</fo:block>													
-						</fo:table-cell>					
-					</fo:table-row>					
-					</fo:table-body>
-			</fo:table>		
+			</fo:table> 
 		</fo:block>
 
         <!-- DATOS RESPUESTA -->
@@ -418,17 +422,17 @@ contains($spacechars, $c2))">
 						line-height="10pt" space-after.optimum="1pt" display-align="after">
 						<fo:inline font-weight="bold">
 							<!-- <xsl:text>Se han obtenido los siguientes datos de Títulos No Universitarios:</xsl:text> -->
-							<xsl:text>Datos de Respuesta</xsl:text>
+							<xsl:text>Datos de respuesta</xsl:text>
 						</fo:inline>
 					</fo:block>
 				</fo:block>
 
 				<fo:block border-style="solid" border-width="1px 1px 1px 1px">
-					<!-- El cliente solicita que los datos del titular aparezcan en la respuesta y no en los datos de consulta
-						#Bug: 0002243: Titulos universitarios. En el justificante aparecen datos de consulta que son realmente de la respuesta
+					<!-- El cliente solicita que los datos del titular aparezcan en la respuesta y no en los Datos de consulta
+						#Bug: 0002243: Titulos universitarios. En el justificante aparecen Datos de consulta que son realmente de la respuesta
 					 -->
 					<xsl:if test="$datosTitular">
-						<!-- Panel Datos Titular -->
+						<!-- Panel Datos titular -->
 						<fo:block text-indent="3mm" margin-top="2pt" margin-left="2pt"
 							margin-right="2pt" font-family="Arial,sans-serif" font-size="10pt"
 							space-before="5mm" space-after="4mm">
@@ -440,7 +444,7 @@ contains($spacechars, $c2))">
 											background-color="#B0C4DE">
 											<fo:block>
 												<fo:inline font-weight="bold" display-align="after">
-													<xsl:text>Datos Titular</xsl:text>
+													<xsl:text>Datos titular</xsl:text>
 												</fo:inline>
 											</fo:block>
 										</fo:table-cell>
@@ -495,7 +499,7 @@ contains($spacechars, $c2))">
 														line-height="10pt" space-after.optimum="1pt"
 														display-align="after">
 														<fo:inline font-weight="bold">
-															<xsl:text>Nombre y Apellidos:</xsl:text>															
+															<xsl:text>Nombre y apellidos:</xsl:text>															
 														</fo:inline>
 													</fo:block>
 												</fo:block>
@@ -571,7 +575,7 @@ contains($spacechars, $c2))">
 					</xsl:if>
 					
 					<xsl:if test="$datosImporteActual">   
-						<!-- Panel Datos Importe Actual -->
+						<!-- Panel Datos importe actual -->
 						<fo:block text-indent="3mm" margin-top="2pt" margin-left="2pt"
 							margin-right="2pt" font-family="Arial,sans-serif" font-size="10pt"
 							space-before="5mm" space-after="4mm">
@@ -583,7 +587,7 @@ contains($spacechars, $c2))">
 											background-color="#B0C4DE">
 											<fo:block>
 												<fo:inline font-weight="bold" display-align="after">
-													<xsl:text>Datos Importe Actual</xsl:text>
+													<xsl:text>Datos importe actual</xsl:text>
 												</fo:inline>
 											</fo:block>
 										</fo:table-cell>
@@ -609,7 +613,7 @@ contains($spacechars, $c2))">
 														line-height="10pt" space-after.optimum="1pt"
 														display-align="after">
 														<fo:inline font-weight="bold">
-															<xsl:text>Tipo Prestación:</xsl:text>															
+															<xsl:text>Tipo prestación:</xsl:text>															
 														</fo:inline>
 													</fo:block>
 												</fo:block>
@@ -666,7 +670,7 @@ contains($spacechars, $c2))">
 														line-height="10pt" space-after.optimum="1pt"
 														display-align="after">
 														<fo:inline font-weight="bold">
-															<xsl:text>Fecha Inicio:</xsl:text>															
+															<xsl:text>Fecha inicio:</xsl:text>															
 														</fo:inline>
 													</fo:block>
 												</fo:block>
@@ -689,7 +693,7 @@ contains($spacechars, $c2))">
 														line-height="10pt" space-after.optimum="1pt"
 														display-align="after">
 														<fo:inline font-weight="bold">
-															<xsl:text>Fecha Fin:</xsl:text>															
+															<xsl:text>Fecha fin:</xsl:text>															
 														</fo:inline>
 													</fo:block>
 												</fo:block>
@@ -715,7 +719,7 @@ contains($spacechars, $c2))">
 														line-height="10pt" space-after.optimum="1pt"
 														display-align="after">
 														<fo:inline font-weight="bold">
-															<xsl:text>Base Reguladora Diaria:</xsl:text>
+															<xsl:text>Base reguladora diaria:</xsl:text>
 															
 														</fo:inline>
 													</fo:block>

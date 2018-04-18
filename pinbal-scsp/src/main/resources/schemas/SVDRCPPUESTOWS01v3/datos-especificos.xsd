@@ -1,0 +1,243 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns="http://intermediacion.redsara.es/scsp/esquemas/datosespecificos" xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://intermediacion.redsara.es/scsp/esquemas/datosespecificos" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<xs:element name="DatosEspecificos" type="DatosEspecificos"/>
+	<xs:complexType name="DatosEspecificos">
+		<xs:all>
+			<xs:element ref="Retorno">
+				<xs:annotation>
+					<xs:documentation>Solo en el mensaje RESPUESTA</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:all>
+		<xs:attribute name="Id" type="xs:string" use="optional"/>
+	</xs:complexType>
+	<xs:element name="Retorno">
+		<xs:complexType>
+			<xs:all>
+				<xs:element ref="Estado"/>
+				<xs:element ref="OrigenRegistro"/>
+				<xs:element ref="CalidadDato" minOccurs="0"/>
+				<xs:element ref="ListaPuestos" minOccurs="0"/>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:simpleType name="Fecha">
+		<xs:annotation>
+			<xs:documentation>Format de la data: DD/MM/AAAA</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:minLength value="10"/>
+			<xs:maxLength value="10"/>
+			<xs:whiteSpace value="collapse"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:element name="Estado">
+		<xs:complexType>
+			<xs:all>
+				<xs:element ref="CodigoEstado"/>
+				<xs:element ref="CodigoEstadoSecundario" minOccurs="0"/>
+				<xs:element ref="LiteralError"/>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="CodigoEstado">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:maxLength value="4"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="CodigoEstadoSecundario">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:maxLength value="16"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="OrigenRegistro">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:maxLength value="50"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="CalidadDato">
+		<xs:simpleType>
+			<xs:restriction base="xs:int">
+				<xs:minInclusive value="0"/>
+				<xs:maxInclusive value="3"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="LiteralError">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:maxLength value="255"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="ListaPuestos">
+		<xs:annotation>
+			<xs:documentation>Lista de puestos que ocupa el titular consultado</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="Puesto" minOccurs="1" maxOccurs="unbounded">
+					<xs:annotation>
+						<xs:documentation>Puesto que ocupa el titular consultado</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Puesto">
+		<xs:complexType>
+			<xs:all>
+				<xs:element ref="TipoAdministracion" minOccurs="0"/>
+				<xs:element ref="CodigoOrganismo"/>
+				<xs:element ref="Organismo"/>
+				<xs:element ref="CodigoCentroDirectivo" minOccurs="0"/>
+				<xs:element ref="CentroDirectivo" minOccurs="0"/>
+				<xs:element ref="CodigoCentroDestino" minOccurs="0"/>
+				<xs:element ref="CentroDestino" minOccurs="0"/>
+				<xs:element ref="CodigoUnidadOrganica"/>
+				<xs:element ref="Provincia" minOccurs="0"/>
+				<xs:element ref="Localidad" minOccurs="0"/>
+				<xs:element ref="CodigoPostal" minOccurs="0"/>
+				<xs:element ref="Direccion" minOccurs="0"/>
+				<xs:element ref="Cargo" minOccurs="0"/>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="TipoAdministracion">
+		<xs:annotation>
+			<xs:documentation>Tipo de administración a la que pertenece el titular consultado: 1-AGE 2-CCAA 3-EELL 4-Universidades 5-Otras instituciones</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:int">
+				<xs:minInclusive value="1"/>
+				<xs:maxInclusive value="5"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="CodigoOrganismo">
+		<xs:annotation>
+			<xs:documentation>Código de organismo al que pertenece el titular</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:pattern value="[EALUIJO][0-9]{8}|(EA){1}|(LA){1}[0-9]{7}|(GE){1}[0-9]{7}|(EC){1}[0-9]{7}"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Organismo">
+		<xs:annotation>
+			<xs:documentation>Organismo al que pertenece el titular</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:maxLength value="250"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="CodigoCentroDirectivo">
+		<xs:annotation>
+			<xs:documentation>Código de centro al que pertenece el titular</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:pattern value="[EALUIJO][0-9]{8}|(EA){1}|(LA){1}[0-9]{7}|(GE){1}[0-9]{7}|(EC){1}[0-9]{7}"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="CentroDirectivo">
+		<xs:annotation>
+			<xs:documentation>Centro al que pertenece el titular</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:maxLength value="250"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="CodigoCentroDestino">
+		<xs:annotation>
+			<xs:documentation>Código de centro al que está destinado el titular</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:pattern value="[EALUIJO][0-9]{8}|(EA){1}|(LA){1}[0-9]{7}|(GE){1}[0-9]{7}|(EC){1}[0-9]{7}"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="CentroDestino">
+		<xs:annotation>
+			<xs:documentation>Centro al que está destinado el titular</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:maxLength value="250"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="CodigoUnidadOrganica">
+		<xs:annotation>
+			<xs:documentation>Código de la unidad orgánica del último nivel del titular</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:pattern value="[EALUIJO][0-9]{8}|(EA){1}|(LA){1}[0-9]{7}|(GE){1}[0-9]{7}|(EC){1}[0-9]{7}"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Cargo">
+		<xs:annotation>
+			<xs:documentation>Cargo o puesto que posee el titular consultado</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:maxLength value="250"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Provincia">
+		<xs:annotation>
+			<xs:documentation>Provincia o estado del centro del puesto o cargo</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:maxLength value="30"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Localidad">
+		<xs:annotation>
+			<xs:documentation>Localidad del centro del puesto o cargo</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:maxLength value="150"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="CodigoPostal">
+		<xs:annotation>
+			<xs:documentation>Código postal del centro del puesto o cargo</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:pattern value="0[1-9][0-9]{3}|[1-4][0-9]{4}|5[0-2][0-9]{3}"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Direccion">
+		<xs:annotation>
+			<xs:documentation>Dirección del centro del puesto o cargo</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:maxLength value="250"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+</xs:schema>

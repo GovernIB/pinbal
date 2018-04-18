@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://intermediacion.redsara.es/scsp/esquemas/datosespecificos" targetNamespace="http://intermediacion.redsara.es/scsp/esquemas/datosespecificos" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<xs:element name="TipoDocumentacion">
+		<xs:annotation>
+			<xs:documentation>
+			Tipo de documentación.
+			</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:enumeration value="DNI"/>
+				<xs:enumeration value="NIE"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Documentacion">
+		<xs:annotation>
+			<xs:documentation>
+			Número de documento de identidad con formato de nueve caracteres, incluida letras y sin espacios.
+			</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:maxLength value="9"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Nombre">
+		<xs:annotation>
+			<xs:documentation>
+			Nombre del afectado.
+			</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="50"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Apellido1">
+		<xs:annotation>
+			<xs:documentation>
+			Primer apellido del afectado.
+			</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="50"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Apellido2">
+		<xs:annotation>
+			<xs:documentation>
+			Segundo apellido del afectado.
+			</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:maxLength value="50"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="FechaNacimiento" type="xs:date"/>
+	<xs:element name="PoblacionNacimiento">
+		<xs:annotation>
+			<xs:documentation>
+			Población en la que se ha producido el nacimiento. Código INE.
+			(En caso de España: Código provincia de 2 dígitos + código municipio de 3 dígitos)
+			(En caso de un consulado: 00 + Código del Ministerio de Asuntos Exteriores)
+			</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:pattern value="\d{5}"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="RelacionParentesco">
+		<xs:annotation>
+			<xs:documentation>
+				Relación de parentesco que tiene el reclamante de la ayuda con la víctima. Formato:
+				1 - Afectado directo
+				2 - Padre o madre
+				3 - Cónyuge
+				4 - Hermano o hermana
+				9 - Hijo o hija
+				10 - Pareja de hecho
+				12 - Abuelo o abuela
+				13 - Nieto o nieta
+			</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:integer">
+				<xs:enumeration value="1"/>
+				<xs:enumeration value="2"/>
+				<xs:enumeration value="3"/>
+				<xs:enumeration value="4"/>
+				<xs:enumeration value="9"/>
+				<xs:enumeration value="10"/>
+				<xs:enumeration value="12"/>
+				<xs:enumeration value="13"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="DerechoReclamado">
+		<xs:annotation>
+			<xs:documentation>
+				Es el tipo de ayuda que afirma el reclamante que le corresponde. Formato:
+				1 - Exención de tasas académicas
+				2 - Exención de tasas judiciales y asistencia jurídica gratuita
+				3 - Exención de tasas de derechos de examen
+				4 - Condición de víctima de terrorismo
+				5 - Movilidad geográfica y reordenación del tiempo de trabajo
+				6 - Bonificación laboral y tarifa especial autónomos
+				7 - Becas de estudio y comedor
+				8 - Ayudas de libros
+				9 - Acceso a vivienda
+				10 - Concursos para provisión de puestos de trabajo				
+			</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:integer">
+				<xs:enumeration value="1"/>
+				<xs:enumeration value="2"/>
+				<xs:enumeration value="3"/>
+				<xs:enumeration value="4"/>
+				<xs:enumeration value="5"/>
+				<xs:enumeration value="6"/>
+				<xs:enumeration value="7"/>
+				<xs:enumeration value="8"/>
+				<xs:enumeration value="9"/>
+				<xs:enumeration value="10"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="CodigoEstado">
+		<xs:annotation>
+			<xs:documentation>
+			Código de estado que devuelve la petición de consulta.
+			</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:maxLength value="2"/>
+				<xs:minLength value="1"/>
+				<xs:whiteSpace value="collapse"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Descripcion">
+		<xs:annotation>
+			<xs:documentation>
+			Mensaje retorno con la contestación a la consulta.
+			</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:maxLength value="255"/>
+				<xs:minLength value="1"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="DatosAfectado">
+		<xs:complexType>
+			<xs:all>
+				<xs:element ref="TipoDocumentacion" minOccurs="0"/>
+				<xs:element ref="Documentacion" minOccurs="0"/>
+				<xs:element ref="Nombre"/>
+				<xs:element ref="Apellido1"/>
+				<xs:element ref="Apellido2" minOccurs="0"/>
+				<xs:element ref="FechaNacimiento">
+					<xs:annotation>
+						<xs:documentation>Fecha de nacimiento del afectado.</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="DatosBeneficiario">
+		<xs:complexType>
+			<xs:all>
+				<xs:element ref="FechaNacimiento">
+				<xs:annotation>
+						<xs:documentation>Fecha de nacimiento del beneficiario</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element ref="PoblacionNacimiento"/>
+				<xs:element ref="RelacionParentesco"/>
+				<xs:element ref="DerechoReclamado"/>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="DatosEspecificos" type="DatosEspecificos"/>
+	<xs:complexType name="DatosEspecificos">
+		<xs:choice>
+			<xs:element name="Consulta">
+				<xs:complexType>
+					<xs:all>
+						<xs:element ref="DatosAfectado"/>
+						<xs:element ref="DatosBeneficiario"/>
+					</xs:all>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="Retorno">
+				<xs:complexType>
+					<xs:all>
+						<xs:element ref="CodigoEstado"/>
+						<xs:element ref="Descripcion"/>
+					</xs:all>
+				</xs:complexType>
+			</xs:element>
+		</xs:choice>
+	</xs:complexType>
+</xs:schema>

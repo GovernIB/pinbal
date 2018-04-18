@@ -21,7 +21,6 @@
 			<xs:all>
 				<xs:element ref="NPIE" minOccurs="0"/>
 				<xs:element ref="NumeroAfiliacion" minOccurs="0"/>
-				<xs:element ref="Idioma" minOccurs="0"/>
 			</xs:all>
 		</xs:complexType>
 	</xs:element>
@@ -37,7 +36,7 @@
 	<xs:element name="Estado">
 		<xs:complexType>
 			<xs:all>
-				<xs:element ref="CodigoEstado"/>				
+				<xs:element ref="CodigoEstado"/>
 				<xs:element ref="LiteralError"/>
 			</xs:all>
 		</xs:complexType>
@@ -48,7 +47,7 @@
 				<xs:maxLength value="4"/>
 			</xs:restriction>
 		</xs:simpleType>
-	</xs:element>	
+	</xs:element>
 	<xs:element name="LiteralError">
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
@@ -115,22 +114,5 @@
 		<xs:annotation>
 			<xs:documentation>PDF en base64</xs:documentation>
 		</xs:annotation>
-	</xs:element>
-	<xs:element name="Idioma">
-		<xs:annotation>
-			<xs:documentation>Formato: 
-· 1 - CASTELLANO
-· 2 - CATALAN
-· 3 - EUSKERA
-· 4 - GALLEGO</xs:documentation>
-		</xs:annotation>
-		<xs:simpleType>
-			<xs:restriction base="xs:integer">
-				<xs:enumeration value="1"/>
-				<xs:enumeration value="2"/>
-				<xs:enumeration value="3"/>
-				<xs:enumeration value="4"/>
-			</xs:restriction>
-		</xs:simpleType>
 	</xs:element>
 </xs:schema>

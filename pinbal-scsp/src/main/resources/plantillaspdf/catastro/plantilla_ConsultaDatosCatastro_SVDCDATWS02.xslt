@@ -30,7 +30,16 @@
 	<xsl:param name="docPeticion"/>
 	<xsl:param name="consentimiento"/>
 	<xsl:param name="idExpediente"/>
-	<xsl:param name="finalidad"/> 
+	<xsl:param name="finalidad"/>
+	<xsl:param name="referenciaCatastralpc1"/>
+	<xsl:param name="referenciaCatastralpc2"/>
+	<xsl:param name="referenciaCatastralcar"/>
+	<xsl:param name="referenciaCatastralcc1"/>
+	<xsl:param name="referenciaCatastralcc2"/>
+	<xsl:param name="localizacionINEcm"/>
+	<xsl:param name="localizacionINEcp"/>
+	<xsl:param name="cppcpo"/>
+	<xsl:param name="cppcpa"/>
 
 	<xsl:template match="/">
 		<xsl:variable name="datosEspecificos" select="/*[local-name()='TransmisionDatos']/*[local-name()='DatosEspecificos']"/>
@@ -204,7 +213,7 @@
 		</fo:block>
 		<fo:block margin-top="2pt" text-align="center" font-family="Arial,sans-serif" font-size="8pt" line-height="10pt" space-after.optimum="1pt" display-align="after" color="#2F4F4F">
 			<fo:inline font-weight="bold">
-				<xsl:text>Identificador de Petición:</xsl:text>
+				<xsl:text>Identificador de petición:</xsl:text>
 			</fo:inline>
 			<fo:inline font-weight="bold">
 				<xsl:text> </xsl:text>
@@ -213,7 +222,7 @@
 		</fo:block>
 		<fo:block text-align="center" font-family="Arial,sans-serif" font-size="8pt" line-height="10pt" space-after.optimum="1pt" display-align="after" color="#2F4F4F">
 			<fo:inline font-weight="bold">
-				<xsl:text>Identificador de Transmisión:</xsl:text>
+				<xsl:text>Identificador de transmisión:</xsl:text>
 			</fo:inline>
 			<fo:inline font-weight="bold">
 				<xsl:text> </xsl:text>
@@ -224,119 +233,134 @@
 		<fo:block text-align="left" margin-top="20pt">
 			<fo:block font-size="8pt" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after">
 				<fo:inline font-weight="bold">
-					<xsl:text>Datos de Consulta</xsl:text>
+					<xsl:text>Datos de consulta</xsl:text>
 				</fo:inline>
 			</fo:block>
 		</fo:block>
 		<fo:block border-style="solid" border="1px 0 0 0" text-indent="3mm" font-family="Arial,sans-serif" font-size="10pt" space-after="1mm">
 			<fo:table table-layout="fixed" border-spacing="5pt" space-before="2mm">
-				<fo:table-column column-width="proportional-column-width(0.8)"/>
-				<fo:table-column column-width="proportional-column-width(0.8)"/>
-				<fo:table-column column-width="proportional-column-width(0.85)"/>
-				<fo:table-column column-width="proportional-column-width(0.75)"/>
-				<fo:table-column column-width="proportional-column-width(1.15)"/>
-				<fo:table-column column-width="proportional-column-width(2.3)"/>
+				<fo:table-column column-width="proportional-column-width(1)"/>
+				<fo:table-column column-width="proportional-column-width(0.7)"/>
+				<fo:table-column column-width="proportional-column-width(1)"/>
+				<fo:table-column column-width="proportional-column-width(0.75)"/>	
+				<fo:table-column column-width="proportional-column-width(1.1)"/>
+				<fo:table-column column-width="proportional-column-width(2.1)"/>
 				<fo:table-body start-indent="0pt">
 					<fo:table-row>
-						<!-- TIPO DOCUMENTACION -->
-						<fo:table-cell padding="2pt" display-align="center">
-							<fo:block font-size="8pt" text-align="left" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after">
-								<fo:inline font-weight="bold">
-									<xsl:text>Tipo Doc:</xsl:text>
-								</fo:inline>
-							</fo:block>
+					   <!-- TIPO DOCUMENTACION -->
+						<fo:table-cell padding="2pt" display-align="center">						
+								<fo:block font-size="8pt" text-align="left" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after" >
+									<fo:inline font-weight="bold">
+										<xsl:text>Tipo Doc.:</xsl:text>
+									</fo:inline>
+								</fo:block>							
 						</fo:table-cell>
-						<fo:table-cell padding="2pt" display-align="center">
-							<fo:block font-size="8pt" text-align="left" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after">
-								<xsl:value-of select="$tipoDocPeticion"/>
-							</fo:block>
+						<fo:table-cell padding="2pt" display-align="center">						
+								<fo:block font-size="8pt" text-align="left" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after" >
+									<xsl:value-of select="$tipoDocPeticion"/>
+								</fo:block>							
 						</fo:table-cell>
-						<!-- DOCUMENTACION -->
-						<fo:table-cell padding="2pt" display-align="center">
-							<fo:block font-size="8pt" text-align="left" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after">
-								<fo:inline font-weight="bold">
-									<xsl:text>Documentación:</xsl:text>
-								</fo:inline>
-							</fo:block>
+						
+						 <!-- DOCUMENTACION -->
+						<fo:table-cell padding="2pt" display-align="center">							
+								<fo:block font-size="8pt" text-align="left" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after" >
+									<fo:inline font-weight="bold">
+										<xsl:text>Documentación:</xsl:text>
+									</fo:inline>
+								</fo:block>							
 						</fo:table-cell>
-						<fo:table-cell padding="2pt" display-align="center">
-							<fo:block font-size="8pt" text-align="left" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after">
-								<xsl:value-of select="$docPeticion"/>
-							</fo:block>
+						<fo:table-cell padding="2pt" display-align="center">						
+								<fo:block font-size="8pt" text-align="left" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after" >
+									<xsl:value-of select="$docPeticion"/>	
+								</fo:block>							
 						</fo:table-cell>
+						
 						<!-- NOMBRE Y APELLIDOS -->
-						<fo:table-cell padding="2pt" display-align="center">
-							<fo:block font-size="8pt" text-align="left" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after">
-								<fo:inline font-weight="bold">
-									<xsl:text>Nombre y Apellidos:</xsl:text>
-								</fo:inline>
-							</fo:block>
+						<fo:table-cell padding="2pt" display-align="center">						
+								<fo:block font-size="8pt" text-align="left" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after" >
+									<fo:inline font-weight="bold">
+										<xsl:text>Nombre y apellidos:</xsl:text>
+									</fo:inline>
+								</fo:block>							
 						</fo:table-cell>
-						<fo:table-cell padding="2pt" display-align="center">
-							<fo:block font-size="8pt" text-align="left" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after">
-								<xsl:value-of select="$nomApellidosPeticion"/>
-							</fo:block>
+						<fo:table-cell padding="2pt" display-align="center">						
+								<fo:block font-size="8pt" text-align="left" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after" >
+										<xsl:value-of select="$nomApellidosPeticion"/>								
+								</fo:block>							
+						</fo:table-cell>
+					</fo:table-row>
+					
+					<fo:table-row>
+					   <!-- CONSENTIMIENTO -->
+						<fo:table-cell padding="2pt" display-align="center"  >							
+								<fo:block font-size="8pt" text-align="left" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after" >
+									<fo:inline font-weight="bold">
+										<xsl:text>Consentimiento:</xsl:text>
+									</fo:inline>
+								</fo:block>							
+						</fo:table-cell>
+						<fo:table-cell padding="2pt" display-align="center">						
+								<fo:block font-size="8pt" text-align="left" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after" >
+									<xsl:choose>
+									  <xsl:when test="$consentimiento = 'Si' "> 
+											<xsl:text>Sí</xsl:text>
+									  </xsl:when>
+									  <xsl:otherwise>
+											<xsl:value-of select="$consentimiento"/>
+									  </xsl:otherwise>
+								</xsl:choose>
+								</fo:block>							
+						</fo:table-cell>
+						
+						 <!-- NUMERO EXPEDIENTE -->
+						<fo:table-cell padding="2pt" display-align="center">						
+								<fo:block font-size="8pt" text-align="left" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after" >
+									<fo:inline font-weight="bold">
+										<xsl:text>Nº expediente:</xsl:text>
+									</fo:inline>
+								</fo:block>							
+						</fo:table-cell>
+						<fo:table-cell padding="2pt" display-align="center" number-columns-spanned="3">						
+								<fo:block font-size="8pt" text-align="left" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after" >
+									<xsl:value-of select="$idExpediente"/>
+								</fo:block>							
 						</fo:table-cell>
 					</fo:table-row>
 					<fo:table-row>
-						<!-- CONSENTIMIENTO -->
-						<fo:table-cell padding="2pt" display-align="center">
-							<fo:block font-size="8pt" text-align="left" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after">
-								<fo:inline font-weight="bold">
-									<xsl:text>Consentimiento:</xsl:text>
-								</fo:inline>
-							</fo:block>
-						</fo:table-cell>
-						<fo:table-cell padding="2pt" display-align="center">
-							<fo:block font-size="8pt" text-align="left" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after">
-								<xsl:value-of select="$consentimiento"/>
-							</fo:block>
-						</fo:table-cell>
-						<!-- NUMERO EXPEDIENTE -->
-						<fo:table-cell padding="2pt" display-align="center">
-							<fo:block font-size="8pt" text-align="left" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after">
-								<fo:inline font-weight="bold">
-									<xsl:text>Nº Expediente:</xsl:text>
-								</fo:inline>
-							</fo:block>
-						</fo:table-cell>
-						<fo:table-cell padding="2pt" display-align="center">
-							<fo:block font-size="8pt" text-align="left" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after">
-								<xsl:value-of select="$idExpediente"/>
-							</fo:block>
-						</fo:table-cell>
+						<!-- NOMBRE Procedimiento -->
+						<fo:table-cell padding="2pt" display-align="center">						
+								<fo:block font-size="8pt" text-align="left" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after" >
+									<fo:inline font-weight="bold">
+										<xsl:text>Procedimiento:     </xsl:text>
+									</fo:inline>
+									
+								</fo:block>													
+						</fo:table-cell>		
+						<fo:table-cell padding="2pt" display-align="center" number-columns-spanned="5">						
+								<fo:block font-size="8pt" text-align="left" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after" >
+									<xsl:value-of select="$nomProcedimiento"/>
+								</fo:block>													
+						</fo:table-cell>			
+					</fo:table-row>
+					
+					<fo:table-row> 
 						<!-- FINALIDAD -->
-						<fo:table-cell padding="2pt" display-align="center">
-							<fo:block font-size="8pt" text-align="left" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after">
-								<fo:inline font-weight="bold">
-									<xsl:text>Finalidad:</xsl:text>
-								</fo:inline>
-							</fo:block>
+						<fo:table-cell padding="2pt" display-align="center">						
+								<fo:block font-size="8pt" text-align="left" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after" >
+									<fo:inline font-weight="bold">
+										<xsl:text>Finalidad:</xsl:text>
+									</fo:inline>
+								</fo:block>							
 						</fo:table-cell>
-						<fo:table-cell padding="2pt" display-align="center">
-							<fo:block font-size="8pt" text-align="left" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after">
-								<xsl:value-of select="$finalidad"/>
-							</fo:block>
+						<fo:table-cell padding="2pt" display-align="center" number-columns-spanned="5">						
+								<fo:block font-size="8pt" text-align="left" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after" >
+										<xsl:value-of select="$finalidad"/>								
+								</fo:block>							
 						</fo:table-cell>
-					</fo:table-row>
+					</fo:table-row> 
 				</fo:table-body>
 			</fo:table>
-			<fo:table table-layout="fixed" border-spacing="5pt" space-before="0mm">
-				<fo:table-body start-indent="0pt">
-					<fo:table-row>
-						<!-- Nombre Procedimiento -->
-						<fo:table-cell padding="2pt" display-align="center">
-							<fo:block font-size="8pt" text-align="left" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after">
-								<fo:inline font-weight="bold">
-									<xsl:text>Código Procedimiento:     </xsl:text>
-								</fo:inline>
-								<xsl:value-of select="$codProcedimiento"/>
-							</fo:block>
-						</fo:table-cell>
-					</fo:table-row>
-				</fo:table-body>
-			</fo:table>
-			 
+		 
 		</fo:block>
 		<!-- DATOS DE LA RESPUESTA -->
 		<xsl:choose>
@@ -358,7 +382,7 @@
 				<fo:block text-align="left" margin-top="25pt">
 					<fo:block font-size="8pt" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after">
 						<fo:inline font-weight="bold">
-							<xsl:text>Datos de Respuesta</xsl:text>
+							<xsl:text>Datos de respuesta</xsl:text>
 						</fo:inline>
 					</fo:block>
 				</fo:block>
@@ -390,7 +414,7 @@
 												<fo:table-cell padding="3pt" display-align="center" background-color="#B0C4DE">
 													<fo:block>
 														<fo:inline font-weight="bold" display-align="after">
-															<xsl:text>Datos Referencia Rústica</xsl:text>
+															<xsl:text>Datos referencia rústica</xsl:text>
 														</fo:inline>
 													</fo:block>
 												</fo:table-cell>
@@ -406,7 +430,7 @@
 											<fo:table-cell padding="1pt" display-align="center" background-color="#B0C4DE">
 												<fo:block>
 													<fo:inline font-weight="bold" display-align="after" font-size="9pt" font-family="Arial,Helvetica,sans-serif">
-														<xsl:text>Bien Rústico</xsl:text>
+														<xsl:text>Bien rústico</xsl:text>
 													</fo:inline>
 												</fo:block>
 											</fo:table-cell>
@@ -450,7 +474,7 @@
 												<fo:block text-align="left" margin="0pt">
 													<fo:block font-size="8pt" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after">
 														<fo:inline font-weight="bold">
-															<xsl:text>Referencia Catastral:</xsl:text>																
+															<xsl:text>Referencia catastral:</xsl:text>																
 														</fo:inline>
 													</fo:block>
 												</fo:block>
@@ -475,7 +499,7 @@
 												<fo:block text-align="left" margin="0pt">
 													<fo:block font-size="8pt" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after">
 														<fo:inline font-weight="bold">
-															<xsl:text>Código de Provincia INE:</xsl:text>																
+															<xsl:text>Código de provincia INE:</xsl:text>																
 														</fo:inline>
 													</fo:block>
 												</fo:block>
@@ -493,7 +517,7 @@
 												<fo:block text-align="left" margin="0pt">
 													<fo:block font-size="8pt" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after">
 														<fo:inline font-weight="bold">
-															<xsl:text>Código de Municipio INE:</xsl:text>																
+															<xsl:text>Código de municipio INE:</xsl:text>																
 														</fo:inline>
 													</fo:block>
 												</fo:block>
@@ -516,7 +540,7 @@
 													<fo:block text-align="left" margin="0pt">
 														<fo:block font-size="8pt" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after">
 															<fo:inline font-weight="bold">
-																<xsl:text>Año del Valor Catastral:</xsl:text>																	
+																<xsl:text>Año del valor catastral:</xsl:text>																	
 															</fo:inline>
 														</fo:block>
 													</fo:block>
@@ -534,7 +558,7 @@
 													<fo:block text-align="left" margin="0pt">
 														<fo:block font-size="8pt" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after">
 															<fo:inline font-weight="bold">
-																<xsl:text>Valor Catastral:</xsl:text>																
+																<xsl:text>Valor catastral:</xsl:text>																
 															</fo:inline>
 														</fo:block>
 													</fo:block>												
@@ -554,7 +578,7 @@
 													<fo:block text-align="left" margin="0pt">
 														<fo:block font-size="8pt" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after">
 															<fo:inline font-weight="bold">
-																<xsl:text>Valor Catastral del Suelo:</xsl:text>																
+																<xsl:text>Valor catastral del suelo:</xsl:text>																
 															</fo:inline>
 														</fo:block>
 													</fo:block>
@@ -572,7 +596,7 @@
 													<fo:block text-align="left" margin="0pt">
 														<fo:block font-size="8pt" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after">
 															<fo:inline font-weight="bold">
-																<xsl:text>Valor Catastral Construcción:</xsl:text>																
+																<xsl:text>Valor catastral construcción:</xsl:text>																
 															</fo:inline>
 														</fo:block>
 													</fo:block>
@@ -611,7 +635,7 @@
 													<fo:block text-align="left" margin="0pt">
 														<fo:block font-size="8pt" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after">
 															<fo:inline font-weight="bold">
-																<xsl:text>Superficie Construida:</xsl:text>																
+																<xsl:text>Superficie construida:</xsl:text>																
 															</fo:inline>
 														</fo:block>
 													</fo:block>
@@ -637,7 +661,7 @@
 													<fo:block text-align="left" margin="0pt">
 														<fo:block font-size="8pt" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after">
 															<fo:inline font-weight="bold">
-																<xsl:text>Coef. Participacion del Titular:</xsl:text>																
+																<xsl:text>Coef. Participacion del titular:</xsl:text>																
 															</fo:inline>
 														</fo:block>
 													</fo:block>
@@ -686,7 +710,7 @@
 													<fo:block text-align="left" margin="0pt">
 														<fo:block font-size="8pt" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after">
 															<fo:inline font-weight="bold">
-																<xsl:text>Domicilio Tributario:</xsl:text>																
+																<xsl:text>Domicilio tributario:</xsl:text>																
 															</fo:inline>
 														</fo:block>
 													</fo:block>
@@ -705,7 +729,7 @@
 									</fo:table>
 								</xsl:if>
 								<!-- /DATOS RUSTICOS -->
-								<!-- FINCAS COLINDANTES -->
+								<!-- Fincas colindantes -->
 								<xsl:if test="./*[local-name()='BienInmuebleRustico']/*[local-name()='lcol']/*[local-name()='col']">
 
 									<fo:table table-layout="fixed" width="100%" border-spacing="5pt" space-after="2mm">
@@ -716,7 +740,7 @@
 													<fo:block margin-left="2pt" margin-right="2pt">
 														<fo:inline font-weight="bold" display-align="after"
 															font-size="9pt" font-family="Arial,Helvetica,sans-serif">
-															<xsl:text>Fincas Colindantes</xsl:text>
+															<xsl:text>Fincas colindantes</xsl:text>
 														</fo:inline>
 													</fo:block>
 												</fo:table-cell>
@@ -735,7 +759,7 @@
 																border="1px 1px 1px 1px">
 																<fo:inline font-weight="bold" display-align="after"
 																	font-size="9pt" font-family="Arial,Helvetica,sans-serif">
-																	<xsl:text>Finca Colindante </xsl:text>
+																	<xsl:text>Finca colindante </xsl:text>
 																</fo:inline>
 															</fo:block>
 														</fo:table-cell>
@@ -890,7 +914,7 @@
 															<fo:block font-size="8pt" font-family="Arial,Helvetica,sans-serif" line-height="10pt"
 																	space-after.optimum="1pt" display-align="after" text-align="left" margin="0pt">
 																<fo:inline font-weight="bold">
-																	<xsl:text>Cod. Municipal Agregado:</xsl:text>
+																	<xsl:text>Cod. Municipal agregado:</xsl:text>
 																</fo:inline>
 															</fo:block>
 														</fo:table-cell>
@@ -911,7 +935,7 @@
 															<fo:block font-size="8pt" font-family="Arial,Helvetica,sans-serif" line-height="10pt"
 																	space-after.optimum="1pt" display-align="after" text-align="left" margin="0pt">
 																<fo:inline font-weight="bold">
-																	<xsl:text>Cod. Zona Concentración:</xsl:text>
+																	<xsl:text>Cod. Zona concentración:</xsl:text>
 																</fo:inline>
 															</fo:block>
 														</fo:table-cell>
@@ -953,7 +977,7 @@
 															<fo:block font-size="8pt" font-family="Arial,Helvetica,sans-serif" line-height="10pt"
 																	space-after.optimum="1pt" display-align="after" text-align="left" margin="0pt">
 																<fo:inline font-weight="bold">
-																	<xsl:text>Cod.Poligono:</xsl:text>
+																	<xsl:text>Cod. Polígono:</xsl:text>
 																</fo:inline>
 															</fo:block>
 														</fo:table-cell>
@@ -995,7 +1019,7 @@
 															<fo:block font-size="8pt" font-family="Arial,Helvetica,sans-serif" line-height="10pt"
 																	space-after.optimum="1pt" display-align="after" text-align="left" margin="0pt">
 																<fo:inline font-weight="bold">
-																	<xsl:text>Nombre Paraje:</xsl:text>
+																	<xsl:text>Nombre paraje:</xsl:text>
 																</fo:inline>
 															</fo:block>
 														</fo:table-cell>
@@ -1014,7 +1038,7 @@
 										</fo:table>
 									</xsl:for-each>
 								</xsl:if>
-								<!-- LISTA DE TITULARES -->
+								<!-- Lista de titulares -->
 								<xsl:if test="./*[local-name()='listaTitulares']">
 									<xsl:for-each select="./*[local-name()='listaTitulares']/*">
 										<xsl:variable name="listaTitularesCount" select="position()"/>
@@ -1026,7 +1050,7 @@
 															<fo:table-cell padding="1pt" display-align="center" background-color="#B0C4DE">
 																<fo:block>
 																	<fo:inline font-weight="bold" display-align="after" font-size="9pt" font-family="Arial,Helvetica,sans-serif">
-																		<xsl:text>Lista de Titulares</xsl:text>
+																		<xsl:text>Lista de titulares</xsl:text>
 																	</fo:inline>
 																</fo:block>
 															</fo:table-cell>
@@ -1126,7 +1150,7 @@
 																	<fo:block text-align="left" margin="0pt">
 																		<fo:block font-size="8pt" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after">
 																			<fo:inline font-weight="bold">																			
-																					<xsl:text>Ordinal del Titular:</xsl:text>																		
+																					<xsl:text>Ordinal del titular:</xsl:text>																		
 																			</fo:inline>
 																		</fo:block>
 																	</fo:block>
@@ -1397,7 +1421,7 @@
 																<fo:block text-align="left" margin="0pt">
 																	<fo:block font-size="8pt" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after">
 																		<fo:inline font-weight="bold">
-																			<xsl:text>Derecho Propiedad:</xsl:text>																			
+																			<xsl:text>Derecho propiedad:</xsl:text>																			
 																		</fo:inline>
 																	</fo:block>
 																</fo:block>
@@ -1420,7 +1444,7 @@
 																<fo:block text-align="left" margin="0pt">
 																	<fo:block font-size="8pt" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after">
 																		<fo:inline font-weight="bold">
-																			<xsl:text>Domicilio Fiscal</xsl:text>																			
+																			<xsl:text>Domicilio fiscal</xsl:text>																			
 																		</fo:inline>
 																	</fo:block>
 																</fo:block>
@@ -1463,7 +1487,7 @@
 																	<fo:block text-align="left" margin="0pt">
 																		<fo:block font-size="8pt" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after">
 																			<fo:inline font-weight="bold">
-																				<xsl:text>Código de Municipio INE:</xsl:text>																				
+																				<xsl:text>Código de municipio INE:</xsl:text>																				
 																			</fo:inline>
 																		</fo:block>
 																	</fo:block>
@@ -1485,7 +1509,7 @@
 																	<fo:block text-align="left" margin="0pt">
 																		<fo:block font-size="8pt" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after">
 																			<fo:inline font-weight="bold">
-																				<xsl:text>Código de Municipio DGC:</xsl:text>																				
+																				<xsl:text>Código de municipio DGC:</xsl:text>																				
 																			</fo:inline>
 																		</fo:block>
 																	</fo:block>
@@ -1595,7 +1619,7 @@
 																	<fo:block text-align="left" margin="0pt">
 																		<fo:block font-size="8pt" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after">
 																			<fo:inline font-weight="bold">
-																				<xsl:text>Código de Vía:</xsl:text>																				
+																				<xsl:text>Código de vía:</xsl:text>																				
 																			</fo:inline>
 																		</fo:block>
 																	</fo:block>
@@ -1617,7 +1641,7 @@
 																	<fo:block text-align="left" margin="0pt">
 																		<fo:block font-size="8pt" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after">
 																			<fo:inline font-weight="bold">
-																				<xsl:text>Tipo de Vía:</xsl:text>																				
+																				<xsl:text>Tipo de vía:</xsl:text>																				
 																			</fo:inline>
 																		</fo:block>
 																	</fo:block>
@@ -1639,7 +1663,7 @@
 																	<fo:block text-align="left" margin="0pt">
 																		<fo:block font-size="8pt" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after">
 																			<fo:inline font-weight="bold">
-																				<xsl:text>Nombre de Vía:</xsl:text>																				
+																				<xsl:text>Nombre de vía:</xsl:text>																				
 																			</fo:inline>
 																		</fo:block>
 																	</fo:block>
@@ -1683,7 +1707,7 @@
 																	<fo:block text-align="left" margin="0pt">
 																		<fo:block font-size="8pt" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after">
 																			<fo:inline font-weight="bold">
-																				<xsl:text>Letra del Primer Nº de policía:</xsl:text>																				
+																				<xsl:text>Letra del primer Nº de policía:</xsl:text>																				
 																			</fo:inline>
 																		</fo:block>
 																	</fo:block>
@@ -1907,7 +1931,7 @@
 																		<fo:block text-align="left" margin="0pt">
 																			<fo:block font-size="8pt" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after">
 																				<fo:inline font-weight="bold">
-																					<xsl:text>Datos Postales:</xsl:text>																					
+																					<xsl:text>Datos postales:</xsl:text>																					
 																				</fo:inline>
 																			</fo:block>
 																		</fo:block>
@@ -1929,7 +1953,7 @@
 																		<fo:block text-align="left" margin="0pt">
 																			<fo:block font-size="8pt" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after">
 																				<fo:inline font-weight="bold">
-																					<xsl:text>Apartado de Correos:</xsl:text>																					
+																					<xsl:text>Apartado de correos:</xsl:text>																					
 																				</fo:inline>
 																			</fo:block>
 																		</fo:block>
@@ -1954,7 +1978,7 @@
 																<fo:block text-align="left" margin="0pt">
 																	<fo:block font-size="8pt" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after">
 																		<fo:inline font-weight="bold">
-																			<xsl:text>Domicilio Fiscal:</xsl:text>																			
+																			<xsl:text>Domicilio fiscal:</xsl:text>																			
 																		</fo:inline>
 																	</fo:block>
 																</fo:block>
@@ -2019,7 +2043,7 @@
 																	<fo:block text-align="left" margin="0pt">
 																		<fo:block font-size="8pt" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after">
 																			<fo:inline font-weight="bold">
-																				<xsl:text>Nombre/Razón Social:</xsl:text>																				
+																				<xsl:text>Nombre/Razón social:</xsl:text>																				
 																			</fo:inline>
 																		</fo:block>
 																	</fo:block>
@@ -2085,7 +2109,7 @@
 																	<fo:block text-align="left" margin="0pt">
 																		<fo:block font-size="8pt" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after">
 																			<fo:inline font-weight="bold">
-																				<xsl:text>Denominación/Razón social de la Comunidad de Bienes:</xsl:text>																				
+																				<xsl:text>Denominación/Razón social de la comunidad de bienes:</xsl:text>																				
 																			</fo:inline>
 																		</fo:block>
 																	</fo:block>
@@ -2129,7 +2153,7 @@
 																	<fo:block text-align="left" margin="0pt">
 																		<fo:block font-size="8pt" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after">
 																			<fo:inline font-weight="bold">
-																				<xsl:text>NIF del Cónyuge:</xsl:text>																				
+																				<xsl:text>NIF del cónyuge:</xsl:text>																				
 																			</fo:inline>
 																		</fo:block>
 																	</fo:block>
@@ -2151,7 +2175,7 @@
 																	<fo:block text-align="left" margin="0pt">
 																		<fo:block font-size="8pt" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after">
 																			<fo:inline font-weight="bold">
-																				<xsl:text>NIF de la Comunidad de Bienes:</xsl:text>																				
+																				<xsl:text>NIF de la comunidad de bienes:</xsl:text>																				
 																			</fo:inline>
 																		</fo:block>
 																	</fo:block>
@@ -2217,7 +2241,7 @@
 																	<fo:block text-align="left" margin="0pt">
 																		<fo:block font-size="8pt" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after">
 																			<fo:inline font-weight="bold">
-																				<xsl:text>Fecha de Inicio de la titularidad:</xsl:text>																				
+																				<xsl:text>Fecha de inicio de la titularidad:</xsl:text>																				
 																			</fo:inline>
 																		</fo:block>
 																	</fo:block>
@@ -2262,7 +2286,7 @@
 																<fo:block text-align="left" margin="0pt">
 																	<fo:block font-size="8pt" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after">
 																		<fo:inline font-weight="bold">
-																			<xsl:text>Fecha de alteración juridica:</xsl:text>																			
+																			<xsl:text>Fecha de alteración jurídica:</xsl:text>																			
 																		</fo:inline>
 																	</fo:block>
 																</fo:block>
@@ -2330,7 +2354,7 @@
 															<fo:block text-align="left" margin="0pt">
 																<fo:block font-size="8pt" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after">
 																	<fo:inline font-weight="bold">
-																		<xsl:text>Tipo de Inmueble:</xsl:text>
+																		<xsl:text>Tipo de inmueble:</xsl:text>
 																	</fo:inline>
 																</fo:block>
 															</fo:block>
@@ -2377,7 +2401,7 @@
 																<fo:block text-align="left" margin="0pt">
 																	<fo:block font-size="8pt" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after">
 																		<fo:inline font-weight="bold">
-																			<xsl:text>Superficie Construida de la finca:</xsl:text>																			
+																			<xsl:text>Superficie construida de la finca:</xsl:text>																			
 																		</fo:inline>
 																	</fo:block>
 																</fo:block>															
@@ -2451,7 +2475,7 @@
 										</fo:table>									
 									</fo:block>
 								</xsl:if>
-								<!-- LISTA DE CONSTRUCCIONES -->
+								<!-- Lista de construcciones -->
 								<xsl:if test="./*[local-name()='listaConstrucciones']">
 									<xsl:for-each select="./*[local-name()='listaConstrucciones']/*">
 										<xsl:variable name="listaConstruccionesCount" select="position()"/>
@@ -2463,7 +2487,7 @@
 															<fo:table-cell padding="1pt" display-align="center" background-color="#B0C4DE">
 																<fo:block>
 																	<fo:inline font-weight="bold" display-align="after" font-size="9pt" font-family="Arial,Helvetica,sans-serif">
-																		<xsl:text>Lista de Construcciones</xsl:text>
+																		<xsl:text>Lista de construcciones</xsl:text>
 																	</fo:inline>
 																</fo:block>
 															</fo:table-cell>
@@ -2493,7 +2517,7 @@
 																<fo:block text-align="left" margin="0pt">
 																	<fo:block font-size="8pt" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after">
 																		<fo:inline font-weight="bold">
-																				<xsl:text>Uso Construcción:</xsl:text>																			
+																				<xsl:text>Uso construcción:</xsl:text>																			
 																		</fo:inline>
 																	</fo:block>
 																</fo:block>
@@ -2584,7 +2608,7 @@
 										</fo:block>
 									</xsl:for-each>
 								</xsl:if>	
-								<!-- LISTA DE SUBPARCELAS -->
+								<!-- Lista de subparcelas -->
 								<xsl:if test="./*[local-name()='listaSubparcelas']">
 									<xsl:for-each select="./*[local-name()='listaSubparcelas']/*">
 										<xsl:variable name="listaSubparcelasCount" select="position()"/>
@@ -2596,7 +2620,7 @@
 															<fo:table-cell padding="1pt" display-align="center" background-color="#B0C4DE">
 																<fo:block>
 																	<fo:inline font-weight="bold" display-align="after" font-size="9pt" font-family="Arial,Helvetica,sans-serif">
-																		<xsl:text>Lista de Subparcelas</xsl:text>
+																		<xsl:text>Lista de subparcelas</xsl:text>
 																	</fo:inline>
 																</fo:block>
 															</fo:table-cell>
@@ -2630,7 +2654,7 @@
 																<fo:block text-align="left" margin="0pt">
 																	<fo:block font-size="8pt" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after">
 																		<fo:inline font-weight="bold">																			
-																				<xsl:text>Calificación Catastral:</xsl:text>								
+																				<xsl:text>Calificación catastral:</xsl:text>								
 																		</fo:inline>
 																	</fo:block>
 																</fo:block>
@@ -2646,7 +2670,7 @@
 																<fo:block text-align="left" margin="0pt">
 																	<fo:block font-size="8pt" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after">
 																		<fo:inline font-weight="bold">																			
-																				<xsl:text>Clase Cultivo:</xsl:text>								
+																				<xsl:text>Clase cultivo:</xsl:text>								
 																		</fo:inline>
 																	</fo:block>
 																</fo:block>
@@ -2665,7 +2689,7 @@
 																<fo:block text-align="left" margin="0pt">
 																	<fo:block font-size="8pt" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after">
 																		<fo:inline font-weight="bold">																			
-																				<xsl:text>Intensidad Productiva:</xsl:text>								
+																				<xsl:text>Intensidad productiva:</xsl:text>								
 																		</fo:inline>
 																	</fo:block>
 																</fo:block>
@@ -2681,7 +2705,7 @@
 																<fo:block text-align="left" margin="0pt">
 																	<fo:block font-size="8pt" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after">
 																		<fo:inline font-weight="bold">																			
-																				<xsl:text>Superficie Parcela:</xsl:text>								
+																				<xsl:text>Superficie parcela:</xsl:text>								
 																		</fo:inline>
 																	</fo:block>
 																</fo:block>
@@ -2706,7 +2730,7 @@
 																<fo:block text-align="left" margin="0pt">
 																	<fo:block font-size="8pt" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after">
 																		<fo:inline font-weight="bold">																			
-																				<xsl:text>Valor Catastral:</xsl:text>								
+																				<xsl:text>Valor catastral:</xsl:text>								
 																		</fo:inline>
 																	</fo:block>
 																</fo:block>

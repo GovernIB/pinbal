@@ -39,7 +39,7 @@
 	<xsl:param name="ConsultaFECHA_ACTO"/>
 	<xsl:param name="ConsultaNOTARIOCOD_NOTARIO"/>
 	<xsl:template match="/">
-		<fo:root> 
+		<fo:root>
 			<fo:layout-master-set>
 				<fo:simple-page-master master-name="default-page" page-height="11in" page-width="9.5in" margin-top="0.2in" margin-right="0.9in" margin-left="0.8in">
 					<fo:region-body margin-top="82" margin-bottom="120" margin-left="0.2in"/>
@@ -212,7 +212,7 @@
 		</fo:block>
 		<fo:block margin-top="2pt" text-align="center" font-family="Arial,sans-serif" font-size="8pt" line-height="10pt" space-after.optimum="1pt" display-align="after" color="#2F4F4F">
 			<fo:inline font-weight="bold">
-				<xsl:text>Identificador de Petición:</xsl:text>
+				<xsl:text>Identificador de petición:</xsl:text>
 			</fo:inline>
 			<fo:inline font-weight="bold">
 				<xsl:value-of select="$idPeticion"/>
@@ -220,7 +220,7 @@
 		</fo:block>
 		<fo:block text-align="center" font-family="Arial,sans-serif" font-size="8pt" line-height="10pt" space-after.optimum="1pt" display-align="after" color="#2F4F4F">
 			<fo:inline font-weight="bold">
-				<xsl:text>Identificador de Transmisión:</xsl:text>
+				<xsl:text>Identificador de transmisión:</xsl:text>
 			</fo:inline>
 			<fo:inline font-weight="bold">
 				<xsl:value-of select="$idTransmision"/>
@@ -230,7 +230,7 @@
 			<fo:block text-align="left" margin-top="20pt">
 				<fo:block font-size="8pt" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after">
 					<fo:inline font-weight="bold">
-						<xsl:text>Datos de Consulta</xsl:text>
+						<xsl:text>Datos de consulta</xsl:text>
 					</fo:inline>
 				</fo:block>
 			</fo:block>
@@ -263,7 +263,7 @@
 						<fo:table-cell padding="2pt" display-align="center">
 							<fo:block font-size="8pt" text-align="left" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after">
 								<fo:inline font-weight="bold">
-									<xsl:text>Tipo Doc:</xsl:text>
+									<xsl:text>Tipo Doc.:</xsl:text>
 								</fo:inline>
 							</fo:block>
 						</fo:table-cell>
@@ -289,7 +289,7 @@
 						<fo:table-cell padding="2pt" display-align="center">
 							<fo:block font-size="8pt" text-align="left" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after">
 								<fo:inline font-weight="bold">
-									<xsl:text>Nombre y Apellidos:</xsl:text>
+									<xsl:text>Nombre y apellidos:</xsl:text>
 								</fo:inline>
 							</fo:block>
 						</fo:table-cell>
@@ -313,7 +313,7 @@
 								<xsl:value-of select="$ConsultaNOTARIOCOD_NOTARIO"/>
 							</fo:block>
 						</fo:table-cell>
-					</fo:table-row>		
+					</fo:table-row>				
 				</fo:table-body>
 			</fo:table>
 			
@@ -323,7 +323,7 @@
 						<fo:table-cell padding="2pt" display-align="center">
 							<fo:block font-size="8pt" text-align="left" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after">
 								<fo:inline font-weight="bold">
-									<xsl:text>Nº Expediente:           </xsl:text>
+									<xsl:text>Nº expediente:           </xsl:text>
 								</fo:inline>
 								<xsl:value-of select="$idExpediente"/>
 							</fo:block>
@@ -359,7 +359,7 @@
 						<fo:table-cell padding="3pt" display-align="center" background-color="#B0C4DE">
 							<fo:block>
 								<fo:inline font-weight="bold" display-align="after">
-									<xsl:text>Datos Notaría</xsl:text>
+									<xsl:text>Datos notaría</xsl:text>
 								</fo:inline>
 							</fo:block>
 						</fo:table-cell>
@@ -434,7 +434,7 @@
 						</fo:table-cell>
 						<fo:table-cell padding="2pt" display-align="center">
 							<fo:block font-size="8pt" text-align="left" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after">
-								<xsl:value-of select="$ConsultaFECHA_ACTO"/>
+								<xsl:value-of select="concat(substring(string($ConsultaFECHA_ACTO),9,2),'/',substring(string($ConsultaFECHA_ACTO),6,2),'/',substring(string($ConsultaFECHA_ACTO),1,4))"/>
 							</fo:block>
 						</fo:table-cell>
 					</fo:table-row>	
@@ -442,7 +442,7 @@
 						<fo:table-cell padding="2pt" display-align="center">
 							<fo:block font-size="8pt" text-align="left" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after">
 								<fo:inline font-weight="bold">
-									<xsl:text>Código Postal:</xsl:text>
+									<xsl:text>Código postal:</xsl:text>
 								</fo:inline>
 							</fo:block>
 						</fo:table-cell>
@@ -476,7 +476,7 @@
 				<fo:block text-align="left" margin-top="25pt">
 					<fo:block font-size="8pt" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after">
 						<fo:inline font-weight="bold">
-							<xsl:text>Datos de Respuesta</xsl:text>
+							<xsl:text>Datos de respuesta</xsl:text>
 						</fo:inline>
 					</fo:block>
 				</fo:block>
@@ -522,7 +522,7 @@
 											<fo:block text-align="left" margin="0pt">
 												<fo:block font-size="8pt" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after">
 													<fo:inline font-weight="bold">
-														<xsl:text>Fecha Inicio:</xsl:text>
+														<xsl:text>Fecha inicio:</xsl:text>
 														<xsl:text> </xsl:text>
 														</fo:inline>
 													<fo:inline font-weight="normal">
@@ -538,7 +538,7 @@
 											<fo:block text-align="left" margin="0pt">
 												<fo:block font-size="8pt" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after">
 													<fo:inline font-weight="bold">
-														<xsl:text>Fecha Fin:</xsl:text>
+														<xsl:text>Fecha fin:</xsl:text>
 														<xsl:text></xsl:text>
 													</fo:inline>
 													<fo:inline font-weight="normal">
@@ -633,7 +633,7 @@
 															<fo:block text-align="left" margin="0pt">
 																<fo:block font-size="8pt" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after">
 																	<fo:inline font-weight="bold">
-																		<xsl:text>Nombre Completo:</xsl:text>
+																		<xsl:text>Nombre completo:</xsl:text>
 																	</fo:inline>
 																</fo:block>
 															</fo:block>
@@ -712,7 +712,7 @@
 															<fo:block text-align="left" margin="0pt">
 																<fo:block font-size="8pt" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after">
 																	<fo:inline font-weight="bold">
-																		<xsl:text>PLAZA:</xsl:text>
+																		<xsl:text>Plaza:</xsl:text>
 																	</fo:inline>
 																</fo:block>
 															</fo:block>
@@ -796,7 +796,7 @@
 															<fo:block text-align="left" margin="0pt">
 																<fo:block font-size="8pt" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after">
 																	<fo:inline font-weight="bold">
-																		<xsl:text>Código Postal:</xsl:text>
+																		<xsl:text>Código postal:</xsl:text>
 																	</fo:inline>
 																</fo:block>
 															</fo:block>
@@ -810,7 +810,78 @@
 																</fo:block>
 															</fo:block>
 														</fo:table-cell>
-													</fo:table-row>						
+													</fo:table-row>		
+													
+													<xsl:if test="$notarioNotaria/*[local-name()='NOTARIA']/*[local-name()='TLF_1'] != ''">
+														<fo:table-row>
+															<fo:table-cell padding="2pt" display-align="center">
+																<fo:block text-align="left" margin="0pt">
+																	<fo:block font-size="8pt" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after">
+																		<fo:inline font-weight="bold">
+																			<xsl:text>Teléfono:</xsl:text>
+																		</fo:inline>
+																	</fo:block>
+																</fo:block>
+															</fo:table-cell>
+															<fo:table-cell padding="2pt" display-align="center">
+																<fo:block text-align="left" margin="0pt">
+																	<fo:block font-size="8pt" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after">
+																		<fo:inline font-weight="normal">
+																			<xsl:value-of select="$notarioNotaria/*[local-name()='NOTARIA']/*[local-name()='TLF_1']"/>
+																		</fo:inline>
+																	</fo:block>
+																</fo:block>
+															</fo:table-cell>
+														</fo:table-row>	
+													</xsl:if>
+													
+													<xsl:if test="$notarioNotaria/*[local-name()='NOTARIA']/*[local-name()='TLF_2'] != ''">
+														<fo:table-row>
+															<fo:table-cell padding="2pt" display-align="center">
+																<fo:block text-align="left" margin="0pt">
+																	<fo:block font-size="8pt" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after">
+																		<fo:inline font-weight="bold">
+																			<xsl:text>Teléfono:</xsl:text>
+																		</fo:inline>
+																	</fo:block>
+																</fo:block>
+															</fo:table-cell>
+															<fo:table-cell padding="2pt" display-align="center">
+																<fo:block text-align="left" margin="0pt">
+																	<fo:block font-size="8pt" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after">
+																		<fo:inline font-weight="normal">
+																			<xsl:value-of select="$notarioNotaria/*[local-name()='NOTARIA']/*[local-name()='TLF_2']"/>
+																		</fo:inline>
+																	</fo:block>
+																</fo:block>
+															</fo:table-cell>
+														</fo:table-row>	
+													</xsl:if>
+													
+													<xsl:if test="$notarioNotaria/*[local-name()='NOTARIA']/*[local-name()='FAX'] != ''">
+														<fo:table-row>
+															<fo:table-cell padding="2pt" display-align="center">
+																<fo:block text-align="left" margin="0pt">
+																	<fo:block font-size="8pt" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after">
+																		<fo:inline font-weight="bold">
+																			<xsl:text>Fax:</xsl:text>
+																		</fo:inline>
+																	</fo:block>
+																</fo:block>
+															</fo:table-cell>
+															<fo:table-cell padding="2pt" display-align="center">
+																<fo:block text-align="left" margin="0pt">
+																	<fo:block font-size="8pt" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after">
+																		<fo:inline font-weight="normal">
+																			<xsl:value-of select="$notarioNotaria/*[local-name()='NOTARIA']/*[local-name()='FAX']"/>
+																		</fo:inline>
+																	</fo:block>
+																</fo:block>
+															</fo:table-cell>
+														</fo:table-row>	
+													</xsl:if>
+													
+																	
 												</fo:table-body>
 											</fo:table>
 												

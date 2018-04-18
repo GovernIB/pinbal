@@ -171,6 +171,7 @@ introducidos por el usuario en la petición. Sólo en el mensaje de PETICION.</x
 			<xs:restriction base="xs:string">
 				<xs:maxLength value="38"/>
 				<xs:minLength value="9"/>
+				<xs:pattern value="[a-zA-Z0-9]*"/>
 			</xs:restriction>
 		</xs:simpleType>
 	</xs:element>

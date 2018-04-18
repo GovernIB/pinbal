@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- edited with XMLSpy v2008 sp1 (http://www.altova.com) by eee (eee) -->
 <xs:schema xmlns="http://intermediacion.redsara.es/scsp/esquemas/datosespecificos" xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://intermediacion.redsara.es/scsp/esquemas/datosespecificos" elementFormDefault="qualified">
 	<xs:element name="DatosEspecificos" type="DatosEspecificos"/>
 	<xs:complexType name="DatosEspecificos">
@@ -28,7 +27,6 @@
 						<xs:documentation>Año en formato: AAAA</xs:documentation>
 					</xs:annotation>
 				</xs:element>
-				<xs:element ref="Idioma" minOccurs="0"/>
 			</xs:all>
 		</xs:complexType>
 	</xs:element>
@@ -121,22 +119,5 @@
 		<xs:annotation>
 			<xs:documentation>PDF en base64</xs:documentation>
 		</xs:annotation>
-	</xs:element>
-	<xs:element name="Idioma">
-		<xs:annotation>
-			<xs:documentation>Formato: 
-· 1 - CASTELLANO
-· 2 - CATALAN
-· 3 - EUSKERA
-· 4 - GALLEGO</xs:documentation>
-		</xs:annotation>
-		<xs:simpleType>
-			<xs:restriction base="xs:integer">
-				<xs:enumeration value="1"/>
-				<xs:enumeration value="2"/>
-				<xs:enumeration value="3"/>
-				<xs:enumeration value="4"/>
-			</xs:restriction>
-		</xs:simpleType>
 	</xs:element>
 </xs:schema>

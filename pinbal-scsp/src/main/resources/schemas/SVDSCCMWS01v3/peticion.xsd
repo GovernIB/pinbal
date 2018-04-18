@@ -6,6 +6,7 @@
 			<xs:restriction base="xs:string">
 				<xs:maxLength value="40"/>
 				<xs:minLength value="1"/>
+				<xs:pattern value="[A-Za-zÁáÉéÍíÓóÚúüÑñÀàÈèÌìÒòÙùÄäËëÏïÖöÜüÂâÊêÎîÔôÛûÇç·'\-\s,.()/\\]+"/>
 				<xs:whiteSpace value="collapse"/>
 			</xs:restriction>
 		</xs:simpleType>
@@ -15,6 +16,7 @@
 			<xs:restriction base="xs:string">
 				<xs:maxLength value="40"/>
 				<xs:minLength value="1"/>
+				<xs:pattern value="[A-Za-zÁáÉéÍíÓóÚúüÑñÀàÈèÌìÒòÙùÄäËëÏïÖöÜüÂâÊêÎîÔôÛûÇç·'\-\s,.()/\\]+"/>
 				<xs:whiteSpace value="collapse"/>
 			</xs:restriction>
 		</xs:simpleType>
@@ -148,16 +150,16 @@
 	<xs:element name="Funcionario">
 		<xs:complexType>
 			<xs:sequence>
-				<xs:element ref="NombreCompletoFuncionario" />
-				<xs:element ref="NifFuncionario" />
+				<xs:element ref="NombreCompletoFuncionario"/>
+				<xs:element ref="NifFuncionario"/>
 			</xs:sequence>
 		</xs:complexType>
 	</xs:element>
 	<xs:element name="Procedimiento">
 		<xs:complexType>
 			<xs:sequence>
-				<xs:element ref="CodProcedimiento" minOccurs="0"/>
-				<xs:element ref="NombreProcedimiento" minOccurs="0"/>
+				<xs:element ref="CodProcedimiento"/>
+				<xs:element ref="NombreProcedimiento"/>
 			</xs:sequence>
 		</xs:complexType>
 	</xs:element>
@@ -206,7 +208,7 @@
 	<xs:element name="NifEmisor">
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
-				<xs:enumeration value="S2813001A"/>				
+				<xs:enumeration value="S2813001A"/>
 			</xs:restriction>
 		</xs:simpleType>
 	</xs:element>
@@ -225,6 +227,7 @@
 			<xs:restriction base="xs:string">
 				<xs:maxLength value="40"/>
 				<xs:minLength value="1"/>
+				<xs:pattern value="[A-Za-zÁáÉéÍíÓóÚúüÑñÀàÈèÌìÒòÙùÄäËëÏïÖöÜüÂâÊêÎîÔôÛûÇç·'\-\s,.()/\\]+"/>
 				<xs:whiteSpace value="collapse"/>
 			</xs:restriction>
 		</xs:simpleType>
@@ -288,10 +291,10 @@
 				<xs:element ref="IdentificadorSolicitante"/>
 				<xs:element ref="NombreSolicitante"/>
 				<xs:element ref="UnidadTramitadora" minOccurs="0"/>
-				<xs:element ref="Procedimiento" minOccurs="0"/>
+				<xs:element ref="Procedimiento"/>
 				<xs:element ref="Finalidad"/>
 				<xs:element ref="Consentimiento"/>
-				<xs:element ref="Funcionario" />
+				<xs:element ref="Funcionario"/>
 				<xs:element ref="IdExpediente" minOccurs="0"/>
 			</xs:all>
 		</xs:complexType>

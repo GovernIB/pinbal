@@ -36,6 +36,7 @@
 	<xsl:param name="finalidad"/>
 	
 	<xsl:param name="ConsultaAnioNacimiento"/>
+	<xsl:param name="ConsultaNumeroSoporte"/>
 	<xsl:param name="ConsultaMail"/>
 	<xsl:param name="ConsultaTelefono" />
 	
@@ -297,7 +298,7 @@
 								<fo:block font-size="8pt" text-align="left" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after" >
 									<xsl:choose>
 									  <xsl:when test="$consentimiento = 'Si' "> 
-											<xsl:text>Expreso</xsl:text>
+											<xsl:text>Sí</xsl:text>
 									  </xsl:when>
 									  <xsl:otherwise>
 											<xsl:value-of select="$consentimiento"/>
@@ -366,6 +367,23 @@
 							<fo:table-cell padding="2pt" display-align="center" number-columns-spanned="5">						
 									<fo:block font-size="8pt" text-align="left" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after" >
 											<xsl:value-of select="$ConsultaAnioNacimiento"/>								
+									</fo:block>							
+							</fo:table-cell> 
+						</fo:table-row>
+					</xsl:if>
+					<xsl:if test="$ConsultaNumeroSoporte != ''">
+						<fo:table-row>
+							<!-- Año Nacimiento -->
+							<fo:table-cell padding="2pt" display-align="center"  >							
+									<fo:block font-size="8pt" text-align="left" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after" >
+										<fo:inline font-weight="bold">
+											<xsl:text>Año nacimiento:</xsl:text>
+										</fo:inline>
+									</fo:block>							
+							</fo:table-cell>
+							<fo:table-cell padding="2pt" display-align="center" number-columns-spanned="5">						
+									<fo:block font-size="8pt" text-align="left" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after" >
+											<xsl:value-of select="$ConsultaNumeroSoporte"/>								
 									</fo:block>							
 							</fo:table-cell> 
 						</fo:table-row>

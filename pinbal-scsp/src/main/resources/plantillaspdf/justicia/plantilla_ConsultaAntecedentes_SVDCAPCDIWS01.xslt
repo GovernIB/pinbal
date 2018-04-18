@@ -36,6 +36,7 @@
 	<xsl:param name="finalidad"/>
 	
 	<xsl:param name="ConsultaAnioNacimiento"/>
+	<xsl:param name="ConsultaNumeroSoporte"/>
 	<xsl:param name="ConsultaMail"/>
 	<xsl:param name="ConsultaTelefono" />
 	
@@ -297,7 +298,7 @@
 								<fo:block font-size="8pt" text-align="left" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after" >
 									<xsl:choose>
 									  <xsl:when test="$consentimiento = 'Si' "> 
-											<xsl:text>Expreso</xsl:text>
+											<xsl:text>Sí</xsl:text>
 									  </xsl:when>
 									  <xsl:otherwise>
 											<xsl:value-of select="$consentimiento"/>
@@ -369,6 +370,23 @@
 							</fo:table-cell> 
 						</fo:table-row>
 					</xsl:if>
+					<xsl:if test="$ConsultaNumeroSoporte != ''">
+						<fo:table-row>
+							<!-- Año Nacimiento -->
+							<fo:table-cell padding="2pt" display-align="center"  >							
+									<fo:block font-size="8pt" text-align="left" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after" >
+										<fo:inline font-weight="bold">
+											<xsl:text>Año nacimiento:</xsl:text>
+										</fo:inline>
+									</fo:block>							
+							</fo:table-cell>
+							<fo:table-cell padding="2pt" display-align="center" number-columns-spanned="5">						
+									<fo:block font-size="8pt" text-align="left" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after" >
+											<xsl:value-of select="$ConsultaNumeroSoporte"/>								
+									</fo:block>							
+							</fo:table-cell> 
+						</fo:table-row>
+					</xsl:if>
 					<xsl:if test="$ConsultaTelefono != ''">
 						<fo:table-row>
 							<fo:table-cell padding="2pt" display-align="center"  >							
@@ -422,31 +440,30 @@
 					<xsl:if test="string($CSV) != ''">
 						<fo:block margin-top="40pt" text-align="center" font-family="Arial,sans-serif" font-size="10pt" line-height="10pt" space-after.optimum="1pt" display-align="after">
 						 	<fo:table table-layout="fixed" width="100%" border-spacing="5pt" space-after="2mm" space-before="10mm">
-							<fo:table-body start-indent="0pt">
-							<fo:table-row>
-								<fo:table-cell padding="3pt" display-align="center"  >
-									<fo:block font-size="8pt" text-align="center" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt"  >
-										<fo:inline font-weight="bold" text-align="center" font-family="Arial,sans-serif" font-size="12pt"> 
-											<xsl:text>Puede descargarse el certificado en </xsl:text>
-											<xsl:value-of select="$URL"/> 
-										</fo:inline>
-									</fo:block>
-									</fo:table-cell> 
+								<fo:table-body start-indent="0pt">
+									<fo:table-row>
+										<fo:table-cell padding="3pt" display-align="center"  >
+											<fo:block font-size="8pt" text-align="center" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt"  >
+												<fo:inline font-weight="bold" text-align="center" font-family="Arial,sans-serif" font-size="12pt"> 
+													<xsl:text>Puede descargarse el certificado en </xsl:text>
+													<xsl:value-of select="$URL"/> 
+												</fo:inline>
+											</fo:block>
+										</fo:table-cell> 
 									</fo:table-row>
 									<fo:table-row>
-								<fo:table-cell padding="3pt" display-align="center"  >
-									<fo:block font-size="8pt" text-align="center" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt"  >
-										<fo:inline font-weight="bold" text-align="center" font-family="Arial,sans-serif" font-size="12pt">
-										 	<xsl:text> con el Código Seguro de Verificación   </xsl:text>
-											<xsl:value-of select="$CSV"/> 
-										</fo:inline>
-									</fo:block>
-									</fo:table-cell> 
+										<fo:table-cell padding="3pt" display-align="center"  >
+											<fo:block font-size="8pt" text-align="center" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt"  >
+												<fo:inline font-weight="bold" text-align="center" font-family="Arial,sans-serif" font-size="12pt">
+												 	<xsl:text> con el Código Seguro de Verificación   </xsl:text>
+													<xsl:value-of select="$CSV"/> 
+												</fo:inline>
+											</fo:block>
+										</fo:table-cell> 
 									</fo:table-row>
 								</fo:table-body>
 							</fo:table> 
 						</fo:block>	
-					</xsl:if>
-			 
+					</xsl:if> 
 	</xsl:template>
 </xsl:stylesheet>

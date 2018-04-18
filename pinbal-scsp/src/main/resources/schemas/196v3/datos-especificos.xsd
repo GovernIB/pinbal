@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2009 sp1 (http://www.altova.com) by PC Corporativo (AGENCIA TRIBUTARIA) -->
+<xs:schema xmlns="http://intermediacion.redsara.es/scsp/esquemas/datosespecificos" xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://intermediacion.redsara.es/scsp/esquemas/datosespecificos" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<xs:element name="DatosEspecificos">
+		<xs:complexType>
+			<xs:choice>
+				<xs:element name="Ejercicio">
+					<xs:simpleType>
+						<xs:restriction base="xs:string">
+							<xs:maxLength value="4"/>
+							<xs:minLength value="0"/>
+						</xs:restriction>
+					</xs:simpleType>
+				</xs:element>
+				<xs:sequence>
+					<xs:element name="Cabecera">
+						<xs:complexType>
+							<xs:sequence>
+								<xs:element name="CodRet">
+									<xs:simpleType>
+										<xs:restriction base="xs:long">
+											<xs:minInclusive value="0"/>
+											<xs:maxInclusive value="9999"/>
+											<xs:totalDigits value="4"/>
+										</xs:restriction>
+									</xs:simpleType>
+								</xs:element>
+								<xs:element name="DescripcionError">
+									<xs:simpleType>
+										<xs:restriction base="xs:string">
+											<xs:minLength value="0"/>
+											<xs:maxLength value="100"/>
+										</xs:restriction>
+									</xs:simpleType>
+								</xs:element>
+								<xs:element name="Referencia">
+									<xs:simpleType>
+										<xs:restriction base="xs:string">
+											<xs:minLength value="0"/>
+											<xs:maxLength value="11"/>
+										</xs:restriction>
+									</xs:simpleType>
+								</xs:element>
+								<xs:element name="FechaEmision">
+									<xs:simpleType>
+										<xs:restriction base="xs:string">
+											<xs:minLength value="0"/>
+											<xs:maxLength value="10"/>
+										</xs:restriction>
+									</xs:simpleType>
+								</xs:element>
+								<xs:element name="Ejercicio">
+									<xs:simpleType>
+										<xs:restriction base="xs:string">
+											<xs:maxLength value="4"/>
+											<xs:minLength value="0"/>
+										</xs:restriction>
+									</xs:simpleType>
+								</xs:element>
+							</xs:sequence>
+						</xs:complexType>
+					</xs:element>
+					<xs:element name="Cuentas" minOccurs="0">
+						<xs:complexType>
+							<xs:sequence>
+								<xs:element name="NumeroCuentasExistentes">
+									<xs:simpleType>
+										<xs:restriction base="xs:int">
+											<xs:totalDigits value="4"/>
+										</xs:restriction>
+									</xs:simpleType>
+								</xs:element>
+								<xs:element name="NumeroCuentasFacilitados">
+									<xs:simpleType>
+										<xs:restriction base="xs:int">
+											<xs:totalDigits value="4"/>
+										</xs:restriction>
+									</xs:simpleType>
+								</xs:element>
+								<xs:element name="Cuenta" minOccurs="0" maxOccurs="50">
+									<xs:complexType>
+										<xs:sequence>
+											<xs:element name="CodigoCuenta">
+												<xs:simpleType>
+													<xs:restriction base="xs:string">
+														<xs:maxLength value="20"/>
+														<xs:minLength value="0"/>
+													</xs:restriction>
+												</xs:simpleType>
+											</xs:element>
+											<xs:element name="NombreBanco" minOccurs="0">
+												<xs:simpleType>
+													<xs:restriction base="xs:string">
+														<xs:minLength value="0"/>
+														<xs:maxLength value="40"/>
+													</xs:restriction>
+												</xs:simpleType>
+											</xs:element>
+											<xs:element name="DomicilioSucursal">
+												<xs:simpleType>
+													<xs:restriction base="xs:string">
+														<xs:minLength value="0"/>
+														<xs:maxLength value="40"/>
+													</xs:restriction>
+												</xs:simpleType>
+											</xs:element>
+											<xs:element name="MunicipioSucursal">
+												<xs:simpleType>
+													<xs:restriction base="xs:string">
+														<xs:maxLength value="38"/>
+														<xs:minLength value="0"/>
+													</xs:restriction>
+												</xs:simpleType>
+											</xs:element>
+											<xs:element name="CodigoPostal">
+												<xs:simpleType>
+													<xs:restriction base="xs:string">
+														<xs:maxLength value="5"/>
+														<xs:minLength value="0"/>
+													</xs:restriction>
+												</xs:simpleType>
+											</xs:element>
+											<xs:element name="Participacion">
+												<xs:simpleType>
+													<xs:restriction base="xs:decimal">
+														<xs:totalDigits value="5"/>
+														<xs:fractionDigits value="3"/>
+													</xs:restriction>
+												</xs:simpleType>
+											</xs:element>
+											<xs:element name="TipoCuentaCodigo">
+												<xs:simpleType>
+													<xs:restriction base="xs:string">
+														<xs:maxLength value="1"/>
+														<xs:minLength value="0"/>
+													</xs:restriction>
+												</xs:simpleType>
+											</xs:element>
+											<xs:element name="TipoCuentaDescripcion">
+												<xs:simpleType>
+													<xs:restriction base="xs:string">
+														<xs:maxLength value="13"/>
+														<xs:minLength value="0"/>
+													</xs:restriction>
+												</xs:simpleType>
+											</xs:element>
+											<xs:element name="ReferenciaCuenta">
+												<xs:simpleType>
+													<xs:restriction base="xs:string">
+														<xs:minLength value="0"/>
+														<xs:maxLength value="11"/>
+													</xs:restriction>
+												</xs:simpleType>
+											</xs:element>
+										</xs:sequence>
+									</xs:complexType>
+								</xs:element>
+							</xs:sequence>
+						</xs:complexType>
+					</xs:element>
+				</xs:sequence>
+			</xs:choice>
+			<xs:attribute name="Id" type="xs:string" use="optional"/>
+		</xs:complexType>
+	</xs:element>
+</xs:schema>

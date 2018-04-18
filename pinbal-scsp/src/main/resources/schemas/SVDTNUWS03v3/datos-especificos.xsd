@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- edited with XMLSpy v2008 sp1 (http://www.altova.com) by eee (eee) -->
+<!-- edited with XMLSpy v2011 sp1 (http://www.altova.com) by End User (free.org) -->
 <xs:schema xmlns="http://intermediacion.redsara.es/scsp/esquemas/datosespecificos" xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://intermediacion.redsara.es/scsp/esquemas/datosespecificos" elementFormDefault="qualified">
 	<xs:element name="DatosEspecificos" type="DatosEspecificos"/>
 	<xs:complexType name="DatosEspecificos">
@@ -51,7 +51,7 @@
 		</xs:annotation>
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
-				<xs:maxLength value="100"/>
+				<xs:maxLength value="40"/>
 			</xs:restriction>
 		</xs:simpleType>
 	</xs:element>
@@ -72,7 +72,7 @@
 		</xs:annotation>
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
-				<xs:maxLength value="100"/>
+				<xs:maxLength value="30"/>
 			</xs:restriction>
 		</xs:simpleType>
 	</xs:element>
@@ -82,7 +82,7 @@
 		</xs:annotation>
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
-				<xs:maxLength value="100"/>
+				<xs:maxLength value="50"/>
 			</xs:restriction>
 		</xs:simpleType>
 	</xs:element>
@@ -92,7 +92,7 @@
 		</xs:annotation>
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
-				<xs:maxLength value="100"/>
+				<xs:maxLength value="50"/>
 			</xs:restriction>
 		</xs:simpleType>
 	</xs:element>
@@ -142,8 +142,16 @@
 			<xs:all>
 				<xs:element ref="Centro" minOccurs="0"/>
 				<xs:element ref="CodigoCentro" minOccurs="0"/>
-				<xs:element ref="CodigoProvincia" minOccurs="0"/>
-				<xs:element ref="Provincia" minOccurs="0"/>
+				<xs:element ref="CodigoProvincia" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>Código de Provincia del centro en base a los códigos INE</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element ref="Provincia" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>Literal de la Provincia del centro</xs:documentation>
+					</xs:annotation>
+				</xs:element>
 			</xs:all>
 		</xs:complexType>
 	</xs:element>
@@ -153,7 +161,7 @@
 		</xs:annotation>
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
-				<xs:maxLength value="250"/>
+				<xs:maxLength value="40"/>
 			</xs:restriction>
 		</xs:simpleType>
 	</xs:element>
@@ -163,7 +171,7 @@
 		</xs:annotation>
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
-				<xs:maxLength value="100"/>
+				<xs:maxLength value="10"/>
 			</xs:restriction>
 		</xs:simpleType>
 	</xs:element>
@@ -196,7 +204,7 @@
 		</xs:annotation>
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
-				<xs:maxLength value="11"/>
+				<xs:maxLength value="15"/>
 			</xs:restriction>
 		</xs:simpleType>
 	</xs:element>
@@ -206,7 +214,7 @@
 		</xs:annotation>
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
-				<xs:maxLength value="1000"/>
+				<xs:maxLength value="100"/>
 			</xs:restriction>
 		</xs:simpleType>
 	</xs:element>
@@ -226,7 +234,7 @@
 		</xs:annotation>
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
-				<xs:maxLength value="100"/>
+				<xs:maxLength value="15"/>
 			</xs:restriction>
 		</xs:simpleType>
 	</xs:element>
@@ -236,7 +244,7 @@
 		</xs:annotation>
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
-				<xs:maxLength value="100"/>
+				<xs:maxLength value="40"/>
 			</xs:restriction>
 		</xs:simpleType>
 	</xs:element>
@@ -246,7 +254,7 @@
 		</xs:annotation>
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
-				<xs:maxLength value="100"/>
+				<xs:maxLength value="2"/>
 			</xs:restriction>
 		</xs:simpleType>
 	</xs:element>
@@ -296,7 +304,7 @@
 		</xs:annotation>
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
-				<xs:maxLength value="100"/>
+				<xs:maxLength value="15"/>
 			</xs:restriction>
 		</xs:simpleType>
 	</xs:element>
@@ -306,7 +314,7 @@
 		</xs:annotation>
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
-				<xs:maxLength value="100"/>
+				<xs:maxLength value="15"/>
 			</xs:restriction>
 		</xs:simpleType>
 	</xs:element>
@@ -328,7 +336,7 @@
 		</xs:annotation>
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
-				<xs:maxLength value="100"/>
+				<xs:maxLength value="6"/>
 			</xs:restriction>
 		</xs:simpleType>
 	</xs:element>
@@ -338,7 +346,7 @@
 		</xs:annotation>
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
-				<xs:maxLength value="100"/>
+				<xs:maxLength value="6"/>
 			</xs:restriction>
 		</xs:simpleType>
 	</xs:element>
@@ -348,7 +356,7 @@
 		</xs:annotation>
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
-				<xs:maxLength value="100"/>
+				<xs:maxLength value="4"/>
 			</xs:restriction>
 		</xs:simpleType>
 	</xs:element>

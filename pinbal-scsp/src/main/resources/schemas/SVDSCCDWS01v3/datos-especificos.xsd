@@ -18,7 +18,7 @@
 	</xs:complexType>
 	<xs:element name="Consulta">
 		<xs:complexType>
-			<xs:sequence>				
+			<xs:sequence>
 				<xs:element ref="DatosAdicionalesTitularConsulta">
 					<xs:annotation>
 						<xs:documentation>
@@ -44,7 +44,7 @@
 				</xs:element>
 				<xs:element name="AusenciaSegundoApellido" type="xs:boolean" default="false">
 					<xs:annotation>
-						<xs:documentation>Flag que especifica si el ciudadano tiene segundo apellido, en cuyo caso, sera obligatorio introducir el segundo apellido</xs:documentation>
+						<xs:documentation>Flag que especifica si el ciudadano tiene segundo apellido, en cuyo caso, será obligatorio introducir el segundo apellido</xs:documentation>
 					</xs:annotation>
 				</xs:element>
 			</xs:sequence>
@@ -81,12 +81,12 @@
 	</xs:element>
 	<xs:element name="Tomo" type="IdentificadorTomo">
 		<xs:annotation>
-			<xs:documentation>Tomo o Libro del Registro</xs:documentation>
+			<xs:documentation>Tomo ó Libro del Registro</xs:documentation>
 		</xs:annotation>
 	</xs:element>
 	<xs:element name="Pagina" type="IdentificadorPagina">
 		<xs:annotation>
-			<xs:documentation>Folio o pagina del Registro</xs:documentation>
+			<xs:documentation>Folio o página del Registro</xs:documentation>
 		</xs:annotation>
 	</xs:element>
 	<xs:element name="PoblacionHechoRegistral" type="Poblacion">
@@ -119,7 +119,7 @@
 				</xs:element>
 				<xs:element name="FechaConfirmacion" type="xs:date">
 					<xs:annotation>
-						<xs:documentation>Fecha de Confirmacion que permite identificar univocamente a la misma</xs:documentation>
+						<xs:documentation>Fecha de Confirmación que permite identificar univocamente a la misma</xs:documentation>
 					</xs:annotation>
 				</xs:element>
 				<xs:element ref="Estado" minOccurs="0"/>
@@ -188,7 +188,7 @@
 	</xs:element>
 	<xs:simpleType name="IdentificadorRegistro">
 		<xs:annotation>
-			<xs:documentation>Codigo del Registro Civil</xs:documentation>
+			<xs:documentation>Código del Registro Civil</xs:documentation>
 		</xs:annotation>
 		<xs:restriction base="xs:string">
 			<xs:length value="12"/>
@@ -197,7 +197,7 @@
 	</xs:simpleType>
 	<xs:simpleType name="IdentificadorTomo">
 		<xs:annotation>
-			<xs:documentation>Identificador de Tomo o Libro del Registro</xs:documentation>
+			<xs:documentation>Identificador de Tomo ó Libro del Registro</xs:documentation>
 		</xs:annotation>
 		<xs:restriction base="xs:string">
 			<xs:maxLength value="10"/>
@@ -206,7 +206,7 @@
 	</xs:simpleType>
 	<xs:simpleType name="IdentificadorPagina">
 		<xs:annotation>
-			<xs:documentation>Folio o pagina del Registro</xs:documentation>
+			<xs:documentation>Folio o página del Registro</xs:documentation>
 		</xs:annotation>
 		<xs:restriction base="xs:string">
 			<xs:maxLength value="10"/>
@@ -219,18 +219,11 @@
 			<xs:pattern value="[A-Za-zÁáÉéÍíÓóÚúüÑñÀàÈèÌìÒòÙùÄäËëÏïÖöÜüÂâÊêÎîÔôÛûÇç·'\-\s,.()/\\]+"/>
 		</xs:restriction>
 	</xs:simpleType>
-	<xs:simpleType name="Apellido">
-		<xs:restriction base="xs:string">
-			<xs:minLength value="1"/>
-			<xs:maxLength value="50"/>
-			<xs:pattern value="[A-Za-zÁáÉéÍíÓóÚúüÑñÀàÈèÌìÒòÙùÄäËëÏïÖöÜüÂâÊêÎîÔôÛûÇç·'\-\s,.()/\\]+"/>
-		</xs:restriction>
-	</xs:simpleType>
 	<xs:simpleType name="Poblacion">
 		<xs:annotation>
 			<xs:documentation>
 			Codigo Poblacion INE
-			(En caso de un consulado: 00 + Codigo del Ministerio de Asuntos Exteriores)
+			(En caso de un consulado: 00 + Código del Ministerio de Asuntos Exteriores)
 			</xs:documentation>
 		</xs:annotation>
 		<xs:restriction base="xs:string">
@@ -253,7 +246,7 @@
 			<xs:length value="1"/>
 			<xs:enumeration value="V">
 				<xs:annotation>
-					<xs:documentation>Varon</xs:documentation>
+					<xs:documentation>Varón</xs:documentation>
 				</xs:annotation>
 			</xs:enumeration>
 			<xs:enumeration value="M">

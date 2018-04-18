@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns="http://intermediacion.redsara.es/scsp/esquemas/datosespecificos" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:desp="http://intermediacion.redsara.es/scsp/esquemas/datosespecificos" targetNamespace="http://intermediacion.redsara.es/scsp/esquemas/datosespecificos" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<xs:element name="DatosEspecificos" type="DatosEspecificos"/>
+	<xs:complexType name="DatosEspecificos">
+		<xs:choice>
+			<xs:element name="Consulta">
+				<xs:complexType>
+					<xs:all>
+						<xs:element ref="Pais"/>
+						<xs:element ref="FechaDesde" minOccurs="0"/>
+						<xs:element ref="FechaHasta" minOccurs="0"/>
+					</xs:all>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="Retorno">
+				<xs:complexType>
+					<xs:all>
+						<xs:element name="Estado">
+							<xs:complexType>
+								<xs:all>
+									<xs:element ref="CodigoEstado"/>
+									<xs:element ref="CodigoEstadoSecundario" minOccurs="0"/>
+									<xs:element ref="LiteralError"/>
+								</xs:all>
+							</xs:complexType>
+						</xs:element>
+						<xs:element name="DatosIdentificacion">
+							<xs:complexType>
+								<xs:all>
+									<xs:element ref="Pais"/>
+									<xs:element name="Nombre" minOccurs="0">
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="500"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+								</xs:all>
+							</xs:complexType>
+						</xs:element>
+						<xs:element ref="FechaDesde" minOccurs="0"/>
+						<xs:element ref="FechaHasta" minOccurs="0"/>
+						<xs:element name="Minimis" minOccurs="0">
+							<xs:complexType>
+								<xs:all>
+									<xs:element name="NumSubvenciones" type="xs:int"/>
+									<xs:element name="ImporteTotal">
+										<xs:simpleType>
+											<xs:restriction base="xs:decimal">
+												<xs:totalDigits value="18"/>
+												<xs:fractionDigits value="2"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+								</xs:all>
+							</xs:complexType>
+						</xs:element>
+					</xs:all>
+				</xs:complexType>
+			</xs:element>
+		</xs:choice>
+		<xs:attribute name="Id" type="xs:string" use="optional"/>
+	</xs:complexType>
+	<xs:element name="Pais">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="2"/>
+				<xs:maxLength value="2"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="FechaDesde" type="xs:date" nillable="true"/>
+	<xs:element name="FechaHasta" type="xs:date" nillable="true"/>
+	<xs:element name="CodigoEstado">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:maxLength value="4"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="CodigoEstadoSecundario">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:maxLength value="16"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="LiteralError">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:maxLength value="255"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+</xs:schema>

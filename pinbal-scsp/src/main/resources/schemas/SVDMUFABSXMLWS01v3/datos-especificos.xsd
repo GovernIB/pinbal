@@ -1,9 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xs:schema xmlns="http://intermediacion.redsara.es/scsp/esquemas/datosespecificos" xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://intermediacion.redsara.es/scsp/esquemas/datosespecificos" elementFormDefault="qualified">
-	<!-- 
-	<xs:include schemaLocation="schemaModelo190.xsd"/>
-	-->
-
 	<xs:element name="DatosEspecificos" type="DatosEspecificos"/>
 	<xs:complexType name="DatosEspecificos">
 		<xs:choice>
@@ -25,13 +21,11 @@
 			<xs:all>
 				<xs:element ref="NPIE" minOccurs="0"/>
 				<xs:element ref="NumeroAfiliacion" minOccurs="0"/>
-				<xs:element ref="Exento" minOccurs="0"/>
 				<xs:element ref="Ejercicio">
 					<xs:annotation>
 						<xs:documentation>Año en formato: AAAA</xs:documentation>
 					</xs:annotation>
 				</xs:element>
-				<xs:element ref="Idioma" minOccurs="0"/>
 			</xs:all>
 		</xs:complexType>
 	</xs:element>
@@ -47,7 +41,7 @@
 	<xs:element name="Estado">
 		<xs:complexType>
 			<xs:all>
-				<xs:element ref="CodigoEstado"/>				
+				<xs:element ref="CodigoEstado"/>
 				<xs:element ref="LiteralError"/>
 			</xs:all>
 		</xs:complexType>
@@ -58,7 +52,7 @@
 				<xs:maxLength value="4"/>
 			</xs:restriction>
 		</xs:simpleType>
-	</xs:element>	
+	</xs:element>
 	<xs:element name="LiteralError">
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
@@ -73,17 +67,6 @@
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
 				<xs:pattern value="[1-2]{1}[0-9]{3}"/>
-			</xs:restriction>
-		</xs:simpleType>
-	</xs:element>
-	<xs:element name="Exento">
-		<xs:annotation>
-			<xs:documentation>Formato: S o N</xs:documentation>
-		</xs:annotation>
-		<xs:simpleType>
-			<xs:restriction base="xs:string">
-				<xs:enumeration value="S"/>
-				<xs:enumeration value="N"/>
 			</xs:restriction>
 		</xs:simpleType>
 	</xs:element>
@@ -120,180 +103,139 @@
 			</xs:restriction>
 		</xs:simpleType>
 	</xs:element>
-	<!-- 
-	<xs:element name="Certificado" type="xs:base64Binary">
-		<xs:annotation>
-			<xs:documentation>PDF en base64</xs:documentation>
-		</xs:annotation>
+	<xs:element name="Certificado">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="FechaExpedicion" type="xs:date" minOccurs="1" maxOccurs="1"/>
+				<xs:element name="Persona" minOccurs="0" maxOccurs="1">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="Afiliacion" type="xs:string" minOccurs="0" maxOccurs="1"/>
+							<xs:element name="Documento" type="xs:string" minOccurs="0" maxOccurs="1"/>
+							<xs:element name="TipoDocumento" type="xs:string" minOccurs="0" maxOccurs="1"/>
+							<xs:element name="Nombre" type="xs:string" minOccurs="0" maxOccurs="1"/>
+							<xs:element name="Apellido1" type="xs:string" minOccurs="0" maxOccurs="1"/>
+							<xs:element name="Apellido2" type="xs:string" minOccurs="0" maxOccurs="1"/>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="DatosCertificado" minOccurs="0" maxOccurs="1">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="Codigo" type="xs:string" minOccurs="0" maxOccurs="1"/>
+							<xs:element name="Ejercicio" type="xs:unsignedShort" minOccurs="1" maxOccurs="1"/>
+							<xs:element name="Justificante" type="xs:unsignedLong" minOccurs="1" maxOccurs="1"/>
+							<xs:element name="RentasSujetas" minOccurs="0" maxOccurs="1">
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="Pagos" type="ArrayOfCertificadoDatosCertificadoRentasSujetasPago" minOccurs="0" maxOccurs="1"/>
+										<xs:element name="Atrasos" type="ArrayOfCertificadoDatosCertificadoRentasSujetasAtraso" minOccurs="0" maxOccurs="1"/>
+										<xs:element name="Reintegros" type="ArrayOfCertificadoDatosCertificadoRentasSujetasReintegro" minOccurs="0" maxOccurs="1"/>
+									</xs:sequence>
+								</xs:complexType>
+							</xs:element>
+							<xs:element name="RentasExentas" minOccurs="0" maxOccurs="1">
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="Pagos" type="ArrayOfCertificadoDatosCertificadoRentasExentasPago" minOccurs="0" maxOccurs="1"/>
+										<xs:element name="Atrasos" type="ArrayOfCertificadoDatosCertificadoRentasExentasAtraso" minOccurs="0" maxOccurs="1"/>
+										<xs:element name="Reintegros" type="ArrayOfCertificadoDatosCertificadoRentasExentasReintegro" minOccurs="0" maxOccurs="1"/>
+									</xs:sequence>
+								</xs:complexType>
+							</xs:element>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+			</xs:sequence>
+			<xs:attribute name="tipo" type="xs:string"/>
+		</xs:complexType>
 	</xs:element>
-	 -->
-	<xs:element name="Idioma">
-		<xs:annotation>
-			<xs:documentation>Formato: 
-· 1 - CASTELLANO
-· 2 - CATALAN
-· 3 - EUSKERA
-· 4 - GALLEGO</xs:documentation>
-		</xs:annotation>
-		<xs:simpleType>
-			<xs:restriction base="xs:integer">
-				<xs:enumeration value="1"/>
-				<xs:enumeration value="2"/>
-				<xs:enumeration value="3"/>
-				<xs:enumeration value="4"/>
-			</xs:restriction>
-		</xs:simpleType>
-	</xs:element>
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	<!--
-		 schemaModelo190.xsd
-	 -->
-	 <xs:element name="Certificado">
-    <xs:complexType>
-      <xs:sequence>
-        <xs:element minOccurs="1" maxOccurs="1" name="FechaExpedicion" type="xs:date" />
-        <xs:element minOccurs="0" maxOccurs="1" name="Persona">
-          <xs:complexType>
-            <xs:sequence>
-              <xs:element minOccurs="0" maxOccurs="1" name="Afiliacion" type="xs:string" />
-              <xs:element minOccurs="0" maxOccurs="1" name="Documento" type="xs:string" />
-              <xs:element minOccurs="0" maxOccurs="1" name="TipoDocumento" type="xs:string" />
-              <xs:element minOccurs="0" maxOccurs="1" name="Nombre" type="xs:string" />
-              <xs:element minOccurs="0" maxOccurs="1" name="Apellido1" type="xs:string" />
-              <xs:element minOccurs="0" maxOccurs="1" name="Apellido2" type="xs:string" />
-            </xs:sequence>
-          </xs:complexType>
-        </xs:element>
-        <xs:element minOccurs="0" maxOccurs="1" name="DatosCertificado">
-          <xs:complexType>
-            <xs:sequence>
-              <xs:element minOccurs="0" maxOccurs="1" name="Codigo" type="xs:string" />
-              <xs:element minOccurs="1" maxOccurs="1" name="Ejercicio" type="xs:unsignedShort" />
-              <xs:element minOccurs="1" maxOccurs="1" name="Justificante" type="xs:unsignedLong" />
-              <xs:element minOccurs="0" maxOccurs="1" name="RentasSujetas">
-                <xs:complexType>
-                  <xs:sequence>
-                    <xs:element minOccurs="0" maxOccurs="1" name="Pagos" type="ArrayOfCertificadoDatosCertificadoRentasSujetasPago" />
-                    <xs:element minOccurs="0" maxOccurs="1" name="Atrasos" type="ArrayOfCertificadoDatosCertificadoRentasSujetasAtraso" />
-                    <xs:element minOccurs="0" maxOccurs="1" name="Reintegros" type="ArrayOfCertificadoDatosCertificadoRentasSujetasReintegro" />
-                  </xs:sequence>
-                </xs:complexType>
-              </xs:element>
-              <xs:element minOccurs="0" maxOccurs="1" name="RentasExentas">
-                <xs:complexType>
-                  <xs:sequence>
-                    <xs:element minOccurs="0" maxOccurs="1" name="Pagos" type="ArrayOfCertificadoDatosCertificadoRentasExentasPago" />
-                    <xs:element minOccurs="0" maxOccurs="1" name="Atrasos" type="ArrayOfCertificadoDatosCertificadoRentasExentasAtraso" />
-                    <xs:element minOccurs="0" maxOccurs="1" name="Reintegros" type="ArrayOfCertificadoDatosCertificadoRentasExentasReintegro" />
-                  </xs:sequence>
-                </xs:complexType>
-              </xs:element>
-            </xs:sequence>
-          </xs:complexType>
-        </xs:element>
-      </xs:sequence>
-      <xs:attribute name="tipo" type="xs:string" />
-    </xs:complexType>
-  </xs:element>
-  <xs:complexType name="ArrayOfCertificadoDatosCertificadoRentasSujetasPago">
-    <xs:sequence>
-      <xs:element minOccurs="0" maxOccurs="unbounded" name="Pago">
-        <xs:complexType>
-          <xs:sequence>
-            <xs:element minOccurs="0" maxOccurs="1" name="Prestacion" type="xs:string" />
-            <xs:element minOccurs="1" maxOccurs="1" name="Integro" type="xs:decimal" />
-            <xs:element minOccurs="1" maxOccurs="1" name="Reducciones" type="xs:decimal" />
-            <xs:element minOccurs="1" maxOccurs="1" name="IRPF" type="xs:decimal" />
-            <xs:element minOccurs="1" maxOccurs="1" name="OtrasRetenciones" type="xs:decimal" />
-            <xs:element minOccurs="1" maxOccurs="1" name="Liquido" type="xs:decimal" />
-          </xs:sequence>
-        </xs:complexType>
-      </xs:element>
-    </xs:sequence>
-  </xs:complexType>
-  <xs:complexType name="ArrayOfCertificadoDatosCertificadoRentasSujetasAtraso">
-    <xs:sequence>
-      <xs:element minOccurs="0" maxOccurs="unbounded" name="Atraso">
-        <xs:complexType>
-          <xs:sequence>
-            <xs:element minOccurs="0" maxOccurs="1" name="Prestacion" type="xs:string" />
-            <xs:element minOccurs="1" maxOccurs="1" name="Ejercicio" type="xs:unsignedShort" />
-            <xs:element minOccurs="1" maxOccurs="1" name="Integro" type="xs:decimal" />
-            <xs:element minOccurs="1" maxOccurs="1" name="Reducciones" type="xs:decimal" />
-            <xs:element minOccurs="1" maxOccurs="1" name="IRPF" type="xs:decimal" />
-            <xs:element minOccurs="1" maxOccurs="1" name="OtrasRetenciones" type="xs:decimal" />
-            <xs:element minOccurs="1" maxOccurs="1" name="Liquido" type="xs:decimal" />
-          </xs:sequence>
-        </xs:complexType>
-      </xs:element>
-    </xs:sequence>
-  </xs:complexType>
-  <xs:complexType name="ArrayOfCertificadoDatosCertificadoRentasSujetasReintegro">
-    <xs:sequence>
-      <xs:element minOccurs="0" maxOccurs="unbounded" name="Reintegro">
-        <xs:complexType>
-          <xs:sequence>
-            <xs:element minOccurs="0" maxOccurs="1" name="Prestacion" type="xs:string" />
-            <xs:element minOccurs="1" maxOccurs="1" name="Ejercicio" type="xs:unsignedShort" />
-            <xs:element minOccurs="1" maxOccurs="1" name="Importe" type="xs:decimal" />
-          </xs:sequence>
-        </xs:complexType>
-      </xs:element>
-    </xs:sequence>
-  </xs:complexType>
-  <xs:complexType name="ArrayOfCertificadoDatosCertificadoRentasExentasPago">
-    <xs:sequence>
-      <xs:element minOccurs="0" maxOccurs="unbounded" name="Pago">
-        <xs:complexType>
-          <xs:sequence>
-            <xs:element minOccurs="0" maxOccurs="1" name="Prestacion" type="xs:string" />
-            <xs:element minOccurs="1" maxOccurs="1" name="Integro" type="xs:decimal" />
-            <xs:element minOccurs="1" maxOccurs="1" name="OtrasRetenciones" type="xs:decimal" />
-            <xs:element minOccurs="1" maxOccurs="1" name="Liquido" type="xs:decimal" />
-          </xs:sequence>
-        </xs:complexType>
-      </xs:element>
-    </xs:sequence>
-  </xs:complexType>
-  <xs:complexType name="ArrayOfCertificadoDatosCertificadoRentasExentasAtraso">
-    <xs:sequence>
-      <xs:element minOccurs="0" maxOccurs="unbounded" name="Atraso">
-        <xs:complexType>
-          <xs:sequence>
-            <xs:element minOccurs="0" maxOccurs="1" name="Prestacion" type="xs:string" />
-            <xs:element minOccurs="1" maxOccurs="1" name="Ejercicio" type="xs:unsignedShort" />
-            <xs:element minOccurs="1" maxOccurs="1" name="Integro" type="xs:decimal" />
-            <xs:element minOccurs="1" maxOccurs="1" name="OtrasRetenciones" type="xs:decimal" />
-            <xs:element minOccurs="1" maxOccurs="1" name="Liquido" type="xs:decimal" />
-          </xs:sequence>
-        </xs:complexType>
-      </xs:element>
-    </xs:sequence>
-  </xs:complexType>
-  <xs:complexType name="ArrayOfCertificadoDatosCertificadoRentasExentasReintegro">
-    <xs:sequence>
-      <xs:element minOccurs="0" maxOccurs="unbounded" name="Reintegro">
-        <xs:complexType>
-          <xs:sequence>
-            <xs:element minOccurs="0" maxOccurs="1" name="Prestacion" type="xs:string" />
-            <xs:element minOccurs="1" maxOccurs="1" name="Ejercicio" type="xs:unsignedShort" />
-            <xs:element minOccurs="1" maxOccurs="1" name="Importe" type="xs:decimal" />
-          </xs:sequence>
-        </xs:complexType>
-      </xs:element>
-    </xs:sequence>
-  </xs:complexType>
-  
+	<xs:complexType name="ArrayOfCertificadoDatosCertificadoRentasSujetasPago">
+		<xs:sequence>
+			<xs:element name="Pago" minOccurs="0" maxOccurs="unbounded">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="Prestacion" type="xs:string" minOccurs="0" maxOccurs="1"/>
+						<xs:element name="Integro" type="xs:decimal" minOccurs="1" maxOccurs="1"/>
+						<xs:element name="Reducciones" type="xs:decimal" minOccurs="1" maxOccurs="1"/>
+						<xs:element name="IRPF" type="xs:decimal" minOccurs="1" maxOccurs="1"/>
+						<xs:element name="OtrasRetenciones" type="xs:decimal" minOccurs="1" maxOccurs="1"/>
+						<xs:element name="Liquido" type="xs:decimal" minOccurs="1" maxOccurs="1"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="ArrayOfCertificadoDatosCertificadoRentasSujetasAtraso">
+		<xs:sequence>
+			<xs:element name="Atraso" minOccurs="0" maxOccurs="unbounded">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="Prestacion" type="xs:string" minOccurs="0" maxOccurs="1"/>
+						<xs:element name="Ejercicio" type="xs:unsignedShort" minOccurs="1" maxOccurs="1"/>
+						<xs:element name="Integro" type="xs:decimal" minOccurs="1" maxOccurs="1"/>
+						<xs:element name="Reducciones" type="xs:decimal" minOccurs="1" maxOccurs="1"/>
+						<xs:element name="IRPF" type="xs:decimal" minOccurs="1" maxOccurs="1"/>
+						<xs:element name="OtrasRetenciones" type="xs:decimal" minOccurs="1" maxOccurs="1"/>
+						<xs:element name="Liquido" type="xs:decimal" minOccurs="1" maxOccurs="1"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="ArrayOfCertificadoDatosCertificadoRentasSujetasReintegro">
+		<xs:sequence>
+			<xs:element name="Reintegro" minOccurs="0" maxOccurs="unbounded">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="Prestacion" type="xs:string" minOccurs="0" maxOccurs="1"/>
+						<xs:element name="Ejercicio" type="xs:unsignedShort" minOccurs="1" maxOccurs="1"/>
+						<xs:element name="Importe" type="xs:decimal" minOccurs="1" maxOccurs="1"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="ArrayOfCertificadoDatosCertificadoRentasExentasPago">
+		<xs:sequence>
+			<xs:element name="Pago" minOccurs="0" maxOccurs="unbounded">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="Prestacion" type="xs:string" minOccurs="0" maxOccurs="1"/>
+						<xs:element name="Integro" type="xs:decimal" minOccurs="1" maxOccurs="1"/>
+						<xs:element name="OtrasRetenciones" type="xs:decimal" minOccurs="1" maxOccurs="1"/>
+						<xs:element name="Liquido" type="xs:decimal" minOccurs="1" maxOccurs="1"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="ArrayOfCertificadoDatosCertificadoRentasExentasAtraso">
+		<xs:sequence>
+			<xs:element name="Atraso" minOccurs="0" maxOccurs="unbounded">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="Prestacion" type="xs:string" minOccurs="0" maxOccurs="1"/>
+						<xs:element name="Ejercicio" type="xs:unsignedShort" minOccurs="1" maxOccurs="1"/>
+						<xs:element name="Integro" type="xs:decimal" minOccurs="1" maxOccurs="1"/>
+						<xs:element name="OtrasRetenciones" type="xs:decimal" minOccurs="1" maxOccurs="1"/>
+						<xs:element name="Liquido" type="xs:decimal" minOccurs="1" maxOccurs="1"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="ArrayOfCertificadoDatosCertificadoRentasExentasReintegro">
+		<xs:sequence>
+			<xs:element name="Reintegro" minOccurs="0" maxOccurs="unbounded">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="Prestacion" type="xs:string" minOccurs="0" maxOccurs="1"/>
+						<xs:element name="Ejercicio" type="xs:unsignedShort" minOccurs="1" maxOccurs="1"/>
+						<xs:element name="Importe" type="xs:decimal" minOccurs="1" maxOccurs="1"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
 </xs:schema>

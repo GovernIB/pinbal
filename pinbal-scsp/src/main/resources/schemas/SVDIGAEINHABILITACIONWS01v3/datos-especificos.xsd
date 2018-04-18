@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns="http://intermediacion.redsara.es/scsp/esquemas/datosespecificos" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:desp="http://intermediacion.redsara.es/scsp/esquemas/datosespecificos" targetNamespace="http://intermediacion.redsara.es/scsp/esquemas/datosespecificos" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<xs:element name="DatosEspecificos" type="DatosEspecificos"/>
+	<xs:complexType name="DatosEspecificos">
+		<xs:choice>
+			<xs:element name="Consulta">
+				<xs:complexType>
+					<xs:all>
+						<xs:element ref="Pais"/>
+						<xs:element ref="FechaInicio" minOccurs="0"/>
+						<xs:element ref="FechaFin" minOccurs="0"/>
+					</xs:all>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="Retorno">
+				<xs:complexType>
+					<xs:all>
+						<xs:element name="Estado">
+							<xs:complexType>
+								<xs:all>
+									<xs:element ref="CodigoEstado"/>
+									<xs:element ref="CodigoEstadoSecundario" minOccurs="0"/>
+									<xs:element ref="LiteralError"/>
+								</xs:all>
+							</xs:complexType>
+						</xs:element>
+						<xs:element name="DatosIdentificacion">
+							<xs:complexType>
+								<xs:all>
+									<xs:element ref="Pais"/>
+									<xs:element name="Nombre" minOccurs="0">
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:maxLength value="500"/>
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:element>
+								</xs:all>
+							</xs:complexType>
+						</xs:element>
+						<xs:element name="Inhabilitaciones" minOccurs="0">
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element name="Inhabilitacion" maxOccurs="unbounded">
+										<xs:complexType>
+											<xs:all>
+												<xs:element name="Organo">
+													<xs:complexType>
+														<xs:all>
+															<xs:element name="CodigoOrgano">
+																<xs:simpleType>
+																	<xs:restriction base="xs:string">
+																		<xs:maxLength value="9"/>
+																	</xs:restriction>
+																</xs:simpleType>
+															</xs:element>
+															<xs:element name="DescripcionOrgano">
+																<xs:simpleType>
+																	<xs:restriction base="xs:string">
+																		<xs:maxLength value="300"/>
+																	</xs:restriction>
+																</xs:simpleType>
+															</xs:element>
+														</xs:all>
+													</xs:complexType>
+												</xs:element>
+												<xs:element name="Clase">
+													<xs:complexType>
+														<xs:all>
+															<xs:element name="CodigoClase">
+																<xs:simpleType>
+																	<xs:restriction base="xs:string">
+																		<xs:maxLength value="10"/>
+																	</xs:restriction>
+																</xs:simpleType>
+															</xs:element>
+															<xs:element name="DescripcionClase">
+																<xs:simpleType>
+																	<xs:restriction base="xs:string">
+																		<xs:maxLength value="300"/>
+																	</xs:restriction>
+																</xs:simpleType>
+															</xs:element>
+														</xs:all>
+													</xs:complexType>
+												</xs:element>
+												<xs:element name="Discriminador">
+													<xs:simpleType>
+														<xs:restriction base="xs:string">
+															<xs:maxLength value="50"/>
+														</xs:restriction>
+													</xs:simpleType>
+												</xs:element>
+												<xs:element ref="FechaInicio"/>
+												<xs:element ref="FechaFin"/>
+											</xs:all>
+										</xs:complexType>
+									</xs:element>
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
+					</xs:all>
+				</xs:complexType>
+			</xs:element>
+		</xs:choice>
+		<xs:attribute name="Id" type="xs:string" use="optional"/>
+	</xs:complexType>
+	<xs:element name="Pais">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="2"/>
+				<xs:maxLength value="2"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="FechaInicio" type="xs:date" nillable="true"/>
+	<xs:element name="FechaFin" type="xs:date" nillable="true"/>
+	<xs:element name="CodigoEstado">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:maxLength value="4"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="CodigoEstadoSecundario">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:maxLength value="16"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="LiteralError">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:maxLength value="255"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+</xs:schema>

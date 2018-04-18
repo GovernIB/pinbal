@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<!-- edited with XMLSpy v2008 sp1 (http://www.altova.com) by Daniel (Particular) -->
+<!-- edited with XMLSpy v2007 (http://www.altova.com) by Master (SAG) -->
 <xs:schema xmlns="http://intermediacion.redsara.es/scsp/esquemas/V3/respuesta" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://intermediacion.redsara.es/scsp/esquemas/datosespecificos" targetNamespace="http://intermediacion.redsara.es/scsp/esquemas/V3/respuesta" elementFormDefault="qualified" attributeFormDefault="unqualified">
 	<xs:import namespace="http://intermediacion.redsara.es/scsp/esquemas/datosespecificos" schemaLocation="datos-especificos.xsd"/>
 	<xs:element name="Apellido1">
@@ -151,7 +151,7 @@
 	<xs:element name="Funcionario">
 		<xs:complexType>
 			<xs:sequence>
-				<xs:element ref="NombreCompletoFuncionario" minOccurs="0"/>
+				<xs:element ref="NombreCompletoFuncionario"/>
 				<xs:element ref="NifFuncionario"/>
 			</xs:sequence>
 		</xs:complexType>
@@ -221,6 +221,7 @@
 				<xs:minLength value="1"/>
 				<xs:maxLength value="9"/>
 				<xs:whiteSpace value="collapse"/>
+				<xs:pattern value="((([XxYyZz])[0-9]{7}([a-z]|[A-Z]))|([0-9]{8}([a-z]|[A-Z])))"/>
 			</xs:restriction>
 		</xs:simpleType>
 	</xs:element>
@@ -292,7 +293,7 @@
 			<xs:all>
 				<xs:element ref="IdentificadorSolicitante"/>
 				<xs:element ref="NombreSolicitante"/>
-				<xs:element ref="UnidadTramitadora"/>
+				<xs:element ref="UnidadTramitadora" minOccurs="0"/>
 				<xs:element ref="Procedimiento"/>
 				<xs:element ref="Finalidad"/>
 				<xs:element ref="Consentimiento"/>

@@ -209,7 +209,7 @@
 		</fo:block>
 		<fo:block margin-top="2pt" text-align="center" font-family="Arial,sans-serif" font-size="8pt" line-height="10pt" space-after.optimum="1pt" display-align="after" color="#2F4F4F">
 			<fo:inline font-weight="bold">
-				<xsl:text>Identificador de Petición:</xsl:text>
+				<xsl:text>Identificador de petición:</xsl:text>
 			</fo:inline>
 			<fo:inline font-weight="bold">
 				<xsl:value-of select="$idPeticion"/>
@@ -217,7 +217,7 @@
 		</fo:block>
 		<fo:block text-align="center" font-family="Arial,sans-serif" font-size="8pt" line-height="10pt" space-after.optimum="1pt" display-align="after" color="#2F4F4F">
 			<fo:inline font-weight="bold">
-				<xsl:text>Identificador de Transmisión:</xsl:text>
+				<xsl:text>Identificador de transmisión:</xsl:text>
 			</fo:inline>
 			<fo:inline font-weight="bold">
 				<xsl:value-of select="$idTransmision"/>
@@ -226,19 +226,19 @@
 		<!-- DATOS DE LA CONSULTA -->
 		<fo:block border-style="solid" border="1px 0 0 0" text-indent="3mm" font-family="Arial,sans-serif" font-size="10pt" space-after="1mm">
 			<fo:table table-layout="fixed" border-spacing="5pt" space-before="2mm">
-				<fo:table-column column-width="proportional-column-width(0.8)"/>
-				<fo:table-column column-width="proportional-column-width(0.8)"/>
-				<fo:table-column column-width="proportional-column-width(0.85)"/>
+				<fo:table-column column-width="proportional-column-width(1)"/>
+				<fo:table-column column-width="proportional-column-width(0.7)"/>
+				<fo:table-column column-width="proportional-column-width(1)"/>
 				<fo:table-column column-width="proportional-column-width(0.75)"/>	
-				<fo:table-column column-width="proportional-column-width(1.15)"/>
-				<fo:table-column column-width="proportional-column-width(2.3)"/>
+				<fo:table-column column-width="proportional-column-width(1.1)"/>
+				<fo:table-column column-width="proportional-column-width(2.1)"/>
 				<fo:table-body start-indent="0pt">
 					<fo:table-row>
 					   <!-- TIPO DOCUMENTACION -->
 						<fo:table-cell padding="2pt" display-align="center">						
 								<fo:block font-size="8pt" text-align="left" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after" >
 									<fo:inline font-weight="bold">
-										<xsl:text>Tipo Doc:</xsl:text>
+										<xsl:text>Tipo Doc.:</xsl:text>
 									</fo:inline>
 								</fo:block>							
 						</fo:table-cell>
@@ -266,7 +266,7 @@
 						<fo:table-cell padding="2pt" display-align="center">						
 								<fo:block font-size="8pt" text-align="left" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after" >
 									<fo:inline font-weight="bold">
-										<xsl:text>Nombre y Apellidos:</xsl:text>
+										<xsl:text>Nombre y apellidos:</xsl:text>
 									</fo:inline>
 								</fo:block>							
 						</fo:table-cell>
@@ -288,7 +288,14 @@
 						</fo:table-cell>
 						<fo:table-cell padding="2pt" display-align="center">						
 								<fo:block font-size="8pt" text-align="left" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after" >
-									<xsl:value-of select="$consentimiento"/>
+									<xsl:choose>
+									  <xsl:when test="$consentimiento = 'Si' "> 
+											<xsl:text>Sí</xsl:text>
+									  </xsl:when>
+									  <xsl:otherwise>
+											<xsl:value-of select="$consentimiento"/>
+									  </xsl:otherwise>
+								</xsl:choose>
 								</fo:block>							
 						</fo:table-cell>
 						
@@ -296,16 +303,34 @@
 						<fo:table-cell padding="2pt" display-align="center">						
 								<fo:block font-size="8pt" text-align="left" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after" >
 									<fo:inline font-weight="bold">
-										<xsl:text>Nº Expediente:</xsl:text>
+										<xsl:text>Nº expediente:</xsl:text>
 									</fo:inline>
 								</fo:block>							
 						</fo:table-cell>
-						<fo:table-cell padding="2pt" display-align="center">						
+						<fo:table-cell padding="2pt" display-align="center" number-columns-spanned="3">						
 								<fo:block font-size="8pt" text-align="left" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after" >
 									<xsl:value-of select="$idExpediente"/>
 								</fo:block>							
 						</fo:table-cell>
-						
+					</fo:table-row>
+					<fo:table-row>
+						<!-- NOMBRE Procedimiento -->
+						<fo:table-cell padding="2pt" display-align="center">						
+								<fo:block font-size="8pt" text-align="left" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after" >
+									<fo:inline font-weight="bold">
+										<xsl:text>Procedimiento:     </xsl:text>
+									</fo:inline>
+									
+								</fo:block>													
+						</fo:table-cell>		
+						<fo:table-cell padding="2pt" display-align="center" number-columns-spanned="5">						
+								<fo:block font-size="8pt" text-align="left" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after" >
+									<xsl:value-of select="$nomProcedimiento"/>
+								</fo:block>													
+						</fo:table-cell>			
+					</fo:table-row>
+					
+					<fo:table-row> 
 						<!-- FINALIDAD -->
 						<fo:table-cell padding="2pt" display-align="center">						
 								<fo:block font-size="8pt" text-align="left" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after" >
@@ -314,28 +339,12 @@
 									</fo:inline>
 								</fo:block>							
 						</fo:table-cell>
-						<fo:table-cell padding="2pt" display-align="center">						
+						<fo:table-cell padding="2pt" display-align="center" number-columns-spanned="5">						
 								<fo:block font-size="8pt" text-align="left" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after" >
 										<xsl:value-of select="$finalidad"/>								
 								</fo:block>							
 						</fo:table-cell>
-					</fo:table-row>
-				</fo:table-body>
-			</fo:table>
-			
-			<fo:table table-layout="auto" border-spacing="5pt" space-before="0mm">
-				<fo:table-body start-indent="0pt">
-					<fo:table-row>
-					   <!-- Código Procedimiento -->
-						<fo:table-cell padding="2pt" display-align="center">						
-								<fo:block font-size="8pt" text-align="left" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after" >
-									<fo:inline font-weight="bold">
-										<xsl:text>Cod. Procedimiento:     </xsl:text>
-									</fo:inline>
-									<xsl:value-of select="$codProcedimiento"/>
-								</fo:block>													
-						</fo:table-cell>							
-					</fo:table-row>	
+					</fo:table-row> 
 					<fo:table-row>
 					   <!-- Español -->
 						<fo:table-cell padding="2pt" display-align="center">						
@@ -343,13 +352,23 @@
 									<fo:inline font-weight="bold">
 										<xsl:text>Español:     </xsl:text>
 									</fo:inline>
-									<xsl:value-of select="$SolicitudEspanol"/>
+									
 								</fo:block>													
-						</fo:table-cell>							
+						</fo:table-cell>	
+						<fo:table-cell padding="2pt" display-align="center" number-columns-spanned="5">						
+								<fo:block font-size="8pt" text-align="left" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after" >
+									 <xsl:if test="$SolicitudEspanol = 's'">
+										<xsl:text>Sí</xsl:text>
+									</xsl:if>
+									<xsl:if test="$SolicitudEspanol = 'n'">
+										<xsl:text>No</xsl:text>
+									</xsl:if>					
+								</fo:block>							
+						</fo:table-cell>						
 					</fo:table-row>
 				</fo:table-body>
 			</fo:table>
-			
+		 
 			
 				<fo:table table-layout="fixed" width="100%" border-spacing="5pt" space-after="2mm">
 					<fo:table-body start-indent="0pt">
@@ -357,7 +376,7 @@
 							<fo:table-cell padding="3pt" display-align="center" background-color="#B0C4DE">
 								<fo:block>
 									<fo:inline font-weight="bold" display-align="after">
-										<xsl:text>Datos de Nacimiento</xsl:text>
+										<xsl:text>Datos de nacimiento</xsl:text>
 									</fo:inline>
 								</fo:block>
 							</fo:table-cell>
@@ -365,29 +384,14 @@
 					</fo:table-body>
 				</fo:table>
 				<fo:table table-layout="fixed" border-spacing="5pt" space-before="0mm">
-				<fo:table-column column-width="proportional-column-width(0.6)"/>
-				<fo:table-column column-width="proportional-column-width(0.6)"/>
-				<fo:table-column column-width="proportional-column-width(0.6)"/>
-				<fo:table-column column-width="proportional-column-width(0.6)"/>
-				<fo:table-column column-width="proportional-column-width(1.4)"/>
-				<fo:table-column column-width="proportional-column-width(2.2)"/>
+					<fo:table-column column-width="proportional-column-width(1)"/>
+				<fo:table-column column-width="proportional-column-width(1)"/>
+				<fo:table-column column-width="proportional-column-width(1)"/>
+				<fo:table-column column-width="proportional-column-width(1)"/>
+				<fo:table-column column-width="proportional-column-width(1)"/>
+				<fo:table-column column-width="proportional-column-width(1)"/>
 					<fo:table-body start-indent="0pt">
-						<fo:table-row>
-							 <!-- Fecha Nacimiento -->
-							<fo:table-cell padding="2pt" display-align="center">						
-									<fo:block font-size="8pt" text-align="left" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after" >
-										<fo:inline font-weight="bold">
-											<xsl:text>Fecha:</xsl:text>
-										</fo:inline>
-									</fo:block>	
-							</fo:table-cell>
-							<fo:table-cell padding="2pt" display-align="center">						
-									<fo:block font-size="8pt" text-align="left" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after" >
-										<xsl:if test="$SolicitudNacimientoFecha != '' ">
-											<xsl:value-of select="concat(substring(string($SolicitudNacimientoFecha),7,2),'/',substring(string($SolicitudNacimientoFecha),5,2),'/',substring(string($SolicitudNacimientoFecha),1,4))"/>
-										</xsl:if>
-									</fo:block>	
-							</fo:table-cell>
+						<fo:table-row> 
 							<!-- Provincia Nacimiento -->
 							<fo:table-cell padding="2pt" display-align="center">						
 									<fo:block font-size="8pt" text-align="left" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after" >
@@ -396,7 +400,7 @@
 										</fo:inline>
 									</fo:block>	
 							</fo:table-cell>
-							<fo:table-cell padding="2pt" display-align="center">						
+							<fo:table-cell padding="2pt" display-align="center" number-columns-spanned="2">						
 									<fo:block font-size="8pt" text-align="left" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after" >
 										<xsl:value-of select="$SolicitudNacimientoProvincia"/>
 									</fo:block>	
@@ -406,13 +410,29 @@
 									<fo:block font-size="8pt" text-align="left" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after" >
 										<fo:inline font-weight="bold">
 											<xsl:text>Municipio:     </xsl:text>
-										</fo:inline>
+										</fo:inline> 
+									</fo:block>	
+							</fo:table-cell>
+							<fo:table-cell padding="2pt" display-align="center" number-columns-spanned="2">						
+									<fo:block font-size="8pt" text-align="left" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after" >
 										<xsl:value-of select="$SolicitudNacimientoMunicipio"/>
 									</fo:block>	
 							</fo:table-cell>
+						</fo:table-row>
+						<fo:table-row>
+							 <!-- Fecha nacimiento -->
 							<fo:table-cell padding="2pt" display-align="center">						
 									<fo:block font-size="8pt" text-align="left" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after" >
-										
+										<fo:inline font-weight="bold">
+											<xsl:text>Fecha:</xsl:text>
+										</fo:inline>
+									</fo:block>	
+							</fo:table-cell>
+							<fo:table-cell padding="2pt" display-align="center" number-columns-spanned="5">						
+									<fo:block font-size="8pt" text-align="left" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after" >
+										<xsl:if test="$SolicitudNacimientoFecha != '' ">
+											<xsl:value-of select="concat(substring(string($SolicitudNacimientoFecha),7,2),'/',substring(string($SolicitudNacimientoFecha),5,2),'/',substring(string($SolicitudNacimientoFecha),1,4))"/>
+										</xsl:if>
 									</fo:block>	
 							</fo:table-cell>
 						</fo:table-row>
@@ -425,7 +445,7 @@
 							<fo:table-cell padding="3pt" display-align="center" background-color="#B0C4DE">
 								<fo:block>
 									<fo:inline font-weight="bold" display-align="after">
-										<xsl:text>Datos de Residencia</xsl:text>
+										<xsl:text>Datos de residencia</xsl:text>
 									</fo:inline>
 								</fo:block>
 							</fo:table-cell>
@@ -433,12 +453,12 @@
 					</fo:table-body>
 				</fo:table>
 				<fo:table table-layout="fixed" border-spacing="5pt" space-before="0mm">
-				<fo:table-column column-width="proportional-column-width(0.6)"/>
-				<fo:table-column column-width="proportional-column-width(0.6)"/>
-				<fo:table-column column-width="proportional-column-width(0.6)"/>
-				<fo:table-column column-width="proportional-column-width(0.6)"/>
-				<fo:table-column column-width="proportional-column-width(0.6)"/>
-				<fo:table-column column-width="proportional-column-width(3)"/>
+				<fo:table-column column-width="proportional-column-width(1)"/>
+				<fo:table-column column-width="proportional-column-width(1)"/>
+				<fo:table-column column-width="proportional-column-width(1)"/>
+				<fo:table-column column-width="proportional-column-width(1)"/>
+				<fo:table-column column-width="proportional-column-width(1)"/>
+				<fo:table-column column-width="proportional-column-width(1)"/>
 					<fo:table-body start-indent="0pt">
 						<fo:table-row>
 							 <!-- Fecha Residencia -->
@@ -449,7 +469,7 @@
 										</fo:inline>
 									</fo:block>	
 							</fo:table-cell>
-							<fo:table-cell padding="2pt" display-align="center">						
+							<fo:table-cell padding="2pt" display-align="center" number-columns-spanned="2">						
 									<fo:block font-size="8pt" text-align="left" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after" >
 										<xsl:value-of select="$SolicitudResidenciaProvincia"/>
 									</fo:block>	
@@ -462,7 +482,7 @@
 										</fo:inline>
 									</fo:block>	
 							</fo:table-cell>
-							<fo:table-cell padding="2pt" display-align="center">						
+							<fo:table-cell padding="2pt" display-align="center" number-columns-spanned="2">						
 									<fo:block font-size="8pt" text-align="left" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after" >
 										<xsl:value-of select="$SolicitudResidenciaMunicipio"/>
 									</fo:block>	
@@ -492,7 +512,7 @@
 					<fo:block text-align="left" margin-top="25pt">
 						<fo:block font-size="8pt" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after">
 							<fo:inline font-weight="bold">
-								<xsl:text>Datos de Respuesta</xsl:text>
+								<xsl:text>Datos de respuesta</xsl:text>
 							</fo:inline>
 						</fo:block>
 					</fo:block>
@@ -506,7 +526,7 @@
 											<fo:table-cell padding="3pt" display-align="center" background-color="#B0C4DE">
 												<fo:block>
 													<fo:inline font-weight="bold" display-align="after">
-														<xsl:text>Datos Titular</xsl:text>
+														<xsl:text>Datos titular</xsl:text>
 													</fo:inline>
 												</fo:block>
 											</fo:table-cell>
@@ -515,10 +535,10 @@
 								</fo:table>
 								<!-- titular -->
 								<fo:table table-layout="fixed" width="100%" border-spacing="5pt" space-after="2mm">
-									<fo:table-column column-width="proportional-column-width(0.6)"/>
-									<fo:table-column column-width="proportional-column-width(0.8)"/>
-									<fo:table-column column-width="proportional-column-width(1)"/>
-									<fo:table-column column-width="proportional-column-width(1.6)"/>
+									<fo:table-column column-width="proportional-column-width(1.2)"/>
+									<fo:table-column column-width="proportional-column-width(1.4)"/>
+									<fo:table-column column-width="proportional-column-width(1.1)"/>
+									<fo:table-column column-width="proportional-column-width(1.3)"/>
 									<fo:table-body start-indent="0pt">
 										<!-- Fila 1 Hijo -->
 										<fo:table-row>
@@ -536,8 +556,11 @@
 												<fo:block text-align="left" margin="0pt">
 													<fo:block font-size="8pt" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after">
 														<fo:inline font-style="normal">
-															<xsl:if test="$titular/*[local-name()='TipoDocumentacion'] != ''">
-																(<xsl:value-of select="$titular/*[local-name()='TipoDocumentacion']"/>)
+																											
+															<xsl:variable name="tipoDocumentacion" select="$titular/*[local-name()='TipoDocumentacion']"/>
+															<xsl:if test="$tipoDocumentacion">
+															<xsl:text>(</xsl:text> <xsl:value-of select="$titular/*[local-name()='TipoDocumentacion']"/> 	<xsl:text>)  
+															</xsl:text>
 															</xsl:if>
 															<xsl:value-of select="$titular/*[local-name()='Documentacion']"/>
 														</fo:inline>
@@ -548,7 +571,7 @@
 												<fo:block text-align="left" margin="0pt">
 													<fo:block font-size="8pt" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after">
 														<fo:inline font-weight="bold">
-															<xsl:text>Nombre y Apellidos:</xsl:text>
+															<xsl:text>Nombre y apellidos:</xsl:text>
 														</fo:inline>
 													</fo:block>
 												</fo:block>
@@ -582,7 +605,7 @@
 											<fo:table-cell padding="3pt" display-align="center" background-color="#B0C4DE">
 												<fo:block>
 													<fo:inline font-weight="bold" display-align="after">
-														<xsl:text>Datos de Residencia</xsl:text>
+														<xsl:text>Datos de residencia</xsl:text>
 													</fo:inline>
 												</fo:block>
 											</fo:table-cell>
@@ -591,10 +614,10 @@
 								</fo:table>
 							</fo:block>
 							<fo:table table-layout="fixed" border-spacing="5pt" space-before="2mm">
-								<fo:table-column column-width="proportional-column-width(0.9)"/>
-								<fo:table-column column-width="proportional-column-width(1.5)"/>
+								<fo:table-column column-width="proportional-column-width(1.2)"/>
+								<fo:table-column column-width="proportional-column-width(1.4)"/>
 								<fo:table-column column-width="proportional-column-width(1.1)"/>
-								<fo:table-column column-width="proportional-column-width(1.5)"/>
+								<fo:table-column column-width="proportional-column-width(1.3)"/>
 								<fo:table-body start-indent="0pt">
 									<!-- Fila2 Hijo -->
 									<fo:table-row>
@@ -641,7 +664,7 @@
 											<fo:block text-align="left" margin="0pt">
 												<fo:block font-size="8pt" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after">
 													<fo:inline font-weight="bold">
-														<xsl:text>Entidad Colectiva:</xsl:text>
+														<xsl:text>Entidad colectiva:</xsl:text>
 														<!-- fo:leader leader-pattern="space" / -->
 													</fo:inline>
 												</fo:block>
@@ -660,7 +683,7 @@
 											<fo:block text-align="left" margin="0pt">
 												<fo:block font-size="8pt" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after">
 													<fo:inline font-weight="bold">
-														<xsl:text>Entidad Singular:</xsl:text>
+														<xsl:text>Entidad singular:</xsl:text>
 														<!-- fo:leader leader-pattern="space" / -->
 													</fo:inline>
 												</fo:block>
@@ -701,7 +724,7 @@
 											<fo:block text-align="left" margin="0pt">
 												<fo:block font-size="8pt" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after">
 													<fo:inline font-weight="bold">
-														<xsl:text>Cod. Unidad Poblacional:</xsl:text>
+														<xsl:text>Cod. Unidad poblacional:</xsl:text>
 														<!-- fo:leader leader-pattern="space" / -->
 													</fo:inline>
 												</fo:block>
@@ -723,13 +746,13 @@
 											<fo:block text-align="left" margin="0pt">
 												<fo:block font-size="8pt" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after">
 													<fo:inline font-weight="bold">
-														<xsl:text>Ultima Modificación:</xsl:text>
+														<xsl:text>Última modificación:</xsl:text>
 														<!-- fo:leader leader-pattern="space" / -->
 													</fo:inline>
 												</fo:block>
 											</fo:block>
 										</fo:table-cell>
-										<fo:table-cell padding="2pt" display-align="center">
+										<fo:table-cell padding="2pt" display-align="center" number-columns-spanned="3">
 											<fo:block text-align="left" margin="0pt">
 												<fo:block font-size="8pt" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after">
 													<fo:inline font-style="normal">
@@ -741,17 +764,19 @@
 												</fo:block>
 											</fo:block>
 										</fo:table-cell>
+									</fo:table-row>
+									<fo:table-row>
 										<fo:table-cell padding="2pt" display-align="center">
 											<fo:block text-align="left" margin="0pt">
 												<fo:block font-size="8pt" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after">
 													<fo:inline font-weight="bold">
-														<xsl:text>Fecha Ultima Modificación:</xsl:text>
+														<xsl:text>Fecha última modificación:</xsl:text>
 														<!-- fo:leader leader-pattern="space" / -->
 													</fo:inline>
 												</fo:block>
 											</fo:block>
 										</fo:table-cell>
-										<fo:table-cell padding="2pt" display-align="center">
+										<fo:table-cell padding="2pt" display-align="center"  number-columns-spanned="3">
 											<fo:block text-align="left" margin="0pt">
 												<fo:block font-size="8pt" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after">
 													<fo:inline font-style="normal">
@@ -765,8 +790,8 @@
 							</fo:table>
 							<!-- *************************************************************   -->
 							<fo:table table-layout="fixed" border-spacing="5pt" space-before="2mm">
-								<fo:table-column column-width="proportional-column-width(0.9)"/>
-								<fo:table-column column-width="proportional-column-width(4.1)"/>
+								<fo:table-column column-width="proportional-column-width(1.2)"/>
+								<fo:table-column column-width="proportional-column-width(4.8)"/>
 								<fo:table-body start-indent="0pt">
 									<!-- Fila1 Hijo -->
 									<fo:table-row>

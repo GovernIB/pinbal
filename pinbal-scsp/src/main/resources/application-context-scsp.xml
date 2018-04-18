@@ -49,7 +49,7 @@
 	<!-- ==================================================================== -->
 	<bean id="sessionFactory" class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
 		<property name="dataSource" ref="dataSource" />
-		<property name="packagesToScan" value="es.scsp.common.domain.core.**,es.scsp.common.domain.req.**,es.scsp.common.domain.id.**" />
+		<property name="packagesToScan" value="es.scsp.common.domain.**" />
 		<property name="hibernateProperties">
 			<value>
 				hibernate.dialect=${config:es.caib.pinbal.hibernate.dialect}

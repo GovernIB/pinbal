@@ -13,7 +13,7 @@
 	<xs:element name="Apellido2">
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
-				<xs:maxLength value="40"/>      
+				<xs:maxLength value="40"/>
 				<xs:minLength value="1"/>
 				<xs:whiteSpace value="collapse"/>
 			</xs:restriction>
@@ -332,7 +332,7 @@
 	<xs:element name="TipoDocumentacion">
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
-				<xs:enumeration value="NIF"/>
+				<xs:enumeration value="NIF"/>				
 				<xs:enumeration value="NIE"/>
 				<xs:enumeration value="Pasaporte"/>
 			</xs:restriction>
