@@ -29,7 +29,9 @@
 	<bean name="informeServeisExcelView" class="es.caib.pinbal.webapp.view.InformeServeisExcelView"/>
 	<bean name="informeGeneralEstatExcelView" class="es.caib.pinbal.webapp.view.InformeGeneralEstatExcelView"/>
 	
-	<mvc:resources mapping="/webjars/**" location="classpath:/META-INF/resources/webjars/"/>
+	<!-- TOMCAT: <mvc:resources mapping="/webjars/**" location="classpath:/META-INF/resources/webjars/"/> -->
+	<!-- JBOSS: <mvc:resources mapping="/webjars/**" location="/META-INF/resources/webjars/"/> -->
+	<mvc:resources mapping="/webjars/**" location="${webjars.classpath}/META-INF/resources/webjars/"/>
 	
 	<mvc:interceptors>
 		<bean class="es.caib.pinbal.webapp.interceptor.IdiomaInterceptor"/>
