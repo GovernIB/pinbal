@@ -430,6 +430,11 @@ public class XmlHelper {
 					esquema = "/schemas/" + servicio.getCodCertificado() + "/" + arxiuNom;
 					is = getClass().getResourceAsStream(esquema);
 				}
+				LOGGER.debug("Obtenint fitxer XSD per a servei SCSP (" +
+						"servicio=" + servicio.getCodCertificado() + ", " +
+						"versionEsquema=" + servicio.getVersionEsquema() + ", " +
+						"arxiuNom=" + arxiuNom + ", " +
+						"recursClassPath=" + esquema + ")");
 				return is;
 			} else {
 				throw new Exception("No s'ha pogut obtenir l'esquema pel servicio (codi=" + servicio.getCodCertificado() + ")");
