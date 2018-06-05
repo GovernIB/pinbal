@@ -151,7 +151,7 @@ public class XmlHelper {
 						}
 						elementActual.setTextContent(valor);
 					}
-				} else if (preValor instanceof Document){
+				} else if (preValor instanceof Document) {
 					if (preValor != null) {
 						Document valor = (Document)preValor;
 						String[] pathParts = path.substring("DatosEspecificos/".length()).split("/");
@@ -176,8 +176,18 @@ public class XmlHelper {
 								elementActual = elementTrobat;
 							}
 						}
-						org.w3c.dom.Node auxNode = (org.w3c.dom.Node) doc.importNode(valor.getDocumentElement(), true);
-						elementActual.appendChild(auxNode);
+						org.w3c.dom.Node auxNode = (org.w3c.dom.Node)doc.importNode(valor.getDocumentElement(), true);
+						// Si el nom de l'element arrel de l'XML a afegir coincideix amb el nom
+						// de l'element dels DatosEspecificos farem una substitució. Si no, afegirem
+						// el contingut XML a dins l'element.
+						if (auxNode.getNodeName().equals(elementActual.getNodeName())) {
+							// Substituim l'element
+							elementActual.getParentNode().appendChild(auxNode);
+							elementActual.getParentNode().removeChild(elementActual);
+						} else {
+							// Afegim XML a dins l'element
+							elementActual.appendChild(auxNode);
+						}
 					}
 				}
 			}
