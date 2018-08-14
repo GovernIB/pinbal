@@ -459,6 +459,13 @@ public class ScspHelper {
 		});
 		return servicios;
 	}
+	
+	public Servicio findServicioByCode(long id) {
+		LOGGER.debug("Consulta de la llista de serveis segons un codi");
+		Servicio servicio = getServicioDao().select(id);
+		return servicio;
+	}
+	
 	public List<EmisorCertificado> findEmisorCertificadoAll() {
 		LOGGER.debug("Consulta de la llista d'emissors");
 		return getEmisorCertificadoDao().select();

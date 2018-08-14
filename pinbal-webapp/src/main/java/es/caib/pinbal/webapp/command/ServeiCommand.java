@@ -4,7 +4,9 @@
 package es.caib.pinbal.webapp.command;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -17,6 +19,9 @@ import es.caib.pinbal.core.dto.ClauPrivadaDto;
 import es.caib.pinbal.core.dto.ClauPublicaDto;
 import es.caib.pinbal.core.dto.EmisorDto;
 import es.caib.pinbal.core.dto.ServeiDto;
+import es.caib.pinbal.core.dto.ServeiXsdDto;
+import es.caib.pinbal.core.dto.XsdTipusEnumDto;
+import es.caib.pinbal.webapp.helper.ConversioTipusHelper;
 import es.caib.pinbal.webapp.validation.CodiServeiNoRepetit;
 
 /**
@@ -101,15 +106,16 @@ public class ServeiCommand {
 	private boolean pinbalActiuCampDocument = true;
 	private boolean pinbalDocumentObligatori = true;
 	private boolean pinbalComprovarDocument = true;
+	private boolean activaGestioXsd = false;
 
 	private boolean creacio;
 	
 	private String ajuda;
 	private String fitxerAjudaNom;
 	private MultipartFile fitxerAjuda;
-
-
-
+	
+	private List<ServeiXsdDto>  fitxersXsd;
+	
 	public ServeiCommand() {
 		scspFechaAlta = new Date();
 		creacio = false;
@@ -118,7 +124,14 @@ public class ServeiCommand {
 		scspFechaAlta = new Date();
 		this.creacio = creacio;
 	}
-
+	
+	
+	public List<ServeiXsdDto> getFitxersXsd() {
+		return fitxersXsd;
+	}
+	public void setFitxersXsd(List<ServeiXsdDto> fitxersXsd) {
+		this.fitxersXsd = fitxersXsd;
+	}
 	public String getCodi() {
 		return codi;
 	}
@@ -413,18 +426,22 @@ public class ServeiCommand {
 	public void setFitxerAjuda(MultipartFile fitxerAjuda) {
 		this.fitxerAjuda = fitxerAjuda;
 	}
-
-	
+	public boolean isActivaGestioXsd() {
+		return activaGestioXsd;
+	}
+	public void setActivaGestioXsd(boolean activaGestioXsd) {
+		this.activaGestioXsd = activaGestioXsd;
+	}
 	public static ServeiCommand asCommand(ServeiDto dto) {
-		ServeiCommand command = CommandMappingHelper.getMapperFacade().map(
-				dto,
-				ServeiCommand.class);
+		ServeiCommand command = CommandMappingHelper.getMapperFacade().map(dto, ServeiCommand.class);
 		if (dto.getScspEmisor() != null)
 			command.setScspEmisor(dto.getScspEmisor().getCif());
 		if (dto.getScspClaveFirma() != null)
 			command.setScspClaveFirma(dto.getScspClaveFirma().getAlies());
 		if (dto.getScspClaveCifrado() != null)
 			command.setScspClaveCifrado(dto.getScspClaveCifrado().getAlies());
+		if (dto.getFitxersXsd() != null && dto.getFitxersXsd().size() > 0)
+			command.setFitxersXsd(dto.getFitxersXsd());
 		return command;
 	}
 	public static ServeiDto asDto(ServeiCommand command) {
@@ -461,7 +478,19 @@ public class ServeiCommand {
 				dto.setFitxerAjudaContingut(command.getFitxerAjuda().getBytes());
 			} catch (IOException e) {}
 		}
+		if (command.getFitxersXsd() != null && command.getFitxersXsd().size() > 0) {
+			dto.setFitxersXsd(command.getFitxersXsd());
+		}else {
+			dto.setFitxersXsd(new ArrayList<ServeiXsdDto>());
+		}
+		
 		return dto;
+	}
+	
+	public static ServeiXsdDto asXsdDto(ServeiCommand command) throws IOException {
+		return ConversioTipusHelper.convertir(
+				command,
+				ServeiXsdDto.class);
 	}
 
 	@Override

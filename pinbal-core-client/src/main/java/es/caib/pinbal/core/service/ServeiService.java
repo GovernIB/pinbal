@@ -3,6 +3,7 @@
  */
 package es.caib.pinbal.core.service;
 
+import java.io.IOException;
 import java.util.List;
 
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -12,12 +13,15 @@ import es.caib.pinbal.core.dto.ClauPrivadaDto;
 import es.caib.pinbal.core.dto.ClauPublicaDto;
 import es.caib.pinbal.core.dto.DadaEspecificaDto;
 import es.caib.pinbal.core.dto.EmisorDto;
+import es.caib.pinbal.core.dto.FitxerDto;
 import es.caib.pinbal.core.dto.ProcedimentServeiDto;
 import es.caib.pinbal.core.dto.ServeiBusDto;
 import es.caib.pinbal.core.dto.ServeiCampDto;
 import es.caib.pinbal.core.dto.ServeiCampGrupDto;
 import es.caib.pinbal.core.dto.ServeiDto;
 import es.caib.pinbal.core.dto.ServeiJustificantCampDto;
+import es.caib.pinbal.core.dto.ServeiXsdDto;
+import es.caib.pinbal.core.dto.XsdTipusEnumDto;
 import es.caib.pinbal.core.service.exception.EntitatNotFoundException;
 import es.caib.pinbal.core.service.exception.ProcedimentNotFoundException;
 import es.caib.pinbal.core.service.exception.ScspException;
@@ -440,6 +444,72 @@ public interface ServeiService {
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_DELEG')")
 	public List<ServeiJustificantCampDto> findServeiJustificantCamps(
 			String serveiCodi) throws ServeiNotFoundException;
+	
+	/**
+	 * Retorna tots els fitxers XSD del servei.
+	 * 
+	 * @param serveiCodi
+	 *            El codi del servei.
+	 * @return Un llistat amb tots els fitxers XSD del servei.
+	 * @throws IOException
+	 *             Si no s'ha trobat cap servei amb el codi especificat.
+	 */
+	
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	public List<ServeiXsdDto> xsdFindByServei(
+			String codi) throws IOException;
+	
+	/**
+	 * Retorna tots els camps de de dades específiques del 
+	 * justificant del servei.
+	 * 
+	 * @param serveiCodi
+	 *            El codi del servei.
+	 * @return Un llistat amb les traduccions del servei.
+	 * @throws ServeiNotFoundException
+	 *             Si no s'ha trobat cap servei amb el codi especificat.
+	 */
+	
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	public void xsdDelete(
+			String codi,
+			XsdTipusEnumDto tipus) throws IOException;
+	
+	
+	/**
+	 * Retorna tots els camps de de dades específiques del 
+	 * justificant del servei.
+	 * 
+	 * @param serveiCodi
+	 *            El codi del servei.
+	 * @return Un llistat amb les traduccions del servei.
+	 * @throws ServeiNotFoundException
+	 *             Si no s'ha trobat cap servei amb el codi especificat.
+	 */
+	
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	public FitxerDto xsdDescarregar(
+			String codi,
+			XsdTipusEnumDto tipus) throws IOException;
+	
+
+	/**
+	 * Retorna tots els camps de de dades específiques del 
+	 * justificant del servei.
+	 * 
+	 * @param serveiCodi
+	 *            El codi del servei.
+	 * @return Un llistat amb les traduccions del servei.
+	 * @throws ServeiNotFoundException
+	 *             Si no s'ha trobat cap servei amb el codi especificat.
+	 */
+	
+	
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	public void xsdCreate(
+			String codi,
+			ServeiXsdDto xsd,
+			byte[] contingut) throws IOException;
 
 	/**
 	 * Retorna tots els rols configurats als serveis.

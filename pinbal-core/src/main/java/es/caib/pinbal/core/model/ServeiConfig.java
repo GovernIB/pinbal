@@ -72,6 +72,8 @@ public class ServeiConfig extends PinbalAuditable<Long> {
 	private boolean documentObligatori = false;
 	@Column(name = "comprovar_document")
 	private boolean comprovarDocument = true;
+	@Column(name = "activa_gestio_xsd")
+	private boolean activaGestioXsd = false;
 	
 	// Ajuda
 	@Lob
@@ -121,6 +123,7 @@ public class ServeiConfig extends PinbalAuditable<Long> {
 			JustificantTipus justificantTipus,
 			String justificantXpath,
 			String ajuda,
+			boolean activaGestioXsd,
 			String fitxerAjudaNom,
 			String fitxerAjudaMimeType,
 			byte[] fitxerAjudaContingut) {
@@ -133,6 +136,7 @@ public class ServeiConfig extends PinbalAuditable<Long> {
 				justificantTipus,
 				justificantXpath,
 				ajuda,
+				activaGestioXsd,
 				fitxerAjudaNom,
 				fitxerAjudaMimeType,
 				fitxerAjudaContingut);
@@ -219,7 +223,13 @@ public class ServeiConfig extends PinbalAuditable<Long> {
 	public void setFitxerAjudaContingut(byte[] fitxerAjudaContingut) {
 		this.fitxerAjudaContingut = fitxerAjudaContingut;
 	}
-
+//	public boolean isActivaGestioXsd() {
+//		return activaGestioXsd;
+//	}
+//	public void setActivaGestioXsd(boolean activaGestioXsd) {
+//		this.activaGestioXsd = activaGestioXsd;
+//	}
+	
 	public long getVersion() {
 		return version;
 	}
@@ -243,6 +253,7 @@ public class ServeiConfig extends PinbalAuditable<Long> {
 			boolean actiuCampDocument,
 			boolean documentObligatori,
 			boolean comprovarDocument,
+			boolean activaGestioXsd,
 			String ajuda) {
 		this.custodiaCodi = custodiaCodi;
 		this.roleName = roleName;
@@ -262,6 +273,7 @@ public class ServeiConfig extends PinbalAuditable<Long> {
 		this.actiuCampDocument = actiuCampDocument;
 		this.documentObligatori = documentObligatori;
 		this.comprovarDocument = comprovarDocument;
+		this.activaGestioXsd = activaGestioXsd;
 		this.ajuda = ajuda;
 	}
 	public void updateFitxerAjuda(
@@ -303,6 +315,7 @@ public class ServeiConfig extends PinbalAuditable<Long> {
 				JustificantTipus justificantTipus,
 				String justificantXpath,
 				String ajuda,
+				boolean activaGestioXsd,
 				String fitxerAjudaNom,
 				String fitxerAjudaMimeType,
 				byte[] fitxerAjudaContingut) {
@@ -315,6 +328,7 @@ public class ServeiConfig extends PinbalAuditable<Long> {
 			built.justificantTipus = justificantTipus;
 			built.justificantXpath = justificantXpath;
 			built.ajuda = ajuda;
+			built.activaGestioXsd = activaGestioXsd;
 			built.fitxerAjudaNom = fitxerAjudaNom;
 			built.fitxerAjudaMimeType = fitxerAjudaMimeType;
 			built.fitxerAjudaContingut = fitxerAjudaContingut;

@@ -25,18 +25,68 @@
 	</title>
 	<script type="text/javascript" src="<c:url value="/js/jquery.jmesa.min.js"/>"></script>
 	<script type="text/javascript" src="<c:url value="/js/jmesa.min.js"/>"></script>
-	<script src="<c:url value="/js/jquery.maskedinput.js"/>"></script>
+	<script type="text/javascript" src="<c:url value="/js/jquery.maskedinput.js"/>"></script>
 	<script type="text/javascript" src="<c:url value="/js/jHtmlArea/scripts/jHtmlArea-0.8.min.js"/>"></script>
 	<script type="text/javascript" src="<c:url value="/js/jHtmlArea/scripts/jHtmlArea.ColorPickerMenu-0.8.min.js"/>"></script>
+	<script type="text/javascript" src="<c:url value="/js/webutil.common.js"/>"></script>
+	<script type="text/javascript" src="<c:url value="/js/webutil.datatable.js"/>"></script>
+	<script type="text/javascript" src="<c:url value="/js/jasny-bootstrap.min.js"/>"></script>
+	<script type="text/javascript" src="<c:url value="/js/datatables.min.js"/>"></script>
     <link rel="Stylesheet" type="text/css" href="<c:url value="/js/jHtmlArea/style/jHtmlArea.css"/>"/>
     <link rel="Stylesheet" type="text/css" href="<c:url value="/js/jHtmlArea/style/jHtmlArea.ColorPickerMenu.css"/>"/>
+    <link rel="Stylesheet" type="text/css" href="<c:url value="/css/jasny-bootstrap.min.css"/>"/>
+    <link rel="Stylesheet" type="text/css" href="<c:url value="/css/inputFile.css"/>"/>
 <script>
 $(document).ready(function() {
+	$("#activaGestioXsd").attr("checked", true);
+	$("#scspEsquemas").attr("disabled", $("#activaGestioXsd").attr("checked") ? true : false);
+	$("#gestioXsdFieldSet").attr("hidden", $("#activaGestioXsd").attr("checked") ? false : true);
+	
 	$('#modal-boto-submit').click(function() {
 		$('#modal-redir-form .modal-body').load(
 			'<c:url value="/modal/servei/${serveiCommand.codi}/redir/save"/>',
 			$('#modal-form').serializeArray());
 	});
+
+	$('#modal-boto-submit-xsd').click(function() {
+		$('#nomArxiu').removeAttr('disabled');
+		var data = $('#xsd-form').serializeArray();
+		var contingut = {"name": "contingut", "value": $("#contingut")[0].files[0]};
+		var formData =  new FormData();
+		data.forEach(function(row){
+			formData.append(row.name, row.value);
+		});
+		data.push(contingut);
+		formData.append('contingut', $("#contingut")[0].files[0], data[2].name);
+		$.ajax({
+			type: "POST",
+			url: '<c:url value="/modal/servei/${serveiCommand.codi}/xsd/save"/>',
+			data: formData,
+			processData: false,  // tell jQuery not to process the data
+			contentType: false,   // tell jQuery not to set contentType
+			success: function(data, textStatus, jqXHR){
+				var jsonData = JSON.parse(data)
+				if (jsonData){
+					if(jsonData.error){
+						jsonData.errors.forEach(function(error){
+							
+							if(error.camp == "contingut"){
+								error.camp = "nomArxiu";
+							}
+							$("#" + error.camp + "Control").addClass("error");
+							if(error.errorMsg != undefined && error.errorMsg != ""){
+								$("#" + error.camp + "Label").append(error.errorMsg);
+								$("#" + error.camp + "Label").css("display", 'block');
+							}
+						});
+					}else{
+						location.reload();
+					}
+				}	
+			}
+		});
+	});
+	
 	$('.confirm-esborrar').click(function() {
 		  return confirm("<spring:message code="servei.form.bus.confirmacio.esborrar"/>");
 	});
@@ -86,6 +136,11 @@ $(document).ready(function() {
                    	"paste": "Enganxa"
 			    })
 	});
+	
+	$("#activaGestioXsd").change(function(value){
+		$("#scspEsquemas").attr("disabled", $(this).attr("checked") ? true : false);
+		$("#gestioXsdFieldSet").attr("hidden", $(this).attr("checked") ? false : true);
+	});
 });
 function showModalRedir(element) {
 <c:choose>
@@ -98,6 +153,24 @@ function showModalRedir(element) {
 	</c:otherwise>
 </c:choose>
 }
+
+function esborraFitxerXsd(tipusFitxer) {
+	
+	if(confirm("<spring:message code="servei.form.xsd.confirmacio.esborrar"/>")){
+		//var tipusFitxer = $("#tipusXsd").val();
+		$.ajax({
+			url: '<c:url value="/servei/${serveiCommand.codi}/xsd/'+ tipusFitxer +'/delete"/>',
+			success: function(info){
+				location.reload();
+			}
+		});
+	}
+};
+
+function showModalXsd(element) {
+		$('#modal-xsd-form .modal-body').load(element.href);
+		$('#modal-xsd-form').modal('toggle');	
+	}
 </script>
 </head>
 <body>
@@ -472,6 +545,21 @@ function showModalRedir(element) {
 						</div>
 					</div>
 				</div>
+				
+				
+				<div class="span6">
+					<c:set var="campPath" value="activaGestioXsd"/>
+					<c:set var="campErrors"><form:errors path="${campPath}"/></c:set>
+					<div class="control-group<c:if test="${not empty campErrors}"> error</c:if>">
+						<label class="control-label" for="${campPath}"><spring:message code="servei.form.camp.scsp.activa.gestio.xsd"/></label>
+						<div class="controls">
+							<form:checkbox path="${campPath}" id="${campPath}"/>
+							<form:errors path="${campPath}" cssClass="help-inline"/>
+						</div>
+					</div>
+				</div>
+				
+				
 			</div>
 			<div class="row-fluid">
 				<div class="span6">
@@ -491,13 +579,58 @@ function showModalRedir(element) {
 					<div class="control-group<c:if test="${not empty campErrors}"> error</c:if>">
 						<label class="control-label" for="${campPath}"><spring:message code="servei.form.camp.scsp.esquemas"/></label>
 						<div class="controls">
-							<form:input path="${campPath}" cssClass="span12" id="${campPath}"/>
+							<form:input path="${campPath}" cssClass="span12" id="${campPath}" disabled="${ activaGestioXsd ? 'true' : ''}"/>
 							<form:errors path="${campPath}" cssClass="help-inline"/>
 						</div>
 					</div>
 				</div>
 			</div>
 		</fieldset>
+		
+		<c:if test="${not empty serveiCommand.codi}">
+			<fieldset id="gestioXsdFieldSet" hidden="${ activaGestioXsd ? '' : 'true'}">
+				<legend><spring:message code="servei.form.legend.gestio.xsd"/></legend>
+				<div class="clearfix legend-margin-bottom"></div>
+					<fieldset>
+						<div class="row-fluid">
+							<div class="span11 offset1">
+								<a class="btn pull-right" href="<c:url value="/modal/servei/${serveiCommand.codi}/xsd/new"/>" onclick="showModalXsd(this);return false"><i class="icon-plus"></i>&nbsp;<spring:message code="servei.list.boto.nou.arxiuXsd"/></a>
+							</div>
+						</div>
+					</fieldset>
+				<c:if test="${not empty serveiCommand.fitxersXsd}">
+					<div class="row-fluid">
+						<div class="clearfix"></div>
+					</div>
+					<jmesa:tableModel
+							id="arxiusXsd" 
+							items="${serveiCommand.fitxersXsd}"
+							toolbar="es.caib.pinbal.webapp.jmesa.BootstrapToolbar"
+							view="es.caib.pinbal.webapp.jmesa.BootstrapView"
+							var="registre"
+							maxRows="${fn:length(serveiCommand.fitxersXsd)}">
+						<jmesa:htmlTable>
+							<jmesa:htmlRow>
+								<jmesa:htmlColumn width="30%" property="tipus" titleKey="servei.xsd.camp.tipus"/>
+								<jmesa:htmlColumn width="60%" property="nomArxiu" titleKey="servei.xsd.camp.arxiu">
+									<div style="width: 90%; display: inline-block;">${registre.nomArxiu}</div>
+									<div style="width: 10%; display: inline;">
+										<a class="btn btn-default btn-sm" href="<c:url value="/servei/${serveiCommand.codi}/xsd/${registre.tipus}/download"/>">
+											<span class="icon-download"></span>
+										</a>
+									</div>
+								</jmesa:htmlColumn>
+								<jmesa:htmlColumn width="10%" property="ACCIO_elimina" title="&nbsp;" sortable="false" style="white-space:nowrap; text-align: center;">
+									<button class="btn btn-default btn-sm" onclick="esborraFitxerXsd('${registre.tipus}');" type="button">
+										<span class="icon-trash"></span>
+									</button>
+								</jmesa:htmlColumn>
+				            </jmesa:htmlRow>
+				        </jmesa:htmlTable>
+					</jmesa:tableModel>
+				</c:if>
+			</fieldset>
+		</c:if>
 		<fieldset>
 			<legend><spring:message code="servei.form.legend.xifrat.seguretat"/></legend>
 			<div class="clearfix legend-margin-bottom"></div>
@@ -703,6 +836,17 @@ function showModalRedir(element) {
 			<a href="#" id="modal-boto-submit" class="btn btn-primary"><spring:message code="comu.boto.guardar"/></a>
 		</div>
 	</div>
-
+	
+	<div id="modal-xsd-form" class="modal hide fade">
+		<div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+			<h3><spring:message code="servei.form.modal.xsd.titol"/></h3>
+		</div>
+		<div class="modal-body"></div>
+		<div class="modal-footer">
+			<a href="#" class="btn" data-dismiss="modal"><spring:message code="comu.boto.tornar"/></a>
+			<a href="#" id="modal-boto-submit-xsd" class="btn btn-primary"><spring:message code="comu.boto.guardar"/></a>
+		</div>
+	</div>
 </body>
 </html>

@@ -1,8 +1,6 @@
-/**
- * 
- */
 package es.caib.pinbal.webapp.controller;
 
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -19,18 +17,23 @@ import org.springframework.beans.propertyeditors.CustomDateEditor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import es.caib.pinbal.core.dto.ArbreDto;
 import es.caib.pinbal.core.dto.DadaEspecificaDto;
+import es.caib.pinbal.core.dto.FitxerDto;
 import es.caib.pinbal.core.dto.ProcedimentDto;
 import es.caib.pinbal.core.dto.ServeiBusDto;
 import es.caib.pinbal.core.dto.ServeiCampDto;
 import es.caib.pinbal.core.dto.ServeiDto;
+import es.caib.pinbal.core.dto.ServeiXsdDto;
+import es.caib.pinbal.core.dto.XsdTipusEnumDto;
 import es.caib.pinbal.core.service.EntitatService;
 import es.caib.pinbal.core.service.ProcedimentService;
 import es.caib.pinbal.core.service.ServeiService;
@@ -46,7 +49,9 @@ import es.caib.pinbal.webapp.command.ServeiCampCommand;
 import es.caib.pinbal.webapp.command.ServeiCampGrupCommand;
 import es.caib.pinbal.webapp.command.ServeiCommand;
 import es.caib.pinbal.webapp.command.ServeiJustificantCampCommand;
+import es.caib.pinbal.webapp.command.ServeiXsdCommand;
 import es.caib.pinbal.webapp.common.AlertHelper;
+import es.caib.pinbal.webapp.helper.HtmlSelectOptionHelper;
 
 /**
  * Controlador per al manteniment de serveis.
@@ -75,28 +80,37 @@ public class ServeiController extends BaseController {
 	}
 
 	@RequestMapping(value = "/new", method = RequestMethod.GET)
-	public String get(Model model) throws ServeiNotFoundException {
+	public String get(Model model) throws ServeiNotFoundException, IOException {
 		return get(null, model);
 	}
+	
 	@RequestMapping(value = "/{serveiCodi}", method = RequestMethod.GET)
 	public String get(
 			@PathVariable String serveiCodi,
-			Model model) throws ServeiNotFoundException {
-		ServeiDto servei = null;
-		if (serveiCodi != null)
-			servei = serveiService.findAmbCodiPerAdminORepresentant(serveiCodi);
-		if (servei != null) {
-			model.addAttribute(ServeiCommand.asCommand(servei));
+			Model model) throws ServeiNotFoundException, IOException {
+		ServeiDto serveiDto = null;
+		List<ServeiXsdDto> llistatFitxers = new ArrayList<ServeiXsdDto>();
+		if (serveiCodi != null) {
+			serveiDto = serveiService.findAmbCodiPerAdminORepresentant(serveiCodi);
+			llistatFitxers = serveiService.xsdFindByServei(serveiCodi);
+		}
+		
+		if (serveiDto != null) {
+			model.addAttribute(ServeiCommand.asCommand(serveiDto));
+			serveiDto.setFitxersXsd(llistatFitxers);
 		} else {
 			model.addAttribute(new ServeiCommand(true));
 		}
+		
+		model.addAttribute("serveiXsdCommand", new ServeiXsdCommand());
 		model.addAttribute("emisors", serveiService.findEmisorAll());
 		model.addAttribute("clausPubliques", serveiService.findClauPublicaAll());
 		model.addAttribute("clausPrivades", serveiService.findClauPrivadaAll());
-		if (servei != null)
-			model.addAttribute("serveisBus", serveiService.findServeisBus(servei.getCodi()));
+		if (serveiDto != null)
+			model.addAttribute("serveisBus", serveiService.findServeisBus(serveiDto.getCodi()));
 		return "serveiForm";
 	}
+	
 
 	@RequestMapping(method = RequestMethod.POST)
 	public String save(
@@ -434,6 +448,130 @@ public class ServeiController extends BaseController {
 			Model model) throws ServeiNotFoundException, ServeiBusNotFoundException {
 		return redirGet(request, serveiCodi, null, model);
 	}
+	
+	
+
+	/*Gestió de fitxers xsd*/
+	
+	@RequestMapping(value = "/{serveiCodi}/xsd/new", method = RequestMethod.GET)
+	public String newXsd(
+			HttpServletRequest request,
+			@PathVariable String serveiCodi,
+			Model model) throws ServeiNotFoundException {
+		model.addAttribute("serveiCodi", serveiCodi);
+//		model.addAttribute(
+//				"xsdTipusEnumOptions",
+//				HtmlSelectOptionHelper.getOptionsForEnum(
+//						XsdTipusEnumDto.class,
+//						"xsd.tipus.enum."));
+		return xsdGet(request, serveiCodi, null, model);
+	}
+	
+	@RequestMapping(value = "/{serveiCodi}/xsd/{tipus}/delete")
+	@ResponseBody
+	public void xsdDelete(
+			HttpServletRequest request,
+			@PathVariable XsdTipusEnumDto tipus,
+			@PathVariable String serveiCodi) throws IOException {
+		serveiService.xsdDelete(
+				serveiCodi,
+				tipus);
+		AlertHelper.success(
+				request, 
+				getMessage(
+						request, 
+						"servei.controller.servei.xsd.esborrat.ok"));
+	}
+	
+	@RequestMapping(value = "/{codi}/xsd/{tipus}/download", method = RequestMethod.GET)
+	public String xsdDownload(
+			HttpServletRequest request,
+			HttpServletResponse response,
+			@PathVariable String codi,
+			@PathVariable XsdTipusEnumDto tipus) throws Exception {
+		FitxerDto fitxer = serveiService.xsdDescarregar(
+				codi,
+				tipus);
+		writeFileToResponse(
+				fitxer.getNom(),
+				fitxer.getContingut(),
+				response);
+		return null;
+	}
+	
+	@RequestMapping(value = "/{serveiCodi}/xsd/save", method = RequestMethod.POST)
+	@ResponseBody
+	public String xsdPost(
+			HttpServletRequest request,
+			@PathVariable String serveiCodi,
+			@Valid ServeiXsdCommand command,
+			BindingResult bindingResult,
+			Model model) throws EntitatNotFoundException, ServeiNotFoundException, ServeiBusNotFoundException, IOException {
+		String jsonResponse = "";
+		if (bindingResult.hasErrors()) {
+			jsonResponse = "{\"error\": true ";
+			if (bindingResult.hasFieldErrors()) {
+				jsonResponse += ", \"errors\":[";
+				int aux = 0;
+				for (FieldError fieldError : bindingResult.getFieldErrors()) {
+					if(aux != 0) {
+						jsonResponse += ",";
+					}
+					jsonResponse += "{\"camp\":\"" + fieldError.getField() + "\",";
+					if(fieldError.getField().equals("contingut")) {
+						jsonResponse += "\"errorMsg\":\""+ getMessage(request, "servei.form.xsd.validacio.contingut") +"\"}";
+					}else if(fieldError.getField().equals("nomArxiu")) {
+						jsonResponse += "\"errorMsg\":\""+ getMessage(request, "servei.form.xsd.validacio.contingut") +"\"}";
+					}else if(fieldError.getField().equals("tipus")) {
+						jsonResponse += "\"errorMsg\":\""+ getMessage(request, "servei.form.xsd.validacio.contingut") +"\"}";
+					}
+					aux ++;
+				}
+				jsonResponse += "]}";	
+			} else {
+				jsonResponse += "}";
+			}
+			return jsonResponse;
+		}
+		List<ServeiXsdDto> llistatFitxers = serveiService.xsdFindByServei(serveiCodi);
+		List<XsdTipusEnumDto> llistatTipusFitxersXsd = new ArrayList<XsdTipusEnumDto>();
+		for(ServeiXsdDto fitxer : llistatFitxers) {
+			llistatTipusFitxersXsd.add(fitxer.getTipus());
+		}
+		ServeiXsdDto dto = ServeiXsdCommand.asDto(command);
+		serveiService.xsdCreate(command.getCodi(), dto, command.getContingut().getBytes());
+		if (!llistatTipusFitxersXsd.contains(dto.getTipus())) {
+			AlertHelper.success(
+					request, 
+					getMessage(
+							request, 
+							"servei.controller.servei.xsd.creat.ok"));
+		} else {
+			AlertHelper.success(
+					request, 
+					getMessage(
+							request, 
+							"servei.controller.servei.xsd.modificat.ok"));
+		}
+		return "{\"error\": false}";
+	}
+	
+	
+	@RequestMapping(value = "/{serveiCodi}/xsd/{serveiXsdId}", method = RequestMethod.GET)
+	public String xsdGet(
+			HttpServletRequest request,
+			@PathVariable String serveiCodi,
+			@PathVariable Long serveiXsdId,
+			Model model) throws ServeiNotFoundException {
+		ServeiDto servei = serveiService.findAmbCodiPerAdminORepresentant(serveiCodi);
+		model.addAttribute("servei", servei);
+		if (serveiXsdId == null) {
+			model.addAttribute(new ServeiXsdCommand());
+		}
+		return "serveiXsd";
+	}
+	/*Gestió de fitxers xsd*/
+	
 	@RequestMapping(value = "/{serveiCodi}/redir/{serveiBusId}", method = RequestMethod.GET)
 	public String redirGet(
 			HttpServletRequest request,
@@ -455,6 +593,7 @@ public class ServeiController extends BaseController {
 		}
 		return "serveiBus";
 	}
+	
 	@RequestMapping(value = "/{serveiCodi}/redir/save", method = RequestMethod.POST)
 	public String redirPost(
 			HttpServletRequest request,
@@ -488,6 +627,8 @@ public class ServeiController extends BaseController {
 		model.addAttribute("reloadPage", new Boolean(true));
 		return "serveiBus";
 	}
+	
+	
 
 	@RequestMapping(value = "/{serveiCodi}/redir/{serveiBusId}/delete", method = RequestMethod.GET)
 	public String delete(

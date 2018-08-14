@@ -2,6 +2,7 @@ package es.caib.pinbal.core.dto;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
 
@@ -24,6 +25,7 @@ public class ServeiDto implements Serializable {
 
 	private String codi;
 	private String descripcio;
+	private long id;
 
 	private EmisorDto scspEmisor;
 	private Date scspFechaAlta;
@@ -70,12 +72,15 @@ public class ServeiDto implements Serializable {
 	private boolean pinbalActiuCampDocument;
 	private boolean pinbalDocumentObligatori;
 	private boolean pinbalComprovarDocument;
+	private boolean activaGestioXsd;
 	
 	private String ajuda;
 	private String fitxerAjudaNom;
 	private String fitxerAjudaMimeType;
 	private byte[] fitxerAjudaContingut;
 	
+	private List<ServeiXsdDto> fitxersXsd;
+		
 	private Long numeroProcedimentsAssociats;
 
 	// Propietat per a mostrar el check actiu als llistats
@@ -249,11 +254,9 @@ public class ServeiDto implements Serializable {
 	public String getProcedimentCodi() {
 		return procedimentCodi;
 	}
-
 	public void setProcedimentCodi(String procedimentCodi) {
 		this.procedimentCodi = procedimentCodi;
 	}
-
 	public String getPinbalCustodiaCodi() {
 		return pinbalCustodiaCodi;
 	}
@@ -362,6 +365,13 @@ public class ServeiDto implements Serializable {
 	public void setPinbalComprovarDocument(boolean pinbalComprovarDocument) {
 		this.pinbalComprovarDocument = pinbalComprovarDocument;
 	}
+	public boolean isActivaGestioXsd() {
+		return activaGestioXsd;
+	}
+	public void setActivaGestioXsd(boolean activaGestioXsd) {
+		this.activaGestioXsd = activaGestioXsd;
+	}
+
 	public String getAjuda() {
 		return ajuda;
 	}
@@ -426,6 +436,20 @@ public class ServeiDto implements Serializable {
 	}
 	public void setActiu(boolean actiu) {
 		this.actiu = actiu;
+	}
+	
+	public long getId() {
+		return id;
+	}
+
+	public void setId(long id) {
+		this.id = id;
+	}
+	public List<ServeiXsdDto> getFitxersXsd() {
+		return fitxersXsd;
+	}
+	public void setFitxersXsd(List<ServeiXsdDto> fitxersXsd) {
+		this.fitxersXsd = fitxersXsd;
 	}
 
 	@Override

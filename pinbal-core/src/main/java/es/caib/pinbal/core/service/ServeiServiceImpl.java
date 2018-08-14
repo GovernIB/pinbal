@@ -3,6 +3,7 @@
  */
 package es.caib.pinbal.core.service;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -29,6 +30,7 @@ import es.caib.pinbal.core.dto.ClauPrivadaDto;
 import es.caib.pinbal.core.dto.ClauPublicaDto;
 import es.caib.pinbal.core.dto.DadaEspecificaDto;
 import es.caib.pinbal.core.dto.EmisorDto;
+import es.caib.pinbal.core.dto.FitxerDto;
 import es.caib.pinbal.core.dto.NodeDto;
 import es.caib.pinbal.core.dto.ProcedimentDto;
 import es.caib.pinbal.core.dto.ProcedimentServeiDto;
@@ -40,16 +42,20 @@ import es.caib.pinbal.core.dto.ServeiDto;
 import es.caib.pinbal.core.dto.ServeiDto.EntitatTipusDto;
 import es.caib.pinbal.core.dto.ServeiDto.JustificantTipusDto;
 import es.caib.pinbal.core.dto.ServeiJustificantCampDto;
+import es.caib.pinbal.core.dto.ServeiXsdDto;
+import es.caib.pinbal.core.dto.XsdTipusEnumDto;
 import es.caib.pinbal.core.helper.DtoMappingHelper;
 import es.caib.pinbal.core.helper.PermisosHelper;
 import es.caib.pinbal.core.helper.PermisosHelper.ObjectIdentifierExtractor;
 import es.caib.pinbal.core.helper.PluginHelper;
 import es.caib.pinbal.core.helper.ServeiHelper;
+import es.caib.pinbal.core.helper.ServeiXsdHelper;
 import es.caib.pinbal.core.helper.UsuariHelper;
 import es.caib.pinbal.core.model.Entitat;
 import es.caib.pinbal.core.model.EntitatUsuari;
 import es.caib.pinbal.core.model.Procediment;
 import es.caib.pinbal.core.model.ProcedimentServei;
+import es.caib.pinbal.core.model.Servei;
 import es.caib.pinbal.core.model.ServeiBus;
 import es.caib.pinbal.core.model.ServeiCamp;
 import es.caib.pinbal.core.model.ServeiCamp.ServeiCampTipus;
@@ -67,7 +73,9 @@ import es.caib.pinbal.core.repository.ServeiCampGrupRepository;
 import es.caib.pinbal.core.repository.ServeiCampRepository;
 import es.caib.pinbal.core.repository.ServeiConfigRepository;
 import es.caib.pinbal.core.repository.ServeiJustificantCampRepository;
+import es.caib.pinbal.core.repository.ServeiRepository;
 import es.caib.pinbal.core.service.exception.EntitatNotFoundException;
+import es.caib.pinbal.core.service.exception.NotFoundException;
 import es.caib.pinbal.core.service.exception.ProcedimentNotFoundException;
 import es.caib.pinbal.core.service.exception.ScspException;
 import es.caib.pinbal.core.service.exception.ServeiAmbConsultesException;
@@ -112,6 +120,8 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 	private ServeiBusRepository serveiBusRepository;
 	@Resource
 	private ServeiJustificantCampRepository serveiJustificantCampRepository;
+	@Resource
+	private ServeiRepository serveiRepository;
 
 	@Resource
 	private ServeiHelper serveiHelper;
@@ -121,6 +131,8 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 	private DtoMappingHelper dtoMappingHelper;
 	@Resource
 	private UsuariHelper usuariHelper;
+	@Resource
+	private ServeiXsdHelper serveiXsdHelper;
 
 	@Resource
 	private MutableAclService aclService;
@@ -150,6 +162,7 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 					toJustificantTipus(servei.getPinbalJustificantTipus()),
 					servei.getPinbalJustificantXpath(),
 					servei.getAjuda(),
+					servei.isActivaGestioXsd(),
 					servei.getFitxerAjudaNom(),
 					servei.getFitxerAjudaMimeType(),
 					servei.getFitxerAjudaContingut()).build();
@@ -176,6 +189,7 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 					servei.isPinbalActiuCampDocument(),
 					servei.isPinbalDocumentObligatori(),
 					servei.isPinbalComprovarDocument(),
+					servei.isActivaGestioXsd(),
 					servei.getAjuda());
 			if (servei.getFitxerAjudaNom() != null && !servei.getFitxerAjudaNom().isEmpty()) {
 				serveiConfig.updateFitxerAjuda(
@@ -950,6 +964,20 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 
 	@Transactional(readOnly = true)
 	@Override
+	public List<ServeiXsdDto> xsdFindByServei(
+			String serveiCodi) throws IOException {
+		LOGGER.debug("Obtenint tots els fitxers XSD per a un servei (" +
+				"serveiCodi=" + serveiCodi + ")");
+		Servicio servicio = getScspHelper().getServicio(serveiCodi);
+		if (servicio == null) {
+			LOGGER.debug("No s'ha trobat el servicio (codi=" + serveiCodi + ")");
+			throw new IOException();
+		}
+		return serveiXsdHelper.findAll(servicio.getCodCertificado());
+	}
+
+	@Transactional(readOnly = true)
+	@Override
 	public List<String> getRolsConfigurats() {
 		LOGGER.debug("Obtenint tots els rols configurats per als diferents serveis");
 		List<String> resposta = new ArrayList<String>();
@@ -1042,6 +1070,7 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 	private ServeiDto toServeiDto(Servicio servicio) {
 		ServeiDto dto = new ServeiDto();
 		dto.setCodi(servicio.getCodCertificado());
+		dto.setId(servicio.getId());
 		dto.setDescripcio(servicio.getDescripcion());
 		if (servicio.getEmisor() != null) {
 			EmisorDto emisor = new EmisorDto();
@@ -1119,6 +1148,7 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 			dto.setPinbalActiuCampDocument(serveiConfig.isActiuCampDocument());
 			dto.setPinbalDocumentObligatori(serveiConfig.isDocumentObligatori());
 			dto.setPinbalComprovarDocument(serveiConfig.isComprovarDocument());
+//			dto.setActivaGestioXsd(serveiConfig.isActivaGestioXsd());
 			dto.setAjuda(serveiConfig.getAjuda());
 			dto.setFitxerAjudaNom(serveiConfig.getFitxerAjudaNom());
 			dto.setFitxerAjudaMimeType(serveiConfig.getFitxerAjudaMimeType());
@@ -1253,4 +1283,34 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(ServeiServiceImpl.class);
 
+
+
+	@Override
+	public void xsdDelete(String codi, XsdTipusEnumDto tipus) throws IOException {
+		LOGGER.debug("Esborra un fitxer XSD per a un servei (" +
+				"codi=" + codi + ", " +
+				"tipus=" + tipus + ")");
+		Servicio servei = scspHelper.getServicio(codi);
+		serveiXsdHelper.esborrarXsd(servei, tipus);
+	}
+
+	@Override
+	public FitxerDto xsdDescarregar(String codi, XsdTipusEnumDto tipus) throws IOException {
+		LOGGER.debug("Descarrega un fitxer XSD per a un servei (" +
+				"codi=" + codi + ", " +
+				"tipus=" + tipus + ")");
+		Servicio servei = scspHelper.getServicio(codi);
+		return serveiXsdHelper.descarregarXsd(servei, tipus);
+	}
+
+	@Override
+	public void xsdCreate(String codi, ServeiXsdDto xsd, byte[] contingut) throws IOException {
+		LOGGER.debug("Afegeix un fitxer XSD per a un servei (" +
+				"codi=" + codi + ", " +
+				"xsd=" + xsd.getNomArxiu() + ")");
+		Servicio servei = scspHelper.getServicio(codi);
+		serveiXsdHelper.modificarXsd(servei, xsd, contingut);
+	}
+	
+	
 }

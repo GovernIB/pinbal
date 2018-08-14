@@ -3,6 +3,7 @@
  */
 package es.caib.pinbal.core.ejb;
 
+import java.io.IOException;
 import java.util.List;
 
 import javax.annotation.security.PermitAll;
@@ -18,12 +19,15 @@ import es.caib.pinbal.core.dto.ClauPrivadaDto;
 import es.caib.pinbal.core.dto.ClauPublicaDto;
 import es.caib.pinbal.core.dto.DadaEspecificaDto;
 import es.caib.pinbal.core.dto.EmisorDto;
+import es.caib.pinbal.core.dto.FitxerDto;
 import es.caib.pinbal.core.dto.ProcedimentServeiDto;
 import es.caib.pinbal.core.dto.ServeiBusDto;
 import es.caib.pinbal.core.dto.ServeiCampDto;
 import es.caib.pinbal.core.dto.ServeiCampGrupDto;
 import es.caib.pinbal.core.dto.ServeiDto;
 import es.caib.pinbal.core.dto.ServeiJustificantCampDto;
+import es.caib.pinbal.core.dto.ServeiXsdDto;
+import es.caib.pinbal.core.dto.XsdTipusEnumDto;
 import es.caib.pinbal.core.service.ServeiService;
 import es.caib.pinbal.core.service.exception.EntitatNotFoundException;
 import es.caib.pinbal.core.service.exception.ProcedimentNotFoundException;
@@ -268,6 +272,30 @@ public class ServeiServiceBean implements ServeiService {
 	@PermitAll
 	public List<String> getRolsConfigurats() {
 		return delegate.getRolsConfigurats();
+	}
+
+	@Override
+	@RolesAllowed({"PBL_ADMIN"})
+	public List<ServeiXsdDto> xsdFindByServei(
+			String codi) throws IOException {
+		return delegate.xsdFindByServei(codi);
+	}
+
+	@Override
+	public void xsdDelete(
+			String codi, XsdTipusEnumDto tipus) throws IOException {
+		delegate.xsdDelete(codi, tipus);
+	}
+
+	@Override
+	public FitxerDto xsdDescarregar(
+			String codi, XsdTipusEnumDto tipus) throws IOException {
+		return delegate.xsdDescarregar(codi, tipus);
+	}
+
+	@Override
+	public void xsdCreate(String codi, ServeiXsdDto xsd, byte[] contingut) throws IOException {
+		delegate.xsdCreate(codi, xsd, contingut);
 	}
 
 }
