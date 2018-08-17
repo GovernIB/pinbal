@@ -197,6 +197,22 @@ public interface ServeiService {
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_DELEG')")
 	public ArbreDto<DadaEspecificaDto> generarArbreDadesEspecifiques(String serveiCodi) throws ServeiNotFoundException, ScspException;
 
+
+	/**
+	 * Retorna l'arbre de dades específiques donat un servei.
+	 * 
+	 * @param serveiCodi
+	 *             El codi del servei.
+	 * @return L'arbre de dades específiques.
+	 * @throws ServeiNotFoundException
+	 *             Si no s'ha trobat troba cap servei amb l'id especificat.
+	 * @throws ScspException
+	 *             Si hi ha hagut errors al generar l'arbre.
+	 */
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_DELEG')")
+	public ArbreDto<DadaEspecificaDto> generarArbreDadesEspecifiques(String serveiCodi, boolean gestioXsdActiva) throws ServeiNotFoundException, ScspException;
+
+	
 	/**
 	 * Afegeix un camp al formulari del servei.
 	 * 

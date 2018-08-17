@@ -16,7 +16,6 @@ import org.springframework.stereotype.Component;
 import es.caib.pinbal.core.dto.FitxerDto;
 import es.caib.pinbal.core.dto.ServeiXsdDto;
 import es.caib.pinbal.core.dto.XsdTipusEnumDto;
-import es.caib.pinbal.core.model.Servei;
 import es.scsp.common.domain.core.Servicio;
 
 

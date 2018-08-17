@@ -38,6 +38,7 @@ import org.apache.ws.commons.schema.XmlSchemaSimpleTypeRestriction;
 import org.apache.ws.commons.schema.resolver.URIResolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -430,6 +431,7 @@ public class XmlHelper {
 	private InputStream getScspResourceInputStream(
 			Servicio servicio,
 			String arxiuNom) throws Exception {
+		// Comprovar si el servei te la gestió de fitxers xsd activada. Si esta activada cerca els esquemes al sistema de fitxers.
 		String versionEsquema = servicio.getVersionEsquema();
 		if (versionEsquema != null) {
 			int index = versionEsquema.lastIndexOf("V");

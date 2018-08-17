@@ -96,8 +96,8 @@ public class ServeiController extends BaseController {
 		}
 		
 		if (serveiDto != null) {
-			model.addAttribute(ServeiCommand.asCommand(serveiDto));
 			serveiDto.setFitxersXsd(llistatFitxers);
+			model.addAttribute(ServeiCommand.asCommand(serveiDto));
 		} else {
 			model.addAttribute(new ServeiCommand(true));
 		}
@@ -202,9 +202,10 @@ public class ServeiController extends BaseController {
 			HttpServletRequest request,
 			@PathVariable String serveiCodi,
 			Model model)  throws ServeiNotFoundException, ScspException {
+		ServeiDto serveiDto = serveiService.findAmbCodiPerAdminORepresentant(serveiCodi);
 		model.addAttribute(
 				"servei",
-				serveiService.findAmbCodiPerAdminORepresentant(serveiCodi));
+				serveiDto);
 		model.addAttribute(
 				"arbreDadesEspecifiques",
 				serveiService.generarArbreDadesEspecifiques(serveiCodi));

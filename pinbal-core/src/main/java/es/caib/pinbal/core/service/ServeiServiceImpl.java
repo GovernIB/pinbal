@@ -55,7 +55,6 @@ import es.caib.pinbal.core.model.Entitat;
 import es.caib.pinbal.core.model.EntitatUsuari;
 import es.caib.pinbal.core.model.Procediment;
 import es.caib.pinbal.core.model.ProcedimentServei;
-import es.caib.pinbal.core.model.Servei;
 import es.caib.pinbal.core.model.ServeiBus;
 import es.caib.pinbal.core.model.ServeiCamp;
 import es.caib.pinbal.core.model.ServeiCamp.ServeiCampTipus;
@@ -73,9 +72,7 @@ import es.caib.pinbal.core.repository.ServeiCampGrupRepository;
 import es.caib.pinbal.core.repository.ServeiCampRepository;
 import es.caib.pinbal.core.repository.ServeiConfigRepository;
 import es.caib.pinbal.core.repository.ServeiJustificantCampRepository;
-import es.caib.pinbal.core.repository.ServeiRepository;
 import es.caib.pinbal.core.service.exception.EntitatNotFoundException;
-import es.caib.pinbal.core.service.exception.NotFoundException;
 import es.caib.pinbal.core.service.exception.ProcedimentNotFoundException;
 import es.caib.pinbal.core.service.exception.ScspException;
 import es.caib.pinbal.core.service.exception.ServeiAmbConsultesException;
@@ -120,8 +117,6 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 	private ServeiBusRepository serveiBusRepository;
 	@Resource
 	private ServeiJustificantCampRepository serveiJustificantCampRepository;
-	@Resource
-	private ServeiRepository serveiRepository;
 
 	@Resource
 	private ServeiHelper serveiHelper;
@@ -491,6 +486,39 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 	@Override
 	public ArbreDto<DadaEspecificaDto> generarArbreDadesEspecifiques(
 			String serveiCodi) throws ServeiNotFoundException, ScspException {
+		LOGGER.debug("Generant arbre de dades específiques per al servei (codi=" + serveiCodi + ")");
+		Servicio servicio = getScspHelper().getServicio(serveiCodi);
+		if (servicio == null) {
+			LOGGER.debug("No s'ha trobat el servicio (codi=" + serveiCodi + ")");
+			throw new ServeiNotFoundException();
+		}
+		try {
+			ArbreDto<DadaEspecificaDto> arbre = new ArbreDto<DadaEspecificaDto>();
+			Tree<DadesEspecifiquesNode> tree = getScspHelper().generarArbreDadesEspecifiques(serveiCodi);
+			if (tree != null && tree.getRootElement() != null) {
+				NodeDto<DadaEspecificaDto> arrel = new NodeDto<DadaEspecificaDto>();
+				copiarArbreDadesEspecifiques(
+						tree.getRootElement(),
+						arrel,
+						new ArrayList<String>());
+				arbre.setArrel(arrel);
+			}
+			return arbre;
+		} catch (Exception ex) {
+			LOGGER.error(
+					"Error al generar arbre de dades específiques per al servei (codi=" + serveiCodi + ")",
+					ex);
+			throw new ScspException(
+					"Error al generar arbre de dades específiques per al servei (codi=" + serveiCodi + ")",
+					ex);
+		}
+	}
+	
+	/*Metode per acabar, Fer que si la gestio de fitxers XSD es activa vaigui a cercar els fitxers*/
+	@Transactional(readOnly = true)
+	@Override
+	public ArbreDto<DadaEspecificaDto> generarArbreDadesEspecifiques(
+			String serveiCodi, boolean gestioXsdActiva) throws ServeiNotFoundException, ScspException {
 		LOGGER.debug("Generant arbre de dades específiques per al servei (codi=" + serveiCodi + ")");
 		Servicio servicio = getScspHelper().getServicio(serveiCodi);
 		if (servicio == null) {
