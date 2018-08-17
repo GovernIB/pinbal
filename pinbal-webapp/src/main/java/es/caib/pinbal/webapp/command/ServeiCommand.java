@@ -483,7 +483,6 @@ public class ServeiCommand {
 		}else {
 			dto.setFitxersXsd(new ArrayList<ServeiXsdDto>());
 		}
-		
 		return dto;
 	}
 	

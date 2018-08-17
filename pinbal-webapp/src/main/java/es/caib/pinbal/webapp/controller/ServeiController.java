@@ -208,7 +208,8 @@ public class ServeiController extends BaseController {
 				serveiDto);
 		model.addAttribute(
 				"arbreDadesEspecifiques",
-				serveiService.generarArbreDadesEspecifiques(serveiCodi));
+				serveiService.generarArbreDadesEspecifiques(serveiCodi, serveiDto.isActivaGestioXsd()));
+		
 		List<ServeiCampDto> camps = serveiService.findServeiCamps(serveiCodi);
 		model.addAttribute("camps", camps);
 		Map<Long, List<ServeiCampDto>> campsAgrupats = new HashMap<Long, List<ServeiCampDto>>();

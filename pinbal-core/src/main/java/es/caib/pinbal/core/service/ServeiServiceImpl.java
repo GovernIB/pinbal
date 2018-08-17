@@ -514,7 +514,6 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 		}
 	}
 	
-	/*Metode per acabar, Fer que si la gestio de fitxers XSD es activa vaigui a cercar els fitxers*/
 	@Transactional(readOnly = true)
 	@Override
 	public ArbreDto<DadaEspecificaDto> generarArbreDadesEspecifiques(
@@ -527,7 +526,12 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 		}
 		try {
 			ArbreDto<DadaEspecificaDto> arbre = new ArbreDto<DadaEspecificaDto>();
-			Tree<DadesEspecifiquesNode> tree = getScspHelper().generarArbreDadesEspecifiques(serveiCodi);
+			Tree<DadesEspecifiquesNode> tree;
+			if(gestioXsdActiva) {
+				tree = getScspHelper().generarArbreDadesEspecifiques(serveiCodi, gestioXsdActiva);
+			}else {
+				tree = getScspHelper().generarArbreDadesEspecifiques(serveiCodi);
+			}
 			if (tree != null && tree.getRootElement() != null) {
 				NodeDto<DadaEspecificaDto> arrel = new NodeDto<DadaEspecificaDto>();
 				copiarArbreDadesEspecifiques(
@@ -1176,7 +1180,7 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 			dto.setPinbalActiuCampDocument(serveiConfig.isActiuCampDocument());
 			dto.setPinbalDocumentObligatori(serveiConfig.isDocumentObligatori());
 			dto.setPinbalComprovarDocument(serveiConfig.isComprovarDocument());
-//			dto.setActivaGestioXsd(serveiConfig.isActivaGestioXsd());
+			dto.setActivaGestioXsd(serveiConfig.isActivaGestioXsd());
 			dto.setAjuda(serveiConfig.getAjuda());
 			dto.setFitxerAjudaNom(serveiConfig.getFitxerAjudaNom());
 			dto.setFitxerAjudaMimeType(serveiConfig.getFitxerAjudaMimeType());

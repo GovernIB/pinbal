@@ -141,9 +141,17 @@ public class ServeiServiceBean implements ServeiService {
 	@Override
 	@RolesAllowed({"PBL_ADMIN", "tothom"})
 	public ArbreDto<DadaEspecificaDto> generarArbreDadesEspecifiques(
+			String serveiCodi, boolean gestioXsdActiva) throws ServeiNotFoundException, ScspException {
+		return delegate.generarArbreDadesEspecifiques(serveiCodi, gestioXsdActiva);
+	}
+	
+	@Override
+	@RolesAllowed({"PBL_ADMIN", "tothom"})
+	public ArbreDto<DadaEspecificaDto> generarArbreDadesEspecifiques(
 			String serveiCodi) throws ServeiNotFoundException, ScspException {
 		return delegate.generarArbreDadesEspecifiques(serveiCodi);
 	}
+
 
 	@Override
 	@RolesAllowed("PBL_ADMIN")

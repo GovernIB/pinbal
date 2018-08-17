@@ -38,7 +38,6 @@
     <link rel="Stylesheet" type="text/css" href="<c:url value="/css/inputFile.css"/>"/>
 <script>
 $(document).ready(function() {
-	$("#activaGestioXsd").attr("checked", true);
 	$("#scspEsquemas").attr("disabled", $("#activaGestioXsd").attr("checked") ? true : false);
 	$("#gestioXsdFieldSet").attr("hidden", $("#activaGestioXsd").attr("checked") ? false : true);
 	

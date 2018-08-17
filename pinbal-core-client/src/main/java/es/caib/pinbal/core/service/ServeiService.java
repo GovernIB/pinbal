@@ -195,9 +195,9 @@ public interface ServeiService {
 	 *             Si hi ha hagut errors al generar l'arbre.
 	 */
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_DELEG')")
-	public ArbreDto<DadaEspecificaDto> generarArbreDadesEspecifiques(String serveiCodi) throws ServeiNotFoundException, ScspException;
-
-
+	public ArbreDto<DadaEspecificaDto> generarArbreDadesEspecifiques(String serveiCodi, boolean gestioXsdActiva) throws ServeiNotFoundException, ScspException;
+	
+	
 	/**
 	 * Retorna l'arbre de dades específiques donat un servei.
 	 * 
@@ -210,8 +210,7 @@ public interface ServeiService {
 	 *             Si hi ha hagut errors al generar l'arbre.
 	 */
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_DELEG')")
-	public ArbreDto<DadaEspecificaDto> generarArbreDadesEspecifiques(String serveiCodi, boolean gestioXsdActiva) throws ServeiNotFoundException, ScspException;
-
+	public ArbreDto<DadaEspecificaDto> generarArbreDadesEspecifiques(String serveiCodi) throws ServeiNotFoundException, ScspException;
 	
 	/**
 	 * Afegeix un camp al formulari del servei.

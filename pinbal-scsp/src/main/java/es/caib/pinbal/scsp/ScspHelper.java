@@ -354,6 +354,17 @@ public class ScspHelper {
 		Servicio servicio = getServicio(codigoServicio);
 		return getXmlHelper().getArbrePerDadesEspecifiques(servicio);
 	}
+	
+	public Tree<DadesEspecifiquesNode> generarArbreDadesEspecifiques(
+			String codigoServicio, boolean gestioXsdActiva) throws Exception {
+		LOGGER.debug("Generant l'arbre de dades específiques pel servicio (codi=" + codigoServicio + ")");
+		Servicio servicio = getServicio(codigoServicio);
+		if(gestioXsdActiva) {
+			return getXmlHelper().getArbrePerDadesEspecifiques(servicio, gestioXsdActiva);
+		}else{
+			return getXmlHelper().getArbrePerDadesEspecifiques(servicio);
+		}
+	}
 
 	public Element copiarDadesEspecifiquesRecobriment(
 			String codigoCertificado,

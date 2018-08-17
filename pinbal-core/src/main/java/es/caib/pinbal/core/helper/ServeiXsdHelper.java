@@ -57,6 +57,16 @@ public class ServeiXsdHelper {
 		fitxer.setContentType("text/xml");
 		return fitxer;
 	}
+	
+	public FitxerDto descarregarXsdDadesEspecifiques(
+			Servicio servei) throws IOException {
+		String fitxerPath = getPathPerFitxerXsdDadesEspecifiques(servei);
+		FitxerDto fitxer = new FitxerDto();
+		fitxer.setNom(getXsdTipusNom(XsdTipusEnumDto.DATOS_ESPECIFICOS));
+		fitxer.setContingut(IOUtils.toByteArray(new FileInputStream(fitxerPath)));
+		fitxer.setContentType("text/xml");
+		return fitxer;
+	}
 
 	public List<ServeiXsdDto> findAll(
 			String serveiCodi) {
@@ -98,6 +108,15 @@ public class ServeiXsdHelper {
 
 
 
+	private String getPathPerFitxerXsdDadesEspecifiques(
+			Servicio servei) {
+		StringBuilder path = new StringBuilder();
+		path.append(getPathPerServei(servei.getCodCertificado()));
+		path.append(File.separator);
+		path.append(getXsdTipusNom(XsdTipusEnumDto.DATOS_ESPECIFICOS));
+		return path.toString();
+	}
+	
 	private String getPathPerFitxerXsd(
 			Servicio servei,
 			XsdTipusEnumDto tipus) {

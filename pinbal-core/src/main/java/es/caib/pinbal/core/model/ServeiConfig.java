@@ -223,12 +223,12 @@ public class ServeiConfig extends PinbalAuditable<Long> {
 	public void setFitxerAjudaContingut(byte[] fitxerAjudaContingut) {
 		this.fitxerAjudaContingut = fitxerAjudaContingut;
 	}
-//	public boolean isActivaGestioXsd() {
-//		return activaGestioXsd;
-//	}
-//	public void setActivaGestioXsd(boolean activaGestioXsd) {
-//		this.activaGestioXsd = activaGestioXsd;
-//	}
+	public boolean isActivaGestioXsd() {
+		return activaGestioXsd;
+	}
+	public void setActivaGestioXsd(boolean activaGestioXsd) {
+		this.activaGestioXsd = activaGestioXsd;
+	}
 	
 	public long getVersion() {
 		return version;
