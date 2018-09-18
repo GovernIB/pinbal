@@ -1,4 +1,5 @@
-<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://intermediacion.redsara.es/scsp/esquemas/V3/peticion" xmlns:ns1="http://intermediacion.redsara.es/scsp/esquemas/datosespecificos" targetNamespace="http://intermediacion.redsara.es/scsp/esquemas/V3/peticion" elementFormDefault="qualified" attributeFormDefault="unqualified">
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<xs:schema xmlns="http://intermediacion.redsara.es/scsp/esquemas/V3/peticion" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://intermediacion.redsara.es/scsp/esquemas/datosespecificos" targetNamespace="http://intermediacion.redsara.es/scsp/esquemas/V3/peticion" elementFormDefault="qualified" attributeFormDefault="unqualified">
 	<xs:import namespace="http://intermediacion.redsara.es/scsp/esquemas/datosespecificos" schemaLocation="datos-especificos.xsd"/>
 	<xs:element name="Apellido1">
 		<xs:simpleType>

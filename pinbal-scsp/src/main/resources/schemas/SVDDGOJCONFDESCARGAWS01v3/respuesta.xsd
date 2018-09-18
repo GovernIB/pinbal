@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<xs:schema xmlns="http://intermediacion.redsara.es/scsp/esquemas/V3/respuesta" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://intermediacion.redsara.es/scsp/esquemas/datosespecificos" targetNamespace="http://intermediacion.redsara.es/scsp/esquemas/V3/respuesta" elementFormDefault="qualified" attributeFormDefault="unqualified">
+<xs:schema xmlns:ns1="http://intermediacion.redsara.es/scsp/esquemas/datosespecificos" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://intermediacion.redsara.es/scsp/esquemas/V3/respuesta" targetNamespace="http://intermediacion.redsara.es/scsp/esquemas/V3/respuesta" elementFormDefault="qualified" attributeFormDefault="unqualified">
 	<xs:import namespace="http://intermediacion.redsara.es/scsp/esquemas/datosespecificos" schemaLocation="datos-especificos.xsd"/>
 	<xs:element name="Apellido1">
 		<xs:simpleType>
@@ -33,7 +33,7 @@
 	<xs:element name="CodigoCertificado">
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
-				<xs:enumeration value="SVDSCDWS01"/>
+				<xs:enumeration value="SVDDGOJCONFDESCARGAWS01"/>
 			</xs:restriction>
 		</xs:simpleType>
 	</xs:element>
@@ -64,7 +64,7 @@
 			<xs:all>
 				<xs:element ref="Emisor"/>
 				<xs:element ref="Solicitante"/>
-				<xs:element ref="Titular"/>
+				<xs:element ref="Titular" minOccurs="0"/>
 				<xs:element ref="Transmision"/>
 			</xs:all>
 		</xs:complexType>
@@ -72,7 +72,7 @@
 	<xs:element name="Documentacion">
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
-				<xs:maxLength value="10"/>
+				<xs:maxLength value="14"/>
 				<xs:whiteSpace value="collapse"/>
 				<xs:minLength value="1"/>
 			</xs:restriction>
@@ -210,7 +210,7 @@
 	<xs:element name="NifEmisor">
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
-				<xs:enumeration value="S2833002E"/>
+				<xs:enumeration value="S2801109F"/>
 			</xs:restriction>
 		</xs:simpleType>
 	</xs:element>
@@ -246,8 +246,8 @@
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
 				<xs:maxLength value="122"/>
-				<xs:whiteSpace value="collapse"/>
 				<xs:minLength value="1"/>
+				<xs:whiteSpace value="collapse"/>
 			</xs:restriction>
 		</xs:simpleType>
 	</xs:element>
@@ -320,16 +320,17 @@
 	<xs:element name="TipoDocumentacion">
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
-				<xs:enumeration value="NIF"/>
+				<xs:enumeration value="DNI"/>
 				<xs:enumeration value="NIE"/>
+				<xs:enumeration value="Pasaporte"/>
 			</xs:restriction>
 		</xs:simpleType>
 	</xs:element>
 	<xs:element name="Titular">
 		<xs:complexType>
 			<xs:sequence>
-				<xs:element ref="TipoDocumentacion"/>
-				<xs:element ref="Documentacion"/>
+				<xs:element ref="TipoDocumentacion" minOccurs="0"/>
+				<xs:element ref="Documentacion" minOccurs="0"/>
 				<xs:element ref="NombreCompleto" minOccurs="0"/>
 				<xs:element ref="Nombre" minOccurs="0"/>
 				<xs:element ref="Apellido1" minOccurs="0"/>

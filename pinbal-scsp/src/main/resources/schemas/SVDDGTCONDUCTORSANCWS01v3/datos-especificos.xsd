@@ -1,0 +1,492 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2011 sp1 (http://www.altova.com) by End User (free.org) -->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://intermediacion.redsara.es/scsp/esquemas/datosespecificos" targetNamespace="http://intermediacion.redsara.es/scsp/esquemas/datosespecificos" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<xs:element name="DatosEspecificos">
+		<xs:complexType>
+			<xs:all>
+				<xs:element ref="Retorno"/>
+			</xs:all>
+			<xs:attribute name="Id" type="xs:string" use="optional"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Retorno">
+		<xs:annotation>
+			<xs:documentation>Datos de retorno para servicio de consulta de conductores</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="Estado"/>
+				<xs:element ref="DatosConductor" minOccurs="0" maxOccurs="1"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Estado">
+		<xs:complexType>
+			<xs:all>
+				<xs:element name="CodigoEstado">
+					<xs:annotation>
+						<xs:documentation>Codigo de estado: 0 - Tramitado, 1 - Error</xs:documentation>
+					</xs:annotation>
+					<xs:simpleType>
+						<xs:restriction base="xs:string">
+							<xs:maxLength value="4"/>
+						</xs:restriction>
+					</xs:simpleType>
+				</xs:element>
+				<xs:element name="CodigoEstadoSecundario" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>Codigo devuelto por DGT en caso de error</xs:documentation>
+					</xs:annotation>
+					<xs:simpleType>
+						<xs:restriction base="xs:string">
+							<xs:minLength value="1"/>
+							<xs:maxLength value="10"/>
+						</xs:restriction>
+					</xs:simpleType>
+				</xs:element>
+				<xs:element name="Literal">
+					<xs:annotation>
+						<xs:documentation>Descripcion del estado</xs:documentation>
+					</xs:annotation>
+					<xs:simpleType>
+						<xs:restriction base="xs:string">
+							<xs:minLength value="1"/>
+							<xs:maxLength value="1024"/>
+						</xs:restriction>
+					</xs:simpleType>
+				</xs:element>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<!-- Datos vehículo -->
+	<xs:element name="DatosConductor">
+		<xs:annotation>
+			<xs:documentation>Datos del coductor consultado</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:all>
+				<xs:element ref="FechaNacimiento" minOccurs="0"/>
+				<xs:element ref="Sexo" minOccurs="0"/>
+				<xs:element ref="Indicadores" minOccurs="1"/>
+				<xs:element ref="DomicilioDGT" minOccurs="0"/>
+				<xs:element ref="ListaIncidencias" minOccurs="0"/>
+				<xs:element ref="ListaPermisosVigentes" minOccurs="0"/>
+				<xs:element ref="ListaSanciones" minOccurs="0"/>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Indicadores">
+		<xs:annotation>
+			<xs:documentation>Indicadores específicos del conductor consultado</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:all>
+				<xs:element ref="AutorizadoMercanciasPeligrosas" minOccurs="0"/>
+				<xs:element ref="CondicionRestrictiva" minOccurs="0"/>
+				<xs:element ref="DireccionElectronicaVial"/>
+				<xs:element ref="Lentes" minOccurs="0"/>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="AutorizadoMercanciasPeligrosas">
+		<xs:annotation>
+			<xs:documentation>Indicador de autorización para transportar mercancías peligrosas</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:boolean"/>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="CondicionRestrictiva">
+		<xs:annotation>
+			<xs:documentation>XXXX</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:boolean"/>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="DireccionElectronicaVial">
+		<xs:annotation>
+			<xs:documentation>Indicador de si el conductor posee dirección electrónica víal</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:boolean"/>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Lentes">
+		<xs:annotation>
+			<xs:documentation>Indicador de la obligación de utilización de lentes correctivas</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:boolean"/>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="DomicilioDGT">
+		<xs:annotation>
+			<xs:documentation>Domicilio del titular del vehículo consultado en DGT</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:all>
+				<xs:element ref="NombreVia" minOccurs="0"/>
+				<xs:element ref="Provincia" minOccurs="0"/>
+				<xs:element name="Municipio" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>Nombre del municipio</xs:documentation>
+					</xs:annotation>
+					<xs:simpleType>
+						<xs:restriction base="xs:string">
+							<xs:minLength value="1"/>
+							<xs:maxLength value="50"/>
+							<xs:whiteSpace value="collapse"/>
+						</xs:restriction>
+					</xs:simpleType>
+				</xs:element>
+				<xs:element ref="Localidad" minOccurs="0"/>
+				<xs:element ref="CodigoPostal" minOccurs="0"/>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="NombreVia">
+		<xs:annotation>
+			<xs:documentation>Nombre de vía de la residencia del titular del vehículo consultado en DGT</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="70"/>
+				<xs:whiteSpace value="collapse"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Provincia">
+		<xs:annotation>
+			<xs:documentation>Provincia del domicilio</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:all>
+				<xs:element ref="Codigo" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>Código de la provincia</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element ref="Descripcion" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>Descripción de la provincia</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Localidad">
+		<xs:annotation>
+			<xs:documentation>Localidad de la residencia del titular del vehículo consultado en DGT</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="70"/>
+				<xs:whiteSpace value="collapse"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="CodigoPostal">
+		<xs:annotation>
+			<xs:documentation>Código postal de la dirección de la residencia del titular del vehículo consultado en DGT</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:int">
+				<xs:pattern value="\d{5}"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Codigo">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:whiteSpace value="collapse"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Descripcion">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:whiteSpace value="collapse"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="FechaNacimiento">
+		<xs:annotation>
+			<xs:documentation>Fecha de nacimiento del conductor consultado</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:date"/>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Sexo">
+		<xs:annotation>
+			<xs:documentation>Sexo del conductor consultado</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:whiteSpace value="collapse"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Conductor">
+		<xs:annotation>
+			<xs:documentation>Datos del conductor consultado</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:all>
+				<xs:element ref="FechaNacimiento" minOccurs="0"/>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="ListaIncidencias">
+		<xs:annotation>
+			<xs:documentation>Lista de incidencias del coductor consultado</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="Incidencia" minOccurs="1" maxOccurs="unbounded"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Incidencia">
+		<xs:annotation>
+			<xs:documentation>Datos de la incidencia del coductor consultado</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:all>
+				<xs:element ref="Anotacion" minOccurs="0"/>
+				<xs:element ref="Documento" minOccurs="0"/>
+				<xs:element ref="Fecha" minOccurs="0"/>
+				<xs:element ref="Jefatura" minOccurs="0"/>
+				<xs:element ref="Sucursal" minOccurs="0"/>
+				<xs:element ref="Tipo" minOccurs="0"/>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Anotacion">
+		<xs:annotation>
+			<xs:documentation>XXXXX</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:whiteSpace value="collapse"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Documento">
+		<xs:annotation>
+			<xs:documentation>XXXXX</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:whiteSpace value="collapse"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Fecha">
+		<xs:annotation>
+			<xs:documentation>Fecha de la incidencia</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:date"/>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Jefatura">
+		<xs:annotation>
+			<xs:documentation>Jefatura XXXX</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:all>
+				<xs:element ref="Codigo" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>Código de la jefatura XXXX</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element ref="Descripcion" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>Descripción de la jefatura XXXX</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Sucursal">
+		<xs:annotation>
+			<xs:documentation>Sucursal XXXX</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:all>
+				<xs:element ref="Codigo" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>Código de la sucursal XXXX</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element ref="Descripcion" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>Descripción de la sucursal XXXX</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Tipo">
+		<xs:annotation>
+			<xs:documentation>Tipo de incidencia</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:all>
+				<xs:element ref="Codigo" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>Código del tipo de incidencia</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element ref="Descripcion" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>Descripción del tipo de incidencia</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="ListaPermisosVigentes">
+		<xs:annotation>
+			<xs:documentation>Lista de los permisos vigentes del conductor consultado</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="Permiso" minOccurs="1" maxOccurs="unbounded"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Permiso">
+		<xs:annotation>
+			<xs:documentation>Datos del permiso de conducir del conductor consultado</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:all>
+				<xs:element ref="TipoPermiso" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>Documentación del arrendatario del vehículo consultado</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element ref="FechaInicio" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>Fecha de inicio del permiso de conducir</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element ref="FechaFin" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>Fecha de fin del permiso de conducir</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="TipoPermiso">
+		<xs:annotation>
+			<xs:documentation>Tipo de permiso de conducir del conductor consultado</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:all>
+				<xs:element ref="Codigo" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>Código del tipo permiso de conducir</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element ref="Descripcion" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>Descripción del tipo permiso de conducir</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="FechaInicio">
+		<xs:simpleType>
+			<xs:restriction base="xs:date"/>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="FechaFin">
+		<xs:simpleType>
+			<xs:restriction base="xs:date"/>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="ListaSanciones">
+		<xs:annotation>
+			<xs:documentation>Lista de sanciones del coductor consultado</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="Sancion" minOccurs="1" maxOccurs="unbounded"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Sancion">
+		<xs:annotation>
+			<xs:documentation>Datos de la sanción del coductor consultado</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:all>
+				<xs:element ref="AutoridadSancionadora" minOccurs="0"/>
+				<xs:element ref="Expediente" minOccurs="0"/>
+				<xs:element ref="Fecha" minOccurs="0"/>
+				<xs:element ref="FechaFin" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>Fecha de finalización de la sanción</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element ref="TipoSancion" minOccurs="0"/>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="AutoridadSancionadora">
+		<xs:annotation>
+			<xs:documentation>Autoridad que ha realizado la sanción</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:all>
+				<xs:element ref="Codigo" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>Código de la autoridad sancionadora</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element ref="Descripcion" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>Descripción de la autoridad sancionadora</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Expediente">
+		<xs:annotation>
+			<xs:documentation>Expediente de la sanción</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:whiteSpace value="collapse"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="TipoSancion">
+		<xs:annotation>
+			<xs:documentation>Tipo de sanción</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:all>
+				<xs:element ref="Codigo" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>Código del tipo de sanción</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element ref="Descripcion" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>Descripción del tipo de sanción</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+</xs:schema>

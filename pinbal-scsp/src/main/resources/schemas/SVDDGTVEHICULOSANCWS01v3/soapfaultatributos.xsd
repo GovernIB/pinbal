@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<xs:schema xmlns="http://intermediacion.redsara.es/scsp/esquemas/V3/confirmacionPeticion" xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://intermediacion.redsara.es/scsp/esquemas/V3/confirmacionPeticion" elementFormDefault="qualified" attributeFormDefault="unqualified">
+<xs:schema xmlns="http://intermediacion.redsara.es/scsp/esquemas/V3/soapfaultatributos" xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://intermediacion.redsara.es/scsp/esquemas/V3/soapfaultatributos" elementFormDefault="qualified" attributeFormDefault="unqualified">
 	<xs:element name="Atributos">
 		<xs:complexType>
 			<xs:all>
@@ -14,7 +14,7 @@
 	<xs:element name="CodigoCertificado">
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
-				<xs:enumeration value="SVDSCDWS01"/>
+				<xs:maxLength value="64"/>
 			</xs:restriction>
 		</xs:simpleType>
 	</xs:element>
@@ -32,29 +32,10 @@
 			</xs:restriction>
 		</xs:simpleType>
 	</xs:element>
-	<xs:element name="ConfirmacionPeticion">
-		<xs:complexType>
-			<xs:all>
-				<xs:element ref="Atributos"/>
-			</xs:all>
-		</xs:complexType>
-	</xs:element>
-	<xs:element name="Estado">
-		<xs:complexType>
-			<xs:all>
-				<xs:element ref="CodigoEstado" minOccurs="0"/>
-				<xs:element ref="CodigoEstadoSecundario" minOccurs="0"/>
-				<xs:element ref="LiteralError" minOccurs="0"/>
-				<xs:element ref="TiempoEstimadoRespuesta" minOccurs="0"/>
-			</xs:all>
-		</xs:complexType>
-	</xs:element>
 	<xs:element name="IdPeticion">
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
 				<xs:maxLength value="26"/>
-				<xs:minLength value="1"/>
-				<xs:whiteSpace value="collapse"/>
 			</xs:restriction>
 		</xs:simpleType>
 	</xs:element>
@@ -65,12 +46,18 @@
 			</xs:restriction>
 		</xs:simpleType>
 	</xs:element>
+	<xs:element name="LiteralErrorSec">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:maxLength value="255"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
 	<xs:element name="NumElementos">
 		<xs:simpleType>
 			<xs:restriction base="xs:int">
-				<xs:totalDigits value="4"/>
+				<xs:totalDigits value="7"/>
 				<xs:minInclusive value="0"/>
-				<xs:maxInclusive value="1000"/>
 			</xs:restriction>
 		</xs:simpleType>
 	</xs:element>
@@ -85,10 +72,19 @@
 	<xs:element name="TimeStamp">
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
-				<xs:minLength value="1"/>
 				<xs:maxLength value="29"/>
-				<xs:whiteSpace value="collapse"/>
 			</xs:restriction>
 		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Estado">
+		<xs:complexType>
+			<xs:all>
+				<xs:element ref="CodigoEstado" minOccurs="0"/>
+				<xs:element ref="CodigoEstadoSecundario" minOccurs="0"/>
+				<xs:element ref="LiteralError" minOccurs="0"/>
+				<xs:element ref="LiteralErrorSec" minOccurs="0"/>
+				<xs:element ref="TiempoEstimadoRespuesta" minOccurs="0"/>
+			</xs:all>
+		</xs:complexType>
 	</xs:element>
 </xs:schema>

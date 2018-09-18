@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<xs:schema xmlns="http://intermediacion.redsara.es/scsp/esquemas/V3/respuesta" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://intermediacion.redsara.es/scsp/esquemas/datosespecificos" targetNamespace="http://intermediacion.redsara.es/scsp/esquemas/V3/respuesta" elementFormDefault="qualified" attributeFormDefault="unqualified">
+<xs:schema xmlns="http://intermediacion.redsara.es/scsp/esquemas/V3/peticion" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://intermediacion.redsara.es/scsp/esquemas/datosespecificos" targetNamespace="http://intermediacion.redsara.es/scsp/esquemas/V3/peticion" elementFormDefault="qualified" attributeFormDefault="unqualified">
 	<xs:import namespace="http://intermediacion.redsara.es/scsp/esquemas/datosespecificos" schemaLocation="datos-especificos.xsd"/>
 	<xs:element name="Apellido1">
 		<xs:simpleType>
@@ -33,7 +33,8 @@
 	<xs:element name="CodigoCertificado">
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
-				<xs:enumeration value="SVDSCDWS01"/>
+				<!-- Código de certificado asignado por MINHAP -->
+				<xs:enumeration value="SVDSTESOROGARANTIASWS01"/>
 			</xs:restriction>
 		</xs:simpleType>
 	</xs:element>
@@ -64,7 +65,7 @@
 			<xs:all>
 				<xs:element ref="Emisor"/>
 				<xs:element ref="Solicitante"/>
-				<xs:element ref="Titular"/>
+				<xs:element ref="Titular" minOccurs="0"/>
 				<xs:element ref="Transmision"/>
 			</xs:all>
 		</xs:complexType>
@@ -72,9 +73,9 @@
 	<xs:element name="Documentacion">
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
-				<xs:maxLength value="10"/>
-				<xs:whiteSpace value="collapse"/>
 				<xs:minLength value="1"/>
+				<xs:maxLength value="14"/>
+				<xs:whiteSpace value="collapse"/>
 			</xs:restriction>
 		</xs:simpleType>
 	</xs:element>
@@ -100,8 +101,6 @@
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
 				<xs:maxLength value="29"/>
-				<xs:minLength value="1"/>
-				<xs:whiteSpace value="collapse"/>
 			</xs:restriction>
 		</xs:simpleType>
 	</xs:element>
@@ -195,8 +194,6 @@
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
 				<xs:maxLength value="29"/>
-				<xs:minLength value="1"/>
-				<xs:whiteSpace value="collapse"/>
 			</xs:restriction>
 		</xs:simpleType>
 	</xs:element>
@@ -210,7 +207,7 @@
 	<xs:element name="NifEmisor">
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
-				<xs:enumeration value="S2833002E"/>
+				<xs:enumeration value="S2826011E"/>
 			</xs:restriction>
 		</xs:simpleType>
 	</xs:element>
@@ -246,8 +243,8 @@
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
 				<xs:maxLength value="122"/>
-				<xs:whiteSpace value="collapse"/>
 				<xs:minLength value="1"/>
+				<xs:whiteSpace value="collapse"/>
 			</xs:restriction>
 		</xs:simpleType>
 	</xs:element>
@@ -273,17 +270,17 @@
 		<xs:simpleType>
 			<xs:restriction base="xs:int">
 				<xs:totalDigits value="4"/>
-				<xs:minInclusive value="0"/>
+				<xs:minInclusive value="1"/>
 				<xs:maxInclusive value="1000"/>
 			</xs:restriction>
 		</xs:simpleType>
 	</xs:element>
-	<xs:element name="Respuesta">
+	<xs:element name="Peticion">
 		<xs:complexType>
-			<xs:sequence>
+			<xs:all>
 				<xs:element ref="Atributos"/>
-				<xs:element ref="Transmisiones" minOccurs="0"/>
-			</xs:sequence>
+				<xs:element ref="Solicitudes"/>
+			</xs:all>
 		</xs:complexType>
 	</xs:element>
 	<xs:element name="Solicitante">
@@ -297,6 +294,22 @@
 				<xs:element ref="Consentimiento"/>
 				<xs:element ref="Funcionario"/>
 				<xs:element ref="IdExpediente" minOccurs="0"/>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Solicitudes">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="SolicitudTransmision" maxOccurs="unbounded"/>
+			</xs:sequence>
+			<xs:attribute name="Id" type="xs:string" use="optional"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="SolicitudTransmision">
+		<xs:complexType>
+			<xs:all>
+				<xs:element ref="DatosGenericos"/>
+				<xs:element ref="ns1:DatosEspecificos" minOccurs="0"/>
 			</xs:all>
 		</xs:complexType>
 	</xs:element>
@@ -320,7 +333,7 @@
 	<xs:element name="TipoDocumentacion">
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
-				<xs:enumeration value="NIF"/>
+				<xs:enumeration value="DNI"/>
 				<xs:enumeration value="NIE"/>
 			</xs:restriction>
 		</xs:simpleType>
@@ -328,8 +341,8 @@
 	<xs:element name="Titular">
 		<xs:complexType>
 			<xs:sequence>
-				<xs:element ref="TipoDocumentacion"/>
-				<xs:element ref="Documentacion"/>
+				<xs:element ref="TipoDocumentacion" minOccurs="0"/>
+				<xs:element ref="Documentacion" minOccurs="0"/>
 				<xs:element ref="NombreCompleto" minOccurs="0"/>
 				<xs:element ref="Nombre" minOccurs="0"/>
 				<xs:element ref="Apellido1" minOccurs="0"/>
@@ -342,25 +355,9 @@
 			<xs:all>
 				<xs:element ref="CodigoCertificado"/>
 				<xs:element ref="IdSolicitud"/>
-				<xs:element ref="IdTransmision"/>
-				<xs:element ref="FechaGeneracion"/>
+				<xs:element ref="IdTransmision" minOccurs="0"/>
+				<xs:element ref="FechaGeneracion" minOccurs="0"/>
 			</xs:all>
-		</xs:complexType>
-	</xs:element>
-	<xs:element name="TransmisionDatos">
-		<xs:complexType>
-			<xs:all>
-				<xs:element ref="DatosGenericos"/>
-				<xs:element ref="ns1:DatosEspecificos"/>
-			</xs:all>
-		</xs:complexType>
-	</xs:element>
-	<xs:element name="Transmisiones" nillable="false">
-		<xs:complexType>
-			<xs:sequence>
-				<xs:element ref="TransmisionDatos" maxOccurs="unbounded"/>
-			</xs:sequence>
-			<xs:attribute name="Id" type="xs:string" use="optional"/>
 		</xs:complexType>
 	</xs:element>
 </xs:schema>
