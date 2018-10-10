@@ -29,6 +29,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
  * 
  * @author Limit Tecnologies <limit@limit.es>
  */
+@SuppressWarnings("deprecation")
 @Entity
 @Table(name = "core_clave_privada")
 @EntityListeners(AuditingEntityListener.class)

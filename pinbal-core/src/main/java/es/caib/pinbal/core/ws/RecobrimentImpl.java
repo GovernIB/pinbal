@@ -197,13 +197,12 @@ public class RecobrimentImpl implements Recobriment {
 	@Override
 	public Respuesta getRespuesta(
 			String idpeticion) throws ScspException {
-		throw getErrorValidacio(
-				"0227",
-				"Mètode no implementat");
+		return recuperarRespuestaScsp(idpeticion);
 	}
 
 
 
+	@SuppressWarnings("incomplete-switch")
 	private List<RecobrimentSolicitudDto> validarIObtenirSolicituds(
 			Peticion peticion,
 			int maxSolicituds) throws ScspException {
