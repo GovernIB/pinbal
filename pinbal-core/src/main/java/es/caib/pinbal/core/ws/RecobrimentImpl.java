@@ -200,6 +200,15 @@ public class RecobrimentImpl implements Recobriment {
 		return recuperarRespuestaScsp(idpeticion);
 	}
 
+	@Override
+	public byte[] getJustificante(
+			String idpeticion,
+			String idsolicitud) throws ScspException {
+		throw getErrorValidacio(
+				"0227",
+				"Mètode no implementat");
+	}
+
 
 
 	@SuppressWarnings("incomplete-switch")
