@@ -30,6 +30,7 @@ import org.w3c.dom.Element;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
+import es.caib.pinbal.core.dto.ArxiuDto;
 import es.caib.pinbal.core.dto.ConsultaDto;
 import es.caib.pinbal.core.dto.ConsultaDto.Consentiment;
 import es.caib.pinbal.core.dto.ConsultaDto.DocumentTipus;
@@ -39,6 +40,7 @@ import es.caib.pinbal.core.service.ConsultaService;
 import es.caib.pinbal.core.service.ConsultaServiceImpl;
 import es.caib.pinbal.core.service.exception.ConsultaNotFoundException;
 import es.caib.pinbal.core.service.exception.EntitatNotFoundException;
+import es.caib.pinbal.core.service.exception.JustificantGeneracioException;
 import es.caib.pinbal.core.service.exception.ProcedimentNotFoundException;
 import es.caib.pinbal.core.service.exception.ProcedimentServeiNotFoundException;
 import es.caib.pinbal.core.service.exception.ServeiNotAllowedException;
@@ -72,8 +74,6 @@ public class RecobrimentImpl implements Recobriment {
 
 	@Autowired
 	private ConsultaService consultaService;
-
-
 
 	@Override
 	public Respuesta peticionSincrona(
@@ -204,9 +204,21 @@ public class RecobrimentImpl implements Recobriment {
 	public byte[] getJustificante(
 			String idpeticion,
 			String idsolicitud) throws ScspException {
-		throw getErrorValidacio(
-				"0227",
-				"Mètode no implementat");
+		try {
+			ArxiuDto arxiu = consultaService.obtenirJustificant(
+					idpeticion,
+					idsolicitud);
+			return arxiu.getContingut();
+		} catch (ConsultaNotFoundException ex) {
+			throw getErrorValidacio(
+					"0227",
+					"No s'ha trobat la sol·licitud");
+		} catch (JustificantGeneracioException ex) {
+			LOGGER.error("Error en la generació del justificant", ex);
+			throw getErrorValidacio(
+					"0227",
+					"Error en la generació del justificant: " + ExceptionUtils.getStackTrace(ex));
+		}
 	}
 
 
