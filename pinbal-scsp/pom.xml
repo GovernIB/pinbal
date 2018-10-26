@@ -91,6 +91,22 @@
 					<groupId>javax.servlet</groupId>
 					<artifactId>servlet-api</artifactId>
 				</exclusion>
+				<exclusion>
+					<groupId>org.apache.geronimo.specs</groupId>
+					<artifactId>
+						geronimo-activation_1.1_spec
+					</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.apache.geronimo.specs</groupId>
+					<artifactId>geronimo-stax-api_1.0_spec</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.apache.geronimo.specs</groupId>
+					<artifactId>
+						geronimo-ws-metadata_2.0_spec
+					</artifactId>
+				</exclusion>
 			</exclusions>
 		</dependency>
 		<dependency>
@@ -98,10 +114,6 @@
 			<artifactId>axis2-transport-local</artifactId>
 			<version>${axis2.version}</version>
 			<exclusions>
-				<exclusion>
-					<artifactId>geronimo-jta_1.1_spec</artifactId>
-					<groupId>org.apache.geronimo.specs</groupId>
-				</exclusion>
 				<exclusion>
 					<artifactId>xercesImpl</artifactId>
 					<groupId>xerces</groupId>

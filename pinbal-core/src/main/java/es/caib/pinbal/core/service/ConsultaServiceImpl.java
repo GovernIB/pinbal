@@ -876,6 +876,54 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 		}
 	}
 
+	@Override
+	public ArxiuDto obtenirJustificant(String idpeticion, String idsolicitud)
+			throws ConsultaNotFoundException, JustificantGeneracioException {
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		LOGGER.debug("Generant justificant per a la consulta (" +
+				"idpeticion=" + idpeticion + ", " +
+				"idsolicitud=" + idsolicitud + ")");
+		copiarPropertiesToDb();
+		Consulta consulta = consultaRepository.findByScspPeticionIdAndScspSolicitudId(
+				idpeticion,
+				idsolicitud);
+		if (consulta == null) {
+			LOGGER.error("No s'ha trobat la consulta (" +
+					"idpeticion=" + idpeticion + ", " +
+					"idsolicitud=" + idsolicitud + ")");
+			throw new ConsultaNotFoundException();
+		}
+		if (!auth.getName().equals(consulta.getCreatedBy().getCodi())) {
+			LOGGER.error("La consulta (" +
+					"idpeticion=" + idpeticion + ", " +
+					"idsolicitud=" + idsolicitud + ") no pertany a aquest usuari");
+			throw new ConsultaNotFoundException();
+		}
+		ResultatEnviamentPeticio resultat;
+		try {
+			resultat = getScspHelper().recuperarResultatEnviamentPeticio(consulta.getScspPeticionId());
+		} catch (Exception ex) {
+			LOGGER.error("No s'ha pogut recuperar l'estat de la consulta (" +
+					"idpeticion=" + idpeticion + ", " +
+					"idsolicitud=" + idsolicitud + ")", ex);
+			throw new JustificantGeneracioException();
+		}
+		if (resultat.isError()) {
+			LOGGER.error("La consulta (" +
+					"idpeticion=" + idpeticion + ", " +
+					"idsolicitud=" + idsolicitud + ") conté errors");
+			throw new ConsultaNotFoundException();
+		}
+		try {
+			return obtenirJustificantConsulta(consulta);
+		} catch (Exception ex) {
+			LOGGER.error("Error al obtenir el justificant de la consulta (" +
+					"idpeticion=" + idpeticion + ", " +
+					"idsolicitud=" + idsolicitud + ")", ex);
+			throw new JustificantGeneracioException(ex.getMessage(), ex);
+		}
+	}
+
 	@Transactional(rollbackFor = {ConsultaNotFoundException.class, JustificantGeneracioException.class})
 	@Override
 	public ArxiuDto obtenirJustificantMultipleConcatenat(

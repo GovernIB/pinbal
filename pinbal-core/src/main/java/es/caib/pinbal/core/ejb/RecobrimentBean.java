@@ -85,6 +85,16 @@ public class RecobrimentBean implements Recobriment {
 		return delegate.getRespuesta(idpeticion);
 	}
 
+	@Override
+	public byte[] getJustificante(
+			String idpeticion,
+			String idsolicitud) throws ScspException {
+		propagarUsuariAutenticat();
+		return delegate.getJustificante(
+				idpeticion,
+				idsolicitud);
+	}
+
 
 
 	private ScspException getErrorValidacio(

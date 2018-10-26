@@ -284,6 +284,9 @@ public interface ConsultaRepository extends JpaRepository<Consulta, Long> {
 	public List<Object[]> countGroupByProcedimentServeiEstat(
 			@Param("dataInici") Date dataInici,
 			@Param("dataFi") Date dataFi);
-	
+
+	public Consulta findByScspPeticionIdAndScspSolicitudId(
+			String scspPeticionId,
+			String scspSolicitudId);
 
 }

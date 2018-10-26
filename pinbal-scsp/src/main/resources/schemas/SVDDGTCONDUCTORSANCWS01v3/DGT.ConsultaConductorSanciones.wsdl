@@ -1,0 +1,51 @@
+<definitions xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:wsdl="http://intermediacion.redsara.es/scsp/wsdl" 
+xmlns:pet="http://intermediacion.redsara.es/scsp/esquemas/V3/peticion" 
+xmlns:resp="http://intermediacion.redsara.es/scsp/esquemas/V3/respuesta" 
+xmlns:sf="http://intermediacion.redsara.es/scsp/esquemas/V3/soapfaultatributos"  
+xmlns:desp="http://intermediacion.redsara.es/scsp/esquemas/datosespecificos" 
+xmlns:ds="http://www.w3.org/2000/09/xmldsig#" targetNamespace="http://intermediacion.redsara.es/scsp/wsdl">
+	<types>
+		<xsd:schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+			<xsd:import namespace="http://intermediacion.redsara.es/scsp/esquemas/datosespecificos" schemaLocation="datos-especificos.xsd"/>
+			<xsd:import namespace="http://intermediacion.redsara.es/scsp/esquemas/V3/peticion" schemaLocation="peticion.xsd"/>		
+			<xsd:import namespace="http://intermediacion.redsara.es/scsp/esquemas/V3/respuesta" schemaLocation="respuesta.xsd"/>			
+			<xsd:import namespace="http://intermediacion.redsara.es/scsp/esquemas/V3/soapfaultatributos" schemaLocation="soapfaultatributos.xsd"/>
+		</xsd:schema>
+	</types>
+	<message name="peticionMessage">
+		<part name="Peticion" element="pet:Peticion"/>
+	</message>
+	<message name="respuestaMessage">
+		<part name="Respuesta" element="resp:Respuesta"/>
+	</message>
+	<message name="faultSCSPMessage">
+		<part name="fault" element="sf:Atributos"/>
+	</message>
+	<portType name="DGTConsultaConductorSancionesPort">
+		<operation name="peticionSincrona">
+			<input message="wsdl:peticionMessage"/>
+			<output message="wsdl:respuestaMessage"/>
+			<fault name="FaultSCSP" message="wsdl:faultSCSPMessage"/>
+		</operation>
+	</portType>
+	<binding name="DGTConsultaConductorSancionesBinding" type="wsdl:DGTConsultaConductorSancionesPort">
+		<soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+		<operation name="peticionSincrona">
+			<soap:operation soapAction="peticionSincrona" style="document"/>
+			<input>
+				<soap:body use="literal"/>
+			</input>
+			<output>
+				<soap:body use="literal"/>
+			</output>
+			<fault name="FaultSCSP">
+				<soap:fault name="FaultSCSP" use="literal"/>
+			</fault>
+		</operation>
+	</binding>
+	<service name="DGT.ConsultaConductorSanciones">
+		<port name="DGT.ConsultaConductorSanciones" binding="wsdl:DGTConsultaConductorSancionesBinding">
+			<soap:address location="https://intermediacion.redsara.es/servicios/SVD/DGT.ConsultaConductorSanciones"/>
+		</port>
+	</service>
+</definitions>

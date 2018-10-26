@@ -1,0 +1,374 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- edited with XMLSpy v2011 sp1 (http://www.altova.com) by End User (free.org) -->
+<xs:schema xmlns="http://intermediacion.redsara.es/scsp/esquemas/datosespecificos" xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://intermediacion.redsara.es/scsp/esquemas/datosespecificos" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<xs:element name="DatosEspecificos" type="DatosEspecificos"/>
+	<xs:complexType name="DatosEspecificos">
+		<xs:choice>
+			<xs:element ref="Consulta">
+				<xs:annotation>
+					<xs:documentation>Solo en el mensaje PETICION</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element ref="Retorno">
+				<xs:annotation>
+					<xs:documentation>Solo en el mensaje RESPUESTA</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:choice>
+		<xs:attribute name="Id" type="xs:string" use="optional"/>
+	</xs:complexType>
+	<xs:element name="Consulta">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="ClaseGarantia" minOccurs="0"/>
+				<xs:element ref="Expediente" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>Expediente por el que se van a consultar las garantías</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element ref="ConVivo" minOccurs="0"/>
+				<xs:element ref="FechaConstitucionDesde" minOccurs="0"/>
+				<xs:element ref="FechaConstitucionHasta" minOccurs="0"/>
+				<xs:element ref="ImporteDesde" minOccurs="0"/>
+				<xs:element ref="ImporteHasta" minOccurs="0"/>
+				<xs:element ref="NifGarante" minOccurs="0"/>
+				<xs:element ref="NifGarantizado" minOccurs="0"/>
+				<xs:element ref="NumeroDepositoSIC" minOccurs="0"/>
+				<xs:element ref="Sucursal" minOccurs="0"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Retorno">
+		<xs:complexType>
+			<xs:all>
+				<xs:element ref="Estado"/>
+				<xs:element ref="Garantias" minOccurs="0"/>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="FechaConstitucionDesde" type="xs:date">
+		<xs:annotation>
+			<xs:documentation>Fecha de constitución desde de la que se van a consultar garantías formato: YYYY-MM-DD</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="FechaConstitucionHasta" type="xs:date">
+		<xs:annotation>
+			<xs:documentation>Fecha de constitución desde de la que se van a consultar garantías formato: YYYY-MM-DD</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="ImporteDesde" type="xs:decimal">
+		<xs:annotation>
+			<xs:documentation>Importe de constitución desde de el que se va a consultar las garantías</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="ImporteHasta" type="xs:decimal">
+		<xs:annotation>
+			<xs:documentation>Importe de constitución hasta el que se va a consultar las garantías</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="NifGarante">
+		<xs:annotation>
+			<xs:documentation>NIF del garante por el que se van a consultar las garantías</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:length value="9"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="NifGarantizado">
+		<xs:annotation>
+			<xs:documentation>NIF del garantizado por el que se van a consultar las garantías</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:length value="9"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Expediente">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="20"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="ClaseGarantia">
+		<xs:annotation>
+			<xs:documentation>Código del tipo de forma de constitución de la garantía según los valores de CODICE</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:int">
+				<xs:enumeration value="1"/>
+				<xs:enumeration value="2"/>
+				<xs:enumeration value="4"/>
+				<xs:enumeration value="6"/>
+				<xs:enumeration value="7"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="NumeroDepositoSIC">
+		<xs:annotation>
+			<xs:documentation>Número de depósito SIC de la garantía</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="20"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Sucursal">
+		<xs:annotation>
+			<xs:documentation>Código de la oficina en la que se presentó y constituyó la(s) garantía(s)</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:pattern value="\d{5}"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="ConVivo">
+		<xs:annotation>
+			<xs:documentation>Indica si las garantías a buscar deben de tener aún importe vivo o no</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:boolean"/>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Garantias">
+		<xs:annotation>
+			<xs:documentation>Listado de garantías obtenidas</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="Garantia" maxOccurs="unbounded"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="FechaConstitucion" type="xs:date">
+		<xs:annotation>
+			<xs:documentation>Fecha de constitución de la garantía. Formato YYYY-MM-DD</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="Estado">
+		<xs:complexType>
+			<xs:all>
+				<xs:element ref="CodigoEstado"/>
+				<xs:element ref="CodigoEstadoSecundario" minOccurs="0"/>
+				<xs:element ref="LiteralError"/>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="CodigoEstado">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:maxLength value="4"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="CodigoEstadoSecundario">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:maxLength value="16"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="LiteralError">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:maxLength value="255"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Garantia">
+		<xs:annotation>
+			<xs:documentation>Datos de la garantía</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:all>
+				<xs:element ref="NumeroDepositoSIC"/>
+				<xs:element ref="Expediente" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>Expediente de la garantía devuelta</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element ref="FechaConstitucion"/>
+				<xs:element ref="TipoGarantia" minOccurs="1"/>
+				<xs:element ref="Finalidad"/>
+				<xs:element ref="Importe"/>
+				<xs:element ref="CodigoConstitucion"/>
+				<xs:element ref="Situacion"/>
+				<xs:element ref="Sucursal"/>
+				<xs:element ref="Ejercicio"/>
+				<xs:element ref="Normativa"/>
+				<xs:element ref="Garante"/>
+				<xs:element ref="Garantizado"/>
+				<xs:element ref="Beneficiario"/>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Normativa">
+		<xs:annotation>
+			<xs:documentation>Información de la normativa que impone la constitución de esta garantía</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:all>
+				<xs:element ref="Codigo">
+					<xs:annotation>
+						<xs:documentation>Código de la norma</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element ref="Nombre">
+					<xs:annotation>
+						<xs:documentation>Nombre de la norma</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Garante">
+		<xs:annotation>
+			<xs:documentation>Información del garante de la garantía</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:all>
+				<xs:element ref="NIF">
+					<xs:annotation>
+						<xs:documentation>NIF del garante de la garantía</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element ref="Nombre">
+					<xs:annotation>
+						<xs:documentation>Nombre del garante de la garantía</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Garantizado">
+		<xs:annotation>
+			<xs:documentation>Información del garantizado de la garantía</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:all>
+				<xs:element ref="NIF">
+					<xs:annotation>
+						<xs:documentation>NIF del garantizado de la garantía</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element ref="Nombre">
+					<xs:annotation>
+						<xs:documentation>Nombre del garantizado de la garantía</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Beneficiario">
+		<xs:annotation>
+			<xs:documentation>Información del beneficiario de la garantía</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:all>
+				<xs:element ref="NIF">
+					<xs:annotation>
+						<xs:documentation>NIF del beneficiario de la garantía</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element ref="Nombre">
+					<xs:annotation>
+						<xs:documentation>Nombre del beneficiario de la garantía</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Nombre">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:maxLength value="250"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="NIF">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:maxLength value="9"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Codigo">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:maxLength value="10"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Finalidad">
+		<xs:annotation>
+			<xs:documentation>Finalidad de la garantía</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:maxLength value="250"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Importe">
+		<xs:annotation>
+			<xs:documentation>Importe de constitución en Euros</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:decimal">
+				<xs:fractionDigits value="2"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="CodigoConstitucion">
+		<xs:annotation>
+			<xs:documentation>Código del tipo de forma de constitución de la garantía</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:int">
+				<xs:enumeration value="1"/>
+				<xs:enumeration value="2"/>
+				<xs:enumeration value="3"/>
+				<xs:enumeration value="4"/>
+				<xs:enumeration value="5"/>
+				<xs:enumeration value="6"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Situacion">
+		<xs:annotation>
+			<xs:documentation>Situación sobre si el importe de la garantía sigue vivo intégro o no</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:maxLength value="50"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Ejercicio">
+		<xs:annotation>
+			<xs:documentation>Año del ejercicio al que corresponde la garantía</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:gYear"/>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="TipoGarantia">
+		<xs:annotation>
+			<xs:documentation>Código de tipo de garantía con respecto a si es provisional o definitiva</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:int">
+				<xs:enumeration value="1"/>
+				<xs:enumeration value="2"/>
+				<xs:enumeration value="3"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+</xs:schema>

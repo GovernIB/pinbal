@@ -1,9 +1,12 @@
-<xs:schema targetNamespace="http://www.red.es/padron" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:ds="http://www.w3.org/2000/09/xmldsig#" xmlns="http://www.red.es/padron">
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:ds="http://www.w3.org/2000/09/xmldsig#" xmlns="http://www.red.es/padron" targetNamespace="http://www.red.es/padron">
 	<!-- Otros schemas -->
 	<xs:import namespace="http://www.w3.org/2000/09/xmldsig#" schemaLocation="xmldsig-core-schema.xsd"/>
 	<xs:include schemaLocation="VolanteEmpadronamientoTipos.xsd"/>
 	<!-- Element -->
 	<xs:element name="VolanteEmpadronamiento">
+		<xs:annotation>
+			<xs:documentation>Volante de Empadronamiento procedente del Ayuntamiento</xs:documentation>
+		</xs:annotation>
 		<xs:complexType>
 			<xs:sequence>
 				<xs:element ref="VolanteEmpadronamientoDatosFirmados"/>
@@ -13,17 +16,31 @@
 	</xs:element>
 	<!-- Elementos Referenciados-->
 	<xs:element name="VolanteEmpadronamientoDatosFirmados">
+		<xs:annotation>
+			<xs:documentation>Datos firmados del Volante de Empadronamiento</xs:documentation>
+		</xs:annotation>
 		<xs:complexType>
 			<xs:sequence>
 				<xs:element ref="FechaExpedicion"/>
 				<xs:element ref="DatosPersonales"/>
 				<xs:element ref="DireccionEmpadronamiento"/>
 			</xs:sequence>
-			<xs:attribute name="Id" type="tipo_id" use="required"/>
-			<xs:attribute name="Version" type="tipo_version" use="required" fixed="02.00"/>
+			<xs:attribute name="Id" type="tipo_id" use="required">
+				<xs:annotation>
+					<xs:documentation>Id de referencia del Volante de Empadronamiento</xs:documentation>
+				</xs:annotation>
+			</xs:attribute>
+			<xs:attribute name="Version" type="tipo_version" use="required" fixed="02.00">
+				<xs:annotation>
+					<xs:documentation>Versión del Volante de Empadronamiento</xs:documentation>
+				</xs:annotation>
+			</xs:attribute>
 		</xs:complexType>
 	</xs:element>
 	<xs:element name="Bloque">
+		<xs:annotation>
+			<xs:documentation>Bloque de la dirección de empadronamiento</xs:documentation>
+		</xs:annotation>
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
 				<xs:maxLength value="2"/>
@@ -31,6 +48,9 @@
 		</xs:simpleType>
 	</xs:element>
 	<xs:element name="CalificadorNumero">
+		<xs:annotation>
+			<xs:documentation>Calificador del número de la dirección de empadronamiento</xs:documentation>
+		</xs:annotation>
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
 				<xs:maxLength value="1"/>
@@ -38,15 +58,29 @@
 		</xs:simpleType>
 	</xs:element>
 	<xs:element name="CalificadorNumeroSuperior">
+		<xs:annotation>
+			<xs:documentation>Calificador del número superior de la dirección de empadronamiento</xs:documentation>
+		</xs:annotation>
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
 				<xs:maxLength value="1"/>
 			</xs:restriction>
 		</xs:simpleType>
 	</xs:element>
-	<xs:element name="CodigoMunicipio" type="tipo_codigoMunicipio"/>
-	<xs:element name="CodigoMunicipioNacimiento" type="tipo_codigoMunicipio"/>
+	<xs:element name="CodigoMunicipio" type="tipo_codigoMunicipio">
+		<xs:annotation>
+			<xs:documentation>Código INE del municipio de empadronamiento</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="CodigoMunicipioNacimiento" type="tipo_codigoMunicipio">
+		<xs:annotation>
+			<xs:documentation>Código INE del municipio de nacimiento</xs:documentation>
+		</xs:annotation>
+	</xs:element>
 	<xs:element name="CodigoNacionalidad">
+		<xs:annotation>
+			<xs:documentation>Código INE de la nacionalidad del titular</xs:documentation>
+		</xs:annotation>
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
 				<xs:pattern value="\d{1,3}"/>
@@ -54,6 +88,9 @@
 		</xs:simpleType>
 	</xs:element>
 	<xs:element name="CodigoPostal">
+		<xs:annotation>
+			<xs:documentation>Código postal de la dirección de empadronamiento</xs:documentation>
+		</xs:annotation>
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
 				<xs:minLength value="5"/>
@@ -61,16 +98,30 @@
 			</xs:restriction>
 		</xs:simpleType>
 	</xs:element>
-	<xs:element name="CodigoProvincia" type="tipo_codigoProvincia"/>
-	<xs:element name="CodigoProvinciaNacimiento" type="tipo_codigoProvincia"/>
+	<xs:element name="CodigoProvincia" type="tipo_codigoProvincia">
+		<xs:annotation>
+			<xs:documentation>Código INE de la provincia de empadronamiento</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="CodigoProvinciaNacimiento" type="tipo_codigoProvincia">
+		<xs:annotation>
+			<xs:documentation>Código INE de la provincia de nacimiento del titular</xs:documentation>
+		</xs:annotation>
+	</xs:element>
 	<xs:element name="CodigoUnidadPoblacional">
+		<xs:annotation>
+			<xs:documentation>Código de unidad poblacional de empadronamiento</xs:documentation>
+		</xs:annotation>
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
-				<xs:pattern value="\d{1,7}"/>
+				<xs:pattern value="\d{7}"/>
 			</xs:restriction>
 		</xs:simpleType>
 	</xs:element>
 	<xs:element name="DatosPersonales">
+		<xs:annotation>
+			<xs:documentation>Datos personales del titular</xs:documentation>
+		</xs:annotation>
 		<xs:complexType>
 			<xs:sequence>
 				<xs:element ref="Nombre"/>
@@ -90,6 +141,9 @@
 		</xs:complexType>
 	</xs:element>
 	<xs:element name="DireccionEmpadronamiento">
+		<xs:annotation>
+			<xs:documentation>Dirección de empadronamiento</xs:documentation>
+		</xs:annotation>
 		<xs:complexType>
 			<xs:sequence>
 				<xs:element ref="Localidad"/>
@@ -100,6 +154,9 @@
 		</xs:complexType>
 	</xs:element>
 	<xs:element name="Documentacion">
+		<xs:annotation>
+			<xs:documentation>Documentación del titular</xs:documentation>
+		</xs:annotation>
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
 				<xs:maxLength value="20"/>
@@ -107,16 +164,34 @@
 		</xs:simpleType>
 	</xs:element>
 	<xs:element name="Escalera">
+		<xs:annotation>
+			<xs:documentation>Escalera de la dirección de empadronamiento</xs:documentation>
+		</xs:annotation>
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
 				<xs:maxLength value="2"/>
 			</xs:restriction>
 		</xs:simpleType>
 	</xs:element>
-	<xs:element name="FechaExpedicion" type="tipo_fecha"/>
-	<xs:element name="FechaAltaPadron" type="tipo_fecha"/>
-	<xs:element name="FechaNacimiento" type="tipo_fecha"/>
+	<xs:element name="FechaExpedicion" type="tipo_fecha">
+		<xs:annotation>
+			<xs:documentation>Fecha de expedición del volante de empadronamiento, debe tener el formato AAAAMMDD</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="FechaAltaPadron" type="tipo_fecha">
+		<xs:annotation>
+			<xs:documentation>Fecha de Alta en el padron municipal, debe tener el formato AAAAMMDD</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="FechaNacimiento" type="tipo_fecha">
+		<xs:annotation>
+			<xs:documentation>Fecha de nacimiento del titular, debe tener el formato AAAAMMDD</xs:documentation>
+		</xs:annotation>
+	</xs:element>
 	<xs:element name="Hectometro">
+		<xs:annotation>
+			<xs:documentation>Hectómetro de la dirección de empadronamiento</xs:documentation>
+		</xs:annotation>
 		<xs:simpleType>
 			<xs:restriction base="xs:integer">
 				<xs:totalDigits value="1"/>
@@ -124,6 +199,9 @@
 		</xs:simpleType>
 	</xs:element>
 	<xs:element name="Kilometro">
+		<xs:annotation>
+			<xs:documentation>Kilómetro de la dirección de empadronamiento</xs:documentation>
+		</xs:annotation>
 		<xs:simpleType>
 			<xs:restriction base="xs:integer">
 				<xs:totalDigits value="3"/>
@@ -131,6 +209,9 @@
 		</xs:simpleType>
 	</xs:element>
 	<xs:element name="Localidad">
+		<xs:annotation>
+			<xs:documentation>Localidad de empadronamiento</xs:documentation>
+		</xs:annotation>
 		<xs:complexType>
 			<xs:sequence>
 				<xs:element ref="CodigoProvincia"/>
@@ -140,6 +221,9 @@
 		</xs:complexType>
 	</xs:element>
 	<xs:element name="Nombre">
+		<xs:annotation>
+			<xs:documentation>Nombre del titular</xs:documentation>
+		</xs:annotation>
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
 				<xs:maxLength value="40"/>
@@ -147,6 +231,9 @@
 		</xs:simpleType>
 	</xs:element>
 	<xs:element name="NombreVia">
+		<xs:annotation>
+			<xs:documentation>Nombre de la vía de la dirección de empadronamiento</xs:documentation>
+		</xs:annotation>
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
 				<xs:maxLength value="50"/>
@@ -154,6 +241,9 @@
 		</xs:simpleType>
 	</xs:element>
 	<xs:element name="Numeracion">
+		<xs:annotation>
+			<xs:documentation>Numeración de la dirección de empadronamiento</xs:documentation>
+		</xs:annotation>
 		<xs:complexType>
 			<xs:sequence>
 				<xs:element ref="Numero"/>
@@ -172,6 +262,9 @@
 		</xs:complexType>
 	</xs:element>
 	<xs:element name="Numero">
+		<xs:annotation>
+			<xs:documentation>Número de la dirección de empadronamiento</xs:documentation>
+		</xs:annotation>
 		<xs:simpleType>
 			<xs:restriction base="xs:integer">
 				<xs:totalDigits value="4"/>
@@ -179,15 +272,29 @@
 		</xs:simpleType>
 	</xs:element>
 	<xs:element name="NumeroSuperior">
+		<xs:annotation>
+			<xs:documentation>Número superior de la dirección de empadronamiento</xs:documentation>
+		</xs:annotation>
 		<xs:simpleType>
 			<xs:restriction base="xs:integer">
 				<xs:totalDigits value="4"/>
 			</xs:restriction>
 		</xs:simpleType>
 	</xs:element>
-	<xs:element name="ParticulaPrimerApellido" type="tipo_particulaApellido"/>
-	<xs:element name="ParticulaSegundoApellido" type="tipo_particulaApellido"/>
+	<xs:element name="ParticulaPrimerApellido" type="tipo_particulaApellido">
+		<xs:annotation>
+			<xs:documentation>Particula del primer apellido del titular</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="ParticulaSegundoApellido" type="tipo_particulaApellido">
+		<xs:annotation>
+			<xs:documentation>Partícual del segundo apellido del titular</xs:documentation>
+		</xs:annotation>
+	</xs:element>
 	<xs:element name="Planta">
+		<xs:annotation>
+			<xs:documentation>Planta de la dirección de empadronamiento</xs:documentation>
+		</xs:annotation>
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
 				<xs:maxLength value="3"/>
@@ -195,6 +302,9 @@
 		</xs:simpleType>
 	</xs:element>
 	<xs:element name="Portal">
+		<xs:annotation>
+			<xs:documentation>Portal de la dirección de empadronamiento</xs:documentation>
+		</xs:annotation>
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
 				<xs:maxLength value="2"/>
@@ -202,6 +312,9 @@
 		</xs:simpleType>
 	</xs:element>
 	<xs:element name="PrimerApellido">
+		<xs:annotation>
+			<xs:documentation>Primer apellido del titular</xs:documentation>
+		</xs:annotation>
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
 				<xs:maxLength value="40"/>
@@ -209,6 +322,9 @@
 		</xs:simpleType>
 	</xs:element>
 	<xs:element name="Pseudovia">
+		<xs:annotation>
+			<xs:documentation>Pseudovía de la dirección de empadronamiento</xs:documentation>
+		</xs:annotation>
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
 				<xs:maxLength value="50"/>
@@ -216,6 +332,9 @@
 		</xs:simpleType>
 	</xs:element>
 	<xs:element name="Puerta">
+		<xs:annotation>
+			<xs:documentation>Puerta de la dirección de empadronamiento</xs:documentation>
+		</xs:annotation>
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
 				<xs:maxLength value="4"/>
@@ -223,15 +342,32 @@
 		</xs:simpleType>
 	</xs:element>
 	<xs:element name="SegundoApellido">
+		<xs:annotation>
+			<xs:documentation>Segundo apellido del titular</xs:documentation>
+		</xs:annotation>
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
 				<xs:maxLength value="40"/>
 			</xs:restriction>
 		</xs:simpleType>
 	</xs:element>
-	<xs:element name="Sexo" type="tipo_sexo"/>
-	<xs:element name="TipoDocumentacion" type="tipo_tipoDocumentacion"/>
+	<xs:element name="Sexo" type="tipo_sexo">
+		<xs:annotation>
+			<xs:documentation>Sexo del titular M (Masculino) o F (Femenino)</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="TipoDocumentacion" type="tipo_tipoDocumentacion">
+		<xs:annotation>
+			<xs:documentation>Tipo de documentación del titular: 1 - Corresponde al NIF
+2 - Corresponde al Pasaporte
+3 - Corresponde al Permiso de residencia
+4 - Corresponde al NIE</xs:documentation>
+		</xs:annotation>
+	</xs:element>
 	<xs:element name="TipoLocal">
+		<xs:annotation>
+			<xs:documentation>Tipo de local de empadronamiento</xs:documentation>
+		</xs:annotation>
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
 				<xs:maxLength value="1"/>
@@ -239,6 +375,9 @@
 		</xs:simpleType>
 	</xs:element>
 	<xs:element name="TipoVia">
+		<xs:annotation>
+			<xs:documentation>Tipo de vía de la dirección de empadronamiento</xs:documentation>
+		</xs:annotation>
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
 				<xs:maxLength value="5"/>
@@ -246,6 +385,9 @@
 		</xs:simpleType>
 	</xs:element>
 	<xs:element name="Via">
+		<xs:annotation>
+			<xs:documentation>Vía de la dirección de empadronamiento</xs:documentation>
+		</xs:annotation>
 		<xs:complexType>
 			<xs:sequence>
 				<xs:element ref="TipoVia"/>

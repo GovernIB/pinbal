@@ -138,6 +138,14 @@ public class ConsultaServiceBean implements ConsultaService {
 	}
 
 	@Override
+	@RolesAllowed("PBL_WS")
+	public ArxiuDto obtenirJustificant(
+			String idpeticion,
+			String idsolicitud) throws ConsultaNotFoundException, JustificantGeneracioException {
+		return delegate.obtenirJustificant(idpeticion, idsolicitud);
+	}
+
+	@Override
 	@RolesAllowed("tothom")
 	public ArxiuDto obtenirJustificantMultipleConcatenat(
 			Long id) throws ConsultaNotFoundException, JustificantGeneracioException {
@@ -157,7 +165,7 @@ public class ConsultaServiceBean implements ConsultaService {
 			Long id) throws ConsultaNotFoundException, JustificantGeneracioException {
 		delegate.reintentarGeneracioJustificant(id);
 	}
-
+	
 	@Override
 	@RolesAllowed("tothom")
 	public PaginaLlistatDto<ConsultaDto> findSimplesByFiltrePaginatPerDelegat(
