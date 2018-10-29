@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>es.caib.pinbal</groupId>
 		<artifactId>pinbal</artifactId>
-		<version>1.4</version>
+		<version>${version.project}</version>
 	</parent>
 	<artifactId>pinbal-ear</artifactId>
 	<packaging>ear</packaging>
@@ -99,7 +99,13 @@
 						<artifactTypeMapping type="mar" mapping="jar" />
 					</artifactTypeMappings>
 					<defaultJavaBundleDir>lib/</defaultJavaBundleDir>
-					<!--skinnyWars>true</skinnyWars -->
+					<archive>
+						<manifestEntries>
+							<project-version>${version.full}</project-version>
+							<project-buildtime>${maven.build.timestamp}</project-buildtime>
+							<SCM-Revision>${git.commit.id}</SCM-Revision>
+						</manifestEntries>
+					</archive>
 				</configuration>
 			</plugin>
 		</plugins>

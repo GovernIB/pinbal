@@ -3,6 +3,8 @@
  */
 package es.caib.pinbal.core.ejb;
 
+import java.io.IOException;
+
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.Stateless;
 import javax.interceptor.Interceptors;
@@ -25,11 +27,9 @@ public class VersioServiceBean implements VersioService {
 	@Autowired
 	VersioService delegate;
 
-
-
 	@Override
 	@RolesAllowed({"PBL_ADMIN", "PBL_REPRES", "PBL_AUDIT", "PBL_SUPERAUD", "PBL_WS", "tothom"})
-	public String getVersioActual() {
+	public String getVersioActual() throws IOException {
 		return delegate.getVersioActual();
 	}
 

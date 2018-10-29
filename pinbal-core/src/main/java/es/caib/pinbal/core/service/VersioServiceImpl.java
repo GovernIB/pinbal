@@ -4,8 +4,8 @@
 package es.caib.pinbal.core.service;
 
 import java.io.IOException;
+import java.util.Properties;
 
-import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -18,21 +18,21 @@ import org.springframework.stereotype.Service;
 @Service
 public class VersioServiceImpl implements VersioService {
 
-	private String version;
+	private Properties versionProperties;
 
 	@Override
-	public String getVersioActual() {
+	public String getVersioActual() throws IOException {
 		LOGGER.debug("Obtenint versió actual de l'aplicació");
-		if (version == null) {
-			try {
-				version = IOUtils.toString(
-						getClass().getResourceAsStream("versio"),
-						"UTF-8");
-			} catch (IOException e) {
-				version = "???";
-			}
+		return getProperties().getProperty("app.version"); // 1.4.13
+	}
+
+	private Properties getProperties() throws IOException {
+		if (versionProperties == null) {
+			versionProperties = new Properties();
+			versionProperties.load(
+					getClass().getResourceAsStream("version.properties"));
 		}
-		return version;
+		return versionProperties;
 	}
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(VersioServiceImpl.class);

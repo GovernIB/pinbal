@@ -3,6 +3,8 @@
  */
 package es.caib.pinbal.core.service;
 
+import java.io.IOException;
+
 import org.springframework.security.access.prepost.PreAuthorize;
 
 /**
@@ -18,6 +20,6 @@ public interface VersioService {
 	 * @return La versió actual.
 	 */
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_REPRES') or hasRole('ROLE_DELEG') or hasRole('ROLE_AUDIT') or hasRole('ROLE_SUPERAUD') or hasRole('ROLE_WS')")
-	public String getVersioActual();
+	public String getVersioActual() throws IOException;
 
 }
