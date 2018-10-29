@@ -30,7 +30,8 @@ public class VersioServiceImpl implements VersioService {
 		if (versionProperties == null) {
 			versionProperties = new Properties();
 			versionProperties.load(
-					getClass().getResourceAsStream("version.properties"));
+					getClass().getResourceAsStream(
+							"/es/caib/pinbal/core/version/version.properties"));
 		}
 		return versionProperties;
 	}
