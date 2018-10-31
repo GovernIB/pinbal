@@ -25,12 +25,13 @@
 		<xdocreport.version>1.0.3</xdocreport.version>
 		<compiler.plugin.version>3.1</compiler.plugin.version>
 		<slf4j.version>1.7.7</slf4j.version>
+		<maven.test.skip>true</maven.test.skip>
 		<maven.compiler.source>1.6</maven.compiler.source>
 		<maven.compiler.target>1.6</maven.compiler.target>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<build.timestamp>${maven.build.timestamp}</build.timestamp>
 		<version.main>1.4</version.main>
-		<version.revision>13</version.revision>
+		<version.revision>14</version.revision>
 		<version.full>${version.main}.${version.revision}</version.full>
 		<version.project>${version.main}</version.project>
 	</properties>
@@ -82,22 +83,6 @@
 						<phase>deploy</phase>
 					</execution>
 				</executions>
-			</plugin>
-			<plugin>
-				<groupId>pl.project13.maven</groupId>
-				<artifactId>git-commit-id-plugin</artifactId>
-				<executions>
-					<execution>
-						<id>get-the-git-infos</id>
-						<goals>
-							<goal>revision</goal>
-						</goals>
-						<phase>validate</phase>
-					</execution>
-				</executions>
-				<configuration>
-					<dotGitDirectory>${project.basedir}/.git</dotGitDirectory>
-				</configuration>
 			</plugin>
 		</plugins>
 	</build>

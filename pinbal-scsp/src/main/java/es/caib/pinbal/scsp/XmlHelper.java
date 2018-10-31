@@ -97,12 +97,11 @@ public class XmlHelper {
 			final Servicio servicio, boolean gestioXsdActiva) throws Exception {
 		Tree<DadesEspecifiquesNode> tree = new Tree<DadesEspecifiquesNode>();
 		InputStream is;
-		if(gestioXsdActiva) {
+		if (gestioXsdActiva) {
 			is = getInputStreamXsdDadesEspecifiques(servicio, gestioXsdActiva);
-		}else {
+		} else {
 			is = getInputStreamXsdDadesEspecifiques(servicio);
 		}
-		
 		if (is != null) {
 			XmlSchemaCollection schemaCol = new XmlSchemaCollection();
 			schemaCol.setSchemaResolver(
@@ -299,10 +298,11 @@ public class XmlHelper {
 		long maxOccurs = element.getMaxOccurs();
 		DadesEspecifiquesNode dadesNode = new DadesEspecifiquesNode();
 		Node<DadesEspecifiquesNode> node = new Node<DadesEspecifiquesNode>(dadesNode);
-		if (!path.isEmpty())
+		if (!path.isEmpty()) {
 			dadesNode.setPath(pathToString(path) + "/" + element.getName());
-		else
+		} else {
 			dadesNode.setPath("/" + element.getName());
+		}
 		path.add(element.getName());
 		if (element.getSchemaType() instanceof XmlSchemaComplexType) {
 			XmlSchemaComplexType complexType = (XmlSchemaComplexType)element.getSchemaType();
