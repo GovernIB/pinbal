@@ -12,8 +12,8 @@
 <xs:element name="peticionSincronaResponse" type="tns:peticionSincronaResponse"/>
 <xs:complexType name="getJustificante">
 <xs:sequence>
-<xs:element minOccurs="0" name="idpeticion" type="xs:string"/>
-<xs:element minOccurs="0" name="idsolicitud" type="xs:string"/>
+<xs:element minOccurs="0" name="arg0" type="xs:string"/>
+<xs:element minOccurs="0" name="arg1" type="xs:string"/>
 </xs:sequence>
 </xs:complexType>
 <xs:complexType name="getJustificanteResponse">
@@ -23,7 +23,7 @@
 </xs:complexType>
 <xs:complexType name="getRespuesta">
 <xs:sequence>
-<xs:element minOccurs="0" name="idpeticion" type="xs:string"/>
+<xs:element minOccurs="0" name="arg0" type="xs:string"/>
 </xs:sequence>
 </xs:complexType>
 <xs:complexType name="getRespuestaResponse">
@@ -145,7 +145,7 @@
 </xs:complexType>
 <xs:complexType name="peticionAsincrona">
 <xs:sequence>
-<xs:element minOccurs="0" name="peticion" type="tns:peticion"/>
+<xs:element minOccurs="0" name="arg0" type="tns:peticion"/>
 </xs:sequence>
 </xs:complexType>
 <xs:complexType name="peticion">
@@ -178,7 +178,7 @@
 </xs:complexType>
 <xs:complexType name="peticionSincrona">
 <xs:sequence>
-<xs:element minOccurs="0" name="peticion" type="tns:peticion"/>
+<xs:element minOccurs="0" name="arg0" type="tns:peticion"/>
 </xs:sequence>
 </xs:complexType>
 <xs:complexType name="peticionSincronaResponse">

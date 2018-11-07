@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>es.caib.pinbal</groupId>
 	<artifactId>pinbal</artifactId>
-	<version>${version.project}</version>
+	<version>1.4</version>
 	<properties>
 		<spring.version>3.2.16.RELEASE</spring.version>
 		<spring-security.version>3.2.9.RELEASE</spring-security.version>
@@ -30,22 +30,20 @@
 		<maven.compiler.target>1.6</maven.compiler.target>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<build.timestamp>${maven.build.timestamp}</build.timestamp>
-		<version.main>1.4</version.main>
 		<version.revision>14</version.revision>
-		<version.full>${version.main}.${version.revision}</version.full>
-		<version.project>${version.main}</version.project>
+		<version.full>${project.version}.${version.revision}</version.full>
 	</properties>
 	<packaging>pom</packaging>
 	<url>https://github.com/GovernIB/pinbal</url>
 	<modules>
 		<module>pinbal-core</module>
-		<module>pinbal-webapp</module>
 		<module>pinbal-scsp</module>
-		<module>pinbal-ear</module>
 		<module>pinbal-core-client</module>
 		<module>pinbal-plugins-caib</module>
 		<module>pinbal-plugins</module>
 		<module>pinbal-ws-client</module>
+		<!--module>pinbal-webapp</module>
+		<module>pinbal-ear</module-->
 	</modules>
 	<build>
 		<plugins>
