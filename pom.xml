@@ -30,7 +30,7 @@
 		<maven.compiler.target>1.6</maven.compiler.target>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<build.timestamp>${maven.build.timestamp}</build.timestamp>
-		<version.revision>14</version.revision>
+		<version.revision>15</version.revision>
 		<version.full>${project.version}.${version.revision}</version.full>
 	</properties>
 	<packaging>pom</packaging>
@@ -42,8 +42,8 @@
 		<module>pinbal-plugins-caib</module>
 		<module>pinbal-plugins</module>
 		<module>pinbal-ws-client</module>
-		<!--module>pinbal-webapp</module>
-		<module>pinbal-ear</module-->
+		<module>pinbal-webapp</module>
+		<module>pinbal-ear</module>
 	</modules>
 	<build>
 		<plugins>

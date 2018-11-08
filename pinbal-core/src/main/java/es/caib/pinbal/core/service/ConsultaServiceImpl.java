@@ -110,7 +110,6 @@ import es.caib.pinbal.scsp.Resposta;
 import es.caib.pinbal.scsp.ResultatEnviamentPeticio;
 import es.caib.pinbal.scsp.ScspHelper;
 import es.caib.pinbal.scsp.Solicitud;
-import es.scsp.bean.common.Respuesta;
 import es.scsp.common.domain.core.EmisorCertificado;
 import es.scsp.common.domain.core.Servicio;
 import net.sf.jooreports.templates.DocumentTemplateException;
@@ -1619,12 +1618,6 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 	public boolean isOptimitzarTransaccionsNovaConsulta() {
 		LOGGER.debug("Consultant optimització transaccions en nova consulta");
 		return PropertiesHelper.getProperties().getAsBoolean("es.caib.pinbal.optimitzar.transaccions.nova.consulta");
-	}
-
-	@Transactional
-	public Respuesta recuperarRespuestaScsp(String peticionId) throws es.scsp.common.exceptions.ScspException {
-		LOGGER.debug("Recuperant resposta SCSP per recobriment(peticionId=" + peticionId + ")");
-		return getScspHelper().recuperarRespuestaScsp(peticionId);
 	}
 
 	@Transactional(readOnly = true)

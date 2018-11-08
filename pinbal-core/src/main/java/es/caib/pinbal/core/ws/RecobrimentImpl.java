@@ -23,7 +23,12 @@ import javax.xml.transform.stream.StreamResult;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
+import org.springframework.context.MessageSource;
+import org.springframework.context.MessageSourceAware;
 import org.springframework.stereotype.Service;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -37,13 +42,13 @@ import es.caib.pinbal.core.dto.ConsultaDto.DocumentTipus;
 import es.caib.pinbal.core.dto.RecobrimentSolicitudDto;
 import es.caib.pinbal.core.dto.RespostaAtributsDto;
 import es.caib.pinbal.core.service.ConsultaService;
-import es.caib.pinbal.core.service.ConsultaServiceImpl;
 import es.caib.pinbal.core.service.exception.ConsultaNotFoundException;
 import es.caib.pinbal.core.service.exception.EntitatNotFoundException;
 import es.caib.pinbal.core.service.exception.JustificantGeneracioException;
 import es.caib.pinbal.core.service.exception.ProcedimentNotFoundException;
 import es.caib.pinbal.core.service.exception.ProcedimentServeiNotFoundException;
 import es.caib.pinbal.core.service.exception.ServeiNotAllowedException;
+import es.caib.pinbal.scsp.ScspHelper;
 import es.scsp.bean.common.Atributos;
 import es.scsp.bean.common.ConfirmacionPeticion;
 import es.scsp.bean.common.DatosGenericos;
@@ -70,10 +75,14 @@ import es.scsp.common.exceptions.ScspException;
 		portName = "RecobrimentServicePort",
 		endpointInterface = "es.caib.pinbal.core.ws.Recobriment",
 		targetNamespace = "http://www.caib.es/pinbal/ws/recobriment")
-public class RecobrimentImpl implements Recobriment {
+public class RecobrimentImpl implements Recobriment, ApplicationContextAware, MessageSourceAware {
 
 	@Autowired
 	private ConsultaService consultaService;
+
+	private ApplicationContext applicationContext;
+	private MessageSource messageSource;
+	private ScspHelper scspHelper;
 
 	@Override
 	public Respuesta peticionSincrona(
@@ -103,7 +112,8 @@ public class RecobrimentImpl implements Recobriment {
 			}
 			LOGGER.debug("Recuperant resposta SCSP per retornar al client (" +
 					"peticionId=" + consulta.getScspPeticionId() + ")");
-			Respuesta respuesta = recuperarRespuestaScsp(consulta.getScspPeticionId());
+			Respuesta respuesta = getScspHelper().recuperarRespuestaScsp(
+					consulta.getScspPeticionId());
 			processarDatosEspecificos(respuesta);
 			return respuesta;
 		} catch (EntitatNotFoundException ex) {
@@ -197,7 +207,7 @@ public class RecobrimentImpl implements Recobriment {
 	@Override
 	public Respuesta getRespuesta(
 			String idpeticion) throws ScspException {
-		return recuperarRespuestaScsp(idpeticion);
+		return getScspHelper().recuperarRespuestaScsp(idpeticion);
 	}
 
 	@Override
@@ -219,6 +229,15 @@ public class RecobrimentImpl implements Recobriment {
 					"0227",
 					"Error en la generació del justificant: " + ExceptionUtils.getStackTrace(ex));
 		}
+	}
+
+	@Override
+	public void setMessageSource(MessageSource messageSource) {
+		this.messageSource = messageSource;
+	}
+	@Override
+	public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+		this.applicationContext = applicationContext;
 	}
 
 
@@ -411,14 +430,19 @@ public class RecobrimentImpl implements Recobriment {
 		}
 	}
 
-	private Respuesta recuperarRespuestaScsp(String peticionId) throws ScspException {
-		ConsultaServiceImpl consultaServiceImpl = (ConsultaServiceImpl)consultaService;
-		return consultaServiceImpl.recuperarRespuestaScsp(peticionId);
-	}
 	private ScspException getErrorValidacio(
 			String codi,
 			String missatge) {
 		return new ScspException(missatge, codi);
+	}
+
+	private ScspHelper getScspHelper() {
+		if (scspHelper == null) {
+			scspHelper = new ScspHelper(
+					applicationContext,
+					messageSource);
+		}
+		return scspHelper;
 	}
 
 	private static final String XMLNS_DATOS_ESPECIFICOS_V2 = "http://www.map.es/scsp/esquemas/datosespecificos";
