@@ -39,6 +39,7 @@ import es.caib.pinbal.core.dto.ArxiuDto;
 import es.caib.pinbal.core.dto.ConsultaDto;
 import es.caib.pinbal.core.dto.ConsultaDto.Consentiment;
 import es.caib.pinbal.core.dto.ConsultaDto.DocumentTipus;
+import es.caib.pinbal.core.helper.PropertiesHelper;
 import es.caib.pinbal.core.dto.RecobrimentSolicitudDto;
 import es.caib.pinbal.core.dto.RespostaAtributsDto;
 import es.caib.pinbal.core.service.ConsultaService;
@@ -112,10 +113,7 @@ public class RecobrimentImpl implements Recobriment, ApplicationContextAware, Me
 			}
 			LOGGER.debug("Recuperant resposta SCSP per retornar al client (" +
 					"peticionId=" + consulta.getScspPeticionId() + ")");
-			Respuesta respuesta = getScspHelper().recuperarRespuestaScsp(
-					consulta.getScspPeticionId());
-			processarDatosEspecificos(respuesta);
-			return respuesta;
+			return recuperarRespuestaScsp(consulta.getScspPeticionId());
 		} catch (EntitatNotFoundException ex) {
 			throw getErrorValidacio(
 					"0227",
@@ -207,7 +205,14 @@ public class RecobrimentImpl implements Recobriment, ApplicationContextAware, Me
 	@Override
 	public Respuesta getRespuesta(
 			String idpeticion) throws ScspException {
-		return getScspHelper().recuperarRespuestaScsp(idpeticion);
+		try {
+			return recuperarRespuestaScsp(idpeticion);
+		} catch (Exception ex) {
+			LOGGER.error("Error en la consulta SCSP", ex);
+			throw getErrorValidacio(
+					"0227",
+					"Error en la consulta SCSP: " + ExceptionUtils.getStackTrace(ex));
+		}
 	}
 
 	@Override
@@ -430,6 +435,16 @@ public class RecobrimentImpl implements Recobriment, ApplicationContextAware, Me
 		}
 	}
 
+	private Respuesta recuperarRespuestaScsp(
+			String peticionId) throws TransformerException, ParserConfigurationException, SAXException, IOException {
+		Respuesta respuesta = getScspHelper().recuperarRespuestaScsp(peticionId);
+		boolean processar = getPropertyDatosEspecificosProcessar();
+		if (processar) {
+			processarDatosEspecificos(respuesta);
+		}
+		return respuesta;
+	}
+
 	private ScspException getErrorValidacio(
 			String codi,
 			String missatge) {
@@ -465,8 +480,9 @@ public class RecobrimentImpl implements Recobriment, ApplicationContextAware, Me
 					} else {
 						xmlns = "";
 					}
+					boolean incloureNs = getPropertyDatosEspecificosIncloureNs();
 					String datosEspecificosProcessat =  datosEspecificosSenseNs.substring(0, "<DatosEspecificos ".length()) +
-							xmlns + 
+							(incloureNs ? xmlns : "") + 
 							datosEspecificosSenseNs.substring("<DatosEspecificos ".length());
 					transmisionDatos.setDatosEspecificos(
 							stringToElement(datosEspecificosProcessat));
@@ -475,10 +491,10 @@ public class RecobrimentImpl implements Recobriment, ApplicationContextAware, Me
 		}
 	}
 	private String removeXmlStringNamespaceAndPreamble(String xml) {
-		return xml.replaceAll("(<\\?[^<]*\\?>)?", ""). /* remove preamble */
-				replaceAll("xmlns.*?(\"|\').*?(\"|\')", ""). /* remove xmlns declaration */
-				replaceAll("(<)(\\w+:)(.*?>)", "$1$3"). /* remove opening tag prefix */
-				replaceAll("(</)(\\w+:)(.*?>)", "$1$3"); /* remove closing tags prefix */
+		return xml.replaceAll("(<\\?[^<]*\\?>)?", "").
+				replaceAll("xmlns.*?(\"|\').*?(\"|\')", "").
+				replaceAll("(<)(\\w+:)(.*?>)", "$1$3").
+				replaceAll("(</)(\\w+:)(.*?>)", "$1$3");
 	}
 	private Element stringToElement(String xml) throws TransformerException, ParserConfigurationException, SAXException, IOException {
 		DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
@@ -498,6 +514,25 @@ public class RecobrimentImpl implements Recobriment, ApplicationContextAware, Me
 				new DOMSource(element),
 				new StreamResult(buffer));
 		return buffer.toString();
+	}
+
+	private boolean getPropertyDatosEspecificosProcessar() {
+		String propertyStr = PropertiesHelper.getProperties().getProperty(
+				"es.caib.pinbal.recobriment.datos.especificos.processar");
+		if (propertyStr != null) {
+			return new Boolean(propertyStr).booleanValue();
+		} else {
+			return false;
+		}
+	}
+	private boolean getPropertyDatosEspecificosIncloureNs() {
+		String propertyStr = PropertiesHelper.getProperties().getProperty(
+				"es.caib.pinbal.recobriment.datos.especificos.incloure.ns");
+		if (propertyStr != null) {
+			return new Boolean(propertyStr).booleanValue();
+		} else {
+			return false;
+		}
 	}
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(RecobrimentImpl.class);
