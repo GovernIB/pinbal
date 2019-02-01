@@ -1,4 +1,4 @@
-# ![Logo](https://github.com/GovernIB/pinbal/raw/master/assets/logo-pinbal-w.png) PINBAL
+# ![Logo](https://github.com/GovernIB/pinbal/raw/master/assets/pinbal_logo.png) PINBAL
 
 **Descripció**
 
