@@ -1,4 +1,4 @@
-# ![Logo](https://raw.githubusercontent.com/GovernIB/pinbal/binaris/projectinfo_Attachments/icon.jpg) PINBAL
+# ![Logo](https://github.com/GovernIB/pinbal/raw/master/assets/logo-pinbal-w.png) PINBAL
 
 **Descripció**
 
@@ -22,19 +22,19 @@ La Plataforma d'Interoperabilitat de les Illes Balears (PINBAL) és una solució
 
 **Captures de pantalla**
 
-![Consultes Simples](https://raw.githubusercontent.com/GovernIB/pinbal/binaris/projectinfo_Attachments/screenshots/PINBAL_1.png)<br/>
+![Consultes Simples](https://github.com/GovernIB/pinbal/raw/master/assets/1.jpeg)<br/>
 Consultes Simples
 
 
-![Verificació de dades d'identitat](https://raw.githubusercontent.com/GovernIB/pinbal/binaris/projectinfo_Attachments/screenshots/PINBAL_2.png)<br/>
+![Verificació de dades d'identitat](https://github.com/GovernIB/pinbal/raw/master/assets/2.jpeg)<br/>
 Verificació de dades d'identitat
 
 
-![Gestió de procediments](https://raw.githubusercontent.com/GovernIB/pinbal/binaris/projectinfo_Attachments/screenshots/PINBAL_3.png)<br/>
+![Gestió de procediments](https://github.com/GovernIB/pinbal/raw/master/assets/3.jpeg)<br/>
 Gestió de procediments
 
 
-![Gestió d'entitats](https://raw.githubusercontent.com/GovernIB/pinbal/binaris/projectinfo_Attachments/screenshots/PINBAL_4.png)<br/>
+![Gestió d'entitats](https://github.com/GovernIB/pinbal/raw/master/assets/4.jpeg)<br/>
 Gestió d'entitats
 
 
