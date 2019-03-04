@@ -49,7 +49,7 @@ public class EntitatServiceRepositoryTest {
 	}
 
 	@Test
-	public void create() {
+	public void create(){
 		EntitatDto created = EntitatTestUtil.createDto(null, NOM);
 		Entitat persisted = EntitatTestUtil.createModelObject(
 				ENTITAT_ID,
@@ -57,8 +57,12 @@ public class EntitatServiceRepositoryTest {
 				NOM,
 				CIF,
 				RESP);
-		when(entitatRepositoryMock.save(any(Entitat.class))).thenReturn(
-				persisted);
+		try {
+			when(entitatRepositoryMock.save(any(Entitat.class))).thenReturn(
+					persisted);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		EntitatDto returned = entitatService.create(created);
 		ArgumentCaptor<Entitat> entitatArgument = ArgumentCaptor
 				.forClass(Entitat.class);

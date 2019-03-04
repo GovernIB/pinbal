@@ -29,9 +29,11 @@ import es.caib.pinbal.core.helper.PaginacioHelper;
 import es.caib.pinbal.core.model.Entitat;
 import es.caib.pinbal.core.model.Entitat.EntitatTipus;
 import es.caib.pinbal.core.model.EntitatServei;
+import es.caib.pinbal.core.model.OrganismeCessionari;
 import es.caib.pinbal.core.model.ServeiConfig;
 import es.caib.pinbal.core.repository.EntitatRepository;
 import es.caib.pinbal.core.repository.EntitatServeiRepository;
+import es.caib.pinbal.core.repository.OrganismeCessionariRepository;
 import es.caib.pinbal.core.repository.ServeiConfigRepository;
 import es.caib.pinbal.core.service.exception.EntitatNotFoundException;
 import es.caib.pinbal.core.service.exception.EntitatServeiNotFoundException;
@@ -54,6 +56,8 @@ public class EntitatServiceImpl implements EntitatService, ApplicationContextAwa
 	private EntitatServeiRepository entitatServeiRepository;
 	@Resource
 	private ServeiConfigRepository serveiConfigRepository;
+	@Resource
+	private OrganismeCessionariRepository organismeCessionariRepository;
 
 	@Resource
 	private DtoMappingHelper dtoMappingHelper;
@@ -66,7 +70,7 @@ public class EntitatServiceImpl implements EntitatService, ApplicationContextAwa
 
 	@Transactional
 	@Override
-	public EntitatDto create(EntitatDto creada) {
+	public EntitatDto create(EntitatDto creada){
 		LOGGER.debug("Creant una nova entitat: " + creada);
 		Entitat entitat = Entitat.getBuilder(
 				creada.getCodi(),
@@ -149,28 +153,35 @@ public class EntitatServiceImpl implements EntitatService, ApplicationContextAwa
 				entitatRepository.findByCodi(codi),
 				EntitatDto.class);
 	}
+	
+	@Transactional(readOnly = true)
+	@Override
+	public EntitatDto findByCif(String cif) {
+		LOGGER.debug("Consulta de l'entitat (codi=" + cif + ")");
+		return dtoMappingHelper.getMapperFacade().map(
+				entitatRepository.findByCif(cif),
+				EntitatDto.class);
+	}
+
 
 	@Transactional(rollbackFor = EntitatNotFoundException.class)
 	@Override
-	public EntitatDto update(EntitatDto modificada) throws EntitatNotFoundException {
+	public EntitatDto update(EntitatDto modificada) throws EntitatNotFoundException{
 		LOGGER.debug("Actualitzant l'entitat (id=" + modificada.getId() + ") amb la informació: " + modificada);
 		Entitat entitat = entitatRepository.findOne(modificada.getId());
 		if (entitat == null) {
 			LOGGER.debug("No s'ha trobat l'entitat (id=" + modificada.getId() + ")");
 			throw new EntitatNotFoundException();
 		}
-		getScspHelper().organismoCesionarioDelete(entitat.getCif());
+		modificada.setActiva(entitat.isActiva());
+		OrganismeCessionari oc = organismeCessionariRepository.findByCif(entitat.getCif());
+		oc.updateEntitat(modificada.getNom(), modificada.getCif(), !modificada.isActiva());
+		organismeCessionariRepository.saveAndFlush(oc);
 		entitat.update(
 				modificada.getCodi(),
 				modificada.getNom(),
 				modificada.getCif(),
 				EntitatTipus.valueOf(modificada.getTipus().toString()));
-		getScspHelper().organismoCesionarioSave(
-				entitat.getCif(),
-				entitat.getNom(),
-				entitat.getCreatedDate().toDate(),
-				null,
-				!modificada.isActiva());
 		actualitzarServeisScspActiusEntitat(entitat);
 		return dtoMappingHelper.getMapperFacade().map(
 				entitat,
@@ -187,12 +198,9 @@ public class EntitatServiceImpl implements EntitatService, ApplicationContextAwa
 			throw new EntitatNotFoundException();
 		}
 		entitat.updateActiva(activa);
-		getScspHelper().organismoCesionarioSave(
-				entitat.getCif(),
-				entitat.getNom(),
-				entitat.getCreatedDate().toDate(),
-				null,
-				!activa);
+		OrganismeCessionari oc = organismeCessionariRepository.findByCif(entitat.getCif());
+		oc.setBloquejat(!activa);
+		organismeCessionariRepository.saveAndFlush(oc);
 		return dtoMappingHelper.getMapperFacade().map(
 				entitat,
 				EntitatDto.class);
@@ -296,8 +304,6 @@ public class EntitatServiceImpl implements EntitatService, ApplicationContextAwa
 		this.messageSource = messageSource;
 	}
 
-
-
 	private void actualitzarServeisScspActiusEntitat(
 			Entitat entitat) {
 		List<EntitatServei> entitatServeis = entitatServeiRepository.findByEntitatId(
@@ -321,5 +327,7 @@ public class EntitatServiceImpl implements EntitatService, ApplicationContextAwa
 	}
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(EntitatServiceImpl.class);
+
+
 
 }

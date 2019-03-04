@@ -31,7 +31,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
  * @author Limit Tecnologies <limit@limit.es>
  */
 @Entity
-@Table(name = "organismo_cesionario")
+@Table(name = "core_organismo_cesionario")
 @EntityListeners(AuditingEntityListener.class)
 public class OrganismeCessionari implements Serializable {
 	
@@ -150,6 +150,15 @@ public class OrganismeCessionari implements Serializable {
 		this.logo = logo;
 		this.claus = claus;
 	}
+	
+	public void updateEntitat(
+			String nom,
+			String cif,
+			Boolean bloquejat) {
+		this.nom = nom;
+		this.cif = cif;
+		this.bloquejat = bloquejat;
+	}
 
 	/**
 	 * La classe Builder emprada per a crear nous objectes de tipus OrganismeCessionari.
@@ -234,7 +243,13 @@ public class OrganismeCessionari implements Serializable {
 		return ToStringBuilder.reflectionToString(this);
 	}
 	
-	
+	public void setBloquejat(Boolean bloquejat) {
+		this.bloquejat = bloquejat;
+	}
+
+
+
+
 	private static final long serialVersionUID = -6657066865382086237L;
 	
 }
