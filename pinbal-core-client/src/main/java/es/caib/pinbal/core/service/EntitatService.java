@@ -99,6 +99,16 @@ public interface EntitatService {
 	 */
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public EntitatDto findByCodi(String codi);
+	
+	/**
+	 * Consulta una entitat donat el seu cif.
+	 * 
+	 * @param cif
+	 *            Atribut cif de l'entitat a trobar.
+	 * @return L'entitat trobada. Si no s'ha trobat cap entitat retorna null.
+	 */
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	public EntitatDto findByCif(String cif);
 
 	/**
 	 * Activa o desactiva l'entitat.

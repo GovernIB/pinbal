@@ -14,6 +14,7 @@ import org.hibernate.validator.constraints.NotEmpty;
 
 import es.caib.pinbal.core.dto.ConsultaDto.DocumentTipus;
 import es.caib.pinbal.core.dto.EntitatDto;
+import es.caib.pinbal.webapp.validation.CifEntitatNoRepetit;
 import es.caib.pinbal.webapp.validation.CodiEntitatNoRepetit;
 import es.caib.pinbal.webapp.validation.DocumentIdentitat;
 
@@ -23,6 +24,7 @@ import es.caib.pinbal.webapp.validation.DocumentIdentitat;
  * @author Limit Tecnologies <limit@limit.es>
  */
 @CodiEntitatNoRepetit(campId = "id", campCodi = "codi")
+@CifEntitatNoRepetit(campId = "id", campCif="cif")
 public class EntitatCommand {
 
 	private Long id;

@@ -546,9 +546,11 @@ public class ScspHelper {
 		OrganismoCesionario organismoCesionario = getOrganismoCesionarioAmbCif(cif);
 		List<ServicioOrganismoCesionario> servicios = getServicioOrganismoCesionarioDao().selectHistorico(organismoCesionario);
 		for (ServicioOrganismoCesionario servicio: servicios) {
-			getPinbalDao().delete(servicio);
+			getPinbalDao().delete(servicio);	
 		}
-		getPinbalDao().delete(organismoCesionario);
+		if(organismoCesionario != null) {
+			getPinbalDao().delete(organismoCesionario);	
+		}
 	}
 	public OrganismoCesionario organismoCesionarioFindByCif(String cif) {
 		LOGGER.debug("Consulta organismo cesionario (" +
@@ -574,6 +576,9 @@ public class ScspHelper {
 				}
 			}
 			servicio.setBloqueado(!trobat);
+			if(!trobat) {
+				getPinbalDao().delete(servicio);
+			}
 		}
 		// Crea els servicios que no existeixen
 		for (String activo: activos) {

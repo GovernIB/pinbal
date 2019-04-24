@@ -37,7 +37,7 @@ public class EntitatServiceBean implements EntitatService {
 
 	@Override
 	@RolesAllowed("PBL_ADMIN")
-	public EntitatDto create(EntitatDto creada) {
+	public EntitatDto create(EntitatDto creada){
 		return delegate.create(creada);
 	}
 
@@ -73,11 +73,17 @@ public class EntitatServiceBean implements EntitatService {
 	public EntitatDto findByCodi(String codi) {
 		return delegate.findByCodi(codi);
 	}
+	
+	@Override
+	@RolesAllowed("PBL_ADMIN")
+	public EntitatDto findByCif(String cif) {
+		return delegate.findByCif(cif);
+	}
 
 	@Override
 	@RolesAllowed("PBL_ADMIN")
 	public EntitatDto update(
-			EntitatDto modificada) throws EntitatNotFoundException {
+			EntitatDto modificada) throws EntitatNotFoundException{
 		return delegate.update(modificada);
 	}
 
@@ -116,5 +122,6 @@ public class EntitatServiceBean implements EntitatService {
 	public List<EntitatDto> findDisponiblesPerRedireccionsBus(String serveiCodi) throws ServeiNotFoundException {
 		return delegate.findDisponiblesPerRedireccionsBus(serveiCodi);
 	}
+
 
 }

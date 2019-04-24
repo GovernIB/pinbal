@@ -21,5 +21,7 @@ public interface OrganismeCessionariRepository extends JpaRepository<OrganismeCe
 	public List<OrganismeCessionari> findAll();
 	
 	public OrganismeCessionari findById(Long id);
+	
+	public OrganismeCessionari findByCif(String id);
 
 }
