@@ -51,7 +51,6 @@ import es.caib.pinbal.webapp.command.ServeiCommand;
 import es.caib.pinbal.webapp.command.ServeiJustificantCampCommand;
 import es.caib.pinbal.webapp.command.ServeiXsdCommand;
 import es.caib.pinbal.webapp.common.AlertHelper;
-import es.caib.pinbal.webapp.helper.HtmlSelectOptionHelper;
 
 /**
  * Controlador per al manteniment de serveis.

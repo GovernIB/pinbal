@@ -1791,6 +1791,26 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 			boolean multiple,
 			boolean nomesSensePare) throws EntitatNotFoundException {
 		copiarPropertiesToDb();
+		LOGGER.debug("Consulta de peticions findByEntitatIUsuariFiltrePaginat (" +
+				"entitat=" + entitat.getCodi() + ", " +
+				"usuariCodi=" + usuariCodi + ", " +
+				((filtre != null) ? (
+				"filtre.scspPeticionId=" + filtre.getScspPeticionId() + ", " +
+				"filtre.procedimentId=" + filtre.getProcedimentId() + ", " +
+				"filtre.serveiCodi=" + filtre.getServeiCodi() + ", " +
+				"filtre.estat=" + filtre.getProcedimentId() + ", " +
+				"filtre.dataInici=" + filtre.getProcedimentId() + ", " +
+				"filtre.dataFi=" + filtre.getProcedimentId() + ", " +
+				"filtre.titularNom=" + filtre.getTitularNom() + ", " +
+				"filtre.titularDocument=" + filtre.getTitularDocument() + ", " +
+				"filtre.funcionariNom=" + filtre.getFuncionariNom() + ", " +
+				"filtre.funcionariDocument=" + filtre.getFuncionariDocument() + ", ") : "") +
+				((paginacioAmbOrdre != null) ? (
+				"paginacio.paginaNum=" + paginacioAmbOrdre.getPaginaNum() + ", " +
+				"paginacio.paginaTamany=" + paginacioAmbOrdre.getPaginaTamany() + ", ") : "") +
+				"multiple=" + multiple + ", " +
+				"nomesSensePare=" + nomesSensePare + ")");
+		long t0 = System.currentTimeMillis();
 		Map<String, String> mapeigPropietats = new HashMap<String, String>();
 		mapeigPropietats.put("scspPeticionSolicitudId", "scspPeticionId");
 		mapeigPropietats.put("creacioData", "createdDate");
@@ -1840,10 +1860,14 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 					nomesSensePare,
 					pageable);
 		}
+		LOGGER.debug("Consulta de peticions findByEntitatIUsuariFiltrePaginat temps consulta: " + (System.currentTimeMillis() - t0) + " ms");
+		t0 = System.currentTimeMillis();
 		PaginaLlistatDto<ConsultaDto> resposta = PaginacioHelper.toPaginaLlistatDto(
 				paginaConsultes,
 				dtoMappingHelper,
 				ConsultaDto.class);
+		LOGGER.debug("Consulta de peticions findByEntitatIUsuariFiltrePaginat temps conversió DTO : " + (System.currentTimeMillis() - t0) + " ms");
+		t0 = System.currentTimeMillis();
 		for (ConsultaDto consulta: resposta) {
 			consulta.setServeiDescripcio(
 					getScspHelper().getServicioDescripcion(
@@ -1863,6 +1887,7 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 				LOGGER.error("No s'han pogut consultar el TER de la petició (id=" + consulta.getScspPeticionId() + ")", ex);
 			}
 		}
+		LOGGER.debug("Consulta de peticions findByEntitatIUsuariFiltrePaginat temps consultes addicionals : " + (System.currentTimeMillis() - t0) + " ms");
 		return resposta;
 	}
 
