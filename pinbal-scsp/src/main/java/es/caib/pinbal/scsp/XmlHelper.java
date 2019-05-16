@@ -384,7 +384,7 @@ public class XmlHelper {
 			dadesNode.setNom(element.getName());
 			dadesNode.setComplex(false);
 			XmlSchemaSimpleType simpleType = (XmlSchemaSimpleType)element.getSchemaType();
-			if (simpleType.getContent() != null && simpleType.getContent() instanceof XmlSchemaSimpleTypeRestriction) {
+			if (simpleType != null && simpleType.getContent() != null && simpleType.getContent() instanceof XmlSchemaSimpleTypeRestriction) {
 				XmlSchemaSimpleTypeRestriction restriction = (XmlSchemaSimpleTypeRestriction)simpleType.getContent();
 				Iterator<XmlSchemaFacet> it = restriction.getFacets().getIterator();
 				while (it.hasNext()) {
