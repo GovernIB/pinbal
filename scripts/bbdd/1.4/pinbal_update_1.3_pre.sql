@@ -267,6 +267,10 @@ update CORE_SERVICIO set  URLSINCRONA='https://ws.ia.aeat.es/ES98/L/iniinvoc/es.
 update CORE_SERVICIO set  URLSINCRONA='https://ws.ia.aeat.es/ES98/L/iniinvoc/es.aeat.dit.adu.suap.irpfws.IRPFI3SOAP' WHERE CODCERTIFICADO='AEATIR01';
 update CORE_SERVICIO set  URLSINCRONA='https://ws.ia.aeat.es/ES98/L/iniinvoc/es.aeat.dit.adu.suap.ireaws.IREAI3SOAP' WHERE CODCERTIFICADO='AEATIREA';
 
+/* Nova funcionalitat de gestió de serveis XSD */
+ALTER TABLE PBL_SERVEI_CONFIG ADD ACTIVA_GESTIO_XSD NUMBER(1);
+UPDATE PBL_SERVEI_CONFIG SET ACTIVA_GESTIO_XSD = 0;
+
 /*
  * Actualització llibreries SCSP 4.6.0
  */
@@ -449,7 +453,3 @@ UPDATE CORE_SERVICIO SET DESCRIPCION='Estar al corriente de obligaciones tributa
 UPDATE CORE_SERVICIO SET DESCRIPCION='Estar al corriente de obligaciones tributarias para solicitud de subvenciones y ayudas de la CCAA' where CODCERTIFICADO='SVDCCAACPASWS01';  
 CREATE INDEX CORE_SERVICIO_INDEX_EMISOR  ON CORE_SERVICIO (EMISOR);
 CREATE INDEX CESIONARIOS_INDEX_ORGANISMO  ON CORE_REQ_CESIONARIOS_SERVICIOS (ORGANISMO);
-
-/* Nova funcionalitat de gestió de serveis XSD */
-ALTER TABLE PBL_SERVEI_CONFIG ADD ACTIVA_GESTIO_XSD NUMBER(1);
-UPDATE PBL_SERVEI_CONFIG SET ACTIVA_GESTIO_XSD = 0;
