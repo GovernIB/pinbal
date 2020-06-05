@@ -1,0 +1,12 @@
+UPDATE CORE_PARAMETRO_CONFIGURACION SET VALOR='4.6.0' WHERE NOMBRE='version.datamodel.scsp';   
+UPDATE CORE_PARAMETRO_CONFIGURACION SET VALOR='4.8.0' WHERE NOMBRE='version.datamodel.scsp';   
+UPDATE CORE_EMISOR_CERTIFICADO SET FECHAALTA = SYSDATE  WHERE FECHAALTA IS NULL;
+UPDATE CORE_REQ_CESIONARIOS_SERVICIOS SET BLOQUEADO=1 WHERE FECHABAJA IS NOT NULL;
+update core_servicio set descripcion = 'Servicio de Consulta de ser beneficiario de víctima del terrorismo manual' where codcertificado = 'SVDIVTMWS01';
+update core_servicio set descripcion = 'Servicio de Consulta de ser beneficiario de víctima del terrorismo' where codcertificado = 'SVDIVTWS01';
+UPDATE CORE_PARAMETRO_CONFIGURACION SET VALOR='4.16.0' where NOMBRE='version.datamodel.scsp'; 
+UPDATE CORE_SERVICIO SET DESCRIPCION='Servicio de Consulta de Renta Salario Prestación Social Básica (Importes Anuales)' where CODCERTIFICADO='SVDSRSPSBANUALWS01'; 
+UPDATE CORE_SERVICIO SET DESCRIPCION='Servicio de Consulta de Renta Salario Prestación Social Básica (Importes Actuales)' where CODCERTIFICADO='SVDSRSPSBACTUALWS01';  
+UPDATE CORE_SERVICIO SET DESCRIPCION='Consulta de datos de solvencia para concursos públicos' where CODCERTIFICADO='DGSFP0005'; 
+UPDATE CORE_SERVICIO SET DESCRIPCION='Estar al corriente de obligaciones tributarias para contratación con la CCAA' where CODCERTIFICADO='SVDCCAACPCWS01';  
+UPDATE CORE_SERVICIO SET DESCRIPCION='Estar al corriente de obligaciones tributarias para solicitud de subvenciones y ayudas de la CCAA' where CODCERTIFICADO='SVDCCAACPASWS01';  
