@@ -412,26 +412,44 @@ public class RecobrimentImpl implements Recobriment, ApplicationContextAware, Me
 			String serveiCodi,
 			RecobrimentSolicitudDto solicitud) throws EntitatNotFoundException, ProcedimentNotFoundException, ProcedimentServeiNotFoundException, ConsultaNotFoundException, ServeiNotAllowedException, es.caib.pinbal.core.service.exception.ScspException {
 		if (consultaService.isOptimitzarTransaccionsNovaConsulta()) {
-			LOGGER.error("Nova petició SCSP amb optimitació INIT (" +
-						"serveiCodi=" + serveiCodi + ")");
+			LOGGER.info("Iniciant petició SCSP amb optimització fase INIT (serveiCodi=" + serveiCodi + ")");
+			long t0 = System.currentTimeMillis();
 			ConsultaDto consultaInit = consultaService.novaConsultaRecobrimentInit(
 					serveiCodi,
 					solicitud);
-			LOGGER.error("Nova petició SCSP amb optimitació ENVIAMENT (" +
-					"serveiCodi=" + serveiCodi + ")");
+			LOGGER.debug("\tpetició SCSP amb optimització fase INIT creada (" +
+					"serveiCodi=" + serveiCodi + ", " +
+					"scspId=" + consultaInit.getScspPeticionSolicitudId() + ", " +
+					"temps=" + (System.currentTimeMillis() - t0) + "ms)");
+			LOGGER.info("Petició SCSP amb optimització fase ENVIAMENT (" +
+					"serveiCodi=" + serveiCodi + ", " +
+					"scspId=" + consultaInit.getScspPeticionSolicitudId() + ")");
+			t0 = System.currentTimeMillis();
 			consultaService.novaConsultaRecobrimentEnviament(
 					consultaInit.getId(),
 					solicitud);
-			LOGGER.error("Nova petició SCSP amb optimitació ESTAT (" +
-					"serveiCodi=" + serveiCodi + ")");
-			return consultaService.novaConsultaEstat(
+			LOGGER.debug("\tpetició SCSP amb optimització fase ENVIAMENT resposta (" +
+					"serveiCodi=" + serveiCodi + ", " +
+					"scspId=" + consultaInit.getScspPeticionSolicitudId() + ", " +
+					"temps=" + (System.currentTimeMillis() - t0) + "ms)");
+			LOGGER.info("Petició SCSP amb optimització fase ESTAT (" +
+					"serveiCodi=" + serveiCodi + ", " +
+					"scspId=" + consultaInit.getScspPeticionSolicitudId() + ")");
+			t0 = System.currentTimeMillis();
+			ConsultaDto resposta = consultaService.novaConsultaEstat(
 					consultaInit.getId());
+			LOGGER.debug("\tpetició SCSP amb optimització fase ESTAT resposta (" +
+					"serveiCodi=" + serveiCodi + ", " +
+					"scspId=" + consultaInit.getScspPeticionSolicitudId() + ", " +
+					"temps=" + (System.currentTimeMillis() - t0) + "ms)");
+			return resposta;
 		} else {
-			LOGGER.error("Nova petició SCSP sense oprimització (" +
+			LOGGER.info("Nova petició SCSP sense optimització (" +
 					"serveiCodi=" + serveiCodi + ")");
-			return consultaService.novaConsultaRecobriment(
+			ConsultaDto resposta = consultaService.novaConsultaRecobriment(
 					serveiCodi,
 					solicitud);
+			return resposta;
 		}
 	}
 
