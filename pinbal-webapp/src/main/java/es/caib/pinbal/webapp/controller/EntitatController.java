@@ -195,6 +195,9 @@ public class EntitatController extends BaseController {
 			return entitatService.findAmbFiltrePaginat(
 					command.getCodi(),
 					command.getNom(),
+					command.getCif(),
+					command.getActiva(),
+					command.getTipus(),					
 					paginacioAmbOrdre);
 		}
 	}

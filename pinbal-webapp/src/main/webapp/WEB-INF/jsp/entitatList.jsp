@@ -5,6 +5,12 @@
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="http://code.google.com/p/jmesa" prefix="jmesa" %>
 
+<%
+	request.setAttribute(
+			"entitatTipusLlista",
+			es.caib.pinbal.core.dto.EntitatDto.EntitatTipusDto.values());
+%>
+
 <html>
 <head>
 	<title><spring:message code="entitat.list.titol"/></title>
@@ -37,9 +43,32 @@ $(document).ready(function() {
 		<c:set var="campPath" value="codi"/>
 		<spring:message var="placeholderCodi" code="entitat.list.filtre.camp.codi"/>
 		<form:input path="${campPath}" cssClass="input-medium" id="${campPath}" placeholder="${placeholderCodi}"/>
+		
 		<c:set var="campPath" value="nom"/>
 		<spring:message var="placeholderNom" code="entitat.list.filtre.camp.nom"/>
 		<form:input path="${campPath}" cssClass="input-medium" id="${campPath}" placeholder="${placeholderNom}"/>
+		
+		<c:set var="campPath" value="cif"/>
+		<spring:message var="placeholderCif" code="entitat.list.filtre.camp.cif"/>
+		<form:input path="${campPath}" cssClass="input-medium" id="${campPath}" placeholder="${placeholderCif}"/>
+		
+		<c:set var="campPath" value="activa"/>
+		<spring:message var="trueValue" code="entitat.list.filtre.camp.activa.yes"/>
+		<spring:message var="falseValue" code="entitat.list.filtre.camp.activa.no"/>
+		<form:select path="${campPath}">
+			<option value=""><spring:message code="entitat.list.filtre.camp.activa"/>:</option>>
+			<form:option value="true">${trueValue}</form:option>>
+			<form:option value="false">${falseValue}</form:option>>
+		</form:select>
+
+		<c:set var="campPath" value="tipus"/>
+		<form:select path="${campPath}">
+			<option value=""><spring:message code="entitat.list.filtre.camp.tipus"/>:</option>>
+			<c:forEach var="estat" items="${entitatTipusLlista}">
+					<form:option value="${estat}">${estat}</form:option>
+			</c:forEach>
+		</form:select>
+				
 		<button id="netejar-filtre" class="btn" type="button"><spring:message code="comu.boto.netejar"/></button>
 		<button type="submit" class="btn btn-primary"><spring:message code="comu.boto.filtrar"/></button>
 	</form:form>

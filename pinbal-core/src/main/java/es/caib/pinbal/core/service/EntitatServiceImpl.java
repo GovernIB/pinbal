@@ -22,6 +22,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import es.caib.pinbal.core.dto.EntitatDto;
+import es.caib.pinbal.core.dto.EntitatDto.EntitatTipusDto;
 import es.caib.pinbal.core.dto.PaginaLlistatDto;
 import es.caib.pinbal.core.dto.PaginacioAmbOrdreDto;
 import es.caib.pinbal.core.helper.DtoMappingHelper;
@@ -120,13 +121,23 @@ public class EntitatServiceImpl implements EntitatService, ApplicationContextAwa
 	public PaginaLlistatDto<EntitatDto> findAmbFiltrePaginat(
 			String codi,
 			String nom,
+			String cif,
+			Boolean activa,
+			String tipus,
 			PaginacioAmbOrdreDto paginacioAmbOrdre) {
-		LOGGER.debug("Consulta d'entitats segons filtre (codi=" + codi + ", nom=" + nom + ")");
+		LOGGER.debug("Consulta d'entitats segons filtre (codi=" + codi + ", nom=" + nom + ""
+				+ "cif=" + cif + " activa=" + activa + " tipus=" + tipus + ")");
 		Page<Entitat> paginaEntitats = entitatRepository.findByFiltre(
 				codi == null || codi.length() == 0,
 				codi,
 				nom == null || nom.length() == 0,
 				nom,
+				cif == null || cif.length() == 0,
+				cif,
+				activa == null,
+				activa,
+				tipus == null || tipus.length() == 0,
+				(tipus != null && tipus.length() > 0) ? Entitat.EntitatTipus.valueOf(tipus.toString()) : null,
 				PaginacioHelper.toSpringDataPageable(
 						paginacioAmbOrdre,
 						null));
