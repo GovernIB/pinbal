@@ -3,6 +3,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://code.google.com/p/jmesa" prefix="jmesa" %>
+<%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 
 <html>
 <head>
@@ -11,6 +12,18 @@
 	<script type="text/javascript" src="<c:url value="/js/jmesa.min.js"/>"></script>
 	<script>
 		$(document).ready(function() {
+			$('#netejar-filtre').click(function() {
+				$(':input', $('#form-filtre')).each (function() {
+					var type = this.type, tag = this.tagName.toLowerCase();
+					if (type == 'text' || type == 'password' || tag == 'textarea')
+						this.value = '';
+					else if (type == 'checkbox' || type == 'radio')
+						this.checked = false;
+					else if (tag == 'select')
+						this.selectedIndex = 0;
+				});
+				$('#form-filtre').submit();
+			});
 			$('.confirm-esborrar').click(function() {
 				  return confirm("<spring:message code="servei.list.confirmacio.esborrar"/>");
 			});
@@ -34,6 +47,34 @@
 	</style>
 </head>
 <body>
+	<c:url value="/servei" var="formAction"/>
+	<form:form id="form-filtre" action="${formAction}" method="post" cssClass="well form-inline" commandName="serveiFiltreCommand">
+		<c:set var="campPath" value="codi"/>
+		<spring:message var="placeholderCodi" code="servei.list.filtre.camp.codi"/>
+		<form:input path="${campPath}" cssClass="input-medium" id="${campPath}" placeholder="${placeholderCodi}"/>
+		
+		<c:set var="campPath" value="descripcio"/>
+		<spring:message var="placeholderDescripcio" code="servei.list.filtre.camp.descripcio"/>
+		<form:input path="${campPath}" cssClass="input-medium" id="${campPath}" placeholder="${placeholderDescripcio}"/>
+		
+		<c:set var="campPath" value="emissor"/>
+		<form:select path="${campPath}" id="${campPath}">
+			<option value=""><spring:message code="servei.list.filtre.camp.emissor"/></option>
+			<form:options items="${emisors}" itemLabel="nom" itemValue="id"/>
+		</form:select>
+	
+		<c:set var="campPath" value="activa"/>
+		<spring:message var="trueValue" code="entitat.list.filtre.camp.activa.yes"/>
+		<spring:message var="falseValue" code="entitat.list.filtre.camp.activa.no"/>
+		<form:select path="${campPath}">
+			<option value=""><spring:message code="entitat.list.filtre.camp.activa"/></option>>
+			<form:option value="true">${trueValue}</form:option>>
+			<form:option value="false">${falseValue}</form:option>>
+		</form:select>
+
+		<button id="netejar-filtre" class="btn" type="button"><spring:message code="comu.boto.netejar"/></button>
+		<button type="submit" class="btn btn-primary"><spring:message code="comu.boto.filtrar"/></button>
+	</form:form>
 
 	<div class="row-fluid">
 		<div class="span12">
@@ -47,13 +88,13 @@
 				items="${serveis}"
 				toolbar="es.caib.pinbal.webapp.jmesa.BootstrapToolbar"
 				view="es.caib.pinbal.webapp.jmesa.BootstrapView"
-				var="registre"
-				maxRows="${fn:length(serveis)}">
+				var="registre">
 			<jmesa:htmlTable>
 				<jmesa:htmlRow>
 					<jmesa:htmlColumn property="codi" titleKey="servei.list.taula.columna.codi"/>
 					<jmesa:htmlColumn property="descripcio" titleKey="servei.list.taula.columna.descripcio"/>
-					<jmesa:htmlColumn property="scspEmisor.nom" titleKey="servei.list.taula.columna.emisor"/>
+					<jmesa:htmlColumn property="scspEmisor.nom" titleKey="servei.list.taula.columna.emissor"/>
+<%-- 					<jmesa:htmlColumn property="scspFechaBaja" titleKey="servei.list.taula.columna.emissor"/> --%>
 					<jmesa:htmlColumn property="ACCIO_procediments" title="&nbsp;" sortable="false" style="white-space:nowrap;">
 						<a class="btn" href="<c:url value="/modal/servei/${registre.codi}/procediments"/>" 
 							onclick="showModalProcediments(this);return false" data-titol="<spring:message code="servei.procediment.list.titol" arguments="${registre.descripcio}"/>">

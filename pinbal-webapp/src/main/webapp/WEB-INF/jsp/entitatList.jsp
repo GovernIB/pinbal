@@ -98,7 +98,7 @@ $(document).ready(function() {
 						${registre.nom}
 					</jmesa:htmlColumn>
 					<jmesa:htmlColumn property="cif" titleKey="entitat.list.taula.columna.cif"/>
-					<!--jmesa:htmlColumn property="tipus" titleKey="entitat.list.taula.columna.tipus"/-->
+					<jmesa:htmlColumn property="tipus" titleKey="entitat.list.taula.columna.tipus"/>
 					<jmesa:htmlColumn property="activa" titleKey="entitat.list.taula.columna.activa">
 						<c:if test="${registre.activa}"><i class="icon-ok"></i></c:if>
 					</jmesa:htmlColumn>
