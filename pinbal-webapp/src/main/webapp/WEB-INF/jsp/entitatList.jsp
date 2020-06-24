@@ -56,14 +56,14 @@ $(document).ready(function() {
 		<spring:message var="trueValue" code="entitat.list.filtre.camp.activa.yes"/>
 		<spring:message var="falseValue" code="entitat.list.filtre.camp.activa.no"/>
 		<form:select path="${campPath}">
-			<option value=""><spring:message code="entitat.list.filtre.camp.activa"/>:</option>>
+			<option value=""><spring:message code="entitat.list.filtre.camp.activa"/></option>>
 			<form:option value="true">${trueValue}</form:option>>
 			<form:option value="false">${falseValue}</form:option>>
 		</form:select>
 
 		<c:set var="campPath" value="tipus"/>
 		<form:select path="${campPath}">
-			<option value=""><spring:message code="entitat.list.filtre.camp.tipus"/>:</option>>
+			<option value=""><spring:message code="entitat.list.filtre.camp.tipus"/></option>>
 			<c:forEach var="estat" items="${entitatTipusLlista}">
 					<form:option value="${estat}">${estat}</form:option>
 			</c:forEach>

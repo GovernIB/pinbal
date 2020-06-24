@@ -7,7 +7,11 @@ import java.util.List;
 
 import org.springframework.security.access.prepost.PreAuthorize;
 
+import es.caib.pinbal.core.dto.EntitatDto;
+import es.caib.pinbal.core.dto.EntitatUsuariDto;
 import es.caib.pinbal.core.dto.InformeUsuariDto;
+import es.caib.pinbal.core.dto.PaginaLlistatDto;
+import es.caib.pinbal.core.dto.PaginacioAmbOrdreDto;
 import es.caib.pinbal.core.dto.UsuariDto;
 import es.caib.pinbal.core.service.exception.EntitatNotFoundException;
 import es.caib.pinbal.core.service.exception.EntitatUsuariNotFoundException;
@@ -28,6 +32,26 @@ public interface UsuariService {
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_REPRES') or hasRole('ROLE_DELEG') or hasRole('ROLE_AUDIT') or hasRole('ROLE_SUPERAUD') or hasRole('ROLE_WS')")
 	public void inicialitzarUsuariActual();
 
+	/**
+	 * Consulta les entitats segons el filtre.
+	 * 
+	 * @param codi
+	 *            Codi a cercar.
+	 * @param nom
+	 *            Nom a cercar.
+	 * @param paginacioAmbOrdre
+	 *            Paràmetres per a la paginació i ordenació dels resultats.
+	 * @return El llistat d'entitats paginat.
+	 */
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	public PaginaLlistatDto<EntitatUsuariDto> findAmbFiltrePaginat(
+			Long id_entitat,
+			String codi,
+			String nom,
+			String nif,
+			String departament,
+			PaginacioAmbOrdreDto paginacioAmbOrdre);
+	
 	/**
 	 * Obté les dades de l'usuari actual del sistema extern definit al plugin
 	 * de dades d'usuari.

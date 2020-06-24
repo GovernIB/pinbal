@@ -154,13 +154,13 @@ function showModalEditar(
 		<div class="clearfix"></div>
 	</div>
 
-	<div style="margin-top:8px;padding:4px 0">
+	<form>
 		<jmesa:tableModel
 				id="usuaris" 
-				items="${entitat.usuarisAdmin}"
-				view="es.caib.pinbal.webapp.jmesa.BootstrapNoToolbarView"
-				var="registre"
-				maxRows="${fn:length(entitat.usuarisAdmin)}">
+				items="${usuaris}"
+				toolbar="es.caib.pinbal.webapp.jmesa.BootstrapToolbar"
+				view="es.caib.pinbal.webapp.jmesa.BootstrapView"
+				var="registre">
 			<jmesa:htmlTable>
 				<jmesa:htmlRow>
 					<jmesa:htmlColumn property="usuari.nom" titleKey="entitat.usuaris.camp.usuari">
@@ -189,7 +189,7 @@ function showModalEditar(
 	            </jmesa:htmlRow>
 	        </jmesa:htmlTable>
 		</jmesa:tableModel>
-	</div>
+	</form>
 	<div>
 		<a href="<c:url value="/entitat"/>" class="btn pull-right"><spring:message code="comu.boto.tornar"/></a>
 		<div class="clearfix"></div>
@@ -261,6 +261,11 @@ function showModalEditar(
 			<a href="#" class="btn btn-primary" onclick="$('#modal-form').submit()"><spring:message code="comu.boto.guardar"/></a>
 		</div>
 	</div>
-
+<script type="text/javascript">
+function onInvokeAction(id) {
+	setExportToLimit(id, '');
+	createHiddenInputFieldsForLimitAndSubmit(id);
+}
+</script>
 </body>
 </html>

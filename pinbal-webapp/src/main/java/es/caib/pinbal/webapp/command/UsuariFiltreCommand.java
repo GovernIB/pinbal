@@ -5,6 +5,8 @@ package es.caib.pinbal.webapp.command;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
 
+import es.caib.pinbal.core.dto.EntitatDto;
+
 /**
  * Command per a filtrar els usuaris.
  * 
@@ -17,6 +19,9 @@ public class UsuariFiltreCommand {
 	private String nom;
 	private String departament;
 
+	private EntitatDto entitat = null;
+	
+	
 	public String getCodi() {
 		return codi;
 	}
@@ -45,6 +50,12 @@ public class UsuariFiltreCommand {
 	@Override
 	public String toString() {
 		return ToStringBuilder.reflectionToString(this);
+	}
+	public EntitatDto getEntitat() {
+		return entitat;
+	}
+	public void setEntitat(EntitatDto entitat) {
+		this.entitat = entitat;
 	}
 
 }
