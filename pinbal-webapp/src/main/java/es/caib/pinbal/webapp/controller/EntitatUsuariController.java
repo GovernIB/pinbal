@@ -4,6 +4,7 @@
 package es.caib.pinbal.webapp.controller;
 
 import java.util.Iterator;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -19,12 +20,17 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import es.caib.pinbal.core.dto.EntitatDto;
 import es.caib.pinbal.core.dto.EntitatUsuariDto;
+import es.caib.pinbal.core.dto.OrdreDto;
+import es.caib.pinbal.core.dto.PaginaLlistatDto;
+import es.caib.pinbal.core.dto.PaginacioAmbOrdreDto;
 import es.caib.pinbal.core.dto.UsuariDto;
+import es.caib.pinbal.core.dto.OrdreDto.OrdreDireccio;
 import es.caib.pinbal.core.service.EntitatService;
 import es.caib.pinbal.core.service.UsuariService;
 import es.caib.pinbal.core.service.exception.EntitatNotFoundException;
 import es.caib.pinbal.core.service.exception.EntitatUsuariNotFoundException;
 import es.caib.pinbal.core.service.exception.UsuariExternNotFoundException;
+import es.caib.pinbal.webapp.command.EntitatFiltreCommand;
 import es.caib.pinbal.webapp.command.EntitatUsuariCommand;
 import es.caib.pinbal.webapp.command.EntitatUsuariCommand.Existent;
 import es.caib.pinbal.webapp.command.EntitatUsuariCommand.TipusCodi;
@@ -33,6 +39,9 @@ import es.caib.pinbal.webapp.command.UsuariFiltreCommand;
 import es.caib.pinbal.webapp.common.AlertHelper;
 import es.caib.pinbal.webapp.common.RequestSessionHelper;
 import es.caib.pinbal.webapp.common.ValidationHelper;
+import es.caib.pinbal.webapp.controller.EntitatController.ConsultaPaginaEntitat;
+import es.caib.pinbal.webapp.jmesa.JMesaGridHelper;
+import es.caib.pinbal.webapp.jmesa.JMesaGridHelper.ConsultaPagina;
 
 /**
  * Controlador per al manteniment dels usuaris d'una entitat.
@@ -231,46 +240,44 @@ public class EntitatUsuariController extends BaseController {
 				SESSION_ATTRIBUTE_FILTRE);
 		if (command == null)
 			command = new UsuariFiltreCommand();
+		
+		command.setEntitat(entitat);
 		model.addAttribute(command);
-		Iterator<EntitatUsuariDto> it = entitat.getUsuaris().iterator();
-		while (it.hasNext()) {
-			EntitatUsuariDto entitatUsuari = it.next();
-			UsuariDto usuari = entitatUsuari.getUsuari();
-			boolean eliminar = false;
-			if (command.getCodi() != null && command.getCodi().length() > 0) {
-				if (usuari.getCodi() == null || usuari.getCodi().length() == 0) {
-					eliminar = true;
-				} else if (!usuari.getCodi().toLowerCase().contains(command.getCodi().toLowerCase())) {
-					eliminar = true;
-				}
-			}
-			if (command.getNif() != null && command.getNif().length() > 0) {
-				if (usuari.getNif() == null || usuari.getNif().length() == 0) {
-					eliminar = true;
-				} else if (!usuari.getNif().toLowerCase().contains(command.getNif().toLowerCase())) {
-					eliminar = true;
-				}
-			}
-			if (command.getNom() != null && command.getNom().length() > 0) {
-				if (usuari.getNom() == null || usuari.getNom().length() == 0) {
-					eliminar = true;
-				} else if (!usuari.getNom().toLowerCase().contains(command.getNom().toLowerCase())) {
-					eliminar = true;
-				}
-			}
-			if (command.getDepartament() != null && command.getDepartament().length() > 0) {
-				if (entitatUsuari.getDepartament() == null || entitatUsuari.getDepartament().length() == 0) {
-					eliminar = true;
-				} else if (!entitatUsuari.getDepartament().toLowerCase().contains(command.getDepartament().toLowerCase())) {
-					eliminar = true;
-				}
-			}
-			if (eliminar) {
-				it.remove();
-			}
-		}
+		
+		List<?> paginaUsuaris = JMesaGridHelper.consultarPaginaIActualitzarLimit(
+				"usuaris",
+				request,
+				new ConsultaPaginaEntitat(
+						usuariService,
+						command),
+				new OrdreDto("usuari.nom", OrdreDireccio.DESCENDENT));
+		
 		model.addAttribute("entitat", entitat);
 		model.addAttribute(new EntitatUsuariCommand(entitat.getId()));
+		model.addAttribute("usuaris", paginaUsuaris);
 	}
-
+	public class ConsultaPaginaEntitat implements ConsultaPagina<EntitatUsuariDto> {
+		UsuariService usuariService;
+		UsuariFiltreCommand command;
+		public ConsultaPaginaEntitat(
+				UsuariService usuariService,
+				UsuariFiltreCommand command) {
+			this.usuariService = usuariService;
+			this.command = command;
+		}
+		public PaginaLlistatDto<EntitatUsuariDto> consultar(
+				PaginacioAmbOrdreDto paginacioAmbOrdre) throws Exception {
+			return usuariService.findAmbFiltrePaginat(
+					command.getEntitat().getId(),
+					command.getIsRepresentant(),
+					command.getIsDelegat(),
+					command.getIsAuditor(),
+					command.getIsAplicacio(),
+					command.getCodi(),
+					command.getNom(),
+					command.getNif(),
+					command.getDepartament(),					
+					paginacioAmbOrdre);
+		}
+	}
 }

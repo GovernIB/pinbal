@@ -12,8 +12,13 @@ import javax.interceptor.Interceptors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ejb.interceptor.SpringBeanAutowiringInterceptor;
 
+import es.caib.pinbal.core.dto.EntitatDto;
+import es.caib.pinbal.core.dto.EntitatUsuariDto;
 import es.caib.pinbal.core.dto.InformeUsuariDto;
+import es.caib.pinbal.core.dto.PaginaLlistatDto;
+import es.caib.pinbal.core.dto.PaginacioAmbOrdreDto;
 import es.caib.pinbal.core.dto.UsuariDto;
+import es.caib.pinbal.core.model.Entitat;
 import es.caib.pinbal.core.service.UsuariService;
 import es.caib.pinbal.core.service.exception.EntitatNotFoundException;
 import es.caib.pinbal.core.service.exception.EntitatUsuariNotFoundException;
@@ -41,6 +46,23 @@ public class UsuariServiceBean implements UsuariService {
 		delegate.inicialitzarUsuariActual();
 	}
 
+	@Override
+	@RolesAllowed("PBL_ADMIN")
+	public PaginaLlistatDto<EntitatUsuariDto> findAmbFiltrePaginat(
+			Long id_entitat,
+			Boolean isRepresentant,
+			Boolean isDelegat,
+			Boolean isAuditor,
+			Boolean isAplicacio,
+			String codi,
+			String nom,
+			String nif,
+			String departament,
+			PaginacioAmbOrdreDto paginacioAmbOrdre){
+		return delegate.findAmbFiltrePaginat(id_entitat, isRepresentant, isDelegat, isAuditor,isAplicacio, 
+											 codi, nom, nif, departament, paginacioAmbOrdre);
+	}
+	
 	@Override
 	@RolesAllowed({"PBL_ADMIN", "PBL_REPRES", "PBL_AUDIT", "PBL_SUPERAUD", "PBL_WS", "tothom"})
 	public UsuariDto getDades() {

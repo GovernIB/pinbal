@@ -5,6 +5,8 @@ package es.caib.pinbal.webapp.command;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
 
+import es.caib.pinbal.core.dto.EntitatDto;
+
 /**
  * Command per a filtrar els usuaris.
  * 
@@ -17,6 +19,37 @@ public class UsuariFiltreCommand {
 	private String nom;
 	private String departament;
 
+	private Boolean isRepresentant;
+	private Boolean isDelegat;
+	private Boolean isAuditor;
+	private Boolean isAplicacio;
+	
+	private EntitatDto entitat = null;
+	
+	public Boolean getIsRepresentant() {
+		return isRepresentant;
+	}
+	public void setIsRepresentant(Boolean isRepresentant) {
+		this.isRepresentant = isRepresentant;
+	}
+	public Boolean getIsDelegat() {
+		return isDelegat;
+	}
+	public void setIsDelegat(Boolean isDelegat) {
+		this.isDelegat = isDelegat;
+	}
+	public Boolean getIsAuditor() {
+		return isAuditor;
+	}
+	public void setIsAuditor(Boolean isAuditor) {
+		this.isAuditor = isAuditor;
+	}
+	public Boolean getIsAplicacio() {
+		return isAplicacio;
+	}
+	public void setIsAplicacio(Boolean isAplicacio) {
+		this.isAplicacio = isAplicacio;
+	}
 	public String getCodi() {
 		return codi;
 	}
@@ -45,6 +78,12 @@ public class UsuariFiltreCommand {
 	@Override
 	public String toString() {
 		return ToStringBuilder.reflectionToString(this);
+	}
+	public EntitatDto getEntitat() {
+		return entitat;
+	}
+	public void setEntitat(EntitatDto entitat) {
+		this.entitat = entitat;
 	}
 
 }

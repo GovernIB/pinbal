@@ -131,20 +131,53 @@ function showModalEditar(
 
 	<c:url value="/entitat/${entitat.id}/usuari" var="formAction"/>
 	<form:form id="form-filtre"action="${formAction}" method="post" cssClass="well form-inline" commandName="usuariFiltreCommand">
-		<c:set var="campPath" value="codi"/>
-		<spring:message var="placeholderCodi" code="entitat.usuaris.filtre.camp.codi"/>
-		<form:input path="${campPath}" cssClass="input-medium" id="${campPath}" placeholder="${placeholderCodi}"/>
-		<c:set var="campPath" value="nif"/>
-		<spring:message var="placeholderNif" code="entitat.usuaris.filtre.camp.nif"/>
-		<form:input path="${campPath}" cssClass="input-medium" id="${campPath}" placeholder="${placeholderNif}"/>
-		<c:set var="campPath" value="nom"/>
-		<spring:message var="placeholderNom" code="entitat.usuaris.filtre.camp.nom"/>
-		<form:input path="${campPath}" cssClass="input-medium" id="${campPath}" placeholder="${placeholderNom}"/>
-		<c:set var="campPath" value="departament"/>
-		<spring:message var="placeholderDepartament" code="entitat.usuaris.filtre.camp.departament"/>
-		<form:input path="${campPath}" cssClass="input-medium" id="${campPath}" placeholder="${placeholderDepartament}"/>
-		<button id="netejar-filtre" class="btn" type="button"><spring:message code="comu.boto.netejar"/></button>
-		<button type="submit" class="btn btn-primary"><spring:message code="comu.boto.filtrar"/></button>
+		<div class="row-fluid">
+			<c:set var="campPath" value="codi"/>
+			<spring:message var="placeholderCodi" code="entitat.usuaris.filtre.camp.codi"/>
+			<form:input path="${campPath}" cssClass="input-medium" id="${campPath}" placeholder="${placeholderCodi}"/>
+			
+			<c:set var="campPath" value="nif"/>
+			<spring:message var="placeholderNif" code="entitat.usuaris.filtre.camp.nif"/>
+			<form:input path="${campPath}" cssClass="input-medium" id="${campPath}" placeholder="${placeholderNif}"/>
+			
+			<c:set var="campPath" value="nom"/>
+			<spring:message var="placeholderNom" code="entitat.usuaris.filtre.camp.nom"/>
+			<form:input path="${campPath}" cssClass="input-medium" id="${campPath}" placeholder="${placeholderNom}"/>
+			
+			<c:set var="campPath" value="departament"/>
+			<spring:message var="placeholderDepartament" code="entitat.usuaris.filtre.camp.departament"/>
+			<form:input path="${campPath}" cssClass="input-medium" id="${campPath}" placeholder="${placeholderDepartament}"/>
+		</div>
+		<div class="row-fluid">
+		<label class="control-label" for="modal-input-representant"><spring:message code="entitat.usuaris.camp.rols"/>: </label>
+			<c:set var="campPath" value="isRepresentant"/>
+			<label class="checkbox" for="modal-input-representant">
+				<form:checkbox  path="${campPath}" id="${campPath}"/>
+				<spring:message code="entitat.usuaris.rol.repres"/>
+			</label>
+			
+			<c:set var="campPath" value="isDelegat"/>
+			<label class="checkbox" for="modal-input-delegat">
+				<form:checkbox  path="${campPath}" id="${campPath}"/>
+				<spring:message code="entitat.usuaris.rol.deleg"/>
+			</label>
+			
+			<c:set var="campPath" value="isAuditor"/>
+			<label class="checkbox" for="modal-input-auditor">
+				<form:checkbox  path="${campPath}" id="${campPath}"/>
+				<spring:message code="entitat.usuaris.rol.audit"/>
+			</label>
+	
+			<c:set var="campPath" value="isAplicacio"/>
+			<label class="checkbox" for="modal-input-aplicacio">
+				<form:checkbox  path="${campPath}" id="${campPath}"/>
+				<spring:message code="entitat.usuaris.rol.aplic"/>
+			</label>
+		</div>
+		<div class="row-fluid">
+			<button id="netejar-filtre" class="btn" type="button"><spring:message code="comu.boto.netejar"/></button>
+			<button type="submit" class="btn btn-primary"><spring:message code="comu.boto.filtrar"/></button>
+		</div>
 	</form:form>
 
 	<div class="row-fluid">
@@ -154,13 +187,13 @@ function showModalEditar(
 		<div class="clearfix"></div>
 	</div>
 
-	<div style="margin-top:8px;padding:4px 0">
+	<form>
 		<jmesa:tableModel
 				id="usuaris" 
-				items="${entitat.usuarisAdmin}"
-				view="es.caib.pinbal.webapp.jmesa.BootstrapNoToolbarView"
-				var="registre"
-				maxRows="${fn:length(entitat.usuarisAdmin)}">
+				items="${usuaris}"
+				toolbar="es.caib.pinbal.webapp.jmesa.BootstrapToolbar"
+				view="es.caib.pinbal.webapp.jmesa.BootstrapView"
+				var="registre">
 			<jmesa:htmlTable>
 				<jmesa:htmlRow>
 					<jmesa:htmlColumn property="usuari.nom" titleKey="entitat.usuaris.camp.usuari">
@@ -189,7 +222,7 @@ function showModalEditar(
 	            </jmesa:htmlRow>
 	        </jmesa:htmlTable>
 		</jmesa:tableModel>
-	</div>
+	</form>
 	<div>
 		<a href="<c:url value="/entitat"/>" class="btn pull-right"><spring:message code="comu.boto.tornar"/></a>
 		<div class="clearfix"></div>
@@ -261,6 +294,11 @@ function showModalEditar(
 			<a href="#" class="btn btn-primary" onclick="$('#modal-form').submit()"><spring:message code="comu.boto.guardar"/></a>
 		</div>
 	</div>
-
+	<script type="text/javascript">
+	function onInvokeAction(id) {
+		setExportToLimit(id, '');
+		createHiddenInputFieldsForLimitAndSubmit(id);
+	}
+	</script>
 </body>
 </html>
