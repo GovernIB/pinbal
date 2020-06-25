@@ -31,6 +31,7 @@ public class Solicitud {
 	private String finalitat;
 	private Consentiment consentiment;
 	private String unitatTramitadora;
+	private String unitatTramitadoraCodi;
 	private String expedientId;
 
 	private Element dadesEspecifiquesElement;
@@ -131,6 +132,12 @@ public class Solicitud {
 	}
 	public void setUnitatTramitadora(String unitatTramitadora) {
 		this.unitatTramitadora = unitatTramitadora;
+	}
+	public String getUnitatTramitadoraCodi() {
+		return unitatTramitadoraCodi;
+	}
+	public void setUnitatTramitadoraCodi(String unitatTramitadoraCodi) {
+		this.unitatTramitadoraCodi = unitatTramitadoraCodi;
 	}
 	public String getExpedientId() {
 		return expedientId;

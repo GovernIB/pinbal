@@ -20,7 +20,6 @@ import es.caib.pinbal.core.dto.ClauPublicaDto;
 import es.caib.pinbal.core.dto.EmisorDto;
 import es.caib.pinbal.core.dto.ServeiDto;
 import es.caib.pinbal.core.dto.ServeiXsdDto;
-import es.caib.pinbal.core.dto.XsdTipusEnumDto;
 import es.caib.pinbal.webapp.helper.ConversioTipusHelper;
 import es.caib.pinbal.webapp.validation.CodiServeiNoRepetit;
 
@@ -104,6 +103,8 @@ public class ServeiCommand {
 	private boolean pinbalActiuCampLlinatge2 = true;
 	private boolean pinbalActiuCampNomComplet = true;
 	private boolean pinbalActiuCampDocument = true;
+	@Size(max=10)
+	private String pinbalUnitatDir3;
 	private boolean pinbalDocumentObligatori = true;
 	private boolean pinbalComprovarDocument = true;
 	private boolean activaGestioXsd = false;
@@ -389,6 +390,12 @@ public class ServeiCommand {
 	}
 	public void setPinbalActiuCampDocument(boolean pinbalActiuCampDocument) {
 		this.pinbalActiuCampDocument = pinbalActiuCampDocument;
+	}
+	public String getPinbalUnitatDir3() {
+		return pinbalUnitatDir3;
+	}
+	public void setPinbalUnitatDir3(String pinbalUnitatDir3) {
+		this.pinbalUnitatDir3 = pinbalUnitatDir3;
 	}
 	public boolean isPinbalDocumentObligatori() {
 		return pinbalDocumentObligatori;

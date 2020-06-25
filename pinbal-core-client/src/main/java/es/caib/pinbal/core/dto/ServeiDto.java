@@ -70,6 +70,7 @@ public class ServeiDto implements Serializable {
 	private boolean pinbalActiuCampLlinatge2;
 	private boolean pinbalActiuCampNomComplet;
 	private boolean pinbalActiuCampDocument;
+	private String pinbalUnitatDir3;
 	private boolean pinbalDocumentObligatori;
 	private boolean pinbalComprovarDocument;
 	private boolean activaGestioXsd;
@@ -352,6 +353,12 @@ public class ServeiDto implements Serializable {
 	}
 	public void setPinbalActiuCampDocument(boolean pinbalActiuCampDocument) {
 		this.pinbalActiuCampDocument = pinbalActiuCampDocument;
+	}
+	public String getPinbalUnitatDir3() {
+		return pinbalUnitatDir3;
+	}
+	public void setPinbalUnitatDir3(String pinbalUnitatDir3) {
+		this.pinbalUnitatDir3 = pinbalUnitatDir3;
 	}
 	public boolean isPinbalDocumentObligatori() {
 		return pinbalDocumentObligatori;

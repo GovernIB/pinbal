@@ -182,6 +182,7 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 					servei.isPinbalActiuCampLlinatge2(),
 					servei.isPinbalActiuCampNomComplet(),
 					servei.isPinbalActiuCampDocument(),
+					servei.getPinbalUnitatDir3(),
 					servei.isPinbalDocumentObligatori(),
 					servei.isPinbalComprovarDocument(),
 					servei.isActivaGestioXsd(),
@@ -1178,6 +1179,7 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 			dto.setPinbalActiuCampLlinatge2(serveiConfig.isActiuCampLlinatge2());
 			dto.setPinbalActiuCampNomComplet(serveiConfig.isActiuCampNomComplet());
 			dto.setPinbalActiuCampDocument(serveiConfig.isActiuCampDocument());
+			dto.setPinbalUnitatDir3(serveiConfig.getPinbalUnitatDir3());
 			dto.setPinbalDocumentObligatori(serveiConfig.isDocumentObligatori());
 			dto.setPinbalComprovarDocument(serveiConfig.isComprovarDocument());
 			dto.setActivaGestioXsd(serveiConfig.isActivaGestioXsd());

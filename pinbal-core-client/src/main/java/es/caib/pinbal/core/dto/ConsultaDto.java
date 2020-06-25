@@ -64,6 +64,7 @@ public class ConsultaDto implements Serializable {
 	private String entitatNom;
 	private String entitatCif;
 	private String departamentNom;
+	private String unitatTramitadoraCodi;
 	private Consentiment consentiment;
 	private String finalitat;
 
@@ -186,6 +187,12 @@ public class ConsultaDto implements Serializable {
 	}
 	public void setDepartamentNom(String departamentNom) {
 		this.departamentNom = departamentNom;
+	}
+	public String getUnitatTramitadoraCodi() {
+		return unitatTramitadoraCodi;
+	}
+	public void setUnitatTramitadoraCodi(String unitatTramitadoraCodi) {
+		this.unitatTramitadoraCodi = unitatTramitadoraCodi;
 	}
 	public Consentiment getConsentiment() {
 		return consentiment;

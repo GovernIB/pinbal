@@ -24,6 +24,7 @@ public class RecobrimentSolicitudDto implements Serializable {
 	private String funcionariNif;
 	private String funcionariNom;
 	private String departamentNom;
+	private String unitatTramitadoraCodi;
 	private Consentiment consentiment;
 	private String finalitat;
 	private String expedientId;
@@ -72,6 +73,12 @@ public class RecobrimentSolicitudDto implements Serializable {
 	}
 	public void setDepartamentNom(String departamentNom) {
 		this.departamentNom = departamentNom;
+	}
+	public String getUnitatTramitadoraCodi() {
+		return unitatTramitadoraCodi;
+	}
+	public void setUnitatTramitadoraCodi(String unitatTramitadoraCodi) {
+		this.unitatTramitadoraCodi = unitatTramitadoraCodi;
 	}
 	public Consentiment getConsentiment() {
 		return consentiment;

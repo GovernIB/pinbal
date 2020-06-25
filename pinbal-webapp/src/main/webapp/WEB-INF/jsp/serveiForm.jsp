@@ -321,6 +321,13 @@ function showModalXsd(element) {
 				</div>
 			</div>
 			<div class="row-fluid">
+				<div class="span6">
+					<pbl:inputText name="pinbalUnitatDir3" textKey="servei.form.camp.pinbal.dir3"/>
+				</div>
+				<div class="span6">
+				</div>
+			</div>
+			<div class="row-fluid">
 				<c:set var="campPath" value="ajuda"/>
 				<c:set var="campErrors"><form:errors path="${campPath}"/></c:set>
 				<div class="control-group<c:if test="${not empty campErrors}"> error</c:if>">
@@ -331,7 +338,6 @@ function showModalXsd(element) {
 					</div>
 				</div>
 			</div>
-			
 			<div class="row-fluid">
 				<div class="span12">
 					<c:set var="campPath" value="fitxerAjuda"/>
@@ -348,12 +354,9 @@ function showModalXsd(element) {
 					</div>
 				</div>
 			</div>
-			
 			<script>
 				$(document).ready(function() {
-				
 					var fileTextInput = $('#fitxerAjuda_txt');
-						
 					if (!$('#fitxerAjuda_txt').val()) {
 						$('#ajuda_clean').attr('disabled', 'disabled');
 						$("#ajuda_file").click(function() {
@@ -367,7 +370,6 @@ function showModalXsd(element) {
 							location.href = "<c:url value='/servei/${serveiCommand.codi}/downloadAjuda'/>";
 						});
 					}
-					
 					$("#fitxerAjuda").change(
 						function() {
 							var input = $(this),
@@ -417,11 +419,7 @@ function showModalXsd(element) {
 						}
 				    });
 				});
-				
-				
 			</script>
-
-				
 		</fieldset>
 		<c:if test="${not empty serveiCommand.codi}">
 			<fieldset>

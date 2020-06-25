@@ -68,6 +68,8 @@ public class ServeiConfig extends PinbalAuditable<Long> {
 	private boolean actiuCampNomComplet = true;
 	@Column(name = "actiu_camp_doc")
 	private boolean actiuCampDocument = true;
+	@Column(name = "unitat_dir3", length = 10)
+	private String pinbalUnitatDir3;
 	@Column(name = "document_obligatori")
 	private boolean documentObligatori = false;
 	@Column(name = "comprovar_document")
@@ -193,6 +195,9 @@ public class ServeiConfig extends PinbalAuditable<Long> {
 	public boolean isActiuCampDocument() {
 		return actiuCampDocument;
 	}
+	public String getPinbalUnitatDir3() {
+		return pinbalUnitatDir3;
+	}
 	public boolean isDocumentObligatori() {
 		return documentObligatori;
 	}
@@ -251,6 +256,7 @@ public class ServeiConfig extends PinbalAuditable<Long> {
 			boolean actiuCampLlinatge2,
 			boolean actiuCampNomComplet,
 			boolean actiuCampDocument,
+			String pinbalUnitatDir3,
 			boolean documentObligatori,
 			boolean comprovarDocument,
 			boolean activaGestioXsd,
@@ -271,6 +277,7 @@ public class ServeiConfig extends PinbalAuditable<Long> {
 		this.actiuCampLlinatge2 = actiuCampLlinatge2;
 		this.actiuCampNomComplet = actiuCampNomComplet;
 		this.actiuCampDocument = actiuCampDocument;
+		this.pinbalUnitatDir3 = pinbalUnitatDir3;
 		this.documentObligatori = documentObligatori;
 		this.comprovarDocument = comprovarDocument;
 		this.activaGestioXsd = activaGestioXsd;

@@ -20,6 +20,7 @@ public class Resposta {
 	private String expedientId;
 	private String finalitat;
 	private String unitatTramitadora;
+	private String unitatTramitadoraCodi;
 
 	private Date respostaData;
 	private String peticioXml;
@@ -64,6 +65,12 @@ public class Resposta {
 	}
 	public void setUnitatTramitadora(String unitatTramitadora) {
 		this.unitatTramitadora = unitatTramitadora;
+	}
+	public String getUnitatTramitadoraCodi() {
+		return unitatTramitadoraCodi;
+	}
+	public void setUnitatTramitadoraCodi(String unitatTramitadoraCodi) {
+		this.unitatTramitadoraCodi = unitatTramitadoraCodi;
 	}
 	public Date getRespostaData() {
 		return respostaData;

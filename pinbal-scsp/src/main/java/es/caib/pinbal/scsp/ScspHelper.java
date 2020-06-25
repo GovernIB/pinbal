@@ -287,6 +287,7 @@ public class ScspHelper {
 			}
 			if (transmision != null) {
 				resposta.setUnitatTramitadora(transmision.getUnidadTramitadora());
+				resposta.setUnitatTramitadoraCodi(transmision.getCodigoUnidadTramitadora());
 				String cons = transmision.getConsentimiento();
 				if (cons.equals(Consentimiento.Si.toString()))
 					resposta.setConsentiment(Consentiment.Si);
@@ -711,6 +712,7 @@ public class ScspHelper {
 		procedimiento.setNombreProcedimiento(solicitud.getProcedimentNom());
 		solicitante.setProcedimiento(procedimiento);
 		solicitante.setUnidadTramitadora(solicitud.getUnitatTramitadora());
+		solicitante.setCodigoUnidadTramitadora(solicitud.getUnitatTramitadoraCodi());
 		if (solicitud.getExpedientId() != null && solicitud.getExpedientId().length() > 0)
 			solicitante.setIdExpediente(solicitud.getExpedientId());
 		datosGenericos.setTitular(new Titular());

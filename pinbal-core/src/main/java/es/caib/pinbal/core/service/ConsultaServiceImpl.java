@@ -214,7 +214,8 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 					procedimentServei,
 					false,
 					false,
-					null).build();
+					null).
+					build();
 			c.updateEstat(EstatTipus.Processant);
 			processarDadesEspecifiquesSegonsCamps(
 					consulta.getServeiCodi(),
@@ -287,7 +288,8 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 				procedimentServei,
 				false,
 				false,
-				null).build();
+				null).
+				build();
 		c.updateEstat(EstatTipus.Processant);
 		Consulta saved = consultaRepository.save(c);
 		return dtoMappingHelper.getMapperFacade().map(
@@ -322,7 +324,7 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 			throw new ConsultaNotFoundException();
 		}
 		List<Solicitud> solicituds = new ArrayList<Solicitud>();
-		solicituds.add(convertirEnSolicitud(consulta,procedimentServei));
+		solicituds.add(convertirEnSolicitud(consulta, procedimentServei));
 		ResultatEnviamentPeticio resultat = getScspHelper().enviarPeticionSincrona(
 				c.getScspPeticionId(),
 				solicituds);
@@ -402,7 +404,8 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 					procedimentServei,
 					false,
 					true,
-					null).build();
+					null).
+					build();
 			c.updateEstat(EstatTipus.Pendent);
 			List<Solicitud> solicituds = convertirEnMultiplesSolicituds(consulta,procedimentServei);
 			ResultatEnviamentPeticio resultat = getScspHelper().enviarPeticionAsincrona(
@@ -429,7 +432,8 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 						procedimentServei,
 						false,
 						false,
-						c).build();
+						c).
+						build();
 				cs.updateScspSolicitudId(resultat.getIdsSolicituds()[solicitudIndex++]);
 				updateEstatConsulta(cs, resultat, true);
 				consultaRepository.save(cs);
@@ -505,7 +509,8 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 					procedimentServei,
 					true,
 					false,
-					null).build();
+					null).
+					build();
 			c.updateEstat(EstatTipus.Pendent);
 			Solicitud solicitudEnviar = convertirEnSolicitud(
 					entitat,
@@ -522,6 +527,7 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 					solicitud.getFinalitat(),
 					solicitud.getConsentiment(),
 					solicitud.getDepartamentNom(),
+					solicitud.getUnitatTramitadoraCodi(),
 					solicitud.getExpedientId(),
 					getScspHelper().copiarDadesEspecifiquesRecobriment(
 							serveiCodi,
@@ -619,7 +625,8 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 				procedimentServei,
 				true,
 				false,
-				null).build();
+				null).
+				build();
 		c.updateEstat(EstatTipus.Processant);
 		Consulta saved = consultaRepository.save(c);
 		ConsultaDto resposta = dtoMappingHelper.getMapperFacade().map(
@@ -665,6 +672,7 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 				solicitud.getFinalitat(),
 				solicitud.getConsentiment(),
 				solicitud.getDepartamentNom(),
+				solicitud.getUnitatTramitadoraCodi(),
 				solicitud.getExpedientId(),
 				copiaDadesEspecifiques,
 				procedimentServei);
@@ -768,7 +776,8 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 					procedimentServei,
 					true,
 					true,
-					null).build();
+					null).
+					build();
 			c.updateEstat(EstatTipus.Pendent);
 			List<Solicitud> solicitudsEnviar = new ArrayList<Solicitud>();
 			for (RecobrimentSolicitudDto solicitud: solicituds) {
@@ -787,6 +796,7 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 						solicitud.getFinalitat(),
 						solicitud.getConsentiment(),
 						departamentNom,
+						solicitud.getUnitatTramitadoraCodi(),
 						solicitud.getExpedientId(),
 						getScspHelper().copiarDadesEspecifiquesRecobriment(
 								serveiCodi,
@@ -818,7 +828,8 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 						procedimentServei,
 						true,
 						false,
-						c).build();
+						c).
+						build();
 				cs.updateScspSolicitudId(resultat.getIdsSolicituds()[solicitudIndex++]);
 				updateEstatConsulta(cs, resultat, true);
 				consultaRepository.save(cs);
@@ -1759,6 +1770,8 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 				if (rpt.getConsentiment() != null)
 					resposta.setConsentiment(ConsultaDto.Consentiment.valueOf(rpt.getConsentiment().name()));
 				resposta.setExpedientId(rpt.getExpedientId());
+				resposta.setDepartamentNom(rpt.getUnitatTramitadora());
+				resposta.setUnitatTramitadoraCodi(rpt.getUnitatTramitadoraCodi());
 				if (rpt.getRespostaXml() != null) {
 					resposta.setHiHaResposta(true);
 					resposta.setRespostaData(rpt.getRespostaData());
@@ -2117,6 +2130,10 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 				es.caib.pinbal.scsp.Consentiment.valueOf(
 						consulta.getConsentiment().toString()));
 		solicitud.setUnitatTramitadora(consulta.getDepartamentNom());
+		ServeiConfig serveiConfig = serveiConfigRepository.findByServei(consulta.getServeiCodi());
+		if (serveiConfig.getPinbalUnitatDir3() != null && !serveiConfig.getPinbalUnitatDir3().isEmpty()) {
+			solicitud.setUnitatTramitadoraCodi(serveiConfig.getPinbalUnitatDir3());
+		}
 		solicitud.setExpedientId(consulta.getExpedientId());
 		solicitud.setDadesEspecifiquesMap(consulta.getDadesEspecifiques());
 		return solicitud;
@@ -2136,6 +2153,7 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 			String finalitat,
 			Consentiment consentiment,
 			String departamentNom,
+			String unitatTramitadoraCodi,
 			String expedientId,
 			Element dadesEspecifiques,
 			ProcedimentServei procedimentServei) {
@@ -2163,6 +2181,7 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 		solicitud.setConsentiment(
 				es.caib.pinbal.scsp.Consentiment.valueOf(consentiment.toString()));
 		solicitud.setUnitatTramitadora(departamentNom);
+		solicitud.setUnitatTramitadoraCodi(unitatTramitadoraCodi);
 		solicitud.setExpedientId(expedientId);
 		solicitud.setDadesEspecifiquesElement(dadesEspecifiques);
 		return solicitud;

@@ -6,11 +6,8 @@ package es.caib.pinbal.webapp.interceptor;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 import org.springframework.web.servlet.support.RequestContextUtils;
-
-import es.caib.pinbal.core.service.UsuariService;
 
 /**
  * Interceptor que carrega una variable amb l'idioma del navigador.
