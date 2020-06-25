@@ -4,6 +4,7 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="http://code.google.com/p/jmesa" prefix="jmesa" %>
+<%@ taglib tagdir="/WEB-INF/tags/pinbal" prefix="pbl" %>
 
 <%
 	request.setAttribute(
@@ -40,37 +41,50 @@ $(document).ready(function() {
 
 	<c:url value="/entitat" var="formAction"/>
 	<form:form id="form-filtre" action="${formAction}" method="post" cssClass="well form-inline" commandName="entitatFiltreCommand">
-		<c:set var="campPath" value="codi"/>
-		<spring:message var="placeholderCodi" code="entitat.list.filtre.camp.codi"/>
-		<form:input path="${campPath}" cssClass="input-medium" id="${campPath}" placeholder="${placeholderCodi}"/>
-		
-		<c:set var="campPath" value="nom"/>
-		<spring:message var="placeholderNom" code="entitat.list.filtre.camp.nom"/>
-		<form:input path="${campPath}" cssClass="input-medium" id="${campPath}" placeholder="${placeholderNom}"/>
-		
-		<c:set var="campPath" value="cif"/>
-		<spring:message var="placeholderCif" code="entitat.list.filtre.camp.cif"/>
-		<form:input path="${campPath}" cssClass="input-medium" id="${campPath}" placeholder="${placeholderCif}"/>
-		
-		<c:set var="campPath" value="activa"/>
-		<spring:message var="trueValue" code="entitat.list.filtre.camp.activa.yes"/>
-		<spring:message var="falseValue" code="entitat.list.filtre.camp.activa.no"/>
-		<form:select path="${campPath}">
-			<option value=""><spring:message code="entitat.list.filtre.camp.activa"/></option>>
-			<form:option value="true">${trueValue}</form:option>>
-			<form:option value="false">${falseValue}</form:option>>
-		</form:select>
+		<div class="row-fluid">
+			<div class="span3">
+				<c:set var="campPath" value="codi"/>
+				<pbl:inputText name="${campPath}" textKey="entitat.list.filtre.camp.codi"
+							   placeholder="entitat.list.filtre.camp.codi" hideLabel="true"/>
+			</div>
+			<div class="span3">
+				<c:set var="campPath" value="nom"/>
+				<pbl:inputText name="${campPath}" textKey="entitat.list.filtre.camp.nom"
+							   placeholder="entitat.list.filtre.camp.nom" hideLabel="true"/>
+			</div>
+			<div class="span3">
+				<c:set var="campPath" value="cif"/>
+				<pbl:inputText name="${campPath}" textKey="entitat.list.filtre.camp.cif"
+							   placeholder="entitat.list.filtre.camp.cif" hideLabel="true"/>
+			</div>
+			<div class="span3">
+				<c:set var="campPath" value="activa"/>
+				<spring:message var="trueValue" code="entitat.list.filtre.camp.activa.yes"/>
+				<spring:message var="falseValue" code="entitat.list.filtre.camp.activa.no"/>
+				<form:select class="span12" path="${campPath}">
+					<option value=""><spring:message code="entitat.list.filtre.camp.activa"/></option>>
+					<form:option value="true">${trueValue}</form:option>>
+					<form:option value="false">${falseValue}</form:option>>
+				</form:select>
+			</div>
 
-		<c:set var="campPath" value="tipus"/>
-		<form:select path="${campPath}">
-			<option value=""><spring:message code="entitat.list.filtre.camp.tipus"/></option>>
-			<c:forEach var="estat" items="${entitatTipusLlista}">
-					<form:option value="${estat}">${estat}</form:option>
-			</c:forEach>
-		</form:select>
-				
-		<button id="netejar-filtre" class="btn" type="button"><spring:message code="comu.boto.netejar"/></button>
-		<button type="submit" class="btn btn-primary"><spring:message code="comu.boto.filtrar"/></button>
+		</div>
+		<div class="row-fluid">
+			<div class="span3">
+				<c:set var="campPath" value="tipus"/>
+				<form:select class="span12" path="${campPath}">
+					<option value=""><spring:message code="entitat.list.filtre.camp.tipus"/></option>>
+					<c:forEach var="estat" items="${entitatTipusLlista}">
+						<form:option value="${estat}">${estat}</form:option>
+					</c:forEach>
+				</form:select>
+			</div>
+			<div class="pull-right">
+				<button id="netejar-filtre" class="btn" type="button"><spring:message code="comu.boto.netejar"/></button>
+				<button type="submit" class="btn btn-primary"><spring:message code="comu.boto.filtrar"/></button>
+			</div>
+		</div>
+
 	</form:form>
 
 	<div class="row-fluid">
