@@ -46,6 +46,10 @@ public interface UsuariService {
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public PaginaLlistatDto<EntitatUsuariDto> findAmbFiltrePaginat(
 			Long id_entitat,
+			Boolean isRepresentant,
+			Boolean isDelegat,
+			Boolean isAuditor,
+			Boolean isAplicacio,
 			String codi,
 			String nom,
 			String nif,

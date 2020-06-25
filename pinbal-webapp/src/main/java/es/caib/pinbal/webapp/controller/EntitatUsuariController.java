@@ -269,6 +269,10 @@ public class EntitatUsuariController extends BaseController {
 				PaginacioAmbOrdreDto paginacioAmbOrdre) throws Exception {
 			return usuariService.findAmbFiltrePaginat(
 					command.getEntitat().getId(),
+					command.getIsRepresentant(),
+					command.getIsDelegat(),
+					command.getIsAuditor(),
+					command.getIsAplicacio(),
 					command.getCodi(),
 					command.getNom(),
 					command.getNif(),

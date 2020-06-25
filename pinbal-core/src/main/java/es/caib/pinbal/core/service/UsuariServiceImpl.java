@@ -83,6 +83,10 @@ public class UsuariServiceImpl implements UsuariService {
 	@SuppressWarnings("unchecked")
 	public PaginaLlistatDto<EntitatUsuariDto> findAmbFiltrePaginat(
 			Long id_entitat,
+			Boolean isRepresentant,
+			Boolean isDelegat,
+			Boolean isAuditor,
+			Boolean isAplicacio,
 			String codi,
 			String nom,
 			String nif,
@@ -94,6 +98,10 @@ public class UsuariServiceImpl implements UsuariService {
 		Page<EntitatUsuari> paginaEntitats = entitatUsuariRepository.findByFiltre(
 				id_entitat == null,
 				entitatRepository.findOne(id_entitat),
+				isRepresentant != null && isRepresentant == true,
+				isDelegat != null && isDelegat == true,
+				isAuditor != null && isAuditor == true,
+				isAplicacio != null && isAplicacio == true,
 				codi == null || codi.length() == 0,
 				codi,
 				nom == null || nom.length() == 0,

@@ -50,12 +50,17 @@ public class UsuariServiceBean implements UsuariService {
 	@RolesAllowed("PBL_ADMIN")
 	public PaginaLlistatDto<EntitatUsuariDto> findAmbFiltrePaginat(
 			Long id_entitat,
+			Boolean isRepresentant,
+			Boolean isDelegat,
+			Boolean isAuditor,
+			Boolean isAplicacio,
 			String codi,
 			String nom,
 			String nif,
 			String departament,
 			PaginacioAmbOrdreDto paginacioAmbOrdre){
-		return delegate.findAmbFiltrePaginat(id_entitat, codi, nom, nif, departament, paginacioAmbOrdre);
+		return delegate.findAmbFiltrePaginat(id_entitat, isRepresentant, isDelegat, isAuditor,isAplicacio, 
+											 codi, nom, nif, departament, paginacioAmbOrdre);
 	}
 	
 	@Override

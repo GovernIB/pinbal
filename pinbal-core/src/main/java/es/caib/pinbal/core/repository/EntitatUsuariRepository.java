@@ -46,6 +46,10 @@ public interface EntitatUsuariRepository extends JpaRepository<EntitatUsuari, Lo
 			"    EntitatUsuari eu " +
 			"where " +
 			"      (:esNullEntitat = true or :entitat = eu.entitat)    " + 
+			"  and (:filtreRepresentants = false or eu.representant = true) " + 
+			"  and (:filtreDelegats = false or eu.delegat = true) " +
+			"  and (:filtreAuditors = false or eu.auditor = true) " +
+			"  and (:filtreAplicacio = false or eu.aplicacio = true) " +
 			"  and (:esNullCodi = true or lower(eu.usuari.codi) like concat('%', lower(:codi), '%')) " +
 			"  and (:esNullNom = true or lower(eu.usuari.nom) like concat('%', lower(:nom), '%'))" +
 			"  and (:esNullNif = true or lower(eu.usuari.nif) like concat('%', lower(:nif), '%'))" +
@@ -54,6 +58,10 @@ public interface EntitatUsuariRepository extends JpaRepository<EntitatUsuari, Lo
 	public  Page<EntitatUsuari> findByFiltre(
 			@Param("esNullEntitat") boolean esNullEntitat,
 			@Param("entitat") Entitat entitat,
+			@Param("filtreRepresentants") boolean filtreRepresentants,
+			@Param("filtreDelegats") boolean filtreDelegats,
+			@Param("filtreAuditors") boolean filtreAuditors,
+			@Param("filtreAplicacio") boolean filtreAplicacio,
 			@Param("esNullCodi") boolean esNullCodi,
 			@Param("codi") String codi,
 			@Param("esNullNom") boolean esNullNom,
