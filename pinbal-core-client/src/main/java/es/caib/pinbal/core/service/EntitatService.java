@@ -8,6 +8,7 @@ import java.util.List;
 import org.springframework.security.access.prepost.PreAuthorize;
 
 import es.caib.pinbal.core.dto.EntitatDto;
+import es.caib.pinbal.core.dto.EntitatDto.EntitatTipusDto;
 import es.caib.pinbal.core.dto.PaginaLlistatDto;
 import es.caib.pinbal.core.dto.PaginacioAmbOrdreDto;
 import es.caib.pinbal.core.service.exception.EntitatNotFoundException;
@@ -78,6 +79,9 @@ public interface EntitatService {
 	public PaginaLlistatDto<EntitatDto> findAmbFiltrePaginat(
 			String codi,
 			String nom,
+			String cif,
+			Boolean activa,
+			String tipus,
 			PaginacioAmbOrdreDto paginacioAmbOrdre);
 
 	/**

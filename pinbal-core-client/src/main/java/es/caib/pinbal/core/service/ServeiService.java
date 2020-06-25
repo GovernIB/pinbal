@@ -13,7 +13,10 @@ import es.caib.pinbal.core.dto.ClauPrivadaDto;
 import es.caib.pinbal.core.dto.ClauPublicaDto;
 import es.caib.pinbal.core.dto.DadaEspecificaDto;
 import es.caib.pinbal.core.dto.EmisorDto;
+import es.caib.pinbal.core.dto.EntitatDto;
 import es.caib.pinbal.core.dto.FitxerDto;
+import es.caib.pinbal.core.dto.PaginaLlistatDto;
+import es.caib.pinbal.core.dto.PaginacioAmbOrdreDto;
 import es.caib.pinbal.core.dto.ProcedimentServeiDto;
 import es.caib.pinbal.core.dto.ServeiBusDto;
 import es.caib.pinbal.core.dto.ServeiCampDto;
@@ -62,6 +65,25 @@ public interface ServeiService {
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public ServeiDto delete(String serveiCodi) throws ServeiNotFoundException, ServeiAmbConsultesException;
 
+	
+	/**
+	 * Consulta les entitats segons el filtre.
+	 * 
+	 * @param codi Codi a cercar.
+	 * @param descripcio Nom a cercar.
+	 * @param emisor Emisor a cercar.
+	 * @param activa Si cercar actius (true) o inactius (false).
+	 * @param paginacioAmbOrdre
+	 * 				Paràmetres per a la paginació i ordenació dels resultats.
+	 * @return
+	 */
+	public PaginaLlistatDto<ServeiDto> findAmbFiltrePaginat(
+			String codi,
+			String descripcio,
+			String emisor,
+			Boolean activa,
+			PaginacioAmbOrdreDto paginacioAmbOrdre);
+	
 	/**
 	 * Obté el servei amb un codi determinat.
 	 * 

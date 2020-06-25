@@ -174,7 +174,7 @@ function showModalXsd(element) {
 </head>
 <body>
 
-	<c:url value="/servei" var="formAction"/>
+	<c:url value="/servei/save" var="formAction"/>
 	<form:form action="${formAction}" method="post" cssClass="form-horizontal" commandName="serveiCommand" enctype="multipart/form-data">
 		<form:hidden path="creacio"/>
 		<fieldset>

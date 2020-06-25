@@ -14,6 +14,7 @@ import org.apache.commons.lang.builder.ToStringBuilder;
  */
 public class EmisorDto implements Serializable {
 
+	private Long id;
 	private String nom;
 	private String cif;
 
@@ -33,6 +34,13 @@ public class EmisorDto implements Serializable {
 	@Override
 	public String toString() {
 		return ToStringBuilder.reflectionToString(this);
+	}
+
+	public Long getId() {
+		return id;
+	}
+	public void setId(Long id) {
+		this.id = id;
 	}
 
 	private static final long serialVersionUID = -8620175604318725073L;

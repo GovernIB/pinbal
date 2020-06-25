@@ -17,6 +17,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.MessageSource;
 import org.springframework.context.MessageSourceAware;
+import org.springframework.data.domain.Page;
 import org.springframework.security.acls.domain.BasePermission;
 import org.springframework.security.acls.model.MutableAclService;
 import org.springframework.security.acls.model.Permission;
@@ -30,8 +31,11 @@ import es.caib.pinbal.core.dto.ClauPrivadaDto;
 import es.caib.pinbal.core.dto.ClauPublicaDto;
 import es.caib.pinbal.core.dto.DadaEspecificaDto;
 import es.caib.pinbal.core.dto.EmisorDto;
+import es.caib.pinbal.core.dto.EntitatDto;
 import es.caib.pinbal.core.dto.FitxerDto;
 import es.caib.pinbal.core.dto.NodeDto;
+import es.caib.pinbal.core.dto.PaginaLlistatDto;
+import es.caib.pinbal.core.dto.PaginacioAmbOrdreDto;
 import es.caib.pinbal.core.dto.ProcedimentDto;
 import es.caib.pinbal.core.dto.ProcedimentServeiDto;
 import es.caib.pinbal.core.dto.ServeiBusDto;
@@ -45,6 +49,7 @@ import es.caib.pinbal.core.dto.ServeiJustificantCampDto;
 import es.caib.pinbal.core.dto.ServeiXsdDto;
 import es.caib.pinbal.core.dto.XsdTipusEnumDto;
 import es.caib.pinbal.core.helper.DtoMappingHelper;
+import es.caib.pinbal.core.helper.PaginacioHelper;
 import es.caib.pinbal.core.helper.PermisosHelper;
 import es.caib.pinbal.core.helper.PermisosHelper.ObjectIdentifierExtractor;
 import es.caib.pinbal.core.helper.PluginHelper;
@@ -55,6 +60,7 @@ import es.caib.pinbal.core.model.Entitat;
 import es.caib.pinbal.core.model.EntitatUsuari;
 import es.caib.pinbal.core.model.Procediment;
 import es.caib.pinbal.core.model.ProcedimentServei;
+import es.caib.pinbal.core.model.Servei;
 import es.caib.pinbal.core.model.ServeiBus;
 import es.caib.pinbal.core.model.ServeiCamp;
 import es.caib.pinbal.core.model.ServeiCamp.ServeiCampTipus;
@@ -72,6 +78,7 @@ import es.caib.pinbal.core.repository.ServeiCampGrupRepository;
 import es.caib.pinbal.core.repository.ServeiCampRepository;
 import es.caib.pinbal.core.repository.ServeiConfigRepository;
 import es.caib.pinbal.core.repository.ServeiJustificantCampRepository;
+import es.caib.pinbal.core.repository.ServeiRepository;
 import es.caib.pinbal.core.service.exception.EntitatNotFoundException;
 import es.caib.pinbal.core.service.exception.ProcedimentNotFoundException;
 import es.caib.pinbal.core.service.exception.ScspException;
@@ -107,6 +114,8 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 	private ProcedimentRepository procedimentRepository;
 	@Resource
 	private ProcedimentServeiRepository procedimentServeiRepository;
+	@Resource
+	private ServeiRepository serveiRepository;
 	@Resource
 	private ServeiCampRepository serveiCampRepository;
 	@Resource
@@ -295,6 +304,38 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 		return resposta;
 	}
 
+
+	@Transactional(readOnly = true)
+	@Override
+	@SuppressWarnings("unchecked")
+	public PaginaLlistatDto<ServeiDto> findAmbFiltrePaginat(
+			String codi,
+			String descripcio,
+			String emisor,
+			Boolean activa,
+			PaginacioAmbOrdreDto paginacioAmbOrdre) {
+		LOGGER.debug("Consulta de serveis segons filtre (codi=" + codi + ", descripcio=" + descripcio + ""
+				+ "emisor=" + emisor + " activa=" + activa + ")");
+		
+		Page<Servei> paginaServeis = serveiRepository.findByFiltre(
+				codi == null || codi.length() == 0,
+				codi,
+				descripcio == null || descripcio.length() == 0,
+				descripcio,
+				emisor == null || emisor.length() == 0,
+				(emisor != null && emisor.length() > 0) ? Long.parseLong(emisor) : null,
+				activa == null,
+				activa,
+				PaginacioHelper.toSpringDataPageable(
+						paginacioAmbOrdre,
+						null));
+		PaginaLlistatDto<ServeiDto> pagina = PaginacioHelper.toPaginaLlistatDto(
+				paginaServeis,
+				dtoMappingHelper,
+				ServeiDto.class);
+		return pagina;
+	}
+
 	@Transactional(readOnly = true)
 	@Override
 	public List<ServeiDto> findAmbEntitat(Long entitatId)
@@ -442,6 +483,7 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 		List<EmisorDto> resposta = new ArrayList<EmisorDto>();
 		for (EmisorCertificado emisor: getScspHelper().findEmisorCertificadoAll()) {
 			EmisorDto dto = new EmisorDto();
+			dto.setId(emisor.getId());
 			dto.setNom(emisor.getNombre());
 			dto.setCif(emisor.getCif());
 			resposta.add(dto);

@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ejb.interceptor.SpringBeanAutowiringInterceptor;
 
 import es.caib.pinbal.core.dto.EntitatDto;
+import es.caib.pinbal.core.dto.EntitatDto.EntitatTipusDto;
 import es.caib.pinbal.core.dto.PaginaLlistatDto;
 import es.caib.pinbal.core.dto.PaginacioAmbOrdreDto;
 import es.caib.pinbal.core.service.EntitatService;
@@ -58,8 +59,12 @@ public class EntitatServiceBean implements EntitatService {
 	public PaginaLlistatDto<EntitatDto> findAmbFiltrePaginat(
 			String codi,
 			String nom,
+			String cif,
+			Boolean activa,
+			String tipus,
 			PaginacioAmbOrdreDto paginacioAmbOrdre) {
-		return delegate.findAmbFiltrePaginat(codi, nom, paginacioAmbOrdre);
+		return delegate.findAmbFiltrePaginat(codi, nom, cif, activa, tipus, 
+											 paginacioAmbOrdre);
 	}
 
 	@Override

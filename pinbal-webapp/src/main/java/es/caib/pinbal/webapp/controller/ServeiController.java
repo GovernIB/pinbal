@@ -28,6 +28,10 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import es.caib.pinbal.core.dto.ArbreDto;
 import es.caib.pinbal.core.dto.DadaEspecificaDto;
 import es.caib.pinbal.core.dto.FitxerDto;
+import es.caib.pinbal.core.dto.OrdreDto;
+import es.caib.pinbal.core.dto.PaginaLlistatDto;
+import es.caib.pinbal.core.dto.PaginacioAmbOrdreDto;
+import es.caib.pinbal.core.dto.OrdreDto.OrdreDireccio;
 import es.caib.pinbal.core.dto.ProcedimentDto;
 import es.caib.pinbal.core.dto.ServeiBusDto;
 import es.caib.pinbal.core.dto.ServeiCampDto;
@@ -48,9 +52,13 @@ import es.caib.pinbal.webapp.command.ServeiBusCommand;
 import es.caib.pinbal.webapp.command.ServeiCampCommand;
 import es.caib.pinbal.webapp.command.ServeiCampGrupCommand;
 import es.caib.pinbal.webapp.command.ServeiCommand;
+import es.caib.pinbal.webapp.command.ServeiFiltreCommand;
 import es.caib.pinbal.webapp.command.ServeiJustificantCampCommand;
 import es.caib.pinbal.webapp.command.ServeiXsdCommand;
 import es.caib.pinbal.webapp.common.AlertHelper;
+import es.caib.pinbal.webapp.common.RequestSessionHelper;
+import es.caib.pinbal.webapp.jmesa.JMesaGridHelper;
+import es.caib.pinbal.webapp.jmesa.JMesaGridHelper.ConsultaPagina;
 
 /**
  * Controlador per al manteniment de serveis.
@@ -60,7 +68,9 @@ import es.caib.pinbal.webapp.common.AlertHelper;
 @Controller
 @RequestMapping("/servei")
 public class ServeiController extends BaseController {
- 
+	
+	private static final String SESSION_ATTRIBUTE_FILTRE = "ServeiController.session.filtre"; 
+	
 	@Autowired
 	private ServeiService serveiService;
 	@Autowired
@@ -68,14 +78,31 @@ public class ServeiController extends BaseController {
 	@Autowired
 	private ProcedimentService procedimentService;
 
-
 	@RequestMapping(method = RequestMethod.GET)
 	public String get(
 			HttpServletRequest request,
 			HttpServletResponse response,
-			Model model) {
-		model.addAttribute("serveis", serveiService.findActius());
+			Model model) throws Exception {
+		omplirModelPerMostrarLlistat(request, model); 
 		return "serveiList";
+	}
+
+	@RequestMapping(method = RequestMethod.POST)
+	public String post(
+			HttpServletRequest request,
+			@Valid ServeiFiltreCommand command,
+			BindingResult bindingResult,
+			Model model) throws Exception {
+		if (bindingResult.hasErrors()) {
+			omplirModelPerMostrarLlistat(request, model);
+			return "serveiList";
+		} else {
+			RequestSessionHelper.actualitzarObjecteSessio(
+					request,
+					SESSION_ATTRIBUTE_FILTRE,
+					command);
+			return "redirect:servei";
+		}
 	}
 
 	@RequestMapping(value = "/new", method = RequestMethod.GET)
@@ -110,8 +137,8 @@ public class ServeiController extends BaseController {
 		return "serveiForm";
 	}
 	
-
-	@RequestMapping(method = RequestMethod.POST)
+	// TODO: canviar rutes del codi
+	@RequestMapping(value = "/save", method = RequestMethod.POST) 
 	public String save(
 			HttpServletRequest request,
 			@Valid ServeiCommand command,
@@ -674,7 +701,33 @@ public class ServeiController extends BaseController {
 	}
 
 
-
+	private void omplirModelPerMostrarLlistat( 
+			HttpServletRequest request, 
+			Model model) throws Exception {
+		
+		ServeiFiltreCommand command = (ServeiFiltreCommand) RequestSessionHelper.obtenirObjecteSessio( 
+				request, 
+				SESSION_ATTRIBUTE_FILTRE);
+		
+		model.addAttribute("emisors", serveiService.findEmisorAll());
+		
+		if (command == null) 
+			command = new ServeiFiltreCommand(); 
+		model.addAttribute(command); 
+		List<?> paginaServeis = JMesaGridHelper.consultarPaginaIActualitzarLimit(
+				"serveis",
+				request,
+				new ConsultaPaginaServei(
+						serveiService,
+						command),
+				new OrdreDto("codi", OrdreDireccio.DESCENDENT));
+		model.addAttribute("serveis", paginaServeis);
+//		model.addAttribute(
+//				"propertyEsborrar",
+//				propertyService.get( // TODO: això s'ha de canviar entitat --> servei
+//						"es.caib.pinbal.entitat.accio.esborrar.activa"));
+	} 
+	
 	private void omplirModelTraduccio(
 			String serveiCodi,
 			Model model) throws ServeiNotFoundException, ScspException {
@@ -700,4 +753,23 @@ public class ServeiController extends BaseController {
 		command.setEnumDescripcions(request.getParameterValues(parametreDescripcio));
 	}
 
+	public class ConsultaPaginaServei implements ConsultaPagina<ServeiDto> {
+		ServeiService serveiService;
+		ServeiFiltreCommand command;
+		public ConsultaPaginaServei(
+				ServeiService serveiService,
+				ServeiFiltreCommand command) {
+			this.serveiService = serveiService;
+			this.command = command;
+		}
+		public PaginaLlistatDto<ServeiDto> consultar(
+				PaginacioAmbOrdreDto paginacioAmbOrdre) throws Exception {
+			return serveiService.findAmbFiltrePaginat(
+					command.getCodi(),
+					command.getDescripcio(),
+					command.getEmissor(),
+					command.getActiva(),				
+					paginacioAmbOrdre);
+		}
+	}
 }

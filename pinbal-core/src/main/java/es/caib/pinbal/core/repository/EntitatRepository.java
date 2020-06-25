@@ -54,13 +54,22 @@ public interface EntitatRepository extends JpaRepository<Entitat, Long> {
 			"from" +
 			"    Entitat e " +
 			"where " +
-			"    (:esNullCodi = true or lower(e.codi) like concat('%', lower(:codi), '%')) " +
-			"and (:esNullNom = true or lower(e.nom) like concat('%', lower(:nom), '%'))")
+			"      (:esNullCodi = true or lower(e.codi) like concat('%', lower(:codi), '%')) " +
+			"  and (:esNullNom = true or lower(e.nom) like concat('%', lower(:nom), '%'))" +
+			"  and (:esNullCif = true or lower(e.cif) like concat('%', lower(:cif), '%')) " +
+			"  and (:esNullActiva = true or e.activa = :activa) " +
+			"  and (:esNullTipus = true or e.tipus = :tipus) " +
+			"")
 	public Page<Entitat> findByFiltre(
 			@Param("esNullCodi") boolean esNullCodi,
 			@Param("codi") String codi,
 			@Param("esNullNom") boolean esNullNom,
 			@Param("nom") String nom,
+			@Param("esNullCif") boolean esNullCif,
+			@Param("cif") String cif,
+			@Param("esNullActiva") boolean esNullActiva,
+			@Param("activa") Boolean activa,
+			@Param("esNullTipus") boolean esNullTipus,
+			@Param("tipus") EntitatTipus tipus,			
 			Pageable pageable);
-
 }
