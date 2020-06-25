@@ -4,6 +4,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
 <%@ taglib uri="http://code.google.com/p/jmesa" prefix="jmesa" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
+<%@ taglib tagdir="/WEB-INF/tags/pinbal" prefix="pbl" %>
 
 <%
 	request.setAttribute(
@@ -130,54 +131,59 @@ function showModalEditar(
 	</ul>
 
 	<c:url value="/entitat/${entitat.id}/usuari" var="formAction"/>
-	<form:form id="form-filtre"action="${formAction}" method="post" cssClass="well form-inline" commandName="usuariFiltreCommand">
+	<form:form id="form-filtre"action="${formAction}" method="post" cssClass="well" commandName="usuariFiltreCommand">
 		<div class="row-fluid">
-			<c:set var="campPath" value="codi"/>
-			<spring:message var="placeholderCodi" code="entitat.usuaris.filtre.camp.codi"/>
-			<form:input path="${campPath}" cssClass="input-medium" id="${campPath}" placeholder="${placeholderCodi}"/>
-			
-			<c:set var="campPath" value="nif"/>
-			<spring:message var="placeholderNif" code="entitat.usuaris.filtre.camp.nif"/>
-			<form:input path="${campPath}" cssClass="input-medium" id="${campPath}" placeholder="${placeholderNif}"/>
-			
-			<c:set var="campPath" value="nom"/>
-			<spring:message var="placeholderNom" code="entitat.usuaris.filtre.camp.nom"/>
-			<form:input path="${campPath}" cssClass="input-medium" id="${campPath}" placeholder="${placeholderNom}"/>
-			
-			<c:set var="campPath" value="departament"/>
-			<spring:message var="placeholderDepartament" code="entitat.usuaris.filtre.camp.departament"/>
-			<form:input path="${campPath}" cssClass="input-medium" id="${campPath}" placeholder="${placeholderDepartament}"/>
+			<div class="span3">
+				<c:set var="campPath" value="codi"/>
+				<pbl:inputText name="${campPath}" textKey="entitat.usuaris.filtre.camp.codi"
+							   placeholder="entitat.usuaris.filtre.camp.codi" hideLabel="true"/>
+			</div>
+			<div class="span3">
+				<c:set var="campPath" value="nif"/>
+				<pbl:inputText name="${campPath}" textKey="entitat.usuaris.filtre.camp.nif"
+							   placeholder="entitat.usuaris.filtre.camp.nif" hideLabel="true"/>
+			</div>
+			<div class="span3">			
+				<c:set var="campPath" value="nom"/>
+				<pbl:inputText name="${campPath}" textKey="entitat.usuaris.filtre.camp.nom"
+							   placeholder="entitat.usuaris.filtre.camp.nom" hideLabel="true"/>
+			</div>
+			<div class="span3">			
+				<c:set var="campPath" value="departament"/>
+				<pbl:inputText name="${campPath}" textKey="entitat.usuaris.filtre.camp.departament"
+							   placeholder="entitat.usuaris.filtre.camp.departament" hideLabel="true"/>
+			</div>
 		</div>
 		<div class="row-fluid">
-		<label class="control-label" for="modal-input-representant"><spring:message code="entitat.usuaris.camp.rols"/>: </label>
+<%-- 		<label class="control-label" for="modal-input-representant"><spring:message code="entitat.usuaris.camp.rols"/>: </label> --%>
 			<c:set var="campPath" value="isRepresentant"/>
-			<label class="checkbox" for="modal-input-representant">
+			<label class="checkbox span1" for="modal-input-representant">
 				<form:checkbox  path="${campPath}" id="${campPath}"/>
 				<spring:message code="entitat.usuaris.rol.repres"/>
 			</label>
 			
 			<c:set var="campPath" value="isDelegat"/>
-			<label class="checkbox" for="modal-input-delegat">
+			<label class="checkbox span1" for="modal-input-delegat">
 				<form:checkbox  path="${campPath}" id="${campPath}"/>
 				<spring:message code="entitat.usuaris.rol.deleg"/>
 			</label>
 			
 			<c:set var="campPath" value="isAuditor"/>
-			<label class="checkbox" for="modal-input-auditor">
+			<label class="checkbox span1" for="modal-input-auditor">
 				<form:checkbox  path="${campPath}" id="${campPath}"/>
 				<spring:message code="entitat.usuaris.rol.audit"/>
 			</label>
 	
 			<c:set var="campPath" value="isAplicacio"/>
-			<label class="checkbox" for="modal-input-aplicacio">
+			<label class="checkbox span1" for="modal-input-aplicacio">
 				<form:checkbox  path="${campPath}" id="${campPath}"/>
 				<spring:message code="entitat.usuaris.rol.aplic"/>
 			</label>
-		</div>
-		<div class="row-fluid">
-			<button id="netejar-filtre" class="btn" type="button"><spring:message code="comu.boto.netejar"/></button>
-			<button type="submit" class="btn btn-primary"><spring:message code="comu.boto.filtrar"/></button>
-		</div>
+			<div class="pull-right">
+				<button id="netejar-filtre" class="btn" type="button"><spring:message code="comu.boto.netejar"/></button>
+				<button type="submit" class="btn btn-primary"><spring:message code="comu.boto.filtrar"/></button>
+			</div>
+		</div>		
 	</form:form>
 
 	<div class="row-fluid">
