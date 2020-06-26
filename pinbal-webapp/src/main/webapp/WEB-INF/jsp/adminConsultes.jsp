@@ -6,7 +6,7 @@
 <%@ taglib uri="http://code.google.com/p/jmesa" prefix="jmesa"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
-
+<%@ taglib tagdir="/WEB-INF/tags/pinbal" prefix="pbl" %>
 <%
 	request.setAttribute(
 			"consultaEstats",
@@ -16,8 +16,11 @@
 <html>
 <head>
 	<title><spring:message code="admin.consulta.list.titol"/></title>
+	<link href="<c:url value="/css/select2.css"/>" rel="stylesheet"/>
+	<link href="<c:url value="/css/select2-bootstrap.css"/>" rel="stylesheet"/>
 	<script type="text/javascript"src="<c:url value="/js/jquery.jmesa.min.js"/>"></script>
 	<script type="text/javascript" src="<c:url value="/js/jmesa.min.js"/>"></script>
+	<script type="text/javascript" src="<c:url value="/js/select2.min.js"/>"></script>
 	<script>
 	$(document).ready(function() {
 		$('#netejar-filtre').click(function() {
@@ -32,6 +35,7 @@
 			});
 			$('#form-filtre').submit();
 		});
+		$("#select-entitat").select2();
 	});
 </script>
 </head>
@@ -40,13 +44,29 @@
 	<c:choose>
 		<c:when test="${empty entitatActual}">
 			<form action="<c:url value="/admin/consulta/entitat/seleccionar"/>" method="post" class="well well-small form-inline">
-				<select name="entitatId" class="input-xlarge">
-					<option value=""><spring:message code="admin.consulta.list.entitat.seleccio"/></option>
-					<c:forEach var="entitat" items="${entitats}">
-						<option value="${entitat.id}">${entitat.nom}</option>
-					</c:forEach>
-				</select>
-				<button type="submit" class="btn"><spring:message code="comu.boto.seleccionar"/></button>
+				<div class="row-fluid">
+					<div class="span10">
+					<label for="id_label_multiple" class="span12">
+	  				<select class="form-control" name="entitatId" id="select-entitat" data-toggle="select2" data-netejar="${netejar}" 
+								 data-minimumresults="4" data-enum-value="entitatId">
+						<option value=""><spring:message code="admin.consulta.list.entitat.seleccio"/></option>
+						<c:choose>
+							<c:when test="${not empty entitats}">
+								<c:forEach var="entitat" items="${entitats}">
+									<option value="${entitat.id}">${entitat.nom}</option>
+								</c:forEach>
+							</c:when>
+							<c:otherwise><form:options/></c:otherwise>
+						</c:choose>
+					</select>
+					</label>
+					</div>
+					<div class="span2">
+						<div class="pull-right">
+						<button type="submit" class="btn btn-primary" style="height: 36px;"><spring:message code="comu.boto.seleccionar"/></button>
+						</div>
+					</div>
+				</div>				
 			</form>
 		</c:when>
 		<c:otherwise>
