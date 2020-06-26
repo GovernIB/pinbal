@@ -75,13 +75,14 @@ function showModalEditar(
 		inicialitzat,
 		noInicialitzatNif,
 		noInicialitzatCodi,
+		nom,
 		codi,
 		nif,
 		departament,
 		representant,
 		delegat,
 		aplicacio) {
-	$('#modal-form-usuari .modal-header h3').html("<spring:message code="representant.usuaris.titol.modificar"/>");
+	$('#modal-form-usuari .modal-header h3').html("<spring:message code="representant.usuaris.titol.modificar"/>: " + nom);
 	$('#modal-hidden-codi').removeAttr('disabled');
 	$('#modal-hidden-codi').val(codi);
 	$('#modal-hidden-nif').removeAttr('disabled');
@@ -172,7 +173,7 @@ function showModalEditar(
 								<a class="btn disabled" href="#"><i class="icon-pencil"></i>&nbsp;<spring:message code="comu.boto.modificar"/></a>
 							</c:when>
 							<c:otherwise>
-								<c:set var="onclickShowModal">showModalEditar(${registre.usuari.inicialitzat}, ${registre.usuari.noInicialitzatNif}, ${registre.usuari.noInicialitzatCodi}, '${registre.usuari.codi}', '${registre.usuari.nif}', '${fn:replace(registre.departament, "'", "\\'")}', ${registre.representant}, ${registre.delegat}, ${registre.aplicacio})</c:set>
+								<c:set var="onclickShowModal">showModalEditar(${registre.usuari.inicialitzat}, ${registre.usuari.noInicialitzatNif}, ${registre.usuari.noInicialitzatCodi}, '${registre.usuari.descripcio}', '${registre.usuari.codi}', '${registre.usuari.nif}', '${fn:replace(registre.departament, "'", "\\'")}', ${registre.representant}, ${registre.delegat}, ${registre.aplicacio})</c:set>
 								<a class="btn" href="#modal-form-usuari" onclick="${onclickShowModal}"><i class="icon-pencil"></i>&nbsp;<spring:message code="comu.boto.modificar"/></a>
 							</c:otherwise>
 						</c:choose>
@@ -185,7 +186,7 @@ function showModalEditar(
 	<div id="modal-form-usuari" class="modal hide fade">
 		<div class="modal-header">
 			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-			<h3><spring:message code="representant.usuaris.titol.modificar"/></h3>
+			<h3></h3>
 		</div>
 		<div class="modal-body">
 			<c:url value="/representant/usuari/save" var="formAction"/>

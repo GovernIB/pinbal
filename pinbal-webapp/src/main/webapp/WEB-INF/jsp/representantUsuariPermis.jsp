@@ -59,28 +59,36 @@ $(document).ready(function() {
 		<button type="submit" class="btn btn-primary"><spring:message code="comu.boto.afegir"/></button>
 	</form>
 
-	<jmesa:tableModel
-			id="permisos"
-			items="${permisos}"
-			toolbar="es.caib.pinbal.webapp.jmesa.BootstrapToolbar"
-			view="es.caib.pinbal.webapp.jmesa.BootstrapNoToolbarView"
-			var="registre"
-			maxRows="${fn:length(permisos)}">
-		<jmesa:htmlTable>
-			<jmesa:htmlRow>
-				<jmesa:htmlColumn property="procediment.nom" title="Procediment" sortable="false"/>
-				<jmesa:htmlColumn property="servei.descripcio" title="Servei" sortable="false"/>
-				<jmesa:htmlColumn property="ACCIO_denegar" title="&nbsp;" style="white-space:nowrap;" sortable="false">
-					<c:url value="/representant/usuari/${usuari.codi}/permis/deny" var="formAction"/>
-					<form action="${formAction}" method="post" class="form-inline">
-						<input type="hidden" name="procedimentId" value="${registre.procediment.id}"/>
-						<input type="hidden" name="serveiCodi" value="${registre.servei.codi}"/>
-						<button type="submit" class="btn"><i class="icon-remove"></i>&nbsp;<spring:message code="procediment.serveis.permisos.taula.boto.denegar.acces"/></button>
-					</form>
-				</jmesa:htmlColumn>
-			</jmesa:htmlRow>
-		</jmesa:htmlTable>
-	</jmesa:tableModel>
+	<table id="permisos" border="0" cellpadding="0" cellspacing="0" class="table table-bordered table-striped">
+	<thead>
+	<tr class="header">
+		<th><div>Procediment</div></th>
+		<th><div>Servei</div></th>
+		<th><div>&nbsp;</div></th>
+	</tr>
+	</thead>
+	<tbody class="tbody">
+		<c:forEach var="permis" items="${permisos}">
+		<tr>
+			<td>
+				${permis.procediment.nom} (${permis.procediment.codi}) 
+			</td>
+			<td>
+				 ${permis.servei.descripcio} (${permis.servei.codi})
+			</td>
+			<td>
+				<c:url value="/representant/usuari/${usuari.codi}/permis/deny" var="formAction"/>
+				<form action="${formAction}" method="post" class="form-inline">
+					<input type="hidden" name="procedimentId" value="${permis.procediment.id}"/>
+					<input type="hidden" name="serveiCodi" value="${permis.servei.codi}"/>
+					<button type="submit" class="btn"><i class="icon-remove"></i>&nbsp;<spring:message code="procediment.serveis.permisos.taula.boto.denegar.acces"/></button>
+				</form>
+			</td>
+		</tr>
+		</c:forEach>		
+	</tbody>
+	</table>
+
 	<div>
 		<a href="<c:url value="/representant/usuari/${usuari.codi}/permis/deny/all"/>" class="btn btn-primary confirm-esborrar"><spring:message code="procediment.serveis.permisos.esborrar.tots"/></a>
 		<a href="<c:url value="/representant/usuari"/>" class="btn pull-right"><spring:message code="comu.boto.tornar"/></a>
