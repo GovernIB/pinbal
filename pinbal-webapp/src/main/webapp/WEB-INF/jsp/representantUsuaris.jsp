@@ -94,6 +94,8 @@ function showModalEditar(
 	if (inicialitzat) {
 		$('#modal-group-codi').removeClass('hide');
 		$('#modal-input-codi').val(codi);
+		$('#modal-group-nom').removeClass('hide');
+		$('#modal-input-nom').val(nom);
 		$('#modal-group-nif').removeClass('hide');
 		$('#modal-input-nif').val(nif);
 	} else {
@@ -103,8 +105,10 @@ function showModalEditar(
 			$('#modal-input-nif').val(nif);
 		} else if (noInicialitzatCodi) {
 			$('#modal-group-codi').removeClass('hide');
+			$('#modal-group-nom').removeClass('hide');
 			$('#modal-group-nif').addClass('hide');
 			$('#modal-input-codi').val(codi);
+			$('#modal-input-nom').val(nom);
 		}
 	}
 	$('#modal-input-departament').val(departament);
@@ -201,6 +205,12 @@ function showModalEditar(
 							<option value="${caracterTipusNif}"><spring:message code="representant.usuaris.tipus.nif"/></option>
 							<option value="${caracterTipusCodi}"><spring:message code="representant.usuaris.tipus.codi"/></option>
 						</select>
+					</div>
+				</div>
+				<div id="modal-group-nom" class="control-group">
+    				<label class="control-label" for="modal-input-nom"><spring:message code="representant.usuaris.camp.nom"/></label>
+					<div class="controls">
+						<input type="text" id="modal-input-nom" name="codi" disabled="disabled"/>
 					</div>
 				</div>
 				<div id="modal-group-codi" class="control-group">
