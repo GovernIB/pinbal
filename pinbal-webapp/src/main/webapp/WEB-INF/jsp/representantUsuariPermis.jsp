@@ -62,8 +62,10 @@ $(document).ready(function() {
 	<table id="permisos" border="0" cellpadding="0" cellspacing="0" class="table table-bordered table-striped">
 	<thead>
 	<tr class="header">
-		<th><div>Procediment</div></th>
-		<th><div>Servei</div></th>
+		<th><div><spring:message code="representant.usuaris.permisos.taula.columna.procediment.codi"/></div></th>
+		<th><div><spring:message code="representant.usuaris.permisos.taula.columna.servei.codi"/></div></th>
+		<th><div><spring:message code="representant.usuaris.permisos.taula.columna.procediment.nom"/></div></th>
+		<th><div><spring:message code="representant.usuaris.permisos.taula.columna.servei.descripcio"/></div></th>
 		<th><div>&nbsp;</div></th>
 	</tr>
 	</thead>
@@ -71,10 +73,17 @@ $(document).ready(function() {
 		<c:forEach var="permis" items="${permisos}">
 		<tr>
 			<td>
-				${permis.procediment.nom} (${permis.procediment.codi}) 
+				${permis.procediment.codi} 
 			</td>
 			<td>
-				 ${permis.servei.descripcio} (${permis.servei.codi})
+				${permis.servei.codi} 
+			</td>
+			<td>
+				${permis.procediment.nom} 
+			</td>
+
+			<td>
+				 ${permis.servei.descripcio}
 			</td>
 			<td>
 				<c:url value="/representant/usuari/${usuari.codi}/permis/deny" var="formAction"/>
