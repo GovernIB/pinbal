@@ -164,8 +164,11 @@ public class EntitatController extends BaseController {
 		EntitatFiltreCommand command = (EntitatFiltreCommand)RequestSessionHelper.obtenirObjecteSessio(
 				request,
 				SESSION_ATTRIBUTE_FILTRE);
-		if (command == null)
+		if (command == null) {
 			command = new EntitatFiltreCommand();
+			command.setActiva(true);
+		}
+			
 		model.addAttribute(command);
 		List<?> paginaEntitats = JMesaGridHelper.consultarPaginaIActualitzarLimit(
 				"entitats",
