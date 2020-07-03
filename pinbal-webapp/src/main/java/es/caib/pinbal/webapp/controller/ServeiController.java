@@ -137,7 +137,6 @@ public class ServeiController extends BaseController {
 		return "serveiForm";
 	}
 	
-	// TODO: canviar rutes del codi
 	@RequestMapping(value = "/save", method = RequestMethod.POST) 
 	public String save(
 			HttpServletRequest request,
@@ -711,8 +710,11 @@ public class ServeiController extends BaseController {
 		
 		model.addAttribute("emisors", serveiService.findEmisorAll());
 		
-		if (command == null) 
-			command = new ServeiFiltreCommand(); 
+		if (command == null) {
+			command = new ServeiFiltreCommand();
+			command.setActiva(true);
+		}
+
 		model.addAttribute(command); 
 		List<?> paginaServeis = JMesaGridHelper.consultarPaginaIActualitzarLimit(
 				"serveis",

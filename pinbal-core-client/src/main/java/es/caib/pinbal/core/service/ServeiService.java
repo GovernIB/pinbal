@@ -17,6 +17,7 @@ import es.caib.pinbal.core.dto.EntitatDto;
 import es.caib.pinbal.core.dto.FitxerDto;
 import es.caib.pinbal.core.dto.PaginaLlistatDto;
 import es.caib.pinbal.core.dto.PaginacioAmbOrdreDto;
+import es.caib.pinbal.core.dto.ProcedimentDto;
 import es.caib.pinbal.core.dto.ProcedimentServeiDto;
 import es.caib.pinbal.core.dto.ServeiBusDto;
 import es.caib.pinbal.core.dto.ServeiCampDto;
@@ -67,7 +68,7 @@ public interface ServeiService {
 
 	
 	/**
-	 * Consulta les entitats segons el filtre.
+	 * Consulta els serveis segons el filtre.
 	 * 
 	 * @param codi Codi a cercar.
 	 * @param descripcio Nom a cercar.
@@ -84,6 +85,27 @@ public interface ServeiService {
 			Boolean activa,
 			PaginacioAmbOrdreDto paginacioAmbOrdre);
 	
+	/**
+	 * Consulta els serveis d'un procediment segons el filtre.
+	 * 
+	 * @param codi Codi a cercar.
+	 * @param descripcio Nom a cercar.
+	 * @param emisor Emisor a cercar.
+	 * @param activa Si cercar actius (true) o inactius (false).
+	 * @param entitat Entitat de la sessió
+	 * @param procediment Procediment al que es volen consultar els serveis.
+	 * @param paginacioAmbOrdre
+	 * 				Paràmetres per a la paginació i ordenació dels resultats.
+	 * @return
+	 */
+	public PaginaLlistatDto<ServeiDto> findAmbFiltrePaginat(
+			String codi,
+			String descripcio,
+			String emisor,
+			Boolean activa,
+			EntitatDto entitat,
+			ProcedimentDto procediment,
+			PaginacioAmbOrdreDto paginacioAmbOrdre);
 	/**
 	 * Obté el servei amb un codi determinat.
 	 * 
@@ -490,11 +512,12 @@ public interface ServeiService {
 	 * @return Un llistat amb tots els fitxers XSD del servei.
 	 * @throws IOException
 	 *             Si no s'ha trobat cap servei amb el codi especificat.
+	 * @throws ServeiNotFoundException 
 	 */
 	
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public List<ServeiXsdDto> xsdFindByServei(
-			String codi) throws IOException;
+			String codi) throws IOException, ServeiNotFoundException;
 	
 	/**
 	 * Retorna tots els camps de de dades específiques del 
