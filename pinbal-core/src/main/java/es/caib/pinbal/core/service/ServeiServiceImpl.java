@@ -57,6 +57,7 @@ import es.caib.pinbal.core.helper.ServeiHelper;
 import es.caib.pinbal.core.helper.ServeiXsdHelper;
 import es.caib.pinbal.core.helper.UsuariHelper;
 import es.caib.pinbal.core.model.Entitat;
+import es.caib.pinbal.core.model.EntitatServei;
 import es.caib.pinbal.core.model.EntitatUsuari;
 import es.caib.pinbal.core.model.Procediment;
 import es.caib.pinbal.core.model.ProcedimentServei;
@@ -70,6 +71,7 @@ import es.caib.pinbal.core.model.ServeiConfig.EntitatTipus;
 import es.caib.pinbal.core.model.ServeiConfig.JustificantTipus;
 import es.caib.pinbal.core.model.ServeiJustificantCamp;
 import es.caib.pinbal.core.repository.EntitatRepository;
+import es.caib.pinbal.core.repository.EntitatServeiRepository;
 import es.caib.pinbal.core.repository.EntitatUsuariRepository;
 import es.caib.pinbal.core.repository.ProcedimentRepository;
 import es.caib.pinbal.core.repository.ProcedimentServeiRepository;
@@ -126,7 +128,9 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 	private ServeiBusRepository serveiBusRepository;
 	@Resource
 	private ServeiJustificantCampRepository serveiJustificantCampRepository;
-
+	@Resource
+	private EntitatServeiRepository entitatServeiRepository;
+	
 	@Resource
 	private ServeiHelper serveiHelper;
 	@Resource
@@ -339,17 +343,22 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 			PaginacioAmbOrdreDto paginacioAmbOrdre) {
 		LOGGER.debug("Consulta de serveis segons filtre (codi=" + codi + ", descripcio=" + descripcio + ""
 				+ "emisor=" + emisor + " activa=" + activa + ")");
-		
-		// De moment ignoram si els serveis estan actius o no pel procediment
-		List<String> serveisProcediment = procedimentServeiRepository.findServeisProcediment(
-				activa == null,
-				activa,
+
+		List<String> serveisEntitat = entitatServeiRepository.findServeisByEntitatId(entitat.getId());
+
+		List<ProcedimentServei> serveisProcediment = procedimentServeiRepository.findServeisProcediment(
 				entitatRepository.findByCodi(entitat.getCodi()),
 				procedimentRepository.findOne(procediment.getId())
 				);
-
+		
+		List<String> serveisProcedimentIds = procedimentServeiRepository.findServeisProcedimentServeisIds(
+				entitatRepository.findByCodi(entitat.getCodi()),
+				procedimentRepository.findOne(procediment.getId())
+				);
+		
 		Page<Servei> paginaServeis = serveiRepository.findByFiltre(
-				serveisProcediment, 
+				serveisEntitat, 
+				serveisProcedimentIds,
 				codi == null || codi.length() == 0,
 				codi,
 				descripcio == null || descripcio.length() == 0,
@@ -360,12 +369,23 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 				activa,
 				PaginacioHelper.toSpringDataPageable(
 						paginacioAmbOrdre,
-				null));
-
+						null)
+				);
+		
 		PaginaLlistatDto<ServeiDto> pagina = PaginacioHelper.toPaginaLlistatDto(
 				paginaServeis,
 				dtoMappingHelper,
 				ServeiDto.class);
+				
+		for (ServeiDto servei: pagina.getContingut()) {
+			for (ProcedimentServei procedimentServei: serveisProcediment) {
+				if (servei.getCodi().equals(procedimentServei.getServei())) {
+					servei.setActiu(procedimentServei.isActiu());
+					servei.setProcedimentCodi(procedimentServei.getProcediment().getCodi());
+					break;
+				}
+			}	
+		}
 		return pagina;
 	}
 

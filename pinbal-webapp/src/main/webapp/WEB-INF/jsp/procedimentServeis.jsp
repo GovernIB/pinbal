@@ -59,10 +59,10 @@ $(document).ready(function() {
 <!-- 			</div> -->
 			<div class="control-group span3">	
 				<c:set var="campPath" value="activa"/>
-				<spring:message var="trueValue" code="entitat.list.filtre.camp.activa.yes"/>
-				<spring:message var="falseValue" code="entitat.list.filtre.camp.activa.no"/>
+				<spring:message var="trueValue" code="servei.list.filtre.camp.activa.yes"/>
+				<spring:message var="falseValue" code="servei.list.filtre.camp.activa.no"/>
 				<form:select path="${campPath}" class="span12">
-					<option value=""><spring:message code="entitat.list.filtre.camp.activa"/></option>>
+					<option value=""><spring:message code="servei.list.filtre.camp.activa"/></option>>
 					<form:option value="true">${trueValue}</form:option>>
 					<form:option value="false">${falseValue}</form:option>>
 				</form:select>

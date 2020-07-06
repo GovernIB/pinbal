@@ -93,19 +93,28 @@ public interface ProcedimentServeiRepository extends JpaRepository<ProcedimentSe
 	public List<ProcedimentServei> findByUsuariAmbAccesEntitat(String usuariCodi);
 	
 	@Query(	"select" +
+			"    ps " +
+			"from" +
+			"    ProcedimentServei ps " +
+			"where " +
+			"      ps.procediment.entitat = :entitat " +
+			"  and ps.procediment = :procediment " +
+			") " +
+			"")
+	public List<ProcedimentServei> findServeisProcediment(
+			@Param("entitat") Entitat entitat,
+			@Param("procediment") Procediment procediment);
+
+	@Query(	"select" +
 			"    ps.servei " +
 			"from" +
 			"    ProcedimentServei ps " +
 			"where " +
 			"      ps.procediment.entitat = :entitat " +
-			"  and (:esNullActiva = true or ps.actiu = :activa) " +
 			"  and ps.procediment = :procediment " +
 			") " +
 			"")
-	public List<String> findServeisProcediment(
-			@Param("esNullActiva") boolean esNullActiva,
-			@Param("activa") Boolean activa,	
+	public List<String> findServeisProcedimentServeisIds(
 			@Param("entitat") Entitat entitat,
 			@Param("procediment") Procediment procediment);
-
 }
