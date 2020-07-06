@@ -63,8 +63,8 @@ $(document).ready(function() {
 	<thead>
 	<tr class="header">
 		<th><div><spring:message code="representant.usuaris.permisos.taula.columna.procediment.codi"/></div></th>
-		<th><div><spring:message code="representant.usuaris.permisos.taula.columna.servei.codi"/></div></th>
 		<th><div><spring:message code="representant.usuaris.permisos.taula.columna.procediment.nom"/></div></th>
+		<th><div><spring:message code="representant.usuaris.permisos.taula.columna.servei.codi"/></div></th>
 		<th><div><spring:message code="representant.usuaris.permisos.taula.columna.servei.descripcio"/></div></th>
 		<th><div>&nbsp;</div></th>
 	</tr>
@@ -76,12 +76,11 @@ $(document).ready(function() {
 				${permis.procediment.codi} 
 			</td>
 			<td>
-				${permis.servei.codi} 
-			</td>
-			<td>
 				${permis.procediment.nom} 
 			</td>
-
+			<td>
+				${permis.servei.codi} 
+			</td>
 			<td>
 				 ${permis.servei.descripcio}
 			</td>
