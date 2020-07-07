@@ -8,11 +8,15 @@
 <html>
 <head>
 	<title><spring:message code="representant.usuaris.titol"/></title>
+	<link href="<c:url value="/css/select2.css"/>" rel="stylesheet"/>
+	<link href="<c:url value="/css/select2-bootstrap.css"/>" rel="stylesheet"/>
 	<script type="text/javascript"src="<c:url value="/js/jquery.jmesa.min.js"/>"></script>
 	<script type="text/javascript" src="<c:url value="/js/jmesa.min.js"/>"></script>
+	<script type="text/javascript" src="<c:url value="/js/select2.min.js"/>"></script>
+	
 <script>
 $(document).ready(function() {
-	$('#procedimentId').change(function() {
+	$('#select-procediment').change(function() {
 		if ($(this).val()) {
 			var targetUrl = '<c:url value="/estadistiques/serveisPerProcediment"/>/' + $(this).val();
 			$.ajax({
@@ -23,7 +27,7 @@ $(document).ready(function() {
 			    	$('#serveiCodi').empty();
 		        	$('#serveiCodi').append($('<option value="">').text('<spring:message code="consulta.list.filtre.servei"/>:'));
 			        $.each(json, function(i, value) {
-			            $('#serveiCodi').append($('<option>').text(value.descripcio).attr('value', value.codi));
+			            $('#serveiCodi').append($('<option>').text("(" + value.codi+ ") " + value.descripcio).attr('value', value.codi));
 			        });
 			    }
 			});
@@ -32,6 +36,9 @@ $(document).ready(function() {
 			$('#serveiCodi').append($('<option value="">').text('<spring:message code="consulta.list.filtre.servei"/>:'));
 		}
 	});
+	
+	$('#select-procediment').select2();
+	$('#serveiCodi').select2();
 	$('.confirm-esborrar').click(function() {
 		  return confirm("<spring:message code="procediment.serveis.permisos.esborrar.tots.segur"/>");
 	});
@@ -46,17 +53,19 @@ $(document).ready(function() {
 	</ul>
 
 	<c:url value="/representant/usuari/${usuari.codi}/permis/allow" var="formAction"/>
-	<form action="${formAction}" method="post" class="well form-inline">
-		<select id="procedimentId" name="procedimentId" class="input-xlarge">
+	<form action="${formAction}" method="post" class="well form-inline" style="padding-bottom: 30px;">
+		<select id="select-procediment" name="procedimentId" class="input-xlarge span4">
 			<option value=""><spring:message code="representant.usuaris.permisos.filtre.procediment"/>:</option>
 			<c:forEach var="procediment" items="${procediments}">
-				<option value="${procediment.id}">${procediment.nom}</option>
+				<option value="${procediment.id}">(${procediment.codi}) ${procediment.nom}</option>
 			</c:forEach>
 		</select>
-		<select id="serveiCodi" name="serveiCodi" class="input-xlarge">
+		<select id="serveiCodi" name="serveiCodi" class="input-xlarge span4">
 			<option value=""><spring:message code="representant.usuaris.permisos.filtre.servei"/>:</option>
 		</select>
+		<div class="pull-right">
 		<button type="submit" class="btn btn-primary"><spring:message code="comu.boto.afegir"/></button>
+		</div>
 	</form>
 
 	<table id="permisos" border="0" cellpadding="0" cellspacing="0" class="table table-bordered table-striped">
