@@ -35,16 +35,24 @@ $(document).ready(function() {
 	<c:url value="/procediment" var="formAction"/>
 	<form:form id="form-filtre" action="${formAction}" method="post" cssClass="well form-inline" commandName="procedimentFiltreCommand">
 		<c:set var="campPath" value="codi"/>
-		<spring:message var="placeholderCodi" code="procediment.list.filtre.camp.codi"/>
-		<form:input path="${campPath}" cssClass="input-medium" id="${campPath}" placeholder="${placeholderCodi}"/>
-		<c:set var="campPath" value="nom"/>
-		<spring:message var="placeholderNom" code="procediment.list.filtre.camp.nom"/>
-		<form:input path="${campPath}" cssClass="input-medium" id="${campPath}" placeholder="${placeholderNom}"/>
-		<c:set var="campPath" value="departament"/>
-		<spring:message var="placeholderDepartament" code="procediment.list.filtre.camp.departament"/>
-		<form:input path="${campPath}" cssClass="input-medium" id="${campPath}" placeholder="${placeholderDepartament}"/>
-		<button id="netejar-filtre" class="btn" type="button"><spring:message code="comu.boto.netejar"/></button>
-		<button type="submit" class="btn btn-primary"><spring:message code="comu.boto.filtrar"/></button>
+		<div class="span3">
+			<spring:message var="placeholderCodi" code="procediment.list.filtre.camp.codi"/>
+			<form:input path="${campPath}" cssClass="span12 input-medium" id="${campPath}" placeholder="${placeholderCodi}"/>
+		</div>
+		<div class="span3">
+			<c:set var="campPath" value="nom"/>
+			<spring:message var="placeholderNom" code="procediment.list.filtre.camp.nom"/>
+			<form:input path="${campPath}" cssClass="span12 input-medium" id="${campPath}" placeholder="${placeholderNom}"/>
+		</div>
+		<div class="span3">
+			<c:set var="campPath" value="departament"/>
+			<spring:message var="placeholderDepartament" code="procediment.list.filtre.camp.departament"/>
+			<form:input path="${campPath}" cssClass="span12 input-medium" id="${campPath}" placeholder="${placeholderDepartament}"/>
+		</div>
+		<div class="pull-right">
+			<button id="netejar-filtre" class="btn" type="button"><spring:message code="comu.boto.netejar"/></button>
+			<button type="submit" class="btn btn-primary"><spring:message code="comu.boto.filtrar"/></button>
+		</div>
 	</form:form>
 
 	<div class="row-fluid">
