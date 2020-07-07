@@ -82,7 +82,7 @@ function showModalEditar(
 		representant,
 		delegat,
 		aplicacio) {
-	$('#modal-form-usuari .modal-header h3').html("<spring:message code="representant.usuaris.titol.modificar"/>: " + nom);
+	$('#modal-form-usuari .modal-header h3').html("<spring:message code="representant.usuaris.titol.modificar"/>");
 	$('#modal-hidden-codi').removeAttr('disabled');
 	$('#modal-hidden-codi').val(codi);
 	$('#modal-hidden-nif').removeAttr('disabled');
