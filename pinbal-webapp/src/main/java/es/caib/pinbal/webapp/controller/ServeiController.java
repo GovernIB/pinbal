@@ -120,20 +120,19 @@ public class ServeiController extends BaseController {
 			serveiDto = serveiService.findAmbCodiPerAdminORepresentant(serveiCodi);
 			llistatFitxers = serveiService.xsdFindByServei(serveiCodi);
 		}
-		
 		if (serveiDto != null) {
 			serveiDto.setFitxersXsd(llistatFitxers);
 			model.addAttribute(ServeiCommand.asCommand(serveiDto));
 		} else {
 			model.addAttribute(new ServeiCommand(true));
 		}
-		
 		model.addAttribute("serveiXsdCommand", new ServeiXsdCommand());
 		model.addAttribute("emisors", serveiService.findEmisorAll());
 		model.addAttribute("clausPubliques", serveiService.findClauPublicaAll());
 		model.addAttribute("clausPrivades", serveiService.findClauPrivadaAll());
-		if (serveiDto != null)
+		if (serveiDto != null) {
 			model.addAttribute("serveisBus", serveiService.findServeisBus(serveiDto.getCodi()));
+		}
 		return "serveiForm";
 	}
 	
@@ -170,7 +169,7 @@ public class ServeiController extends BaseController {
 							request, 
 							"servei.controller.servei.modificat.ok"));
 		}
-		return "redirect:servei";
+		return "redirect:../servei";
 	}
 	
 	@RequestMapping(value = "/{serveiCodi}/downloadAjuda", method = RequestMethod.GET)
