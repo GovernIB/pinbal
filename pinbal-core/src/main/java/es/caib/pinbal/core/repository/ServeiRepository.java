@@ -85,13 +85,13 @@ public interface ServeiRepository extends JpaRepository<Servei, Long> {
 			"  and (:esNullDescripcio = true or lower(s.descripcio) like concat('%', lower(:descripcio), '%'))" +
 			"  and (:esNullEmisor = true or s.scspEmisor.id = :emisor) " +
 			"  and (:esNullEmisor = true or s.scspEmisor.id = :emisor) " +
-			"  and (:esNullActiva = true or (:activa = true  and s.codi in :serveisProcedimentIds) " +
-			"   						 or (:activa = false  and s.codi not in :serveisProcedimentIds) " +
+			"  and (:esNullActiva = true or (:activa = true  and s.codi in :serveisProcedimentActiusIds) " +
+			"   						 or (:activa = false  and s.codi not in :serveisProcedimentActiusIds) " +
 			") "
 			)
 	public Page<Servei> findByFiltre(
 			@Param("serveiIds") List<String> serveiIds,
-			@Param("serveisProcedimentIds") List<String> serveisProcedimentIds,	
+			@Param("serveisProcedimentActiusIds") List<String> serveisProcedimentActiusIds,	
 			@Param("esNullCodi") boolean esNullCodi,
 			@Param("codi") String codi,
 			@Param("esNullDescripcio") boolean esNullDescripcio,

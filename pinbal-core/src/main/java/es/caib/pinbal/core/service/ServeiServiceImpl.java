@@ -351,14 +351,14 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 				procedimentRepository.findOne(procediment.getId())
 				);
 		
-		List<String> serveisProcedimentIds = procedimentServeiRepository.findServeisProcedimentServeisIds(
+		List<String> serveisProcedimentActiusIds = procedimentServeiRepository.findServeisProcedimenActiustServeisIds(
 				entitatRepository.findByCodi(entitat.getCodi()),
 				procedimentRepository.findOne(procediment.getId())
 				);
 		
 		Page<Servei> paginaServeis = serveiRepository.findByFiltre(
 				serveisEntitat, 
-				serveisProcedimentIds,
+				serveisProcedimentActiusIds,
 				codi == null || codi.length() == 0,
 				codi,
 				descripcio == null || descripcio.length() == 0,

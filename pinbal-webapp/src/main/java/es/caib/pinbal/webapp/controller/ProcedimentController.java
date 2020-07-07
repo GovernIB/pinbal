@@ -677,8 +677,6 @@ public class ProcedimentController extends BaseController {
 				request, 
 				SESSION_ATTRIBUTE_FILTRE_SERVEIS);
 		
-//		model.addAttribute("emisors", serveiService.findEmisorAll());
-		
 		if (command == null) {
 			command = new ServeiFiltreCommand(); 
 			command.setActiva(true);

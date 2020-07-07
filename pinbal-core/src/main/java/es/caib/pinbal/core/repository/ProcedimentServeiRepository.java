@@ -5,8 +5,6 @@ package es.caib.pinbal.core.repository;
 
 import java.util.List;
 
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -14,7 +12,6 @@ import org.springframework.data.repository.query.Param;
 import es.caib.pinbal.core.model.Entitat;
 import es.caib.pinbal.core.model.Procediment;
 import es.caib.pinbal.core.model.ProcedimentServei;
-import es.caib.pinbal.core.model.Servei;
 
 /**
  * Especifica els mètodes que s'han d'emprar per obtenir i modificar la
@@ -110,11 +107,12 @@ public interface ProcedimentServeiRepository extends JpaRepository<ProcedimentSe
 			"from" +
 			"    ProcedimentServei ps " +
 			"where " +
-			"      ps.procediment.entitat = :entitat " +
+			"  ps.actiu = true" +
+			"  and ps.procediment.entitat = :entitat " +
 			"  and ps.procediment = :procediment " +
 			") " +
 			"")
-	public List<String> findServeisProcedimentServeisIds(
+	public List<String> findServeisProcedimenActiustServeisIds(
 			@Param("entitat") Entitat entitat,
 			@Param("procediment") Procediment procediment);
 }
