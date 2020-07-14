@@ -9,7 +9,7 @@ import org.apache.commons.lang.builder.ToStringBuilder;
  * 
  * @author Limit Tecnologies <limit@limit.es>
  */
-public class UsuariDto implements Serializable {
+public class UsuariDto extends AbstractIdentificable<Long> implements Serializable {
 
 	private String codi;
 	private String nif;

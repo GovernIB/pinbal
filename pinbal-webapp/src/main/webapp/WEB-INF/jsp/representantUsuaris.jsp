@@ -2,7 +2,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
-<%@ taglib uri="http://code.google.com/p/jmesa" prefix="jmesa" %>
+
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 
 <%
@@ -26,8 +26,10 @@
 <html>
 <head>
 	<title><spring:message code="representant.usuaris.titol"/></title>
-	<script type="text/javascript" src="<c:url value="/js/jquery.jmesa.min.js"/>"></script>
-	<script type="text/javascript" src="<c:url value="/js/jmesa.min.js"/>"></script>
+	<script src="<c:url value="/webjars/datatables/1.10.21/js/jquery.dataTables.min.js"/>"></script>
+	<script src="<c:url value="/webjars/datatables/1.10.21/js/dataTables.bootstrap.min.js"/>"></script>
+	<script src="<c:url value="/webjars/mustache.js/3.0.1/mustache.min.js"/>"></script>
+
 <script>
 $(document).ready(function() {
 	$('#netejar-filtre').click(function() {
@@ -49,6 +51,82 @@ $(document).ready(function() {
 		} else if (this.value == '${caracterTipusCodi}') {
 			$('#modal-group-codi').removeClass('hide');
 			$('#modal-group-nif').addClass('hide');
+		}
+	});
+	
+	
+    $('#table-users').DataTable({
+    	autoWidth: false,
+    	paging: false,
+		processing: true,
+		serverSide: true,
+		dom: "<'row'<'col-md-6'i><'col-md-6'>><'row'<'col-md-12'rt>><'row'<'col-md-6'l><'col-md-6'p>>",
+		language: {
+            "url": '<c:url value="/js/datatable-language.json"/>',
+        },
+		ajax: '<c:url value="/representant/usuari/datatable"/>',
+		columnDefs: [
+			{ 
+	            targets: 0,
+				render: function (data, type, row, meta) {
+					var template = $('#template-usuari').html();
+					return Mustache.render(template, row);
+				}
+	        },
+
+	        {
+	            targets: 2,
+	            width: "20%",
+				render: function (data, type, row, meta) {
+					console.log(row)
+					var template = $('#template-rols').html();
+					return Mustache.render(template, row);
+				}
+	        },
+	        {
+	            targets: [3],
+	            width: "20%",
+	            render: function (data, type, row, meta) {
+	            	console.log(data)
+	            	if (row.usuari.inicialitzat || row.usuari.noInicialitzatCodi){
+						var template = $('#template-permisos').html();
+						return Mustache.render(template, row);
+	            	}else{
+	            		return "";
+	            	}
+	            }
+	        },
+			{
+				targets: [4],
+				orderable: false,
+				width: "10%",
+				render: function (data, type, row, meta) {
+					var template = $('#template-actions').html();
+					row['nrow'] = meta['row'];
+					return Mustache.render(template, row);
+				}
+			}, 
+			{
+				targets: [5],
+				orderable: false,
+				visible:false
+			}, 
+	   ],
+	   initComplete: function( settings, json ) {
+		   console.log(settings)
+		   console.log(json)
+			$('.btn-open-modal-edit').click(function() {
+				var nrow = $(this).data('nrow');
+				var row = json.data[nrow];
+				var usuari = row.usuari;
+				console.log(usuari);
+		 		showModalEditar(usuari.inicialitzat, usuari.noInicialitzatNif, 
+		 				usuari.noInicialitzatCodi, usuari.descripcio, 
+		 				usuari.codi, usuari.nif, 
+		 				row.departament, 
+		 				row.representant, 
+		 				row.delegat, row.aplicacio);
+			});
 		}
 	});
 });
@@ -146,48 +224,49 @@ function showModalEditar(
 		<div class="clearfix"></div>
 	</div>
 
-	<div style="margin-top:8px;padding:4px 0">
-		<jmesa:tableModel
-				id="usuaris" 
-				items="${entitat.usuarisRepresentant}"
-				view="es.caib.pinbal.webapp.jmesa.BootstrapNoToolbarView"
-				var="registre"
-				maxRows="${fn:length(entitat.usuarisRepresentant)}">
-			<jmesa:htmlTable>
-				<jmesa:htmlRow>
-					<jmesa:htmlColumn property="usuari.nom" titleKey="representant.usuaris.camp.usuari" sortable="false">
-						${registre.usuari.descripcio}
-					</jmesa:htmlColumn>
-					<jmesa:htmlColumn property="departament" titleKey="representant.usuaris.camp.departament" sortable="false">
-						${registre.departament}
-					</jmesa:htmlColumn>
-					<jmesa:htmlColumn property="rols" titleKey="representant.usuaris.camp.rols" sortable="false">
-						<c:if test="${registre.representant}"><span class="label"><spring:message code="representant.usuaris.rol.repres"/></span></c:if>
-						<c:if test="${registre.delegat}"><span class="label"><spring:message code="representant.usuaris.rol.deleg"/></span></c:if>
-						<c:if test="${registre.aplicacio}"><span class="label"><spring:message code="representant.usuaris.rol.aplic"/></span></c:if>
-					</jmesa:htmlColumn>
-					<jmesa:htmlColumn property="principal" title="&nbsp;">
-						<c:if test="${registre.usuari.inicialitzat or registre.usuari.noInicialitzatCodi}">
-							<a class="btn" href="<c:url value="/representant/usuari/${registre.usuari.codi}/permis"/>"><i class="icon-lock"></i>&nbsp;<spring:message code="comu.boto.permisos"/></a>
-						</c:if>
-					</jmesa:htmlColumn>
-					<jmesa:htmlColumn property="ACCIO_update" title="&nbsp;" sortable="false">
-						<c:choose>
-							<c:when test="${registre.principal}">
-								<a class="btn disabled" href="#"><i class="icon-pencil"></i>&nbsp;<spring:message code="comu.boto.modificar"/></a>
-							</c:when>
-							<c:otherwise>
-								<c:set var="onclickShowModal">showModalEditar(${registre.usuari.inicialitzat}, ${registre.usuari.noInicialitzatNif}, ${registre.usuari.noInicialitzatCodi}, '${registre.usuari.descripcio}', '${registre.usuari.codi}', '${registre.usuari.nif}', '${fn:replace(registre.departament, "'", "\\'")}', ${registre.representant}, ${registre.delegat}, ${registre.aplicacio})</c:set>
-								<a class="btn" href="#modal-form-usuari" onclick="${onclickShowModal}"><i class="icon-pencil"></i>&nbsp;<spring:message code="comu.boto.modificar"/></a>
-							</c:otherwise>
-						</c:choose>
-					</jmesa:htmlColumn>
-				</jmesa:htmlRow>
-			</jmesa:htmlTable>
-		</jmesa:tableModel>
-	</div>
-
-	<div id="modal-form-usuari" class="modal hide fade">
+	<table id="table-users" class="table table-striped table-bordered" style="width: 100%">
+		<thead>
+			<tr>
+			<th data-data="usuari.nom"><spring:message code="representant.usuaris.camp.usuari" /></th>
+			<th data-data="departament"><spring:message code="representant.usuaris.camp.departament" /></th>
+			<th data-data="representant"><spring:message code="representant.usuaris.camp.rols" /></th>
+			<th data-data="delegat"></th>
+			<th data-data="aplicacio"></th>
+			<th data-data="principal"></th>
+			</tr>
+		</thead>
+	</table>
+	
+<script id="template-usuari" type="x-tmpl-mustache">
+	{{ usuari.descripcio }}
+</script>
+<script id="template-rols" type="x-tmpl-mustache">
+	{{#representant}}
+		<span class="badge"><spring:message code="representant.usuaris.rol.repres"/></span>
+	{{/representant}}
+	{{#delegat}}
+		<span class="badge"><spring:message code="representant.usuaris.rol.deleg"/></span>
+	{{/delegat}}
+	{{#aplicacio}}
+		<span class="badge"><spring:message code="representant.usuaris.rol.aplic"/></span>
+	{{/aplicacio}}
+</script>
+<script id="template-permisos" type="x-tmpl-mustache">
+	<a class="btn btn-primary" href="<c:url value="/representant/usuari/{{ usuari.codi }}/permis"/>">
+		<i class="fas fa-lock"></i>&nbsp;<spring:message code="comu.boto.permisos"/>
+	</a>
+</script>
+<script id="template-actions" type="x-tmpl-mustache">
+{{#principal}}
+ 	<a class="btn btn-primary disabled" href="#"><i class="fas fa-pen"></i>&nbsp;<spring:message code="comu.boto.modificar"/></a>
+{{/principal}}
+{{^principal}}
+	<a data-nrow="{{ nrow }}" class="btn-open-modal-edit btn btn-primary"><i class="fas fa-pen"></i>&nbsp;<spring:message code="comu.boto.modificar"/></a>
+{{/principal}}
+</script>	
+<div id="modal-form-usuari" class="modal" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
 		<div class="modal-header">
 			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
 			<h3></h3>
@@ -255,6 +334,8 @@ function showModalEditar(
 			<a href="#" class="btn btn-primary" onclick="$('#modal-form').submit()"><spring:message code="comu.boto.guardar"/></a>
 		</div>
 	</div>
-
+</div>
+</div>
+</div>
 </body>
 </html>

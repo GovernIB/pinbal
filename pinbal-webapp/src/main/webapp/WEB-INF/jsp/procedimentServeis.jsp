@@ -3,32 +3,14 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
-<%@ taglib uri="http://code.google.com/p/jmesa" prefix="jmesa" %>
+
 
 <html>
 <head>
 	<title><spring:message code="procediment.list.titol"/></title>
-	<script type="text/javascript" src="<c:url value="/js/jquery.jmesa.min.js"/>"></script>
-	<script type="text/javascript" src="<c:url value="/js/jmesa.min.js"/>"></script>
-<script>
-$(document).ready(function() {
-	$('.confirm-remove').click(function() {
-		  return confirm("<spring:message code="procediment.serveis.confirmacio.desactivacio.servei.entitat"/>");
-	});
-	$('#netejar-filtre').click(function() {
-		$(':input', $('#form-filtre')).each (function() {
-			var type = this.type, tag = this.tagName.toLowerCase();
-			if (type == 'text' || type == 'password' || tag == 'textarea')
-				this.value = '';
-			else if (type == 'checkbox' || type == 'radio')
-				this.checked = false;
-			else if (tag == 'select')
-				this.selectedIndex = 0;
-		});
-		$('#form-filtre').submit();
-	});
-});
-</script>
+	<script src="<c:url value="/webjars/datatables/1.10.21/js/jquery.dataTables.min.js"/>"></script>
+	<script src="<c:url value="/webjars/datatables/1.10.21/js/dataTables.bootstrap.min.js"/>"></script>
+	<script src="<c:url value="/webjars/mustache.js/3.0.1/mustache.min.js"/>"></script>
 </head>
 <body>
 
@@ -37,7 +19,7 @@ $(document).ready(function() {
 		<li class="active"><spring:message code="procediment.serveis.miques.serveis"/></li>
 	</ul>
 
-	<c:url value="./servei" var="formAction"/>
+	<c:url value="/procediment/${procediment.id}/servei" var="formAction"/>
 	<form:form id="form-filtre" action="${formAction}" method="post" cssClass="well form-inline" commandName="serveiFiltreCommand">
 		<div class="row-fluid">
 			<div class="control-group span3">	
@@ -75,67 +57,114 @@ $(document).ready(function() {
 			</div>
 		</div>
 	</form:form>
-	
-	<form>
-		<jmesa:tableModel
-				id="serveis" 
-				items="${serveis}"
-				toolbar="es.caib.pinbal.webapp.jmesa.BootstrapToolbar"
-				view="es.caib.pinbal.webapp.jmesa.BootstrapView"
-				var="registre">
-			<jmesa:htmlTable>
-				<jmesa:htmlRow>
-					<jmesa:htmlColumn property="codi" titleKey="procediment.serveis.taula.columna.codi"/>
-					<jmesa:htmlColumn property="descripcio" titleKey="procediment.serveis.taula.columna.descripcio"/>
-					<jmesa:htmlColumn property="actiu" titleKey="procediment.serveis.taula.columna.actiu">
-						<c:if test="${registre.actiu}"><i class="icon-ok"></i></c:if>
-					</jmesa:htmlColumn>
-					<jmesa:htmlColumn property="procedimentCodi" titleKey="procediment.serveis.taula.columna.procediment.codi.adicional">
-						<div class="input-append">
-						  <input class="span9" id="procedimentCodi_${registre.codi}" type="text" value="${registre.procedimentCodi}" disabled>
-						  <button class="btn edit-codi-procediment" type="button" data-codi-servei="${registre.codi}"><i class="icon-pencil"></i></button>
-						</div>
-					</jmesa:htmlColumn>
-					<jmesa:htmlColumn property="ACCIO_activar" title="&nbsp;" sortable="false">
-						<c:choose>
-							<c:when test="${not registre.actiu}"><a href="servei/${registre.codi}/enable" class="btn"><i class="icon-ok"></i>&nbsp;<spring:message code="comu.boto.activar"/></a></c:when>
-							<c:otherwise><a href="servei/${registre.codi}/disable" class="btn confirm-remove"><i class="icon-remove"></i>&nbsp;<spring:message code="comu.boto.desactivar"/></a></c:otherwise>
-						</c:choose>
-					</jmesa:htmlColumn>
-					<jmesa:htmlColumn property="ACCIO_permisos" title="&nbsp;" sortable="false">
-						<c:choose>
-							<c:when test="${registre.actiu}">
-								<a href="servei/${registre.codi}/permis" class="btn"><i class="icon-lock"></i>&nbsp;<spring:message code="procediment.serveis.taula.boto.permisos"/></a>
-							</c:when>
-							<c:otherwise>
-								<a href="#" class="btn disabled"><i class="icon-lock"></i>&nbsp;<spring:message code="procediment.serveis.taula.boto.permisos"/></a>
-							</c:otherwise>
-						</c:choose>
-					</jmesa:htmlColumn>
-	            </jmesa:htmlRow>
-	        </jmesa:htmlTable>
-		</jmesa:tableModel>
-	</form>
+		<div class="clearfix"></div>
+	<table id="table-serveis" class="table table-striped table-bordered" style="width: 100%">
+		<thead>
+			<tr>
+				<th data-data="codi"><spring:message code="procediment.serveis.taula.columna.codi" /></th>
+				<th data-data="descripcio"><spring:message code="procediment.serveis.taula.columna.descripcio" /></th>
+				<th data-data="actiu"><spring:message code="procediment.serveis.taula.columna.actiu" /></th>
+				<th data-data="procedimentCodi"><spring:message code="procediment.serveis.taula.columna.procediment.codi.adicional" /></th>
+				<th data-data="actiu"><spring:message code="entitat.list.taula.columna.activa" /></th>
+				<th></th>
+			</tr>
+		</thead>
+	</table>
+
+	<div>
+		<a href="<c:url value="/procediment"/>" class="btn pull-right"><spring:message code="comu.boto.tornar"/></a>
+		<div class="clearfix"></div>
+	</div>
 <script>
 $(document).ready(function() {
-	$('button.edit-codi-procediment').click(function() {
-		var servei_codi = $(this).data('codi-servei');
-		var $input = $('#procedimentCodi_' + servei_codi);
-		if ($input.prop('disabled')) {
-			$input.prop('disabled',false);
-			$input.next().html('<i class="icon-ok"></i>');
-			$input.focus();
-			$input.select();
-		} else {
-			actualitzaCodiProcediment(servei_codi,$input.val());
-			$input.prop('disabled',true);
-			$input.next().html('<i class="icon-pencil"></i>');
-		}
+	$('.confirm-remove').click(function() {
+		  return confirm("<spring:message code="procediment.serveis.confirmacio.desactivacio.servei.entitat"/>");
 	});
+	$('#netejar-filtre').click(function() {
+		$(':input', $('#form-filtre')).each (function() {
+			var type = this.type, tag = this.tagName.toLowerCase();
+			if (type == 'text' || type == 'password' || tag == 'textarea')
+				this.value = '';
+			else if (type == 'checkbox' || type == 'radio')
+				this.checked = false;
+			else if (tag == 'select')
+				this.selectedIndex = 0;
+		});
+		$('#form-filtre').submit();
+	});
+
 	
 	$('#confirm-remove').click(function() {
 		  return confirm("<spring:message code="procediment.serveis.confirmacio.desactivacio.servei.procediment"/>");
 	});
+
+    $('#table-serveis').DataTable({
+    	autoWidth: false,
+		processing: true,
+		serverSide: true,
+		dom: "<'row'<'col-md-6'i><'col-md-6'>><'row'<'col-md-12'rt>><'row'<'col-md-6'l><'col-md-6'p>>",
+		language: {
+            "url": '<c:url value="/js/datatable-language.json"/>'
+        },
+		ajax: '<c:url value="/servei/datatable/procediment/${procediment.id}"/>',
+		columnDefs: [
+			{
+				targets: [2],
+				orderable: false,
+				width: "10%",
+				render: function (data, type, row, meta) {
+						var template = $('#template-activa').html();
+						console.log(row)
+						return Mustache.render(template, row);
+				}
+			},
+			{
+				targets: [3],
+				orderable: false,
+				width: "10%",
+				render: function (data, type, row, meta) {
+						var template = $('#template-procediment').html();
+						return Mustache.render(template, row);
+				}
+			}, 
+			{
+				targets: [4],
+				orderable: false,
+				width: "10%",
+				render: function (data, type, row, meta) {
+						var template = $('#template-status').html();
+						return Mustache.render(template, row);
+				}
+			}, 
+			{
+				targets: [5],
+				orderable: false,
+				width: "10%",
+				render: function (data, type, row, meta) {
+						var template = $('#template-permisos').html();
+						return Mustache.render(template, row);
+				}
+			}, 
+	   ],
+	   initComplete: function( settings, json ) {
+			$('button.edit-codi-procediment').click(function() {
+				console.log("uep!");
+				var servei_codi = $(this).data('codi-servei');
+				var $input = $('#procedimentCodi_' + servei_codi);
+				if ($input.prop('disabled')) {
+					$input.prop('disabled',false);
+					$(this).html('<i class="fa fa-check"></i>');
+					$input.focus();
+					$input.select();
+				} else {
+					actualitzaCodiProcediment(servei_codi,$input.val());
+					$input.prop('disabled',true);
+					$(this).html('<i class="fas fa-pencil-alt"></i>');
+				}
+			});
+		}
+	});
+   
 });
 
 function onInvokeAction(id) {
@@ -155,12 +184,39 @@ function actualitzaCodiProcediment(servei_codi, codi_procediment) {
 	    }
 	});	
 }
-
 </script>
-	<div>
-		<a href="<c:url value="/procediment"/>" class="btn pull-right"><spring:message code="comu.boto.tornar"/></a>
-		<div class="clearfix"></div>
-	</div>
-
+<script id="template-activa" type="x-tmpl-mustache">
+{{#actiu}}
+<i class="fa fa-check"></i>
+{{/actiu}}
+</script>
+<script id="template-procediment" type="x-tmpl-mustache">
+{{ procedimentCodi }}
+  <div class="input-group">
+  <input class="form-control" id="procedimentCodi_{{ codi }}" type="text" value="{{ procedimentCodi }}" disabled>
+  <div class="input-group-btn">
+      <button class="btn btn-default edit-codi-procediment" type="button" data-codi-servei="{{ codi }}">
+        <i class="fas fa-pencil-alt"></i>
+      </button>
+  </div>
+  </div>
+</script>
+<!-- TODO: substituir icones  -->
+<script id="template-status" type="x-tmpl-mustache">
+	{{#actiu}}
+		<a href="servei/{{ codi }}/disable" class="btn btn-default confirm-remove"><i class="icon-remove"></i>&nbsp;<spring:message code="comu.boto.desactivar"/></a>
+	{{/actiu}}
+	{{^actiu}}
+		<a href="servei/{{ codi }}/enable" class="btn btn-default"><i class="icon-ok"></i>&nbsp;<spring:message code="comu.boto.activar"/></a>
+	{{/actiu}}
+</script>
+<script id="template-permisos" type="x-tmpl-mustache">
+	{{#actiu}}
+		<a href="servei/{{ codi }}/permis" class="btn btn-primary"><i class="icon-lock"></i>&nbsp;<spring:message code="procediment.serveis.taula.boto.permisos"/></a>
+	{{/actiu}}
+	{{^actiu}}
+		<a href="#" class="btn btn-primary disabled"><i class="icon-lock"></i>&nbsp;<spring:message code="procediment.serveis.taula.boto.permisos"/></a>
+	{{/actiu}}
+</script>
 </body>
 </html>

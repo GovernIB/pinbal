@@ -2,7 +2,6 @@
 	pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
-<%@ taglib uri="http://code.google.com/p/jmesa" prefix="jmesa"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
 
@@ -15,9 +14,16 @@
 <html>
 <head>
 	<title><spring:message code="consulta.multiple.list.titol"/></title>
-	<script type="text/javascript"src="<c:url value="/js/jquery.jmesa.min.js"/>"></script>
-	<script type="text/javascript" src="<c:url value="/js/jmesa.min.js"/>"></script>
-	<script src="<c:url value="/js/jquery.maskedinput.js"/>"></script>
+	<link href="<c:url value="/css/select2.css"/>" rel="stylesheet"/>
+	<link href="<c:url value="/css/select2-bootstrap.css"/>" rel="stylesheet"/>
+	<script src="<c:url value="/webjars/datatables/1.10.21/js/jquery.dataTables.min.js"/>"></script>
+	<script src="<c:url value="/webjars/datatables/1.10.21/js/dataTables.bootstrap.min.js"/>"></script>
+	<script src="<c:url value="/webjars/mustache.js/3.0.1/mustache.min.js"/>"></script>
+	<script src="<c:url value="/webjars/bootstrap-datepicker/1.6.1/dist/js/bootstrap-datepicker.min.js"/>"></script>
+	<script src="<c:url value="/webjars/bootstrap-datepicker/1.6.1/dist/locales/bootstrap-datepicker.ca.min.js"/>"></script>
+	<script type="text/javascript" src="<c:url value="/js/select2.min.js"/>"></script>
+	<script src="<c:url value="/webjars/datatables-plugins/1.10.20/dataRender/datetime.js"/>"></script>
+	<script src="<c:url value="/webjars/momentjs/2.24.0/min/moment.min.js"/>"></script>
 <script>
 $(document).ready(function() {
 	$('#netejar-filtre').click(function() {
@@ -139,40 +145,94 @@ $(document).ready(function() {
 		</div>
 	</form:form>
 
-	<form>
-		<jmesa:tableModel
-				id="consultes"
-				items="${consultes}"
-				toolbar="es.caib.pinbal.webapp.jmesa.BootstrapToolbar"
-				view="es.caib.pinbal.webapp.jmesa.BootstrapView"
-				var="registre">
-			<jmesa:htmlTable>
-				<jmesa:htmlRow>
-					<jmesa:htmlColumn property="scspPeticionId" titleKey="consulta.list.taula.peticion.id">
-						${registre.scspPeticionId}<c:if test="${registre.recobriment}"> <span class="badge">R</span></c:if>
-					</jmesa:htmlColumn>
-					<jmesa:htmlColumn property="creacioData" titleKey="consulta.list.taula.data" cellEditor="org.jmesa.view.editor.DateCellEditor" pattern="dd/MM/yyyy HH:mm:ss" />
-					<jmesa:htmlColumn property="procedimentNom" titleKey="consulta.list.taula.procediment"/>
-					<jmesa:htmlColumn property="serveiDescripcio" titleKey="consulta.list.taula.servei"/>
-					<jmesa:htmlColumn property="terData" titleKey="consulta.list.taula.ter" cellEditor="org.jmesa.view.editor.DateCellEditor" pattern="dd/MM/yyyy HH:mm:ss" />
-					<jmesa:htmlColumn property="estat" titleKey="consulta.list.taula.estat" style="white-space:nowrap;">
-						<span<c:if test="${registre.estatError}"> title="${registre.error}"</c:if>>
-							<c:choose>
-								<c:when test="${registre.estatPendent}"><i class="icon-bookmark"></i></c:when>
-								<c:when test="${registre.estatProcessant}"><i class="icon-time"></i></c:when>
-								<c:when test="${registre.estatError}"><i class="icon-warning-sign"></i></c:when>
-								<c:otherwise><i class="icon-ok"></i></c:otherwise>
-							</c:choose>
-							${registre.estat}
-						</span>
-					</jmesa:htmlColumn>
-					<jmesa:htmlColumn property="ACCIO_detalls" title="&nbsp;" style="white-space:nowrap;" sortable="false">
-						<a href="multiple/${registre.id}" class="btn"><i class="icon-zoom-in"></i>&nbsp;<spring:message code="consulta.list.taula.detalls"/></a>
-					</jmesa:htmlColumn>
-				</jmesa:htmlRow>
-			</jmesa:htmlTable>
-		</jmesa:tableModel>
-	</form>
+	<div class="clearfix"></div>
+	<table id="table-consultes" class="table table-striped table-bordered" style="width: 100%">
+		<thead>
+			<tr>
+				<th data-data="scspPeticionId"><spring:message code="consulta.list.taula.peticion.id" /></th>
+				<th data-data="creacioData"><spring:message code="consulta.list.taula.data" /></th>
+				<th data-data="procedimentNom"><spring:message code="consulta.list.taula.procediment" /></th>
+				<th data-data="serveiDescripcio"><spring:message code="consulta.list.taula.servei" /></th>
+				<th data-data="terData"><spring:message code="consulta.list.taula.titular.nom" /></th>		
+				<th data-data="estat"><spring:message code="consulta.list.taula.estat" /></th>
+				<th data-data="id"></th>
+			</tr>
+		</thead>
+	</table>
+<script>
+$(document).ready(function() {
+    $('#table-consultes').DataTable({
+    	autoWidth: false,
+		processing: true,
+		serverSide: true,
+		dom: "<'row'<'col-md-6'i><'col-md-6'>><'row'<'col-md-12'rt>><'row'<'col-md-6'l><'col-md-6'p>>",
+		language: {
+            "url": '<c:url value="/js/datatable-language.json"/>'
+        },
+		ajax: '<c:url value="/consulta/multiple/datatable/"/>',
+		columnDefs: [
+			{
+				targets: [0],
+				width: "10%",
+				render: function (data, type, row, meta) {
+						var template = $('#template-id-peticion').html();
+						return Mustache.render(template, row);
+				}
+			},
+			{
+				targets: [1],
+				width: "10%",
+				render: $.fn.dataTable.render.moment('x', 'DD/MM/YYYY HH:mm:ss', 'es' )
+			},				
+			{
+				targets: [5],
+				orderable: false,
+				width: "10%",
+				render: function (data, type, row, meta) {
+						var template = $('#template-estat').html();
+						row['icon-status'] = '';
+						if (row.estat=='Error'){
+							row['icon-status'] = '<i class="fas fa-exclamation-triangle"></i>';
+
+						}else if(row.estat=='Pendent'){
+							row['icon-status'] = '<i class="fas fa-bookmark"></i>';
+
+						}else if(row.estat=='Processant'){
+							row['icon-status'] = '<i class="fas fa-hourglass-half"></i>';
+
+						}else{
+							row['icon-status'] = '<i class="fa fa-check"></i>';
+						}
+						return Mustache.render(template, row);
+				}
+			}, 
+			{
+				targets: [6],
+				width: "10%",
+				render: function (data, type, row, meta) {
+						var template = $('#template-details').html();
+						return Mustache.render(template, row);
+				}
+			},
+	   ],
+	   initComplete: function( settings, json ) {
+
+		}
+	});
+});
+</script>
+<script id="template-id-peticion" type="x-tmpl-mustache">
+{{scspPeticionId}}
+{{#recobriment}}
+	<span class="badge">R</span>
+{{/recobriment}}
+</script>
+<script id="template-estat" type="x-tmpl-mustache">
+	{{{ icon-status }}} {{ estat }}
+</script>
+<script id="template-details" type="x-tmpl-mustache">
+<a href="consulta/{{ id }}" class="btn btn-default"><i class="fas fa-search-plus"></i>&nbsp;<spring:message code="admin.consulta.list.taula.detalls"/></a>
+</script>
 	<script type="text/javascript">
 		function onInvokeAction(id) {
 			setExportToLimit(id, '');

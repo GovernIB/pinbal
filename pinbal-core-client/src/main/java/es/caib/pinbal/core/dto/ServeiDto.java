@@ -11,7 +11,7 @@ import org.apache.commons.lang.builder.ToStringBuilder;
  * 
  * @author Limit Tecnologies <limit@limit.es>
  */
-public class ServeiDto implements Serializable {
+public class ServeiDto extends AbstractIdentificable<Long> implements Serializable {
 
 	public enum EntitatTipusDto {
 		GOVERN,
@@ -25,7 +25,7 @@ public class ServeiDto implements Serializable {
 
 	private String codi;
 	private String descripcio;
-	private long id;
+	private Long id;
 
 	private EmisorDto scspEmisor;
 	private Date scspFechaAlta;
@@ -445,11 +445,11 @@ public class ServeiDto implements Serializable {
 		this.actiu = actiu;
 	}
 	
-	public long getId() {
+	public Long getId() {
 		return id;
 	}
 
-	public void setId(long id) {
+	public void setId(Long id) {
 		this.id = id;
 	}
 	public List<ServeiXsdDto> getFitxersXsd() {

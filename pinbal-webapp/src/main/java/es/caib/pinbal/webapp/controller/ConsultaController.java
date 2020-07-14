@@ -5,6 +5,8 @@ package es.caib.pinbal.webapp.controller;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.InvocationTargetException;
+import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -14,6 +16,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import javax.naming.NamingException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
@@ -26,6 +29,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -37,6 +42,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.w3c.dom.Document;
@@ -49,10 +55,6 @@ import es.caib.pinbal.core.dto.DadaEspecificaDto;
 import es.caib.pinbal.core.dto.EntitatDto;
 import es.caib.pinbal.core.dto.EntitatUsuariDto;
 import es.caib.pinbal.core.dto.NodeDto;
-import es.caib.pinbal.core.dto.OrdreDto;
-import es.caib.pinbal.core.dto.OrdreDto.OrdreDireccio;
-import es.caib.pinbal.core.dto.PaginaLlistatDto;
-import es.caib.pinbal.core.dto.PaginacioAmbOrdreDto;
 import es.caib.pinbal.core.dto.ServeiCampDto;
 import es.caib.pinbal.core.dto.ServeiCampDto.ServeiCampDtoTipus;
 import es.caib.pinbal.core.dto.ServeiDto;
@@ -84,8 +86,8 @@ import es.caib.pinbal.webapp.common.AlertHelper;
 import es.caib.pinbal.webapp.common.EntitatHelper;
 import es.caib.pinbal.webapp.common.RequestSessionHelper;
 import es.caib.pinbal.webapp.common.ValidationHelper;
-import es.caib.pinbal.webapp.jmesa.JMesaGridHelper;
-import es.caib.pinbal.webapp.jmesa.JMesaGridHelper.ConsultaPagina;
+import es.caib.pinbal.webapp.datatables.ServerSideRequest;
+import es.caib.pinbal.webapp.datatables.ServerSideResponse;
 import es.caib.pinbal.webapp.view.SpreadSheetReader;
 
 /**
@@ -123,7 +125,7 @@ public class ConsultaController extends BaseController {
 			return "delegatNoAutoritzat";
 		EntitatDto entitat = EntitatHelper.getEntitatActual(request, entitatService);
 		if (entitat != null) {
-			omplirModelPerMostrarLlistat(request, entitat, model);
+			omplirModelPerFiltreTaula(request, entitat, model);
 		}
 		return "consulta";
 	}
@@ -139,7 +141,7 @@ public class ConsultaController extends BaseController {
 		EntitatDto entitat = EntitatHelper.getEntitatActual(request, entitatService);
 		if (entitat != null) {
 			if (bindingResult.hasErrors()) {
-				omplirModelPerMostrarLlistat(request, entitat, model);
+				omplirModelPerFiltreTaula(request, entitat, model);
 			} else {
 				RequestSessionHelper.actualitzarObjecteSessio(
 						request,
@@ -151,6 +153,48 @@ public class ConsultaController extends BaseController {
 		return "consulta";
 	}
 
+
+	@RequestMapping(value = "/datatable", produces="application/json", method = RequestMethod.GET)
+	@ResponseBody
+	public ServerSideResponse<ConsultaDto, Long> datatable(HttpServletRequest request, Model model)
+	      throws IllegalAccessException, InvocationTargetException, NoSuchMethodException, NamingException,
+	      SQLException, EntitatNotFoundException {
+		String error = null;
+		ServerSideRequest serverSideRequest = new ServerSideRequest(request);
+		if (!EntitatHelper.isDelegatEntitatActual(request)) {
+			error = "Delegat no autoritzat";
+		}
+
+		EntitatDto entitat = EntitatHelper.getEntitatActual(request, entitatService);
+		if (entitat == null) {
+			throw new EntitatNotFoundException();
+		}
+
+		ConsultaFiltreCommand command = (ConsultaFiltreCommand)RequestSessionHelper.obtenirObjecteSessio(
+				request,
+				SESSION_ATTRIBUTE_FILTRE);
+		if (command == null)
+			command = new ConsultaFiltreCommand();
+		
+		Page<ConsultaDto> page;
+		ServerSideResponse<ConsultaDto, Long> response = null;
+		if (error != null) {
+			List<ConsultaDto> lista = new ArrayList<ConsultaDto>();
+			page = new PageImpl<ConsultaDto>(lista, serverSideRequest.toPageable(), lista.size());
+			response = new ServerSideResponse<ConsultaDto, Long>(serverSideRequest, page);
+			response.setError(error);
+
+		}else {
+			page = consultaService.findSimplesByFiltrePaginatPerDelegat(
+					entitat.getId(),
+					ConsultaFiltreCommand.asDto(command),		
+					serverSideRequest.toPageable());	
+			response = new ServerSideResponse<ConsultaDto, Long>(serverSideRequest, page);
+		}
+		
+		return response;
+	}
+	
 	@RequestMapping(value = "/{serveiCodi}/new", method = RequestMethod.GET)
 	public String newGet(
 			HttpServletRequest request,
@@ -700,7 +744,7 @@ public class ConsultaController extends BaseController {
 		return resposta;
 	}
 
-	private void omplirModelPerMostrarLlistat(
+	private void omplirModelPerFiltreTaula(
 			HttpServletRequest request,
 			EntitatDto entitat,
 			Model model) throws Exception {
@@ -712,17 +756,6 @@ public class ConsultaController extends BaseController {
 		model.addAttribute(
 				"filtreCommand",
 				command);
-		List<?> paginaConsultes = JMesaGridHelper.consultarPaginaIActualitzarLimit(
-				"consultes",
-				request,
-				new ConsultaPaginaConsulta(
-						consultaService,
-						entitat,
-						command),
-				new OrdreDto("creacioData", OrdreDireccio.DESCENDENT));
-		model.addAttribute(
-				"consultes",
-				paginaConsultes);
 		model.addAttribute(
 				"procediments",
 				procedimentService.findAmbEntitatPerDelegat(entitat.getId()));
@@ -846,27 +879,6 @@ public class ConsultaController extends BaseController {
 		return consultaService.novaConsultaMultiple(consulta);
 	}
 
-	public class ConsultaPaginaConsulta implements ConsultaPagina<ConsultaDto> {
-		ConsultaService consultaService;
-		EntitatDto entitat;
-		ConsultaFiltreCommand command;
-		public ConsultaPaginaConsulta(
-				ConsultaService consultaService,
-				EntitatDto entitat,
-				ConsultaFiltreCommand command) {
-			this.consultaService = consultaService;
-			this.entitat = entitat;
-			this.command = command;
-		}
-		public PaginaLlistatDto<ConsultaDto> consultar(
-				PaginacioAmbOrdreDto paginacioAmbOrdre) throws Exception {
-			return consultaService.findSimplesByFiltrePaginatPerDelegat(
-					entitat.getId(),
-					ConsultaFiltreCommand.asDto(command),
-					paginacioAmbOrdre);
-		}
-	}
-	
 	private List<String[]> readFile(
 			MultipartFile fitxer,
 			Errors errors) throws Exception {

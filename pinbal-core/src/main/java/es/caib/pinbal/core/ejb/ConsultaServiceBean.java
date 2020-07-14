@@ -12,6 +12,8 @@ import javax.ejb.Stateless;
 import javax.interceptor.Interceptors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.ejb.interceptor.SpringBeanAutowiringInterceptor;
 
 import es.caib.pinbal.core.dto.ArxiuDto;
@@ -21,8 +23,6 @@ import es.caib.pinbal.core.dto.EntitatDto;
 import es.caib.pinbal.core.dto.EstadisticaDto;
 import es.caib.pinbal.core.dto.EstadistiquesFiltreDto;
 import es.caib.pinbal.core.dto.InformeGeneralEstatDto;
-import es.caib.pinbal.core.dto.PaginaLlistatDto;
-import es.caib.pinbal.core.dto.PaginacioAmbOrdreDto;
 import es.caib.pinbal.core.dto.RecobrimentSolicitudDto;
 import es.caib.pinbal.core.service.ConsultaService;
 import es.caib.pinbal.core.service.exception.ConsultaNotFoundException;
@@ -168,59 +168,59 @@ public class ConsultaServiceBean implements ConsultaService {
 	
 	@Override
 	@RolesAllowed("tothom")
-	public PaginaLlistatDto<ConsultaDto> findSimplesByFiltrePaginatPerDelegat(
+	public Page<ConsultaDto> findSimplesByFiltrePaginatPerDelegat(
 			Long entitatId,
 			ConsultaFiltreDto filtre,
-			PaginacioAmbOrdreDto paginacioAmbOrdre) throws EntitatNotFoundException {
+			Pageable pageable) throws EntitatNotFoundException {
 		return delegate.findSimplesByFiltrePaginatPerDelegat(
 				entitatId,
 				filtre,
-				paginacioAmbOrdre);
+				pageable);
 	}
 
 	@Override
 	@RolesAllowed("tothom")
-	public PaginaLlistatDto<ConsultaDto> findMultiplesByFiltrePaginatPerDelegat(
+	public Page<ConsultaDto> findMultiplesByFiltrePaginatPerDelegat(
 			Long entitatId,
 			ConsultaFiltreDto filtre,
-			PaginacioAmbOrdreDto paginacioAmbOrdre) throws EntitatNotFoundException {
+			Pageable pageable) throws EntitatNotFoundException {
 		return delegate.findMultiplesByFiltrePaginatPerDelegat(
 				entitatId,
 				filtre,
-				paginacioAmbOrdre);
+				pageable);
 	}
 
 	@Override
 	@RolesAllowed("PBL_AUDIT")
-	public PaginaLlistatDto<ConsultaDto> findByFiltrePaginatPerAuditor(
+	public Page<ConsultaDto> findByFiltrePaginatPerAuditor(
 			Long entitatId,
 			ConsultaFiltreDto filtre,
-			PaginacioAmbOrdreDto paginacioAmbOrdre) throws EntitatNotFoundException {
+			Pageable pageable) throws EntitatNotFoundException {
 		return delegate.findByFiltrePaginatPerAuditor(
 				entitatId,
 				filtre,
-				paginacioAmbOrdre);
+				pageable);
 	}
 
 	@Override
 	@RolesAllowed("PBL_SUPERAUD")
-	public PaginaLlistatDto<ConsultaDto> findByFiltrePaginatPerSuperauditor(
+	public Page<ConsultaDto> findByFiltrePaginatPerSuperauditor(
 			Long entitatId,
 			ConsultaFiltreDto filtre,
-			PaginacioAmbOrdreDto paginacioAmbOrdre) throws EntitatNotFoundException {
+			Pageable pageable) throws EntitatNotFoundException {
 		return delegate.findByFiltrePaginatPerSuperauditor(
 				entitatId,
 				filtre,
-				paginacioAmbOrdre);
+				pageable);
 	}
 
 	@Override
 	@RolesAllowed("PBL_ADMIN")
-	public PaginaLlistatDto<ConsultaDto> findByFiltrePaginatPerAdmin(
+	public Page<ConsultaDto> findByFiltrePaginatPerAdmin(
 			Long entitatId,
 			ConsultaFiltreDto filtre,
-			PaginacioAmbOrdreDto paginacioAmbOrdre) throws EntitatNotFoundException {
-	return delegate.findByFiltrePaginatPerAdmin(entitatId, filtre, paginacioAmbOrdre);
+			Pageable pageable) throws EntitatNotFoundException {
+	return delegate.findByFiltrePaginatPerAdmin(entitatId, filtre, pageable);
 	}
 
 	@Override

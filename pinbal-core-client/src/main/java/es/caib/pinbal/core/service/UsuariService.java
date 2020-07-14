@@ -5,13 +5,12 @@ package es.caib.pinbal.core.service;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
 
-import es.caib.pinbal.core.dto.EntitatDto;
 import es.caib.pinbal.core.dto.EntitatUsuariDto;
 import es.caib.pinbal.core.dto.InformeUsuariDto;
-import es.caib.pinbal.core.dto.PaginaLlistatDto;
-import es.caib.pinbal.core.dto.PaginacioAmbOrdreDto;
 import es.caib.pinbal.core.dto.UsuariDto;
 import es.caib.pinbal.core.service.exception.EntitatNotFoundException;
 import es.caib.pinbal.core.service.exception.EntitatUsuariNotFoundException;
@@ -44,7 +43,7 @@ public interface UsuariService {
 	 * @return El llistat d'entitats paginat.
 	 */
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
-	public PaginaLlistatDto<EntitatUsuariDto> findAmbFiltrePaginat(
+	public Page<EntitatUsuariDto> findAmbFiltrePaginat(
 			Long id_entitat,
 			Boolean isRepresentant,
 			Boolean isDelegat,
@@ -54,7 +53,7 @@ public interface UsuariService {
 			String nom,
 			String nif,
 			String departament,
-			PaginacioAmbOrdreDto paginacioAmbOrdre);
+			Pageable pageable);
 	
 	/**
 	 * Obté les dades de l'usuari actual del sistema extern definit al plugin

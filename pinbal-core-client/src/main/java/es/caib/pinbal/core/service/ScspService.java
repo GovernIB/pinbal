@@ -5,6 +5,8 @@ package es.caib.pinbal.core.service;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
 
 import es.caib.pinbal.core.dto.ClauPrivadaDto;
@@ -86,7 +88,7 @@ public interface ScspService {
 	 * @return Un llistat de paràmetres de configuració.
 	 */
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
-	public List<ParamConfDto> findAllParamConf();
+	public Page<ParamConfDto> findAllParamConf(Pageable pageable);
 	
 	
 	// Funcions de la taula de emissor certificat.
@@ -149,7 +151,7 @@ public interface ScspService {
 	 * @return Un llistat d'emissors certificats.
 	 */
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
-	public List<EmissorCertDto> findAllEmissorCert();
+	public Page<EmissorCertDto> findAllEmissorCert(Pageable pageable);
 	
 	
 
@@ -213,7 +215,7 @@ public interface ScspService {
 	 * @return Un llistat de les claus privades.
 	 */
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
-	public List<ClauPrivadaDto> findAllClauPrivada();
+	public Page<ClauPrivadaDto> findAllClauPrivada(Pageable pageable);
 
 	
 	// Funcions de la taula de organisme cessionari
@@ -287,5 +289,5 @@ public interface ScspService {
 	 * @return Un llistat de claus públiques.
 	 */
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
-	public List<ClauPublicaDto> findAllClauPublica();	
+	public Page<ClauPublicaDto> findAllClauPublica(Pageable pageable);	
 }

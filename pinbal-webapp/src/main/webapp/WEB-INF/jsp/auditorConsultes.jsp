@@ -2,7 +2,6 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
-<%@ taglib uri="http://code.google.com/p/jmesa" prefix="jmesa" %>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
 
 <%
@@ -14,8 +13,11 @@
 <html>
 <head>
 	<title><spring:message code="auditor.list.titol"/></title>
-	<script type="text/javascript"src="<c:url value="/js/jquery.jmesa.min.js"/>"></script>
-	<script type="text/javascript" src="<c:url value="/js/jmesa.min.js"/>"></script>
+	<script src="<c:url value="/webjars/datatables/1.10.21/js/jquery.dataTables.min.js"/>"></script>
+	<script src="<c:url value="/webjars/datatables/1.10.21/js/dataTables.bootstrap.min.js"/>"></script>
+	<script src="<c:url value="/webjars/mustache.js/3.0.1/mustache.min.js"/>"></script>
+	<script src="<c:url value="/webjars/datatables-plugins/1.10.20/dataRender/datetime.js"/>"></script>
+	<script src="<c:url value="/webjars/momentjs/2.24.0/min/moment.min.js"/>"></script>
 	<script src="<c:url value="/js/jquery.maskedinput.js"/>"></script>
 <script>
 $(document).ready(function() {
@@ -50,6 +52,64 @@ $(document).ready(function() {
 		    }
 		});
 	});
+	
+
+    $('#table-consultes').DataTable({
+    	autoWidth: false,
+		processing: true,
+		serverSide: true,
+		dom: "<'row'<'col-md-6'i><'col-md-6'>><'row'<'col-md-12'rt>><'row'<'col-md-6'l><'col-md-6'p>>",
+		language: {
+            "url": '<c:url value="/js/datatable-language.json"/>'
+        },
+		ajax: '<c:url value="/auditor/datatable/"/>',
+		columnDefs: [
+			{
+				targets: [0],
+				width: "10%",
+				render: function (data, type, row, meta) {
+						var template = $('#template-id-peticion').html();
+						return Mustache.render(template, row);
+				}
+			},
+			{
+				targets: [1],
+				orderable: false,
+				width: "10%",
+				render: $.fn.dataTable.render.moment('x', 'DD/MM/YYYY HH:mm:ss', 'es' )
+			},
+			{
+				targets: [2, 3, 4, 5],
+				orderable: false,
+			},
+			{
+				targets: [6],
+				orderable: false,
+				width: "10%",
+				render: function (data, type, row, meta) {
+						var template = $('#template-estat').html();
+						row['icon-status'] = '';
+						if (row.estat=='Error'){
+							row['icon-status'] = '<i class="fas fa-exclamation-triangle"></i>';
+
+						}else if(row.estat=='Pendent'){
+							row['icon-status'] = '<i class="fas fa-bookmark"></i>';
+
+						}else if(row.estat=='Processant'){
+							row['icon-status'] = '<i class="fas fa-hourglass-half"></i>';
+
+						}else{
+							row['icon-status'] = '<i class="fa fa-check"></i>';
+						}
+						return Mustache.render(template, row);
+				}
+			}
+	   ],
+	   initComplete: function( settings, json ) {
+
+		}
+	});
+    
 });
 </script>
 </head>
@@ -160,39 +220,29 @@ $(document).ready(function() {
 			</div>
 		</div>
 	</form:form>
+	<table id="table-consultes" class="table table-striped table-bordered" style="width: 100%">
+		<thead>
+			<tr>
+				<th data-data="scspPeticionId"><spring:message code="consulta.list.taula.peticion.id" /></th>
+				<th data-data="creacioData"><spring:message code="auditor.list.taula.data" /></th>
+				<th data-data="creacioUsuari.nom"><spring:message code="auditor.list.taula.usuari" /></th>
+				<th data-data="funcionariNomAmbDocument"><spring:message code="auditor.list.taula.funcionari" /></th>
+				<th data-data="procedimentNom"><spring:message code="auditor.list.taula.procediment" /></th>
+				<th data-data="serveiDescripcio"><spring:message code="auditor.list.taula.servei" /></th>
+				<th data-data="estat"><spring:message code="auditor.list.taula.estat" /></th>
+			</tr>
+		</thead>
+	</table>
 
-	<form>
-		<jmesa:tableModel
-				id="consultes"
-				items="${consultes}"
-				toolbar="es.caib.pinbal.webapp.jmesa.BootstrapToolbar"
-				view="es.caib.pinbal.webapp.jmesa.BootstrapView"
-				var="registre">
-			<jmesa:htmlTable>
-				<jmesa:htmlRow>
-					<jmesa:htmlColumn property="scspPeticionSolicitudId" titleKey="consulta.list.taula.peticion.id">
-						${registre.scspPeticionSolicitudId}<c:if test="${registre.recobriment}"> <span class="badge">R</span></c:if>
-					</jmesa:htmlColumn>
-					<jmesa:htmlColumn property="creacioData" titleKey="auditor.list.taula.data" cellEditor="org.jmesa.view.editor.DateCellEditor" pattern="dd/MM/yyyy HH:mm:ss" />
-					<jmesa:htmlColumn property="creacioUsuari.nom" titleKey="auditor.list.taula.usuari"/>
-					<jmesa:htmlColumn property="funcionariNomAmbDocument" titleKey="auditor.list.taula.funcionari"/>
-					<jmesa:htmlColumn property="procedimentNom" titleKey="auditor.list.taula.procediment"/>
-					<jmesa:htmlColumn property="serveiDescripcio" titleKey="auditor.list.taula.servei"/>
-					<jmesa:htmlColumn property="estat" titleKey="auditor.list.taula.estat" style="white-space:nowrap;">
-						<span<c:if test="${registre.estatError}"> title="${registre.error}"</c:if>>
-							<c:choose>
-								<c:when test="${registre.estatPendent}"><i class="icon-bookmark"></i></c:when>
-								<c:when test="${registre.estatProcessant}"><i class="icon-time"></i></c:when>
-								<c:when test="${registre.estatError}"><i class="icon-warning-sign"></i></c:when>
-								<c:otherwise><i class="icon-ok"></i></c:otherwise>
-							</c:choose>
-							${registre.estat}
-						</span>
-					</jmesa:htmlColumn>
-				</jmesa:htmlRow>
-			</jmesa:htmlTable>
-		</jmesa:tableModel>
-	</form>
+<script id="template-id-peticion" type="x-tmpl-mustache">
+{{scspPeticionId}}
+{{#recobriment}}
+	<span class="badge">R</span>
+{{/recobriment}}
+</script>
+<script id="template-estat" type="x-tmpl-mustache">
+	{{{ icon-status }}} {{ estat }}
+</script>
 	<script type="text/javascript">
 		function onInvokeAction(id) {
 			setExportToLimit(id, '');

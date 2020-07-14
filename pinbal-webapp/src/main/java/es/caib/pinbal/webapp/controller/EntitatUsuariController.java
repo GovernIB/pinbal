@@ -3,13 +3,15 @@
  */
 package es.caib.pinbal.webapp.controller;
 
-import java.util.Iterator;
-import java.util.List;
+import java.lang.reflect.InvocationTargetException;
+import java.sql.SQLException;
 
+import javax.naming.NamingException;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -17,31 +19,26 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import es.caib.pinbal.core.dto.EntitatDto;
 import es.caib.pinbal.core.dto.EntitatUsuariDto;
-import es.caib.pinbal.core.dto.OrdreDto;
-import es.caib.pinbal.core.dto.PaginaLlistatDto;
-import es.caib.pinbal.core.dto.PaginacioAmbOrdreDto;
-import es.caib.pinbal.core.dto.UsuariDto;
-import es.caib.pinbal.core.dto.OrdreDto.OrdreDireccio;
 import es.caib.pinbal.core.service.EntitatService;
 import es.caib.pinbal.core.service.UsuariService;
 import es.caib.pinbal.core.service.exception.EntitatNotFoundException;
 import es.caib.pinbal.core.service.exception.EntitatUsuariNotFoundException;
 import es.caib.pinbal.core.service.exception.UsuariExternNotFoundException;
-import es.caib.pinbal.webapp.command.EntitatFiltreCommand;
 import es.caib.pinbal.webapp.command.EntitatUsuariCommand;
 import es.caib.pinbal.webapp.command.EntitatUsuariCommand.Existent;
 import es.caib.pinbal.webapp.command.EntitatUsuariCommand.TipusCodi;
 import es.caib.pinbal.webapp.command.EntitatUsuariCommand.TipusNif;
 import es.caib.pinbal.webapp.command.UsuariFiltreCommand;
 import es.caib.pinbal.webapp.common.AlertHelper;
+import es.caib.pinbal.webapp.common.EntitatHelper;
 import es.caib.pinbal.webapp.common.RequestSessionHelper;
 import es.caib.pinbal.webapp.common.ValidationHelper;
-import es.caib.pinbal.webapp.controller.EntitatController.ConsultaPaginaEntitat;
-import es.caib.pinbal.webapp.jmesa.JMesaGridHelper;
-import es.caib.pinbal.webapp.jmesa.JMesaGridHelper.ConsultaPagina;
+import es.caib.pinbal.webapp.datatables.ServerSideRequest;
+import es.caib.pinbal.webapp.datatables.ServerSideResponse;
 
 /**
  * Controlador per al manteniment dels usuaris d'una entitat.
@@ -114,6 +111,43 @@ public class EntitatUsuariController extends BaseController {
 		}
 	}
 
+	@RequestMapping(value = "/{entitatId}/usuari/datatable", produces="application/json", method = RequestMethod.GET)
+	@ResponseBody
+	public ServerSideResponse<EntitatUsuariDto, Long> datatable(HttpServletRequest request, 
+																@PathVariable Long entitatId,
+																Model model)
+	      throws IllegalAccessException, InvocationTargetException, NoSuchMethodException, NamingException,
+	      SQLException, EntitatNotFoundException {
+		ServerSideRequest serverSideRequest = new ServerSideRequest(request);
+		
+		EntitatDto entitat = null;
+		entitat = entitatService.findById(entitatId);
+		if (entitat == null) {
+			throw new EntitatNotFoundException();
+		}
+		
+		UsuariFiltreCommand command = (UsuariFiltreCommand)RequestSessionHelper.obtenirObjecteSessio(
+				request,
+				SESSION_ATTRIBUTE_FILTRE);
+		if (command == null)
+			command = new UsuariFiltreCommand();
+		
+		
+		Page<EntitatUsuariDto> page = usuariService.findAmbFiltrePaginat(
+				entitat.getId(),
+				command.getIsRepresentant(),
+				command.getIsDelegat(),
+				command.getIsAuditor(),
+				command.getIsAplicacio(),
+				command.getCodi(),
+				command.getNom(),
+				command.getNif(),
+				command.getDepartament(),		
+				serverSideRequest.toPageable());
+
+		return new ServerSideResponse<EntitatUsuariDto, Long>(serverSideRequest, page);
+	}
+	
 	@RequestMapping(value = "/{entitatId}/usuari/save", method = RequestMethod.POST)
 	public String usuariSave(
 			HttpServletRequest request,
@@ -244,40 +278,8 @@ public class EntitatUsuariController extends BaseController {
 		command.setEntitat(entitat);
 		model.addAttribute(command);
 		
-		List<?> paginaUsuaris = JMesaGridHelper.consultarPaginaIActualitzarLimit(
-				"usuaris",
-				request,
-				new ConsultaPaginaEntitat(
-						usuariService,
-						command),
-				new OrdreDto("usuari.nom", OrdreDireccio.DESCENDENT));
-		
 		model.addAttribute("entitat", entitat);
 		model.addAttribute(new EntitatUsuariCommand(entitat.getId()));
-		model.addAttribute("usuaris", paginaUsuaris);
 	}
-	public class ConsultaPaginaEntitat implements ConsultaPagina<EntitatUsuariDto> {
-		UsuariService usuariService;
-		UsuariFiltreCommand command;
-		public ConsultaPaginaEntitat(
-				UsuariService usuariService,
-				UsuariFiltreCommand command) {
-			this.usuariService = usuariService;
-			this.command = command;
-		}
-		public PaginaLlistatDto<EntitatUsuariDto> consultar(
-				PaginacioAmbOrdreDto paginacioAmbOrdre) throws Exception {
-			return usuariService.findAmbFiltrePaginat(
-					command.getEntitat().getId(),
-					command.getIsRepresentant(),
-					command.getIsDelegat(),
-					command.getIsAuditor(),
-					command.getIsAplicacio(),
-					command.getCodi(),
-					command.getNom(),
-					command.getNif(),
-					command.getDepartament(),					
-					paginacioAmbOrdre);
-		}
-	}
+	
 }

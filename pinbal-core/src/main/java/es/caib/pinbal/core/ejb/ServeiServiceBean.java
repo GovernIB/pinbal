@@ -12,6 +12,8 @@ import javax.ejb.Stateless;
 import javax.interceptor.Interceptors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.ejb.interceptor.SpringBeanAutowiringInterceptor;
 
 import es.caib.pinbal.core.dto.ArbreDto;
@@ -93,22 +95,22 @@ public class ServeiServiceBean implements ServeiService {
 
 	@Override
 	@RolesAllowed("PBL_ADMIN")
-	public PaginaLlistatDto<ServeiDto> findAmbFiltrePaginat(String codi, String descripcio, String emisor,
-			Boolean activa, PaginacioAmbOrdreDto paginacioAmbOrdre) {
-		return delegate.findAmbFiltrePaginat(codi, descripcio, emisor, activa, paginacioAmbOrdre);
+	public Page<ServeiDto> findAmbFiltrePaginat(String codi, String descripcio, String emisor,
+			Boolean activa, Pageable pageable) {
+		return delegate.findAmbFiltrePaginat(codi, descripcio, emisor, activa, pageable);
 	}
 	
 	@Override
 	@RolesAllowed("PBL_ADMIN")
-	public PaginaLlistatDto<ServeiDto> findAmbFiltrePaginat(
+	public Page<ServeiDto> findAmbFiltrePaginat(
 			String codi,
 			String descripcio,
 			String emisor,
 			Boolean activa,
 			EntitatDto entitat,
 			ProcedimentDto procediment,
-			PaginacioAmbOrdreDto paginacioAmbOrdre) {
-		return delegate.findAmbFiltrePaginat(codi, descripcio, emisor, activa, entitat, procediment, paginacioAmbOrdre);
+			Pageable pageable) {
+		return delegate.findAmbFiltrePaginat(codi, descripcio, emisor, activa, entitat, procediment, pageable);
 	}
 	
 	@Override

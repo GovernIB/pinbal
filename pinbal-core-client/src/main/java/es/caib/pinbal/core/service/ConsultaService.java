@@ -7,6 +7,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
 
 import es.caib.pinbal.core.dto.ArxiuDto;
@@ -17,7 +19,6 @@ import es.caib.pinbal.core.dto.EstadisticaDto;
 import es.caib.pinbal.core.dto.EstadistiquesFiltreDto;
 import es.caib.pinbal.core.dto.InformeGeneralEstatDto;
 import es.caib.pinbal.core.dto.PaginaLlistatDto;
-import es.caib.pinbal.core.dto.PaginacioAmbOrdreDto;
 import es.caib.pinbal.core.dto.RecobrimentSolicitudDto;
 import es.caib.pinbal.core.service.exception.ConsultaNotFoundException;
 import es.caib.pinbal.core.service.exception.EntitatNotFoundException;
@@ -194,7 +195,7 @@ public interface ConsultaService {
 
 	/**
 	 * Realitza una consulta mitjançant les llibreries SCSP provinent del
-	 * recobriment. Tercera passa del procés per fer peticions al recobriment
+	 * recobriment. Tercera passa del procésfindByFiltrePaginatPerAdmin per fer peticions al recobriment
 	 * evitant bloquejar connexions a l'espera de rebre la resposta SCSP.
 	 * 
 	 * @param consultaId
@@ -320,17 +321,17 @@ public interface ConsultaService {
 	 *            Atribut id de l'entitat.
 	 * @param filtre
 	 *            Filtre de consultes.
-	 * @param paginacioAmbOrdre
+	 * @param pageable
 	 *            Informació per a la paginació i ordenació de resultats.
 	 * @return el llistat de consultes simples.
 	 * @throws EntitatNotFoundException
 	 *            Si l'entitat especificada no existeix.
 	 */
 	@PreAuthorize("hasRole('ROLE_DELEG')")
-	public PaginaLlistatDto<ConsultaDto> findSimplesByFiltrePaginatPerDelegat(
+	public Page<ConsultaDto> findSimplesByFiltrePaginatPerDelegat(
 			Long entitatId,
 			ConsultaFiltreDto filtre,
-			PaginacioAmbOrdreDto paginacioAmbOrdre) throws EntitatNotFoundException;
+			Pageable pageable) throws EntitatNotFoundException;
 
 	/**
 	 * Retorna una pàgina de les consultes múltiples realitzades donada
@@ -341,17 +342,17 @@ public interface ConsultaService {
 	 *            Atribut id de l'entitat.
 	 * @param filtre
 	 *            Filtre de consultes.
-	 * @param paginacioAmbOrdre
+	 * @param pageable
 	 *            Informació per a la paginació i ordenació de resultats.
 	 * @return el llistat de consultes múltiples.
 	 * @throws EntitatNotFoundException
 	 *            Si l'entitat especificada no existeix.
 	 */
 	@PreAuthorize("hasRole('ROLE_DELEG')")
-	public PaginaLlistatDto<ConsultaDto> findMultiplesByFiltrePaginatPerDelegat(
+	public Page<ConsultaDto> findMultiplesByFiltrePaginatPerDelegat(
 			Long entitatId,
 			ConsultaFiltreDto filtre,
-			PaginacioAmbOrdreDto paginacioAmbOrdre) throws EntitatNotFoundException;
+			Pageable pageable) throws EntitatNotFoundException;
 
 	/**
 	 * Retorna una pàgina de les consultes realitzades donada una entitat.
@@ -361,17 +362,17 @@ public interface ConsultaService {
 	 *            Atribut id de l'entitat.
 	 * @param filtre
 	 *            Filtre de consultes.
-	 * @param paginacioAmbOrdre
+	 * @param pageable
 	 *            Informació per a la paginació i ordenació de resultats.
 	 * @return el llistat de consultes.
 	 * @throws EntitatNotFoundException
 	 *            Si l'entitat especificada no existeix.
 	 */
 	@PreAuthorize("hasRole('ROLE_AUDIT')")
-	public PaginaLlistatDto<ConsultaDto> findByFiltrePaginatPerAuditor(
+	public Page<ConsultaDto> findByFiltrePaginatPerAuditor(
 			Long entitatId,
 			ConsultaFiltreDto filtre,
-			PaginacioAmbOrdreDto paginacioAmbOrdre) throws EntitatNotFoundException;
+			Pageable pageable) throws EntitatNotFoundException;
 
 	/**
 	 * Retorna una pàgina de les consultes realitzades donada una entitat.
@@ -380,17 +381,17 @@ public interface ConsultaService {
 	 *            Atribut id de l'entitat.
 	 * @param filtre
 	 *            Filtre de consultes.
-	 * @param paginacioAmbOrdre
+	 * @param pageable
 	 *            Informació per a la paginació i ordenació de resultats.
 	 * @return el llistat de consultes.
 	 * @throws EntitatNotFoundException
 	 *            Si l'entitat especificada no existeix.
 	 */
 	@PreAuthorize("hasRole('ROLE_SUPERAUD')")
-	public PaginaLlistatDto<ConsultaDto> findByFiltrePaginatPerSuperauditor(
+	public Page<ConsultaDto> findByFiltrePaginatPerSuperauditor(
 			Long entitatId,
 			ConsultaFiltreDto filtre,
-			PaginacioAmbOrdreDto paginacioAmbOrdre) throws EntitatNotFoundException;
+			Pageable pageable) throws EntitatNotFoundException;
 
 	/**
 	 * Retorna una pàgina de les consultes realitzades donada una entitat.
@@ -399,17 +400,17 @@ public interface ConsultaService {
 	 *            Atribut id de l'entitat.
 	 * @param filtre
 	 *            Filtre de consultes.
-	 * @param paginacioAmbOrdre
+	 * @param pageable
 	 *            Informació per a la paginació i ordenació de resultats.
 	 * @return el llistat de consultes.
 	 * @throws EntitatNotFoundException
 	 *            Si l'entitat especificada no existeix.
 	 */
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
-	public PaginaLlistatDto<ConsultaDto> findByFiltrePaginatPerAdmin(
+	public Page<ConsultaDto> findByFiltrePaginatPerAdmin(
 			Long entitatId,
 			ConsultaFiltreDto filtre,
-			PaginacioAmbOrdreDto paginacioAmbOrdre) throws EntitatNotFoundException;
+			Pageable pageable) throws EntitatNotFoundException;
 
 	/**
 	 * Retorna la informació d'una consulta donat el seu id.

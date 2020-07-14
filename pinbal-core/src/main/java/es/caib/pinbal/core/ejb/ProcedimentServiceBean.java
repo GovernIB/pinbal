@@ -10,11 +10,11 @@ import javax.ejb.Stateless;
 import javax.interceptor.Interceptors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.ejb.interceptor.SpringBeanAutowiringInterceptor;
 
 import es.caib.pinbal.core.dto.InformeProcedimentDto;
-import es.caib.pinbal.core.dto.PaginaLlistatDto;
-import es.caib.pinbal.core.dto.PaginacioAmbOrdreDto;
 import es.caib.pinbal.core.dto.ProcedimentDto;
 import es.caib.pinbal.core.service.ProcedimentService;
 import es.caib.pinbal.core.service.exception.EntitatNotFoundException;
@@ -67,18 +67,18 @@ public class ProcedimentServiceBean implements ProcedimentService {
 
 	@Override
 	@RolesAllowed("PBL_REPRES")
-	public PaginaLlistatDto<ProcedimentDto> findAmbFiltrePaginat(
+	public Page<ProcedimentDto> findAmbFiltrePaginat(
 			Long entitatId,
 			String codi,
 			String nom,
 			String departament,
-			PaginacioAmbOrdreDto paginacioAmbOrdre) throws EntitatNotFoundException {
+			Pageable pageable) throws EntitatNotFoundException {
 		return delegate.findAmbFiltrePaginat(
 				entitatId,
 				codi,
 				nom,
 				departament,
-				paginacioAmbOrdre);
+				pageable);
 	}
 
 	@Override

@@ -4,13 +4,17 @@
 package es.caib.pinbal.webapp.controller;
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.sql.SQLException;
 import java.util.List;
 
+import javax.naming.NamingException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -22,10 +26,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import es.caib.pinbal.core.dto.EntitatDto;
 import es.caib.pinbal.core.dto.EntitatUsuariDto;
-import es.caib.pinbal.core.dto.OrdreDto;
-import es.caib.pinbal.core.dto.OrdreDto.OrdreDireccio;
-import es.caib.pinbal.core.dto.PaginaLlistatDto;
-import es.caib.pinbal.core.dto.PaginacioAmbOrdreDto;
 import es.caib.pinbal.core.dto.ProcedimentDto;
 import es.caib.pinbal.core.dto.ProcedimentServeiSimpleDto;
 import es.caib.pinbal.core.dto.ServeiDto;
@@ -44,8 +44,8 @@ import es.caib.pinbal.webapp.command.ServeiFiltreCommand;
 import es.caib.pinbal.webapp.common.AlertHelper;
 import es.caib.pinbal.webapp.common.EntitatHelper;
 import es.caib.pinbal.webapp.common.RequestSessionHelper;
-import es.caib.pinbal.webapp.jmesa.JMesaGridHelper;
-import es.caib.pinbal.webapp.jmesa.JMesaGridHelper.ConsultaPagina;
+import es.caib.pinbal.webapp.datatables.ServerSideRequest;
+import es.caib.pinbal.webapp.datatables.ServerSideResponse;
 
 /**
  * Controlador per al manteniment de procediments.
@@ -57,7 +57,6 @@ import es.caib.pinbal.webapp.jmesa.JMesaGridHelper.ConsultaPagina;
 public class ProcedimentController extends BaseController {
 
 	public static final String SESSION_ATTRIBUTE_FILTRE = "ProcedimentController.session.filtre";
-	public static final String SESSION_ATTRIBUTE_FILTRE_SERVEIS = "ProcedimentController.session.filtre.serveis";
 
 	@Autowired
 	private ProcedimentService procedimentService;
@@ -77,19 +76,22 @@ public class ProcedimentController extends BaseController {
 			Model model) throws Exception {
 		if (!EntitatHelper.isRepresentantEntitatActual(request))
 			return "representantNoAutoritzat";
+		
 		EntitatDto entitat = EntitatHelper.getEntitatActual(request, entitatService);
-		if (entitat != null) {
-			omplirModelPerMostrarLlistat(request, entitat, model);
-			return "procedimentList";
-		} else {
+		if (entitat == null) {
 			AlertHelper.error(
 					request,
 					getMessage(
 							request, 
 							"procediment.controller.no.entitat.seleccionada"));
 			return "redirect:../index";
+			
 		}
+		
+		omplirModelFiltreDataTable(request, entitat, model);
+		return "procedimentList";
 	}
+	
 	@RequestMapping(method = RequestMethod.POST)
 	public String post(
 			HttpServletRequest request,
@@ -99,18 +101,7 @@ public class ProcedimentController extends BaseController {
 		if (!EntitatHelper.isRepresentantEntitatActual(request))
 			return "representantNoAutoritzat";
 		EntitatDto entitat = EntitatHelper.getEntitatActual(request, entitatService);
-		if (entitat != null) {
-			if (bindingResult.hasErrors()) {
-				omplirModelPerMostrarLlistat(request, entitat, model);
-				return "procedimentList";
-			} else {
-				RequestSessionHelper.actualitzarObjecteSessio(
-						request,
-						SESSION_ATTRIBUTE_FILTRE,
-						command);
-				return "redirect:procediment";
-			}
-		} else {
+		if (entitat == null) {
 			AlertHelper.error(
 					request,
 					getMessage(
@@ -118,8 +109,45 @@ public class ProcedimentController extends BaseController {
 							"procediment.controller.no.entitat.seleccionada"));
 			return "redirect:../index";
 		}
+			
+		if (bindingResult.hasErrors()) {
+			omplirModelFiltreDataTable(request, entitat, model);
+			return "procedimentList";
+		} else {
+			RequestSessionHelper.actualitzarObjecteSessio(
+					request,
+					SESSION_ATTRIBUTE_FILTRE,
+					command);
+			return "redirect:procediment";
+		}
 	}
+	
+	@RequestMapping(value = "/datatable", produces="application/json", method = RequestMethod.GET)
+	@ResponseBody
+	public ServerSideResponse<ProcedimentDto, Long> datatable(HttpServletRequest request, Model model)
+	      throws IllegalAccessException, InvocationTargetException, NoSuchMethodException, NamingException,
+	      SQLException, EntitatNotFoundException {
+		ServerSideRequest serverSideRequest = new ServerSideRequest(request);
+		
+		ProcedimentFiltreCommand command = (ProcedimentFiltreCommand)RequestSessionHelper.obtenirObjecteSessio(
+				request,
+				SESSION_ATTRIBUTE_FILTRE);
+		if (command == null)
+			command = new ProcedimentFiltreCommand();
+		EntitatDto entitat = EntitatHelper.getEntitatActual(request, entitatService);
+		if (entitat == null) {
+			throw new EntitatNotFoundException();
+		}
+		Page<ProcedimentDto> page = procedimentService.findAmbFiltrePaginat(
+													entitat.getId(),
+													command.getCodi(),
+													command.getNom(),
+													command.getDepartament(),
+													serverSideRequest.toPageable());
 
+		return new ServerSideResponse<ProcedimentDto, Long>(serverSideRequest, page);
+	}	
+	
 	@RequestMapping(value = "/new", method = RequestMethod.GET)
 	public String get(
 			HttpServletRequest request,
@@ -133,6 +161,7 @@ public class ProcedimentController extends BaseController {
 			Model model) {
 		if (!EntitatHelper.isRepresentantEntitatActual(request))
 			return "representantNoAutoritzat";
+		
 		EntitatDto entitat = EntitatHelper.getEntitatActual(request, entitatService);
 		if (entitat != null) {
 			ProcedimentDto procediment = null;
@@ -147,6 +176,7 @@ public class ProcedimentController extends BaseController {
 			command.setEntitatId(entitat.getId());
 			model.addAttribute(command);
 			return "procedimentForm";
+			
 		} else {
 			AlertHelper.error(
 					request, 
@@ -154,6 +184,7 @@ public class ProcedimentController extends BaseController {
 							request,
 							"procediment.controller.no.entitat.seleccionada"));
 			return "redirect:../../index";
+			
 		}
 	}
 
@@ -274,9 +305,7 @@ public class ProcedimentController extends BaseController {
 			return "redirect:../../../index";
 		}
 		
-		ProcedimentDto procediment = null;
-		if (procedimentId != null)
-			procediment = procedimentService.findById(procedimentId);
+		ProcedimentDto procediment = procedimentService.findById(procedimentId);
 		if (procediment == null) {
 			AlertHelper.error(
 					request, 
@@ -288,10 +317,9 @@ public class ProcedimentController extends BaseController {
 		model.addAttribute("entitat", entitat);
 		model.addAttribute("procediment", procediment);
 				
-		omplirModelPerMostrarLlistatServeis(request, model, entitat, procediment);
+		setCommandFiltreServeis(request, model);
 		return "procedimentServeis";		
 	}
-
 
 	@RequestMapping(value = "/{procedimentId}/servei", method = RequestMethod.POST)
 	public String serveiPost(
@@ -328,15 +356,15 @@ public class ProcedimentController extends BaseController {
 
 		
 		if (bindingResult.hasErrors()) {
-			omplirModelPerMostrarLlistatServeis(request, model, entitat, procediment);
-			return "serveiList";
+			setCommandFiltreServeis(request, model);
+			
 		} else {
 			RequestSessionHelper.actualitzarObjecteSessio(
 					request,
-					SESSION_ATTRIBUTE_FILTRE_SERVEIS,
+					ServeiController.getSessionAttributeFiltreProcediment(),
 					command);
-			return "redirect:servei";
 		}
+		return "procedimentServeis";
 	}
 	
 	@RequestMapping(value = "/{procedimentId}/servei/{serveiCodi}/enable", method = RequestMethod.GET)
@@ -616,7 +644,7 @@ public class ProcedimentController extends BaseController {
 		}
 	}
 
-	private void omplirModelPerMostrarLlistat(
+	private void omplirModelFiltreDataTable(
 			HttpServletRequest request,
 			EntitatDto entitat,
 			Model model) throws Exception {
@@ -626,58 +654,20 @@ public class ProcedimentController extends BaseController {
 		if (command == null)
 			command = new ProcedimentFiltreCommand();
 		model.addAttribute(command);
-		List<?> paginaProcediments = JMesaGridHelper.consultarPaginaIActualitzarLimit(
-				"procediments",
-				request,
-				new ConsultaPaginaProcediment(
-						procedimentService,
-						entitat,
-						command),
-				new OrdreDto("nom", OrdreDireccio.DESCENDENT));
-		model.addAttribute("procediments", paginaProcediments);
-		/*List<ProcedimentDto> procediments = procedimentService.findAmbEntitat(entitat.getId());
-		model.addAttribute("procediments", procediments);*/
+		
 		model.addAttribute(
 				"propertyEsborrar",
 				propertyService.get(
 						"es.caib.pinbal.procediment.accio.esborrar.activa"));
 	}
-
-	public class ConsultaPaginaProcediment implements ConsultaPagina<ProcedimentDto> {
-		ProcedimentService procedimentService;
-		EntitatDto entitat;
-		ProcedimentFiltreCommand command;
-		public ConsultaPaginaProcediment(
-				ProcedimentService procedimentService,
-				EntitatDto entitat,
-				ProcedimentFiltreCommand command) {
-			this.procedimentService = procedimentService;
-			this.entitat = entitat;
-			this.command = command;
-		}
-		public PaginaLlistatDto<ProcedimentDto> consultar(
-				PaginacioAmbOrdreDto paginacioAmbOrdre) throws Exception {
-			return procedimentService.findAmbFiltrePaginat(
-					entitat.getId(),
-					command.getCodi(),
-					command.getNom(),
-					command.getDepartament(),
-					paginacioAmbOrdre);
-		}
-	}
 	
-	
-	private void omplirModelPerMostrarLlistatServeis( 
+	private void setCommandFiltreServeis( 
 			HttpServletRequest request,
-			Model model, 
-			EntitatDto entitat,
-			ProcedimentDto procediment) throws Exception {
+			Model model) throws Exception {
 		
 		ServeiFiltreCommand command = (ServeiFiltreCommand) RequestSessionHelper.obtenirObjecteSessio( 
 				request, 
-				SESSION_ATTRIBUTE_FILTRE_SERVEIS);
-		
-//		model.addAttribute("emisors", serveiService.findEmisorAll());
+				ServeiController.getSessionAttributeFiltreProcediment());
 		
 		if (command == null) {
 			command = new ServeiFiltreCommand(); 
@@ -685,45 +675,5 @@ public class ProcedimentController extends BaseController {
 		}
 			
 		model.addAttribute(command); 
-		List<?> paginaServeis = JMesaGridHelper.consultarPaginaIActualitzarLimit(
-				"serveis",
-				request,
-				new ConsultaPaginaServei(
-							serveiService, command, entitat, procediment
-						),
-				new OrdreDto("codi", OrdreDireccio.DESCENDENT));
-		model.addAttribute("serveis", paginaServeis);
 	} 
-	
-	public class ConsultaPaginaServei implements ConsultaPagina<ServeiDto> {
-		ServeiService serveiService;
-		EntitatDto entitat;
-		ProcedimentDto procediment;
-		ServeiFiltreCommand command;
-		
-		public ConsultaPaginaServei(
-				ServeiService serveiService,
-				ServeiFiltreCommand command,
-				EntitatDto entitat,
-				ProcedimentDto procediment) {
-			this.serveiService = serveiService;
-			this.command = command;
-			
-			this.entitat = entitat;
-			this.procediment = procediment;
-		}
-		
-		public PaginaLlistatDto<ServeiDto> consultar(
-				PaginacioAmbOrdreDto paginacioAmbOrdre) throws Exception {
-			return serveiService.findAmbFiltrePaginat(
-					command.getCodi(),
-					command.getDescripcio(),
-					command.getEmissor(),
-					command.getActiva(),
-					this.entitat, 
-					this.procediment,
-					paginacioAmbOrdre);
-		}
-	}
-
 }

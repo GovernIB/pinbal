@@ -2,7 +2,6 @@
 	pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
-<%@ taglib uri="http://code.google.com/p/jmesa" prefix="jmesa"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
 
@@ -15,49 +14,16 @@
 <html>
 <head>
 	<title><spring:message code="consulta.list.titol"/></title>
-	<script type="text/javascript"src="<c:url value="/js/jquery.jmesa.min.js"/>"></script>
-	<script type="text/javascript" src="<c:url value="/js/jmesa.min.js"/>"></script>
-	<script src="<c:url value="/js/jquery.maskedinput.js"/>"></script>
-<script>
-$(document).ready(function() {
-	$('#netejar-filtre').click(function() {
-		$(':input', $('#form-filtre')).each (function() {
-			var type = this.type, tag = this.tagName.toLowerCase();
-			if (type == 'text' || type == 'password' || tag == 'textarea')
-				this.value = '';
-			else if (type == 'checkbox' || type == 'radio')
-				this.checked = false;
-			else if (tag == 'select')
-				this.selectedIndex = 0;
-		});
-		$('#form-filtre').submit();
-// 		return true;
-	});
-	$('#select-procediment').change(function() {
-		var targetUrl;
-		if ($(this).val())
-			targetUrl = '<c:url value="consulta/serveisPermesosPerProcediment"/>/' + $(this).val();
-		else
-			targetUrl = '<c:url value="consulta/serveisPermesosPerProcediment"/>';
-		$.ajax({
-		    url:targetUrl,
-		    type:'GET',
-		    dataType: 'json',
-		    success: function(json) {
-		    	$('#select-servei').empty();
-	        	$('#select-servei').append($('<option value="">').text('<spring:message code="consulta.list.filtre.servei"/>:'));
-		        $.each(json, function(i, value) {
-		            $('#select-servei').append($('<option>').text(value.descripcio).attr('value', value.codi));
-		        });
-		    }
-		});
-	});
-	$('.justificant-reintentar').click(function() {
-		var $link = $(this);
-		setTimeout(function(){$link.attr('href', '#')}, 100);
-	});
-});
-</script>
+	<link href="<c:url value="/css/select2.css"/>" rel="stylesheet"/>
+	<link href="<c:url value="/css/select2-bootstrap.css"/>" rel="stylesheet"/>
+	<script src="<c:url value="/webjars/datatables/1.10.21/js/jquery.dataTables.min.js"/>"></script>
+	<script src="<c:url value="/webjars/datatables/1.10.21/js/dataTables.bootstrap.min.js"/>"></script>
+	<script src="<c:url value="/webjars/mustache.js/3.0.1/mustache.min.js"/>"></script>
+	<script src="<c:url value="/webjars/bootstrap-datepicker/1.6.1/dist/js/bootstrap-datepicker.min.js"/>"></script>
+	<script src="<c:url value="/webjars/bootstrap-datepicker/1.6.1/dist/locales/bootstrap-datepicker.ca.min.js"/>"></script>
+	<script type="text/javascript" src="<c:url value="/js/select2.min.js"/>"></script>
+	<script src="<c:url value="/webjars/datatables-plugins/1.10.20/dataRender/datetime.js"/>"></script>
+	<script src="<c:url value="/webjars/momentjs/2.24.0/min/moment.min.js"/>"></script>
 </head>
 <body>
 
@@ -167,82 +133,203 @@ $(document).ready(function() {
 		</div>
 	</form:form>
 
-	<form>
-		<jmesa:tableModel
-				id="consultes"
-				items="${consultes}"
-				toolbar="es.caib.pinbal.webapp.jmesa.BootstrapToolbar"
-				view="es.caib.pinbal.webapp.jmesa.BootstrapView"
-				var="registre">
-			<jmesa:htmlTable>
-				<jmesa:htmlRow>
-					<jmesa:htmlColumn property="scspPeticionId" titleKey="consulta.list.taula.peticion.id">
-						${registre.scspPeticionId}<c:if test="${registre.recobriment}"> <span class="badge">R</span></c:if>
-					</jmesa:htmlColumn>
-					<jmesa:htmlColumn property="creacioData" titleKey="consulta.list.taula.data" cellEditor="org.jmesa.view.editor.DateCellEditor" pattern="dd/MM/yyyy HH:mm:ss" />
-					<jmesa:htmlColumn property="procedimentNom" titleKey="consulta.list.taula.procediment"/>
-					<jmesa:htmlColumn property="serveiDescripcio" titleKey="consulta.list.taula.servei"/>
-					<jmesa:htmlColumn property="titularNomSencer" titleKey="consulta.list.taula.titular.nom"/>
-					<jmesa:htmlColumn property="titularDocumentAmbTipus" titleKey="consulta.list.taula.titular.document"/>
-					<jmesa:htmlColumn property="estat" titleKey="consulta.list.taula.estat" style="white-space:nowrap;">
-						<span<c:if test="${registre.estatError}"> title="${registre.error}"</c:if>>
-							<c:choose>
-								<c:when test="${registre.estatPendent}"><i class="icon-bookmark"></i></c:when>
-								<c:when test="${registre.estatProcessant}"><i class="icon-time"></i></c:when>
-								<c:when test="${registre.estatError}"><i class="icon-warning-sign"></i></c:when>
-								<c:otherwise><i class="icon-ok"></i></c:otherwise>
-							</c:choose>
-							${registre.estat}
-						</span>
-					</jmesa:htmlColumn>
-					<jmesa:htmlColumn property="ACCIO_justificant" title="&nbsp;" style="width:16px;" sortable="false">
-						<c:if test="${registre.justificantEstatPendent}">
-							<i class="icon-time" title="<spring:message code="consulta.list.taula.justif.pendent"/>"></i>
-						</c:if>
-						<c:if test="${registre.justificantEstatOk}">
-							<a class="btn btn-small" href="consulta/${registre.id}/justificant">
-								<i class="icon-"><img src="<c:url value="/img/pdf-icon.png"/>" width="16" height="16" title="<spring:message code="consulta.list.taula.descarregar.pdf"/>" alt="<spring:message code="consulta.list.taula.descarregar.pdf"/>"/></i>
-							</a>
-						</c:if>
-						<c:if test="${registre.justificantEstatError}">
-							<div class="btn-group">
-								<a class="btn btn-small dropdown-toggle" data-toggle="dropdown" href="#"><i class="icon-"><img src="<c:url value="/img/error_icon.png"/>" width="16" height="15" title="<spring:message code="consulta.list.taula.justif.error"/>" alt="<spring:message code="consulta.list.taula.justif.error"/>"/></i>&nbsp;<span class="caret"></span></a>
-								<ul class="dropdown-menu">
-									<li><a href="consulta/${registre.id}/justificantError" data-toggle="modal" data-target="#modal-justificant-error-${registre.id}"><i class="icon-info-sign"></i>&nbsp;<spring:message code="consulta.list.taula.justif.error.veure"/></a></li>
-									<li><a href="consulta/${registre.id}/justificantReintentar" class="justificant-reintentar"><i class="icon-repeat"></i>&nbsp;<spring:message code="consulta.list.taula.justif.error.reintentar"/></a></li>
-								</ul>
-							</div>
-						</c:if>
-					</jmesa:htmlColumn>
-					<jmesa:htmlColumn property="ACCIO_detalls" title="&nbsp;" style="white-space:nowrap;" sortable="false">
-						<a href="consulta/${registre.id}" class="btn"><i class="icon-zoom-in"></i>&nbsp;<spring:message code="consulta.list.taula.detalls"/></a>
-					</jmesa:htmlColumn>
-				</jmesa:htmlRow>
-			</jmesa:htmlTable>
-		</jmesa:tableModel>
-	</form>
-	<script type="text/javascript">
-		function onInvokeAction(id) {
-			setExportToLimit(id, '');
-			createHiddenInputFieldsForLimitAndSubmit(id);
-		}
-	</script>
+	<div class="clearfix"></div>
+	<table id="table-consultes" class="table table-striped table-bordered" style="width: 100%">
+		<thead>
+			<tr>
+				<th data-data="scspPeticionId"><spring:message code="consulta.list.taula.peticion.id" /></th>
+				<th data-data="creacioData"><spring:message code="consulta.list.taula.data" /></th>
+				<th data-data="procedimentNom"><spring:message code="consulta.list.taula.procediment" /></th>
+				<th data-data="serveiDescripcio"><spring:message code="consulta.list.taula.servei" /></th>
+				<th data-data="titularNomSencer"><spring:message code="consulta.list.taula.titular.nom" /></th>
+				<th data-data="titularDocumentAmbTipus"><spring:message code="consulta.list.taula.titular.document" /></th>				
+				<th data-data="estat"><spring:message code="consulta.list.taula.estat" /></th>
+				<th data-data="id"></th>
+				<th data-data="id"></th>
+			</tr>
+		</thead>
+	</table>
+<script type="text/javascript">
+$(document).ready(function() {
+	$('#netejar-filtre').click(function() {
+		$(':input', $('#form-filtre')).each (function() {
+			var type = this.type, tag = this.tagName.toLowerCase();
+			if (type == 'text' || type == 'password' || tag == 'textarea')
+				this.value = '';
+			else if (type == 'checkbox' || type == 'radio')
+				this.checked = false;
+			else if (tag == 'select')
+				this.selectedIndex = 0;
+		});
+		$('#form-filtre').submit();
+	});
+	$('#select-procediment').change(function() {
+		var targetUrl;
+		if ($(this).val())
+			targetUrl = '<c:url value="consulta/serveisPermesosPerProcediment"/>/' + $(this).val();
+		else
+			targetUrl = '<c:url value="consulta/serveisPermesosPerProcediment"/>';
+		$.ajax({
+		    url:targetUrl,
+		    type:'GET',
+		    dataType: 'json',
+		    success: function(json) {
+		    	$('#select-servei').empty();
+	        	$('#select-servei').append($('<option value="">').text('<spring:message code="consulta.list.filtre.servei"/>:'));
+		        $.each(json, function(i, value) {
+		            $('#select-servei').append($('<option>').text(value.descripcio).attr('value', value.codi));
+		        });
+		    }
+		});
+	});
+	$('.justificant-reintentar').click(function() {
+		var $link = $(this);
+		setTimeout(function(){$link.attr('href', '#')}, 100);
+	});
+	
 
-	<c:forEach var="consulta" items="${consultes}">
-		<c:if test="${consulta.justificantEstatError}">
-			<div class="modal hide fade" id="modal-justificant-error-${consulta.id}" style="width:900px;margin-left:-450px;">
-				<div class="modal-header">
-					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-					<h3><spring:message code="consulta.list.taula.justif.error"/></h3>
-				</div>
-				<div class="modal-body">
-					<textarea style="width:98%" rows="18">${consulta.justificantError}</textarea>
-				</div>
-				<div class="modal-footer">
-				</div>
+    $('#table-consultes').DataTable({
+    	autoWidth: false,
+		processing: true,
+		serverSide: true,
+		dom: "<'row'<'col-md-6'i><'col-md-6'>><'row'<'col-md-12'rt>><'row'<'col-md-6'l><'col-md-6'p>>",
+		language: {
+            "url": '<c:url value="/js/datatable-language.json"/>'
+        },
+		ajax: '<c:url value="/consulta/datatable/"/>',
+		columnDefs: [
+			{
+				targets: [0],
+				width: "10%",
+				render: function (data, type, row, meta) {
+						var template = $('#template-id-peticion').html();
+						return Mustache.render(template, row);
+				}
+			},
+			{
+				targets: [1],
+				width: "10%",
+				orderable: false,
+				render: $.fn.dataTable.render.moment('x', 'DD/MM/YYYY HH:mm:ss', 'es' )
+			},	
+			{
+				targets: [2, 3, 4, 5],
+				width: "10%",
+				orderable: false,
+			},
+			{
+				targets: [6],
+				orderable: false,
+				width: "10%",
+				render: function (data, type, row, meta) {
+						var template = $('#template-estat').html();
+						row['icon-status'] = '';
+						if (row.estat=='Error'){
+							row['icon-status'] = '<i class="fas fa-exclamation-triangle"></i>';
+
+						}else if(row.estat=='Pendent'){
+							row['icon-status'] = '<i class="fas fa-bookmark"></i>';
+
+						}else if(row.estat=='Processant'){
+							row['icon-status'] = '<i class="fas fa-hourglass-half"></i>';
+
+						}else{
+							row['icon-status'] = '<i class="fa fa-check"></i>';
+						}
+						return Mustache.render(template, row);
+				}
+			}, 
+			{
+				targets: [7],
+				orderable: false,
+				width: "10%",
+				render: function (data, type, row, meta) {
+						var template = $('#template-justificant').html();
+						row["estat-pendent"] = row['justificantEstat'] == 'pendent';
+						row["estat-ok"] = row['justificantEstat'] == 'ok';
+						row["estat-error"] = row['justificantEstat'] == 'error';
+						row["estat-nodisponible"] = row['justificantEstat'] == 'no_disponible';
+						row["estat-oknocustodia"] = row['justificantEstat'] == 'ok_no_custodia';
+						return Mustache.render(template, row);
+				}
+			},
+			{
+				targets: [8],
+				orderable: false,
+				width: "10%",
+				render: function (data, type, row, meta) {
+						var template = $('#template-details').html();
+						return Mustache.render(template, row);
+				}
+			},
+	   ],
+	   initComplete: function( settings, json ) {
+
+		}
+	});
+});
+</script>
+
+<script id="template-justificant" type="x-tmpl-mustache">
+{{#estat-pendent}}
+<i class="far fa-clock" title="<spring:message code="consulta.list.taula.justif.pendent"/>"></i>
+<i class="icon-time" title="<spring:message code="consulta.list.taula.justif.pendent"/>"></i>
+{{/estat-pendent}}
+{{#estat-ok}}
+<a class="btn btn-small" href="consulta/{{ id }}/justificant">
+<i class="far fa-file-pdf" title="<spring:message code="consulta.list.taula.descarregar.pdf"/>" 
+			 alt="<spring:message code="consulta.list.taula.descarregar.pdf"/>"></i>
+</a>
+{{/estat-ok}}
+{{#estat-error}}
+<div class="btn-group">
+	<a class="btn btn-small dropdown-toggle" data-toggle="dropdown" href="#">
+		<i class="icon-"><img src="<c:url value="/img/error_icon.png"/>" width="16" height="15" title="<spring:message code="consulta.list.taula.justif.error"/>" alt="<spring:message code="consulta.list.taula.justif.error"/>"/></i>
+		&nbsp;<span class="caret"></span>
+	</a>
+	<ul class="dropdown-menu">
+		<li><a href="consulta/{{ id }}/justificantError" data-toggle="modal" data-target="#modal-justificant-error-{{ id }}"><i class="icon-info-sign"></i>&nbsp;<spring:message code="consulta.list.taula.justif.error.veure"/></a></li>
+		<li><a href="consulta/{{ id }}/justificantReintentar" class="justificant-reintentar"><i class="icon-repeat"></i>&nbsp;<spring:message code="consulta.list.taula.justif.error.reintentar"/></a></li>
+	</ul>
+</div>
+{{/estat-error}}
+</script>
+<script id="template-id-peticion" type="x-tmpl-mustache">
+{{scspPeticionId}}
+{{#recobriment}}
+	<span class="badge">R</span>
+{{/recobriment}}
+</script>
+
+<script id="template-estat" type="x-tmpl-mustache">
+	{{{ icon-status }}} {{ estat }}
+</script>
+
+<script id="template-details" type="x-tmpl-mustache">
+<a href="consulta/{{ id }}" class="btn btn-default"><i class="fas fa-search-plus"></i>&nbsp;<spring:message code="admin.consulta.list.taula.detalls"/></a>
+</script>
+<script type="text/javascript">
+	function onInvokeAction(id) {
+		setExportToLimit(id, '');
+		createHiddenInputFieldsForLimitAndSubmit(id);
+	}
+</script>
+
+<c:forEach var="consulta" items="${consultes}">
+	<c:if test="${consulta.justificantEstatError}">
+		<div class="modal hide fade" id="modal-justificant-error-${consulta.id}" style="width:900px;margin-left:-450px;">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				<h3><spring:message code="consulta.list.taula.justif.error"/></h3>
 			</div>
-		</c:if>
-	</c:forEach>
+			<div class="modal-body">
+				<textarea style="width:98%" rows="18">${consulta.justificantError}</textarea>
+			</div>
+			<div class="modal-footer">
+			</div>
+		</div>
+	</c:if>
+</c:forEach>
 
 </body>
 </html>

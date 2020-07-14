@@ -3,14 +3,18 @@
  */
 package es.caib.pinbal.webapp.controller;
 
+import java.lang.reflect.InvocationTargetException;
+import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import javax.naming.NamingException;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -19,12 +23,16 @@ import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import es.caib.pinbal.core.dto.ClauPrivadaDto;
 import es.caib.pinbal.core.service.ScspService;
 import es.caib.pinbal.core.service.exception.ClauPrivadaNotFoundException;
+import es.caib.pinbal.core.service.exception.EntitatNotFoundException;
 import es.caib.pinbal.webapp.command.ClauPrivadaCommand;
 import es.caib.pinbal.webapp.common.AlertHelper;
+import es.caib.pinbal.webapp.datatables.ServerSideRequest;
+import es.caib.pinbal.webapp.datatables.ServerSideResponse;
 
 /**
  * Controlador per al manteniment de claus privades.
@@ -43,10 +51,18 @@ public class ClauPrivadaController extends BaseController {
 	public String get(
 			HttpServletRequest request,
 			Model model) throws Exception {
-		
-		model.addAttribute( "llistaClausPrivades", scspService.findAllClauPrivada());
-		
 		return "clauPrivadaList";
+	}
+	
+	@RequestMapping(value = "/datatable", produces="application/json", method = RequestMethod.GET)
+	@ResponseBody
+	public ServerSideResponse<ClauPrivadaDto, Long> datatable(HttpServletRequest request, Model model)
+	      throws IllegalAccessException, InvocationTargetException, NoSuchMethodException, NamingException,
+	      SQLException, EntitatNotFoundException {
+
+		ServerSideRequest serverSideRequest = new ServerSideRequest(request);		 
+		Page<ClauPrivadaDto> page = scspService.findAllClauPrivada(serverSideRequest.toPageable());	
+		return new ServerSideResponse<ClauPrivadaDto, Long>(serverSideRequest, page);
 	}
 	
 	@RequestMapping(value = "/new", method = RequestMethod.GET)
@@ -54,7 +70,6 @@ public class ClauPrivadaController extends BaseController {
 		
 		model.addAttribute( new ClauPrivadaCommand() );
 		model.addAttribute( "organismes", scspService.findAllOrganismeCessionari());
-		
 		return "clauPrivadaForm";
 	}
 	

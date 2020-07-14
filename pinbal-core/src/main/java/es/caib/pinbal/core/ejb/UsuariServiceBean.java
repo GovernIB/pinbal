@@ -10,6 +10,8 @@ import javax.ejb.Stateless;
 import javax.interceptor.Interceptors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.ejb.interceptor.SpringBeanAutowiringInterceptor;
 
 import es.caib.pinbal.core.dto.EntitatDto;
@@ -48,7 +50,7 @@ public class UsuariServiceBean implements UsuariService {
 
 	@Override
 	@RolesAllowed("PBL_ADMIN")
-	public PaginaLlistatDto<EntitatUsuariDto> findAmbFiltrePaginat(
+	public Page<EntitatUsuariDto> findAmbFiltrePaginat(
 			Long id_entitat,
 			Boolean isRepresentant,
 			Boolean isDelegat,
@@ -58,9 +60,9 @@ public class UsuariServiceBean implements UsuariService {
 			String nom,
 			String nif,
 			String departament,
-			PaginacioAmbOrdreDto paginacioAmbOrdre){
+			Pageable pageable){
 		return delegate.findAmbFiltrePaginat(id_entitat, isRepresentant, isDelegat, isAuditor,isAplicacio, 
-											 codi, nom, nif, departament, paginacioAmbOrdre);
+											 codi, nom, nif, departament, pageable);
 	}
 	
 	@Override

@@ -3,13 +3,13 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
-<%@ taglib uri="http://code.google.com/p/jmesa" prefix="jmesa" %>
 
 <html>
 <head>
 	<title><spring:message code="procediment.list.titol"/></title>
-	<script type="text/javascript" src="<c:url value="/js/jquery.jmesa.min.js"/>"></script>
-	<script type="text/javascript" src="<c:url value="/js/jmesa.min.js"/>"></script>
+	<script src="<c:url value="/webjars/datatables/1.10.21/js/jquery.dataTables.min.js"/>"></script>
+	<script src="<c:url value="/webjars/datatables/1.10.21/js/dataTables.bootstrap.min.js"/>"></script>
+	<script src="<c:url value="/webjars/mustache.js/3.0.1/mustache.min.js"/>"></script>
 <script>
 $(document).ready(function() {
 	$('#netejar-filtre').click(function() {
@@ -26,6 +26,67 @@ $(document).ready(function() {
 	});
 	$('.confirm-esborrar').click(function() {
 		  return confirm('<spring:message code="procediment.list.confirmacio.esborrar"/>');
+	});
+	
+
+    $('#table-procediments').DataTable({
+    	autoWidth: false,
+		processing: true,
+		serverSide: true,
+		dom: "<'row'<'col-md-6'i><'col-md-6'>><'row'<'col-md-12'rt>><'row'<'col-md-6'l><'col-md-6'p>>",
+		language: {
+            "url": '<c:url value="/js/datatable-language.json"/>'
+        },
+		ajax: '<c:url value="/procediment/datatable/"/>',
+		columnDefs: [
+			{
+				targets: [3],
+				render: function (data, type, row, meta) {
+						var template = $('#template-activa').html();
+						return Mustache.render(template, row);
+				}
+			},
+			{
+				targets: [4],
+				orderable: false,
+				width: "10%",
+				render: function (data, type, row, meta) {
+						var template = $('#template-chg-status').html();
+						return Mustache.render(template, row);
+				}
+			}, 
+			{
+				targets: [5],
+				orderable: false,
+				width: "10%",
+				render: function (data, type, row, meta) {
+						var template = $('#template-serveis').html();
+						return Mustache.render(template, row);
+				}
+			}, 
+			{
+				targets: [6],
+				orderable: false,
+				width: "10%",
+				render: function (data, type, row, meta) {
+						var template = $('#template-modificar').html();
+						row['propertyEsborrar'] = ${propertyEsborrar};
+						return Mustache.render(template, row);
+				}
+			}, 
+			{
+				targets: [7],
+				orderable: false,
+				width: "10%",
+				render: function (data, type, row, meta) {
+						var template = $('#template-eliminar').html();
+						return Mustache.render(template, row);
+				}
+			}, 
+	   ],
+	   initComplete: function( settings, json ) {
+
+		}
 	});
 });
 </script>
@@ -53,49 +114,45 @@ $(document).ready(function() {
 		</div>
 		<div class="clearfix"></div>
 	</div>
+	<table id="table-procediments" class="table table-striped table-bordered" style="width: 100%">
+		<thead>
+			<tr>
+				<th data-data="codi"><spring:message code="procediment.list.taula.columna.codi" /></th>
+				<th data-data="nom"><spring:message code="procediment.list.taula.columna.nom" /></th>
+				<th data-data="departament"><spring:message code="procediment.list.taula.columna.departament" /></th>
+				<th data-data="actiu"><spring:message code="procediment.list.taula.columna.actiu" /></th>
+				<th data-data="id"></th>
+				<th data-data="serveisActius"></th>
+				<th data-data="id"></th>
+				<th data-data="id"></th>
+			</tr>
+		</thead>
+	</table>
 
-	<form>
-		<jmesa:tableModel
-				id="procediments" 
-				items="${procediments}"
-				toolbar="es.caib.pinbal.webapp.jmesa.BootstrapToolbar"
-				view="es.caib.pinbal.webapp.jmesa.BootstrapView"
-				var="registre">
-			<jmesa:htmlTable>
-				<jmesa:htmlRow>
-					<jmesa:htmlColumn property="codi" titleKey="procediment.list.taula.columna.codi"/>
-					<jmesa:htmlColumn property="nom" titleKey="procediment.list.taula.columna.nom"/>
-					<jmesa:htmlColumn property="departament" titleKey="procediment.list.taula.columna.departament"/>
-					<jmesa:htmlColumn property="actiu" titleKey="procediment.list.taula.columna.actiu">
-						<c:if test="${registre.actiu}"><i class="icon-ok"></i></c:if>
-					</jmesa:htmlColumn>
-					<jmesa:htmlColumn sortable="false">
-						<c:choose>
-							<c:when test="${not registre.actiu}">
-								<a href="procediment/${registre.id}/enable" class="btn"><i class="icon-ok"></i>&nbsp;<spring:message code="comu.boto.activar"/></a>
-							</c:when>
-							<c:otherwise>
-								<a href="procediment/${registre.id}/disable" class="btn"><i class="icon-remove"></i>&nbsp;<spring:message code="comu.boto.desactivar"/></a>
-							</c:otherwise>
-						</c:choose>
-					</jmesa:htmlColumn>
-					<jmesa:htmlColumn property="ACCIO_serveis" title="&nbsp;" sortable="false">
-						<a href="procediment/${registre.id}/servei" class="btn">
-							<i class="icon-briefcase"></i>&nbsp;Serveis <span class="badge">${fn:length(registre.serveisActius)}</span>
-						</a>
-					</jmesa:htmlColumn>
-					<jmesa:htmlColumn property="ACCIO_edit" title="&nbsp;" sortable="false">
-						<a href="procediment/${registre.id}" class="btn"><i class="icon-pencil"></i>&nbsp;<spring:message code="comu.boto.modificar"/></a>
-					</jmesa:htmlColumn>
-					<c:if test="${propertyEsborrar}">
-						<jmesa:htmlColumn property="ACCIO_delete" title="&nbsp;" sortable="false">
-							<a href="procediment/${registre.id}/delete" class="btn confirm-esborrar"><i class="icon-trash"></i>&nbsp;<spring:message code="comu.boto.esborrar"/></a>
-						</jmesa:htmlColumn>
-					</c:if>
-	            </jmesa:htmlRow>
-	        </jmesa:htmlTable>
-		</jmesa:tableModel>
-	</form>
+<script id="template-activa" type="x-tmpl-mustache">
+{{#actiu}}
+<i class="fa fa-check"></i>
+{{/actiu}}
+</script>
+<script id="template-chg-status" type="x-tmpl-mustache">
+{{#actiu}}
+<a href="procediment/{{ id }}/disable" class="btn btn-default"><i class="fas fa-times"></i>&nbsp;<spring:message code="comu.boto.desactivar"/></a>
+{{/actiu}}
+{{^actiu}}
+<a href="procediment/{{ id }}/enable" class="btn btn-default"><i class="fa fa-check"></i>&nbsp;<spring:message code="comu.boto.activar"/></a>
+{{/actiu}}
+</script>
+<script id="template-serveis" type="x-tmpl-mustache">
+	<a href="procediment/{{ id }}/servei" class="btn btn-default">
+		<i class="fas fa-briefcase"></i>&nbsp;<spring:message code="entitat.list.taula.boto.serveis"/>&nbsp;<span class="badge">{{ serveisActius.length }}</span>
+ 	</a>
+</script>
+<script id="template-modificar" type="x-tmpl-mustache">
+	<a href="procediment/{{ id }}" class="btn btn-default"><i class="fas fa-pen"></i>&nbsp;<spring:message code="comu.boto.modificar"/></a>
+</script>
+<script id="template-eliminar" type="x-tmpl-mustache">
+	<a href="procediment/{{ id }}/delete" class="btn btn-default confirm-esborrar"><i class="fas fa-trash-alt"></i>&nbsp;<spring:message code="comu.boto.esborrar"/></a>
+</script>
 <script type="text/javascript">
 function onInvokeAction(id) {
 	setExportToLimit(id, '');

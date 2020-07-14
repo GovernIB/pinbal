@@ -9,7 +9,7 @@ import org.apache.commons.lang.builder.ToStringBuilder;
  * 
  * @author Limit Tecnologies <limit@limit.es>
  */
-public class EntitatUsuariDto implements Serializable {
+public class EntitatUsuariDto extends AbstractIdentificable<Long> implements Serializable {
 
 	private UsuariDto usuari;
 	private String departament;

@@ -3,22 +3,31 @@
  */
 package es.caib.pinbal.webapp.controller;
 
+import java.lang.reflect.InvocationTargetException;
+import java.sql.SQLException;
+
+import javax.naming.NamingException;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import es.caib.pinbal.core.dto.ParamConfDto;
 import es.caib.pinbal.core.service.ScspService;
+import es.caib.pinbal.core.service.exception.EntitatNotFoundException;
 import es.caib.pinbal.core.service.exception.ParamConfNotFoundException;
 import es.caib.pinbal.webapp.command.ParamConfCommand;
 import es.caib.pinbal.webapp.common.AlertHelper;
+import es.caib.pinbal.webapp.datatables.ServerSideRequest;
+import es.caib.pinbal.webapp.datatables.ServerSideResponse;
 
 /**
  * Controlador per al manteniment d'entitats.
@@ -36,12 +45,21 @@ public class ParamConfController extends BaseController {
 	@RequestMapping(method = RequestMethod.GET)
 	public String get(
 			HttpServletRequest request,
-			Model model) throws Exception {
-		
-		model.addAttribute( "llistaParametres", scspService.findAllParamConf());
-//		omplirModelPerMostrarLlistat(request, model);
-		
+			Model model) throws Exception {		
 		return "paramConfList";
+	}
+	
+	@RequestMapping(value = "/datatable", produces="application/json", method = RequestMethod.GET)
+	@ResponseBody
+	public ServerSideResponse<ParamConfDto, Long> datatable(HttpServletRequest request, Model model)
+	      throws IllegalAccessException, InvocationTargetException, NoSuchMethodException, NamingException,
+	      SQLException, EntitatNotFoundException {
+
+		ServerSideRequest serverSideRequest = new ServerSideRequest(request);
+		 
+		Page<ParamConfDto> page = scspService.findAllParamConf(serverSideRequest.toPageable());	
+
+		return new ServerSideResponse<ParamConfDto, Long>(serverSideRequest, page);
 	}
 	
 	@RequestMapping(value = "/new", method = RequestMethod.GET)

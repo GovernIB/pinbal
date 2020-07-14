@@ -6,12 +6,13 @@ import java.util.List;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
 
+
 /**
  * Objecte DTO amb informació d'una entitat.
  * 
  * @author Limit Tecnologies <limit@limit.es>
  */
-public class EntitatDto implements Serializable {
+public class EntitatDto extends AbstractIdentificable<Long> implements Serializable {
 
 	public enum EntitatTipusDto {
 		ALTRES,

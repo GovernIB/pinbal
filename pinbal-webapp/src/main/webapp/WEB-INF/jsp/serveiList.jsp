@@ -2,15 +2,19 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
-<%@ taglib uri="http://code.google.com/p/jmesa" prefix="jmesa" %>
+
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 
 <html>
 <head>
 	<title><spring:message code="servei.list.titol"/></title>
-	<script type="text/javascript" src="<c:url value="/js/jquery.jmesa.min.js"/>"></script>
-	<script type="text/javascript" src="<c:url value="/js/jmesa.min.js"/>"></script>
-	<script>
+	<script src="<c:url value="/webjars/datatables/1.10.21/js/jquery.dataTables.min.js"/>"></script>
+	<script src="<c:url value="/webjars/datatables/1.10.21/js/dataTables.bootstrap.min.js"/>"></script>
+	<script src="<c:url value="/webjars/mustache.js/3.0.1/mustache.min.js"/>"></script>
+	<script src="<c:url value="/webjars/datatables-plugins/1.10.20/dataRender/datetime.js"/>"></script>
+	<script src="<c:url value="/webjars/momentjs/2.24.0/min/moment.min.js"/>"></script>
+		
+<script>
 		$(document).ready(function() {
 			$('#netejar-filtre').click(function() {
 				$(':input', $('#form-filtre')).each (function() {
@@ -27,6 +31,40 @@
 			$('.confirm-esborrar').click(function() {
 				  return confirm("<spring:message code="servei.list.confirmacio.esborrar"/>");
 			});
+			
+			
+			
+		    $('#table-serveis').DataTable({
+		    	autoWidth: false,
+				processing: true,
+				serverSide: true,
+				dom: "<'row'<'col-md-6'i><'col-md-6'>><'row'<'col-md-12'rt>><'row'<'col-md-6'l><'col-md-6'p>>",
+				language: {
+		            "url": "js/datatable-language.json"
+		        },
+				ajax: "servei/datatable",
+				columnDefs: [
+					{
+						targets: [3],
+						orderable: false,
+						width: "10%",
+						render: function (data, type, row, meta) {
+								var template = $('#template-btn-procediments').html();
+								return Mustache.render(template, row);
+						}
+					}, 
+					{
+						targets: [4],
+						orderable: false,
+						width: "10%",
+						render: function (data, type, row, meta) {
+								var template = $('#template-accions').html();
+								return Mustache.render(template, row);
+						}
+					}, 
+			   ]
+			});
+		    
 		});
 		function showModalProcediments(element) {
 			var ample = Math.min(980, (window.innerWidth - 40));
@@ -92,41 +130,22 @@
 		</div>
 		<div class="clearfix"></div>
 	</div>
-	<form>
-		<jmesa:tableModel
-				id="serveis" 
-				items="${serveis}"
-				toolbar="es.caib.pinbal.webapp.jmesa.BootstrapToolbar"
-				view="es.caib.pinbal.webapp.jmesa.BootstrapView"
-				var="registre">
-			<jmesa:htmlTable>
-				<jmesa:htmlRow>
-					<jmesa:htmlColumn property="codi" titleKey="servei.list.taula.columna.codi"/>
-					<jmesa:htmlColumn property="descripcio" titleKey="servei.list.taula.columna.descripcio"/>
-					<jmesa:htmlColumn property="scspEmisor.nom" titleKey="servei.list.taula.columna.emissor"/>
-<%-- 					<jmesa:htmlColumn property="scspFechaBaja" titleKey="servei.list.taula.columna.emissor"/> --%>
-					<jmesa:htmlColumn property="ACCIO_procediments" title="&nbsp;" sortable="false" style="white-space:nowrap;">
-						<a class="btn" href="<c:url value="/modal/servei/${registre.codi}/procediments"/>" 
-							onclick="showModalProcediments(this);return false" data-titol="<spring:message code="servei.procediment.list.titol" arguments="${registre.descripcio}"/>">
-							<i class="icon-briefcase"></i>&nbsp;<spring:message code="entitat.list.taula.boto.procediments"/>&nbsp;<span class="badge">${registre.numeroProcedimentsAssociats}</span>
-						</a>
-					</jmesa:htmlColumn>
-					<jmesa:htmlColumn property="ACCIO_accions" title="&nbsp;" style="white-space:nowrap;" sortable="false">
-						<div class="btn-group">
-							<a class="btn dropdown-toggle" data-toggle="dropdown" href="#"><i class="icon-cog"></i>&nbsp;<spring:message code="comu.accions"/>&nbsp;<span class="caret"></span></a>
-							<ul class="dropdown-menu">
-								<li><a href="servei/${registre.codi}" title="<spring:message code="comu.boto.modificar"/>"><i class="icon-pencil"></i>&nbsp;<spring:message code="comu.boto.modificar"/></a></li>
-								<li><a href="servei/${registre.codi}/camp" title="<spring:message code="servei.list.taula.boto.formulari"/>"><i class="icon-th-list"></i>&nbsp;<spring:message code="servei.list.taula.boto.formulari"/></a></li>
-								<li><a href="servei/${registre.codi}/justificant" title="<spring:message code="servei.list.taula.boto.justificant"/>"><i class="icon-file"></i>&nbsp;<spring:message code="servei.list.taula.boto.justificant"/></a></li>
-								<li><a href="servei/${registre.codi}/delete" class="confirm-esborrar"><i class="icon-trash"></i>&nbsp;<spring:message code="comu.boto.esborrar"/></a></li>
-							</ul>
-						</div>
-					</jmesa:htmlColumn>
-	            </jmesa:htmlRow>
-	        </jmesa:htmlTable>
-		</jmesa:tableModel>
-	</form>
 	
+	<div class="clearfix"></div>
+	<div style="position: relative; top: -40px; z-index:0">
+	<table id="table-serveis" class="table table-striped table-bordered" style="width: 100%">
+		<thead>
+			<tr>
+				<th data-data="codi"><spring:message code="servei.list.taula.columna.codi" /></th>
+				<th data-data="descripcio"><spring:message code="servei.list.taula.columna.descripcio" /></th>
+				<th data-data="scspEmisor.nom"><spring:message code="servei.list.taula.columna.emissor" /></th>
+				<th data-data="numeroProcedimentsAssociats"></th>
+				<th data-data="id"></th>
+			</tr>
+		</thead>
+	</table>
+	</div>
+
 	<div id="modal-procediment-list" class="modal hide fade">
 		<div class="modal-header">
 			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
@@ -137,6 +156,23 @@
 			<a href="#" class="btn" data-dismiss="modal"><spring:message code="comu.boto.tornar"/></a>
 		</div>
 	</div>
+<script id="template-btn-procediments" type="x-tmpl-mustache">
+<a class="btn btn-default" href="<c:url value="/modal/servei/{{ codi }}/procediments"/>" 
+		onclick="showModalProcediments(this);return false" data-titol="<spring:message code="servei.procediment.list.titol" arguments="{{ descripcio }}"/>">
+	<i class="fas fa-briefcase"></i>&nbsp;<spring:message code="entitat.list.taula.boto.procediments"/>&nbsp;<span class="badge">{{ numeroProcedimentsAssociats }}</span>
+</a>
+</script>
+<script id="template-accions" type="x-tmpl-mustache">
+	<div class="btn-group">
+		<a class="btn btn-primary dropdown-toggle" data-toggle="dropdown" href="#"><i class="fas fa-cog"></i>&nbsp;<spring:message code="comu.accions"/>&nbsp;<span class="caret"></span></a>
+		<ul class="dropdown-menu">
+			<li><a href="servei/{{ codi }}" title="<spring:message code="comu.boto.modificar"/>"><i class="fas fa-pen"></i>&nbsp;<spring:message code="comu.boto.modificar"/></a></li>
+			<li><a href="servei/{{ codi }}/camp" title="<spring:message code="servei.list.taula.boto.formulari"/>"><i class="fas fa-th-list"></i>&nbsp;<spring:message code="servei.list.taula.boto.formulari"/></a></li>
+			<li><a href="servei/{{ codi }}/justificant" title="<spring:message code="servei.list.taula.boto.justificant"/>"><i class="fas fa-file"></i></i>&nbsp;<spring:message code="servei.list.taula.boto.justificant"/></a></li>
+			<li><a href="servei/{{ codi }}/delete" class="confirm-esborrar"><i class="fas fa-trash-alt"></i>&nbsp;<spring:message code="comu.boto.esborrar"/></a></li>
+		</ul>
+	</div>
+</script>
 <script type="text/javascript">
 function onInvokeAction(id) {
 	setExportToLimit(id, '');
