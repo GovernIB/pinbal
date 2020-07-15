@@ -15,6 +15,18 @@ $(document).ready(function() {
 	$('.confirm-remove').click(function() {
 		  return confirm("<spring:message code="procediment.serveis.confirmacio.desactivacio.servei.entitat"/>");
 	});
+	$('#netejar-filtre').click(function() {
+		$(':input', $('#form-filtre')).each (function() {
+			var type = this.type, tag = this.tagName.toLowerCase();
+			if (type == 'text' || type == 'password' || tag == 'textarea')
+				this.value = '';
+			else if (type == 'checkbox' || type == 'radio')
+				this.checked = false;
+			else if (tag == 'select')
+				this.selectedIndex = 0;
+		});
+		$('#form-filtre').submit();
+	});
 });
 </script>
 </head>
@@ -25,13 +37,52 @@ $(document).ready(function() {
 		<li class="active"><spring:message code="procediment.serveis.miques.serveis"/></li>
 	</ul>
 
+	<c:url value="./servei" var="formAction"/>
+	<form:form id="form-filtre" action="${formAction}" method="post" cssClass="well form-inline" commandName="serveiFiltreCommand">
+		<div class="row">
+			<div class="form-group col-md-3">	
+				<c:set var="campPath" value="codi"/>
+				<spring:message var="placeholderCodi" code="servei.list.filtre.camp.codi"/>
+				<form:input path="${campPath}" cssClass= "col-md-12 input-sm" id="${campPath}" placeholder="${placeholderCodi}"/>
+			</div>
+			<div class="form-group col-md-3">	
+				<c:set var="campPath" value="descripcio"/>
+				<spring:message var="placeholderDescripcio" code="servei.list.filtre.camp.descripcio"/>
+				<form:input path="${campPath}" cssClass="col-md-12 input-sm" id="${campPath}" placeholder="${placeholderDescripcio}"/>
+			</div>
+<!-- 			<div class="control-group col-md-3 hidden">	 -->
+<%-- 				<c:set var="campPath" value="emissor"/> --%>
+<%-- 				<form:select path="${campPath}" id="${campPath}" class="col-md-12"> --%>
+<%-- 					<option value=""><spring:message code="servei.list.filtre.camp.emissor"/></option> --%>
+<%-- 					<form:options items="${emisors}" itemLabel="nom" itemValue="id"/> --%>
+<%-- 				</form:select> --%>
+<!-- 			</div> -->
+			<div class="form-group col-md-3">	
+				<c:set var="campPath" value="activa"/>
+				<spring:message var="trueValue" code="entitat.list.filtre.camp.activa.yes"/>
+				<spring:message var="falseValue" code="entitat.list.filtre.camp.activa.no"/>
+				<form:select path="${campPath}" class="col-md-12">
+					<option value=""><spring:message code="entitat.list.filtre.camp.activa"/></option>>
+					<form:option value="true">${trueValue}</form:option>>
+					<form:option value="false">${falseValue}</form:option>>
+				</form:select>
+			</div>
+		</div>
+		<div class="row">
+			<div class="pull-right">
+				<button id="netejar-filtre" class="btn" type="button"><spring:message code="comu.boto.netejar"/></button>
+				<button type="submit" class="btn btn-primary"><spring:message code="comu.boto.filtrar"/></button>
+			</div>
+		</div>
+	</form:form>
+	
 	<form>
 		<jmesa:tableModel
 				id="serveis" 
-				items="${serveisActius}"
-				view="es.caib.pinbal.webapp.jmesa.BootstrapNoToolbarView"
-				var="registre"
-				maxRows="${fn:length(serveisActius)}">
+				items="${serveis}"
+				toolbar="es.caib.pinbal.webapp.jmesa.BootstrapToolbar"
+				view="es.caib.pinbal.webapp.jmesa.BootstrapView"
+				var="registre">
 			<jmesa:htmlTable>
 				<jmesa:htmlRow>
 					<jmesa:htmlColumn property="codi" titleKey="procediment.serveis.taula.columna.codi"/>
@@ -81,10 +132,10 @@ $(document).ready(function() {
 			$input.next().html('<i class="icon-pencil"></i>');
 		}
 	});
-});
-
-$('#confirm-remove').click(function() {
-	  return confirm("<spring:message code="procediment.serveis.confirmacio.desactivacio.servei.procediment"/>");
+	
+	$('#confirm-remove').click(function() {
+		  return confirm("<spring:message code="procediment.serveis.confirmacio.desactivacio.servei.procediment"/>");
+	});
 });
 
 function onInvokeAction(id) {

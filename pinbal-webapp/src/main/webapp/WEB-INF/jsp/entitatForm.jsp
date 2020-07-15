@@ -27,44 +27,44 @@
 		<fieldset class="well">
 			<c:set var="campPath" value="codi"/>
 			<c:set var="campErrors"><form:errors path="${campPath}"/></c:set>
-			<div class="control-group<c:if test="${not empty campErrors}"> error</c:if>">
+			<div class="form-group<c:if test="${not empty campErrors}"> error</c:if>">
 				<label class="control-label" for="${campPath}"><spring:message code="entitat.form.camp.codi"/> *</label>
 				<div class="controls">
 					<form:input path="${campPath}" cssClass="input-xlarge" id="${campPath}"/>
-					<form:errors path="${campPath}" cssClass="help-inline"/>
+					<form:errors path="${campPath}" cssClass="help-block"/>
 				</div>
 			</div>
 			<c:set var="campPath" value="nom"/>
 			<c:set var="campErrors"><form:errors path="${campPath}"/></c:set>
-			<div class="control-group<c:if test="${not empty campErrors}"> error</c:if>">
+			<div class="form-group<c:if test="${not empty campErrors}"> error</c:if>">
 				<label class="control-label" for="${campPath}"><spring:message code="entitat.form.camp.nom"/> *</label>
 				<div class="controls">
 					<form:input path="${campPath}" cssClass="input-xlarge" id="${campPath}"/>
-					<form:errors path="${campPath}" cssClass="help-inline"/>
+					<form:errors path="${campPath}" cssClass="help-block"/>
 				</div>
 			</div>
 			<c:set var="campPath" value="cif"/>
 			<c:set var="campErrors"><form:errors path="${campPath}"/></c:set>
-			<div class="control-group<c:if test="${not empty campErrors}"> error</c:if>">
+			<div class="form-group<c:if test="${not empty campErrors}"> error</c:if>">
 				<label class="control-label" for="${campPath}"><spring:message code="entitat.form.camp.cif"/> *</label>
 				<div class="controls">
 					<form:input path="${campPath}" cssClass="input-xlarge" id="${campPath}"/>
-					<form:errors path="${campPath}" cssClass="help-inline"/>
+					<form:errors path="${campPath}" cssClass="help-block"/>
 				</div>
 			</div>
 			<c:set var="campPath" value="tipus"/>
 			<c:set var="campErrors"><form:errors path="${campPath}"/></c:set>
-			<div class="control-group<c:if test="${not empty campErrors}"> error</c:if>">
+			<div class="form-group<c:if test="${not empty campErrors}"> error</c:if>">
 				<label class="control-label" for="${campPath}"><spring:message code="entitat.form.camp.tipus"/> *</label>
 				<div class="controls">
 					<form:select path="${campPath}">
 						<form:options items="${entitatTipusLlista}"/>
 					</form:select>
-					<form:errors path="${campPath}" cssClass="help-inline"/>
+					<form:errors path="${campPath}" cssClass="help-block"/>
 				</div>
 			</div>
 		</fieldset>
-		<div class="well">
+		<div class="well-lg">
 			<button type="submit" class="btn btn-primary"><spring:message code="comu.boto.guardar"/></button>
 			<a href="<c:url value="/entitat"/>" class="btn"><spring:message code="comu.boto.cancelar"/></a>
 		</div>

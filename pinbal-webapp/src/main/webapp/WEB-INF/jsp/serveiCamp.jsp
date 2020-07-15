@@ -199,19 +199,19 @@ $(function() {
 </head>
 <body>
 
-	<div class="row-fluid">
-		<div class="well span4" style="overflow:auto">
+	<div class="row">
+		<div class="well col-md-4" style="overflow:auto">
 			<div class="btn-group pull-right">
-				<a href="#" class="btn" title="<spring:message code="servei.camp.contreure.tot"/>" id="accio-contreure-all"><i class="icon-chevron-right"></i></a>
-				<a href="#" class="btn" title="<spring:message code="servei.camp.expandir.tot"/>" id="accio-expandir-all"><i class=icon-chevron-down></i></a>
+				<a href="#" class="btn-default" title="<spring:message code="servei.camp.contreure.tot"/>" id="accio-contreure-all"><i class="glyphicon-chevron-right"></i></a>
+				<a href="#" class="btn-default" title="<spring:message code="servei.camp.expandir.tot"/>" id="accio-expandir-all"><i class=glyphicon-chevron-down></i></a>
 			</div><br/>
 			<ul style="list-style:none; margin:0">
 				<c:set var="nodeArbreActual" value="${arbreDadesEspecifiques.arrel}" scope="request"/>
 				<jsp:include page="import/dadesEspecifiquesArbreNode.jsp"/>
 			</ul>
 		</div>
-		<div class="span8">
-			<a id="boto-nou-grup" class="btn pull-right" href="#"><i class="icon-plus"></i>&nbsp;Nou grup</a><br/><br/>
+		<div class="col-md-8">
+			<a id="boto-nou-grup" class="btn pull-right" href="#"><i class="glyphicon-plus"></i>&nbsp;Nou grup</a><br/><br/>
 			<c:set var="hiHaCampsSenseGrup" value="${false}"/>
 			<c:forEach var="camp" items="${camps}">
 				<c:if test="${empty camp.grup}"><c:set var="hiHaCampsSenseGrup" value="${true}"/></c:if>
@@ -266,7 +266,7 @@ $(function() {
 				</jmesa:tableModel>
 			</c:if>
 			<c:forEach var="grup" items="${grups}" varStatus="grupStatus">
-				<div class="well well-small">
+				<div class="well well-sm">
 					<fieldset>
 					 	<legend>${grup.nom}</legend>
 	    			</fieldset>
@@ -324,10 +324,10 @@ $(function() {
 						</c:otherwise>
 					</c:choose>
 					<div style="text-align: right">
-						<a href="campGrup/${grup.id}/up" title="<spring:message code="comu.boto.pujar"/>" class="btn<c:if test="${grupStatus.first}"> disabled</c:if>"><i class="icon-arrow-up"></i></a>
-						<a href="campGrup/${grup.id}/down" title="<spring:message code="comu.boto.baixar"/>" class="btn<c:if test="${grupStatus.last}"> disabled</c:if>"><i class="icon-arrow-down"></i></a>
-						<a href="#modal-grup-form" title="<spring:message code="comu.boto.modificar"/>" class="btn boto-grup-editar" data-id="${grup.id}" data-nom="${grup.nom}"><i class="icon-pencil"></i></a>
-						<a href="campGrup/${grup.id}/delete" title="<spring:message code="comu.boto.esborrar"/>" class="btn confirm-esborrar-grup"><i class="icon-trash"></i></a>
+						<a href="campGrup/${grup.id}/up" title="<spring:message code="comu.boto.pujar"/>" class="btn<c:if test="${grupStatus.first}"> disabled</c:if>"><i class="glyphicon-arrow-up"></i></a>
+						<a href="campGrup/${grup.id}/down" title="<spring:message code="comu.boto.baixar"/>" class="btn<c:if test="${grupStatus.last}"> disabled</c:if>"><i class="glyphicon-arrow-down"></i></a>
+						<a href="#modal-grup-form" title="<spring:message code="comu.boto.modificar"/>" class="btn boto-grup-editar" data-id="${grup.id}" data-nom="${grup.nom}"><i class="glyphicon-pencil"></i></a>
+						<a href="campGrup/${grup.id}/delete" title="<spring:message code="comu.boto.esborrar"/>" class="btn confirm-esborrar-grup"><i class="glyphicon-trash"></i></a>
 					</div>
 				</div>
 			</c:forEach>
@@ -351,42 +351,42 @@ $(function() {
 			<form id="modal-form" action="camp/update" method="post" class="form-horizontal">
 				<input type="hidden" id="modal-hidden-id" name="id"/>
 				<input type="hidden" id="modal-hidden-servei" name="servei" value="${servei.codi}"/>
-				<div class="control-group">
+				<div class="form-group">
     				<label class="control-label" for="modal-input-path"><spring:message code="servei.camp.path"/> *</label>
 					<div class="controls">
 						<input type="hidden" id="modal-hidden-path" name="path"/>
-						<input type="text" id="modal-input-path" name="path" class="input-xlarge" disabled="disabled"/>
+						<input type="text" id="modal-input-path" name="path" class="input-lg" disabled="disabled"/>
 					</div>
 				</div>
-				<div class="control-group">
+				<div class="form-group">
     				<label class="control-label" for="modal-input-tipus"><spring:message code="servei.camp.tipus"/> *</label>
 					<div class="controls">
-						<select id="modal-select-tipus" name="tipus" class="input-xlarge">
+						<select id="modal-select-tipus" name="tipus" class="input-lg">
 							<c:forEach var="tip" items="${serveiCampTipus}">
 								<option value="${tip}"<c:if test="${tip == 'ENUM'}"> id="modal-option-tipus-enum"</c:if>>${tip}</option>
 							</c:forEach>
 						</select>
 					</div>
 				</div>
-				<div class="control-group">
+				<div class="form-group">
     				<label class="control-label" for="modal-input-etiqueta"><spring:message code="servei.camp.etiqueta"/></label>
 					<div class="controls">
-						<input type="text" id="modal-input-etiqueta" name="etiqueta" class="input-xlarge"/>
+						<input type="text" id="modal-input-etiqueta" name="etiqueta" class="input-lg"/>
 					</div>
 				</div>
-				<div class="control-group">
+				<div class="form-group">
     				<label class="control-label" for="modal-input-defecte"><spring:message code="servei.camp.valor.defecte"/></label>
 					<div class="controls">
-						<input type="text" id="modal-input-defecte" name="valorPerDefecte" class="input-xlarge"/>
+						<input type="text" id="modal-input-defecte" name="valorPerDefecte" class="input-lg"/>
 					</div>
 				</div>
-				<div class="control-group">
+				<div class="form-group">
     				<label class="control-label" for="modal-input-comentari"><spring:message code="servei.camp.comentari"/></label>
 					<div class="controls">
-						<input type="text" id="modal-input-comentari" name="comentari" class="input-xlarge"/>
+						<input type="text" id="modal-input-comentari" name="comentari" class="input-lg"/>
 					</div>
 				</div>
-				<div class="control-group">
+				<div class="form-group">
 					<div class="controls">
 						<label class="checkbox inline" for="modal-checkbox-obligatori">
 							<input type="checkbox" id="modal-checkbox-obligatori" name="obligatori"/>
@@ -402,17 +402,17 @@ $(function() {
 						</label>
 					</div>
 				</div>
-				<div id="modal-grup-data" class="control-group">
+				<div id="modal-grup-data" class="form-group">
     				<label class="control-label" for="modal-input-comentari"><spring:message code="servei.camp.data.format"/></label>
 					<div class="controls">
-						<input type="text" id="modal-input-data-format" name="dataFormat" class="input-xlarge"/>
+						<input type="text" id="modal-input-data-format" name="dataFormat" class="input-lg"/>
 						<span class="help-block"><small><spring:message code="servei.camp.data.format.comment"/></small></span>
 					</div>
 				</div>
-				<div id="modal-grup-data" class="control-group">
+				<div id="modal-grup-data" class="form-group">
     				<label class="control-label" for="modal-input-comentari"><spring:message code="servei.camp.data.camp.pare"/></label>
 					<div class="controls">
-						<select id="modal-select-camp-pare" name="campPareId" class="input-xlarge">
+						<select id="modal-select-camp-pare" name="campPareId" class="input-lg">
 							<option value=""><spring:message code="comu.opcio.sense.definir"/></option>
 							<c:forEach var="camp" items="${camps}">
 								<option value="${camp.id}">${camp.path}</option>
@@ -420,10 +420,10 @@ $(function() {
 						</select>
 					</div>
 				</div>
-				<div id="modal-grup-data" class="control-group">
+				<div id="modal-grup-data" class="form-group">
     				<label class="control-label" for="modal-input-comentari"><spring:message code="servei.camp.data.valor.pare"/></label>
 					<div class="controls">
-						<input type="text" id="modal-input-valor-pare" name="valorPare" class="input-xlarge"/>
+						<input type="text" id="modal-input-valor-pare" name="valorPare" class="input-lg"/>
 					</div>
 				</div>
 				<c:forEach var="camp" items="${camps}">
@@ -435,7 +435,7 @@ $(function() {
 			    					<c:forEach var="valor" items="${node.dades.enumeracioValors}" varStatus="status">
 			    						<div class="controls">
 											<div class="input-prepend">
-												<span class="add-on">${valor}</span><input type="text" id="modal-input-descripcio-${status.index}" name="descripcio-${camp.id}"<c:if test="${status.index lt fn:length(camp.enumDescripcions)}"> value="${camp.enumDescripcions[status.index]}"</c:if> class="input-large"/>
+												<span class="add-on">${valor}</span><input type="text" id="modal-input-descripcio-${status.index}" name="descripcio-${camp.id}"<c:if test="${status.index lt fn:length(camp.enumDescripcions)}"> value="${camp.enumDescripcions[status.index]}"</c:if> class="input-lg"/>
 											</div>
 										</div><c:if test="${not status.last}"><br/></c:if>
 			    					</c:forEach>
@@ -447,7 +447,7 @@ $(function() {
 			</form>
 		</div>
 		<div class="modal-footer">
-			<a href="#" class="btn" data-dismiss="modal"><spring:message code="comu.boto.tornar"/></a>
+			<a href="#" class="btn-default" data-dismiss="modal"><spring:message code="comu.boto.tornar"/></a>
 			<a href="#" id="modal-boto-submit" class="btn btn-primary"><spring:message code="comu.boto.guardar"/></a>
 		</div>
 	</div>
@@ -472,16 +472,16 @@ $(function() {
 			<form id="modal-grup-formform" action="" method="post" class="form-horizontal">
 				<input type="hidden" id="modal-grup-hidden-id" name="id"/>
 				<input type="hidden" id="modal-grup-hidden-servei" name="servei" value="${servei.codi}"/>
-				<div class="control-group">
+				<div class="form-group">
     				<label class="control-label" for="modal-grup-input-nom"><spring:message code="servei.camp.grup.form.nom"/> *</label>
 					<div class="controls">
-						<input type="text" id="modal-grup-input-nom" name="nom" class="input-xlarge"/>
+						<input type="text" id="modal-grup-input-nom" name="nom" class="input-lg"/>
 					</div>
 				</div>
 			</form>
 		</div>
 		<div class="modal-footer">
-			<a href="#" class="btn" data-dismiss="modal"><spring:message code="comu.boto.tornar"/></a>
+			<a href="#" class="btn-default" data-dismiss="modal"><spring:message code="comu.boto.tornar"/></a>
 			<a href="#" id="modal-grup-boto-submit" class="btn btn-primary"><spring:message code="comu.boto.guardar"/></a>
 		</div>
 	</div>
@@ -489,7 +489,7 @@ $(function() {
 	<div class="well">
 		<a href="<c:url value="/servei"/>" class="btn pull-right"><spring:message code="comu.boto.tornar"/></a>
 		<c:set var="initModalPreview">initModalPreview(this);return false</c:set>
-		<a href="<c:url value="/modal/servei/${servei.codi}/preview"/>" class="btn btn-info" onclick="${initModalPreview}"><i class="icon-eye-open icon-white"></i>&nbsp;<spring:message code="comu.boto.previsualitzar"/></a>
+		<a href="<c:url value="/modal/servei/${servei.codi}/preview"/>" class="btn btn-info" onclick="${initModalPreview}"><i class="glyphicon-eye-open icon-white"></i>&nbsp;<spring:message code="comu.boto.previsualitzar"/></a>
 	</div>
 
 </body>

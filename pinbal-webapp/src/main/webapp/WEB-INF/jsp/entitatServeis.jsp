@@ -55,7 +55,7 @@ $(document).ready(function() {
 		</div>
 	</form>
 	<div>
-		<a href="<c:url value="/entitat"/>" class="btn pull-right"><spring:message code="comu.boto.tornar"/></a>
+		<a href="<c:url value="/entitat"/>" class="btn col-md-pull-right"><spring:message code="comu.boto.tornar"/></a>
 		<div class="clearfix"></div>
 	</div>
 

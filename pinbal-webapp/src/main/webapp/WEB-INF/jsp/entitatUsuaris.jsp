@@ -131,64 +131,64 @@ function showModalEditar(
 	</ul>
 
 	<c:url value="/entitat/${entitat.id}/usuari" var="formAction"/>
-	<form:form id="form-filtre"action="${formAction}" method="post" cssClass="well" commandName="usuariFiltreCommand">
-		<div class="row-fluid">
-			<div class="span3">
+	<form:form id="form-filtre"action="${formAction}" method="post" cssClass="well-lg" commandName="usuariFiltreCommand">
+		<div class="container-fluid">
+			<div class="col-md-3">
 				<c:set var="campPath" value="codi"/>
 				<pbl:inputText name="${campPath}" textKey="entitat.usuaris.filtre.camp.codi"
 							   placeholder="entitat.usuaris.filtre.camp.codi" hideLabel="true"/>
 			</div>
-			<div class="span3">
+			<div class="col-md-3">
 				<c:set var="campPath" value="nif"/>
 				<pbl:inputText name="${campPath}" textKey="entitat.usuaris.filtre.camp.nif"
 							   placeholder="entitat.usuaris.filtre.camp.nif" hideLabel="true"/>
 			</div>
-			<div class="span3">			
+			<div class="col-md-3">			
 				<c:set var="campPath" value="nom"/>
 				<pbl:inputText name="${campPath}" textKey="entitat.usuaris.filtre.camp.nom"
 							   placeholder="entitat.usuaris.filtre.camp.nom" hideLabel="true"/>
 			</div>
-			<div class="span3">			
+			<div class="col-md-3">			
 				<c:set var="campPath" value="departament"/>
 				<pbl:inputText name="${campPath}" textKey="entitat.usuaris.filtre.camp.departament"
 							   placeholder="entitat.usuaris.filtre.camp.departament" hideLabel="true"/>
 			</div>
 		</div>
-		<div class="row-fluid">
+		<div class="container-fluid">
 <%-- 		<label class="control-label" for="modal-input-representant"><spring:message code="entitat.usuaris.camp.rols"/>: </label> --%>
 			<c:set var="campPath" value="isRepresentant"/>
-			<label class="checkbox span1" for="modal-input-representant">
+			<label class="checkbox col-md-1" for="modal-input-representant">
 				<form:checkbox  path="${campPath}" id="${campPath}"/>
 				<spring:message code="entitat.usuaris.rol.repres"/>
 			</label>
 			
 			<c:set var="campPath" value="isDelegat"/>
-			<label class="checkbox span1" for="modal-input-delegat">
+			<label class="checkbox col-md-1" for="modal-input-delegat">
 				<form:checkbox  path="${campPath}" id="${campPath}"/>
 				<spring:message code="entitat.usuaris.rol.deleg"/>
 			</label>
 			
 			<c:set var="campPath" value="isAuditor"/>
-			<label class="checkbox span1" for="modal-input-auditor">
+			<label class="checkbox col-md-1" for="modal-input-auditor">
 				<form:checkbox  path="${campPath}" id="${campPath}"/>
 				<spring:message code="entitat.usuaris.rol.audit"/>
 			</label>
 	
 			<c:set var="campPath" value="isAplicacio"/>
-			<label class="checkbox span1" for="modal-input-aplicacio">
+			<label class="checkbox col-md-1" for="modal-input-aplicacio">
 				<form:checkbox  path="${campPath}" id="${campPath}"/>
 				<spring:message code="entitat.usuaris.rol.aplic"/>
 			</label>
-			<div class="pull-right">
-				<button id="netejar-filtre" class="btn" type="button"><spring:message code="comu.boto.netejar"/></button>
+			<div class="col-md-pull-right">
+				<button id="netejar-filtre" class="btn-default" type="button"><spring:message code="comu.boto.netejar"/></button>
 				<button type="submit" class="btn btn-primary"><spring:message code="comu.boto.filtrar"/></button>
 			</div>
 		</div>		
 	</form:form>
 
-	<div class="row-fluid">
-		<div class="span12">
-			<a class="btn pull-right" href="#modal-form-usuari" onclick="showModalCrear()"><i class="icon-plus"></i>&nbsp;<spring:message code="entitat.usuaris.boto.nou.usuari"/></a>
+	<div class="container-fluid">
+		<div class="col-md-12">
+			<a class="btn col-md-pull-right" href="#modal-form-usuari" onclick="showModalCrear()"><i class="glyphicon-plus"></i>&nbsp;<spring:message code="entitat.usuaris.boto.nou.usuari"/></a>
 		</div>
 		<div class="clearfix"></div>
 	</div>
@@ -213,39 +213,39 @@ function showModalEditar(
 						<c:if test="${registre.aplicacio}"><span class="label"><spring:message code="entitat.usuaris.rol.aplic"/></span></c:if>
 					</jmesa:htmlColumn>
 					<jmesa:htmlColumn property="principal" titleKey="entitat.usuaris.camp.principal">
-						<c:if test="${registre.principal}"><i class="icon-certificate"></i></c:if>
+						<c:if test="${registre.principal}"><i class="glyphicon-certificate"></i></c:if>
 					</jmesa:htmlColumn>
 					<jmesa:htmlColumn property="ACCIO_principal" title="&nbsp;" sortable="false" style="white-space:nowrap;">
 						<c:choose>
-							<c:when test="${not registre.principal}"><a href="usuari/${registre.usuari.codi}/principal" class="btn"><i class="icon-certificate"></i>&nbsp;<spring:message code="entitat.usuaris.accio.fer.principal"/></a></c:when>
-							<c:otherwise><a href="usuari/${registre.usuari.codi}/principal" class="btn"><i class="icon-remove"></i>&nbsp;<spring:message code="entitat.usuaris.accio.desfer.principal"/></a></c:otherwise>
+							<c:when test="${not registre.principal}"><a href="usuari/${registre.usuari.codi}/principal" class="btn"><i class="glyphicon-certificate"></i>&nbsp;<spring:message code="entitat.usuaris.accio.fer.principal"/></a></c:when>
+							<c:otherwise><a href="usuari/${registre.usuari.codi}/principal" class="btn"><i class="glyphicon-remove"></i>&nbsp;<spring:message code="entitat.usuaris.accio.desfer.principal"/></a></c:otherwise>
 						</c:choose>
 					</jmesa:htmlColumn>
 					<jmesa:htmlColumn property="ACCIO_update" title="&nbsp;" sortable="false" style="white-space:nowrap;">
 						<c:set var="onclickShowModal">showModalEditar(${registre.usuari.inicialitzat}, ${registre.usuari.noInicialitzatNif}, ${registre.usuari.noInicialitzatCodi}, '${registre.usuari.codi}', '${registre.usuari.nif}', '${fn:replace(registre.departament, "'", "\\'")}', ${registre.representant}, ${registre.delegat}, ${registre.auditor}, ${registre.aplicacio})</c:set>
-						<a href="#modal-form-usuari" onclick="${onclickShowModal}" class="btn"><i class="icon-pencil"></i>&nbsp;<spring:message code="comu.boto.modificar"/></a>
+						<a href="#modal-form-usuari" onclick="${onclickShowModal}" class="btn"><i class="glyphicon-pencil"></i>&nbsp;<spring:message code="comu.boto.modificar"/></a>
 					</jmesa:htmlColumn>
 	            </jmesa:htmlRow>
 	        </jmesa:htmlTable>
 		</jmesa:tableModel>
 	</form>
 	<div>
-		<a href="<c:url value="/entitat"/>" class="btn pull-right"><spring:message code="comu.boto.tornar"/></a>
+		<a href="<c:url value="/entitat"/>" class="btn col-md-pull-right"><spring:message code="comu.boto.tornar"/></a>
 		<div class="clearfix"></div>
 	</div>
 
 	<div id="modal-form-usuari" class="modal hide fade">
-		<div class="modal-header">
+		<div class="modal-content">
 			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
 			<h3><spring:message code="entitat.usuaris.titol.modificar"/></h3>
 		</div>
-		<div class="modal-body">
+		<div class="modal-content">
 			<c:url value="/entitat/${entitat.id}/usuari/save" var="formAction"/>
 			<form id="modal-form" action="${formAction}" method="post" class="form-horizontal">
 				<input type="hidden" id="modal-hidden-id" name="id" value="${entitat.id}"/>
 				<input type="hidden" id="modal-hidden-codi" name="codi"/>
 				<input type="hidden" id="modal-hidden-nif" name="nif"/>
-				<div id="modal-group-tipus" class="control-group">
+				<div id="modal-group-tipus" class="form-group">
     				<label class="control-label" for="modal-select-tipus"><spring:message code="entitat.usuaris.camp.tipus"/></label>
 					<div class="controls">
 						<select id="modal-select-tipus" name="tipus" class="input-medium">
@@ -254,25 +254,25 @@ function showModalEditar(
 						</select>
 					</div>
 				</div>
-				<div id="modal-group-codi" class="control-group">
+				<div id="modal-content" class="form-group">
     				<label class="control-label" for="modal-input-codi"><spring:message code="entitat.usuaris.camp.codi"/></label>
 					<div class="controls">
 						<input type="text" id="modal-input-codi" name="codi" disabled="disabled"/>
 					</div>
 				</div>
-				<div id="modal-group-nif" class="control-group">
+				<div id="modal-group-nif" class="form-group">
     				<label class="control-label" for="modal-input-nif"><spring:message code="entitat.usuaris.camp.nif"/></label>
 					<div class="controls">
 						<input type="text" id="modal-input-nif" name="nif" disabled="disabled"/>
 					</div>
 				</div>
-				<div class="control-group">
+				<div class="form-group">
     				<label class="control-label" for="modal-input-departament"><spring:message code="entitat.usuaris.camp.departament"/></label>
 					<div class="controls">
 						<input type="text" id="modal-input-departament" name="departament"/>
 					</div>
 				</div>
-				<div class="control-group">
+				<div class="form-group">
 					<label class="control-label" for="modal-input-representant"><spring:message code="entitat.usuaris.camp.rols"/></label>
 					<div class="controls">
 						<label class="checkbox" for="modal-input-representant">
@@ -296,7 +296,7 @@ function showModalEditar(
 			</form>
 		</div>
 		<div class="modal-footer">
-			<a href="#" class="btn" data-dismiss="modal"><spring:message code="comu.boto.tornar"/></a>
+			<a href="#" class="btn-default" data-dismiss="modal-content"><spring:message code="comu.boto.tornar"/></a>
 			<a href="#" class="btn btn-primary" onclick="$('#modal-form').submit()"><spring:message code="comu.boto.guardar"/></a>
 		</div>
 	</div>

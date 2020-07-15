@@ -40,6 +40,7 @@ import es.caib.pinbal.core.service.exception.ProcedimentServeiNotFoundException;
 import es.caib.pinbal.core.service.exception.ServeiNotFoundException;
 import es.caib.pinbal.webapp.command.ProcedimentCommand;
 import es.caib.pinbal.webapp.command.ProcedimentFiltreCommand;
+import es.caib.pinbal.webapp.command.ServeiFiltreCommand;
 import es.caib.pinbal.webapp.common.AlertHelper;
 import es.caib.pinbal.webapp.common.EntitatHelper;
 import es.caib.pinbal.webapp.common.RequestSessionHelper;
@@ -56,6 +57,7 @@ import es.caib.pinbal.webapp.jmesa.JMesaGridHelper.ConsultaPagina;
 public class ProcedimentController extends BaseController {
 
 	public static final String SESSION_ATTRIBUTE_FILTRE = "ProcedimentController.session.filtre";
+	public static final String SESSION_ATTRIBUTE_FILTRE_SERVEIS = "ProcedimentController.session.filtre.serveis";
 
 	@Autowired
 	private ProcedimentService procedimentService;
@@ -259,42 +261,11 @@ public class ProcedimentController extends BaseController {
 	public String servei(
 			HttpServletRequest request,
 			@PathVariable Long procedimentId,
-			Model model) throws EntitatNotFoundException {
+			Model model) throws EntitatNotFoundException, Exception {
 		if (!EntitatHelper.isRepresentantEntitatActual(request))
 			return "representantNoAutoritzat";
 		EntitatDto entitat = EntitatHelper.getEntitatActual(request, entitatService);
-		if (entitat != null) {
-			ProcedimentDto procediment = null;
-			if (procedimentId != null)
-				procediment = procedimentService.findById(procedimentId);
-			if (procediment != null) {
-				model.addAttribute("entitat", entitat);
-				model.addAttribute("procediment", procediment);
-				
-				List<ServeiDto> serveisActius = serveiService.findAmbEntitat(entitat.getId());
-				for (ServeiDto servei: serveisActius) {
-					for (ProcedimentServeiSimpleDto serveiActiu: procediment.getServeisActius()) {
-						if (servei.getCodi().equals(serveiActiu.getServeiCodi())) {
-							servei.setActiu(serveiActiu.isActiu());
-							servei.setProcedimentCodi(serveiActiu.getProcedimentCodi());
-							break;
-						}
-					}
-				}
-				model.addAttribute(
-						"serveisActius",
-						serveisActius);
-				return "procedimentServeis";
-			} else {
-				AlertHelper.error(
-						request, 
-						getMessage(
-								request,
-								"procediment.controller.procediment.no.existeix"));
-				return "redirect:../../procediment";
-			}
-			
-		} else {
+		if (entitat == null) {
 			AlertHelper.error(
 					request,
 					getMessage(
@@ -302,8 +273,72 @@ public class ProcedimentController extends BaseController {
 							"procediment.controller.no.entitat.seleccionada"));
 			return "redirect:../../../index";
 		}
+		
+		ProcedimentDto procediment = null;
+		if (procedimentId != null)
+			procediment = procedimentService.findById(procedimentId);
+		if (procediment == null) {
+			AlertHelper.error(
+					request, 
+					getMessage(
+							request,
+							"procediment.controller.procediment.no.existeix"));
+			return "redirect:../../procediment";	
+		}
+		model.addAttribute("entitat", entitat);
+		model.addAttribute("procediment", procediment);
+				
+		omplirModelPerMostrarLlistatServeis(request, model, entitat, procediment);
+		return "procedimentServeis";		
 	}
 
+
+	@RequestMapping(value = "/{procedimentId}/servei", method = RequestMethod.POST)
+	public String serveiPost(
+			HttpServletRequest request,
+			@PathVariable Long procedimentId,
+			@Valid ServeiFiltreCommand command,
+			BindingResult bindingResult,
+			Model model) throws Exception {
+		if (!EntitatHelper.isRepresentantEntitatActual(request))
+			return "representantNoAutoritzat";
+		EntitatDto entitat = EntitatHelper.getEntitatActual(request, entitatService);
+		if (entitat == null) {
+			AlertHelper.error(
+					request,
+					getMessage(
+							request,
+							"procediment.controller.no.entitat.seleccionada"));
+			return "redirect:../../../index";
+		}
+		
+		ProcedimentDto procediment = null;
+		if (procedimentId != null)
+			procediment = procedimentService.findById(procedimentId);
+		if (procediment == null) {
+			AlertHelper.error(
+					request, 
+					getMessage(
+							request,
+							"procediment.controller.procediment.no.existeix"));
+			return "redirect:../../procediment";	
+		}
+		model.addAttribute("entitat", entitat);
+		model.addAttribute("procediment", procediment);
+
+		
+		if (bindingResult.hasErrors()) {
+			omplirModelPerMostrarLlistatServeis(request, model, entitat, procediment);
+			return "serveiList";
+		} else {
+			RequestSessionHelper.actualitzarObjecteSessio(
+					request,
+					SESSION_ATTRIBUTE_FILTRE_SERVEIS,
+					command);
+			return "redirect:servei";
+		}
+	}
+	
 	@RequestMapping(value = "/{procedimentId}/servei/{serveiCodi}/enable", method = RequestMethod.GET)
 	public String serveiEnable(
 			HttpServletRequest request,
@@ -627,6 +662,66 @@ public class ProcedimentController extends BaseController {
 					command.getCodi(),
 					command.getNom(),
 					command.getDepartament(),
+					paginacioAmbOrdre);
+		}
+	}
+	
+	
+	private void omplirModelPerMostrarLlistatServeis( 
+			HttpServletRequest request,
+			Model model, 
+			EntitatDto entitat,
+			ProcedimentDto procediment) throws Exception {
+		
+		ServeiFiltreCommand command = (ServeiFiltreCommand) RequestSessionHelper.obtenirObjecteSessio( 
+				request, 
+				SESSION_ATTRIBUTE_FILTRE_SERVEIS);
+		
+//		model.addAttribute("emisors", serveiService.findEmisorAll());
+		
+		if (command == null) {
+			command = new ServeiFiltreCommand(); 
+			command.setActiva(true);
+		}
+			
+		model.addAttribute(command); 
+		List<?> paginaServeis = JMesaGridHelper.consultarPaginaIActualitzarLimit(
+				"serveis",
+				request,
+				new ConsultaPaginaServei(
+							serveiService, command, entitat, procediment
+						),
+				new OrdreDto("codi", OrdreDireccio.DESCENDENT));
+		model.addAttribute("serveis", paginaServeis);
+	} 
+	
+	public class ConsultaPaginaServei implements ConsultaPagina<ServeiDto> {
+		ServeiService serveiService;
+		EntitatDto entitat;
+		ProcedimentDto procediment;
+		ServeiFiltreCommand command;
+		
+		public ConsultaPaginaServei(
+				ServeiService serveiService,
+				ServeiFiltreCommand command,
+				EntitatDto entitat,
+				ProcedimentDto procediment) {
+			this.serveiService = serveiService;
+			this.command = command;
+			
+			this.entitat = entitat;
+			this.procediment = procediment;
+		}
+		
+		public PaginaLlistatDto<ServeiDto> consultar(
+				PaginacioAmbOrdreDto paginacioAmbOrdre) throws Exception {
+			return serveiService.findAmbFiltrePaginat(
+					command.getCodi(),
+					command.getDescripcio(),
+					command.getEmissor(),
+					command.getActiva(),
+					this.entitat, 
+					this.procediment,
 					paginacioAmbOrdre);
 		}
 	}

@@ -36,20 +36,20 @@ $(document).ready(function() {
 	<form:form id="form-filtre" action="${formAction}" method="post" cssClass="well form-inline" commandName="procedimentFiltreCommand">
 		<c:set var="campPath" value="codi"/>
 		<spring:message var="placeholderCodi" code="procediment.list.filtre.camp.codi"/>
-		<form:input path="${campPath}" cssClass="input-medium" id="${campPath}" placeholder="${placeholderCodi}"/>
+		<form:input path="${campPath}" cssClass="input-sm" id="${campPath}" placeholder="${placeholderCodi}"/>
 		<c:set var="campPath" value="nom"/>
 		<spring:message var="placeholderNom" code="procediment.list.filtre.camp.nom"/>
-		<form:input path="${campPath}" cssClass="input-medium" id="${campPath}" placeholder="${placeholderNom}"/>
+		<form:input path="${campPath}" cssClass="input-sm" id="${campPath}" placeholder="${placeholderNom}"/>
 		<c:set var="campPath" value="departament"/>
 		<spring:message var="placeholderDepartament" code="procediment.list.filtre.camp.departament"/>
-		<form:input path="${campPath}" cssClass="input-medium" id="${campPath}" placeholder="${placeholderDepartament}"/>
-		<button id="netejar-filtre" class="btn" type="button"><spring:message code="comu.boto.netejar"/></button>
+		<form:input path="${campPath}" cssClass="input-sm" id="${campPath}" placeholder="${placeholderDepartament}"/>
+		<button id="netejar-filtre" class="btn-default" type="button"><spring:message code="comu.boto.netejar"/></button>
 		<button type="submit" class="btn btn-primary"><spring:message code="comu.boto.filtrar"/></button>
 	</form:form>
 
-	<div class="row-fluid">
-		<div class="span12">
-			<a class="btn pull-right" href="<c:url value="/procediment/new"/>"><i class="icon-plus"></i>&nbsp;<spring:message code="procediment.list.boto.nou.procediment"/></a>
+	<div class="row">
+		<div class="col-md-12" >
+			<a class="btn pull-right" href="<c:url value="/procediment/new"/>"><i class="glyphicon-plus"></i>&nbsp;<spring:message code="procediment.list.boto.nou.procediment"/></a>
 		</div>
 		<div class="clearfix"></div>
 	</div>

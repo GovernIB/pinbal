@@ -16,7 +16,7 @@
 		<scsp.beans.version>4.3.0</scsp.beans.version>
 		<scsp.rampart.core.version>1.6.4.1</scsp.rampart.core.version>
 		<axis2.version>1.6.4</axis2.version>
-		<jackson.version>2.6.3</jackson.version>
+		<jackson.version>2.7.0</jackson.version>
 		<poi.version>3.9</poi.version>
 		<axiom.version>1.2.15</axiom.version>
 		<rampart.version>1.6.4</rampart.version>
@@ -30,7 +30,7 @@
 		<maven.compiler.target>1.6</maven.compiler.target>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<build.timestamp>${maven.build.timestamp}</build.timestamp>
-		<version.revision>18.pre1</version.revision>
+		<version.revision>18.pre2</version.revision>
 		<version.full>${project.version}.${version.revision}</version.full>
 	</properties>
 	<packaging>pom</packaging>

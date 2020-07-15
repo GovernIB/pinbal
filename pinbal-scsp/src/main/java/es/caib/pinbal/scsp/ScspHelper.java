@@ -502,6 +502,14 @@ public class ScspHelper {
 		Servicio servicio = getServicioDao().select(codigoServicio);
 		return servicio;
 	}
+	
+	public Servicio getServicioById(Long id) {
+		LOGGER.debug("Consulta de les dades del servei(" +
+					 "id=" + id + ")");
+		Servicio servicio = getServicioDao().select(id);
+		return servicio;
+	}
+	
 	public void deleteServicio(String codigoServicio) {
 		LOGGER.debug("Eliminació del servei(" +
 				"codigoServicio=" + codigoServicio + ")");

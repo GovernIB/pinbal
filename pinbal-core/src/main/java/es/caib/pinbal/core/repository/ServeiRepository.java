@@ -3,6 +3,9 @@
  */
 package es.caib.pinbal.core.repository;
 
+import java.util.Collection;
+import java.util.List;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -43,4 +46,44 @@ public interface ServeiRepository extends JpaRepository<Servei, Long> {
 			@Param("esNullActiva") boolean esNullActiva,
 			@Param("activa") Boolean activa,	
 			Pageable pageable);
+	
+	@Query(	"select" +
+			"    s " +
+			"from" +
+			"    Servei s " +
+			"where " +
+			"    s.codi in (:serveiIds) " +
+			"  and (:esNullCodi = true or lower(s.codi) like concat('%', lower(:codi), '%')) " +
+			"  and (:esNullDescripcio = true or lower(s.descripcio) like concat('%', lower(:descripcio), '%'))" +
+			"  and (:esNullEmisor = true or s.scspEmisor.id = :emisor) " +
+			"  and (:esNullActiva = true or (:activa = true  and "+ 
+			"									(s.scspFechaBaja = null" + 
+			"				                     or current_date() <= s.scspFechaBaja))" + 
+			"							 or (:activa = false  and " + 
+			"									 (s.scspFechaBaja != null" + 
+			"				                      and current_date() > s.scspFechaBaja))" +
+			") "
+			)
+	public Page<Servei> findByFiltre(
+			@Param("serveiIds") List<String> serveiIds,	
+			@Param("esNullCodi") boolean esNullCodi,
+			@Param("codi") String codi,
+			@Param("esNullDescripcio") boolean esNullDescripcio,
+			@Param("descripcio") String descripcio,
+			@Param("esNullEmisor") boolean esNullEmisor,
+			@Param("emisor") Long emisor,
+			@Param("esNullActiva") boolean esNullActiva,
+			@Param("activa") Boolean activa,	
+			Pageable pageable);
+	
+	@Query(	"select" +
+			"    s " +
+			"from" +
+			"    Servei s " +
+			"where " +
+			"    s.codi = ?1 ")
+	public List<Servei> findByCode(
+			String codi
+			);
+	
 }

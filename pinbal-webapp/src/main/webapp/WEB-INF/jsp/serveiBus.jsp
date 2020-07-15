@@ -9,23 +9,23 @@
 			<form:hidden path="servei"/>
 			<c:set var="campPath" value="entitatId"/>
 			<c:set var="campErrors"><form:errors path="${campPath}"/></c:set>
-			<div class="control-group<c:if test="${not empty campErrors}"> error</c:if>">
+			<div class="form-group<c:if test="${not empty campErrors}"> error</c:if>">
 		 		<label class="control-label" for="modal-input-defecte"><spring:message code="servei.bus.form.camp.entitat"/></label>
 				<div class="controls">
-					<form:select path="${campPath}" cssClass="span12" id="${campPath}">
+					<form:select path="${campPath}" cssClass="form-group" id="${campPath}">
 						<option value=""><spring:message code="comu.opcio.sense.definir"/></option>
 						<form:options items="${entitats}" itemLabel="nom" itemValue="id"/>
 					</form:select>
-					<form:errors path="${campPath}" cssClass="help-inline"/>
+					<form:errors path="${campPath}" cssClass="help-block"/>
 				</div>
 			</div>
 			<c:set var="campPath" value="urlDesti"/>
 			<c:set var="campErrors"><form:errors path="${campPath}"/></c:set>
-			<div class="control-group<c:if test="${not empty campErrors}"> error</c:if>">
+			<div class="form-group<c:if test="${not empty campErrors}"> error</c:if>">
 		 		<label class="control-label" for="modal-input-etiqueta"><spring:message code="servei.bus.form.camp.url"/></label>
 				<div class="controls">
-					<form:input path="${campPath}" cssClass="span12" id="${campPath}"/>
-					<form:errors path="${campPath}" cssClass="help-inline"/>
+					<form:input path="${campPath}" cssClass="form-group" id="${campPath}"/>
+					<form:errors path="${campPath}" cssClass="help-block"/>
 				</div>
 			</div>
 		</form:form>

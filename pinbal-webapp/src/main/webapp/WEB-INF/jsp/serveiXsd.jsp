@@ -68,19 +68,19 @@ $(document).ready(function() {
 		<form:form id="xsd-form" method="post" action="/servei/${serveiCodi}/xsd/save" commandName="serveiXsdCommand" role="form" enctype="multipart/form-data">	
 			<c:set var="campPath" value="fitxerXsd"/>
 			<form:input path="codi" type="hidden" value="${serveiCodi}"/>
-			<div class="control-group">
+			<div class="form-group">
 				<div class="controls input-append" style="margin-left:20px;width:99%;">
-					<div class="control-group" id="tipusControl">
+					<div class="form-group" id="tipusControl">
 						<pbl:inputSelectGestioXsd name="tipus" inline="true" textKey="servei.xsd.camp.tipus" labelSize="8" required="true" optionItems="${xsdTipusEnumOptions}" optionValueAttribute="value" optionTextKeyAttribute="text"/>
 						<div class="controls">
 							<label id="tipusLabel" style="color: #b94a48;"></label>
 						</div>
 					</div>
-					<div class="control-group" id="nomArxiuControl" style="display: inline;">
+					<div class="form-group" id="nomArxiuControl" style="display: inline;">
 						<label class="control-label" style="margin-top: 10px;" for="nomArxiu"><spring:message code="servei.form.camp.fitxer.xsd"/></label>
 						<input type="text" name="nomArxiu" id="nomArxiu" class="form-control xsd_file" style="width:73%;"/>
 						<span id="xsd_file" class="btn btn-default btn-file xsd_file"><i class='icon-file'></i></span>
-						<span id="xsd_clean" class="btn btn-default btn-file-clean" style="border-radius: 0px 4px 4px 0px;"><i class='icon-trash'></i></span>
+						<span id="xsd_clean" class="btn btn-default btn-file-clean" style="border-radius: 0px 4px 4px 0px;"><i class='glyphicon-trash'></i></span>
 						<input type="file" name="contingut" id="contingut" class="hide" />
 						<div class="controls">
 							<label id="nomArxiuLabel" style="color: #b94a48; display: none;"></label>

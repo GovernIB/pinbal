@@ -23,6 +23,7 @@ import es.caib.pinbal.core.dto.EntitatDto;
 import es.caib.pinbal.core.dto.FitxerDto;
 import es.caib.pinbal.core.dto.PaginaLlistatDto;
 import es.caib.pinbal.core.dto.PaginacioAmbOrdreDto;
+import es.caib.pinbal.core.dto.ProcedimentDto;
 import es.caib.pinbal.core.dto.ProcedimentServeiDto;
 import es.caib.pinbal.core.dto.ServeiBusDto;
 import es.caib.pinbal.core.dto.ServeiCampDto;
@@ -95,6 +96,19 @@ public class ServeiServiceBean implements ServeiService {
 	public PaginaLlistatDto<ServeiDto> findAmbFiltrePaginat(String codi, String descripcio, String emisor,
 			Boolean activa, PaginacioAmbOrdreDto paginacioAmbOrdre) {
 		return delegate.findAmbFiltrePaginat(codi, descripcio, emisor, activa, paginacioAmbOrdre);
+	}
+	
+	@Override
+	@RolesAllowed("PBL_ADMIN")
+	public PaginaLlistatDto<ServeiDto> findAmbFiltrePaginat(
+			String codi,
+			String descripcio,
+			String emisor,
+			Boolean activa,
+			EntitatDto entitat,
+			ProcedimentDto procediment,
+			PaginacioAmbOrdreDto paginacioAmbOrdre) {
+		return delegate.findAmbFiltrePaginat(codi, descripcio, emisor, activa, entitat, procediment, paginacioAmbOrdre);
 	}
 	
 	@Override
@@ -295,7 +309,7 @@ public class ServeiServiceBean implements ServeiService {
 	@Override
 	@RolesAllowed({"PBL_ADMIN"})
 	public List<ServeiXsdDto> xsdFindByServei(
-			String codi) throws IOException {
+			String codi) throws IOException, ServeiNotFoundException {
 		return delegate.xsdFindByServei(codi);
 	}
 

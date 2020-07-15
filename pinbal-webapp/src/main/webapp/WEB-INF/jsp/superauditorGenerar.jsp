@@ -18,18 +18,18 @@
 	<form:form action="${formAction}" method="post" cssClass="well form-inline" commandName="auditoriaGenerarCommand">
 		<c:set var="campPath" value="dataInici"/>
 		<spring:message var="placeholderDataInici" code="auditor.generar.filtre.camp.data.inici"/>
-		<form:input path="${campPath}" cssClass="input-medium" id="${campPath}" placeholder="${placeholderDataInici}"/>
+		<form:input path="${campPath}" cssClass="input-sm" id="${campPath}" placeholder="${placeholderDataInici}"/>
 		<script>$("#${campPath}").mask("99/99/9999");</script>
 		<c:set var="campPath" value="dataFi"/>
 		<spring:message var="placeholderDataFi" code="auditor.generar.filtre.camp.data.fi"/>
-		<form:input path="${campPath}" cssClass="input-medium" id="${campPath}" placeholder="${placeholderDataFi}"/>
+		<form:input path="${campPath}" cssClass="input-sm" id="${campPath}" placeholder="${placeholderDataFi}"/>
 		<script>$("#${campPath}").mask("99/99/9999");</script>
 		<c:set var="campPath" value="numEntitats"/>
 		<spring:message var="placeholderNumEntitats" code="auditor.generar.filtre.camp.num.entitats"/>
-		<form:input path="${campPath}" cssClass="input-medium" id="${campPath}" placeholder="${placeholderNumEntitats}"/>
+		<form:input path="${campPath}" cssClass="input-sm" id="${campPath}" placeholder="${placeholderNumEntitats}"/>
 		<c:set var="campPath" value="numConsultes"/>
 		<spring:message var="placeholderNumConsultes" code="auditor.generar.filtre.camp.num.consultes"/>
-		<form:input path="${campPath}" cssClass="input-medium" id="${campPath}" placeholder="${placeholderNumConsultes}"/>
+		<form:input path="${campPath}" cssClass="input-sm" id="${campPath}" placeholder="${placeholderNumConsultes}"/>
 		<button type="submit" class="btn btn-primary"><spring:message code="comu.boto.generar"/></button>
 	</form:form>
 
@@ -77,7 +77,7 @@
 				}
 			</script>
 		</c:forEach>
-		<a href="generarExcel" class="btn"><i class="icon-download-alt"></i>&nbsp;<spring:message code="auditor.list.exportar.excel"/></a>		
+		<a href="generarExcel" class="btn"><i class="glyphicon -download-alt"></i>&nbsp;<spring:message code="auditor.list.exportar.excel"/></a>		
 	</c:if>
 
 </body>

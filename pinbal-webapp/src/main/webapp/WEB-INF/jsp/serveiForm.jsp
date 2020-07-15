@@ -178,36 +178,36 @@ function showModalXsd(element) {
 	<form:form action="${formAction}" method="post" cssClass="form-horizontal" commandName="serveiCommand" enctype="multipart/form-data">
 		<form:hidden path="creacio"/>
 		<fieldset>
-			<div class="row-fluid">
-				<div class="span12">
+			<div class="row">
+				<div class="col-md-12">
 					<c:set var="campPath" value="codi"/>
 					<c:set var="campErrors"><form:errors path="${campPath}"/></c:set>
 					<div class="control-group<c:if test="${not empty campErrors}"> error</c:if>">
 						<label class="control-label" for="${campPath}"><spring:message code="servei.form.camp.codi"/> *</label>
 						<div class="controls">
-							<form:input path="${campPath}" cssClass="span12" id="${campPath}"/>
-							<form:errors path="${campPath}" cssClass="help-inline"/>
+							<form:input path="${campPath}" cssClass="col-md-12" id="${campPath}"/>
+							<form:errors path="${campPath}" cssClass="help-block"/>
 						</div>
 					</div>
 					<c:set var="campPath" value="descripcio"/>
 					<c:set var="campErrors"><form:errors path="${campPath}"/></c:set>
-					<div class="control-group<c:if test="${not empty campErrors}"> error</c:if>">
+					<div class="form-group<c:if test="${not empty campErrors}"> error</c:if>">
 						<label class="control-label" for="${campPath}"><spring:message code="servei.form.camp.descripcio"/> *</label>
 						<div class="controls">
-							<form:textarea rows="8" path="${campPath}" cssClass="span12" id="${campPath}"/>
-							<form:errors path="${campPath}" cssClass="help-inline"/>
+							<form:textarea rows="8" path="${campPath}" cssClass="col-md-12" id="${campPath}"/>
+							<form:errors path="${campPath}" cssClass="help-block"/>
 						</div>
 					</div>
 					<c:set var="campPath" value="scspEmisor"/>
 					<c:set var="campErrors"><form:errors path="${campPath}"/></c:set>
-					<div class="control-group<c:if test="${not empty campErrors}"> error</c:if>">
+					<div class="form-group<c:if test="${not empty campErrors}"> error</c:if>">
 						<label class="control-label" for="${campPath}"><spring:message code="servei.form.camp.scsp.emisor"/> *</label>
 						<div class="controls">
-							<form:select path="${campPath}" cssClass="span12" id="${campPath}">
+							<form:select path="${campPath}" cssClass="col-md-12" id="${campPath}">
 								<option value=""><spring:message code="comu.opcio.sense.definir"/></option>
 								<form:options items="${emisors}" itemLabel="nom" itemValue="cif"/>
 							</form:select>
-							<form:errors path="${campPath}" cssClass="help-inline"/>
+							<form:errors path="${campPath}" cssClass="help-block"/>
 						</div>
 					</div>
 				</div>
@@ -216,33 +216,33 @@ function showModalXsd(element) {
 		<fieldset>
 			<legend><spring:message code="servei.form.legend.param.pinbal"/></legend>
 			<div class="clearfix legend-margin-bottom"></div>
-			<div class="row-fluid">
-				<div class="span6">
+			<div class="row">
+				<div class="col-md-6">
 					<pbl:inputText name="pinbalCustodiaCodi" textKey="servei.form.camp.pinbal.custodia.codi"/>
 				</div>
-				<div class="span6">
+				<div class="col-md-6">
 					<pbl:inputText name="pinbalRoleName" textKey="servei.form.camp.pinbal.role.name"/>
 				</div>
 			</div>
-			<div class="row-fluid">
-				<div class="span6">
+			<div class="row">
+				<div class="col-md-6">
 					<pbl:inputText name="pinbalCondicioBusClass" textKey="servei.form.camp.pinbal.condicio.bus.class"/>
 				</div>
-				<div class="span6">
+				<div class="col-md-6">
 					<pbl:inputSelect name="pinbalEntitatTipus" textKey="servei.form.camp.pinbal.entitat.tipus" optionsModelKey="entitatTipusLlista" emptyOptionTextKey="comu.opcio.sense.definir"/>
 				</div>
 			</div>
-			<div class="row-fluid">
-				<div class="span6">
+			<div class="row">
+				<div class="col-md-6">
 					<pbl:inputSelect name="pinbalJustificantTipus" textKey="servei.form.camp.pinbal.justificant.tipus" optionsModelKey="justificantTipusLlista"/>
 				</div>
-				<div class="span6">
+				<div class="col-md-6">
 					<pbl:inputText name="pinbalJustificantXpath" textKey="servei.form.camp.pinbal.justificant.xpath"/>
 				</div>
 			</div>
-			<div class="row-fluid">
-				<div class="span6">
-					<div class="control-group">
+			<div class="row">
+				<div class="col-md-6">
+					<div class="form-group">
 						<label class="control-label"><spring:message code="servei.form.camp.pinbal.camps.dadesgen"/></label>
 						<div class="controls">
 							<c:set var="campPath" value="pinbalActiuCampNom"/>
@@ -268,8 +268,8 @@ function showModalXsd(element) {
 						</div>
 					</div>
 				</div>
-				<div class="span6">
-					<div class="control-group">
+				<div class="col-md-6">
+					<div class="form-group">
 						<label class="control-label"><spring:message code="servei.form.camp.pinbal.document.tipus"/></label>
 						<div class="controls">
 							<c:set var="campPath" value="pinbalPermesDocumentTipusDni"/>
@@ -296,50 +296,50 @@ function showModalXsd(element) {
 					</div>
 				</div>
 			</div>
-			<div class="row-fluid">
-				<div class="span6">
+			<div class="row">
+				<div class="col-md-6">
 					<c:set var="campPath" value="pinbalDocumentObligatori"/>
 					<c:set var="campErrors"><form:errors path="${campPath}"/></c:set>
-					<div class="control-group<c:if test="${not empty campErrors}"> error</c:if>">
+					<div class="form-group<c:if test="${not empty campErrors}"> error</c:if>">
 						<label class="control-label" for="${campPath}"><spring:message code="servei.form.camp.pinbal.document.obligatori"/></label>
 						<div class="controls">
 							<form:checkbox path="${campPath}" id="${campPath}"/>
-							<form:errors path="${campPath}" cssClass="help-inline"/>
+							<form:errors path="${campPath}" cssClass="help-block"/>
 						</div>
 					</div>
 				</div>
-				<div class="span6">
+				<div class="col-md-6">
 					<c:set var="campPath" value="pinbalComprovarDocument"/>
 					<c:set var="campErrors"><form:errors path="${campPath}"/></c:set>
-					<div class="control-group<c:if test="${not empty campErrors}"> error</c:if>">
+					<div class="form-group<c:if test="${not empty campErrors}"> error</c:if>">
 						<label class="control-label" for="${campPath}"><spring:message code="servei.form.camp.pinbal.comprovar.document"/></label>
 						<div class="controls">
 							<form:checkbox path="${campPath}" id="${campPath}"/>
-							<form:errors path="${campPath}" cssClass="help-inline"/>
+							<form:errors path="${campPath}" cssClass="help-block"/>
 						</div>
 					</div>
 				</div>
 			</div>
-			<div class="row-fluid">
-				<div class="span6">
+			<div class="row>
+				<div class="col-md-6">
 					<pbl:inputText name="pinbalUnitatDir3" textKey="servei.form.camp.pinbal.dir3"/>
 				</div>
-				<div class="span6">
+				<div class="col-md-6">
 				</div>
 			</div>
-			<div class="row-fluid">
+			<div class="row">
 				<c:set var="campPath" value="ajuda"/>
 				<c:set var="campErrors"><form:errors path="${campPath}"/></c:set>
-				<div class="control-group<c:if test="${not empty campErrors}"> error</c:if>">
+				<div class="form-group<c:if test="${not empty campErrors}"> error</c:if>">
 					<label class="control-label" for="${campPath}"><spring:message code="servei.form.camp.ajuda"/></label>
 					<div class="controls">
-						<form:textarea rows="8" path="${campPath}" cssClass="span12" id="${campPath}"/>
-						<form:errors path="${campPath}" cssClass="help-inline"/>
+						<form:textarea rows="8" path="${campPath}" cssClass="col-md-12" id="${campPath}"/>
+						<form:errors path="${campPath}" cssClass="help-block"/>
 					</div>
 				</div>
 			</div>
-			<div class="row-fluid">
-				<div class="span12">
+			<div class="row">
+				<div class="col-md-12">
 					<c:set var="campPath" value="fitxerAjuda"/>
 					<c:set var="campErrors"><form:errors path="${campPath}"/></c:set>
 					<div class="control-group<c:if test="${not empty campErrors}"> error</c:if>">
@@ -350,7 +350,7 @@ function showModalXsd(element) {
 							<span id="ajuda_file" class="btn btn-default btn-file ajuda_file"><i class='icon-file'></i></span>
 						</div>
 						<form:input type="file" path="${campPath}" cssClass="hide" id="${campPath}" title="" />
-						<form:errors path="${campPath}" cssClass="help-inline"/>
+						<form:errors path="${campPath}" cssClass="help-block"/>
 					</div>
 				</div>
 			</div>
@@ -425,14 +425,14 @@ function showModalXsd(element) {
 			<fieldset>
 				<legend><spring:message code="servei.form.legend.config.bus"/></legend>
 				<div class="clearfix legend-margin-bottom"></div>
-				<div class="row-fluid">
-					<div class="span11 offset1">
+				<div class="row">
+					<div class="col-md-11 offset1">
 						<a class="btn pull-right" href="<c:url value="/modal/servei/${serveiCommand.codi}/redir/new"/>" onclick="showModalRedir(this);return false"><i class="icon-plus"></i>&nbsp;<spring:message code="servei.form.boto.nova.redireccio"/></a>
 					</div>
 				</div>
 				<c:if test="${not empty serveisBus}">
-					<div class="row-fluid">
-						<div class="span11 offset1">
+					<div class="row">
+						<div class="col-md-11 offset1">
 							<br/>
 							<jmesa:tableModel
 									id="serveisBus"
@@ -461,18 +461,18 @@ function showModalXsd(element) {
 		<fieldset>
 			<legend><spring:message code="servei.form.legend.validesa.servei"/></legend>
 			<div class="clearfix legend-margin-bottom"></div>
-			<div class="row-fluid">
-				<div class="span6">
+			<div class="row">
+				<div class="col-md-6">
 					<pbl:inputText name="scspFechaAlta" textKey="servei.form.camp.scsp.fecha.alta"/>
 					<script>$("#scspFechaAlta").mask("99/99/9999");</script>
 				</div>
-				<div class="span6">
+				<div class="col-md-6">
 					<pbl:inputText name="scspFechaBaja" textKey="servei.form.camp.scsp.fecha.baja"/>
 					<script>$("#scspFechaBaja").mask("99/99/9999");</script>
 				</div>
 			</div>
-			<div class="row-fluid">
-				<div class="span6">
+			<div class="row">
+				<div class="col-md-6">
 					<pbl:inputText name="scspCaducidad" textKey="servei.form.camp.scsp.caducidad"/>
 				</div>
 			</div>
@@ -480,104 +480,104 @@ function showModalXsd(element) {
 		<fieldset>
 			<legend><spring:message code="servei.form.legend.ubicacio.servei"/></legend>
 			<div class="clearfix legend-margin-bottom"></div>
-			<div class="row-fluid">
-				<div class="span12">
+			<div class="row">
+				<div class="col-md-12">
 					<c:set var="campPath" value="scspUrlSincrona"/>
 					<c:set var="campErrors"><form:errors path="${campPath}"/></c:set>
-					<div class="control-group<c:if test="${not empty campErrors}"> error</c:if>">
+					<div class="form-group<c:if test="${not empty campErrors}"> error</c:if>">
 						<label class="control-label" for="${campPath}"><spring:message code="servei.form.camp.scsp.url.sincrona"/></label>
 						<div class="controls">
-							<form:input path="${campPath}" cssClass="span12" id="${campPath}" cssStyle="width:100%"/>
-							<form:errors path="${campPath}" cssClass="help-inline"/>
+							<form:input path="${campPath}" cssClass="col-md-12" id="${campPath}" cssStyle="width:100%"/>
+							<form:errors path="${campPath}" cssClass="help-block"/>
 						</div>
 					</div>
 				</div>
 			</div>
-			<div class="row-fluid">
-				<div class="span12">
+			<div class="row">
+				<div class="col-md-12">
 					<c:set var="campPath" value="scspUrlAsincrona"/>
 					<c:set var="campErrors"><form:errors path="${campPath}"/></c:set>
-					<div class="control-group<c:if test="${not empty campErrors}"> error</c:if>">
+					<div class="form-group<c:if test="${not empty campErrors}"> error</c:if>">
 						<label class="control-label" for="${campPath}"><spring:message code="servei.form.camp.scsp.url.asincrona"/></label>
 						<div class="controls">
-							<form:input path="${campPath}" cssClass="span12" id="${campPath}" cssStyle="width:100%"/>
-							<form:errors path="${campPath}" cssClass="help-inline"/>
+							<form:input path="${campPath}" cssClass="col-md-12" id="${campPath}" cssStyle="width:100%"/>
+							<form:errors path="${campPath}" cssClass="help-block"/>
 						</div>
 					</div>
 				</div>
 			</div>
-			<div class="row-fluid">
-				<div class="span6">
+			<div class="row">
+				<div class="col-md-6">
 					<c:set var="campPath" value="scspActionSincrona"/>
 					<c:set var="campErrors"><form:errors path="${campPath}"/></c:set>
-					<div class="control-group<c:if test="${not empty campErrors}"> error</c:if>">
+					<div class="form-group<c:if test="${not empty campErrors}"> error</c:if>">
 						<label class="control-label" for="${campPath}"><spring:message code="servei.form.camp.scsp.action.sincrona"/></label>
 						<div class="controls">
-							<form:input path="${campPath}" cssClass="span12" id="${campPath}"/>
-							<form:errors path="${campPath}" cssClass="help-inline"/>
+							<form:input path="${campPath}" cssClass="col-md-12" id="${campPath}"/>
+							<form:errors path="${campPath}" cssClass="help-block"/>
 						</div>
 					</div>
 				</div>
-				<div class="span6">
+				<div class="col-md-6">
 					<c:set var="campPath" value="scspActionAsincrona"/>
 					<c:set var="campErrors"><form:errors path="${campPath}"/></c:set>
-					<div class="control-group<c:if test="${not empty campErrors}"> error</c:if>">
+					<div class="form-group<c:if test="${not empty campErrors}"> error</c:if>">
 						<label class="control-label" for="${campPath}"><spring:message code="servei.form.camp.scsp.action.asincrona"/></label>
 						<div class="controls">
-							<form:input path="${campPath}" cssClass="span12" id="${campPath}"/>
-							<form:errors path="${campPath}" cssClass="help-inline"/>
+							<form:input path="${campPath}" cssClass="col-md-12" id="${campPath}"/>
+							<form:errors path="${campPath}" cssClass="help-block"/>
 						</div>
 					</div>
 				</div>
 			</div>
-			<div class="row-fluid">
-				<div class="span6">
+			<div class="row">
+				<div class="col-md-6">
 					<c:set var="campPath" value="scspActionSolicitud"/>
 					<c:set var="campErrors"><form:errors path="${campPath}"/></c:set>
 					<div class="control-group<c:if test="${not empty campErrors}"> error</c:if>">
 						<label class="control-label" for="${campPath}"><spring:message code="servei.form.camp.scsp.action.solicitud"/></label>
 						<div class="controls">
-							<form:input path="${campPath}" cssClass="span12" id="${campPath}"/>
-							<form:errors path="${campPath}" cssClass="help-inline"/>
+							<form:input path="${campPath}" cssClass="col-md-12" id="${campPath}"/>
+							<form:errors path="${campPath}" cssClass="help-block"/>
 						</div>
 					</div>
 				</div>
 				
 				
-				<div class="span6">
+				<div class="col-md-6">
 					<c:set var="campPath" value="activaGestioXsd"/>
 					<c:set var="campErrors"><form:errors path="${campPath}"/></c:set>
 					<div class="control-group<c:if test="${not empty campErrors}"> error</c:if>">
 						<label class="control-label" for="${campPath}"><spring:message code="servei.form.camp.scsp.activa.gestio.xsd"/></label>
 						<div class="controls">
 							<form:checkbox path="${campPath}" id="${campPath}"/>
-							<form:errors path="${campPath}" cssClass="help-inline"/>
+							<form:errors path="${campPath}" cssClass="help-block"/>
 						</div>
 					</div>
 				</div>
 				
 				
 			</div>
-			<div class="row-fluid">
-				<div class="span6">
+			<div class="row">
+				<div class="col-md-6">
 					<c:set var="campPath" value="scspVersionEsquema"/>
 					<c:set var="campErrors"><form:errors path="${campPath}"/></c:set>
 					<div class="control-group<c:if test="${not empty campErrors}"> error</c:if>">
 						<label class="control-label" for="${campPath}"><spring:message code="servei.form.camp.scsp.version.esquema"/> *</label>
 						<div class="controls">
-							<form:input path="${campPath}" cssClass="span12" id="${campPath}"/>
-							<form:errors path="${campPath}" cssClass="help-inline"/>
+							<form:input path="${campPath}" cssClass="col-md-12" id="${campPath}"/>
+							<form:errors path="${campPath}" cssClass="help-block"/>
 						</div>
 					</div>
 				</div>
-				<div class="span6">
+				<div class="col-md-6">
 					<c:set var="campPath" value="scspEsquemas"/>
 					<c:set var="campErrors"><form:errors path="${campPath}"/></c:set>
 					<div class="control-group<c:if test="${not empty campErrors}"> error</c:if>">
 						<label class="control-label" for="${campPath}"><spring:message code="servei.form.camp.scsp.esquemas"/></label>
 						<div class="controls">
-							<form:input path="${campPath}" cssClass="span12" id="${campPath}" disabled="${ activaGestioXsd ? 'true' : ''}"/>
-							<form:errors path="${campPath}" cssClass="help-inline"/>
+							<form:input path="${campPath}" cssClass="col-md-12" id="${campPath}" disabled="${ activaGestioXsd ? 'true' : ''}"/>
+							<form:errors path="${campPath}" cssClass="help-block"/>
 						</div>
 					</div>
 				</div>
@@ -589,14 +589,14 @@ function showModalXsd(element) {
 				<legend><spring:message code="servei.form.legend.gestio.xsd"/></legend>
 				<div class="clearfix legend-margin-bottom"></div>
 					<fieldset>
-						<div class="row-fluid">
+						<div class="row">
 							<div class="span11 offset1">
 								<a class="btn pull-right" href="<c:url value="/modal/servei/${serveiCommand.codi}/xsd/new"/>" onclick="showModalXsd(this);return false"><i class="icon-plus"></i>&nbsp;<spring:message code="servei.list.boto.nou.arxiuXsd"/></a>
 							</div>
 						</div>
 					</fieldset>
 				<c:if test="${not empty serveiCommand.fitxersXsd}">
-					<div class="row-fluid">
+					<div class="row">
 						<div class="clearfix"></div>
 					</div>
 					<jmesa:tableModel
@@ -631,97 +631,97 @@ function showModalXsd(element) {
 		<fieldset>
 			<legend><spring:message code="servei.form.legend.xifrat.seguretat"/></legend>
 			<div class="clearfix legend-margin-bottom"></div>
-			<div class="row-fluid">
-				<div class="span6">
+			<div class="row">
+				<div class="col-md-6">
 					<c:set var="campPath" value="scspTipoSeguridad"/>
 					<c:set var="campErrors"><form:errors path="${campPath}"/></c:set>
 					<div class="control-group<c:if test="${not empty campErrors}"> error</c:if>">
 						<label class="control-label" for="${campPath}"><spring:message code="servei.form.camp.scsp.tipo.seguridad"/> *</label>
 						<div class="controls">
-							<form:select path="${campPath}" cssClass="span12" id="${campPath}">
+							<form:select path="${campPath}" cssClass="col-md-12" id="${campPath}">
 								<option value=""><spring:message code="comu.opcio.sense.definir"/></option>
 								<form:option value="XMLSignature"/>
 								<form:option value="WS-Security"/>
 							</form:select>
-							<form:errors path="${campPath}" cssClass="help-inline"/>
+							<form:errors path="${campPath}" cssClass="help-block"/>
 						</div>
 					</div>
 				</div>
 			</div>
-			<div class="row-fluid">
-				<div class="span6">
+			<div class="row">
+				<div class="col-md-6">
 					<c:set var="campPath" value="scspAlgoritmoCifrado"/>
 					<c:set var="campErrors"><form:errors path="${campPath}"/></c:set>
 					<div class="control-group<c:if test="${not empty campErrors}"> error</c:if>">
 						<label class="control-label" for="${campPath}"><spring:message code="servei.form.camp.scsp.algoritmo.cifrado"/></label>
 						<div class="controls">
-							<form:input path="${campPath}" cssClass="span12" id="${campPath}"/>
-							<form:errors path="${campPath}" cssClass="help-inline"/>
+							<form:input path="${campPath}" cssClass="col-md-12" id="${campPath}"/>
+							<form:errors path="${campPath}" cssClass="help-block"/>
 						</div>
 					</div>
 				</div>
-				<div class="span6">
+				<div class="col-md-6">
 					<c:set var="campPath" value="scspValidacionFirma"/>
 					<c:set var="campErrors"><form:errors path="${campPath}"/></c:set>
 					<div class="control-group<c:if test="${not empty campErrors}"> error</c:if>">
 						<label class="control-label" for="${campPath}"><spring:message code="servei.form.camp.scsp.validacion.firma"/></label>
 						<div class="controls">
-							<form:input path="${campPath}" cssClass="span12" id="${campPath}"/>
-							<form:errors path="${campPath}" cssClass="help-inline"/>
+							<form:input path="${campPath}" cssClass="col-md-12" id="${campPath}"/>
+							<form:errors path="${campPath}" cssClass="help-block"/>
 						</div>
 					</div>
 				</div>
 			</div>
-			<div class="row-fluid">
-				<div class="span6">
+			<div class="row">
+				<div class="col-md-6">
 					<c:set var="campPath" value="scspClaveFirma"/>
 					<c:set var="campErrors"><form:errors path="${campPath}"/></c:set>
 					<div class="control-group<c:if test="${not empty campErrors}"> error</c:if>">
 						<label class="control-label" for="${campPath}"><spring:message code="servei.form.camp.scsp.clave.firma"/> *</label>
 						<div class="controls">
-							<form:select path="${campPath}" cssClass="span12" id="${campPath}">
+							<form:select path="${campPath}" cssClass="col-md-12" id="${campPath}">
 								<option value=""><spring:message code="comu.opcio.sense.definir"/></option>
 								<form:options items="${clausPrivades}" itemLabel="nom" itemValue="alies"/>
 							</form:select>
-							<form:errors path="${campPath}" cssClass="help-inline"/>
+							<form:errors path="${campPath}" cssClass="help-block"/>
 						</div>
 					</div>
 				</div>
-				<div class="span6">
+				<div class="col-md-6">
 					<c:set var="campPath" value="scspClaveCifrado"/>
 					<c:set var="campErrors"><form:errors path="${campPath}"/></c:set>
 					<div class="control-group<c:if test="${not empty campErrors}"> error</c:if>">
 						<label class="control-label" for="${campPath}"><spring:message code="servei.form.camp.scsp.clave.cifrado"/></label>
 						<div class="controls">
-							<form:select path="${campPath}" cssClass="span12" id="${campPath}">
+							<form:select path="${campPath}" cssClass="col-md-12" id="${campPath}">
 								<option value=""><spring:message code="comu.opcio.sense.definir"/></option>
 								<form:options items="${clausPubliques}" itemLabel="nom" itemValue="alies"/>
 							</form:select>
-							<form:errors path="${campPath}" cssClass="help-inline"/>
+							<form:errors path="${campPath}" cssClass="help-block"/>
 						</div>
 					</div>
 				</div>
 			</div>
-			<div class="row-fluid">
-				<div class="span6">
+			<div class="row">
+				<div class="col-md-6">
 					<c:set var="campPath" value="scspXpathCifradoSincrono"/>
 					<c:set var="campErrors"><form:errors path="${campPath}"/></c:set>
 					<div class="control-group<c:if test="${not empty campErrors}"> error</c:if>">
 						<label class="control-label" for="${campPath}"><spring:message code="servei.form.camp.scsp.xpath.cifrado.sincrono"/></label>
 						<div class="controls">
-							<form:input path="${campPath}" cssClass="span12" id="${campPath}"/>
-							<form:errors path="${campPath}" cssClass="help-inline"/>
+							<form:input path="${campPath}" cssClass="col-md-12" id="${campPath}"/>
+							<form:errors path="${campPath}" cssClass="help-block"/>
 						</div>
 					</div>
 				</div>
-				<div class="span6">
+				<div class="col-md-6">
 					<c:set var="campPath" value="scspXpathCifradoAsincrono"/>
 					<c:set var="campErrors"><form:errors path="${campPath}"/></c:set>
 					<div class="control-group<c:if test="${not empty campErrors}"> error</c:if>">
 						<label class="control-label" for="${campPath}"><spring:message code="servei.form.camp.scsp.xpath.cifrado.asincrono"/></label>
 						<div class="controls">
-							<form:input path="${campPath}" cssClass="span12" id="${campPath}"/>
-							<form:errors path="${campPath}" cssClass="help-inline"/>
+							<form:input path="${campPath}" cssClass="col-md-12" id="${campPath}"/>
+							<form:errors path="${campPath}" cssClass="help-block"/>
 						</div>
 					</div>
 				</div>
@@ -730,87 +730,87 @@ function showModalXsd(element) {
 		<fieldset>
 			<legend><spring:message code="servei.form.legend.config.enviaments"/></legend>
 			<div class="clearfix legend-margin-bottom"></div>
-			<div class="row-fluid">
-				<div class="span6">
+			<div class="row">
+				<div class="col-md-6">
 					<c:set var="campPath" value="scspPrefijoPeticion"/>
 					<c:set var="campErrors"><form:errors path="${campPath}"/></c:set>
 					<div class="control-group<c:if test="${not empty campErrors}"> error</c:if>">
 						<label class="control-label" for="${campPath}"><spring:message code="servei.form.camp.scsp.prefijo.peticion"/></label>
 						<div class="controls">
-							<form:input path="${campPath}" cssClass="span12" id="${campPath}"/>
-							<form:errors path="${campPath}" cssClass="help-inline"/>
+							<form:input path="${campPath}" cssClass="col-md-12" id="${campPath}"/>
+							<form:errors path="${campPath}" cssClass="help-block"/>
 						</div>
 					</div>
 				</div>
-				<div class="span6">
+				<div class="col-md-6">
 					<c:set var="campPath" value="scspPrefijoIdTransmision"/>
 					<c:set var="campErrors"><form:errors path="${campPath}"/></c:set>
 					<div class="control-group<c:if test="${not empty campErrors}"> error</c:if>">
 						<label class="control-label" for="${campPath}"><spring:message code="servei.form.camp.scsp.prefijo.id.transmision"/></label>
 						<div class="controls">
-							<form:input path="${campPath}" cssClass="span12" id="${campPath}"/>
-							<form:errors path="${campPath}" cssClass="help-inline"/>
+							<form:input path="${campPath}" cssClass="col-md-12" id="${campPath}"/>
+							<form:errors path="${campPath}" cssClass="help-block"/>
 						</div>
 					</div>
 				</div>
 			</div>
-			<div class="row-fluid">
-				<div class="span6">
+			<div class="row">
+				<div class="col-md-6">
 					<c:set var="campPath" value="scspNumeroMaximoReenvios"/>
 					<c:set var="campErrors"><form:errors path="${campPath}"/></c:set>
 					<div class="control-group<c:if test="${not empty campErrors}"> error</c:if>">
 						<label class="control-label" for="${campPath}"><spring:message code="servei.form.camp.scsp.num.max.reenvios"/></label>
 						<div class="controls">
-							<form:input path="${campPath}" cssClass="span12" id="${campPath}"/>
-							<form:errors path="${campPath}" cssClass="help-inline"/>
+							<form:input path="${campPath}" cssClass="col-md-12" id="${campPath}"/>
+							<form:errors path="${campPath}" cssClass="help-block"/>
 						</div>
 					</div>
 				</div>
-				<div class="span6">
+				<div class="col-md-6">
 					<c:set var="campPath" value="scspMaxSolicitudesPeticion"/>
 					<c:set var="campErrors"><form:errors path="${campPath}"/></c:set>
 					<div class="control-group<c:if test="${not empty campErrors}"> error</c:if>">
 						<label class="control-label" for="${campPath}"><spring:message code="servei.form.camp.scsp.max.solicitudes.peticion"/></label>
 						<div class="controls">
-							<form:input path="${campPath}" cssClass="span12" id="${campPath}"/>
-							<form:errors path="${campPath}" cssClass="help-inline"/>
+							<form:input path="${campPath}" cssClass="col-md-12" id="${campPath}"/>
+							<form:errors path="${campPath}" cssClass="help-block"/>
 						</div>
 					</div>
 				</div>
 			</div>
-			<div class="row-fluid">
-				<div class="span6">
+			<div class="row">
+				<div class="col-md-6">
 					<c:set var="campPath" value="scspXpathCodigoError"/>
 					<c:set var="campErrors"><form:errors path="${campPath}"/></c:set>
-					<div class="control-group<c:if test="${not empty campErrors}"> error</c:if>">
+					<div class="form-group<c:if test="${not empty campErrors}"> error</c:if>">
 						<label class="control-label" for="${campPath}"><spring:message code="servei.form.camp.scsp.xpath.codigo.error"/></label>
 						<div class="controls">
-							<form:input path="${campPath}" cssClass="span12" id="${campPath}"/>
-							<form:errors path="${campPath}" cssClass="help-inline"/>
+							<form:input path="${campPath}" cssClass="col-md-12" id="${campPath}"/>
+							<form:errors path="${campPath}" cssClass="help-block"/>
 						</div>
 					</div>
 				</div>
-				<div class="span6">
+				<div class="col-md-6">
 					<c:set var="campPath" value="scspXpathLiteralError"/>
 					<c:set var="campErrors"><form:errors path="${campPath}"/></c:set>
 					<div class="control-group<c:if test="${not empty campErrors}"> error</c:if>">
 						<label class="control-label" for="${campPath}"><spring:message code="servei.form.camp.scsp.xpath.literal.error"/></label>
 						<div class="controls">
-							<form:input path="${campPath}" cssClass="span12" id="${campPath}"/>
-							<form:errors path="${campPath}" cssClass="help-inline"/>
+							<form:input path="${campPath}" cssClass="col-md-12" id="${campPath}"/>
+							<form:errors path="${campPath}" cssClass="help-block"/>
 						</div>
 					</div>
 				</div>
 			</div>
-			<div class="row-fluid">
-				<div class="span6">
+			<div class="row">
+				<div class="col-md-6">
 					<c:set var="campPath" value="scspTimeout"/>
 					<c:set var="campErrors"><form:errors path="${campPath}"/></c:set>
-					<div class="control-group<c:if test="${not empty campErrors}"> error</c:if>">
+					<div class="form-group<c:if test="${not empty campErrors}"> error</c:if>">
 						<label class="control-label" for="${campPath}"><spring:message code="servei.form.camp.scsp.timeout"/></label>
 						<div class="controls">
-							<form:input path="${campPath}" cssClass="span12" id="${campPath}"/>
-							<form:errors path="${campPath}" cssClass="help-inline"/>
+							<form:input path="${campPath}" cssClass="col-md-12" id="${campPath}"/>
+							<form:errors path="${campPath}" cssClass="help-block"/>
 						</div>
 					</div>
 				</div>

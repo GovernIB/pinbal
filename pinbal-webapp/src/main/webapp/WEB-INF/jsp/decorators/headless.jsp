@@ -12,11 +12,17 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 	<meta name="description" content=""/>
 	<meta name="author" content=""/>
-
+	
+	<link href="<c:url value="/webjars/bootstrap/3.3.6/dist/css/bootstrap.min.css"/>" rel="stylesheet"/>
 	<link href="<c:url value="/css/bootstrap.min.css"/>" rel="stylesheet">
     <link href="<c:url value="/css/bootstrap-responsive.css"/>" rel="stylesheet">
     <link href="<c:url value="/css/default.css"/>" rel="stylesheet">
+    <link href="<c:url value="/webjars/font-awesome/4.7.0/css/font-awesome.min.css"/>" rel="stylesheet"/>
+	<link href="<c:url value="/css/estils.css"/>" rel="stylesheet">
+	<link rel="shortcut icon" href="<c:url value="/img/favicon.png"/>" type="image/x-icon" />
 	<link href="<c:url value="/css/orange-header.css"/>" rel="stylesheet">
+	
+	
 	<!-- Llibreria per a compatibilitat amb HTML5 -->
 	<!--[if lt IE 9]>
       <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
