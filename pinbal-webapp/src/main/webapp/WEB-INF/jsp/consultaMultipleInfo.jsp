@@ -33,13 +33,13 @@ function initModalXml(element) {
 		<h3>
 			<spring:message code="consulta.info.consulta.dades"/>
 			<a href="#dadesPeticio" data-toggle="collapse" data-target="#dadesPeticio">
-				<i id="dadesPeticioIcon" class="pull-right icon-chevron-down"></i>
+				<i id="dadesPeticioIcon" class="pull-right glyphicon-chevron-down"></i>
 			</a>
 		</h3>
 		<div id="dadesPeticio" class="collapse">
 			<c:if test="${consulta.hiHaPeticio}">
 				<c:set var="initModalXml">initModalXml(this);return false</c:set>
-				<a class="btn pull-right" href="<c:url value="/modal/consulta/${consulta.id}/xmlPeticio"/>" onclick="${initModalXml}"><i class="icon-info-sign"></i> <spring:message code="consulta.info.veure.xml"/></a>
+				<a class="btn pull-right" href="<c:url value="/modal/consulta/${consulta.id}/xmlPeticio"/>" onclick="${initModalXml}"><i class="glyphicon-info-sign"></i> <spring:message code="consulta.info.veure.xml"/></a>
 			</c:if>
 			<p>
 				<spring:message code="consulta.info.consulta.enviada.dia"/>
@@ -49,40 +49,40 @@ function initModalXml(element) {
 			</p>
 			<form class="form-horizontal" style="margin:0">
 				<br/>
-				<div class="row-fluid">
-					<div class="span6">
-						<div class="control-group">
+				<div class="row">
+					<div class="col-md-6">
+						<div class="form-group">
 							<label class="control-label" for=""><spring:message code="consulta.form.camp.numpet"/></label>
 							<div class="controls">
-								<input type="text" value="${consulta.scspPeticionId}" class="span12" style="width:100%" id="" disabled="disabled"/>
+								<input type="text" value="${consulta.scspPeticionId}" class="col-md-12" style="width:100%" id="" disabled="disabled"/>
 							</div>
 						</div>
 					</div>
-					<div class="span6">
-						<div class="control-group">
+					<div class="col-md-6">
+						<div class="form-group">
 							<label class="control-label" for=""><spring:message code="consulta.form.camp.numsol"/></label>
 							<div class="controls">
-								<input type="text" value="${consulta.scspSolicitudId}" class="span12" style="width:100%" id="" disabled="disabled"/>
+								<input type="text" value="${consulta.scspSolicitudId}" class="col-md-12" style="width:100%" id="" disabled="disabled"/>
 							</div>
 						</div>
 					</div>
 				</div>
-				<div class="row-fluid">
-					<div class="span12">
-						<div class="control-group">
+				<div class="row">
+					<div class="col-md-12">
+						<div class="form-group">
 							<label class="control-label" for=""><spring:message code="consulta.form.camp.procediment"/></label>
 							<div class="controls">
-								<input type="text" value="${consulta.procedimentNom}" class="span12" style="width:100%" id="" disabled="disabled"/>
+								<input type="text" value="${consulta.procedimentNom}" class="col-md-12" style="width:100%" id="" disabled="disabled"/>
 							</div>
 						</div>
 					</div>
 				</div>
-				<div class="row-fluid">
-					<div class="span12">
-						<div class="control-group">
+				<div class="row">
+					<div class="col-md-12">
+						<div class="form-group">
 							<label class="control-label" for=""><spring:message code="consulta.form.camp.servei"/></label>
 							<div class="controls">
-								<input type="text" value="${servei.descripcio}" class="span12" style="width:100%" id="" disabled="disabled"/>
+								<input type="text" value="${servei.descripcio}" class="col-md-12" style="width:100%" id="" disabled="disabled"/>
 							</div>
 						</div>
 					</div>
@@ -90,66 +90,66 @@ function initModalXml(element) {
 				<fieldset>
 					<legend><spring:message code="consulta.form.dades.generiques"/></legend>
 					<br/>
-					<div class="row-fluid">
-						<div class="span6">
-							<div class="control-group">
+					<div class="row">
+						<div class="col-md-6">
+							<div class="form-group">
 								<label class="control-label" for=""><spring:message code="consulta.form.camp.funcionari.nom"/></label>
 								<div class="controls">
-									<input type="text" value="${consulta.funcionariNom}" class="span12" id="" disabled="disabled"/>
+									<input type="text" value="${consulta.funcionariNom}" class="col-md-12" id="" disabled="disabled"/>
 								</div>
 							</div>
 						</div>
-						<div class="span6">
-							<div class="control-group">
+						<div class="col-md-6">
+							<div class="form-group">
 								<label class="control-label" for=""><spring:message code="consulta.form.camp.funcionari.nif"/></label>
 								<div class="controls">
-									<input type="text" value="${consulta.funcionariNif}" class="span12" id="" disabled="disabled"/>
+									<input type="text" value="${consulta.funcionariNif}" class="col-md-12" id="" disabled="disabled"/>
 								</div>
 							</div>
 						</div>
 					</div>
-					<div class="row-fluid">
-						<div class="span6">
-							<div class="control-group">
+					<div class="row">
+						<div class="col-md-6">
+							<div class="form-group">
 								<label class="control-label" for=""><spring:message code="consulta.form.camp.entitat.nom"/></label>
 								<div class="controls">
-									<input type="text" value="${consulta.entitatNom}" class="span12" id="" disabled="disabled"/>
+									<input type="text" value="${consulta.entitatNom}" class="col-md-12" id="" disabled="disabled"/>
 								</div>
 							</div>
 						</div>
-						<div class="span6">
-							<div class="control-group">
+						<div class="col-md-6">
+							<div class="form-group">
 								<label class="control-label" for=""><spring:message code="consulta.form.camp.entitat.cif"/></label>
 								<div class="controls">
-									<input type="text" value="${consulta.entitatCif}" class="span12" id="" disabled="disabled"/>
+									<input type="text" value="${consulta.entitatCif}" class="col-md-12" id="" disabled="disabled"/>
 								</div>
 							</div>
 						</div>
 					</div>
-					<div class="row-fluid">
-						<div class="span6">
-							<div class="control-group">
+					<div class="row">
+						<div class="col-md-6">
+							<div class="form-group">
 								<label class="control-label" for=""><spring:message code="consulta.form.camp.consentiment"/></label>
 								<div class="controls">
-									<input type="text" value="${consulta.consentiment}" class="span12" id="" disabled="disabled"/>
+									<input type="text" value="${consulta.consentiment}" class="col-md-12" id="" disabled="disabled"/>
 								</div>
 							</div>
 						</div>
-						<div class="span6">
-							<div class="control-group">
+						<div class="col-md-6">
+							<div class="form-group">
 								<label class="control-label" for=""><spring:message code="consulta.form.camp.departament"/></label>
 								<div class="controls">
-									<input type="text" value="${consulta.departamentNom}" class="span12" id="" disabled="disabled"/>
+									<input type="text" value="${consulta.departamentNom}" class="col-md-12" id="" disabled="disabled"/>
 								</div>
 							</div>
 						</div>
 					</div>
-					<div class="row-fluid">
-						<div class="span12">
-							<div class="control-group">
+					<div class="row">
+						<div class="col-md-12">
+							<div class="form-group">
 								<label class="control-label" for=""><spring:message code="consulta.form.camp.finalitat"/></label>
 								<div class="controls">
-									<textarea rows="8" class="span12" id="" disabled="disabled">${consulta.finalitat}</textarea>
+									<textarea rows="8" class="col-md-12" id="" disabled="disabled">${consulta.finalitat}</textarea>
 								</div>
 							</div>
 						</div>
@@ -160,10 +160,10 @@ function initModalXml(element) {
 	</div>
 <script type="text/javascript">
 $('#dadesPeticio').on('hidden', function () {
-	$('#dadesPeticioIcon').attr('class', 'pull-right icon-chevron-down');
+	$('#dadesPeticioIcon').attr('class', 'pull-right glyphicon-chevron-down');
 });
 $('#dadesPeticio').on('shown', function () {
-	$('#dadesPeticioIcon').attr('class', 'pull-right icon-chevron-up');
+	$('#dadesPeticioIcon').attr('class', 'pull-right glyphicon-chevron-up');
 });
 </script>
 	<c:if test="${not empty filles}">
@@ -171,7 +171,7 @@ $('#dadesPeticio').on('shown', function () {
 			<h3>
 				<spring:message code="consulta.multiple.info.solicituds"/>
 				<a href="#dadesSolicitud" data-toggle="collapse" data-target="#dadesSolicitud">
-					<i id="dadesSolicitudIcon" class="pull-right icon-chevron-up"></i>
+					<i id="dadesSolicitudIcon" class="pull-right glyphicon-chevron-up"></i>
 				</a>
 			</h3>
 			<div id="dadesSolicitud" class="collapse in">
@@ -199,25 +199,25 @@ $('#dadesPeticio').on('shown', function () {
 								<td>${filla.titularDocumentAmbTipus}</td>
 								<c:if test="${consulta.hiHaPeticio}">
 									<td>
-										<a class="btn pull-right" href="<c:url value="/modal/consulta/${filla.id}/xmlPeticio"/>" onclick="${initModalXml}">
-											<i class="icon-info-sign"></i>
+										<a class="btn col-md-pull-right" href="<c:url value="/modal/consulta/${filla.id}/xmlPeticio"/>" onclick="${initModalXml}">
+											<i class="glyphicon-info-sign"></i>
 											<spring:message code="consulta.info.veure.xml"/>
 										</a>
 									</td>
 									<td>
 										<a class="btn pull-right" href="<c:url value="/modal/consulta/${filla.id}/xmlResposta"/>" onclick="${initModalXml}">
-											<i class="icon-info-sign"></i>
+											<i class="glyphicon-info-sign"></i>
 											<spring:message code="consulta.info.veure.xml"/>
 										</a>
 									</td>
 								</c:if>
 								<td>
-									<a href="../${filla.id}" class="btn"><i class="icon-zoom-in"></i>&nbsp;<spring:message code="consulta.list.taula.detalls"/></a>
+									<a href="../${filla.id}" class="btn-default"><i class="glyphglyphicon-zoom-in"></i>&nbsp;<spring:message code="consulta.list.taula.detalls"/></a>
 								</td>
 								<c:if test="${consulta.estatTramitada}">
 									<td>
 										<a class="btn btn-small" href="../${filla.id}/justificant">
-											<i class="icon-"><img src="<c:url value="/img/pdf-icon.png"/>" width="16" height="16" alt="<spring:message code="consulta.list.taula.descarregar.pdf"/>"/></i>
+											<i class="glyphicon"><img src="<c:url value="/img/pdf-glyphicon.png"/>" width="16" height="16" alt="<spring:message code="consulta.list.taula.descarregar.pdf"/>"/></i>
 										</a>
 									</td>
 								</c:if>
@@ -230,23 +230,23 @@ $('#dadesPeticio').on('shown', function () {
 	</c:if>
 <script type="text/javascript">
 $('#dadesSolicitud').on('hidden', function () {
-	$('#dadesSolicitudIcon').attr('class', 'pull-right icon-chevron-down');
+	$('#dadesSolicitudIcon').attr('class', 'pull-right glyphicon-chevron-down');
 });
 $('#dadesSolicitud').on('shown', function () {
-	$('#dadesSolicitudIcon').attr('class', 'pull-right icon-chevron-up');
+	$('#dadesSolicitudIcon').attr('class', 'pull-right glyphicon-chevron-up');
 });
 </script>
 	<c:if test="${consulta.hiHaResposta}">
-		<div class="well">
+		<div class="well-lg">
 			<h3>
 				<spring:message code="consulta.info.resposta.dades"/>
 				<a href="#dadesResposta" data-toggle="collapse" data-target="#dadesResposta">
-					<i id="dadesRespostaIcon" class="pull-right icon-chevron-down"></i>
+					<i id="dadesRespostaIcon" class="pull-right glyphicon-chevron-down"></i>
 				</a>
 			</h3>
 			<div id="dadesResposta" class="collapse out">
 				<c:set var="initModalXml">initModalXml(this);return false</c:set>
-				<a class="btn pull-right" href="<c:url value="/modal/consulta/${consulta.id}/xmlResposta"/>" onclick="${initModalXml}"><i class="icon-info-sign"></i> <spring:message code="consulta.info.veure.xml"/></a>
+				<a class="btn pull-right" href="<c:url value="/modal/consulta/${consulta.id}/xmlResposta"/>" onclick="${initModalXml}"><i class="glyphicon-info-sign"></i> <spring:message code="consulta.info.veure.xml"/></a>
 				<p>
 					<spring:message code="consulta.info.resposta.rebuda.dia"/>
 					<fmt:formatDate pattern="dd/MM/yyyy" value="${consulta.respostaData}"/>
@@ -257,43 +257,43 @@ $('#dadesSolicitud').on('shown', function () {
 <script type="text/javascript">
 $('#respostaXml').val(vkbeautify.xml($('#respostaXml').val()));
 $('#dadesResposta').on('hidden', function () {
-	$('#dadesRespostaIcon').attr('class', 'pull-right icon-chevron-down');
+	$('#dadesRespostaIcon').attr('class', 'pull-right glyphicon-chevron-down');
 });
 $('#dadesResposta').on('shown', function () {
-	$('#dadesRespostaIcon').attr('class', 'pull-right icon-chevron-up');
+	$('#dadesRespostaIcon').attr('class', 'pull-right glyphicon-chevron-up');
 });
 </script>
 		</div>
 	</c:if>
 	<c:if test="${consulta.estatTramitada}">
-		<div class="well">
+		<div class="well-lg">
 			<h3>
 				<spring:message code="consulta.multiple.info.generar.justificantpdf"/>
 				<a href="${consulta.id}/justificantpdf" class="pull-right">
-					<img src="<c:url value="/img/pdf-icon-big.png"/>" width="27" height="32" alt="<spring:message code="consulta.info.descarregar.pdf"/>" title="<spring:message code="consulta.info.descarregar.pdf"/>"/>
+					<img src="<c:url value="/img/pdf-glyphicon-big.png"/>" width="27" height="32" alt="<spring:message code="consulta.info.descarregar.pdf"/>" title="<spring:message code="consulta.info.descarregar.pdf"/>"/>
 				</a>
 			</h3>
 		</div>
-		<div class="well">
+		<div class="well-lg">
 			<h3>
 				<spring:message code="consulta.multiple.info.generar.justificantzip"/>
 				<a href="${consulta.id}/justificantzip" class="pull-right">
-					<img src="<c:url value="/img/file-extension-zip-icon.png"/>" width="32" height="32" alt="<spring:message code="consulta.info.descarregar.zip"/>" title="<spring:message code="consulta.info.descarregar.zip"/>"/>
+					<img src="<c:url value="/img/file-extension-zip-glyphicon.png"/>" width="32" height="32" alt="<spring:message code="consulta.info.descarregar.zip"/>" title="<spring:message code="consulta.info.descarregar.zip"/>"/>
 				</a>
 			</h3>
 		</div>
 	</c:if>
-	<div class="well">
-		<a href="<c:url value="/consulta/multiple"/>" class="btn"><spring:message code="comu.boto.tornar"/></a>
+	<div class="well-lg">
+		<a href="<c:url value="/consulta/multiple"/>" class="btn-default"><spring:message code="comu.boto.tornar"/></a>
 	</div>
 	<div id="modal-missatge-xml" class="modal hide fade" style="width:750px">
-		<div class="modal-header">
+		<div class="modal-content">
 			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
 			<h3><spring:message code="consulta.info.missatge.xml"/></h3>
 		</div>
-		<div class="modal-body"></div>
-		<div class="modal-footer">
-			<a href="#" class="btn" data-dismiss="modal"><spring:message code="comu.boto.tornar"/></a>
+		<div class="modal-content"></div>
+		<div class="modal-content">
+			<a href="#" class="btn-default" data-dismiss="modal-content"><spring:message code="comu.boto.tornar"/></a>
 		</div>
 	</div>
 

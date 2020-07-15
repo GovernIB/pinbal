@@ -34,9 +34,9 @@
 </head>
 <body>
 
-	<div class="row-fluid">
-		<div class="span12">
-			<a class="btn pull-right" href="<c:url value="/scsp/paramconf/new"/>"><i class="icon-plus"></i>&nbsp;<spring:message code="paramconf.list.boto.nou.registre"/></a>
+	<div class="row">
+		<div class="col-md-12">
+			<a class="btn pull-right" href="<c:url value="/scsp/paramconf/new"/>"><i class="glyphicon-plus"></i>&nbsp;<spring:message code="paramconf.list.boto.nou.registre"/></a>
 		</div>
 		<div class="clearfix"></div>
 	</div>

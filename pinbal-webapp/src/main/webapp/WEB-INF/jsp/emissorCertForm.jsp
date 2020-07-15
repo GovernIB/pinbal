@@ -43,25 +43,25 @@
 		
 		<fieldset class="well">
 			
-			<div class="span12"></div>
+			<div class="col-md-12"></div>
 			
-			<div class="span5">
+			<div class="col-md-5">
 				<c:set var="campPath" value="nom"/>
 				<c:set var="campErrors"><form:errors path="${campPath}"/></c:set>
-				<div class="control-group<c:if test="${not empty campErrors}"> error</c:if>">
+				<div class="form-group<c:if test="${not empty campErrors}"> error</c:if>">
 					<label class="control-label" for="${campPath}"><spring:message code="emissorcert.form.camp.nom"/> *</label>
 					<div class="controls">
-						<form:input path="${campPath}" cssClass="input-xlarge" id="${campPath}"/>
-						<form:errors path="${campPath}" cssClass="help-inline"/>
+						<form:input path="${campPath}" cssClass="input-lg" id="${campPath}"/>
+						<form:errors path="${campPath}" cssClass="help-block"/>
 					</div>
 				</div>
 			</div>
 			
-			<div class="span5">
+			<div class="col-md-5">
 				<c:set var="campPath" value="dataBaixa"/>
 				<c:set var="campErrors"><form:errors path="${campPath}"/></c:set>
 				<c:set var="idioma"><%=org.springframework.web.servlet.support.RequestContextUtils.getLocale(request).getLanguage()%></c:set>
-				<div class="control-group<c:if test="${not empty campErrors}"> error</c:if>">
+				<div class="form-group<c:if test="${not empty campErrors}"> error</c:if>">
 					<label class="control-label" for="${campPath}"><spring:message code="emissorcert.form.camp.data.baixa"/>  </label>
 					<div class="controls">
 						<div class="input-append" style="width: 100%;">
@@ -75,19 +75,19 @@
 								style="width: calc(100% - 40px);"/>
 							<button id="btn-calendar-baixa" class="btn" type="button"><i class="icon-calendar"></i></button>
 						</div>
-						<form:errors path="${campPath}" cssClass="help-inline"/>
+						<form:errors path="${campPath}" cssClass="help-block"/>
 					</div>
 				</div>
 			</div>
 			
-			<div class="span5">
+			<div class="col-md-5">
 				<c:set var="campPath" value="cif"/>
 				<c:set var="campErrors"><form:errors path="${campPath}"/></c:set>
-				<div class="control-group<c:if test="${not empty campErrors}"> error</c:if>">
+				<div class="form-group<c:if test="${not empty campErrors}"> error</c:if>">
 					<label class="control-label" for="${campPath}"><spring:message code="emissorcert.form.camp.cif"/> *</label>
 					<div class="controls">
-						<form:input path="${campPath}" cssClass="input-xlarge" id="${campPath}"/>
-						<form:errors path="${campPath}" cssClass="help-inline"/>
+						<form:input path="${campPath}" cssClass="input-lg" id="${campPath}"/>
+						<form:errors path="${campPath}" cssClass="help-block"/>
 					</div>
 				</div>
 			</div>

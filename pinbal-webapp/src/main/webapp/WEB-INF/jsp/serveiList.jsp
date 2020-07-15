@@ -49,36 +49,36 @@
 <body>
 	<c:url value="/servei" var="formAction"/>
 	<form:form id="form-filtre" action="${formAction}" method="post" cssClass="well form-inline" commandName="serveiFiltreCommand">
-		<div class="row-fluid">
-			<div class="control-group span3">	
+		<div class="row">
+			<div class="form-group col-md-3">	
 				<c:set var="campPath" value="codi"/>
 				<spring:message var="placeholderCodi" code="servei.list.filtre.camp.codi"/>
-				<form:input path="${campPath}" cssClass="span12 input-medium" id="${campPath}" placeholder="${placeholderCodi}"/>
+				<form:input path="${campPath}" cssClass="col-md-12 input-medium" id="${campPath}" placeholder="${placeholderCodi}"/>
 			</div>
-			<div class="control-group span3">	
+			<div class="form-group col-md-3">	
 				<c:set var="campPath" value="descripcio"/>
 				<spring:message var="placeholderDescripcio" code="servei.list.filtre.camp.descripcio"/>
-				<form:input path="${campPath}" cssClass="span12 input-medium" id="${campPath}" placeholder="${placeholderDescripcio}"/>
+				<form:input path="${campPath}" cssClass="col-md-12 input-medium" id="${campPath}" placeholder="${placeholderDescripcio}"/>
 			</div>
-			<div class="control-group span3">	
+			<div class="form-group col-md-3">	
 				<c:set var="campPath" value="emissor"/>
-				<form:select path="${campPath}" id="${campPath}" class="span12">
+				<form:select path="${campPath}" id="${campPath}" class="col-md-12">
 					<option value=""><spring:message code="servei.list.filtre.camp.emissor"/></option>
 					<form:options items="${emisors}" itemLabel="nom" itemValue="id"/>
 				</form:select>
 			</div>
-			<div class="control-group span3">	
+			<div class="form-group col-md-3">	
 				<c:set var="campPath" value="activa"/>
 				<spring:message var="trueValue" code="entitat.list.filtre.camp.activa.yes"/>
 				<spring:message var="falseValue" code="entitat.list.filtre.camp.activa.no"/>
-				<form:select path="${campPath}" class="span12">
+				<form:select path="${campPath}" class="col-md-12">
 					<option value=""><spring:message code="entitat.list.filtre.camp.activa"/></option>>
 					<form:option value="true">${trueValue}</form:option>>
 					<form:option value="false">${falseValue}</form:option>>
 				</form:select>
 			</div>
 		</div>
-		<div class="row-fluid">
+		<div class="row">
 			<div class="pull-right">
 				<button id="netejar-filtre" class="btn" type="button"><spring:message code="comu.boto.netejar"/></button>
 				<button type="submit" class="btn btn-primary"><spring:message code="comu.boto.filtrar"/></button>
@@ -86,9 +86,9 @@
 		</div>
 	</form:form>
 
-	<div class="row-fluid">
-		<div class="span12">
-			<a class="btn pull-right" href="<c:url value="/servei/new"/>"><i class="icon-plus"></i>&nbsp;<spring:message code="servei.list.boto.nou.servei"/></a>
+	<div class="row">
+		<div class="col-md-12">
+			<a class="btn pull-right" href="<c:url value="/servei/new"/>"><i class="glyphicon-plus"></i>&nbsp;<spring:message code="servei.list.boto.nou.servei"/></a>
 		</div>
 		<div class="clearfix"></div>
 	</div>

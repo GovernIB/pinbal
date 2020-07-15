@@ -23,7 +23,7 @@ function initModalXml(element) {
 		</div>
 	</c:if>
 
-	<div class="well">
+	<div class="well-lg">
 		<h3>
 			<spring:message code="admin.consulta.info.consulta.dades"/>
 		</h3>
@@ -41,13 +41,13 @@ function initModalXml(element) {
 		</div>
 	</div>
 	<c:if test="${consulta.hiHaResposta}">
-		<div class="well">
+		<div class="well-lg">
 			<h3>
 				<spring:message code="admin.consulta.info.resposta.dades"/>
 			</h3>
 			<div id="dadesResposta">
 				<c:set var="initModalXml">initModalXml(this);return false</c:set>
-				<a class="btn pull-right" href="<c:url value="/modal/admin/consulta/${consulta.id}/xmlResposta"/>" onclick="${initModalXml}"><i class="icon-info-sign"></i> <spring:message code="admin.consulta.info.veure.xml"/></a>
+				<a class="btn col-md-pull-right" href="<c:url value="/modal/admin/consulta/${consulta.id}/xmlResposta"/>" onclick="${initModalXml}"><i class="glyphicon-info-sign"></i> <spring:message code="admin.consulta.info.veure.xml"/></a>
 				<p>
 					<spring:message code="admin.consulta.info.resposta.rebuda.dia"/>
 					<fmt:formatDate pattern="dd/MM/yyyy" value="${consulta.respostaData}"/>
@@ -57,17 +57,17 @@ function initModalXml(element) {
 			</div>
 		</div>
 	</c:if>
-	<div class="well">
-		<a href="<c:url value="/admin/consulta"/>" class="btn"><spring:message code="comu.boto.tornar"/></a>
+	<div class="well-lg">
+		<a href="<c:url value="/admin/consulta"/>" class="btn-default"><spring:message code="comu.boto.tornar"/></a>
 	</div>
 	<div id="modal-missatge-xml" class="modal hide fade" style="width:750px">
-		<div class="modal-header">
-			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+		<div class="modal-content">
+			<button type="button" class="close" data-dismiss="modal-content" aria-hidden="true">&times;</button>
 			<h3><spring:message code="admin.consulta.info.missatge.xml"/></h3>
 		</div>
-		<div class="modal-body"></div>
-		<div class="modal-footer">
-			<a href="#" class="btn" data-dismiss="modal"><spring:message code="comu.boto.tornar"/></a>
+		<div class="modal-content"></div>
+		<div class="modal-content">
+			<a href="#" class="btn-default" data-dismiss="modal-content"><spring:message code="comu.boto.tornar"/></a>
 		</div>
 	</div>
 

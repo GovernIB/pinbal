@@ -56,86 +56,92 @@ $(document).ready(function() {
 </head>
 <body>
 
-	<form:form id="form-filtre" action="multiple" method="post" cssClass="well formbox" commandName="filtreCommand">
+	<form:form id="form-filtre" action="multiple" method="post" cssClass="well-lg formbox" commandName="filtreCommand">
 		<div class="page-header"><spring:message code="consulta.list.filtre.titol"/></div>
-		<div class="row-fluid">
-			<div class="span3">
-				<c:set var="campPath" value="scspPeticionId"/>
-				<c:set var="campErrors"><form:errors path="${campPath}"/></c:set>
-				<div class="control-group<c:if test="${not empty campErrors}"> error</c:if>">
-					<spring:bind path="${campPath}">
-						<input type="text" id="${campPath}" name="${campPath}"<c:if test="${not empty status.value}"> value="${status.value}"</c:if> class="span12" placeholder="<spring:message code="consulta.list.filtre.peticion.id"/>">
-					</spring:bind>
+		<div class="container-fluid">
+			<div class="row">
+				<div class="col-md-3">
+					<c:set var="campPath" value="scspPeticionId"/>
+					<c:set var="campErrors"><form:errors path="${campPath}"/></c:set>
+					<div class="form-group<c:if test="${not empty campErrors}"> error</c:if>">
+						<spring:bind path="${campPath}">
+							<input type="text" id="${campPath}" name="${campPath}"<c:if test="${not empty status.value}"> value="${status.value}"</c:if> class="form-control" placeholder="<spring:message code="consulta.list.filtre.peticion.id"/>">
+						</spring:bind>
+					</div>
 				</div>
-			</div>
-			<div class="span3">
-				<c:set var="campPath" value="procediment"/>
-				<c:set var="campErrors"><form:errors path="${campPath}"/></c:set>
-				<div class="control-group<c:if test="${not empty campErrors}"> error</c:if>">
-					<form:select id="select-procediment" path="${campPath}" cssClass="span12">
-						<option value=""><spring:message code="consulta.list.filtre.procediment"/>:</option>
-						<form:options items="${procediments}" itemLabel="nom" itemValue="id"/>
-					</form:select>
+				<div class="col-md-3">
+					<c:set var="campPath" value="procediment"/>
+					<c:set var="campErrors"><form:errors path="${campPath}"/></c:set>
+					<div class="form-group<c:if test="${not empty campErrors}"> error</c:if>">
+						<form:select id="select-procediment" path="${campPath}" cssClass="form-control">
+							<option value=""><spring:message code="consulta.list.filtre.procediment"/>:</option>
+							<form:options items="${procediments}" itemLabel="nom" itemValue="id"/>
+						</form:select>
+					</div>
 				</div>
-			</div>
-			<div class="span3">
-				<c:set var="campPath" value="servei"/>
-				<c:set var="campErrors"><form:errors path="${campPath}"/></c:set>
-				<div class="control-group<c:if test="${not empty campErrors}"> error</c:if>">
-					<form:select id="select-servei" path="${campPath}" cssClass="span12">
-						<option value=""><spring:message code="consulta.list.filtre.servei"/>:</option>
-						<form:options items="${serveis}" itemLabel="descripcio" itemValue="codi"/>
-					</form:select>
+				<div class="col-md-3">
+					<c:set var="campPath" value="servei"/>
+					<c:set var="campErrors"><form:errors path="${campPath}"/></c:set>
+					<div class="form-group<c:if test="${not empty campErrors}"> error</c:if>">
+						<form:select id="select-servei" path="${campPath}" cssClass="form-control">
+							<option value=""><spring:message code="consulta.list.filtre.servei"/>:</option>
+							<form:options items="${serveis}" itemLabel="descripcio" itemValue="codi"/>
+						</form:select>
+					</div>
 				</div>
-			</div>
-			<div class="span3">
-				<c:set var="campPath" value="estat"/>
-				<c:set var="campErrors"><form:errors path="${campPath}"/></c:set>
-				<div class="control-group<c:if test="${not empty campErrors}"> error</c:if>">
-					<form:select path="${campPath}" cssClass="span12">
-						<option value=""><spring:message code="consulta.list.filtre.estat"/>:</option>
-						<c:forEach var="estat" items="${consultaEstats}">
-							<c:if test="${not fn:startsWith(estat, 'P')}">
-								<form:option value="${estat}">${estat}</form:option>
-							</c:if>
-						</c:forEach>
-					</form:select>
-				</div>
-			</div>
-		</div>
-		<div class="row-fluid">
-			<div class="span4">
-				<c:set var="campErrors"><form:errors path="dataInici"/></c:set>
-				<c:if test="${empty campErrors}"><c:set var="campErrors"><form:errors path="dataFi"/></c:set></c:if>
-				<div class="control-group<c:if test="${not empty campErrors}"> error</c:if>">
-					<label><spring:message code="consulta.list.filtre.data"/></label>
-					<div class="row-fluid">
-						<div class="span6">
-							<c:set var="campPath" value="dataInici"/>
-							<c:set var="campErrors"><form:errors path="${campPath}"/></c:set>
-							<spring:bind path="${campPath}">
-								<input type="text" id="${campPath}" name="${campPath}"<c:if test="${not empty status.value}"> value="${status.value}"</c:if> class="span12" placeholder="<spring:message code="consulta.list.filtre.data.inici"/>">
-								<script>$("#${campPath}").mask("99/99/9999");</script>
-							</spring:bind>
-						</div>
-						<div class="span6">
-							<c:set var="campPath" value="dataFi"/>
-							<c:set var="campErrors"><form:errors path="${campPath}"/></c:set>
-							<div class="control-group<c:if test="${not empty campErrors}"> error</c:if>">
-								<spring:bind path="${campPath}">
-									<input type="text" id="${campPath}" name="${campPath}"<c:if test="${not empty status.value}"> value="${status.value}"</c:if> class="span12" placeholder="<spring:message code="consulta.list.filtre.data.fi"/>">
-									<script>$("#${campPath}").mask("99/99/9999");</script>
-								</spring:bind>
-							</div>
-						</div>
+				<div class="col-md-3">
+					<c:set var="campPath" value="estat"/>
+					<c:set var="campErrors"><form:errors path="${campPath}"/></c:set>
+					<div class="form-group<c:if test="${not empty campErrors}"> error</c:if>">
+						<form:select path="${campPath}" cssClass="form-control">
+							<option value=""><spring:message code="consulta.list.filtre.estat"/>:</option>
+							<c:forEach var="estat" items="${consultaEstats}">
+								<c:if test="${not fn:startsWith(estat, 'P')}">
+									<form:option value="${estat}">${estat}</form:option>
+								</c:if>
+							</c:forEach>
+						</form:select>
 					</div>
 				</div>
 			</div>
-			<div class="span8" style="text-align:right">
-				<label>&nbsp;</label>
-				<button id="netejar-filtre" class="btn" type="button"><spring:message code="comu.boto.netejar"/></button>
-				<button class="btn btn-primary" type="submit"><spring:message code="comu.boto.filtrar"/></button>
-			</div>
+		</div>	
+		<div class="container-fluid">
+		  <div class="row">
+				<div class="col-md-4">
+					<c:set var="campErrors"><form:errors path="dataInici"/></c:set>
+					<c:if test="${empty campErrors}"><c:set var="campErrors"><form:errors path="dataFi"/></c:set></c:if>
+					<div class="form-group<c:if test="${not empty campErrors}"> error</c:if>">
+						<label><spring:message code="consulta.list.filtre.data"/></label>
+						<div class="container-fluid">
+							<div class="row">
+								<div class="col-md-6">
+									<c:set var="campPath" value="dataInici"/>
+									<c:set var="campErrors"><form:errors path="${campPath}"/></c:set>
+									<spring:bind path="${campPath}">
+										<input type="text" id="${campPath}" name="${campPath}"<c:if test="${not empty status.value}"> value="${status.value}"</c:if> class="form-control" placeholder="<spring:message code="consulta.list.filtre.data.inici"/>">
+										<script>$("#${campPath}").mask("99/99/9999");</script>
+									</spring:bind>
+								</div>
+								<div class="col-md-6">
+									<c:set var="campPath" value="dataFi"/>
+									<c:set var="campErrors"><form:errors path="${campPath}"/></c:set>
+									<div class="form-group<c:if test="${not empty campErrors}"> error</c:if>">
+										<spring:bind path="${campPath}">
+											<input type="text" id="${campPath}" name="${campPath}"<c:if test="${not empty status.value}"> value="${status.value}"</c:if> class="form-control" placeholder="<spring:message code="consulta.list.filtre.data.fi"/>">
+											<script>$("#${campPath}").mask("99/99/9999");</script>
+										</spring:bind>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>	
+				<div class="col-md-8" style="text-align:right">
+					<label>&nbsp;</label>
+					<button id="netejar-filtre" class="btn" type="button"><spring:message code="comu.boto.netejar"/></button>
+			 		<button class="btn btn-primary" type="submit"><spring:message code="comu.boto.filtrar"/></button>
+		 		</div>
+		</div>
 		</div>
 	</form:form>
 
@@ -158,16 +164,16 @@ $(document).ready(function() {
 					<jmesa:htmlColumn property="estat" titleKey="consulta.list.taula.estat" style="white-space:nowrap;">
 						<span<c:if test="${registre.estatError}"> title="${registre.error}"</c:if>>
 							<c:choose>
-								<c:when test="${registre.estatPendent}"><i class="icon-bookmark"></i></c:when>
-								<c:when test="${registre.estatProcessant}"><i class="icon-time"></i></c:when>
-								<c:when test="${registre.estatError}"><i class="icon-warning-sign"></i></c:when>
-								<c:otherwise><i class="icon-ok"></i></c:otherwise>
+								<c:when test="${registre.estatPendent}"><i class="glyphicon-bookmark"></i></c:when>
+								<c:when test="${registre.estatProcessant}"><i class="glyphicon-time"></i></c:when>
+								<c:when test="${registre.estatError}"><i class="glyphicon-warning-sign"></i></c:when>
+								<c:otherwise><i class="glyphicon-ok"></i></c:otherwise>
 							</c:choose>
 							${registre.estat}
 						</span>
 					</jmesa:htmlColumn>
 					<jmesa:htmlColumn property="ACCIO_detalls" title="&nbsp;" style="white-space:nowrap;" sortable="false">
-						<a href="multiple/${registre.id}" class="btn"><i class="icon-zoom-in"></i>&nbsp;<spring:message code="consulta.list.taula.detalls"/></a>
+						<a href="multiple/${registre.id}" class="btn-default"><i class="glyphicon-zoom-in"></i>&nbsp;<spring:message code="consulta.list.taula.detalls"/></a>
 					</jmesa:htmlColumn>
 				</jmesa:htmlRow>
 			</jmesa:htmlTable>

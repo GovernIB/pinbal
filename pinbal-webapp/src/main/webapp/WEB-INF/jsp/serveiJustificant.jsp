@@ -56,7 +56,7 @@ $(document).ready(function() {
 					<jmesa:htmlColumn sortable="false">
 						<c:choose>
 							<c:when test="${not empty traduccioCoincident}">
-								<a href="#" title="<spring:message code="comu.boto.modificar"/>" class="btn justificant-modificar" data-xpath="${registre.dades.pathAmbSeparadorDefault}" data-traduccio="${traduccioCoincident.traduccio}"><i class="icon-pencil"></i> <spring:message code="comu.boto.modificar"/></a>
+								<a href="#" title="<spring:message code="comu.boto.modificar"/>" class="btn justificant-modificar" data-xpath="${registre.dades.pathAmbSeparadorDefault}" data-traduccio="${traduccioCoincident.traduccio}"><i class="-pencil"></i> <spring:message code="comu.boto.modificar"/></a>
 							</c:when>
 							<c:otherwise>
 								<a href="#" title="<spring:message code="comu.boto.modificar"/>" class="btn justificant-modificar" data-xpath="${registre.dades.pathAmbSeparadorDefault}"><i class="icon-pencil"></i> <spring:message code="comu.boto.modificar"/></a>
@@ -82,10 +82,10 @@ $(document).ready(function() {
 				<input type="hidden" id="modal-justificant-hidden-id" name="id"/>
 				<input type="hidden" id="modal-justificant-hidden-servei" name="servei" value="${servei.codi}"/>
 				<input type="hidden" id="modal-justificant-hidden-xpath" name="xpath"/>
-				<div class="control-group">
+				<div class="form-group">
     				<label class="control-label" for="modal-justificant-input-traduccio"><spring:message code="servei.justificant.modal.camp.traduccio"/></label>
 					<div class="controls">
-						<input type="text" id="modal-justificant-input-traduccio" name="traduccio" class="input-xlarge"/>
+						<input type="text" id="modal-justificant-input-traduccio" name="traduccio" class="input-lg"/>
 					</div>
 				</div>
 			</form>

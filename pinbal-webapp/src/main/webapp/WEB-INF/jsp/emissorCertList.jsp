@@ -34,9 +34,9 @@
 </head>
 <body>
 
-	<div class="row-fluid">
-		<div class="span12">
-			<a class="btn pull-right" href="<c:url value="/scsp/emissorcert/new"/>"><i class="icon-plus"></i>&nbsp;<spring:message code="emissorcert.list.boto.nou.registre"/></a>
+	<div class="container-fluid">
+		<div class="col-md-12">
+			<a class="btn col-md-pull-right" href="<c:url value="/scsp/emissorcert/new"/>"><i class="glyphicon-plus"></i>&nbsp;<spring:message code="emissorcert.list.boto.nou.registre"/></a>
 		</div>
 		<div class="clearfix"></div>
 	</div>
@@ -56,11 +56,11 @@
 					<jmesa:htmlColumn property="dataBaixa" titleKey="emissorcert.list.taula.columna.databaixa" style="width:20%;"/>
 					
 					<jmesa:htmlColumn property="ACCIO_accions" title="&nbsp;" sortable="false" style="width:10%;white-space:nowrap;">
-						<div class="btn-group">
-							<a class="btn dropdown-toggle" data-toggle="dropdown" href="#"><i class="icon-cog"></i>&nbsp;<spring:message code="comu.accions"/>&nbsp;<span class="caret"></span></a>
+						<div class="btn-group-lg">
+							<a class="btn dropdown-toggle" data-toggle="dropdown" href="#"><i class="glyphicon-cog"></i>&nbsp;<spring:message code="comu.accions"/>&nbsp;<span class="caret"></span></a>
 							<ul class="dropdown-menu">
-								<li><a href="<c:url value="/scsp/emissorcert/${registre.id}"/>" ><i class="icon-pencil"></i>&nbsp;<spring:message code="comu.boto.modificar"/></a></li>
-								<li><a href="<c:url value="/scsp/emissorcert/${registre.id}/delete"/>" class="confirm-esborrar"><i class="icon-trash"></i>&nbsp;<spring:message code="comu.boto.esborrar"/></a></li>
+								<li><a href="<c:url value="/scsp/emissorcert/${registre.id}"/>" ><i class="glyphicon-pencil"></i>&nbsp;<spring:message code="comu.boto.modificar"/></a></li>
+								<li><a href="<c:url value="/scsp/emissorcert/${registre.id}/delete"/>" class="confirm-esborrar"><i class="glyphicon-trash"></i>&nbsp;<spring:message code="comu.boto.esborrar"/></a></li>
 							</ul>
 						</div>
 					</jmesa:htmlColumn>

@@ -122,30 +122,31 @@ function showModalEditar(
 <body>
 
 	<c:url value="/representant/usuari" var="formAction"/>
-	<form:form id="form-filtre" action="${formAction}" method="post" cssClass="well form-inline" commandName="usuariFiltreCommand">
+	<form:form id="form-filtre" action="${formAction}" method="post" cssClass="well" commandName="usuariFiltreCommand">
 		<c:set var="campPath" value="codi"/>
 		<spring:message var="placeholderCodi" code="representant.usuaris.filtre.camp.codi"/>
-		<form:input path="${campPath}" cssClass="input-medium" id="${campPath}" placeholder="${placeholderCodi}"/>
+		<form:input path="${campPath}" cssClass="input-sm" id="${campPath}" placeholder="${placeholderCodi}"/>
 		<c:set var="campPath" value="nif"/>
 		<spring:message var="placeholderNif" code="representant.usuaris.filtre.camp.nif"/>
-		<form:input path="${campPath}" cssClass="input-medium" id="${campPath}" placeholder="${placeholderNif}"/>
+		<form:input path="${campPath}" cssClass="input-sm" id="${campPath}" placeholder="${placeholderNif}"/>
 		<c:set var="campPath" value="nom"/>
 		<spring:message var="placeholderNom" code="representant.usuaris.filtre.camp.nom"/>
-		<form:input path="${campPath}" cssClass="input-medium" id="${campPath}" placeholder="${placeholderNom}"/>
+		<form:input path="${campPath}" cssClass="input-sm" id="${campPath}" placeholder="${placeholderNom}"/>
 		<c:set var="campPath" value="departament"/>
 		<spring:message var="placeholderDepartament" code="representant.usuaris.filtre.camp.departament"/>
-		<form:input path="${campPath}" cssClass="input-medium" id="${campPath}" placeholder="${placeholderDepartament}"/>
+		<form:input path="${campPath}" cssClass="input-sm" id="${campPath}" placeholder="${placeholderDepartament}"/>
 		<button id="netejar-filtre" class="btn" type="button"><spring:message code="comu.boto.netejar"/></button>
 		<button type="submit" class="btn btn-primary"><spring:message code="comu.boto.filtrar"/></button>
 	</form:form>
 
-	<div class="row-fluid">
-		<div class="span12">
-			<a class="btn pull-right" href="#modal-form-usuari" onclick="showModalCrear()"><i class="icon-plus"></i>&nbsp;<spring:message code="entitat.usuaris.boto.nou.usuari"/></a>
+	<div class="container-fluid">
+		<div class="row">
+			<div class="col-md-12">
+				<a class="btn pull-right" href="#modal-form-usuari" onclick="showModalCrear()"><i class="glyphicon-plus"></i>&nbsp;<spring:message code="entitat.usuaris.boto.nou.usuari"/></a>
+			</div>
+			<div class="clearfix"></div>
 		</div>
-		<div class="clearfix"></div>
 	</div>
-
 	<div style="margin-top:8px;padding:4px 0">
 		<jmesa:tableModel
 				id="usuaris" 
@@ -201,37 +202,37 @@ function showModalEditar(
 				<div id="modal-group-tipus" class="control-group">
     				<label class="control-label" for="modal-select-tipus"><spring:message code="representant.usuaris.camp.tipus"/></label>
 					<div class="controls">
-						<select id="modal-select-tipus" name="tipus" class="input-medium">
+						<select id="modal-select-tipus" name="tipus" class="input-sm">
 							<option value="${caracterTipusNif}"><spring:message code="representant.usuaris.tipus.nif"/></option>
 							<option value="${caracterTipusCodi}"><spring:message code="representant.usuaris.tipus.codi"/></option>
 						</select>
 					</div>
 				</div>
-				<div id="modal-group-nom" class="control-group">
+				<div id="modal-group-nom" class="form-group">
     				<label class="control-label" for="modal-input-nom"><spring:message code="representant.usuaris.camp.nom"/></label>
 					<div class="controls">
 						<input type="text" id="modal-input-nom" name="codi" disabled="disabled"/>
 					</div>
 				</div>
-				<div id="modal-group-codi" class="control-group">
+				<div id="modal-group-codi" class="form-group">
     				<label class="control-label" for="modal-input-codi"><spring:message code="representant.usuaris.camp.codi"/></label>
 					<div class="controls">
 						<input type="text" id="modal-input-codi" name="codi" disabled="disabled"/>
 					</div>
 				</div>
-				<div id="modal-group-nif" class="control-group">
+				<div id="modal-group-nif" class="form-group">
     				<label class="control-label" for="modal-input-nif"><spring:message code="representant.usuaris.camp.nif"/></label>
 					<div class="controls">
 						<input type="text" id="modal-input-nif" name="nif" disabled="disabled"/>
 					</div>
 				</div>
-				<div class="control-group">
+				<div class="form-group">
     				<label class="control-label" for="modal-input-departament"><spring:message code="representant.usuaris.camp.departament"/></label>
 					<div class="controls">
 						<input type="text" id="modal-input-departament" name="departament"/>
 					</div>
 				</div>
-				<div class="control-group">
+				<div class="form-group">
 					<label class="control-label" for="modal-input-representant"><spring:message code="representant.usuaris.camp.rols"/></label>
 					<div class="controls">
 						<label class="checkbox" for="modal-input-representant">

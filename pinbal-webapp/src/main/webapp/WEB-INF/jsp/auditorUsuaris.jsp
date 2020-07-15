@@ -103,23 +103,23 @@ function showModalEditar(
 <body>
 
 	<c:url value="/auditor/usuari" var="formAction"/>
-	<form:form id="form-filtre" action="${formAction}" method="post" cssClass="well form-inline" commandName="usuariFiltreCommand">
+	<form:form id="form-filtre" action="${formAction}" method="post" cssClass="well-sm form-block" commandName="usuariFiltreCommand">
 		<c:set var="campPath" value="codi"/>
 		<spring:message var="placeholderCodi" code="auditor.usuaris.filtre.camp.codi"/>
-		<form:input path="${campPath}" cssClass="input-medium" id="${campPath}" placeholder="${placeholderCodi}"/>
+		<form:input path="${campPath}" cssClass="input-sm" id="${campPath}" placeholder="${placeholderCodi}"/>
 		<c:set var="campPath" value="nif"/>
 		<spring:message var="placeholderNif" code="auditor.usuaris.filtre.camp.nif"/>
-		<form:input path="${campPath}" cssClass="input-medium" id="${campPath}" placeholder="${placeholderNif}"/>
+		<form:input path="${campPath}" cssClass="input-sm" id="${campPath}" placeholder="${placeholderNif}"/>
 		<c:set var="campPath" value="nom"/>
 		<spring:message var="placeholderNom" code="auditor.usuaris.filtre.camp.nom"/>
-		<form:input path="${campPath}" cssClass="input-medium" id="${campPath}" placeholder="${placeholderNom}"/>
-		<button id="netejar-filtre" class="btn" type="button"><spring:message code="comu.boto.netejar"/></button>
+		<form:input path="${campPath}" cssClass="input-sm" id="${campPath}" placeholder="${placeholderNom}"/>
+		<button id="netejar-filtre" class="btn-default" type="button"><spring:message code="comu.boto.netejar"/></button>
 		<button type="submit" class="btn btn-primary"><spring:message code="comu.boto.filtrar"/></button>
 	</form:form>
 
-	<div class="row-fluid">
-		<div class="span12">
-			<a class="btn pull-right" href="#modal-form-usuari" onclick="showModalCrear()"><i class="icon-plus"></i>&nbsp;<spring:message code="entitat.usuaris.boto.nou.usuari"/></a>
+	<div class="container-fluid">
+		<div class="col-md-12">
+			<a class="btn col-md-pull-right" href="#modal-form-usuari" onclick="showModalCrear()"><i class="glyphicons-plus"></i>&nbsp;<spring:message code="entitat.usuaris.boto.nou.usuari"/></a>
 		</div>
 		<div class="clearfix"></div>
 	</div>
@@ -145,11 +145,11 @@ function showModalEditar(
 					<jmesa:htmlColumn property="ACCIO_update" title="&nbsp;" sortable="false">
 						<c:choose>
 							<c:when test="${registre.principal}">
-								<a class="btn disabled" href="#"><i class="icon-pencil"></i>&nbsp;<spring:message code="comu.boto.modificar"/></a>
+								<a class="btn disabled" href="#"><i class="glyphicons-pencil"></i>&nbsp;<spring:message code="comu.boto.modificar"/></a>
 							</c:when>
 							<c:otherwise>
 								<c:set var="onclickShowModal">showModalEditar(${registre.usuari.inicialitzat}, ${registre.usuari.noInicialitzatNif}, ${registre.usuari.noInicialitzatCodi}, '${registre.usuari.codi}', '${registre.usuari.nif}', '${fn:replace(registre.departament, "'", "\\'")}', ${registre.auditor})</c:set>
-								<a class="btn" href="#modal-editar-departament" onclick="${onclickShowModal}"><i class="icon-pencil"></i>&nbsp;<spring:message code="comu.boto.modificar"/></a>
+								<a class="btn-default" href="#modal-editar-departament" onclick="${onclickShowModal}"><i class="glyphicons-pencil"></i>&nbsp;<spring:message code="comu.boto.modificar"/></a>
 							</c:otherwise>
 						</c:choose>
 					</jmesa:htmlColumn>
@@ -158,39 +158,39 @@ function showModalEditar(
 		</jmesa:tableModel>
 	</div>
 
-	<div id="modal-form-usuari" class="modal hide fade">
+	<div id="modal-content-usuari" class="modal hidden fade">
 		<div class="modal-header">
 			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
 			<h3><spring:message code="auditor.usuaris.titol.modificar"/></h3>
 		</div>
-		<div class="modal-body">
+		<div class="modal-content">
 			<c:url value="/auditor/usuari/save" var="formAction"/>
 			<form id="modal-form" action="${formAction}" method="post" class="form-horizontal">
 				<input type="hidden" id="modal-hidden-id" name="id" value="${entitat.id}"/>
 				<input type="hidden" id="modal-hidden-codi" name="codi"/>
 				<input type="hidden" id="modal-hidden-nif" name="nif"/>
-				<div id="modal-group-tipus" class="control-group">
+				<div id="modal-group-tipus" class="form-group">
     				<label class="control-label" for="modal-select-tipus"><spring:message code="auditor.usuaris.camp.tipus"/></label>
 					<div class="controls">
-						<select id="modal-select-tipus" name="tipus" class="input-medium">
+						<select id="modal-select-tipus" name="tipus" class="input-sm">
 							<option value="${caracterTipusNif}"><spring:message code="auditor.usuaris.tipus.nif"/></option>
 							<option value="${caracterTipusCodi}"><spring:message code="auditor.usuaris.tipus.codi"/></option>
 						</select>
 					</div>
 				</div>
-				<div id="modal-group-codi" class="control-group">
+				<div id="modal-group-codi" class="from-group">
     				<label class="control-label" for="modal-input-codi"><spring:message code="auditor.usuaris.camp.codi"/></label>
 					<div class="controls">
 						<input type="text" id="modal-input-codi" name="codi" disabled="disabled"/>
 					</div>
 				</div>
-				<div id="modal-group-nif" class="control-group">
+				<div id="modal-group-nif" class="form-group">
     				<label class="control-label" for="modal-input-nif"><spring:message code="auditor.usuaris.camp.nif"/></label>
 					<div class="controls">
 						<input type="text" id="modal-input-nif" name="nif" disabled="disabled"/>
 					</div>
 				</div>
-				<div class="control-group">
+				<div class="form-group">
 					<label class="control-label" for="modal-input-auditor"><spring:message code="auditor.usuaris.camp.rols"/></label>
 					<div class="controls">
 	    				<label class="checkbox" for="modal-input-auditor">
@@ -201,8 +201,8 @@ function showModalEditar(
     			</div>
 			</form>
 		</div>
-		<div class="modal-footer">
-			<a href="#" class="btn" data-dismiss="modal"><spring:message code="comu.boto.tornar"/></a>
+		<div class="modal-content">
+			<a href="#" class="btn-default" data-dismiss="modal"><spring:message code="comu.boto.tornar"/></a>
 			<a href="#" class="btn btn-primary" onclick="$('#modal-form').submit()"><spring:message code="comu.boto.guardar"/></a>
 		</div>
 	</div>
