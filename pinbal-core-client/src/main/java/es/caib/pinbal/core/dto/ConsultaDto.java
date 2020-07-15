@@ -14,7 +14,7 @@ import org.apache.commons.lang.builder.ToStringBuilder;
  * 
  * @author Limit Tecnologies <limit@limit.es>
  */
-public class ConsultaDto implements Serializable {
+public class ConsultaDto extends AbstractIdentificable<Long> implements Serializable {
 
 	public enum EstatTipus {
 		Pendent,

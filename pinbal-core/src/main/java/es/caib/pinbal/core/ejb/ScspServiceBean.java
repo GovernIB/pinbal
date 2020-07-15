@@ -10,6 +10,8 @@ import javax.ejb.Stateless;
 import javax.interceptor.Interceptors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.ejb.interceptor.SpringBeanAutowiringInterceptor;
 
 import es.caib.pinbal.core.dto.ClauPrivadaDto;
@@ -62,8 +64,8 @@ public class ScspServiceBean implements ScspService {
 
 	@Override
 	@RolesAllowed("PBL_ADMIN")
-	public List<ParamConfDto> findAllParamConf() {
-		return delegate.findAllParamConf();
+	public Page<ParamConfDto> findAllParamConf(Pageable pageable) {
+		return delegate.findAllParamConf(pageable);
 	}
 
 	@Override
@@ -92,8 +94,8 @@ public class ScspServiceBean implements ScspService {
 
 	@Override
 	@RolesAllowed("PBL_ADMIN")
-	public List<EmissorCertDto> findAllEmissorCert() {
-		return delegate.findAllEmissorCert();
+	public Page<EmissorCertDto> findAllEmissorCert(Pageable pageable) {
+		return delegate.findAllEmissorCert(pageable);
 	}
 
 	@Override
@@ -122,8 +124,8 @@ public class ScspServiceBean implements ScspService {
 
 	@Override
 	@RolesAllowed("PBL_ADMIN")
-	public List<ClauPrivadaDto> findAllClauPrivada() {
-		return delegate.findAllClauPrivada();
+	public Page<ClauPrivadaDto> findAllClauPrivada(Pageable pageable) {
+		return delegate.findAllClauPrivada(pageable);
 	}
 
 	@Override
@@ -158,8 +160,8 @@ public class ScspServiceBean implements ScspService {
 
 	@Override
 	@RolesAllowed("PBL_ADMIN")
-	public List<ClauPublicaDto> findAllClauPublica() {
-		return delegate.findAllClauPublica();
+	public Page<ClauPublicaDto> findAllClauPublica(Pageable pageable) {
+		return delegate.findAllClauPublica(pageable);
 	}
 
 }

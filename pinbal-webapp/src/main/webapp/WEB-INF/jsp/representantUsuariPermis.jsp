@@ -2,21 +2,19 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
-<%@ taglib uri="http://code.google.com/p/jmesa" prefix="jmesa" %>
+
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
 
 <html>
 <head>
 	<title><spring:message code="representant.usuaris.titol"/></title>
-	<script type="text/javascript"src="<c:url value="/js/jquery.jmesa.min.js"/>"></script>
-	<script type="text/javascript" src="<c:url value="/js/jmesa.min.js"/>"></script>
 <script>
 $(document).ready(function() {
 	$('#procedimentId').change(function() {
 		if ($(this).val()) {
 			var targetUrl = '<c:url value="/estadistiques/serveisPerProcediment"/>/' + $(this).val();
 			$.ajax({
-			    url:targetUrl,
+			    url: targetUrl,
 			    type:'GET',
 			    dataType: 'json',
 			    success: function(json) {
@@ -33,7 +31,7 @@ $(document).ready(function() {
 		}
 	});
 	$('.confirm-esborrar').click(function() {
-		  return confirm("<spring:message code="procediment.serveis.permisos.esborrar.tots.segur"/>");
+		  return confirm('<spring:message code="procediment.serveis.permisos.esborrar.tots.segur"/>');
 	});
 });
 </script>
@@ -90,7 +88,7 @@ $(document).ready(function() {
 				<form action="${formAction}" method="post" class="form-inline">
 					<input type="hidden" name="procedimentId" value="${permis.procediment.id}"/>
 					<input type="hidden" name="serveiCodi" value="${permis.servei.codi}"/>
-					<button type="submit" class="btn"><i class="icon-remove"></i>&nbsp;<spring:message code="procediment.serveis.permisos.taula.boto.denegar.acces"/></button>
+					<button type="submit" class="btn btn-primary"><i class="icon-remove"></i>&nbsp;<spring:message code="procediment.serveis.permisos.taula.boto.denegar.acces"/></button>
 				</form>
 			</td>
 		</tr>

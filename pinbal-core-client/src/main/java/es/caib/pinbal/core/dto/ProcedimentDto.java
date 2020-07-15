@@ -11,7 +11,7 @@ import org.apache.commons.lang.builder.ToStringBuilder;
  * 
  * @author Limit Tecnologies <limit@limit.es>
  */
-public class ProcedimentDto implements Serializable {
+public class ProcedimentDto extends AbstractIdentificable<Long> implements Serializable {
 
 	private Long id;
 

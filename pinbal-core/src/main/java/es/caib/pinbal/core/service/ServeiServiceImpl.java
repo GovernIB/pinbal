@@ -18,6 +18,8 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.MessageSource;
 import org.springframework.context.MessageSourceAware;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.acls.domain.BasePermission;
 import org.springframework.security.acls.model.MutableAclService;
 import org.springframework.security.acls.model.Permission;
@@ -34,8 +36,6 @@ import es.caib.pinbal.core.dto.EmisorDto;
 import es.caib.pinbal.core.dto.EntitatDto;
 import es.caib.pinbal.core.dto.FitxerDto;
 import es.caib.pinbal.core.dto.NodeDto;
-import es.caib.pinbal.core.dto.PaginaLlistatDto;
-import es.caib.pinbal.core.dto.PaginacioAmbOrdreDto;
 import es.caib.pinbal.core.dto.ProcedimentDto;
 import es.caib.pinbal.core.dto.ProcedimentServeiDto;
 import es.caib.pinbal.core.dto.ServeiBusDto;
@@ -49,7 +49,6 @@ import es.caib.pinbal.core.dto.ServeiJustificantCampDto;
 import es.caib.pinbal.core.dto.ServeiXsdDto;
 import es.caib.pinbal.core.dto.XsdTipusEnumDto;
 import es.caib.pinbal.core.helper.DtoMappingHelper;
-import es.caib.pinbal.core.helper.PaginacioHelper;
 import es.caib.pinbal.core.helper.PermisosHelper;
 import es.caib.pinbal.core.helper.PermisosHelper.ObjectIdentifierExtractor;
 import es.caib.pinbal.core.helper.PluginHelper;
@@ -298,12 +297,12 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 	@Transactional(readOnly = true)
 	@Override
 	@SuppressWarnings("unchecked")
-	public PaginaLlistatDto<ServeiDto> findAmbFiltrePaginat(
+	public Page<ServeiDto> findAmbFiltrePaginat(
 			String codi,
 			String descripcio,
 			String emisor,
 			Boolean activa,
-			PaginacioAmbOrdreDto paginacioAmbOrdre) {
+			Pageable pageable) {
 		LOGGER.debug("Consulta de serveis segons filtre (codi=" + codi + ", descripcio=" + descripcio + ""
 				+ "emisor=" + emisor + " activa=" + activa + ")");
 		
@@ -316,27 +315,21 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 				(emisor != null && emisor.length() > 0) ? Long.parseLong(emisor) : null,
 				activa == null,
 				activa,
-				PaginacioHelper.toSpringDataPageable(
-						paginacioAmbOrdre,
-						null));
-		PaginaLlistatDto<ServeiDto> pagina = PaginacioHelper.toPaginaLlistatDto(
-				paginaServeis,
-				dtoMappingHelper,
-				ServeiDto.class);
-		return pagina;
+				pageable);
+		return dtoMappingHelper.pageEntities2pageDto(paginaServeis, ServeiDto.class, pageable);
 	}
 	
 	@Transactional(readOnly = true)
 	@Override
 	@SuppressWarnings("unchecked")
-	public PaginaLlistatDto<ServeiDto> findAmbFiltrePaginat(
+	public Page<ServeiDto> findAmbFiltrePaginat(
 			String codi,
 			String descripcio,
 			String emisor,
 			Boolean activa,
 			EntitatDto entitat,
 			ProcedimentDto procediment,
-			PaginacioAmbOrdreDto paginacioAmbOrdre) {
+			Pageable pageable) {
 		LOGGER.debug("Consulta de serveis segons filtre (codi=" + codi + ", descripcio=" + descripcio + ""
 				+ "emisor=" + emisor + " activa=" + activa + ")");
 		
@@ -358,15 +351,9 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 				(emisor != null && emisor.length() > 0) ? Long.parseLong(emisor) : null,
 				activa == null,
 				activa,
-				PaginacioHelper.toSpringDataPageable(
-						paginacioAmbOrdre,
-				null));
+				pageable);
 
-		PaginaLlistatDto<ServeiDto> pagina = PaginacioHelper.toPaginaLlistatDto(
-				paginaServeis,
-				dtoMappingHelper,
-				ServeiDto.class);
-		return pagina;
+		return dtoMappingHelper.pageEntities2pageDto(paginaServeis, ServeiDto.class, pageable);
 	}
 
 	@Transactional(readOnly = true)

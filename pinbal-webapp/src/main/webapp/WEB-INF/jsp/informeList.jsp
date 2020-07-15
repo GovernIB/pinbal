@@ -3,7 +3,6 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
-<%@ taglib uri="http://code.google.com/p/jmesa" prefix="jmesa" %>
 <%@ taglib tagdir="/WEB-INF/tags/pinbal" prefix="pbl" %>
 
 <html>

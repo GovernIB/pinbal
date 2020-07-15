@@ -3,13 +3,15 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
-<%@ taglib uri="http://code.google.com/p/jmesa" prefix="jmesa" %>
 
 <html>
 <head>
 	<title><spring:message code="claupublica.list.titol"/></title>
-	<script type="text/javascript" src="<c:url value="/js/jquery.jmesa.min.js"/>"></script>
-	<script type="text/javascript" src="<c:url value="/js/jmesa.min.js"/>"></script>
+	<script src="<c:url value="/webjars/datatables/1.10.21/js/jquery.dataTables.min.js"/>"></script>
+	<script src="<c:url value="/webjars/datatables/1.10.21/js/dataTables.bootstrap.min.js"/>"></script>
+	<script src="<c:url value="/webjars/mustache.js/3.0.1/mustache.min.js"/>"></script>
+	<script src="<c:url value="/webjars/datatables-plugins/1.10.20/dataRender/datetime.js"/>"></script>
+	<script src="<c:url value="/webjars/momentjs/2.24.0/min/moment.min.js"/>"></script>
 	
 	<script>
 	$(document).ready(function() {
@@ -28,6 +30,45 @@
 		$('.confirm-esborrar').click(function() {
 			  return confirm("<spring:message code="claupublica.list.confirmacio.esborrar"/>");
 		});
+		
+	    $('#table-claus').DataTable({
+	    	autoWidth: false,
+			processing: true,
+			serverSide: true,
+			dom: "<'row'<'col-md-6'i><'col-md-6'>><'row'<'col-md-12'rt>><'row'<'col-md-6'l><'col-md-6'p>>",
+			language: {
+	            "url": '<c:url value="/js/datatable-language.json"/>',
+	        },
+			ajax: '<c:url value="/scsp/claupublica/datatable"/>',
+			columnDefs: [
+				{ 
+		            targets: 0,
+		            width: "50%"
+		        },
+		        {
+		            targets: 1,
+		            width: "20%"
+		        },
+		        {
+		            targets: [3, 4],
+		            width: "20%",
+		            render: function (data, type, row, meta) {
+		            	console.log(data)
+		            	return data==null ? "" : moment(data).format('DD-MM-YYYY' )
+		            }
+		        },
+				{
+					targets: [5],
+					orderable: false,
+					width: "10%",
+					render: function (data, type, row, meta) {
+						var template = $('#template-actions').html();
+						return Mustache.render(template, row);
+					}
+				}, 
+		   ]
+		});
+
 	});
 	</script>
 
@@ -40,37 +81,28 @@
 		</div>
 		<div class="clearfix"></div>
 	</div>
+	<table id="table-claus" class="table table-striped table-bordered" style="width: 100%">
+		<thead>
+			<tr>
+			<th data-data="alies"><spring:message code="claupublica.list.taula.columna.alies" /></th>
+			<th data-data="nom"><spring:message code="claupublica.list.taula.columna.nom" /></th>
+			<th data-data="numSerie"><spring:message code="claupublica.list.taula.columna.numserie" /></th>
+			<th data-data="dataAlta"><spring:message code="claupublica.list.taula.columna.dataalta" /></th>
+			<th data-data="dataBaixa"><spring:message code="claupublica.list.taula.columna.databaixa" /></th>
+			<th data-data="id"></th>
+			</tr>
+		</thead>
+	</table>
 
-	<form>
-		<jmesa:tableModel
-				id="claupublica" 
-				items="${llistaClausPubliques}"
-				toolbar="es.caib.pinbal.webapp.jmesa.BootstrapToolbar"
-				view="es.caib.pinbal.webapp.jmesa.BootstrapView"
-				var="registre">
-			<jmesa:htmlTable>
-				<jmesa:htmlRow>
-				
-					<jmesa:htmlColumn property="alies" titleKey="claupublica.list.taula.columna.alies" style="width:20%;"/>
-					<jmesa:htmlColumn property="nom" titleKey="claupublica.list.taula.columna.nom" style="width:20%;"/>
-					<jmesa:htmlColumn property="numSerie" titleKey="claupublica.list.taula.columna.numserie" style="width:20%;"/>
-					<jmesa:htmlColumn property="dataAlta" titleKey="claupublica.list.taula.columna.dataalta" style="width:10%;"/>
-					<jmesa:htmlColumn property="dataBaixa" titleKey="claupublica.list.taula.columna.databaixa" style="width:10%;"/>
-					
-					<jmesa:htmlColumn property="ACCIO_accions" title="&nbsp;" sortable="false" style="width:10%;white-space:nowrap;">
-						<div class="btn-group">
-							<a class="btn dropdown-toggle" data-toggle="dropdown" href="#"><i class="icon-cog"></i>&nbsp;<spring:message code="comu.accions"/>&nbsp;<span class="caret"></span></a>
-							<ul class="dropdown-menu">
-								<li><a href="<c:url value="/scsp/claupublica/${registre.id}"/>" ><i class="icon-pencil"></i>&nbsp;<spring:message code="comu.boto.modificar"/></a></li>
-								<li><a href="<c:url value="/scsp/claupublica/${registre.id}/delete"/>" class="confirm-esborrar"><i class="icon-trash"></i>&nbsp;<spring:message code="comu.boto.esborrar"/></a></li>
-							</ul>
-						</div>
-					</jmesa:htmlColumn>
-					
-	            </jmesa:htmlRow>
-	        </jmesa:htmlTable>
-		</jmesa:tableModel>
-	</form>
+<script id="template-actions" type="x-tmpl-mustache">
+	<div class="btn-group">
+		<a class="btn btn-primary dropdown-toggle" data-toggle="dropdown" href="#"><i class="fas fa-cog"></i>&nbsp;<spring:message code="comu.accions"/>&nbsp;<span class="caret"></span></a>
+		<ul class="dropdown-menu">
+			<li><a href="<c:url value="/scsp/claupublica/{{ id }}"/>" ><i class="fas fa-pen"></i>&nbsp;<spring:message code="comu.boto.modificar"/></a></li>
+			<li><a href="<c:url value="/scsp/claupublica/{{ id }}/delete"/>" class="confirm-esborrar"><i class="fas fa-trash-alt"></i>&nbsp;<spring:message code="comu.boto.esborrar"/></a></li>
+		</ul>
+	</div>
+</script>	
 	<script type="text/javascript">
 		function onInvokeAction(id) {
 			setExportToLimit(id, '');

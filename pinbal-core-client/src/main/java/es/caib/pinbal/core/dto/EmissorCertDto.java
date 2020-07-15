@@ -10,7 +10,7 @@ import org.apache.commons.lang.builder.ToStringBuilder;
  * 
  * @author Limit Tecnologies <limit@limit.es>
  */
-public class EmissorCertDto implements Serializable {
+public class EmissorCertDto extends AbstractIdentificable<Long> implements Serializable {
 	
 	private Long id;
 	

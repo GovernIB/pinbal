@@ -11,6 +11,7 @@ import javax.annotation.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.acls.domain.BasePermission;
 import org.springframework.security.acls.domain.PrincipalSid;
 import org.springframework.security.acls.model.AccessControlEntry;
@@ -22,11 +23,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import es.caib.pinbal.core.dto.InformeProcedimentDto;
-import es.caib.pinbal.core.dto.PaginaLlistatDto;
-import es.caib.pinbal.core.dto.PaginacioAmbOrdreDto;
 import es.caib.pinbal.core.dto.ProcedimentDto;
 import es.caib.pinbal.core.helper.DtoMappingHelper;
-import es.caib.pinbal.core.helper.PaginacioHelper;
 import es.caib.pinbal.core.helper.PermisosHelper;
 import es.caib.pinbal.core.helper.PermisosHelper.ObjectIdentifierExtractor;
 import es.caib.pinbal.core.helper.UsuariHelper;
@@ -123,12 +121,12 @@ public class ProcedimentServiceImpl implements ProcedimentService {
 	@Transactional(readOnly = true)
 	@Override
 	@SuppressWarnings("unchecked")
-	public PaginaLlistatDto<ProcedimentDto> findAmbFiltrePaginat(
+	public Page<ProcedimentDto> findAmbFiltrePaginat(
 			Long entitatId,
 			String codi,
 			String nom,
 			String departament,
-			PaginacioAmbOrdreDto paginacioAmbOrdre) throws EntitatNotFoundException {
+			Pageable pageable) throws EntitatNotFoundException {
 		LOGGER.debug("Consulta de procediments segons filtre ("
 				+ "entitatId=" + entitatId + ", "
 				+ "codi=" + codi + ", "
@@ -145,13 +143,9 @@ public class ProcedimentServiceImpl implements ProcedimentService {
 				nom,
 				departament == null || departament.length() == 0,
 				departament,
-				PaginacioHelper.toSpringDataPageable(
-						paginacioAmbOrdre,
-						null));
-		return PaginacioHelper.toPaginaLlistatDto(
-				paginaProcediments,
-				dtoMappingHelper,
-				ProcedimentDto.class);
+				pageable);
+		return dtoMappingHelper.pageEntities2pageDto(paginaProcediments, 
+													 ProcedimentDto.class, pageable);
 	}
 
 	@Transactional(readOnly = true)

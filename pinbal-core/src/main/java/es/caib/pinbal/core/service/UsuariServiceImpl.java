@@ -11,20 +11,17 @@ import javax.annotation.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.acls.model.MutableAclService;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import es.caib.pinbal.core.dto.EntitatDto;
 import es.caib.pinbal.core.dto.EntitatUsuariDto;
 import es.caib.pinbal.core.dto.InformeUsuariDto;
-import es.caib.pinbal.core.dto.PaginaLlistatDto;
-import es.caib.pinbal.core.dto.PaginacioAmbOrdreDto;
 import es.caib.pinbal.core.dto.UsuariDto;
 import es.caib.pinbal.core.helper.DtoMappingHelper;
-import es.caib.pinbal.core.helper.PaginacioHelper;
 import es.caib.pinbal.core.helper.PluginHelper;
 import es.caib.pinbal.core.helper.UsuariHelper;
 import es.caib.pinbal.core.model.Entitat;
@@ -81,7 +78,7 @@ public class UsuariServiceImpl implements UsuariService {
 	@Transactional(readOnly = true)
 	@Override
 	@SuppressWarnings("unchecked")
-	public PaginaLlistatDto<EntitatUsuariDto> findAmbFiltrePaginat(
+	public Page<EntitatUsuariDto> findAmbFiltrePaginat(
 			Long id_entitat,
 			Boolean isRepresentant,
 			Boolean isDelegat,
@@ -91,7 +88,7 @@ public class UsuariServiceImpl implements UsuariService {
 			String nom,
 			String nif,
 			String departament,
-			PaginacioAmbOrdreDto paginacioAmbOrdre) {
+			Pageable pageable) {
 		LOGGER.debug("Consulta d'entitats segons filtre (codi=" + codi + ", nom=" + nom + ""
 				+ "nif=" + nif + " Departament=" + departament + ")");
 		
@@ -110,13 +107,10 @@ public class UsuariServiceImpl implements UsuariService {
 				nif,
 				departament == null || departament.length() == 0,
 				departament,
-				PaginacioHelper.toSpringDataPageable(
-						paginacioAmbOrdre,
-						null));
-		return PaginacioHelper.toPaginaLlistatDto(
-				paginaEntitats,
-				dtoMappingHelper,
-				EntitatUsuariDto.class);
+				pageable);
+		return  dtoMappingHelper.pageEntities2pageDto(paginaEntitats, 
+													  EntitatUsuariDto.class, 
+													  pageable);
 	}
 	
 	@Transactional(readOnly = true)

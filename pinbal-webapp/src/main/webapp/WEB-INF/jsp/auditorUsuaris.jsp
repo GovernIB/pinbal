@@ -2,7 +2,6 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
-<%@ taglib uri="http://code.google.com/p/jmesa" prefix="jmesa" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 
 <%
@@ -20,8 +19,9 @@
 <html>
 <head>
 	<title><spring:message code="auditor.usuaris.titol"/></title>
-	<script type="text/javascript" src="<c:url value="/js/jquery.jmesa.min.js"/>"></script>
-	<script type="text/javascript" src="<c:url value="/js/jmesa.min.js"/>"></script>
+	<script src="<c:url value="/webjars/datatables/1.10.21/js/jquery.dataTables.min.js"/>"></script>
+	<script src="<c:url value="/webjars/datatables/1.10.21/js/dataTables.bootstrap.min.js"/>"></script>
+	<script src="<c:url value="/webjars/mustache.js/3.0.1/mustache.min.js"/>"></script>
 <script>
 $(document).ready(function() {
 	$('#netejar-filtre').click(function() {
@@ -43,6 +43,67 @@ $(document).ready(function() {
 		} else if (this.value == '${caracterTipusCodi}') {
 			$('#modal-group-codi').removeClass('hide');
 			$('#modal-group-nif').addClass('hide');
+		}
+	});
+
+    $('#table-users').DataTable({
+    	autoWidth: false,
+		processing: true,
+		serverSide: true,
+		dom: "<'row'<'col-md-6'i><'col-md-6'>><'row'<'col-md-12'rt>><'row'<'col-md-6'l><'col-md-6'p>>",
+		language: {
+            "url": '<c:url value="/js/datatable-language.json"/>',
+        },
+		ajax: '<c:url value="/auditor/usuari/datatable"/>',
+		columnDefs: [
+			{ 
+	            targets: 0,
+	            orderable: false,
+				render: function (data, type, row, meta) {
+					var template = $('#template-usuari').html();
+					return Mustache.render(template, row);
+				}
+	        },
+	        {
+	            targets: 1,
+	            orderable: false,
+	            width: "20%",
+				render: function (data, type, row, meta) {
+					var template = $('#template-rols').html();
+					return Mustache.render(template, row);
+				}
+	        },
+			{
+				targets: 2,
+				orderable: false,
+				width: "10%",
+				render: function (data, type, row, meta) {
+					var template = $('#template-actions').html();
+					row['nrow'] = meta['row'];
+					return Mustache.render(template, row);
+				}
+			}, 
+			{
+				targets: [3, 4],
+				orderable: false,
+				visible:false
+			}, 
+	   ],
+	   initComplete: function( settings, json ) {
+		   console.log(settings)
+		   console.log(json)
+			$('.btn-open-modal-edit').click(function() {
+				var nrow = $(this).data('nrow');
+				var row = json.data[nrow];
+				var usuari = row.usuari;
+				console.log(usuari);
+		 		showModalEditar(usuari.inicialitzat, usuari.noInicialitzatNif, 
+		 				usuari.noInicialitzatCodi, usuari.descripcio, 
+		 				usuari.codi, usuari.nif, 
+		 				row.departament, 
+		 				row.representant, 
+		 				row.delegat, row.aplicacio);
+			});
 		}
 	});
 });
@@ -123,42 +184,39 @@ function showModalEditar(
 		</div>
 		<div class="clearfix"></div>
 	</div>
+	<table id="table-users" class="table table-striped table-bordered" style="width: 100%">
+		<thead>
+			<tr>
+			<th data-data="usuari.nom"><spring:message code="entitat.usuaris.camp.usuari" /></th>
+			<th data-data="representant"><spring:message code="auditor.usuaris.camp.rols" /></th>
+			<th data-data="principal"></th>
+			<th data-data="aplicacio"></th>
+			<th data-data="auditor"></th>
+			</tr>
+		</thead>
+	</table>	
 	
-	<div style="margin-top:8px;padding:4px 0">
-		<jmesa:tableModel
-				id="usuaris" 
-				items="${entitat.usuarisAuditor}"
-				view="es.caib.pinbal.webapp.jmesa.BootstrapNoToolbarView"
-				var="registre"
-				maxRows="${fn:length(entitat.usuarisAuditor)}">
-			<jmesa:htmlTable>
-				<jmesa:htmlRow>
-					<jmesa:htmlColumn property="usuari.nom" titleKey="auditor.usuaris.camp.usuari" sortable="false">
-						${registre.usuari.descripcio}
-					</jmesa:htmlColumn>
-					<jmesa:htmlColumn property="rols" titleKey="auditor.usuaris.camp.rols" sortable="false">
-						<c:if test="${registre.auditor}"><span class="label"><spring:message code="auditor.usuaris.rol.audit"/></span></c:if>
-					</jmesa:htmlColumn>
-					<%--jmesa:htmlColumn property="principal" titleKey="auditor.usuaris.camp.principal">
-						<c:if test="${registre.principal}"><i class="icon-certificate"></i></c:if>
-					</jmesa:htmlColumn--%>
-					<jmesa:htmlColumn property="ACCIO_update" title="&nbsp;" sortable="false">
-						<c:choose>
-							<c:when test="${registre.principal}">
-								<a class="btn disabled" href="#"><i class="glyphicons-pencil"></i>&nbsp;<spring:message code="comu.boto.modificar"/></a>
-							</c:when>
-							<c:otherwise>
-								<c:set var="onclickShowModal">showModalEditar(${registre.usuari.inicialitzat}, ${registre.usuari.noInicialitzatNif}, ${registre.usuari.noInicialitzatCodi}, '${registre.usuari.codi}', '${registre.usuari.nif}', '${fn:replace(registre.departament, "'", "\\'")}', ${registre.auditor})</c:set>
-								<a class="btn-default" href="#modal-editar-departament" onclick="${onclickShowModal}"><i class="glyphicons-pencil"></i>&nbsp;<spring:message code="comu.boto.modificar"/></a>
-							</c:otherwise>
-						</c:choose>
-					</jmesa:htmlColumn>
-	            </jmesa:htmlRow>
-	        </jmesa:htmlTable>
-		</jmesa:tableModel>
-	</div>
+<script id="template-usuari" type="x-tmpl-mustache">
+	{{ usuari.descripcio }}
+</script>
+<script id="template-rols" type="x-tmpl-mustache">
 
-	<div id="modal-content-usuari" class="modal hidden fade">
+	{{#auditor}}
+		<span class="badge"><spring:message code="auditor.usuaris.rol.audit"/></span>
+	{{/auditor}}
+</script>
+<script id="template-actions" type="x-tmpl-mustache">
+{{#principal}}
+ 	<a class="btn btn-primary disabled" href="#"><i class="fas fa-pen"></i>&nbsp;<spring:message code="comu.boto.modificar"/></a>
+{{/principal}}
+{{^principal}}
+	<a data-nrow="{{ nrow }}" class="btn-open-modal-edit btn btn-primary"><i class="fas fa-pen"></i>&nbsp;<spring:message code="comu.boto.modificar"/></a>
+{{/principal}}
+</script>
+
+<div id="modal-form-usuari" class="modal" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
 		<div class="modal-header">
 			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
 			<h3><spring:message code="auditor.usuaris.titol.modificar"/></h3>
@@ -205,6 +263,8 @@ function showModalEditar(
 			<a href="#" class="btn-default" data-dismiss="modal"><spring:message code="comu.boto.tornar"/></a>
 			<a href="#" class="btn btn-primary" onclick="$('#modal-form').submit()"><spring:message code="comu.boto.guardar"/></a>
 		</div>
+	</div>
+	</div>
 	</div>
 
 </body>

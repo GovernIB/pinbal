@@ -10,6 +10,8 @@ import javax.ejb.Stateless;
 import javax.interceptor.Interceptors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.ejb.interceptor.SpringBeanAutowiringInterceptor;
 
 import es.caib.pinbal.core.dto.EntitatDto;
@@ -56,15 +58,15 @@ public class EntitatServiceBean implements EntitatService {
 
 	@Override
 	@RolesAllowed("PBL_ADMIN")
-	public PaginaLlistatDto<EntitatDto> findAmbFiltrePaginat(
+	public Page<EntitatDto> findAmbFiltrePaginat(
 			String codi,
 			String nom,
 			String cif,
 			Boolean activa,
 			String tipus,
-			PaginacioAmbOrdreDto paginacioAmbOrdre) {
+			Pageable pageable) {
 		return delegate.findAmbFiltrePaginat(codi, nom, cif, activa, tipus, 
-											 paginacioAmbOrdre);
+				pageable);
 	}
 
 	@Override

@@ -2,17 +2,49 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
-<%@ taglib uri="http://code.google.com/p/jmesa" prefix="jmesa" %>
 
 <html>
 <head>
 	<title><spring:message code="entitat.list.titol"/></title>
-	<script type="text/javascript" src="<c:url value="/js/jquery.jmesa.min.js"/>"></script>
-	<script type="text/javascript" src="<c:url value="/js/jmesa.min.js"/>"></script>
+	<script src="<c:url value="/webjars/datatables/1.10.21/js/jquery.dataTables.min.js"/>"></script>
+	<script src="<c:url value="/webjars/datatables/1.10.21/js/dataTables.bootstrap.min.js"/>"></script>
+	<script src="<c:url value="/webjars/mustache.js/3.0.1/mustache.min.js"/>"></script>
+
 <script>
 $(document).ready(function() {
 	$('.confirm-remove').click(function() {
 		  return confirm("<spring:message code="entitat.serveis.confirmacio.desactivar.servei"/>");
+	});
+	
+	
+	
+    $('#table-serveis').DataTable({
+    	autoWidth: false,
+		processing: true,
+		serverSide: true,
+		dom: "<'row'<'col-md-6'i><'col-md-6'>><'row'<'col-md-12'rt>><'row'<'col-md-6'l><'col-md-6'p>>",
+		language: {
+            "url": '<c:url value="/js/datatable-language.json"/>'
+        },
+		ajax: '<c:url value="/entitat/${entitat.id}/servei/datatable"/>',
+		columnDefs: [
+			{
+				targets: [2],
+				orderable: false,
+				render: function (data, type, row, meta) {
+					var template = $('#template-actiu').html();
+					return Mustache.render(template, row);
+				}
+			}, 
+			{
+				targets: [3],
+				orderable: false,
+				render: function (data, type, row, meta) {
+					var template = $('#template-swap-actiu').html();
+					return Mustache.render(template, row);
+				}
+			}, 
+	   ]
 	});
 });
 </script>
@@ -23,37 +55,29 @@ $(document).ready(function() {
 		<li><spring:message code="entitat.miques.entitat" arguments="${entitat.nom}"/> <span class="divider">/</span></li>
 		<li class="active"><spring:message code="entitat.miques.serveis"/></li>
 	</ul>
-
-	<form>
-		<div>
-			<jmesa:tableModel
-		                id="serveis"
-		                items="${serveisActius}"
-		                view="es.caib.pinbal.webapp.jmesa.BootstrapNoToolbarView"
-		                var="registre"
-		                maxRows="${fn:length(serveisActius)}">
-				<jmesa:htmlTable>
-					<jmesa:htmlRow>
-						<c:set var="trobat" value="${false}"/>
-						<c:forEach var="entitatServei" items="${entitat.serveis}">
-							<c:if test="${registre.codi == entitatServei}"><c:set var="trobat" value="${true}"/></c:if>
-						</c:forEach>
-						<jmesa:htmlColumn property="codi"/>
-						<jmesa:htmlColumn property="descripcio"/>
-						<jmesa:htmlColumn property="CALCUL_actiu" titleKey="entitat.serveis.actiu">
-							<c:if test="${trobat}"><i class="icon-ok"></i></c:if>
-						</jmesa:htmlColumn>
-						<jmesa:htmlColumn property="ACCIO_activar" title="&nbsp;" sortable="false" style="white-space:nowrap;">
-							<c:choose>
-								<c:when test="${not trobat}"><a href="servei/${registre.codi}/add" class="btn"><i class="icon-ok"></i>&nbsp;<spring:message code="comu.boto.activar"/></a></c:when>
-								<c:otherwise><a href="servei/${registre.codi}/remove" class="btn confirm-remove"><i class="icon-remove"></i>&nbsp;<spring:message code="comu.boto.desactivar"/></a></c:otherwise>
-							</c:choose>
-						</jmesa:htmlColumn>
-		            </jmesa:htmlRow>
-		        </jmesa:htmlTable>
-			</jmesa:tableModel>
-		</div>
-	</form>
+	<table id="table-serveis" class="table table-striped table-bordered" style="width: 100%">
+		<thead>
+			<tr>
+				<th data-data="codi"><spring:message code="servei.list.taula.columna.codi" /></th>
+				<th data-data="descripcio"><spring:message code="servei.list.taula.columna.descripcio" /></th>
+				<th data-data="actiu"><spring:message code="entitat.serveis.actiu" /></th>
+				<th></th>
+			</tr>
+		</thead>
+	</table>
+<script id="template-actiu" type="x-tmpl-mustache">
+{{#actiu}}
+<i class="fa fa-check"></i>
+{{/actiu}}
+</script>
+<script id="template-swap-actiu" type="x-tmpl-mustache">
+{{#actiu}}
+	<a href="servei/{{ codi }}/remove" class="btn btn-default confirm-remove"><i class="fas fa-times"></i>&nbsp;<spring:message code="comu.boto.desactivar"/></a>
+{{/actiu}}
+{{^actiu}}
+	<a href="servei/{{ codi }}/add" class="btn btn-default"><i class="fa fa-check"></i>&nbsp;<spring:message code="comu.boto.activar"/></a>
+{{/actiu}}
+</script>
 	<div>
 		<a href="<c:url value="/entitat"/>" class="btn col-md-pull-right"><spring:message code="comu.boto.tornar"/></a>
 		<div class="clearfix"></div>

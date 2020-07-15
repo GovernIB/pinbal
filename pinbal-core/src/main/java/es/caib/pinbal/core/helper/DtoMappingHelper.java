@@ -6,6 +6,9 @@ package es.caib.pinbal.core.helper;
 import java.util.Date;
 
 import org.joda.time.DateTime;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 
 import es.caib.pinbal.core.dto.ClauPrivadaDto;
@@ -15,6 +18,7 @@ import es.caib.pinbal.core.dto.EntitatUsuariDto;
 import es.caib.pinbal.core.dto.InformeUsuariDto;
 import es.caib.pinbal.core.dto.ProcedimentDto;
 import es.caib.pinbal.core.dto.ServeiCampDto;
+import es.caib.pinbal.core.dto.ServeiDto;
 import es.caib.pinbal.core.dto.UsuariDto;
 import es.caib.pinbal.core.model.ClauPrivada;
 import es.caib.pinbal.core.model.Consulta;
@@ -122,6 +126,17 @@ public class DtoMappingHelper {
 
 	public MapperFacade getMapperFacade() {
 		return mapperFactory.getMapperFacade();
+	}
+	
+	public <S, D> Page<D> pageEntities2pageDto(Page<S> pageEntities, 
+											   Class<D> destinationClass,
+											   Pageable pageable){
+		return new PageImpl<D>(
+				this.getMapperFacade().mapAsList(
+						pageEntities.getContent(),
+						destinationClass),
+				pageable,
+				pageEntities.getTotalElements());
 	}
 
 }

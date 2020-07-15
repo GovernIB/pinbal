@@ -3,32 +3,54 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
-<%@ taglib uri="http://code.google.com/p/jmesa" prefix="jmesa" %>
 
 <html>
 <head>
 	<title><spring:message code="paramconf.list.titol"/></title>
-	<script type="text/javascript" src="<c:url value="/js/jquery.jmesa.min.js"/>"></script>
-	<script type="text/javascript" src="<c:url value="/js/jmesa.min.js"/>"></script>
+	<script src="<c:url value="/webjars/datatables/1.10.21/js/jquery.dataTables.min.js"/>"></script>
+	<script src="<c:url value="/webjars/datatables/1.10.21/js/dataTables.bootstrap.min.js"/>"></script>
+	<script src="<c:url value="/webjars/mustache.js/3.0.1/mustache.min.js"/>"></script>
+	<script src="<c:url value="/webjars/bootstrap-datepicker/1.6.1/dist/js/bootstrap-datepicker.min.js"/>"></script>
+	<script src="<c:url value="/webjars/bootstrap-datepicker/1.6.1/dist/locales/bootstrap-datepicker.ca.min.js"/>"></script>
 	
 	<script>
 	$(document).ready(function() {
-		/* $('#netejar-filtre').click(function() {
-			$(':input', $('#form-filtre')).each (function() {
-				var type = this.type, tag = this.tagName.toLowerCase();
-				if (type == 'text' || type == 'password' || tag == 'textarea')
-					this.value = '';
-				else if (type == 'checkbox' || type == 'radio')
-					this.checked = false;
-				else if (tag == 'select')
-					this.selectedIndex = 0;
-			});
-			$('#form-filtre').submit();
-		}); */
 		$('.confirm-esborrar').click(function() {
 			  return confirm("<spring:message code="paramconf.list.confirmacio.esborrar"/>");
 		});
+
+		
+	    $('#table-params').DataTable({
+	    	autoWidth: false,
+			processing: true,
+			serverSide: true,
+			dom: "<'row'<'col-md-6'i><'col-md-6'>><'row'<'col-md-12'rt>><'row'<'col-md-6'l><'col-md-6'p>>",
+			language: {
+	            "url": '<c:url value="/js/datatable-language.json"/>',
+	        },
+			ajax: '<c:url value="/scsp/paramconf/datatable"/>',
+			columnDefs: [
+				{ 
+		            targets: 0,
+		            width: "30%"
+		        },
+		        {
+		            targets: 1,
+		            width: "60%"
+		        },
+				{
+					targets: [2],
+					orderable: false,
+					width: "10%",
+					render: function (data, type, row, meta) {
+							var template = $('#template-actions').html();
+							return Mustache.render(template, row);
+					}
+				}, 
+		   ]
+		});
 	});
+
 	</script>
 
 </head>
@@ -40,40 +62,31 @@
 		</div>
 		<div class="clearfix"></div>
 	</div>
-
-	<form>
-		<jmesa:tableModel
-				id="paramconf" 
-				items="${llistaParametres}"
-				toolbar="es.caib.pinbal.webapp.jmesa.BootstrapToolbar"
-				view="es.caib.pinbal.webapp.jmesa.BootstrapView"
-				var="registre">
-			<jmesa:htmlTable>
-				<jmesa:htmlRow>
-				
-					<jmesa:htmlColumn property="nom" titleKey="paramconf.list.taula.columna.nom" style="width:30%;"/>
-					<jmesa:htmlColumn property="valor" titleKey="paramconf.list.taula.columna.valor" style="width:60%;"/>
-					
-					<jmesa:htmlColumn property="ACCIO_accions" title="&nbsp;" sortable="false" style="width:10%;white-space:nowrap;">
-						<div class="btn-group">
-							<a class="btn dropdown-toggle" data-toggle="dropdown" href="#"><i class="icon-cog"></i>&nbsp;<spring:message code="comu.accions"/>&nbsp;<span class="caret"></span></a>
-							<ul class="dropdown-menu">
-								<li><a href="<c:url value="/scsp/paramconf/${registre.nom}"/>" ><i class="icon-pencil"></i>&nbsp;<spring:message code="comu.boto.modificar"/></a></li>
-								<li><a href="<c:url value="/scsp/paramconf/${registre.nom}/delete"/>" class="confirm-esborrar"><i class="icon-trash"></i>&nbsp;<spring:message code="comu.boto.esborrar"/></a></li>
-							</ul>
-						</div>
-					</jmesa:htmlColumn>
-					
-	            </jmesa:htmlRow>
-	        </jmesa:htmlTable>
-		</jmesa:tableModel>
-	</form>
-	<script type="text/javascript">
-		function onInvokeAction(id) {
-			setExportToLimit(id, '');
-			createHiddenInputFieldsForLimitAndSubmit(id);
-		}
-	</script>
+	<div class="clearfix"></div>
+	<table id="table-params" class="table table-striped table-bordered" style="width: 100%">
+		<thead>
+			<tr>
+				<th data-data="nom"><spring:message code="paramconf.list.taula.columna.nom" /></th>
+				<th data-data="valor"><spring:message code="paramconf.list.taula.columna.valor" /></th>
+				<th data-data="id"></th>
+			</tr>
+		</thead>
+	</table>
+<script id="template-actions" type="x-tmpl-mustache">
+	<div class="btn-group">
+		<a class="btn btn-primary dropdown-toggle" data-toggle="dropdown" href="#"><i class="fas fa-cog"></i>&nbsp;<spring:message code="comu.accions"/>&nbsp;<span class="caret"></span></a>
+		<ul class="dropdown-menu">
+			<li><a href="<c:url value="/scsp/paramconf/{{ nom }}"/>" ><i class="fas fa-pen"></i>&nbsp;<spring:message code="comu.boto.modificar"/></a></li>
+			<li><a href="<c:url value="/scsp/paramconf/{{ nom }}/delete"/>" class="confirm-esborrar"><i class="fas fa-trash-alt"></i>&nbsp;<spring:message code="comu.boto.esborrar"/></a></li>
+		</ul>
+	</div>
+</script>
+<script type="text/javascript">
+	function onInvokeAction(id) {
+		setExportToLimit(id, '');
+		createHiddenInputFieldsForLimitAndSubmit(id);
+	}
+</script>
 
 </body>
 </html>

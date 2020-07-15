@@ -3,7 +3,6 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
-<%@ taglib uri="http://code.google.com/p/jmesa" prefix="jmesa" %>
 <%@ taglib tagdir="/WEB-INF/tags/pinbal" prefix="pbl" %>
 
 <%
@@ -15,8 +14,11 @@
 <html>
 <head>
 	<title><spring:message code="entitat.list.titol"/></title>
-	<script type="text/javascript" src="<c:url value="/js/jquery.jmesa.min.js"/>"></script>
-	<script type="text/javascript" src="<c:url value="/js/jmesa.min.js"/>"></script>
+	<script src="<c:url value="/webjars/datatables/1.10.21/js/jquery.dataTables.min.js"/>"></script>
+	<script src="<c:url value="/webjars/datatables/1.10.21/js/dataTables.bootstrap.min.js"/>"></script>
+	<script src="<c:url value="/webjars/mustache.js/3.0.1/mustache.min.js"/>"></script>
+	<script src="<c:url value="/webjars/bootstrap-datepicker/1.6.1/dist/js/bootstrap-datepicker.min.js"/>"></script>
+	<script src="<c:url value="/webjars/bootstrap-datepicker/1.6.1/dist/locales/bootstrap-datepicker.ca.min.js"/>"></script>
 <script>
 $(document).ready(function() {
 	$('#netejar-filtre').click(function() {
@@ -34,6 +36,74 @@ $(document).ready(function() {
 	$('.confirm-esborrar').click(function() {
 		  return confirm("<spring:message code="entitat.list.confirmacio.esborrar"/>");
 	});
+		
+    $('#table-entitats').DataTable({
+    	autoWidth: false,
+		processing: true,
+		serverSide: true,
+		dom: "<'row'<'col-md-6'i><'col-md-6'>><'row'<'col-md-12'rt>><'row'<'col-md-6'l><'col-md-6'p>>",
+		language: {
+            "url": "js/datatable-language.json"
+        },
+		ajax: "entitat/datatable",
+		columnDefs: [
+			{ 
+	            targets: 0,
+	        }, { 
+	            targets: [1],
+				render: function (data, type, row, meta) {
+					row['span-label'] = '';
+					if (row.tipus=='GOVERN'){
+						row['span-label'] = '<span class="label label-default" title="<spring:message code="entitat.list.entitat.tipus.GOVERN"/>">GOV</span>';
+						
+					}else if(row.tipus=='CONSELL'){
+						row['span-label'] = '<span class="label label-default" title="<spring:message code="entitat.list.entitat.tipus.CONSELL"/>">CON</span>';
+						
+					}else if(row.tipus=='AJUNTAMENT'){
+						row['span-label'] = '<span class="label label-default" title="<spring:message code="entitat.list.entitat.tipus.AJUNTAMENT"/>">AJU</span>';
+					}
+					var template = $('#template-nom').html();
+					return Mustache.render(template, row);
+				}
+	        },
+			{
+				targets: [4],
+				render: function (data, type, row, meta) {
+						var template = $('#template-activa').html();
+						return Mustache.render(template, row);
+				}
+			},
+			{
+				targets: [5],
+				orderable: false,
+				width: "10%",
+				render: function (data, type, row, meta) {
+						var template = $('#template-btn-usuaris').html();
+						return Mustache.render(template, row);
+				}
+			}, 
+			{
+				targets: [6],
+				orderable: false,
+				width: "10%",
+				render: function (data, type, row, meta) {
+						var template = $('#template-btn-serveis').html();
+						return Mustache.render(template, row);
+				}
+			}, 
+			{
+				targets: [7],
+				orderable: false,
+				width: "10%",
+				render: function (data, type, row, meta) {
+						var template = $('#template-accions').html();
+						row['propertyEsborrar'] = ${propertyEsborrar};
+						return Mustache.render(template, row);
+				}
+			}, 
+	   ]
+	});
+	
 });
 </script>
 </head>
@@ -94,81 +164,65 @@ $(document).ready(function() {
 		<div class="clearfix"></div>
 	</div>
 
-	<form>
-		<jmesa:tableModel
-				id="entitats" 
-				items="${entitats}"
-				toolbar="es.caib.pinbal.webapp.jmesa.BootstrapToolbar"
-				view="es.caib.pinbal.webapp.jmesa.BootstrapView"
-				var="registre">
-			<jmesa:htmlTable>
-				<jmesa:htmlRow>
-					<jmesa:htmlColumn property="codi" titleKey="entitat.list.taula.columna.codi"/>
-					<jmesa:htmlColumn property="nom" titleKey="entitat.list.taula.columna.nom">
-						<c:if test="${registre.tipus != 'ALTRES'}">
-							<c:set var="tipusDescripcio" value="entitat.list.entitat.tipus.${registre.tipus}"/>
-							<span class="label" title="<spring:message code="${tipusDescripcio}"/>">${fn:substring(registre.tipus, 0, 3)}</span>
-						</c:if>
-						${registre.nom}
-					</jmesa:htmlColumn>
-					<jmesa:htmlColumn property="cif" titleKey="entitat.list.taula.columna.cif"/>
-					<jmesa:htmlColumn property="tipus" titleKey="entitat.list.taula.columna.tipus"/>
-					<jmesa:htmlColumn property="activa" titleKey="entitat.list.taula.columna.activa">
-						<c:if test="${registre.activa}"><i class="glyphicon-ok"></i></c:if>
-					</jmesa:htmlColumn>
-					<jmesa:htmlColumn property="ACCIO_usuaris" title="&nbsp;" sortable="false" style="white-space:nowrap;">
-						<a href="entitat/${registre.id}/usuari" class="btn-default">
-							<i class="glyphglyphicon-user"></i>&nbsp;<spring:message code="entitat.list.taula.boto.usuaris"/>&nbsp;<span class="badge">${fn:length(registre.usuaris)}</span>
-						</a>
-					</jmesa:htmlColumn>
-					<jmesa:htmlColumn property="ACCIO_serveis" title="&nbsp;" sortable="false" style="white-space:nowrap;">
-						<a href="entitat/${registre.id}/servei" class="btn">
-							<i class="glyphicon-briefcase"></i>&nbsp;<spring:message code="entitat.list.taula.boto.serveis"/>&nbsp;<span class="badge">${fn:length(registre.serveis)}</span>
-						</a>
-					</jmesa:htmlColumn>
-					<%--jmesa:htmlColumn property="ACCIO_enable_disable" title="&nbsp;" style="white-space:nowrap;">
-						<c:choose>
-							<c:when test="${not registre.activa}">
-								<a href="entitat/${registre.id}/enable" class="btn"><i class="glyphicon-ok"></i>&nbsp;<spring:message code="comu.boto.activar"/></a>
-							</c:when>
-							<c:otherwise>
-								<a href="entitat/${registre.id}/disable" class="btn"><i class="glyphicon-remove"></i>&nbsp;<spring:message code="comu.boto.desactivar"/></a>
-							</c:otherwise>
-						</c:choose>
-					</jmesa:htmlColumn>
-					<jmesa:htmlColumn property="ACCIO_edit" title="&nbsp;" style="white-space:nowrap;">
-						<a href="entitat/${registre.id}" class="btn"><i class="glyphicon-pencil"></i>&nbsp;<spring:message code="comu.boto.modificar"/></a>
-					</jmesa:htmlColumn>
-					<c:if test="${propertyEsborrar}">
-						<jmesa:htmlColumn property="ACCIO_delete" title="&nbsp;" style="white-space:nowrap;">
-							<a href="entitat/${registre.id}/delete" class="btn confirm-esborrar"><i class="glyphicon-trash"></i>&nbsp;<spring:message code="comu.boto.esborrar"/></a>
-						</jmesa:htmlColumn>
-					</c:if--%>
-					<jmesa:htmlColumn property="ACCIO_accions" title="&nbsp;" sortable="false" style="white-space:nowrap;">
-						<div class="btn-group-lg">
-							<a class="btn dropdown-toggle" data-toggle="dropdown" href="#"><i class="glyphicon-cog"></i>&nbsp;<spring:message code="comu.accions"/>&nbsp;<span class="caret"></span></a>
-							<ul class="dropdown-menu">
-								<li>
-									<c:choose>
-										<c:when test="${not registre.activa}">
-											<a href="entitat/${registre.id}/enable"><i class="glyphicon-ok"></i>&nbsp;<spring:message code="comu.boto.activar"/></a>
-										</c:when>
-										<c:otherwise>
-											<a href="entitat/${registre.id}/disable"><i class="glyphicon-remove"></i>&nbsp;<spring:message code="comu.boto.desactivar"/></a>
-										</c:otherwise>
-									</c:choose>
-								</li>
-								<li><a href="entitat/${registre.id}"><i class="glyphicon-pencil"></i>&nbsp;<spring:message code="comu.boto.modificar"/></a></li>
-								<c:if test="${propertyEsborrar}">
-									<li><a href="entitat/${registre.id}/delete" class="confirm-esborrar"><i class="glyphicon-trash"></i>&nbsp;<spring:message code="comu.boto.esborrar"/></a></li>
-								</c:if>
-							</ul>
-						</div>
-					</jmesa:htmlColumn>
-	            </jmesa:htmlRow>
-	        </jmesa:htmlTable>
-		</jmesa:tableModel>
-	</form>
+
+	<div class="clearfix"></div>
+	<div style="position: relative; top: -40px; z-index:0">
+	<table id="table-entitats" class="table table-striped table-bordered" style="width: 100%">
+		<thead>
+			<tr>
+				<th data-data="codi"><spring:message code="entitat.list.taula.columna.codi" /></th>
+				<th data-data="nom"><spring:message code="entitat.list.taula.columna.nom" /></th>
+				<th data-data="cif"><spring:message code="entitat.list.taula.columna.cif" /></th>
+				<th data-data="tipus"><spring:message code="entitat.list.taula.columna.tipus" /></th>
+				<th data-data="activa"><spring:message code="entitat.list.taula.columna.activa" /></th>
+				<th data-data="usuaris"></th>
+				<th data-data="serveis"></th>
+				<th data-data="id"></th>
+			</tr>
+		</thead>
+	</table>
+	</div>
+<script id="template-nom" type="x-tmpl-mustache">
+{{{ span-label }}}
+{{ nom }}
+</script>
+
+<script id="template-activa" type="x-tmpl-mustache">
+{{#activa}}
+<i class="fa fa-check"></i>
+{{/activa}}
+</script>
+<script id="template-btn-usuaris" type="x-tmpl-mustache">
+	<a href="entitat/{{ id }}/usuari" class="btn btn-default">
+		<i class="fas fa-users"></i>&nbsp;<spring:message code="entitat.list.taula.boto.usuaris"/>&nbsp;<span class="badge">{{ usuaris.length }}</span>
+	</a>
+</script>
+<script id="template-btn-serveis" type="x-tmpl-mustache">
+	<a href="entitat/{{ id }}/servei" class="btn btn-default">
+		<i class="fas fa-briefcase"></i>&nbsp;<spring:message code="entitat.list.taula.boto.serveis"/>&nbsp;<span class="badge">{{ serveis.length }}</span>
+	</a>
+</script>
+<script id="template-accions" type="x-tmpl-mustache">
+	<div class="btn-group">
+		<a class="btn btn-primary dropdown-toggle" data-toggle="dropdown" href="#"><i class="fas fa-cog"></i>&nbsp;<spring:message code="comu.accions"/>&nbsp;<span class="caret"></span></a>
+		<ul class="dropdown-menu">
+			<li>
+				{{#activa}}
+				<a href="entitat/{{ id }}/disable"><i class="fas fa-times"></i>&nbsp;<spring:message code="comu.boto.desactivar"/></a>
+				{{/activa}}
+				{{^activa}}
+				<a href="entitat/{{ id }}/enable"><i class="fas fa-check"></i>&nbsp;<spring:message code="comu.boto.activar"/></a>
+				{{/activa}}
+			</li>
+			<li>
+				<a href="entitat/{{ id }}"><i class="fas fa-pen"></i>&nbsp;<spring:message code="comu.boto.modificar"/></a>
+			</li>
+			{{#propertyEsborrar}}
+				<li><a href="entitat/{{ id }}/delete" class="confirm-esborrar"><i class="fas fa-trash-alt"></i>&nbsp;<spring:message code="comu.boto.esborrar"/></a></li>
+			{{/propertyEsborrar}}
+		</ul>
+	</div>
+</script>
 <script type="text/javascript">
 function onInvokeAction(id) {
 	setExportToLimit(id, '');

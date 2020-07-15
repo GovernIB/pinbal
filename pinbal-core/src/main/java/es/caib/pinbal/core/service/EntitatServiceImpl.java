@@ -17,16 +17,14 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.MessageSource;
 import org.springframework.context.MessageSourceAware;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import es.caib.pinbal.core.dto.EntitatDto;
-import es.caib.pinbal.core.dto.EntitatDto.EntitatTipusDto;
-import es.caib.pinbal.core.dto.PaginaLlistatDto;
-import es.caib.pinbal.core.dto.PaginacioAmbOrdreDto;
 import es.caib.pinbal.core.helper.DtoMappingHelper;
-import es.caib.pinbal.core.helper.PaginacioHelper;
 import es.caib.pinbal.core.model.Entitat;
 import es.caib.pinbal.core.model.Entitat.EntitatTipus;
 import es.caib.pinbal.core.model.EntitatServei;
@@ -117,16 +115,16 @@ public class EntitatServiceImpl implements EntitatService, ApplicationContextAwa
 
 	@Transactional(readOnly = true)
 	@Override
-	@SuppressWarnings("unchecked")
-	public PaginaLlistatDto<EntitatDto> findAmbFiltrePaginat(
+	public Page<EntitatDto> findAmbFiltrePaginat(
 			String codi,
 			String nom,
 			String cif,
 			Boolean activa,
 			String tipus,
-			PaginacioAmbOrdreDto paginacioAmbOrdre) {
+			Pageable pageable) {
 		LOGGER.debug("Consulta d'entitats segons filtre (codi=" + codi + ", nom=" + nom + ""
 				+ "cif=" + cif + " activa=" + activa + " tipus=" + tipus + ")");
+		
 		Page<Entitat> paginaEntitats = entitatRepository.findByFiltre(
 				codi == null || codi.length() == 0,
 				codi,
@@ -138,13 +136,14 @@ public class EntitatServiceImpl implements EntitatService, ApplicationContextAwa
 				activa,
 				tipus == null || tipus.length() == 0,
 				(tipus != null && tipus.length() > 0) ? Entitat.EntitatTipus.valueOf(tipus.toString()) : null,
-				PaginacioHelper.toSpringDataPageable(
-						paginacioAmbOrdre,
-						null));
-		return PaginacioHelper.toPaginaLlistatDto(
-				paginaEntitats,
-				dtoMappingHelper,
-				EntitatDto.class);
+				pageable);
+		
+		return new PageImpl<EntitatDto>(
+					dtoMappingHelper.getMapperFacade().mapAsList(
+							paginaEntitats.getContent(),
+							EntitatDto.class),
+					pageable,
+					paginaEntitats.getTotalElements());
 	}
 
 	@Transactional(readOnly = true)
@@ -338,7 +337,4 @@ public class EntitatServiceImpl implements EntitatService, ApplicationContextAwa
 	}
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(EntitatServiceImpl.class);
-
-
-
 }

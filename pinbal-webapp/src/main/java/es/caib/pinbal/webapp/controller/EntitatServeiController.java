@@ -3,22 +3,34 @@
  */
 package es.caib.pinbal.webapp.controller;
 
+import java.lang.reflect.InvocationTargetException;
+import java.sql.SQLException;
+import java.util.List;
+
+import javax.naming.NamingException;
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import es.caib.pinbal.core.dto.EntitatDto;
+import es.caib.pinbal.core.dto.ServeiDto;
 import es.caib.pinbal.core.service.EntitatService;
 import es.caib.pinbal.core.service.ServeiService;
 import es.caib.pinbal.core.service.exception.EntitatNotFoundException;
 import es.caib.pinbal.core.service.exception.EntitatServeiNotFoundException;
 import es.caib.pinbal.core.service.exception.ServeiNotFoundException;
 import es.caib.pinbal.webapp.common.AlertHelper;
+import es.caib.pinbal.webapp.common.EntitatHelper;
+import es.caib.pinbal.webapp.datatables.ServerSideRequest;
+import es.caib.pinbal.webapp.datatables.ServerSideResponse;
 
 /**
  * Controlador per al manteniment dels serveis d'una entitat.
@@ -43,11 +55,7 @@ public class EntitatServeiController extends BaseController {
 		EntitatDto entitat = null;
 		if (entitatId != null)
 			entitat = entitatService.findById(entitatId);
-		if (entitat != null) {
-			model.addAttribute("entitat", entitat);
-			model.addAttribute("serveisActius", serveiService.findActius());
-			return "entitatServeis";
-		} else {
+		if (entitat == null) {
 			AlertHelper.error(
 					request, 
 					getMessage(
@@ -55,8 +63,40 @@ public class EntitatServeiController extends BaseController {
 							"entitat.controller.entitat.no.existeix"));
 			return "redirect:../../entitat";
 		}
+						
+		model.addAttribute("entitat", entitat);
+		return "entitatServeis";
+
 	}
 
+	@RequestMapping(value = "/{entitatId}/servei/datatable", produces="application/json", method = RequestMethod.GET)
+	@ResponseBody
+	public ServerSideResponse<ServeiDto, Long> datatable(HttpServletRequest request, Model model)
+	      throws IllegalAccessException, InvocationTargetException, NoSuchMethodException, NamingException,
+	      SQLException, EntitatNotFoundException {
+		
+		EntitatDto entitat = EntitatHelper.getEntitatActual(request);
+		if (entitat == null) {
+			throw new EntitatNotFoundException();			
+		}
+		
+		ServerSideRequest serverSideRequest = new ServerSideRequest(request);
+		
+		List<ServeiDto> listServeis = serveiService.findActius();
+		List<String> serveisEntitat = entitat.getServeis();
+		for (ServeiDto servei : listServeis) {
+			servei.setActiu(false);
+			for (String codi : serveisEntitat) {
+				if (servei.getCodi() == codi) {
+					servei.setActiu(true);
+					break;
+				}
+			}
+		}
+		Page<ServeiDto> page = new PageImpl<ServeiDto>(listServeis, null, listServeis.size());
+		
+		return new ServerSideResponse<ServeiDto, Long>(serverSideRequest, page);
+	}
 	@RequestMapping(value = "/{entitatId}/servei/{serveiCodi}/add", method = RequestMethod.GET)
 	public String serveiAdd(
 			HttpServletRequest request,

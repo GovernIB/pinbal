@@ -5,11 +5,11 @@ package es.caib.pinbal.core.service;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
 
 import es.caib.pinbal.core.dto.InformeProcedimentDto;
-import es.caib.pinbal.core.dto.PaginaLlistatDto;
-import es.caib.pinbal.core.dto.PaginacioAmbOrdreDto;
 import es.caib.pinbal.core.dto.ProcedimentDto;
 import es.caib.pinbal.core.service.exception.EntitatNotFoundException;
 import es.caib.pinbal.core.service.exception.EntitatUsuariNotFoundException;
@@ -78,12 +78,12 @@ public interface ProcedimentService {
 	 *             Si no s'ha trobat cap entitat amb l'id especificat.
 	 */
 	@PreAuthorize("hasRole('ROLE_REPRES')")
-	public PaginaLlistatDto<ProcedimentDto> findAmbFiltrePaginat(
+	public Page<ProcedimentDto> findAmbFiltrePaginat(
 			Long entitatId,
 			String codi,
 			String nom,
 			String departament,
-			PaginacioAmbOrdreDto paginacioAmbOrdre) throws EntitatNotFoundException;
+			Pageable pageable) throws EntitatNotFoundException;
 
 	/**
 	 * Llistat amb els procediments d'una entitat.

@@ -1,11 +1,10 @@
-/**
- * 
- */
 package es.caib.pinbal.core.service;
 
 import java.io.IOException;
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
 
 import es.caib.pinbal.core.dto.ArbreDto;
@@ -15,8 +14,6 @@ import es.caib.pinbal.core.dto.DadaEspecificaDto;
 import es.caib.pinbal.core.dto.EmisorDto;
 import es.caib.pinbal.core.dto.EntitatDto;
 import es.caib.pinbal.core.dto.FitxerDto;
-import es.caib.pinbal.core.dto.PaginaLlistatDto;
-import es.caib.pinbal.core.dto.PaginacioAmbOrdreDto;
 import es.caib.pinbal.core.dto.ProcedimentDto;
 import es.caib.pinbal.core.dto.ProcedimentServeiDto;
 import es.caib.pinbal.core.dto.ServeiBusDto;
@@ -78,12 +75,12 @@ public interface ServeiService {
 	 * 				Paràmetres per a la paginació i ordenació dels resultats.
 	 * @return
 	 */
-	public PaginaLlistatDto<ServeiDto> findAmbFiltrePaginat(
+	public Page<ServeiDto> findAmbFiltrePaginat(
 			String codi,
 			String descripcio,
 			String emisor,
 			Boolean activa,
-			PaginacioAmbOrdreDto paginacioAmbOrdre);
+			Pageable pageable);
 	
 	/**
 	 * Consulta els serveis d'un procediment segons el filtre.
@@ -98,14 +95,14 @@ public interface ServeiService {
 	 * 				Paràmetres per a la paginació i ordenació dels resultats.
 	 * @return
 	 */
-	public PaginaLlistatDto<ServeiDto> findAmbFiltrePaginat(
+	public Page<ServeiDto> findAmbFiltrePaginat(
 			String codi,
 			String descripcio,
 			String emisor,
 			Boolean activa,
 			EntitatDto entitat,
 			ProcedimentDto procediment,
-			PaginacioAmbOrdreDto paginacioAmbOrdre);
+			Pageable pageable);
 	/**
 	 * Obté el servei amb un codi determinat.
 	 * 

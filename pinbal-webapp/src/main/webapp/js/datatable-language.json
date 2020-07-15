@@ -1,0 +1,22 @@
+{
+	"processing": "En proc&eacute;s...",
+	"search": "Filtre:",
+	"lengthMenu": "Mostrar _MENU_ registres",
+	"info": "Mostrant registres del _START_ al _END_ de _TOTAL_ registres",
+	"infoEmpty": "Mostrant registres del 0 al 0 de un total de 0 registres",
+	"infoFiltered": "(filtrat d'un total de _MAX_ registres)",
+	"infoPostFix": "",
+	"loadingRecords": "Carregant...",
+	"zeroRecords": "No es van trobar resultats",
+	"emptyTable": "No hi ha dades disponibles per a aquesta taula",
+	"paginate": {
+		"first": "Primer",
+		"previous": "Anterior",
+		"next": "Seg&uuml;ent",
+		"last": "&Uacute;ltim"
+	},
+	"aria": {
+		"sortAscending": ": Activa per ordenar la columna de manera ascendent",
+		"sortDescending": ": Activa per ordenar la columna de manera descendent"
+	}
+}

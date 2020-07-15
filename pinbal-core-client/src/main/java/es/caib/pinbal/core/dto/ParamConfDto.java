@@ -9,7 +9,7 @@ import org.apache.commons.lang.builder.ToStringBuilder;
  * 
  * @author Limit Tecnologies <limit@limit.es>
  */
-public class ParamConfDto implements Serializable {
+public class ParamConfDto extends AbstractIdentificable<Long> implements Serializable {
 
 	private String nom;
 	private String valor;

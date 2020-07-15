@@ -9,6 +9,9 @@ import javax.annotation.Resource;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,6 +20,7 @@ import es.caib.pinbal.core.dto.ClauPublicaDto;
 import es.caib.pinbal.core.dto.EmissorCertDto;
 import es.caib.pinbal.core.dto.OrganismeCessionariDto;
 import es.caib.pinbal.core.dto.ParamConfDto;
+import es.caib.pinbal.core.dto.ServeiDto;
 import es.caib.pinbal.core.helper.DtoMappingHelper;
 import es.caib.pinbal.core.model.ClauPrivada;
 import es.caib.pinbal.core.model.ClauPublica;
@@ -129,15 +133,18 @@ public class ScspServiceImpl implements ScspService {
 
 	@Override
 	@Transactional(readOnly = true)
-	public List<ParamConfDto> findAllParamConf() {
+	public Page<ParamConfDto> findAllParamConf(Pageable pageable) {
 		
 		LOGGER.debug("Consulta de tots els paràmetre de configuració");
 		
-		List<ParamConf> llista = paramConfRepository.findAll();
+		Page<ParamConf> pageParams = paramConfRepository.findAll(pageable);
 		
-		return dtoMappingHelper.getMapperFacade().mapAsList(
-				llista,
-				ParamConfDto.class);
+		return new PageImpl<ParamConfDto>(
+				dtoMappingHelper.getMapperFacade().mapAsList(
+						pageParams.getContent(),
+						ParamConfDto.class),
+				pageable,
+				pageParams.getTotalElements());
 	}
 	
 	
@@ -214,15 +221,13 @@ public class ScspServiceImpl implements ScspService {
 
 	@Override
 	@Transactional(readOnly = true)
-	public List<EmissorCertDto> findAllEmissorCert() {
+	public Page<EmissorCertDto> findAllEmissorCert(Pageable pageable) {
 
 		LOGGER.debug("Consulta de tots els emissors certificats");
 		
-		List<EmissorCert> llista = emissorCertRepository.findAll();
+		Page<EmissorCert> llista = emissorCertRepository.findAll(pageable);
 		
-		return dtoMappingHelper.getMapperFacade().mapAsList(
-				llista,
-				EmissorCertDto.class);
+		return dtoMappingHelper.pageEntities2pageDto(llista, EmissorCertDto.class, pageable);
 	}
 	
 	
@@ -313,15 +318,13 @@ public class ScspServiceImpl implements ScspService {
 
 	@Override
 	@Transactional(readOnly = true)
-	public List<ClauPrivadaDto> findAllClauPrivada() {
+	public Page<ClauPrivadaDto> findAllClauPrivada(Pageable pageable) {
 
 		LOGGER.debug("Consulta de tots les claus privades");
 		
-		List<ClauPrivada> llista = clauPrivadaRepository.findAll();
+		Page<ClauPrivada> page = clauPrivadaRepository.findAll(pageable);
 		
-		return dtoMappingHelper.getMapperFacade().mapAsList(
-				llista,
-				ClauPrivadaDto.class);
+		return dtoMappingHelper .pageEntities2pageDto(page, ClauPrivadaDto.class, pageable);
 	}
 	
 	
@@ -418,15 +421,13 @@ public class ScspServiceImpl implements ScspService {
 
 	@Override
 	@Transactional(readOnly = true)
-	public List<ClauPublicaDto> findAllClauPublica() {
+	public Page<ClauPublicaDto> findAllClauPublica(Pageable pageable) {
 
 		LOGGER.debug("Consulta de tots els claus públiques");
 		
-		List<ClauPublica> llista = clauPublicaRepository.findAll();
+		Page<ClauPublica> page = clauPublicaRepository.findAll(pageable);
 		
-		return dtoMappingHelper.getMapperFacade().mapAsList(
-				llista,
-				ClauPublicaDto.class);
+		return dtoMappingHelper.pageEntities2pageDto(page, ClauPublicaDto.class, pageable);
 	}
 	
 	

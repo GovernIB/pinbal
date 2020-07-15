@@ -13,7 +13,7 @@ import org.apache.commons.lang.builder.ToStringBuilder;
  * 
  * @author Limit Tecnologies <limit@limit.es>
  */
-public class ClauPublicaDto implements Serializable {
+public class ClauPublicaDto extends AbstractIdentificable<Long> implements Serializable {
 
 	private Long id;
 

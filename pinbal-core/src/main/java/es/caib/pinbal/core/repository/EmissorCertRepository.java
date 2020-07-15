@@ -5,6 +5,8 @@ package es.caib.pinbal.core.repository;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import es.caib.pinbal.core.model.EmissorCert;
@@ -19,6 +21,8 @@ import es.caib.pinbal.core.model.EmissorCert;
 public interface EmissorCertRepository extends JpaRepository<EmissorCert, Long> {
 
 	public List<EmissorCert> findAll();
+	
+	public Page<EmissorCert> findAll(Pageable pageable);
 
 	public EmissorCert findById(Long id);
 
