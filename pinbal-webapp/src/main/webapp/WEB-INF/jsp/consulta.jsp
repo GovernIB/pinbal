@@ -15,15 +15,9 @@
 <head>	
 
 	<title><spring:message code="consulta.list.titol"/></title>
-	<script type="text/javascript"src="<c:url value="/js/jquery.jmesa.min.js"/>"></script>
-	<script type="text/javascript" src="<c:url value="/js/jmesa.min.js"/>"></script>
-	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 	<link href="<c:url value="/webjars/bootstrap-datepicker/1.6.1/dist/css/bootstrap-datepicker.min.css"/>" rel="stylesheet"/>
 	<script src="<c:url value="/webjars/bootstrap-datepicker/1.6.1/dist/js/bootstrap-datepicker.min.js"/>"></script>
 	<script src="<c:url value="/webjars/bootstrap-datepicker/1.6.1/dist/locales/bootstrap-datepicker.ca.min.js"/>"></script>
-	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-<%-- <script src="<c:url value="/js/jquery.maskedinput.js"/>"></script> --%>
-	
 <script>
 $(document).ready(function() {
 	$('#netejar-filtre').click(function() {
@@ -128,8 +122,7 @@ $(document).ready(function() {
 							<!--  <label>&nbsp;</label>-->
 							<div class="row">
 								<div class="col-md-3" >
-									<c:set var="campPath"  value="dataInici"/>
-									<pbl:inputDate name="${campPath}" campErrors="${campPath}" placeholderKey="consulta.list.filtre.data.inici"/>
+									<pbl:inputDate name="dataInici" placeholderKey="consulta.list.filtre.data.inici"/>
 <%-- 									<spring:bind path="${campPath}"> --%>
 <%-- 										<input class="form-control" type="text" id="${campPath}" name="${campPath}"<c:if test="${not empty status.value}"> value="${status.value}"</c:if> class="col-md-6" placeholder="<spring:message code="consulta.list.filtre.data.inici"/>"> --%>
 <!-- 										<script>$("#${campPath}").mask("99/99/9999");</script> -->
