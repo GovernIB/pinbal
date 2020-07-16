@@ -128,9 +128,11 @@ body {
 					<ul class="list-inline pull-right">
 						<c:if test="${hiHaEntitats}">
 							<li class="dropdown">
-								<c:if test="${hiHaMesEntitats}"><a href="#" class="dropdown-toggle" data-toggle="dropdown"></c:if>
-		         						<i class="icon-map-marker icon-white"></i> ${entitatActual.nom}
-		         						<c:if test="${hiHaMesEntitats}"><b class="caret caret-white"></b></c:if>
+								<c:if test="${hiHaMesEntitats}">
+									<a href="#" class="dropdown-toggle" data-toggle="dropdown">
+								</c:if>
+         						<i class="fas fa-university"></i> ${entitatActual.nom}
+         						<c:if test="${hiHaMesEntitats}"><b class="caret caret-white"></b></c:if>
 								<c:if test="${hiHaMesEntitats}"></a></c:if>
 								<c:if test="${hiHaMesEntitats}">
 									<ul class="dropdown-menu">
@@ -150,7 +152,7 @@ body {
 							<c:choose>
 								<c:when test="${fn:length(rolsUsuariActual) > 1}">
 									<a href="#" data-toggle="dropdown">
-										<span class="fa fa-id-card-o"></span>
+										<i class="far fa-id-card"></i>
 										<spring:message code="decorator.menu.rol.${rolActual}"/>
 										<span class="caret caret-white"></span>
 									</a>
@@ -174,15 +176,12 @@ body {
 						</li>
 										
 												
-						<li class="dropdown">
-							<a href="#" data-toggle="dropdown">
-								<span class="fa fa-user"></span>
-								<c:choose>
-									<c:when test="${not empty dadesUsuariActual}">${dadesUsuariActual.nom}</c:when>
-									<c:otherwise>${pageContext.request.userPrincipal.name}</c:otherwise>
-								</c:choose>
-								<span class="caret caret-white"></span>
-							</a>
+						<li>
+							<span class="fa fa-user"></span>
+							<c:choose>
+								<c:when test="${not empty dadesUsuariActual}">${dadesUsuariActual.nom}</c:when>
+								<c:otherwise>${pageContext.request.userPrincipal.name}</c:otherwise>
+							</c:choose>
 						</li>
 					</ul>
 					<div class="clearfix"></div>
@@ -223,12 +222,14 @@ body {
 									<c:if test="${countConsultesMultiplesPendents gt 0}"><span class="badge badge-warning">${countConsultesMultiplesPendents}</span></c:if>
 								</a>
 								<c:if test="${not empty sessionServeis}">
-									<a href="#" data-toggle="dropdown" class="btn btn-primary dropdown-toggle"><spring:message code="decorator.menu.consulta.nova"/> <span class="caret"></span></a>
+								<div class="btn-group">
+									<button data-toggle="dropdown" class="btn btn-primary dropdown-toggle"><spring:message code="decorator.menu.consulta.nova"/> <span class="caret"></span></button>
 									<ul class="dropdown-menu">
 										<c:forEach var="servei" items="${sessionServeis}">
 											<li><a href="<c:url value="/consulta/${servei.codi}/new"/>">${servei.descripcio}</a></li>
 										</c:forEach>
 									</ul>
+									</div>
 								</c:if>
 							</c:if>
 						</c:when>
@@ -255,15 +256,11 @@ body {
 		<div class="panel panel-default">
 			<div class="panel-heading">
 				<h2>
-<%-- 					<c:set var="metaTitleIconClass"><decorator:getProperty property="meta.title-icon-class"/></c:set> --%>
-<%-- 					<c:if test="${not empty metaTitleIconClass}"><span class="${metaTitleIconClass}"></span></c:if> --%>
 					<decorator:title />
-<%-- 					<small><decorator:getProperty property="meta.subtitle"/></small> --%>
 				</h2>
 			</div>
 			<div class="panel-body">
 				<jsp:include page="../import/alerts.jsp"/>
-<!-- 				<div id="contingut-missatges"><rip:missatges/></div> -->
     			<decorator:body />
 			</div>
 		</div>
@@ -272,45 +269,13 @@ body {
     	<div class="pull-left app-version"><p>Pinbal v${versioActual}</p></div>
         <div class="pull-right govern-footer">
         	<p>
-        	<img src="<c:url value="/img/govern-logo-neg.png"/>" width="110" style="height:30px" alt="<spring:message code="decorator.govern"/>" />
+        	<img src="<c:url value="/img/govern-logo-neg.png"/>"     width="100" style="height:30px" alt="<spring:message code="decorator.govern"/>" />
 	        	<img src="<c:url value="/img/una_manera.png"/>" 	 hspace="5"  style="height:30px" alt="<spring:message code='decorator.logo.manera'/>" />
 	        	<img src="<c:url value="/img/feder7.png"/>" 	     hspace="5"  style="height:35px" alt="<spring:message code='decorator.logo.feder'/>" />
 	        	<img src="<c:url value="/img/uenegroma.png"/>"	     hspace="5"  style="height:50px" alt="<spring:message code='decorator.logo.ue'/>" />
-<%-- 	        	<img src="<c:url value="/img/uenegroma.png"/>"	     hspace="5" height="50" alt="<spring:message code='decorator.logo.ue'/>" /> --%>
-<%-- 	        	<img src="<c:url value="/img/feder7.png"/>" 	     hspace="5" height="35" alt="<spring:message code='decorator.logo.feder'/>" /> --%>
-<%-- 	        	<img src="<c:url value="/img/una_manera.png"/>" 	 hspace="5" height="30" alt="<spring:message code='decorator.logo.manera'/>" /> --%>
-	        	<%--img src="<c:url value="/img/govern-logo-neg.png"/>" hspace="5" height="30" alt="<spring:message code='decorator.logo.govern'/>" /--%>
         	</p>
         </div>
     </div>
-
-
-
-<!-- 	<div class="row-fluid container main"> -->
-<!-- 		<div class="well well-white"> -->
-<%-- 			<jsp:include page="../import/alerts.jsp"/> --%>
-<!-- 			<div class="page-header"> -->
-<!-- 				<h2> -->
-<%-- 					<decorator:title /> --%>
-<%-- 					<small><decorator:getProperty property="meta.subtitle"/></small> --%>
-<!-- 				</h2> -->
-<!-- 			</div> -->
-<%-- 			<decorator:body /> --%>
-<!-- 		</div> -->
-<!-- 	</div> -->
-<!--     <div class="container row-fluid"> -->
-<%--     	<div class="pull-left colophon versio-footer" style="margin: 10px 0 0 40px"><p>Pinbal v${versioActual}</p></div> --%>
-<!--         <div class="pull-right govern-footer" style="margin: 10px 40px 0 0"> -->
-<!--         	<p> -->
-<%--         		<img src="<c:url value="/img/govern-logo-neg.png"/>" width="129" style="height:30px" alt="<spring:message code="decorator.govern"/>" /> --%>
-<%-- 	        	<img src="<c:url value="/img/una_manera.png"/>" 	 hspace="5"  style="height:30px" alt="<spring:message code='decorator.logo.manera'/>" /> --%>
-<%-- 	        	<img src="<c:url value="/img/feder7.png"/>" 	     hspace="5"  style="height:35px" alt="<spring:message code='decorator.logo.feder'/>" /> --%>
-<%-- 	        	<img src="<c:url value="/img/uenegroma.png"/>"	     hspace="5"  style="height:50px" alt="<spring:message code='decorator.logo.ue'/>" /> --%>
-<!--         	</p> -->
-<!--         </div> -->
-<!--     </div> -->
-
-<%--     <script src="<c:url value="/js/bootstrap.min.js"/>"></script> --%>
 
 </body>
 </html>
