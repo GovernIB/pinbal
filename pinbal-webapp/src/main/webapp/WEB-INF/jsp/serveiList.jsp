@@ -122,6 +122,7 @@
 				<button type="submit" class="btn btn-primary"><spring:message code="comu.boto.filtrar"/></button>
 			</div>
 		</div>
+
 	</form:form>
 
 	<div class="row">
