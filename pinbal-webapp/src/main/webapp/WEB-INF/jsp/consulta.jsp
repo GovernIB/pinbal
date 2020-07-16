@@ -19,11 +19,15 @@
 	<script src="<c:url value="/webjars/datatables/1.10.21/js/jquery.dataTables.min.js"/>"></script>
 	<script src="<c:url value="/webjars/datatables/1.10.21/js/dataTables.bootstrap.min.js"/>"></script>
 	<script src="<c:url value="/webjars/mustache.js/3.0.1/mustache.min.js"/>"></script>
+	<link href="<c:url value="/webjars/bootstrap-datepicker/1.6.1/dist/css/bootstrap-datepicker.min.css"/>" rel="stylesheet"/>
 	<script src="<c:url value="/webjars/bootstrap-datepicker/1.6.1/dist/js/bootstrap-datepicker.min.js"/>"></script>
-	<script src="<c:url value="/webjars/bootstrap-datepicker/1.6.1/dist/locales/bootstrap-datepicker.ca.min.js"/>"></script>
+	<script src="<c:url value="/webjars/bootstrap-datepicker/1.6.1/dist/locales/bootstrap-datepicker.${requestLocale}.min.js"/>"></script>
 	<script type="text/javascript" src="<c:url value="/js/select2.min.js"/>"></script>
 	<script src="<c:url value="/webjars/datatables-plugins/1.10.20/dataRender/datetime.js"/>"></script>
 	<script src="<c:url value="/webjars/momentjs/2.24.0/min/moment.min.js"/>"></script>
+	
+	
+	
 </head>
 <body>
 
@@ -86,52 +90,55 @@
 							<c:if test="${empty campErrors}"><c:set var="campErrors"><form:errors path="titularDocument"/></c:set></c:if>
 							<div class="form-group<c:if test="${not empty campErrors}"> error</c:if>">
 							<!--  <label>&nbsp;</label>-->
-							<div class="row">
-								<div class="col-md-3" >
-									<pbl:inputDate name="dataInici" placeholderKey="consulta.list.filtre.data.inici"/>
-<%-- 									<spring:bind path="${campPath}"> --%>
-<%-- 										<input class="form-control" type="text" id="${campPath}" name="${campPath}"<c:if test="${not empty status.value}"> value="${status.value}"</c:if> class="col-md-6" placeholder="<spring:message code="consulta.list.filtre.data.inici"/>"> --%>
+							</div>	
+						</div>
+				</div>							
+				<div class="col-md-2" >
+						<pbl:inputDate name="dataInici"  inline="true" placeholderKey="consulta.list.filtre.data.inici"/> 
+					 
+<%--  									<spring:bind path="${campPath}">  --%>
+<%--  										<input class="form-control" type="text" id="${campPath}" name="${campPath}"<c:if test="${not empty status.value}"> value="${status.value}"</c:if> class="col-md-6" placeholder="<spring:message code="consulta.list.filtre.data.inici"/>">  --%>
 <!-- 										<script>$("#${campPath}").mask("99/99/9999");</script> -->
 <%-- 									</spring:bind> --%>
-								</div>
-								<div class="col-md-3">
-									<c:set var="campPath" value="dataFi"/>
-									<c:set var="campErrors"><form:errors path="${campPath}"/></c:set>
-									<div class="form-group<c:if test="${not empty campErrors}"> error</c:if>">
-										<spring:bind path="${campPath}">
-											<input class="form-control" type="text" id="${campPath}" name="${campPath}"<c:if test="${not empty status.value}"> value="${status.value}"</c:if> class="col-md-6" placeholder="<spring:message code="consulta.list.filtre.data.fi"/>">
-											<script>$("#${campPath}").mask("99/99/9999");</script>
-										</spring:bind>
-									</div>
-								</div>	
-							
-								<div class="container-fluid">
-									<div class="col-md-3">
-										<c:set var="campPath" value="titularNom"/>
-										<c:set var="campErrors"><form:errors path="${campPath}"/></c:set>
-										<spring:bind path="${campPath}">
-											<input class="form-control" type="text" name="${campPath}"<c:if test="${not empty status.value}"> value="${status.value}"</c:if> class="col-md-12" placeholder="<spring:message code="consulta.list.filtre.titular.nom"/>">
-										</spring:bind>
-									</div>
-									<div class="col-md-3">
-										<c:set var="campPath" value="titularDocument"/>
-										<c:set var="campErrors"><form:errors path="${campPath}"/></c:set>
-										<spring:bind path="${campPath}">
-											<input class="form-control" type="text" name="${campPath}"<c:if test="${not empty status.value}"> value="${status.value}"</c:if> class="col-md-12" placeholder="<spring:message code="consulta.list.filtre.titular.document"/>">
-											</spring:bind>
-									</div>
-								</div>
-							</div>
-						</div>
-					</div>	
 				</div>
-			</div>
-			<div class="col-md-12" style="text-align:right">
+				<div class="col-md-2">
+							<pbl:inputDate name="dataFi"  inline="true" placeholderKey="consulta.list.filtre.data.fi"/>
+<%-- 									<c:set var="campPath" value="dataFi"/> --%>
+<%-- 									<c:set var="campErrors"><form:errors path="${campPath}"/></c:set> --%>
+							<div class="form-group<c:if test="${not empty campErrors}"> error</c:if>">
+									
+<%-- 										<spring:bind path="${campPath}"> --%>
+<%-- 											<input class="form-control" type="text" id="${campPath}" name="${campPath}"<c:if test="${not empty status.value}"> value="${status.value}"</c:if> class="col-md-6" placeholder="<spring:message code="consulta.list.filtre.data.fi"/>"> --%>
+<!-- 											<script>$("#${campPath}").mask("99/99/9999");</script> -->
+<%-- 										</spring:bind> --%>
+							</div>
+				</div>	
+							
+				<div class="col-md-2">
+							<c:set var="campPath" value="titularNom"/>
+							<c:set var="campErrors"><form:errors path="${campPath}"/></c:set>
+							<spring:bind path="${campPath}">
+								<input class="form-control" type="text" name="${campPath}"<c:if test="${not empty status.value}"> value="${status.value}"</c:if> class="col-md-12" placeholder="<spring:message code="consulta.list.filtre.titular.nom"/>">
+							</spring:bind>
+				</div>
+				<div class="col-md-2">
+							<c:set var="campPath" value="titularDocument"/>
+							<c:set var="campErrors"><form:errors path="${campPath}"/></c:set>
+							<spring:bind path="${campPath}">
+								<input class="form-control" type="text" name="${campPath}"<c:if test="${not empty status.value}"> value="${status.value}"</c:if> class="col-md-12" placeholder="<spring:message code="consulta.list.filtre.titular.document"/>">
+								</spring:bind>
+				</div>
+							
+			
+				<div class="col-md-2" style="text-align:right">
 						<label>&nbsp;</label>
 						<button id="netejar-filtre" class="btn btn-default" type="button"><spring:message code="comu.boto.netejar"/></button>
 						<button class="btn btn-primary" type="submit"><spring:message code="comu.boto.filtrar"/></button>
+				</div>
 			</div>
+				
 		</div>
+
 		</form:form>
 
 	<div class="clearfix"></div>

@@ -18,13 +18,13 @@
 		</c:choose>
 	</label>
 	<div class="controls">
-		<form:select path="${campPath}" cssClass="span12" id="${campPath}">
+		<form:select path="${campPath}" cssClass="col-md-12" id="${campPath}">
 			<c:choose>
 				<c:when test="${not empty emptyOptionTextKey}"><option value=""><spring:message code="${emptyOptionTextKey}"/></option></c:when>
 				<c:when test="${not empty emptyOptionText}"><option value="">${emptyOptionText}</option></c:when>
 			</c:choose>
 			<form:options items="${requestScope[optionsModelKey]}"/>
 		</form:select>
-		<form:errors path="${campPath}" cssClass="help-inline"/>
+		<form:errors path="${campPath}" cssClass="help-block"/>
 	</div>
 </div>

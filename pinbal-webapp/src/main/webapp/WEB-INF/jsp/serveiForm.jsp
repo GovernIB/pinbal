@@ -32,6 +32,7 @@
 	<script type="text/javascript" src="<c:url value="/js/webutil.datatable.js"/>"></script>
 	<script type="text/javascript" src="<c:url value="/js/jasny-bootstrap.min.js"/>"></script>
 	<script type="text/javascript" src="<c:url value="/js/datatables.min.js"/>"></script>
+	
     <link rel="Stylesheet" type="text/css" href="<c:url value="/js/jHtmlArea/style/jHtmlArea.css"/>"/>
     <link rel="Stylesheet" type="text/css" href="<c:url value="/js/jHtmlArea/style/jHtmlArea.ColorPickerMenu.css"/>"/>
     <link rel="Stylesheet" type="text/css" href="<c:url value="/css/jasny-bootstrap.min.css"/>"/>
