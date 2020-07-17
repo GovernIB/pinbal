@@ -22,7 +22,7 @@
 <body>
 
 	<c:url value="/entitat/save" var="formAction"/>
-	<form:form action="${formAction}" method="post" cssClass="form-horizontal" commandName="entitatCommand">
+	<form:form action="${formAction}" method="post" cssClass="well" commandName="entitatCommand">
 		<form:hidden path="id"/>
 		<fieldset class="well">
 			<c:set var="campPath" value="codi"/>
@@ -30,7 +30,7 @@
 			<div class="form-group<c:if test="${not empty campErrors}"> error</c:if>">
 				<label class="control-label" for="${campPath}"><spring:message code="entitat.form.camp.codi"/> *</label>
 				<div class="controls">
-					<form:input path="${campPath}" cssClass="input-xlarge" id="${campPath}"/>
+					<form:input path="${campPath}" cssClass="input-lg" id="${campPath}"/>
 					<form:errors path="${campPath}" cssClass="help-block"/>
 				</div>
 			</div>

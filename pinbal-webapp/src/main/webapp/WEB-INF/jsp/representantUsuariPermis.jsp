@@ -44,14 +44,14 @@ $(document).ready(function() {
 	</ul>
 
 	<c:url value="/representant/usuari/${usuari.codi}/permis/allow" var="formAction"/>
-	<form action="${formAction}" method="post" class="well form-inline">
-		<select id="procedimentId" name="procedimentId" class="input-xlarge">
+	<form action="${formAction}" method="post" class="well">
+		<select id="procedimentId" name="procedimentId" class="input-lg">
 			<option value=""><spring:message code="representant.usuaris.permisos.filtre.procediment"/>:</option>
 			<c:forEach var="procediment" items="${procediments}">
 				<option value="${procediment.id}">${procediment.nom}</option>
 			</c:forEach>
 		</select>
-		<select id="serveiCodi" name="serveiCodi" class="input-xlarge">
+		<select id="serveiCodi" name="serveiCodi" class="input-lg">
 			<option value=""><spring:message code="representant.usuaris.permisos.filtre.servei"/>:</option>
 		</select>
 		<button type="submit" class="btn btn-primary"><spring:message code="comu.boto.afegir"/></button>

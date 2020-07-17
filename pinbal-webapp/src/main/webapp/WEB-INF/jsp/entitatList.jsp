@@ -110,61 +110,67 @@ $(document).ready(function() {
 <body>
 
 	<c:url value="/entitat" var="formAction"/>
-	<form:form id="form-filtre" action="${formAction}" method="post" cssClass="form-inline" commandName="entitatFiltreCommand">
+	<form:form id="form-filtre" action="${formAction}" method="post" cssClass="well" commandName="entitatFiltreCommand">
 		<div class="container-fluid">
-			<div class="col-md-3">
-				<c:set var="campPath" value="codi"/>
-				<pbl:inputText name="${campPath}" textKey="entitat.list.filtre.camp.codi"
-							   placeholder="entitat.list.filtre.camp.codi" hideLabel="true"/>
-			</div>
-			<div class="col-md-3">
-				<c:set var="campPath" value="nom"/>
-				<pbl:inputText name="${campPath}" textKey="entitat.list.filtre.camp.nom"
-							   placeholder="entitat.list.filtre.camp.nom" hideLabel="true"/>
-			</div>
-			<div class="col-md-3">
-				<c:set var="campPath" value="cif"/>
-				<pbl:inputText name="${campPath}" textKey="entitat.list.filtre.camp.cif"
-							   placeholder="entitat.list.filtre.camp.cif" hideLabel="true"/>
-			</div>
-			<div class="col-md-3">
-				<c:set var="campPath" value="activa"/>
-				<spring:message var="trueValue" code="entitat.list.filtre.camp.activa.yes"/>
-				<spring:message var="falseValue" code="entitat.list.filtre.camp.activa.no"/>
-				<form:select class="col-md-12" path="${campPath}">
-					<option value=""><spring:message code="entitat.list.filtre.camp.activa"/></option>>
-					<form:option value="true">${trueValue}</form:option>>
-					<form:option value="false">${falseValue}</form:option>>
-				</form:select>
-			</div>
-
-		</div>
-		<div class="container-fluid">
-			<div class="col-md-3">
-				<c:set var="campPath" value="tipus"/>
-				<form:select class="col-md-12" path="${campPath}">
-					<option value=""><spring:message code="entitat.list.filtre.camp.tipus"/></option>>
-					<c:forEach var="estat" items="${entitatTipusLlista}">
-						<form:option value="${estat}">${estat}</form:option>
-					</c:forEach>
-				</form:select>
-			</div>
-			<div class="col-md-pull-right">
-				<button id="netejar-filtre" class="btn" type="button"><spring:message code="comu.boto.netejar"/></button>
-				<button type="submit" class="btn btn-primary"><spring:message code="comu.boto.filtrar"/></button>
+		
+			<div class="row">		
+				<div class="col-md-3" >
+					<c:set var="campPath" value="codi" />
+					<pbl:inputText name="${campPath}" textKey="entitat.list.filtre.camp.codi" placeholder="entitat.list.filtre.camp.codi" hideLabel="true"/>	
+				</div>			
+				<div class="col-md-3">
+					<c:set var="campPath" value="nom"/>
+					<pbl:inputText name="${campPath}" textKey="entitat.list.filtre.camp.nom"  placeholder="entitat.list.filtre.camp.nom" hideLabel="true"/>
+				</div>
+				
+				<div class="col-md-3">
+					<c:set var="campPath" value="cif"/>
+					<pbl:inputText name="${campPath}" textKey="entitat.list.filtre.camp.cif" placeholder="entitat.list.filtre.camp.cif" hideLabel="true"/>
+				</div>
+				<div class="col-md-3">
+					<c:set var="campPath" value="activa"/>
+					<spring:message var="trueValue" code="entitat.list.filtre.camp.activa.yes"/>
+					<spring:message var="falseValue" code="entitat.list.filtre.camp.activa.no"/>
+					<form:select class="form-control" path="${campPath}">
+						<option value=""><spring:message code="entitat.list.filtre.camp.activa"/></option>>
+						<form:option value="true">${trueValue}</form:option>>
+						<form:option value="false">${falseValue}</form:option>>
+					</form:select>
+				</div>
+				
+			
 			</div>
 		</div>
+			
+		<div class="container-fluid">
+		
+			<div class="row">
+				<div class="col-md-3">
+					<c:set var="campPath" value="tipus"/>
+					<form:select class="form-control" path="${campPath}">
+						<option value=""><spring:message code="entitat.list.filtre.camp.tipus"/></option>>
+						<c:forEach var="estat" items="${entitatTipusLlista}">
+							<form:option value="${estat}">${estat}</form:option>
+						</c:forEach>
+					</form:select>
+				</div>
+				<div class="col-md-3">
+					<button id="netejar-filtre" class="btn" type="button"><spring:message code="comu.boto.netejar"/></button>
+					<button type="submit" class="btn btn-primary"><spring:message code="comu.boto.filtrar"/></button>
+				</div>
+			</div>
+		</div>	
 
 	</form:form>
 
 	<div class="container-fluid">
-		<div class="col-md-12">
-			<a class="btn col-md-pull-right" href="<c:url value="/entitat/new"/>"><i class="glyphicon-plus"></i>&nbsp;<spring:message code="entitat.list.boto.nova.entitat"/></a>
+		<div class="row">
+	
+			<div class="col-md-12">
+					<a class="btn pull-right" href="<c:url value="/entitat/new"/>"><i class="glyphicon-plus"></i>&nbsp;<spring:message code="entitat.list.boto.nova.entitat"/></a>
+			</div>
 		</div>
-		<div class="clearfix"></div>
-	</div>
-
-
+		
 	<div class="clearfix"></div>
 	<div style="position: relative; top: -40px; z-index:0">
 	<table id="table-entitats" class="table table-striped table-bordered" style="width: 100%">

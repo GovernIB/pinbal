@@ -58,40 +58,40 @@
 		
 		<fieldset class="well">
 		
-		<div class="span12"></div>
+		<div class="col-md-12"></div>
 		
-		<div class="span10">
+		<div class="col-md-10">
 			<c:set var="campPath" value="alies"/>
 			<c:set var="campErrors"><form:errors path="${campPath}"/></c:set>
 			<div class="control-group<c:if test="${not empty campErrors}"> error</c:if>">
 				<label class="control-label" for="${campPath}"><spring:message code="clau.privada.form.camp.alies"/> *</label>
 				<div class="controls">
-					<form:input path="${campPath}" cssClass="span12 input-xlarge" id="${campPath}"/>
+					<form:input path="${campPath}" cssClass="col-md-12 input-xlarge" id="${campPath}"/>
 					<form:errors path="${campPath}" cssClass="help-inline"/>
 				</div>
 			</div>
 		</div>
 		
-		<div class="span10">
+		<div class="col-md-10">
 			<c:set var="campPath" value="nom"/>
 			<c:set var="campErrors"><form:errors path="${campPath}"/></c:set>
 			<div class="control-group<c:if test="${not empty campErrors}"> error</c:if>">
 				<label class="control-label" for="${campPath}"><spring:message code="clau.privada.form.camp.nom"/> *</label>
 				<div class="controls">
-					<form:input path="${campPath}" cssClass="span12 input-xlarge" id="${campPath}"/>
+					<form:input path="${campPath}" cssClass="col-md-12 input-xlarge" id="${campPath}"/>
 					<form:errors path="${campPath}" cssClass="help-inline"/>
 				</div>
 			</div>
 		</div>
 		
-		<div class="span10">
+		<div class="col-md-10">
 			<c:set var="campPath" value="password"/>
 			<c:set var="campErrors"><form:errors path="${campPath}"/></c:set>
 			<div class="control-group<c:if test="${not empty campErrors}"> error</c:if>">
 				<label class="control-label" for="${campPath}"><spring:message code="clau.privada.form.camp.password"/> *</label>
 				<div class="controls">
 					<div class="input-append" style="width: 100%;">
-						<form:input path="${campPath}" cssClass="span12 input-xlarge" id="${campPath}" type="password" style="width: calc(100% - 40px);"/>
+						<form:input path="${campPath}" cssClass="col-md-12 input-xlarge" id="${campPath}" type="password" style="width: calc(100% - 40px);"/>
 						<button id="btn-eye" class="btn" type="button"><i id="icon-eye" class="icon-eye-open"></i></button>
 					</div>
 					<form:errors path="${campPath}" cssClass="help-inline"/>
@@ -99,23 +99,23 @@
 			</div>
 		</div>
 		
-		<div class="span10">
+		<div class="col-md-10">
 			<c:set var="campPath" value="numSerie"/>
 			<c:set var="campErrors"><form:errors path="${campPath}"/></c:set>
-			<div class="control-group<c:if test="${not empty campErrors}"> error</c:if>">
+			<div class="form-group<c:if test="${not empty campErrors}"> error</c:if>">
 				<label class="control-label" for="${campPath}"><spring:message code="clau.privada.form.camp.numeroserie"/> *</label>
 				<div class="controls">
-					<form:input path="${campPath}" cssClass="span12 input-xlarge" id="${campPath}"/>
-					<form:errors path="${campPath}" cssClass="help-inline"/>
+					<form:input path="${campPath}" cssClass="col-md-12 input-xlarge" id="${campPath}"/>
+					<form:errors path="${campPath}" cssClass="help-block"/>
 				</div>
 			</div>
 		</div>
 		
-		<div class="span5">
+		<div class="col-md-5">
 			<c:set var="campPath" value="dataAlta"/>
 			<c:set var="campErrors"><form:errors path="${campPath}"/></c:set>
 			<c:set var="idioma"><%=org.springframework.web.servlet.support.RequestContextUtils.getLocale(request).getLanguage()%></c:set>
-			<div class="control-group<c:if test="${not empty campErrors}"> error</c:if>">
+			<div class="form-group<c:if test="${not empty campErrors}"> error</c:if>">
 				<label class="control-label" for="${campPath}"><spring:message code="clau.privada.form.camp.data.alta"/> *</label>
 				<div class="controls">
 					<div class="input-append" style="width: 100%;">
@@ -134,7 +134,7 @@
 			</div>
 		</div>
 		
-		<div class="span5">
+		<div class="col-md-5">
 			<c:set var="campPath" value="interoperabilitat"/>
 			<c:set var="campErrors"><form:errors path="${campPath}"/></c:set>
 			<div class="control-group<c:if test="${not empty campErrors}"> error</c:if>">
@@ -146,11 +146,11 @@
 			</div>
 		</div>
 		
-		<div class="span5">
+		<div class="col-md-5">
 			<c:set var="campPath" value="dataBaixa"/>
 			<c:set var="campErrors"><form:errors path="${campPath}"/></c:set>
 			<c:set var="idioma"><%=org.springframework.web.servlet.support.RequestContextUtils.getLocale(request).getLanguage()%></c:set>
-			<div class="control-group<c:if test="${not empty campErrors}"> error</c:if>">
+			<div class="form-group<c:if test="${not empty campErrors}"> error</c:if>">
 				<label class="control-label" for="${campPath}"><spring:message code="clau.privada.form.camp.data.baixa"/>  </label>
 				<div class="controls">
 					<div class="input-append" style="width: 100%;">
@@ -162,23 +162,23 @@
 							data-toggle="datepicker"
 							data-idioma="${idioma}"
 							style="width: calc(100% - 40px);"/>
-						<button id="btn-calendar-baixa" class="btn" type="button"><i class="icon-calendar"></i></button>
+						<button id="btn-calendar-baixa" class="btn" type="button"><i class="glyphicon-calendar"></i></button>
 					</div>
-					<form:errors path="${campPath}" cssClass="help-inline"/>
+					<form:errors path="${campPath}" cssClass="help-block"/>
 				</div>
 			</div>
 		</div>
 			
-		<div class="span5">
+		<div class="col-md-5">
 			<c:set var="campPath" value="organisme"/>
 			<c:set var="campErrors"><form:errors path="${campPath}"/></c:set>
-			<div class="control-group<c:if test="${not empty campErrors}"> error</c:if>">
+			<div class="form-group<c:if test="${not empty campErrors}"> error</c:if>">
 				<label class="control-label" for="${campPath}"><spring:message code="clau.privada.form.camp.organisme"/>  </label>
 				<div class="controls">
-					<form:select path="${campPath}" cssClass="span12" id="${campPath}">
+					<form:select path="${campPath}" cssClass="col-md-12" id="${campPath}">
 						<form:options items="${organismes}" itemLabel="cadenaIdentificadora" itemValue="id"/>
 					</form:select>
-					<form:errors path="${campPath}" cssClass="help-inline"/>
+					<form:errors path="${campPath}" cssClass="help-block"/>
 				</div>
 			</div>
 		</div>
