@@ -1,7 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
-<%@ taglib uri="http://code.google.com/p/jmesa" prefix="jmesa" %>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 
 <%
@@ -22,8 +21,7 @@
 	</c:choose>
 	<meta name="subtitle" content="${serveiPerTitol}"/>
 	<script type="text/javascript" src="<c:url value="/js/jquery-ui-1.8.20.custom.min.js"/>"></script>
-	<script type="text/javascript" src="<c:url value="/js/jquery.jmesa.min.js"/>"></script>
-	<script type="text/javascript" src="<c:url value="/js/jmesa.min.js"/>"></script>
+
 	<script src="<c:url value="/js/jquery.maskedinput.js"/>"></script>
 <script>
 $(document).ready(function() {
@@ -194,6 +192,24 @@ $(function() {
 		$('#modal-grup-formform').attr('action', 'campGrup/update');
 		$('#modal-grup-form').modal('toggle');
 	});
+	
+	
+	$('.btn-edit-camp').click(function (event) {
+		initModalCamp($(this).data('id'), 
+					  $(this).data('path'),
+					  $(this).data('tipus'),
+					  $(this).data('etiqueta'),
+					  $(this).data('valorperdefecte'),
+					  $(this).data('comentari'),
+					  $(this).data('dataformat'),
+					  $(this).data('camppare'),
+					  $(this).data('valorPare'),
+					  $(this).data('obligatori'),
+					  $(this).data('modificable'),
+					  $(this).data('visible'))
+
+	});
+
 });
 </script>
 </head>
@@ -202,8 +218,8 @@ $(function() {
 	<div class="row">
 		<div class="well col-md-4" style="overflow:auto">
 			<div class="btn-group pull-right">
-				<a href="#" class="btn-default" title="<spring:message code="servei.camp.contreure.tot"/>" id="accio-contreure-all"><i class="glyphicon-chevron-right"></i></a>
-				<a href="#" class="btn-default" title="<spring:message code="servei.camp.expandir.tot"/>" id="accio-expandir-all"><i class=glyphicon-chevron-down></i></a>
+				<a href="#" class="btn btn-default" title="<spring:message code="servei.camp.contreure.tot"/>" id="accio-contreure-all"><i class="fas fa-chevron-right"></i></a>
+				<a href="#" class="btn btn-default" title="<spring:message code="servei.camp.expandir.tot"/>" id="accio-expandir-all"><i class="fas fa-chevron-down"></i></a>
 			</div><br/>
 			<ul style="list-style:none; margin:0">
 				<c:set var="nodeArbreActual" value="${arbreDadesEspecifiques.arrel}" scope="request"/>
@@ -211,59 +227,97 @@ $(function() {
 			</ul>
 		</div>
 		<div class="col-md-8">
-			<a id="boto-nou-grup" class="btn pull-right" href="#"><i class="glyphicon-plus"></i>&nbsp;Nou grup</a><br/><br/>
+			<a id="boto-nou-grup" class="btn btn-primary pull-right" href="#"><i class="fas fa-plus"></i>&nbsp;Nou grup</a><br/><br/>
 			<c:set var="hiHaCampsSenseGrup" value="${false}"/>
 			<c:forEach var="camp" items="${camps}">
 				<c:if test="${empty camp.grup}"><c:set var="hiHaCampsSenseGrup" value="${true}"/></c:if>
 			</c:forEach>
 			<c:if test="${hiHaCampsSenseGrup}">
-				<jmesa:tableModel
-						id="jmesa-camps"
-						items="${camps}"
-						view="es.caib.pinbal.webapp.jmesa.BootstrapNoToolbarView"
-						var="registre"
-						maxRows="${fn:length(camps)}">
-					<jmesa:htmlTable>
-						<c:if test="${empty registre.grup}">
-							<jmesa:htmlRow>
-								<jmesa:htmlColumn property="CALCUL_campNom" titleKey="servei.camp.taula.columna.nom" sortable="false">
-									<input type="hidden" name="id" value="${registre.id}"/>
-									<span title="${registre.path}">${registre.campNom}</span>
-								</jmesa:htmlColumn>
-								<jmesa:htmlColumn property="tipus" titleKey="servei.camp.taula.columna.tipus" sortable="false"/>
-								<jmesa:htmlColumn property="etiqueta" titleKey="servei.camp.taula.columna.etiqueta" sortable="false"/>
-								<jmesa:htmlColumn property="CALCUL_obligatori" titleKey="servei.camp.taula.columna.o" sortable="false">
-									<c:if test="${registre.obligatori}"><i class="icon-ok"></i></c:if>
-								</jmesa:htmlColumn>
-								<jmesa:htmlColumn property="CALCUL_modificable" titleKey="servei.camp.taula.columna.m" sortable="false">
-									<c:if test="${registre.modificable}"><i class="icon-ok"></i></c:if>
-								</jmesa:htmlColumn>
-								<jmesa:htmlColumn property="CALCUL_visible" titleKey="servei.camp.taula.columna.v" sortable="false">
-									<c:if test="${registre.visible}"><i class="icon-ok"></i></c:if>
-								</jmesa:htmlColumn>
-								<c:if test="${not empty grups}">
-									<jmesa:htmlColumn property="ACCIO_grup" title="&nbsp;" style="white-space:nowrap;" sortable="false">
-										<div class="btn-group">
-											<a href="#" title="<spring:message code="servei.camp.taula.accio.agrupar"/>" class="btn dropdown-toggle" data-toggle="dropdown"><i class="icon-download"></i>&nbsp;<span class="caret"></span></a>
-											<ul class="dropdown-menu">
-												<c:forEach var="grup" items="${grups}">
-													<li><a href="camp/${registre.id}/agrupar/${grup.id}">${grup.nom}</a></li>
-												</c:forEach>
-											</ul>
-										</div>
-									</jmesa:htmlColumn>
-								</c:if>
-								<jmesa:htmlColumn property="ACCIO_edit" title="&nbsp;" style="white-space:nowrap;" sortable="false">
-									<c:set var="jsInitModalCamp">initModalCamp('${registre.id}', '${registre.path}', '${registre.tipus}', '${fn:replace(registre.etiqueta,"'","\\'")}', '${fn:replace(registre.valorPerDefecte,"'","\\'")}', '${fn:replace(registre.comentari,"'","\\'")}', '${registre.dataFormat}', '${registre.campPare.id}', '${registre.valorPare}', ${registre.obligatori}, ${registre.modificable}, ${registre.visible})</c:set>
-									<a href="#modal-editar-camp" title="<spring:message code="servei.camp.taula.accio.modificar"/>" onclick="${jsInitModalCamp}" class="btn"><i class="icon-pencil"></i></a>
-								</jmesa:htmlColumn>
-								<jmesa:htmlColumn property="ACCIO_delete" title="&nbsp;" style="white-space:nowrap;" sortable="false">
-									<a href="camp/${registre.id}/delete" title="<spring:message code="servei.camp.taula.accio.esborrar"/>" class="btn confirm-esborrar"><i class="icon-trash"></i></a>
-								</jmesa:htmlColumn>
-							</jmesa:htmlRow>
+				<table id="table-camps" class="table table-striped table-bordered" style="width: 100%">
+					<thead>
+						<tr>
+						<th><spring:message code="servei.camp.taula.columna.nom" /></th>
+						<th><spring:message code="servei.camp.taula.columna.tipus" /></th>
+						<th><spring:message code="servei.camp.taula.columna.etiqueta" /></th>
+						<th><spring:message code="servei.camp.taula.columna.o" /></th>
+						<th><spring:message code="servei.camp.taula.columna.m" /></th>
+						<th><spring:message code="servei.camp.taula.columna.v" /></th>
+						<c:if test="${not empty grups}">
+						<th></th>
 						</c:if>
-					</jmesa:htmlTable>
-				</jmesa:tableModel>
+						<th></th>
+						<th></th>
+						</tr>
+					</thead>
+					<tbody>
+					<c:forEach items="${camps}" var="camp" varStatus="loopcamps">
+			   			<tr>
+							<td>
+								<input type="hidden" name="id" value="${ id }"/>
+								<span title="${ camp.path }">${ camp.campNom }</span>
+							</td>
+							<td>
+								${ camp.tipus }
+							</td>
+							<td>
+								${ camp.etiqueta }
+							</td>
+							<td>
+								<c:if test="${ camp.obligatori }"><i class="fa fa-check"></i></c:if>
+							</td>
+							<td>
+								<c:if test="${ camp.modificable }"><i class="fa fa-check"></i></c:if>
+							</td>
+							<td>
+								<c:if test="${ camp.visible }"><i class="fa fa-check"></i></c:if>
+							</td>
+							<c:if test="${not empty grups}">
+							<td>
+								<div class="btn-group">
+									<a href="#" title="<spring:message code="servei.camp.taula.accio.agrupar"/>" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+										<i class="far fa-arrow-alt-circle-down"></i>&nbsp;<span class="caret"></span>
+									</a>
+									<ul class="dropdown-menu">
+										<c:forEach var="grup" items="${grups}">
+											<li><a href="camp/${ camp.id }/agrupar/${grup.id}">${grup.nom}</a></li>
+										</c:forEach>
+									</ul>
+								</div>
+							</td>
+							</c:if>
+							<td>
+								<a href="#modal-editar-camp" data-nrow="${ loopcamps.index }" 
+								   data-id="${ camp.id }" 
+								   data-path="${ camp.path }" 
+								   data-tipus="${ camp.tipus }" 
+								   data-etiqueta="${ camp.etiqueta }" 
+								   data-valorperdefecte="${ camp.valorPerDefecte }" 
+								   data-comentari="${ camp.comentari }" 
+								   data-dataformat="${ camp.dataFormat }" 
+								   <c:if test="${ camp.campPare }">
+								   data-camppare="${ camp.campPare }"
+								   </c:if>
+								   <c:if test="${ not camp.campPare }">
+								   data-camppare="0"
+								   </c:if>
+								   data-camppare="${ camp.campPare }"
+								   data-valorpare="${ camp.valorPare }"
+								   data-obligatori="${ camp.obligatori }" 
+								   data-modificable="${ camp.modificable }" 
+								   data-visible="${ camp.visible }"
+								class="btn btn-default btn-edit-camp" title="<spring:message code="servei.camp.taula.accio.modificar"/>">
+									<i class="fas fa-pen"></i>
+								</a>
+							</td>
+							<td>
+								<a href="camp/${ camp.id }/delete" title="<spring:message code="servei.camp.taula.accio.esborrar"/>" class="btn btn-default confirm-esborrar">
+									<i class="fas fa-trash-alt"></i>
+								</a>
+							</td>
+						</tr>
+					</c:forEach>
+					</tbody>
+				</table>
 			</c:if>
 			<c:forEach var="grup" items="${grups}" varStatus="grupStatus">
 				<div class="well well-sm">
@@ -272,62 +326,99 @@ $(function() {
 	    			</fieldset>
 	    			<c:choose>
 	    				<c:when test="${not empty campsAgrupats[grup.id]}">
-			    			<jmesa:tableModel
-									id="jmesa-camps"
-									items="${campsAgrupats[grup.id]}"
-									view="es.caib.pinbal.webapp.jmesa.BootstrapNoToolbarView"
-									var="registre"
-									maxRows="${fn:length(campsAgrupats[grup.id])}">
-								<jmesa:htmlTable>
-									<jmesa:htmlRow>
-										<jmesa:htmlColumn property="CALCUL_campNom" titleKey="servei.camp.taula.columna.nom" sortable="false">
-											<input type="hidden" name="id" value="${registre.id}"/>
-											<span title="${registre.path}">${registre.campNom}</span>
-										</jmesa:htmlColumn>
-										<jmesa:htmlColumn property="tipus" titleKey="servei.camp.taula.columna.tipus" sortable="false"/>
-										<jmesa:htmlColumn property="etiqueta" titleKey="servei.camp.taula.columna.etiqueta" sortable="false"/>
-										<jmesa:htmlColumn property="CALCUL_obligatori" titleKey="servei.camp.taula.columna.o" sortable="false">
-											<c:if test="${registre.obligatori}"><i class="icon-ok"></i></c:if>
-										</jmesa:htmlColumn>
-										<jmesa:htmlColumn property="CALCUL_modificable" titleKey="servei.camp.taula.columna.m" sortable="false">
-											<c:if test="${registre.modificable}"><i class="icon-ok"></i></c:if>
-										</jmesa:htmlColumn>
-										<jmesa:htmlColumn property="CALCUL_visible" titleKey="servei.camp.taula.columna.v" sortable="false">
-											<c:if test="${registre.visible}"><i class="icon-ok"></i></c:if>
-										</jmesa:htmlColumn>
-										<jmesa:htmlColumn property="ACCIO_grup" title="&nbsp;" style="white-space:nowrap;" sortable="false">
+   							<table id="table-camps" class="table table-striped table-bordered" style="width: 100%">
+								<thead>
+									<tr>
+									<th data-data="campNom"><spring:message code="servei.camp.taula.columna.nom" /></th>
+									<th data-data="tipus"><spring:message code="servei.camp.taula.columna.tipus" /></th>
+									<th data-data="etiqueta"><spring:message code="servei.camp.taula.columna.etiqueta" /></th>
+									<th data-data="obligatori"><spring:message code="servei.camp.taula.columna.o" /></th>
+									<th data-data="modificable"><spring:message code="servei.camp.taula.columna.m" /></th>
+									<th data-data="visible"><spring:message code="servei.camp.taula.columna.v" /></th>
+									<th data-data="path"></th>
+									<th data-data="id"></th>
+									<th data-data="campPare"></th>
+									</tr>
+								</thead>
+								<tbody>
+								<c:forEach items="${campsAgrupats[grup.id]}" var="camp" varStatus="loopcamps">
+						   			<tr>
+										<td>
+											<input type="hidden" name="id" value="${ id }"/>
+											<span title="${ camp.path }">${ camp.campNom }</span>
+										</td>
+										<td>
+											${ camp.tipus }
+										</td>
+										<td>
+											${ camp.etiqueta }
+										</td>
+										<td>
+											<c:if test="${ camp.obligatori }"><i class="fa fa-check"></i></c:if>
+										</td>
+										<td>
+											<c:if test="${ camp.modificable }"><i class="fa fa-check"></i></c:if>
+										</td>
+										<td>
+											<c:if test="${ camp.visible }"><i class="fa fa-check"></i></c:if>
+										</td>
+										<c:if test="${not empty grups}">
+										<td>
 											<div class="btn-group">
-												<a href="#" title="<spring:message code="servei.camp.taula.accio.agrupar"/>" class="btn dropdown-toggle" data-toggle="dropdown"><i class="icon-download"></i>&nbsp;<span class="caret"></span></a>
+												<a href="#" title="<spring:message code="servei.camp.taula.accio.agrupar"/>" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+													<i class="far fa-arrow-alt-circle-down"></i>&nbsp;<span class="caret"></span>
+												</a>
 												<ul class="dropdown-menu">
-													<li><a href="camp/${registre.id}/desagrupar">Sense grup</a></li>
-													<c:forEach var="grupItem" items="${grups}">
-														<c:if test="${grupItem.id != grup.id}">
-															<li><a href="camp/${registre.id}/agrupar/${grupItem.id}">${grupItem.nom}</a></li>
-														</c:if>
+													<c:forEach var="grup" items="${grups}">
+														<li><a href="camp/${ camp.id }/agrupar/${grup.id}">${grup.nom}</a></li>
 													</c:forEach>
 												</ul>
 											</div>
-										</jmesa:htmlColumn>
-										<jmesa:htmlColumn property="ACCIO_edit" title="&nbsp;" style="white-space:nowrap;" sortable="false">
-											<c:set var="jsInitModalCamp">initModalCamp('${registre.id}', '${registre.path}', '${registre.tipus}', '${fn:replace(registre.etiqueta,"'","\\'")}', '${fn:replace(registre.valorPerDefecte,"'","\\'")}', '${fn:replace(registre.comentari,"'","\\'")}', '${registre.dataFormat}', '${registre.campPare.id}', '${registre.valorPare}', ${registre.obligatori}, ${registre.modificable}, ${registre.visible})</c:set>
-											<a href="#modal-editar-camp" title="<spring:message code="servei.camp.taula.accio.modificar"/>" onclick="${jsInitModalCamp}" class="btn"><i class="icon-pencil"></i></a>
-										</jmesa:htmlColumn>
-										<jmesa:htmlColumn property="ACCIO_delete" title="&nbsp;" style="white-space:nowrap;" sortable="false">
-											<a href="camp/${registre.id}/delete" title="<spring:message code="servei.camp.taula.accio.esborrar"/>" class="btn confirm-esborrar"><i class="icon-trash"></i></a>
-										</jmesa:htmlColumn>
-									</jmesa:htmlRow>
-								</jmesa:htmlTable>
-							</jmesa:tableModel>
+										</td>
+										</c:if>
+										<td>
+											<a href="#modal-editar-camp" data-nrow="${ loopcamps.index }" 
+											   data-id="${ camp.id }" 
+											   data-path="${ camp.path }" 
+											   data-tipus="${ camp.tipus }" 
+											   data-etiqueta="${ camp.etiqueta }" 
+											   data-valorperdefecte="${ camp.valorPerDefecte }" 
+											   data-comentari="${ camp.comentari }" 
+											   data-dataformat="${ camp.dataFormat }" 
+											   <c:if test="${ camp.campPare }">
+											   data-camppare="${ camp.campPare }"
+											   </c:if>
+											   <c:if test="${ not camp.campPare }">
+											   data-camppare="0"
+											   </c:if>
+											   data-camppare="${ camp.campPare }"
+											   data-valorpare="${ camp.valorPare }"
+											   data-obligatori="${ camp.obligatori }" 
+											   data-modificable="${ camp.modificable }" 
+											   data-visible="${ camp.visible }"
+											class="btn btn-default btn-edit-camp" title="<spring:message code="servei.camp.taula.accio.modificar"/>">
+												<i class="fas fa-pen"></i>
+											</a>
+										</td>
+										<td>
+											<a href="camp/${ camp.id }/delete" title="<spring:message code="servei.camp.taula.accio.esborrar"/>" class="btn btn-default confirm-esborrar">
+												<i class="fas fa-trash-alt"></i>
+											</a>
+										</td>
+									</tr>
+								</c:forEach>
+								</tbody>
+							</table>
 						</c:when>
 						<c:otherwise>
 							<p style="text-align:center"><spring:message code="servei.camp.grup.buit"/></p>
 						</c:otherwise>
 					</c:choose>
 					<div style="text-align: right">
-						<a href="campGrup/${grup.id}/up" title="<spring:message code="comu.boto.pujar"/>" class="btn<c:if test="${grupStatus.first}"> disabled</c:if>"><i class="glyphicon-arrow-up"></i></a>
-						<a href="campGrup/${grup.id}/down" title="<spring:message code="comu.boto.baixar"/>" class="btn<c:if test="${grupStatus.last}"> disabled</c:if>"><i class="glyphicon-arrow-down"></i></a>
-						<a href="#modal-grup-form" title="<spring:message code="comu.boto.modificar"/>" class="btn boto-grup-editar" data-id="${grup.id}" data-nom="${grup.nom}"><i class="glyphicon-pencil"></i></a>
-						<a href="campGrup/${grup.id}/delete" title="<spring:message code="comu.boto.esborrar"/>" class="btn confirm-esborrar-grup"><i class="glyphicon-trash"></i></a>
+						<a href="campGrup/${grup.id}/up" title="<spring:message code="comu.boto.pujar"/>" class="btn<c:if test="${grupStatus.first}"> disabled</c:if>"><i class="fas fa-upload"></i></a>
+						<a href="campGrup/${grup.id}/down" title="<spring:message code="comu.boto.baixar"/>" class="btn<c:if test="${grupStatus.last}"> disabled</c:if>"><i class="fas fa-download"></i></a>
+						<a href="#modal-grup-form" title="<spring:message code="comu.boto.modificar"/>" class="btn boto-grup-editar" data-id="${grup.id}" data-nom="${grup.nom}"><i class="fas fa-pen"></i></a>
+						<a href="campGrup/${grup.id}/delete" title="<spring:message code="comu.boto.esborrar"/>" class="btn confirm-esborrar-grup"><i class="fas fa-trash-alt"></i></a>
 					</div>
 				</div>
 			</c:forEach>
@@ -342,7 +433,9 @@ $(function() {
 		<input type="hidden" id="hidden-hidden-path" name="path"/>
 	</form>
 
-	<div id="modal-editar-camp" class="modal hide fade">
+<div id="modal-editar-camp" class="modal" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
 		<div class="modal-header">
 			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
 			<h3><spring:message code="servei.camp.titol.modificar"/></h3>
@@ -451,7 +544,8 @@ $(function() {
 			<a href="#" id="modal-boto-submit" class="btn btn-primary"><spring:message code="comu.boto.guardar"/></a>
 		</div>
 	</div>
-
+	</div>
+</div>
 	<div id="modal-form-preview" class="modal hide fade" style="width: 750px;margin-left: -375px;">
 		<div class="modal-header">
 			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>

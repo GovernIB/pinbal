@@ -17,24 +17,35 @@
 		<c:set var="procediments" value="${procedimentEntitat.value}"/>
 		
 		<h3><spring:message code="entitat.miques.entitat" arguments="${entitat}"/></h3>
-		<jmesa:tableModel
-				id="procediments_${entitat}" 
-				items="${procediments}"
-				toolbar="es.caib.pinbal.webapp.jmesa.BootstrapToolbar"
-				view="es.caib.pinbal.webapp.jmesa.BootstrapView"
-				var="registre"
-				maxRows="${fn:length(procediments)}">
-			<jmesa:htmlTable>
-				<jmesa:htmlRow>
-					<jmesa:htmlColumn property="codi" titleKey="servei.procediment.list.taula.columna.codi" width="25%"/>
-					<jmesa:htmlColumn property="nom" titleKey="servei.procediment.list.taula.columna.nom" width="50%"/>
-					<jmesa:htmlColumn property="departament" titleKey="servei.procediment.list.taula.columna.departament" width="20%"/>
-					<jmesa:htmlColumn property="actiu" titleKey="servei.procediment.list.taula.columna.actiu" width="5%">
-						<c:if test="${registre.actiu}"><i class="icon-ok"></i></c:if>
-					</jmesa:htmlColumn>
-	            </jmesa:htmlRow>
-	        </jmesa:htmlTable>
-		</jmesa:tableModel>
+		
+		<table id="procediments_${entitat}" class="table table-striped table-bordered" style="width: 100%">
+		<thead>
+			<tr>
+			<th><spring:message code="servei.procediment.list.taula.columna.codi" /></th>
+			<th><spring:message code="servei.procediment.list.taula.columna.nom" /></th>
+			<th><spring:message code="servei.procediment.list.taula.columna.departament" /></th>
+			<th><spring:message code="servei.procediment.list.taula.columna.actiu" /></th>
+			</tr>
+		</thead>
+		<tbody>
+			<c:forEach items="${procediments}" var="registre">
+	   			<tr>
+					<td>
+						${registre.codi}
+					</td>
+					<td>
+						${registre.nom}
+					</td>
+					<td>
+						${registre.departament}
+					</td>
+					<td>
+					<c:if test="${registre.actiu}"><i class="fas fa-check"></i></c:if>
+					</td>
+				</tr>
+			</c:forEach>
+		</tbody>
+		</table>
 	</c:forEach>
 </body>
 </html>
