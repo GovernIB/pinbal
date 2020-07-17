@@ -110,24 +110,41 @@ $(document).ready(function() {
 <body>
 
 	<c:url value="/entitat" var="formAction"/>
-	<form:form id="form-filtre" action="${formAction}" method="post" cssClass="well" commandName="entitatFiltreCommand">
+	<form:form id="form-filtre" action="${formAction}" method="post" cssClass="well" commandName="entitatFiltreCommand" >
 		<div class="container-fluid">
-		
 			<div class="row">		
-				<div class="col-md-3" >
+				<div class="col-md-2" >
 					<c:set var="campPath" value="codi" />
-					<pbl:inputText name="${campPath}" textKey="entitat.list.filtre.camp.codi" placeholder="entitat.list.filtre.camp.codi" hideLabel="true"/>	
+					<div class="form-group<c:if test="${not empty campErrors}"> error</c:if>">
+							<spring:bind path="${campPath}">
+								<input type="text" id="${campPath}" name="${campPath}"<c:if test="${not empty status.value}"> value="${status.value}"</c:if> class="form-control col-md-12" placeholder="<spring:message code="entitat.list.filtre.camp.codi"/>">
+							</spring:bind>
+					</div>
+<%-- 					<pbl:inputText name="${campPath}" textKey="entitat.list.filtre.camp.codi" placeholder="entitat.list.filtre.camp.codi" hideLabel="true"/>	 --%>
+					
 				</div>			
 				<div class="col-md-3">
 					<c:set var="campPath" value="nom"/>
-					<pbl:inputText name="${campPath}" textKey="entitat.list.filtre.camp.nom"  placeholder="entitat.list.filtre.camp.nom" hideLabel="true"/>
+					
+					<div class="form-group<c:if test="${not empty campErrors}"> error</c:if>">
+							<spring:bind path="${campPath}">
+								<input type="text" id="${campPath}" name="${campPath}"<c:if test="${not empty status.value}"> value="${status.value}"</c:if> class="form-control col-md-12" placeholder="<spring:message code="entitat.list.filtre.camp.nom"/>">
+							</spring:bind>
+					</div>
+<%-- 					<pbl:inputText name="${campPath}" textKey="entitat.list.filtre.camp.nom"  placeholder="entitat.list.filtre.camp.nom" hideLabel="true"/> --%>
 				</div>
 				
 				<div class="col-md-3">
 					<c:set var="campPath" value="cif"/>
-					<pbl:inputText name="${campPath}" textKey="entitat.list.filtre.camp.cif" placeholder="entitat.list.filtre.camp.cif" hideLabel="true"/>
+					<div class="form-group<c:if test="${not empty campErrors}"> error</c:if>">
+							<spring:bind path="${campPath}">
+								<input type="text" id="${campPath}" name="${campPath}"<c:if test="${not empty status.value}"> value="${status.value}"</c:if> class="form-control col-md-12" placeholder="<spring:message code="entitat.list.filtre.camp.cif"/>">
+							</spring:bind>
+					</div>
+<%-- 					<pbl:inputText name="${campPath}" textKey="entitat.list.filtre.camp.cif" placeholder="entitat.list.filtre.camp.cif" hideLabel="true"/> --%>
 				</div>
-				<div class="col-md-3">
+			
+				<div class="col-md-2">
 					<c:set var="campPath" value="activa"/>
 					<spring:message var="trueValue" code="entitat.list.filtre.camp.activa.yes"/>
 					<spring:message var="falseValue" code="entitat.list.filtre.camp.activa.no"/>
@@ -137,15 +154,13 @@ $(document).ready(function() {
 						<form:option value="false">${falseValue}</form:option>>
 					</form:select>
 				</div>
-				
 			
 			</div>
 		</div>
-			
+			</br>
 		<div class="container-fluid">
-		
 			<div class="row">
-				<div class="col-md-3">
+				<div class="col-md-2">
 					<c:set var="campPath" value="tipus"/>
 					<form:select class="form-control" path="${campPath}">
 						<option value=""><spring:message code="entitat.list.filtre.camp.tipus"/></option>>
@@ -154,7 +169,7 @@ $(document).ready(function() {
 						</c:forEach>
 					</form:select>
 				</div>
-				<div class="col-md-3">
+				<div class="col-md-3 pull-right">
 					<button id="netejar-filtre" class="btn" type="button"><spring:message code="comu.boto.netejar"/></button>
 					<button type="submit" class="btn btn-primary"><spring:message code="comu.boto.filtrar"/></button>
 				</div>

@@ -164,7 +164,7 @@ function showModalEditar(
 <body>
 
 	<c:url value="/auditor/usuari" var="formAction"/>
-	<form:form id="form-filtre" action="${formAction}" method="post" cssClass="well-sm form-block" commandName="usuariFiltreCommand">
+	<form:form id="form-filtre" action="${formAction}" method="post" cssClass="well" commandName="usuariFiltreCommand">
 		<c:set var="campPath" value="codi"/>
 		<spring:message var="placeholderCodi" code="auditor.usuaris.filtre.camp.codi"/>
 		<form:input path="${campPath}" cssClass="input-sm" id="${campPath}" placeholder="${placeholderCodi}"/>
@@ -260,7 +260,7 @@ function showModalEditar(
 			</form>
 		</div>
 		<div class="modal-content">
-			<a href="#" class="btn-default" data-dismiss="modal"><spring:message code="comu.boto.tornar"/></a>
+			<a href="#" class="btn" data-dismiss="modal"><spring:message code="comu.boto.tornar"/></a>
 			<a href="#" class="btn btn-primary" onclick="$('#modal-form').submit()"><spring:message code="comu.boto.guardar"/></a>
 		</div>
 	</div>

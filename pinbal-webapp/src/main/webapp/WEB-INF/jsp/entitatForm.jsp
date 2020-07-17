@@ -39,7 +39,7 @@
 			<div class="form-group<c:if test="${not empty campErrors}"> error</c:if>">
 				<label class="control-label" for="${campPath}"><spring:message code="entitat.form.camp.nom"/> *</label>
 				<div class="controls">
-					<form:input path="${campPath}" cssClass="input-xlarge" id="${campPath}"/>
+					<form:input path="${campPath}" cssClass="input-lg" id="${campPath}"/>
 					<form:errors path="${campPath}" cssClass="help-block"/>
 				</div>
 			</div>
