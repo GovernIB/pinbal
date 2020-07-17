@@ -3,7 +3,6 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
-<%@ taglib uri="http://code.google.com/p/jmesa" prefix="jmesa" %>
 <%@ taglib tagdir="/WEB-INF/tags/pinbal" prefix="pbl" %>
 
 <%
@@ -23,18 +22,12 @@
 			<c:otherwise><spring:message code="servei.form.titol.modificar"/></c:otherwise>
 		</c:choose>
 	</title>
-	<script type="text/javascript" src="<c:url value="/js/jquery.jmesa.min.js"/>"></script>
-	<script type="text/javascript" src="<c:url value="/js/jmesa.min.js"/>"></script>
 	<script type="text/javascript" src="<c:url value="/js/jquery.maskedinput.js"/>"></script>
 	<script type="text/javascript" src="<c:url value="/js/jHtmlArea/scripts/jHtmlArea-0.8.min.js"/>"></script>
 	<script type="text/javascript" src="<c:url value="/js/jHtmlArea/scripts/jHtmlArea.ColorPickerMenu-0.8.min.js"/>"></script>
 	<script type="text/javascript" src="<c:url value="/js/webutil.common.js"/>"></script>
-	<script type="text/javascript" src="<c:url value="/js/webutil.datatable.js"/>"></script>
-	<script type="text/javascript" src="<c:url value="/js/jasny-bootstrap.min.js"/>"></script>
-	<script type="text/javascript" src="<c:url value="/js/datatables.min.js"/>"></script>
     <link rel="Stylesheet" type="text/css" href="<c:url value="/js/jHtmlArea/style/jHtmlArea.css"/>"/>
     <link rel="Stylesheet" type="text/css" href="<c:url value="/js/jHtmlArea/style/jHtmlArea.ColorPickerMenu.css"/>"/>
-    <link rel="Stylesheet" type="text/css" href="<c:url value="/css/jasny-bootstrap.min.css"/>"/>
     <link rel="Stylesheet" type="text/css" href="<c:url value="/css/inputFile.css"/>"/>
 <script>
 $(document).ready(function() {
@@ -427,32 +420,46 @@ function showModalXsd(element) {
 				<div class="clearfix legend-margin-bottom"></div>
 				<div class="row">
 					<div class="col-md-11 offset1">
-						<a class="btn pull-right" href="<c:url value="/modal/servei/${serveiCommand.codi}/redir/new"/>" onclick="showModalRedir(this);return false"><i class="icon-plus"></i>&nbsp;<spring:message code="servei.form.boto.nova.redireccio"/></a>
+						<a class="btn btn-primary pull-right" href="<c:url value="/modal/servei/${serveiCommand.codi}/redir/new"/>" onclick="showModalRedir(this);return false"><i class="fas fa-plus"></i>&nbsp;<spring:message code="servei.form.boto.nova.redireccio"/></a>
 					</div>
 				</div>
 				<c:if test="${not empty serveisBus}">
 					<div class="row">
 						<div class="col-md-11 offset1">
 							<br/>
-							<jmesa:tableModel
-									id="serveisBus"
-									items="${serveisBus}"
-									view="es.caib.pinbal.webapp.jmesa.BootstrapNoToolbarView"
-									var="registre"
-									maxRows="${fn:length(serveisBus)}">
-								<jmesa:htmlTable>
-									<jmesa:htmlRow>
-										<jmesa:htmlColumn property="entitat.nom" titleKey="servei.form.bus.taula.columna.entitat"/>
-										<jmesa:htmlColumn property="urlDesti" titleKey="servei.form.bus.taula.columna.url"/>
-										<jmesa:htmlColumn property="ACCIO_edit" title="&nbsp;" style="white-space:nowrap;">
-											<a href="../modal/servei/${registre.servei}/redir/${registre.id}" title="<spring:message code="comu.boto.modificar"/>" class="btn" onclick="showModalRedir(this);return false"><i class="icon-pencil"></i>&nbsp;<spring:message code="comu.boto.modificar"/></a>
-										</jmesa:htmlColumn>
-										<jmesa:htmlColumn property="ACCIO_delete" title="&nbsp;" style="white-space:nowrap;">
-											<a href="${registre.servei}/redir/${registre.id}/delete" class="btn confirm-esborrar"><i class="icon-trash"></i>&nbsp;<spring:message code="comu.boto.esborrar"/></a>
-										</jmesa:htmlColumn>
-						            </jmesa:htmlRow>
-						        </jmesa:htmlTable>
-							</jmesa:tableModel>
+							<table id="serveisBus" class="table table-striped table-bordered" style="width: 100%">
+							<thead>
+								<tr>
+								<th><spring:message code="servei.form.bus.taula.columna.entitat" /></th>
+								<th><spring:message code="servei.form.bus.taula.columna.url" /></th>
+								<th></th>
+								<th></th>
+								</tr>
+							</thead>
+							<tbody>
+								<c:forEach items="${serveisBus}" var="registre">
+						   			<tr>
+										<td>
+										${ registre.entitat.nom }
+										</td>
+										<td>
+										${ registre.urlDesti }
+										</td>
+										<td>
+										<a href="../modal/servei/${registre.servei}/redir/${registre.id}" title="<spring:message code="comu.boto.modificar"/>" 
+										   class="btn btn-default" onclick="showModalRedir(this);return false">
+										   <i class="fas fa-pen"></i>&nbsp;<spring:message code="comu.boto.modificar"/>
+										</a>
+										</td>
+										<td>
+										<a href="${registre.servei}/redir/${registre.id}/delete" class="btn btn-default confirm-esborrar">
+											<i class="fas fa-trash-alt"></i>&nbsp;<spring:message code="comu.boto.esborrar"/>
+										</a>
+										</td>
+									</tr>
+								</c:forEach>
+							</tbody>
+							</table>
 						</div>
 					</div>
 				</c:if>
@@ -591,7 +598,7 @@ function showModalXsd(element) {
 					<fieldset>
 						<div class="row">
 							<div class="span11 offset1">
-								<a class="btn pull-right" href="<c:url value="/modal/servei/${serveiCommand.codi}/xsd/new"/>" onclick="showModalXsd(this);return false"><i class="icon-plus"></i>&nbsp;<spring:message code="servei.list.boto.nou.arxiuXsd"/></a>
+								<a class="btn btn-primary pull-right" href="<c:url value="/modal/servei/${serveiCommand.codi}/xsd/new"/>" onclick="showModalXsd(this);return false"><i class="fas fa-plus"></i>&nbsp;<spring:message code="servei.list.boto.nou.arxiuXsd"/></a>
 							</div>
 						</div>
 					</fieldset>
@@ -599,32 +606,38 @@ function showModalXsd(element) {
 					<div class="row">
 						<div class="clearfix"></div>
 					</div>
-					<jmesa:tableModel
-							id="arxiusXsd" 
-							items="${serveiCommand.fitxersXsd}"
-							toolbar="es.caib.pinbal.webapp.jmesa.BootstrapToolbar"
-							view="es.caib.pinbal.webapp.jmesa.BootstrapView"
-							var="registre"
-							maxRows="${fn:length(serveiCommand.fitxersXsd)}">
-						<jmesa:htmlTable>
-							<jmesa:htmlRow>
-								<jmesa:htmlColumn width="30%" property="tipus" titleKey="servei.xsd.camp.tipus"/>
-								<jmesa:htmlColumn width="60%" property="nomArxiu" titleKey="servei.xsd.camp.arxiu">
-									<div style="width: 90%; display: inline-block;">${registre.nomArxiu}</div>
-									<div style="width: 10%; display: inline;">
-										<a class="btn btn-default btn-sm" href="<c:url value="/servei/${serveiCommand.codi}/xsd/${registre.tipus}/download"/>">
-											<span class="icon-download"></span>
-										</a>
-									</div>
-								</jmesa:htmlColumn>
-								<jmesa:htmlColumn width="10%" property="ACCIO_elimina" title="&nbsp;" sortable="false" style="white-space:nowrap; text-align: center;">
-									<button class="btn btn-default btn-sm" onclick="esborraFitxerXsd('${registre.tipus}');" type="button">
-										<span class="icon-trash"></span>
-									</button>
-								</jmesa:htmlColumn>
-				            </jmesa:htmlRow>
-				        </jmesa:htmlTable>
-					</jmesa:tableModel>
+					
+					<table id="arxiusXsd" class="table table-striped table-bordered" style="width: 100%">
+					<thead>
+						<tr>
+						<th width="30%"><spring:message code="servei.xsd.camp.tipus" /></th>
+						<th width="60%"><spring:message code="servei.xsd.camp.arxiu" /></th>
+						<th width="10%"></th>
+						</tr>
+					</thead>
+					<tbody>
+						<c:forEach items="${serveiCommand.fitxersXsd}" var="registre">
+				   			<tr>
+								<td>
+								${ registre.tipus }
+								</td>
+								<td>
+								<div style="width: 90%; display: inline-block;">${registre.nomArxiu}</div>
+								<div style="width: 10%; display: inline;">
+									<a class="btn btn-default btn-sm" href="<c:url value="/servei/${serveiCommand.codi}/xsd/${registre.tipus}/download"/>">
+										<i class="fas fa-download"></i>&nbsp;<spring:message code="comu.boto.baixar"/>
+									</a>
+								</div>
+								</td>
+								<td>
+								<button class="btn btn-default btn-sm" onclick="esborraFitxerXsd('${registre.tipus}');" type="button">
+									<i class="fas fa-trash-alt"></i>&nbsp;<spring:message code="comu.boto.esborrar"/>
+								</button>
+								</td>
+							</tr>
+						</c:forEach>
+					</tbody>
+					</table>
 				</c:if>
 			</fieldset>
 		</c:if>
@@ -822,7 +835,9 @@ function showModalXsd(element) {
 		</div>
 	</form:form>
 
-	<div id="modal-redir-form" class="modal hide fade">
+<div id="modal-redir-form" class="modal" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
 		<div class="modal-header">
 			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
 			<h3><spring:message code="servei.form.modal.bus.titol"/></h3>
@@ -833,8 +848,12 @@ function showModalXsd(element) {
 			<a href="#" id="modal-boto-submit" class="btn btn-primary"><spring:message code="comu.boto.guardar"/></a>
 		</div>
 	</div>
+	</div>
+	</div>
 	
-	<div id="modal-xsd-form" class="modal hide fade">
+	<div id="modal-xsd-form" class="modal" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
 		<div class="modal-header">
 			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
 			<h3><spring:message code="servei.form.modal.xsd.titol"/></h3>
@@ -844,6 +863,8 @@ function showModalXsd(element) {
 			<a href="#" class="btn" data-dismiss="modal"><spring:message code="comu.boto.tornar"/></a>
 			<a href="#" id="modal-boto-submit-xsd" class="btn btn-primary"><spring:message code="comu.boto.guardar"/></a>
 		</div>
+	</div>
+	</div>
 	</div>
 </body>
 </html>

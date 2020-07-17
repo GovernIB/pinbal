@@ -70,11 +70,11 @@
 			var ample = Math.min(980, (window.innerWidth - 40));
 			var alt = Math.round(window.innerHeight * 0.8) - 110;
 			
-			$('#modal-procediment-list .modal-header h3').html($(element).data("titol"));
-			$('#modal-procediment-list').css({	"width": ample + 'px',
-												"margin-left": '-' + (ample/2) + 'px'});
-			$('#modal-procediment-list .modal-body').css({"max-height": alt + "px"});
-			$('#modal-procediment-list .modal-body').load(element.href);
+			$('#modal-procediment-list').find('.modal-header h3').html($(element).data("titol"));
+// 			$('#modal-procediment-list').css({	"width": ample + 'px',
+// 												"margin-left": '-' + (ample/2) + 'px'});
+			$('#modal-procediment-list').find('.modal-body').css({"max-height": alt + "px"});
+			$('#modal-procediment-list').find('.modal-body').load(element.href);
 			$('#modal-procediment-list').modal('toggle');
 		}
 	</script>
@@ -147,7 +147,9 @@
 	</table>
 	</div>
 
-	<div id="modal-procediment-list" class="modal hide fade">
+<div id="modal-procediment-list" class="modal" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
 		<div class="modal-header">
 			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
 			<h3></h3>
@@ -157,6 +159,8 @@
 			<a href="#" class="btn" data-dismiss="modal"><spring:message code="comu.boto.tornar"/></a>
 		</div>
 	</div>
+  </div>
+</div>
 <script id="template-btn-procediments" type="x-tmpl-mustache">
 <a class="btn btn-default" href="<c:url value="/modal/servei/{{ codi }}/procediments"/>" 
 		onclick="showModalProcediments(this);return false" data-titol="<spring:message code="servei.procediment.list.titol" arguments="{{ descripcio }}"/>">

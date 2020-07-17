@@ -28,47 +28,51 @@ $(document).ready(function() {
 </script>
 </head>
 <body>
-
-	<jmesa:tableModel
-			id="jmesa-camps"
-			items="${llistaDadesEspecifiques}"
-			view="es.caib.pinbal.webapp.jmesa.BootstrapNoToolbarView"
-			var="registre"
-			maxRows="${fn:length(llistaDadesEspecifiques)}">
-		<jmesa:htmlTable>
+	<table id="table-servei-justificant" class="table table-striped table-bordered" style="width: 100%">
+	<thead>
+		<tr>
+		<th><spring:message code="servei.justificant.taula.columna.path" /></th>
+		<th><spring:message code="servei.justificant.taula.columna.traduccio" /></th>
+		<th></th>
+		</tr>
+	</thead>
+	<tbody>
+		<c:forEach items="${llistaDadesEspecifiques}" var="registre">
 			<c:if test="${registre.dades.pathAmbSeparadorDefault != 'DatosEspecificos'}">
-				<jmesa:htmlRow>
-					<c:set var="traduccioCoincident"/>
-					<c:forEach var="traduccio" items="${traduccions}">
-						<c:if test="${traduccio.xpath == registre.dades.pathAmbSeparadorDefault}">
-							<c:set var="traduccioCoincident" value="${traduccio}"/>
-						</c:if>
-					</c:forEach>
-					<jmesa:htmlColumn property="CALCUL_path" titleKey="servei.justificant.taula.columna.path" sortable="false">
+				<c:set var="traduccioCoincident"/>
+				<c:forEach var="traduccio" items="${traduccions}">
+					<c:if test="${traduccio.xpath == registre.dades.pathAmbSeparadorDefault}">
+						<c:set var="traduccioCoincident" value="${traduccio}"/>
+					</c:if>
+				</c:forEach>
+	   			<tr>
+					<td>
 						${registre.dades.pathAmbSeparadorDefault}
-					</jmesa:htmlColumn>
-					<jmesa:htmlColumn property="CALCUL_traduccio" titleKey="servei.justificant.taula.columna.traduccio" sortable="false">
+					</td>
+					<td>
 						<c:choose>
 							<c:when test="${not empty traduccioCoincident}">${traduccioCoincident.traduccio}</c:when>
 							<c:otherwise><span class="muted">${registre.dades.nom}</span></c:otherwise>
 						</c:choose>
-					</jmesa:htmlColumn>
-					<jmesa:htmlColumn sortable="false">
+					</td>
+					<td>
 						<c:choose>
 							<c:when test="${not empty traduccioCoincident}">
-								<a href="#" title="<spring:message code="comu.boto.modificar"/>" class="btn justificant-modificar" data-xpath="${registre.dades.pathAmbSeparadorDefault}" data-traduccio="${traduccioCoincident.traduccio}"><i class="-pencil"></i> <spring:message code="comu.boto.modificar"/></a>
+								<a href="#" title="<spring:message code="comu.boto.modificar"/>" class="btn btn-primary justificant-modificar" data-xpath="${registre.dades.pathAmbSeparadorDefault}" data-traduccio="${traduccioCoincident.traduccio}"><i class="-pencil"></i> <spring:message code="comu.boto.modificar"/></a>
 							</c:when>
 							<c:otherwise>
-								<a href="#" title="<spring:message code="comu.boto.modificar"/>" class="btn justificant-modificar" data-xpath="${registre.dades.pathAmbSeparadorDefault}"><i class="icon-pencil"></i> <spring:message code="comu.boto.modificar"/></a>
+								<a href="#" title="<spring:message code="comu.boto.modificar"/>" class="btn btn-primary justificant-modificar" data-xpath="${registre.dades.pathAmbSeparadorDefault}"><i class="icon-pencil"></i> <spring:message code="comu.boto.modificar"/></a>
 							</c:otherwise>
 						</c:choose>
-					</jmesa:htmlColumn>
-				</jmesa:htmlRow>
+					</td>
+				</tr>
 			</c:if>
-		</jmesa:htmlTable>
-	</jmesa:tableModel>
+		</c:forEach>
+	</tbody>
+	</table>
+
 	<div>
-		<a href="<c:url value="/servei"/>" class="btn pull-right"><spring:message code="comu.boto.tornar"/></a>
+		<a href="<c:url value="/servei"/>" class="btn btn-primary pull-right"><spring:message code="comu.boto.tornar"/></a>
 		<div class="clearfix"></div>
 	</div>
 

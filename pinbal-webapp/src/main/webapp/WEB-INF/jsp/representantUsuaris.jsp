@@ -113,13 +113,10 @@ $(document).ready(function() {
 			}, 
 	   ],
 	   initComplete: function( settings, json ) {
-		   console.log(settings)
-		   console.log(json)
 			$('.btn-open-modal-edit').click(function() {
 				var nrow = $(this).data('nrow');
 				var row = json.data[nrow];
 				var usuari = row.usuari;
-				console.log(usuari);
 		 		showModalEditar(usuari.inicialitzat, usuari.noInicialitzatNif, 
 		 				usuari.noInicialitzatCodi, usuari.descripcio, 
 		 				usuari.codi, usuari.nif, 

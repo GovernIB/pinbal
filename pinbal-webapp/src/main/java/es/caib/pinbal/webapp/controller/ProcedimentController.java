@@ -15,6 +15,7 @@ import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -27,7 +28,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import es.caib.pinbal.core.dto.EntitatDto;
 import es.caib.pinbal.core.dto.EntitatUsuariDto;
 import es.caib.pinbal.core.dto.ProcedimentDto;
-import es.caib.pinbal.core.dto.ProcedimentServeiSimpleDto;
 import es.caib.pinbal.core.dto.ServeiDto;
 import es.caib.pinbal.core.service.EntitatService;
 import es.caib.pinbal.core.service.ProcedimentService;
@@ -458,46 +458,7 @@ public class ProcedimentController extends BaseController {
 		if (!EntitatHelper.isRepresentantEntitatActual(request))
 			return "representantNoAutoritzat";
 		EntitatDto entitat = EntitatHelper.getEntitatActual(request, entitatService);
-		if (entitat != null) {
-			ProcedimentDto procediment = null;
-			if (procedimentId != null)
-				procediment = procedimentService.findById(procedimentId);
-			if (procediment != null) {
-				for (ProcedimentServeiSimpleDto serveiActiu: procediment.getServeisActius()){
-					if (serveiActiu.getServeiCodi().equalsIgnoreCase(serveiCodi)) {
-						model.addAttribute("entitat", entitat);
-						model.addAttribute("procediment", procediment);
-						model.addAttribute("servei", serveiService.findAmbCodiPerAdminORepresentant(serveiCodi));
-						List<String> usuarisAmbPermis = procedimentService.findUsuarisAmbPermisPerServei(procedimentId, serveiCodi);
-						model.addAttribute("usuarisAmbPermis", usuarisAmbPermis);
-						
-						for (EntitatUsuariDto usuari: entitat.getUsuarisRepresentant()) {
-							for (String usuariAmbPermis: usuarisAmbPermis) {
-								if (usuari.getUsuari().getCodi().equals(usuariAmbPermis)) {
-									usuari.setAcces(true);
-									break;
-								}
-							}
-						}
-						
-						return "procedimentServeiPermisos";
-					}
-				}
-				AlertHelper.error(
-						request,
-						getMessage(
-								request,
-								"procediment.controller.servei.no.pertany.procediment"));
-				return "redirect:../../../../procediment";
-			} else {
-				AlertHelper.error(
-						request, 
-						getMessage(
-								request,
-								"procediment.controller.procediment.no.existeix"));
-				return "redirect:../../../../procediment";
-			}
-		} else {
+		if (entitat == null) {
 			AlertHelper.error(
 					request, 
 					getMessage(
@@ -505,8 +466,67 @@ public class ProcedimentController extends BaseController {
 							"procediment.controller.no.entitat.seleccionada"));
 			return "redirect:../../../../../index";
 		}
+		ProcedimentDto procediment = null;
+		if (procedimentId != null)
+			procediment = procedimentService.findById(procedimentId);
+		
+		if (procediment == null) {
+			AlertHelper.error(
+					request, 
+					getMessage(
+							request,
+							"procediment.controller.procediment.no.existeix"));
+			return "redirect:../../../../procediment";
+		}
+		
+		model.addAttribute("entitat", entitat);
+		model.addAttribute("procediment", procediment);
+		model.addAttribute("servei", serveiService.findAmbCodiPerAdminORepresentant(serveiCodi));
+		return "procedimentServeiPermisos";
+
 	}
 
+	@RequestMapping(value = "/{procedimentId}/servei/{serveiCodi}/permis/datatable", produces="application/json", method = RequestMethod.GET)
+	@ResponseBody
+	public ServerSideResponse<EntitatUsuariDto, Long> datatableServeiPermis(HttpServletRequest request, 
+																			@PathVariable Long procedimentId, 
+																			@PathVariable String serveiCodi,
+																			Model model)
+	      throws Exception {
+		if (!EntitatHelper.isRepresentantEntitatActual(request))
+			throw new Exception("Representant no autoritzat");
+							
+		EntitatDto entitat = EntitatHelper.getEntitatActual(request, entitatService);
+		if (entitat == null) {
+			throw new EntitatNotFoundException();
+		}
+		
+		
+		ProcedimentDto procediment = null;
+		if (procedimentId != null)
+			procediment = procedimentService.findById(procedimentId);
+		
+		if (procediment == null) {
+			throw new ProcedimentNotFoundException();
+		}
+	
+		List<String> usuarisAmbPermis = procedimentService.findUsuarisAmbPermisPerServei(procedimentId, serveiCodi);
+		
+		for (EntitatUsuariDto usuari: entitat.getUsuarisRepresentant()) {
+			for (String usuariAmbPermis: usuarisAmbPermis) {
+				if (usuari.getUsuari().getCodi().equals(usuariAmbPermis)) {
+					usuari.setAcces(true);
+					break;
+				}
+			}
+		}
+		ServerSideRequest serverSideRequest = new ServerSideRequest(request);	
+		
+		List<EntitatUsuariDto> list =  entitat.getUsuarisRepresentant();
+		Page<EntitatUsuariDto> page = new PageImpl<EntitatUsuariDto>(list, null, list.size());
+		return new ServerSideResponse<EntitatUsuariDto, Long>(serverSideRequest, page);
+
+	}
 	@RequestMapping(value = "/{procedimentId}/servei/{serveiCodi}/permis/{usuariCodi}/allow", method = RequestMethod.GET)
 	public String serveiPermisAllow(
 			HttpServletRequest request,

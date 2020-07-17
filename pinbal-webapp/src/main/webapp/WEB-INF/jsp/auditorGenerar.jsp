@@ -8,8 +8,6 @@
 <html>
 <head>
 	<title><spring:message code="auditor.generar.titol"/></title>
-	<script type="text/javascript"src="<c:url value="/js/jquery.jmesa.min.js"/>"></script>
-	<script type="text/javascript" src="<c:url value="/js/jmesa.min.js"/>"></script>
 	<script src="<c:url value="/js/jquery.maskedinput.js"/>"></script>
 </head>
 <body>
@@ -32,37 +30,54 @@
 	</form:form>
 
 	<c:if test="${not empty consultes}">
-	<form>
-		<jmesa:tableModel
-				id="consultes"
-				items="${consultes}"
-				toolbar="es.caib.pinbal.webapp.jmesa.BootstrapToolbar"
-				view="es.caib.pinbal.webapp.jmesa.BootstrapView"
-				var="registre">
-			<jmesa:htmlTable>
-				<jmesa:htmlRow>
-					<jmesa:htmlColumn property="scspPeticionId" titleKey="consulta.list.taula.peticion.id" sortable="false">
-						${registre.scspPeticionSolicitudId}<c:if test="${registre.recobriment}"> <span class="badge">R</span></c:if>
-					</jmesa:htmlColumn>
-					<jmesa:htmlColumn property="creacioData" titleKey="auditor.list.taula.data" cellEditor="org.jmesa.view.editor.DateCellEditor" pattern="dd/MM/yyyy HH:mm:ss" sortable="false"/>
-					<jmesa:htmlColumn property="creacioUsuari.nom" titleKey="auditor.list.taula.usuari"/>
-					<jmesa:htmlColumn property="funcionariNomAmbDocument" titleKey="auditor.list.taula.funcionari"/>
-					<jmesa:htmlColumn property="procedimentNom" titleKey="auditor.list.taula.procediment" sortable="false"/>
-					<jmesa:htmlColumn property="serveiDescripcio" titleKey="auditor.list.taula.servei" sortable="false"/>
-					<jmesa:htmlColumn property="estat" titleKey="auditor.list.taula.estat" style="white-space:nowrap;" sortable="false">
-						<span<c:if test="${registre.estatError}"> title="${registre.error}"</c:if>>
+			<table id="table-users" class="table table-striped table-bordered" style="width: 100%">
+		<thead>
+			<tr>
+			<th><spring:message code="consulta.list.taula.peticion.id" /></th>
+			<th><spring:message code="auditor.list.taula.data" /></th>
+			<th><spring:message code="auditor.list.taula.usuari" /></th>
+			<th><spring:message code="auditor.list.taula.funcionari" /></th>
+			<th><spring:message code="auditor.list.taula.procediment" /></th>
+			<th><spring:message code="auditor.list.taula.servei" /></th>
+			<th><spring:message code="auditor.list.taula.estat" /></th>
+			</tr>
+		</thead>
+		<tbody>
+			<c:forEach items="${consultes}" var="consulta">
+	   			<tr>
+					<td>
+					${consulta.scspPeticionSolicitudId}<c:if test="${consulta.recobriment}"> <span class="badge">R</span></c:if>
+					</td>
+					<td>
+					${ consulta.creacioData }
+					</td>
+					<td>
+					${ consulta.creacioUsuari.nom }
+					</td>
+					<td>
+					${ consulta.funcionariNomAmbDocument }
+					</td>
+					<td>
+					${ consulta.procedimentNom }
+					</td>
+					<td>
+					${ consulta.serveiDescripcio }
+					</td>
+					<td>
+<%-- 						<span<c:if test="${consulta.estatError}"> title="${consulta.error}"</c:if>> --%>
 							<c:choose>
-								<c:when test="${registre.estatPendent}"><i class="glyphicon-bookmark"></i></c:when>
-								<c:when test="${registre.estatProcessant}"><i class="glyphicon-time"></i></c:when>
-								<c:when test="${registre.estatError}"><i class="glyphicon-warning-sign"></i></c:when>
-								<c:otherwise><i class="glyphicon-ok"></i></c:otherwise>
+								<c:when test="${consulta.estatPendent}"><i class="fas fa-bookmark"></i></i></c:when>
+								<c:when test="${consulta.estatProcessant}"><i class="fas fa-times"></i></c:when>
+								<c:when test="${consulta.estatError}"><i class="fas fa-exclamation-triangle"></i></c:when>
+								<c:otherwise><i class="fas fa-check"></i></c:otherwise>
 							</c:choose>
-							${registre.estat}
-						</span>
-					</jmesa:htmlColumn>
-				</jmesa:htmlRow>
-			</jmesa:htmlTable>
-		</jmesa:tableModel>
+							${consulta.estat}
+<!-- 						</span> -->
+					</td>
+				</tr>
+			</c:forEach>
+		</tbody>
+		</table>
 		<a href="generarExcel" class="btn-default"><i class="glyphicon-download-alt"></i>&nbsp;<spring:message code="auditor.list.exportar.excel"/></a>
 	</form>
 	<script type="text/javascript">
