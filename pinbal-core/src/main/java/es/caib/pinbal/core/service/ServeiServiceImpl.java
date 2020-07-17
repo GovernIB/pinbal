@@ -36,6 +36,7 @@ import es.caib.pinbal.core.dto.EmisorDto;
 import es.caib.pinbal.core.dto.EntitatDto;
 import es.caib.pinbal.core.dto.FitxerDto;
 import es.caib.pinbal.core.dto.NodeDto;
+import es.caib.pinbal.core.dto.PaginaLlistatDto;
 import es.caib.pinbal.core.dto.ProcedimentDto;
 import es.caib.pinbal.core.dto.ProcedimentServeiDto;
 import es.caib.pinbal.core.dto.ServeiBusDto;
@@ -49,6 +50,7 @@ import es.caib.pinbal.core.dto.ServeiJustificantCampDto;
 import es.caib.pinbal.core.dto.ServeiXsdDto;
 import es.caib.pinbal.core.dto.XsdTipusEnumDto;
 import es.caib.pinbal.core.helper.DtoMappingHelper;
+import es.caib.pinbal.core.helper.PaginacioHelper;
 import es.caib.pinbal.core.helper.PermisosHelper;
 import es.caib.pinbal.core.helper.PermisosHelper.ObjectIdentifierExtractor;
 import es.caib.pinbal.core.helper.PluginHelper;
@@ -56,6 +58,7 @@ import es.caib.pinbal.core.helper.ServeiHelper;
 import es.caib.pinbal.core.helper.ServeiXsdHelper;
 import es.caib.pinbal.core.helper.UsuariHelper;
 import es.caib.pinbal.core.model.Entitat;
+import es.caib.pinbal.core.model.EntitatServei;
 import es.caib.pinbal.core.model.EntitatUsuari;
 import es.caib.pinbal.core.model.Procediment;
 import es.caib.pinbal.core.model.ProcedimentServei;
@@ -69,6 +72,7 @@ import es.caib.pinbal.core.model.ServeiConfig.EntitatTipus;
 import es.caib.pinbal.core.model.ServeiConfig.JustificantTipus;
 import es.caib.pinbal.core.model.ServeiJustificantCamp;
 import es.caib.pinbal.core.repository.EntitatRepository;
+import es.caib.pinbal.core.repository.EntitatServeiRepository;
 import es.caib.pinbal.core.repository.EntitatUsuariRepository;
 import es.caib.pinbal.core.repository.ProcedimentRepository;
 import es.caib.pinbal.core.repository.ProcedimentServeiRepository;
@@ -125,7 +129,9 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 	private ServeiBusRepository serveiBusRepository;
 	@Resource
 	private ServeiJustificantCampRepository serveiJustificantCampRepository;
-
+	@Resource
+	private EntitatServeiRepository entitatServeiRepository;
+	
 	@Resource
 	private ServeiHelper serveiHelper;
 	@Resource
@@ -332,17 +338,22 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 			Pageable pageable) {
 		LOGGER.debug("Consulta de serveis segons filtre (codi=" + codi + ", descripcio=" + descripcio + ""
 				+ "emisor=" + emisor + " activa=" + activa + ")");
-		
-		// De moment ignoram si els serveis estan actius o no pel procediment
-		List<String> serveisProcediment = procedimentServeiRepository.findServeisProcediment(
-				activa == null,
-				activa,
+
+		List<String> serveisEntitat = entitatServeiRepository.findServeisByEntitatId(entitat.getId());
+
+		List<ProcedimentServei> serveisProcediment = procedimentServeiRepository.findServeisProcediment(
 				entitatRepository.findByCodi(entitat.getCodi()),
 				procedimentRepository.findOne(procediment.getId())
 				);
-
+		
+		List<String> serveisProcedimentActiusIds = procedimentServeiRepository.findServeisProcedimenActiustServeisIds(
+				entitatRepository.findByCodi(entitat.getCodi()),
+				procedimentRepository.findOne(procediment.getId())
+				);
+		
 		Page<Servei> paginaServeis = serveiRepository.findByFiltre(
-				serveisProcediment, 
+				serveisEntitat, 
+				serveisProcedimentActiusIds,
 				codi == null || codi.length() == 0,
 				codi,
 				descripcio == null || descripcio.length() == 0,
@@ -351,9 +362,19 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 				(emisor != null && emisor.length() > 0) ? Long.parseLong(emisor) : null,
 				activa == null,
 				activa,
-				pageable);
-
-		return dtoMappingHelper.pageEntities2pageDto(paginaServeis, ServeiDto.class, pageable);
+				pageable
+				);
+		Page<ServeiDto> paginaDtos = dtoMappingHelper.pageEntities2pageDto(paginaServeis, ServeiDto.class, pageable);
+		for (ServeiDto servei: paginaDtos.getContent()) {
+			for (ProcedimentServei procedimentServei: serveisProcediment) {
+				if (servei.getCodi().equals(procedimentServei.getServei())) {
+					servei.setActiu(procedimentServei.isActiu());
+					servei.setProcedimentCodi(procedimentServei.getProcediment().getCodi());
+					break;
+				}
+			}	
+		}
+		return paginaDtos;
 	}
 
 	@Transactional(readOnly = true)

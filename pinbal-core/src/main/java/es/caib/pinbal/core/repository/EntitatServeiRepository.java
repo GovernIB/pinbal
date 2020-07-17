@@ -22,6 +22,9 @@ public interface EntitatServeiRepository extends JpaRepository<EntitatServei, Lo
 	@Query("select es from EntitatServei es where es.entitat.id = ?1")
 	public List<EntitatServei> findByEntitatId(Long entitatId);
 
+	@Query("select es.servei from EntitatServei es where es.entitat.id = ?1")
+	public List<String> findServeisByEntitatId(Long entitatId);
+	
 	@Query("select es from EntitatServei es where es.entitat.id = ?1 and es.servei = ?2")
 	public EntitatServei findByEntitatIdAndServei(Long entitatId, String servei);
 

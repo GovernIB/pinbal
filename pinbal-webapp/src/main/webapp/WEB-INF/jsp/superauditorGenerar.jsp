@@ -35,41 +35,60 @@
 
 	<c:if test="${not empty consultes}">
 		<c:forEach var="consultesEntitat" items="${consultes}">
-			<h3>${consultesEntitat.key.nom}</h3>
-			<form>
-				<c:set var="taulaId" value="consultes_${consultesEntitat.key.id}"/>
-				<jmesa:tableModel
-						id="${taulaId}"
-						items="${consultesEntitat.value}"
-						toolbar="es.caib.pinbal.webapp.jmesa.BootstrapToolbar"
-						view="es.caib.pinbal.webapp.jmesa.BootstrapNoToolbarView"
-						var="registre">
-					<jmesa:htmlTable>
-						<jmesa:htmlRow>
-							<jmesa:htmlColumn property="scspPeticionId" titleKey="consulta.list.taula.peticion.id" sortable="false">
-								${registre.scspPeticionId}<c:if test="${registre.recobriment}"> <span class="badge">R</span></c:if>
-							</jmesa:htmlColumn>
-							<jmesa:htmlColumn property="creacioData" titleKey="auditor.list.taula.data" cellEditor="org.jmesa.view.editor.DateCellEditor" pattern="dd/MM/yyyy HH:mm:ss" />
-							<jmesa:htmlColumn property="creacioUsuari.nom" titleKey="auditor.list.taula.usuari"/>
-							<jmesa:htmlColumn property="funcionariNom" titleKey="auditor.list.taula.funcionari.nom"/>
-							<jmesa:htmlColumn property="funcionariNif" titleKey="auditor.list.taula.funcionari.document"/>
-							<jmesa:htmlColumn property="procedimentNom" titleKey="auditor.list.taula.procediment" sortable="false"/>
-							<jmesa:htmlColumn property="serveiDescripcio" titleKey="auditor.list.taula.servei" sortable="false"/>
-							<jmesa:htmlColumn property="estat" titleKey="auditor.list.taula.estat" style="white-space:nowrap;" sortable="false">
-								<span<c:if test="${registre.estatError}"> title="${registre.error}"</c:if>>
-									<c:choose>
-										<c:when test="${registre.estatPendent}"><i class="icon-bookmark"></i></c:when>
-										<c:when test="${registre.estatProcessant}"><i class="icon-time"></i></c:when>
-										<c:when test="${registre.estatError}"><i class="icon-warning-sign"></i></c:when>
-										<c:otherwise><i class="icon-ok"></i></c:otherwise>
-									</c:choose>
-									${registre.estat}
-								</span>
-							</jmesa:htmlColumn>
-						</jmesa:htmlRow>
-					</jmesa:htmlTable>
-				</jmesa:tableModel>
-			</form>
+			<h3>${consultesEntitat.key.nom}</h3>	
+			<c:set var="taulaId" value="consultes_${consultesEntitat.key.id}"/>
+			<table id="${taulaId}" class="table table-striped table-bordered" style="width: 100%">
+			<thead>
+				<tr>
+				<th><spring:message code="consulta.list.taula.peticion.id" /></th>
+				<th><spring:message code="auditor.list.taula.data" /></th>
+				<th><spring:message code="auditor.list.taula.usuari" /></th>
+				<th><spring:message code="auditor.list.taula.funcionari.nom" /></th>
+				<th><spring:message code="auditor.list.taula.funcionari.nif" /></th>
+				<th><spring:message code="auditor.list.taula.procediment" /></th>
+				<th><spring:message code="auditor.list.taula.servei" /></th>
+				<th><spring:message code="auditor.list.taula.estat" /></th>
+				</tr>
+			</thead>
+			<tbody>
+				<c:forEach items="${consultesEntitat.value}" var="consulta">
+		   			<tr>
+						<td>
+						${consulta.scspPeticionId}<c:if test="${consulta.recobriment}"> <span class="badge">R</span></c:if>
+						</td>
+						<td>
+						${ consulta.creacioData }
+						</td>
+						<td>
+						${ consulta.creacioUsuari.nom }
+						</td>
+						<td>
+						${ consulta.funcionariNom }
+						</td>
+						<td>
+						${ consulta.funcionariNif }
+						</td>
+						<td>
+						${ consulta.procedimentNom }
+						</td>
+						<td>
+						${ consulta.serveiDescripcio }
+						</td>
+						<td>
+							<span<c:if test="${consulta.estatError}"> title="${consulta.error}"</c:if>>
+								<c:choose>
+									<c:when test="${consulta.estatPendent}"><i class="glyphicon-bookmark"></i></c:when>
+									<c:when test="${consulta.estatProcessant}"><i class="glyphicon-time"></i></c:when>
+									<c:when test="${consulta.estatError}"><i class="glyphicon-warning-sign"></i></c:when>
+									<c:otherwise><i class="glyphicon-ok"></i></c:otherwise>
+								</c:choose>
+								${consulta.estat}
+							</span>
+						</td>
+					</tr>
+				</c:forEach>
+			</tbody>
+			</table>
 			<script type="text/javascript">
 				function onInvokeAction(id) {
 					setExportToLimit(id, '');
@@ -77,7 +96,7 @@
 				}
 			</script>
 		</c:forEach>
-		<a href="generarExcel" class="btn"><i class="glyphicon -download-alt"></i>&nbsp;<spring:message code="auditor.list.exportar.excel"/></a>		
+		<a href="generarExcel" class="btn btn-primary"><i class="fas fa-file-download"></i>&nbsp;<spring:message code="auditor.list.exportar.excel"/></a>		
 	</c:if>
 
 </body>

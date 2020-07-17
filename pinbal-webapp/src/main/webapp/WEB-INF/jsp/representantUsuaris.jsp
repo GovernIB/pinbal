@@ -120,13 +120,10 @@ $(document).ready(function() {
 			}, 
 	   ],
 	   initComplete: function( settings, json ) {
-		   console.log(settings)
-		   console.log(json)
 			$('.btn-open-modal-edit').click(function() {
 				var nrow = $(this).data('nrow');
 				var row = json.data[nrow];
 				var usuari = row.usuari;
-				console.log(usuari);
 		 		showModalEditar(usuari.inicialitzat, usuari.noInicialitzatNif, 
 		 				usuari.noInicialitzatCodi, usuari.descripcio, 
 		 				usuari.codi, usuari.nif, 
@@ -167,7 +164,7 @@ function showModalEditar(
 		representant,
 		delegat,
 		aplicacio) {
-	$('#modal-form-usuari .modal-header h3').html("<spring:message code="representant.usuaris.titol.modificar"/>: " + nom);
+	$('#modal-form-usuari .modal-header h3').html("<spring:message code="representant.usuaris.titol.modificar"/>");
 	$('#modal-hidden-codi').removeAttr('disabled');
 	$('#modal-hidden-codi').val(codi);
 	$('#modal-hidden-nif').removeAttr('disabled');

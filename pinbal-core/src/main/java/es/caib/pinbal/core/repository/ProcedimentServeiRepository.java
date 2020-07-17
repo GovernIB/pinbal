@@ -5,8 +5,6 @@ package es.caib.pinbal.core.repository;
 
 import java.util.List;
 
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -14,7 +12,6 @@ import org.springframework.data.repository.query.Param;
 import es.caib.pinbal.core.model.Entitat;
 import es.caib.pinbal.core.model.Procediment;
 import es.caib.pinbal.core.model.ProcedimentServei;
-import es.caib.pinbal.core.model.Servei;
 
 /**
  * Especifica els mètodes que s'han d'emprar per obtenir i modificar la
@@ -93,19 +90,29 @@ public interface ProcedimentServeiRepository extends JpaRepository<ProcedimentSe
 	public List<ProcedimentServei> findByUsuariAmbAccesEntitat(String usuariCodi);
 	
 	@Query(	"select" +
-			"    ps.servei " +
+			"    ps " +
 			"from" +
 			"    ProcedimentServei ps " +
 			"where " +
 			"      ps.procediment.entitat = :entitat " +
-			"  and (:esNullActiva = true or ps.actiu = :activa) " +
 			"  and ps.procediment = :procediment " +
 			") " +
 			"")
-	public List<String> findServeisProcediment(
-			@Param("esNullActiva") boolean esNullActiva,
-			@Param("activa") Boolean activa,	
+	public List<ProcedimentServei> findServeisProcediment(
 			@Param("entitat") Entitat entitat,
 			@Param("procediment") Procediment procediment);
 
+	@Query(	"select" +
+			"    ps.servei " +
+			"from" +
+			"    ProcedimentServei ps " +
+			"where " +
+			"  ps.actiu = true" +
+			"  and ps.procediment.entitat = :entitat " +
+			"  and ps.procediment = :procediment " +
+			") " +
+			"")
+	public List<String> findServeisProcedimenActiustServeisIds(
+			@Param("entitat") Entitat entitat,
+			@Param("procediment") Procediment procediment);
 }
