@@ -74,7 +74,7 @@ $(document).ready(function() {
 		<c:choose>
 			<c:when test="${empty estadistiquesFiltreCommand.entitatId}">
 				<c:url value="/estadistiques/canviEntitat" var="formAction"/>
-				<form:form action="${formAction}" method="post" cssClass="well well-sm form-block" commandName="estadistiquesFiltreCommand">
+				<form:form action="${formAction}" method="post" cssClass="well" commandName="estadistiquesFiltreCommand">
 					<c:set var="campPath" value="entitatId"/>
 					<form:select id="entitat_entitatId" path="${campPath}" cssClass="input-sm">
 						<option value="-1">${opcioEntitatTotes}</option>
@@ -84,9 +84,9 @@ $(document).ready(function() {
 				</form:form>
 			</c:when>
 			<c:otherwise>
-				<form class="well-sm">
+				<form class="well">
 					<c:choose>
-						<c:when test="${empty entitatSeleccionada}"><input type="text" class="input-lg" value="${opcioEntitatTotes}" disabled="disabled"/></c:when>
+						<c:when test="${empty entitatSeleccionada}"><input type="text" class="input-sm" value="${opcioEntitatTotes}" disabled="disabled"/></c:when>
 						<c:otherwise><input type="text" class="input-sm" value="${entitatSeleccionada.nom}" disabled="disabled"/></c:otherwise>
 					</c:choose>
 					<a href="<c:url value="/estadistiques/canviEntitat"/>" class="btn"><spring:message code="comu.boto.canviar"/></a>
@@ -99,55 +99,61 @@ $(document).ready(function() {
 			<c:when test="${empty entitatSeleccionada}"><c:set var="spanClass" value="col-md-6"/></c:when>
 			<c:otherwise><c:set var="spanClass" value="col-md-4"/></c:otherwise>
 		</c:choose>
-		<form:form id="form-filtre" action="" method="post" cssClass="well-lg formbox" commandName="estadistiquesFiltreCommand">
+		<form:form id="form-filtre" action="" method="post" cssClass="well" commandName="estadistiquesFiltreCommand">
 			<form:hidden path="entitatId"/>
 			<div class="page-header"><spring:message code="estadistiques.list.filtre.titol"/></div>
 			<div class="container-fluid">
 				<div class="row">
 					<c:if test="${not empty entitatSeleccionada}">
 						<div class="${spanClass}">
-							<c:set var="campPath" value="procediment"/>
-							<c:set var="campErrors"><form:errors path="${campPath}"/></c:set>
-							<div class="form-group<c:if test="${not empty campErrors}"> error</c:if>">
-								<form:select id="select-procediment" path="${campPath}" cssClass="form-control">
-									<option value=""><spring:message code="estadistiques.list.filtre.procediment"/>:</option>
-									<form:options items="${procediments}" itemLabel="nom" itemValue="id"/>
-								</form:select>
+							<div class="col-md-4">
+								<c:set var="campPath" value="procediment"/>
+								<c:set var="campErrors"><form:errors path="${campPath}"/></c:set>
+								<div class="form-group<c:if test="${not empty campErrors}"> error</c:if>">
+									<form:select id="select-procediment" path="${campPath}" cssClass="form-control">
+										<option value=""><spring:message code="estadistiques.list.filtre.procediment"/>:</option>
+										<form:options items="${procediments}" itemLabel="nom" itemValue="id"/>
+									</form:select>
+								</div>
 							</div>
 						</div>
 					</c:if>
-					<div class="${spanClass}">
-						<c:set var="campPath" value="servei"/>
-						<c:set var="campErrors"><form:errors path="${campPath}"/></c:set>
-						<div class="form-group<c:if test="${not empty campErrors}"> error</c:if>">
-							<form:select id="select-servei" path="${campPath}" cssClass="form-control">
-								<option value=""><spring:message code="estadistiques.list.filtre.servei"/>:</option>
-								<form:options items="${serveis}" itemLabel="descripcio" itemValue="codi"/>
-							</form:select>
+					<div class="col-md-4">
+						<div class="${spanClass}">
+							<c:set var="campPath" value="servei"/>
+							<c:set var="campErrors"><form:errors path="${campPath}"/></c:set>
+							<div class="form-group"<c:if test="${not empty campErrors}"> error</c:if>">
+								<form:select id="select-servei" path="${campPath}" cssClass="form-control">
+									<option value=""><spring:message code="estadistiques.list.filtre.servei"/>:</option>
+									<form:options items="${serveis}" itemLabel="descripcio" itemValue="codi"/>
+								</form:select>
+							</div>
 						</div>
 					</div>
-					<div class="${spanClass}">
-						<c:set var="campPath" value="estat"/>
-						<c:set var="campErrors"><form:errors path="${campPath}"/></c:set>
-						<div class="form-group<c:if test="${not empty campErrors}"> error</c:if>">
-							<form:select path="${campPath}" cssClass="form-control">
-								<option value=""><spring:message code="estadistiques.list.filtre.estat"/>:</option>
-								<c:forEach var="estat" items="${consultaEstats}">
-									<c:if test="${not fn:startsWith(estat, 'P')}">
-										<form:option value="${estat}">${estat}</form:option>
-									</c:if>
-								</c:forEach>
-							</form:select>
+					<div class="col-md-4">
+						<div class="${spanClass}">
+							<c:set var="campPath" value="estat"/>
+							<c:set var="campErrors"><form:errors path="${campPath}"/></c:set>
+							<div class="form-group"<c:if test="${not empty campErrors}"> error</c:if>">
+								<form:select path="${campPath}" cssClass="form-control">
+									<option value=""><spring:message code="estadistiques.list.filtre.estat"/>:</option>
+									<c:forEach var="estat" items="${consultaEstats}">
+										<c:if test="${not fn:startsWith(estat, 'P')}">
+											<form:option value="${estat}">${estat}</form:option>
+										</c:if>
+									</c:forEach>
+								</form:select>
+							</div>
 						</div>
 					</div>
-				</div>
-				
+			
 					<div class="col-md-3">
 						<c:set var="campErrors"><form:errors path="dataInici"/></c:set>
 						<c:if test="${empty campErrors}"><c:set var="campErrors"><form:errors path="dataFi"/></c:set></c:if>
-						<div class="form-group<c:if test="${not empty campErrors}"> error</c:if>">
-							<label><spring:message code="estadistiques.list.filtre.data"/></label>
-							<div class="container-fluid">
+					<div class="form-group"<c:if test="${not empty campErrors}"> error</c:if>">
+						<label><spring:message code="estadistiques.list.filtre.data"/></label>
+						<div class="container-fluid">
+							<div class="row">
 								<div class="col-md-6">
 									<c:set var="campPath" value="dataInici"/>
 									<c:set var="campErrors"><form:errors path="${campPath}"/></c:set>
@@ -161,33 +167,33 @@ $(document).ready(function() {
 									<c:set var="campErrors"><form:errors path="${campPath}"/></c:set>
 									<div class="form-group<c:if test="${not empty campErrors}"> error</c:if>">
 										<spring:bind path="${campPath}">
-											<input type="text" id="${campPath}" name="${campPath}"<c:if test="${not empty status.value}"> value="${status.value}"</c:if> class="col-md-12" placeholder="<spring:message code="estadistiques.list.filtre.data.fi"/>">
+											<input type="text" id="${campPath}" name="${campPath}"<c:if test="${not empty status.value}"> value="${status.value}"</c:if> class="form-control" placeholder="<spring:message code="estadistiques.list.filtre.data.fi"/>">
 											<script>$("#${campPath}").mask("99/99/9999");</script>
 										</spring:bind>
 									</div>
 								</div>
 							</div>
 						</div>
+				</div>
+				<div class="col-md-4"> 
+					<c:set var="campPath" value="usuariCodi"/>
+					<c:set var="campErrors"><form:errors path="${campPath}"/></c:set>
+					<div class="form-group<c:if test="${not empty campErrors}"> error</c:if>">
+						<label>&nbsp;</label>
+						<form:select path="${campPath}" cssClass="form-control">
+							<option value=""><spring:message code="estadistiques.list.filtre.usuari"/>:</option>
+							<c:forEach var="entitatUsuari" items="${entitatSeleccionada.usuaris}">
+								<form:option value="${entitatUsuari.usuari.codi}">${entitatUsuari.usuari.descripcio}</form:option>
+							</c:forEach>
+						</form:select>
 					</div>
-					<div class="col-md-4"> 
-						<c:set var="campPath" value="usuariCodi"/>
-						<c:set var="campErrors"><form:errors path="${campPath}"/></c:set>
-						<div class="form-group<c:if test="${not empty campErrors}"> error</c:if>">
-							<label>&nbsp;</label>
-							<form:select path="${campPath}" cssClass="col-md-12">
-								<option value=""><spring:message code="estadistiques.list.filtre.usuari"/>:</option>
-								<c:forEach var="entitatUsuari" items="${entitatSeleccionada.usuaris}">
-									<form:option value="${entitatUsuari.usuari.codi}">${entitatUsuari.usuari.descripcio}</form:option>
-								</c:forEach>
-							</form:select>
-						</div>
-					</div>
+				</div>
 					<div class="col-md-3">
 						<c:set var="campPath" value="agrupacio"/>
 						<c:set var="campErrors"><form:errors path="${campPath}"/></c:set>
 						<div class="form-group<c:if test="${not empty campErrors}"> error</c:if>">
 							<label>Agrupar per</label>
-							<form:select path="${campPath}" cssClass="col-md-12">
+							<form:select path="${campPath}" cssClass="form-control">
 								<c:forEach var="agrupacio" items="${agrupacioValors}">
 									<form:option value="${agrupacio}"><spring:message code="estadistiques.list.filtre.agrupacio.${agrupacio}"/></form:option>
 								</c:forEach>
@@ -226,7 +232,7 @@ $(document).ready(function() {
 				<jsp:param name="agrupacio" value="${estadistiquesFiltreCommand.agrupacio}"/>
 			</jsp:include>
 		</c:if>
-		<a href="estadistiques/excel" class="btn-default"><i class="glyphicon-download-alt"></i>&nbsp;<spring:message code="estadistiques.list.exportar.excel"/></a>
+		<a href="estadistiques/excel" class="btn"><i class="glyphicon-download-alt"></i>&nbsp;<spring:message code="estadistiques.list.exportar.excel"/></a>
 	</c:if>
 
 </body>

@@ -218,14 +218,9 @@ $(document).ready(function() {
 				</div>
 				<div class="col-md-4" style="text-align:right">
 					<label>&nbsp;</label>
-					<button id="netejar-filtre" class="btn-default" type="button"><spring:message code="comu.boto.netejar"/></button>
+					<button id="netejar-filtre" class="btn" type="button"><spring:message code="comu.boto.netejar"/></button>
 					<button class="btn btn-primary" type="submit"><spring:message code="comu.boto.filtrar"/></button>
 				</div>
-			</div>
-			<div class="span4" style="text-align:right">
-				<label>&nbsp;</label>
-				<button id="netejar-filtre" class="btn" type="button"><spring:message code="comu.boto.netejar"/></button>
-				<button class="btn btn-primary" type="submit"><spring:message code="comu.boto.filtrar"/></button>
 			</div>
 		</div>
 	</form:form>

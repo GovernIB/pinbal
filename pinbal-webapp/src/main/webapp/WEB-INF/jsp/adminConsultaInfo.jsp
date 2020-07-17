@@ -23,14 +23,14 @@ function initModalXml(element) {
 		</div>
 	</c:if>
 
-	<div class="well-lg">
+	<div class="well">
 		<h3>
 			<spring:message code="admin.consulta.info.consulta.dades"/>
 		</h3>
 		<div id="dadesPeticio">
 			<c:if test="${consulta.hiHaPeticio}">
 				<c:set var="initModalXml">initModalXml(this);return false</c:set>
-				<a class="btn pull-right" href="<c:url value="/modal/admin/consulta/${consulta.id}/xmlPeticio"/>" onclick="${initModalXml}"><i class="icon-info-sign"></i> <spring:message code="admin.consulta.info.veure.xml"/></a>
+				<a class="btn pull-right" href="<c:url value="/modal/admin/consulta/${consulta.id}/xmlPeticio"/>" onclick="${initModalXml}"><i class="glyphicon-info-sign"></i> <spring:message code="admin.consulta.info.veure.xml"/></a>
 			</c:if>
 			<p>
 				<spring:message code="admin.consulta.info.consulta.enviada.dia"/>
@@ -41,7 +41,7 @@ function initModalXml(element) {
 		</div>
 	</div>
 	<c:if test="${consulta.hiHaResposta}">
-		<div class="well-lg">
+		<div class="well">
 			<h3>
 				<spring:message code="admin.consulta.info.resposta.dades"/>
 			</h3>
@@ -57,7 +57,7 @@ function initModalXml(element) {
 			</div>
 		</div>
 	</c:if>
-	<div class="well-lg">
+	<div class="well">
 		<a href="<c:url value="/admin/consulta"/>" class="btn-default"><spring:message code="comu.boto.tornar"/></a>
 	</div>
 	<div id="modal-missatge-xml" class="modal hide fade" style="width:750px">
