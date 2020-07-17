@@ -144,29 +144,13 @@ function initModalPreview(element) {
 	$('#modal-form-preview').css('width', '700px');
 	$('#modal-form-preview').modal('toggle');
 }
-// JMesa
+
 function onInvokeAction(id) {
 	setExportToLimit(id, '');
 	createHiddenInputFieldsForLimitAndSubmit(id);
 }
 $(function() {
-	// Ordenació del llistat de camps
-	$("#jmesa-camps tbody").sortable({
-		cursor: 'move',
-		start: function(e, ui) {
-			//$(this).attr('data-previndex', ui.item.index());
-			$(this).attr('data-campId', $('input[name="id"]', ui.item).val());
-		},
-		update: function(e, ui) {
-			var newIndex = ui.item.index();
-			//var oldIndex = $(this).attr('data-previndex');
-			//$(this).removeAttr('data-previndex');
-			var campId = $(this).attr('data-campId');
-			$(this).removeAttr('data-campId');
-			window.location = 'camp/move/' + campId + '/' + newIndex;
-		}
-	});
-	$("#jmesa-camps tbody").disableSelection();
+
 	// Canvi d'icones al ocultar/mostrar
 	$('.arbre-node').on('hidden', function (event) {
 		var iconId = '#icon-' + this.id.substring(3);

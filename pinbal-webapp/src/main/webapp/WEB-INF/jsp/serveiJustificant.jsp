@@ -1,7 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
-<%@ taglib uri="http://code.google.com/p/jmesa" prefix="jmesa" %>
+
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 
 <html>
@@ -12,8 +12,6 @@
 		<c:otherwise><c:set var="serveiPerTitol" value="${servei.codi}"/></c:otherwise>
 	</c:choose>
 	<meta name="subtitle" content="${serveiPerTitol}"/>
-	<script type="text/javascript" src="<c:url value="/js/jquery.jmesa.min.js"/>"></script>
-	<script type="text/javascript" src="<c:url value="/js/jmesa.min.js"/>"></script>
 <script>
 $(document).ready(function() {
 	$('.justificant-modificar').click(function() {
