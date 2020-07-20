@@ -115,15 +115,16 @@ $(document).ready(function() {
 			<div class="row">		
 				<div class="col-md-2" >
 					<c:set var="campPath" value="codi" />
-					<div class="form-group<c:if test="${not empty campErrors}"> error</c:if>">
+					<div class="form-group"<c:if test="${not empty campErrors}"> error</c:if>">
+<%-- 						<pbl:inputText name="${campPath}" textKey="entitat.list.filtre.camp.codi" placeholder="entitat.list.filtre.camp.codi" hideLabel="true"/>				 --%>
 							<spring:bind path="${campPath}">
 								<input type="text" id="${campPath}" name="${campPath}"<c:if test="${not empty status.value}"> value="${status.value}"</c:if> class="form-control col-md-12" placeholder="<spring:message code="entitat.list.filtre.camp.codi"/>">
 							</spring:bind>
 					</div>
-<%-- 					<pbl:inputText name="${campPath}" textKey="entitat.list.filtre.camp.codi" placeholder="entitat.list.filtre.camp.codi" hideLabel="true"/>	 --%>
+						
 					
 				</div>			
-				<div class="col-md-3">
+				<div class="col-md-2">
 					<c:set var="campPath" value="nom"/>
 					
 					<div class="form-group<c:if test="${not empty campErrors}"> error</c:if>">
@@ -134,7 +135,7 @@ $(document).ready(function() {
 <%-- 					<pbl:inputText name="${campPath}" textKey="entitat.list.filtre.camp.nom"  placeholder="entitat.list.filtre.camp.nom" hideLabel="true"/> --%>
 				</div>
 				
-				<div class="col-md-3">
+				<div class="col-md-2">
 					<c:set var="campPath" value="cif"/>
 					<div class="form-group<c:if test="${not empty campErrors}"> error</c:if>">
 							<spring:bind path="${campPath}">
@@ -153,13 +154,7 @@ $(document).ready(function() {
 						<form:option value="true">${trueValue}</form:option>>
 						<form:option value="false">${falseValue}</form:option>>
 					</form:select>
-				</div>
-			
-			</div>
-		</div>
-			</br>
-		<div class="container-fluid">
-			<div class="row">
+				</div>	
 				<div class="col-md-2">
 					<c:set var="campPath" value="tipus"/>
 					<form:select class="form-control" path="${campPath}">
@@ -169,22 +164,27 @@ $(document).ready(function() {
 						</c:forEach>
 					</form:select>
 				</div>
-				<div class="col-md-3 pull-right">
+				<div class="col-md-2 pull-right">
 					<button id="netejar-filtre" class="btn" type="button"><spring:message code="comu.boto.netejar"/></button>
 					<button type="submit" class="btn btn-primary"><spring:message code="comu.boto.filtrar"/></button>
 				</div>
-			</div>
-		</div>	
-
-	</form:form>
-
-	<div class="container-fluid">
-		<div class="row">
-	
-			<div class="col-md-12">
-					<a class="btn pull-right" href="<c:url value="/entitat/new"/>"><i class="glyphicon-plus"></i>&nbsp;<spring:message code="entitat.list.boto.nova.entitat"/></a>
+			
 			</div>
 		</div>
+		
+	
+	</form:form>
+	
+		<div class ="container-fluid">
+				<div class="row">
+					<div class="col-md-12">
+						<a class="btn pull-right" href="<c:url value="/entitat/new"/>"><i class="glyphicon-plus"></i>&nbsp;<spring:message code="entitat.list.boto.nova.entitat"/></a>
+					</div>
+				
+				</div
+
+
+	
 		
 	<div class="clearfix"></div>
 	<div style="position: relative; top: -40px; z-index:0">

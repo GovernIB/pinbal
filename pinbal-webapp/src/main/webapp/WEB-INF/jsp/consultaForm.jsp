@@ -18,7 +18,6 @@
 
 <c:set var="serveiMultiple" value="${servei.consultaMultiplePermesa}"/>
 <c:set var="tabSimpleActiu" value="${not consultaCommand.multiple}"/>
-<c:set var="tabMultipleActiu" value="${not tabSimpleActiu}"/>
 
 <html>
 <head>
@@ -47,7 +46,7 @@
 	<c:url value="/consulta/${servei.codi}/plantilla/CSV" var="downloadPlantillaCsvUrl"/>
 	<c:url value="/consulta/${servei.codi}/plantilla/ODS" var="downloadPlantillaOdsUrl"/>
 	<c:url value="/consulta/${servei.codi}/new" var="formAction"/>
-	<form:form action="${formAction}" method="post" cssClass="form-horizontal" commandName="consultaCommand" enctype="multipart/form-data">
+	<form:form action="${formAction}" method="post" cssClass="well" commandName="consultaCommand" enctype="multipart/form-data">
 		<form:hidden path="serveiCodi"/>
 		<form:hidden path="multiple" />
 		<br/>
@@ -55,7 +54,7 @@
 		<c:set var="campErrors"><form:errors path="${campPath}"/></c:set>
 		<div class="row">
 			<div class="col-md-12">
-				<div class="control-group<c:if test="${not empty campErrors}"> error</c:if>">
+				<div class="form-group<c:if test="${not empty campErrors}"> error</c:if>">
 					<label class="control-label" for="${campPath}"><spring:message code="consulta.form.camp.procediment"/> *</label>
 					<div class="controls">
 						<form:select path="${campPath}" cssClass="col-md-12" cssStyle="width:100%" id="${campPath}">
@@ -76,19 +75,19 @@
 					<div class="form-group<c:if test="${not empty campErrors}"> error</c:if>">
 						<label class="control-label" for="${campPath}"><spring:message code="consulta.form.camp.funcionari.nom"/> *</label>
 						<div class="controls">
-							<form:input path="${campPath}" cssClass="span12" id="${campPath}"/>
-							<form:errors path="${campPath}" cssClass="help-inline"/>
+							<form:input path="${campPath}" cssClass="col-md-12" id="${campPath}"/>
+							<form:errors path="${campPath}" cssClass="help-block"/>
 						</div>
 					</div>
 				</div>
-				<div class="span6">
+				<div class="col-md-6">
 					<c:set var="campPath" value="funcionariNif"/>
 					<c:set var="campErrors"><form:errors path="${campPath}"/></c:set>
-					<div class="control-group<c:if test="${not empty campErrors}"> error</c:if>">
+					<div class="form-group<c:if test="${not empty campErrors}"> error</c:if>">
 						<label class="control-label" for="${campPath}"><spring:message code="consulta.form.camp.funcionari.nif"/> *</label>
 						<div class="controls">
-							<form:input path="${campPath}" cssClass="span12" id="${campPath}" disabled="true"/>
-							<form:errors path="${campPath}" cssClass="help-inline"/>
+							<form:input path="${campPath}" cssClass="col-md-12" id="${campPath}" disabled="true"/>
+							<form:errors path="${campPath}" cssClass="help-block"/>
 						</div>
 					</div>
 				</div>
@@ -97,7 +96,7 @@
 				<div class="col-md-6">
 					<c:set var="campPath" value="entitatNom"/>
 					<c:set var="campErrors"><form:errors path="${campPath}"/></c:set>
-					<div class="control-group<c:if test="${not empty campErrors}"> error</c:if>">
+					<div class="form-group<c:if test="${not empty campErrors}"> error</c:if>">
 						<label class="control-label" for="${campPath}"><spring:message code="consulta.form.camp.entitat.nom"/> *</label>
 						<div class="controls">
 							<form:input path="${campPath}" cssClass="col-md-12" id="${campPath}" disabled="true"/>
@@ -108,7 +107,7 @@
 				<div class="col-md-6">
 					<c:set var="campPath" value="entitatCif"/>
 					<c:set var="campErrors"><form:errors path="${campPath}"/></c:set>
-					<div class="control-group<c:if test="${not empty campErrors}"> error</c:if>">
+					<div class="form-group<c:if test="${not empty campErrors}"> error</c:if>">
 						<label class="control-label" for="${campPath}"><spring:message code="consulta.form.camp.entitat.cif"/> *</label>
 						<div class="controls">
 							<form:input path="${campPath}" cssClass="col-md-12" id="${campPath}" disabled="true"/>
@@ -137,8 +136,8 @@
 					<div class="form-group<c:if test="${not empty campErrors}"> error</c:if>">
 						<label class="control-label" for="${campPath}"><spring:message code="consulta.form.camp.departament"/> *</label>
 						<div class="controls">
-							<form:input path="${campPath}" cssClass="span12" id="${campPath}"/>
-							<form:errors path="${campPath}" cssClass="help-inline"/>
+							<form:input path="${campPath}" cssClass="col-md-12" id="${campPath}"/>
+							<form:errors path="${campPath}" cssClass="help-block"/>
 						</div>
 					</div>
 				</div>
@@ -175,7 +174,7 @@
 					<label class="control-label" for="${campPath}"><spring:message code="consulta.form.camp.expedient"/></label>
 					<div class="controls">
 						<form:input path="${campPath}" cssClass="col-md-12" id="${campPath}"/>
-						<form:errors path="${campPath}" cssClass="help-inline"/>
+						<form:errors path="${campPath}" cssClass="help-block"/>
 					</div>
 				</div>
 			</div>
@@ -192,7 +191,7 @@
 						<div class="col-md-6">
 							<c:set var="campPath" value="titularDocumentTipus"/>
 							<c:set var="campErrors"><form:errors path="${campPath}"/></c:set>
-							<div class="control-group<c:if test="${not empty campErrors}"> error</c:if>">
+							<div class="form-group<c:if test="${not empty campErrors}"> error</c:if>">
 								<label class="control-label" for="${campPath}"><spring:message code="consulta.form.camp.document.tipus"/> <c:if test="${servei.pinbalDocumentObligatori}">*</c:if></label>
 								<div class="controls">
 									<form:select path="${campPath}" cssClass="col-md-12" id="${campPath}">
@@ -216,7 +215,7 @@
 						<div class="col-md-6">
 							<c:set var="campPath" value="titularDocumentNum"/>
 							<c:set var="campErrors"><form:errors path="${campPath}"/></c:set>
-							<div class="control-group<c:if test="${not empty campErrors}"> error</c:if>">
+							<div class="form-group<c:if test="${not empty campErrors}"> error</c:if>">
 								<label class="control-label" for="${campPath}"><spring:message code="consulta.form.camp.document.num"/> <c:if test="${servei.pinbalDocumentObligatori}">*</c:if></label>
 								<div class="controls">
 									<form:input path="${campPath}" cssClass="col-md-12" id="${campPath}"/>
@@ -347,13 +346,13 @@
 					<div class="col-md-12">
 						<c:set var="campPath" value="multipleFitxer"/>
 						<c:set var="campErrors"><form:errors path="${campPath}"/></c:set>
-						<div class="control-group<c:if test="${not empty campErrors}"> error</c:if>">
+						<div class="form-group<c:if test="${not empty campErrors}"> error</c:if>">
 							<label class="control-label" for="${campPath}"><spring:message code="consulta.form.camp.multiple.fitxer"/> *</label>
 							<div class="controls">
 								<span class="input-group-btn">
-									<form:input type="file" path="${campPath}" cssClass="" id="${campPath}" title="<i class='icon-file'></i>" />
+									<form:input type="file" path="${campPath}" cssClass="" id="${campPath}" title="<i class='glyphicon-file'></i>" />
 								</span>
-								<form:errors path="${campPath}" cssClass="help-inline"/>
+								<form:errors path="${campPath}" cssClass="help-block"/>
 							</div>
 						</div>
 					</div>

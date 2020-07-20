@@ -94,26 +94,38 @@ $(document).ready(function() {
 <body>
 
 	<c:url value="/procediment" var="formAction"/>
-	<form:form id="form-filtre" action="${formAction}" method="post" cssClass="well form-inline" commandName="procedimentFiltreCommand">
-		<c:set var="campPath" value="codi"/>
-		<spring:message var="placeholderCodi" code="procediment.list.filtre.camp.codi"/>
-		<form:input path="${campPath}" cssClass="input-sm" id="${campPath}" placeholder="${placeholderCodi}"/>
-		<c:set var="campPath" value="nom"/>
-		<spring:message var="placeholderNom" code="procediment.list.filtre.camp.nom"/>
-		<form:input path="${campPath}" cssClass="input-sm" id="${campPath}" placeholder="${placeholderNom}"/>
-		<c:set var="campPath" value="departament"/>
-		<spring:message var="placeholderDepartament" code="procediment.list.filtre.camp.departament"/>
-		<form:input path="${campPath}" cssClass="input-sm" id="${campPath}" placeholder="${placeholderDepartament}"/>
-		<button id="netejar-filtre" class="btn-default" type="button"><spring:message code="comu.boto.netejar"/></button>
-		<button type="submit" class="btn btn-primary"><spring:message code="comu.boto.filtrar"/></button>
+	<form:form id="form-filtre" action="${formAction}" method="post" cssClass="well" commandName="procedimentFiltreCommand">
+		<div class="container-fluid">
+			<div class="row">
+				<div clasa="form-control">
+					<c:set var="campPath" value="codi"/>
+					<spring:message var="placeholderCodi" code="procediment.list.filtre.camp.codi"/>
+					<form:input path="${campPath}" cssClass="form-control col-md-3" id="${campPath}" placeholder="${placeholderCodi}"/>
+				</div>
+				<div class="col-md-3">
+					<c:set var="campPath" value="nom"/>
+					<spring:message var="placeholderNom" code="procediment.list.filtre.camp.nom"/>
+					<form:input path="${campPath}" cssClass="input-sm" id="${campPath}" placeholder="${placeholderNom}"/>
+				</div>
+				<div class="col-md-3">	
+					<c:set var="campPath" value="departament"/>
+					<spring:message var="placeholderDepartament" code="procediment.list.filtre.camp.departament"/>
+					<form:input path="${campPath}" cssClass="input-sm" id="${campPath}" placeholder="${placeholderDepartament}"/>
+				</div>
+				<button id="netejar-filtre" class="btn" type="button"><spring:message code="comu.boto.netejar"/></button>
+				<button type="submit" class="btn btn-primary"><spring:message code="comu.boto.filtrar"/></button>
+			</div>
+		</div>	
 	</form:form>
-
-	<div class="row">
-		<div class="col-md-12" >
-			<a class="btn pull-right" href="<c:url value="/procediment/new"/>"><i class="glyphicon-plus"></i>&nbsp;<spring:message code="procediment.list.boto.nou.procediment"/></a>
+	
+	<div class="container-fluid">
+		<div class="row">
+			<div class="col-md-12" >
+				<a class="btn pull-right" href="<c:url value="/procediment/new"/>"><i class="glyphicon-plus"></i>&nbsp;<spring:message code="procediment.list.boto.nou.procediment"/></a>
+			</div>
+			<div class="clearfix"></div>
 		</div>
-		<div class="clearfix"></div>
-	</div>
+	</div>	
 	<table id="table-procediments" class="table table-striped table-bordered" style="width: 100%">
 		<thead>
 			<tr>

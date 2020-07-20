@@ -34,7 +34,7 @@
 			<div class="form-group<c:if test="${not empty campErrors}"> error</c:if>">
 				<label class="control-label" for="${campPath}"><spring:message code="procediment.form.camp.nom"/> *</label>
 				<div class="controls">
-					<form:input path="${campPath}" cssClass="input-sm" id="${campPath}"/>
+					<form:input path="${campPath}" cssClass="form-control" id="${campPath}"/>
 					<form:errors path="${campPath}" cssClass="help-block"/>
 				</div>
 			</div>
