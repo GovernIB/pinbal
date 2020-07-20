@@ -146,7 +146,7 @@
 				<th data-data="titularDocumentAmbTipus"><spring:message code="consulta.list.taula.titular.document" /></th>				
 				<th data-data="estat"><spring:message code="consulta.list.taula.estat" /></th>
 				<th data-data="id"></th>
-				<th data-data="id"></th>
+				<th data-data="justificantEstat"></th>
 			</tr>
 		</thead>
 	</table>
@@ -245,13 +245,15 @@ $(document).ready(function() {
 				orderable: false,
 				width: "10%",
 				render: function (data, type, row, meta) {
-						var template = $('#template-justificant').html();
-						row["estat-pendent"] = row['justificantEstat'] == 'pendent';
-						row["estat-ok"] = row['justificantEstat'] == 'ok';
-						row["estat-error"] = row['justificantEstat'] == 'error';
-						row["estat-nodisponible"] = row['justificantEstat'] == 'no_disponible';
-						row["estat-oknocustodia"] = row['justificantEstat'] == 'ok_no_custodia';
-						return Mustache.render(template, row);
+					console.log('hola');
+					console.log(row);
+					var template = $('#template-justificant').html();
+					row["estat-pendent"] = row['justificantEstat'].toLowerCase() == 'pendent';
+					row["estat-ok"] = row['justificantEstat'].toLowerCase() == 'ok';
+					row["estat-error"] = row['justificantEstat'].toLowerCase() == 'error';
+					row["estat-nodisponible"] = row['justificantEstat'].toLowerCase() == 'no_disponible';
+					row["estat-oknocustodia"] = row['justificantEstat'].toLowerCase() == 'ok_no_custodia';
+					return Mustache.render(template, row);
 				}
 			},
 			{
@@ -274,10 +276,9 @@ $(document).ready(function() {
 <script id="template-justificant" type="x-tmpl-mustache">
 {{#estat-pendent}}
 <i class="far fa-clock" title="<spring:message code="consulta.list.taula.justif.pendent"/>"></i>
-<i class="icon-time" title="<spring:message code="consulta.list.taula.justif.pendent"/>"></i>
 {{/estat-pendent}}
 {{#estat-ok}}
-<a class="btn btn-small" href="consulta/{{ id }}/justificant">
+<a class="btn btn-default btn-small" href="consulta/{{ id }}/justificant">
 <i class="far fa-file-pdf" title="<spring:message code="consulta.list.taula.descarregar.pdf"/>" 
 			 alt="<spring:message code="consulta.list.taula.descarregar.pdf"/>"></i>
 </a>

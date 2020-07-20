@@ -317,11 +317,16 @@ $('#dadesResposta').on('shown', function () {
 		<div class="well">
 			<h3>
 			<spring:message code="consulta.info.descarregar.justificant"/>
-			<div class="btn-group pull-right">
-				<a class="btn dropdown-toggle" data-toggle="dropdown" href="#"><i class="icon-"><img src="<c:url value="/img/error_icon.png"/>" title="<spring:message code="consulta.list.taula.justif.error"/>" alt="<spring:message code="consulta.list.taula.justif.error"/>"/></i>&nbsp;&nbsp;<span class="caret"></span></a>
+			<div class="dropdown pull-right">
+				<a class="btn btn-default dropdown-toggle" data-toggle="dropdown" href="#"><i class="icon-"><img src="<c:url value="/img/error_icon.png"/>" title="<spring:message code="consulta.list.taula.justif.error"/>" alt="<spring:message code="consulta.list.taula.justif.error"/>"/></i>&nbsp;&nbsp;<span class="caret"></span></a>
 				<ul class="dropdown-menu">
-					<li><a href="../consulta/${consulta.id}/justificantError" data-toggle="modal" data-target="#modal-justificant-error"><i class="icon-info-sign"></i>&nbsp;<spring:message code="consulta.list.taula.justif.error.veure"/></a></li>
-					<li><a href="../consulta/${consulta.id}/justificantReintentar?info=true" class="justificant-reintentar"><i class="icon-repeat"></i>&nbsp;<spring:message code="consulta.list.taula.justif.error.reintentar"/></a></li>
+					<li>
+					<a href="../consulta/${consulta.id}/justificantError" data-toggle="modal" data-target="#modal-justificant-error">
+						<i class="fas fa-exclamation-triangle"></i>&nbsp;<spring:message code="consulta.list.taula.justif.error.veure"/>
+					</a>
+					</li>
+					<li><a href="../consulta/${consulta.id}/justificantReintentar?info=true" class="justificant-reintentar">
+						<i class="fas fa-redo-alt"></i>&nbsp;<spring:message code="consulta.list.taula.justif.error.reintentar"/></a></li>
 				</ul>
 			</div>
 			</h3>
@@ -338,28 +343,36 @@ $('#dadesResposta').on('shown', function () {
 			</c:otherwise>
 		</c:choose>
 	</div>
-	<div id="modal-missatge-xml" class="modal hide fade" style="width:750px">
-		<div class="modal-header">
-			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-			<h3><spring:message code="consulta.info.missatge.xml"/></h3>
-		</div>
-		<div class="modal-body"></div>
-		<div class="modal-footer">
-			<a href="#" class="btn" data-dismiss="modal"><spring:message code="comu.boto.tornar"/></a>
+	<div id="modal-missatge-xml" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+  		<div class="modal-dialog modal-dialog-centered" role="document">
+	   		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				<h3><spring:message code="consulta.info.missatge.xml"/></h3>
+			</div>
+			<div class="modal-body"></div>
+			<div class="modal-footer">
+				<a href="#" class="btn btn-primary" data-dismiss="modal"><spring:message code="comu.boto.tornar"/></a>
+			</div>
+			</div>
 		</div>
 	</div>
 	<c:if test="${consulta.justificantEstatError}">
-		<div class="modal hide fade" id="modal-justificant-error" style="width:900px;margin-left:-450px;">
-			<div class="modal-header">
+	<div id="modal-justificant-error" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+  		<div class="modal-dialog modal-dialog-centered" role="document">
+    		<div class="modal-content">
+    		<div class="modal-header">
 				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
 				<h3><spring:message code="consulta.list.taula.justif.error"/></h3>
 			</div>
 			<div class="modal-body">
-				<textarea style="width:98%" rows="18">${consulta.justificantError}</textarea>
+				<textarea class="input-lg form-control" style="width:98%" rows="18">${consulta.justificantError}</textarea>
 			</div>
 			<div class="modal-footer">
 			</div>
+			</div>
 		</div>
+	</div>
 	</c:if>
 </body>
 </html>

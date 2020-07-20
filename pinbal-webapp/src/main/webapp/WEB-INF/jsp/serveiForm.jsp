@@ -420,7 +420,8 @@ function showModalXsd(element) {
 				<div class="clearfix legend-margin-bottom"></div>
 				<div class="row">
 					<div class="col-md-11 offset1">
-						<a class="btn btn-primary pull-right" href="<c:url value="/modal/servei/${serveiCommand.codi}/redir/new"/>" onclick="showModalRedir(this);return false"><i class="fas fa-plus"></i>&nbsp;<spring:message code="servei.form.boto.nova.redireccio"/></a>
+						<a class="btn btn-primary pull-right" href="<c:url value="/modal/servei/${serveiCommand.codi}/redir/new"/>" 
+						onclick="showModalRedir(this);return false"><i class="fas fa-plus"></i>&nbsp;<spring:message code="servei.form.boto.nova.redireccio"/></a>
 					</div>
 				</div>
 				<c:if test="${not empty serveisBus}">
@@ -591,7 +592,7 @@ function showModalXsd(element) {
 			</div>
 		</fieldset>
 		
-		<c:if test="${not empty serveiCommand.codi}">
+<%-- 		<c:if test="${not empty serveiCommand.codi}"> --%>
 			<fieldset id="gestioXsdFieldSet" hidden="${ activaGestioXsd ? '' : 'true'}">
 				<legend><spring:message code="servei.form.legend.gestio.xsd"/></legend>
 				<div class="clearfix legend-margin-bottom"></div>
@@ -640,7 +641,7 @@ function showModalXsd(element) {
 					</table>
 				</c:if>
 			</fieldset>
-		</c:if>
+<%--		</c:if> --%>
 		<fieldset>
 			<legend><spring:message code="servei.form.legend.xifrat.seguretat"/></legend>
 			<div class="clearfix legend-margin-bottom"></div>
@@ -732,7 +733,7 @@ function showModalXsd(element) {
 					<c:set var="campErrors"><form:errors path="${campPath}"/></c:set>
 					<div class="control-group<c:if test="${not empty campErrors}"> error</c:if>">
 						<label class="control-label" for="${campPath}"><spring:message code="servei.form.camp.scsp.xpath.cifrado.asincrono"/></label>
-						<div class="controls">
+						<div class="controls">form-control
 							<form:input path="${campPath}" cssClass="col-md-12" id="${campPath}"/>
 							<form:errors path="${campPath}" cssClass="help-block"/>
 						</div>
@@ -778,7 +779,7 @@ function showModalXsd(element) {
 							<form:errors path="${campPath}" cssClass="help-block"/>
 						</div>
 					</div>
-				</div>
+				</div>form-control
 				<div class="col-md-6">
 					<c:set var="campPath" value="scspMaxSolicitudesPeticion"/>
 					<c:set var="campErrors"><form:errors path="${campPath}"/></c:set>
@@ -831,25 +832,25 @@ function showModalXsd(element) {
 		</fieldset>
 		<div class="well">
 			<button type="submit" class="btn btn-primary"><spring:message code="comu.boto.guardar"/></button>
-			<a href="<c:url value="/servei"/>" class="btn"><spring:message code="comu.boto.cancelar"/></a>
+			<a href="<c:url value="/servei"/>" cform-controllass="btn"><spring:message code="comu.boto.cancelar"/></a>
 		</div>
 	</form:form>
 
 <div id="modal-redir-form" class="modal" tabindex="-1" role="dialog">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
+ 	<div class="modal-dialog" role="document">
+    	<div class="modal-content">
 		<div class="modal-header">
 			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
 			<h3><spring:message code="servei.form.modal.bus.titol"/></h3>
 		</div>
 		<div class="modal-body"></div>
 		<div class="modal-footer">
-			<a href="#" class="btn" data-dismiss="modal"><spring:message code="comu.boto.tornar"/></a>
+			<a href="#" class="btn btn-default" data-dismiss="modal"><spring:message code="comu.boto.tornar"/></a>
 			<a href="#" id="modal-boto-submit" class="btn btn-primary"><spring:message code="comu.boto.guardar"/></a>
 		</div>
+		</div>
 	</div>
-	</div>
-	</div>
+</div>
 	
 	<div id="modal-xsd-form" class="modal" tabindex="-1" role="dialog">
   <div class="modal-dialog" role="document">
@@ -860,7 +861,7 @@ function showModalXsd(element) {
 		</div>
 		<div class="modal-body"></div>
 		<div class="modal-footer">
-			<a href="#" class="btn" data-dismiss="modal"><spring:message code="comu.boto.tornar"/></a>
+			<a href="#" class="btn btn-default" data-dismiss="modal"><spring:message code="comu.boto.tornar"/></a>
 			<a href="#" id="modal-boto-submit-xsd" class="btn btn-primary"><spring:message code="comu.boto.guardar"/></a>
 		</div>
 	</div>

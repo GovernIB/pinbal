@@ -74,29 +74,31 @@ $(document).ready(function() {
 		<div class="clearfix"></div>
 	</div>
 
-	<div id="modal-justificant" class="modal hide fade">
+<div id="modal-justificant" class="modal fade" role="dialog">
+	<div class="modal-dialog">
+	    <div class="modal-content">
 		<div class="modal-header">
 			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
 			<h3 id="modal-justificant-titol"><spring:message code="servei.justificant.modal.titol"/></h3>
 		</div>
 		<div class="modal-body">
-			<form id="modal-justificant-form" action="" method="post" class="form-horizontal">
+			<form id="modal-justificant-form" action="" method="post">
 				<input type="hidden" id="modal-justificant-hidden-id" name="id"/>
 				<input type="hidden" id="modal-justificant-hidden-servei" name="servei" value="${servei.codi}"/>
 				<input type="hidden" id="modal-justificant-hidden-xpath" name="xpath"/>
 				<div class="form-group">
-    				<label class="control-label" for="modal-justificant-input-traduccio"><spring:message code="servei.justificant.modal.camp.traduccio"/></label>
-					<div class="controls">
-						<input type="text" id="modal-justificant-input-traduccio" name="traduccio" class="input-lg"/>
-					</div>
+    				<label for="modal-justificant-input-traduccio"><spring:message code="servei.justificant.modal.camp.traduccio"/></label>
+					<input type="text" id="modal-justificant-input-traduccio" name="traduccio" class="form-control"/>
 				</div>
 			</form>
 		</div>
 		<div class="modal-footer">
-			<a href="#" class="btn" data-dismiss="modal"><spring:message code="comu.boto.tornar"/></a>
+			<a href="#" class="btn btn-default" data-dismiss="modal"><spring:message code="comu.boto.tornar"/></a>
 			<a href="#" id="modal-justificant-boto-submit" class="btn btn-primary"><spring:message code="comu.boto.guardar"/></a>
 		</div>
+		</div>
 	</div>
+</div>
 
 </body>
 </html>

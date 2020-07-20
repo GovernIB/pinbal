@@ -62,7 +62,7 @@
 	</c:when>
 	<c:otherwise>
 		<div style="display: inline;" class="form-group<c:if test="${not empty campErrors}"> has-error</c:if>">
-    		<c:if test="${not labelDisabled}"><label class="control-label" for="${campPath}">${campLabelText}</label></c:if>
+    		<c:if test="${not labelDisabled}"><label for="${campPath}">${campLabelText}</label></c:if>
 			<form:select path="${campPath}" cssClass="form-control" id="${campPath}" disabled="${disabled}" style="width:90%;height: 30px; border-radius: 4px 4px 4px 4px;">
 				<c:if test="${emptyOption == 'true'}">
 					<c:choose>

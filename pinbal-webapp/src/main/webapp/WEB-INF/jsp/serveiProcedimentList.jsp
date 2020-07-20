@@ -10,6 +10,9 @@
 	<title><spring:message code="servei.procediment.list.titol" arguments=""/></title>
 </head>
 <body>
+	<c:if test="${empty procedimentsEntitat}">
+		<h3><spring:message code="servei.procediment.list.taula.buida" arguments="${entitat}"/></h3>
+	</c:if>
 	<c:forEach items="${procedimentsEntitat}" var="procedimentEntitat">
 		<c:set var="entitat" value="${procedimentEntitat.key}"/>
 		<c:set var="procediments" value="${procedimentEntitat.value}"/>

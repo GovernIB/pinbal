@@ -63,8 +63,7 @@
 						}
 					}, 
 			   ]
-			});
-		    
+			});		    
 		});
 		function showModalProcediments(element) {
 			var ample = Math.min(980, (window.innerWidth - 40));
@@ -156,7 +155,7 @@
 		</div>
 		<div class="modal-body"></div>
 		<div class="modal-footer">
-			<a href="#" class="btn" data-dismiss="modal"><spring:message code="comu.boto.tornar"/></a>
+			<a href="#" class="btn btn-primary" data-dismiss="modal"><spring:message code="comu.boto.tornar"/></a>
 		</div>
 	</div>
   </div>
