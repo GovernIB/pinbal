@@ -205,20 +205,36 @@ function showModalEditar(
 
 	<c:url value="/representant/usuari" var="formAction"/>
 	<form:form id="form-filtre" action="${formAction}" method="post" cssClass="well" commandName="usuariFiltreCommand">
-		<c:set var="campPath" value="codi"/>
-		<spring:message var="placeholderCodi" code="representant.usuaris.filtre.camp.codi"/>
-			<form:input path="${campPath}" cssClass="input-sm" id="${campPath}" placeholder="${placeholderCodi}"/>
-		<c:set var="campPath" value="nif"/>
-		<spring:message var="placeholderNif" code="representant.usuaris.filtre.camp.nif"/>
-		<form:input path="${campPath}" cssClass="input-sm" id="${campPath}" placeholder="${placeholderNif}"/>
-		<c:set var="campPath" value="nom"/>
-		<spring:message var="placeholderNom" code="representant.usuaris.filtre.camp.nom"/>
-		<form:input path="${campPath}" cssClass="input-sm" id="${campPath}" placeholder="${placeholderNom}"/>
-		<c:set var="campPath" value="departament"/>
-		<spring:message var="placeholderDepartament" code="representant.usuaris.filtre.camp.departament"/>
-		<form:input path="${campPath}" cssClass="input-sm" id="${campPath}" placeholder="${placeholderDepartament}"/>
-		<button id="netejar-filtre" class="btn" type="button"><spring:message code="comu.boto.netejar"/></button>
-		<button type="submit" class="btn btn-primary"><spring:message code="comu.boto.filtrar"/></button>
+		<div class="container-fluid">
+		  <div class="row">
+		  	<div class="col-md-2">
+				<c:set var="campPath" value="codi"/>
+				<spring:message var="placeholderCodi" code="representant.usuaris.filtre.camp.codi"/>
+					<form:input path="${campPath}"  cssClass="form-control" id="${campPath}" placeholder="${placeholderCodi}"/>
+		  	</div>
+		  
+		  	<div class="col-md-2">	
+				<c:set var="campPath" value="nif"/>
+				<spring:message var="placeholderNif" code="representant.usuaris.filtre.camp.nif"/>
+				<form:input path="${campPath}" cssClass="form-control" id="${campPath}" placeholder="${placeholderNif}"/>
+			</div>	
+			<div class="col-md-2">
+				<c:set var="campPath" value="nom"/>
+				<spring:message var="placeholderNom" code="representant.usuaris.filtre.camp.nom"/>
+				<form:input path="${campPath}" cssClass="form-control" id="${campPath}" placeholder="${placeholderNom}"/>
+			</div>	
+			<div class="col-md-3">
+				<c:set var="campPath" value="departament"/>
+				<spring:message var="placeholderDepartament" code="representant.usuaris.filtre.camp.departament"/>
+				<form:input path="${campPath}" cssClass="form-control" id="${campPath}" placeholder="${placeholderDepartament}"/>
+			</div>
+			<div class="col-md-2 pull-right">
+				
+				<button id="netejar-filtre" class="btn" type="button"><spring:message code="comu.boto.netejar"/></button>
+				<button type="submit" class="btn btn-primary"><spring:message code="comu.boto.filtrar"/></button>
+			</div>	
+		</div>	
+	</div>	
 	</form:form>
 
 	<div class="container-fluid">

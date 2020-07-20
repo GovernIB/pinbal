@@ -62,7 +62,7 @@ $(document).ready(function() {
 </head>
 <body>
 
-	<form:form id="form-filtre" action="multiple" method="post" cssClass="well-lg formbox" commandName="filtreCommand">
+	<form:form id="form-filtre" action="multiple" method="post" cssClass="well" commandName="filtreCommand">
 		<div class="page-header"><spring:message code="consulta.list.filtre.titol"/></div>
 		<div class="container-fluid">
 			<div class="row">

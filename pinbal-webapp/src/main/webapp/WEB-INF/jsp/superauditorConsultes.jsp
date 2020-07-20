@@ -113,14 +113,24 @@ $(document).ready(function() {
 	<c:choose>
 		<c:when test="${empty entitatActual}">
 			<c:url value="/superauditor/entitat/seleccionar" var="formAction"/>
-			<form action="<c:url value="/superauditor/entitat/seleccionar"/>" method="post" class="well formbox">
-				<select name="entitatId" class="input-sm">
-					<option value=""><spring:message code="superauditor.list.select.entitat.seleccioni"/></option>
-					<c:forEach var="entitat" items="${entitats}">
-						<option value="${entitat.id}">${entitat.nom}</option>
-					</c:forEach>
-				</select>
-				<button type="submit" class="btn-default"><spring:message code="comu.boto.seleccionar"/></button>
+			<form action="<c:url value="/superauditor/entitat/seleccionar"/>" method="post" class="well">
+			<div class="container-fluid">
+				<div class="row">
+					<div class="col-md-2" width="">
+						<select name="entitatId" class="form-control">
+							<option value=""><spring:message code="superauditor.list.select.entitat.seleccioni"/></option>
+							<c:forEach var="entitat" items="${entitats}">
+								<option value="${entitat.id}">${entitat.nom}</option>
+							</c:forEach>
+						</select>
+					</div>
+					<div class="col-md-2">
+							
+						<button type="submit" class="btn btn-primary"><spring:message code="comu.boto.seleccionar"/></button>
+					
+					</div>
+				</div>
+			</div>		
 			</form>
 		</c:when>
 		<c:otherwise>
@@ -132,7 +142,7 @@ $(document).ready(function() {
 	</c:choose>
 
 	<c:if test="${not empty entitatActual}">
-		<form:form id="form-filtre" action="" method="post" cssClass="well-sm" commandName="filtreCommand">
+		<form:form id="form-filtre" action="" method="post" cssClass="well" commandName="filtreCommand">
 			<div class="page-header"><spring:message code="auditor.list.filtre.titol"/></div>
 			<div class="container-fluid">
 				<div class="row">

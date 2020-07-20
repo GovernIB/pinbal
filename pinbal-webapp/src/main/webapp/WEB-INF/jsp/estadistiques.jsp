@@ -75,12 +75,19 @@ $(document).ready(function() {
 			<c:when test="${empty estadistiquesFiltreCommand.entitatId}">
 				<c:url value="/estadistiques/canviEntitat" var="formAction"/>
 				<form:form action="${formAction}" method="post" cssClass="well" commandName="estadistiquesFiltreCommand">
-					<c:set var="campPath" value="entitatId"/>
-					<form:select id="entitat_entitatId" path="${campPath}" cssClass="input-sm">
-						<option value="-1">${opcioEntitatTotes}</option>
-						<form:options items="${entitats}" itemLabel="nom" itemValue="id"/>
-					</form:select>
-					<button type="submit" class="btn"><spring:message code="comu.boto.seleccionar"/></button>
+					<div class="container-fluid">	
+						<div class="row">
+							<div class="col-md-2">
+								<c:set var="campPath" value="entitatId"/>
+								<form:select id="entitat_entitatId" path="${campPath}" cssClass="form-control">
+								<option value="-1">${opcioEntitatTotes}</option>
+								<form:options items="${entitats}" itemLabel="nom" itemValue="id"/>
+								</form:select>
+							</div>	
+							<div class="col-md-3">
+								<button type="submit" class="btn btn-primary"><spring:message code="comu.boto.seleccionar"/></button>
+							</div>	
+						</div>	
 				</form:form>
 			</c:when>
 			<c:otherwise>
@@ -104,20 +111,20 @@ $(document).ready(function() {
 			<div class="page-header"><spring:message code="estadistiques.list.filtre.titol"/></div>
 			<div class="container-fluid">
 				<div class="row">
-					<c:if test="${not empty entitatSeleccionada}">
+					<div class="col-md-4">
+						<c:if test="${not empty entitatSeleccionada}">
 						<div class="${spanClass}">
-							<div class="col-md-4">
 								<c:set var="campPath" value="procediment"/>
 								<c:set var="campErrors"><form:errors path="${campPath}"/></c:set>
-								<div class="form-group<c:if test="${not empty campErrors}"> error</c:if>">
-									<form:select id="select-procediment" path="${campPath}" cssClass="form-control">
+								<div class=""<c:if test="${not empty campErrors}"> error</c:if>">
+									<form:select id="select-procediment" path="${campPath}" cssClass="form-control col-md-1">
 										<option value=""><spring:message code="estadistiques.list.filtre.procediment"/>:</option>
 										<form:options items="${procediments}" itemLabel="nom" itemValue="id"/>
 									</form:select>
 								</div>
-							</div>
 						</div>
-					</c:if>
+					</div>
+	</c:if>
 					<div class="col-md-4">
 						<div class="${spanClass}">
 							<c:set var="campPath" value="servei"/>
