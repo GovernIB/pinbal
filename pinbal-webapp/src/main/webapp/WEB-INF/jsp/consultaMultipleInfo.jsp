@@ -32,14 +32,16 @@ function initModalXml(element) {
 	<div class="well">
 		<h3>
 			<spring:message code="consulta.info.consulta.dades"/>
-			<a href="#dadesPeticio" data-toggle="collapse" data-target="#dadesPeticio">
-				<i id="dadesPeticioIcon" class="pull-right glyphicon-chevron-down"></i>
+			<a href="#dadesPeticio" class="pull-right" data-toggle="collapse" data-target="#dadesPeticio">
+				<i id="dadesPeticioIcon" class="fas fa-chevron-down"></i>
 			</a>
 		</h3>
 		<div id="dadesPeticio" class="collapse">
 			<c:if test="${consulta.hiHaPeticio}">
 				<c:set var="initModalXml">initModalXml(this);return false</c:set>
-				<a class="btn pull-right" href="<c:url value="/modal/consulta/${consulta.id}/xmlPeticio"/>" onclick="${initModalXml}"><i class="glyphicon-info-sign"></i> <spring:message code="consulta.info.veure.xml"/></a>
+				<a class="btn btn-primary pull-right" href="<c:url value="/modal/consulta/${consulta.id}/xmlPeticio"/>" onclick="${initModalXml}">
+					<i class="glyphicon-info-sign"></i> <spring:message code="consulta.info.veure.xml"/>
+				</a>
 			</c:if>
 			<p>
 				<spring:message code="consulta.info.consulta.enviada.dia"/>
@@ -134,7 +136,17 @@ function initModalXml(element) {
 									<input type="text" value="${consulta.consentiment}" class="col-md-12" id="" disabled="disabled"/>
 								</div>
 							</div>
-						</div>
+						</div>="document">
+	    <div class="modal-content">
+			<div class="modal-content">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				<h3><spring:message code="consulta.info.missatge.xml"/></h3>
+			</div>
+			<div class="modal-content"></div>
+			<div class="modal-content">
+				<a href="#" class="btn-default" data-dismiss="modal-content"><spring:message code="comu.boto.tornar"/></a>
+			</div>
+		</div>
 						<div class="col-md-6">
 							<div class="form-group">
 								<label class="control-label" for=""><spring:message code="consulta.form.camp.departament"/></label>
@@ -227,7 +239,7 @@ $('#dadesPeticio').on('shown', function () {
 				</table>
 			</div>
 		</div>
-	</c:if>
+	</c:if> --%>
 <script type="text/javascript">
 $('#dadesSolicitud').on('hidden', function () {
 	$('#dadesSolicitudIcon').attr('class', 'pull-right glyphicon-chevron-down');
@@ -262,7 +274,20 @@ $('#dadesResposta').on('hidden', function () {
 $('#dadesResposta').on('shown', function () {
 	$('#dadesRespostaIcon').attr('class', 'pull-right glyphicon-chevron-up');
 });
-</script>
+</script>	<div id="modal-missatge-xml" class="modal fade" role="dialog">
+	  <div class="modal-dialog" role="document">
+	    <div class="modal-content">
+			<div class="modal-content">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				<h3><spring:message code="consulta.info.missatge.xml"/></h3>
+			</div>
+			<div class="modal-content"></div>
+			<div class="modal-content">
+				<a href="#" class="btn-default" data-dismiss="modal-content"><spring:message code="comu.boto.tornar"/></a>
+			</div>
+		</div>
+		</div>
+		</div>
 		</div>
 	</c:if>
 	<c:if test="${consulta.estatTramitada}">
@@ -286,14 +311,18 @@ $('#dadesResposta').on('shown', function () {
 	<div class="well-lg">
 		<a href="<c:url value="/consulta/multiple"/>" class="btn-default"><spring:message code="comu.boto.tornar"/></a>
 	</div>
-	<div id="modal-missatge-xml" class="modal hide fade" style="width:750px">
-		<div class="modal-content">
-			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-			<h3><spring:message code="consulta.info.missatge.xml"/></h3>
-		</div>
-		<div class="modal-content"></div>
-		<div class="modal-content">
-			<a href="#" class="btn-default" data-dismiss="modal-content"><spring:message code="comu.boto.tornar"/></a>
+	<div id="modal-missatge-xml" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+  		<div class="modal-dialog modal-dialog-centered" role="document">
+	   		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				<h3><spring:message code="consulta.info.missatge.xml"/></h3>
+			</div>
+			<div class="modal-body"></div>
+			<div class="modal-footer">
+				<a href="#" class="btn btn-primary" data-dismiss="modal"><spring:message code="comu.boto.tornar"/></a>
+			</div>
+			</div>
 		</div>
 	</div>
 

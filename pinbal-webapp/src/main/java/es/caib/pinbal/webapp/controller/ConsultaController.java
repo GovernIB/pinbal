@@ -238,142 +238,7 @@ public class ConsultaController extends BaseController {
 			return "delegatNoAutoritzat";
 		EntitatDto entitat = EntitatHelper.getEntitatActual(request, entitatService);
 		List<String[]> liniesFitxer = null;
-		if (entitat != null) {
-			if (bindingResult.hasErrors()) {
-				// El command te errors d'anotacions sense grups
-				omplirModelPerMostrarFormulari(
-						entitat.getId(),
-						serveiCodi,
-						model);
-				emplenarCommand(
-						request,
-						command,
-						serveiCodi,
-						entitat,
-						false);
-				return "consultaForm";
-			} else {
-				List<Class<?>> grups = new ArrayList<Class<?>>();
-				ServeiDto servei = serveiService.findAmbCodiPerDelegat(entitat.getId(), serveiCodi);
-				List<ServeiCampDto> camps = serveiService.findServeiCamps(serveiCodi);
-				if (!command.isMultiple()) {
-					// Comprova les anotacions amb grups
-					if (servei.isPinbalDocumentObligatori())
-						grups.add(ConsultaCommandAmbDocumentObligatori.class);
-					if (servei.isPinbalComprovarDocument()) {
-						if (DocumentTipus.NIF.equals(command.getTitularDocumentTipus()))
-							grups.add(ConsultaCommandAmbDocumentTipusNif.class);
-						if (DocumentTipus.DNI.equals(command.getTitularDocumentTipus()))
-							grups.add(ConsultaCommandAmbDocumentTipusDni.class);
-						if (DocumentTipus.CIF.equals(command.getTitularDocumentTipus()))
-							grups.add(ConsultaCommandAmbDocumentTipusCif.class);
-						if (DocumentTipus.NIE.equals(command.getTitularDocumentTipus()))
-							grups.add(ConsultaCommandAmbDocumentTipusNie.class);
-						if (DocumentTipus.Passaport.equals(command.getTitularDocumentTipus()))
-							grups.add(ConsultaCommandAmbDocumentTipusPass.class);
-					}
-					new ValidationHelper(validator).isValid(
-							command,
-							bindingResult,
-							grups.toArray(new Class[grups.size()]));
-					emplenarCommand(
-							request,
-							command,
-							serveiCodi,
-							entitat,
-							false);
-					new DadesEspecifiquesValidator(
-							serveiService.findServeiCamps(serveiCodi)).validate(
-									command,
-									bindingResult);
-				} else {
-					MultipartFile fitxer = command.getMultipleFitxer();
-					grups.add(ConsultaCommandMultiple.class);
-					new ValidationHelper(validator).isValid(
-							command,
-							bindingResult,
-							grups.toArray(new Class[grups.size()]));
-					// Validar fitxer					
-					if (!bindingResult.hasErrors()) {
-						try {
-							liniesFitxer = readFile(fitxer, bindingResult);
-							int numPeticions = liniesFitxer.size() - 1;
-							if (servei.getScspMaxSolicitudesPeticion() > 0 && 
-									numPeticions > servei.getScspMaxSolicitudesPeticion()) {
-								LOGGER.error(
-										"Error al processar dades de la petició múltiple",
-										"El fitxer excedeix el màxim de sol·licituds permeses pel servei");
-								bindingResult.rejectValue(
-										"multipleFitxer", 
-										"PeticioMultiple.fitxer.massa.peticions", 
-										"El fitxer excedeix el màxim de sol·licituds permeses pel servei");
-							}
-							
-							if (!bindingResult.hasErrors()) {
-								List<String> errorsValidacio = new ArrayList<String>();
-								validatePeticioMultipleFile(request, liniesFitxer, servei, camps, bindingResult, errorsValidacio);
-								command.setMultipleErrorsValidacio(errorsValidacio);
-							}
-						} catch (Exception ex) {
-							LOGGER.error(
-									"Error al processar dades de la petició múltiple",
-									ex);
-							bindingResult.rejectValue(
-									"multipleFitxer", 
-									"PeticioMultiple.fitxer.format", 
-									"Errors en el contingut del fitxer");
-						}
-					}
-					emplenarCommand(
-							request,
-							command,
-							serveiCodi,
-							entitat,
-							false);
-				}
-				if (bindingResult.hasErrors()) {
-					omplirModelPerMostrarFormulari(
-							entitat.getId(),
-							serveiCodi,
-							model);
-					return "consultaForm";
-				}
-			}
-			try {
-				ConsultaDto consulta = null;
-				if (!command.isMultiple()) {
-					consulta = novaConsulta(command);
-				} else {
-					consulta = novaConsultaMultiple(
-							command, 
-							liniesFitxer.get(0),
-							liniesFitxer.subList(1, liniesFitxer.size()));
-				}
-				if (consulta.isEstatError()) {
-					AlertHelper.error(
-							request,
-							getMessage(
-									request, 
-									"consulta.controller.recepcio.error") + ": " + consulta.getError());
-				} else {
-					AlertHelper.success(
-							request,
-							getMessage(
-									request, 
-									"consulta.controller.recepcio.ok"));
-				}
-			} catch (ScspException ex) {
-				AlertHelper.error(
-						request,
-						getMessage(
-								request, 
-								"consulta.controller.enviament.error") + ": " + ex.getMessage());
-			}
-			if (!command.isMultiple())
-				return "redirect:../../consulta";
-			else
-				return "redirect:../../consulta/multiple";
-		} else {
+		if (entitat == null) {
 			AlertHelper.error(
 					request,
 					getMessage(
@@ -381,6 +246,140 @@ public class ConsultaController extends BaseController {
 							"comu.error.no.entitat"));
 			return "redirect:../../index";
 		}
+		if (bindingResult.hasErrors()) {
+			// El command te errors d'anotacions sense grups
+			omplirModelPerMostrarFormulari(
+					entitat.getId(),
+					serveiCodi,
+					model);
+			emplenarCommand(
+					request,
+					command,
+					serveiCodi,
+					entitat,
+					false);
+			return "consultaForm";
+		} 
+		List<Class<?>> grups = new ArrayList<Class<?>>();
+		ServeiDto servei = serveiService.findAmbCodiPerDelegat(entitat.getId(), serveiCodi);
+		List<ServeiCampDto> camps = serveiService.findServeiCamps(serveiCodi);
+		if (!command.isMultiple()) {
+			// Comprova les anotacions amb grups
+			if (servei.isPinbalDocumentObligatori())
+				grups.add(ConsultaCommandAmbDocumentObligatori.class);
+			if (servei.isPinbalComprovarDocument()) {
+				if (DocumentTipus.NIF.equals(command.getTitularDocumentTipus()))
+					grups.add(ConsultaCommandAmbDocumentTipusNif.class);
+				if (DocumentTipus.DNI.equals(command.getTitularDocumentTipus()))
+					grups.add(ConsultaCommandAmbDocumentTipusDni.class);
+				if (DocumentTipus.CIF.equals(command.getTitularDocumentTipus()))
+					grups.add(ConsultaCommandAmbDocumentTipusCif.class);
+				if (DocumentTipus.NIE.equals(command.getTitularDocumentTipus()))
+					grups.add(ConsultaCommandAmbDocumentTipusNie.class);
+				if (DocumentTipus.Passaport.equals(command.getTitularDocumentTipus()))
+					grups.add(ConsultaCommandAmbDocumentTipusPass.class);
+			}
+			new ValidationHelper(validator).isValid(
+					command,
+					bindingResult,
+					grups.toArray(new Class[grups.size()]));
+			emplenarCommand(
+					request,
+					command,
+					serveiCodi,
+					entitat,
+					false);
+			new DadesEspecifiquesValidator(
+					serveiService.findServeiCamps(serveiCodi)).validate(
+							command,
+							bindingResult);
+		} else {
+			MultipartFile fitxer = command.getMultipleFitxer();
+			grups.add(ConsultaCommandMultiple.class);
+			new ValidationHelper(validator).isValid(
+					command,
+					bindingResult,
+					grups.toArray(new Class[grups.size()]));
+			// Validar fitxer					
+			if (!bindingResult.hasErrors()) {
+				try {
+					liniesFitxer = readFile(fitxer, bindingResult);
+					int numPeticions = liniesFitxer.size() - 1;
+					if (servei.getScspMaxSolicitudesPeticion() > 0 && 
+							numPeticions > servei.getScspMaxSolicitudesPeticion()) {
+						LOGGER.error(
+								"Error al processar dades de la petició múltiple",
+								"El fitxer excedeix el màxim de sol·licituds permeses pel servei");
+						bindingResult.rejectValue(
+								"multipleFitxer", 
+								"PeticioMultiple.fitxer.massa.peticions", 
+								"El fitxer excedeix el màxim de sol·licituds permeses pel servei");
+					}
+					
+					if (!bindingResult.hasErrors()) {
+						List<String> errorsValidacio = new ArrayList<String>();
+						validatePeticioMultipleFile(request, liniesFitxer, servei, camps, bindingResult, errorsValidacio);
+						command.setMultipleErrorsValidacio(errorsValidacio);
+					}
+				} catch (Exception ex) {
+					LOGGER.error(
+							"Error al processar dades de la petició múltiple",
+							ex);
+					bindingResult.rejectValue(
+							"multipleFitxer", 
+							"PeticioMultiple.fitxer.format", 
+							"Errors en el contingut del fitxer");
+				}
+			}
+			emplenarCommand(
+					request,
+					command,
+					serveiCodi,
+					entitat,
+					false);
+		}
+		if (bindingResult.hasErrors()) {
+			omplirModelPerMostrarFormulari(
+					entitat.getId(),
+					serveiCodi,
+					model);
+			return "consultaForm";
+		}
+		
+		try {
+			ConsultaDto consulta = null;
+			if (!command.isMultiple()) {
+				consulta = novaConsulta(command);
+			} else {
+				consulta = novaConsultaMultiple(
+						command, 
+						liniesFitxer.get(0),
+						liniesFitxer.subList(1, liniesFitxer.size()));
+			}
+			if (consulta.isEstatError()) {
+				AlertHelper.error(
+						request,
+						getMessage(
+								request, 
+								"consulta.controller.recepcio.error") + ": " + consulta.getError());
+			} else {
+				AlertHelper.success(
+						request,
+						getMessage(
+								request, 
+								"consulta.controller.recepcio.ok"));
+			}
+		} catch (ScspException ex) {
+			AlertHelper.error(
+					request,
+					getMessage(
+							request, 
+							"consulta.controller.enviament.error") + ": " + ex.getMessage());
+		}
+		if (!command.isMultiple())
+			return "redirect:../../consulta";
+		else
+			return "redirect:../../consulta/multiple";
 	}
 
 	@RequestMapping(value = "/{consultaId}", method = RequestMethod.GET)

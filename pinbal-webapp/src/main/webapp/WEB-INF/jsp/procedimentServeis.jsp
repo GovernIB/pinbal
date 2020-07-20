@@ -204,10 +204,10 @@ function actualitzaCodiProcediment(servei_codi, codi_procediment) {
 <!-- TODO: substituir icones  -->
 <script id="template-status" type="x-tmpl-mustache">
 	{{#actiu}}
-		<a href="servei/{{ codi }}/disable" class="btn btn-default confirm-remove"><i class="icon-remove"></i>&nbsp;<spring:message code="comu.boto.desactivar"/></a>
+		<a href="servei/{{ codi }}/disable" class="btn btn-default confirm-remove"><i class="fa fa-times"></i>&nbsp;<spring:message code="comu.boto.desactivar"/></a>
 	{{/actiu}}
 	{{^actiu}}
-		<a href="servei/{{ codi }}/enable" class="btn btn-default"><i class="icon-ok"></i>&nbsp;<spring:message code="comu.boto.activar"/></a>
+		<a href="servei/{{ codi }}/enable" class="btn btn-default"><i class="fa fa-check"></i>&nbsp;<spring:message code="comu.boto.activar"/></a>
 	{{/actiu}}
 </script>
 <script id="template-permisos" type="x-tmpl-mustache">
