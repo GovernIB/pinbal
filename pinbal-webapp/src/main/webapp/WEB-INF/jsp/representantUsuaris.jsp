@@ -106,7 +106,6 @@ $(document).ready(function() {
 					return Mustache.render(template, row);
 				}
 	        },
-
 	        {
 	            targets: 2,
 	            width: "20%",
@@ -317,7 +316,7 @@ function showModalEditar(
 	<a data-nrow="{{ nrow }}" class="btn-open-modal-edit btn btn-primary"><i class="fas fa-pen"></i>&nbsp;<spring:message code="comu.boto.modificar"/></a>
 {{/principal}}
 </script>	
-<div id="modal-form-usuari" class="modal" tabindex="-1" role="dialog">
+<div id="modal-form-usuari" class="modal fade" tabindex="-1" role="dialog">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
 		<div class="modal-header">
@@ -326,64 +325,58 @@ function showModalEditar(
 		</div>
 		<div class="modal-body">
 			<c:url value="/representant/usuari/save" var="formAction"/>
-			<form id="modal-form" action="${formAction}" method="post" class="form-horizontal">
+			<form id="modal-form" action="${formAction}" method="post">
 				<input type="hidden" id="modal-hidden-id" name="id" value="${entitat.id}"/>
 				<input type="hidden" id="modal-hidden-codi" name="codi"/>
 				<input type="hidden" id="modal-hidden-nif" name="nif"/>
 				<div id="modal-group-tipus" class="form-group">
     				<label class="control-label" for="modal-select-tipus"><spring:message code="representant.usuaris.camp.tipus"/></label>
-					<div class="controls">
-						<select id="modal-select-tipus" name="tipus" class="input-sm">
-							<option value="${caracterTipusNif}"><spring:message code="representant.usuaris.tipus.nif"/></option>
-							<option value="${caracterTipusCodi}"><spring:message code="representant.usuaris.tipus.codi"/></option>
-						</select>
-					</div>
+					<select id="modal-select-tipus" name="tipus" class="form-control input-sm">
+						<option value="${caracterTipusNif}"><spring:message code="representant.usuaris.tipus.nif"/></option>
+						<option value="${caracterTipusCodi}"><spring:message code="representant.usuaris.tipus.codi"/></option>
+					</select>
 				</div>
 				<div id="modal-group-nom" class="form-group">
     				<label class="control-label" for="modal-input-nom"><spring:message code="representant.usuaris.camp.nom"/></label>
-					<div class="controls">
-						<input type="text" id="modal-input-nom" name="codi" disabled="disabled"/>
-					</div>
+					<input class="form-control" type="text" id="modal-input-nom" name="codi" disabled="disabled"/>
 				</div>
 				<div id="modal-group-codi" class="form-group">
     				<label class="control-label" for="modal-input-codi"><spring:message code="representant.usuaris.camp.codi"/></label>
-					<div class="controls">
-						<input type="text" id="modal-input-codi" name="codi" disabled="disabled"/>
-					</div>
+					<input class="form-control" type="text" id="modal-input-codi" name="codi" disabled="disabled"/>
 				</div>
 				<div id="modal-group-nif" class="form-group">
     				<label class="control-label" for="modal-input-nif"><spring:message code="representant.usuaris.camp.nif"/></label>
-					<div class="controls">
-						<input type="text" id="modal-input-nif" name="nif" disabled="disabled"/>
-					</div>
+					<input class="form-control" type="text" id="modal-input-nif" name="nif" disabled="disabled"/>
 				</div>
 				<div class="form-group">
     				<label class="control-label" for="modal-input-departament"><spring:message code="representant.usuaris.camp.departament"/></label>
-					<div class="controls">
-						<input type="text" id="modal-input-departament" name="departament"/>
-					</div>
+					<input class="form-control" type="text" id="modal-input-departament" name="departament"/>
 				</div>
 				<div class="form-group">
-					<label class="control-label" for="modal-input-representant"><spring:message code="representant.usuaris.camp.rols"/></label>
-					<div class="controls">
-						<label class="checkbox" for="modal-input-representant">
+					<label for="modal-input-representant"><spring:message code="representant.usuaris.camp.rols"/></label>
+					<div class="checkbox" for="modal-input-representant" style="margin-top: 0px;">
+	    				<label>
 	    					<input type="checkbox" id="modal-input-representant" name="rolRepresentant">
 	    					<spring:message code="representant.usuaris.rol.repres"/>
 	    				</label>
-	    				<label class="checkbox" for="modal-input-delegat">
+	    			</div>
+    				<div class="checkbox" for="modal-input-delegat">
+	    				<label>
 	    					<input type="checkbox" id="modal-input-delegat" name="rolDelegat">
 	    					<spring:message code="representant.usuaris.rol.deleg"/>
 	    				</label>
-	    				<label class="checkbox" for="modal-input-aplicacio">
+    				</div>
+    				<div class="checkbox" for="modal-input-aplicacio">
+	    				<label>
 	    					<input type="checkbox" id="modal-input-aplicacio" name="rolAplicacio">
 	    					<spring:message code="representant.usuaris.rol.aplic"/>
 	    				</label>
-	    			</div>
+    				</div>
     			</div>
 			</form>
 		</div>
 		<div class="modal-footer">
-			<a href="#" class="btn" data-dismiss="modal"><spring:message code="comu.boto.tornar"/></a>
+			<a href="#" class="btn btn-default" data-dismiss="modal"><spring:message code="comu.boto.tornar"/></a>
 			<a href="#" class="btn btn-primary" onclick="$('#modal-form').submit()"><spring:message code="comu.boto.guardar"/></a>
 		</div>
 	</div>
