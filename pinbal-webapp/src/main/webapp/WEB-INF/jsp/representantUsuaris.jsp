@@ -26,12 +26,38 @@
 <html>
 <head>
 	<title><spring:message code="representant.usuaris.titol"/></title>
-	<script src="<c:url value="/webjars/datatables/1.10.21/js/jquery.dataTables.min.js"/>"></script>
-	<script src="<c:url value="/webjars/datatables/1.10.21/js/dataTables.bootstrap.min.js"/>"></script>
-	<script src="<c:url value="/webjars/mustache.js/3.0.1/mustache.min.js"/>"></script>
+<%-- 	<script src="<c:url value="/webjars/datatables/1.10.21/js/jquery.dataTables.min.js"/>"></script> --%>
+<%-- 	<script src="<c:url value="/webjars/datatables/1.10.21/js/dataTables.bootstrap.min.js"/>"></script> --%>
+<%-- 	<script src="<c:url value="/webjars/mustache.js/3.0.1/mustache.min.js"/>"></script> --%>
+<%-- 	<link href="<c:url value="/css/select2.css"/>" rel="stylesheet"/> --%>
+<%-- 	<link href="<c:url value="/css/select2-bootstrap.css"/>" rel="stylesheet"/> --%>
+	
+	
+	
+	<script src="<c:url value="/webjars/datatables.net-select/1.1.2/js/dataTables.select.min.js"/>"></script>
+	<link href="<c:url value="/webjars/datatables.net-select-bs/1.1.2/css/select.bootstrap.min.css"/>" rel="stylesheet"></link>
+	<link href="<c:url value="/webjars/select2/4.0.6-rc.1/dist/css/select2.min.css"/>" rel="stylesheet"/>
+	<link href="<c:url value="/webjars/select2-bootstrap-theme/0.1.0-beta.4/dist/select2-bootstrap.min.css"/>" rel="stylesheet"/>
 	<link href="<c:url value="/css/select2.css"/>" rel="stylesheet"/>
 	<link href="<c:url value="/css/select2-bootstrap.css"/>" rel="stylesheet"/>
-	
+	<link href="<c:url value="/webjars/bootstrap-datepicker/1.6.1/dist/css/bootstrap-datepicker.min.css"/>" rel="stylesheet"/>
+	<script src="<c:url value="/webjars/select2/4.0.6-rc.1/dist/js/select2.min.js"/>"></script>
+	<script src="<c:url value="/webjars/select2/4.0.6-rc.1/dist/js/i18n/${requestLocale}.js"/>"></script>
+	<script src="<c:url value="/webjars/bootstrap-datepicker/1.6.1/dist/js/bootstrap-datepicker.min.js"/>"></script>
+	<script src="<c:url value="/webjars/jsrender/1.0.0-rc.70/jsrender.min.js"/>"></script>
+	<script src="<c:url value="/js/webutil.common.js"/>"></script>
+	<script src="<c:url value="/js/webutil.datatable.js"/>"></script>
+	<script src="<c:url value="/js/webutil.modal.js"/>"></script>
+	<script src="<c:url value="/webjars/datatables/1.10.21/js/jquery.dataTables.min.js"/>"></script> 
+ 	<script src="<c:url value="/webjars/datatables/1.10.21/js/dataTables.bootstrap.min.js"/>"></script> 
+	<script src="<c:url value="/webjars/mustache.js/3.0.1/mustache.min.js"/>"></script>
+	<script src="<c:url value="/webjars/bootstrap-datepicker/1.6.1/dist/js/bootstrap-datepicker.min.js"/>"></script>
+	<script src="<c:url value="/webjars/bootstrap-datepicker/1.6.1/dist/locales/bootstrap-datepicker.${requestLocale}.min.js"/>"></script>
+	<script type="text/javascript" src="<c:url value="/js/select2.min.js"/>"></script>
+	<script src="<c:url value="/webjars/datatables-plugins/1.10.20/dataRender/datetime.js"/>"></script>
+	<script src="<c:url value="/webjars/momentjs/2.24.0/min/moment.min.js"/>"></script>
+	<script src="<c:url value="/webjars/datatables.net/1.10.11/js/jquery.dataTables.min.js"/>"></script>
+	<script src="<c:url value="/webjars/datatables.net-bs/1.10.11/js/dataTables.bootstrap.min.js"/>"></script>
 	
 
 
@@ -226,28 +252,33 @@ function showModalEditar(
 				<spring:message var="placeholderNom" code="representant.usuaris.filtre.camp.nom"/>
 				<form:input path="${campPath}" cssClass="form-control" id="${campPath}" placeholder="${placeholderNom}"/>
 			</div>	
-			<div class="col-md-3">
+			<div class="col-md-2">
 				<c:set var="campPath" value="departament"/>
 				<spring:message var="placeholderDepartament" code="representant.usuaris.filtre.camp.departament"/>
 				<form:input path="${campPath}" cssClass="form-control" id="${campPath}" placeholder="${placeholderDepartament}"/>
 			</div>
-			<div class="col-md-2 pull-right">
+			<div class="col-md-3">
+			<div class="pull-right">
 				
-				<button id="netejar-filtre" class="btn" type="button"><spring:message code="comu.boto.netejar"/></button>
-				<button type="submit" class="btn btn-primary"><spring:message code="comu.boto.filtrar"/></button>
-			</div>	
+					<button id="netejar-filtre" class="btn-default" type="button"><spring:message code="comu.boto.netejar"/></button>
+					<button type="submit" class="btn btn-primary"><spring:message code="comu.boto.filtrar"/></button>
+				</div>	
+			</div>
 		</div>	
 	</div>	
+		
 	</form:form>
-
-	<div class="container-fluid">
-		<div class="row">
-			<div class="col-md-12">
-				<a class="btn pull-right" href="#modal-form-usuari" onclick="showModalCrear()"><i class="glyphicon-plus"></i>&nbsp;<spring:message code="entitat.usuaris.boto.nou.usuari"/></a>
-			</div>
+			
+			<div class="container-fluid">
+				<div class="row">
+				<div class="pull-right">
+					<div class="col-md-12 pull-right">
+						<a class="btn btn-primary" href="#modal-form-usuari" onclick="showModalCrear()"><i class="glyphicon-plus"></i>&nbsp;<spring:message code="entitat.usuaris.boto.nou.usuari"/></a>
+					</div>
+				</div>
 			<div class="clearfix"></div>
-		</div>
-	</div>
+			</div>
+					
 
 	<table id="table-users" class="table table-striped table-bordered" style="width: 100%">
 		<thead>
