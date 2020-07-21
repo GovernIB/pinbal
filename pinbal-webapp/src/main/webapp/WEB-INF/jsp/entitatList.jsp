@@ -114,16 +114,16 @@ $(document).ready(function() {
 		<div class="container-fluid">
 			<div class="row">		
 				<div class="col-md-2" >
-					<c:set var="campPath" value="codi" />
-					<div class="form-group"<c:if test="${not empty campErrors}"> error</c:if>">
-<%-- 						<pbl:inputText name="${campPath}" textKey="entitat.list.filtre.camp.codi" placeholder="entitat.list.filtre.camp.codi" hideLabel="true"/>				 --%>
-							<spring:bind path="${campPath}">
-								<input type="text" id="${campPath}" name="${campPath}"<c:if test="${not empty status.value}"> value="${status.value}"</c:if> class="form-control col-md-12" placeholder="<spring:message code="entitat.list.filtre.camp.codi"/>">
-							</spring:bind>
+<%-- 					<c:set var="campPath" value="codi" /> --%>
+<%-- 					<div class="form-group"<c:if test="${not empty campErrors}"> error</c:if>"> --%>
+						<pbl:inputText name="codi"  inline="true" placeholderKey="entitat.list.filtre.camp.codi"/>				
+<%-- 							<spring:bind path="${campPath}"> --%>
+<%-- 								<input type="text" id="${campPath}" name="${campPath}"<c:if test="${not empty status.value}"> value="${status.value}"</c:if> class="form-control col-md-12" placeholder="<spring:message code="entitat.list.filtre.camp.codi"/>"> --%>
+<%-- 							</spring:bind> --%>
 					</div>
 						
 					
-				</div>			
+						
 				<div class="col-md-2">
 					<c:set var="campPath" value="nom"/>
 					
@@ -164,14 +164,12 @@ $(document).ready(function() {
 						</c:forEach>
 					</form:select>
 				</div>
-				<div class="col-md-2 pull-right">
+				<div class="col-md-2">
 					<button id="netejar-filtre" class="btn" type="button"><spring:message code="comu.boto.netejar"/></button>
 					<button type="submit" class="btn btn-primary"><spring:message code="comu.boto.filtrar"/></button>
 				</div>
-			
-			</div>
 		</div>
-		
+	</div>		
 	
 	</form:form>
 	
@@ -182,6 +180,7 @@ $(document).ready(function() {
 					</div>
 				
 				</div
+		</div>		
 
 
 	

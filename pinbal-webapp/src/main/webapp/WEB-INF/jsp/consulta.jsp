@@ -4,8 +4,8 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
 <%@ taglib tagdir="/WEB-INF/tags/pinbal" prefix="pbl" %>
-<%
-	request.setAttribute(
+
+<%	request.setAttribute(
 			"consultaEstats",
 			es.caib.pinbal.core.dto.ConsultaDto.EstatTipus.sortedValues());
 %>
@@ -14,33 +14,52 @@
 <head>	
 
 	<title><spring:message code="consulta.list.titol"/></title>	
+	
+	
+	
+    
 
 	<script src="<c:url value="/webjars/datatables.net-select/1.1.2/js/dataTables.select.min.js"/>"></script>
 	<link href="<c:url value="/webjars/datatables.net-select-bs/1.1.2/css/select.bootstrap.min.css"/>" rel="stylesheet"></link>
 	<link href="<c:url value="/webjars/select2/4.0.6-rc.1/dist/css/select2.min.css"/>" rel="stylesheet"/>
 	<link href="<c:url value="/webjars/select2-bootstrap-theme/0.1.0-beta.4/dist/select2-bootstrap.min.css"/>" rel="stylesheet"/>
+	<link href="<c:url value="/css/select2.css"/>" rel="stylesheet"/>
+	<link href="<c:url value="/css/select2-bootstrap.css"/>" rel="stylesheet"/>
+	<link href="<c:url value="/webjars/bootstrap-datepicker/1.6.1/dist/css/bootstrap-datepicker.min.css"/>" rel="stylesheet"/>
 	<script src="<c:url value="/webjars/select2/4.0.6-rc.1/dist/js/select2.min.js"/>"></script>
 	<script src="<c:url value="/webjars/select2/4.0.6-rc.1/dist/js/i18n/${requestLocale}.js"/>"></script>
-	<link href="<c:url value="/webjars/bootstrap-datepicker/1.6.1/dist/css/bootstrap-datepicker.min.css"/>" rel="stylesheet"/>
 	<script src="<c:url value="/webjars/bootstrap-datepicker/1.6.1/dist/js/bootstrap-datepicker.min.js"/>"></script>
-	<script src="<c:url value="/webjars/bootstrap-datepicker/1.6.1/dist/locales/bootstrap-datepicker.${requestLocale}.min.js"/>"></script>
 	<script src="<c:url value="/webjars/jsrender/1.0.0-rc.70/jsrender.min.js"/>"></script>
 	<script src="<c:url value="/js/webutil.common.js"/>"></script>
 	<script src="<c:url value="/js/webutil.datatable.js"/>"></script>
 	<script src="<c:url value="/js/webutil.modal.js"/>"></script>
-	<link href="<c:url value="/css/select2.css"/>" rel="stylesheet"/>
-	<link href="<c:url value="/css/select2-bootstrap.css"/>" rel="stylesheet"/>
-	<script src="<c:url value="/webjars/datatables/1.10.21/js/jquery.dataTables.min.js"/>"></script>
-	<script src="<c:url value="/webjars/datatables/1.10.21/js/dataTables.bootstrap.min.js"/>"></script>
+	<script src="<c:url value="/webjars/datatables/1.10.21/js/jquery.dataTables.min.js"/>"></script> 
+ 	<script src="<c:url value="/webjars/datatables/1.10.21/js/dataTables.bootstrap.min.js"/>"></script> 
 	<script src="<c:url value="/webjars/mustache.js/3.0.1/mustache.min.js"/>"></script>
-	<link href="<c:url value="/webjars/bootstrap-datepicker/1.6.1/dist/css/bootstrap-datepicker.min.css"/>" rel="stylesheet"/>
 	<script src="<c:url value="/webjars/bootstrap-datepicker/1.6.1/dist/js/bootstrap-datepicker.min.js"/>"></script>
 	<script src="<c:url value="/webjars/bootstrap-datepicker/1.6.1/dist/locales/bootstrap-datepicker.${requestLocale}.min.js"/>"></script>
 	<script type="text/javascript" src="<c:url value="/js/select2.min.js"/>"></script>
 	<script src="<c:url value="/webjars/datatables-plugins/1.10.20/dataRender/datetime.js"/>"></script>
 	<script src="<c:url value="/webjars/momentjs/2.24.0/min/moment.min.js"/>"></script>
+	<script src="<c:url value="/webjars/datatables.net/1.10.11/js/jquery.dataTables.min.js"/>"></script>
+	<script src="<c:url value="/webjars/datatables.net-bs/1.10.11/js/dataTables.bootstrap.min.js"/>"></script>
 	
-	
+<style>
+#form-filtre{
+	margin-bottom: 15px;
+}
+table.dataTable tbody > tr.selected, table.dataTable tbody > tr > .selected {
+	background-color: #fcf8e3;
+	color: #666666;
+}
+table.dataTable thead > tr.selectable > :first-child, table.dataTable tbody > tr.selectable > :first-child {
+	cursor: pointer;
+}
+.datepicker{
+	padding-left: 12px;
+	padding-right: 12px;
+}
+</style>
 	
 	
 	
@@ -61,10 +80,10 @@
 				</div>
 				<div class="col-md-3">
 				<pbl:inputSelect name="procediment"  inline="true" placeholderKey="consulta.list.filtre.procediment" 
-								 optionItems="${procediments}" 
-								 optionValueAttribute="id"
-								 optionTextAttribute="nom"
-								 emptyOption="true"/>
+	 								 optionItems="${procediments}"  
+	 								 optionValueAttribute="id" 
+	 								 optionTextAttribute="nom" 
+	 								 emptyOption="true"/> 
 <%-- 					<c:set var="campPath" value="procediment"/> --%>
 <%-- 					<c:set var="campErrors"><form:errors path="${campPath}"/></c:set> --%>
 <%-- 					<div class="form-group<c:if test="${not empty campErrors}"> error</c:if>"> --%>
@@ -110,17 +129,19 @@
 			
 			<div class="row">
 				<div class="col-md-12">
-						<c:set var="campErrors"><form:errors path="dataInici"/></c:set>
-						<c:if test="${empty campErrors}"><c:set var="campErrors"><form:errors path="dataFi"/></c:set></c:if>
-						<div class="form-group<c:if test="${not empty campErrors}"> error</c:if>">
-							<label><spring:message code="consulta.list.filtre.data"/></label>
-							<c:set var="campErrors"><form:errors path="titularNom"/></c:set>
-							<c:if test="${empty campErrors}"><c:set var="campErrors"><form:errors path="titularDocument"/></c:set></c:if>
-							<div class="form-group<c:if test="${not empty campErrors}"> error</c:if>">
-<!-- 							 <label>&nbsp;</label> -->
-							</div>	
-						</div>
-				</div>							
+			
+<%-- 						<pbl:inputSelect name="estat"  inline="true" placeholderKey="consulta.list.filtre.estat" /> --%>
+	 						<c:set var="campErrors"><form:errors path="dataInici"/></c:set> 
+	 						<c:if test="${empty campErrors}"><c:set var="campErrors"><form:errors path="dataFi"/></c:set></c:if> 
+	 	 						<div class="form-group<c:if test="${not empty campErrors}"> error</c:if>">  
+		  							<label><spring:message code="consulta.list.filtre.data"/></label>  
+		  							<c:set var="campErrors"><form:errors path="titularNom"/></c:set>  
+		  							<c:if test="${empty campErrors}"><c:set var="campErrors"><form:errors path="titularDocument"/></c:set></c:if> 
+		  							<div class="form-group<c:if test="${not empty campErrors}"> error</c:if>">  
+<!-- 									 <label>&nbsp;</label>  -->
+	 								</div>	  
+	 							</div> 
+				</div>				
 				<div class="col-md-2" >
 						<pbl:inputDate name="dataInici"  inline="true" placeholderKey="consulta.list.filtre.data.inici"/> 
 <%--  									<spring:bind path="${campPath}">  --%>
@@ -141,14 +162,14 @@
 							</div>
 				</div>	
 							
-				<div class="col-md-2">
+				<div class="col-md-3">
 							<c:set var="campPath" value="titularNom"/>
 							<c:set var="campErrors"><form:errors path="${campPath}"/></c:set>
 							<spring:bind path="${campPath}">
 								<input class="form-control" type="text" name="${campPath}"<c:if test="${not empty status.value}"> value="${status.value}"</c:if> class="col-md-12" placeholder="<spring:message code="consulta.list.filtre.titular.nom"/>">
 							</spring:bind>
 				</div>
-				<div class="col-md-2">
+				<div class="col-md-3">
 							<c:set var="campPath" value="titularDocument"/>
 							<c:set var="campErrors"><form:errors path="${campPath}"/></c:set>
 							<spring:bind path="${campPath}">
@@ -157,7 +178,7 @@
 				</div>
 							
 			
-				<div class="col-md-2" style="text-align:right">
+				<div class="col-md-2 pull-right">
 						<label>&nbsp;</label>
 						<button id="netejar-filtre" class="btn btn-default" type="button"><spring:message code="comu.boto.netejar"/></button>
 						<button class="btn btn-primary" type="submit"><spring:message code="comu.boto.filtrar"/></button>
