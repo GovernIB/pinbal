@@ -226,21 +226,22 @@ function showModalEditar(
 				<div class="col-md-3">
 					<c:set var="campPath" value="codi"/>
 					<pbl:inputText name="${campPath}" textKey="entitat.usuaris.filtre.camp.codi"
-								   placeholder="entitat.usuaris.filtre.camp.codi" hideLabel="true"/>
+								   placeholder="entitat.usuaris.filtre.camp.codi"/>
 				</div>
 				<div class="col-md-3">
 					<c:set var="campPath" value="nif"/>
-					<pbl:inputText name="${campPath}" textKey="entitat.usuaris.filtre.camp.nif" placeholder="entitat.usuaris.filtre.camp.nif" hideLabel="true"/>
+					<pbl:inputText name="${campPath}" textKey="entitat.usuaris.filtre.camp.nif" 
+								   placeholder="entitat.usuaris.filtre.camp.nif"/>
 				</div>
 				<div class="col-md-3">			
 					<c:set var="campPath" value="nom"/>
 					<pbl:inputText name="${campPath}" textKey="entitat.usuaris.filtre.camp.nom"
-								   placeholder="entitat.usuaris.filtre.camp.nom" hideLabel="true"/>
+								   placeholder="entitat.usuaris.filtre.camp.nom"/>
 				</div>
 					<div class="col-md-3">			
 					<c:set var="campPath" value="departament"/>
 					<pbl:inputText name="${campPath}" textKey="entitat.usuaris.filtre.camp.departament"
-								   placeholder="entitat.usuaris.filtre.camp.departament" hideLabel="true"/>
+								   placeholder="entitat.usuaris.filtre.camp.departament"/>
 				</div>
 			</div>
 		<div class="container-fluid">

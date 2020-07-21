@@ -181,6 +181,7 @@
 				<th data-data="estat"><spring:message code="consulta.list.taula.estat" /></th>
 				<th data-data="id"></th>
 				<th data-data="justificantEstat"></th>
+				<th data-data="justificantError"></th>
 			</tr>
 		</thead>
 	</table>
@@ -299,6 +300,10 @@ $(document).ready(function() {
 						return Mustache.render(template, row);
 				}
 			},
+			{
+				targets: [9],
+				visible: false
+			},
 	   ],
 	   initComplete: function( settings, json ) {
 
@@ -319,14 +324,38 @@ $(document).ready(function() {
 {{/estat-ok}}
 {{#estat-error}}
 <div class="btn-group">
-	<a class="btn btn-small dropdown-toggle" data-toggle="dropdown" href="#">
+	<a class="btn btn-default btn-small dropdown-toggle" data-toggle="dropdown" href="#">
 		<i class="icon-"><img src="<c:url value="/img/error_icon.png"/>" width="16" height="15" title="<spring:message code="consulta.list.taula.justif.error"/>" alt="<spring:message code="consulta.list.taula.justif.error"/>"/></i>
 		&nbsp;<span class="caret"></span>
 	</a>
 	<ul class="dropdown-menu">
-		<li><a href="consulta/{{ id }}/justificantError" data-toggle="modal" data-target="#modal-justificant-error-{{ id }}"><i class="icon-info-sign"></i>&nbsp;<spring:message code="consulta.list.taula.justif.error.veure"/></a></li>
-		<li><a href="consulta/{{ id }}/justificantReintentar" class="justificant-reintentar"><i class="icon-repeat"></i>&nbsp;<spring:message code="consulta.list.taula.justif.error.reintentar"/></a></li>
+		<li>
+			<a href="consulta/{{ id }}/justificantError" data-toggle="modal" data-target="#modal-justificant-error-{{ id }}">
+				<i class="fas fa-exclamation-triangle"></i>&nbsp;<spring:message code="consulta.list.taula.justif.error.veure"/>
+			</a>
+		</li>
+		<li>
+			<a href="consulta/{{ id }}/justificantReintentar" class="justificant-reintentar">
+				<i class="fas fa-redo-alt"></i>&nbsp;<spring:message code="consulta.list.taula.justif.error.reintentar"/>
+			</a>
+		</li>
 	</ul>
+</div>
+<div id="modal-justificant-error-{{ id }}" class="modal fade" role="dialog">
+	<div class="modal-dialog">
+	    <!-- Modal content-->
+	    <div class="modal-content">
+		<div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+			<h3><spring:message code="consulta.list.taula.justif.error"/></h3>
+		</div>
+		<div class="modal-body">
+			<textarea style="width:98%" rows="18">{{ justificantError }}</textarea>
+		</div>
+		<div class="modal-footer">
+		</div>
+		</div>
+	</div>
 </div>
 {{/estat-error}}
 </script>
@@ -350,22 +379,6 @@ $(document).ready(function() {
 		createHiddenInputFieldsForLimitAndSubmit(id);
 	}
 </script>
-
-<c:forEach var="consulta" items="${consultes}">
-	<c:if test="${consulta.justificantEstatError}">
-		<div class="modal hide fade" id="modal-justificant-error-${consulta.id}" style="width:900px;margin-left:-450px;">
-			<div class="modal-header">
-				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-				<h3><spring:message code="consulta.list.taula.justif.error"/></h3>
-			</div>
-			<div class="modal-body">
-				<textarea style="width:98%" rows="18">${consulta.justificantError}</textarea>
-			</div>
-			<div class="modal-footer">
-			</div>
-		</div>
-	</c:if>
-</c:forEach>
 
 </body>
 </html>

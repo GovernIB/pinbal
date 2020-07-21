@@ -22,13 +22,16 @@
 			<c:otherwise><spring:message code="servei.form.titol.modificar"/></c:otherwise>
 		</c:choose>
 	</title>
-	<script type="text/javascript" src="<c:url value="/js/jquery.maskedinput.js"/>"></script>
-	<script type="text/javascript" src="<c:url value="/js/jHtmlArea/scripts/jHtmlArea-0.8.min.js"/>"></script>
-	<script type="text/javascript" src="<c:url value="/js/jHtmlArea/scripts/jHtmlArea.ColorPickerMenu-0.8.min.js"/>"></script>
-	<script type="text/javascript" src="<c:url value="/js/webutil.common.js"/>"></script>
     <link rel="Stylesheet" type="text/css" href="<c:url value="/js/jHtmlArea/style/jHtmlArea.css"/>"/>
     <link rel="Stylesheet" type="text/css" href="<c:url value="/js/jHtmlArea/style/jHtmlArea.ColorPickerMenu.css"/>"/>
-    <link rel="Stylesheet" type="text/css" href="<c:url value="/css/inputFile.css"/>"/>
+	<link href="<c:url value="/webjars/jasny-bootstrap/3.1.3/dist/css/jasny-bootstrap.min.css"/>" rel="stylesheet">
+	<script src="<c:url value="/webjars/jasny-bootstrap/3.1.3/dist/js/jasny-bootstrap.min.js"/>"></script>
+	
+	<link href="<c:url value="/webjars/select2/4.0.6-rc.1/dist/css/select2.min.css"/>" rel="stylesheet"/>
+	<link href="<c:url value="/webjars/select2-bootstrap-theme/0.1.0-beta.4/dist/select2-bootstrap.min.css"/>" rel="stylesheet"/>
+	
+	<script src="<c:url value="/webjars/select2/4.0.6-rc.1/dist/js/select2.min.js"/>"></script>
+	<script src="<c:url value="/webjars/select2/4.0.6-rc.1/dist/js/i18n/${requestLocale}.js"/>"></script>
 <script>
 $(document).ready(function() {
 	$("#scspEsquemas").attr("disabled", $("#activaGestioXsd").attr("checked") ? true : false);
@@ -43,13 +46,17 @@ $(document).ready(function() {
 	$('#modal-boto-submit-xsd').click(function() {
 		$('#nomArxiu').removeAttr('disabled');
 		var data = $('#xsd-form').serializeArray();
-		var contingut = {"name": "contingut", "value": $("#contingut")[0].files[0]};
+		var contingut = {"name": "contingut", "value": $("#nomArxiu")[0].files[0]};
 		var formData =  new FormData();
 		data.forEach(function(row){
 			formData.append(row.name, row.value);
 		});
 		data.push(contingut);
-		formData.append('contingut', $("#contingut")[0].files[0], data[2].name);
+		formData.append('contingut', $("#nomArxiu")[0].files[0], data[2].name);
+ 		formData.append('nomArxiu', $("#nomArxiu")[0].files[0].name);
+		data.forEach(function(row){
+			console.log(row);
+		});
 		$.ajax({
 			type: "POST",
 			url: '<c:url value="/modal/servei/${serveiCommand.codi}/xsd/save"/>',
@@ -57,6 +64,7 @@ $(document).ready(function() {
 			processData: false,  // tell jQuery not to process the data
 			contentType: false,   // tell jQuery not to set contentType
 			success: function(data, textStatus, jqXHR){
+				console.log(data);
 				var jsonData = JSON.parse(data)
 				if (jsonData){
 					if(jsonData.error){
@@ -168,7 +176,8 @@ function showModalXsd(element) {
 <body>
 
 	<c:url value="/servei/save" var="formAction"/>
-	<form:form action="${formAction}" method="post" cssClass="form-horizontal" commandName="serveiCommand" enctype="multipart/form-data">
+	<form:form action="${formAction}" method="post" cssClass="form-horizontal" 
+			   commandName="serveiCommand" enctype="multipart/form-data">
 		<form:hidden path="creacio"/>
 		<fieldset>
 			<div class="row">
@@ -222,12 +231,15 @@ function showModalXsd(element) {
 					<pbl:inputText name="pinbalCondicioBusClass" textKey="servei.form.camp.pinbal.condicio.bus.class"/>
 				</div>
 				<div class="col-md-6">
-					<pbl:inputSelect name="pinbalEntitatTipus" textKey="servei.form.camp.pinbal.entitat.tipus" optionsModelKey="entitatTipusLlista" emptyOptionTextKey="comu.opcio.sense.definir"/>
+					<pbl:inputSelect name="pinbalEntitatTipus" textKey="servei.form.camp.pinbal.entitat.tipus" 
+									 optionTextAttribute="entitatTipusLlista" 
+									 optionTextKeyAttribute="comu.opcio.sense.definir"/>
 				</div>
 			</div>
 			<div class="row">
 				<div class="col-md-6">
-					<pbl:inputSelect name="pinbalJustificantTipus" textKey="servei.form.camp.pinbal.justificant.tipus" optionsModelKey="justificantTipusLlista"/>
+					<pbl:inputSelect name="pinbalJustificantTipus" textKey="servei.form.camp.pinbal.justificant.tipus" 
+									 optionTextKeyAttribute="justificantTipusLlista"/>
 				</div>
 				<div class="col-md-6">
 					<pbl:inputText name="pinbalJustificantXpath" textKey="servei.form.camp.pinbal.justificant.xpath"/>
@@ -593,7 +605,7 @@ function showModalXsd(element) {
 		</fieldset>
 		
 <%-- 		<c:if test="${not empty serveiCommand.codi}"> --%>
-			<fieldset id="gestioXsdFieldSet" hidden="${ activaGestioXsd ? '' : 'true'}">
+			<fieldset id="gestioXsdFieldSet">
 				<legend><spring:message code="servei.form.legend.gestio.xsd"/></legend>
 				<div class="clearfix legend-margin-bottom"></div>
 					<fieldset>

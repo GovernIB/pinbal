@@ -29,6 +29,7 @@
 <%@ attribute name="deleteMsg" required="false" rtexprvalue="true"%>
 <%@ attribute name="icon" required="false" rtexprvalue="true"%>
 <%@ attribute name="iconDelete" required="false" rtexprvalue="true"%>
+<%@ attribute name="srLabel" required="false" rtexprvalue="true"%>
 <c:set var="campPath" value="${name}"/>
 <c:set var="campId" value="${campPath}"/><c:if test="${not empty id}"><c:set var="campId" value="${id}"/></c:if>
 <c:set var="campErrors"><form:errors path="${campPath}"/></c:set>
@@ -121,7 +122,7 @@
 		</div>
 	</c:when>
 	<c:otherwise>
-   		<label class="sr-only" for="${campPath}">${campLabelText}</label>
+   		<label <c:if test="${empty srLabel}">class="sr-only" </c:if>for="${campPath}">${campLabelText}</label>
 		<form:select path="${campPath}" cssClass="form-control" id="${campId}" disabled="${disabled}" data-netejar="${netejar}" data-toggle="select2" data-placeholder="${campPlaceholder}" data-minimumresults="${minimumResultsForSearch}" data-enum="${optionEnum}" data-enum-value="${campValue}">
 			<c:if test="${emptyOption == 'true'}">
 				<c:choose>

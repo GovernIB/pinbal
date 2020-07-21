@@ -140,15 +140,6 @@
 			</div>
 			<div class="clearfix"></div>
 		</div>
-
-	</form:form>
-
-	<div class="row">
-		<div class="col-md-12">
-			<a class="btn pull-right" href="<c:url value="/servei/new"/>"><i class="glyphicon-plus"></i>&nbsp;<spring:message code="servei.list.boto.nou.servei"/></a>
-		</div>
-		<div class="clearfix"></div>
-	</div>
 	
 	<div class="clearfix"></div>
 	<div style="position: relative; top: -40px; z-index:0">
