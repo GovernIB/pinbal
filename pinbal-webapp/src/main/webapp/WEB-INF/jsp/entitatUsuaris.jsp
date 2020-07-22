@@ -29,9 +29,12 @@
 <html>
 <head>
 	<title><spring:message code="entitat.list.titol"/></title>
+	<link href="<c:url value="/webjars/datatables/1.10.21/css/dataTables.bootstrap.min.css"/>" rel="stylesheet"/>
+	
 	<script src="<c:url value="/webjars/datatables/1.10.21/js/jquery.dataTables.min.js"/>"></script>
 	<script src="<c:url value="/webjars/datatables/1.10.21/js/dataTables.bootstrap.min.js"/>"></script>
 	<script src="<c:url value="/webjars/mustache.js/3.0.1/mustache.min.js"/>"></script>
+	<script src="<c:url value="/js/webutil.datatable.js"/>"></script>
 <script>
 $(document).ready(function() {
 	$('#netejar-filtre').click(function() {
@@ -66,7 +69,6 @@ $(document).ready(function() {
     	autoWidth: false,
 		processing: true,
 		serverSide: true,
-		dom: "<'row'<'col-md-6'i><'col-md-6'>><'row'<'col-md-12'rt>><'row'<'col-md-6'l><'col-md-6'p>>",
 		language: {
             "url": '<c:url value="/js/datatable-language.json"/>',
         },
@@ -74,7 +76,6 @@ $(document).ready(function() {
 		columnDefs: [
 			{ 
 	            targets: 0,
-	            orderable: false,
 				render: function (data, type, row, meta) {
 					var template = $('#template-usuari').html();
 					return Mustache.render(template, row);
@@ -106,7 +107,7 @@ $(document).ready(function() {
 			{
 				targets: [4],
 				orderable: false,
-				width: "10%",
+				width: "1%",
 				render: function (data, type, row, meta) {
 					var template = $('#template-swap-principal').html();
 					return Mustache.render(template, row);
@@ -115,7 +116,7 @@ $(document).ready(function() {
 			{
 				targets: [5],
 				orderable: false,
-				width: "10%",
+				width: "1%",
 				render: function (data, type, row, meta) {
 					var template = $('#template-actions').html();
 					row['nrow'] = meta['row'];
@@ -341,8 +342,8 @@ function showModalEditar(
 {{/principal}}
 </script>
 	<div>
-		<a href="<c:url value="/entitat"/>" class="btn col-md-pull-right"><spring:message code="comu.boto.tornar"/></a>
-		<div class="clearfix"></div>
+		<a href="<c:url value="/entitat"/>" class="btn btn-primary pull-right"><spring:message code="comu.boto.tornar"/></a>
+		
 	</div>
 
 <div id="modal-form-usuari" class="modal fade" role="dialog">

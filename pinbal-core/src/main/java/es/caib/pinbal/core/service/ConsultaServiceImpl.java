@@ -38,6 +38,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Order;
 import org.springframework.security.acls.domain.PrincipalSid;
 import org.springframework.security.acls.model.AccessControlEntry;
 import org.springframework.security.acls.model.MutableAclService;
@@ -1900,12 +1901,7 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 //			}
 //		}
 		LOGGER.debug("Consulta de peticions findByEntitatIUsuariFiltrePaginat temps consultes addicionals : " + (System.currentTimeMillis() - t0) + " ms");
-		return  new PageImpl<ConsultaDto>(
-				dtoMappingHelper.getMapperFacade().mapAsList(
-						paginaConsultes.getContent(),
-						ConsultaDto.class),
-				pageable,
-				paginaConsultes.getTotalElements());
+		return dtoMappingHelper.pageEntities2pageDto(paginaConsultes, ConsultaDto.class, pageable);
 	}
 
 	private ArxiuDto obtenirJustificantConsulta(

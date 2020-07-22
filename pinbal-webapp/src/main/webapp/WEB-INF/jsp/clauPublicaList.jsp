@@ -7,26 +7,19 @@
 <html>
 <head>
 	<title><spring:message code="claupublica.list.titol"/></title>
+	<link href="<c:url value="/webjars/datatables/1.10.21/css/dataTables.bootstrap.min.css"/>" rel="stylesheet"/>
+	
 	<script src="<c:url value="/webjars/datatables/1.10.21/js/jquery.dataTables.min.js"/>"></script>
 	<script src="<c:url value="/webjars/datatables/1.10.21/js/dataTables.bootstrap.min.js"/>"></script>
-	<script src="<c:url value="/webjars/mustache.js/3.0.1/mustache.min.js"/>"></script>
 	<script src="<c:url value="/webjars/datatables-plugins/1.10.20/dataRender/datetime.js"/>"></script>
+	<script src="<c:url value="/js/webutil.datatable.js"/>"></script>
+	
+	<script src="<c:url value="/webjars/mustache.js/3.0.1/mustache.min.js"/>"></script>
 	<script src="<c:url value="/webjars/momentjs/2.24.0/min/moment.min.js"/>"></script>
 	
 	<script>
 	$(document).ready(function() {
-		/* $('#netejar-filtre').click(function() {
-			$(':input', $('#form-filtre')).each (function() {
-				var type = this.type, tag = this.tagName.toLowerCase();
-				if (type == 'text' || type == 'password' || tag == 'textarea')
-					this.value = '';
-				else if (type == 'checkbox' || type == 'radio')
-					this.checked = false;
-				else if (tag == 'select')
-					this.selectedIndex = 0;
-			});
-			$('#form-filtre').submit();
-		}); */
+
 		$('.confirm-esborrar').click(function() {
 			  return confirm("<spring:message code="claupublica.list.confirmacio.esborrar"/>");
 		});
@@ -35,23 +28,13 @@
 	    	autoWidth: false,
 			processing: true,
 			serverSide: true,
-			dom: "<'row'<'col-md-6'i><'col-md-6'>><'row'<'col-md-12'rt>><'row'<'col-md-6'l><'col-md-6'p>>",
 			language: {
 	            "url": '<c:url value="/js/datatable-language.json"/>',
 	        },
 			ajax: '<c:url value="/scsp/claupublica/datatable"/>',
 			columnDefs: [
-				{ 
-		            targets: 0,
-		            width: "50%"
-		        },
-		        {
-		            targets: 1,
-		            width: "20%"
-		        },
 		        {
 		            targets: [3, 4],
-		            width: "20%",
 		            render: function (data, type, row, meta) {
 		            	console.log(data)
 		            	return data==null ? "" : moment(data).format('DD-MM-YYYY' )
@@ -60,7 +43,7 @@
 				{
 					targets: [5],
 					orderable: false,
-					width: "10%",
+					width: "1%",
 					render: function (data, type, row, meta) {
 						var template = $('#template-actions').html();
 						return Mustache.render(template, row);

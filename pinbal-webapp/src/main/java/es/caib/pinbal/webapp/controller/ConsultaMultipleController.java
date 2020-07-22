@@ -44,6 +44,7 @@ import es.caib.pinbal.webapp.command.ConsultaFiltreCommand;
 import es.caib.pinbal.webapp.common.AlertHelper;
 import es.caib.pinbal.webapp.common.EntitatHelper;
 import es.caib.pinbal.webapp.common.RequestSessionHelper;
+import es.caib.pinbal.webapp.datatables.ServerSideColumn;
 import es.caib.pinbal.webapp.datatables.ServerSideRequest;
 import es.caib.pinbal.webapp.datatables.ServerSideResponse;
 
@@ -134,10 +135,17 @@ public class ConsultaMultipleController extends BaseController {
 			response.setError(error);
 
 		}else { 
+			List<ServerSideColumn> cols = serverSideRequest.getColumns();
+			cols.get(1).setData("createdDate");
+			cols.get(2).setData("procedimentServei.procediment.nom");
+			
 			page = consultaService.findMultiplesByFiltrePaginatPerDelegat(
 					entitat.getId(),
 					ConsultaFiltreCommand.asDto(command),		
 					serverSideRequest.toPageable());	
+			cols.get(1).setData("creacioData");
+			cols.get(2).setData("procedimentNom");
+			
 			response = new ServerSideResponse<ConsultaDto, Long>(serverSideRequest, page);
 		}
 		

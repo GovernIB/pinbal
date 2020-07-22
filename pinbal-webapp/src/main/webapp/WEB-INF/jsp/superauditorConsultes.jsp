@@ -14,12 +14,15 @@
 <html>
 <head>
 	<title><spring:message code="superauditor.list.titol"/></title>
+	<link href="<c:url value="/webjars/datatables/1.10.21/css/dataTables.bootstrap.min.css"/>" rel="stylesheet"/>
+		
 	<script src="<c:url value="/webjars/datatables/1.10.21/js/jquery.dataTables.min.js"/>"></script>
 	<script src="<c:url value="/webjars/datatables/1.10.21/js/dataTables.bootstrap.min.js"/>"></script>
 	<script src="<c:url value="/webjars/mustache.js/3.0.1/mustache.min.js"/>"></script>
 	<script src="<c:url value="/webjars/datatables-plugins/1.10.20/dataRender/datetime.js"/>"></script>
 	<script src="<c:url value="/webjars/momentjs/2.24.0/min/moment.min.js"/>"></script>
-	<script src="<c:url value="/js/jquery.maskedinput.js"/>"></script>
+
+	<script src="<c:url value="/js/webutil.datatable.js"/>"></script>
 <script>
 $(document).ready(function() {
 	$('#netejar-filtre').click(function() {
@@ -59,7 +62,6 @@ $(document).ready(function() {
     	autoWidth: false,
 		processing: true,
 		serverSide: true,
-		dom: "<'row'<'col-md-6'i><'col-md-6'>><'row'<'col-md-12'rt>><'row'<'col-md-6'l><'col-md-6'p>>",
 		language: {
             "url": '<c:url value="/js/datatable-language.json"/>'
         },
@@ -77,7 +79,11 @@ $(document).ready(function() {
 				targets: [1],
 				width: "10%",
 				render: $.fn.dataTable.render.moment('x', 'DD/MM/YYYY HH:mm:ss', 'es' )
-			},				
+			},	
+			{
+				targets: [3, 5],
+				orderable: false,
+			},
 			{
 				targets: [6],
 				orderable: false,
@@ -100,10 +106,7 @@ $(document).ready(function() {
 						return Mustache.render(template, row);
 				}
 			}
-	   ],
-	   initComplete: function( settings, json ) {
-
-		}
+	   ]
 	});
 });
 </script>

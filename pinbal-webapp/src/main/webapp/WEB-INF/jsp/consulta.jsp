@@ -15,35 +15,23 @@
 
 	<title><spring:message code="consulta.list.titol"/></title>	
 
-	<script src="<c:url value="/webjars/datatables.net-select/1.1.2/js/dataTables.select.min.js"/>"></script>
-	<link href="<c:url value="/webjars/datatables.net-select-bs/1.1.2/css/select.bootstrap.min.css"/>" rel="stylesheet"></link>
-	<link href="<c:url value="/webjars/select2/4.0.6-rc.1/dist/css/select2.min.css"/>" rel="stylesheet"/>
-	<link href="<c:url value="/webjars/select2-bootstrap-theme/0.1.0-beta.4/dist/select2-bootstrap.min.css"/>" rel="stylesheet"/>
-	<script src="<c:url value="/webjars/select2/4.0.6-rc.1/dist/js/select2.min.js"/>"></script>
-	<script src="<c:url value="/webjars/select2/4.0.6-rc.1/dist/js/i18n/${requestLocale}.js"/>"></script>
+	<link href="<c:url value="/webjars/datatables/1.10.21/css/dataTables.bootstrap.min.css"/>" rel="stylesheet"/>
 	<link href="<c:url value="/webjars/bootstrap-datepicker/1.6.1/dist/css/bootstrap-datepicker.min.css"/>" rel="stylesheet"/>
-	<script src="<c:url value="/webjars/bootstrap-datepicker/1.6.1/dist/js/bootstrap-datepicker.min.js"/>"></script>
-	<script src="<c:url value="/webjars/bootstrap-datepicker/1.6.1/dist/locales/bootstrap-datepicker.${requestLocale}.min.js"/>"></script>
-	<script src="<c:url value="/webjars/jsrender/1.0.0-rc.70/jsrender.min.js"/>"></script>
-	<script src="<c:url value="/js/webutil.common.js"/>"></script>
-	<script src="<c:url value="/js/webutil.datatable.js"/>"></script>
-	<script src="<c:url value="/js/webutil.modal.js"/>"></script>
 	<link href="<c:url value="/css/select2.css"/>" rel="stylesheet"/>
 	<link href="<c:url value="/css/select2-bootstrap.css"/>" rel="stylesheet"/>
+	
+	<script src="<c:url value="/webjars/bootstrap-datepicker/1.6.1/dist/js/bootstrap-datepicker.min.js"/>"></script>
+	<script src="<c:url value="/webjars/bootstrap-datepicker/1.6.1/dist/locales/bootstrap-datepicker.${requestLocale}.min.js"/>"></script>
+
+	<script src="<c:url value="/js/webutil.common.js"/>"></script>
+	
 	<script src="<c:url value="/webjars/datatables/1.10.21/js/jquery.dataTables.min.js"/>"></script>
 	<script src="<c:url value="/webjars/datatables/1.10.21/js/dataTables.bootstrap.min.js"/>"></script>
 	<script src="<c:url value="/webjars/mustache.js/3.0.1/mustache.min.js"/>"></script>
-	<link href="<c:url value="/webjars/bootstrap-datepicker/1.6.1/dist/css/bootstrap-datepicker.min.css"/>" rel="stylesheet"/>
-	<script src="<c:url value="/webjars/bootstrap-datepicker/1.6.1/dist/js/bootstrap-datepicker.min.js"/>"></script>
-	<script src="<c:url value="/webjars/bootstrap-datepicker/1.6.1/dist/locales/bootstrap-datepicker.${requestLocale}.min.js"/>"></script>
-	<script type="text/javascript" src="<c:url value="/js/select2.min.js"/>"></script>
+	<script src="<c:url value="/js/select2.min.js"/>" type="text/javascript"></script>
 	<script src="<c:url value="/webjars/datatables-plugins/1.10.20/dataRender/datetime.js"/>"></script>
 	<script src="<c:url value="/webjars/momentjs/2.24.0/min/moment.min.js"/>"></script>
-	
-	
-	
-	
-	
+	<script src="<c:url value="/js/webutil.datatable.js"/>"></script>
 </head>
 <body>
 		<form:form id="form-filtre" action="" method="post" cssClass="well" commandName="filtreCommand" >
@@ -169,7 +157,8 @@
 		</form:form>
 
 	<div class="clearfix"></div>
-	<table id="table-consultes" class="table table-striped table-bordered" style="width: 100%">
+	<table id="table-consultes" 
+		   class="table table-striped table-bordered" style="width: 100%">
 		<thead>
 			<tr>
 				<th data-data="scspPeticionId"><spring:message code="consulta.list.taula.peticion.id" /></th>
@@ -222,13 +211,11 @@ $(document).ready(function() {
 		var $link = $(this);
 		setTimeout(function(){$link.attr('href', '#')}, 100);
 	});
-	
 
     $('#table-consultes').DataTable({
     	autoWidth: false,
 		processing: true,
 		serverSide: true,
-		dom: "<'row'<'col-md-6'i><'col-md-6'>><'row'<'col-md-12'rt>><'row'<'col-md-6'l><'col-md-6'p>>",
 		language: {
             "url": '<c:url value="/js/datatable-language.json"/>'
         },
@@ -245,18 +232,17 @@ $(document).ready(function() {
 			{
 				targets: [1],
 				width: "10%",
-				orderable: false,
 				render: $.fn.dataTable.render.moment('x', 'DD/MM/YYYY HH:mm:ss', 'es' )
 			},	
 			{
-				targets: [2, 3, 4, 5],
+				targets: [3, 4, 5],
 				width: "10%",
 				orderable: false,
 			},
 			{
 				targets: [6],
 				orderable: false,
-				width: "10%",
+				width: "5%",
 				render: function (data, type, row, meta) {
 						var template = $('#template-estat').html();
 						row['icon-status'] = '';
@@ -278,10 +264,8 @@ $(document).ready(function() {
 			{
 				targets: [7],
 				orderable: false,
-				width: "10%",
+				width: "3%",
 				render: function (data, type, row, meta) {
-					console.log('hola');
-					console.log(row);
 					var template = $('#template-justificant').html();
 					row["estat-pendent"] = row['justificantEstat'].toLowerCase() == 'pendent';
 					row["estat-ok"] = row['justificantEstat'].toLowerCase() == 'ok';
@@ -294,7 +278,7 @@ $(document).ready(function() {
 			{
 				targets: [8],
 				orderable: false,
-				width: "10%",
+				width: "1%",
 				render: function (data, type, row, meta) {
 						var template = $('#template-details').html();
 						return Mustache.render(template, row);
@@ -304,10 +288,7 @@ $(document).ready(function() {
 				targets: [9],
 				visible: false
 			},
-	   ],
-	   initComplete: function( settings, json ) {
-
-		}
+	   ]
 	});
 });
 </script>
@@ -371,7 +352,9 @@ $(document).ready(function() {
 </script>
 
 <script id="template-details" type="x-tmpl-mustache">
-<a href="consulta/{{ id }}" class="btn btn-default"><i class="fas fa-search-plus"></i>&nbsp;<spring:message code="admin.consulta.list.taula.detalls"/></a>
+<a href="consulta/{{ id }}" class="btn btn-default">
+	<i class="fas fa-search-plus"></i>&nbsp;<spring:message code="admin.consulta.list.taula.detalls"/>
+</a>
 </script>
 <script type="text/javascript">
 	function onInvokeAction(id) {

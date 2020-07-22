@@ -64,15 +64,13 @@
 					${ consulta.serveiDescripcio }
 					</td>
 					<td>
-<%-- 						<span<c:if test="${consulta.estatError}"> title="${consulta.error}"</c:if>> --%>
-							<c:choose>
-								<c:when test="${consulta.estatPendent}"><i class="fas fa-bookmark"></i></i></c:when>
-								<c:when test="${consulta.estatProcessant}"><i class="fas fa-times"></i></c:when>
-								<c:when test="${consulta.estatError}"><i class="fas fa-exclamation-triangle"></i></c:when>
-								<c:otherwise><i class="fas fa-check"></i></c:otherwise>
-							</c:choose>
-							${consulta.estat}
-<!-- 						</span> -->
+					<c:choose>
+						<c:when test="${consulta.estatPendent}"><i class="fas fa-bookmark"></i></i></c:when>
+						<c:when test="${consulta.estatProcessant}"><i class="fas fa-times"></i></c:when>
+						<c:when test="${consulta.estatError}"><i class="fas fa-exclamation-triangle"></i></c:when>
+						<c:otherwise><i class="fas fa-check"></i></c:otherwise>
+					</c:choose>
+					${consulta.estat}
 					</td>
 				</tr>
 			</c:forEach>

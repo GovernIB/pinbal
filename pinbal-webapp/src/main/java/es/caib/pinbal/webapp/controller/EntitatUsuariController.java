@@ -34,7 +34,6 @@ import es.caib.pinbal.webapp.command.EntitatUsuariCommand.TipusCodi;
 import es.caib.pinbal.webapp.command.EntitatUsuariCommand.TipusNif;
 import es.caib.pinbal.webapp.command.UsuariFiltreCommand;
 import es.caib.pinbal.webapp.common.AlertHelper;
-import es.caib.pinbal.webapp.common.EntitatHelper;
 import es.caib.pinbal.webapp.common.RequestSessionHelper;
 import es.caib.pinbal.webapp.common.ValidationHelper;
 import es.caib.pinbal.webapp.datatables.ServerSideRequest;

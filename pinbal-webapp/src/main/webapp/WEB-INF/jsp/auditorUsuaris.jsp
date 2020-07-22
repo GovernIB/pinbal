@@ -19,9 +19,13 @@
 <html>
 <head>
 	<title><spring:message code="auditor.usuaris.titol"/></title>
+	<link href="<c:url value="/webjars/datatables/1.10.21/css/dataTables.bootstrap.min.css"/>" rel="stylesheet"/>
+		
 	<script src="<c:url value="/webjars/datatables/1.10.21/js/jquery.dataTables.min.js"/>"></script>
 	<script src="<c:url value="/webjars/datatables/1.10.21/js/dataTables.bootstrap.min.js"/>"></script>
+	<script src="<c:url value="/js/webutil.datatable.js"/>"></script>
 	<script src="<c:url value="/webjars/mustache.js/3.0.1/mustache.min.js"/>"></script>
+	
 <script>
 $(document).ready(function() {
 	$('#netejar-filtre').click(function() {
@@ -48,9 +52,10 @@ $(document).ready(function() {
 
     $('#table-users').DataTable({
     	autoWidth: false,
+    	paging: false,
 		processing: true,
 		serverSide: true,
-		dom: "<'row'<'col-md-6'i><'col-md-6'>><'row'<'col-md-12'rt>><'row'<'col-md-6'l><'col-md-6'p>>",
+		order: [],
 		language: {
             "url": '<c:url value="/js/datatable-language.json"/>',
         },
@@ -76,7 +81,7 @@ $(document).ready(function() {
 			{
 				targets: 2,
 				orderable: false,
-				width: "10%",
+				width: "1%",
 				render: function (data, type, row, meta) {
 					var template = $('#template-actions').html();
 					row['nrow'] = meta['row'];

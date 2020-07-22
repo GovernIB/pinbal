@@ -26,17 +26,14 @@
 <html>
 <head>
 	<title><spring:message code="representant.usuaris.titol"/></title>
-	<script src="<c:url value="/webjars/datatables/1.10.21/js/jquery.dataTables.min.js"/>"></script>
-	<script src="<c:url value="/webjars/datatables/1.10.21/js/dataTables.bootstrap.min.js"/>"></script>
-	<script src="<c:url value="/webjars/mustache.js/3.0.1/mustache.min.js"/>"></script>
+	<link href="<c:url value="/webjars/datatables/1.10.21/css/dataTables.bootstrap.min.css"/>" rel="stylesheet"/>
 	<link href="<c:url value="/css/select2.css"/>" rel="stylesheet"/>
 	<link href="<c:url value="/css/select2-bootstrap.css"/>" rel="stylesheet"/>
 	
-	
-
-
-
-
+	<script src="<c:url value="/webjars/datatables/1.10.21/js/jquery.dataTables.min.js"/>"></script>
+	<script src="<c:url value="/webjars/datatables/1.10.21/js/dataTables.bootstrap.min.js"/>"></script>
+	<script src="<c:url value="/webjars/mustache.js/3.0.1/mustache.min.js"/>"></script>
+	<script src="<c:url value="/js/webutil.datatable.js"/>"></script>
 <script>
 $(document).ready(function() {
 	$('#netejar-filtre').click(function() {
@@ -72,17 +69,24 @@ $(document).ready(function() {
             "url": '<c:url value="/js/datatable-language.json"/>',
         },
 		ajax: '<c:url value="/representant/usuari/datatable"/>',
+		order: [],
 		columnDefs: [
 			{ 
 	            targets: 0,
+	            orderable: false,
 				render: function (data, type, row, meta) {
 					var template = $('#template-usuari').html();
 					return Mustache.render(template, row);
 				}
 	        },
+			{
+				targets: [1],
+				orderable: false
+			}, 
 	        {
 	            targets: 2,
 	            width: "20%",
+	            orderable: false,
 				render: function (data, type, row, meta) {
 					console.log(row)
 					var template = $('#template-rols').html();
@@ -91,7 +95,8 @@ $(document).ready(function() {
 	        },
 	        {
 	            targets: [3],
-	            width: "20%",
+	            width: "1%",
+	            orderable: false,
 	            render: function (data, type, row, meta) {
 	            	console.log(data)
 	            	if (row.usuari.inicialitzat || row.usuari.noInicialitzatCodi){
@@ -105,7 +110,7 @@ $(document).ready(function() {
 			{
 				targets: [4],
 				orderable: false,
-				width: "10%",
+				width: "1%",
 				render: function (data, type, row, meta) {
 					var template = $('#template-actions').html();
 					row['nrow'] = meta['row'];
@@ -273,7 +278,7 @@ function showModalEditar(
 	{{/aplicacio}}
 </script>
 <script id="template-permisos" type="x-tmpl-mustache">
-	<a class="btn btn-primary" href="<c:url value="/representant/usuari/{{ usuari.codi }}/permis"/>">
+	<a class="btn btn-default" href="<c:url value="/representant/usuari/{{ usuari.codi }}/permis"/>">
 		<i class="fas fa-lock"></i>&nbsp;<spring:message code="comu.boto.permisos"/>
 	</a>
 </script>
