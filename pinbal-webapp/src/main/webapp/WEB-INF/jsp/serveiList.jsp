@@ -10,22 +10,19 @@
 <head>
 	<title><spring:message code="servei.list.titol"/></title>
 	<link href="<c:url value="/css/select2-bootstrap.css"/>" rel="stylesheet"/>
+	<link href="<c:url value="/webjars/bootstrap-datepicker/1.6.1/dist/css/bootstrap-datepicker.min.css"/>" rel="stylesheet"/>
+	<link href="<c:url value="/webjars/datatables/1.10.21/css/dataTables.bootstrap.min.css"/>" rel="stylesheet"/>
+	
 	<script src="<c:url value="/webjars/datatables/1.10.21/js/jquery.dataTables.min.js"/>"></script>
 	<script src="<c:url value="/webjars/datatables/1.10.21/js/dataTables.bootstrap.min.js"/>"></script>
 	<script src="<c:url value="/webjars/mustache.js/3.0.1/mustache.min.js"/>"></script>
 	<script src="<c:url value="/webjars/datatables-plugins/1.10.20/dataRender/datetime.js"/>"></script>
 	<script src="<c:url value="/webjars/momentjs/2.24.0/min/moment.min.js"/>"></script>
-	<link href="<c:url value="/webjars/bootstrap-datepicker/1.6.1/dist/css/bootstrap-datepicker.min.css"/>" rel="stylesheet"/>
+	<script src="<c:url value="/js/webutil.datatable.js"/>"></script>
 	<script src="<c:url value="/webjars/bootstrap-datepicker/1.6.1/dist/js/bootstrap-datepicker.min.js"/>"></script>
 	<script src="<c:url value="/webjars/bootstrap-datepicker/1.6.1/dist/locales/bootstrap-datepicker.${requestLocale}.min.js"/>"></script>
-	<script type="text/javascript" src="<c:url value="/js/select2.min.js"/>"></script>
-	<script src="<c:url value="/webjars/datatables-plugins/1.10.20/dataRender/datetime.js"/>"></script>
-	<script src="<c:url value="/webjars/momentjs/2.24.0/min/moment.min.js"/>"></script>
-	
+	<script src="<c:url value="/js/select2.min.js"/>" type="text/javascript"></script>
 
-	
-	
-	
 		
 <script>
 		$(document).ready(function() {
@@ -60,7 +57,7 @@
 					{
 						targets: [3],
 						orderable: false,
-						width: "10%",
+						width: "1%",
 						render: function (data, type, row, meta) {
 								var template = $('#template-btn-procediments').html();
 								return Mustache.render(template, row);
@@ -69,15 +66,14 @@
 					{
 						targets: [4],
 						orderable: false,
-						width: "10%",
+						width: "1%",
 						render: function (data, type, row, meta) {
 								var template = $('#template-accions').html();
 								return Mustache.render(template, row);
 						}
 					}, 
 			   ]
-			});
-		    
+			});		    
 		});
 		function showModalProcediments(element) {
 			var ample = Math.min(980, (window.innerWidth - 40));
@@ -190,7 +186,7 @@
 		</div>
 		<div class="modal-body"></div>
 		<div class="modal-footer">
-			<a href="#" class="btn" data-dismiss="modal"><spring:message code="comu.boto.tornar"/></a>
+			<a href="#" class="btn btn-primary" data-dismiss="modal"><spring:message code="comu.boto.tornar"/></a>
 		</div>
 	</div>
   </div>

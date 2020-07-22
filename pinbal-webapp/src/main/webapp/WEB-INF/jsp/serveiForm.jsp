@@ -22,13 +22,16 @@
 			<c:otherwise><spring:message code="servei.form.titol.modificar"/></c:otherwise>
 		</c:choose>
 	</title>
-	<script type="text/javascript" src="<c:url value="/js/jquery.maskedinput.js"/>"></script>
-	<script type="text/javascript" src="<c:url value="/js/jHtmlArea/scripts/jHtmlArea-0.8.min.js"/>"></script>
-	<script type="text/javascript" src="<c:url value="/js/jHtmlArea/scripts/jHtmlArea.ColorPickerMenu-0.8.min.js"/>"></script>
-	<script type="text/javascript" src="<c:url value="/js/webutil.common.js"/>"></script>
     <link rel="Stylesheet" type="text/css" href="<c:url value="/js/jHtmlArea/style/jHtmlArea.css"/>"/>
     <link rel="Stylesheet" type="text/css" href="<c:url value="/js/jHtmlArea/style/jHtmlArea.ColorPickerMenu.css"/>"/>
-    <link rel="Stylesheet" type="text/css" href="<c:url value="/css/inputFile.css"/>"/>
+	<link href="<c:url value="/webjars/jasny-bootstrap/3.1.3/dist/css/jasny-bootstrap.min.css"/>" rel="stylesheet">
+	<script src="<c:url value="/webjars/jasny-bootstrap/3.1.3/dist/js/jasny-bootstrap.min.js"/>"></script>
+	
+	<link href="<c:url value="/webjars/select2/4.0.6-rc.1/dist/css/select2.min.css"/>" rel="stylesheet"/>
+	<link href="<c:url value="/webjars/select2-bootstrap-theme/0.1.0-beta.4/dist/select2-bootstrap.min.css"/>" rel="stylesheet"/>
+	
+	<script src="<c:url value="/webjars/select2/4.0.6-rc.1/dist/js/select2.min.js"/>"></script>
+	<script src="<c:url value="/webjars/select2/4.0.6-rc.1/dist/js/i18n/${requestLocale}.js"/>"></script>
 <script>
 $(document).ready(function() {
 	$("#scspEsquemas").attr("disabled", $("#activaGestioXsd").attr("checked") ? true : false);
@@ -43,13 +46,17 @@ $(document).ready(function() {
 	$('#modal-boto-submit-xsd').click(function() {
 		$('#nomArxiu').removeAttr('disabled');
 		var data = $('#xsd-form').serializeArray();
-		var contingut = {"name": "contingut", "value": $("#contingut")[0].files[0]};
+		var contingut = {"name": "contingut", "value": $("#nomArxiu")[0].files[0]};
 		var formData =  new FormData();
 		data.forEach(function(row){
 			formData.append(row.name, row.value);
 		});
 		data.push(contingut);
-		formData.append('contingut', $("#contingut")[0].files[0], data[2].name);
+		formData.append('contingut', $("#nomArxiu")[0].files[0], data[2].name);
+ 		formData.append('nomArxiu', $("#nomArxiu")[0].files[0].name);
+		data.forEach(function(row){
+			console.log(row);
+		});
 		$.ajax({
 			type: "POST",
 			url: '<c:url value="/modal/servei/${serveiCommand.codi}/xsd/save"/>',
@@ -57,6 +64,7 @@ $(document).ready(function() {
 			processData: false,  // tell jQuery not to process the data
 			contentType: false,   // tell jQuery not to set contentType
 			success: function(data, textStatus, jqXHR){
+				console.log(data);
 				var jsonData = JSON.parse(data)
 				if (jsonData){
 					if(jsonData.error){
@@ -168,7 +176,8 @@ function showModalXsd(element) {
 <body>
 
 	<c:url value="/servei/save" var="formAction"/>
-	<form:form action="${formAction}" method="post" cssClass="form-horizontal" commandName="serveiCommand" enctype="multipart/form-data">
+	<form:form action="${formAction}" method="post" cssClass="form-horizontal" 
+			   commandName="serveiCommand" enctype="multipart/form-data">
 		<form:hidden path="creacio"/>
 		<fieldset>
 			<div class="row">
@@ -222,12 +231,15 @@ function showModalXsd(element) {
 					<pbl:inputText name="pinbalCondicioBusClass" textKey="servei.form.camp.pinbal.condicio.bus.class"/>
 				</div>
 				<div class="col-md-6">
-					<pbl:inputSelect name="pinbalEntitatTipus" textKey="servei.form.camp.pinbal.entitat.tipus" optionsModelKey="entitatTipusLlista" emptyOptionTextKey="comu.opcio.sense.definir"/>
+					<pbl:inputSelect name="pinbalEntitatTipus" textKey="servei.form.camp.pinbal.entitat.tipus" 
+									 optionTextAttribute="entitatTipusLlista" 
+									 optionTextKeyAttribute="comu.opcio.sense.definir"/>
 				</div>
 			</div>
 			<div class="row">
 				<div class="col-md-6">
-					<pbl:inputSelect name="pinbalJustificantTipus" textKey="servei.form.camp.pinbal.justificant.tipus" optionsModelKey="justificantTipusLlista"/>
+					<pbl:inputSelect name="pinbalJustificantTipus" textKey="servei.form.camp.pinbal.justificant.tipus" 
+									 optionTextKeyAttribute="justificantTipusLlista"/>
 				</div>
 				<div class="col-md-6">
 					<pbl:inputText name="pinbalJustificantXpath" textKey="servei.form.camp.pinbal.justificant.xpath"/>
@@ -420,7 +432,8 @@ function showModalXsd(element) {
 				<div class="clearfix legend-margin-bottom"></div>
 				<div class="row">
 					<div class="col-md-11 offset1">
-						<a class="btn btn-primary pull-right" href="<c:url value="/modal/servei/${serveiCommand.codi}/redir/new"/>" onclick="showModalRedir(this);return false"><i class="fas fa-plus"></i>&nbsp;<spring:message code="servei.form.boto.nova.redireccio"/></a>
+						<a class="btn btn-primary pull-right" href="<c:url value="/modal/servei/${serveiCommand.codi}/redir/new"/>" 
+						onclick="showModalRedir(this);return false"><i class="fas fa-plus"></i>&nbsp;<spring:message code="servei.form.boto.nova.redireccio"/></a>
 					</div>
 				</div>
 				<c:if test="${not empty serveisBus}">
@@ -591,8 +604,8 @@ function showModalXsd(element) {
 			</div>
 		</fieldset>
 		
-		<c:if test="${not empty serveiCommand.codi}">
-			<fieldset id="gestioXsdFieldSet" hidden="${ activaGestioXsd ? '' : 'true'}">
+<%-- 		<c:if test="${not empty serveiCommand.codi}"> --%>
+			<fieldset id="gestioXsdFieldSet">
 				<legend><spring:message code="servei.form.legend.gestio.xsd"/></legend>
 				<div class="clearfix legend-margin-bottom"></div>
 					<fieldset>
@@ -640,7 +653,7 @@ function showModalXsd(element) {
 					</table>
 				</c:if>
 			</fieldset>
-		</c:if>
+<%--		</c:if> --%>
 		<fieldset>
 			<legend><spring:message code="servei.form.legend.xifrat.seguretat"/></legend>
 			<div class="clearfix legend-margin-bottom"></div>
@@ -732,7 +745,7 @@ function showModalXsd(element) {
 					<c:set var="campErrors"><form:errors path="${campPath}"/></c:set>
 					<div class="control-group<c:if test="${not empty campErrors}"> error</c:if>">
 						<label class="control-label" for="${campPath}"><spring:message code="servei.form.camp.scsp.xpath.cifrado.asincrono"/></label>
-						<div class="controls">
+						<div class="controls">form-control
 							<form:input path="${campPath}" cssClass="col-md-12" id="${campPath}"/>
 							<form:errors path="${campPath}" cssClass="help-block"/>
 						</div>
@@ -778,7 +791,7 @@ function showModalXsd(element) {
 							<form:errors path="${campPath}" cssClass="help-block"/>
 						</div>
 					</div>
-				</div>
+				</div>form-control
 				<div class="col-md-6">
 					<c:set var="campPath" value="scspMaxSolicitudesPeticion"/>
 					<c:set var="campErrors"><form:errors path="${campPath}"/></c:set>
@@ -831,25 +844,25 @@ function showModalXsd(element) {
 		</fieldset>
 		<div class="well">
 			<button type="submit" class="btn btn-primary"><spring:message code="comu.boto.guardar"/></button>
-			<a href="<c:url value="/servei"/>" class="btn"><spring:message code="comu.boto.cancelar"/></a>
+			<a href="<c:url value="/servei"/>" cform-controllass="btn"><spring:message code="comu.boto.cancelar"/></a>
 		</div>
 	</form:form>
 
 <div id="modal-redir-form" class="modal" tabindex="-1" role="dialog">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
+ 	<div class="modal-dialog" role="document">
+    	<div class="modal-content">
 		<div class="modal-header">
 			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
 			<h3><spring:message code="servei.form.modal.bus.titol"/></h3>
 		</div>
 		<div class="modal-body"></div>
 		<div class="modal-footer">
-			<a href="#" class="btn" data-dismiss="modal"><spring:message code="comu.boto.tornar"/></a>
+			<a href="#" class="btn btn-default" data-dismiss="modal"><spring:message code="comu.boto.tornar"/></a>
 			<a href="#" id="modal-boto-submit" class="btn btn-primary"><spring:message code="comu.boto.guardar"/></a>
 		</div>
+		</div>
 	</div>
-	</div>
-	</div>
+</div>
 	
 	<div id="modal-xsd-form" class="modal" tabindex="-1" role="dialog">
   <div class="modal-dialog" role="document">
@@ -860,7 +873,7 @@ function showModalXsd(element) {
 		</div>
 		<div class="modal-body"></div>
 		<div class="modal-footer">
-			<a href="#" class="btn" data-dismiss="modal"><spring:message code="comu.boto.tornar"/></a>
+			<a href="#" class="btn btn-default" data-dismiss="modal"><spring:message code="comu.boto.tornar"/></a>
 			<a href="#" id="modal-boto-submit-xsd" class="btn btn-primary"><spring:message code="comu.boto.guardar"/></a>
 		</div>
 	</div>

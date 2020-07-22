@@ -43,6 +43,7 @@ import es.caib.pinbal.webapp.command.ConsultaFiltreCommand;
 import es.caib.pinbal.webapp.common.AlertHelper;
 import es.caib.pinbal.webapp.common.EntitatHelper;
 import es.caib.pinbal.webapp.common.RequestSessionHelper;
+import es.caib.pinbal.webapp.datatables.ServerSideColumn;
 import es.caib.pinbal.webapp.datatables.ServerSideRequest;
 import es.caib.pinbal.webapp.datatables.ServerSideResponse;
 
@@ -120,12 +121,20 @@ public class AuditorController extends BaseController {
 				SESSION_ATTRIBUTE_FILTRE);
 		if (command == null)
 			command = new ConsultaFiltreCommand();
-		
+		List<ServerSideColumn> cols = serverSideRequest.getColumns();
+		cols.get(1).setData("createdDate");
+		cols.get(2).setData("createdBy.nom");
+		cols.get(4).setData("procedimentServei.procediment.nom");
+
 		Page<ConsultaDto> page = consultaService.findByFiltrePaginatPerAuditor(
 				entitat.getId(),
 				ConsultaFiltreCommand.asDto(command),		
 				serverSideRequest.toPageable());
-
+		cols.get(1).setData("creacioData");
+		cols.get(2).setData("creacioUsuari.nom");
+		cols.get(3).setData("funcionariNomAmbDocument");
+		cols.get(4).setData("procedimentNom");
+		cols.get(5).setData("serveiDescripcio");
 		return new ServerSideResponse<ConsultaDto, Long>(serverSideRequest, page);
 	}
 	

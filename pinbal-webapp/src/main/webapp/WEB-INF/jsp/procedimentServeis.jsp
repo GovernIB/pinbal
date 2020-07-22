@@ -8,9 +8,11 @@
 <html>
 <head>
 	<title><spring:message code="procediment.list.titol"/></title>
+	<link href="<c:url value="/webjars/datatables/1.10.21/css/dataTables.bootstrap.min.css"/>" rel="stylesheet"/>
 	<script src="<c:url value="/webjars/datatables/1.10.21/js/jquery.dataTables.min.js"/>"></script>
 	<script src="<c:url value="/webjars/datatables/1.10.21/js/dataTables.bootstrap.min.js"/>"></script>
 	<script src="<c:url value="/webjars/mustache.js/3.0.1/mustache.min.js"/>"></script>
+	<script src="<c:url value="/js/webutil.datatable.js"/>"></script>
 </head>
 <body>
 
@@ -72,7 +74,7 @@
 	</table>
 
 	<div>
-		<a href="<c:url value="/procediment"/>" class="btn pull-right"><spring:message code="comu.boto.tornar"/></a>
+		<a href="<c:url value="/procediment"/>" class="btn btn-primary pull-right"><spring:message code="comu.boto.tornar"/></a>
 		<div class="clearfix"></div>
 	</div>
 <script>
@@ -130,7 +132,7 @@ $(document).ready(function() {
 			{
 				targets: [4],
 				orderable: false,
-				width: "10%",
+				width: "1%",
 				render: function (data, type, row, meta) {
 						var template = $('#template-status').html();
 						return Mustache.render(template, row);
@@ -139,7 +141,7 @@ $(document).ready(function() {
 			{
 				targets: [5],
 				orderable: false,
-				width: "10%",
+				width: "1%",
 				render: function (data, type, row, meta) {
 						var template = $('#template-permisos').html();
 						return Mustache.render(template, row);
@@ -204,10 +206,10 @@ function actualitzaCodiProcediment(servei_codi, codi_procediment) {
 <!-- TODO: substituir icones  -->
 <script id="template-status" type="x-tmpl-mustache">
 	{{#actiu}}
-		<a href="servei/{{ codi }}/disable" class="btn btn-default confirm-remove"><i class="icon-remove"></i>&nbsp;<spring:message code="comu.boto.desactivar"/></a>
+		<a href="servei/{{ codi }}/disable" class="btn btn-default confirm-remove"><i class="fa fa-times"></i>&nbsp;<spring:message code="comu.boto.desactivar"/></a>
 	{{/actiu}}
 	{{^actiu}}
-		<a href="servei/{{ codi }}/enable" class="btn btn-default"><i class="icon-ok"></i>&nbsp;<spring:message code="comu.boto.activar"/></a>
+		<a href="servei/{{ codi }}/enable" class="btn btn-default"><i class="fa fa-check"></i>&nbsp;<spring:message code="comu.boto.activar"/></a>
 	{{/actiu}}
 </script>
 <script id="template-permisos" type="x-tmpl-mustache">
