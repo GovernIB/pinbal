@@ -46,7 +46,7 @@
  	<script src="<c:url value="/webjars/datatables/1.10.21/js/dataTables.bootstrap.min.js"/>"></script> 
 	<script src="<c:url value="/webjars/mustache.js/3.0.1/mustache.min.js"/>"></script>
 	
-	<script src="<c:url value="/webjars/bootstrap-datepicker/1.6.1/dist/js/bootstrap-datepicker.min.js"/>"></script>
+
 	<script src="<c:url value="/webjars/bootstrap-datepicker/1.6.1/dist/locales/bootstrap-datepicker.${requestLocale}.min.js"/>"></script>
 	<script type="text/javascript" src="<c:url value="/js/select2.min.js"/>"></script>
 	<script src="<c:url value="/webjars/datatables-plugins/1.10.20/dataRender/datetime.js"/>"></script>
@@ -86,82 +86,105 @@
 		<c:set var="campErrors"><form:errors path="${campPath}"/></c:set>
 		<div class="container-fluid">
 			<div class="row">
-				<div class="col-md-12">
-					<pbl inputSelect name="">
-						<div class="form-group<c:if test="${not empty campErrors}"> error</c:if>">
-						<label class="control-label" for="${campPath}"><spring:message code="consulta.form.camp.procediment"/> *</label>
-						<div class="controls">
-						<form:select path="${campPath}" cssClass="col-md-12" cssStyle="width:100%" id="${campPath}">
-							<form:options items="${procediments}" itemLabel="nom" itemValue="id"/>
-						</form:select>
-						<form:errors path="${campPath}" cssClass="help-block"/>
+				<div class="col-md-6">
+					 <pbl:inputSelect name="${campPath}" inline="true" placeholderKey="consulta.form.camp.procediment"
+				 					optionItems="${procediments}" 
+									 optionValueAttribute="id"
+									 optionTextAttribute="nom"
+									 emptyOption="true"/>
+<%-- 						<div class="form-group"<c:if test="${not empty campErrors}"> error</c:if>"> --%>
+<%-- 						<label class="control-label" for="${campPath}"><spring:message code="consulta.form.camp.procediment"/> *</label> --%>
+<!-- 							<div class="controls"> -->
+<%-- 								<form:select path="${campPath}" cssClass="col-md-12" cssStyle="width:100%" id="${campPath}"> --%>
+<%-- 									<form:options items="${procediments}" itemLabel="nom" itemValue="id"/> --%>
+<%-- 								</form:select> --%>
+<%-- 								<form:errors path="${campPath}" cssClass="help-block"/> --%>
+<!-- 							</div> -->
 					</div>
 				</div>
 			</div>
-		</div>
+			
 		<fieldset>
 			<legend><spring:message code="consulta.form.dades.generiques"/></legend>
 			<div class="clearfix legend-margin-bottom"></div>
 			<div class="row">
 				<div class="col-md-6">
-					<c:set var="campPath" value="funcionariNom"/>
-					<c:set var="campErrors"><form:errors path="${campPath}"/></c:set>
-					<div class="form-group<c:if test="${not empty campErrors}"> error</c:if>">
-						<label class="control-label" for="${campPath}"><spring:message code="consulta.form.camp.funcionari.nom"/> *</label>
-						<div class="controls">
-							<form:input path="${campPath}" cssClass="form-group" id="${campPath}"/>
-							<form:errors path="${campPath}" cssClass="help-block"/>
+				<label class="control-label" for="${campPath}"><spring:message code="consulta.form.camp.funcionari.nom"/> *</label>
+					<pbl:inputText name="funcionariNom" inline="true" placeholderKey="consulta.form.camp.funcionari.nom"/>
+<%-- 					<c:set var="campPath" value="funcionariNom"/> --%>
+<%-- 					<c:set var="campErrors"><form:errors path="${campPath}"/></c:set> --%>
+<%-- 					<div class="form-group<c:if test="${not empty campErrors}"> error</c:if>"> --%>
+						
+<!-- 						<div class="controls"> -->
+<%-- 							<form:input path="${campPath}" cssClass="form-group" id="${campPath}"/> --%>
+<%-- 							<form:errors path="${campPath}" cssClass="help-block"/> --%>
+<!-- 						</div> -->
+				</div>
+	
+				<div class="col-md-6">
+				
+					<label class="control-label" for="${campPath}"><spring:message code="consulta.form.camp.funcionari.nif"/></label>
+						<pbl:inputText name="funcionariNif" inline="true" placeholderKey="consulta.form.camp.funcionari.nif"/>
+					
+<%-- 					<c:set var="campPath" value="funcionariNif"/> --%>
+<%-- 					<c:set var="campErrors"><form:errors path="${campPath}"/></c:set> --%>
+<%-- 					<div class="form-group<c:if test="${not empty campErrors}"> error</c:if>"> --%>
+<%-- 						<label class="control-label" for="${campPath}"><spring:message code="consulta.form.camp.funcionari.nif"/> *</label> --%>
+<!-- 						<div class="controls"> -->
+<%-- 							<form:input path="${campPath}" cssClass="col-md-12" id="${campPath}" disabled="true"/> --%>
+<%-- 							<form:errors path="${campPath}" cssClass="help-block"/> --%>
+<!-- 						</div> -->
+				</div>
+			</div>	
+		
+			<div class="container-fluid">
+				<div class="row">
+				<pbl>
+					<div class="col-md-6">
+					<label class="control-label" for="${campPath}"><spring:message code="consulta.form.camp.entitat.nom"/></label> 
+						<pbl:inputText name="entitatNom" inline="true" placeholderKey="consulta.form.camp.entitat.nom"/>
+<%-- 					<c:set var="campPath" value="entitatNom"/> --%>
+<%-- 					<c:set var="campErrors"><form:errors path="${campPath}"/></c:set> --%>
+<%-- 					<div class="form-group<c:if test="${not empty campErrors}"> error</c:if>"> --%>
+<%-- 						<label class="control-label" for="${campPath}"><spring:message code="consulta.form.camp.entitat.nom"/> *</label> --%>
+<!-- 						<div class="controls"> -->
+<%-- 							<form:input path="${campPath}" cssClass="col-md-12" id="${campPath}" disabled="true"/> --%>
+<%-- 							<form:errors path="${campPath}" cssClass="help-block"/> --%>
 						</div>
 					</div>
 				</div>
 				<div class="col-md-6">
-					<c:set var="campPath" value="funcionariNif"/>
-					<c:set var="campErrors"><form:errors path="${campPath}"/></c:set>
-					<div class="form-group<c:if test="${not empty campErrors}"> error</c:if>">
-						<label class="control-label" for="${campPath}"><spring:message code="consulta.form.camp.funcionari.nif"/> *</label>
-						<div class="controls">
-							<form:input path="${campPath}" cssClass="col-md-12" id="${campPath}" disabled="true"/>
-							<form:errors path="${campPath}" cssClass="help-block"/>
-						</div>
-					</div>
+					<label class="control-label" for="${campPath}"><spring:message code="consulta.form.camp.entitat.cif"/></label> 
+					<pbl:inputText name="entitatCif" inline="true" placeholderKey="consulta.form.camp.entitat.cif"/>
+<%-- 					<c:set var="campPath" value="entitatCif"/> --%>
+<%-- 					<c:set var="campErrors"><form:errors path="${campPath}"/></c:set> --%>
+<%-- 					<div class="form-group<c:if test="${not empty campErrors}"> error</c:if>"> --%>
+<%-- 						
+<!-- 						<div class="controls"> -->
+<%-- 							<form:input path="${campPath}" cssClass="col-md-12" id="${campPath}" disabled="true"/> --%>
+<%-- 							<form:errors path="${campPath}" cssClass="help-block"/> --%>
+<!-- 						</div> -->
+<!-- 					</div> -->
 				</div>
 			</div>
+		</div>	
 			<div class="row">
 				<div class="col-md-6">
-					<c:set var="campPath" value="entitatNom"/>
-					<c:set var="campErrors"><form:errors path="${campPath}"/></c:set>
-					<div class="form-group<c:if test="${not empty campErrors}"> error</c:if>">
-						<label class="control-label" for="${campPath}"><spring:message code="consulta.form.camp.entitat.nom"/> *</label>
-						<div class="controls">
-							<form:input path="${campPath}" cssClass="col-md-12" id="${campPath}" disabled="true"/>
-							<form:errors path="${campPath}" cssClass="help-block"/>
-						</div>
-					</div>
-				</div>
-				<div class="col-md-6">
-					<c:set var="campPath" value="entitatCif"/>
-					<c:set var="campErrors"><form:errors path="${campPath}"/></c:set>
-					<div class="form-group<c:if test="${not empty campErrors}"> error</c:if>">
-						<label class="control-label" for="${campPath}"><spring:message code="consulta.form.camp.entitat.cif"/> *</label>
-						<div class="controls">
-							<form:input path="${campPath}" cssClass="col-md-12" id="${campPath}" disabled="true"/>
-							<form:errors path="${campPath}" cssClass="help-block"/>
-						</div>
-					</div>
-				</div>
-			</div>
-			<div class="row">
-				<div class="col-md-6">
-					<c:set var="campPath" value="consentiment"/>
-					<c:set var="campErrors"><form:errors path="${campPath}"/></c:set>
-					<div class="form-group<c:if test="${not empty campErrors}"> error</c:if>">
-						<label class="control-label" for="${campPath}"><spring:message code="consulta.form.camp.consentiment"/> *</label>
-						<div class="controls">
-							<form:select path="${campPath}" cssClass="col-md-12" id="${campPath}">
-								<form:options items="${consentimentValors}"/>
-							</form:select>
-							<form:errors path="${campPath}" cssClass="help-block"/>
-						</div>
+				
+					<label class="control-label" for="${campPath}"><spring:message code="consulta.form.camp.consentiment"/> *</label>
+					<pbl:inputSelect name="consentiment" inline="true" placeholderKey="consulta.form.camp.consentiment" 
+								optionItems="${consentimentValors}"
+								emptyOption="true"/>
+				
+<%-- 					<c:set var="campPath" value="consentiment"/> --%>
+<%-- 					<c:set var="campErrors"><form:errors path="${campPath}"/></c:set> --%>
+<%-- 					<div class="form-group<c:if test="${not empty campErrors}"> error</c:if>"> --%>
+<!-- 												<div class="controls"> -->
+<%-- 							<form:select path="${campPath}" cssClass="col-md-12" id="${campPath}"> --%>
+<%-- 								<form:options items="${consentimentValors}"/> --%>
+<%-- 							</form:select> --%>
+<%-- 							<form:errors path="${campPath}" cssClass="help-block"/> --%>
+<!-- 						</div> -->
 					</div>
 				</div>
 				<div class="col-md-6">

@@ -167,8 +167,8 @@ $(document).ready(function() {
 <%-- 								<input type="text" id="${campPath}" name="${campPath}"<c:if test="${not empty status.value}"> value="${status.value}"</c:if> class="form-control" placeholder="<spring:message code="consulta.list.filtre.data.inici"/>"> --%>
 <!-- 								<script>$("#${campPath}").mask("99/99/9999");</script> -->
 <%-- 						</spring:bind> --%>
-	 				</div>
-						<div class="col-md-2">
+	 			</div>
+				<div class="col-md-2">
 							<pbl:inputDate name="dataFi" inline="true" placeholderKey="consulta.list.filtre.data.fi"/> 
 <%-- 							<c:set var="campPath" value="dataFi"/> --%>
 <%-- 							<c:set var="campErrors"><form:errors path="${campPath}"/></c:set> --%>
@@ -178,13 +178,13 @@ $(document).ready(function() {
 <!-- 									<script>$("#${campPath}").mask("99/99/9999");</script> -->
 <%-- 								</spring:bind> --%>
 <!-- 							</div> -->
-						</div>
-		<div class="col-md-6" style="text-align:right">
-					<label>&nbsp;</label>
-					<button id="netejar-filtre" class="btn" type="button"><spring:message code="comu.boto.netejar"/></button>
-			 		<button class="btn btn-primary" type="submit"><spring:message code="comu.boto.filtrar"/></button>
-		</div>
-		
+				</div>
+				<div class="col-md-8">
+					<div class="pull-right">
+							<button id="netejar-filtre" class="btn-default" type="button"><spring:message code="comu.boto.netejar"/></button>
+					 		<button class="btn btn-primary" type="submit"><spring:message code="comu.boto.filtrar"/></button>
+					</div>
+				</div>
 		
 		</div>	
 	</div>	

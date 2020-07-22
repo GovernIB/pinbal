@@ -103,27 +103,33 @@ $(document).ready(function() {
 			<div class="row">
 
 				 <div class="col-md-2">
-					<c:set var="campPath" value="codi"/>
-					<spring:message var="placeholderCodi" code="procediment.list.filtre.camp.codi"/>
-					<form:input path="${campPath}" cssClass="form-control" id="${campPath}" placeholder="${placeholderCodi}"/>
+				 
+				 <pbl:inputText name="codi" inline="true" placeholderKey="procediment.list.filtre.camp.codi"/>
+<%-- 					<c:set var="campPath" value="codi"/> --%>
+<%-- 					<spring:message var="placeholderCodi" code="procediment.list.filtre.camp.codi"/> --%>
+<%-- 					<form:input path="${campPath}" cssClass="form-control" id="${campPath}" placeholder="${placeholderCodi}"/> --%>
 				</div>
 				<div class="col-md-2">
-					<c:set var="campPath" value="nom"/>
-					<spring:message var="placeholderNom" code="procediment.list.filtre.camp.nom"/>
-					<form:input path="${campPath}" cssClass="form-control" id="${campPath}" placeholder="${placeholderNom}"/>
+				<pbl:inputText name="nom" inline="true" placeholderKey="procediment.list.filtre.camp.nom"/>
+<%-- 					<c:set var="campPath" value="nom"/> --%>
+<%-- 					<spring:message var="placeholderNom" code="procediment.list.filtre.camp.nom"/> --%>
+<%-- 					<form:input path="${campPath}" cssClass="form-control" id="${campPath}" placeholder="${placeholderNom}"/> --%>
 				</div>
-				<div class="col-md-3">	
-					<c:set var="campPath" value="departament"/>
-					<spring:message var="placeholderDepartament" code="procediment.list.filtre.camp.departament"/>
-					<form:input path="${campPath}" cssClass="form-control" id="${campPath}" placeholder="${placeholderDepartament}"/>
+				<div class="col-md-3">
+					<pbl:inputText name="departament" inline="true" placeholderKey="procediment.list.filtre.camp.departament"/>	
+<%-- 					<c:set var="campPath" value="departament"/> --%>
+<%-- 					<spring:message var="placeholderDepartament" code="procediment.list.filtre.camp.departament"/> --%>
+<%-- 					<form:input path="${campPath}" cssClass="form-control" id="${campPath}" placeholder="${placeholderDepartament}"/> --%>
 				</div>
 					
+					
+				<div class="col-md-5" >
+				
 					<div class ="pull-right">
-						<div class="col-md-5" >
-							<button id="netejar-filtre" class="btn-default" type="button"><spring:message code="comu.boto.netejar"/></button>
-							<button type="submit" class="btn btn-primary"><spring:message code="comu.boto.filtrar"/></button>
-						</div>
+						<button id="netejar-filtre" class="btn-default" type="button"><spring:message code="comu.boto.netejar"/></button>
+						<button type="submit" class="btn btn-primary"><spring:message code="comu.boto.filtrar"/></button>
 					</div>
+		       </div>        
 			</div>
 			
 			

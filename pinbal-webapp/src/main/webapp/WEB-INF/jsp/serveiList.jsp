@@ -4,6 +4,7 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
+<%@ taglib tagdir="/WEB-INF/tags/pinbal" prefix="pbl" %>
 
 <html>
 <head>
@@ -20,6 +21,9 @@
 	<script type="text/javascript" src="<c:url value="/js/select2.min.js"/>"></script>
 	<script src="<c:url value="/webjars/datatables-plugins/1.10.20/dataRender/datetime.js"/>"></script>
 	<script src="<c:url value="/webjars/momentjs/2.24.0/min/moment.min.js"/>"></script>
+	
+
+	
 	
 	
 		
@@ -98,24 +102,36 @@
 	<form:form id="form-filtre" action="${formAction}" method="post" cssClass="well" commandName="serveiFiltreCommand">
 		<div class="container-fluid">
 			<div class="row">
-				<div class="form-group col-md-2">	
-					<c:set var="campPath" value="codi"/>
-					<spring:message var="placeholderCodi" code="servei.list.filtre.camp.codi"/>
-					<form:input path="${campPath}" cssClass="form-control col-md-3" id="${campPath}" placeholder="${placeholderCodi}"/>
+				<div class="col-md-2">
+					<pbl:inputText name="codi"  inline="true" placeholderKey="servei.list.filtre.camp.codi"/>	
+<%-- 					<c:set var="campPath" value="codi"/> --%>
+<%-- 						<spring:message var="placeholderCodi" code="servei.list.filtre.camp.codi"/> --%>
+<%-- 						<form:input path="${campPath}" cssClass="form-control col-md-3" id="${campPath}" placeholder="${placeholderCodi}"/> --%>
 				</div>
 				<div class="form-group col-md-2">	
-					<c:set var="campPath" value="descripcio"/>
-					<spring:message var="placeholderDescripcio" code="servei.list.filtre.camp.descripcio"/>
-					<form:input path="${campPath}" cssClass="form-control input-sm" id="${campPath}" placeholder="${placeholderDescripcio}"/>
+					<pbl:inputText name="descripcio"  inline="true" placeholderKey="servei.list.filtre.camp.descripcio"/>
+<%-- 					<c:set var="campPath" value="descripcio"/> --%>
+<%-- 					<spring:message var="placeholderDescripcio" code="servei.list.filtre.camp.descripcio"/> --%>
+<%-- 					<form:input path="${campPath}" cssClass="form-control input-sm" id="${campPath}" placeholder="${placeholderDescripcio}"/> --%>
 				</div>
 				<div class="col-md-2">	
-					<c:set var="campPath" value="emissor"/>
-					<form:select path="${campPath}" id="${campPath}" class="form-control col-md-12">
-						<option value=""><spring:message code="servei.list.filtre.camp.emissor"/></option>
-						<form:options items="${emisors}" itemLabel="nom" itemValue="id"/>
-					</form:select>
+					<pbl:inputSelect name="descripcio"  inline="true" placeholderKey="servei.list.filtre.camp.emissor"
+					 optionItems="${emisors}"
+					 	optionValueAttribute="id"
+					 	optionTextAttribute="nom"
+					 	emptyOption="true"/>
+<%-- 					<c:set var="campPath" value="emissor"/> --%>
+<%-- 					<form:select path="${campPath}" id="${campPath}" class="form-control col-md-12"> --%>
+<%-- 						<option value=""><spring:message code="servei.list.filtre.camp.emissor"/></option> --%>
+<%-- 						<form:options items="${emisors}" itemLabel="nom" itemValue="id"/> --%>
+<%-- 					</form:select> --%>
 				</div>
 				<div class="form-group col-md-2">	
+<%-- 				<pbl:inputSelect name="activa"  inline="true" placeholderKey="entitat.list.filtre.camp.activa --%>
+<%-- 					 optionItems="${emisors}" --%>
+<%-- 					 	optionValueAttribute="id" --%>
+<%-- 					 	optionTextAttribute="nom" --%>
+				
 					<c:set var="campPath" value="activa"/>
 					<spring:message var="trueValue" code="entitat.list.filtre.camp.activa.yes"/>
 					<spring:message var="falseValue" code="entitat.list.filtre.camp.activa.no"/>
@@ -126,7 +142,7 @@
 					</form:select>
 				</div>
 				<div class="pull-right">
-					<button id="netejar-filtre" class="btn" type="button"><spring:message code="comu.boto.netejar"/></button>
+					<button id="netejar-filtre" class="btn-default" type="button"><spring:message code="comu.boto.netejar"/></button>
 					<button type="submit" class="btn btn-primary"><spring:message code="comu.boto.filtrar"/></button>
 				</div>
 		</div>
@@ -141,8 +157,7 @@
 			</div>
 			<div class="clearfix"></div>
 		</div>
-
-	</form:form>
+	</div>	
 
 	<div class="row">
 		<div class="col-md-12">
