@@ -199,26 +199,32 @@ $(document).ready(function() {
 							
 				</div
 		</div>		
+		
 		<div class="clearfix"></div>
 		
+		<label>&nbsp;</label>
+		<label>&nbsp;</label>
+		
 	<div class="container-fluid">	
-		<div style="position: relative; top: -40px; z-index:0">
-		<table id="table-entitats" class="table table-striped table-bordered" style="width: 100%">
-			<thead>
-				<tr>
-					<th data-data="codi"><spring:message code="entitat.list.taula.columna.codi" /></th>
-					<th data-data="nom"><spring:message code="entitat.list.taula.columna.nom" /></th>
-					<th data-data="cif"><spring:message code="entitat.list.taula.columna.cif" /></th>
-					<th data-data="tipus"><spring:message code="entitat.list.taula.columna.tipus" /></th>
-					<th data-data="activa"><spring:message code="entitat.list.taula.columna.activa" /></th>
-					<th data-data="usuaris"></th>
-					<th data-data="serveis"></th>
-					<th data-data="id"></th>
-				</tr>
-			</thead>
-		</table>
+		<div class="row">
+			<div style="position: relative; top: -40px; z-index:0">
+			<table id="table-entitats" class="table table-striped table-bordered" style="width: 100%">
+				<thead>
+					<tr>
+						<th data-data="codi"><spring:message code="entitat.list.taula.columna.codi" /></th>
+						<th data-data="nom"><spring:message code="entitat.list.taula.columna.nom" /></th>
+						<th data-data="cif"><spring:message code="entitat.list.taula.columna.cif" /></th>
+						<th data-data="tipus"><spring:message code="entitat.list.taula.columna.tipus" /></th>
+						<th data-data="activa"><spring:message code="entitat.list.taula.columna.activa" /></th>
+						<th data-data="usuaris"></th>
+						<th data-data="serveis"></th>
+						<th data-data="id"></th>
+					</tr>
+				</thead>
+			</table>
 		</div>
 	</div>
+</div>	
 <script id="template-nom" type="x-tmpl-mustache">
 {{{ span-label }}}
 {{ nom }}

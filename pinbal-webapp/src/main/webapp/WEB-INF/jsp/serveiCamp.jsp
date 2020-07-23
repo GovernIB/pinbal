@@ -198,10 +198,10 @@ $(function() {
 </script>
 </head>
 <body>
-
-	<div class="row">
-		<div class="well col-md-4" style="overflow:auto">
-			<div class="btn-group pull-right">
+	
+	<div class="container-fluid">
+		<div class="row">
+		
 				<a href="#" class="btn btn-default" title="<spring:message code="servei.camp.contreure.tot"/>" id="accio-contreure-all"><i class="fas fa-chevron-right"></i></a>
 				<a href="#" class="btn btn-default" title="<spring:message code="servei.camp.expandir.tot"/>" id="accio-expandir-all"><i class="fas fa-chevron-down"></i></a>
 			</div><br/>
@@ -210,6 +210,7 @@ $(function() {
 				<jsp:include page="import/dadesEspecifiquesArbreNode.jsp"/>
 			</ul>
 		</div>
+		
 		<div class="col-md-8">
 			<a id="boto-nou-grup" class="btn btn-primary pull-right" href="#"><i class="fas fa-plus"></i>&nbsp;Nou grup</a><br/><br/>
 			<c:set var="hiHaCampsSenseGrup" value="${false}"/>

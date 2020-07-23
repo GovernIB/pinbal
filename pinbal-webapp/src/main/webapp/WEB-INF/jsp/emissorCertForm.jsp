@@ -134,7 +134,7 @@
 						</div>
 					</div>
 					<div class="row">
-						<div class="col-md-12">	
+						<div class="pull-right">	
 							<button type="submit" class="btn btn-primary" ><spring:message code="comu.boto.guardar" /></button>
 							<a href="<c:url value="/scsp/emissorcert"/>" class="btn btn-default"><spring:message code="comu.boto.cancelar"/></a>
 						</div>
