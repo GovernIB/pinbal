@@ -20,8 +20,11 @@
 <html>
 <head>
 	<title><spring:message code="auditor.usuaris.titol"/></title>
+	<link href="<c:url value="/webjars/datatables/1.10.21/css/dataTables.bootstrap.min.css"/>" rel="stylesheet"/>
+		
 	<script src="<c:url value="/webjars/datatables/1.10.21/js/jquery.dataTables.min.js"/>"></script>
 	<script src="<c:url value="/webjars/datatables/1.10.21/js/dataTables.bootstrap.min.js"/>"></script>
+	<script src="<c:url value="/js/webutil.datatable.js"/>"></script>
 	<script src="<c:url value="/webjars/mustache.js/3.0.1/mustache.min.js"/>"></script>
 	
 	
@@ -77,9 +80,10 @@ $(document).ready(function() {
 
     $('#table-users').DataTable({
     	autoWidth: false,
+    	paging: false,
 		processing: true,
 		serverSide: true,
-		dom: "<'row'<'col-md-6'i><'col-md-6'>><'row'<'col-md-12'rt>><'row'<'col-md-6'l><'col-md-6'p>>",
+		order: [],
 		language: {
             "url": '<c:url value="/js/datatable-language.json"/>',
         },
@@ -105,7 +109,7 @@ $(document).ready(function() {
 			{
 				targets: 2,
 				orderable: false,
-				width: "10%",
+				width: "1%",
 				render: function (data, type, row, meta) {
 					var template = $('#template-actions').html();
 					row['nrow'] = meta['row'];
@@ -268,36 +272,36 @@ function showModalEditar(
 			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
 			<h3><spring:message code="auditor.usuaris.titol.modificar"/></h3>
 		</div>
-		<div class="modal-content">
+		<div class="modal-body">
 			<c:url value="/auditor/usuari/save" var="formAction"/>
 			<form id="modal-form" action="${formAction}" method="post" class="form-horizontal">
 				<input type="hidden" id="modal-hidden-id" name="id" value="${entitat.id}"/>
 				<input type="hidden" id="modal-hidden-codi" name="codi"/>
 				<input type="hidden" id="modal-hidden-nif" name="nif"/>
 				<div id="modal-group-tipus" class="form-group">
-    				<label class="control-label" for="modal-select-tipus"><spring:message code="auditor.usuaris.camp.tipus"/></label>
-					<div class="controls">
+    				<label class="control-label col-md-2" for="modal-select-tipus"><spring:message code="auditor.usuaris.camp.tipus"/></label>
+					<div class="col-md-10">
 						<select id="modal-select-tipus" name="tipus" class="input-sm">
 							<option value="${caracterTipusNif}"><spring:message code="auditor.usuaris.tipus.nif"/></option>
 							<option value="${caracterTipusCodi}"><spring:message code="auditor.usuaris.tipus.codi"/></option>
 						</select>
 					</div>
 				</div>
-				<div id="modal-group-codi" class="from-group">
-    				<label class="control-label" for="modal-input-codi"><spring:message code="auditor.usuaris.camp.codi"/></label>
-					<div class="controls">
-						<input type="text" id="modal-input-codi" name="codi" disabled="disabled"/>
+				<div id="modal-group-codi" class="form-group">
+    				<label class="control-label col-md-2" for="modal-input-codi"><spring:message code="auditor.usuaris.camp.codi"/></label>
+					<div class=" col-md-10">
+						<input type="text" class="form-control" id="modal-input-codi" name="codi" disabled="disabled"/>
 					</div>
 				</div>
 				<div id="modal-group-nif" class="form-group">
-    				<label class="control-label" for="modal-input-nif"><spring:message code="auditor.usuaris.camp.nif"/></label>
-					<div class="controls">
-						<input type="text" id="modal-input-nif" name="nif" disabled="disabled"/>
+    				<label class="control-label col-md-2" for="modal-input-nif"><spring:message code="auditor.usuaris.camp.nif"/></label>
+					<div class="col-md-10">
+						<input type="text" class="form-control" id="modal-input-nif" name="nif" disabled="disabled"/>
 					</div>
 				</div>
 				<div class="form-group">
-					<label class="control-label" for="modal-input-auditor"><spring:message code="auditor.usuaris.camp.rols"/></label>
-					<div class="controls">
+					<label class="control-label col-md-2" for="modal-input-auditor"><spring:message code="auditor.usuaris.camp.rols"/></label>
+					<div class="controls col-md-10">
 	    				<label class="checkbox" for="modal-input-auditor">
 	    					<input type="checkbox" id="modal-input-auditor" name="rolAuditor">
 	    					<spring:message code="auditor.usuaris.rol.audit"/>
@@ -306,8 +310,8 @@ function showModalEditar(
     			</div>
 			</form>
 		</div>
-		<div class="modal-content">
-			<a href="#" class="btn" data-dismiss="modal"><spring:message code="comu.boto.tornar"/></a>
+		<div class="modal-footer">
+			<a href="#" class="btn btn-default" data-dismiss="modal"><spring:message code="comu.boto.tornar"/></a>
 			<a href="#" class="btn btn-primary" onclick="$('#modal-form').submit()"><spring:message code="comu.boto.guardar"/></a>
 		</div>
 	</div>

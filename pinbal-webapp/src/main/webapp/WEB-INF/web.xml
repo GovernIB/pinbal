@@ -5,15 +5,6 @@
 
 	<display-name>pinbal</display-name>
 
-	<context-param>
-		<param-name>jmesaPreferencesLocation</param-name>
-		<param-value>WEB-INF/jmesa.properties</param-value>
-	</context-param>
-	<context-param>
-		<param-name>jmesaMessagesLocation</param-name>
-		<param-value>es/caib/pinbal/webapp/i18n/messages</param-value>
-	</context-param>
-
 	<filter>
 		<filter-name>springSecurityFilterChain</filter-name>
 		<filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>

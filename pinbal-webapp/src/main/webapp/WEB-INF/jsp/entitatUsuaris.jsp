@@ -29,9 +29,12 @@
 <html>
 <head>
 	<title><spring:message code="entitat.list.titol"/></title>
+	<link href="<c:url value="/webjars/datatables/1.10.21/css/dataTables.bootstrap.min.css"/>" rel="stylesheet"/>
+	
 	<script src="<c:url value="/webjars/datatables/1.10.21/js/jquery.dataTables.min.js"/>"></script>
 	<script src="<c:url value="/webjars/datatables/1.10.21/js/dataTables.bootstrap.min.js"/>"></script>
 	<script src="<c:url value="/webjars/mustache.js/3.0.1/mustache.min.js"/>"></script>
+	<script src="<c:url value="/js/webutil.datatable.js"/>"></script>
 <script>
 $(document).ready(function() {
 	$('#netejar-filtre').click(function() {
@@ -66,7 +69,6 @@ $(document).ready(function() {
     	autoWidth: false,
 		processing: true,
 		serverSide: true,
-		dom: "<'row'<'col-md-6'i><'col-md-6'>><'row'<'col-md-12'rt>><'row'<'col-md-6'l><'col-md-6'p>>",
 		language: {
             "url": '<c:url value="/js/datatable-language.json"/>',
         },
@@ -74,7 +76,6 @@ $(document).ready(function() {
 		columnDefs: [
 			{ 
 	            targets: 0,
-	            orderable: false,
 				render: function (data, type, row, meta) {
 					var template = $('#template-usuari').html();
 					return Mustache.render(template, row);
@@ -106,7 +107,7 @@ $(document).ready(function() {
 			{
 				targets: [4],
 				orderable: false,
-				width: "10%",
+				width: "1%",
 				render: function (data, type, row, meta) {
 					var template = $('#template-swap-principal').html();
 					return Mustache.render(template, row);
@@ -115,7 +116,7 @@ $(document).ready(function() {
 			{
 				targets: [5],
 				orderable: false,
-				width: "10%",
+				width: "1%",
 				render: function (data, type, row, meta) {
 					var template = $('#template-actions').html();
 					row['nrow'] = meta['row'];
@@ -226,21 +227,22 @@ function showModalEditar(
 				<div class="col-md-3">
 					<c:set var="campPath" value="codi"/>
 					<pbl:inputText name="${campPath}" textKey="entitat.usuaris.filtre.camp.codi"
-								   placeholder="entitat.usuaris.filtre.camp.codi" hideLabel="true"/>
+								   placeholder="entitat.usuaris.filtre.camp.codi"/>
 				</div>
 				<div class="col-md-3">
 					<c:set var="campPath" value="nif"/>
-					<pbl:inputText name="${campPath}" textKey="entitat.usuaris.filtre.camp.nif" placeholder="entitat.usuaris.filtre.camp.nif" hideLabel="true"/>
+					<pbl:inputText name="${campPath}" textKey="entitat.usuaris.filtre.camp.nif" 
+								   placeholder="entitat.usuaris.filtre.camp.nif"/>
 				</div>
 				<div class="col-md-3">			
 					<c:set var="campPath" value="nom"/>
 					<pbl:inputText name="${campPath}" textKey="entitat.usuaris.filtre.camp.nom"
-								   placeholder="entitat.usuaris.filtre.camp.nom" hideLabel="true"/>
+								   placeholder="entitat.usuaris.filtre.camp.nom"/>
 				</div>
 					<div class="col-md-3">			
 					<c:set var="campPath" value="departament"/>
 					<pbl:inputText name="${campPath}" textKey="entitat.usuaris.filtre.camp.departament"
-								   placeholder="entitat.usuaris.filtre.camp.departament" hideLabel="true"/>
+								   placeholder="entitat.usuaris.filtre.camp.departament"/>
 				</div>
 			</div>
 		<div class="container-fluid">
@@ -340,71 +342,69 @@ function showModalEditar(
 {{/principal}}
 </script>
 	<div>
-		<a href="<c:url value="/entitat"/>" class="btn col-md-pull-right"><spring:message code="comu.boto.tornar"/></a>
-		<div class="clearfix"></div>
+		<a href="<c:url value="/entitat"/>" class="btn btn-primary pull-right"><spring:message code="comu.boto.tornar"/></a>
+		
 	</div>
 
-<div id="modal-form-usuari" class="modal" tabindex="-1" role="dialog">
-  <div class="modal-dialog" role="document">
+<div id="modal-form-usuari" class="modal fade" role="dialog">
+  <div class="modal-dialog">
     <div class="modal-content">
 
 		<div class="modal-header">
 			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
 			<h3><spring:message code="entitat.usuaris.titol.modificar"/></h3>
 		</div>
-		<div class="modal-content">
+		<div class="modal-body">
 			<c:url value="/entitat/${entitat.id}/usuari/save" var="formAction"/>
-			<form id="modal-form" action="${formAction}" method="post" class="form-horizontal">
+			<form id="modal-form" action="${formAction}" method="post">
 				<input type="hidden" id="modal-hidden-id" name="id" value="${entitat.id}"/>
 				<input type="hidden" id="modal-hidden-codi" name="codi"/>
 				<input type="hidden" id="modal-hidden-nif" name="nif"/>
 				<div id="modal-group-tipus" class="form-group">
     				<label class="control-label" for="modal-select-tipus"><spring:message code="entitat.usuaris.camp.tipus"/></label>
-					<div class="controls">
-						<select id="modal-select-tipus" name="tipus" class="input-medium">
-							<option value="${caracterTipusNif}"><spring:message code="entitat.usuaris.tipus.nif"/></option>
-							<option value="${caracterTipusCodi}"><spring:message code="entitat.usuaris.tipus.codi"/></option>
-						</select>
-					</div>
+					<select id="modal-select-tipus" name="tipus" class="form-control input-medium">
+						<option value="${caracterTipusNif}"><spring:message code="entitat.usuaris.tipus.nif"/></option>
+						<option value="${caracterTipusCodi}"><spring:message code="entitat.usuaris.tipus.codi"/></option>
+					</select>
 				</div>
-				<div id="modal-content" class="form-group">
-    				<label class="control-label" for="modal-input-codi"><spring:message code="entitat.usuaris.camp.codi"/></label>
-					<div class="controls">
-						<input type="text" id="modal-input-codi" name="codi" disabled="disabled"/>
-					</div>
+				<div id="modal-group-codi" class="form-group">
+    				<label for="modal-input-codi"><spring:message code="entitat.usuaris.camp.codi"/></label>
+					<input class="form-control" type="text" id="modal-input-codi" name="codi" disabled="disabled"/>
 				</div>
 				<div id="modal-group-nif" class="form-group">
-    				<label class="control-label" for="modal-input-nif"><spring:message code="entitat.usuaris.camp.nif"/></label>
-					<div class="controls">
-						<input type="text" id="modal-input-nif" name="nif" disabled="disabled"/>
-					</div>
+    				<labe for="modal-input-nif"><spring:message code="entitat.usuaris.camp.nif"/></label>
+					<input class="form-control" type="text" id="modal-input-nif" name="nif" disabled="disabled"/>
 				</div>
 				<div class="form-group">
-    				<label class="control-label" for="modal-input-departament"><spring:message code="entitat.usuaris.camp.departament"/></label>
-					<div class="controls">
-						<input type="text" id="modal-input-departament" name="departament"/>
-					</div>
-				</div>
+    				<label for="modal-input-departament"><spring:message code="entitat.usuaris.camp.departament"/></label>
+					<input class="form-control" type="text" id="modal-input-departament" name="departament"/>
+				</div>		
 				<div class="form-group">
-					<label class="control-label" for="modal-input-representant"><spring:message code="entitat.usuaris.camp.rols"/></label>
-					<div class="controls">
-						<label class="checkbox" for="modal-input-representant">
-	    					<input type="checkbox" id="modal-input-representant" name="rolRepresentant">
-	    					<spring:message code="entitat.usuaris.rol.repres"/>
-	    				</label>
-	    				<label class="checkbox" for="modal-input-delegat">
-	    					<input type="checkbox" id="modal-input-delegat" name="rolDelegat">
-	    					<spring:message code="entitat.usuaris.rol.deleg"/>
-	    				</label>
-	    				<label class="checkbox" for="modal-input-auditor">
-	    					<input type="checkbox" id="modal-input-auditor" name="rolAuditor">
-	    					<spring:message code="entitat.usuaris.rol.audit"/>
-	    				</label>
-	    				<label class="checkbox" for="modal-input-aplicacio">
+					<label for="modal-input-representant"><spring:message code="entitat.usuaris.camp.rols"/></label>
+					<div class="checkbox" for="modal-input-representant" style="margin-top: 0px;">
+						<label>
+    					<input type="checkbox" id="modal-input-representant" name="rolRepresentant">
+    					<spring:message code="entitat.usuaris.rol.repres"/>
+    					</label>
+    				</div>
+    				<div class="checkbox" for="modal-input-delegat">
+    					<label>
+    					<input type="checkbox" id="modal-input-delegat" name="rolDelegat">
+    					<spring:message code="entitat.usuaris.rol.deleg"/>
+    					</label>
+    				</div>
+    				<div class="checkbox" for="modal-input-auditor">
+    					<label>
+    					<input type="checkbox" id="modal-input-auditor" name="rolAuditor">
+    					<spring:message code="entitat.usuaris.rol.audit"/>
+    					</label>
+    				</div>
+    				<div class="checkbox" for="modal-input-aplicacio">
+	    				<label>
 	    					<input type="checkbox" id="modal-input-aplicacio" name="rolAplicacio">
 	    					<spring:message code="entitat.usuaris.rol.aplic"/>
 	    				</label>
-	    			</div>
+    				</div>
     			</div>
 			</form>
 		</div>

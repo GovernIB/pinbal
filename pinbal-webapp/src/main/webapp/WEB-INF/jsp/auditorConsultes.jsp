@@ -14,6 +14,8 @@
 <html>
 <head>
 	<title><spring:message code="auditor.list.titol"/></title>
+	<link href="<c:url value="/webjars/datatables/1.10.21/css/dataTables.bootstrap.min.css"/>" rel="stylesheet"/>
+	
 	<script src="<c:url value="/webjars/datatables/1.10.21/js/jquery.dataTables.min.js"/>"></script>
 	<script src="<c:url value="/webjars/datatables/1.10.21/js/dataTables.bootstrap.min.js"/>"></script>
 	<script src="<c:url value="/webjars/mustache.js/3.0.1/mustache.min.js"/>"></script>
@@ -106,12 +108,11 @@ $(document).ready(function() {
 			},
 			{
 				targets: [1],
-				orderable: false,
 				width: "10%",
 				render: $.fn.dataTable.render.moment('x', 'DD/MM/YYYY HH:mm:ss', 'es' )
 			},
 			{
-				targets: [2, 3, 4, 5],
+				targets: [3, 5],
 				orderable: false,
 			},
 			{

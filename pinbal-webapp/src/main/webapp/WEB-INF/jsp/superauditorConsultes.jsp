@@ -83,7 +83,6 @@ $(document).ready(function() {
     	autoWidth: false,
 		processing: true,
 		serverSide: true,
-		dom: "<'row'<'col-md-6'i><'col-md-6'>><'row'<'col-md-12'rt>><'row'<'col-md-6'l><'col-md-6'p>>",
 		language: {
             "url": '<c:url value="/js/datatable-language.json"/>'
         },
@@ -101,7 +100,11 @@ $(document).ready(function() {
 				targets: [1],
 				width: "10%",
 				render: $.fn.dataTable.render.moment('x', 'DD/MM/YYYY HH:mm:ss', 'es' )
-			},				
+			},	
+			{
+				targets: [3, 5],
+				orderable: false,
+			},
 			{
 				targets: [6],
 				orderable: false,
@@ -124,10 +127,7 @@ $(document).ready(function() {
 						return Mustache.render(template, row);
 				}
 			}
-	   ],
-	   initComplete: function( settings, json ) {
-
-		}
+	   ]
 	});
 });
 </script>

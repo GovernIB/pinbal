@@ -181,7 +181,7 @@ public class RepresentantUsuariController extends BaseController {
 		}
 		List<EntitatUsuariDto> listUsers = entitat.getUsuarisRepresentant();
 		Page<EntitatUsuariDto> page = new PageImpl<EntitatUsuariDto>(listUsers, null, listUsers.size());
-		
+		serverSideRequest.setOrder(null);
 		return new ServerSideResponse<EntitatUsuariDto, Long>(serverSideRequest, page);
 	}
 	

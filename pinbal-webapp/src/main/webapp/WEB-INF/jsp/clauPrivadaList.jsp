@@ -8,8 +8,11 @@
 <html>
 <head>
 	<title><spring:message code="clau.privada.list.titol"/></title>
+	
+	<link href="<c:url value="/webjars/datatables/1.10.21/css/dataTables.bootstrap.min.css"/>" rel="stylesheet"/>
 	<script src="<c:url value="/webjars/datatables/1.10.21/js/jquery.dataTables.min.js"/>"></script>
 	<script src="<c:url value="/webjars/datatables/1.10.21/js/dataTables.bootstrap.min.js"/>"></script>
+	<script src="<c:url value="/js/webutil.datatable.js"/>"></script>
 	<script src="<c:url value="/webjars/mustache.js/3.0.1/mustache.min.js"/>"></script>
 	<script src="<c:url value="/webjars/datatables-plugins/1.10.20/dataRender/datetime.js"/>"></script>
 	<script src="<c:url value="/webjars/momentjs/2.24.0/min/moment.min.js"/>"></script>
@@ -31,21 +34,8 @@
 	        },
 			ajax: '<c:url value="/scsp/clauprivada/datatable"/>',
 			columnDefs: [
-				{ 
-		            targets: 0,
-		            width: "30%"
-		        },
-		        {
-		            targets: 1,
-		            width: "30%"
-		        },
-		        {
-		            targets: 2,
-		            width: "15%"
-		        },
 		        {
 		            targets: [3],
-		            width: "15%",
 		            render: function (data, type, row, meta) {
 		            	console.log(data)
 		            	return data==null ? "" : moment(data).format('DD-MM-YYYY' )
@@ -54,7 +44,7 @@
 				{
 					targets: [4],
 					orderable: false,
-					width: "10%",
+					width: "1%",
 					render: function (data, type, row, meta) {
 						var template = $('#template-actions').html();
 						return Mustache.render(template, row);

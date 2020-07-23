@@ -35,7 +35,6 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.MessageSource;
 import org.springframework.context.MessageSourceAware;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.acls.domain.PrincipalSid;
@@ -1094,7 +1093,8 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 				filtre,
 				pageable,
 				false,
-				true);
+				true,
+				false, false);
 	}
 
 	@Transactional(readOnly = true)
@@ -1117,7 +1117,8 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 				filtre,
 				pageable,
 				true,
-				true);
+				true,
+				false, false);
 	}
 
 	@Transactional(readOnly = true)
@@ -1147,7 +1148,8 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 				filtre,
 				pageable,
 				false,
-				false);
+				false,
+				false, false);
 	}
 
 	@Transactional(readOnly = true)
@@ -1169,7 +1171,8 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 				filtre,
 				pageable,
 				false,
-				false);
+				false,
+				false, false);
 	}
 
 	@Transactional(readOnly = true)
@@ -1191,7 +1194,8 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 				filtre,
 				pageable,
 				false,
-				false);
+				false,
+				false, false);
 	}
 
 	@Transactional(readOnly = true)
@@ -1792,15 +1796,17 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 		}
 		return resposta;
 	}
-
-	@SuppressWarnings("unchecked")
+ 
 	private Page<ConsultaDto> findByEntitatIUsuariFiltrePaginat(
 			Entitat entitat,
 			String usuariCodi,
 			ConsultaFiltreDto filtre,
 			Pageable pageable,
 			boolean multiple,
-			boolean nomesSensePare) throws EntitatNotFoundException {
+			boolean nomesSensePare,
+			boolean consultaHihaPeticio,
+			boolean consultaTerData
+			) throws EntitatNotFoundException {
 		copiarPropertiesToDb();
 		LOGGER.debug("Consulta de peticions findByEntitatIUsuariFiltrePaginat (" +
 				"entitat=" + entitat.getCodi() + ", " +
@@ -1822,17 +1828,7 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 				"multiple=" + multiple + ", " +
 				"nomesSensePare=" + nomesSensePare + ")");
 		long t0 = System.currentTimeMillis();
-//		Map<String, String> mapeigPropietats = new HashMap<String, String>();
-//		mapeigPropietats.put("scspPeticionSolicitudId", "scspPeticionId");
-//		mapeigPropietats.put("creacioData", "createdDate");
-//		mapeigPropietats.put("procedimentNom", "procedimentServei.procediment.nom");
-//		mapeigPropietats.put("serveiDescripcio", "procedimentServei.servei");
-//		mapeigPropietats.put("titularNomSencer", "titularNom");
-//		mapeigPropietats.put("titularDocumentAmbTipus", "titularDocumentNum");
-//		mapeigPropietats.put("funcionariNomAmbDocument", "funcionariNom");
-//		Pageable pageable = PaginacioHelper.toSpringDataPageable(
-//				paginacioAmbOrdre,
-//				mapeigPropietats);
+
 		Page<Consulta> paginaConsultes;
 		if (filtre == null) {
 			paginaConsultes = consultaRepository.findByProcedimentServeiProcedimentEntitatIdAndCreatedBy(
@@ -1872,40 +1868,46 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 					pageable);
 		}
 		LOGGER.debug("Consulta de peticions findByEntitatIUsuariFiltrePaginat temps consulta: " + (System.currentTimeMillis() - t0) + " ms");
+		System.out.println("Consulta de peticions findByEntitatIUsuariFiltrePaginat temps consulta: " + (System.currentTimeMillis() - t0) + " ms");
 		t0 = System.currentTimeMillis();
-//		PaginaLlistatDto<ConsultaDto> resposta = PaginacioHelper.toPaginaLlistatDto(
-//				paginaConsultes,
-//				dtoMappingHelper,
-//				ConsultaDto.class);
+		Page<ConsultaDto> paginaConsultesDto = dtoMappingHelper.pageEntities2pageDto(paginaConsultes, ConsultaDto.class, pageable);
+		
 		LOGGER.debug("Consulta de peticions findByEntitatIUsuariFiltrePaginat temps conversió DTO : " + (System.currentTimeMillis() - t0) + " ms");
+		System.out.println("Consulta de peticions findByEntitatIUsuariFiltrePaginat temps conversió DTO : " + (System.currentTimeMillis() - t0) + " ms");
 		t0 = System.currentTimeMillis();
-		// TODO: #1 el seguent codi comentat s'ha de descomentar i corregir
-//		for (Consulta consulta: paginaConsultes.getContent()) {
-//			consulta.setServeiDescripcio(
-//					getScspHelper().getServicioDescripcion(
-//							consulta.getServeiCodi()));
-//			try {
-//				consulta.setHiHaPeticio(
-//						getScspHelper().isPeticionEnviada(
-//								consulta.getScspPeticionId()));
-//			} catch (es.scsp.common.exceptions.ScspException ex) {
-//				LOGGER.error("No s'han pogut consultar l'enviament de la petició (id=" + consulta.getScspPeticionId() + ")", ex);
-//				consulta.setHiHaPeticio(false);
-//			}
-//			try {
-//				consulta.setTerData(getScspHelper().getTerPeticion(
-//									consulta.getScspPeticionId()));
-//			} catch (es.scsp.common.exceptions.ScspException ex) {
-//				LOGGER.error("No s'han pogut consultar el TER de la petició (id=" + consulta.getScspPeticionId() + ")", ex);
-//			}
-//		}
+
+		for (ConsultaDto consulta: paginaConsultesDto.getContent()) {
+			consulta.setServeiDescripcio(
+					getScspHelper().getServicioDescripcion(
+							consulta.getServeiCodi()));
+		}
+		
+		if(consultaHihaPeticio) {
+			for (ConsultaDto consulta: paginaConsultesDto.getContent()) {
+				try {
+					consulta.setHiHaPeticio(
+							getScspHelper().isPeticionEnviada(
+									consulta.getScspPeticionId()));
+				} catch (es.scsp.common.exceptions.ScspException ex) {
+					LOGGER.error("No s'han pogut consultar l'enviament de la petició (id=" + consulta.getScspPeticionId() + ")", ex);
+					consulta.setHiHaPeticio(false);
+				}
+			}
+		}
+		
+		if(consultaHihaPeticio) {
+			for (ConsultaDto consulta: paginaConsultesDto.getContent()) {
+				try {
+					consulta.setTerData(getScspHelper().getTerPeticion(
+										consulta.getScspPeticionId()));
+				} catch (es.scsp.common.exceptions.ScspException ex) {
+					LOGGER.error("No s'han pogut consultar el TER de la petició (id=" + consulta.getScspPeticionId() + ")", ex);
+				}
+			}
+		}
 		LOGGER.debug("Consulta de peticions findByEntitatIUsuariFiltrePaginat temps consultes addicionals : " + (System.currentTimeMillis() - t0) + " ms");
-		return  new PageImpl<ConsultaDto>(
-				dtoMappingHelper.getMapperFacade().mapAsList(
-						paginaConsultes.getContent(),
-						ConsultaDto.class),
-				pageable,
-				paginaConsultes.getTotalElements());
+		System.out.println("Consulta de peticions findByEntitatIUsuariFiltrePaginat temps consultes addicionals : " + (System.currentTimeMillis() - t0) + " ms");
+		return  paginaConsultesDto;
 	}
 
 	private ArxiuDto obtenirJustificantConsulta(
