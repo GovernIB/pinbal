@@ -14,11 +14,11 @@
 <html>
 <head>
 	<title><spring:message code="entitat.list.titol"/></title>
-<%-- 	<script src="<c:url value="/webjars/datatables/1.10.21/js/jquery.dataTables.min.js"/>"></script> --%>
-<%-- 	<script src="<c:url value="/webjars/datatables/1.10.21/js/dataTables.bootstrap.min.js"/>"></script> --%>
-<%-- 	<script src="<c:url value="/webjars/mustache.js/3.0.1/mustache.min.js"/>"></script> --%>
-<%-- 	<script src="<c:url value="/webjars/bootstrap-datepicker/1.6.1/dist/js/bootstrap-datepicker.min.js"/>"></script> --%>
-<%-- 	<script src="<c:url value="/webjars/bootstrap-datepicker/1.6.1/dist/locales/bootstrap-datepicker.ca.min.js"/>"></script> --%>
+	<script src="<c:url value="/webjars/datatables/1.10.21/js/jquery.dataTables.min.js"/>"></script>
+	<script src="<c:url value="/webjars/datatables/1.10.21/js/dataTables.bootstrap.min.js"/>"></script>
+	<script src="<c:url value="/webjars/mustache.js/3.0.1/mustache.min.js"/>"></script>
+	<script src="<c:url value="/webjars/bootstrap-datepicker/1.6.1/dist/js/bootstrap-datepicker.min.js"/>"></script>
+	<script src="<c:url value="/webjars/bootstrap-datepicker/1.6.1/dist/locales/bootstrap-datepicker.ca.min.js"/>"></script>
 	
 	<script src="<c:url value="/webjars/datatables.net/1.10.11/js/jquery.dataTables.min.js"/>"></script>
 	<script src="<c:url value="/webjars/datatables.net-bs/1.10.11/js/dataTables.bootstrap.min.js"/>"></script>
@@ -169,7 +169,8 @@ $(document).ready(function() {
 				</div>
 			
 				<div class="col-md-2">
-					<pbl:inputSelect name="activa" inline="true"  placeholderKey="entitat.list.filtre.camp.activa.yes"	emptyOption="true"/>
+					<pbl:inputSelect name="activa" inline="true"  placeholderKey="en.
+					titat.list.filtre.camp.activa.yes"	optionItems="" emptyOption="true"/>
 <%-- 					<c:set var="campPath" value="activa"/> --%>
 <%-- 					<spring:message var="trueValue" code="entitat.list.filtre.camp.activa.yes"/> --%>
 <%-- 					<spring:message var="falseValue" code="entitat.list.filtre.camp.activa.no"/> --%>
@@ -193,7 +194,7 @@ $(document).ready(function() {
 				</div>
 				<div class="col-md-2">
 					<div class="pull-right">
-						<button id="netejar-filtre" class="btn-default" type="button"><spring:message code="comu.boto.netejar"/></button>
+						<button id="netejar-filtre" class="btn btn-default" type="button"><spring:message code="comu.boto.netejar"/></button>
 						<button type="submit" class="btn btn-primary"><spring:message code="comu.boto.filtrar"/></button>
 					</div>				
 				</div>
@@ -204,28 +205,31 @@ $(document).ready(function() {
 	
 		<div class ="container-fluid">
 				<div class="row">
-					<div class="col-md-12">
-						<a class="btn btn-primary pull-right" href="<c:url value="/entitat/new"/>"><i class="glyphicon-plus"></i>&nbsp;<spring:message code="entitat.list.boto.nova.entitat"/></a>
+					<div class="pull-right">
+						<a class="btn btn-primary " href="<c:url value="/entitat/new"/>"><i class="glyphicon-plus"></i>&nbsp;<spring:message code="entitat.list.boto.nova.entitat"/></a>
 					</div>
-					<div class="clearfix"></div>			
+							
 				</div
 		</div>		
-	
-	<div style="position: relative; top: -40px; z-index:0">
-	<table id="table-entitats" class="table table-striped table-bordered" style="width: 100%">
-		<thead>
-			<tr>
-				<th data-data="codi"><spring:message code="entitat.list.taula.columna.codi" /></th>
-				<th data-data="nom"><spring:message code="entitat.list.taula.columna.nom" /></th>
-				<th data-data="cif"><spring:message code="entitat.list.taula.columna.cif" /></th>
-				<th data-data="tipus"><spring:message code="entitat.list.taula.columna.tipus" /></th>
-				<th data-data="activa"><spring:message code="entitat.list.taula.columna.activa" /></th>
-				<th data-data="usuaris"></th>
-				<th data-data="serveis"></th>
-				<th data-data="id"></th>
-			</tr>
-		</thead>
-	</table>
+		<div class="clearfix"></div>
+		
+	<div class="container-fluid">	
+		<div style="position: relative; top: -40px; z-index:0">
+		<table id="table-entitats" class="table table-striped table-bordered" style="width: 100%">
+			<thead>
+				<tr>
+					<th data-data="codi"><spring:message code="entitat.list.taula.columna.codi" /></th>
+					<th data-data="nom"><spring:message code="entitat.list.taula.columna.nom" /></th>
+					<th data-data="cif"><spring:message code="entitat.list.taula.columna.cif" /></th>
+					<th data-data="tipus"><spring:message code="entitat.list.taula.columna.tipus" /></th>
+					<th data-data="activa"><spring:message code="entitat.list.taula.columna.activa" /></th>
+					<th data-data="usuaris"></th>
+					<th data-data="serveis"></th>
+					<th data-data="id"></th>
+				</tr>
+			</thead>
+		</table>
+		</div>
 	</div>
 <script id="template-nom" type="x-tmpl-mustache">
 {{{ span-label }}}

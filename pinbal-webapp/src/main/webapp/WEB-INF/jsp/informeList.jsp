@@ -11,31 +11,52 @@
 	<script src="<c:url value="/js/jquery.maskedinput.js"/>"></script>
 </head>
 <body>
+	
+	<div class="container-fluid">
+		<div class="row">
+			<div class="well">
+				<h4>
+				<spring:message code="informe.list.informe.procediments"/>
+				<a href="informe/procediments" class="btn btn-default pull-right"><i class="glyphicon-download"></i>&nbsp;<spring:message code="informe.list.generar"/></a>
+				</h4>
+			</div>
+		</div>
+	</div>	
+		
+	<div class="container-fluid">
+		<div class="row">
+			<div class="well">
+					<h4>
+						<spring:message code="informe.list.informe.usuaris"/>
+						<a href="informe/usuaris" class="btn btn-default pull-right"><i class="glyphicon-download"></i>&nbsp;<spring:message code="informe.list.generar"/></a>
+					</h4>
+			</div>
+		</div>
+	</div>
+	<div class="container-fluid">
+		<div class="row">
+			<div class="well">
+				<h4>
+						<spring:message code="informe.list.informe.serveis"/>
+						<a href="informe/serveis" class="btn btn-default pull-right"><i class="glyphicon-download"></i>&nbsp;<spring:message code="informe.list.generar"/></a>
+				</h4>
+			</div>
+		</div>
+	</div>
+			
+	<div class="container-fluid">
+		<div class="row">
+			<div class="well">
+				<h4>
+					<spring:message code="informe.list.informe.generalEstat"/>
+					<a href="#modal-form-filtre" onclick="showModalFiltrar()" class="btn btn-default pull-right"><i class="glyphicon-download"></i>&nbsp;<spring:message code="informe.list.generar"/></a>
+				</h4>
+			</div>
+		</div>
+	</div>
 
-	<div class="well well-sm">
-		<h4>
-			<spring:message code="informe.list.informe.procediments"/>
-			<a href="informe/procediments" class="btn pull-right"><i class="glyphicon-download"></i>&nbsp;<spring:message code="informe.list.generar"/></a>
-		</h4>
-	</div>
-	<div class="well well-sm">
-		<h4>
-			<spring:message code="informe.list.informe.usuaris"/>
-			<a href="informe/usuaris" class="btn pull-right"><i class="glyphicon-download"></i>&nbsp;<spring:message code="informe.list.generar"/></a>
-		</h4>
-	</div>
-	<div class="well well-sm">
-		<h4>
-			<spring:message code="informe.list.informe.serveis"/>
-			<a href="informe/serveis" class="btn pull-right"><i class="glyphicon-download"></i>&nbsp;<spring:message code="informe.list.generar"/></a>
-		</h4>
-	</div>
-	<div class="well well-sm">
-		<h4>
-			<spring:message code="informe.list.informe.generalEstat"/>
-			<a href="#modal-form-filtre" onclick="showModalFiltrar()" class="btn pull-right"><i class="glyphicon-download"></i>&nbsp;<spring:message code="informe.list.generar"/></a>
-		</h4>
-	</div>
+		
+
 
 	<div id="modal-filtre-dates" class="modal fade">
 		<div class="modal-content">

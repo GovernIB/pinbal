@@ -107,10 +107,11 @@
 		<fieldset>
 			<legend><spring:message code="consulta.form.dades.generiques"/></legend>
 			<div class="clearfix legend-margin-bottom"></div>
-			<div class="row">
-				<div class="col-md-6">
-				<label class="control-label" for="${campPath}"><spring:message code="consulta.form.camp.funcionari.nom"/> *</label>
-					<pbl:inputText name="funcionariNom" inline="true" placeholderKey="consulta.form.camp.funcionari.nom"/>
+			<div class="container-fluid">
+				<div class="row">
+					<div class="col-md-6">
+						<label class="control-label" for="${campPath}"><spring:message code="consulta.form.camp.funcionari.nom"/> *</label>
+						<pbl:inputText name="funcionariNom" inline="true" placeholderKey="consulta.form.camp.funcionari.nom"/>
 <%-- 					<c:set var="campPath" value="funcionariNom"/> --%>
 <%-- 					<c:set var="campErrors"><form:errors path="${campPath}"/></c:set> --%>
 <%-- 					<div class="form-group<c:if test="${not empty campErrors}"> error</c:if>"> --%>
@@ -119,7 +120,7 @@
 <%-- 							<form:input path="${campPath}" cssClass="form-group" id="${campPath}"/> --%>
 <%-- 							<form:errors path="${campPath}" cssClass="help-block"/> --%>
 <!-- 						</div> -->
-				</div>
+					</div>
 	
 				<div class="col-md-6">
 				
@@ -135,14 +136,15 @@
 <%-- 							<form:errors path="${campPath}" cssClass="help-block"/> --%>
 <!-- 						</div> -->
 				</div>
-			</div>	
+				</div>	
 		
-			<div class="container-fluid">
+			
 				<div class="row">
-				<pbl>
 					<div class="col-md-6">
-					<label class="control-label" for="${campPath}"><spring:message code="consulta.form.camp.entitat.nom"/></label> 
-						<pbl:inputText name="entitatNom" inline="true" placeholderKey="consulta.form.camp.entitat.nom"/>
+						<label class="control-label" for="${campPath}"><spring:message code="consulta.form.camp.entitat.nom"/></label>
+						<pbl:inputText name="entitatNom" inline="true" placeholderKey="consulta.form.camp.entitat.nom">
+			
+			
 <%-- 					<c:set var="campPath" value="entitatNom"/> --%>
 <%-- 					<c:set var="campErrors"><form:errors path="${campPath}"/></c:set> --%>
 <%-- 					<div class="form-group<c:if test="${not empty campErrors}"> error</c:if>"> --%>
@@ -151,23 +153,23 @@
 <%-- 							<form:input path="${campPath}" cssClass="col-md-12" id="${campPath}" disabled="true"/> --%>
 <%-- 							<form:errors path="${campPath}" cssClass="help-block"/> --%>
 						</div>
+				
+			
+					<div class="col-md-6">
+						<label class="control-label" for="${campPath}"><spring:message code="consulta.form.camp.entitat.cif"/></label> 
+						<pbl:inputText name="entitatCif" inline="true" placeholderKey="consulta.form.camp.entitat.cif"/>
+	<%-- 					<c:set var="campPath" value="entitatCif"/> --%>
+	<%-- 					<c:set var="campErrors"><form:errors path="${campPath}"/></c:set> --%>
+	<%-- 					<div class="form-group<c:if test="${not empty campErrors}"> error</c:if>"> --%>
+	<%-- 						
+	<!-- 						<div class="controls"> -->
+	<%-- 							<form:input path="${campPath}" cssClass="col-md-12" id="${campPath}" disabled="true"/> --%>
+	<%-- 							<form:errors path="${campPath}" cssClass="help-block"/> --%>
+	<!-- 						</div> -->
+	<!-- 					</div> -->
 					</div>
 				</div>
-				<div class="col-md-6">
-					<label class="control-label" for="${campPath}"><spring:message code="consulta.form.camp.entitat.cif"/></label> 
-					<pbl:inputText name="entitatCif" inline="true" placeholderKey="consulta.form.camp.entitat.cif"/>
-<%-- 					<c:set var="campPath" value="entitatCif"/> --%>
-<%-- 					<c:set var="campErrors"><form:errors path="${campPath}"/></c:set> --%>
-<%-- 					<div class="form-group<c:if test="${not empty campErrors}"> error</c:if>"> --%>
-<%-- 						
-<!-- 						<div class="controls"> -->
-<%-- 							<form:input path="${campPath}" cssClass="col-md-12" id="${campPath}" disabled="true"/> --%>
-<%-- 							<form:errors path="${campPath}" cssClass="help-block"/> --%>
-<!-- 						</div> -->
-<!-- 					</div> -->
-				</div>
-			</div>
-		</div>	
+		
 			<div class="row">
 				<div class="col-md-6">
 				
@@ -186,19 +188,20 @@
 <%-- 							<form:errors path="${campPath}" cssClass="help-block"/> --%>
 <!-- 						</div> -->
 					</div>
-				</div>
+			
 				<div class="col-md-6">
-					<c:set var="campPath" value="departamentNom"/>
-					<c:set var="campErrors"><form:errors path="${campPath}"/></c:set>
-					<div class="form-group<c:if test="${not empty campErrors}"> error</c:if>">
-						<label class="control-label" for="${campPath}"><spring:message code="consulta.form.camp.departament"/> *</label>
-						<div class="controls">
-							<form:input path="${campPath}" cssClass="col-md-12" id="${campPath}"/>
-							<form:errors path="${campPath}" cssClass="help-block"/>
-						</div>
-					</div>
+					<pbl:inputText name="departamentNom" inline="true" placeholderKey="consulta.form.camp.departament"/>
+<%-- 					<c:set var="campPath" value="departamentNom"/> --%>
+<%-- 					<c:set var="campErrors"><form:errors path="${campPath}"/></c:set> --%>
+<%-- 					<div class="form-group<c:if test="${not empty campErrors}"> error</c:if>"> --%>
+<%-- 						<label class="control-label" for="${campPath}"><spring:message code="consulta.form.camp.departament"/> *</label> --%>
+<%-- 						<div class="controls"> --%>
+<%-- 							<form:input path="${campPath}" cssClass="col-md-12" id="${campPath}"/> --%>
+<%-- 							<form:errors path="${campPath}" cssClass="help-block"/> --%>
+<%-- 						</div> --%>
 				</div>
-			</div>
+				</div>
+			
 			<div class="row">
 				<div class="col-md-12">
 					<c:set var="campPath" value="finalitat"/>
@@ -212,34 +215,35 @@
 					</div>
 				</div>
 			</div>
+		</div>	
 		</fieldset>
 
 		<c:if test="${serveiMultiple}">
-		<ul id="tabs-simple-multiple" class="nav nav-tabs">
-			<li<c:if test="${tabSimpleActiu}"> class="active"</c:if>><a href="#tab-simple" data-toggle="tab"><spring:message code="consulta.form.tipus.simple"/></a></li>
- 			<li<c:if test="${tabMultipleActiu}"> class="active"</c:if>><a href="#tab-multiple" data-toggle="tab"><spring:message code="consulta.form.tipus.multiple"/></a></li>
- 		</ul>
- 		<div class="tab-content">
- 			<div class="tab-pane<c:if test="${tabSimpleActiu}"> active</c:if>" id="tab-simple">
+			<ul id="tabs-simple-multiple" class="nav nav-tabs">
+				<li<c:if test="${tabSimpleActiu}"> class="active"</c:if>><a href="#tab-simple" data-toggle="tab"><spring:message code="consulta.form.tipus.simple"/></a></li>
+	 			<li<c:if test="${tabMultipleActiu}"> class="active"</c:if>><a href="#tab-multiple" data-toggle="tab"><spring:message code="consulta.form.tipus.multiple"/></a></li>
+ 			</ul>
+ 			<div class="tab-content"></div>
+ 			<div class="tab-pane<c:if test="${tabSimpleActiu}"> active</c:if>" id="tab-simple"></div>
 		</c:if>
-
-		<div class="row">
-			<div class="col-md-6">
-				<c:set var="campPath" value="expedientId"/>
-				<c:set var="campErrors"><form:errors path="${campPath}"/></c:set>
-				<div class="form-group<c:if test="${not empty campErrors}"> error</c:if>">
-					<label class="control-label" for="${campPath}"><spring:message code="consulta.form.camp.expedient"/></label>
-					<div class="controls">
-						<form:input path="${campPath}" cssClass="col-md-12" id="${campPath}"/>
-						<form:errors path="${campPath}" cssClass="help-block"/>
+		<div class="container-fluid">
+			<div class="row">
+				<div class="col-md-6">
+					<c:set var="campPath" value="expedientId"/>
+					<c:set var="campErrors"><form:errors path="${campPath}"/></c:set>
+					<div class="form-group<c:if test="${not empty campErrors}"> error</c:if>">
+						<label class="control-label" for="${campPath}"><spring:message code="consulta.form.camp.expedient"/></label>
+						<div class="controls">
+							<form:input path="${campPath}" cssClass="col-md-12" id="${campPath}"/>
+							<form:errors path="${campPath}" cssClass="help-block"/>
+						</div>
 					</div>
 				</div>
+				<div class="col-md-12"></div>
 			</div>
-			<div class="col-md-12">
-			</div>
-		</div>
-		<c:set var="mostrarDadesTitular" value="${servei.pinbalActiuCampNom or servei.pinbalActiuCampLlinatge1 or servei.pinbalActiuCampLlinatge2 or servei.pinbalActiuCampNomComplet or servei.pinbalActiuCampDocument}"/>
-		<c:if test="${mostrarDadesTitular}">
+		</div>	
+<%-- 		<c:set var="mostrarDadesTitular" value="${servei.pinbalActiuCampNom or servei.pinbalActiuCampLlinatge1 or servei.pinbalActiuCampLlinatge2 or servei.pinbalActiuCampNomComplet or servei.pinbalActiuCampDocument}"> --%>
+<%-- 		<c:if test="${mostrarDadesTitular}"/> --%>
 			<fieldset>
 				<legend><spring:message code="consulta.form.dades.titular"/></legend>
 				<div class="clearfix legend-margin-bottom"></div>

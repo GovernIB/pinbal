@@ -22,6 +22,31 @@
 	<script src="<c:url value="/webjars/datatables-plugins/1.10.20/dataRender/datetime.js"/>"></script>
 	<script src="<c:url value="/webjars/momentjs/2.24.0/min/moment.min.js"/>"></script>
 	
+	<script src="<c:url value="/webjars/datatables.net-select/1.1.2/js/dataTables.select.min.js"/>"></script>
+	<link href="<c:url value="/webjars/datatables.net-select-bs/1.1.2/css/select.bootstrap.min.css"/>" rel="stylesheet"></link>
+	<link href="<c:url value="/webjars/select2/4.0.6-rc.1/dist/css/select2.min.css"/>" rel="stylesheet"/>
+	<link href="<c:url value="/webjars/select2-bootstrap-theme/0.1.0-beta.4/dist/select2-bootstrap.min.css"/>" rel="stylesheet"/>
+	<link href="<c:url value="/css/select2.css"/>" rel="stylesheet"/>
+	<link href="<c:url value="/css/select2-bootstrap.css"/>" rel="stylesheet"/>
+	<link href="<c:url value="/webjars/bootstrap-datepicker/1.6.1/dist/css/bootstrap-datepicker.min.css"/>" rel="stylesheet"/>
+	<script src="<c:url value="/webjars/select2/4.0.6-rc.1/dist/js/select2.min.js"/>"></script>
+	<script src="<c:url value="/webjars/select2/4.0.6-rc.1/dist/js/i18n/${requestLocale}.js"/>"></script>
+	<script src="<c:url value="/webjars/bootstrap-datepicker/1.6.1/dist/js/bootstrap-datepicker.min.js"/>"></script>
+	<script src="<c:url value="/webjars/jsrender/1.0.0-rc.70/jsrender.min.js"/>"></script>
+	<script src="<c:url value="/js/webutil.common.js"/>"></script>
+	<script src="<c:url value="/js/webutil.datatable.js"/>"></script>
+	<script src="<c:url value="/js/webutil.modal.js"/>"></script>
+	<script src="<c:url value="/webjars/datatables/1.10.21/js/jquery.dataTables.min.js"/>"></script> 
+ 	<script src="<c:url value="/webjars/datatables/1.10.21/js/dataTables.bootstrap.min.js"/>"></script> 
+	<script src="<c:url value="/webjars/mustache.js/3.0.1/mustache.min.js"/>"></script>
+	<script src="<c:url value="/webjars/bootstrap-datepicker/1.6.1/dist/js/bootstrap-datepicker.min.js"/>"></script>
+	<script src="<c:url value="/webjars/bootstrap-datepicker/1.6.1/dist/locales/bootstrap-datepicker.${requestLocale}.min.js"/>"></script>
+	<script type="text/javascript" src="<c:url value="/js/select2.min.js"/>"></script>
+	<script src="<c:url value="/webjars/datatables-plugins/1.10.20/dataRender/datetime.js"/>"></script>
+	<script src="<c:url value="/webjars/momentjs/2.24.0/min/moment.min.js"/>"></script>
+	<script src="<c:url value="/webjars/datatables.net/1.10.11/js/jquery.dataTables.min.js"/>"></script>
+	<script src="<c:url value="/webjars/datatables.net-bs/1.10.11/js/dataTables.bootstrap.min.js"/>"></script>
+	
 
 	
 	
@@ -108,7 +133,7 @@
 <%-- 						<spring:message var="placeholderCodi" code="servei.list.filtre.camp.codi"/> --%>
 <%-- 						<form:input path="${campPath}" cssClass="form-control col-md-3" id="${campPath}" placeholder="${placeholderCodi}"/> --%>
 				</div>
-				<div class="form-group col-md-2">	
+				<div class="col-md-2">	
 					<pbl:inputText name="descripcio"  inline="true" placeholderKey="servei.list.filtre.camp.descripcio"/>
 <%-- 					<c:set var="campPath" value="descripcio"/> --%>
 <%-- 					<spring:message var="placeholderDescripcio" code="servei.list.filtre.camp.descripcio"/> --%>
@@ -126,24 +151,26 @@
 <%-- 						<form:options items="${emisors}" itemLabel="nom" itemValue="id"/> --%>
 <%-- 					</form:select> --%>
 				</div>
-				<div class="form-group col-md-2">	
-<%-- 				<pbl:inputSelect name="activa"  inline="true" placeholderKey="entitat.list.filtre.camp.activa --%>
-<%-- 					 optionItems="${emisors}" --%>
-<%-- 					 	optionValueAttribute="id" --%>
-<%-- 					 	optionTextAttribute="nom" --%>
-				
-					<c:set var="campPath" value="activa"/>
-					<spring:message var="trueValue" code="entitat.list.filtre.camp.activa.yes"/>
-					<spring:message var="falseValue" code="entitat.list.filtre.camp.activa.no"/>
-					<form:select path="${campPath}" class="form-control col-md-12">
-						<option value=""><spring:message code="entitat.list.filtre.camp.activa"/></option>>
-						<form:option value="true">${trueValue}</form:option>>
-						<form:option value="false">${falseValue}</form:option>>
-					</form:select>
+				<div class="col-md-2">	
+					<pbl:inputSelect name="activa"  inline="true" placeholderKey="entitat.list.filtre.camp.activa" 
+					 optionItems="${trueValue}"
+							emptyOption="true"/>
+							
+<%-- 					<c:set var="campPath" value="activa"/> --%>
+<%-- 					<spring:message var="trueValue" code="entitat.list.filtre.camp.activa.yes"/> --%>
+<%-- 					<spring:message var="falseValue" code="entitat.list.filtre.camp.activa.no"/> --%>
+<%-- 					<form:select path="${campPath}" class="form-control col-md-12"> --%>
+<%-- 						<option value=""><spring:message code="entitat.list.filtre.camp.activa"/></option>> --%>
+<%-- 						<form:option value="true">${trueValue}</form:option>> --%>
+<%-- 						<form:option value="false">${falseValue}</form:option>> --%>
+<%-- 					</form:select> --%>
+<!-- 				</div> -->
 				</div>
-				<div class="pull-right">
-					<button id="netejar-filtre" class="btn-default" type="button"><spring:message code="comu.boto.netejar"/></button>
-					<button type="submit" class="btn btn-primary"><spring:message code="comu.boto.filtrar"/></button>
+				<div class="col-md-4">
+					<div class="pull-right">
+						<button id="netejar-filtre" class="btn btn-default" type="button"><spring:message code="comu.boto.netejar"/></button>
+						<button type="submit" class="btn btn-primary"><spring:message code="comu.boto.filtrar"/></button>
+					</div>
 				</div>
 		</div>
 	</div>
@@ -152,35 +179,34 @@
 	
 	<div class="container-fluid">
 		<div class="row">
-			<div class="col-md-12">
-				<a class="btn pull-right" href="<c:url value="/servei/new"/>"><i class="glyphicon-plus"></i>&nbsp;<spring:message code="servei.list.boto.nou.servei"/></a>
+				<div class="pull-right">
+				<a class="btn btn-primary" href="<c:url value="/servei/new"/>"><i class="glyphicon-plus"></i>&nbsp;<spring:message code="servei.list.boto.nou.servei"/></a>
 			</div>
-			<div class="clearfix"></div>
+			
 		</div>
-	</div>	
-
-	<div class="row">
-		<div class="col-md-12">
-			<a class="btn pull-right" href="<c:url value="/servei/new"/>"><i class="glyphicon-plus"></i>&nbsp;<spring:message code="servei.list.boto.nou.servei"/></a>
-		</div>
-		<div class="clearfix"></div>
+			
 	</div>
 	
-	<div class="clearfix"></div>
-	<div style="position: relative; top: -40px; z-index:0">
-	<table id="table-serveis" class="table table-striped table-bordered" style="width: 100%">
-		<thead>
-			<tr>
-				<th data-data="codi"><spring:message code="servei.list.taula.columna.codi" /></th>
-				<th data-data="descripcio"><spring:message code="servei.list.taula.columna.descripcio" /></th>
-				<th data-data="scspEmisor.nom"><spring:message code="servei.list.taula.columna.emissor" /></th>
-				<th data-data="numeroProcedimentsAssociats"></th>
-				<th data-data="id"></th>
-			</tr>
-		</thead>
-	</table>
-	</div>
+	 <label>&nbsp;</label> 	
+		<div class="clearfix"></div>
 
+	
+	<div class="clearfix"></div>
+	<div class="container-fluid">
+		<div style="position: relative; top: -40px; z-index:0">
+		<table id="table-serveis" class="table table-striped table-bordered" style="width: 100%">
+			<thead>
+				<tr>
+					<th data-data="codi"><spring:message code="servei.list.taula.columna.codi" /></th>
+					<th data-data="descripcio"><spring:message code="servei.list.taula.columna.descripcio" /></th>
+					<th data-data="scspEmisor.nom"><spring:message code="servei.list.taula.columna.emissor" /></th>
+					<th data-data="numeroProcedimentsAssociats"></th>
+					<th data-data="id"></th>
+				</tr>
+			</thead>
+		</table>
+		</div>
+</div>
 <div id="modal-procediment-list" class="modal" tabindex="-1" role="dialog">
   <div class="modal-dialog" role="document">
     <div class="modal-content">

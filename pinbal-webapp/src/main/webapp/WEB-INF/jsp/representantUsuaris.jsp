@@ -261,7 +261,7 @@ function showModalEditar(
 			<div class="col-md-4">	
 					
 					<div class="pull-right">
-						<button id="netejar-filtre" class="btn-default" type="button"><spring:message code="comu.boto.netejar"/></button>
+						<button id="netejar-filtre" class="btn btn-default" type="button"><spring:message code="comu.boto.netejar"/></button>
 						<button type="submit" class="btn btn-primary"><spring:message code="comu.boto.filtrar"/></button>
 					
 					</div>

@@ -59,11 +59,11 @@
 						<div class="col-md-3">
 							<label for="id_label_multiple" class="col-md-12">
 							
-<%-- 							<pbl:inputSelect name="entitat" inline="true"  placeholderKey="admin.consulta.list.entitat.seleccio"/> --%>
+<%-- 							<pbl:inputSelect name="entitat.id" inline="true"  placeholderKey="admin.consulta.list.entitat.seleccio" --%>
 <%-- 								optionItems="${entitats}" --%>
-<!-- 								optionTextKeyAttribute="entitat" -->
+<%-- 								optionTextKeyAttribute="${entitat.id}" --%>
 <%-- 								optionTextAttribute="${entitat.id}" --%>
-<!-- 								emptyOption="true"/> -->
+<%-- 								emptyOption="true"/> --%>
 							
 			  					<select class="form-control" name="entitatId" id="select-entitat" data-toggle="select2"  data-netejar="${netejar}"  data-minimumresults="4" data-enum-value="entitatId">
 									<option value=""><spring:message code="admin.consulta.list.entitat.seleccio"/></option>
@@ -75,15 +75,14 @@
 									</c:when>
 									<c:otherwise><form:options/></c:otherwise>
 								</c:choose>
-							</select>
+								</select>
 							</label>
 						</div>
 						<div class="col-md-3">
 							<button type="submit" class="btn btn-primary" style="height: 36px;"><spring:message code="comu.boto.seleccionar"/></button>
 						</div>
 					</div>
-				</div>	
-			</div>				
+				</div>				
 			</form>
 		</c:when>
 		<c:otherwise>
@@ -218,7 +217,7 @@
 				<div class="col-md-2 pull-right">
 					<div class="pull-right">
 <!-- 							<label>&nbsp;</label> -->
-							<button id="netejar-filtre" class="btn-default" type="button"><spring:message code="comu.boto.netejar"/></button>
+							<button id="netejar-filtre" class="btn btn-default" type="button"><spring:message code="comu.boto.netejar"/></button>
 							<button class="btn btn-primary" type="submit"><spring:message code="comu.boto.filtrar"/></button>		
 					</div>
 				</div>

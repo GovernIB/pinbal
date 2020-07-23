@@ -77,7 +77,7 @@
 
 	<div class="container-fluid">
 		<div class="col-md-12">
-			<a class="btn col-md-pull-right" href="<c:url value="/scsp/emissorcert/new"/>"><i class="glyphicon-plus"></i>&nbsp;<spring:message code="emissorcert.list.boto.nou.registre"/></a>
+			<a class="btn btn-primary pull-right" href="<c:url value="/scsp/emissorcert/new"/>"><i class="glyphicon-plus"></i>&nbsp;<spring:message code="emissorcert.list.boto.nou.registre"/></a>
 		</div>
 		<div class="clearfix"></div>
 	</div>

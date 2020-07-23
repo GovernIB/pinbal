@@ -200,28 +200,33 @@ table.dataTable thead > tr.selectable > :first-child, table.dataTable tbody > tr
 							<button id="netejar-filtre" class="btn btn-default" type="button"><spring:message code="comu.boto.netejar"/></button>
 							<button class="btn btn-primary" type="submit"><spring:message code="comu.boto.filtrar"/></button>
 						</div>
-			</div>
+				</div>
 				
 		</div>
+	</div>
 
 		</form:form>
 
 	<div class="clearfix"></div>
-	<table id="table-consultes" class="table table-striped table-bordered" style="width: 100%">
-		<thead>
-			<tr>
-				<th data-data="scspPeticionId"><spring:message code="consulta.list.taula.peticion.id" /></th>
-				<th data-data="creacioData"><spring:message code="consulta.list.taula.data" /></th>
-				<th data-data="procedimentNom"><spring:message code="consulta.list.taula.procediment" /></th>
-				<th data-data="serveiDescripcio"><spring:message code="consulta.list.taula.servei" /></th>
-				<th data-data="titularNomSencer"><spring:message code="consulta.list.taula.titular.nom" /></th>
-				<th data-data="titularDocumentAmbTipus"><spring:message code="consulta.list.taula.titular.document" /></th>				
-				<th data-data="estat"><spring:message code="consulta.list.taula.estat" /></th>
-				<th data-data="id"></th>
-				<th data-data="id"></th>
-			</tr>
-		</thead>
-	</table>
+	
+	<div class="container-fluid">
+		<table id="table-consultes" class="table table-striped table-bordered" style="width: 100%">
+			<thead>
+				<tr>
+					<th data-data="scspPeticionId"><spring:message code="consulta.list.taula.peticion.id" /></th>
+					<th data-data="creacioData"><spring:message code="consulta.list.taula.data" /></th>
+					<th data-data="procedimentNom"><spring:message code="consulta.list.taula.procediment" /></th>
+					<th data-data="serveiDescripcio"><spring:message code="consulta.list.taula.servei" /></th>
+					<th data-data="titularNomSencer"><spring:message code="consulta.list.taula.titular.nom" /></th>
+					<th data-data="titularDocumentAmbTipus"><spring:message code="consulta.list.taula.titular.document" /></th>				
+					<th data-data="estat"><spring:message code="consulta.list.taula.estat" /></th>
+					<th data-data="id"></th>
+					<th data-data="id"></th>
+				</tr>
+			</thead>
+		</table>
+	</div>
+		
 <script type="text/javascript">
 $(document).ready(function() {
 	$('#netejar-filtre').click(function() {
