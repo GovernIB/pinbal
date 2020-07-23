@@ -3,6 +3,7 @@
 
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
+<%@ taglib tagdir="/WEB-INF/tags/pinbal" prefix="pbl" %>
 
 <html>
 <head>

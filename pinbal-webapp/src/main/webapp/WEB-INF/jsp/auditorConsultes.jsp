@@ -267,11 +267,11 @@ $(document).ready(function() {
 		<%-- 									<input type="text" name="${campPath}"<c:if test="${not empty status.value}"> value="${status.value}"</c:if> class="form-control" placeholder="<spring:message code="auditor.list.filtre.funcionari.document"/>"> --%>
 		<%-- 								</spring:bind> --%>
 					</div>
-			
+						
+						<label>&nbsp;</label>
 			
 					<div class="col-md-2 ">
-						<div class="pull-right">
-							<label>&nbsp;</label>
+						
 							<button id="netejar-filtre" class="btn btn-default" type="button"><spring:message code="comu.boto.netejar"/></button>
 							<button class="btn btn-primary" type="submit"><spring:message code="comu.boto.filtrar"/></button>
 						</div>

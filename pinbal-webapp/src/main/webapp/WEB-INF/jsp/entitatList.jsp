@@ -169,8 +169,7 @@ $(document).ready(function() {
 				</div>
 			
 				<div class="col-md-2">
-					<pbl:inputSelect name="activa" inline="true"  placeholderKey="en.
-					titat.list.filtre.camp.activa.yes"	optionItems="" emptyOption="true"/>
+					<pbl:inputSelect name="activa" inline="true"  placeholderKey="entitat.list.filtre.camp.activa.yes"	optionItems="${campPath}" emptyOption="true"/>
 <%-- 					<c:set var="campPath" value="activa"/> --%>
 <%-- 					<spring:message var="trueValue" code="entitat.list.filtre.camp.activa.yes"/> --%>
 <%-- 					<spring:message var="falseValue" code="entitat.list.filtre.camp.activa.no"/> --%>
