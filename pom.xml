@@ -16,7 +16,7 @@
 		<scsp.beans.version>4.3.0</scsp.beans.version>
 		<scsp.rampart.core.version>1.6.4.1</scsp.rampart.core.version>
 		<axis2.version>1.6.4</axis2.version>
-		<jackson.version>2.7.0</jackson.version>
+		<jackson.version>2.6.3</jackson.version>
 		<poi.version>3.9</poi.version>
 		<axiom.version>1.2.15</axiom.version>
 		<rampart.version>1.6.4</rampart.version>
