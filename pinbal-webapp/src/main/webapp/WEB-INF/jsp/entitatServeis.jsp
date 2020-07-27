@@ -6,10 +6,12 @@
 <html>
 <head>
 	<title><spring:message code="entitat.list.titol"/></title>
+	<link href="<c:url value="/webjars/datatables/1.10.21/css/dataTables.bootstrap.min.css"/>" rel="stylesheet"/>
+	
 	<script src="<c:url value="/webjars/datatables/1.10.21/js/jquery.dataTables.min.js"/>"></script>
 	<script src="<c:url value="/webjars/datatables/1.10.21/js/dataTables.bootstrap.min.js"/>"></script>
 	<script src="<c:url value="/webjars/mustache.js/3.0.1/mustache.min.js"/>"></script>
-
+	<script src="<c:url value="/js/webutil.datatable.js"/>"></script>
 <script>
 $(document).ready(function() {
 	$('.confirm-remove').click(function() {
@@ -21,8 +23,8 @@ $(document).ready(function() {
     $('#table-serveis').DataTable({
     	autoWidth: false,
 		processing: true,
+		paging: false,
 		serverSide: true,
-		dom: "<'row'<'col-md-6'i><'col-md-6'>><'row'<'col-md-12'rt>><'row'<'col-md-6'l><'col-md-6'p>>",
 		language: {
             "url": '<c:url value="/js/datatable-language.json"/>'
         },
@@ -39,6 +41,7 @@ $(document).ready(function() {
 			{
 				targets: [3],
 				orderable: false,
+				width: "1%",
 				render: function (data, type, row, meta) {
 					var template = $('#template-swap-actiu').html();
 					return Mustache.render(template, row);
@@ -79,7 +82,7 @@ $(document).ready(function() {
 {{/actiu}}
 </script>
 	<div>
-		<a href="<c:url value="/entitat"/>" class="btn col-md-pull-right"><spring:message code="comu.boto.tornar"/></a>
+		<a href="<c:url value="/entitat"/>" class="btn btn-primary pull-right"><spring:message code="comu.boto.tornar"/></a>
 		<div class="clearfix"></div>
 	</div>
 

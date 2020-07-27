@@ -6,6 +6,8 @@
 <html>
 <head>
 	<title><spring:message code="emissorcert.list.titol"/></title>
+	<link href="<c:url value="/webjars/datatables/1.10.21/css/dataTables.bootstrap.min.css"/>" rel="stylesheet"/>
+	
 	<script src="<c:url value="/webjars/datatables/1.10.21/js/jquery.dataTables.min.js"/>"></script>
 	<script src="<c:url value="/webjars/datatables/1.10.21/js/dataTables.bootstrap.min.js"/>"></script>
 	<script src="<c:url value="/webjars/mustache.js/3.0.1/mustache.min.js"/>"></script>
@@ -13,6 +15,7 @@
 	<script src="<c:url value="/webjars/bootstrap-datepicker/1.6.1/dist/locales/bootstrap-datepicker.ca.min.js"/>"></script>
 	<script src="<c:url value="/webjars/datatables-plugins/1.10.20/dataRender/datetime.js"/>"></script>
 	<script src="<c:url value="/webjars/momentjs/2.24.0/min/moment.min.js"/>"></script>
+	<script src="<c:url value="/js/webutil.datatable.js"/>"></script>
 	
 	<script>
 	$(document).ready(function() {
@@ -61,7 +64,7 @@
 				{
 					targets: [3],
 					orderable: false,
-					width: "10%",
+					width: "1%",
 					render: function (data, type, row, meta) {
 							var template = $('#template-actions').html();
 							return Mustache.render(template, row);
@@ -77,7 +80,7 @@
 
 	<div class="container-fluid">
 		<div class="col-md-12">
-			<a class="btn col-md-pull-right" href="<c:url value="/scsp/emissorcert/new"/>"><i class="glyphicon-plus"></i>&nbsp;<spring:message code="emissorcert.list.boto.nou.registre"/></a>
+			<a class="btn btn-primary pull-right" href="<c:url value="/scsp/emissorcert/new"/>"><i class="glyphicon-plus"></i>&nbsp;<spring:message code="emissorcert.list.boto.nou.registre"/></a>
 		</div>
 		<div class="clearfix"></div>
 	</div>

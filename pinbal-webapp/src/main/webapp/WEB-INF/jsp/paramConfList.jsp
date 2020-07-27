@@ -3,15 +3,19 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
+<%@ taglib tagdir="/WEB-INF/tags/pinbal" prefix="pbl" %>
 
 <html>
 <head>
 	<title><spring:message code="paramconf.list.titol"/></title>
+	<link href="<c:url value="/webjars/datatables/1.10.21/css/dataTables.bootstrap.min.css"/>" rel="stylesheet"/>
+	
 	<script src="<c:url value="/webjars/datatables/1.10.21/js/jquery.dataTables.min.js"/>"></script>
 	<script src="<c:url value="/webjars/datatables/1.10.21/js/dataTables.bootstrap.min.js"/>"></script>
 	<script src="<c:url value="/webjars/mustache.js/3.0.1/mustache.min.js"/>"></script>
 	<script src="<c:url value="/webjars/bootstrap-datepicker/1.6.1/dist/js/bootstrap-datepicker.min.js"/>"></script>
 	<script src="<c:url value="/webjars/bootstrap-datepicker/1.6.1/dist/locales/bootstrap-datepicker.ca.min.js"/>"></script>
+	<script src="<c:url value="/js/webutil.datatable.js"/>"></script>
 	
 	<script>
 	$(document).ready(function() {
@@ -41,7 +45,7 @@
 				{
 					targets: [2],
 					orderable: false,
-					width: "10%",
+					width: "1%",
 					render: function (data, type, row, meta) {
 							var template = $('#template-actions').html();
 							return Mustache.render(template, row);
@@ -55,11 +59,14 @@
 
 </head>
 <body>
-
-	<div class="row">
-		<div class="col-md-12">
-			<a class="btn pull-right" href="<c:url value="/scsp/paramconf/new"/>"><i class="glyphicon-plus"></i>&nbsp;<spring:message code="paramconf.list.boto.nou.registre"/></a>
+	
+	<div class="container-fluid">
+		<div class="row">
+			<div class="pull-right">
+				<a class="btn btn-primary" href="<c:url value="/scsp/paramconf/new"/>"><i class="glyphicon-plus"></i>&nbsp;<spring:message code="paramconf.list.boto.nou.registre"/></a>
+			</div>
 		</div>
+	</div>		
 		<div class="clearfix"></div>
 	</div>
 	<div class="clearfix"></div>

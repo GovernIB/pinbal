@@ -23,7 +23,7 @@ $(document).ready(function() {
 </head>
 <body>
 
-	<form class="form-horizontal">
+	<form class="well">
 		<c:set var="campsPerMostrar" value="${campsSenseAgrupar}" scope="request"/>
 		<jsp:include page="import/dadesEspecifiquesForm.jsp"/>
 		<c:forEach var="grup" items="${grups}">

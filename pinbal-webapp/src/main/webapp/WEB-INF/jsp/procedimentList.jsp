@@ -8,12 +8,12 @@
 <html>
 <head>
 	<title><spring:message code="procediment.list.titol"/></title>
+	<link href="<c:url value="/webjars/datatables/1.10.21/css/dataTables.bootstrap.min.css"/>" rel="stylesheet"/>
+	
 	<script src="<c:url value="/webjars/datatables/1.10.21/js/jquery.dataTables.min.js"/>"></script>
 	<script src="<c:url value="/webjars/datatables/1.10.21/js/dataTables.bootstrap.min.js"/>"></script>
 	<script src="<c:url value="/webjars/mustache.js/3.0.1/mustache.min.js"/>"></script>
-	<link href="<c:url value="/css/select2.css"/>" rel="stylesheet"/>
-	<link href="<c:url value="/css/select2-bootstrap.css"/>" rel="stylesheet"/>
-	
+	<script src="<c:url value="/js/webutil.datatable.js"/>"></script>
 <script>
 $(document).ready(function() {
 	$('#netejar-filtre').click(function() {
@@ -44,6 +44,10 @@ $(document).ready(function() {
 		ajax: '<c:url value="/procediment/datatable/"/>',
 		columnDefs: [
 			{
+				targets: [0, 1, 2],
+				width: "30%"
+			},
+			{
 				targets: [3],
 				render: function (data, type, row, meta) {
 						var template = $('#template-activa').html();
@@ -53,7 +57,7 @@ $(document).ready(function() {
 			{
 				targets: [4],
 				orderable: false,
-				width: "10%",
+				width: "1%",
 				render: function (data, type, row, meta) {
 						var template = $('#template-chg-status').html();
 						return Mustache.render(template, row);
@@ -62,7 +66,7 @@ $(document).ready(function() {
 			{
 				targets: [5],
 				orderable: false,
-				width: "10%",
+				width: "1%",
 				render: function (data, type, row, meta) {
 						var template = $('#template-serveis').html();
 						return Mustache.render(template, row);
@@ -71,7 +75,7 @@ $(document).ready(function() {
 			{
 				targets: [6],
 				orderable: false,
-				width: "10%",
+				width: "1%",
 				render: function (data, type, row, meta) {
 						var template = $('#template-modificar').html();
 						row['propertyEsborrar'] = ${propertyEsborrar};
@@ -81,7 +85,7 @@ $(document).ready(function() {
 			{
 				targets: [7],
 				orderable: false,
-				width: "10%",
+				width: "1%",
 				render: function (data, type, row, meta) {
 						var template = $('#template-eliminar').html();
 						return Mustache.render(template, row);
@@ -103,27 +107,33 @@ $(document).ready(function() {
 			<div class="row">
 
 				 <div class="col-md-2">
-					<c:set var="campPath" value="codi"/>
-					<spring:message var="placeholderCodi" code="procediment.list.filtre.camp.codi"/>
-					<form:input path="${campPath}" cssClass="form-control" id="${campPath}" placeholder="${placeholderCodi}"/>
+				 
+				 <pbl:inputText name="codi" inline="true" placeholderKey="procediment.list.filtre.camp.codi"/>
+<%-- 					<c:set var="campPath" value="codi"/> --%>
+<%-- 					<spring:message var="placeholderCodi" code="procediment.list.filtre.camp.codi"/> --%>
+<%-- 					<form:input path="${campPath}" cssClass="form-control" id="${campPath}" placeholder="${placeholderCodi}"/> --%>
 				</div>
 				<div class="col-md-2">
-					<c:set var="campPath" value="nom"/>
-					<spring:message var="placeholderNom" code="procediment.list.filtre.camp.nom"/>
-					<form:input path="${campPath}" cssClass="form-control" id="${campPath}" placeholder="${placeholderNom}"/>
+				<pbl:inputText name="nom" inline="true" placeholderKey="procediment.list.filtre.camp.nom"/>
+<%-- 					<c:set var="campPath" value="nom"/> --%>
+<%-- 					<spring:message var="placeholderNom" code="procediment.list.filtre.camp.nom"/> --%>
+<%-- 					<form:input path="${campPath}" cssClass="form-control" id="${campPath}" placeholder="${placeholderNom}"/> --%>
 				</div>
-				<div class="col-md-3">	
-					<c:set var="campPath" value="departament"/>
-					<spring:message var="placeholderDepartament" code="procediment.list.filtre.camp.departament"/>
-					<form:input path="${campPath}" cssClass="form-control" id="${campPath}" placeholder="${placeholderDepartament}"/>
+				<div class="col-md-3">
+					<pbl:inputText name="departament" inline="true" placeholderKey="procediment.list.filtre.camp.departament"/>	
+<%-- 					<c:set var="campPath" value="departament"/> --%>
+<%-- 					<spring:message var="placeholderDepartament" code="procediment.list.filtre.camp.departament"/> --%>
+<%-- 					<form:input path="${campPath}" cssClass="form-control" id="${campPath}" placeholder="${placeholderDepartament}"/> --%>
 				</div>
 					
+					
+				<div class="col-md-5" >
+				
 					<div class ="pull-right">
-						<div class="col-md-5" >
-							<button id="netejar-filtre" class="btn-default" type="button"><spring:message code="comu.boto.netejar"/></button>
-							<button type="submit" class="btn btn-primary"><spring:message code="comu.boto.filtrar"/></button>
-						</div>
+						<button id="netejar-filtre" class="btn btn-default" type="button"><spring:message code="comu.boto.netejar"/></button>
+						<button type="submit" class="btn btn-primary"><spring:message code="comu.boto.filtrar"/></button>
 					</div>
+		       </div>        
 			</div>
 			
 			

@@ -7,10 +7,13 @@
 <html>
 <head>
 	<title><spring:message code="procediment.list.titol"/></title>
+	<link href="<c:url value="/webjars/datatables/1.10.21/css/dataTables.bootstrap.min.css"/>" rel="stylesheet"/>
+	
 	<script src="<c:url value="/webjars/datatables/1.10.21/css/jquery.dataTables.min.css"/>"></script>
 	<script src="<c:url value="/webjars/datatables/1.10.21/js/jquery.dataTables.min.js"/>"></script>
 	<script src="<c:url value="/webjars/datatables/1.10.21/js/dataTables.bootstrap.min.js"/>"></script>
-<script src="<c:url value="/webjars/mustache.js/3.0.1/mustache.min.js"/>"></script>
+	<script src="<c:url value="/webjars/mustache.js/3.0.1/mustache.min.js"/>"></script>
+	<script src="<c:url value="/js/webutil.datatable.js"/>"></script>
 </head>
 <body>
 
@@ -29,7 +32,7 @@
 		</thead>
 	</table>
 	<div>
-		<a href="<c:url value="../../servei"/>" class="btn pull-right"><spring:message code="comu.boto.tornar"/></a>
+		<a href="<c:url value="../../servei"/>" class="btn btn-primary pull-right"><spring:message code="comu.boto.tornar"/></a>
 		<div class="clearfix"></div>
 	</div>
 
@@ -80,7 +83,7 @@
 				{
 					targets: [2],
 					orderable: false,
-					width: "10%",
+					width: "1%",
 					render: function (data, type, row, meta) {
 							var template = $('#template-accions').html();
 							return Mustache.render(template, row);

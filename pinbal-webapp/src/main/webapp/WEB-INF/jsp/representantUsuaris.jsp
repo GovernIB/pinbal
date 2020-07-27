@@ -2,8 +2,8 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
-
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
+<%@ taglib tagdir="/WEB-INF/tags/pinbal" prefix="pbl" %>
 
 <%
 	request.setAttribute(
@@ -26,43 +26,14 @@
 <html>
 <head>
 	<title><spring:message code="representant.usuaris.titol"/></title>
-<%-- 	<script src="<c:url value="/webjars/datatables/1.10.21/js/jquery.dataTables.min.js"/>"></script> --%>
-<%-- 	<script src="<c:url value="/webjars/datatables/1.10.21/js/dataTables.bootstrap.min.js"/>"></script> --%>
-<%-- 	<script src="<c:url value="/webjars/mustache.js/3.0.1/mustache.min.js"/>"></script> --%>
-<%-- 	<link href="<c:url value="/css/select2.css"/>" rel="stylesheet"/> --%>
-<%-- 	<link href="<c:url value="/css/select2-bootstrap.css"/>" rel="stylesheet"/> --%>
-	
-	
-	
-	<script src="<c:url value="/webjars/datatables.net-select/1.1.2/js/dataTables.select.min.js"/>"></script>
-	<link href="<c:url value="/webjars/datatables.net-select-bs/1.1.2/css/select.bootstrap.min.css"/>" rel="stylesheet"></link>
-	<link href="<c:url value="/webjars/select2/4.0.6-rc.1/dist/css/select2.min.css"/>" rel="stylesheet"/>
-	<link href="<c:url value="/webjars/select2-bootstrap-theme/0.1.0-beta.4/dist/select2-bootstrap.min.css"/>" rel="stylesheet"/>
+	<link href="<c:url value="/webjars/datatables/1.10.21/css/dataTables.bootstrap.min.css"/>" rel="stylesheet"/>
 	<link href="<c:url value="/css/select2.css"/>" rel="stylesheet"/>
 	<link href="<c:url value="/css/select2-bootstrap.css"/>" rel="stylesheet"/>
-	<link href="<c:url value="/webjars/bootstrap-datepicker/1.6.1/dist/css/bootstrap-datepicker.min.css"/>" rel="stylesheet"/>
-	<script src="<c:url value="/webjars/select2/4.0.6-rc.1/dist/js/select2.min.js"/>"></script>
-	<script src="<c:url value="/webjars/select2/4.0.6-rc.1/dist/js/i18n/${requestLocale}.js"/>"></script>
-	<script src="<c:url value="/webjars/bootstrap-datepicker/1.6.1/dist/js/bootstrap-datepicker.min.js"/>"></script>
-	<script src="<c:url value="/webjars/jsrender/1.0.0-rc.70/jsrender.min.js"/>"></script>
-	<script src="<c:url value="/js/webutil.common.js"/>"></script>
-	<script src="<c:url value="/js/webutil.datatable.js"/>"></script>
-	<script src="<c:url value="/js/webutil.modal.js"/>"></script>
-	<script src="<c:url value="/webjars/datatables/1.10.21/js/jquery.dataTables.min.js"/>"></script> 
- 	<script src="<c:url value="/webjars/datatables/1.10.21/js/dataTables.bootstrap.min.js"/>"></script> 
-	<script src="<c:url value="/webjars/mustache.js/3.0.1/mustache.min.js"/>"></script>
-	<script src="<c:url value="/webjars/bootstrap-datepicker/1.6.1/dist/js/bootstrap-datepicker.min.js"/>"></script>
-	<script src="<c:url value="/webjars/bootstrap-datepicker/1.6.1/dist/locales/bootstrap-datepicker.${requestLocale}.min.js"/>"></script>
-	<script type="text/javascript" src="<c:url value="/js/select2.min.js"/>"></script>
-	<script src="<c:url value="/webjars/datatables-plugins/1.10.20/dataRender/datetime.js"/>"></script>
-	<script src="<c:url value="/webjars/momentjs/2.24.0/min/moment.min.js"/>"></script>
-	<script src="<c:url value="/webjars/datatables.net/1.10.11/js/jquery.dataTables.min.js"/>"></script>
-	<script src="<c:url value="/webjars/datatables.net-bs/1.10.11/js/dataTables.bootstrap.min.js"/>"></script>
 	
-
-
-
-
+	<script src="<c:url value="/webjars/datatables/1.10.21/js/jquery.dataTables.min.js"/>"></script>
+	<script src="<c:url value="/webjars/datatables/1.10.21/js/dataTables.bootstrap.min.js"/>"></script>
+	<script src="<c:url value="/webjars/mustache.js/3.0.1/mustache.min.js"/>"></script>
+	<script src="<c:url value="/js/webutil.datatable.js"/>"></script>
 <script>
 $(document).ready(function() {
 	$('#netejar-filtre').click(function() {
@@ -98,17 +69,24 @@ $(document).ready(function() {
             "url": '<c:url value="/js/datatable-language.json"/>',
         },
 		ajax: '<c:url value="/representant/usuari/datatable"/>',
+		order: [],
 		columnDefs: [
 			{ 
 	            targets: 0,
+	            orderable: false,
 				render: function (data, type, row, meta) {
 					var template = $('#template-usuari').html();
 					return Mustache.render(template, row);
 				}
 	        },
+			{
+				targets: [1],
+				orderable: false
+			}, 
 	        {
 	            targets: 2,
 	            width: "20%",
+	            orderable: false,
 				render: function (data, type, row, meta) {
 					console.log(row)
 					var template = $('#template-rols').html();
@@ -117,7 +95,8 @@ $(document).ready(function() {
 	        },
 	        {
 	            targets: [3],
-	            width: "20%",
+	            width: "1%",
+	            orderable: false,
 	            render: function (data, type, row, meta) {
 	            	console.log(data)
 	            	if (row.usuari.inicialitzat || row.usuari.noInicialitzatCodi){
@@ -131,7 +110,7 @@ $(document).ready(function() {
 			{
 				targets: [4],
 				orderable: false,
-				width: "10%",
+				width: "1%",
 				render: function (data, type, row, meta) {
 					var template = $('#template-actions').html();
 					row['nrow'] = meta['row'];
@@ -233,36 +212,43 @@ function showModalEditar(
 		<div class="container-fluid">
 		  <div class="row">
 		  	<div class="col-md-2">
-				<c:set var="campPath" value="codi"/>
-				<spring:message var="placeholderCodi" code="representant.usuaris.filtre.camp.codi"/>
-					<form:input path="${campPath}"  cssClass="form-control" id="${campPath}" placeholder="${placeholderCodi}"/>
+		  		<pbl:inputText name="codi" inline="true" placeholderKey="representant.usuaris.filtre.camp.codi" />
+<%-- 				<c:set var="campPath" value="codi"/> --%>
+<%-- 				<spring:message var="placeholderCodi" code="representant.usuaris.filtre.camp.codi"/> --%>
+<%-- 					<form:input path="${campPath}"  cssClass="form-control" id="${campPath}" placeholder="${placeholderCodi}"/> --%>
 		  	</div>
 		  
 		  	<div class="col-md-2">	
-				<c:set var="campPath" value="nif"/>
-				<spring:message var="placeholderNif" code="representant.usuaris.filtre.camp.nif"/>
-				<form:input path="${campPath}" cssClass="form-control" id="${campPath}" placeholder="${placeholderNif}"/>
+		  		<pbl:inputText name="nif" inline="true" placeholderKey="representant.usuaris.filtre.camp.nif" />
+<%-- 				<c:set var="campPath" value="nif"/> --%>
+<%-- 				<spring:message var="placeholderNif" code="representant.usuaris.filtre.camp.nif"/> --%>
+<%-- 				<form:input path="${campPath}" cssClass="form-control" id="${campPath}" placeholder="${placeholderNif}"/> --%>
 			</div>	
 			<div class="col-md-2">
-				<c:set var="campPath" value="nom"/>
-				<spring:message var="placeholderNom" code="representant.usuaris.filtre.camp.nom"/>
-				<form:input path="${campPath}" cssClass="form-control" id="${campPath}" placeholder="${placeholderNom}"/>
+			
+			<pbl:inputText name="nom" inline="true" placeholderKey="representant.usuaris.filtre.camp.nom" />
+<%-- 				<c:set var="campPath" value="nom"/> --%>
+<%-- 				<spring:message var="placeholderNom" code="representant.usuaris.filtre.camp.nom"/> --%>
+<%-- 				<form:input path="${campPath}" cssClass="form-control" id="${campPath}" placeholder="${placeholderNom}"/> --%>
 			</div>	
 			<div class="col-md-2">
-				<c:set var="campPath" value="departament"/>
-				<spring:message var="placeholderDepartament" code="representant.usuaris.filtre.camp.departament"/>
-				<form:input path="${campPath}" cssClass="form-control" id="${campPath}" placeholder="${placeholderDepartament}"/>
+				<pbl:inputText name="departament" inline="true" placeholderKey="representant.usuaris.filtre.camp.departament"/>
+<%-- 				<c:set var="campPath" value="departament"/> --%>
+<%-- 				<spring:message var="placeholderDepartament" code="representant.usuaris.filtre.camp.departament"/> --%>
+<%-- 				<form:input path="${campPath}" cssClass="form-control" id="${campPath}" placeholder="${placeholderDepartament}"/> --%>
 			</div>
-			<div class="col-md-3">
-			<div class="pull-right">
-				
-					<button id="netejar-filtre" class="btn-default" type="button"><spring:message code="comu.boto.netejar"/></button>
-					<button type="submit" class="btn btn-primary"><spring:message code="comu.boto.filtrar"/></button>
-				</div>	
-			</div>
+			
+			
+			<div class="col-md-4">	
+					
+					<div class="pull-right">
+						<button id="netejar-filtre" class="btn btn-default" type="button"><spring:message code="comu.boto.netejar"/></button>
+						<button type="submit" class="btn btn-primary"><spring:message code="comu.boto.filtrar"/></button>
+					
+					</div>
+			</div>	
 		</div>	
-	</div>	
-		
+	</div>
 	</form:form>
 			
 			<div class="container-fluid">
@@ -304,7 +290,7 @@ function showModalEditar(
 	{{/aplicacio}}
 </script>
 <script id="template-permisos" type="x-tmpl-mustache">
-	<a class="btn btn-primary" href="<c:url value="/representant/usuari/{{ usuari.codi }}/permis"/>">
+	<a class="btn btn-default" href="<c:url value="/representant/usuari/{{ usuari.codi }}/permis"/>">
 		<i class="fas fa-lock"></i>&nbsp;<spring:message code="comu.boto.permisos"/>
 	</a>
 </script>
