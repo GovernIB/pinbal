@@ -95,16 +95,18 @@
 <%-- 							<form:errors path="${campPath}" cssClass="help-block"/> --%>
 <!-- 						</div> -->
 					</div>
-			</div>
-			<div class="row">
-				<div class="col-md-2">
-					<label class="control-label" for="${campPath}"><spring:message code="entitat.form.camp.tipus"/> *</label>
-					<pbl:inputSelect name="tipus" inline="true" placeholderKey="entitat.form.camp.tipus"
-						optionItems="${entitatTipusLlista}"
-						emptyOption="true"/>
-		<%-- 			<c:set var="campPath" value="tipus"/> --%>
-		<%-- 			<c:set var="campErrors"><form:errors path="${campPath}"/></c:set> --%>
-		<%-- 			<div class="form-group<c:if test="${not empty campErrors}"> error</c:if>"> --%>
+		
+				
+					<div class="col-md-2">
+						
+						<label class="control-label" for="${campPath}"><spring:message code="entitat.form.camp.tipus"/> *</label>
+						<pbl:inputSelect name="tipus" inline="true" placeholderKey="entitat.form.camp.tipus"
+	 						optionItems="${entitatTipusLlista}" 
+	 						emptyOption="true"/>
+							
+<%-- 					<c:set var="campPath" value="tipus"/> --%>
+<%-- 					<c:set var="campErrors"><form:errors path="${campPath}"/></c:set> --%>
+<%-- 					<div class="form-group<c:if test="${not empty campErrors}"> error</c:if>"> --%>
 <%-- 					<label class="control-label" for="${campPath}"><spring:message code="entitat.form.camp.tipus"/> *</label> --%>
 <!-- 					<div class="controls"> -->
 <%-- 					<form:select path="${campPath}"> --%>
@@ -112,15 +114,22 @@
 <%-- 					</form:select> --%>
 <%-- 					<form:errors path="${campPath}" cssClass="help-block"/> --%>
 <!-- 				</div> -->
-				</div>
-			</div>	
-		</fieldset>
-		<div class="conteiner-fluid">
-			<div class="row">
-				<div class="pull-right">
-				<button type="submit" class="btn btn-primary"><spring:message code="comu.boto.guardar"/></button>
-				<a href="<c:url value="/entitat"/>" class="btn btn-default"><spring:message code="comu.boto.cancelar"/></a>
+					</div>
+				
+				<label>&nbsp;</label>
+				<div class="col-md-4">
+					<label>&nbsp;</label>
+					
+					<div class="pull-right">
+						<button type="submit" class="btn btn-primary"><spring:message code="comu.boto.guardar"/></button>
+						<a href="<c:url value="/entitat"/>" class="btn btn-default"><spring:message code="comu.boto.cancelar"/></a>
+					</div>
+				</div>	
 			</div>
+		</div>		
+		</fieldset>
+
+			
 	</form:form>
 
 </body>

@@ -43,7 +43,7 @@ $(document).ready(function() {
 	$('.confirm-esborrar').click(function() {
 		  return confirm("<spring:message code="entitat.list.confirmacio.esborrar"/>");
 	});
-		
+	
     $('#table-entitats').DataTable({
     	autoWidth: false,
 		processing: true,
@@ -158,20 +158,24 @@ $(document).ready(function() {
 				</div>
 			
 				<div class="col-md-2">
-					<pbl:inputSelect name="activa" inline="true"  placeholderKey="entitat.list.filtre.camp.activa.yes"	optionItems="${campPath}" emptyOption="true"/>
-<%-- 					<c:set var="campPath" value="activa"/> --%>
-<%-- 					<spring:message var="trueValue" code="entitat.list.filtre.camp.activa.yes"/> --%>
-<%-- 					<spring:message var="falseValue" code="entitat.list.filtre.camp.activa.no"/> --%>
-<%-- 					<form:select class="form-control" path="${campPath}"> --%>
-<%-- 						<option value=""><spring:message code="entitat.list.filtre.camp.activa"/></option>> --%>
-<%-- 						<form:option value="true">${trueValue}</form:option>> --%>
-<%-- 						<form:option value="false">${falseValue}</form:option>> --%>
-<%-- 					</form:select> --%>
+<%-- 					<pbl:inputSelect name="activa" inline="true"  placeholderKey="entitat.list.filtre.camp.activa.yes"	 --%>
+<%-- 					optionItems="${campPath}"  --%>
+<%-- 					emptyOption="true"/> --%>
+					<c:set var="campPath" value="activa"/>
+					<spring:message var="trueValue" code="entitat.list.filtre.camp.activa.yes"/>
+					<spring:message var="falseValue" code="entitat.list.filtre.camp.activa.no"/>
+					<form:select cssClass="form-control" path="${campPath}">
+						<option value=""><spring:message code="entitat.list.filtre.camp.activa"/></option>>
+						<form:option value="true">${trueValue}</form:option>>
+						<form:option value="false">${falseValue}</form:option>>
+					</form:select>
 				</div>	
 				<div class="col-md-2">
-					<pbl:inputSelect name="activa" inline="true"  placeholderKey="entitat.list.filtre.camp.tipus"
+					<pbl:inputSelect name="tipus" inline="true" 
+						placeholderKey="entitat.list.filtre.camp.tipus"
 						optionItems="${entitatTipusLlista}"
 						emptyOption="true"/>
+						
 <%-- 						<c:set var="campPath" value="tipus"/> --%>
 <%-- 					<form:select class="form-control" path="${campPath}"> --%>
 <%-- 						<option value=""><spring:message code="entitat.list.filtre.camp.tipus"/></option>> --%>

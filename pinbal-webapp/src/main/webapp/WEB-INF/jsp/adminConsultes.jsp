@@ -193,34 +193,35 @@
 <!-- 					</div> -->
 				
 					
-				<div class="col-md-2">
+					<div class="col-md-2">
 					<pbl:inputText name="funcionariNom" inline="true" placeholderKey="admin.consulta.list.filtre.funcionari.nom"/>
 <%-- 						<c:set var="campPath" value="funcionariNom"/> --%>
 <%-- 						<c:set var="campErrors"><form:errors path="${campPath}"/></c:set> --%>
 <%-- 						<spring:bind path="${campPath}"> --%>
 <%-- 							<input type="text" name="${campPath}"<c:if test="${not empty status.value}"> value="${status.value}"</c:if> class="form-control col-md-12" placeholder="<spring:message code="admin.consulta.list.filtre.funcionari.nom"/>"> --%>
 <%-- 						</spring:bind> --%>
-				</div>
-				<div class="col-md-2">	
-					<pbl:inputText name="funcionariDocument" inline="true" placeholderKey="admin.consulta.list.filtre.funcionari.document"/>
+					</div>
+					<div class="col-md-2">	
+						<pbl:inputText name="funcionariDocument" inline="true" placeholderKey="admin.consulta.list.filtre.funcionari.document"/>
 <%-- 						<c:set var="campPath" value="funcionariDocument"/> --%>
 <%-- 						<c:set var="campErrors"><form:errors path="${campPath}"/></c:set> --%>
 <%-- 						<spring:bind path="${campPath}"> --%>
 <%-- 							<input type="text" name="${campPath}"<c:if test="${not empty status.value}"> value="${status.value}"</c:if> class="form-control col-md-12" placeholder="<spring:message code="admin.consulta.list.filtre.funcionari.document"/>"> --%>
 <%-- 						</spring:bind> --%>
-				</div>
-				<div class="col-md-2 pull-right">
-					<div class="pull-right">
+					</div>
+					<div class="col-md-2 pull-right">
+						<div class="pull-right">
 <!-- 							<label>&nbsp;</label> -->
 							<button id="netejar-filtre" class="btn btn-default" type="button"><spring:message code="comu.boto.netejar"/></button>
 							<button class="btn btn-primary" type="submit"><spring:message code="comu.boto.filtrar"/></button>		
+						</div>
 					</div>
-				</div>
 		</div>	
 	</div>		
 		</form:form>
 
 		<div class="clearfix"></div>
+		
 		<table id="table-consultes" class="table table-striped table-bordered" style="width: 100%">
 			<thead>
 				<tr>

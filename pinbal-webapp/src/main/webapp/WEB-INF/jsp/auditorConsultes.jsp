@@ -261,8 +261,10 @@ $(document).ready(function() {
 					</div>
 						
 						<label>&nbsp;</label>
-			
-					<div class="col-md-2 ">
+					
+					
+					<div class="col-md-2">
+						<div class="pull-right">
 						
 							<button id="netejar-filtre" class="btn btn-default" type="button"><spring:message code="comu.boto.netejar"/></button>
 							<button class="btn btn-primary" type="submit"><spring:message code="comu.boto.filtrar"/></button>

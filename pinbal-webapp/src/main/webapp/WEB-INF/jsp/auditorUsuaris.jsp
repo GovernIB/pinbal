@@ -274,7 +274,7 @@ function showModalEditar(
 		</div>
 		<div class="modal-body">
 			<c:url value="/auditor/usuari/save" var="formAction"/>
-			<form id="modal-form" action="${formAction}" method="post" class="form-horizontal">
+			<form id="modal-form" action="${formAction}" method="post" class="well">
 				<input type="hidden" id="modal-hidden-id" name="id" value="${entitat.id}"/>
 				<input type="hidden" id="modal-hidden-codi" name="codi"/>
 				<input type="hidden" id="modal-hidden-nif" name="nif"/>

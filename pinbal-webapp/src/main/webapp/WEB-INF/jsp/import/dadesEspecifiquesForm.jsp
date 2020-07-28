@@ -4,6 +4,9 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
+<%@ taglib tagdir="/WEB-INF/tags/pinbal" prefix="pbl" %>
+
+
 <c:if test="${empty dadesEspecifiquesDisabled}"><c:set var="dadesEspecifiquesDisabled" value="${false}"/></c:if>
 <c:set var="numColumnes" value="${2}"/>
 <c:set var="indexCamp" value="${0}"/>
@@ -28,10 +31,10 @@
 	<c:choose>
 		<c:when test="${camp.visible}">
 			<c:if test="${indexCamp == 0 or (indexCamp % numColumnes) == 0}">
-				<div class="row-fluid">
+				<div class="row">
 			</c:if>
 			<div class="span<fmt:formatNumber value="${12 / numColumnes}" maxFractionDigits="0"/>">
-				<div class="control-group<c:if test="${not empty campError}"> error</c:if>">
+				<div class="form-group<c:if test="${not empty campError}"> error</c:if>">
 	   				<label class="control-label" for="${campId}">
 	   					<c:choose>
 	   						<c:when test="${camp.tipus == 'ETIQUETA'}">&nbsp;</c:when>
@@ -39,32 +42,32 @@
 	   						<c:otherwise>${camp.campNom}<c:if test="${not dadesEspecifiquesDisabled and camp.obligatori}"> *</c:if></c:otherwise>
 	   					</c:choose>
 	   				</label>
-					<div class="controls">
+					<div class="container-fluid">
 						<c:choose>
 							<c:when test="${camp.modificable}">
 								<c:choose>
 									<c:when test="${empty dadaEspecifica.enumeracioValors}">
 										<c:choose>
 											<c:when test="${camp.tipus == 'TEXT' or camp.tipus == 'DOC_IDENT'}">
-												<input type="text" id="${campId}" name="${campId}"<c:if test="${not empty campValorDefecte}"> value="${campValorDefecte}"</c:if><c:if test="${dadesEspecifiquesDisabled}"> disabled="disabled"</c:if><c:if test="${not empty valorDadaEspecifica}"> value="${valorDadaEspecifica}"</c:if> class="span12"/>
+												<input type="text" id="${campId}" name="${campId}"<c:if test="${not empty campValorDefecte}"> value="${campValorDefecte}"</c:if><c:if test="${dadesEspecifiquesDisabled}"> disabled="disabled"</c:if><c:if test="${not empty valorDadaEspecifica}"> value="${valorDadaEspecifica}"</c:if> class="col-md-6"/>
 											</c:when>
 											<c:when test="${camp.tipus == 'NUMERIC'}">
-												<input type="text" id="${campId}" name="${campId}"<c:if test="${not empty campValorDefecte}"> value="${campValorDefecte}"</c:if><c:if test="${dadesEspecifiquesDisabled}"> disabled="disabled"</c:if><c:if test="${not empty valorDadaEspecifica}"> value="${valorDadaEspecifica}"</c:if> class="span12"/>
+												<input type="text" id="${campId}" name="${campId}"<c:if test="${not empty campValorDefecte}"> value="${campValorDefecte}"</c:if><c:if test="${dadesEspecifiquesDisabled}"> disabled="disabled"</c:if><c:if test="${not empty valorDadaEspecifica}"> value="${valorDadaEspecifica}"</c:if> class="col-md-6"/>
 												<script>$("#${campId}").mask("999999999999");</script>
 											</c:when>
 											<c:when test="${camp.tipus == 'DATA'}">
-												<input type="text" id="${campId}" name="${campId}"<c:if test="${not empty campValorDefecte}"> value="${campValorDefecte}"</c:if><c:if test="${dadesEspecifiquesDisabled}"> disabled="disabled"</c:if><c:if test="${not empty valorDadaEspecifica}"> value="${valorDadaEspecifica}"</c:if> class="span12"/>
+												<input type="text" id="${campId}" name="${campId}"<c:if test="${not empty campValorDefecte}"> value="${campValorDefecte}"</c:if><c:if test="${dadesEspecifiquesDisabled}"> disabled="disabled"</c:if><c:if test="${not empty valorDadaEspecifica}"> value="${valorDadaEspecifica}"</c:if> class="col-md-6"/>
 												<script>$("#${campId}").mask("99/99/9999");</script>
 											</c:when>
 											<c:when test="${camp.tipus == 'BOOLEA'}">
 												<c:set var="campChecked" value="${false}"/>
 												<c:if test="${not empty valorDadaEspecifica}"><c:set var="campChecked" value="${valorDadaEspecifica == 'on'}"/></c:if>
-												<input type="checkbox" id="${campId}" name="${campId}"<c:if test="${campChecked}"> checked="checked"</c:if><c:if test="${dadesEspecifiquesDisabled}"> disabled="disabled"</c:if> class="span12"/>
+												<input type="checkbox" id="${campId}" name="${campId}"<c:if test="${campChecked}"> checked="checked"</c:if><c:if test="${dadesEspecifiquesDisabled}"> disabled="disabled"</c:if> class="col-md-6"/>
 												<input type="hidden" name="${campId}" value="off"/>
 											</c:when>
 											<c:when test="${camp.tipus == 'MUNICIPI_3' or camp.tipus == 'MUNICIPI_5'}">
 												<c:set var="codiMunicipiSenseCodiProvincia" value="${camp.tipus == 'MUNICIPI_3'}"/>
-												<select id="${campId}" name="${campId}"<c:if test="${dadesEspecifiquesDisabled}"> disabled="disabled"</c:if> class="span12">
+												<select id="${campId}" name="${campId}"<c:if test="${dadesEspecifiquesDisabled}"> disabled="disabled"</c:if> class="col-md-6">
 													<option value=""><spring:message code="comu.opcio.sense.definir"/></option>
 												</select>
 												<c:choose>
@@ -134,7 +137,7 @@
 												<c:forEach var="candidatFill" items="${campsPerMostrar}">
 													<c:if test="${not empty candidatFill.campPare and candidatFill.campPare.id == camp.id}"><c:set var="campFillId" value="camp_${candidatFill.campPare.id}"/></c:if>
 												</c:forEach>
-												<select id="${campId}" name="${campId}" <c:if test="${dadesEspecifiquesDisabled}"> disabled="disabled"</c:if> class="span12">
+												<select id="${campId}" name="${campId}" <c:if test="${dadesEspecifiquesDisabled}"> disabled="disabled"</c:if> class="col-md-12">
 													<option value=""><spring:message code="comu.opcio.carregant"/></option>
 												</select>
 	<script>
@@ -163,7 +166,7 @@
 												<c:forEach var="candidatFill" items="${campsPerMostrar}">
 													<c:if test="${not empty candidatFill.campPare and candidatFill.campPare.id == camp.id}"><c:set var="campFillId" value="camp_${candidatFill.campPare.id}"/></c:if>
 												</c:forEach>
-												<select id="${campId}" name="${campId}" <c:if test="${dadesEspecifiquesDisabled}"> disabled="disabled"</c:if> class="span12">
+												<select id="${campId}" name="${campId}" <c:if test="${dadesEspecifiquesDisabled}"> disabled="disabled"</c:if> class="col-md-12">
 													<option value=""><spring:message code="comu.opcio.carregant"/></option>
 												</select>
 	<script>
@@ -190,7 +193,7 @@
 											<c:when test="${camp.tipus == 'ADJUNT_BINARI' or camp.tipus == 'ADJUNT_XML'}">
 												<c:choose>
 													<c:when test="${dadesEspecifiquesDisabled}">
-														<input type="text" id="${campId}" name="${campId}" disabled="disabled"<c:if test="${not empty valorDadaEspecifica}"> value="${valorDadaEspecifica}"</c:if> class="span12"/>
+														<input type="text" id="${campId}" name="${campId}" disabled="disabled"<c:if test="${not empty valorDadaEspecifica}"> value="${valorDadaEspecifica}"</c:if> class="col-md-12"/>
 													</c:when>
 													<c:otherwise>
 														<div class="input-append">
@@ -251,7 +254,7 @@
 	   								<c:otherwise>
 	   									<c:set var="selectValue" value="${valorDadaEspecifica}"/>
 	   									<c:if test="${empty selectValue}"><c:set var="selectValue" value="${camp.valorPerDefecte}"/></c:if>
-	   									<select id="${campId}" name="${campId}"<c:if test="${dadesEspecifiquesDisabled}"> disabled="disabled"</c:if> class="span12">
+	   									<select id="${campId}" name="${campId}"<c:if test="${dadesEspecifiquesDisabled}"> disabled="disabled"</c:if> class="col-md-12">
 	   										<c:if test="${dadesEspecifiquesDisabled or not camp.obligatori}">
 	   											<option value=""><spring:message code="comu.opcio.sense.definir"/></option>
 	   										</c:if>
@@ -263,11 +266,11 @@
 								</c:choose>
 							</c:when>
 							<c:otherwise>
-								<input type="text" id="${campId}" name="${campId}"<c:if test="${not empty camp.valorPerDefecte}"> value="${camp.valorPerDefecte}"</c:if> class="span12" disabled="disabled"/>
+								<input type="text" id="${campId}" name="${campId}"<c:if test="${not empty camp.valorPerDefecte}"> value="${camp.valorPerDefecte}"</c:if> class="col-md-12" disabled="disabled"/>
 								<input type="hidden" id="${campId}_hidden" name="${campId}"<c:if test="${not empty camp.valorPerDefecte}"> value="${camp.valorPerDefecte}"</c:if>/>
 							</c:otherwise>
 						</c:choose>
-						<form:errors path="${campCommandPath}" cssClass="help-inline"/>
+						<form:errors path="${campCommandPath}" cssClass="help-block"/>
 						<c:if test="${not dadesEspecifiquesDisabled and not empty camp.comentari}"><span class="help-block">${camp.comentari}</span></c:if>
 					</div>
 				</div>

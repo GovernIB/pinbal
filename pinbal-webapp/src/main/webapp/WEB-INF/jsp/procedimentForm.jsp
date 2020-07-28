@@ -21,61 +21,59 @@
 		<form:hidden path="id"/>
 		<form:hidden path="entitatId"/>
 		<fieldset>
-		<div class="container-fluid">
-			<div class="row">
-				<div class="col-md-3">
-					<label class="control-label" for="${campPath}"><spring:message code="procediment.form.camp.codi"/> *</label>
-					<pbl:inputText name="codi" inline="true" placeholderKey="procediment.form.camp.codi"/>
-<%-- 					<c:set var="campPath" value="codi"/> --%>
-<%-- 					<c:set var="campErrors"><form:errors path="${campPath}"/></c:set> --%>
-<%-- 					<div class="form-group<c:if test="${not empty campErrors}"> error</c:if>"> --%>
+			<div class="container-fluid">
+				<div class="row">
+					<div class="col-md-3">
+						<label class="control-label" for="${campPath}"><spring:message code="procediment.form.camp.codi"/> *</label>
+						<pbl:inputText name="codi" inline="true" placeholderKey="procediment.form.camp.codi"/>
+<%-- 						<c:set var="campPath" value="codi"/> --%>
+<%-- 						<c:set var="campErrors"><form:errors path="${campPath}"/></c:set> --%>
+<%-- 						<div class="form-group<c:if test="${not empty campErrors}"> error</c:if>"> --%>
 				
-<!-- 				<div class="controls"> -->
-<%-- 					<form:input path="${campPath}" cssClass="input-sm" id="${campPath}"/> --%>
-<%-- 					<form:errors path="${campPath}" cssClass="help-block"/> --%>
-<!-- 				</div> -->
-				</div>
-			</div>
-			<div class="row">
-				<div class="col-md-3">
-				<label class="control-label" for="${campPath}"><spring:message code="procediment.form.camp.nom"/> *</label>
-					<pbl:inputText name="nom" inline="true" placeholderKey="procediment.form.camp.nom"/>
+<!-- 					<div class="controls"> -->
+<%-- 						<form:input path="${campPath}" cssClass="input-sm" id="${campPath}"/> --%>
+<%-- 						<form:errors path="${campPath}" cssClass="help-block"/> --%>
+<!-- 					</div> -->
+					</div>
 			
-<%-- 			<c:set var="campPath" value="nom"/> --%>
-<%-- 			<c:set var="campErrors"><form:errors path="${campPath}"/></c:set> --%>
-<%-- 			<div class="form-group<c:if test="${not empty campErrors}"> error</c:if>"> --%>
-				
-<!-- 				<div class="controls"> -->
-<%-- 					<form:input path="${campPath}" cssClass="form-control" id="${campPath}"/> --%>
-<%-- 					<form:errors path="${campPath}" cssClass="help-block"/> --%>
-<!-- 				</div> -->
-				</div>
-			</div>
-			<div class="row">
-				<div class="col-md-3">	
-				<label class="control-label" for="${campPath}"><spring:message code="procediment.form.camp.departament"/> *</label>
-					<pbl:inputText name="departament" inline="true" placeholderKey="procediment.form.camp.departament"/>
-<%-- 					<c:set var="campPath" value="departament"/> --%>
-<%-- 					<c:set var="campErrors"><form:errors path="${campPath}"/></c:set> --%>
-<%-- 					<div class="form-group<c:if test="${not empty campErrors}"> error</c:if>"> --%>
-<%-- 						<label class="control-label" for="${campPath}"><spring:message code="procediment.form.camp.departament"/> *</label> --%>
-<!-- 						<div class="controls"> -->
-<%-- 							<form:input path="${campPath}" cssClass="input-sm" id="${campPath}"/> --%>
-<%-- 							<form:errors path="${campPath}" cssClass="help-block"/> --%>
-<!-- 						</div> -->
-			  	</div>
-			</div>
-		</div>
-		</fieldset>
 		
-		<div clas="container-fluid">
-			<div class="row">
-				<div class="col-md-12">			
-					<button type="submit" class="btn btn-primary"><spring:message code="comu.boto.guardar"/></button>
-					<a href="<c:url value="/procediment"/>" class="btn btn-default"><spring:message code="comu.boto.cancelar"/></a>
-				</div>
-			</div>
-		</div>	
+					<div class="col-md-3">
+						<label class="control-label" for="${campPath}"><spring:message code="procediment.form.camp.nom"/> *</label>
+							<pbl:inputText name="nom" inline="true" placeholderKey="procediment.form.camp.nom"/>
+					
+		<%-- 			<c:set var="campPath" value="nom"/> --%>
+		<%-- 			<c:set var="campErrors"><form:errors path="${campPath}"/></c:set> --%>
+		<%-- 			<div class="form-group<c:if test="${not empty campErrors}"> error</c:if>"> --%>
+						
+		<!-- 				<div class="controls"> -->
+		<%-- 					<form:input path="${campPath}" cssClass="form-control" id="${campPath}"/> --%>
+		<%-- 					<form:errors path="${campPath}" cssClass="help-block"/> --%>
+		<!-- 				</div> -->
+					</div>
+					<div class="col-md-3">	
+						<label class="control-label" for="${campPath}"><spring:message code="procediment.form.camp.departament"/> *</label>
+						<pbl:inputText name="departament" inline="true" placeholderKey="procediment.form.camp.departament"/>
+	<%-- 					<c:set var="campPath" value="departament"/> --%>
+	<%-- 					<c:set var="campErrors"><form:errors path="${campPath}"/></c:set> --%>
+	<%-- 					<div class="form-group<c:if test="${not empty campErrors}"> error</c:if>"> --%>
+	<%-- 						<label class="control-label" for="${campPath}"><spring:message code="procediment.form.camp.departament"/> *</label> --%>
+	<!-- 						<div class="controls"> -->
+	<%-- 							<form:input path="${campPath}" cssClass="input-sm" id="${campPath}"/> --%>
+	<%-- 							<form:errors path="${campPath}" cssClass="help-block"/> --%>
+	<!-- 						</div> -->
+			  		</div>	
+			 		
+			 			<br/>
+			 			
+			  		<div class="pull-right">	
+			  					 
+						 <button type="submit" class="btn btn-primary"><spring:message code="comu.boto.guardar"/></button>
+						 <a href="<c:url value="/procediment"/>" class="btn btn-default"><spring:message code="comu.boto.cancelar"/></a>
+					</div>
+				 </div> 	
+		  </div>	
+		</fieldset>
+	
 	</form:form>
 
 </body>

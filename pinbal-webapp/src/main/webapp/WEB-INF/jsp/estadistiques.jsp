@@ -120,6 +120,7 @@ $(document).ready(function() {
 								<button type="submit" class="btn btn-primary"><spring:message code="comu.boto.seleccionar"/></button>
 							</div>	
 						</div>	
+					</div>	
 				</form:form>
 			</c:when>
 			<c:otherwise>
@@ -254,22 +255,24 @@ $(document).ready(function() {
 								
 				<div class="col-md-4"> 
 						<label>&nbsp;</label>
-						<pbl:inputSelect name="usuariCodi" inline ="true" placeholderKey="estadistiques.list.filtre.usuari"
-								 	 optionItems="${entitatSeleccionada.usuaris}"
-								 	 optionValueAttribute="${entitatUsuari.usuari.codi}"   
-								 	 optionTextAttribute="${entitatUsuari.usuari.descripcio}"
-	 								 emptyOption="true"/>		
-<%-- 						<c:set var="campPath" value="usuariCodi"/> --%>
-<%-- 						<c:set var="campErrors"><form:errors path="${campPath}"/></c:set> --%>
-<%-- 						<div class="form-group<c:if test="${not empty campErrors}"> error</c:if>"> --%>
-<!-- 						 -->
-<%-- 						<form:select path="${campPath}" cssClass="form-control"> --%>
-<%-- 							<option value=""><spring:message code="estadistiques.list.filtre.usuari"/>:</option> --%>
-<%-- 							<c:forEach var="entitatUsuari" items="${entitatSeleccionada.usuaris}"> --%>
-<%-- 								<form:option value="${entitatUsuari.usuari.codi}">${entitatUsuari.usuari.descripcio}</form:option> --%>
-<%-- 							</c:forEach> --%>
-<%-- 						</form:select> --%>
-				</div>
+<%-- 						<pbl:inputSelect name="usuariCodi" inline ="true" placeholderKey="estadistiques.list.filtre.usuari" --%>
+<%-- 	 								 	 optionItems="${entitatSeleccionada.usuaris}" --%>
+<%-- 	 								 	 optionValueAttribute="entitatUsuari.usuari.codi"    --%>
+<%-- 	 								 	 optionTextAttribute=""  --%>
+<%-- 	 	 								 emptyOption="true"/>	  --%>
+	 								 	
+						<c:set var="campPath" value="usuariCodi"/>
+						<c:set var="campErrors"><form:errors path="${campPath}"/></c:set>
+						<div class="form-group<c:if test="${not empty campErrors}"> error</c:if>">
+						
+						<form:select path="${campPath}" cssClass="form-group">
+							<option value=""><spring:message code="estadistiques.list.filtre.usuari"/>:</option>
+							<c:forEach var="entitatUsuari" items="${entitatSeleccionada.usuaris}">
+								<form:option value="${entitatUsuari.usuari.codi}">${entitatUsuari.usuari.descripcio}</form:option>
+							</c:forEach>
+						</form:select>
+						</div>
+				</div>	
 				<label>&nbsp;</label>
 				<div class="col-md-5">
 							<div class="pull-right">
@@ -309,7 +312,7 @@ $(document).ready(function() {
 				<jsp:param name="agrupacio" value="${estadistiquesFiltreCommand.agrupacio}"/>
 			</jsp:include>
 		</c:if>
-		<a href="estadistiques/excel" class="btn"><i class="glyphicon-download-alt"></i>&nbsp;<spring:message code="estadistiques.list.exportar.excel"/></a>
+		<a href="estadistiques/excel" class="btn btn-default"><i class="glyphicon-download-alt"></i>&nbsp;<spring:message code="estadistiques.list.exportar.excel"/></a>
 	</c:if>
 
 </body>

@@ -15,25 +15,6 @@
 
 	<title><spring:message code="consulta.list.titol"/></title>	
 	
-	
-<%-- 	<script src="<c:url value="/webjars/datatables.net/1.10.11/js/jquery.dataTables.min.js"/>"></script> --%>
-<%-- 	<script src="<c:url value="/webjars/datatables.net-bs/1.10.11/js/dataTables.bootstrap.min.js"/>"></script> --%>
-<%-- 	<link href="<c:url value="/webjars/datatables.net-bs/1.10.11/css/dataTables.bootstrap.min.css"/>" rel="stylesheet"></link> --%>
-<%-- 	<link href="<c:url value="/webjars/datatables.net-bs/1.10.11/css/dataTables.bootstrap.min.css"/>" rel="stylesheet"></link> --%>
-<%-- 	<script src="<c:url value="/webjars/datatables.net-select/1.1.2/js/dataTables.select.min.js"/>"></script> --%>
-<%-- 	<link href="<c:url value="/webjars/datatables.net-select-bs/1.1.2/css/select.bootstrap.min.css"/>" rel="stylesheet"></link> --%>
-<%-- 	<link href="<c:url value="/webjars/select2/4.0.6-rc.1/dist/css/select2.min.css"/>" rel="stylesheet"/> --%>
-<%-- 	<link href="<c:url value="/webjars/select2-bootstrap-theme/0.1.0-beta.4/dist/select2-bootstrap.min.css"/>" rel="stylesheet"/> --%>
-<%-- 	<script src="<c:url value="/webjars/select2/4.0.6-rc.1/dist/js/select2.min.js"/>"></script> --%>
-<%-- 	<script src="<c:url value="/webjars/select2/4.0.6-rc.1/dist/js/i18n/${requestLocale}.js"/>"></script> --%>
-<%-- 	<link href="<c:url value="/webjars/bootstrap-datepicker/1.6.1/dist/css/bootstrap-datepicker.min.css"/>" rel="stylesheet"/> --%>
-<%-- 	<script src="<c:url value="/webjars/bootstrap-datepicker/1.6.1/dist/js/bootstrap-datepicker.min.js"/>"></script> --%>
-<%-- 	<script src="<c:url value="/webjars/bootstrap-datepicker/1.6.1/dist/locales/bootstrap-datepicker.${requestLocale}.min.js"/>"></script> --%>
-<%-- 	<script src="<c:url value="/webjars/jsrender/1.0.0-rc.70/jsrender.min.js"/>"></script> --%>
-<%-- 	<script src="<c:url value="/js/webutil.common.js"/>"></script> --%>
-<%-- 	<script src="<c:url value="/js/webutil.datatable.js"/>"></script> --%>
-<%-- 	<script src="<c:url value="/js/webutil.modal.js"/>"></script> --%>
-    
 
 	<link href="<c:url value="/webjars/datatables/1.10.21/css/dataTables.bootstrap.min.css"/>" rel="stylesheet"/>
 	<link href="<c:url value="/webjars/bootstrap-datepicker/1.6.1/dist/css/bootstrap-datepicker.min.css"/>" rel="stylesheet"/>
@@ -52,9 +33,30 @@
 	<script src="<c:url value="/webjars/datatables-plugins/1.10.20/dataRender/datetime.js"/>"></script>
 	<script src="<c:url value="/webjars/momentjs/2.24.0/min/moment.min.js"/>"></script>
 	<script src="<c:url value="/js/webutil.datatable.js"/>"></script>
+	<script src="<c:url value="/js/webutil.datatable.js"/>"></script>
+	<script src="<c:url value="/js/webutil.modal.js"/>"></script>
+    
+
+<style>
+#expedientFiltreForm {
+	margin-bottom: 15px;
+}
+table.dataTable tbody > tr.selected, table.dataTable tbody > tr > .selected {
+	background-color: #fcf8e3;
+	color: #666666;
+}
+table.dataTable thead > tr.selectable > :first-child, table.dataTable tbody > tr.selectable > :first-child {
+	cursor: pointer;
+}
+.datepicker{
+	padding-left: 12px;
+	padding-right: 12px;
+}
+</style>
+	
 </head>
 <body>
-		<form:form id="form-filtre" action="" method="post" cssClass="well" commandName="filtreCommand" >
+		<form:form id="form-group" action="" method="post" cssClass="well" commandName="filtreCommand" >
 		<div class="container-fluid" >
 			<div class ="row">	
 				<div class="col-md-3">
@@ -68,7 +70,7 @@
 <!-- 					</div> -->
 				</div>
 				<div class="col-md-3">
-				<pbl:inputSelect name="procediment"  inline="true" placeholderKey="consulta.list.filtre.procediment" 
+					<pbl:inputSelect name="procediment"  inline="true" placeholderKey="consulta.list.filtre.procediment" 
 	 								 optionItems="${procediments}"  
 	 								 optionValueAttribute="id" 
 	 								 optionTextAttribute="nom" 
@@ -130,11 +132,13 @@
 <!-- 									 <label>&nbsp;</label>  -->
 	 								</div>	  
 	 							</div> 
-				</div>				
+				</div>	
+			</div>
+			<div class="row">				
 				<div class="col-md-2" >
 						<pbl:inputDate name="dataInici"  inline="true" placeholderKey="consulta.list.filtre.data.inici"/> 
 <%--  									<spring:bind path="${campPath}">  --%>
-<%--  										<input class="form-control" type="text" id="${campPath}" name="${campPath}"<c:if test="${not empty status.value}"> value="${status.value}"</c:if> class="col-md-6" placeholder="<spring:message code="consulta.list.filtre.data.inici"/>">  --%>
+<%--  										<input class="fa fa calendar" type="text" id="${campPath}" name="${campPath}"<c:if test="${not empty status.value}"> value="${status.value}"</c:if> class="fa fa-calendar" placeholder="<spring:message code="consulta.list.filtre.data.inici"/>">  --%>
 <!-- 										<script>$("#${campPath}").mask("99/99/9999");</script> -->
 <%-- 									</spring:bind> --%>
 				</div>
@@ -142,28 +146,30 @@
 							<pbl:inputDate name="dataFi"  inline="true" placeholderKey="consulta.list.filtre.data.fi"/>
 <%-- 									<c:set var="campPath" value="dataFi"/> --%>
 <%-- 									<c:set var="campErrors"><form:errors path="${campPath}"/></c:set> --%>
-							<div class="form-group<c:if test="${not empty campErrors}"> error</c:if>">
+<%-- 							<div class="form-group<c:if test="${not empty campErrors}"> error</c:if>"> --%>
 									
 <%-- 										<spring:bind path="${campPath}"> --%>
 <%-- 											<input class="form-control" type="text" id="${campPath}" name="${campPath}"<c:if test="${not empty status.value}"> value="${status.value}"</c:if> class="col-md-6" placeholder="<spring:message code="consulta.list.filtre.data.fi"/>"> --%>
 <!-- 											<script>$("#${campPath}").mask("99/99/9999");</script> -->
 <%-- 										</spring:bind> --%>
 							</div>
-				</div>	
+					
 							
 				<div class="col-md-3">
-							<c:set var="campPath" value="titularNom"/>
-							<c:set var="campErrors"><form:errors path="${campPath}"/></c:set>
-							<spring:bind path="${campPath}">
-								<input class="form-control" type="text" name="${campPath}"<c:if test="${not empty status.value}"> value="${status.value}"</c:if> class="col-md-12" placeholder="<spring:message code="consulta.list.filtre.titular.nom"/>">
-							</spring:bind>
+					<pbl:inputText name="titularNom" inline="true" placeholderKey="consulta.list.filtre.titular.nom"/>
+<%-- 							<c:set var="campPath" value="titularNom"/> --%>
+<%-- 							<c:set var="campErrors"><form:errors path="${campPath}"/></c:set> --%>
+<%-- 							<spring:bind path="${campPath}"> --%>
+<%-- 								<input class="form-control" type="text" name="${campPath}"<c:if test="${not empty status.value}"> value="${status.value}"</c:if> class="col-md-12" placeholder="<spring:message code="consulta.list.filtre.titular.nom"/>"> --%>
+<%-- 							</spring:bind> --%>
 				</div>
 				<div class="col-md-3">
-							<c:set var="campPath" value="titularDocument"/>
-							<c:set var="campErrors"><form:errors path="${campPath}"/></c:set>
-							<spring:bind path="${campPath}">
-								<input class="form-control" type="text" name="${campPath}"<c:if test="${not empty status.value}"> value="${status.value}"</c:if> class="col-md-12" placeholder="<spring:message code="consulta.list.filtre.titular.document"/>">
-								</spring:bind>
+					<pbl:inputText name="titularDocument" inline="true" placeholderKey="consulta.list.filtre.titular.document"/>
+<%-- 							<c:set var="campPath" value="titularDocument"/> --%>
+<%-- 							<c:set var="campErrors"><form:errors path="${campPath}"/></c:set> --%>
+<%-- 							<spring:bind path="${campPath}"> --%>
+<%-- 								<input class="form-control" type="text" name="${campPath}"<c:if test="${not empty status.value}"> value="${status.value}"</c:if> class="col-md-12" placeholder="<spring:message code="consulta.list.filtre.titular.document"/>"> --%>
+<%-- 								</spring:bind> --%>
 				</div>
 							
 			
@@ -174,15 +180,15 @@
 							<button class="btn btn-primary" type="submit"><spring:message code="comu.boto.filtrar"/></button>
 						</div>
 				</div>
-				
+			</div>
 		</div>
 	</div>
 
+	
 		</form:form>
 
 	<div class="clearfix"></div>
 	
-	<div class="container-fluid">
 		<table id="table-consultes" class="table table-striped table-bordered" style="width: 100%">
 			<thead>
 				<tr>
@@ -198,7 +204,7 @@
 				</tr>
 			</thead>
 		</table>
-	</div>
+
 		
 <script type="text/javascript">
 $(document).ready(function() {

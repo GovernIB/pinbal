@@ -59,6 +59,9 @@ $(document).ready(function() {
 		        $.each(json, function(i, value) {
 		            $('#select-servei').append($('<option>').text(value.descripcio).attr('value', value.codi));
 		        });
+		        
+		        
+		        
 		    }
 		});
 	});
@@ -86,6 +89,7 @@ $(document).ready(function() {
 								 optionValueAttribute="id"
 								 optionTextAttribute="nom"
 								 emptyOption="true"/>
+								 
 <%-- 					<c:set var="campPath" value="procediment"/> --%>
 <%-- 					<c:set var="campErrors"><form:errors path="${campPath}"/></c:set> --%>
 <%-- 					<div class="form-group<c:if test="${not empty campErrors}"> error</c:if>"> --%>
@@ -96,11 +100,15 @@ $(document).ready(function() {
 <!-- 					</div> -->
 				</div>
 				<div class="col-md-3">
-					<pbl:inputSelect name="servei"  inline="true" placeholderKey="consulta.list.filtre.servei" 
-									 optionItems="${serveis}" 
-									 optionValueAttribute="codi"
-									 optionTextAttribute="descripcio"
-									 emptyOption="true"/>
+					<pbl:inputSelect 
+						name="servei" 
+						inline="true" 
+						placeholderKey="consulta.list.filtre.servei"
+ 						optionItems="${serveis}" 
+	 					optionValueAttribute="codi" 
+	 					optionTextAttribute="descripcio" 
+	 					emptyOption="true"/> 
+									 
 <%-- 					<c:set var="campPath" value="servei"/> --%>
 <%-- 					<c:set var="campErrors"><form:errors path="${campPath}"/></c:set> --%>
 <%-- 					<div class="form-group<c:if test="${not empty campErrors}"> error</c:if>"> --%>
@@ -108,12 +116,16 @@ $(document).ready(function() {
 <%-- 							<option value=""><spring:message code="consulta.list.filtre.servei"/>:</option> --%>
 <%-- 							<form:options items="${serveis}" itemLabel="descripcio" itemValue="codi"/> --%>
 <%-- 						</form:select> --%>
+<%-- 					</div> --%>
 				</div>
-				
 				<div class="col-md-3">
-					<pbl:inputSelect name="servei"  inline="true" placeholderKey="consulta.list.filtre.estat" 
-					optionItems="${consultaEstats}"
-					 emptyOption="true"/>
+					<pbl:inputSelect 
+						name="servei"  
+						inline="true" 
+						placeholderKey="consulta.list.filtre.estat" 
+						optionItems="${consultaEstats}"
+					 	emptyOption="true"/>
+					 
 <%-- 					<c:set var="campPath" value="estat"/> --%>
 <%-- 					<c:set var="campErrors"><form:errors path="${campPath}"/></c:set> --%>
 <%-- 					<div class="form-group<c:if test="${not empty campErrors}"> error</c:if>"> --%>
@@ -133,7 +145,8 @@ $(document).ready(function() {
 			
 		<div class="container-fluid">
 		  <div class="row">				
-		  		<div class="col-md-12">
+		  		<div class="col-md-12">.
+		  		<>
 					<c:set var="campErrors"><form:errors path="dataInici"/></c:set>
 					<c:if test="${empty campErrors}"><c:set var="campErrors"><form:errors path="dataFi"/></c:set></c:if>
 					<div class="form-group<c:if test="${not empty campErrors}"> error</c:if>">
@@ -187,7 +200,7 @@ $(document).ready(function() {
 	</table>
 <script>
 $(document).ready(function() {
-    $('#table-consultes').DataTable({
+	$('#table-consultes').DataTable({
     	autoWidth: false,
 		processing: true,
 		serverSide: true,

@@ -32,6 +32,7 @@ import es.caib.pinbal.core.dto.ConsultaDto;
 import es.caib.pinbal.core.dto.EntitatDto;
 import es.caib.pinbal.core.service.ConsultaService;
 import es.caib.pinbal.core.service.EntitatService;
+
 import es.caib.pinbal.core.service.ProcedimentService;
 import es.caib.pinbal.core.service.ServeiService;
 import es.caib.pinbal.core.service.exception.ConsultaNotFoundException;

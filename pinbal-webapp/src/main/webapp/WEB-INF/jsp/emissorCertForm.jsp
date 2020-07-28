@@ -114,9 +114,9 @@
 <!-- 						</div> -->
 <%-- 						<form:errors path="${campPath}" cssClass="help-block"/> --%>
 						</div>
-				</div>
+			
 					
-					<div class="row">
+			
 			
 						<div class="col-md-3">
 							<label class="control-label" for="${campPath}"><spring:message code="emissorcert.form.camp.cif"/> *</label>
@@ -137,10 +137,12 @@
 						<div class="pull-right">	
 							<button type="submit" class="btn btn-primary" ><spring:message code="comu.boto.guardar" /></button>
 							<a href="<c:url value="/scsp/emissorcert"/>" class="btn btn-default"><spring:message code="comu.boto.cancelar"/></a>
-						</div>
+							</div>
+						</div>	
 	
 					</div>
 			</div>
+			
 		</fieldset>
 		
 	
