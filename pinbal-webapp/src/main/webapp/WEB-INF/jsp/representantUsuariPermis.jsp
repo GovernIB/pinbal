@@ -2,7 +2,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
-
+<%@ taglib tagdir="/WEB-INF/tags/pinbal" prefix="pbl" %>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
 
 <html>
@@ -54,13 +54,14 @@ $(document).ready(function() {
 
 	<c:url value="/representant/usuari/${usuari.codi}/permis/allow" var="formAction"/>
 	<form action="${formAction}" method="post" class="well">
-		<select id="procedimentId" name="procedimentId" class="input-lg">
+		<select id="procedimentId" name="procedimentId" class="well">
+			
 			<option value=""><spring:message code="representant.usuaris.permisos.filtre.procediment"/>:</option>
-			<c:forEach var="procediment" items="${procediments}">
+				<c:forEach var="procediment" items="${procediments}">
 				<option value="${procediment.id}">(${procediment.codi}) ${procediment.nom}</option>
 			</c:forEach>
 		</select>
-		<select id="serveiCodi" name="serveiCodi" class="input-lg">
+		<select id="serveiCodi" name="serveiCodi" class="well">
 			<option value=""><spring:message code="representant.usuaris.permisos.filtre.servei"/>:</option>
 		</select>
 		<div class="pull-right">

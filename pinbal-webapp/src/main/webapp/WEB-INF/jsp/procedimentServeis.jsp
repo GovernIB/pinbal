@@ -3,7 +3,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
-
+<%@ taglib tagdir="/WEB-INF/tags/pinbal" prefix="pbl" %>
 
 <html>
 <head>
@@ -20,17 +20,19 @@
 	</ul>
 
 	<c:url value="/procediment/${procediment.id}/servei" var="formAction"/>
-	<form:form id="form-filtre" action="${formAction}" method="post" cssClass="well form-inline" commandName="serveiFiltreCommand">
+	<form:form id="form-filtre" action="${formAction}" method="post" cssClass="well" commandName="serveiFiltreCommand">
 		<div class="row">
-			<div class="form-group col-md-3">	
-				<c:set var="campPath" value="codi"/>
-				<spring:message var="placeholderCodi" code="servei.list.filtre.camp.codi"/>
-				<form:input path="${campPath}" cssClass= "col-md-12 input-sm" id="${campPath}" placeholder="${placeholderCodi}"/>
+			<div class="col-md-3">	
+				<pbl:inputText name="codi" inline="true" placeholderKey="servei.list.filtre.camp.codi"/>
+<%-- 				<c:set var="campPath" value="codi"/> --%>
+<%-- 				<spring:message var="placeholderCodi" code="servei.list.filtre.camp.codi"/> --%>
+<%-- 				<form:input path="${campPath}" cssClass= "col-md-12 input-sm" id="${campPath}" placeholder="${placeholderCodi}"/> --%>
 			</div>
-			<div class="form-group col-md-3">	
-				<c:set var="campPath" value="descripcio"/>
-				<spring:message var="placeholderDescripcio" code="servei.list.filtre.camp.descripcio"/>
-				<form:input path="${campPath}" cssClass="col-md-12 input-sm" id="${campPath}" placeholder="${placeholderDescripcio}"/>
+			<div class="col-md-3">	
+				<pbl:inputText name="descripcio" inline="true" placeholderKey="servei.list.filtre.camp.descripcio"/>
+<%-- 				<c:set var="campPath" value="descripcio"/> --%>
+<%-- 				<spring:message var="placeholderDescripcio" code="servei.list.filtre.camp.descripcio"/> --%>
+<%-- 				<form:input path="${campPath}" cssClass="col-md-12 input-sm" id="${campPath}" placeholder="${placeholderDescripcio}"/> --%>
 			</div>
 <!-- 			<div class="control-group col-md-3 hidden">	 -->
 <%-- 				<c:set var="campPath" value="emissor"/> --%>
@@ -39,23 +41,24 @@
 <%-- 					<form:options items="${emisors}" itemLabel="nom" itemValue="id"/> --%>
 <%-- 				</form:select> --%>
 <!-- 			</div> -->
-			<div class="form-group col-md-3">	
+			<div class="col-md-3">
+<%-- 				<pbl:inputSelect name="activa" inline="true" placeholderKey="servei.list.filtre.camp.descripcio"/> --%>
 				<c:set var="campPath" value="activa"/>
 				<spring:message var="trueValue" code="entitat.list.filtre.camp.activa.yes"/>
 				<spring:message var="falseValue" code="entitat.list.filtre.camp.activa.no"/>
-				<form:select path="${campPath}" class="col-md-12">
+				<form:select path="${campPath}" class="form-control">
 					<option value=""><spring:message code="entitat.list.filtre.camp.activa"/></option>>
 					<form:option value="true">${trueValue}</form:option>>
 					<form:option value="false">${falseValue}</form:option>>
 				</form:select>
 			</div>
-		</div>
-		<div class="row">
-			<div class="pull-right">
-				<button id="netejar-filtre" class="btn" type="button"><spring:message code="comu.boto.netejar"/></button>
-				<button type="submit" class="btn btn-primary"><spring:message code="comu.boto.filtrar"/></button>
+			<div class="col-md-3">
+				<div class="pull-right">
+					<button id="netejar-filtre" class="btn" type="button"><spring:message code="comu.boto.netejar"/></button>
+					<button type="submit" class="btn btn-primary"><spring:message code="comu.boto.filtrar"/></button>
+				</div>
 			</div>
-		</div>
+		
 	</form:form>
 		<div class="clearfix"></div>
 	<table id="table-serveis" class="table table-striped table-bordered" style="width: 100%">

@@ -15,53 +15,29 @@
 
 	<title><spring:message code="consulta.list.titol"/></title>	
 	
-	
-<%-- 	<script src="<c:url value="/webjars/datatables.net/1.10.11/js/jquery.dataTables.min.js"/>"></script> --%>
-<%-- 	<script src="<c:url value="/webjars/datatables.net-bs/1.10.11/js/dataTables.bootstrap.min.js"/>"></script> --%>
-<%-- 	<link href="<c:url value="/webjars/datatables.net-bs/1.10.11/css/dataTables.bootstrap.min.css"/>" rel="stylesheet"></link> --%>
-<%-- 	<link href="<c:url value="/webjars/datatables.net-bs/1.10.11/css/dataTables.bootstrap.min.css"/>" rel="stylesheet"></link> --%>
-<%-- 	<script src="<c:url value="/webjars/datatables.net-select/1.1.2/js/dataTables.select.min.js"/>"></script> --%>
-<%-- 	<link href="<c:url value="/webjars/datatables.net-select-bs/1.1.2/css/select.bootstrap.min.css"/>" rel="stylesheet"></link> --%>
-<%-- 	<link href="<c:url value="/webjars/select2/4.0.6-rc.1/dist/css/select2.min.css"/>" rel="stylesheet"/> --%>
-<%-- 	<link href="<c:url value="/webjars/select2-bootstrap-theme/0.1.0-beta.4/dist/select2-bootstrap.min.css"/>" rel="stylesheet"/> --%>
-<%-- 	<script src="<c:url value="/webjars/select2/4.0.6-rc.1/dist/js/select2.min.js"/>"></script> --%>
-<%-- 	<script src="<c:url value="/webjars/select2/4.0.6-rc.1/dist/js/i18n/${requestLocale}.js"/>"></script> --%>
-<%-- 	<link href="<c:url value="/webjars/bootstrap-datepicker/1.6.1/dist/css/bootstrap-datepicker.min.css"/>" rel="stylesheet"/> --%>
-<%-- 	<script src="<c:url value="/webjars/bootstrap-datepicker/1.6.1/dist/js/bootstrap-datepicker.min.js"/>"></script> --%>
-<%-- 	<script src="<c:url value="/webjars/bootstrap-datepicker/1.6.1/dist/locales/bootstrap-datepicker.${requestLocale}.min.js"/>"></script> --%>
-<%-- 	<script src="<c:url value="/webjars/jsrender/1.0.0-rc.70/jsrender.min.js"/>"></script> --%>
-<%-- 	<script src="<c:url value="/js/webutil.common.js"/>"></script> --%>
-<%-- 	<script src="<c:url value="/js/webutil.datatable.js"/>"></script> --%>
-<%-- 	<script src="<c:url value="/js/webutil.modal.js"/>"></script> --%>
-    
 
+	
+	<script src="<c:url value="/webjars/datatables.net/1.10.11/js/jquery.dataTables.min.js"/>"></script>
+	<script src="<c:url value="/webjars/datatables.net-bs/1.10.11/js/dataTables.bootstrap.min.js"/>"></script>
+	<link href="<c:url value="/webjars/datatables.net-bs/1.10.11/css/dataTables.bootstrap.min.css"/>" rel="stylesheet"></link>
+	<link href="<c:url value="/webjars/datatables.net-bs/1.10.11/css/dataTables.bootstrap.min.css"/>" rel="stylesheet"></link>
 	<script src="<c:url value="/webjars/datatables.net-select/1.1.2/js/dataTables.select.min.js"/>"></script>
 	<link href="<c:url value="/webjars/datatables.net-select-bs/1.1.2/css/select.bootstrap.min.css"/>" rel="stylesheet"></link>
 	<link href="<c:url value="/webjars/select2/4.0.6-rc.1/dist/css/select2.min.css"/>" rel="stylesheet"/>
 	<link href="<c:url value="/webjars/select2-bootstrap-theme/0.1.0-beta.4/dist/select2-bootstrap.min.css"/>" rel="stylesheet"/>
-	<link href="<c:url value="/css/select2.css"/>" rel="stylesheet"/>
-	<link href="<c:url value="/css/select2-bootstrap.css"/>" rel="stylesheet"/>
-	<link href="<c:url value="/webjars/bootstrap-datepicker/1.6.1/dist/css/bootstrap-datepicker.min.css"/>" rel="stylesheet"/>
 	<script src="<c:url value="/webjars/select2/4.0.6-rc.1/dist/js/select2.min.js"/>"></script>
 	<script src="<c:url value="/webjars/select2/4.0.6-rc.1/dist/js/i18n/${requestLocale}.js"/>"></script>
+	<link href="<c:url value="/webjars/bootstrap-datepicker/1.6.1/dist/css/bootstrap-datepicker.min.css"/>" rel="stylesheet"/>
 	<script src="<c:url value="/webjars/bootstrap-datepicker/1.6.1/dist/js/bootstrap-datepicker.min.js"/>"></script>
+	<script src="<c:url value="/webjars/bootstrap-datepicker/1.6.1/dist/locales/bootstrap-datepicker.${requestLocale}.min.js"/>"></script>
 	<script src="<c:url value="/webjars/jsrender/1.0.0-rc.70/jsrender.min.js"/>"></script>
 	<script src="<c:url value="/js/webutil.common.js"/>"></script>
 	<script src="<c:url value="/js/webutil.datatable.js"/>"></script>
 	<script src="<c:url value="/js/webutil.modal.js"/>"></script>
-	<script src="<c:url value="/webjars/datatables/1.10.21/js/jquery.dataTables.min.js"/>"></script> 
- 	<script src="<c:url value="/webjars/datatables/1.10.21/js/dataTables.bootstrap.min.js"/>"></script> 
-	<script src="<c:url value="/webjars/mustache.js/3.0.1/mustache.min.js"/>"></script>
-	<script src="<c:url value="/webjars/bootstrap-datepicker/1.6.1/dist/js/bootstrap-datepicker.min.js"/>"></script>
-	<script src="<c:url value="/webjars/bootstrap-datepicker/1.6.1/dist/locales/bootstrap-datepicker.${requestLocale}.min.js"/>"></script>
-	<script type="text/javascript" src="<c:url value="/js/select2.min.js"/>"></script>
-	<script src="<c:url value="/webjars/datatables-plugins/1.10.20/dataRender/datetime.js"/>"></script>
-	<script src="<c:url value="/webjars/momentjs/2.24.0/min/moment.min.js"/>"></script>
-	<script src="<c:url value="/webjars/datatables.net/1.10.11/js/jquery.dataTables.min.js"/>"></script>
-	<script src="<c:url value="/webjars/datatables.net-bs/1.10.11/js/dataTables.bootstrap.min.js"/>"></script>
-	
+    
+
 <style>
-#form-filtre{
+#expedientFiltreForm {
 	margin-bottom: 15px;
 }
 table.dataTable tbody > tr.selected, table.dataTable tbody > tr > .selected {
@@ -77,11 +53,9 @@ table.dataTable thead > tr.selectable > :first-child, table.dataTable tbody > tr
 }
 </style>
 	
-	
-	
 </head>
 <body>
-		<form:form id="form-filtre" action="" method="post" cssClass="well" commandName="filtreCommand" >
+		<form:form id="form-group" action="" method="post" cssClass="well" commandName="filtreCommand" >
 		<div class="container-fluid" >
 			<div class ="row">	
 				<div class="col-md-3">
@@ -95,7 +69,7 @@ table.dataTable thead > tr.selectable > :first-child, table.dataTable tbody > tr
 <!-- 					</div> -->
 				</div>
 				<div class="col-md-3">
-				<pbl:inputSelect name="procediment"  inline="true" placeholderKey="consulta.list.filtre.procediment" 
+					<pbl:inputSelect name="procediment"  inline="true" placeholderKey="consulta.list.filtre.procediment" 
 	 								 optionItems="${procediments}"  
 	 								 optionValueAttribute="id" 
 	 								 optionTextAttribute="nom" 
@@ -157,11 +131,13 @@ table.dataTable thead > tr.selectable > :first-child, table.dataTable tbody > tr
 <!-- 									 <label>&nbsp;</label>  -->
 	 								</div>	  
 	 							</div> 
-				</div>				
+				</div>	
+			</div>
+			<div class="row">				
 				<div class="col-md-2" >
 						<pbl:inputDate name="dataInici"  inline="true" placeholderKey="consulta.list.filtre.data.inici"/> 
 <%--  									<spring:bind path="${campPath}">  --%>
-<%--  										<input class="form-control" type="text" id="${campPath}" name="${campPath}"<c:if test="${not empty status.value}"> value="${status.value}"</c:if> class="col-md-6" placeholder="<spring:message code="consulta.list.filtre.data.inici"/>">  --%>
+<%--  										<input class="fa fa calendar" type="text" id="${campPath}" name="${campPath}"<c:if test="${not empty status.value}"> value="${status.value}"</c:if> class="fa fa-calendar" placeholder="<spring:message code="consulta.list.filtre.data.inici"/>">  --%>
 <!-- 										<script>$("#${campPath}").mask("99/99/9999");</script> -->
 <%-- 									</spring:bind> --%>
 				</div>
@@ -169,28 +145,30 @@ table.dataTable thead > tr.selectable > :first-child, table.dataTable tbody > tr
 							<pbl:inputDate name="dataFi"  inline="true" placeholderKey="consulta.list.filtre.data.fi"/>
 <%-- 									<c:set var="campPath" value="dataFi"/> --%>
 <%-- 									<c:set var="campErrors"><form:errors path="${campPath}"/></c:set> --%>
-							<div class="form-group<c:if test="${not empty campErrors}"> error</c:if>">
+<%-- 							<div class="form-group<c:if test="${not empty campErrors}"> error</c:if>"> --%>
 									
 <%-- 										<spring:bind path="${campPath}"> --%>
 <%-- 											<input class="form-control" type="text" id="${campPath}" name="${campPath}"<c:if test="${not empty status.value}"> value="${status.value}"</c:if> class="col-md-6" placeholder="<spring:message code="consulta.list.filtre.data.fi"/>"> --%>
 <!-- 											<script>$("#${campPath}").mask("99/99/9999");</script> -->
 <%-- 										</spring:bind> --%>
 							</div>
-				</div>	
+					
 							
 				<div class="col-md-3">
-							<c:set var="campPath" value="titularNom"/>
-							<c:set var="campErrors"><form:errors path="${campPath}"/></c:set>
-							<spring:bind path="${campPath}">
-								<input class="form-control" type="text" name="${campPath}"<c:if test="${not empty status.value}"> value="${status.value}"</c:if> class="col-md-12" placeholder="<spring:message code="consulta.list.filtre.titular.nom"/>">
-							</spring:bind>
+					<pbl:inputText name="titularNom" inline="true" placeholderKey="consulta.list.filtre.titular.nom"/>
+<%-- 							<c:set var="campPath" value="titularNom"/> --%>
+<%-- 							<c:set var="campErrors"><form:errors path="${campPath}"/></c:set> --%>
+<%-- 							<spring:bind path="${campPath}"> --%>
+<%-- 								<input class="form-control" type="text" name="${campPath}"<c:if test="${not empty status.value}"> value="${status.value}"</c:if> class="col-md-12" placeholder="<spring:message code="consulta.list.filtre.titular.nom"/>"> --%>
+<%-- 							</spring:bind> --%>
 				</div>
 				<div class="col-md-3">
-							<c:set var="campPath" value="titularDocument"/>
-							<c:set var="campErrors"><form:errors path="${campPath}"/></c:set>
-							<spring:bind path="${campPath}">
-								<input class="form-control" type="text" name="${campPath}"<c:if test="${not empty status.value}"> value="${status.value}"</c:if> class="col-md-12" placeholder="<spring:message code="consulta.list.filtre.titular.document"/>">
-								</spring:bind>
+					<pbl:inputText name="titularDocument" inline="true" placeholderKey="consulta.list.filtre.titular.document"/>
+<%-- 							<c:set var="campPath" value="titularDocument"/> --%>
+<%-- 							<c:set var="campErrors"><form:errors path="${campPath}"/></c:set> --%>
+<%-- 							<spring:bind path="${campPath}"> --%>
+<%-- 								<input class="form-control" type="text" name="${campPath}"<c:if test="${not empty status.value}"> value="${status.value}"</c:if> class="col-md-12" placeholder="<spring:message code="consulta.list.filtre.titular.document"/>"> --%>
+<%-- 								</spring:bind> --%>
 				</div>
 							
 			
@@ -201,15 +179,15 @@ table.dataTable thead > tr.selectable > :first-child, table.dataTable tbody > tr
 							<button class="btn btn-primary" type="submit"><spring:message code="comu.boto.filtrar"/></button>
 						</div>
 				</div>
-				
+			</div>
 		</div>
 	</div>
 
+	
 		</form:form>
 
 	<div class="clearfix"></div>
 	
-	<div class="container-fluid">
 		<table id="table-consultes" class="table table-striped table-bordered" style="width: 100%">
 			<thead>
 				<tr>
@@ -225,7 +203,7 @@ table.dataTable thead > tr.selectable > :first-child, table.dataTable tbody > tr
 				</tr>
 			</thead>
 		</table>
-	</div>
+
 		
 <script type="text/javascript">
 $(document).ready(function() {
@@ -264,13 +242,11 @@ $(document).ready(function() {
 		var $link = $(this);
 		setTimeout(function(){$link.attr('href', '#')}, 100);
 	});
-	
 
     $('#table-consultes').DataTable({
     	autoWidth: false,
 		processing: true,
 		serverSide: true,
-		dom: "<'row'<'col-md-6'i><'col-md-6'>><'row'<'col-md-12'rt>><'row'<'col-md-6'l><'col-md-6'p>>",
 		language: {
             "url": '<c:url value="/js/datatable-language.json"/>'
         },
@@ -287,18 +263,17 @@ $(document).ready(function() {
 			{
 				targets: [1],
 				width: "10%",
-				orderable: false,
 				render: $.fn.dataTable.render.moment('x', 'DD/MM/YYYY HH:mm:ss', 'es' )
 			},	
 			{
-				targets: [2, 3, 4, 5],
+				targets: [3, 4, 5],
 				width: "10%",
 				orderable: false,
 			},
 			{
 				targets: [6],
 				orderable: false,
-				width: "10%",
+				width: "5%",
 				render: function (data, type, row, meta) {
 						var template = $('#template-estat').html();
 						row['icon-status'] = '';
@@ -320,30 +295,31 @@ $(document).ready(function() {
 			{
 				targets: [7],
 				orderable: false,
-				width: "10%",
+				width: "3%",
 				render: function (data, type, row, meta) {
-						var template = $('#template-justificant').html();
-						row["estat-pendent"] = row['justificantEstat'] == 'pendent';
-						row["estat-ok"] = row['justificantEstat'] == 'ok';
-						row["estat-error"] = row['justificantEstat'] == 'error';
-						row["estat-nodisponible"] = row['justificantEstat'] == 'no_disponible';
-						row["estat-oknocustodia"] = row['justificantEstat'] == 'ok_no_custodia';
-						return Mustache.render(template, row);
+					var template = $('#template-justificant').html();
+					row["estat-pendent"] = row['justificantEstat'].toLowerCase() == 'pendent';
+					row["estat-ok"] = row['justificantEstat'].toLowerCase() == 'ok';
+					row["estat-error"] = row['justificantEstat'].toLowerCase() == 'error';
+					row["estat-nodisponible"] = row['justificantEstat'].toLowerCase() == 'no_disponible';
+					row["estat-oknocustodia"] = row['justificantEstat'].toLowerCase() == 'ok_no_custodia';
+					return Mustache.render(template, row);
 				}
 			},
 			{
 				targets: [8],
 				orderable: false,
-				width: "10%",
+				width: "1%",
 				render: function (data, type, row, meta) {
 						var template = $('#template-details').html();
 						return Mustache.render(template, row);
 				}
 			},
-	   ],
-	   initComplete: function( settings, json ) {
-
-		}
+			{
+				targets: [9],
+				visible: false
+			},
+	   ]
 	});
 });
 </script>
@@ -351,24 +327,47 @@ $(document).ready(function() {
 <script id="template-justificant" type="x-tmpl-mustache">
 {{#estat-pendent}}
 <i class="far fa-clock" title="<spring:message code="consulta.list.taula.justif.pendent"/>"></i>
-<i class="icon-time" title="<spring:message code="consulta.list.taula.justif.pendent"/>"></i>
 {{/estat-pendent}}
 {{#estat-ok}}
-<a class="btn btn-small" href="consulta/{{ id }}/justificant">
+<a class="btn btn-default btn-small" href="consulta/{{ id }}/justificant">
 <i class="far fa-file-pdf" title="<spring:message code="consulta.list.taula.descarregar.pdf"/>" 
 			 alt="<spring:message code="consulta.list.taula.descarregar.pdf"/>"></i>
 </a>
 {{/estat-ok}}
 {{#estat-error}}
 <div class="btn-group">
-	<a class="btn btn-small dropdown-toggle" data-toggle="dropdown" href="#">
+	<a class="btn btn-default btn-small dropdown-toggle" data-toggle="dropdown" href="#">
 		<i class="icon-"><img src="<c:url value="/img/error_icon.png"/>" width="16" height="15" title="<spring:message code="consulta.list.taula.justif.error"/>" alt="<spring:message code="consulta.list.taula.justif.error"/>"/></i>
 		&nbsp;<span class="caret"></span>
 	</a>
 	<ul class="dropdown-menu">
-		<li><a href="consulta/{{ id }}/justificantError" data-toggle="modal" data-target="#modal-justificant-error-{{ id }}"><i class="icon-info-sign"></i>&nbsp;<spring:message code="consulta.list.taula.justif.error.veure"/></a></li>
-		<li><a href="consulta/{{ id }}/justificantReintentar" class="justificant-reintentar"><i class="icon-repeat"></i>&nbsp;<spring:message code="consulta.list.taula.justif.error.reintentar"/></a></li>
+		<li>
+			<a href="consulta/{{ id }}/justificantError" data-toggle="modal" data-target="#modal-justificant-error-{{ id }}">
+				<i class="fas fa-exclamation-triangle"></i>&nbsp;<spring:message code="consulta.list.taula.justif.error.veure"/>
+			</a>
+		</li>
+		<li>
+			<a href="consulta/{{ id }}/justificantReintentar" class="justificant-reintentar">
+				<i class="fas fa-redo-alt"></i>&nbsp;<spring:message code="consulta.list.taula.justif.error.reintentar"/>
+			</a>
+		</li>
 	</ul>
+</div>
+<div id="modal-justificant-error-{{ id }}" class="modal fade" role="dialog">
+	<div class="modal-dialog">
+	    <!-- Modal content-->
+	    <div class="modal-content">
+		<div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+			<h3><spring:message code="consulta.list.taula.justif.error"/></h3>
+		</div>
+		<div class="modal-body">
+			<textarea style="width:98%" rows="18">{{ justificantError }}</textarea>
+		</div>
+		<div class="modal-footer">
+		</div>
+		</div>
+	</div>
 </div>
 {{/estat-error}}
 </script>
@@ -384,7 +383,9 @@ $(document).ready(function() {
 </script>
 
 <script id="template-details" type="x-tmpl-mustache">
-<a href="consulta/{{ id }}" class="btn btn-default"><i class="fas fa-search-plus"></i>&nbsp;<spring:message code="admin.consulta.list.taula.detalls"/></a>
+<a href="consulta/{{ id }}" class="btn btn-default">
+	<i class="fas fa-search-plus"></i>&nbsp;<spring:message code="admin.consulta.list.taula.detalls"/>
+</a>
 </script>
 <script type="text/javascript">
 	function onInvokeAction(id) {
@@ -392,22 +393,6 @@ $(document).ready(function() {
 		createHiddenInputFieldsForLimitAndSubmit(id);
 	}
 </script>
-
-<c:forEach var="consulta" items="${consultes}">
-	<c:if test="${consulta.justificantEstatError}">
-		<div class="modal hide fade" id="modal-justificant-error-${consulta.id}" style="width:900px;margin-left:-450px;">
-			<div class="modal-header">
-				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-				<h3><spring:message code="consulta.list.taula.justif.error"/></h3>
-			</div>
-			<div class="modal-body">
-				<textarea style="width:98%" rows="18">${consulta.justificantError}</textarea>
-			</div>
-			<div class="modal-footer">
-			</div>
-		</div>
-	</c:if>
-</c:forEach>
 
 </body>
 </html>

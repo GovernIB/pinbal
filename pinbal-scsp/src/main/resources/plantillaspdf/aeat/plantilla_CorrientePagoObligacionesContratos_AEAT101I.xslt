@@ -376,11 +376,11 @@ contains($spacechars, $c2))">
 			</fo:table> 
 		</fo:block>
 
-	    <!-- DATOS DE LA RESPUESTA -->	
+	    DATOS DE LA RESPUESTA	
 		<!--xsl:choose -->
 			<!-- Miramos el Codigo de Error de la etiqueta Atributos -->
 			
-			<!--xsl:when test="$datosEspecificos/*[local-name()='CodRespuesta'] != '0' ">
+			<xsl:when test="$datosEspecificos/*[local-name()='CodRespuesta'] != '0' ">
 				<fo:block margin-top="40pt" text-align="center" font-family="Arial,sans-serif" font-size="10pt" line-height="10pt" space-after.optimum="1pt" display-align="after">
 					<fo:inline font-weight="bold">
 						<xsl:text>RESULTADO DE LA CONSULTA:      </xsl:text>
@@ -389,7 +389,7 @@ contains($spacechars, $c2))">
 						<xsl:value-of select="$datosEspecificos/*[local-name()='DescRespuesta']"/>
 					</fo:inline>
 				</fo:block>
-			</xsl:when -->
+			</xsl:when>
 			<!-- xsl:when test="$datosEspecificos/*[local-name()='CodRespuesta'] = '0'" -->
 				<fo:block text-align="left" margin-top="25pt">
 					<fo:block font-size="8pt" font-family="Arial,Helvetica,sans-serif" line-height="10pt" space-after.optimum="1pt" display-align="after">

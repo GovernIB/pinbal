@@ -328,24 +328,26 @@ function showModalEditar(
 			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
 			<h3></h3>
 		</div>
-		<div class="modal-body">
-			<c:url value="/representant/usuari/save" var="formAction"/>
-			<form id="modal-form" action="${formAction}" method="post" class="form-horizontal">
-				<input type="hidden" id="modal-hidden-id" name="id" value="${entitat.id}"/>
-				<input type="hidden" id="modal-hidden-codi" name="codi"/>
-				<input type="hidden" id="modal-hidden-nif" name="nif"/>
-				<div id="modal-group-tipus" class="form-group">
-    				<label class="control-label" for="modal-select-tipus"><spring:message code="representant.usuaris.camp.tipus"/></label>
-					<div class="controls">
-						<select id="modal-select-tipus" name="tipus" class="input-sm">
-							<option value="${caracterTipusNif}"><spring:message code="representant.usuaris.tipus.nif"/></option>
-							<option value="${caracterTipusCodi}"><spring:message code="representant.usuaris.tipus.codi"/></option>
-						</select>
+		
+		<div class="container-fluid">
+			<div class="modal-body">
+				<c:url value="/representant/usuari/save" var="formAction"/>
+				<form id="modal-form" action="${formAction}" method="post" class="form-horizontal">
+					<input type="hidden" id="modal-hidden-id" name="id" value="${entitat.id}"/>
+					<input type="hidden" id="modal-hidden-codi" name="codi"/>
+					<input type="hidden" id="modal-hidden-nif" name="nif"/>
+					<div id="modal-group-tipus" class="form-group">
+    					<label class="control-label" for="modal-select-tipus"><spring:message code="representant.usuaris.camp.tipus"/></label>
+							<div class="controls">
+								<select id="modal-select-tipus" name="tipus" class="well">
+									<option value="${caracterTipusNif}"><spring:message code="representant.usuaris.tipus.nif"/></option>
+									<option value="${caracterTipusCodi}"><spring:message code="representant.usuaris.tipus.codi"/></option>
+								</select>
+							</div>
 					</div>
-				</div>
-				<div id="modal-group-nom" class="form-group">
-    				<label class="control-label" for="modal-input-nom"><spring:message code="representant.usuaris.camp.nom"/></label>
-					<div class="controls">
+					<div id="modal-group-nom" class="form-group">
+    					<label class="control-label" for="modal-input-nom"><spring:message code="representant.usuaris.camp.nom"/></label>
+						<div class="controls">
 						<input type="text" id="modal-input-nom" name="codi" disabled="disabled"/>
 					</div>
 				</div>
@@ -385,6 +387,7 @@ function showModalEditar(
 	    			</div>
     			</div>
 			</form>
+		</div>
 		</div>
 		<div class="modal-footer">
 			<a href="#" class="btn" data-dismiss="modal"><spring:message code="comu.boto.tornar"/></a>

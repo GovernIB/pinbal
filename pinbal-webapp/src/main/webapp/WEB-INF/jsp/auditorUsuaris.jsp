@@ -270,12 +270,13 @@ function showModalEditar(
 		</div>
 		<div class="modal-content">
 			<c:url value="/auditor/usuari/save" var="formAction"/>
-			<form id="modal-form" action="${formAction}" method="post" class="form-horizontal">
+			<form id="modal-form" action="${formAction}" method="post" class="well">
 				<input type="hidden" id="modal-hidden-id" name="id" value="${entitat.id}"/>
 				<input type="hidden" id="modal-hidden-codi" name="codi"/>
 				<input type="hidden" id="modal-hidden-nif" name="nif"/>
 				<div id="modal-group-tipus" class="form-group">
     				<label class="control-label" for="modal-select-tipus"><spring:message code="auditor.usuaris.camp.tipus"/></label>
+    				
 					<div class="controls">
 						<select id="modal-select-tipus" name="tipus" class="input-sm">
 							<option value="${caracterTipusNif}"><spring:message code="auditor.usuaris.tipus.nif"/></option>
@@ -290,6 +291,7 @@ function showModalEditar(
 					</div>
 				</div>
 				<div id="modal-group-nif" class="form-group">
+				
     				<label class="control-label" for="modal-input-nif"><spring:message code="auditor.usuaris.camp.nif"/></label>
 					<div class="controls">
 						<input type="text" id="modal-input-nif" name="nif" disabled="disabled"/>

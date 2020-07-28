@@ -150,11 +150,15 @@
 <!-- 			</div> -->
 			</div>
 		</div>
-		
+			
+	
 		<div class="row">
-			<div class="col-md-3">
-			<label class="control-label" for="${campPath}"><spring:message code="clau.privada.form.camp.data.alta"/> *</label>
-			<pbl:inputDate name="dataAlta" inline="true" placeholderKey="clau.privada.form.camp.data.alta"/>
+		
+
+			 <div class="col-md-3">
+			
+				<label class="control-label" for="${campPath}"><spring:message code="clau.privada.form.camp.data.alta"/> *</label>
+				<pbl:inputDate name="dataAlta" inline="true" placeholderKey="clau.privada.form.camp.data.alta"/>
 <%-- 			<c:set var="campPath" value="dataAlta"/> --%>
 <%-- 			<c:set var="campErrors"><form:errors path="${campPath}"/></c:set> --%>
 <%-- 			<c:set var="idioma"><%=org.springframework.web.servlet.support.RequestContextUtils.getLocale(request).getLanguage()%></c:set> --%>
@@ -175,20 +179,8 @@
 <%-- 					<form:errors path="${campPath}" cssClass="help-inline"/> --%>
 <!-- 				</div> -->
 			</div>
-		<div class="col-md-2"></div>
-		<div class="col-md-6 ">
-			<c:set var="campPath" value="interoperabilitat"/>
-			<c:set var="campErrors"><form:errors path="${campPath}"/></c:set>
-			<div class="control-group<c:if test="${not empty campErrors}"> error</c:if>">
-				<label class="control-label" for="${campPath}"><spring:message code="clau.privada.form.camp.interoperabilitat"/>  </label>
-				<div class="controls">
-					<form:checkbox path="${campPath}" cssClass="my-checkbox" id="${campPath}"/>
-					<form:errors path="${campPath}" cssClass="help-inline"/>
-				</div>
-			</div>
-		</div>
-		<div class="col-md-2"></div>
-		<div class="col-md-3">
+			<div class="col-md-2"></div>
+			<div class="col-md-3">
 			<label class="control-label" for="${campPath}"><spring:message code="clau.privada.form.camp.data.baixa"/></label>
 			<pbl:inputDate name="dataBaixa" inline="true" placeholderKey="clau.privada.form.camp.data.baixa"/>
 				
@@ -196,7 +188,7 @@
 <%-- 			<c:set var="campErrors"><form:errors path="${campPath}"/></c:set> --%>
 <%-- 			<c:set var="idioma"><%=org.springframework.web.servlet.support.RequestContextUtils.getLocale(request).getLanguage()%></c:set> --%>
 <%-- 			<div class="form-group<c:if test="${not empty campErrors}"> error</c:if>"> --%>
-<%-- 				<label class="control-label" for="${campPath}"><spring:message code="clau.privada.form.camp.data.baixa"/>  </label> --%>
+<%-- 			
 <!-- 				<div class="controls"> -->
 <!-- 					<div class="input-append" style="width: 100%;"> -->
 <%-- 						<form:input --%>
@@ -212,6 +204,25 @@
 <%-- 					<form:errors path="${campPath}" cssClass="help-block"/> --%>
 <!-- 				</div> -->
 			</div>
+			<div class="col-md-12"></div>
+				<div class="col-md-5"></div>
+			<div class="col-md-3">
+				
+				<c:set var="campPath" value="interoperabilitat"/>
+				<c:set var="campErrors"><form:errors path="${campPath}"/></c:set>
+				<div class="control-group<c:if test="${not empty campErrors}"> error</c:if>">
+					<label class="control-label" for="${campPath}"><spring:message code="clau.privada.form.camp.interoperabilitat"/>  </label>
+					<div class="controls">
+						<form:checkbox path="${campPath}" cssClass="my-checkbox" id="${campPath}"/>
+						<form:errors path="${campPath}" cssClass="help-inline"/>
+					</div>
+				</div>
+			</div>
+		
+	
+	</div>	
+		<div class="col-md-2"></div>
+		
 		</div>
 	
 	<div class="row">
