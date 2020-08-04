@@ -14,28 +14,26 @@
 <head>	
 
 	<title><spring:message code="consulta.list.titol"/></title>	
-	
 
 	<link href="<c:url value="/webjars/datatables/1.10.21/css/dataTables.bootstrap.min.css"/>" rel="stylesheet"/>
 	<link href="<c:url value="/webjars/bootstrap-datepicker/1.6.1/dist/css/bootstrap-datepicker.min.css"/>" rel="stylesheet"/>
-	<link href="<c:url value="/css/select2.css"/>" rel="stylesheet"/>
-	<link href="<c:url value="/css/select2-bootstrap.css"/>" rel="stylesheet"/>
-	
+	<link href="<c:url value="/webjars/select2/4.0.6-rc.1/dist/css/select2.min.css"/>" rel="stylesheet"/>
+	<link href="<c:url value="/webjars/select2-bootstrap-theme/0.1.0-beta.10/dist/select2-bootstrap.min.css"/>" rel="stylesheet"/>
+
 	<script src="<c:url value="/webjars/bootstrap-datepicker/1.6.1/dist/js/bootstrap-datepicker.min.js"/>"></script>
 	<script src="<c:url value="/webjars/bootstrap-datepicker/1.6.1/dist/locales/bootstrap-datepicker.${requestLocale}.min.js"/>"></script>
-
-	<script src="<c:url value="/js/webutil.common.js"/>"></script>
 	
 	<script src="<c:url value="/webjars/datatables/1.10.21/js/jquery.dataTables.min.js"/>"></script>
 	<script src="<c:url value="/webjars/datatables/1.10.21/js/dataTables.bootstrap.min.js"/>"></script>
 	<script src="<c:url value="/webjars/mustache.js/3.0.1/mustache.min.js"/>"></script>
-	<script src="<c:url value="/js/select2.min.js"/>" type="text/javascript"></script>
+
+	<script src="<c:url value="/webjars/select2/4.0.6-rc.1/dist/js/select2.min.js"/>"></script>
+	<script src="<c:url value="/webjars/select2/4.0.6-rc.1/dist/js/i18n/${requestLocale}.js"/>"></script>
+	
 	<script src="<c:url value="/webjars/datatables-plugins/1.10.20/dataRender/datetime.js"/>"></script>
 	<script src="<c:url value="/webjars/momentjs/2.24.0/min/moment.min.js"/>"></script>
 	<script src="<c:url value="/js/webutil.datatable.js"/>"></script>
-	<script src="<c:url value="/js/webutil.datatable.js"/>"></script>
-	<script src="<c:url value="/js/webutil.modal.js"/>"></script>
-    
+    <script src="<c:url value="/js/webutil.common.js"/>"></script>
 
 <style>
 #expedientFiltreForm {
@@ -56,25 +54,17 @@ table.dataTable thead > tr.selectable > :first-child, table.dataTable tbody > tr
 	
 </head>
 <body>
-		<form:form id="form-group" action="" method="post" cssClass="well" commandName="filtreCommand" >
-		<div class="container-fluid" >
-			<div class ="row">	
-				<div class="col-md-3">
-				<pbl:inputText name="scspPeticionId"  inline="true" placeholderKey="consulta.list.filtre.peticion.id"/>
-<%-- 					<c:set var="campPath" value="scspPeticionId"/>					 --%>
-<%-- 					<c:set var="campErrors"><form:errors path="${campPath}"/></c:set> --%>
-<%-- 					<div class="form-group<c:if test="${not empty campErrors}"> error</c:if>"> --%>
-<%-- 						<spring:bind path="${campPath}"> --%>
-<%-- 							<input class="form-control" type="text" id="${campPath}" name="${campPath}"<c:if test="${not empty status.value}"> value="${status.value}"</c:if> placeholder="<spring:message code="consulta.list.filtre.peticion.id"/>"> --%>
-<%-- 						</spring:bind> --%>
-<!-- 					</div> -->
-				</div>
-				<div class="col-md-3">
-					<pbl:inputSelect name="procediment"  inline="true" placeholderKey="consulta.list.filtre.procediment" 
-	 								 optionItems="${procediments}"  
-	 								 optionValueAttribute="id" 
-	 								 optionTextAttribute="nom" 
-	 								 emptyOption="true"/> 
+<form:form id="form-group" action="" method="post" cssClass="well" commandName="filtreCommand" >
+	<div class ="row">	
+		<div class="col-md-3">
+			<pbl:inputText name="scspPeticionId"  inline="true" placeholderKey="consulta.list.filtre.peticion.id"/>
+		</div>
+		<div class="col-md-3">
+			<pbl:inputSelect name="procediment"  inline="true" placeholderKey="consulta.list.filtre.procediment" 
+								 optionItems="${procediments}"  
+								 optionValueAttribute="id" 
+								 optionTextAttribute="nom" 
+								 emptyOption="true"/> 
 <%-- 					<c:set var="campPath" value="procediment"/> --%>
 <%-- 					<c:set var="campErrors"><form:errors path="${campPath}"/></c:set> --%>
 <%-- 					<div class="form-group<c:if test="${not empty campErrors}"> error</c:if>"> --%>
@@ -82,14 +72,14 @@ table.dataTable thead > tr.selectable > :first-child, table.dataTable tbody > tr
 <%-- 							<option value=""><spring:message code="consulta.list.filtre.procediment"/>:</option> --%>
 <%-- 							<form:options items="${procediments}" itemLabel="nom" itemValue="id"/> --%>
 <%-- 						</form:select> --%>
-				</div>
-		
-				<div class="col-md-3">
-					<pbl:inputSelect name="servei"  inline="true" placeholderKey="consulta.list.filtre.servei" 
-									 optionItems="${serveis}" 
-									 optionValueAttribute="codi"
-									 optionTextAttribute="descripcio"
-									 emptyOption="true"/>
+		</div>
+
+		<div class="col-md-3">
+			<pbl:inputSelect name="servei"  inline="true" placeholderKey="consulta.list.filtre.servei" 
+							 optionItems="${serveis}" 
+							 optionValueAttribute="codi"
+							 optionTextAttribute="descripcio"
+							 emptyOption="true"/>
 <%-- 					<c:set var="campPath" value="servei"/> --%>
 <%-- 					<c:set var="campErrors"><form:errors path="${campPath}"/></c:set> --%>
 <%-- 					<div class="form-group<c:if test="${not empty campErrors}">error</c:if>"> --%>
@@ -98,11 +88,11 @@ table.dataTable thead > tr.selectable > :first-child, table.dataTable tbody > tr
 <%-- 							<form:options items="${serveis}" itemLabel="descripcio" itemValue="codi"/> --%>
 <%-- 						</form:select> --%>
 <!-- 					</div> -->
-				</div>
-				<div class="col-md-3">
-					<pbl:inputSelect name="estat"  inline="true" placeholderKey="consulta.list.filtre.estat" 
-									 optionItems="${consultaEstats}" 
-									 emptyOption="true"/>
+		</div>
+		<div class="col-md-3">
+			<pbl:inputSelect name="estat"  inline="true" placeholderKey="consulta.list.filtre.estat" 
+							 optionItems="${consultaEstats}" 
+							 emptyOption="true"/>
 <%-- 					<c:set var="campPath" value="estat"/> --%>
 <%-- 					<c:set var="campErrors"><form:errors path="${campPath}"/></c:set> --%>
 <%-- 					<div class="form-group<c:if test="${not empty campErrors}">error</c:if>"> --%>
@@ -115,97 +105,81 @@ table.dataTable thead > tr.selectable > :first-child, table.dataTable tbody > tr
 <%-- 							</c:forEach> --%>
 <%-- 						</form:select> --%>
 <!-- 					</div> -->
-				</div>
-			</div>
-			
-			<div class="row">
-				<div class="col-md-12">
-			
+		</div>
+	</div>
+	
+	<div class="row">
+		<div class="col-md-12">
+	
 <%-- 						<pbl:inputSelect name="estat"  inline="true" placeholderKey="consulta.list.filtre.estat" /> --%>
-	 						<c:set var="campErrors"><form:errors path="dataInici"/></c:set> 
-	 						<c:if test="${empty campErrors}"><c:set var="campErrors"><form:errors path="dataFi"/></c:set></c:if> 
-	 	 						<div class="form-group<c:if test="${not empty campErrors}"> error</c:if>">  
-		  							<label><spring:message code="consulta.list.filtre.data"/></label>  
-		  							<c:set var="campErrors"><form:errors path="titularNom"/></c:set>  
-		  							<c:if test="${empty campErrors}"><c:set var="campErrors"><form:errors path="titularDocument"/></c:set></c:if> 
-		  							<div class="form-group<c:if test="${not empty campErrors}"> error</c:if>">  
+			<c:set var="campErrors"><form:errors path="dataInici"/></c:set> 
+			<c:if test="${empty campErrors}"><c:set var="campErrors"><form:errors path="dataFi"/></c:set></c:if> 
+					<div class="form-group<c:if test="${not empty campErrors}"> error</c:if>">  
+<%--  							<label><spring:message code="consulta.list.filtre.data"/></label>   --%>
+						<c:set var="campErrors"><form:errors path="titularNom"/></c:set>  
+						<c:if test="${empty campErrors}"><c:set var="campErrors"><form:errors path="titularDocument"/></c:set></c:if> 
+						<div class="form-group<c:if test="${not empty campErrors}"> error</c:if>">  
 <!-- 									 <label>&nbsp;</label>  -->
-	 								</div>	  
-	 							</div> 
-				</div>	
-			</div>
-			<div class="row">				
-				<div class="col-md-2" >
-						<pbl:inputDate name="dataInici"  inline="true" placeholderKey="consulta.list.filtre.data.inici"/> 
-<%--  									<spring:bind path="${campPath}">  --%>
-<%--  										<input class="fa fa calendar" type="text" id="${campPath}" name="${campPath}"<c:if test="${not empty status.value}"> value="${status.value}"</c:if> class="fa fa-calendar" placeholder="<spring:message code="consulta.list.filtre.data.inici"/>">  --%>
-<!-- 										<script>$("#${campPath}").mask("99/99/9999");</script> -->
-<%-- 									</spring:bind> --%>
-				</div>
-				<div class="col-md-2">
-							<pbl:inputDate name="dataFi"  inline="true" placeholderKey="consulta.list.filtre.data.fi"/>
-<%-- 									<c:set var="campPath" value="dataFi"/> --%>
-<%-- 									<c:set var="campErrors"><form:errors path="${campPath}"/></c:set> --%>
-<%-- 							<div class="form-group<c:if test="${not empty campErrors}"> error</c:if>"> --%>
-									
-<%-- 										<spring:bind path="${campPath}"> --%>
-<%-- 											<input class="form-control" type="text" id="${campPath}" name="${campPath}"<c:if test="${not empty status.value}"> value="${status.value}"</c:if> class="col-md-6" placeholder="<spring:message code="consulta.list.filtre.data.fi"/>"> --%>
-<!-- 											<script>$("#${campPath}").mask("99/99/9999");</script> -->
-<%-- 										</spring:bind> --%>
-							</div>
-					
-							
-				<div class="col-md-3">
-					<pbl:inputText name="titularNom" inline="true" placeholderKey="consulta.list.filtre.titular.nom"/>
+					</div>	  
+				</div> 
+		</div>	
+	</div>
+	<div class="row">				
+		<div class="col-md-2" >
+				<pbl:inputDate name="dataInici"  inline="true" placeholderKey="consulta.list.filtre.data.inici"/> 
+		</div>
+		<div class="col-md-2">
+			<pbl:inputDate name="dataFi"  inline="true" placeholderKey="consulta.list.filtre.data.fi"/>
+		</div>		
+		<div class="col-md-3">
+			<pbl:inputText name="titularNom" inline="true" placeholderKey="consulta.list.filtre.titular.nom"/>
 <%-- 							<c:set var="campPath" value="titularNom"/> --%>
 <%-- 							<c:set var="campErrors"><form:errors path="${campPath}"/></c:set> --%>
 <%-- 							<spring:bind path="${campPath}"> --%>
 <%-- 								<input class="form-control" type="text" name="${campPath}"<c:if test="${not empty status.value}"> value="${status.value}"</c:if> class="col-md-12" placeholder="<spring:message code="consulta.list.filtre.titular.nom"/>"> --%>
 <%-- 							</spring:bind> --%>
-				</div>
-				<div class="col-md-3">
-					<pbl:inputText name="titularDocument" inline="true" placeholderKey="consulta.list.filtre.titular.document"/>
+		</div>
+		<div class="col-md-3">
+			<pbl:inputText name="titularDocument" inline="true" placeholderKey="consulta.list.filtre.titular.document"/>
 <%-- 							<c:set var="campPath" value="titularDocument"/> --%>
 <%-- 							<c:set var="campErrors"><form:errors path="${campPath}"/></c:set> --%>
 <%-- 							<spring:bind path="${campPath}"> --%>
 <%-- 								<input class="form-control" type="text" name="${campPath}"<c:if test="${not empty status.value}"> value="${status.value}"</c:if> class="col-md-12" placeholder="<spring:message code="consulta.list.filtre.titular.document"/>"> --%>
 <%-- 								</spring:bind> --%>
+		</div>
+					
+	
+		<div class="col-md-2 ">
+				<div class="pull-right">
+					<label>&nbsp;</label>
+					<button id="netejar-filtre" class="btn btn-default" type="button"><spring:message code="comu.boto.netejar"/></button>
+					<button class="btn btn-primary" type="submit"><spring:message code="comu.boto.filtrar"/></button>
 				</div>
-							
-			
-				<div class="col-md-2 ">
-						<div class="pull-right">
-							<label>&nbsp;</label>
-							<button id="netejar-filtre" class="btn btn-default" type="button"><spring:message code="comu.boto.netejar"/></button>
-							<button class="btn btn-primary" type="submit"><spring:message code="comu.boto.filtrar"/></button>
-						</div>
-				</div>
-			</div>
 		</div>
 	</div>
-
-	
-		</form:form>
-
-	<div class="clearfix"></div>
-	
-		<table id="table-consultes" class="table table-striped table-bordered" style="width: 100%">
-			<thead>
-				<tr>
-					<th data-data="scspPeticionId"><spring:message code="consulta.list.taula.peticion.id" /></th>
-					<th data-data="creacioData"><spring:message code="consulta.list.taula.data" /></th>
-					<th data-data="procedimentNom"><spring:message code="consulta.list.taula.procediment" /></th>
-					<th data-data="serveiDescripcio"><spring:message code="consulta.list.taula.servei" /></th>
-					<th data-data="titularNomSencer"><spring:message code="consulta.list.taula.titular.nom" /></th>
-					<th data-data="titularDocumentAmbTipus"><spring:message code="consulta.list.taula.titular.document" /></th>				
-					<th data-data="estat"><spring:message code="consulta.list.taula.estat" /></th>
-					<th data-data="id"></th>
-					<th data-data="id"></th>
-				</tr>
-			</thead>
-		</table>
-
-		
+</div>
+</form:form>
+		<div class="container-fluid">
+<div class="row">				
+	<div class="col-md-12" >	
+	<table id="table-consultes" class="table table-striped table-bordered" style="width: 100%">
+		<thead>
+			<tr>
+				<th data-data="scspPeticionId"><spring:message code="consulta.list.taula.peticion.id" /></th>
+				<th data-data="creacioData"><spring:message code="consulta.list.taula.data" /></th>
+				<th data-data="procedimentNom"><spring:message code="consulta.list.taula.procediment" /></th>
+				<th data-data="serveiDescripcio"><spring:message code="consulta.list.taula.servei" /></th>
+				<th data-data="titularNomSencer"><spring:message code="consulta.list.taula.titular.nom" /></th>
+				<th data-data="titularDocumentAmbTipus"><spring:message code="consulta.list.taula.titular.document" /></th>				
+				<th data-data="estat"><spring:message code="consulta.list.taula.estat" /></th>
+				<th data-data="id"></th>
+				<th data-data="justificantEstat"></th>
+			</tr>
+		</thead>
+	</table>
+	</div>
+</div>
+	</div>	
 <script type="text/javascript">
 $(document).ready(function() {
 	$('#netejar-filtre').click(function() {
@@ -299,6 +273,7 @@ $(document).ready(function() {
 				width: "3%",
 				render: function (data, type, row, meta) {
 					var template = $('#template-justificant').html();
+					console.log(row)
 					row["estat-pendent"] = row['justificantEstat'].toLowerCase() == 'pendent';
 					row["estat-ok"] = row['justificantEstat'].toLowerCase() == 'ok';
 					row["estat-error"] = row['justificantEstat'].toLowerCase() == 'error';

@@ -8,16 +8,31 @@
 <html>
 <head>
 	<title><spring:message code="procediment.list.titol"/></title>
+
 	<link href="<c:url value="/webjars/datatables/1.10.21/css/dataTables.bootstrap.min.css"/>" rel="stylesheet"/>
+	<link href="<c:url value="/webjars/bootstrap-datepicker/1.6.1/dist/css/bootstrap-datepicker.min.css"/>" rel="stylesheet"/>
+	<link href="<c:url value="/webjars/select2/4.0.6-rc.1/dist/css/select2.min.css"/>" rel="stylesheet"/>
+	<link href="<c:url value="/webjars/select2-bootstrap-theme/0.1.0-beta.10/dist/select2-bootstrap.min.css"/>" rel="stylesheet"/>
+
+	<script src="<c:url value="/webjars/bootstrap-datepicker/1.6.1/dist/js/bootstrap-datepicker.min.js"/>"></script>
+	<script src="<c:url value="/webjars/bootstrap-datepicker/1.6.1/dist/locales/bootstrap-datepicker.${requestLocale}.min.js"/>"></script>
+	
 	<script src="<c:url value="/webjars/datatables/1.10.21/js/jquery.dataTables.min.js"/>"></script>
 	<script src="<c:url value="/webjars/datatables/1.10.21/js/dataTables.bootstrap.min.js"/>"></script>
 	<script src="<c:url value="/webjars/mustache.js/3.0.1/mustache.min.js"/>"></script>
+
+	<script src="<c:url value="/webjars/select2/4.0.6-rc.1/dist/js/select2.min.js"/>"></script>
+	<script src="<c:url value="/webjars/select2/4.0.6-rc.1/dist/js/i18n/${requestLocale}.js"/>"></script>
+	
+	<script src="<c:url value="/webjars/datatables-plugins/1.10.20/dataRender/datetime.js"/>"></script>
+	<script src="<c:url value="/webjars/momentjs/2.24.0/min/moment.min.js"/>"></script>
 	<script src="<c:url value="/js/webutil.datatable.js"/>"></script>
+    <script src="<c:url value="/js/webutil.common.js"/>"></script>
 </head>
 <body>
 
 	<ul class="breadcrumb">
-		<li><spring:message code="procediment.serveis.miques.procediment" arguments="${procediment.nom}"/> <span class="divider">/</span></li>
+		<li><spring:message code="procediment.serveis.miques.procediment" arguments="${procediment.nom}"/> </li>
 		<li class="active"><spring:message code="procediment.serveis.miques.serveis"/></li>
 	</ul>
 
@@ -26,29 +41,16 @@
 		<div class="row">
 			<div class="col-md-3">	
 				<pbl:inputText name="codi" inline="true" placeholderKey="servei.list.filtre.camp.codi"/>
-<%-- 				<c:set var="campPath" value="codi"/> --%>
-<%-- 				<spring:message var="placeholderCodi" code="servei.list.filtre.camp.codi"/> --%>
-<%-- 				<form:input path="${campPath}" cssClass= "col-md-12 input-sm" id="${campPath}" placeholder="${placeholderCodi}"/> --%>
 			</div>
 			<div class="col-md-3">	
 				<pbl:inputText name="descripcio" inline="true" placeholderKey="servei.list.filtre.camp.descripcio"/>
-<%-- 				<c:set var="campPath" value="descripcio"/> --%>
-<%-- 				<spring:message var="placeholderDescripcio" code="servei.list.filtre.camp.descripcio"/> --%>
-<%-- 				<form:input path="${campPath}" cssClass="col-md-12 input-sm" id="${campPath}" placeholder="${placeholderDescripcio}"/> --%>
 			</div>
-<!-- 			<div class="control-group col-md-3 hidden">	 -->
-<%-- 				<c:set var="campPath" value="emissor"/> --%>
-<%-- 				<form:select path="${campPath}" id="${campPath}" class="col-md-12"> --%>
-<%-- 					<option value=""><spring:message code="servei.list.filtre.camp.emissor"/></option> --%>
-<%-- 					<form:options items="${emisors}" itemLabel="nom" itemValue="id"/> --%>
-<%-- 				</form:select> --%>
-<!-- 			</div> -->
 			<div class="col-md-3">
-<%-- 				<pbl:inputSelect name="activa" inline="true" placeholderKey="servei.list.filtre.camp.descripcio"/> --%>
 				<c:set var="campPath" value="activa"/>
 				<spring:message var="trueValue" code="entitat.list.filtre.camp.activa.yes"/>
 				<spring:message var="falseValue" code="entitat.list.filtre.camp.activa.no"/>
-				<form:select path="${campPath}" class="form-control">
+				<form:select path="${campPath}" class="form-control" data-toggle="select2"
+							 data-minimumresults="5">
 					<option value=""><spring:message code="entitat.list.filtre.camp.activa"/></option>>
 					<form:option value="true">${trueValue}</form:option>>
 					<form:option value="false">${falseValue}</form:option>>
@@ -56,13 +58,13 @@
 			</div>
 			<div class="col-md-3">
 				<div class="pull-right">
-					<button id="netejar-filtre" class="btn" type="button"><spring:message code="comu.boto.netejar"/></button>
+					<button id="netejar-filtre" class="btn btn-default" type="button"><spring:message code="comu.boto.netejar"/></button>
 					<button type="submit" class="btn btn-primary"><spring:message code="comu.boto.filtrar"/></button>
 				</div>
 			</div>
-		
+		</div>
 	</form:form>
-		<div class="clearfix"></div>
+
 	<table id="table-serveis" class="table table-striped table-bordered" style="width: 100%">
 		<thead>
 			<tr>
@@ -162,7 +164,9 @@ $(document).ready(function() {
 					$input.focus();
 					$input.select();
 				} else {
-					actualitzaCodiProcediment(servei_codi,$input.val());
+					console.log(servei_codi);
+					console.log($input.val());
+					actualitzaCodiProcediment(servei_codi, $input.val());
 					$input.prop('disabled',true);
 					$(this).html('<i class="fas fa-pencil-alt"></i>');
 				}
@@ -184,8 +188,7 @@ function actualitzaCodiProcediment(servei_codi, codi_procediment) {
 	    dataType: 'json',
 	    data: {procedimentCodi: codi_procediment},
 	    success: function(result) {
-		    if (result)
-	    		console.log(result);
+    		console.log(result);
 	    }
 	});	
 }
@@ -196,7 +199,6 @@ function actualitzaCodiProcediment(servei_codi, codi_procediment) {
 {{/actiu}}
 </script>
 <script id="template-procediment" type="x-tmpl-mustache">
-{{ procedimentCodi }}
   <div class="input-group">
   <input class="form-control" id="procedimentCodi_{{ codi }}" type="text" value="{{ procedimentCodi }}" disabled>
   <div class="input-group-btn">
@@ -206,7 +208,6 @@ function actualitzaCodiProcediment(servei_codi, codi_procediment) {
   </div>
   </div>
 </script>
-<!-- TODO: substituir icones  -->
 <script id="template-status" type="x-tmpl-mustache">
 	{{#actiu}}
 		<a href="servei/{{ codi }}/disable" class="btn btn-default confirm-remove"><i class="fa fa-times"></i>&nbsp;<spring:message code="comu.boto.desactivar"/></a>

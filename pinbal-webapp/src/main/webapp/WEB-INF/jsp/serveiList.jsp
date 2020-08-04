@@ -9,190 +9,137 @@
 <html>
 <head>
 	<title><spring:message code="servei.list.titol"/></title>
-	<link href="<c:url value="/css/select2-bootstrap.css"/>" rel="stylesheet"/>
-	<link href="<c:url value="/webjars/bootstrap-datepicker/1.6.1/dist/css/bootstrap-datepicker.min.css"/>" rel="stylesheet"/>
 	<link href="<c:url value="/webjars/datatables/1.10.21/css/dataTables.bootstrap.min.css"/>" rel="stylesheet"/>
+	<link href="<c:url value="/webjars/select2/4.0.6-rc.1/dist/css/select2.min.css"/>" rel="stylesheet"/>
+	<link href="<c:url value="/webjars/select2-bootstrap-theme/0.1.0-beta.10/dist/select2-bootstrap.min.css"/>" rel="stylesheet"/>
+	
 	
 	<script src="<c:url value="/webjars/datatables/1.10.21/js/jquery.dataTables.min.js"/>"></script>
 	<script src="<c:url value="/webjars/datatables/1.10.21/js/dataTables.bootstrap.min.js"/>"></script>
 	<script src="<c:url value="/webjars/mustache.js/3.0.1/mustache.min.js"/>"></script>
 	<script src="<c:url value="/webjars/datatables-plugins/1.10.20/dataRender/datetime.js"/>"></script>
 	<script src="<c:url value="/webjars/momentjs/2.24.0/min/moment.min.js"/>"></script>
-	<script src="<c:url value="/js/webutil.datatable.js"/>"></script>
-	<script src="<c:url value="/webjars/bootstrap-datepicker/1.6.1/dist/js/bootstrap-datepicker.min.js"/>"></script>
-	<script src="<c:url value="/webjars/bootstrap-datepicker/1.6.1/dist/locales/bootstrap-datepicker.${requestLocale}.min.js"/>"></script>
-	<script type="text/javascript" src="<c:url value="/js/select2.min.js"/>"></script>
 	<script src="<c:url value="/webjars/datatables-plugins/1.10.20/dataRender/datetime.js"/>"></script>
 	<script src="<c:url value="/webjars/momentjs/2.24.0/min/moment.min.js"/>"></script>
 	
-	<script src="<c:url value="/webjars/datatables.net-select/1.1.2/js/dataTables.select.min.js"/>"></script>
-	<link href="<c:url value="/webjars/datatables.net-select-bs/1.1.2/css/select.bootstrap.min.css"/>" rel="stylesheet"></link>
-	<link href="<c:url value="/webjars/select2/4.0.6-rc.1/dist/css/select2.min.css"/>" rel="stylesheet"/>
-	<link href="<c:url value="/webjars/select2-bootstrap-theme/0.1.0-beta.4/dist/select2-bootstrap.min.css"/>" rel="stylesheet"/>
-	<link href="<c:url value="/css/select2.css"/>" rel="stylesheet"/>
-	<link href="<c:url value="/css/select2-bootstrap.css"/>" rel="stylesheet"/>
-	<link href="<c:url value="/webjars/bootstrap-datepicker/1.6.1/dist/css/bootstrap-datepicker.min.css"/>" rel="stylesheet"/>
 	<script src="<c:url value="/webjars/select2/4.0.6-rc.1/dist/js/select2.min.js"/>"></script>
 	<script src="<c:url value="/webjars/select2/4.0.6-rc.1/dist/js/i18n/${requestLocale}.js"/>"></script>
 	<script src="<c:url value="/webjars/bootstrap-datepicker/1.6.1/dist/js/bootstrap-datepicker.min.js"/>"></script>
-	<script src="<c:url value="/webjars/jsrender/1.0.0-rc.70/jsrender.min.js"/>"></script>
+
 	<script src="<c:url value="/js/webutil.common.js"/>"></script>
 	<script src="<c:url value="/js/webutil.datatable.js"/>"></script>
-	<script src="<c:url value="/js/webutil.modal.js"/>"></script>
-	<script src="<c:url value="/webjars/datatables/1.10.21/js/jquery.dataTables.min.js"/>"></script> 
- 	<script src="<c:url value="/webjars/datatables/1.10.21/js/dataTables.bootstrap.min.js"/>"></script> 
-	<script src="<c:url value="/webjars/mustache.js/3.0.1/mustache.min.js"/>"></script>
-	<script src="<c:url value="/webjars/bootstrap-datepicker/1.6.1/dist/js/bootstrap-datepicker.min.js"/>"></script>
-	<script src="<c:url value="/webjars/bootstrap-datepicker/1.6.1/dist/locales/bootstrap-datepicker.${requestLocale}.min.js"/>"></script>
-	<script type="text/javascript" src="<c:url value="/js/select2.min.js"/>"></script>
-	<script src="<c:url value="/webjars/datatables-plugins/1.10.20/dataRender/datetime.js"/>"></script>
-	<script src="<c:url value="/webjars/momentjs/2.24.0/min/moment.min.js"/>"></script>
-	<script src="<c:url value="/webjars/datatables.net/1.10.11/js/jquery.dataTables.min.js"/>"></script>
-	<script src="<c:url value="/webjars/datatables.net-bs/1.10.11/js/dataTables.bootstrap.min.js"/>"></script>
 	
-
-		
 <script>
-		$(document).ready(function() {
-			$('#netejar-filtre').click(function() {
-				$(':input', $('#form-filtre')).each (function() {
-					var type = this.type, tag = this.tagName.toLowerCase();
-					if (type == 'text' || type == 'password' || tag == 'textarea')
-						this.value = '';
-					else if (type == 'checkbox' || type == 'radio')
-						this.checked = false;
-					else if (tag == 'select')
-						this.selectedIndex = 0;
-				});
-				$('#form-filtre').submit();
+	$(document).ready(function() {
+		$('#netejar-filtre').click(function() {
+			$(':input', $('#form-filtre')).each (function() {
+				var type = this.type, tag = this.tagName.toLowerCase();
+				if (type == 'text' || type == 'password' || tag == 'textarea')
+					this.value = '';
+				else if (type == 'checkbox' || type == 'radio')
+					this.checked = false;
+				else if (tag == 'select')
+					this.selectedIndex = 0;
 			});
-			$('.confirm-esborrar').click(function() {
-				  return confirm("<spring:message code="servei.list.confirmacio.esborrar"/>");
-			});
-			
-			
-			
-		    $('#table-serveis').DataTable({
-		    	autoWidth: false,
-				processing: true,
-				serverSide: true,
-				dom: "<'row'<'col-md-6'i><'col-md-6'>><'row'<'col-md-12'rt>><'row'<'col-md-6'l><'col-md-6'p>>",
-				language: {
-		            "url": "js/datatable-language.json"
-		        },
-				ajax: "servei/datatable",
-				columnDefs: [
-					{
-						targets: [3],
-						orderable: false,
-						width: "1%",
-						render: function (data, type, row, meta) {
-								var template = $('#template-btn-procediments').html();
-								return Mustache.render(template, row);
-						}
-					}, 
-					{
-						targets: [4],
-						orderable: false,
-						width: "1%",
-						render: function (data, type, row, meta) {
-								var template = $('#template-accions').html();
-								return Mustache.render(template, row);
-						}
-					}, 
-			   ]
-			});		    
+			$('#form-filtre').submit();
 		});
-		function showModalProcediments(element) {
-			var ample = Math.min(980, (window.innerWidth - 40));
-			var alt = Math.round(window.innerHeight * 0.8) - 110;
-			
-			$('#modal-procediment-list').find('.modal-header h3').html($(element).data("titol"));
+		
+		$('.confirm-esborrar').click(function() {
+			  return confirm("<spring:message code="servei.list.confirmacio.esborrar"/>");
+		});
+				
+	    $('#table-serveis').DataTable({
+	    	autoWidth: false,
+			processing: true,
+			serverSide: true,
+			dom: "<'row'<'col-md-6'i><'col-md-6'>><'row'<'col-md-12'rt>><'row'<'col-md-6'l><'col-md-6'p>>",
+			language: {
+	            "url": "js/datatable-language.json"
+	        },
+			ajax: "servei/datatable",
+			columnDefs: [
+				{
+					targets: [3],
+					orderable: false,
+					width: "1%",
+					render: function (data, type, row, meta) {
+							var template = $('#template-btn-procediments').html();
+							return Mustache.render(template, row);
+					}
+				}, 
+				{
+					targets: [4],
+					orderable: false,
+					width: "1%",
+					render: function (data, type, row, meta) {
+							var template = $('#template-accions').html();
+							return Mustache.render(template, row);
+					}
+				}, 
+		   ]
+		});		    
+	});
+	function showModalProcediments(element) {
+		var ample = Math.min(980, (window.innerWidth - 40));
+		var alt = Math.round(window.innerHeight * 0.8) - 110;
+		
+		$('#modal-procediment-list').find('.modal-header h3').html($(element).data("titol"));
 // 			$('#modal-procediment-list').css({	"width": ample + 'px',
 // 												"margin-left": '-' + (ample/2) + 'px'});
-			$('#modal-procediment-list').find('.modal-body').css({"max-height": alt + "px"});
-			$('#modal-procediment-list').find('.modal-body').load(element.href);
-			$('#modal-procediment-list').modal('toggle');
-		}
-	</script>
-	<style type="text/css">
-		#modal-procediment-list .modal-body .well {
-			display: none;
-		}
-	</style>
+		$('#modal-procediment-list').find('.modal-body').css({"max-height": alt + "px"});
+		$('#modal-procediment-list').find('.modal-body').load(element.href);
+		$('#modal-procediment-list').modal('toggle');
+	}
+</script>
+<style type="text/css">
+	#modal-procediment-list .modal-body .well {
+		display: none;
+	}
+</style>
 </head>
 <body>
 	<c:url value="/servei" var="formAction"/>
 	<form:form id="form-filtre" action="${formAction}" method="post" cssClass="well" commandName="serveiFiltreCommand">
-		<div class="container-fluid">
-			<div class="row">
-				<div class="col-md-2">
-					<pbl:inputText name="codi"  inline="true" placeholderKey="servei.list.filtre.camp.codi"/>	
-<%-- 					<c:set var="campPath" value="codi"/> --%>
-<%-- 						<spring:message var="placeholderCodi" code="servei.list.filtre.camp.codi"/> --%>
-<%-- 						<form:input path="${campPath}" cssClass="form-control col-md-3" id="${campPath}" placeholder="${placeholderCodi}"/> --%>
-				</div>
-				<div class="col-md-2">	
-					<pbl:inputText name="descripcio"  inline="true" placeholderKey="servei.list.filtre.camp.descripcio"/>
-<%-- 					<c:set var="campPath" value="descripcio"/> --%>
-<%-- 					<spring:message var="placeholderDescripcio" code="servei.list.filtre.camp.descripcio"/> --%>
-<%-- 					<form:input path="${campPath}" cssClass="form-control input-sm" id="${campPath}" placeholder="${placeholderDescripcio}"/> --%>
-				</div>
-				<div class="col-md-2">	
-					<pbl:inputSelect name="descripcio"  inline="true" placeholderKey="servei.list.filtre.camp.emissor"
-					 optionItems="${emisors}"
-					 	optionValueAttribute="id"
-					 	optionTextAttribute="nom"
-					 	emptyOption="true"/>
-<%-- 					<c:set var="campPath" value="emissor"/> --%>
-<%-- 					<form:select path="${campPath}" id="${campPath}" class="form-control col-md-12"> --%>
-<%-- 						<option value=""><spring:message code="servei.list.filtre.camp.emissor"/></option> --%>
-<%-- 						<form:options items="${emisors}" itemLabel="nom" itemValue="id"/> --%>
-<%-- 					</form:select> --%>
-				</div>
-				<div class="col-md-2">	
-					<pbl:inputSelect name="activa"  inline="true" placeholderKey="entitat.list.filtre.camp.activa" 
-					 optionItems="${trueValue}"
-							emptyOption="true"/>
-							
-<%-- 					<c:set var="campPath" value="activa"/> --%>
-<%-- 					<spring:message var="trueValue" code="entitat.list.filtre.camp.activa.yes"/> --%>
-<%-- 					<spring:message var="falseValue" code="entitat.list.filtre.camp.activa.no"/> --%>
-<%-- 					<form:select path="${campPath}" class="form-control col-md-12"> --%>
-<%-- 						<option value=""><spring:message code="entitat.list.filtre.camp.activa"/></option>> --%>
-<%-- 						<form:option value="true">${trueValue}</form:option>> --%>
-<%-- 						<form:option value="false">${falseValue}</form:option>> --%>
-<%-- 					</form:select> --%>
-<!-- 				</div> -->
-				</div>
-				<div class="col-md-4">
-					<div class="pull-right">
-						<button id="netejar-filtre" class="btn btn-default" type="button"><spring:message code="comu.boto.netejar"/></button>
-						<button type="submit" class="btn btn-primary"><spring:message code="comu.boto.filtrar"/></button>
-					</div>
-				</div>
-		</div>
-	</div>
-	
-	</form:form>
-	
-	<div class="container-fluid">
 		<div class="row">
-				<div class="pull-right">
-				<a class="btn btn-primary" href="<c:url value="/servei/new"/>"><i class="glyphicon-plus"></i>&nbsp;<spring:message code="servei.list.boto.nou.servei"/></a>
+			<div class="col-md-2">
+				<pbl:inputText name="codi"  inline="true" placeholderKey="servei.list.filtre.camp.codi"/>	
 			</div>
-			
+			<div class="col-md-2">	
+				<pbl:inputText name="descripcio"  inline="true" placeholderKey="servei.list.filtre.camp.descripcio"/>
+			</div>
+			<div class="col-md-2">	
+				<pbl:inputSelect name="descripcio"  inline="true" placeholderKey="servei.list.filtre.camp.emissor"
+				 optionItems="${emisors}"
+				 	optionValueAttribute="id"
+				 	optionTextAttribute="nom"
+				 	emptyOption="true"/>
+			</div>
+			<div class="col-md-2">	
+				<c:set var="campPath" value="activa"/>
+				<spring:message var="trueValue" code="entitat.list.filtre.camp.activa.yes"/>
+				<spring:message var="falseValue" code="entitat.list.filtre.camp.activa.no"/>
+				<form:select path="${campPath}" cssClass="form-control" data-toggle="select2" data-minimumresults="5">
+					<option value=""></option>
+					<form:option value="true">${trueValue}</form:option>
+					<form:option value="false">${falseValue}</form:option>
+				</form:select>
+			</div>
+			<div class="col-md-4">
+				<div class="pull-right">
+					<button id="netejar-filtre" class="btn btn-default" type="button"><spring:message code="comu.boto.netejar"/></button>
+					<button type="submit" class="btn btn-primary"><spring:message code="comu.boto.filtrar"/></button>
+				</div>
+			</div>
 		</div>
-			
-	</div>
-	
-	 <label>&nbsp;</label> 	
-		<div class="clearfix"></div>
+	</form:form>
 
-	
-	<div class="clearfix"></div>
-	<div class="container-fluid">
-		<div style="position: relative; top: -40px; z-index:0">
+	<div class="row">
+		<div class="col-md-12">
+			<a class="btn btn-primary pull-right" href="<c:url value="/servei/new"/>"><i class="fa fa-plus"></i>&nbsp;<spring:message code="servei.list.boto.nou.servei"/></a>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-md-12">
 		<table id="table-serveis" class="table table-striped table-bordered" style="width: 100%">
 			<thead>
 				<tr>
@@ -205,7 +152,7 @@
 			</thead>
 		</table>
 		</div>
-</div>
+	</div>
 <div id="modal-procediment-list" class="modal" tabindex="-1" role="dialog">
   <div class="modal-dialog" role="document">
     <div class="modal-content">

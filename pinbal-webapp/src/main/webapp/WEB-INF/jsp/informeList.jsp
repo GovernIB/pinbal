@@ -11,7 +11,6 @@
 	<link href="<c:url value="/webjars/bootstrap-datepicker/1.6.1/dist/css/bootstrap-datepicker.min.css"/>" rel="stylesheet"/>
 	<script src="<c:url value="/webjars/bootstrap-datepicker/1.6.1/dist/js/bootstrap-datepicker.min.js"/>"></script>
 	<script src="<c:url value="/webjars/bootstrap-datepicker/1.6.1/dist/locales/bootstrap-datepicker.${requestLocale}.min.js"/>"></script>
-	<script src="<c:url value="/js/jquery.maskedinput.js"/>"></script>
 </head>
 <body>
 	
@@ -20,7 +19,7 @@
 			<div class="well">
 				<h4>
 				<spring:message code="informe.list.informe.procediments"/>
-				<a href="informe/procediments" class="btn btn-default pull-right"><i class="glyphicon-download"></i>&nbsp;<spring:message code="informe.list.generar"/></a>
+				<a href="informe/procediments" class="btn btn-default pull-right"><i class="fas fa-file-download"></i>&nbsp;<spring:message code="informe.list.generar"/></a>
 				</h4>
 			</div>
 		</div>
@@ -31,7 +30,7 @@
 			<div class="well">
 					<h4>
 						<spring:message code="informe.list.informe.usuaris"/>
-						<a href="informe/usuaris" class="btn btn-default pull-right"><i class="glyphicon-download"></i>&nbsp;<spring:message code="informe.list.generar"/></a>
+						<a href="informe/usuaris" class="btn btn-default pull-right"><i class="fas fa-file-download"></i>&nbsp;<spring:message code="informe.list.generar"/></a>
 					</h4>
 			</div>
 		</div>
@@ -41,7 +40,7 @@
 			<div class="well">
 				<h4>
 						<spring:message code="informe.list.informe.serveis"/>
-						<a href="informe/serveis" class="btn btn-default pull-right"><i class="glyphicon-download"></i>&nbsp;<spring:message code="informe.list.generar"/></a>
+						<a href="informe/serveis" class="btn btn-default pull-right"><i class="fas fa-file-download"></i>&nbsp;<spring:message code="informe.list.generar"/></a>
 				</h4>
 			</div>
 		</div>
@@ -52,7 +51,9 @@
 			<div class="well">
 				<h4>
 					<spring:message code="informe.list.informe.generalEstat"/>
-					<a href="#modal-form-filtre" onclick="showModalFiltrar()" class="btn btn-default pull-right"><i class="glyphicon-download"></i>&nbsp;<spring:message code="informe.list.generar"/></a>
+					<a href="#modal-form-filtre" onclick="showModalFiltrar()" class="btn btn-default pull-right">
+						<i class="fas fa-file-download"></i>&nbsp;<spring:message code="informe.list.generar"/>
+					</a>
 				</h4>
 			</div>
 		</div>

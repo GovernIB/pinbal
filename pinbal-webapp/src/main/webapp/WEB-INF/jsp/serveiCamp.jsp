@@ -20,9 +20,7 @@
 		<c:otherwise><c:set var="serveiPerTitol" value="${servei.codi}"/></c:otherwise>
 	</c:choose>
 	<meta name="subtitle" content="${serveiPerTitol}"/>
-	<script type="text/javascript" src="<c:url value="/js/jquery-ui-1.8.20.custom.min.js"/>"></script>
 
-	<script src="<c:url value="/js/jquery.maskedinput.js"/>"></script>
 <script>
 $(document).ready(function() {
 	// Confirmació al esborrar el camp

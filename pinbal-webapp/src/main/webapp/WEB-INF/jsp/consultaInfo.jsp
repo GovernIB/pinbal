@@ -23,7 +23,8 @@ function initModalXml(element) {
 <body>
 
 	<c:if test="${consulta.estatError}">
-		<div class="alert alert-error">
+		<div class="alert alert-danger fade in">
+		  	<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
 			<h4 class="alert-heading"><spring:message code="consulta.controller.recepcio.error"/>:</h4>
 			<p>${consulta.error}</p>
 		</div>
@@ -47,23 +48,18 @@ function initModalXml(element) {
 				<spring:message code="consulta.info.consulta.enviada.ales"/>
 				<fmt:formatDate pattern="HH:mm:ss" value="${consulta.creacioData}"/>
 			</p>
-			<form class="well" style="margin:0">
-				<br/>
+			<form>
 				<div class="row">
 					<div class="col-md-6">
 						<div class="form-group">
 							<label class="control-label" for=""><spring:message code="consulta.form.camp.numpet"/></label>
-							<div class="controls">
-								<input type="text" value="${consulta.scspPeticionId}" class="col-md-12" style="width:100%" id="" disabled="disabled"/>
-							</div>
+							<input type="text" value="${consulta.scspPeticionId}" class="form-control" disabled="disabled"/>
 						</div>
 					</div>
 					<div class="col-md-6">
 						<div class="form-group">
 							<label class="control-label" for=""><spring:message code="consulta.form.camp.numsol"/></label>
-							<div class="controls">
-								<input type="text" value="${consulta.scspSolicitudId}" class="col-md-12" style="width:100%" id="" disabled="disabled"/>
-							</div>
+							<input type="text" value="${consulta.scspSolicitudId}" class="form-control" disabled="disabled"/>
 						</div>
 					</div>
 				</div>
@@ -71,9 +67,7 @@ function initModalXml(element) {
 					<div class="col-md-12">
 						<div class="form-group">
 							<label class="control-label" for=""><spring:message code="consulta.form.camp.procediment"/></label>
-							<div class="controls">
-								<input type="text" value="${consulta.procedimentNom}" class="col-md-12" style="width:100%" id="" disabled="disabled"/>
-							</div>
+							<input type="text" value="${consulta.procedimentNom}" class="form-control" disabled="disabled"/>
 						</div>
 					</div>
 				</div>
@@ -81,30 +75,23 @@ function initModalXml(element) {
 					<div class="col-md-12">
 						<div class="form-group">
 							<label class="control-label" for=""><spring:message code="consulta.form.camp.servei"/></label>
-							<div class="controls">
-								<input type="text" value="${servei.descripcio}" class="col-md-12" style="width:100%" id="" disabled="disabled"/>
-							</div>
+							<input type="text" value="${servei.descripcio}" class="form-control" disabled="disabled"/>
 						</div>
 					</div>
 				</div>
 				<fieldset>
 					<legend><spring:message code="consulta.form.dades.generiques"/></legend>
-					<br/>
 					<div class="row">
 						<div class="col-md-6">
 							<div class="form-group">
 								<label class="control-label" for=""><spring:message code="consulta.form.camp.funcionari.nom"/></label>
-								<div class="controls">
-									<input type="text" value="${consulta.funcionariNom}" class="col-md-12" id="" disabled="disabled"/>
-								</div>
+								<input type="text" value="${consulta.funcionariNom}" class="form-control" id="" disabled="disabled"/>
 							</div>
 						</div>
 						<div class="col-md-6">
 							<div class="form-group">
 								<label class="control-label" for=""><spring:message code="consulta.form.camp.funcionari.nif"/></label>
-								<div class="controls">
-									<input type="text" value="${consulta.funcionariNif}" class="col-md-12" id="" disabled="disabled"/>
-								</div>
+								<input type="text" value="${consulta.funcionariNif}" class="form-control" id="" disabled="disabled"/>
 							</div>
 						</div>
 					</div>
@@ -112,17 +99,13 @@ function initModalXml(element) {
 						<div class="col-md-6">
 							<div class="form-group">
 								<label class="control-label" for=""><spring:message code="consulta.form.camp.entitat.nom"/></label>
-								<div class="controls">
-									<input type="text" value="${consulta.entitatNom}" class="col-md-12" id="" disabled="disabled"/>
-								</div>
+								<input type="text" value="${consulta.entitatNom}" class="form-control" id="" disabled="disabled"/>
 							</div>
 						</div>
 						<div class="col-md-6">
 							<div class="form-group">
 								<label class="control-label" for=""><spring:message code="consulta.form.camp.entitat.cif"/></label>
-								<div class="controls">
-									<input type="text" value="${consulta.entitatCif}" class="col-md-12" id="" disabled="disabled"/>
-								</div>
+								<input type="text" value="${consulta.entitatCif}" class="form-control" id="" disabled="disabled"/>
 							</div>
 						</div>
 					</div>
@@ -130,16 +113,14 @@ function initModalXml(element) {
 						<div class="col-md-6">
 							<div class="form-group">
 								<label class="control-label" for=""><spring:message code="consulta.form.camp.consentiment"/></label>
-								<div class="controls">
-									<input type="text" value="${consulta.consentiment}" class="col-md-12" id="" disabled="disabled"/>
-								</div>
+								<input type="text" value="${consulta.consentiment}" class="form-control" id="" disabled="disabled"/>
 							</div>
 						</div>
 						<div class="col-md-6">
 							<div class="form-group">
 								<label class="control-label" for=""><spring:message code="consulta.form.camp.departament"/></label>
 								<div class="controls">
-									<input type="text" value="${consulta.departamentNom}" class="col-md-12" id="" disabled="disabled"/>
+									<input type="text" value="${consulta.departamentNom}" class="form-control" id="" disabled="disabled"/>
 								</div>
 							</div>
 						</div>
@@ -149,7 +130,7 @@ function initModalXml(element) {
 							<div class="form-group">
 								<label class="control-label" for=""><spring:message code="consulta.form.camp.finalitat"/></label>
 								<div class="controls">
-									<textarea rows="8" class="col-md-12" id="" disabled="disabled">${consulta.finalitat}</textarea>
+									<textarea rows="8" class="form-control" id="" disabled="disabled">${consulta.finalitat}</textarea>
 								</div>
 							</div>
 						</div>
@@ -159,7 +140,7 @@ function initModalXml(element) {
 							<div class="form-group">
 								<label class="control-label" for=""><spring:message code="consulta.form.camp.expedient"/></label>
 								<div class="controls">
-									<input type="text" value="${consulta.expedientId}" class="col-md-12" id="" disabled="disabled"/>
+									<input type="text" value="${consulta.expedientId}" class="form-control" id="" disabled="disabled"/>
 								</div>
 							</div>
 						</div>
@@ -178,7 +159,7 @@ function initModalXml(element) {
 									<div class="form-group">
 										<label class="control-label" for=""><spring:message code="consulta.form.camp.document.tipus"/></label>
 										<div class="controls">
-											<input type="text" value="${consulta.titularDocumentTipus}" class="col-md-12" id="" disabled="disabled"/>
+											<input type="text" value="${consulta.titularDocumentTipus}" class="form-control" id="" disabled="disabled"/>
 										</div>
 									</div>
 								</div>
@@ -186,7 +167,7 @@ function initModalXml(element) {
 									<div class="form-group">
 										<label class="control-label" for=""><spring:message code="consulta.form.camp.document.num"/></label>
 										<div class="controls">
-											<input type="text" value="${consulta.titularDocumentNum}" class="col-md-12" id="" disabled="disabled"/>
+											<input type="text" value="${consulta.titularDocumentNum}" class="form-control" id="" disabled="disabled"/>
 										</div>
 									</div>
 								</div>
@@ -225,7 +206,7 @@ function initModalXml(element) {
 									<div class="form-group">
 										<label class="control-label" for="${campPath}">${campLabel}</label>
 										<div class="controls">
-											<input type="text" value="${consulta[campPath]}" class="col-md-12" id="campPath" disabled="disabled"/>
+											<input type="text" value="${consulta[campPath]}" class="form-control" id="campPath" disabled="disabled"/>
 										</div>
 									</div>
 								</div>
@@ -339,7 +320,7 @@ $('#dadesResposta').on('shown', function () {
 				<a href="<c:url value="/consulta/multiple/${consulta.pareId}"/>" class="btn"><spring:message code="comu.boto.tornar"/></a>
 			</c:when>
 			<c:otherwise>
-				<a href="<c:url value="/consulta"/>" class="btn"><spring:message code="comu.boto.tornar"/></a>
+				<a href="<c:url value="/consulta"/>" class="btn btn-primary"><spring:message code="comu.boto.tornar"/></a>
 			</c:otherwise>
 		</c:choose>
 	</div>

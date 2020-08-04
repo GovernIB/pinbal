@@ -34,8 +34,8 @@
 <div class="form-group<c:if test="${not empty campErrors}"> has-error</c:if>"<c:if test="${multiple}"> data-toggle="multifield"</c:if>>
 <c:choose>
 	<c:when test="${not inline}">
-		<label class="control-label col-xs-${campLabelSize}" for="${campPath}">${campLabelText}</label>
-		<div class="col-xs-${campInputSize}">
+		<label class="control-label col-md-${campLabelSize}" for="${campPath}">${campLabelText}</label>
+		<div class="col-md-${campInputSize}">
 			<c:choose>
 				<c:when test="${tooltip && not button}">
 					<c:set var="tooltipMsg"><spring:message code="${tooltipMsg}"/></c:set>

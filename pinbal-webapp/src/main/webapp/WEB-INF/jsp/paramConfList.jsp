@@ -61,24 +61,22 @@
 <body>
 	
 	<div class="container-fluid">
-		<div class="row">
-			<div class="pull-right">
-				<a class="btn btn-primary" href="<c:url value="/scsp/paramconf/new"/>"><i class="glyphicon-plus"></i>&nbsp;<spring:message code="paramconf.list.boto.nou.registre"/></a>
-			</div>
+		<div class="pull-right">
+			<a class="btn btn-primary" href="<c:url value="/scsp/paramconf/new"/>">
+				<i class="fas fa-plus"></i>&nbsp;<spring:message code="paramconf.list.boto.nou.registre"/>
+			</a>
 		</div>
-	</div>		
-		<div class="clearfix"></div>
+		
+		<table id="table-params" class="table table-striped table-bordered" style="width: 100%">
+			<thead>
+				<tr>
+					<th data-data="nom"><spring:message code="paramconf.list.taula.columna.nom" /></th>
+					<th data-data="valor"><spring:message code="paramconf.list.taula.columna.valor" /></th>
+					<th data-data="id"></th>
+				</tr>
+			</thead>
+		</table>
 	</div>
-	<div class="clearfix"></div>
-	<table id="table-params" class="table table-striped table-bordered" style="width: 100%">
-		<thead>
-			<tr>
-				<th data-data="nom"><spring:message code="paramconf.list.taula.columna.nom" /></th>
-				<th data-data="valor"><spring:message code="paramconf.list.taula.columna.valor" /></th>
-				<th data-data="id"></th>
-			</tr>
-		</thead>
-	</table>
 <script id="template-actions" type="x-tmpl-mustache">
 	<div class="btn-group">
 		<a class="btn btn-primary dropdown-toggle" data-toggle="dropdown" href="#"><i class="fas fa-cog"></i>&nbsp;<spring:message code="comu.accions"/>&nbsp;<span class="caret"></span></a>

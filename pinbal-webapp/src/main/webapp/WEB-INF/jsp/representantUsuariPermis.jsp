@@ -38,7 +38,7 @@ $(document).ready(function() {
 	$('#select-procediment').select2();
 	$('#serveiCodi').select2();
 	$('.confirm-esborrar').click(function() {
-		  return confirm('<spring:message code="procediment.serveis.permisos.esborrar.tots.segur"/>');
+		  return confirm("<spring:message code="procediment.serveis.permisos.esborrar.tots.segur"/>");
 	});
 });
 </script>
@@ -46,28 +46,33 @@ $(document).ready(function() {
 <body>
 
 	<ul class="breadcrumb">
-		<li><spring:message code="representant.usuaris.permisos.miques.usuari" arguments="${usuari.descripcio}"/> <span class="divider">/</span></li>
+		<li><spring:message code="representant.usuaris.permisos.miques.usuari" arguments="${usuari.descripcio}"/></li>
 		<li class="active"><spring:message code="representant.usuaris.permisos.miques.permisos"/></li>
 	</ul>
 
+	<div class="container-fluid">
 	<c:url value="/representant/usuari/${usuari.codi}/permis/allow" var="formAction"/>
-	<form action="${formAction}" method="post" class="well">
-		<select id="procedimentId" name="procedimentId" class="well">
-			
-			<option value=""><spring:message code="representant.usuaris.permisos.filtre.procediment"/>:</option>
-				<c:forEach var="procediment" items="${procediments}">
-				<option value="${procediment.id}">(${procediment.codi}) ${procediment.nom}</option>
-			</c:forEach>
-		</select>
-		<select id="serveiCodi" name="serveiCodi" class="well">
-			<option value=""><spring:message code="representant.usuaris.permisos.filtre.servei"/>:</option>
-		</select>
+	<form action="${formAction}" method="post" class="row well">
+		<div class="col-md-4">
+			<select id="select-procediment" name="procedimentId" class="form-control">				
+				<option value=""><spring:message code="representant.usuaris.permisos.filtre.procediment"/>:</option>
+					<c:forEach var="procediment" items="${procediments}">
+					<option value="${procediment.id}">(${procediment.codi}) ${procediment.nom}</option>
+				</c:forEach>
+			</select>
+		</div>
+		<div class="col-md-4">
+			<select id="serveiCodi" name="serveiCodi" class="form-control">
+				<option value=""><spring:message code="representant.usuaris.permisos.filtre.servei"/>:</option>
+			</select>
+		</div>
 		<div class="pull-right">
-		<button type="submit" class="btn btn-primary"><spring:message code="comu.boto.afegir"/></button>
+			<button type="submit" class="btn btn-primary"><spring:message code="comu.boto.afegir"/></button>
 		</div>
 	</form>
+	</div>
 
-	<table id="permisos" border="0" cellpadding="0" cellspacing="0" class="table table-bordered table-striped">
+	<table id="permisos" border="0" cellpadding="0" class="table table-bordered table-striped">
 	<thead>
 	<tr class="header">
 		<th><div><spring:message code="representant.usuaris.permisos.taula.columna.procediment.codi"/></div></th>
@@ -107,7 +112,7 @@ $(document).ready(function() {
 
 	<div>
 		<a href="<c:url value="/representant/usuari/${usuari.codi}/permis/deny/all"/>" class="btn btn-primary confirm-esborrar"><spring:message code="procediment.serveis.permisos.esborrar.tots"/></a>
-		<a href="<c:url value="/representant/usuari"/>" class="btn pull-right"><spring:message code="comu.boto.tornar"/></a>
+		<a href="<c:url value="/representant/usuari"/>" class="btn btn-default pull-right"><spring:message code="comu.boto.tornar"/></a>
 		<div class="clearfix"></div>
 	</div>
 

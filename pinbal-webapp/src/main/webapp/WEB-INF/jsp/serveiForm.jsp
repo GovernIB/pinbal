@@ -23,27 +23,35 @@
 		</c:choose>
 	</title>
    
-   	<link href="<c:url value="/webjars/datatables/1.10.21/css/dataTables.bootstrap.min.css"/>" rel="stylesheet"/>
+   	<link href="<c:url value="/webjars/bootstrap-datepicker/1.6.1/dist/css/bootstrap-datepicker.min.css"/>" rel="stylesheet"/>
+	<link href="<c:url value="/webjars/select2/4.0.6-rc.1/dist/css/select2.min.css"/>" rel="stylesheet"/>
+	<link href="<c:url value="/webjars/select2-bootstrap-theme/0.1.0-beta.10/dist/select2-bootstrap.min.css"/>" rel="stylesheet"/>
 	<link href="<c:url value="/webjars/bootstrap-datepicker/1.6.1/dist/css/bootstrap-datepicker.min.css"/>" rel="stylesheet"/>
-	<link href="<c:url value="/css/select2.css"/>" rel="stylesheet"/>
-	<link href="<c:url value="/css/select2-bootstrap.css"/>" rel="stylesheet"/>
+	
+	<script src="<c:url value="/webjars/select2/4.0.6-rc.1/dist/js/select2.min.js"/>"></script>
+	<script src="<c:url value="/webjars/select2/4.0.6-rc.1/dist/js/i18n/${requestLocale}.js"/>"></script>
 	
 	<script src="<c:url value="/webjars/bootstrap-datepicker/1.6.1/dist/js/bootstrap-datepicker.min.js"/>"></script>
 	<script src="<c:url value="/webjars/bootstrap-datepicker/1.6.1/dist/locales/bootstrap-datepicker.${requestLocale}.min.js"/>"></script>
 
-	<script src="<c:url value="/js/webutil.common.js"/>"></script>
+
 	
-	<script src="<c:url value="/webjars/datatables/1.10.21/js/jquery.dataTables.min.js"/>"></script>
-	<script src="<c:url value="/webjars/datatables/1.10.21/js/dataTables.bootstrap.min.js"/>"></script>
-	<script src="<c:url value="/webjars/mustache.js/3.0.1/mustache.min.js"/>"></script>
-	<script src="<c:url value="/js/select2.min.js"/>" type="text/javascript"></script>
-	<script src="<c:url value="/webjars/datatables-plugins/1.10.20/dataRender/datetime.js"/>"></script>
-	<script src="<c:url value="/webjars/momentjs/2.24.0/min/moment.min.js"/>"></script>
-	<script src="<c:url value="/js/webutil.datatable.js"/>"></script>
+	<link href="<c:url value="/js/jHtmlArea/style/jHtmlArea.css"/>" rel="stylesheet"/>
+	<link href="<c:url value="/js/jHtmlArea/style/jHtmlArea.ColorPickerMenu.css"/>" rel="stylesheet"/>
+	<script src="<c:url value="/js/jHtmlArea/scripts/jHtmlArea-0.8.min.js"/>"></script>
+	<script src="<c:url value="/js/jHtmlArea/scripts/jHtmlArea.ColorPickerMenu-0.8.min.js"/>"></script>
 
 
+	<link href="<c:url value="/webjars/jasny-bootstrap/3.1.3/dist/css/jasny-bootstrap.min.css"/>" rel="stylesheet"> 
+	<script src="<c:url value="/webjars/jasny-bootstrap/3.1.3/dist/js/jasny-bootstrap.min.js"/>"></script> 
 
-
+	<script src="<c:url value="/js/webutil.common.js"/>"></script>
+	<style type="text/css">
+	.vcenter {
+ display: flex;
+    align-items: center;
+}
+	</style>
 <script>
 
 $(document).ready(function() {
@@ -111,22 +119,34 @@ $(document).ready(function() {
                    	["orderedList", "unorderedList"],
                    	["indent", "outdent"],
                    	["justifyleft", "justifycenter", "justifyright"],
-                   	["link", "unlink", "image", "horizontalrule"],
+                   	["link", "unlink", "image", "horizontal.vcenter {
+                   	    display: inline-block;
+                    vertical-align: middle;
+                    float: none;
+                }rule"],
                    	[ "p", "h1", "h2", "h3", "h4", "h5", "h6"],
                    	["cut", "copy", "paste"]
 				],
 		toolbarText: $.extend({}, jHtmlArea.defaultOptions.toolbarText, {
 					"html": "Mostra/Oculta el codi HTML",
 			        "bold": "Negreta",
-			        "italic": "Cursiva",
+			        "italic": "Cursiva",.vcenter {
+			            display: inline-block;
+			        vertical-align: middle;
+			        float: none;
+			    }
 			        "underline": "Subrallat",
 			        "strikethrough": "Ratllat",
 			        "forecolor": "Color del text",
 			        "subscript": "Subíndex", 
 			        "superscript": "Superíndex", 
 			        "increasefontsize": "Augmenta la mida de la font", 
-			        "decreasefontsize": "Disminueix la mida de la font",
-                   	"orderedlist": "Insereix una llista ordenada", 
+			        "decreasefontsize": "Disminueix la mida de la font",justify
+                   	"orderedlist": "Insereix una llista ord.vcenter {
+                   	    display: inline-block;
+                    vertical-align: middle;
+                    float: none;
+                }enada", 
                    	"unorderedlist": "Insereix una llista no ordenada",
                    	"indent": "Augmenta el sagnat", 
                    	"outdent": "Disminueix el sagnat",
@@ -136,7 +156,7 @@ $(document).ready(function() {
                    	"link": "Insereix un enllaç", 
                    	"unlink": "Elimina un enllaç", 
                    	"image": "Insereix una imatge", 
-                   	"horizontalrule": "Insereix una separació horitzontal",
+                   	"horizontalrule": "Insereix una separació horitzontal",justify
                    	"p": "Paràgraf", 
                    	"h1": "Capçalera 1", 
                    	"h2": "Capçalera 2", 
@@ -189,230 +209,131 @@ function showModalXsd(element) {
 <body>
 
 	<c:url value="/servei/save" var="formAction"/>
-	<form:form action="${formAction}" method="post" cssClass="well" 
+	<form:form action="${formAction}" method="post" cssClass="form-horizontal" 
 			   commandName="serveiCommand" enctype="multipart/form-data">
 		<form:hidden path="creacio"/>
 		<fieldset>
-			<div class="container-fluid">
-				<div class="row">
-					<div class="col-md-12">
-						<label class="control-label" for="${campPath}"><spring:message code="servei.form.camp.codi"/> *</label>
-						<pbl:inputText name="codi" inline="true" placeholderKey="servei.form.camp.codi"/>
-<%-- 						<c:set var="campPath" value="codi"/> --%>
-<%-- 						<c:set var="campErrors"><form:errors path="${campPath}"/></c:set> --%>
-<%-- 						<div class="control-group<c:if test="${not empty campErrors}"> error</c:if>"> --%>
-						
-<!-- 						<div class="controls"> -->
-<%-- 							<form:input path="${campPath}" cssClass="col-md-12" id="${campPath}"/> --%>
-<%-- 							<form:errors path="${campPath}" cssClass="help-block"/> --%>
-<!-- 						</div> -->
-					</div>
-				</div>	
-				<div class="row">
-					<div class="col-md-12">
-					
-						<label class="control-label" for="${campPath}"><spring:message code="servei.form.camp.descripcio"/> *</label>
-						<pbl:inputText name="codi" inline="true" placeholderKey="servei.form.camp.descripcio"/>
-					
-<%-- 					<c:set var="campPath" value="descripcio"/> --%>
-<%-- 					<c:set var="campErrors"><form:errors path="${campPath}"/></c:set> --%>
-<%-- 					<div class="form-group<c:if test="${not empty campErrors}"> error</c:if>"> --%>
-<%-- 						<label class="control-label" for="${campPath}"><spring:message code="servei.form.camp.descripcio"/> *</label> --%>
-<!-- 						<div class="controls"> -->
-<%-- 							<form:textarea rows="8" path="${campPath}" cssClass="col-md-12" id="${campPath}"/> --%>
-<%-- 							<form:errors path="${campPath}" cssClass="help-block"/> --%>
-<!-- 						</div> -->
-					</div>
+			<div class="row">
+				<div class="col-md-12">
+					<pbl:inputText name="codi" labelSize="1" textKey="servei.form.camp.codi" required="true"/>
+					<pbl:inputText name="descripcio" labelSize="1" textKey="servei.form.camp.descripcio" required="true"/>
+					<pbl:inputSelect name="scspEmisor" labelSize="1" 
+									 required="true"
+									 placeholderKey="servei.form.camp.scsp.emisor" 
+									 textKey="servei.form.camp.scsp.emisor"
+									 optionItems="${emisors}"
+									 optionValueAttribute="cif"
+									 optionTextAttribute="nom"
+									 emptyOption="true"/>
 				</div>
-				<div class="row">
-					<div class="col-md-12">
-					<label class="control-label" for="${campPath}"><spring:message code="servei.form.camp.scsp.emisor"/> *</label>
-						<pbl:inputSelect name="scspEmisor" inline="true"  placeholderKey="servei.form.camp.scsp.emisor" 
-						optionItems="${emisors}"
-						optionValueAttribute="cif"
-						optionTextAttribute="nom"
-						emptyOption="true"/>
-						
-	<%-- 					<c:set var="campPath" value="scspEmisor"/> --%>
-	<%-- 					<c:set var="campErrors"><form:errors path="${campPath}"/></c:set> --%>
-	<%-- 					<div class="form-group<c:if test="${not empty campErrors}"> error</c:if>"> --%>
-							
-	<!-- 						<div class="controls"> -->
-	<%-- 							<form:select path="${campPath}" cssClass="col-md-12" id="${campPath}"> --%>
-	<%-- 								<option value=""><spring:message code="comu.opcio.sense.definir"/></option> --%>
-	<%-- 								<form:options items="${emisors}" itemLabel="nom" itemValue="cif"/> --%>
-	<%-- 							</form:select> --%>
-	<%-- 							<form:errors path="${campPath}" cssClass="help-block"/> --%>
-	<!-- 						</div> -->
-	<!-- 					</div> -->
-					</div>
-				</div>
-				
+			</div>	
 		</fieldset>
 		<fieldset>
 			<legend><spring:message code="servei.form.legend.param.pinbal"/></legend>
-			<div class="clearfix legend-margin-bottom"></div>
-			<div class="container-fluid well">
-				<div class="row">
-					<div class="col-md-6">
-						<pbl:inputText name="pinbalCustodiaCodi" textKey="servei.form.camp.pinbal.custodia.codi"/>
-					</div>
-					<div class="col-md-6">
-						<pbl:inputText name="pinbalRoleName" textKey="servei.form.camp.pinbal.role.name"/>
-					</div>
-					</div>
-				<div class="row">
-					<div class="col-md-6">
+			<div class="row">
+				<div class="col-md-6">
+					<pbl:inputText name="pinbalCustodiaCodi" textKey="servei.form.camp.pinbal.custodia.codi"/>
 					<pbl:inputText name="pinbalCondicioBusClass" textKey="servei.form.camp.pinbal.condicio.bus.class"/>
-				</div>
-					<div class="col-md-6">
-					<pbl:inputSelect name="pinbalEntitatTipus" textKey="servei.form.camp.pinbal.entitat.tipus" emptyOptionTextKey="comu.opcio.sense.definir"/>
-				</div>
-				</div>
-				<div class="row">
-				<div class="col-md-6">
-					<pbl:inputSelect name="pinbalJustificantTipus" textKey="servei.form.camp.pinbal.justificant.tipus" />
-				</div>
-				<div class="col-md-6">
-					<pbl:inputText name="pinbalJustificantXpath" textKey="servei.form.camp.pinbal.justificant.xpath"/>
-				</div>
-			</div>
-			</div>
-			<label>&nbsp;</label>
-			<div class="container-fluid well">
-				<div class="row">
-					<div class="col-md-6">
-						<div class="form-group">
-							<label class="control-label"><spring:message code="servei.form.camp.pinbal.camps.dadesgen"/></label>
-								<div class="controls">
-								<c:set var="campPath" value="pinbalActiuCampNom"/>
-								<label class="checkbox inline" for="${campPath}">
-									<form:checkbox path="${campPath}" id="${campPath}"/> <spring:message code="servei.form.camp.pinbal.camps.dadesgen.nom"/>
-								</label>
-								<c:set var="campPath" value="pinbalActiuCampLlinatge1"/>
-								<label class="checkbox inline" for="${campPath}">
-									<form:checkbox path="${campPath}" id="${campPath}"/> <spring:message code="servei.form.camp.pinbal.camps.dadesgen.llinatge1"/>
-								</label>
-								<c:set var="campPath" value="pinbalActiuCampLlinatge2"/>
-								<label class="checkbox inline" for="${campPath}">
-									<form:checkbox path="${campPath}" id="${campPath}"/> <spring:message code="servei.form.camp.pinbal.camps.dadesgen.llinatge2"/>
-								</label>
-								<c:set var="campPath" value="pinbalActiuCampNomComplet"/>
-								<label class="checkbox inline" for="${campPath}">
-									<form:checkbox path="${campPath}" id="${campPath}"/> <spring:message code="servei.form.camp.pinbal.camps.dadesgen.nomcomp"/>
-								</label>
-								<c:set var="campPath" value="pinbalActiuCampDocument"/>
-								<label class="checkbox inline" for="${campPath}">
-									<form:checkbox path="${campPath}" id="${campPath}"/> <spring:message code="servei.form.camp.pinbal.camps.dadesgen.document"/>
-								</label>
-							</div>
-						</div>
-				</div>	
-			
-				<div class="col-md-6">
-					<div class="form-group">
-						<label class="control-label"><spring:message code="servei.form.camp.pinbal.document.tipus"/></label>
-						<div class="controls">
-							<c:set var="campPath" value="pinbalPermesDocumentTipusDni"/>
-							<label class="checkbox inline" for="${campPath}">
-								<form:checkbox path="${campPath}" id="${campPath}"/> <spring:message code="servei.form.camp.pinbal.document.tipus.DNI"/>
-							</label>
-							<c:set var="campPath" value="pinbalPermesDocumentTipusNif"/>
-							<label class="checkbox inline" for="${campPath}">
-								<form:checkbox path="${campPath}" id="${campPath}"/> <spring:message code="servei.form.camp.pinbal.document.tipus.NIF"/>
-							</label>
-							<c:set var="campPath" value="pinbalPermesDocumentTipusCif"/>
-							<label class="checkbox inline" for="${campPath}">
-								<form:checkbox path="${campPath}" id="${campPath}"/> <spring:message code="servei.form.camp.pinbal.document.tipus.CIF"/>
-							</label>
-							<c:set var="campPath" value="pinbalPermesDocumentTipusNie"/>
-							<label class="checkbox inline" for="${campPath}">
-								<form:checkbox path="${campPath}" id="${campPath}"/> <spring:message code="servei.form.camp.pinbal.document.tipus.NIE"/>
-							</label>
-							<c:set var="campPath" value="pinbalPermesDocumentTipusPas"/>
-							<label class="checkbox inline" for="${campPath}">
-								<form:checkbox path="${campPath}" id="${campPath}"/> <spring:message code="servei.form.camp.pinbal.document.tipus.Passaport"/>
-							</label>
-						</div>
-					</div>
-				</div>
-			</div>
-			</div>
-			<div class="container-fluid">
-				<div class="row">
-					<div class="col-md-6">
-					<label class="control-label" for="${campPath}"><spring:message code="servei.form.camp.pinbal.document.obligatori"/></label>
-<%-- 					<pbl:inputText name="pinbalDocumentObligatori" inline="true" placeholderKey="servei.form.camp.pinbal.document.obligatori"/> --%>
-						<c:set var="campPath" value="pinbalDocumentObligatori"/>
-						<c:set var="campErrors"><form:errors path="${campPath}"/></c:set>
-						<div class="form-group<c:if test="${not empty campErrors}"> error</c:if>">
-							
-							<div class="controls">
-								<form:checkbox path="${campPath}" id="${campPath}"/>
-								<form:errors path="${campPath}" cssClass="help-block"/>
-							</div>
-						</div>
-					</div>
-					<div class="col-md-6">
-						<c:set var="campPath" value="pinbalComprovarDocument"/>
-						<c:set var="campErrors"><form:errors path="${campPath}"/></c:set>
-						<div class="form-group<c:if test="${not empty campErrors}"> error</c:if>">
-							<label class="control-label" for="${campPath}"><spring:message code="servei.form.camp.pinbal.comprovar.document"/></label>
-								<div class="controls">
-									<form:checkbox path="${campPath}" id="${campPath}"/>
-									<form:errors path="${campPath}" cssClass="help-block"/>
-								</div>
-						</div>
-					</div>
-				</div>
-
-				</div>	
-				
-			<div class="container-fluid">
-					<div class="row">
-						<div class="col-md-3">
-						<label class="control-label" for="${campPath}"><spring:message code="servei.form.camp.pinbal.dir3"/></label>
-							<pbl:inputText name="pinbalUnitatDir3" inline="true" placeholderKey="servei.form.camp.pinbal.dir3"/>
-						</div>
-					</div>	
-			</div>
-				<div class="container-fluid">
-					<div class="row">
-						<div class="col-md-12">
-<%-- 						<label class="control-label" for="${campPath}"><spring:message code="servei.form.camp.ajuda"/></label> --%>
-							
-							<pbl:inputTextarea name="ajuda"  textKey="servei.form.camp.ajuda" />
-								
-							
-	<!-- 				<c:set var="campPath" value="ajuda"/> -->
-	<%-- 				<c:set var="campErrors"><form:errors path="${campPath}"/></c:set> --%>
-	<%-- 				<div class="form-group<c:if test="${not empty campErrors}"> error</c:if>"> --%>
+					<pbl:inputSelect name="pinbalJustificantTipus" textKey="servei.form.camp.pinbal.justificant.tipus" 
+									 emptyOption="true"
+									 optionItems="${ justificantTipusLlista }"/>
 					
-<!-- 					<div class="controls"> -->
-<%-- 						<form:textarea rows="8" path="${campPath}" cssClass="col-md-12" id="${campPath}"/> --%>
-<%-- 						<form:errors path="${campPath}" cssClass="help-block"/> --%>
-<!-- 					</div> -->
+					<div class="form-group">					
+						<label class="control-label col-md-4"><spring:message code="servei.form.camp.pinbal.camps.dadesgen"/></label>
+						<div class="col-md-8">
+							<c:set var="campPath" value="pinbalActiuCampNom"/>
+							<label class="checkbox-inline" for="${campPath}">
+								<form:checkbox path="${campPath}" id="${campPath}"/> <spring:message code="servei.form.camp.pinbal.camps.dadesgen.nom"/>
+							</label>
+							<c:set var="campPath" value="pinbalActiuCampLlinatge1"/>
+							<label class="checkbox-inline" for="${campPath}">
+								<form:checkbox path="${campPath}" id="${campPath}"/> <spring:message code="servei.form.camp.pinbal.camps.dadesgen.llinatge1"/>
+							</label>
+							<c:set var="campPath" value="pinbalActiuCampLlinatge2"/>
+							<label class="checkbox-inline" for="${campPath}">
+								<form:checkbox path="${campPath}" id="${campPath}"/> <spring:message code="servei.form.camp.pinbal.camps.dadesgen.llinatge2"/>
+							</label>
+							<c:set var="campPath" value="pinbalActiuCampNomComplet"/>
+							<label class="checkbox-inline" for="${campPath}">
+								<form:checkbox path="${campPath}" id="${campPath}"/> <spring:message code="servei.form.camp.pinbal.camps.dadesgen.nomcomp"/>
+							</label>
+							<c:set var="campPath" value="pinbalActiuCampDocument"/>
+							<label class="checkbox-inline" for="${campPath}">
+								<form:checkbox path="${campPath}" id="${campPath}"/> <spring:message code="servei.form.camp.pinbal.camps.dadesgen.document"/>
+							</label>
 						</div>
 					</div>
-				</div>
-				<div class="row">
-					<div class="col-md-12">
-						<label class="control-label" for="${campPath}"><spring:message code="servei.form.camp.fitxer.ajuda"/></label>
-						<pbl:inputText name="fitxerAjuda" inline="true" placeholderKey="servei.form.camp.fitxer.ajuda"/>
-						<c:set var="campPath" value="fitxerAjuda"/>
-						<c:set var="campErrors"><form:errors path="${campPath}"/></c:set>
-						<div class="control-group<c:if test="${not empty campErrors}"> error</c:if>">
-							
-							<div class="controls input-append" style="margin-left:20px;width:calc(100% - 180px);">
-								<input type="text" id="${campPath}_txt" class="form-control ajuda_file" value="${serveiCommand.fitxerAjudaNom}" style="width:calc(100% - 92px);"/>
-								<span id="ajuda_clean" class="btn btn-default btn-file-clean"><i class='icon-trash'></i></span>
-								<span id="ajuda_file" class="btn btn-default btn-file ajuda_file"><i class='icon-file'></i></span>
-							</div>
-							<form:input type="file" path="${campPath}" cssClass="hide" id="${campPath}" title="" />
+					<c:set var="campPath" value="pinbalDocumentObligatori"/>
+					<c:set var="campErrors"><form:errors path="${campPath}"/></c:set>
+					<div class="form-group vcenter<c:if test="${not empty campErrors}"> error</c:if>">
+						<label class="control-label col-md-4" for="${campPath}"><spring:message code="servei.form.camp.pinbal.document.obligatori"/></label>
+						<div class="col-md-8">
+							<form:checkbox path="${campPath}" id="${campPath}"/>
 							<form:errors path="${campPath}" cssClass="help-block"/>
 						</div>
 					</div>
 				</div>
+				<div class="col-md-6">
+					<pbl:inputText name="pinbalRoleName" textKey="servei.form.camp.pinbal.role.name"/>
+					<pbl:inputSelect name="pinbalEntitatTipus" textKey="servei.form.camp.pinbal.entitat.tipus" 
+									 emptyOption="true"
+									 optionItems="${ entitatTipusLlista}" emptyOptionTextKey="comu.opcio.sense.definir"/>
+					<pbl:inputText name="pinbalJustificantXpath" textKey="servei.form.camp.pinbal.justificant.xpath"/>
+					<div class="form-group">
+						<label class="control-label col-md-4"><spring:message code="servei.form.camp.pinbal.document.tipus"/></label>
+						<div class="col-md-8">
+							<c:set var="campPath" value="pinbalPermesDocumentTipusDni"/>
+							<label class="checkbox-inline" for="${campPath}">
+								<form:checkbox path="${campPath}" id="${campPath}"/> <spring:message code="servei.form.camp.pinbal.document.tipus.DNI"/>
+							</label>
+							<c:set var="campPath" value="pinbalPermesDocumentTipusNif"/>
+							<label class="checkbox-inline" for="${campPath}">
+								<form:checkbox path="${campPath}" id="${campPath}"/> <spring:message code="servei.form.camp.pinbal.document.tipus.NIF"/>
+							</label>
+							<c:set var="campPath" value="pinbalPermesDocumentTipusCif"/>
+							<label class="checkbox-inline" for="${campPath}">
+								<form:checkbox path="${campPath}" id="${campPath}"/> <spring:message code="servei.form.camp.pinbal.document.tipus.CIF"/>
+							</label>
+							<c:set var="campPath" value="pinbalPermesDocumentTipusNie"/>
+							<label class="checkbox-inline" for="${campPath}">
+								<form:checkbox path="${campPath}" id="${campPath}"/> <spring:message code="servei.form.camp.pinbal.document.tipus.NIE"/>
+							</label>
+							<c:set var="campPath" value="pinbalPermesDocumentTipusPas"/>
+							<label class="checkbox-inline" for="${campPath}">
+								<form:checkbox path="${campPath}" id="${campPath}"/> <spring:message code="servei.form.camp.pinbal.document.tipus.Passaport"/>
+							</label>
+						</div>
+					</div>
+					<c:set var="campPath" value="pinbalComprovarDocument"/>
+					<c:set var="campErrors"><form:errors path="${campPath}"/></c:set>
+					<div class="form-group vcenter<c:if test="${not empty campErrors}"> error</c:if>">
+						<label class="control-label col-md-4" for="${campPath}"><spring:message code="servei.form.camp.pinbal.comprovar.document"/></label>
+						<div class="col-md-8">
+							<form:checkbox path="${campPath}" id="${campPath}"/>
+							<form:errors path="${campPath}" cssClass="help-block"/>
+						</div>
+					</div>
+				</div>
+			</div>
+		
+			<div class="row">
+				<div class="col-md-12">
+					<pbl:inputText name="pinbalUnitatDir3" labelSize="1" textKey="servei.form.camp.pinbal.dir3"/>
+				</div>
+			</div>	
+
+			<div class="row">
+				<div class="col-md-12">
+					<pbl:inputTextarea name="ajuda" labelSize="1" textKey="servei.form.camp.ajuda" />
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-md-12">
+					<c:set var="campPath" value="fitxerAjuda"/>				
+					<pbl:inputFile name="${campPath}" labelSize="1" textKey="servei.form.camp.fitxer.ajuda"/>
+					<form:errors path="${campPath}" cssClass="help-block"/>					
+				</div>
+			</div>
 			<script>
 				$(document).ready(function() {
 					var fileTextInput = $('#fitxerAjuda_txt');
@@ -481,225 +402,115 @@ function showModalXsd(element) {
 			</script>
 		</fieldset>
 		<c:if test="${not empty serveiCommand.codi}">
-			<fieldset>
-			
+		<fieldset>
 			<div class="container-fluid">
 				<legend><spring:message code="servei.form.legend.config.bus"/></legend>
-					<div class="clearfix legend-margin-bottom"></div>
-				
-					<div class="row">
-						<div class="col-md-11">
-							<a class="btn btn-primary pull-right" href="<c:url value="/modal/servei/${serveiCommand.codi}/redir/new"/>" 
-							onclick="showModalRedir(this);return false"><i class="fas fa-plus"></i>&nbsp;<spring:message code="servei.form.boto.nova.redireccio"/></a>
-						</div>
+				<div class="row">
+					<div class="col-md-11">
+						<a class="btn btn-primary pull-right" href="<c:url value="/modal/servei/${serveiCommand.codi}/redir/new"/>" 
+						   onclick="showModalRedir(this);return false"><i class="fas fa-plus"></i>&nbsp;<spring:message code="servei.form.boto.nova.redireccio"/></a>
 					</div>
-					<c:if test="${not empty serveisBus}">
-					<div class="row">
-						<div class="col-md-11">
-							<br/>
-							<table id="serveisBus" class="table table-striped table-bordered" style="width: 100%">
-							<thead>
-								<tr>
-								<th><spring:message code="servei.form.bus.taula.columna.entitat" /></th>
-								<th><spring:message code="servei.form.bus.taula.columna.url" /></th>
-								<th></th>
-								<th></th>
-								</tr>
-							</thead>
-							<tbody>
-								<c:forEach items="${serveisBus}" var="registre">
-						   			<tr>
-										<td>
-										${ registre.entitat.nom }
-										</td>
-										<td>
-										${ registre.urlDesti }
-										</td>
-										<td>
+				</div>
+				<c:if test="${not empty serveisBus}">
+				<div class="row">
+					<div class="col-md-11">
+						<br/>
+						<table id="serveisBus" class="table table-striped table-bordered" style="width: 100%">
+						<thead>
+							<tr>
+							<th><spring:message code="servei.form.bus.taula.columna.entitat" /></th>
+							<th><spring:message code="servei.form.bus.taula.columna.url" /></th>
+							<th></th>
+							<th></th>
+							</tr>
+						</thead>
+						<tbody>
+							<c:forEach items="${serveisBus}" var="registre">
+					   			<tr>
+									<td>
+									${ registre.entitat.nom }
+									</td>
+									<td>
+									${ registre.urlDesti }
+									</td>
+									<td>
 										<a href="../modal/servei/${registre.servei}/redir/${registre.id}" title="<spring:message code="comu.boto.modificar"/>" 
 										   class="btn btn-default" onclick="showModalRedir(this);return false">
 										   <i class="fas fa-pen"></i>&nbsp;<spring:message code="comu.boto.modificar"/>
 										</a>
-										</td>
-										<td>
+									</td>
+									<td>
 										<a href="${registre.servei}/redir/${registre.id}/delete" class="btn btn-default confirm-esborrar">
 											<i class="fas fa-trash-alt"></i>&nbsp;<spring:message code="comu.boto.esborrar"/>
 										</a>
-										</td>
-									</tr>
-								</c:forEach>
-							</tbody>
-							</table>
-						</div>
+									</td>
+								</tr>
+							</c:forEach>
+						</tbody>
+						</table>
 					</div>
-				</div>	
-				</c:if>
-			</fieldset>
+				</div>
+			</div>	
+			</c:if>
+		</fieldset>
 		</c:if>
 		<fieldset>
 			<legend><spring:message code="servei.form.legend.validesa.servei"/></legend>
 			<div class="clearfix legend-margin-bottom"></div>
 			<div class="row">
 				<div class="col-md-6">
-					<pbl:inputDate name="scspFechaAlta" textKey="servei.form.camp.scsp.fecha.alta"/>
-<!-- 					<script>$("#scspFechaAlta").mask("99/99/9999");</script> -->
+					<pbl:inputDate name="scspFechaAlta" labelSize="2" textKey="servei.form.camp.scsp.fecha.alta"/>
+					<pbl:inputDate name="scspCaducidad" labelSize="2" textKey="servei.form.camp.scsp.caducidad" 
+					               placeholderKey="servei.form.legend.ubicacio.servei"/>
 				</div>
 				<div class="col-md-6">
-					<pbl:inputDate name="scspFechaBaja"  textKey="servei.form.camp.scsp.fecha.baja"/>
-<!-- 					<script>$("#scspFechaBaja").mask("99/99/9999");</script> -->
-				</div>
-			</div>
-			
-			<label>&nbsp;</label>
-			<div class="row">
-			
-				<div class="col-md-6">
-					<pbl:inputDate name="scspCaducidad" textKey="servei.form.camp.scsp.caducidad" placeholderKey="servei.form.legend.ubicacio.servei"/>
+					<pbl:inputDate name="scspFechaBaja" labelSize="2" textKey="servei.form.camp.scsp.fecha.baja"/>
 				</div>
 			</div>
 		</fieldset>
 		
 		<fieldset>
-			<div class="container-fluid">
-				<legend><spring:message code="servei.form.legend.ubicacio.servei"/></legend>
-				<div class="clearfix legend-margin-bottom"></div>
-				<div class="row">
-					<div class="col-md-12">
-						<label class="control-label" for="${campPath}"><spring:message code="servei.form.camp.scsp.url.sincrona"/></label>
-						<pbl:inputText name="scspUrlSincrona" inline="true" placeholderKey="servei.form.camp.scsp.url.sincrona"/>
-<%-- 					<c:set var="campPath" value="scspUrlSincrona"/> --%>
-<%-- 					<c:set var="campErrors"><form:errors path="${campPath}"/></c:set> --%>
-<%-- 					<div class="form-group<c:if test="${not empty campErrors}"> error</c:if>"> --%
-<!-- 						<div class="controls"> -->
-<%-- 							<form:input path="${campPath}" cssClass="col-md-12" id="${campPath}" cssStyle="width:100%"/> --%>
-<%-- 							<form:errors path="${campPath}" cssClass="help-block"/> --%>
-<!-- 						</div> -->
-<!-- 					</div> -->
-					</div>
-				</div>
+			<legend><spring:message code="servei.form.legend.ubicacio.servei"/></legend>
 			<div class="row">
 				<div class="col-md-12">
-					<label class="control-label" for="${campPath}"><spring:message code="servei.form.camp.scsp.url.asincrona"/></label>
-						<pbl:inputText name="scspUrlAsincrona" inline="true" placeholderKey="servei.form.camp.scsp.url.asincrona"/>
-<%-- 					<c:set var="campPath" value="scspUrlAsincrona"/> --%>
-<%-- 					<c:set var="campErrors"><form:errors path="${campPath}"/></c:set> --%>
-<%-- 					<div class="form-group<c:if test="${not empty campErrors}"> error</c:if>"> --%>
-						
-<!-- 						<div class="controls"> -->
-<%-- 							<form:input path="${campPath}" cssClass="col-md-12" id="${campPath}" cssStyle="width:100%"/> --%>
-<%-- 							<form:errors path="${campPath}" cssClass="help-block"/> --%>
-<!-- 						</div> -->
-<!-- 					</div> -->
+					<pbl:inputText name="scspUrlSincrona" labelSize="1" textKey="servei.form.camp.scsp.url.sincrona"/>
+					<pbl:inputText name="scspUrlAsincrona" labelSize="1" textKey="servei.form.camp.scsp.url.asincrona"/>
 				</div>
 			</div>
 			<div class="row">
 				<div class="col-md-6">
-					<label class="control-label" for="${campPath}"><spring:message code="servei.form.camp.scsp.action.sincrona"/></label>
-					<pbl:inputText name="scspActionSincrona" inline="true" placeholderKey="servei.form.camp.scsp.action.sincrona"/>
-<%-- 					<c:set var="campPath" value="scspActionSincrona"/> --%>
-<%-- 					<c:set var="campErrors"><form:errors path="${campPath}"/></c:set> --%>
-<%-- 					<div class="form-group<c:if test="${not empty campErrors}"> error</c:if>"> --%>
-						
-<!-- 						<div class="controls"> -->
-<%-- 							<form:input path="${campPath}" cssClass="col-md-12" id="${campPath}"/> --%>
-<%-- 							<form:errors path="${campPath}" cssClass="help-block"/> --%>
-<!-- 						</div> -->
-<!-- 					</div> -->
+					<pbl:inputText name="scspActionSincrona" labelSize="2" textKey="servei.form.camp.scsp.action.sincrona"/>
+					<pbl:inputText name="scspActionSolicitud" labelSize="2" textKey="servei.form.camp.scsp.action.solicitud"/>
+					<pbl:inputText name="scspVersionEsquema" labelSize="2" textKey="servei.form.camp.scsp.version.esquema"/>
 				</div>
-			
-			<div class="col-md-6">
-				<label class="control-label" for="${campPath}"><spring:message code="servei.form.camp.scsp.action.asincrona"/></label>
-					<pbl:inputText name="scspActionAsincrona" inline="true" placeholderKey="servei.form.camp.scsp.action.asincrona"/>
-<%-- 					<c:set var="campPath" value="scspActionAsincrona"/> --%>
-<%-- 					<c:set var="campErrors"><form:errors path="${campPath}"/></c:set> --%>
-<%-- 					<div class="form-group<c:if test="${not empty campErrors}"> error</c:if>"> --%>
-						
-<!-- 						<div class="controls"> -->
-<%-- 							<form:input path="${campPath}" cssClass="col-md-12" id="${campPath}"/> --%>
-<%-- 							<form:errors path="${campPath}" cssClass="help-block"/> --%>
-<!-- 						</div> -->
-<!-- 					</div> -->
-			</div>
-			</div>
-		</div>	
-		<div class="container-fluid">
-			<div class="row">
 				<div class="col-md-6">
-					<label class="control-label" for="${campPath}"><spring:message code="servei.form.camp.scsp.action.solicitud"/></label>
-					<pbl:inputText name="scspActionSolicitud" inline="true" placeholderKey="servei.form.camp.scsp.action.solicitud"/>
-<%-- 					<c:set var="campPath" value="scspActionSolicitud"/> --%>
-<%-- 					<c:set var="campErrors"><form:errors path="${campPath}"/></c:set> --%>
-<%-- 					<div class="control-group<c:if test="${not empty campErrors}"> error</c:if>"> --%>
-						
-<!-- 						<div class="controls"> -->
-<%-- 							<form:input path="${campPath}" cssClass="col-md-12" id="${campPath}"/> --%>
-<%-- 							<form:errors path="${campPath}" cssClass="help-block"/> --%>
-<!-- 						</div> -->
-				</div>
-				
-				
-				
-				<div class="col-md-6">
-					<label class="control-label" for="${campPath}"><spring:message code="servei.form.camp.scsp.activa.gestio.xsd"/></label>
-					<pbl:inputText name="activaGestioXsd" inline="true" placeholderKey="servei.form.camp.scsp.activa.gestio.xsd"/>
-<%-- 					<c:set var="campPath" value="activaGestioXsd"/> --%>
-<%-- 					<c:set var="campErrors"><form:errors path="${campPath}"/></c:set> --%>
-<%-- 					<div class="form-group<c:if test="${not empty campErrors}"> error</c:if>"> --%>
-					
-<!-- 						<div class="controls"> -->
-<%-- 							<form:checkbox path="${campPath}" id="${campPath}"/> --%>
-<%-- 							<form:errors path="${campPath}" cssClass="help-block"/> --%>
-<!-- 						</div> -->
-<!-- 					</div> -->
-				</div>
-			</div>
-				
-			
-			<div class="row">
-				<div class="col-md-6">
-				<label class="control-label" for="${campPath}"><spring:message code="servei.form.camp.scsp.version.esquema"/> *</label>
-					<pbl:inputText name="scspVersionEsquema" inline="true" placeholderKey="servei.form.camp.scsp.version.esquema"/>
-<%-- 					<c:set var="campPath" value="scspVersionEsquema"/> --%>
-<%-- 					<c:set var="campErrors"><form:errors path="${campPath}"/></c:set> --%>
-<%-- 					<div class="control-group<c:if test="${not empty campErrors}"> error</c:if>"> --%>
-<%-- 						<label class="control-label" for="${campPath}"><spring:message code="servei.form.camp.scsp.version.esquema"/> *</label> --%>
-<!-- 						<div class="controls"> -->
-<%-- 							<form:input path="${campPath}" cssClass="col-md-12" id="${campPath}"/> --%>
-<%-- 							<form:errors path="${campPath}" cssClass="help-block"/> --%>
-<!-- 						</div> -->
+					<pbl:inputText name="scspActionAsincrona" labelSize="2" textKey="servei.form.camp.scsp.action.asincrona"/>
+					<c:set var="campPath" value="activaGestioXsd"/>
+					<c:set var="campErrors"><form:errors path="${campPath}"/></c:set>
+					<div class="form-group vcenter<c:if test="${not empty campErrors}"> error</c:if>">
+						<label class="control-label col-md-2" for="${campPath}"><spring:message code="servei.form.camp.scsp.activa.gestio.xsd"/></label>
+						<div class="col-md-10">
+							<form:checkbox path="${campPath}" id="${campPath}"/>
+							<form:errors path="${campPath}" cssClass="help-block"/>
+						</div>
 					</div>
-	
-				<div class="col-md-6">
-					<label class="control-label" for="${campPath}"><spring:message code="servei.form.camp.scsp.esquemas"/></label>
-					<pbl:inputText name="scspEsquemas" inline="true" placeholderKey="servei.form.camp.scsp.esquemas"/>
-<%-- 					<c:set var="campPath" value="scspEsquemas"/> --%>
-<%-- 					<c:set var="campErrors"><form:errors path="${campPath}"/></c:set> --%>
-<%-- 					<div class="control-group<c:if test="${not empty campErrors}"> error</c:if>"> --%>
-<%-- 						<label class="control-label" for="${campPath}"><spring:message code="servei.form.camp.scsp.esquemas"/></label> --%>
-<!-- 						<div class="controls"> -->
-<%-- 							<form:input path="${campPath}" cssClass="col-md-12" id="${campPath}" disabled="${ activaGestioXsd ? 'true' : ''}"/> --%>
-<%-- 							<form:errors path="${campPath}" cssClass="help-block"/> --%>
-<!-- 						</div> -->
+					<pbl:inputText name="scspEsquemas" labelSize="2" textKey="servei.form.camp.scsp.esquemas"/>
 				</div>
 			</div>
-		</div>
-			
 		</fieldset>
 		
-<%-- 		<c:if test="${not empty serveiCommand.codi}"> --%>
-			<fieldset id="gestioXsdFieldSet">
+		<c:if test="${not empty serveiCommand.codi}">
+			<fieldset id="gestioXsdFieldSet" hidden="${ activaGestioXsd ? '' : 'true'}">
 				<legend><spring:message code="servei.form.legend.gestio.xsd"/></legend>
-				<div class="clearfix well"></div>
-					
-					<fieldset>
-						<div class="container-fluid">
-							<div class="row">
-								<div class="col-md-6">
-									<a class="btn btn-primary pull-right" href="<c:url value="/modal/servei/${serveiCommand.codi}/xsd/new"/>" onclick="showModalXsd(this);return false"><i class="fas fa-plus"></i>&nbsp;<spring:message code="servei.list.boto.nou.arxiuXsd"/></a>
-								</div>
+				<fieldset>
+					<div class="container-fluid">
+						<div class="row">
+							<div class="col-md-6">
+								<a class="btn btn-primary pull-right" href="<c:url value="/modal/servei/${serveiCommand.codi}/xsd/new"/>" onclick="showModalXsd(this);return false"><i class="fas fa-plus"></i>&nbsp;<spring:message code="servei.list.boto.nou.arxiuXsd"/></a>
 							</div>
-						</div>	
-					</fieldset>
+						</div>
+					</div>	
+				</fieldset>
 				<c:if test="${not empty serveiCommand.fitxersXsd}">
 					<div class="row">
 						<div class="clearfix"></div>
@@ -738,231 +549,67 @@ function showModalXsd(element) {
 					</table>
 				</c:if>
 			</fieldset>
-<%--		</c:if> --%>
+		</c:if>
 		<fieldset>
 			<legend><spring:message code="servei.form.legend.xifrat.seguretat"/></legend>
 			<div class="clearfix legend-margin-bottom"></div>
-			<div class="container-fluid">
-				<div class="row">
-						<div class="col-md-6">
-						<label class="control-label" for="${campPath}"><spring:message code="servei.form.camp.scsp.tipo.seguridad"/> *</label>
-						<pbl:inputSelect name="scspTipoSeguridad" inline="true" placeholderKey="servei.form.camp.scsp.tipo.seguridad"
-							optionItems=""
-							optionValueAttribute="XMLSignature"
-							optionTextAttribute="WS-Security"
-							emptyOption="true"/>
-					
-<%-- 					<c:set var="campPath" value="scspTipoSeguridad"/> --%>
-<%-- 					<c:set var="campErrors"><form:errors path="${campPath}"/></c:set> --%>
-<%-- 					<div class="form-group<c:if test="${not empty campErrors}"> error</c:if>"> --%>
-						
-<!-- 						<div class="controls"> -->
-<%-- 							<form:select path="${campPath}" cssClass="col-md-12" id="${campPath}"> --%>
-<%-- 								<option value=""><spring:message code="comu.opcio.sense.definir"/></option> --%>
-<%-- 								<form:option value="XMLSignature"/> --%>
-<%-- 								<form:option value="WS-Security"/> --%>
-<%-- 							</form:select> --%>
-<%-- 							<form:errors path="${campPath}" cssClass="help-block"/> --%>
-<!-- 						</div> -->
-						</div>
-				</div>	
-			    <div class="row">
-					<div class="col-md-6">
-						<label class="control-label" for="${campPath}"><spring:message code="servei.form.camp.scsp.algoritmo.cifrado"/></label>
-						<pbl:inputText name="scspAlgoritmoCifrado" inline="true" placeholderKey="servei.form.camp.scsp.algoritmo.cifrado"/>
-<%-- 					<c:set var="campPath" value="scspAlgoritmoCifrado"/> --%>
-<%-- 					<c:set var="campErrors"><form:errors path="${campPath}"/></c:set> --%>
-<%-- 					<div class="control-group<c:if test="${not empty campErrors}"> error</c:if>"> --%>
-<%-- 						<label class="control-label" for="${campPath}"><spring:message code="servei.form.camp.scsp.algoritmo.cifrado"/></label> --%>
-<%-- 						<div class="controls"> --%>
-<%-- 							<form:input path="${campPath}" cssClass="col-md-12" id="${campPath}"/> --%>
-<%-- 							<form:errors path="${campPath}" cssClass="help-block"/> --%>
-<%-- 						</div> --%>
-<%-- 					</div> --%>
-					</div>
-					<div class="col-md-6">
-						<label class="control-label" for="${campPath}"><spring:message code="servei.form.camp.scsp.validacion.firma"/></label>
-						<pbl:inputText name="scspValidacionFirma" inline="true" placeholderKey="servei.form.camp.scsp.validacion.firma"/>
-<%-- 					<c:set var="campPath" value="scspValidacionFirma"/> --%>
-<%-- 					<c:set var="campErrors"><form:errors path="${campPath}"/></c:set> --%>
-<%-- 					<div class="control-group<c:if test="${not empty campErrors}"> error</c:if>"> --%>
-						
-<!-- 							<div class="controls"> -->
-<%-- 								<form:input path="${campPath}" cssClass="col-md-12" id="${campPath}"/> --%>
-<%-- 								<form:errors path="${campPath}" cssClass="help-block"/> --%>
-<!-- 							</div> -->
-<!-- 						</div> -->
-					</div>
-			</div>
-			<div class="row">
-					
-					<div class="col-md-6">
-						<label class="control-label" for="${campPath}"><spring:message code="servei.form.camp.scsp.clave.firma"/> *</label> 
-						<pbl:inputText name="scspClaveFirma" inline="true" placeholderKey="servei.form.camp.scsp.clave.firma"/>
-				
-<%-- 					<c:set var="campPath" value="scspClaveFirma"/> --%>
-<%-- 					<c:set var="campErrors"><form:errors path="${campPath}"/></c:set> --%>
-<%-- 					<div class="control-group<c:if test="${not empty campErrors}"> error</c:if>"> --%>
-<%-- 						<label class="control-label" for="${campPath}"><spring:message code="servei.form.camp.scsp.clave.firma"/> *</label> --%>
-<!-- 						<div class="controls"> -->
-<%-- 							<form:select path="${campPath}" cssClass="col-md-12" id="${campPath}"> --%>
-<%-- 								<option value=""><spring:message code="comu.opcio.sense.definir"/></option> --%>
-<%-- 								<form:options items="${clausPrivades}" itemLabel="nom" itemValue="alies"/> --%>
-<%-- 							</form:select> --%>
-<%-- 							<form:errors path="${campPath}" cssClass="help-block"/> --%>
-<!-- 						</div> -->
-					</div>
-					
-					<div class="col-md-6">
-						<label class="control-label" for="${campPath}"><spring:message code="comu.opcio.sense.definir"/></label>
-						<pbl:inputText name="scspClaveCifrado" inline="true" placeholderKey="comu.opcio.sense.definir"/>
-<%-- 						<c:set var="campPath" value="scspClaveCifrado"/> --%>
-<%-- 						<c:set var="campErrors"><form:errors path="${campPath}"/></c:set> --%>
-<%-- 						<div class="control-group<c:if test="${not empty campErrors}"> error</c:if>"> --%>
-						
-<!-- 						<div class="controls"> -->
-<%-- 							<form:select path="${campPath}" cssClass="col-md-12" id="${campPath}"> --%>
-<%-- 								<option value=""><spring:message code="comu.opcio.sense.definir"/></option> --%>
-<%-- 								<form:options items="${clausPubliques}" itemLabel="nom" itemValue="alies"/> --%>
-<%-- 							</form:select> --%>
-<%-- 							<form:errors path="${campPath}" cssClass="help-block"/> --%>
-<!-- 						</div> -->
-<!-- 					</div> -->
-					</div>
-			</div>
 			<div class="row">
 				<div class="col-md-6">
-					<label class="control-label" for="${campPath}"><spring:message code="servei.form.camp.scsp.xpath.cifrado.sincrono"/></label>
-					<pbl:inputText name="scspXpathCifradoSincrono" inline="true" placeholderKey="servei.form.camp.scsp.xpath.cifrado.sincrono"/>
-<%-- 						<c:set var="campPath" value="scspXpathCifradoSincrono"/> --%>
-<%-- 						<c:set var="campErrors"><form:errors path="${campPath}"/></c:set> --%>
-<%-- 						<div class="control-group<c:if test="${not empty campErrors}"> error</c:if>"> --%>
-<%-- 							
-<!-- 							<div class="controls"> -->
-<%-- 							<form:input path="${campPath}" cssClass="col-md-12" id="${campPath}"/> --%>
-<%-- 							<form:errors path="${campPath}" cssClass="help-block"/> --%>
+					<c:set var="campPath" value="scspTipoSeguridad"/>
+					<c:set var="campErrors"><form:errors path="${campPath}"/></c:set>
+					<label class="control-label col-xs-2" for="${campPath}">
+						<spring:message code="servei.form.camp.scsp.tipo.seguridad"/> *
+					</label>
+					<div class="col-xs-10">
+						<form:select path="${campPath}" cssClass="form-control" disabled="${disabled}" data-toggle="select2" data-minimumresults="5">
+							<option value=""><spring:message code="comu.opcio.sense.definir"/></option>
+							<form:option value="XMLSignature"/>
+							<form:option value="WS-Security"/>
+						</form:select>
+						<form:errors path="${campPath}" cssClass="help-inline"/>
+					</div>
 				</div>
-			
-				
+			</div>	
+		    <div class="row">
 				<div class="col-md-6">
-					<label class="control-label" for="${campPath}"><spring:message code="servei.form.camp.scsp.xpath.cifrado.asincrono"/></label>
-					<pbl:inputText name="scspXpathCifradoAsincrono" inline="true" placeholderKey="servei.form.camp.scsp.xpath.cifrado.asincrono"/>
-<%-- 						<c:set var="campPath" value="scspXpathCifradoAsincrono"/> --%>
-<%-- 						<c:set var="campErrors"><form:errors path="${campPath}"/></c:set> --%>
-<%-- 						<div class="control-group<c:if test="${not empty campErrors}"> error</c:if>"> --%>
-<%-- 						<label class="control-label" for="${campPath}"><spring:message code="servei.form.camp.scsp.xpath.cifrado.asincrono"/></label> --%>
-<!-- 						<div class="controls">form-control -->
-<%-- 							<form:input path="${campPath}" cssClass="col-md-12" id="${campPath}"/> --%>
-<%-- 							<form:errors path="${campPath}" cssClass="help-block"/> --%>
-<!-- 						</div> -->
-<!-- 					</div> -->
+					<pbl:inputText name="scspAlgoritmoCifrado" labelSize="2" textKey="servei.form.camp.scsp.algoritmo.cifrado"/>
+					<pbl:inputSelect name="scspClaveFirma" textKey="servei.form.camp.scsp.clave.firma" 
+									 optionValueAttribute="alies"
+									 optionTextAttribute="nom"
+									 required="true"
+									 emptyOption="true" labelSize="2" 
+									 optionItems="${clausPrivades}" 
+									 emptyOptionTextKey="comu.opcio.sense.definir"/>
+					<pbl:inputText name="scspXpathCifradoSincrono" labelSize="2" textKey="servei.form.camp.scsp.xpath.cifrado.sincrono"/>
+				</div>
+				<div class="col-md-6">
+					<pbl:inputText name="scspValidacionFirma" labelSize="2" textKey="servei.form.camp.scsp.validacion.firma"/>
+					<pbl:inputSelect name="scspClaveCifrado" textKey="servei.form.camp.scsp.clave.cifrado" 
+									 optionValueAttribute="alies"
+									 optionTextAttribute="nom"
+									 required="true"
+									 emptyOption="true" labelSize="2" 
+									 optionItems="${clausPubliques}" 
+									 emptyOptionTextKey="comu.opcio.sense.definir"/>
+					<pbl:inputText name="scspXpathCifradoAsincrono" labelSize="2" textKey="servei.form.camp.scsp.xpath.cifrado.asincrono"/>
 				</div>
 			</div>
-		</div>	
 		</fieldset>
 		<fieldset>
-			<div class="container-fluid">
-				<div class="row">
-					<legend><spring:message code="servei.form.legend.config.enviaments"/></legend>
-						<div class="clearfix legend-margin-bottom"></div>
-						<div class="col-md-6">
-							<label class="control-label" for="${campPath}"><spring:message code="servei.form.camp.scsp.prefijo.peticion"/></label>
-							<pbl:inputText name="scspPrefijoPeticion" inline="true" placeholderKey="servei.form.camp.scsp.prefijo.peticion"/>
-<%-- 						<c:set var="campPath" value="scspPrefijoPeticion"/> --%>
-<%-- 						<c:set var="campErrors"><form:errors path="${campPath}"/></c:set> --%>
-<%-- 						<div class="control-group<c:if test="${not empty campErrors}"> error</c:if>"> --%>
-<%-- 							<label class="control-label" for="${campPath}"><spring:message code="servei.form.camp.scsp.prefijo.peticion"/></label> --%>
-<!-- 							<div class="controls"> -->
-<%-- 								<form:input path="${campPath}" cssClass="col-md-12" id="${campPath}"/> --%>
-<%-- 								<form:errors path="${campPath}" cssClass="help-block"/> --%>
-<!-- 							</div> -->
-<!-- 						</div> -->
-						</div>
-				<div class="col-md-6">
-					<label class="control-label" for="${campPath}"><spring:message code="servei.form.camp.scsp.prefijo.id.transmision"/></label>
-					<pbl:inputText name="scspPrefijoIdTransmision" inline="true" placeholderKey="servei.form.camp.scsp.prefijo.id.transmision"/>
-<%-- 						<c:set var="campPath" value="scspPrefijoIdTransmision"/> --%>
-<%-- 						<c:set var="campErrors"><form:errors path="${campPath}"/></c:set> --%>
-<%-- 						<div class="control-group<c:if test="${not empty campErrors}"> error</c:if>"> --%>
-							
-<!-- 						<div class="controls"> -->
-<%-- 							<form:input path="${campPath}" cssClass="col-md-12" id="${campPath}"/> --%>
-<%-- 							<form:errors path="${campPath}" cssClass="help-block"/> --%>
-<!-- 						</div> -->
-				</div>
-			</div>
+			<legend><spring:message code="servei.form.legend.config.enviaments"/></legend>
 			<div class="row">
 				<div class="col-md-6">
-					<label class="control-label" for="${campPath}"><spring:message code="servei.form.camp.scsp.num.max.reenvios"/></label>
-					<pbl:inputText name="scspPrefijoIdTransmision" inline="true" placeholderKey="servei.form.camp.scsp.prefijo.id.transmision"/>
-<%-- 					<c:set var="campPath" value="scspNumeroMaximoReenvios"/> --%>
-<%-- 					<c:set var="campErrors"><form:errors path="${campPath}"/></c:set> --%>
-<%-- 					<div class="control-group<c:if test="${not empty campErrors}"> error</c:if>"> --%>
-						
-<!-- 						<div class="controls"> -->
-<%-- 							<form:input path="${campPath}" cssClass="col-md-12" id="${campPath}"/> --%>
-<%-- 							<form:errors path="${campPath}" cssClass="help-block"/> --%>
-<!-- 						</div> -->
-<!-- 					</div> -->
+					<pbl:inputText name="scspPrefijoPeticion" labelSize="2" textKey="servei.form.camp.scsp.prefijo.peticion"/>
+					<pbl:inputText name="scspNumeroMaximoReenvios" labelSize="2" textKey="servei.form.camp.scsp.num.max.reenvios"/>
+					<pbl:inputText name="scspXpathCodigoError" labelSize="2" textKey="servei.form.camp.scsp.xpath.codigo.error"/>
+					<pbl:inputText name="scspTimeout" labelSize="2" textKey="servei.form.camp.scsp.timeout"/>
 				</div>
 				<div class="col-md-6">
-				<label class="control-label" for="${campPath}"><spring:message code="servei.form.camp.scsp.prefijo.id.transmision"/></label>
-				<pbl:inputText name="scspMaxSolicitudesPeticion" inline="true" placeholderKey="servei.form.camp.scsp.prefijo.id.transmision"/>
-<%-- 					<c:set var="campPath" value="scspMaxSolicitudesPeticion"/> --%>
-<%-- 					<c:set var="campErrors"><form:errors path="${campPath}"/></c:set> --%>
-<%-- 					<div class="control-group<c:if test="${not empty campErrors}"> error</c:if>"> --%>
-						
-<!-- 						<div class="controls"> -->
-<%-- 							<form:input path="${campPath}" cssClass="col-md-12" id="${campPath}"/> --%>
-<%-- 							<form:errors path="${campPath}" cssClass="help-block"/> --%>
-<!-- 						</div> -->
+					<pbl:inputText name="scspPrefijoIdTransmision" labelSize="2" textKey="servei.form.camp.scsp.prefijo.id.transmision"/>
+					<pbl:inputText name="scspMaxSolicitudesPeticion" labelSize="2" textKey="servei.form.camp.scsp.max.solicitudes.peticion"/>
+					<pbl:inputText name="scspXpathLiteralError" labelSize="2" textKey="servei.form.camp.scsp.xpath.literal.error"/>
 				</div>
 			</div>
-			
-			<div class="row">
-				<div class="col-md-6">
-					<label class="control-label" for="${campPath}"><spring:message code="servei.form.camp.scsp.xpath.codigo.error"/></label>
-					<pbl:inputText name="scspXpathCodigoError" inline="true" placeholderKey="servei.form.camp.scsp.xpath.codigo.error"/>
-<%-- 						<c:set var="campPath" value="scspXpathCodigoError"/> --%>
-<%-- 						<c:set var="campErrors"><form:errors path="${campPath}"/></c:set> --%>
-<%-- 						<div class="form-group<c:if test="${not empty campErrors}"> error</c:if>"> --%>
-<%-- 						<label class="control-label" for="${campPath}"><spring:message code="servei.form.camp.scsp.xpath.codigo.error"/></label> --%>
-<!-- 						<div class="controls"> -->
-<%-- 							<form:input path="${campPath}" cssClass="col-md-12" id="${campPath}"/> --%>
-<%-- 							<form:errors path="${campPath}" cssClass="help-block"/> --%>
-<!-- 						</div> -->
-				</div>
-				
-				<div class="col-md-6">
-				<label class="control-label" for="${campPath}"><spring:message code="servei.form.camp.scsp.xpath.literal.error"/></label>
-				<pbl:inputText name="scspXpathCodigoError" inline="true" placeholderKey="servei.form.camp.scsp.xpath.codigo.error"/>
-<%-- 					<c:set var="campPath" value="scspXpathLiteralError"/> --%>
-<%-- 					<c:set var="campErrors"><form:errors path="${campPath}"/></c:set> --%>
-<%-- 					<div class="control-group<c:if test="${not empty campErrors}"> error</c:if>"> --%>
-<%-- 						<label class="control-label" for="${campPath}"><spring:message code="servei.form.camp.scsp.xpath.literal.error"/></label> --%>
-<!-- 						<div class="controls"> -->
-<%-- 							<form:input path="${campPath}" cssClass="col-md-12" id="${campPath}"/> --%>
-<%-- 							<form:errors path="${campPath}" cssClass="help-block"/> --%>
-<!-- 						</div> -->
-				</div>
-			</div>
-		
-			<div class="row">
-				<div class="col-md-6">
-<%-- 				<label class="control-label" for="${campPath}"><spring:message code="servei.form.camp.scsp.timeout"/></label> --%>
-<%-- 				<pbl:inputText name="scspXpathCodigoError" inline="true" placeholderKey="servei.form.camp.scsp.xpath.codigo.error"/> --%>
-<%-- 					<c:set var="campPath" value="scspTimeout"/> --%>
-<%-- 					<c:set var="campErrors"><form:errors path="${campPath}"/></c:set> --%>
-<%-- 					<div class="form-group<c:if test="${not empty campErrors}"> error</c:if>"> --%>
-						
-<!-- 						<div class="controls"> -->
-<%-- 							<form:input path="${campPath}" cssClass="col-md-12" id="${campPath}"/> --%>
-<%-- 							<form:errors path="${campPath}" cssClass="help-block"/> --%>
-<!-- 						</div> -->
-<!-- 					</div> -->
-				</div>
-			</div>
-		</div>	
 		</fieldset>
 		<div class="container-fluid">
 			<div class="row">
@@ -990,20 +637,20 @@ function showModalXsd(element) {
 	</div>
 </div>
 	
-	<div id="modal-xsd-form" class="modal" tabindex="-1" role="dialog">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-		<div class="modal-header">
-			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-			<h3><spring:message code="servei.form.modal.xsd.titol"/></h3>
+<div id="modal-xsd-form" class="modal" tabindex="-1" role="dialog">
+	<div class="modal-dialog" role="document">
+	    <div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				<h3><spring:message code="servei.form.modal.xsd.titol"/></h3>
+			</div>
+			<div class="modal-body"></div>
+			<div class="modal-footer">
+				<a href="#" class="btn btn-default" data-dismiss="modal"><spring:message code="comu.boto.tornar"/></a>
+				<a href="#" id="modal-boto-submit-xsd" class="btn btn-primary"><spring:message code="comu.boto.guardar"/></a>
+			</div>
 		</div>
-		<div class="modal-body"></div>
-		<div class="modal-footer">
-			<a href="#" class="btn btn-default" data-dismiss="modal"><spring:message code="comu.boto.tornar"/></a>
-			<a href="#" id="modal-boto-submit-xsd" class="btn btn-primary"><spring:message code="comu.boto.guardar"/></a>
-		</div>
 	</div>
-	</div>
-	</div>
+</div>
 </body>
 </html>

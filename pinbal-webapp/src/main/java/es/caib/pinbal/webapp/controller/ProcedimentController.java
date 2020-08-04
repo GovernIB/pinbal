@@ -642,23 +642,16 @@ public class ProcedimentController extends BaseController {
 		if (!EntitatHelper.isRepresentantEntitatActual(request))
 			return "representantNoAutoritzat";
 		EntitatDto entitat = EntitatHelper.getEntitatActual(request, entitatService);
-		if (entitat != null) {
-			ProcedimentDto procediment = null;
-			if (procedimentId != null)
-				procediment = procedimentService.findById(procedimentId);
-			if (procediment != null) {
-				procedimentService.putProcedimentCodi(procedimentId, serveiCodi, procedimentCodi);
-//				ServeiDto servei = serveiService.findAmbCodiPerAdminORepresentant(serveiCodi);
-//				AlertHelper.success(
-//						request, 
-//						getMessage(
-//								request,
-//								"procediment.controller.servei.activat",
-//								new Object[] {servei.getDescripcio()}));
-				return "true";
-			} else {
-				return "false";
-			}
+		if (entitat == null) {
+			return "false";
+		}
+		
+		ProcedimentDto procediment = null;
+		if (procedimentId != null)
+			procediment = procedimentService.findById(procedimentId);
+		if (procediment != null) {
+			procedimentService.putProcedimentCodi(procedimentId, serveiCodi, procedimentCodi);
+			return "true";
 		} else {
 			return "false";
 		}

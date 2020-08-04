@@ -26,6 +26,17 @@
 		<c:otherwise>${readonly}</c:otherwise>
 	</c:choose>
 </c:set>
+<script>
+$(document).ready(function() {
+	$('.datepicker').datepicker({
+	    orientation: "bottom auto",
+		format: 'dd/mm/yyyy',
+		weekStart: 1,
+		autoclose: true,
+		language: 'es'
+	});
+});
+</script>
 <div class="form-group<c:if test="${not empty campErrors}"> has-error</c:if>"<c:if test="${multiple}"> data-toggle="multifield"</c:if>>
 <c:choose>
 	<c:when test="${not inline}">
@@ -37,7 +48,7 @@
 						<form:input path="${campPath}" cssClass="form-control datepicker" id="${campPath}" disabled="${disabled}" data-idioma="${idioma}" readonly="${myReadonly}" />
 					</c:when>
 					<c:otherwise>
-						<form:input path="${campPath}" cssClass="form-control datepicker" id="${campPath}" disabled="${disabled}" data-toggle="datepicker" data-idioma="${idioma}" />					
+						<form:input path="${campPath}" cssClass="form-control datepicker" id="${campPath}" disabled="${disabled}" data-idioma="${idioma}" />					
 					</c:otherwise>
 				</c:choose>
 				<span class="input-group-addon" style="width:1%"><span class="far fa-calendar-alt"></span></span>
@@ -51,10 +62,12 @@
 		<div class="input-group" style="width:100%">
 			<c:choose>
 				<c:when test="${myReadonly}">
-					<form:input path="${campPath}" cssClass="form-control datepicker" id="${campPath}" placeholder="${campPlaceholder}" disabled="${disabled}" data-idioma="${idioma}" readonly="${myReadonly}"/>
+					<form:input path="${campPath}" cssClass="form-control datepicker" id="${campPath}" placeholder="${campPlaceholder}" 
+								disabled="${disabled}" data-idioma="${idioma}" readonly="${myReadonly}"/>
 				</c:when>
 				<c:otherwise>
-					<form:input path="${campPath}" cssClass="form-control datepicker" id="${campPath}" placeholder="${campPlaceholder}" disabled="${disabled}" data-toggle="datepicker" data-idioma="${idioma}"/>
+					<form:input path="${campPath}" cssClass="form-control datepicker" id="${campPath}" placeholder="${campPlaceholder}" 
+								disabled="${disabled}" data-idioma="${idioma}"/>
 				</c:otherwise>
 			</c:choose>
 			<span class="input-group-addon" style="width:auto"><span class="far fa-calendar-alt"></span></span>

@@ -79,22 +79,23 @@
 <body>
 
 	<div class="container-fluid">
-		<div class="col-md-12">
-			<a class="btn btn-primary pull-right" href="<c:url value="/scsp/emissorcert/new"/>"><i class="glyphicon-plus"></i>&nbsp;<spring:message code="emissorcert.list.boto.nou.registre"/></a>
+		<div class="pull-right">
+			<a class="btn btn-primary " href="<c:url value="/scsp/emissorcert/new"/>">
+				<i class="fas fa-plus"></i>&nbsp;<spring:message code="emissorcert.list.boto.nou.registre"/>
+			</a>
 		</div>
-		<div class="clearfix"></div>
+	
+		<table id="table-emisors" class="table table-striped table-bordered" style="width: 100%">
+			<thead>
+				<tr>
+					<th data-data="nom"><spring:message code="emissorcert.list.taula.columna.nom" /></th>
+					<th data-data="cif"><spring:message code="emissorcert.list.taula.columna.cif" /></th>
+					<th data-data="dataBaixa"><spring:message code="emissorcert.list.taula.columna.databaixa" /></th>
+					<th data-data="id"></th>
+				</tr>
+			</thead>
+		</table>
 	</div>
-
-	<table id="table-emisors" class="table table-striped table-bordered" style="width: 100%">
-		<thead>
-			<tr>
-				<th data-data="nom"><spring:message code="emissorcert.list.taula.columna.nom" /></th>
-				<th data-data="cif"><spring:message code="emissorcert.list.taula.columna.cif" /></th>
-				<th data-data="dataBaixa"><spring:message code="emissorcert.list.taula.columna.databaixa" /></th>
-				<th data-data="id"></th>
-			</tr>
-		</thead>
-	</table>
 <script id="template-actions" type="x-tmpl-mustache">
 	<div class="btn-group">
 		<a class="btn btn-primary dropdown-toggle" data-toggle="dropdown" href="#"><i class="fas fa-cog"></i>&nbsp;<spring:message code="comu.accions"/>&nbsp;<span class="caret"></span></a>

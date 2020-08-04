@@ -14,17 +14,24 @@
 <html>
 <head>
 	<title><spring:message code="entitat.list.titol"/></title>
-	<script src="<c:url value="/webjars/datatables/1.10.21/js/jquery.dataTables.min.js"/>"></script>
-	<script src="<c:url value="/webjars/datatables/1.10.21/js/dataTables.bootstrap.min.js"/>"></script>
-	<script src="<c:url value="/webjars/mustache.js/3.0.1/mustache.min.js"/>"></script>
-	<script src="<c:url value="/webjars/bootstrap-datepicker/1.6.1/dist/js/bootstrap-datepicker.min.js"/>"></script>
-	<script src="<c:url value="/webjars/bootstrap-datepicker/1.6.1/dist/locales/bootstrap-datepicker.ca.min.js"/>"></script>
+	<link href="<c:url value="/webjars/datatables/1.10.21/css/dataTables.bootstrap.min.css"/>" rel="stylesheet"/>
+	<link href="<c:url value="/webjars/select2/4.0.6-rc.1/dist/css/select2.min.css"/>" rel="stylesheet"/>
+	<link href="<c:url value="/webjars/select2-bootstrap-theme/0.1.0-beta.10/dist/select2-bootstrap.min.css"/>" rel="stylesheet"/>
+	<link href="<c:url value="/webjars/bootstrap-datepicker/1.6.1/dist/css/bootstrap-datepicker.min.css"/>" rel="stylesheet"/>
+
 	
 	<script src="<c:url value="/webjars/datatables/1.10.21/js/jquery.dataTables.min.js"/>"></script>
 	<script src="<c:url value="/webjars/datatables/1.10.21/js/dataTables.bootstrap.min.js"/>"></script>
 	<script src="<c:url value="/webjars/mustache.js/3.0.1/mustache.min.js"/>"></script>
+	<script src="<c:url value="/webjars/datatables-plugins/1.10.20/dataRender/datetime.js"/>"></script>
+	<script src="<c:url value="/webjars/momentjs/2.24.0/min/moment.min.js"/>"></script>
+
+
+	<script src="<c:url value="/webjars/select2/4.0.6-rc.1/dist/js/select2.min.js"/>"></script>
+	<script src="<c:url value="/webjars/select2/4.0.6-rc.1/dist/js/i18n/${requestLocale}.js"/>"></script>
 	<script src="<c:url value="/webjars/bootstrap-datepicker/1.6.1/dist/js/bootstrap-datepicker.min.js"/>"></script>
-	<script src="<c:url value="/webjars/bootstrap-datepicker/1.6.1/dist/locales/bootstrap-datepicker.ca.min.js"/>"></script>
+
+	<script src="<c:url value="/js/webutil.common.js"/>"></script>
 	<script src="<c:url value="/js/webutil.datatable.js"/>"></script>
 <script>
 $(document).ready(function() {
@@ -118,117 +125,66 @@ $(document).ready(function() {
 
 	<c:url value="/entitat" var="formAction"/>
 	<form:form id="form-filtre" action="${formAction}" method="post" cssClass="well" commandName="entitatFiltreCommand">
-		<div class="container-fluid">
-			<div class="row">		
-				<div class="col-md-2" >
-					<pbl:inputText name="codi" inline="true" placeholderKey="entitat.list.filtre.camp.codi"/>
-<%-- 					<c:set var="campPath" value="codi" /> --%>
-<%-- 					<div class="form-group"<c:if test="${not empty campErrors}"> error</c:if>"> --%>
-								
-<%-- 							<spring:bind path="${campPath}"> --%>
-<%-- 								<input type="text" id="${campPath}" name="${campPath}"<c:if test="${not empty status.value}"> value="${status.value}"</c:if> class="form-control col-md-12" placeholder="<spring:message code="entitat.list.filtre.camp.codi"/>"> --%>
-<%-- 							</spring:bind> --%>
-				</div>
-						
-					
-						
-				<div class="col-md-2">
-				
-					<pbl:inputText name="nom" inline="true" placeholderKey="entitat.list.filtre.camp.nom"/>
-					
-<%-- 					<c:set var="campPath" value="nom"/> --%>
-					
-<%-- 					<div class="form-group<c:if test="${not empty campErrors}"> error</c:if>"> --%>
-<%-- 							<spring:bind path="${campPath}"> --%>
-<%-- 								<input type="text" id="${campPath}" name="${campPath}"<c:if test="${not empty status.value}"> value="${status.value}"</c:if> class="form-control col-md-12" placeholder="<spring:message code="entitat.list.filtre.camp.nom"/>"> --%>
-<%-- 							</spring:bind> --%>
-<!-- 					</div> -->
 
-				</div>
-				
-				<div class="col-md-2">
-					<pbl:inputText name="cif" inline="true" placeholderKey="entitat.list.filtre.camp.cif"/>
-<%-- 					<c:set var="campPath" value="cif"/> --%>
-<%-- 					<div class="form-group<c:if test="${not empty campErrors}"> error</c:if>"> --%>
-<%-- 							<spring:bind path="${campPath}"> --%>
-<%-- 								<input type="text" id="${campPath}" name="${campPath}"<c:if test="${not empty status.value}"> value="${status.value}"</c:if> class="form-control col-md-12" placeholder="<spring:message code="entitat.list.filtre.camp.cif"/>"> --%>
-<%-- 							</spring:bind> --%>
-<!-- 					</div> -->
-
-				</div>
-			
-				<div class="col-md-2">
-<%-- 					<pbl:inputSelect name="activa" inline="true"  placeholderKey="entitat.list.filtre.camp.activa.yes"	 --%>
-<%-- 					optionItems="${campPath}"  --%>
-<%-- 					emptyOption="true"/> --%>
-					<c:set var="campPath" value="activa"/>
-					<spring:message var="trueValue" code="entitat.list.filtre.camp.activa.yes"/>
-					<spring:message var="falseValue" code="entitat.list.filtre.camp.activa.no"/>
-					<form:select cssClass="form-control" path="${campPath}">
-						<option value=""><spring:message code="entitat.list.filtre.camp.activa"/></option>>
-						<form:option value="true">${trueValue}</form:option>>
-						<form:option value="false">${falseValue}</form:option>>
-					</form:select>
-				</div>	
-				<div class="col-md-2">
-					<pbl:inputSelect name="tipus" inline="true" 
-						placeholderKey="entitat.list.filtre.camp.tipus"
-						optionItems="${entitatTipusLlista}"
-						emptyOption="true"/>
-						
-<%-- 						<c:set var="campPath" value="tipus"/> --%>
-<%-- 					<form:select class="form-control" path="${campPath}"> --%>
-<%-- 						<option value=""><spring:message code="entitat.list.filtre.camp.tipus"/></option>> --%>
-<%-- 						<c:forEach var="estat" items="${entitatTipusLlista}"> --%>
-<%-- 							<form:option value="${estat}">${estat}</form:option> --%>
-<%-- 						</c:forEach> --%>
-<%-- 					</form:select> --%>
-				</div>
-				<div class="col-md-2">
-					<div class="pull-right">
-						<button id="netejar-filtre" class="btn btn-default" type="button"><spring:message code="comu.boto.netejar"/></button>
-						<button type="submit" class="btn btn-primary"><spring:message code="comu.boto.filtrar"/></button>
-					</div>				
-				</div>
+		<div class="row">		
+			<div class="col-md-2" >
+				<pbl:inputText name="codi" inline="true" placeholderKey="entitat.list.filtre.camp.codi"/>
+			</div>						
+			<div class="col-md-2">
+				<pbl:inputText name="nom" inline="true" placeholderKey="entitat.list.filtre.camp.nom"/>
+			</div>
+			<div class="col-md-2">
+				<pbl:inputText name="cif" inline="true" placeholderKey="entitat.list.filtre.camp.cif"/>
+			</div>
+			<div class="col-md-2">
+				<c:set var="campPath" value="activa"/>
+				<spring:message var="trueValue" code="entitat.list.filtre.camp.activa.yes"/>
+				<spring:message var="falseValue" code="entitat.list.filtre.camp.activa.no"/>
+				<form:select path="${campPath}" cssClass="form-control" data-toggle="select2" data-minimumresults="5">
+					<option value=""></option>
+					<form:option value="true">${trueValue}</form:option>
+					<form:option value="false">${falseValue}</form:option>
+				</form:select>
+			</div>	
+			<div class="col-md-2">
+				<pbl:inputSelect name="tipus" inline="true" 
+				 				 placeholderKey="entitat.list.filtre.camp.tipus"
+						 		 optionItems="${entitatTipusLlista}"
+								 emptyOption="true"/>
+			</div>
+			<div class="col-md-2">
+				<div class="pull-right">
+					<button id="netejar-filtre" class="btn btn-default" type="button"><spring:message code="comu.boto.netejar"/></button>
+					<button type="submit" class="btn btn-primary"><spring:message code="comu.boto.filtrar"/></button>
+				</div>				
+			</div>
 		</div>
-	</div>		
-	
 	</form:form>
 	
-		<div class ="container-fluid">
-				<div class="row">
-					<div class="pull-right">
-						<a class="btn btn-primary " href="<c:url value="/entitat/new"/>"><i class="glyphicon-plus"></i>&nbsp;<spring:message code="entitat.list.boto.nova.entitat"/></a>
-					</div>
-							
-				</div
-		</div>		
-		
-		<div class="clearfix"></div>
-		
-		<label>&nbsp;</label>
-		<label>&nbsp;</label>
-		
-	<div class="container-fluid">	
-		<div class="row">
-			<div style="position: relative; top: -40px; z-index:0">
-			<table id="table-entitats" class="table table-striped table-bordered" style="width: 100%">
-				<thead>
-					<tr>
-						<th data-data="codi"><spring:message code="entitat.list.taula.columna.codi" /></th>
-						<th data-data="nom"><spring:message code="entitat.list.taula.columna.nom" /></th>
-						<th data-data="cif"><spring:message code="entitat.list.taula.columna.cif" /></th>
-						<th data-data="tipus"><spring:message code="entitat.list.taula.columna.tipus" /></th>
-						<th data-data="activa"><spring:message code="entitat.list.taula.columna.activa" /></th>
-						<th data-data="usuaris"></th>
-						<th data-data="serveis"></th>
-						<th data-data="id"></th>
-					</tr>
-				</thead>
-			</table>
+	<div class="row">
+		<div class="col-md-12">
+			<a class="btn btn-primary pull-right" href="<c:url value="/entitat/new"/>"><i class="glyphicon-plus"></i>&nbsp;<spring:message code="entitat.list.boto.nova.entitat"/></a>
 		</div>
-	</div>
-</div>	
+	</div>		
+			
+	<div class="row">
+	<div class="col-md-12">
+		<table id="table-entitats" class="table table-striped table-bordered" style="width: 100%">
+			<thead>
+				<tr>
+					<th data-data="codi"><spring:message code="entitat.list.taula.columna.codi" /></th>
+					<th data-data="nom"><spring:message code="entitat.list.taula.columna.nom" /></th>
+					<th data-data="cif"><spring:message code="entitat.list.taula.columna.cif" /></th>
+					<th data-data="tipus"><spring:message code="entitat.list.taula.columna.tipus" /></th>
+					<th data-data="activa"><spring:message code="entitat.list.taula.columna.activa" /></th>
+					<th data-data="usuaris"></th>
+					<th data-data="serveis"></th>
+					<th data-data="id"></th>
+				</tr>
+			</thead>
+		</table>
+		</div>
+	</div>	
 <script id="template-nom" type="x-tmpl-mustache">
 {{{ span-label }}}
 {{ nom }}
