@@ -9,11 +9,16 @@ import java.util.Map;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
 
+import lombok.Getter;
+import lombok.Setter;
+
+
 /**
  * Objecte DTO amb informació d'una consulta SCSP.
  * 
  * @author Limit Tecnologies <limit@limit.es>
  */
+@Setter @Getter
 public class ConsultaDto extends AbstractIdentificable<Long> implements Serializable {
 
 	public enum EstatTipus {
@@ -109,292 +114,19 @@ public class ConsultaDto extends AbstractIdentificable<Long> implements Serializ
 
 	private String error;
 
-
-
-	public ConsultaDto() {
-	}
-
-	public Long getId() {
-		return id;
-	}
-	public void setId(Long id) {
-		this.id = id;
-	}
-	public Long getPareId() {
-		return pareId;
-	}
-
-	public void setPareId(Long pareId) {
-		this.pareId = pareId;
-	}
-
-	public Long getProcedimentId() {
-		return procedimentId;
-	}
-	public void setProcedimentId(Long procedimentId) {
-		this.procedimentId = procedimentId;
-	}
-	public String getServeiCodi() {
-		return serveiCodi;
-	}
-	public void setServeiCodi(String serveiCodi) {
-		this.serveiCodi = serveiCodi;
-	}
-	public String getScspPeticionId() {
-		return scspPeticionId;
-	}
-	public void setScspPeticionId(String scspPeticionId) {
-		this.scspPeticionId = scspPeticionId;
-	}
-	public String getScspSolicitudId() {
-		return scspSolicitudId;
-	}
-	public void setScspSolicitudId(String scspSolicitudId) {
-		this.scspSolicitudId = scspSolicitudId;
-	}
-	public String getFuncionariNom() {
-		return funcionariNom;
-	}
-	public void setFuncionariNom(String funcionariNom) {
-		this.funcionariNom = funcionariNom;
-	}
-	public String getFuncionariNif() {
-		return funcionariNif;
-	}
-	public void setFuncionariNif(String funcionariNif) {
-		this.funcionariNif = funcionariNif;
-	}
-	public Long getEntitatId() {
-		return entitatId;
-	}
-	public void setEntitatId(Long entitatId) {
-		this.entitatId = entitatId;
-	}
-	public String getEntitatNom() {
-		return entitatNom;
-	}
-	public void setEntitatNom(String entitatNom) {
-		this.entitatNom = entitatNom;
-	}
-	public String getEntitatCif() {
-		return entitatCif;
-	}
-	public void setEntitatCif(String entitatCif) {
-		this.entitatCif = entitatCif;
-	}
-	public String getDepartamentNom() {
-		return departamentNom;
-	}
-	public void setDepartamentNom(String departamentNom) {
-		this.departamentNom = departamentNom;
-	}
-	public String getUnitatTramitadoraCodi() {
-		return unitatTramitadoraCodi;
-	}
-	public void setUnitatTramitadoraCodi(String unitatTramitadoraCodi) {
-		this.unitatTramitadoraCodi = unitatTramitadoraCodi;
-	}
-	public Consentiment getConsentiment() {
-		return consentiment;
-	}
-	public void setConsentiment(Consentiment consentiment) {
-		this.consentiment = consentiment;
-	}
-	public String getFinalitat() {
-		return finalitat;
-	}
-	public void setFinalitat(String finalitat) {
-		this.finalitat = finalitat;
-	}
-	public DocumentTipus getTitularDocumentTipus() {
-		return titularDocumentTipus;
-	}
-	public void setTitularDocumentTipus(DocumentTipus titularDocumentTipus) {
-		this.titularDocumentTipus = titularDocumentTipus;
-	}
 	public String getTitularDocumentNum() {
-		return titularDocumentNum;
+		return this.titularDocumentNum.toUpperCase();
 	}
-	public void setTitularDocumentNum(String titularDocumentNum) {
-		this.titularDocumentNum = titularDocumentNum;
+	
+	public String getFuncionariNif() {
+		return funcionariNif.toUpperCase();
 	}
-	public String getTitularNom() {
-		return titularNom;
-	}
-	public void setTitularNom(String titularNom) {
-		this.titularNom = titularNom;
-	}
-	public String getTitularLlinatge1() {
-		return titularLlinatge1;
-	}
-	public void setTitularLlinatge1(String titularLlinatge1) {
-		this.titularLlinatge1 = titularLlinatge1;
-	}
-	public String getTitularLlinatge2() {
-		return titularLlinatge2;
-	}
-	public void setTitularLlinatge2(String titularLlinatge2) {
-		this.titularLlinatge2 = titularLlinatge2;
-	}
-	public String getTitularNomComplet() {
-		return titularNomComplet;
-	}
-	public void setTitularNomComplet(String titularNomComplet) {
-		this.titularNomComplet = titularNomComplet;
-	}
-	public String[] getCampsPeticioMultiple() {
-		return campsPeticioMultiple;
-	}
-	public void setCampsPeticioMultiple(String[] campsPeticioMultiple) {
-		this.campsPeticioMultiple = campsPeticioMultiple;
-	}
-	public String[][] getDadesPeticioMultiple() {
-		return dadesPeticioMultiple;
-	}
-	public void setDadesPeticioMultiple(String[][] dadesPeticioMultiple) {
-		this.dadesPeticioMultiple = dadesPeticioMultiple;
-	}
-	public String getExpedientId() {
-		return expedientId;
-	}
-	public void setExpedientId(String expedientId) {
-		this.expedientId = expedientId;
-	}
-	public Map<String, Object> getDadesEspecifiques() {
-		return dadesEspecifiques;
-	}
-	public void setDadesEspecifiques(Map<String, Object> dadesEspecifiques) {
-		this.dadesEspecifiques = dadesEspecifiques;
-	}
+
 	public String getServeiDescripcio() {
 		if (serveiDescripcio != null)
 			return serveiDescripcio;
 		else
 			return serveiCodi;
-	}
-	public void setServeiDescripcio(String serveiDescripcio) {
-		this.serveiDescripcio = serveiDescripcio;
-	}
-	public String getProcedimentNom() {
-		return procedimentNom;
-	}
-	public void setProcedimentNom(String procedimentNom) {
-		this.procedimentNom = procedimentNom;
-	}
-	public Date getCreacioData() {
-		return creacioData;
-	}
-	public void setCreacioData(Date creacioData) {
-		this.creacioData = creacioData;
-	}
-	public UsuariDto getCreacioUsuari() {
-		return creacioUsuari;
-	}
-	public void setCreacioUsuari(UsuariDto creacioUsuari) {
-		this.creacioUsuari = creacioUsuari;
-	}
-	public String getEstat() {
-		return estat;
-	}
-	public void setEstat(String estat) {
-		this.estat = estat;
-	}
-	public Date getTerData() {
-		return terData;
-	}
-	public void setTerData(Date terData) {
-		this.terData = terData;
-	}
-	public boolean isRecobriment() {
-		return recobriment;
-	}
-	public void setRecobriment(boolean recobriment) {
-		this.recobriment = recobriment;
-	}
-	public boolean isMultiple() {
-		return multiple;
-	}
-	public void setMultiple(boolean multiple) {
-		this.multiple = multiple;
-	}
-	public JustificantEstat getJustificantEstat() {
-		return justificantEstat;
-	}
-	public void setJustificantEstat(JustificantEstat justificantEstat) {
-		this.justificantEstat = justificantEstat;
-	}
-	public boolean isCustodiat() {
-		return custodiat;
-	}
-	public void setCustodiat(boolean custodiat) {
-		this.custodiat = custodiat;
-	}
-	public String getCustodiaUrl() {
-		return custodiaUrl;
-	}
-	public void setCustodiaUrl(String custodiaUrl) {
-		this.custodiaUrl = custodiaUrl;
-	}
-	public String getJustificantError() {
-		return justificantError;
-	}
-	public void setJustificantError(String justificantError) {
-		this.justificantError = justificantError;
-	}
-	public boolean isHiHaPeticio() {
-		return hiHaPeticio;
-	}
-	public void setHiHaPeticio(boolean hiHaPeticio) {
-		this.hiHaPeticio = hiHaPeticio;
-	}
-	public String getPeticioXml() {
-		return peticioXml;
-	}
-	public void setPeticioXml(String peticioXml) {
-		this.peticioXml = peticioXml;
-	}
-	public boolean isHiHaResposta() {
-		return hiHaResposta;
-	}
-	public void setHiHaResposta(boolean hiHaResposta) {
-		this.hiHaResposta = hiHaResposta;
-	}
-	public Date getRespostaData() {
-		return respostaData;
-	}
-	public void setRespostaData(Date respostaData) {
-		this.respostaData = respostaData;
-	}
-	public String getRespostaEstadoCodigo() {
-		return respostaEstadoCodigo;
-	}
-	public void setRespostaEstadoCodigo(String respostaEstadoCodigo) {
-		this.respostaEstadoCodigo = respostaEstadoCodigo;
-	}
-	public String getRespostaEstadoError() {
-		return respostaEstadoError;
-	}
-	public void setRespostaEstadoError(String respostaEstadoError) {
-		this.respostaEstadoError = respostaEstadoError;
-	}
-	public String getRespostaXml() {
-		return respostaXml;
-	}
-	public void setRespostaXml(String respostaXml) {
-		this.respostaXml = respostaXml;
-	}
-	public RespostaAtributsDto getRespostaAtributs() {
-		return respostaAtributs;
-	}
-	public void setRespostaAtributs(RespostaAtributsDto respostaAtributs) {
-		this.respostaAtributs = respostaAtributs;
-	}
-
-	public String getError() {
-		return error;
-	}
-	public void setError(String error) {
-		this.error = error;
 	}
 
 	public String getTitularNomSencer() {
@@ -474,11 +206,6 @@ public class ConsultaDto extends AbstractIdentificable<Long> implements Serializ
 
 	public static DocumentTipus[] getDocumentTipusValorsPerFormulari() {
 		return DocumentTipus.values();
-		/*/ Retorna tots els valors excepte el primer (CIF)
-		return Arrays.copyOfRange(
-				DocumentTipus.values(),
-				1,
-				DocumentTipus.values().length);*/
 	}
 
 	@Override
