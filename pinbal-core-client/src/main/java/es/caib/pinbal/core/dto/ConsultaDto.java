@@ -115,11 +115,18 @@ public class ConsultaDto extends AbstractIdentificable<Long> implements Serializ
 	private String error;
 
 	public String getTitularDocumentNum() {
-		return this.titularDocumentNum.toUpperCase();
+		if (this.titularDocumentNum != null) {
+			return this.titularDocumentNum.toUpperCase();
+		}
+		return null;
 	}
 	
 	public String getFuncionariNif() {
-		return funcionariNif.toUpperCase();
+		if (this.funcionariNif != null) {
+			return funcionariNif.toUpperCase();
+		}
+		return null;
+		
 	}
 
 	public String getServeiDescripcio() {

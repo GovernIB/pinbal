@@ -236,6 +236,7 @@ function showModalXsd(element) {
 					<pbl:inputText name="pinbalCondicioBusClass" textKey="servei.form.camp.pinbal.condicio.bus.class"/>
 					<pbl:inputSelect name="pinbalJustificantTipus" textKey="servei.form.camp.pinbal.justificant.tipus" 
 									 emptyOption="true"
+									 emptyOptionTextKey="comu.opcio.sense.definir"
 									 optionItems="${ justificantTipusLlista }"/>
 					
 					<div class="form-group">					
@@ -481,7 +482,7 @@ function showModalXsd(element) {
 				<div class="col-md-6">
 					<pbl:inputText name="scspActionSincrona" labelSize="2" textKey="servei.form.camp.scsp.action.sincrona"/>
 					<pbl:inputText name="scspActionSolicitud" labelSize="2" textKey="servei.form.camp.scsp.action.solicitud"/>
-					<pbl:inputText name="scspVersionEsquema" labelSize="2" textKey="servei.form.camp.scsp.version.esquema"/>
+					<pbl:inputText name="scspVersionEsquema" required="true" labelSize="2" textKey="servei.form.camp.scsp.version.esquema"/>
 				</div>
 				<div class="col-md-6">
 					<pbl:inputText name="scspActionAsincrona" labelSize="2" textKey="servei.form.camp.scsp.action.asincrona"/>
@@ -556,18 +557,11 @@ function showModalXsd(element) {
 			<div class="row">
 				<div class="col-md-6">
 					<c:set var="campPath" value="scspTipoSeguridad"/>
-					<c:set var="campErrors"><form:errors path="${campPath}"/></c:set>
-					<label class="control-label col-xs-2" for="${campPath}">
-						<spring:message code="servei.form.camp.scsp.tipo.seguridad"/> *
-					</label>
-					<div class="col-xs-10">
-						<form:select path="${campPath}" cssClass="form-control" disabled="${disabled}" data-toggle="select2" data-minimumresults="5">
-							<option value=""><spring:message code="comu.opcio.sense.definir"/></option>
-							<form:option value="XMLSignature"/>
-							<form:option value="WS-Security"/>
-						</form:select>
-						<form:errors path="${campPath}" cssClass="help-inline"/>
-					</div>
+					<pbl:inputSelect name="${campPath}" textKey="servei.form.camp.scsp.tipo.seguridad" 
+									 required="true"
+									 emptyOption="true" labelSize="2" 
+									 optionItems="${tipusSeguretat}" 
+									 emptyOptionTextKey="comu.opcio.sense.definir"/>
 				</div>
 			</div>	
 		    <div class="row">

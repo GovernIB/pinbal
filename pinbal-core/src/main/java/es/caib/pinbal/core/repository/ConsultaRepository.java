@@ -165,7 +165,7 @@ public interface ConsultaRepository extends JpaRepository<Consulta, Long> {
 			"where " +
 			"    c.procedimentServei.procediment.entitat.id = :entitatId " +
 			"and (:esNullCreatedBy = true or c.createdBy = :createdBy) " +
-			"and (:esNullScspPeticionId = true or c.scspPeticionId = :scspPeticionId) " +
+			"and (:esNullScspPeticionId = true or lower(c.scspPeticionId) like lower('%'||:scspPeticionId||'%')) " +
 			"and (:esNullProcedimentId = true or c.procedimentServei.procediment.id = :procedimentId) " +
 			"and (:esNullServeiCodi = true or c.procedimentServei.servei = :serveiCodi) " +
 			"and (:esNullEstat = true or c.estat = :estat) " +

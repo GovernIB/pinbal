@@ -150,14 +150,14 @@ function onInvokeAction(id) {
 $(function() {
 
 	// Canvi d'icones al ocultar/mostrar
-	$('.arbre-node').on('hidden', function (event) {
+	$('.arbre-node').on('hide.bs.collapse', function (event) {
 		var iconId = '#icon-' + this.id.substring(3);
-		$(iconId).attr('class', 'icon-chevron-right');
+		$(iconId).attr('class', 'fas fa-chevron-right');
 		event.stopPropagation();
 	});
-	$('.arbre-node').on('shown', function (event) {
+	$('.arbre-node').on('show.bs.collapse', function (event) {
 		var iconId = '#icon-' + this.id.substring(3);
-		$(iconId).attr('class', 'icon-chevron-down');
+		$(iconId).attr('class', 'fas fa-chevron-down');
 		event.stopPropagation();
 	});
 	$('#boto-nou-grup').click(function (event) {
@@ -196,19 +196,26 @@ $(function() {
 </script>
 </head>
 <body>
-	
-	<div class="container-fluid">
-		<div class="row">
-		
-				<a href="#" class="btn btn-default" title="<spring:message code="servei.camp.contreure.tot"/>" id="accio-contreure-all"><i class="fas fa-chevron-right"></i></a>
-				<a href="#" class="btn btn-default" title="<spring:message code="servei.camp.expandir.tot"/>" id="accio-expandir-all"><i class="fas fa-chevron-down"></i></a>
-			</div><br/>
-			<ul style="list-style:none; margin:0">
-				<c:set var="nodeArbreActual" value="${arbreDadesEspecifiques.arrel}" scope="request"/>
-				<jsp:include page="import/dadesEspecifiquesArbreNode.jsp"/>
-			</ul>
+<div class="container-fluid">
+	<div class="row">
+		<div class="col-md-4">
+			<div class="well">
+				<div class="btn-group pull-right">
+					<a href="#" class="btn btn-default"
+						title="<spring:message code="servei.camp.contreure.tot"/>"
+						id="accio-contreure-all"><i class="fas fa-chevron-right"></i></a> 
+					<a href="#" class="btn btn-default"
+						title="<spring:message code="servei.camp.expandir.tot"/>"
+						id="accio-expandir-all"><i class="fas fa-chevron-down"></i></a>
+				</div>
+				<br />
+				<ul style="list-style: none; margin: 0; padding: 0;">
+					<c:set var="nodeArbreActual" value="${arbreDadesEspecifiques.arrel}"
+						scope="request" />
+					<jsp:include page="import/dadesEspecifiquesArbreNode.jsp" />
+				</ul>
+			</div>
 		</div>
-		
 		<div class="col-md-8">
 			<a id="boto-nou-grup" class="btn btn-primary pull-right" href="#"><i class="fas fa-plus"></i>&nbsp;Nou grup</a><br/><br/>
 			<c:set var="hiHaCampsSenseGrup" value="${false}"/>
@@ -222,14 +229,14 @@ $(function() {
 						<th><spring:message code="servei.camp.taula.columna.nom" /></th>
 						<th><spring:message code="servei.camp.taula.columna.tipus" /></th>
 						<th><spring:message code="servei.camp.taula.columna.etiqueta" /></th>
-						<th><spring:message code="servei.camp.taula.columna.o" /></th>
-						<th><spring:message code="servei.camp.taula.columna.m" /></th>
-						<th><spring:message code="servei.camp.taula.columna.v" /></th>
+						<th style="width: 1%"><spring:message code="servei.camp.taula.columna.o" /></th>
+						<th style="width: 1%"><spring:message code="servei.camp.taula.columna.m" /></th>
+						<th style="width: 1%"><spring:message code="servei.camp.taula.columna.v" /></th>
 						<c:if test="${not empty grups}">
-						<th></th>
+						<th style="width: 1%"></th>
 						</c:if>
-						<th></th>
-						<th></th>
+						<th style="width: 1%"></th>
+						<th style="width: 1%"></th>
 						</tr>
 					</thead>
 					<tbody>
@@ -315,12 +322,12 @@ $(function() {
 									<th data-data="campNom"><spring:message code="servei.camp.taula.columna.nom" /></th>
 									<th data-data="tipus"><spring:message code="servei.camp.taula.columna.tipus" /></th>
 									<th data-data="etiqueta"><spring:message code="servei.camp.taula.columna.etiqueta" /></th>
-									<th data-data="obligatori"><spring:message code="servei.camp.taula.columna.o" /></th>
-									<th data-data="modificable"><spring:message code="servei.camp.taula.columna.m" /></th>
-									<th data-data="visible"><spring:message code="servei.camp.taula.columna.v" /></th>
-									<th data-data="path"></th>
-									<th data-data="id"></th>
-									<th data-data="campPare"></th>
+									<th data-data="obligatori" style="width: 1%"><spring:message code="servei.camp.taula.columna.o" /></th>
+									<th data-data="modificable" style="width: 1%"><spring:message code="servei.camp.taula.columna.m" /></th>
+									<th data-data="visible" style="width: 1%"><spring:message code="servei.camp.taula.columna.v" /></th>
+									<th data-data="path" style="width: 1%"></th>
+									<th data-data="id" style="width: 1%"></th>
+									<th data-data="campPare" style="width: 1%"></th>
 									</tr>
 								</thead>
 								<tbody>
@@ -398,10 +405,10 @@ $(function() {
 						</c:otherwise>
 					</c:choose>
 					<div style="text-align: right">
-						<a href="campGrup/${grup.id}/up" title="<spring:message code="comu.boto.pujar"/>" class="btn<c:if test="${grupStatus.first}"> disabled</c:if>"><i class="fas fa-upload"></i></a>
-						<a href="campGrup/${grup.id}/down" title="<spring:message code="comu.boto.baixar"/>" class="btn<c:if test="${grupStatus.last}"> disabled</c:if>"><i class="fas fa-download"></i></a>
-						<a href="#modal-grup-form" title="<spring:message code="comu.boto.modificar"/>" class="btn boto-grup-editar" data-id="${grup.id}" data-nom="${grup.nom}"><i class="fas fa-pen"></i></a>
-						<a href="campGrup/${grup.id}/delete" title="<spring:message code="comu.boto.esborrar"/>" class="btn confirm-esborrar-grup"><i class="fas fa-trash-alt"></i></a>
+						<a href="campGrup/${grup.id}/up" title="<spring:message code="comu.boto.pujar"/>" class="btn btn-default <c:if test="${grupStatus.first}"> disabled</c:if>"><i class="fas fa-arrow-up"></i></a>
+						<a href="campGrup/${grup.id}/down" title="<spring:message code="comu.boto.baixar"/>" class="btn btn-default <c:if test="${grupStatus.last}"> disabled</c:if>"><i class="fas fa-arrow-down"></i></a>
+						<a href="#modal-grup-form" title="<spring:message code="comu.boto.modificar"/>" class="btn btn-default boto-grup-editar" data-id="${grup.id}" data-nom="${grup.nom}"><i class="fas fa-pen"></i></a>
+						<a href="campGrup/${grup.id}/delete" title="<spring:message code="comu.boto.esborrar"/>" class="btn btn-default confirm-esborrar-grup"><i class="fas fa-trash-alt"></i></a>
 					</div>
 				</div>
 			</c:forEach>
@@ -410,6 +417,13 @@ $(function() {
 			</c:if>
 		</div>
 	</div>
+	
+	<div class="well">
+		<a href="<c:url value="/servei"/>" class="btn btn-default pull-right"><spring:message code="comu.boto.tornar"/></a>
+		<c:set var="initModalPreview">initModalPreview(this);return false</c:set>
+		<a href="<c:url value="/modal/servei/${servei.codi}/preview"/>" class="btn btn-info" onclick="${initModalPreview}"><i class="fas fa-eye"></i>&nbsp;<spring:message code="comu.boto.previsualitzar"/></a>
+	</div>
+</div>
 
 	<form id="hidden-form" action="camp/add" method="post" class="form-horizontal">
 		<input type="hidden" id="hidden-hidden-servei" name="servei"/>
@@ -555,11 +569,6 @@ $(function() {
 	</div>
 </div>
 
-	<div class="well">
-		<a href="<c:url value="/servei"/>" class="btn pull-right"><spring:message code="comu.boto.tornar"/></a>
-		<c:set var="initModalPreview">initModalPreview(this);return false</c:set>
-		<a href="<c:url value="/modal/servei/${servei.codi}/preview"/>" class="btn btn-info" onclick="${initModalPreview}"><i class="glyphicon-eye-open icon-white"></i>&nbsp;<spring:message code="comu.boto.previsualitzar"/></a>
-	</div>
 
 </body>
 </html>

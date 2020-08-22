@@ -5,6 +5,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -203,12 +204,12 @@ public class ServeiController extends BaseController {
 			model.addAttribute(new ServeiCommand(true));
 		}
 		model.addAttribute("serveiXsdCommand", new ServeiXsdCommand());
-		model.addAttribute("emisors", serveiService.findEmisorAll());
-		model.addAttribute("clausPubliques", serveiService.findClauPublicaAll());
-		model.addAttribute("clausPrivades", serveiService.findClauPrivadaAll());
+		
 		if (serveiDto != null) {
 			model.addAttribute("serveisBus", serveiService.findServeisBus(serveiDto.getCodi()));
 		}
+		
+		this.fillFormModel(model);
 		return "serveiForm";
 	}
 	
@@ -219,9 +220,7 @@ public class ServeiController extends BaseController {
 			BindingResult bindingResult,
 			Model model) throws ServeiNotFoundException {
 		if (bindingResult.hasErrors()) {
-			model.addAttribute("emisors", serveiService.findEmisorAll());
-			model.addAttribute("clausPubliques", serveiService.findClauPublicaAll());
-			model.addAttribute("clausPrivades", serveiService.findClauPrivadaAll());
+			this.fillFormModel(model);
 			return "serveiForm";
 		}
 		ServeiDto servei = ServeiCommand.asDto(command);
@@ -312,6 +311,7 @@ public class ServeiController extends BaseController {
 		
 		List<ServeiCampDto> camps = serveiService.findServeiCamps(serveiCodi);
 		model.addAttribute("camps", camps);
+		
 		Map<Long, List<ServeiCampDto>> campsAgrupats = new HashMap<Long, List<ServeiCampDto>>();
 		for (ServeiCampDto camp: camps) {
 			Long clau = (camp.getGrup() != null) ? camp.getGrup().getId() : null;
@@ -811,6 +811,16 @@ public class ServeiController extends BaseController {
 				serveiService.findServeiJustificantCamps(serveiCodi));
 	}
 
+
+	private void fillFormModel(Model model) {
+		model.addAttribute("emisors", serveiService.findEmisorAll());
+		model.addAttribute("clausPubliques", serveiService.findClauPublicaAll());
+		model.addAttribute("clausPrivades", serveiService.findClauPrivadaAll());
+	
+		List<String> tipusSeguretat = new ArrayList<String>(Arrays.asList("XMLSignature", "WS-Security"));
+		model.addAttribute("tipusSeguretat", tipusSeguretat);
+	}
+	
 	private void omplirCampEnumDescripcions(
 			HttpServletRequest request,
 			ServeiCampCommand command) {

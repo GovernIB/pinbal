@@ -141,7 +141,7 @@ $(document).ready(function() {
 				<spring:message var="trueValue" code="entitat.list.filtre.camp.activa.yes"/>
 				<spring:message var="falseValue" code="entitat.list.filtre.camp.activa.no"/>
 				<form:select path="${campPath}" cssClass="form-control" data-toggle="select2" data-minimumresults="5">
-					<option value=""></option>
+					<option value=""><spring:message code="comu.opcio.sense.definir"/></option>
 					<form:option value="true">${trueValue}</form:option>
 					<form:option value="false">${falseValue}</form:option>
 				</form:select>

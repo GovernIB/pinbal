@@ -27,8 +27,7 @@
 <c:choose>
 	<c:when test="${not inline}">
 		<div class="form-group<c:if test="${not empty campErrors}"> has-error</c:if>">
-    		<label class="control-label col-xs-${campLabelSize}" for="${campPath}">${campLabelText}</label>
-    		<div class="col-xs-${campInputSize}">
+			<label for="${campPath}">${campLabelText}</label>
     		<div class="fileinput fileinput-new input-group" data-provides="fileinput">
 				<div class="form-control" data-trigger="fileinput">
 					<i class="glyphicon glyphicon-file fileinput-exists"></i> 
@@ -39,8 +38,7 @@
 					<input type="file" id="${campPath}" name="${campPath}"></span>
 				<a href="#" class="input-group-addon btn btn-default fileinput-exists" style="width:auto" data-dismiss="fileinput">Netejar</a>
 			</div>
-			</div>
-  		</div>
+		</div>
 	</c:when>
 	<c:otherwise>
 		<div class="form-group<c:if test="${not empty campErrors}"> has-error</c:if>">

@@ -107,19 +107,18 @@
 			<div class="col-md-2">	
 				<pbl:inputText name="descripcio"  inline="true" placeholderKey="servei.list.filtre.camp.descripcio"/>
 			</div>
-			<div class="col-md-2">	
-				<pbl:inputSelect name="descripcio"  inline="true" placeholderKey="servei.list.filtre.camp.emissor"
-				 optionItems="${emisors}"
-				 	optionValueAttribute="id"
-				 	optionTextAttribute="nom"
-				 	emptyOption="true"/>
+			<div class="col-md-2">
+				<pbl:inputSelect name="emissor" inline="true"
+					placeholderKey="servei.list.filtre.camp.emissor"
+					optionItems="${emisors}" optionValueAttribute="id"
+					optionTextAttribute="nom" emptyOption="true" />
 			</div>
 			<div class="col-md-2">	
 				<c:set var="campPath" value="activa"/>
 				<spring:message var="trueValue" code="entitat.list.filtre.camp.activa.yes"/>
 				<spring:message var="falseValue" code="entitat.list.filtre.camp.activa.no"/>
 				<form:select path="${campPath}" cssClass="form-control" data-toggle="select2" data-minimumresults="5">
-					<option value=""></option>
+					<option value=""><spring:message code="comu.opcio.sense.definir"/></option>
 					<form:option value="true">${trueValue}</form:option>
 					<form:option value="false">${falseValue}</form:option>
 				</form:select>

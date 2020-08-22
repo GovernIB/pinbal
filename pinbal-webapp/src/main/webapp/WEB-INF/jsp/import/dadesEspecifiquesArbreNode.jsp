@@ -3,7 +3,10 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
 <li class="arbre-node" id="li-${nodeArbreActual.dades.pathAmbSeparadorAlternatiu}">
 	<c:if test="${nodeArbreActual.dades.complexa}">
-		<i class="icon-chevron-down" id="icon-${nodeArbreActual.dades.pathAmbSeparadorAlternatiu}" data-toggle="collapse" data-target="#ul-${nodeArbreActual.dades.pathAmbSeparadorAlternatiu}"></i>&nbsp;
+		<i class="fas fa-chevron-down"
+			id="icon-${nodeArbreActual.dades.pathAmbSeparadorAlternatiu}"
+			data-toggle="collapse"
+			data-target="#ul-${nodeArbreActual.dades.pathAmbSeparadorAlternatiu}"></i>&nbsp;
 	</c:if>
 	<c:set var="campTrobat" value="${false}"/>
 	<c:forEach var="camp" items="${camps}">
@@ -21,7 +24,7 @@
 		</c:otherwise>
 	</c:choose>
 	<c:if test="${nodeArbreActual.dades.enumeracio}"><a id="enum-${nodeArbreActual.dades.pathAmbSeparadorAlternatiu}" href="#" rel="tooltip" title="[<c:forEach var="valor" items="${nodeArbreActual.dades.enumeracioValors}" varStatus="status">${valor}<c:if test="${not status.last}">, </c:if></c:forEach>]"><i class="icon-list-alt"></i></a><script>$('#enum-${nodeArbreActual.dades.pathAmbSeparadorAlternatiu}').tooltip({placement:'right'});</script></c:if>
-	<c:if test="${campTrobat}">&nbsp;<i class="icon-ok"></i></c:if>
+	<c:if test="${campTrobat}">&nbsp;<i class="fa fa-check"></i></c:if>
 	<c:if test="${not campTrobat}">
 		</a>
 	</c:if>

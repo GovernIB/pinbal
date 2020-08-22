@@ -408,6 +408,7 @@ public class ConsultaController extends BaseController {
 					serveiService.findAmbCodiPerDelegat(
 							entitat.getId(),
 							consulta.getServeiCodi()));
+
 			omplirModelAmbDadesEspecifiques(
 					consulta.getServeiCodi(),
 					model);
@@ -815,6 +816,16 @@ public class ConsultaController extends BaseController {
 		model.addAttribute(
 				"grups",
 				serveiService.findServeiCampGrups(serveiCodi));
+		
+		boolean mostraDadesEspecifiques = false;
+		for (ServeiCampDto camp: camps) {
+			if (camp.isVisible()) {
+				mostraDadesEspecifiques = true;
+				break;
+			}
+		}
+		
+		model.addAttribute("mostrarDadesEspecifiques", mostraDadesEspecifiques);
 	}
 	
 	@SuppressWarnings("rawtypes")

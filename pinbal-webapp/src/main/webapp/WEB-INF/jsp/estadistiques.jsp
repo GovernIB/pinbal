@@ -139,33 +139,21 @@ $(document).ready(function() {
 			</div>
 			<div class="row">		
 				<div class="col-md-2">
-						<label><spring:message code="estadistiques.list.filtre.data"/></label> 
 						<pbl:inputDate name="dataInici" inline="true" placeholderKey="estadistiques.list.filtre.data.inici"/>
 				</div>
 				<div class="col-md-2">
-					<label>&nbsp;</label>
 					<pbl:inputDate name="dataFi" inline="true" placeholderKey="estadistiques.list.filtre.data.fi"/>
 				</div>	
 				<div class="col-md-4">
-					<label>Agrupar per</label>
  					<pbl:inputSelect name="agrupacio"  inline="true" placeholderKey="estadistiques.list.filtre.agrupacio.SERVEI_PROCEDIMENT" 
 	 	  							optionItems="${agrupacioValors}"    
 	 	 							emptyOption="true"/>
 				</div>
 								
-				<div class="col-md-4"> 
-					<label>&nbsp;</label>
- 								 	
+				<div class="col-md-4">
 					<c:set var="campPath" value="usuariCodi"/>
 					<c:set var="campErrors"><form:errors path="${campPath}"/></c:set>
 					<div class="form-group<c:if test="${not empty campErrors}"> error</c:if>">
-<%-- 					${entitatSeleccionada.usuaris} --%>
-<%-- 					<pbl:inputSelect name="servei"  inline="true" placeholderKey="estadistiques.list.filtre.servei"  --%>
-<%-- 	 								 optionItems="${entitatSeleccionada.usuaris}"   --%>
-<%-- 	 								 optionValueAttribute="usuari"  --%>
-<%-- 	 								 optionTextAttribute="usuari"  --%>
-<%-- 	 								 emptyOption="true"/>  --%>
-
 						<c:set var="campPlaceholder"><spring:message code="estadistiques.list.filtre.usuari"/></c:set>
 						<form:select path="${campPath}" cssClass="form-control" data-toggle="select2" data-placeholder="${campPlaceholder}">
 							<option value=""></option>

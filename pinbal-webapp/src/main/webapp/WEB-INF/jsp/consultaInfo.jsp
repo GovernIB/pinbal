@@ -87,30 +87,11 @@ function initModalXml(element) {
 								<label class="control-label" for=""><spring:message code="consulta.form.camp.funcionari.nom"/></label>
 								<input type="text" value="${consulta.funcionariNom}" class="form-control" id="" disabled="disabled"/>
 							</div>
-						</div>
-						<div class="col-md-6">
-							<div class="form-group">
-								<label class="control-label" for=""><spring:message code="consulta.form.camp.funcionari.nif"/></label>
-								<input type="text" value="${consulta.funcionariNif}" class="form-control" id="" disabled="disabled"/>
-							</div>
-						</div>
-					</div>
-					<div class="row">
-						<div class="col-md-6">
+							
 							<div class="form-group">
 								<label class="control-label" for=""><spring:message code="consulta.form.camp.entitat.nom"/></label>
 								<input type="text" value="${consulta.entitatNom}" class="form-control" id="" disabled="disabled"/>
 							</div>
-						</div>
-						<div class="col-md-6">
-							<div class="form-group">
-								<label class="control-label" for=""><spring:message code="consulta.form.camp.entitat.cif"/></label>
-								<input type="text" value="${consulta.entitatCif}" class="form-control" id="" disabled="disabled"/>
-							</div>
-						</div>
-					</div>
-					<div class="row">
-						<div class="col-md-6">
 							<div class="form-group">
 								<label class="control-label" for=""><spring:message code="consulta.form.camp.consentiment"/></label>
 								<input type="text" value="${consulta.consentiment}" class="form-control" id="" disabled="disabled"/>
@@ -118,6 +99,13 @@ function initModalXml(element) {
 						</div>
 						<div class="col-md-6">
 							<div class="form-group">
+								<label class="control-label" for=""><spring:message code="consulta.form.camp.funcionari.nif"/></label>
+								<input type="text" value="${consulta.funcionariNif}" class="form-control" id="" disabled="disabled"/>
+							</div>
+							<div class="form-group">
+								<label class="control-label" for=""><spring:message code="consulta.form.camp.entitat.cif"/></label>
+								<input type="text" value="${consulta.entitatCif}" class="form-control" id="" disabled="disabled"/>
+							</div>							<div class="form-group">
 								<label class="control-label" for=""><spring:message code="consulta.form.camp.departament"/></label>
 								<div class="controls">
 									<input type="text" value="${consulta.departamentNom}" class="form-control" id="" disabled="disabled"/>
@@ -218,10 +206,6 @@ function initModalXml(element) {
 						</c:forEach>
 					</fieldset>
 				</c:if>
-				<c:set var="mostrarDadesEspecifiques" value="${false}"/>
-				<c:forEach var="camp" items="${campsDadesEspecifiques}">
-					<c:if test="${camp.visible}"><c:set var="mostrarDadesEspecifiques" value="${true}"/></c:if>
-				</c:forEach>
 				<c:if test="${mostrarDadesEspecifiques}">
 					<fieldset>
 						<c:if test="${not empty campsSenseAgrupar}">

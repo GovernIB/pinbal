@@ -79,33 +79,22 @@
 				<div class="col-md-6">
 					<label class="control-label" for="${campPath}"><spring:message code="consulta.form.camp.funcionari.nom"/> *</label>
 					<pbl:inputText name="funcionariNom" inline="true" placeholderKey="consulta.form.camp.funcionari.nom"/>
-				</div>
-
-				<div class="col-md-6">
-			
-					<label class="control-label" for="${campPath}"><spring:message code="consulta.form.camp.funcionari.nif"/></label>
-					<pbl:inputText name="funcionariNif" inline="true" placeholderKey="consulta.form.camp.funcionari.nif"/>
-				</div>
-			</div>
-			<div class="row">
-				<div class="col-md-6">
+					
 					<label class="control-label" for="${campPath}"><spring:message code="consulta.form.camp.entitat.nom"/></label> 
 					<pbl:inputText name="entitatNom" inline="true" placeholderKey="consulta.form.camp.entitat.nom"  disabled="true"/>
-				</div>
-				<div class="col-md-6">
-					<label class="control-label" for="${campPath}"><spring:message code="consulta.form.camp.entitat.cif"/></label> 
-					<pbl:inputText name="entitatCif" inline="true" placeholderKey="consulta.form.camp.entitat.cif"/>
-				</div>
-			</div>
-			<div class="row">
-				<div class="col-md-6">
+					
 					<label class="control-label" for="${campPath}"><spring:message code="consulta.form.camp.consentiment"/> *</label>
 					<pbl:inputSelect name="consentiment" inline="true" placeholderKey="consulta.form.camp.consentiment" 
-									 optionItems="${consentimentValors}"
-									 emptyOption="true"/>
+									 optionItems="${consentimentValors}" emptyOption="true"/>
 				</div>
-		
-				<div class="col-md-6">
+
+				<div class="col-md-6">			
+					<label class="control-label" for="${campPath}"><spring:message code="consulta.form.camp.funcionari.nif"/></label>
+					<pbl:inputText name="funcionariNif" inline="true" placeholderKey="consulta.form.camp.funcionari.nif"/>
+					
+					<label class="control-label" for="${campPath}"><spring:message code="consulta.form.camp.entitat.cif"/></label> 
+					<pbl:inputText name="entitatCif" inline="true" placeholderKey="consulta.form.camp.entitat.cif"/>
+					
 					<label class="control-label" for="${campPath}"><spring:message code="consulta.form.camp.departament"/> *</label>
 					<pbl:inputText name="departamentNom" inline="true" placeholderKey="consulta.form.camp.departament"/>
 				</div>
@@ -174,7 +163,7 @@
 							<c:set var="campPath" value="multipleFitxer"/>
 							<c:set var="campErrors"><form:errors path="${campPath}"/></c:set>
 							<div class="form-group<c:if test="${not empty campErrors}"> error</c:if>">
-								<pbl:inputFile name="${campPath}" textKey="consulta.form.camp.multiple.fitxer" required="true"/>
+								<pbl:inputFile inline="false" name="${campPath}" textKey="consulta.form.camp.multiple.fitxer" required="true"/>
 								<form:errors path="${campPath}" cssClass="help-block"/>
 							</div>
 						</div>
