@@ -50,7 +50,9 @@ function initModalXml(element) {
 			</h3>
 			<div id="dadesResposta">
 				<c:set var="initModalXml">initModalXml(this);return false</c:set>
-				<a class="btn col-md-pull-right" href="<c:url value="/modal/admin/consulta/${consulta.id}/xmlResposta"/>" onclick="${initModalXml}"><i class="glyphicon-info-sign"></i> <spring:message code="admin.consulta.info.veure.xml"/></a>
+				<a class="btn Zcol-md-pull-right" href="<c:url value="/modal/admin/consulta/${consulta.id}/xmlResposta"/>" onclick="${initModalXml}">
+					<i class="fas fa-info-circle"></i> <spring:message code="admin.consulta.info.veure.xml"/>
+				</a>
 				<p>
 					<spring:message code="admin.consulta.info.resposta.rebuda.dia"/>
 					<fmt:formatDate pattern="dd/MM/yyyy" value="${consulta.respostaData}"/>

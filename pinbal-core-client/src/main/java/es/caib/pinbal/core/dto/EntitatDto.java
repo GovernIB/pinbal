@@ -6,12 +6,16 @@ import java.util.List;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
 
+import lombok.Getter;
+import lombok.Setter;
+
 
 /**
  * Objecte DTO amb informació d'una entitat.
  * 
  * @author Limit Tecnologies <limit@limit.es>
  */
+@Getter @Setter
 public class EntitatDto extends AbstractIdentificable<Long> implements Serializable {
 
 	public enum EntitatTipusDto {
@@ -33,55 +37,6 @@ public class EntitatDto extends AbstractIdentificable<Long> implements Serializa
 	private List<String> serveis = new ArrayList<String>();
 
 	public EntitatDto() {
-	}
-
-	public Long getId() {
-		return id;
-	}
-	public void setId(Long id) {
-		this.id = id;
-	}
-	public String getCodi() {
-		return codi;
-	}
-	public void setCodi(String codi) {
-		this.codi = codi;
-	}
-	public String getNom() {
-		return nom;
-	}
-	public void setNom(String nom) {
-		this.nom = nom;
-	}
-	public String getCif() {
-		return cif;
-	}
-	public void setCif(String cif) {
-		this.cif = cif;
-	}
-	public EntitatTipusDto getTipus() {
-		return tipus;
-	}
-	public void setTipus(EntitatTipusDto tipus) {
-		this.tipus = tipus;
-	}
-	public boolean isActiva() {
-		return activa;
-	}
-	public void setActiva(boolean activa) {
-		this.activa = activa;
-	}
-	public List<String> getServeis() {
-		return serveis;
-	}
-	public void setServeis(List<String> serveis) {
-		this.serveis = serveis;
-	}
-	public List<EntitatUsuariDto> getUsuaris() {
-		return usuaris;
-	}
-	public void setUsuaris(List<EntitatUsuariDto> usuaris) {
-		this.usuaris = usuaris;
 	}
 
 	@Override

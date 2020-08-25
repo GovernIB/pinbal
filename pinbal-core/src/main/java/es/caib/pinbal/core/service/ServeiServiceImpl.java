@@ -18,6 +18,7 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.MessageSource;
 import org.springframework.context.MessageSourceAware;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.acls.domain.BasePermission;
 import org.springframework.security.acls.model.MutableAclService;
@@ -347,19 +348,27 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 				procedimentRepository.findOne(procediment.getId())
 				);
 		
-		Page<Servei> paginaServeis = serveiRepository.findByFiltre(
-				serveisEntitat, 
-				serveisProcedimentActiusIds,
-				codi == null || codi.length() == 0,
-				codi,
-				descripcio == null || descripcio.length() == 0,
-				descripcio,
-				emisor == null || emisor.length() == 0,
-				(emisor != null && emisor.length() > 0) ? Long.parseLong(emisor) : null,
-				activa == null,
-				activa,
-				pageable
-				);
+		Page<Servei> paginaServeis;
+		if (serveisProcedimentActiusIds.isEmpty()) {
+			paginaServeis = new PageImpl<Servei>(new ArrayList<Servei>());
+			
+		}else {
+			paginaServeis = serveiRepository.findByFiltre(
+					serveisEntitat, 
+					serveisProcedimentActiusIds,
+					codi == null || codi.length() == 0,
+					codi,
+					descripcio == null || descripcio.length() == 0,
+					descripcio,
+					emisor == null || emisor.length() == 0,
+					(emisor != null && emisor.length() > 0) ? Long.parseLong(emisor) : null,
+					activa == null,
+					activa,
+					pageable
+					);
+			
+		}
+		
 		Page<ServeiDto> paginaDtos = dtoMappingHelper.pageEntities2pageDto(paginaServeis, ServeiDto.class, pageable);
 		for (ServeiDto servei: paginaDtos.getContent()) {
 			for (ProcedimentServei procedimentServei: serveisProcediment) {

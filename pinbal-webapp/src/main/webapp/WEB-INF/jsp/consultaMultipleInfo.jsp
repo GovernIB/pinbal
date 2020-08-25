@@ -254,24 +254,26 @@ $('#dadesResposta').on('shown', function () {
 </script>
 	</c:if>
 	<c:if test="${consulta.estatTramitada}">
-		<div class="well-lg">
+		<div class="well well-lg">
 			<h3>
 				<spring:message code="consulta.multiple.info.generar.justificantpdf"/>
-				<a href="${consulta.id}/justificantpdf" class="pull-right">
-					<img src="<c:url value="/img/pdf-glyphicon-big.png"/>" width="27" height="32" alt="<spring:message code="consulta.info.descarregar.pdf"/>" title="<spring:message code="consulta.info.descarregar.pdf"/>"/>
+				<a href="${consulta.id}/justificantpdf" 
+					aria-label="<spring:message code="consulta.info.descarregar.pdf"/>" class="pull-right">
+					<i aria-hidden="true" class="fas fa-file-pdf"></i>
 				</a>
 			</h3>
 		</div>
-		<div class="well-lg">
+		<div class="well well-lg">
 			<h3>
 				<spring:message code="consulta.multiple.info.generar.justificantzip"/>
-				<a href="${consulta.id}/justificantzip" class="pull-right">
-					<img src="<c:url value="/img/file-extension-zip-glyphicon.png"/>" width="32" height="32" alt="<spring:message code="consulta.info.descarregar.zip"/>" title="<spring:message code="consulta.info.descarregar.zip"/>"/>
+				<a href="${consulta.id}/justificantzip" 
+					aria-label="<spring:message code="consulta.info.descarregar.zip"/>" class="pull-right">
+					<i class="far fa-file-archive"></i>
 				</a>
 			</h3>
 		</div>
 	</c:if>
-	<div class="well-lg">
+	<div class="well well-lg">
 		<a href="<c:url value="/consulta/multiple"/>" class="btn btn-default"><spring:message code="comu.boto.tornar"/></a>
 	</div>
 	<div id="modal-missatge-xml" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">

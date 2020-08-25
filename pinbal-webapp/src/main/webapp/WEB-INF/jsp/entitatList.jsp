@@ -163,7 +163,7 @@ $(document).ready(function() {
 	
 	<div class="row">
 		<div class="col-md-12">
-			<a class="btn btn-primary pull-right" href="<c:url value="/entitat/new"/>"><i class="glyphicon-plus"></i>&nbsp;<spring:message code="entitat.list.boto.nova.entitat"/></a>
+			<a class="btn btn-primary pull-right" href="<c:url value="/entitat/new"/>"><i class="fa fa-plus"></i>&nbsp;<spring:message code="entitat.list.boto.nova.entitat"/></a>
 		</div>
 	</div>		
 			

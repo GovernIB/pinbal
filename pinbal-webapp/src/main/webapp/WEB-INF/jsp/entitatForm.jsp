@@ -30,84 +30,25 @@
 <body>
 
 	<c:url value="/entitat/save" var="formAction"/>
-	<form:form action="${formAction}" method="post" cssClass="well" commandName="entitatCommand">
+	<form:form action="${formAction}" method="post" cssClass="form-horizontal" commandName="entitatCommand">
 		<form:hidden path="id"/>
-		<fieldset>
-			<div class="container-fluid">
-				<div class="row">
-				
-					
-					<div class="col-md-2">
-						<label class="control-label" for="${campPath}"><spring:message code="entitat.form.camp.codi"/> *</label>
-						<pbl:inputText name="codi" inline="true" placeholderKey="entitat.form.camp.codi"/>
-	<%-- 					<c:set var="campPath" value="codi"/ > --%>
-	<%-- 					<c:set var="campErrors"><form:errors path="${campPath}"/></c:set> --%>
-	<%-- 					<div class="form-group<c:if test="${not empty campErrors}"> error</c:if>"> --%>
-				
-<!-- 					<div class="controls"> -->
-<%-- 					<form:input path="${campPath}" cssClass="input-lg" id="${campPath}"/> --%>
-<%-- 					<form:errors path="${campPath}" cssClass="help-block"/> --%>
-					</div>
-					<div class="col-md-2">
-						<label class="control-label" for="${campPath}"><spring:message code="entitat.form.camp.nom"/> *</label>
-						<pbl:inputText name="nom" inline="true" placeholderKey="entitat.form.camp.nom"/>
-					
-<%-- 					<c:set var="campPath" value="nom"/> --%>
-<%-- 					<c:set var="campErrors"><form:errors path="${campPath}"/></c:set> --%>
-<%-- 					<div class="form-group<c:if test="${not empty campErrors}"> error</c:if>"> --%>
-						
-<!-- 						<div class="controls"> -->
-<%-- 							<form:input path="${campPath}" cssClass="input-lg" id="${campPath}"/> --%>
-<%-- 							<form:errors path="${campPath}" cssClass="help-block"/> --%>
-<!-- 				</div> -->
-					</div>
-					<div class="col-md-2">
-						<label class="control-label" for="${campPath}"><spring:message code="entitat.form.camp.cif"/> *</label>
-						<pbl:inputText name="cif" inline="true" placeholderKey="entitat.form.camp.cif"/>
-<%-- 					<c:set var="campPath" value="cif"/> --%>
-<%-- 					<c:set var="campErrors"><form:errors path="${campPath}"/></c:set> --%>
-<%-- 					<div class="form-group<c:if test="${not empty campErrors}"> error</c:if>"> --%>
-					
-<!-- 						<div class="controls"> -->
-<%-- 							<form:input path="${campPath}" cssClass="input-xlarge" id="${campPath}"/> --%>
-<%-- 							<form:errors path="${campPath}" cssClass="help-block"/> --%>
-<!-- 						</div> -->
-					</div>
-		
-				
-					<div class="col-md-2">
-						
-						<label class="control-label" for="${campPath}"><spring:message code="entitat.form.camp.tipus"/> *</label>
-						<pbl:inputSelect name="tipus" inline="true" placeholderKey="entitat.form.camp.tipus"
-	 						optionItems="${entitatTipusLlista}" 
-	 						emptyOption="true"/>
-							
-<%-- 					<c:set var="campPath" value="tipus"/> --%>
-<%-- 					<c:set var="campErrors"><form:errors path="${campPath}"/></c:set> --%>
-<%-- 					<div class="form-group<c:if test="${not empty campErrors}"> error</c:if>"> --%>
-<%-- 					<label class="control-label" for="${campPath}"><spring:message code="entitat.form.camp.tipus"/> *</label> --%>
-<!-- 					<div class="controls"> -->
-<%-- 					<form:select path="${campPath}"> --%>
-<%-- 						<form:options items"${entitatTipusLlista}"/> --%>
-<%-- 					</form:select> --%>
-<%-- 					<form:errors path="${campPath}" cssClass="help-block"/> --%>
-<!-- 				</div> -->
-					</div>
-				
-				<label>&nbsp;</label>
-				<div class="col-md-4">
-					<label>&nbsp;</label>
-					
-					<div class="pull-right">
-						<button type="submit" class="btn btn-primary"><spring:message code="comu.boto.guardar"/></button>
-						<a href="<c:url value="/entitat"/>" class="btn btn-default"><spring:message code="comu.boto.cancelar"/></a>
-					</div>
-				</div>	
+		<div class="row">					
+			<div class="col-md-12">
+				<pbl:inputText name="codi" required="true" labelSize="1" inline="false" textKey="entitat.form.camp.codi"/>
+				<pbl:inputText name="nom" required="true" labelSize="1" inline="false" textKey="entitat.form.camp.nom"/>
+				<pbl:inputText name="cif" required="true" labelSize="1" inline="false" textKey="entitat.form.camp.cif"/>
+				<pbl:inputSelect name="tipus" 
+						textKey="entitat.form.camp.tipus"
+						required="true" labelSize="1" inline="false" 
+						optionItems="${entitatTipusLlista}" 
+						emptyOption="true"
+						emptyOptionTextKey="comu.opcio.sense.definir"/>			
+				<div class="pull-right">
+					<button type="submit" class="btn btn-primary"><spring:message code="comu.boto.guardar"/></button>
+					<a href="<c:url value="/entitat"/>" class="btn btn-default"><spring:message code="comu.boto.cancelar"/></a>
+				</div>
 			</div>
-		</div>		
-		</fieldset>
-
-			
+		</div>
 	</form:form>
 
 </body>

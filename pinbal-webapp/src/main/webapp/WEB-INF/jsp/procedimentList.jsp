@@ -145,7 +145,7 @@ $(document).ready(function() {
 				<div class="pull-right">
 				<div class="row">
 					<div class="col-md-12" >
-						<a class="btn btn-primary" href="<c:url value="/procediment/new"/>"><i class="glyphicon-plus"></i>&nbsp;<spring:message code="procediment.list.boto.nou.procediment"/></a>
+						<a class="btn btn-primary" href="<c:url value="/procediment/new"/>"><i class="fa fa-plus"></i>&nbsp;<spring:message code="procediment.list.boto.nou.procediment"/></a>
 					</div>
 				</div>
 			</div>		

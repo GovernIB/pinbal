@@ -329,7 +329,8 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 			String error = "[" + resultat.getErrorCodi() + "] " + resultat.getErrorDescripcio();
 			transaccioHelper.updateErrorConsulta(consultaId, error);
 			Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-			LOGGER.error("Error retornat per la consulta SCSP (id=" + c.getScspPeticionId() + ", servei=" + consulta.getServeiCodi() + ", usuari=" + auth.getName() + "): " + error);
+			LOGGER.error("Error retornat per la consulta SCSP (id=" + c.getScspPeticionId() + 
+					", servei=" + consulta.getServeiCodi() + ", usuari=" + auth.getName() + "): " + error);
 			throw new ScspException(error);
 		}
 	}

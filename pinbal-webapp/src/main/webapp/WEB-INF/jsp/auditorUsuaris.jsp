@@ -21,15 +21,18 @@
 <head>
 	<title><spring:message code="auditor.usuaris.titol"/></title>
 	<link href="<c:url value="/webjars/datatables/1.10.21/css/dataTables.bootstrap.min.css"/>" rel="stylesheet"/>
-		
+	<link href="<c:url value="/webjars/select2/4.0.6-rc.1/dist/css/select2.min.css"/>" rel="stylesheet"/>
+	<link href="<c:url value="/webjars/select2-bootstrap-theme/0.1.0-beta.10/dist/select2-bootstrap.min.css"/>" rel="stylesheet"/>
+
 	<script src="<c:url value="/webjars/datatables/1.10.21/js/jquery.dataTables.min.js"/>"></script>
 	<script src="<c:url value="/webjars/datatables/1.10.21/js/dataTables.bootstrap.min.js"/>"></script>
-	<script src="<c:url value="/js/webutil.datatable.js"/>"></script>
 	<script src="<c:url value="/webjars/mustache.js/3.0.1/mustache.min.js"/>"></script>
+
+	<script src="<c:url value="/webjars/select2/4.0.6-rc.1/dist/js/select2.min.js"/>"></script>
+	<script src="<c:url value="/webjars/select2/4.0.6-rc.1/dist/js/i18n/${requestLocale}.js"/>"></script>
 	
-	<script src="<c:url value="/js/webutil.common.js"/>"></script>
-	<script src="<c:url value="/js/webutil.modal.js"/>"></script>
-	
+	<script src="<c:url value="/js/webutil.datatable.js"/>"></script>
+    <script src="<c:url value="/js/webutil.common.js"/>"></script>
 <script>
 $(document).ready(function() {
 	$('#netejar-filtre').click(function() {
@@ -167,7 +170,7 @@ function showModalEditar(
 	}
 	$('#modal-input-auditor').prop('checked', auditor);
 	$('#modal-form-usuari').modal('toggle');
-}
+}01/03/2018
 </script>
 </head>
 <body>
@@ -187,10 +190,10 @@ function showModalEditar(
 					<pbl:inputText name="nom" inline="true"  placeholderKey="auditor.usuaris.filtre.camp.nom"/>
 				</div>
 				<div class="col-md-4">
-						<div class="pull-right">
-							<button id="netejar-filtre" class="btn btn-default" type="button"><spring:message code="comu.boto.netejar"/></button>
-							<button type="submit" class="btn btn-primary"><spring:message code="comu.boto.filtrar"/></button>
-						</div>
+					<div class="pull-right">
+						<button id="netejar-filtre" class="btn btn-default" type="button"><spring:message code="comu.boto.netejar"/></button>
+						<button type="submit" class="btn btn-primary"><spring:message code="comu.boto.filtrar"/></button>
+					</div>
 				</div>
 			</div>	
 		</div>	
@@ -218,7 +221,6 @@ function showModalEditar(
 	{{ usuari.descripcio }}
 </script>
 <script id="template-rols" type="x-tmpl-mustache">
-
 	{{#auditor}}
 		<span class="badge"><spring:message code="auditor.usuaris.rol.audit"/></span>
 	{{/auditor}}
@@ -248,7 +250,8 @@ function showModalEditar(
 				<div id="modal-group-tipus" class="form-group">
     				<label class="control-label col-md-2" for="modal-select-tipus"><spring:message code="auditor.usuaris.camp.tipus"/></label>
 					<div class="col-md-10">
-						<select id="modal-select-tipus" name="tipus" class="input-sm">
+						<select id="modal-select-tipus" name="tipus" class="input-sm"
+								data-minimumresults="-1" data-toggle="select2">
 							<option value="${caracterTipusNif}"><spring:message code="auditor.usuaris.tipus.nif"/></option>
 							<option value="${caracterTipusCodi}"><spring:message code="auditor.usuaris.tipus.codi"/></option>
 						</select>

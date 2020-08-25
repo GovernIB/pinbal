@@ -316,8 +316,8 @@ public class EntitatServiceImpl implements EntitatService, ApplicationContextAwa
 
 	private void actualitzarServeisScspActiusEntitat(
 			Entitat entitat) {
-		List<EntitatServei> entitatServeis = entitatServeiRepository.findByEntitatId(
-				entitat.getId());
+		List<EntitatServei> entitatServeis = entitatServeiRepository.findByEntitat(
+				entitat);
 		String[] serveisActius = new String[entitatServeis.size()];
 		for (int i = 0; i < serveisActius.length; i++) {
 			serveisActius[i] = entitatServeis.get(i).getServei();

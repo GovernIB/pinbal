@@ -27,13 +27,18 @@
 <head>
 	<title><spring:message code="representant.usuaris.titol"/></title>
 	<link href="<c:url value="/webjars/datatables/1.10.21/css/dataTables.bootstrap.min.css"/>" rel="stylesheet"/>
-	<link href="<c:url value="/css/select2.css"/>" rel="stylesheet"/>
-	<link href="<c:url value="/css/select2-bootstrap.css"/>" rel="stylesheet"/>
-	
+	<link href="<c:url value="/webjars/select2/4.0.6-rc.1/dist/css/select2.min.css"/>" rel="stylesheet"/>
+	<link href="<c:url value="/webjars/select2-bootstrap-theme/0.1.0-beta.10/dist/select2-bootstrap.min.css"/>" rel="stylesheet"/>
+
 	<script src="<c:url value="/webjars/datatables/1.10.21/js/jquery.dataTables.min.js"/>"></script>
 	<script src="<c:url value="/webjars/datatables/1.10.21/js/dataTables.bootstrap.min.js"/>"></script>
 	<script src="<c:url value="/webjars/mustache.js/3.0.1/mustache.min.js"/>"></script>
+
+	<script src="<c:url value="/webjars/select2/4.0.6-rc.1/dist/js/select2.min.js"/>"></script>
+	<script src="<c:url value="/webjars/select2/4.0.6-rc.1/dist/js/i18n/${requestLocale}.js"/>"></script>
+	
 	<script src="<c:url value="/js/webutil.datatable.js"/>"></script>
+    <script src="<c:url value="/js/webutil.common.js"/>"></script>
 <script>
 $(document).ready(function() {
 	$('#netejar-filtre').click(function() {
@@ -209,59 +214,35 @@ function showModalEditar(
 
 	<c:url value="/representant/usuari" var="formAction"/>
 	<form:form id="form-filtre" action="${formAction}" method="post" cssClass="well" commandName="usuariFiltreCommand">
-		<div class="container-fluid">
 		  <div class="row">
 		  	<div class="col-md-2">
 		  		<pbl:inputText name="codi" inline="true" placeholderKey="representant.usuaris.filtre.camp.codi" />
-<%-- 				<c:set var="campPath" value="codi"/> --%>
-<%-- 				<spring:message var="placeholderCodi" code="representant.usuaris.filtre.camp.codi"/> --%>
-<%-- 					<form:input path="${campPath}"  cssClass="form-control" id="${campPath}" placeholder="${placeholderCodi}"/> --%>
 		  	</div>
-		  
 		  	<div class="col-md-2">	
 		  		<pbl:inputText name="nif" inline="true" placeholderKey="representant.usuaris.filtre.camp.nif" />
-<%-- 				<c:set var="campPath" value="nif"/> --%>
-<%-- 				<spring:message var="placeholderNif" code="representant.usuaris.filtre.camp.nif"/> --%>
-<%-- 				<form:input path="${campPath}" cssClass="form-control" id="${campPath}" placeholder="${placeholderNif}"/> --%>
 			</div>	
-			<div class="col-md-2">
-			
-			<pbl:inputText name="nom" inline="true" placeholderKey="representant.usuaris.filtre.camp.nom" />
-<%-- 				<c:set var="campPath" value="nom"/> --%>
-<%-- 				<spring:message var="placeholderNom" code="representant.usuaris.filtre.camp.nom"/> --%>
-<%-- 				<form:input path="${campPath}" cssClass="form-control" id="${campPath}" placeholder="${placeholderNom}"/> --%>
+			<div class="col-md-2">			
+				<pbl:inputText name="nom" inline="true" placeholderKey="representant.usuaris.filtre.camp.nom" />
 			</div>	
 			<div class="col-md-2">
 				<pbl:inputText name="departament" inline="true" placeholderKey="representant.usuaris.filtre.camp.departament"/>
-<%-- 				<c:set var="campPath" value="departament"/> --%>
-<%-- 				<spring:message var="placeholderDepartament" code="representant.usuaris.filtre.camp.departament"/> --%>
-<%-- 				<form:input path="${campPath}" cssClass="form-control" id="${campPath}" placeholder="${placeholderDepartament}"/> --%>
 			</div>
-			
-			
-			<div class="col-md-4">	
-					
-					<div class="pull-right">
-						<button id="netejar-filtre" class="btn btn-default" type="button"><spring:message code="comu.boto.netejar"/></button>
-						<button type="submit" class="btn btn-primary"><spring:message code="comu.boto.filtrar"/></button>
-					
-					</div>
+			<div class="col-md-4">
+				<div class="pull-right">
+					<button id="netejar-filtre" class="btn btn-default" type="button"><spring:message code="comu.boto.netejar"/></button>
+					<button type="submit" class="btn btn-primary"><spring:message code="comu.boto.filtrar"/></button>
+				</div>
 			</div>	
 		</div>	
-	</div>
 	</form:form>
 			
-			<div class="container-fluid">
-				<div class="row">
-				<div class="pull-right">
-					<div class="col-md-12 pull-right">
-						<a class="btn btn-primary" href="#modal-form-usuari" onclick="showModalCrear()"><i class="glyphicon-plus"></i>&nbsp;<spring:message code="entitat.usuaris.boto.nou.usuari"/></a>
-					</div>
-				</div>
-			<div class="clearfix"></div>
+	<div class="container-fluid">
+		<div class="row">
+		<div class="pull-right">
+			<div class="col-md-12 pull-right">
+				<a class="btn btn-primary" href="#modal-form-usuari" onclick="showModalCrear()"><i class="fa fa-plus"></i>&nbsp;<spring:message code="entitat.usuaris.boto.nou.usuari"/></a>
 			</div>
-					
-
+		</div>
 	<table id="table-users" class="table table-striped table-bordered" style="width: 100%">
 		<thead>
 			<tr>
@@ -302,12 +283,13 @@ function showModalEditar(
 	<a data-nrow="{{ nrow }}" class="btn-open-modal-edit btn btn-primary"><i class="fas fa-pen"></i>&nbsp;<spring:message code="comu.boto.modificar"/></a>
 {{/principal}}
 </script>	
-<div id="modal-form-usuari" class="modal fade" tabindex="-1" role="dialog">
+<div class="container">
+<div id="modal-form-usuari" class="modal fade" role="dialog">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
 		<div class="modal-header">
 			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-			<h3></h3>
+			<h3 style="margin: 0;"></h3>
 		</div>
 		<div class="modal-body">
 			<c:url value="/representant/usuari/save" var="formAction"/>
@@ -317,7 +299,8 @@ function showModalEditar(
 				<input type="hidden" id="modal-hidden-nif" name="nif"/>
 				<div id="modal-group-tipus" class="form-group">
     				<label class="control-label" for="modal-select-tipus"><spring:message code="representant.usuaris.camp.tipus"/></label>
-					<select id="modal-select-tipus" name="tipus" class="form-control input-sm">
+					<select id="modal-select-tipus" name="tipus" class="form-control input-sm"
+							data-minimumresults="-1" data-toggle="select2">
 						<option value="${caracterTipusNif}"><spring:message code="representant.usuaris.tipus.nif"/></option>
 						<option value="${caracterTipusCodi}"><spring:message code="representant.usuaris.tipus.codi"/></option>
 					</select>
@@ -366,6 +349,7 @@ function showModalEditar(
 			<a href="#" class="btn btn-primary" onclick="$('#modal-form').submit()"><spring:message code="comu.boto.guardar"/></a>
 		</div>
 	</div>
+</div>
 </div>
 </div>
 </div>

@@ -31,6 +31,10 @@ $(document).ready(function() {
 		ajax: '<c:url value="/entitat/${entitat.id}/servei/datatable"/>',
 		columnDefs: [
 			{
+				targets: [0, 1],
+				orderable: false,
+			},
+			{
 				targets: [2],
 				orderable: false,
 				render: function (data, type, row, meta) {
@@ -55,7 +59,7 @@ $(document).ready(function() {
 <body>
 
 	<ul class="breadcrumb">
-		<li><spring:message code="entitat.miques.entitat" arguments="${entitat.nom}"/> <span class="divider">/</span></li>
+		<li><spring:message code="entitat.miques.entitat" arguments="${entitat.nom}"/></li>
 		<li class="active"><spring:message code="entitat.miques.serveis"/></li>
 	</ul>
 	<table id="table-serveis" class="table table-striped table-bordered" style="width: 100%">

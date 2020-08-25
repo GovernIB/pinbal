@@ -62,7 +62,6 @@
 												<c:if test="${dadesEspecifiquesDisabled}"> disabled="disabled"</c:if>
 												<c:if test="${not empty valorDadaEspecifica}"> value="${valorDadaEspecifica}"</c:if>
 												class="form-control" />
-											<script>$("#${campId}").mask("999999999999");</script>
 										</c:when>
 										<c:when test="${camp.tipus == 'DATA'}">
 											<jsp:include page="dadesEspecifiquesFormInputDATA.jsp"/>

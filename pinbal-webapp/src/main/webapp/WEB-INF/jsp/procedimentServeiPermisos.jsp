@@ -18,8 +18,8 @@
 <body>
 
 	<ul class="breadcrumb">
-		<li><spring:message code="procediment.serveis.miques.procediment" arguments="${procediment.nom}"/> <span class="divider">/</span></li>
-		<li><spring:message code="procediment.serveis.miques.servei" arguments="${servei.descripcio}"/> <span class="divider">/</span></li>
+		<li><spring:message code="procediment.serveis.miques.procediment" arguments="${procediment.nom}"/> </li>
+		<li><spring:message code="procediment.serveis.miques.servei" arguments="${servei.descripcio}"/> </li>
 		<li class="active"><spring:message code="procediment.serveis.miques.permisos"/></li>
 	</ul>
 	<table id="table-serveis" class="table table-striped table-bordered" style="width: 100%">

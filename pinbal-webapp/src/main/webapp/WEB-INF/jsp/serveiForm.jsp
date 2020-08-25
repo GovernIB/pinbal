@@ -48,9 +48,12 @@
 	<script src="<c:url value="/js/webutil.common.js"/>"></script>
 	<style type="text/css">
 	.vcenter {
- display: flex;
-    align-items: center;
-}
+	 	display: flex;
+	    align-items: center;
+	}
+	.h1, .h2, .h3, .h4, .h5, .h6 {
+	    margin: 0px;
+	}
 	</style>
 <script>
 
@@ -119,34 +122,22 @@ $(document).ready(function() {
                    	["orderedList", "unorderedList"],
                    	["indent", "outdent"],
                    	["justifyleft", "justifycenter", "justifyright"],
-                   	["link", "unlink", "image", "horizontal.vcenter {
-                   	    display: inline-block;
-                    vertical-align: middle;
-                    float: none;
-                }rule"],
+                   	["link", "unlink", "image", "horizontalrule"],
                    	[ "p", "h1", "h2", "h3", "h4", "h5", "h6"],
                    	["cut", "copy", "paste"]
 				],
 		toolbarText: $.extend({}, jHtmlArea.defaultOptions.toolbarText, {
 					"html": "Mostra/Oculta el codi HTML",
 			        "bold": "Negreta",
-			        "italic": "Cursiva",.vcenter {
-			            display: inline-block;
-			        vertical-align: middle;
-			        float: none;
-			    }
+			        "italic": "Cursiva",
 			        "underline": "Subrallat",
 			        "strikethrough": "Ratllat",
 			        "forecolor": "Color del text",
 			        "subscript": "Subíndex", 
 			        "superscript": "Superíndex", 
 			        "increasefontsize": "Augmenta la mida de la font", 
-			        "decreasefontsize": "Disminueix la mida de la font",justify
-                   	"orderedlist": "Insereix una llista ord.vcenter {
-                   	    display: inline-block;
-                    vertical-align: middle;
-                    float: none;
-                }enada", 
+			        "decreasefontsize": "Disminueix la mida de la font",
+                   	"orderedlist": "Insereix una llista ordenada", 
                    	"unorderedlist": "Insereix una llista no ordenada",
                    	"indent": "Augmenta el sagnat", 
                    	"outdent": "Disminueix el sagnat",
@@ -156,7 +147,7 @@ $(document).ready(function() {
                    	"link": "Insereix un enllaç", 
                    	"unlink": "Elimina un enllaç", 
                    	"image": "Insereix una imatge", 
-                   	"horizontalrule": "Insereix una separació horitzontal",justify
+                   	"horizontalrule": "Insereix una separació horitzontal",
                    	"p": "Paràgraf", 
                    	"h1": "Capçalera 1", 
                    	"h2": "Capçalera 2", 
@@ -320,19 +311,11 @@ function showModalXsd(element) {
 			<div class="row">
 				<div class="col-md-12">
 					<pbl:inputText name="pinbalUnitatDir3" labelSize="1" textKey="servei.form.camp.pinbal.dir3"/>
-				</div>
-			</div>	
-
-			<div class="row">
-				<div class="col-md-12">
 					<pbl:inputTextarea name="ajuda" labelSize="1" textKey="servei.form.camp.ajuda" />
-				</div>
-			</div>
-			<div class="row">
-				<div class="col-md-12">
+					
 					<c:set var="campPath" value="fitxerAjuda"/>				
-					<pbl:inputFile name="${campPath}" labelSize="1" textKey="servei.form.camp.fitxer.ajuda"/>
-					<form:errors path="${campPath}" cssClass="help-block"/>					
+					<pbl:inputFile name="${campPath}" labelSize="1" inline="true" textKey="servei.form.camp.fitxer.ajuda"/>
+					<form:errors path="${campPath}" cssClass="help-block"/>
 				</div>
 			</div>
 			<script>
@@ -404,17 +387,16 @@ function showModalXsd(element) {
 		</fieldset>
 		<c:if test="${not empty serveiCommand.codi}">
 		<fieldset>
-			<div class="container-fluid">
-				<legend><spring:message code="servei.form.legend.config.bus"/></legend>
-				<div class="row">
-					<div class="col-md-11">
-						<a class="btn btn-primary pull-right" href="<c:url value="/modal/servei/${serveiCommand.codi}/redir/new"/>" 
-						   onclick="showModalRedir(this);return false"><i class="fas fa-plus"></i>&nbsp;<spring:message code="servei.form.boto.nova.redireccio"/></a>
-					</div>
+			<legend><spring:message code="servei.form.legend.config.bus"/></legend>
+			<div class="row">
+				<div class="col-md-12">
+					<a class="btn btn-primary pull-right" href="<c:url value="/modal/servei/${serveiCommand.codi}/redir/new"/>" 
+					   onclick="showModalRedir(this);return false"><i class="fas fa-plus"></i>&nbsp;<spring:message code="servei.form.boto.nova.redireccio"/></a>
 				</div>
-				<c:if test="${not empty serveisBus}">
+			</div>
+			<c:if test="${not empty serveisBus}">
 				<div class="row">
-					<div class="col-md-11">
+					<div class="col-md-12">
 						<br/>
 						<table id="serveisBus" class="table table-striped table-bordered" style="width: 100%">
 						<thead>
@@ -451,7 +433,6 @@ function showModalXsd(element) {
 						</table>
 					</div>
 				</div>
-			</div>	
 			</c:if>
 		</fieldset>
 		</c:if>
@@ -503,51 +484,49 @@ function showModalXsd(element) {
 		<c:if test="${not empty serveiCommand.codi}">
 			<fieldset id="gestioXsdFieldSet" hidden="${ activaGestioXsd ? '' : 'true'}">
 				<legend><spring:message code="servei.form.legend.gestio.xsd"/></legend>
-				<fieldset>
-					<div class="container-fluid">
-						<div class="row">
-							<div class="col-md-6">
-								<a class="btn btn-primary pull-right" href="<c:url value="/modal/servei/${serveiCommand.codi}/xsd/new"/>" onclick="showModalXsd(this);return false"><i class="fas fa-plus"></i>&nbsp;<spring:message code="servei.list.boto.nou.arxiuXsd"/></a>
-							</div>
-						</div>
-					</div>	
-				</fieldset>
+				<div class="row">
+					<div class="col-md-12">
+						<a class="btn btn-primary pull-right" href="<c:url value="/modal/servei/${serveiCommand.codi}/xsd/new"/>" onclick="showModalXsd(this);return false"><i class="fas fa-plus"></i>&nbsp;<spring:message code="servei.list.boto.nou.arxiuXsd"/></a>
+
+					</div>
+				</div>
 				<c:if test="${not empty serveiCommand.fitxersXsd}">
 					<div class="row">
-						<div class="clearfix"></div>
+						<div class="col-md-12">
+							<br/>
+							<table id="arxiusXsd" class="table table-striped table-bordered" style="width: 100%">
+							<thead>
+								<tr>
+								<th width="30%"><spring:message code="servei.xsd.camp.tipus" /></th>
+								<th width="60%"><spring:message code="servei.xsd.camp.arxiu" /></th>
+								<th width="10%"></th>
+								</tr>
+							</thead>
+							<tbody>
+								<c:forEach items="${serveiCommand.fitxersXsd}" var="registre">
+						   			<tr>
+										<td>
+										${ registre.tipus }
+										</td>
+										<td>
+										<div style="width: 90%; display: inline-block;">${registre.nomArxiu}</div>
+										<div style="width: 10%; display: inline;">
+											<a class="btn btn-default btn-sm" href="<c:url value="/servei/${serveiCommand.codi}/xsd/${registre.tipus}/download"/>">
+												<i class="fas fa-download"></i>&nbsp;<spring:message code="comu.boto.baixar"/>
+											</a>
+										</div>
+										</td>
+										<td>
+										<button class="btn btn-default" onclick="esborraFitxerXsd('${registre.tipus}');" type="button">
+											<i class="fas fa-trash-alt"></i>&nbsp;<spring:message code="comu.boto.esborrar"/>
+										</button>
+										</td>
+									</tr>
+								</c:forEach>
+							</tbody>
+							</table>
+						</div>
 					</div>
-					
-					<table id="arxiusXsd" class="table table-striped table-bordered" style="width: 100%">
-					<thead>
-						<tr>
-						<th width="30%"><spring:message code="servei.xsd.camp.tipus" /></th>
-						<th width="60%"><spring:message code="servei.xsd.camp.arxiu" /></th>
-						<th width="10%"></th>
-						</tr>
-					</thead>
-					<tbody>
-						<c:forEach items="${serveiCommand.fitxersXsd}" var="registre">
-				   			<tr>
-								<td>
-								${ registre.tipus }
-								</td>
-								<td>
-								<div style="width: 90%; display: inline-block;">${registre.nomArxiu}</div>
-								<div style="width: 10%; display: inline;">
-									<a class="btn btn-default btn-sm" href="<c:url value="/servei/${serveiCommand.codi}/xsd/${registre.tipus}/download"/>">
-										<i class="fas fa-download"></i>&nbsp;<spring:message code="comu.boto.baixar"/>
-									</a>
-								</div>
-								</td>
-								<td>
-								<button class="btn btn-default" onclick="esborraFitxerXsd('${registre.tipus}');" type="button">
-									<i class="fas fa-trash-alt"></i>&nbsp;<spring:message code="comu.boto.esborrar"/>
-								</button>
-								</td>
-							</tr>
-						</c:forEach>
-					</tbody>
-					</table>
 				</c:if>
 			</fieldset>
 		</c:if>

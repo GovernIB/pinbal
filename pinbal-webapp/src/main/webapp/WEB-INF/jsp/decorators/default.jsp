@@ -269,7 +269,7 @@ body {
     	<div class="pull-left app-version"><p>Pinbal v${versioActual}</p></div>
         <div class="pull-right govern-footer">
         	<p>
-        	<img src="<c:url value="/img/govern-logo-neg.png"/>"     width="100" style="height:30px" alt="<spring:message code="decorator.govern"/>" />
+        		<img src="<c:url value="/img/govern-logo-neg.png"/>" style="height:30px" alt="<spring:message code="decorator.govern"/>" />
 	        	<img src="<c:url value="/img/una_manera.png"/>" 	 hspace="5"  style="height:30px" alt="<spring:message code='decorator.logo.manera'/>" />
 	        	<img src="<c:url value="/img/feder7.png"/>" 	     hspace="5"  style="height:35px" alt="<spring:message code='decorator.logo.feder'/>" />
 	        	<img src="<c:url value="/img/uenegroma.png"/>"	     hspace="5"  style="height:50px" alt="<spring:message code='decorator.logo.ue'/>" />

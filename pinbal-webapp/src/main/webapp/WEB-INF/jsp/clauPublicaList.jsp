@@ -60,7 +60,7 @@
 <body>
 
 	<div class="containter-fluid">
-		<a class="btn btn-primary pull-right" href="<c:url value="/scsp/claupublica/new"/>"><i class="glyphicon-plus"></i>&nbsp;<spring:message code="claupublica.list.boto.nou.registre"/></a>
+		<a class="btn btn-primary pull-right" href="<c:url value="/scsp/claupublica/new"/>"><i class="fa fa-plus"></i>&nbsp;<spring:message code="claupublica.list.boto.nou.registre"/></a>
 
 		<table id="table-claus" class="table table-striped table-bordered" style="width: 100%">
 			<thead>

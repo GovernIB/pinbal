@@ -51,10 +51,9 @@ table.dataTable thead > tr.selectable > :first-child, table.dataTable tbody > tr
 	padding-right: 12px;
 }
 </style>
-	
 </head>
 <body>
-<form:form id="form-group" action="" method="post" cssClass="well" commandName="filtreCommand" >
+<form:form id="form-filtre" action="" method="post" cssClass="well" commandName="filtreCommand" >
 	<div class ="row">	
 		<div class="col-md-4">
 			<pbl:inputText name="scspPeticionId"  inline="true" placeholderKey="consulta.list.filtre.peticion.id"/>
@@ -97,10 +96,11 @@ table.dataTable thead > tr.selectable > :first-child, table.dataTable tbody > tr
 			<pbl:inputText name="titularDocument" inline="true" placeholderKey="consulta.list.filtre.titular.document"/>
 		</div>
 	
-		<div class="pull-right">
-			<label>&nbsp;</label>
-			<button id="netejar-filtre" class="btn btn-default" type="button"><spring:message code="comu.boto.netejar"/></button>
-			<button class="btn btn-primary" type="submit"><spring:message code="comu.boto.filtrar"/></button>
+		<div class="col-md-8">
+			<div class="pull-right">
+				<button id="netejar-filtre" class="btn btn-default" type="button"><spring:message code="comu.boto.netejar"/></button>
+				<button class="btn btn-primary" type="submit"><spring:message code="comu.boto.filtrar"/></button>
+			</div>
 		</div>
 	</div>
 </div>

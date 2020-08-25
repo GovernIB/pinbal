@@ -36,18 +36,6 @@
 	<link href="<c:url value="/webjars/jasny-bootstrap/3.1.3/dist/css/jasny-bootstrap.min.css"/>" rel="stylesheet"> 
 	<script src="<c:url value="/webjars/jasny-bootstrap/3.1.3/dist/js/jasny-bootstrap.min.js"/>"></script> 
 
-	<c:if test="${serveiMultiple}">
-	<script>
-		$(document).ready(function() {
-// 			$('#tabs-simple-multiple a:first').click(function (e) {
-// 				$("#multiple").val('false');
-// 			});
-// 			$('#tabs-simple-multiple a:last').click(function (e) {
-// 				$("#multiple").val('true');
-// 			});
-		});
-	</script>
-	</c:if>
 </head>
 <body>
 
@@ -55,7 +43,7 @@
 	<c:url value="/consulta/${servei.codi}/plantilla/CSV" var="downloadPlantillaCsvUrl"/>
 	<c:url value="/consulta/${servei.codi}/plantilla/ODS" var="downloadPlantillaOdsUrl"/>
 	<c:url value="/consulta/${servei.codi}/new" var="formAction"/>
-	
+	<div class="container-fluid">
 	<form:form action="${formAction}" method="post" cssClass="" commandName="consultaCommand" enctype="multipart/form-data">
 		<form:hidden path="serveiCodi"/>
 		<form:hidden path="multiple" />
@@ -78,25 +66,25 @@
 			<div class="row">
 				<div class="col-md-6">
 					<label class="control-label" for="${campPath}"><spring:message code="consulta.form.camp.funcionari.nom"/> *</label>
-					<pbl:inputText name="funcionariNom" inline="true" placeholderKey="consulta.form.camp.funcionari.nom"/>
+					<pbl:inputText name="funcionariNom" inline="true"/>
 					
 					<label class="control-label" for="${campPath}"><spring:message code="consulta.form.camp.entitat.nom"/></label> 
-					<pbl:inputText name="entitatNom" inline="true" placeholderKey="consulta.form.camp.entitat.nom"  disabled="true"/>
+					<pbl:inputText name="entitatNom" inline="true" disabled="true"/>
 					
 					<label class="control-label" for="${campPath}"><spring:message code="consulta.form.camp.consentiment"/> *</label>
-					<pbl:inputSelect name="consentiment" inline="true" placeholderKey="consulta.form.camp.consentiment" 
+					<pbl:inputSelect name="consentiment" inline="true" 
 									 optionItems="${consentimentValors}" emptyOption="true"/>
 				</div>
 
 				<div class="col-md-6">			
 					<label class="control-label" for="${campPath}"><spring:message code="consulta.form.camp.funcionari.nif"/></label>
-					<pbl:inputText name="funcionariNif" inline="true" placeholderKey="consulta.form.camp.funcionari.nif"/>
+					<pbl:inputText name="funcionariNif" inline="true"/>
 					
 					<label class="control-label" for="${campPath}"><spring:message code="consulta.form.camp.entitat.cif"/></label> 
-					<pbl:inputText name="entitatCif" inline="true" placeholderKey="consulta.form.camp.entitat.cif"/>
+					<pbl:inputText name="entitatCif" inline="true"/>
 					
 					<label class="control-label" for="${campPath}"><spring:message code="consulta.form.camp.departament"/> *</label>
-					<pbl:inputText name="departamentNom" inline="true" placeholderKey="consulta.form.camp.departament"/>
+					<pbl:inputText name="departamentNom" inline="true"/>
 				</div>
 			</div>
 			<div class="row">
@@ -183,7 +171,7 @@
 			</c:if>
 		</div>
 	</form:form>
-	
+	</div>
 	<!-- Modal ajuda-->
 	<div id="modalAjuda" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
   		<div class="modal-dialog" role="document">

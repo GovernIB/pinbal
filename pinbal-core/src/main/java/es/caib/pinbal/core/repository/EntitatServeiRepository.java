@@ -8,6 +8,7 @@ import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
+import es.caib.pinbal.core.model.Entitat;
 import es.caib.pinbal.core.model.EntitatServei;
 
 /**
@@ -22,6 +23,9 @@ public interface EntitatServeiRepository extends JpaRepository<EntitatServei, Lo
 	@Query("select es from EntitatServei es where es.entitat.id = ?1")
 	public List<EntitatServei> findByEntitatId(Long entitatId);
 
+	@Query("select es from EntitatServei es where es.entitat = ?1")
+	public List<EntitatServei> findByEntitat(Entitat entitat);
+	
 	@Query("select es.servei from EntitatServei es where es.entitat.id = ?1")
 	public List<String> findServeisByEntitatId(Long entitatId);
 	

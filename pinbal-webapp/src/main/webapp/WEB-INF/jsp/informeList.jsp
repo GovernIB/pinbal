@@ -63,38 +63,39 @@
 
 
 	<div id="modal-filtre-dates" class="modal fade">
+	  <div class="modal-dialog">
 		<div class="modal-content">
-			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-			<h3><spring:message code="informe.general.estat.filtre.dates.titol"/></h3>
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				<h3><spring:message code="informe.general.estat.filtre.dates.titol"/></h3>
+			</div>
+			<div class="modal-body">
+				<c:url value="informe/generalEstat" var="formAction"/>
+				<form id="modal-form-filtre" action="${formAction}" method="GET">
+					<div class="input-group date" data-provide="datepicker" style="margin-bottom: 20px;">
+						<spring:message var="placeholderDataInici" code="informe.general.estat.filtre.dates.inici"/>
+					    <input class="form-control" type="text" name="dataInici" id="dataInici" placeholder="${placeholderDataInici}">
+					    <div class="input-group-addon">
+					        <span class="glyphicon glyphicon-th"></span>
+					    </div>
+					</div>
+					<div class="input-group date" data-provide="datepicker">
+						<spring:message var="placeholderDataFi" code="informe.general.estat.filtre.dates.fi"/>
+					    <input class="form-control" type="text" name="dataFi" id="dataFi" placeholder="${placeholderDataFi}">
+					    <div class="input-group-addon">
+					        <span class="glyphicon glyphicon-th"></span>
+					    </div>
+					</div>
+				</form>
+			</div>	
+			
+			<div class="modal-footer">
+				<a href="#" class="btn btn-default" data-dismiss="modal"><spring:message code="comu.boto.tornar"/></a>
+				<a href="#" class="btn btn-primary" onclick="$('#modal-form-filtre').submit()"><spring:message code="comu.boto.generar"/></a>
+			</div>
 		</div>
-		<div class="modal-body">
-			<c:url value="informe/generalEstat" var="formAction"/>
-			<form id="modal-form-filtre" action="${formAction}" method="GET">
-				<div class="input-group date" data-provide="datepicker" style="margin-bottom: 20px;">
-					<spring:message var="placeholderDataInici" code="informe.general.estat.filtre.dates.inici"/>
-				    <input class="form-control" type="text" name="dataInici" id="dataInici" placeholder="${placeholderDataInici}">
-				    <div class="input-group-addon">
-				        <span class="glyphicon glyphicon-th"></span>
-				    </div>
-				</div>
-				<div class="input-group date" data-provide="datepicker">
-					<spring:message var="placeholderDataFi" code="informe.general.estat.filtre.dates.fi"/>
-				    <input class="form-control" type="text" name="dataFi" id="dataFi" placeholder="${placeholderDataFi}">
-				    <div class="input-group-addon">
-				        <span class="glyphicon glyphicon-th"></span>
-				    </div>
-				</div>
-			</form>
-		</div>	
-		
-		<div class="modal-footer">
-			<a href="#" class="btn btn-default" data-dismiss="modal"><spring:message code="comu.boto.tornar"/></a>
-			<a href="#" class="btn btn-primary" onclick="$('#modal-form-filtre').submit()"><spring:message code="comu.boto.generar"/></a>
-		</div>
-	</div>
 	</div>	
-	</div>	
-
+</div>
 <script type="text/javascript">
 $(document).ready(function() {
 	$.fn.datepicker.defaults.format = 'dd/mm/yyyy';

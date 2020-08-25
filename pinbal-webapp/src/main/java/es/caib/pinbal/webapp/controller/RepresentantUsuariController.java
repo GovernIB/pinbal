@@ -142,6 +142,9 @@ public class RepresentantUsuariController extends BaseController {
 		if (command == null)
 			command = new UsuariFiltreCommand();
 		model.addAttribute(command);
+		
+		// carregam un objecte nou per no modificar l'objecte de la sessió
+		entitat = entitatService.findById(entitat.getId());
 		Iterator<EntitatUsuariDto> it = entitat.getUsuaris().iterator();
 		while (it.hasNext()) {
 			EntitatUsuariDto entitatUsuari = it.next();
@@ -179,6 +182,7 @@ public class RepresentantUsuariController extends BaseController {
 				it.remove();
 			}
 		}
+		
 		List<EntitatUsuariDto> listUsers = entitat.getUsuarisRepresentant();
 		Page<EntitatUsuariDto> page = new PageImpl<EntitatUsuariDto>(listUsers, null, listUsers.size());
 		serverSideRequest.setOrder(null);
@@ -192,69 +196,7 @@ public class RepresentantUsuariController extends BaseController {
 			BindingResult bindingResult,
 			Model model) throws Exception {
 		EntitatDto entitat = EntitatHelper.getEntitatActual(request);
-		if (entitat != null) {
-			if (!EntitatHelper.isRepresentantEntitatActual(request))
-				return "representantNoAutoritzat";
-			Class<?> grup = null;
-			if (command.isTipusCodi()) {
-				grup = TipusCodi.class;
-			} else if (command.isTipusNif()) {
-				grup = TipusNif.class;
-			} else {
-				grup = Existent.class;
-			}
-			new ValidationHelper(validator).isValid(
-					command,
-					bindingResult,
-					grup);
-			if (bindingResult.hasErrors()) {
-				for (FieldError error: bindingResult.getFieldErrors()) {
-					AlertHelper.error(
-							request,
-							getMessage(
-									request, 
-									error.getCode(),
-									error.getArguments()));
-					break;
-				}
-				omplirModelPerMostrarLlistat(
-						request,
-						entitat,
-						model);
-				return "representantUsuaris";
-			}
-			try {
-				usuariService.actualitzarDadesRepresentant(
-						command.getId(),
-						command.getCodi(),
-						command.getNif(),
-						command.getDepartament(),
-						command.isRolRepresentant(),
-						command.isRolDelegat(),
-						command.isRolAplicacio(),
-						command.isAfegir());
-				String nomUsuari = command.getNif();
-				for (EntitatUsuariDto usuari: entitat.getUsuaris()) {
-					if (usuari.getUsuari().getNif() != null && usuari.getUsuari().getNif() != null && usuari.getUsuari().getNif().equalsIgnoreCase(command.getNif())) {
-						nomUsuari = usuari.getUsuari().getDescripcio();
-						break;
-					}
-				}
-				AlertHelper.success(
-						request,
-						getMessage(
-								request, 
-								"representant.controller.usuari.actualitzat",
-								new Object[] {nomUsuari}));
-			} catch (UsuariExternNotFoundException ex) {
-				AlertHelper.error(
-						request,
-						getMessage(
-								request, 
-								"representant.controller.usuari.extern.no.existeix"));
-			}
-			return "redirect:../usuari";
-		} else {
+		if (entitat == null) {
 			AlertHelper.error(
 					request,
 					getMessage(
@@ -262,6 +204,69 @@ public class RepresentantUsuariController extends BaseController {
 							"representant.controller.entitat.no.existeix"));
 			return "redirect:../index";
 		}
+		
+		if (!EntitatHelper.isRepresentantEntitatActual(request))
+			return "representantNoAutoritzat";
+		Class<?> grup = null;
+		if (command.isTipusCodi()) {
+			grup = TipusCodi.class;
+		} else if (command.isTipusNif()) {
+			grup = TipusNif.class;
+		} else {
+			grup = Existent.class;
+		}
+		new ValidationHelper(validator).isValid(
+				command,
+				bindingResult,
+				grup);
+		if (bindingResult.hasErrors()) {
+			for (FieldError error: bindingResult.getFieldErrors()) {
+				AlertHelper.error(
+						request,
+						getMessage(
+								request, 
+								error.getCode(),
+								error.getArguments()));
+				break;
+			}
+			omplirModelPerMostrarLlistat(
+					request,
+					entitat,
+					model);
+			return "representantUsuaris";
+		}
+		try {
+			usuariService.actualitzarDadesRepresentant(
+					command.getId(),
+					command.getCodi(),
+					command.getNif(),
+					command.getDepartament(),
+					command.isRolRepresentant(),
+					command.isRolDelegat(),
+					command.isRolAplicacio(),
+					command.isAfegir());
+			String nomUsuari = command.getNif();
+			for (EntitatUsuariDto usuari: entitat.getUsuaris()) {
+				if (usuari.getUsuari().getNif() != null && usuari.getUsuari().getNif() != null && usuari.getUsuari().getNif().equalsIgnoreCase(command.getNif())) {
+					nomUsuari = usuari.getUsuari().getDescripcio();
+					break;
+				}
+			}
+			AlertHelper.success(
+					request,
+					getMessage(
+							request, 
+							"representant.controller.usuari.actualitzat",
+							new Object[] {nomUsuari}));
+		} catch (UsuariExternNotFoundException ex) {
+			AlertHelper.error(
+					request,
+					getMessage(
+							request, 
+							"representant.controller.usuari.extern.no.existeix"));
+		}
+		return "redirect:../usuari";
+
 	}
 
 	@RequestMapping(value = "/{usuariCodi}/permis", method = RequestMethod.GET)
@@ -425,43 +430,7 @@ public class RepresentantUsuariController extends BaseController {
 		if (command == null)
 			command = new UsuariFiltreCommand();
 		model.addAttribute(command);
-		Iterator<EntitatUsuariDto> it = entitat.getUsuaris().iterator();
-		while (it.hasNext()) {
-			EntitatUsuariDto entitatUsuari = it.next();
-			UsuariDto usuari = entitatUsuari.getUsuari();
-			boolean eliminar = false;
-			if (command.getCodi() != null && command.getCodi().length() > 0) {
-				if (usuari.getCodi() == null || usuari.getCodi().length() == 0) {
-					eliminar = true;
-				} else if (!usuari.getCodi().toLowerCase().contains(command.getCodi().toLowerCase())) {
-					eliminar = true;
-				}
-			}
-			if (command.getNif() != null && command.getNif().length() > 0) {
-				if (usuari.getNif() == null || usuari.getNif().length() == 0) {
-					eliminar = true;
-				} else if (!usuari.getNif().toLowerCase().contains(command.getNif().toLowerCase())) {
-					eliminar = true;
-				}
-			}
-			if (command.getNom() != null && command.getNom().length() > 0) {
-				if (usuari.getNom() == null || usuari.getNom().length() == 0) {
-					eliminar = true;
-				} else if (!usuari.getNom().toLowerCase().contains(command.getNom().toLowerCase())) {
-					eliminar = true;
-				}
-			}
-			if (command.getDepartament() != null && command.getDepartament().length() > 0) {
-				if (entitatUsuari.getDepartament() == null || entitatUsuari.getDepartament().length() == 0) {
-					eliminar = true;
-				} else if (!entitatUsuari.getDepartament().toLowerCase().contains(command.getDepartament().toLowerCase())) {
-					eliminar = true;
-				}
-			}
-			if (eliminar) {
-				it.remove();
-			}
-		}
+		
 		model.addAttribute("entitat", entitat);
 		model.addAttribute(new EntitatUsuariCommand(entitat.getId()));
 	}
