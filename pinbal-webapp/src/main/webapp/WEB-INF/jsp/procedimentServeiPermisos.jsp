@@ -65,7 +65,7 @@
 			language: {
 	            "url": '<c:url value="/js/datatable-language.json"/>'
 	        },
-			ajax: '<c:url value="/procediment/${procediment.id}/servei/${servei.codi}/permis/datatable"/>',
+			ajax: '<c:url value="/procediment/${procediment.id}/servei/${servei.codiUrlEncoded}/permis/datatable"/>',
 			columnDefs: [
 				{
 					targets: [0],

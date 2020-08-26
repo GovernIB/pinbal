@@ -18,7 +18,7 @@ function initModalXml(element) {
 
 	<c:if test="${consulta.estatError}">
 		<div class="alert alert-danger fade in">
-		  <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+		  	<button class="close" data-dismiss="alert" aria-label="close">&times;</button>
 			<h4 class="alert-heading"><spring:message code="admin.consulta.info.recepcio.error"/>:</h4>
 			<p>${consulta.error}</p>
 		</div>

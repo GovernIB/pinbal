@@ -56,10 +56,10 @@ $(document).ready(function() {
 					<td>
 						<c:choose>
 							<c:when test="${not empty traduccioCoincident}">
-								<a href="#" title="<spring:message code="comu.boto.modificar"/>" class="btn btn-primary justificant-modificar" data-xpath="${registre.dades.pathAmbSeparadorDefault}" data-traduccio="${traduccioCoincident.traduccio}"><i class="-pencil"></i> <spring:message code="comu.boto.modificar"/></a>
+								<button title="<spring:message code="comu.boto.modificar"/>" class="btn btn-primary justificant-modificar" data-xpath="${registre.dades.pathAmbSeparadorDefault}" data-traduccio="${traduccioCoincident.traduccio}"><i class="icon-pencil"></i> <spring:message code="comu.boto.modificar"/></button>
 							</c:when>
 							<c:otherwise>
-								<a href="#" title="<spring:message code="comu.boto.modificar"/>" class="btn btn-primary justificant-modificar" data-xpath="${registre.dades.pathAmbSeparadorDefault}"><i class="icon-pencil"></i> <spring:message code="comu.boto.modificar"/></a>
+								<button title="<spring:message code="comu.boto.modificar"/>" class="btn btn-primary justificant-modificar" data-xpath="${registre.dades.pathAmbSeparadorDefault}"><i class="icon-pencil"></i> <spring:message code="comu.boto.modificar"/></button>
 							</c:otherwise>
 						</c:choose>
 					</td>
@@ -93,8 +93,8 @@ $(document).ready(function() {
 			</form>
 		</div>
 		<div class="modal-footer">
-			<a href="#" class="btn btn-default" data-dismiss="modal"><spring:message code="comu.boto.tornar"/></a>
-			<a href="#" id="modal-justificant-boto-submit" class="btn btn-primary"><spring:message code="comu.boto.guardar"/></a>
+			<button class="btn btn-default" data-dismiss="modal"><spring:message code="comu.boto.tornar"/></button>
+			<button id="modal-justificant-boto-submit" class="btn btn-primary"><spring:message code="comu.boto.guardar"/></button>
 		</div>
 		</div>
 	</div>

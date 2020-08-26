@@ -226,7 +226,7 @@ body {
 									<button data-toggle="dropdown" class="btn btn-primary dropdown-toggle"><spring:message code="decorator.menu.consulta.nova"/> <span class="caret"></span></button>
 									<ul class="dropdown-menu">
 										<c:forEach var="servei" items="${sessionServeis}">
-											<li><a href="<c:url value="/consulta/${servei.codi}/new"/>">${servei.descripcio}</a></li>
+											<li><a href="<c:url value="/consulta/${servei.codiUrlEncoded}/new"/>">${servei.descripcio}</a></li>
 										</c:forEach>
 									</ul>
 									</div>

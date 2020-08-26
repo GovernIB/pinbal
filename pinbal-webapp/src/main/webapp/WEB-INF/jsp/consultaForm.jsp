@@ -39,10 +39,10 @@
 </head>
 <body>
 
-	<c:url value="/consulta/${servei.codi}/plantilla/Excel" var="downloadPlantillaExcelUrl"/>
-	<c:url value="/consulta/${servei.codi}/plantilla/CSV" var="downloadPlantillaCsvUrl"/>
-	<c:url value="/consulta/${servei.codi}/plantilla/ODS" var="downloadPlantillaOdsUrl"/>
-	<c:url value="/consulta/${servei.codi}/new" var="formAction"/>
+	<c:url value="/consulta/${servei.codiUrlEncoded}/plantilla/Excel" var="downloadPlantillaExcelUrl"/>
+	<c:url value="/consulta/${servei.codiUrlEncoded}/plantilla/CSV" var="downloadPlantillaCsvUrl"/>
+	<c:url value="/consulta/${servei.codiUrlEncoded}/plantilla/ODS" var="downloadPlantillaOdsUrl"/>
+	<c:url value="/consulta/${servei.codiUrlEncoded}/new" var="formAction"/>
 	<div class="container-fluid">
 	<form:form action="${formAction}" method="post" cssClass="" commandName="consultaCommand" enctype="multipart/form-data">
 		<form:hidden path="serveiCodi"/>
@@ -176,29 +176,20 @@
 	<div id="modalAjuda" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
   		<div class="modal-dialog" role="document">
     		<div class="modal-content">
-			<div class="modal-header">
-		    	<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-		    	<h3 id="myModalLabel"><spring:message code="comu.boto.ajuda"/></h3>
-		  	</div>
-		  	<div class="modal-body">
-		  		${servei.ajuda}
-		  	</div>
-		  	<div class="modal-footer">
-		  		<c:if test="${not empty servei.fitxerAjudaNom}">
-		  			<a href="<c:url value='/consulta/${servei.codi}/downloadAjuda'/>" class="btn btn-primary pull-left"><i class='icon-download-alt icon-white'></i> <spring:message code="comu.boto.document.ajuda"/></a>
-		  		</c:if>
-		    	<button class="btn" data-dismiss="modal" aria-hidden="true"><spring:message code="comu.boto.tancar"/></button>
-		  	</div>
+				<div class="modal-header">
+			    	<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+			    	<h3 id="myModalLabel"><spring:message code="comu.boto.ajuda"/></h3>
+			  	</div>
+			  	<div class="modal-body">
+			  		${servei.ajuda}
+			  	</div>
+			  	<div class="modal-footer">
+			  		<c:if test="${not empty servei.fitxerAjudaNom}">
+			  			<a href="<c:url value='/consulta/${servei.codiUrlEncoded}/downloadAjuda'/>" class="btn btn-primary pull-left"><i class="fas fa-file-download"></i> <spring:message code="comu.boto.document.ajuda"/></a>
+			  		</c:if>
+			    	<button class="btn btn-default" data-dismiss="modal" aria-hidden="true"><spring:message code="comu.boto.tancar"/></button>
+			  	</div>
 			</div>
-	  	</div>
-	  	<div class="modal-body">
-	  		${servei.ajuda}
-	  	</div>
-	  	<div class="modal-footer">
-	  		<c:if test="${not empty servei.fitxerAjudaNom}">
-	  			<a href="<c:url value='/consulta/${servei.codi}/downloadAjuda'/>" class="btn btn-primary pull-left"><i class='glyphicon-download-alt icon-white'></i> <spring:message code="comu.boto.document.ajuda"/></a>
-	  		</c:if>
-	    	<button class="btn btn-default" data-dismiss="modal" aria-hidden="true"><spring:message code="comu.boto.tancar"/></button>
 	  	</div>
 	</div>
 	<!-- Fi modal -->

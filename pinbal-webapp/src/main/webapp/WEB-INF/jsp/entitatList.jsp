@@ -207,7 +207,7 @@ $(document).ready(function() {
 </script>
 <script id="template-accions" type="x-tmpl-mustache">
 	<div class="btn-group">
-		<a class="btn btn-primary dropdown-toggle" data-toggle="dropdown" href="#"><i class="fas fa-cog"></i>&nbsp;<spring:message code="comu.accions"/>&nbsp;<span class="caret"></span></a>
+		<a class="btn btn-primary dropdown-toggle" data-toggle="dropdown"><i class="fas fa-cog"></i>&nbsp;<spring:message code="comu.accions"/>&nbsp;<span class="caret"></span></a>
 		<ul class="dropdown-menu">
 			<li>
 				{{#activa}}

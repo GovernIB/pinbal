@@ -345,8 +345,8 @@ function showModalEditar(
 			</form>
 		</div>
 		<div class="modal-footer">
-			<a href="#" class="btn btn-default" data-dismiss="modal"><spring:message code="comu.boto.tornar"/></a>
-			<a href="#" class="btn btn-primary" onclick="$('#modal-form').submit()"><spring:message code="comu.boto.guardar"/></a>
+			<button class="btn btn-default" data-dismiss="modal"><spring:message code="comu.boto.tornar"/></button>
+			<button class="btn btn-primary" onclick="$('#modal-form').submit()"><spring:message code="comu.boto.guardar"/></button>
 		</div>
 	</div>
 </div>

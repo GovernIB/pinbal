@@ -76,6 +76,10 @@
 							return Mustache.render(template, row);
 					}
 				}, 
+				{
+					targets: [5],
+					visible: false
+				}, 
 		   ]
 		});		    
 	});
@@ -147,6 +151,7 @@
 					<th data-data="scspEmisor.nom"><spring:message code="servei.list.taula.columna.emissor" /></th>
 					<th data-data="numeroProcedimentsAssociats"></th>
 					<th data-data="id"></th>
+					<th data-data="codiUrlEncoded"></th>
 				</tr>
 			</thead>
 		</table>
@@ -161,7 +166,7 @@
 		</div>
 		<div class="modal-body"></div>
 		<div class="modal-footer">
-			<a href="#" class="btn btn-primary" data-dismiss="modal"><spring:message code="comu.boto.tornar"/></a>
+			<button class="btn btn-primary" data-dismiss="modal"><spring:message code="comu.boto.tornar"/></button>
 		</div>
 	</div>
   </div>
@@ -174,12 +179,12 @@
 </script>
 <script id="template-accions" type="x-tmpl-mustache">
 	<div class="btn-group">
-		<a class="btn btn-primary dropdown-toggle" data-toggle="dropdown" href="#"><i class="fas fa-cog"></i>&nbsp;<spring:message code="comu.accions"/>&nbsp;<span class="caret"></span></a>
+		<button class="btn btn-primary dropdown-toggle" data-toggle="dropdown"><i class="fas fa-cog"></i>&nbsp;<spring:message code="comu.accions"/>&nbsp;<span class="caret"></span></button>
 		<ul class="dropdown-menu">
-			<li><a href="servei/{{ codi }}" title="<spring:message code="comu.boto.modificar"/>"><i class="fas fa-pen"></i>&nbsp;<spring:message code="comu.boto.modificar"/></a></li>
-			<li><a href="servei/{{ codi }}/camp" title="<spring:message code="servei.list.taula.boto.formulari"/>"><i class="fas fa-th-list"></i>&nbsp;<spring:message code="servei.list.taula.boto.formulari"/></a></li>
-			<li><a href="servei/{{ codi }}/justificant" title="<spring:message code="servei.list.taula.boto.justificant"/>"><i class="fas fa-file"></i></i>&nbsp;<spring:message code="servei.list.taula.boto.justificant"/></a></li>
-			<li><a href="servei/{{ codi }}/delete" class="confirm-esborrar"><i class="fas fa-trash-alt"></i>&nbsp;<spring:message code="comu.boto.esborrar"/></a></li>
+			<li><a href="servei/{{ codiUrlEncoded }}" title="<spring:message code="comu.boto.modificar"/>"><i class="fas fa-pen"></i>&nbsp;<spring:message code="comu.boto.modificar"/></a></li>
+			<li><a href="servei/{{ codiUrlEncoded }}/camp" title="<spring:message code="servei.list.taula.boto.formulari"/>"><i class="fas fa-th-list"></i>&nbsp;<spring:message code="servei.list.taula.boto.formulari"/></a></li>
+			<li><a href="servei/{{ codiUrlEncoded }}/justificant" title="<spring:message code="servei.list.taula.boto.justificant"/>"><i class="fas fa-file"></i></i>&nbsp;<spring:message code="servei.list.taula.boto.justificant"/></a></li>
+			<li><a href="servei/{{ codiUrlEncoded }}/delete" class="confirm-esborrar"><i class="fas fa-trash-alt"></i>&nbsp;<spring:message code="comu.boto.esborrar"/></a></li>
 		</ul>
 	</div>
 </script>

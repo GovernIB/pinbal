@@ -230,7 +230,7 @@ $(function() {
 			</div>
 		</div>
 		<div class="col-md-8">
-			<a id="boto-nou-grup" class="btn btn-primary pull-right" href="#"><i class="fas fa-plus"></i>&nbsp;Nou grup</a><br/><br/>
+			<a id="boto-nou-grup" class="btn btn-primary pull-right"><i class="fas fa-plus"></i>&nbsp;Nou grup</a><br/><br/>
 			<c:set var="hiHaCampsSenseGrup" value="${false}"/>
 			<c:forEach var="camp" items="${camps}">
 				<c:if test="${empty camp.grup}"><c:set var="hiHaCampsSenseGrup" value="${true}"/></c:if>
@@ -434,7 +434,7 @@ $(function() {
 	<div class="well">
 		<a href="<c:url value="/servei"/>" class="btn btn-default pull-right"><spring:message code="comu.boto.tornar"/></a>
 		<c:set var="initModalPreview">initModalPreview(this);return false</c:set>
-		<a href="<c:url value="/modal/servei/${servei.codi}/preview"/>" class="btn btn-info" onclick="${initModalPreview}"><i class="fas fa-eye"></i>&nbsp;<spring:message code="comu.boto.previsualitzar"/></a>
+		<a href="<c:url value="/modal/servei/${servei.codiUrlEncoded}/preview"/>" class="btn btn-info" onclick="${initModalPreview}"><i class="fas fa-eye"></i>&nbsp;<spring:message code="comu.boto.previsualitzar"/></a>
 	</div>
 </div>
 
@@ -537,8 +537,8 @@ $(function() {
 			</form>
 		</div>
 		<div class="modal-footer">
-			<a href="#" class="btn btn-default" data-dismiss="modal"><spring:message code="comu.boto.tornar"/></a>
-			<a href="#" id="modal-boto-submit" class="btn btn-primary"><spring:message code="comu.boto.guardar"/></a>
+			<button class="btn btn-default" data-dismiss="modal"><spring:message code="comu.boto.tornar"/></button>
+			<button id="modal-boto-submit" class="btn btn-primary"><spring:message code="comu.boto.guardar"/></button>
 		</div>
 	</div>
 	</div>
@@ -552,7 +552,7 @@ $(function() {
 			</div>
 			<div class="modal-body"></div>
 			<div class="modal-footer">
-				<a href="#" class="btn btn-primary" data-dismiss="modal"><spring:message code="comu.boto.tornar"/></a>
+				<button class="btn btn-primary" data-dismiss="modal"><spring:message code="comu.boto.tornar"/></button>
 			</div>
 		</div>
 	</div>
@@ -575,8 +575,8 @@ $(function() {
 			</form>
 		</div>
 		<div class="modal-footer">
-			<a href="#" class="btn btn-default" data-dismiss="modal"><spring:message code="comu.boto.tornar"/></a>
-			<a href="#" id="modal-grup-boto-submit" class="btn btn-primary"><spring:message code="comu.boto.guardar"/></a>
+			<button class="btn btn-default" data-dismiss="modal"><spring:message code="comu.boto.tornar"/></button>
+			<button id="modal-grup-boto-submit" class="btn btn-primary"><spring:message code="comu.boto.guardar"/></button>
 		</div>
 		</div>
 	</div>

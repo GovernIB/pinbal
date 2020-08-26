@@ -13,19 +13,15 @@
 	<script src="<c:url value="/webjars/bootstrap-datepicker/1.6.1/dist/locales/bootstrap-datepicker.${requestLocale}.min.js"/>"></script>
 </head>
 <body>
-	
 	<div class="container-fluid">
 		<div class="row">
-			<div class="well">
+			<div class="col-md-12 well">
 				<h4>
 				<spring:message code="informe.list.informe.procediments"/>
 				<a href="informe/procediments" class="btn btn-default pull-right"><i class="fas fa-file-download"></i>&nbsp;<spring:message code="informe.list.generar"/></a>
 				</h4>
 			</div>
 		</div>
-	</div>	
-		
-	<div class="container-fluid">
 		<div class="row">
 			<div class="well">
 					<h4>
@@ -34,8 +30,6 @@
 					</h4>
 			</div>
 		</div>
-	</div>
-	<div class="container-fluid">
 		<div class="row">
 			<div class="well">
 				<h4>
@@ -44,30 +38,23 @@
 				</h4>
 			</div>
 		</div>
-	</div>
-			
-	<div class="container-fluid">
 		<div class="row">
 			<div class="well">
 				<h4>
 					<spring:message code="informe.list.informe.generalEstat"/>
-					<a href="#modal-form-filtre" onclick="showModalFiltrar()" class="btn btn-default pull-right">
+					<button onclick="showModalFiltrar()" class="btn btn-default pull-right">
 						<i class="fas fa-file-download"></i>&nbsp;<spring:message code="informe.list.generar"/>
-					</a>
+					</button>
 				</h4>
 			</div>
 		</div>
 	</div>
-
-		
-
-
 	<div id="modal-filtre-dates" class="modal fade">
 	  <div class="modal-dialog">
 		<div class="modal-content">
 			<div class="modal-header">
 				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-				<h3><spring:message code="informe.general.estat.filtre.dates.titol"/></h3>
+				<h3 style="margin: 0px;"><spring:message code="informe.general.estat.filtre.dates.titol"/></h3>
 			</div>
 			<div class="modal-body">
 				<c:url value="informe/generalEstat" var="formAction"/>
@@ -90,8 +77,8 @@
 			</div>	
 			
 			<div class="modal-footer">
-				<a href="#" class="btn btn-default" data-dismiss="modal"><spring:message code="comu.boto.tornar"/></a>
-				<a href="#" class="btn btn-primary" onclick="$('#modal-form-filtre').submit()"><spring:message code="comu.boto.generar"/></a>
+				<button class="btn btn-default" data-dismiss="modal"><spring:message code="comu.boto.tornar"/></button>
+				<button class="btn btn-primary" onclick="$('#modal-form-filtre').submit()"><spring:message code="comu.boto.generar"/></button>
 			</div>
 		</div>
 	</div>	

@@ -259,7 +259,7 @@ $(document).ready(function() {
 {{/estat-ok}}
 {{#estat-error}}
 <div class="btn-group">
-	<a class="btn btn-default btn-small dropdown-toggle" data-toggle="dropdown" href="#">
+	<a class="btn btn-default btn-small dropdown-toggle" data-toggle="dropdown">
 		<i class="icon-"><img src="<c:url value="/img/error_icon.png"/>" width="16" height="15" title="<spring:message code="consulta.list.taula.justif.error"/>" alt="<spring:message code="consulta.list.taula.justif.error"/>"/></i>
 		&nbsp;<span class="caret"></span>
 	</a>

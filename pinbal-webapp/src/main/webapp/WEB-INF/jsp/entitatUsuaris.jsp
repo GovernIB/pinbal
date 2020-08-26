@@ -323,7 +323,7 @@ function showModalEditar(row) {
 </script>
 <script id="template-actions" type="x-tmpl-mustache">
 {{#principal}}
- 	<a class="btn btn-primary disabled" href="#"><i class="fas fa-pen"></i>&nbsp;<spring:message code="comu.boto.modificar"/></a>
+ 	<a class="btn btn-primary disabled"><i class="fas fa-pen"></i>&nbsp;<spring:message code="comu.boto.modificar"/></a>
 {{/principal}}
 {{^principal}}
 	<a data-nrow="{{ nrow }}" class="btn-open-modal-edit btn btn-primary"><i class="fas fa-pen"></i>&nbsp;<spring:message code="comu.boto.modificar"/></a>
@@ -411,8 +411,8 @@ function showModalEditar(row) {
 			</form>
 		</div>
 		<div class="modal-footer">
-			<a href="#" class="btn btn-default" data-dismiss="modal"><spring:message code="comu.boto.tornar"/></a>
-			<a href="#" class="btn btn-primary" onclick="$('#modal-form').submit()"><spring:message code="comu.boto.guardar"/></a>
+			<button class="btn btn-default" data-dismiss="modal"><spring:message code="comu.boto.tornar"/></button>
+			<button class="btn btn-primary" onclick="$('#modal-form').submit()"><spring:message code="comu.boto.guardar"/></button>
 		</div>
 	</div>
 	</div>

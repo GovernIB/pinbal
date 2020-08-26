@@ -36,7 +36,7 @@
 				<span class="input-group-addon btn btn-default btn-file">
 					<span class="fileinput-new">Seleccionar</span><span class="fileinput-exists">Canviar</span>
 					<input type="file" id="${campPath}" name="${campPath}"></span>
-				<a href="#" class="input-group-addon btn btn-default fileinput-exists" style="width:auto" data-dismiss="fileinput">Netejar</a>
+				<button class="input-group-addon btn btn-default fileinput-exists" style="width:auto" data-dismiss="fileinput">Netejar</button>
 			</div>
 		</div>
 	</c:when>
@@ -47,7 +47,7 @@
 				<div class="fileinput fileinput-new input-group" style="width:100%" data-provides="fileinput">
 					<div class="form-control" data-trigger="fileinput"><i class="glyphicon glyphicon-file fileinput-exists"></i> <span class="fileinput-filename"></span></div>
 					<span class="input-group-addon btn btn-default btn-file"><span class="fileinput-new">Seleccionar</span><span class="fileinput-exists">Canviar</span><input type="file" id="${campPath}" name="${campPath}"></span>
-					<a href="#" class="input-group-addon btn btn-default fileinput-exists" data-dismiss="fileinput">Netejar</a>
+					<button class="input-group-addon btn btn-default fileinput-exists" data-dismiss="fileinput">Netejar</button>
 				</div>
 				<c:if test="${not empty campErrors}"><p class="help-block"><span class="fa fa-exclamation-triangle"></span>&nbsp;<form:errors path="${campPath}"/></p></c:if>
 			</div>
