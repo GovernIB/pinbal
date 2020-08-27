@@ -214,11 +214,13 @@ public class JustificantArbreHelper implements MessageSourceAware {
 				arrel.addFill(elementTitular);
 			}
 		}
-		afegirDadesEspecifiques(
-				arrel,
-				(Element)transmision.getDatosEspecificos(),
-				transmision.getDatosGenericos().getTransmision().getCodigoCertificado(),
-				locale);
+		if (transmision.getDatosEspecificos() != null) {
+			afegirDadesEspecifiques(
+					arrel,
+					(Element)transmision.getDatosEspecificos(),
+					transmision.getDatosGenericos().getTransmision().getCodigoCertificado(),
+					locale);
+		}
 		return arrel;
 	}
 	public void imprimirJustificantStdout(ElementArbre arrel) {

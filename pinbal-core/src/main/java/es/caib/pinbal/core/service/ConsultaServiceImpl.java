@@ -1869,12 +1869,10 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 					pageable);
 		}
 		LOGGER.debug("Consulta de peticions findByEntitatIUsuariFiltrePaginat temps consulta: " + (System.currentTimeMillis() - t0) + " ms");
-		System.out.println("Consulta de peticions findByEntitatIUsuariFiltrePaginat temps consulta: " + (System.currentTimeMillis() - t0) + " ms");
 		t0 = System.currentTimeMillis();
 		Page<ConsultaDto> paginaConsultesDto = dtoMappingHelper.pageEntities2pageDto(paginaConsultes, ConsultaDto.class, pageable);
 		
 		LOGGER.debug("Consulta de peticions findByEntitatIUsuariFiltrePaginat temps conversió DTO : " + (System.currentTimeMillis() - t0) + " ms");
-		System.out.println("Consulta de peticions findByEntitatIUsuariFiltrePaginat temps conversió DTO : " + (System.currentTimeMillis() - t0) + " ms");
 		t0 = System.currentTimeMillis();
 
 		for (ConsultaDto consulta: paginaConsultesDto.getContent()) {
@@ -1907,7 +1905,6 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 			}
 		}
 		LOGGER.debug("Consulta de peticions findByEntitatIUsuariFiltrePaginat temps consultes addicionals : " + (System.currentTimeMillis() - t0) + " ms");
-		System.out.println("Consulta de peticions findByEntitatIUsuariFiltrePaginat temps consultes addicionals : " + (System.currentTimeMillis() - t0) + " ms");
 		return  paginaConsultesDto;
 	}
 

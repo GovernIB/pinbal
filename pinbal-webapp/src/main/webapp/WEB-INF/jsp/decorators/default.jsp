@@ -4,7 +4,6 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.opensymphony.com/sitemesh/decorator" prefix="decorator"%>
 <%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags"%>
-
 <%
 	pageContext.setAttribute(
 			"sessionEntitats",
@@ -70,13 +69,11 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-
 	<meta charset="utf-8">
 	<title>Pinbal - <decorator:title default="Benvinguts" /></title>
 	<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 	<meta name="description" content=""/>
 	<meta name="author" content=""/>
-
 	<!-- Estils CSS -->
 	<link href="<c:url value="/webjars/bootstrap/3.3.6/css/bootstrap.min.css"/>" rel="stylesheet"/>
 	<link href="<c:url value="/webjars/font-awesome/5.13.1/css/all.min.css"/>" rel="stylesheet"/>
@@ -103,7 +100,6 @@ body {
 	color:#666666;
 	padding-top: 120px;
 }
-
 .navbar-app {
 	background-color: #ff9523;
 }
@@ -122,7 +118,6 @@ body {
 					</div>
 				</div>
 			</div>
-			
 			<div class="navbar-collapse collapse">
 				<div class="nav navbar-nav navbar-right">
 					<ul class="list-inline pull-right">
@@ -174,8 +169,6 @@ body {
 								</c:otherwise>
 							</c:choose>
 						</li>
-										
-												
 						<li>
 							<span class="fa fa-user"></span>
 							<c:choose>
@@ -185,12 +178,9 @@ body {
 						</li>
 					</ul>
 					<div class="clearfix"></div>
-					
-					
 					<%------------------------ MENU BUTTONS ------------------------%>
 					<div class="btn-group navbar-btn navbar-right">
 						<c:choose>
-						
 						<c:when test="${isRolActualAdministrador}">
 							<a href="<c:url value="/entitat"/>" class="btn btn-primary"><spring:message code="decorator.menu.entitats"/></a>
 							<a href="<c:url value="/servei"/>" class="btn btn-primary"><spring:message code="decorator.menu.serveis"/></a>
@@ -250,8 +240,6 @@ body {
 			</div>		
 		</div>
 	</div>
-
-
 	<div class="container container-main container-caib">
 		<div class="panel panel-default">
 			<div class="panel-heading">
@@ -266,7 +254,7 @@ body {
 		</div>
 	</div>
     <div class="container container-foot container-caib">
-    	<div class="pull-left app-version"><p>Pinbal v${versioActual}</p></div>
+    	<div class="pull-left app-version"><p>PINBAL v${versioActual}</p></div>
         <div class="pull-right govern-footer">
         	<p>
         		<img src="<c:url value="/img/govern-logo-neg.png"/>" style="height:30px" alt="<spring:message code="decorator.govern"/>" />
@@ -276,6 +264,5 @@ body {
         	</p>
         </div>
     </div>
-
 </body>
 </html>

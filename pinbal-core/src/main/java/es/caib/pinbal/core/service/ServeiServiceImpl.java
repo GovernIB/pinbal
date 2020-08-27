@@ -299,7 +299,6 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 
 	@Transactional(readOnly = true)
 	@Override
-	@SuppressWarnings("unchecked")
 	public Page<ServeiDto> findAmbFiltrePaginat(
 			String codi,
 			String descripcio,
@@ -324,7 +323,6 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 	
 	@Transactional(readOnly = true)
 	@Override
-	@SuppressWarnings("unchecked")
 	public Page<ServeiDto> findAmbFiltrePaginat(
 			String codi,
 			String descripcio,

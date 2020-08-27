@@ -120,7 +120,6 @@ public class ProcedimentServiceImpl implements ProcedimentService {
 
 	@Transactional(readOnly = true)
 	@Override
-	@SuppressWarnings("unchecked")
 	public Page<ProcedimentDto> findAmbFiltrePaginat(
 			Long entitatId,
 			String codi,

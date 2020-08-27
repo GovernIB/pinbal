@@ -77,7 +77,6 @@ public class UsuariServiceImpl implements UsuariService {
 
 	@Transactional(readOnly = true)
 	@Override
-	@SuppressWarnings("unchecked")
 	public Page<EntitatUsuariDto> findAmbFiltrePaginat(
 			Long id_entitat,
 			Boolean isRepresentant,

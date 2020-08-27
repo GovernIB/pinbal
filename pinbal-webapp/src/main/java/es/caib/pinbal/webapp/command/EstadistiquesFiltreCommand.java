@@ -7,8 +7,6 @@ import java.util.Date;
 
 import javax.validation.constraints.Size;
 
-import org.apache.commons.lang.builder.ToStringBuilder;
-
 import es.caib.pinbal.core.dto.ConsultaDto.EstatTipus;
 import es.caib.pinbal.core.dto.EstadistiquesFiltreDto;
 import es.caib.pinbal.core.dto.EstadistiquesFiltreDto.EstadistiquesAgrupacioDto;

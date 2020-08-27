@@ -20,7 +20,6 @@ import es.caib.pinbal.core.dto.ClauPublicaDto;
 import es.caib.pinbal.core.dto.EmissorCertDto;
 import es.caib.pinbal.core.dto.OrganismeCessionariDto;
 import es.caib.pinbal.core.dto.ParamConfDto;
-import es.caib.pinbal.core.dto.ServeiDto;
 import es.caib.pinbal.core.helper.DtoMappingHelper;
 import es.caib.pinbal.core.model.ClauPrivada;
 import es.caib.pinbal.core.model.ClauPublica;
