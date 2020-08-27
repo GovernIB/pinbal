@@ -9,9 +9,6 @@
 	pageContext.setAttribute(
 			"consentimentValors",
 			es.caib.pinbal.core.dto.ConsultaDto.Consentiment.values());
-	pageContext.setAttribute(
-			"documentTipusValors",
-			es.caib.pinbal.core.dto.ConsultaDto.getDocumentTipusValorsPerFormulari());
 	java.util.Map<?,?> map = (java.util.Map<?,?>)request.getAttribute("campsDadesEspecifiquesAgrupats");
 	if (map != null)
 		pageContext.setAttribute("campsSenseAgrupar", map.get(null));
@@ -56,7 +53,7 @@
 			 					  optionItems="${procediments}" 
 								  optionValueAttribute="id"
 								  optionTextAttribute="nom"
-							      emptyOption="true"/>
+							      emptyOption="false"/>
 			</div>
 		</div>
 			
@@ -73,7 +70,7 @@
 					
 					<label class="control-label" for="${campPath}"><spring:message code="consulta.form.camp.consentiment"/> *</label>
 					<pbl:inputSelect name="consentiment" inline="true" 
-									 optionItems="${consentimentValors}" emptyOption="true"/>
+									 optionItems="${consentimentValors}" emptyOption="false"/>
 				</div>
 
 				<div class="col-md-6">			

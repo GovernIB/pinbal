@@ -5,7 +5,11 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@ taglib tagdir="/WEB-INF/tags/pinbal" prefix="pbl" %>
-
+<%
+pageContext.setAttribute(
+		"documentTipusValors",
+		es.caib.pinbal.core.dto.ConsultaDto.getDocumentTipusValorsPerFormulari());
+%>
 <div class="row">
 	<div class="col-md-6">
 		<label class="control-label" for="${campPath}"><spring:message code="consulta.form.camp.expedient"/></label>
@@ -23,7 +27,7 @@
 					<label class="control-label" for="${campPath}"><spring:message code="consulta.form.camp.document.tipus"/> <c:if test="${servei.pinbalDocumentObligatori}">*</c:if></label>
 					<pbl:inputSelect name="titularDocumentTipus" inline="true"
 									 optionItems="${documentTipusValors}" 
-									 emptyOption="true"/>
+									 emptyOption="false"/>
 				</div>
 				<div class="col-md-6">
 					<label class="control-label" for="${campPath}"><spring:message code="consulta.form.camp.document.num"/> <c:if test="${servei.pinbalDocumentObligatori}">*</c:if></label>

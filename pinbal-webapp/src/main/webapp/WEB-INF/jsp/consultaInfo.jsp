@@ -49,13 +49,13 @@ function initModalXml(element) {
 		<h3>
 			<spring:message code="consulta.info.consulta.dades"/>
 			<a href="#dadesPeticio" data-toggle="collapse" data-target="#dadesPeticio">
-				<i id="dadesPeticioIcon" class="pull-right icon-chevron-down"></i>
+				<i id="dadesPeticioIcon" class="pull-right fas fa-chevron-down"></i>
 			</a>
 		</h3>
 		<div id="dadesPeticio" class="collapse in">
 			<c:if test="${consulta.hiHaPeticio}">
 				<c:set var="initModalXml">initModalXml(this);return false</c:set>
-				<a class="btn pull-right" href="<c:url value="/modal/consulta/${consulta.id}/xmlPeticio"/>" onclick="${initModalXml}"><i class="icon-info-sign"></i> <spring:message code="consulta.info.veure.xml"/></a>
+				<a class="btn btn-default pull-right" href="<c:url value="/modal/consulta/${consulta.id}/xmlPeticio"/>" onclick="${initModalXml}"><i class="fas fa-info"></i> <spring:message code="consulta.info.veure.xml"/></a>
 			</c:if>
 			<p>
 				<spring:message code="consulta.info.consulta.enviada.dia"/>
@@ -259,12 +259,12 @@ $('#dadesPeticio').on('shown', function () {
 			<h3>
 				<spring:message code="consulta.info.resposta.dades"/>
 				<a href="#dadesResposta" data-toggle="collapse" data-target="#dadesResposta">
-					<i id="dadesRespostaIcon" class="pull-right icon-chevron-down"></i>
+					<i id="dadesRespostaIcon" class="pull-right fas fa-chevron-down"></i>
 				</a>
 			</h3>
 			<div id="dadesResposta" class="collapse out">
 				<c:set var="initModalXml">initModalXml(this);return false</c:set>
-				<a class="btn pull-right" href="<c:url value="/modal/consulta/${consulta.id}/xmlResposta"/>" onclick="${initModalXml}"><i class="icon-info-sign"></i> <spring:message code="consulta.info.veure.xml"/></a>
+				<a class="btn btn-default pull-right" href="<c:url value="/modal/consulta/${consulta.id}/xmlResposta"/>" onclick="${initModalXml}"><i class="fas fa-info"></i> <spring:message code="consulta.info.veure.xml"/></a>
 				<p>
 					<spring:message code="consulta.info.resposta.rebuda.dia"/>
 					<fmt:formatDate pattern="dd/MM/yyyy" value="${consulta.respostaData}"/>

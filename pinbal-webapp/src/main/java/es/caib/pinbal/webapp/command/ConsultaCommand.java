@@ -53,7 +53,7 @@ public class ConsultaCommand {
 	private String finalitat;
 
 	@NotNull(groups=ConsultaCommandAmbDocumentObligatori.class)
-	private DocumentTipus titularDocumentTipus;
+	private DocumentTipus titularDocumentTipus = DocumentTipus.NIF;
 	@NotEmpty(groups=ConsultaCommandAmbDocumentObligatori.class)
 	@Size(max=14)
 	@DocumentIdentitatNif(groups=ConsultaCommandAmbDocumentTipusNif.class)

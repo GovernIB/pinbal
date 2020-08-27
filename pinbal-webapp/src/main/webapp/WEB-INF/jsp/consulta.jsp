@@ -169,6 +169,7 @@ $(document).ready(function() {
     	autoWidth: false,
 		processing: true,
 		serverSide: true,
+		"order": [[ 1, "desc" ]],
 		language: {
             "url": '<c:url value="/js/datatable-language.json"/>'
         },
@@ -222,10 +223,10 @@ $(document).ready(function() {
 					var template = $('#template-justificant').html();
 					console.log(row)
 					row["estat-pendent"] = row['justificantEstat'].toLowerCase() == 'pendent';
-					row["estat-ok"] = row['justificantEstat'].toLowerCase() == 'ok';
 					row["estat-error"] = row['justificantEstat'].toLowerCase() == 'error';
 					row["estat-nodisponible"] = row['justificantEstat'].toLowerCase() == 'no_disponible';
 					row["estat-oknocustodia"] = row['justificantEstat'].toLowerCase() == 'ok_no_custodia';
+					row["estat-ok"] = row['justificantEstat'].toLowerCase() == 'ok' || row["estat-oknocustodia"];
 					return Mustache.render(template, row);
 				}
 			},
