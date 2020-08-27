@@ -71,7 +71,8 @@
 		<c:if test="${button}">
 			<button class="btn btn-outline-secondary" type="button">Button</button>
 		</c:if>
-		<c:if test="${not empty comment}"><p class="comentari col-xs-${12 - labelSize} col-xs-offset-${labelSize}"><spring:message code="${comment}"/></p></c:if>
+					<c:if test="${not empty campErrors}"><p class="help-block"><span class="fa fa-exclamation-triangle"></span>&nbsp;<form:errors path="${campPath}"/></p></c:if>
+			<c:if test="${not empty comment}"><p class="comentari col-xs-${12 - labelSize} col-xs-offset-${labelSize}"><spring:message code="${comment}"/></p></c:if>
 	</c:otherwise>
 </c:choose>
 </div>

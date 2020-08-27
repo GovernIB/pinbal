@@ -45,17 +45,17 @@ function initModalXml(element) {
 		</div>
 	</c:if>
 
-	<div class="well">
+	<div class="well well-sm">
 		<h3>
 			<spring:message code="consulta.info.consulta.dades"/>
-			<a href="#dadesPeticio" data-toggle="collapse" data-target="#dadesPeticio">
+			<button class="btn btn-link pull-right" data-toggle="collapse" data-target="#dadesPeticio" style="color:black">
 				<i id="dadesPeticioIcon" class="pull-right fas fa-chevron-down"></i>
-			</a>
+			</button>
 		</h3>
 		<div id="dadesPeticio" class="collapse in">
 			<c:if test="${consulta.hiHaPeticio}">
 				<c:set var="initModalXml">initModalXml(this);return false</c:set>
-				<a class="btn btn-default pull-right" href="<c:url value="/modal/consulta/${consulta.id}/xmlPeticio"/>" onclick="${initModalXml}"><i class="fas fa-info"></i> <spring:message code="consulta.info.veure.xml"/></a>
+				<a class="btn btn-default pull-right" href="<c:url value="/modal/consulta/${consulta.id}/xmlPeticio"/>" onclick="${initModalXml}"><i class="fas fa-info-circle"></i> <spring:message code="consulta.info.veure.xml"/></a>
 			</c:if>
 			<p>
 				<spring:message code="consulta.info.consulta.enviada.dia"/>
@@ -255,16 +255,16 @@ $('#dadesPeticio').on('shown', function () {
 </script>
 	</div>
 	<c:if test="${consulta.hiHaResposta}">
-		<div class="well">
+		<div class="well well-sm">
 			<h3>
 				<spring:message code="consulta.info.resposta.dades"/>
-				<a href="#dadesResposta" data-toggle="collapse" data-target="#dadesResposta">
-					<i id="dadesRespostaIcon" class="pull-right fas fa-chevron-down"></i>
-				</a>
+				<button class="btn btn-link pull-right" data-toggle="collapse" data-target="#dadesResposta" style="color:black">
+					<i id="dadesRespostaIcon" class="fas fa-chevron-down"></i>
+				</button>
 			</h3>
 			<div id="dadesResposta" class="collapse out">
 				<c:set var="initModalXml">initModalXml(this);return false</c:set>
-				<a class="btn btn-default pull-right" href="<c:url value="/modal/consulta/${consulta.id}/xmlResposta"/>" onclick="${initModalXml}"><i class="fas fa-info"></i> <spring:message code="consulta.info.veure.xml"/></a>
+				<a class="btn btn-default pull-right" href="<c:url value="/modal/consulta/${consulta.id}/xmlResposta"/>" onclick="${initModalXml}"><i class="fas fa-info-circle"></i> <spring:message code="consulta.info.veure.xml"/></a>
 				<p>
 					<spring:message code="consulta.info.resposta.rebuda.dia"/>
 					<fmt:formatDate pattern="dd/MM/yyyy" value="${consulta.respostaData}"/>
@@ -284,11 +284,11 @@ $('#dadesResposta').on('shown', function () {
 		</div>
 	</c:if>
 	<c:if test="${consulta.justificantEstatOk}">
-		<div class="well">
+		<div class="well well-sm">
 			<h3>
 				<spring:message code="consulta.info.descarregar.justificant"/>
-				<a href="${consulta.id}/justificant" class="pull-right">
-					<img src="<c:url value="/img/pdf-icon-big.png"/>" width="27" height="32" alt="<spring:message code="consulta.info.descarregar.pdf"/>" title="<spring:message code="consulta.info.descarregar.pdf"/>"/>
+				<a href="${consulta.id}/justificant" class="pull-right" style="color:black;margin-right: 5px;">
+					<i class="far fa-file-pdf"></i>
 				</a>
 			</h3>
 		</div>

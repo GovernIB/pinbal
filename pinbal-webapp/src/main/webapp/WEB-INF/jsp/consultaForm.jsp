@@ -49,7 +49,7 @@
 		<c:set var="campErrors"><form:errors path="${campPath}"/></c:set>
 		<div class="row">
 			<div class="col-md-6">
-				 <pbl:inputSelect name="${campPath}" inline="true" placeholderKey="consulta.form.camp.procediment"
+				 <pbl:inputSelect name="${campPath}" inline="true"
 			 					  optionItems="${procediments}" 
 								  optionValueAttribute="id"
 								  optionTextAttribute="nom"
@@ -86,13 +86,8 @@
 			</div>
 			<div class="row">
 				<div class="col-md-12">
-					<label class="control-label" for="${campPath}"><spring:message code="consulta.form.camp.finalitat"/> *</label>
 					<c:set var="campPath" value="finalitat"/>
-					<c:set var="campErrors"><form:errors path="${campPath}"/></c:set>
-					<div class="form-group"<c:if test="${not empty campErrors}"> error</c:if>">
-						<form:textarea rows="8" path="${campPath}" cssClass="form-control" id="${campPath}"/>
-						<form:errors path="${campPath}" cssClass="help-block"/>
-					</div>
+					<pbl:inputTextarea name="${campPath}" required="true" inline="true" textKey="consulta.form.camp.finalitat"/>
 				</div>
 			</div>
 		</fieldset>
@@ -102,7 +97,7 @@
 				<li<c:if test="${tabSimpleActiu}"> class="active"</c:if>><a href="#tab-simple" data-toggle="tab"><spring:message code="consulta.form.tipus.simple"/></a></li>
 	 			<li<c:if test="${tabMultipleActiu}"> class="active"</c:if>><a href="#tab-multiple" data-toggle="tab"><spring:message code="consulta.form.tipus.multiple"/></a></li>
 	 		</ul>
-	 		<div class="tab-content">
+	 		<div class="tab-content" style="margin-top: 15px;">
 	 			<div class="tab-pane<c:if test="${tabSimpleActiu}"> active</c:if>" id="tab-simple">
 	 				<jsp:include page="import/consultaSimpleForm.jsp"/>
 	 			</div>
