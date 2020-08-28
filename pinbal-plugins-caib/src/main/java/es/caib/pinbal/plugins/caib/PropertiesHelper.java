@@ -9,6 +9,9 @@ import java.util.Properties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import lombok.Getter;
+import lombok.Setter;
+
 /**
  * Utilitat per accedir a les entrades del fitxer de properties.
  * 
@@ -20,6 +23,7 @@ public class PropertiesHelper extends Properties {
 
 	private static PropertiesHelper instance = null;
 
+	@Getter @Setter
 	private boolean llegirSystem = true;
 
 
