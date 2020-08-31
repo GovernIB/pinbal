@@ -169,7 +169,7 @@
   </div>
 </div>
 <script id="template-btn-procediments" type="x-tmpl-mustache">
-<a class="btn btn-default" href="<c:url value="/modal/servei/{{ codi }}/procediments"/>" 
+<a class="btn btn-default" href="<c:url value="/modal/servei/{{ codiUrlEncoded }}/procediments"/>" 
 		onclick="showModalProcediments(this);return false" data-titol="<spring:message code="servei.procediment.list.titol" arguments="{{ descripcio }}"/>">
 	<i class="fas fa-briefcase"></i>&nbsp;<spring:message code="entitat.list.taula.boto.procediments"/>&nbsp;<span class="badge">{{ numeroProcedimentsAssociats }}</span>
 </a>

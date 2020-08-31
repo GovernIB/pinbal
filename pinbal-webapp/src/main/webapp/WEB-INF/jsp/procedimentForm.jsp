@@ -25,6 +25,8 @@
 				<pbl:inputText name="nom" required="true" labelSize="1" inline="false" textKey="procediment.form.camp.nom"/>
 				<pbl:inputText name="departament" labelSize="1" inline="false" textKey="procediment.form.camp.departament"/>
 		
+				<pbl:inputText name="organGestor" required="true" labelSize="1" inline="false" textKey="procediment.form.camp.organgestor"/>
+				<pbl:inputText name="codiSia" labelSize="1" inline="false" textKey="procediment.form.camp.codisia"/>
 		  		<div class="pull-right">
 					 <button type="submit" class="btn btn-primary"><spring:message code="comu.boto.guardar"/></button>
 					 <a href="<c:url value="/procediment"/>" class="btn btn-default"><spring:message code="comu.boto.cancelar"/></a>

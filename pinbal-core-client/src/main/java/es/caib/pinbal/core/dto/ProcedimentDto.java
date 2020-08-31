@@ -6,11 +6,16 @@ import java.util.List;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
 
+import lombok.Getter;
+import lombok.Setter;
+
 /**
  * Objecte DTO amb informació d'un procediment.
  * 
  * @author Limit Tecnologies <limit@limit.es>
  */
+@Getter
+@Setter
 public class ProcedimentDto extends AbstractIdentificable<Long> implements Serializable {
 
 	private Long id;
@@ -23,60 +28,13 @@ public class ProcedimentDto extends AbstractIdentificable<Long> implements Seria
 	private Long entitatId;
 	private String entitatNom;
 
+	private String organGestor;
+	private String codiSia;
+
 	private List<ProcedimentServeiSimpleDto> serveisActius = new ArrayList<ProcedimentServeiSimpleDto>();
 
 	public ProcedimentDto() {
 
-	}
-
-	public Long getId() {
-		return id;
-	}
-	public void setId(Long id) {
-		this.id = id;
-	}
-	public String getCodi() {
-		return codi;
-	}
-	public void setCodi(String codi) {
-		this.codi = codi;
-	}
-	public String getNom() {
-		return nom;
-	}
-	public void setNom(String nom) {
-		this.nom = nom;
-	}
-	public String getDepartament() {
-		return departament;
-	}
-	public void setDepartament(String departament) {
-		this.departament = departament;
-	}
-	public boolean isActiu() {
-		return actiu;
-	}
-	public void setActiu(boolean actiu) {
-		this.actiu = actiu;
-	}
-	public Long getEntitatId() {
-		return entitatId;
-	}
-	public void setEntitatId(Long entitatId) {
-		this.entitatId = entitatId;
-	}
-	public String getEntitatNom() {
-		return entitatNom;
-	}
-	public void setEntitatNom(String entitatNom) {
-		this.entitatNom = entitatNom;
-	}
-
-	public List<ProcedimentServeiSimpleDto> getServeisActius() {
-		return serveisActius;
-	}
-	public void setServeisActius(List<ProcedimentServeiSimpleDto> serveisActius) {
-		this.serveisActius = serveisActius;
 	}
 
 	public String getNomAmbDepartament() {

@@ -196,29 +196,7 @@ public class ProcedimentController extends BaseController {
 		if (!EntitatHelper.isRepresentantEntitatActual(request))
 			return "representantNoAutoritzat";
 		EntitatDto entitat = EntitatHelper.getEntitatActual(request, entitatService);
-		if (entitat != null) {
-			if (bindingResult.hasErrors()) {
-				return "procedimentForm";
-			}
-			ProcedimentDto procediment = ProcedimentCommand.asDto(command);
-			procediment.setEntitatId(entitat.getId());
-			if (command.getId() != null) {
-				procedimentService.update(procediment);
-				AlertHelper.success(
-						request,
-						getMessage(
-								request,
-								"procediment.controller.procediment.modificat.ok"));
-			} else {
-				procedimentService.create(procediment);
-				AlertHelper.success(
-						request, 
-						getMessage(
-								request,
-								"procediment.controller.procediment.creat.ok"));
-			}
-			return "redirect:../procediment";
-		} else {
+		if (entitat == null) {
 			AlertHelper.error(
 					request, 
 					getMessage(
@@ -226,6 +204,29 @@ public class ProcedimentController extends BaseController {
 							"procediment.controller.no.entitat.seleccionada"));
 			return "redirect:../index";
 		}
+			
+		if (bindingResult.hasErrors()) {
+			return "procedimentForm";
+		}
+		
+		ProcedimentDto procediment = ProcedimentCommand.asDto(command);
+		procediment.setEntitatId(entitat.getId());
+		if (command.getId() != null) {
+			procedimentService.update(procediment);
+			AlertHelper.success(
+					request,
+					getMessage(
+							request,
+							"procediment.controller.procediment.modificat.ok"));
+		} else {
+			procedimentService.create(procediment);
+			AlertHelper.success(
+					request, 
+					getMessage(
+							request,
+							"procediment.controller.procediment.creat.ok"));
+		}
+		return "redirect:../procediment";
 	}
 
 	@RequestMapping(value = "/{procedimentId}/delete", method = RequestMethod.GET)

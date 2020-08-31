@@ -85,7 +85,10 @@ public class ProcedimentServiceImpl implements ProcedimentService {
 				entitat,
 				creat.getCodi(),
 				creat.getNom(),
-				creat.getDepartament()).build();
+				creat.getDepartament(),
+				creat.getOrganGestor(),
+				creat.getCodiSia()).build();
+
 		return dtoMappingHelper.getMapperFacade().map(
         		procedimentRepository.save(procediment),
         		ProcedimentDto.class);
@@ -180,7 +183,10 @@ public class ProcedimentServiceImpl implements ProcedimentService {
         procediment.update(
         		modificat.getCodi(),
         		modificat.getNom(),
-        		modificat.getDepartament());
+        		modificat.getDepartament(),
+        		modificat.getOrganGestor(),
+        		modificat.getCodiSia());
+
         return dtoMappingHelper.getMapperFacade().map(
 				procediment,
         		ProcedimentDto.class);

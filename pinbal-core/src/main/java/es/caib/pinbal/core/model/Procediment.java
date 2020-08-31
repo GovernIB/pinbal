@@ -26,12 +26,14 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import es.caib.pinbal.core.audit.PinbalAuditable;
 import es.caib.pinbal.core.dto.ProcedimentServeiSimpleDto;
+import lombok.Getter;
 
 /**
  * Classe de model de dades que conté la informació d'un procediment.
  * 
  * @author Limit Tecnologies <limit@limit.es>
  */
+@Getter
 @Entity
 @Table(	name = "pbl_procediment",
 		uniqueConstraints = {
@@ -54,7 +56,12 @@ public class Procediment extends PinbalAuditable<Long> {
 
 	@Column(name = "actiu")
 	private boolean actiu = true;
-
+	
+	@Column(name = "ORGAN_GESTOR")
+	private String organGestor;
+	@Column(name = "CODI_SIA")
+	private String codiSia;
+	
 	@ManyToOne(optional = false, fetch = FetchType.EAGER)
 	@JoinColumn(
 			name = "entitat_id",
@@ -87,32 +94,16 @@ public class Procediment extends PinbalAuditable<Long> {
 			Entitat entitat,
 			String codi,
 			String nom,
-			String departament) {
+			String departament,
+			String organGestor,
+			String codiSia) {
 		return new Builder(
 				entitat,
 				codi,
 				nom,
-				departament);
-	}
-
-	public String getCodi() {
-		return codi;
-	}
-
-	public String getNom() {
-		return nom;
-	}
-
-	public String getDepartament() {
-		return departament;
-	}
-
-	public boolean isActiu() {
-		return actiu;
-	}
-
-	public Entitat getEntitat() {
-		return entitat;
+				departament,
+				organGestor,
+				codiSia);
 	}
 
 	public List<ProcedimentServeiSimpleDto> getServeisActius() {
@@ -128,17 +119,17 @@ public class Procediment extends PinbalAuditable<Long> {
 		return resposta;
 	}
 
-	public long getVersion() {
-		return version;
-	}
-
 	public void update(
 			String codi,
 			String nom,
-			String departament) {
+			String departament,
+			String organGestor,
+			String codiSia) {
 		this.codi = codi;
 		this.nom = nom;
 		this.departament = departament;
+		this.organGestor = organGestor;
+		this.codiSia = codiSia;
 	}
 	public void updateActiu(boolean actiu) {
 		this.actiu = actiu;
@@ -173,12 +164,16 @@ public class Procediment extends PinbalAuditable<Long> {
 				Entitat entitat,
 				String codi,
 				String nom,
-				String departament) {
+				String departament,
+				String organGestor,
+				String codiSia) {
 			built = new Procediment();
 			built.entitat = entitat;
 			built.codi = codi;
 			built.nom = nom;
 			built.departament = departament;
+			built.organGestor = organGestor;
+			built.codiSia = codiSia;
 		}
 
 		/**

@@ -55,7 +55,7 @@ $(document).ready(function() {
 				}
 			},
 			{
-				targets: [4],
+				targets: [6],
 				orderable: false,
 				width: "1%",
 				render: function (data, type, row, meta) {
@@ -64,7 +64,7 @@ $(document).ready(function() {
 				}
 			}, 
 			{
-				targets: [5],
+				targets: [7],
 				orderable: false,
 				width: "1%",
 				render: function (data, type, row, meta) {
@@ -73,7 +73,7 @@ $(document).ready(function() {
 				}
 			}, 
 			{
-				targets: [6],
+				targets: [8],
 				orderable: false,
 				width: "1%",
 				render: function (data, type, row, meta) {
@@ -83,7 +83,7 @@ $(document).ready(function() {
 				}
 			}, 
 			{
-				targets: [7],
+				targets: [9],
 				orderable: false,
 				width: "1%",
 				render: function (data, type, row, meta) {
@@ -105,55 +105,33 @@ $(document).ready(function() {
 	<form:form id="form-filtre" action="${formAction}" method="post" cssClass="well" commandName="procedimentFiltreCommand">
 		<div class="container-fluid">
 			<div class="row">
-
-				 <div class="col-md-2">
-				 
-				 <pbl:inputText name="codi" inline="true" placeholderKey="procediment.list.filtre.camp.codi"/>
-<%-- 					<c:set var="campPath" value="codi"/> --%>
-<%-- 					<spring:message var="placeholderCodi" code="procediment.list.filtre.camp.codi"/> --%>
-<%-- 					<form:input path="${campPath}" cssClass="form-control" id="${campPath}" placeholder="${placeholderCodi}"/> --%>
+				 <div class="col-md-2">			 
+					 <pbl:inputText name="codi" inline="true" placeholderKey="procediment.list.filtre.camp.codi"/>
 				</div>
 				<div class="col-md-2">
-				<pbl:inputText name="nom" inline="true" placeholderKey="procediment.list.filtre.camp.nom"/>
-<%-- 					<c:set var="campPath" value="nom"/> --%>
-<%-- 					<spring:message var="placeholderNom" code="procediment.list.filtre.camp.nom"/> --%>
-<%-- 					<form:input path="${campPath}" cssClass="form-control" id="${campPath}" placeholder="${placeholderNom}"/> --%>
+					<pbl:inputText name="nom" inline="true" placeholderKey="procediment.list.filtre.camp.nom"/>
 				</div>
 				<div class="col-md-3">
 					<pbl:inputText name="departament" inline="true" placeholderKey="procediment.list.filtre.camp.departament"/>	
-<%-- 					<c:set var="campPath" value="departament"/> --%>
-<%-- 					<spring:message var="placeholderDepartament" code="procediment.list.filtre.camp.departament"/> --%>
-<%-- 					<form:input path="${campPath}" cssClass="form-control" id="${campPath}" placeholder="${placeholderDepartament}"/> --%>
-				</div>
-					
-					
+				</div>				
 				<div class="col-md-5" >
-				
 					<div class ="pull-right">
 						<button id="netejar-filtre" class="btn btn-default" type="button"><spring:message code="comu.boto.netejar"/></button>
 						<button type="submit" class="btn btn-primary"><spring:message code="comu.boto.filtrar"/></button>
 					</div>
 		       </div>        
 			</div>
-			
-			
-		</div>
-			
-	</form:form>
-			
+		</div>			
+	</form:form>			
 			<div class ="container-fluid">
 				<div class="pull-right">
-				<div class="row">
-					<div class="col-md-12" >
-						<a class="btn btn-primary" href="<c:url value="/procediment/new"/>"><i class="fa fa-plus"></i>&nbsp;<spring:message code="procediment.list.boto.nou.procediment"/></a>
+					<div class="row">
+						<div class="col-md-12" >
+							<a class="btn btn-primary" href="<c:url value="/procediment/new"/>"><i class="fa fa-plus"></i>&nbsp;<spring:message code="procediment.list.boto.nou.procediment"/></a>
+						</div>
 					</div>
-				</div>
-			</div>		
-			<div class="clearfix"></div>
-	
-
-		
-	
+				</div>		
+				<div class="clearfix"></div>
 	<table id="table-procediments" class="table table-striped table-bordered" style="width: 100%">
 		<thead>
 			<tr>
@@ -161,6 +139,8 @@ $(document).ready(function() {
 				<th data-data="nom"><spring:message code="procediment.list.taula.columna.nom" /></th>
 				<th data-data="departament"><spring:message code="procediment.list.taula.columna.departament" /></th>
 				<th data-data="actiu"><spring:message code="procediment.list.taula.columna.actiu" /></th>
+				<th data-data="organGestor"><spring:message code="procediment.list.taula.columna.organgestor" /></th>
+				<th data-data="codiSia"><spring:message code="procediment.list.taula.columna.codisia" /></th>
 				<th data-data="id"></th>
 				<th data-data="serveisActius"></th>
 				<th data-data="id"></th>
