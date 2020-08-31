@@ -29,9 +29,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import es.caib.pinbal.core.dto.ArxiuDto;
 import es.caib.pinbal.core.dto.ConsultaDto;
 import es.caib.pinbal.core.dto.EntitatDto;
+import es.caib.pinbal.core.dto.FitxerDto;
 import es.caib.pinbal.core.service.ConsultaService;
 import es.caib.pinbal.core.service.EntitatService;
 import es.caib.pinbal.core.service.ProcedimentService;
@@ -191,10 +191,10 @@ public class ConsultaMultipleController extends BaseController {
 		EntitatDto entitat = EntitatHelper.getEntitatActual(request, entitatService);
 		if (entitat != null) {
 			try {
-				ArxiuDto arxiu = consultaService.obtenirJustificantMultipleConcatenat(consultaId);
+				FitxerDto fitxer = consultaService.obtenirJustificantMultipleConcatenat(consultaId);
 				writeFileToResponse(
-						arxiu.getNom(),
-						arxiu.getContingut(),
+						fitxer.getNom(),
+						fitxer.getContingut(),
 						response);
 				return null;
 			} catch (ConsultaNotFoundException ex) {
@@ -228,10 +228,10 @@ public class ConsultaMultipleController extends BaseController {
 		EntitatDto entitat = EntitatHelper.getEntitatActual(request, entitatService);
 		if (entitat != null) {
 			try {
-				ArxiuDto arxiu = consultaService.obtenirJustificantMultipleZip(consultaId);
+				FitxerDto fitxer = consultaService.obtenirJustificantMultipleZip(consultaId);
 				writeFileToResponse(
-						arxiu.getNom(),
-						arxiu.getContingut(),
+						fitxer.getNom(),
+						fitxer.getContingut(),
 						response);
 				return null;
 			} catch (ConsultaNotFoundException ex) {

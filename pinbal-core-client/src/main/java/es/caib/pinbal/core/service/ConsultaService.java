@@ -11,13 +11,14 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
 
-import es.caib.pinbal.core.dto.ArxiuDto;
 import es.caib.pinbal.core.dto.ConsultaDto;
 import es.caib.pinbal.core.dto.ConsultaFiltreDto;
 import es.caib.pinbal.core.dto.EntitatDto;
 import es.caib.pinbal.core.dto.EstadisticaDto;
 import es.caib.pinbal.core.dto.EstadistiquesFiltreDto;
+import es.caib.pinbal.core.dto.FitxerDto;
 import es.caib.pinbal.core.dto.InformeGeneralEstatDto;
+import es.caib.pinbal.core.dto.JustificantDto;
 import es.caib.pinbal.core.dto.RecobrimentSolicitudDto;
 import es.caib.pinbal.core.service.exception.ConsultaNotFoundException;
 import es.caib.pinbal.core.service.exception.EntitatNotFoundException;
@@ -243,7 +244,7 @@ public interface ConsultaService {
 	 *            Si es produeixen errors al generar el justificant.
 	 */
 	@PreAuthorize("hasRole('ROLE_DELEG')")
-	public ArxiuDto obtenirJustificant(
+	public JustificantDto obtenirJustificant(
 			Long id) throws ConsultaNotFoundException, JustificantGeneracioException;
 
 	/**
@@ -260,7 +261,7 @@ public interface ConsultaService {
 	 *            Si es produeixen errors al generar el justificant.
 	 */
 	@PreAuthorize("hasRole('ROLE_WS')")
-	public ArxiuDto obtenirJustificant(
+	public JustificantDto obtenirJustificant(
 			String idpeticion,
 			String idsolicitud) throws ConsultaNotFoundException, JustificantGeneracioException;
 
@@ -277,7 +278,7 @@ public interface ConsultaService {
 	 *            Si es produeixen errors al generar el justificant.
 	 */
 	@PreAuthorize("hasRole('ROLE_DELEG')")
-	public ArxiuDto obtenirJustificantMultipleConcatenat(
+	public FitxerDto obtenirJustificantMultipleConcatenat(
 			Long id) throws ConsultaNotFoundException, JustificantGeneracioException;
 
 	/**
@@ -293,7 +294,7 @@ public interface ConsultaService {
 	 *            Si es produeixen errors al generar el justificant.
 	 */
 	@PreAuthorize("hasRole('ROLE_DELEG')")
-	public ArxiuDto obtenirJustificantMultipleZip(
+	public FitxerDto obtenirJustificantMultipleZip(
 			Long id) throws ConsultaNotFoundException, JustificantGeneracioException;
 
 	/**
@@ -301,6 +302,8 @@ public interface ConsultaService {
 	 * 
 	 * @param id
 	 *            Atribut id de la consulta.
+	 * @param descarregar
+	 *            Indica si la s'ha de retornar el fitxer amb el justificant.
 	 * @return l'arxiu amb el document generat.
 	 * @throws ConsultaNotFoundException
 	 *            Si la consulta no és accessible per aquest usuari.
@@ -308,8 +311,9 @@ public interface ConsultaService {
 	 *            Si es produeixen errors al generar el justificant.
 	 */
 	@PreAuthorize("hasRole('ROLE_DELEG')")
-	public void reintentarGeneracioJustificant(
-			Long id) throws ConsultaNotFoundException, JustificantGeneracioException;
+	public JustificantDto reintentarGeneracioJustificant(
+			Long id,
+			boolean descarregar) throws ConsultaNotFoundException, JustificantGeneracioException;
 
 	/**
 	 * Retorna una pàgina de les consultes simples realitzades donada
@@ -596,10 +600,22 @@ public interface ConsultaService {
 			List<Long> consultaIds) throws ScspException;
 
 	/**
-	 * Revisa l'estat de les peticions múltiples pendents per veure
-	 * si ja han estat processades.
+	 * Tasca automàtica per a revisar l'estat de les peticions múltiples
+	 * pendents per veure si ja han estat processades.
 	 */
-	public void revisarEstatPeticionsMultiplesPendents();
+	public void autoRevisarEstatPeticionsMultiplesPendents();
+
+	/**
+	 * Tasca automàtica per a generar els justificants pendents de les
+	 * peticions SCSP ja tramitades.
+	 */
+	public void autoGenerarJustificantsPendents();
+
+	/**
+	 * Tasca automàtica per a tancar els expedients pendents que contenen
+	 * els justificants pendents ja generats.
+	 */
+	public void autoTancarExpedientsPendents();
 
 	/**
 	 * Retorna si les peticions al SCSP s'han de fer en una sola passa o en

@@ -5,6 +5,7 @@ package es.caib.pinbal.scsp;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
 import java.util.ArrayList;
@@ -15,6 +16,7 @@ import java.util.Map;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
@@ -44,6 +46,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
 
 import es.caib.pinbal.scsp.tree.Node;
 import es.caib.pinbal.scsp.tree.Tree;
@@ -136,7 +139,7 @@ public class XmlHelper {
 	}
 
 	public Map<String, Object> getDadesEspecifiquesXml(
-			String xmlPeticion) throws Exception {
+			String xmlPeticion) throws ParserConfigurationException, SAXException, IOException {
 		Map<String, Object> dades = new HashMap<String, Object>();
 		if (xmlPeticion != null) {
 			Document doc = xmlToDocument(
@@ -448,7 +451,7 @@ public class XmlHelper {
 			path.remove(path.size() - 1);
 		}
 	}
-	private Document xmlToDocument(InputStream is) throws Exception {
+	private Document xmlToDocument(InputStream is) throws ParserConfigurationException, SAXException, IOException {
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 		factory.setNamespaceAware(true);
 		DocumentBuilder builder = null;

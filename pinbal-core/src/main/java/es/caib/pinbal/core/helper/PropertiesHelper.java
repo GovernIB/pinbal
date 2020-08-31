@@ -52,6 +52,10 @@ public class PropertiesHelper extends Properties {
 		return instance;
 	}
 
+	public boolean isLlegirSystem() {
+		return llegirSystem;
+	}
+
 	public String getProperty(String key) {
 		if (llegirSystem)
 			return System.getProperty(key);
@@ -77,6 +81,37 @@ public class PropertiesHelper extends Properties {
 	}
 	public double getAsDouble(String key) {
 		return new Double(getProperty(key)).doubleValue();
+	}
+
+	public Properties findByPrefix(String prefix) {
+		Properties properties = new Properties();
+		if (llegirSystem) {
+			for (Object key: System.getProperties().keySet()) {
+				if (key instanceof String) {
+					String keystr = (String)key;
+					if (prefix == null || keystr.startsWith(prefix)) {
+						properties.put(
+								keystr,
+								System.getProperty(keystr));
+					}
+				}
+			}
+		} else {
+			for (Object key: this.keySet()) {
+				if (key instanceof String) {
+					String keystr = (String)key;
+					if (prefix == null || keystr.startsWith(prefix)) {
+						properties.put(
+								keystr,
+								getProperty(keystr));
+					}
+				}
+			}
+		}
+		return properties;
+	}
+	public Properties findAll() {
+		return findByPrefix(null);
 	}
 
 	private static final Logger logger = LoggerFactory.getLogger(PropertiesHelper.class);

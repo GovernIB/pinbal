@@ -17,9 +17,6 @@ public class FitxerDto implements Serializable {
 	private String nom;
 	private String contentType;
 	private byte[] contingut;
-	private long tamany;
-
-
 
 	public String getNom() {
 		return nom;
@@ -38,16 +35,10 @@ public class FitxerDto implements Serializable {
 	}
 	public void setContingut(byte[] contingut) {
 		this.contingut = contingut;
-		if (contingut != null)
-			this.tamany = contingut.length;
-		else
-			this.tamany = 0;
 	}
-	public long getTamany() {
-		return tamany;
-	}
-	public void setTamany(long tamany) {
-		this.tamany = tamany;
+
+	public long getLongitud() {
+		return (contingut != null) ? contingut.length : 0;
 	}
 
 	public String getExtensio() {

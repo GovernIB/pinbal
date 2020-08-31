@@ -104,7 +104,13 @@ public class Consulta extends PinbalAuditable<Long> {
 	private String custodiaUrl;
 	@Column(name = "justificant_error", length = ERROR_JUSTIFICANT_MAX_LENGTH)
 	private String justificantError;
-
+	@Column(name = "arxiu_expedient_uuid", length = 100)
+	private String arxiuExpedientUuid;
+	@Column(name = "arxiu_document_uuid", length = 100)
+	private String arxiuDocumentUuid;
+	@Column(name = "arxiu_expedient_tancat")
+	private boolean arxiuExpedientTancat = false;
+	
 	@ManyToOne(optional=true, fetch = FetchType.LAZY)
 	@JoinColumn(
 			name = "pare_id",
@@ -122,8 +128,6 @@ public class Consulta extends PinbalAuditable<Long> {
 
 	@Version
 	private long version = 0;
-
-
 
 	/**
 	 * Obté el Builder per a crear objectes de tipus Consulta.
@@ -253,6 +257,15 @@ public class Consulta extends PinbalAuditable<Long> {
 	public String getJustificantError() {
 		return justificantError;
 	}
+	public String getArxiuExpedientUuid() {
+		return arxiuExpedientUuid;
+	}
+	public String getArxiuDocumentUuid() {
+		return arxiuDocumentUuid;
+	}
+	public boolean isArxiuExpedientTancat() {
+		return arxiuExpedientTancat;
+	}
 	public Consulta getPare() {
 		return pare;
 	}
@@ -277,20 +290,27 @@ public class Consulta extends PinbalAuditable<Long> {
 			boolean custodiat,
 			String custodiaId,
 			String custodiaUrl,
-			String justificantError) {
+			String justificantError,
+			String arxiuExpedientUuid,
+			String arxiuDocumentUuid) {
 		this.justificantEstat = justificantEstat;
 		this.custodiat = custodiat;
 		this.custodiaId = custodiaId;
 		this.custodiaUrl = custodiaUrl;
 		if (justificantError != null && justificantError.length() > ERROR_JUSTIFICANT_MAX_LENGTH) {
 			String tokenFinal = " [...]";
-			this.justificantError = justificantError.substring(0, (ERROR_JUSTIFICANT_MAX_LENGTH - tokenFinal.length())) + tokenFinal;
+			this.justificantError = justificantError.substring(0, (ERROR_JUSTIFICANT_MAX_LENGTH - tokenFinal.length() - 2)) + tokenFinal;
 		} else {
 			this.justificantError = justificantError;
 		}
+		this.arxiuExpedientUuid = arxiuExpedientUuid;
+		this.arxiuDocumentUuid = arxiuDocumentUuid;
 	}
 	public void updateScspSolicitudId(String scspSolicitudId) {
 		this.scspSolicitudId = scspSolicitudId;
+	}
+	public void updateArxiuExpedientTancat(boolean arxiuExpedientTancat) {
+		this.arxiuExpedientTancat = arxiuExpedientTancat;
 	}
 
 	/**

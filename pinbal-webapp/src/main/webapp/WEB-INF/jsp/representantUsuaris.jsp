@@ -213,14 +213,14 @@ function showModalEditar(
 <body>
 
 	<c:url value="/representant/usuari" var="formAction"/>
-	<form:form id="form-filtre" action="${formAction}" method="post" cssClass="well" commandName="usuariFiltreCommand">
-		  <div class="row">
-		  	<div class="col-md-2">
-		  		<pbl:inputText name="codi" inline="true" placeholderKey="representant.usuaris.filtre.camp.codi" />
-		  	</div>
-		  	<div class="col-md-2">	
-		  		<pbl:inputText name="nif" inline="true" placeholderKey="representant.usuaris.filtre.camp.nif" />
-			</div>	
+	<form:form id="form-filtre" action="${formAction}" method="post" cssClass="well form-filtre-table" commandName="usuariFiltreCommand">
+		<div class="row">
+		 	<div class="col-md-2">
+		 		<pbl:inputText name="codi" inline="true" placeholderKey="representant.usuaris.filtre.camp.codi" />
+		 	</div>
+		 	<div class="col-md-2">	
+		 		<pbl:inputText name="nif" inline="true" placeholderKey="representant.usuaris.filtre.camp.nif" />
+			</div>
 			<div class="col-md-2">			
 				<pbl:inputText name="nom" inline="true" placeholderKey="representant.usuaris.filtre.camp.nom" />
 			</div>	
@@ -230,19 +230,15 @@ function showModalEditar(
 			<div class="col-md-4">
 				<div class="pull-right">
 					<button id="netejar-filtre" class="btn btn-default" type="button"><spring:message code="comu.boto.netejar"/></button>
-					<button type="submit" class="btn btn-primary"><spring:message code="comu.boto.filtrar"/></button>
+					<button type="submit" class="btn btn-primary"><span class="fa fa-filter"></span> <spring:message code="comu.boto.filtrar"/></button>
 				</div>
 			</div>	
 		</div>	
 	</form:form>
 			
-	<div class="container-fluid">
-		<div class="row">
-		<div class="pull-right">
-			<div class="col-md-12 pull-right">
-				<a class="btn btn-primary" href="#modal-form-usuari" onclick="showModalCrear()"><i class="fa fa-plus"></i>&nbsp;<spring:message code="entitat.usuaris.boto.nou.usuari"/></a>
-			</div>
-		</div>
+	<div class="pull-right">
+		<a class="btn btn-primary" href="#modal-form-usuari" onclick="showModalCrear()"><i class="fa fa-plus"></i>&nbsp;<spring:message code="entitat.usuaris.boto.nou.usuari"/></a>
+	</div>
 	<table id="table-users" class="table table-striped table-bordered" style="width: 100%">
 		<thead>
 			<tr>
@@ -282,8 +278,7 @@ function showModalEditar(
 {{^principal}}
 	<a data-nrow="{{ nrow }}" class="btn-open-modal-edit btn btn-primary"><i class="fas fa-pen"></i>&nbsp;<spring:message code="comu.boto.modificar"/></a>
 {{/principal}}
-</script>	
-<div class="container">
+</script>
 <div id="modal-form-usuari" class="modal fade" role="dialog">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
@@ -351,7 +346,6 @@ function showModalEditar(
 	</div>
 </div>
 </div>
-</div>
-</div>
+
 </body>
 </html>

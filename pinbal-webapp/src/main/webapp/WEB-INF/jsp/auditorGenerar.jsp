@@ -31,27 +31,23 @@
 <body>
 
 	<c:url value="/auditor/generar" var="formAction"/>
-	<form:form action="${formAction}" method="post" cssClass="well" commandName="auditoriaGenerarCommand">
+	<form:form action="${formAction}" method="post" cssClass="well form-filtre-table" commandName="auditoriaGenerarCommand">
 		<form:hidden path="numEntitats"/>
-		<div class="container-fluid">
-			<div class="row">
-				<div class="col-md-3">
-					<pbl:inputDate name="dataInici" inline="true" placeholderKey="auditor.generar.filtre.camp.data.inici"/>
-				</div>
-				<div class="col-md-3">
-					<pbl:inputDate name="dataFi" inline="true" placeholderKey="auditor.generar.filtre.camp.data.fi"/>
-					<c:set var="campPath" value="dataFi"/>
-				</div>
-				<div class="col-md-3">
-					<pbl:inputText name="numConsultes" inline="true" placeholderKey="auditor.generar.filtre.camp.num.consultes"/>
-				</div>
-				<div class="col-md-3">	
-					<button type="submit" class="btn btn-primary pull-right"><spring:message code="comu.boto.generar"/></button>
-				</div>	
+		<div class="row">
+			<div class="col-md-3">
+				<pbl:inputDate name="dataInici" inline="true" placeholderKey="auditor.generar.filtre.camp.data.inici"/>
 			</div>
+			<div class="col-md-3">
+				<pbl:inputDate name="dataFi" inline="true" placeholderKey="auditor.generar.filtre.camp.data.fi"/>
+				<c:set var="campPath" value="dataFi"/>
+			</div>
+			<div class="col-md-3">
+				<pbl:inputText name="numConsultes" inline="true" placeholderKey="auditor.generar.filtre.camp.num.consultes"/>
+			</div>
+			<div class="col-md-3">	
+				<button type="submit" class="btn btn-primary pull-right"><spring:message code="comu.boto.generar"/></button>
+			</div>	
 		</div>
-	
-					
 	</form:form>
 
 	<c:if test="${not empty consultes}">
@@ -101,7 +97,7 @@
 			</c:forEach>
 		</tbody>
 		</table>
-		<a href="generarExcel" class="btn btn-primary"><i class="fas fa-file-download"></i>&nbsp;<spring:message code="auditor.list.exportar.excel"/></a>
+		<a href="generarExcel" class="btn btn-default"><i class="fas fa-file-excel"></i>&nbsp;<spring:message code="auditor.list.exportar.excel"/></a>
 	</form>
 	<script type="text/javascript">
 		function onInvokeAction(id) {

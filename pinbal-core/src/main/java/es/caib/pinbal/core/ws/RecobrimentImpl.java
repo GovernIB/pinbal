@@ -35,13 +35,13 @@ import org.w3c.dom.Element;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
-import es.caib.pinbal.core.dto.ArxiuDto;
 import es.caib.pinbal.core.dto.ConsultaDto;
 import es.caib.pinbal.core.dto.ConsultaDto.Consentiment;
 import es.caib.pinbal.core.dto.ConsultaDto.DocumentTipus;
-import es.caib.pinbal.core.helper.PropertiesHelper;
+import es.caib.pinbal.core.dto.JustificantDto;
 import es.caib.pinbal.core.dto.RecobrimentSolicitudDto;
 import es.caib.pinbal.core.dto.RespostaAtributsDto;
+import es.caib.pinbal.core.helper.PropertiesHelper;
 import es.caib.pinbal.core.service.ConsultaService;
 import es.caib.pinbal.core.service.exception.ConsultaNotFoundException;
 import es.caib.pinbal.core.service.exception.EntitatNotFoundException;
@@ -220,14 +220,20 @@ public class RecobrimentImpl implements Recobriment, ApplicationContextAware, Me
 			String idpeticion,
 			String idsolicitud) throws ScspException {
 		try {
-			ArxiuDto arxiu = consultaService.obtenirJustificant(
+			JustificantDto justificant = consultaService.obtenirJustificant(
 					idpeticion,
 					idsolicitud);
-			return arxiu.getContingut();
+			if (!justificant.isError()) {
+				return justificant.getContingut();
+			} else {
+				throw getErrorValidacio(
+						"0227",
+						justificant.getErrorDescripcio());
+			}
 		} catch (ConsultaNotFoundException ex) {
 			throw getErrorValidacio(
 					"0227",
-					"No s'ha trobat la sol·licitud");
+					"No s'ha trobat la sol·licitud: " + ex.getMessage());
 		} catch (JustificantGeneracioException ex) {
 			LOGGER.error("Error en la generació del justificant", ex);
 			throw getErrorValidacio(

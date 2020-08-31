@@ -25,7 +25,8 @@
 		<xdocreport.version>1.0.3</xdocreport.version>
 		<compiler.plugin.version>3.1</compiler.plugin.version>
 		<slf4j.version>1.7.7</slf4j.version>
-		<maven.test.skip>true</maven.test.skip>
+		<pluginsib.arxiu.version>2.0.5</pluginsib.arxiu.version>
+		<skipTests>true</skipTests>
 		<maven.compiler.source>1.6</maven.compiler.source>
 		<maven.compiler.target>1.6</maven.compiler.target>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

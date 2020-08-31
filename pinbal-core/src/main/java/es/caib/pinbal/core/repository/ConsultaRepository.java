@@ -14,6 +14,7 @@ import org.springframework.data.repository.query.Param;
 
 import es.caib.pinbal.core.model.Consulta;
 import es.caib.pinbal.core.model.Consulta.EstatTipus;
+import es.caib.pinbal.core.model.Consulta.JustificantEstat;
 import es.caib.pinbal.core.model.Entitat;
 import es.caib.pinbal.core.model.Usuari;
 
@@ -247,6 +248,18 @@ public interface ConsultaRepository extends JpaRepository<Consulta, Long> {
 	public List<Consulta> findByPareOrderByScspSolicitudIdAsc(Consulta pare);
 
 	public List<Consulta> findByEstatAndMultipleTrue(EstatTipus estat);
+
+	public List<Consulta> findByEstatAndJustificantEstatAndMultipleAndArxiuExpedientTancatOrderByIdAsc(
+			EstatTipus estat,
+			JustificantEstat justificantEstat,
+			boolean multiple,
+			boolean arxiuExpedientTancat);
+
+	public int countByPare(Consulta pare);
+
+	public int countByPareAndCustodiat(
+			Consulta pare,
+			boolean custodiat);
 
 	@Query(	"select " +
 			"    count(*) " +

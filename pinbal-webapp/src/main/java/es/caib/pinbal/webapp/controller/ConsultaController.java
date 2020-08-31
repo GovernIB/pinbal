@@ -48,12 +48,12 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
-import es.caib.pinbal.core.dto.ArxiuDto;
 import es.caib.pinbal.core.dto.ConsultaDto;
 import es.caib.pinbal.core.dto.ConsultaDto.DocumentTipus;
 import es.caib.pinbal.core.dto.DadaEspecificaDto;
 import es.caib.pinbal.core.dto.EntitatDto;
 import es.caib.pinbal.core.dto.EntitatUsuariDto;
+import es.caib.pinbal.core.dto.JustificantDto;
 import es.caib.pinbal.core.dto.NodeDto;
 import es.caib.pinbal.core.dto.ServeiCampDto;
 import es.caib.pinbal.core.dto.ServeiCampDto.ServeiCampDtoTipus;
@@ -434,20 +434,30 @@ public class ConsultaController extends BaseController {
 		EntitatDto entitat = EntitatHelper.getEntitatActual(request, entitatService);
 		if (entitat != null) {
 			try {
-				ArxiuDto arxiu = consultaService.obtenirJustificant(consultaId);
-				writeFileToResponse(
-						arxiu.getNom(),
-						arxiu.getContingut(),
-						response);
-				return null;
+				JustificantDto justificant = consultaService.obtenirJustificant(consultaId);
+				if (!justificant.isError()) {
+					writeFileToResponse(
+							justificant.getNom(),
+							justificant.getContingut(),
+							response);
+					return null;
+				} else {
+					AlertHelper.error(
+							request,
+							getMessage(
+									request, 
+									"consulta.controller.justificant.error"));
+					return "redirect:../../consulta";
+				}
 			} catch (ConsultaNotFoundException ex) {
 				throw ex;
 			} catch (Exception ex) {
+				ex.printStackTrace();
 				AlertHelper.error(
 						request,
 						getMessage(
 								request, 
-								"consulta.controller.justificant.error") + ": " + ex.getMessage());
+								"consulta.controller.justificant.error"));
 				return "redirect:../../consulta";
 			}
 		} else {
@@ -471,18 +481,30 @@ public class ConsultaController extends BaseController {
 		EntitatDto entitat = EntitatHelper.getEntitatActual(request, entitatService);
 		if (entitat != null) {
 			try {
-				consultaService.reintentarGeneracioJustificant(consultaId);
-				AlertHelper.success(
-						request,
-						getMessage(
-								request, 
-								"consulta.controller.justificant.regenerat"));
+				JustificantDto justificant = consultaService.reintentarGeneracioJustificant(
+						consultaId,
+						false);
+				if (!justificant.isError()) {
+					AlertHelper.success(
+							request,
+							getMessage(
+									request, 
+									"consulta.controller.justificant.regenerat"));
+				} else {
+					AlertHelper.error(
+							request,
+							getMessage(
+									request, 
+									"consulta.controller.justificant.error"));
+				}
+			} catch (ConsultaNotFoundException ex) {
+				throw ex;
 			} catch (Exception ex) {
 				AlertHelper.error(
 						request,
 						getMessage(
 								request, 
-								"consulta.controller.justificant.error") + ": " + ex.getMessage());
+								"consulta.controller.justificant.error"));
 			}
 			if (info != null && info.booleanValue()) {
 				return "redirect:../../consulta/" + consultaId;

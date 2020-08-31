@@ -33,6 +33,7 @@
 
 	<script src="<c:url value="/js/webutil.common.js"/>"></script>
 	<script src="<c:url value="/js/webutil.datatable.js"/>"></script>
+
 <script>
 $(document).ready(function() {
 	$('#netejar-filtre').click(function() {
@@ -122,9 +123,9 @@ $(document).ready(function() {
 </script>
 </head>
 <body>
-
+	
 	<c:url value="/entitat" var="formAction"/>
-	<form:form id="form-filtre" action="${formAction}" method="post" cssClass="well" commandName="entitatFiltreCommand">
+	<form:form id="form-filtre" action="${formAction}" method="post" cssClass="well form-filtre-table" commandName="entitatFiltreCommand">
 
 		<div class="row">		
 			<div class="col-md-2" >
@@ -155,36 +156,29 @@ $(document).ready(function() {
 			<div class="col-md-2">
 				<div class="pull-right">
 					<button id="netejar-filtre" class="btn btn-default" type="button"><spring:message code="comu.boto.netejar"/></button>
-					<button type="submit" class="btn btn-primary"><spring:message code="comu.boto.filtrar"/></button>
+					<button type="submit" class="btn btn-primary"><span class="fa fa-filter"></span> <spring:message code="comu.boto.filtrar"/></button>
 				</div>				
 			</div>
 		</div>
 	</form:form>
 	
-	<div class="row">
-		<div class="col-md-12">
-			<a class="btn btn-primary pull-right" href="<c:url value="/entitat/new"/>"><i class="fa fa-plus"></i>&nbsp;<spring:message code="entitat.list.boto.nova.entitat"/></a>
-		</div>
-	</div>		
-			
-	<div class="row">
-	<div class="col-md-12">
-		<table id="table-entitats" class="table table-striped table-bordered" style="width: 100%">
-			<thead>
-				<tr>
-					<th data-data="codi"><spring:message code="entitat.list.taula.columna.codi" /></th>
-					<th data-data="nom"><spring:message code="entitat.list.taula.columna.nom" /></th>
-					<th data-data="cif"><spring:message code="entitat.list.taula.columna.cif" /></th>
-					<th data-data="tipus"><spring:message code="entitat.list.taula.columna.tipus" /></th>
-					<th data-data="activa"><spring:message code="entitat.list.taula.columna.activa" /></th>
-					<th data-data="usuaris"></th>
-					<th data-data="serveis"></th>
-					<th data-data="id"></th>
-				</tr>
-			</thead>
-		</table>
-		</div>
-	</div>	
+	<div class="pull-right">
+		<a class="btn btn-primary" href="<c:url value="/entitat/new"/>"><i class="fa fa-plus"></i>&nbsp;<spring:message code="entitat.list.boto.nova.entitat"/></a>
+	</div>
+	<table id="table-entitats" class="table table-striped table-bordered" style="width: 100%">
+		<thead>
+			<tr>
+				<th data-data="codi"><spring:message code="entitat.list.taula.columna.codi" /></th>
+				<th data-data="nom"><spring:message code="entitat.list.taula.columna.nom" /></th>
+				<th data-data="cif"><spring:message code="entitat.list.taula.columna.cif" /></th>
+				<th data-data="tipus"><spring:message code="entitat.list.taula.columna.tipus" /></th>
+				<th data-data="activa"><spring:message code="entitat.list.taula.columna.activa" /></th>
+				<th data-data="usuaris"></th>
+				<th data-data="serveis"></th>
+				<th data-data="id"></th>
+			</tr>
+		</thead>
+	</table>
 <script id="template-nom" type="x-tmpl-mustache">
 {{{ span-label }}}
 {{ nom }}

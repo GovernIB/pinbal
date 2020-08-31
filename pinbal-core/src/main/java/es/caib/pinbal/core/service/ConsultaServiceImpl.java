@@ -3,11 +3,7 @@
  */
 package es.caib.pinbal.core.service;
 
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -24,12 +20,10 @@ import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
-import javax.annotation.Resource;
-import javax.xml.parsers.ParserConfigurationException;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.MessageSource;
@@ -43,16 +37,18 @@ import org.springframework.security.acls.model.MutableAclService;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionCallback;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
 import org.w3c.dom.Element;
 
 import com.lowagie.text.Document;
-import com.lowagie.text.DocumentException;
 import com.lowagie.text.pdf.PdfCopy;
 import com.lowagie.text.pdf.PdfReader;
-import com.lowagie.text.pdf.codec.Base64;
 
-import es.caib.pinbal.core.dto.ArxiuDto;
 import es.caib.pinbal.core.dto.ConsultaDto;
 import es.caib.pinbal.core.dto.ConsultaDto.Consentiment;
 import es.caib.pinbal.core.dto.ConsultaDto.DocumentTipus;
@@ -62,12 +58,13 @@ import es.caib.pinbal.core.dto.EntitatDto;
 import es.caib.pinbal.core.dto.EstadisticaDto;
 import es.caib.pinbal.core.dto.EstadistiquesFiltreDto;
 import es.caib.pinbal.core.dto.EstadistiquesFiltreDto.EstadistiquesAgrupacioDto;
+import es.caib.pinbal.core.dto.FitxerDto;
 import es.caib.pinbal.core.dto.InformeGeneralEstatDto;
+import es.caib.pinbal.core.dto.JustificantDto;
 import es.caib.pinbal.core.dto.ProcedimentDto;
 import es.caib.pinbal.core.dto.RecobrimentSolicitudDto;
-import es.caib.pinbal.core.helper.ConversioTipusDocumentHelper;
 import es.caib.pinbal.core.helper.DtoMappingHelper;
-import es.caib.pinbal.core.helper.JustificantPlantillaHelper;
+import es.caib.pinbal.core.helper.JustificantHelper;
 import es.caib.pinbal.core.helper.PermisosHelper;
 import es.caib.pinbal.core.helper.PluginHelper;
 import es.caib.pinbal.core.helper.PropertiesHelper;
@@ -84,7 +81,6 @@ import es.caib.pinbal.core.model.ProcedimentServei;
 import es.caib.pinbal.core.model.ServeiCamp;
 import es.caib.pinbal.core.model.ServeiCamp.ServeiCampTipus;
 import es.caib.pinbal.core.model.ServeiConfig;
-import es.caib.pinbal.core.model.ServeiConfig.JustificantTipus;
 import es.caib.pinbal.core.repository.ConsultaRepository;
 import es.caib.pinbal.core.repository.EntitatRepository;
 import es.caib.pinbal.core.repository.EntitatUsuariRepository;
@@ -92,7 +88,6 @@ import es.caib.pinbal.core.repository.ProcedimentRepository;
 import es.caib.pinbal.core.repository.ProcedimentServeiRepository;
 import es.caib.pinbal.core.repository.ServeiCampRepository;
 import es.caib.pinbal.core.repository.ServeiConfigRepository;
-import es.caib.pinbal.core.repository.ServeiJustificantCampRepository;
 import es.caib.pinbal.core.repository.UsuariRepository;
 import es.caib.pinbal.core.service.exception.AccesExternException;
 import es.caib.pinbal.core.service.exception.ConsultaNotFoundException;
@@ -103,13 +98,15 @@ import es.caib.pinbal.core.service.exception.ProcedimentServeiNotFoundException;
 import es.caib.pinbal.core.service.exception.ScspException;
 import es.caib.pinbal.core.service.exception.ServeiNotAllowedException;
 import es.caib.pinbal.core.service.exception.ValidacioDadesPeticioException;
+import es.caib.pinbal.plugins.SistemaExternException;
 import es.caib.pinbal.scsp.Resposta;
 import es.caib.pinbal.scsp.ResultatEnviamentPeticio;
 import es.caib.pinbal.scsp.ScspHelper;
 import es.caib.pinbal.scsp.Solicitud;
+import es.caib.plugins.arxiu.api.Expedient;
+import es.caib.plugins.arxiu.api.ExpedientEstat;
 import es.scsp.common.domain.core.EmisorCertificado;
 import es.scsp.common.domain.core.Servicio;
-import net.sf.jooreports.templates.DocumentTemplateException;
 
 /**
  * Implementació dels mètodes per a gestionar les consultes al SCSP.
@@ -119,48 +116,47 @@ import net.sf.jooreports.templates.DocumentTemplateException;
 @Service
 public class ConsultaServiceImpl implements ConsultaService, ApplicationContextAware, MessageSourceAware {
 
-	private static final String JUSTIFICANT_EXTENSIO_SORTIDA = "pdf";
-
-	@Resource
+	@Autowired
 	private ConsultaRepository consultaRepository;
-	@Resource
+	@Autowired
 	private ProcedimentRepository procedimentRepository;
-	@Resource
+	@Autowired
 	private ProcedimentServeiRepository procedimentServeiRepository;
-	@Resource
+	@Autowired
 	private EntitatRepository entitatRepository;
-	@Resource
+	@Autowired
 	private UsuariRepository usuariRepository;
-	@Resource
+	@Autowired
 	private ServeiConfigRepository serveiConfigRepository;
-	@Resource
+	@Autowired
 	private ServeiCampRepository serveiCampRepository;
-	@Resource
+	@Autowired
 	private EntitatUsuariRepository entitatUsuariRepository;
-	@Resource
-	private ServeiJustificantCampRepository serveiJustificantCampRepository;
 
-	@Resource
-	private JustificantPlantillaHelper justificantPlantillaHelper;
-	@Resource
-	private ConversioTipusDocumentHelper conversioTipusDocumentHelper;
-	@Resource
+	@Autowired
+	private JustificantHelper justificantHelper;
+	@Autowired
 	private DtoMappingHelper dtoMappingHelper;
-	@Resource
+	@Autowired
 	private TransaccioHelper transaccioHelper;
-	@Resource
-	private PluginHelper pluginHelper;
-	@Resource
+	@Autowired
 	private UsuariHelper usuariHelper;
-	@Resource
+	@Autowired
 	private ServeiHelper serveiHelper;
+	@Autowired
+	private PluginHelper pluginHelper;
 
-	@Resource
+	@Autowired
 	private MutableAclService aclService;
+
+	@Autowired
+	private PlatformTransactionManager transactionManager;
 
 	private ApplicationContext applicationContext;
 	private MessageSource messageSource;
 	private ScspHelper scspHelper;
+
+	private Map<Long, Object> justificantLocks = new HashMap<Long, Object>();
 
 
 
@@ -224,9 +220,11 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 					solicituds);
 			updateEstatConsulta(c, resultat, true);
 			c.updateScspSolicitudId(resultat.getIdsSolicituds()[0]);
-			if (EstatTipus.Tramitada.equals(c.getEstat())) {
-				generarCustodiarJustificant(c);
-			}
+			/*if (EstatTipus.Tramitada.equals(c.getEstat())) {
+				justificantHelper.generarCustodiarJustificantPendent(
+						c,
+						getScspHelper());
+			}*/
 			Consulta saved = consultaRepository.save(c);
 			return dtoMappingHelper.getMapperFacade().map(
 					saved,
@@ -346,9 +344,11 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 					consulta.getScspPeticionId());
 			updateEstatConsulta(consulta, resultat, true);
 			consulta.updateScspSolicitudId(resultat.getIdsSolicituds()[0]);
-			if (EstatTipus.Tramitada.equals(consulta.getEstat())) {
-				generarCustodiarJustificant(consulta);
-			}
+			/*if (EstatTipus.Tramitada.equals(consulta.getEstat())) {
+				justificantHelper.generarCustodiarJustificantPendent(
+						consulta,
+						getScspHelper());
+			}*/
 			return dtoMappingHelper.getMapperFacade().map(
 					consulta,
 					ConsultaDto.class);
@@ -556,7 +556,9 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 				resposta.setRespostaEstadoError(resultat.getErrorDescripcio());
 			} else {
 				// Si no hi ha error genera el justificant
-				generarCustodiarJustificant(saved);
+				/*justificantHelper.generarCustodiarJustificantPendent(
+						saved,
+						getScspHelper());*/
 			}
 			return resposta;
 		} catch (Exception ex) {
@@ -698,9 +700,11 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 			ResultatEnviamentPeticio resultat = getScspHelper().recuperarResultatEnviamentPeticio(consulta.getScspPeticionId());
 			updateEstatConsulta(consulta, resultat, true);
 			consulta.updateScspSolicitudId(resultat.getIdsSolicituds()[0]);
-			if (EstatTipus.Tramitada.equals(consulta.getEstat())) {
-				generarCustodiarJustificant(consulta);
-			}
+			/*if (EstatTipus.Tramitada.equals(consulta.getEstat())) {
+				justificantHelper.generarCustodiarJustificantPendent(
+						consulta,
+						getScspHelper());
+			}*/
 			return dtoMappingHelper.getMapperFacade().map(
 					consulta,
 					ConsultaDto.class);
@@ -849,92 +853,65 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 		}
 	}
 
-	@Transactional(rollbackFor = {ConsultaNotFoundException.class, JustificantGeneracioException.class})
 	@Override
-	public ArxiuDto obtenirJustificant(
+	public JustificantDto obtenirJustificant(
 			Long id) throws ConsultaNotFoundException, JustificantGeneracioException {
-		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 		LOGGER.debug("Generant justificant per a la consulta (id=" + id + ")");
-		copiarPropertiesToDb();
 		Consulta consulta = consultaRepository.findOne(id);
 		if (consulta == null) {
 			LOGGER.error("No s'ha trobat la consulta (id=" + id + ")");
 			throw new ConsultaNotFoundException();
 		}
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 		if (!auth.getName().equals(consulta.getCreatedBy().getCodi())) {
 			LOGGER.error("La consulta (id=" + id + ") no pertany a aquest usuari");
 			throw new ConsultaNotFoundException();
 		}
-		ResultatEnviamentPeticio resultat;
-		try {
-			resultat = getScspHelper().recuperarResultatEnviamentPeticio(consulta.getScspPeticionId());
-		} catch (Exception ex) {
-			LOGGER.error("No s'ha pogut recuperar l'estat de la consulta (id=" + id + ")", ex);
-			throw new JustificantGeneracioException();
-		}
-		if (resultat.isError()) {
-			LOGGER.error("La consulta (id=" + id + ") conté errors");
-			throw new ConsultaNotFoundException();
-		}
-		try {
-			return obtenirJustificantConsulta(consulta);
-		} catch (Exception ex) {
-			LOGGER.error("Error al obtenir el justificant de la consulta (id=" + id + ")", ex);
-			throw new JustificantGeneracioException(ex.getMessage(), ex);
-		}
+		return obtenirJustificantComu(consulta, true);
 	}
 
 	@Override
-	public ArxiuDto obtenirJustificant(String idpeticion, String idsolicitud)
+	public JustificantDto obtenirJustificant(String idpeticion, String idsolicitud)
 			throws ConsultaNotFoundException, JustificantGeneracioException {
-		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 		LOGGER.debug("Generant justificant per a la consulta (" +
 				"idpeticion=" + idpeticion + ", " +
 				"idsolicitud=" + idsolicitud + ")");
-		copiarPropertiesToDb();
 		Consulta consulta = consultaRepository.findByScspPeticionIdAndScspSolicitudId(
 				idpeticion,
 				idsolicitud);
 		if (consulta == null) {
-			LOGGER.error("No s'ha trobat la consulta (" +
-					"idpeticion=" + idpeticion + ", " +
-					"idsolicitud=" + idsolicitud + ")");
+			LOGGER.error("No s'ha trobat la consulta (idpeticion=" + idpeticion + ", idsolicitud=" + idsolicitud + ")");
 			throw new ConsultaNotFoundException();
 		}
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 		if (!auth.getName().equals(consulta.getCreatedBy().getCodi())) {
-			LOGGER.error("La consulta (" +
-					"idpeticion=" + idpeticion + ", " +
-					"idsolicitud=" + idsolicitud + ") no pertany a aquest usuari");
+			LOGGER.error("La consulta (idpeticion=" + idpeticion + ", idsolicitud=" + idsolicitud + ") no pertany a aquest usuari");
 			throw new ConsultaNotFoundException();
 		}
-		ResultatEnviamentPeticio resultat;
-		try {
-			resultat = getScspHelper().recuperarResultatEnviamentPeticio(consulta.getScspPeticionId());
-		} catch (Exception ex) {
-			LOGGER.error("No s'ha pogut recuperar l'estat de la consulta (" +
-					"idpeticion=" + idpeticion + ", " +
-					"idsolicitud=" + idsolicitud + ")", ex);
-			throw new JustificantGeneracioException();
-		}
-		if (resultat.isError()) {
-			LOGGER.error("La consulta (" +
-					"idpeticion=" + idpeticion + ", " +
-					"idsolicitud=" + idsolicitud + ") conté errors");
+		return obtenirJustificantComu(consulta, true);
+	}
+
+	@Override
+	public JustificantDto reintentarGeneracioJustificant(
+			Long id,
+			boolean descarregar) throws ConsultaNotFoundException, JustificantGeneracioException {
+		LOGGER.debug("Reintentant generació del justificant per a la consulta (id=" + id + ")");
+		Consulta consulta = consultaRepository.findOne(id);
+		if (consulta == null) {
+			LOGGER.error("No s'ha trobat la consulta (id=" + id + ")");
 			throw new ConsultaNotFoundException();
 		}
-		try {
-			return obtenirJustificantConsulta(consulta);
-		} catch (Exception ex) {
-			LOGGER.error("Error al obtenir el justificant de la consulta (" +
-					"idpeticion=" + idpeticion + ", " +
-					"idsolicitud=" + idsolicitud + ")", ex);
-			throw new JustificantGeneracioException(ex.getMessage(), ex);
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		if (!auth.getName().equals(consulta.getCreatedBy().getCodi())) {
+			LOGGER.error("La consulta (id=" + id + ") no pertany a aquest usuari");
+			throw new ConsultaNotFoundException();
 		}
+		return obtenirJustificantComu(consulta, descarregar);
 	}
 
 	@Transactional(rollbackFor = {ConsultaNotFoundException.class, JustificantGeneracioException.class})
 	@Override
-	public ArxiuDto obtenirJustificantMultipleConcatenat(
+	public FitxerDto obtenirJustificantMultipleConcatenat(
 			Long id) throws ConsultaNotFoundException, JustificantGeneracioException {
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 		LOGGER.debug("Generant justificant concatenat per a la consulta múltiple (id=" + id + ")");
@@ -952,32 +929,26 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 			LOGGER.debug("La consulta (id=" + id + ") no és múltiple");
 			throw new ConsultaNotFoundException();
 		}
-		if (!getExtensioSortida().equalsIgnoreCase("pdf")) {
-			LOGGER.debug("L'extensió de sortida del justificant no és PDF");
-			throw new JustificantGeneracioException();
-		}
 		try {
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
 			Document pdfConcatenat = new Document();
 			PdfCopy copy = new PdfCopy(pdfConcatenat, baos);
 			pdfConcatenat.open();
 			for (Consulta solicitud: consulta.getFills()) {
-				PdfReader pdfReader = new PdfReader(
-						generarJustificantAmbPlantilla(solicitud));
+				FitxerDto fitxerJustificantGenerat = justificantHelper.generar(
+						solicitud,
+						getScspHelper());
+				PdfReader pdfReader = new PdfReader(fitxerJustificantGenerat.getContingut());
 				for (int pagina = 1; pagina <= pdfReader.getNumberOfPages(); pagina++) {
 					copy.addPage(
 							copy.getImportedPage(pdfReader, pagina));
 				}
 			}
 			pdfConcatenat.close();
-			ArxiuDto arxiu = new ArxiuDto();
-			arxiu.setNom(conversioTipusDocumentHelper.nomArxiuConvertit(
-					justificantPlantillaHelper.getNomArxiuGenerat(
-							consulta.getScspPeticionId(),
-							consulta.getScspSolicitudId()),
-					getExtensioSortida()));
-			arxiu.setContingut(baos.toByteArray());
-			return arxiu;
+			FitxerDto fitxer = new FitxerDto();
+			fitxer.setNom("PBL_" + consulta.getScspPeticionId() + ".pdf");
+			fitxer.setContingut(baos.toByteArray());
+			return fitxer;
 		} catch (Exception ex) {
 			LOGGER.error("Error al generar justificant concatenat per a la consulta múltiple (id=" + id + ")", ex);
 			throw new JustificantGeneracioException(ex.getMessage(), ex);
@@ -986,7 +957,7 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 
 	@Transactional(rollbackFor = {ConsultaNotFoundException.class, JustificantGeneracioException.class})
 	@Override
-	public ArxiuDto obtenirJustificantMultipleZip(
+	public FitxerDto obtenirJustificantMultipleZip(
 			Long id) throws ConsultaNotFoundException, JustificantGeneracioException {
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 		LOGGER.debug("Generant justificant ZIP per a la consulta múltiple (id=" + id + ")");
@@ -1008,69 +979,22 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
 			ZipOutputStream zos = new ZipOutputStream(baos);
 			for (Consulta solicitud: consulta.getFills()) {
-				String justificantNom = conversioTipusDocumentHelper.nomArxiuConvertit(
-						justificantPlantillaHelper.getNomArxiuGenerat(
-								solicitud.getScspPeticionId(),
-								solicitud.getScspSolicitudId()),
-						getExtensioSortida());
-				ZipEntry zipEntry = new ZipEntry(justificantNom);
+				FitxerDto fitxerJustificantGenerat = justificantHelper.generar(
+						solicitud,
+						getScspHelper());
+				ZipEntry zipEntry = new ZipEntry(fitxerJustificantGenerat.getNom());
 				zos.putNextEntry(zipEntry);
-				zos.write(
-						generarJustificantAmbPlantilla(solicitud));
+				zos.write(fitxerJustificantGenerat.getContingut());
 				zos.closeEntry();
 			}
 			zos.close();
-			ArxiuDto arxiu = new ArxiuDto();
-			arxiu.setNom(conversioTipusDocumentHelper.nomArxiuConvertit(
-					justificantPlantillaHelper.getNomArxiuGenerat(
-							consulta.getScspPeticionId(),
-							consulta.getScspSolicitudId()),
-					"zip"));
-			arxiu.setContingut(baos.toByteArray());
-			return arxiu;
+			FitxerDto fitxer = new FitxerDto();
+			fitxer.setNom("PBL_" + consulta.getScspPeticionId() + ".zip");
+			fitxer.setContingut(baos.toByteArray());
+			return fitxer;
 		} catch (Exception ex) {
 			LOGGER.error("Error al generar justificant ZIP per a la consulta múltiple (id=" + id + ")", ex);
 			throw new JustificantGeneracioException(ex.getMessage(), ex);
-		}
-	}
-
-	@Transactional(readOnly = true)
-	@Override
-	public void reintentarGeneracioJustificant(
-			Long id) throws ConsultaNotFoundException, JustificantGeneracioException {
-		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-		LOGGER.debug("Reintentant generació del justificant per a la consulta (id=" + id + ")");
-		copiarPropertiesToDb();
-		Consulta consulta = consultaRepository.findOne(id);
-		if (consulta == null) {
-			LOGGER.error("No s'ha trobat la consulta (id=" + id + ")");
-			throw new ConsultaNotFoundException();
-		}
-		if (!auth.getName().equals(consulta.getCreatedBy().getCodi())) {
-			LOGGER.error("La consulta (id=" + id + ") no pertany a aquest usuari");
-			throw new ConsultaNotFoundException();
-		}
-		ResultatEnviamentPeticio resultat;
-		try {
-			resultat = getScspHelper().recuperarResultatEnviamentPeticio(consulta.getScspPeticionId());
-		} catch (Exception ex) {
-			LOGGER.error("No s'ha pogut recuperar l'estat de la consulta (id=" + id + ")", ex);
-			throw new JustificantGeneracioException();
-		}
-		if (resultat.isError()) {
-			LOGGER.error("La consulta (id=" + id + ") conté errors");
-			throw new ConsultaNotFoundException();
-		}
-		if (EstatTipus.Tramitada.equals(consulta.getEstat())) {
-			try {
-				generarCustodiarJustificant(consulta);
-			} catch (Exception ex) {
-				LOGGER.error("Error al generar el justificant de la consulta (id=" + id + ")", ex);
-				throw new JustificantGeneracioException(ex.getMessage(), ex);
-			}
-		} else {
-			LOGGER.error("La consulta no està en estat TRAMITADA (id=" + id + ")");
-			throw new JustificantGeneracioException();
 		}
 	}
 
@@ -1605,27 +1529,129 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 		return resposta;
 	}
 
-	@Transactional
 	@Override
-	public void revisarEstatPeticionsMultiplesPendents() {
-		LOGGER.debug("Revisant estats peticions múltiples pendents");
+	public void autoRevisarEstatPeticionsMultiplesPendents() {
+		LOGGER.debug("Iniciant revisió automàtica dels estats de les peticions múltiples pendents de forma automàtica");
 		long t0 = System.currentTimeMillis();
 		List<Consulta> pendents = consultaRepository.findByEstatAndMultipleTrue(EstatTipus.Processant);
-		for (Consulta pendent: pendents) {
-			try {
-				ResultatEnviamentPeticio resultat = getScspHelper().recuperarResultatEnviamentPeticio(pendent.getScspPeticionId());
-				updateEstatConsulta(pendent, resultat, false);
-				for (Consulta filla: pendent.getFills()) {
-					updateEstatConsulta(filla, resultat, false);
-					if (EstatTipus.Tramitada.equals(filla.getEstat())) {
-						generarCustodiarJustificant(filla);
+		for (final Consulta pendent: pendents) {
+			TransactionTemplate transactionTemplate = new TransactionTemplate(transactionManager);
+			transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+				protected void doInTransactionWithoutResult(TransactionStatus status) {
+					try {
+						ResultatEnviamentPeticio resultat = getScspHelper().recuperarResultatEnviamentPeticio(pendent.getScspPeticionId());
+						updateEstatConsulta(pendent, resultat, false);
+						consultaRepository.saveAndFlush(pendent);
+						for (Consulta fill: pendent.getFills()) {
+							updateEstatConsulta(fill, resultat, false);
+							consultaRepository.saveAndFlush(fill);
+							/*if (EstatTipus.Tramitada.equals(filla.getEstat())) {
+								justificantHelper.generarCustodiarJustificantPendent(
+										filla,
+										getScspHelper());
+							}*/
+						}
+						if (EstatTipus.Tramitada.equals(pendent.getEstat())) {
+							LOGGER.info(
+									"Actualitzat l'estat de la consulta múltiple a TRAMITADA (" +
+									"id=" + pendent.getId() + ", " +
+									"scspPeticionId=" + pendent.getScspPeticionId() + ", " +
+									"scspSolicitudId=" + pendent.getScspSolicitudId() + ", " +
+									"arxiuExpedientUuid=" + pendent.getArxiuExpedientUuid() + ")");
+						}
+					} catch (Exception ex) {
+						LOGGER.error("No s'ha pogut obtenir l'estat de la consulta SCSP (peticionId=" + pendent.getScspPeticionId() + ")", ex);
 					}
 				}
-			} catch (Exception ex) {
-				LOGGER.error("No s'ha pogut obtenir l'estat de la consulta SCSP (peticionId=" + pendent.getScspPeticionId() + ")", ex);
+			});
+		}
+		LOGGER.debug("Finalitzada revisió automàtica dels estats de les peticions múltiples pendents (" + (System.currentTimeMillis() - t0) + "ms)");
+	}
+
+	@Override
+	public void autoGenerarJustificantsPendents() {
+		LOGGER.debug("Iniciant generació automàtica dels justificants pendents");
+		long t0 = System.currentTimeMillis();
+		List<Consulta> pendents = consultaRepository.findByEstatAndJustificantEstatAndMultipleAndArxiuExpedientTancatOrderByIdAsc(
+				EstatTipus.Tramitada,
+				JustificantEstat.PENDENT,
+				false,
+				false);
+		for (Consulta pendent: pendents) {
+			try {
+				obtenirJustificantComu(pendent, false);
+			} catch (JustificantGeneracioException ex) {
+				LOGGER.error(
+						"Error al generar automàticament el justificant per la consulta (" +
+						"id=" + pendent.getId() + ", " +
+						"scspPeticionId=" + pendent.getScspPeticionId() + ", " +
+						"scspSolicitudId=" + pendent.getScspSolicitudId() + ")",
+						ex);
 			}
 		}
-		LOGGER.debug("Finalitzada revisió estats peticions múltiples pendents (" + (System.currentTimeMillis() - t0) + "ms)");
+		LOGGER.debug("Finalitzada generació automàtica dels justificants pendents (" + (System.currentTimeMillis() - t0) + "ms)");
+	}
+
+	@Override
+	public void autoTancarExpedientsPendents() {
+		LOGGER.debug("Iniciant tancament automàtic dels expedients pendents");
+		long t0 = System.currentTimeMillis();
+		List<Consulta> pendents = consultaRepository.findByEstatAndJustificantEstatAndMultipleAndArxiuExpedientTancatOrderByIdAsc(
+				EstatTipus.Tramitada,
+				JustificantEstat.OK,
+				false,
+				false);
+		for (final Consulta pendent: pendents) {
+			boolean esPotTancar = false;
+			final Consulta pare = pendent.getPare();
+			if (pare == null) {
+				// Consultes simples
+				esPotTancar = pendent.isCustodiat();
+			} else {
+				// Consultes múltiples
+				int fillsTotals = consultaRepository.countByPare(pendent);
+				int fillsCustodiats = consultaRepository.countByPareAndCustodiat(pendent, true);
+				esPotTancar = fillsTotals == fillsCustodiats;
+			}
+			if (esPotTancar) {
+				TransactionTemplate transactionTemplate = new TransactionTemplate(transactionManager);
+				transactionTemplate.execute(new TransactionCallback<JustificantGeneracioException>() {
+					@Override
+					public JustificantGeneracioException doInTransaction(TransactionStatus status) {
+						try {
+							Expedient expedient = pluginHelper.arxiuExpedientConsultar(pendent.getArxiuExpedientUuid());
+							if (!expedient.getMetadades().getEstat().equals(ExpedientEstat.TANCAT)) {
+								pluginHelper.arxiuExpedientTancar(pendent.getArxiuExpedientUuid());
+							}
+							if (pare == null) {
+								pendent.updateArxiuExpedientTancat(true);
+								consultaRepository.saveAndFlush(pendent);
+							} else {
+								for (Consulta fill: pare.getFills()) {
+									fill.updateArxiuExpedientTancat(true);
+									consultaRepository.saveAndFlush(fill);
+								}
+							}
+						} catch (SistemaExternException ex) {
+							LOGGER.error(
+									"Error al tancar l'expedient per la consulta (" +
+									"id=" + pendent.getId() + ", " +
+									"scspPeticionId=" + pendent.getScspPeticionId() + ", " +
+									"scspSolicitudId=" + pendent.getScspSolicitudId() + ", " +
+									"arxiuExpedientUuid=" + pendent.getArxiuExpedientUuid() + ")",
+									ex);
+						}
+						LOGGER.info(
+								"Tancat expedient de l'arxiu relacionat amb la consulta (" +
+								"id=" + pendent.getId() + ", " +
+								"scspPeticionId=" + pendent.getScspPeticionId() + ", " +
+								"arxiuExpedientUuid=" + pendent.getArxiuExpedientUuid() + ")");
+						return null;
+					}
+				});
+			}
+		}
+		LOGGER.debug("Finalitzat el tancament automàtic dels expedients pendents (" + (System.currentTimeMillis() - t0) + "ms)");
 	}
 
 	@Override
@@ -1666,6 +1692,7 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 			ApplicationContext applicationContext) throws BeansException {
 		this.applicationContext = applicationContext;
 	}
+
 	@Override
 	public void setMessageSource(MessageSource messageSource) {
 		this.messageSource = messageSource;
@@ -1675,9 +1702,7 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 
 	private InformeGeneralEstatDto toInformeGeneralEstatDto(ProcedimentServei servei, List<Object[]> consultes) {
 		InformeGeneralEstatDto dto = new InformeGeneralEstatDto();
-		
 		Servicio servicio = getScspHelper().getServicio(servei.getServei());
-	
 		dto.setEntitatNom(servei.getProcediment().getEntitat().getNom());
 		dto.setEntitatCif(servei.getProcediment().getEntitat().getCif());
 		dto.setDepartament(servei.getProcediment().getDepartament());
@@ -1692,20 +1717,19 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 			emisor.setNom(getScspHelper().getEmisorNombre(emisorCertificado.getCif()));
 			dto.setServeiEmisor(emisor);
 		}
-		
 		// Obtenim els usuaris que tenen permís sobre el procediment-servei
 		List<AccessControlEntry> aces = PermisosHelper.getAclSids(
 				ProcedimentServei.class,
 				servei.getId(),
 				aclService);
 		Set<String> usuaris = new HashSet<String>();
-		if (aces != null)
+		if (aces != null) {
 			for (AccessControlEntry ace: aces) {
 				if (ace.getSid() instanceof PrincipalSid)
 					usuaris.add(((PrincipalSid)ace.getSid()).getPrincipal());
 			}
+		}
 		dto.setServeiUsuaris(usuaris.size());
-		
 		// Calculam les peticions correctes i les errònees
 		// consulta[0] --> Codi entitat
 		// consulta[1] --> Codi procediemnt
@@ -1714,13 +1738,10 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 		// consulta[4] --> Número de peticions
 		Long peticionsCorrectes = 0L;
 		Long peticionsErronees = 0L;
-		
 		boolean etrobat = false;
 		boolean strobat = false;
-		
 		Long entitatId = servei.getProcediment().getEntitat().getId();
 		Long procedimentId = servei.getProcediment().getId();
-		
 		for (int i = 0; i < consultes.size(); i++) {
 			Long entId = (Long)consultes.get(i)[0];
 			Long procId = (Long)consultes.get(i)[1];
@@ -1748,7 +1769,6 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 		}
 		dto.setPeticionsCorrectes(peticionsCorrectes.intValue());
 		dto.setPeticionsErronees(peticionsErronees.intValue());
-		
 		return dto;
 	}
 
@@ -1829,7 +1849,6 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 				"multiple=" + multiple + ", " +
 				"nomesSensePare=" + nomesSensePare + ")");
 		long t0 = System.currentTimeMillis();
-
 		Page<Consulta> paginaConsultes;
 		if (filtre == null) {
 			paginaConsultes = consultaRepository.findByProcedimentServeiProcedimentEntitatIdAndCreatedBy(
@@ -1871,17 +1890,14 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 		LOGGER.debug("Consulta de peticions findByEntitatIUsuariFiltrePaginat temps consulta: " + (System.currentTimeMillis() - t0) + " ms");
 		t0 = System.currentTimeMillis();
 		Page<ConsultaDto> paginaConsultesDto = dtoMappingHelper.pageEntities2pageDto(paginaConsultes, ConsultaDto.class, pageable);
-		
 		LOGGER.debug("Consulta de peticions findByEntitatIUsuariFiltrePaginat temps conversió DTO : " + (System.currentTimeMillis() - t0) + " ms");
 		t0 = System.currentTimeMillis();
-
 		for (ConsultaDto consulta: paginaConsultesDto.getContent()) {
 			consulta.setServeiDescripcio(
 					getScspHelper().getServicioDescripcion(
 							consulta.getServeiCodi()));
 		}
-		
-		if(consultaHihaPeticio) {
+		if (consultaHihaPeticio) {
 			for (ConsultaDto consulta: paginaConsultesDto.getContent()) {
 				try {
 					consulta.setHiHaPeticio(
@@ -1893,8 +1909,7 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 				}
 			}
 		}
-		
-		if(consultaHihaPeticio) {
+		if (consultaHihaPeticio) {
 			for (ConsultaDto consulta: paginaConsultesDto.getContent()) {
 				try {
 					consulta.setTerData(getScspHelper().getTerPeticion(
@@ -1908,199 +1923,87 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 		return  paginaConsultesDto;
 	}
 
-	private ArxiuDto obtenirJustificantConsulta(
-			Consulta consulta) throws Exception {
-		if (JustificantEstat.PENDENT.equals(consulta.getJustificantEstat())) {
-			// Si el justificant està pendent de generar intenta generar-lo
-			generarCustodiarJustificant(consulta);
-		}
-		if (JustificantEstat.PENDENT.equals(consulta.getJustificantEstat())) {
-			LOGGER.error("S'ha intentat generar el justificant d'una consulta PENDENT però l'estat segueix essent PENDENT (" +
-					"id=" + consulta.getId() + ")");
-			throw new JustificantGeneracioException("S'ha intentat generar el justificant d'una consulta PENDENT però l'estat segueix essent PENDENT");
-		}
-		if (JustificantEstat.ERROR.equals(consulta.getJustificantEstat())) {
-			LOGGER.error("L'estat del justificant de la consulta és ERROR (" +
-					"id=" + consulta.getId() + ")");
-			throw new JustificantGeneracioException("L'estat del justificant de la consulta és ERROR");
-		}
-		if (JustificantEstat.NO_DISPONIBLE.equals(consulta.getJustificantEstat())) {
-			LOGGER.error("L'estat del justificant de la consulta és NO_DISPONIBLE (" +
-					"id=" + consulta.getId() + ")");
-			throw new JustificantGeneracioException("L'estat del justificant de la consulta és NO_DISPONIBLE");
-		}
-		String serveiCodi = consulta.getProcedimentServei().getServei();
-		String peticionId = consulta.getScspPeticionId();
-		String solicitudId = consulta.getScspSolicitudId();
-		ServeiConfig serveiConfig = serveiConfigRepository.findByServei(serveiCodi);
-		ArxiuDto arxiuDto = new ArxiuDto();
-		if (serveiConfig.getJustificantTipus() != null && JustificantTipus.ADJUNT_PDF_BASE64.equals(serveiConfig.getJustificantTipus())) {
-			LOGGER.debug("El justificant de la consulta (id=" + consulta.getId() + ") està inclòs a dins la resposta");
-			Map<String, Object> dadesEspecifiques = getScspHelper().getDadesEspecifiquesResposta(
-					peticionId,
-					solicitudId);
-			String justificantB64 = (String)dadesEspecifiques.get(serveiConfig.getJustificantXpath());
-			arxiuDto.setNom("PBL_" + peticionId + ".pdf");
-			if (justificantB64 != null) {
-				arxiuDto.setContingut(Base64.decode(justificantB64));
-				return arxiuDto;
-			} else {
-				// Si no hi ha justificant a dins les dades específiques continuarà i
-				// es retornarà el justificant genèric.
-			}
-		}
-		arxiuDto.setNom(
-				conversioTipusDocumentHelper.nomArxiuConvertit(
-						justificantPlantillaHelper.getNomArxiuGenerat(
-								consulta.getScspPeticionId(),
-								consulta.getScspSolicitudId()),
-						getExtensioSortida()));
-		if (JustificantEstat.OK.equals(consulta.getJustificantEstat())) {
-			arxiuDto.setContingut(
-					pluginHelper.custodiaObtenirDocument(
-							custodiaObtenirId(consulta)));
-		} else if (JustificantEstat.OK_NO_CUSTODIA.equals(consulta.getJustificantEstat())) {
-			arxiuDto.setContingut(
-					generarJustificantAmbPlantilla(consulta));
-		}
-		return arxiuDto;
-	}
-
-	private void generarCustodiarJustificant(
-			Consulta consulta) {
-		String serveiCodi = consulta.getProcedimentServei().getServei();
-		//String peticionId = consulta.getScspPeticionId();
-		ServeiConfig serveiConfig = serveiConfigRepository.findByServei(serveiCodi);
-		String arxiuNom = conversioTipusDocumentHelper.nomArxiuConvertit(
-				justificantPlantillaHelper.getNomArxiuGenerat(
-						consulta.getScspPeticionId(),
-						consulta.getScspSolicitudId()),
-						JUSTIFICANT_EXTENSIO_SORTIDA);
-		// Només signa i custòdia si està activat per paràmetre i 
-		// si encara no està custodiat
-		if (isSignarICustodiarJustificant() && !consulta.isCustodiat()) {
-			String custodiaUrl = consulta.getCustodiaUrl();
-			JustificantEstat justificantEstat = JustificantEstat.PENDENT;
-			String custodiaError = null;
-			boolean custodiat = false;
-			String custodiaId = custodiaObtenirId(consulta);
+	private JustificantDto obtenirJustificantComu(
+			final Consulta consulta,
+			boolean descarregar) throws JustificantGeneracioException {
+		// Abans de continuar es comprova si l'estat de la consulta és "Tramitada"
+		if (EstatTipus.Tramitada.equals(consulta.getEstat())) {
+			// Amb aquest bloc sincronitzat aconseguim que només hi hagi un thread a la vegada
+			// generant el justificant per a una determinada consulta. Si un altre thread intenta
+			// generar el mateix justificant es quedarà bloquejat esperant.
+			// Això es fa per a evitar problemes derivats de l'accés concurrent a l'arxiu digital.
 			try {
-				/*// Genera el certificat SCSP original
-				ByteArrayOutputStream baosGeneracio = getScspHelper().generaJustificanteTransmision(
-						documentId);*/
-				// Genera el justificant emprant la plantilla
-				byte[] justificant = generarJustificantAmbPlantilla(consulta);
-				LOGGER.debug("Inici del procés de signatura i custodia del justificant de la consulta (id=" + consulta.getId() + ")");
-				String documentTipus = null;
-				if (serveiConfig != null)
-					documentTipus = serveiConfig.getCustodiaCodi();
-				if (custodiaUrl == null || custodiaUrl.isEmpty()) {
-					// Obté la URL de comprovació de signatura
-					LOGGER.debug("Sol·licitud de URL per a la custòdia del justificant de la consulta (id=" + consulta.getId() + ")");
-					custodiaUrl = pluginHelper.custodiaObtenirUrlVerificacioDocument(custodiaId);
-					LOGGER.debug("Obtinguda URL per a la custòdia del justificant de la consulta (id=" + consulta.getId() + ", custodiaUrl=" + custodiaUrl + ")");
+				synchronized (getJustificantLockForConsulta(consulta)) {
+					TransactionTemplate transactionTemplate = new TransactionTemplate(transactionManager);
+					JustificantGeneracioException ex = transactionTemplate.execute(new TransactionCallback<JustificantGeneracioException>() {
+						@Override
+						public JustificantGeneracioException doInTransaction(TransactionStatus status) {
+							Consulta consultaRefreshed = consultaRepository.getOne(consulta.getId());
+							// Si l'estat del justificant és PENDENT o ERROR intentam tornar a generar el justificant
+							if (JustificantEstat.PENDENT.equals(consultaRefreshed.getJustificantEstat()) || JustificantEstat.ERROR.equals(consultaRefreshed.getJustificantEstat())) {
+								try {
+									justificantHelper.generarCustodiarJustificantPendent(
+											consultaRefreshed,
+											getScspHelper());
+									consultaRepository.saveAndFlush(consultaRefreshed);
+								} catch (JustificantGeneracioException ex) {
+									return ex;
+								}
+							}
+							return null;
+						}
+					});
+					if (ex != null) {
+						throw ex;
+					}
 				}
-				// Signa el justificant
-				LOGGER.debug("Signatura del justificant de la consulta (id=" + consulta.getId() + ")");
-				ByteArrayOutputStream signedStream = new ByteArrayOutputStream();
-				pluginHelper.signaturaSignarEstamparPdf(
-						new ByteArrayInputStream(justificant),
-						signedStream,
-						custodiaUrl);
-				// Envia el justificant a custòdia
-				LOGGER.debug("Custodia del justificant de la consulta (id=" + consulta.getId() + ")");
-				byte[] arxiuSignat = signedStream.toByteArray();
-				pluginHelper.custodiaEnviarPdfSignat(
-						custodiaId,
-						arxiuNom,
-						arxiuSignat,
-						documentTipus);
-				justificantEstat = JustificantEstat.OK;
-				custodiat = true;
-			} catch (Exception ex) {
-				justificantEstat = JustificantEstat.ERROR;
-				StringWriter sw = new StringWriter();
-				ex.printStackTrace(new PrintWriter(sw));
-				custodiaError = sw.toString();
 			} finally {
-				consulta.updateJustificantEstat(
-						justificantEstat,
-						custodiat,
-						custodiaId,
-						custodiaUrl,
-						custodiaError);
+				releaseJustificantLockForConsulta(consulta);
 			}
-		} else {
-			consulta.updateJustificantEstat(
-					JustificantEstat.OK_NO_CUSTODIA,
-					false,
-					null,
-					null,
-					null);
-		}
-	}
-
-	private String custodiaObtenirId(
-			Consulta consulta) {
-		if (consulta.getCustodiaId() != null) {
-			return consulta.getCustodiaId();
-		} else {
-			if (consulta.isCustodiat()) {
-				return consulta.getScspPeticionId();
+			if (descarregar) {
+				TransactionTemplate transactionTemplate = new TransactionTemplate(transactionManager);
+				return transactionTemplate.execute(new TransactionCallback<JustificantDto>() {
+					@Override
+					public JustificantDto doInTransaction(TransactionStatus status) {
+						Consulta consultaRefreshed = consultaRepository.getOne(consulta.getId());
+						JustificantDto justificant = new JustificantDto();
+						justificant.setEstat(
+								es.caib.pinbal.core.dto.ConsultaDto.JustificantEstat.valueOf(
+										consultaRefreshed.getJustificantEstat().name()));
+						if (JustificantEstat.ERROR.equals(consultaRefreshed.getJustificantEstat())) {
+							justificant.setError(true);
+							justificant.setErrorDescripcio("La generació del justificant ha produït errors");
+						}
+						if (JustificantEstat.NO_DISPONIBLE.equals(consultaRefreshed.getJustificantEstat())) {
+							justificant.setError(true);
+							justificant.setErrorDescripcio("L'estat del justificant de la consulta és NO_DISPONIBLE");
+						}
+						if (!justificant.isError()) {
+							try {
+								FitxerDto justificantFitxer = justificantHelper.descarregarFitxerGenerat(
+										consultaRefreshed,
+										getScspHelper());
+								justificant.setNom(justificantFitxer.getNom());
+								justificant.setContentType(justificantFitxer.getContentType());
+								justificant.setContingut(justificantFitxer.getContingut());
+							} catch (Exception ex) {
+								LOGGER.error("La descàrrega del justificant ha produït errors (" +
+										"id=" + consultaRefreshed.getScspPeticionId() + ", " +
+										"scspPeticionId=" + consultaRefreshed.getScspPeticionId() + ", " +
+										"scspSolicitudId=" + consultaRefreshed.getScspSolicitudId() + ")",
+										ex);
+								justificant.setError(true);
+								justificant.setErrorDescripcio("La descàrrega del justificant ha produit errors");
+							}
+						}
+						return justificant;
+					}
+				});
 			} else {
-				return consulta.getScspPeticionId() + "#" + consulta.getScspSolicitudId();
-			}
-		}
-	}
-
-	private byte[] generarJustificantAmbPlantilla(
-			Consulta consulta) throws IOException, DocumentTemplateException, ParserConfigurationException, DocumentException {
-		String arxiuNom = justificantPlantillaHelper.getNomArxiuGenerat(
-				consulta.getScspPeticionId(),
-				consulta.getScspSolicitudId());
-		String arxiuExtensio = justificantPlantillaHelper.getExtensioArxiuGenerat(
-				consulta.getScspPeticionId(),
-				consulta.getScspSolicitudId());
-		String serveiCodi = consulta.getProcedimentServei().getServei();
-		boolean convertir = !getExtensioSortida().equalsIgnoreCase(arxiuExtensio);
-		ByteArrayOutputStream baosGeneracio = new ByteArrayOutputStream();
-		LOGGER.debug("Generant el justificant per a la consulta (id=" + consulta.getId() + ") a partir de la plantilla");
-		justificantPlantillaHelper.generar(
-				getScspHelper().generarArbreJustificant(
-						consulta.getScspPeticionId(),
-						consulta.getScspSolicitudId(),
-						null),
-				"[" + serveiCodi + "] " + getScspHelper().getServicioDescripcion(serveiCodi),
-				serveiJustificantCampRepository.findByServeiAndLocaleIdiomaAndLocaleRegio(
-						serveiCodi,
-						ServeiServiceImpl.DEFAULT_TRADUCCIO_LOCALE.getLanguage(),
-						ServeiServiceImpl.DEFAULT_TRADUCCIO_LOCALE.getCountry()),
-				null,
-				baosGeneracio);
-		// Converteix el document si és necessari
-		if (convertir) {
-			LOGGER.debug("Convertint el justificant per a la consulta (" +
-					"id=" + consulta.getId() + "," +
-					"extensio=" + getExtensioSortida() + ")");
-			ByteArrayOutputStream baosConversio = new ByteArrayOutputStream();
-			String extensioSortida = getExtensioSortida();
-			conversioTipusDocumentHelper.convertir(
-					arxiuNom,
-					new ByteArrayInputStream(baosGeneracio.toByteArray()),
-					extensioSortida,
-					baosConversio);
-			boolean convertirPdfa = isConvertirPdfaJustificant() && "pdf".equalsIgnoreCase(getExtensioSortida());
-			if (convertirPdfa) {
-				ByteArrayOutputStream baosPdfa = new ByteArrayOutputStream();
-				conversioTipusDocumentHelper.convertirPdfToPdfa(
-						new ByteArrayInputStream(baosConversio.toByteArray()),
-						baosPdfa);
-				return baosPdfa.toByteArray();
-			} else {
-				return baosConversio.toByteArray();
+				return null;
 			}
 		} else {
-			return baosGeneracio.toByteArray();
+			throw new JustificantGeneracioException("La consulta no està en estat TRAMITADA");
 		}
 	}
 
@@ -2443,14 +2346,18 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 		return scspHelper;
 	}
 
-	private String getExtensioSortida() {
-		return PropertiesHelper.getProperties().getProperty("es.caib.pinbal.justificant.extensio.sortida");
+	private Object getJustificantLockForConsulta(Consulta consulta) {
+		Long id = consulta.getId();
+		if (!justificantLocks.containsKey(id)) {
+			justificantLocks.put(id, new Object());
+		}
+		return justificantLocks.get(id);
 	}
-	private boolean isSignarICustodiarJustificant() {
-		return PropertiesHelper.getProperties().getAsBoolean("es.caib.pinbal.justificant.signar.i.custodiar");
-	}
-	private boolean isConvertirPdfaJustificant() {
-		return PropertiesHelper.getProperties().getAsBoolean("es.caib.pinbal.justificant.convertir.pdfa");
+	private void releaseJustificantLockForConsulta(Consulta consulta) {
+		Long id = consulta.getId();
+		if (justificantLocks.containsKey(id)) {
+			justificantLocks.remove(id);
+		}
 	}
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(ConsultaServiceImpl.class);

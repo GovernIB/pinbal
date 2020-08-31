@@ -39,32 +39,30 @@
 <body>
 
 	<c:url value="/superauditor/generar" var="formAction"/>
-	<form:form action="${formAction}" method="post" cssClass="well" commandName="auditoriaGenerarCommand">
-		<div class="container-fluid">
-			<div class="row">
-				<div class="col-md-3">
-					<pbl:inputDate name="dataInici" inline="true" placeholderKey="auditor.generar.filtre.camp.data.inici"/>
-				</div>
-				<div class="col-md-3">	
-					<pbl:inputDate name="dataFi" inline="true" placeholderKey="auditor.generar.filtre.camp.data.fi"/>
-				</div>
-				<div class="col-md-3">
-					<pbl:inputText name="numEntitats" inline="true" placeholderKey="auditor.generar.filtre.camp.num.entitats"/>
-				</div>
-				<div class="col-md-3">
-					<c:set var="campPath" value="numConsultes"/>
-					<spring:message var="placeholderNumConsultes" code="auditor.generar.filtre.camp.num.consultes"/>
-					<pbl:inputText name="${campPath}" inline="true"  placeholderKey="auditor.generar.filtre.camp.num.consultes"/>
-				</div>
-			</div>	
-			<div class="row">
-				<div class="col-md-12">
-					<div class="pull-right">
-						<button type="submit" class="btn btn-primary "><spring:message code="comu.boto.generar"/></button>
-					</div>
-				</div>
-			</div>			
+	<form:form action="${formAction}" method="post" cssClass="well form-filtre-table" commandName="auditoriaGenerarCommand">
+		<div class="row">
+			<div class="col-md-3">
+				<pbl:inputDate name="dataInici" inline="true" placeholderKey="auditor.generar.filtre.camp.data.inici"/>
+			</div>
+			<div class="col-md-3">	
+				<pbl:inputDate name="dataFi" inline="true" placeholderKey="auditor.generar.filtre.camp.data.fi"/>
+			</div>
+			<div class="col-md-3">
+				<pbl:inputText name="numEntitats" inline="true" placeholderKey="auditor.generar.filtre.camp.num.entitats"/>
+			</div>
+			<div class="col-md-3">
+				<c:set var="campPath" value="numConsultes"/>
+				<spring:message var="placeholderNumConsultes" code="auditor.generar.filtre.camp.num.consultes"/>
+				<pbl:inputText name="${campPath}" inline="true"  placeholderKey="auditor.generar.filtre.camp.num.consultes"/>
+			</div>
 		</div>	
+		<div class="row">
+			<div class="col-md-12">
+				<div class="form-group pull-right">
+					<button type="submit" class="btn btn-primary "><spring:message code="comu.boto.generar"/></button>
+				</div>
+			</div>
+		</div>			
 	</form:form>
 
 	<c:if test="${not empty consultes}">
@@ -130,7 +128,7 @@
 				}
 			</script>
 		</c:forEach>
-		<a href="generarExcel" class="btn btn-primary"><i class="fas fa-file-download"></i>&nbsp;<spring:message code="auditor.list.exportar.excel"/></a>		
+		<a href="generarExcel" class="btn btn-default"><i class="fas fa-file-excel"></i>&nbsp;<spring:message code="auditor.list.exportar.excel"/></a>		
 	</c:if>
 
 </body>

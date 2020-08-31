@@ -16,13 +16,14 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.ejb.interceptor.SpringBeanAutowiringInterceptor;
 
-import es.caib.pinbal.core.dto.ArxiuDto;
 import es.caib.pinbal.core.dto.ConsultaDto;
 import es.caib.pinbal.core.dto.ConsultaFiltreDto;
 import es.caib.pinbal.core.dto.EntitatDto;
 import es.caib.pinbal.core.dto.EstadisticaDto;
 import es.caib.pinbal.core.dto.EstadistiquesFiltreDto;
+import es.caib.pinbal.core.dto.FitxerDto;
 import es.caib.pinbal.core.dto.InformeGeneralEstatDto;
+import es.caib.pinbal.core.dto.JustificantDto;
 import es.caib.pinbal.core.dto.RecobrimentSolicitudDto;
 import es.caib.pinbal.core.service.ConsultaService;
 import es.caib.pinbal.core.service.exception.ConsultaNotFoundException;
@@ -132,14 +133,14 @@ public class ConsultaServiceBean implements ConsultaService {
 
 	@Override
 	@RolesAllowed("tothom")
-	public ArxiuDto obtenirJustificant(
+	public JustificantDto obtenirJustificant(
 			Long id) throws ConsultaNotFoundException, JustificantGeneracioException {
 		return delegate.obtenirJustificant(id);
 	}
 
 	@Override
 	@RolesAllowed("PBL_WS")
-	public ArxiuDto obtenirJustificant(
+	public JustificantDto obtenirJustificant(
 			String idpeticion,
 			String idsolicitud) throws ConsultaNotFoundException, JustificantGeneracioException {
 		return delegate.obtenirJustificant(idpeticion, idsolicitud);
@@ -147,23 +148,24 @@ public class ConsultaServiceBean implements ConsultaService {
 
 	@Override
 	@RolesAllowed("tothom")
-	public ArxiuDto obtenirJustificantMultipleConcatenat(
+	public FitxerDto obtenirJustificantMultipleConcatenat(
 			Long id) throws ConsultaNotFoundException, JustificantGeneracioException {
 		return delegate.obtenirJustificantMultipleConcatenat(id);
 	}
 
 	@Override
 	@RolesAllowed("tothom")
-	public ArxiuDto obtenirJustificantMultipleZip(
+	public FitxerDto obtenirJustificantMultipleZip(
 			Long id) throws ConsultaNotFoundException, JustificantGeneracioException {
 		return delegate.obtenirJustificantMultipleZip(id);
 	}
 
 	@Override
 	@RolesAllowed("tothom")
-	public void reintentarGeneracioJustificant(
-			Long id) throws ConsultaNotFoundException, JustificantGeneracioException {
-		delegate.reintentarGeneracioJustificant(id);
+	public JustificantDto reintentarGeneracioJustificant(
+			Long id,
+			boolean descarregar) throws ConsultaNotFoundException, JustificantGeneracioException {
+		return delegate.reintentarGeneracioJustificant(id, descarregar);
 	}
 	
 	@Override
@@ -324,8 +326,18 @@ public class ConsultaServiceBean implements ConsultaService {
 	}
 
 	@Override
-	public void revisarEstatPeticionsMultiplesPendents() {
-		delegate.revisarEstatPeticionsMultiplesPendents();
+	public void autoRevisarEstatPeticionsMultiplesPendents() {
+		delegate.autoRevisarEstatPeticionsMultiplesPendents();
+	}
+
+	@Override
+	public void autoGenerarJustificantsPendents() {
+		delegate.autoGenerarJustificantsPendents();
+	}
+
+	@Override
+	public void autoTancarExpedientsPendents() {
+		delegate.autoTancarExpedientsPendents();
 	}
 
 	@Override

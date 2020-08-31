@@ -46,15 +46,19 @@
 			<form action="<c:url value="/admin/consulta/entitat/seleccionar"/>" method="post" class="well">
 				<div class="row">
 					<div class="col-md-3">
-	  					<select class="form-control" name="entitatId" id="select-entitat" 
-	  							data-toggle="select2"  data-netejar="${netejar}"  data-minimumresults="5" data-enum-value="entitatId">
-							<option value=""><spring:message code="comu.opcio.sense.definir"/></option>
-							<c:if test="${not empty entitats}">
-								<c:forEach var="entitat" items="${entitats}">
-									<option value="${entitat.id}">${entitat.nom}</option>
-								</c:forEach>
-							</c:if>
-						</select>
+						<div class="form-group">
+							<label class="sr-only" for="entitatId">entitatId</label>
+		  					<select class="form-control select2" name="entitatId" 
+		  							data-placeholder="<spring:message code="comu.opcio.sense.definir"/>"
+		  							data-toggle="select2"  data-netejar="true"  data-minimumresults="5" data-enum-value="entitatId">
+								<option value=""></option>
+								<c:if test="${not empty entitats}">
+									<c:forEach var="entitat" items="${entitats}">
+										<option value="${entitat.id}">${entitat.nom}</option>
+									</c:forEach>
+								</c:if>
+							</select>
+						</div>
 					</div>
 					<div class="col-md-3">
 						<button type="submit" class="btn btn-primary"><spring:message code="comu.boto.seleccionar"/></button>
@@ -77,57 +81,56 @@
 	</c:choose>
 
 	<c:if test="${not empty entitatActual}">
-		<form:form id="form-filtre" action="" class="form-horizontal" method="post" cssClass="well" commandName="filtreCommand">
-			<div class="container-fluid">
-				<div class="row">
-					<div class="col-md-4">
-						<pbl:inputText name="scspPeticionId" inline="true" placeholderKey="admin.consulta.list.filtre.peticion.id"/>
-					</div>					
-					<div class="col-md-4">
- 						 <pbl:inputSelect name="procediment" inline="true" placeholderKey="admin.consulta.list.filtre.procediment" 
-			 						 	 optionItems="${procediments}"   
-				 						 optionValueAttribute="id"
-				 						 optionTextAttribute="nom" 
-										 emptyOption="true"/>
-					</div>
-					<div class="col-md-4">
-						<pbl:inputSelect name="servei" inline="true" placeholderKey="admin.consulta.list.filtre.servei"
-										 optionItems="${serveis}"
-										 optionValueAttribute="codi"
-						 				 optionTextAttribute="descripcio" 
-										 emptyOption="true"/>
-					</div>
-
-				</div>				
-				<div class="row">
-					<div class="col-md-4">
-						<pbl:inputSelect name="estat" inline="true" 
-										placeholderKey="admin.consulta.list.filtre.estat"
-										optionItems="${consultaEstats}"
-										emptyOption="true"/>
-					</div>				
-					<div class="col-md-2">
-						<pbl:inputDate name="dataInici" inline="true" placeholderKey="auditor.list.filtre.data.inici"/>
-					</div>	
-					<div class="col-md-2">
-						<pbl:inputDate name="dataFi" inline="true" placeholderKey="auditor.list.filtre.data.fi"/>
-					</div>		
-					<div class="col-md-4">
-						<pbl:inputText name="funcionariNom" inline="true" placeholderKey="admin.consulta.list.filtre.funcionari.nom"/>
-					</div>			
-				</div>																			
-				<div class=row>
-					<div class="col-md-4">	
-						<pbl:inputText name="funcionariDocument" inline="true" placeholderKey="admin.consulta.list.filtre.funcionari.document"/>
-					</div>
-					<div class="col-md-2 pull-right">
-						<div class="pull-right">
-							<button id="netejar-filtre" class="btn btn-default" type="button"><spring:message code="comu.boto.netejar"/></button>
-							<button class="btn btn-primary" type="submit"><spring:message code="comu.boto.filtrar"/></button>		
-						</div>
-					</div>
+		<form:form id="form-filtre" action="" class="form-horizontal" method="post" cssClass="well form-filtre-table" commandName="filtreCommand">
+			<div class="row">
+				<div class="col-md-3">
+					<pbl:inputText name="scspPeticionId" inline="true" placeholderKey="admin.consulta.list.filtre.peticion.id"/>
+				</div>					
+				<div class="col-md-3">
+						 <pbl:inputSelect name="procediment" inline="true" placeholderKey="admin.consulta.list.filtre.procediment" 
+		 						 	 optionItems="${procediments}"   
+			 						 optionValueAttribute="id"
+			 						 optionTextAttribute="nom" 
+									 emptyOption="true"/>
+				</div>
+				<div class="col-md-3">
+					<pbl:inputSelect name="servei" inline="true" placeholderKey="admin.consulta.list.filtre.servei"
+									 optionItems="${serveis}"
+									 optionValueAttribute="codi"
+					 				 optionTextAttribute="descripcio" 
+									 emptyOption="true"/>
+				</div>
+				<div class="col-md-3">
+					<pbl:inputSelect name="estat" inline="true" 
+									placeholderKey="admin.consulta.list.filtre.estat"
+									optionItems="${consultaEstats}"
+									emptyOption="true"/>
 				</div>	
-			</div>		
+			</div>				
+			<div class="row">
+				<div class="col-md-3" >
+					<div class="row">
+						<div class="col-md-6" >
+							<pbl:inputDate name="dataInici" inline="true" placeholderKey="auditor.list.filtre.data.inici"/>
+						</div>		
+						<div class="col-md-6" >
+							<pbl:inputDate name="dataFi" inline="true" placeholderKey="auditor.list.filtre.data.fi"/>
+						</div>		
+					</div>		
+				</div>		
+				<div class="col-md-3">
+					<pbl:inputText name="funcionariNom" inline="true" placeholderKey="admin.consulta.list.filtre.funcionari.nom"/>
+				</div>		
+				<div class="col-md-3">	
+					<pbl:inputText name="funcionariDocument" inline="true" placeholderKey="admin.consulta.list.filtre.funcionari.document"/>
+				</div>
+				<div class="col-md-3">
+					<div class="pull-right">
+						<button id="netejar-filtre" class="btn btn-default" type="button"><spring:message code="comu.boto.netejar"/></button>
+						<button class="btn btn-primary" type="submit"><span class="fa fa-filter"></span> <spring:message code="comu.boto.filtrar"/></button>		
+					</div>
+				</div>
+			</div>
 		</form:form>
 
 		<div class="clearfix"></div>

@@ -15,7 +15,7 @@ import org.springframework.context.support.ResourceBundleMessageSource;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 
-import es.caib.pinbal.core.helper.JustificantPlantillaHelper;
+import es.caib.pinbal.core.helper.JustificantHelper;
 import es.caib.pinbal.scsp.JustificantArbreHelper;
 import es.caib.pinbal.scsp.JustificantArbreHelper.ElementArbre;
 import es.scsp.bean.common.DatosGenericos;
@@ -59,7 +59,7 @@ public class GenerarArbreDadesEspecifiquesTest {
 				"PBL0000000000236",
 				new Locale("ca", "ES"));
 		arbreHelper.imprimirJustificantStdout(arbre);
-		JustificantPlantillaHelper justificantHelper = new JustificantPlantillaHelper();
+		JustificantHelper justificantHelper = new JustificantHelper();
 		ResourceBundleMessageSource ms = new ResourceBundleMessageSource();
 		ms.setBasename("es/caib/pinbal/core/i18n/messages");
 		justificantHelper.setMessageSource(ms);

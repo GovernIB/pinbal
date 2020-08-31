@@ -79,9 +79,14 @@
 	</bean>
 	<cache:annotation-driven cache-manager="cacheManager"/>
 
+	<!-- Tasques programades -->
+	<task:annotation-driven scheduler="taskScheduler"/>
+	<task:scheduler id="taskScheduler" pool-size="1"/>
 	<task:scheduled-tasks>
-        <task:scheduled ref="consultaServiceImpl" method="revisarEstatPeticionsMultiplesPendents" fixed-rate="${config:es.caib.pinbal.tasca.auto.comprovacio.repeticio}"/>
-    </task:scheduled-tasks>
+		<task:scheduled ref="consultaServiceImpl" method="autoRevisarEstatPeticionsMultiplesPendents" fixed-rate="${config:es.caib.pinbal.tasca.auto.comprovacio.repeticio:600000}"/>
+		<task:scheduled ref="consultaServiceImpl" method="autoGenerarJustificantsPendents" fixed-rate="${config:es.caib.pinbal.tasca.auto.justificant.repeticio:60000}"/>
+		<task:scheduled ref="consultaServiceImpl" method="autoTancarExpedientsPendents" cron="${config:es.caib.pinbal.tasca.auto.exp.tancar.cron:0 0 2 * * ?}"/>
+	</task:scheduled-tasks>
 
 	<!-- Context llibreries SCSP -->
 	<import resource="classpath:application-context-scsp.xml" />

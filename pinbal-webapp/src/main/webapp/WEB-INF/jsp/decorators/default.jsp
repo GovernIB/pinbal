@@ -87,13 +87,6 @@
 	<script src="<c:url value="/webjars/bootstrap/3.3.6/js/bootstrap.min.js"/>"></script>
 	<script src="<c:url value="/webjars/font-awesome/5.13.1/js/all.min.js"/>"></script>
 	<decorator:head />
-<script>
-// $(document).ready(function() {
-	<%-- Per evitar que el menu surti de la finestra del navegador --%>
-// 	$(".dropdown-menu").css("max-height", ($(window).height() - 110) + "px");
-// 	$(".dropdown-menu").css("overflow", "auto");
-// });
-</script>
 <style>
 body {
 	background-image:url(<c:url value="/img/background-pattern.png"/>);
@@ -102,6 +95,10 @@ body {
 }
 .navbar-app {
 	background-color: #ff9523;
+}
+.datepicker {
+	padding-left: 12px;
+	padding-right: 12px;
 }
 </style>
 </head>
