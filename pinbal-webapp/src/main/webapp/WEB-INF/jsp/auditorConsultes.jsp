@@ -129,58 +129,56 @@ $(document).ready(function() {
 </head>
 <body>
 
-	<form:form id="form-filtre" action="" method="post" cssClass="well" commandName="filtreCommand">
-<%-- 		<div class="page-header"><spring:message code="auditor.list.filtre.titol"/></div> --%>
-		<div class="container-fluid">
-			<div class="row">
-				<div class="col-md-4">
-				<pbl:inputText name="scspPeticionId"  inline="true" placeholderKey="consulta.list.filtre.peticion.id"/>
-				</div>
-				<div class="col-md-4">
-					<pbl:inputSelect name="procediment"  inline="true" placeholderKey="consulta.list.filtre.procediment" 
-	 								 optionItems="${procediments}"  
-	 								 optionValueAttribute="id" 
-	 								 optionTextAttribute="nom" 
-	 								 emptyOption="true"/> 
-				</div>
-				<div class="col-md-4">
-					<pbl:inputSelect name="servei"  inline="true" placeholderKey="consulta.list.filtre.servei" 
-									 optionItems="${serveis}" 
-									 optionValueAttribute="codi"
-									 optionTextAttribute="descripcio"
-									 emptyOption="true"/>
-				</div>
-				
+	<form:form id="form-filtre" action="" method="post" cssClass="well form-filtre-table" commandName="filtreCommand">
+		<div class="row">
+			<div class="col-md-3">
+			<pbl:inputText name="scspPeticionId"  inline="true" placeholderKey="consulta.list.filtre.peticion.id"/>
 			</div>
-			<div class="row">				
-				<div class="col-md-2">
-					<pbl:inputDate name="dataInici" inline="true" placeholderKey="auditor.list.filtre.data.inici"/>
-				</div>
-				<div class="col-md-2">
-					<pbl:inputDate name="dataFi" inline="true" placeholderKey="auditor.list.filtre.data.fi"/>
-				</div>	
-				<div class="col-md-4">
-					<pbl:inputSelect name="estat"  inline="true" placeholderKey="consulta.list.filtre.estat" 
-									 optionItems="${consultaEstats}" 
-									 emptyOption="true"/>
-				</div>
-				<div class="col-md-4">
-					<pbl:inputText name="funcionariNom" inline="true" placeholderKey="auditor.list.filtre.funcionari.nom"/>
-				</div>
+			<div class="col-md-3">
+				<pbl:inputSelect name="procediment"  inline="true" placeholderKey="consulta.list.filtre.procediment" 
+ 								 optionItems="${procediments}"  
+ 								 optionValueAttribute="id" 
+ 								 optionTextAttribute="nom" 
+ 								 emptyOption="true"/> 
+			</div>
+			<div class="col-md-3">
+				<pbl:inputSelect name="servei"  inline="true" placeholderKey="consulta.list.filtre.servei" 
+								 optionItems="${serveis}" 
+								 optionValueAttribute="codi"
+								 optionTextAttribute="descripcio"
+								 emptyOption="true"/>
+			</div>
+			<div class="col-md-3">
+				<pbl:inputSelect name="estat"  inline="true" placeholderKey="consulta.list.filtre.estat" 
+								 optionItems="${consultaEstats}" 
+								 emptyOption="true"/>
+			</div>
 
-			</div>	
-			<div class="row">	
-				<div class="col-md-4">
-					<pbl:inputText name="funcionariDocument" inline="true" placeholderKey="auditor.list.filtre.funcionari.document"/>
+		</div>
+		<div class="row">	
+			<div class="col-md-3" >
+				<div class="row">
+					<div class="col-md-6" >
+						<pbl:inputDate name="dataInici" inline="true" placeholderKey="auditor.list.filtre.data.inici"/>
+					</div>		
+					<div class="col-md-6" >
+						<pbl:inputDate name="dataFi" inline="true" placeholderKey="auditor.list.filtre.data.fi"/>
+					</div>		
+				</div>		
+			</div>
+			<div class="col-md-3">
+				<pbl:inputText name="funcionariNom" inline="true" placeholderKey="auditor.list.filtre.funcionari.nom"/>
+			</div>
+			<div class="col-md-3">
+				<pbl:inputText name="funcionariDocument" inline="true" placeholderKey="auditor.list.filtre.funcionari.document"/>
+			</div>
+			<div class="col-md-3">
+				<div class="pull-right">
+					<button id="netejar-filtre" class="btn btn-default" type="button"><spring:message code="comu.boto.netejar"/></button>
+					<button class="btn btn-primary" type="submit"><span class="fa fa-filter"></span> <spring:message code="comu.boto.filtrar"/></button>
 				</div>
-				<div class="col-md-8">
-					<div class="pull-right">
-						<button id="netejar-filtre" class="btn btn-default" type="button"><spring:message code="comu.boto.netejar"/></button>
-						<button class="btn btn-primary" type="submit"><spring:message code="comu.boto.filtrar"/></button>
-					</div>
-				</div>
-			</div>	
-		</div>			
+			</div>
+		</div>	
 	</form:form>
 	
 	<table id="table-consultes" class="table table-striped table-bordered" style="width: 100%">

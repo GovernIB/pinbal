@@ -85,76 +85,87 @@ $(document).ready(function() {
 		<c:choose>
 			<c:when test="${empty estadistiquesFiltreCommand.entitatId}">
 				<c:url value="/estadistiques/canviEntitat" var="formAction"/>
-				<form:form action="${formAction}" method="post" cssClass="well" commandName="estadistiquesFiltreCommand">
-					<div class="container-fluid">	
-						<div class="row">
-							<div class="col-md-2">
-								<pbl:inputSelect name="entitatId" inline="true" 
-												placeholderKey="estadistiques.list.entitat.seleccio" 
-												optionMinimumResultsForSearch="5"
-												optionItems="${entitats}"
-												optionValueAttribute="id" 
-												optionTextAttribute="nom" 
-												emptyOption="true"/>
-							</div>	
-							<div class="col-md-3">
-								<button type="submit" class="btn btn-primary"><spring:message code="comu.boto.seleccionar"/></button>
-							</div>	
+				<form:form action="${formAction}" method="post" cssClass="well form-filtre-table" commandName="estadistiquesFiltreCommand">
+					<div class="row">
+						<div class="col-md-2">
+							<pbl:inputSelect name="entitatId" inline="true" 
+											placeholderKey="estadistiques.list.entitat.seleccio" 
+											optionMinimumResultsForSearch="5"
+											optionItems="${entitats}"
+											optionValueAttribute="id" 
+											optionTextAttribute="nom" 
+											emptyOption="true"/>
+						</div>	
+						<div class="col-md-3">
+							<button type="submit" class="btn btn-primary"><spring:message code="comu.boto.seleccionar"/></button>
 						</div>	
 					</div>	
 				</form:form>
 			</c:when>
 			<c:otherwise>
-				<form class="well">
-					<c:choose>
-						<c:when test="${empty entitatSeleccionada}"><input type="text" class="input-sm" value="${opcioEntitatTotes}" disabled="disabled"/></c:when>
-						<c:otherwise><input type="text" class="input-sm" value="${entitatSeleccionada.nom}" disabled="disabled"/></c:otherwise>
-					</c:choose>
-					<a href="<c:url value="/estadistiques/canviEntitat"/>" class="btn btn-default"><spring:message code="comu.boto.canviar"/></a>
+				<form class="well form-filtre-table">
+					<div class="row">
+						<div class="col-md-2">
+							<div class="form-group">
+								<c:choose>
+									<c:when test="${empty entitatSeleccionada}">
+										<input type="text" class="form-control" value="${opcioEntitatTotes}" disabled="disabled"/>
+									</c:when>
+									<c:otherwise>
+										<input type="text" class="form-control" value="${entitatSeleccionada.nom}" disabled="disabled"/>
+									</c:otherwise>
+								</c:choose>
+							</div>
+						</div>
+						<div class="col-md-3">
+							<a href="<c:url value="/estadistiques/canviEntitat"/>" class="btn btn-default"><spring:message code="comu.boto.canviar"/></a>
+						</div>	
+					</div>	
 				</form>
 			</c:otherwise>
 		</c:choose>
 	</c:if>
 	<c:if test="${not empty estadistiquesFiltreCommand.entitatId}">
-
-	<div class="container-fluid">
-		<form:form id="form-filtre" action="" method="post" cssClass="well" commandName="estadistiquesFiltreCommand">
+		<form:form id="form-filtre" action="" method="post" cssClass="well form-filtre-table" commandName="estadistiquesFiltreCommand">
 			<form:hidden path="entitatId"/>
 			<div class="row">
-				<div class="col-md-4">
+				<div class="col-md-3">
 					<pbl:inputSelect name="procediment" inline="true" placeholderKey="estadistiques.list.filtre.procediment"
 						optionItems="${procediments}"  
 						optionValueAttribute="id"  
 						optionTextAttribute="nom"  
 						emptyOption="true"/>
 				</div>
-				<div class="col-md-4">
+				<div class="col-md-3">
 					<pbl:inputSelect name="servei"  inline="true" placeholderKey="estadistiques.list.filtre.servei" 
  								 optionItems="${serveis}"  
  								 optionValueAttribute="codi" 
  								 optionTextAttribute="descripcio" 
  								 emptyOption="true"/> 
 				</div>			
-				<div class="col-md-4">
+				<div class="col-md-3">
 					<pbl:inputSelect name="estat"  inline="true" placeholderKey="estadistiques.list.filtre.estat"
 								optionItems="${consultaEstats}"  
  								 emptyOption="true"/> 
 				</div>
-			</div>
-			<div class="row">		
-				<div class="col-md-2">
-						<pbl:inputDate name="dataInici" inline="true" placeholderKey="estadistiques.list.filtre.data.inici"/>
-				</div>
-				<div class="col-md-2">
-					<pbl:inputDate name="dataFi" inline="true" placeholderKey="estadistiques.list.filtre.data.fi"/>
-				</div>	
-				<div class="col-md-4">
+				<div class="col-md-3">
  					<pbl:inputSelect name="agrupacio"  inline="true" placeholderKey="estadistiques.list.filtre.agrupacio.SERVEI_PROCEDIMENT" 
 	 	  							optionItems="${agrupacioValors}"    
 	 	 							emptyOption="true"/>
 				</div>
-								
-				<div class="col-md-4">
+			</div>
+			<div class="row">	
+				<div class="col-md-3" >
+					<div class="row">
+						<div class="col-md-6" >
+							<pbl:inputDate name="dataInici" inline="true" placeholderKey="estadistiques.list.filtre.data.inici"/>
+						</div>		
+						<div class="col-md-6" >
+							<pbl:inputDate name="dataFi" inline="true" placeholderKey="estadistiques.list.filtre.data.fi"/>
+						</div>		
+					</div>		
+				</div>									
+				<div class="col-md-3">
 					<c:set var="campPath" value="usuariCodi"/>
 					<c:set var="campErrors"><form:errors path="${campPath}"/></c:set>
 					<div class="form-group<c:if test="${not empty campErrors}"> error</c:if>">
@@ -166,19 +177,15 @@ $(document).ready(function() {
 							</c:forEach>
 						</form:select>
 					</div>
-				</div>	
-			</div>
-			<div class="row">	
-				<div class="col-md-12"> 
+				</div>
+				<div class="col-md-6"> 
 					<div class="pull-right">
 						<button id="netejar-filtre" class="btn btn-default" type="button"><spring:message code="comu.boto.netejar"/></button>
-						<button class="btn btn-primary" type="submit"><spring:message code="comu.boto.filtrar"/></button>
+						<button class="btn btn-primary" type="submit"><span class="fa fa-filter"></span> <spring:message code="comu.boto.filtrar"/></button>
 					</div>
 				</div>		
 			</div>	
 		</form:form>
-	</div>		
-	<div class="container-fluid">
 		<c:if test="${not empty estadistiques}">
 			<c:set var="estadistiques" value="${estadistiques}" scope="request"/>
 			<jsp:include page="import/estadistiquesTaula.jsp">
@@ -206,6 +213,6 @@ $(document).ready(function() {
 		</c:if>
 		<a href="estadistiques/excel" class="btn btn-default"><i class="far fa-file-excel"></i>&nbsp;<spring:message code="estadistiques.list.exportar.excel"/></a>
 	</c:if>
-</div>		
+
 </body>
 </html>

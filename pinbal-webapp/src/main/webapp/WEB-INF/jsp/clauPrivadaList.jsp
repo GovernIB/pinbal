@@ -58,21 +58,19 @@
 
 </head>
 <body>
+	<a class="btn btn-primary pull-right" href="<c:url value="/scsp/clauprivada/new"/>"><i class="fa fa-plus"></i>&nbsp;<spring:message code="clau.privada.list.boto.nou.registre"/></a>
+	<table id="table-claus" class="table table-striped table-bordered" style="width: 100%">
+		<thead>
+			<tr>
+			<th data-data="alies"><spring:message code="clau.privada.list.taula.columna.alias" /></th>
+			<th data-data="nom"><spring:message code="clau.privada.list.taula.columna.nom" /></th>
+			<th data-data="numSerie"><spring:message code="clau.privada.list.taula.columna.numeroserie" /></th>
+			<th data-data="dataAlta"><spring:message code="clau.privada.list.taula.columna.dataalta" /></th>
+			<th data-data="id"></th>
+			</tr>
+		</thead>
+	</table>
 
-	<div class="container-fluid">
-		<a class="btn btn-primary pull-right" href="<c:url value="/scsp/clauprivada/new"/>"><i class="fa fa-plus"></i>&nbsp;<spring:message code="clau.privada.list.boto.nou.registre"/></a>
-		<table id="table-claus" class="table table-striped table-bordered" style="width: 100%">
-			<thead>
-				<tr>
-				<th data-data="alies"><spring:message code="clau.privada.list.taula.columna.alias" /></th>
-				<th data-data="nom"><spring:message code="clau.privada.list.taula.columna.nom" /></th>
-				<th data-data="numSerie"><spring:message code="clau.privada.list.taula.columna.numeroserie" /></th>
-				<th data-data="dataAlta"><spring:message code="clau.privada.list.taula.columna.dataalta" /></th>
-				<th data-data="id"></th>
-				</tr>
-			</thead>
-		</table>
-	</div>
 <script id="template-actions" type="x-tmpl-mustache">
 	<div class="btn-group">
 		<a class="btn btn-primary dropdown-toggle" data-toggle="dropdown"><i class="fas fa-cog"></i>&nbsp;<spring:message code="comu.accions"/>&nbsp;<span class="caret"></span></a>

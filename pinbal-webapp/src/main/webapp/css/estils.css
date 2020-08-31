@@ -128,3 +128,8 @@ div.exemple {
 	display: none;
 	margin-top: 2px;
 }
+
+.form-filtre-table {
+    padding: 20px 15px 5px 15px;
+}
+

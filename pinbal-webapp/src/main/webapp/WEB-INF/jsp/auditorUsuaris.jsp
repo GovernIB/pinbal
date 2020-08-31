@@ -170,41 +170,34 @@ function showModalEditar(
 	}
 	$('#modal-input-auditor').prop('checked', auditor);
 	$('#modal-form-usuari').modal('toggle');
-}01/03/2018
+}
 </script>
 </head>
 <body>
 
 	<c:url value="/auditor/usuari" var="formAction"/>
-	<form:form id="form-filtre" action="${formAction}" method="post" cssClass="well" commandName="usuariFiltreCommand">
-		<div class="container-fluid">
-			<div class="row">
-				<div class="col-md-2">			
-					<pbl:inputText name="codi" inline="true"  placeholderKey="auditor.usuaris.filtre.camp.codi"/>
+	<form:form id="form-filtre" action="${formAction}" method="post" cssClass="well form-filtre-table" commandName="usuariFiltreCommand">
+		<div class="row">
+			<div class="col-md-3">			
+				<pbl:inputText name="codi" inline="true"  placeholderKey="auditor.usuaris.filtre.camp.codi"/>
+			</div>
+			<div class="col-md-3">
+				<pbl:inputText name="nif" inline="true"  placeholderKey="auditor.usuaris.filtre.camp.nif"/>
+				
+			</div>
+			<div class="col-md-3">
+				<pbl:inputText name="nom" inline="true"  placeholderKey="auditor.usuaris.filtre.camp.nom"/>
+			</div>
+			<div class="col-md-3">
+				<div class="pull-right">
+					<button id="netejar-filtre" class="btn btn-default" type="button"><spring:message code="comu.boto.netejar"/></button>
+					<button type="submit" class="btn btn-primary"><span class="fa fa-filter"></span> <spring:message code="comu.boto.filtrar"/></button>
 				</div>
-				<div class="col-md-2">
-					<pbl:inputText name="nif" inline="true"  placeholderKey="auditor.usuaris.filtre.camp.nif"/>
-					
-				</div>
-				<div class="col-md-4">
-					<pbl:inputText name="nom" inline="true"  placeholderKey="auditor.usuaris.filtre.camp.nom"/>
-				</div>
-				<div class="col-md-4">
-					<div class="pull-right">
-						<button id="netejar-filtre" class="btn btn-default" type="button"><spring:message code="comu.boto.netejar"/></button>
-						<button type="submit" class="btn btn-primary"><spring:message code="comu.boto.filtrar"/></button>
-					</div>
-				</div>
-			</div>	
+			</div>
 		</div>	
 	</form:form>
 
-	<div class="row">
-		<div class="col-md-12">
-			<a class="btn btn-primary pull-right" onclick="showModalCrear()"><i class="fas fa-plus"></i>&nbsp;<spring:message code="entitat.usuaris.boto.nou.usuari"/></a>
-		</div>
-		<div class="clearfix"></div>
-	</div>
+	<a class="btn btn-primary pull-right" onclick="showModalCrear()"><i class="fas fa-plus"></i>&nbsp;<spring:message code="entitat.usuaris.boto.nou.usuari"/></a>
 	<table id="table-users" class="table table-striped table-bordered" style="width: 100%">
 		<thead>
 			<tr>

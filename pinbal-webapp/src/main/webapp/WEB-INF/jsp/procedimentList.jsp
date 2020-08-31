@@ -102,36 +102,28 @@ $(document).ready(function() {
 <body>
 
 	<c:url value="/procediment" var="formAction"/>
-	<form:form id="form-filtre" action="${formAction}" method="post" cssClass="well" commandName="procedimentFiltreCommand">
-		<div class="container-fluid">
-			<div class="row">
-				 <div class="col-md-2">			 
-					 <pbl:inputText name="codi" inline="true" placeholderKey="procediment.list.filtre.camp.codi"/>
-				</div>
-				<div class="col-md-2">
-					<pbl:inputText name="nom" inline="true" placeholderKey="procediment.list.filtre.camp.nom"/>
-				</div>
-				<div class="col-md-3">
-					<pbl:inputText name="departament" inline="true" placeholderKey="procediment.list.filtre.camp.departament"/>	
-				</div>				
-				<div class="col-md-5" >
-					<div class ="pull-right">
-						<button id="netejar-filtre" class="btn btn-default" type="button"><spring:message code="comu.boto.netejar"/></button>
-						<button type="submit" class="btn btn-primary"><spring:message code="comu.boto.filtrar"/></button>
-					</div>
-		       </div>        
+	<form:form id="form-filtre" action="${formAction}" method="post" cssClass="well form-filtre-table" commandName="procedimentFiltreCommand">
+		<div class="row">
+			 <div class="col-md-2">			 
+				 <pbl:inputText name="codi" inline="true" placeholderKey="procediment.list.filtre.camp.codi"/>
 			</div>
-		</div>			
+			<div class="col-md-2">
+				<pbl:inputText name="nom" inline="true" placeholderKey="procediment.list.filtre.camp.nom"/>
+			</div>
+			<div class="col-md-3">
+				<pbl:inputText name="departament" inline="true" placeholderKey="procediment.list.filtre.camp.departament"/>	
+			</div>				
+			<div class="col-md-5" >
+				<div class ="pull-right">
+					<button id="netejar-filtre" class="btn btn-default" type="button"><spring:message code="comu.boto.netejar"/></button>
+					<button type="submit" class="btn btn-primary"><span class="fa fa-filter"></span> <spring:message code="comu.boto.filtrar"/></button>
+				</div>
+	       </div>        
+		</div>
 	</form:form>			
-			<div class ="container-fluid">
-				<div class="pull-right">
-					<div class="row">
-						<div class="col-md-12" >
-							<a class="btn btn-primary" href="<c:url value="/procediment/new"/>"><i class="fa fa-plus"></i>&nbsp;<spring:message code="procediment.list.boto.nou.procediment"/></a>
-						</div>
-					</div>
-				</div>		
-				<div class="clearfix"></div>
+	<div class="pull-right">
+		<a class="btn btn-primary" href="<c:url value="/procediment/new"/>"><i class="fa fa-plus"></i>&nbsp;<spring:message code="procediment.list.boto.nou.procediment"/></a>
+	</div>		
 	<table id="table-procediments" class="table table-striped table-bordered" style="width: 100%">
 		<thead>
 			<tr>

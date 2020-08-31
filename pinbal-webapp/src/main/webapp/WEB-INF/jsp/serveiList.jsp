@@ -85,8 +85,6 @@
 		var alt = Math.round(window.innerHeight * 0.8) - 110;
 		
 		$('#modal-procediment-list').find('.modal-header h3').html($(element).data("titol"));
-// 			$('#modal-procediment-list').css({	"width": ample + 'px',
-// 												"margin-left": '-' + (ample/2) + 'px'});
 		$('#modal-procediment-list').find('.modal-body').css({"max-height": alt + "px"});
 		$('#modal-procediment-list').find('.modal-body').load(element.href);
 		$('#modal-procediment-list').modal('toggle');
@@ -100,7 +98,7 @@
 </head>
 <body>
 	<c:url value="/servei" var="formAction"/>
-	<form:form id="form-filtre" action="${formAction}" method="post" cssClass="well" commandName="serveiFiltreCommand">
+	<form:form id="form-filtre" action="${formAction}" method="post" cssClass="well form-filtre-table" commandName="serveiFiltreCommand">
 		<div class="row">
 			<div class="col-md-2">
 				<pbl:inputText name="codi"  inline="true" placeholderKey="servei.list.filtre.camp.codi"/>	
@@ -127,33 +125,28 @@
 			<div class="col-md-4">
 				<div class="pull-right">
 					<button id="netejar-filtre" class="btn btn-default" type="button"><spring:message code="comu.boto.netejar"/></button>
-					<button type="submit" class="btn btn-primary"><spring:message code="comu.boto.filtrar"/></button>
+					<button type="submit" class="btn btn-primary"><span class="fa fa-filter"></span> <spring:message code="comu.boto.filtrar"/></button>
 				</div>
 			</div>
 		</div>
 	</form:form>
 
-	<div class="row">
-		<div class="col-md-12">
-			<a class="btn btn-primary pull-right" href="<c:url value="/servei/new"/>"><i class="fa fa-plus"></i>&nbsp;<spring:message code="servei.list.boto.nou.servei"/></a>
-		</div>
+	<div class="pull-right">
+		<a class="btn btn-primary pull-right" href="<c:url value="/servei/new"/>"><i class="fa fa-plus"></i>&nbsp;<spring:message code="servei.list.boto.nou.servei"/></a>
 	</div>
-	<div class="row">
-		<div class="col-md-12">
-		<table id="table-serveis" class="table table-striped table-bordered" style="width: 100%">
-			<thead>
-				<tr>
-					<th data-data="codi"><spring:message code="servei.list.taula.columna.codi" /></th>
-					<th data-data="descripcio"><spring:message code="servei.list.taula.columna.descripcio" /></th>
-					<th data-data="scspEmisor.nom"><spring:message code="servei.list.taula.columna.emissor" /></th>
-					<th data-data="numeroProcedimentsAssociats"></th>
-					<th data-data="id"></th>
-					<th data-data="codiUrlEncoded"></th>
-				</tr>
-			</thead>
-		</table>
-		</div>
-	</div>
+	<table id="table-serveis" class="table table-striped table-bordered" style="width: 100%">
+		<thead>
+			<tr>
+				<th data-data="codi"><spring:message code="servei.list.taula.columna.codi" /></th>
+				<th data-data="descripcio"><spring:message code="servei.list.taula.columna.descripcio" /></th>
+				<th data-data="scspEmisor.nom"><spring:message code="servei.list.taula.columna.emissor" /></th>
+				<th data-data="numeroProcedimentsAssociats"></th>
+				<th data-data="id"></th>
+				<th data-data="codiUrlEncoded"></th>
+			</tr>
+		</thead>
+	</table>
+	
 <div id="modal-procediment-list" class="modal" tabindex="-1" role="dialog">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
