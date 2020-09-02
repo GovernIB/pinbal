@@ -8,6 +8,7 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 
 /**
@@ -15,7 +16,7 @@ import lombok.Setter;
  * 
  * @author Limit Tecnologies <limit@limit.es>
  */
-@Getter @Setter
+@Getter @Setter @ToString
 public class EntitatDto extends AbstractIdentificable<Long> implements Serializable {
 
 	public enum EntitatTipusDto {
@@ -30,6 +31,7 @@ public class EntitatDto extends AbstractIdentificable<Long> implements Serializa
 	private String codi;
 	private String nom;
 	private String cif;
+	private String unitatArrel;
 	private EntitatTipusDto tipus;
 	private boolean activa;
 
@@ -37,11 +39,6 @@ public class EntitatDto extends AbstractIdentificable<Long> implements Serializa
 	private List<String> serveis = new ArrayList<String>();
 
 	public EntitatDto() {
-	}
-
-	@Override
-	public String toString() {
-		return ToStringBuilder.reflectionToString(this);
 	}
 
 	public List<EntitatUsuariDto> getUsuarisAdmin() {

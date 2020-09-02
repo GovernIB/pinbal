@@ -24,8 +24,8 @@ import es.caib.pinbal.core.service.exception.ProcedimentServeiNotFoundException;
 import es.caib.pinbal.core.service.exception.ServeiNotFoundException;
 
 /**
- * Implementació de ProcedimentService que empra una clase delegada per accedir a la
- * funcionalitat del servei.
+ * Implementació de ProcedimentService que empra una clase delegada per accedir
+ * a la funcionalitat del servei.
  * 
  * @author Limit Tecnologies <limit@limit.es>
  */
@@ -36,19 +36,15 @@ public class ProcedimentServiceBean implements ProcedimentService {
 	@Autowired
 	ProcedimentService delegate;
 
-
-
 	@Override
 	@RolesAllowed("PBL_REPRES")
-	public ProcedimentDto create(ProcedimentDto creat)
-			throws EntitatNotFoundException {
+	public ProcedimentDto create(ProcedimentDto creat) throws EntitatNotFoundException {
 		return delegate.create(creat);
 	}
 
 	@Override
 	@RolesAllowed("PBL_REPRES")
-	public ProcedimentDto delete(Long procedimentId)
-			throws ProcedimentNotFoundException {
+	public ProcedimentDto delete(Long procedimentId) throws ProcedimentNotFoundException {
 		return delegate.delete(procedimentId);
 	}
 
@@ -59,9 +55,8 @@ public class ProcedimentServiceBean implements ProcedimentService {
 	}
 
 	@Override
-	@RolesAllowed({"PBL_ADMIN", "PBL_REPRES", "PBL_AUDIT", "PBL_SUPERAUD"})
-	public List<ProcedimentDto> findAmbEntitat(Long entitatId)
-			throws EntitatNotFoundException {
+	@RolesAllowed({ "PBL_ADMIN", "PBL_REPRES", "PBL_AUDIT", "PBL_SUPERAUD" })
+	public List<ProcedimentDto> findAmbEntitat(Long entitatId) throws EntitatNotFoundException {
 		return delegate.findAmbEntitat(entitatId);
 	}
 
@@ -72,13 +67,9 @@ public class ProcedimentServiceBean implements ProcedimentService {
 			String codi,
 			String nom,
 			String departament,
+			String filtreOrganGestor,
 			Pageable pageable) throws EntitatNotFoundException {
-		return delegate.findAmbFiltrePaginat(
-				entitatId,
-				codi,
-				nom,
-				departament,
-				pageable);
+		return delegate.findAmbFiltrePaginat(entitatId, codi, nom, departament, filtreOrganGestor, pageable);
 	}
 
 	@Override
@@ -89,23 +80,19 @@ public class ProcedimentServiceBean implements ProcedimentService {
 
 	@Override
 	@RolesAllowed("PBL_REPRES")
-	public ProcedimentDto update(
-			ProcedimentDto modificat) throws ProcedimentNotFoundException {
+	public ProcedimentDto update(ProcedimentDto modificat) throws ProcedimentNotFoundException {
 		return delegate.update(modificat);
 	}
 
 	@Override
 	@RolesAllowed("PBL_REPRES")
-	public ProcedimentDto updateActiu(
-			Long id, boolean actiu) throws ProcedimentNotFoundException {
+	public ProcedimentDto updateActiu(Long id, boolean actiu) throws ProcedimentNotFoundException {
 		return delegate.updateActiu(id, actiu);
 	}
 
 	@Override
 	@RolesAllowed("PBL_REPRES")
-	public void serveiEnable(
-			Long id,
-			String serveiCodi) throws ProcedimentNotFoundException, ServeiNotFoundException {
+	public void serveiEnable(Long id, String serveiCodi) throws ProcedimentNotFoundException, ServeiNotFoundException {
 		delegate.serveiEnable(id, serveiCodi);
 	}
 
@@ -122,38 +109,36 @@ public class ProcedimentServiceBean implements ProcedimentService {
 	public void serveiPermisAllow(
 			Long id,
 			String serveiCodi,
-			String usuariCodi) throws ProcedimentNotFoundException,
-			ProcedimentServeiNotFoundException, EntitatUsuariNotFoundException {
+			String usuariCodi) throws ProcedimentNotFoundException, ProcedimentServeiNotFoundException, EntitatUsuariNotFoundException {
 		delegate.serveiPermisAllow(id, serveiCodi, usuariCodi);
 	}
 
 	@Override
 	@RolesAllowed("PBL_REPRES")
-	public void serveiPermisDeny(Long id, String serveiCodi, String usuariCodi)
-			throws ProcedimentNotFoundException,
-			ProcedimentServeiNotFoundException, EntitatUsuariNotFoundException {
+	public void serveiPermisDeny(
+			Long id,
+			String serveiCodi,
+			String usuariCodi) throws ProcedimentNotFoundException, ProcedimentServeiNotFoundException, EntitatUsuariNotFoundException {
 		delegate.serveiPermisDeny(id, serveiCodi, usuariCodi);
 	}
-	
+
 	@Override
 	@RolesAllowed("PBL_REPRES")
-	public void serveiPermisDenyAll(String usuariCodi, Long entitatId) 
-			throws EntitatUsuariNotFoundException {
+	public void serveiPermisDenyAll(String usuariCodi, Long entitatId) throws EntitatUsuariNotFoundException {
 		delegate.serveiPermisDenyAll(usuariCodi, entitatId);
 	}
 
 	@Override
 	@RolesAllowed("PBL_REPRES")
-	public List<String> findUsuarisAmbPermisPerServei(Long id, String serveiCodi)
-			throws ProcedimentNotFoundException,
-			ProcedimentServeiNotFoundException {
+	public List<String> findUsuarisAmbPermisPerServei(
+			Long id,
+			String serveiCodi) throws ProcedimentNotFoundException, ProcedimentServeiNotFoundException {
 		return delegate.findUsuarisAmbPermisPerServei(id, serveiCodi);
 	}
 
 	@Override
 	@RolesAllowed("tothom")
-	public List<ProcedimentDto> findAmbEntitatPerDelegat(
-			Long entitatId) throws EntitatNotFoundException {
+	public List<ProcedimentDto> findAmbEntitatPerDelegat(Long entitatId) throws EntitatNotFoundException {
 		return delegate.findAmbEntitatPerDelegat(entitatId);
 	}
 
@@ -162,11 +147,9 @@ public class ProcedimentServiceBean implements ProcedimentService {
 	public List<ProcedimentDto> findActiusAmbEntitatIServeiCodi(
 			Long entitatId,
 			String serveiCodi) throws EntitatNotFoundException {
-		return delegate.findActiusAmbEntitatIServeiCodi(
-				entitatId,
-				serveiCodi);
+		return delegate.findActiusAmbEntitatIServeiCodi(entitatId, serveiCodi);
 	}
-	
+
 	@Override
 	@RolesAllowed("tothom")
 	public List<ProcedimentDto> findAmbServeiCodi(String serveiCodi) {
@@ -181,11 +164,12 @@ public class ProcedimentServiceBean implements ProcedimentService {
 
 	@Override
 	@RolesAllowed("PBL_REPRES")
-	public boolean putProcedimentCodi(Long procedimentId, String serveiCodi,
-			String procedimentCodi) throws ProcedimentNotFoundException,
-			ServeiNotFoundException {
+	public boolean putProcedimentCodi(
+			Long procedimentId,
+			String serveiCodi,
+			String procedimentCodi) throws ProcedimentNotFoundException, ServeiNotFoundException {
 		return delegate.putProcedimentCodi(procedimentId, serveiCodi, procedimentCodi);
-		
+
 	}
 
 }

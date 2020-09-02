@@ -10,6 +10,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
 
 import es.caib.pinbal.core.dto.EntitatDto;
+import es.caib.pinbal.core.dto.OrganGestorDto;
 import es.caib.pinbal.core.service.exception.EntitatNotFoundException;
 import es.caib.pinbal.core.service.exception.EntitatServeiNotFoundException;
 import es.caib.pinbal.core.service.exception.ServeiNotFoundException;
@@ -113,6 +114,16 @@ public interface EntitatService {
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public EntitatDto findByCif(String cif);
 
+	/**
+	 * Obté una llista amb tots els òrgans gestors de l'entitat.
+	 * 
+	 * @param id
+	 *            Identificador de l'entitat
+	 * @return Llista amb tots els organs gestors asociats a la entitat
+	 */
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	public List<OrganGestorDto> getOrgansGestors(Long id);
+	
 	/**
 	 * Activa o desactiva l'entitat.
 	 * 

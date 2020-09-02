@@ -37,6 +37,7 @@
 				<pbl:inputText name="codi" required="true" labelSize="1" inline="false" textKey="entitat.form.camp.codi"/>
 				<pbl:inputText name="nom" required="true" labelSize="1" inline="false" textKey="entitat.form.camp.nom"/>
 				<pbl:inputText name="cif" required="true" labelSize="1" inline="false" textKey="entitat.form.camp.cif"/>
+				<pbl:inputText name="unitatArrel" required="true" labelSize="1" inline="false" textKey="entitat.form.camp.dir3"/>
 				<pbl:inputSelect name="tipus" 
 						textKey="entitat.form.camp.tipus"
 						required="true" labelSize="1" inline="false" 

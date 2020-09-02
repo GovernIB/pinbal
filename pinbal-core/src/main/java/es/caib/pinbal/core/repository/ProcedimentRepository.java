@@ -43,6 +43,9 @@ public interface ProcedimentRepository extends JpaRepository<Procediment, Long> 
 			"    p.entitat = :entitat " +
 			"and (:esNullCodi = true or lower(p.codi) like concat('%', lower(:codi), '%')) " +
 			"and (:esNullNom = true or lower(p.nom) like concat('%', lower(:nom), '%'))" +
+			"and (:esNullOrganGestor = true" +
+			"								or lower(p.organGestor.nom) like concat('%', lower(:organGestor), '%')" +
+			"								or lower(p.organGestor.codi) like concat('%', lower(:organGestor), '%'))" +
 			"and (:esNullDepartament = true or lower(p.departament) like concat('%', lower(:departament), '%'))")
 	public Page<Procediment> findByFiltre(
 			@Param("entitat") Entitat entitat,
@@ -52,6 +55,8 @@ public interface ProcedimentRepository extends JpaRepository<Procediment, Long> 
 			@Param("nom") String nom,
 			@Param("esNullDepartament") boolean esNullDepartament,
 			@Param("departament") String departament,
+			@Param("esNullOrganGestor") boolean esNullOrganGestor,
+			@Param("organGestor") String organGestor,
 			Pageable pageable);
 
 	@Query(	"select" +

@@ -10,21 +10,28 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import javax.persistence.Table;
 import javax.persistence.Version;
 
-import org.apache.commons.lang.builder.ToStringBuilder;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import es.caib.pinbal.core.audit.PinbalAuditable;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 
 /**
  * Classe de model de dades que conté la informació d'una entitat.
  * 
  * @author Limit Tecnologies <limit@limit.es>
  */
+@Getter
+@Setter
+@ToString
 @Entity
 @Table(name = "pbl_entitat")
 @EntityListeners(AuditingEntityListener.class)
@@ -48,6 +55,9 @@ public class Entitat extends PinbalAuditable<Long> {
 	@Column(name = "cif", length = 16, nullable = false)
 	private String cif;
 
+	@Column(name = "unitat_arrel", length = 9, nullable = false)
+	private String unitatArrel;
+	
 	@Column(name = "tipus", nullable = false)
 	private EntitatTipus tipus;
 
@@ -70,10 +80,13 @@ public class Entitat extends PinbalAuditable<Long> {
 	@OrderBy("nom asc")
 	private List<Procediment> procediments = new ArrayList<Procediment>();
 
+    @OneToMany(			
+    		mappedBy = "entitat",
+			fetch = FetchType.LAZY, cascade = {CascadeType.ALL})
+	private List<OrganGestor> organGestors;
+	
 	@Version
 	private long version = 0;
-
-
 
 	/**
 	 * Obté el Builder per a crear objectes de tipus Entitat.
@@ -102,47 +115,11 @@ public class Entitat extends PinbalAuditable<Long> {
 				tipus);
 	}
 
-	public String getCodi() {
-		return codi;
-	}
-
-	public String getNom() {
-		return nom;
-	}
-
-	public String getCif() {
-		return cif;
-	}
-
-	public EntitatTipus getTipus() {
-		return tipus;
-	}
-
-	public boolean isActiva() {
-		return activa;
-	}
-
 	public List<String> getServeis() {
 		List<String> resposta = new ArrayList<String>();
 		for (EntitatServei servei: serveis)
 			resposta.add(servei.getServei());
 		return resposta;
-	}
-
-	public List<ServeiBus> getServeisBus() {
-		return serveisBus;
-	}
-
-	public List<EntitatUsuari> getUsuaris() {
-		return usuaris;
-	}
-
-	public List<Procediment> getProcediments() {
-		return procediments;
-	}
-
-	public long getVersion() {
-		return version;
 	}
 
 	public void update(
@@ -262,11 +239,6 @@ public class Entitat extends PinbalAuditable<Long> {
 		} else if (!codi.equals(other.codi))
 			return false;
 		return true;
-	}
-
-	@Override
-	public String toString() {
-		return ToStringBuilder.reflectionToString(this);
 	}
 
 }

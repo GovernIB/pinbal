@@ -2109,11 +2109,13 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 			ProcedimentServei procedimentServei) {
 		Solicitud solicitud = new Solicitud();
 		solicitud.setServeiCodi(consulta.getServeiCodi());
+		
 		Procediment procediment = procedimentRepository.findOne(procedimentServei.getProcediment().getId());
 		solicitud.setProcedimentCodi(
 				(procedimentServei.getProcedimentCodi() != null && !("".equalsIgnoreCase(procedimentServei.getProcedimentCodi())) ? 
 						procedimentServei.getProcedimentCodi() : 
 						procediment.getCodi()));
+		
 		solicitud.setProcedimentNom(procediment.getNom());
 		solicitud.setSolicitantIdentificacio(consulta.getEntitatCif());
 		solicitud.setSolicitantNom(consulta.getEntitatNom());
@@ -2121,8 +2123,7 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 		solicitud.setFuncionariNif(consulta.getFuncionariNif());
 		if (consulta.getTitularDocumentTipus() != null) {
 			solicitud.setTitularDocumentTipus(
-					es.caib.pinbal.scsp.DocumentTipus.valueOf(
-							consulta.getTitularDocumentTipus().toString()));
+					es.caib.pinbal.scsp.DocumentTipus.valueOf(consulta.getTitularDocumentTipus().toString()));
 		}
 		solicitud.setTitularDocument(consulta.getTitularDocumentNum());
 		solicitud.setTitularNom(consulta.getTitularNom());
@@ -2133,15 +2134,18 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 		solicitud.setConsentiment(
 				es.caib.pinbal.scsp.Consentiment.valueOf(
 						consulta.getConsentiment().toString()));
-		solicitud.setUnitatTramitadora(consulta.getDepartamentNom());
+
+		setUnitatTramitadoraSolicitud(solicitud, procediment, consulta.getDepartamentNom());
 		ServeiConfig serveiConfig = serveiConfigRepository.findByServei(consulta.getServeiCodi());
 		if (serveiConfig.getPinbalUnitatDir3() != null && !serveiConfig.getPinbalUnitatDir3().isEmpty()) {
 			solicitud.setUnitatTramitadoraCodi(serveiConfig.getPinbalUnitatDir3());
 		}
+		
 		solicitud.setExpedientId(consulta.getExpedientId());
 		solicitud.setDadesEspecifiquesMap(consulta.getDadesEspecifiques());
 		return solicitud;
 	}
+	
 	private Solicitud convertirEnSolicitud(
 			Entitat entitat,
 			Procediment procediment,
@@ -2184,7 +2188,8 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 		solicitud.setFinalitat(finalitat);
 		solicitud.setConsentiment(
 				es.caib.pinbal.scsp.Consentiment.valueOf(consentiment.toString()));
-		solicitud.setUnitatTramitadora(departamentNom);
+		setUnitatTramitadoraSolicitud(solicitud, procediment, departamentNom);
+		
 		solicitud.setUnitatTramitadoraCodi(unitatTramitadoraCodi);
 		solicitud.setExpedientId(expedientId);
 		solicitud.setDadesEspecifiquesElement(dadesEspecifiques);
@@ -2210,8 +2215,8 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 			solicitud.setConsentiment(
 					es.caib.pinbal.scsp.Consentiment.valueOf(
 							consulta.getConsentiment().toString()));
-			solicitud.setUnitatTramitadora(consulta.getDepartamentNom());
-			//
+			setUnitatTramitadoraSolicitud(solicitud, procediment, consulta.getDepartamentNom());
+
 			String titularDocumentTipus = getValorCampPeticioMultiple(
 					"DatosGenericos/Titular/TipoDocumentacion",
 					consulta.getCampsPeticioMultiple(),
@@ -2263,6 +2268,15 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 		}
 		return solicituds;
 	}
+	
+	private void setUnitatTramitadoraSolicitud(Solicitud solicitud, Procediment procediment, String defaultUnitatTramitadora) {
+		if (procediment.getOrganGestor() != null) {
+			solicitud.setUnitatTramitadora(procediment.getOrganGestor().getCodi());	
+		}else {
+			solicitud.setUnitatTramitadora(defaultUnitatTramitadora);
+		}
+	}
+		
 
 	private void processarDadesEspecifiquesSegonsCamps(
 			String serveiCodi,

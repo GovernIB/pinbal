@@ -231,15 +231,15 @@
 			<version>1.6.1</version>
 		</dependency>
 		<dependency>
-    <groupId>org.webjars.bower</groupId>
-    <artifactId>select2</artifactId>
-    <version>4.0.6-rc.1</version>
-</dependency>
-<dependency>
-    <groupId>org.webjars.bower</groupId>
-    <artifactId>select2-bootstrap-theme</artifactId>
-    <version>0.1.0-beta.10</version>
-</dependency>
+		    <groupId>org.webjars.bower</groupId>
+		    <artifactId>select2</artifactId>
+		    <version>4.0.6-rc.1</version>
+		</dependency>
+		<dependency>
+		    <groupId>org.webjars.bower</groupId>
+		    <artifactId>select2-bootstrap-theme</artifactId>
+		    <version>0.1.0-beta.10</version>
+		</dependency>
 		<dependency>
 			 <groupId>com.fasterxml.jackson.core</groupId>
 			 <artifactId>jackson-core</artifactId>
@@ -266,7 +266,7 @@
 			<artifactId>pinbal-core-client</artifactId>
 			<version>${project.version}</version>
 		</dependency>
-				<dependency>
+		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
 			<version>1.18.12</version>

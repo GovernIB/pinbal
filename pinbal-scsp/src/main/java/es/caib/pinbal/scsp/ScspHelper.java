@@ -715,6 +715,7 @@ public class ScspHelper {
 		funcionario.setNombreCompletoFuncionario(solicitud.getFuncionariNom());
 		funcionario.setNifFuncionario(solicitud.getFuncionariNif());
 		solicitante.setFuncionario(funcionario);
+		
 		Procedimiento procedimiento = new Procedimiento();
 		procedimiento.setCodProcedimiento(solicitud.getProcedimentCodi());
 		procedimiento.setNombreProcedimiento(solicitud.getProcedimentNom());

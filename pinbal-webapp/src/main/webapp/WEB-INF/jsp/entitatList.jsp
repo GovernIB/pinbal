@@ -82,14 +82,14 @@ $(document).ready(function() {
 				}
 	        },
 			{
-				targets: [4],
+				targets: [5],
 				render: function (data, type, row, meta) {
 						var template = $('#template-activa').html();
 						return Mustache.render(template, row);
 				}
 			},
 			{
-				targets: [5],
+				targets: [6],
 				orderable: false,
 				width: "1%",
 				render: function (data, type, row, meta) {
@@ -98,7 +98,7 @@ $(document).ready(function() {
 				}
 			}, 
 			{
-				targets: [6],
+				targets: [7],
 				orderable: false,
 				width: "1%",
 				render: function (data, type, row, meta) {
@@ -107,7 +107,7 @@ $(document).ready(function() {
 				}
 			}, 
 			{
-				targets: [7],
+				targets: [8],
 				orderable: false,
 				width: "1%",
 				render: function (data, type, row, meta) {
@@ -172,6 +172,7 @@ $(document).ready(function() {
 				<th data-data="nom"><spring:message code="entitat.list.taula.columna.nom" /></th>
 				<th data-data="cif"><spring:message code="entitat.list.taula.columna.cif" /></th>
 				<th data-data="tipus"><spring:message code="entitat.list.taula.columna.tipus" /></th>
+				<th data-data="unitatArrel"><spring:message code="entitat.list.taula.columna.unitatArrel" /></th>
 				<th data-data="activa"><spring:message code="entitat.list.taula.columna.activa" /></th>
 				<th data-data="usuaris"></th>
 				<th data-data="serveis"></th>

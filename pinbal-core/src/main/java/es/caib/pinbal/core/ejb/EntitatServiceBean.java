@@ -15,6 +15,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.ejb.interceptor.SpringBeanAutowiringInterceptor;
 
 import es.caib.pinbal.core.dto.EntitatDto;
+import es.caib.pinbal.core.dto.OrganGestorDto;
 import es.caib.pinbal.core.service.EntitatService;
 import es.caib.pinbal.core.service.exception.EntitatNotFoundException;
 import es.caib.pinbal.core.service.exception.EntitatServeiNotFoundException;
@@ -33,11 +34,9 @@ public class EntitatServiceBean implements EntitatService {
 	@Autowired
 	EntitatService delegate;
 
-
-
 	@Override
 	@RolesAllowed("PBL_ADMIN")
-	public EntitatDto create(EntitatDto creada){
+	public EntitatDto create(EntitatDto creada) {
 		return delegate.create(creada);
 	}
 
@@ -48,7 +47,7 @@ public class EntitatServiceBean implements EntitatService {
 	}
 
 	@Override
-	@RolesAllowed({"PBL_ADMIN", "PBL_SUPERAUD"})
+	@RolesAllowed({ "PBL_ADMIN", "PBL_SUPERAUD" })
 	public List<EntitatDto> findAll() {
 		return delegate.findAll();
 	}
@@ -62,12 +61,11 @@ public class EntitatServiceBean implements EntitatService {
 			Boolean activa,
 			String tipus,
 			Pageable pageable) {
-		return delegate.findAmbFiltrePaginat(codi, nom, cif, activa, tipus, 
-				pageable);
+		return delegate.findAmbFiltrePaginat(codi, nom, cif, activa, tipus, pageable);
 	}
 
 	@Override
-	@RolesAllowed({"PBL_ADMIN", "PBL_REPRES", "PBL_AUDIT", "PBL_SUPERAUD", "tothom"})
+	@RolesAllowed({ "PBL_ADMIN", "PBL_REPRES", "PBL_AUDIT", "PBL_SUPERAUD", "tothom" })
 	public EntitatDto findById(Long id) {
 		return delegate.findById(id);
 	}
@@ -77,7 +75,7 @@ public class EntitatServiceBean implements EntitatService {
 	public EntitatDto findByCodi(String codi) {
 		return delegate.findByCodi(codi);
 	}
-	
+
 	@Override
 	@RolesAllowed("PBL_ADMIN")
 	public EntitatDto findByCif(String cif) {
@@ -86,24 +84,19 @@ public class EntitatServiceBean implements EntitatService {
 
 	@Override
 	@RolesAllowed("PBL_ADMIN")
-	public EntitatDto update(
-			EntitatDto modificada) throws EntitatNotFoundException{
+	public EntitatDto update(EntitatDto modificada) throws EntitatNotFoundException {
 		return delegate.update(modificada);
 	}
 
 	@Override
 	@RolesAllowed("PBL_ADMIN")
-	public EntitatDto updateActiva(
-			Long id,
-			boolean activa) throws EntitatNotFoundException {
+	public EntitatDto updateActiva(Long id, boolean activa) throws EntitatNotFoundException {
 		return delegate.updateActiva(id, activa);
 	}
 
 	@Override
 	@RolesAllowed("PBL_ADMIN")
-	public void addServei(
-			Long id,
-			String serveiCodi) throws EntitatNotFoundException, ServeiNotFoundException {
+	public void addServei(Long id, String serveiCodi) throws EntitatNotFoundException, ServeiNotFoundException {
 		delegate.addServei(id, serveiCodi);
 	}
 
@@ -116,7 +109,7 @@ public class EntitatServiceBean implements EntitatService {
 	}
 
 	@Override
-	@RolesAllowed({"PBL_ADMIN", "PBL_REPRES", "PBL_AUDIT", "PBL_SUPERAUD", "tothom"})
+	@RolesAllowed({ "PBL_ADMIN", "PBL_REPRES", "PBL_AUDIT", "PBL_SUPERAUD", "tothom" })
 	public List<EntitatDto> findActivesAmbUsuariCodi(String usuariCodi) {
 		return delegate.findActivesAmbUsuariCodi(usuariCodi);
 	}
@@ -127,5 +120,10 @@ public class EntitatServiceBean implements EntitatService {
 		return delegate.findDisponiblesPerRedireccionsBus(serveiCodi);
 	}
 
+	@Override
+	@RolesAllowed("PBL_ADMIN")
+	public List<OrganGestorDto> getOrgansGestors(Long id) {
+		return delegate.getOrgansGestors(id);
+	}
 
 }

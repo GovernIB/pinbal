@@ -36,6 +36,7 @@ import es.caib.pinbal.core.model.ProcedimentServei;
 import es.caib.pinbal.core.repository.EntitatRepository;
 import es.caib.pinbal.core.repository.EntitatServeiRepository;
 import es.caib.pinbal.core.repository.EntitatUsuariRepository;
+import es.caib.pinbal.core.repository.OrganGestorRepository;
 import es.caib.pinbal.core.repository.ProcedimentRepository;
 import es.caib.pinbal.core.repository.ProcedimentServeiRepository;
 import es.caib.pinbal.core.service.exception.EntitatNotFoundException;
@@ -63,7 +64,8 @@ public class ProcedimentServiceImpl implements ProcedimentService {
 	private EntitatUsuariRepository entitatUsuariRepository;
 	@Resource
 	private ProcedimentServeiRepository procedimentServeiRepository;
-
+	@Resource
+	private OrganGestorRepository organGestorRepository;
 	@Resource
 	private DtoMappingHelper dtoMappingHelper;
 
@@ -81,12 +83,13 @@ public class ProcedimentServiceImpl implements ProcedimentService {
 		Entitat entitat = entitatRepository.findOne(creat.getEntitatId());
 		if (entitat == null)
 			throw new EntitatNotFoundException();
+		
 		Procediment procediment = Procediment.getBuilder(
 				entitat,
 				creat.getCodi(),
 				creat.getNom(),
 				creat.getDepartament(),
-				creat.getOrganGestor(),
+				organGestorRepository.getOne(creat.getOrganGestor().getId()),
 				creat.getCodiSia()).build();
 
 		return dtoMappingHelper.getMapperFacade().map(
@@ -128,6 +131,7 @@ public class ProcedimentServiceImpl implements ProcedimentService {
 			String codi,
 			String nom,
 			String departament,
+			String filtreOrganGestor,
 			Pageable pageable) throws EntitatNotFoundException {
 		LOGGER.debug("Consulta de procediments segons filtre ("
 				+ "entitatId=" + entitatId + ", "
@@ -145,6 +149,8 @@ public class ProcedimentServiceImpl implements ProcedimentService {
 				nom,
 				departament == null || departament.length() == 0,
 				departament,
+				filtreOrganGestor == null || filtreOrganGestor.length() == 0,
+				filtreOrganGestor,
 				pageable);
 		return dtoMappingHelper.pageEntities2pageDto(paginaProcediments, 
 													 ProcedimentDto.class, pageable);
@@ -184,7 +190,7 @@ public class ProcedimentServiceImpl implements ProcedimentService {
         		modificat.getCodi(),
         		modificat.getNom(),
         		modificat.getDepartament(),
-        		modificat.getOrganGestor(),
+        		organGestorRepository.getOne(modificat.getOrganGestor().getId()),
         		modificat.getCodiSia());
 
         return dtoMappingHelper.getMapperFacade().map(

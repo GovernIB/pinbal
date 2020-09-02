@@ -25,6 +25,7 @@
 		<xdocreport.version>1.0.3</xdocreport.version>
 		<compiler.plugin.version>3.1</compiler.plugin.version>
 		<slf4j.version>1.7.7</slf4j.version>
+		<dir3caib.version>1.0.7</dir3caib.version>
 		<maven.test.skip>true</maven.test.skip>
 		<maven.compiler.source>1.6</maven.compiler.source>
 		<maven.compiler.target>1.6</maven.compiler.target>
