@@ -141,17 +141,31 @@ public class ProcedimentServiceImpl implements ProcedimentService {
 		Entitat entitat = entitatRepository.findOne(entitatId);
 		if (entitat == null)
 			throw new EntitatNotFoundException();
-		Page<Procediment> paginaProcediments = procedimentRepository.findByFiltre(
-				entitat,
-				codi == null || codi.length() == 0,
-				codi,
-				nom == null || nom.length() == 0,
-				nom,
-				departament == null || departament.length() == 0,
-				departament,
-				filtreOrganGestor == null || filtreOrganGestor.length() == 0,
-				filtreOrganGestor,
-				pageable);
+		
+		Page<Procediment> paginaProcediments;
+		if (filtreOrganGestor == null || filtreOrganGestor.length() == 0) {
+			paginaProcediments = procedimentRepository.findByFiltre(
+					entitat,
+					codi == null || codi.length() == 0,
+					codi,
+					nom == null || nom.length() == 0,
+					nom,
+					departament == null || departament.length() == 0,
+					departament,
+					pageable);
+
+		} else {
+			paginaProcediments = procedimentRepository.findByFiltreWithOrganGestor(
+					entitat,
+					codi == null || codi.length() == 0,
+					codi,
+					nom == null || nom.length() == 0,
+					nom,
+					departament == null || departament.length() == 0,
+					departament,
+					filtreOrganGestor,
+					pageable);
+		}
 		return dtoMappingHelper.pageEntities2pageDto(paginaProcediments, 
 													 ProcedimentDto.class, pageable);
 	}

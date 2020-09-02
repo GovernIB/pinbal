@@ -61,28 +61,4 @@ public class OrganGestorServiceBean implements OrganGestorService {
 		return delegate.syncDir3OrgansGestors(entitatId);
 	}
 
-//	@Override
-//	@RolesAllowed("IPA_ADMIN")
-//	public List<PermisOrganGestorDto> findPermisos(Long entitatId) throws NotFoundException {
-//		return delegate.findPermisos(entitatId);
-//	}
-//
-//	@Override
-//	@RolesAllowed("IPA_ADMIN")
-//	public void updatePermis(Long id, PermisDto permis, Long entitatId) throws NotFoundException {
-//		delegate.updatePermis(id, permis, entitatId);
-//	}
-//
-//	@Override
-//	@RolesAllowed("IPA_ADMIN")
-//	public void deletePermis(Long id, Long permisId, Long entitatId) throws NotFoundException {
-//		delegate.deletePermis(id, permisId, entitatId);
-//	}
-//
-//	@Override
-//	@RolesAllowed("tothom")
-//	public List<OrganGestorDto> findAccessiblesUsuariActual(Long entitatId) {
-//		return delegate.findAccessiblesUsuariActual(entitatId);
-//	}
-
 }
