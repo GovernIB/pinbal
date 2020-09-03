@@ -2,6 +2,7 @@ package es.caib.pinbal.core.model;
 
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
@@ -9,6 +10,7 @@ import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.PreRemove;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
@@ -24,36 +26,43 @@ import lombok.Setter;
  * @author Limit Tecnologies <limit@limit.es>
  */
 @Entity
-@Table(name = "pbl_organ_gestor", uniqueConstraints = @UniqueConstraint(name = "pbl_organ_gestor_uk", columnNames = {
-        "codi", "entitat_id" }))
+@Table(name = "pbl_organ_gestor",
+		uniqueConstraints = @UniqueConstraint(name = "pbl_organ_gestor_uk", columnNames = { "codi", "entitat_id" }))
 @EntityListeners(AuditingEntityListener.class)
 @Getter
 @Setter
 public class OrganGestor extends PinbalAuditable<Long> {
 
-    @Column(name = "codi", length = 64, nullable = false)
-    private String codi;
+	@Column(name = "codi", length = 64, nullable = false)
+	private String codi;
 
-    @Column(name = "nom", length = 1000)
-    private String nom;
+	@Column(name = "nom", length = 1000)
+	private String nom;
 
-    @ManyToOne(optional = true, fetch = FetchType.EAGER)
-    @JoinColumn(name = "entitat_id")
-    private Entitat entitat;
+	@ManyToOne(optional = true, fetch = FetchType.EAGER)
+	@JoinColumn(name = "entitat_id")
+	private Entitat entitat;
 
-    @ManyToOne(optional = true, fetch = FetchType.EAGER)
-    @JoinColumn(name = "pare_id")
-    private OrganGestor pare;
+	@ManyToOne(optional = true, fetch = FetchType.EAGER)
+	@JoinColumn(name = "pare_id")
+	private OrganGestor pare;
 
-    @Column(name = "actiu")
-    private boolean actiu;
-    
-    @OneToMany(			
-    		mappedBy = "organGestor",
-			fetch = FetchType.LAZY)
-    private List<Procediment> procediments;
-            
-    
-    private static final long serialVersionUID = 458331024861203562L;
+	@Column(name = "actiu")
+	private boolean actiu;
+
+	@OneToMany(mappedBy = "organGestor", fetch = FetchType.LAZY)
+	private List<Procediment> procediments;
+
+	@OneToMany(mappedBy = "pare", fetch = FetchType.LAZY, cascade = { CascadeType.PERSIST })
+	private List<OrganGestor> fills;
+
+	@PreRemove
+	private void preRemove() {
+		for (OrganGestor fill : this.getFills()) {
+			fill.setPare(null);
+		}
+	}
+
+	private static final long serialVersionUID = 458331024861203562L;
 
 }

@@ -66,6 +66,7 @@ public class OrganGestorServiceImpl implements OrganGestorService {
 		}
 		
 		List<OrganGestor> organismesDIR3 = new ArrayList<OrganGestor>();
+		
 		List<OrganGestorDto> organismes = findOrganismesArbre(entitat.getUnitatArrel());
 		for (OrganGestorDto o : organismes) {
 			OrganGestor organDB = organGestorRepository.findByCodiAndEntitat(o.getCodi(), entitat);
@@ -94,7 +95,7 @@ public class OrganGestorServiceImpl implements OrganGestorService {
 		for (OrganGestor o : organismesNotInDIR3) {
 			if (o.getProcediments() == null || o.getProcediments().size() == 0) {
 				organGestorRepository.delete(o.getId());
-				System.out.println("REMOVED: " + o.getNom());
+
 			} else {
 				o.setActiu(false);
 				organGestorRepository.flush();
