@@ -219,7 +219,7 @@ function showModalEditar(row) {
 	</ul>
 
 	<c:url value="/entitat/${entitat.id}/usuari" var="formAction"/>
-	<form:form id="form-filtre"action="${formAction}" method="post" cssClass="well" commandName="usuariFiltreCommand">
+	<form:form id="form-filtre"action="${formAction}" method="post" cssClass="well form-filtre-table" commandName="usuariFiltreCommand">
 		
 			<div class="row">
 				<div class="col-md-3">
@@ -275,15 +275,10 @@ function showModalEditar(row) {
 			
 	</form:form>
 
-	<div class="container-fluid">
-		<div class="row">
-			<div class="col-md-12">
-				<a class="btn btn-primary pull-right" href="#modal-form-usuari" onclick="showModalCrear()"><i class="fa fa-plus"></i>&nbsp;<spring:message code="entitat.usuaris.boto.nou.usuari"/></a>
-			</div>
-		</div>
-	</div>		
-		<div class="clearfix"></div>
-	
+
+	<div class="pull-right">
+		<a class="btn btn-primary" href="#modal-form-usuari" onclick="showModalCrear()"><i class="fa fa-plus"></i>&nbsp;<spring:message code="entitat.usuaris.boto.nou.usuari"/></a>
+	</div>			
 	<table id="table-users" class="table table-striped table-bordered" style="width: 100%">
 		<thead>
 			<tr>
