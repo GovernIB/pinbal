@@ -492,17 +492,22 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 			Long procedimentId) throws EntitatNotFoundException, ProcedimentNotFoundException {
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 		LOGGER.debug("Cercant serveis permesos pel delegat (entitatId=" + entitatId + ", procedimentId=" + procedimentId + ", usuariCodi=" + auth.getName() + ")");
+		// long t0 = System.currentTimeMillis();
 		Entitat entitat = entitatRepository.findOne(entitatId);
 		if (entitat == null) {
 			LOGGER.debug("No s'ha trobat l'entitat (id=" + entitatId + ")");
 			throw new EntitatNotFoundException();
 		}
+		// System.out.println(">>> 0 (" + (System.currentTimeMillis() - t0) + "ms)");
+		// t0 = System.currentTimeMillis();
 		Procediment procediment = null;
 		if (procedimentId != null) {
 			procediment = procedimentRepository.findOne(procedimentId);
 			if (procediment == null)
 				throw new ProcedimentNotFoundException();
 		}
+		// System.out.println(">>> 1 (" + (System.currentTimeMillis() - t0) + "ms)");
+		// t0 = System.currentTimeMillis();
 		EntitatUsuari entitatUsuari = entitatUsuariRepository.findByEntitatIdAndUsuariCodi(
 				entitat.getId(),
 				auth.getName());
@@ -510,13 +515,19 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 			LOGGER.debug("Aquest usuari no té permisos per accedir com a delegat a l'entitat (id=" + entitat.getId() + ", usuariCodi=" + auth.getName() + ")");
 			throw new EntitatNotFoundException();
 		}
+		// System.out.println(">>> 2 (" + (System.currentTimeMillis() - t0) + "ms)");
+		// t0 = System.currentTimeMillis();
 		List<String> permesos = serveiHelper.findServeisPermesosPerUsuari(
 				entitat.getId(),
 				(procediment != null) ? procediment.getCodi() : null,
 				auth);
+		// System.out.println(">>> 3 (" + (System.currentTimeMillis() - t0) + "ms)");
+		// t0 = System.currentTimeMillis();
 		List<ServeiDto> resposta = new ArrayList<ServeiDto>();
-		for (String servei: permesos)
+		for (String servei: permesos) {
 			resposta.add(toServeiDto(getScspHelper().getServicio(servei)));
+		}
+		// System.out.println(">>> 4 (" + (System.currentTimeMillis() - t0) + "ms)");
 		return resposta;
 	}
 

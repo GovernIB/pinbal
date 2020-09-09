@@ -154,7 +154,6 @@ public class ConsultaController extends BaseController {
 		return "consulta";
 	}
 
-
 	@RequestMapping(value = "/datatable", produces="application/json", method = RequestMethod.GET)
 	@ResponseBody
 	public ServerSideResponse<ConsultaDto, Long> datatable(HttpServletRequest request, Model model)
@@ -165,18 +164,16 @@ public class ConsultaController extends BaseController {
 		if (!EntitatHelper.isDelegatEntitatActual(request)) {
 			error = "Delegat no autoritzat";
 		}
-
 		EntitatDto entitat = EntitatHelper.getEntitatActual(request, entitatService);
 		if (entitat == null) {
 			throw new EntitatNotFoundException();
 		}
-
 		ConsultaFiltreCommand command = (ConsultaFiltreCommand)RequestSessionHelper.obtenirObjecteSessio(
 				request,
 				SESSION_ATTRIBUTE_FILTRE);
-		if (command == null)
+		if (command == null) {
 			command = new ConsultaFiltreCommand();
-		
+		}
 		Page<ConsultaDto> page;
 		ServerSideResponse<ConsultaDto, Long> response = null;
 		if (error != null) {
@@ -184,27 +181,22 @@ public class ConsultaController extends BaseController {
 			page = new PageImpl<ConsultaDto>(lista, serverSideRequest.toPageable(), lista.size());
 			response = new ServerSideResponse<ConsultaDto, Long>(serverSideRequest, page);
 			response.setError(error);
-
-		}else {
+		} else {
 			List<ServerSideColumn> cols = serverSideRequest.getColumns();
 			cols.get(1).setData("createdDate");
 			cols.get(2).setData("procedimentServei.procediment.nom");
-		
 			page = consultaService.findSimplesByFiltrePaginatPerDelegat(
 					entitat.getId(),
 					ConsultaFiltreCommand.asDto(command),		
 					serverSideRequest.toPageable());
-			
-
 			cols.get(1).setData("creacioData");
 			cols.get(2).setData("procedimentNom");
 			cols.get(3).setData("serveiDescripcio");
 			response = new ServerSideResponse<ConsultaDto, Long>(serverSideRequest, page);
 		}
-		
 		return response;
 	}
-	
+
 	@RequestMapping(value = "/{serveiCodi}/new", method = RequestMethod.GET)
 	public String newGet(
 			HttpServletRequest request,
@@ -784,8 +776,9 @@ public class ConsultaController extends BaseController {
 		ConsultaFiltreCommand command = (ConsultaFiltreCommand)RequestSessionHelper.obtenirObjecteSessio(
 				request,
 				SESSION_ATTRIBUTE_FILTRE);
-		if (command == null)
+		if (command == null) {
 			command = new ConsultaFiltreCommand();
+		}
 		model.addAttribute(
 				"filtreCommand",
 				command);
@@ -839,7 +832,6 @@ public class ConsultaController extends BaseController {
 		model.addAttribute(
 				"grups",
 				serveiService.findServeiCampGrups(serveiCodi));
-		
 		boolean mostraDadesEspecifiques = false;
 		for (ServeiCampDto camp: camps) {
 			if (camp.isVisible()) {
@@ -847,7 +839,6 @@ public class ConsultaController extends BaseController {
 				break;
 			}
 		}
-		
 		model.addAttribute("mostrarDadesEspecifiques", mostraDadesEspecifiques);
 	}
 	
