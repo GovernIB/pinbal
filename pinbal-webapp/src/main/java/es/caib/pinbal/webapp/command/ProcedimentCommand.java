@@ -6,15 +6,17 @@ package es.caib.pinbal.webapp.command;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-import org.apache.commons.lang.builder.ToStringBuilder;
 import org.hibernate.validator.constraints.NotEmpty;
 
+import es.caib.pinbal.core.dto.OrganGestorDto;
 import es.caib.pinbal.core.dto.ProcedimentDto;
 import es.caib.pinbal.webapp.validation.CodiProcedimentNoRepetit;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 /**
  * Command per al manteniment de procediments
@@ -23,6 +25,7 @@ import lombok.Setter;
  */
 @Getter
 @Setter
+@ToString
 @CodiProcedimentNoRepetit(campId = "id", campEntitatId = "entitatId", campCodi = "codi")
 public class ProcedimentCommand {
 
@@ -38,31 +41,35 @@ public class ProcedimentCommand {
 	private String nom;
 	@Size(max = 64)
 	private String departament;
-	@NotEmpty
-	@Size(max = 64)
-	private String organGestor;
+	@NotNull
+	private Long organGestorId;
 	@Size(max = 64)
 	private String codiSia;
 
 	public static List<ProcedimentCommand> toProcedimentCommands(List<ProcedimentDto> dtos) {
 		List<ProcedimentCommand> commands = new ArrayList<ProcedimentCommand>();
 		for (ProcedimentDto dto : dtos) {
-			commands.add(CommandMappingHelper.getMapperFacade().map(dto, ProcedimentCommand.class));
+			commands.add(asCommand(dto));
 		}
 		return commands;
 	}
 
 	public static ProcedimentCommand asCommand(ProcedimentDto dto) {
-		return CommandMappingHelper.getMapperFacade().map(dto, ProcedimentCommand.class);
+		ProcedimentCommand command = CommandMappingHelper.getMapperFacade().map(dto, ProcedimentCommand.class);
+		if (dto.getOrganGestor() != null) {
+			command.setOrganGestorId(dto.getOrganGestor().getId());
+		}
+		return command;
 	}
 
-	public static ProcedimentDto asDto(ProcedimentCommand command) {
-		return CommandMappingHelper.getMapperFacade().map(command, ProcedimentDto.class);
-	}
-
-	@Override
-	public String toString() {
-		return ToStringBuilder.reflectionToString(this);
+	public ProcedimentDto asDto() {
+		ProcedimentDto dto = CommandMappingHelper.getMapperFacade().map(this, ProcedimentDto.class);
+		if (this.getOrganGestorId() != null) {
+			OrganGestorDto organGestor = new OrganGestorDto();
+			organGestor.setId(this.getOrganGestorId());
+			dto.setOrganGestor(organGestor);
+		}
+		return dto;
 	}
 
 }

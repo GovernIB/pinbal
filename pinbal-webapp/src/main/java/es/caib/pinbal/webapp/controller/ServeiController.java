@@ -34,9 +34,11 @@ import es.caib.pinbal.core.dto.ArbreDto;
 import es.caib.pinbal.core.dto.DadaEspecificaDto;
 import es.caib.pinbal.core.dto.EntitatDto;
 import es.caib.pinbal.core.dto.FitxerDto;
+import es.caib.pinbal.core.dto.NodeDto;
 import es.caib.pinbal.core.dto.ProcedimentDto;
 import es.caib.pinbal.core.dto.ServeiBusDto;
 import es.caib.pinbal.core.dto.ServeiCampDto;
+import es.caib.pinbal.core.dto.ServeiCampDto.ServeiCampDtoTipus;
 import es.caib.pinbal.core.dto.ServeiDto;
 import es.caib.pinbal.core.dto.ServeiXsdDto;
 import es.caib.pinbal.core.dto.XsdTipusEnumDto;
@@ -305,12 +307,29 @@ public class ServeiController extends BaseController {
 		model.addAttribute(
 				"servei",
 				serveiDto);
-		model.addAttribute(
-				"arbreDadesEspecifiques",
-				serveiService.generarArbreDadesEspecifiques(serveiCodi, serveiDto.isActivaGestioXsd()));
-		
+		ArbreDto<DadaEspecificaDto> arbreDadesEspecifiques = serveiService.generarArbreDadesEspecifiques(
+				serveiCodi,
+				serveiDto.isActivaGestioXsd());
+		model.addAttribute("arbreDadesEspecifiques", arbreDadesEspecifiques);
+		List<NodeDto<DadaEspecificaDto>> llistatDadesEspecifiques = arbreDadesEspecifiques.toList();
 		List<ServeiCampDto> camps = serveiService.findServeiCamps(serveiCodi);
 		model.addAttribute("camps", camps);
+		
+		// Consulta dels valors d'enumerat dels camps tipus enumerat
+		List<ServeiCampDto> campsEnum = new ArrayList<ServeiCampDto>();
+		List<String[]> valorsEnums = new ArrayList<String[]>();
+		for (ServeiCampDto camp: camps) {
+			if (camp.getTipus() == ServeiCampDtoTipus.ENUM) {
+				for (NodeDto<DadaEspecificaDto> node: llistatDadesEspecifiques) {
+					if (node.getDades().getPathAmbSeparadorDefault().equals(camp.getPath())) {
+						campsEnum.add(camp);
+						valorsEnums.add( node.getDades().getEnumeracioValors() );
+					}
+				}				
+			}
+		}
+		model.addAttribute("campsEnumList", campsEnum);
+		model.addAttribute("valorsEnumList", valorsEnums);
 		
 		Map<Long, List<ServeiCampDto>> campsAgrupats = new HashMap<Long, List<ServeiCampDto>>();
 		for (ServeiCampDto camp: camps) {

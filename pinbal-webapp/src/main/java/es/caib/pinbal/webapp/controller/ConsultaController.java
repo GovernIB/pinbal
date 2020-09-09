@@ -212,22 +212,9 @@ public class ConsultaController extends BaseController {
 			Model model) throws AccesExternException, ServeiNotFoundException, ScspException, EntitatNotFoundException, IOException, ParserConfigurationException, SAXException {
 		if (!EntitatHelper.isDelegatEntitatActual(request))
 			return "delegatNoAutoritzat";
+
 		EntitatDto entitat = EntitatHelper.getEntitatActual(request, entitatService);
-		if (entitat != null) {
-			omplirModelPerMostrarFormulari(
-					entitat.getId(),
-					serveiCodi,
-					model);
-			ConsultaCommand command = new ConsultaCommand(serveiCodi);
-			emplenarCommand(
-					request,
-					command,
-					serveiCodi,
-					entitat,
-					true);
-			model.addAttribute(command);
-			return "consultaForm";
-		} else {
+		if (entitat == null) {
 			AlertHelper.error(
 					request,
 					getMessage(
@@ -235,6 +222,20 @@ public class ConsultaController extends BaseController {
 							"comu.error.no.entitat"));
 			return "redirect:../../../index";
 		}
+		omplirModelPerMostrarFormulari(
+				entitat.getId(),
+				serveiCodi,
+				model);
+		ConsultaCommand command = new ConsultaCommand(serveiCodi);
+		emplenarCommand(
+				request,
+				command,
+				serveiCodi,
+				entitat,
+				true);
+		model.addAttribute(command);
+		return "consultaForm";
+
 	}
 
 	@RequestMapping(value = "/{serveiCodi}/new", method = RequestMethod.POST)

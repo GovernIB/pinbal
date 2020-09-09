@@ -43,6 +43,28 @@ public interface ProcedimentRepository extends JpaRepository<Procediment, Long> 
 			"    p.entitat = :entitat " +
 			"and (:esNullCodi = true or lower(p.codi) like concat('%', lower(:codi), '%')) " +
 			"and (:esNullNom = true or lower(p.nom) like concat('%', lower(:nom), '%'))" +
+			"and (lower(p.organGestor.nom) like concat('%', lower(:organGestor), '%')" +
+			"	  or lower(p.organGestor.codi) like concat('%', lower(:organGestor), '%'))" +
+			"and (:esNullDepartament = true or lower(p.departament) like concat('%', lower(:departament), '%'))")
+	public Page<Procediment> findByFiltreWithOrganGestor(
+			@Param("entitat") Entitat entitat,
+			@Param("esNullCodi") boolean esNullCodi,
+			@Param("codi") String codi,
+			@Param("esNullNom") boolean esNullNom,
+			@Param("nom") String nom,
+			@Param("esNullDepartament") boolean esNullDepartament,
+			@Param("departament") String departament,
+			@Param("organGestor") String organGestor,
+			Pageable pageable);
+
+	@Query(	"select" +
+			"    p " +
+			"from" +
+			"    Procediment p " +
+			"where " +
+			"    p.entitat = :entitat " +
+			"and (:esNullCodi = true or lower(p.codi) like concat('%', lower(:codi), '%')) " +
+			"and (:esNullNom = true or lower(p.nom) like concat('%', lower(:nom), '%'))" +
 			"and (:esNullDepartament = true or lower(p.departament) like concat('%', lower(:departament), '%'))")
 	public Page<Procediment> findByFiltre(
 			@Param("entitat") Entitat entitat,
@@ -53,7 +75,7 @@ public interface ProcedimentRepository extends JpaRepository<Procediment, Long> 
 			@Param("esNullDepartament") boolean esNullDepartament,
 			@Param("departament") String departament,
 			Pageable pageable);
-
+	
 	@Query(	"select" +
 			"    p " +
 			"from" +

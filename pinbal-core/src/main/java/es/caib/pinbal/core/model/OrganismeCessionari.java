@@ -24,12 +24,17 @@ import javax.persistence.TemporalType;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import lombok.Getter;
+import lombok.Setter;
+
 /**
  * Classe de model de dades que conté la informació d'un
  * organisme cesionari
  * 
  * @author Limit Tecnologies <limit@limit.es>
  */
+@Getter
+@Setter
 @Entity
 @Table(name = "core_organismo_cesionario")
 @EntityListeners(AuditingEntityListener.class)
@@ -99,40 +104,6 @@ public class OrganismeCessionari implements Serializable {
 				logo,
 				claus);
 	}
-	
-	
-	public Long getId() {
-		return id;
-	}
-	
-	public String getNom() {
-		return nom;
-	}
-	
-	public String getCif() {
-		return cif;
-	}
-	
-	public Date getDataBaixa() {
-		return dataBaixa;
-	}
-	
-	public Date getDataAlta() {
-		return dataAlta;
-	}
-	
-	public Boolean getBloquejat() {
-		return bloquejat;
-	}
-	
-	public byte[] getLogo() {
-		return logo;
-	}
-	
-	public List<ClauPrivada> getClaus() {
-		return claus;
-	}
-	
 	
 	public void update(
 			String nom,
@@ -243,13 +214,6 @@ public class OrganismeCessionari implements Serializable {
 		return ToStringBuilder.reflectionToString(this);
 	}
 	
-	public void setBloquejat(Boolean bloquejat) {
-		this.bloquejat = bloquejat;
-	}
-
-
-
-
 	private static final long serialVersionUID = -6657066865382086237L;
 	
 }

@@ -14,7 +14,7 @@
 
 <html>
 <head>
-	<title><spring:message code="servei.camp.titol"/></title>
+	<title><spring:message code="servei.camp.titol"/>: ${servei.descripcio}</title>
 	<c:choose>
 		<c:when test="${not empty servei.descripcio}"><c:set var="serveiPerTitol" value="${servei.descripcio}"/></c:when>
 		<c:otherwise><c:set var="serveiPerTitol" value="${servei.codi}"/></c:otherwise>
@@ -209,7 +209,6 @@ $(function() {
 </script>
 </head>
 <body>
-<div class="container-fluid">
 	<div class="row">
 		<div class="col-md-4">
 			<div class="well">
@@ -297,13 +296,12 @@ $(function() {
 								   data-valorperdefecte="${ camp.valorPerDefecte }" 
 								   data-comentari="${ camp.comentari }" 
 								   data-dataformat="${ camp.dataFormat }" 
-								   <c:if test="${ camp.campPare }">
-								   data-camppare="${ camp.campPare }"
+								   <c:if test="${ not empty camp.campPare }">
+								   data-camppare="${ camp.campPare.id }"
 								   </c:if>
-								   <c:if test="${ not camp.campPare }">
+								   <c:if test="${ empty camp.campPare }">
 								   data-camppare="0"
 								   </c:if>
-								   data-camppare="${ camp.campPare }"
 								   data-valorpare="${ camp.valorPare }"
 								   data-obligatori="${ camp.obligatori }" 
 								   data-modificable="${ camp.modificable }" 
@@ -388,13 +386,12 @@ $(function() {
 											   data-valorperdefecte="${ camp.valorPerDefecte }" 
 											   data-comentari="${ camp.comentari }" 
 											   data-dataformat="${ camp.dataFormat }" 
-											   <c:if test="${ camp.campPare }">
-											   data-camppare="${ camp.campPare }"
+											   <c:if test="${ not empty camp.campPare }">
+											   data-camppare="${ camp.campPare.id }"
 											   </c:if>
-											   <c:if test="${ not camp.campPare }">
+											   <c:if test="${ empty camp.campPare }">
 											   data-camppare="0"
 											   </c:if>
-											   data-camppare="${ camp.campPare }"
 											   data-valorpare="${ camp.valorPare }"
 											   data-obligatori="${ camp.obligatori }" 
 											   data-modificable="${ camp.modificable }" 
@@ -436,7 +433,6 @@ $(function() {
 		<c:set var="initModalPreview">initModalPreview(this);return false</c:set>
 		<a href="<c:url value="/modal/servei/${servei.codiUrlEncoded}/preview"/>" class="btn btn-info" onclick="${initModalPreview}"><i class="fas fa-eye"></i>&nbsp;<spring:message code="comu.boto.previsualitzar"/></a>
 	</div>
-</div>
 
 	<form id="hidden-form" action="camp/add" method="post" class="form-horizontal">
 		<input type="hidden" id="hidden-hidden-servei" name="servei"/>
@@ -517,22 +513,17 @@ $(function() {
     				<label for="modal-input-comentari"><spring:message code="servei.camp.data.valor.pare"/></label>
 					<input class="form-control" type="text" id="modal-input-valor-pare" name="valorPare" class="input-lg"/>
 				</div>
-				<c:forEach var="camp" items="${camps}">
-					<c:if test="${camp.tipus == 'ENUM'}">
-						<c:forEach var="node" items="${llistatDadesEspecifiques}">
-							<c:if test="${node.dades.pathAmbSeparadorDefault == camp.path}">
-								<div id="modal-grup-descripcions-${camp.id}" class="form-group grup-descripcions">
-			    					<label for="modal-input-descripcions"><spring:message code="servei.camp.descripcions"/></label>
-			    					<c:forEach var="valor" items="${node.dades.enumeracioValors}" varStatus="status">
-										<div class="input-prepend">
-											<span class="add-on">${valor}</span><input type="text" id="modal-input-descripcio-${status.index}" name="descripcio-${camp.id}"<c:if test="${status.index lt fn:length(camp.enumDescripcions)}"> value="${camp.enumDescripcions[status.index]}"</c:if> class="input-lg"/>
-										</div>
-										<c:if test="${not status.last}"><br/></c:if>
-			    					</c:forEach>
-								</div>
-							</c:if>
-						</c:forEach>
-					</c:if>
+				<c:forEach var="camp" items="${campsEnumList}" varStatus="status">
+					<div id="modal-grup-descripcions-${camp.id}" class="form-group grup-descripcions">
+    					<label for="modal-input-descripcions"><spring:message code="servei.camp.descripcions"/></label>
+    					<c:forEach var="valor" items="${valorsEnumList[status.index]}" varStatus="statusValor">
+							<div class="input-group">
+								<span class="input-group-addon">${valor}</span>
+								<input id="modal-input-descripcio-${statusValor.index}" class="form-control" type="text" name="descripcio-${camp.id}"<c:if test="${statusValor.index lt fn:length(camp.enumDescripcions)}"> value="${camp.enumDescripcions[statusValor.index]}"</c:if>/>
+							</div>
+							<c:if test="${not statusValor.last}"><br/></c:if>
+    					</c:forEach>
+					</div>
 				</c:forEach>
 			</form>
 		</div>

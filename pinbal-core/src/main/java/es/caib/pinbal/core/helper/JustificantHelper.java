@@ -147,7 +147,7 @@ public class JustificantHelper implements MessageSourceAware {
 							arxiuExpedientUuid = pluginHelper.arxiuExpedientCrear(
 									consulta.getScspPeticionId(),
 									consulta.getTitularDocumentNum(),
-									procediment.getOrganGestor(),
+									procediment.getOrganGestor().getCodi(),
 									procediment.getCodiSia(),
 									procediment.getCodi(),
 									serieDocumental);
@@ -162,7 +162,7 @@ public class JustificantHelper implements MessageSourceAware {
 					arxiuDocumentUuid = pluginHelper.arxiuDocumentGuardarFirmaPades(
 							arxiuExpedientUuid,
 							consulta.getScspSolicitudId(),
-							procediment.getOrganGestor(),
+							procediment.getOrganGestor().getCodi(),
 							serieDocumental,
 							justificantFitxer,
 							ContingutOrigen.ADMINISTRACIO,

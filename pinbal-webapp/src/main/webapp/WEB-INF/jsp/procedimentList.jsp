@@ -44,11 +44,11 @@ $(document).ready(function() {
 		ajax: '<c:url value="/procediment/datatable/"/>',
 		columnDefs: [
 			{
-				targets: [0, 1, 2],
-				width: "30%"
+				targets: [0, 1, 2, 3],
+				width: "20%"
 			},
 			{
-				targets: [3],
+				targets: [5],
 				render: function (data, type, row, meta) {
 						var template = $('#template-activa').html();
 						return Mustache.render(template, row);
@@ -112,27 +112,25 @@ $(document).ready(function() {
 			</div>
 			<div class="col-md-3">
 				<pbl:inputText name="departament" inline="true" placeholderKey="procediment.list.filtre.camp.departament"/>	
-			</div>				
-			<div class="col-md-5" >
+			</div>
+			<div class="col-md-5">
 				<div class ="pull-right">
 					<button id="netejar-filtre" class="btn btn-default" type="button"><spring:message code="comu.boto.netejar"/></button>
 					<button type="submit" class="btn btn-primary"><span class="fa fa-filter"></span> <spring:message code="comu.boto.filtrar"/></button>
 				</div>
-	       </div>        
+	       </div>
 		</div>
-	</form:form>			
-	<div class="pull-right">
-		<a class="btn btn-primary" href="<c:url value="/procediment/new"/>"><i class="fa fa-plus"></i>&nbsp;<spring:message code="procediment.list.boto.nou.procediment"/></a>
-	</div>		
+	</form:form>
+	<a class="btn btn-primary" href="<c:url value="/procediment/new"/>"><i class="fa fa-plus"></i>&nbsp;<spring:message code="procediment.list.boto.nou.procediment"/></a>
 	<table id="table-procediments" class="table table-striped table-bordered" style="width: 100%">
 		<thead>
 			<tr>
 				<th data-data="codi"><spring:message code="procediment.list.taula.columna.codi" /></th>
 				<th data-data="nom"><spring:message code="procediment.list.taula.columna.nom" /></th>
 				<th data-data="departament"><spring:message code="procediment.list.taula.columna.departament" /></th>
-				<th data-data="actiu"><spring:message code="procediment.list.taula.columna.actiu" /></th>
-				<th data-data="organGestor"><spring:message code="procediment.list.taula.columna.organgestor" /></th>
+				<th data-data="organGestorStr"><spring:message code="procediment.list.taula.columna.organgestor" /></th>
 				<th data-data="codiSia"><spring:message code="procediment.list.taula.columna.codisia" /></th>
+				<th data-data="actiu"><spring:message code="procediment.list.taula.columna.actiu" /></th>
 				<th data-data="id"></th>
 				<th data-data="serveisActius"></th>
 				<th data-data="id"></th>

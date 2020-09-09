@@ -4,8 +4,6 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.lang.builder.ToStringBuilder;
-
 import lombok.Getter;
 import lombok.Setter;
 
@@ -28,7 +26,7 @@ public class ProcedimentDto extends AbstractIdentificable<Long> implements Seria
 	private Long entitatId;
 	private String entitatNom;
 
-	private String organGestor;
+	private OrganGestorDto organGestor;
 	private String codiSia;
 
 	private List<ProcedimentServeiSimpleDto> serveisActius = new ArrayList<ProcedimentServeiSimpleDto>();
@@ -44,12 +42,16 @@ public class ProcedimentDto extends AbstractIdentificable<Long> implements Seria
 			return nom;
 		}
 	}
-
-	@Override
-	public String toString() {
-		return ToStringBuilder.reflectionToString(this);
+	
+	public String getOrganGestorStr()
+	{
+		if (this.organGestor == null) {
+			return "";
+		}
+		
+		return this.organGestor.getNom() + " (" + this.organGestor.getCodi() + ")";
 	}
-
+	
 	private static final long serialVersionUID = 3986823331500016935L;
 
 }

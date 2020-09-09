@@ -57,8 +57,10 @@ public class Procediment extends PinbalAuditable<Long> {
 	@Column(name = "actiu")
 	private boolean actiu = true;
 	
-	@Column(name = "ORGAN_GESTOR")
-	private String organGestor;
+	@ManyToOne(optional = true, fetch = FetchType.EAGER)
+	@JoinColumn(name = "ORGAN_GESTOR_ID")
+	private OrganGestor organGestor;
+		
 	@Column(name = "CODI_SIA")
 	private String codiSia;
 	
@@ -74,7 +76,6 @@ public class Procediment extends PinbalAuditable<Long> {
 
 	@Version
 	private long version = 0;
-
 
 
 	/**
@@ -95,7 +96,7 @@ public class Procediment extends PinbalAuditable<Long> {
 			String codi,
 			String nom,
 			String departament,
-			String organGestor,
+			OrganGestor organGestor,
 			String codiSia) {
 		return new Builder(
 				entitat,
@@ -123,7 +124,7 @@ public class Procediment extends PinbalAuditable<Long> {
 			String codi,
 			String nom,
 			String departament,
-			String organGestor,
+			OrganGestor organGestor,
 			String codiSia) {
 		this.codi = codi;
 		this.nom = nom;
@@ -165,7 +166,7 @@ public class Procediment extends PinbalAuditable<Long> {
 				String codi,
 				String nom,
 				String departament,
-				String organGestor,
+				OrganGestor organGestor,
 				String codiSia) {
 			built = new Procediment();
 			built.entitat = entitat;

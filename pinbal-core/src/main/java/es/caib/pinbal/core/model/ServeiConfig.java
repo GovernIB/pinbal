@@ -11,12 +11,16 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import es.caib.pinbal.core.audit.PinbalAuditable;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * Dades d'un camp per al formulari de configuracio d'un servei.
  * 
  * @author Limit Tecnologies <limit@limit.es>
  */
+@Getter
+@Setter
 @Entity
 @Table(	name = "pbl_servei_config" )
 @EntityListeners(AuditingEntityListener.class)
@@ -144,97 +148,6 @@ public class ServeiConfig extends PinbalAuditable<Long> {
 				fitxerAjudaContingut);
 	}
 
-	public String getServei() {
-		return servei;
-	}
-	public String getCustodiaCodi() {
-		return custodiaCodi;
-	}
-	public String getRoleName() {
-		return roleName;
-	}
-	public String getCondicioBusClass() {
-		return condicioBusClass;
-	}
-	public EntitatTipus getEntitatTipus() {
-		return entitatTipus;
-	}
-	public JustificantTipus getJustificantTipus() {
-		return justificantTipus;
-	}
-	public String getJustificantXpath() {
-		return justificantXpath;
-	}
-	public boolean isPermesDocumentTipusDni() {
-		return permesDocumentTipusDni;
-	}
-	public boolean isPermesDocumentTipusNif() {
-		return permesDocumentTipusNif;
-	}
-	public boolean isPermesDocumentTipusCif() {
-		return permesDocumentTipusCif;
-	}
-	public boolean isPermesDocumentTipusNie() {
-		return permesDocumentTipusNie;
-	}
-	public boolean isPermesDocumentTipusPas() {
-		return permesDocumentTipusPas;
-	}
-	public boolean isActiuCampNom() {
-		return actiuCampNom;
-	}
-	public boolean isActiuCampLlinatge1() {
-		return actiuCampLlinatge1;
-	}
-	public boolean isActiuCampLlinatge2() {
-		return actiuCampLlinatge2;
-	}
-	public boolean isActiuCampNomComplet() {
-		return actiuCampNomComplet;
-	}
-	public boolean isActiuCampDocument() {
-		return actiuCampDocument;
-	}
-	public String getPinbalUnitatDir3() {
-		return pinbalUnitatDir3;
-	}
-	public boolean isDocumentObligatori() {
-		return documentObligatori;
-	}
-	public boolean isComprovarDocument() {
-		return comprovarDocument;
-	}
-	public String getAjuda() {
-		return ajuda;
-	}
-	public void setAjuda(String ajuda) {
-		this.ajuda = ajuda;
-	}
-	public String getFitxerAjudaNom() {
-		return fitxerAjudaNom;
-	}
-	public void setFitxerAjudaNom(String fitxerAjudaNom) {
-		this.fitxerAjudaNom = fitxerAjudaNom;
-	}
-	public String getFitxerAjudaMimeType() {
-		return fitxerAjudaMimeType;
-	}
-	public void setFitxerAjudaMimeType(String fitxerAjudaMimeType) {
-		this.fitxerAjudaMimeType = fitxerAjudaMimeType;
-	}
-	public byte[] getFitxerAjudaContingut() {
-		return fitxerAjudaContingut;
-	}
-	public void setFitxerAjudaContingut(byte[] fitxerAjudaContingut) {
-		this.fitxerAjudaContingut = fitxerAjudaContingut;
-	}
-	public boolean isActivaGestioXsd() {
-		return activaGestioXsd;
-	}
-	public void setActivaGestioXsd(boolean activaGestioXsd) {
-		this.activaGestioXsd = activaGestioXsd;
-	}
-	
 	public long getVersion() {
 		return version;
 	}

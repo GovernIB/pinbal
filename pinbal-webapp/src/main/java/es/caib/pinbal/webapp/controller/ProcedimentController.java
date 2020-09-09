@@ -143,6 +143,7 @@ public class ProcedimentController extends BaseController {
 													command.getCodi(),
 													command.getNom(),
 													command.getDepartament(),
+													command.getOrganGestor(),
 													serverSideRequest.toPageable());
 
 		return new ServerSideResponse<ProcedimentDto, Long>(serverSideRequest, page);
@@ -174,7 +175,9 @@ public class ProcedimentController extends BaseController {
 				command = new ProcedimentCommand();
 			}
 			command.setEntitatId(entitat.getId());
+			
 			model.addAttribute(command);
+			model.addAttribute("organsGestors", entitatService.getOrgansGestors(entitat.getId()));
 			return "procedimentForm";
 			
 		} else {
@@ -209,8 +212,10 @@ public class ProcedimentController extends BaseController {
 			return "procedimentForm";
 		}
 		
-		ProcedimentDto procediment = ProcedimentCommand.asDto(command);
+		ProcedimentDto procediment = command.asDto();
 		procediment.setEntitatId(entitat.getId());
+		command.setEntitatId(entitat.getId());
+		
 		if (command.getId() != null) {
 			procedimentService.update(procediment);
 			AlertHelper.success(

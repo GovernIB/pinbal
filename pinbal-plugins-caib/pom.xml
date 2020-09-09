@@ -112,6 +112,16 @@
 			<version>2.2</version>
 		</dependency>
 		<!-- Fi signatura en el servidor amb PortaFib -->
+  		<dependency>
+			<groupId>es.caib.dir3caib</groupId>
+			<artifactId>dir3caib-ws-api</artifactId>
+			<version>${dir3caib.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>commons-io</groupId>
+			<artifactId>commons-io</artifactId>
+			<version>2.2</version>
+		</dependency>
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>

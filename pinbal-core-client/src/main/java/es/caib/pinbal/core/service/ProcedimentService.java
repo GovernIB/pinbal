@@ -83,6 +83,7 @@ public interface ProcedimentService {
 			String codi,
 			String nom,
 			String departament,
+			String filtreOrganGestor,
 			Pageable pageable) throws EntitatNotFoundException;
 
 	/**

@@ -24,10 +24,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import es.caib.pinbal.core.dto.EntitatDto;
+import es.caib.pinbal.core.dto.OrganGestorDto;
 import es.caib.pinbal.core.helper.DtoMappingHelper;
 import es.caib.pinbal.core.model.Entitat;
 import es.caib.pinbal.core.model.Entitat.EntitatTipus;
 import es.caib.pinbal.core.model.EntitatServei;
+import es.caib.pinbal.core.model.OrganGestor;
 import es.caib.pinbal.core.model.OrganismeCessionari;
 import es.caib.pinbal.core.model.ServeiConfig;
 import es.caib.pinbal.core.repository.EntitatRepository;
@@ -76,14 +78,17 @@ public class EntitatServiceImpl implements EntitatService, ApplicationContextAwa
 				creada.getNom(),
 				creada.getCif(),
 				EntitatTipus.valueOf(creada.getTipus().toString())).build();
+		entitat.setUnitatArrel(creada.getUnitatArrel());
+		
 		getScspHelper().organismoCesionarioSave(
 				creada.getCif(),
 				creada.getNom(),
 				new Date(),
 				null,
 				!entitat.isActiva());
+		entitat = entitatRepository.save(entitat);
 		return dtoMappingHelper.getMapperFacade().map(
-				entitatRepository.save(entitat),
+				entitat,
 				EntitatDto.class);
 	}
 
@@ -184,20 +189,31 @@ public class EntitatServiceImpl implements EntitatService, ApplicationContextAwa
 			throw new EntitatNotFoundException();
 		}
 		modificada.setActiva(entitat.isActiva());
+		
 		OrganismeCessionari oc = organismeCessionariRepository.findByCif(entitat.getCif());
 		oc.updateEntitat(modificada.getNom(), modificada.getCif(), !modificada.isActiva());
 		organismeCessionariRepository.saveAndFlush(oc);
+		
 		entitat.update(
 				modificada.getCodi(),
 				modificada.getNom(),
 				modificada.getCif(),
 				EntitatTipus.valueOf(modificada.getTipus().toString()));
+		entitat.setUnitatArrel(modificada.getUnitatArrel());
 		actualitzarServeisScspActiusEntitat(entitat);
+		
 		return dtoMappingHelper.getMapperFacade().map(
 				entitat,
 				EntitatDto.class);
 	}
 
+	@Transactional(readOnly = true)
+	public List<OrganGestorDto> getOrgansGestors(Long id) {
+		Entitat entitat = entitatRepository.findOne(id);
+		List<OrganGestor> organs = entitat.getOrganGestors();
+		return dtoMappingHelper.convertirList(organs, OrganGestorDto.class);
+	}
+	
 	@Transactional(rollbackFor = EntitatNotFoundException.class)
 	@Override
 	public EntitatDto updateActiva(Long id, boolean activa) throws EntitatNotFoundException {
