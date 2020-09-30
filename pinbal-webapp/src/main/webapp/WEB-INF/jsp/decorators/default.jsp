@@ -253,7 +253,7 @@ body {
 		</div>
 	</div>
     <div class="container container-foot container-caib">
-    	<div class="pull-left app-version"><p>PINBAL v${versioActual}</p></div>
+    	<div class="pull-left app-version"><p>PINBAL <pbl:versio/></p></div>
         <div class="pull-right govern-footer">
         	<p>
         		<img src="<c:url value="/img/govern-logo-neg.png"/>" style="height:30px" alt="<spring:message code="decorator.govern"/>" />

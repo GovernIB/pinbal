@@ -34,12 +34,11 @@
 	<mvc:resources mapping="/webjars/**" location="${webjars.classpath}/META-INF/resources/webjars/"/>
 	
 	<mvc:interceptors>
-		<bean class="es.caib.pinbal.webapp.interceptor.IdiomaInterceptor"/>
+		<bean class="es.caib.pinbal.webapp.interceptor.AplicacioInterceptor"/>
 		<bean class="es.caib.pinbal.webapp.interceptor.UsuariInterceptor"/>
 		<bean class="es.caib.pinbal.webapp.interceptor.SeleccioEntitatInterceptor"/>
 		<bean class="es.caib.pinbal.webapp.interceptor.SeleccioRolInterceptor"/>
 		<bean class="es.caib.pinbal.webapp.interceptor.ModalInterceptor"/>
-		<bean class="es.caib.pinbal.webapp.interceptor.VersioInterceptor"/>
 	</mvc:interceptors>
 
 	<bean id="beanNameViewResolver" class="org.springframework.web.servlet.view.BeanNameViewResolver">
