@@ -4,12 +4,9 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.lang.builder.ToStringBuilder;
-
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-
 
 /**
  * Objecte DTO amb informació d'una entitat.
