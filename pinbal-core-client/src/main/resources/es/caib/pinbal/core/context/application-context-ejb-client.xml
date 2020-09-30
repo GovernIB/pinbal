@@ -41,10 +41,6 @@
 			jndi-name="pinbal/ScspServiceBean/local"
 			business-interface="es.caib.pinbal.core.service.ScspService"/>
 	<jee:local-slsb
-			id="versioService"
-			jndi-name="pinbal/VersioServiceBean/local"
-			business-interface="es.caib.pinbal.core.service.VersioService"/>
-	<jee:local-slsb
 			id="aclService"
 			jndi-name="pinbal/AclServiceBean/local"
 			business-interface="org.springframework.security.acls.model.AclService"/>
