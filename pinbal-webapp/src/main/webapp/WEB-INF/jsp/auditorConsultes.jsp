@@ -74,6 +74,7 @@ $(document).ready(function() {
 		processing: true,
 		serverSide: true,
 		dom: "<'row'<'col-md-6'i><'col-md-6'>><'row'<'col-md-12'rt>><'row'<'col-md-6'l><'col-md-6'p>>",
+		"order": [[ 1, "desc" ]],
 		language: {
             "url": '<c:url value="/js/datatable-language.json"/>'
         },

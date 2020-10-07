@@ -75,6 +75,7 @@ $(document).ready(function() {
     	autoWidth: false,
 		processing: true,
 		serverSide: true,
+		"order": [[ 1, "desc" ]],
 		language: {
             "url": '<c:url value="/js/datatable-language.json"/>'
         },

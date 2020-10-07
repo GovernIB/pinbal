@@ -145,6 +145,7 @@ $(document).ready(function() {
     	autoWidth: false,
 		processing: true,
 		serverSide: true,
+		"order": [[ 1, "desc" ]],
 		dom: "<'row'<'col-md-6'i><'col-md-6'>><'row'<'col-md-12'rt>><'row'<'col-md-6'l><'col-md-6'p>>",
 		language: {
             "url": '<c:url value="/js/datatable-language.json"/>'
