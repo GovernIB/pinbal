@@ -301,7 +301,7 @@ $('#dadesResposta').on('shown', function () {
 				<a class="btn btn-default dropdown-toggle" data-toggle="dropdown" href="#"><i class="icon-"><img src="<c:url value="/img/error_icon.png"/>" title="<spring:message code="consulta.list.taula.justif.error"/>" alt="<spring:message code="consulta.list.taula.justif.error"/>"/></i>&nbsp;&nbsp;<span class="caret"></span></a>
 				<ul class="dropdown-menu">
 					<li>
-					<a href="../consulta/${consulta.id}/justificantError" data-toggle="modal" data-target="#modal-justificant-error">
+					<a href="#" data-toggle="modal" data-target="#modal-justificant-error">
 						<i class="fas fa-exclamation-triangle"></i>&nbsp;<spring:message code="consulta.list.taula.justif.error.veure"/>
 					</a>
 					</li>
@@ -346,7 +346,7 @@ $('#dadesResposta').on('shown', function () {
 				<h3><spring:message code="consulta.list.taula.justif.error"/></h3>
 			</div>
 			<div class="modal-body">
-				<textarea class="input-lg form-control" style="width:98%" rows="18">${consulta.justificantError}</textarea>
+				<textarea style="width:98%" rows="18">${consulta.justificantError}</textarea>
 			</div>
 			<div class="modal-footer">
 			</div>
