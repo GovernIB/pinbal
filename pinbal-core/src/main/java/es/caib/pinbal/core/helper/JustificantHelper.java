@@ -92,15 +92,31 @@ public class JustificantHelper implements MessageSourceAware {
 					"scspPeticionId=" + consulta.getScspPeticionId() + ", " +
 					"scspSolicitudId=" + consulta.getScspSolicitudId() + ")",
 					ex);
+			consulta.updateJustificantEstat(
+					JustificantEstat.ERROR,
+					false,
+					null,
+					null,
+					ExceptionUtils.getStackTrace(ex),
+					null,
+					null);
 			throw new JustificantGeneracioException(
 					"No s'ha pogut recuperar la resposta SCSP associada a la consulta",
 					ex);
 		}
 		if (resultat.isError()) {
+			consulta.updateJustificantEstat(
+					JustificantEstat.ERROR,
+					false,
+					null,
+					null,
+					resultat.getErrorDescripcio(),
+					null,
+					null);
 			throw new JustificantGeneracioException("La resposta SCSP associada a la consulta conté errors");
 		}
+		
 		String serveiCodi = consulta.getProcedimentServei().getServei();
-		//String peticionId = consulta.getScspPeticionId();
 		ServeiConfig serveiConfig = serveiConfigRepository.findByServei(serveiCodi);
 		String arxiuNom = conversioTipusDocumentHelper.nomArxiuConvertit(
 				getNomArxiuGenerat(
