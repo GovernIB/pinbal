@@ -1935,27 +1935,20 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 			try {
 				synchronized (getJustificantLockForConsulta(consulta)) {
 					TransactionTemplate transactionTemplate = new TransactionTemplate(transactionManager);
-					JustificantGeneracioException ex = transactionTemplate.execute(new TransactionCallback<JustificantGeneracioException>() {
+					transactionTemplate.execute(new TransactionCallback<Object>() {
 						@Override
-						public JustificantGeneracioException doInTransaction(TransactionStatus status) {
+						public Object doInTransaction(TransactionStatus status) {
 							Consulta consultaRefreshed = consultaRepository.getOne(consulta.getId());
 							// Si l'estat del justificant és PENDENT o ERROR intentam tornar a generar el justificant
 							if (JustificantEstat.PENDENT.equals(consultaRefreshed.getJustificantEstat()) || JustificantEstat.ERROR.equals(consultaRefreshed.getJustificantEstat())) {
-								try {
-									justificantHelper.generarCustodiarJustificantPendent(
-											consultaRefreshed,
-											getScspHelper());
-									consultaRepository.saveAndFlush(consultaRefreshed);
-								} catch (JustificantGeneracioException ex) {
-									return ex;
-								}
+								justificantHelper.generarCustodiarJustificantPendent(
+										consultaRefreshed,
+										getScspHelper());
+								consultaRepository.saveAndFlush(consultaRefreshed);
 							}
 							return null;
 						}
 					});
-					if (ex != null) {
-						throw ex;
-					}
 				}
 			} finally {
 				releaseJustificantLockForConsulta(consulta);

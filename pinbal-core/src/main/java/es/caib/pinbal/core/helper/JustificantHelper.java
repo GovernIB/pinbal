@@ -41,7 +41,6 @@ import es.caib.pinbal.core.model.ServeiJustificantCamp;
 import es.caib.pinbal.core.repository.ServeiConfigRepository;
 import es.caib.pinbal.core.repository.ServeiJustificantCampRepository;
 import es.caib.pinbal.core.service.ServeiServiceImpl;
-import es.caib.pinbal.core.service.exception.JustificantGeneracioException;
 import es.caib.pinbal.plugins.FirmaServidorPlugin.TipusFirma;
 import es.caib.pinbal.scsp.JustificantArbreHelper.ElementArbre;
 import es.caib.pinbal.scsp.ResultatEnviamentPeticio;
@@ -82,7 +81,7 @@ public class JustificantHelper implements MessageSourceAware {
 
 	public void generarCustodiarJustificantPendent(
 			Consulta consulta,
-			ScspHelper scspHelper) throws JustificantGeneracioException {
+			ScspHelper scspHelper) {
 		ResultatEnviamentPeticio resultat = null;
 		try {
 			resultat = scspHelper.recuperarResultatEnviamentPeticio(consulta.getScspPeticionId());
@@ -97,12 +96,9 @@ public class JustificantHelper implements MessageSourceAware {
 					false,
 					null,
 					null,
-					ExceptionUtils.getStackTrace(ex),
+					"No s'ha pogut recuperar la resposta SCSP associada a la consulta: " + ExceptionUtils.getStackTrace(ex),
 					null,
 					null);
-			throw new JustificantGeneracioException(
-					"No s'ha pogut recuperar la resposta SCSP associada a la consulta",
-					ex);
 		}
 		if (resultat.isError()) {
 			consulta.updateJustificantEstat(
@@ -110,12 +106,10 @@ public class JustificantHelper implements MessageSourceAware {
 					false,
 					null,
 					null,
-					resultat.getErrorDescripcio(),
+					"La resposta SCSP associada a la consulta conté errors: " + resultat.getErrorDescripcio(),
 					null,
 					null);
-			throw new JustificantGeneracioException("La resposta SCSP associada a la consulta conté errors");
 		}
-		
 		String serveiCodi = consulta.getProcedimentServei().getServei();
 		ServeiConfig serveiConfig = serveiConfigRepository.findByServei(serveiCodi);
 		String arxiuNom = conversioTipusDocumentHelper.nomArxiuConvertit(
