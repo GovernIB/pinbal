@@ -1925,7 +1925,7 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 
 	private JustificantDto obtenirJustificantComu(
 			final Consulta consulta,
-			boolean descarregar) throws JustificantGeneracioException {
+			final boolean descarregar) throws JustificantGeneracioException {
 		// Abans de continuar es comprova si l'estat de la consulta és "Tramitada"
 		if (EstatTipus.Tramitada.equals(consulta.getEstat())) {
 			// Amb aquest bloc sincronitzat aconseguim que només hi hagi un thread a la vegada

@@ -79,43 +79,6 @@ public class JustificantHelper implements MessageSourceAware {
 
 	private MessageSource messageSource;
 
-	private ResultatEnviamentPeticio getResultatEnviamentPeticio(
-			Consulta consulta,
-			ScspHelper scspHelper) {
-		ResultatEnviamentPeticio resultat = null;
-		try {
-			resultat =  scspHelper.recuperarResultatEnviamentPeticio(consulta.getScspPeticionId());
-		} catch (Exception ex) {
-			LOGGER.error("No s'ha pogut recuperar la resposta SCSP associada a la consulta (" +
-					"id=" + consulta.getScspPeticionId() + ", " +
-					"scspPeticionId=" + consulta.getScspPeticionId() + ", " +
-					"scspSolicitudId=" + consulta.getScspSolicitudId() + ")",
-					ex);
-			consulta.updateJustificantEstat(
-					JustificantEstat.ERROR,
-					false,
-					null,
-					null,
-					"No s'ha pogut recuperar la resposta SCSP associada a la consulta: " + ExceptionUtils.getStackTrace(ex),
-					null,
-					null);
-			return null;
-		}
-		
-		if (!resultat.isError()) {
-			consulta.updateJustificantEstat(
-					JustificantEstat.ERROR,
-					false,
-					null,
-					null,
-					"La resposta SCSP associada a la consulta conté errors: " + resultat.getErrorDescripcio(),
-					null,
-					null);
-			return null;
-		}
-		
-		return resultat;
-	}
 	public void generarCustodiarJustificantPendent(
 			Consulta consulta,
 			ScspHelper scspHelper) {
@@ -420,6 +383,46 @@ public class JustificantHelper implements MessageSourceAware {
 	}
 
 
+
+	private ResultatEnviamentPeticio getResultatEnviamentPeticio(
+			Consulta consulta,
+			ScspHelper scspHelper) {
+		ResultatEnviamentPeticio resultat = null;
+		try {
+			resultat =  scspHelper.recuperarResultatEnviamentPeticio(consulta.getScspPeticionId());
+		} catch (Exception ex) {
+			LOGGER.error("No s'ha pogut recuperar la resposta SCSP associada a la consulta (" +
+					"id=" + consulta.getScspPeticionId() + ", " +
+					"scspPeticionId=" + consulta.getScspPeticionId() + ", " +
+					"scspSolicitudId=" + consulta.getScspSolicitudId() + ")",
+					ex);
+			consulta.updateJustificantEstat(
+					JustificantEstat.ERROR,
+					false,
+					null,
+					null,
+					"No s'ha pogut recuperar la resposta SCSP associada a la consulta: " + ExceptionUtils.getStackTrace(ex),
+					null,
+					null);
+			return null;
+		}
+		if (resultat.isError()) {
+			LOGGER.error("La resposta SCSP associada a la consulta és de tipus error (" +
+					"id=" + consulta.getScspPeticionId() + ", " +
+					"scspPeticionId=" + consulta.getScspPeticionId() + ", " +
+					"scspSolicitudId=" + consulta.getScspSolicitudId() + "): " + resultat.getErrorDescripcio());
+			consulta.updateJustificantEstat(
+					JustificantEstat.ERROR,
+					false,
+					null,
+					null,
+					"La resposta SCSP associada a la consulta és de tipus error: " + resultat.getErrorDescripcio(),
+					null,
+					null);
+			return null;
+		}
+		return resultat;
+	}
 
 	private Map<String, Object> generarModel(
 			ElementArbre arbre,
