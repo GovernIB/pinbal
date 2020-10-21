@@ -9,6 +9,10 @@
 pageContext.setAttribute(
 		"documentTipusValors",
 		es.caib.pinbal.core.dto.ConsultaDto.getDocumentTipusValorsPerFormulari());
+java.util.Map<?,?> map = (java.util.Map<?,?>)request.getAttribute("campsDadesEspecifiquesAgrupats");
+if (map != null) {
+	pageContext.setAttribute("campsSenseAgrupar", map.get(null));
+}
 %>
 <div class="row">
 	<div class="col-md-6">
