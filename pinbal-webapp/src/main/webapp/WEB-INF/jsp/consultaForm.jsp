@@ -71,7 +71,6 @@
 					<label class="control-label" for="${campPath}"><spring:message code="consulta.form.camp.consentiment"/> *</label>
 					<pbl:inputSelect name="consentiment" inline="true" optionItems="${consentimentValors}" emptyOption="false"/>
 				</div>
-
 				<div class="col-md-6">			
 					<label class="control-label" for="${campPath}"><spring:message code="consulta.form.camp.funcionari.nif"/></label>
 					<pbl:inputText name="funcionariNif" inline="true"/>

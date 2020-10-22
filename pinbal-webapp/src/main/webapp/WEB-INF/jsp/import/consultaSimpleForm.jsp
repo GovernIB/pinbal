@@ -6,9 +6,24 @@
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@ taglib tagdir="/WEB-INF/tags/pinbal" prefix="pbl" %>
 <%
-pageContext.setAttribute(
-		"documentTipusValors",
-		es.caib.pinbal.core.dto.ConsultaDto.getDocumentTipusValorsPerFormulari());
+es.caib.pinbal.core.dto.ServeiDto servei = (es.caib.pinbal.core.dto.ServeiDto)request.getAttribute("servei");
+java.util.List<es.caib.pinbal.core.dto.ConsultaDto.DocumentTipus> documentTipusValors = new java.util.ArrayList<es.caib.pinbal.core.dto.ConsultaDto.DocumentTipus>();
+if (servei.isPinbalPermesDocumentTipusDni()) {
+	documentTipusValors.add(es.caib.pinbal.core.dto.ConsultaDto.DocumentTipus.DNI);
+}
+if (servei.isPinbalPermesDocumentTipusNif()) {
+	documentTipusValors.add(es.caib.pinbal.core.dto.ConsultaDto.DocumentTipus.NIF);
+}
+if (servei.isPinbalPermesDocumentTipusCif()) {
+	documentTipusValors.add(es.caib.pinbal.core.dto.ConsultaDto.DocumentTipus.CIF);
+}
+if (servei.isPinbalPermesDocumentTipusNie()) {
+	documentTipusValors.add(es.caib.pinbal.core.dto.ConsultaDto.DocumentTipus.NIE);
+}
+if (servei.isPinbalPermesDocumentTipusPas()) {
+	documentTipusValors.add(es.caib.pinbal.core.dto.ConsultaDto.DocumentTipus.Passaport);
+}
+pageContext.setAttribute("documentTipusValors", documentTipusValors);
 java.util.Map<?,?> map = (java.util.Map<?,?>)request.getAttribute("campsDadesEspecifiquesAgrupats");
 if (map != null) {
 	pageContext.setAttribute("campsSenseAgrupar", map.get(null));
@@ -39,54 +54,43 @@ if (map != null) {
 				</div>
 			</div>
 		</c:if>
-		<div class="row">	
-			<div class="col-md-6">
-				<label class="control-label" for="titularNom"><spring:message code="consulta.form.camp.nom"/></label>
-				<pbl:inputText name="titularNom" inline="true"/>
-			</div>		
-			<div class="col-md-6">
-				<label class="control-label" for="titularLlinatge1"><spring:message code="consulta.form.camp.llinatge1"/></label>
-				<pbl:inputText name="titularLlinatge1" inline="true"/>
-			</div>
-		</div>
-		<div class="row">
-			<div class="col-md-6">	
-				<label class="control-label" for="titularLlinatge2"><spring:message code="consulta.form.camp.llinatge1"/></label>
-				<pbl:inputText name="titularLlinatge2" inline="true"/>
-			</div>
-			<div class="col-md-6">	
-				<label class="control-label" for="$titularNomComplet"><spring:message code="consulta.form.camp.nomcomplet"/></label>
-				<pbl:inputText name="titularNomComplet" inline="true"/>
-			</div>
-		</div>			
 		<c:set var="numColumnes" value="${2}"/>
 		<c:set var="indexCamp" value="${0}"/>
 		<c:forEach var="index" begin="0" end="3" varStatus="status">
 			<c:choose>
 				<c:when test="${index == 0}">
-					
-				</c:when>			
+					<c:set var="campPath" value="titularNom"/>
+					<spring:message var="campLabel" code="consulta.form.camp.nom"/>
+					<c:set var="campServeiTest" value="pinbalActiuCampNom"/>
+				</c:when>
 				<c:when test="${index == 1}">
-											
+					<c:set var="campPath" value="titularLlinatge1"/>
+					<spring:message var="campLabel" code="consulta.form.camp.llinatge1"/>
+					<c:set var="campServeiTest" value="pinbalActiuCampLlinatge1"/>
 				</c:when>
 				<c:when test="${index == 2}">
-
-				</c:when>						
+					<c:set var="campPath" value="titularLlinatge2"/>
+					<spring:message var="campLabel" code="consulta.form.camp.llinatge2"/>
+					<c:set var="campServeiTest" value="pinbalActiuCampLlinatge2"/>
+				</c:when>
 				<c:when test="${index == 3}">
-
+					<c:set var="campPath" value="titularNomComplet"/>
+					<spring:message var="campLabel" code="consulta.form.camp.nomcomplet"/>
+					<c:set var="campServeiTest" value="pinbalActiuCampNomComplet"/>
 				</c:when>
 			</c:choose>
 			<c:if test="${servei[campServeiTest]}">
+				<c:if test="${indexCamp == 0 or (indexCamp % numColumnes) == 0}">
+					<div class="row">
+				</c:if>
 				<div class="col-md-6">
-					<c:set var="campErrors"><form:errors path="${campPath}"/></c:set>
-					<div class="form-group<c:if test="${not empty campErrors}"> error</c:if>">
-						<label class="control-label" for="${campPath}">${campLabel}</label>
-						<div class="controls">
-							<form:input path="${campPath}" cssClass="col-md-12" id="${campPath}"/>
-							<form:errors path="${campPath}" cssClass="help-block"/>
-						</div>
-					</div>
+					<label class="control-label" for="titularNom">${campLabel}</label>
+					<pbl:inputText name="${campPath}" inline="true"/>
 				</div>
+				<c:if test="${status.last or (indexCamp % numColumnes) == (numColumnes - 1)}">
+					</div>
+				</c:if>
+				<c:set var="indexCamp" value="${indexCamp + 1}"/>
 			</c:if>
 		</c:forEach>
 	</fieldset>
