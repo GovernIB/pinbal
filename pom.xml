@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>es.caib.pinbal</groupId>
 	<artifactId>pinbal</artifactId>
-	<version>1.4.19</version>
+	<version>1.4.19.1</version>
 	<properties>
 		<spring.version>3.2.16.RELEASE</spring.version>
 		<spring-security.version>3.2.9.RELEASE</spring-security.version>

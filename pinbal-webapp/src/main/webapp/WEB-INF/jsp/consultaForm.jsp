@@ -9,9 +9,6 @@
 	pageContext.setAttribute(
 			"consentimentValors",
 			es.caib.pinbal.core.dto.ConsultaDto.Consentiment.values());
-	java.util.Map<?,?> map = (java.util.Map<?,?>)request.getAttribute("campsDadesEspecifiquesAgrupats");
-	if (map != null)
-		pageContext.setAttribute("campsSenseAgrupar", map.get(null));
 %>
 
 <c:set var="serveiMultiple" value="${servei.consultaMultiplePermesa}"/>
@@ -29,6 +26,9 @@
 	<script src="<c:url value="/webjars/select2/4.0.6-rc.1/dist/js/i18n/${requestLocale}.js"/>"></script>
 	<script src="<c:url value="/webjars/bootstrap-datepicker/1.6.1/dist/js/bootstrap-datepicker.min.js"/>"></script>
 	<script src="<c:url value="/js/webutil.common.js"/>"></script>
+
+	<script src="<c:url value="/js/bootstrap.file-input.js"/>"></script>
+	<script src="<c:url value="/js/jquery.maskedinput.js"/>"></script>
 
 	<link href="<c:url value="/webjars/jasny-bootstrap/3.1.3/dist/css/jasny-bootstrap.min.css"/>" rel="stylesheet"> 
 	<script src="<c:url value="/webjars/jasny-bootstrap/3.1.3/dist/js/jasny-bootstrap.min.js"/>"></script> 
@@ -69,10 +69,8 @@
 					<pbl:inputText name="entitatNom" inline="true" disabled="true"/>
 					
 					<label class="control-label" for="${campPath}"><spring:message code="consulta.form.camp.consentiment"/> *</label>
-					<pbl:inputSelect name="consentiment" inline="true" 
-									 optionItems="${consentimentValors}" emptyOption="false"/>
+					<pbl:inputSelect name="consentiment" inline="true" optionItems="${consentimentValors}" emptyOption="false"/>
 				</div>
-
 				<div class="col-md-6">			
 					<label class="control-label" for="${campPath}"><spring:message code="consulta.form.camp.funcionari.nif"/></label>
 					<pbl:inputText name="funcionariNif" inline="true"/>
