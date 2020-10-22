@@ -9,6 +9,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
 
+import es.caib.pinbal.core.dto.FiltreActiuEnumDto;
 import es.caib.pinbal.core.dto.InformeProcedimentDto;
 import es.caib.pinbal.core.dto.ProcedimentDto;
 import es.caib.pinbal.core.service.exception.EntitatNotFoundException;
@@ -71,6 +72,9 @@ public interface ProcedimentService {
 	 *            Nom a cercar.
 	 * @param departament
 	 *            Departament a cercar.
+	 * @param organGestorId TODO
+	 * @param codiSia TODO
+	 * @param actiu TODO
 	 * @param paginacioAmbOrdre
 	 *            Paràmetres per a la paginació i ordenació dels resultats.
 	 * @return El llistat de procediments paginat.
@@ -83,7 +87,9 @@ public interface ProcedimentService {
 			String codi,
 			String nom,
 			String departament,
-			String filtreOrganGestor,
+			Long organGestorId,
+			String codiSia,
+			FiltreActiuEnumDto actiu,
 			Pageable pageable) throws EntitatNotFoundException;
 
 	/**

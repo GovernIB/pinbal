@@ -3,6 +3,7 @@
  */
 package es.caib.pinbal.webapp.command;
 
+import es.caib.pinbal.core.dto.FiltreActiuEnumDto;
 import lombok.Data;
 
 /**
@@ -12,10 +13,16 @@ import lombok.Data;
  */
 @Data
 public class ProcedimentFiltreCommand {
+	
 
 	private String codi;
 	private String nom;
 	private String departament;
-	private String organGestor;
-
+	private Long organGestorId;
+	private String codiSia;
+	private FiltreActiuEnumDto actiu;
+	
+	
+	
+	
 }

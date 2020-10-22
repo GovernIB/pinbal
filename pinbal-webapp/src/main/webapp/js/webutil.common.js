@@ -6,7 +6,7 @@ function webutilModalTancarPath() {
 	return webutilContextPath() + '/modal/tancar';
 }
 function webutilAjaxEnumPath(enumClass) {
-	return webutilContextPath() + '/userajax/enum/' + enumClass;
+	return webutilContextPath() + '/enumajax/enum/' + enumClass;
 }
 function webutilRefreshMissatges() {
 	$('#contingut-missatges').load(webutilContextPath() + "/nodeco/missatges");

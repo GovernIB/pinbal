@@ -12,6 +12,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import es.caib.pinbal.core.model.Entitat;
+import es.caib.pinbal.core.model.OrganGestor;
 import es.caib.pinbal.core.model.Procediment;
 
 /**
@@ -35,27 +36,6 @@ public interface ProcedimentRepository extends JpaRepository<Procediment, Long> 
 	@Query("select ps.procediment from ProcedimentServei ps where ps.procediment.entitat.id = ?1 and ps.servei = ?2 and ps.procediment.actiu = true")
 	List<Procediment> findActiusByEntitatAndServeid(Long entitatId, String servei);
 
-	@Query(	"select" +
-			"    p " +
-			"from" +
-			"    Procediment p " +
-			"where " +
-			"    p.entitat = :entitat " +
-			"and (:esNullCodi = true or lower(p.codi) like concat('%', lower(:codi), '%')) " +
-			"and (:esNullNom = true or lower(p.nom) like concat('%', lower(:nom), '%'))" +
-			"and (lower(p.organGestor.nom) like concat('%', lower(:organGestor), '%')" +
-			"	  or lower(p.organGestor.codi) like concat('%', lower(:organGestor), '%'))" +
-			"and (:esNullDepartament = true or lower(p.departament) like concat('%', lower(:departament), '%'))")
-	public Page<Procediment> findByFiltreWithOrganGestor(
-			@Param("entitat") Entitat entitat,
-			@Param("esNullCodi") boolean esNullCodi,
-			@Param("codi") String codi,
-			@Param("esNullNom") boolean esNullNom,
-			@Param("nom") String nom,
-			@Param("esNullDepartament") boolean esNullDepartament,
-			@Param("departament") String departament,
-			@Param("organGestor") String organGestor,
-			Pageable pageable);
 
 	@Query(	"select" +
 			"    p " +
@@ -64,8 +44,12 @@ public interface ProcedimentRepository extends JpaRepository<Procediment, Long> 
 			"where " +
 			"    p.entitat = :entitat " +
 			"and (:esNullCodi = true or lower(p.codi) like concat('%', lower(:codi), '%')) " +
-			"and (:esNullNom = true or lower(p.nom) like concat('%', lower(:nom), '%'))" +
-			"and (:esNullDepartament = true or lower(p.departament) like concat('%', lower(:departament), '%'))")
+			"and (:esNullNom = true or lower(p.nom) like concat('%', lower(:nom), '%')) " +
+			"and (:esNullDepartament = true or lower(p.departament) like concat('%', lower(:departament), '%')) " +
+			"and (:esNullOrganGestor = true or p.organGestor = :organGestor) " +
+			"and (:esNullCodiSia = true or lower(p.codiSia) like concat('%', lower(:codiSia), '%')) " +
+			"and (:esNullActiu = true or p.actiu = :actiu) "
+			)
 	public Page<Procediment> findByFiltre(
 			@Param("entitat") Entitat entitat,
 			@Param("esNullCodi") boolean esNullCodi,
@@ -74,6 +58,12 @@ public interface ProcedimentRepository extends JpaRepository<Procediment, Long> 
 			@Param("nom") String nom,
 			@Param("esNullDepartament") boolean esNullDepartament,
 			@Param("departament") String departament,
+			@Param("esNullOrganGestor") boolean esNullOrganGestor,
+			@Param("organGestor") OrganGestor organGestor,
+			@Param("esNullCodiSia") boolean esNullCodiSia,
+			@Param("codiSia") String codiSia,
+			@Param("esNullActiu") boolean esNullActiu,
+			@Param("actiu") boolean actiu,
 			Pageable pageable);
 	
 	@Query(	"select" +

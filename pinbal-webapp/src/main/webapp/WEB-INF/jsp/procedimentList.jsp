@@ -8,12 +8,29 @@
 <html>
 <head>
 	<title><spring:message code="procediment.list.titol"/></title>
-	<link href="<c:url value="/webjars/datatables/1.10.21/css/dataTables.bootstrap.min.css"/>" rel="stylesheet"/>
+
+	<link href="<c:url value="/webjars/bootstrap-datepicker/1.6.1/dist/css/bootstrap-datepicker.min.css"/>" rel="stylesheet"/>
+	<script src="<c:url value="/webjars/bootstrap-datepicker/1.6.1/dist/js/bootstrap-datepicker.min.js"/>"></script>
+	<script src="<c:url value="/webjars/bootstrap-datepicker/1.6.1/dist/locales/bootstrap-datepicker.${requestLocale}.min.js"/>"></script>
 	
+	<link href="<c:url value="/webjars/datatables/1.10.21/css/dataTables.bootstrap.min.css"/>" rel="stylesheet"/>
 	<script src="<c:url value="/webjars/datatables/1.10.21/js/jquery.dataTables.min.js"/>"></script>
 	<script src="<c:url value="/webjars/datatables/1.10.21/js/dataTables.bootstrap.min.js"/>"></script>
+		<script src="<c:url value="/webjars/datatables-plugins/1.10.20/dataRender/datetime.js"/>"></script>
+		
 	<script src="<c:url value="/webjars/mustache.js/3.0.1/mustache.min.js"/>"></script>
+
+	<link href="<c:url value="/webjars/select2/4.0.6-rc.1/dist/css/select2.min.css"/>" rel="stylesheet"/>
+	<link href="<c:url value="/webjars/select2-bootstrap-theme/0.1.0-beta.10/dist/select2-bootstrap.min.css"/>" rel="stylesheet"/>
+	<script src="<c:url value="/webjars/select2/4.0.6-rc.1/dist/js/select2.min.js"/>"></script>
+	<script src="<c:url value="/webjars/select2/4.0.6-rc.1/dist/js/i18n/${requestLocale}.js"/>"></script>
+
+	<script src="<c:url value="/webjars/momentjs/2.24.0/min/moment.min.js"/>"></script>
+	
 	<script src="<c:url value="/js/webutil.datatable.js"/>"></script>
+	<script src="<c:url value="/js/webutil.common.js"/>"></script>	
+	
+	
 <script>
 $(document).ready(function() {
 	$('#netejar-filtre').click(function() {
@@ -104,16 +121,43 @@ $(document).ready(function() {
 	<c:url value="/procediment" var="formAction"/>
 	<form:form id="form-filtre" action="${formAction}" method="post" cssClass="well form-filtre-table" commandName="procedimentFiltreCommand">
 		<div class="row">
-			 <div class="col-md-2">			 
+			 <div class="col-md-3">			 
 				 <pbl:inputText name="codi" inline="true" placeholderKey="procediment.list.filtre.camp.codi"/>
 			</div>
-			<div class="col-md-2">
+			<div class="col-md-3">
 				<pbl:inputText name="nom" inline="true" placeholderKey="procediment.list.filtre.camp.nom"/>
 			</div>
 			<div class="col-md-3">
 				<pbl:inputText name="departament" inline="true" placeholderKey="procediment.list.filtre.camp.departament"/>	
 			</div>
-			<div class="col-md-5">
+		</div>
+		<div class="row">
+			<div class="col-md-3">
+				<pbl:inputSelect 
+					name="organGestorId" 
+					placeholderKey="procediment.list.filtre.camp.organgestor" 
+					inline="true" 
+					emptyOption="true" 
+					emptyOptionTextKey="procediment.list.filtre.camp.opcio.cap"
+					optionItems="${organsGestors}" 
+					optionValueAttribute="id" 
+					optionTextAttribute="nom"
+					required="true" 
+					optionMinimumResultsForSearch="5"/>
+			</div>
+			<div class="col-md-3">
+				<pbl:inputText name="codiSia"  inline="true" placeholderKey="procediment.list.filtre.camp.codisia"/>
+			</div>
+			<div class="col-md-3">
+				<pbl:inputSelect 
+					name="actiu" 
+					emptyOption="true" 
+					inline="true"
+					optionEnum="FiltreActiuEnumDto"
+					placeholderKey="procediment.list.filtre.camp.actiuOInactiu"/>
+			</div>
+
+			<div class="col-md-3">
 				<div class ="pull-right">
 					<button id="netejar-filtre" class="btn btn-default" type="button"><spring:message code="comu.boto.netejar"/></button>
 					<button type="submit" class="btn btn-primary"><span class="fa fa-filter"></span> <spring:message code="comu.boto.filtrar"/></button>

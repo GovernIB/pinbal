@@ -87,7 +87,7 @@ public class ProcedimentController extends BaseController {
 			return "redirect:../index";
 			
 		}
-		
+		model.addAttribute("organsGestors", entitatService.getOrgansGestors(entitat.getId()));
 		omplirModelFiltreDataTable(request, entitat, model);
 		return "procedimentList";
 	}
@@ -143,7 +143,9 @@ public class ProcedimentController extends BaseController {
 													command.getCodi(),
 													command.getNom(),
 													command.getDepartament(),
-													command.getOrganGestor(),
+													command.getOrganGestorId(),
+													command.getCodiSia(), 
+													command.getActiu(), 
 													serverSideRequest.toPageable());
 
 		return new ServerSideResponse<ProcedimentDto, Long>(serverSideRequest, page);

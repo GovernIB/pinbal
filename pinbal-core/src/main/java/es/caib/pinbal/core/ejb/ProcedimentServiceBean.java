@@ -14,6 +14,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.ejb.interceptor.SpringBeanAutowiringInterceptor;
 
+import es.caib.pinbal.core.dto.FiltreActiuEnumDto;
 import es.caib.pinbal.core.dto.InformeProcedimentDto;
 import es.caib.pinbal.core.dto.ProcedimentDto;
 import es.caib.pinbal.core.service.ProcedimentService;
@@ -67,9 +68,19 @@ public class ProcedimentServiceBean implements ProcedimentService {
 			String codi,
 			String nom,
 			String departament,
-			String filtreOrganGestor,
+			Long organGestorId,
+			String codiSia,
+			FiltreActiuEnumDto actiu,
 			Pageable pageable) throws EntitatNotFoundException {
-		return delegate.findAmbFiltrePaginat(entitatId, codi, nom, departament, filtreOrganGestor, pageable);
+		return delegate.findAmbFiltrePaginat(
+				entitatId,
+				codi,
+				nom,
+				departament,
+				organGestorId,
+				codiSia,
+				actiu,
+				pageable);
 	}
 
 	@Override

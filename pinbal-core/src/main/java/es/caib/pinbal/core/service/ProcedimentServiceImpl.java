@@ -22,6 +22,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import es.caib.pinbal.core.dto.FiltreActiuEnumDto;
 import es.caib.pinbal.core.dto.InformeProcedimentDto;
 import es.caib.pinbal.core.dto.ProcedimentDto;
 import es.caib.pinbal.core.helper.DtoMappingHelper;
@@ -31,6 +32,7 @@ import es.caib.pinbal.core.helper.UsuariHelper;
 import es.caib.pinbal.core.model.Entitat;
 import es.caib.pinbal.core.model.EntitatServei;
 import es.caib.pinbal.core.model.EntitatUsuari;
+import es.caib.pinbal.core.model.OrganGestor;
 import es.caib.pinbal.core.model.Procediment;
 import es.caib.pinbal.core.model.ProcedimentServei;
 import es.caib.pinbal.core.repository.EntitatRepository;
@@ -131,7 +133,9 @@ public class ProcedimentServiceImpl implements ProcedimentService {
 			String codi,
 			String nom,
 			String departament,
-			String filtreOrganGestor,
+			Long organGestorId,
+			String codiSia,
+			FiltreActiuEnumDto actiu,
 			Pageable pageable) throws EntitatNotFoundException {
 		LOGGER.debug("Consulta de procediments segons filtre ("
 				+ "entitatId=" + entitatId + ", "
@@ -142,9 +146,18 @@ public class ProcedimentServiceImpl implements ProcedimentService {
 		if (entitat == null)
 			throw new EntitatNotFoundException();
 		
-		Page<Procediment> paginaProcediments;
-		if (filtreOrganGestor == null || filtreOrganGestor.length() == 0) {
-			paginaProcediments = procedimentRepository.findByFiltre(
+		boolean esActiu = false;
+		if (actiu != null) {
+			if (actiu == FiltreActiuEnumDto.ACTIU) {
+				esActiu = true;
+			} else {
+				esActiu = false;
+			}
+		}
+		
+		OrganGestor organGestor = organGestorId == null ? null : organGestorRepository.findOne(organGestorId);
+
+		Page<Procediment> paginaProcediments = procedimentRepository.findByFiltre(
 					entitat,
 					codi == null || codi.length() == 0,
 					codi,
@@ -152,22 +165,19 @@ public class ProcedimentServiceImpl implements ProcedimentService {
 					nom,
 					departament == null || departament.length() == 0,
 					departament,
+					organGestor == null,
+					organGestor,
+					codiSia == null || codiSia.isEmpty(),
+					codiSia,
+					actiu == null,
+					esActiu,
 					pageable);
 
-		} else {
-			paginaProcediments = procedimentRepository.findByFiltreWithOrganGestor(
-					entitat,
-					codi == null || codi.length() == 0,
-					codi,
-					nom == null || nom.length() == 0,
-					nom,
-					departament == null || departament.length() == 0,
-					departament,
-					filtreOrganGestor,
-					pageable);
-		}
-		return dtoMappingHelper.pageEntities2pageDto(paginaProcediments, 
-													 ProcedimentDto.class, pageable);
+	
+		return dtoMappingHelper.pageEntities2pageDto(
+				paginaProcediments,
+				ProcedimentDto.class,
+				pageable);
 	}
 
 	@Transactional(readOnly = true)
