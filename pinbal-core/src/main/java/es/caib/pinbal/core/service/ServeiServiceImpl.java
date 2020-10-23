@@ -346,12 +346,11 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 				procedimentRepository.findOne(procediment.getId())
 				);
 		
-		Page<Servei> paginaServeis;
-		if (serveisProcedimentActiusIds.isEmpty()) {
-			paginaServeis = new PageImpl<Servei>(new ArrayList<Servei>());
-			
-		}else {
-			paginaServeis = serveiRepository.findByFiltre(
+		if (serveisProcedimentActiusIds != null && serveisProcedimentActiusIds.isEmpty()) {
+			serveisProcedimentActiusIds = null;
+		}
+		
+		Page<Servei> paginaServeis = serveiRepository.findByFiltre(
 					serveisEntitat, 
 					serveisProcedimentActiusIds,
 					codi == null || codi.length() == 0,
@@ -365,7 +364,6 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 					pageable
 					);
 			
-		}
 		
 		Page<ServeiDto> paginaDtos = dtoMappingHelper.pageEntities2pageDto(paginaServeis, ServeiDto.class, pageable);
 		for (ServeiDto servei: paginaDtos.getContent()) {
