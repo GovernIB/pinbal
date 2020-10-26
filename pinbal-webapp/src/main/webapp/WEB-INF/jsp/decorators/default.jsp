@@ -200,6 +200,7 @@ body {
 							<c:if test="${isRepresentantEntitatActual}">
 								<a href="<c:url value="/representant/usuari"/>" class="btn btn-primary"><spring:message code="decorator.menu.usuaris"/></a>
 								<a href="<c:url value="/procediment"/>" class="btn btn-primary"><spring:message code="decorator.menu.procediments"/></a>
+								<a href="<c:url value="/organgestor"/>" class="btn btn-primary"><spring:message code="decorator.menu.organgestor"/></a>
 								<a href="<c:url value="/estadistiques"/>" class="btn btn-primary"><spring:message code="decorator.menu.estadistiques"/></a>
 							</c:if>
 						</c:when>
