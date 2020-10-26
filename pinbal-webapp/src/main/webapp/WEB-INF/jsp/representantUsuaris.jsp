@@ -159,6 +159,7 @@ function showModalCrear() {
 	$('#modal-group-tipus').removeClass('hide');
 	$('#modal-select-tipus').removeAttr('disabled');
 	$('#modal-select-tipus').val('${caracterTipusNif}');
+	$('#modal-input-nom').val('');
 	$('#modal-input-codi').removeAttr('disabled');
 	$('#modal-input-codi').val('');
 	$('#modal-input-nif').removeAttr('disabled');
