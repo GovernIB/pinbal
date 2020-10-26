@@ -32,8 +32,7 @@ public class EntitatUsuariCommand {
 	@Size(max = 64)
 	@NotEmpty(groups = {TipusCodi.class, Existent.class})
 	private String codi;
-	private boolean tipusNif;
-	private boolean tipusCodi;
+	private String tipus;
 	@Size(max = 64)
 	@NotEmpty(groups = {TipusNif.class, Existent.class})
 	@DocumentIdentitat(documentTipus = DocumentTipus.NIF, groups = {TipusNif.class})
@@ -62,18 +61,6 @@ public class EntitatUsuariCommand {
 	}
 	public void setCodi(String codi) {
 		this.codi = codi;
-	}
-	public boolean isTipusNif() {
-		return tipusNif;
-	}
-	public void setTipusNif(boolean tipusNif) {
-		this.tipusNif = tipusNif;
-	}
-	public boolean isTipusCodi() {
-		return tipusCodi;
-	}
-	public void setTipusCodi(boolean tipusCodi) {
-		this.tipusCodi = tipusCodi;
 	}
 	public String getNif() {
 		return nif;
@@ -117,7 +104,13 @@ public class EntitatUsuariCommand {
 	public void setAfegir(boolean afegir) {
 		this.afegir = afegir;
 	}
-
+	public String getTipus() {
+		return tipus;
+	}
+	public void setTipus(String tipus) {
+		this.tipus = tipus;
+	}
+	
 	public String getRols() {
 		StringBuilder rols = new StringBuilder();
 		if (isRolRepresentant())
@@ -137,10 +130,6 @@ public class EntitatUsuariCommand {
 		setRolAplicacio(rols.contains(CARACTER_APLICACIO));
 	}
 
-	public void setTipus(String tipus) {
-		setTipusNif(tipus.contains(CARACTER_NIF));
-		setTipusCodi(tipus.contains(CARACTER_CODI));
-	}
 
 	@Override
 	public String toString() {

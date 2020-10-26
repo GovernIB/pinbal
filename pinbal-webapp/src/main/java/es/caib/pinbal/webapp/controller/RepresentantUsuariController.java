@@ -208,9 +208,9 @@ public class RepresentantUsuariController extends BaseController {
 		if (!EntitatHelper.isRepresentantEntitatActual(request))
 			return "representantNoAutoritzat";
 		Class<?> grup = null;
-		if (command.isTipusCodi()) {
+		if (command.getTipus().equals(EntitatUsuariCommand.CARACTER_CODI)) {
 			grup = TipusCodi.class;
-		} else if (command.isTipusNif()) {
+		} else if (command.getTipus().equals(EntitatUsuariCommand.CARACTER_NIF)) {
 			grup = TipusNif.class;
 		} else {
 			grup = Existent.class;
@@ -433,6 +433,16 @@ public class RepresentantUsuariController extends BaseController {
 		
 		model.addAttribute("entitat", entitat);
 		model.addAttribute(new EntitatUsuariCommand(entitat.getId()));
+		
+//		String[] values = { EntitatUsuariCommand.CARACTER_NIF, EntitatUsuariCommand.CARACTER_CODI };
+//		String[] texts = { "representant.usuaris.tipus.nif", "representant.usuaris.tipus.codi" };
+//		model.addAttribute(
+//				"identificatPerOptions",
+//				EnumHelper.getOptionsForArray(
+//						values ,
+//						texts));
+		
+		
 	}
 
 }
