@@ -188,9 +188,9 @@ public class AuditorUsuariController extends BaseController {
 			if (!EntitatHelper.isAuditorEntitatActual(request))
 				return "auditorNoAutoritzat";
 			Class<?> grup = null;
-			if (command.isTipusCodi()) {
+			if (command.getTipus().equals(EntitatUsuariCommand.CARACTER_CODI)) {
 				grup = TipusCodi.class;
-			} else if (command.isTipusNif()) {
+			} else if (command.getTipus().equals(EntitatUsuariCommand.CARACTER_NIF)) {
 				grup = TipusNif.class;
 			} else {
 				grup = Existent.class;

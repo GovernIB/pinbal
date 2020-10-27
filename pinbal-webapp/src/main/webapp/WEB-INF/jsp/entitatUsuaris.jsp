@@ -56,17 +56,19 @@ $(document).ready(function() {
 		});
 		$('#form-filtre').submit();
 	});
-	$('select[name="tipus"]', $('form#modal-form')).change(function() {
-		if (this.value == '${caracterTipusNif}') {
+
+
+
+	$('input[type=radio][name=tipus]').on('change', function() {
+		if ($(this).val() == '${caracterTipusNif}') {
 			$('#modal-group-codi').addClass('hide');
 			$('#modal-group-nif').removeClass('hide');
-		} else if (this.value == '${caracterTipusCodi}') {
+		} else if ($(this).val() == '${caracterTipusCodi}') {
 			$('#modal-group-codi').removeClass('hide');
 			$('#modal-group-nif').addClass('hide');
 		}
 	});
-	$('select[name="tipus"]', $('form#modal-form')).val('${caracterTipusNif}');
-	$('select[name="tipus"]').trigger('change');
+	
 
     $('#table-users').DataTable({
     	autoWidth: false,
@@ -356,13 +358,18 @@ function showModalEditar(row) {
 				<input type="hidden" id="modal-hidden-id" name="id" value="${entitat.id}"/>
 				<input type="hidden" id="modal-hidden-codi" name="codi"/>
 				<input type="hidden" id="modal-hidden-nif" name="nif"/>
+				
+				
 				<div id="modal-group-tipus" class="form-group">
-    				<label class="control-label" for="modal-select-tipus"><spring:message code="entitat.usuaris.camp.tipus"/></label>
-					<select id="modal-select-tipus" name="tipus" class="form-control input-medium"
-							data-minimumresults="-1" data-toggle="select2">>
-						<option value="${caracterTipusNif}"><spring:message code="entitat.usuaris.tipus.nif"/></option>
-						<option value="${caracterTipusCodi}"><spring:message code="entitat.usuaris.tipus.codi"/></option>
-					</select>
+					<label class="control-label" for="modal-select-tipus"><spring:message code="entitat.usuaris.camp.tipus"/></label>
+					<div class="btn-group" data-toggle="buttons" id="modal-select-tipus" style="display: block; width: 100%; margin-bottom: 50px;">
+						<label class="btn btn-default active">
+							<input id="tipus1" name="tipus" type="radio" value="${caracterTipusNif}" checked="checked"> <spring:message code="entitat.usuaris.tipus.nif"/>
+						</label>
+						<label class="btn btn-default">
+							<input id="tipus2" name="tipus" type="radio" value="${caracterTipusCodi}"> <spring:message code="entitat.usuaris.tipus.codi"/>
+						</label>
+					</div>
 				</div>
 				<div id="modal-group-codi" class="form-group">
     				<label for="modal-input-codi"><spring:message code="entitat.usuaris.camp.codi"/></label>

@@ -47,15 +47,18 @@ $(document).ready(function() {
 		});
 		$('#form-filtre').submit();
 	});
-	$('select[name="tipus"]', $('form#modal-form')).change(function() {
-		if (this.value == '${caracterTipusNif}') {
+
+
+	$('input[type=radio][name=tipus]').on('change', function() {
+		if ($(this).val() == '${caracterTipusNif}') {
 			$('#modal-group-codi').addClass('hide');
 			$('#modal-group-nif').removeClass('hide');
-		} else if (this.value == '${caracterTipusCodi}') {
+		} else if ($(this).val() == '${caracterTipusCodi}') {
 			$('#modal-group-codi').removeClass('hide');
 			$('#modal-group-nif').addClass('hide');
 		}
 	});
+
 
     $('#table-users').DataTable({
     	autoWidth: false,
@@ -240,16 +243,19 @@ function showModalEditar(
 				<input type="hidden" id="modal-hidden-id" name="id" value="${entitat.id}"/>
 				<input type="hidden" id="modal-hidden-codi" name="codi"/>
 				<input type="hidden" id="modal-hidden-nif" name="nif"/>
+				
 				<div id="modal-group-tipus" class="form-group">
-    				<label class="control-label col-md-2" for="modal-select-tipus"><spring:message code="auditor.usuaris.camp.tipus"/></label>
-					<div class="col-md-10">
-						<select id="modal-select-tipus" name="tipus" class="input-sm"
-								data-minimumresults="-1" data-toggle="select2">
-							<option value="${caracterTipusNif}"><spring:message code="auditor.usuaris.tipus.nif"/></option>
-							<option value="${caracterTipusCodi}"><spring:message code="auditor.usuaris.tipus.codi"/></option>
-						</select>
+					<label class="control-label col-md-2" for="modal-select-tipus"><spring:message code="auditor.usuaris.camp.tipus"/></label>
+					<div class="btn-group" data-toggle="buttons" id="modal-select-tipus" style="padding-left: 15px;">
+						<label class="btn btn-default active">
+							<input id="tipus1" name="tipus" type="radio" value="${caracterTipusNif}" checked="checked"> <spring:message code="auditor.usuaris.tipus.nif"/>
+						</label>
+						<label class="btn btn-default">
+							<input id="tipus2" name="tipus" type="radio" value="${caracterTipusCodi}"> <spring:message code="auditor.usuaris.tipus.codi"/>
+						</label>
 					</div>
 				</div>
+				
 				<div id="modal-group-codi" class="form-group">
     				<label class="control-label col-md-2" for="modal-input-codi"><spring:message code="auditor.usuaris.camp.codi"/></label>
 					<div class="col-md-10">
