@@ -76,7 +76,7 @@ $(document).ready(function() {
 				orderable: false,
 				width: "1%",
 				render: function (data, type, row, meta) {
-						var template = $('#template-chg-status').html();
+						var template = $('#template-serveis').html();
 						return Mustache.render(template, row);
 				}
 			}, 
@@ -85,26 +85,8 @@ $(document).ready(function() {
 				orderable: false,
 				width: "1%",
 				render: function (data, type, row, meta) {
-						var template = $('#template-serveis').html();
-						return Mustache.render(template, row);
-				}
-			}, 
-			{
-				targets: [8],
-				orderable: false,
-				width: "1%",
-				render: function (data, type, row, meta) {
-						var template = $('#template-modificar').html();
+						var template = $('#template-accions').html();
 						row['propertyEsborrar'] = ${propertyEsborrar};
-						return Mustache.render(template, row);
-				}
-			}, 
-			{
-				targets: [9],
-				orderable: false,
-				width: "1%",
-				render: function (data, type, row, meta) {
-						var template = $('#template-eliminar').html();
 						return Mustache.render(template, row);
 				}
 			}, 
@@ -175,9 +157,7 @@ $(document).ready(function() {
 				<th data-data="organGestorStr"><spring:message code="procediment.list.taula.columna.organgestor" /></th>
 				<th data-data="codiSia"><spring:message code="procediment.list.taula.columna.codisia" /></th>
 				<th data-data="actiu"><spring:message code="procediment.list.taula.columna.actiu" /></th>
-				<th data-data="id"></th>
 				<th data-data="serveisActius"></th>
-				<th data-data="id"></th>
 				<th data-data="id"></th>
 			</tr>
 		</thead>
@@ -188,25 +168,30 @@ $(document).ready(function() {
 <i class="fa fa-check"></i>
 {{/actiu}}
 </script>
-<script id="template-chg-status" type="x-tmpl-mustache">
-{{#actiu}}
-<a href="procediment/{{ id }}/disable" class="btn btn-default"><i class="fas fa-times"></i>&nbsp;<spring:message code="comu.boto.desactivar"/></a>
-{{/actiu}}
-{{^actiu}}
-<a href="procediment/{{ id }}/enable" class="btn btn-default"><i class="fa fa-check"></i>&nbsp;<spring:message code="comu.boto.activar"/></a>
-{{/actiu}}
-</script>
+
 <script id="template-serveis" type="x-tmpl-mustache">
 	<a href="procediment/{{ id }}/servei" class="btn btn-default">
 		<i class="fas fa-briefcase"></i>&nbsp;<spring:message code="entitat.list.taula.boto.serveis"/>&nbsp;<span class="badge">{{ serveisActius.length }}</span>
  	</a>
 </script>
-<script id="template-modificar" type="x-tmpl-mustache">
-	<a href="procediment/{{ id }}" class="btn btn-default"><i class="fas fa-pen"></i>&nbsp;<spring:message code="comu.boto.modificar"/></a>
+
+
+<script id="template-accions" type="x-tmpl-mustache">
+	<div class="btn-group">
+		<button class="btn btn-primary dropdown-toggle" data-toggle="dropdown"><i class="fas fa-cog"></i>&nbsp;<spring:message code="comu.accions"/>&nbsp;<span class="caret"></span></button>
+		<ul class="dropdown-menu">
+			{{#actiu}}
+				<li><a href="procediment/{{ id }}/disable" ><i class="fas fa-times"></i>&nbsp;<spring:message code="comu.boto.desactivar"/></a></li>
+			{{/actiu}}
+			{{^actiu}}
+				<li><a href="procediment/{{ id }}/enable" ><i class="fa fa-check"></i>&nbsp;<spring:message code="comu.boto.activar"/></a></li>
+			{{/actiu}}
+			<li><a href="procediment/{{ id }}" ><i class="fas fa-pen"></i>&nbsp;<spring:message code="comu.boto.modificar"/></a></li>
+			<li><a href="procediment/{{ id }}/delete" confirm-esborrar"><i class="fas fa-trash-alt"></i>&nbsp;<spring:message code="comu.boto.esborrar"/></a></li>
+		</ul>
+	</div>
 </script>
-<script id="template-eliminar" type="x-tmpl-mustache">
-	<a href="procediment/{{ id }}/delete" class="btn btn-default confirm-esborrar"><i class="fas fa-trash-alt"></i>&nbsp;<spring:message code="comu.boto.esborrar"/></a>
-</script>
+
 <script type="text/javascript">
 function onInvokeAction(id) {
 	setExportToLimit(id, '');
