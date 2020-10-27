@@ -147,6 +147,37 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 	private MessageSource messageSource;
 	private ScspHelper scspHelper;
 
+	
+	
+	
+	@Transactional
+	@Override
+	public void saveActiu(String serveiCodi, boolean actiu) {
+
+		ServeiConfig serveiConfig = serveiConfigRepository.findByServei(serveiCodi);
+		
+		if (serveiConfig == null) {
+			// Si no està creat el crea
+			serveiConfig = ServeiConfig.getBuilder(
+					serveiCodi,
+					null,
+					null,
+					null,
+					null,
+					JustificantTipus.GENERAT,
+					null,
+					null,
+					false, 
+					null,
+					null, 
+					new byte[0],
+					actiu).build();
+			serveiConfigRepository.save(serveiConfig);
+		} else {
+			serveiConfig.updateActiu(actiu);
+		}
+
+	}
 
 
 	@Transactional
@@ -171,7 +202,8 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 					servei.isActivaGestioXsd(),
 					servei.getFitxerAjudaNom(),
 					servei.getFitxerAjudaMimeType(),
-					servei.getFitxerAjudaContingut()).build();
+					servei.getFitxerAjudaContingut(),
+					true).build();
 			serveiConfigRepository.save(serveiConfig);
 		} else {
 			// Si ja està creat l'actualitza
@@ -318,7 +350,21 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 				activa == null,
 				activa,
 				pageable);
-		return dtoMappingHelper.pageEntities2pageDto(paginaServeis, ServeiDto.class, pageable);
+		
+		Page<ServeiDto> paginaDtos = dtoMappingHelper.pageEntities2pageDto(
+				paginaServeis,
+				ServeiDto.class,
+				pageable);
+		for (ServeiDto servei : paginaDtos.getContent()) {
+			ServeiConfig serveiConfig = serveiConfigRepository.findByServei(servei.getCodi());
+			if (serveiConfig != null && serveiConfig.isActiu() == true) {
+				servei.setActiu(true);
+			} else {
+				servei.setActiu(false);
+			}
+		}
+		
+		return paginaDtos;
 	}
 	
 	@Transactional(readOnly = true)

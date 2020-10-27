@@ -90,7 +90,7 @@ public class ServeiHelper {
 		List<ServeiConfig> serveiConfigs = new ArrayList<ServeiConfig>();
 		for (String servei: serveis) {
 			ServeiConfig serveiConfig = serveiConfigRepository.findByServei(servei);
-			if (serveiConfig != null)
+			if (serveiConfig != null && serveiConfig.isActiu())
 				serveiConfigs.add(serveiConfig);
 		}
 		PermisosHelper.filterGrantedAll(
@@ -113,8 +113,16 @@ public class ServeiHelper {
 		// per Rol al ServeiConfig
 		for (String servei: serveis) {
 			ServeiConfig serveiConfig = serveiConfigRepository.findByServei(servei);
-			if (serveiConfig == null || serveiConfig.getRoleName() == null || serveiConfig.getRoleName().isEmpty())
-				resposta.add(servei);
+			if ((serveiConfig == null || serveiConfig.getRoleName() == null || serveiConfig.getRoleName().isEmpty())) {
+				boolean serveiActive = true;
+				if (serveiConfig != null && !serveiConfig.isActiu()) {
+					serveiActive = false;
+				}
+				if (serveiActive) {
+					resposta.add(servei);
+				}
+			}
+				
 		}
 		return resposta;
 	}

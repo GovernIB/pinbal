@@ -81,6 +81,11 @@ public class ServeiConfig extends PinbalAuditable<Long> {
 	@Column(name = "activa_gestio_xsd")
 	private boolean activaGestioXsd = false;
 	
+	
+	@Column(name = "actiu", nullable = false)
+	private boolean actiu;
+	
+	
 	// Ajuda
 	@Lob
 	@Column(name = "ajuda")
@@ -132,7 +137,8 @@ public class ServeiConfig extends PinbalAuditable<Long> {
 			boolean activaGestioXsd,
 			String fitxerAjudaNom,
 			String fitxerAjudaMimeType,
-			byte[] fitxerAjudaContingut) {
+			byte[] fitxerAjudaContingut, 
+			boolean actiu) {
 		return new Builder(
 				servei,
 				custodiaCodi,
@@ -145,11 +151,16 @@ public class ServeiConfig extends PinbalAuditable<Long> {
 				activaGestioXsd,
 				fitxerAjudaNom,
 				fitxerAjudaMimeType,
-				fitxerAjudaContingut);
+				fitxerAjudaContingut,
+				actiu);
 	}
 
 	public long getVersion() {
 		return version;
+	}
+	
+	public void updateActiu(boolean actiu) {
+		this.actiu = actiu;
 	}
 
 	public void update(
@@ -238,7 +249,8 @@ public class ServeiConfig extends PinbalAuditable<Long> {
 				boolean activaGestioXsd,
 				String fitxerAjudaNom,
 				String fitxerAjudaMimeType,
-				byte[] fitxerAjudaContingut) {
+				byte[] fitxerAjudaContingut,
+				boolean actiu) {
 			built = new ServeiConfig();
 			built.servei = servei;
 			built.custodiaCodi = custodiaCodi;
@@ -252,6 +264,7 @@ public class ServeiConfig extends PinbalAuditable<Long> {
 			built.fitxerAjudaNom = fitxerAjudaNom;
 			built.fitxerAjudaMimeType = fitxerAjudaMimeType;
 			built.fitxerAjudaContingut = fitxerAjudaContingut;
+			built.actiu = actiu;
 		}
 		/**
 		 * Construeix el nou objecte de tipus ServeiConfig.

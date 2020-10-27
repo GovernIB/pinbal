@@ -575,4 +575,9 @@ public interface ServeiService {
 	 */
 	public List<String> getRolsConfigurats();
 
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	void saveActiu(
+			String serveiCodi,
+			boolean actiu);
+
 }

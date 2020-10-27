@@ -46,6 +46,7 @@ import es.caib.pinbal.core.service.EntitatService;
 import es.caib.pinbal.core.service.ProcedimentService;
 import es.caib.pinbal.core.service.ServeiService;
 import es.caib.pinbal.core.service.exception.EntitatNotFoundException;
+import es.caib.pinbal.core.service.exception.ProcedimentNotFoundException;
 import es.caib.pinbal.core.service.exception.ScspException;
 import es.caib.pinbal.core.service.exception.ServeiAmbConsultesException;
 import es.caib.pinbal.core.service.exception.ServeiBusNotFoundException;
@@ -76,6 +77,8 @@ public class ServeiController extends BaseController {
 	
 	private static final String SESSION_ATTRIBUTE_FILTRE = "ServeiController.session.filtre"; 
 	private static final String SESSION_ATTRIBUTE_FILTRE_PROCEDIMENT = "ServeiController.session.filtre.procediment";
+	
+	private static final String SESSION_ATTRIBUTE_SERVEIS = "ServeiHelper.serveis";
 	
 	public static String getSessionAttributeFiltreProcediment() {
 		return SESSION_ATTRIBUTE_FILTRE_PROCEDIMENT;
@@ -248,6 +251,50 @@ public class ServeiController extends BaseController {
 		}
 		return "redirect:../servei";
 	}
+	
+
+
+	@RequestMapping(value = "/{serveiCodi}/enable", method = RequestMethod.GET)
+	public String enable(
+			HttpServletRequest request,
+			@PathVariable String serveiCodi) throws ServeiNotFoundException {
+		try {
+			serveiService.saveActiu(serveiCodi, true);
+			request.getSession().removeAttribute(SESSION_ATTRIBUTE_SERVEIS);
+			AlertHelper.success(
+					request, 
+					getMessage(
+							request, 
+							"servei.controller.servei.activat.ok"));
+		} catch (Exception e) {
+			AlertHelper.error(
+					request, 
+					e.getMessage());
+		}
+		return "redirect:../../servei";
+	}
+	
+	@RequestMapping(value = "/{serveiCodi}/disable", method = RequestMethod.GET)
+	public String disable(
+			HttpServletRequest request,
+			@PathVariable String serveiCodi) throws ServeiNotFoundException {
+		try {
+			serveiService.saveActiu(serveiCodi, false);
+			request.getSession().removeAttribute(SESSION_ATTRIBUTE_SERVEIS);
+			AlertHelper.success(
+					request, 
+					getMessage(
+							request, 
+							"servei.controller.servei.desactivat.ok"));
+		} catch (Exception e) {
+			AlertHelper.error(
+					request, 
+					e.getMessage());
+		}
+		return "redirect:../../servei";
+	}
+	
+	
 	
 	@RequestMapping(value = "/{serveiCodi}/downloadAjuda", method = RequestMethod.GET)
 	public String downloadAjuda(

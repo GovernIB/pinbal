@@ -77,6 +77,11 @@
 					targets: [5],
 					visible: false
 				}, 
+				{
+					targets: [6],
+					visible: false,
+					orderable: false,
+				}, 
 		   ]
 		});		    
 	});
@@ -143,6 +148,7 @@
 				<th data-data="numeroProcedimentsAssociats"></th>
 				<th data-data="id"></th>
 				<th data-data="codiUrlEncoded"></th>
+				<th data-data="actiu"><spring:message code="servei.list.taula.columna.actiu" /></th>
 			</tr>
 		</thead>
 	</table>
@@ -161,6 +167,8 @@
 	</div>
   </div>
 </div>
+
+
 <script id="template-btn-procediments" type="x-tmpl-mustache">
 <a class="btn btn-default" href="<c:url value="/modal/servei/{{ codiUrlEncoded }}/procediments"/>" 
 		onclick="showModalProcediments(this);return false" data-titol="<spring:message code="servei.procediment.list.titol" arguments="{{ descripcio }}"/>">
@@ -171,6 +179,12 @@
 	<div class="btn-group">
 		<button class="btn btn-primary dropdown-toggle" data-toggle="dropdown"><i class="fas fa-cog"></i>&nbsp;<spring:message code="comu.accions"/>&nbsp;<span class="caret"></span></button>
 		<ul class="dropdown-menu">
+			{{#actiu}}
+				<li><a href="servei/{{ codiUrlEncoded }}/disable" ><i class="fa fa-times"></i>&nbsp;<spring:message code="comu.boto.desactivar"/></a></li>
+			{{/actiu}}
+			{{^actiu}}
+				<li><a href="servei/{{ codiUrlEncoded }}/enable" ><i class="fa fa-check"></i>&nbsp;<spring:message code="comu.boto.activar"/></a></li>
+			{{/actiu}}
 			<li><a href="servei/{{ codiUrlEncoded }}" title="<spring:message code="comu.boto.modificar"/>"><i class="fas fa-pen"></i>&nbsp;<spring:message code="comu.boto.modificar"/></a></li>
 			<li><a href="servei/{{ codiUrlEncoded }}/camp" title="<spring:message code="servei.list.taula.boto.formulari"/>"><i class="fas fa-th-list"></i>&nbsp;<spring:message code="servei.list.taula.boto.formulari"/></a></li>
 			<li><a href="servei/{{ codiUrlEncoded }}/justificant" title="<spring:message code="servei.list.taula.boto.justificant"/>"><i class="fas fa-file"></i></i>&nbsp;<spring:message code="servei.list.taula.boto.justificant"/></a></li>
@@ -184,6 +198,8 @@ function onInvokeAction(id) {
 	createHiddenInputFieldsForLimitAndSubmit(id);
 }
 </script>
+
+
 
 </body>
 </html>

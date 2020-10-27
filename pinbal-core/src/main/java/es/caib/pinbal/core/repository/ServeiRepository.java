@@ -27,14 +27,9 @@ public interface ServeiRepository extends JpaRepository<Servei, Long> {
 			"      (:esNullCodi = true or lower(s.codi) like concat('%', lower(:codi), '%')) " +
 			"  and (:esNullDescripcio = true or lower(s.descripcio) like concat('%', lower(:descripcio), '%'))" +
 			"  and (:esNullEmisor = true or s.scspEmisor.id = :emisor) " +
-			"  and (:esNullActiva = true or (:activa = true  and "+ 
-			"									(s.scspFechaBaja = null" + 
-			"				                     or current_date() <= s.scspFechaBaja))" + 
-			"							 or (:activa = false  and " + 
-			"									 (s.scspFechaBaja != null" + 
-			"				                      and current_date() > s.scspFechaBaja))" +
-			") " +
-			"")
+			"  and (:esNullActiva = true or (:activa = true and (select count(sc.servei) from ServeiConfig sc where sc.servei = s.codi and sc.actiu = true) > 0) " +
+			" 							 or (:activa = false and (select count(sc.servei) from ServeiConfig sc where sc.servei = s.codi and sc.actiu = true) = 0) " +
+			")")
 	public Page<Servei> findByFiltre(
 			@Param("esNullCodi") boolean esNullCodi,
 			@Param("codi") String codi,
@@ -86,7 +81,8 @@ public interface ServeiRepository extends JpaRepository<Servei, Long> {
 			"  and (:esNullEmisor = true or s.scspEmisor.id = :emisor) " +
 			"  and (:esNullEmisor = true or s.scspEmisor.id = :emisor) " +
 			"  and (:esNullActiva = true or (:activa = true  and s.codi in :serveisProcedimentActiusIds) " +
-			"   						 or (:activa = false  and s.codi not in :serveisProcedimentActiusIds) " +
+			"   						 or (:activa = false  and s.codi not in :serveisProcedimentActiusIds)) " +
+			"  and (select count(sc.servei) from ServeiConfig sc where sc.servei = s.codi and sc.actiu = true) > 0 " + 
 			") "
 			)
 	public Page<Servei> findByFiltre(

@@ -330,4 +330,13 @@ public class ServeiServiceBean implements ServeiService {
 		delegate.xsdCreate(codi, xsd, contingut);
 	}
 
+	@Override
+	public void saveActiu(
+			String serveiCodi,
+			boolean actiu) {
+		delegate.saveActiu(
+				serveiCodi,
+				actiu);
+	}
+
 }
