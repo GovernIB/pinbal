@@ -121,7 +121,7 @@ public class EntitatServiceBean implements EntitatService {
 	}
 
 	@Override
-	@RolesAllowed("PBL_ADMIN")
+	@RolesAllowed({"PBL_ADMIN", "PBL_REPRES"})
 	public List<OrganGestorDto> getOrgansGestors(Long id) {
 		return delegate.getOrgansGestors(id);
 	}

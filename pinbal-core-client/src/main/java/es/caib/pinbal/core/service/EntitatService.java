@@ -121,7 +121,7 @@ public interface EntitatService {
 	 *            Identificador de l'entitat
 	 * @return Llista amb tots els organs gestors asociats a la entitat
 	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_REPRES')")
 	public List<OrganGestorDto> getOrgansGestors(Long id);
 	
 	/**
