@@ -81,7 +81,7 @@ public interface ProcedimentService {
 	 * @throws EntitatNotFoundException
 	 *             Si no s'ha trobat cap entitat amb l'id especificat.
 	 */
-	@PreAuthorize("hasRole('ROLE_REPRES')")
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_REPRES') or hasRole('ROLE_AUDIT') or hasRole('ROLE_SUPERAUD')")
 	public Page<ProcedimentDto> findAmbFiltrePaginat(
 			Long entitatId,
 			String codi,

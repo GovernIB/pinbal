@@ -7,7 +7,7 @@
 	<parent>
 		<groupId>es.caib.pinbal</groupId>
 		<artifactId>pinbal</artifactId>
-		<version>1.4.20.pre1</version>
+		<version>1.4.20.pre2</version>
 	</parent>
 	<artifactId>pinbal-webapp</artifactId>
 	<packaging>war</packaging>
