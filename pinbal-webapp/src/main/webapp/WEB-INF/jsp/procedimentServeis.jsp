@@ -113,7 +113,7 @@ $(document).ready(function() {
 		language: {
             "url": '<c:url value="/js/datatable-language.json"/>'
         },
-		ajax: '<c:url value="/servei/datatable/procediment/${procediment.id}"/>',
+		ajax: '<c:url value="/procediment/${procediment.id}/servei/datatable"/>',
 		columnDefs: [
 			{
 				targets: [2],

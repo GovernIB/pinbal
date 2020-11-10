@@ -32,7 +32,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import es.caib.pinbal.core.dto.ArbreDto;
 import es.caib.pinbal.core.dto.DadaEspecificaDto;
-import es.caib.pinbal.core.dto.EntitatDto;
 import es.caib.pinbal.core.dto.FitxerDto;
 import es.caib.pinbal.core.dto.NodeDto;
 import es.caib.pinbal.core.dto.ProcedimentDto;
@@ -60,7 +59,6 @@ import es.caib.pinbal.webapp.command.ServeiFiltreCommand;
 import es.caib.pinbal.webapp.command.ServeiJustificantCampCommand;
 import es.caib.pinbal.webapp.command.ServeiXsdCommand;
 import es.caib.pinbal.webapp.common.AlertHelper;
-import es.caib.pinbal.webapp.common.EntitatHelper;
 import es.caib.pinbal.webapp.common.RequestSessionHelper;
 import es.caib.pinbal.webapp.datatables.ServerSideRequest;
 import es.caib.pinbal.webapp.datatables.ServerSideResponse;
@@ -74,14 +72,8 @@ import es.caib.pinbal.webapp.datatables.ServerSideResponse;
 @RequestMapping("/servei")
 public class ServeiController extends BaseController {
 	
-	private static final String SESSION_ATTRIBUTE_FILTRE = "ServeiController.session.filtre"; 
-	private static final String SESSION_ATTRIBUTE_FILTRE_PROCEDIMENT = "ServeiController.session.filtre.procediment";
-	
+	private static final String SESSION_ATTRIBUTE_FILTRE = "ServeiController.session.filtre";
 	private static final String SESSION_ATTRIBUTE_SERVEIS = "ServeiHelper.serveis";
-	
-	public static String getSessionAttributeFiltreProcediment() {
-		return SESSION_ATTRIBUTE_FILTRE_PROCEDIMENT;
-	}
 
 	@Autowired
 	private ServeiService serveiService;
@@ -142,50 +134,7 @@ public class ServeiController extends BaseController {
 
 		return new ServerSideResponse<ServeiDto, Long>(serverSideRequest, page);
 	}
-	
-	@RequestMapping(value = "/datatable/procediment/{procedimentId}", produces="application/json", method = RequestMethod.GET)
-	@ResponseBody
-	public ServerSideResponse<ServeiDto, Long> datatable(
-			HttpServletRequest request,
-			@PathVariable Long procedimentId,
-			Model model)
-	      throws Exception {
-		ServerSideRequest serverSideRequest = new ServerSideRequest(request);
-		
-		ServeiFiltreCommand command = (ServeiFiltreCommand) RequestSessionHelper.obtenirObjecteSessio( 
-				request, 
-				SESSION_ATTRIBUTE_FILTRE_PROCEDIMENT);
-		
-		if (command == null) {
-			command = new ServeiFiltreCommand();
-			command.setActiva(true);
-		}
-		
-		if (!EntitatHelper.isRepresentantEntitatActual(request))
-			throw new Exception("Representant no autoritzat");
-		
-		EntitatDto entitat = EntitatHelper.getEntitatActual(request, entitatService);
-		if (entitat == null) {
-			throw new Exception("Entitat actual incorrecte");
-		}
-		
-		ProcedimentDto procediment = procedimentService.findById(procedimentId);
-		if (procediment == null) {
-			throw new Exception("Incorrect procediment id");
-		}
-		
-		Page<ServeiDto> page = serveiService.findAmbFiltrePaginat(
-													command.getCodi(),
-													command.getDescripcio(),
-													command.getEmissor(),
-													command.getActiva(),
-													entitat, 
-													procediment,			
-													serverSideRequest.toPageable());
 
-		return new ServerSideResponse<ServeiDto, Long>(serverSideRequest, page);
-	}
-	
 	@RequestMapping(value = "/new", method = RequestMethod.GET)
 	public String get(Model model) throws ServeiNotFoundException, IOException {
 		return get(null, model);

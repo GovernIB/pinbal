@@ -57,6 +57,11 @@ import es.caib.pinbal.webapp.datatables.ServerSideResponse;
 public class ProcedimentController extends BaseController {
 
 	public static final String SESSION_ATTRIBUTE_FILTRE = "ProcedimentController.session.filtre";
+	private static final String SESSION_ATTRIBUTE_FILTRE_PROCEDIMENT = "ServeiController.session.filtre.procediment";
+
+	public static String getSessionAttributeFiltreProcediment() {
+		return SESSION_ATTRIBUTE_FILTRE_PROCEDIMENT;
+	}
 
 	@Autowired
 	private ProcedimentService procedimentService;
@@ -149,8 +154,8 @@ public class ProcedimentController extends BaseController {
 													serverSideRequest.toPageable());
 
 		return new ServerSideResponse<ProcedimentDto, Long>(serverSideRequest, page);
-	}	
-	
+	}
+
 	@RequestMapping(value = "/new", method = RequestMethod.GET)
 	public String get(
 			HttpServletRequest request,
@@ -296,6 +301,42 @@ public class ProcedimentController extends BaseController {
 		}
 	}
 
+	@RequestMapping(value = "/{procedimentId}/servei/datatable", produces="application/json", method = RequestMethod.GET)
+	@ResponseBody
+	public ServerSideResponse<ServeiDto, Long> datatable(
+			HttpServletRequest request,
+			@PathVariable Long procedimentId,
+			Model model)
+	      throws Exception {
+		ServerSideRequest serverSideRequest = new ServerSideRequest(request);
+		ServeiFiltreCommand command = (ServeiFiltreCommand) RequestSessionHelper.obtenirObjecteSessio( 
+				request, 
+				SESSION_ATTRIBUTE_FILTRE_PROCEDIMENT);
+		if (command == null) {
+			command = new ServeiFiltreCommand();
+			command.setActiva(true);
+		}
+		if (!EntitatHelper.isRepresentantEntitatActual(request))
+			throw new Exception("Representant no autoritzat");
+		EntitatDto entitat = EntitatHelper.getEntitatActual(request, entitatService);
+		if (entitat == null) {
+			throw new Exception("Entitat actual incorrecte");
+		}
+		ProcedimentDto procediment = procedimentService.findById(procedimentId);
+		if (procediment == null) {
+			throw new Exception("Incorrect procediment id");
+		}
+		Page<ServeiDto> page = serveiService.findAmbFiltrePaginat(
+													command.getCodi(),
+													command.getDescripcio(),
+													command.getEmissor(),
+													command.getActiva(),
+													entitat, 
+													procediment,			
+													serverSideRequest.toPageable());
+		return new ServerSideResponse<ServeiDto, Long>(serverSideRequest, page);
+	}
+
 	@RequestMapping(value = "/{procedimentId}/servei", method = RequestMethod.GET)
 	public String servei(
 			HttpServletRequest request,
@@ -347,7 +388,6 @@ public class ProcedimentController extends BaseController {
 							"procediment.controller.no.entitat.seleccionada"));
 			return "redirect:../../../index";
 		}
-		
 		ProcedimentDto procediment = null;
 		if (procedimentId != null)
 			procediment = procedimentService.findById(procedimentId);
@@ -361,15 +401,13 @@ public class ProcedimentController extends BaseController {
 		}
 		model.addAttribute("entitat", entitat);
 		model.addAttribute("procediment", procediment);
-
-		
 		if (bindingResult.hasErrors()) {
 			setCommandFiltreServeis(request, model);
 			
 		} else {
 			RequestSessionHelper.actualitzarObjecteSessio(
 					request,
-					ServeiController.getSessionAttributeFiltreProcediment(),
+					getSessionAttributeFiltreProcediment(),
 					command);
 		}
 		return "procedimentServeis";
@@ -681,20 +719,18 @@ public class ProcedimentController extends BaseController {
 				propertyService.get(
 						"es.caib.pinbal.procediment.accio.esborrar.activa"));
 	}
-	
-	private void setCommandFiltreServeis( 
+
+	private void setCommandFiltreServeis(
 			HttpServletRequest request,
 			Model model) throws Exception {
-		
 		ServeiFiltreCommand command = (ServeiFiltreCommand) RequestSessionHelper.obtenirObjecteSessio( 
 				request, 
-				ServeiController.getSessionAttributeFiltreProcediment());
-		
+				getSessionAttributeFiltreProcediment());
 		if (command == null) {
-			command = new ServeiFiltreCommand(); 
+			command = new ServeiFiltreCommand();
 			command.setActiva(true);
 		}
-			
-		model.addAttribute(command); 
-	} 
+		model.addAttribute(command);
+	}
+
 }

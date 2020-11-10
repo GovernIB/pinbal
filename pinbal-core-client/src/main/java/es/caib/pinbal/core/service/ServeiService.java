@@ -95,6 +95,7 @@ public interface ServeiService {
 	 * 				Paràmetres per a la paginació i ordenació dels resultats.
 	 * @return
 	 */
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_REPRES')")
 	public Page<ServeiDto> findAmbFiltrePaginat(
 			String codi,
 			String descripcio,

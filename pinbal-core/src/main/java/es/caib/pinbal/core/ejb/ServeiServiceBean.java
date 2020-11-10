@@ -99,7 +99,7 @@ public class ServeiServiceBean implements ServeiService {
 	}
 	
 	@Override
-	@RolesAllowed("PBL_ADMIN")
+	@RolesAllowed({"PBL_ADMIN", "PBL_REPRES"})
 	public Page<ServeiDto> findAmbFiltrePaginat(
 			String codi,
 			String descripcio,
