@@ -13,6 +13,7 @@
 
 <c:set var="serveiMultiple" value="${servei.consultaMultiplePermesa}"/>
 <c:set var="tabSimpleActiu" value="${not consultaCommand.multiple}"/>
+<c:set var="tabMultipleActiu" value="${not tabSimpleActiu}"/>
 
 <html>
 <head>
@@ -32,7 +33,18 @@
 
 	<link href="<c:url value="/webjars/jasny-bootstrap/3.1.3/dist/css/jasny-bootstrap.min.css"/>" rel="stylesheet"> 
 	<script src="<c:url value="/webjars/jasny-bootstrap/3.1.3/dist/js/jasny-bootstrap.min.js"/>"></script> 
-
+	<c:if test="${serveiMultiple}">
+	<script>
+		$(document).ready(function() {
+			$('#tabs-simple-multiple a:first').click(function (e) {
+				$("#multiple").val('false');
+			});
+			$('#tabs-simple-multiple a:last').click(function (e) {
+				$("#multiple").val('true');
+			});
+		});
+	</script>
+	</c:if>
 </head>
 <body>
 
@@ -99,7 +111,7 @@
 	 			<div class="tab-pane<c:if test="${tabSimpleActiu}"> active</c:if>" id="tab-simple">
 	 				<jsp:include page="import/consultaSimpleForm.jsp"/>
 	 			</div>
-				<div class="tab-pane"<c:if test="${tabMultipleActiu}"> active</c:if>" id="tab-multiple">
+				<div class="tab-pane<c:if test="${tabMultipleActiu}"> active</c:if>" id="tab-multiple">
 					<div class="container-fluid">
 					<c:if test="${not empty consultaCommand.multipleErrorsValidacio}">
 						<div id="errorsFitxer" class="errorsFitxer well alert-danger">
@@ -109,7 +121,6 @@
 						</c:forEach>
 						</div>
 					</c:if>
-					
 					<div class="row">
 						<div class="col-md-12">
 						<br />
@@ -139,11 +150,7 @@
 					<div class="row">
 						<div class="col-md-12">
 							<c:set var="campPath" value="multipleFitxer"/>
-							<c:set var="campErrors"><form:errors path="${campPath}"/></c:set>
-							<div class="form-group<c:if test="${not empty campErrors}"> error</c:if>">
-								<pbl:inputFile inline="false" name="${campPath}" textKey="consulta.form.camp.multiple.fitxer" required="true"/>
-								<form:errors path="${campPath}" cssClass="help-block"/>
-							</div>
+							<pbl:inputFile inline="false" name="${campPath}" textKey="consulta.form.camp.multiple.fitxer" required="true"/>
 						</div>
 					</div>
 					</div>

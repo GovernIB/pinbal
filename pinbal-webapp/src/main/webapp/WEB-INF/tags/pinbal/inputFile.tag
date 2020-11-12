@@ -38,6 +38,7 @@
 					<input type="file" id="${campPath}" name="${campPath}"></span>
 				<button class="input-group-addon btn btn-default fileinput-exists" style="width:auto" data-dismiss="fileinput">Netejar</button>
 			</div>
+			<c:if test="${not empty campErrors}"><p class="help-block"><span class="fa fa-exclamation-triangle"></span>&nbsp;<form:errors path="${campPath}"/></p></c:if>
 		</div>
 	</c:when>
 	<c:otherwise>
