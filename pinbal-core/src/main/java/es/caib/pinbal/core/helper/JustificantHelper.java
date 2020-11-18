@@ -172,16 +172,30 @@ public class JustificantHelper implements MessageSourceAware {
 							custodiaUrl = pluginHelper.custodiaObtenirUrlVerificacioDocument(custodiaId);
 							LOGGER.debug("Obtinguda URL per a la custòdia del justificant de la consulta (id=" + consulta.getId() + ", custodiaUrl=" + custodiaUrl + ")");
 						}
-						// Signa el justificant amb IBKey
-						LOGGER.debug("Signatura amb IBKey del justificant de la consulta (id=" + consulta.getId() + ")");
-						ByteArrayOutputStream signedStream = new ByteArrayOutputStream();
-						pluginHelper.signaturaIbkeySignarEstamparPdf(
-								new ByteArrayInputStream(arxiuJustificantGenerat.getContingut()),
-								signedStream,
-								custodiaUrl);
+						byte[] justificantFirmat;
+						if (pluginHelper.isPluginFirmaServidorActiu()) {
+							// Signa el justificant amb firma de servidor
+							FitxerDto justificantFitxer = new FitxerDto();
+							justificantFitxer.setNom(arxiuJustificantGenerat.getNom());
+							justificantFitxer.setContentType("application/pdf");
+							justificantFitxer.setContingut(arxiuJustificantGenerat.getContingut());
+							justificantFirmat = pluginHelper.firmaServidorFirmar(
+									justificantFitxer,
+									TipusFirma.PADES,
+									"Firma justificant PINBAL",
+									"ca");
+						} else {
+							// Signa el justificant amb IBKey
+							LOGGER.debug("Signatura amb IBKey del justificant de la consulta (id=" + consulta.getId() + ")");
+							ByteArrayOutputStream signedStream = new ByteArrayOutputStream();
+							pluginHelper.signaturaIbkeySignarEstamparPdf(
+									new ByteArrayInputStream(arxiuJustificantGenerat.getContingut()),
+									signedStream,
+									custodiaUrl);
+							justificantFirmat = signedStream.toByteArray();
+						}
 						// Envia el justificant a custòdia
 						LOGGER.debug("Enviament a custòdia del justificant de la consulta (id=" + consulta.getId() + ")");
-						byte[] justificantFirmat = signedStream.toByteArray();
 						pluginHelper.custodiaEnviarPdfSignat(
 								custodiaId,
 								arxiuNom,
