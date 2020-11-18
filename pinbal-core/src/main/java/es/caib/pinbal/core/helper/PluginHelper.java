@@ -155,6 +155,11 @@ public class PluginHelper {
 		}
 	}
 
+	public boolean isPluginFirmaServidorActiu() {
+		String propertyPlugin = getPropertyPluginFirmaServidor();
+		return propertyPlugin != null && !propertyPlugin.isEmpty();
+	}
+
 	public byte[] firmaServidorFirmar(
 			FitxerDto fitxer,
 			TipusFirma tipusFirma,
@@ -177,8 +182,8 @@ public class PluginHelper {
 	}
 
 	public boolean isPluginArxiuActiu() {
-		String propertyPluginArxiu = getPropertyPluginArxiu();
-		return propertyPluginArxiu != null && !propertyPluginArxiu.isEmpty();
+		String propertyPlugin = getPropertyPluginArxiu();
+		return propertyPlugin != null && !propertyPlugin.isEmpty();
 	}
 
 	public String arxiuExpedientCrear(
