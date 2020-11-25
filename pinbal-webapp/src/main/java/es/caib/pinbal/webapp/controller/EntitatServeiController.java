@@ -28,7 +28,6 @@ import es.caib.pinbal.core.service.exception.EntitatNotFoundException;
 import es.caib.pinbal.core.service.exception.EntitatServeiNotFoundException;
 import es.caib.pinbal.core.service.exception.ServeiNotFoundException;
 import es.caib.pinbal.webapp.common.AlertHelper;
-import es.caib.pinbal.webapp.common.EntitatHelper;
 import es.caib.pinbal.webapp.datatables.ServerSideRequest;
 import es.caib.pinbal.webapp.datatables.ServerSideResponse;
 
@@ -71,30 +70,26 @@ public class EntitatServeiController extends BaseController {
 
 	@RequestMapping(value = "/{entitatId}/servei/datatable", produces="application/json", method = RequestMethod.GET)
 	@ResponseBody
-	public ServerSideResponse<ServeiDto, Long> datatable(HttpServletRequest request, Model model)
+	public ServerSideResponse<ServeiDto, Long> datatable(
+			HttpServletRequest request,
+			@PathVariable Long entitatId,
+			Model model)
 	      throws IllegalAccessException, InvocationTargetException, NoSuchMethodException, NamingException,
 	      SQLException, EntitatNotFoundException {
-		
-		EntitatDto entitat = EntitatHelper.getEntitatActual(request);
-		if (entitat == null) {
-			throw new EntitatNotFoundException();			
-		}
-		
+		EntitatDto entitat = entitatService.findById(entitatId);
 		ServerSideRequest serverSideRequest = new ServerSideRequest(request);
-		
 		List<ServeiDto> listServeis = serveiService.findActius();
 		List<String> serveisEntitat = entitat.getServeis();
-		for (ServeiDto servei : listServeis) {
+		for (ServeiDto servei: listServeis) {
 			servei.setActiu(false);
-			for (String codi : serveisEntitat) {
-				if (servei.getCodi() == codi) {
+			for (String codi: serveisEntitat) {
+				if (servei.getCodi().equals(codi)) {
 					servei.setActiu(true);
 					break;
 				}
 			}
 		}
 		Page<ServeiDto> page = new PageImpl<ServeiDto>(listServeis, null, listServeis.size());
-		
 		return new ServerSideResponse<ServeiDto, Long>(serverSideRequest, page);
 	}
 	@RequestMapping(value = "/{entitatId}/servei/{serveiCodi}/add", method = RequestMethod.GET)
