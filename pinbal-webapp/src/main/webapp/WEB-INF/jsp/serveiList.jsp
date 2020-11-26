@@ -55,8 +55,16 @@
 	        },
 			ajax: "servei/datatable",
 			columnDefs: [
+
 				{
 					targets: [3],
+					render: function (data, type, row, meta) {
+							var template = $('#template-actiu').html();
+							return Mustache.render(template, row);
+					}
+				},
+				{
+					targets: [4],
 					orderable: false,
 					width: "1%",
 					render: function (data, type, row, meta) {
@@ -65,7 +73,7 @@
 					}
 				}, 
 				{
-					targets: [4],
+					targets: [5],
 					orderable: false,
 					width: "1%",
 					render: function (data, type, row, meta) {
@@ -74,11 +82,11 @@
 					}
 				}, 
 				{
-					targets: [5],
+					targets: [6],
 					visible: false
 				}, 
 				{
-					targets: [6],
+					targets: [7],
 					visible: false,
 					orderable: false,
 				}, 
@@ -119,8 +127,8 @@
 			</div>
 			<div class="col-md-2">	
 				<c:set var="campPath" value="activa"/>
-				<spring:message var="trueValue" code="entitat.list.filtre.camp.activa.yes"/>
-				<spring:message var="falseValue" code="entitat.list.filtre.camp.activa.no"/>
+				<spring:message var="trueValue" code="servei.list.filtre.camp.actiu.yes"/>
+				<spring:message var="falseValue" code="servei.list.filtre.camp.actiu.no"/>
 				<form:select path="${campPath}" cssClass="form-control" data-toggle="select2" data-minimumresults="5">
 					<option value=""><spring:message code="comu.opcio.sense.definir"/></option>
 					<form:option value="true">${trueValue}</form:option>
@@ -145,6 +153,7 @@
 				<th data-data="codi"><spring:message code="servei.list.taula.columna.codi" /></th>
 				<th data-data="descripcio"><spring:message code="servei.list.taula.columna.descripcio" /></th>
 				<th data-data="scspEmisor.nom"><spring:message code="servei.list.taula.columna.emissor" /></th>
+				<th data-data="actiu"><spring:message code="servei.list.taula.columna.actiu" /></th>
 				<th data-data="numeroProcedimentsAssociats"></th>
 				<th data-data="id"></th>
 				<th data-data="codiUrlEncoded"></th>
@@ -169,6 +178,12 @@
 </div>
 
 
+
+<script id="template-actiu" type="x-tmpl-mustache">
+{{#actiu}}
+<i class="fa fa-check"></i>
+{{/actiu}}
+</script>
 <script id="template-btn-procediments" type="x-tmpl-mustache">
 <a class="btn btn-default" href="<c:url value="/modal/servei/{{ codiUrlEncoded }}/procediments"/>" 
 		onclick="showModalProcediments(this);return false" data-titol="<spring:message code="servei.procediment.list.titol" arguments="{{ descripcio }}"/>">
