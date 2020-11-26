@@ -21,7 +21,7 @@ public interface OrganGestorService {
 	 * 
 	 * @return Llistat de tots els organs gestors
 	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_REPRES')")
 	public List<OrganGestorDto> findAll();
 
 	/**
@@ -32,7 +32,7 @@ public interface OrganGestorService {
 	 * @return L'objecte del registre consultat.
 	 * @throws NotFoundException Si no s'ha trobat l'objecte amb l'id especificat.
 	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_REPRES')")
 	public OrganGestorDto findItem(Long id) throws NotFoundException;
 
 	/**
@@ -42,7 +42,7 @@ public interface OrganGestorService {
 	 * @param entitatId Id de l'entitat.
 	 * @return Llistat dels organs gestors de l'entitat
 	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_REPRES')")
 	public List<OrganGestorDto> findByEntitat(Long entitatId);
 
 	/**
@@ -55,7 +55,7 @@ public interface OrganGestorService {
 	 *                        resultats.
 	 * @return La pàgina amb els organs gestors
 	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_REPRES')")
 	public Page<OrganGestorDto> findPageOrgansGestorsAmbFiltrePaginat(Long entitatId, String filtre, Pageable pageable);
 
 	/**
@@ -64,7 +64,7 @@ public interface OrganGestorService {
 	 * @param entitatId Identificador de l'entitat actual
 	 * @return Indica si la sincronització ha tengut èxit
 	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_REPRES')")
 	public boolean syncDir3OrgansGestors(Long entitatId) throws Exception;
 
 }

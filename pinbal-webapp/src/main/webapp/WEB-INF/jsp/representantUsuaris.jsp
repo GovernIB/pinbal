@@ -86,33 +86,27 @@ $(document).ready(function() {
 		order: [],
 		columnDefs: [
 			{ 
-	            targets: 0,
-	            orderable: false,
-				render: function (data, type, row, meta) {
-					var template = $('#template-usuari').html();
-					return Mustache.render(template, row);
-				}
+	            targets: [0, 1, 2],
+				orderable: false
 	        },
 			{
-				targets: [1],
+				targets: [3],
 				orderable: false
 			}, 
 	        {
-	            targets: 2,
+	            targets: 4,
 	            width: "20%",
 	            orderable: false,
 				render: function (data, type, row, meta) {
-					console.log(row)
 					var template = $('#template-rols').html();
 					return Mustache.render(template, row);
 				}
 	        },
 	        {
-	            targets: [3],
+	            targets: [5],
 	            width: "1%",
 	            orderable: false,
 	            render: function (data, type, row, meta) {
-	            	console.log(data)
 	            	if (row.usuari.inicialitzat || row.usuari.noInicialitzatCodi){
 						var template = $('#template-permisos').html();
 						return Mustache.render(template, row);
@@ -122,7 +116,7 @@ $(document).ready(function() {
 	            }
 	        },
 			{
-				targets: [4],
+				targets: [6],
 				orderable: false,
 				width: "1%",
 				render: function (data, type, row, meta) {
@@ -132,7 +126,7 @@ $(document).ready(function() {
 				}
 			}, 
 			{
-				targets: [5],
+				targets: [7],
 				orderable: false,
 				visible:false
 			}, 
@@ -228,12 +222,12 @@ function showModalEditar(
 		 	<div class="col-md-2">
 		 		<pbl:inputText name="codi" inline="true" placeholderKey="representant.usuaris.filtre.camp.codi" />
 		 	</div>
-		 	<div class="col-md-2">	
-		 		<pbl:inputText name="nif" inline="true" placeholderKey="representant.usuaris.filtre.camp.nif" />
-			</div>
 			<div class="col-md-2">			
 				<pbl:inputText name="nom" inline="true" placeholderKey="representant.usuaris.filtre.camp.nom" />
 			</div>	
+		 	<div class="col-md-2">	
+		 		<pbl:inputText name="nif" inline="true" placeholderKey="representant.usuaris.filtre.camp.nif" />
+			</div>
 			<div class="col-md-2">
 				<pbl:inputText name="departament" inline="true" placeholderKey="representant.usuaris.filtre.camp.departament"/>
 			</div>
@@ -252,7 +246,9 @@ function showModalEditar(
 	<table id="table-users" class="table table-striped table-bordered" style="width: 100%">
 		<thead>
 			<tr>
-			<th data-data="usuari.nom"><spring:message code="representant.usuaris.camp.usuari" /></th>
+			<th data-data="usuari.codi"><spring:message code="representant.usuaris.camp.codi" /></th>
+			<th data-data="usuari.nom"><spring:message code="representant.usuaris.camp.nom" /></th>
+			<th data-data="usuari.nif"><spring:message code="representant.usuaris.camp.nif" /></th>
 			<th data-data="departament"><spring:message code="representant.usuaris.camp.departament" /></th>
 			<th data-data="representant"><spring:message code="representant.usuaris.camp.rols" /></th>
 			<th data-data="delegat"></th>
@@ -302,8 +298,6 @@ function showModalEditar(
 				<input type="hidden" id="modal-hidden-id" name="id" value="${entitat.id}"/>
 				<input type="hidden" id="modal-hidden-codi" name="codi"/>
 				<input type="hidden" id="modal-hidden-nif" name="nif"/>
-				
-				
 				<div id="modal-group-tipus" class="form-group">
 					<label class="control-label" for="modal-select-tipus"><spring:message code="representant.usuaris.camp.tipus"/></label>
 					<div class="btn-group" data-toggle="buttons" id="modal-select-tipus" style="display: block; width: 100%; margin-bottom: 50px;">
@@ -315,12 +309,6 @@ function showModalEditar(
 						</label>
 					</div>
 				</div>
-			
-
-				<div id="modal-group-nom" class="form-group">
-    				<label class="control-label" for="modal-input-nom"><spring:message code="representant.usuaris.camp.nom"/></label>
-					<input class="form-control" type="text" id="modal-input-nom" name="codi" disabled="disabled"/>
-				</div>
 				<div id="modal-group-codi" class="form-group">
     				<label class="control-label" for="modal-input-codi"><spring:message code="representant.usuaris.camp.codi"/></label>
 					<input class="form-control" type="text" id="modal-input-codi" name="codi" disabled="disabled"/>
@@ -328,6 +316,10 @@ function showModalEditar(
 				<div id="modal-group-nif" class="form-group">
     				<label class="control-label" for="modal-input-nif"><spring:message code="representant.usuaris.camp.nif"/></label>
 					<input class="form-control" type="text" id="modal-input-nif" name="nif" disabled="disabled"/>
+				</div>
+				<div id="modal-group-nom" class="form-group">
+    				<label class="control-label" for="modal-input-nom"><spring:message code="representant.usuaris.camp.nom"/></label>
+					<input class="form-control" type="text" id="modal-input-nom" name="codi" disabled="disabled"/>
 				</div>
 				<div class="form-group">
     				<label class="control-label" for="modal-input-departament"><spring:message code="representant.usuaris.camp.departament"/></label>

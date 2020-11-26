@@ -29,25 +29,25 @@ public class OrganGestorServiceBean implements OrganGestorService {
 	OrganGestorService delegate;
 
 	@Override
-	@RolesAllowed("PBL_ADMIN")
+	@RolesAllowed({ "PBL_ADMIN", "PBL_REPRES" })
 	public List<OrganGestorDto> findAll() {
 		return delegate.findAll();
 	}
 
 	@Override
-	@RolesAllowed("PBL_ADMIN")
+	@RolesAllowed({ "PBL_ADMIN", "PBL_REPRES" })
 	public OrganGestorDto findItem(Long id) {
 		return delegate.findItem(id);
 	}
 
 	@Override
-	@RolesAllowed("PBL_ADMIN")
+	@RolesAllowed({ "PBL_ADMIN", "PBL_REPRES" })
 	public List<OrganGestorDto> findByEntitat(Long entitatId) {
 		return delegate.findByEntitat(entitatId);
 	}
 
 	@Override
-	@RolesAllowed("PBL_ADMIN")
+	@RolesAllowed({ "PBL_ADMIN", "PBL_REPRES" })
 	public Page<OrganGestorDto> findPageOrgansGestorsAmbFiltrePaginat(
 			Long entitatId,
 			String filtre,
@@ -56,7 +56,7 @@ public class OrganGestorServiceBean implements OrganGestorService {
 	}
 
 	@Override
-	@RolesAllowed("PBL_ADMIN")
+	@RolesAllowed({ "PBL_ADMIN", "PBL_REPRES" })
 	public boolean syncDir3OrgansGestors(Long entitatId) throws Exception {
 		return delegate.syncDir3OrgansGestors(entitatId);
 	}

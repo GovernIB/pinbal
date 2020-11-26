@@ -88,17 +88,19 @@
 				</div>					
 				<div class="col-md-3">
 						 <pbl:inputSelect name="procediment" inline="true" placeholderKey="admin.consulta.list.filtre.procediment" 
-		 						 	 optionItems="${procediments}"   
-			 						 optionValueAttribute="id"
-			 						 optionTextAttribute="nom" 
-									 emptyOption="true"/>
+		 						 	optionItems="${procediments}"   
+			 						optionValueAttribute="id"
+			 						optionTextAttribute="nom" 
+									emptyOption="true"
+									optionMinimumResultsForSearch="0"/>
 				</div>
 				<div class="col-md-3">
 					<pbl:inputSelect name="servei" inline="true" placeholderKey="admin.consulta.list.filtre.servei"
-									 optionItems="${serveis}"
-									 optionValueAttribute="codi"
-					 				 optionTextAttribute="descripcio" 
-									 emptyOption="true"/>
+									optionItems="${serveis}"
+									optionValueAttribute="codi"
+					 				optionTextAttribute="descripcio" 
+									emptyOption="true"
+									optionMinimumResultsForSearch="0"/>
 				</div>
 				<div class="col-md-3">
 					<pbl:inputSelect name="estat" inline="true" 

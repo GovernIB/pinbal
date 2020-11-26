@@ -80,19 +80,15 @@ $(document).ready(function() {
 		ajax: '<c:url value="/entitat/${entitat.id}/usuari/datatable"/>',
 		columnDefs: [
 			{ 
-	            targets: 0,
-				render: function (data, type, row, meta) {
-					var template = $('#template-usuari').html();
-					return Mustache.render(template, row);
-				}
+	            targets: [0, 1, 2]
 	        },
 			{
-				targets: [1],
+				targets: [3],
 				orderable: false,
 				visible: true
 			}, 
 	        {
-	            targets: 2,
+	            targets: 4,
 	            orderable: false,
 	            width: "20%",
 				render: function (data, type, row, meta) {
@@ -101,7 +97,7 @@ $(document).ready(function() {
 				}
 	        },
 	        {
-	            targets: [3],
+	            targets: [5],
 	            orderable: false,
 	            width: "20%",
 	            render: function (data, type, row, meta) {
@@ -110,7 +106,7 @@ $(document).ready(function() {
 	            }
 	        },
 			{
-				targets: [4],
+				targets: [6],
 				orderable: false,
 				width: "1%",
 				render: function (data, type, row, meta) {
@@ -119,7 +115,7 @@ $(document).ready(function() {
 				}
 			}, 
 			{
-				targets: [5],
+				targets: [7],
 				orderable: false,
 				width: "1%",
 				render: function (data, type, row, meta) {
@@ -129,7 +125,7 @@ $(document).ready(function() {
 				}
 			}, 
 			{
-				targets: [6, 7],
+				targets: [8, 9],
 				orderable: false,
 				visible:false
 			}, 
@@ -228,17 +224,17 @@ function showModalEditar(row) {
 					<pbl:inputText name="codi" inline="true"
 								   placeholderKey="entitat.usuaris.filtre.camp.codi"/>
 				</div>
+				<div class="col-md-3">			
+					<c:set var="campPath" value="nom"/>
+					<pbl:inputText name="${campPath}"  inline="true"
+								   placeholderKey="entitat.usuaris.filtre.camp.nom"/>
+				</div>
 				<div class="col-md-3">
 					<c:set var="campPath" value="nif"/>
 					<pbl:inputText name="${campPath}"   inline="true"
 								   placeholderKey="entitat.usuaris.filtre.camp.nif"/>
 				</div>
 				<div class="col-md-3">			
-					<c:set var="campPath" value="nom"/>
-					<pbl:inputText name="${campPath}"  inline="true"
-								   placeholderKey="entitat.usuaris.filtre.camp.nom"/>
-				</div>
-					<div class="col-md-3">			
 					<c:set var="campPath" value="departament"/>
 					<pbl:inputText name="${campPath}"  inline="true"
 								   placeholderKey="entitat.usuaris.filtre.camp.departament"/>
@@ -284,7 +280,9 @@ function showModalEditar(row) {
 	<table id="table-users" class="table table-striped table-bordered" style="width: 100%">
 		<thead>
 			<tr>
-			<th data-data="usuari.nom"><spring:message code="entitat.usuaris.camp.usuari" /></th>
+			<th data-data="usuari.codi"><spring:message code="entitat.usuaris.camp.codi" /></th>
+			<th data-data="usuari.nom"><spring:message code="entitat.usuaris.camp.nom" /></th>
+			<th data-data="usuari.nif"><spring:message code="entitat.usuaris.camp.nif" /></th>
 			<th data-data="departament"><spring:message code="entitat.usuaris.camp.departament" /></th>
 			<th data-data="representant"><spring:message code="entitat.usuaris.camp.rols" /></th>
 			<th data-data="principal"></th>
