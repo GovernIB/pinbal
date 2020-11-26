@@ -98,7 +98,6 @@ $(document).ready(function() {
 	            width: "20%",
 	            orderable: false,
 				render: function (data, type, row, meta) {
-					console.log(row)
 					var template = $('#template-rols').html();
 					return Mustache.render(template, row);
 				}
@@ -108,7 +107,6 @@ $(document).ready(function() {
 	            width: "1%",
 	            orderable: false,
 	            render: function (data, type, row, meta) {
-	            	console.log(data)
 	            	if (row.usuari.inicialitzat || row.usuari.noInicialitzatCodi){
 						var template = $('#template-permisos').html();
 						return Mustache.render(template, row);
@@ -300,8 +298,6 @@ function showModalEditar(
 				<input type="hidden" id="modal-hidden-id" name="id" value="${entitat.id}"/>
 				<input type="hidden" id="modal-hidden-codi" name="codi"/>
 				<input type="hidden" id="modal-hidden-nif" name="nif"/>
-				
-				
 				<div id="modal-group-tipus" class="form-group">
 					<label class="control-label" for="modal-select-tipus"><spring:message code="representant.usuaris.camp.tipus"/></label>
 					<div class="btn-group" data-toggle="buttons" id="modal-select-tipus" style="display: block; width: 100%; margin-bottom: 50px;">
@@ -313,12 +309,6 @@ function showModalEditar(
 						</label>
 					</div>
 				</div>
-			
-
-				<div id="modal-group-nom" class="form-group">
-    				<label class="control-label" for="modal-input-nom"><spring:message code="representant.usuaris.camp.nom"/></label>
-					<input class="form-control" type="text" id="modal-input-nom" name="codi" disabled="disabled"/>
-				</div>
 				<div id="modal-group-codi" class="form-group">
     				<label class="control-label" for="modal-input-codi"><spring:message code="representant.usuaris.camp.codi"/></label>
 					<input class="form-control" type="text" id="modal-input-codi" name="codi" disabled="disabled"/>
@@ -326,6 +316,10 @@ function showModalEditar(
 				<div id="modal-group-nif" class="form-group">
     				<label class="control-label" for="modal-input-nif"><spring:message code="representant.usuaris.camp.nif"/></label>
 					<input class="form-control" type="text" id="modal-input-nif" name="nif" disabled="disabled"/>
+				</div>
+				<div id="modal-group-nom" class="form-group">
+    				<label class="control-label" for="modal-input-nom"><spring:message code="representant.usuaris.camp.nom"/></label>
+					<input class="form-control" type="text" id="modal-input-nom" name="codi" disabled="disabled"/>
 				</div>
 				<div class="form-group">
     				<label class="control-label" for="modal-input-departament"><spring:message code="representant.usuaris.camp.departament"/></label>
