@@ -137,11 +137,11 @@
 									<a href="${downloadPlantillaExcelUrl}" class="btn btn-default btn-editar" title="<spring:message code="consulta.form.camp.multiple.plantilla.excel" />">
 										<i class="far fa-file-excel"></i> <spring:message code="consulta.form.camp.multiple.fitxer.excel" />
 									</a>
+									<a href="${downloadPlantillaOdsUrl}" class="btn btn-default btn-editar" title="<spring:message code="consulta.form.camp.multiple.plantilla.ods" />">
+										<i class="fas fa-file-excel"></i> <spring:message code="consulta.form.camp.multiple.fitxer.ods" />
+									</a>
 									<a href="${downloadPlantillaCsvUrl}" class="btn btn-default btn-editar" title="<spring:message code="consulta.form.camp.multiple.plantilla.csv" />">
 										<i class="fas fa-file-csv"></i> <spring:message code="consulta.form.camp.multiple.fitxer.csv" />
-									</a>
-									<a href="${downloadPlantillaOdsUrl}" class="btn btn-default btn-editar" title="<spring:message code="consulta.form.camp.multiple.plantilla.ods" />">
-										<i class="fas fa-file-word"></i> <spring:message code="consulta.form.camp.multiple.fitxer.ods" />
 									</a>
 								</div>
 							</div>
