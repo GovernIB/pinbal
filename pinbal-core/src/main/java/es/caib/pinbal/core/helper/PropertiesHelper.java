@@ -68,7 +68,8 @@ public class PropertiesHelper extends Properties {
 	}
 
 	public boolean getAsBoolean(String key) {
-		return new Boolean(getProperty(key)).booleanValue();
+		String prop = getProperty(key);
+		return (prop != null) ? new Boolean(prop).booleanValue() : false; 
 	}
 	public int getAsInt(String key) {
 		return new Integer(getProperty(key)).intValue();

@@ -15,10 +15,13 @@ import org.springframework.security.acls.domain.BasePermission;
 import org.springframework.security.acls.model.MutableAclService;
 import org.springframework.security.acls.model.Permission;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
 import es.caib.pinbal.core.helper.PermisosHelper.ObjectIdentifierExtractor;
+import es.caib.pinbal.core.model.Entitat;
 import es.caib.pinbal.core.model.EntitatServei;
+import es.caib.pinbal.core.model.Procediment;
 import es.caib.pinbal.core.model.ProcedimentServei;
 import es.caib.pinbal.core.model.ServeiConfig;
 import es.caib.pinbal.core.repository.EntitatServeiRepository;
@@ -44,7 +47,24 @@ public class ServeiHelper {
 	@Resource
 	private MutableAclService aclService;
 
-
+	public boolean isServeiPermesPerUsuari(
+			Entitat entitat,
+			Procediment procediment,
+			String serveiCodi) {
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		List<String> permesos = findServeisPermesosPerUsuari(
+				entitat.getId(),
+				procediment.getCodi(),
+				auth);
+		boolean trobat = false;
+		for (String servei: permesos) {
+			if (servei.equals(serveiCodi)) {
+				trobat = true;
+				break;
+			}
+		}
+		return trobat;
+	}
 
 	public List<String> findServeisPermesosPerUsuari(
 			Long entitatId,

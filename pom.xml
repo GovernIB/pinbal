@@ -27,6 +27,7 @@
 		<slf4j.version>1.7.7</slf4j.version>
 		<pluginsib.arxiu.version>2.0.5</pluginsib.arxiu.version>
 		<dir3caib.version>1.0.7</dir3caib.version>
+		<jersey.version>1.19.4</jersey.version>
 		<skipTests>true</skipTests>
 		<maven.compiler.source>1.6</maven.compiler.source>
 		<maven.compiler.target>1.6</maven.compiler.target>
@@ -45,6 +46,7 @@
 		<module>pinbal-ws-client</module>
 		<module>pinbal-webapp</module>
 		<module>pinbal-ear</module>
+		<module>pinbal-client</module>
 	</modules>
 	<build>
 		<plugins>

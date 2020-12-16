@@ -251,11 +251,9 @@ public class JustificantHelper implements MessageSourceAware {
 			String justificantB64 = (String)dadesEspecifiques.get(serveiConfig.getJustificantXpath());
 			if (justificantB64 != null) {
 				fitxerDto.setNom(
-						conversioTipusDocumentHelper.nomArxiuConvertit(
-								getNomArxiuGenerat(
-										consulta.getScspPeticionId(),
-										consulta.getScspSolicitudId()),
-								getExtensioSortida()));
+						getNomArxiuJustificant(
+								consulta.getScspPeticionId(),
+								consulta.getScspSolicitudId()));
 				fitxerDto.setContingut(Base64.decode(justificantB64));
 				return fitxerDto;
 			} else {
@@ -265,11 +263,9 @@ public class JustificantHelper implements MessageSourceAware {
 		}
 		if (JustificantEstat.OK.equals(consulta.getJustificantEstat())) {
 			fitxerDto.setNom(
-					conversioTipusDocumentHelper.nomArxiuConvertit(
-							getNomArxiuGenerat(
-									consulta.getScspPeticionId(),
-									consulta.getScspSolicitudId()),
-							getExtensioSortida()));
+					getNomArxiuJustificant(
+							consulta.getScspPeticionId(),
+							consulta.getScspSolicitudId()));
 			if (consulta.getArxiuDocumentUuid() != null) {
 				es.caib.plugins.arxiu.api.Document documentArxiu = pluginHelper.arxiuDocumentConsultar(
 						consulta.getArxiuDocumentUuid(),
@@ -315,11 +311,9 @@ public class JustificantHelper implements MessageSourceAware {
 				baosGeneracio);
 		FitxerDto fitxerDto = new FitxerDto();
 		fitxerDto.setNom(
-				conversioTipusDocumentHelper.nomArxiuConvertit(
-						getNomArxiuGenerat(
+				getNomArxiuJustificant(
 								consulta.getScspPeticionId(),
-								consulta.getScspSolicitudId()),
-						extensioSortida));
+								consulta.getScspSolicitudId()));
 		// Converteix el document si és necessari
 		if (convertir) {
 			LOGGER.debug("Convertint el justificant per a la consulta (" +
@@ -562,6 +556,14 @@ public class JustificantHelper implements MessageSourceAware {
 				return consulta.getScspPeticionId() + "#" + consulta.getScspSolicitudId();
 			}
 		}
+	}
+
+	private String getNomArxiuJustificant(
+			String peticionId,
+			String solicitudId) {
+		return conversioTipusDocumentHelper.nomArxiuConvertit(
+				getNomArxiuGenerat(peticionId, solicitudId),
+				getExtensioSortida());
 	}
 
 	private String getExtensioSortida() {

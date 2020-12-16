@@ -48,4 +48,8 @@
 			id="organGestorService"
 			jndi-name="pinbal/OrganGestorServiceBean/local"
 			business-interface="es.caib.pinbal.core.service.OrganGestorService"/>
+	<jee:local-slsb
+			id="recobrimentService"
+			jndi-name="pinbal/RecobrimentServiceBean/local"
+			business-interface="es.caib.pinbal.core.service.RecobrimentService"/>
 </beans>
