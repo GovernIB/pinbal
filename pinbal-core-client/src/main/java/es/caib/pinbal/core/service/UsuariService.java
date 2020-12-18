@@ -206,7 +206,22 @@ public interface UsuariService {
 	 * 
 	 * @return Les dades per a generar l'informe.
 	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_REPRES') or hasRole('ROLE_DELEG') or hasRole('ROLE_AUDIT')")
 	public List<InformeUsuariDto> informeUsuarisAgrupatsEntitatDepartament();
+
+	/**
+	 * Obté l'usuari actual.
+	 * 
+	 * @return L'usuari actual.
+	 */
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_REPRES') or hasRole('ROLE_DELEG') or hasRole('ROLE_AUDIT')")
+	public UsuariDto getUsuariActual();
+
+	/**
+	 * Modifica la configuració de l'usuari actual
+	 * 
+	 * @return L'usuari actual.
+	 */
+	public UsuariDto updateUsuariActual(UsuariDto dto);
 
 }

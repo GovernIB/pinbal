@@ -66,6 +66,8 @@ public class BaseController implements MessageSourceAware {
 			return url;
 		}
 	}
+	
+	
 
 	protected void writeFileToResponse(
 			String fileName,

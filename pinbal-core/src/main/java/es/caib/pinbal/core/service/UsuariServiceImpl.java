@@ -14,6 +14,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.acls.model.MutableAclService;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -131,6 +132,41 @@ public class UsuariServiceImpl implements UsuariService {
 				usuariRepository.findOne(usuariCodi),
 				UsuariDto.class);
 	}
+	
+	
+	@Transactional
+	@Override
+	public UsuariDto getUsuariActual() {
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		LOGGER.debug("Obtenint usuari actual");
+		
+		Usuari usuari = usuariRepository.findOne(auth.getName());
+		
+		if (usuari.getEmail() == null || usuari.getEmail().isEmpty()) {
+			try {
+				DadesUsuari dadesUsuari = externHelper.dadesUsuariConsultarAmbUsuariCodi(auth.getName());
+				usuari.updateEmail(dadesUsuari.getEmail());
+			} catch (SistemaExternException ex) {
+				LOGGER.error("Error al consultar les dades de l'usuari (codi=" + auth.getName() + ") al sistema extern", ex);
+			}
+		}
+		
+		return toUsuariDtoAmbRols(
+				usuari);
+	}
+	
+	@Transactional
+	@Override
+	public UsuariDto updateUsuariActual(UsuariDto dto) {
+		LOGGER.debug("Actualitzant configuració de usuari actual");
+		Usuari usuari = usuariRepository.findOne(dto.getCodi());
+		usuari.updateIdioma(
+				dto.getIdioma());
+		
+		
+		return toUsuariDtoAmbRols(usuari);
+	}
+	
 
 	@Transactional(rollbackFor = EntitatNotFoundException.class)
 	@Override
@@ -410,6 +446,25 @@ public class UsuariServiceImpl implements UsuariService {
 					aplicacioPerUpdate);
 		}
 	}
+	
+	
+	private UsuariDto toUsuariDtoAmbRols(
+			Usuari usuari) {
+		UsuariDto dto = dtoMappingHelper.convertir(
+				usuari,
+				UsuariDto.class);
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		if (auth.getAuthorities() != null) {
+			String[] rols = new String[auth.getAuthorities().size()];
+			int index = 0;
+			for (GrantedAuthority grantedAuthority: auth.getAuthorities()) {
+				rols[index++] = grantedAuthority.getAuthority();
+			}
+			dto.setRols(rols);
+		}
+		return dto;
+	}
+
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(UsuariServiceImpl.class);
 

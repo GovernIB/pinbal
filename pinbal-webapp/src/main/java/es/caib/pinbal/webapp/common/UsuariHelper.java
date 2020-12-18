@@ -4,9 +4,13 @@
 package es.caib.pinbal.webapp.common;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.util.StringUtils;
+import org.springframework.web.servlet.LocaleResolver;
+import org.springframework.web.servlet.support.RequestContextUtils;
 
 import es.caib.pinbal.core.dto.UsuariDto;
 import es.caib.pinbal.core.service.UsuariService;
@@ -59,6 +63,27 @@ public class UsuariHelper {
 		}
 	}
 
+	
+	
+	public static void processarLocale(
+			HttpServletRequest request,
+			HttpServletResponse response,
+			UsuariService usuariService) {
+		if (request.getUserPrincipal() != null) {
+			try {
+				String idioma_usuari = usuariService.getUsuariActual().getIdioma();			
+
+				LocaleResolver localeResolver = RequestContextUtils.getLocaleResolver(request);
+		        localeResolver.setLocale(
+		        		request, 
+		        		response, 
+		        		StringUtils.parseLocaleString(idioma_usuari));
+			} catch (Exception e) {
+				LOGGER.error("Error establint l'idioma de l'usuari " + request.getUserPrincipal(), e);
+			}
+		}
+	}
+	
 
 
 	private static boolean isUsuariCreacioExecutat(HttpServletRequest request) {
