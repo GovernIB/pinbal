@@ -43,6 +43,12 @@ public class Usuari implements Serializable {
 
 	@Column(name = "inicialitzat")
 	private boolean inicialitzat = false;
+	
+	@Column(name = "email", length = 200)
+	private String email;
+	
+	@Column(name="idioma", length = 2)
+	private String idioma;
 
 	@OneToMany(mappedBy="usuari", cascade={CascadeType.ALL})
 	private Set<EntitatUsuari> entitats = new HashSet<EntitatUsuari>();
@@ -104,29 +110,30 @@ public class Usuari implements Serializable {
 				false);
 	}
 
+	public String getEmail() {
+		return email;
+	}
+	public String getIdioma() {
+		return idioma;
+	}
 	public String getCodi() {
 		return codi;
 	}
-
 	public String getNom() {
 		return nom;
 	}
-
 	public String getNif() {
 		return nif;
 	}
-
 	public boolean isInicialitzat() {
 		return inicialitzat;
 	}
-
 	public boolean isNoInicialitzatNif() {
 		return !inicialitzat && NOM_USUARI_NOINIT_NIF.equals(nom);
 	}
 	public boolean isNoInicialitzatCodi() {
 		return !inicialitzat && NOM_USUARI_NOINIT_CODI.equals(nom);
 	}
-
 	public Set<EntitatUsuari> getEntitats() {
 		return entitats;
 	}
@@ -142,7 +149,13 @@ public class Usuari implements Serializable {
 		this.nif = nif;
 		this.inicialitzat = true;
 	}
-
+	
+	public void updateEmail(String email) {
+		this.email = email;
+	}
+	public void updateIdioma(String idioma) {
+		this.idioma = idioma;
+	}
 	public void moureEntitats(
 			Usuari usuariNou) {
 		for (EntitatUsuari eu: entitats) {
