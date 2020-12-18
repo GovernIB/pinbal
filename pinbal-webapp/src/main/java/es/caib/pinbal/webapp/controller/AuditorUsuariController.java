@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import es.caib.pinbal.core.dto.EntitatDto;
 import es.caib.pinbal.core.dto.EntitatUsuariDto;
+import es.caib.pinbal.core.dto.RolEnumDto;
 import es.caib.pinbal.core.dto.UsuariDto;
 import es.caib.pinbal.core.service.EntitatService;
 import es.caib.pinbal.core.service.UsuariService;
@@ -133,6 +134,9 @@ public class AuditorUsuariController extends BaseController {
 		if (command == null)
 			command = new UsuariFiltreCommand();
 		model.addAttribute(command);
+		
+		// carregam un objecte nou per no modificar l'objecte de la sessió
+		entitat = entitatService.findById(entitat.getId());
 		Iterator<EntitatUsuariDto> it = entitat.getUsuaris().iterator();
 		while (it.hasNext()) {
 			EntitatUsuariDto entitatUsuari = it.next();
@@ -166,6 +170,13 @@ public class AuditorUsuariController extends BaseController {
 					eliminar = true;
 				}
 			}
+			
+			if (command.getRol() != null) {
+				if (command.getRol() == RolEnumDto.AUDITOR && !entitatUsuari.isAuditor()) {
+					eliminar = true;
+				}
+			}
+			
 			if (eliminar) {
 				it.remove();
 			}

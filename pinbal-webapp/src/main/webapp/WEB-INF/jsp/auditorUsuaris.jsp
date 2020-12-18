@@ -35,6 +35,11 @@
     <script src="<c:url value="/js/webutil.common.js"/>"></script>
 <script>
 $(document).ready(function() {
+
+	$("option[value='REPRESENTANT']").remove();
+	$("option[value='DELEGAT']").remove();
+	$("option[value='APLICACIO']").remove();
+
 	$('#netejar-filtre').click(function() {
 		$(':input', $('#form-filtre')).each (function() {
 			var type = this.type, tag = this.tagName.toLowerCase();
@@ -188,10 +193,20 @@ function showModalEditar(
 				<pbl:inputText name="nif" inline="true"  placeholderKey="auditor.usuaris.filtre.camp.nif"/>
 				
 			</div>
-			<div class="col-md-3">
+			<div class="col-md-2">
 				<pbl:inputText name="nom" inline="true"  placeholderKey="auditor.usuaris.filtre.camp.nom"/>
 			</div>
-			<div class="col-md-3">
+			
+			<div class="col-md-2">
+				<pbl:inputSelect 
+					name="rol" 
+					emptyOption="true" 
+					inline="true"
+					optionEnum="RolEnumDto"
+					placeholderKey="representant.usuaris.filtre.camp.rol"/>
+			</div>
+			
+			<div class="col-md-2">
 				<div class="pull-right">
 					<button id="netejar-filtre" class="btn btn-default" type="button"><spring:message code="comu.boto.netejar"/></button>
 					<button type="submit" class="btn btn-primary"><span class="fa fa-filter"></span> <spring:message code="comu.boto.filtrar"/></button>

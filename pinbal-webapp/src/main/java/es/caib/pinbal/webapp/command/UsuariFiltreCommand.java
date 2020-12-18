@@ -6,6 +6,7 @@ package es.caib.pinbal.webapp.command;
 import org.apache.commons.lang.builder.ToStringBuilder;
 
 import es.caib.pinbal.core.dto.EntitatDto;
+import es.caib.pinbal.core.dto.RolEnumDto;
 
 /**
  * Command per a filtrar els usuaris.
@@ -24,8 +25,17 @@ public class UsuariFiltreCommand {
 	private Boolean isAuditor;
 	private Boolean isAplicacio;
 	
+	private RolEnumDto rol;
+	
 	private EntitatDto entitat = null;
 	
+	
+	public RolEnumDto getRol() {
+		return rol;
+	}
+	public void setRol(RolEnumDto rol) {
+		this.rol = rol;
+	}
 	public Boolean getIsRepresentant() {
 		return isRepresentant;
 	}
