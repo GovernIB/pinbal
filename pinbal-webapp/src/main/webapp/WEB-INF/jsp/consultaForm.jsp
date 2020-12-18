@@ -160,12 +160,14 @@
 		<c:if test="${not serveiMultiple}">
 			<jsp:include page="import/consultaSimpleForm.jsp"/>
 		</c:if>
-		<div class="well">
-			<button type="submit" class="btn btn-primary"><spring:message code="comu.boto.enviar"/></button>
-			<a href="<c:url value="/consulta"/>" class="btn btn-default"><spring:message code="comu.boto.cancelar"/></a>
+		<div class="pull-right">
 			<c:if test="${not empty servei.ajuda or not empty servei.fitxerAjudaNom}">
 				<a href="#modalAjuda" class="btn btn-default" data-toggle="modal"><spring:message code="comu.boto.ajuda"/></a>
 			</c:if>
+			<a href="<c:url value="/consulta"/>" class="btn btn-default"><spring:message code="comu.boto.cancelar"/></a>
+			<button type="submit" class="btn btn-primary"><spring:message code="comu.boto.enviar"/></button>
+			
+
 		</div>
 	</form:form>
 	</div>
