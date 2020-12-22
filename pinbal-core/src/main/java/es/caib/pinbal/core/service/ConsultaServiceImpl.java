@@ -174,7 +174,7 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 			LOGGER.debug("No s'ha trobat el servei (codi=" + consulta.getServeiCodi() + ") del procediment (id=" + consulta.getProcedimentId() + ")");
 			throw new ProcedimentServeiNotFoundException();
 		}
-		if (!isServeiPermesPerUsuari(
+		if (!serveiHelper.isServeiPermesPerUsuari(
 				procedimentServei.getProcediment().getEntitat(),
 				procedimentServei.getProcediment(),
 				consulta.getServeiCodi())) {
@@ -251,7 +251,7 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 			LOGGER.debug("No s'ha trobat el servei (codi=" + consulta.getServeiCodi() + ") del procediment (id=" + consulta.getProcedimentId() + ")");
 			throw new ProcedimentServeiNotFoundException();
 		}
-		if (!isServeiPermesPerUsuari(
+		if (!serveiHelper.isServeiPermesPerUsuari(
 				procedimentServei.getProcediment().getEntitat(),
 				procedimentServei.getProcediment(),
 				consulta.getServeiCodi())) {
@@ -372,7 +372,7 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 			LOGGER.debug("No s'ha trobat el servei (codi=" + consulta.getServeiCodi() + ") del procediment (id=" + consulta.getProcedimentId() + ")");
 			throw new ProcedimentServeiNotFoundException();
 		}
-		if (!isServeiPermesPerUsuari(
+		if (!serveiHelper.isServeiPermesPerUsuari(
 				procedimentServei.getProcediment().getEntitat(),
 				procedimentServei.getProcediment(),
 				consulta.getServeiCodi())) {
@@ -477,7 +477,7 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 		}
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 		usuariHelper.init(auth.getName());
-		if (!isServeiPermesPerUsuari(
+		if (!serveiHelper.isServeiPermesPerUsuari(
 				entitat,
 				procediment,
 				serveiCodi)) {
@@ -597,7 +597,7 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 		}
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 		usuariHelper.init(auth.getName());
-		if (!isServeiPermesPerUsuari(
+		if (!serveiHelper.isServeiPermesPerUsuari(
 				entitat,
 				procediment,
 				serveiCodi)) {
@@ -748,7 +748,7 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 		}
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 		usuariHelper.init(auth.getName());
-		if (!isServeiPermesPerUsuari(
+		if (!serveiHelper.isServeiPermesPerUsuari(
 				entitat,
 				procediment,
 				serveiCodi)) {
@@ -2293,25 +2293,6 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 		cal.set(Calendar.SECOND, 59);
 		cal.set(Calendar.MILLISECOND, 999);
 		return cal.getTime();
-	}
-
-	private boolean isServeiPermesPerUsuari(
-			Entitat entitat,
-			Procediment procediment,
-			String serveiCodi) {
-		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-		List<String> permesos = serveiHelper.findServeisPermesosPerUsuari(
-				entitat.getId(),
-				procediment.getCodi(),
-				auth);
-		boolean trobat = false;
-		for (String servei: permesos) {
-			if (servei.equals(serveiCodi)) {
-				trobat = true;
-				break;
-			}
-		}
-		return trobat;
 	}
 
 	private int[] getRandomIndexesFromList(

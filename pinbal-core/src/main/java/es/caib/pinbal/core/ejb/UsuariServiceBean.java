@@ -127,4 +127,16 @@ public class UsuariServiceBean implements UsuariService {
 		return delegate.informeUsuarisAgrupatsEntitatDepartament();
 	}
 
+	@Override
+	@RolesAllowed({"PBL_ADMIN", "PBL_REPRES", "PBL_AUDIT"})
+	public UsuariDto getUsuariActual() {
+		return delegate.getUsuariActual();
+	}
+
+	@Override
+	@RolesAllowed({"PBL_ADMIN", "PBL_REPRES", "PBL_AUDIT"})
+	public UsuariDto updateUsuariActual(UsuariDto dto) {
+		return delegate.updateUsuariActual(dto);
+	}
+
 }

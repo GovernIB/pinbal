@@ -33,6 +33,9 @@ public class UsuariInterceptor extends HandlerInterceptorAdapter {
 			Object handler) throws Exception {
 		UsuariHelper.inicialitzarUsuariActual(request, usuariService);
 		UsuariHelper.getDadesUsuariActual(request, usuariService);
+		
+		UsuariHelper.processarLocale(request,response, usuariService);
+		
 		return true;
 	}
 

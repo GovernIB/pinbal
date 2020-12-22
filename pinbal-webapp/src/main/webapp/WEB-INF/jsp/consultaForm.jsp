@@ -137,11 +137,11 @@
 									<a href="${downloadPlantillaExcelUrl}" class="btn btn-default btn-editar" title="<spring:message code="consulta.form.camp.multiple.plantilla.excel" />">
 										<i class="far fa-file-excel"></i> <spring:message code="consulta.form.camp.multiple.fitxer.excel" />
 									</a>
+									<a href="${downloadPlantillaOdsUrl}" class="btn btn-default btn-editar" title="<spring:message code="consulta.form.camp.multiple.plantilla.ods" />">
+										<i class="fas fa-file-excel"></i> <spring:message code="consulta.form.camp.multiple.fitxer.ods" />
+									</a>
 									<a href="${downloadPlantillaCsvUrl}" class="btn btn-default btn-editar" title="<spring:message code="consulta.form.camp.multiple.plantilla.csv" />">
 										<i class="fas fa-file-csv"></i> <spring:message code="consulta.form.camp.multiple.fitxer.csv" />
-									</a>
-									<a href="${downloadPlantillaOdsUrl}" class="btn btn-default btn-editar" title="<spring:message code="consulta.form.camp.multiple.plantilla.ods" />">
-										<i class="fas fa-file-word"></i> <spring:message code="consulta.form.camp.multiple.fitxer.ods" />
 									</a>
 								</div>
 							</div>
@@ -160,12 +160,14 @@
 		<c:if test="${not serveiMultiple}">
 			<jsp:include page="import/consultaSimpleForm.jsp"/>
 		</c:if>
-		<div class="well">
-			<button type="submit" class="btn btn-primary"><spring:message code="comu.boto.enviar"/></button>
-			<a href="<c:url value="/consulta"/>" class="btn btn-default"><spring:message code="comu.boto.cancelar"/></a>
+		<div class="pull-right">
 			<c:if test="${not empty servei.ajuda or not empty servei.fitxerAjudaNom}">
 				<a href="#modalAjuda" class="btn btn-default" data-toggle="modal"><spring:message code="comu.boto.ajuda"/></a>
 			</c:if>
+			<a href="<c:url value="/consulta"/>" class="btn btn-default"><spring:message code="comu.boto.cancelar"/></a>
+			<button type="submit" class="btn btn-primary"><spring:message code="comu.boto.enviar"/></button>
+			
+
 		</div>
 	</form:form>
 	</div>

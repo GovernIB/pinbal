@@ -2,6 +2,7 @@ package es.caib.pinbal.core.dto;
 
 import java.io.Serializable;
 
+
 import org.apache.commons.lang.builder.ToStringBuilder;
 
 /**
@@ -17,6 +18,9 @@ public class UsuariDto extends AbstractIdentificable<Long> implements Serializab
 	private boolean inicialitzat;
 	private boolean noInicialitzatNif;
 	private boolean noInicialitzatCodi;
+	private String[] rols;
+	private String email;
+	private String idioma;
 
 	public UsuariDto() {
 	}
@@ -35,6 +39,24 @@ public class UsuariDto extends AbstractIdentificable<Long> implements Serializab
 		this.noInicialitzatCodi = noInicialitzatCodi;
 	}
 
+	public String getEmail() {
+		return email;
+	}
+	public void setEmail(String email) {
+		this.email = email;
+	}
+	public String getIdioma() {
+		return idioma;
+	}
+	public void setIdioma(String idioma) {
+		this.idioma = idioma;
+	}
+	public String[] getRols() {
+		return rols;
+	}
+	public void setRols(String[] rols) {
+		this.rols = rols;
+	}
 	public String getCodi() {
 		return codi;
 	}

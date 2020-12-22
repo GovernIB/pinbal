@@ -3,6 +3,8 @@
  */
 package es.caib.pinbal.webapp.controller;
 
+import java.io.IOException;
+
 import javax.activation.MimetypesFileTypeMap;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -64,16 +66,33 @@ public class BaseController implements MessageSourceAware {
 			return url;
 		}
 	}
+	
+	
 
 	protected void writeFileToResponse(
 			String fileName,
 			byte[] fileContent,
-			HttpServletResponse response) throws Exception {
+			HttpServletResponse response) throws IOException {
+		writeFileToResponse(
+				fileName,
+				null,
+				fileContent,
+				response);
+	}
+	protected void writeFileToResponse(
+			String fileName,
+			String contentType,
+			byte[] fileContent,
+			HttpServletResponse response) throws IOException {
 		response.setHeader("Pragma", "");
 		response.setHeader("Expires", "");
 		response.setHeader("Cache-Control", "");
 		response.setHeader("Content-Disposition", "attachment; filename=\"" + fileName + "\"");
-		response.setContentType(new MimetypesFileTypeMap().getContentType(fileName));
+		if (contentType != null) {
+			response.setContentType(contentType);
+		} else {
+			response.setContentType(new MimetypesFileTypeMap().getContentType(fileName));
+		}
 		response.getOutputStream().write(fileContent);
 	}
 

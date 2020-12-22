@@ -918,12 +918,16 @@ public class ConsultaController extends BaseController {
 			Errors errors) throws Exception {
 		List<String[]> linies = new ArrayList<String[]>();
 		// Obtenir dades del fitxer
-		if ("text/csv".equals(fitxer.getContentType()) || fitxer.getOriginalFilename().endsWith(".csv")) {
+		if (	"text/csv".equals(fitxer.getContentType()) ||
+				isFilenameExtension(fitxer.getOriginalFilename(), "csv")) {
 			linies = SpreadSheetReader.getLinesFromCsv(fitxer.getInputStream());
 		} else if ("application/vnd.ms-excel".equals(fitxer.getContentType()) ||
-			"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet".equals(fitxer.getContentType())) {
+			"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet".equals(fitxer.getContentType()) ||
+			isFilenameExtension(fitxer.getOriginalFilename(), "xls")) {
 			linies = SpreadSheetReader.getLinesFromXls(fitxer.getBytes());
-		} else if ("application/vnd.oasis.opendocument.spreadsheet".equals(fitxer.getContentType())) {
+		} else if (
+				"application/vnd.oasis.opendocument.spreadsheet".equals(fitxer.getContentType()) ||
+				isFilenameExtension(fitxer.getOriginalFilename(), "ods")) {
 			linies = SpreadSheetReader.getLinesFromOds(fitxer.getInputStream());
 		} else {	
 			errors.rejectValue(
@@ -1112,6 +1116,16 @@ public class ConsultaController extends BaseController {
 				campsData.add(camp);
 		}
 		return campsData;
+	}
+
+	private boolean isFilenameExtension(String fileName, String extension) {
+		if (fileName != null && !fileName.isEmpty()) {
+			int dotIndex = fileName.lastIndexOf(".");
+			if (dotIndex != -1) {
+				return fileName.substring(dotIndex + 1).equalsIgnoreCase(extension);
+			}
+		}
+		return false;
 	}
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(ConsultaController.class);

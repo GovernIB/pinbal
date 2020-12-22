@@ -27,6 +27,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import es.caib.pinbal.core.dto.EntitatDto;
 import es.caib.pinbal.core.dto.EntitatUsuariDto;
+import es.caib.pinbal.core.dto.RolEnumDto;
 import es.caib.pinbal.core.dto.ServeiDto;
 import es.caib.pinbal.core.dto.UsuariDto;
 import es.caib.pinbal.core.service.EntitatService;
@@ -178,6 +179,17 @@ public class RepresentantUsuariController extends BaseController {
 					eliminar = true;
 				}
 			}
+			
+			if (command.getRol() != null) {
+				if (command.getRol() == RolEnumDto.REPRESENTANT && !entitatUsuari.isRepresentant()) {
+					eliminar = true;
+				} else if (command.getRol() == RolEnumDto.DELEGAT && !entitatUsuari.isDelegat()) {
+					eliminar = true;
+				} else if (command.getRol() == RolEnumDto.APLICACIO && !entitatUsuari.isAplicacio()) {
+					eliminar = true;
+				}
+			}
+			
 			if (eliminar) {
 				it.remove();
 			}
