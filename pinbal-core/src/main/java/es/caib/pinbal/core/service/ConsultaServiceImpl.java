@@ -1529,6 +1529,7 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 		return resposta;
 	}
 
+	@Transactional
 	@Override
 	public void autoRevisarEstatPeticionsMultiplesPendents() {
 		LOGGER.debug("Iniciant revisió automàtica dels estats de les peticions múltiples pendents de forma automàtica");
