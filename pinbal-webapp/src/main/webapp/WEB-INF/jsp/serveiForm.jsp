@@ -310,6 +310,15 @@ function showModalXsd(element) {
 		
 			<div class="row">
 				<div class="col-md-12">
+					<c:set var="campPath" value="pinbalUnitatDir3FromEntitat"/>
+					<c:set var="campErrors"><form:errors path="${campPath}"/></c:set>
+					<div class="form-group vcenter<c:if test="${not empty campErrors}"> error</c:if>">
+						<label class="control-label col-md-1" for="${campPath}"><spring:message code="servei.form.camp.pinbal.dir3.from.entitat"/></label>
+						<div class="col-md-11">
+							<form:checkbox path="${campPath}" id="${campPath}"/>
+							<form:errors path="${campPath}" cssClass="help-block"/>
+						</div>
+					</div>
 					<pbl:inputText name="pinbalUnitatDir3" labelSize="1" textKey="servei.form.camp.pinbal.dir3"/>
 					<pbl:inputTextarea name="ajuda" labelSize="1" textKey="servei.form.camp.ajuda" />
 					

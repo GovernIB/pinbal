@@ -72,6 +72,8 @@ public class ServeiConfig extends PinbalAuditable<Long> {
 	private boolean actiuCampNomComplet = true;
 	@Column(name = "actiu_camp_doc")
 	private boolean actiuCampDocument = true;
+	@Column(name = "unitat_dir3_from_entitat", length = 10)
+	private boolean pinbalUnitatDir3FromEntitat;
 	@Column(name = "unitat_dir3", length = 10)
 	private String pinbalUnitatDir3;
 	@Column(name = "document_obligatori")
@@ -155,10 +157,6 @@ public class ServeiConfig extends PinbalAuditable<Long> {
 				actiu);
 	}
 
-	public long getVersion() {
-		return version;
-	}
-	
 	public void updateActiu(boolean actiu) {
 		this.actiu = actiu;
 	}

@@ -76,6 +76,7 @@ public class ServeiDto extends AbstractIdentificable<Long> implements Serializab
 	private boolean pinbalActiuCampLlinatge2;
 	private boolean pinbalActiuCampNomComplet;
 	private boolean pinbalActiuCampDocument;
+	private boolean pinbalUnitatDir3FromEntitat;
 	private String pinbalUnitatDir3;
 	private boolean pinbalDocumentObligatori;
 	private boolean pinbalComprovarDocument;

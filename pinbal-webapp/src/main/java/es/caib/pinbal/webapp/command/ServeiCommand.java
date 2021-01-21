@@ -1,6 +1,3 @@
-/**
- * 
- */
 package es.caib.pinbal.webapp.command;
 
 import java.io.IOException;
@@ -105,6 +102,7 @@ public class ServeiCommand {
 	private boolean pinbalActiuCampLlinatge2 = true;
 	private boolean pinbalActiuCampNomComplet = true;
 	private boolean pinbalActiuCampDocument = true;
+	private boolean pinbalUnitatDir3FromEntitat = false;
 	@Size(max=10)
 	private String pinbalUnitatDir3;
 	private boolean pinbalDocumentObligatori = true;
