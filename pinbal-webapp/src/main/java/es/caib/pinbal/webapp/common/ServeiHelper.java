@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package es.caib.pinbal.webapp.common;
 
@@ -18,49 +18,18 @@ import es.caib.pinbal.core.service.exception.ProcedimentNotFoundException;
 /**
  * Utilitat per a gestionar els serveis disponibles o permesos
  * per a l'usuari actual.
- * 
+ *
  * @author Limit Tecnologies <limit@limit.es>
  */
 public class ServeiHelper {
+    public static final String REQUEST_ATTRIBUTE_SERVEIS = "serveis";
 
-	private static final String SESSION_ATTRIBUTE_SERVEIS = "ServeiHelper.serveis";
-	private static final String SESSION_ATTRIBUTE_ENTITAT_ID = "ServeiHelper.entitat.id";
-
-
-	public static List<ServeiDto> getServeis(
-			HttpServletRequest request,
-			Long entitatId) throws EntitatNotFoundException, ProcedimentNotFoundException {
-		return getServeis(request, entitatId, null);
-	}
-	@SuppressWarnings("unchecked")
-	public static List<ServeiDto> getServeis(
-			HttpServletRequest request,
-			Long entitatId,
-			ServeiService serveiService) throws EntitatNotFoundException, ProcedimentNotFoundException {
-		Long eid = (Long)request.getSession().getAttribute(
-				SESSION_ATTRIBUTE_ENTITAT_ID);
-		List<ServeiDto> serveis = null;
-		// Només obté els serveis de la sessió si no ha canviat l'entitat
-		if (entitatId.equals(eid)) {
-			serveis = (List<ServeiDto>)request.getSession().getAttribute(
-					SESSION_ATTRIBUTE_SERVEIS);
-		}
-		if (request.getUserPrincipal() != null) {
-			if (serveis == null) {
-				String usuari = request.getUserPrincipal().getName();
-				LOGGER.debug("Consulta del llistat de serveis pel delegat (usuari=" + usuari + ")");
-				serveis = serveiService.findPermesosAmbProcedimentPerDelegat(entitatId, null);
-				request.getSession().setAttribute(
-						SESSION_ATTRIBUTE_SERVEIS,
-						serveis);
-				request.getSession().setAttribute(
-						SESSION_ATTRIBUTE_ENTITAT_ID,
-						entitatId);
-			}
-		}
-		return serveis;
-	}
-
-	private static final Logger LOGGER = LoggerFactory.getLogger(ServeiHelper.class);
-
+    public static List<ServeiDto> getServeis(HttpServletRequest request) {
+        // Atribute set in interceptor
+        if (request.getAttribute(REQUEST_ATTRIBUTE_SERVEIS) != null) {
+            return (List<ServeiDto>) request.getAttribute(REQUEST_ATTRIBUTE_SERVEIS);
+        } else {
+            return null;
+        }
+    }
 }

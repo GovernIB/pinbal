@@ -29,9 +29,7 @@
 		if (entitat != null) {
 			pageContext.setAttribute(
 					"sessionServeis",
-					es.caib.pinbal.webapp.common.ServeiHelper.getServeis(
-							request,
-							entitat.getId()));
+					es.caib.pinbal.webapp.common.ServeiHelper.getServeis(request));
 		}
 	}
 	pageContext.setAttribute(
