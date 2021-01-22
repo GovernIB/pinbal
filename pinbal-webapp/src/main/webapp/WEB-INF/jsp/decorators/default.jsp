@@ -177,7 +177,12 @@ body {
 							<ul class="dropdown-menu">
 								<li>
 									<a href="<c:url value="/usuari/configuracio"/>">
-										<spring:message code="decorator.menu.configuracio.user"/>
+										<span class="fa fa-download"></span> <spring:message code="decorator.menu.configuracio.user"/>
+									</a>
+								</li>
+								<li>
+									<a href="<c:url value="/usuari/logout"/>">
+										<i class="fa fa-power-off"></i> <spring:message code="decorator.menu.accions.desconectar"/>
 									</a>
 								</li>
 							</ul>

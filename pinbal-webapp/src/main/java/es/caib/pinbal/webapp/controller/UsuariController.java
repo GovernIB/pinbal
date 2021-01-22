@@ -1,6 +1,3 @@
-/**
- * 
- */
 package es.caib.pinbal.webapp.controller;
 
 import javax.servlet.http.HttpServletRequest;
@@ -23,7 +20,7 @@ import es.caib.pinbal.core.dto.UsuariDto;
 import es.caib.pinbal.core.service.UsuariService;
 import es.caib.pinbal.webapp.common.AlertHelper;
 import es.caib.pinbal.webapp.helper.EnumHelper;
-
+import javax.servlet.http.Cookie;
 /**
  * Controlador per al manteniment de usuaris.
  * 
@@ -37,6 +34,18 @@ public class UsuariController extends BaseController{
 	private UsuariService usuariService;
 
 
+	@RequestMapping(value = "/logout", method = RequestMethod.GET)
+	public String logout(HttpServletRequest request, HttpServletResponse response) {
+		// Només per Jboss
+		// Es itera sobre totes les cookies
+		for(Cookie c : request.getCookies()) {
+			// Es sobre escriu el valor de cada cookie a NULL
+			Cookie ck = new Cookie(c.getName(), null);
+			ck.setPath(request.getContextPath());
+			response.addCookie(ck);
+		}
+		return "redirect:/";
+	}
 	@RequestMapping(value = "/configuracio", method = RequestMethod.GET)
 	public String getConfiguracio(
 			HttpServletRequest request,
