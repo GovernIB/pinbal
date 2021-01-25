@@ -1,6 +1,3 @@
-/**
- * 
- */
 package es.caib.pinbal.client.recobriment.model;
 
 import es.caib.pinbal.client.recobriment.model.ScspSolicitante.ScspConsentimiento;
@@ -86,4 +83,19 @@ public abstract class SolicitudBase {
 
 	public abstract String getDatosEspecificos();
 
+	protected String xmlOptionalStringParameter(String value, String nombre) {
+		if (value != null && !value.isEmpty()) {
+			String xmlString = "";
+			xmlString += "<" + nombre + ">";
+			xmlString += value;
+			xmlString += "</" + nombre + ">";
+			return xmlString;
+		} else {
+			return "";
+		}
+	}
+
+	protected boolean isEmptyString(String s) {
+		return s == null || s.isEmpty();
+	}
 }

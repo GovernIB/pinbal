@@ -39,8 +39,9 @@ public class Svdccaacpasws01Test {
 	private static final String CONTRASENYA = "passwd";
 	private static final String SERVEI_SCSP = "pruebaPMI";
 	private static final String PETICION_SCSP_ID = "PBL0000000001292";
+	private static final boolean IS_JBOSS = false;
 
-	private ClientSvdccaacpasws01 client = new ClientSvdccaacpasws01(URL_BASE, USUARI, CONTRASENYA);
+	private final ClientSvdccaacpasws01 client = new ClientSvdccaacpasws01(URL_BASE, USUARI, CONTRASENYA, !IS_JBOSS, null, null);
 
 	@Test
 	public void peticionSincrona() throws UniformInterfaceException, ClientHandlerException, IOException {
