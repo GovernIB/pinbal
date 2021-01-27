@@ -203,6 +203,7 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 					servei.getFitxerAjudaMimeType(),
 					servei.getFitxerAjudaContingut(),
 					true).build();
+			serveiConfig.setPinbalUnitatDir3FromEntitat(servei.isPinbalUnitatDir3FromEntitat());
 			serveiConfigRepository.save(serveiConfig);
 		} else {
 			// Si ja està creat l'actualitza
@@ -229,6 +230,7 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 					servei.isPinbalComprovarDocument(),
 					servei.isActivaGestioXsd(),
 					servei.getAjuda());
+			serveiConfig.setPinbalUnitatDir3FromEntitat(servei.isPinbalUnitatDir3FromEntitat());
 			if (servei.getFitxerAjudaNom() != null && !servei.getFitxerAjudaNom().isEmpty()) {
 				serveiConfig.updateFitxerAjuda(
 						servei.getFitxerAjudaNom(),
@@ -1324,6 +1326,7 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 			dto.setFitxerAjudaNom(serveiConfig.getFitxerAjudaNom());
 			dto.setFitxerAjudaMimeType(serveiConfig.getFitxerAjudaMimeType());
 			dto.setFitxerAjudaContingut(serveiConfig.getFitxerAjudaContingut());
+			dto.setPinbalUnitatDir3FromEntitat(serveiConfig.isPinbalUnitatDir3FromEntitat());
 		}
 //		Long numeroProcedimentsAssociats = procedimentRepository.countByServei(servicio.getCodCertificado());
 //		dto.setNumeroProcedimentsAssociats(numeroProcedimentsAssociats == null ? 0 : numeroProcedimentsAssociats);

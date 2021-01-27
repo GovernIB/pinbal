@@ -1,10 +1,4 @@
-/**
- * 
- */
-package es.caib.pinbal.client.recobriment.svdccaacpasws01;
-
-import java.io.IOException;
-import java.util.List;
+package es.caib.pinbal.client.recobriment.svddgpviws02;
 
 import es.caib.pinbal.client.recobriment.ClientBase;
 import es.caib.pinbal.client.recobriment.model.ScspConfirmacionPeticion;
@@ -13,23 +7,25 @@ import es.caib.pinbal.client.recobriment.model.SolicitudBase;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+import java.io.IOException;
+import java.util.List;
+
 /**
- * Client del recobriment per a fer peticions al servei SCSP SVDCCAACPASWS01:
- * "Estar al corriente de obligaciones tributarias para solicitud de
- * subvenciones y ayudas de la CCAA" .
+ * Client del recobriment per a fer peticions al servei SCSP SVDDGPVIWS02:
+ * "Verificación de datos de identidad" .
  * 
  * @author Limit Tecnologies <limit@limit.es>
  */
-public class ClientSvdccaacpasws01 extends ClientBase {
+public class ClientSvddgpviws02 extends ClientBase {
 
-	public ClientSvdccaacpasws01(
+	public ClientSvddgpviws02(
 			String urlBase,
 			String usuari,
 			String contrasenya) {
 		super(urlBase, usuari, contrasenya);
 	}
 
-	public ClientSvdccaacpasws01(
+	public ClientSvddgpviws02(
 			String urlBase,
 			String usuari,
 			String contrasenya,
@@ -41,40 +37,51 @@ public class ClientSvdccaacpasws01 extends ClientBase {
 
 	public ScspRespuesta peticionSincrona(
 			String serveiCodi,
-			List<SolicitudSvdccaacpasws01> solicituds) throws IOException {
+			List<SolicitudSvddgpviws02> solicituds) throws IOException {
 		return basePeticionSincrona(serveiCodi, solicituds);
 	}
 
 	public ScspConfirmacionPeticion peticionAsincrona(
 			String serveiCodi,
-			List<SolicitudSvdccaacpasws01> solicituds) throws IOException {
+			List<SolicitudSvddgpviws02> solicituds) throws IOException {
 		return basePeticionAsincrona(serveiCodi, solicituds);
 	}
 
-	@Data
 	@EqualsAndHashCode(callSuper = true)
-	public static class SolicitudSvdccaacpasws01 extends SolicitudBase {
-		private String codigoProvincia;
-		private String codigoComunidadAutonoma;
+	@Data
+	public static class SolicitudSvddgpviws02 extends SolicitudBase {
+		private String fecha;
+		private String numeroSoporte;
+		private String provincia;
+		private String pais;
 
 		@Override
 		public String getDatosEspecificos() { // xml
 			StringBuilder xmlBuilder = new StringBuilder("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
 			xmlBuilder.append("<DatosEspecificos>");
-			if (!isEmptyString(codigoProvincia)) {
+			if (!isEmptyString(fecha) || !isEmptyString(numeroSoporte) || !isEmptyString(provincia) || !isEmptyString(pais)) {
 				xmlBuilder.append("<Consulta>");
 				xmlBuilder.append(
-						xmlOptionalStringParameter(this.codigoProvincia, "CodigoProvincia")
+						xmlOptionalStringParameter(this.fecha, "Fecha")
 				);
+
 				xmlBuilder.append(
-						xmlOptionalStringParameter(this.codigoComunidadAutonoma, "CodigoComunidadAutonoma")
+						xmlOptionalStringParameter(this.numeroSoporte, "NumeroSoporte")
+				);
+
+				xmlBuilder.append(
+						xmlOptionalStringParameter(this.provincia, "provincia")
+				);
+
+				xmlBuilder.append(
+						xmlOptionalStringParameter(this.pais, "País")
 				);
 				xmlBuilder.append("</Consulta>");
-
 			}
 			xmlBuilder.append("</DatosEspecificos>");
 			return xmlBuilder.toString();
 		}
-	}
 
+
+	}
 }

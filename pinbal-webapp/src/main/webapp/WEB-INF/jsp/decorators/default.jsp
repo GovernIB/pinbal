@@ -29,9 +29,7 @@
 		if (entitat != null) {
 			pageContext.setAttribute(
 					"sessionServeis",
-					es.caib.pinbal.webapp.common.ServeiHelper.getServeis(
-							request,
-							entitat.getId()));
+					es.caib.pinbal.webapp.common.ServeiHelper.getServeis(request));
 		}
 	}
 	pageContext.setAttribute(
@@ -179,7 +177,12 @@ body {
 							<ul class="dropdown-menu">
 								<li>
 									<a href="<c:url value="/usuari/configuracio"/>">
-										<spring:message code="decorator.menu.configuracio.user"/>
+										<span class="fa fa-download"></span> <spring:message code="decorator.menu.configuracio.user"/>
+									</a>
+								</li>
+								<li>
+									<a href="<c:url value="/usuari/logout"/>">
+										<i class="fa fa-power-off"></i> <spring:message code="decorator.menu.accions.desconectar"/>
 									</a>
 								</li>
 							</ul>

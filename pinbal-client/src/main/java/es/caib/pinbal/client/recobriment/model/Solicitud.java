@@ -1,6 +1,3 @@
-/**
- * 
- */
 package es.caib.pinbal.client.recobriment.model;
 
 /**

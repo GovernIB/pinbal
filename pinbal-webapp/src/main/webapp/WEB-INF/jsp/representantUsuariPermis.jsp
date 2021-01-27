@@ -16,29 +16,35 @@
 	
 <script>
 $(document).ready(function() {
-	$('#select-procediment').change(function() {
+	var $selectProcediment = $('#select-procediment');
+	var $selectServei = $('#serveiCodi');
+	$selectProcediment.change(function() {
 		if ($(this).val()) {
+			$selectProcediment.prop("disabled", true);
+			$selectServei.prop("disabled", true);
 			var targetUrl = '<c:url value="/estadistiques/serveisPerProcediment"/>/' + $(this).val();
 			$.ajax({
 			    url: targetUrl,
 			    type:'GET',
 			    dataType: 'json',
 			    success: function(json) {
-			    	$('#serveiCodi').empty();
-		        	$('#serveiCodi').append($('<option value="">').text('<spring:message code="consulta.list.filtre.servei"/>:'));
+					$selectProcediment.prop("disabled", false);
+					$selectServei.prop("disabled", false);
+					$selectServei.empty();
+					$selectServei.append($('<option value="">').text('<spring:message code="consulta.list.filtre.servei"/>:'));
 			        $.each(json, function(i, value) {
 			            $('#serveiCodi').append($('<option>').text("(" + value.codi+ ") " + value.descripcio).attr('value', value.codi));
 			        });
 			    }
 			});
 		} else {
-			$('#serveiCodi').empty();
-			$('#serveiCodi').append($('<option value="">').text('<spring:message code="consulta.list.filtre.servei"/>:'));
+			$selectServei.empty();
+			$selectServei.append($('<option value="">').text('<spring:message code="consulta.list.filtre.servei"/>:'));
 		}
 	});
-	
-	$('#select-procediment').select2();
-	$('#serveiCodi').select2();
+
+	$selectProcediment.select2();
+	$selectServei.select2();
 	$('.confirm-esborrar').click(function() {
 		  return confirm("<spring:message code="procediment.serveis.permisos.esborrar.tots.segur"/>");
 	});

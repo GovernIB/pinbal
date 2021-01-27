@@ -1529,6 +1529,7 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 		return resposta;
 	}
 
+	@Transactional
 	@Override
 	public void autoRevisarEstatPeticionsMultiplesPendents() {
 		LOGGER.debug("Iniciant revisió automàtica dels estats de les peticions múltiples pendents de forma automàtica");
@@ -2032,11 +2033,7 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 						consulta.getConsentiment().toString()));
 
 		setUnitatTramitadoraSolicitud(solicitud, procediment, consulta.getDepartamentNom());
-		ServeiConfig serveiConfig = serveiConfigRepository.findByServei(consulta.getServeiCodi());
-		if (serveiConfig.getPinbalUnitatDir3() != null && !serveiConfig.getPinbalUnitatDir3().isEmpty()) {
-			solicitud.setUnitatTramitadoraCodi(serveiConfig.getPinbalUnitatDir3());
-		}
-		
+
 		solicitud.setExpedientId(consulta.getExpedientId());
 		solicitud.setDadesEspecifiquesMap(consulta.getDadesEspecifiques());
 		return solicitud;
@@ -2166,8 +2163,16 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 	}
 	
 	private void setUnitatTramitadoraSolicitud(Solicitud solicitud, Procediment procediment, String defaultUnitatTramitadora) {
-		if (procediment.getOrganGestor() != null) {
-			solicitud.setUnitatTramitadora(procediment.getOrganGestor().getCodi());	
+		ServeiConfig serveiConfig = serveiConfigRepository.findByServei(solicitud.getServeiCodi());
+		if (serveiConfig.isPinbalUnitatDir3FromEntitat()) {
+			solicitud.setUnitatTramitadoraCodi(procediment.getEntitat().getUnitatArrel());
+
+		} else if(serveiConfig.getPinbalUnitatDir3() != null && !serveiConfig.getPinbalUnitatDir3().isEmpty()) {
+			solicitud.setUnitatTramitadoraCodi(serveiConfig.getPinbalUnitatDir3());
+
+		}else if (procediment.getOrganGestor() != null) {
+			solicitud.setUnitatTramitadora(procediment.getOrganGestor().getCodi());
+
 		}else {
 			solicitud.setUnitatTramitadora(defaultUnitatTramitadora);
 		}

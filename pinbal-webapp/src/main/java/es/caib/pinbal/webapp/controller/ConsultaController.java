@@ -1,6 +1,3 @@
-/**
- * 
- */
 package es.caib.pinbal.webapp.controller;
 
 import java.io.IOException;

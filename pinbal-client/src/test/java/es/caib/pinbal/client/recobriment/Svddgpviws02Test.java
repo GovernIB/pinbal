@@ -1,14 +1,4 @@
-/**
- * 
- */
 package es.caib.pinbal.client.recobriment;
-
-import static org.junit.Assert.assertNotNull;
-
-import java.io.IOException;
-import java.util.Arrays;
-
-import org.junit.Test;
 
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -17,22 +7,27 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.sun.jersey.api.client.ClientHandlerException;
 import com.sun.jersey.api.client.UniformInterfaceException;
-
 import es.caib.pinbal.client.recobriment.model.ScspFuncionario;
 import es.caib.pinbal.client.recobriment.model.ScspJustificante;
 import es.caib.pinbal.client.recobriment.model.ScspRespuesta;
 import es.caib.pinbal.client.recobriment.model.ScspSolicitante.ScspConsentimiento;
 import es.caib.pinbal.client.recobriment.model.ScspTitular;
 import es.caib.pinbal.client.recobriment.model.ScspTitular.ScspTipoDocumentacion;
-import es.caib.pinbal.client.recobriment.svdccaacpasws01.ClientSvdccaacpasws01;
-import es.caib.pinbal.client.recobriment.svdccaacpasws01.ClientSvdccaacpasws01.SolicitudSvdccaacpasws01;
+import es.caib.pinbal.client.recobriment.svddgpviws02.ClientSvddgpviws02.SolicitudSvddgpviws02;
+import es.caib.pinbal.client.recobriment.svddgpviws02.ClientSvddgpviws02;
+import org.junit.Test;
+
+import java.io.IOException;
+import java.util.Arrays;
+
+import static org.junit.Assert.assertNotNull;
 
 /**
  * Test del client genèric del recobriment.
  * 
  * @author Limit Tecnologies <limit@limit.es>
  */
-public class Svdccaacpasws01Test {
+public class Svddgpviws02Test {
 
 	private static final String URL_BASE = "http://localhost:8080/pinbal";
 	private static final String USUARI = "user";
@@ -41,11 +36,11 @@ public class Svdccaacpasws01Test {
 	private static final String PETICION_SCSP_ID = "PBL0000000001292";
 	private static final boolean IS_JBOSS = false;
 
-	private final ClientSvdccaacpasws01 client = new ClientSvdccaacpasws01(URL_BASE, USUARI, CONTRASENYA, !IS_JBOSS, null, null);
+	private ClientSvddgpviws02 client = new ClientSvddgpviws02(URL_BASE, USUARI, CONTRASENYA, !IS_JBOSS, null, null);
 
 	@Test
 	public void peticionSincrona() throws UniformInterfaceException, ClientHandlerException, IOException {
-		SolicitudSvdccaacpasws01 solicitud = new SolicitudSvdccaacpasws01();
+		SolicitudSvddgpviws02 solicitud = new SolicitudSvddgpviws02();
 		solicitud.setIdentificadorSolicitante("B07167448");
 		solicitud.setCodigoProcedimiento("ProvaConcepte");
 		solicitud.setUnidadTramitadora("Departament de test");

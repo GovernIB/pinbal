@@ -2,3 +2,7 @@
 /.settings/
 /.project
 /.classpath
+
+# intellij files
+.idea
+*.iml
