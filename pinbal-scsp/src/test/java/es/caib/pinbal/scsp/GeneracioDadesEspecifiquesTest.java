@@ -50,7 +50,7 @@ public class GeneracioDadesEspecifiquesTest {
 				"DatosEspecificos/Solicitud/MunicipioSolicitud",
 				"07033");
 		XmlHelper helper = new XmlHelper();
-		Element resultat = helper.crearDadesEspecifiques(servicio, dades);
+		Element resultat = helper.crearDadesEspecifiques(servicio, dades, false);
 		System.out.println(">>> " + nodeToString(resultat));
 	}
 
