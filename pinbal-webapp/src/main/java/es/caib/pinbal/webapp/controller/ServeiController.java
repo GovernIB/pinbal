@@ -303,8 +303,7 @@ public class ServeiController extends BaseController {
 				"servei",
 				serveiDto);
 		ArbreDto<DadaEspecificaDto> arbreDadesEspecifiques = serveiService.generarArbreDadesEspecifiques(
-				serveiCodi,
-				serveiDto.isActivaGestioXsd());
+				serveiCodi);
 		model.addAttribute("arbreDadesEspecifiques", arbreDadesEspecifiques);
 		List<NodeDto<DadaEspecificaDto>> llistatDadesEspecifiques = arbreDadesEspecifiques.toList();
 		List<ServeiCampDto> camps = serveiService.findServeiCamps(serveiCodi);

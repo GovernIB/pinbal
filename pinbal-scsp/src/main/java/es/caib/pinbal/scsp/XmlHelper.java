@@ -59,7 +59,7 @@ import es.scsp.common.domain.core.Servicio;
  */
 public class XmlHelper {
 
-	public Tree<DadesEspecifiquesNode> getArbrePerDadesEspecifiques(
+	/*public Tree<DadesEspecifiquesNode> getArbrePerDadesEspecifiques(
 			final Servicio servicio) throws Exception {
 		Tree<DadesEspecifiquesNode> tree = new Tree<DadesEspecifiquesNode>();
 		InputStream is = getInputStreamXsdDadesEspecifiques(servicio);
@@ -94,17 +94,19 @@ public class XmlHelper {
 					datosEspecificosElement);
 		}
 		return tree;
-	}
+	}*/
 	
 	public Tree<DadesEspecifiquesNode> getArbrePerDadesEspecifiques(
-			final Servicio servicio, boolean gestioXsdActiva) throws Exception {
+			final Servicio servicio,
+			boolean gestioXsdActiva) throws Exception {
 		Tree<DadesEspecifiquesNode> tree = new Tree<DadesEspecifiquesNode>();
-		InputStream is;
+		InputStream is = getInputStreamXsdDadesEspecifiques(servicio, gestioXsdActiva);
+		/*InputStream is;
 		if (gestioXsdActiva) {
 			is = getInputStreamXsdDadesEspecifiques(servicio, gestioXsdActiva);
 		} else {
 			is = getInputStreamXsdDadesEspecifiques(servicio);
-		}
+		}*/
 		if (is != null) {
 			XmlSchemaCollection schemaCol = new XmlSchemaCollection();
 			schemaCol.setSchemaResolver(
@@ -159,7 +161,8 @@ public class XmlHelper {
 
 	public Element crearDadesEspecifiques(
 			Servicio servicio,
-			Map<String, Object> dadesEspecifiques) throws Exception {
+			Map<String, Object> dadesEspecifiques,
+			boolean gestioXsdActiva) throws Exception {
 		DocumentBuilderFactory fac = DocumentBuilderFactory.newInstance();
 		fac.setNamespaceAware(true);
 		Document doc = fac.newDocumentBuilder().newDocument();
@@ -168,7 +171,7 @@ public class XmlHelper {
 				"xmlns",
 				getXmlnsPerDadesEspecifiques(servicio));
 		if (dadesEspecifiques != null) {
-			for (Node<DadesEspecifiquesNode> node: getArbrePerDadesEspecifiques(servicio).toList()) {
+			for (Node<DadesEspecifiquesNode> node: getArbrePerDadesEspecifiques(servicio, gestioXsdActiva).toList()) {
 				String path = node.getData().getPath().substring(1);
 				Object preValor = dadesEspecifiques.get(path);
 				if (preValor instanceof String) {
@@ -247,8 +250,9 @@ public class XmlHelper {
 
 	public Element copiarDadesEspecifiquesRecobriment(
 			Servicio servicio,
-			Element datosEspecificosRebuts) throws Exception {
-		Element datosEspecificos = crearDadesEspecifiques(servicio, null);
+			Element datosEspecificosRebuts,
+			boolean gestioXsdActiva) throws Exception {
+		Element datosEspecificos = crearDadesEspecifiques(servicio, null, gestioXsdActiva);
 		NodeList nodes = datosEspecificosRebuts.getChildNodes();
 		for (int i = 0; i < nodes.getLength(); i++) {
 			datosEspecificos.appendChild(
@@ -285,6 +289,18 @@ public class XmlHelper {
 			}
 		}
 		return null;
+	}
+
+	public String getPathPerServei(
+			String serveiCodi) {
+		StringBuilder path = new StringBuilder();
+		String basePath = getPropertyXsdBasePath();
+		path.append(basePath);
+		if (!basePath.endsWith(File.separator)) {
+			path.append(File.separator);
+		}
+		path.append(serveiCodi);
+		return path.toString();
 	}
 
 
@@ -478,7 +494,6 @@ public class XmlHelper {
 	private InputStream getScspResourceInputStream(
 			Servicio servicio,
 			String arxiuNom) throws Exception {
-		// Comprovar si el servei te la gestió de fitxers xsd activada. Si esta activada cerca els esquemes al sistema de fitxers.
 		String versionEsquema = servicio.getVersionEsquema();
 		if (versionEsquema != null) {
 			int index = versionEsquema.lastIndexOf("V");
@@ -502,22 +517,22 @@ public class XmlHelper {
 			throw new Exception("No s'ha pogut obtenir la versió de l'esquema pel servicio (codi=" + servicio.getCodCertificado() + ")");
 		}
 	}
-	
+
 	private InputStream getScspResourceInputStream(
 			Servicio servicio,
-			String arxiuNom, boolean gestioXsdActiva) throws Exception {
-		// Comprovar si el servei te la gestió de fitxers xsd activada. Si esta activada cerca els esquemes al sistema de fitxers.
+			String arxiuNom,
+			boolean gestioXsdActiva) throws Exception {
 		String versionEsquema = servicio.getVersionEsquema();
 		if (versionEsquema != null) {
 			int index = versionEsquema.lastIndexOf("V");
 			if (index != -1) {
 				String esquema;
 				InputStream is;
-				if(gestioXsdActiva) {
+				if (gestioXsdActiva) {
 					esquema = getPathPerFitxerXsdDadesEspecifiques(servicio);
 					File fitxer = new File(esquema);
 					is = FileUtils.openInputStream(fitxer);
-				}else {
+				} else {
 					esquema = "/schemas/" + servicio.getCodCertificado() + "v" + versionEsquema.substring(index + 1) + "/" + arxiuNom;
 					is = getClass().getResourceAsStream(esquema);
 				}
@@ -538,8 +553,7 @@ public class XmlHelper {
 			throw new Exception("No s'ha pogut obtenir la versió de l'esquema pel servicio (codi=" + servicio.getCodCertificado() + ")");
 		}
 	}
-	
-	
+
 	private String getPathPerFitxerXsdDadesEspecifiques(
 			Servicio servei) {
 		StringBuilder path = new StringBuilder();
@@ -548,24 +562,12 @@ public class XmlHelper {
 		path.append("datos-especificos.xsd");
 		return path.toString();
 	}
-	
-	public String getPathPerServei(
-			String serveiCodi) {
-		StringBuilder path = new StringBuilder();
-		String basePath = getPropertyXsdBasePath();
-		path.append(basePath);
-		if (!basePath.endsWith(File.separator)) {
-			path.append(File.separator);
-		}
-		path.append(serveiCodi);
-		return path.toString();
-	}
-	
+
 	private String getPropertyXsdBasePath() {
 		return PropertiesHelper.getProperties().getProperty(
 				"es.caib.pinbal.xsd.base.path");
 	}
-	
+
 	private String getXmlnsPerDadesEspecifiques(
 			Servicio servicio) throws Exception {
 		InputStream is = getInputStreamXsdDadesEspecifiques(servicio);
@@ -602,9 +604,10 @@ public class XmlHelper {
 		}
 		return is;
 	}
-	
+
 	private InputStream getInputStreamXsdDadesEspecifiques(
-			Servicio servicio, boolean gestioXsdActiva) throws Exception {
+			Servicio servicio,
+			boolean gestioXsdActiva) throws Exception {
 		InputStream is = getScspResourceInputStream(
 				servicio,
 				"datos-especificos.xsd", gestioXsdActiva);
@@ -625,8 +628,6 @@ public class XmlHelper {
 		}
 		return is;
 	}
-
-
 
 	public class DadesEspecifiquesNode {
 		public static final int GROUP_TYPE_ALL = 0;
@@ -725,7 +726,7 @@ public class XmlHelper {
 			}
 		}
 	}
-	
+
 	private static final Logger LOGGER = LoggerFactory.getLogger(XmlHelper.class);
 
 }

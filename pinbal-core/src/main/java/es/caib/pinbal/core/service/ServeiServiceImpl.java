@@ -637,7 +637,10 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 		}
 		try {
 			ArbreDto<DadaEspecificaDto> arbre = new ArbreDto<DadaEspecificaDto>();
-			Tree<DadesEspecifiquesNode> tree = getScspHelper().generarArbreDadesEspecifiques(serveiCodi);
+			Tree<DadesEspecifiquesNode> tree = getScspHelper().generarArbreDadesEspecifiques(
+					serveiCodi,
+					isGestioXsdActiva(serveiCodi));
+			//Tree<DadesEspecifiquesNode> tree = getScspHelper().generarArbreDadesEspecifiques(serveiCodi);
 			if (tree != null && tree.getRootElement() != null) {
 				NodeDto<DadaEspecificaDto> arrel = new NodeDto<DadaEspecificaDto>();
 				copiarArbreDadesEspecifiques(
@@ -656,11 +659,12 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 					ex);
 		}
 	}
-	
-	@Transactional(readOnly = true)
+
+	/*@Transactional(readOnly = true)
 	@Override
 	public ArbreDto<DadaEspecificaDto> generarArbreDadesEspecifiques(
-			String serveiCodi, boolean gestioXsdActiva) throws ServeiNotFoundException, ScspException {
+			String serveiCodi,
+			boolean gestioXsdActiva) throws ServeiNotFoundException, ScspException {
 		LOGGER.debug("Generant arbre de dades específiques per al servei (codi=" + serveiCodi + ")");
 		Servicio servicio = getServicioByCode(serveiCodi);
 		if (servicio == null) {
@@ -670,9 +674,9 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 		try {
 			ArbreDto<DadaEspecificaDto> arbre = new ArbreDto<DadaEspecificaDto>();
 			Tree<DadesEspecifiquesNode> tree;
-			if(gestioXsdActiva) {
+			if (gestioXsdActiva) {
 				tree = getScspHelper().generarArbreDadesEspecifiques(serveiCodi, gestioXsdActiva);
-			}else {
+			} else {
 				tree = getScspHelper().generarArbreDadesEspecifiques(serveiCodi);
 			}
 			if (tree != null && tree.getRootElement() != null) {
@@ -692,7 +696,7 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 					"Error al generar arbre de dades específiques per al servei (codi=" + serveiCodi + ")",
 					ex);
 		}
-	}
+	}*/
 
 	@Transactional(rollbackFor = ServeiNotFoundException.class)
 	@Override
@@ -728,7 +732,9 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 				// Configura les descripcions de les opcions del enumerat
 				// amb els valor per defecte.
 				try {
-					Tree<DadesEspecifiquesNode> tree = getScspHelper().generarArbreDadesEspecifiques(serveiCodi);
+					Tree<DadesEspecifiquesNode> tree = getScspHelper().generarArbreDadesEspecifiques(
+							serveiCodi,
+							isGestioXsdActiva(serveiCodi));
 					DadesEspecifiquesNode nodeEnum = trobarNodeAmbPath(
 							tree.getRootElement(),
 							path,
@@ -1495,8 +1501,7 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 	 * @return
 	 * @throws ServeiNotFoundException
 	 */
-	private Servicio getServicioByCode(String serveiCodi) throws ServeiNotFoundException
-	{
+	private Servicio getServicioByCode(String serveiCodi) throws ServeiNotFoundException {
 		List<Servei> serveis = serveiRepository.findByCode(serveiCodi);
 		if (serveis.size() == 0) {
 			LOGGER.debug("No s'ha trobat el servicio (codi=" + serveiCodi + ")");
@@ -1510,5 +1515,10 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 		}
 		return servicio;
 	}
-	
+
+	private boolean isGestioXsdActiva(String serveiCodi) {
+		ServeiConfig serveiConfig = serveiConfigRepository.findByServei(serveiCodi);
+		return serveiConfig != null && serveiConfig.isActivaGestioXsd();
+	}
+
 }

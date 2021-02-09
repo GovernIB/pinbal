@@ -236,8 +236,8 @@ public interface ServeiService {
 	 * @throws ScspException
 	 *             Si hi ha hagut errors al generar l'arbre.
 	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_DELEG')")
-	public ArbreDto<DadaEspecificaDto> generarArbreDadesEspecifiques(String serveiCodi, boolean gestioXsdActiva) throws ServeiNotFoundException, ScspException;
+	/*@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_DELEG')")
+	public ArbreDto<DadaEspecificaDto> generarArbreDadesEspecifiquesa(String serveiCodi, boolean gestioXsdActiva) throws ServeiNotFoundException, ScspException;*/
 	
 	
 	/**

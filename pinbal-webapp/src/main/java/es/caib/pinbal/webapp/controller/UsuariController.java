@@ -1,5 +1,6 @@
 package es.caib.pinbal.webapp.controller;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
@@ -7,12 +8,9 @@ import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.util.StringUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.servlet.LocaleResolver;
-import org.springframework.web.servlet.support.RequestContextUtils;
 
 import es.caib.distribucio.war.command.UsuariCommand;
 import es.caib.pinbal.core.dto.IdiomaEnumDto;
@@ -20,7 +18,6 @@ import es.caib.pinbal.core.dto.UsuariDto;
 import es.caib.pinbal.core.service.UsuariService;
 import es.caib.pinbal.webapp.common.AlertHelper;
 import es.caib.pinbal.webapp.helper.EnumHelper;
-import javax.servlet.http.Cookie;
 /**
  * Controlador per al manteniment de usuaris.
  * 

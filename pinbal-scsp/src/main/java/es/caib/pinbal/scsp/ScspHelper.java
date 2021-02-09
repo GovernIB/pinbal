@@ -110,13 +110,15 @@ public class ScspHelper {
 
 	public ResultatEnviamentPeticio enviarPeticionSincrona(
 			String idPeticion,
-			List<Solicitud> solicituds) {
+			List<Solicitud> solicituds,
+			boolean gestioXsdActiva) {
 		LOGGER.debug("Nova petició SCSP (peticionId=" + idPeticion + ")");
 		Peticion peticion = null;
 		try {
 			peticion = crearPeticion(
 					idPeticion,
-					solicituds);
+					solicituds,
+					gestioXsdActiva);
 		} catch (Exception ex) {
 			LOGGER.error("Error al generar nova petició SCSP síncrona (peticionId=" + idPeticion + ")", ex);
 			ResultatEnviamentPeticio estat = new ResultatEnviamentPeticio();
@@ -151,13 +153,15 @@ public class ScspHelper {
 
 	public ResultatEnviamentPeticio enviarPeticionAsincrona(
 			String idPeticion,
-			List<Solicitud> solicituds) {
+			List<Solicitud> solicituds,
+			boolean gestioXsdActiva) {
 		LOGGER.debug("Nova petició SCSP (peticionId=" + idPeticion + ")");
 		Peticion peticion = null;
 		try {
 			peticion = crearPeticion(
 					idPeticion,
-					solicituds);
+					solicituds,
+					gestioXsdActiva);
 		} catch (Exception ex) {
 			LOGGER.error("Error al generar nova petició SCSP síncrona (peticionId=" + idPeticion + ")", ex);
 			ResultatEnviamentPeticio estat = new ResultatEnviamentPeticio();
@@ -349,33 +353,36 @@ public class ScspHelper {
 		return getResultatEnviamentPeticio(idPeticion);
 	}
 
-	public Tree<DadesEspecifiquesNode> generarArbreDadesEspecifiques(
+	/*public Tree<DadesEspecifiquesNode> generarArbreDadesEspecifiques(
 			String codigoServicio) throws Exception {
 		LOGGER.debug("Generant l'arbre de dades específiques pel servicio (codi=" + codigoServicio + ")");
 		Servicio servicio = getServicio(codigoServicio);
 		return getXmlHelper().getArbrePerDadesEspecifiques(servicio);
-	}
+	}*/
 	
 	public Tree<DadesEspecifiquesNode> generarArbreDadesEspecifiques(
-			String codigoServicio, boolean gestioXsdActiva) throws Exception {
+			String codigoServicio,
+			boolean gestioXsdActiva) throws Exception {
 		LOGGER.debug("Generant l'arbre de dades específiques pel servicio (codi=" + codigoServicio + ")");
 		Servicio servicio = getServicio(codigoServicio);
-		if(gestioXsdActiva) {
-			return getXmlHelper().getArbrePerDadesEspecifiques(servicio, gestioXsdActiva);
-		}else{
+		//if (gestioXsdActiva) {
+		return getXmlHelper().getArbrePerDadesEspecifiques(servicio, gestioXsdActiva);
+		/*} else {
 			return getXmlHelper().getArbrePerDadesEspecifiques(servicio);
-		}
+		}*/
 	}
 
 	public Element copiarDadesEspecifiquesRecobriment(
 			String codigoCertificado,
-			Element dadesEspecifiques) throws Exception {
+			Element dadesEspecifiques,
+			boolean gestioXsdActiva) throws Exception {
 		LOGGER.debug("Copia dades específiques per recobriment (" +
 				"codigoCertificado=" + codigoCertificado + ")");
 		if (dadesEspecifiques != null)
 			return getXmlHelper().copiarDadesEspecifiquesRecobriment(
 					getServicioDao().select(codigoCertificado),
-					dadesEspecifiques);
+					dadesEspecifiques,
+					gestioXsdActiva);
 		else
 			return null;
 	}
@@ -661,7 +668,8 @@ public class ScspHelper {
 
 	private Peticion crearPeticion(
 			String idPeticion,
-			List<Solicitud> solicituds) throws Exception {
+			List<Solicitud> solicituds,
+			boolean gestioXsdActiva) throws Exception {
 		String serveiCodi = solicituds.get(0).getServeiCodi();
 		Peticion peticion = new Peticion();
 		// Afegeix les sol·licituds
@@ -675,7 +683,8 @@ public class ScspHelper {
 							idPeticion,
 							solicituds.size(),
 							solicitud,
-							indexSolicitud++));
+							indexSolicitud++,
+							gestioXsdActiva));
 		}
 		peticion.setSolicitudes(solicitudes);
 		// Afegeix els atributs
@@ -695,7 +704,8 @@ public class ScspHelper {
 			String idPeticion,
 			int numSolicitudes,
 			Solicitud solicitud,
-			int index) throws Exception {
+			int index,
+			boolean gestioXsdActiva) throws Exception {
 		SolicitudTransmision st = new SolicitudTransmision();
 		DatosGenericos datosGenericos = new DatosGenericos();
 		Emisor beanEmisor = new Emisor();
@@ -765,7 +775,8 @@ public class ScspHelper {
 			st.setDatosEspecificos(
 					getXmlHelper().crearDadesEspecifiques(
 							getServicioDao().select(solicitud.getServeiCodi()),
-							solicitud.getDadesEspecifiquesMap()));
+							solicitud.getDadesEspecifiquesMap(),
+							gestioXsdActiva));
 		}
 		return st;
 	}

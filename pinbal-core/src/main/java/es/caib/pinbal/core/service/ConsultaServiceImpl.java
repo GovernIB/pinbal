@@ -217,7 +217,8 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 			solicituds.add(convertirEnSolicitud(consulta,procedimentServei));
 			ResultatEnviamentPeticio resultat = getScspHelper().enviarPeticionSincrona(
 					idPeticion,
-					solicituds);
+					solicituds,
+					isGestioXsdActiva(consulta.getServeiCodi()));
 			updateEstatConsulta(c, resultat, true);
 			c.updateScspSolicitudId(resultat.getIdsSolicituds()[0]);
 			/*if (EstatTipus.Tramitada.equals(c.getEstat())) {
@@ -322,7 +323,8 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 		solicituds.add(convertirEnSolicitud(consulta, procedimentServei));
 		ResultatEnviamentPeticio resultat = getScspHelper().enviarPeticionSincrona(
 				c.getScspPeticionId(),
-				solicituds);
+				solicituds,
+				isGestioXsdActiva(consulta.getServeiCodi()));
 		if (resultat.isError()) {
 			String error = "[" + resultat.getErrorCodi() + "] " + resultat.getErrorDescripcio();
 			transaccioHelper.updateErrorConsulta(consultaId, error);
@@ -408,7 +410,8 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 			List<Solicitud> solicituds = convertirEnMultiplesSolicituds(consulta,procedimentServei);
 			ResultatEnviamentPeticio resultat = getScspHelper().enviarPeticionAsincrona(
 					idPeticion,
-					solicituds);
+					solicituds,
+					isGestioXsdActiva(consulta.getServeiCodi()));
 			updateEstatConsulta(c, resultat, true);
 			Consulta saved = consultaRepository.save(c);
 			int solicitudIndex = 0;
@@ -529,13 +532,15 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 					solicitud.getExpedientId(),
 					getScspHelper().copiarDadesEspecifiquesRecobriment(
 							serveiCodi,
-							solicitud.getDadesEspecifiques()),
+							solicitud.getDadesEspecifiques(),
+							isGestioXsdActiva(serveiCodi)),
 					procedimentServei);
 			List<Solicitud> solicituds = new ArrayList<Solicitud>();
 			solicituds.add(solicitudEnviar);
 			ResultatEnviamentPeticio resultat = getScspHelper().enviarPeticionSincrona(
 					idPeticion,
-					solicituds);
+					solicituds,
+					isGestioXsdActiva(serveiCodi));
 			c.updateEstat(EstatTipus.Processant);
 			c.updateScspSolicitudId(resultat.getIdsSolicituds()[0]);
 			if (resultat.isError()) {
@@ -651,7 +656,8 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 		try {
 			copiaDadesEspecifiques = getScspHelper().copiarDadesEspecifiquesRecobriment(
 					procedimentServei.getServei(),
-					solicitud.getDadesEspecifiques());
+					solicitud.getDadesEspecifiques(),
+					isGestioXsdActiva(procedimentServei.getServei()));
 		} catch (Exception ex) {
 			LOGGER.error("Error al copiar les dades específiques de la consulta (consultaId=" + consultaId + ")", ex);
 			throw new ScspException(ex.getMessage(), ex);
@@ -680,7 +686,8 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 		solicituds.add(solicitudEnviar);
 		ResultatEnviamentPeticio resultat = getScspHelper().enviarPeticionSincrona(
 				consulta.getScspPeticionId(),
-				solicituds);
+				solicituds,
+				isGestioXsdActiva(procedimentServei.getServei()));
 		if (resultat.isError()) {
 			String error = "[" + resultat.getErrorCodi() + "] " + resultat.getErrorDescripcio();
 			transaccioHelper.updateErrorConsulta(consultaId, error);
@@ -802,13 +809,15 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 						solicitud.getExpedientId(),
 						getScspHelper().copiarDadesEspecifiquesRecobriment(
 								serveiCodi,
-								solicitud.getDadesEspecifiques()),
+								solicitud.getDadesEspecifiques(),
+								isGestioXsdActiva(serveiCodi)),
 						procedimentServei);
 				solicitudsEnviar.add(solicitudEnviar);
 			}
 			ResultatEnviamentPeticio resultat = getScspHelper().enviarPeticionSincrona(
 					idPeticion,
-					solicitudsEnviar);
+					solicitudsEnviar,
+					isGestioXsdActiva(serveiCodi));
 			updateEstatConsulta(c, resultat, true);
 			Consulta saved = consultaRepository.save(c);
 			int solicitudIndex = 0;
@@ -2351,6 +2360,11 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 		if (justificantLocks.containsKey(id)) {
 			justificantLocks.remove(id);
 		}
+	}
+
+	private boolean isGestioXsdActiva(String serveiCodi) {
+		ServeiConfig serveiConfig = serveiConfigRepository.findByServei(serveiCodi);
+		return serveiConfig != null && serveiConfig.isActivaGestioXsd();
 	}
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(ConsultaServiceImpl.class);
