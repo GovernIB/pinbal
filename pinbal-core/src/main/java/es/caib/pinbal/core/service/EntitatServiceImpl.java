@@ -126,7 +126,8 @@ public class EntitatServiceImpl implements EntitatService, ApplicationContextAwa
 			String cif,
 			Boolean activa,
 			String tipus,
-			Pageable pageable) {
+			Pageable pageable, 
+			String unitatArrel) {
 		LOGGER.debug("Consulta d'entitats segons filtre (codi=" + codi + ", nom=" + nom + ""
 				+ "cif=" + cif + " activa=" + activa + " tipus=" + tipus + ")");
 		
@@ -141,6 +142,8 @@ public class EntitatServiceImpl implements EntitatService, ApplicationContextAwa
 				activa,
 				tipus == null || tipus.length() == 0,
 				(tipus != null && tipus.length() > 0) ? Entitat.EntitatTipus.valueOf(tipus.toString()) : null,
+				unitatArrel == null || unitatArrel.length() == 0,
+				unitatArrel,
 				pageable);
 		
 		return new PageImpl<EntitatDto>(

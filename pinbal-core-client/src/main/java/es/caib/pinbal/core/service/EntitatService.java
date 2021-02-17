@@ -73,6 +73,8 @@ public interface EntitatService {
 	 *            Nom a cercar.
 	 * @param pageable
 	 *            Paràmetres per a la paginació i ordenació dels resultats.
+	 * @param unitatArrel 
+	 * 				Unitatat arrel a cercar
 	 * @return El llistat d'entitats paginat.
 	 */
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
@@ -82,7 +84,8 @@ public interface EntitatService {
 			String cif,
 			Boolean activa,
 			String tipus,
-			Pageable pageable);
+			Pageable pageable, 
+			String unitatArrel);
 	
 	/**
 	 * Consulta una entitat donat el seu id.

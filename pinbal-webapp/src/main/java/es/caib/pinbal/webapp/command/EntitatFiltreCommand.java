@@ -18,6 +18,7 @@ public class EntitatFiltreCommand {
 	private String cif;
 	private Boolean activa;
 	private String tipus;
+	private String unitatArrel;
 	
 	public String getCodi() {
 		return codi;
@@ -38,6 +39,12 @@ public class EntitatFiltreCommand {
 		this.cif = cif;
 	}
 
+	public String getUnitatArrel() {
+		return unitatArrel;
+	}
+	public void setUnitatArrel(String unitatArrel) {
+		this.unitatArrel = unitatArrel;
+	}
 	@Override
 	public String toString() {
 		return ToStringBuilder.reflectionToString(this);

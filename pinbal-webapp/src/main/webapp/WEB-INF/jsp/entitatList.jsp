@@ -137,6 +137,11 @@ $(document).ready(function() {
 			<div class="col-md-2">
 				<pbl:inputText name="cif" inline="true" placeholderKey="entitat.list.filtre.camp.cif"/>
 			</div>
+			
+			<div class="col-md-2">
+				<pbl:inputText name="unitatArrel" inline="true" placeholderKey="entitat.list.filtre.camp.unitatArrel"/>
+			</div>			
+			
 			<div class="col-md-2">
 				<c:set var="campPath" value="activa"/>
 				<spring:message var="trueValue" code="entitat.list.filtre.camp.activa.yes"/>
@@ -153,13 +158,16 @@ $(document).ready(function() {
 						 		 optionItems="${entitatTipusLlista}"
 								 emptyOption="true"/>
 			</div>
-			<div class="col-md-2">
+		</div>
+		<div class="row">	
+			<div class="col-md-2 pull-right">
 				<div class="pull-right">
 					<button id="netejar-filtre" class="btn btn-default" type="button"><spring:message code="comu.boto.netejar"/></button>
 					<button type="submit" class="btn btn-primary"><span class="fa fa-filter"></span> <spring:message code="comu.boto.filtrar"/></button>
 				</div>				
-			</div>
+			</div>		
 		</div>
+		
 	</form:form>
 	
 	<div class="pull-right">

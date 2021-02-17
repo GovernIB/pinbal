@@ -60,8 +60,9 @@ public class EntitatServiceBean implements EntitatService {
 			String cif,
 			Boolean activa,
 			String tipus,
-			Pageable pageable) {
-		return delegate.findAmbFiltrePaginat(codi, nom, cif, activa, tipus, pageable);
+			Pageable pageable, 
+			String unitatArrel) {
+		return delegate.findAmbFiltrePaginat(codi, nom, cif, activa, tipus, pageable, unitatArrel);
 	}
 
 	@Override
