@@ -59,6 +59,7 @@ public interface EntitatRepository extends JpaRepository<Entitat, Long> {
 			"  and (:esNullCif = true or lower(e.cif) like concat('%', lower(:cif), '%')) " +
 			"  and (:esNullActiva = true or e.activa = :activa) " +
 			"  and (:esNullTipus = true or e.tipus = :tipus) " +
+			"  and (:esNullUnitatArrel = true or lower(e.unitatArrel) like concat('%', lower(:unitatArrel), '%')) " +
 			"")
 	public Page<Entitat> findByFiltre(
 			@Param("esNullCodi") boolean esNullCodi,
@@ -70,6 +71,8 @@ public interface EntitatRepository extends JpaRepository<Entitat, Long> {
 			@Param("esNullActiva") boolean esNullActiva,
 			@Param("activa") Boolean activa,
 			@Param("esNullTipus") boolean esNullTipus,
-			@Param("tipus") EntitatTipus tipus,			
+			@Param("tipus") EntitatTipus tipus,	
+			@Param("esNullUnitatArrel") boolean esNullUnitatArrel,
+			@Param("unitatArrel") String unitatArrel,
 			Pageable pageable);
 }

@@ -112,7 +112,8 @@ public class EntitatController extends BaseController {
 				command.getCif(),
 				command.getActiva(),
 				command.getTipus(),					
-				serverSideRequest.toPageable());
+				serverSideRequest.toPageable(), 
+				command.getUnitatArrel());
 //		Page<EntitatDto> page = entitatService.findAll(serverSideRequest.toPageable());
 		return new ServerSideResponse<EntitatDto, Long>(serverSideRequest, page);
 	}
