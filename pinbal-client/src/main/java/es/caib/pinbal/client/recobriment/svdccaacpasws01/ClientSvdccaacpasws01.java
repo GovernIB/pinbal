@@ -22,6 +22,8 @@ import lombok.EqualsAndHashCode;
  */
 public class ClientSvdccaacpasws01 extends ClientBase {
 
+	private static final String SERVEI_CODI = "SVDCCAACPASWS01";
+
 	public ClientSvdccaacpasws01(
 			String urlBase,
 			String usuari,
@@ -40,15 +42,13 @@ public class ClientSvdccaacpasws01 extends ClientBase {
 	}
 
 	public ScspRespuesta peticionSincrona(
-			String serveiCodi,
 			List<SolicitudSvdccaacpasws01> solicituds) throws IOException {
-		return basePeticionSincrona(serveiCodi, solicituds);
+		return basePeticionSincrona(SERVEI_CODI, solicituds);
 	}
 
 	public ScspConfirmacionPeticion peticionAsincrona(
-			String serveiCodi,
 			List<SolicitudSvdccaacpasws01> solicituds) throws IOException {
-		return basePeticionAsincrona(serveiCodi, solicituds);
+		return basePeticionAsincrona(SERVEI_CODI, solicituds);
 	}
 
 	@Data

@@ -59,7 +59,7 @@ public class Svdccaacpasws01Test {
 		titular.setTipoDocumentacion(ScspTipoDocumentacion.NIF);
 		titular.setDocumentacion("12345678Z");
 		solicitud.setTitular(titular);
-		ScspRespuesta respuesta = client.peticionSincrona(
+		ScspRespuesta respuesta = client.basePeticionSincrona(
 				SERVEI_SCSP,
 				Arrays.asList(solicitud));
 		assertNotNull(respuesta);

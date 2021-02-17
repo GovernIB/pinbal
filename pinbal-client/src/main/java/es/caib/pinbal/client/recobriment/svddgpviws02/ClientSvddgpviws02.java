@@ -18,6 +18,8 @@ import java.util.List;
  */
 public class ClientSvddgpviws02 extends ClientBase {
 
+	private static final String SERVEI_CODI = "SVDDGPVIWS02";
+
 	public ClientSvddgpviws02(
 			String urlBase,
 			String usuari,
@@ -36,15 +38,13 @@ public class ClientSvddgpviws02 extends ClientBase {
 	}
 
 	public ScspRespuesta peticionSincrona(
-			String serveiCodi,
 			List<SolicitudSvddgpviws02> solicituds) throws IOException {
-		return basePeticionSincrona(serveiCodi, solicituds);
+		return basePeticionSincrona(SERVEI_CODI, solicituds);
 	}
 
 	public ScspConfirmacionPeticion peticionAsincrona(
-			String serveiCodi,
 			List<SolicitudSvddgpviws02> solicituds) throws IOException {
-		return basePeticionAsincrona(serveiCodi, solicituds);
+		return basePeticionAsincrona(SERVEI_CODI, solicituds);
 	}
 
 	@EqualsAndHashCode(callSuper = true)
