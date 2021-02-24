@@ -24,14 +24,20 @@ public interface OrganGestorRepository extends JpaRepository<OrganGestor, Long> 
 	public Page<OrganGestor> findByEntitat(Entitat entitat, Pageable paginacio);
 	public OrganGestor findByCodiAndEntitat(String codi, Entitat entitat);
 	
+	
+	
+	
 	@Query(	"from " +
 			"    OrganGestor og " +
 			"where (og.entitat = :entitat)" +
-      " and (:esNullFiltre = true or lower(og.codi) like lower('%'||:filtre||'%') or lower(og.nom) like lower('%'||:filtre||'%')) ")
+			"  and (:esNullFiltreCodi = true or lower(og.codi) like concat('%', lower(:filtreCodi), '%'))" +
+			"  and (:esNullFiltreNom = true or lower(og.nom) like concat('%', lower(:filtreNom), '%')) ")
 	public Page<OrganGestor> findByEntitatAndFiltre(
 			@Param("entitat") Entitat entitat,
-		    @Param("esNullFiltre") boolean esNullFiltre,
-		    @Param("filtre") String filtre, 
+		    @Param("esNullFiltreCodi") boolean esNullFiltreCodi,
+		    @Param("filtreCodi") String filtreCodi, 
+		    @Param("esNullFiltreNom") boolean esNullFiltreNom,
+		    @Param("filtreNom") String filtreNom, 
 			Pageable paginacio);
 	
 	@Query("from " +

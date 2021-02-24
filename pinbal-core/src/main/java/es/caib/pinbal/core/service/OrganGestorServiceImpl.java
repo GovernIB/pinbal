@@ -106,15 +106,20 @@ public class OrganGestorServiceImpl implements OrganGestorService {
 	@Transactional(readOnly = true)
 	public Page<OrganGestorDto> findPageOrgansGestorsAmbFiltrePaginat(
 			Long entitatId,
-			String filtre,
+			String filtreCodi, 
+			String filtreNom, 
 			Pageable pageable) {
 		Entitat entitat = entitatRepository.findOne(entitatId);
 
 		Page<OrganGestor> organs = organGestorRepository.findByEntitatAndFiltre(
 				entitat,
-				filtre == null,
-				filtre,
+				filtreCodi == null || filtreCodi.length() == 0,
+				filtreCodi,
+				filtreNom == null || filtreNom.length() == 0,
+				filtreNom,
 				pageable);
+		
+		
 
 		return dtoMappingHelper.pageEntities2pageDto(organs, OrganGestorDto.class, pageable);
 	}

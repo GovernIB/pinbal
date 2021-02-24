@@ -1,5 +1,5 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-<%@ taglib tagdir="/WEB-INF/tags/ripea" prefix="rip"%>
+<%@ taglib tagdir="/WEB-INF/tags/pinbal" prefix="pbl"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
@@ -24,11 +24,36 @@
 	<script src="<c:url value="/js/webutil.datatable.js"/>"></script>
 </head>
 <body>
+
 	<div class="text-right" data-toggle="botons-titol">
 		<a id="organgestor-boto-nou" class="btn btn-default" href="organgestor/sync/dir3">
 			<i class="fas fa-sync"></i> &nbsp; <spring:message code="organgestor.list.boto.actualitzar"/>
 		</a>
 	</div>
+	
+
+	<c:url value="/organgestor" var="formAction"/>
+	<form:form id="form-filtre" action="${formAction}" method="post" cssClass="well form-filtre-table" commandName="organGestorFiltreCommand">
+
+		<div class="row">		
+			<div class="col-md-3" >
+				<pbl:inputText name="codi" inline="true" placeholderKey="organgestor.list.filtre.camp.codi"/>
+			</div>						
+			<div class="col-md-4">
+				<pbl:inputText name="nom" inline="true" placeholderKey="organgestor.list.filtre.camp.nom"/>
+			</div>
+
+			<div class="col-md-2 pull-right">
+				<div class="pull-right">
+					<button id="netejar-filtre" class="btn btn-default" type="button"><spring:message code="comu.boto.netejar"/></button>
+					<button type="submit" class="btn btn-primary"><span class="fa fa-filter"></span> <spring:message code="comu.boto.filtrar"/></button>
+				</div>				
+			</div>	
+		</div>	
+	</form:form>
+
+
+
 	<table id="table-organs" 
 			class="table table-striped table-bordered" style="width:100%">
 		<thead>
@@ -50,6 +75,7 @@
 	
 	<script type="text/javascript">
 	$(document).ready(function() {
+		
 	    $('#table-organs').DataTable({
 	    	autoWidth: false,
 			processing: true,
@@ -61,6 +87,21 @@
 			ajax: "organgestor/datatable",
 			columnDefs: []
 		});
+
+		$('#netejar-filtre').click(function() {
+			$(':input', $('#form-filtre')).each (function() {
+				var type = this.type, tag = this.tagName.toLowerCase();
+				if (type == 'text' || type == 'password' || tag == 'textarea')
+					this.value = '';
+				else if (type == 'checkbox' || type == 'radio')
+					this.checked = false;
+				else if (tag == 'select')
+					this.selectedIndex = 0;
+			});
+			$('#form-filtre').submit();
+		});
+
+		
 	});
 	</script>
 </body>
