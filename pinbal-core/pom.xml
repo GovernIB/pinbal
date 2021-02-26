@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>es.caib.pinbal</groupId>
 		<artifactId>pinbal</artifactId>
-		<version>1.4.23</version>
+		<version>1.4.24</version>
 	</parent>
 	<artifactId>pinbal-core</artifactId>
 	<packaging>ejb</packaging>
