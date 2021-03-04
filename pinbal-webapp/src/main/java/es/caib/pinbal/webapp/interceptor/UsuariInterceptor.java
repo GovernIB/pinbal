@@ -31,11 +31,11 @@ public class UsuariInterceptor extends HandlerInterceptorAdapter {
 			HttpServletRequest request,
 			HttpServletResponse response,
 			Object handler) throws Exception {
-		UsuariHelper.inicialitzarUsuariActual(request, usuariService);
-		UsuariHelper.getDadesUsuariActual(request, usuariService);
-		
-		UsuariHelper.processarLocale(request,response, usuariService);
-		
+		if (!request.getServletPath().startsWith("/api")) {
+			UsuariHelper.inicialitzarUsuariActual(request, usuariService);
+			UsuariHelper.getDadesUsuariActual(request, usuariService);
+			UsuariHelper.processarLocale(request,response, usuariService);
+		}
 		return true;
 	}
 

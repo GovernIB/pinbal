@@ -29,12 +29,11 @@ import static org.junit.Assert.assertNotNull;
  */
 public class Svddgpciws02Test {
 
-	private static final String URL_BASE = "http://localhost:8080/pinbal";
-	private static final String USUARI = "user";
-	private static final String CONTRASENYA = "passwd";
-	private static final String SERVEI_SCSP = "pruebaPMI";
+	private static final String URL_BASE = "https://proves.caib.es/pinbal";
+	private static final String USUARI = "usuari";
+	private static final String CONTRASENYA = "contrasenya";
 	private static final String PETICION_SCSP_ID = "PBL0000000001292";
-	private static final boolean IS_JBOSS = false;
+	private static final boolean IS_JBOSS = true;
 
 	private ClientSvddgpciws02 client = new ClientSvddgpciws02(URL_BASE, USUARI, CONTRASENYA, !IS_JBOSS, null, null);
 
@@ -54,11 +53,9 @@ public class Svddgpciws02Test {
 		titular.setTipoDocumentacion(ScspTipoDocumentacion.NIF);
 		titular.setDocumentacion("12345678Z");
 		solicitud.setTitular(titular);
-		ScspRespuesta respuesta = client.basePeticionSincrona(
-				SERVEI_SCSP,
-				Arrays.asList(solicitud));
+		ScspRespuesta respuesta = client.peticionSincrona(Arrays.asList(solicitud));
 		assertNotNull(respuesta);
-		System.out.println("-> peticionSincrona(" + SERVEI_SCSP + ") = " + objectToJsonString(respuesta));
+		System.out.println("-> peticionSincrona = " + objectToJsonString(respuesta));
 	}
 
 	@Test
