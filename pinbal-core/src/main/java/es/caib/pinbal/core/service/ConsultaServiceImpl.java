@@ -2015,13 +2015,11 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 			ProcedimentServei procedimentServei) {
 		Solicitud solicitud = new Solicitud();
 		solicitud.setServeiCodi(consulta.getServeiCodi());
-		
 		Procediment procediment = procedimentRepository.findOne(procedimentServei.getProcediment().getId());
 		solicitud.setProcedimentCodi(
 				(procedimentServei.getProcedimentCodi() != null && !("".equalsIgnoreCase(procedimentServei.getProcedimentCodi())) ? 
 						procedimentServei.getProcedimentCodi() : 
 						procediment.getCodi()));
-		
 		solicitud.setProcedimentNom(procediment.getNom());
 		solicitud.setSolicitantIdentificacio(consulta.getEntitatCif());
 		solicitud.setSolicitantNom(consulta.getEntitatNom());
@@ -2040,9 +2038,7 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 		solicitud.setConsentiment(
 				es.caib.pinbal.scsp.Consentiment.valueOf(
 						consulta.getConsentiment().toString()));
-
 		setUnitatTramitadoraSolicitud(solicitud, procediment, consulta.getDepartamentNom());
-
 		solicitud.setExpedientId(consulta.getExpedientId());
 		solicitud.setDadesEspecifiquesMap(consulta.getDadesEspecifiques());
 		return solicitud;
@@ -2091,7 +2087,6 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 		solicitud.setConsentiment(
 				es.caib.pinbal.scsp.Consentiment.valueOf(consentiment.toString()));
 		setUnitatTramitadoraSolicitud(solicitud, procediment, departamentNom);
-		
 		solicitud.setUnitatTramitadoraCodi(unitatTramitadoraCodi);
 		solicitud.setExpedientId(expedientId);
 		solicitud.setDadesEspecifiquesElement(dadesEspecifiques);
@@ -2118,7 +2113,6 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 					es.caib.pinbal.scsp.Consentiment.valueOf(
 							consulta.getConsentiment().toString()));
 			setUnitatTramitadoraSolicitud(solicitud, procediment, consulta.getDepartamentNom());
-
 			String titularDocumentTipus = getValorCampPeticioMultiple(
 					"DatosGenericos/Titular/TipoDocumentacion",
 					consulta.getCampsPeticioMultiple(),
@@ -2175,14 +2169,11 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 		ServeiConfig serveiConfig = serveiConfigRepository.findByServei(solicitud.getServeiCodi());
 		if (serveiConfig.isPinbalUnitatDir3FromEntitat()) {
 			solicitud.setUnitatTramitadoraCodi(procediment.getEntitat().getUnitatArrel());
-
 		} else if(serveiConfig.getPinbalUnitatDir3() != null && !serveiConfig.getPinbalUnitatDir3().isEmpty()) {
 			solicitud.setUnitatTramitadoraCodi(serveiConfig.getPinbalUnitatDir3());
-
-		}else if (procediment.getOrganGestor() != null) {
-			solicitud.setUnitatTramitadora(procediment.getOrganGestor().getCodi());
-
-		}else {
+		} else if (procediment.getOrganGestor() != null) {
+			solicitud.setUnitatTramitadoraCodi(procediment.getOrganGestor().getCodi());
+		} else {
 			solicitud.setUnitatTramitadora(defaultUnitatTramitadora);
 		}
 	}
