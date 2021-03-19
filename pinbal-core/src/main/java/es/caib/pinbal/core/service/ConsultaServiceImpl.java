@@ -2173,9 +2173,8 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 			solicitud.setUnitatTramitadoraCodi(serveiConfig.getPinbalUnitatDir3());
 		} else if (procediment.getOrganGestor() != null) {
 			solicitud.setUnitatTramitadoraCodi(procediment.getOrganGestor().getCodi());
-		} else {
-			solicitud.setUnitatTramitadora(defaultUnitatTramitadora);
 		}
+		solicitud.setUnitatTramitadora(defaultUnitatTramitadora);
 	}
 		
 
