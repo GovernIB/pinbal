@@ -122,16 +122,19 @@ public class EntitatHelper {
 	}
 
 	public static boolean isRepresentantEntitatActual(HttpServletRequest request) {
-		return (Boolean)request.getSession().getAttribute(
+		Boolean isRepresentant = (Boolean)request.getSession().getAttribute(
 				SESSION_ATTRIBUTE_ENTITAT_ACTUAL_REPRESENTANT);
+		return (isRepresentant != null) ? isRepresentant : false;
 	}
 	public static boolean isDelegatEntitatActual(HttpServletRequest request) {
-		return (Boolean)request.getSession().getAttribute(
+		Boolean isDelegat = (Boolean)request.getSession().getAttribute(
 				SESSION_ATTRIBUTE_ENTITAT_ACTUAL_DELEGAT);
+		return (isDelegat != null) ? isDelegat : false;
 	}
 	public static boolean isAuditorEntitatActual(HttpServletRequest request) {
-		return (Boolean)request.getSession().getAttribute(
+		Boolean isAuditor = (Boolean)request.getSession().getAttribute(
 				SESSION_ATTRIBUTE_ENTITAT_ACTUAL_AUDITOR);
+		return (isAuditor != null) ? isAuditor : false;
 	}
 
 

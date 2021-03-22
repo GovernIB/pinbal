@@ -31,19 +31,18 @@ public class ServeisInterceptor extends HandlerInterceptorAdapter {
             HttpServletRequest request,
             HttpServletResponse response,
             Object handler) throws Exception {
-
-        EntitatDto entitatActual = EntitatHelper.getEntitatActual(request);
-
-        List<ServeiDto> serveis = null;
-        if (request.getUserPrincipal() != null && RolHelper.isRolActualDelegat(request)) { // Si hi ha algún usuari autenticat
-            String usuari = request.getUserPrincipal().getName();
-            LOGGER.debug("Consulta del llistat de serveis pel delegat (usuari=" + usuari + ")");
-            serveis = serveiService.findPermesosAmbProcedimentPerDelegat(entitatActual.getId(), null);
-
-        }
-        request.setAttribute(
-                ServeiHelper.REQUEST_ATTRIBUTE_SERVEIS,
-                serveis);
+    	if (!request.getServletPath().startsWith("/api")) {
+	        EntitatDto entitatActual = EntitatHelper.getEntitatActual(request);
+	        List<ServeiDto> serveis = null;
+	        if (request.getUserPrincipal() != null && RolHelper.isRolActualDelegat(request)) { // Si hi ha algún usuari autenticat
+	            String usuari = request.getUserPrincipal().getName();
+	            LOGGER.debug("Consulta del llistat de serveis pel delegat (usuari=" + usuari + ")");
+	            serveis = serveiService.findPermesosAmbProcedimentPerDelegat(entitatActual.getId(), null);
+	        }
+	        request.setAttribute(
+	                ServeiHelper.REQUEST_ATTRIBUTE_SERVEIS,
+	                serveis);
+    	}
         return true;
     }
 
