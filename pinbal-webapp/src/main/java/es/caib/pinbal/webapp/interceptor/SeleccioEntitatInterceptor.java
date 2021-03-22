@@ -26,7 +26,7 @@ public class SeleccioEntitatInterceptor extends HandlerInterceptorAdapter {
 			HttpServletRequest request,
 			HttpServletResponse response,
 			Object handler) throws Exception {
-		if (!ContingutEstaticHelper.isContingutEstatic(request)) {
+		if (!ContingutEstaticHelper.isContingutEstatic(request) && !request.getServletPath().startsWith("/api")) {
 			EntitatHelper.getEntitats(
 					request,
 					entitatService,

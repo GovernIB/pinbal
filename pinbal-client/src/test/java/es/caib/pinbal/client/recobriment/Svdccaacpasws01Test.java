@@ -34,9 +34,9 @@ import es.caib.pinbal.client.recobriment.svdccaacpasws01.ClientSvdccaacpasws01.S
  */
 public class Svdccaacpasws01Test {
 
-	private static final String URL_BASE = "https://proves.caib.es/pinbal";
-	private static final String USUARI = "usuari";
-	private static final String CONTRASENYA = "contrasenya";
+	private static final String URL_BASE = "http://localhost:8180/pinbal";
+	private static final String USUARI = "pblws";
+	private static final String CONTRASENYA = "pblws";
 	private static final String PETICION_SCSP_ID = "PBL0000000001292";
 	private static final boolean IS_JBOSS = true;
 
@@ -46,7 +46,7 @@ public class Svdccaacpasws01Test {
 	public void peticionSincrona() throws UniformInterfaceException, ClientHandlerException, IOException {
 		SolicitudSvdccaacpasws01 solicitud = new SolicitudSvdccaacpasws01();
 		solicitud.setIdentificadorSolicitante("B07167448");
-		solicitud.setCodigoProcedimiento("ProvaConcepte");
+		solicitud.setCodigoProcedimiento("CODSVDR_GBA_20121107");
 		solicitud.setUnidadTramitadora("Departament de test");
 		solicitud.setFinalidad("Test peticionSincrona");
 		solicitud.setConsentimiento(ScspConsentimiento.Si);
@@ -63,14 +63,14 @@ public class Svdccaacpasws01Test {
 		System.out.println("-> peticionSincrona = " + objectToJsonString(respuesta));
 	}
 
-	@Test
+	//@Test
 	public void getRespuesta() throws IOException {
 		ScspRespuesta respuesta = client.getRespuesta(PETICION_SCSP_ID);
 		assertNotNull(respuesta);
 		System.out.println("-> getRespuesta(" + PETICION_SCSP_ID + ") = " + objectToJsonString(respuesta));
 	}
 
-	@Test
+	//@Test
 	public void getJustificante() throws IOException {
 		ScspJustificante justificante = client.getJustificante(PETICION_SCSP_ID);
 		assertNotNull(justificante);
