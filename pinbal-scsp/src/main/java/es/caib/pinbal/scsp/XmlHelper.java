@@ -98,7 +98,7 @@ public class XmlHelper {
 	
 	public Tree<DadesEspecifiquesNode> getArbrePerDadesEspecifiques(
 			final Servicio servicio,
-			boolean gestioXsdActiva) throws Exception {
+			final boolean gestioXsdActiva) throws Exception {
 		Tree<DadesEspecifiquesNode> tree = new Tree<DadesEspecifiquesNode>();
 		InputStream is = getInputStreamXsdDadesEspecifiques(servicio, gestioXsdActiva);
 		/*InputStream is;
@@ -120,7 +120,8 @@ public class XmlHelper {
 								return new InputSource(
 										getScspResourceInputStream(
 												servicio,
-												schemaLocation));
+												schemaLocation,
+												gestioXsdActiva));
 							} catch (Exception ex) {
 								return null;
 							}
@@ -138,6 +139,40 @@ public class XmlHelper {
 					datosEspecificosElement);
 		}
 		return tree;
+	}
+	
+	public boolean hasCodigoUnidadTramitadora(
+			final Servicio servicio,
+			final boolean gestioXsdActiva) throws Exception {
+		InputStream is = getScspResourceInputStream(
+				servicio,
+				"peticion.xsd",
+				gestioXsdActiva);
+		if (is != null) {
+			XmlSchemaCollection schemaCol = new XmlSchemaCollection();
+			schemaCol.setSchemaResolver(
+					new URIResolver() {
+						@Override
+						public InputSource resolveEntity(
+								String targetNamespace,
+								String schemaLocation,
+								String baseUri) {
+							try {
+								return new InputSource(
+										getScspResourceInputStream(
+												servicio,
+												schemaLocation,
+												gestioXsdActiva));
+							} catch (Exception ex) {
+								return null;
+							}
+						}
+					});
+			XmlSchema schema = schemaCol.read(new StreamSource(is), null);
+			XmlSchemaElement codigoUnidadTramitadoraElement = schema.getElementByName("CodigoUnidadTramitadora");
+			return codigoUnidadTramitadoraElement != null;
+		}
+		return false;
 	}
 
 	public Map<String, Object> getDadesEspecifiquesXml(
