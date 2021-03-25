@@ -725,13 +725,16 @@ public class ScspHelper {
 		funcionario.setNombreCompletoFuncionario(solicitud.getFuncionariNom());
 		funcionario.setNifFuncionario(solicitud.getFuncionariNif());
 		solicitante.setFuncionario(funcionario);
-		
 		Procedimiento procedimiento = new Procedimiento();
 		procedimiento.setCodProcedimiento(solicitud.getProcedimentCodi());
 		procedimiento.setNombreProcedimiento(solicitud.getProcedimentNom());
 		solicitante.setProcedimiento(procedimiento);
 		solicitante.setUnidadTramitadora(solicitud.getUnitatTramitadora());
-		solicitante.setCodigoUnidadTramitadora(solicitud.getUnitatTramitadoraCodi());
+		if (getXmlHelper().hasCodigoUnidadTramitadora(
+				getServicioDao().select(solicitud.getServeiCodi()),
+				gestioXsdActiva)) {
+			solicitante.setCodigoUnidadTramitadora(solicitud.getUnitatTramitadoraCodi());
+		}
 		if (solicitud.getExpedientId() != null && solicitud.getExpedientId().length() > 0)
 			solicitante.setIdExpediente(solicitud.getExpedientId());
 		datosGenericos.setTitular(new Titular());
