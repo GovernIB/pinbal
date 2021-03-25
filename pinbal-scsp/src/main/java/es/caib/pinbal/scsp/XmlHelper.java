@@ -58,55 +58,12 @@ import es.scsp.common.domain.core.Servicio;
  * @author Limit Tecnologies <limit@limit.es>
  */
 public class XmlHelper {
-
-	/*public Tree<DadesEspecifiquesNode> getArbrePerDadesEspecifiques(
-			final Servicio servicio) throws Exception {
-		Tree<DadesEspecifiquesNode> tree = new Tree<DadesEspecifiquesNode>();
-		InputStream is = getInputStreamXsdDadesEspecifiques(servicio);
-		if (is != null) {
-			XmlSchemaCollection schemaCol = new XmlSchemaCollection();
-			schemaCol.setSchemaResolver(
-					new URIResolver() {
-						@Override
-						public InputSource resolveEntity(
-								String targetNamespace,
-								String schemaLocation,
-								String baseUri) {
-							try {
-								return new InputSource(
-										getScspResourceInputStream(
-												servicio,
-												schemaLocation));
-							} catch (Exception ex) {
-								return null;
-							}
-						}
-					});
-			XmlSchema schema = schemaCol.read(new StreamSource(is), null);
-			XmlSchemaElement datosEspecificosElement = schema.getElementByName("DatosEspecificos");
-			List<String> path = new ArrayList<String>();
-			afegirElement(
-					servicio,
-					tree,
-					null,
-					path,
-					schema,
-					datosEspecificosElement);
-		}
-		return tree;
-	}*/
 	
 	public Tree<DadesEspecifiquesNode> getArbrePerDadesEspecifiques(
 			final Servicio servicio,
 			final boolean gestioXsdActiva) throws Exception {
 		Tree<DadesEspecifiquesNode> tree = new Tree<DadesEspecifiquesNode>();
 		InputStream is = getInputStreamXsdDadesEspecifiques(servicio, gestioXsdActiva);
-		/*InputStream is;
-		if (gestioXsdActiva) {
-			is = getInputStreamXsdDadesEspecifiques(servicio, gestioXsdActiva);
-		} else {
-			is = getInputStreamXsdDadesEspecifiques(servicio);
-		}*/
 		if (is != null) {
 			XmlSchemaCollection schemaCol = new XmlSchemaCollection();
 			schemaCol.setSchemaResolver(
@@ -457,10 +414,11 @@ public class XmlHelper {
 			}
 		}
 		path.remove(path.size() - 1);
-		if (pare == null)
+		if (pare == null) {
 			tree.setRootElement(node);
-		else
+		} else {
 			pare.addChild(node);
+		}
 	}
 
 	private void recorrerDocument(
