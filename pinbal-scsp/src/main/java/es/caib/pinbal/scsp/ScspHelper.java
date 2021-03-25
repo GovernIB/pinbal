@@ -734,6 +734,8 @@ public class ScspHelper {
 				getServicioDao().select(solicitud.getServeiCodi()),
 				gestioXsdActiva)) {
 			solicitante.setCodigoUnidadTramitadora(solicitud.getUnitatTramitadoraCodi());
+		} else {
+			solicitante.setCodigoUnidadTramitadora(null);
 		}
 		if (solicitud.getExpedientId() != null && solicitud.getExpedientId().length() > 0)
 			solicitante.setIdExpediente(solicitud.getExpedientId());

@@ -522,7 +522,7 @@ public class XmlHelper {
 				String esquema;
 				InputStream is;
 				if (gestioXsdActiva) {
-					esquema = getPathPerFitxerXsdDadesEspecifiques(servicio);
+					esquema = getPathPerFitxerXsd(servicio, arxiuNom);
 					File fitxer = new File(esquema);
 					is = FileUtils.openInputStream(fitxer);
 				} else {
@@ -547,12 +547,13 @@ public class XmlHelper {
 		}
 	}
 
-	private String getPathPerFitxerXsdDadesEspecifiques(
-			Servicio servei) {
+	private String getPathPerFitxerXsd(
+			Servicio servei,
+			String arxiuNom) {
 		StringBuilder path = new StringBuilder();
 		path.append(getPathPerServei(servei.getCodCertificado()));
 		path.append(File.separator);
-		path.append("datos-especificos.xsd");
+		path.append(arxiuNom);
 		return path.toString();
 	}
 
