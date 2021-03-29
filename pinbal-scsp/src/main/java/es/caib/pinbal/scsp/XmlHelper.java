@@ -161,7 +161,7 @@ public class XmlHelper {
 		Element datosEspecificos = doc.createElement("DatosEspecificos");
 		datosEspecificos.setAttribute(
 				"xmlns",
-				getXmlnsPerDadesEspecifiques(servicio));
+				getXmlnsPerDadesEspecifiques(servicio, gestioXsdActiva));
 		if (dadesEspecifiques != null) {
 			for (Node<DadesEspecifiquesNode> node: getArbrePerDadesEspecifiques(servicio, gestioXsdActiva).toList()) {
 				String path = node.getData().getPath().substring(1);
@@ -486,33 +486,6 @@ public class XmlHelper {
 
 	private InputStream getScspResourceInputStream(
 			Servicio servicio,
-			String arxiuNom) throws Exception {
-		String versionEsquema = servicio.getVersionEsquema();
-		if (versionEsquema != null) {
-			int index = versionEsquema.lastIndexOf("V");
-			if (index != -1) {
-				String esquema = "/schemas/" + servicio.getCodCertificado() + "v" + versionEsquema.substring(index + 1) + "/" + arxiuNom;
-				InputStream is = getClass().getResourceAsStream(esquema);
-				if (is == null) {
-					esquema = "/schemas/" + servicio.getCodCertificado() + "/" + arxiuNom;
-					is = getClass().getResourceAsStream(esquema);
-				}
-				LOGGER.debug("Obtenint fitxer XSD per a servei SCSP (" +
-						"servicio=" + servicio.getCodCertificado() + ", " +
-						"versionEsquema=" + servicio.getVersionEsquema() + ", " +
-						"arxiuNom=" + arxiuNom + ", " +
-						"recursClassPath=" + esquema + ")");
-				return is;
-			} else {
-				throw new Exception("No s'ha pogut obtenir l'esquema pel servicio (codi=" + servicio.getCodCertificado() + ")");
-			}
-		} else {
-			throw new Exception("No s'ha pogut obtenir la versió de l'esquema pel servicio (codi=" + servicio.getCodCertificado() + ")");
-		}
-	}
-
-	private InputStream getScspResourceInputStream(
-			Servicio servicio,
 			String arxiuNom,
 			boolean gestioXsdActiva) throws Exception {
 		String versionEsquema = servicio.getVersionEsquema();
@@ -563,8 +536,9 @@ public class XmlHelper {
 	}
 
 	private String getXmlnsPerDadesEspecifiques(
-			Servicio servicio) throws Exception {
-		InputStream is = getInputStreamXsdDadesEspecifiques(servicio);
+			Servicio servicio,
+			boolean gestioXsdActiva) throws Exception {
+		InputStream is = getInputStreamXsdDadesEspecifiques(servicio, gestioXsdActiva);
 		if (is == null)
 			return null;
 		XmlSchemaCollection schemaCol = new XmlSchemaCollection();
@@ -574,29 +548,6 @@ public class XmlHelper {
 		XmlSchema schema = schemaCol.read(new StreamSource(is), null);
 		XmlSchemaElement datosEspecificosElement = schema.getElementByName("DatosEspecificos");
 		return datosEspecificosElement.getQName().getNamespaceURI();
-	}
-
-	private InputStream getInputStreamXsdDadesEspecifiques(
-			Servicio servicio) throws Exception {
-		InputStream is = getScspResourceInputStream(
-				servicio,
-				"datos-especificos.xsd");
-		if (is == null) {
-			is = getScspResourceInputStream(
-					servicio,
-					"datos-especificos-entrada.xsd"); // ADWSRDT1
-		}
-		if (is == null) {
-			is = getScspResourceInputStream(
-					servicio,
-					"datos-especificos-ent.xsd"); // VDRSFWS02
-		}
-		if (is == null) {
-			is = getScspResourceInputStream(
-					servicio,
-					"peticion_datos-especificos.xsd"); // AEATCCC1
-		}
-		return is;
 	}
 
 	private InputStream getInputStreamXsdDadesEspecifiques(
