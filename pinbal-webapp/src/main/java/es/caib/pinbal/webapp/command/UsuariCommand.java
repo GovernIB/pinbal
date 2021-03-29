@@ -1,7 +1,7 @@
 /**
  * 
  */
-package es.caib.distribucio.war.command;
+package es.caib.pinbal.webapp.command;
 
 import java.io.Serializable;
 
