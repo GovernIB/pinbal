@@ -1713,6 +1713,7 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 	private InformeGeneralEstatDto toInformeGeneralEstatDto(ProcedimentServei servei, List<Object[]> consultes) {
 		InformeGeneralEstatDto dto = new InformeGeneralEstatDto();
 		Servicio servicio = getScspHelper().getServicio(servei.getServei());
+		dto.setEntitatCodi(servei.getProcediment().getEntitat().getCodi());
 		dto.setEntitatNom(servei.getProcediment().getEntitat().getNom());
 		dto.setEntitatCif(servei.getProcediment().getEntitat().getCif());
 		dto.setDepartament(servei.getProcediment().getDepartament());

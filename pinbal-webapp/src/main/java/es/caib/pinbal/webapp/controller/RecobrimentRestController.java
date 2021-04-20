@@ -26,7 +26,7 @@ import es.caib.pinbal.core.service.RecobrimentService;
 import es.caib.pinbal.core.service.exception.RecobrimentScspException;
 
 /**
- * Controlador per a proves.
+ * Controlador pel servei REST de recobriment.
  * 
  * @author Limit Tecnologies <limit@limit.es>
  */

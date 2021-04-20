@@ -32,6 +32,9 @@
 		<sec:intercept-url pattern="/estadistiques" access="ROLE_ADMIN,ROLE_REPRES"/>
 		<sec:intercept-url pattern="/estadistiques/**" access="ROLE_ADMIN,ROLE_REPRES"/>
 		<sec:intercept-url pattern="/api/recobriment/**" access="ROLE_WS"/>
+		<sec:intercept-url pattern="/api/interna/reports/**" access="PBL_REPORT"/>
+		<sec:intercept-url pattern="/api/interna/stats/**" access="PBL_REPORT"/>
+		<sec:intercept-url pattern="/api/externa/opendata" access="PBL_REPORT"/>
 		<sec:intercept-url pattern="/**" access="ROLE_ADMIN,ROLE_REPRES,ROLE_DELEG,ROLE_AUDIT,ROLE_SUPERAUD,ROLE_WS"/>
 		<sec:custom-filter position="PRE_AUTH_FILTER" ref="preauthFilter"/>
 		<sec:anonymous/>
@@ -61,6 +64,7 @@
 								<value>PBL_AUDIT</value>
 								<value>PBL_SUPERAUD</value>
 								<value>PBL_WS</value>
+								<value>PBL_REPORT</value>
 								<value>tothom</value>
 							</set>
 						</property>
@@ -75,6 +79,7 @@
 								<entry key="PBL_AUDIT" value="ROLE_AUDIT"/>
 								<entry key="PBL_SUPERAUD" value="ROLE_SUPERAUD"/>
 								<entry key="PBL_WS" value="ROLE_WS"/>
+								<entry key="PBL_REPORT" value="ROLE_REPORT"/>
 								<entry key="tothom" value="ROLE_DELEG"/>
 							</map>
 						</property>
