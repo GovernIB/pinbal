@@ -21,15 +21,26 @@ import es.caib.pinbal.client.comu.Departament;
 import es.caib.pinbal.client.comu.Entitat;
 import es.caib.pinbal.client.comu.Procediment;
 import es.caib.pinbal.client.comu.Servei;
+import es.caib.pinbal.client.comu.Servei.ConsultesOkError;
 import es.caib.pinbal.client.comu.Usuari;
+import es.caib.pinbal.core.dto.ConsultaDto.EstatTipus;
+import es.caib.pinbal.core.dto.EntitatDto;
+import es.caib.pinbal.core.dto.EstadisticaDto;
+import es.caib.pinbal.core.dto.EstadistiquesFiltreDto;
+import es.caib.pinbal.core.dto.EstadistiquesFiltreDto.EstadistiquesAgrupacioDto;
 import es.caib.pinbal.core.dto.InformeGeneralEstatDto;
 import es.caib.pinbal.core.dto.InformeProcedimentDto;
 import es.caib.pinbal.core.dto.InformeUsuariDto;
+import es.caib.pinbal.core.dto.ProcedimentDto;
 import es.caib.pinbal.core.dto.ServeiDto;
 import es.caib.pinbal.core.service.ConsultaService;
+import es.caib.pinbal.core.service.EntitatService;
 import es.caib.pinbal.core.service.ProcedimentService;
 import es.caib.pinbal.core.service.ServeiService;
 import es.caib.pinbal.core.service.UsuariService;
+import es.caib.pinbal.core.service.exception.EntitatNotFoundException;
+import es.caib.pinbal.core.service.exception.ProcedimentNotFoundException;
+import es.caib.pinbal.webapp.command.EstadistiquesFiltreCommand;
 
 /**
  * Controlador pel servei REST de consulta d'informes.
@@ -37,20 +48,22 @@ import es.caib.pinbal.core.service.UsuariService;
  * @author Limit Tecnologies <limit@limit.es>
  */
 @Controller
-@RequestMapping("/api/interna/reports")
+@RequestMapping("/api/interna")
 public class ExplotacioDadesInternesRestController extends BaseController {
 
 	@Autowired
+	private EntitatService entitatService;
+	@Autowired
 	private ProcedimentService procedimentService;
 	@Autowired
-	private UsuariService usuariService;
-	@Autowired
 	private ServeiService serveiService;
+	@Autowired
+	private UsuariService usuariService;
 	@Autowired
 	private ConsultaService consultaService;
 
 	@RequestMapping(
-			value= "/procediments",
+			value= "/reports/procediments",
 			method = RequestMethod.POST,
 			produces = "application/json")
 	public ResponseEntity<List<Entitat>> procediments(
@@ -94,7 +107,7 @@ public class ExplotacioDadesInternesRestController extends BaseController {
 	}
 
 	@RequestMapping(
-			value= "/usuaris",
+			value= "/reports/usuaris",
 			method = RequestMethod.POST,
 			produces = "application/json")
 	public ResponseEntity<List<Entitat>> usuaris(
@@ -138,7 +151,7 @@ public class ExplotacioDadesInternesRestController extends BaseController {
 	}
 
 	@RequestMapping(
-			value= "/serveis",
+			value= "/reports/serveis",
 			method = RequestMethod.POST,
 			produces = "application/json")
 	public ResponseEntity<List<Servei>> serveis(
@@ -157,7 +170,7 @@ public class ExplotacioDadesInternesRestController extends BaseController {
 	}
 
 	@RequestMapping(
-			value= "/general",
+			value= "/reports/general",
 			method = RequestMethod.POST,
 			produces = "application/json")
 	public ResponseEntity<List<Entitat>> general(
@@ -212,6 +225,120 @@ public class ExplotacioDadesInternesRestController extends BaseController {
 			}
 		}
 		return new ResponseEntity<List<Entitat>>(entitats, HttpStatus.OK);
+	}
+
+	@RequestMapping(
+			value= "/stats/consultes",
+			method = RequestMethod.POST,
+			produces = "application/json")
+	public ResponseEntity<List<Procediment>> consultes(
+			HttpServletRequest request,
+			@RequestParam final String entitatCodi,
+			@RequestParam(required = false) final String procedimentCodi,
+			@RequestParam(required = false) final String serveiCodi,
+			@RequestParam(required = false) final EstatTipus estat,
+			@RequestParam(required = false) final Date dataInici,
+			@RequestParam(required = false) final Date dataFi) throws EntitatNotFoundException, ProcedimentNotFoundException {
+		// Estadística de consultes
+		List<EstadisticaDto> estadistiques = consultaService.findEstadistiquesByFiltre(
+				getEstadistiquesFiltre(
+						entitatCodi,
+						procedimentCodi,
+						serveiCodi,
+						estat,
+						null,
+						dataInici,
+						dataFi));
+		List<Procediment> estadisticaProcediments = new ArrayList<Procediment>();
+		Procediment procedimentActual = null;
+		Long procedimentActualId = null;
+		for (EstadisticaDto estadistica: estadistiques) {
+			if (procedimentActual == null || !procedimentActualId.equals(estadistica.getProcediment().getId())) {
+				procedimentActualId = estadistica.getProcediment().getId();
+				procedimentActual = new Procediment();
+				procedimentActual.setCodi(estadistica.getProcediment().getCodi());
+				procedimentActual.setNom(estadistica.getProcediment().getNom());
+				estadisticaProcediments.add(procedimentActual);
+			}
+			Servei servei = new Servei();
+			servei.setCodi(estadistica.getServeiCodi());
+			servei.setNom(estadistica.getServeiNom());
+			servei.setConsultesWeb(new ConsultesOkError(
+					estadistica.getNumWebUIOk(),
+					estadistica.getNumWebUIError()));
+			servei.setConsultesRecobriment(new ConsultesOkError(
+					estadistica.getNumRecobrimentOk(),
+					estadistica.getNumRecobrimentError()));
+			servei.setConsultesTotal(new ConsultesOkError(
+					estadistica.getNumWebUIOk() + estadistica.getNumRecobrimentOk(),
+					estadistica.getNumWebUIError() + estadistica.getNumRecobrimentError()));
+			if (estadistica.isConteSumatori()) {
+				procedimentActual.setConsultesWeb(new ConsultesOkError(
+						estadistica.getSumatoriNumWebUIOk(),
+						estadistica.getSumatoriNumWebUIError()));
+				procedimentActual.setConsultesRecobriment(new ConsultesOkError(
+						estadistica.getSumatoriNumRecobrimentOk(),
+						estadistica.getSumatoriNumRecobrimentError()));
+				procedimentActual.setConsultesTotal(new ConsultesOkError(
+						estadistica.getSumatoriNumWebUIOk() + estadistica.getSumatoriNumRecobrimentOk(),
+						estadistica.getSumatoriNumWebUIError() + estadistica.getSumatoriNumRecobrimentError()));
+			}
+			if (procedimentActual.getServeis() == null) {
+				procedimentActual.setServeis(new ArrayList<Servei>());
+			}
+			procedimentActual.getServeis().add(servei);
+		}
+		return new ResponseEntity<List<Procediment>>(estadisticaProcediments, HttpStatus.OK);
+	}
+
+	@RequestMapping(
+			value= "/stats/carrega",
+			method = RequestMethod.POST,
+			produces = "application/json")
+	public ResponseEntity<List<Servei>> carrega(
+			HttpServletRequest request) {
+		// Informe de seveis
+		List<ServeiDto> informeServeis = serveiService.findActius();
+		List<Servei> serveis = new ArrayList<Servei>();
+		for (ServeiDto informeServei: informeServeis) {
+			Servei servei = new Servei();
+			servei.setCodi(informeServei.getCodi());
+			servei.setNom(informeServei.getDescripcio());
+			servei.setEmisor(informeServei.getScspEmisorNom());
+			serveis.add(servei);
+		}
+		return new ResponseEntity<List<Servei>>(serveis, HttpStatus.OK);
+	}
+
+	private EstadistiquesFiltreDto getEstadistiquesFiltre(
+			String entitatCodi,
+			String procedimentCodi,
+			String serveiCodi,
+			EstatTipus estat,
+			EstadistiquesAgrupacioDto agrupacio,
+			Date dataInici,
+			Date dataFi) throws EntitatNotFoundException, ProcedimentNotFoundException {
+		EstadistiquesFiltreCommand filtre = new EstadistiquesFiltreCommand();
+		EntitatDto entitat = entitatService.findByCodi(entitatCodi);
+		if (entitat != null) {
+			filtre.setEntitatId(entitat.getId());
+		} else {
+			throw new EntitatNotFoundException();
+		}
+		ProcedimentDto procediment = procedimentService.findAmbEntitatICodi(
+				entitat.getId(),
+				procedimentCodi);
+		if (procediment != null) {
+			filtre.setProcediment(procediment.getId());
+		} else {
+			throw new ProcedimentNotFoundException();
+		}
+		filtre.setServei(serveiCodi);
+		filtre.setEstat(estat);
+		filtre.setDataInici(dataInici);
+		filtre.setDataFi(dataFi);
+		filtre.setAgrupacio(agrupacio != null ? agrupacio : EstadistiquesAgrupacioDto.PROCEDIMENT_SERVEI);
+		return EstadistiquesFiltreCommand.asDto(filtre);
 	}
 
 }

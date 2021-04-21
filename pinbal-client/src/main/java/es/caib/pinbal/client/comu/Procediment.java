@@ -5,6 +5,8 @@ package es.caib.pinbal.client.comu;
 
 import java.util.List;
 
+import es.caib.pinbal.client.comu.Servei.ConsultesOkError;
+
 /**
  * Informació d'un procediment associat a un informe.
  * 
@@ -15,9 +17,12 @@ public class Procediment {
 	private String codi;
 	private String nom;
 	private boolean actiu;
-	private List<Servei> serveis;
+	private ConsultesOkError consultesWeb;
+	private ConsultesOkError consultesRecobriment;
+	private ConsultesOkError consultesTotal;
 	private TotalAcumulat totalWeb;
 	private TotalAcumulat totalRecobriment;
+	private List<Servei> serveis;
 	
 	public String getCodi() {
 		return codi;
@@ -37,11 +42,23 @@ public class Procediment {
 	public void setActiu(boolean actiu) {
 		this.actiu = actiu;
 	}
-	public List<Servei> getServeis() {
-		return serveis;
+	public ConsultesOkError getConsultesWeb() {
+		return consultesWeb;
 	}
-	public void setServeis(List<Servei> serveis) {
-		this.serveis = serveis;
+	public void setConsultesWeb(ConsultesOkError consultesWeb) {
+		this.consultesWeb = consultesWeb;
+	}
+	public ConsultesOkError getConsultesRecobriment() {
+		return consultesRecobriment;
+	}
+	public void setConsultesRecobriment(ConsultesOkError consultesRecobriment) {
+		this.consultesRecobriment = consultesRecobriment;
+	}
+	public ConsultesOkError getConsultesTotal() {
+		return consultesTotal;
+	}
+	public void setConsultesTotal(ConsultesOkError consultesTotal) {
+		this.consultesTotal = consultesTotal;
 	}
 	public TotalAcumulat getTotalWeb() {
 		return totalWeb;
@@ -54,6 +71,12 @@ public class Procediment {
 	}
 	public void setTotalRecobriment(TotalAcumulat totalRecobriment) {
 		this.totalRecobriment = totalRecobriment;
+	}
+	public List<Servei> getServeis() {
+		return serveis;
+	}
+	public void setServeis(List<Servei> serveis) {
+		this.serveis = serveis;
 	}
 
 }
