@@ -32,10 +32,10 @@
 		<sec:intercept-url pattern="/estadistiques" access="ROLE_ADMIN,ROLE_REPRES"/>
 		<sec:intercept-url pattern="/estadistiques/**" access="ROLE_ADMIN,ROLE_REPRES"/>
 		<sec:intercept-url pattern="/api/recobriment/**" access="ROLE_WS"/>
-		<sec:intercept-url pattern="/api/interna/reports/**" access="PBL_REPORT"/>
-		<sec:intercept-url pattern="/api/interna/stats/**" access="PBL_REPORT"/>
-		<sec:intercept-url pattern="/api/externa/opendata" access="PBL_REPORT"/>
-		<sec:intercept-url pattern="/**" access="ROLE_ADMIN,ROLE_REPRES,ROLE_DELEG,ROLE_AUDIT,ROLE_SUPERAUD,ROLE_WS"/>
+		<sec:intercept-url pattern="/api/interna/reports/**" access="ROLE_REPORT"/>
+		<sec:intercept-url pattern="/api/interna/stats/**" access="ROLE_REPORT"/>
+		<sec:intercept-url pattern="/api/externa/opendata" access="ROLE_REPORT"/>
+		<sec:intercept-url pattern="/**" access="ROLE_ADMIN,ROLE_REPRES,ROLE_DELEG,ROLE_AUDIT,ROLE_SUPERAUD,ROLE_WS,ROLE_REPORT"/>
 		<sec:custom-filter position="PRE_AUTH_FILTER" ref="preauthFilter"/>
 		<sec:anonymous/>
 		<sec:session-management session-fixation-protection="none"/>

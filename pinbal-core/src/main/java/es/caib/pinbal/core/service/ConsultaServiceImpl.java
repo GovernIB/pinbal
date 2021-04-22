@@ -9,6 +9,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -20,6 +21,7 @@ import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
+import org.apache.commons.lang.time.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
@@ -49,6 +51,8 @@ import com.lowagie.text.Document;
 import com.lowagie.text.pdf.PdfCopy;
 import com.lowagie.text.pdf.PdfReader;
 
+import es.caib.pinbal.core.dto.CarregaDto;
+import es.caib.pinbal.core.dto.CarregaDto.CarregaDetailedCountDto;
 import es.caib.pinbal.core.dto.ConsultaDto;
 import es.caib.pinbal.core.dto.ConsultaDto.Consentiment;
 import es.caib.pinbal.core.dto.ConsultaDto.DocumentTipus;
@@ -157,8 +161,11 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 	private ScspHelper scspHelper;
 
 	private Map<Long, Object> justificantLocks = new HashMap<Long, Object>();
-
-
+	private List<CarregaDto> carreguesAny;
+	private List<CarregaDto> carreguesMes;
+	private List<CarregaDto> carreguesDia;
+	private List<CarregaDto> carreguesHora;
+	private List<CarregaDto> carreguesMinut;
 
 	@Transactional(rollbackFor = {ProcedimentServeiNotFoundException.class, ServeiNotAllowedException.class, ScspException.class})
 	@Override
@@ -1379,6 +1386,67 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 		}
 		return resposta;
 	}
+	
+	@Transactional(readOnly = true)
+	@Override
+	public List<CarregaDto> findEstadistiquesCarrega() {
+		LOGGER.debug("Consultant estadístiques de càrrega");
+		if (carreguesAny == null) {
+			carreguesAny = Collections.synchronizedList(
+					consultaRepository.findCarrega(DateUtils.truncate(new Date(), Calendar.YEAR)));
+		}
+		if (carreguesMes == null) {
+			carreguesMes = Collections.synchronizedList(
+					consultaRepository.findCarrega(DateUtils.truncate(new Date(), Calendar.MONTH)));
+		}
+		if (carreguesDia == null) {
+			carreguesDia = Collections.synchronizedList(
+					consultaRepository.findCarrega(DateUtils.truncate(new Date(), Calendar.DAY_OF_MONTH)));
+		}
+		if (carreguesHora == null) {
+			carreguesHora = Collections.synchronizedList(
+					consultaRepository.findCarrega(DateUtils.truncate(new Date(), Calendar.HOUR_OF_DAY)));
+		}
+		if (carreguesMinut == null) {
+			carreguesMinut = Collections.synchronizedList(
+					consultaRepository.findCarrega(DateUtils.truncate(new Date(), Calendar.MINUTE)));
+		}
+		List<CarregaDto> carregues = new ArrayList<CarregaDto>();
+		for (CarregaDto carregaAny: carreguesAny) {
+			CarregaDto carrega = new CarregaDto(
+					0,
+					carregaAny.getEntitatId(),
+					carregaAny.getEntitatCodi(),
+					carregaAny.getEntitatNom(),
+					carregaAny.getEntitatCif(),
+					carregaAny.getDepartamentNom(),
+					carregaAny.getProcedimentServeiId(),
+					carregaAny.getProcedimentCodi(),
+					carregaAny.getProcedimentNom(),
+					carregaAny.getServeiCodi(),
+					carregaAny.getServeiDescripcio());
+			long countMes = getCountFromCarregues(carrega, carreguesMes);
+			long countDia = getCountFromCarregues(carrega, carreguesDia);
+			long countHora = getCountFromCarregues(carrega, carreguesHora);
+			long countMinut = getCountFromCarregues(carrega, carreguesMinut);
+			carrega.setDetailedWebCount(
+					new CarregaDetailedCountDto(
+							carregaAny.getCount(),
+							countMes,
+							countDia,
+							countHora,
+							countMinut));
+			carrega.setDetailedRecobrimentCount(
+					new CarregaDetailedCountDto(
+							carregaAny.getCount(),
+							countMes,
+							countDia,
+							countHora,
+							countMinut));
+			carregues.add(carrega);
+		}
+		return carregues;
+	}
 
 	@Transactional(readOnly = true)
 	@Override
@@ -2319,6 +2387,18 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 		}
 		Arrays.sort(indexes);
 		return indexes;
+	}
+
+	private long getCountFromCarregues(
+			CarregaDto carrega,
+			List<CarregaDto> carregues) {
+		int index = carregues.indexOf(carrega);
+		if (index != -1) {
+			CarregaDto carregaTrobada = carregues.get(index);
+			return carregaTrobada.getCount();
+		} else {
+			return 0;
+		}
 	}
 
 	private boolean propertiesCopiades = false;

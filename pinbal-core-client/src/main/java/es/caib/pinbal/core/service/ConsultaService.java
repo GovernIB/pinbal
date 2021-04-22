@@ -11,6 +11,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
 
+import es.caib.pinbal.core.dto.CarregaDto;
 import es.caib.pinbal.core.dto.ConsultaDto;
 import es.caib.pinbal.core.dto.ConsultaFiltreDto;
 import es.caib.pinbal.core.dto.EntitatDto;
@@ -509,7 +510,7 @@ public interface ConsultaService {
 	 * @throws EntitatNotFoundException
 	 *            Si l'entitat especificada no existeix.
 	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_REPRES')")
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_REPRES') or hasRole('ROLE_REPORT')")
 	public List<EstadisticaDto> findEstadistiquesByFiltre(EstadistiquesFiltreDto filtre) throws EntitatNotFoundException;
 
 	/**
@@ -520,9 +521,17 @@ public interface ConsultaService {
 	 * @param filtre
 	 * @return una taula hash amb les estadístiques organitzades per entitat.
 	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_REPORT')")
 	public Map<EntitatDto, List<EstadisticaDto>> findEstadistiquesGlobalsByFiltre(
 			EstadistiquesFiltreDto filtre);
+
+	/**
+	 * Retorna informació sobre la càrrega del sistema.
+	 * 
+	 * @return la llista d'informació de càrrega.
+	 */
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_REPORT')")
+	public List<CarregaDto> findEstadistiquesCarrega();
 
 	/**
 	 * Retorna una llista d'ids de consultes de l'entitat seleccionades aleatòriament.
@@ -627,7 +636,7 @@ public interface ConsultaService {
 	@PreAuthorize("hasRole('ROLE_DELEG')")
 	public boolean isOptimitzarTransaccionsNovaConsulta();
 
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_REPORT')")
 	public List<InformeGeneralEstatDto> informeGeneralEstat(
 			Date dataInici,
 			Date dataFi);

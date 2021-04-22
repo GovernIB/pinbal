@@ -50,7 +50,7 @@ public class ProcedimentServiceBean implements ProcedimentService {
 	}
 
 	@Override
-	@RolesAllowed("PBL_REPRES")
+	@RolesAllowed({"PBL_REPRES", "PBL_REPORT"})
 	public ProcedimentDto findAmbEntitatICodi(Long entitatId, String codi) throws EntitatNotFoundException {
 		return delegate.findAmbEntitatICodi(entitatId, codi);
 	}
@@ -168,7 +168,7 @@ public class ProcedimentServiceBean implements ProcedimentService {
 	}
 
 	@Override
-	@RolesAllowed("PBL_ADMIN")
+	@RolesAllowed({"PBL_ADMIN", "PBL_REPORT"})
 	public List<InformeProcedimentDto> informeProcedimentsAgrupatsEntitatDepartament() {
 		return delegate.informeProcedimentsAgrupatsEntitatDepartament();
 	}

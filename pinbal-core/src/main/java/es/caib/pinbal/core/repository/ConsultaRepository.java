@@ -12,6 +12,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import es.caib.pinbal.core.dto.CarregaDto;
 import es.caib.pinbal.core.model.Consulta;
 import es.caib.pinbal.core.model.Consulta.EstatTipus;
 import es.caib.pinbal.core.model.Consulta.JustificantEstat;
@@ -301,5 +302,43 @@ public interface ConsultaRepository extends JpaRepository<Consulta, Long> {
 	public Consulta findByScspPeticionIdAndScspSolicitudId(
 			String scspPeticionId,
 			String scspSolicitudId);
+
+	@Query(	"select " +
+			"	new es.caib.pinbal.core.dto.CarregaDto( " +
+			"		count(*), " +
+			"		c.procedimentServei.procediment.entitat.id, " +
+			"		c.procedimentServei.procediment.entitat.codi, " +
+			"		c.procedimentServei.procediment.entitat.nom, " +
+			"		c.procedimentServei.procediment.entitat.cif, " +
+			"		c.departamentNom, " +
+			"		c.procedimentServei.id, " +
+			"		c.procedimentServei.procediment.codi, " +
+			"		c.procedimentServei.procediment.nom, " +
+			"		s.codi, " +
+			"		s.descripcio) " +
+			"from " +
+			"	Consulta c, " +
+			"	Servei s " +
+			"where " +
+			"	 c.createdDate >= :dataInici " +
+			"and s.codi = c.procedimentServei.servei " +
+			"group by " +
+			"	c.procedimentServei.procediment.entitat.id, " +
+			"	c.procedimentServei.procediment.entitat.codi, " +
+			"	c.procedimentServei.procediment.entitat.nom, " +
+			"	c.procedimentServei.procediment.entitat.cif, " +
+			"	c.departamentNom, " +
+			"	c.procedimentServei.id, " +
+			"	c.procedimentServei.procediment.codi, " +
+			"	c.procedimentServei.procediment.nom, " +
+			"	s.codi, " +
+			"	s.descripcio " +
+			"order by " +
+			"	c.procedimentServei.procediment.entitat.nom, " +
+			"	c.departamentNom, " +
+			"	c.procedimentServei.procediment.nom, " +
+			"	s.descripcio")
+	public List<CarregaDto> findCarrega(
+			@Param("dataInici") Date dataInici);
 
 }

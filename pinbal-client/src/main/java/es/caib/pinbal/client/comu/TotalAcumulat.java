@@ -10,40 +10,49 @@ package es.caib.pinbal.client.comu;
  */
 public class TotalAcumulat {
 
-	private int any;
-	private int mes;
-	private int dia;
-	private int hora;
-	private int minut;
+	private long any;
+	private long mes;
+	private long dia;
+	private long hora;
+	private long minut;
+	
+	public TotalAcumulat(long any, long mes, long dia, long hora, long minut) {
+		super();
+		this.any = any;
+		this.mes = mes;
+		this.dia = dia;
+		this.hora = hora;
+		this.minut = minut;
+	}
 
-	public int getAny() {
+	public long getAny() {
 		return any;
 	}
-	public void setAny(int any) {
+	public void setAny(long any) {
 		this.any = any;
 	}
-	public int getMes() {
+	public long getMes() {
 		return mes;
 	}
-	public void setMes(int mes) {
+	public void setMes(long mes) {
 		this.mes = mes;
 	}
-	public int getDia() {
+	public long getDia() {
 		return dia;
 	}
-	public void setDia(int dia) {
+	public void setDia(long dia) {
 		this.dia = dia;
 	}
-	public int getHora() {
+	public long getHora() {
 		return hora;
 	}
-	public void setHora(int hora) {
+	public void setHora(long hora) {
 		this.hora = hora;
 	}
-	public int getMinut() {
+	public long getMinut() {
 		return minut;
 	}
-	public void setMinut(int minut) {
+	public void setMinut(long minut) {
 		this.minut = minut;
 	}
 

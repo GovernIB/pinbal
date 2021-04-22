@@ -22,7 +22,9 @@ import es.caib.pinbal.client.comu.Entitat;
 import es.caib.pinbal.client.comu.Procediment;
 import es.caib.pinbal.client.comu.Servei;
 import es.caib.pinbal.client.comu.Servei.ConsultesOkError;
+import es.caib.pinbal.client.comu.TotalAcumulat;
 import es.caib.pinbal.client.comu.Usuari;
+import es.caib.pinbal.core.dto.CarregaDto;
 import es.caib.pinbal.core.dto.ConsultaDto.EstatTipus;
 import es.caib.pinbal.core.dto.EntitatDto;
 import es.caib.pinbal.core.dto.EstadisticaDto;
@@ -64,7 +66,7 @@ public class ExplotacioDadesInternesRestController extends BaseController {
 
 	@RequestMapping(
 			value= "/reports/procediments",
-			method = RequestMethod.POST,
+			method = RequestMethod.GET,
 			produces = "application/json")
 	public ResponseEntity<List<Entitat>> procediments(
 			HttpServletRequest request) {
@@ -108,7 +110,7 @@ public class ExplotacioDadesInternesRestController extends BaseController {
 
 	@RequestMapping(
 			value= "/reports/usuaris",
-			method = RequestMethod.POST,
+			method = RequestMethod.GET,
 			produces = "application/json")
 	public ResponseEntity<List<Entitat>> usuaris(
 			HttpServletRequest request) {
@@ -152,7 +154,7 @@ public class ExplotacioDadesInternesRestController extends BaseController {
 
 	@RequestMapping(
 			value= "/reports/serveis",
-			method = RequestMethod.POST,
+			method = RequestMethod.GET,
 			produces = "application/json")
 	public ResponseEntity<List<Servei>> serveis(
 			HttpServletRequest request) {
@@ -171,7 +173,7 @@ public class ExplotacioDadesInternesRestController extends BaseController {
 
 	@RequestMapping(
 			value= "/reports/general",
-			method = RequestMethod.POST,
+			method = RequestMethod.GET,
 			produces = "application/json")
 	public ResponseEntity<List<Entitat>> general(
 			HttpServletRequest request,
@@ -181,13 +183,14 @@ public class ExplotacioDadesInternesRestController extends BaseController {
 		List<Entitat> entitats = new ArrayList<Entitat>();
 		List<InformeGeneralEstatDto> informeGeneralFiles = consultaService.informeGeneralEstat(dataInici, dataFi);
 		Entitat entitatActual = null;
-		String entitatActualCif = null;
+		String entitatActualCodi = null;
 		Departament departamentActual = null;
 		Procediment procedimentActual = null;
 		for (InformeGeneralEstatDto informeGeneralFila: informeGeneralFiles) {
-			if (entitatActual == null || !entitatActualCif.equals(informeGeneralFila.getEntitatCif())) {
-				entitatActualCif = informeGeneralFila.getEntitatCif();
+			if (entitatActual == null || !entitatActualCodi.equals(informeGeneralFila.getEntitatCodi())) {
+				entitatActualCodi = informeGeneralFila.getEntitatCodi();
 				entitatActual = new Entitat();
+				entitatActual.setCodi(informeGeneralFila.getEntitatCodi());
 				entitatActual.setNom(informeGeneralFila.getEntitatNom());
 				entitatActual.setNif(informeGeneralFila.getEntitatCif());
 				entitats.add(entitatActual);
@@ -229,7 +232,7 @@ public class ExplotacioDadesInternesRestController extends BaseController {
 
 	@RequestMapping(
 			value= "/stats/consultes",
-			method = RequestMethod.POST,
+			method = RequestMethod.GET,
 			produces = "application/json")
 	public ResponseEntity<List<Procediment>> consultes(
 			HttpServletRequest request,
@@ -293,21 +296,71 @@ public class ExplotacioDadesInternesRestController extends BaseController {
 
 	@RequestMapping(
 			value= "/stats/carrega",
-			method = RequestMethod.POST,
+			method = RequestMethod.GET,
 			produces = "application/json")
-	public ResponseEntity<List<Servei>> carrega(
+	public ResponseEntity<List<Entitat>> carrega(
 			HttpServletRequest request) {
-		// Informe de seveis
-		List<ServeiDto> informeServeis = serveiService.findActius();
-		List<Servei> serveis = new ArrayList<Servei>();
-		for (ServeiDto informeServei: informeServeis) {
-			Servei servei = new Servei();
-			servei.setCodi(informeServei.getCodi());
-			servei.setNom(informeServei.getDescripcio());
-			servei.setEmisor(informeServei.getScspEmisorNom());
-			serveis.add(servei);
+		// Informe de carrega
+		List<CarregaDto> carregues = consultaService.findEstadistiquesCarrega();
+		Entitat entitatActual = null;
+		Long entitatActualId = null;
+		Departament departamentActual = null;
+		Procediment procedimentActual = null;
+		List<Entitat> entitats = new ArrayList<Entitat>();
+		for (CarregaDto carrega: carregues) {
+			if (entitatActual == null || !entitatActualId.equals(carrega.getEntitatId())) {
+				entitatActualId = carrega.getEntitatId();
+				entitatActual = new Entitat();
+				entitatActual.setCodi(carrega.getEntitatCodi());
+				entitatActual.setNom(carrega.getEntitatNom());
+				entitatActual.setNif(carrega.getEntitatCif());
+				entitats.add(entitatActual);
+			}
+			if (carrega.getDepartamentNom() != null) {
+				if (departamentActual == null || departamentActual.getNom() != carrega.getDepartamentNom()) {
+					departamentActual = new Departament();
+					//departamentActual.setCodi(informeProcediment.getDepartamentCodi());
+					departamentActual.setNom(carrega.getDepartamentNom());
+					if (entitatActual.getDepartaments() == null) {
+						entitatActual.setDepartaments(new ArrayList<Departament>());
+					}
+					entitatActual.getDepartaments().add(departamentActual);
+				}
+				if (procedimentActual == null || procedimentActual.getCodi() != carrega.getProcedimentCodi()) {
+					procedimentActual = new Procediment();
+					procedimentActual.setCodi(carrega.getProcedimentCodi());
+					procedimentActual.setNom(carrega.getProcedimentNom());
+					if (departamentActual.getProcediments() == null) {
+						departamentActual.setProcediments(new ArrayList<Procediment>());
+					}
+					departamentActual.getProcediments().add(procedimentActual);
+				}
+				Servei servei = new Servei();
+				servei.setCodi(carrega.getServeiCodi());
+				servei.setNom(carrega.getServeiDescripcio());
+				if (carrega.getDetailedWebCount() != null) {
+					servei.setTotalWeb(new TotalAcumulat(
+							carrega.getDetailedWebCount().getAny(),
+							carrega.getDetailedWebCount().getMes(),
+							carrega.getDetailedWebCount().getDia(),
+							carrega.getDetailedWebCount().getHora(),
+							carrega.getDetailedWebCount().getMinut()));
+				}
+				if (carrega.getDetailedRecobrimentCount() != null) {
+					servei.setTotalRecobriment(new TotalAcumulat(
+							carrega.getDetailedRecobrimentCount().getAny(),
+							carrega.getDetailedRecobrimentCount().getMes(),
+							carrega.getDetailedRecobrimentCount().getDia(),
+							carrega.getDetailedRecobrimentCount().getHora(),
+							carrega.getDetailedRecobrimentCount().getMinut()));
+				}
+				if (procedimentActual.getServeis() == null) {
+					procedimentActual.setServeis(new ArrayList<Servei>());
+				}
+				procedimentActual.getServeis().add(servei);
+			}
 		}
-		return new ResponseEntity<List<Servei>>(serveis, HttpStatus.OK);
+		return new ResponseEntity<List<Entitat>>(entitats, HttpStatus.OK);
 	}
 
 	private EstadistiquesFiltreDto getEstadistiquesFiltre(

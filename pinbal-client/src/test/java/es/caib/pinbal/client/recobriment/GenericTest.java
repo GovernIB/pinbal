@@ -12,7 +12,6 @@ import org.junit.Test;
 
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.sun.jersey.api.client.ClientHandlerException;
@@ -85,10 +84,10 @@ public class GenericTest {
 
 	private String objectToJsonString(Object obj) throws JsonProcessingException {
 		ObjectMapper mapper = new ObjectMapper();
-		mapper.enable(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY);
-		mapper.enable(DeserializationFeature.READ_ENUMS_USING_TO_STRING);
-		mapper.setSerializationInclusion(Include.NON_NULL);
+		//mapper.enable(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY);
+		//mapper.enable(DeserializationFeature.READ_ENUMS_USING_TO_STRING);
 		mapper.enable(SerializationFeature.INDENT_OUTPUT);
+		mapper.setSerializationInclusion(Include.NON_NULL);
 		return mapper.writeValueAsString(obj);
 	}
 
