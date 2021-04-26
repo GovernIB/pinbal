@@ -12,7 +12,8 @@ import java.io.Serializable;
  */
 public class CarregaDto implements Serializable {
 
-	private long count;
+	private long countWeb;
+	private long countRecobriment;
 	private Long entitatId;
 	private String entitatCodi;
 	private String entitatNom;
@@ -27,7 +28,8 @@ public class CarregaDto implements Serializable {
 	private CarregaDetailedCountDto detailedRecobrimentCount;
 
 	public CarregaDto(
-			long count,
+			long countWeb,
+			long countRecobriment,
 			Long entitatId,
 			String entitatCodi,
 			String entitatNom,
@@ -39,7 +41,8 @@ public class CarregaDto implements Serializable {
 			String serveiCodi,
 			String serveiDescripcio) {
 		super();
-		this.count = count;
+		this.countWeb = countWeb;
+		this.countRecobriment = countRecobriment;
 		this.entitatId = entitatId;
 		this.entitatCodi = entitatCodi;
 		this.entitatNom = entitatNom;
@@ -52,11 +55,17 @@ public class CarregaDto implements Serializable {
 		this.serveiDescripcio = serveiDescripcio;
 	}
 
-	public long getCount() {
-		return count;
+	public long getCountWeb() {
+		return countWeb;
 	}
-	public void setCount(long count) {
-		this.count = count;
+	public void setCountWeb(long countWeb) {
+		this.countWeb = countWeb;
+	}
+	public long getCountRecobriment() {
+		return countRecobriment;
+	}
+	public void setCountRecobriment(long countRecobriment) {
+		this.countRecobriment = countRecobriment;
 	}
 	public Long getEntitatId() {
 		return entitatId;

@@ -1415,6 +1415,7 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 		for (CarregaDto carregaAny: carreguesAny) {
 			CarregaDto carrega = new CarregaDto(
 					0,
+					0,
 					carregaAny.getEntitatId(),
 					carregaAny.getEntitatCodi(),
 					carregaAny.getEntitatNom(),
@@ -1425,24 +1426,28 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 					carregaAny.getProcedimentNom(),
 					carregaAny.getServeiCodi(),
 					carregaAny.getServeiDescripcio());
-			long countMes = getCountFromCarregues(carrega, carreguesMes);
-			long countDia = getCountFromCarregues(carrega, carreguesDia);
-			long countHora = getCountFromCarregues(carrega, carreguesHora);
-			long countMinut = getCountFromCarregues(carrega, carreguesMinut);
+			long countWebMes = getCountFromCarregues(carrega, carreguesMes, true);
+			long countWebDia = getCountFromCarregues(carrega, carreguesDia, true);
+			long countWebHora = getCountFromCarregues(carrega, carreguesHora, true);
+			long countWebMinut = getCountFromCarregues(carrega, carreguesMinut, true);
 			carrega.setDetailedWebCount(
 					new CarregaDetailedCountDto(
-							carregaAny.getCount(),
-							countMes,
-							countDia,
-							countHora,
-							countMinut));
+							carregaAny.getCountWeb(),
+							countWebMes,
+							countWebDia,
+							countWebHora,
+							countWebMinut));
+			long countRecobrimentMes = getCountFromCarregues(carrega, carreguesMes, false);
+			long countRecobrimentDia = getCountFromCarregues(carrega, carreguesDia, false);
+			long countRecobrimentHora = getCountFromCarregues(carrega, carreguesHora, false);
+			long countRecobrimentMinut = getCountFromCarregues(carrega, carreguesMinut, false);
 			carrega.setDetailedRecobrimentCount(
 					new CarregaDetailedCountDto(
-							carregaAny.getCount(),
-							countMes,
-							countDia,
-							countHora,
-							countMinut));
+							carregaAny.getCountRecobriment(),
+							countRecobrimentMes,
+							countRecobrimentDia,
+							countRecobrimentHora,
+							countRecobrimentMinut));
 			carregues.add(carrega);
 		}
 		return carregues;
@@ -2391,11 +2396,12 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 
 	private long getCountFromCarregues(
 			CarregaDto carrega,
-			List<CarregaDto> carregues) {
+			List<CarregaDto> carregues,
+			boolean web) {
 		int index = carregues.indexOf(carrega);
 		if (index != -1) {
 			CarregaDto carregaTrobada = carregues.get(index);
-			return carregaTrobada.getCount();
+			return web ? carregaTrobada.getCountWeb() : carregaTrobada.getCountRecobriment();
 		} else {
 			return 0;
 		}

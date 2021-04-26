@@ -305,7 +305,8 @@ public interface ConsultaRepository extends JpaRepository<Consulta, Long> {
 
 	@Query(	"select " +
 			"	new es.caib.pinbal.core.dto.CarregaDto( " +
-			"		count(*), " +
+			"		sum(case c.recobriment when true then 0 else 1 end), " +
+			"		sum(case c.recobriment when true then 1 else 0 end), " +
 			"		c.procedimentServei.procediment.entitat.id, " +
 			"		c.procedimentServei.procediment.entitat.codi, " +
 			"		c.procedimentServei.procediment.entitat.nom, " +
