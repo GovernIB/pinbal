@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
+import org.apache.commons.lang.exception.ExceptionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -89,27 +90,39 @@ public class RecobrimentRestController extends BaseController {
 				response);
 	}
 
-	@ExceptionHandler(RecobrimentScspValidationException.class)
+	@ExceptionHandler(Exception.class)
 	public ResponseEntity<ErrorResponse> handleError(
 			HttpServletRequest request,
 			HttpServletResponse response,
-			RecobrimentScspValidationException ex) {
-		return new ResponseEntity<ErrorResponse>(
-				new ErrorResponse(ex.getMessage()),
-				HttpStatus.BAD_REQUEST);
+			Exception ex) {
+		if (ex instanceof RecobrimentScspValidationException) {
+			return new ResponseEntity<ErrorResponse>(
+					new ErrorResponse(ex.getMessage()),
+					HttpStatus.BAD_REQUEST);
+		} else {
+			return new ResponseEntity<ErrorResponse>(
+					new ErrorResponse(ex.getMessage(), ExceptionUtils.getStackTrace(ex)),
+					HttpStatus.INTERNAL_SERVER_ERROR);
+		}
 	}
 
 	public class ErrorResponse {
 		private String message;
+		private String trace;
 		public ErrorResponse(String message) {
 			super();
 			this.message = message;
 		}
+		public ErrorResponse(String message, String trace) {
+			super();
+			this.message = message;
+			this.trace = trace;
+		}
 		public String getMessage() {
 			return message;
 		}
-		public void setMessage(String message) {
-			this.message = message;
+		public String getTrace() {
+			return trace;
 		}
 	}
 
