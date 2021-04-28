@@ -1,7 +1,7 @@
 /**
  * 
  */
-package es.caib.pinbal.client.informe;
+package es.caib.pinbal.client.dadesobertes;
 
 import java.io.IOException;
 import java.util.Date;
@@ -10,8 +10,6 @@ import java.util.List;
 import java.util.Map;
 
 import es.caib.pinbal.client.comu.ClientBase;
-import es.caib.pinbal.client.comu.Entitat;
-import es.caib.pinbal.client.comu.Servei;
 
 /**
  * Client amb la lògica bàsica per a accedir al servei de consulta
@@ -19,18 +17,18 @@ import es.caib.pinbal.client.comu.Servei;
  * 
  * @author Limit Tecnologies <limit@limit.es>
  */
-public class ClientInforme extends ClientBase {
+public class ClientDadesObertes extends ClientBase {
 
-	private static final String BASE_URL_SUFIX = "/api/interna/reports/";
+	private static final String BASE_URL_SUFIX = "/api/externa/";
 
-	public ClientInforme(
+	public ClientDadesObertes(
 			String urlBase,
 			String usuari,
 			String contrasenya) {
 		super(urlBase + BASE_URL_SUFIX, usuari, contrasenya);
 	}
 
-	public ClientInforme(
+	public ClientDadesObertes(
 			String urlBase,
 			String usuari,
 			String contrasenya,
@@ -40,41 +38,32 @@ public class ClientInforme extends ClientBase {
 		super(urlBase + BASE_URL_SUFIX, usuari, contrasenya, basicAuth, timeoutConnect, timeoutRead);
 	}
 
-	public List<Entitat> procediments() throws IOException {
-		return restPeticioGetList(
-				"procediments",
-				null,
-				Entitat.class);
-	}
-
-	public List<Entitat> usuaris() throws IOException {
-		return restPeticioGetList(
-				"usuaris",
-				null,
-				Entitat.class);
-	}
-
-	public List<Servei> serveis() throws IOException {
-		return restPeticioGetList(
-				"serveis",
-				null,
-				Servei.class);
-	}
-
-	public List<Entitat> general(
+	public List<DadesObertesRespostaConsulta> opendata(
+			String entitatCodi,
 			Date dataInici,
-			Date dataFi) throws IOException {
+			Date dataFi,
+			String procedimentCodi,
+			String serveiCodi) throws IOException {
 		Map<String, String> params = new HashMap<String, String>();
+		if (entitatCodi != null) {
+			params.put("entitatCodi", entitatCodi);
+		}
 		if (dataInici != null) {
 			params.put("dataInici", dateToString(dataInici));
 		}
 		if (dataFi != null) {
 			params.put("dataFi", dateToString(dataFi));
 		}
+		if (procedimentCodi != null) {
+			params.put("procedimentCodi", procedimentCodi);
+		}
+		if (serveiCodi != null) {
+			params.put("serveiCodi", serveiCodi);
+		}
 		return restPeticioGetList(
-				"general",
+				"opendata",
 				params,
-				Entitat.class);
+				DadesObertesRespostaConsulta.class);
 	}
 
 }

@@ -16,6 +16,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.ejb.interceptor.SpringBeanAutowiringInterceptor;
 
+import es.caib.pinbal.client.dadesobertes.DadesObertesRespostaConsulta;
 import es.caib.pinbal.core.dto.CarregaDto;
 import es.caib.pinbal.core.dto.ConsultaDto;
 import es.caib.pinbal.core.dto.ConsultaFiltreDto;
@@ -223,7 +224,23 @@ public class ConsultaServiceBean implements ConsultaService {
 			Long entitatId,
 			ConsultaFiltreDto filtre,
 			Pageable pageable) throws EntitatNotFoundException {
-	return delegate.findByFiltrePaginatPerAdmin(entitatId, filtre, pageable);
+		return delegate.findByFiltrePaginatPerAdmin(entitatId, filtre, pageable);
+	}
+
+	@Override
+	@RolesAllowed("PBL_REPORT")
+	public List<DadesObertesRespostaConsulta> findByFiltrePerOpenData(
+			String entitatCodi,
+			Date dataInici,
+			Date dataFi,
+			String procedimentCodi,
+			String serveiCodi) throws EntitatNotFoundException, ProcedimentNotFoundException {
+		return delegate.findByFiltrePerOpenData(
+				entitatCodi,
+				dataInici,
+				dataFi,
+				procedimentCodi,
+				serveiCodi);
 	}
 
 	@Override

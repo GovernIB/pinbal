@@ -5,7 +5,9 @@ package es.caib.pinbal.client.estadistica;
 
 import java.io.IOException;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import es.caib.pinbal.client.comu.ClientBase;
 import es.caib.pinbal.client.comu.Entitat;
@@ -45,9 +47,28 @@ public class ClientEstadistica extends ClientBase {
 			String estat,
 			Date dataInici,
 			Date dataFi) throws IOException {
+		Map<String, String> params = new HashMap<String, String>();
+		if (entitatCodi != null) {
+			params.put("entitatCodi", entitatCodi);
+		}
+		if (procedimentCodi != null) {
+			params.put("procedimentCodi", procedimentCodi);
+		}
+		if (serveiCodi != null) {
+			params.put("serveiCodi", serveiCodi);
+		}
+		if (estat != null) {
+			params.put("estat", estat);
+		}
+		if (dataInici != null) {
+			params.put("dataInici", dateToString(dataInici));
+		}
+		if (dataFi != null) {
+			params.put("dataFi", dateToString(dataFi));
+		}
 		return restPeticioGetList(
 				"consultes",
-				null,
+				params,
 				Procediment.class);
 	}
 

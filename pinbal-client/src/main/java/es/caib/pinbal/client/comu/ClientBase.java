@@ -4,9 +4,12 @@
 package es.caib.pinbal.client.comu;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.TimeZone;
 
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
@@ -30,6 +33,7 @@ import com.sun.jersey.api.client.config.ClientConfig;
 import com.sun.jersey.api.client.config.DefaultClientConfig;
 import com.sun.jersey.api.client.filter.ClientFilter;
 import com.sun.jersey.api.client.filter.HTTPBasicAuthFilter;
+import com.sun.jersey.api.client.filter.LoggingFilter;
 import com.sun.jersey.api.representation.Form;
 import com.sun.jersey.core.util.MultivaluedMapImpl;
 
@@ -42,7 +46,6 @@ import com.sun.jersey.core.util.MultivaluedMapImpl;
 public abstract class ClientBase {
 
 	private String urlBase;
-
 	private Client jerseyClient;
 	private ObjectMapper mapper;
 
@@ -109,6 +112,9 @@ public abstract class ClientBase {
 				queryParams(requestParams).
 				type("application/json").
 				get(new GenericType<List<R>>(){});
+		System.out.println(">>> Rebuda resposta HTTP GET de PINBAL (" +
+				"url=" + urlAmbMetode + ", " +
+				"body=" + mapper.writeValueAsString(response) + ")");
 		if (logger.isDebugEnabled()) {
 			logger.debug("Rebuda resposta HTTP GET de PINBAL (" +
 					"url=" + urlAmbMetode + ", " +
@@ -164,6 +170,12 @@ public abstract class ClientBase {
 		return response;
 	}
 
+	protected String dateToString(Date date) {
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
+		sdf.setTimeZone(TimeZone.getTimeZone("CET"));
+		return sdf.format(date);
+	}
+
 	private String getUrlAmbMetode(String metode) {
 		return urlBase + metode;
 	}
@@ -185,7 +197,6 @@ public abstract class ClientBase {
 		if (timeoutRead != null) {
 			jerseyClient.setReadTimeout(timeoutRead);
 		}
-		//jerseyClient.addFilter(new LoggingFilter(System.out));
 		jerseyClient.addFilter(
 				new ClientFilter() {
 					private ArrayList<Object> cookies;
@@ -250,6 +261,10 @@ public abstract class ClientBase {
 		mapper.enable(DeserializationFeature.READ_ENUMS_USING_TO_STRING);
 		// Per a no serialitzar propietats amb valors NULL
 		mapper.setSerializationInclusion(Include.NON_NULL);
+	}
+
+	public void enableLogginFilter() {
+		jerseyClient.addFilter(new LoggingFilter(System.out));
 	}
 
 	private static final Logger logger = LoggerFactory.getLogger(ClientBase.class);

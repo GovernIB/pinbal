@@ -11,6 +11,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
 
+import es.caib.pinbal.client.dadesobertes.DadesObertesRespostaConsulta;
 import es.caib.pinbal.core.dto.CarregaDto;
 import es.caib.pinbal.core.dto.ConsultaDto;
 import es.caib.pinbal.core.dto.ConsultaFiltreDto;
@@ -396,6 +397,28 @@ public interface ConsultaService {
 			Long entitatId,
 			ConsultaFiltreDto filtre,
 			Pageable pageable) throws EntitatNotFoundException;
+
+	/**
+	 * Retorna una llista de les consultes realitzades donada una entitat
+	 * i el filtre.
+	 * 
+	 * @param entitatId
+	 *            Atribut id de l'entitat.
+	 * @param filtre
+	 *            Filtre de consultes.
+	 * @return la llista de consultes.
+	 * @throws EntitatNotFoundException
+	 *            Si l'entitat especificada no existeix.
+	 * @throws ProcedimentNotFoundException
+	 *            Si el procediment especificat no existeix.
+	 */
+	@PreAuthorize("hasRole('ROLE_REPORT')")
+	public List<DadesObertesRespostaConsulta> findByFiltrePerOpenData(
+			String entitatCodi,
+			Date dataInici,
+			Date dataFi,
+			String procedimentCodi,
+			String serveiCodi) throws EntitatNotFoundException, ProcedimentNotFoundException;
 
 	/**
 	 * Retorna una pàgina de les consultes realitzades donada una entitat.
