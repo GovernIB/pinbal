@@ -46,6 +46,7 @@ import es.caib.pinbal.client.recobriment.model.ScspTransmisionDatos;
 import es.caib.pinbal.core.dto.JustificantDto;
 import es.caib.pinbal.core.helper.RecobrimentHelper;
 import es.caib.pinbal.core.service.exception.RecobrimentScspException;
+import es.caib.pinbal.core.service.exception.RecobrimentScspValidationException;
 import es.scsp.bean.common.Atributos;
 import es.scsp.bean.common.ConfirmacionPeticion;
 import es.scsp.bean.common.Consentimiento;
@@ -83,9 +84,15 @@ public class RecobrimentServiceImpl implements RecobrimentService {
 			return toScspRespuesta(
 					recobrimentHelper.peticionSincrona(toPeticion(peticion)));
 		} catch (ScspException ex) {
-			throw new RecobrimentScspException(
-					ex.getMessage(), 
-					ex);
+			if (RecobrimentHelper.ERROR_CODE_SCSP_VALIDATION.equals(ex.getScspCode())) {
+				throw new RecobrimentScspValidationException(
+						ex.getMessage(), 
+						ex);
+			} else {
+				throw new RecobrimentScspException(
+						ex.getMessage(), 
+						ex);	
+			}
 		} catch (TransformerException ex) {
 			throw new RecobrimentScspException(
 					ex.getMessage(), 

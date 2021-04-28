@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -24,6 +25,7 @@ import es.caib.pinbal.client.recobriment.model.ScspPeticion;
 import es.caib.pinbal.client.recobriment.model.ScspRespuesta;
 import es.caib.pinbal.core.service.RecobrimentService;
 import es.caib.pinbal.core.service.exception.RecobrimentScspException;
+import es.caib.pinbal.core.service.exception.RecobrimentScspValidationException;
 
 /**
  * Controlador per a proves.
@@ -85,6 +87,30 @@ public class RecobrimentRestController extends BaseController {
 				justificante.getContentType(),
 				justificante.getContingut(),
 				response);
+	}
+
+	@ExceptionHandler(RecobrimentScspValidationException.class)
+	public ResponseEntity<ErrorResponse> handleError(
+			HttpServletRequest request,
+			HttpServletResponse response,
+			RecobrimentScspValidationException ex) {
+		return new ResponseEntity<ErrorResponse>(
+				new ErrorResponse(ex.getMessage()),
+				HttpStatus.BAD_REQUEST);
+	}
+
+	public class ErrorResponse {
+		private String message;
+		public ErrorResponse(String message) {
+			super();
+			this.message = message;
+		}
+		public String getMessage() {
+			return message;
+		}
+		public void setMessage(String message) {
+			this.message = message;
+		}
 	}
 
 }

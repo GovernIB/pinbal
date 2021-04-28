@@ -70,6 +70,8 @@ import es.scsp.common.exceptions.ScspException;
 @Component
 public class RecobrimentHelper implements ApplicationContextAware, MessageSourceAware {
 
+	public static final String ERROR_CODE_SCSP_VALIDATION = "0226";
+
 	@Autowired
 	private ConsultaService consultaService;
 
@@ -247,29 +249,29 @@ public class RecobrimentHelper implements ApplicationContextAware, MessageSource
 			int maxSolicituds) throws ScspException {
 		if (peticion == null)
 			throw getErrorValidacio(
-					"0226",
+					ERROR_CODE_SCSP_VALIDATION,
 					"No s'ha trobat l'element peticion");
 		if (peticion.getAtributos() == null)
 			throw getErrorValidacio(
-					"0226",
+					ERROR_CODE_SCSP_VALIDATION,
 					"No s'ha trobat l'element peticion.atributos");
 		if (peticion.getAtributos().getCodigoCertificado() == null)
 			throw getErrorValidacio(
-					"0226",
+					ERROR_CODE_SCSP_VALIDATION,
 					"No s'ha trobat l'element peticion.atributos.codigoCertificado");
 		if (peticion.getSolicitudes() == null)
 			throw getErrorValidacio(
-					"0226",
+					ERROR_CODE_SCSP_VALIDATION,
 					"No s'ha trobat l'element peticion.solicitudes");
 		if (peticion.getSolicitudes().getSolicitudTransmision() == null)
 			throw getErrorValidacio(
-					"0226",
+					ERROR_CODE_SCSP_VALIDATION,
 					"No s'ha trobat cap element peticion.solicitudes.solicitudTransmision");
 		if (maxSolicituds != -1) {
 			int numSolicitudes = peticion.getSolicitudes().getSolicitudTransmision().size();
 			if (numSolicitudes > maxSolicituds)
 				throw getErrorValidacio(
-						"0226",
+						ERROR_CODE_SCSP_VALIDATION,
 						"S'ha excedit el màxim nombre de sol·licituds permeses en la petició (màxim=" + maxSolicituds + ")");
 		}
 		List<RecobrimentSolicitudDto> solicituds = new ArrayList<RecobrimentSolicitudDto>();
@@ -279,17 +281,17 @@ public class RecobrimentHelper implements ApplicationContextAware, MessageSource
 			DatosGenericos datosGenericos = st.getDatosGenericos();
 			if (datosGenericos == null)
 				throw getErrorValidacio(
-						"0226",
+						ERROR_CODE_SCSP_VALIDATION,
 						"No s'ha trobat l'element peticion.solicitudes.solicitudTransmision.datosGenericos (solicitudIndex=" + index + ")");
 			if (maxSolicituds != 1) {
 				Transmision transmision = datosGenericos.getTransmision();
 				if (transmision == null)
 					throw getErrorValidacio(
-							"0226",
+							ERROR_CODE_SCSP_VALIDATION,
 							"No s'ha trobat l'element peticion.solicitudes.solicitudTransmision.datosGenericos.transmision (solicitudIndex=" + index + ")");
 				if (transmision.getIdSolicitud() == null)
 					throw getErrorValidacio(
-							"0226",
+							ERROR_CODE_SCSP_VALIDATION,
 							"No s'ha trobat l'element peticion.solicitudes.solicitudTransmision.datosGenericos.transmision.idSolicitud (solicitudIndex=" + index + ")");
 				solicitud.setId(transmision.getIdSolicitud());
 			} else {
@@ -297,22 +299,22 @@ public class RecobrimentHelper implements ApplicationContextAware, MessageSource
 			}
 			if (datosGenericos.getSolicitante() == null)
 				throw getErrorValidacio(
-						"0226",
+						ERROR_CODE_SCSP_VALIDATION,
 						"No s'ha trobat l'element peticion.solicitudes.solicitudTransmision.datosGenericos.solicitante (solicitudIndex=" + index + ")");
 			Solicitante solicitante = datosGenericos.getSolicitante();
 			if (solicitante.getIdentificadorSolicitante() == null)
 				throw getErrorValidacio(
-						"0226",
+						ERROR_CODE_SCSP_VALIDATION,
 						"No s'ha trobat l'element peticion.solicitudes.solicitudTransmision.datosGenericos.solicitante.identificadorSolicitante (solicitudIndex=" + index + ")");
 			solicitud.setEntitatCif(solicitante.getIdentificadorSolicitante());
 			if (solicitante.getFinalidad() == null)
 				throw getErrorValidacio(
-						"0226",
+						ERROR_CODE_SCSP_VALIDATION,
 						"No s'ha trobat l'element peticion.solicitudes.solicitudTransmision.datosGenericos.solicitante.finalidad (solicitudIndex=" + index + ")");
 			solicitud.setFinalitat(solicitante.getFinalidad());
 			if (solicitante.getConsentimiento() == null)
 				throw getErrorValidacio(
-						"0226",
+						ERROR_CODE_SCSP_VALIDATION,
 						"No s'ha trobat l'element peticion.solicitudes.solicitudTransmision.datosGenericos.solicitante.consentimiento (solicitudIndex=" + index + ")");
 			switch (solicitante.getConsentimiento()) {
 			case Si:
@@ -324,31 +326,31 @@ public class RecobrimentHelper implements ApplicationContextAware, MessageSource
 			}
 			if (solicitante.getUnidadTramitadora() == null)
 				throw getErrorValidacio(
-						"0226",
+						ERROR_CODE_SCSP_VALIDATION,
 						"No s'ha trobat l'element peticion.solicitudes.solicitudTransmision.datosGenericos.solicitante.unidadTramitadora (solicitudIndex=" + index + ")");
 			solicitud.setDepartamentNom(solicitante.getUnidadTramitadora());
 			solicitud.setExpedientId(solicitante.getIdExpediente());
 			if (solicitante.getProcedimiento() == null)
 				throw getErrorValidacio(
-						"0226",
+						ERROR_CODE_SCSP_VALIDATION,
 						"No s'ha trobat l'element peticion.solicitudes.solicitudTransmision.datosGenericos.solicitante.procedimiento (solicitudIndex=" + index + ")");
 			if (solicitante.getProcedimiento().getCodProcedimiento() == null)
 				throw getErrorValidacio(
-						"0226",
+						ERROR_CODE_SCSP_VALIDATION,
 						"No s'ha trobat l'element peticion.solicitudes.solicitudTransmision.datosGenericos.solicitante.procedimiento.codProcedimiento (solicitudIndex=" + index + ")");
 			solicitud.setProcedimentCodi(solicitante.getProcedimiento().getCodProcedimiento());
 			if (solicitante.getFuncionario() == null)
 				throw getErrorValidacio(
-						"0226",
+						ERROR_CODE_SCSP_VALIDATION,
 						"No s'ha trobat l'element peticion.solicitudes.solicitudTransmision.datosGenericos.solicitante.funcionario (solicitudIndex=" + index + ")");
 			if (solicitante.getFuncionario().getNifFuncionario() == null)
 				throw getErrorValidacio(
-						"0226",
+						ERROR_CODE_SCSP_VALIDATION,
 						"No s'ha trobat l'element peticion.solicitudes.solicitudTransmision.datosGenericos.solicitante.funcionario.nifFuncionario (solicitudIndex=" + index + ")");
 			solicitud.setFuncionariNif(solicitante.getFuncionario().getNifFuncionario());
 			if (solicitante.getFuncionario().getNombreCompletoFuncionario() == null)
 				throw getErrorValidacio(
-						"0226",
+						ERROR_CODE_SCSP_VALIDATION,
 						"No s'ha trobat l'element peticion.solicitudes.solicitudTransmision.datosGenericos.solicitante.funcionario.nombreCompletoFuncionario (solicitudIndex=" + index + ")");
 			solicitud.setFuncionariNom(solicitante.getFuncionario().getNombreCompletoFuncionario());
 			if (datosGenericos.getTitular() != null) {
@@ -357,7 +359,7 @@ public class RecobrimentHelper implements ApplicationContextAware, MessageSource
 					solicitud.setTitularDocumentNum(titular.getDocumentacion());
 					if (titular.getTipoDocumentacion() == null)
 						throw getErrorValidacio(
-								"0226",
+								ERROR_CODE_SCSP_VALIDATION,
 								"No s'ha trobat l'element peticion.solicitudes.solicitudTransmision.datosGenericos.titular.tipoDocumentacion (solicitudIndex=" + index + ")");
 					switch (titular.getTipoDocumentacion()) {
 					case CIF:
@@ -391,7 +393,7 @@ public class RecobrimentHelper implements ApplicationContextAware, MessageSource
 			Object datosEspecificos = st.getDatosEspecificos();
 			if (datosEspecificos != null && !(datosEspecificos instanceof Element)) {
 				throw getErrorValidacio(
-						"0226",
+						ERROR_CODE_SCSP_VALIDATION,
 						"L'element peticion.solicitudes.solicitudTransmision (solicitudIndex=" + index + ") no és del tipus org.w3c.dom.Element");
 			}
 			solicitud.setDadesEspecifiques(
