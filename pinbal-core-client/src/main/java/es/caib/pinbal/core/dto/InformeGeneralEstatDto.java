@@ -11,6 +11,7 @@ import org.apache.commons.lang.builder.ToStringBuilder;
  */
 public class InformeGeneralEstatDto implements Serializable {
 
+	private String entitatCodi;
 	private String entitatNom;
 	private String entitatCif;
 	private String departament;
@@ -24,11 +25,12 @@ public class InformeGeneralEstatDto implements Serializable {
 	private Integer peticionsErronees;
 	private Integer peticionsPendents;
 
-
-	public InformeGeneralEstatDto() {
-
+	public String getEntitatCodi() {
+		return entitatCodi;
 	}
-	
+	public void setEntitatCodi(String entitatCodi) {
+		this.entitatCodi = entitatCodi;
+	}
 	public String getEntitatNom() {
 		return entitatNom;
 	}

@@ -134,7 +134,7 @@ public interface ServeiService {
 	 * 
 	 * @return Un llistat amb els serveis actius.
 	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_REPORT')")
 	public List<ServeiDto> findActius();
 
 	/**

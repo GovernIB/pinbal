@@ -16,6 +16,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.ejb.interceptor.SpringBeanAutowiringInterceptor;
 
+import es.caib.pinbal.client.dadesobertes.DadesObertesRespostaConsulta;
+import es.caib.pinbal.core.dto.CarregaDto;
 import es.caib.pinbal.core.dto.ConsultaDto;
 import es.caib.pinbal.core.dto.ConsultaFiltreDto;
 import es.caib.pinbal.core.dto.EntitatDto;
@@ -222,7 +224,23 @@ public class ConsultaServiceBean implements ConsultaService {
 			Long entitatId,
 			ConsultaFiltreDto filtre,
 			Pageable pageable) throws EntitatNotFoundException {
-	return delegate.findByFiltrePaginatPerAdmin(entitatId, filtre, pageable);
+		return delegate.findByFiltrePaginatPerAdmin(entitatId, filtre, pageable);
+	}
+
+	@Override
+	@RolesAllowed("PBL_REPORT")
+	public List<DadesObertesRespostaConsulta> findByFiltrePerOpenData(
+			String entitatCodi,
+			Date dataInici,
+			Date dataFi,
+			String procedimentCodi,
+			String serveiCodi) throws EntitatNotFoundException, ProcedimentNotFoundException {
+		return delegate.findByFiltrePerOpenData(
+				entitatCodi,
+				dataInici,
+				dataFi,
+				procedimentCodi,
+				serveiCodi);
 	}
 
 	@Override
@@ -267,7 +285,7 @@ public class ConsultaServiceBean implements ConsultaService {
 	}
 
 	@Override
-	@RolesAllowed({"PBL_ADMIN", "PBL_REPRES"})
+	@RolesAllowed({"PBL_ADMIN", "PBL_REPRES", "PBL_REPORT"})
 	public List<EstadisticaDto> findEstadistiquesByFiltre(
 			EstadistiquesFiltreDto filtre) throws EntitatNotFoundException {
 		return delegate.findEstadistiquesByFiltre(filtre);
@@ -347,9 +365,15 @@ public class ConsultaServiceBean implements ConsultaService {
 	}
 	
 	@Override
-	@RolesAllowed("PBL_ADMIN")
+	@RolesAllowed({"PBL_ADMIN", "PBL_REPORT"})
 	public List<InformeGeneralEstatDto> informeGeneralEstat(Date dataInici, Date dataFi) {
 		return delegate.informeGeneralEstat(dataInici, dataFi);
+	}
+
+	@Override
+	@RolesAllowed({"PBL_ADMIN", "PBL_REPORT"})
+	public List<CarregaDto> findEstadistiquesCarrega() {
+		return delegate.findEstadistiquesCarrega();
 	}
 
 }

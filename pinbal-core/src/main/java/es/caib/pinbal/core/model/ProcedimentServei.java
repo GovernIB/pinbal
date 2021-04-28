@@ -4,6 +4,7 @@
 package es.caib.pinbal.core.model;
 
 import javax.persistence.Column;
+import javax.persistence.ConstraintMode;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
 import javax.persistence.FetchType;
@@ -45,6 +46,14 @@ public class ProcedimentServei extends PinbalAuditable<Long> {
 
 	@Column(name = "servei_id", length = 64)
 	private String servei;
+
+	@ManyToOne(optional = true, fetch = FetchType.LAZY)
+	@JoinColumn(
+			name = "servei_id",
+			referencedColumnName = "CODCERTIFICADO",
+			insertable = false, updatable = false,
+			foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
+	private Servei serveiScsp;
 
 	@Column(name = "actiu")
 	private boolean actiu;
@@ -96,6 +105,10 @@ public class ProcedimentServei extends PinbalAuditable<Long> {
 
 	public void updateActiu(boolean actiu) {
 		this.actiu = actiu;
+	}
+	
+	public Servei getServeiScsp() {
+		return serveiScsp;
 	}
 
 	/**

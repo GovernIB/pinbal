@@ -12,10 +12,10 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import es.caib.distribucio.war.command.UsuariCommand;
 import es.caib.pinbal.core.dto.IdiomaEnumDto;
 import es.caib.pinbal.core.dto.UsuariDto;
 import es.caib.pinbal.core.service.UsuariService;
+import es.caib.pinbal.webapp.command.UsuariCommand;
 import es.caib.pinbal.webapp.common.AlertHelper;
 import es.caib.pinbal.webapp.helper.EnumHelper;
 /**

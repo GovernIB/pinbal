@@ -8,12 +8,14 @@ import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.ConstraintMode;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
 import javax.persistence.FetchType;
 import javax.persistence.ForeignKey;
 import javax.persistence.Index;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinColumns;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
@@ -125,6 +127,15 @@ public class Consulta extends PinbalAuditable<Long> {
 			name = "procserv_id",
 			foreignKey = @ForeignKey(name = "pbl_procserv_consulta_fk"))
 	private ProcedimentServei procedimentServei;
+
+	@ManyToOne(optional = true, fetch = FetchType.LAZY)
+	@JoinColumns(
+			value = {
+					@JoinColumn(name = "peticion_id", referencedColumnName = "idpeticion", insertable = false, updatable = false),
+					@JoinColumn(name = "solicitud_id", referencedColumnName = "idsolicitud", insertable = false, updatable = false)
+			},
+			foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
+	private Transmision transmision;
 
 	@Version
 	private long version = 0;
@@ -271,6 +282,9 @@ public class Consulta extends PinbalAuditable<Long> {
 	}
 	public List<Consulta> getFills() {
 		return fills;
+	}
+	public Transmision getTransmision() {
+		return transmision;
 	}
 
 	public void updateEstat(EstatTipus estat) {
