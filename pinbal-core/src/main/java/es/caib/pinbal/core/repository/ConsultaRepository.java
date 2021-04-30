@@ -12,6 +12,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import es.caib.pinbal.client.dadesobertes.DadesObertesRespostaConsulta;
+import es.caib.pinbal.core.dto.CarregaDto;
 import es.caib.pinbal.core.model.Consulta;
 import es.caib.pinbal.core.model.Consulta.EstatTipus;
 import es.caib.pinbal.core.model.Consulta.JustificantEstat;
@@ -206,6 +208,43 @@ public interface ConsultaRepository extends JpaRepository<Consulta, Long> {
 			@Param("nomesSensePare")boolean nomesSensePare,
 			Pageable pageable);
 
+	@Query(	"select " +
+			"    new es.caib.pinbal.client.dadesobertes.DadesObertesRespostaConsulta(" +
+			"        c.procedimentServei.procediment.entitat.codi, " +
+			"        c.procedimentServei.procediment.entitat.nom, " +
+			"        c.procedimentServei.procediment.entitat.cif, " +
+			"        c.transmision.codigoUnidadTramitadora, " +
+			"        c.transmision.unidadTramitadora, " +
+			"        c.procedimentServei.procediment.codi, " +
+			"        c.procedimentServei.procediment.nom, " +
+			"        c.procedimentServei.serveiScsp.codi, " +
+			"        c.procedimentServei.serveiScsp.descripcio, " +
+			"        c.procedimentServei.serveiScsp.scspEmisor.nom, " +
+			"        c.createdDate, " +
+			"        c.recobriment, " +
+			"        cast(c.estat as string)) " +
+			"from" +
+			"    Consulta c " +
+			"where " +
+			"    c.procedimentServei.procediment.entitat.id = :entitatId " +
+			"and (:esNullProcedimentId = true or c.procedimentServei.procediment.id = :procedimentId) " +
+			"and (:esNullServeiCodi = true or c.procedimentServei.servei = :serveiCodi) " +
+			"and (:esNullDataInici = true or c.createdDate >= :dataInici) " +
+			"and (:esNullDataFi = true or c.createdDate <= :dataFi) " +
+			"and (c.multiple = false) " +
+			"order by " +
+			"c.createdDate asc")
+	public List<DadesObertesRespostaConsulta> findByOpendata(
+			@Param("entitatId") Long entitatId,
+			@Param("esNullProcedimentId") boolean esNullProcedimentId,
+			@Param("procedimentId") Long procedimentId,
+			@Param("esNullServeiCodi") boolean esNullServeiCodi,
+			@Param("serveiCodi") String serveiCodi,
+			@Param("esNullDataInici") boolean esNullDataInici,
+			@Param("dataInici") Date dataInici,
+			@Param("esNullDataFi") boolean esNullDataFi,
+			@Param("dataFi") Date dataFi);
+
 	@Query(	"select" +
 			"    c " +
 			"from" +
@@ -301,5 +340,44 @@ public interface ConsultaRepository extends JpaRepository<Consulta, Long> {
 	public Consulta findByScspPeticionIdAndScspSolicitudId(
 			String scspPeticionId,
 			String scspSolicitudId);
+
+	@Query(	"select " +
+			"	new es.caib.pinbal.core.dto.CarregaDto( " +
+			"		sum(case c.recobriment when true then 0 else 1 end), " +
+			"		sum(case c.recobriment when true then 1 else 0 end), " +
+			"		c.procedimentServei.procediment.entitat.id, " +
+			"		c.procedimentServei.procediment.entitat.codi, " +
+			"		c.procedimentServei.procediment.entitat.nom, " +
+			"		c.procedimentServei.procediment.entitat.cif, " +
+			"		c.departamentNom, " +
+			"		c.procedimentServei.id, " +
+			"		c.procedimentServei.procediment.codi, " +
+			"		c.procedimentServei.procediment.nom, " +
+			"		s.codi, " +
+			"		s.descripcio) " +
+			"from " +
+			"	Consulta c, " +
+			"	Servei s " +
+			"where " +
+			"	 c.createdDate >= :dataInici " +
+			"and s.codi = c.procedimentServei.servei " +
+			"group by " +
+			"	c.procedimentServei.procediment.entitat.id, " +
+			"	c.procedimentServei.procediment.entitat.codi, " +
+			"	c.procedimentServei.procediment.entitat.nom, " +
+			"	c.procedimentServei.procediment.entitat.cif, " +
+			"	c.departamentNom, " +
+			"	c.procedimentServei.id, " +
+			"	c.procedimentServei.procediment.codi, " +
+			"	c.procedimentServei.procediment.nom, " +
+			"	s.codi, " +
+			"	s.descripcio " +
+			"order by " +
+			"	c.procedimentServei.procediment.entitat.nom, " +
+			"	c.departamentNom, " +
+			"	c.procedimentServei.procediment.nom, " +
+			"	s.descripcio")
+	public List<CarregaDto> findCarrega(
+			@Param("dataInici") Date dataInici);
 
 }

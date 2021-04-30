@@ -1,0 +1,36 @@
+databaseChangeLog:
+- changeSet:
+    id: lob-1
+    author: limit (generated)
+    context: caib
+    changes:
+    - sql:
+        dbms: oracle
+        sql: ALTER TABLE pbl_servei_config MOVE LOB(ajuda) STORE AS pbl_seconf_ajuda_lob(TABLESPACE pinbal_lob INDEX pbl_seconf_ajuda_lob_i);
+    - sql:
+        dbms: oracle
+        sql: ALTER TABLE pbl_servei_config MOVE LOB(fitxer_ajuda_contingut) STORE AS pbl_seconf_ajucont_lob(TABLESPACE pinbal_lob INDEX pbl_seconf_ajucont_lob_i);
+- changeSet:
+    id: lob-2
+    author: limit (generated)
+    context: caib
+    changes:
+    - sql:
+        dbms: oracle
+        sql: ALTER TABLE core_organismo_cesionario MOVE LOB(logo) STORE AS core_orgces_logo_lob(TABLESPACE pinbal_lob INDEX core_orgces_logo_lob_i);
+- changeSet:
+    id: lob-3
+    author: limit (generated)
+    context: caib
+    changes:
+    - sql:
+        dbms: oracle
+        sql: ALTER TABLE core_token_data MOVE LOB(datos) STORE AS core_tokdat_datos_lob(TABLESPACE pinbal_lob INDEX core_tokdat_datos_lob_i);
+- changeSet:
+    id: lob-4
+    author: limit (generated)
+    context: caib
+    changes:
+    - sql:
+        dbms: oracle
+        sql: ALTER TABLE core_transmision MOVE LOB(xmltransmision) STORE AS core_transm_xmltran_lob(TABLESPACE pinbal_lob INDEX core_transm_xmltran_lob_i);

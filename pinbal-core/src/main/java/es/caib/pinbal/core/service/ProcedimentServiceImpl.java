@@ -562,9 +562,9 @@ public class ProcedimentServiceImpl implements ProcedimentService {
 	}
 
 	/**
-     * Aquest setter només s'hauria d'emprar en les proves unitàries.
-     * @param personRepository
-     */
+	 * Aquest setter només s'hauria d'emprar en les proves unitàries.
+	 * @param personRepository
+	 */
 	public void setProcedimentRepository(ProcedimentRepository procedimentRepository) {
 		this.procedimentRepository = procedimentRepository;
 	}

@@ -103,7 +103,7 @@ public interface ProcedimentService {
 	 * @throws EntitatNotFoundException
 	 *             Si no s'ha trobat cap entitat amb l'id especificat.
 	 */
-	@PreAuthorize("hasRole('ROLE_REPRES')")
+	@PreAuthorize("hasRole('ROLE_REPRES') or hasRole('ROLE_REPORT')")
 	public ProcedimentDto findAmbEntitatICodi(Long entitatId, String codi) throws EntitatNotFoundException;
 
 	/**
@@ -290,7 +290,7 @@ public interface ProcedimentService {
 	 * 
 	 * @return El llistat de dades per a generar l'informe.
 	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_REPORT')")
 	public List<InformeProcedimentDto> informeProcedimentsAgrupatsEntitatDepartament();
 
 	/**

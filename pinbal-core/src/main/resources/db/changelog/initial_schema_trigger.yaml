@@ -1,0 +1,17 @@
+databaseChangeLog:
+- changeSet:
+    id: init-trigger-1
+    author: limit (generated)
+    changes:
+    - sql:
+        dbms: oracle
+        sql: CREATE OR REPLACE TRIGGER acl_sid_idgen BEFORE INSERT ON acl_sid FOR EACH ROW BEGIN SELECT acl_sid_seq.NEXTVAL INTO :NEW.ID FROM DUAL END;
+    - sql:
+        dbms: oracle
+        sql: CREATE OR REPLACE TRIGGER acl_class_idgen BEFORE INSERT ON acl_class FOR EACH ROW BEGIN SELECT acl_class_seq.NEXTVAL INTO :NEW.ID FROM DUAL END;
+    - sql:
+        dbms: oracle
+        sql: CREATE OR REPLACE TRIGGER acl_oid_idgen BEFORE INSERT ON acl_object_identity FOR EACH ROW BEGIN SELECT acl_oid_seq.NEXTVAL INTO :NEW.ID FROM DUAL END;
+    - sql:
+        dbms: oracle
+        sql: CREATE OR REPLACE TRIGGER acl_entry_idgen BEFORE INSERT ON acl_entry FOR EACH ROW BEGIN SELECT acl_entry_seq.NEXTVAL INTO :NEW.ID FROM DUAL END;

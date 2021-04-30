@@ -86,7 +86,7 @@ public class ServeiServiceBean implements ServeiService {
 	}
 
 	@Override
-	@RolesAllowed("PBL_ADMIN")
+	@RolesAllowed({"PBL_ADMIN", "PBL_REPORT"})
 	public List<ServeiDto> findActius() {
 		return delegate.findActius();
 	}

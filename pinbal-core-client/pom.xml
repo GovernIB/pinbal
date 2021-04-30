@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>es.caib.pinbal</groupId>
 		<artifactId>pinbal</artifactId>
-		<version>1.4.24.5</version>
+		<version>1.4.25</version>
 	</parent>
 	<artifactId>pinbal-core-client</artifactId>
 	<dependencies>

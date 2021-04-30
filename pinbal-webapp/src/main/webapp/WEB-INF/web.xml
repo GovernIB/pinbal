@@ -79,6 +79,9 @@
 		<role-name>PBL_WS</role-name>
 	</security-role>
 	<security-role>
+		<role-name>PBL_REPORT</role-name>
+	</security-role>
+	<security-role>
 		<role-name>tothom</role-name>
 	</security-role>
 

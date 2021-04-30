@@ -1,0 +1,7 @@
+databaseChangeLog:
+- changeSet:
+    id: init-data-scsp-1
+    author: limit
+    changes:
+    - sqlFile:
+        path: db/changelog/initial_data_scsp.sql

@@ -206,7 +206,7 @@ public interface UsuariService {
 	 * 
 	 * @return Les dades per a generar l'informe.
 	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_REPRES') or hasRole('ROLE_DELEG') or hasRole('ROLE_AUDIT')")
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_REPRES') or hasRole('ROLE_DELEG') or hasRole('ROLE_AUDIT') or hasRole('ROLE_REPORT')")
 	public List<InformeUsuariDto> informeUsuarisAgrupatsEntitatDepartament();
 
 	/**

@@ -1,0 +1,306 @@
+databaseChangeLog:
+- changeSet:
+    id: init-index-1
+    author: limit (generated)
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: codi
+        - column:
+            name: entitat_id
+        indexName: pbl_organ_gestor_uk
+        tableName: pbl_organ_gestor
+        unique: true
+- changeSet:
+    id: init-index-2
+    author: limit (generated)
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: codi
+        - column:
+            name: entitat_id
+        indexName: pbl_proid_uk
+        tableName: pbl_procediment
+        unique: true
+- changeSet:
+    id: init-index-3
+    author: limit (generated)
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: codi
+        indexName: pbl_entitat_codi_uk
+        tableName: pbl_entitat
+        unique: true
+- changeSet:
+    id: init-index-4
+    author: limit (generated)
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: entitat_id
+        - column:
+            name: servei_id
+        indexName: pbl_entitat_servei_uk
+        tableName: pbl_entitat_servei
+        unique: true
+- changeSet:
+    id: init-index-5
+    author: limit (generated)
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: entitat_id
+        - column:
+            name: usuari_id
+        indexName: pbl_entitat_usuari_uk
+        tableName: pbl_entitat_usuari
+        unique: true
+- changeSet:
+    id: init-index-6
+    author: limit (generated)
+    changes:
+    - addUniqueConstraint:
+        columnNames: entitat_id, usuari_id
+        constraintName: pbl_entitat_usuari_uk
+        forIndexName: pbl_entitat_usuari_uk
+        tableName: pbl_entitat_usuari
+- changeSet:
+    id: init-index-7
+    author: limit (generated)
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: procediment_id
+        - column:
+            name: servei_id
+        indexName: pbl_procediment_servei_uk
+        tableName: pbl_procediment_servei
+        unique: true
+- changeSet:
+    id: init-index-8
+    author: limit (generated)
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: servei_id
+        - column:
+            name: path
+        indexName: pbl_servei_camp_uk
+        tableName: pbl_servei_camp
+        unique: true
+- changeSet:
+    id: init-index-9
+    author: limit (generated)
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: servei_id
+        - column:
+            name: xpath
+        indexName: pbl_servei_justif_camp_uk
+        tableName: pbl_servei_justif_camp
+        unique: true
+- changeSet:
+    id: init-index-10
+    author: limit (generated)
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: createdby_codi
+        indexName: pbl_consulta_createdby_i
+        tableName: pbl_consulta
+- changeSet:
+    id: init-index-11
+    author: limit (generated)
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: createdby_codi
+        - column:
+            name: estat
+        - column:
+            name: multiple
+        indexName: pbl_consulta_mult_i
+        tableName: pbl_consulta
+- changeSet:
+    id: init-index-12
+    author: limit (generated)
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: pare_id
+        indexName: pbl_consulta_pare_I
+        tableName: pbl_consulta
+- changeSet:
+    id: init-index-13
+    author: limit (generated)
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: procserv_id
+        indexName: pbl_consulta_procserv_i
+        tableName: pbl_consulta
+- changeSet:
+    id: init-index-14
+    author: limit (generated)
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: idpeticion
+        indexName: pbl_coretra_idpeticion_i
+        tableName: core_transmision
+- changeSet:
+    id: init-index-15
+    author: limit (generated)
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: entitat_id
+        indexName: pbl_entiserv_entitat_i
+        tableName: pbl_entitat_servei
+- changeSet:
+    id: init-index-16
+    author: limit (generated)
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: servei_id
+        indexName: pbl_entiserv_servei_i
+        tableName: pbl_entitat_servei
+- changeSet:
+    id: init-index-17
+    author: limit (generated)
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: entitat_id
+        indexName: pbl_entiusr_entitat_i
+        tableName: pbl_entitat_usuari
+- changeSet:
+    id: init-index-18
+    author: limit (generated)
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: usuari_id
+        indexName: pbl_entiusr_usuari_i
+        tableName: pbl_entiusr_usuari
+- changeSet:
+    id: init-index-19
+    author: limit (generated)
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: entitat_id
+        indexName: pbl_procediment_entitat_i
+        tableName: pbl_procediment
+- changeSet:
+    id: init-index-20
+    author: limit (generated)
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: procediment_id
+        indexName: pbl_procserv_proced_i
+        tableName: pbl_procediment_servei
+- changeSet:
+    id: init-index-21
+    author: limit (generated)
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: servei_id
+        indexName: pbl_procserv_servei_i
+        tableName: pbl_procediment_servei
+- changeSet:
+    id: init-index-22
+    author: limit (generated)
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: servei_id
+        indexName: pbl_servei_bus_servei_i
+        tableName: pbl_servei_bus
+- changeSet:
+    id: init-index-23
+    author: limit (generated)
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: servei_id
+        indexName:  pbl_servei_campgr_servei_i
+        tableName: pbl_servei_camp_grup
+- changeSet:
+    id: init-index-24
+    author: limit (generated)
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: servei_id
+        indexName: pbl_servei_camp_servei_i
+        tableName: pbl_servei_camp
+- changeSet:
+    id: init-index-25
+    author: limit (generated)
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: servei_id
+        indexName: pbl_servei_juscam_servei_i
+        tableName: pbl_servei_justif_camp
+- changeSet:
+    id: init-index-26
+    author: limit (generated)
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: emisor
+        indexName: core_servicio_index_emisor
+        tableName: core_servicio
+- changeSet:
+    id: init-index-27
+    author: limit (generated)
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: idpeticion
+        indexName: core_transmision_index_idpet
+        tableName: core_transmision
+- changeSet:
+    id: init-index-28
+    author: limit (generated)
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: organismo
+        indexName: cesionarios_index_organismo
+        tableName: core_req_cesionarios_servicios

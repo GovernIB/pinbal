@@ -19,9 +19,11 @@ import es.caib.pinbal.webapp.validation.NomParamConfNoRepetit;
 @NomParamConfNoRepetit(campNom = "nom")
 public class ParamConfCommand {
 
-	@NotEmpty @Size(max=64)
+	@NotEmpty
+	@Size(max=64)
 	private String nom;
-	@NotEmpty @Size(max=512)
+	@NotEmpty
+	@Size(max=512)
 	private String valor;
 	@Size(max=512)
 	private String descripcio;

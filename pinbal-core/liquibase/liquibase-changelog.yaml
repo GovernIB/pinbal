@@ -1,0 +1,4024 @@
+databaseChangeLog:
+- changeSet:
+    id: 1619622439401-1
+    author: limit (generated)
+    changes:
+    - createSequence:
+        sequenceName: ACL_CLASS_SEQ
+        startValue: 41
+- changeSet:
+    id: 1619622439401-2
+    author: limit (generated)
+    changes:
+    - createSequence:
+        sequenceName: ACL_ENTRY_SEQ
+        startValue: 1561
+- changeSet:
+    id: 1619622439401-3
+    author: limit (generated)
+    changes:
+    - createSequence:
+        sequenceName: ACL_OID_SEQ
+        startValue: 901
+- changeSet:
+    id: 1619622439401-4
+    author: limit (generated)
+    changes:
+    - createSequence:
+        sequenceName: ACL_SID_SEQ
+        startValue: 381
+- changeSet:
+    id: 1619622439401-5
+    author: limit (generated)
+    changes:
+    - createSequence:
+        sequenceName: HIBERNATE_SEQUENCE
+        startValue: 18591
+- changeSet:
+    id: 1619622439401-6
+    author: limit (generated)
+    changes:
+    - createSequence:
+        cacheSize: 0
+        sequenceName: ID_CLAVE_PRIVADA_SEQUENCE
+        startValue: 3
+- changeSet:
+    id: 1619622439401-7
+    author: limit (generated)
+    changes:
+    - createSequence:
+        cacheSize: 0
+        sequenceName: ID_CLAVE_PUBLICA_SEQUENCE
+        startValue: 1
+- changeSet:
+    id: 1619622439401-8
+    author: limit (generated)
+    changes:
+    - createSequence:
+        cacheSize: 0
+        sequenceName: ID_EMISOR_SEQUENCE
+        startValue: 16
+- changeSet:
+    id: 1619622439401-9
+    author: limit (generated)
+    changes:
+    - createSequence:
+        cacheSize: 0
+        sequenceName: ID_ORGANISMO_CESIONARIO_SEQ
+        startValue: 132
+- changeSet:
+    id: 1619622439401-10
+    author: limit (generated)
+    changes:
+    - createSequence:
+        cacheSize: 0
+        sequenceName: ID_SERVICIO_CESIONARIO_SEQ
+        startValue: 984
+- changeSet:
+    id: 1619622439401-11
+    author: limit (generated)
+    changes:
+    - createSequence:
+        cacheSize: 0
+        sequenceName: ID_SERVICIO_SEQUENCE
+        startValue: 79
+- changeSet:
+    id: 1619622439401-12
+    author: limit (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: ACL_CLASS_PK
+            name: ID
+            type: NUMBER(19, 0)
+        - column:
+            constraints:
+              nullable: false
+            name: CLASS
+            type: VARCHAR2(100 CHAR)
+        tableName: ACL_CLASS
+        tablespace: SYSTEM
+- changeSet:
+    id: 1619622439401-13
+    author: limit (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: ACL_ENTRY_PK
+            name: ID
+            type: NUMBER(19, 0)
+        - column:
+            constraints:
+              nullable: false
+            name: ACL_OBJECT_IDENTITY
+            type: NUMBER(19, 0)
+        - column:
+            constraints:
+              nullable: false
+            name: ACE_ORDER
+            type: NUMBER(10, 0)
+        - column:
+            constraints:
+              nullable: false
+            name: SID
+            type: NUMBER(19, 0)
+        - column:
+            constraints:
+              nullable: false
+            name: MASK
+            type: NUMBER(10, 0)
+        - column:
+            constraints:
+              nullable: false
+            name: GRANTING
+            type: NUMBER(1, 0)
+        - column:
+            constraints:
+              nullable: false
+            name: AUDIT_SUCCESS
+            type: NUMBER(1, 0)
+        - column:
+            constraints:
+              nullable: false
+            name: AUDIT_FAILURE
+            type: NUMBER(1, 0)
+        tableName: ACL_ENTRY
+        tablespace: SYSTEM
+- changeSet:
+    id: 1619622439401-14
+    author: limit (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: ACL_OID_PK
+            name: ID
+            type: NUMBER(19, 0)
+        - column:
+            constraints:
+              nullable: false
+            name: OBJECT_ID_CLASS
+            type: NUMBER(19, 0)
+        - column:
+            constraints:
+              nullable: false
+            name: OBJECT_ID_IDENTITY
+            type: NUMBER(19, 0)
+        - column:
+            name: PARENT_OBJECT
+            type: NUMBER(19, 0)
+        - column:
+            name: OWNER_SID
+            type: NUMBER(19, 0)
+        - column:
+            constraints:
+              nullable: false
+            name: ENTRIES_INHERITING
+            type: NUMBER(1, 0)
+        tableName: ACL_OBJECT_IDENTITY
+        tablespace: SYSTEM
+- changeSet:
+    id: 1619622439401-15
+    author: limit (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: ACL_SID_PK
+            name: ID
+            type: NUMBER(19, 0)
+        - column:
+            constraints:
+              nullable: false
+            name: PRINCIPAL
+            type: NUMBER(1, 0)
+        - column:
+            constraints:
+              nullable: false
+            name: SID
+            type: VARCHAR2(100 CHAR)
+        tableName: ACL_SID
+        tablespace: SYSTEM
+- changeSet:
+    id: 1619622439401-16
+    author: limit (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: SYS_C00115929
+            name: IDBLOQUEO
+            remarks: Identificador del recurso a ser bloqueado
+            type: VARCHAR2(64 CHAR)
+        - column:
+            constraints:
+              nullable: false
+            name: FECHAEXPIRACION
+            remarks: Fecha a partir de la cual un bloqueo deja de tener vigencia.
+              Utilizado para evitar que un proceso que haya acabado con un fallo inesperado
+              deje un recurso inutilizado
+            type: TIMESTAMP(6)
+        remarks: Tabla gestionada por las librerias para el establecimiento de bloqueos
+          sobre un recurso que puede ser compartido de manera simult?nea por varios
+          procesos, pero cuyo acceso debe ser secuencial. Su principal uso ser? el
+          control del acceso al secuencial que permite generar identificadores de
+          petici?n de la tabla core_secuencia_idpeticion
+        tableName: CORE_BLOQUEO
+        tablespace: SYSTEM
+- changeSet:
+    id: 1619622439401-17
+    author: limit (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: SYS_C00115934
+            name: NUMSERIE
+            remarks: N?mero de serie del certificado
+            type: VARCHAR2(256 CHAR)
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: SYS_C00115934
+            name: AUTORIDADCERTIF
+            remarks: Autoridad certificadora que emiti? el certificado
+            type: VARCHAR2(512 CHAR)
+        - column:
+            constraints:
+              nullable: false
+            name: TIEMPOCOMPROBACION
+            remarks: Fecha en la que se realiz? el proceso de validaci?n del certificado
+              por ?ltima vez
+            type: TIMESTAMP(6)
+        - column:
+            constraints:
+              nullable: false
+            name: REVOCADO
+            remarks: "Valor booleano (?1? o ?0?) que indicar?: -\t?1?:   si el proceso\
+              \ de validaci?n revoc? el certificado. -\t?0?: si el proceso de validaci?n\
+              \ acept? el certificado."
+            type: NUMBER(10, 0)
+        remarks: Tabla que registra el resultado de la validaci?n de los certificados   empleados
+          en la firma de los mensajes recibidos por el requirente o por el emisor.
+          As? mismo se registra la fecha en la que se realiz? dicha validaci?n para
+          poder calcular el periodo de tiempo en la que dicha validaci?n esta vigente
+        tableName: CORE_CACHE_CERTIFICADOS
+        tablespace: SYSTEM
+- changeSet:
+    id: 1619622439401-18
+    author: limit (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+            name: ALIAS
+            remarks: Alias que identifica de manera un?voca a la clave privada dentro
+              del almac?n de certificados que haya sido configurado en la tabla core_parametro_configuracion
+              bajo el nombre keystoreFile
+            type: VARCHAR2(256 CHAR)
+        - column:
+            constraints:
+              nullable: false
+            name: NOMBRE
+            remarks: Nombre descriptivo de la clave privada
+            type: VARCHAR2(256 CHAR)
+        - column:
+            constraints:
+              nullable: false
+            name: PASSWORD
+            remarks: Password de la clave privada necesaria para hacer uso de la misma
+            type: VARCHAR2(256 CHAR)
+        - column:
+            constraints:
+              nullable: false
+            name: NUMEROSERIE
+            remarks: Numero de serie de la clave privada
+            type: VARCHAR2(256 CHAR)
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: SYS_C00115942
+            name: ID
+            type: NUMBER(19, 0)
+        - column:
+            constraints:
+              nullable: false
+            name: FECHAALTA
+            type: TIMESTAMP(6)
+        - column:
+            name: FECHABAJA
+            type: TIMESTAMP(6)
+        - column:
+            constraints:
+              nullable: false
+            name: ORGANISMO
+            type: NUMBER(19, 0)
+        - column:
+            defaultValueNumeric: !!float '0'
+            name: INTEROPERABILIDAD
+            type: NUMBER(1, 0)
+        remarks: Esta tabla almacenar? los datos de configuraci?n necesarios para
+          acceder a las claves privadas disponibles en el almac?n de certificados
+          configurado. Las claves privadas aqu? configuradas ser?n utilizadas para
+          la firma de los mensajes emitidos
+        tableName: CORE_CLAVE_PRIVADA
+        tablespace: SYSTEM
+- changeSet:
+    id: 1619622439401-19
+    author: limit (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+            name: ALIAS
+            remarks: Alias que identifica de manera un?voca a la clave p?blica dentro
+              del almac?n de certificados que haya sido configurado en la tabla core_parametro_configuracion
+              bajo el nombre keystoreFile
+            type: VARCHAR2(256 CHAR)
+        - column:
+            constraints:
+              nullable: false
+            name: NOMBRE
+            remarks: Nombre descriptivo de la clave p?blica
+            type: VARCHAR2(256 CHAR)
+        - column:
+            constraints:
+              nullable: false
+            name: NUMEROSERIE
+            remarks: Numero de serie de la clave publica
+            type: VARCHAR2(256 CHAR)
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: SYS_C00115948
+            name: ID
+            type: NUMBER(19, 0)
+        - column:
+            constraints:
+              nullable: false
+            name: FECHAALTA
+            type: TIMESTAMP(6)
+        - column:
+            name: FECHABAJA
+            type: TIMESTAMP(6)
+        remarks: Esta tabla almacenar? los datos de configuraci?n necesarios para
+          acceder a las claves p?blicas disponibles en el almac?n de certificados
+          configurado. Las claves p?blicas  aqu? configuradas ser?n utilizadas para
+          el posible cifrado de los  mensajes emitidos
+        tableName: CORE_CLAVE_PUBLICA
+        tablespace: SYSTEM
+- changeSet:
+    id: 1619622439401-20
+    author: limit (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: SYS_C00116104
+            name: CODIGO
+            remarks: C?digo identificativo del error
+            type: VARCHAR2(4 CHAR)
+        - column:
+            constraints:
+              nullable: false
+            name: DESCRIPCION
+            remarks: Litreral descriptivo del error
+            type: VARCHAR2(1024 CHAR)
+        remarks: Tabla que registrar? los posibles errores gen?ricos que toda comunicaci?n
+          SCSP puede generar
+        tableName: CORE_CODIGO_ERROR
+        tablespace: SYSTEM
+- changeSet:
+    id: 1619622439401-21
+    author: limit (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+            name: CIF
+            remarks: Nombre descriptivo del organismo emisor de servicios
+            type: VARCHAR2(16 CHAR)
+        - column:
+            constraints:
+              nullable: false
+            name: NOMBRE
+            remarks: CIF identificativo del organismo emisor de servicios
+            type: VARCHAR2(50 BYTE)
+        - column:
+            name: FECHABAJA
+            remarks: Fecha de Baja de emisores de certificados
+            type: TIMESTAMP(6)
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: SYS_C00115951
+            name: ID
+            type: NUMBER(19, 0)
+        - column:
+            name: FECHAALTA
+            type: TIMESTAMP(6)
+        remarks: Esta tabla almacenar? los diferentes emisores de servicio configurados
+        tableName: CORE_EMISOR_CERTIFICADO
+        tablespace: SYSTEM
+- changeSet:
+    id: 1619622439401-22
+    author: limit (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: SYS_C00116107
+            name: CODIGO
+            remarks: C?digo identificativo del estado
+            type: VARCHAR2(4 CHAR)
+        - column:
+            constraints:
+              nullable: false
+            name: MENSAJE
+            remarks: Literal descriptivo del estado
+            type: VARCHAR2(256 CHAR)
+        remarks: "Tabla que almacena los posibles estados en los que se puede encontrar\
+          \ una petici?n SCSP. Sus posibles valores ser?n: ?\t0001 - Pendiente ?\t\
+          0002 - En proceso ?\t0003 - Tramitada"
+        tableName: CORE_ESTADO_PETICION
+        tablespace: SYSTEM
+- changeSet:
+    id: 1619622439401-23
+    author: limit (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: SYS_C00115953
+            name: ID
+            remarks: Valor incremental autogenerado
+            type: NUMBER(19, 0)
+        - column:
+            name: FECHA
+            remarks: Fecha  en la que se gener? la traza de log
+            type: TIMESTAMP(6)
+        - column:
+            name: CRITICIDAD
+            remarks: Tipo de nivel de la traza de log (WARN,INFO,DEBUG,ALL,ERROR)
+            type: VARCHAR2(10 CHAR)
+        - column:
+            name: CLASE
+            remarks: Clase que gener? la traza de log registrada
+            type: VARCHAR2(256 CHAR)
+        - column:
+            name: METODO
+            remarks: M?todo espec?fico de la clase que gener? la traza de log
+            type: VARCHAR2(64 CHAR)
+        - column:
+            name: MENSAJE
+            remarks: Literal descriptivo del error almacenado
+            type: CLOB
+        remarks: Tabla de configurada en el appender log4j para base de datos de la
+          aplicaci?n, donde se registrar?n las posibles trazas de error
+        tableName: CORE_LOG
+        tablespace: SYSTEM
+- changeSet:
+    id: 1619622439401-24
+    author: limit (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: SYS_C00115957
+            name: NOMBRE
+            remarks: Nombre del m?dulo
+            type: VARCHAR2(256 CHAR)
+        - column:
+            name: DESCRIPCION
+            remarks: Literal descriptivo del modulo a configurar su activaci?n
+            type: VARCHAR2(512 CHAR)
+        - column:
+            constraints:
+              nullable: false
+            name: ACTIVOENTRADA
+            remarks: Valor que indica si el m?dulo esta activo en la emisi?n de mensajes.
+              Puede tomar valor 1 (Activo) ? 0 (Inactivo)
+            type: NUMBER(1, 0)
+        - column:
+            constraints:
+              nullable: false
+            name: ACTIVOSALIDA
+            remarks: Valor que indica si el m?dulo esta activo en la recepci?n de
+              mensajes. Puede tomar valor 1 (Activo) ? 0 (Inactivo)
+            type: NUMBER(1, 0)
+        remarks: Tabla que almacena la configuraci?n de activaci?n  o desactivaci?n
+          de los m?dulos que componen el ciclo de ejecuci?n de las librer?as SCSP
+        tableName: CORE_MODULO
+        tablespace: SYSTEM
+- changeSet:
+    id: 1619622439401-25
+    author: limit (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+            name: MODULO
+            remarks: Nombre del m?dulo a configurar
+            type: VARCHAR2(256 CHAR)
+        - column:
+            constraints:
+              nullable: false
+            name: ACTIVOENTRADA
+            remarks: Valor que indica si el m?dulo esta activo en la emisi?n de mensajes.
+              Puede tomar valor 1 (Activo) ? 0 (Inactivo)
+            type: NUMBER(1, 0)
+        - column:
+            constraints:
+              nullable: false
+            name: ACTIVOSALIDA
+            remarks: Valor que indica si el m?dulo esta activo en la recepci?n de
+              mensajes. Puede tomar valor 1 (Activo) ? 0 (Inactivo)
+            type: NUMBER(1, 0)
+        - column:
+            name: CERTIFICADO
+            type: NUMBER(19, 0)
+        remarks: Tabla que permite la sobreescritura de la configuraci?n de activaci?n
+          de un m?dulo para un servicio concreto
+        tableName: CORE_MODULO_CONFIGURACION
+        tablespace: SYSTEM
+- changeSet:
+    id: 1619622439401-26
+    author: limit (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: SYS_C00116028
+            name: ID
+            type: NUMBER(19, 0)
+        - column:
+            name: NOMBRE
+            type: VARCHAR2(50 CHAR)
+        - column:
+            name: CIF
+            type: VARCHAR2(50 CHAR)
+        - column:
+            name: FECHAALTA
+            type: TIMESTAMP(6)
+        - column:
+            name: FECHABAJA
+            type: TIMESTAMP(6)
+        - column:
+            constraints:
+              nullable: false
+            defaultValueNumeric: !!float '0'
+            name: BLOQUEADO
+            type: NUMBER(1, 0)
+        - column:
+            name: LOGO
+            type: BLOB
+        - column:
+            name: CODIGOUNIDADTRAMITADORA
+            type: VARCHAR2(9 BYTE)
+        tableName: CORE_ORGANISMO_CESIONARIO
+        tablespace: SYSTEM
+- changeSet:
+    id: 1619622439401-27
+    author: limit (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: SYS_C00115963
+            name: NOMBRE
+            remarks: Nombre identificativo del par?metro
+            type: VARCHAR2(64 CHAR)
+        - column:
+            constraints:
+              nullable: false
+            name: VALOR
+            remarks: Valor del par?metro
+            type: VARCHAR2(512 CHAR)
+        - column:
+            name: DESCRIPCION
+            remarks: Literal descriptivo de la utilidad del par?metro
+            type: VARCHAR2(512 CHAR)
+        remarks: Tabla  que almacena aquellos par?metros de configuraci?n que son
+          globales a todos los servicios y entornos para un mismo cliente integrador
+          de las librerias SCSP
+        tableName: CORE_PARAMETRO_CONFIGURACION
+        tablespace: SYSTEM
+- changeSet:
+    id: 1619622439401-28
+    author: limit (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: SYS_C00115969
+            name: IDPETICION
+            remarks: Identificador un?voco de la petici?n de servicio
+            type: VARCHAR2(26 CHAR)
+        - column:
+            constraints:
+              nullable: false
+            name: ESTADO
+            remarks: Codigo identificativo del estado de la petici?n. Tomar? sus valores
+              de las tablas scsp_estado_peticion y scsp_codigo_error
+            type: VARCHAR2(4 CHAR)
+        - column:
+            constraints:
+              nullable: false
+            name: FECHAPETICION
+            remarks: Timestamp que indica la fecha en la que se gener? la petici?n
+            type: TIMESTAMP(6)
+        - column:
+            name: FECHARESPUESTA
+            remarks: Timestamp que indica la fecha en la cual se recibi? la respuesta
+              a nuestra petici?n
+            type: TIMESTAMP(6)
+        - column:
+            name: TER
+            remarks: Timestamp que indica la fecha a partir de la cual una petici?n
+              de tipo as?ncrono podr? solicitar una respuesta definitiva al servicio
+            type: TIMESTAMP(6)
+        - column:
+            constraints:
+              nullable: false
+            name: NUMEROENVIOS
+            remarks: Valor que indica el n?mero de veces que se ha reenviado una petici?n
+              al servicio
+            type: NUMBER(10, 0)
+        - column:
+            constraints:
+              nullable: false
+            name: NUMEROTRANSMISIONES
+            remarks: N?mero de Solicitudes de Transmisi?n que se enviaron en la petici?n
+            type: NUMBER(10, 0)
+        - column:
+            name: FECHAULTIMOSONDEO
+            remarks: Timestamp que indica la fecha del ?ltimo reenvio de una petici?n
+              de tipo asincrono
+            type: TIMESTAMP(6)
+        - column:
+            name: TRANSMISIONSINCRONA
+            remarks: 'Valor binario que indica si la petici?n fue solicitada a un
+              servicio de tipo s?ncrono o asincrono. Podr? tomar los valores: 0: La
+              comunicaci?n fue de tipo as?ncrono, 1: La comunicaci?n fue de tipo s?ncrono'
+            type: NUMBER(10, 0)
+        - column:
+            name: DESCOMPUESTA
+            remarks: 'Caracter que indica el estado del procesamiento de las transmisiones
+              de la respuesta recibida. Podr? tomar los siguientes valores:    - S:
+              Se ha procesado correctamente la respuesta, habiendo obtenido todas
+              las transmisiones en ella incluidas y registradas en la tabla core_transmision.
+              - N: No ha sido procesadas las transmisiones de la respuesta. - E: La
+              respuesta termin? correctamente  (estado 0003), pero se ha producido
+              un error al procesar sus trasmisiones'
+            type: VARCHAR2(1 CHAR)
+        - column:
+            name: CERTIFICADO
+            type: NUMBER(19, 0)
+        - column:
+            name: ERROR
+            type: VARCHAR2(4000 BYTE)
+        - column:
+            name: ERRORSECUNDARIO
+            type: VARCHAR2(1024 BYTE)
+        - column:
+            name: ESTADOSECUNDARIO
+            type: VARCHAR2(16 BYTE)
+        remarks: Esta tabla registrar? un hist?rico de las peticiones y respuestas
+          intercambiadas entre los requirentes y los emisores de servicios
+        tableName: CORE_PETICION_RESPUESTA
+        tablespace: SYSTEM
+- changeSet:
+    id: 1619622439401-29
+    author: limit (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: SYS_C00116109
+            name: ID
+            type: NUMBER(19, 0)
+        - column:
+            name: CLAVEPRIVADA
+            type: NUMBER(19, 0)
+        - column:
+            name: FECHAALTA
+            type: TIMESTAMP(6)
+        - column:
+            name: FECHABAJA
+            type: TIMESTAMP(6)
+        - column:
+            constraints:
+              nullable: false
+            defaultValueNumeric: !!float '0'
+            name: BLOQUEADO
+            type: NUMBER(1, 0)
+        - column:
+            name: ORGANISMO
+            type: NUMBER(19, 0)
+        - column:
+            name: SERVICIO
+            type: NUMBER(19, 0)
+        - column:
+            defaultValueNumeric: !!float '0'
+            name: SSLFLAG
+            type: NUMBER(1, 0)
+        tableName: CORE_REQ_CESIONARIOS_SERVICIOS
+        tablespace: SYSTEM
+- changeSet:
+    id: 1619622439401-30
+    author: limit (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: SYS_C00116163
+            name: NOMBRE
+            type: VARCHAR2(256 CHAR)
+        - column:
+            constraints:
+              nullable: false
+            defaultValueNumeric: !!float '1'
+            name: ACTIVO
+            type: NUMBER(1, 0)
+        - column:
+            constraints:
+              nullable: false
+            name: ORDEN
+            type: NUMBER(1, 0)
+        tableName: CORE_REQ_MODULO_PDF
+        tablespace: USERS
+- changeSet:
+    id: 1619622439401-31
+    author: limit (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: SYS_C00116169
+            name: MODULO
+            type: VARCHAR2(256 CHAR)
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: SYS_C00116169
+            name: SERVICIO
+            type: NUMBER(19, 0)
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: SYS_C00116169
+            name: ORGANISMO
+            type: NUMBER(19, 0)
+        - column:
+            constraints:
+              nullable: false
+            defaultValueNumeric: !!float '1'
+            name: ACTIVO
+            type: NUMBER(1, 0)
+        tableName: CORE_REQ_MODULO_PDF_CESIONARIO
+        tablespace: USERS
+- changeSet:
+    id: 1619622439401-32
+    author: limit (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: SYS_C00115973
+            name: PREFIJO
+            remarks: Prefijo utilizado para la construccion de los identificadores.
+              Dicho valor podr? ser el prefijo especificado a ser utilizado para cada
+              servicio o ante la no existencia del mismo, el n?mero de serie del certificado
+              digital firmante  de los mensajes
+            type: VARCHAR2(9 BYTE)
+        - column:
+            constraints:
+              nullable: false
+            name: SECUENCIA
+            remarks: Valor secuencial que ser? concatenado al prefijo para generar
+              los identificadores de petici?n. Este secuencial ser? de tipo alfanum?rico,
+              de tal forma que el siguiente valor a 00000009 ser?a 0000000A
+            type: VARCHAR2(23 CHAR)
+        - column:
+            constraints:
+              nullable: false
+            name: FECHAGENERACION
+            remarks: Fecha en la que se registr?  el secuencial
+            type: TIMESTAMP(6)
+        remarks: Tabla que almacena las semillas (secuenciales) utilizadas para la
+          generaci?n de los identificadores de peticion. Existir? un secuencial asociado
+          a cada posible prefijo o n?mero de serie de certificado digital firmante
+        tableName: CORE_REQ_SECUENCIA_IDPETICION
+        tablespace: SYSTEM
+- changeSet:
+    id: 1619622439401-33
+    author: limit (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+            name: CODCERTIFICADO
+            remarks: C?digo del certificado que lo identifica un?vocamente en las
+              comunicaciones SCSP
+            type: VARCHAR2(64 CHAR)
+        - column:
+            name: URLSINCRONA
+            remarks: Endpoint de acceso al servicio de tipo s?ncrono
+            type: VARCHAR2(256 CHAR)
+        - column:
+            name: URLASINCRONA
+            remarks: Endpoint de acceso al servicio de tipo as?ncrono del certificado
+            type: VARCHAR2(256 CHAR)
+        - column:
+            name: ACTIONSINCRONA
+            remarks: Valor del Soap:Action de la petici?n s?ncrona utilizado por el
+              servidor WS en el caso de que sea necesario
+            type: VARCHAR2(256 CHAR)
+        - column:
+            name: ACTIONASINCRONA
+            remarks: Valor del Soap:Action de la petici?n as?ncrona utilizado por
+              el servidor WS en el caso de que sea necesario
+            type: VARCHAR2(256 CHAR)
+        - column:
+            name: ACTIONSOLICITUD
+            remarks: Valor del Soap:Action de la solicitud as?ncrona de respuesta
+              utilizado por el servidor WS en el caso de que sea necesario
+            type: VARCHAR2(256 CHAR)
+        - column:
+            constraints:
+              nullable: false
+            name: VERSIONESQUEMA
+            type: VARCHAR2(32 CHAR)
+        - column:
+            constraints:
+              nullable: false
+            name: TIPOSEGURIDAD
+            remarks: Indica la politica de seguridad utilizada en la securizaci?n
+              de los mensajes, pudiendo tomar los valores [XMLSignature| WS-Security]
+            type: VARCHAR2(16 CHAR)
+        - column:
+            name: PREFIJOPETICION
+            remarks: Literal con una longitud m?xima de 8 caracteres, el cual ser?
+              utilizado para la construcci?n de los identificadores de petici?n, anteponiendose
+              a un valor secuencial. Mediante este literal pueden personalizarse los
+              identificadores de petici?n haciendolos m?s descriptivos
+            type: VARCHAR2(9 BYTE)
+        - column:
+            name: XPATHCIFRADOSINCRONO
+            remarks: Literal que identifica el nodo del mensaje XML a cifrar en caso
+              de que los mensajes intercambiados con el emisor de servicio viajasen
+              cifrados. Se corresponde con una expresi?n xpath que permite localizar  al
+              nodo en el mensaje XML, presentar? el siguiente formato //*[local-name()=?NODO_A_CIFRAR?],
+              donde ?NODO_A_CIFRAR? es el local name del nodo que se desea cifrar.
+              Este nodo ser? empleado en el caso de realizar comunicaciones s?ncronas
+            type: VARCHAR2(256 CHAR)
+        - column:
+            name: XPATHCIFRADOASINCRONO
+            remarks: Literal que identifica el nodo del mensaje XML a cifrar en caso
+              de que los mensajes intercambiados con el emisor de servicio viajasen
+              cifrados. Se corresponde con una expresi?n xpath que permite localizar  al
+              nodo en el mensaje XML, presentar? el siguiente formato //*[local-name()=?NODO_A_CIFRAR?],
+              donde ?NODO_A_CIFRAR? es el local name del nodo que se desea cifrar.
+              Este nodo ser? empleado en el caso de realizar comunicaciones as?ncronas
+            type: VARCHAR2(256 CHAR)
+        - column:
+            name: ESQUEMAS
+            remarks: Ruta que indica el directorio donde se encuentran los esquemas
+              (*.xsd) con el que se validar? el XML de los diferentes mensajes intercambiados.
+              Esta ruta podr? tomar un valor relativo haciendo referencia al classpath
+              de la aplicaci?n o  un path absoluto
+            type: VARCHAR2(256 CHAR)
+        - column:
+            name: ALGORITMOCIFRADO
+            type: VARCHAR2(32 CHAR)
+        - column:
+            constraints:
+              nullable: false
+            name: NUMEROMAXIMOREENVIOS
+            remarks: Valor que indica en el caso del requirente, el n?mero m?ximo
+              de reenvios que pueden llevarse a cabo sobre una petici?n as?ncrona.
+              En el caso del emisor, hace referencia al n?mero m?ximo de veces que
+              procesar? y crear? una respuesta para una petici?n con un mismo identificador
+            type: NUMBER(10, 0)
+        - column:
+            constraints:
+              nullable: false
+            name: MAXSOLICITUDESPETICION
+            remarks: N?mero m?ximo de solicitudes de transmisi?n que se van a permitir
+              por petici?n
+            type: NUMBER(10, 0)
+        - column:
+            name: PREFIJOIDTRANSMISION
+            remarks: Semilla empleada por el emisor para generar los identificadores
+              de transmisi?n de las respuestas. Ser? un valor alfanum?rico con un
+              m?nimo de 3 caracteres y un m?ximo de 8
+            type: VARCHAR2(9 BYTE)
+        - column:
+            constraints:
+              nullable: false
+            name: DESCRIPCION
+            remarks: Literal descriptivo del servicio a solicitar utilizando el c?digo
+              de certificado
+            type: VARCHAR2(512 CHAR)
+        - column:
+            constraints:
+              nullable: false
+            name: FECHAALTA
+            remarks: Timestamp con la fecha en la cual el certificado se di? de alta
+              en el sistema y por lo tanto a partir de la cual se podr?n emitir peticiones
+              al mismo
+            type: TIMESTAMP(6)
+        - column:
+            name: FECHABAJA
+            remarks: Timestamp con la fecha en la cual el certificado se dio de baja
+              en el sistema y por tanto a partir de la cual no se podr?n emitir peticiones
+              al mismo
+            type: TIMESTAMP(6)
+        - column:
+            name: CADUCIDAD
+            remarks: N?mero de dias que deber?n sumarse a la fecharespuesta de una
+              petici?n, para calcular la fecha a partir de la cual se podr? considerar
+              que la respuesta esta caducada y se devolvera el error scsp correspondiente
+              para indicar que la respuesta ha perdido su valor
+            type: NUMBER(10, 0)
+        - column:
+            name: XPATHLITERALERROR
+            remarks: Xpath para recuperar el literal del error de los datos especificos
+            type: VARCHAR2(256 CHAR)
+        - column:
+            name: XPATHCODIGOERROR
+            remarks: Xpath para recuperar el codigo de error de los datos especificos
+            type: VARCHAR2(256 CHAR)
+        - column:
+            constraints:
+              nullable: false
+            defaultValueNumeric: !!float '60'
+            name: TIMEOUT
+            remarks: Timeout que se establecera para el envio de las peticiones a
+              los servicios
+            type: NUMBER(10, 0)
+        - column:
+            defaultValue: estricto
+            name: VALIDACIONFIRMA
+            remarks: Parametro que indica si se admite otro tipo de firma en el servicio
+              ademas del configurado
+            type: VARCHAR2(32 CHAR)
+        - column:
+            name: PLANTILLAXSLT
+            type: VARCHAR2(512 BYTE)
+        - column:
+            name: CLAVECIFRADO
+            type: NUMBER(19, 0)
+        - column:
+            name: CLAVEFIRMA
+            type: NUMBER(19, 0)
+        - column:
+            name: EMISOR
+            type: NUMBER(19, 0)
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: SYS_C00115982
+            name: ID
+            type: NUMBER(19, 0)
+        - column:
+            name: PLANTILLADETALLESERVICIO
+            type: VARCHAR2(512 BYTE)
+        - column:
+            name: XPATHCODIGOERRORSECUNDARIO
+            type: VARCHAR2(256 BYTE)
+        remarks: Esta tabla registrar? cada uno de los certificados SCSP que van a
+          ser utilizados por el sistema tanto de la parte requirente como de la parte
+          emisora
+        tableName: CORE_SERVICIO
+        tablespace: SYSTEM
+- changeSet:
+    id: 1619622439401-34
+    author: limit (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: SYS_C00115985
+            name: TIPO
+            remarks: Tipo identificativo del mensaje
+            type: NUMBER(1, 0)
+        - column:
+            constraints:
+              nullable: false
+            name: DESCRIPCION
+            remarks: Literal descriptivo del tipo de mensaje
+            type: VARCHAR2(32 CHAR)
+        remarks: "Tabla maestra que almacena los diferentes tipos de mensajes que\
+          \ pueden ser intercambiados a lo largo de un ciclo de comunicaci?n SCSP.\
+          \ Estos valores ser?n: ?\tPeticion ?\tRespuesta ?\tSolicitudRespuesta ?\t\
+          Confirmaci?nPeticion ?\tFault"
+        tableName: CORE_TIPO_MENSAJE
+        tablespace: SYSTEM
+- changeSet:
+    id: 1619622439401-35
+    author: limit (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+            name: IDPETICION
+            type: VARCHAR2(26 CHAR)
+        - column:
+            constraints:
+              nullable: false
+            name: TIPOMENSAJE
+            type: NUMBER(1, 0)
+        - column:
+            constraints:
+              nullable: false
+            name: DATOS
+            type: CLOB
+        - column:
+            name: CLAVE
+            type: VARCHAR2(256 CHAR)
+        - column:
+            name: MODOENCRIPTACION
+            type: VARCHAR2(32 CHAR)
+        - column:
+            name: ALGORITMOENCRIPTACION
+            type: VARCHAR2(32 CHAR)
+        tableName: CORE_TOKEN_DATA
+        tablespace: SYSTEM
+- changeSet:
+    id: 1619622439401-36
+    author: limit (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+            name: IDSOLICITUD
+            type: VARCHAR2(64 CHAR)
+        - column:
+            constraints:
+              nullable: false
+            name: IDPETICION
+            type: VARCHAR2(26 CHAR)
+        - column:
+            name: IDTRANSMISION
+            type: VARCHAR2(64 CHAR)
+        - column:
+            constraints:
+              nullable: false
+            name: IDSOLICITANTE
+            type: VARCHAR2(10 CHAR)
+        - column:
+            name: NOMBRESOLICITANTE
+            type: VARCHAR2(256 CHAR)
+        - column:
+            name: DOCTITULAR
+            type: VARCHAR2(30 BYTE)
+        - column:
+            name: DOCFUNCIONARIO
+            type: VARCHAR2(16 CHAR)
+        - column:
+            name: NOMBREFUNCIONARIO
+            type: VARCHAR2(128 CHAR)
+        - column:
+            name: FECHAGENERACION
+            type: TIMESTAMP(6)
+        - column:
+            name: UNIDADTRAMITADORA
+            type: VARCHAR2(256 CHAR)
+        - column:
+            name: CODIGOPROCEDIMIENTO
+            type: VARCHAR2(256 CHAR)
+        - column:
+            name: NOMBREPROCEDIMIENTO
+            type: VARCHAR2(256 CHAR)
+        - column:
+            name: EXPEDIENTE
+            type: VARCHAR2(65 BYTE)
+        - column:
+            name: FINALIDAD
+            type: VARCHAR2(256 CHAR)
+        - column:
+            name: CONSENTIMIENTO
+            type: VARCHAR2(3 CHAR)
+        - column:
+            name: ESTADO
+            type: VARCHAR2(10 BYTE)
+        - column:
+            name: XMLTRANSMISION
+            type: CLOB
+        - column:
+            name: NOMBRETITULAR
+            type: VARCHAR2(40 CHAR)
+        - column:
+            name: APELLIDO1TITULAR
+            type: VARCHAR2(40 CHAR)
+        - column:
+            name: APELLIDO2TITULAR
+            type: VARCHAR2(40 CHAR)
+        - column:
+            name: NOMBRECOMPLETOTITULAR
+            type: VARCHAR2(122 CHAR)
+        - column:
+            name: ESTADOSECUNDARIO
+            type: VARCHAR2(16 BYTE)
+        - column:
+            name: CODIGOUNIDADTRAMITADORA
+            type: VARCHAR2(9 BYTE)
+        - column:
+            name: SEUDONIMOFUNCIONARIO
+            type: VARCHAR2(32 BYTE)
+        - column:
+            name: ERROR
+            type: VARCHAR2(4000 BYTE)
+        tableName: CORE_TRANSMISION
+        tablespace: SYSTEM
+- changeSet:
+    id: 1619622439401-37
+    author: limit (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: IPA_REGISTRE_PK
+            name: ID
+            type: NUMBER(19, 0)
+        - column:
+            name: CREATEDDATE
+            type: TIMESTAMP(6)
+        - column:
+            name: LASTMODIFIEDDATE
+            type: TIMESTAMP(6)
+        - column:
+            name: APLICACIO_CODI
+            type: VARCHAR2(80 BYTE)
+        - column:
+            name: APLICACIO_VERSIO
+            type: VARCHAR2(60 BYTE)
+        - column:
+            name: ASSUMPTE_CODI
+            type: VARCHAR2(64 BYTE)
+        - column:
+            name: ASSUMPTE_NUMEXP
+            type: VARCHAR2(320 BYTE)
+        - column:
+            name: ASSUMPTE_REF
+            type: VARCHAR2(64 BYTE)
+        - column:
+            constraints:
+              nullable: false
+            name: ASSUMPTE_TIPUS
+            type: VARCHAR2(64 BYTE)
+        - column:
+            name: DATA
+            type: TIMESTAMP(6)
+        - column:
+            name: DATA_PROCESSAT
+            type: TIMESTAMP(6)
+        - column:
+            name: DOCUMENTACIO_FIS
+            type: VARCHAR2(4 BYTE)
+        - column:
+            name: EXPOSA
+            type: VARCHAR2(4000 BYTE)
+        - column:
+            name: EXTRACTE
+            type: VARCHAR2(960 BYTE)
+        - column:
+            name: IDENTIFICADOR
+            type: VARCHAR2(1020 BYTE)
+        - column:
+            constraints:
+              nullable: false
+            name: IDIOMA
+            type: VARCHAR2(8 BYTE)
+        - column:
+            constraints:
+              nullable: false
+            name: LLIBRE
+            type: VARCHAR2(16 BYTE)
+        - column:
+            name: MOTIU_REBUIG
+            type: VARCHAR2(4000 BYTE)
+        - column:
+            constraints:
+              nullable: false
+            name: NUMERO
+            type: NUMBER(10, 0)
+        - column:
+            name: OBSERVACIONS
+            type: VARCHAR2(200 BYTE)
+        - column:
+            constraints:
+              nullable: false
+            name: OFICINA
+            type: VARCHAR2(84 BYTE)
+        - column:
+            name: SOLICITA
+            type: VARCHAR2(4000 BYTE)
+        - column:
+            constraints:
+              nullable: false
+            name: TIPUS
+            type: VARCHAR2(4 BYTE)
+        - column:
+            name: TRANSPORT_NUM
+            type: VARCHAR2(80 BYTE)
+        - column:
+            name: TRANSPORT_TIPUS
+            type: VARCHAR2(8 BYTE)
+        - column:
+            name: USUARI_CONTACTE
+            type: VARCHAR2(640 BYTE)
+        - column:
+            constraints:
+              nullable: false
+            name: USUARI_NOM
+            type: VARCHAR2(320 BYTE)
+        - column:
+            constraints:
+              nullable: false
+            name: VERSION
+            type: NUMBER(19, 0)
+        - column:
+            name: CREATEDBY_CODI
+            type: VARCHAR2(256 BYTE)
+        - column:
+            name: LASTMODIFIEDBY_CODI
+            type: VARCHAR2(256 BYTE)
+        - column:
+            name: CONTENIDOR_ID
+            type: NUMBER(19, 0)
+        - column:
+            constraints:
+              nullable: false
+            name: UNITAT_ADM
+            type: VARCHAR2(84 BYTE)
+        tableName: IPA_REGISTRE
+        tablespace: SYSTEM
+- changeSet:
+    id: 1619622439401-38
+    author: limit (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: IPA_REGANX_PK
+            name: ID
+            type: NUMBER(19, 0)
+        - column:
+            name: CREATEDDATE
+            type: TIMESTAMP(6)
+        - column:
+            name: LASTMODIFIEDDATE
+            type: TIMESTAMP(6)
+        - column:
+            constraints:
+              nullable: false
+            name: DATA_CAPTURA
+            type: TIMESTAMP(6)
+        - column:
+            name: FIRMA_MODE
+            type: NUMBER(10, 0)
+        - column:
+            constraints:
+              nullable: false
+            name: FITXER_NOM
+            type: VARCHAR2(320 BYTE)
+        - column:
+            constraints:
+              nullable: false
+            name: FITXER_TAMANY
+            type: NUMBER(10, 0)
+        - column:
+            name: FITXER_MIME
+            type: VARCHAR2(120 BYTE)
+        - column:
+            constraints:
+              nullable: false
+            name: NTI_TIPO
+            type: VARCHAR2(16 BYTE)
+        - column:
+            name: OBSERVACIONS
+            type: VARCHAR2(200 BYTE)
+        - column:
+            name: ORIGEN
+            type: VARCHAR2(4 BYTE)
+        - column:
+            constraints:
+              nullable: false
+            name: TIPUS
+            type: VARCHAR2(1020 BYTE)
+        - column:
+            constraints:
+              nullable: false
+            name: TITOL
+            type: VARCHAR2(800 BYTE)
+        - column:
+            name: VALIDESA
+            type: VARCHAR2(1020 BYTE)
+        - column:
+            constraints:
+              nullable: false
+            name: VERSION
+            type: NUMBER(19, 0)
+        - column:
+            name: CREATEDBY_CODI
+            type: VARCHAR2(256 BYTE)
+        - column:
+            name: LASTMODIFIEDBY_CODI
+            type: VARCHAR2(256 BYTE)
+        - column:
+            constraints:
+              nullable: false
+            name: REGISTRE_ID
+            type: NUMBER(19, 0)
+        tableName: IPA_REGISTRE_ANNEX
+        tablespace: SYSTEM
+- changeSet:
+    id: 1619622439401-39
+    author: limit (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: IPA_REGINT_PK
+            name: ID
+            type: NUMBER(19, 0)
+        - column:
+            name: CREATEDDATE
+            type: TIMESTAMP(6)
+        - column:
+            name: LASTMODIFIEDDATE
+            type: TIMESTAMP(6)
+        - column:
+            name: ADRESA
+            type: VARCHAR2(640 BYTE)
+        - column:
+            name: CANAL_PREF
+            type: VARCHAR2(8 BYTE)
+        - column:
+            name: CODI_POSTAL
+            type: VARCHAR2(20 BYTE)
+        - column:
+            name: DOC_NUM
+            type: VARCHAR2(68 BYTE)
+        - column:
+            name: DOC_TIPUS
+            type: VARCHAR2(4 BYTE)
+        - column:
+            name: EMAIL
+            type: VARCHAR2(640 BYTE)
+        - column:
+            name: EMAIL_HAB
+            type: VARCHAR2(640 BYTE)
+        - column:
+            name: LLINATGE1
+            type: VARCHAR2(120 BYTE)
+        - column:
+            name: LLINATGE2
+            type: VARCHAR2(120 BYTE)
+        - column:
+            name: MUNICIPI
+            type: VARCHAR2(20 BYTE)
+        - column:
+            name: NOM
+            type: VARCHAR2(120 BYTE)
+        - column:
+            name: OBSERVACIONS
+            type: VARCHAR2(640 BYTE)
+        - column:
+            name: PAIS
+            type: VARCHAR2(16 BYTE)
+        - column:
+            name: PROVINCIA
+            type: VARCHAR2(8 BYTE)
+        - column:
+            name: RAO_SOCIAL
+            type: VARCHAR2(320 BYTE)
+        - column:
+            name: TELEFON
+            type: VARCHAR2(80 BYTE)
+        - column:
+            constraints:
+              nullable: false
+            name: TIPUS
+            type: VARCHAR2(4 BYTE)
+        - column:
+            constraints:
+              nullable: false
+            name: VERSION
+            type: NUMBER(19, 0)
+        - column:
+            name: CREATEDBY_CODI
+            type: VARCHAR2(256 BYTE)
+        - column:
+            name: LASTMODIFIEDBY_CODI
+            type: VARCHAR2(256 BYTE)
+        - column:
+            constraints:
+              nullable: false
+            name: REGISTRE_ID
+            type: NUMBER(19, 0)
+        - column:
+            name: REPRESENTANT_ID
+            type: NUMBER(19, 0)
+        - column:
+            name: REPRESENTAT_ID
+            type: NUMBER(19, 0)
+        tableName: IPA_REGISTRE_INTER
+        tablespace: SYSTEM
+- changeSet:
+    id: 1619622439401-40
+    author: limit (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: IPA_REGMOV_PK
+            name: ID
+            type: NUMBER(19, 0)
+        - column:
+            name: CREATEDDATE
+            type: TIMESTAMP(6)
+        - column:
+            name: LASTMODIFIEDDATE
+            type: TIMESTAMP(6)
+        - column:
+            name: COMENTARI
+            type: VARCHAR2(256 BYTE)
+        - column:
+            constraints:
+              nullable: false
+            name: DATA
+            type: TIMESTAMP(6)
+        - column:
+            name: VERSION
+            type: NUMBER(19, 0)
+        - column:
+            name: CREATEDBY_CODI
+            type: VARCHAR2(64 BYTE)
+        - column:
+            name: LASTMODIFIEDBY_CODI
+            type: VARCHAR2(64 BYTE)
+        - column:
+            constraints:
+              nullable: false
+            name: DESTI_ID
+            type: NUMBER(19, 0)
+        - column:
+            name: ORIGEN_ID
+            type: NUMBER(19, 0)
+        - column:
+            constraints:
+              nullable: false
+            name: REGISTRE_ID
+            type: NUMBER(19, 0)
+        - column:
+            name: REMITENT_ID
+            type: VARCHAR2(64 BYTE)
+        tableName: IPA_REGISTRE_MOV
+        tablespace: SYSTEM
+- changeSet:
+    id: 1619622439401-41
+    author: limit (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: SYS_C00116037
+            name: ID
+            type: NUMBER(19, 0)
+        - column:
+            name: CREATEDDATE
+            type: TIMESTAMP(6)
+        - column:
+            name: LASTMODIFIEDDATE
+            type: TIMESTAMP(6)
+        - column:
+            name: CUSTODIAT
+            type: NUMBER(1, 0)
+        - column:
+            constraints:
+              nullable: false
+            name: DEPARTAMENT
+            type: VARCHAR2(64 CHAR)
+        - column:
+            name: ERROR
+            type: VARCHAR2(4000 BYTE)
+        - column:
+            constraints:
+              nullable: false
+            name: ESTAT
+            type: NUMBER(10, 0)
+        - column:
+            constraints:
+              nullable: false
+            name: PETICION_ID
+            type: VARCHAR2(64 CHAR)
+        - column:
+            name: TITULAR_DOCNUM
+            type: VARCHAR2(14 BYTE)
+        - column:
+            name: TITULAR_DOCTIP
+            type: VARCHAR2(16 CHAR)
+        - column:
+            name: TITULAR_LLING1
+            type: VARCHAR2(64 CHAR)
+        - column:
+            name: TITULAR_LLING2
+            type: VARCHAR2(64 CHAR)
+        - column:
+            name: TITULAR_NOM
+            type: VARCHAR2(64 CHAR)
+        - column:
+            constraints:
+              nullable: false
+            name: VERSION
+            type: NUMBER(19, 0)
+        - column:
+            name: CREATEDBY_CODI
+            type: VARCHAR2(64 CHAR)
+        - column:
+            name: LASTMODIFIEDBY_CODI
+            type: VARCHAR2(64 CHAR)
+        - column:
+            constraints:
+              nullable: false
+            name: PROCSERV_ID
+            type: NUMBER(19, 0)
+        - column:
+            name: RECOBRIMENT
+            type: NUMBER(1, 0)
+        - column:
+            name: TITULAR_NOMCOMPLET
+            type: VARCHAR2(122 CHAR)
+        - column:
+            name: FUNCIONARI_NOM
+            type: VARCHAR2(128 CHAR)
+        - column:
+            constraints:
+              nullable: false
+            name: FUNCIONARI_DOCNUM
+            type: VARCHAR2(16 CHAR)
+        - column:
+            name: SOLICITUD_ID
+            type: VARCHAR2(64 BYTE)
+        - column:
+            name: MULTIPLE
+            type: NUMBER(1, 0)
+        - column:
+            name: PARE_ID
+            type: NUMBER(19, 0)
+        - column:
+            name: CUSTODIA_URL
+            type: VARCHAR2(255 CHAR)
+        - column:
+            name: JUSTIFICANT_ERROR
+            type: VARCHAR2(2000 BYTE)
+        - column:
+            constraints:
+              nullable: false
+            name: JUSTIFICANT_ESTAT
+            type: NUMBER(10, 0)
+        - column:
+            name: CUSTODIA_ID
+            type: VARCHAR2(255 CHAR)
+        - column:
+            name: ARXIU_EXPEDIENT_UUID
+            type: VARCHAR2(100 BYTE)
+        - column:
+            name: ARXIU_DOCUMENT_UUID
+            type: VARCHAR2(100 BYTE)
+        - column:
+            defaultValueNumeric: !!float '0'
+            name: ARXIU_EXPEDIENT_TANCAT
+            type: NUMBER(1, 0)
+        tableName: PBL_CONSULTA
+        tablespace: SYSTEM
+- changeSet:
+    id: 1619622439401-42
+    author: limit (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: SYS_C00116043
+            name: ID
+            type: NUMBER(19, 0)
+        - column:
+            name: CREATEDDATE
+            type: TIMESTAMP(6)
+        - column:
+            name: LASTMODIFIEDDATE
+            type: TIMESTAMP(6)
+        - column:
+            name: ACTIVA
+            type: NUMBER(1, 0)
+        - column:
+            constraints:
+              nullable: false
+            name: CIF
+            type: VARCHAR2(16 CHAR)
+        - column:
+            constraints:
+              nullable: false
+            name: CODI
+            type: VARCHAR2(64 CHAR)
+        - column:
+            constraints:
+              nullable: false
+            name: NOM
+            type: VARCHAR2(255 CHAR)
+        - column:
+            name: RESPONSABLE
+            type: VARCHAR2(64 CHAR)
+        - column:
+            constraints:
+              nullable: false
+            name: VERSION
+            type: NUMBER(19, 0)
+        - column:
+            name: CREATEDBY_CODI
+            type: VARCHAR2(64 CHAR)
+        - column:
+            name: LASTMODIFIEDBY_CODI
+            type: VARCHAR2(64 CHAR)
+        - column:
+            name: TIPUS
+            type: NUMBER(10, 0)
+        - column:
+            name: UNITAT_ARREL
+            type: VARCHAR2(9 BYTE)
+        tableName: PBL_ENTITAT
+        tablespace: SYSTEM
+- changeSet:
+    id: 1619622439401-43
+    author: limit (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: SYS_C00116048
+            name: ID
+            type: NUMBER(19, 0)
+        - column:
+            name: CREATEDDATE
+            type: TIMESTAMP(6)
+        - column:
+            name: LASTMODIFIEDDATE
+            type: TIMESTAMP(6)
+        - column:
+            name: SERVEI_ID
+            type: VARCHAR2(64 CHAR)
+        - column:
+            constraints:
+              nullable: false
+            name: VERSION
+            type: NUMBER(19, 0)
+        - column:
+            name: CREATEDBY_CODI
+            type: VARCHAR2(64 CHAR)
+        - column:
+            name: LASTMODIFIEDBY_CODI
+            type: VARCHAR2(64 CHAR)
+        - column:
+            constraints:
+              nullable: false
+            name: ENTITAT_ID
+            type: NUMBER(19, 0)
+        tableName: PBL_ENTITAT_SERVEI
+        tablespace: SYSTEM
+- changeSet:
+    id: 1619622439401-44
+    author: limit (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: SYS_C00116054
+            name: ID
+            type: NUMBER(19, 0)
+        - column:
+            name: CREATEDDATE
+            type: TIMESTAMP(6)
+        - column:
+            name: LASTMODIFIEDDATE
+            type: TIMESTAMP(6)
+        - column:
+            name: DELEGAT
+            type: NUMBER(1, 0)
+        - column:
+            name: PRINCIPAL
+            type: NUMBER(1, 0)
+        - column:
+            name: REPRESENTANT
+            type: NUMBER(1, 0)
+        - column:
+            constraints:
+              nullable: false
+            name: VERSION
+            type: NUMBER(19, 0)
+        - column:
+            name: CREATEDBY_CODI
+            type: VARCHAR2(64 CHAR)
+        - column:
+            name: LASTMODIFIEDBY_CODI
+            type: VARCHAR2(64 CHAR)
+        - column:
+            constraints:
+              nullable: false
+            name: ENTITAT_ID
+            type: NUMBER(19, 0)
+        - column:
+            constraints:
+              nullable: false
+            name: USUARI_ID
+            type: VARCHAR2(64 CHAR)
+        - column:
+            name: AUDITOR
+            type: NUMBER(1, 0)
+        - column:
+            name: DEPARTAMENT
+            type: VARCHAR2(64 BYTE)
+        - column:
+            name: APLICACIO
+            type: NUMBER(1, 0)
+        tableName: PBL_ENTITAT_USUARI
+        tablespace: SYSTEM
+- changeSet:
+    id: 1619622439401-45
+    author: limit (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: PBL_ORGAN_GESTOR_PK
+            name: ID
+            type: NUMBER(19, 0)
+        - column:
+            constraints:
+              nullable: false
+            name: CODI
+            type: VARCHAR2(64 BYTE)
+        - column:
+            constraints:
+              nullable: false
+            name: NOM
+            type: VARCHAR2(1000 BYTE)
+        - column:
+            constraints:
+              nullable: false
+            name: ENTITAT_ID
+            type: NUMBER(19, 0)
+        - column:
+            name: PARE_ID
+            type: NUMBER(19, 0)
+        - column:
+            constraints:
+              nullable: false
+            defaultValueNumeric: !!float '1'
+            name: ACTIU
+            type: NUMBER(1, 0)
+        - column:
+            name: CREATEDBY_CODI
+            type: VARCHAR2(64 BYTE)
+        - column:
+            name: CREATEDDATE
+            type: TIMESTAMP(6)
+        - column:
+            name: LASTMODIFIEDBY_CODI
+            type: VARCHAR2(64 BYTE)
+        - column:
+            name: LASTMODIFIEDDATE
+            type: TIMESTAMP(6)
+        tableName: PBL_ORGAN_GESTOR
+        tablespace: USERS
+- changeSet:
+    id: 1619622439401-46
+    author: limit (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: SYS_C00116061
+            name: ID
+            type: NUMBER(19, 0)
+        - column:
+            name: CREATEDDATE
+            type: TIMESTAMP(6)
+        - column:
+            name: LASTMODIFIEDDATE
+            type: TIMESTAMP(6)
+        - column:
+            name: ACTIU
+            type: NUMBER(1, 0)
+        - column:
+            constraints:
+              nullable: false
+            name: CODI
+            type: VARCHAR2(20 CHAR)
+        - column:
+            constraints:
+              nullable: false
+            name: NOM
+            type: VARCHAR2(255 CHAR)
+        - column:
+            constraints:
+              nullable: false
+            name: VERSION
+            type: NUMBER(19, 0)
+        - column:
+            name: CREATEDBY_CODI
+            type: VARCHAR2(64 CHAR)
+        - column:
+            name: LASTMODIFIEDBY_CODI
+            type: VARCHAR2(64 CHAR)
+        - column:
+            constraints:
+              nullable: false
+            name: ENTITAT_ID
+            type: NUMBER(19, 0)
+        - column:
+            name: DEPARTAMENT
+            type: VARCHAR2(64 CHAR)
+        - column:
+            name: CODI_SIA
+            type: VARCHAR2(64 BYTE)
+        - column:
+            name: ORGAN_GESTOR
+            type: VARCHAR2(64 BYTE)
+        - column:
+            name: ORGAN_GESTOR_ID
+            type: NUMBER(19, 0)
+        tableName: PBL_PROCEDIMENT
+        tablespace: SYSTEM
+- changeSet:
+    id: 1619622439401-47
+    author: limit (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: SYS_C00116067
+            name: ID
+            type: NUMBER(19, 0)
+        - column:
+            name: CREATEDDATE
+            type: TIMESTAMP(6)
+        - column:
+            name: LASTMODIFIEDDATE
+            type: TIMESTAMP(6)
+        - column:
+            name: ACTIU
+            type: NUMBER(1, 0)
+        - column:
+            name: SERVEI_ID
+            type: VARCHAR2(64 CHAR)
+        - column:
+            constraints:
+              nullable: false
+            name: VERSION
+            type: NUMBER(19, 0)
+        - column:
+            name: CREATEDBY_CODI
+            type: VARCHAR2(64 CHAR)
+        - column:
+            name: LASTMODIFIEDBY_CODI
+            type: VARCHAR2(64 CHAR)
+        - column:
+            constraints:
+              nullable: false
+            name: PROCEDIMENT_ID
+            type: NUMBER(19, 0)
+        - column:
+            name: PROCEDIMENT_CODI
+            type: VARCHAR2(20 BYTE)
+        tableName: PBL_PROCEDIMENT_SERVEI
+        tablespace: SYSTEM
+- changeSet:
+    id: 1619622439401-48
+    author: limit (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: SYS_C00116074
+            name: ID
+            type: NUMBER(19, 0)
+        - column:
+            name: CREATEDDATE
+            type: TIMESTAMP(6)
+        - column:
+            name: LASTMODIFIEDDATE
+            type: TIMESTAMP(6)
+        - column:
+            constraints:
+              nullable: false
+            name: SERVEI_ID
+            type: VARCHAR2(64 CHAR)
+        - column:
+            constraints:
+              nullable: false
+            name: URL_DESTI
+            type: VARCHAR2(255 CHAR)
+        - column:
+            name: CREATEDBY_CODI
+            type: VARCHAR2(64 CHAR)
+        - column:
+            name: LASTMODIFIEDBY_CODI
+            type: VARCHAR2(64 CHAR)
+        - column:
+            constraints:
+              nullable: false
+            name: ENTITAT_ID
+            type: NUMBER(19, 0)
+        - column:
+            constraints:
+              nullable: false
+            name: VERSION
+            type: NUMBER(19, 0)
+        tableName: PBL_SERVEI_BUS
+        tablespace: SYSTEM
+- changeSet:
+    id: 1619622439401-49
+    author: limit (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: SYS_C00116080
+            name: ID
+            type: NUMBER(19, 0)
+        - column:
+            name: CREATEDDATE
+            type: TIMESTAMP(6)
+        - column:
+            name: LASTMODIFIEDDATE
+            type: TIMESTAMP(6)
+        - column:
+            name: COMENTARI
+            type: VARCHAR2(255 CHAR)
+        - column:
+            name: ENUM_DESCS
+            type: VARCHAR2(1024 CHAR)
+        - column:
+            name: ETIQUETA
+            type: VARCHAR2(64 CHAR)
+        - column:
+            name: MODIFICABLE
+            type: NUMBER(1, 0)
+        - column:
+            name: OBLIGATORI
+            type: NUMBER(1, 0)
+        - column:
+            name: ORDRE
+            type: NUMBER(10, 0)
+        - column:
+            constraints:
+              nullable: false
+            name: PATH
+            type: VARCHAR2(255 CHAR)
+        - column:
+            constraints:
+              nullable: false
+            name: SERVEI_ID
+            type: VARCHAR2(64 CHAR)
+        - column:
+            constraints:
+              nullable: false
+            name: TIPUS
+            type: NUMBER(10, 0)
+        - column:
+            name: VALOR_DEFECTE
+            type: VARCHAR2(64 CHAR)
+        - column:
+            name: VISIBLE
+            type: NUMBER(1, 0)
+        - column:
+            name: CREATEDBY_CODI
+            type: VARCHAR2(64 CHAR)
+        - column:
+            name: LASTMODIFIEDBY_CODI
+            type: VARCHAR2(64 CHAR)
+        - column:
+            name: DATA_FORMAT
+            type: VARCHAR2(32 CHAR)
+        - column:
+            name: VALOR_PARE
+            type: VARCHAR2(64 CHAR)
+        - column:
+            name: CAMP_PARE_ID
+            type: NUMBER(19, 0)
+        - column:
+            name: GRUP_ID
+            type: NUMBER(19, 0)
+        - column:
+            constraints:
+              nullable: false
+            name: VERSION
+            type: NUMBER(19, 0)
+        tableName: PBL_SERVEI_CAMP
+        tablespace: SYSTEM
+- changeSet:
+    id: 1619622439401-50
+    author: limit (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: SYS_C00116086
+            name: ID
+            type: NUMBER(19, 0)
+        - column:
+            name: CREATEDDATE
+            type: TIMESTAMP(6)
+        - column:
+            name: LASTMODIFIEDDATE
+            type: TIMESTAMP(6)
+        - column:
+            constraints:
+              nullable: false
+            name: NOM
+            type: VARCHAR2(255 CHAR)
+        - column:
+            name: ORDRE
+            type: NUMBER(10, 0)
+        - column:
+            constraints:
+              nullable: false
+            name: SERVEI_ID
+            type: VARCHAR2(64 CHAR)
+        - column:
+            constraints:
+              nullable: false
+            name: VERSION
+            type: NUMBER(19, 0)
+        - column:
+            name: CREATEDBY_CODI
+            type: VARCHAR2(64 CHAR)
+        - column:
+            name: LASTMODIFIEDBY_CODI
+            type: VARCHAR2(64 CHAR)
+        tableName: PBL_SERVEI_CAMP_GRUP
+        tablespace: SYSTEM
+- changeSet:
+    id: 1619622439401-51
+    author: limit (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+            name: ID
+            type: NUMBER(19, 0)
+        - column:
+            name: CREATEDDATE
+            type: TIMESTAMP(6)
+        - column:
+            name: LASTMODIFIEDDATE
+            type: TIMESTAMP(6)
+        - column:
+            name: CUSTODIA_CODI
+            type: VARCHAR2(64 CHAR)
+        - column:
+            name: ROLE_NAME
+            type: VARCHAR2(64 CHAR)
+        - column:
+            constraints:
+              nullable: false
+            name: SERVEI_ID
+            type: VARCHAR2(64 CHAR)
+        - column:
+            name: CREATEDBY_CODI
+            type: VARCHAR2(64 CHAR)
+        - column:
+            name: LASTMODIFIEDBY_CODI
+            type: VARCHAR2(64 CHAR)
+        - column:
+            name: CONDICIO_BUS_CLASS
+            type: VARCHAR2(255 CHAR)
+        - column:
+            name: ENTITAT_TIPUS
+            type: NUMBER(10, 0)
+        - column:
+            name: JUSTIFICANT_XPATH
+            type: VARCHAR2(255 CHAR)
+        - column:
+            name: JUSTIFICANT_TIPUS
+            type: NUMBER(10, 0)
+        - column:
+            constraints:
+              nullable: false
+            name: VERSION
+            type: NUMBER(19, 0)
+        - column:
+            name: PERMES_DOCTIP_DNI
+            type: NUMBER(1, 0)
+        - column:
+            name: PERMES_DOCTIP_NIE
+            type: NUMBER(1, 0)
+        - column:
+            name: PERMES_DOCTIP_NIF
+            type: NUMBER(1, 0)
+        - column:
+            name: PERMES_DOCTIP_PAS
+            type: NUMBER(1, 0)
+        - column:
+            name: ACTIU_CAMP_EXP
+            type: NUMBER(1, 0)
+        - column:
+            name: ACTIU_CAMP_LLIN1
+            type: NUMBER(1, 0)
+        - column:
+            name: ACTIU_CAMP_LLIN2
+            type: NUMBER(1, 0)
+        - column:
+            name: ACTIU_CAMP_NOM
+            type: NUMBER(1, 0)
+        - column:
+            constraints:
+              nullable: false
+            name: COMPROVAR_DOCUMENT
+            type: NUMBER(1, 0)
+        - column:
+            name: DOCUMENT_OPCIONAL
+            type: NUMBER(1, 0)
+        - column:
+            name: DOCUMENT_OBLIGATORI
+            type: NUMBER(1, 0)
+        - column:
+            name: PERMES_DOCTIP_CIF
+            type: NUMBER(1, 0)
+        - column:
+            name: ACTIU_CAMP_NOMCOMP
+            type: NUMBER(1, 0)
+        - column:
+            name: ACTIU_CAMP_DOC
+            type: NUMBER(1, 0)
+        - column:
+            name: AJUDA
+            type: CLOB
+        - column:
+            name: FITXER_AJUDA_CONTINGUT
+            type: BLOB
+        - column:
+            name: FITXER_AJUDA_MIME
+            type: VARCHAR2(255 CHAR)
+        - column:
+            name: FITXER_AJUDA_NOM
+            type: VARCHAR2(255 CHAR)
+        - column:
+            name: ACTIVA_GESTIO_XSD
+            type: NUMBER(1, 0)
+        - column:
+            name: UNITAT_DIR3
+            type: VARCHAR2(10 BYTE)
+        - column:
+            constraints:
+              nullable: false
+            defaultValueNumeric: !!float '1'
+            name: ACTIU
+            type: NUMBER(1, 0)
+        - column:
+            constraints:
+              nullable: false
+            defaultValueNumeric: !!float '0'
+            name: UNITAT_DIR3_FROM_ENTITAT
+            type: NUMBER(1, 0)
+        tableName: PBL_SERVEI_CONFIG
+        tablespace: SYSTEM
+- changeSet:
+    id: 1619622439401-52
+    author: limit (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: SYS_C00116097
+            name: ID
+            type: NUMBER(19, 0)
+        - column:
+            name: CREATEDDATE
+            type: TIMESTAMP(6)
+        - column:
+            name: LASTMODIFIEDDATE
+            type: TIMESTAMP(6)
+        - column:
+            constraints:
+              nullable: false
+            name: LOCALE_IDIOMA
+            type: VARCHAR2(2 CHAR)
+        - column:
+            constraints:
+              nullable: false
+            name: LOCALE_REGIO
+            type: VARCHAR2(2 CHAR)
+        - column:
+            constraints:
+              nullable: false
+            name: SERVEI_ID
+            type: VARCHAR2(64 CHAR)
+        - column:
+            name: TRADUCCIO
+            type: VARCHAR2(255 CHAR)
+        - column:
+            constraints:
+              nullable: false
+            name: VERSION
+            type: NUMBER(19, 0)
+        - column:
+            constraints:
+              nullable: false
+            name: XPATH
+            type: VARCHAR2(255 CHAR)
+        - column:
+            name: CREATEDBY_CODI
+            type: VARCHAR2(64 CHAR)
+        - column:
+            name: LASTMODIFIEDBY_CODI
+            type: VARCHAR2(64 CHAR)
+        tableName: PBL_SERVEI_JUSTIF_CAMP
+        tablespace: SYSTEM
+- changeSet:
+    id: 1619622439401-53
+    author: limit (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: SYS_C00116101
+            name: CODI
+            type: VARCHAR2(64 CHAR)
+        - column:
+            name: INICIALITZAT
+            type: NUMBER(1, 0)
+        - column:
+            name: NOM
+            type: VARCHAR2(200 CHAR)
+        - column:
+            defaultValue: 12345678Z
+            name: NIF
+            type: VARCHAR2(15 BYTE)
+        - column:
+            constraints:
+              nullable: false
+            name: VERSION
+            type: NUMBER(19, 0)
+        - column:
+            name: EMAIL
+            type: VARCHAR2(200 CHAR)
+        - column:
+            defaultValue: CA
+            name: IDIOMA
+            type: VARCHAR2(2 CHAR)
+        tableName: PBL_USUARI
+        tablespace: SYSTEM
+- changeSet:
+    id: 1619622439401-54
+    author: limit (generated)
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: CLASS
+        indexName: ACL_CLASS_UK
+        tableName: ACL_CLASS
+        tablespace: SYSTEM
+        unique: true
+- changeSet:
+    id: 1619622439401-55
+    author: limit (generated)
+    changes:
+    - addUniqueConstraint:
+        columnNames: CLASS
+        constraintName: ACL_CLASS_UK
+        forIndexName: ACL_CLASS_UK
+        tableName: ACL_CLASS
+        tablespace: SYSTEM
+- changeSet:
+    id: 1619622439401-56
+    author: limit (generated)
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: ACL_OBJECT_IDENTITY
+        - column:
+            name: ACE_ORDER
+        indexName: ACL_ENTRY_UK
+        tableName: ACL_ENTRY
+        tablespace: SYSTEM
+        unique: true
+- changeSet:
+    id: 1619622439401-57
+    author: limit (generated)
+    changes:
+    - addUniqueConstraint:
+        columnNames: ACL_OBJECT_IDENTITY, ACE_ORDER
+        constraintName: ACL_ENTRY_UK
+        forIndexName: ACL_ENTRY_UK
+        tableName: ACL_ENTRY
+        tablespace: SYSTEM
+- changeSet:
+    id: 1619622439401-58
+    author: limit (generated)
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: OBJECT_ID_CLASS
+        - column:
+            name: OBJECT_ID_IDENTITY
+        indexName: ACL_OID_UK
+        tableName: ACL_OBJECT_IDENTITY
+        tablespace: SYSTEM
+        unique: true
+- changeSet:
+    id: 1619622439401-59
+    author: limit (generated)
+    changes:
+    - addUniqueConstraint:
+        columnNames: OBJECT_ID_CLASS, OBJECT_ID_IDENTITY
+        constraintName: ACL_OID_UK
+        forIndexName: ACL_OID_UK
+        tableName: ACL_OBJECT_IDENTITY
+        tablespace: SYSTEM
+- changeSet:
+    id: 1619622439401-60
+    author: limit (generated)
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: SID
+        - column:
+            name: PRINCIPAL
+        indexName: ACL_SID_UK
+        tableName: ACL_SID
+        tablespace: SYSTEM
+        unique: true
+- changeSet:
+    id: 1619622439401-61
+    author: limit (generated)
+    changes:
+    - addUniqueConstraint:
+        columnNames: SID, PRINCIPAL
+        constraintName: ACL_SID_UK
+        forIndexName: ACL_SID_UK
+        tableName: ACL_SID
+        tablespace: SYSTEM
+- changeSet:
+    id: 1619622439401-62
+    author: limit (generated)
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: REGISTRE_ID
+        - column:
+            name: TITOL
+        - column:
+            name: FITXER_NOM
+        - column:
+            name: FITXER_TAMANY
+        - column:
+            name: TIPUS
+        indexName: IPA_REGANX_MULT_UK
+        tableName: IPA_REGISTRE_ANNEX
+        tablespace: SYSTEM
+        unique: true
+- changeSet:
+    id: 1619622439401-63
+    author: limit (generated)
+    changes:
+    - addUniqueConstraint:
+        columnNames: REGISTRE_ID, TITOL, FITXER_NOM, FITXER_TAMANY, TIPUS
+        constraintName: IPA_REGANX_MULT_UK
+        forIndexName: IPA_REGANX_MULT_UK
+        tableName: IPA_REGISTRE_ANNEX
+        tablespace: SYSTEM
+- changeSet:
+    id: 1619622439401-64
+    author: limit (generated)
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: REGISTRE_ID
+        - column:
+            name: DOC_TIPUS
+        - column:
+            name: DOC_NUM
+        - column:
+            name: NOM
+        - column:
+            name: LLINATGE1
+        - column:
+            name: LLINATGE2
+        - column:
+            name: RAO_SOCIAL
+        indexName: IPA_REGINT_MULT_UK
+        tableName: IPA_REGISTRE_INTER
+        tablespace: SYSTEM
+        unique: true
+- changeSet:
+    id: 1619622439401-65
+    author: limit (generated)
+    changes:
+    - addUniqueConstraint:
+        columnNames: REGISTRE_ID, DOC_TIPUS, DOC_NUM, NOM, LLINATGE1, LLINATGE2, RAO_SOCIAL
+        constraintName: IPA_REGINT_MULT_UK
+        forIndexName: IPA_REGINT_MULT_UK
+        tableName: IPA_REGISTRE_INTER
+        tablespace: SYSTEM
+- changeSet:
+    id: 1619622439401-66
+    author: limit (generated)
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: REGISTRE_ID
+        - column:
+            name: DESTI_ID
+        - column:
+            name: DATA
+        indexName: IPA_REGMOV_MULT_UK
+        tableName: IPA_REGISTRE_MOV
+        tablespace: SYSTEM
+        unique: true
+- changeSet:
+    id: 1619622439401-67
+    author: limit (generated)
+    changes:
+    - addUniqueConstraint:
+        columnNames: REGISTRE_ID, DESTI_ID, DATA
+        constraintName: IPA_REGMOV_MULT_UK
+        forIndexName: IPA_REGMOV_MULT_UK
+        tableName: IPA_REGISTRE_MOV
+        tablespace: SYSTEM
+- changeSet:
+    id: 1619622439401-68
+    author: limit (generated)
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: TIPUS
+        - column:
+            name: UNITAT_ADM
+        - column:
+            name: NUMERO
+        - column:
+            name: DATA
+        - column:
+            name: OFICINA
+        - column:
+            name: LLIBRE
+        indexName: IPA_REG_MULT_UK
+        tableName: IPA_REGISTRE
+        tablespace: SYSTEM
+        unique: true
+- changeSet:
+    id: 1619622439401-69
+    author: limit (generated)
+    changes:
+    - addUniqueConstraint:
+        columnNames: TIPUS, UNITAT_ADM, NUMERO, DATA, OFICINA, LLIBRE
+        constraintName: IPA_REG_MULT_UK
+        forIndexName: IPA_REG_MULT_UK
+        tableName: IPA_REGISTRE
+        tablespace: SYSTEM
+- changeSet:
+    id: 1619622439401-70
+    author: limit (generated)
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: CODI
+        - column:
+            name: ENTITAT_ID
+        indexName: PBL_ORGAN_GESTOR_UK
+        tableName: PBL_ORGAN_GESTOR
+        unique: true
+- changeSet:
+    id: 1619622439401-71
+    author: limit (generated)
+    changes:
+    - addUniqueConstraint:
+        columnNames: CODI, ENTITAT_ID
+        constraintName: PBL_ORGAN_GESTOR_UK
+        forIndexName: PBL_ORGAN_GESTOR_UK
+        tableName: PBL_ORGAN_GESTOR
+- changeSet:
+    id: 1619622439401-72
+    author: limit (generated)
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: CODI
+        - column:
+            name: ENTITAT_ID
+        indexName: PBL_PROID_UK
+        tableName: PBL_PROCEDIMENT
+        tablespace: SYSTEM
+        unique: true
+- changeSet:
+    id: 1619622439401-73
+    author: limit (generated)
+    changes:
+    - addUniqueConstraint:
+        columnNames: CODI, ENTITAT_ID
+        constraintName: PBL_PROID_UK
+        forIndexName: PBL_PROID_UK
+        tableName: PBL_PROCEDIMENT
+        tablespace: SYSTEM
+- changeSet:
+    id: 1619622439401-74
+    author: limit (generated)
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: CODI
+        indexName: SYS_C00116044
+        tableName: PBL_ENTITAT
+        tablespace: SYSTEM
+        unique: true
+- changeSet:
+    id: 1619622439401-75
+    author: limit (generated)
+    changes:
+    - addUniqueConstraint:
+        columnNames: CODI
+        constraintName: SYS_C00116044
+        forIndexName: SYS_C00116044
+        tableName: PBL_ENTITAT
+        tablespace: SYSTEM
+- changeSet:
+    id: 1619622439401-76
+    author: limit (generated)
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: ENTITAT_ID
+        - column:
+            name: SERVEI_ID
+        indexName: SYS_C00116049
+        tableName: PBL_ENTITAT_SERVEI
+        tablespace: SYSTEM
+        unique: true
+- changeSet:
+    id: 1619622439401-77
+    author: limit (generated)
+    changes:
+    - addUniqueConstraint:
+        columnNames: ENTITAT_ID, SERVEI_ID
+        constraintName: SYS_C00116049
+        forIndexName: SYS_C00116049
+        tableName: PBL_ENTITAT_SERVEI
+        tablespace: SYSTEM
+- changeSet:
+    id: 1619622439401-78
+    author: limit (generated)
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: ENTITAT_ID
+        - column:
+            name: USUARI_ID
+        indexName: SYS_C00116055
+        tableName: PBL_ENTITAT_USUARI
+        tablespace: SYSTEM
+        unique: true
+- changeSet:
+    id: 1619622439401-79
+    author: limit (generated)
+    changes:
+    - addUniqueConstraint:
+        columnNames: ENTITAT_ID, USUARI_ID
+        constraintName: SYS_C00116055
+        forIndexName: SYS_C00116055
+        tableName: PBL_ENTITAT_USUARI
+        tablespace: SYSTEM
+- changeSet:
+    id: 1619622439401-80
+    author: limit (generated)
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: PROCEDIMENT_ID
+        - column:
+            name: SERVEI_ID
+        indexName: SYS_C00116068
+        tableName: PBL_PROCEDIMENT_SERVEI
+        tablespace: SYSTEM
+        unique: true
+- changeSet:
+    id: 1619622439401-81
+    author: limit (generated)
+    changes:
+    - addUniqueConstraint:
+        columnNames: PROCEDIMENT_ID, SERVEI_ID
+        constraintName: SYS_C00116068
+        forIndexName: SYS_C00116068
+        tableName: PBL_PROCEDIMENT_SERVEI
+        tablespace: SYSTEM
+- changeSet:
+    id: 1619622439401-82
+    author: limit (generated)
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: SERVEI_ID
+        - column:
+            name: PATH
+        indexName: SYS_C00116081
+        tableName: PBL_SERVEI_CAMP
+        tablespace: SYSTEM
+        unique: true
+- changeSet:
+    id: 1619622439401-83
+    author: limit (generated)
+    changes:
+    - addUniqueConstraint:
+        columnNames: SERVEI_ID, PATH
+        constraintName: SYS_C00116081
+        forIndexName: SYS_C00116081
+        tableName: PBL_SERVEI_CAMP
+        tablespace: SYSTEM
+- changeSet:
+    id: 1619622439401-84
+    author: limit (generated)
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: SERVEI_ID
+        - column:
+            name: XPATH
+        indexName: SYS_C00116098
+        tableName: PBL_SERVEI_JUSTIF_CAMP
+        tablespace: SYSTEM
+        unique: true
+- changeSet:
+    id: 1619622439401-85
+    author: limit (generated)
+    changes:
+    - addUniqueConstraint:
+        columnNames: SERVEI_ID, XPATH
+        constraintName: SYS_C00116098
+        forIndexName: SYS_C00116098
+        tableName: PBL_SERVEI_JUSTIF_CAMP
+        tablespace: SYSTEM
+- changeSet:
+    id: 1619622439401-86
+    author: limit (generated)
+    changes:
+    - addUniqueConstraint:
+        columnNames: ENTITAT_ID, CODI
+        constraintName: UKKP90P07KM4OCBVCCCQRC3G6H1
+        tableName: PBL_PROCEDIMENT
+        tablespace: SYSTEM
+- changeSet:
+    id: 1619622439401-87
+    author: limit (generated)
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: ORGANISMO
+        indexName: CESIONARIOS_INDEX_ORGANISMO
+        tableName: CORE_REQ_CESIONARIOS_SERVICIOS
+- changeSet:
+    id: 1619622439401-88
+    author: limit (generated)
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: EMISOR
+        indexName: CORE_SERVICIO_INDEX_EMISOR
+        tableName: CORE_SERVICIO
+- changeSet:
+    id: 1619622439401-89
+    author: limit (generated)
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: CONTENIDOR_ID
+        indexName: IPA_CONTENIDOR_REGISTRE_FK_I
+        tableName: IPA_REGISTRE
+        tablespace: SYSTEM
+- changeSet:
+    id: 1619622439401-90
+    author: limit (generated)
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: DESTI_ID
+        indexName: IPA_DESTI_REGMOV_FK_I
+        tableName: IPA_REGISTRE_MOV
+        tablespace: SYSTEM
+- changeSet:
+    id: 1619622439401-91
+    author: limit (generated)
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: ORIGEN_ID
+        indexName: IPA_ORIGEN_REGMOV_FK_I
+        tableName: IPA_REGISTRE_MOV
+        tablespace: SYSTEM
+- changeSet:
+    id: 1619622439401-92
+    author: limit (generated)
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: REGISTRE_ID
+        indexName: IPA_REGISTRE_REGINT_FK_I
+        tableName: IPA_REGISTRE_INTER
+        tablespace: SYSTEM
+- changeSet:
+    id: 1619622439401-93
+    author: limit (generated)
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: REGISTRE_ID
+        indexName: IPA_REGISTRE_REGMOV_FK_I
+        tableName: IPA_REGISTRE_MOV
+        tablespace: SYSTEM
+- changeSet:
+    id: 1619622439401-94
+    author: limit (generated)
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: REGISTRE_ID
+        indexName: IPA_REGISTRE_REGNX_FK_I
+        tableName: IPA_REGISTRE_ANNEX
+        tablespace: SYSTEM
+- changeSet:
+    id: 1619622439401-95
+    author: limit (generated)
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: REPRESENTANT_ID
+        indexName: IPA_REGISTRE_REGRPS_FK_I
+        tableName: IPA_REGISTRE_INTER
+        tablespace: SYSTEM
+- changeSet:
+    id: 1619622439401-96
+    author: limit (generated)
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: REPRESENTAT_ID
+        indexName: IPA_REGISTRE_REGRPT_FK_I
+        tableName: IPA_REGISTRE_INTER
+        tablespace: SYSTEM
+- changeSet:
+    id: 1619622439401-97
+    author: limit (generated)
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: REMITENT_ID
+        indexName: IPA_REMITENT_REGMOV_FK_I
+        tableName: IPA_REGISTRE_MOV
+        tablespace: SYSTEM
+- changeSet:
+    id: 1619622439401-98
+    author: limit (generated)
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: CREATEDBY_CODI
+        indexName: IPA_USUCRE_REGANX_FK_I
+        tableName: IPA_REGISTRE_ANNEX
+        tablespace: SYSTEM
+- changeSet:
+    id: 1619622439401-99
+    author: limit (generated)
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: CREATEDBY_CODI
+        indexName: IPA_USUCRE_REGINT_FK_I
+        tableName: IPA_REGISTRE_INTER
+        tablespace: SYSTEM
+- changeSet:
+    id: 1619622439401-100
+    author: limit (generated)
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: CREATEDBY_CODI
+        indexName: IPA_USUCRE_REGISTRE_FK_I
+        tableName: IPA_REGISTRE
+        tablespace: SYSTEM
+- changeSet:
+    id: 1619622439401-101
+    author: limit (generated)
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: CREATEDBY_CODI
+        indexName: IPA_USUCRE_REGMOV_FK_I
+        tableName: IPA_REGISTRE_MOV
+        tablespace: SYSTEM
+- changeSet:
+    id: 1619622439401-102
+    author: limit (generated)
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: LASTMODIFIEDBY_CODI
+        indexName: IPA_USUMOD_REGINT_FK_I
+        tableName: IPA_REGISTRE_INTER
+        tablespace: SYSTEM
+- changeSet:
+    id: 1619622439401-103
+    author: limit (generated)
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: LASTMODIFIEDBY_CODI
+        indexName: IPA_USUMOD_REGISTRE_FK_I
+        tableName: IPA_REGISTRE
+        tablespace: SYSTEM
+- changeSet:
+    id: 1619622439401-104
+    author: limit (generated)
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: LASTMODIFIEDBY_CODI
+        indexName: IPA_USUMOD_REGMOV_FK_I
+        tableName: IPA_REGISTRE_MOV
+        tablespace: SYSTEM
+- changeSet:
+    id: 1619622439401-105
+    author: limit (generated)
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: LASTMODIFIEDBY_CODI
+        indexName: IPA_USUMOD_REGNX_FK_I
+        tableName: IPA_REGISTRE_ANNEX
+        tablespace: SYSTEM
+- changeSet:
+    id: 1619622439401-106
+    author: limit (generated)
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: CREATEDBY_CODI
+        indexName: PBL_CONSULTA_CREATEDBY_I
+        tableName: PBL_CONSULTA
+        tablespace: SYSTEM
+- changeSet:
+    id: 1619622439401-107
+    author: limit (generated)
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: CREATEDBY_CODI
+        - column:
+            name: ESTAT
+        - column:
+            name: MULTIPLE
+        indexName: PBL_CONSULTA_MULT_I
+        tableName: PBL_CONSULTA
+- changeSet:
+    id: 1619622439401-108
+    author: limit (generated)
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: PARE_ID
+        indexName: PBL_CONSULTA_PARE_I
+        tableName: PBL_CONSULTA
+- changeSet:
+    id: 1619622439401-109
+    author: limit (generated)
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: PROCSERV_ID
+        indexName: PBL_CONSULTA_PROCSERV_I
+        tableName: PBL_CONSULTA
+        tablespace: SYSTEM
+- changeSet:
+    id: 1619622439401-110
+    author: limit (generated)
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: IDPETICION
+        indexName: PBL_CORETRA_IDPETICION_I
+        tableName: CORE_TRANSMISION
+- changeSet:
+    id: 1619622439401-111
+    author: limit (generated)
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: ENTITAT_ID
+        indexName: PBL_ENTISERV_ENTITAT_I
+        tableName: PBL_ENTITAT_SERVEI
+        tablespace: SYSTEM
+- changeSet:
+    id: 1619622439401-112
+    author: limit (generated)
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: SERVEI_ID
+        indexName: PBL_ENTISERV_SERVEI_I
+        tableName: PBL_ENTITAT_SERVEI
+        tablespace: SYSTEM
+- changeSet:
+    id: 1619622439401-113
+    author: limit (generated)
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: ENTITAT_ID
+        indexName: PBL_ENTIUSR_ENTITAT_I
+        tableName: PBL_ENTITAT_USUARI
+        tablespace: SYSTEM
+- changeSet:
+    id: 1619622439401-114
+    author: limit (generated)
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: USUARI_ID
+        indexName: PBL_ENTIUSR_USUARI_I
+        tableName: PBL_ENTITAT_USUARI
+        tablespace: SYSTEM
+- changeSet:
+    id: 1619622439401-115
+    author: limit (generated)
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: ENTITAT_ID
+        indexName: PBL_PROCEDIMENT_ENTITAT_I
+        tableName: PBL_PROCEDIMENT
+        tablespace: SYSTEM
+- changeSet:
+    id: 1619622439401-116
+    author: limit (generated)
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: PROCEDIMENT_ID
+        indexName: PBL_PROCSERV_PROCED_I
+        tableName: PBL_PROCEDIMENT_SERVEI
+        tablespace: SYSTEM
+- changeSet:
+    id: 1619622439401-117
+    author: limit (generated)
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: SERVEI_ID
+        indexName: PBL_PROCSERV_SERVEI_I
+        tableName: PBL_PROCEDIMENT_SERVEI
+        tablespace: SYSTEM
+- changeSet:
+    id: 1619622439401-118
+    author: limit (generated)
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: SERVEI_ID
+        indexName: PBL_SERVEI_BUS_SERVEI_I
+        tableName: PBL_SERVEI_BUS
+        tablespace: SYSTEM
+- changeSet:
+    id: 1619622439401-119
+    author: limit (generated)
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: SERVEI_ID
+        indexName: PBL_SERVEI_CAMPGR_SERVEI_I
+        tableName: PBL_SERVEI_CAMP_GRUP
+        tablespace: SYSTEM
+- changeSet:
+    id: 1619622439401-120
+    author: limit (generated)
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: SERVEI_ID
+        indexName: PBL_SERVEI_CAMP_SERVEI_I
+        tableName: PBL_SERVEI_CAMP
+        tablespace: SYSTEM
+- changeSet:
+    id: 1619622439401-121
+    author: limit (generated)
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: SERVEI_ID
+        indexName: PBL_SERVEI_JUSCAM_SERVEI_I
+        tableName: PBL_SERVEI_JUSTIF_CAMP
+        tablespace: SYSTEM
+- changeSet:
+    id: 1619622439401-122
+    author: limit (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: ACL_OBJECT_IDENTITY
+        baseTableName: ACL_ENTRY
+        constraintName: ACL_ENTRY_OID_FK
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: RESTRICT
+        onUpdate: RESTRICT
+        referencedColumnNames: ID
+        referencedTableName: ACL_OBJECT_IDENTITY
+        validate: true
+- changeSet:
+    id: 1619622439401-123
+    author: limit (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: SID
+        baseTableName: ACL_ENTRY
+        constraintName: ACL_ENTRY_SID_FK
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: RESTRICT
+        onUpdate: RESTRICT
+        referencedColumnNames: ID
+        referencedTableName: ACL_SID
+        validate: true
+- changeSet:
+    id: 1619622439401-124
+    author: limit (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: OBJECT_ID_CLASS
+        baseTableName: ACL_OBJECT_IDENTITY
+        constraintName: ACL_OID_CLASS_FK
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: CASCADE
+        onUpdate: RESTRICT
+        referencedColumnNames: ID
+        referencedTableName: ACL_CLASS
+        validate: true
+- changeSet:
+    id: 1619622439401-125
+    author: limit (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: PARENT_OBJECT
+        baseTableName: ACL_OBJECT_IDENTITY
+        constraintName: ACL_OID_OID_FK
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: CASCADE
+        onUpdate: RESTRICT
+        referencedColumnNames: ID
+        referencedTableName: ACL_OBJECT_IDENTITY
+        validate: true
+- changeSet:
+    id: 1619622439401-126
+    author: limit (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: OWNER_SID
+        baseTableName: ACL_OBJECT_IDENTITY
+        constraintName: ACL_OID_SID_FK
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: CASCADE
+        onUpdate: RESTRICT
+        referencedColumnNames: ID
+        referencedTableName: ACL_SID
+        validate: true
+- changeSet:
+    id: 1619622439401-127
+    author: limit (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: CREATEDBY_CODI
+        baseTableName: PBL_SERVEI_BUS
+        constraintName: FK31B17CA01D90EB87
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: RESTRICT
+        onUpdate: RESTRICT
+        referencedColumnNames: CODI
+        referencedTableName: PBL_USUARI
+        validate: true
+- changeSet:
+    id: 1619622439401-128
+    author: limit (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: LASTMODIFIEDBY_CODI
+        baseTableName: PBL_SERVEI_BUS
+        constraintName: FK31B17CA024DDA730
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: RESTRICT
+        onUpdate: RESTRICT
+        referencedColumnNames: CODI
+        referencedTableName: PBL_USUARI
+        validate: true
+- changeSet:
+    id: 1619622439401-129
+    author: limit (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: TIPOMENSAJE
+        baseTableName: CORE_TOKEN_DATA
+        constraintName: FK35573ED06007240E
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: RESTRICT
+        onUpdate: RESTRICT
+        referencedColumnNames: TIPO
+        referencedTableName: CORE_TIPO_MENSAJE
+        validate: true
+- changeSet:
+    id: 1619622439401-130
+    author: limit (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: IDPETICION
+        baseTableName: CORE_TOKEN_DATA
+        constraintName: FK35573ED082700A73
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: RESTRICT
+        onUpdate: RESTRICT
+        referencedColumnNames: IDPETICION
+        referencedTableName: CORE_PETICION_RESPUESTA
+        validate: true
+- changeSet:
+    id: 1619622439401-131
+    author: limit (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: MODULO
+        baseTableName: CORE_MODULO_CONFIGURACION
+        constraintName: FK484613EDF60E414
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: RESTRICT
+        onUpdate: RESTRICT
+        referencedColumnNames: NOMBRE
+        referencedTableName: CORE_MODULO
+        validate: true
+- changeSet:
+    id: 1619622439401-132
+    author: limit (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: IDPETICION
+        baseTableName: CORE_TRANSMISION
+        constraintName: FK4F5CAA5982700A73
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: RESTRICT
+        onUpdate: RESTRICT
+        referencedColumnNames: IDPETICION
+        referencedTableName: CORE_PETICION_RESPUESTA
+        validate: true
+- changeSet:
+    id: 1619622439401-133
+    author: limit (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: CREATEDBY_CODI
+        baseTableName: PBL_SERVEI_CONFIG
+        constraintName: FKDEB551221D90EB87
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: RESTRICT
+        onUpdate: RESTRICT
+        referencedColumnNames: CODI
+        referencedTableName: PBL_USUARI
+        validate: true
+- changeSet:
+    id: 1619622439401-134
+    author: limit (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: LASTMODIFIEDBY_CODI
+        baseTableName: PBL_SERVEI_CONFIG
+        constraintName: FKDEB5512224DDA730
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: RESTRICT
+        onUpdate: RESTRICT
+        referencedColumnNames: CODI
+        referencedTableName: PBL_USUARI
+        validate: true
+- changeSet:
+    id: 1619622439401-135
+    author: limit (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: CREATEDBY_CODI
+        baseTableName: PBL_SERVEI_JUSTIF_CAMP
+        constraintName: FKE04E98171D90EB87
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: RESTRICT
+        onUpdate: RESTRICT
+        referencedColumnNames: CODI
+        referencedTableName: PBL_USUARI
+        validate: true
+- changeSet:
+    id: 1619622439401-136
+    author: limit (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: LASTMODIFIEDBY_CODI
+        baseTableName: PBL_SERVEI_JUSTIF_CAMP
+        constraintName: FKE04E981724DDA730
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: RESTRICT
+        onUpdate: RESTRICT
+        referencedColumnNames: CODI
+        referencedTableName: PBL_USUARI
+        validate: true
+- changeSet:
+    id: 1619622439401-137
+    author: limit (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: CREATEDBY_CODI
+        baseTableName: PBL_SERVEI_CAMP_GRUP
+        constraintName: FKFB5B19E41D90EB87
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: RESTRICT
+        onUpdate: RESTRICT
+        referencedColumnNames: CODI
+        referencedTableName: PBL_USUARI
+        validate: true
+- changeSet:
+    id: 1619622439401-138
+    author: limit (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: LASTMODIFIEDBY_CODI
+        baseTableName: PBL_SERVEI_CAMP_GRUP
+        constraintName: FKFB5B19E424DDA730
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: RESTRICT
+        onUpdate: RESTRICT
+        referencedColumnNames: CODI
+        referencedTableName: PBL_USUARI
+        validate: true
+- changeSet:
+    id: 1619622439401-139
+    author: limit (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: MODULO
+        baseTableName: CORE_REQ_MODULO_PDF_CESIONARIO
+        constraintName: FK_MODULO_MOD_PDF
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: RESTRICT
+        onUpdate: RESTRICT
+        referencedColumnNames: NOMBRE
+        referencedTableName: CORE_REQ_MODULO_PDF
+        validate: true
+- changeSet:
+    id: 1619622439401-140
+    author: limit (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: ORGANISMO
+        baseTableName: CORE_REQ_CESIONARIOS_SERVICIOS
+        constraintName: FK_ORGANISMO_ORG_CESIONARIO
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: RESTRICT
+        onUpdate: RESTRICT
+        referencedColumnNames: ID
+        referencedTableName: CORE_ORGANISMO_CESIONARIO
+        validate: true
+- changeSet:
+    id: 1619622439401-141
+    author: limit (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: ORGANISMO
+        baseTableName: CORE_REQ_MODULO_PDF_CESIONARIO
+        constraintName: FK_ORG_CESIONARIO_MOD_PDF
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: RESTRICT
+        onUpdate: RESTRICT
+        referencedColumnNames: ID
+        referencedTableName: CORE_ORGANISMO_CESIONARIO
+        validate: true
+- changeSet:
+    id: 1619622439401-142
+    author: limit (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: SERVICIO
+        baseTableName: CORE_REQ_MODULO_PDF_CESIONARIO
+        constraintName: FK_SERVICIO_MOD_PDF
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: RESTRICT
+        onUpdate: RESTRICT
+        referencedColumnNames: ID
+        referencedTableName: CORE_SERVICIO
+        validate: true
+- changeSet:
+    id: 1619622439401-143
+    author: limit (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: SERVICIO
+        baseTableName: CORE_REQ_CESIONARIOS_SERVICIOS
+        constraintName: FK_SERVICIO_ORG_CESIONARIO
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: RESTRICT
+        onUpdate: RESTRICT
+        referencedColumnNames: ID
+        referencedTableName: CORE_SERVICIO
+        validate: true
+- changeSet:
+    id: 1619622439401-144
+    author: limit (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: CERTIFICADO
+        baseTableName: CORE_MODULO_CONFIGURACION
+        constraintName: MOD_CONF_SERV
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: RESTRICT
+        onUpdate: RESTRICT
+        referencedColumnNames: ID
+        referencedTableName: CORE_SERVICIO
+        validate: true
+- changeSet:
+    id: 1619622439401-145
+    author: limit (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: PARE_ID
+        baseTableName: PBL_CONSULTA
+        constraintName: PBL_CONSULTA_PARE_FK
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: RESTRICT
+        onUpdate: RESTRICT
+        referencedColumnNames: ID
+        referencedTableName: PBL_CONSULTA
+        validate: true
+- changeSet:
+    id: 1619622439401-146
+    author: limit (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: CREATEDBY_CODI
+        baseTableName: PBL_CONSULTA
+        constraintName: PBL_CREATEDBY_CONSULTA_FK
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: RESTRICT
+        onUpdate: RESTRICT
+        referencedColumnNames: CODI
+        referencedTableName: PBL_USUARI
+        validate: true
+- changeSet:
+    id: 1619622439401-147
+    author: limit (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: CREATEDBY_CODI
+        baseTableName: PBL_ENTITAT_SERVEI
+        constraintName: PBL_CREATEDBY_ENTISERV_FK
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: RESTRICT
+        onUpdate: RESTRICT
+        referencedColumnNames: CODI
+        referencedTableName: PBL_USUARI
+        validate: true
+- changeSet:
+    id: 1619622439401-148
+    author: limit (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: CREATEDBY_CODI
+        baseTableName: PBL_ENTITAT_USUARI
+        constraintName: PBL_CREATEDBY_ENTIUSR_FK
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: RESTRICT
+        onUpdate: RESTRICT
+        referencedColumnNames: CODI
+        referencedTableName: PBL_USUARI
+        validate: true
+- changeSet:
+    id: 1619622439401-149
+    author: limit (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: CREATEDBY_CODI
+        baseTableName: PBL_PROCEDIMENT
+        constraintName: PBL_CREATEDBY_PROCED_FK
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: RESTRICT
+        onUpdate: RESTRICT
+        referencedColumnNames: CODI
+        referencedTableName: PBL_USUARI
+        validate: true
+- changeSet:
+    id: 1619622439401-150
+    author: limit (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: CREATEDBY_CODI
+        baseTableName: PBL_PROCEDIMENT_SERVEI
+        constraintName: PBL_CREATEDBY_PROCSERV_FK
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: RESTRICT
+        onUpdate: RESTRICT
+        referencedColumnNames: CODI
+        referencedTableName: PBL_USUARI
+        validate: true
+- changeSet:
+    id: 1619622439401-151
+    author: limit (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: CREATEDBY_CODI
+        baseTableName: PBL_SERVEI_CAMP
+        constraintName: PBL_CREATEDBY_SRVCAMP_FK
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: RESTRICT
+        onUpdate: RESTRICT
+        referencedColumnNames: CODI
+        referencedTableName: PBL_USUARI
+        validate: true
+- changeSet:
+    id: 1619622439401-152
+    author: limit (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: CREATEDBY_CODI
+        baseTableName: PBL_ENTITAT
+        constraintName: PBL_CREATEDBY_USUARI_FK
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: RESTRICT
+        onUpdate: RESTRICT
+        referencedColumnNames: CODI
+        referencedTableName: PBL_USUARI
+        validate: true
+- changeSet:
+    id: 1619622439401-153
+    author: limit (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: ENTITAT_ID
+        baseTableName: PBL_ENTITAT_SERVEI
+        constraintName: PBL_ENTITAT_ENTISERV_FK
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: RESTRICT
+        onUpdate: RESTRICT
+        referencedColumnNames: ID
+        referencedTableName: PBL_ENTITAT
+        validate: true
+- changeSet:
+    id: 1619622439401-154
+    author: limit (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: ENTITAT_ID
+        baseTableName: PBL_ENTITAT_USUARI
+        constraintName: PBL_ENTITAT_ENTIUSR_FK
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: RESTRICT
+        onUpdate: RESTRICT
+        referencedColumnNames: ID
+        referencedTableName: PBL_ENTITAT
+        validate: true
+- changeSet:
+    id: 1619622439401-155
+    author: limit (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: ENTITAT_ID
+        baseTableName: PBL_ORGAN_GESTOR
+        constraintName: PBL_ENTITAT_ORGAN_GESTOR_FK
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: RESTRICT
+        onUpdate: RESTRICT
+        referencedColumnNames: ID
+        referencedTableName: PBL_ENTITAT
+        validate: true
+- changeSet:
+    id: 1619622439401-156
+    author: limit (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: ENTITAT_ID
+        baseTableName: PBL_PROCEDIMENT
+        constraintName: PBL_ENTITAT_PROCED_FK
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: RESTRICT
+        onUpdate: RESTRICT
+        referencedColumnNames: ID
+        referencedTableName: PBL_ENTITAT
+        validate: true
+- changeSet:
+    id: 1619622439401-157
+    author: limit (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: ENTITAT_ID
+        baseTableName: PBL_SERVEI_BUS
+        constraintName: PBL_ENTITAT_SERVBUS_FK
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: RESTRICT
+        onUpdate: RESTRICT
+        referencedColumnNames: ID
+        referencedTableName: PBL_ENTITAT
+        validate: true
+- changeSet:
+    id: 1619622439401-158
+    author: limit (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: LASTMODIFIEDBY_CODI
+        baseTableName: PBL_CONSULTA
+        constraintName: PBL_LASTMODIFIEDBY_CONSULTA_FK
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: RESTRICT
+        onUpdate: RESTRICT
+        referencedColumnNames: CODI
+        referencedTableName: PBL_USUARI
+        validate: true
+- changeSet:
+    id: 1619622439401-159
+    author: limit (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: LASTMODIFIEDBY_CODI
+        baseTableName: PBL_ENTITAT_SERVEI
+        constraintName: PBL_LASTMODIFIEDBY_ENTISERV_FK
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: RESTRICT
+        onUpdate: RESTRICT
+        referencedColumnNames: CODI
+        referencedTableName: PBL_USUARI
+        validate: true
+- changeSet:
+    id: 1619622439401-160
+    author: limit (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: LASTMODIFIEDBY_CODI
+        baseTableName: PBL_ENTITAT_USUARI
+        constraintName: PBL_LASTMODIFIEDBY_ENTIUSR_FK
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: RESTRICT
+        onUpdate: RESTRICT
+        referencedColumnNames: CODI
+        referencedTableName: PBL_USUARI
+        validate: true
+- changeSet:
+    id: 1619622439401-161
+    author: limit (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: LASTMODIFIEDBY_CODI
+        baseTableName: PBL_PROCEDIMENT
+        constraintName: PBL_LASTMODIFIEDBY_PROCED_FK
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: RESTRICT
+        onUpdate: RESTRICT
+        referencedColumnNames: CODI
+        referencedTableName: PBL_USUARI
+        validate: true
+- changeSet:
+    id: 1619622439401-162
+    author: limit (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: LASTMODIFIEDBY_CODI
+        baseTableName: PBL_PROCEDIMENT_SERVEI
+        constraintName: PBL_LASTMODIFIEDBY_PROCSERV_FK
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: RESTRICT
+        onUpdate: RESTRICT
+        referencedColumnNames: CODI
+        referencedTableName: PBL_USUARI
+        validate: true
+- changeSet:
+    id: 1619622439401-163
+    author: limit (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: LASTMODIFIEDBY_CODI
+        baseTableName: PBL_SERVEI_CAMP
+        constraintName: PBL_LASTMODIFIEDBY_SRVCAMP_FK
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: RESTRICT
+        onUpdate: RESTRICT
+        referencedColumnNames: CODI
+        referencedTableName: PBL_USUARI
+        validate: true
+- changeSet:
+    id: 1619622439401-164
+    author: limit (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: LASTMODIFIEDBY_CODI
+        baseTableName: PBL_ENTITAT
+        constraintName: PBL_LASTMODIFIEDBY_USUARI_FK
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: RESTRICT
+        onUpdate: RESTRICT
+        referencedColumnNames: CODI
+        referencedTableName: PBL_USUARI
+        validate: true
+- changeSet:
+    id: 1619622439401-165
+    author: limit (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: ORGAN_GESTOR_ID
+        baseTableName: PBL_PROCEDIMENT
+        constraintName: PBL_ORGAN_PROCEDIMENT_FK
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: RESTRICT
+        onUpdate: RESTRICT
+        referencedColumnNames: ID
+        referencedTableName: PBL_ORGAN_GESTOR
+        validate: true
+- changeSet:
+    id: 1619622439401-166
+    author: limit (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: CAMP_PARE_ID
+        baseTableName: PBL_SERVEI_CAMP
+        constraintName: PBL_PARE_SERVCAMP_FK
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: RESTRICT
+        onUpdate: RESTRICT
+        referencedColumnNames: ID
+        referencedTableName: PBL_SERVEI_CAMP
+        validate: true
+- changeSet:
+    id: 1619622439401-167
+    author: limit (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: PROCEDIMENT_ID
+        baseTableName: PBL_PROCEDIMENT_SERVEI
+        constraintName: PBL_PROCED_PROCSERV_FK
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: RESTRICT
+        onUpdate: RESTRICT
+        referencedColumnNames: ID
+        referencedTableName: PBL_PROCEDIMENT
+        validate: true
+- changeSet:
+    id: 1619622439401-168
+    author: limit (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: PROCSERV_ID
+        baseTableName: PBL_CONSULTA
+        constraintName: PBL_PROCSERV_CONSULTA_FK
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: RESTRICT
+        onUpdate: RESTRICT
+        referencedColumnNames: ID
+        referencedTableName: PBL_PROCEDIMENT_SERVEI
+        validate: true
+- changeSet:
+    id: 1619622439401-169
+    author: limit (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: GRUP_ID
+        baseTableName: PBL_SERVEI_CAMP
+        constraintName: PBL_SRCGRUP_SRVCAMP_FK
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: RESTRICT
+        onUpdate: RESTRICT
+        referencedColumnNames: ID
+        referencedTableName: PBL_SERVEI_CAMP_GRUP
+        validate: true
+- changeSet:
+    id: 1619622439401-170
+    author: limit (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: USUARI_ID
+        baseTableName: PBL_ENTITAT_USUARI
+        constraintName: PBL_USUARI_ENTIUSR_FK
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: RESTRICT
+        onUpdate: RESTRICT
+        referencedColumnNames: CODI
+        referencedTableName: PBL_USUARI
+        validate: true
+- changeSet:
+    id: 1619622439401-171
+    author: limit (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: CERTIFICADO
+        baseTableName: CORE_PETICION_RESPUESTA
+        constraintName: PETICION_SERVICIO
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: RESTRICT
+        onUpdate: RESTRICT
+        referencedColumnNames: ID
+        referencedTableName: CORE_SERVICIO
+        validate: true
+- changeSet:
+    id: 1619622439401-172
+    author: limit (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: EMISOR
+        baseTableName: CORE_SERVICIO
+        constraintName: SERV_EMISOR
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: RESTRICT
+        onUpdate: RESTRICT
+        referencedColumnNames: ID
+        referencedTableName: CORE_EMISOR_CERTIFICADO
+        validate: true
+- changeSet:
+    id: 1619622439401-173
+    author: limit (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: ORGANISMO
+        baseTableName: CORE_CLAVE_PRIVADA
+        constraintName: clave_privada_org
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: RESTRICT
+        onUpdate: RESTRICT
+        referencedColumnNames: ID
+        referencedTableName: CORE_ORGANISMO_CESIONARIO
+        validate: true
+- changeSet:
+    id: 1619622439401-174
+    author: limit (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: CLAVEPRIVADA
+        baseTableName: CORE_REQ_CESIONARIOS_SERVICIOS
+        constraintName: fk_clave_priv_org_cesionario
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: RESTRICT
+        onUpdate: RESTRICT
+        referencedColumnNames: ID
+        referencedTableName: CORE_CLAVE_PRIVADA
+        validate: true
+- changeSet:
+    id: 1619622439401-175
+    author: limit (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: CLAVECIFRADO
+        baseTableName: CORE_SERVICIO
+        constraintName: serv_clavecifrado
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: RESTRICT
+        onUpdate: RESTRICT
+        referencedColumnNames: ID
+        referencedTableName: CORE_CLAVE_PUBLICA
+        validate: true
+- changeSet:
+    id: 1619622439401-176
+    author: limit (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: CLAVEFIRMA
+        baseTableName: CORE_SERVICIO
+        constraintName: serv_clavefirma
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: RESTRICT
+        onUpdate: RESTRICT
+        referencedColumnNames: ID
+        referencedTableName: CORE_CLAVE_PRIVADA
+        validate: true
+

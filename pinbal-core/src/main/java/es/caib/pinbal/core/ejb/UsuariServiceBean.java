@@ -122,7 +122,7 @@ public class UsuariServiceBean implements UsuariService {
 	}
 
 	@Override
-	@RolesAllowed("PBL_ADMIN")
+	@RolesAllowed({"PBL_ADMIN", "PBL_REPORT"})
 	public List<InformeUsuariDto> informeUsuarisAgrupatsEntitatDepartament() {
 		return delegate.informeUsuarisAgrupatsEntitatDepartament();
 	}
