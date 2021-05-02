@@ -34,7 +34,6 @@ databaseChangeLog:
     - addUniqueConstraint:
         columnNames: codi
         constraintName: pbl_entitat_codi_uk
-        forIndexName: pbl_entitat_codi_uk
         tableName: pbl_entitat
     - addForeignKeyConstraint:
         baseColumnNames: createdby_codi
@@ -55,7 +54,6 @@ databaseChangeLog:
     - addUniqueConstraint:
         columnNames: entitat_id, servei_id
         constraintName: pbl_entitat_servei_uk
-        forIndexName: pbl_entitat_servei_uk
         tableName: pbl_entitat_servei
     - addForeignKeyConstraint:
         baseColumnNames: entitat_id
@@ -110,7 +108,6 @@ databaseChangeLog:
     - addUniqueConstraint:
         columnNames: codi, entitat_id
         constraintName: pbl_organ_gestor_uk
-        forIndexName: pbl_organ_gestor_uk
         tableName: pbl_organ_gestor
     - addForeignKeyConstraint:
         baseColumnNames: entitat_id
@@ -129,7 +126,6 @@ databaseChangeLog:
     - addUniqueConstraint:
         columnNames: codi, entitat_id
         constraintName: pbl_proid_uk
-        forIndexName: pbl_proid_uk
         tableName: pbl_procediment
     - addForeignKeyConstraint:
         baseColumnNames: entitat_id
@@ -162,7 +158,6 @@ databaseChangeLog:
     - addUniqueConstraint:
         columnNames: procediment_id, servei_id
         constraintName: pbl_procediment_servei_uk
-        forIndexName: pbl_procediment_servei_uk
         tableName: pbl_procediment_servei
     - addForeignKeyConstraint:
         baseColumnNames: procediment_id
@@ -211,7 +206,6 @@ databaseChangeLog:
     - addUniqueConstraint:
         columnNames: servei_id, path
         constraintName: pbl_servei_camp_uk
-        forIndexName: pbl_servei_camp_uk
         tableName: pbl_servei_camp
     - addForeignKeyConstraint:
         baseColumnNames: camp_pare_id
@@ -276,7 +270,6 @@ databaseChangeLog:
     - addUniqueConstraint:
         columnNames: servei_id, xpath
         constraintName: pbl_servei_justif_camp_uk
-        forIndexName: pbl_servei_justif_camp_uk
         tableName: pbl_servei_justif_camp
     - addForeignKeyConstraint:
         baseColumnNames: createdby_codi
@@ -447,55 +440,3 @@ databaseChangeLog:
         constraintName: trans_peticion
         referencedColumnNames: idpeticion
         referencedTableName: core_peticion_respuesta
-- changeSet:
-    id: init-constraint-21
-    author: limit (generated)
-    changes:
-    - addForeignKeyConstraint:
-        baseColumnNames: autoridadcertif
-        baseTableName: core_em_aplicacion
-        constraintName: apli_codca
-        referencedColumnNames: id
-        referencedTableName: core_em_autorizacion_ca
-- changeSet:
-    id: init-constraint-22
-    author: limit (generated)
-    changes:
-    - addForeignKeyConstraint:
-        baseColumnNames: idcertificado
-        baseTableName: core_em_autorizacion_cert
-        constraintName: aut_cert_servicio
-        referencedColumnNames: id
-        referencedTableName: core_servicio
-    - addForeignKeyConstraint:
-        baseColumnNames: idorganismo
-        baseTableName: core_em_autorizacion_cert
-        constraintName: aut_cert_organismo
-        referencedColumnNames: id
-        referencedTableName: core_em_autorizacion_organismo
-    - addForeignKeyConstraint:
-        baseColumnNames: idaplicacion
-        baseTableName: core_em_autorizacion_cert
-        constraintName: aut_cert_aplicacion
-        referencedColumnNames: idaplicacion
-        referencedTableName: core_em_aplicacion
-- changeSet:
-    id: init-constraint-23
-    author: limit (generated)
-    changes:
-    - addForeignKeyConstraint:
-        baseColumnNames: codigo
-        baseTableName: core_em_codigo_error_secun
-        constraintName: codigosecundario_fk
-        referencedColumnNames: codigo
-        referencedTableName: core_codigo_error
-- changeSet:
-    id: init-constraint-24
-    author: limit (generated)
-    changes:
-    - addForeignKeyConstraint:
-        baseColumnNames: certificado
-        baseTableName: core_em_backoffice
-        constraintName: emisor_bo_servicio
-        referencedColumnNames: id
-        referencedTableName: core_servicio

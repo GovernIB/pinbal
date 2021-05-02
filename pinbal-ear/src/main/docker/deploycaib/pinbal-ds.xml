@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<datasources>
+	<no-tx-datasource>
+		<jndi-name>es.caib.pinbal.db</jndi-name>
+		<connection-url>DATABASE_URL</connection-url>
+		<driver-class>oracle.jdbc.driver.OracleDriver</driver-class>
+		<user-name>DATABASE_USERNAME</user-name>
+		<password>DATABASE_PASSWORD</password>
+	</no-tx-datasource>
+	<no-tx-datasource>
+		<jndi-name>es.caib.pinbal.usuaris.db</jndi-name>
+		<connection-url>SEYCON_URL</connection-url>
+		<driver-class>oracle.jdbc.driver.OracleDriver</driver-class>
+		<user-name>SEYCON_USERNAME</user-name>
+		<password>SEYCON_PASSWORD</password>
+	</no-tx-datasource>
+</datasources>

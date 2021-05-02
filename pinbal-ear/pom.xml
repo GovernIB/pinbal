@@ -82,6 +82,30 @@
 	<build>
 		<plugins>
 			<plugin>
+				<groupId>io.fabric8</groupId>
+				<artifactId>docker-maven-plugin</artifactId>
+				<version>0.33.0</version>
+				<configuration>
+					<verbose>true</verbose>
+					<images>
+						<image>
+							<name>280421/%g</name>
+							<alias>${project.parent.artifactId}</alias>
+							<build>
+								<assembly>
+									<descriptorRef>artifact</descriptorRef>
+								</assembly>
+								<dockerFile>Dockerfile</dockerFile>
+								<tags>
+									<tag>latest</tag>
+									<tag>${project.version}</tag>
+								</tags>
+							</build>
+						</image>
+					</images>
+				</configuration>
+			</plugin>
+			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-ear-plugin</artifactId>
 				<configuration>
