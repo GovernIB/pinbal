@@ -614,7 +614,7 @@ databaseChangeLog:
             name: id
             type: BIGINT
         - column:
-            name: custodia_id
+            name: custodia_codi
             type: VARCHAR2(64)
         - column:
             name: role_name
@@ -637,7 +637,7 @@ databaseChangeLog:
             name: justificant_tipus
             type: INTEGER
         - column:
-            name: permes_doctipdni
+            name: permes_doctip_dni
             type: BOOLEAN
         - column:
             name: permes_doctip_nie
@@ -1331,7 +1331,7 @@ databaseChangeLog:
             name: logo
             type: BLOB
         - column:
-            name: codigounidadtramitadora;
+            name: codigounidadtramitadora
             type: VARCHAR(9)
         tableName: core_organismo_cesionario
 - changeSet:

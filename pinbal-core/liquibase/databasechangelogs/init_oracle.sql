@@ -2,7 +2,7 @@
 -- Update Database Script
 -- *********************************************************************
 -- Change Log: db/changelog/db.changelog-master.yaml
--- Ran at: 28/04/21 20:46
+-- Ran at: 30/04/21 11:42
 -- Against: null@offline:oracle?changeLogFile=liquibase/databasechangelog.csv
 -- Liquibase version: 4.3.3
 -- *********************************************************************
@@ -38,7 +38,7 @@ CREATE TABLE pbl_servei_camp (id NUMBER(38, 0) NOT NULL, comentari VARCHAR2(255 
 CREATE TABLE pbl_servei_camp_grup (id NUMBER(38, 0) NOT NULL, nom VARCHAR2(255) NOT NULL, ordre INTEGER, servei_id VARCHAR2(64) NOT NULL, createdby_codi VARCHAR2(64), createddate TIMESTAMP, lastmodifiedby_codi VARCHAR2(64), lastmodifieddate TIMESTAMP, version NUMBER(38, 0) NOT NULL, CONSTRAINT pbl_servei_camp_grup_pk PRIMARY KEY (id));
 
 -- Changeset db/changelog/initial_schema_table.yaml::init-11::limit (generated)
-CREATE TABLE pbl_servei_config (id NUMBER(38, 0) NOT NULL, custodia_id VARCHAR2(64), role_name VARCHAR2(64), servei_id VARCHAR2(64) NOT NULL, condicio_bus_class VARCHAR2(255), entitat_tipus INTEGER, justificant_xpath VARCHAR2(255), justificant_tipus INTEGER, permes_doctipdni NUMBER(1), permes_doctip_nie NUMBER(1), permes_doctip_nif NUMBER(1), permes_doctip_cif NUMBER(1), permes_doctip_pas NUMBER(1), actiu_camp_exp NUMBER(1), actiu_camp_llin1 NUMBER(1), actiu_camp_llin2 NUMBER(1), actiu_camp_nom NUMBER(1), actiu_camp_nomcomp NUMBER(1), actiu_camp_doc NUMBER(1), comprovar_document NUMBER(1) NOT NULL, document_opcional NUMBER(1), document_obligatori NUMBER(1), ajuda CLOB, fitxer_ajuda_contingut BLOB, fitxer_ajuda_mime VARCHAR2(255), fitxer_ajuda_nom VARCHAR2(255), activa_gestio_xsd NUMBER(1), unitat_dir3 VARCHAR2(10 BYTE), actiu NUMBER(1) NOT NULL, unitat_dir3_from_entitat NUMBER(1) NOT NULL, createdby_codi VARCHAR2(64), createddate TIMESTAMP, lastmodifiedby_codi VARCHAR2(64), lastmodifieddate TIMESTAMP, version NUMBER(38, 0) NOT NULL, CONSTRAINT pbl_servei_config_pk PRIMARY KEY (id));
+CREATE TABLE pbl_servei_config (id NUMBER(38, 0) NOT NULL, custodia_codi VARCHAR2(64), role_name VARCHAR2(64), servei_id VARCHAR2(64) NOT NULL, condicio_bus_class VARCHAR2(255), entitat_tipus INTEGER, justificant_xpath VARCHAR2(255), justificant_tipus INTEGER, permes_doctip_dni NUMBER(1), permes_doctip_nie NUMBER(1), permes_doctip_nif NUMBER(1), permes_doctip_cif NUMBER(1), permes_doctip_pas NUMBER(1), actiu_camp_exp NUMBER(1), actiu_camp_llin1 NUMBER(1), actiu_camp_llin2 NUMBER(1), actiu_camp_nom NUMBER(1), actiu_camp_nomcomp NUMBER(1), actiu_camp_doc NUMBER(1), comprovar_document NUMBER(1) NOT NULL, document_opcional NUMBER(1), document_obligatori NUMBER(1), ajuda CLOB, fitxer_ajuda_contingut BLOB, fitxer_ajuda_mime VARCHAR2(255), fitxer_ajuda_nom VARCHAR2(255), activa_gestio_xsd NUMBER(1), unitat_dir3 VARCHAR2(10 BYTE), actiu NUMBER(1) NOT NULL, unitat_dir3_from_entitat NUMBER(1) NOT NULL, createdby_codi VARCHAR2(64), createddate TIMESTAMP, lastmodifiedby_codi VARCHAR2(64), lastmodifieddate TIMESTAMP, version NUMBER(38, 0) NOT NULL, CONSTRAINT pbl_servei_config_pk PRIMARY KEY (id));
 
 -- Changeset db/changelog/initial_schema_table.yaml::init-12::limit (generated)
 CREATE TABLE pbl_servei_justif_camp (id NUMBER(38, 0) NOT NULL, locale_idioma VARCHAR2(2) NOT NULL, locale_regio VARCHAR2(2) NOT NULL, servei_id VARCHAR2(64) NOT NULL, traduccio VARCHAR2(255), xpath VARCHAR2(255) NOT NULL, createdby_codi VARCHAR2(64), createddate TIMESTAMP, lastmodifiedby_codi VARCHAR2(64), lastmodifieddate TIMESTAMP, version NUMBER(38, 0) NOT NULL, CONSTRAINT pbl_servei_justif_camp_pk PRIMARY KEY (id));
@@ -348,14 +348,14 @@ ALTER TABLE pbl_consulta ADD CONSTRAINT pbl_createdby_consulta_fk FOREIGN KEY (c
 ALTER TABLE pbl_consulta ADD CONSTRAINT pbl_lastmodifiedby_consulta_fk FOREIGN KEY (lastmodifiedby_codi) REFERENCES pbl_usuari (codi);
 
 -- Changeset db/changelog/initial_schema_constraint.yaml::init-constraint-2::limit (generated)
-ALTER TABLE pbl_entitat ADD CONSTRAINT pbl_entitat_codi_uk UNIQUE (codi) USING INDEX pbl_entitat_codi_uk;
+ALTER TABLE pbl_entitat ADD CONSTRAINT pbl_entitat_codi_uk UNIQUE (codi);
 
 ALTER TABLE pbl_entitat ADD CONSTRAINT pbl_createdby_usuari_fk FOREIGN KEY (createdby_codi) REFERENCES pbl_usuari (codi);
 
 ALTER TABLE pbl_entitat ADD CONSTRAINT pbl_lastmodifiedby_usuari_fk FOREIGN KEY (lastmodifiedby_codi) REFERENCES pbl_usuari (codi);
 
 -- Changeset db/changelog/initial_schema_constraint.yaml::init-constraint-3::limit (generated)
-ALTER TABLE pbl_entitat_servei ADD CONSTRAINT pbl_entitat_servei_uk UNIQUE (entitat_id, servei_id) USING INDEX pbl_entitat_servei_uk;
+ALTER TABLE pbl_entitat_servei ADD CONSTRAINT pbl_entitat_servei_uk UNIQUE (entitat_id, servei_id);
 
 ALTER TABLE pbl_entitat_servei ADD CONSTRAINT pbl_entitat_entiserv_fk FOREIGN KEY (entitat_id) REFERENCES pbl_entitat (id);
 
@@ -373,14 +373,14 @@ ALTER TABLE pbl_entitat_usuari ADD CONSTRAINT pbl_createdby_entiusr_fk FOREIGN K
 ALTER TABLE pbl_entitat_usuari ADD CONSTRAINT pbl_lastmodifiedby_entiusr_fk FOREIGN KEY (lastmodifiedby_codi) REFERENCES pbl_usuari (codi);
 
 -- Changeset db/changelog/initial_schema_constraint.yaml::init-constraint-5::limit (generated)
-ALTER TABLE pbl_organ_gestor ADD CONSTRAINT pbl_organ_gestor_uk UNIQUE (codi, entitat_id) USING INDEX pbl_organ_gestor_uk;
+ALTER TABLE pbl_organ_gestor ADD CONSTRAINT pbl_organ_gestor_uk UNIQUE (codi, entitat_id);
 
 ALTER TABLE pbl_organ_gestor ADD CONSTRAINT pbl_entitat_organ_gestor_fk FOREIGN KEY (entitat_id) REFERENCES pbl_entitat (id);
 
 -- Changeset db/changelog/initial_schema_constraint.yaml::init-constraint-6::limit (generated)
 ALTER TABLE pbl_procediment ADD CONSTRAINT pbl_procediment_uk UNIQUE (entitat_id, codi);
 
-ALTER TABLE pbl_procediment ADD CONSTRAINT pbl_proid_uk UNIQUE (codi, entitat_id) USING INDEX pbl_proid_uk;
+ALTER TABLE pbl_procediment ADD CONSTRAINT pbl_proid_uk UNIQUE (codi, entitat_id);
 
 ALTER TABLE pbl_procediment ADD CONSTRAINT pbl_entitat_proced_fk FOREIGN KEY (entitat_id) REFERENCES pbl_entitat (id);
 
@@ -391,7 +391,7 @@ ALTER TABLE pbl_procediment ADD CONSTRAINT pbl_createdby_proced_fk FOREIGN KEY (
 ALTER TABLE pbl_procediment ADD CONSTRAINT pbl_lastmodifiedby_proced_fk FOREIGN KEY (lastmodifiedby_codi) REFERENCES pbl_usuari (codi);
 
 -- Changeset db/changelog/initial_schema_constraint.yaml::init-constraint-7::limit (generated)
-ALTER TABLE pbl_procediment_servei ADD CONSTRAINT pbl_procediment_servei_uk UNIQUE (procediment_id, servei_id) USING INDEX pbl_procediment_servei_uk;
+ALTER TABLE pbl_procediment_servei ADD CONSTRAINT pbl_procediment_servei_uk UNIQUE (procediment_id, servei_id);
 
 ALTER TABLE pbl_procediment_servei ADD CONSTRAINT pbl_proced_procserv_fk FOREIGN KEY (procediment_id) REFERENCES pbl_procediment (id);
 
@@ -407,7 +407,7 @@ ALTER TABLE pbl_servei_bus ADD CONSTRAINT FK31B17CA01D90EB87 FOREIGN KEY (create
 ALTER TABLE pbl_servei_bus ADD CONSTRAINT FK31B17CA024DDA730 FOREIGN KEY (lastmodifiedby_codi) REFERENCES pbl_usuari (codi);
 
 -- Changeset db/changelog/initial_schema_constraint.yaml::init-constraint-9::limit (generated)
-ALTER TABLE pbl_servei_camp ADD CONSTRAINT pbl_servei_camp_uk UNIQUE (servei_id, path) USING INDEX pbl_servei_camp_uk;
+ALTER TABLE pbl_servei_camp ADD CONSTRAINT pbl_servei_camp_uk UNIQUE (servei_id, path);
 
 ALTER TABLE pbl_servei_camp ADD CONSTRAINT pbl_pare_servcamp_fk FOREIGN KEY (camp_pare_id) REFERENCES pbl_servei_camp (id);
 
@@ -428,7 +428,7 @@ ALTER TABLE pbl_servei_config ADD CONSTRAINT FKDEB551221D90EB87 FOREIGN KEY (cre
 ALTER TABLE pbl_servei_config ADD CONSTRAINT FKDEB5512224DDA730 FOREIGN KEY (lastmodifiedby_codi) REFERENCES pbl_usuari (codi);
 
 -- Changeset db/changelog/initial_schema_constraint.yaml::init-constraint-12::limit (generated)
-ALTER TABLE pbl_servei_justif_camp ADD CONSTRAINT pbl_servei_justif_camp_uk UNIQUE (servei_id, xpath) USING INDEX pbl_servei_justif_camp_uk;
+ALTER TABLE pbl_servei_justif_camp ADD CONSTRAINT pbl_servei_justif_camp_uk UNIQUE (servei_id, xpath);
 
 ALTER TABLE pbl_servei_justif_camp ADD CONSTRAINT FKE04E98171D90EB87 FOREIGN KEY (createdby_codi) REFERENCES pbl_usuari (codi);
 
@@ -486,104 +486,64 @@ ALTER TABLE core_token_data ADD CONSTRAINT token_tipo FOREIGN KEY (tipomensaje) 
 -- Changeset db/changelog/initial_schema_constraint.yaml::init-constraint-20::limit (generated)
 ALTER TABLE core_transmision ADD CONSTRAINT trans_peticion FOREIGN KEY (idpeticion) REFERENCES core_peticion_respuesta (idpeticion);
 
--- Changeset db/changelog/initial_schema_constraint.yaml::init-constraint-21::limit (generated)
-ALTER TABLE core_em_aplicacion ADD CONSTRAINT apli_codca FOREIGN KEY (autoridadcertif) REFERENCES core_em_autorizacion_ca (id);
-
--- Changeset db/changelog/initial_schema_constraint.yaml::init-constraint-22::limit (generated)
-ALTER TABLE core_em_autorizacion_cert ADD CONSTRAINT aut_cert_servicio FOREIGN KEY (idcertificado) REFERENCES core_servicio (id);
-
-ALTER TABLE core_em_autorizacion_cert ADD CONSTRAINT aut_cert_organismo FOREIGN KEY (idorganismo) REFERENCES core_em_autorizacion_organismo (id);
-
-ALTER TABLE core_em_autorizacion_cert ADD CONSTRAINT aut_cert_aplicacion FOREIGN KEY (idaplicacion) REFERENCES core_em_aplicacion (idaplicacion);
-
--- Changeset db/changelog/initial_schema_constraint.yaml::init-constraint-23::limit (generated)
-ALTER TABLE core_em_codigo_error_secun ADD CONSTRAINT codigosecundario_fk FOREIGN KEY (codigo) REFERENCES core_codigo_error (codigo);
-
--- Changeset db/changelog/initial_schema_constraint.yaml::init-constraint-24::limit (generated)
-ALTER TABLE core_em_backoffice ADD CONSTRAINT emisor_bo_servicio FOREIGN KEY (certificado) REFERENCES core_servicio (id);
-
 -- Changeset db/changelog/initial_schema_index.yaml::init-index-1::limit (generated)
-CREATE UNIQUE INDEX pbl_organ_gestor_uk ON pbl_organ_gestor(codi, entitat_id);
-
--- Changeset db/changelog/initial_schema_index.yaml::init-index-2::limit (generated)
-CREATE UNIQUE INDEX pbl_proid_uk ON pbl_procediment(codi, entitat_id);
-
--- Changeset db/changelog/initial_schema_index.yaml::init-index-3::limit (generated)
-CREATE UNIQUE INDEX pbl_entitat_codi_uk ON pbl_entitat(codi);
-
--- Changeset db/changelog/initial_schema_index.yaml::init-index-4::limit (generated)
-CREATE UNIQUE INDEX pbl_entitat_servei_uk ON pbl_entitat_servei(entitat_id, servei_id);
-
--- Changeset db/changelog/initial_schema_index.yaml::init-index-5::limit (generated)
 CREATE UNIQUE INDEX pbl_entitat_usuari_uk ON pbl_entitat_usuari(entitat_id, usuari_id);
 
--- Changeset db/changelog/initial_schema_index.yaml::init-index-6::limit (generated)
+-- Changeset db/changelog/initial_schema_index.yaml::init-index-2::limit (generated)
 ALTER TABLE pbl_entitat_usuari ADD CONSTRAINT pbl_entitat_usuari_uk UNIQUE (entitat_id, usuari_id) USING INDEX pbl_entitat_usuari_uk;
 
--- Changeset db/changelog/initial_schema_index.yaml::init-index-7::limit (generated)
-CREATE UNIQUE INDEX pbl_procediment_servei_uk ON pbl_procediment_servei(procediment_id, servei_id);
-
--- Changeset db/changelog/initial_schema_index.yaml::init-index-8::limit (generated)
-CREATE UNIQUE INDEX pbl_servei_camp_uk ON pbl_servei_camp(servei_id, path);
-
--- Changeset db/changelog/initial_schema_index.yaml::init-index-9::limit (generated)
-CREATE UNIQUE INDEX pbl_servei_justif_camp_uk ON pbl_servei_justif_camp(servei_id, xpath);
-
--- Changeset db/changelog/initial_schema_index.yaml::init-index-10::limit (generated)
+-- Changeset db/changelog/initial_schema_index.yaml::init-index-3::limit (generated)
 CREATE INDEX pbl_consulta_createdby_i ON pbl_consulta(createdby_codi);
 
--- Changeset db/changelog/initial_schema_index.yaml::init-index-11::limit (generated)
+-- Changeset db/changelog/initial_schema_index.yaml::init-index-4::limit (generated)
 CREATE INDEX pbl_consulta_mult_i ON pbl_consulta(createdby_codi, estat, multiple);
 
--- Changeset db/changelog/initial_schema_index.yaml::init-index-12::limit (generated)
-CREATE INDEX pbl_consulta_pare_I ON pbl_consulta(pare_id);
+-- Changeset db/changelog/initial_schema_index.yaml::init-index-5::limit (generated)
+CREATE INDEX pbl_consulta_pare_i ON pbl_consulta(pare_id);
 
--- Changeset db/changelog/initial_schema_index.yaml::init-index-13::limit (generated)
+-- Changeset db/changelog/initial_schema_index.yaml::init-index-6::limit (generated)
 CREATE INDEX pbl_consulta_procserv_i ON pbl_consulta(procserv_id);
 
--- Changeset db/changelog/initial_schema_index.yaml::init-index-14::limit (generated)
-CREATE INDEX pbl_coretra_idpeticion_i ON core_transmision(idpeticion);
-
--- Changeset db/changelog/initial_schema_index.yaml::init-index-15::limit (generated)
+-- Changeset db/changelog/initial_schema_index.yaml::init-index-7::limit (generated)
 CREATE INDEX pbl_entiserv_entitat_i ON pbl_entitat_servei(entitat_id);
 
--- Changeset db/changelog/initial_schema_index.yaml::init-index-16::limit (generated)
+-- Changeset db/changelog/initial_schema_index.yaml::init-index-8::limit (generated)
 CREATE INDEX pbl_entiserv_servei_i ON pbl_entitat_servei(servei_id);
 
--- Changeset db/changelog/initial_schema_index.yaml::init-index-17::limit (generated)
+-- Changeset db/changelog/initial_schema_index.yaml::init-index-9::limit (generated)
 CREATE INDEX pbl_entiusr_entitat_i ON pbl_entitat_usuari(entitat_id);
 
--- Changeset db/changelog/initial_schema_index.yaml::init-index-18::limit (generated)
-CREATE INDEX pbl_entiusr_usuari_i ON pbl_entiusr_usuari(usuari_id);
+-- Changeset db/changelog/initial_schema_index.yaml::init-index-10::limit (generated)
+CREATE INDEX pbl_entiusr_usuari_i ON pbl_entitat_usuari(usuari_id);
 
--- Changeset db/changelog/initial_schema_index.yaml::init-index-19::limit (generated)
+-- Changeset db/changelog/initial_schema_index.yaml::init-index-11::limit (generated)
 CREATE INDEX pbl_procediment_entitat_i ON pbl_procediment(entitat_id);
 
--- Changeset db/changelog/initial_schema_index.yaml::init-index-20::limit (generated)
+-- Changeset db/changelog/initial_schema_index.yaml::init-index-12::limit (generated)
 CREATE INDEX pbl_procserv_proced_i ON pbl_procediment_servei(procediment_id);
 
--- Changeset db/changelog/initial_schema_index.yaml::init-index-21::limit (generated)
+-- Changeset db/changelog/initial_schema_index.yaml::init-index-13::limit (generated)
 CREATE INDEX pbl_procserv_servei_i ON pbl_procediment_servei(servei_id);
 
--- Changeset db/changelog/initial_schema_index.yaml::init-index-22::limit (generated)
+-- Changeset db/changelog/initial_schema_index.yaml::init-index-14::limit (generated)
 CREATE INDEX pbl_servei_bus_servei_i ON pbl_servei_bus(servei_id);
 
--- Changeset db/changelog/initial_schema_index.yaml::init-index-23::limit (generated)
+-- Changeset db/changelog/initial_schema_index.yaml::init-index-15::limit (generated)
 CREATE INDEX pbl_servei_campgr_servei_i ON pbl_servei_camp_grup(servei_id);
 
--- Changeset db/changelog/initial_schema_index.yaml::init-index-24::limit (generated)
+-- Changeset db/changelog/initial_schema_index.yaml::init-index-16::limit (generated)
 CREATE INDEX pbl_servei_camp_servei_i ON pbl_servei_camp(servei_id);
 
--- Changeset db/changelog/initial_schema_index.yaml::init-index-25::limit (generated)
+-- Changeset db/changelog/initial_schema_index.yaml::init-index-17::limit (generated)
 CREATE INDEX pbl_servei_juscam_servei_i ON pbl_servei_justif_camp(servei_id);
 
--- Changeset db/changelog/initial_schema_index.yaml::init-index-26::limit (generated)
+-- Changeset db/changelog/initial_schema_index.yaml::init-index-18::limit (generated)
 CREATE INDEX core_servicio_index_emisor ON core_servicio(emisor);
 
--- Changeset db/changelog/initial_schema_index.yaml::init-index-27::limit (generated)
+-- Changeset db/changelog/initial_schema_index.yaml::init-index-19::limit (generated)
 CREATE INDEX core_transmision_index_idpet ON core_transmision(idpeticion);
 
--- Changeset db/changelog/initial_schema_index.yaml::init-index-28::limit (generated)
+-- Changeset db/changelog/initial_schema_index.yaml::init-index-20::limit (generated)
 CREATE INDEX cesionarios_index_organismo ON core_req_cesionarios_servicios(organismo);
 
 -- Changeset db/changelog/initial_schema_lob.yaml::lob-1::limit (generated)
@@ -601,19 +561,19 @@ ALTER TABLE core_token_data MOVE LOB(datos) STORE AS core_tokdat_datos_lob(TABLE
 ALTER TABLE core_transmision MOVE LOB(xmltransmision) STORE AS core_transm_xmltran_lob(TABLESPACE pinbal_lob INDEX core_transm_xmltran_lob_i);
 
 -- Changeset db/changelog/initial_schema_sequence.yaml::init-sequence-1::limit (generated)
-CREATE SEQUENCE ems_hibernate_sequence START WITH 1;
+CREATE SEQUENCE hibernate_sequence START WITH 1;
 
 -- Changeset db/changelog/initial_schema_sequence.yaml::init-sequence-2::limit (generated)
-CREATE SEQUENCE ems_acl_sid_seq START WITH 1;
+CREATE SEQUENCE acl_sid_seq START WITH 1;
 
 -- Changeset db/changelog/initial_schema_sequence.yaml::init-sequence-3::limit (generated)
-CREATE SEQUENCE ems_acl_class_seq START WITH 1;
+CREATE SEQUENCE acl_class_seq START WITH 1;
 
 -- Changeset db/changelog/initial_schema_sequence.yaml::init-sequence-4::limit (generated)
-CREATE SEQUENCE ems_acl_oid_seq START WITH 1;
+CREATE SEQUENCE acl_oid_seq START WITH 1;
 
 -- Changeset db/changelog/initial_schema_sequence.yaml::init-sequence-5::limit (generated)
-CREATE SEQUENCE ems_acl_entry_seq START WITH 1;
+CREATE SEQUENCE acl_entry_seq START WITH 1;
 
 -- Changeset db/changelog/initial_schema_sequence.yaml::init-sequence-6::limit (generated)
 CREATE SEQUENCE id_clave_privada_sequence START WITH 1;
@@ -646,13 +606,13 @@ CREATE SEQUENCE id_autorizacion_certific_seq START WITH 1;
 CREATE SEQUENCE id_servicio_cesionario_seq START WITH 1;
 
 -- Changeset db/changelog/initial_schema_trigger.yaml::init-trigger-1::limit (generated)
-CREATE OR REPLACE TRIGGER ems_acl_sid_idgen BEFORE INSERT ON ems_acl_sid FOR EACH ROW BEGIN SELECT ems_acl_sid_seq.NEXTVAL INTO :NEW.ID FROM DUAL END;
+CREATE OR REPLACE TRIGGER acl_sid_idgen BEFORE INSERT ON acl_sid FOR EACH ROW BEGIN SELECT acl_sid_seq.NEXTVAL INTO :NEW.ID FROM DUAL END;
 
-CREATE OR REPLACE TRIGGER ems_acl_class_idgen BEFORE INSERT ON ems_acl_class FOR EACH ROW BEGIN SELECT ems_acl_class_seq.NEXTVAL INTO :NEW.ID FROM DUAL END;
+CREATE OR REPLACE TRIGGER acl_class_idgen BEFORE INSERT ON acl_class FOR EACH ROW BEGIN SELECT acl_class_seq.NEXTVAL INTO :NEW.ID FROM DUAL END;
 
-CREATE OR REPLACE TRIGGER ems_acl_oid_idgen BEFORE INSERT ON ems_acl_object_identity FOR EACH ROW BEGIN SELECT ems_acl_oid_seq.NEXTVAL INTO :NEW.ID FROM DUAL END;
+CREATE OR REPLACE TRIGGER acl_oid_idgen BEFORE INSERT ON acl_object_identity FOR EACH ROW BEGIN SELECT acl_oid_seq.NEXTVAL INTO :NEW.ID FROM DUAL END;
 
-CREATE OR REPLACE TRIGGER ems_acl_entry_idgen BEFORE INSERT ON ems_acl_entry FOR EACH ROW BEGIN SELECT ems_acl_entry_seq.NEXTVAL INTO :NEW.ID FROM DUAL END;
+CREATE OR REPLACE TRIGGER acl_entry_idgen BEFORE INSERT ON acl_entry FOR EACH ROW BEGIN SELECT acl_entry_seq.NEXTVAL INTO :NEW.ID FROM DUAL END;
 
 -- Changeset db/changelog/initial_schema_grant.yaml::init-trigger-1::limit (generated)
 GRANT SELECT, UPDATE, INSERT, DELETE ON pbl_consulta TO www_emiserv;
@@ -709,8 +669,6 @@ GRANT SELECT, UPDATE, INSERT, DELETE ON core_req_modulo_pdf TO www_emiserv;
 
 GRANT SELECT, UPDATE, INSERT, DELETE ON core_req_modulo_pdf_cesionario TO www_emiserv;
 
-GRANT SELECT, UPDATE, INSERT, DELETE ON core_em_autorizacion_organismo TO www_emiserv;
-
 GRANT SELECT, UPDATE, INSERT, DELETE ON core_organismo_cesionario TO www_emiserv;
 
 GRANT SELECT, UPDATE, INSERT, DELETE ON core_parametro_configuracion TO www_emiserv;
@@ -724,18 +682,6 @@ GRANT SELECT, UPDATE, INSERT, DELETE ON core_tipo_mensaje TO www_emiserv;
 GRANT SELECT, UPDATE, INSERT, DELETE ON core_token_data TO www_emiserv;
 
 GRANT SELECT, UPDATE, INSERT, DELETE ON core_transmision TO www_emiserv;
-
-GRANT SELECT, UPDATE, INSERT, DELETE ON core_em_aplicacion TO www_emiserv;
-
-GRANT SELECT, UPDATE, INSERT, DELETE ON core_em_autorizacion_ca TO www_emiserv;
-
-GRANT SELECT, UPDATE, INSERT, DELETE ON core_em_autorizacion_cert TO www_emiserv;
-
-GRANT SELECT, UPDATE, INSERT, DELETE ON core_em_codigo_error_secun TO www_emiserv;
-
-GRANT SELECT, UPDATE, INSERT, DELETE ON core_em_backoffice TO www_emiserv;
-
-GRANT SELECT, UPDATE, INSERT, DELETE ON core_em_secuencia_idtrans TO www_emiserv;
 
 GRANT SELECT, UPDATE, INSERT, DELETE ON core_req_secuencia_id_peticion TO www_emiserv;
 
@@ -789,40 +735,6 @@ INSERT INTO core_estado_peticion(codigo, mensaje) VALUES ('0002', 'En proceso');
 INSERT INTO core_estado_peticion(codigo, mensaje) VALUES ('0003', 'Tramitada');
 
 INSERT INTO core_estado_peticion(codigo, mensaje) VALUES ('0004', 'En proceso Polling');
-
-INSERT INTO core_em_autorizacion_ca(id, codca, nombre) VALUES (1, 'OU=FNMT Clase 2 CA, O=FNMT, C=ES', 'Fabrica Nacional de Moneda y Timbre');
-
-INSERT INTO core_em_autorizacion_ca(id, codca, nombre) VALUES (2, 'OU=FNMT Clase 2 CA,O=FNMT,C=ES', 'Fabrica Nacional de Moneda y Timbre');
-
-INSERT INTO core_em_autorizacion_ca(id, codca, nombre) VALUES (3, 'OU=AC APE, O=FNMT-RCM, C=ES', 'Fabrica Nacional de Moneda y Timbre');
-
-INSERT INTO core_em_autorizacion_ca(id, codca, nombre) VALUES (4, 'OU=AC APE,O=FNMT-RCM,C=ES', 'Fabrica Nacional de Moneda y Timbre');
-
-INSERT INTO core_em_autorizacion_ca(id, codca, nombre) VALUES (5, 'CN=AC DGP 001, OU=CNP, O=DIRECCION GENERAL DE LA POLICIA, C=ES', 'DIRECCION GENERAL DE LA POLICIA');
-
-INSERT INTO core_em_autorizacion_ca(id, codca, nombre) VALUES (6, 'CN=EC-SAFP, OU=Secretaria d''Administracio i Funcio Publica, OU="Vegeu https://www.catcert.net/verCIC-2 [^] (c)03", OU=Serveis Publics de Certificacio ECV-2, L=Passatge de la Concepcio 11 08008 Barcelona, O=Agencia Catalana de Certificacio (NIF Q-0801176-I), C=ES', 'Secretaria d''Administracio i Funcio Publica');
-
-INSERT INTO core_em_autorizacion_ca(id, codca, nombre) VALUES (7, 'CN=EAEko HAetako langileen CA - CA personal de AAPP vascas (2), OU=AZZ Ziurtagiri publikoa - Certificado publico SCA, O=IZENPE S.A., C=ES', 'IZENPE S.A');
-
-INSERT INTO core_em_autorizacion_ca(id, codca, nombre) VALUES (8, 'CN=AC CAMERFIRMA AAPP, SERIALNUMBER=A82743287, OU=AC CAMERFIRMA, L=MADRID (Ver en https://www.camerfirma.com/address [^]), O=AC CAMERFIRMA S.A., C=ES', 'AC Camerfirma');
-
-INSERT INTO core_em_autorizacion_ca(id, codca, nombre) VALUES (9, 'CN=AC Administración Pública, SERIALNUMBER=Q2826004J, OU=CERES, O=FNMT-RCM, C=ES', 'Fabrica Nacional de Moneda y Timbre');
-
-INSERT INTO core_em_autorizacion_ca(id, codca, nombre) VALUES (10, 'CN=AC Camerfirma Express Corporate Server v3, O=AC Camerfirma SA, OU=http://www.camerfirma.com, [^] SERIALNUMBER=A82743287, L=Madrid (see current address at www.camerfirma.com/address), EMAILADDRESS=info@camerfirma.com, C=ES', 'AC Camerfirma');
-
-INSERT INTO core_em_autorizacion_ca(id, codca, nombre) VALUES (11, 'CN=AC Camerfirma Certificados Camerales, O=AC Camerfirma SA, SERIALNUMBER=A82743287, L=Madrid (see current address at www.camerfirma.com/address), EMAILADDRESS=ac_camerfirma_cc@camerfirma.com, C=ES', 'AC Camerfirma');
-
-INSERT INTO core_em_autorizacion_ca(id, codca, nombre) VALUES (12, 'CN=EC-AL, OU=Administracions Locals de Catalunya, OU="Vegeu https://www.catcert.net/verCIC-2 [^] (c)03", OU=Serveis Publics de Certificacio ECV-2, L=Passatge de la Concepcio 11 08008 Barcelona, O=Agencia Catalana de Certificacio (NIF Q-0801176-I), C=ES', 'Agència Catalana de Certificació CATCert');
-
-INSERT INTO core_em_autorizacion_ca(id, codca, nombre) VALUES (13, 'C=ES, O=Generalitat Valenciana, OU=PKIGVA, CN=ACCV-CA2', 'Autoritat de Certificació de la Comunitat Valenciana (ACCV)');
-
-INSERT INTO core_em_autorizacion_ca(id, codca, nombre) VALUES (14, 'C=ES,O=FNMT,OU=FNMT Clase 2 CA', 'Fabrica Nacional de Moneda y Timbre');
-
-INSERT INTO core_em_autorizacion_ca(id, codca, nombre) VALUES (15, 'C=ES, L=MADRID, O=MINISTERIO DE TRABAJO E INMIGRACION, OU=SUBDIRECCION GENERAL DE PROCESO DE DATOS, OU=PRESTADOR DE SERVICIOS DE CERTIFICACION MTIN, SERIALNUMBER=S2819001E, CN=AC1 RAIZ MTIN', 'Prestador de Servicios de Certificación del Ministerio de Trabajo e Inmigración (PSCMTIN).');
-
-INSERT INTO core_em_autorizacion_ca(id, codca, nombre) VALUES (16, 'C=ES,L=Madrid,E=ac@acabogacia.org,O=Consejo General de la Abogacia NIF:Q-2863006I,OU=Autoridad de Certificacion de la Abogacia,CN=ACA - Certificados Corporativos', 'Autoridad de Certificacion de la Abogacia');
-
-INSERT INTO core_em_autorizacion_ca(id, codca, nombre) VALUES (17, 'C=ES,O=Agencia Catalana de Certificacio (NIF Q-0801176-I),L=Passatge de la Concepcio 11 08008 Barcelona,OU=Serveis Publics de Certificacio ECV-2,OU=Vegeu https://www.catcert.net/verCIC-2 [^] (c)03,OU=Administracions Locals de Catalunya,CN=EC-AL ', 'Agència Catalana de Certificació CATCert');
 
 INSERT INTO core_codigo_error(codigo, descripcion) VALUES ('0101','Error al contactar con el servicio Web especificado {0} {1}');
 
@@ -1028,5 +940,13 @@ INSERT INTO core_parametro_configuracion(nombre, valor, descripcion) VALUES ('ve
 
 INSERT INTO core_parametro_configuracion(nombre, valor, descripcion) VALUES ('validate.nif.emisor.enabled','true','Flag que indica si se valida el valor del nodo <NifEmisor> de la petición');
 
-SELECT id_autorizacion_ca_seq.nextval FROM core_em_autorizacion_ca;
+INSERT INTO core_modulo(nombre, descripcion, activoentrada, activosalida) VALUES ('AlmacenarBaseDatos','AlmacenarBaseDatos',1,1);
+
+INSERT INTO core_modulo(nombre, descripcion, activoentrada, activosalida) VALUES ('ValidarCertificado','ValidarCertificado',1,1);
+
+INSERT INTO core_modulo(nombre, descripcion, activoentrada, activosalida) VALUES ('AlmacenarFichero','AlmacenarFichero',1,1);
+
+INSERT INTO core_modulo(nombre, descripcion, activoentrada, activosalida) VALUES ('ValidarEsquema','ValidarEsquema',1,1);
+
+INSERT INTO core_modulo(nombre, descripcion, activoentrada, activosalida) VALUES ('AlmacenarFicheroPlain','AlmacenarFicheroPlain',1,1);
 
