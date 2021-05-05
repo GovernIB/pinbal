@@ -3,7 +3,7 @@
  */
 package es.caib.pinbal.client.dadesobertes;
 
-import java.time.LocalDate;
+import java.util.Date;
 
 /**
  * Estructura de la petició d'informació per a les dades obertes.
@@ -15,8 +15,8 @@ public class DadesObertesPeticio {
 	private String entitatCodi;
 	private String procedimentCodi;
 	private String serveiCodi;
-	private LocalDate dataInici;
-	private LocalDate dataFi;
+	private Date dataInici;
+	private Date dataFi;
 
 	public String getEntitatCodi() {
 		return entitatCodi;
@@ -36,16 +36,16 @@ public class DadesObertesPeticio {
 	public void setServeiCodi(String serveiCodi) {
 		this.serveiCodi = serveiCodi;
 	}
-	public LocalDate getDataInici() {
+	public Date getDataInici() {
 		return dataInici;
 	}
-	public void setDataInici(LocalDate dataInici) {
+	public void setDataInici(Date dataInici) {
 		this.dataInici = dataInici;
 	}
-	public LocalDate getDataFi() {
+	public Date getDataFi() {
 		return dataFi;
 	}
-	public void setDataFi(LocalDate dataFi) {
+	public void setDataFi(Date dataFi) {
 		this.dataFi = dataFi;
 	}
 
