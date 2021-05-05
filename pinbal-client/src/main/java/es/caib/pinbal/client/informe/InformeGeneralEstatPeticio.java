@@ -3,7 +3,7 @@
  */
 package es.caib.pinbal.client.informe;
 
-import java.time.LocalDate;
+import java.util.Date;
 
 /**
  * Estructura de la petició de l'informe general d'estat.
@@ -12,19 +12,19 @@ import java.time.LocalDate;
  */
 public class InformeGeneralEstatPeticio {
 
-	private LocalDate dataInici;
-	private LocalDate dataFi;
+	private Date dataInici;
+	private Date dataFi;
 
-	public LocalDate getDataInici() {
+	public Date getDataInici() {
 		return dataInici;
 	}
-	public void setDataInici(LocalDate dataInici) {
+	public void setDataInici(Date dataInici) {
 		this.dataInici = dataInici;
 	}
-	public LocalDate getDataFi() {
+	public Date getDataFi() {
 		return dataFi;
 	}
-	public void setDataFi(LocalDate dataFi) {
+	public void setDataFi(Date dataFi) {
 		this.dataFi = dataFi;
 	}
 	

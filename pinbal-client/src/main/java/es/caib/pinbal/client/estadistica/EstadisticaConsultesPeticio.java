@@ -3,7 +3,7 @@
  */
 package es.caib.pinbal.client.estadistica;
 
-import java.time.LocalDate;
+import java.util.Date;
 
 /**
  * Estructura de la petició de l'estadística de consultes realitzades.
@@ -17,8 +17,8 @@ public class EstadisticaConsultesPeticio {
 	private String serveiCodi;
 	private String estatCodi;
 	private String agrupacioTipus;
-	private LocalDate dataInici;
-	private LocalDate dataFi;
+	private Date dataInici;
+	private Date dataFi;
 
 	public String getEntitatCodi() {
 		return entitatCodi;
@@ -50,16 +50,16 @@ public class EstadisticaConsultesPeticio {
 	public void setAgrupacioTipus(String agrupacioTipus) {
 		this.agrupacioTipus = agrupacioTipus;
 	}
-	public LocalDate getDataInici() {
+	public Date getDataInici() {
 		return dataInici;
 	}
-	public void setDataInici(LocalDate dataInici) {
+	public void setDataInici(Date dataInici) {
 		this.dataInici = dataInici;
 	}
-	public LocalDate getDataFi() {
+	public Date getDataFi() {
 		return dataFi;
 	}
-	public void setDataFi(LocalDate dataFi) {
+	public void setDataFi(Date dataFi) {
 		this.dataFi = dataFi;
 	}
 
