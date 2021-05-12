@@ -213,6 +213,7 @@ public interface ConsultaRepository extends JpaRepository<Consulta, Long> {
 			"        c.procedimentServei.procediment.entitat.codi, " +
 			"        c.procedimentServei.procediment.entitat.nom, " +
 			"        c.procedimentServei.procediment.entitat.cif, " +
+			"        cast(c.procedimentServei.procediment.entitat.tipus as string), " +
 			"        c.transmision.codigoUnidadTramitadora, " +
 			"        c.transmision.unidadTramitadora, " +
 			"        c.procedimentServei.procediment.codi, " +
@@ -220,6 +221,11 @@ public interface ConsultaRepository extends JpaRepository<Consulta, Long> {
 			"        c.procedimentServei.serveiScsp.codi, " +
 			"        c.procedimentServei.serveiScsp.descripcio, " +
 			"        c.procedimentServei.serveiScsp.scspEmisor.nom, " +
+			"        c.procedimentServei.serveiScsp.scspEmisor.cif, " +
+			"        c.transmision.consentimiento, " +
+			"        c.transmision.finalidad, " +
+			"        c.titularDocumentTipus, " +
+			"        c.scspSolicitudId, " +
 			"        c.createdDate, " +
 			"        c.recobriment, " +
 			"        cast(c.estat as string)) " +
