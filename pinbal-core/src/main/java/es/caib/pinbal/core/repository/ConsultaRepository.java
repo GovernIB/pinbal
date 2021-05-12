@@ -226,7 +226,7 @@ public interface ConsultaRepository extends JpaRepository<Consulta, Long> {
 			"from" +
 			"    Consulta c " +
 			"where " +
-			"    c.procedimentServei.procediment.entitat.id = :entitatId " +
+			"    (:esNullEntitatId = true or c.procedimentServei.procediment.entitat.id = :entitatId) " +
 			"and (:esNullProcedimentId = true or c.procedimentServei.procediment.id = :procedimentId) " +
 			"and (:esNullServeiCodi = true or c.procedimentServei.servei = :serveiCodi) " +
 			"and (:esNullDataInici = true or c.createdDate >= :dataInici) " +
@@ -235,6 +235,7 @@ public interface ConsultaRepository extends JpaRepository<Consulta, Long> {
 			"order by " +
 			"c.createdDate asc")
 	public List<DadesObertesRespostaConsulta> findByOpendata(
+			@Param("esNullEntitatId") boolean esNullEntitatId,
 			@Param("entitatId") Long entitatId,
 			@Param("esNullProcedimentId") boolean esNullProcedimentId,
 			@Param("procedimentId") Long procedimentId,

@@ -1178,21 +1178,25 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 				"dataFi" + dataFi + ", " +
 				"procedimentCodi=" + procedimentCodi + ", " +
 				"serveiCodi=" + serveiCodi + ")");
-		Entitat entitat = entitatRepository.findByCodi(entitatCodi);
-		if (entitat == null) {
-			LOGGER.debug("No s'ha trobat l'entitat (codi=" + entitatCodi + ")");
-			throw new EntitatNotFoundException();
-		}
+		Entitat entitat = null;
 		Procediment procediment = null;
-		if (procedimentCodi != null) {
-			procediment = procedimentRepository.findByEntitatAndCodi(entitat, procedimentCodi);
-			if (procediment == null) {
-				LOGGER.debug("No s'ha trobat el procediment (codi=" + procedimentCodi + ")");
-				throw new ProcedimentNotFoundException();
+		if (entitatCodi != null) {
+			entitat = entitatRepository.findByCodi(entitatCodi);
+			if (entitat == null) {
+				LOGGER.debug("No s'ha trobat l'entitat (codi=" + entitatCodi + ")");
+				throw new EntitatNotFoundException();
+			}
+			if (procedimentCodi != null) {
+				procediment = procedimentRepository.findByEntitatAndCodi(entitat, procedimentCodi);
+				if (procediment == null) {
+					LOGGER.debug("No s'ha trobat el procediment (codi=" + procedimentCodi + ")");
+					throw new ProcedimentNotFoundException();
+				}
 			}
 		}
 		List<DadesObertesRespostaConsulta> resposta = consultaRepository.findByOpendata(
-				entitat.getId(),
+				entitat == null,
+				entitat != null ? entitat.getId() : null,
 				procediment == null,
 				procediment != null ? procediment.getId() : null,
 				serveiCodi == null,

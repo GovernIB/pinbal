@@ -40,7 +40,7 @@ public class ExplotacioDadesExternesRestController extends BaseController {
 			produces = "application/json")
 	public ResponseEntity<List<DadesObertesRespostaConsulta>> opendata(
 			HttpServletRequest request,
-			@RequestParam final String entitatCodi,
+			@RequestParam(required = false) final String entitatCodi,
 			@RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) final Date dataInici,
 			@RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) final Date dataFi,
 			@RequestParam(required = false) final String procedimentCodi,
