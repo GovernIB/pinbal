@@ -37,7 +37,7 @@ public class DadesObertesTest {
 		Calendar cal = Calendar.getInstance();
 		cal.set(Calendar.DAY_OF_YEAR, 1);
 		List<DadesObertesRespostaConsulta> resposta = getClient().opendata(
-				"LIMIT",
+				null,
 				cal.getTime(),
 				new Date(),
 				null,
@@ -60,7 +60,7 @@ public class DadesObertesTest {
 				URL_BASE,
 				USUARI,
 				CONTRASENYA,
-				true, null, null);
+				false, null, null);
 		client.enableLogginFilter();
 		return client;
 	}

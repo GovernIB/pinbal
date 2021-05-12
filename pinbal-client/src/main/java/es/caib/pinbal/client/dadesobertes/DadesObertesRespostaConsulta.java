@@ -15,13 +15,19 @@ public class DadesObertesRespostaConsulta {
 	private String entitatCodi;
 	private String entitatNom;
 	private String entitatNif;
+	private String entitatTipus;
 	private String departamentCodi;
 	private String departamentNom;
 	private String procedimentCodi;
 	private String procedimentNom;
 	private String serveiCodi;
 	private String serveiNom;
-	private String emisor;
+	private String emissor;
+	private String emissorNif;
+	private String consentiment;
+	private String finalitat;
+	private String titularTipusDoc;
+	private String solicitudId;
 	private Date data;
 	private DadesObertesConsultaTipus tipus;
 	private DadesObertesConsultaResultat resultat;
@@ -30,13 +36,19 @@ public class DadesObertesRespostaConsulta {
 			String entitatCodi,
 			String entitatNom,
 			String entitatNif,
+			String entitatTipus,
 			String departamentCodi,
 			String departamentNom,
 			String procedimentCodi,
 			String procedimentNom,
 			String serveiCodi,
 			String serveiNom,
-			String emisor,
+			String emissor,
+			String emissorNif,
+			String consentiment,
+			String finalitat,
+			String titularTipusDoc,
+			String solicitudId,
 			Date data,
 			boolean recobriment,
 			String estat) {
@@ -44,13 +56,19 @@ public class DadesObertesRespostaConsulta {
 		this.entitatCodi = entitatCodi;
 		this.entitatNom = entitatNom;
 		this.entitatNif = entitatNif;
+		this.entitatTipus = entitatTipus;
 		this.departamentCodi = departamentCodi;
 		this.departamentNom = departamentNom;
 		this.procedimentCodi = procedimentCodi;
 		this.procedimentNom = procedimentNom;
 		this.serveiCodi = serveiCodi;
 		this.serveiNom = serveiNom;
-		this.emisor = emisor;
+		this.emissor = emissor;
+		this.emissorNif = emissorNif;
+		this.consentiment = consentiment;
+		this.finalitat = finalitat;
+		this.titularTipusDoc = titularTipusDoc;
+		this.solicitudId = solicitudId;
 		this.data = data;
 		this.tipus = recobriment ? DadesObertesConsultaTipus.RECOBRIMENT : DadesObertesConsultaTipus.WEB;
 		if ("Pendent".equals(estat)) {
@@ -81,6 +99,12 @@ public class DadesObertesRespostaConsulta {
 	}
 	public void setEntitatNif(String entitatNif) {
 		this.entitatNif = entitatNif;
+	}
+	public String getEntitatTipus() {
+		return entitatTipus;
+	}
+	public void setEntitatTipus(String entitatTipus) {
+		this.entitatTipus = entitatTipus;
 	}
 	public String getDepartamentCodi() {
 		return departamentCodi;
@@ -118,11 +142,41 @@ public class DadesObertesRespostaConsulta {
 	public void setServeiNom(String serveiNom) {
 		this.serveiNom = serveiNom;
 	}
-	public String getEmisor() {
-		return emisor;
+	public String getEmissor() {
+		return emissor;
 	}
-	public void setEmisor(String emisor) {
-		this.emisor = emisor;
+	public void setEmissor(String emissor) {
+		this.emissor = emissor;
+	}
+	public String getEmissorNif() {
+		return emissorNif;
+	}
+	public void setEmissorNif(String emissorNif) {
+		this.emissorNif = emissorNif;
+	}
+	public String getConsentiment() {
+		return consentiment;
+	}
+	public void setConsentiment(String consentiment) {
+		this.consentiment = consentiment;
+	}
+	public String getFinalitat() {
+		return finalitat;
+	}
+	public void setFinalitat(String finalitat) {
+		this.finalitat = finalitat;
+	}
+	public String getTitularTipusDoc() {
+		return titularTipusDoc;
+	}
+	public void setTitularTipusDoc(String titularTipusDoc) {
+		this.titularTipusDoc = titularTipusDoc;
+	}
+	public String getSolicitudId() {
+		return solicitudId;
+	}
+	public void setSolicitudId(String solicitudId) {
+		this.solicitudId = solicitudId;
 	}
 	public Date getData() {
 		return data;
