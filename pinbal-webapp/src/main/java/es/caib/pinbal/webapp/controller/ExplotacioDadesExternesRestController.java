@@ -42,7 +42,7 @@ public class ExplotacioDadesExternesRestController extends BaseController {
 			HttpServletRequest request,
 			@RequestParam(required = false) final String entitatCodi,
 			@RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) final Date dataInici,
-			@RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) final Date dataFi,
+			@RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) final Date dataFi,
 			@RequestParam(required = false) final String procedimentCodi,
 			@RequestParam(required = false) final String serveiCodi) throws EntitatNotFoundException, ProcedimentNotFoundException {
 		// Informe de procediments agrupats per entitat i departament
