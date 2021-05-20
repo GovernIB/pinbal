@@ -1460,26 +1460,7 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 	@Override
 	public List<CarregaDto> findEstadistiquesCarrega() {
 		LOGGER.debug("Consultant estadístiques de càrrega");
-		if (carreguesAny == null) {
-			carreguesAny = Collections.synchronizedList(
-					consultaRepository.findCarrega(DateUtils.truncate(new Date(), Calendar.YEAR)));
-		}
-		if (carreguesMes == null) {
-			carreguesMes = Collections.synchronizedList(
-					consultaRepository.findCarrega(DateUtils.truncate(new Date(), Calendar.MONTH)));
-		}
-		if (carreguesDia == null) {
-			carreguesDia = Collections.synchronizedList(
-					consultaRepository.findCarrega(DateUtils.truncate(new Date(), Calendar.DAY_OF_MONTH)));
-		}
-		if (carreguesHora == null) {
-			carreguesHora = Collections.synchronizedList(
-					consultaRepository.findCarrega(DateUtils.truncate(new Date(), Calendar.HOUR_OF_DAY)));
-		}
-		if (carreguesMinut == null) {
-			carreguesMinut = Collections.synchronizedList(
-					consultaRepository.findCarrega(DateUtils.truncate(new Date(), Calendar.MINUTE)));
-		}
+		initEstadistiquesCarrega();
 		List<CarregaDto> carregues = new ArrayList<CarregaDto>();
 		for (CarregaDto carregaAny: carreguesAny) {
 			CarregaDto carrega = new CarregaDto(
@@ -1859,6 +1840,7 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 			List<Solicitud> solicituds,
 			boolean sincrona,
 			boolean recobriment) {
+		initEstadistiquesCarrega();
 		if (solicituds != null && solicituds.size() > 0) {
 			Solicitud solicitud = solicituds.get(0);
 			afegirConsultaEstadistiquesCarrega(
@@ -1908,6 +1890,29 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 					idPeticion,
 					solicituds,
 					gestioXsdActiva);
+		}
+	}
+
+	private void initEstadistiquesCarrega() {
+		if (carreguesAny == null) {
+			carreguesAny = Collections.synchronizedList(
+					consultaRepository.findCarrega(DateUtils.truncate(new Date(), Calendar.YEAR)));
+		}
+		if (carreguesMes == null) {
+			carreguesMes = Collections.synchronizedList(
+					consultaRepository.findCarrega(DateUtils.truncate(new Date(), Calendar.MONTH)));
+		}
+		if (carreguesDia == null) {
+			carreguesDia = Collections.synchronizedList(
+					consultaRepository.findCarrega(DateUtils.truncate(new Date(), Calendar.DAY_OF_MONTH)));
+		}
+		if (carreguesHora == null) {
+			carreguesHora = Collections.synchronizedList(
+					consultaRepository.findCarrega(DateUtils.truncate(new Date(), Calendar.HOUR_OF_DAY)));
+		}
+		if (carreguesMinut == null) {
+			carreguesMinut = Collections.synchronizedList(
+					consultaRepository.findCarrega(DateUtils.truncate(new Date(), Calendar.MINUTE)));
 		}
 	}
 
