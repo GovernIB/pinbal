@@ -222,6 +222,7 @@ public interface UsuariService {
 	 * 
 	 * @return L'usuari actual.
 	 */
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_REPRES') or hasRole('ROLE_DELEG') or hasRole('ROLE_AUDIT')")
 	public UsuariDto updateUsuariActual(UsuariDto dto);
 
 }
