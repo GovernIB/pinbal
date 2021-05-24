@@ -2,7 +2,7 @@
 -- Update Database Script
 -- *********************************************************************
 -- Change Log: db/changelog/db.changelog-master.yaml
--- Ran at: 24/05/21 09:43
+-- Ran at: 24/05/21 12:03
 -- Against: null@offline:oracle?changeLogFile=liquibase/databasechangelog.csv
 -- Liquibase version: 4.3.3
 -- *********************************************************************
@@ -622,6 +622,27 @@ CREATE OR REPLACE TRIGGER acl_entry_idgen BEFORE INSERT ON acl_entry FOR EACH RO
 
 END;
 
+CREATE OR REPLACE TRIGGER acl_entry_idgen BEFORE INSERT ON acl_entry FOR EACH ROW BEGIN SELECT acl_entry_seq.NEXTVAL INTO :NEW.ID FROM DUAL;
+
+END;
+
+-- Changeset db/changelog/initial_schema_trigger.yaml::init-trigger-2::limit (generated)
+CREATE OR REPLACE PROCEDURE getsecuenciaidpeticion (prefijo_param in varchar2, on_Secuencial out number) as rRegistro ROWID;
+
+begin select ROWID, secuencia+1 into rRegistro, on_Secuencial from core_req_secuencia_id_peticion where prefijo = prefijo_param for update;
+
+update core_req_secuencia_id_peticion set secuencia = on_Secuencial, fechageneracion=sysdate where rowid = rRegistro;
+
+commit;
+
+exception when no_data_found then on_Secuencial := 1;
+
+insert into core_req_secuencia_id_peticion (prefijo, secuencia,fechageneracion) values (prefijo_param, on_Secuencial,(SELECT SYSDATE FROM DUAL));
+
+commit;
+
+end;
+
 -- Changeset db/changelog/initial_schema_grant.yaml::init-trigger-1::limit (generated)
 GRANT SELECT, UPDATE, INSERT, DELETE ON pbl_consulta TO www_emiserv;
 
@@ -941,6 +962,8 @@ INSERT INTO core_parametro_configuracion(nombre, valor, descripcion) VALUES ('cu
 INSERT INTO core_parametro_configuracion(nombre, valor, descripcion) VALUES ('periodo.validacion.certificados',24,'Periodo de validez del certificado en caché');
 
 INSERT INTO core_parametro_configuracion(nombre, valor, descripcion) VALUES ('tipoId','long','Longitud del identificador de la petición');
+
+INSERT INTO core_parametro_configuracion(nombre, valor, descripcion) VALUES ('prefijo.idpeticion','pbl','Prefijo utilizado para la generación del identificador de la petición');
 
 INSERT INTO core_parametro_configuracion(nombre, valor, descripcion) VALUES ('prefijo.idtransmision','em1','Cuando no haya indicado un prefijo asociado al servicio y este si está definido se utilizará este para la generación del id de transmisión.');
 
