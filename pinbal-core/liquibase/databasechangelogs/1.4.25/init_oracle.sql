@@ -2,7 +2,7 @@
 -- Update Database Script
 -- *********************************************************************
 -- Change Log: db/changelog/db.changelog-master.yaml
--- Ran at: 30/04/21 11:42
+-- Ran at: 24/05/21 12:03
 -- Against: null@offline:oracle?changeLogFile=liquibase/databasechangelog.csv
 -- Liquibase version: 4.3.3
 -- *********************************************************************
@@ -160,7 +160,7 @@ CREATE TABLE core_req_modulo_pdf (nombre VARCHAR2(256) NOT NULL, activo INTEGER 
 CREATE TABLE core_req_modulo_pdf_cesionario (servicio NUMBER(38, 0) NOT NULL, organismo NUMBER(38, 0) NOT NULL, modulo VARCHAR2(256) NOT NULL, activo INTEGER DEFAULT 1 NOT NULL, CONSTRAINT core_req_modpdf_ces_pk PRIMARY KEY (servicio, organismo, modulo));
 
 -- Changeset db/changelog/initial_schema_table.yaml::init-28::limit (generated)
-CREATE TABLE core_organismo_cesionario (id NUMBER(38, 0) NOT NULL, fechaalta TIMESTAMP NOT NULL, fechabaja TIMESTAMP, nombre VARCHAR2(50) NOT NULL, cif VARCHAR2(50) NOT NULL, bloqueado INTEGER DEFAULT 0 NOT NULL, logo BLOB, "codigounidadtramitadora;" VARCHAR2(9), CONSTRAINT core_organismo_cesionario_pk PRIMARY KEY (id));
+CREATE TABLE core_organismo_cesionario (id NUMBER(38, 0) NOT NULL, fechaalta TIMESTAMP NOT NULL, fechabaja TIMESTAMP, nombre VARCHAR2(50) NOT NULL, cif VARCHAR2(50) NOT NULL, bloqueado INTEGER DEFAULT 0 NOT NULL, logo BLOB, codigounidadtramitadora VARCHAR2(9), CONSTRAINT core_organismo_cesionario_pk PRIMARY KEY (id));
 
 -- Changeset db/changelog/initial_schema_table.yaml::init-29::limit (generated)
 CREATE TABLE core_parametro_configuracion (nombre VARCHAR2(64) NOT NULL, valor VARCHAR2(512) NOT NULL, descripcion VARCHAR2(512), CONSTRAINT core_parametro_config_pk PRIMARY KEY (nombre));
@@ -606,13 +606,42 @@ CREATE SEQUENCE id_autorizacion_certific_seq START WITH 1;
 CREATE SEQUENCE id_servicio_cesionario_seq START WITH 1;
 
 -- Changeset db/changelog/initial_schema_trigger.yaml::init-trigger-1::limit (generated)
-CREATE OR REPLACE TRIGGER acl_sid_idgen BEFORE INSERT ON acl_sid FOR EACH ROW BEGIN SELECT acl_sid_seq.NEXTVAL INTO :NEW.ID FROM DUAL END;
+CREATE OR REPLACE TRIGGER acl_sid_idgen BEFORE INSERT ON acl_sid FOR EACH ROW BEGIN SELECT acl_sid_seq.NEXTVAL INTO :NEW.ID FROM DUAL;
 
-CREATE OR REPLACE TRIGGER acl_class_idgen BEFORE INSERT ON acl_class FOR EACH ROW BEGIN SELECT acl_class_seq.NEXTVAL INTO :NEW.ID FROM DUAL END;
+END;
 
-CREATE OR REPLACE TRIGGER acl_oid_idgen BEFORE INSERT ON acl_object_identity FOR EACH ROW BEGIN SELECT acl_oid_seq.NEXTVAL INTO :NEW.ID FROM DUAL END;
+CREATE OR REPLACE TRIGGER acl_class_idgen BEFORE INSERT ON acl_class FOR EACH ROW BEGIN SELECT acl_class_seq.NEXTVAL INTO :NEW.ID FROM DUAL;
 
-CREATE OR REPLACE TRIGGER acl_entry_idgen BEFORE INSERT ON acl_entry FOR EACH ROW BEGIN SELECT acl_entry_seq.NEXTVAL INTO :NEW.ID FROM DUAL END;
+END;
+
+CREATE OR REPLACE TRIGGER acl_oid_idgen BEFORE INSERT ON acl_object_identity FOR EACH ROW BEGIN SELECT acl_oid_seq.NEXTVAL INTO :NEW.ID FROM DUAL;
+
+END;
+
+CREATE OR REPLACE TRIGGER acl_entry_idgen BEFORE INSERT ON acl_entry FOR EACH ROW BEGIN SELECT acl_entry_seq.NEXTVAL INTO :NEW.ID FROM DUAL;
+
+END;
+
+CREATE OR REPLACE TRIGGER acl_entry_idgen BEFORE INSERT ON acl_entry FOR EACH ROW BEGIN SELECT acl_entry_seq.NEXTVAL INTO :NEW.ID FROM DUAL;
+
+END;
+
+-- Changeset db/changelog/initial_schema_trigger.yaml::init-trigger-2::limit (generated)
+CREATE OR REPLACE PROCEDURE getsecuenciaidpeticion (prefijo_param in varchar2, on_Secuencial out number) as rRegistro ROWID;
+
+begin select ROWID, secuencia+1 into rRegistro, on_Secuencial from core_req_secuencia_id_peticion where prefijo = prefijo_param for update;
+
+update core_req_secuencia_id_peticion set secuencia = on_Secuencial, fechageneracion=sysdate where rowid = rRegistro;
+
+commit;
+
+exception when no_data_found then on_Secuencial := 1;
+
+insert into core_req_secuencia_id_peticion (prefijo, secuencia,fechageneracion) values (prefijo_param, on_Secuencial,(SELECT SYSDATE FROM DUAL));
+
+commit;
+
+end;
 
 -- Changeset db/changelog/initial_schema_grant.yaml::init-trigger-1::limit (generated)
 GRANT SELECT, UPDATE, INSERT, DELETE ON pbl_consulta TO www_emiserv;
@@ -933,6 +962,8 @@ INSERT INTO core_parametro_configuracion(nombre, valor, descripcion) VALUES ('cu
 INSERT INTO core_parametro_configuracion(nombre, valor, descripcion) VALUES ('periodo.validacion.certificados',24,'Periodo de validez del certificado en caché');
 
 INSERT INTO core_parametro_configuracion(nombre, valor, descripcion) VALUES ('tipoId','long','Longitud del identificador de la petición');
+
+INSERT INTO core_parametro_configuracion(nombre, valor, descripcion) VALUES ('prefijo.idpeticion','pbl','Prefijo utilizado para la generación del identificador de la petición');
 
 INSERT INTO core_parametro_configuracion(nombre, valor, descripcion) VALUES ('prefijo.idtransmision','em1','Cuando no haya indicado un prefijo asociado al servicio y este si está definido se utilizará este para la generación del id de transmisión.');
 

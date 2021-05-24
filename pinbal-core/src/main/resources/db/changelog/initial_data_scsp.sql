@@ -109,6 +109,7 @@ INSERT INTO core_parametro_configuracion(nombre, valor, descripcion) VALUES ('af
 INSERT INTO core_parametro_configuracion(nombre, valor, descripcion) VALUES ('custom.cert.validation.class','none','Clase propia de validación de certificados');
 INSERT INTO core_parametro_configuracion(nombre, valor, descripcion) VALUES ('periodo.validacion.certificados',24,'Periodo de validez del certificado en caché');
 INSERT INTO core_parametro_configuracion(nombre, valor, descripcion) VALUES ('tipoId','long','Longitud del identificador de la petición');
+INSERT INTO core_parametro_configuracion(nombre, valor, descripcion) VALUES ('prefijo.idpeticion','PBL','Prefijo utilizado para la generación del identificador de la petición');
 INSERT INTO core_parametro_configuracion(nombre, valor, descripcion) VALUES ('prefijo.idtransmision','em1','Cuando no haya indicado un prefijo asociado al servicio y este si está definido se utilizará este para la generación del id de transmisión.');
 INSERT INTO core_parametro_configuracion(nombre, valor, descripcion) VALUES ('version.datamodel.scsp','4.2.0','Especifica la versión del modelo de datos actual');
 INSERT INTO core_parametro_configuracion(nombre, valor, descripcion) VALUES ('validate.nif.emisor.enabled','true','Flag que indica si se valida el valor del nodo <NifEmisor> de la petición');

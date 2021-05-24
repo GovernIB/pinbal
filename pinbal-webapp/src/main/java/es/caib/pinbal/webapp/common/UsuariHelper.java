@@ -26,8 +26,6 @@ public class UsuariHelper {
 	private static final String SESSION_ATTRIBUTE_DADES_USUARI_ACTUAL = "UsuariHelper.dades.usuari.actual";
 	private static final String SESSION_ATTRIBUTE_USUARI_CREACIO_EXEC = "UsuariHelper.usuari.creacio.exec";
 
-
-
 	public static UsuariDto getDadesUsuariActual(
 			HttpServletRequest request) throws AccesExternException {
 		return getDadesUsuariActual(request, null);
@@ -63,28 +61,25 @@ public class UsuariHelper {
 		}
 	}
 
-	
-	
 	public static void processarLocale(
 			HttpServletRequest request,
 			HttpServletResponse response,
 			UsuariService usuariService) {
 		if (request.getUserPrincipal() != null) {
 			try {
-				String idioma_usuari = usuariService.getUsuariActual().getIdioma();			
-
-				LocaleResolver localeResolver = RequestContextUtils.getLocaleResolver(request);
-		        localeResolver.setLocale(
-		        		request, 
-		        		response, 
-		        		StringUtils.parseLocaleString(idioma_usuari));
+				String idiomaUsuari = usuariService.getUsuariActual().getIdioma();
+				if (idiomaUsuari != null) {
+					LocaleResolver localeResolver = RequestContextUtils.getLocaleResolver(request);
+					localeResolver.setLocale(
+							request, 
+							response, 
+							StringUtils.parseLocaleString(idiomaUsuari));
+				}
 			} catch (Exception e) {
 				LOGGER.error("Error establint l'idioma de l'usuari " + request.getUserPrincipal(), e);
 			}
 		}
 	}
-	
-
 
 	private static boolean isUsuariCreacioExecutat(HttpServletRequest request) {
 		Boolean refrescat = (Boolean)request.getSession().getAttribute(
