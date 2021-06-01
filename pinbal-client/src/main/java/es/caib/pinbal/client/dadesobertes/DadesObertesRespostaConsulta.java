@@ -66,18 +66,25 @@ public class DadesObertesRespostaConsulta {
 		this.emissor = emissor;
 		this.emissorNif = emissorNif;
 		this.consentiment = consentiment;
-		this.finalitat = finalitat;
+		if (finalitat != null) {
+			int index = finalitat.lastIndexOf("#");
+			if (index != -1) {
+				this.finalitat = finalitat.substring(index + 1);
+			} else {
+				this.finalitat = finalitat;
+			}
+		}
 		this.titularTipusDoc = titularTipusDoc;
 		this.solicitudId = solicitudId;
 		this.data = data;
 		this.tipus = recobriment ? DadesObertesConsultaTipus.RECOBRIMENT : DadesObertesConsultaTipus.WEB;
-		if ("Pendent".equals(estat)) {
+		if ("0".equals(estat)) {
 			this.resultat = DadesObertesConsultaResultat.PROCES;
-		} else if ("Processant".equals(estat)) {
+		} else if ("1".equals(estat)) {
 			this.resultat = DadesObertesConsultaResultat.PROCES;
-		} else if ("Tramitada".equals(estat)) {
+		} else if ("2".equals(estat)) {
 			this.resultat = DadesObertesConsultaResultat.OK;
-		} else if ("Error".equals(estat)) {
+		} else if ("3".equals(estat)) {
 			this.resultat = DadesObertesConsultaResultat.ERROR;
 		}
 	}

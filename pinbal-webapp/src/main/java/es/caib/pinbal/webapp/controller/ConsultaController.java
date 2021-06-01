@@ -154,8 +154,7 @@ public class ConsultaController extends BaseController {
 	@RequestMapping(value = "/datatable", produces="application/json", method = RequestMethod.GET)
 	@ResponseBody
 	public ServerSideResponse<ConsultaDto, Long> datatable(HttpServletRequest request, Model model)
-	      throws IllegalAccessException, InvocationTargetException, NoSuchMethodException, NamingException,
-	      SQLException, EntitatNotFoundException {
+			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException, NamingException, SQLException, EntitatNotFoundException {
 		String error = null;
 		ServerSideRequest serverSideRequest = new ServerSideRequest(request);
 		if (!EntitatHelper.isDelegatEntitatActual(request)) {
