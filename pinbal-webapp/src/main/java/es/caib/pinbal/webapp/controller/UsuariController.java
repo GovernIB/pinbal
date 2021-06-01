@@ -30,12 +30,11 @@ public class UsuariController extends BaseController{
 	@Autowired
 	private UsuariService usuariService;
 
-
 	@RequestMapping(value = "/logout", method = RequestMethod.GET)
 	public String logout(HttpServletRequest request, HttpServletResponse response) {
 		// Només per Jboss
 		// Es itera sobre totes les cookies
-		for(Cookie c : request.getCookies()) {
+		for (Cookie c: request.getCookies()) {
 			// Es sobre escriu el valor de cada cookie a NULL
 			Cookie ck = new Cookie(c.getName(), null);
 			ck.setPath(request.getContextPath());
@@ -43,12 +42,14 @@ public class UsuariController extends BaseController{
 		}
 		return "redirect:/";
 	}
+
 	@RequestMapping(value = "/configuracio", method = RequestMethod.GET)
 	public String getConfiguracio(
 			HttpServletRequest request,
 			Model model) {
 		UsuariDto usuari = usuariService.getUsuariActual();
-		model.addAttribute(UsuariCommand.asCommand(usuari));
+		UsuariCommand command = UsuariCommand.asCommand(usuari);
+		model.addAttribute(command);
 		model.addAttribute(
 				"idiomaEnumOptions",
 				EnumHelper.getOptionsForEnum(
@@ -56,6 +57,7 @@ public class UsuariController extends BaseController{
 						"usuari.form.camp.idioma.enum."));
 		return "usuariForm";
 	}
+
 	@RequestMapping(value = "/configuracio", method = RequestMethod.POST)
 	public String save(
 			HttpServletRequest request,
@@ -66,17 +68,13 @@ public class UsuariController extends BaseController{
 		if (bindingResult.hasErrors()) {
 			return "usuariForm";
 		}
-		
 		usuariService.updateUsuariActual(UsuariCommand.asDto(command));
-		
 		AlertHelper.success(
 				request, 
 				getMessage(
 						request, 
 						"usuari.controller.modificat.ok"));
-		
 		return "redirect:/";
-
 	}
 
 }
