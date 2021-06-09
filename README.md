@@ -8,6 +8,7 @@ La Plataforma d'Interoperabilitat de les Illes Balears (PINBAL) és una solució
 * [Manual de l'usuari auditor](https://github.com/GovernIB/pinbal/raw/pinbal-1.4/doc/odt/04_pinbal_usuari_auditor.odt)
 * [Manual de l'usuari superauditor](https://github.com/GovernIB/pinbal/raw/pinbal-1.4/doc/odt/05_pinbal_usuari_superauditor.odt)
 * [Manual d'integració](https://github.com/GovernIB/pinbal/raw/pinbal-1.4/doc/odt/10_pinbal_integracio.odt)
+* [Manual d'integració amb API REST](https://github.com/GovernIB/pinbal/raw/pinbal-1.4/doc/odt/11_pinbal_integracio_rest.odt)
 ## <a name="v_estable"></a> Versió estable
 ### [v1.4.24](https://github.com/GovernIB/pinbal/releases/tag/v1.4.24.5)
 ## <a name="b_activa"></a> Branca activa
