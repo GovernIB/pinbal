@@ -31,13 +31,16 @@ public interface OrganGestorRepository extends JpaRepository<OrganGestor, Long> 
 			"    OrganGestor og " +
 			"where (og.entitat = :entitat)" +
 			"  and (:esNullFiltreCodi = true or lower(og.codi) like concat('%', lower(:filtreCodi), '%'))" +
-			"  and (:esNullFiltreNom = true or lower(og.nom) like concat('%', lower(:filtreNom), '%')) ")
+			"  and (:esNullFiltreNom = true or lower(og.nom) like concat('%', lower(:filtreNom), '%')) " + 
+			"  and (:esNullFiltreActiu = true or og.actiu = :actiu )")
 	public Page<OrganGestor> findByEntitatAndFiltre(
 			@Param("entitat") Entitat entitat,
 		    @Param("esNullFiltreCodi") boolean esNullFiltreCodi,
 		    @Param("filtreCodi") String filtreCodi, 
 		    @Param("esNullFiltreNom") boolean esNullFiltreNom,
 		    @Param("filtreNom") String filtreNom, 
+		    @Param("esNullFiltreActiu") boolean esNullFiltreActiu,
+		    @Param("actiu") boolean actiu,
 			Pageable paginacio);
 	
 	@Query("from " +

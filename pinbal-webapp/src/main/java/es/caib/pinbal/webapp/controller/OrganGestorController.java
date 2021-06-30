@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import es.caib.pinbal.core.dto.EntitatDto;
 import es.caib.pinbal.core.dto.OrganGestorDto;
+import es.caib.pinbal.core.dto.OrganGestorEstatEnumDto;
 import es.caib.pinbal.core.service.OrganGestorService;
 import es.caib.pinbal.webapp.command.OrganGestorFiltreCommand;
 import es.caib.pinbal.webapp.common.EntitatHelper;
@@ -84,6 +85,7 @@ public class OrganGestorController extends BaseController {
 				entitat.getId(),
 				command.getCodi(), 
 				command.getNom(), 
+				command.getEstat(), 
 				serverSideRequest.toPageable());
 		return new ServerSideResponse<OrganGestorDto, Long>(serverSideRequest, page);
 	}
@@ -124,6 +126,7 @@ public class OrganGestorController extends BaseController {
 				SESSION_ATTRIBUTE_FILTRE);
 		if (command == null) {
 			command = new OrganGestorFiltreCommand();
+			command.setEstat(OrganGestorEstatEnumDto.VIGENT);
 		}
 		model.addAttribute(command);
 
