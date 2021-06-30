@@ -200,6 +200,7 @@ body {
 							<a href="<c:url value="/informe"/>" class="btn btn-primary"><spring:message code="decorator.menu.informes"/></a>
 							<a href="<c:url value="/organgestor"/>" class="btn btn-primary"><spring:message code="decorator.menu.organgestor"/></a>
 							<a href="<c:url value="/admin/consulta"/>" class="btn btn-primary"><spring:message code="decorator.menu.consultes"/></a>
+							<a href="<c:url value="/integracio"/>" class="btn btn-primary"><spring:message code="decorator.menu.integracions"/></a>
 							<div class="btn-group">
 								<button data-toggle="dropdown" class="btn btn-primary dropdown-toggle"><spring:message code="decorator.menu.scsp"/>&nbsp;<span class="caret caret-white"></span></button>
 								<ul class="dropdown-menu">

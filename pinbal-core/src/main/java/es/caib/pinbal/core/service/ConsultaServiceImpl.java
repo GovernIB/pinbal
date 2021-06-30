@@ -65,10 +65,12 @@ import es.caib.pinbal.core.dto.EstadistiquesFiltreDto;
 import es.caib.pinbal.core.dto.EstadistiquesFiltreDto.EstadistiquesAgrupacioDto;
 import es.caib.pinbal.core.dto.FitxerDto;
 import es.caib.pinbal.core.dto.InformeGeneralEstatDto;
+import es.caib.pinbal.core.dto.IntegracioAccioTipusEnumDto;
 import es.caib.pinbal.core.dto.JustificantDto;
 import es.caib.pinbal.core.dto.ProcedimentDto;
 import es.caib.pinbal.core.dto.RecobrimentSolicitudDto;
 import es.caib.pinbal.core.helper.DtoMappingHelper;
+import es.caib.pinbal.core.helper.IntegracioHelper;
 import es.caib.pinbal.core.helper.JustificantHelper;
 import es.caib.pinbal.core.helper.PermisosHelper;
 import es.caib.pinbal.core.helper.PluginHelper;
@@ -153,6 +155,9 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 
 	@Autowired
 	private MutableAclService aclService;
+	
+	@Autowired
+	private IntegracioHelper integracioHelper;
 
 	@Autowired
 	private PlatformTransactionManager transactionManager;
@@ -172,6 +177,12 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 	@Override
 	public ConsultaDto novaConsulta(
 			ConsultaDto consulta) throws ProcedimentServeiNotFoundException, ServeiNotAllowedException, ScspException {
+		
+		String accioDescripcio = "Consulta del servei";
+		Map<String, String> accioParams = new HashMap<String, String>();
+		accioParams.put("codi", consulta.getServeiCodi());
+		long t0 = System.currentTimeMillis();
+		
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 		LOGGER.debug("Executant consulta del servei (codi=" + consulta.getServeiCodi() + "): " + consulta);
 		copiarPropertiesToDb();
@@ -194,8 +205,19 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 		try {
 			idPeticion = getScspHelper().generarIdPeticion(consulta.getServeiCodi());
 		} catch (Exception ex) {
+			String errorDescripcio = "Error al generar identificador per a consulta (servei=" + consulta.getServeiCodi() + ", usuari=" + auth.getName() + "): " + ex.getMessage();
 			// Error al generar l'identificador
-			LOGGER.error("Error al generar identificador per a consulta (servei=" + consulta.getServeiCodi() + ", usuari=" + auth.getName() + ")", ex);
+			LOGGER.error(errorDescripcio, ex);
+			
+			integracioHelper.addAccioError(
+					IntegracioHelper.INTCODI_SERVEIS_SCSP,
+					accioDescripcio,
+					accioParams,
+					IntegracioAccioTipusEnumDto.ENVIAMENT,
+					System.currentTimeMillis() - t0,
+					errorDescripcio,
+					ex);
+			
 			throw new ScspException(ex.getMessage(), ex);
 		}
 		try {
@@ -239,12 +261,35 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 						getScspHelper());
 			}*/
 			Consulta saved = consultaRepository.save(c);
+			
+			
+			integracioHelper.addAccioOk(
+					IntegracioHelper.INTCODI_SERVEIS_SCSP,
+					accioDescripcio,
+					accioParams,
+					IntegracioAccioTipusEnumDto.ENVIAMENT,
+					System.currentTimeMillis() - t0);
+			
+			
+			
 			return dtoMappingHelper.getMapperFacade().map(
 					saved,
 					ConsultaDto.class);
 		} catch (Exception ex) {
+			String errorDescripcio = "Excepció al realitzar consulta SCSP (id=" + idPeticion + ", servei=" + consulta.getServeiCodi() + ", usuari=" + auth.getName() + ")" + ex.getMessage();
 			// Error al realitzar la petició (no s'arriba a enviar)
-			LOGGER.error("Excepció al realitzar consulta SCSP (id=" + idPeticion + ", servei=" + consulta.getServeiCodi() + ", usuari=" + auth.getName() + ")", ex);
+			LOGGER.error(errorDescripcio, ex);
+			
+			integracioHelper.addAccioError(
+					IntegracioHelper.INTCODI_SERVEIS_SCSP,
+					accioDescripcio,
+					accioParams,
+					IntegracioAccioTipusEnumDto.ENVIAMENT,
+					System.currentTimeMillis() - t0,
+					errorDescripcio,
+					ex);
+			
+			
 			throw new ScspException(ex.getMessage(), ex);
 		}
 		// Generació del justificant
@@ -254,6 +299,14 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 	@Override
 	public ConsultaDto novaConsultaInit(
 			ConsultaDto consulta) throws ProcedimentServeiNotFoundException, ServeiNotAllowedException, ScspException {
+		
+		
+		String accioDescripcio = "Consulta del servei (init)";
+		Map<String, String> accioParams = new HashMap<String, String>();
+		accioParams.put("codi", consulta.getServeiCodi());
+		long t0 = System.currentTimeMillis();
+		
+		
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 		LOGGER.debug("Executant consulta del servei (init) (codi=" + consulta.getServeiCodi() + "): " + consulta);
 		copiarPropertiesToDb();
@@ -274,9 +327,30 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 		String idPeticion = null;
 		try {
 			idPeticion = getScspHelper().generarIdPeticion(consulta.getServeiCodi());
+			
+			integracioHelper.addAccioOk(
+					IntegracioHelper.INTCODI_SERVEIS_SCSP,
+					accioDescripcio,
+					accioParams,
+					IntegracioAccioTipusEnumDto.ENVIAMENT,
+					System.currentTimeMillis() - t0);
+			
+			
 		} catch (Exception ex) {
+			
+			String errorDescripcio = "Error al generar identificador per a consulta (servei=" + consulta.getServeiCodi() + ", usuari=" + auth.getName() + ")";
 			// Error al generar l'identificador
-			LOGGER.error("Error al generar identificador per a consulta (servei=" + consulta.getServeiCodi() + ", usuari=" + auth.getName() + ")", ex);
+			LOGGER.error(errorDescripcio, ex);
+			
+			integracioHelper.addAccioError(
+					IntegracioHelper.INTCODI_SERVEIS_SCSP,
+					accioDescripcio,
+					accioParams,
+					IntegracioAccioTipusEnumDto.ENVIAMENT,
+					System.currentTimeMillis() - t0,
+					errorDescripcio,
+					ex);
+			
 			throw new ScspException(ex.getMessage(), ex);
 		}
 		String titularDocumentTipus = null;
@@ -310,6 +384,12 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 	public void novaConsultaEnviament(
 			Long consultaId,
 			ConsultaDto consulta) throws ProcedimentServeiNotFoundException, ConsultaNotFoundException, ScspException {
+		
+		String accioDescripcio = "Consulta del servei (enviament)";
+		Map<String, String> accioParams = new HashMap<String, String>();
+		accioParams.put("consultaId", consultaId.toString());
+		long t0 = System.currentTimeMillis();
+		
 		LOGGER.debug("Executant consulta del servei (enviament) (consultaId=" + consultaId + ")");
 		ProcedimentServei procedimentServei = procedimentServeiRepository.findByProcedimentIdAndServei(
 				consulta.getProcedimentId(),
@@ -322,8 +402,30 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 			processarDadesEspecifiquesSegonsCamps(
 					consulta.getServeiCodi(),
 					consulta.getDadesEspecifiques());
+			
+			integracioHelper.addAccioOk(
+					IntegracioHelper.INTCODI_SERVEIS_SCSP,
+					accioDescripcio,
+					accioParams,
+					IntegracioAccioTipusEnumDto.ENVIAMENT,
+					System.currentTimeMillis() - t0);
+			
 		} catch (Exception ex) {
-			LOGGER.error("Error al processar dades específiques de la consulta (consultaId=" + consultaId + ")", ex);
+			
+			String errorDescripcio = "Error al processar dades específiques de la consulta (consultaId=" + consultaId + ")";
+			LOGGER.error(errorDescripcio, ex);
+			
+			integracioHelper.addAccioError(
+					IntegracioHelper.INTCODI_SERVEIS_SCSP,
+					accioDescripcio,
+					accioParams,
+					IntegracioAccioTipusEnumDto.ENVIAMENT,
+					System.currentTimeMillis() - t0,
+					errorDescripcio,
+					ex);
+			
+			
+			
 			throw new ScspException(ex.getMessage(), ex);
 		}
 		Consulta c = consultaRepository.findOne(consultaId);
@@ -354,6 +456,12 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 	@Override
 	public ConsultaDto novaConsultaEstat(
 			Long consultaId) throws ScspException {
+		
+		String accioDescripcio = "Consulta del servei (estat)";
+		Map<String, String> accioParams = new HashMap<String, String>();
+		accioParams.put("consultaId", consultaId.toString());
+		long t0 = System.currentTimeMillis();
+		
 		LOGGER.debug("Executant consulta del servei (estat) (consultaId=" + consultaId + ")");
 		Consulta consulta = consultaRepository.findOne(consultaId);
 		try {
@@ -366,11 +474,31 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 						consulta,
 						getScspHelper());
 			}*/
+			
+			integracioHelper.addAccioOk(
+					IntegracioHelper.INTCODI_SERVEIS_SCSP,
+					accioDescripcio,
+					accioParams,
+					IntegracioAccioTipusEnumDto.ENVIAMENT,
+					System.currentTimeMillis() - t0);
+			
 			return dtoMappingHelper.getMapperFacade().map(
 					consulta,
 					ConsultaDto.class);
 		} catch (Exception ex) {
-			LOGGER.error("Error al obtenir l'estat de la petició corresponent a la consulta (consultaId=" + consultaId + ")", ex);
+			String errorDescripcio = "Error al obtenir l'estat de la petició corresponent a la consulta (consultaId=" + consultaId + ")";;
+			LOGGER.error(errorDescripcio, ex);
+			
+			integracioHelper.addAccioError(
+					IntegracioHelper.INTCODI_SERVEIS_SCSP,
+					accioDescripcio,
+					accioParams,
+					IntegracioAccioTipusEnumDto.ENVIAMENT,
+					System.currentTimeMillis() - t0,
+					errorDescripcio,
+					ex);
+			
+			
 			throw new ScspException(ex.getMessage(), ex);
 		}
 	}
@@ -379,6 +507,12 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 	@Override
 	public ConsultaDto novaConsultaMultiple(
 			ConsultaDto consulta) throws ValidacioDadesPeticioException, ProcedimentServeiNotFoundException, ServeiNotAllowedException, ScspException {
+		
+		String accioDescripcio = "Consulta múltiple del servei";
+		Map<String, String> accioParams = new HashMap<String, String>();
+		accioParams.put("codi", consulta.getServeiCodi());
+		long t0 = System.currentTimeMillis();
+		
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 		LOGGER.debug("Executant consulta múltiple del servei (codi=" + consulta.getServeiCodi() + "): " + consulta);
 		copiarPropertiesToDb();
@@ -400,8 +534,20 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 		try {
 			idPeticion = getScspHelper().generarIdPeticion(consulta.getServeiCodi());
 		} catch (Exception ex) {
-			// Error al generar l'identificador
-			LOGGER.error("Error al generar identificador per a consulta (servei=" + consulta.getServeiCodi() + ", usuari=" + auth.getName() + ")", ex);
+			
+			String errorDescripcio = "Error al generar identificador per a consulta (servei=" + consulta.getServeiCodi() + ", usuari=" + auth.getName() + ")";
+			LOGGER.error(errorDescripcio, ex);
+			
+			integracioHelper.addAccioError(
+					IntegracioHelper.INTCODI_SERVEIS_SCSP,
+					accioDescripcio,
+					accioParams,
+					IntegracioAccioTipusEnumDto.ENVIAMENT,
+					System.currentTimeMillis() - t0,
+					errorDescripcio,
+					ex);
+			
+			
 			throw new ScspException(ex.getMessage(), ex);
 		}
 		try {
@@ -457,12 +603,32 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 				updateEstatConsulta(cs, resultat, true);
 				consultaRepository.save(cs);
 			}
+			
+			
+			integracioHelper.addAccioOk(
+					IntegracioHelper.INTCODI_SERVEIS_SCSP,
+					accioDescripcio,
+					accioParams,
+					IntegracioAccioTipusEnumDto.ENVIAMENT,
+					System.currentTimeMillis() - t0);
+			
+			
 			return dtoMappingHelper.getMapperFacade().map(
 					saved,
 					ConsultaDto.class);
 		} catch (Exception ex) {
 			// Error al realitzar la petició (no s'arriba a enviar)
-			LOGGER.error("Excepció al realitzar consulta SCSP (id=" + idPeticion + ", servei=" + consulta.getServeiCodi() + ", usuari=" + auth.getName() + ")", ex);
+			String errorDescripcio = "Excepció al realitzar consulta SCSP (id=" + idPeticion + ", servei=" + consulta.getServeiCodi() + ", usuari=" + auth.getName() + ")";
+			LOGGER.error(errorDescripcio, ex);
+			
+			integracioHelper.addAccioError(
+					IntegracioHelper.INTCODI_SERVEIS_SCSP,
+					accioDescripcio,
+					accioParams,
+					IntegracioAccioTipusEnumDto.ENVIAMENT,
+					System.currentTimeMillis() - t0,
+					errorDescripcio,
+					ex);
 			throw new ScspException(ex.getMessage(), ex);
 		}
 	}
@@ -472,6 +638,12 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 	public ConsultaDto novaConsultaRecobriment(
 			String serveiCodi,
 			RecobrimentSolicitudDto solicitud) throws EntitatNotFoundException, ProcedimentNotFoundException, ProcedimentServeiNotFoundException, ServeiNotAllowedException, ScspException {
+		String accioDescripcio = "Consulta del servei via recobriment";
+		Map<String, String> accioParams = new HashMap<String, String>();
+		accioParams.put("entitatCif", solicitud.getEntitatCif());
+		accioParams.put("procedimentCodi", solicitud.getProcedimentCodi());
+		accioParams.put("serveiCodi", serveiCodi);
+		long t0 = System.currentTimeMillis();
 		LOGGER.debug("Executant consulta del servei via recobriment (" +
 				"entitatCif=" + solicitud.getEntitatCif() + ", " +
 				"procedimentCodi=" + solicitud.getProcedimentCodi() + ", " +
@@ -510,7 +682,18 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 			idPeticion = getScspHelper().generarIdPeticion(serveiCodi);
 		} catch (Exception ex) {
 			// Error al generar l'identificador
-			LOGGER.error("Error al generar identificador per a consulta (servei=" + serveiCodi + ")", ex);
+			String errorDescripcio = "Error al generar identificador per a consulta (servei=" + serveiCodi + ")";
+			LOGGER.error(errorDescripcio, ex);
+			
+			integracioHelper.addAccioError(
+					IntegracioHelper.INTCODI_SERVEIS_SCSP,
+					accioDescripcio,
+					accioParams,
+					IntegracioAccioTipusEnumDto.ENVIAMENT,
+					System.currentTimeMillis() - t0,
+					errorDescripcio,
+					ex);
+			
 			throw new ScspException(ex.getMessage(), ex);
 		}
 		try {
@@ -586,10 +769,30 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 						saved,
 						getScspHelper());*/
 			}
+			
+			integracioHelper.addAccioOk(
+					IntegracioHelper.INTCODI_SERVEIS_SCSP,
+					accioDescripcio,
+					accioParams,
+					IntegracioAccioTipusEnumDto.ENVIAMENT,
+					System.currentTimeMillis() - t0);
+			
+			
 			return resposta;
 		} catch (Exception ex) {
+
 			// Error al realitzar la petició (no s'arriba a enviar)
-			LOGGER.error("Excepció al realitzar consulta SCSP (id=" + idPeticion + ", servei=" + serveiCodi + ", usuari=" + auth.getName() + ")", ex);
+			String errorDescripcio = "Excepció al realitzar consulta SCSP (id=" + idPeticion + ", servei=" + serveiCodi + ", usuari=" + auth.getName() + ")";
+			LOGGER.error(errorDescripcio, ex);
+			
+			integracioHelper.addAccioError(
+					IntegracioHelper.INTCODI_SERVEIS_SCSP,
+					accioDescripcio,
+					accioParams,
+					IntegracioAccioTipusEnumDto.ENVIAMENT,
+					System.currentTimeMillis() - t0,
+					errorDescripcio,
+					ex);
 			throw new ScspException(ex.getMessage(), ex);
 		}
 	}
@@ -599,6 +802,13 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 	public ConsultaDto novaConsultaRecobrimentInit(
 			String serveiCodi,
 			RecobrimentSolicitudDto solicitud) throws EntitatNotFoundException, ProcedimentNotFoundException, ProcedimentServeiNotFoundException, ServeiNotAllowedException, ScspException {
+		String accioDescripcio = "Consulta múltiple del via recobriment (init)";
+		Map<String, String> accioParams = new HashMap<String, String>();
+		accioParams.put("entitatCif", solicitud.getEntitatCif());
+		accioParams.put("procedimentCodi", solicitud.getProcedimentCodi());
+		accioParams.put("serveiCodi", serveiCodi);
+		long t0 = System.currentTimeMillis();
+		
 		LOGGER.debug("Executant consulta del servei via recobriment (init) (" +
 				"entitatCif=" + solicitud.getEntitatCif() + ", " +
 				"procedimentCodi=" + solicitud.getProcedimentCodi() + ", " +
@@ -633,8 +843,26 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 		String idPeticion = null;
 		try {
 			idPeticion = getScspHelper().generarIdPeticion(serveiCodi);
+			
+			integracioHelper.addAccioOk(
+					IntegracioHelper.INTCODI_SERVEIS_SCSP,
+					accioDescripcio,
+					accioParams,
+					IntegracioAccioTipusEnumDto.ENVIAMENT,
+					System.currentTimeMillis() - t0);
+			
 		} catch (Exception ex) {
-			LOGGER.error("Error al generar identificador per a consulta (servei=" + serveiCodi + ")", ex);
+			String errorDescripcio = "Error al generar identificador per a consulta (servei=" + serveiCodi + ")";
+			LOGGER.error(errorDescripcio, ex);
+			
+			integracioHelper.addAccioError(
+					IntegracioHelper.INTCODI_SERVEIS_SCSP,
+					accioDescripcio,
+					accioParams,
+					IntegracioAccioTipusEnumDto.ENVIAMENT,
+					System.currentTimeMillis() - t0,
+					errorDescripcio,
+					ex);
 			throw new ScspException(ex.getMessage(), ex);
 		}
 		Consulta c = Consulta.getBuilder(
@@ -665,6 +893,10 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 	public void novaConsultaRecobrimentEnviament(
 			Long consultaId,
 			RecobrimentSolicitudDto solicitud) throws ConsultaNotFoundException, ScspException {
+		String accioDescripcio = "Consulta múltiple del via recobriment (SCSP)";
+		Map<String, String> accioParams = new HashMap<String, String>();
+		accioParams.put("consultaId", consultaId.toString());
+		long t0 = System.currentTimeMillis();
 		LOGGER.debug("Executant consulta del servei via recobriment (SCSP) (" +
 				"consultaId=" + consultaId + ")");
 		Consulta consulta = consultaRepository.findOne(consultaId);
@@ -679,8 +911,20 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 					procedimentServei.getServei(),
 					solicitud.getDadesEspecifiques(),
 					isGestioXsdActiva(procedimentServei.getServei()));
+			
+			
 		} catch (Exception ex) {
-			LOGGER.error("Error al copiar les dades específiques de la consulta (consultaId=" + consultaId + ")", ex);
+			String errorDescripcio = "Error al copiar les dades específiques de la consulta (consultaId=" + consultaId + ")";
+			LOGGER.error(errorDescripcio, ex);
+			
+			integracioHelper.addAccioError(
+					IntegracioHelper.INTCODI_SERVEIS_SCSP,
+					accioDescripcio,
+					accioParams,
+					IntegracioAccioTipusEnumDto.ENVIAMENT,
+					System.currentTimeMillis() - t0,
+					errorDescripcio,
+					ex);
 			throw new ScspException(ex.getMessage(), ex);
 		}
 		DocumentTipus documentTipus = (consulta.getTitularDocumentTipus() != null) ? DocumentTipus.valueOf(consulta.getTitularDocumentTipus()) : null;
@@ -717,9 +961,27 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 			String error = "[" + resultat.getErrorCodi() + "] " + resultat.getErrorDescripcio();
 			transaccioHelper.updateErrorConsulta(consultaId, error);
 			Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-			LOGGER.error("Error retornat per la consulta SCSP (id=" + consulta.getScspPeticionId() + ", servei=" + procedimentServei.getServei() + ", usuari=" + auth.getName() + "): " + error);
+
+			String errorDescripcio = "Error retornat per la consulta SCSP (id=" + consulta.getScspPeticionId() + ", servei=" + procedimentServei.getServei() + ", usuari=" + auth.getName() + "): ";
+			
+			integracioHelper.addAccioError(
+					IntegracioHelper.INTCODI_SERVEIS_SCSP,
+					accioDescripcio,
+					accioParams,
+					IntegracioAccioTipusEnumDto.ENVIAMENT,
+					System.currentTimeMillis() - t0,
+					errorDescripcio,
+					null);
 			throw new ScspException(error);
 		}
+		
+		integracioHelper.addAccioOk(
+				IntegracioHelper.INTCODI_SERVEIS_SCSP,
+				accioDescripcio,
+				accioParams,
+				IntegracioAccioTipusEnumDto.ENVIAMENT,
+				System.currentTimeMillis() - t0);
+		
 	}
 	@Transactional(rollbackFor = {EntitatNotFoundException.class, ProcedimentNotFoundException.class, ProcedimentNotFoundException.class, AccesExternException.class, ServeiNotAllowedException.class, ScspException.class})
 	@Override
@@ -751,6 +1013,11 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 	public ConsultaDto novaConsultaRecobrimentMultiple(
 			String serveiCodi,
 			List<RecobrimentSolicitudDto> solicituds) throws EntitatNotFoundException, ProcedimentNotFoundException, ProcedimentServeiNotFoundException, ServeiNotAllowedException, ScspException {
+		String accioDescripcio = "Consulta múltiple multiple via recobriment";
+		Map<String, String> accioParams = new HashMap<String, String>();
+		accioParams.put("serveiCodi", serveiCodi);
+		accioParams.put("serveiCodi", (solicituds != null) ? String.valueOf(solicituds.size()) : "");
+		long t0 = System.currentTimeMillis();
 		LOGGER.debug("Executant consulta del servei multiple via recobriment (" +
 				"serveiCodi=" + serveiCodi + ", " +
 				"solicituds=" + ((solicituds != null) ? solicituds.size() : "") + ")");
@@ -792,7 +1059,18 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 			idPeticion = getScspHelper().generarIdPeticion(serveiCodi);
 		} catch (Exception ex) {
 			// Error al generar l'identificador
-			LOGGER.error("Error al generar identificador per a consulta (servei=" + serveiCodi + ")", ex);
+			String errorDescripcio = "Error al generar identificador per a consulta (servei=" + serveiCodi + ")";
+			LOGGER.error(errorDescripcio, ex);
+			
+			integracioHelper.addAccioError(
+					IntegracioHelper.INTCODI_SERVEIS_SCSP,
+					accioDescripcio,
+					accioParams,
+					IntegracioAccioTipusEnumDto.ENVIAMENT,
+					System.currentTimeMillis() - t0,
+					errorDescripcio,
+					ex);
+			
 			throw new ScspException(ex.getMessage(), ex);
 		}
 		try {
@@ -882,10 +1160,29 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 				resposta.setRespostaEstadoCodigo(resultat.getErrorCodi());
 				resposta.setRespostaEstadoError(resultat.getErrorDescripcio());
 			}
+			
+			integracioHelper.addAccioOk(
+					IntegracioHelper.INTCODI_SERVEIS_SCSP,
+					accioDescripcio,
+					accioParams,
+					IntegracioAccioTipusEnumDto.ENVIAMENT,
+					System.currentTimeMillis() - t0);
+			
 			return resposta;
 		} catch (Exception ex) {
 			// Error al realitzar la petició (no s'arriba a enviar)
-			LOGGER.error("Excepció al realitzar consulta SCSP (id=" + idPeticion + ", servei=" + serveiCodi + ", usuari=" + auth.getName() + ")", ex);
+			String errorDescripcio = "Excepció al realitzar consulta SCSP (id=" + idPeticion + ", servei=" + serveiCodi + ", usuari=" + auth.getName() + ")";
+			LOGGER.error(errorDescripcio, ex);
+			
+			integracioHelper.addAccioError(
+					IntegracioHelper.INTCODI_SERVEIS_SCSP,
+					accioDescripcio,
+					accioParams,
+					IntegracioAccioTipusEnumDto.ENVIAMENT,
+					System.currentTimeMillis() - t0,
+					errorDescripcio,
+					ex);
+			
 			throw new ScspException(ex.getMessage(), ex);
 		}
 	}
