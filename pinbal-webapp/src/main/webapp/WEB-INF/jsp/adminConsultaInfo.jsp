@@ -74,7 +74,7 @@ function initModalXml(element) {
 			</div>
 			<div class="modal-body"></div>
 			<div class="modal-footer">
-				<a href="#" class="btn btn-default" data-dismiss="modal-content"><spring:message code="comu.boto.tornar"/></a>
+				<a href="#" class="btn btn-default" data-dismiss="modal"><spring:message code="comu.boto.tancar"/></a>
 			</div>
 		</div>
 	</div>

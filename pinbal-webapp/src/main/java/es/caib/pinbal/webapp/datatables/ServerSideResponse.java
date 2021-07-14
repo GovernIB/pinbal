@@ -13,6 +13,7 @@ import java.util.Map;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 
 import es.caib.pinbal.core.dto.Identificable;
 
@@ -36,6 +37,35 @@ public class ServerSideResponse<T extends Identificable<ID>, ID extends Serializ
 	public ServerSideResponse(
 			ServerSideRequest serverSideRequest,
 			Page<T> page) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+		
+		fillServerSideRequest(serverSideRequest, page);
+	}
+	
+	public ServerSideResponse(
+			ServerSideRequest serverSideRequest,
+			List<T> llista) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+
+		List<T> sublist = llista.subList(
+				serverSideRequest.getStart(),
+				(serverSideRequest.getLength() > 0 && serverSideRequest.getLength() < (llista.size() - serverSideRequest.getStart())) ? serverSideRequest.getLength() : llista.size());
+
+		Page<T> page = new PageImpl<T>(
+				sublist,
+				serverSideRequest.toPageable(),
+				(llista != null) ? llista.size() : 0);
+
+		
+//		 new ServerSideResponse<T, Long>(serverSideRequest, page);
+		
+		fillServerSideRequest(serverSideRequest, page);
+		
+	}
+	
+	
+	public void fillServerSideRequest(
+				ServerSideRequest serverSideRequest,
+				Page<T> page) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException{
+		
 		draw = serverSideRequest.getDraw();
 		recordsTotal = page.getTotalElements();
 		recordsFiltered = page.getTotalElements();
@@ -68,6 +98,7 @@ public class ServerSideResponse<T extends Identificable<ID>, ID extends Serializ
 			}
 		}
 	}
+	
 
 	public int getDraw() {
 		return draw;

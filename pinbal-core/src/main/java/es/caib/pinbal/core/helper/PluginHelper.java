@@ -8,15 +8,19 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import es.caib.pinbal.core.dto.FitxerDto;
+import es.caib.pinbal.core.dto.IntegracioAccioTipusEnumDto;
 import es.caib.pinbal.plugins.CustodiaPlugin;
 import es.caib.pinbal.plugins.DadesUsuari;
 import es.caib.pinbal.plugins.DadesUsuariPlugin;
@@ -58,6 +62,8 @@ public class PluginHelper {
 	private CustodiaPlugin custodiaPlugin;
 	private FirmaServidorPlugin firmaServidorPlugin;
 	private IArxiuPlugin arxiuPlugin;
+	@Autowired
+	private IntegracioHelper integracioHelper;
 
 	public DadesUsuari dadesUsuariConsultarAmbUsuariCodi(
 			String usuariCodi) throws SistemaExternException {
@@ -165,6 +171,11 @@ public class PluginHelper {
 			TipusFirma tipusFirma,
 			String motiu,
 			String idioma) throws SistemaExternException {
+		
+		String accioDescripcio = "Firma en servidor d'un fitxer";
+		Map<String, String> accioParams = new HashMap<String, String>();
+		accioParams.put("nom", fitxer.getNom());
+		long t0 = System.currentTimeMillis();
 		try {
 			byte[] firmaContingut = getFirmaServidorPlugin().firmar(
 					fitxer.getNom(),
@@ -172,9 +183,26 @@ public class PluginHelper {
 					fitxer.getContingut(),
 					tipusFirma,
 					idioma);
+			
+			integracioHelper.addAccioOk(
+					IntegracioHelper.INTCODI_FIRMASERV,
+					accioDescripcio,
+					accioParams,
+					IntegracioAccioTipusEnumDto.ENVIAMENT,
+					System.currentTimeMillis() - t0);
+			
 			return firmaContingut;
 		} catch (Exception ex) {
 			String errorDescripcio = "Error al accedir al plugin de firma en servidor: " + ex.getMessage();
+			integracioHelper.addAccioError(
+					IntegracioHelper.INTCODI_FIRMASERV,
+					accioDescripcio,
+					accioParams,
+					IntegracioAccioTipusEnumDto.ENVIAMENT,
+					System.currentTimeMillis() - t0,
+					errorDescripcio,
+					ex);
+			
 			throw new SistemaExternException(
 					errorDescripcio,
 					ex);
@@ -193,6 +221,15 @@ public class PluginHelper {
 			String codiClassificacio,
 			String codiProcediment,
 			String serieDocumental) throws SistemaExternException {
+		String accioDescripcio = "Creació d'un expedient";
+		Map<String, String> accioParams = new HashMap<String, String>();
+		accioParams.put("titol", titol);
+		accioParams.put("interessatDocumentNum", interessatDocumentNum);
+		accioParams.put("codiDir3", codiDir3);
+		accioParams.put("codiClassificacio", codiClassificacio);
+		accioParams.put("codiProcediment", codiProcediment);
+		accioParams.put("serieDocumental", serieDocumental);
+		long t0 = System.currentTimeMillis();
 		try {
 			String classificacio;
 			if (codiClassificacio != null) {
@@ -211,9 +248,25 @@ public class PluginHelper {
 							ExpedientEstat.OBERT,
 							Arrays.asList(interessatDocumentNum),
 							serieDocumental));
+			integracioHelper.addAccioOk(
+					IntegracioHelper.INTCODI_FIRMASERV,
+					accioDescripcio,
+					accioParams,
+					IntegracioAccioTipusEnumDto.ENVIAMENT,
+					System.currentTimeMillis() - t0);
+			
 			return expedientCreat.getIdentificador();
 		} catch (Exception ex) {
-			String errorDescripcio = "Error al accedir al plugin d'arxiu digital: " + ex.getMessage();
+			String errorDescripcio = "Error al accedir al plugin de firma en servidor: " + ex.getMessage();
+			integracioHelper.addAccioError(
+					IntegracioHelper.INTCODI_FIRMASERV,
+					accioDescripcio,
+					accioParams,
+					IntegracioAccioTipusEnumDto.ENVIAMENT,
+					System.currentTimeMillis() - t0,
+					errorDescripcio,
+					ex);
+			
 			throw new SistemaExternException(
 					errorDescripcio,
 					ex);
@@ -222,13 +275,31 @@ public class PluginHelper {
 
 	public Expedient arxiuExpedientConsultar(
 			String uuid) throws SistemaExternException {
+		String accioDescripcio = "Consulta d'un expedient per uuid";
+		Map<String, String> accioParams = new HashMap<String, String>();
+		accioParams.put("uuid", uuid);
+		long t0 = System.currentTimeMillis();
 		try {
 			Expedient arxiuExpedient = getArxiuPlugin().expedientDetalls(
 					uuid,
 					null);
+			integracioHelper.addAccioOk(
+					IntegracioHelper.INTCODI_ARXIU,
+					accioDescripcio,
+					accioParams,
+					IntegracioAccioTipusEnumDto.ENVIAMENT,
+					System.currentTimeMillis() - t0);
 			return arxiuExpedient;
 		} catch (Exception ex) {
 			String errorDescripcio = "Error al accedir al plugin d'arxiu digital: " + ex.getMessage();
+			integracioHelper.addAccioError(
+					IntegracioHelper.INTCODI_ARXIU,
+					accioDescripcio,
+					accioParams,
+					IntegracioAccioTipusEnumDto.ENVIAMENT,
+					System.currentTimeMillis() - t0,
+					errorDescripcio,
+					ex);
 			throw new SistemaExternException(
 					errorDescripcio,
 					ex);
@@ -237,19 +308,39 @@ public class PluginHelper {
 
 	public ContingutArxiu arxiuExpedientCercarAmbNom(
 			String nom) throws SistemaExternException {
+		String accioDescripcio = "Consulta d'un expedient per nom";
+		Map<String, String> accioParams = new HashMap<String, String>();
+		accioParams.put("nom", nom);
+		long t0 = System.currentTimeMillis();
 		try {
 			ConsultaFiltre filtre = new ConsultaFiltre();
 			filtre.setMetadada("name");
 			filtre.setOperacio(ConsultaOperacio.IGUAL);
 			filtre.setValorOperacio1(nom);
 			ConsultaResultat resultat = getArxiuPlugin().expedientConsulta(Arrays.asList(filtre), 0, 1);
+			
+			integracioHelper.addAccioOk(
+					IntegracioHelper.INTCODI_ARXIU,
+					accioDescripcio,
+					accioParams,
+					IntegracioAccioTipusEnumDto.ENVIAMENT,
+					System.currentTimeMillis() - t0);
 			if (resultat.getNumRetornat() > 0) {
 				return resultat.getResultats().get(0);
 			} else {
 				return null;
 			}
 		} catch (Exception ex) {
+			
 			String errorDescripcio = "Error al accedir al plugin d'arxiu digital: " + ex.getMessage();
+			integracioHelper.addAccioError(
+					IntegracioHelper.INTCODI_ARXIU,
+					accioDescripcio,
+					accioParams,
+					IntegracioAccioTipusEnumDto.ENVIAMENT,
+					System.currentTimeMillis() - t0,
+					errorDescripcio,
+					ex);
 			throw new SistemaExternException(
 					errorDescripcio,
 					ex);
@@ -258,10 +349,29 @@ public class PluginHelper {
 
 	public void arxiuExpedientTancar(
 			String uuid) throws SistemaExternException {
+		String accioDescripcio = "Tancament d'un expedient";
+		Map<String, String> accioParams = new HashMap<String, String>();
+		accioParams.put("uuid", uuid);
+		long t0 = System.currentTimeMillis();
+		
 		try {
 			getArxiuPlugin().expedientTancar(uuid);
+			integracioHelper.addAccioOk(
+					IntegracioHelper.INTCODI_ARXIU,
+					accioDescripcio,
+					accioParams,
+					IntegracioAccioTipusEnumDto.ENVIAMENT,
+					System.currentTimeMillis() - t0);
 		} catch (Exception ex) {
 			String errorDescripcio = "Error al accedir al plugin d'arxiu digital: " + ex.getMessage();
+			integracioHelper.addAccioError(
+					IntegracioHelper.INTCODI_ARXIU,
+					accioDescripcio,
+					accioParams,
+					IntegracioAccioTipusEnumDto.ENVIAMENT,
+					System.currentTimeMillis() - t0,
+					errorDescripcio,
+					ex);
 			throw new SistemaExternException(
 					errorDescripcio,
 					ex);
@@ -270,10 +380,28 @@ public class PluginHelper {
 
 	public void arxiuExpedientEsborrar(
 			String uuid) throws SistemaExternException {
+		String accioDescripcio = "Eliminació d'un expedient";
+		Map<String, String> accioParams = new HashMap<String, String>();
+		accioParams.put("uuid", uuid);
+		long t0 = System.currentTimeMillis();
 		try {
 			getArxiuPlugin().expedientEsborrar(uuid);
+			integracioHelper.addAccioOk(
+					IntegracioHelper.INTCODI_ARXIU,
+					accioDescripcio,
+					accioParams,
+					IntegracioAccioTipusEnumDto.ENVIAMENT,
+					System.currentTimeMillis() - t0);
 		} catch (Exception ex) {
 			String errorDescripcio = "Error al accedir al plugin d'arxiu digital: " + ex.getMessage();
+			integracioHelper.addAccioError(
+					IntegracioHelper.INTCODI_ARXIU,
+					accioDescripcio,
+					accioParams,
+					IntegracioAccioTipusEnumDto.ENVIAMENT,
+					System.currentTimeMillis() - t0,
+					errorDescripcio,
+					ex);
 			throw new SistemaExternException(
 					errorDescripcio,
 					ex);
@@ -289,6 +417,19 @@ public class PluginHelper {
 			ContingutOrigen ntiOrigen,
 			DocumentEstatElaboracio ntiEstatElaboracio,
 			DocumentTipus ntiTipusDocumental) throws SistemaExternException {
+		
+		
+		String accioDescripcio = "Creació d'un document";
+		Map<String, String> accioParams = new HashMap<String, String>();
+		accioParams.put("expedientUuid", expedientUuid);
+		accioParams.put("titol", titol);
+		accioParams.put("codiDir3", codiDir3);
+		accioParams.put("fitxerNom", fitxerPdfFirmat.getNom());
+		accioParams.put("ntiOrigen", ntiOrigen.toString());
+		accioParams.put("ntiEstatElaboracio", ntiEstatElaboracio.toString());
+		accioParams.put("ntiTipusDocumental", ntiTipusDocumental.toString());
+		long t0 = System.currentTimeMillis();
+		
 		try {
 			ArxiuFirma firma = new ArxiuFirma();
 			firma.setNom(fitxerPdfFirmat.getNom());
@@ -312,9 +453,24 @@ public class PluginHelper {
 							DocumentEstat.DEFINITIU,
 							serieDocumental),
 					expedientUuid);
+			integracioHelper.addAccioOk(
+					IntegracioHelper.INTCODI_ARXIU,
+					accioDescripcio,
+					accioParams,
+					IntegracioAccioTipusEnumDto.ENVIAMENT,
+					System.currentTimeMillis() - t0);
+			
 			return documentModificat.getIdentificador();
 		} catch (Exception ex) {
 			String errorDescripcio = "Error al accedir al plugin d'arxiu digital: " + ex.getMessage();
+			integracioHelper.addAccioError(
+					IntegracioHelper.INTCODI_ARXIU,
+					accioDescripcio,
+					accioParams,
+					IntegracioAccioTipusEnumDto.ENVIAMENT,
+					System.currentTimeMillis() - t0,
+					errorDescripcio,
+					ex);
 			throw new SistemaExternException(
 					errorDescripcio,
 					ex);
@@ -326,17 +482,41 @@ public class PluginHelper {
 			String versio,
 			boolean ambContingut,
 			boolean ambVersioImprimible) throws SistemaExternException {
+		
+		String accioDescripcio = "Consulta d'un document";
+		Map<String, String> accioParams = new HashMap<String, String>();
+		accioParams.put("nodeId", arxiuUuid);
+		accioParams.put("arxiuUuidCalculat", arxiuUuid);
+		accioParams.put("versio", versio);
+		accioParams.put("ambContingut", new Boolean(ambContingut).toString());
+		long t0 = System.currentTimeMillis();
 		try {
 			Document documentDetalls = getArxiuPlugin().documentDetalls(
 					arxiuUuid,
 					versio,
 					ambContingut);
+			integracioHelper.addAccioOk(
+					IntegracioHelper.INTCODI_ARXIU,
+					accioDescripcio,
+					accioParams,
+					IntegracioAccioTipusEnumDto.ENVIAMENT,
+					System.currentTimeMillis() - t0);
+			
 			if (ambVersioImprimible && documentDetalls.getFirmes() != null && !documentDetalls.getFirmes().isEmpty()) {
 				documentDetalls.setContingut(getArxiuPlugin().documentImprimible(documentDetalls.getIdentificador()));
 			}
 			return documentDetalls;
 		} catch (Exception ex) {
 			String errorDescripcio = "Error al accedir al plugin d'arxiu digital: " + ex.getMessage();
+			integracioHelper.addAccioError(
+					IntegracioHelper.INTCODI_ARXIU,
+					accioDescripcio,
+					accioParams,
+					IntegracioAccioTipusEnumDto.ENVIAMENT,
+					System.currentTimeMillis() - t0,
+					errorDescripcio,
+					ex);
+			
 			throw new SistemaExternException(
 					errorDescripcio,
 					ex);
