@@ -29,9 +29,12 @@ import static org.junit.Assert.assertNotNull;
  */
 public class Svddgpviws02Test {
 
-	private static final String URL_BASE = "https://proves.caib.es/pinbal";
+	private static final String URL_BASE = "http://localhost:8080/pinbal";
 	private static final String USUARI = "usuari";
 	private static final String CONTRASENYA = "contrasenya";
+	/*private static final String URL_BASE = "https://proves.caib.es/pinbal";
+	private static final String USUARI = "$ripea_pinbal";
+	private static final String CONTRASENYA = "ripea_pinbal";*/
 	private static final String PETICION_SCSP_ID = "PBL0000000001292";
 	private static final boolean IS_JBOSS = true;
 
@@ -42,6 +45,8 @@ public class Svddgpviws02Test {
 		SolicitudSvddgpviws02 solicitud = new SolicitudSvddgpviws02();
 		solicitud.setIdentificadorSolicitante("B07167448");
 		solicitud.setCodigoProcedimiento("ProvaConcepte");
+		//solicitud.setIdentificadorSolicitante("S0711001H");
+		//solicitud.setCodigoProcedimiento("CODSVDR_GBA_20121107");
 		solicitud.setUnidadTramitadora("Departament de test");
 		solicitud.setFinalidad("Test peticionSincrona");
 		solicitud.setConsentimiento(ScspConsentimiento.Si);
@@ -50,7 +55,7 @@ public class Svddgpviws02Test {
 		funcionario.setNombreCompletoFuncionario("Funcionari CAIB");
 		solicitud.setFuncionario(funcionario);
 		ScspTitular titular = new ScspTitular();
-		titular.setTipoDocumentacion(ScspTipoDocumentacion.NIF);
+		titular.setTipoDocumentacion(ScspTipoDocumentacion.DNI);
 		titular.setDocumentacion("12345678Z");
 		solicitud.setTitular(titular);
 		ScspRespuesta respuesta = client.peticionSincrona(Arrays.asList(solicitud));

@@ -64,10 +64,10 @@ public class ClientSvdccaacpasws01 extends ClientBase {
 			if (!isEmptyString(codigoProvincia)) {
 				xmlBuilder.append("<Consulta>");
 				xmlBuilder.append(
-						xmlOptionalStringParameter(this.codigoProvincia, "CodigoProvincia")
+						xmlOptionalStringParameter(this.codigoComunidadAutonoma, "CodigoComunidadAutonoma")
 				);
 				xmlBuilder.append(
-						xmlOptionalStringParameter(this.codigoComunidadAutonoma, "CodigoComunidadAutonoma")
+						xmlOptionalStringParameter(this.codigoProvincia, "CodigoProvincia")
 				);
 				xmlBuilder.append("</Consulta>");
 
