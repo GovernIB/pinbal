@@ -12,6 +12,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.ejb.interceptor.SpringBeanAutowiringInterceptor;
 
 import es.caib.pinbal.core.dto.OrganGestorDto;
+import es.caib.pinbal.core.dto.OrganGestorEstatEnumDto;
 import es.caib.pinbal.core.service.OrganGestorService;
 
 
@@ -50,8 +51,8 @@ public class OrganGestorServiceBean implements OrganGestorService {
 	@RolesAllowed({ "PBL_ADMIN", "PBL_REPRES" })
 	public Page<OrganGestorDto> findPageOrgansGestorsAmbFiltrePaginat(
 			Long entitatId,
-			String filtreCodi, String filtreNom, Pageable pageable) {
-		return delegate.findPageOrgansGestorsAmbFiltrePaginat(entitatId, filtreCodi, filtreNom, pageable);
+			String filtreCodi, String filtreNom, OrganGestorEstatEnumDto filtreEstat, Pageable pageable) {
+		return delegate.findPageOrgansGestorsAmbFiltrePaginat(entitatId, filtreCodi, filtreNom, filtreEstat, pageable);
 	}
 
 	@Override

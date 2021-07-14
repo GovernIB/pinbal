@@ -332,7 +332,7 @@ $('#dadesResposta').on('shown', function () {
 			</div>
 			<div class="modal-body"></div>
 			<div class="modal-footer">
-				<button class="btn btn-primary" data-dismiss="modal"><spring:message code="comu.boto.tornar"/></button>
+				<button class="btn btn-default" data-dismiss="modal"><spring:message code="comu.boto.tancar"/></button>
 			</div>
 			</div>
 		</div>

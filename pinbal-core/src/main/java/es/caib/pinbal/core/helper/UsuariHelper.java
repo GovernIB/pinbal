@@ -49,9 +49,16 @@ public class UsuariHelper {
 	@Resource
 	private MutableAclService aclService;
 
+	
+	public Usuari getUsuariAutenticat() {
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		if (auth == null)
+			return null;
+		return init(auth.getName());
+	}
+	
 
-
-	public void init(String usuariCodi) {
+	public Usuari init(String usuariCodi) {
 		Usuari usuari = usuariRepository.findOne(usuariCodi);
 		if (usuari == null || !usuari.isInicialitzat()) {
 			// Només inicialitza els usuaris que entren per primera vegada
@@ -103,6 +110,7 @@ public class UsuariHelper {
 				}
 			}
 		}
+		return usuari;
 	}
 
 	public Usuari moure(

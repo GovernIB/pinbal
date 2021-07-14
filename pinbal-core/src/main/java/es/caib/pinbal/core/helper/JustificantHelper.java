@@ -32,6 +32,7 @@ import com.lowagie.text.DocumentException;
 import com.lowagie.text.pdf.codec.Base64;
 
 import es.caib.pinbal.core.dto.FitxerDto;
+import es.caib.pinbal.core.dto.IntegracioAccioTipusEnumDto;
 import es.caib.pinbal.core.model.Consulta;
 import es.caib.pinbal.core.model.Consulta.JustificantEstat;
 import es.caib.pinbal.core.model.Procediment;
@@ -76,6 +77,8 @@ public class JustificantHelper implements MessageSourceAware {
 	private ConversioTipusDocumentHelper conversioTipusDocumentHelper;
 	@Autowired
 	private PluginHelper pluginHelper;
+	@Autowired
+	private IntegracioHelper integracioHelper;
 
 	private MessageSource messageSource;
 
@@ -297,18 +300,49 @@ public class JustificantHelper implements MessageSourceAware {
 		boolean convertir = !extensioSortida.equalsIgnoreCase(arxiuExtensio);
 		ByteArrayOutputStream baosGeneracio = new ByteArrayOutputStream();
 		LOGGER.debug("Generant el justificant per a la consulta (id=" + consulta.getId() + ") a partir de la plantilla");
-		generarAmbPlantillaFreemarker(
-				scspHelper.generarArbreJustificant(
-						consulta.getScspPeticionId(),
-						consulta.getScspSolicitudId(),
-						null),
-				"[" + serveiCodi + "] " + scspHelper.getServicioDescripcion(serveiCodi),
-				serveiJustificantCampRepository.findByServeiAndLocaleIdiomaAndLocaleRegio(
-						serveiCodi,
-						ServeiServiceImpl.DEFAULT_TRADUCCIO_LOCALE.getLanguage(),
-						ServeiServiceImpl.DEFAULT_TRADUCCIO_LOCALE.getCountry()),
-				null,
-				baosGeneracio);
+		
+		String accioDescripcio = "Generant el justificant per a la consulta";
+		Map<String, String> accioParams = new HashMap<String, String>();
+		accioParams.put("consultaId", consulta.getId().toString());
+		long t0 = System.currentTimeMillis();
+		try {
+		
+			generarAmbPlantillaFreemarker(
+					scspHelper.generarArbreJustificant(
+							consulta.getScspPeticionId(),
+							consulta.getScspSolicitudId(),
+							null),
+					"[" + serveiCodi + "] " + scspHelper.getServicioDescripcion(serveiCodi),
+					serveiJustificantCampRepository.findByServeiAndLocaleIdiomaAndLocaleRegio(
+							serveiCodi,
+							ServeiServiceImpl.DEFAULT_TRADUCCIO_LOCALE.getLanguage(),
+							ServeiServiceImpl.DEFAULT_TRADUCCIO_LOCALE.getCountry()),
+					null,
+					baosGeneracio);
+			integracioHelper.addAccioOk(
+					IntegracioHelper.INTCODI_SERVEIS_SCSP,
+					accioDescripcio,
+					accioParams,
+					IntegracioAccioTipusEnumDto.ENVIAMENT,
+					System.currentTimeMillis() - t0);
+			
+		} catch (Exception ex) {
+			
+			String errorDescripcio = "Error generant el justificant per a la consulta";
+			
+			integracioHelper.addAccioError(
+					IntegracioHelper.INTCODI_SERVEIS_SCSP,
+					accioDescripcio,
+					accioParams,
+					IntegracioAccioTipusEnumDto.ENVIAMENT,
+					System.currentTimeMillis() - t0,
+					errorDescripcio,
+					ex);
+			
+			throw ex;
+		}
+		
+		
 		FitxerDto fitxerDto = new FitxerDto();
 		fitxerDto.setNom(
 				getNomArxiuJustificant(

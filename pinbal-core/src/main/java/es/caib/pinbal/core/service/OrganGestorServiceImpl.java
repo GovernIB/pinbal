@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import es.caib.pinbal.core.dto.OrganGestorDto;
+import es.caib.pinbal.core.dto.OrganGestorEstatEnumDto;
 import es.caib.pinbal.core.helper.DtoMappingHelper;
 import es.caib.pinbal.core.helper.PluginOrganGestorHelper;
 import es.caib.pinbal.core.model.Entitat;
@@ -75,12 +76,13 @@ public class OrganGestorServiceImpl implements OrganGestorService {
 				organDB.setEntitat(entitat);
 				organDB.setNom(o.getNom());
 				organDB.setPare(organGestorRepository.findByCodiAndEntitat(o.getPareCodi(), entitat));
+				organDB.setActiu(true);
 				organGestorRepository.save(organDB);
 				
 			} else { // update it
 				organDB.setNom(o.getNom());
+				organDB.setActiu(true);
 				organDB.setPare(organGestorRepository.findByCodiAndEntitat(o.getPareCodi(), entitat));
-				organGestorRepository.flush();
 				
 			}
 			
@@ -91,13 +93,7 @@ public class OrganGestorServiceImpl implements OrganGestorService {
 		List<OrganGestor> organismesNotInDIR3 = entitat.getOrganGestors();
 		organismesNotInDIR3.removeAll(organismesDIR3);
 		for (OrganGestor o : organismesNotInDIR3) {
-			if (o.getProcediments() == null || o.getProcediments().size() == 0) {
-				organGestorRepository.delete(o.getId());
-
-			} else {
-				o.setActiu(false);
-				organGestorRepository.flush();
-			}
+			o.setActiu(false);
 		}
 		return true;
 	}
@@ -108,6 +104,7 @@ public class OrganGestorServiceImpl implements OrganGestorService {
 			Long entitatId,
 			String filtreCodi, 
 			String filtreNom, 
+			OrganGestorEstatEnumDto filtreEstat, 
 			Pageable pageable) {
 		Entitat entitat = entitatRepository.findOne(entitatId);
 
@@ -117,6 +114,8 @@ public class OrganGestorServiceImpl implements OrganGestorService {
 				filtreCodi,
 				filtreNom == null || filtreNom.length() == 0,
 				filtreNom,
+				filtreEstat == null,
+				filtreEstat == OrganGestorEstatEnumDto.VIGENT ? true : false,
 				pageable);
 		
 		
