@@ -66,8 +66,9 @@ public abstract class ClientBase extends es.caib.pinbal.client.comu.ClientBase {
 		} catch (UniformInterfaceException ex) {
 			ClientResponse response = ex.getResponse();
 			ErrorResponse errorResponse = ex.getResponse().getEntity(ErrorResponse.class);
+			String[] errorMessageParts = errorResponse.getMessage() != null ? errorResponse.getMessage().split("\n", 2) : null;
 			throw new RecobrimentException(
-					errorResponse.getMessage(),
+					(errorMessageParts != null && errorMessageParts.length > 0) ? errorMessageParts[0] : null,
 					response.getStatus(),
 					errorResponse.getTrace());
 		}
