@@ -35,6 +35,10 @@ public class ProcedimentDto extends AbstractIdentificable<Long> implements Seria
 
 	}
 
+	public String getNomAmbCodi() {
+		return nom + " (" + codi + ")";
+	}
+
 	public String getNomAmbDepartament() {
 		if (departament != null && !departament.isEmpty()) {
 			return nom + " (" + departament + ")";
@@ -43,12 +47,10 @@ public class ProcedimentDto extends AbstractIdentificable<Long> implements Seria
 		}
 	}
 	
-	public String getOrganGestorStr()
-	{
+	public String getOrganGestorStr() {
 		if (this.organGestor == null) {
 			return "";
 		}
-		
 		return this.organGestor.getNom() + " (" + this.organGestor.getCodi() + ")";
 	}
 	

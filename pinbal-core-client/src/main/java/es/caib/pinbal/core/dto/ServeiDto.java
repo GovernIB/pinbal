@@ -127,6 +127,10 @@ public class ServeiDto extends AbstractIdentificable<Long> implements Serializab
 		return (scspUrlAsincrona != null && !scspUrlAsincrona.isEmpty());
 	}
 
+	public String getDescripcioAmbCodi() {
+		return descripcio + " (" + codi + ")";
+	}
+
 	@Override
 	public String toString() {
 		return ToStringBuilder.reflectionToString(this);

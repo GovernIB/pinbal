@@ -90,7 +90,7 @@
 						 <pbl:inputSelect name="procediment" inline="true" placeholderKey="admin.consulta.list.filtre.procediment" 
 		 						 	optionItems="${procediments}"   
 			 						optionValueAttribute="id"
-			 						optionTextAttribute="nom" 
+			 						optionTextAttribute="nomAmbCodi" 
 									emptyOption="true"
 									optionMinimumResultsForSearch="0"/>
 				</div>
@@ -98,7 +98,7 @@
 					<pbl:inputSelect name="servei" inline="true" placeholderKey="admin.consulta.list.filtre.servei"
 									optionItems="${serveis}"
 									optionValueAttribute="codi"
-					 				optionTextAttribute="descripcio" 
+					 				optionTextAttribute="descripcioAmbCodi" 
 									emptyOption="true"
 									optionMinimumResultsForSearch="0"/>
 				</div>
