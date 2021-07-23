@@ -47,6 +47,12 @@
 			<version>${project.version}</version>
 			<type>war</type>
 		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>pinbal-api</artifactId>
+			<version>${project.version}</version>
+			<type>war</type>
+		</dependency>
 	</dependencies>
 	<profiles>
 		<profile>
@@ -71,6 +77,12 @@
 									<artifactId>pinbal-webapp</artifactId>
 									<contextRoot>/pinbal</contextRoot>
 									<bundleFileName>pinbal.war</bundleFileName>
+								</webModule>
+								<webModule>
+									<groupId>${project.groupId}</groupId>
+									<artifactId>pinbal-api</artifactId>
+									<contextRoot>/pinbalapi</contextRoot>
+									<bundleFileName>pinbal-api.war</bundleFileName>
 								</webModule>
 							</modules>
 						</configuration>
@@ -122,6 +134,12 @@
 							<artifactId>pinbal-webapp</artifactId>
 							<contextRoot>/pinbal</contextRoot>
 							<bundleFileName>pinbal.war</bundleFileName>
+						</webModule>
+						<webModule>
+							<groupId>${project.groupId}</groupId>
+							<artifactId>pinbal-api</artifactId>
+							<contextRoot>/pinbalapi</contextRoot>
+							<bundleFileName>pinbal-api.war</bundleFileName>
 						</webModule>
 					</modules>
 					<artifactTypeMappings>

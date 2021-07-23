@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+<beans	xmlns="http://www.springframework.org/schema/beans"
+		xmlns:ws="http://jax-ws.dev.java.net/spring/core"
+		xmlns:wss="http://jax-ws.dev.java.net/spring/servlet"
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		xsi:schemaLocation="
+				http://www.springframework.org/schema/beans
+				http://www.springframework.org/schema/beans/spring-beans.xsd
+				http://jax-ws.dev.java.net/spring/core
+				http://jax-ws.java.net/spring/core.xsd
+				http://jax-ws.dev.java.net/spring/servlet
+				http://jax-ws.java.net/spring/servlet.xsd">
+
+</beans>

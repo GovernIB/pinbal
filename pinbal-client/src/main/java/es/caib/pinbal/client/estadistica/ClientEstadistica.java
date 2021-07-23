@@ -21,7 +21,7 @@ import es.caib.pinbal.client.comu.Procediment;
  */
 public class ClientEstadistica extends ClientBase {
 
-	private static final String BASE_URL_SUFIX = "/api/interna/stats/";
+	private static final String BASE_URL_SUFIX = "api/interna/stats/";
 
 	public ClientEstadistica(
 			String urlBase,
