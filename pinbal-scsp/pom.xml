@@ -436,6 +436,11 @@
 			<version>1.18.12</version>
 			<scope>provided</scope>
 		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>pinbal-core-client</artifactId>
+			<version>${project.version}</version>
+		</dependency>
 	</dependencies>
 	<repositories>
 		<repository>

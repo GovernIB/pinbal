@@ -18,6 +18,7 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
@@ -48,6 +49,7 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
+import es.caib.pinbal.core.service.exception.ConsultaScspGeneracioException;
 import es.caib.pinbal.scsp.tree.Node;
 import es.caib.pinbal.scsp.tree.Tree;
 import es.scsp.common.domain.core.Servicio;
@@ -61,7 +63,7 @@ public class XmlHelper {
 	
 	public Tree<DadesEspecifiquesNode> getArbrePerDadesEspecifiques(
 			final Servicio servicio,
-			final boolean gestioXsdActiva) throws Exception {
+			final boolean gestioXsdActiva) throws ConsultaScspGeneracioException {
 		Tree<DadesEspecifiquesNode> tree = new Tree<DadesEspecifiquesNode>();
 		InputStream is = getInputStreamXsdDadesEspecifiques(servicio, gestioXsdActiva);
 		if (is != null) {
@@ -154,96 +156,100 @@ public class XmlHelper {
 	public Element crearDadesEspecifiques(
 			Servicio servicio,
 			Map<String, Object> dadesEspecifiques,
-			boolean gestioXsdActiva) throws Exception {
-		DocumentBuilderFactory fac = DocumentBuilderFactory.newInstance();
-		fac.setNamespaceAware(true);
-		Document doc = fac.newDocumentBuilder().newDocument();
-		Element datosEspecificos = doc.createElement("DatosEspecificos");
-		datosEspecificos.setAttribute(
-				"xmlns",
-				getXmlnsPerDadesEspecifiques(servicio, gestioXsdActiva));
-		if (dadesEspecifiques != null) {
-			for (Node<DadesEspecifiquesNode> node: getArbrePerDadesEspecifiques(servicio, gestioXsdActiva).toList()) {
-				String path = node.getData().getPath().substring(1);
-				Object preValor = dadesEspecifiques.get(path);
-				if (preValor instanceof String) {
-					String valor = (String)preValor;
-					if (valor != null && valor.length() > 0) {
-						String[] pathParts = path.substring("DatosEspecificos/".length()).split("/");
-						Element elementActual = datosEspecificos;
-						for (String pathPart: pathParts) {
-							NodeList nodeList = elementActual.getElementsByTagName(pathPart);
-							Element elementTrobat = null;
-							if (nodeList.getLength() > 0) {
-								for (int i = 0; i < nodeList.getLength(); i++) {
-									org.w3c.dom.Node n = nodeList.item(i);
-									if (n.getParentNode().equals(elementActual)) {
-										elementTrobat = (Element)n;
-										break;
+			boolean gestioXsdActiva) throws ConsultaScspGeneracioException {
+		try {
+			DocumentBuilderFactory fac = DocumentBuilderFactory.newInstance();
+			fac.setNamespaceAware(true);
+			Document doc = fac.newDocumentBuilder().newDocument();
+			Element datosEspecificos = doc.createElement("DatosEspecificos");
+			datosEspecificos.setAttribute(
+					"xmlns",
+					getXmlnsPerDadesEspecifiques(servicio, gestioXsdActiva));
+			if (dadesEspecifiques != null) {
+				for (Node<DadesEspecifiquesNode> node: getArbrePerDadesEspecifiques(servicio, gestioXsdActiva).toList()) {
+					String path = node.getData().getPath().substring(1);
+					Object preValor = dadesEspecifiques.get(path);
+					if (preValor instanceof String) {
+						String valor = (String)preValor;
+						if (valor != null && valor.length() > 0) {
+							String[] pathParts = path.substring("DatosEspecificos/".length()).split("/");
+							Element elementActual = datosEspecificos;
+							for (String pathPart: pathParts) {
+								NodeList nodeList = elementActual.getElementsByTagName(pathPart);
+								Element elementTrobat = null;
+								if (nodeList.getLength() > 0) {
+									for (int i = 0; i < nodeList.getLength(); i++) {
+										org.w3c.dom.Node n = nodeList.item(i);
+										if (n.getParentNode().equals(elementActual)) {
+											elementTrobat = (Element)n;
+											break;
+										}
 									}
 								}
-							}
-							if (elementTrobat == null) {
-								Element nou = doc.createElement(pathPart);
-								elementActual.appendChild(nou);
-								elementActual = nou;
-							} else {
-								elementActual = elementTrobat;
-							}
-						}
-						elementActual.setTextContent(valor);
-					}
-				} else if (preValor instanceof Document) {
-					if (preValor != null) {
-						Document valor = (Document)preValor;
-						String[] pathParts = path.substring("DatosEspecificos/".length()).split("/");
-						Element elementActual = datosEspecificos;
-						for (String pathPart: pathParts) {
-							NodeList nodeList = elementActual.getElementsByTagName(pathPart);
-							Element elementTrobat = null;
-							if (nodeList.getLength() > 0) {
-								for (int i = 0; i < nodeList.getLength(); i++) {
-									org.w3c.dom.Node n = nodeList.item(i);
-									if (n.getParentNode().equals(elementActual)) {
-										elementTrobat = (Element)n;
-										break;
-									}
+								if (elementTrobat == null) {
+									Element nou = doc.createElement(pathPart);
+									elementActual.appendChild(nou);
+									elementActual = nou;
+								} else {
+									elementActual = elementTrobat;
 								}
 							}
-							if (elementTrobat == null) {
-								Element nou = doc.createElement(pathPart);
-								elementActual.appendChild(nou);
-								elementActual = nou;
-							} else {
-								elementActual = elementTrobat;
-							}
+							elementActual.setTextContent(valor);
 						}
-						org.w3c.dom.Node auxNode = (org.w3c.dom.Node)doc.importNode(valor.getDocumentElement(), true);
-						// Si el nom de l'element arrel de l'XML a afegir coincideix amb el nom
-						// de l'element dels DatosEspecificos farem una substitució. Si no, afegirem
-						// el contingut XML a dins l'element.
-						if (auxNode.getNodeName().equals(elementActual.getNodeName())) {
-							// Substituim l'element
-							elementActual.getParentNode().appendChild(auxNode);
-							elementActual.getParentNode().removeChild(elementActual);
-						} else {
-							// Afegim XML a dins l'element
-							elementActual.appendChild(auxNode);
+					} else if (preValor instanceof Document) {
+						if (preValor != null) {
+							Document valor = (Document)preValor;
+							String[] pathParts = path.substring("DatosEspecificos/".length()).split("/");
+							Element elementActual = datosEspecificos;
+							for (String pathPart: pathParts) {
+								NodeList nodeList = elementActual.getElementsByTagName(pathPart);
+								Element elementTrobat = null;
+								if (nodeList.getLength() > 0) {
+									for (int i = 0; i < nodeList.getLength(); i++) {
+										org.w3c.dom.Node n = nodeList.item(i);
+										if (n.getParentNode().equals(elementActual)) {
+											elementTrobat = (Element)n;
+											break;
+										}
+									}
+								}
+								if (elementTrobat == null) {
+									Element nou = doc.createElement(pathPart);
+									elementActual.appendChild(nou);
+									elementActual = nou;
+								} else {
+									elementActual = elementTrobat;
+								}
+							}
+							org.w3c.dom.Node auxNode = (org.w3c.dom.Node)doc.importNode(valor.getDocumentElement(), true);
+							// Si el nom de l'element arrel de l'XML a afegir coincideix amb el nom
+							// de l'element dels DatosEspecificos farem una substitució. Si no, afegirem
+							// el contingut XML a dins l'element.
+							if (auxNode.getNodeName().equals(elementActual.getNodeName())) {
+								// Substituim l'element
+								elementActual.getParentNode().appendChild(auxNode);
+								elementActual.getParentNode().removeChild(elementActual);
+							} else {
+								// Afegim XML a dins l'element
+								elementActual.appendChild(auxNode);
+							}
 						}
 					}
 				}
 			}
+			doc.appendChild(datosEspecificos);
+			Element docElement = doc.getDocumentElement();
+			LOGGER.debug("Dades específiques generades: " + nodeToString(docElement));
+			return docElement;
+		} catch (Exception ex) {
+			throw new ConsultaScspGeneracioException(ex);
 		}
-		doc.appendChild(datosEspecificos);
-		Element docElement = doc.getDocumentElement();
-		LOGGER.debug("Dades específiques generades: " + nodeToString(docElement));
-		return docElement;
 	}
 
 	public Element copiarDadesEspecifiquesRecobriment(
 			Servicio servicio,
 			Element datosEspecificosRebuts,
-			boolean gestioXsdActiva) throws Exception {
+			boolean gestioXsdActiva) throws ConsultaScspGeneracioException  {
 		Element datosEspecificos = crearDadesEspecifiques(servicio, null, gestioXsdActiva);
 		NodeList nodes = datosEspecificosRebuts.getChildNodes();
 		for (int i = 0; i < nodes.getLength(); i++) {
@@ -469,7 +475,7 @@ public class XmlHelper {
 		is.close();
 		return doc;
 	}
-	private String nodeToString(org.w3c.dom.Node node) throws Exception {
+	private String nodeToString(org.w3c.dom.Node node) throws TransformerException {
 		StringWriter writer = new StringWriter();
 		Transformer transformer = TransformerFactory.newInstance().newTransformer();
 		transformer.transform(new DOMSource(node), new StreamResult(writer));
@@ -487,36 +493,40 @@ public class XmlHelper {
 	private InputStream getScspResourceInputStream(
 			Servicio servicio,
 			String arxiuNom,
-			boolean gestioXsdActiva) throws Exception {
-		String versionEsquema = servicio.getVersionEsquema();
-		if (versionEsquema != null) {
-			int index = versionEsquema.lastIndexOf("V");
-			if (index != -1) {
-				String esquema;
-				InputStream is;
-				if (gestioXsdActiva) {
-					esquema = getPathPerFitxerXsd(servicio, arxiuNom);
-					File fitxer = new File(esquema);
-					is = FileUtils.openInputStream(fitxer);
+			boolean gestioXsdActiva) throws ConsultaScspGeneracioException {
+		try {
+			String versionEsquema = servicio.getVersionEsquema();
+			if (versionEsquema != null) {
+				int index = versionEsquema.lastIndexOf("V");
+				if (index != -1) {
+					String esquema;
+					InputStream is;
+					if (gestioXsdActiva) {
+						esquema = getPathPerFitxerXsd(servicio, arxiuNom);
+						File fitxer = new File(esquema);
+						is = FileUtils.openInputStream(fitxer);
+					} else {
+						esquema = "/schemas/" + servicio.getCodCertificado() + "v" + versionEsquema.substring(index + 1) + "/" + arxiuNom;
+						is = getClass().getResourceAsStream(esquema);
+					}
+					if (is == null) {
+						esquema = "/schemas/" + servicio.getCodCertificado() + "/" + arxiuNom;
+						is = getClass().getResourceAsStream(esquema);
+					}
+					LOGGER.debug("Obtenint fitxer XSD per a servei SCSP (" +
+							"servicio=" + servicio.getCodCertificado() + ", " +
+							"versionEsquema=" + servicio.getVersionEsquema() + ", " +
+							"arxiuNom=" + arxiuNom + ", " +
+							"recursClassPath=" + esquema + ")");
+					return is;
 				} else {
-					esquema = "/schemas/" + servicio.getCodCertificado() + "v" + versionEsquema.substring(index + 1) + "/" + arxiuNom;
-					is = getClass().getResourceAsStream(esquema);
+					throw new ConsultaScspGeneracioException("No s'ha pogut obtenir l'esquema pel servicio (codi=" + servicio.getCodCertificado() + ")");
 				}
-				if (is == null) {
-					esquema = "/schemas/" + servicio.getCodCertificado() + "/" + arxiuNom;
-					is = getClass().getResourceAsStream(esquema);
-				}
-				LOGGER.debug("Obtenint fitxer XSD per a servei SCSP (" +
-						"servicio=" + servicio.getCodCertificado() + ", " +
-						"versionEsquema=" + servicio.getVersionEsquema() + ", " +
-						"arxiuNom=" + arxiuNom + ", " +
-						"recursClassPath=" + esquema + ")");
-				return is;
 			} else {
-				throw new Exception("No s'ha pogut obtenir l'esquema pel servicio (codi=" + servicio.getCodCertificado() + ")");
+				throw new ConsultaScspGeneracioException("No s'ha pogut obtenir la versió de l'esquema pel servicio (codi=" + servicio.getCodCertificado() + ")");
 			}
-		} else {
-			throw new Exception("No s'ha pogut obtenir la versió de l'esquema pel servicio (codi=" + servicio.getCodCertificado() + ")");
+		} catch (IOException ex) {
+			throw new ConsultaScspGeneracioException(ex);
 		}
 	}
 
@@ -537,7 +547,7 @@ public class XmlHelper {
 
 	private String getXmlnsPerDadesEspecifiques(
 			Servicio servicio,
-			boolean gestioXsdActiva) throws Exception {
+			boolean gestioXsdActiva) throws ConsultaScspGeneracioException, IOException {
 		InputStream is = getInputStreamXsdDadesEspecifiques(servicio, gestioXsdActiva);
 		if (is == null)
 			return null;
@@ -552,7 +562,7 @@ public class XmlHelper {
 
 	private InputStream getInputStreamXsdDadesEspecifiques(
 			Servicio servicio,
-			boolean gestioXsdActiva) throws Exception {
+			boolean gestioXsdActiva) throws ConsultaScspGeneracioException {
 		InputStream is = getScspResourceInputStream(
 				servicio,
 				"datos-especificos.xsd", gestioXsdActiva);

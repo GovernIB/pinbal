@@ -63,6 +63,7 @@ import es.caib.pinbal.core.service.ServeiService;
 import es.caib.pinbal.core.service.UsuariService;
 import es.caib.pinbal.core.service.exception.AccesExternException;
 import es.caib.pinbal.core.service.exception.ConsultaNotFoundException;
+import es.caib.pinbal.core.service.exception.ConsultaScspException;
 import es.caib.pinbal.core.service.exception.EntitatNotFoundException;
 import es.caib.pinbal.core.service.exception.ProcedimentNotFoundException;
 import es.caib.pinbal.core.service.exception.ProcedimentServeiNotFoundException;
@@ -368,7 +369,7 @@ public class ConsultaController extends BaseController {
 								request, 
 								"consulta.controller.recepcio.ok"));
 			}
-		} catch (ScspException ex) {
+		} catch (ConsultaScspException ex) {
 			AlertHelper.error(
 					request,
 					getMessage(
@@ -881,7 +882,7 @@ public class ConsultaController extends BaseController {
 	}
 
 	private ConsultaDto novaConsulta(
-			ConsultaCommand command) throws ProcedimentServeiNotFoundException, ConsultaNotFoundException, ServeiNotAllowedException, ScspException {
+			ConsultaCommand command) throws ProcedimentServeiNotFoundException, ConsultaNotFoundException, ServeiNotAllowedException, ConsultaScspException {
 		ConsultaDto consulta = ConsultaCommand.asDto(command);
 		if (consultaService.isOptimitzarTransaccionsNovaConsulta()) {
 			ConsultaDto consultaInit = consultaService.novaConsultaInit(
@@ -900,7 +901,7 @@ public class ConsultaController extends BaseController {
 	private ConsultaDto novaConsultaMultiple(
 			ConsultaCommand command,
 			String[] campsPeticioMultiple,
-			List<String[]> dadesPeticioMultiple) throws ProcedimentServeiNotFoundException, ConsultaNotFoundException, ServeiNotAllowedException, ScspException, ValidacioDadesPeticioException {
+			List<String[]> dadesPeticioMultiple) throws ProcedimentServeiNotFoundException, ConsultaNotFoundException, ServeiNotAllowedException, ConsultaScspException, ValidacioDadesPeticioException {
 		ConsultaDto consulta = ConsultaCommand.asDto(command);
 		consulta.setCampsPeticioMultiple(campsPeticioMultiple);
 		consulta.setDadesPeticioMultiple(

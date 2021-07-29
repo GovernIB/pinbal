@@ -23,6 +23,8 @@ import es.caib.pinbal.core.dto.InformeGeneralEstatDto;
 import es.caib.pinbal.core.dto.JustificantDto;
 import es.caib.pinbal.core.dto.RecobrimentSolicitudDto;
 import es.caib.pinbal.core.service.exception.ConsultaNotFoundException;
+import es.caib.pinbal.core.service.exception.ConsultaScspException;
+import es.caib.pinbal.core.service.exception.ConsultaScspGeneracioException;
 import es.caib.pinbal.core.service.exception.EntitatNotFoundException;
 import es.caib.pinbal.core.service.exception.JustificantGeneracioException;
 import es.caib.pinbal.core.service.exception.ProcedimentNotFoundException;
@@ -48,12 +50,12 @@ public interface ConsultaService {
 	 *            Si el procediment-servei especificat no existeix.
 	 * @throws ServeiNotAllowedException
 	 *            Si el funcionari no té accés al servei.
-	 * @throws ScspException
+	 * @throws ConsultaScspException
 	 *            Si hi ha hagut algun error en la consulta al servei SCSP.
 	 */
 	@PreAuthorize("hasRole('ROLE_DELEG')")
 	public ConsultaDto novaConsulta(
-			ConsultaDto consulta) throws ProcedimentServeiNotFoundException, ServeiNotAllowedException, ScspException;
+			ConsultaDto consulta) throws ProcedimentServeiNotFoundException, ServeiNotAllowedException, ConsultaScspException;
 
 	/**
 	 * Realitza una consulta mitjançant les llibreries SCSP. Primera passa
@@ -67,12 +69,12 @@ public interface ConsultaService {
 	 *            Si el procediment-servei especificat no existeix.
 	 * @throws ServeiNotAllowedException
 	 *            Si el funcionari no té accés al servei.
-	 * @throws ScspException
-	 *            Si hi ha hagut algun error en la consulta al servei SCSP.
+	 * @throws ConsultaScspGeneracioException
+	 *            Si hi ha hagut algun error generant la petició SCSP.
 	 */
 	@PreAuthorize("hasRole('ROLE_DELEG')")
 	public ConsultaDto novaConsultaInit(
-			ConsultaDto consulta) throws ProcedimentServeiNotFoundException, ServeiNotAllowedException, ScspException;
+			ConsultaDto consulta) throws ProcedimentServeiNotFoundException, ServeiNotAllowedException, ConsultaScspGeneracioException;
 
 	/**
 	 * Realitza una consulta mitjançant les llibreries SCSP. Segona passa
@@ -83,13 +85,13 @@ public interface ConsultaService {
 	 *            Dades de la consulta a executar.
 	 * @throws ConsultaNotFoundException
 	 *            Si la consulta no és accessible per aquest usuari.
-	 * @throws ScspException
-	 *            Si hi ha hagut algun error en la consulta al servei SCSP.
+	 * @throws ConsultaScspException
+	 *            Si hi ha hagut algun error fent la consulta al servei SCSP.
 	 */
 	@PreAuthorize("hasRole('ROLE_DELEG')")
 	public void novaConsultaEnviament(
 			Long consultaId,
-			ConsultaDto consulta) throws ProcedimentServeiNotFoundException, ConsultaNotFoundException, ScspException;
+			ConsultaDto consulta) throws ProcedimentServeiNotFoundException, ConsultaNotFoundException, ConsultaScspException;
 
 	/**
 	 * Realitza una consulta mitjançant les llibreries SCSP. Tercera passa
@@ -99,12 +101,14 @@ public interface ConsultaService {
 	 * @param consultaId
 	 *            Id de la consulta creada en el primer pas.
 	 * @return la consulta modificada.
-	 * @throws ScspException
-	 *            Si hi ha hagut algun error en la consulta al servei SCSP.
+	 * @throws ConsultaNotFoundException
+	 *            Si la consulta no és accessible per aquest usuari.
+	 * @throws ConsultaScspException
+	 *            Si hi ha hagut algun error al recuperar l'estat de la consulta.
 	 */
 	@PreAuthorize("hasRole('ROLE_DELEG')")
 	public ConsultaDto novaConsultaEstat(
-			Long consultaId) throws ScspException;
+			Long consultaId) throws ConsultaNotFoundException, ConsultaScspException;
 
 	/**
 	 * Realitza una consulta múltiple mitjançant les llibreries SCSP.
@@ -118,12 +122,12 @@ public interface ConsultaService {
 	 *            Si el procediment-servei especificat no existeix.
 	 * @throws ServeiNotAllowedException
 	 *            Si el funcionari no té accés al servei.
-	 * @throws ScspException
+	 * @throws ConsultaScspException
 	 *            Si hi ha hagut algun error en la consulta al servei SCSP.
 	 */
 	@PreAuthorize("hasRole('ROLE_DELEG')")
 	public ConsultaDto novaConsultaMultiple(
-			ConsultaDto consulta) throws ValidacioDadesPeticioException, ProcedimentServeiNotFoundException, ServeiNotAllowedException, ScspException;
+			ConsultaDto consulta) throws ValidacioDadesPeticioException, ProcedimentServeiNotFoundException, ServeiNotAllowedException, ConsultaScspException;
 
 	/**
 	 * Realitza una consulta mitjançant les llibreries SCSP provinent
@@ -142,13 +146,13 @@ public interface ConsultaService {
 	 *            Si la combinació procediment-servei especificada no existeix.
 	 * @throws ServeiNotAllowedException
 	 *            Si el funcionari no té accés al servei.
-	 * @throws ScspException
+	 * @throws ConsultaScspException
 	 *            Si hi ha hagut algun error en la consulta al servei SCSP.
 	 */
 	@PreAuthorize("hasRole('ROLE_WS')")
 	public ConsultaDto novaConsultaRecobriment(
 			String serveiCodi,
-			RecobrimentSolicitudDto solicitud) throws EntitatNotFoundException, ProcedimentNotFoundException, ProcedimentServeiNotFoundException, ServeiNotAllowedException, ScspException;
+			RecobrimentSolicitudDto solicitud) throws EntitatNotFoundException, ProcedimentNotFoundException, ProcedimentServeiNotFoundException, ServeiNotAllowedException, ConsultaScspException;
 
 	/**
 	 * Realitza una consulta mitjançant les llibreries SCSP provinent del
@@ -168,13 +172,13 @@ public interface ConsultaService {
 	 *            Si la combinació procediment-servei especificada no existeix.
 	 * @throws ServeiNotAllowedException
 	 *            Si el funcionari no té accés al servei.
-	 * @throws ScspException
+	 * @throws ConsultaScspException
 	 *            Si hi ha hagut algun error en la consulta al servei SCSP.
 	 */
 	@PreAuthorize("hasRole('ROLE_WS')")
 	public ConsultaDto novaConsultaRecobrimentInit(
 			String serveiCodi,
-			RecobrimentSolicitudDto solicitud) throws EntitatNotFoundException, ProcedimentNotFoundException, ProcedimentServeiNotFoundException, ServeiNotAllowedException, ScspException;
+			RecobrimentSolicitudDto solicitud) throws EntitatNotFoundException, ProcedimentNotFoundException, ProcedimentServeiNotFoundException, ServeiNotAllowedException, ConsultaScspException;
 
 	/**
 	 * Realitza una consulta mitjançant les llibreries SCSP provinent del
@@ -187,13 +191,13 @@ public interface ConsultaService {
 	 *            La sol·licitud de la consulta.
 	 * @throws ConsultaNotFoundException
 	 *            Si la consulta no és accessible per aquest usuari.
-	 * @throws ScspException
+	 * @throws ConsultaScspException
 	 *            Si hi ha hagut algun error en la consulta al servei SCSP.
 	 */
 	@PreAuthorize("hasRole('ROLE_WS')")
 	public void novaConsultaRecobrimentEnviament(
 			Long consultaId,
-			RecobrimentSolicitudDto solicitud) throws ConsultaNotFoundException, ScspException;
+			RecobrimentSolicitudDto solicitud) throws ConsultaNotFoundException, ConsultaScspException;
 
 	/**
 	 * Realitza una consulta mitjançant les llibreries SCSP provinent del
@@ -203,12 +207,14 @@ public interface ConsultaService {
 	 * @param consultaId
 	 *            Id de la consulta creada en el primer pas.
 	 * @return la consulta modificada.
-	 * @throws ScspException
+	 * @throws ConsultaNotFoundException
+	 *            Si la consulta no és accessible per aquest usuari.
+	 * @throws ConsultaScspException
 	 *            Si hi ha hagut algun error en la consulta al servei SCSP.
 	 */
 	@PreAuthorize("hasRole('ROLE_WS')")
 	public ConsultaDto novaConsultaRecobrimentEstat(
-			Long consultaId) throws ScspException;
+			Long consultaId) throws ConsultaNotFoundException, ConsultaScspException;
 
 	/**
 	 * Realitza una consulta mitjançant les llibreries SCSP provinent
@@ -227,12 +233,12 @@ public interface ConsultaService {
 	 *            Si la combinació procediment-servei especificada no existeix.
 	 * @throws ServeiNotAllowedException
 	 *            Si el funcionari no té accés al servei.
-	 * @throws ScspException
+	 * @throws ConsultaScspException
 	 *            Si hi ha hagut algun error en la consulta al servei SCSP.
 	 */
 	public ConsultaDto novaConsultaRecobrimentMultiple(
 			String serveiCodi,
-			List<RecobrimentSolicitudDto> solicituds) throws EntitatNotFoundException, ProcedimentNotFoundException, ProcedimentServeiNotFoundException, ServeiNotAllowedException, ScspException;
+			List<RecobrimentSolicitudDto> solicituds) throws EntitatNotFoundException, ProcedimentNotFoundException, ProcedimentServeiNotFoundException, ServeiNotAllowedException, ConsultaScspException;
 
 	/**
 	 * Obté el justificant de la consulta.

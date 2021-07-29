@@ -139,12 +139,12 @@ public class IntegracioHelper {
 		addAccio(
 				integracioCodi,
 				accio);
-		logger.error("Error d'integracio " + descripcio + ": " + errorDescripcio + "("
+		/*logger.error("Error d'integracio " + descripcio + ": " + errorDescripcio + "("
 				+ "integracioCodi=" + integracioCodi + ", "
 				+ "parametres=" + parametres + ", "
 				+ "tipus=" + tipus + ", "
 				+ "tempsResposta=" + tempsResposta + ")",
-				throwable);
+				throwable);*/
 	}
 
 	private LinkedList<IntegracioAccioDto> getLlistaAccions(

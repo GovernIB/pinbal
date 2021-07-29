@@ -29,6 +29,8 @@ import es.caib.pinbal.core.dto.JustificantDto;
 import es.caib.pinbal.core.dto.RecobrimentSolicitudDto;
 import es.caib.pinbal.core.service.ConsultaService;
 import es.caib.pinbal.core.service.exception.ConsultaNotFoundException;
+import es.caib.pinbal.core.service.exception.ConsultaScspException;
+import es.caib.pinbal.core.service.exception.ConsultaScspGeneracioException;
 import es.caib.pinbal.core.service.exception.EntitatNotFoundException;
 import es.caib.pinbal.core.service.exception.JustificantGeneracioException;
 import es.caib.pinbal.core.service.exception.ProcedimentNotFoundException;
@@ -55,14 +57,14 @@ public class ConsultaServiceBean implements ConsultaService {
 	@Override
 	@RolesAllowed("tothom")
 	public ConsultaDto novaConsulta(
-			ConsultaDto consulta) throws ProcedimentServeiNotFoundException, ServeiNotAllowedException, ScspException {
+			ConsultaDto consulta) throws ProcedimentServeiNotFoundException, ServeiNotAllowedException, ConsultaScspException {
 		return delegate.novaConsulta(consulta);
 	}
 
 	@Override
 	@RolesAllowed("tothom")
 	public ConsultaDto novaConsultaInit(
-			ConsultaDto consulta) throws ProcedimentServeiNotFoundException, ServeiNotAllowedException, ScspException {
+			ConsultaDto consulta) throws ProcedimentServeiNotFoundException, ServeiNotAllowedException, ConsultaScspGeneracioException {
 		return delegate.novaConsultaInit(consulta);
 	}
 
@@ -70,21 +72,21 @@ public class ConsultaServiceBean implements ConsultaService {
 	@RolesAllowed("tothom")
 	public void novaConsultaEnviament(
 			Long consultaId,
-			ConsultaDto consulta) throws ProcedimentServeiNotFoundException, ConsultaNotFoundException, ScspException {
+			ConsultaDto consulta) throws ProcedimentServeiNotFoundException, ConsultaNotFoundException, ConsultaScspException {
 		delegate.novaConsultaEnviament(consultaId, consulta);
 	}
 
 	@Override
 	@RolesAllowed("tothom")
 	public ConsultaDto novaConsultaEstat(
-			Long consultaId) throws ScspException {
+			Long consultaId) throws ConsultaNotFoundException, ConsultaScspException {
 		return delegate.novaConsultaEstat(consultaId);
 	}
 
 	@Override
 	@RolesAllowed("tothom")
 	public ConsultaDto novaConsultaMultiple(
-			ConsultaDto consulta) throws ValidacioDadesPeticioException, ProcedimentServeiNotFoundException, ServeiNotAllowedException, ScspException {
+			ConsultaDto consulta) throws ValidacioDadesPeticioException, ProcedimentServeiNotFoundException, ServeiNotAllowedException, ConsultaScspException {
 		return delegate.novaConsultaMultiple(consulta);
 	}
 
@@ -92,7 +94,7 @@ public class ConsultaServiceBean implements ConsultaService {
 	@RolesAllowed("PBL_WS")
 	public ConsultaDto novaConsultaRecobriment(
 			String serveiCodi,
-			RecobrimentSolicitudDto solicitud) throws EntitatNotFoundException, ProcedimentNotFoundException, ProcedimentServeiNotFoundException, ServeiNotAllowedException, ScspException {
+			RecobrimentSolicitudDto solicitud) throws EntitatNotFoundException, ProcedimentNotFoundException, ProcedimentServeiNotFoundException, ServeiNotAllowedException, ConsultaScspException {
 		return delegate.novaConsultaRecobriment(
 				serveiCodi,
 				solicitud);
@@ -102,7 +104,7 @@ public class ConsultaServiceBean implements ConsultaService {
 	@RolesAllowed("PBL_WS")
 	public ConsultaDto novaConsultaRecobrimentInit(
 			String serveiCodi,
-			RecobrimentSolicitudDto solicitud) throws EntitatNotFoundException, ProcedimentNotFoundException, ProcedimentServeiNotFoundException, ServeiNotAllowedException, ScspException {
+			RecobrimentSolicitudDto solicitud) throws EntitatNotFoundException, ProcedimentNotFoundException, ProcedimentServeiNotFoundException, ServeiNotAllowedException, ConsultaScspException {
 		return delegate.novaConsultaRecobrimentInit(
 				serveiCodi,
 				solicitud);
@@ -111,7 +113,7 @@ public class ConsultaServiceBean implements ConsultaService {
 	@RolesAllowed("PBL_WS")
 	public void novaConsultaRecobrimentEnviament(
 			Long consultaId,
-			RecobrimentSolicitudDto solicitud) throws ConsultaNotFoundException, ScspException {
+			RecobrimentSolicitudDto solicitud) throws ConsultaNotFoundException, ConsultaScspException {
 		delegate.novaConsultaRecobrimentEnviament(
 				consultaId,
 				solicitud);
@@ -119,7 +121,7 @@ public class ConsultaServiceBean implements ConsultaService {
 	@Override
 	@RolesAllowed("PBL_WS")
 	public ConsultaDto novaConsultaRecobrimentEstat(
-			Long consultaId) throws ScspException {
+			Long consultaId) throws ConsultaNotFoundException, ConsultaScspException {
 		return delegate.novaConsultaRecobrimentEstat(consultaId);
 	}
 
@@ -127,7 +129,7 @@ public class ConsultaServiceBean implements ConsultaService {
 	@RolesAllowed("PBL_WS")
 	public ConsultaDto novaConsultaRecobrimentMultiple(
 			String serveiCodi,
-			List<RecobrimentSolicitudDto> solicituds) throws EntitatNotFoundException, ProcedimentNotFoundException, ProcedimentServeiNotFoundException, ServeiNotAllowedException, ScspException {
+			List<RecobrimentSolicitudDto> solicituds) throws EntitatNotFoundException, ProcedimentNotFoundException, ProcedimentServeiNotFoundException, ServeiNotAllowedException, ConsultaScspException {
 		return delegate.novaConsultaRecobrimentMultiple(
 				serveiCodi,
 				solicituds);
