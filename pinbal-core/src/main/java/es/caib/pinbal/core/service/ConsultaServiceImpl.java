@@ -4,6 +4,7 @@
 package es.caib.pinbal.core.service;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -47,6 +48,10 @@ import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 import org.w3c.dom.Element;
 
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.lowagie.text.Document;
 import com.lowagie.text.pdf.PdfCopy;
 import com.lowagie.text.pdf.PdfReader;
@@ -237,6 +242,9 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 					consulta.getTitularNomComplet(),
 					consulta.getDepartamentNom(),
 					procedimentServei,
+					consulta.getFinalitat(),
+					consulta.getConsentiment(),
+					consulta.getExpedientId(),
 					false,
 					false,
 					null).
@@ -245,8 +253,10 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 			processarDadesEspecifiquesSegonsCamps(
 					consulta.getServeiCodi(),
 					consulta.getDadesEspecifiques());
+			conslt.updateDadesEspecifiques(
+					dadesEspecifiquesToJson(consulta.getDadesEspecifiques()));
 			List<Solicitud> solicituds = new ArrayList<Solicitud>();
-			solicituds.add(convertirEnSolicitud(consulta,procedimentServei));
+			solicituds.add(convertirEnSolicitud(consulta, procedimentServei));
 			ResultatEnviamentPeticio resultat = enviarPeticioScsp(
 					entitat.getId(),
 					consulta.getServeiCodi(),
@@ -285,6 +295,11 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 					ex);
 			throw new ScspException(ex.getMessage(), ex);
 		}*/
+		} catch (JsonProcessingException ex) {
+			LOGGER.error("Error al convertir les dades específiques a format JSON", ex);
+			throw new ConsultaScspGeneracioException(
+					"Error al convertir les dades específiques a format JSON",
+					ex);
 		} catch (ConsultaScspException ex) {
 			return processarConsultaScspException(
 					ex,
@@ -356,6 +371,9 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 				consulta.getTitularNomComplet(),
 				consulta.getDepartamentNom(),
 				procedimentServei,
+				consulta.getFinalitat(),
+				consulta.getConsentiment(),
+				consulta.getExpedientId(),
 				false,
 				false,
 				null).
@@ -393,6 +411,8 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 			processarDadesEspecifiquesSegonsCamps(
 					consulta.getServeiCodi(),
 					consulta.getDadesEspecifiques());
+			conslt.updateDadesEspecifiques(
+					dadesEspecifiquesToJson(consulta.getDadesEspecifiques()));
 		/*} catch (Exception ex) {
 			String errorDescripcio = "Error al processar dades específiques de la consulta (consultaId=" + consultaId + ")";
 			LOGGER.error(errorDescripcio, ex);
@@ -425,6 +445,11 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 						"usuari=" + auth.getName() + "): " + error);
 				throw new ScspException(error);
 			}*/
+		} catch (JsonProcessingException ex) {
+			LOGGER.error("Error al convertir les dades específiques a format JSON", ex);
+			throw new ConsultaScspGeneracioException(
+					"Error al convertir les dades específiques a format JSON",
+					ex);
 		} catch (ConsultaScspException ex) {
 			processarConsultaScspException(
 					ex,
@@ -523,6 +548,9 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 					null,
 					consulta.getDepartamentNom(),
 					procedimentServei,
+					null,
+					null,
+					null,
 					false,
 					true,
 					null).
@@ -555,6 +583,9 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 						solicitud.getTitularNomComplet(),
 						consulta.getDepartamentNom(),
 						procedimentServei,
+						solicitud.getFinalitat(),
+						(solicitud.getConsentiment() == es.caib.pinbal.scsp.Consentiment.Llei) ? Consentiment.Llei : Consentiment.Si,
+						solicitud.getExpedientId(),
 						false,
 						false,
 						conslt).
@@ -655,6 +686,9 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 					solicitud.getTitularNomComplet(),
 					solicitud.getDepartamentNom(),
 					procedimentServei,
+					solicitud.getFinalitat(),
+					solicitud.getConsentiment(),
+					solicitud.getExpedientId(),
 					true,
 					false,
 					null).
@@ -801,6 +835,9 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 				solicitud.getTitularNomComplet(),
 				solicitud.getDepartamentNom(),
 				procedimentServei,
+				solicitud.getFinalitat(),
+				solicitud.getConsentiment(),
+				solicitud.getExpedientId(),
 				true,
 				false,
 				null).
@@ -993,6 +1030,9 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 					null,
 					departamentNom,
 					procedimentServei,
+					null,
+					null,
+					null,
 					true,
 					true,
 					null).
@@ -1050,6 +1090,9 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 						solicitud.getTitularNomComplet(),
 						departamentNom,
 						procedimentServei,
+						solicitud.getFinalitat(),
+						solicitud.getConsentiment(),
+						solicitud.getExpedientId(),
 						true,
 						false,
 						conslt).
@@ -2786,6 +2829,39 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 		}
 	}
 
+	private Map<String, Integer> consultaServeiCount = new HashMap<String, Integer>();
+	private Map<String, Date> consultaIntervalStart = new HashMap<String, Date>();
+	/*
+	 * Retorna true si s'ha de posar en cua, fals en cas contrari.
+	 */
+	private boolean processarConsultaServei(Consulta consulta, Integer maxCount) {
+		String serveiCodi = consulta.getProcedimentServei().getServei();
+		ServeiConfig serveiConfig = serveiConfigRepository.findByServei(serveiCodi);
+		if (serveiConfig.getMaxPeticionsMinut() != null) {
+			Integer count = consultaServeiCount.get(serveiCodi);
+			if (count != null) {
+				Date intervalStart = consultaIntervalStart.get(serveiCodi);
+				Calendar now = Calendar.getInstance();
+				Calendar intervalStartCal = Calendar.getInstance();
+				intervalStartCal.setTime(intervalStart);
+				long millisBetweenDates = now.getTime().getTime() - intervalStart.getTime();
+				boolean mateixMinut = millisBetweenDates < 60 * 1000 && intervalStartCal.get(Calendar.MINUTE) == now.get(Calendar.MINUTE);
+				if (mateixMinut) {
+					boolean posarEnCua = count >= serveiConfig.getMaxPeticionsMinut();
+					consultaServeiCount.put(serveiCodi, count++);
+					return posarEnCua;
+				} else {
+					consultaIntervalStart.put(serveiCodi, new Date());
+					consultaServeiCount.put(serveiCodi, new Integer(1));
+				}
+			} else {
+				consultaIntervalStart.put(serveiCodi, new Date());
+				consultaServeiCount.put(serveiCodi, new Integer(1));
+			}
+		}
+		return false;
+	}
+
 	private boolean propertiesCopiades = false;
 	private void copiarPropertiesToDb() {
 		if (!propertiesCopiades) {
@@ -2855,6 +2931,13 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 	private boolean isGestioXsdActiva(String serveiCodi) {
 		ServeiConfig serveiConfig = serveiConfigRepository.findByServei(serveiCodi);
 		return serveiConfig != null && serveiConfig.isActivaGestioXsd();
+	}
+
+	private String dadesEspecifiquesToJson(Map<String, Object> dadesEspecifiques) throws JsonProcessingException {
+		return new ObjectMapper().writeValueAsString(dadesEspecifiques);
+	}
+	private Map<String, Object> dadesEspecifiquesFromJson(String dadesEspecifiques) throws JsonParseException, JsonMappingException, IOException {
+		return new ObjectMapper().readValue(dadesEspecifiques, Map.class);
 	}
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(ConsultaServiceImpl.class);

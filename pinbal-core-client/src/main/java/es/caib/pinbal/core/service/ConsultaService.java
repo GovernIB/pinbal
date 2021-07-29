@@ -662,7 +662,7 @@ public interface ConsultaService {
 	 * 
 	 * @return true si s'ha d'optimitzar en 3 peticions o false en cas contrari. 
 	 */
-	@PreAuthorize("hasRole('ROLE_DELEG')")
+	@PreAuthorize("hasRole('ROLE_DELEG') or hasRole('ROLE_WS')")
 	public boolean isOptimitzarTransaccionsNovaConsulta();
 
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_REPORT')")

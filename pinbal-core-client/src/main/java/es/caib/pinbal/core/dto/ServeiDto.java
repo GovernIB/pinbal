@@ -81,6 +81,7 @@ public class ServeiDto extends AbstractIdentificable<Long> implements Serializab
 	private boolean pinbalDocumentObligatori;
 	private boolean pinbalComprovarDocument;
 	private boolean activaGestioXsd;
+	private Integer maxPeticionsMinut;
 	
 	private String ajuda;
 	private String fitxerAjudaNom;

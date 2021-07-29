@@ -168,6 +168,7 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 					null,
 					false, 
 					null,
+					null,
 					null, 
 					new byte[0],
 					actiu).build();
@@ -199,6 +200,7 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 					servei.getPinbalJustificantXpath(),
 					servei.getAjuda(),
 					servei.isActivaGestioXsd(),
+					servei.getMaxPeticionsMinut(),
 					servei.getFitxerAjudaNom(),
 					servei.getFitxerAjudaMimeType(),
 					servei.getFitxerAjudaContingut(),
@@ -229,6 +231,7 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 					servei.isPinbalDocumentObligatori(),
 					servei.isPinbalComprovarDocument(),
 					servei.isActivaGestioXsd(),
+					servei.getMaxPeticionsMinut(),
 					servei.getAjuda());
 			serveiConfig.setPinbalUnitatDir3FromEntitat(servei.isPinbalUnitatDir3FromEntitat());
 			if (servei.getFitxerAjudaNom() != null && !servei.getFitxerAjudaNom().isEmpty()) {
