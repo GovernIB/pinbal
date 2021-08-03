@@ -52,4 +52,12 @@
 			id="recobrimentService"
 			jndi-name="pinbal/RecobrimentServiceBean/local"
 			business-interface="es.caib.pinbal.core.service.RecobrimentService"/>
+	<jee:local-slsb
+			id="aplicacioService"
+			jndi-name="pinbal/AplicacioServiceBean/local"
+			business-interface="es.caib.pinbal.core.service.AplicacioService"/>
+	<jee:local-slsb
+			id="avisService"
+			jndi-name="pinbal/AvisServiceBean/local"
+			business-interface="es.caib.pinbal.core.service.AvisService"/>		
 </beans>

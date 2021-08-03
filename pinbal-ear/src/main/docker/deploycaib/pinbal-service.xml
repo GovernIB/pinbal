@@ -37,7 +37,7 @@ es.caib.pinbal.mapeig.rol.tothom=ROLE_DELEG
 
 es.caib.pinbal.recobriment.base.url=http://localhost:8180/pinbalrec
 
-es.caib.pinbal.optimitzar.transaccions.nova.consulta=false
+es.caib.pinbal.optimitzar.transaccions.nova.consulta=true
 es.caib.pinbal.tasca.auto.comprovacio.repeticio=10000
 
 es.caib.pinbal.plugin.dades.usuari.class=es.caib.pinbal.plugins.caib.DadesUsuariPluginJdbc

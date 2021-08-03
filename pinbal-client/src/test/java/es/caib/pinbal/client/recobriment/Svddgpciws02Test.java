@@ -29,7 +29,7 @@ import static org.junit.Assert.assertNotNull;
  */
 public class Svddgpciws02Test {
 
-	private static final String URL_BASE = "https://proves.caib.es/pinbal";
+	private static final String URL_BASE = "http://localhost:8080/pinbal";
 	private static final String USUARI = "usuari";
 	private static final String CONTRASENYA = "contrasenya";
 	private static final String PETICION_SCSP_ID = "PBL0000000001292";

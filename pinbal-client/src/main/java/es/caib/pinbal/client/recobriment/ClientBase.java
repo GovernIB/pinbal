@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.sun.jersey.api.client.ClientResponse;
+import com.sun.jersey.api.client.UniformInterfaceException;
 
 import es.caib.pinbal.client.recobriment.model.ScspAtributos;
 import es.caib.pinbal.client.recobriment.model.ScspConfirmacionPeticion;
@@ -23,6 +24,8 @@ import es.caib.pinbal.client.recobriment.model.ScspRespuesta;
 import es.caib.pinbal.client.recobriment.model.ScspSolicitante;
 import es.caib.pinbal.client.recobriment.model.ScspSolicitud;
 import es.caib.pinbal.client.recobriment.model.SolicitudBase;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * Client amb la lògica bàsica per a accedir al servei de recobriment.
@@ -52,67 +55,104 @@ public abstract class ClientBase extends es.caib.pinbal.client.comu.ClientBase {
 
 	protected ScspRespuesta basePeticionSincrona(
 			String serveiCodi,
-			List<? extends SolicitudBase> solicituds) throws IOException {
-		ScspPeticion peticion = toScspPeticion(serveiCodi, solicituds);
-		ScspRespuesta response = restPeticioPost(
-				"peticionSincrona",
-				peticion,
-				ScspRespuesta.class);
-		return response;
+			List<? extends SolicitudBase> solicituds) throws RecobrimentException, IOException {
+		try {
+			ScspPeticion peticion = toScspPeticion(serveiCodi, solicituds);
+			ScspRespuesta response = restPeticioPost(
+					"peticionSincrona",
+					peticion,
+					ScspRespuesta.class);
+			return response;
+		} catch (UniformInterfaceException ex) {
+			ClientResponse response = ex.getResponse();
+			ErrorResponse errorResponse = ex.getResponse().getEntity(ErrorResponse.class);
+			String[] errorMessageParts = errorResponse.getMessage() != null ? errorResponse.getMessage().split("\n", 2) : null;
+			throw new RecobrimentException(
+					(errorMessageParts != null && errorMessageParts.length > 0) ? errorMessageParts[0] : null,
+					response.getStatus(),
+					errorResponse.getTrace());
+		}
 	}
 
 	protected ScspConfirmacionPeticion basePeticionAsincrona(
 			String serveiCodi,
-			List<? extends SolicitudBase> solicituds) throws IOException {
-		ScspPeticion peticion = toScspPeticion(serveiCodi, solicituds);
-		ScspConfirmacionPeticion response = restPeticioPost(
-				"peticionSincrona",
-				peticion,
-				ScspConfirmacionPeticion.class);
-		return response;
+			List<? extends SolicitudBase> solicituds) throws RecobrimentException, IOException {
+		try {
+			ScspPeticion peticion = toScspPeticion(serveiCodi, solicituds);
+			ScspConfirmacionPeticion response = restPeticioPost(
+					"peticionSincrona",
+					peticion,
+					ScspConfirmacionPeticion.class);
+			return response;
+		} catch (UniformInterfaceException ex) {
+			ClientResponse response = ex.getResponse();
+			ErrorResponse errorResponse = ex.getResponse().getEntity(ErrorResponse.class);
+			throw new RecobrimentException(
+					errorResponse.getMessage(),
+					response.getStatus(),
+					errorResponse.getTrace());
+		}
 	}
 
 	public ScspRespuesta getRespuesta(
-			String idPeticion) throws IOException {
-		Map<String, String> requestParams = new HashMap<String, String>();
-		requestParams.put("idPeticion", idPeticion);
-		ScspRespuesta response = restPeticioGet(
-				"getRespuesta",
-				requestParams,
-				ScspRespuesta.class);
-		return response;
+			String idPeticion) throws RecobrimentException, IOException {
+		try {
+			Map<String, String> requestParams = new HashMap<String, String>();
+			requestParams.put("idPeticion", idPeticion);
+			ScspRespuesta response = restPeticioGet(
+					"getRespuesta",
+					requestParams,
+					ScspRespuesta.class);
+			return response;
+		} catch (UniformInterfaceException ex) {
+			ClientResponse response = ex.getResponse();
+			ErrorResponse errorResponse = ex.getResponse().getEntity(ErrorResponse.class);
+			throw new RecobrimentException(
+					errorResponse.getMessage(),
+					response.getStatus(),
+					errorResponse.getTrace());
+		}
 	}
 
 	public ScspJustificante getJustificante(
-			String idPeticion) throws IOException {
+			String idPeticion) throws RecobrimentException, IOException {
 		return getJustificante(idPeticion, idPeticion);
 	}
 
 	public ScspJustificante getJustificante(
 			String idPeticion,
-			String idSolicitud) throws IOException {
-		Map<String, String> requestParams = new HashMap<String, String>();
-		requestParams.put("idPeticion", idPeticion);
-		requestParams.put("idSolicitud", idSolicitud);
-		ClientResponse response = restPeticioGetResponse(
-				"getJustificante",
-				requestParams);
-		ScspJustificante justificante = new ScspJustificante();
-		String contentDisposition = getHeaderFirst(response, "Content-Disposition");
-		if (contentDisposition != null) {
-			String token = "filename=\"";
-			int tokenIndex = contentDisposition.indexOf(token);
-			if (tokenIndex != -1) {
-				justificante.setNom(
-						contentDisposition.substring(
-								tokenIndex + token.length(),
-								contentDisposition.indexOf("\"", tokenIndex + token.length())));
+			String idSolicitud) throws RecobrimentException, IOException {
+		try {
+			Map<String, String> requestParams = new HashMap<String, String>();
+			requestParams.put("idPeticion", idPeticion);
+			requestParams.put("idSolicitud", idSolicitud);
+			ClientResponse response = restPeticioGetResponse(
+					"getJustificante",
+					requestParams);
+			ScspJustificante justificante = new ScspJustificante();
+			String contentDisposition = getHeaderFirst(response, "Content-Disposition");
+			if (contentDisposition != null) {
+				String token = "filename=\"";
+				int tokenIndex = contentDisposition.indexOf(token);
+				if (tokenIndex != -1) {
+					justificante.setNom(
+							contentDisposition.substring(
+									tokenIndex + token.length(),
+									contentDisposition.indexOf("\"", tokenIndex + token.length())));
+				}
 			}
+			justificante.setContentType(getHeaderFirst(response, "Content-Type"));
+			justificante.setContingut(
+					inputStreamToByteArray(response.getEntityInputStream()));
+			return justificante;
+		} catch (UniformInterfaceException ex) {
+			ClientResponse response = ex.getResponse();
+			ErrorResponse errorResponse = ex.getResponse().getEntity(ErrorResponse.class);
+			throw new RecobrimentException(
+					errorResponse.getMessage(),
+					response.getStatus(),
+					errorResponse.getTrace());
 		}
-		justificante.setContentType(getHeaderFirst(response, "Content-Type"));
-		justificante.setContingut(
-				inputStreamToByteArray(response.getEntityInputStream()));
-		return justificante;
 	}
 
 	private ScspPeticion toScspPeticion(
@@ -171,6 +211,13 @@ public abstract class ClientBase extends es.caib.pinbal.client.comu.ClientBase {
 	    }
 	    buffer.flush();
 	    return buffer.toByteArray();
+	}
+
+	@Getter
+	@Setter
+	private static class ErrorResponse {
+		private String message;
+		private String trace;
 	}
 
 }

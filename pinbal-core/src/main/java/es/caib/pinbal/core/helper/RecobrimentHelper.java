@@ -42,6 +42,7 @@ import es.caib.pinbal.core.dto.RecobrimentSolicitudDto;
 import es.caib.pinbal.core.dto.RespostaAtributsDto;
 import es.caib.pinbal.core.service.ConsultaService;
 import es.caib.pinbal.core.service.exception.ConsultaNotFoundException;
+import es.caib.pinbal.core.service.exception.ConsultaScspException;
 import es.caib.pinbal.core.service.exception.EntitatNotFoundException;
 import es.caib.pinbal.core.service.exception.JustificantGeneracioException;
 import es.caib.pinbal.core.service.exception.ProcedimentNotFoundException;
@@ -127,8 +128,9 @@ public class RecobrimentHelper implements ApplicationContextAware, MessageSource
 			throw getErrorValidacio(
 					"0227",
 					"L'usuari no te permisos per a realitzar aquesta consulta");
-		} catch (ScspException ex) {
-			throw ex;
+		} catch (ConsultaScspException ex) {
+			// TODO revisar tractament d'errors
+			throw getErrorValidacio("0227", ex.getMessage());
 		} catch (Exception ex) {
 			LOGGER.error("Error en la consulta SCSP", ex);
 			throw getErrorValidacio(
@@ -406,7 +408,7 @@ public class RecobrimentHelper implements ApplicationContextAware, MessageSource
 
 	private ConsultaDto novaConsultaRecobriment(
 			String serveiCodi,
-			RecobrimentSolicitudDto solicitud) throws EntitatNotFoundException, ProcedimentNotFoundException, ProcedimentServeiNotFoundException, ConsultaNotFoundException, ServeiNotAllowedException, es.caib.pinbal.core.service.exception.ScspException {
+			RecobrimentSolicitudDto solicitud) throws EntitatNotFoundException, ProcedimentNotFoundException, ProcedimentServeiNotFoundException, ConsultaNotFoundException, ServeiNotAllowedException, ConsultaScspException {
 		if (consultaService.isOptimitzarTransaccionsNovaConsulta()) {
 			LOGGER.info("Iniciant petició SCSP amb optimització fase INIT (serveiCodi=" + serveiCodi + ")");
 			long t0 = System.currentTimeMillis();

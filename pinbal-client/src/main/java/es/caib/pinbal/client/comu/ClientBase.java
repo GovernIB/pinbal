@@ -235,14 +235,14 @@ public abstract class ClientBase {
 		if (basicAuth) {
 			logger.debug(
 					"Autenticant REST amb autenticació de tipus HTTP basic (" +
-					"usuari=" + usuari +
+					"usuari=" + usuari + ", " +
 					"contrasenya=********)");
 			jerseyClient.addFilter(
 					new HTTPBasicAuthFilter(usuari, contrasenya));
 		} else {
 			logger.debug(
 					"Autenticant client REST per a fer peticions cap a servei desplegat a damunt jBoss (" +
-					"usuari=" + usuari +
+					"usuari=" + usuari + ", " +
 					"contrasenya=********)");
 			jerseyClient.resource(getUrlAmbMetode("getRespuesta")).get(String.class);
 			Form form = new Form();

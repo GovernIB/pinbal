@@ -42,6 +42,9 @@
 			<div class="col-md-4">
 				<pbl:inputText name="nom" inline="true" placeholderKey="organgestor.list.filtre.camp.nom"/>
 			</div>
+			<div class="col-md-3">
+				<pbl:inputSelect name="estat"  inline="true" placeholderKey="organgestor.list.filtre.camp.estat" optionEnum="OrganGestorEstatEnumDto"  emptyOption="true"/>
+			</div>	
 
 			<div class="col-md-2 pull-right">
 				<div class="pull-right">
@@ -58,20 +61,12 @@
 			class="table table-striped table-bordered" style="width:100%">
 		<thead>
 			<tr>
-				<th data-data="codi">
-					<spring:message code="organgestor.list.columna.codi"/>
-				</th>
-				<th data-data="nom">
-					<spring:message code="organgestor.list.columna.nom"/>
-				</th>
+				<th data-data="actiu"><spring:message code="organgestor.list.columna.codi"/></th>
+				<th data-data="codi" width="80px"><spring:message code="organgestor.list.columna.codi"/></th>
+				<th data-data="nom"><spring:message code="organgestor.list.columna.nom"/></th>
 			</tr>
 		</thead>
 	</table>
-	<script id="botonsTemplate" type="text/x-jsrender">
-		<p style="text-align:right">
-			
-		</p>
-	</script>
 	
 	<script type="text/javascript">
 	$(document).ready(function() {
@@ -85,7 +80,20 @@
 	            "url": "js/datatable-language.json"
 	        },
 			ajax: "organgestor/datatable",
-			columnDefs: []
+			columnDefs: [
+				{ 
+		            targets: [0],
+					orderable: false,
+					visible: false
+		        },
+				{
+					targets: [1],
+					render: function (data, type, row, meta) {
+							var template = $('#template-activa').html();
+							return Mustache.render(template, row);
+					}
+				}				
+			]
 		});
 
 		$('#netejar-filtre').click(function() {
@@ -98,11 +106,20 @@
 				else if (tag == 'select')
 					this.selectedIndex = 0;
 			});
+		    $('#estat').val('VIGENT').change();
 			$('#form-filtre').submit();
 		});
 
 		
 	});
 	</script>
+	
+<script id="template-activa" type="x-tmpl-mustache">
+	{{codi}}
+	{{^actiu}}
+		<span class="fa fa-exclamation-triangle text-danger pull-right" style="margin-top: 3px;" title="<spring:message code="organgestor.list.extingit"/>"></span>
+	{{/actiu}}
+</script>
+	
 </body>
 </html>

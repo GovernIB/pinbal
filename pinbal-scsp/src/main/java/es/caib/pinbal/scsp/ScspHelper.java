@@ -5,6 +5,7 @@ package es.caib.pinbal.scsp;
 
 import java.io.ByteArrayOutputStream;
 import java.io.StringWriter;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -33,6 +34,8 @@ import org.springframework.context.MessageSource;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
+import es.caib.pinbal.core.service.exception.ConsultaScspComunicacioException;
+import es.caib.pinbal.core.service.exception.ConsultaScspGeneracioException;
 import es.caib.pinbal.scsp.JustificantArbreHelper.ElementArbre;
 import es.caib.pinbal.scsp.XmlHelper.DadesEspecifiquesNode;
 import es.caib.pinbal.scsp.tree.Tree;
@@ -55,6 +58,7 @@ import es.scsp.client.ClienteUnico;
 import es.scsp.common.dao.ClavePrivadaDao;
 import es.scsp.common.dao.ClavePublicaDao;
 import es.scsp.common.dao.EmisorCertificadoDao;
+import es.scsp.common.dao.ErrorDao;
 import es.scsp.common.dao.OrganismoCesionarioDao;
 import es.scsp.common.dao.ParametroConfiguracionDao;
 import es.scsp.common.dao.PeticionRespuestaDao;
@@ -66,6 +70,7 @@ import es.scsp.common.dao.TokenDao;
 import es.scsp.common.dao.TransmisionDao;
 import es.scsp.common.domain.core.ClavePrivada;
 import es.scsp.common.domain.core.ClavePublica;
+import es.scsp.common.domain.core.CodigoError;
 import es.scsp.common.domain.core.EmisorCertificado;
 import es.scsp.common.domain.core.OrganismoCesionario;
 import es.scsp.common.domain.core.ParametroConfiguracion;
@@ -103,15 +108,19 @@ public class ScspHelper {
 	}
 
 	public String generarIdPeticion(
-			String serveiCodi) throws ScspException {
-		LOGGER.debug("Generació id petició (serveiCodi=" + serveiCodi + ")");
-		return getClienteUnico().getIDPeticion(serveiCodi);
+			String serveiCodi) throws ConsultaScspGeneracioException {
+		try {
+			LOGGER.debug("Generació id petició (serveiCodi=" + serveiCodi + ")");
+			return getClienteUnico().getIDPeticion(serveiCodi);
+		} catch (Exception ex) {
+			throw new ConsultaScspGeneracioException(null, ex);
+		}
 	}
 
 	public ResultatEnviamentPeticio enviarPeticionSincrona(
 			String idPeticion,
 			List<Solicitud> solicituds,
-			boolean gestioXsdActiva) {
+			boolean gestioXsdActiva) throws ConsultaScspGeneracioException, ConsultaScspComunicacioException {
 		LOGGER.debug("Nova petició SCSP (peticionId=" + idPeticion + ")");
 		Peticion peticion = null;
 		try {
@@ -120,7 +129,8 @@ public class ScspHelper {
 					solicituds,
 					gestioXsdActiva);
 		} catch (Exception ex) {
-			LOGGER.error("Error al generar nova petició SCSP síncrona (peticionId=" + idPeticion + ")", ex);
+			throw new ConsultaScspGeneracioException(idPeticion, ex);
+			/*LOGGER.error("Error al generar nova petició SCSP síncrona (peticionId=" + idPeticion + ")", ex);
 			ResultatEnviamentPeticio estat = new ResultatEnviamentPeticio();
 			estat.setErrorGeneracio(true);
 			estat.setEstatCodi("ERR");
@@ -132,13 +142,14 @@ public class ScspHelper {
 					getIdsSolicitudes(
 							idPeticion,
 							solicituds.size()));
-			return estat;
+			return estat;*/
 		}
 		try {
 			getClienteUnico().realizaPeticionSincrona(peticion);
 			return getResultatEnviamentPeticio(idPeticion);
 		} catch (ScspException ex) {
-			LOGGER.error("Error al enviar petició SCSP síncrona (peticionId=" + idPeticion + ")", ex);
+			throw new ConsultaScspComunicacioException(idPeticion, ex);
+			/*LOGGER.error("Error al enviar petició SCSP síncrona (peticionId=" + idPeticion + ")", ex);
 			ResultatEnviamentPeticio estat = new ResultatEnviamentPeticio();
 			estat.setEstatCodi(ex.getScspCode());
 			estat.setErrorEnviament(true);
@@ -147,14 +158,14 @@ public class ScspHelper {
 					getIdsSolicitudes(
 							idPeticion,
 							solicituds.size()));
-			return estat;
+			return estat;*/
 		}
 	}
 
 	public ResultatEnviamentPeticio enviarPeticionAsincrona(
 			String idPeticion,
 			List<Solicitud> solicituds,
-			boolean gestioXsdActiva) {
+			boolean gestioXsdActiva) throws ConsultaScspGeneracioException, ConsultaScspComunicacioException {
 		LOGGER.debug("Nova petició SCSP (peticionId=" + idPeticion + ")");
 		Peticion peticion = null;
 		try {
@@ -163,7 +174,8 @@ public class ScspHelper {
 					solicituds,
 					gestioXsdActiva);
 		} catch (Exception ex) {
-			LOGGER.error("Error al generar nova petició SCSP síncrona (peticionId=" + idPeticion + ")", ex);
+			throw new ConsultaScspGeneracioException(idPeticion, ex);
+			/*LOGGER.error("Error al generar nova petició SCSP síncrona (peticionId=" + idPeticion + ")", ex);
 			ResultatEnviamentPeticio estat = new ResultatEnviamentPeticio();
 			estat.setErrorGeneracio(true);
 			estat.setEstatCodi("ERR");
@@ -175,13 +187,14 @@ public class ScspHelper {
 					getIdsSolicitudes(
 							idPeticion,
 							solicituds.size()));
-			return estat;
+			return estat;*/
 		}
 		try {
 			getClienteUnico().realizaPeticionAsincrona(peticion);
 			return getResultatEnviamentPeticio(idPeticion);
 		} catch (ScspException ex) {
-			LOGGER.error("Error al enviar petició SCSP asíncrona (peticionId=" + idPeticion + ")", ex);
+			throw new ConsultaScspComunicacioException(idPeticion, ex);
+			/*LOGGER.error("Error al enviar petició SCSP asíncrona (peticionId=" + idPeticion + ")", ex);
 			ResultatEnviamentPeticio estat = new ResultatEnviamentPeticio();
 			estat.setEstatCodi(ex.getScspCode());
 			estat.setErrorEnviament(true);
@@ -190,7 +203,7 @@ public class ScspHelper {
 					getIdsSolicitudes(
 							idPeticion,
 							solicituds.size()));
-			return estat;
+			return estat;*/
 		}
 	}
 
@@ -348,7 +361,7 @@ public class ScspHelper {
 	}
 
 	public ResultatEnviamentPeticio recuperarResultatEnviamentPeticio(
-			String idPeticion) throws Exception {
+			String idPeticion) throws ScspException {
 		LOGGER.debug("Recuperant estat comunicació (peticionId=" + idPeticion + ")");
 		return getResultatEnviamentPeticio(idPeticion);
 	}
@@ -375,7 +388,7 @@ public class ScspHelper {
 	public Element copiarDadesEspecifiquesRecobriment(
 			String codigoCertificado,
 			Element dadesEspecifiques,
-			boolean gestioXsdActiva) throws Exception {
+			boolean gestioXsdActiva) throws ConsultaScspGeneracioException {
 		LOGGER.debug("Copia dades específiques per recobriment (" +
 				"codigoCertificado=" + codigoCertificado + ")");
 		if (dadesEspecifiques != null)
@@ -786,7 +799,7 @@ public class ScspHelper {
 		return st;
 	}
 
-	private String[] getIdsSolicitudes(
+	/*private String[] getIdsSolicitudes(
 			String idPeticion,
 			int numSolicitudes) {
 		String[] ids = new String[numSolicitudes];
@@ -797,7 +810,7 @@ public class ScspHelper {
 					i);
 		}
 		return ids;
-	}
+	}*/
 	private String getIdSolicitud(
 			String idPeticion,
 			int numSolicitudes,
@@ -843,7 +856,18 @@ public class ScspHelper {
 		PeticionRespuesta peticionRespuesta = getPeticionRespuestaDao().select(idPeticion);
 		resultat.setEstatCodi(peticionRespuesta.getEstado());
 		resultat.setErrorRecepcio(!peticionRespuesta.getEstado().startsWith("00"));
-		resultat.setEstatDescripcio(peticionRespuesta.getError());
+		if (resultat.isErrorRecepcio()) {
+			String errorDescripcio = peticionRespuesta.getError();
+			CodigoError codigoError = getErrorDao().select(peticionRespuesta.getEstado());
+			if (codigoError != null) {
+				errorDescripcio = MessageFormat.format(codigoError.getDescripcion(), new Object[] {"", "", "", "", ""}) + " (" + peticionRespuesta.getError() + ")";
+			} else {
+				errorDescripcio = peticionRespuesta.getError();
+			}
+			resultat.setEstatDescripcio(errorDescripcio);
+		} else {
+			resultat.setEstatDescripcio(peticionRespuesta.getError());
+		}
 		List<es.scsp.common.domain.core.Transmision> transmisiones = getTransmisionDao().select(peticionRespuesta);
 		if (transmisiones != null) {
 			String[] idsSolicituds = new String[transmisiones.size()];
@@ -977,6 +1001,10 @@ public class ScspHelper {
 	private PinbalDao getPinbalDao() {
 		configurarAccesScsp();
 		return (PinbalDao)applicationContext.getBean("pinbalDao");
+	}
+	private ErrorDao getErrorDao() {
+		configurarAccesScsp();
+		return (ErrorDao)applicationContext.getBean("errorDao");
 	}
 	private ClienteUnico getClienteUnico() {
 		configurarAccesScsp();

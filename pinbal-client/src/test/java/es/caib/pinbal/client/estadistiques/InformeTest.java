@@ -31,10 +31,11 @@ public class InformeTest {
 	private static final String USUARI = "pblrep";
 	private static final String CONTRASENYA = "pblrep";
 
-	private ClientInforme client = new ClientInforme(URL_BASE, USUARI, CONTRASENYA, true, null, null);
+	private ClientInforme client = new ClientInforme(URL_BASE, USUARI, CONTRASENYA, false, null, null);
 
 	@Test
 	public void procediments() throws IOException {
+		client.enableLogginFilter();
 		List<Entitat> resposta = client.procediments();
 		assertNotNull(resposta);
 		System.out.println("-> procediments: " + objectToJsonString(resposta));

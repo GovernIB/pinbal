@@ -30,10 +30,11 @@ public class EstadistiquesTest {
 	private static final String USUARI = "pblrep";
 	private static final String CONTRASENYA = "pblrep";
 
-	private ClientEstadistica client = new ClientEstadistica(URL_BASE, USUARI, CONTRASENYA, true, null, null);
+	private ClientEstadistica client = new ClientEstadistica(URL_BASE, USUARI, CONTRASENYA, false, null, null);
 
 	@Test
 	public void carrega() throws IOException {
+		client.enableLogginFilter();
 		List<Entitat> resposta = client.carrega();
 		assertNotNull(resposta);
 		System.out.println("-> carrega: " + objectToJsonString(resposta));
