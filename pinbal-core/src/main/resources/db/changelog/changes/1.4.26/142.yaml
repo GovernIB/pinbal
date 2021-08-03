@@ -1,0 +1,63 @@
+databaseChangeLog:
+- changeSet:
+    id: 1627985337018-1
+    author: limit
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+            name: id
+            type: number(19)
+        - column:
+            constraints:
+              nullable: false
+            name: assumpte
+            type: varchar(256)
+        - column:
+            constraints:
+              nullable: false
+            name: missatge
+            type: varchar(2048)
+        - column:
+            constraints:
+              nullable: false
+            name: data_inici
+            type: timestamp
+        - column:
+            constraints:
+              nullable: false
+            name: data_final
+            type: timestamp
+        - column:
+            constraints:
+              nullable: false
+            name: actiu
+            type: boolean
+        - column:
+            constraints:
+              nullable: false
+            name: avis_nivell
+            type: varchar(10)
+        - column:
+            name: createdby_codi
+            type: varchar(64)
+        - column:
+            name: createddate
+            type: timestamp
+        - column:
+            name: lastmodifiedby_codi
+            type: varchar(64)
+        - column:
+            name: lastmodifieddate
+            type: timestamp
+        tableName: pbl_avis
+    - addPrimaryKey:
+        columnNames: id
+        constraintName: pbl_avis_pk
+        tableName: pbl_avis
+    - sql:
+        dbms: oracle
+        sql: grant select, update, insert, delete on PBL_AVIS to www_emiserv;
+

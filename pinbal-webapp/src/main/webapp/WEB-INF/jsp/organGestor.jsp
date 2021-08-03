@@ -67,11 +67,6 @@
 			</tr>
 		</thead>
 	</table>
-	<script id="botonsTemplate" type="text/x-jsrender">
-		<p style="text-align:right">
-			
-		</p>
-	</script>
 	
 	<script type="text/javascript">
 	$(document).ready(function() {

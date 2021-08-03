@@ -40,6 +40,7 @@
 		<bean class="es.caib.pinbal.webapp.interceptor.ServeisInterceptor"/>
 		<bean class="es.caib.pinbal.webapp.interceptor.SeleccioRolInterceptor"/>
 		<bean class="es.caib.pinbal.webapp.interceptor.ModalInterceptor"/>
+		<bean class="es.caib.pinbal.webapp.interceptor.AvisosInterceptor"/>
 	</mvc:interceptors>
 
 	<bean id="beanNameViewResolver" class="org.springframework.web.servlet.view.BeanNameViewResolver">
