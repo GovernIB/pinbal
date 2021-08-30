@@ -49,7 +49,8 @@ public class Consulta extends PinbalAuditable<Long> {
 		Pendent, // 0
 		Processant, // 1
 		Tramitada, // 2
-		Error // 3
+		Error, // 3
+		Encua // 4
 	}
 	public enum JustificantEstat {
 		PENDENT, // 0 - Hi ha justificant però encara no s'ha pogut generar/custodiar

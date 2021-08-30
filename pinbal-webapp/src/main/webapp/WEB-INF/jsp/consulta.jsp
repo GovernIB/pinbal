@@ -191,11 +191,11 @@ $(document).ready(function() {
 						var template = $('#template-estat').html();
 						row['icon-status'] = '';
 						if (row.estat=='Error') {
-							row['icon-status'] = '<i class="fas fa-exclamation-triangle"></i>';
+							row['icon-status'] = '<i class="fa fa-exclamation-triangle"></i>';
 						} else if(row.estat=='Pendent') {
-							row['icon-status'] = '<i class="fas fa-bookmark"></i>';
+							row['icon-status'] = '<i class="far fa-clock"></i>';
 						} else if(row.estat=='Processant') {
-							row['icon-status'] = '<i class="fas fa-hourglass-half"></i>';
+							row['icon-status'] = '<i class="fa fa-cogs"></i>';
 						} else {
 							row['icon-status'] = '<i class="fa fa-check"></i>';
 						}

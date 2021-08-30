@@ -4,7 +4,6 @@
 package es.caib.pinbal.core.service;
 
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -48,9 +47,7 @@ import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 import org.w3c.dom.Element;
 
-import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.lowagie.text.Document;
 import com.lowagie.text.pdf.PdfCopy;
@@ -249,35 +246,37 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 					false,
 					null).
 					build();
-			conslt.updateEstat(EstatTipus.Processant);
 			processarDadesEspecifiquesSegonsCamps(
 					consulta.getServeiCodi(),
 					consulta.getDadesEspecifiques());
 			conslt.updateDadesEspecifiques(
 					dadesEspecifiquesToJson(consulta.getDadesEspecifiques()));
-			List<Solicitud> solicituds = new ArrayList<Solicitud>();
-			solicituds.add(convertirEnSolicitud(consulta, procedimentServei));
-			ResultatEnviamentPeticio resultat = enviarPeticioScsp(
-					entitat.getId(),
-					consulta.getServeiCodi(),
-					idPeticion,
-					solicituds,
-					true,
-					conslt.isRecobriment());
-			updateEstatConsulta(conslt, resultat);
-			conslt.updateScspSolicitudId(resultat.getIdsSolicituds()[0]);
-			/*if (EstatTipus.Tramitada.equals(c.getEstat())) {
-				justificantHelper.generarCustodiarJustificantPendent(
-						c,
-						getScspHelper());
-			}*/
+			if (isEnviarConsultaServei(conslt)) {
+				conslt.updateEstat(EstatTipus.Processant);
+				List<Solicitud> solicituds = new ArrayList<Solicitud>();
+				solicituds.add(convertirEnSolicitud(consulta, procedimentServei));
+				ResultatEnviamentPeticio resultat = enviarPeticioScsp(
+						entitat.getId(),
+						consulta.getServeiCodi(),
+						idPeticion,
+						solicituds,
+						true,
+						conslt.isRecobriment());
+				updateEstatConsulta(conslt, resultat);
+				conslt.updateScspSolicitudId(resultat.getIdsSolicituds()[0]);
+				/*if (EstatTipus.Tramitada.equals(c.getEstat())) {
+					justificantHelper.generarCustodiarJustificantPendent(
+							c,
+							getScspHelper());
+				}*/
+				integracioHelper.addAccioOk(
+						IntegracioHelper.INTCODI_SERVEIS_SCSP,
+						accioDescripcio,
+						accioParams,
+						IntegracioAccioTipusEnumDto.ENVIAMENT,
+						System.currentTimeMillis() - t0);
+			}
 			Consulta saved = consultaRepository.save(conslt);
-			integracioHelper.addAccioOk(
-					IntegracioHelper.INTCODI_SERVEIS_SCSP,
-					accioDescripcio,
-					accioParams,
-					IntegracioAccioTipusEnumDto.ENVIAMENT,
-					System.currentTimeMillis() - t0);
 			return dtoMappingHelper.getMapperFacade().map(
 					saved,
 					ConsultaDto.class);
@@ -378,7 +377,6 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 				false,
 				null).
 				build();
-		constl.updateEstat(EstatTipus.Processant);
 		Consulta saved = consultaRepository.save(constl);
 		return dtoMappingHelper.getMapperFacade().map(
 				saved,
@@ -426,15 +424,18 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 					ex);
 			throw new ScspException(ex.getMessage(), ex);
 		}*/
-			List<Solicitud> solicituds = new ArrayList<Solicitud>();
-			solicituds.add(convertirEnSolicitud(consulta, procedimentServei));
-			enviarPeticioScsp(
-					procedimentServei.getProcediment().getEntitat().getId(),
-					consulta.getServeiCodi(),
-					conslt.getScspPeticionId(),
-					solicituds,
-					true,
-					conslt.isRecobriment());
+			if (isEnviarConsultaServei(conslt)) {
+				conslt.updateEstat(EstatTipus.Processant);
+				List<Solicitud> solicituds = new ArrayList<Solicitud>();
+				solicituds.add(convertirEnSolicitud(consulta, procedimentServei));
+				enviarPeticioScsp(
+						procedimentServei.getProcediment().getEntitat().getId(),
+						consulta.getServeiCodi(),
+						conslt.getScspPeticionId(),
+						solicituds,
+						true,
+						conslt.isRecobriment());
+			}
 			/*if (resultat.isError()) {
 				String error = "[" + resultat.getErrorCodi() + "] " + resultat.getErrorDescripcio();
 				transaccioHelper.updateErrorConsulta(consultaId, error);
@@ -474,38 +475,40 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 			LOGGER.debug("No s'ha trobat la consulta (id=" + consultaId + ")");
 			throw new ConsultaNotFoundException();
 		}
-		try {
-			ResultatEnviamentPeticio resultat = getScspHelper().recuperarResultatEnviamentPeticio(
-					consulta.getScspPeticionId());
-			updateEstatConsulta(consulta, resultat);
-			consulta.updateScspSolicitudId(resultat.getIdsSolicituds()[0]);
-			/*if (EstatTipus.Tramitada.equals(consulta.getEstat())) {
-				justificantHelper.generarCustodiarJustificantPendent(
-						consulta,
-						getScspHelper());
-			}*/
-			integracioHelper.addAccioOk(
-					IntegracioHelper.INTCODI_SERVEIS_SCSP,
-					accioDescripcio,
-					accioParams,
-					IntegracioAccioTipusEnumDto.ENVIAMENT,
-					System.currentTimeMillis() - t0);
-			return dtoMappingHelper.getMapperFacade().map(
-					consulta,
-					ConsultaDto.class);
-		} catch (Exception ex) {
-			String errorDescripcio = "Error al obtenir l'estat de la petició corresponent a la consulta (consultaId=" + consultaId + ")";
-			LOGGER.error(errorDescripcio, ex);
-			integracioHelper.addAccioError(
-					IntegracioHelper.INTCODI_SERVEIS_SCSP,
-					accioDescripcio,
-					accioParams,
-					IntegracioAccioTipusEnumDto.ENVIAMENT,
-					System.currentTimeMillis() - t0,
-					errorDescripcio,
-					ex);
-			throw new ConsultaScspEstatException(consulta.getScspPeticionId(), ex);
+		if (EstatTipus.Processant.equals(consulta.getEstat())) {
+			try {
+				ResultatEnviamentPeticio resultat = getScspHelper().recuperarResultatEnviamentPeticio(
+						consulta.getScspPeticionId());
+				updateEstatConsulta(consulta, resultat);
+				consulta.updateScspSolicitudId(resultat.getIdsSolicituds()[0]);
+				/*if (EstatTipus.Tramitada.equals(consulta.getEstat())) {
+					justificantHelper.generarCustodiarJustificantPendent(
+							consulta,
+							getScspHelper());
+				}*/
+				integracioHelper.addAccioOk(
+						IntegracioHelper.INTCODI_SERVEIS_SCSP,
+						accioDescripcio,
+						accioParams,
+						IntegracioAccioTipusEnumDto.ENVIAMENT,
+						System.currentTimeMillis() - t0);
+			} catch (Exception ex) {
+				String errorDescripcio = "Error al obtenir l'estat de la petició corresponent a la consulta (consultaId=" + consultaId + ")";
+				LOGGER.error(errorDescripcio, ex);
+				integracioHelper.addAccioError(
+						IntegracioHelper.INTCODI_SERVEIS_SCSP,
+						accioDescripcio,
+						accioParams,
+						IntegracioAccioTipusEnumDto.ENVIAMENT,
+						System.currentTimeMillis() - t0,
+						errorDescripcio,
+						ex);
+				throw new ConsultaScspEstatException(consulta.getScspPeticionId(), ex);
+			}
 		}
+		return dtoMappingHelper.getMapperFacade().map(
+				consulta,
+				ConsultaDto.class);
 	}
 
 	@Transactional(rollbackFor = {ProcedimentServeiNotFoundException.class, ServeiNotAllowedException.class, ConsultaScspException.class})
@@ -693,7 +696,6 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 					false,
 					null).
 					build();
-			conslt.updateEstat(EstatTipus.Pendent);
 			Solicitud solicitudEnviar = convertirEnSolicitud(
 					entitat,
 					procediment,
@@ -842,7 +844,6 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 				false,
 				null).
 				build();
-		conslt.updateEstat(EstatTipus.Processant);
 		Consulta saved = consultaRepository.save(conslt);
 		ConsultaDto resposta = dtoMappingHelper.getMapperFacade().map(
 				saved,
@@ -866,6 +867,7 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 			throw new ConsultaNotFoundException();
 		}
 		try {
+			consulta.updateEstat(EstatTipus.Processant);
 			ProcedimentServei procedimentServei = consulta.getProcedimentServei();
 			DocumentTipus documentTipus = (consulta.getTitularDocumentTipus() != null) ? DocumentTipus.valueOf(consulta.getTitularDocumentTipus()) : null;
 			Entitat entitat = procedimentServei.getProcediment().getEntitat();
@@ -930,43 +932,44 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 			LOGGER.debug("No s'ha trobat la consulta (id=" + consultaId + ")");
 			throw new ConsultaNotFoundException();
 		}
-		try {
-			ResultatEnviamentPeticio resultat = getScspHelper().recuperarResultatEnviamentPeticio(
-					consulta.getScspPeticionId());
-			updateEstatConsulta(consulta, resultat);
-			consulta.updateScspSolicitudId(resultat.getIdsSolicituds()[0]);
-			/*if (EstatTipus.Tramitada.equals(consulta.getEstat())) {
-				justificantHelper.generarCustodiarJustificantPendent(
-						consulta,
-						getScspHelper());
+		if (EstatTipus.Processant.equals(consulta.getEstat())) {
+			try {
+				ResultatEnviamentPeticio resultat = getScspHelper().recuperarResultatEnviamentPeticio(
+						consulta.getScspPeticionId());
+				updateEstatConsulta(consulta, resultat);
+				consulta.updateScspSolicitudId(resultat.getIdsSolicituds()[0]);
+				/*if (EstatTipus.Tramitada.equals(consulta.getEstat())) {
+					justificantHelper.generarCustodiarJustificantPendent(
+							consulta,
+							getScspHelper());
+				}*/
+				integracioHelper.addAccioOk(
+						IntegracioHelper.INTCODI_SERVEIS_SCSP,
+						accioDescripcio,
+						accioParams,
+						IntegracioAccioTipusEnumDto.ENVIAMENT,
+						System.currentTimeMillis() - t0);
+			/*} catch (Exception ex) {
+				LOGGER.error("Error al obtenir l'estat de la petició corresponent a la consulta (consultaId=" + consultaId + ")", ex);
+				throw new ScspException(ex.getMessage(), ex);
 			}*/
-
-			integracioHelper.addAccioOk(
-					IntegracioHelper.INTCODI_SERVEIS_SCSP,
-					accioDescripcio,
-					accioParams,
-					IntegracioAccioTipusEnumDto.ENVIAMENT,
-					System.currentTimeMillis() - t0);
-			return dtoMappingHelper.getMapperFacade().map(
-					consulta,
-					ConsultaDto.class);
-		/*} catch (Exception ex) {
-			LOGGER.error("Error al obtenir l'estat de la petició corresponent a la consulta (consultaId=" + consultaId + ")", ex);
-			throw new ScspException(ex.getMessage(), ex);
-		}*/
-		} catch (Exception ex) {
-			String errorDescripcio = "Error al obtenir l'estat de la petició corresponent a la consulta (consultaId=" + consultaId + ")";
-			LOGGER.error(errorDescripcio, ex);
-			integracioHelper.addAccioError(
-					IntegracioHelper.INTCODI_SERVEIS_SCSP,
-					accioDescripcio,
-					accioParams,
-					IntegracioAccioTipusEnumDto.ENVIAMENT,
-					System.currentTimeMillis() - t0,
-					errorDescripcio,
-					ex);
-			throw new ConsultaScspEstatException(consulta.getScspPeticionId(), ex);
+			} catch (Exception ex) {
+				String errorDescripcio = "Error al obtenir l'estat de la petició corresponent a la consulta (consultaId=" + consultaId + ")";
+				LOGGER.error(errorDescripcio, ex);
+				integracioHelper.addAccioError(
+						IntegracioHelper.INTCODI_SERVEIS_SCSP,
+						accioDescripcio,
+						accioParams,
+						IntegracioAccioTipusEnumDto.ENVIAMENT,
+						System.currentTimeMillis() - t0,
+						errorDescripcio,
+						ex);
+				throw new ConsultaScspEstatException(consulta.getScspPeticionId(), ex);
+			}
 		}
+		return dtoMappingHelper.getMapperFacade().map(
+				consulta,
+				ConsultaDto.class);
 	}
 
 	@Transactional(rollbackFor = {EntitatNotFoundException.class, ProcedimentNotFoundException.class, ProcedimentServeiNotFoundException.class, ServeiNotAllowedException.class, ConsultaScspException.class})
@@ -2829,12 +2832,12 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 		}
 	}
 
+	/* Emmagatzema el comptador de peticions fetes dins linterval actual per a cada servei */
 	private Map<String, Integer> consultaServeiCount = new HashMap<String, Integer>();
+	/* Emmagatzema l'inici de l'interval actual per a cada servei */
 	private Map<String, Date> consultaIntervalStart = new HashMap<String, Date>();
-	/*
-	 * Retorna true si s'ha de posar en cua, fals en cas contrari.
-	 */
-	private boolean processarConsultaServei(Consulta consulta, Integer maxCount) {
+	/* Retorna true si s'ha de continuar l'enviament de la consulta, fals en cas contrari. */
+	private boolean isEnviarConsultaServei(Consulta consulta) {
 		String serveiCodi = consulta.getProcedimentServei().getServei();
 		ServeiConfig serveiConfig = serveiConfigRepository.findByServei(serveiCodi);
 		if (serveiConfig.getMaxPeticionsMinut() != null) {
@@ -2847,19 +2850,15 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 				long millisBetweenDates = now.getTime().getTime() - intervalStart.getTime();
 				boolean mateixMinut = millisBetweenDates < 60 * 1000 && intervalStartCal.get(Calendar.MINUTE) == now.get(Calendar.MINUTE);
 				if (mateixMinut) {
-					boolean posarEnCua = count >= serveiConfig.getMaxPeticionsMinut();
+					boolean isMaxPeticionsEnviades = count >= serveiConfig.getMaxPeticionsMinut();
 					consultaServeiCount.put(serveiCodi, count++);
-					return posarEnCua;
-				} else {
-					consultaIntervalStart.put(serveiCodi, new Date());
-					consultaServeiCount.put(serveiCodi, new Integer(1));
+					return !isMaxPeticionsEnviades;
 				}
-			} else {
-				consultaIntervalStart.put(serveiCodi, new Date());
-				consultaServeiCount.put(serveiCodi, new Integer(1));
 			}
+			consultaIntervalStart.put(serveiCodi, new Date());
+			consultaServeiCount.put(serveiCodi, new Integer(1));
 		}
-		return false;
+		return true;
 	}
 
 	private boolean propertiesCopiades = false;
@@ -2936,9 +2935,9 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 	private String dadesEspecifiquesToJson(Map<String, Object> dadesEspecifiques) throws JsonProcessingException {
 		return new ObjectMapper().writeValueAsString(dadesEspecifiques);
 	}
-	private Map<String, Object> dadesEspecifiquesFromJson(String dadesEspecifiques) throws JsonParseException, JsonMappingException, IOException {
+	/*private Map<String, Object> dadesEspecifiquesFromJson(String dadesEspecifiques) throws JsonParseException, JsonMappingException, IOException {
 		return new ObjectMapper().readValue(dadesEspecifiques, Map.class);
-	}
+	}*/
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(ConsultaServiceImpl.class);
 
