@@ -25,6 +25,7 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import es.caib.pinbal.core.audit.PinbalAuditable;
+import es.caib.pinbal.core.dto.ProcedimentClaseTramiteEnumDto;
 import es.caib.pinbal.core.dto.ProcedimentServeiSimpleDto;
 import lombok.Getter;
 
@@ -56,14 +57,20 @@ public class Procediment extends PinbalAuditable<Long> {
 
 	@Column(name = "actiu")
 	private boolean actiu = true;
-	
+
 	@ManyToOne(optional = true, fetch = FetchType.EAGER)
-	@JoinColumn(name = "ORGAN_GESTOR_ID")
+	@JoinColumn(name = "organ_gestor_id")
 	private OrganGestor organGestor;
-		
-	@Column(name = "CODI_SIA")
+
+	@Column(name = "codi_sia")
 	private String codiSia;
-	
+
+	@Column(name = "valor_camp_automatizado")
+	private Boolean valorCampAutomatizado;
+
+	@Column(name = "valor_camp_clasetramite")
+	private ProcedimentClaseTramiteEnumDto valorCampClaseTramite;
+
 	@ManyToOne(optional = false, fetch = FetchType.EAGER)
 	@JoinColumn(
 			name = "entitat_id",
@@ -97,14 +104,18 @@ public class Procediment extends PinbalAuditable<Long> {
 			String nom,
 			String departament,
 			OrganGestor organGestor,
-			String codiSia) {
+			String codiSia,
+			Boolean valorCampAutomatizado,
+			ProcedimentClaseTramiteEnumDto valorCampClaseTramite) {
 		return new Builder(
 				entitat,
 				codi,
 				nom,
 				departament,
 				organGestor,
-				codiSia);
+				codiSia,
+				valorCampAutomatizado,
+				valorCampClaseTramite);
 	}
 
 	public List<ProcedimentServeiSimpleDto> getServeisActius() {
@@ -125,12 +136,16 @@ public class Procediment extends PinbalAuditable<Long> {
 			String nom,
 			String departament,
 			OrganGestor organGestor,
-			String codiSia) {
+			String codiSia,
+			boolean valorCampAutomatizado,
+			ProcedimentClaseTramiteEnumDto valorCampClaseTramite) {
 		this.codi = codi;
 		this.nom = nom;
 		this.departament = departament;
 		this.organGestor = organGestor;
 		this.codiSia = codiSia;
+		this.valorCampAutomatizado = valorCampAutomatizado;
+		this.valorCampClaseTramite = valorCampClaseTramite;
 	}
 	public void updateActiu(boolean actiu) {
 		this.actiu = actiu;
@@ -167,7 +182,9 @@ public class Procediment extends PinbalAuditable<Long> {
 				String nom,
 				String departament,
 				OrganGestor organGestor,
-				String codiSia) {
+				String codiSia,
+				Boolean valorCampAutomatizado,
+				ProcedimentClaseTramiteEnumDto valorCampClaseTramite) {
 			built = new Procediment();
 			built.entitat = entitat;
 			built.codi = codi;
@@ -175,6 +192,8 @@ public class Procediment extends PinbalAuditable<Long> {
 			built.departament = departament;
 			built.organGestor = organGestor;
 			built.codiSia = codiSia;
+			built.valorCampAutomatizado = valorCampAutomatizado;
+			built.valorCampClaseTramite = valorCampClaseTramite;
 		}
 
 		/**

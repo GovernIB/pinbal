@@ -92,11 +92,13 @@ public class ProcedimentServiceImpl implements ProcedimentService {
 				creat.getNom(),
 				creat.getDepartament(),
 				organGestorRepository.getOne(creat.getOrganGestor().getId()),
-				creat.getCodiSia()).build();
+				creat.getCodiSia(),
+				creat.getValorCampAutomatizado(),
+				creat.getValorCampClaseTramite()).build();
 
 		return dtoMappingHelper.getMapperFacade().map(
-        		procedimentRepository.save(procediment),
-        		ProcedimentDto.class);
+				procedimentRepository.save(procediment),
+				ProcedimentDto.class);
 	}
 
 	@Transactional(rollbackFor = ProcedimentNotFoundException.class)
@@ -104,14 +106,14 @@ public class ProcedimentServiceImpl implements ProcedimentService {
 	public ProcedimentDto delete(Long procedimentId) throws ProcedimentNotFoundException {
 		LOGGER.debug("Esborrant procediment (id= " + procedimentId + ")");
 		Procediment esborrat = procedimentRepository.findOne(procedimentId);
-        if (esborrat == null) {
-            LOGGER.debug("No s'ha trobat cap procediment (id= " + procedimentId + ")");
-            throw new ProcedimentNotFoundException();
-        }
-        procedimentRepository.delete(esborrat);
-        return dtoMappingHelper.getMapperFacade().map(
-        		esborrat,
-        		ProcedimentDto.class);
+		if (esborrat == null) {
+			LOGGER.debug("No s'ha trobat cap procediment (id= " + procedimentId + ")");
+			throw new ProcedimentNotFoundException();
+		}
+		procedimentRepository.delete(esborrat);
+		return dtoMappingHelper.getMapperFacade().map(
+				esborrat,
+				ProcedimentDto.class);
 	}
 
 	@Transactional(readOnly = true)
@@ -123,7 +125,7 @@ public class ProcedimentServiceImpl implements ProcedimentService {
 			throw new EntitatNotFoundException();
 		return dtoMappingHelper.getMapperFacade().mapAsList(
 				procedimentRepository.findByEntitatOrderByNomAsc(entitat),
-        		ProcedimentDto.class);
+				ProcedimentDto.class);
 	}
 
 	@Transactional(readOnly = true)
@@ -189,7 +191,7 @@ public class ProcedimentServiceImpl implements ProcedimentService {
 			throw new EntitatNotFoundException();
 		return dtoMappingHelper.getMapperFacade().map(
 				procedimentRepository.findByEntitatAndCodi(entitat, codi),
-        		ProcedimentDto.class);
+				ProcedimentDto.class);
 	}
 
 	@Transactional(readOnly = true)
@@ -198,7 +200,7 @@ public class ProcedimentServiceImpl implements ProcedimentService {
 		LOGGER.debug("Cercant el procediment (id= " + id + ")");
 		return dtoMappingHelper.getMapperFacade().map(
 				procedimentRepository.findOne(id),
-        		ProcedimentDto.class);
+				ProcedimentDto.class);
 	}
 
 	@Transactional(rollbackFor = ProcedimentNotFoundException.class)
@@ -206,20 +208,22 @@ public class ProcedimentServiceImpl implements ProcedimentService {
 	public ProcedimentDto update(ProcedimentDto modificat) throws ProcedimentNotFoundException {
 		LOGGER.debug("Actualitzant el procediment (id= " + modificat.getId() + ") amb la informació: " + modificat);
 		Procediment procediment = procedimentRepository.findOne(modificat.getId());
-        if (procediment == null) {
-            LOGGER.debug("No s'ha trobat el procediment (id= " + modificat.getId() + ")");
-            throw new ProcedimentNotFoundException();
-        }
-        procediment.update(
-        		modificat.getCodi(),
-        		modificat.getNom(),
-        		modificat.getDepartament(),
-        		organGestorRepository.getOne(modificat.getOrganGestor().getId()),
-        		modificat.getCodiSia());
-
-        return dtoMappingHelper.getMapperFacade().map(
+		if (procediment == null) {
+			LOGGER.debug("No s'ha trobat el procediment (id= " + modificat.getId() + ")");
+			throw new ProcedimentNotFoundException();
+		}
+		procediment.update(
+				modificat.getCodi(),
+				modificat.getNom(),
+				modificat.getDepartament(),
+				organGestorRepository.getOne(modificat.getOrganGestor().getId()),
+				modificat.getCodiSia(),
+				modificat.getValorCampAutomatizado(),
+				modificat.getValorCampClaseTramite());
+		
+		return dtoMappingHelper.getMapperFacade().map(
 				procediment,
-        		ProcedimentDto.class);
+				ProcedimentDto.class);
 	}
 
 	@Transactional(rollbackFor = ProcedimentNotFoundException.class)
@@ -227,14 +231,14 @@ public class ProcedimentServiceImpl implements ProcedimentService {
 	public ProcedimentDto updateActiu(Long id, boolean actiu) throws ProcedimentNotFoundException {
 		LOGGER.debug("Actualitzant estat actiu del procediment (id= " + id + ", actiu=" + actiu + ")");
 		Procediment procediment = procedimentRepository.findOne(id);
-        if (procediment == null) {
-            LOGGER.debug("No s'ha trobat el procediment (id= " + id + ")");
-            throw new ProcedimentNotFoundException();
-        }
-        procediment.updateActiu(actiu);
-        return dtoMappingHelper.getMapperFacade().map(
+		if (procediment == null) {
+			LOGGER.debug("No s'ha trobat el procediment (id= " + id + ")");
+			throw new ProcedimentNotFoundException();
+		}
+		procediment.updateActiu(actiu);
+		return dtoMappingHelper.getMapperFacade().map(
 				procediment,
-        		ProcedimentDto.class);
+				ProcedimentDto.class);
 	}
 
 	@Transactional(rollbackFor = {ProcedimentNotFoundException.class, ServeiNotFoundException.class})
@@ -568,8 +572,6 @@ public class ProcedimentServiceImpl implements ProcedimentService {
 	public void setProcedimentRepository(ProcedimentRepository procedimentRepository) {
 		this.procedimentRepository = procedimentRepository;
 	}
-
-
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(ProcedimentServiceImpl.class);
 

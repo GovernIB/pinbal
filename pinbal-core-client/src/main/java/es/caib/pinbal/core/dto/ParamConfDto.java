@@ -16,7 +16,7 @@ public class ParamConfDto extends AbstractIdentificable<Long> implements Seriali
 	private String descripcio;
 
 	public ParamConfDto() {}
-	
+
 	public ParamConfDto(
 			String nom,
 			String valor,
@@ -25,7 +25,6 @@ public class ParamConfDto extends AbstractIdentificable<Long> implements Seriali
 		this.valor = valor;
 		this.descripcio = descripcio;
 	}
-	
 
 	public String getNom() {
 		return nom;
@@ -47,14 +46,12 @@ public class ParamConfDto extends AbstractIdentificable<Long> implements Seriali
 	public void setDescripcio(String descripcio) {
 		this.descripcio = descripcio;
 	}
-	
-	
+
 	@Override
 	public String toString() {
 		return ToStringBuilder.reflectionToString(this);
 	}
-	
-	
+
 	private static final long serialVersionUID = -5757581909233321212L;
-	
+
 }

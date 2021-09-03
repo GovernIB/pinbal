@@ -28,6 +28,8 @@ public class ProcedimentDto extends AbstractIdentificable<Long> implements Seria
 
 	private OrganGestorDto organGestor;
 	private String codiSia;
+	private Boolean valorCampAutomatizado;
+	private ProcedimentClaseTramiteEnumDto valorCampClaseTramite;
 
 	private List<ProcedimentServeiSimpleDto> serveisActius = new ArrayList<ProcedimentServeiSimpleDto>();
 

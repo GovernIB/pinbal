@@ -18,7 +18,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import es.caib.distribucio.core.api.dto.AvisDto;
+import es.caib.pinbal.core.dto.AvisDto;
 import es.caib.pinbal.core.helper.DtoMappingHelper;
 import es.caib.pinbal.core.model.Avis;
 import es.caib.pinbal.core.repository.AvisRepository;

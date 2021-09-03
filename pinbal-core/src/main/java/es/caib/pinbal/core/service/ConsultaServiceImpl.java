@@ -245,13 +245,11 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 			processarDadesEspecifiquesSegonsCamps(
 					consulta.getServeiCodi(),
 					consulta.getDadesEspecifiques());
-			List<Solicitud> solicituds = new ArrayList<Solicitud>();
-			solicituds.add(convertirEnSolicitud(consulta,procedimentServei));
 			ResultatEnviamentPeticio resultat = enviarPeticioScsp(
 					entitat.getId(),
 					consulta.getServeiCodi(),
 					idPeticion,
-					solicituds,
+					Arrays.asList(convertirEnSolicitud(consulta, procedimentServei)),
 					true,
 					conslt.isRecobriment());
 			updateEstatConsulta(conslt, resultat);
@@ -406,13 +404,11 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 					ex);
 			throw new ScspException(ex.getMessage(), ex);
 		}*/
-			List<Solicitud> solicituds = new ArrayList<Solicitud>();
-			solicituds.add(convertirEnSolicitud(consulta, procedimentServei));
 			enviarPeticioScsp(
 					procedimentServei.getProcediment().getEntitat().getId(),
 					consulta.getServeiCodi(),
 					conslt.getScspPeticionId(),
-					solicituds,
+					Arrays.asList(convertirEnSolicitud(consulta, procedimentServei)),
 					true,
 					conslt.isRecobriment());
 			/*if (resultat.isError()) {
@@ -528,7 +524,7 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 					null).
 					build();
 			conslt.updateEstat(EstatTipus.Pendent);
-			List<Solicitud> solicituds = convertirEnMultiplesSolicituds(consulta,procedimentServei);
+			List<Solicitud> solicituds = convertirEnMultiplesSolicituds(consulta, procedimentServei);
 			ResultatEnviamentPeticio resultat = enviarPeticioScsp(
 					procedimentServei.getProcediment().getEntitat().getId(),
 					consulta.getServeiCodi(),
@@ -682,13 +678,11 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 							solicitud.getDadesEspecifiques(),
 							isGestioXsdActiva(serveiCodi)),
 					procedimentServei);
-			List<Solicitud> solicituds = new ArrayList<Solicitud>();
-			solicituds.add(solicitudEnviar);
 			ResultatEnviamentPeticio resultat = enviarPeticioScsp(
 					entitat.getId(),
 					serveiCodi,
 					idPeticion,
-					solicituds,
+					Arrays.asList(solicitudEnviar),
 					true,
 					conslt.isRecobriment());
 			conslt.updateEstat(EstatTipus.Processant);
@@ -854,13 +848,11 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 							solicitud.getDadesEspecifiques(),
 							isGestioXsdActiva(procedimentServei.getServei())),
 					procedimentServei);
-			List<Solicitud> solicituds = new ArrayList<Solicitud>();
-			solicituds.add(solicitudEnviar);
 			enviarPeticioScsp(
 					entitat.getId(),
 					procedimentServei.getServei(),
 					consulta.getScspPeticionId(),
-					solicituds,
+					Arrays.asList(solicitudEnviar),
 					true,
 					consulta.isRecobriment());
 			integracioHelper.addAccioOk(
@@ -2459,6 +2451,10 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 						procedimentServei.getProcedimentCodi() : 
 						procediment.getCodi()));
 		solicitud.setProcedimentNom(procediment.getNom());
+		solicitud.setProcedimentValorCampAutomatizado(procediment.getValorCampAutomatizado());
+		if (procediment.getValorCampClaseTramite() != null) {
+			solicitud.setProcedimentValorCampClaseTramite(procediment.getValorCampClaseTramite().getIntValue());
+		}
 		solicitud.setSolicitantIdentificacio(consulta.getEntitatCif());
 		solicitud.setSolicitantNom(consulta.getEntitatNom());
 		solicitud.setFuncionariNom(consulta.getFuncionariNom());
@@ -2508,6 +2504,10 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 						procedimentServei.getProcedimentCodi() : 
 						procediment.getCodi()));
 		solicitud.setProcedimentNom(procediment.getNom());
+		solicitud.setProcedimentValorCampAutomatizado(procediment.getValorCampAutomatizado());
+		if (procediment.getValorCampClaseTramite() != null) {
+			solicitud.setProcedimentValorCampClaseTramite(procediment.getValorCampClaseTramite().getIntValue());
+		}
 		solicitud.setSolicitantIdentificacio(entitat.getCif());
 		solicitud.setSolicitantNom(entitat.getNom());
 		solicitud.setFuncionariNom(funcionariNom);
@@ -2543,6 +2543,10 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 				Procediment procediment = procedimentRepository.findOne(consulta.getProcedimentId());
 				solicitud.setProcedimentCodi(procediment.getCodi());
 				solicitud.setProcedimentNom(procediment.getNom());
+				solicitud.setProcedimentValorCampAutomatizado(procediment.getValorCampAutomatizado());
+				if (procediment.getValorCampClaseTramite() != null) {
+					solicitud.setProcedimentValorCampClaseTramite(procediment.getValorCampClaseTramite().getIntValue());
+				}
 				solicitud.setSolicitantIdentificacio(consulta.getEntitatCif());
 				solicitud.setSolicitantNom(consulta.getEntitatNom());
 				solicitud.setFuncionariNom(consulta.getFuncionariNom());

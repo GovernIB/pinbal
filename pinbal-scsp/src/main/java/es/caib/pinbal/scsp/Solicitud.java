@@ -22,6 +22,8 @@ public class Solicitud {
 	private String serveiCodi;
 	private String procedimentCodi;
 	private String procedimentNom;
+	private Boolean procedimentValorCampAutomatizado;
+	private Integer procedimentValorCampClaseTramite;
 	private String solicitantIdentificacio;
 	private String solicitantNom;
 	private String funcionariNom;

@@ -12,6 +12,7 @@ import javax.validation.constraints.Size;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import es.caib.pinbal.core.dto.OrganGestorDto;
+import es.caib.pinbal.core.dto.ProcedimentClaseTramiteEnumDto;
 import es.caib.pinbal.core.dto.ProcedimentDto;
 import es.caib.pinbal.webapp.validation.CodiProcedimentNoRepetit;
 import lombok.Getter;
@@ -45,6 +46,8 @@ public class ProcedimentCommand {
 	private Long organGestorId;
 	@Size(max = 64)
 	private String codiSia;
+	private Boolean valorCampAutomatizado;
+	private ProcedimentClaseTramiteEnumDto valorCampClaseTramite;
 
 	public static List<ProcedimentCommand> toProcedimentCommands(List<ProcedimentDto> dtos) {
 		List<ProcedimentCommand> commands = new ArrayList<ProcedimentCommand>();

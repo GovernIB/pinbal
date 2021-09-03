@@ -14,7 +14,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.ejb.interceptor.SpringBeanAutowiringInterceptor;
 
-import es.caib.distribucio.core.api.dto.AvisDto;
+import es.caib.pinbal.core.dto.AvisDto;
 import es.caib.pinbal.core.service.AvisService;
 
 /**

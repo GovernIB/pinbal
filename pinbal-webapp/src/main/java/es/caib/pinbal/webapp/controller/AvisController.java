@@ -25,7 +25,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import es.caib.distribucio.core.api.dto.AvisDto;
+import es.caib.pinbal.core.dto.AvisDto;
 import es.caib.pinbal.core.service.AvisService;
 import es.caib.pinbal.webapp.command.AvisCommand;
 import es.caib.pinbal.webapp.common.AlertHelper;

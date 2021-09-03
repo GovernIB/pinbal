@@ -10,7 +10,7 @@ import javax.validation.constraints.NotNull;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.hibernate.validator.constraints.NotEmpty;
 
-import es.caib.distribucio.core.api.dto.AvisDto;
+import es.caib.pinbal.core.dto.AvisDto;
 import es.caib.pinbal.core.dto.AvisNivellEnumDto;
 import es.caib.pinbal.webapp.helper.ConversioTipusHelper;
 

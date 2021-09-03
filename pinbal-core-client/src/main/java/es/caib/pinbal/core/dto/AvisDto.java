@@ -1,15 +1,12 @@
 /**
  * 
  */
-package es.caib.distribucio.core.api.dto;
+package es.caib.pinbal.core.dto;
 
 import java.io.Serializable;
 import java.util.Date;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
-
-import es.caib.pinbal.core.dto.AbstractIdentificable;
-import es.caib.pinbal.core.dto.AvisNivellEnumDto;
 
 /**
  * Informació d'una avis.
