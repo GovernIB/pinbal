@@ -8,8 +8,6 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.acls.domain.BasePermission;
@@ -46,6 +44,7 @@ import es.caib.pinbal.core.service.exception.EntitatUsuariNotFoundException;
 import es.caib.pinbal.core.service.exception.ProcedimentNotFoundException;
 import es.caib.pinbal.core.service.exception.ProcedimentServeiNotFoundException;
 import es.caib.pinbal.core.service.exception.ServeiNotFoundException;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Implementació de ProcedimentService que es comunica amb la base de dades emprant
@@ -53,6 +52,7 @@ import es.caib.pinbal.core.service.exception.ServeiNotFoundException;
  * 
  * @author Limit Tecnologies <limit@limit.es>
  */
+@Slf4j
 @Service
 public class ProcedimentServiceImpl implements ProcedimentService {
 
@@ -81,7 +81,7 @@ public class ProcedimentServiceImpl implements ProcedimentService {
 	@Transactional(rollbackFor = EntitatNotFoundException.class)
 	@Override
 	public ProcedimentDto create(ProcedimentDto creat) throws EntitatNotFoundException {
-		LOGGER.debug("Creant un nou procediment: " + creat);
+		log.debug("Creant un nou procediment: " + creat);
 		Entitat entitat = entitatRepository.findOne(creat.getEntitatId());
 		if (entitat == null)
 			throw new EntitatNotFoundException();
@@ -104,10 +104,10 @@ public class ProcedimentServiceImpl implements ProcedimentService {
 	@Transactional(rollbackFor = ProcedimentNotFoundException.class)
 	@Override
 	public ProcedimentDto delete(Long procedimentId) throws ProcedimentNotFoundException {
-		LOGGER.debug("Esborrant procediment (id= " + procedimentId + ")");
+		log.debug("Esborrant procediment (id= " + procedimentId + ")");
 		Procediment esborrat = procedimentRepository.findOne(procedimentId);
 		if (esborrat == null) {
-			LOGGER.debug("No s'ha trobat cap procediment (id= " + procedimentId + ")");
+			log.debug("No s'ha trobat cap procediment (id= " + procedimentId + ")");
 			throw new ProcedimentNotFoundException();
 		}
 		procedimentRepository.delete(esborrat);
@@ -119,7 +119,7 @@ public class ProcedimentServiceImpl implements ProcedimentService {
 	@Transactional(readOnly = true)
 	@Override
 	public List<ProcedimentDto> findAmbEntitat(Long entitatId) throws EntitatNotFoundException {
-		LOGGER.debug("Cercant els procediments de l'entitat (id=" + entitatId + ")");
+		log.debug("Cercant els procediments de l'entitat (id=" + entitatId + ")");
 		Entitat entitat = entitatRepository.findOne(entitatId);
 		if (entitat == null)
 			throw new EntitatNotFoundException();
@@ -139,7 +139,7 @@ public class ProcedimentServiceImpl implements ProcedimentService {
 			String codiSia,
 			FiltreActiuEnumDto actiu,
 			Pageable pageable) throws EntitatNotFoundException {
-		LOGGER.debug("Consulta de procediments segons filtre ("
+		log.debug("Consulta de procediments segons filtre ("
 				+ "entitatId=" + entitatId + ", "
 				+ "codi=" + codi + ", "
 				+ "nom=" + nom + ", "
@@ -185,7 +185,7 @@ public class ProcedimentServiceImpl implements ProcedimentService {
 	@Transactional(readOnly = true)
 	@Override
 	public ProcedimentDto findAmbEntitatICodi(Long entitatId, String codi) throws EntitatNotFoundException {
-		LOGGER.debug("Cercant els procediment de l'entitat (id=" + entitatId + ") amb codi (codi=" + codi + ")");
+		log.debug("Cercant els procediment de l'entitat (id=" + entitatId + ") amb codi (codi=" + codi + ")");
 		Entitat entitat = entitatRepository.findOne(entitatId);
 		if (entitat == null)
 			throw new EntitatNotFoundException();
@@ -197,7 +197,7 @@ public class ProcedimentServiceImpl implements ProcedimentService {
 	@Transactional(readOnly = true)
 	@Override
 	public ProcedimentDto findById(Long id) {
-		LOGGER.debug("Cercant el procediment (id= " + id + ")");
+		log.debug("Cercant el procediment (id= " + id + ")");
 		return dtoMappingHelper.getMapperFacade().map(
 				procedimentRepository.findOne(id),
 				ProcedimentDto.class);
@@ -206,10 +206,10 @@ public class ProcedimentServiceImpl implements ProcedimentService {
 	@Transactional(rollbackFor = ProcedimentNotFoundException.class)
 	@Override
 	public ProcedimentDto update(ProcedimentDto modificat) throws ProcedimentNotFoundException {
-		LOGGER.debug("Actualitzant el procediment (id= " + modificat.getId() + ") amb la informació: " + modificat);
+		log.debug("Actualitzant el procediment (id= " + modificat.getId() + ") amb la informació: " + modificat);
 		Procediment procediment = procedimentRepository.findOne(modificat.getId());
 		if (procediment == null) {
-			LOGGER.debug("No s'ha trobat el procediment (id= " + modificat.getId() + ")");
+			log.debug("No s'ha trobat el procediment (id= " + modificat.getId() + ")");
 			throw new ProcedimentNotFoundException();
 		}
 		procediment.update(
@@ -229,10 +229,10 @@ public class ProcedimentServiceImpl implements ProcedimentService {
 	@Transactional(rollbackFor = ProcedimentNotFoundException.class)
 	@Override
 	public ProcedimentDto updateActiu(Long id, boolean actiu) throws ProcedimentNotFoundException {
-		LOGGER.debug("Actualitzant estat actiu del procediment (id= " + id + ", actiu=" + actiu + ")");
+		log.debug("Actualitzant estat actiu del procediment (id= " + id + ", actiu=" + actiu + ")");
 		Procediment procediment = procedimentRepository.findOne(id);
 		if (procediment == null) {
-			LOGGER.debug("No s'ha trobat el procediment (id= " + id + ")");
+			log.debug("No s'ha trobat el procediment (id= " + id + ")");
 			throw new ProcedimentNotFoundException();
 		}
 		procediment.updateActiu(actiu);
@@ -246,17 +246,17 @@ public class ProcedimentServiceImpl implements ProcedimentService {
 	public void serveiEnable(
 			Long id,
 			String serveiCodi) throws ProcedimentNotFoundException, ServeiNotFoundException {
-		LOGGER.debug("Activant el servei (codi=" + serveiCodi + ") al procediment (id= " + id + ")");
+		log.debug("Activant el servei (codi=" + serveiCodi + ") al procediment (id= " + id + ")");
 		Procediment procediment = procedimentRepository.findOne(id);
 		if (procediment == null) {
-			LOGGER.debug("No s'ha trobat cap procediment (id= " + id + ")");
+			log.debug("No s'ha trobat cap procediment (id= " + id + ")");
 			throw new ProcedimentNotFoundException();
 		}
 		EntitatServei entitatServei = entitatServeiRepository.findByEntitatIdAndServei(
 				procediment.getEntitat().getId(),
 				serveiCodi);
 		if (entitatServei == null) {
-			LOGGER.debug("El servei (codi=" + serveiCodi + ") no està actiu per a l'entitat (id= " + procediment.getEntitat().getId() + ")");
+			log.debug("El servei (codi=" + serveiCodi + ") no està actiu per a l'entitat (id= " + procediment.getEntitat().getId() + ")");
 			throw new ServeiNotFoundException();
 		}
 		ProcedimentServei procedimentServei = procedimentServeiRepository.findByProcedimentIdAndServei(id, serveiCodi);
@@ -276,17 +276,17 @@ public class ProcedimentServiceImpl implements ProcedimentService {
 			Long procedimentId,
 			String serveiCodi,
 			String procedimentCodi) throws ProcedimentNotFoundException, ServeiNotFoundException {
-		LOGGER.debug("Afegint codi adicional (codi=" + serveiCodi + ") al servei (serveiCodi= " + serveiCodi + ") al procediment (procedimentId= " + procedimentId + ")");
+		log.debug("Afegint codi adicional (codi=" + serveiCodi + ") al servei (serveiCodi= " + serveiCodi + ") al procediment (procedimentId= " + procedimentId + ")");
 		Procediment procediment = procedimentRepository.findOne(procedimentId);
 		if (procediment == null) {
-			LOGGER.debug("No s'ha trobat cap procediment (id= " + procedimentId + ")");
+			log.debug("No s'ha trobat cap procediment (id= " + procedimentId + ")");
 			throw new ProcedimentNotFoundException();
 		}
 		EntitatServei entitatServei = entitatServeiRepository.findByEntitatIdAndServei(
 				procediment.getEntitat().getId(),
 				serveiCodi);
 		if (entitatServei == null) {
-			LOGGER.debug("El servei (codi=" + serveiCodi + ") no està actiu per a l'entitat (id= " + procediment.getEntitat().getId() + ")");
+			log.debug("El servei (codi=" + serveiCodi + ") no està actiu per a l'entitat (id= " + procediment.getEntitat().getId() + ")");
 			throw new ServeiNotFoundException();
 		}
 		ProcedimentServei procedimentServei = procedimentServeiRepository.findByProcedimentIdAndServei(procedimentId, serveiCodi);
@@ -308,15 +308,15 @@ public class ProcedimentServiceImpl implements ProcedimentService {
 	public void serveiDisable(
 			Long id,
 			String serveiCodi) throws ProcedimentNotFoundException, ProcedimentServeiNotFoundException {
-		LOGGER.debug("Desactivant el servei (codi=" + serveiCodi + ") del procediment (id= " + id + ")");
+		log.debug("Desactivant el servei (codi=" + serveiCodi + ") del procediment (id= " + id + ")");
 		Procediment procediment = procedimentRepository.findOne(id);
 		if (procediment == null) {
-			LOGGER.debug("No s'ha trobat cap procediment (id= " + id + ")");
+			log.debug("No s'ha trobat cap procediment (id= " + id + ")");
 			throw new ProcedimentNotFoundException();
 		}
 		ProcedimentServei procedimentServei = procedimentServeiRepository.findByProcedimentIdAndServei(id, serveiCodi);
 		if (procedimentServei == null) {
-			LOGGER.debug("El procediment (id= " + id + ") no té cap servei (codi=" + serveiCodi + ")");
+			log.debug("El procediment (id= " + id + ") no té cap servei (codi=" + serveiCodi + ")");
 			throw new ProcedimentServeiNotFoundException();
 		}
 		procedimentServei.updateActiu(false);
@@ -335,25 +335,25 @@ public class ProcedimentServiceImpl implements ProcedimentService {
 			Long id,
 			String serveiCodi,
 			String usuariCodi) throws ProcedimentNotFoundException, ProcedimentServeiNotFoundException, EntitatUsuariNotFoundException {
-		LOGGER.debug("Donant permis d'accés a un servei d'un procediment(" +
+		log.debug("Donant permis d'accés a un servei d'un procediment(" +
 				"id=" + id + ", " +
 				"serveiCodi=" + serveiCodi + ", " +
 				"usuariCodi=" + usuariCodi + ")");
 		Procediment procediment = procedimentRepository.findOne(id);
 		if (procediment == null) {
-			LOGGER.debug("No s'ha trobat cap procediment (id= " + id + ")");
+			log.debug("No s'ha trobat cap procediment (id= " + id + ")");
 			throw new ProcedimentNotFoundException();
 		}
 		ProcedimentServei procedimentServei = procedimentServeiRepository.findByProcedimentIdAndServei(id, serveiCodi);
 		if (procedimentServei == null) {
-			LOGGER.debug("El procediment (id= " + id + ") no té cap servei (codi=" + serveiCodi + ")");
+			log.debug("El procediment (id= " + id + ") no té cap servei (codi=" + serveiCodi + ")");
 			throw new ProcedimentServeiNotFoundException();
 		}
 		EntitatUsuari entitatUsuari = entitatUsuariRepository.findByEntitatIdAndUsuariCodi(
 				procediment.getEntitat().getId(),
 				usuariCodi);
 		if (entitatUsuari == null) {
-			LOGGER.debug("L'entitat (id=" + procediment.getEntitat().getId() + ") no té cap usuari (codi=" + usuariCodi + ")");
+			log.debug("L'entitat (id=" + procediment.getEntitat().getId() + ") no té cap usuari (codi=" + usuariCodi + ")");
 			throw new EntitatUsuariNotFoundException();
 		}
 		PermisosHelper.assignarPermisUsuari(
@@ -370,22 +370,22 @@ public class ProcedimentServiceImpl implements ProcedimentService {
 			Long id,
 			String serveiCodi,
 			String usuariCodi) throws ProcedimentNotFoundException, ProcedimentServeiNotFoundException, EntitatUsuariNotFoundException {
-		LOGGER.debug("Esborrant servei (codi=" + serveiCodi + ") del procediment (id= " + id + ")");
+		log.debug("Esborrant servei (codi=" + serveiCodi + ") del procediment (id= " + id + ")");
 		Procediment procediment = procedimentRepository.findOne(id);
 		if (procediment == null) {
-			LOGGER.debug("No s'ha trobat cap procediment (id= " + id + ")");
+			log.debug("No s'ha trobat cap procediment (id= " + id + ")");
 			throw new ProcedimentNotFoundException();
 		}
 		ProcedimentServei procedimentServei = procedimentServeiRepository.findByProcedimentIdAndServei(id, serveiCodi);
 		if (procedimentServei == null) {
-			LOGGER.debug("El procediment (id= " + id + ") no té cap servei (codi=" + serveiCodi + ")");
+			log.debug("El procediment (id= " + id + ") no té cap servei (codi=" + serveiCodi + ")");
 			throw new ProcedimentServeiNotFoundException();
 		}
 		EntitatUsuari entitatUsuari = entitatUsuariRepository.findByEntitatIdAndUsuariCodi(
 				procediment.getEntitat().getId(),
 				usuariCodi);
 		if (entitatUsuari == null) {
-			LOGGER.debug("L'entitat (id=" + procediment.getEntitat().getId() + ") no té cap usuari (codi=" + usuariCodi + ")");
+			log.debug("L'entitat (id=" + procediment.getEntitat().getId() + ") no té cap usuari (codi=" + usuariCodi + ")");
 			throw new EntitatUsuariNotFoundException();
 		}
 		PermisosHelper.revocarPermisUsuari(
@@ -405,7 +405,7 @@ public class ProcedimentServiceImpl implements ProcedimentService {
 				entitatId,
 				usuariCodi);
 		if (entitatUsuari == null) {
-			LOGGER.debug("L'entitat (id=" + entitatId + ") no té cap usuari (codi=" + usuariCodi + ")");
+			log.debug("L'entitat (id=" + entitatId + ") no té cap usuari (codi=" + usuariCodi + ")");
 			throw new EntitatUsuariNotFoundException();
 		}
 		List<ProcedimentServei> procedimentServeis = procedimentServeiRepository.findByEntitatId(entitatId);
@@ -437,15 +437,15 @@ public class ProcedimentServiceImpl implements ProcedimentService {
 	@Transactional(readOnly = true)
 	@Override
 	public List<String> findUsuarisAmbPermisPerServei(Long id, String serveiCodi) throws ProcedimentNotFoundException, ProcedimentServeiNotFoundException {
-		LOGGER.debug("Cercant usuaris amb permisos per a accedir al servei (codi=" + serveiCodi + ") del procediment (id= " + id + ")");
+		log.debug("Cercant usuaris amb permisos per a accedir al servei (codi=" + serveiCodi + ") del procediment (id= " + id + ")");
 		Procediment procediment = procedimentRepository.findOne(id);
 		if (procediment == null) {
-			LOGGER.debug("No s'ha trobat cap procediment (id= " + id + ")");
+			log.debug("No s'ha trobat cap procediment (id= " + id + ")");
 			throw new ProcedimentNotFoundException();
 		}
 		ProcedimentServei procedimentServei = procedimentServeiRepository.findByProcedimentIdAndServei(id, serveiCodi);
 		if (procedimentServei == null) {
-			LOGGER.debug("El procediment (id= " + id + ") no té cap servei (codi=" + serveiCodi + ")");
+			log.debug("El procediment (id= " + id + ") no té cap servei (codi=" + serveiCodi + ")");
 			throw new ProcedimentServeiNotFoundException();
 		}
 		List<String> resposta = new ArrayList<String>();
@@ -464,7 +464,7 @@ public class ProcedimentServiceImpl implements ProcedimentService {
 	@Override
 	public List<ProcedimentDto> findAmbEntitatPerDelegat(
 			Long entitatId) throws EntitatNotFoundException {
-		LOGGER.debug("Cercant procediments de delegat per l'entitat (id=" + entitatId + ")");
+		log.debug("Cercant procediments de delegat per l'entitat (id=" + entitatId + ")");
 		Entitat entitat = entitatRepository.findOne(entitatId);
 		if (entitat == null)
 			throw new EntitatNotFoundException();
@@ -500,7 +500,7 @@ public class ProcedimentServiceImpl implements ProcedimentService {
 	public List<ProcedimentDto> findActiusAmbEntitatIServeiCodi(
 			Long entitatId,
 			String serveiCodi) throws EntitatNotFoundException {
-		LOGGER.debug("Cercant procediments actius per l'entitat (" +
+		log.debug("Cercant procediments actius per l'entitat (" +
 				"entitatId=" + entitatId + ", " +
 				"serveiCodi=" + serveiCodi + ")");
 		Entitat entitat = entitatRepository.findOne(entitatId);
@@ -537,7 +537,7 @@ public class ProcedimentServiceImpl implements ProcedimentService {
 	@Override
 	public List<ProcedimentDto> findAmbServeiCodi(
 			String serveiCodi) {
-		LOGGER.debug("Cercant procediments amb el serveiCodi=" + serveiCodi);
+		log.debug("Cercant procediments amb el serveiCodi=" + serveiCodi);
 		List<Procediment> procediments = procedimentRepository.findAllByServei(serveiCodi);
 		return dtoMappingHelper.getMapperFacade().mapAsList(
 				procediments,
@@ -547,7 +547,7 @@ public class ProcedimentServiceImpl implements ProcedimentService {
 	@Transactional(readOnly = true)
 	@Override
 	public List<InformeProcedimentDto> informeProcedimentsAgrupatsEntitatDepartament() {
-		LOGGER.debug("Generant informe de procediments agrupats per entitat i departament");
+		log.debug("Generant informe de procediments agrupats per entitat i departament");
 		List<Procediment> procediments = procedimentRepository.findAllOrderByEntitatAndDepartament();
 		Entitat entitatActual = null;
 		String departamentActual = null;
@@ -572,7 +572,5 @@ public class ProcedimentServiceImpl implements ProcedimentService {
 	public void setProcedimentRepository(ProcedimentRepository procedimentRepository) {
 		this.procedimentRepository = procedimentRepository;
 	}
-
-	private static final Logger LOGGER = LoggerFactory.getLogger(ProcedimentServiceImpl.class);
 
 }

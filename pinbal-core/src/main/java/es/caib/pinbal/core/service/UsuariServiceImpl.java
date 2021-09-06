@@ -8,8 +8,6 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.acls.model.MutableAclService;
@@ -38,12 +36,14 @@ import es.caib.pinbal.core.service.exception.EntitatUsuariProtegitException;
 import es.caib.pinbal.core.service.exception.UsuariExternNotFoundException;
 import es.caib.pinbal.plugins.DadesUsuari;
 import es.caib.pinbal.plugins.SistemaExternException;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Implementació dels mètodes per al manteniment de la taula d'usuaris.
  * 
  * @author Limit Tecnologies <limit@limit.es>
  */
+@Slf4j
 @Service
 public class UsuariServiceImpl implements UsuariService {
 
@@ -72,7 +72,7 @@ public class UsuariServiceImpl implements UsuariService {
 	@Override
 	public void inicialitzarUsuariActual() {
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-		LOGGER.debug("Inicialitzant l'usuari (codi=" + auth.getName() + ")");
+		log.debug("Inicialitzant l'usuari (codi=" + auth.getName() + ")");
 		usuariHelper.init(auth.getName());
 	}
 
@@ -89,7 +89,7 @@ public class UsuariServiceImpl implements UsuariService {
 			String nif,
 			String departament,
 			Pageable pageable) {
-		LOGGER.debug("Consulta d'entitats segons filtre (codi=" + codi + ", nom=" + nom + ""
+		log.debug("Consulta d'entitats segons filtre (codi=" + codi + ", nom=" + nom + ""
 				+ "nif=" + nif + " Departament=" + departament + ")");
 		
 		Page<EntitatUsuari> paginaEntitats = entitatUsuariRepository.findByFiltre(
@@ -117,7 +117,7 @@ public class UsuariServiceImpl implements UsuariService {
 	@Override
 	public UsuariDto getDades() {
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-		LOGGER.debug("Consulta de les dades de l'usuari (codi=" + auth.getName() + ")");
+		log.debug("Consulta de les dades de l'usuari (codi=" + auth.getName() + ")");
 		return dtoMappingHelper.getMapperFacade().map(
 				usuariRepository.findOne(auth.getName()),
 				UsuariDto.class);
@@ -127,7 +127,7 @@ public class UsuariServiceImpl implements UsuariService {
 	@Override
 	public UsuariDto getDades(
 			String usuariCodi) {
-		LOGGER.debug("Consulta de les dades de l'usuari (codi=" + usuariCodi + ")");
+		log.debug("Consulta de les dades de l'usuari (codi=" + usuariCodi + ")");
 		return dtoMappingHelper.getMapperFacade().map(
 				usuariRepository.findOne(usuariCodi),
 				UsuariDto.class);
@@ -138,7 +138,7 @@ public class UsuariServiceImpl implements UsuariService {
 	@Override
 	public UsuariDto getUsuariActual() {
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-		LOGGER.debug("Obtenint usuari actual");
+		log.debug("Obtenint usuari actual");
 		
 		Usuari usuari = usuariRepository.findOne(auth.getName());
 		
@@ -147,7 +147,7 @@ public class UsuariServiceImpl implements UsuariService {
 				DadesUsuari dadesUsuari = externHelper.dadesUsuariConsultarAmbUsuariCodi(auth.getName());
 				usuari.updateEmail(dadesUsuari.getEmail());
 			} catch (SistemaExternException ex) {
-				LOGGER.error("Error al consultar les dades de l'usuari (codi=" + auth.getName() + ") al sistema extern", ex);
+				log.error("Error al consultar les dades de l'usuari (codi=" + auth.getName() + ") al sistema extern", ex);
 			}
 		}
 		
@@ -158,7 +158,7 @@ public class UsuariServiceImpl implements UsuariService {
 	@Transactional
 	@Override
 	public UsuariDto updateUsuariActual(UsuariDto dto) {
-		LOGGER.debug("Actualitzant configuració de usuari actual");
+		log.debug("Actualitzant configuració de usuari actual");
 		Usuari usuari = usuariRepository.findOne(dto.getCodi());
 		usuari.updateIdioma(
 				dto.getIdioma());
@@ -180,10 +180,10 @@ public class UsuariServiceImpl implements UsuariService {
 			boolean auditor,
 			boolean aplicacio,
 			boolean afegir) throws EntitatNotFoundException, UsuariExternNotFoundException {
-		LOGGER.debug("Actualitzant dades no auditor de l'usuari (codi=" + codi + ", nif=" + nif + ") a l'entitat (id=" + id + ")");
+		log.debug("Actualitzant dades no auditor de l'usuari (codi=" + codi + ", nif=" + nif + ") a l'entitat (id=" + id + ")");
 		Entitat entitat = entitatRepository.findOne(id);
 		if (entitat == null) {
-			LOGGER.debug("No s'ha trobat l'entitat (id=" + id + ")");
+			log.debug("No s'ha trobat l'entitat (id=" + id + ")");
 			throw new EntitatNotFoundException();
 		}
 		usuariActualitzarDades(
@@ -213,10 +213,10 @@ public class UsuariServiceImpl implements UsuariService {
 			boolean delegat,
 			boolean aplicacio,
 			boolean afegir) throws EntitatNotFoundException, EntitatUsuariProtegitException, UsuariExternNotFoundException {
-		LOGGER.debug("Actualitzant dades no auditor de l'usuari (codi=" + codi + ", nif=" + nif + ") a l'entitat (id=" + id + ")");
+		log.debug("Actualitzant dades no auditor de l'usuari (codi=" + codi + ", nif=" + nif + ") a l'entitat (id=" + id + ")");
 		Entitat entitat = entitatRepository.findOne(id);
 		if (entitat == null) {
-			LOGGER.debug("No s'ha trobat l'entitat (id=" + id + ")");
+			log.debug("No s'ha trobat l'entitat (id=" + id + ")");
 			throw new EntitatNotFoundException();
 		}
 		EntitatUsuari entitatUsuari;
@@ -230,7 +230,7 @@ public class UsuariServiceImpl implements UsuariService {
 					id,
 					codi);
 		if (entitatUsuari != null && entitatUsuari.isPrincipal()) {
-			LOGGER.debug("No es pot modificar un usuari principal (codi=" + codi + ", nif=" + nif + ") de l'entitat (id=" + id + ")");
+			log.debug("No es pot modificar un usuari principal (codi=" + codi + ", nif=" + nif + ") de l'entitat (id=" + id + ")");
 			throw new EntitatUsuariProtegitException();
 		}
 		usuariActualitzarDades(
@@ -257,10 +257,10 @@ public class UsuariServiceImpl implements UsuariService {
 			String nif,
 			boolean auditor,
 			boolean afegir) throws EntitatNotFoundException, EntitatUsuariProtegitException, UsuariExternNotFoundException {
-		LOGGER.debug("Actualitzant dades auditor de l'usuari (codi=" + codi + ", nif=" + nif + ") a l'entitat (id=" + id + ")");
+		log.debug("Actualitzant dades auditor de l'usuari (codi=" + codi + ", nif=" + nif + ") a l'entitat (id=" + id + ")");
 		Entitat entitat = entitatRepository.findOne(id);
 		if (entitat == null) {
-			LOGGER.debug("No s'ha trobat l'entitat (id=" + id + ")");
+			log.debug("No s'ha trobat l'entitat (id=" + id + ")");
 			throw new EntitatNotFoundException();
 		}
 		EntitatUsuari entitatUsuari;
@@ -274,7 +274,7 @@ public class UsuariServiceImpl implements UsuariService {
 					id,
 					codi);
 		if (entitatUsuari != null && entitatUsuari.isPrincipal()) {
-			LOGGER.debug("No es pot modificar un usuari principal (codi=" + codi + ", nif=" + nif + ") de l'entitat (id=" + id + ")");
+			log.debug("No es pot modificar un usuari principal (codi=" + codi + ", nif=" + nif + ") de l'entitat (id=" + id + ")");
 			throw new EntitatUsuariProtegitException();
 		}
 		usuariActualitzarDades(
@@ -298,15 +298,15 @@ public class UsuariServiceImpl implements UsuariService {
 	public boolean establirPrincipal(
 			Long id,
 			String usuariCodi) throws EntitatNotFoundException, EntitatUsuariNotFoundException {
-		LOGGER.debug("Marca l'usuari com a principal (codi=" + usuariCodi + ") a l'entitat (id=" + id + ")");
+		log.debug("Marca l'usuari com a principal (codi=" + usuariCodi + ") a l'entitat (id=" + id + ")");
 		Entitat entitat = entitatRepository.findOne(id);
 		if (entitat == null) {
-			LOGGER.debug("No s'ha trobat l'entitat (id=" + id + ")");
+			log.debug("No s'ha trobat l'entitat (id=" + id + ")");
 			throw new EntitatNotFoundException();
 		}
 		EntitatUsuari entitatUsuari = entitatUsuariRepository.findByEntitatIdAndUsuariCodi(id, usuariCodi);
 		if (entitatUsuari == null) {
-			LOGGER.debug("L'entitat (id=" + id + ") no té actiu l'usuari (codi=" + usuariCodi + ")");
+			log.debug("L'entitat (id=" + id + ") no té actiu l'usuari (codi=" + usuariCodi + ")");
 			throw new EntitatUsuariNotFoundException();
 		}
 		return entitatUsuari.canviPrincipal();
@@ -315,7 +315,7 @@ public class UsuariServiceImpl implements UsuariService {
 	@Transactional(readOnly = true)
 	@Override
 	public List<InformeUsuariDto> informeUsuarisAgrupatsEntitatDepartament() {
-		LOGGER.debug("Generant informe d'usuaris agrupats per entitat i departament");
+		log.debug("Generant informe d'usuaris agrupats per entitat i departament");
 		List<EntitatUsuari> usuaris = entitatUsuariRepository.findAllOrderByEntitatAndDepartament();
 		Entitat entitatActual = null;
 		String departamentActual = null;
@@ -363,14 +363,14 @@ public class UsuariServiceImpl implements UsuariService {
 				try {
 					dadesUsuari = externHelper.dadesUsuariConsultarAmbUsuariNif(nif);
 				} catch (SistemaExternException ex) {
-					LOGGER.warn("No s'han trobat les dades de l'usuari (nif=" + nif + ") al sistema extern");
+					log.warn("No s'han trobat les dades de l'usuari (nif=" + nif + ") al sistema extern");
 					throw new UsuariExternNotFoundException();
 				}
 			} else {
 				try {
 					dadesUsuari = externHelper.dadesUsuariConsultarAmbUsuariCodi(codi);
 				} catch (SistemaExternException ex) {
-					LOGGER.warn("No s'han trobat les dades de l'usuari (codi=" + codi + ") al sistema extern");
+					log.warn("No s'han trobat les dades de l'usuari (codi=" + codi + ") al sistema extern");
 					throw new UsuariExternNotFoundException();
 				}
 			}
@@ -396,7 +396,7 @@ public class UsuariServiceImpl implements UsuariService {
 			} else {
 				// Si l'usuari ja existeix actualitza les seves dades
 				if (!usuari.isInicialitzat() && dadesUsuari != null) {
-					LOGGER.debug("Actualitzant les dades de l'usuari (codi=" + usuari.getCodi() + ")");
+					log.debug("Actualitzant les dades de l'usuari (codi=" + usuari.getCodi() + ")");
 					usuari = usuariHelper.moure(
 							usuari,
 							dadesUsuari,
@@ -446,8 +446,7 @@ public class UsuariServiceImpl implements UsuariService {
 					aplicacioPerUpdate);
 		}
 	}
-	
-	
+
 	private UsuariDto toUsuariDtoAmbRols(
 			Usuari usuari) {
 		UsuariDto dto = dtoMappingHelper.convertir(
@@ -464,8 +463,5 @@ public class UsuariServiceImpl implements UsuariService {
 		}
 		return dto;
 	}
-
-
-	private static final Logger LOGGER = LoggerFactory.getLogger(UsuariServiceImpl.class);
 
 }

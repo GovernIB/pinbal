@@ -9,8 +9,6 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -41,6 +39,7 @@ import es.caib.pinbal.core.service.exception.EntitatServeiNotFoundException;
 import es.caib.pinbal.core.service.exception.ServeiNotFoundException;
 import es.caib.pinbal.scsp.ScspHelper;
 import es.scsp.common.domain.core.Servicio;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Implementació de EntitatService que es comunica amb la base de dades emprant
@@ -48,6 +47,7 @@ import es.scsp.common.domain.core.Servicio;
  * 
  * @author Limit Tecnologies <limit@limit.es>
  */
+@Slf4j
 @Service
 public class EntitatServiceImpl implements EntitatService, ApplicationContextAware, MessageSourceAware {
 
@@ -72,7 +72,7 @@ public class EntitatServiceImpl implements EntitatService, ApplicationContextAwa
 	@Transactional
 	@Override
 	public EntitatDto create(EntitatDto creada){
-		LOGGER.debug("Creant una nova entitat: " + creada);
+		log.debug("Creant una nova entitat: " + creada);
 		Entitat entitat = Entitat.getBuilder(
 				creada.getCodi(),
 				creada.getNom(),
@@ -95,10 +95,10 @@ public class EntitatServiceImpl implements EntitatService, ApplicationContextAwa
 	@Transactional(rollbackFor = EntitatNotFoundException.class)
 	@Override
 	public EntitatDto delete(Long entitatId) throws EntitatNotFoundException {
-		LOGGER.debug("Esborrant entitat (id=" + entitatId + ")");
+		log.debug("Esborrant entitat (id=" + entitatId + ")");
         Entitat esborrada = entitatRepository.findOne(entitatId);
 		if (esborrada == null) {
-			LOGGER.debug("No s'ha trobat l'entitat (id=" + entitatId + ")");
+			log.debug("No s'ha trobat l'entitat (id=" + entitatId + ")");
 			throw new EntitatNotFoundException();
 		}
 		getScspHelper().organismoCesionarioDelete(esborrada.getCif());
@@ -111,7 +111,7 @@ public class EntitatServiceImpl implements EntitatService, ApplicationContextAwa
 	@Transactional(readOnly = true)
 	@Override
 	public List<EntitatDto> findAll() {
-		LOGGER.debug("Consulta de totes les entitats");
+		log.debug("Consulta de totes les entitats");
 		return dtoMappingHelper.getMapperFacade().mapAsList(
 				entitatRepository.findAll(
 						new Sort(Sort.Direction.ASC, "nom")),
@@ -128,7 +128,7 @@ public class EntitatServiceImpl implements EntitatService, ApplicationContextAwa
 			String tipus,
 			Pageable pageable, 
 			String unitatArrel) {
-		LOGGER.debug("Consulta d'entitats segons filtre (codi=" + codi + ", nom=" + nom + ""
+		log.debug("Consulta d'entitats segons filtre (codi=" + codi + ", nom=" + nom + ""
 				+ "cif=" + cif + " activa=" + activa + " tipus=" + tipus + ")");
 		
 		Page<Entitat> paginaEntitats = entitatRepository.findByFiltre(
@@ -157,7 +157,7 @@ public class EntitatServiceImpl implements EntitatService, ApplicationContextAwa
 	@Transactional(readOnly = true)
 	@Override
 	public EntitatDto findById(Long id) {
-		LOGGER.debug("Consulta de l'entitat (id=" + id + ")");
+		log.debug("Consulta de l'entitat (id=" + id + ")");
 		return dtoMappingHelper.getMapperFacade().map(
 				entitatRepository.findOne(id),
 				EntitatDto.class);
@@ -166,7 +166,7 @@ public class EntitatServiceImpl implements EntitatService, ApplicationContextAwa
 	@Transactional(readOnly = true)
 	@Override
 	public EntitatDto findByCodi(String codi) {
-		LOGGER.debug("Consulta de l'entitat (codi=" + codi + ")");
+		log.debug("Consulta de l'entitat (codi=" + codi + ")");
 		return dtoMappingHelper.getMapperFacade().map(
 				entitatRepository.findByCodi(codi),
 				EntitatDto.class);
@@ -175,7 +175,7 @@ public class EntitatServiceImpl implements EntitatService, ApplicationContextAwa
 	@Transactional(readOnly = true)
 	@Override
 	public EntitatDto findByCif(String cif) {
-		LOGGER.debug("Consulta de l'entitat (codi=" + cif + ")");
+		log.debug("Consulta de l'entitat (codi=" + cif + ")");
 		return dtoMappingHelper.getMapperFacade().map(
 				entitatRepository.findByCif(cif),
 				EntitatDto.class);
@@ -185,10 +185,10 @@ public class EntitatServiceImpl implements EntitatService, ApplicationContextAwa
 	@Transactional(rollbackFor = EntitatNotFoundException.class)
 	@Override
 	public EntitatDto update(EntitatDto modificada) throws EntitatNotFoundException{
-		LOGGER.debug("Actualitzant l'entitat (id=" + modificada.getId() + ") amb la informació: " + modificada);
+		log.debug("Actualitzant l'entitat (id=" + modificada.getId() + ") amb la informació: " + modificada);
 		Entitat entitat = entitatRepository.findOne(modificada.getId());
 		if (entitat == null) {
-			LOGGER.debug("No s'ha trobat l'entitat (id=" + modificada.getId() + ")");
+			log.debug("No s'ha trobat l'entitat (id=" + modificada.getId() + ")");
 			throw new EntitatNotFoundException();
 		}
 		modificada.setActiva(entitat.isActiva());
@@ -220,10 +220,10 @@ public class EntitatServiceImpl implements EntitatService, ApplicationContextAwa
 	@Transactional(rollbackFor = EntitatNotFoundException.class)
 	@Override
 	public EntitatDto updateActiva(Long id, boolean activa) throws EntitatNotFoundException {
-		LOGGER.debug("Desactivant l'entitat (id=" + id + ")");
+		log.debug("Desactivant l'entitat (id=" + id + ")");
 		Entitat entitat = entitatRepository.findOne(id);
 		if (entitat == null) {
-			LOGGER.debug("No s'ha trobat l'entitat (id=" + id + ")");
+			log.debug("No s'ha trobat l'entitat (id=" + id + ")");
 			throw new EntitatNotFoundException();
 		}
 		entitat.updateActiva(activa);
@@ -238,14 +238,14 @@ public class EntitatServiceImpl implements EntitatService, ApplicationContextAwa
 	@Transactional(rollbackFor = {EntitatNotFoundException.class, ServeiNotFoundException.class})
 	@Override
 	public void addServei(Long id, String serveiCodi) throws EntitatNotFoundException, ServeiNotFoundException {
-		LOGGER.debug("Afegint servei (codi=" + serveiCodi + ") a l'entitat (id=" + id + ")");
+		log.debug("Afegint servei (codi=" + serveiCodi + ") a l'entitat (id=" + id + ")");
 		Entitat entitat = entitatRepository.findOne(id);
 		if (entitat == null) {
-			LOGGER.debug("No s'ha trobat l'entitat (id=" + id + ")");
+			log.debug("No s'ha trobat l'entitat (id=" + id + ")");
 			throw new EntitatNotFoundException();
 		}
 		if (getScspHelper().getServicio(serveiCodi) == null) {
-			LOGGER.debug("No s'ha trobat el servei (codi=" + serveiCodi + ")");
+			log.debug("No s'ha trobat el servei (codi=" + serveiCodi + ")");
 			throw new ServeiNotFoundException();
 		}
 		EntitatServei entitatServei = EntitatServei.getBuilder(
@@ -258,15 +258,15 @@ public class EntitatServiceImpl implements EntitatService, ApplicationContextAwa
 	@Transactional(rollbackFor = {EntitatNotFoundException.class, ServeiNotFoundException.class})
 	@Override
 	public void removeServei(Long id, String serveiCodi) throws EntitatNotFoundException, EntitatServeiNotFoundException {
-		LOGGER.debug("Esborrant servei (codi=" + serveiCodi + ") de l'entitat (id=" + id + ")");
+		log.debug("Esborrant servei (codi=" + serveiCodi + ") de l'entitat (id=" + id + ")");
 		Entitat entitat = entitatRepository.findOne(id);
 		if (entitat == null) {
-			LOGGER.debug("No s'ha trobat l'entitat (id=" + id + ")");
+			log.debug("No s'ha trobat l'entitat (id=" + id + ")");
 			throw new EntitatNotFoundException();
 		}
 		EntitatServei entitatServei = entitatServeiRepository.findByEntitatIdAndServei(id, serveiCodi);
 		if (entitatServei == null) {
-			LOGGER.debug("L'entitat (id=" + id + ") no té cap servei (codi=" + serveiCodi + ")");
+			log.debug("L'entitat (id=" + id + ") no té cap servei (codi=" + serveiCodi + ")");
 			throw new EntitatServeiNotFoundException();
 		}
 		entitatServeiRepository.delete(entitatServei);
@@ -276,7 +276,7 @@ public class EntitatServiceImpl implements EntitatService, ApplicationContextAwa
 	@Transactional(readOnly = true)
 	@Override
 	public List<EntitatDto> findActivesAmbUsuariCodi(String usuariCodi) {
-		LOGGER.debug("Consulta de les entitats actives per a l'usuari (codi=" + usuariCodi + ")");
+		log.debug("Consulta de les entitats actives per a l'usuari (codi=" + usuariCodi + ")");
 		return dtoMappingHelper.getMapperFacade().mapAsList(
 				entitatRepository.findActivesAmbUsuariCodi(usuariCodi),
 				EntitatDto.class);
@@ -285,10 +285,10 @@ public class EntitatServiceImpl implements EntitatService, ApplicationContextAwa
 	@Transactional(readOnly = true)
 	@Override
 	public List<EntitatDto> findDisponiblesPerRedireccionsBus(String serveiCodi) throws ServeiNotFoundException {
-		LOGGER.debug("Consulta de les entitats disponibles per a configurar les redireccions del bus (serveiCodi=" + serveiCodi + ")");
+		log.debug("Consulta de les entitats disponibles per a configurar les redireccions del bus (serveiCodi=" + serveiCodi + ")");
 		Servicio servicio = getScspHelper().getServicio(serveiCodi);
 		if (servicio == null) {
-			LOGGER.debug("No s'ha trobat el servicio (codi=" + serveiCodi + ")");
+			log.debug("No s'ha trobat el servicio (codi=" + serveiCodi + ")");
 			throw new ServeiNotFoundException();
 		}
 		ServeiConfig serveiConfig = serveiConfigRepository.findByServei(serveiCodi);
@@ -355,5 +355,4 @@ public class EntitatServiceImpl implements EntitatService, ApplicationContextAwa
 		return scspHelper;
 	}
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(EntitatServiceImpl.class);
 }
