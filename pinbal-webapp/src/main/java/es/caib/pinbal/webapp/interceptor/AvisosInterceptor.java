@@ -31,10 +31,13 @@ public class AvisosInterceptor extends HandlerInterceptorAdapter {
 			HttpServletRequest request,
 			HttpServletResponse response,
 			Object handler) throws Exception {
-		
-		AvisHelper.findAvisos(
-				request,
-				avisService);
+		String restApiPrefix = request.getContextPath() + "/api/recobriment";
+		boolean isPeticioApi = request.getRequestURI().startsWith(restApiPrefix);
+		if (!isPeticioApi) {
+			AvisHelper.findAvisos(
+					request,
+					avisService);
+		}
 		return true;
 	}
 
