@@ -35,8 +35,8 @@ import es.caib.pinbal.client.recobriment.svdccaacpasws01.ClientSvdccaacpasws01.S
 public class Svdccaacpasws01Test {
 
 	private static final String URL_BASE = "http://localhost:8080/pinbal";
-	private static final String USUARI = "pblws";
-	private static final String CONTRASENYA = "pblws";
+	private static final String USUARI = "user";
+	private static final String CONTRASENYA = "passwd";
 	private static final String PETICION_SCSP_ID = "PBL0000000001292";
 	private static final boolean IS_JBOSS = true;
 
