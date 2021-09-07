@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <server>
-	<mbean code="org.jboss.varia.property.SystemPropertiesService" name="jboss:type=Service,name=NotibProperties">
+	<mbean code="org.jboss.varia.property.SystemPropertiesService" name="jboss:type=Service,name=PinbalProperties">
 		<attribute name="Properties">
 caib-crypto-keystore=/opt/webapps/keystores/caib_certs.jks
 caib-crypto-keystore-password=1234
