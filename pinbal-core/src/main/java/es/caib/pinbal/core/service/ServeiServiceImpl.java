@@ -1331,6 +1331,7 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 			dto.setPinbalDocumentObligatori(serveiConfig.isDocumentObligatori());
 			dto.setPinbalComprovarDocument(serveiConfig.isComprovarDocument());
 			dto.setActivaGestioXsd(serveiConfig.isActivaGestioXsd());
+			dto.setMaxPeticionsMinut(serveiConfig.getMaxPeticionsMinut());
 			dto.setAjuda(serveiConfig.getAjuda());
 			dto.setFitxerAjudaNom(serveiConfig.getFitxerAjudaNom());
 			dto.setFitxerAjudaMimeType(serveiConfig.getFitxerAjudaMimeType());

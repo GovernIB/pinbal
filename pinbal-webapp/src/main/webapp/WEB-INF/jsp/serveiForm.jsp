@@ -320,8 +320,8 @@ function showModalXsd(element) {
 						</div>
 					</div>
 					<pbl:inputText name="pinbalUnitatDir3" labelSize="1" textKey="servei.form.camp.pinbal.dir3"/>
+					<pbl:inputText name="maxPeticionsMinut" labelSize="1" inputSize="1" textKey="servei.form.camp.pinbal.max.minut"/>
 					<pbl:inputTextarea name="ajuda" labelSize="1" textKey="servei.form.camp.ajuda" />
-					
 					<c:set var="campPath" value="fitxerAjuda"/>				
 					<pbl:inputFile name="${campPath}" labelSize="1" inline="true" textKey="servei.form.camp.fitxer.ajuda"/>
 					<form:errors path="${campPath}" cssClass="help-block"/>

@@ -293,7 +293,9 @@ public interface ConsultaRepository extends JpaRepository<Consulta, Long> {
 
 	public List<Consulta> findByPareOrderByScspSolicitudIdAsc(Consulta pare);
 
-	public List<Consulta> findByEstatAndMultipleTrue(EstatTipus estat);
+	public List<Consulta> findByEstatAndMultipleOrderByIdAsc(
+			EstatTipus estat,
+			boolean multiple);
 
 	public List<Consulta> findByEstatAndJustificantEstatAndMultipleAndArxiuExpedientTancatOrderByIdAsc(
 			EstatTipus estat,

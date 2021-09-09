@@ -656,6 +656,11 @@ public interface ConsultaService {
 	public void autoTancarExpedientsPendents();
 
 	/**
+	 * Tasca automàtica per a enviar les peticions SCSP pendents.
+	 */
+	public void autoEnviarPeticionsPendents();
+
+	/**
 	 * Retorna si les peticions al SCSP s'han de fer en una sola passa o en
 	 * 3 passes per a optimitzar el temps que la transacció bloqueja les
 	 * connexions del pool.

@@ -4,12 +4,12 @@
 package es.caib.pinbal.core.service;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -21,7 +21,6 @@ import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
-import org.apache.commons.lang.time.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
@@ -55,7 +54,6 @@ import com.lowagie.text.pdf.PdfReader;
 
 import es.caib.pinbal.client.dadesobertes.DadesObertesRespostaConsulta;
 import es.caib.pinbal.core.dto.CarregaDto;
-import es.caib.pinbal.core.dto.CarregaDto.CarregaDetailedCountDto;
 import es.caib.pinbal.core.dto.ConsultaDto;
 import es.caib.pinbal.core.dto.ConsultaDto.Consentiment;
 import es.caib.pinbal.core.dto.ConsultaDto.DocumentTipus;
@@ -75,6 +73,8 @@ import es.caib.pinbal.core.helper.DtoMappingHelper;
 import es.caib.pinbal.core.helper.IntegracioHelper;
 import es.caib.pinbal.core.helper.JustificantHelper;
 import es.caib.pinbal.core.helper.PermisosHelper;
+import es.caib.pinbal.core.helper.PeticioScspEstadistiquesHelper;
+import es.caib.pinbal.core.helper.PeticioScspHelper;
 import es.caib.pinbal.core.helper.PluginHelper;
 import es.caib.pinbal.core.helper.PropertiesHelper;
 import es.caib.pinbal.core.helper.ServeiHelper;
@@ -88,14 +88,12 @@ import es.caib.pinbal.core.model.Procediment;
 import es.caib.pinbal.core.model.ProcedimentServei;
 import es.caib.pinbal.core.model.ServeiCamp;
 import es.caib.pinbal.core.model.ServeiCamp.ServeiCampTipus;
-import es.caib.pinbal.core.model.ServeiConfig;
 import es.caib.pinbal.core.repository.ConsultaRepository;
 import es.caib.pinbal.core.repository.EntitatRepository;
 import es.caib.pinbal.core.repository.EntitatUsuariRepository;
 import es.caib.pinbal.core.repository.ProcedimentRepository;
 import es.caib.pinbal.core.repository.ProcedimentServeiRepository;
 import es.caib.pinbal.core.repository.ServeiCampRepository;
-import es.caib.pinbal.core.repository.ServeiConfigRepository;
 import es.caib.pinbal.core.repository.UsuariRepository;
 import es.caib.pinbal.core.service.exception.AccesExternException;
 import es.caib.pinbal.core.service.exception.ConsultaNotFoundException;
@@ -140,8 +138,6 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 	@Autowired
 	private UsuariRepository usuariRepository;
 	@Autowired
-	private ServeiConfigRepository serveiConfigRepository;
-	@Autowired
 	private ServeiCampRepository serveiCampRepository;
 	@Autowired
 	private EntitatUsuariRepository entitatUsuariRepository;
@@ -150,20 +146,21 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 	private JustificantHelper justificantHelper;
 	@Autowired
 	private DtoMappingHelper dtoMappingHelper;
-	/*@Autowired
-	private TransaccioHelper transaccioHelper;*/
 	@Autowired
 	private UsuariHelper usuariHelper;
 	@Autowired
 	private ServeiHelper serveiHelper;
 	@Autowired
 	private PluginHelper pluginHelper;
+	@Autowired
+	private PeticioScspEstadistiquesHelper peticioScspEstadistiquesHelper;
+	@Autowired
+	private PeticioScspHelper peticioScspHelper;
+	@Autowired
+	private IntegracioHelper integracioHelper;
 
 	@Autowired
 	private MutableAclService aclService;
-	
-	@Autowired
-	private IntegracioHelper integracioHelper;
 
 	@Autowired
 	private PlatformTransactionManager transactionManager;
@@ -173,11 +170,6 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 	private ScspHelper scspHelper;
 
 	private Map<Long, Object> justificantLocks = new HashMap<Long, Object>();
-	private List<CarregaDto> carreguesAny;
-	private List<CarregaDto> carreguesMes;
-	private List<CarregaDto> carreguesDia;
-	private List<CarregaDto> carreguesHora;
-	private List<CarregaDto> carreguesMinut;
 
 	@Transactional(rollbackFor = {ProcedimentServeiNotFoundException.class, ServeiNotAllowedException.class, ConsultaScspException.class})
 	@Override
@@ -208,21 +200,6 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 		Consulta conslt = null;
 		try {
 			String idPeticion = getScspHelper().generarIdPeticion(consulta.getServeiCodi());
-		/*} catch (Exception ex) {
-			String errorDescripcio = "Error al generar identificador per a consulta (servei=" + consulta.getServeiCodi() + ", usuari=" + auth.getName() + "): " + ex.getMessage();
-			// Error al generar l'identificador
-			LOGGER.error(errorDescripcio, ex);
-			integracioHelper.addAccioError(
-					IntegracioHelper.INTCODI_SERVEIS_SCSP,
-					accioDescripcio,
-					accioParams,
-					IntegracioAccioTipusEnumDto.ENVIAMENT,
-					System.currentTimeMillis() - t0,
-					errorDescripcio,
-					ex);
-			throw new ScspException(ex.getMessage(), ex);
-		}
-		try {*/
 			String titularDocumentTipus = null;
 			if (consulta.getTitularDocumentTipus() != null) {
 				titularDocumentTipus = consulta.getTitularDocumentTipus().toString();
@@ -251,24 +228,16 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 					consulta.getDadesEspecifiques());
 			conslt.updateDadesEspecifiques(
 					dadesEspecifiquesToJson(consulta.getDadesEspecifiques()));
-			if (isEnviarConsultaServei(conslt)) {
+			if (peticioScspHelper.isEnviarConsultaServei(conslt)) {
 				conslt.updateEstat(EstatTipus.Processant);
-				List<Solicitud> solicituds = new ArrayList<Solicitud>();
-				solicituds.add(convertirEnSolicitud(consulta, procedimentServei));
-				ResultatEnviamentPeticio resultat = enviarPeticioScsp(
-						entitat.getId(),
-						consulta.getServeiCodi(),
-						idPeticion,
-						solicituds,
+				ResultatEnviamentPeticio resultat = peticioScspHelper.enviarPeticioScsp(
+						conslt,
+						Arrays.asList(peticioScspHelper.convertirEnSolicitud(conslt)),
 						true,
-						conslt.isRecobriment());
-				updateEstatConsulta(conslt, resultat);
+						conslt.isRecobriment(),
+						getScspHelper());
+				peticioScspHelper.updateEstatConsulta(conslt, resultat);
 				conslt.updateScspSolicitudId(resultat.getIdsSolicituds()[0]);
-				/*if (EstatTipus.Tramitada.equals(c.getEstat())) {
-					justificantHelper.generarCustodiarJustificantPendent(
-							c,
-							getScspHelper());
-				}*/
 				integracioHelper.addAccioOk(
 						IntegracioHelper.INTCODI_SERVEIS_SCSP,
 						accioDescripcio,
@@ -280,24 +249,15 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 			return dtoMappingHelper.getMapperFacade().map(
 					saved,
 					ConsultaDto.class);
-		/*} catch (Exception ex) {
-			String errorDescripcio = "Excepció al realitzar consulta SCSP (id=" + idPeticion + ", servei=" + consulta.getServeiCodi() + ", usuari=" + auth.getName() + ")" + ex.getMessage();
-			// Error al realitzar la petició (no s'arriba a enviar)
-			LOGGER.error(errorDescripcio, ex);
-			integracioHelper.addAccioError(
-					IntegracioHelper.INTCODI_SERVEIS_SCSP,
-					accioDescripcio,
-					accioParams,
-					IntegracioAccioTipusEnumDto.ENVIAMENT,
-					System.currentTimeMillis() - t0,
-					errorDescripcio,
-					ex);
-			throw new ScspException(ex.getMessage(), ex);
-		}*/
 		} catch (JsonProcessingException ex) {
 			LOGGER.error("Error al convertir les dades específiques a format JSON", ex);
 			throw new ConsultaScspGeneracioException(
 					"Error al convertir les dades específiques a format JSON",
+					ex);
+		} catch (IOException ex) {
+			LOGGER.error("Error al convertir les dades específiques des de format JSON", ex);
+			throw new ConsultaScspGeneracioException(
+					"Error al convertir les dades específiques des de format JSON",
 					ex);
 		} catch (ConsultaScspException ex) {
 			return processarConsultaScspException(
@@ -341,20 +301,6 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 				accioParams,
 				IntegracioAccioTipusEnumDto.ENVIAMENT,
 				System.currentTimeMillis() - t0);
-		/*} catch (Exception ex) {
-			String errorDescripcio = "Error al generar identificador per a consulta (servei=" + consulta.getServeiCodi() + ", usuari=" + auth.getName() + ")";
-			// Error al generar l'identificador
-			LOGGER.error(errorDescripcio, ex);
-			integracioHelper.addAccioError(
-					IntegracioHelper.INTCODI_SERVEIS_SCSP,
-					accioDescripcio,
-					accioParams,
-					IntegracioAccioTipusEnumDto.ENVIAMENT,
-					System.currentTimeMillis() - t0,
-					errorDescripcio,
-					ex);
-			throw new ScspException(ex.getMessage(), ex);
-		}*/
 		String titularDocumentTipus = null;
 		if (consulta.getTitularDocumentTipus() != null)
 			titularDocumentTipus = consulta.getTitularDocumentTipus().toString();
@@ -411,45 +357,24 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 					consulta.getDadesEspecifiques());
 			conslt.updateDadesEspecifiques(
 					dadesEspecifiquesToJson(consulta.getDadesEspecifiques()));
-		/*} catch (Exception ex) {
-			String errorDescripcio = "Error al processar dades específiques de la consulta (consultaId=" + consultaId + ")";
-			LOGGER.error(errorDescripcio, ex);
-			integracioHelper.addAccioError(
-					IntegracioHelper.INTCODI_SERVEIS_SCSP,
-					accioDescripcio,
-					accioParams,
-					IntegracioAccioTipusEnumDto.ENVIAMENT,
-					System.currentTimeMillis() - t0,
-					errorDescripcio,
-					ex);
-			throw new ScspException(ex.getMessage(), ex);
-		}*/
-			if (isEnviarConsultaServei(conslt)) {
+			if (peticioScspHelper.isEnviarConsultaServei(conslt)) {
 				conslt.updateEstat(EstatTipus.Processant);
-				List<Solicitud> solicituds = new ArrayList<Solicitud>();
-				solicituds.add(convertirEnSolicitud(consulta, procedimentServei));
-				enviarPeticioScsp(
-						procedimentServei.getProcediment().getEntitat().getId(),
-						consulta.getServeiCodi(),
-						conslt.getScspPeticionId(),
-						solicituds,
+				peticioScspHelper.enviarPeticioScsp(
+						conslt,
+						Arrays.asList(peticioScspHelper.convertirEnSolicitud(conslt)),
 						true,
-						conslt.isRecobriment());
+						conslt.isRecobriment(),
+						getScspHelper());
 			}
-			/*if (resultat.isError()) {
-				String error = "[" + resultat.getErrorCodi() + "] " + resultat.getErrorDescripcio();
-				transaccioHelper.updateErrorConsulta(consultaId, error);
-				Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-				LOGGER.error("Error retornat per la consulta SCSP (" +
-						"id=" + conslt.getScspPeticionId() + ", " +
-						"servei=" + consulta.getServeiCodi() + ", " +
-						"usuari=" + auth.getName() + "): " + error);
-				throw new ScspException(error);
-			}*/
 		} catch (JsonProcessingException ex) {
 			LOGGER.error("Error al convertir les dades específiques a format JSON", ex);
 			throw new ConsultaScspGeneracioException(
 					"Error al convertir les dades específiques a format JSON",
+					ex);
+		} catch (IOException ex) {
+			LOGGER.error("Error al convertir les dades específiques des de format JSON", ex);
+			throw new ConsultaScspGeneracioException(
+					"Error al convertir les dades específiques des de format JSON",
 					ex);
 		} catch (ConsultaScspException ex) {
 			processarConsultaScspException(
@@ -479,13 +404,8 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 			try {
 				ResultatEnviamentPeticio resultat = getScspHelper().recuperarResultatEnviamentPeticio(
 						consulta.getScspPeticionId());
-				updateEstatConsulta(consulta, resultat);
+				peticioScspHelper.updateEstatConsulta(consulta, resultat);
 				consulta.updateScspSolicitudId(resultat.getIdsSolicituds()[0]);
-				/*if (EstatTipus.Tramitada.equals(consulta.getEstat())) {
-					justificantHelper.generarCustodiarJustificantPendent(
-							consulta,
-							getScspHelper());
-				}*/
 				integracioHelper.addAccioOk(
 						IntegracioHelper.INTCODI_SERVEIS_SCSP,
 						accioDescripcio,
@@ -560,14 +480,13 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 					build();
 			conslt.updateEstat(EstatTipus.Pendent);
 			List<Solicitud> solicituds = convertirEnMultiplesSolicituds(consulta,procedimentServei);
-			ResultatEnviamentPeticio resultat = enviarPeticioScsp(
-					procedimentServei.getProcediment().getEntitat().getId(),
-					consulta.getServeiCodi(),
-					idPeticion,
+			ResultatEnviamentPeticio resultat = peticioScspHelper.enviarPeticioScsp(
+					conslt,
 					solicituds,
 					false,
-					conslt.isRecobriment());
-			updateEstatConsulta(conslt, resultat);
+					conslt.isRecobriment(),
+					getScspHelper());
+			peticioScspHelper.updateEstatConsulta(conslt, resultat);
 			Consulta saved = consultaRepository.save(conslt);
 			int solicitudIndex = 0;
 			for (Solicitud solicitud: solicituds) {
@@ -594,7 +513,7 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 						conslt).
 						build();
 				cs.updateScspSolicitudId(resultat.getIdsSolicituds()[solicitudIndex++]);
-				updateEstatConsulta(cs, resultat);
+				peticioScspHelper.updateEstatConsulta(cs, resultat);
 				consultaRepository.save(cs);
 			}
 			integracioHelper.addAccioOk(
@@ -606,20 +525,6 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 			return dtoMappingHelper.getMapperFacade().map(
 					saved,
 					ConsultaDto.class);
-		/*} catch (Exception ex) {
-			// Error al realitzar la petició (no s'arriba a enviar)
-			String errorDescripcio = "Excepció al realitzar consulta SCSP (id=" + idPeticion + ", servei=" + consulta.getServeiCodi() + ", usuari=" + auth.getName() + ")";
-			LOGGER.error(errorDescripcio, ex);
-			integracioHelper.addAccioError(
-					IntegracioHelper.INTCODI_SERVEIS_SCSP,
-					accioDescripcio,
-					accioParams,
-					IntegracioAccioTipusEnumDto.ENVIAMENT,
-					System.currentTimeMillis() - t0,
-					errorDescripcio,
-					ex);
-			throw new ScspException(ex.getMessage(), ex);
-		}*/
 		} catch (ConsultaScspException ex) {
 			return processarConsultaScspException(
 					ex,
@@ -716,20 +621,19 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 					getScspHelper().copiarDadesEspecifiquesRecobriment(
 							serveiCodi,
 							solicitud.getDadesEspecifiques(),
-							isGestioXsdActiva(serveiCodi)),
+							peticioScspHelper.isGestioXsdActiva(serveiCodi)),
 					procedimentServei);
 			List<Solicitud> solicituds = new ArrayList<Solicitud>();
 			solicituds.add(solicitudEnviar);
-			ResultatEnviamentPeticio resultat = enviarPeticioScsp(
-					entitat.getId(),
-					serveiCodi,
-					idPeticion,
+			ResultatEnviamentPeticio resultat = peticioScspHelper.enviarPeticioScsp(
+					conslt,
 					solicituds,
 					true,
-					conslt.isRecobriment());
+					conslt.isRecobriment(),
+					getScspHelper());
 			conslt.updateEstat(EstatTipus.Processant);
 			conslt.updateScspSolicitudId(resultat.getIdsSolicituds()[0]);
-			updateEstatConsulta(conslt, resultat);
+			peticioScspHelper.updateEstatConsulta(conslt, resultat);
 			Consulta saved = consultaRepository.save(conslt);
 			ConsultaDto resposta = dtoMappingHelper.getMapperFacade().map(
 					saved,
@@ -760,20 +664,6 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 					accioParams,
 					t0);
 		}
-		/*} catch (Exception ex) {
-			// Error al realitzar la petició (no s'arriba a enviar)
-			String errorDescripcio = "Excepció al realitzar consulta SCSP (id=" + idPeticion + ", servei=" + serveiCodi + ", usuari=" + auth.getName() + ")";
-			LOGGER.error(errorDescripcio, ex);
-			integracioHelper.addAccioError(
-					IntegracioHelper.INTCODI_SERVEIS_SCSP,
-					accioDescripcio,
-					accioParams,
-					IntegracioAccioTipusEnumDto.ENVIAMENT,
-					System.currentTimeMillis() - t0,
-					errorDescripcio,
-					ex);
-			throw new ScspException(ex.getMessage(), ex);
-		}*/
 	}
 
 	@Transactional(rollbackFor = {EntitatNotFoundException.class, ProcedimentNotFoundException.class, ProcedimentNotFoundException.class, AccesExternException.class, ServeiNotAllowedException.class, ConsultaScspException.class})
@@ -891,17 +781,16 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 					getScspHelper().copiarDadesEspecifiquesRecobriment(
 							procedimentServei.getServei(),
 							solicitud.getDadesEspecifiques(),
-							isGestioXsdActiva(procedimentServei.getServei())),
+							peticioScspHelper.isGestioXsdActiva(procedimentServei.getServei())),
 					procedimentServei);
 			List<Solicitud> solicituds = new ArrayList<Solicitud>();
 			solicituds.add(solicitudEnviar);
-			enviarPeticioScsp(
-					entitat.getId(),
-					procedimentServei.getServei(),
-					consulta.getScspPeticionId(),
+			peticioScspHelper.enviarPeticioScsp(
+					consulta,
 					solicituds,
 					true,
-					consulta.isRecobriment());
+					consulta.isRecobriment(),
+					getScspHelper());
 			integracioHelper.addAccioOk(
 					IntegracioHelper.INTCODI_SERVEIS_SCSP,
 					accioDescripcio,
@@ -936,23 +825,14 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 			try {
 				ResultatEnviamentPeticio resultat = getScspHelper().recuperarResultatEnviamentPeticio(
 						consulta.getScspPeticionId());
-				updateEstatConsulta(consulta, resultat);
+				peticioScspHelper.updateEstatConsulta(consulta, resultat);
 				consulta.updateScspSolicitudId(resultat.getIdsSolicituds()[0]);
-				/*if (EstatTipus.Tramitada.equals(consulta.getEstat())) {
-					justificantHelper.generarCustodiarJustificantPendent(
-							consulta,
-							getScspHelper());
-				}*/
 				integracioHelper.addAccioOk(
 						IntegracioHelper.INTCODI_SERVEIS_SCSP,
 						accioDescripcio,
 						accioParams,
 						IntegracioAccioTipusEnumDto.ENVIAMENT,
 						System.currentTimeMillis() - t0);
-			/*} catch (Exception ex) {
-				LOGGER.error("Error al obtenir l'estat de la petició corresponent a la consulta (consultaId=" + consultaId + ")", ex);
-				throw new ScspException(ex.getMessage(), ex);
-			}*/
 			} catch (Exception ex) {
 				String errorDescripcio = "Error al obtenir l'estat de la petició corresponent a la consulta (consultaId=" + consultaId + ")";
 				LOGGER.error(errorDescripcio, ex);
@@ -1063,18 +943,17 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 						getScspHelper().copiarDadesEspecifiquesRecobriment(
 								serveiCodi,
 								solicitud.getDadesEspecifiques(),
-								isGestioXsdActiva(serveiCodi)),
+								peticioScspHelper.isGestioXsdActiva(serveiCodi)),
 						procedimentServei);
 				solicitudsEnviar.add(solicitudEnviar);
 			}
-			ResultatEnviamentPeticio resultat = enviarPeticioScsp(
-					entitat.getId(),
-					serveiCodi,
-					idPeticion,
+			ResultatEnviamentPeticio resultat = peticioScspHelper.enviarPeticioScsp(
+					conslt,
 					solicitudsEnviar,
 					true,
-					conslt.isRecobriment());
-			updateEstatConsulta(conslt, resultat);
+					conslt.isRecobriment(),
+					getScspHelper());
+			peticioScspHelper.updateEstatConsulta(conslt, resultat);
 			Consulta saved = consultaRepository.save(conslt);
 			int solicitudIndex = 0;
 			for (RecobrimentSolicitudDto solicitud: solicituds) {
@@ -1101,7 +980,7 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 						conslt).
 						build();
 				cs.updateScspSolicitudId(resultat.getIdsSolicituds()[solicitudIndex++]);
-				updateEstatConsulta(cs, resultat);
+				peticioScspHelper.updateEstatConsulta(cs, resultat);
 				consultaRepository.save(cs);
 			}
 			ConsultaDto resposta = dtoMappingHelper.getMapperFacade().map(
@@ -1113,7 +992,6 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 				resposta.setRespostaEstadoCodigo(resultat.getErrorCodi());
 				resposta.setRespostaEstadoError(resultat.getErrorDescripcio());
 			}
-			
 			integracioHelper.addAccioOk(
 					IntegracioHelper.INTCODI_SERVEIS_SCSP,
 					accioDescripcio,
@@ -1122,20 +1000,6 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 					System.currentTimeMillis() - t0);
 			
 			return resposta;
-		/*} catch (Exception ex) {
-			// Error al realitzar la petició (no s'arriba a enviar)
-			String errorDescripcio = "Excepció al realitzar consulta SCSP (id=" + idPeticion + ", servei=" + serveiCodi + ", usuari=" + auth.getName() + ")";
-			LOGGER.error(errorDescripcio, ex);
-			integracioHelper.addAccioError(
-					IntegracioHelper.INTCODI_SERVEIS_SCSP,
-					accioDescripcio,
-					accioParams,
-					IntegracioAccioTipusEnumDto.ENVIAMENT,
-					System.currentTimeMillis() - t0,
-					errorDescripcio,
-					ex);
-			throw new ScspException(ex.getMessage(), ex);
-		}*/
 		} catch (ConsultaScspException ex) {
 			return processarConsultaScspException(
 					ex,
@@ -1716,47 +1580,7 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 	@Override
 	public List<CarregaDto> findEstadistiquesCarrega() {
 		LOGGER.debug("Consultant estadístiques de càrrega");
-		initEstadistiquesCarrega();
-		List<CarregaDto> carregues = new ArrayList<CarregaDto>();
-		for (CarregaDto carregaAny: carreguesAny) {
-			CarregaDto carrega = new CarregaDto(
-					0,
-					0,
-					carregaAny.getEntitatId(),
-					carregaAny.getEntitatCodi(),
-					carregaAny.getEntitatNom(),
-					carregaAny.getEntitatCif(),
-					carregaAny.getDepartamentNom(),
-					carregaAny.getProcedimentServeiId(),
-					carregaAny.getProcedimentCodi(),
-					carregaAny.getProcedimentNom(),
-					carregaAny.getServeiCodi(),
-					carregaAny.getServeiDescripcio());
-			long countWebMes = getCountFromCarregues(carrega, carreguesMes, true);
-			long countWebDia = getCountFromCarregues(carrega, carreguesDia, true);
-			long countWebHora = getCountFromCarregues(carrega, carreguesHora, true);
-			long countWebMinut = getCountFromCarregues(carrega, carreguesMinut, true);
-			carrega.setDetailedWebCount(
-					new CarregaDetailedCountDto(
-							carregaAny.getCountWeb(),
-							countWebMes,
-							countWebDia,
-							countWebHora,
-							countWebMinut));
-			long countRecobrimentMes = getCountFromCarregues(carrega, carreguesMes, false);
-			long countRecobrimentDia = getCountFromCarregues(carrega, carreguesDia, false);
-			long countRecobrimentHora = getCountFromCarregues(carrega, carreguesHora, false);
-			long countRecobrimentMinut = getCountFromCarregues(carrega, carreguesMinut, false);
-			carrega.setDetailedRecobrimentCount(
-					new CarregaDetailedCountDto(
-							carregaAny.getCountRecobriment(),
-							countRecobrimentMes,
-							countRecobrimentDia,
-							countRecobrimentHora,
-							countRecobrimentMinut));
-			carregues.add(carrega);
-		}
-		return carregues;
+		return peticioScspEstadistiquesHelper.consultaEstadistiques();
 	}
 
 	@Transactional(readOnly = true)
@@ -1922,17 +1746,17 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 	public void autoRevisarEstatPeticionsMultiplesPendents() {
 		LOGGER.debug("Iniciant revisió automàtica dels estats de les peticions múltiples pendents de forma automàtica");
 		long t0 = System.currentTimeMillis();
-		List<Consulta> pendents = consultaRepository.findByEstatAndMultipleTrue(EstatTipus.Processant);
+		List<Consulta> pendents = consultaRepository.findByEstatAndMultipleOrderByIdAsc(EstatTipus.Processant, true);
 		for (final Consulta pendent: pendents) {
 			TransactionTemplate transactionTemplate = new TransactionTemplate(transactionManager);
 			transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 				protected void doInTransactionWithoutResult(TransactionStatus status) {
 					try {
 						ResultatEnviamentPeticio resultat = getScspHelper().recuperarResultatEnviamentPeticio(pendent.getScspPeticionId());
-						updateEstatConsulta(pendent, resultat);
+						peticioScspHelper.updateEstatConsulta(pendent, resultat);
 						consultaRepository.saveAndFlush(pendent);
 						for (Consulta fill: pendent.getFills()) {
-							updateEstatConsulta(fill, resultat);
+							peticioScspHelper.updateEstatConsulta(fill, resultat);
 							consultaRepository.saveAndFlush(fill);
 							/*if (EstatTipus.Tramitada.equals(filla.getEstat())) {
 								justificantHelper.generarCustodiarJustificantPendent(
@@ -2044,6 +1868,17 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 	}
 
 	@Override
+	public void autoEnviarPeticionsPendents() {
+		LOGGER.debug("Iniciant enviament automàtic de les peticions pendents");
+		long t0 = System.currentTimeMillis();
+		List<Consulta> pendents = consultaRepository.findByEstatAndMultipleOrderByIdAsc(EstatTipus.Pendent, true);
+		for (final Consulta pendent: pendents) {
+			peticioScspHelper.enviarPeticioScspPendent(pendent.getId(), scspHelper);
+		}
+		LOGGER.debug("Finalitzat l'enviament automàtic de les peticions pendents (" + (System.currentTimeMillis() - t0) + "ms)");
+	}
+
+	@Override
 	public boolean isOptimitzarTransaccionsNovaConsulta() {
 		LOGGER.debug("Consultant optimització transaccions en nova consulta");
 		return PropertiesHelper.getProperties().getAsBoolean("es.caib.pinbal.optimitzar.transaccions.nova.consulta");
@@ -2088,111 +1923,6 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 	}
 
 
-
-	private ResultatEnviamentPeticio enviarPeticioScsp(
-			Long entitatId,
-			String serveiCodi,
-			String idPeticion,
-			List<Solicitud> solicituds,
-			boolean sincrona,
-			boolean recobriment) throws ConsultaScspGeneracioException, ConsultaScspComunicacioException {
-		initEstadistiquesCarrega();
-		if (solicituds != null && solicituds.size() > 0) {
-			Solicitud solicitud = solicituds.get(0);
-			afegirConsultaEstadistiquesCarrega(
-					entitatId,
-					solicitud.getUnitatTramitadora(),
-					solicitud.getProcedimentCodi(),
-					solicitud.getServeiCodi(),
-					recobriment,
-					carreguesAny);
-			afegirConsultaEstadistiquesCarrega(
-					entitatId,
-					solicitud.getUnitatTramitadora(),
-					solicitud.getProcedimentCodi(),
-					solicitud.getServeiCodi(),
-					recobriment,
-					carreguesMes);
-			afegirConsultaEstadistiquesCarrega(
-					entitatId,
-					solicitud.getUnitatTramitadora(),
-					solicitud.getProcedimentCodi(),
-					solicitud.getServeiCodi(),
-					recobriment,
-					carreguesDia);
-			afegirConsultaEstadistiquesCarrega(
-					entitatId,
-					solicitud.getUnitatTramitadora(),
-					solicitud.getProcedimentCodi(),
-					solicitud.getServeiCodi(),
-					recobriment,
-					carreguesHora);
-			afegirConsultaEstadistiquesCarrega(
-					entitatId,
-					solicitud.getUnitatTramitadora(),
-					solicitud.getProcedimentCodi(),
-					solicitud.getServeiCodi(),
-					recobriment,
-					carreguesMinut);
-		}
-		boolean gestioXsdActiva = isGestioXsdActiva(serveiCodi);
-		if (sincrona) {
-			return getScspHelper().enviarPeticionSincrona(
-					idPeticion,
-					solicituds,
-					gestioXsdActiva);
-		} else {
-			return getScspHelper().enviarPeticionAsincrona(
-					idPeticion,
-					solicituds,
-					gestioXsdActiva);
-		}
-	}
-
-	private void initEstadistiquesCarrega() {
-		if (carreguesAny == null) {
-			carreguesAny = Collections.synchronizedList(
-					consultaRepository.findCarrega(DateUtils.truncate(new Date(), Calendar.YEAR)));
-		}
-		if (carreguesMes == null) {
-			carreguesMes = Collections.synchronizedList(
-					consultaRepository.findCarrega(DateUtils.truncate(new Date(), Calendar.MONTH)));
-		}
-		if (carreguesDia == null) {
-			carreguesDia = Collections.synchronizedList(
-					consultaRepository.findCarrega(DateUtils.truncate(new Date(), Calendar.DAY_OF_MONTH)));
-		}
-		if (carreguesHora == null) {
-			carreguesHora = Collections.synchronizedList(
-					consultaRepository.findCarrega(DateUtils.truncate(new Date(), Calendar.HOUR_OF_DAY)));
-		}
-		if (carreguesMinut == null) {
-			carreguesMinut = Collections.synchronizedList(
-					consultaRepository.findCarrega(DateUtils.truncate(new Date(), Calendar.MINUTE)));
-		}
-	}
-
-	private void afegirConsultaEstadistiquesCarrega(
-			Long entitatId,
-			String departamentNom,
-			String procedimentCodi,
-			String serveiCodi,
-			boolean recobriment,
-			List<CarregaDto> carregues) {
-		for (CarregaDto carrega: carregues) {
-			if (	carrega.getEntitatId().equals(entitatId) &&
-					carrega.getDepartamentNom().equals(departamentNom) &&
-					carrega.getProcedimentCodi().equals(procedimentCodi) &&
-					carrega.getServeiCodi().equals(serveiCodi)) {
-				if (!recobriment) {
-					carrega.setCountWeb(carrega.getCountWeb() + 1);
-				} else {
-					carrega.setCountRecobriment(carrega.getCountRecobriment() + 1);
-				}
-				break;
-			}
-		}
-	}
 
 	private InformeGeneralEstatDto toInformeGeneralEstatDto(ProcedimentServei servei, List<Object[]> consultes) {
 		InformeGeneralEstatDto dto = new InformeGeneralEstatDto();
@@ -2494,7 +2224,7 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 		}
 	}
 
-	private Solicitud convertirEnSolicitud(
+	/*private Solicitud convertirEnSolicitud(
 			ConsultaDto consulta,
 			ProcedimentServei procedimentServei) {
 		Solicitud solicitud = new Solicitud();
@@ -2526,7 +2256,7 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 		solicitud.setExpedientId(consulta.getExpedientId());
 		solicitud.setDadesEspecifiquesMap(consulta.getDadesEspecifiques());
 		return solicitud;
-	}
+	}*/
 	
 	private Solicitud convertirEnSolicitud(
 			Entitat entitat,
@@ -2570,7 +2300,10 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 		solicitud.setFinalitat(finalitat);
 		solicitud.setConsentiment(
 				es.caib.pinbal.scsp.Consentiment.valueOf(consentiment.toString()));
-		setUnitatTramitadoraSolicitud(solicitud, procediment, departamentNom);
+		peticioScspHelper.setUnitatTramitadoraSolicitud(
+				solicitud,
+				procediment,
+				departamentNom);
 		solicitud.setUnitatTramitadoraCodi(unitatTramitadoraCodi);
 		solicitud.setExpedientId(expedientId);
 		solicitud.setDadesEspecifiquesElement(dadesEspecifiques);
@@ -2597,7 +2330,10 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 				solicitud.setConsentiment(
 						es.caib.pinbal.scsp.Consentiment.valueOf(
 								consulta.getConsentiment().toString()));
-				setUnitatTramitadoraSolicitud(solicitud, procediment, consulta.getDepartamentNom());
+				peticioScspHelper.setUnitatTramitadoraSolicitud(
+						solicitud,
+						procediment,
+						consulta.getDepartamentNom());
 				String titularDocumentTipus = getValorCampPeticioMultiple(
 						"DatosGenericos/Titular/TipoDocumentacion",
 						consulta.getCampsPeticioMultiple(),
@@ -2656,19 +2392,6 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 			}
 		}
 	}
-
-	private void setUnitatTramitadoraSolicitud(Solicitud solicitud, Procediment procediment, String defaultUnitatTramitadora) {
-		ServeiConfig serveiConfig = serveiConfigRepository.findByServei(solicitud.getServeiCodi());
-		if (serveiConfig.isPinbalUnitatDir3FromEntitat()) {
-			solicitud.setUnitatTramitadoraCodi(procediment.getEntitat().getUnitatArrel());
-		} else if(serveiConfig.getPinbalUnitatDir3() != null && !serveiConfig.getPinbalUnitatDir3().isEmpty()) {
-			solicitud.setUnitatTramitadoraCodi(serveiConfig.getPinbalUnitatDir3());
-		} else if (procediment.getOrganGestor() != null) {
-			solicitud.setUnitatTramitadoraCodi(procediment.getOrganGestor().getCodi());
-		}
-		solicitud.setUnitatTramitadora(defaultUnitatTramitadora);
-	}
-		
 
 	private void processarDadesEspecifiquesSegonsCamps(
 			String serveiCodi,
@@ -2761,31 +2484,6 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 		return valor;
 	}
 
-	private void updateEstatConsulta(
-			Consulta consulta,
-			ResultatEnviamentPeticio resultat) {
-		if (resultat.isError()) {
-			updateEstatConsultaError(
-					consulta,
-					"[" + resultat.getErrorCodi() + "] " + resultat.getErrorDescripcio());
-		} else if ("0001".equals(resultat.getEstatCodi())) {
-			consulta.updateEstat(EstatTipus.Pendent);
-		} else if ("0002".equals(resultat.getEstatCodi())) {
-			consulta.updateEstat(EstatTipus.Processant);
-		} else if ("0003".equals(resultat.getEstatCodi())) {
-			consulta.updateEstat(EstatTipus.Tramitada);
-		} else if ("0004".equals(resultat.getEstatCodi())) {
-			consulta.updateEstat(EstatTipus.Processant);
-		}
-	}
-
-	private void updateEstatConsultaError(
-			Consulta consulta,
-			String error) {
-		consulta.updateEstat(EstatTipus.Error);
-		consulta.updateEstatError(error);
-	}
-
 	private Date configurarDataFiPerFiltre(Date dataFi) {
 		if (dataFi == null)
 			return null;
@@ -2817,48 +2515,6 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 		}
 		Arrays.sort(indexes);
 		return indexes;
-	}
-
-	private long getCountFromCarregues(
-			CarregaDto carrega,
-			List<CarregaDto> carregues,
-			boolean web) {
-		int index = carregues.indexOf(carrega);
-		if (index != -1) {
-			CarregaDto carregaTrobada = carregues.get(index);
-			return web ? carregaTrobada.getCountWeb() : carregaTrobada.getCountRecobriment();
-		} else {
-			return 0;
-		}
-	}
-
-	/* Emmagatzema el comptador de peticions fetes dins linterval actual per a cada servei */
-	private Map<String, Integer> consultaServeiCount = new HashMap<String, Integer>();
-	/* Emmagatzema l'inici de l'interval actual per a cada servei */
-	private Map<String, Date> consultaIntervalStart = new HashMap<String, Date>();
-	/* Retorna true si s'ha de continuar l'enviament de la consulta, fals en cas contrari. */
-	private boolean isEnviarConsultaServei(Consulta consulta) {
-		String serveiCodi = consulta.getProcedimentServei().getServei();
-		ServeiConfig serveiConfig = serveiConfigRepository.findByServei(serveiCodi);
-		if (serveiConfig.getMaxPeticionsMinut() != null) {
-			Integer count = consultaServeiCount.get(serveiCodi);
-			if (count != null) {
-				Date intervalStart = consultaIntervalStart.get(serveiCodi);
-				Calendar now = Calendar.getInstance();
-				Calendar intervalStartCal = Calendar.getInstance();
-				intervalStartCal.setTime(intervalStart);
-				long millisBetweenDates = now.getTime().getTime() - intervalStart.getTime();
-				boolean mateixMinut = millisBetweenDates < 60 * 1000 && intervalStartCal.get(Calendar.MINUTE) == now.get(Calendar.MINUTE);
-				if (mateixMinut) {
-					boolean isMaxPeticionsEnviades = count >= serveiConfig.getMaxPeticionsMinut();
-					consultaServeiCount.put(serveiCodi, count++);
-					return !isMaxPeticionsEnviades;
-				}
-			}
-			consultaIntervalStart.put(serveiCodi, new Date());
-			consultaServeiCount.put(serveiCodi, new Integer(1));
-		}
-		return true;
 	}
 
 	private boolean propertiesCopiades = false;
@@ -2907,7 +2563,7 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 			} else {
 				error = ex.getMessage();
 			}
-			updateEstatConsultaError(
+			peticioScspHelper.updateEstatConsultaError(
 					conslt,
 					error);
 			Consulta saved = consultaRepository.save(conslt);
@@ -2927,17 +2583,9 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 		}
 	}
 
-	private boolean isGestioXsdActiva(String serveiCodi) {
-		ServeiConfig serveiConfig = serveiConfigRepository.findByServei(serveiCodi);
-		return serveiConfig != null && serveiConfig.isActivaGestioXsd();
-	}
-
 	private String dadesEspecifiquesToJson(Map<String, Object> dadesEspecifiques) throws JsonProcessingException {
 		return new ObjectMapper().writeValueAsString(dadesEspecifiques);
 	}
-	/*private Map<String, Object> dadesEspecifiquesFromJson(String dadesEspecifiques) throws JsonParseException, JsonMappingException, IOException {
-		return new ObjectMapper().readValue(dadesEspecifiques, Map.class);
-	}*/
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(ConsultaServiceImpl.class);
 
