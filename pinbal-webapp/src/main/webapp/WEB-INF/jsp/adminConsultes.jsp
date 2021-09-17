@@ -148,6 +148,7 @@
 					<th data-data="serveiDescripcio"><spring:message code="admin.consulta.list.taula.servei" /></th>
 					<th data-data="estat"><spring:message code="admin.consulta.list.taula.estat" /></th>
 					<th data-data="id"></th>
+					<th data-data="error" data-visible="false"></th>
 				</tr>
 			</thead>
 		</table>
@@ -205,7 +206,7 @@
 							var template = $('#template-estat').html();
 							row['icon-status'] = '';
 							if (row.estat=='Error'){
-								row['icon-status'] = '<i class="fas fa-exclamation-triangle"></i>';
+								row['icon-status'] = '<i class="fas fa-exclamation-triangle" title="' + row.error + '"></i>';
 
 							}else if(row.estat=='Pendent'){
 								row['icon-status'] = '<i class="fas fa-bookmark"></i>';

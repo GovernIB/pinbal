@@ -135,6 +135,7 @@ $(document).ready(function() {
 				<th data-data="serveiDescripcio"><spring:message code="consulta.list.taula.servei" /></th>
 				<th><spring:message code="consulta.list.taula.titular.nom" /></th>		
 				<th data-data="estat"><spring:message code="consulta.list.taula.estat" /></th>
+				<th data-data="error" data-visible="false"></th>
 				<th data-data="id"></th>
 			</tr>
 		</thead>
@@ -177,7 +178,7 @@ $(document).ready(function() {
 						var template = $('#template-estat').html();
 						row['icon-status'] = '';
 						if (row.estat=='Error'){
-							row['icon-status'] = '<i class="fas fa-exclamation-triangle"></i>';
+							row['icon-status'] = '<i class="fas fa-exclamation-triangle" title="' + row.error + '"></i>';
 
 						}else if(row.estat=='Pendent'){
 							row['icon-status'] = '<i class="fas fa-bookmark"></i>';

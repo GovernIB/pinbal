@@ -110,6 +110,7 @@ table.dataTable thead > tr.selectable > :first-child, table.dataTable tbody > tr
 					<th data-data="titularNomSencer"><spring:message code="consulta.list.taula.titular.nom" /></th>
 					<th data-data="titularDocumentAmbTipus"><spring:message code="consulta.list.taula.titular.document" /></th>				
 					<th data-data="estat"><spring:message code="consulta.list.taula.estat" /></th>
+					<th data-data="error" data-visible="false"></th>
 					<th data-data="id"></th>
 					<th data-data="justificantEstat"></th>
 					<th data-data="justificantError"></th>
@@ -191,7 +192,7 @@ $(document).ready(function() {
 						var template = $('#template-estat').html();
 						row['icon-status'] = '';
 						if (row.estat=='Error') {
-							row['icon-status'] = '<i class="fas fa-exclamation-triangle"></i>';
+							row['icon-status'] = '<i class="fas fa-exclamation-triangle" title="' + row.error + '"></i>';
 						} else if(row.estat=='Pendent') {
 							row['icon-status'] = '<i class="fas fa-bookmark"></i>';
 						} else if(row.estat=='Processant') {
