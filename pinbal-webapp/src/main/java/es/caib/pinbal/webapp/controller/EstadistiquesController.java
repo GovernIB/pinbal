@@ -200,25 +200,25 @@ public class EstadistiquesController {
 					entitat);
 		}
 		if (command.getEntitatId() != null) {
-			if (command.getEntitatId() != -1) {
-				model.addAttribute(
-						"procediments",
-						procedimentService.findAmbEntitat(command.getEntitatId()));
-				if (command.getProcediment() != null)
-					model.addAttribute(
-							"serveis",
-							serveiService.findAmbEntitatIProcediment(
-									command.getEntitatId(),
-									command.getProcediment()));
-				else
-					model.addAttribute(
-							"serveis",
-							serveiService.findAmbEntitat(command.getEntitatId()));
-			} else {
-				model.addAttribute(
-						"serveis",
-						serveiService.findActius());
-			}
+//			if (command.getEntitatId() != -1) {
+//				model.addAttribute(
+//						"procediments",
+//						procedimentService.findAmbEntitat(command.getEntitatId()));
+//				if (command.getProcediment() != null)
+//					model.addAttribute(
+//							"serveis",
+//							serveiService.findAmbEntitatIProcediment(
+//									command.getEntitatId(),
+//									command.getProcediment()));
+//				else
+//					model.addAttribute(
+//							"serveis",
+//							serveiService.findAmbEntitat(command.getEntitatId()));
+//			} else {
+//				model.addAttribute(
+//						"serveis",
+//						serveiService.findActius());
+//			}
 			EstadistiquesFiltreDto filtre = EstadistiquesFiltreCommand.asDto(command);
 			if (command.getEntitatId() == -1) {
 				filtre.setEntitatId(null);

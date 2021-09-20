@@ -130,18 +130,29 @@ $(document).ready(function() {
 			<form:hidden path="entitatId"/>
 			<div class="row">
 				<div class="col-md-3">
-					<pbl:inputSelect name="procediment" inline="true" placeholderKey="estadistiques.list.filtre.procediment"
-						optionItems="${procediments}"  
-						optionValueAttribute="id"  
-						optionTextAttribute="nom"  
-						emptyOption="true"/>
+					<c:url value="/procedimentajax/procediment" var="urlConsultaInicialProcediments"/>
+					<c:url value="/procedimentajax/procediment" var="urlConsultaLlistatProcediments"/>
+					<pbl:inputSuggest 
+	 					name="procediment"  
+	 					urlConsultaInicial="${urlConsultaInicialProcediments}"
+	 					urlConsultaLlistat="${urlConsultaLlistatProcediments}"
+	 					placeholderKey="estadistiques.list.filtre.procediment"
+	 					suggestValue="id"
+	 					suggestText="nomAmbCodi"
+	 					inline="true"/>	
 				</div>
 				<div class="col-md-3">
-					<pbl:inputSelect name="servei"  inline="true" placeholderKey="estadistiques.list.filtre.servei" 
- 								 optionItems="${serveis}"  
- 								 optionValueAttribute="codi" 
- 								 optionTextAttribute="descripcio" 
- 								 emptyOption="true"/> 
+ 					<c:url value="/serveiajax/servei" var="urlConsultaInicialServeis"/>
+					<c:url value="/serveiajax/servei" var="urlConsultaLlistatServeis"/>
+					<c:set var="procedimentId" value="$('#procediment').find(':selected')" />
+					<pbl:inputSuggest 
+						name="servei"  
+						urlConsultaInicial="${urlConsultaInicialServeis}"
+						urlConsultaLlistat="${urlConsultaLlistatServeis}"
+						placeholderKey="estadistiques.list.filtre.servei"
+						suggestValue="id"
+						suggestText="descripcioAmbCodi"
+						inline="true" />	
 				</div>			
 				<div class="col-md-3">
 					<pbl:inputSelect name="estat"  inline="true" placeholderKey="estadistiques.list.filtre.estat"

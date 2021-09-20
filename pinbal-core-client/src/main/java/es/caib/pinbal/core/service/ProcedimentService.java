@@ -62,6 +62,22 @@ public interface ProcedimentService {
 	public List<ProcedimentDto> findAmbEntitat(Long entitatId) throws EntitatNotFoundException;
 
 	/**
+	 * Llistat amb els procediments d'una entitat.
+	 * 
+	 * Selecciona les que tenen el patró espedificat al parametre de filtre al nom o al codi.
+	 * 
+	 * @param entitatId
+	 *            Atribut id de l'entitat.
+	 * @param filtre
+	 *            Paràmetre de filtre 
+	 * @return Un llistat de procediments.
+	 * @throws EntitatNotFoundException
+	 *             Si no s'ha trobat cap entitat amb l'id especificat.
+	 */
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_REPRES') or hasRole('ROLE_AUDIT') or hasRole('ROLE_SUPERAUD')")
+	public List<ProcedimentDto> findAmbEntitat(Long entitatId, String filtre) throws EntitatNotFoundException;
+	
+	/**
 	 * Consulta els procediments segons el filtre.
 	 * 
 	 * @param entitatId

@@ -90,6 +90,12 @@ public class ServeiServiceBean implements ServeiService {
 	public List<ServeiDto> findActius() {
 		return delegate.findActius();
 	}
+	
+	@Override
+	@RolesAllowed({"PBL_ADMIN", "PBL_REPORT"})
+	public List<ServeiDto> findActius(String filtre) {
+		return delegate.findActius(filtre);
+	}
 
 	@Override
 	@RolesAllowed("PBL_ADMIN")
@@ -117,6 +123,13 @@ public class ServeiServiceBean implements ServeiService {
 			throws EntitatNotFoundException {
 		return delegate.findAmbEntitat(entitatId);
 	}
+	
+	@Override
+	@RolesAllowed({"PBL_ADMIN", "PBL_REPRES", "PBL_AUDIT", "PBL_SUPERAUD"})
+	public List<ServeiDto> findAmbEntitat(Long entitatId, String filtre)
+			throws EntitatNotFoundException {
+		return delegate.findAmbEntitat(entitatId, filtre);
+	}
 
 	@Override
 	@RolesAllowed({"PBL_ADMIN", "PBL_REPRES", "PBL_AUDIT", "PBL_SUPERAUD"})
@@ -124,6 +137,15 @@ public class ServeiServiceBean implements ServeiService {
 			Long entitatId,
 			Long procedimentId) throws EntitatNotFoundException, ProcedimentNotFoundException {
 		return delegate.findAmbEntitatIProcediment(entitatId, procedimentId);
+	}
+	
+	@Override
+	@RolesAllowed({"PBL_ADMIN", "PBL_REPRES", "PBL_AUDIT", "PBL_SUPERAUD"})
+	public List<ServeiDto> findAmbEntitatIProcediment(
+			Long entitatId,
+			Long procedimentId,
+			String filtre) throws EntitatNotFoundException, ProcedimentNotFoundException {
+		return delegate.findAmbEntitatIProcediment(entitatId, procedimentId, filtre);
 	}
 
 	@Override

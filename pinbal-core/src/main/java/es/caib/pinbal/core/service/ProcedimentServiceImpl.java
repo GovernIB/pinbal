@@ -127,6 +127,20 @@ public class ProcedimentServiceImpl implements ProcedimentService {
 				procedimentRepository.findByEntitatOrderByNomAsc(entitat),
 				ProcedimentDto.class);
 	}
+	
+	@Transactional(readOnly = true)
+	@Override
+	public List<ProcedimentDto> findAmbEntitat(Long entitatId, String filtre) throws EntitatNotFoundException {
+		log.debug("Cercant els procediments de l'entitat (id=" + entitatId + ") y filtre: " + filtre);
+		Entitat entitat = entitatRepository.findOne(entitatId);
+		if (entitat == null)
+			throw new EntitatNotFoundException();
+		return dtoMappingHelper.getMapperFacade().mapAsList(
+				procedimentRepository.findByEntitatAndFiltreOrderByNomAsc(entitat, 
+						filtre == null || filtre.isEmpty(), 
+						filtre),
+				ProcedimentDto.class);
+	}
 
 	@Transactional(readOnly = true)
 	@Override
