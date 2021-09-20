@@ -47,24 +47,34 @@ $(document).ready(function() {
 		});
 		$('#form-filtre').submit();
 	});
-	$('#select-procediment').change(function() {
-		var targetUrl;
-		if ($(this).val())
-			targetUrl = '<c:url value="estadistiques/serveisPerProcediment"/>/' + $(this).val();
-		else
-			targetUrl = '<c:url value="estadistiques/serveisPerProcediment"/>';
-		$.ajax({
-		    url:targetUrl,
-		    type:'GET',
-		    dataType: 'json',
-		    success: function(json) {
-		    	$('#select-servei').empty();
-	        	$('#select-servei').append($('<option value="">').text('<spring:message code="consulta.list.filtre.servei"/>:'));
-		        $.each(json, function(i, value) {
-		            $('#select-servei').append($('<option>').text(value.descripcio).attr('value', value.codi));
-		        });
-		    }
-		});
+// 	$('#select-procediment').change(function() {
+// 		var targetUrl;
+// 		if ($(this).val())
+// 			targetUrl = '<c:url value="estadistiques/serveisPerProcediment"/>/' + $(this).val();
+// 		else
+// 			targetUrl = '<c:url value="estadistiques/serveisPerProcediment"/>';
+// 		$.ajax({
+// 		    url:targetUrl,
+// 		    type:'GET',
+// 		    dataType: 'json',
+// 		    success: function(json) {
+// 		    	$('#select-servei').empty();
+// 	        	$('#select-servei').append($('<option value="">').text('<spring:message code="consulta.list.filtre.servei"/>:'));
+// 		        $.each(json, function(i, value) {
+// 		            $('#select-servei').append($('<option>').text(value.descripcio).attr('value', value.codi));
+// 		        });
+// 		    }
+// 		});
+// 	});
+	
+	$('#procediment').change(function() {
+		$('#servei').attr('urlParamAddicional', $('#procediment').select2('data')[0].id);
+		$('#servei').val(null).trigger('change.select2');
+	});
+	
+	$('#procediment').on('select2:clear', function (e) {
+		$('#servei').attr('urlParamAddicional', '');
+		$('#servei').val(null).trigger('change.select2');
 	});
 });
 </script>
@@ -144,7 +154,6 @@ $(document).ready(function() {
 				<div class="col-md-3">
  					<c:url value="/serveiajax/servei" var="urlConsultaInicialServeis"/>
 					<c:url value="/serveiajax/servei" var="urlConsultaLlistatServeis"/>
-					<c:set var="procedimentId" value="$('#procediment').find(':selected')" />
 					<pbl:inputSuggest 
 						name="servei"  
 						urlConsultaInicial="${urlConsultaInicialServeis}"
@@ -152,7 +161,8 @@ $(document).ready(function() {
 						placeholderKey="estadistiques.list.filtre.servei"
 						suggestValue="id"
 						suggestText="descripcioAmbCodi"
-						inline="true" />	
+						inline="true" 
+						urlParamAddicional=""/>	
 				</div>			
 				<div class="col-md-3">
 					<pbl:inputSelect name="estat"  inline="true" placeholderKey="estadistiques.list.filtre.estat"

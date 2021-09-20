@@ -20,7 +20,6 @@ import es.caib.pinbal.core.dto.ServeiDto;
 import es.caib.pinbal.core.service.ServeiService;
 import es.caib.pinbal.core.service.exception.EntitatNotFoundException;
 import es.caib.pinbal.core.service.exception.ProcedimentNotFoundException;
-import es.caib.pinbal.webapp.command.EstadistiquesFiltreCommand;
 import es.caib.pinbal.webapp.common.RequestSessionHelper;
 
 /**
@@ -33,7 +32,6 @@ import es.caib.pinbal.webapp.common.RequestSessionHelper;
 public class AjaxServeiController extends BaseController{
 	
 	private static final String SESSION_ATTRIBUTE_ENTITAT_ID = "EstadistiquesController.session.entitat.id";
-//	private static final String SESSION_ATTRIBUTE_FILTRE = "EstadistiquesController.session.filtre";
 
 	@Autowired
 	private ServeiService serveiService;
@@ -60,16 +58,9 @@ public class AjaxServeiController extends BaseController{
 	
 	private List<ServeiDto> getWithParam(HttpServletRequest request, String text, Long procedimentId, Model model, boolean directOrganPermisRequired) throws EntitatNotFoundException, ProcedimentNotFoundException {
 		
-//		EstadistiquesFiltreCommand command = (EstadistiquesFiltreCommand)RequestSessionHelper.obtenirObjecteSessio(
-//				request,
-//				SESSION_ATTRIBUTE_FILTRE);
-//		if (command == null)
-//			command = new EstadistiquesFiltreCommand();
-		
 		Long entitatId = (Long)RequestSessionHelper.obtenirObjecteSessio(
 				request,
 				SESSION_ATTRIBUTE_ENTITAT_ID);
-//		command.setEntitatId(entitatId);
 		
 		try {
 			text = URLDecoder.decode(request.getRequestURI().split("/")[4], StandardCharsets.UTF_8.name());

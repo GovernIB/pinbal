@@ -19,7 +19,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import es.caib.pinbal.core.dto.ProcedimentDto;
 import es.caib.pinbal.core.service.ProcedimentService;
 import es.caib.pinbal.core.service.exception.EntitatNotFoundException;
-import es.caib.pinbal.webapp.command.EstadistiquesFiltreCommand;
 import es.caib.pinbal.webapp.common.RequestSessionHelper;
 
 /**
@@ -32,7 +31,6 @@ import es.caib.pinbal.webapp.common.RequestSessionHelper;
 public class AjaxProcedimentController extends BaseController{
 	
 	private static final String SESSION_ATTRIBUTE_ENTITAT_ID = "EstadistiquesController.session.entitat.id";
-//	private static final String SESSION_ATTRIBUTE_FILTRE = "EstadistiquesController.session.filtre";
 
 	@Autowired
 	private ProcedimentService procedimentService;
@@ -52,16 +50,9 @@ public class AjaxProcedimentController extends BaseController{
 	
 	private List<ProcedimentDto> getWithParam(HttpServletRequest request, String text, Model model, boolean directOrganPermisRequired) throws EntitatNotFoundException {
 		
-//		EstadistiquesFiltreCommand command = (EstadistiquesFiltreCommand)RequestSessionHelper.obtenirObjecteSessio(
-//				request,
-//				SESSION_ATTRIBUTE_FILTRE);
-//		if (command == null)
-//			command = new EstadistiquesFiltreCommand();
-		
 		Long entitatId = (Long)RequestSessionHelper.obtenirObjecteSessio(
 				request,
 				SESSION_ATTRIBUTE_ENTITAT_ID);
-//		command.setEntitatId(entitatId);
 		
 		try {
 			text = URLDecoder.decode(request.getRequestURI().split("/")[4], StandardCharsets.UTF_8.name());

@@ -374,7 +374,6 @@ $(document).ajaxError(function(event, jqxhr, ajaxSettings, thrownError) {
 		var suggestText = $(this).data('suggestText');
 		var suggestTextAddicional = $(this).data('suggestTextAddicional');
 		var suggest = $(this);
-		var urlParamAddicional = $(this).data('urlParamAddicional');
 		if (value != null && typeof value === 'string' && value != "") {
 			if (value.includes(",")) {
 				var valueArr = value.split(',');
@@ -474,8 +473,8 @@ $(document).ajaxError(function(event, jqxhr, ajaxSettings, thrownError) {
 		    ajax: {
 		    	delay: 500,
 		    	url: function(params){
-		    		debugger;
-		    		var additionalParam = urlParamAddicional;
+		    	
+		    		var additionalParam = $(this).attr('urlParamAddicional');
 		    		
 		    		if (additionalParam) {
 		    			return $(this).data('urlLlistat') + "/" + encodeURIComponent(params.term) + "/" + additionalParam;
