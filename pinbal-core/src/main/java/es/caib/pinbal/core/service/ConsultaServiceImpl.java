@@ -1871,11 +1871,11 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 	public void autoEnviarPeticionsPendents() {
 		LOGGER.debug("Iniciant enviament automàtic de les peticions pendents");
 		long t0 = System.currentTimeMillis();
-		List<Consulta> pendents = consultaRepository.findByEstatAndMultipleOrderByIdAsc(EstatTipus.Pendent, true);
+		List<Consulta> pendents = consultaRepository.findByEstatAndMultipleOrderByIdAsc(EstatTipus.Pendent, false);
 		for (final Consulta pendent: pendents) {
 			peticioScspHelper.enviarPeticioScspPendent(pendent.getId(), scspHelper);
 		}
-		LOGGER.debug("Finalitzat l'enviament automàtic de les peticions pendents (" + (System.currentTimeMillis() - t0) + "ms)");
+		LOGGER.debug("Finalitzat l'enviament automàtic de les " + pendents.size() + " peticions pendents (" + (System.currentTimeMillis() - t0) + "ms)");
 	}
 
 	@Override
