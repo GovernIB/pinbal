@@ -71,6 +71,7 @@ public interface ServeiService {
 	 * @param descripcio Nom a cercar.
 	 * @param emisor Emisor a cercar.
 	 * @param activa Si cercar actius (true) o inactius (false).
+	 * @param scspVersionEsquema Versió esquema SCSP  a cercar.
 	 * @param paginacioAmbOrdre
 	 * 				Paràmetres per a la paginació i ordenació dels resultats.
 	 * @return
@@ -80,6 +81,7 @@ public interface ServeiService {
 			String descripcio,
 			String emisor,
 			Boolean activa,
+			String scspVersionEsquema,
 			Pageable pageable);
 	
 	/**

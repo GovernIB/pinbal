@@ -355,6 +355,7 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 			String descripcio,
 			String emisor,
 			Boolean activa,
+			String scspVersionEsquema,
 			Pageable pageable) {
 		log.debug("Consulta de serveis segons filtre (codi=" + codi + ", descripcio=" + descripcio + ""
 				+ "emisor=" + emisor + " activa=" + activa + ")");
@@ -368,6 +369,8 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 				(emisor != null && emisor.length() > 0) ? Long.parseLong(emisor) : null,
 				activa == null,
 				activa,
+				scspVersionEsquema == null || scspVersionEsquema.length() == 0,
+				scspVersionEsquema,
 				pageable);
 		
 		Page<ServeiDto> paginaDtos = dtoMappingHelper.pageEntities2pageDto(

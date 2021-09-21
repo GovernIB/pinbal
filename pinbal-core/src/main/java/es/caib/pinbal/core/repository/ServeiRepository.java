@@ -29,7 +29,9 @@ public interface ServeiRepository extends JpaRepository<Servei, Long> {
 			"  and (:esNullEmisor = true or s.scspEmisor.id = :emisor) " +
 			"  and (:esNullActiva = true or (:activa = true and (select count(sc.servei) from ServeiConfig sc where sc.servei = s.codi and sc.actiu = true) > 0) " +
 			" 							 or (:activa = false and (select count(sc.servei) from ServeiConfig sc where sc.servei = s.codi and sc.actiu = true) = 0) " +
-			")")
+			")" +
+			"  and (:esNullScspVersionEsquema = true or lower(s.scspVersionEsquema) like concat('%', lower(:scspVersionEsquema), '%'))"
+			)
 	public Page<Servei> findByFiltre(
 			@Param("esNullCodi") boolean esNullCodi,
 			@Param("codi") String codi,
@@ -38,7 +40,9 @@ public interface ServeiRepository extends JpaRepository<Servei, Long> {
 			@Param("esNullEmisor") boolean esNullEmisor,
 			@Param("emisor") Long emisor,
 			@Param("esNullActiva") boolean esNullActiva,
-			@Param("activa") Boolean activa,	
+			@Param("activa") Boolean activa,
+			@Param("esNullScspVersionEsquema") boolean esNullScspVersionEsquema,
+			@Param("scspVersionEsquema") String scspVersionEsquema,
 			Pageable pageable);
 	
 //	@Query(	"select" +

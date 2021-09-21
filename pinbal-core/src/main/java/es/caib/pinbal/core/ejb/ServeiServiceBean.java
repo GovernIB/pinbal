@@ -106,8 +106,8 @@ public class ServeiServiceBean implements ServeiService {
 	@Override
 	@RolesAllowed("PBL_ADMIN")
 	public Page<ServeiDto> findAmbFiltrePaginat(String codi, String descripcio, String emisor,
-			Boolean activa, Pageable pageable) {
-		return delegate.findAmbFiltrePaginat(codi, descripcio, emisor, activa, pageable);
+			Boolean activa, String scspVersionEsquema, Pageable pageable) {
+		return delegate.findAmbFiltrePaginat(codi, descripcio, emisor, activa, scspVersionEsquema, pageable);
 	}
 	
 	@Override
