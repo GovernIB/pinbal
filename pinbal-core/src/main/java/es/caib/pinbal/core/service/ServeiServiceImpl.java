@@ -314,6 +314,15 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 
 	@Transactional(readOnly = true)
 	@Override
+	public ServeiDto findById(Long id) {
+		log.debug("Cercant el servei (id= " + id + ")");
+		return dtoMappingHelper.getMapperFacade().map(
+				serveiRepository.findOne(id),
+				ServeiDto.class);
+	}
+	
+	@Transactional(readOnly = true)
+	@Override
 	public List<ServeiDto> findActius() {
 		log.debug("Cercant els servicios actius");
 		List<ServeiDto> resposta = new ArrayList<ServeiDto>();

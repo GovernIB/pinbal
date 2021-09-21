@@ -45,9 +45,12 @@ $(document).ready(function() {
 			else if (tag == 'select')
 				this.selectedIndex = 0;
 		});
+		$('#procediment').val(null);
+		$('#servei').val(null);
 		$('#form-filtre').submit();
 	});
 // 	$('#select-procediment').change(function() {
+// 		debugger;
 // 		var targetUrl;
 // 		if ($(this).val())
 // 			targetUrl = '<c:url value="estadistiques/serveisPerProcediment"/>/' + $(this).val();
@@ -68,10 +71,10 @@ $(document).ready(function() {
 // 	});
 	
 	$('#procediment').change(function() {
-		$('#servei').attr('urlParamAddicional', $('#procediment').select2('data')[0].id);
+		$('#servei').attr('urlParamAddicional', $(this).val());
 		$('#servei').val(null).trigger('change.select2');
 	});
-	
+
 	$('#procediment').on('select2:clear', function (e) {
 		$('#servei').attr('urlParamAddicional', '');
 		$('#servei').val(null).trigger('change.select2');
@@ -159,7 +162,7 @@ $(document).ready(function() {
 						urlConsultaInicial="${urlConsultaInicialServeis}"
 						urlConsultaLlistat="${urlConsultaLlistatServeis}"
 						placeholderKey="estadistiques.list.filtre.servei"
-						suggestValue="id"
+						suggestValue="codi"
 						suggestText="descripcioAmbCodi"
 						inline="true" 
 						urlParamAddicional=""/>	

@@ -48,6 +48,12 @@ public class AjaxProcedimentController extends BaseController{
 		return getWithParam(request, text, model, false);
 	}
 	
+	@RequestMapping(value = "/procediment/item/{id}", method = RequestMethod.GET)
+	@ResponseBody
+	public ProcedimentDto getItem(HttpServletRequest request, @PathVariable Long id, Model model) {
+		return procedimentService.findById(id);
+	}
+	
 	private List<ProcedimentDto> getWithParam(HttpServletRequest request, String text, Model model, boolean directOrganPermisRequired) throws EntitatNotFoundException {
 		
 		Long entitatId = (Long)RequestSessionHelper.obtenirObjecteSessio(
@@ -70,6 +76,5 @@ public class AjaxProcedimentController extends BaseController{
 
 		return procedimentsList;
 	}
-	
-	
+
 }

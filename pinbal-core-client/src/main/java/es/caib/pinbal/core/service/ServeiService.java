@@ -130,6 +130,16 @@ public interface ServeiService {
 	public ServeiDto findAmbCodiPerDelegat(Long entitatId, String serveiCodi) throws ServeiNotFoundException;
 
 	/**
+	 * Consulta un servei donat el seu id.
+	 * 
+	 * @param id
+	 *            Atribut id del servei a trobar.
+	 * @return El servei trobat. Si no s'ha trobat cap servei retorna null.
+	 */
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_REPRES')")
+	public ServeiDto findById(Long id);
+	
+	/**
 	 * Llistat amb els serveis actius.
 	 * 
 	 * @return Un llistat amb els serveis actius.

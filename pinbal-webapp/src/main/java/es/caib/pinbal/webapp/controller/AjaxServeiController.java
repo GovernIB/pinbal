@@ -49,6 +49,12 @@ public class AjaxServeiController extends BaseController{
 		return getWithParam(request, text, null, model, false);
 	}
 	
+	@RequestMapping(value = "/servei/item/{id}", method = RequestMethod.GET)
+	@ResponseBody
+	public ServeiDto getItem(HttpServletRequest request, @PathVariable Long id, Model model) {
+		return serveiService.findById(id);
+	}
+	
 	@RequestMapping(value = "/servei/{text}/{procediment}", method = RequestMethod.GET)
 	@ResponseBody
 	public List<ServeiDto> get(HttpServletRequest request, @PathVariable String text, @PathVariable Long procediment, Model model) throws EntitatNotFoundException, ProcedimentNotFoundException {
