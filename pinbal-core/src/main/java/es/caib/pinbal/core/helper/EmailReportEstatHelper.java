@@ -32,7 +32,7 @@ public class EmailReportEstatHelper extends EmailHelper {
 
 	@Override
 	protected String getMailPlainTextBody() {
-		return "S'adjunta a aquest email el report diari de l'estat de PINBAL.\n\n";
+		return "Adjuntam amb aquest correu l'informe diari d'estat de PINBAL.\n\n";
 	}
 
 	@Override
