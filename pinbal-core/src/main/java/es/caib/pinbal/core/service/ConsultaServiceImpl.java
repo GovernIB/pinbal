@@ -68,6 +68,8 @@ import es.caib.pinbal.core.dto.JustificantDto;
 import es.caib.pinbal.core.dto.ProcedimentDto;
 import es.caib.pinbal.core.dto.RecobrimentSolicitudDto;
 import es.caib.pinbal.core.helper.DtoMappingHelper;
+import es.caib.pinbal.core.helper.EmailReportEstatHelper;
+import es.caib.pinbal.core.helper.ExcelHelper;
 import es.caib.pinbal.core.helper.IntegracioHelper;
 import es.caib.pinbal.core.helper.JustificantHelper;
 import es.caib.pinbal.core.helper.PermisosHelper;
@@ -107,6 +109,7 @@ import es.caib.pinbal.core.service.exception.ProcedimentServeiNotFoundException;
 import es.caib.pinbal.core.service.exception.ScspException;
 import es.caib.pinbal.core.service.exception.ServeiNotAllowedException;
 import es.caib.pinbal.core.service.exception.ValidacioDadesPeticioException;
+import es.caib.pinbal.plugins.DadesUsuari;
 import es.caib.pinbal.plugins.SistemaExternException;
 import es.caib.pinbal.scsp.Resposta;
 import es.caib.pinbal.scsp.ResultatEnviamentPeticio;
@@ -165,6 +168,12 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 
 	@Autowired
 	private PlatformTransactionManager transactionManager;
+	
+	@Autowired
+	private ExcelHelper excelHelper;
+	
+	@Autowired
+	private EmailReportEstatHelper emailReportEstatHelper;
 
 	private ApplicationContext applicationContext;
 	private MessageSource messageSource;
@@ -2021,7 +2030,27 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 		}
 		return resposta;
 	}
+	
+	@Override
+	public void autoGenerarEmailReportEstat() {
+		Date fechaActual = new Date();
+		List<InformeGeneralEstatDto> informeDades = informeGeneralEstat(fechaActual, fechaActual);
+		byte[] fileReportEstatExcel = excelHelper.generarReportEstatExcel(informeDades);
+		
+		List<String> emailsAdministradorsList = new ArrayList<String>();
+		try {
+			List<DadesUsuari> dadesUsuarisAdmin = pluginHelper.dadesUsuariFindAmbGrup("PBL_ADMIN");
+			for (DadesUsuari dadesUsuari : dadesUsuarisAdmin) {
+				emailsAdministradorsList.add(dadesUsuari.getEmail());
+			}
+		} catch (SistemaExternException ex) {
+			log.error("No s'han trobat usuaris amb el grup PBL_ADMIN al sistema extern");
+		}
 
+		String[] emailsAdministradors = emailsAdministradorsList.toArray(new String[emailsAdministradorsList.size()]);
+		emailReportEstatHelper.sendMail(emailsAdministradors, fileReportEstatExcel);
+	}
+	
 	@Override
 	public void setApplicationContext(
 			ApplicationContext applicationContext) throws BeansException {

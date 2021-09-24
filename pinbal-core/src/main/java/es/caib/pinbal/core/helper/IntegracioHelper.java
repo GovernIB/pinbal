@@ -45,6 +45,7 @@ public class IntegracioHelper {
 	public static final String INTCODI_ARXIU = "ARXIU";
 	public static final String INTCODI_FIRMASERV = "FIRMASERV";
 	public static final String INTCODI_SERVEIS_SCSP = "SERVEIS_SCSP";
+	public static final String INTCODI_USUARIS = "USUARIS";
 
 	private Map<String, LinkedList<IntegracioAccioDto>> accionsIntegracio = Collections.synchronizedMap(new HashMap<String, LinkedList<IntegracioAccioDto>>());
 	private Map<String, Integer> maxAccionsIntegracio = new HashMap<String, Integer>();

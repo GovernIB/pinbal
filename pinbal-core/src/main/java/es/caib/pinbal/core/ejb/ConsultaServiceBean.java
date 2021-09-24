@@ -359,6 +359,11 @@ public class ConsultaServiceBean implements ConsultaService {
 	public void autoTancarExpedientsPendents() {
 		delegate.autoTancarExpedientsPendents();
 	}
+	
+	@Override
+	public void autoGenerarEmailReportEstat() {
+		delegate.autoGenerarEmailReportEstat();
+	}
 
 	@Override
 	@RolesAllowed("tothom")

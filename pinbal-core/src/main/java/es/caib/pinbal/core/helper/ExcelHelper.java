@@ -1,13 +1,8 @@
-/**
- * 
- */
-package es.caib.pinbal.webapp.view;
+package es.caib.pinbal.core.helper;
 
+import java.io.ByteArrayOutputStream;
 import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import java.util.Locale;
 
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
@@ -18,35 +13,25 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Font;
 import org.springframework.context.MessageSource;
 import org.springframework.context.MessageSourceAware;
-import org.springframework.web.servlet.support.RequestContext;
-import org.springframework.web.servlet.view.document.AbstractExcelView;
+import org.springframework.stereotype.Component;
 
 import es.caib.pinbal.core.dto.InformeGeneralEstatDto;
+import lombok.extern.slf4j.Slf4j;
 
-/**
- * Vista per a generar l'informe de procediments.
- * 
- * @author Josep Gayà
- */
-public class InformeGeneralEstatExcelView extends AbstractExcelView implements MessageSourceAware {
+@Slf4j
+@Component
+public class ExcelHelper implements MessageSourceAware {
 
 	private MessageSource messageSource;
-
-
-
-	@SuppressWarnings("unchecked")
-	@Override
-	protected void buildExcelDocument(
-			Map<String, Object> model,
-			HSSFWorkbook workbook,
-			HttpServletRequest request,
-			HttpServletResponse response) throws Exception {
-		response.setHeader("Content-Disposition", "Inline; filename=informeServeis.xls");
-		List<InformeGeneralEstatDto> informeDades = (List<InformeGeneralEstatDto>)model.get("informeDades");
+	
+	
+	
+	public byte [] generarReportEstatExcel (List<InformeGeneralEstatDto> informeDades) {
+		
+		HSSFWorkbook workbook = new HSSFWorkbook();
+		
 		HSSFSheet sheet = workbook.createSheet(
-				getMessage(
-						request,
-						"informe.general.estat.excel.fulla.titol"));
+				getMessage("informe.general.estat.excel.fulla.titol"));
 
 		int filaInicial = 0;
 		int columnaInicial = 0;
@@ -67,69 +52,47 @@ public class InformeGeneralEstatExcelView extends AbstractExcelView implements M
 		HSSFCell codiCell = titolsColumna.createCell(columnaInicial);
 		codiCell.setCellStyle(capsaleraStyle);
 		codiCell.setCellValue(
-				getMessage(
-						request,
-						"informe.general.estat.excel.columna.entitat.nom"));
+				getMessage("informe.general.estat.excel.columna.entitat.nom"));
 		HSSFCell capCell = titolsColumna.createCell(columnaInicial + 1);
 		capCell.setCellStyle(capsaleraStyle);
 		capCell.setCellValue(
-				getMessage(
-						request,
-						"informe.general.estat.excel.columna.entitat.cif"));
+				getMessage("informe.general.estat.excel.columna.entitat.cif"));
 		capCell = titolsColumna.createCell(columnaInicial + 2);
 		capCell.setCellStyle(capsaleraStyle);
 		capCell.setCellValue(
-				getMessage(
-						request,
-						"informe.general.estat.excel.columna.departament"));
+				getMessage("informe.general.estat.excel.columna.departament"));
 		capCell = titolsColumna.createCell(columnaInicial + 3);
 		capCell.setCellStyle(capsaleraStyle);
 		capCell.setCellValue(
-				getMessage(
-						request,
-						"informe.general.estat.excel.columna.procediment.codi"));
+				getMessage("informe.general.estat.excel.columna.procediment.codi"));
 		capCell = titolsColumna.createCell(columnaInicial + 4);
 		capCell.setCellStyle(capsaleraStyle);
 		capCell.setCellValue(
-				getMessage(
-						request,
-						"informe.general.estat.excel.columna.procediment.nom"));
+				getMessage("informe.general.estat.excel.columna.procediment.nom"));
 		capCell = titolsColumna.createCell(columnaInicial + 5);
 		capCell.setCellStyle(capsaleraStyle);
 		capCell.setCellValue(
-				getMessage(
-						request,
-						"informe.general.estat.excel.columna.servei.codi"));
+				getMessage("informe.general.estat.excel.columna.servei.codi"));
 		capCell = titolsColumna.createCell(columnaInicial + 6);
 		capCell.setCellStyle(capsaleraStyle);
 		capCell.setCellValue(
-				getMessage(
-						request,
-						"informe.general.estat.excel.columna.servei.nom"));
+				getMessage("informe.general.estat.excel.columna.servei.nom"));
 		capCell = titolsColumna.createCell(columnaInicial + 7);
 		capCell.setCellStyle(capsaleraStyle);
 		capCell.setCellValue(
-				getMessage(
-						request,
-						"informe.general.estat.excel.columna.servei.emissor"));
+				getMessage("informe.general.estat.excel.columna.servei.emissor"));
 		capCell = titolsColumna.createCell(columnaInicial + 8);
 		capCell.setCellStyle(capsaleraStyle);
 		capCell.setCellValue(
-				getMessage(
-						request,
-						"informe.general.estat.excel.columna.servei.num.usuaris"));
+				getMessage("informe.general.estat.excel.columna.servei.num.usuaris"));
 		capCell = titolsColumna.createCell(columnaInicial + 9);
 		capCell.setCellStyle(capsaleraStyle);
 		capCell.setCellValue(
-				getMessage(
-						request,
-						"informe.general.estat.excel.columna.peticions.correctes"));
+				getMessage("informe.general.estat.excel.columna.peticions.correctes"));
 		capCell = titolsColumna.createCell(columnaInicial + 10);
 		capCell.setCellStyle(capsaleraStyle);
 		capCell.setCellValue(
-				getMessage(
-						request,
-						"informe.general.estat.excel.columna.peticions.erronees"));
+				getMessage("informe.general.estat.excel.columna.peticions.erronees"));
 		int rowIndex = 1;
 		for (InformeGeneralEstatDto informeDada: informeDades) {
 			HSSFRow filaDada = sheet.createRow(filaInicial + rowIndex++);
@@ -157,13 +120,21 @@ public class InformeGeneralEstatExcelView extends AbstractExcelView implements M
 			dadaCell.setCellValue(informeDada.getPeticionsErronees());
 		}
 		autoSize(sheet, 11);
+		try {
+			ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			workbook.write(baos);
+			return baos.toByteArray();
+		} catch (Exception e) {
+			log.error("No s'ha pogut realitzar la exportació." + e);
+		}
+		
+		return null;
+		
 	}
 
 	public void setMessageSource(MessageSource messageSource) {
 		this.messageSource = messageSource;
 	}
-
-
 
 	private void autoSize(
 			HSSFSheet sheet,
@@ -172,15 +143,13 @@ public class InformeGeneralEstatExcelView extends AbstractExcelView implements M
 			sheet.autoSizeColumn(colNum);
 	}
 
-	private String getMessage(
-			HttpServletRequest request,
-			String key) {
+	private String getMessage(String key) {
 		String message = messageSource.getMessage(
 				key,
 				null,
 				"???" + key + "???",
-				new RequestContext(request).getLocale());
+				new Locale("ca", "ES"));
 		return message;
 	}
-
+	
 }
