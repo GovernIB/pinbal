@@ -92,6 +92,38 @@ public class PluginHelper {
 					ex);
 		}
 	}
+	
+	public List<DadesUsuari> dadesUsuariFindAmbGrup(
+			String grupCodi) throws SistemaExternException {
+		String accioDescripcio = "Consulta d'usuaris d'un grup";
+		Map<String, String> accioParams = new HashMap<String, String>();
+		accioParams.put("grup", grupCodi);
+		long t0 = System.currentTimeMillis();
+		try {
+			List<DadesUsuari> dadesUsuari = getDadesUsuariPlugin().findAmbGrup(
+					grupCodi);
+			integracioHelper.addAccioOk(
+					IntegracioHelper.INTCODI_USUARIS,
+					accioDescripcio,
+					accioParams,
+					IntegracioAccioTipusEnumDto.ENVIAMENT,
+					System.currentTimeMillis() - t0);
+			return dadesUsuari;
+		} catch (Exception ex) {
+			String errorDescripcio = "Error al accedir al plugin de dades d'usuari";
+			integracioHelper.addAccioError(
+					IntegracioHelper.INTCODI_USUARIS,
+					accioDescripcio,
+					accioParams,
+					IntegracioAccioTipusEnumDto.ENVIAMENT,
+					System.currentTimeMillis() - t0,
+					errorDescripcio,
+					ex);
+			throw new SistemaExternException(
+					errorDescripcio,
+					ex);
+		}
+	}
 
 	public void signaturaIbkeySignarEstamparPdf(
 			InputStream contentStream,

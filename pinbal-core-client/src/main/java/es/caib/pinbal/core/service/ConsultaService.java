@@ -656,6 +656,12 @@ public interface ConsultaService {
 	public void autoTancarExpedientsPendents();
 
 	/**
+	 * Tasca automàtica per generar al final del dia un petit report 
+	 * de l'estat de PINBAL, que s'envia per correu als administradors.
+	 */
+	public void autoGenerarEmailReportEstat();
+	
+	/**
 	 * Retorna si les peticions al SCSP s'han de fer en una sola passa o en
 	 * 3 passes per a optimitzar el temps que la transacció bloqueja les
 	 * connexions del pool.

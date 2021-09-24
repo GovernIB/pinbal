@@ -46,6 +46,15 @@ public class DadesUsuariPluginJdbc implements DadesUsuariPlugin {
 	}
 
 
+	@Override
+	public List<DadesUsuari> findAmbGrup(
+			String grupCodi) throws SistemaExternException {
+		LOGGER.debug("Consulta dels usuaris del grup (grupCodi=" + grupCodi + ")");
+		return consultaDadesUsuariList(
+				getJdbcQueryUsuariGrup(),
+				"grup",
+				grupCodi);
+	}
 
 	private DadesUsuari consultaDadesUsuari(
 			String sqlQuery,
@@ -94,6 +103,52 @@ public class DadesUsuariPluginJdbc implements DadesUsuariPlugin {
 						"codi",
 						dadesUsuari.getCodi()));
 		return dadesUsuari;
+	}
+	
+	private List<DadesUsuari> consultaDadesUsuariList(
+			String sqlQuery,
+			String paramName,
+			String paramValue) throws SistemaExternException {
+		List<DadesUsuari> llistaUsuaris = new ArrayList<DadesUsuari>();
+		Connection con = null;
+		PreparedStatement ps = null;
+		try {
+			Context initContext = new InitialContext();
+			DataSource ds = (DataSource)initContext.lookup(getDatasourceJndiName());
+			con = ds.getConnection();
+			if (sqlQuery.contains("?")) {
+				ps = con.prepareStatement(sqlQuery);
+				ps.setString(1, paramValue);
+			} else if (sqlQuery.contains(":" + paramName)) {
+				ps = con.prepareStatement(
+						sqlQuery.replace(":" + paramName, "'" + paramValue + "'"));
+			} else {
+				ps = con.prepareStatement(sqlQuery);
+			}
+			ResultSet rs = ps.executeQuery();
+			while (rs.next()) {
+				DadesUsuari dadesUsuari = new DadesUsuari();
+				dadesUsuari.setCodi(rs.getString(1));
+				dadesUsuari.setNom(rs.getString(2));
+				dadesUsuari.setNif(rs.getString(3));
+				dadesUsuari.setEmail(rs.getString(4));
+				llistaUsuaris.add(dadesUsuari);
+			}
+		} catch (Exception ex) {
+			throw new SistemaExternException(ex);
+		} finally {
+			try {
+				if (ps != null) ps.close();
+			} catch (Exception ex) {
+				LOGGER.error("Error al tancar el PreparedStatement", ex);
+			}
+			try {
+				if (con != null) con.close();
+			} catch (Exception ex) {
+				LOGGER.error("Error al tancar la connexió", ex);
+			}
+		}
+		return llistaUsuaris;
 	}
 
 	private String[] consultaRolsUsuari(
@@ -153,6 +208,9 @@ public class DadesUsuariPluginJdbc implements DadesUsuariPlugin {
 	}
 	private String getJdbcQueryUsuariRols() {
 		return PropertiesHelper.getProperties().getProperty("es.caib.pinbal.plugin.dades.usuari.jdbc.query.rols");
+	}
+	private String getJdbcQueryUsuariGrup() {
+		return PropertiesHelper.getProperties().getProperty("es.caib.pinbal.plugin.dades.usuari.jdbc.query.grup");
 	}
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(DadesUsuariPluginJdbc.class);

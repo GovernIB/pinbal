@@ -30,6 +30,11 @@
 		<property name="resourceRef" value="true" />
 		<property name="jndiName" value="${config:es.caib.pinbal.datasource.jndi}" />
 	</bean>
+	
+	<bean id="mailSession" class="org.springframework.jndi.JndiObjectFactoryBean">
+		<property name="resourceRef" value="true"/>
+		<property name="jndiName" value="${config:es.caib.pinbal.email.jndi}"/>
+	</bean>
 
 	<context:annotation-config />
 
@@ -86,6 +91,7 @@
 		<task:scheduled ref="consultaServiceImpl" method="autoRevisarEstatPeticionsMultiplesPendents" fixed-rate="${config:es.caib.pinbal.tasca.auto.comprovacio.repeticio:600000}"/>
 		<task:scheduled ref="consultaServiceImpl" method="autoGenerarJustificantsPendents" fixed-rate="${config:es.caib.pinbal.tasca.auto.justificant.repeticio:60000}"/>
 		<task:scheduled ref="consultaServiceImpl" method="autoTancarExpedientsPendents" cron="${config:es.caib.pinbal.tasca.auto.exp.tancar.cron:0 0 2 * * ?}"/>
+		<task:scheduled ref="consultaServiceImpl" method="autoGenerarEmailReportEstat" cron="${config:es.caib.pinbal.tasca.auto.email.report.estat.cron}"/>
 	</task:scheduled-tasks>
 
 	<!-- Context llibreries SCSP -->
@@ -110,6 +116,12 @@
 			<value>select currval(pg_get_serial_sequence('acl_sid', 'id'))</value>
 		</property-->
 	</bean>
+	
+	<!-- E-mail -->
+	<bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
+		<property name="session" ref="mailSession"/>
+	</bean>
+	
 	<bean id="lookupStrategy" class="org.springframework.security.acls.jdbc.BasicLookupStrategy">
 		<constructor-arg ref="dataSource" />
 		<constructor-arg ref="aclCache" />
