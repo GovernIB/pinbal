@@ -66,7 +66,9 @@ $(document).ajaxError(function(event, jqxhr, ajaxSettings, thrownError) {
 	} else {
 		message = "Unknown Error: (" + jqxhr.status + ", " + thrownError + ")";
 	}*/
-	alert(message);
+	if (thrownError !== 'abort') {
+		console.log(message);
+	}
 });
 
 (function($) {
@@ -364,6 +366,178 @@ $(document).ajaxError(function(event, jqxhr, ajaxSettings, thrownError) {
 		});
 	}
 
+	$.fn.webutilInputSuggest = function() {
+		var urlActual = $(this).data('urlInicial');
+		var value = $(this).data('currentValue');
+		var urlInicial = urlActual + "/item/" + value;
+		var suggestValue = $(this).data('suggestValue');
+		var suggestText = $(this).data('suggestText');
+		var suggestTextAddicional = $(this).data('suggestTextAddicional');
+		var suggest = $(this);
+		if (value != null && typeof value === 'string' && value != "") {
+			if (value.includes(",")) {
+				var valueArr = value.split(',');
+				valueArr.forEach(function(value) {
+					urlInicial = urlActual + "/item/" + value;
+					// Preselected value
+					if (value) {
+						$.ajax({
+							url: urlInicial,
+							async: false,
+							global: false,
+							success: function(resposta) {
+								suggest.append(
+											$('<option>', {
+												value: resposta[suggestValue],
+												text: (suggestTextAddicional != undefined && resposta[suggestTextAddicional] != null) ? resposta[suggestText] + " (" + resposta[suggestTextAddicional] + ")" : resposta[suggestText],
+												selected: value == resposta[suggestValue] != false ? value == resposta[suggestValue] : (value == resposta["codi"] != false ? value == resposta["codi"] : value == resposta["nif"])
+											}));
+							},
+							error: function () {
+								suggest.append(
+										$('<option>', {
+											value: value,
+											text: value,
+											selected: false
+										}));
+							}
+						});
+					} else {
+						$(this).empty();
+					}
+				});
+			} else {
+				$.ajax({
+					url: urlInicial,
+					async: false,
+					global: false,
+					success: function(resposta) {
+						if (value == resposta[suggestValue] != false) {
+							suggest.append(
+									$('<option>', {
+										value: resposta[suggestValue],
+										text: (suggestTextAddicional != undefined && resposta[suggestTextAddicional] != null) ? resposta[suggestText] + " (" + resposta[suggestTextAddicional] + ")" : resposta[suggestText],
+										selected: value == resposta[suggestValue]
+									}));
+						} else {
+							//específic pel suggest de responsables portafib
+							suggest.append(
+									$('<option>', {
+										value: resposta[suggestValue],
+										text: (suggestTextAddicional != undefined && resposta[suggestTextAddicional] != null) ? resposta[suggestText] + " (" + resposta[suggestTextAddicional] + ")" : resposta[suggestText],
+										selected: value == resposta["nif"] ? value == resposta["nif"] : value == resposta["codi"]
+									}));
+						}
+					},
+					error: function () {
+						suggest.append(
+								$('<option>', {
+									value: value,
+									text: value,
+									selected: false
+								}));
+					}
+				});
+			}
+			
+		} else if (value != null && typeof value === 'number') {
+			$.ajax({
+				url: urlActual + "/item/" + value,
+				async: false,
+				global: false,
+				success: function(resposta) {
+					suggest.append(
+							$('<option>', {
+								value: resposta[suggestValue],
+								text: (suggestTextAddicional != undefined && resposta[suggestTextAddicional] != null) ? resposta[suggestText] + " (" + resposta[suggestTextAddicional] + ")" : resposta[suggestText],
+								selected: true
+							}));
+				},
+				error: function () {
+					suggest.append(
+							$('<option>', {
+								value: value,
+								text: value,
+								selected: false
+							}));
+				}
+			});
+		} else {
+			$(this).empty();
+		}
+		$(this).select2({
+		    placeholder: $(this).data('placeholder'),
+		    theme: "bootstrap",
+		    allowClear: $(this).data('placeholder') ? true : false,
+		    minimumInputLength: $(this).data('minimumInputLength'),
+		    ajax: {
+		    	delay: 500,
+		    	url: function(params){
+		    	
+		    		var additionalParam = $(this).attr('urlParamAddicional');
+		    		
+		    		if (additionalParam) {
+		    			return $(this).data('urlLlistat') + "/" + encodeURIComponent(params.term) + "/" + additionalParam;
+					} else {
+						return $(this).data('urlLlistat') + "/" + encodeURIComponent(params.term);
+					}
+		    		
+					
+				},
+				processResults: function (data) {
+					results = [];
+					for (var i = 0; i < data.length; i++) {
+						var item = data[i];
+						results.push({
+							id: item[suggestValue],
+							text: (suggestTextAddicional != undefined && item[suggestTextAddicional] != null) ? item[suggestText] + " (" + item[suggestTextAddicional] + ")" : item[suggestText]
+						});
+					}
+					suggest.trigger({type: 'select2:updateOptions'});
+					return {
+						results: results
+					};
+				},
+				error: function () {
+					suggest.append(
+							$('<option>', {
+								value: value,
+								text: value,
+								selected: false
+							}));
+				}
+		    },
+		    width: '100%',
+		});
+		$(this).on('select2:open', function() {
+			webutilModalAdjustHeight();
+		});
+		$(this).on('select2:updateOptions', function() {
+			setTimeout(function() {
+				webutilModalAdjustHeight();
+			}, 200);
+		});
+		$(this).on('select2:close', function() {
+			webutilModalAdjustHeight();
+		});
+		
+		// codi per no reordenar els elements de seleccio multiple
+	    $(this).on("select2:select", function (e) {
+			var id = e.params.data.id;
+			var option = $(e.target).children('[value='+id+']');
+			option.detach();
+			$(e.target).append(option).change();
+	    });
+	}
+	$.fn.webutilInputSuggestEval = function() {
+		$('[data-toggle="suggest"]', this).each(function() {
+			if (!$(this).attr('data-suggest-eval')) {
+				$(this).webutilInputSuggest();
+				$(this).attr('data-suggest-eval', 'true');
+			}
+		});
+	}
+	
 	$.fn.webutilDatepicker = function() {
 		$(this).datepicker({
 			format: 'dd/mm/yyyy',
@@ -436,6 +610,12 @@ $(document).ajaxError(function(event, jqxhr, ajaxSettings, thrownError) {
 			if (!$(this).attr('data-select2-eval')) {
 				$(this).webutilInputSelect2();
 				$(this).attr('data-select2-eval', 'true');
+			}
+		});
+		$('[data-toggle="suggest"]', this).each(function() {
+			if (!$(this).attr('data-suggest-eval')) {
+				$(this).webutilInputSuggest();
+				$(this).attr('data-suggest-eval', 'true');
 			}
 		});
 		$('[data-toggle="datepicker"]', this).each(function() {

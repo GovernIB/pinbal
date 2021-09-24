@@ -314,6 +314,15 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 
 	@Transactional(readOnly = true)
 	@Override
+	public ServeiDto findById(Long id) {
+		log.debug("Cercant el servei (id= " + id + ")");
+		return dtoMappingHelper.getMapperFacade().map(
+				serveiRepository.findOne(id),
+				ServeiDto.class);
+	}
+	
+	@Transactional(readOnly = true)
+	@Override
 	public List<ServeiDto> findActius() {
 		log.debug("Cercant els servicios actius");
 		List<ServeiDto> resposta = new ArrayList<ServeiDto>();
@@ -323,6 +332,21 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 		return resposta;
 	}
 
+	@Transactional(readOnly = true)
+	@Override
+	public List<ServeiDto> findActius(String filtre) {
+		log.debug("Cercant els servicios actius amb filtre: " + filtre);
+		List<ServeiDto> resposta = new ArrayList<ServeiDto>();
+		List<Servicio> servicios = getScspHelper().findServicioAll();
+		for (Servicio servicio : servicios) {
+			if ((filtre == null || filtre.isEmpty()) || 
+					(filtre != null && !filtre.isEmpty() && 
+						(servicio.getCodCertificado().toLowerCase().contains(filtre.toLowerCase()) ||
+						 servicio.getDescripcion().toLowerCase().contains(filtre.toLowerCase()))))  
+				resposta.add(toServeiDto(servicio));
+		}
+		return resposta;
+	}
 
 	@Transactional(readOnly = true)
 	@Override
@@ -331,6 +355,7 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 			String descripcio,
 			String emisor,
 			Boolean activa,
+			String scspVersionEsquema,
 			Pageable pageable) {
 		log.debug("Consulta de serveis segons filtre (codi=" + codi + ", descripcio=" + descripcio + ""
 				+ "emisor=" + emisor + " activa=" + activa + ")");
@@ -344,6 +369,8 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 				(emisor != null && emisor.length() > 0) ? Long.parseLong(emisor) : null,
 				activa == null,
 				activa,
+				scspVersionEsquema == null || scspVersionEsquema.length() == 0,
+				scspVersionEsquema,
 				pageable);
 		
 		Page<ServeiDto> paginaDtos = dtoMappingHelper.pageEntities2pageDto(
@@ -445,7 +472,38 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 		}
 		return resposta;
 	}
-
+	
+	@Transactional(readOnly = true)
+	@Override
+	public List<ServeiDto> findAmbEntitat(Long entitatId, String filtre)
+			throws EntitatNotFoundException {
+		log.debug("Cercant els servicios actius per a l'entitat (id="
+				+ entitatId + ") y filtre: " + filtre);
+		Entitat entitat = entitatRepository.findOne(entitatId);
+		if (entitat == null) {
+			log.debug("No s'ha trobat l'entitat (id=" + entitatId + ")");
+			throw new EntitatNotFoundException();
+		}
+		List<ServeiDto> resposta = new ArrayList<ServeiDto>();
+		List<Servicio> servicios = getScspHelper().findServicioAll();
+		for (Servicio servicio : servicios) {
+			boolean trobat = false;
+			for (String servei : entitat.getServeis()) {
+				if (servei.equals(servicio.getCodCertificado()) &&
+						((filtre == null || filtre.isEmpty()) || 
+								(filtre != null && !filtre.isEmpty() && 
+										(servicio.getCodCertificado().toLowerCase().contains(filtre.toLowerCase()) ||
+										 servicio.getDescripcion().toLowerCase().contains(filtre.toLowerCase()))))) {
+					trobat = true;
+					break;
+				}
+			}
+			if (trobat)
+				resposta.add(toServeiDto(servicio));
+		}
+		return resposta;
+	}
+	
 	@Transactional(readOnly = true)
 	@Override
 	public List<ServeiDto> findAmbEntitatIProcediment(
@@ -471,6 +529,46 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 			boolean trobat = false;
 			for (ProcedimentServei procedimentServei : procedimentServeis) {
 				if (procedimentServei.getServei().equals(servicio.getCodCertificado())) {
+					trobat = true;
+					break;
+				}
+			}
+			if (trobat)
+				resposta.add(toServeiDto(servicio));
+		}
+		return resposta;
+	}
+
+	@Transactional(readOnly = true)
+	@Override
+	public List<ServeiDto> findAmbEntitatIProcediment(
+			Long entitatId,
+			Long procedimentId,
+			String filtre) throws EntitatNotFoundException, ProcedimentNotFoundException {
+		log.debug("Cercant els servicios (entitatId=" + entitatId + ", procedimentId=" + procedimentId + ", filtre=" + filtre + "\")");
+		Entitat entitat = entitatRepository.findOne(entitatId);
+		if (entitat == null) {
+			log.debug("No s'ha trobat l'entitat (id=" + entitatId + ")");
+			throw new EntitatNotFoundException();
+		}
+		Procediment procediment = procedimentRepository.findOne(procedimentId);
+		if (procediment == null) {
+			log.debug("No s'ha trobat el procediment (id=" + procedimentId + ")");
+			throw new ProcedimentNotFoundException();
+		}
+		List<ProcedimentServei> procedimentServeis = procedimentServeiRepository.findByEntitatIdAndProcedimentId(
+				entitatId,
+				procedimentId);
+		List<ServeiDto> resposta = new ArrayList<ServeiDto>();
+		List<Servicio> servicios = getScspHelper().findServicioAll();
+		for (Servicio servicio : servicios) {
+			boolean trobat = false;
+			for (ProcedimentServei procedimentServei : procedimentServeis) {
+				if (procedimentServei.getServei().equals(servicio.getCodCertificado()) && 
+						((filtre == null || filtre.isEmpty()) || 
+								(filtre != null && !filtre.isEmpty() &&	
+										(servicio.getCodCertificado().toLowerCase().contains(filtre.toLowerCase()) || 
+										 servicio.getDescripcion().toLowerCase().contains(filtre.toLowerCase()))))) {
 					trobat = true;
 					break;
 				}

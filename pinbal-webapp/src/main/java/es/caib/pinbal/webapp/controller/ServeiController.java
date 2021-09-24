@@ -130,6 +130,7 @@ public class ServeiController extends BaseController {
 				command.getDescripcio(),
 				command.getEmissor(),
 				command.getActiva(),				
+				command.getScspVersionEsquema(),
 				serverSideRequest.toPageable());
 
 		return new ServerSideResponse<ServeiDto, Long>(serverSideRequest, page);

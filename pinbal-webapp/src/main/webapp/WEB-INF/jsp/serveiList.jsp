@@ -64,7 +64,7 @@
 					}
 				},
 				{
-					targets: [4],
+					targets: [5],
 					orderable: false,
 					width: "1%",
 					render: function (data, type, row, meta) {
@@ -73,7 +73,7 @@
 					}
 				}, 
 				{
-					targets: [5],
+					targets: [6],
 					orderable: false,
 					width: "1%",
 					render: function (data, type, row, meta) {
@@ -82,11 +82,11 @@
 					}
 				}, 
 				{
-					targets: [6],
+					targets: [7],
 					visible: false
 				}, 
 				{
-					targets: [7],
+					targets: [8],
 					visible: false,
 					orderable: false,
 				}, 
@@ -135,7 +135,10 @@
 					<form:option value="false">${falseValue}</form:option>
 				</form:select>
 			</div>
-			<div class="col-md-4">
+			<div class="col-md-2">	
+				<pbl:inputText name="scspVersionEsquema"  inline="true" placeholderKey="servei.list.filtre.camp.scspVersionEsquema"/>
+			</div>
+			<div class="col-md-2">
 				<div class="pull-right">
 					<button id="netejar-filtre" class="btn btn-default" type="button"><spring:message code="comu.boto.netejar"/></button>
 					<button type="submit" class="btn btn-primary"><span class="fa fa-filter"></span> <spring:message code="comu.boto.filtrar"/></button>
@@ -154,6 +157,7 @@
 				<th data-data="descripcio"><spring:message code="servei.list.taula.columna.descripcio" /></th>
 				<th data-data="scspEmisor.nom"><spring:message code="servei.list.taula.columna.emissor" /></th>
 				<th data-data="actiu"><spring:message code="servei.list.taula.columna.actiu" /></th>
+				<th data-data="scspVersionEsquema"><spring:message code="servei.list.taula.columna.scspVersionEsquema" /></th>
 				<th data-data="numeroProcedimentsAssociats"></th>
 				<th data-data="id"></th>
 				<th data-data="codiUrlEncoded"></th>

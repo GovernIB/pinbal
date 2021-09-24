@@ -71,6 +71,7 @@ public interface ServeiService {
 	 * @param descripcio Nom a cercar.
 	 * @param emisor Emisor a cercar.
 	 * @param activa Si cercar actius (true) o inactius (false).
+	 * @param scspVersionEsquema Versió esquema SCSP  a cercar.
 	 * @param paginacioAmbOrdre
 	 * 				Paràmetres per a la paginació i ordenació dels resultats.
 	 * @return
@@ -80,6 +81,7 @@ public interface ServeiService {
 			String descripcio,
 			String emisor,
 			Boolean activa,
+			String scspVersionEsquema,
 			Pageable pageable);
 	
 	/**
@@ -130,12 +132,34 @@ public interface ServeiService {
 	public ServeiDto findAmbCodiPerDelegat(Long entitatId, String serveiCodi) throws ServeiNotFoundException;
 
 	/**
+	 * Consulta un servei donat el seu id.
+	 * 
+	 * @param id
+	 *            Atribut id del servei a trobar.
+	 * @return El servei trobat. Si no s'ha trobat cap servei retorna null.
+	 */
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_REPRES')")
+	public ServeiDto findById(Long id);
+	
+	/**
 	 * Llistat amb els serveis actius.
 	 * 
 	 * @return Un llistat amb els serveis actius.
 	 */
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_REPORT')")
 	public List<ServeiDto> findActius();
+	
+	/**
+	 * Llistat amb els serveis actius.
+	 * 
+	 * Selecciona les que tenen el patró espedificat al parametre de filtre a la descripció o al codi.
+	 * 
+	 * @param filtre
+	 *            Paràmetre de filtre. 
+	 * @return Un llistat amb els serveis actius.
+	 */
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_REPORT')")
+	public List<ServeiDto> findActius(String filtre);
 
 	/**
 	 * Llistat amb els serveis actius per a una entitat.
@@ -149,6 +173,22 @@ public interface ServeiService {
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_REPRES') or hasRole('ROLE_AUDIT') or hasRole('ROLE_SUPERAUD')")
 	public List<ServeiDto> findAmbEntitat(Long entitatId) throws EntitatNotFoundException;
 
+	/**
+	 * Llistat amb els serveis actius per a una entitat.
+	 * 
+	 * Selecciona les que tenen el patró espedificat al parametre de filtre a la descripció o al codi.
+	 * 
+	 * @param entitatId
+	 *            Atribut id de l'entitat.
+	 * @param filtre
+	 *            Paràmetre de filtre.         
+	 * @return Un llistat amb els serveis actius.
+	 * @throws EntitatNotFoundException
+	 *             Si no s'ha trobat troba cap entitat amb l'id especificat.
+	 */
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_REPRES') or hasRole('ROLE_AUDIT') or hasRole('ROLE_SUPERAUD')")
+	public List<ServeiDto> findAmbEntitat(Long entitatId, String filtre) throws EntitatNotFoundException;
+	
 	/**
 	 * Llistat amb els serveis d'una entitat donat un procediment.
 	 * 
@@ -167,6 +207,29 @@ public interface ServeiService {
 			Long entitatId,
 			Long procedimentId) throws EntitatNotFoundException, ProcedimentNotFoundException;
 
+	/**
+	 * Llistat amb els serveis d'una entitat donat un procediment.
+	 * 
+	 * Selecciona les que tenen el patró espedificat al parametre de filtre a la descripció o al codi.
+	 * 
+	 * @param entitatId
+	 *            Atribut id de l'entitat.
+	 * @param procedimentId
+	 *            Atribut id del procediment.
+	 * @param filtre
+	 *            Paràmetre de filtre.
+	 * @return Una llista amb els serveis resultants de la consulta.
+	 * @throws EntitatNotFoundException
+	 *             Si no s'ha trobat troba cap entitat amb l'id especificat.
+	 * @throws ProcedimentNotFoundException
+	 *             Si no s'ha trobat troba cap procediment amb l'id especificat.
+	 */
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_REPRES') or hasRole('ROLE_AUDIT') or hasRole('ROLE_SUPERAUD')")
+	public List<ServeiDto> findAmbEntitatIProcediment(
+			Long entitatId,
+			Long procedimentId,
+			String filtre) throws EntitatNotFoundException, ProcedimentNotFoundException;
+	
 	/**
 	 * Llistat amb les parelles procediment-servei a les quals un usuari
 	 * delegat té accés dins una entitat.
