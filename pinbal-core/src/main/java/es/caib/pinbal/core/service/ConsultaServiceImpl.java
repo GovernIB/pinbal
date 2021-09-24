@@ -252,8 +252,10 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 					Arrays.asList(convertirEnSolicitud(consulta, procedimentServei)),
 					true,
 					conslt.isRecobriment());
+			if (resultat.getIdsSolicituds() != null && resultat.getIdsSolicituds().length > 0) {
+				conslt.updateScspSolicitudId(resultat.getIdsSolicituds()[0]);
+			}
 			updateEstatConsulta(conslt, resultat);
-			conslt.updateScspSolicitudId(resultat.getIdsSolicituds()[0]);
 			/*if (EstatTipus.Tramitada.equals(c.getEstat())) {
 				justificantHelper.generarCustodiarJustificantPendent(
 						c,
@@ -404,22 +406,20 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 					ex);
 			throw new ScspException(ex.getMessage(), ex);
 		}*/
-			enviarPeticioScsp(
+			List<Solicitud> solicituds = new ArrayList<Solicitud>();
+			solicituds.add(convertirEnSolicitud(consulta, procedimentServei));
+			/*ResultatEnviamentPeticio resultat = */enviarPeticioScsp(
 					procedimentServei.getProcediment().getEntitat().getId(),
 					consulta.getServeiCodi(),
 					conslt.getScspPeticionId(),
 					Arrays.asList(convertirEnSolicitud(consulta, procedimentServei)),
 					true,
 					conslt.isRecobriment());
-			/*if (resultat.isError()) {
-				String error = "[" + resultat.getErrorCodi() + "] " + resultat.getErrorDescripcio();
-				transaccioHelper.updateErrorConsulta(consultaId, error);
-				Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-				log.error("Error retornat per la consulta SCSP (" +
-						"id=" + conslt.getScspPeticionId() + ", " +
-						"servei=" + consulta.getServeiCodi() + ", " +
-						"usuari=" + auth.getName() + "): " + error);
-				throw new ScspException(error);
+			/*updateEstatConsulta(conslt, resultat);
+			if (resultat.isError()) {
+				throw new ConsultaScspRespostaException(
+						consulta.getScspPeticionId(),
+						"[" + resultat.getErrorCodi() + "] " + resultat.getErrorDescripcio());
 			}*/
 		} catch (ConsultaScspException ex) {
 			processarConsultaScspException(
@@ -448,8 +448,10 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 		try {
 			ResultatEnviamentPeticio resultat = getScspHelper().recuperarResultatEnviamentPeticio(
 					consulta.getScspPeticionId());
+			if (resultat.getIdsSolicituds() != null && resultat.getIdsSolicituds().length > 0) {
+				consulta.updateScspSolicitudId(resultat.getIdsSolicituds()[0]);
+			}
 			updateEstatConsulta(consulta, resultat);
-			consulta.updateScspSolicitudId(resultat.getIdsSolicituds()[0]);
 			/*if (EstatTipus.Tramitada.equals(consulta.getEstat())) {
 				justificantHelper.generarCustodiarJustificantPendent(
 						consulta,
@@ -686,7 +688,9 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 					true,
 					conslt.isRecobriment());
 			conslt.updateEstat(EstatTipus.Processant);
-			conslt.updateScspSolicitudId(resultat.getIdsSolicituds()[0]);
+			if (resultat.getIdsSolicituds() != null && resultat.getIdsSolicituds().length > 0) {
+				conslt.updateScspSolicitudId(resultat.getIdsSolicituds()[0]);
+			}
 			updateEstatConsulta(conslt, resultat);
 			Consulta saved = consultaRepository.save(conslt);
 			ConsultaDto resposta = dtoMappingHelper.getMapperFacade().map(
@@ -888,8 +892,10 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 		try {
 			ResultatEnviamentPeticio resultat = getScspHelper().recuperarResultatEnviamentPeticio(
 					consulta.getScspPeticionId());
+			if (resultat.getIdsSolicituds() != null && resultat.getIdsSolicituds().length > 0) {
+				consulta.updateScspSolicitudId(resultat.getIdsSolicituds()[0]);
+			}
 			updateEstatConsulta(consulta, resultat);
-			consulta.updateScspSolicitudId(resultat.getIdsSolicituds()[0]);
 			/*if (EstatTipus.Tramitada.equals(consulta.getEstat())) {
 				justificantHelper.generarCustodiarJustificantPendent(
 						consulta,
