@@ -317,5 +317,13 @@ public interface ProcedimentService {
 	 */
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	List<ProcedimentDto> findAmbServeiCodi(String serveiCodi);
+	
+	/**
+	 * Consulta de tots les procediments
+	 * 
+	 * @return	Un llistat de procediemtns
+	 */
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	public List<ProcedimentDto> findAll();
 
 }

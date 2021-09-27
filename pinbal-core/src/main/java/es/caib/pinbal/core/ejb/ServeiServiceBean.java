@@ -146,6 +146,13 @@ public class ServeiServiceBean implements ServeiService {
 	}
 	
 	@Override
+	@RolesAllowed("PBL_ADMIN")
+	public List<ServeiDto> findAmbProcediment(
+			Long procedimentId) throws ProcedimentNotFoundException {
+		return delegate.findAmbProcediment(procedimentId);
+	}
+	
+	@Override
 	@RolesAllowed({"PBL_ADMIN", "PBL_REPRES", "PBL_AUDIT", "PBL_SUPERAUD"})
 	public List<ServeiDto> findAmbEntitatIProcediment(
 			Long entitatId,
@@ -358,6 +365,12 @@ public class ServeiServiceBean implements ServeiService {
 		delegate.saveActiu(
 				serveiCodi,
 				actiu);
+	}
+	
+	@Override
+	@RolesAllowed("PBL_ADMIN")
+	public List<ServeiDto> findAll() {
+		return delegate.findAll();
 	}
 
 }

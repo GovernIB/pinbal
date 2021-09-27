@@ -208,6 +208,20 @@ public interface ServeiService {
 			Long procedimentId) throws EntitatNotFoundException, ProcedimentNotFoundException;
 
 	/**
+	 * Llistat amb els serveis donat un procediment.
+	 * 
+	 * @param procedimentId
+	 *            Atribut id del procediment.
+	 * @return Una llista amb els serveis resultants de la consulta.
+	 * 
+	 * @throws ProcedimentNotFoundException
+	 *             Si no s'ha trobat troba cap procediment amb l'id especificat.
+	 */
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	public List<ServeiDto> findAmbProcediment(
+			Long procedimentId) throws ProcedimentNotFoundException;
+	
+	/**
 	 * Llistat amb els serveis d'una entitat donat un procediment.
 	 * 
 	 * Selecciona les que tenen el patró espedificat al parametre de filtre a la descripció o al codi.
@@ -643,5 +657,13 @@ public interface ServeiService {
 	void saveActiu(
 			String serveiCodi,
 			boolean actiu);
+	
+	/**
+	 * Consulta de tots les serveis
+	 * 
+	 * @return	Un llistat de serveis
+	 */
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	public List<ServeiDto> findAll();
 
 }
