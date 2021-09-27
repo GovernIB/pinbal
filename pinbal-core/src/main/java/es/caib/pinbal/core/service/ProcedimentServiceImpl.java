@@ -587,4 +587,12 @@ public class ProcedimentServiceImpl implements ProcedimentService {
 		this.procedimentRepository = procedimentRepository;
 	}
 
+	@Transactional(readOnly = true)
+	@Override
+	public List<ProcedimentDto> findAll() {
+		log.debug("Cercant tots els procediments");
+		return dtoMappingHelper.getMapperFacade().mapAsList(
+				procedimentRepository.findAll(),
+				ProcedimentDto.class);
+	}
 }

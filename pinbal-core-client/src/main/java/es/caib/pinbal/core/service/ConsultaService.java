@@ -429,8 +429,6 @@ public interface ConsultaService {
 	/**
 	 * Retorna una pàgina de les consultes realitzades donada una entitat.
 	 * 
-	 * @param entitatId
-	 *            Atribut id de l'entitat.
 	 * @param filtre
 	 *            Filtre de consultes.
 	 * @param pageable
@@ -441,7 +439,6 @@ public interface ConsultaService {
 	 */
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public Page<ConsultaDto> findByFiltrePaginatPerAdmin(
-			Long entitatId,
 			ConsultaFiltreDto filtre,
 			Pageable pageable) throws EntitatNotFoundException;
 

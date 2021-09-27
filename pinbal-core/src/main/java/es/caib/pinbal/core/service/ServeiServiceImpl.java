@@ -538,6 +538,34 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 		}
 		return resposta;
 	}
+	
+	@Transactional(readOnly = true)
+	@Override
+	public List<ServeiDto> findAmbProcediment(
+			Long procedimentId) throws ProcedimentNotFoundException {
+		log.debug("Cercant els servicios (procedimentId=" + procedimentId + ")");
+		Procediment procediment = procedimentRepository.findOne(procedimentId);
+		if (procediment == null) {
+			log.debug("No s'ha trobat el procediment (id=" + procedimentId + ")");
+			throw new ProcedimentNotFoundException();
+		}
+		List<ProcedimentServei> procedimentServeis = procedimentServeiRepository.findByProcedimentId(
+				procedimentId);
+		List<ServeiDto> resposta = new ArrayList<ServeiDto>();
+		List<Servicio> servicios = getScspHelper().findServicioAll();
+		for (Servicio servicio : servicios) {
+			boolean trobat = false;
+			for (ProcedimentServei procedimentServei : procedimentServeis) {
+				if (procedimentServei.getServei().equals(servicio.getCodCertificado())) {
+					trobat = true;
+					break;
+				}
+			}
+			if (trobat)
+				resposta.add(toServeiDto(servicio));
+		}
+		return resposta;
+	}
 
 	@Transactional(readOnly = true)
 	@Override
@@ -1304,6 +1332,18 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 		serveiXsdHelper.modificarXsd(servei, xsd, contingut);
 	}
 
+	@Transactional(readOnly = true)
+	@Override
+	public List<ServeiDto> findAll() {
+		log.debug("Cercant els serveis actius");
+		List<ServeiDto> resposta = new ArrayList<ServeiDto>();
+		List<Servicio> servicios = getScspHelper().findServicioAll();
+		for (Servicio servicio : servicios) {
+			resposta.add(toServeiDto(servicio));
+		}
+		return resposta;
+	}
+	
 	private Servicio toServicioScsp(ServeiDto dto) {
 		Servicio servicio = getScspHelper().getServicio(dto.getCodi());
 		if (servicio == null) {

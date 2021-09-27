@@ -1361,18 +1361,10 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 	@Transactional(readOnly = true)
 	@Override
 	public Page<ConsultaDto> findByFiltrePaginatPerAdmin(
-			Long entitatId,
 			ConsultaFiltreDto filtre,
 			Pageable pageable) throws EntitatNotFoundException {
-		log.debug("Cercant les consultes de administrador per a l'entitat (id=" + entitatId + ")");
-		Entitat entitat = entitatRepository.findOne(entitatId);
-		if (entitat == null) {
-			log.debug("No s'ha trobat l'entitat (id=" + entitatId + ")");
-			throw new EntitatNotFoundException();
-		}
-		return findByEntitatIUsuariFiltrePaginat(
-				entitat,
-				null,
+		log.debug("Cercant les consultes de administrador");
+		return findByFiltrePaginat(
 				filtre,
 				pageable,
 				false,
@@ -2398,6 +2390,103 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 		return  paginaConsultesDto;
 	}
 
+	private Page<ConsultaDto> findByFiltrePaginat(
+			ConsultaFiltreDto filtre,
+			Pageable pageable,
+			boolean multiple,
+			boolean nomesSensePare,
+			boolean consultaHihaPeticio,
+			boolean consultaTerData) throws EntitatNotFoundException {
+		copiarPropertiesToDb();
+		log.debug("Consulta de peticions findByFiltrePaginat (" +
+				((filtre != null) ? (
+				"filtre.entitatId=" + filtre.getEntitatId() + ", " +
+				"filtre.scspPeticionId=" + filtre.getScspPeticionId() + ", " +
+				"filtre.procedimentId=" + filtre.getProcedimentId() + ", " +
+				"filtre.serveiCodi=" + filtre.getServeiCodi() + ", " +
+				"filtre.estat=" + filtre.getProcedimentId() + ", " +
+				"filtre.dataInici=" + filtre.getProcedimentId() + ", " +
+				"filtre.dataFi=" + filtre.getProcedimentId() + ", " +
+				"filtre.titularNom=" + filtre.getTitularNom() + ", " +
+				"filtre.titularDocument=" + filtre.getTitularDocument() + ", " +
+				"filtre.funcionariNom=" + filtre.getFuncionariNom() + ", " +
+				"filtre.funcionariDocument=" + filtre.getFuncionariDocument() + ", ") : "") +
+				((pageable != null) ? (
+				"paginacio.paginaNum=" + pageable.getPageNumber() + ", " +
+				"paginacio.paginaTamany=" + pageable.getPageSize() + ", ") : "") +
+				"multiple=" + multiple + ", " +
+				"nomesSensePare=" + nomesSensePare + ")");
+		long t0 = System.currentTimeMillis();
+		Page<Consulta> paginaConsultes;
+		if (filtre == null) {
+			paginaConsultes = consultaRepository.findByProcedimentServeiProcediment(
+					multiple,
+					nomesSensePare,
+					pageable);
+		} else {
+			paginaConsultes = consultaRepository.findByFiltrePaginat(
+					filtre.getEntitatId() == null,
+					filtre.getEntitatId(),
+					filtre.getScspPeticionId() == null || filtre.getScspPeticionId().isEmpty(),
+					filtre.getScspPeticionId(),
+					filtre.getProcedimentId() == null,
+					filtre.getProcedimentId(),
+					filtre.getServeiCodi() == null || filtre.getServeiCodi().isEmpty(),
+					filtre.getServeiCodi(),
+					filtre.getEstat() == null,
+					(filtre.getEstat() != null) ? Consulta.EstatTipus.valueOf(filtre.getEstat().toString()) : null,
+					filtre.getDataInici() == null,
+					filtre.getDataInici(),
+					filtre.getDataFi() == null,
+					configurarDataFiPerFiltre(filtre.getDataFi()),
+					filtre.getTitularNom() == null || filtre.getTitularNom().isEmpty(),
+					filtre.getTitularNom(),
+					filtre.getTitularDocument() == null || filtre.getTitularDocument().isEmpty(),
+					filtre.getTitularDocument(),
+					filtre.getFuncionariNom() == null || filtre.getFuncionariNom().isEmpty(),
+					filtre.getFuncionariNom(),
+					filtre.getFuncionariDocument() == null || filtre.getFuncionariDocument().isEmpty(),
+					filtre.getFuncionariDocument(),
+					multiple,
+					nomesSensePare,
+					pageable);
+		}
+		log.trace("[S_CONS] Consulta a la base de dades (" + (System.currentTimeMillis() - t0) + " ms)");
+		t0 = System.currentTimeMillis();
+		Page<ConsultaDto> paginaConsultesDto = dtoMappingHelper.pageEntities2pageDto(paginaConsultes, ConsultaDto.class, pageable);
+		log.trace("[S_CONS] Conversió a DTO (" + (System.currentTimeMillis() - t0) + " ms)");
+		t0 = System.currentTimeMillis();
+		for (ConsultaDto consulta: paginaConsultesDto.getContent()) {
+			consulta.setServeiDescripcio(
+					getScspHelper().getServicioDescripcion(
+							consulta.getServeiCodi()));
+		}
+		if (consultaHihaPeticio) {
+			for (ConsultaDto consulta: paginaConsultesDto.getContent()) {
+				try {
+					consulta.setHiHaPeticio(
+							getScspHelper().isPeticionEnviada(
+									consulta.getScspPeticionId()));
+				} catch (es.scsp.common.exceptions.ScspException ex) {
+					log.error("No s'han pogut consultar l'enviament de la petició (id=" + consulta.getScspPeticionId() + ")", ex);
+					consulta.setHiHaPeticio(false);
+				}
+			}
+		}
+		if (consultaHihaPeticio) {
+			for (ConsultaDto consulta: paginaConsultesDto.getContent()) {
+				try {
+					consulta.setTerData(getScspHelper().getTerPeticion(
+										consulta.getScspPeticionId()));
+				} catch (es.scsp.common.exceptions.ScspException ex) {
+					log.error("No s'han pogut consultar el TER de la petició (id=" + consulta.getScspPeticionId() + ")", ex);
+				}
+			}
+		}
+		log.trace("[S_CONS] Consulta de peticions addicionals (" + (System.currentTimeMillis() - t0) + " ms)");
+		return  paginaConsultesDto;
+	}	
+	
 	private JustificantDto obtenirJustificantComu(
 			final Consulta consulta,
 			final boolean descarregar) throws JustificantGeneracioException {

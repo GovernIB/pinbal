@@ -188,5 +188,11 @@ public class ProcedimentServiceBean implements ProcedimentService {
 		return delegate.putProcedimentCodi(procedimentId, serveiCodi, procedimentCodi);
 
 	}
+	
+	@Override
+	@RolesAllowed("PBL_ADMIN")
+	public List<ProcedimentDto> findAll() {
+		return delegate.findAll();
+	}
 
 }
