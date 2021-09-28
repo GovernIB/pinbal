@@ -20,6 +20,7 @@ import es.caib.pinbal.core.dto.ServeiDto;
 import es.caib.pinbal.core.service.ServeiService;
 import es.caib.pinbal.core.service.exception.EntitatNotFoundException;
 import es.caib.pinbal.core.service.exception.ProcedimentNotFoundException;
+import es.caib.pinbal.core.service.exception.ServeiNotFoundException;
 import es.caib.pinbal.webapp.common.RequestSessionHelper;
 
 /**
@@ -49,10 +50,10 @@ public class AjaxServeiController extends BaseController{
 		return getWithParam(request, text, null, model, false);
 	}
 	
-	@RequestMapping(value = "/servei/item/{id}", method = RequestMethod.GET)
+	@RequestMapping(value = "/servei/item/{codi}", method = RequestMethod.GET)
 	@ResponseBody
-	public ServeiDto getItem(HttpServletRequest request, @PathVariable Long id, Model model) {
-		return serveiService.findById(id);
+	public ServeiDto getItem(HttpServletRequest request, @PathVariable String codi, Model model) throws ServeiNotFoundException {
+		return serveiService.findAmbCodiPerAdminORepresentant(codi);
 	}
 	
 	@RequestMapping(value = "/servei/{text}/{procediment}", method = RequestMethod.GET)
