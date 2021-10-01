@@ -257,7 +257,7 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 			if (resultat.getIdsSolicituds() != null && resultat.getIdsSolicituds().length > 0) {
 				conslt.updateScspSolicitudId(resultat.getIdsSolicituds()[0]);
 			}
-			updateEstatConsulta(conslt, resultat);
+			updateEstatConsulta(conslt, resultat, accioParams);
 			/*if (EstatTipus.Tramitada.equals(c.getEstat())) {
 				justificantHelper.generarCustodiarJustificantPendent(
 						c,
@@ -410,19 +410,34 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 		}*/
 			List<Solicitud> solicituds = new ArrayList<Solicitud>();
 			solicituds.add(convertirEnSolicitud(consulta, procedimentServei));
-			/*ResultatEnviamentPeticio resultat = */enviarPeticioScsp(
+			ResultatEnviamentPeticio resultat = enviarPeticioScsp(
 					procedimentServei.getProcediment().getEntitat().getId(),
 					consulta.getServeiCodi(),
 					conslt.getScspPeticionId(),
 					solicituds,
 					true,
 					conslt.isRecobriment());
-			/*updateEstatConsulta(conslt, resultat);
+			/*updateEstatConsulta(conslt, resultat);*/
 			if (resultat.isError()) {
-				throw new ConsultaScspRespostaException(
-						consulta.getScspPeticionId(),
-						"[" + resultat.getErrorCodi() + "] " + resultat.getErrorDescripcio());
-			}*/
+				accioParams.put("idPeticion", consulta.getScspPeticionId());
+				accioParams.put("idSolicitud", consulta.getScspSolicitudId());
+				accioParams.put("estat", "[" + resultat.getEstatCodi() + "] " + resultat.getEstatDescripcio());
+				integracioHelper.addAccioError(
+						IntegracioHelper.INTCODI_SERVEIS_SCSP,
+						accioDescripcio,
+						accioParams,
+						IntegracioAccioTipusEnumDto.ENVIAMENT,
+						System.currentTimeMillis() - t0,
+						"[" + resultat.getErrorCodi() + "] " + resultat.getErrorDescripcio(),
+						(Throwable)null);
+			} else {
+				integracioHelper.addAccioOk(
+						IntegracioHelper.INTCODI_SERVEIS_SCSP,
+						accioDescripcio,
+						accioParams,
+						IntegracioAccioTipusEnumDto.ENVIAMENT,
+						System.currentTimeMillis() - t0);
+			}
 		} catch (ConsultaScspException ex) {
 			processarConsultaScspException(
 					ex,
@@ -453,7 +468,7 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 			if (resultat.getIdsSolicituds() != null && resultat.getIdsSolicituds().length > 0) {
 				consulta.updateScspSolicitudId(resultat.getIdsSolicituds()[0]);
 			}
-			updateEstatConsulta(consulta, resultat);
+			updateEstatConsulta(consulta, resultat, accioParams);
 			/*if (EstatTipus.Tramitada.equals(consulta.getEstat())) {
 				justificantHelper.generarCustodiarJustificantPendent(
 						consulta,
@@ -536,7 +551,7 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 					solicituds,
 					false,
 					conslt.isRecobriment());
-			updateEstatConsulta(conslt, resultat);
+			updateEstatConsulta(conslt, resultat, accioParams);
 			Consulta saved = consultaRepository.save(conslt);
 			int solicitudIndex = 0;
 			for (Solicitud solicitud: solicituds) {
@@ -560,7 +575,7 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 						conslt).
 						build();
 				cs.updateScspSolicitudId(resultat.getIdsSolicituds()[solicitudIndex++]);
-				updateEstatConsulta(cs, resultat);
+				updateEstatConsulta(cs, resultat, accioParams);
 				consultaRepository.save(cs);
 			}
 			integracioHelper.addAccioOk(
@@ -695,7 +710,7 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 			if (resultat.getIdsSolicituds() != null && resultat.getIdsSolicituds().length > 0) {
 				conslt.updateScspSolicitudId(resultat.getIdsSolicituds()[0]);
 			}
-			updateEstatConsulta(conslt, resultat);
+			updateEstatConsulta(conslt, resultat, accioParams);
 			Consulta saved = consultaRepository.save(conslt);
 			ConsultaDto resposta = dtoMappingHelper.getMapperFacade().map(
 					saved,
@@ -901,7 +916,7 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 			if (resultat.getIdsSolicituds() != null && resultat.getIdsSolicituds().length > 0) {
 				consulta.updateScspSolicitudId(resultat.getIdsSolicituds()[0]);
 			}
-			updateEstatConsulta(consulta, resultat);
+			updateEstatConsulta(consulta, resultat, accioParams);
 			/*if (EstatTipus.Tramitada.equals(consulta.getEstat())) {
 				justificantHelper.generarCustodiarJustificantPendent(
 						consulta,
@@ -1035,7 +1050,7 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 					solicitudsEnviar,
 					true,
 					conslt.isRecobriment());
-			updateEstatConsulta(conslt, resultat);
+			updateEstatConsulta(conslt, resultat, accioParams);
 			Consulta saved = consultaRepository.save(conslt);
 			int solicitudIndex = 0;
 			for (RecobrimentSolicitudDto solicitud: solicituds) {
@@ -1059,7 +1074,7 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 						conslt).
 						build();
 				cs.updateScspSolicitudId(resultat.getIdsSolicituds()[solicitudIndex++]);
-				updateEstatConsulta(cs, resultat);
+				updateEstatConsulta(cs, resultat, accioParams);
 				consultaRepository.save(cs);
 			}
 			ConsultaDto resposta = dtoMappingHelper.getMapperFacade().map(
@@ -1887,10 +1902,10 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 				protected void doInTransactionWithoutResult(TransactionStatus status) {
 					try {
 						ResultatEnviamentPeticio resultat = getScspHelper().recuperarResultatEnviamentPeticio(pendent.getScspPeticionId());
-						updateEstatConsulta(pendent, resultat);
+						updateEstatConsulta(pendent, resultat, null);
 						consultaRepository.saveAndFlush(pendent);
 						for (Consulta fill: pendent.getFills()) {
-							updateEstatConsulta(fill, resultat);
+							updateEstatConsulta(fill, resultat, null);
 							consultaRepository.saveAndFlush(fill);
 							/*if (EstatTipus.Tramitada.equals(filla.getEstat())) {
 								justificantHelper.generarCustodiarJustificantPendent(
@@ -2721,11 +2736,12 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 
 	private void updateEstatConsulta(
 			Consulta consulta,
-			ResultatEnviamentPeticio resultat) {
+			ResultatEnviamentPeticio resultat,
+			Map<String, String> accioParams) {
+		String error = null;
 		if (resultat.isError()) {
-			updateEstatConsultaError(
-					consulta,
-					"[" + resultat.getErrorCodi() + "] " + resultat.getErrorDescripcio());
+			error = "[" + resultat.getErrorCodi() + "] " + resultat.getErrorDescripcio();
+			updateEstatConsultaError(consulta, error);
 		} else if ("0001".equals(resultat.getEstatCodi())) {
 			consulta.updateEstat(EstatTipus.Pendent);
 		} else if ("0002".equals(resultat.getEstatCodi())) {
@@ -2734,6 +2750,14 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 			consulta.updateEstat(EstatTipus.Tramitada);
 		} else if ("0004".equals(resultat.getEstatCodi())) {
 			consulta.updateEstat(EstatTipus.Processant);
+		}
+		if (accioParams != null) {
+			accioParams.put("idPeticion", consulta.getScspPeticionId());
+			accioParams.put("idSolicitud", consulta.getScspSolicitudId());
+			accioParams.put("estat", "[" + resultat.getEstatCodi() + "] " + resultat.getEstatDescripcio());
+			if (error != null) {
+				accioParams.put("error", error);
+			}
 		}
 	}
 
