@@ -30,7 +30,6 @@ import es.caib.pinbal.core.dto.EstadisticaDto;
 import es.caib.pinbal.core.dto.EstadistiquesFiltreDto;
 import es.caib.pinbal.core.service.ConsultaService;
 import es.caib.pinbal.core.service.EntitatService;
-import es.caib.pinbal.core.service.ProcedimentService;
 import es.caib.pinbal.core.service.ServeiService;
 import es.caib.pinbal.core.service.exception.EntitatNotFoundException;
 import es.caib.pinbal.core.service.exception.ProcedimentNotFoundException;
@@ -53,8 +52,6 @@ public class EstadistiquesController {
 
 	@Autowired
 	private EntitatService entitatService;
-	@Autowired
-	private ProcedimentService procedimentService;
 	@Autowired
 	private ServeiService serveiService;
 	@Autowired

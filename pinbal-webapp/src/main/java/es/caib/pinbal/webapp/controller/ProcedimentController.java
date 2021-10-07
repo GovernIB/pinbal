@@ -740,6 +740,11 @@ public class ProcedimentController extends BaseController {
 				EnumHelper.getOptionsForEnum(
 						ProcedimentClaseTramiteEnumDto.class,
 						"procediment.form.camp.claseTramite.enum."));
+		model.addAttribute(
+				"procedimentAutomatizadoOptions",
+				EnumHelper.getOptionsForArray(
+						new String[] {"true", "false"},
+						new String[] {"comu.si", "comu.no"}));
 	}
 
 }

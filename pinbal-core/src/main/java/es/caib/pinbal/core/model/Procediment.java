@@ -137,7 +137,7 @@ public class Procediment extends PinbalAuditable<Long> {
 			String departament,
 			OrganGestor organGestor,
 			String codiSia,
-			boolean valorCampAutomatizado,
+			Boolean valorCampAutomatizado,
 			ProcedimentClaseTramiteEnumDto valorCampClaseTramite) {
 		this.codi = codi;
 		this.nom = nom;

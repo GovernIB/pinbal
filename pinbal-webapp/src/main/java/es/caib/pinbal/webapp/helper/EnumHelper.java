@@ -58,7 +58,7 @@ public class EnumHelper {
 			String textKeyPrefix) {
 		HtmlOption resposta = null;
 		if (enumeracio.isEnum()) {
-			for (Object e : enumeracio.getEnumConstants()) {
+			for (Object e: enumeracio.getEnumConstants()) {
 				if (textKeyPrefix.contains(((Enum<?>) e).name())) {
 					resposta = new HtmlOption(((Enum<?>) e).name(),
 							(textKeyPrefix != null) ? textKeyPrefix : ((Enum<?>) e).name());

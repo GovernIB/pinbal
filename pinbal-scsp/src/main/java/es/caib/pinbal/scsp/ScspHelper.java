@@ -741,13 +741,12 @@ public class ScspHelper {
 		Procedimiento procedimiento = new Procedimiento();
 		procedimiento.setCodProcedimiento(solicitud.getProcedimentCodi());
 		procedimiento.setNombreProcedimiento(solicitud.getProcedimentNom());
-		// TODO Descomentar al actualitzar les llibreries SCSP
-		/*if (solicitud.getProcedimentValorCampAutomatizado() != null) {
+		if (solicitud.getProcedimentValorCampAutomatizado() != null) {
 			procedimiento.setAutomatizado(
 					solicitud.getProcedimentValorCampAutomatizado() ? "1" : "0");
 		}
 		procedimiento.setClaseTramite(
-				solicitud.getProcedimentValorCampClaseTramite());*/
+				solicitud.getProcedimentValorCampClaseTramite());
 		solicitante.setProcedimiento(procedimiento);
 		solicitante.setUnidadTramitadora(solicitud.getUnitatTramitadora());
 		if (getXmlHelper().hasCodigoUnidadTramitadora(

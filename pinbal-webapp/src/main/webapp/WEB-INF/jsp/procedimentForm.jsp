@@ -35,7 +35,7 @@
 								optionItems="${ organsGestors }" optionValueAttribute="id" optionTextAttribute="nom"
 								required="true" optionMinimumResultsForSearch="5"/>
 				<pbl:inputText name="codiSia" labelSize="1" inline="false" textKey="procediment.form.camp.codisia"/>
-				<c:set var="campPath" value="valorCampAutomatizado"/>
+				<%--c:set var="campPath" value="valorCampAutomatizado"/>
 				<c:set var="campErrors"><form:errors path="${campPath}"/></c:set>
 				<div class="form-group">
 					<label class="control-label col-md-1" for="${campPath}"></label>
@@ -43,10 +43,14 @@
 						<form:checkbox path="${campPath}" id="${campPath}"/> <spring:message code="procediment.form.camp.actiuCampAuto"/>
 						<form:errors path="${campPath}" cssClass="help-block"/>
 					</div>
-				</div>
+				</div--%>
+				<pbl:inputSelect name="valorCampAutomatizado" textKey="procediment.form.camp.actiuCampAuto" 
+								emptyOption="true" emptyOptionTextKey="procediment.form.camp.actiuCampAuto.buit"
+								optionItems="${ procedimentAutomatizadoOptions }" optionValueAttribute="value" optionTextKeyAttribute="text"
+								required="false" labelSize="1" />
 				<pbl:inputSelect name="valorCampClaseTramite" textKey="procediment.form.camp.claseTramite" 
 								emptyOption="true" emptyOptionTextKey="procediment.form.camp.claseTramite.buit"
-								optionItems="${ procedimentClaseTramiteOptions }" optionValueAttribute="value" optionTextAttribute="text"
+								optionItems="${ procedimentClaseTramiteOptions }" optionValueAttribute="value" optionTextKeyAttribute="text"
 								required="false" labelSize="1" />
 				<div class="pull-right">
 					<button type="submit" class="btn btn-primary"><spring:message code="comu.boto.guardar"/></button>
