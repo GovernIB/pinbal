@@ -460,7 +460,12 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 			if (resultat.getIdsSolicituds() != null && resultat.getIdsSolicituds().length > 0) {
 				consulta.updateScspSolicitudId(resultat.getIdsSolicituds()[0]);
 			}
-			updateEstatConsulta(consulta, resultat);
+			// Si l'estat de la consulta és Error vol dir que l'error s'ha processat amb anterioritat
+			// i no és necessari actualitzar l'estat. Si l'estat s'actualitza segurament el posarà com
+			// a pendent i no seria l'estat correcte.
+			if (consulta.getEstat() != EstatTipus.Error) {
+				updateEstatConsulta(consulta, resultat);
+			}
 			/*if (EstatTipus.Tramitada.equals(consulta.getEstat())) {
 				justificantHelper.generarCustodiarJustificantPendent(
 						consulta,
@@ -904,7 +909,12 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 			if (resultat.getIdsSolicituds() != null && resultat.getIdsSolicituds().length > 0) {
 				consulta.updateScspSolicitudId(resultat.getIdsSolicituds()[0]);
 			}
-			updateEstatConsulta(consulta, resultat);
+			// Si l'estat de la consulta és Error vol dir que l'error s'ha processat amb anterioritat
+			// i no és necessari actualitzar l'estat. Si l'estat s'actualitza segurament el posarà com
+			// a pendent i no seria l'estat correcte.
+			if (consulta.getEstat() != EstatTipus.Error) {
+				updateEstatConsulta(consulta, resultat);
+			}
 			/*if (EstatTipus.Tramitada.equals(consulta.getEstat())) {
 				justificantHelper.generarCustodiarJustificantPendent(
 						consulta,
