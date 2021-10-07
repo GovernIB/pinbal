@@ -10,32 +10,32 @@ package es.caib.pinbal.core.dto;
  */
 public enum ProcedimentClaseTramiteEnumDto {
 
-	ADUANERO(1),
-	AFILIACION_COTIZACION_SS(2),
-	AUTORIZ_LICEN_CONCES_HOMOLOG(3),
-	AYUDAS_BECAS_SUBVEN(4),
-	CERTIFICADOS(5),
-	CONTRATACION_PUB(6),
-	CONVENIOS_COMUNIC(7),
-	GESTION_ECON_PATRIM(8),
-	DECLARAC_COMUNIC_INTERESADOS(9),
-	INSPECTORA(10),
-	PREMIOS(11),
-	PRESTACIONES(12),
-	RECURSOS_HUMANOS(13),
-	REGISTROS_CENSOS(14),
-	RESP_PATRIM_INDEM(15),
-	REVISION_ACTOS_ADM_RECURSOS(16),
-	SANCIONADOR(17),
-	SUGEREN_QUEJAS_CIUDADANOS(18),
-	TRIBUTARIO(19);
+	ADUANERO((short)1),
+	AFILIACION_COTIZACION_SS((short)2),
+	AUTORIZ_LICEN_CONCES_HOMOLOG((short)3),
+	AYUDAS_BECAS_SUBVEN((short)4),
+	CERTIFICADOS((short)5),
+	CONTRATACION_PUB((short)6),
+	CONVENIOS_COMUNIC((short)7),
+	GESTION_ECON_PATRIM((short)8),
+	DECLARAC_COMUNIC_INTERESADOS((short)9),
+	INSPECTORA((short)10),
+	PREMIOS((short)11),
+	PRESTACIONES((short)12),
+	RECURSOS_HUMANOS((short)13),
+	REGISTROS_CENSOS((short)14),
+	RESP_PATRIM_INDEM((short)15),
+	REVISION_ACTOS_ADM_RECURSOS((short)16),
+	SANCIONADOR((short)17),
+	SUGEREN_QUEJAS_CIUDADANOS((short)18),
+	TRIBUTARIO((short)19);
 
-	private final int intValue;
-	private ProcedimentClaseTramiteEnumDto(int intValue) {
-		this.intValue = intValue;
+	private final short shortValue;
+	private ProcedimentClaseTramiteEnumDto(short shortValue) {
+		this.shortValue = shortValue;
 	}
-	public int getIntValue() {
-		return intValue;
+	public short getShortValue() {
+		return shortValue;
 	}
 
 };

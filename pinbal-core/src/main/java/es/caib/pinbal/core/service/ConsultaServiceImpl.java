@@ -2577,7 +2577,7 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 		solicitud.setProcedimentNom(procediment.getNom());
 		solicitud.setProcedimentValorCampAutomatizado(procediment.getValorCampAutomatizado());
 		if (procediment.getValorCampClaseTramite() != null) {
-			solicitud.setProcedimentValorCampClaseTramite(procediment.getValorCampClaseTramite().getIntValue());
+			solicitud.setProcedimentValorCampClaseTramite(procediment.getValorCampClaseTramite().getShortValue());
 		}
 		solicitud.setSolicitantIdentificacio(consulta.getEntitatCif());
 		solicitud.setSolicitantNom(consulta.getEntitatNom());
@@ -2630,7 +2630,7 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 		solicitud.setProcedimentNom(procediment.getNom());
 		solicitud.setProcedimentValorCampAutomatizado(procediment.getValorCampAutomatizado());
 		if (procediment.getValorCampClaseTramite() != null) {
-			solicitud.setProcedimentValorCampClaseTramite(procediment.getValorCampClaseTramite().getIntValue());
+			solicitud.setProcedimentValorCampClaseTramite(procediment.getValorCampClaseTramite().getShortValue());
 		}
 		solicitud.setSolicitantIdentificacio(entitat.getCif());
 		solicitud.setSolicitantNom(entitat.getNom());
@@ -2669,7 +2669,7 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 				solicitud.setProcedimentNom(procediment.getNom());
 				solicitud.setProcedimentValorCampAutomatizado(procediment.getValorCampAutomatizado());
 				if (procediment.getValorCampClaseTramite() != null) {
-					solicitud.setProcedimentValorCampClaseTramite(procediment.getValorCampClaseTramite().getIntValue());
+					solicitud.setProcedimentValorCampClaseTramite(procediment.getValorCampClaseTramite().getShortValue());
 				}
 				solicitud.setSolicitantIdentificacio(consulta.getEntitatCif());
 				solicitud.setSolicitantNom(consulta.getEntitatNom());
