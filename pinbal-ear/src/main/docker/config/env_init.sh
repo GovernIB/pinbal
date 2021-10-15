@@ -3,6 +3,7 @@
 APP_NAME=pinbal
 DS_FILE=/opt/jboss/server/default/deploycaib/$APP_NAME-ds.xml
 SERVICE_FILE=/opt/jboss/server/default/deploycaib/$APP_NAME-service.xml
+LOG_CONFIG_FILE=/opt/jboss/server/default/conf/jboss-log4j.xml
 
 echo "Substituint variables del datasource"
 if [[ -n "$DATABASE_URL" ]]; then
@@ -31,6 +32,12 @@ if [[ -n "$SEYCON_PASSWORD" ]]; then
 	echo "Substituint SEYCON_PASSWORD per $SEYCON_PASSWORD"
 	sed -i "s/SEYCON_PASSWORD/$SEYCON_PASSWORD/g" $DS_FILE
 fi
+
+echo "Establint permisos per a poder accedir al volum de log"
+su -c "chown default.default /opt/jboss/server/default/log" -
+
+# echo "Configurant categories de log"
+#sed -i 's#<root>#<category name="es.caib.pinbal.webapp.controller.ConsultaController"><priority value="TRACE" /></category><root>#g' $LOG_CONFIG_FILE
 
 #echo "Substituint variables de properties"
 #if [[ -n "$NOTIFICA_VERSIO" ]]; then

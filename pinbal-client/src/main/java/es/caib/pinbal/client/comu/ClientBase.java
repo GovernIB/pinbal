@@ -112,9 +112,32 @@ public abstract class ClientBase {
 				queryParams(requestParams).
 				type("application/json").
 				get(new GenericType<List<R>>(){});
-		System.out.println(">>> Rebuda resposta HTTP GET de PINBAL (" +
+		if (logger.isDebugEnabled()) {
+			logger.debug("Rebuda resposta HTTP GET de PINBAL (" +
+					"url=" + urlAmbMetode + ", " +
+					"body=" + mapper.writeValueAsString(response) + ")");
+		}
+		return response;
+	}
+
+	protected String restPeticioGetString(
+			String metode,
+			Map<String, String> queryParams) throws UniformInterfaceException, ClientHandlerException, IOException {
+		MultivaluedMap<String, String> requestParams = new MultivaluedMapImpl();
+		if (queryParams != null) {
+			for (String key: queryParams.keySet()) {
+				requestParams.add(key, queryParams.get(key));
+			}
+		}
+		String urlAmbMetode = getUrlAmbMetode(metode);
+		logger.debug("Enviant petició HTTP GET a PINBAL (" +
 				"url=" + urlAmbMetode + ", " +
-				"body=" + mapper.writeValueAsString(response) + ")");
+				"queryParams=" + queryParams + ")");
+		String response = jerseyClient.
+				resource(urlAmbMetode).
+				queryParams(requestParams).
+				type("application/json").
+				get(String.class);
 		if (logger.isDebugEnabled()) {
 			logger.debug("Rebuda resposta HTTP GET de PINBAL (" +
 					"url=" + urlAmbMetode + ", " +

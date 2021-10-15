@@ -3,6 +3,7 @@
  */
 package es.caib.pinbal.plugins;
 
+import java.util.List;
 
 /**
  * Plugin per a consultar les dades d'una font d'usuaris externa.
@@ -32,5 +33,16 @@ public interface DadesUsuariPlugin {
 	 *            Si es produeix un error al consultar les dades de l'usuari.
 	 */
 	public DadesUsuari consultarAmbUsuariNif(String usuariNif) throws SistemaExternException;
+	
+	/**
+	 * Retorna la llista d'usuaris d'un grup.
+	 * 
+	 * @param usuariNif
+	 *            Codi del grup que es vol consultar.
+	 * @return La llista d'usuaris del grup.
+	 * @throws SistemaExternException
+	 *            Si es produeix un error al consultar les dades de l'usuari.
+	 */
+	public List<DadesUsuari> findAmbGrup(String grupCodi) throws SistemaExternException;
 
 }

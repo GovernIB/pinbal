@@ -41,48 +41,16 @@
 </head>
 <body>
 
-	<c:choose>
-		<c:when test="${empty entitatActual}">
-			<form action="<c:url value="/admin/consulta/entitat/seleccionar"/>" method="post" class="well">
-				<div class="row">
-					<div class="col-md-3">
-						<div class="form-group">
-							<label class="sr-only" for="entitatId">entitatId</label>
-		  					<select class="form-control select2" name="entitatId" 
-		  							data-placeholder="<spring:message code="comu.opcio.sense.definir"/>"
-		  							data-toggle="select2"  data-netejar="true"  data-minimumresults="5" data-enum-value="entitatId">
-								<option value=""></option>
-								<c:if test="${not empty entitats}">
-									<c:forEach var="entitat" items="${entitats}">
-										<option value="${entitat.id}">${entitat.nom}</option>
-									</c:forEach>
-								</c:if>
-							</select>
-						</div>
-					</div>
-					<div class="col-md-3">
-						<button type="submit" class="btn btn-primary"><spring:message code="comu.boto.seleccionar"/></button>
-					</div>
-				</div>				
-			</form>
-		</c:when>
-		<c:otherwise>
-			<div class="well">
-			<div class="row">
-				<div class="col-md-2">
-					<input type="text" class="form-control" value="${entitatActual.nom}" disabled="disabled"/>
-				</div>
-				<div class="col-md-10">
-					<a href="<c:url value="/admin/consulta/entitat/deseleccionar"/>" class="btn btn-default"><spring:message code="comu.boto.canviar"/></a>
-				</div>
-			</div>
-			</div>
-		</c:otherwise>
-	</c:choose>
-
-	<c:if test="${not empty entitatActual}">
 		<form:form id="form-filtre" action="" class="form-horizontal" method="post" cssClass="well form-filtre-table" commandName="filtreCommand">
 			<div class="row">
+				<div class="col-md-3">
+					<pbl:inputSelect name="entitatId" inline="true" placeholderKey="admin.consulta.list.filtre.entitat" 
+		 						 	optionItems="${entitats}"   
+			 						optionValueAttribute="id"
+			 						optionTextAttribute="nom" 
+									emptyOption="true"
+									optionMinimumResultsForSearch="0"/>
+				</div>
 				<div class="col-md-3">
 					<pbl:inputText name="scspPeticionId" inline="true" placeholderKey="admin.consulta.list.filtre.peticion.id"/>
 				</div>					
@@ -101,15 +69,15 @@
 					 				optionTextAttribute="descripcioAmbCodi" 
 									emptyOption="true"
 									optionMinimumResultsForSearch="0"/>
-				</div>
+				</div>		
+			</div>				
+			<div class="row">
 				<div class="col-md-3">
 					<pbl:inputSelect name="estat" inline="true" 
 									placeholderKey="admin.consulta.list.filtre.estat"
 									optionItems="${consultaEstats}"
 									emptyOption="true"/>
 				</div>	
-			</div>				
-			<div class="row">
 				<div class="col-md-3" >
 					<div class="row">
 						<div class="col-md-6" >
@@ -126,7 +94,9 @@
 				<div class="col-md-3">	
 					<pbl:inputText name="funcionariDocument" inline="true" placeholderKey="admin.consulta.list.filtre.funcionari.document"/>
 				</div>
-				<div class="col-md-3">
+			</div>
+			<div class="row">
+				<div class="col-md-2 pull-right">
 					<div class="pull-right">
 						<button id="netejar-filtre" class="btn btn-default" type="button"><spring:message code="comu.boto.netejar"/></button>
 						<button class="btn btn-primary" type="submit"><span class="fa fa-filter"></span> <spring:message code="comu.boto.filtrar"/></button>		
@@ -148,6 +118,7 @@
 					<th data-data="serveiDescripcio"><spring:message code="admin.consulta.list.taula.servei" /></th>
 					<th data-data="estat"><spring:message code="admin.consulta.list.taula.estat" /></th>
 					<th data-data="id"></th>
+					<th data-data="error" data-visible="false"></th>
 				</tr>
 			</thead>
 		</table>
@@ -157,7 +128,7 @@
 				createHiddenInputFieldsForLimitAndSubmit(id);
 			}
 		</script>
-	</c:if>
+
 	<script>
 	$(document).ready(function() {
 		$('#netejar-filtre').click(function() {
@@ -205,7 +176,7 @@
 							var template = $('#template-estat').html();
 							row['icon-status'] = '';
 							if (row.estat=='Error'){
-								row['icon-status'] = '<i class="fas fa-exclamation-triangle"></i>';
+								row['icon-status'] = '<i class="fas fa-exclamation-triangle" title="' + row.error + '"></i>';
 
 							}else if(row.estat=='Pendent'){
 								row['icon-status'] = '<i class="fas fa-bookmark"></i>';

@@ -30,6 +30,7 @@ public class ConsultaFiltreCommand {
 	private String titularDocument;
 	private String funcionariNom;
 	private String funcionariDocument;
+	private Long entitatId;
 
 
 	public static ConsultaFiltreDto asDto(ConsultaFiltreCommand command) {

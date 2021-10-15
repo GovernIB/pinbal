@@ -7,11 +7,10 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 import org.apache.commons.io.IOUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import es.caib.pinbal.core.helper.PropertiesHelper;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Implementació dels mètodes per obtenir dades de fonts
@@ -19,12 +18,13 @@ import es.caib.pinbal.core.helper.PropertiesHelper;
  * 
  * @author Limit Tecnologies <limit@limit.es>
  */
+@Slf4j
 @Service
 public class DadesExternesServiceImpl implements DadesExternesService {
 
 	@Override
 	public byte[] findProvincies() {
-		LOGGER.debug("Cercant totes les províncies");
+		log.debug("Cercant totes les províncies");
 		try {
 			URL url = new URL(getDadesComunesBaseUrl() + "/services/provincies/format/JSON/idioma/ca");
 			HttpURLConnection httpConnection = (HttpURLConnection)url.openConnection();
@@ -33,14 +33,14 @@ public class DadesExternesServiceImpl implements DadesExternesService {
 			httpConnection.setDoOutput(true);
 			return IOUtils.toByteArray(httpConnection.getInputStream());
 		} catch (Exception ex) {
-			LOGGER.error("Error al obtenir les províncies de la font externa", ex);
+			log.error("Error al obtenir les províncies de la font externa", ex);
 			return null;
 		}
 	}
 
 	@Override
 	public byte[] findMunicipisPerProvincia(String provinciaCodi) {
-		LOGGER.debug("Cercant els municipis de la província (provinciaCodi=" + provinciaCodi + ")");
+		log.debug("Cercant els municipis de la província (provinciaCodi=" + provinciaCodi + ")");
 		try {
 			URL url = new URL(getDadesComunesBaseUrl() + "/services/municipis/" + provinciaCodi + "/format/JSON");
 			HttpURLConnection httpConnection = (HttpURLConnection)url.openConnection();
@@ -69,14 +69,14 @@ public class DadesExternesServiceImpl implements DadesExternesService {
 				return resposta.getBytes();
 			}
 		} catch (Exception ex) {
-			LOGGER.error("Error al obtenir les províncies de la font externa", ex);
+			log.error("Error al obtenir les províncies de la font externa", ex);
 			return null;
 		}
 	}
 
 	@Override
 	public byte[] findPaisos() {
-		LOGGER.debug("Cercant tots els paisos");
+		log.debug("Cercant tots els paisos");
 		try {
 			URL url = new URL(getDadesComunesBaseUrl() + "/services/paisos/format/JSON/idioma/ca");
 			HttpURLConnection httpConnection = (HttpURLConnection)url.openConnection();
@@ -85,7 +85,7 @@ public class DadesExternesServiceImpl implements DadesExternesService {
 			httpConnection.setDoOutput(true);
 			return IOUtils.toByteArray(httpConnection.getInputStream());
 		} catch (Exception ex) {
-			LOGGER.error("Error al obtenir les províncies de la font externa", ex);
+			log.error("Error al obtenir les províncies de la font externa", ex);
 			return null;
 		}
 	}
@@ -100,7 +100,5 @@ public class DadesExternesServiceImpl implements DadesExternesService {
 			return "https://proves.caib.es/dadescomunsfront";
 		}
 	}
-
-	private static final Logger LOGGER = LoggerFactory.getLogger(DadesExternesServiceImpl.class);
 
 }

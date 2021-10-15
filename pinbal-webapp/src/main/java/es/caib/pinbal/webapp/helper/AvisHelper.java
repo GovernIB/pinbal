@@ -7,7 +7,7 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
-import es.caib.distribucio.core.api.dto.AvisDto;
+import es.caib.pinbal.core.dto.AvisDto;
 import es.caib.pinbal.core.service.AvisService;
 
 /**

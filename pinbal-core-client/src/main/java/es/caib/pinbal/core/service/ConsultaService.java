@@ -429,8 +429,6 @@ public interface ConsultaService {
 	/**
 	 * Retorna una pàgina de les consultes realitzades donada una entitat.
 	 * 
-	 * @param entitatId
-	 *            Atribut id de l'entitat.
 	 * @param filtre
 	 *            Filtre de consultes.
 	 * @param pageable
@@ -441,7 +439,6 @@ public interface ConsultaService {
 	 */
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public Page<ConsultaDto> findByFiltrePaginatPerAdmin(
-			Long entitatId,
 			ConsultaFiltreDto filtre,
 			Pageable pageable) throws EntitatNotFoundException;
 
@@ -655,6 +652,12 @@ public interface ConsultaService {
 	 */
 	public void autoTancarExpedientsPendents();
 
+	/**
+	 * Tasca automàtica per generar al final del dia un petit report 
+	 * de l'estat de PINBAL, que s'envia per correu als administradors.
+	 */
+	public void autoGenerarEmailReportEstat();
+	
 	/**
 	 * Retorna si les peticions al SCSP s'han de fer en una sola passa o en
 	 * 3 passes per a optimitzar el temps que la transacció bloqueja les

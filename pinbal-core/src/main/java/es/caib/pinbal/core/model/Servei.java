@@ -60,6 +60,8 @@ public class Servei implements Serializable {
 	@Column(name = "caducidad")
 	private int caducitat;
 
+	@Column(name = "versionesquema")
+	private String scspVersionEsquema;
 	
 	public String getCodi() {
 		return codi;
@@ -108,6 +110,14 @@ public class Servei implements Serializable {
 
 	public void setCaducitat(int caducitat) {
 		this.caducitat = caducitat;
+	}
+
+	public String getScspVersionEsquema() {
+		return scspVersionEsquema;
+	}
+
+	public void setScspVersionEsquema(String scspVersionEsquema) {
+		this.scspVersionEsquema = scspVersionEsquema;
 	}
 
 

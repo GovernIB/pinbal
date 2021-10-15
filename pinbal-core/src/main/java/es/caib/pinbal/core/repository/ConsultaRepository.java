@@ -166,6 +166,19 @@ public interface ConsultaRepository extends JpaRepository<Consulta, Long> {
 			"from" +
 			"    Consulta c " +
 			"where " +
+			"    c.pare is null " +
+			"and (c.multiple = :multiple) " +
+			"and (:nomesSensePare = false or c.pare is null)")
+	public Page<Consulta> findByProcedimentServeiProcediment(
+			@Param("multiple")Boolean multiple,
+			@Param("nomesSensePare")boolean nomesSensePare,
+			Pageable pageable);
+	
+	@Query(	"select" +
+			"    c " +
+			"from" +
+			"    Consulta c " +
+			"where " +
 			"    c.procedimentServei.procediment.entitat.id = :entitatId " +
 			"and (:esNullCreatedBy = true or c.createdBy = :createdBy) " +
 			"and (:esNullScspPeticionId = true or lower(c.scspPeticionId) like lower('%'||:scspPeticionId||'%')) " +
@@ -208,6 +221,51 @@ public interface ConsultaRepository extends JpaRepository<Consulta, Long> {
 			@Param("nomesSensePare")boolean nomesSensePare,
 			Pageable pageable);
 
+	@Query(	"select" +
+			"    c " +
+			"from" +
+			"    Consulta c " +
+			"where " +
+			"    (:esNullEntitatId = true or c.procedimentServei.procediment.entitat.id = :entitatId) " +
+			"and (:esNullScspPeticionId = true or lower(c.scspPeticionId) like lower('%'||:scspPeticionId||'%')) " +
+			"and (:esNullProcedimentId = true or c.procedimentServei.procediment.id = :procedimentId) " +
+			"and (:esNullServeiCodi = true or c.procedimentServei.servei = :serveiCodi) " +
+			"and (:esNullEstat = true or c.estat = :estat) " +
+			"and (:esNullDataInici = true or c.createdDate >= :dataInici) " +
+			"and (:esNullDataFi = true or c.createdDate <= :dataFi) " +
+			"and (:esNullTitularNom = true or c.titularNom = :titularNom) " +
+			"and (:esNullTitularDocument = true or c.titularDocumentNum = :titularDocument) " +
+			"and (:esNullFuncionariNom = true or c.funcionariNom = :funcionariNom) " +
+			"and (:esNullFuncionariDocument = true or c.funcionariDocumentNum = :funcionariDocument) " +
+			"and (c.multiple = :multiple) " +
+			"and (:nomesSensePare = false or c.pare is null)")
+	public Page<Consulta> findByFiltrePaginat(
+			@Param("esNullEntitatId") boolean esNullEntitatId,
+			@Param("entitatId") Long entitatId,
+			@Param("esNullScspPeticionId") boolean esNullScspPeticionId,
+			@Param("scspPeticionId") String scspPeticionId,
+			@Param("esNullProcedimentId") boolean esNullProcedimentId,
+			@Param("procedimentId") Long procedimentId,
+			@Param("esNullServeiCodi") boolean esNullServeiCodi,
+			@Param("serveiCodi") String serveiCodi,
+			@Param("esNullEstat") boolean esNullEstat,
+			@Param("estat") EstatTipus estat,
+			@Param("esNullDataInici") boolean esNullDataInici,
+			@Param("dataInici") Date dataInici,
+			@Param("esNullDataFi") boolean esNullDataFi,
+			@Param("dataFi") Date dataFi,
+			@Param("esNullTitularNom") boolean esNullTitularNom,
+			@Param("titularNom") String titularNom,
+			@Param("esNullTitularDocument") boolean esNullTitularDocument,
+			@Param("titularDocument") String titularDocument,
+			@Param("esNullFuncionariNom") boolean esNullFuncionariNom,
+			@Param("funcionariNom") String funcionariNom,
+			@Param("esNullFuncionariDocument") boolean esNullFuncionariDocument,
+			@Param("funcionariDocument") String funcionariDocument,
+			@Param("multiple")boolean multiple,
+			@Param("nomesSensePare")boolean nomesSensePare,
+			Pageable pageable);
+	
 	@Query(	"select " +
 			"    new es.caib.pinbal.client.dadesobertes.DadesObertesRespostaConsulta(" +
 			"        c.procedimentServei.procediment.entitat.codi, " +

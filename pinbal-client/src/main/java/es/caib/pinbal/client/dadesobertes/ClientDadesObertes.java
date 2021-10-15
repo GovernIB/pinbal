@@ -4,10 +4,13 @@
 package es.caib.pinbal.client.dadesobertes;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import es.caib.pinbal.client.comu.ClientBase;
 
@@ -60,10 +63,11 @@ public class ClientDadesObertes extends ClientBase {
 		if (serveiCodi != null) {
 			params.put("serveiCodi", serveiCodi);
 		}
-		return restPeticioGetList(
-				"opendata",
-				params,
-				DadesObertesRespostaConsulta.class);
+		String json = restPeticioGetString("opendata", params);
+		return Arrays.asList(
+				new ObjectMapper().readValue(
+						json,
+						DadesObertesRespostaConsulta[].class));
 	}
 
 }

@@ -10,8 +10,6 @@ import java.util.Locale;
 
 import javax.annotation.Resource;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -94,12 +92,14 @@ import es.scsp.common.domain.core.ClavePrivada;
 import es.scsp.common.domain.core.ClavePublica;
 import es.scsp.common.domain.core.EmisorCertificado;
 import es.scsp.common.domain.core.Servicio;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Implementació dels mètodes per a interactuar amb les funcionalitats SCSP.
  * 
  * @author Limit Tecnologies <limit@limit.es>
  */
+@Slf4j
 @Service
 public class ServeiServiceImpl implements ServeiService, ApplicationContextAware, MessageSourceAware {
 
@@ -145,16 +145,11 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 	private ApplicationContext applicationContext;
 	private MessageSource messageSource;
 	private ScspHelper scspHelper;
-
-	
-	
 	
 	@Transactional
 	@Override
 	public void saveActiu(String serveiCodi, boolean actiu) {
-
 		ServeiConfig serveiConfig = serveiConfigRepository.findByServei(serveiCodi);
-		
 		if (serveiConfig == null) {
 			// Si no està creat el crea
 			serveiConfig = ServeiConfig.getBuilder(
@@ -175,14 +170,13 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 		} else {
 			serveiConfig.updateActiu(actiu);
 		}
-
 	}
 
 
 	@Transactional
 	@Override
 	public ServeiDto save(ServeiDto servei) {
-		LOGGER.debug("Guardant dades per al servicio SCSP (codi=" + servei.getCodi() + ")");
+		log.debug("Guardant dades per al servicio SCSP (codi=" + servei.getCodi() + ")");
 		getScspHelper().saveServicio(toServicioScsp(servei));
 		ServeiConfig serveiConfig = serveiConfigRepository.findByServei(servei.getCodi());
 		// Actualitza la configuració del servei
@@ -263,11 +257,11 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 	@Transactional
 	@Override
 	public ServeiDto delete(String serveiCodi) throws ServeiNotFoundException, ServeiAmbConsultesException {
-		LOGGER.debug("Esborrant dades per al servicio SCSP (codi=" + serveiCodi + ")");
+		log.debug("Esborrant dades per al servicio SCSP (codi=" + serveiCodi + ")");
 		Servicio servicio = getServicioByCode(serveiCodi);
 
 		if (getScspHelper().servicioHasConsultes(serveiCodi)) {
-			LOGGER.debug("El servicio SCSP te consultes realitzades (codi=" + serveiCodi + ")");
+			log.debug("El servicio SCSP te consultes realitzades (codi=" + serveiCodi + ")");
 			throw new ServeiAmbConsultesException();
 		}
 		ServeiDto servei = toServeiDto(servicio);
@@ -283,7 +277,7 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 	@Override
 	public ServeiDto findAmbCodiPerAdminORepresentant(
 			String serveiCodi) throws ServeiNotFoundException {
-		LOGGER.debug("Obtenint informació del servicio (codi=" + serveiCodi + ") per a administrador o representant");
+		log.debug("Obtenint informació del servicio (codi=" + serveiCodi + ") per a administrador o representant");
 			
 		Servicio servicio =  getServicioByCode(serveiCodi);
 		return toServeiDto(servicio);
@@ -294,7 +288,7 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 	public ServeiDto findAmbCodiPerDelegat(
 			Long entitatId,
 			String serveiCodi) throws ServeiNotFoundException {
-		LOGGER.debug("Obtenint informació del servicio (codi=" + serveiCodi + ") per al delegat");
+		log.debug("Obtenint informació del servicio (codi=" + serveiCodi + ") per al delegat");
 		Servicio servicio = getServicioByCode(serveiCodi);
 		ServeiConfig serveiConfig = serveiConfigRepository.findByServei(serveiCodi);
 		if (serveiConfig != null && serveiConfig.getRoleName() != null && !serveiConfig.getRoleName().isEmpty()) {
@@ -308,7 +302,7 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 					auth)) {
 				return toServeiDto(servicio);
 			} else {
-				LOGGER.debug("No té permisos per accedira al servicio (codi=" + serveiCodi + ")");
+				log.debug("No té permisos per accedira al servicio (codi=" + serveiCodi + ")");
 				throw new ServeiNotFoundException();
 			}
 		} else {
@@ -320,8 +314,17 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 
 	@Transactional(readOnly = true)
 	@Override
+	public ServeiDto findById(Long id) {
+		log.debug("Cercant el servei (id= " + id + ")");
+		return dtoMappingHelper.getMapperFacade().map(
+				serveiRepository.findOne(id),
+				ServeiDto.class);
+	}
+	
+	@Transactional(readOnly = true)
+	@Override
 	public List<ServeiDto> findActius() {
-		LOGGER.debug("Cercant els servicios actius");
+		log.debug("Cercant els servicios actius");
 		List<ServeiDto> resposta = new ArrayList<ServeiDto>();
 		List<Servicio> servicios = getScspHelper().findServicioAll();
 		for (Servicio servicio : servicios)
@@ -329,6 +332,21 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 		return resposta;
 	}
 
+	@Transactional(readOnly = true)
+	@Override
+	public List<ServeiDto> findActius(String filtre) {
+		log.debug("Cercant els servicios actius amb filtre: " + filtre);
+		List<ServeiDto> resposta = new ArrayList<ServeiDto>();
+		List<Servicio> servicios = getScspHelper().findServicioAll();
+		for (Servicio servicio : servicios) {
+			if ((filtre == null || filtre.isEmpty()) || 
+					(filtre != null && !filtre.isEmpty() && 
+						(servicio.getCodCertificado().toLowerCase().contains(filtre.toLowerCase()) ||
+						 servicio.getDescripcion().toLowerCase().contains(filtre.toLowerCase()))))  
+				resposta.add(toServeiDto(servicio));
+		}
+		return resposta;
+	}
 
 	@Transactional(readOnly = true)
 	@Override
@@ -337,8 +355,9 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 			String descripcio,
 			String emisor,
 			Boolean activa,
+			String scspVersionEsquema,
 			Pageable pageable) {
-		LOGGER.debug("Consulta de serveis segons filtre (codi=" + codi + ", descripcio=" + descripcio + ""
+		log.debug("Consulta de serveis segons filtre (codi=" + codi + ", descripcio=" + descripcio + ""
 				+ "emisor=" + emisor + " activa=" + activa + ")");
 		
 		Page<Servei> paginaServeis = serveiRepository.findByFiltre(
@@ -350,6 +369,8 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 				(emisor != null && emisor.length() > 0) ? Long.parseLong(emisor) : null,
 				activa == null,
 				activa,
+				scspVersionEsquema == null || scspVersionEsquema.length() == 0,
+				scspVersionEsquema,
 				pageable);
 		
 		Page<ServeiDto> paginaDtos = dtoMappingHelper.pageEntities2pageDto(
@@ -378,7 +399,7 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 			EntitatDto entitat,
 			ProcedimentDto procediment,
 			Pageable pageable) {
-		LOGGER.debug("Consulta de serveis segons filtre (codi=" + codi + ", descripcio=" + descripcio + ""
+		log.debug("Consulta de serveis segons filtre (codi=" + codi + ", descripcio=" + descripcio + ""
 				+ "emisor=" + emisor + " activa=" + activa + ")");
 
 		List<String> serveisEntitat = entitatServeiRepository.findServeisByEntitatId(entitat.getId());
@@ -429,11 +450,11 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 	@Override
 	public List<ServeiDto> findAmbEntitat(Long entitatId)
 			throws EntitatNotFoundException {
-		LOGGER.debug("Cercant els servicios actius per a l'entitat (id="
+		log.debug("Cercant els servicios actius per a l'entitat (id="
 				+ entitatId + ")");
 		Entitat entitat = entitatRepository.findOne(entitatId);
 		if (entitat == null) {
-			LOGGER.debug("No s'ha trobat l'entitat (id=" + entitatId + ")");
+			log.debug("No s'ha trobat l'entitat (id=" + entitatId + ")");
 			throw new EntitatNotFoundException();
 		}
 		List<ServeiDto> resposta = new ArrayList<ServeiDto>();
@@ -451,21 +472,52 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 		}
 		return resposta;
 	}
-
+	
+	@Transactional(readOnly = true)
+	@Override
+	public List<ServeiDto> findAmbEntitat(Long entitatId, String filtre)
+			throws EntitatNotFoundException {
+		log.debug("Cercant els servicios actius per a l'entitat (id="
+				+ entitatId + ") y filtre: " + filtre);
+		Entitat entitat = entitatRepository.findOne(entitatId);
+		if (entitat == null) {
+			log.debug("No s'ha trobat l'entitat (id=" + entitatId + ")");
+			throw new EntitatNotFoundException();
+		}
+		List<ServeiDto> resposta = new ArrayList<ServeiDto>();
+		List<Servicio> servicios = getScspHelper().findServicioAll();
+		for (Servicio servicio : servicios) {
+			boolean trobat = false;
+			for (String servei : entitat.getServeis()) {
+				if (servei.equals(servicio.getCodCertificado()) &&
+						((filtre == null || filtre.isEmpty()) || 
+								(filtre != null && !filtre.isEmpty() && 
+										(servicio.getCodCertificado().toLowerCase().contains(filtre.toLowerCase()) ||
+										 servicio.getDescripcion().toLowerCase().contains(filtre.toLowerCase()))))) {
+					trobat = true;
+					break;
+				}
+			}
+			if (trobat)
+				resposta.add(toServeiDto(servicio));
+		}
+		return resposta;
+	}
+	
 	@Transactional(readOnly = true)
 	@Override
 	public List<ServeiDto> findAmbEntitatIProcediment(
 			Long entitatId,
 			Long procedimentId) throws EntitatNotFoundException, ProcedimentNotFoundException {
-		LOGGER.debug("Cercant els servicios (entitatId=" + entitatId + ", procedimentId=" + procedimentId + ")");
+		log.debug("Cercant els servicios (entitatId=" + entitatId + ", procedimentId=" + procedimentId + ")");
 		Entitat entitat = entitatRepository.findOne(entitatId);
 		if (entitat == null) {
-			LOGGER.debug("No s'ha trobat l'entitat (id=" + entitatId + ")");
+			log.debug("No s'ha trobat l'entitat (id=" + entitatId + ")");
 			throw new EntitatNotFoundException();
 		}
 		Procediment procediment = procedimentRepository.findOne(procedimentId);
 		if (procediment == null) {
-			LOGGER.debug("No s'ha trobat el procediment (id=" + procedimentId + ")");
+			log.debug("No s'ha trobat el procediment (id=" + procedimentId + ")");
 			throw new ProcedimentNotFoundException();
 		}
 		List<ProcedimentServei> procedimentServeis = procedimentServeiRepository.findByEntitatIdAndProcedimentId(
@@ -486,18 +538,86 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 		}
 		return resposta;
 	}
+	
+	@Transactional(readOnly = true)
+	@Override
+	public List<ServeiDto> findAmbProcediment(
+			Long procedimentId) throws ProcedimentNotFoundException {
+		log.debug("Cercant els servicios (procedimentId=" + procedimentId + ")");
+		Procediment procediment = procedimentRepository.findOne(procedimentId);
+		if (procediment == null) {
+			log.debug("No s'ha trobat el procediment (id=" + procedimentId + ")");
+			throw new ProcedimentNotFoundException();
+		}
+		List<ProcedimentServei> procedimentServeis = procedimentServeiRepository.findByProcedimentId(
+				procedimentId);
+		List<ServeiDto> resposta = new ArrayList<ServeiDto>();
+		List<Servicio> servicios = getScspHelper().findServicioAll();
+		for (Servicio servicio : servicios) {
+			boolean trobat = false;
+			for (ProcedimentServei procedimentServei : procedimentServeis) {
+				if (procedimentServei.getServei().equals(servicio.getCodCertificado())) {
+					trobat = true;
+					break;
+				}
+			}
+			if (trobat)
+				resposta.add(toServeiDto(servicio));
+		}
+		return resposta;
+	}
+
+	@Transactional(readOnly = true)
+	@Override
+	public List<ServeiDto> findAmbEntitatIProcediment(
+			Long entitatId,
+			Long procedimentId,
+			String filtre) throws EntitatNotFoundException, ProcedimentNotFoundException {
+		log.debug("Cercant els servicios (entitatId=" + entitatId + ", procedimentId=" + procedimentId + ", filtre=" + filtre + "\")");
+		Entitat entitat = entitatRepository.findOne(entitatId);
+		if (entitat == null) {
+			log.debug("No s'ha trobat l'entitat (id=" + entitatId + ")");
+			throw new EntitatNotFoundException();
+		}
+		Procediment procediment = procedimentRepository.findOne(procedimentId);
+		if (procediment == null) {
+			log.debug("No s'ha trobat el procediment (id=" + procedimentId + ")");
+			throw new ProcedimentNotFoundException();
+		}
+		List<ProcedimentServei> procedimentServeis = procedimentServeiRepository.findByEntitatIdAndProcedimentId(
+				entitatId,
+				procedimentId);
+		List<ServeiDto> resposta = new ArrayList<ServeiDto>();
+		List<Servicio> servicios = getScspHelper().findServicioAll();
+		for (Servicio servicio : servicios) {
+			boolean trobat = false;
+			for (ProcedimentServei procedimentServei : procedimentServeis) {
+				if (procedimentServei.getServei().equals(servicio.getCodCertificado()) && 
+						((filtre == null || filtre.isEmpty()) || 
+								(filtre != null && !filtre.isEmpty() &&	
+										(servicio.getCodCertificado().toLowerCase().contains(filtre.toLowerCase()) || 
+										 servicio.getDescripcion().toLowerCase().contains(filtre.toLowerCase()))))) {
+					trobat = true;
+					break;
+				}
+			}
+			if (trobat)
+				resposta.add(toServeiDto(servicio));
+		}
+		return resposta;
+	}
 
 	@Transactional(readOnly = true)
 	@Override
 	public List<ProcedimentServeiDto> findPermesosAmbEntitatIUsuari(
 			Long entitatId,
 			String usuariCodi) throws EntitatNotFoundException {
-		LOGGER.debug("Cercant serveis permesos per l'usuari (" +
+		log.debug("Cercant serveis permesos per l'usuari (" +
 				"entitatId=" + entitatId + ", " +
 				"usuariCodi=" + usuariCodi + ")");
 		Entitat entitat = entitatRepository.findOne(entitatId);
 		if (entitat == null) {
-			LOGGER.debug("No s'ha trobat l'entitat (id=" + entitatId + ")");
+			log.debug("No s'ha trobat l'entitat (id=" + entitatId + ")");
 			throw new EntitatNotFoundException();
 		}
 		List<ProcedimentServei> procedimentServeis = procedimentServeiRepository.findByEntitatId(entitatId);
@@ -536,11 +656,11 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 			Long entitatId,
 			Long procedimentId) throws EntitatNotFoundException, ProcedimentNotFoundException {
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-		LOGGER.debug("Cercant serveis permesos pel delegat (entitatId=" + entitatId + ", procedimentId=" + procedimentId + ", usuariCodi=" + auth.getName() + ")");
+		log.debug("Cercant serveis permesos pel delegat (entitatId=" + entitatId + ", procedimentId=" + procedimentId + ", usuariCodi=" + auth.getName() + ")");
 		// long t0 = System.currentTimeMillis();
 		Entitat entitat = entitatRepository.findOne(entitatId);
 		if (entitat == null) {
-			LOGGER.debug("No s'ha trobat l'entitat (id=" + entitatId + ")");
+			log.debug("No s'ha trobat l'entitat (id=" + entitatId + ")");
 			throw new EntitatNotFoundException();
 		}
 		// System.out.println(">>> 0 (" + (System.currentTimeMillis() - t0) + "ms)");
@@ -557,7 +677,7 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 				entitat.getId(),
 				auth.getName());
 		if (entitatUsuari == null || !entitatUsuari.isDelegat()) {
-			LOGGER.debug("Aquest usuari no té permisos per accedir com a delegat a l'entitat (id=" + entitat.getId() + ", usuariCodi=" + auth.getName() + ")");
+			log.debug("Aquest usuari no té permisos per accedir com a delegat a l'entitat (id=" + entitat.getId() + ", usuariCodi=" + auth.getName() + ")");
 			throw new EntitatNotFoundException();
 		}
 		// System.out.println(">>> 2 (" + (System.currentTimeMillis() - t0) + "ms)");
@@ -579,7 +699,7 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 	@Transactional(readOnly = true)
 	@Override
 	public List<EmisorDto> findEmisorAll() {
-		LOGGER.debug("Obtenint llistat d'emisors SCSP");
+		log.debug("Obtenint llistat d'emisors SCSP");
 		List<EmisorDto> resposta = new ArrayList<EmisorDto>();
 		for (EmisorCertificado emisor: getScspHelper().findEmisorCertificadoAll()) {
 			EmisorDto dto = new EmisorDto();
@@ -594,7 +714,7 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 	@Transactional(readOnly = true)
 	@Override
 	public List<ClauPublicaDto> findClauPublicaAll() {
-		LOGGER.debug("Obtenint llistat de claus públiques SCSP");
+		log.debug("Obtenint llistat de claus públiques SCSP");
 		List<ClauPublicaDto> resposta = new ArrayList<ClauPublicaDto>();
 		for (ClavePublica clavePublica: getScspHelper().findClavePublicaAll()) {
 			if (clavePublica != null) {
@@ -611,7 +731,7 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 	@Transactional(readOnly = true)
 	@Override
 	public List<ClauPrivadaDto> findClauPrivadaAll() {
-		LOGGER.debug("Obtenint llistat de claus privades SCSP");
+		log.debug("Obtenint llistat de claus privades SCSP");
 		List<ClauPrivadaDto> resposta = new ArrayList<ClauPrivadaDto>();
 		for (ClavePrivada clavePrivada: getScspHelper().findClavePrivadaAll()) {
 			if (clavePrivada != null) {
@@ -629,10 +749,10 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 	@Override
 	public ArbreDto<DadaEspecificaDto> generarArbreDadesEspecifiques(
 			String serveiCodi) throws ServeiNotFoundException, ScspException {
-		LOGGER.debug("Generant arbre de dades específiques per al servei (codi=" + serveiCodi + ")");
+		log.debug("Generant arbre de dades específiques per al servei (codi=" + serveiCodi + ")");
 		Servicio servicio = getServicioByCode(serveiCodi);
 		if (servicio == null) {
-			LOGGER.debug("No s'ha trobat el servicio (codi=" + serveiCodi + ")");
+			log.debug("No s'ha trobat el servicio (codi=" + serveiCodi + ")");
 			throw new ServeiNotFoundException();
 		}
 		try {
@@ -651,7 +771,7 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 			}
 			return arbre;
 		} catch (Exception ex) {
-			LOGGER.error(
+			log.error(
 					"Error al generar arbre de dades específiques per al servei (codi=" + serveiCodi + ")",
 					ex);
 			throw new ScspException(
@@ -665,10 +785,10 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 	public ArbreDto<DadaEspecificaDto> generarArbreDadesEspecifiques(
 			String serveiCodi,
 			boolean gestioXsdActiva) throws ServeiNotFoundException, ScspException {
-		LOGGER.debug("Generant arbre de dades específiques per al servei (codi=" + serveiCodi + ")");
+		log.debug("Generant arbre de dades específiques per al servei (codi=" + serveiCodi + ")");
 		Servicio servicio = getServicioByCode(serveiCodi);
 		if (servicio == null) {
-			LOGGER.debug("No s'ha trobat el servicio (codi=" + serveiCodi + ")");
+			log.debug("No s'ha trobat el servicio (codi=" + serveiCodi + ")");
 			throw new ServeiNotFoundException();
 		}
 		try {
@@ -689,7 +809,7 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 			}
 			return arbre;
 		} catch (Exception ex) {
-			LOGGER.error(
+			log.error(
 					"Error al generar arbre de dades específiques per al servei (codi=" + serveiCodi + ")",
 					ex);
 			throw new ScspException(
@@ -703,10 +823,10 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 	public ServeiCampDto createServeiCamp(
 			String serveiCodi,
 			String path) throws ServeiNotFoundException {
-		LOGGER.debug("Creant camp per al servei (codi=" + serveiCodi + ")");
+		log.debug("Creant camp per al servei (codi=" + serveiCodi + ")");
 		Servicio servicio = getServicioByCode(serveiCodi);
 		if (servicio == null) {
-			LOGGER.debug("No s'ha trobat el servicio (codi=" + serveiCodi + ")");
+			log.debug("No s'ha trobat el servicio (codi=" + serveiCodi + ")");
 			throw new ServeiNotFoundException();
 		}
 		List<ServeiCamp> camps = serveiCampRepository.findByServeiAndGrupOrderByOrdreAsc(
@@ -742,7 +862,7 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 					serveiCamp.updateEnumDescripcions(
 							nodeEnum.getEnumValues().toArray(new String[nodeEnum.getEnumValues().size()]));
 				} catch (Exception ex) {
-					LOGGER.error(
+					log.error(
 							"Error al generar arbre de dades específiques per al servei (codi=" + serveiCodi + ")",
 							ex);
 				}
@@ -757,10 +877,10 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 	@Override
 	public ServeiCampDto updateServeiCamp(
 			ServeiCampDto modificat) throws ServeiCampNotFoundException {
-		LOGGER.debug("Modificant el camp (id=" + modificat.getId() + ") del servei");
+		log.debug("Modificant el camp (id=" + modificat.getId() + ") del servei");
 		ServeiCamp serveiCamp = serveiCampRepository.findOne(modificat.getId());
 		if (serveiCamp == null) {
-			LOGGER.debug("No s'ha trobat el camp (id=" + modificat.getId() + ") del servei");
+			log.debug("No s'ha trobat el camp (id=" + modificat.getId() + ") del servei");
 			throw new ServeiCampNotFoundException();
 		}
 		ServeiCamp campPare = null;
@@ -789,10 +909,10 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 	@Transactional(rollbackFor = ServeiCampNotFoundException.class)
 	@Override
 	public ServeiCampDto deleteServeiCamp(Long serveiCampId) throws ServeiCampNotFoundException {
-		LOGGER.debug("Esborrant el camp (id=" + serveiCampId + ") del servei");
+		log.debug("Esborrant el camp (id=" + serveiCampId + ") del servei");
 		ServeiCamp perEsborrar = serveiCampRepository.findOne(serveiCampId);
 		if (perEsborrar == null) {
-			LOGGER.debug("No s'ha trobat el camp (id=" + serveiCampId + ") del servei");
+			log.debug("No s'ha trobat el camp (id=" + serveiCampId + ") del servei");
 			throw new ServeiCampNotFoundException();
 		}
 		// Si te camps fills esborra la dependència de cada fill del
@@ -819,10 +939,10 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 			String serveiCodi,
 			Long serveiCampId,
 			int indexDesti) throws ServeiCampNotFoundException {
-		LOGGER.debug("Movent el camp del servei (codi=" + serveiCodi + ", serveiCampId=" + serveiCampId + ", " + indexDesti + ")");
+		log.debug("Movent el camp del servei (codi=" + serveiCodi + ", serveiCampId=" + serveiCampId + ", " + indexDesti + ")");
 		ServeiCamp perMoure = serveiCampRepository.findOne(serveiCampId);
 		if (perMoure == null) {
-			LOGGER.debug("No s'ha trobat el camp (id=" + serveiCampId + ") del servei");
+			log.debug("No s'ha trobat el camp (id=" + serveiCampId + ") del servei");
 			throw new ServeiCampNotFoundException();
 		}
 		List<ServeiCamp> camps = serveiCampRepository.findByServeiAndGrupOrderByOrdreAsc(
@@ -831,7 +951,7 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 				perMoure.getGrup());
 		int indexOrigen = perMoure.getOrdre();
 		if (indexOrigen >= camps.size()) {
-			LOGGER.debug("No s'ha trobat el camp (index=" + indexOrigen + ") del servei (codi=" + serveiCodi + ")");
+			log.debug("No s'ha trobat el camp (index=" + indexOrigen + ") del servei (codi=" + serveiCodi + ")");
 			throw new ServeiCampNotFoundException();
 		}
 		if (indexOrigen != indexDesti) {
@@ -858,10 +978,10 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 	public void agrupaServeiCamp(
 			Long serveiCampId,
 			Long serveiCampGrupId) throws ServeiCampNotFoundException, ServeiCampGrupNotFoundException {
-		LOGGER.debug("Agrupant el camp (serveiCampId=" + serveiCampId + ", serveiCampGrupId=" + serveiCampGrupId + ")");
+		log.debug("Agrupant el camp (serveiCampId=" + serveiCampId + ", serveiCampGrupId=" + serveiCampGrupId + ")");
 		ServeiCamp perAgrupar = serveiCampRepository.findOne(serveiCampId);
 		if (perAgrupar == null) {
-			LOGGER.debug("No s'ha trobat el camp (id=" + serveiCampId + ")");
+			log.debug("No s'ha trobat el camp (id=" + serveiCampId + ")");
 			throw new ServeiCampNotFoundException();
 		}
 		ServeiCampGrup grupOrigen = perAgrupar.getGrup();
@@ -870,7 +990,7 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 		if (serveiCampGrupId != null) {
 			grupDesti = serveiCampGrupRepository.findOne(serveiCampGrupId);
 			if (grupDesti == null) {
-				LOGGER.debug("No s'ha trobat el grup (id=" + serveiCampGrupId + ")");
+				log.debug("No s'ha trobat el grup (id=" + serveiCampGrupId + ")");
 				throw new ServeiCampGrupNotFoundException();
 			}
 		}
@@ -892,10 +1012,10 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 	@Transactional(readOnly = true)
 	@Override
 	public List<ServeiCampDto> findServeiCamps(String serveiCodi) throws ServeiNotFoundException {
-		LOGGER.debug("Cercant els camps pel servicio (codi=" + serveiCodi + ")");
+		log.debug("Cercant els camps pel servicio (codi=" + serveiCodi + ")");
 		Servicio servicio = getServicioByCode(serveiCodi);
 		if (servicio == null) {
-			LOGGER.debug("No s'ha trobat el servicio (codi=" + serveiCodi + ")");
+			log.debug("No s'ha trobat el servicio (codi=" + serveiCodi + ")");
 			throw new ServeiNotFoundException();
 		}
 		List<ServeiCamp> camps = serveiCampRepository.findByServeiOrderByGrupOrdreAsc(serveiCodi);
@@ -907,10 +1027,10 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 	@Transactional(rollbackFor = ServeiNotFoundException.class)
 	@Override
 	public ServeiCampGrupDto createServeiCampGrup(ServeiCampGrupDto serveiCampGrup) throws ServeiNotFoundException {
-		LOGGER.debug("Creant nou grup de camps (serveiCodi=" + serveiCampGrup.getServei() + ", nom=" + serveiCampGrup.getNom() + ")");
+		log.debug("Creant nou grup de camps (serveiCodi=" + serveiCampGrup.getServei() + ", nom=" + serveiCampGrup.getNom() + ")");
 		Servicio servicio = getScspHelper().getServicio(serveiCampGrup.getServei());
 		if (servicio == null) {
-			LOGGER.debug("No s'ha trobat el servicio (codi=" + serveiCampGrup.getServei() + ")");
+			log.debug("No s'ha trobat el servicio (codi=" + serveiCampGrup.getServei() + ")");
 			throw new ServeiNotFoundException();
 		}
 		List<ServeiCampGrup> grupsExistents = serveiCampGrupRepository.findByServeiOrderByOrdreAsc(
@@ -927,11 +1047,11 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 	@Transactional(rollbackFor = ServeiCampGrupNotFoundException.class)
 	@Override
 	public ServeiCampGrupDto updateServeiCampGrup(ServeiCampGrupDto serveiCampGrup) throws ServeiCampGrupNotFoundException {
-		LOGGER.debug("Modificant grup de camps (id=" + serveiCampGrup.getId() + ")");
+		log.debug("Modificant grup de camps (id=" + serveiCampGrup.getId() + ")");
 		ServeiCampGrup perModificar = serveiCampGrupRepository.findOne(
 				serveiCampGrup.getId());
 		if (perModificar == null) {
-			LOGGER.debug("No s'ha trobat el grup de camps (id=" + serveiCampGrup.getId() + ")");
+			log.debug("No s'ha trobat el grup de camps (id=" + serveiCampGrup.getId() + ")");
 			throw new ServeiCampGrupNotFoundException();
 		}
 		perModificar.update(serveiCampGrup.getNom());
@@ -943,11 +1063,11 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 	@Transactional(rollbackFor = ServeiCampGrupNotFoundException.class)
 	@Override
 	public ServeiCampGrupDto deleteServeiCampGrup(Long serveiCampGrupId) throws ServeiCampGrupNotFoundException {
-		LOGGER.debug("Esborrant grup de camps (id=" + serveiCampGrupId + ")");
+		log.debug("Esborrant grup de camps (id=" + serveiCampGrupId + ")");
 		ServeiCampGrup perEsborrar = serveiCampGrupRepository.findOne(
 				serveiCampGrupId);
 		if (perEsborrar == null) {
-			LOGGER.debug("No s'ha trobat el grup de camps (id=" + serveiCampGrupId + ")");
+			log.debug("No s'ha trobat el grup de camps (id=" + serveiCampGrupId + ")");
 			throw new ServeiCampGrupNotFoundException();
 		}
 		// Deslliga els camps del grup per a evitar esborrar-los
@@ -966,11 +1086,11 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 	public void moveServeiCampGrup(
 			Long serveiCampGrupId,
 			boolean up) throws ServeiCampGrupNotFoundException {
-		LOGGER.debug("Movent grup de camps (id=" + serveiCampGrupId + ", up=" + up + ")");
+		log.debug("Movent grup de camps (id=" + serveiCampGrupId + ", up=" + up + ")");
 		ServeiCampGrup perMoure = serveiCampGrupRepository.findOne(
 				serveiCampGrupId);
 		if (perMoure == null) {
-			LOGGER.debug("No s'ha trobat el grup de camps (id=" + serveiCampGrupId + ")");
+			log.debug("No s'ha trobat el grup de camps (id=" + serveiCampGrupId + ")");
 			throw new ServeiCampGrupNotFoundException();
 		}
 		List<ServeiCampGrup> grups = serveiCampGrupRepository.findByServeiOrderByOrdreAsc(
@@ -988,10 +1108,10 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 	@Transactional(readOnly = true)
 	@Override
 	public List<ServeiCampGrupDto> findServeiCampGrups(String serveiCodi) throws ServeiNotFoundException {
-		LOGGER.debug("Cercant els grups de camps pel servicio (codi=" + serveiCodi + ")");
+		log.debug("Cercant els grups de camps pel servicio (codi=" + serveiCodi + ")");
 		Servicio servicio = getServicioByCode(serveiCodi);
 		if (servicio == null) {
-			LOGGER.debug("No s'ha trobat el servicio (codi=" + serveiCodi + ")");
+			log.debug("No s'ha trobat el servicio (codi=" + serveiCodi + ")");
 			throw new ServeiNotFoundException();
 		}
 		return dtoMappingHelper.getMapperFacade().mapAsList(
@@ -1003,15 +1123,15 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 	@Override
 	public ServeiBusDto createServeiBus(
 			ServeiBusDto creat) throws ServeiNotFoundException, EntitatNotFoundException {
-		LOGGER.debug("Creant redirecció del bus pel servicio (codi=" + creat.getServei() + ")");
+		log.debug("Creant redirecció del bus pel servicio (codi=" + creat.getServei() + ")");
 		Servicio servicio = getScspHelper().getServicio(creat.getServei());
 		if (servicio == null) {
-			LOGGER.debug("No s'ha trobat el servicio (codi=" + creat.getServei() + ")");
+			log.debug("No s'ha trobat el servicio (codi=" + creat.getServei() + ")");
 			throw new ServeiNotFoundException();
 		}
 		Entitat entitat = entitatRepository.findOne(creat.getEntitat().getId());
 		if (entitat == null) {
-			LOGGER.debug("No s'ha trobat l'entitat (codi=" + creat.getEntitat().getId() + ")");
+			log.debug("No s'ha trobat l'entitat (codi=" + creat.getEntitat().getId() + ")");
 			throw new EntitatNotFoundException();
 		}
 		ServeiBus serveiBus = ServeiBus.getBuilder(
@@ -1027,15 +1147,15 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 	@Override
 	public ServeiBusDto updateServeiBus(
 			ServeiBusDto modificat) throws ServeiBusNotFoundException, EntitatNotFoundException {
-		LOGGER.debug("Modificant redirecció del bus pel servicio (codi=" + modificat.getServei() + ")");
+		log.debug("Modificant redirecció del bus pel servicio (codi=" + modificat.getServei() + ")");
 		ServeiBus serveiBus = serveiBusRepository.findOne(modificat.getId());
 		if (serveiBus == null) {
-			LOGGER.debug("No s'ha trobat la redirecció del bus (id=" + modificat.getId() + ")");
+			log.debug("No s'ha trobat la redirecció del bus (id=" + modificat.getId() + ")");
 			throw new ServeiBusNotFoundException();
 		}
 		Entitat entitat = entitatRepository.findOne(modificat.getEntitat().getId());
 		if (entitat == null) {
-			LOGGER.debug("No s'ha trobat l'entitat (codi=" + modificat.getEntitat().getId() + ")");
+			log.debug("No s'ha trobat l'entitat (codi=" + modificat.getEntitat().getId() + ")");
 			throw new EntitatNotFoundException();
 		}
 		serveiBus.update(
@@ -1050,10 +1170,10 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 	@Override
 	public ServeiBusDto deleteServeiBus(
 			Long serveiBusId) throws ServeiBusNotFoundException {
-		LOGGER.debug("Esborrant redirecció del bus (id=" + serveiBusId + ")");
+		log.debug("Esborrant redirecció del bus (id=" + serveiBusId + ")");
 		ServeiBus serveiBus = serveiBusRepository.findOne(serveiBusId);
 		if (serveiBus == null) {
-			LOGGER.debug("No s'ha trobat la redirecció del bus (id=" + serveiBusId + ")");
+			log.debug("No s'ha trobat la redirecció del bus (id=" + serveiBusId + ")");
 			throw new ServeiBusNotFoundException();
 		}
 		// Esborra el registre
@@ -1067,10 +1187,10 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 	@Transactional(readOnly = true)
 	@Override
 	public ServeiBusDto findServeiBusById(Long id) throws ServeiBusNotFoundException {
-		LOGGER.debug("Obtenint la redirecció del bus (id=" + id + ")");
+		log.debug("Obtenint la redirecció del bus (id=" + id + ")");
 		ServeiBus serveiBus = serveiBusRepository.findOne(id);
 		if (serveiBus == null) {
-			LOGGER.debug("No s'ha trobat la redirecció del bus (id=" + id + ")");
+			log.debug("No s'ha trobat la redirecció del bus (id=" + id + ")");
 			throw new ServeiBusNotFoundException();
 		}
 		return dtoMappingHelper.getMapperFacade().map(
@@ -1081,10 +1201,10 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 	@Transactional(readOnly = true)
 	@Override
 	public List<ServeiBusDto> findServeisBus(String serveiCodi) throws ServeiNotFoundException {
-		LOGGER.debug("Obtenint les redireccions del bus pel servicio (codi=" + serveiCodi + ")");
+		log.debug("Obtenint les redireccions del bus pel servicio (codi=" + serveiCodi + ")");
 		Servicio servicio = getServicioByCode(serveiCodi);
 		if (servicio == null) {
-			LOGGER.debug("No s'ha trobat el servicio (codi=" + serveiCodi + ")");
+			log.debug("No s'ha trobat el servicio (codi=" + serveiCodi + ")");
 			throw new ServeiNotFoundException();
 		}
 		return dtoMappingHelper.getMapperFacade().mapAsList(
@@ -1096,10 +1216,10 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 	@Override
 	public void addServeiJustificantCamp(
 			ServeiJustificantCampDto camp) throws ServeiNotFoundException {
-		LOGGER.debug("Traducció del camp de dades específiques (codi=" + camp.getServei() + ", campPath=" + camp.getXpath() + ")");
+		log.debug("Traducció del camp de dades específiques (codi=" + camp.getServei() + ", campPath=" + camp.getXpath() + ")");
 		Servicio servicio = getScspHelper().getServicio(camp.getServei());
 		if (servicio == null) {
-			LOGGER.debug("No s'ha trobat el servicio (codi=" + camp.getServei() + ")");
+			log.debug("No s'ha trobat el servicio (codi=" + camp.getServei() + ")");
 			throw new ServeiNotFoundException();
 		}
 		ServeiJustificantCamp serveiTraduccio = serveiJustificantCampRepository.findByServeiAndXpathAndLocaleIdiomaAndLocaleRegio(
@@ -1129,10 +1249,10 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 	@Override
 	public List<ServeiJustificantCampDto> findServeiJustificantCamps(
 			String serveiCodi) throws ServeiNotFoundException {
-		LOGGER.debug("Obtenint els camps de dades específiques traduits pel servei (codi=" + serveiCodi + ")");
+		log.debug("Obtenint els camps de dades específiques traduits pel servei (codi=" + serveiCodi + ")");
 		Servicio servicio = getServicioByCode(serveiCodi);
 		if (servicio == null) {
-			LOGGER.debug("No s'ha trobat el servicio (codi=" + serveiCodi + ")");
+			log.debug("No s'ha trobat el servicio (codi=" + serveiCodi + ")");
 			throw new ServeiNotFoundException();
 		}
 		return dtoMappingHelper.getMapperFacade().mapAsList(
@@ -1147,7 +1267,7 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 	@Override
 	public List<ServeiXsdDto> xsdFindByServei(
 			String serveiCodi) throws IOException, ServeiNotFoundException {
-		LOGGER.debug("Obtenint tots els fitxers XSD per a un servei (" +
+		log.debug("Obtenint tots els fitxers XSD per a un servei (" +
 				"serveiCodi=" + serveiCodi + ")");
 		Servicio servicio = getServicioByCode(serveiCodi);
 		
@@ -1157,7 +1277,7 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 	@Transactional(readOnly = true)
 	@Override
 	public List<String> getRolsConfigurats() {
-		LOGGER.debug("Obtenint tots els rols configurats per als diferents serveis");
+		log.debug("Obtenint tots els rols configurats per als diferents serveis");
 		List<String> resposta = new ArrayList<String>();
 		List<ServeiConfig> serveiConfigs = serveiConfigRepository.findAll();
 		for (ServeiConfig serveiConfig: serveiConfigs) {
@@ -1185,8 +1305,45 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 		this.messageSource = messageSource;
 	}
 
+	@Override
+	public void xsdDelete(String codi, XsdTipusEnumDto tipus) throws IOException {
+		log.debug("Esborra un fitxer XSD per a un servei (" +
+				"codi=" + codi + ", " +
+				"tipus=" + tipus + ")");
+		Servicio servei = scspHelper.getServicio(codi);
+		serveiXsdHelper.esborrarXsd(servei, tipus);
+	}
 
+	@Override
+	public FitxerDto xsdDescarregar(String codi, XsdTipusEnumDto tipus) throws IOException {
+		log.debug("Descarrega un fitxer XSD per a un servei (" +
+				"codi=" + codi + ", " +
+				"tipus=" + tipus + ")");
+		Servicio servei = scspHelper.getServicio(codi);
+		return serveiXsdHelper.descarregarXsd(servei, tipus);
+	}
 
+	@Override
+	public void xsdCreate(String codi, ServeiXsdDto xsd, byte[] contingut) throws IOException {
+		log.debug("Afegeix un fitxer XSD per a un servei (" +
+				"codi=" + codi + ", " +
+				"xsd=" + xsd.getNomArxiu() + ")");
+		Servicio servei = scspHelper.getServicio(codi);
+		serveiXsdHelper.modificarXsd(servei, xsd, contingut);
+	}
+
+	@Transactional(readOnly = true)
+	@Override
+	public List<ServeiDto> findAll() {
+		log.debug("Cercant els serveis actius");
+		List<ServeiDto> resposta = new ArrayList<ServeiDto>();
+		List<Servicio> servicios = getScspHelper().findServicioAll();
+		for (Servicio servicio : servicios) {
+			resposta.add(toServeiDto(servicio));
+		}
+		return resposta;
+	}
+	
 	private Servicio toServicioScsp(ServeiDto dto) {
 		Servicio servicio = getScspHelper().getServicio(dto.getCodi());
 		if (servicio == null) {
@@ -1401,7 +1558,7 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 					}
 				}
 			} catch (Exception ex) {
-				LOGGER.warn("Error al obtenir l'arbre de dades específiques per al servei (codi=" + serveiCodi + ")");
+				log.warn("Error al obtenir l'arbre de dades específiques per al servei (codi=" + serveiCodi + ")");
 			}
 		}
 		return false;
@@ -1461,37 +1618,6 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 		return scspHelper;
 	}
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(ServeiServiceImpl.class);
-
-
-
-	@Override
-	public void xsdDelete(String codi, XsdTipusEnumDto tipus) throws IOException {
-		LOGGER.debug("Esborra un fitxer XSD per a un servei (" +
-				"codi=" + codi + ", " +
-				"tipus=" + tipus + ")");
-		Servicio servei = scspHelper.getServicio(codi);
-		serveiXsdHelper.esborrarXsd(servei, tipus);
-	}
-
-	@Override
-	public FitxerDto xsdDescarregar(String codi, XsdTipusEnumDto tipus) throws IOException {
-		LOGGER.debug("Descarrega un fitxer XSD per a un servei (" +
-				"codi=" + codi + ", " +
-				"tipus=" + tipus + ")");
-		Servicio servei = scspHelper.getServicio(codi);
-		return serveiXsdHelper.descarregarXsd(servei, tipus);
-	}
-
-	@Override
-	public void xsdCreate(String codi, ServeiXsdDto xsd, byte[] contingut) throws IOException {
-		LOGGER.debug("Afegeix un fitxer XSD per a un servei (" +
-				"codi=" + codi + ", " +
-				"xsd=" + xsd.getNomArxiu() + ")");
-		Servicio servei = scspHelper.getServicio(codi);
-		serveiXsdHelper.modificarXsd(servei, xsd, contingut);
-	}
-
 	/**
 	 * Obté una instància Servicio a partir del codi.
 	 * 
@@ -1504,13 +1630,13 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 	private Servicio getServicioByCode(String serveiCodi) throws ServeiNotFoundException {
 		List<Servei> serveis = serveiRepository.findByCode(serveiCodi);
 		if (serveis.size() == 0) {
-			LOGGER.debug("No s'ha trobat el servicio (codi=" + serveiCodi + ")");
+			log.debug("No s'ha trobat el servicio (codi=" + serveiCodi + ")");
 			throw new ServeiNotFoundException();
 		}
 		
 		Servicio servicio =  getScspHelper().getServicioById(serveis.get(0).getId());
 		if (servicio == null) {
-			LOGGER.debug("No s'ha trobat el servicio SCSP (codi=" + serveiCodi + ")");
+			log.debug("No s'ha trobat el servicio SCSP (codi=" + serveiCodi + ")");
 			throw new ServeiNotFoundException();
 		}
 		return servicio;

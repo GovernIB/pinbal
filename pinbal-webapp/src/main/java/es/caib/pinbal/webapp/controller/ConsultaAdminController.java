@@ -71,14 +71,8 @@ public class ConsultaAdminController extends BaseController {
 	@RequestMapping(method = RequestMethod.GET)
 	public String get(
 			HttpServletRequest request,
-			Model model) throws Exception {
-		if (!RequestSessionHelper.existeixObjecteSessio(
-				request,
-				SESSION_ATTRIBUTE_ENTITAT)) {
-			model.addAttribute("entitats", entitatService.findAll());
-		} else {
-			omplirModelPerFiltreTaula(request, model);
-		}
+			Model model) throws Exception {		
+		omplirModelPerFiltreTaula(request, model);
 		return "adminConsultes";
 	}
 
@@ -104,12 +98,6 @@ public class ConsultaAdminController extends BaseController {
 	public ServerSideResponse<ConsultaDto, Long> datatable(HttpServletRequest request, Model model)
 	      throws IllegalAccessException, InvocationTargetException, NoSuchMethodException, NamingException,
 	      SQLException, EntitatNotFoundException {
-		EntitatDto entitatActual = (EntitatDto)RequestSessionHelper.obtenirObjecteSessio(
-				request,
-				SESSION_ATTRIBUTE_ENTITAT);
-		if (entitatActual == null) {
-			throw new EntitatNotFoundException();
-		}
 		ServerSideRequest serverSideRequest = new ServerSideRequest(request);
 		
 		ConsultaFiltreCommand command = (ConsultaFiltreCommand)RequestSessionHelper.obtenirObjecteSessio(
@@ -123,8 +111,7 @@ public class ConsultaAdminController extends BaseController {
 		cols.get(4).setData("procedimentServei.procediment.nom");
 		
 		Page<ConsultaDto> page = consultaService.findByFiltrePaginatPerAdmin(
-				entitatActual.getId(),
-				ConsultaFiltreCommand.asDto(command),			
+				ConsultaFiltreCommand.asDto(command), 
 				serverSideRequest.toPageable());
 
 		cols.get(1).setData("creacioData");
@@ -217,32 +204,44 @@ public class ConsultaAdminController extends BaseController {
 	private void omplirModelPerFiltreTaula(
 			HttpServletRequest request,
 			Model model) throws Exception {
-		EntitatDto entitatActual = (EntitatDto)RequestSessionHelper.obtenirObjecteSessio(
-				request,
-				SESSION_ATTRIBUTE_ENTITAT);
-		if (entitatActual != null) {
-			model.addAttribute("entitatActual", entitatActual);
+			model.addAttribute("entitats", entitatService.findAll());
 			ConsultaFiltreCommand command = (ConsultaFiltreCommand)RequestSessionHelper.obtenirObjecteSessio(
 					request,
 					SESSION_ATTRIBUTE_FILTRE);
 			if (command == null)
 				command = new ConsultaFiltreCommand();
-			model.addAttribute(
-					"filtreCommand",
-					command);
-			model.addAttribute(
-					"procediments",
-					procedimentService.findAmbEntitat(entitatActual.getId()));
-			if (command.getProcediment() != null)
+			if (command.getEntitatId() != null) {
 				model.addAttribute(
-						"serveis",
-						serveiService.findAmbEntitatIProcediment(
-								entitatActual.getId(),
-								command.getProcediment()));
-			else
+						"filtreCommand",
+						command);
 				model.addAttribute(
-						"serveis",
-						serveiService.findAmbEntitat(entitatActual.getId()));
-		}
+						"procediments",
+						procedimentService.findAmbEntitat(command.getEntitatId()));
+				if (command.getProcediment() != null)
+					model.addAttribute(
+							"serveis",
+							serveiService.findAmbEntitatIProcediment(
+									command.getEntitatId(),
+									command.getProcediment()));
+				else
+					model.addAttribute(
+							"serveis",
+							serveiService.findAmbEntitat(command.getEntitatId()));
+			} else {
+				model.addAttribute(
+						"filtreCommand",
+						command);
+				model.addAttribute(
+						"procediments",
+						procedimentService.findAll());
+				if (command.getProcediment() != null)
+					model.addAttribute(
+							"serveis",
+							serveiService.findAmbProcediment(command.getProcediment()));
+				else
+					model.addAttribute(
+							"serveis",
+							serveiService.findAll());
+			}
 	}
 }

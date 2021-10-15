@@ -223,10 +223,9 @@ public class ConsultaServiceBean implements ConsultaService {
 	@Override
 	@RolesAllowed("PBL_ADMIN")
 	public Page<ConsultaDto> findByFiltrePaginatPerAdmin(
-			Long entitatId,
 			ConsultaFiltreDto filtre,
 			Pageable pageable) throws EntitatNotFoundException {
-		return delegate.findByFiltrePaginatPerAdmin(entitatId, filtre, pageable);
+		return delegate.findByFiltrePaginatPerAdmin(filtre, pageable);
 	}
 
 	@Override
@@ -358,6 +357,11 @@ public class ConsultaServiceBean implements ConsultaService {
 	@Override
 	public void autoTancarExpedientsPendents() {
 		delegate.autoTancarExpedientsPendents();
+	}
+	
+	@Override
+	public void autoGenerarEmailReportEstat() {
+		delegate.autoGenerarEmailReportEstat();
 	}
 
 	@Override

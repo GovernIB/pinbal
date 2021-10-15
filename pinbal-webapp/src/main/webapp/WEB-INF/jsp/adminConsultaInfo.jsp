@@ -50,7 +50,7 @@ function initModalXml(element) {
 			</h3>
 			<div id="dadesResposta">
 				<c:set var="initModalXml">initModalXml(this);return false</c:set>
-				<a class="btn Zcol-md-pull-right" href="<c:url value="/modal/admin/consulta/${consulta.id}/xmlResposta"/>" onclick="${initModalXml}">
+				<a class="btn btn-default pull-right" href="<c:url value="/modal/admin/consulta/${consulta.id}/xmlResposta"/>" onclick="${initModalXml}">
 					<i class="fas fa-info-circle"></i> <spring:message code="admin.consulta.info.veure.xml"/>
 				</a>
 				<p>

@@ -27,6 +27,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import es.caib.pinbal.core.dto.EntitatDto;
 import es.caib.pinbal.core.dto.EntitatUsuariDto;
+import es.caib.pinbal.core.dto.ProcedimentClaseTramiteEnumDto;
 import es.caib.pinbal.core.dto.ProcedimentDto;
 import es.caib.pinbal.core.dto.ServeiDto;
 import es.caib.pinbal.core.service.EntitatService;
@@ -46,6 +47,7 @@ import es.caib.pinbal.webapp.common.EntitatHelper;
 import es.caib.pinbal.webapp.common.RequestSessionHelper;
 import es.caib.pinbal.webapp.datatables.ServerSideRequest;
 import es.caib.pinbal.webapp.datatables.ServerSideResponse;
+import es.caib.pinbal.webapp.helper.EnumHelper;
 
 /**
  * Controlador per al manteniment de procediments.
@@ -169,7 +171,6 @@ public class ProcedimentController extends BaseController {
 			Model model) {
 		if (!EntitatHelper.isRepresentantEntitatActual(request))
 			return "representantNoAutoritzat";
-		
 		EntitatDto entitat = EntitatHelper.getEntitatActual(request, entitatService);
 		if (entitat != null) {
 			ProcedimentDto procediment = null;
@@ -182,11 +183,9 @@ public class ProcedimentController extends BaseController {
 				command = new ProcedimentCommand();
 			}
 			command.setEntitatId(entitat.getId());
-			
 			model.addAttribute(command);
-			model.addAttribute("organsGestors", entitatService.getOrgansGestors(entitat.getId()));
+			fillFormModel(entitat.getId(), model);
 			return "procedimentForm";
-			
 		} else {
 			AlertHelper.error(
 					request, 
@@ -194,7 +193,6 @@ public class ProcedimentController extends BaseController {
 							request,
 							"procediment.controller.no.entitat.seleccionada"));
 			return "redirect:../../index";
-			
 		}
 	}
 
@@ -202,7 +200,8 @@ public class ProcedimentController extends BaseController {
 	public String save(
 			HttpServletRequest request,
 			@Valid ProcedimentCommand command,
-			BindingResult bindingResult) throws EntitatNotFoundException, ProcedimentNotFoundException {
+			BindingResult bindingResult,
+			Model model) throws EntitatNotFoundException, ProcedimentNotFoundException {
 		if (!EntitatHelper.isRepresentantEntitatActual(request))
 			return "representantNoAutoritzat";
 		EntitatDto entitat = EntitatHelper.getEntitatActual(request, entitatService);
@@ -216,6 +215,7 @@ public class ProcedimentController extends BaseController {
 		}
 			
 		if (bindingResult.hasErrors()) {
+			fillFormModel(entitat.getId(), model);
 			return "procedimentForm";
 		}
 		
@@ -731,6 +731,20 @@ public class ProcedimentController extends BaseController {
 			command.setActiva(true);
 		}
 		model.addAttribute(command);
+	}
+
+	private void fillFormModel(Long entitatId, Model model) {
+		model.addAttribute("organsGestors", entitatService.getOrgansGestors(entitatId));
+		model.addAttribute(
+				"procedimentClaseTramiteOptions",
+				EnumHelper.getOptionsForEnum(
+						ProcedimentClaseTramiteEnumDto.class,
+						"procediment.form.camp.claseTramite.enum."));
+		model.addAttribute(
+				"procedimentAutomatizadoOptions",
+				EnumHelper.getOptionsForArray(
+						new String[] {"true", "false"},
+						new String[] {"comu.si", "comu.no"}));
 	}
 
 }

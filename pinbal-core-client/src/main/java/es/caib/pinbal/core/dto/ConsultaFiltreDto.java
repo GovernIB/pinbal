@@ -24,6 +24,7 @@ public class ConsultaFiltreDto implements Serializable {
 	private String titularDocument;
 	private String funcionariNom;
 	private String funcionariDocument;
+	private Long entitatId;
 
 
 
@@ -86,6 +87,12 @@ public class ConsultaFiltreDto implements Serializable {
 	}
 	public void setFuncionariDocument(String funcionariDocument) {
 		this.funcionariDocument = funcionariDocument;
+	}
+	public Long getEntitatId() {
+		return entitatId;
+	}
+	public void setEntitatId(Long entitatId) {
+		this.entitatId = entitatId;
 	}
 
 	@Override

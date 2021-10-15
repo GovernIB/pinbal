@@ -32,6 +32,9 @@ public class DadesObertesRespostaConsulta {
 	private DadesObertesConsultaTipus tipus;
 	private DadesObertesConsultaResultat resultat;
 
+	public DadesObertesRespostaConsulta() {
+	}
+
 	public DadesObertesRespostaConsulta(
 			String entitatCodi,
 			String entitatNom,

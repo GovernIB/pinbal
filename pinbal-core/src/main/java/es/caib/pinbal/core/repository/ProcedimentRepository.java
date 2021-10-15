@@ -27,6 +27,16 @@ public interface ProcedimentRepository extends JpaRepository<Procediment, Long> 
 	Procediment findByCodi(String codi);
 
 	List<Procediment> findByEntitatOrderByNomAsc(Entitat entitat);
+	
+	@Query(	"from " +
+			"    Procediment p " +
+			"where (p.entitat = :entitat)" +
+			" and (:esNullFiltre = true or lower(p.codi) like lower('%'||:filtre||'%') or lower(p.nom) like lower('%'||:filtre||'%')) " +
+			"order by p.nom asc")
+	public List<Procediment> findByEntitatAndFiltreOrderByNomAsc(
+			@Param("entitat") Entitat entitat,
+			@Param("esNullFiltre") boolean esNullFiltre,
+			@Param("filtre") String filtre);
 
 	Procediment findByEntitatAndCodi(Entitat entitat, String codi);
 

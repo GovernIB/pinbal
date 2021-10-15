@@ -60,6 +60,12 @@ public class ProcedimentServiceBean implements ProcedimentService {
 	public List<ProcedimentDto> findAmbEntitat(Long entitatId) throws EntitatNotFoundException {
 		return delegate.findAmbEntitat(entitatId);
 	}
+	
+	@Override
+	@RolesAllowed({ "PBL_ADMIN", "PBL_REPRES", "PBL_AUDIT", "PBL_SUPERAUD" })
+	public List<ProcedimentDto> findAmbEntitat(Long entitatId, String filtre) throws EntitatNotFoundException {
+		return delegate.findAmbEntitat(entitatId, filtre);
+	}
 
 	@Override
 	@RolesAllowed({ "PBL_ADMIN", "PBL_REPRES", "PBL_AUDIT", "PBL_SUPERAUD" })
@@ -181,6 +187,12 @@ public class ProcedimentServiceBean implements ProcedimentService {
 			String procedimentCodi) throws ProcedimentNotFoundException, ServeiNotFoundException {
 		return delegate.putProcedimentCodi(procedimentId, serveiCodi, procedimentCodi);
 
+	}
+	
+	@Override
+	@RolesAllowed("PBL_ADMIN")
+	public List<ProcedimentDto> findAll() {
+		return delegate.findAll();
 	}
 
 }

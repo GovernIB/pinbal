@@ -15,4 +15,5 @@ public class ServeiFiltreCommand {
 	private String descripcio;
 	private String emissor;
 	private Boolean activa;
+	private String scspVersionEsquema;
 }

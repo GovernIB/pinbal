@@ -741,6 +741,12 @@ public class ScspHelper {
 		Procedimiento procedimiento = new Procedimiento();
 		procedimiento.setCodProcedimiento(solicitud.getProcedimentCodi());
 		procedimiento.setNombreProcedimiento(solicitud.getProcedimentNom());
+		if (solicitud.getProcedimentValorCampAutomatizado() != null) {
+			procedimiento.setAutomatizado(
+					solicitud.getProcedimentValorCampAutomatizado() ? "1" : "0");
+		}
+		procedimiento.setClaseTramite(
+				solicitud.getProcedimentValorCampClaseTramite());
 		solicitante.setProcedimiento(procedimiento);
 		solicitante.setUnidadTramitadora(solicitud.getUnitatTramitadora());
 		if (getXmlHelper().hasCodigoUnidadTramitadora(

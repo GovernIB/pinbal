@@ -180,13 +180,13 @@ $(document).ready(function() {
 	<div class="btn-group">
 		<button class="btn btn-primary dropdown-toggle" data-toggle="dropdown"><i class="fas fa-cog"></i>&nbsp;<spring:message code="comu.accions"/>&nbsp;<span class="caret"></span></button>
 		<ul class="dropdown-menu">
+			<li><a href="procediment/{{ id }}" ><i class="fas fa-pen"></i>&nbsp;<spring:message code="comu.boto.modificar"/></a></li>
 			{{#actiu}}
 				<li><a href="procediment/{{ id }}/disable" ><i class="fas fa-times"></i>&nbsp;<spring:message code="comu.boto.desactivar"/></a></li>
 			{{/actiu}}
 			{{^actiu}}
 				<li><a href="procediment/{{ id }}/enable" ><i class="fa fa-check"></i>&nbsp;<spring:message code="comu.boto.activar"/></a></li>
 			{{/actiu}}
-			<li><a href="procediment/{{ id }}" ><i class="fas fa-pen"></i>&nbsp;<spring:message code="comu.boto.modificar"/></a></li>
 			<li><a href="procediment/{{ id }}/delete" confirm-esborrar"><i class="fas fa-trash-alt"></i>&nbsp;<spring:message code="comu.boto.esborrar"/></a></li>
 		</ul>
 	</div>

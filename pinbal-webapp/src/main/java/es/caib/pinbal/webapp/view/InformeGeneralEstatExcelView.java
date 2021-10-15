@@ -111,7 +111,7 @@ public class InformeGeneralEstatExcelView extends AbstractExcelView implements M
 		capCell.setCellValue(
 				getMessage(
 						request,
-						"informe.general.estat.excel.columna.servei.emisor"));
+						"informe.general.estat.excel.columna.servei.emissor"));
 		capCell = titolsColumna.createCell(columnaInicial + 8);
 		capCell.setCellStyle(capsaleraStyle);
 		capCell.setCellValue(

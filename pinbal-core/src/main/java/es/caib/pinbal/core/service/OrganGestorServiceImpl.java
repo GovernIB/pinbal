@@ -21,7 +21,9 @@ import es.caib.pinbal.core.model.OrganGestor;
 import es.caib.pinbal.core.repository.EntitatRepository;
 import es.caib.pinbal.core.repository.OrganGestorRepository;
 import es.caib.pinbal.plugin.unitat.NodeDir3;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Service
 public class OrganGestorServiceImpl implements OrganGestorService {
 
@@ -37,12 +39,14 @@ public class OrganGestorServiceImpl implements OrganGestorService {
 
 	@Transactional(readOnly = true)
 	public List<OrganGestorDto> findAll() {
+		log.debug("Consulta de tots els òrgans gestors");
 		List<OrganGestor> organs = organGestorRepository.findAll();
 		return dtoMappingHelper.convertirList(organs, OrganGestorDto.class);
 	}
 
 	@Transactional(readOnly = true)
 	public OrganGestorDto findItem(Long id) {
+		log.debug("Consulta d'un òrgan gestor (id=" + id + ")");
 		OrganGestor organGestor = organGestorRepository.findOne(id);
 		OrganGestorDto resposta = dtoMappingHelper.convertir(organGestor, OrganGestorDto.class);
 		return resposta;
@@ -50,6 +54,7 @@ public class OrganGestorServiceImpl implements OrganGestorService {
 
 	@Transactional(readOnly = true)
 	public List<OrganGestorDto> findByEntitat(Long entitatId) {
+		log.debug("Consulta dels òrgans d'una entitat (entitatId=" + entitatId + ")");
 		Entitat entitat = entitatRepository.findOne(entitatId);
 		List<OrganGestor> organs = entitat.getOrganGestors();
 		return dtoMappingHelper.convertirList(organs, OrganGestorDto.class);
@@ -58,18 +63,15 @@ public class OrganGestorServiceImpl implements OrganGestorService {
 	@Override
 	@Transactional
 	public boolean syncDir3OrgansGestors(Long entitatId) throws Exception {
+		log.debug("Sincronització dels òrgans d'una entitat (entitatId=" + entitatId + ")");
 		Entitat entitat = entitatRepository.findOne(entitatId);
-		if (entitat.getUnitatArrel() == null || entitat.getUnitatArrel().isEmpty())
-		{
+		if (entitat.getUnitatArrel() == null || entitat.getUnitatArrel().isEmpty()) {
 			throw new Exception("L'entitat actual no té cap codi DIR3 associat");
 		}
-		
 		List<OrganGestor> organismesDIR3 = new ArrayList<OrganGestor>();
-		
 		List<OrganGestorDto> organismes = findOrganismesArbre(entitat.getUnitatArrel());
 		for (OrganGestorDto o : organismes) {
 			OrganGestor organDB = organGestorRepository.findByCodiAndEntitat(o.getCodi(), entitat);
-			
 			if (organDB == null) { // create it
 				organDB = new OrganGestor();
 				organDB.setCodi(o.getCodi());
@@ -78,14 +80,11 @@ public class OrganGestorServiceImpl implements OrganGestorService {
 				organDB.setPare(organGestorRepository.findByCodiAndEntitat(o.getPareCodi(), entitat));
 				organDB.setActiu(true);
 				organGestorRepository.save(organDB);
-				
 			} else { // update it
 				organDB.setNom(o.getNom());
 				organDB.setActiu(true);
 				organDB.setPare(organGestorRepository.findByCodiAndEntitat(o.getPareCodi(), entitat));
-				
 			}
-			
 			organismesDIR3.add(organDB);
 		}
 		// Processam els organs gestors que ja no estan a dir3 i tenen instancies a la
@@ -106,8 +105,13 @@ public class OrganGestorServiceImpl implements OrganGestorService {
 			String filtreNom, 
 			OrganGestorEstatEnumDto filtreEstat, 
 			Pageable pageable) {
+		log.debug("Consulta pafinada i amb filtre dels òrgans d'una entitat (" +
+				"entitatId=" + entitatId + ", " +
+				"filtreCodi=" + filtreCodi + ", " +
+				"filtreNom=" + filtreNom + ", " +
+				"filtreEstat=" + filtreEstat + ", " +
+				"pageable=" + pageable + ")");
 		Entitat entitat = entitatRepository.findOne(entitatId);
-
 		Page<OrganGestor> organs = organGestorRepository.findByEntitatAndFiltre(
 				entitat,
 				filtreCodi == null || filtreCodi.length() == 0,
@@ -117,9 +121,6 @@ public class OrganGestorServiceImpl implements OrganGestorService {
 				filtreEstat == null,
 				filtreEstat == OrganGestorEstatEnumDto.VIGENT ? true : false,
 				pageable);
-		
-		
-
 		return dtoMappingHelper.pageEntities2pageDto(organs, OrganGestorDto.class, pageable);
 	}
 
@@ -148,9 +149,7 @@ public class OrganGestorServiceImpl implements OrganGestorService {
 			organisme.setCodi(fill.getCodi());
 			organisme.setNom(fill.getDenominacio());
 			organisme.setPareCodi(root.getCodi());
-
 			organismes.add(organisme);
-
 			findOrganismesFills(fill, organismes);
 		}
 	}

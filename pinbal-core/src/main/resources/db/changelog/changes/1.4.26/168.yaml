@@ -1,0 +1,15 @@
+databaseChangeLog:
+- changeSet:
+    id: 1630317753837-1
+    author: limit
+    changes:
+    - addColumn:
+        tableName: pbl_procediment
+        columns:
+        - column:
+            name: valor_camp_automatizado
+            type: BOOLEAN
+        - column:
+            name: valor_camp_clasetramite
+            type: INTEGER
+

@@ -43,7 +43,10 @@ public class DadesObertesTest {
 				null,
 				null);
 		assertNotNull(resposta);
-		System.out.println("-> opendata: " + objectToJsonString(resposta));
+		System.out.println("-> opendata: " + resposta.size());
+		for (DadesObertesRespostaConsulta item: resposta.subList(0, 5)) {
+			System.out.println("    - " + objectToJsonString(item));
+		}
 	}
 
 	private String objectToJsonString(Object obj) throws JsonProcessingException {
@@ -61,7 +64,7 @@ public class DadesObertesTest {
 				USUARI,
 				CONTRASENYA,
 				false, null, null);
-		client.enableLogginFilter();
+		//client.enableLogginFilter();
 		return client;
 	}
 

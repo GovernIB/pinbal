@@ -9,7 +9,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
 
-import es.caib.distribucio.core.api.dto.AvisDto;
+import es.caib.pinbal.core.dto.AvisDto;
 
 /**
  * Declaració dels mètodes per a la gestió d'avisos.
@@ -30,13 +30,13 @@ public interface AvisService {
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	AvisDto delete(Long id);
 
-	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_DELEG')")
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_REPRES') or hasRole('ROLE_DELEG')")
 	AvisDto findById(Long id);
 
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	Page<AvisDto> findPaginat(Pageable pageable);
 
-	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_DELEG')")
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_REPRES') or hasRole('ROLE_DELEG')")
 	List<AvisDto> findActive();
 
 

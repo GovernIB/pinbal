@@ -30,7 +30,6 @@ import es.caib.pinbal.core.dto.EstadisticaDto;
 import es.caib.pinbal.core.dto.EstadistiquesFiltreDto;
 import es.caib.pinbal.core.service.ConsultaService;
 import es.caib.pinbal.core.service.EntitatService;
-import es.caib.pinbal.core.service.ProcedimentService;
 import es.caib.pinbal.core.service.ServeiService;
 import es.caib.pinbal.core.service.exception.EntitatNotFoundException;
 import es.caib.pinbal.core.service.exception.ProcedimentNotFoundException;
@@ -53,8 +52,6 @@ public class EstadistiquesController {
 
 	@Autowired
 	private EntitatService entitatService;
-	@Autowired
-	private ProcedimentService procedimentService;
 	@Autowired
 	private ServeiService serveiService;
 	@Autowired
@@ -200,25 +197,6 @@ public class EstadistiquesController {
 					entitat);
 		}
 		if (command.getEntitatId() != null) {
-			if (command.getEntitatId() != -1) {
-				model.addAttribute(
-						"procediments",
-						procedimentService.findAmbEntitat(command.getEntitatId()));
-				if (command.getProcediment() != null)
-					model.addAttribute(
-							"serveis",
-							serveiService.findAmbEntitatIProcediment(
-									command.getEntitatId(),
-									command.getProcediment()));
-				else
-					model.addAttribute(
-							"serveis",
-							serveiService.findAmbEntitat(command.getEntitatId()));
-			} else {
-				model.addAttribute(
-						"serveis",
-						serveiService.findActius());
-			}
 			EstadistiquesFiltreDto filtre = EstadistiquesFiltreCommand.asDto(command);
 			if (command.getEntitatId() == -1) {
 				filtre.setEntitatId(null);

@@ -40,7 +40,7 @@ public class InformeTest {
 		assertNotNull(resposta);
 		System.out.println("-> procediments: " + objectToJsonString(resposta));
 	}
-	
+
 	@Test
 	public void serveis() throws IOException {
 		List<Servei> resposta = client.serveis();

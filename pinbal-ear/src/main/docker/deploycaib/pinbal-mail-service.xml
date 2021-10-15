@@ -1,0 +1,14 @@
+<!DOCTYPE server>
+<server>
+  <mbean code="org.jboss.mail.MailService" name="jboss:service=PinbalMail">
+    <attribute name="JNDIName">java:es.caib.pinbal.mail</attribute>    
+    <attribute name="Configuration">
+        <configuration>
+            <property name="mail.transport.protocol" value="smtp"/>
+            <property name="mail.smtp.host" value="correu.limit.es"/>            
+            <property name="mail.debug" value="false"/>
+            <property name="mail.smtp.auth" value="false"/> 
+        </configuration>
+    </attribute>
+  </mbean>
+</server>
