@@ -114,6 +114,7 @@ table.dataTable thead > tr.selectable > :first-child, table.dataTable tbody > tr
 					<th data-data="id"></th>
 					<th data-data="justificantEstat"></th>
 					<th data-data="justificantError"></th>
+					<th data-data="recobriment" data-visible="false"></th>
 				</tr>
 			</thead>
 		</table>
