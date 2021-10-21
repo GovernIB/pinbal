@@ -194,6 +194,7 @@ $(document).ready(function() {
 				<th data-data="procedimentNom"><spring:message code="auditor.list.taula.procediment" /></th>
 				<th data-data="serveiDescripcio"><spring:message code="auditor.list.taula.servei" /></th>
 				<th data-data="estat"><spring:message code="auditor.list.taula.estat" /></th>
+				<th data-data="recobriment" data-visible="false"></th>
 			</tr>
 		</thead>
 	</table>
