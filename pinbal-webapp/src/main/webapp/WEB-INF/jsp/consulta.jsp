@@ -103,18 +103,18 @@ table.dataTable thead > tr.selectable > :first-child, table.dataTable tbody > tr
 		<table id="table-consultes" class="table table-striped table-bordered" style="width: 100%">
 			<thead>
 				<tr>
-					<th data-data="scspPeticionId"><spring:message code="consulta.list.taula.peticion.id" /></th>
-					<th data-data="creacioData"><spring:message code="consulta.list.taula.data" /></th>
-					<th data-data="procedimentNom"><spring:message code="consulta.list.taula.procediment" /></th>
-					<th data-data="serveiDescripcio"><spring:message code="consulta.list.taula.servei" /></th>
-					<th data-data="titularNomSencer"><spring:message code="consulta.list.taula.titular.nom" /></th>
-					<th data-data="titularDocumentAmbTipus"><spring:message code="consulta.list.taula.titular.document" /></th>				
-					<th data-data="estat"><spring:message code="consulta.list.taula.estat" /></th>
-					<th data-data="error" data-visible="false"></th>
-					<th data-data="id"></th>
-					<th data-data="justificantEstat"></th>
-					<th data-data="justificantError"></th>
-					<th data-data="recobriment" data-visible="false"></th>
+					<th data-data="scspPeticionId"><spring:message code="consulta.list.taula.peticion.id" /></th><%-- 0 --%>
+					<th data-data="creacioData"><spring:message code="consulta.list.taula.data" /></th><%-- 1 --%>
+					<th data-data="procedimentNom"><spring:message code="consulta.list.taula.procediment" /></th><%-- 2 --%>
+					<th data-data="serveiDescripcio"><spring:message code="consulta.list.taula.servei" /></th><%-- 3 --%>
+					<th data-data="titularNomSencer"><spring:message code="consulta.list.taula.titular.nom" /></th><%-- 4 --%>
+					<th data-data="titularDocumentAmbTipus"><spring:message code="consulta.list.taula.titular.document" /></th>	<%-- 5 --%>			
+					<th data-data="estat"><spring:message code="consulta.list.taula.estat" /></th><%-- 6 --%>
+					<th data-data="id"></th><%-- 7 --%>
+					<th data-data="justificantEstat"></th><%-- 8 --%>
+					<th data-data="justificantError"></th><%-- 9 --%>
+					<th data-data="recobriment"></th><%-- 10 --%>
+					<th data-data="error"></th><%-- 11 --%>
 				</tr>
 			</thead>
 		</table>
@@ -230,12 +230,16 @@ $(document).ready(function() {
 				}
 			},
 			{
-				targets: [9, 10],
+				targets: [9, 10, 11],
 				visible: false
 			}
 	   ]
 	});
 });
+</script>
+
+<script id="template-estat" type="x-tmpl-mustache">
+{{{ icon-status }}}&nbsp;{{ estat }}
 </script>
 
 <script id="template-justificant" type="x-tmpl-mustache">
@@ -288,12 +292,9 @@ $(document).ready(function() {
 </div>
 {{/estat-error}}
 </script>
+
 <script id="template-id-peticion" type="x-tmpl-mustache">
 {{scspPeticionId}}&nbsp;{{#recobriment}}<span class="badge">R</span>{{/recobriment}}
-</script>
-
-<script id="template-estat" type="x-tmpl-mustache">
-{{{ icon-status }}}&nbsp;{{ estat }}
 </script>
 
 <script id="template-details" type="x-tmpl-mustache">
