@@ -10,6 +10,7 @@ EXPOSE 8787
 ADD --chown=default:default deploycaib/ /opt/jboss/server/default/deploycaib/
 ADD --chown=default:default lib/ /opt/jboss/server/default/lib/
 ADD --chown=default:default config/ /opt/webapps/
+ADD --chown=default:default conf/ /opt/jboss/server/default/conf/
 RUN chmod +x /opt/webapps/env_init.sh
 COPY --chown=default:default maven/${project.build.finalName}.ear /opt/jboss/server/default/deploycaib/${project.build.finalName}.ear
 RUN rm /opt/jboss/server/default/lib/bcprov-jdk16.jar
