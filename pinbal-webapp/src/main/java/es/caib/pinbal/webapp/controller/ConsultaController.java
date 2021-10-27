@@ -162,7 +162,7 @@ public class ConsultaController extends BaseController {
 		String error = null;
 		ServerSideRequest serverSideRequest = new ServerSideRequest(request);
 		boolean isDelegat = EntitatHelper.isDelegatEntitatActual(request);
-		log.trace("[C_CONS_DT] Consulta si usuari es delegat (" + (System.currentTimeMillis() - t0) + "ms)");
+		log.debug("[C_CONS_DT] Consulta si usuari es delegat (" + (System.currentTimeMillis() - t0) + "ms)");
 		t0 = System.currentTimeMillis();
 		if (!isDelegat) {
 			error = "Delegat no autoritzat";
@@ -171,7 +171,7 @@ public class ConsultaController extends BaseController {
 		if (entitat == null) {
 			throw new EntitatNotFoundException();
 		}
-		log.trace("[C_CONS_DT] Consulta de l'entitat actual (" + (System.currentTimeMillis() - t0) + "ms)");
+		log.debug("[C_CONS_DT] Consulta de l'entitat actual (" + (System.currentTimeMillis() - t0) + "ms)");
 		t0 = System.currentTimeMillis();
 		ConsultaFiltreCommand command = (ConsultaFiltreCommand)RequestSessionHelper.obtenirObjecteSessio(
 				request,
@@ -179,7 +179,7 @@ public class ConsultaController extends BaseController {
 		if (command == null) {
 			command = new ConsultaFiltreCommand();
 		}
-		log.trace("[C_CONS_DT] Obtenció del filtre (" + (System.currentTimeMillis() - t0) + "ms)");
+		log.debug("[C_CONS_DT] Obtenció del filtre (" + (System.currentTimeMillis() - t0) + "ms)");
 		t0 = System.currentTimeMillis();
 		Page<ConsultaDto> page;
 		ServerSideResponse<ConsultaDto, Long> response = null;
@@ -188,7 +188,7 @@ public class ConsultaController extends BaseController {
 			page = new PageImpl<ConsultaDto>(lista, serverSideRequest.toPageable(), lista.size());
 			response = new ServerSideResponse<ConsultaDto, Long>(serverSideRequest, page);
 			response.setError(error);
-			log.trace("[C_CONS_DT] Retornar resposta error (" + (System.currentTimeMillis() - t0) + "ms)");
+			log.debug("[C_CONS_DT] Retornar resposta error (" + (System.currentTimeMillis() - t0) + "ms)");
 		} else {
 			List<ServerSideColumn> cols = serverSideRequest.getColumns();
 			cols.get(1).setData("createdDate");
@@ -201,7 +201,7 @@ public class ConsultaController extends BaseController {
 			cols.get(2).setData("procedimentNom");
 			cols.get(3).setData("serveiDescripcio");
 			response = new ServerSideResponse<ConsultaDto, Long>(serverSideRequest, page);
-			log.trace("[C_CONS_DT] Retornar resposta amb consultes (" + (System.currentTimeMillis() - t0) + "ms)");
+			log.debug("[C_CONS_DT] Retornar resposta amb consultes (" + (System.currentTimeMillis() - t0) + "ms)");
 		}
 		return response;
 	}
@@ -795,14 +795,14 @@ public class ConsultaController extends BaseController {
 		model.addAttribute(
 				"procediments",
 				procedimentService.findAmbEntitatPerDelegat(entitat.getId()));
-		log.trace("[C_CONS] Consulta de procediments (" + (System.currentTimeMillis() - t0) + "ms)");
+		log.debug("[C_CONS] Consulta de procediments (" + (System.currentTimeMillis() - t0) + "ms)");
 		t0 = System.currentTimeMillis();
 		model.addAttribute(
 				"serveis",
 				serveiService.findPermesosAmbProcedimentPerDelegat(
 						entitat.getId(),
 						command.getProcediment()));
-		log.trace("[C_CONS] Consulta de serveis (" + (System.currentTimeMillis() - t0) + "ms)");
+		log.debug("[C_CONS] Consulta de serveis (" + (System.currentTimeMillis() - t0) + "ms)");
 	}
 
 	private void omplirModelPerMostrarFormulari(
