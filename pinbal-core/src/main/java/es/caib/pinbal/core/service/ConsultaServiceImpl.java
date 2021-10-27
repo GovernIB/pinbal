@@ -2364,10 +2364,10 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 					nomesSensePare,
 					pageable);
 		}
-		log.trace("[S_CONS] Consulta a la base de dades (" + (System.currentTimeMillis() - t0) + " ms)");
+		log.debug("[S_CONS] Consulta a la base de dades (" + (System.currentTimeMillis() - t0) + " ms)");
 		t0 = System.currentTimeMillis();
 		Page<ConsultaDto> paginaConsultesDto = dtoMappingHelper.pageEntities2pageDto(paginaConsultes, ConsultaDto.class, pageable);
-		log.trace("[S_CONS] Conversió a DTO (" + (System.currentTimeMillis() - t0) + " ms)");
+		log.debug("[S_CONS] Conversió a DTO (" + (System.currentTimeMillis() - t0) + " ms)");
 		t0 = System.currentTimeMillis();
 		for (ConsultaDto consulta: paginaConsultesDto.getContent()) {
 			consulta.setServeiDescripcio(
@@ -2396,7 +2396,7 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 				}
 			}
 		}
-		log.trace("[S_CONS] Consulta de peticions addicionals (" + (System.currentTimeMillis() - t0) + " ms)");
+		log.debug("[S_CONS] Consulta de peticions addicionals (" + (System.currentTimeMillis() - t0) + " ms)");
 		return  paginaConsultesDto;
 	}
 
@@ -2461,10 +2461,10 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 					nomesSensePare,
 					pageable);
 		}
-		log.trace("[S_CONS] Consulta a la base de dades (" + (System.currentTimeMillis() - t0) + " ms)");
+		log.debug("[S_CONS] Consulta a la base de dades (" + (System.currentTimeMillis() - t0) + " ms)");
 		t0 = System.currentTimeMillis();
 		Page<ConsultaDto> paginaConsultesDto = dtoMappingHelper.pageEntities2pageDto(paginaConsultes, ConsultaDto.class, pageable);
-		log.trace("[S_CONS] Conversió a DTO (" + (System.currentTimeMillis() - t0) + " ms)");
+		log.debug("[S_CONS] Conversió a DTO (" + (System.currentTimeMillis() - t0) + " ms)");
 		t0 = System.currentTimeMillis();
 		for (ConsultaDto consulta: paginaConsultesDto.getContent()) {
 			consulta.setServeiDescripcio(
@@ -2493,7 +2493,7 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 				}
 			}
 		}
-		log.trace("[S_CONS] Consulta de peticions addicionals (" + (System.currentTimeMillis() - t0) + " ms)");
+		log.debug("[S_CONS] Consulta de peticions addicionals (" + (System.currentTimeMillis() - t0) + " ms)");
 		return  paginaConsultesDto;
 	}	
 	

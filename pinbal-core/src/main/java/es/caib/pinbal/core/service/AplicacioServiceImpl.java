@@ -28,13 +28,13 @@ public class AplicacioServiceImpl implements AplicacioService {
 
 	@Override
 	public List<IntegracioDto> integracioFindAll() {
-		log.trace("Consultant les integracions");
+		log.debug("Consultant les integracions");
 		return integracioHelper.findAll();
 	}
 
 	@Override
 	public List<IntegracioAccioDto> integracioFindDarreresAccionsByCodi(String codi) {
-		log.trace("Consultant les darreres accions per a la integració (" +
+		log.debug("Consultant les darreres accions per a la integració (" +
 				"codi=" + codi + ")");
 		return integracioHelper.findAccionsByIntegracioCodi(codi);
 	}
