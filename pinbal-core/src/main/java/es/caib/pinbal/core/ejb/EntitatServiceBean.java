@@ -15,6 +15,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.ejb.interceptor.SpringBeanAutowiringInterceptor;
 
 import es.caib.pinbal.core.dto.EntitatDto;
+import es.caib.pinbal.core.dto.EntitatDto.EntitatTipusDto;
 import es.caib.pinbal.core.dto.OrganGestorDto;
 import es.caib.pinbal.core.service.EntitatService;
 import es.caib.pinbal.core.service.exception.EntitatNotFoundException;
@@ -77,6 +78,12 @@ public class EntitatServiceBean implements EntitatService {
 		return delegate.findByCodi(codi);
 	}
 
+	@Override
+	@RolesAllowed("PBL_ADMIN")
+	public EntitatDto findTopByTipus(EntitatTipusDto tipus) {
+		return delegate.findTopByTipus(tipus);
+	}
+	
 	@Override
 	@RolesAllowed("PBL_ADMIN")
 	public EntitatDto findByCif(String cif) {

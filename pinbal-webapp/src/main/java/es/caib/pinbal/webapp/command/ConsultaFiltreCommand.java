@@ -7,6 +7,9 @@ import java.util.Date;
 
 import javax.validation.constraints.Size;
 
+import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
+
 import es.caib.pinbal.core.dto.ConsultaDto.EstatTipus;
 import es.caib.pinbal.core.dto.ConsultaFiltreDto;
 import lombok.Data;
@@ -31,8 +34,19 @@ public class ConsultaFiltreCommand {
 	private String funcionariNom;
 	private String funcionariDocument;
 	private Long entitatId;
+	
+	
+	public ConsultaFiltreCommand() {
+		super();
+	}
 
-
+	public ConsultaFiltreCommand(Long entitatId) {
+		DateTime dateStartToday = (new LocalDate()).toDateTimeAtStartOfDay();
+		this.dataFi = dateStartToday.minusDays(1).toDate();
+		this.dataInici = dateStartToday.minusDays(90).toDate();
+		this.entitatId = entitatId;
+	}
+	
 	public static ConsultaFiltreDto asDto(ConsultaFiltreCommand command) {
 		if (command == null)
 			return null;

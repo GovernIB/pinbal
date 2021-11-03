@@ -30,6 +30,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import es.caib.pinbal.core.dto.ConsultaDto;
 import es.caib.pinbal.core.dto.EntitatDto;
+import es.caib.pinbal.core.dto.EntitatDto.EntitatTipusDto;
 import es.caib.pinbal.core.service.ConsultaService;
 import es.caib.pinbal.core.service.EntitatService;
 
@@ -81,17 +82,27 @@ public class ConsultaAdminController extends BaseController {
 			HttpServletRequest request,
 			@Valid ConsultaFiltreCommand command,
 			BindingResult bindingResult,
+			@RequestParam(value = "accio", required = false) String accio,
 			Model model) throws Exception {
-		if (bindingResult.hasErrors()) {
-			omplirModelPerFiltreTaula(request, model);
-			return "adminConsultes";
-		} else {
-			RequestSessionHelper.actualitzarObjecteSessio(
+		
+		if ("netejar".equals(accio)) {
+			RequestSessionHelper.esborrarObjecteSessio(
 					request,
-					SESSION_ATTRIBUTE_FILTRE,
-					command);
-			return "redirect:consulta";
+					SESSION_ATTRIBUTE_FILTRE);
+		} else {
+			if (bindingResult.hasErrors()) {
+				omplirModelPerFiltreTaula(request, model);
+				return "adminConsultes";
+			} else {
+				RequestSessionHelper.actualitzarObjecteSessio(
+						request,
+						SESSION_ATTRIBUTE_FILTRE,
+						command);
+				return "redirect:consulta";
+			}
 		}
+		
+		return "redirect:consulta";
 	}
 	@RequestMapping(value = "/datatable", produces="application/json", method = RequestMethod.GET)
 	@ResponseBody
@@ -104,7 +115,7 @@ public class ConsultaAdminController extends BaseController {
 				request,
 				SESSION_ATTRIBUTE_FILTRE);
 		if (command == null)
-			command = new ConsultaFiltreCommand();
+			command = new ConsultaFiltreCommand(entitatService.findTopByTipus(EntitatTipusDto.GOVERN).getId());
 		List<ServerSideColumn> cols = serverSideRequest.getColumns();
 		cols.get(1).setData("createdDate");
 		cols.get(2).setData("createdBy.nom");
@@ -209,7 +220,7 @@ public class ConsultaAdminController extends BaseController {
 					request,
 					SESSION_ATTRIBUTE_FILTRE);
 			if (command == null)
-				command = new ConsultaFiltreCommand();
+				command = new ConsultaFiltreCommand(entitatService.findTopByTipus(EntitatTipusDto.GOVERN).getId());
 			if (command.getEntitatId() != null) {
 				model.addAttribute(
 						"filtreCommand",
