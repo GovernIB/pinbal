@@ -42,8 +42,7 @@ public class ConsultaFiltreCommand {
 
 	public ConsultaFiltreCommand(Long entitatId) {
 		DateTime dateStartToday = (new LocalDate()).toDateTimeAtStartOfDay();
-		this.dataFi = dateStartToday.minusDays(1).toDate();
-		this.dataInici = dateStartToday.minusDays(90).toDate();
+		this.dataInici = dateStartToday.minusMonths(3).toDate();
 		this.entitatId = entitatId;
 	}
 	
