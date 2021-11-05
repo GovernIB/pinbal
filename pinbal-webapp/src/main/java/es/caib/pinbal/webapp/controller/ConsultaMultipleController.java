@@ -27,6 +27,7 @@ import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import es.caib.pinbal.core.dto.ConsultaDto;
@@ -86,19 +87,27 @@ public class ConsultaMultipleController extends BaseController {
 			HttpServletRequest request,
 			@Valid ConsultaFiltreCommand command,
 			BindingResult bindingResult,
+			@RequestParam(value = "accio", required = false) String accio,
 			Model model) throws Exception {
 		if (!EntitatHelper.isDelegatEntitatActual(request))
 			return "delegatNoAutoritzat";
-		EntitatDto entitat = EntitatHelper.getEntitatActual(request, entitatService);
-		if (entitat != null) {
-			if (bindingResult.hasErrors()) {
-				omplirModelPerFiltreTaula(request, entitat, model);
-			} else {
-				RequestSessionHelper.actualitzarObjecteSessio(
-						request,
-						SESSION_ATTRIBUTE_FILTRE,
-						command);
-				return "redirect:multiple";
+		if ("netejar".equals(accio)) {
+			RequestSessionHelper.esborrarObjecteSessio(
+					request,
+					SESSION_ATTRIBUTE_FILTRE);
+			return "redirect:multiple";
+		} else {
+			EntitatDto entitat = EntitatHelper.getEntitatActual(request, entitatService);
+			if (entitat != null) {
+				if (bindingResult.hasErrors()) {
+					omplirModelPerFiltreTaula(request, entitat, model);
+				} else {
+					RequestSessionHelper.actualitzarObjecteSessio(
+							request,
+							SESSION_ATTRIBUTE_FILTRE,
+							command);
+					return "redirect:multiple";
+				}
 			}
 		}
 		return "consultaMultiple";
@@ -123,8 +132,10 @@ public class ConsultaMultipleController extends BaseController {
 		ConsultaFiltreCommand command = (ConsultaFiltreCommand)RequestSessionHelper.obtenirObjecteSessio(
 				request,
 				SESSION_ATTRIBUTE_FILTRE);
-		if (command == null)
+		if (command == null) {
 			command = new ConsultaFiltreCommand();
+			command.filtrarDarrers3MesosPerDefecte();
+		}
 		
 		Page<ConsultaDto> page;
 		ServerSideResponse<ConsultaDto, Long> response = null;
@@ -270,8 +281,10 @@ public class ConsultaMultipleController extends BaseController {
 		ConsultaFiltreCommand command = (ConsultaFiltreCommand)RequestSessionHelper.obtenirObjecteSessio(
 				request,
 				SESSION_ATTRIBUTE_FILTRE);
-		if (command == null)
+		if (command == null) {
 			command = new ConsultaFiltreCommand();
+			command.filtrarDarrers3MesosPerDefecte();
+		}
 		model.addAttribute(
 				"filtreCommand",
 				command);
