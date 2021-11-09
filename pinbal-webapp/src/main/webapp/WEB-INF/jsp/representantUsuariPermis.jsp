@@ -120,7 +120,7 @@ $(document).ready(function() {
 
 	<div>
 		<a href="<c:url value="/representant/usuari/${usuari.codi}/permis/deny/all"/>" class="btn btn-primary confirm-esborrar"><spring:message code="procediment.serveis.permisos.esborrar.tots"/></a>
-		<a href="<c:url value="/representant/usuari"/>" class="btn btn-default pull-right"><spring:message code="comu.boto.tornar"/></a>
+		<a href="<c:url value="/representant/usuari"/>" class="btn btn-default pull-right"><span class="fa fa-arrow-left"></span>&nbsp;<spring:message code="comu.boto.tornar"/></a>
 		<div class="clearfix"></div>
 	</div>
 

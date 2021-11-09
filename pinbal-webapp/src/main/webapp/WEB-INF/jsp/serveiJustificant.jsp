@@ -70,7 +70,7 @@ $(document).ready(function() {
 	</table>
 
 	<div>
-		<a href="<c:url value="/servei"/>" class="btn btn-primary pull-right"><spring:message code="comu.boto.tornar"/></a>
+		<a href="<c:url value="/servei"/>" class="btn btn-default pull-right"><span class="fa fa-arrow-left"></span>&nbsp;<spring:message code="comu.boto.tornar"/></a>
 		<div class="clearfix"></div>
 	</div>
 
@@ -93,7 +93,7 @@ $(document).ready(function() {
 			</form>
 		</div>
 		<div class="modal-footer">
-			<button class="btn btn-default" data-dismiss="modal"><spring:message code="comu.boto.tornar"/></button>
+			<button class="btn btn-default" data-dismiss="modal"><span class="fa fa-arrow-left"></span>&nbsp;<spring:message code="comu.boto.tornar"/></button>
 			<button id="modal-justificant-boto-submit" class="btn btn-primary"><spring:message code="comu.boto.guardar"/></button>
 		</div>
 		</div>

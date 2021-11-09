@@ -316,10 +316,10 @@ $('#dadesResposta').on('shown', function () {
 	<div class="well">
 		<c:choose>
 			<c:when test="${not empty consulta.pareId}">
-				<a href="<c:url value="/consulta/multiple/${consulta.pareId}"/>" class="btn"><spring:message code="comu.boto.tornar"/></a>
+				<a href="<c:url value="/consulta/multiple/${consulta.pareId}"/>" class="btn btn-default"><span class="fa fa-arrow-left"></span>&nbsp;<spring:message code="comu.boto.tornar"/></a>
 			</c:when>
 			<c:otherwise>
-				<a href="<c:url value="/consulta"/>" class="btn btn-primary"><spring:message code="comu.boto.tornar"/></a>
+				<a href="<c:url value="/consulta"/>" class="btn btn-default"><span class="fa fa-arrow-left"></span>&nbsp;<spring:message code="comu.boto.tornar"/></a>
 			</c:otherwise>
 		</c:choose>
 	</div>

@@ -86,7 +86,7 @@ $(document).ready(function() {
 {{/actiu}}
 </script>
 	<div>
-		<a href="<c:url value="/entitat"/>" class="btn btn-primary pull-right"><spring:message code="comu.boto.tornar"/></a>
+		<a href="<c:url value="/entitat"/>" class="btn btn-default pull-right"><span class="fa fa-arrow-left"></span>&nbsp;<spring:message code="comu.boto.tornar"/></a>
 		<div class="clearfix"></div>
 	</div>
 

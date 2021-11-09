@@ -429,7 +429,7 @@ $(function() {
 	</div>
 	
 	<div class="well">
-		<a href="<c:url value="/servei"/>" class="btn btn-default pull-right"><spring:message code="comu.boto.tornar"/></a>
+		<a href="<c:url value="/servei"/>" class="btn btn-default pull-right"><span class="fa fa-arrow-left"></span>&nbsp;<spring:message code="comu.boto.tornar"/></a>
 		<c:set var="initModalPreview">initModalPreview(this);return false</c:set>
 		<a href="<c:url value="/modal/servei/${servei.codiUrlEncoded}/preview"/>" class="btn btn-info" onclick="${initModalPreview}"><i class="fas fa-eye"></i>&nbsp;<spring:message code="comu.boto.previsualitzar"/></a>
 	</div>
@@ -528,7 +528,7 @@ $(function() {
 			</form>
 		</div>
 		<div class="modal-footer">
-			<button class="btn btn-default" data-dismiss="modal"><spring:message code="comu.boto.tornar"/></button>
+			<button class="btn btn-default" data-dismiss="modal"><span class="fa fa-arrow-left"></span>&nbsp;<spring:message code="comu.boto.tornar"/></button>
 			<button id="modal-boto-submit" class="btn btn-primary"><spring:message code="comu.boto.guardar"/></button>
 		</div>
 	</div>
@@ -543,7 +543,7 @@ $(function() {
 			</div>
 			<div class="modal-body"></div>
 			<div class="modal-footer">
-				<button class="btn btn-primary" data-dismiss="modal"><spring:message code="comu.boto.tornar"/></button>
+				<button class="btn btn-default" data-dismiss="modal"><span class="fa fa-arrow-left"></span>&nbsp;<spring:message code="comu.boto.tornar"/></button>
 			</div>
 		</div>
 	</div>
@@ -566,7 +566,7 @@ $(function() {
 			</form>
 		</div>
 		<div class="modal-footer">
-			<button class="btn btn-default" data-dismiss="modal"><spring:message code="comu.boto.tornar"/></button>
+			<button class="btn btn-default" data-dismiss="modal"><span class="fa fa-arrow-left"></span>&nbsp;<spring:message code="comu.boto.tornar"/></button>
 			<button id="modal-grup-boto-submit" class="btn btn-primary"><spring:message code="comu.boto.guardar"/></button>
 		</div>
 		</div>
