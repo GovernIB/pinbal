@@ -612,7 +612,7 @@ function showModalXsd(element) {
 		</div>
 		<div class="modal-body"></div>
 		<div class="modal-footer">
-			<button class="btn btn-default" data-dismiss="modal"><spring:message code="comu.boto.tornar"/></button>
+			<button class="btn btn-default" data-dismiss="modal"><span class="fa fa-arrow-left"></span>&nbsp;<spring:message code="comu.boto.tornar"/></button>
 			<button id="modal-boto-submit" class="btn btn-primary"><spring:message code="comu.boto.guardar"/></button>
 		</div>
 		</div>
@@ -628,7 +628,7 @@ function showModalXsd(element) {
 			</div>
 			<div class="modal-body"></div>
 			<div class="modal-footer">
-				<button class="btn btn-default" data-dismiss="modal"><spring:message code="comu.boto.tornar"/></button>
+				<button class="btn btn-default" data-dismiss="modal"><span class="fa fa-arrow-left"></span>&nbsp;<spring:message code="comu.boto.tornar"/></button>
 				<button id="modal-boto-submit-xsd" class="btn btn-primary"><spring:message code="comu.boto.guardar"/></button>
 			</div>
 		</div>

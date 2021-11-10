@@ -131,6 +131,12 @@ $(document).ready(function() {
 			else if (tag == 'select')
 				this.selectedIndex = 0;
 		});
+		
+		var accioInput = $("<input>")
+		.attr("type", "hidden")
+        .attr("name", "accio").val("netejar");
+		$('#form-filtre').append(accioInput);
+	
 		$('#form-filtre').submit();
 	});
 	$('#select-procediment').change(function() {
