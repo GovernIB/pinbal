@@ -11,11 +11,11 @@ import javax.interceptor.Interceptors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.ejb.interceptor.SpringBeanAutowiringInterceptor;
 
 import es.caib.pinbal.core.dto.FiltreActiuEnumDto;
 import es.caib.pinbal.core.dto.InformeProcedimentDto;
+import es.caib.pinbal.core.dto.PaginacioAmbOrdreDto;
 import es.caib.pinbal.core.dto.ProcedimentDto;
 import es.caib.pinbal.core.service.ProcedimentService;
 import es.caib.pinbal.core.service.exception.EntitatNotFoundException;
@@ -77,7 +77,7 @@ public class ProcedimentServiceBean implements ProcedimentService {
 			Long organGestorId,
 			String codiSia,
 			FiltreActiuEnumDto actiu,
-			Pageable pageable) throws EntitatNotFoundException {
+			PaginacioAmbOrdreDto paginacioParams) throws EntitatNotFoundException {
 		return delegate.findAmbFiltrePaginat(
 				entitatId,
 				codi,
@@ -86,7 +86,7 @@ public class ProcedimentServiceBean implements ProcedimentService {
 				organGestorId,
 				codiSia,
 				actiu,
-				pageable);
+				paginacioParams);
 	}
 
 	@Override

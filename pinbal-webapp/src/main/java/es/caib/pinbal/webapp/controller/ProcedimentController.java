@@ -153,7 +153,7 @@ public class ProcedimentController extends BaseController {
 													command.getOrganGestorId(),
 													command.getCodiSia(), 
 													command.getActiu(), 
-													serverSideRequest.toPageable());
+													ServerSideRequest.getPaginacioDtoFromRequest(request));
 
 		return new ServerSideResponse<ProcedimentDto, Long>(serverSideRequest, page);
 	}
