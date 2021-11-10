@@ -136,19 +136,27 @@ public class ConsultaController extends BaseController {
 			HttpServletRequest request,
 			@Valid ConsultaFiltreCommand command,
 			BindingResult bindingResult,
+			@RequestParam(value = "accio", required = false) String accio,
 			Model model) throws Exception {
 		if (!EntitatHelper.isDelegatEntitatActual(request))
 			return "delegatNoAutoritzat";
-		EntitatDto entitat = EntitatHelper.getEntitatActual(request, entitatService);
-		if (entitat != null) {
-			if (bindingResult.hasErrors()) {
-				omplirModelPerFiltreTaula(request, entitat, model);
-			} else {
-				RequestSessionHelper.actualitzarObjecteSessio(
-						request,
-						SESSION_ATTRIBUTE_FILTRE,
-						command);
-				return "redirect:.";
+		if ("netejar".equals(accio)) {
+			RequestSessionHelper.esborrarObjecteSessio(
+					request,
+					SESSION_ATTRIBUTE_FILTRE);
+			return "redirect:.";
+		} else {
+			EntitatDto entitat = EntitatHelper.getEntitatActual(request, entitatService);
+			if (entitat != null) {
+				if (bindingResult.hasErrors()) {
+					omplirModelPerFiltreTaula(request, entitat, model);
+				} else {
+					RequestSessionHelper.actualitzarObjecteSessio(
+							request,
+							SESSION_ATTRIBUTE_FILTRE,
+							command);
+					return "redirect:.";
+				}
 			}
 		}
 		return "consulta";
@@ -178,6 +186,7 @@ public class ConsultaController extends BaseController {
 				SESSION_ATTRIBUTE_FILTRE);
 		if (command == null) {
 			command = new ConsultaFiltreCommand();
+			command.filtrarDarrers3MesosPerDefecte();
 		}
 		log.debug("[C_CONS_DT] Obtenció del filtre (" + (System.currentTimeMillis() - t0) + "ms)");
 		t0 = System.currentTimeMillis();
@@ -787,6 +796,7 @@ public class ConsultaController extends BaseController {
 				SESSION_ATTRIBUTE_FILTRE);
 		if (command == null) {
 			command = new ConsultaFiltreCommand();
+			command.filtrarDarrers3MesosPerDefecte();
 		}
 		model.addAttribute(
 				"filtreCommand",

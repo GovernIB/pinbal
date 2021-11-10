@@ -27,6 +27,8 @@ public interface EntitatRepository extends JpaRepository<Entitat, Long> {
 	Entitat findByCodi(String codi);
 
 	Entitat findByCif(String cif);
+	
+	Entitat findTopByTipusOrderByTipusAsc(EntitatTipus tipus);
 
 	@Query(	"select " +
 			"    eu " +

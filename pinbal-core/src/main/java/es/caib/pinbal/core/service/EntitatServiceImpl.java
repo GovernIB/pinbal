@@ -22,6 +22,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import es.caib.pinbal.core.dto.EntitatDto;
+import es.caib.pinbal.core.dto.EntitatDto.EntitatTipusDto;
 import es.caib.pinbal.core.dto.OrganGestorDto;
 import es.caib.pinbal.core.helper.DtoMappingHelper;
 import es.caib.pinbal.core.model.Entitat;
@@ -169,6 +170,15 @@ public class EntitatServiceImpl implements EntitatService, ApplicationContextAwa
 		log.debug("Consulta de l'entitat (codi=" + codi + ")");
 		return dtoMappingHelper.getMapperFacade().map(
 				entitatRepository.findByCodi(codi),
+				EntitatDto.class);
+	}
+	
+	@Transactional(readOnly = true)
+	@Override
+	public EntitatDto findTopByTipus(EntitatTipusDto tipus) {
+		log.debug("Consulta de l'entitat (tipus=" + tipus + ")");
+		return dtoMappingHelper.getMapperFacade().map(
+				entitatRepository.findTopByTipusOrderByTipusAsc(dtoMappingHelper.getMapperFacade().map(tipus, EntitatTipus.class)),
 				EntitatDto.class);
 	}
 	

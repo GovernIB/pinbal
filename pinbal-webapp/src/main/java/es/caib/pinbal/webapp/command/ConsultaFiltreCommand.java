@@ -7,6 +7,9 @@ import java.util.Date;
 
 import javax.validation.constraints.Size;
 
+import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
+
 import es.caib.pinbal.core.dto.ConsultaDto.EstatTipus;
 import es.caib.pinbal.core.dto.ConsultaFiltreDto;
 import lombok.Data;
@@ -31,8 +34,25 @@ public class ConsultaFiltreCommand {
 	private String funcionariNom;
 	private String funcionariDocument;
 	private Long entitatId;
+	
+	
+	public ConsultaFiltreCommand() {
+		super();
+	}
 
-
+	// Filtra per defecte els darrers 3 mesos i l'entitat govern (per a consultes de l'administrador)
+	public ConsultaFiltreCommand(Long entitatId) {
+		DateTime dateStartToday = (new LocalDate()).toDateTimeAtStartOfDay();
+		this.dataInici = dateStartToday.minusMonths(3).toDate();
+		this.entitatId = entitatId;
+	}
+	
+	// Filtra per defecte els darrers 3 mesos (per a consultes simples i multiples del delegat)
+	public void filtrarDarrers3MesosPerDefecte() {
+		DateTime dateStartToday = (new LocalDate()).toDateTimeAtStartOfDay();
+		this.dataInici = dateStartToday.minusMonths(3).toDate();
+	}
+	
 	public static ConsultaFiltreDto asDto(ConsultaFiltreCommand command) {
 		if (command == null)
 			return null;

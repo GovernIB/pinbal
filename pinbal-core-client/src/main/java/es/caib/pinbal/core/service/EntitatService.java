@@ -10,6 +10,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
 
 import es.caib.pinbal.core.dto.EntitatDto;
+import es.caib.pinbal.core.dto.EntitatDto.EntitatTipusDto;
 import es.caib.pinbal.core.dto.OrganGestorDto;
 import es.caib.pinbal.core.service.exception.EntitatNotFoundException;
 import es.caib.pinbal.core.service.exception.EntitatServeiNotFoundException;
@@ -106,6 +107,16 @@ public interface EntitatService {
 	 */
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public EntitatDto findByCodi(String codi);
+	
+	/**
+	 * Consulta la primera entitat amb el tipus donat.
+	 * 
+	 * @param tipus
+	 *            Atribut tipus de l'entitat a trobar.
+	 * @return L'entitat trobada. Si no s'ha trobat cap entitat retorna null.
+	 */
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	public EntitatDto findTopByTipus(EntitatTipusDto codi);
 	
 	/**
 	 * Consulta una entitat donat el seu cif.
