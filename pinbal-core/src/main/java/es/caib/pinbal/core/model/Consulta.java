@@ -23,6 +23,7 @@ import javax.persistence.Table;
 import javax.persistence.Version;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
+import org.hibernate.annotations.Formula;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import es.caib.pinbal.core.audit.PinbalAuditable;
@@ -122,7 +123,7 @@ public class Consulta extends PinbalAuditable<Long> {
 	@OrderBy("scspSolicitudId asc")
 	private List<Consulta> fills = new ArrayList<Consulta>();
 
-	@ManyToOne(optional = false, fetch = FetchType.EAGER)
+	@ManyToOne(optional = false, fetch = FetchType.LAZY)
 	@JoinColumn(
 			name = "procserv_id",
 			foreignKey = @ForeignKey(name = "pbl_procserv_consulta_fk"))
@@ -136,6 +137,21 @@ public class Consulta extends PinbalAuditable<Long> {
 			},
 			foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
 	private Transmision transmision;
+
+	@Formula("(SELECT pps.servei_id FROM pbl_procediment_servei pps WHERE pps.id = procserv_id)")
+	private String serveiCodi;
+	@Formula("(SELECT cs.descripcion FROM pbl_procediment_servei pps, core_servicio cs WHERE pps.id = procserv_id AND cs.codcertificado = pps.servei_id)")
+	private String serveiDescripcio;
+	@Formula("(SELECT pps.procediment_id FROM pbl_procediment_servei pps WHERE pps.id = procserv_id)")
+	private Long procedimentId;
+	@Formula("(SELECT ppr.nom FROM pbl_procediment_servei pps, pbl_procediment ppr WHERE pps.id = procserv_id AND ppr.id = pps.procediment_id)")
+	private String procedimentNom;
+	@Formula("(SELECT ppr.entitat_id FROM pbl_procediment_servei pps, pbl_procediment ppr WHERE pps.id = procserv_id AND ppr.id = pps.procediment_id)")
+	private Long entitatId;
+	@Formula("(SELECT pen.nom FROM pbl_procediment_servei pps, pbl_procediment ppr, pbl_entitat pen WHERE pps.id = procserv_id AND ppr.id = pps.procediment_id AND pen.id = ppr.entitat_id)")
+	private String entitatNom;
+	@Formula("(SELECT pen.cif FROM pbl_procediment_servei pps, pbl_procediment ppr, pbl_entitat pen WHERE pps.id = procserv_id AND ppr.id = pps.procediment_id AND pen.id = ppr.entitat_id)")
+	private String entitatCif;
 
 	@Version
 	private long version = 0;
@@ -285,6 +301,28 @@ public class Consulta extends PinbalAuditable<Long> {
 	}
 	public Transmision getTransmision() {
 		return transmision;
+	}
+
+	public String getServeiCodi() {
+		return serveiCodi;
+	}
+	public String getServeiDescripcio() {
+		return serveiDescripcio;
+	}
+	public Long getProcedimentId() {
+		return procedimentId;
+	}
+	public String getProcedimentNom() {
+		return procedimentNom;
+	}
+	public Long getEntitatId() {
+		return entitatId;
+	}
+	public String getEntitatNom() {
+		return entitatNom;
+	}
+	public String getEntitatCif() {
+		return entitatCif;
 	}
 
 	public void updateEstat(EstatTipus estat) {

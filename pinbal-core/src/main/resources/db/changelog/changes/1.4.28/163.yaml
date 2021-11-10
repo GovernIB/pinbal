@@ -1,0 +1,14 @@
+databaseChangeLog:
+- changeSet:
+    id: 1636451116937-1
+    author: limit
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: createddate
+            descending: true
+        - column:
+            name: createdby_codi
+        indexName: pbl_con_credatcod_i 
+        tableName: pbl_consulta

@@ -38,7 +38,7 @@ public class ProcedimentServei extends PinbalAuditable<Long> {
 
 	private static final long serialVersionUID = -6657066865382086237L;
 
-	@ManyToOne(optional = false, fetch = FetchType.EAGER)
+	@ManyToOne(optional = false, fetch = FetchType.LAZY)
 	@JoinColumn(
 			name = "procediment_id",
 			foreignKey = @ForeignKey(name = "pbl_proced_procserv_fk"))

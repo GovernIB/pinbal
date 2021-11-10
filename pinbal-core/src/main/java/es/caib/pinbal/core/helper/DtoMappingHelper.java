@@ -77,18 +77,17 @@ public class DtoMappingHelper {
 						"entitatNom").byDefault().toClassMap());
 		// Mapeig de consultes
 		mapperFactory.registerClassMap(
-				ClassMapBuilder.map(Consulta.class, ConsultaDto.class).field(
-						"procedimentServei.procediment.entitat.nom",
-						"entitatNom").field("procedimentServei.procediment.entitat.cif", "entitatCif").
-				// field("createdBy.codi", "funcionariNom").
-				// field("createdBy.codi", "funcionariNif").
-						field("procedimentServei.procediment.id", "procedimentId").field(
-								"procedimentServei.procediment.nom",
-								"procedimentNom").field("procedimentServei.servei", "serveiCodi").field(
-										"createdBy",
-										"creacioUsuari").field("createdDate", "creacioData").field(
-												"funcionariDocumentNum",
-												"funcionariNif").field("pare.id", "pareId").byDefault().toClassMap());
+				ClassMapBuilder.map(Consulta.class, ConsultaDto.class).
+				/*field("procedimentServei.procediment.entitat.nom", "entitatNom").
+				field("procedimentServei.procediment.entitat.cif", "entitatCif").
+				field("procedimentServei.procediment.id", "procedimentId").
+				field("procedimentServei.procediment.nom", "procedimentNom").
+				field("procedimentServei.servei", "serveiCodi").*/
+				field("createdBy", "creacioUsuari").
+				field("createdDate", "creacioData").
+				field("funcionariDocumentNum", "funcionariNif").
+				field("pare.id", "pareId").
+				byDefault().toClassMap());
 		// Mapeig d'informes d'usuaris
 		mapperFactory.registerClassMap(
 				ClassMapBuilder.map(EntitatUsuari.class, InformeUsuariDto.class).field("usuari.codi", "codi").field(

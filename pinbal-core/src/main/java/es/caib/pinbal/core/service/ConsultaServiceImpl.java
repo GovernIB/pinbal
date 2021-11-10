@@ -2383,12 +2383,14 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 		t0 = System.currentTimeMillis();
 		Page<ConsultaDto> paginaConsultesDto = dtoMappingHelper.pageEntities2pageDto(paginaConsultes, ConsultaDto.class, pageable);
 		log.debug("[S_CONS] Conversió a DTO (" + (System.currentTimeMillis() - t0) + " ms)");
-		t0 = System.currentTimeMillis();
+		/*t0 = System.currentTimeMillis();
 		for (ConsultaDto consulta: paginaConsultesDto.getContent()) {
 			consulta.setServeiDescripcio(
 					getScspHelper().getServicioDescripcion(
 							consulta.getServeiCodi()));
 		}
+		log.debug("[S_CONS] Consulta de descripcions de serveis (" + (System.currentTimeMillis() - t0) + " ms)");*/
+		t0 = System.currentTimeMillis();
 		if (consultaHihaPeticio) {
 			for (ConsultaDto consulta: paginaConsultesDto.getContent()) {
 				try {
@@ -2481,11 +2483,11 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 		Page<ConsultaDto> paginaConsultesDto = dtoMappingHelper.pageEntities2pageDto(paginaConsultes, ConsultaDto.class, pageable);
 		log.debug("[S_CONS] Conversió a DTO (" + (System.currentTimeMillis() - t0) + " ms)");
 		t0 = System.currentTimeMillis();
-		for (ConsultaDto consulta: paginaConsultesDto.getContent()) {
+		/*for (ConsultaDto consulta: paginaConsultesDto.getContent()) {
 			consulta.setServeiDescripcio(
 					getScspHelper().getServicioDescripcion(
 							consulta.getServeiCodi()));
-		}
+		}*/
 		if (consultaHihaPeticio) {
 			for (ConsultaDto consulta: paginaConsultesDto.getContent()) {
 				try {
