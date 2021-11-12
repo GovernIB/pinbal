@@ -33,15 +33,15 @@ function initModalXml(element) {
 	<div class="well">
 		<h3>
 			<spring:message code="consulta.info.consulta.dades"/>
-			<a href="#dadesPeticio" class="pull-right" data-toggle="collapse" data-target="#dadesPeticio">
-				<i id="dadesPeticioIcon" class="fas fa-chevron-down"></i>
-			</a>
+			<button class="btn btn-link pull-right" data-toggle="collapse" data-target="#dadesPeticio" style="color:black">
+				<i id="dadesPeticioIcon" class="pull-right fas fa-chevron-down"></i>
+			</button>
 		</h3>
 		<div id="dadesPeticio" class="collapse">
 			<c:if test="${consulta.hiHaPeticio}">
 				<c:set var="initModalXml">initModalXml(this);return false</c:set>
-				<a class="btn btn-primary pull-right" href="<c:url value="/modal/consulta/${consulta.id}/xmlPeticio"/>" onclick="${initModalXml}">
-					<i class="glyphicon-info-sign"></i> <spring:message code="consulta.info.veure.xml"/>
+				<a class="btn btn-default pull-right" href="<c:url value="/modal/consulta/${consulta.id}/xmlPeticio"/>" onclick="${initModalXml}">
+					<i class="fas fa-info-circle"></i> <spring:message code="consulta.info.veure.xml"/>
 				</a>
 			</c:if>
 			<p>
@@ -148,10 +148,10 @@ function initModalXml(element) {
 	</div>
 <script type="text/javascript">
 $('#dadesPeticio').on('hidden', function () {
-	$('#dadesPeticioIcon').attr('class', 'pull-right glyphicon-chevron-down');
+	$('#dadesPeticioIcon').attr('class', 'pull-right icon-chevron-down');
 });
 $('#dadesPeticio').on('shown', function () {
-	$('#dadesPeticioIcon').attr('class', 'pull-right glyphicon-chevron-up');
+	$('#dadesPeticioIcon').attr('class', 'pull-right icon-chevron-up');
 });
 </script>
 	<c:if test="${not empty filles}">
@@ -234,7 +234,7 @@ $('#dadesSolicitud').on('shown', function () {
 			</h3>
 			<div id="dadesResposta" class="collapse out">
 				<c:set var="initModalXml">initModalXml(this);return false</c:set>
-				<a class="btn pull-right" href="<c:url value="/modal/consulta/${consulta.id}/xmlResposta"/>" onclick="${initModalXml}"><i class="glyphicon-info-sign"></i> <spring:message code="consulta.info.veure.xml"/></a>
+				<a class="btn btn-default pull-right" href="<c:url value="/modal/consulta/${consulta.id}/xmlResposta"/>" onclick="${initModalXml}"><i class="fas fa-info-circle"></i> <spring:message code="consulta.info.veure.xml"/></a>
 				<p>
 					<spring:message code="consulta.info.resposta.rebuda.dia"/>
 					<fmt:formatDate pattern="dd/MM/yyyy" value="${consulta.respostaData}"/>
@@ -274,7 +274,7 @@ $('#dadesResposta').on('shown', function () {
 		</div>
 	</c:if>
 	<div class="well well-lg">
-		<a href="<c:url value="/consulta/multiple"/>" class="btn btn-default"><spring:message code="comu.boto.tornar"/></a>
+		<a href="<c:url value="/consulta/multiple"/>" class="btn btn-primary"><spring:message code="comu.boto.tornar"/></a>
 	</div>
 	<div id="modal-missatge-xml" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
   		<div class="modal-dialog modal-dialog-centered" role="document">
