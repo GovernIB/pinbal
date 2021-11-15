@@ -37,8 +37,8 @@
 		<bean class="es.caib.pinbal.webapp.interceptor.AplicacioInterceptor"/>
 		<bean class="es.caib.pinbal.webapp.interceptor.UsuariInterceptor"/>
 		<bean class="es.caib.pinbal.webapp.interceptor.SeleccioEntitatInterceptor"/>
-		<bean class="es.caib.pinbal.webapp.interceptor.ServeisInterceptor"/>
 		<bean class="es.caib.pinbal.webapp.interceptor.SeleccioRolInterceptor"/>
+		<bean class="es.caib.pinbal.webapp.interceptor.ServeisInterceptor"/>
 		<bean class="es.caib.pinbal.webapp.interceptor.ModalInterceptor"/>
 		<bean class="es.caib.pinbal.webapp.interceptor.AvisosInterceptor"/>
 	</mvc:interceptors>
