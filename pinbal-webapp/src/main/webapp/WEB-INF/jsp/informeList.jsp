@@ -48,6 +48,14 @@
 				</h4>
 			</div>
 		</div>
+		<div class="row">
+			<div class="well">
+				<h4>
+						<spring:message code="informe.list.informe.serveis"/>
+						<a href="informe/procedimentServei" class="btn btn-default pull-right"><i class="fas fa-file-download"></i>&nbsp;<spring:message code="informe.list.generar"/></a>
+				</h4>
+			</div>
+		</div>
 	</div>
 	<div id="modal-filtre-dates" class="modal fade">
 	  <div class="modal-dialog">

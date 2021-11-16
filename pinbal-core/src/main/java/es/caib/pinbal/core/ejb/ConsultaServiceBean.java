@@ -25,6 +25,7 @@ import es.caib.pinbal.core.dto.EstadisticaDto;
 import es.caib.pinbal.core.dto.EstadistiquesFiltreDto;
 import es.caib.pinbal.core.dto.FitxerDto;
 import es.caib.pinbal.core.dto.InformeGeneralEstatDto;
+import es.caib.pinbal.core.dto.InformeProcedimentServeiDto;
 import es.caib.pinbal.core.dto.JustificantDto;
 import es.caib.pinbal.core.dto.RecobrimentSolicitudDto;
 import es.caib.pinbal.core.service.ConsultaService;
@@ -382,4 +383,9 @@ public class ConsultaServiceBean implements ConsultaService {
 		return delegate.findEstadistiquesCarrega();
 	}
 
+	@Override
+	@RolesAllowed({"PBL_ADMIN", "PBL_REPORT"})
+	public List<InformeProcedimentServeiDto> informeProcedimentServei(Integer entitatId){
+		return delegate.informeProcedimentServei(entitatId);
+	}
 }

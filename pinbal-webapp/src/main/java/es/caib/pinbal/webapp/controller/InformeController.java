@@ -100,4 +100,15 @@ public class InformeController extends BaseController {
 		}
 	}
 
+	@RequestMapping(value = "/procedimentServei", method = RequestMethod.GET)
+	public String procedimentServei(
+			HttpServletRequest request,
+			Model model) {
+		
+			model.addAttribute(
+					"informeDades",
+					consultaService.informeProcedimentServei(null));
+			return "informeProcedimentServeiExcelView";
+	}
+	
 }

@@ -9,6 +9,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -63,6 +64,7 @@ import es.caib.pinbal.core.dto.EstadistiquesFiltreDto;
 import es.caib.pinbal.core.dto.EstadistiquesFiltreDto.EstadistiquesAgrupacioDto;
 import es.caib.pinbal.core.dto.FitxerDto;
 import es.caib.pinbal.core.dto.InformeGeneralEstatDto;
+import es.caib.pinbal.core.dto.InformeProcedimentServeiDto;
 import es.caib.pinbal.core.dto.IntegracioAccioTipusEnumDto;
 import es.caib.pinbal.core.dto.JustificantDto;
 import es.caib.pinbal.core.dto.ProcedimentDto;
@@ -2054,6 +2056,48 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 		return resposta;
 	}
 	
+	@Transactional(readOnly = true)
+	@Override
+	public List<InformeProcedimentServeiDto> informeProcedimentServei(Integer entitatId) {
+		log.debug("Obtenint informe precediments servei entitat usuari");
+		List<InformeProcedimentServeiDto> resposta = new ArrayList<InformeProcedimentServeiDto>();
+		List<ProcedimentServei> serveis = procedimentServeiRepository.findAllActius();
+				
+		for (ProcedimentServei servei : serveis) {
+			List<EntitatUsuari> lentitatUsuari = entitatUsuariRepository.findByEntitatId(servei.getProcediment().getEntitat().getId());
+			resposta.addAll(toInformeProcedimentServeiDto(servei, lentitatUsuari));
+		}
+		return resposta;
+	}
+	
+	private Collection<? extends InformeProcedimentServeiDto> toInformeProcedimentServeiDto(ProcedimentServei servei,
+			List<EntitatUsuari> lentitatUsuari) {
+		List<InformeProcedimentServeiDto> resposta = new ArrayList<InformeProcedimentServeiDto>();
+		for(EntitatUsuari entitatUsuari : lentitatUsuari) {
+			InformeProcedimentServeiDto procedimentServei = new InformeProcedimentServeiDto();
+			Servicio servicio = getScspHelper().getServicio(servei.getServei());
+			procedimentServei.setEntitatCodi(servei.getProcediment().getEntitat().getCodi());
+			procedimentServei.setEntitatNom(servei.getProcediment().getEntitat().getNom());
+			procedimentServei.setEntitatCif(servei.getProcediment().getEntitat().getCif());
+			procedimentServei.setProcedimentCodi(servei.getProcediment().getCodi());
+			procedimentServei.setProcedimentNom(servei.getProcediment().getNom());
+			procedimentServei.setServeiCodi(servicio.getCodCertificado());
+			procedimentServei.setServeiNom(servicio.getDescripcion());
+			if (servicio.getEmisor() != null) {
+				EmisorDto emisor = new EmisorDto();
+				EmisorCertificado emisorCertificado = servicio.getEmisor();
+				emisor.setCif(emisorCertificado.getCif());
+				emisor.setNom(getScspHelper().getEmisorNombre(emisorCertificado.getCif()));
+				procedimentServei.setServeiEmisor(emisor);
+			}
+			procedimentServei.setUsuariCodi(entitatUsuari.getUsuari().getCodi());
+			procedimentServei.setUsuariNif(entitatUsuari.getUsuari().getNif());
+			procedimentServei.setUsuariNom(entitatUsuari.getUsuari().getNom());
+			resposta.add(procedimentServei);
+		}
+		return resposta;
+	}
+
 	@Override
 	public void autoGenerarEmailReportEstat() {
 		Date fechaActual = new Date();

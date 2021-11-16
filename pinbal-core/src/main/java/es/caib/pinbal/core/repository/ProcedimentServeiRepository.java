@@ -124,4 +124,13 @@ public interface ProcedimentServeiRepository extends JpaRepository<ProcedimentSe
 	public List<String> findServeisProcedimenActiustServeisIds(
 			@Param("entitat") Entitat entitat,
 			@Param("procediment") Procediment procediment);
+	
+	@Query(	"select " +
+			"    ps " +
+			"from " +
+			"    ProcedimentServei ps " +
+			"where " +
+			"    ps.procediment.actiu = true " +
+			"and ps.actiu = true")
+	public List<ProcedimentServei> findAllActius();
 }
