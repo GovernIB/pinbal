@@ -5,11 +5,12 @@ import java.io.Serializable;
 import org.apache.commons.lang.builder.ToStringBuilder;
 
 /**
- * Objecte DTO amb informació d'un procediment.
+ * Objecte DTO amb informació de l'informe d'usuaris que tenen accés a PINBAL 
+ * agrupat per entitat/òrgan gestor del procediment/procediment/servei.
  * 
  * @author Limit Tecnologies <limit@limit.es>
  */
-public class InformeProcedimentServeiDto implements Serializable {
+public class InformeProcedimentServeiDto extends AbstractIdentificable<Long> implements Serializable {
 
 	private String entitatCodi;
 	private String entitatNom;
@@ -20,7 +21,6 @@ public class InformeProcedimentServeiDto implements Serializable {
 	private String procedimentNom;
 	private String serveiCodi;
 	private String serveiNom;
-	private EmisorDto serveiEmisor;
 	private String usuariCodi;
 	private String usuariNom;
 	private String usuariNif;
@@ -66,12 +66,6 @@ public class InformeProcedimentServeiDto implements Serializable {
 	}
 	public void setServeiNom(String serveiNom) {
 		this.serveiNom = serveiNom;
-	}
-	public EmisorDto getServeiEmisor() {
-		return serveiEmisor;
-	}
-	public void setServeiEmisor(EmisorDto serveiEmisor) {
-		this.serveiEmisor = serveiEmisor;
 	}
 	public String getOrganGestorCodi() {
 		return organGestorCodi;

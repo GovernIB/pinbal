@@ -133,4 +133,25 @@ public interface ProcedimentServeiRepository extends JpaRepository<ProcedimentSe
 			"    ps.procediment.actiu = true " +
 			"and ps.actiu = true")
 	public List<ProcedimentServei> findAllActius();
+	
+	@Query(	"select " +
+			"    ps " +
+			"from " +
+			"    ProcedimentServei ps " +
+			"where " +
+			"    ps.procediment.actiu = true " +
+			"  and ps.actiu = true" +
+			"  and ps.procediment.entitat.id = :entitatId" + 
+			"  and :esNullFiltreOrganGestorId = true or ps.procediment.organGestor.id = :filtreOrganGestorId" +
+			"  and :esNullFiltreProcedimentId = true or ps.procediment.id = :filtreProcedimentId" +
+			"  and :esNullFiltreServeiCodi = true or lower(ps.serveiScsp.codi) = lower(:filtreServeiCodi)")
+	public List<ProcedimentServei> findAllActiusAmbFiltre(
+			@Param("entitatId") Long entitatId,
+			@Param("esNullFiltreOrganGestorId") boolean esNullFiltreOrganGestorId,
+		    @Param("filtreOrganGestorId") Long filtreOrganGestorId, 
+		    @Param("esNullFiltreProcedimentId") boolean esNullFiltreProcedimentId,
+		    @Param("filtreProcedimentId") Long filtreProcedimentId, 
+		    @Param("esNullFiltreServeiCodi") boolean esNullFiltreServeiCodi,
+		    @Param("filtreServeiCodi") String filtreServeiCodi);
+			
 }

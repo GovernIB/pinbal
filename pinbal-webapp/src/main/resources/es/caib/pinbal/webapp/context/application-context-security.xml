@@ -31,6 +31,8 @@
 		<sec:intercept-url pattern="/consulta/**" access="ROLE_DELEG"/>
 		<sec:intercept-url pattern="/estadistiques" access="ROLE_ADMIN,ROLE_REPRES"/>
 		<sec:intercept-url pattern="/estadistiques/**" access="ROLE_ADMIN,ROLE_REPRES"/>
+		<sec:intercept-url pattern="/informeRepresentant" access="ROLE_REPRES"/>
+		<sec:intercept-url pattern="/informeRepresentant/**" access="ROLE_REPRES"/>
 		<sec:intercept-url pattern="/api/recobriment/**" access="ROLE_WS"/>
 		<sec:intercept-url pattern="/api/interna/reports/**" access="ROLE_REPORT"/>
 		<sec:intercept-url pattern="/api/interna/stats/**" access="ROLE_REPORT"/>

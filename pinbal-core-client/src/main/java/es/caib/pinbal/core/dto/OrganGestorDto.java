@@ -25,6 +25,10 @@ public class OrganGestorDto extends AbstractIdentificable<Long> implements Seria
 	private String entitatNom;
 	private boolean actiu;
 
+	public String getCodiINom() {
+		return codi + " - " + nom;
+	}
+	 
 	private static final long serialVersionUID = -6776483458084380673L;
 
 }

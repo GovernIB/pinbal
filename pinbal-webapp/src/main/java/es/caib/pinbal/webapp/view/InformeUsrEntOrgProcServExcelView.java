@@ -20,22 +20,25 @@ import org.springframework.web.servlet.view.document.AbstractExcelView;
 
 import es.caib.pinbal.core.dto.InformeProcedimentServeiDto;
 
-public class InformeProcedimentServeiExcelView extends AbstractExcelView implements MessageSourceAware {
+public class InformeUsrEntOrgProcServExcelView extends AbstractExcelView implements MessageSourceAware {
 	
 	private MessageSource messageSource;
 	
 	@Override
 	protected void buildExcelDocument(Map<String, Object> model, HSSFWorkbook workbook, HttpServletRequest request,
 			HttpServletResponse response) throws Exception {
-		response.setHeader("Content-Disposition", "Inline; filename=informeServeis.xls");
+		
+		response.setHeader("Content-Disposition", "Inline; filename=informeUsuarisEntitatOrganProcServei.xls");
+		
 		List<InformeProcedimentServeiDto> informeDades = (List<InformeProcedimentServeiDto>)model.get("informeDades");
+		Boolean isAdministrador = (Boolean)model.get("isAdministrador");
+		
 		HSSFSheet sheet = workbook.createSheet(
 				getMessage(
 						request,
-						"informe.general.estat.excel.fulla.titol"));
+						"informe.list.informe.usuaris.entitat.organ.procediment.servei.excel.fulla.titol"));
 
 		int filaInicial = 0;
-		int columnaInicial = 0;
 
 		HSSFCellStyle capsaleraEntitatStyle = workbook.createCellStyle();
 		capsaleraEntitatStyle.setAlignment(HSSFCellStyle.ALIGN_LEFT);
@@ -50,104 +53,122 @@ public class InformeProcedimentServeiExcelView extends AbstractExcelView impleme
 		capsaleraStyle.setFont(capsaleraFont);
 
 		HSSFRow titolsColumna = sheet.createRow(filaInicial);
-		HSSFCell codiCell = titolsColumna.createCell(columnaInicial);
-		codiCell.setCellStyle(capsaleraStyle);
-		codiCell.setCellValue(
-				getMessage(
-						request,
-						"informe.general.estat.excel.columna.entitat.nom"));
-		HSSFCell capCell = titolsColumna.createCell(columnaInicial + 1);
+		
+		int columnaIndex = 0;
+		
+		HSSFCell capCell;
+		
+		if (isAdministrador) {
+			capCell = titolsColumna.createCell(columnaIndex);
+			capCell.setCellStyle(capsaleraStyle);
+			capCell.setCellValue(
+					getMessage(
+							request,
+							"informe.list.informe.usuaris.entitat.organ.procediment.servei.excel.columna.entitat.codi"));
+			capCell = titolsColumna.createCell(++columnaIndex);
+			capCell.setCellStyle(capsaleraStyle);
+			capCell.setCellValue(
+					getMessage(
+							request,
+							"informe.list.informe.usuaris.entitat.organ.procediment.servei.excel.columna.entitat.nom"));
+			capCell = titolsColumna.createCell(++columnaIndex);
+			capCell.setCellStyle(capsaleraStyle);
+			capCell.setCellValue(
+					getMessage(
+							request,
+							"informe.list.informe.usuaris.entitat.organ.procediment.servei.excel.columna.entitat.cif"));
+		}
+		if (isAdministrador)
+			capCell = titolsColumna.createCell(++columnaIndex);
+		else 
+			capCell = titolsColumna.createCell(columnaIndex);
 		capCell.setCellStyle(capsaleraStyle);
 		capCell.setCellValue(
 				getMessage(
 						request,
-						"informe.general.estat.excel.columna.entitat.cif"));
-		capCell = titolsColumna.createCell(columnaInicial + 2);
+						"informe.list.informe.usuaris.entitat.organ.procediment.servei.excel.columna.organ.codi"));
+		capCell = titolsColumna.createCell(++columnaIndex);
 		capCell.setCellStyle(capsaleraStyle);
 		capCell.setCellValue(
 				getMessage(
 						request,
-						"informe.general.estat.excel.columna.departament"));
-		capCell = titolsColumna.createCell(columnaInicial + 3);
+						"informe.list.informe.usuaris.entitat.organ.procediment.servei.excel.columna.organ.nom"));
+		capCell = titolsColumna.createCell(++columnaIndex);
 		capCell.setCellStyle(capsaleraStyle);
 		capCell.setCellValue(
 				getMessage(
 						request,
-						"informe.general.estat.excel.columna.departament"));
-		capCell = titolsColumna.createCell(columnaInicial + 4);
+						"informe.list.informe.usuaris.entitat.organ.procediment.servei.excel.columna.procediment.codi"));
+		capCell = titolsColumna.createCell(++columnaIndex);
 		capCell.setCellStyle(capsaleraStyle);
 		capCell.setCellValue(
 				getMessage(
 						request,
-						"informe.general.estat.excel.columna.procediment.codi"));
-		capCell = titolsColumna.createCell(columnaInicial + 5);
+						"informe.list.informe.usuaris.entitat.organ.procediment.servei.excel.columna.procediment.nom"));
+		capCell = titolsColumna.createCell(++columnaIndex);
 		capCell.setCellStyle(capsaleraStyle);
 		capCell.setCellValue(
 				getMessage(
 						request,
-						"informe.general.estat.excel.columna.procediment.nom"));
-		capCell = titolsColumna.createCell(columnaInicial + 6);
+						"informe.list.informe.usuaris.entitat.organ.procediment.servei.excel.columna.servei.codi"));
+		capCell = titolsColumna.createCell(++columnaIndex);
 		capCell.setCellStyle(capsaleraStyle);
 		capCell.setCellValue(
 				getMessage(
 						request,
-						"informe.general.estat.excel.columna.servei.codi"));
-		capCell = titolsColumna.createCell(columnaInicial + 7);
+						"informe.list.informe.usuaris.entitat.organ.procediment.servei.excel.columna.servei.nom"));
+		capCell = titolsColumna.createCell(++columnaIndex);
 		capCell.setCellStyle(capsaleraStyle);
 		capCell.setCellValue(
 				getMessage(
 						request,
-						"informe.general.estat.excel.columna.servei.nom"));
-		capCell = titolsColumna.createCell(columnaInicial + 8);
+						"informe.list.informe.usuaris.entitat.organ.procediment.servei.excel.columna.usuari.codi"));
+		capCell = titolsColumna.createCell(++columnaIndex);
 		capCell.setCellStyle(capsaleraStyle);
 		capCell.setCellValue(
 				getMessage(
 						request,
-						"informe.general.estat.excel.columna.servei.emissor"));
-		capCell = titolsColumna.createCell(columnaInicial + 9);
+						"informe.list.informe.usuaris.entitat.organ.procediment.servei.excel.columna.usuari.nom"));
+		capCell = titolsColumna.createCell(++columnaIndex);
 		capCell.setCellStyle(capsaleraStyle);
 		capCell.setCellValue(
 				getMessage(
 						request,
-						"informe.general.estat.excel.columna.servei.num.usuaris"));
-		capCell = titolsColumna.createCell(columnaInicial + 10);
-		capCell.setCellStyle(capsaleraStyle);
-		capCell.setCellValue(
-				getMessage(
-						request,
-						"informe.general.estat.excel.columna.peticions.correctes"));
-		capCell = titolsColumna.createCell(columnaInicial + 11);
-		capCell.setCellStyle(capsaleraStyle);
-		capCell.setCellValue(
-				getMessage(
-						request,
-						"informe.general.estat.excel.columna.peticions.erronees"));
+						"informe.list.informe.usuaris.entitat.organ.procediment.servei.excel.columna.usuari.nif"));
+
 		int rowIndex = 1;
 		for (InformeProcedimentServeiDto informeDada: informeDades) {
+			columnaIndex = 0;
 			HSSFRow filaDada = sheet.createRow(filaInicial + rowIndex++);
-			HSSFCell dadaCell = filaDada.createCell(columnaInicial);
-			dadaCell.setCellValue(informeDada.getEntitatNom());
-			dadaCell = filaDada.createCell(columnaInicial + 1);
-			dadaCell.setCellValue(informeDada.getEntitatCif());
-			dadaCell = filaDada.createCell(columnaInicial + 2);
+			HSSFCell dadaCell;
+			if (isAdministrador) {
+				dadaCell = filaDada.createCell(columnaIndex);
+				dadaCell.setCellValue(informeDada.getEntitatCodi());
+				dadaCell = filaDada.createCell(++columnaIndex);
+				dadaCell.setCellValue(informeDada.getEntitatNom());
+				dadaCell = filaDada.createCell(++columnaIndex);
+				dadaCell.setCellValue(informeDada.getEntitatCif());
+			}
+			if (isAdministrador)
+				dadaCell = filaDada.createCell(++columnaIndex);
+			else 
+				dadaCell = filaDada.createCell(columnaIndex);
 			dadaCell.setCellValue(informeDada.getOrganGestorCodi());
-			dadaCell = filaDada.createCell(columnaInicial + 3);
+			dadaCell = filaDada.createCell(++columnaIndex);
 			dadaCell.setCellValue(informeDada.getOrganGestorNom());
-			dadaCell = filaDada.createCell(columnaInicial + 4);
+			dadaCell = filaDada.createCell(++columnaIndex);
 			dadaCell.setCellValue(informeDada.getProcedimentCodi());
-			dadaCell = filaDada.createCell(columnaInicial + 5);
+			dadaCell = filaDada.createCell(++columnaIndex);
 			dadaCell.setCellValue(informeDada.getProcedimentNom());
-			dadaCell = filaDada.createCell(columnaInicial + 6);
+			dadaCell = filaDada.createCell(++columnaIndex);
 			dadaCell.setCellValue(informeDada.getServeiCodi());
-			dadaCell = filaDada.createCell(columnaInicial + 7);
+			dadaCell = filaDada.createCell(++columnaIndex);
 			dadaCell.setCellValue(informeDada.getServeiNom());
-			dadaCell = filaDada.createCell(columnaInicial + 8);
-			dadaCell.setCellValue(informeDada.getServeiEmisor().getNom());
-			dadaCell = filaDada.createCell(columnaInicial + 9);
+			dadaCell = filaDada.createCell(++columnaIndex);
 			dadaCell.setCellValue(informeDada.getUsuariCodi());
-			dadaCell = filaDada.createCell(columnaInicial + 10);
+			dadaCell = filaDada.createCell(++columnaIndex);
 			dadaCell.setCellValue(informeDada.getUsuariNom());
-			dadaCell = filaDada.createCell(columnaInicial + 11);
+			dadaCell = filaDada.createCell(++columnaIndex);
 			dadaCell.setCellValue(informeDada.getUsuariNif());
 		}
 		autoSize(sheet, 12);

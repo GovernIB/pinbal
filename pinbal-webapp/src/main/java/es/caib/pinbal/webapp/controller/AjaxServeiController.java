@@ -21,6 +21,7 @@ import es.caib.pinbal.core.service.ServeiService;
 import es.caib.pinbal.core.service.exception.EntitatNotFoundException;
 import es.caib.pinbal.core.service.exception.ProcedimentNotFoundException;
 import es.caib.pinbal.core.service.exception.ServeiNotFoundException;
+import es.caib.pinbal.webapp.common.EntitatHelper;
 import es.caib.pinbal.webapp.common.RequestSessionHelper;
 
 /**
@@ -68,6 +69,9 @@ public class AjaxServeiController extends BaseController{
 		Long entitatId = (Long)RequestSessionHelper.obtenirObjecteSessio(
 				request,
 				SESSION_ATTRIBUTE_ENTITAT_ID);
+		
+		if (entitatId == null) //Per al representant no es guarda en sessió l'entitat
+			entitatId = EntitatHelper.getEntitatActual(request).getId();
 		
 		try {
 			text = URLDecoder.decode(request.getRequestURI().split("/")[4], StandardCharsets.UTF_8.name());

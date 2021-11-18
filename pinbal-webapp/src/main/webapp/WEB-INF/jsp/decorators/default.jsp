@@ -220,6 +220,7 @@ body {
 								<a href="<c:url value="/procediment"/>" class="btn btn-primary"><spring:message code="decorator.menu.procediments"/></a>
 								<a href="<c:url value="/organgestor"/>" class="btn btn-primary"><spring:message code="decorator.menu.organgestor"/></a>
 								<a href="<c:url value="/estadistiques"/>" class="btn btn-primary"><spring:message code="decorator.menu.estadistiques"/></a>
+								<a href="<c:url value="/informeRepresentant"/>" class="btn btn-primary"><spring:message code="decorator.menu.informes"/></a>
 							</c:if>
 						</c:when>
 						<c:when test="${isRolActualDelegat}">

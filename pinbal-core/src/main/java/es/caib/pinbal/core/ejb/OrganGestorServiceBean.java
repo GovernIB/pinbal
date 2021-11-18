@@ -46,6 +46,12 @@ public class OrganGestorServiceBean implements OrganGestorService {
 	public List<OrganGestorDto> findByEntitat(Long entitatId) {
 		return delegate.findByEntitat(entitatId);
 	}
+	
+	@Override
+	@RolesAllowed({ "PBL_ADMIN", "PBL_REPRES" })
+	public List<OrganGestorDto> findByEntitatAmbFiltre(Long entitatId, String filtre) {
+		return delegate.findByEntitatAmbFiltre(entitatId,filtre);
+	}
 
 	@Override
 	@RolesAllowed({ "PBL_ADMIN", "PBL_REPRES" })

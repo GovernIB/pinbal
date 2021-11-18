@@ -9,7 +9,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -65,6 +64,7 @@ import es.caib.pinbal.core.dto.EstadistiquesFiltreDto.EstadistiquesAgrupacioDto;
 import es.caib.pinbal.core.dto.FitxerDto;
 import es.caib.pinbal.core.dto.InformeGeneralEstatDto;
 import es.caib.pinbal.core.dto.InformeProcedimentServeiDto;
+import es.caib.pinbal.core.dto.InformeRepresentantFiltreDto;
 import es.caib.pinbal.core.dto.IntegracioAccioTipusEnumDto;
 import es.caib.pinbal.core.dto.JustificantDto;
 import es.caib.pinbal.core.dto.ProcedimentDto;
@@ -131,6 +131,9 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Service
 public class ConsultaServiceImpl implements ConsultaService, ApplicationContextAware, MessageSourceAware {
+	
+	private static final String ROLE_ADMIN = "ROLE_ADMIN";
+	private static final String ROLE_REPRES = "ROLE_REPRES";
 
 	@Autowired
 	private ConsultaRepository consultaRepository;
@@ -164,6 +167,9 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 
 	@Autowired
 	private MutableAclService aclService;
+	
+	@Autowired
+	private ProcedimentService procedimentService;
 	
 	@Autowired
 	private IntegracioHelper integracioHelper;
@@ -2058,44 +2064,59 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 	
 	@Transactional(readOnly = true)
 	@Override
-	public List<InformeProcedimentServeiDto> informeProcedimentServei(Integer entitatId) {
-		log.debug("Obtenint informe precediments servei entitat usuari");
+	public List<InformeProcedimentServeiDto> informeUsuarisEntitatOrganProcedimentServei(Long entitatId, String rolActual, InformeRepresentantFiltreDto filtre) {
+		log.debug("Obtenint informe usuaris agrupats per entitat, òrgan gestor, procediment i servei");
 		List<InformeProcedimentServeiDto> resposta = new ArrayList<InformeProcedimentServeiDto>();
-		List<ProcedimentServei> serveis = procedimentServeiRepository.findAllActius();
-				
-		for (ProcedimentServei servei : serveis) {
-			List<EntitatUsuari> lentitatUsuari = entitatUsuariRepository.findByEntitatId(servei.getProcediment().getEntitat().getId());
-			resposta.addAll(toInformeProcedimentServeiDto(servei, lentitatUsuari));
+	
+		List<ProcedimentServei> procedimentServeis = new ArrayList<ProcedimentServei>();
+		if (ROLE_ADMIN.equals(rolActual)) {
+			procedimentServeis = procedimentServeiRepository.findAllActius();
+		} else if (ROLE_REPRES.equals(rolActual)) {
+			procedimentServeis = procedimentServeiRepository.findAllActiusAmbFiltre(
+					entitatId,
+					filtre.getOrganGestorId() == null,
+					filtre.getOrganGestorId(),
+					filtre.getProcedimentId() == null,
+					filtre.getProcedimentId(),
+					filtre.getServeiCodi() == null,
+					filtre.getServeiCodi());
 		}
+		for (ProcedimentServei procedimentServei : procedimentServeis) {
+			List<String> usuarisAmbPermis = new ArrayList<String>();
+			try {
+				usuarisAmbPermis = procedimentService.findUsuarisAmbPermisPerServei(procedimentServei.getProcediment().getId(), procedimentServei.getServei());
+			} catch (ProcedimentNotFoundException e) {
+				log.error("No s'ha trobat el Procediment (id=" + procedimentServei.getProcediment().getId() + ")");
+			} catch (ProcedimentServeiNotFoundException e) {
+				log.error("No s'ha trobat el Servei (codi=" + procedimentServei.getServei() + ")");
+			}
+			
+			for (String usuariAmbPermis: usuarisAmbPermis) {
+				EntitatUsuari entitatUsuari = entitatUsuariRepository.findByEntitatIdAndUsuariCodi(procedimentServei.getProcediment().getEntitat().getId(), usuariAmbPermis);
+				resposta.add(toInformeProcedimentServeiDto(procedimentServei, entitatUsuari));	
+			}
+		}
+		
 		return resposta;
 	}
 	
-	private Collection<? extends InformeProcedimentServeiDto> toInformeProcedimentServeiDto(ProcedimentServei servei,
-			List<EntitatUsuari> lentitatUsuari) {
-		List<InformeProcedimentServeiDto> resposta = new ArrayList<InformeProcedimentServeiDto>();
-		for(EntitatUsuari entitatUsuari : lentitatUsuari) {
-			InformeProcedimentServeiDto procedimentServei = new InformeProcedimentServeiDto();
-			Servicio servicio = getScspHelper().getServicio(servei.getServei());
-			procedimentServei.setEntitatCodi(servei.getProcediment().getEntitat().getCodi());
-			procedimentServei.setEntitatNom(servei.getProcediment().getEntitat().getNom());
-			procedimentServei.setEntitatCif(servei.getProcediment().getEntitat().getCif());
-			procedimentServei.setProcedimentCodi(servei.getProcediment().getCodi());
-			procedimentServei.setProcedimentNom(servei.getProcediment().getNom());
-			procedimentServei.setServeiCodi(servicio.getCodCertificado());
-			procedimentServei.setServeiNom(servicio.getDescripcion());
-			if (servicio.getEmisor() != null) {
-				EmisorDto emisor = new EmisorDto();
-				EmisorCertificado emisorCertificado = servicio.getEmisor();
-				emisor.setCif(emisorCertificado.getCif());
-				emisor.setNom(getScspHelper().getEmisorNombre(emisorCertificado.getCif()));
-				procedimentServei.setServeiEmisor(emisor);
-			}
-			procedimentServei.setUsuariCodi(entitatUsuari.getUsuari().getCodi());
-			procedimentServei.setUsuariNif(entitatUsuari.getUsuari().getNif());
-			procedimentServei.setUsuariNom(entitatUsuari.getUsuari().getNom());
-			resposta.add(procedimentServei);
-		}
-		return resposta;
+	private InformeProcedimentServeiDto toInformeProcedimentServeiDto(ProcedimentServei procedimentServei,
+			EntitatUsuari entitatUsuari) {
+		InformeProcedimentServeiDto informeProcedimentServei = new InformeProcedimentServeiDto();
+		Servicio servicio = getScspHelper().getServicio(procedimentServei.getServei());
+		informeProcedimentServei.setEntitatCodi(procedimentServei.getProcediment().getEntitat().getCodi());
+		informeProcedimentServei.setEntitatNom(procedimentServei.getProcediment().getEntitat().getNom());
+		informeProcedimentServei.setEntitatCif(procedimentServei.getProcediment().getEntitat().getCif());
+		informeProcedimentServei.setOrganGestorCodi(procedimentServei.getProcediment().getOrganGestor().getCodi());
+		informeProcedimentServei.setOrganGestorNom(procedimentServei.getProcediment().getOrganGestor().getNom());
+		informeProcedimentServei.setProcedimentCodi(procedimentServei.getProcediment().getCodi());
+		informeProcedimentServei.setProcedimentNom(procedimentServei.getProcediment().getNom());
+		informeProcedimentServei.setServeiCodi(servicio.getCodCertificado());
+		informeProcedimentServei.setServeiNom(servicio.getDescripcion());
+		informeProcedimentServei.setUsuariCodi(entitatUsuari.getUsuari().getCodi());
+		informeProcedimentServei.setUsuariNif(entitatUsuari.getUsuari().getNif());
+		informeProcedimentServei.setUsuariNom(entitatUsuari.getUsuari().getNom());
+		return informeProcedimentServei;
 	}
 
 	@Override

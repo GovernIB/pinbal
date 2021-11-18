@@ -51,8 +51,8 @@
 		<div class="row">
 			<div class="well">
 				<h4>
-						<spring:message code="informe.list.informe.serveis"/>
-						<a href="informe/procedimentServei" class="btn btn-default pull-right"><i class="fas fa-file-download"></i>&nbsp;<spring:message code="informe.list.generar"/></a>
+						<spring:message code="informe.list.informe.usuaris.entitat.organ.procediment.servei"/>
+						<a href="informe/usuarisEntitatOrganProcedimentServei" class="btn btn-default pull-right"><i class="fas fa-file-download"></i>&nbsp;<spring:message code="informe.list.generar"/></a>
 				</h4>
 			</div>
 		</div>
