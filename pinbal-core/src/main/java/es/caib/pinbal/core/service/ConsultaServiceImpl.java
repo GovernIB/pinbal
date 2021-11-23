@@ -2351,6 +2351,7 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 					nomesSensePare,
 					pageable);
 		} else {
+			consultaRepository.setSessionOptimizerModeToRule();
 			paginaConsultes = consultaRepository.findByCreatedByAndFiltrePaginat(
 					entitat.getId(),
 					usuariCodi == null,
@@ -2451,6 +2452,7 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 					nomesSensePare,
 					pageable);
 		} else {
+			
 			paginaConsultes = consultaRepository.findByFiltrePaginat(
 					filtre.getEntitatId() == null,
 					filtre.getEntitatId(),

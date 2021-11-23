@@ -9,6 +9,7 @@ import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -444,5 +445,11 @@ public interface ConsultaRepository extends JpaRepository<Consulta, Long> {
 			"	s.descripcio")
 	public List<CarregaDto> findCarrega(
 			@Param("dataInici") Date dataInici);
+
+	@Modifying
+	@Query(
+			value = "ALTER SESSION SET OPTIMIZER_MODE = RULE",
+			nativeQuery = true)
+	public void setSessionOptimizerModeToRule();
 
 }
