@@ -37,7 +37,13 @@ public class Svdccaacpasws01Test {
 	private static final String URL_BASE = "http://localhost:8080/pinbal";
 	private static final String USUARI = "user";
 	private static final String CONTRASENYA = "passwd";
+	private static final String ENTITAT_CIF = "B07167448";
+	private static final String CODIGO_PROCEDIMIENTO = "ProvaConcepte";
 	private static final String PETICION_SCSP_ID = "PBL0000000001292";
+	//private static final String ENTITAT_CIF = "S0711001H";
+	//private static final String CODIGO_PROCEDIMIENTO = "CODSVDR_GBA_20121107";
+	//private static final String PETICION_SCSP_ID = "PINBAL00000000000000263447";
+	private static final boolean ENABLE_LOGGING = false;
 	private static final boolean IS_JBOSS = true;
 
 	private final ClientSvdccaacpasws01 client = new ClientSvdccaacpasws01(URL_BASE, USUARI, CONTRASENYA, !IS_JBOSS, null, null);
@@ -45,8 +51,8 @@ public class Svdccaacpasws01Test {
 	@Test
 	public void peticionSincrona() throws UniformInterfaceException, ClientHandlerException, IOException {
 		SolicitudSvdccaacpasws01 solicitud = new SolicitudSvdccaacpasws01();
-		solicitud.setIdentificadorSolicitante("B07167448");
-		solicitud.setCodigoProcedimiento("ProvaConcepte");
+		solicitud.setIdentificadorSolicitante(ENTITAT_CIF);
+		solicitud.setCodigoProcedimiento(CODIGO_PROCEDIMIENTO);
 		solicitud.setUnidadTramitadora("Departament de test");
 		solicitud.setFinalidad("Test peticionSincrona");
 		solicitud.setConsentimiento(ScspConsentimiento.Si);
@@ -60,6 +66,9 @@ public class Svdccaacpasws01Test {
 		solicitud.setTitular(titular);
 		solicitud.setCodigoComunidadAutonoma("04");
 		solicitud.setCodigoProvincia("07");
+		if (ENABLE_LOGGING) {
+			client.enableLogginFilter();
+		}
 		ScspRespuesta respuesta = client.peticionSincrona(Arrays.asList(solicitud));
 		assertNotNull(respuesta);
 		System.out.println("-> peticionSincrona = " + objectToJsonString(respuesta));
@@ -67,6 +76,9 @@ public class Svdccaacpasws01Test {
 
 	@Test
 	public void getRespuesta() throws IOException {
+		if (ENABLE_LOGGING) {
+			client.enableLogginFilter();
+		}
 		ScspRespuesta respuesta = client.getRespuesta(PETICION_SCSP_ID);
 		assertNotNull(respuesta);
 		System.out.println("-> getRespuesta(" + PETICION_SCSP_ID + ") = " + objectToJsonString(respuesta));
@@ -74,6 +86,9 @@ public class Svdccaacpasws01Test {
 
 	@Test
 	public void getJustificante() throws IOException {
+		if (ENABLE_LOGGING) {
+			client.enableLogginFilter();
+		}
 		ScspJustificante justificante = client.getJustificante(PETICION_SCSP_ID);
 		assertNotNull(justificante);
 		System.out.println("-> getJustificante");
