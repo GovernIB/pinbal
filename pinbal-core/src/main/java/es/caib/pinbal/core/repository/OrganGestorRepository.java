@@ -43,6 +43,15 @@ public interface OrganGestorRepository extends JpaRepository<OrganGestor, Long> 
 		    @Param("actiu") boolean actiu,
 			Pageable paginacio);
 	
+	@Query(	"from " +
+			"    OrganGestor og " +
+			"where (og.entitat.id = :entitatId)" +
+			"  and ((lower(og.codi) like concat('%', lower(:filtre), '%'))" +
+			"  		or (lower(og.nom) like concat('%', lower(:filtre), '%')))")
+	public List<OrganGestor> findByEntitatAndCodiNom(
+			@Param("entitatId") Long entitatId,
+			@Param("filtre") String filtre);
+	
 	@Query("from " +
     		 "    OrganGestor og " +
     		 "where og.codi in (:codis)")

@@ -28,6 +28,7 @@
 	<bean name="informeUsuarisExcelView" class="es.caib.pinbal.webapp.view.InformeUsuarisExcelView"/>
 	<bean name="informeServeisExcelView" class="es.caib.pinbal.webapp.view.InformeServeisExcelView"/>
 	<bean name="informeGeneralEstatExcelView" class="es.caib.pinbal.webapp.view.InformeGeneralEstatExcelView"/>
+	<bean name="informeUsrEntOrgProcServExcelView" class="es.caib.pinbal.webapp.view.InformeUsrEntOrgProcServExcelView"/>
 	
 	<!-- TOMCAT: <mvc:resources mapping="/webjars/**" location="classpath:/META-INF/resources/webjars/"/> -->
 	<!-- JBOSS: <mvc:resources mapping="/webjars/**" location="/META-INF/resources/webjars/"/> -->
@@ -37,8 +38,8 @@
 		<bean class="es.caib.pinbal.webapp.interceptor.AplicacioInterceptor"/>
 		<bean class="es.caib.pinbal.webapp.interceptor.UsuariInterceptor"/>
 		<bean class="es.caib.pinbal.webapp.interceptor.SeleccioEntitatInterceptor"/>
-		<bean class="es.caib.pinbal.webapp.interceptor.ServeisInterceptor"/>
 		<bean class="es.caib.pinbal.webapp.interceptor.SeleccioRolInterceptor"/>
+		<bean class="es.caib.pinbal.webapp.interceptor.ServeisInterceptor"/>
 		<bean class="es.caib.pinbal.webapp.interceptor.ModalInterceptor"/>
 		<bean class="es.caib.pinbal.webapp.interceptor.AvisosInterceptor"/>
 	</mvc:interceptors>

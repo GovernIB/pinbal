@@ -11,7 +11,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.ws.rs.core.MediaType;
+
 import com.sun.jersey.api.client.ClientResponse;
+import com.sun.jersey.api.client.ClientHandlerException;
 import com.sun.jersey.api.client.UniformInterfaceException;
 
 import es.caib.pinbal.client.recobriment.model.ScspAtributos;
@@ -61,7 +64,8 @@ public abstract class ClientBase extends es.caib.pinbal.client.comu.ClientBase {
 			ScspRespuesta response = restPeticioPost(
 					"peticionSincrona",
 					peticion,
-					ScspRespuesta.class);
+					ScspRespuesta.class,
+					MediaType.APPLICATION_JSON_TYPE);
 			return response;
 		} catch (UniformInterfaceException ex) {
 			ClientResponse response = ex.getResponse();
@@ -71,6 +75,19 @@ public abstract class ClientBase extends es.caib.pinbal.client.comu.ClientBase {
 					(errorMessageParts != null && errorMessageParts.length > 0) ? errorMessageParts[0] : null,
 					response.getStatus(),
 					errorResponse.getTrace());
+		} catch (ClientHandlerException ex) {
+			boolean isErrorAutenticacio = ex.getMessage().contains("media type text/html");
+			if (isErrorAutenticacio) {
+				throw new RecobrimentException(
+						"Error d'autenticació: usuari o contrasenya incorrectes.",
+						403,
+						null);
+			} else {
+				throw new RecobrimentException(
+						ex.getMessage(),
+						500,
+						null);
+			}
 		}
 	}
 
@@ -82,7 +99,8 @@ public abstract class ClientBase extends es.caib.pinbal.client.comu.ClientBase {
 			ScspConfirmacionPeticion response = restPeticioPost(
 					"peticionSincrona",
 					peticion,
-					ScspConfirmacionPeticion.class);
+					ScspConfirmacionPeticion.class,
+					MediaType.APPLICATION_JSON_TYPE);
 			return response;
 		} catch (UniformInterfaceException ex) {
 			ClientResponse response = ex.getResponse();
@@ -91,6 +109,19 @@ public abstract class ClientBase extends es.caib.pinbal.client.comu.ClientBase {
 					errorResponse.getMessage(),
 					response.getStatus(),
 					errorResponse.getTrace());
+		} catch (ClientHandlerException ex) {
+			boolean isErrorAutenticacio = ex.getMessage().contains("media type text/html");
+			if (isErrorAutenticacio) {
+				throw new RecobrimentException(
+						"Error d'autenticació: usuari o contrasenya incorrectes.",
+						403,
+						null);
+			} else {
+				throw new RecobrimentException(
+						ex.getMessage(),
+						500,
+						null);
+			}
 		}
 	}
 
@@ -111,6 +142,19 @@ public abstract class ClientBase extends es.caib.pinbal.client.comu.ClientBase {
 					errorResponse.getMessage(),
 					response.getStatus(),
 					errorResponse.getTrace());
+		} catch (ClientHandlerException ex) {
+			boolean isErrorAutenticacio = ex.getMessage().contains("media type text/html");
+			if (isErrorAutenticacio) {
+				throw new RecobrimentException(
+						"Error d'autenticació: usuari o contrasenya incorrectes.",
+						403,
+						null);
+			} else {
+				throw new RecobrimentException(
+						ex.getMessage(),
+						500,
+						null);
+			}
 		}
 	}
 
@@ -128,23 +172,38 @@ public abstract class ClientBase extends es.caib.pinbal.client.comu.ClientBase {
 			requestParams.put("idSolicitud", idSolicitud);
 			ClientResponse response = restPeticioGetResponse(
 					"getJustificante",
-					requestParams);
-			ScspJustificante justificante = new ScspJustificante();
-			String contentDisposition = getHeaderFirst(response, "Content-Disposition");
-			if (contentDisposition != null) {
-				String token = "filename=\"";
-				int tokenIndex = contentDisposition.indexOf(token);
-				if (tokenIndex != -1) {
-					justificante.setNom(
-							contentDisposition.substring(
-									tokenIndex + token.length(),
-									contentDisposition.indexOf("\"", tokenIndex + token.length())));
+					requestParams,
+					null);//MediaType.APPLICATION_OCTET_STREAM_TYPE);
+			if (response.getType().isCompatible(MediaType.APPLICATION_OCTET_STREAM_TYPE)) {
+				ScspJustificante justificante = new ScspJustificante();
+				String contentDisposition = getHeaderFirst(response, "Content-Disposition");
+				if (contentDisposition != null) {
+					String token = "filename=\"";
+					int tokenIndex = contentDisposition.indexOf(token);
+					if (tokenIndex != -1) {
+						justificante.setNom(
+								contentDisposition.substring(
+										tokenIndex + token.length(),
+										contentDisposition.indexOf("\"", tokenIndex + token.length())));
+					}
+				}
+				justificante.setContentType(getHeaderFirst(response, "Content-Type"));
+				justificante.setContingut(
+						inputStreamToByteArray(response.getEntityInputStream()));
+				return justificante;
+			} else {
+				if (response.getType().isCompatible(MediaType.TEXT_HTML_TYPE)) {
+					throw new RecobrimentException(
+							"Error d'autenticació: usuari o contrasenya incorrectes.",
+							403,
+							null);
+				} else {
+					throw new RecobrimentException(
+							"El tipus de contingut de la resposta (" + response.getType().getType() + ") no és del tipus esperat: " + MediaType.APPLICATION_OCTET_STREAM,
+							406,
+							null);
 				}
 			}
-			justificante.setContentType(getHeaderFirst(response, "Content-Type"));
-			justificante.setContingut(
-					inputStreamToByteArray(response.getEntityInputStream()));
-			return justificante;
 		} catch (UniformInterfaceException ex) {
 			ClientResponse response = ex.getResponse();
 			ErrorResponse errorResponse = ex.getResponse().getEntity(ErrorResponse.class);

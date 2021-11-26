@@ -20,6 +20,7 @@ import es.caib.pinbal.core.service.ProcedimentService;
 import es.caib.pinbal.core.service.ServeiService;
 import es.caib.pinbal.core.service.UsuariService;
 import es.caib.pinbal.webapp.common.AlertHelper;
+import es.caib.pinbal.webapp.common.RolHelper;
 
 /**
  * Controlador pels informes.
@@ -98,6 +99,20 @@ public class InformeController extends BaseController {
 							"informe.missatges.dates.buides"));
 			return "redirect:../informe";
 		}
+	}
+
+	@RequestMapping(value = "/usuarisEntitatOrganProcedimentServei", method = RequestMethod.GET)
+	public String usuarisEntitatOrganProcedimentServei(
+			HttpServletRequest request,
+			Model model) {
+		 
+		model.addAttribute(
+				"informeDades",
+				consultaService.informeUsuarisEntitatOrganProcedimentServei(null, RolHelper.getRolActual(request), null));
+
+		model.addAttribute("isAdministrador", RolHelper.isRolActualAdministrador(request));
+		
+		return "informeUsrEntOrgProcServExcelView";
 	}
 
 }

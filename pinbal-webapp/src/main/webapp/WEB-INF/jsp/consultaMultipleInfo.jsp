@@ -274,7 +274,7 @@ $('#dadesResposta').on('shown', function () {
 		</div>
 	</c:if>
 	<div class="well well-lg">
-		<a href="<c:url value="/consulta/multiple"/>" class="btn btn-primary"><spring:message code="comu.boto.tornar"/></a>
+		<a href="<c:url value="/consulta/multiple"/>" class="btn btn-default"><span class="fa fa-arrow-left"></span>&nbsp;<spring:message code="comu.boto.tornar"/></a>
 	</div>
 	<div id="modal-missatge-xml" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
   		<div class="modal-dialog modal-dialog-centered" role="document">

@@ -6,11 +6,11 @@ package es.caib.pinbal.core.service;
 import java.util.List;
 
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
 
 import es.caib.pinbal.core.dto.FiltreActiuEnumDto;
 import es.caib.pinbal.core.dto.InformeProcedimentDto;
+import es.caib.pinbal.core.dto.PaginacioAmbOrdreDto;
 import es.caib.pinbal.core.dto.ProcedimentDto;
 import es.caib.pinbal.core.service.exception.EntitatNotFoundException;
 import es.caib.pinbal.core.service.exception.EntitatUsuariNotFoundException;
@@ -106,7 +106,7 @@ public interface ProcedimentService {
 			Long organGestorId,
 			String codiSia,
 			FiltreActiuEnumDto actiu,
-			Pageable pageable) throws EntitatNotFoundException;
+			PaginacioAmbOrdreDto paginacioParams) throws EntitatNotFoundException;
 
 	/**
 	 * Llistat amb els procediments d'una entitat.

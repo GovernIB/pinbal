@@ -60,6 +60,13 @@ public class OrganGestorServiceImpl implements OrganGestorService {
 		return dtoMappingHelper.convertirList(organs, OrganGestorDto.class);
 	}
 
+	@Transactional(readOnly = true)
+	public List<OrganGestorDto> findByEntitatAmbFiltre(Long entitatId, String filtre) {
+		log.debug("Consulta dels òrgans d'una entitat (entitatId=" + entitatId + ") amb codi o nom (" + filtre + ")");
+		List<OrganGestor> organs = organGestorRepository.findByEntitatAndCodiNom(entitatId, filtre);
+		return dtoMappingHelper.convertirList(organs, OrganGestorDto.class);
+	}
+	
 	@Override
 	@Transactional
 	public boolean syncDir3OrgansGestors(Long entitatId) throws Exception {

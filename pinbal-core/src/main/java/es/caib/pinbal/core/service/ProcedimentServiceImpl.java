@@ -4,7 +4,9 @@
 package es.caib.pinbal.core.service;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 
@@ -22,8 +24,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import es.caib.pinbal.core.dto.FiltreActiuEnumDto;
 import es.caib.pinbal.core.dto.InformeProcedimentDto;
+import es.caib.pinbal.core.dto.PaginacioAmbOrdreDto;
 import es.caib.pinbal.core.dto.ProcedimentDto;
 import es.caib.pinbal.core.helper.DtoMappingHelper;
+import es.caib.pinbal.core.helper.PaginacioHelper;
 import es.caib.pinbal.core.helper.PermisosHelper;
 import es.caib.pinbal.core.helper.PermisosHelper.ObjectIdentifierExtractor;
 import es.caib.pinbal.core.helper.UsuariHelper;
@@ -76,7 +80,9 @@ public class ProcedimentServiceImpl implements ProcedimentService {
 	@Resource
 	private UsuariHelper usuariHelper;
 
-
+	@Resource
+	private PaginacioHelper paginacioHelper;
+	
 
 	@Transactional(rollbackFor = EntitatNotFoundException.class)
 	@Override
@@ -152,7 +158,7 @@ public class ProcedimentServiceImpl implements ProcedimentService {
 			Long organGestorId,
 			String codiSia,
 			FiltreActiuEnumDto actiu,
-			Pageable pageable) throws EntitatNotFoundException {
+			PaginacioAmbOrdreDto paginacioParams) throws EntitatNotFoundException {
 		log.debug("Consulta de procediments segons filtre ("
 				+ "entitatId=" + entitatId + ", "
 				+ "codi=" + codi + ", "
@@ -173,6 +179,9 @@ public class ProcedimentServiceImpl implements ProcedimentService {
 		
 		OrganGestor organGestor = organGestorId == null ? null : organGestorRepository.findOne(organGestorId);
 
+		Map<String, String[]> ordenacioMap = new HashMap<String, String[]>();
+		ordenacioMap.put("organGestorStr", new String[] {"organGestor.codi"});
+		
 		Page<Procediment> paginaProcediments = procedimentRepository.findByFiltre(
 					entitat,
 					codi == null || codi.length() == 0,
@@ -187,13 +196,13 @@ public class ProcedimentServiceImpl implements ProcedimentService {
 					codiSia,
 					actiu == null,
 					esActiu,
-					pageable);
+					paginacioHelper.toSpringDataPageable(paginacioParams, ordenacioMap));
 
 	
 		return dtoMappingHelper.pageEntities2pageDto(
 				paginaProcediments,
 				ProcedimentDto.class,
-				pageable);
+				paginacioHelper.toSpringDataPageable(paginacioParams, ordenacioMap));
 	}
 
 	@Transactional(readOnly = true)

@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
 
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
@@ -148,7 +149,8 @@ public abstract class ClientBase {
 
 	protected ClientResponse restPeticioGetResponse(
 			String metode,
-			Map<String, String> queryParams) throws UniformInterfaceException, ClientHandlerException, IOException {
+			Map<String, String> queryParams,
+			MediaType acceptedMediaType) throws UniformInterfaceException, ClientHandlerException, IOException {
 		MultivaluedMap<String, String> requestParams = new MultivaluedMapImpl();
 		if (queryParams != null) {
 			for (String key: queryParams.keySet()) {
@@ -163,6 +165,7 @@ public abstract class ClientBase {
 				resource(urlAmbMetode).
 				queryParams(requestParams).
 				type("application/json").
+				accept(acceptedMediaType).
 				get(ClientResponse.class);
 		if (logger.isDebugEnabled()) {
 			logger.debug("Rebuda resposta HTTP GET de PINBAL (" +
@@ -175,7 +178,8 @@ public abstract class ClientBase {
 	protected <R> R restPeticioPost(
 			String metode,
 			Object request,
-			Class<R> responseType) throws UniformInterfaceException, ClientHandlerException, IOException {
+			Class<R> responseType,
+			MediaType acceptedMediaType) throws UniformInterfaceException, ClientHandlerException, IOException {
 		String urlAmbMetode = getUrlAmbMetode(metode);
 		String body = mapper.writeValueAsString(request);
 		logger.debug("Enviant petició HTTP POST a PINBAL (" +
@@ -184,6 +188,7 @@ public abstract class ClientBase {
 		R response = jerseyClient.
 				resource(urlAmbMetode).
 				type("application/json").
+				accept(acceptedMediaType).
 				post(responseType, body);
 		if (logger.isDebugEnabled()) {
 			logger.debug("Rebuda resposta HTTP POST de PINBAL (" +

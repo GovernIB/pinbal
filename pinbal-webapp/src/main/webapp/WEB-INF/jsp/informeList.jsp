@@ -48,6 +48,14 @@
 				</h4>
 			</div>
 		</div>
+		<div class="row">
+			<div class="well">
+				<h4>
+						<spring:message code="informe.list.informe.usuaris.entitat.organ.procediment.servei"/>
+						<a href="informe/usuarisEntitatOrganProcedimentServei" class="btn btn-default pull-right"><i class="fas fa-file-download"></i>&nbsp;<spring:message code="informe.list.generar"/></a>
+				</h4>
+			</div>
+		</div>
 	</div>
 	<div id="modal-filtre-dates" class="modal fade">
 	  <div class="modal-dialog">
@@ -77,7 +85,7 @@
 			</div>	
 			
 			<div class="modal-footer">
-				<button class="btn btn-default" data-dismiss="modal"><spring:message code="comu.boto.tornar"/></button>
+				<button class="btn btn-default" data-dismiss="modal"><span class="fa fa-arrow-left"></span>&nbsp;<spring:message code="comu.boto.tornar"/></button>
 				<button class="btn btn-primary" onclick="$('#modal-form-filtre').submit()"><spring:message code="comu.boto.generar"/></button>
 			</div>
 		</div>

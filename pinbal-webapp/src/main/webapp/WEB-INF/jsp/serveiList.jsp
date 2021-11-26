@@ -175,7 +175,7 @@
 		</div>
 		<div class="modal-body"></div>
 		<div class="modal-footer">
-			<button class="btn btn-primary" data-dismiss="modal"><spring:message code="comu.boto.tornar"/></button>
+			<button class="btn btn-default" data-dismiss="modal"><span class="fa fa-arrow-left"></span>&nbsp;<spring:message code="comu.boto.tornar"/></button>
 		</div>
 	</div>
   </div>
