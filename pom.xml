@@ -29,8 +29,8 @@
 		<dir3caib.version>1.0.7</dir3caib.version>
 		<jersey.version>1.19.4</jersey.version>
 		<skipTests>true</skipTests>
-		<maven.compiler.source>1.8</maven.compiler.source>
-		<maven.compiler.target>1.8</maven.compiler.target>
+		<maven.compiler.source>1.7</maven.compiler.source>
+		<maven.compiler.target>1.7</maven.compiler.target>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<build.timestamp>${maven.build.timestamp}</build.timestamp>
 		<version.full>${project.version}</version.full>
