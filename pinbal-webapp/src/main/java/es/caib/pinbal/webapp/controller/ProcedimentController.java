@@ -314,7 +314,7 @@ public class ProcedimentController extends BaseController {
 				SESSION_ATTRIBUTE_FILTRE_PROCEDIMENT);
 		if (command == null) {
 			command = new ServeiFiltreCommand();
-			command.setActiva(true);
+//			command.setActiva(true);
 		}
 		if (!EntitatHelper.isRepresentantEntitatActual(request))
 			throw new Exception("Representant no autoritzat");
@@ -728,7 +728,7 @@ public class ProcedimentController extends BaseController {
 				getSessionAttributeFiltreProcediment());
 		if (command == null) {
 			command = new ServeiFiltreCommand();
-			command.setActiva(true);
+//			command.setActiva(true);
 		}
 		model.addAttribute(command);
 	}

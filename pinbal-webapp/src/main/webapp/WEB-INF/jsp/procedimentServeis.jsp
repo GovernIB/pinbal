@@ -51,7 +51,8 @@
 				<spring:message var="falseValue" code="entitat.list.filtre.camp.activa.no"/>
 				<form:select path="${campPath}" class="form-control" data-toggle="select2"
 							 data-minimumresults="5">
-					<option value=""><spring:message code="entitat.list.filtre.camp.activa"/></option>>
+<%--					<option value=""><spring:message code="entitat.list.filtre.camp.activa"/></option>>--%>
+					<option value=""><spring:message code="servei.list.filtre.camp.actiu.tots"/></option>>
 					<form:option value="true">${trueValue}</form:option>>
 					<form:option value="false">${falseValue}</form:option>>
 				</form:select>
