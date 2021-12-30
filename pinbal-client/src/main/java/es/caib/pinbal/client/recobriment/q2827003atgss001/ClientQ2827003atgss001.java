@@ -14,9 +14,8 @@ import java.io.IOException;
 import java.util.List;
 
 /**
- * Client del recobriment per a fer peticions al servei SCSP SVDCCAACPASWS01:
- * "Estar al corriente de obligaciones tributarias para solicitud de
- * subvenciones y ayudas de la CCAA" .
+ * Client del recobriment per a fer peticions al servei SCSP Q2827003ATGSS001:
+ * "Estar al corriente de pago con la seguridad social" .
  * 
  * @author Limit Tecnologies <limit@limit.es>
  */
@@ -54,26 +53,9 @@ public class ClientQ2827003atgss001 extends ClientBase {
 	@Data
 	@EqualsAndHashCode(callSuper = true)
 	public static class SolicitudQ2827003atgss001 extends SolicitudBase {
-//		private String codigoProvincia;
-//		private String codigoComunidadAutonoma;
 
 		@Override
 		public String getDatosEspecificos() { // xml
-//			StringBuilder xmlBuilder = new StringBuilder("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
-//			xmlBuilder.append("<DatosEspecificos>");
-//			if (!isEmptyString(codigoProvincia)) {
-//				xmlBuilder.append("<Consulta>");
-//				xmlBuilder.append(
-//						xmlOptionalStringParameter(this.codigoComunidadAutonoma, "CodigoComunidadAutonoma")
-//				);
-//				xmlBuilder.append(
-//						xmlOptionalStringParameter(this.codigoProvincia, "CodigoProvincia")
-//				);
-//				xmlBuilder.append("</Consulta>");
-//
-//			}
-//			xmlBuilder.append("</DatosEspecificos>");
-//			return xmlBuilder.toString();
 			return null;
 		}
 	}
