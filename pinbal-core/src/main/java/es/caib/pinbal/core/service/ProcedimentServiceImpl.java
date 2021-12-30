@@ -3,10 +3,7 @@
  */
 package es.caib.pinbal.core.service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import javax.annotation.Resource;
 
@@ -508,14 +505,21 @@ public class ProcedimentServiceImpl implements ProcedimentService {
 				auth);
 		// Omple la resposta amb tots els procediments permesos
 		// evitant duplicats.
-		List<Procediment> procediments = new ArrayList<Procediment>();
+		Set<Procediment> procediments = new HashSet<>();
 		for (ProcedimentServei ps : pss) {
-			if (!procediments.contains(ps.getProcediment()))
-				procediments.add(ps.getProcediment());
+//			if (!procediments.contains(ps.getProcediment()))
+			procediments.add(ps.getProcediment());
 		}
-		return dtoMappingHelper.getMapperFacade().mapAsList(
+		List<ProcedimentDto> procedimentList = dtoMappingHelper.getMapperFacade().mapAsList(
 				procediments,
 				ProcedimentDto.class);
+		Collections.sort(procedimentList, new Comparator<ProcedimentDto>() {
+			@Override
+			public int compare(ProcedimentDto p1, ProcedimentDto p2) {
+				return p1.getNom().compareTo(p2.getNom());
+			}
+		});
+		return procedimentList;
 	}
 
 	@Transactional(readOnly = true)
@@ -590,7 +594,7 @@ public class ProcedimentServiceImpl implements ProcedimentService {
 
 	/**
 	 * Aquest setter només s'hauria d'emprar en les proves unitàries.
-	 * @param personRepository
+	 * @param procedimentRepository
 	 */
 	public void setProcedimentRepository(ProcedimentRepository procedimentRepository) {
 		this.procedimentRepository = procedimentRepository;
