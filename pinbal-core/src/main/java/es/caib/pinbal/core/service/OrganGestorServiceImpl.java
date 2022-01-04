@@ -66,7 +66,7 @@ public class OrganGestorServiceImpl implements OrganGestorService {
 		List<OrganGestor> organs = organGestorRepository.findByEntitatAndCodiNom(entitatId, filtre);
 		return dtoMappingHelper.convertirList(organs, OrganGestorDto.class);
 	}
-	
+
 	@Override
 	@Transactional
 	public boolean syncDir3OrgansGestors(Long entitatId) throws Exception {
@@ -143,7 +143,6 @@ public class OrganGestorServiceImpl implements OrganGestorService {
 			organisme.setCodi(arrel.getCodi());
 			organisme.setNom(arrel.getDenominacio());
 			organisme.setPareCodi(null);
-
 			organismes.add(organisme);
 			findOrganismesFills(arrel, organismes);
 		}

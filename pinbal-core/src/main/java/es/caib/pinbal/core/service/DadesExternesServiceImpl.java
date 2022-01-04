@@ -90,8 +90,6 @@ public class DadesExternesServiceImpl implements DadesExternesService {
 		}
 	}
 
-
-
 	private String getDadesComunesBaseUrl() {
 		String baseUrl = PropertiesHelper.getProperties().getProperty("es.caib.pinbal.dadescomunes.base.url");
 		if (baseUrl != null && baseUrl.length() > 0) {

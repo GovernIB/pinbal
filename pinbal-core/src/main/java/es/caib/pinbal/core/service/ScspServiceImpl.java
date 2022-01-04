@@ -193,7 +193,7 @@ public class ScspServiceImpl implements ScspService {
 		Page<EmissorCert> llista = emissorCertRepository.findAll(pageable);
 		return dtoMappingHelper.pageEntities2pageDto(llista, EmissorCertDto.class, pageable);
 	}
-	
+
 	// Funcions de la taula de claus privades
 	@Override
 	@Transactional(readOnly = true)

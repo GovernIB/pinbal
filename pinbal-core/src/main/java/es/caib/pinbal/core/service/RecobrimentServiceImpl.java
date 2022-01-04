@@ -86,28 +86,28 @@ public class RecobrimentServiceImpl implements RecobrimentService {
 		} catch (ScspException ex) {
 			if (RecobrimentHelper.ERROR_CODE_SCSP_VALIDATION.equals(ex.getScspCode())) {
 				throw new RecobrimentScspValidationException(
-						ex.getMessage(), 
+						ex.getMessage(),
 						ex);
 			} else {
 				throw new RecobrimentScspException(
-						ex.getMessage(), 
-						ex);	
+						ex.getMessage(),
+						ex);
 			}
 		} catch (TransformerException ex) {
 			throw new RecobrimentScspException(
-					ex.getMessage(), 
+					ex.getMessage(),
 					ex);
 		} catch (ParserConfigurationException ex) {
 			throw new RecobrimentScspException(
-					ex.getMessage(), 
+					ex.getMessage(),
 					ex);
 		} catch (SAXException ex) {
 			throw new RecobrimentScspException(
-					ex.getMessage(), 
+					ex.getMessage(),
 					ex);
 		} catch (IOException ex) {
 			throw new RecobrimentScspException(
-					ex.getMessage(), 
+					ex.getMessage(),
 					ex);
 		}
 	}
@@ -125,15 +125,15 @@ public class RecobrimentServiceImpl implements RecobrimentService {
 					ex);
 		} catch (ParserConfigurationException ex) {
 			throw new RecobrimentScspException(
-					ex.getMessage(), 
+					ex.getMessage(),
 					ex);
 		} catch (SAXException ex) {
 			throw new RecobrimentScspException(
-					ex.getMessage(), 
+					ex.getMessage(),
 					ex);
 		} catch (IOException ex) {
 			throw new RecobrimentScspException(
-					ex.getMessage(), 
+					ex.getMessage(),
 					ex);
 		}
 	}
@@ -146,11 +146,11 @@ public class RecobrimentServiceImpl implements RecobrimentService {
 					recobrimentHelper.getRespuesta(idPeticion));
 		} catch (TransformerException ex) {
 			throw new RecobrimentScspException(
-					ex.getMessage(), 
+					ex.getMessage(),
 					ex);
 		} catch (ScspException ex) {
 			throw new RecobrimentScspException(
-					ex.getMessage(), 
+					ex.getMessage(),
 					ex);
 		}
 	}
@@ -168,7 +168,7 @@ public class RecobrimentServiceImpl implements RecobrimentService {
 			return justificante;
 		} catch (ScspException ex) {
 			throw new RecobrimentScspException(
-					ex.getMessage(), 
+					ex.getMessage(),
 					ex);
 		}
 	}

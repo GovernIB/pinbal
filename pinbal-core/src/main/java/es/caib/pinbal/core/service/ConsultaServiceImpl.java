@@ -796,7 +796,14 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 			log.debug("No s'ha trobat l'entitat (entitatCif=" + solicitud.getEntitatCif() + ")");
 			throw new EntitatNotFoundException();
 		}
-		Procediment procediment = procedimentRepository.findByEntitatAndCodi(entitat, solicitud.getProcedimentCodi());
+		Procediment procediment = procedimentRepository.findByEntitatAndCodi(
+				entitat,
+				solicitud.getProcedimentCodi());
+		if (procediment == null) {
+			procediment = procedimentRepository.findByEntitatAndCodiSia(
+					entitat,
+					solicitud.getProcedimentCodi());
+		}
 		if (procediment == null) {
 			log.debug("No s'ha trobat el procediment (entitatCif=" + solicitud.getEntitatCif() + ", procedimentCodi=" + solicitud.getProcedimentCodi() + ")");
 			throw new ProcedimentNotFoundException();

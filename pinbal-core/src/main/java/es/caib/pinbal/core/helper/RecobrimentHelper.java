@@ -92,15 +92,21 @@ public class RecobrimentHelper implements ApplicationContextAware, MessageSource
 			ConsultaDto consulta = novaConsultaRecobriment(
 					codigoCertificado,
 					solicituds.get(0));
-			if (consulta.getError() != null) {
+			if (consulta.isEstatError()) {
 				LOGGER.debug("Petició SCSP realitzada amb error (" +
 						"peticionId=" + consulta.getScspPeticionId() + ", " +
 						"error=" + consulta.getError() + ", " +
 						"estadoCodigo=" + consulta.getRespostaEstadoCodigo() + ", " +
 						"estadoError=" + consulta.getRespostaEstadoError() + ")");
-				throw getErrorValidacio(
-						consulta.getRespostaEstadoCodigo(),
-						consulta.getRespostaEstadoError());
+				if (consulta.getRespostaEstadoCodigo() != null) {
+					throw getErrorValidacio(
+							consulta.getRespostaEstadoCodigo(),
+							consulta.getRespostaEstadoError());
+				} else {
+					throw getErrorValidacio(
+							"0227",
+							consulta.getError());
+				}
 			} else {
 				LOGGER.debug("Petició SCSP realitzada correctament (" +
 						"peticionId=" + consulta.getScspPeticionId() + ")");
@@ -129,8 +135,9 @@ public class RecobrimentHelper implements ApplicationContextAware, MessageSource
 					"0227",
 					"L'usuari no te permisos per a realitzar aquesta consulta");
 		} catch (ConsultaScspException ex) {
-			// TODO revisar tractament d'errors
 			throw getErrorValidacio("0227", ex.getMessage());
+		} catch (ScspException ex) {
+			throw ex;
 		} catch (Exception ex) {
 			LOGGER.error("Error en la consulta SCSP", ex);
 			throw getErrorValidacio(

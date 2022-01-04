@@ -35,10 +35,10 @@ import es.caib.pinbal.client.recobriment.svdccaacpasws01.ClientSvdccaacpasws01.S
 public class Svdccaacpasws01Test {
 
 	private static final String URL_BASE = "http://localhost:8080/pinbal";
-	private static final String USUARI = "user";
-	private static final String CONTRASENYA = "passwd";
-	private static final String ENTITAT_CIF = "B07167448";
-	private static final String CODIGO_PROCEDIMIENTO = "ProvaConcepte";
+	private static final String USUARI = "pblws";
+	private static final String CONTRASENYA = "pblws";
+	private static final String ENTITAT_CIF = "12345678Z";
+	private static final String CODIGO_PROCEDIMIENTO = "000002";
 	private static final String PETICION_SCSP_ID = "PBL0000000001292";
 	//private static final String ENTITAT_CIF = "S0711001H";
 	//private static final String CODIGO_PROCEDIMIENTO = "CODSVDR_GBA_20121107";
@@ -74,7 +74,7 @@ public class Svdccaacpasws01Test {
 		System.out.println("-> peticionSincrona = " + objectToJsonString(respuesta));
 	}
 
-	@Test
+	//@Test
 	public void getRespuesta() throws IOException {
 		if (ENABLE_LOGGING) {
 			client.enableLogginFilter();
@@ -84,7 +84,7 @@ public class Svdccaacpasws01Test {
 		System.out.println("-> getRespuesta(" + PETICION_SCSP_ID + ") = " + objectToJsonString(respuesta));
 	}
 
-	@Test
+	//@Test
 	public void getJustificante() throws IOException {
 		if (ENABLE_LOGGING) {
 			client.enableLogginFilter();
