@@ -8,7 +8,6 @@ import java.util.*;
 import javax.annotation.Resource;
 
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.security.acls.domain.BasePermission;
 import org.springframework.security.acls.domain.PrincipalSid;
 import org.springframework.security.acls.model.AccessControlEntry;
@@ -79,7 +78,6 @@ public class ProcedimentServiceImpl implements ProcedimentService {
 
 	@Resource
 	private PaginacioHelper paginacioHelper;
-	
 
 	@Transactional(rollbackFor = EntitatNotFoundException.class)
 	@Override
@@ -88,7 +86,6 @@ public class ProcedimentServiceImpl implements ProcedimentService {
 		Entitat entitat = entitatRepository.findOne(creat.getEntitatId());
 		if (entitat == null)
 			throw new EntitatNotFoundException();
-		
 		Procediment procediment = Procediment.getBuilder(
 				entitat,
 				creat.getCodi(),
@@ -98,7 +95,6 @@ public class ProcedimentServiceImpl implements ProcedimentService {
 				creat.getCodiSia(),
 				creat.getValorCampAutomatizado(),
 				creat.getValorCampClaseTramite()).build();
-
 		return dtoMappingHelper.getMapperFacade().map(
 				procedimentRepository.save(procediment),
 				ProcedimentDto.class);
@@ -164,7 +160,6 @@ public class ProcedimentServiceImpl implements ProcedimentService {
 		Entitat entitat = entitatRepository.findOne(entitatId);
 		if (entitat == null)
 			throw new EntitatNotFoundException();
-		
 		boolean esActiu = false;
 		if (actiu != null) {
 			if (actiu == FiltreActiuEnumDto.ACTIU) {
@@ -173,12 +168,9 @@ public class ProcedimentServiceImpl implements ProcedimentService {
 				esActiu = false;
 			}
 		}
-		
 		OrganGestor organGestor = organGestorId == null ? null : organGestorRepository.findOne(organGestorId);
-
 		Map<String, String[]> ordenacioMap = new HashMap<String, String[]>();
 		ordenacioMap.put("organGestorStr", new String[] {"organGestor.codi"});
-		
 		Page<Procediment> paginaProcediments = procedimentRepository.findByFiltre(
 					entitat,
 					codi == null || codi.length() == 0,
@@ -194,8 +186,6 @@ public class ProcedimentServiceImpl implements ProcedimentService {
 					actiu == null,
 					esActiu,
 					paginacioHelper.toSpringDataPageable(paginacioParams, ordenacioMap));
-
-	
 		return dtoMappingHelper.pageEntities2pageDto(
 				paginaProcediments,
 				ProcedimentDto.class,
@@ -319,7 +309,6 @@ public class ProcedimentServiceImpl implements ProcedimentService {
 			procedimentServei.updateProcedimentCodi(procedimentCodi);
 			procedimentServeiRepository.save(procedimentServei);
 		}
-		
 		return true;
 	}
 
@@ -340,13 +329,12 @@ public class ProcedimentServiceImpl implements ProcedimentService {
 			throw new ProcedimentServeiNotFoundException();
 		}
 		procedimentServei.updateActiu(false);
-		
 		// Esborrar permisos assignats al servei
 		PermisosHelper.revocarPermisosServei(
 				ProcedimentServei.class,
 				procedimentServei.getId(),
 				aclService);
-//				BasePermission.READ);
+		//		BasePermission.READ);
 	}
 
 	@Transactional(rollbackFor = {ProcedimentNotFoundException.class, ProcedimentServeiNotFoundException.class, EntitatUsuariNotFoundException.class})

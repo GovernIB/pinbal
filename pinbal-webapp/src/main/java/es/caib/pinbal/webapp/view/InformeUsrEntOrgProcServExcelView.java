@@ -30,6 +30,7 @@ public class InformeUsrEntOrgProcServExcelView extends AbstractExcelView impleme
 		
 		response.setHeader("Content-Disposition", "Inline; filename=informeUsuarisEntitatOrganProcServei.xls");
 		
+		@SuppressWarnings("unchecked")
 		List<InformeProcedimentServeiDto> informeDades = (List<InformeProcedimentServeiDto>)model.get("informeDades");
 		Boolean isAdministrador = (Boolean)model.get("isAdministrador");
 		

@@ -7,8 +7,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-import javax.annotation.Resource;
-
 import org.apache.commons.lang.time.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -33,10 +31,8 @@ public class AvisServiceImpl implements AvisService {
 
 	@Autowired
 	private AvisRepository avisRepository;
-
-	@Resource
+	@Autowired
 	private DtoMappingHelper dtoMappingHelper;
-	
 
 	@Transactional
 	@Override
@@ -60,7 +56,6 @@ public class AvisServiceImpl implements AvisService {
 			AvisDto avis) {
 		log.debug("Actualitzant avis existent (" +
 				"avis=" + avis + ")");
-
 		Avis avisEntity = avisRepository.findOne(avis.getId());
 		avisEntity.update(
 				avis.getAssumpte(),
@@ -82,14 +77,11 @@ public class AvisServiceImpl implements AvisService {
 				"id=" + id + ", " +
 				"activa=" + activa + ")");
 		Avis avisEntity = avisRepository.findOne(id);
-		
 		avisEntity.updateActiva(activa);
 		return dtoMappingHelper.getMapperFacade().map(
 				avisEntity,
 				AvisDto.class);
 	}
-	
-	
 
 	@Transactional
 	@Override
@@ -97,10 +89,8 @@ public class AvisServiceImpl implements AvisService {
 			Long id) {
 		log.debug("Esborrant avis (" +
 				"id=" + id +  ")");
-		
 		Avis avisEntity = avisRepository.findOne(id);
 		avisRepository.delete(avisEntity);
-
 		return dtoMappingHelper.getMapperFacade().map(
 				avisEntity,
 				AvisDto.class);
@@ -111,31 +101,25 @@ public class AvisServiceImpl implements AvisService {
 	public AvisDto findById(Long id) {
 		log.debug("Consulta de l'avis (" +
 				"id=" + id + ")");
-		
 		Avis avisEntity = avisRepository.findOne(id);
 		AvisDto dto = dtoMappingHelper.getMapperFacade().map(
 				avisEntity,
 				AvisDto.class);
 		return dto;
 	}
-	
-	
+
 	@Transactional(readOnly = true)
 	@Override
 	public Page<AvisDto> findPaginat(Pageable pageable) {
 		log.debug("Consulta de totes les avisos paginades (" +
 				"pageable=" + pageable + ")");
-		
 		Page<Avis> paginaEntitats = avisRepository.findAll(pageable);
-		
 		return dtoMappingHelper.pageEntities2pageDto(
 				paginaEntitats,
 				AvisDto.class,
 				pageable);
-
 	}
-	
-	
+
 	@Transactional(readOnly = true)
 	@Override
 	public List<AvisDto> findActive() {

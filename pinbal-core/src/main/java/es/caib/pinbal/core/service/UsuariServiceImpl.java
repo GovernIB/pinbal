@@ -66,8 +66,6 @@ public class UsuariServiceImpl implements UsuariService {
 	@Resource
 	private MutableAclService aclService;
 
-
-
 	@Transactional
 	@Override
 	public void inicialitzarUsuariActual() {
@@ -89,9 +87,11 @@ public class UsuariServiceImpl implements UsuariService {
 			String nif,
 			String departament,
 			Pageable pageable) {
-		log.debug("Consulta d'entitats segons filtre (codi=" + codi + ", nom=" + nom + ""
-				+ "nif=" + nif + " Departament=" + departament + ")");
-		
+		log.debug("Consulta d'entitats segons filtre (" +
+				"codi=" + codi + ", " +
+				"nom=" + nom + ", " +
+				"nif=" + nif + ", " +
+				"departament=" + departament + ")");
 		Page<EntitatUsuari> paginaEntitats = entitatUsuariRepository.findByFiltre(
 				id_entitat == null,
 				entitatRepository.findOne(id_entitat),
@@ -108,9 +108,10 @@ public class UsuariServiceImpl implements UsuariService {
 				departament == null || departament.length() == 0,
 				departament,
 				pageable);
-		return  dtoMappingHelper.pageEntities2pageDto(paginaEntitats, 
-													  EntitatUsuariDto.class, 
-													  pageable);
+		return dtoMappingHelper.pageEntities2pageDto(
+				paginaEntitats,
+				EntitatUsuariDto.class,
+				pageable);
 	}
 	
 	@Transactional(readOnly = true)
@@ -132,16 +133,13 @@ public class UsuariServiceImpl implements UsuariService {
 				usuariRepository.findOne(usuariCodi),
 				UsuariDto.class);
 	}
-	
-	
+
 	@Transactional
 	@Override
 	public UsuariDto getUsuariActual() {
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 		log.debug("Obtenint usuari actual");
-		
 		Usuari usuari = usuariRepository.findOne(auth.getName());
-		
 		if (usuari.getEmail() == null || usuari.getEmail().isEmpty()) {
 			try {
 				DadesUsuari dadesUsuari = externHelper.dadesUsuariConsultarAmbUsuariCodi(auth.getName());
@@ -150,11 +148,10 @@ public class UsuariServiceImpl implements UsuariService {
 				log.error("Error al consultar les dades de l'usuari (codi=" + auth.getName() + ") al sistema extern", ex);
 			}
 		}
-		
 		return toUsuariDtoAmbRols(
 				usuari);
 	}
-	
+
 	@Transactional
 	@Override
 	public UsuariDto updateUsuariActual(UsuariDto dto) {
@@ -162,11 +159,8 @@ public class UsuariServiceImpl implements UsuariService {
 		Usuari usuari = usuariRepository.findOne(dto.getCodi());
 		usuari.updateIdioma(
 				dto.getIdioma());
-		
-		
 		return toUsuariDtoAmbRols(usuari);
 	}
-	
 
 	@Transactional(rollbackFor = EntitatNotFoundException.class)
 	@Override
@@ -180,7 +174,10 @@ public class UsuariServiceImpl implements UsuariService {
 			boolean auditor,
 			boolean aplicacio,
 			boolean afegir) throws EntitatNotFoundException, UsuariExternNotFoundException {
-		log.debug("Actualitzant dades no auditor de l'usuari (codi=" + codi + ", nif=" + nif + ") a l'entitat (id=" + id + ")");
+		log.debug("Actualitzant dades no auditor de l'usuari (" +
+				"codi=" + codi + ", " +
+				"nif=" + nif + ") a l'entitat (" +
+				"id=" + id + ")");
 		Entitat entitat = entitatRepository.findOne(id);
 		if (entitat == null) {
 			log.debug("No s'ha trobat l'entitat (id=" + id + ")");

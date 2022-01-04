@@ -40,6 +40,8 @@ public interface ProcedimentRepository extends JpaRepository<Procediment, Long> 
 
 	Procediment findByEntitatAndCodi(Entitat entitat, String codi);
 
+	Procediment findByEntitatAndCodiSia(Entitat entitat, String codiSia);
+
 	@Query("from Procediment p where p.entitat.id = ?1 and p.actiu = true order by p.nom asc")
 	List<Procediment> findActiusByEntitat(Long entitatId);
 

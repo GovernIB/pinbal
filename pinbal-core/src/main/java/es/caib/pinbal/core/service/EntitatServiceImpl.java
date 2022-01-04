@@ -60,15 +60,12 @@ public class EntitatServiceImpl implements EntitatService, ApplicationContextAwa
 	private ServeiConfigRepository serveiConfigRepository;
 	@Resource
 	private OrganismeCessionariRepository organismeCessionariRepository;
-
 	@Resource
 	private DtoMappingHelper dtoMappingHelper;
 
 	private ApplicationContext applicationContext;
 	private MessageSource messageSource;
 	private ScspHelper scspHelper;
-
-
 
 	@Transactional
 	@Override
@@ -97,7 +94,7 @@ public class EntitatServiceImpl implements EntitatService, ApplicationContextAwa
 	@Override
 	public EntitatDto delete(Long entitatId) throws EntitatNotFoundException {
 		log.debug("Esborrant entitat (id=" + entitatId + ")");
-        Entitat esborrada = entitatRepository.findOne(entitatId);
+		Entitat esborrada = entitatRepository.findOne(entitatId);
 		if (esborrada == null) {
 			log.debug("No s'ha trobat l'entitat (id=" + entitatId + ")");
 			throw new EntitatNotFoundException();
@@ -131,7 +128,6 @@ public class EntitatServiceImpl implements EntitatService, ApplicationContextAwa
 			String unitatArrel) {
 		log.debug("Consulta d'entitats segons filtre (codi=" + codi + ", nom=" + nom + ""
 				+ "cif=" + cif + " activa=" + activa + " tipus=" + tipus + ")");
-		
 		Page<Entitat> paginaEntitats = entitatRepository.findByFiltre(
 				codi == null || codi.length() == 0,
 				codi,
@@ -146,7 +142,6 @@ public class EntitatServiceImpl implements EntitatService, ApplicationContextAwa
 				unitatArrel == null || unitatArrel.length() == 0,
 				unitatArrel,
 				pageable);
-		
 		return new PageImpl<EntitatDto>(
 					dtoMappingHelper.getMapperFacade().mapAsList(
 							paginaEntitats.getContent(),
@@ -172,7 +167,7 @@ public class EntitatServiceImpl implements EntitatService, ApplicationContextAwa
 				entitatRepository.findByCodi(codi),
 				EntitatDto.class);
 	}
-	
+
 	@Transactional(readOnly = true)
 	@Override
 	public EntitatDto findTopByTipus(EntitatTipusDto tipus) {
@@ -181,7 +176,7 @@ public class EntitatServiceImpl implements EntitatService, ApplicationContextAwa
 				entitatRepository.findTopByTipusOrderByTipusAsc(dtoMappingHelper.getMapperFacade().map(tipus, EntitatTipus.class)),
 				EntitatDto.class);
 	}
-	
+
 	@Transactional(readOnly = true)
 	@Override
 	public EntitatDto findByCif(String cif) {
@@ -190,7 +185,6 @@ public class EntitatServiceImpl implements EntitatService, ApplicationContextAwa
 				entitatRepository.findByCif(cif),
 				EntitatDto.class);
 	}
-
 
 	@Transactional(rollbackFor = EntitatNotFoundException.class)
 	@Override
@@ -202,11 +196,9 @@ public class EntitatServiceImpl implements EntitatService, ApplicationContextAwa
 			throw new EntitatNotFoundException();
 		}
 		modificada.setActiva(entitat.isActiva());
-		
 		OrganismeCessionari oc = organismeCessionariRepository.findByCif(entitat.getCif());
 		oc.updateEntitat(modificada.getNom(), modificada.getCif(), !modificada.isActiva());
 		organismeCessionariRepository.saveAndFlush(oc);
-		
 		entitat.update(
 				modificada.getCodi(),
 				modificada.getNom(),
@@ -214,7 +206,6 @@ public class EntitatServiceImpl implements EntitatService, ApplicationContextAwa
 				EntitatTipus.valueOf(modificada.getTipus().toString()));
 		entitat.setUnitatArrel(modificada.getUnitatArrel());
 		actualitzarServeisScspActiusEntitat(entitat);
-		
 		return dtoMappingHelper.getMapperFacade().map(
 				entitat,
 				EntitatDto.class);
@@ -226,7 +217,7 @@ public class EntitatServiceImpl implements EntitatService, ApplicationContextAwa
 		List<OrganGestor> organs = entitat.getOrganGestors();
 		return dtoMappingHelper.convertirList(organs, OrganGestorDto.class);
 	}
-	
+
 	@Transactional(rollbackFor = EntitatNotFoundException.class)
 	@Override
 	public EntitatDto updateActiva(Long id, boolean activa) throws EntitatNotFoundException {
@@ -318,17 +309,17 @@ public class EntitatServiceImpl implements EntitatService, ApplicationContextAwa
 	}
 
 	/**
-     * Aquest setter només s'hauria d'emprar en les proves unitàries.
-     * @param entitatRepository
-     */
+	 * Aquest setter només s'hauria d'emprar en les proves unitàries.
+	 * @param entitatRepository
+	 */
 	public void setEntitatRepository(EntitatRepository entitatRepository) {
 		this.entitatRepository = entitatRepository;
 	}
 
 	/**
-     * Aquest setter només s'hauria d'emprar en les proves unitàries.
-     * @param entitatServeiRepository
-     */
+	 * Aquest setter només s'hauria d'emprar en les proves unitàries.
+	 * @param entitatServeiRepository
+	 */
 	public void setEntitatServeiRepository(EntitatServeiRepository entitatServeiRepository) {
 		this.entitatServeiRepository = entitatServeiRepository;
 	}
@@ -338,6 +329,7 @@ public class EntitatServiceImpl implements EntitatService, ApplicationContextAwa
 			ApplicationContext applicationContext) throws BeansException {
 		this.applicationContext = applicationContext;
 	}
+
 	@Override
 	public void setMessageSource(MessageSource messageSource) {
 		this.messageSource = messageSource;
