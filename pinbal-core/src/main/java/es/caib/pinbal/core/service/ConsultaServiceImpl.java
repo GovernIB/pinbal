@@ -2114,12 +2114,12 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 		informeProcedimentServei.setEntitatCodi(procedimentServei.getProcediment().getEntitat().getCodi());
 		informeProcedimentServei.setEntitatNom(procedimentServei.getProcediment().getEntitat().getNom());
 		informeProcedimentServei.setEntitatCif(procedimentServei.getProcediment().getEntitat().getCif());
-		informeProcedimentServei.setOrganGestorCodi(procedimentServei.getProcediment().getOrganGestor().getCodi());
-		informeProcedimentServei.setOrganGestorNom(procedimentServei.getProcediment().getOrganGestor().getNom());
+		informeProcedimentServei.setOrganGestorCodi(procedimentServei.getProcediment().getOrganGestor() != null ? procedimentServei.getProcediment().getOrganGestor().getCodi() : null);
+		informeProcedimentServei.setOrganGestorNom(procedimentServei.getProcediment().getOrganGestor() != null ? procedimentServei.getProcediment().getOrganGestor().getNom() : null);
 		informeProcedimentServei.setProcedimentCodi(procedimentServei.getProcediment().getCodi());
 		informeProcedimentServei.setProcedimentNom(procedimentServei.getProcediment().getNom());
-		informeProcedimentServei.setServeiCodi(servicio.getCodCertificado());
-		informeProcedimentServei.setServeiNom(servicio.getDescripcion());
+		informeProcedimentServei.setServeiCodi(servicio != null ? servicio.getCodCertificado() : null);
+		informeProcedimentServei.setServeiNom(servicio != null ? servicio.getDescripcion() : null);
 		informeProcedimentServei.setUsuariCodi(entitatUsuari.getUsuari().getCodi());
 		informeProcedimentServei.setUsuariNif(entitatUsuari.getUsuari().getNif());
 		informeProcedimentServei.setUsuariNom(entitatUsuari.getUsuari().getNom());
