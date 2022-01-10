@@ -8,6 +8,7 @@ import java.lang.reflect.InvocationTargetException;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
@@ -32,6 +33,7 @@ import es.caib.pinbal.webapp.datatables.ServerSideResponse;
  * 
  * @author Limit Tecnologies <limit@limit.es>
  */
+@Slf4j
 @Controller
 @RequestMapping("/organgestor")
 public class OrganGestorController extends BaseController {
@@ -105,6 +107,7 @@ public class OrganGestorController extends BaseController {
 			organGestorService.syncDir3OrgansGestors(entitat.getId());
 
 		} catch (Exception e) {
+			log.error("Error actualitzant els òrgnas gestors.", e);
 			return getAjaxControllerReturnValueError(
 					request,
 					"redirect:../../organgestor",
