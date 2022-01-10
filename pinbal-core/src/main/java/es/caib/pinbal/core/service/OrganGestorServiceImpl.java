@@ -133,19 +133,20 @@ public class OrganGestorServiceImpl implements OrganGestorService {
 
 	private List<OrganGestorDto> findOrganismesArbre(String codiDir3) throws Exception {
 		if (codiDir3 == null || codiDir3.isEmpty()) {
-			throw new Exception("Codi Dir3 incorrecte");
+			throw new Exception("No es poden sincronitzar els òrgans gestors degut a que el 'codi Dir3 arrel' de l'entitat no està emplenat.");
 		}
 		List<OrganGestorDto> organismes = new ArrayList<OrganGestorDto>();
 		Map<String, NodeDir3> organigramaDir3 = pluginOrganGestorHelper.getOrganigramaOrganGestor(codiDir3);
-		if (organigramaDir3 != null) {
-			NodeDir3 arrel = organigramaDir3.get(codiDir3);
-			OrganGestorDto organisme = new OrganGestorDto();
-			organisme.setCodi(arrel.getCodi());
-			organisme.setNom(arrel.getDenominacio());
-			organisme.setPareCodi(null);
-			organismes.add(organisme);
-			findOrganismesFills(arrel, organismes);
+		if (organigramaDir3 == null || organigramaDir3.isEmpty() || organigramaDir3.get(codiDir3) == null) {
+			throw new Exception("No es poden sincronitzar els òrgans gestors degut a que no existeix cap òrgan arrel amb codi '" + codiDir3 + "' al DIR3. Revisar la configuració del camp 'Codi DIR3 arrel' de l'entitat.");
 		}
+		NodeDir3 arrel = organigramaDir3.get(codiDir3);
+		OrganGestorDto organisme = new OrganGestorDto();
+		organisme.setCodi(arrel.getCodi());
+		organisme.setNom(arrel.getDenominacio());
+		organisme.setPareCodi(null);
+		organismes.add(organisme);
+		findOrganismesFills(arrel, organismes);
 		return organismes;
 	}
 
