@@ -170,7 +170,7 @@ public class ProcedimentServiceImpl implements ProcedimentService {
 		}
 		OrganGestor organGestor = organGestorId == null ? null : organGestorRepository.findOne(organGestorId);
 		Map<String, String[]> ordenacioMap = new HashMap<String, String[]>();
-		ordenacioMap.put("organGestorStr", new String[] {"organGestor.codi"});
+		ordenacioMap.put("organGestorStr", new String[] {"org.codi"});
 		Page<Procediment> paginaProcediments = procedimentRepository.findByFiltre(
 					entitat,
 					codi == null || codi.length() == 0,

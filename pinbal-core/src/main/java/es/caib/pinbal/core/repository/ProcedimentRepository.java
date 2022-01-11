@@ -52,7 +52,7 @@ public interface ProcedimentRepository extends JpaRepository<Procediment, Long> 
 	@Query(	"select" +
 			"    p " +
 			"from" +
-			"    Procediment p " +
+			"    Procediment p left join p.organGestor org " +
 			"where " +
 			"    p.entitat = :entitat " +
 			"and (:esNullCodi = true or lower(p.codi) like concat('%', lower(:codi), '%')) " +
