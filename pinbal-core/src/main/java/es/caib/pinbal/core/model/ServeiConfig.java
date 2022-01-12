@@ -82,11 +82,10 @@ public class ServeiConfig extends PinbalAuditable<Long> {
 	private boolean comprovarDocument = true;
 	@Column(name = "activa_gestio_xsd")
 	private boolean activaGestioXsd = false;
-	
-	
+	@Column(name = "max_peticions_min")
+	private Integer maxPeticionsMinut;
 	@Column(name = "actiu", nullable = false)
 	private boolean actiu;
-	
 	
 	// Ajuda
 	@Lob
@@ -137,6 +136,7 @@ public class ServeiConfig extends PinbalAuditable<Long> {
 			String justificantXpath,
 			String ajuda,
 			boolean activaGestioXsd,
+			Integer maxPeticionsMinut,
 			String fitxerAjudaNom,
 			String fitxerAjudaMimeType,
 			byte[] fitxerAjudaContingut, 
@@ -151,6 +151,7 @@ public class ServeiConfig extends PinbalAuditable<Long> {
 				justificantXpath,
 				ajuda,
 				activaGestioXsd,
+				maxPeticionsMinut,
 				fitxerAjudaNom,
 				fitxerAjudaMimeType,
 				fitxerAjudaContingut,
@@ -182,6 +183,7 @@ public class ServeiConfig extends PinbalAuditable<Long> {
 			boolean documentObligatori,
 			boolean comprovarDocument,
 			boolean activaGestioXsd,
+			Integer maxPeticionsMinut,
 			String ajuda) {
 		this.custodiaCodi = custodiaCodi;
 		this.roleName = roleName;
@@ -203,6 +205,7 @@ public class ServeiConfig extends PinbalAuditable<Long> {
 		this.documentObligatori = documentObligatori;
 		this.comprovarDocument = comprovarDocument;
 		this.activaGestioXsd = activaGestioXsd;
+		this.maxPeticionsMinut = maxPeticionsMinut;
 		this.ajuda = ajuda;
 	}
 	public void updateFitxerAjuda(
@@ -245,6 +248,7 @@ public class ServeiConfig extends PinbalAuditable<Long> {
 				String justificantXpath,
 				String ajuda,
 				boolean activaGestioXsd,
+				Integer maxPeticionsMinut,
 				String fitxerAjudaNom,
 				String fitxerAjudaMimeType,
 				byte[] fitxerAjudaContingut,
@@ -259,6 +263,7 @@ public class ServeiConfig extends PinbalAuditable<Long> {
 			built.justificantXpath = justificantXpath;
 			built.ajuda = ajuda;
 			built.activaGestioXsd = activaGestioXsd;
+			built.maxPeticionsMinut = maxPeticionsMinut;
 			built.fitxerAjudaNom = fitxerAjudaNom;
 			built.fitxerAjudaMimeType = fitxerAjudaMimeType;
 			built.fitxerAjudaContingut = fitxerAjudaContingut;

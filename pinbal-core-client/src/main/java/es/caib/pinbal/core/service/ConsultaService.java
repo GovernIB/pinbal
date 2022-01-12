@@ -660,6 +660,11 @@ public interface ConsultaService {
 	 */
 	public void autoGenerarEmailReportEstat();
 	
+	/*
+	 * Tasca automàtica per a enviar les peticions SCSP pendents.
+	 */
+	public void autoEnviarPeticionsPendents();
+
 	/**
 	 * Retorna si les peticions al SCSP s'han de fer en una sola passa o en
 	 * 3 passes per a optimitzar el temps que la transacció bloqueja les
@@ -667,7 +672,7 @@ public interface ConsultaService {
 	 * 
 	 * @return true si s'ha d'optimitzar en 3 peticions o false en cas contrari. 
 	 */
-	@PreAuthorize("hasRole('ROLE_DELEG')")
+	@PreAuthorize("hasRole('ROLE_DELEG') or hasRole('ROLE_WS')")
 	public boolean isOptimitzarTransaccionsNovaConsulta();
 
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_REPORT')")

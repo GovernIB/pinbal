@@ -50,7 +50,6 @@ public class DtoMappingHelper {
 		// Mapeig d'entitats
 		mapperFactory.registerClassMap(ClassMapBuilder.map(Entitat.class, EntitatDto.class).byDefault().toClassMap());
 		mapperFactory.getConverterFactory().registerConverter(new CustomConverter<EntitatUsuari, EntitatUsuariDto>() {
-
 			public EntitatUsuariDto convert(EntitatUsuari source, Type<? extends EntitatUsuariDto> destinationClass) {
 				EntitatUsuariDto dto = new EntitatUsuariDto(
 						new UsuariDto(
@@ -68,7 +67,6 @@ public class DtoMappingHelper {
 						source.isAplicacio());
 				return dto;
 			}
-
 		});
 		// Mapeig de procediments
 		mapperFactory.registerClassMap(
@@ -87,29 +85,29 @@ public class DtoMappingHelper {
 				field("createdDate", "creacioData").
 				field("funcionariDocumentNum", "funcionariNif").
 				field("pare.id", "pareId").
+				exclude("dadesEspecifiques").
 				byDefault().toClassMap());
 		// Mapeig d'informes d'usuaris
 		mapperFactory.registerClassMap(
-				ClassMapBuilder.map(EntitatUsuari.class, InformeUsuariDto.class).field("usuari.codi", "codi").field(
-						"usuari.nif",
-						"nif").field("usuari.nom", "nom").field("departament", "departament").field(
-								"entitat",
-								"entitat").byDefault().toClassMap());
+				ClassMapBuilder.map(EntitatUsuari.class, InformeUsuariDto.class).
+				field("usuari.codi", "codi").
+				field("usuari.nif", "nif").
+				field("usuari.nom", "nom").
+				field("departament", "departament").
+				field("entitat", "entitat").byDefault().toClassMap());
 		mapperFactory.getConverterFactory().registerConverter(new CustomConverter<DateTime, Date>() {
-
 			public Date convert(DateTime source, Type<? extends Date> destinationClass) {
 				return source.toDate();
 			}
-
 		});
 		// Mapeig de camps de serveis
 		mapperFactory.registerClassMap(
 				ClassMapBuilder.map(ServeiCamp.class, ServeiCampDto.class).byDefault().toClassMap());
 		// Mapeig de camps de organismes cessionaris
 		mapperFactory.registerClassMap(
-				ClassMapBuilder.map(ClauPrivada.class, ClauPrivadaDto.class).field(
-						"organisme.id",
-						"organisme").byDefault().toClassMap());
+				ClassMapBuilder.map(ClauPrivada.class, ClauPrivadaDto.class).
+				field("organisme.id", "organisme").
+				byDefault().toClassMap());
 		mapperFactory.build();
 	}
 

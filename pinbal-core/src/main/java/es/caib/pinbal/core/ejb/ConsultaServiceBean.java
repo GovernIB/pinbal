@@ -367,6 +367,11 @@ public class ConsultaServiceBean implements ConsultaService {
 	}
 
 	@Override
+	public void autoEnviarPeticionsPendents() {
+		delegate.autoEnviarPeticionsPendents();
+	}
+
+	@Override
 	@RolesAllowed("tothom")
 	public boolean isOptimitzarTransaccionsNovaConsulta() {
 		return delegate.isOptimitzarTransaccionsNovaConsulta();
