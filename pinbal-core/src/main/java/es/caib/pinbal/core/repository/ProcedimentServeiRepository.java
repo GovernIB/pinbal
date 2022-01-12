@@ -142,9 +142,9 @@ public interface ProcedimentServeiRepository extends JpaRepository<ProcedimentSe
 			"    ps.procediment.actiu = true " +
 			"  and ps.actiu = true" +
 			"  and ps.procediment.entitat.id = :entitatId" + 
-			"  and :esNullFiltreOrganGestorId = true or ps.procediment.organGestor.id = :filtreOrganGestorId" +
-			"  and :esNullFiltreProcedimentId = true or ps.procediment.id = :filtreProcedimentId" +
-			"  and :esNullFiltreServeiCodi = true or lower(ps.serveiScsp.codi) = lower(:filtreServeiCodi)")
+			"  and (:esNullFiltreOrganGestorId = true or ps.procediment.organGestor.id = :filtreOrganGestorId)" +
+			"  and (:esNullFiltreProcedimentId = true or ps.procediment.id = :filtreProcedimentId)" +
+			"  and (:esNullFiltreServeiCodi = true or lower(ps.serveiScsp.codi) = lower(:filtreServeiCodi))")
 	public List<ProcedimentServei> findAllActiusAmbFiltre(
 			@Param("entitatId") Long entitatId,
 			@Param("esNullFiltreOrganGestorId") boolean esNullFiltreOrganGestorId,

@@ -2100,7 +2100,9 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 			
 			for (String usuariAmbPermis: usuarisAmbPermis) {
 				EntitatUsuari entitatUsuari = entitatUsuariRepository.findByEntitatIdAndUsuariCodi(procedimentServei.getProcediment().getEntitat().getId(), usuariAmbPermis);
-				resposta.add(toInformeProcedimentServeiDto(procedimentServei, entitatUsuari));	
+				if (entitatUsuari != null) {
+					resposta.add(toInformeProcedimentServeiDto(procedimentServei, entitatUsuari));	
+				}
 			}
 		}
 		
