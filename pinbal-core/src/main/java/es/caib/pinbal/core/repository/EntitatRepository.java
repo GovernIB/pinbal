@@ -28,7 +28,11 @@ public interface EntitatRepository extends JpaRepository<Entitat, Long> {
 
 	Entitat findByCif(String cif);
 	
-	Entitat findTopByTipusOrderByTipusAsc(EntitatTipus tipus);
+	@Query(	"from " +
+			"    Entitat e " +
+			"where (e.tipus = :tipus)" +
+			" order by tipus asc")
+	List<Entitat> findByTipusOrderByTipusAsc(@Param("tipus") EntitatTipus tipus);
 
 	@Query(	"select " +
 			"    eu " +

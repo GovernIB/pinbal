@@ -173,7 +173,7 @@ public class EntitatServiceImpl implements EntitatService, ApplicationContextAwa
 	public EntitatDto findTopByTipus(EntitatTipusDto tipus) {
 		log.debug("Consulta de l'entitat (tipus=" + tipus + ")");
 		return dtoMappingHelper.getMapperFacade().map(
-				entitatRepository.findTopByTipusOrderByTipusAsc(dtoMappingHelper.getMapperFacade().map(tipus, EntitatTipus.class)),
+				entitatRepository.findByTipusOrderByTipusAsc(dtoMappingHelper.getMapperFacade().map(tipus, EntitatTipus.class)).get(0),
 				EntitatDto.class);
 	}
 
