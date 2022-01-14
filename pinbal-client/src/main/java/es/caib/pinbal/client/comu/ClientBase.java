@@ -22,6 +22,7 @@ import org.slf4j.LoggerFactory;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientHandler;
@@ -289,6 +290,8 @@ public abstract class ClientBase {
 		mapper.enable(DeserializationFeature.READ_ENUMS_USING_TO_STRING);
 		// Per a no serialitzar propietats amb valors NULL
 		mapper.setSerializationInclusion(Include.NON_NULL);
+		
+		mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
 	}
 
 	public void enableLogginFilter() {
