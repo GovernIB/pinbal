@@ -2,7 +2,7 @@
 -- Update Database Script
 -- *********************************************************************
 -- Change Log: db/changelog/db.changelog-master.yaml
--- Ran at: 24/05/21 12:03
+-- Ran at: 14/07/21 11:21
 -- Against: null@offline:oracle?changeLogFile=liquibase/databasechangelog.csv
 -- Liquibase version: 4.3.3
 -- *********************************************************************
@@ -963,7 +963,7 @@ INSERT INTO core_parametro_configuracion(nombre, valor, descripcion) VALUES ('pe
 
 INSERT INTO core_parametro_configuracion(nombre, valor, descripcion) VALUES ('tipoId','long','Longitud del identificador de la petición');
 
-INSERT INTO core_parametro_configuracion(nombre, valor, descripcion) VALUES ('prefijo.idpeticion','pbl','Prefijo utilizado para la generación del identificador de la petición');
+INSERT INTO core_parametro_configuracion(nombre, valor, descripcion) VALUES ('prefijo.idpeticion','PBL','Prefijo utilizado para la generación del identificador de la petición');
 
 INSERT INTO core_parametro_configuracion(nombre, valor, descripcion) VALUES ('prefijo.idtransmision','em1','Cuando no haya indicado un prefijo asociado al servicio y este si está definido se utilizará este para la generación del id de transmisión.');
 

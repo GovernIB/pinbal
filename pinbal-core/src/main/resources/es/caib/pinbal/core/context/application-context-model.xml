@@ -92,6 +92,7 @@
 		<task:scheduled ref="consultaServiceImpl" method="autoGenerarJustificantsPendents" fixed-rate="${config:es.caib.pinbal.tasca.auto.justificant.repeticio:60000}"/>
 		<task:scheduled ref="consultaServiceImpl" method="autoTancarExpedientsPendents" cron="${config:es.caib.pinbal.tasca.auto.exp.tancar.cron:0 0 2 * * ?}"/>
 		<task:scheduled ref="consultaServiceImpl" method="autoGenerarEmailReportEstat" cron="${config:es.caib.pinbal.tasca.auto.email.report.estat.cron}"/>
+		<task:scheduled ref="consultaServiceImpl" method="autoEnviarPeticionsPendents" fixed-rate="10000"/>
 	</task:scheduled-tasks>
 
 	<!-- Context llibreries SCSP -->
@@ -104,12 +105,12 @@
 		<constructor-arg ref="aclCache" />
 		<!-- Oracle -->
 		<property name="sidIdentityQuery">
-            <value>SELECT ACL_SID_SEQ.CURRVAL FROM DUAL</value>
-        </property>
-        <property name="classIdentityQuery">
-            <value>SELECT ACL_CLASS_SEQ.CURRVAL FROM DUAL</value>
-        </property>
-        <!-- Postgres -->
+			<value>SELECT ACL_SID_SEQ.CURRVAL FROM DUAL</value>
+		</property>
+		<property name="classIdentityQuery">
+			<value>SELECT ACL_CLASS_SEQ.CURRVAL FROM DUAL</value>
+		</property>
+		<!-- Postgres -->
 		<!--property name="classIdentityQuery">
 			<value>currval(pg_get_serial_sequence('acl_class', 'id'))</value>
 		<property name="sidIdentityQuery">

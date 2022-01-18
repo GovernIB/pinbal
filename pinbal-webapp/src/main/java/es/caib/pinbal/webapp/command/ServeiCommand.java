@@ -108,6 +108,7 @@ public class ServeiCommand {
 	private boolean pinbalDocumentObligatori = true;
 	private boolean pinbalComprovarDocument = true;
 	private boolean activaGestioXsd = false;
+	private Integer maxPeticionsMinut;
 
 	private boolean creacio;
 	

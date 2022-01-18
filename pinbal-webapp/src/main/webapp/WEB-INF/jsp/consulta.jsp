@@ -33,7 +33,7 @@
 	<script src="<c:url value="/webjars/datatables-plugins/1.10.20/dataRender/datetime.js"/>"></script>
 	<script src="<c:url value="/webjars/momentjs/2.24.0/min/moment.min.js"/>"></script>
 	<script src="<c:url value="/js/webutil.datatable.js"/>"></script>
-    <script src="<c:url value="/js/webutil.common.js"/>"></script>
+	<script src="<c:url value="/js/webutil.common.js"/>"></script>
 
 <style>
 table.dataTable tbody > tr.selected, table.dataTable tbody > tr > .selected {
@@ -134,7 +134,7 @@ $(document).ready(function() {
 		
 		var accioInput = $("<input>")
 		.attr("type", "hidden")
-        .attr("name", "accio").val("netejar");
+		.attr("name", "accio").val("netejar");
 		$('#form-filtre').append(accioInput);
 	
 		$('#form-filtre').submit();
@@ -146,16 +146,16 @@ $(document).ready(function() {
 		else
 			targetUrl = '<c:url value="consulta/serveisPermesosPerProcediment"/>';
 		$.ajax({
-		    url:targetUrl,
-		    type:'GET',
-		    dataType: 'json',
-		    success: function(json) {
-		    	$('#select-servei').empty();
-	        	$('#select-servei').append($('<option value="">').text('<spring:message code="consulta.list.filtre.servei"/>:'));
-		        $.each(json, function(i, value) {
-		            $('#select-servei').append($('<option>').text(value.descripcio).attr('value', value.codi));
-		        });
-		    }
+			url:targetUrl,
+			type:'GET',
+			dataType: 'json',
+			success: function(json) {
+				$('#select-servei').empty();
+				$('#select-servei').append($('<option value="">').text('<spring:message code="consulta.list.filtre.servei"/>:'));
+				$.each(json, function(i, value) {
+					$('#select-servei').append($('<option>').text(value.descripcio).attr('value', value.codi));
+				});
+			}
 		});
 	});
 	$('.justificant-reintentar').click(function() {
@@ -163,14 +163,14 @@ $(document).ready(function() {
 		setTimeout(function(){$link.attr('href', '#')}, 100);
 	});
 
-    $('#table-consultes').DataTable({
-    	autoWidth: false,
+	$('#table-consultes').DataTable({
+		autoWidth: false,
 		processing: true,
 		serverSide: true,
 		"order": [[ 1, "desc" ]],
 		language: {
-            "url": '<c:url value="/js/datatable-language.json"/>'
-        },
+			"url": '<c:url value="/js/datatable-language.json"/>'
+		},
 		ajax: '<c:url value="/consulta/datatable/"/>',
 		columnDefs: [
 			{
@@ -201,9 +201,9 @@ $(document).ready(function() {
 						if (row.estat=='Error') {
 							row['icon-status'] = '<i class="fas fa-exclamation-triangle" title="' + row.error + '"></i>';
 						} else if(row.estat=='Pendent') {
-							row['icon-status'] = '<i class="fas fa-bookmark"></i>';
+							row['icon-status'] = '<i class="far fa-clock"></i>';
 						} else if(row.estat=='Processant') {
-							row['icon-status'] = '<i class="fas fa-hourglass-half"></i>';
+							row['icon-status'] = '<i class="fa fa-cogs"></i>';
 						} else {
 							row['icon-status'] = '<i class="fa fa-check"></i>';
 						}
@@ -239,7 +239,7 @@ $(document).ready(function() {
 				targets: [9, 10, 11],
 				visible: false
 			}
-	   ]
+		]
 	});
 });
 </script>
