@@ -27,6 +27,7 @@ import org.hibernate.annotations.Formula;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import es.caib.pinbal.core.audit.PinbalAuditable;
+import es.caib.pinbal.core.dto.ConsultaDto.Consentiment;
 
 /**
  * Classe de model de dades que conté la informació d'una consulta.
@@ -49,7 +50,8 @@ public class Consulta extends PinbalAuditable<Long> {
 		Pendent, // 0
 		Processant, // 1
 		Tramitada, // 2
-		Error // 3
+		Error, // 3
+		Encua // 4
 	}
 	public enum JustificantEstat {
 		PENDENT, // 0 - Hi ha justificant però encara no s'ha pogut generar/custodiar
@@ -85,6 +87,15 @@ public class Consulta extends PinbalAuditable<Long> {
 	private String titularLlinatge2;
 	@Column(name = "titular_nomcomplet", length = 122)
 	private String titularNomComplet;
+
+	@Column(name = "finalitat", length = 250)
+	private String finalitat;
+	@Column(name = "consentiment")
+	private Consentiment consentiment;
+	@Column(name = "expedient_id", length = 25)
+	private String expedientId;
+	@Column(name = "dades_especifiques", length = 2048)
+	private String dadesEspecifiques;
 
 	@Column(name = "estat", nullable = false)
 	private EstatTipus estat;
@@ -201,6 +212,9 @@ public class Consulta extends PinbalAuditable<Long> {
 			String titularNomComplet,
 			String departamentNom,
 			ProcedimentServei procedimentServei,
+			String finalitat,
+			Consentiment consentiment,
+			String expedientId,
 			boolean recobriment,
 			boolean multiple,
 			Consulta pare) {
@@ -216,6 +230,9 @@ public class Consulta extends PinbalAuditable<Long> {
 				titularNomComplet,
 				departamentNom,
 				procedimentServei,
+				finalitat,
+				consentiment,
+				expedientId,
 				recobriment,
 				multiple,
 				pare);
@@ -247,6 +264,18 @@ public class Consulta extends PinbalAuditable<Long> {
 	}
 	public ProcedimentServei getProcedimentServei() {
 		return procedimentServei;
+	}
+	public String getFinalitat() {
+		return finalitat;
+	}
+	public Consentiment getConsentiment() {
+		return consentiment;
+	}
+	public String getExpedientId() {
+		return expedientId;
+	}
+	public String getDadesEspecifiques() {
+		return dadesEspecifiques;
 	}
 	public EstatTipus getEstat() {
 		return estat;
@@ -364,6 +393,9 @@ public class Consulta extends PinbalAuditable<Long> {
 	public void updateArxiuExpedientTancat(boolean arxiuExpedientTancat) {
 		this.arxiuExpedientTancat = arxiuExpedientTancat;
 	}
+	public void updateDadesEspecifiques(String dadesEspecifiques) {
+		this.dadesEspecifiques = dadesEspecifiques;
+	}
 
 	/**
 	 * La classe Builder emprada per a crear nous objectes de tipus Entitat.
@@ -415,6 +447,9 @@ public class Consulta extends PinbalAuditable<Long> {
 				String titularNomComplet,
 				String departamentNom,
 				ProcedimentServei procedimentServei,
+				String finalitat,
+				Consentiment consentiment,
+				String expedientId,
 				boolean recobriment,
 				boolean multiple,
 				Consulta pare) {
@@ -431,6 +466,9 @@ public class Consulta extends PinbalAuditable<Long> {
 			built.titularLlinatge2 = titularLlinatge2;
 			built.titularNomComplet = titularNomComplet;
 			built.procedimentServei = procedimentServei;
+			built.finalitat = finalitat;
+			built.consentiment = consentiment;
+			built.expedientId = expedientId;
 			built.recobriment = recobriment;
 			built.multiple = multiple;
 			built.pare = pare;

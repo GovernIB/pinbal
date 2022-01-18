@@ -163,7 +163,7 @@ body {
 									</ul>
 								</c:when>
 								<c:otherwise>
-									<c:if test="${not empty rolActual}"><span class="fa fa-id-card-o"></span>&nbsp;<spring:message code="decorator.menu.rol.${rolActual}"/></c:if>
+									<c:if test="${not empty rolActual}"><span class="far fa-id-card"></span>&nbsp;<spring:message code="decorator.menu.rol.${rolActual}"/></c:if>
 								</c:otherwise>
 							</c:choose>
 						</li>
