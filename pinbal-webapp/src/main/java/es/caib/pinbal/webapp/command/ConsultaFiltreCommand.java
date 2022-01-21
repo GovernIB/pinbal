@@ -34,8 +34,7 @@ public class ConsultaFiltreCommand {
 	private String funcionariNom;
 	private String funcionariDocument;
 	private Long entitatId;
-	
-	
+
 	public ConsultaFiltreCommand() {
 		super();
 	}
@@ -46,13 +45,13 @@ public class ConsultaFiltreCommand {
 		this.dataInici = dateStartToday.minusMonths(3).toDate();
 		this.entitatId = entitatId;
 	}
-	
+
 	// Filtra per defecte els darrers 3 mesos (per a consultes simples i multiples del delegat)
 	public void filtrarDarrers3MesosPerDefecte() {
 		DateTime dateStartToday = (new LocalDate()).toDateTimeAtStartOfDay();
 		this.dataInici = dateStartToday.minusMonths(3).toDate();
 	}
-	
+
 	public static ConsultaFiltreDto asDto(ConsultaFiltreCommand command) {
 		if (command == null)
 			return null;

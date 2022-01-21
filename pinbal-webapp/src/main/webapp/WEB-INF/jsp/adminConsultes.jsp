@@ -45,20 +45,20 @@
 			<div class="row">
 				<div class="col-md-3">
 					<pbl:inputSelect name="entitatId" inline="true" placeholderKey="admin.consulta.list.filtre.entitat" 
-		 						 	optionItems="${entitats}"   
-			 						optionValueAttribute="id"
-			 						optionTextAttribute="nom" 
+								 	optionItems="${entitats}"
+									optionValueAttribute="id"
+									optionTextAttribute="nom"
 									emptyOption="true"
 									optionMinimumResultsForSearch="0"/>
 				</div>
 				<div class="col-md-3">
 					<pbl:inputText name="scspPeticionId" inline="true" placeholderKey="admin.consulta.list.filtre.peticion.id"/>
-				</div>					
+				</div>
 				<div class="col-md-3">
 						 <pbl:inputSelect name="procediment" inline="true" placeholderKey="admin.consulta.list.filtre.procediment" 
-		 						 	optionItems="${procediments}"   
-			 						optionValueAttribute="id"
-			 						optionTextAttribute="nomAmbCodi" 
+								 	optionItems="${procediments}"
+									optionValueAttribute="id"
+									optionTextAttribute="nomAmbCodi"
 									emptyOption="true"
 									optionMinimumResultsForSearch="0"/>
 				</div>
@@ -66,28 +66,28 @@
 					<pbl:inputSelect name="servei" inline="true" placeholderKey="admin.consulta.list.filtre.servei"
 									optionItems="${serveis}"
 									optionValueAttribute="codi"
-					 				optionTextAttribute="descripcioAmbCodi" 
+					 				optionTextAttribute="descripcioAmbCodi"
 									emptyOption="true"
 									optionMinimumResultsForSearch="0"/>
-				</div>		
-			</div>				
+				</div>
+			</div>
 			<div class="row">
 				<div class="col-md-3">
-					<pbl:inputSelect name="estat" inline="true" 
+					<pbl:inputSelect name="estat" inline="true"
 									placeholderKey="admin.consulta.list.filtre.estat"
 									optionItems="${consultaEstats}"
 									emptyOption="true"/>
 				</div>	
-				<div class="col-md-3" >
+				<div class="col-md-3">
 					<div class="row">
-						<div class="col-md-6" >
+						<div class="col-md-6">
 							<pbl:inputDate name="dataInici" inline="true" placeholderKey="auditor.list.filtre.data.inici"/>
 						</div>		
-						<div class="col-md-6" >
+						<div class="col-md-6">
 							<pbl:inputDate name="dataFi" inline="true" placeholderKey="auditor.list.filtre.data.fi"/>
-						</div>		
-					</div>		
-				</div>		
+						</div>
+					</div>
+				</div>
 				<div class="col-md-3">
 					<pbl:inputText name="funcionariNom" inline="true" placeholderKey="admin.consulta.list.filtre.funcionari.nom"/>
 				</div>		
@@ -104,9 +104,7 @@
 				</div>
 			</div>
 		</form:form>
-
 		<div class="clearfix"></div>
-		
 		<table id="table-consultes" class="table table-striped table-bordered" style="width: 100%">
 			<thead>
 				<tr>
@@ -123,14 +121,13 @@
 				</tr>
 			</thead>
 		</table>
-		<script type="text/javascript">
-			function onInvokeAction(id) {
-				setExportToLimit(id, '');
-				createHiddenInputFieldsForLimitAndSubmit(id);
-			}
-		</script>
-
-	<script>
+<script type="text/javascript">
+	function onInvokeAction(id) {
+		setExportToLimit(id, '');
+		createHiddenInputFieldsForLimitAndSubmit(id);
+	}
+</script>
+<script>
 	$(document).ready(function() {
 		$('#netejar-filtre').click(function() {
 			$(':input', $('#form-filtre')).each (function() {
@@ -142,24 +139,22 @@
 				else if (tag == 'select')
 					this.selectedIndex = 0;
 			});
-			
 			var accioInput = $("<input>")
 				.attr("type", "hidden")
-	            .attr("name", "accio").val("netejar");
+				.attr("name", "accio").val("netejar");
 			$('#form-filtre').append(accioInput);
 			
 			$('#form-filtre').submit();
 		});
 		$("#select-entitat").select2();
-		
-	    $('#table-consultes').DataTable({
-	    	autoWidth: false,
+		$('#table-consultes').DataTable({
+			autoWidth: false,
 			processing: true,
 			serverSide: true,
 			"order": [[ 1, "desc" ]],
 			language: {
-	            "url": '<c:url value="/js/datatable-language.json"/>'
-	        },
+				"url": '<c:url value="/js/datatable-language.json"/>'
+			},
 			ajax: '<c:url value="/admin/consulta/datatable/"/>',
 			columnDefs: [
 				{
@@ -174,7 +169,7 @@
 					targets: [1],
 					width: "10%",
 					render: $.fn.dataTable.render.moment('x', 'DD/MM/YYYY HH:mm:ss', 'es' )
-				},				
+				},
 				{
 					targets: [6],
 					orderable: false,
@@ -184,20 +179,16 @@
 							row['icon-status'] = '';
 							if (row.estat=='Error'){
 								row['icon-status'] = '<i class="fas fa-exclamation-triangle" title="' + row.error + '"></i>';
-
 							}else if(row.estat=='Pendent'){
 								row['icon-status'] = '<i class="fas fa-bookmark"></i>';
-
 							}else if(row.estat=='Processant'){
 								row['icon-status'] = '<i class="fas fa-hourglass-half"></i>';
-
 							}else{
 								row['icon-status'] = '<i class="fa fa-check"></i>';
 							}
 							return Mustache.render(template, row);
 					}
-				}, 
-				{
+				}, {
 					targets: [7],
 					orderable: false,
 					width: "1%",
@@ -210,28 +201,23 @@
 					targets: [3, 5],
 					orderable: false,
 				},
-		   ],
-		   initComplete: function( settings, json ) {
-
+			],
+			initComplete: function( settings, json ) {
 			}
 		});
 	});
 </script>
-
 <script id="template-id-peticion" type="x-tmpl-mustache">
 {{scspPeticionId}}
 {{#recobriment}}
 	<span class="badge">R</span>
 {{/recobriment}}
 </script>
-
 <script id="template-estat" type="x-tmpl-mustache">
 	{{{ icon-status }}} {{ estat }}
 </script>
-
 <script id="template-details" type="x-tmpl-mustache">
 <a href="consulta/{{ id }}" class="btn btn-default"><i class="fas fa-search-plus"></i>&nbsp;<spring:message code="admin.consulta.list.taula.detalls"/></a>
 </script>
-
 </body>
 </html>

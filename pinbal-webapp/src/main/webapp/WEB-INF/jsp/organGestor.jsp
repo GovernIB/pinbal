@@ -3,6 +3,11 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
+<%
+pageContext.setAttribute(
+		"isRolActualAdministrador",
+		es.caib.pinbal.webapp.common.RolHelper.isRolActualAdministrador(request));
+%>
 <html>
 <head>
 	<title><spring:message code="organgestor.list.titol"/></title>
@@ -24,41 +29,55 @@
 	<script src="<c:url value="/js/webutil.datatable.js"/>"></script>
 </head>
 <body>
-
 	<div class="text-right" data-toggle="botons-titol">
 		<a id="organgestor-boto-nou" class="btn btn-default" href="organgestor/sync/dir3">
 			<i class="fas fa-sync"></i> &nbsp; <spring:message code="organgestor.list.boto.actualitzar"/>
 		</a>
 	</div>
-	
-
 	<c:url value="/organgestor" var="formAction"/>
 	<form:form id="form-filtre" action="${formAction}" method="post" cssClass="well form-filtre-table" commandName="organGestorFiltreCommand">
-
-		<div class="row">		
-			<div class="col-md-3" >
-				<pbl:inputText name="codi" inline="true" placeholderKey="organgestor.list.filtre.camp.codi"/>
-			</div>						
-			<div class="col-md-4">
-				<pbl:inputText name="nom" inline="true" placeholderKey="organgestor.list.filtre.camp.nom"/>
-			</div>
-			<div class="col-md-3">
-				<pbl:inputSelect name="estat"  inline="true" placeholderKey="organgestor.list.filtre.camp.estat" optionEnum="OrganGestorEstatEnumDto"  emptyOption="true"/>
-			</div>	
-
+		<div class="row">
+			<c:choose>
+				<c:when test="${isRolActualAdministrador}">
+					<div class="col-md-2">
+						<pbl:inputSelect name="entitatId" inline="true" placeholderKey="organgestor.list.filtre.camp.entitat" 
+									 	optionItems="${entitats}"
+										optionValueAttribute="id"
+										optionTextAttribute="nom"
+										emptyOption="false"
+										optionMinimumResultsForSearch="0"/>
+					</div>
+					<div class="col-md-2" >
+						<pbl:inputText name="codi" inline="true" placeholderKey="organgestor.list.filtre.camp.codi"/>
+					</div>
+					<div class="col-md-3">
+						<pbl:inputText name="nom" inline="true" placeholderKey="organgestor.list.filtre.camp.nom"/>
+					</div>
+					<div class="col-md-3">
+						<pbl:inputSelect name="estat"  inline="true" placeholderKey="organgestor.list.filtre.camp.estat" optionEnum="OrganGestorEstatEnumDto"  emptyOption="true"/>
+					</div>
+				</c:when>
+				<c:otherwise>
+					<div class="col-md-3" >
+						<pbl:inputText name="codi" inline="true" placeholderKey="organgestor.list.filtre.camp.codi"/>
+					</div>
+					<div class="col-md-4">
+						<pbl:inputText name="nom" inline="true" placeholderKey="organgestor.list.filtre.camp.nom"/>
+					</div>
+					<div class="col-md-3">
+						<pbl:inputSelect name="estat"  inline="true" placeholderKey="organgestor.list.filtre.camp.estat" optionEnum="OrganGestorEstatEnumDto"  emptyOption="true"/>
+					</div>
+				</c:otherwise>
+			</c:choose>
 			<div class="col-md-2 pull-right">
 				<div class="pull-right">
 					<button id="netejar-filtre" class="btn btn-default" type="button"><spring:message code="comu.boto.netejar"/></button>
 					<button type="submit" class="btn btn-primary"><span class="fa fa-filter"></span> <spring:message code="comu.boto.filtrar"/></button>
-				</div>				
-			</div>	
-		</div>	
+				</div>
+			</div>
+		</div>
 	</form:form>
-
-
-
-	<table id="table-organs" 
-			class="table table-striped table-bordered" style="width:100%">
+	<table id="table-organs" class="table table-striped table-bordered" style="width:100%">
 		<thead>
 			<tr>
 				<th data-data="actiu"><spring:message code="organgestor.list.columna.codi"/></th>
@@ -67,35 +86,31 @@
 			</tr>
 		</thead>
 	</table>
-	
-	<script type="text/javascript">
+<script type="text/javascript">
 	$(document).ready(function() {
-		
-	    $('#table-organs').DataTable({
-	    	autoWidth: false,
+		$('#table-organs').DataTable({
+			autoWidth: false,
 			processing: true,
 			serverSide: true,
 			"order": [[ 1, "asc" ]],
 			language: {
-	            "url": "js/datatable-language.json"
-	        },
+				"url": "js/datatable-language.json"
+			},
 			ajax: "organgestor/datatable",
 			columnDefs: [
-				{ 
-		            targets: [0],
+				{
+					targets: [0],
 					orderable: false,
 					visible: false
-		        },
-				{
+				}, {
 					targets: [1],
 					render: function (data, type, row, meta) {
 							var template = $('#template-activa').html();
 							return Mustache.render(template, row);
 					}
-				}				
+				}
 			]
 		});
-
 		$('#netejar-filtre').click(function() {
 			$(':input', $('#form-filtre')).each (function() {
 				var type = this.type, tag = this.tagName.toLowerCase();
@@ -106,20 +121,16 @@
 				else if (tag == 'select')
 					this.selectedIndex = 0;
 			});
-		    $('#estat').val('VIGENT').change();
+			$('#estat').val('VIGENT').change();
 			$('#form-filtre').submit();
 		});
-
-		
 	});
-	</script>
-	
+</script>
 <script id="template-activa" type="x-tmpl-mustache">
 	{{codi}}
 	{{^actiu}}
 		<span class="fa fa-exclamation-triangle text-danger pull-right" style="margin-top: 3px;" title="<spring:message code="organgestor.list.extingit"/>"></span>
 	{{/actiu}}
 </script>
-	
 </body>
 </html>

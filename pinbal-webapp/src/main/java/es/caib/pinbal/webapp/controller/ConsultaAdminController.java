@@ -106,16 +106,16 @@ public class ConsultaAdminController extends BaseController {
 	}
 	@RequestMapping(value = "/datatable", produces="application/json", method = RequestMethod.GET)
 	@ResponseBody
-	public ServerSideResponse<ConsultaDto, Long> datatable(HttpServletRequest request, Model model)
-	      throws IllegalAccessException, InvocationTargetException, NoSuchMethodException, NamingException,
-	      SQLException, EntitatNotFoundException {
+	public ServerSideResponse<ConsultaDto, Long> datatable(
+			HttpServletRequest request,
+			Model model)throws IllegalAccessException, InvocationTargetException, NoSuchMethodException, NamingException, SQLException, EntitatNotFoundException {
 		ServerSideRequest serverSideRequest = new ServerSideRequest(request);
-		
 		ConsultaFiltreCommand command = (ConsultaFiltreCommand)RequestSessionHelper.obtenirObjecteSessio(
 				request,
 				SESSION_ATTRIBUTE_FILTRE);
-		if (command == null)
+		if (command == null) {
 			command = new ConsultaFiltreCommand(entitatService.findTopByTipus(EntitatTipusDto.GOVERN).getId());
+		}
 		List<ServerSideColumn> cols = serverSideRequest.getColumns();
 		cols.get(1).setData("createdDate");
 		cols.get(2).setData("createdBy.nom");
@@ -205,9 +205,9 @@ public class ConsultaAdminController extends BaseController {
 
 	@InitBinder
 	public void initBinder(WebDataBinder binder) {
-	    SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
-	    dateFormat.setLenient(false);
-	    binder.registerCustomEditor(Date.class, new CustomDateEditor(dateFormat, true));
+		SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+		dateFormat.setLenient(false);
+		binder.registerCustomEditor(Date.class, new CustomDateEditor(dateFormat, true));
 	}
 
 
