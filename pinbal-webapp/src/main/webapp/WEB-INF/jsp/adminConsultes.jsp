@@ -48,7 +48,7 @@
 								 	optionItems="${entitats}"
 									optionValueAttribute="id"
 									optionTextAttribute="nom"
-									emptyOption="true"
+									emptyOption="false"
 									optionMinimumResultsForSearch="0"/>
 				</div>
 				<div class="col-md-3">
@@ -118,6 +118,7 @@
 					<th data-data="id"></th>
 					<th data-data="error" data-visible="false"></th>
 					<th data-data="recobriment" data-visible="false"></th>
+					<th data-data="multiple" data-visible="false"></th>
 				</tr>
 			</thead>
 		</table>
@@ -210,8 +211,11 @@
 <script id="template-id-peticion" type="x-tmpl-mustache">
 {{scspPeticionId}}
 {{#recobriment}}
-	<span class="badge">R</span>
+	<span class="badge" title="<spring:message code="admin.consulta.list.recobriment"/>">R</span>
 {{/recobriment}}
+{{#multiple}}
+	<span class="badge" title="<spring:message code="admin.consulta.list.multiple"/>">M</span>
+{{/multiple}}
 </script>
 <script id="template-estat" type="x-tmpl-mustache">
 	{{{ icon-status }}} {{ estat }}

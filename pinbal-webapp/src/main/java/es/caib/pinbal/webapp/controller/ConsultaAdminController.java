@@ -84,7 +84,6 @@ public class ConsultaAdminController extends BaseController {
 			BindingResult bindingResult,
 			@RequestParam(value = "accio", required = false) String accio,
 			Model model) throws Exception {
-		
 		if ("netejar".equals(accio)) {
 			RequestSessionHelper.esborrarObjecteSessio(
 					request,
@@ -101,9 +100,9 @@ public class ConsultaAdminController extends BaseController {
 				return "redirect:consulta";
 			}
 		}
-		
 		return "redirect:consulta";
 	}
+
 	@RequestMapping(value = "/datatable", produces="application/json", method = RequestMethod.GET)
 	@ResponseBody
 	public ServerSideResponse<ConsultaDto, Long> datatable(
@@ -120,11 +119,9 @@ public class ConsultaAdminController extends BaseController {
 		cols.get(1).setData("createdDate");
 		cols.get(2).setData("createdBy.nom");
 		cols.get(4).setData("procedimentServei.procediment.nom");
-		
 		Page<ConsultaDto> page = consultaService.findByFiltrePaginatPerAdmin(
 				ConsultaFiltreCommand.asDto(command), 
 				serverSideRequest.toPageable());
-
 		cols.get(1).setData("creacioData");
 		cols.get(2).setData("creacioUsuari.nom");
 		cols.get(3).setData("funcionariNomAmbDocument");
@@ -132,6 +129,7 @@ public class ConsultaAdminController extends BaseController {
 		cols.get(5).setData("serveiDescripcio");
 		return new ServerSideResponse<ConsultaDto, Long>(serverSideRequest, page);
 	}
+
 	@RequestMapping(value = "/entitat/seleccionar", method = RequestMethod.POST)
 	public String entitatSeleccionar(
 			HttpServletRequest request,
@@ -255,4 +253,5 @@ public class ConsultaAdminController extends BaseController {
 							serveiService.findAll());
 			}
 	}
+
 }
