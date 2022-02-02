@@ -8,6 +8,12 @@
 			"serveiCampTipus",
 			es.caib.pinbal.core.dto.ServeiCampDto.ServeiCampDtoTipus.values());
 	request.setAttribute(
+			"serveiCampValidacioOperacio",
+			es.caib.pinbal.core.dto.ServeiCampDto.ServeiCampDtoValidacioOperacio.values());
+	request.setAttribute(
+			"serveiCampValidacioDataTipus",
+			es.caib.pinbal.core.dto.ServeiCampDto.ServeiCampDtoValidacioDataTipus.values());
+	request.setAttribute(
 			"llistatDadesEspecifiques",
 			((es.caib.pinbal.core.dto.ArbreDto<?>)request.getAttribute("arbreDadesEspecifiques")).toList());
 %>
@@ -20,7 +26,6 @@
 		<c:otherwise><c:set var="serveiPerTitol" value="${servei.codi}"/></c:otherwise>
 	</c:choose>
 	<meta name="subtitle" content="${serveiPerTitol}"/>
-
 
 	<link href="<c:url value="/webjars/select2/4.0.6-rc.1/dist/css/select2.min.css"/>" rel="stylesheet"/>
 	<link href="<c:url value="/webjars/select2-bootstrap-theme/0.1.0-beta.10/dist/select2-bootstrap.min.css"/>" rel="stylesheet"/>
@@ -69,7 +74,11 @@ function serveiCampAfegir(servei, path) {
 	$('#hidden-form').submit();
 }
 // Modal per editar camps
-function initModalCamp(id, path, tipus, etiqueta, defecte, comentari, dataFormat, campPareId, valorPare, obligatori, modificable, visible) {
+function initModalCamp(
+		id, path, tipus, etiqueta, defecte, comentari, dataFormat,
+		campPareId, valorPare, obligatori, modificable, visible,
+		validacioRegexp, validacioMin, validacioMax, validacioDataCmpOperacio,
+		validacioDataCmpCamp2, validacioDataCmpNombre, validacioDataCmpTipus) {
 	$('#modal-hidden-id').val(id);
 	$('#modal-input-path').val(path);
 	$('#modal-hidden-path').val(path);
@@ -123,6 +132,15 @@ function initModalCamp(id, path, tipus, etiqueta, defecte, comentari, dataFormat
 		$('#modal-checkbox-visible').attr('checked', 'checked');
 	else
 		$('#modal-checkbox-visible').removeAttr('checked');
+	$('#modal-input-val-regexp').val(validacioRegexp);
+	$('#modal-input-val-min').val(validacioMin);
+	$('#modal-input-val-max').val(validacioMax);
+	$('#modal-input-val-datop').val(validacioDataCmpOperacio);
+	$('#modal-input-val-datcamp2').val(validacioDataCmpCamp2);
+	$('#modal-input-val-datcamp3').val(validacioDataCmpCamp2);
+	$('#modal-input-val-datop2').val(validacioDataCmpOperacio);
+	$('#modal-input-val-datnum').val(validacioDataCmpNombre);
+	$('#modal-input-val-dattip').val(validacioDataCmpTipus);
 	$('#modal-select-tipus').change(function() {
 		if ($('#modal-select-tipus').val() == 'DATA') {
 			$('#modal-input-data-format').removeAttr('disabled');
@@ -146,6 +164,16 @@ function initModalCamp(id, path, tipus, etiqueta, defecte, comentari, dataFormat
 			$('#modal-input-etiqueta').removeAttr('disabled');
 			$('#modal-input-defecte').removeAttr('disabled');
 		}
+		showHideValidation();
+	});
+	$('#modal-input-val-datvalcamp').change(function() {
+		showHideValidationData();
+	});
+	$('#modal-input-val-datcamp3').change(function() {
+		$('#modal-input-val-datcamp2').val($('#modal-input-val-datcamp3').val());
+	});
+	$('#modal-input-val-datop2').change(function() {
+		$('#modal-input-val-datop').val($('#modal-input-val-datop2').val());
 	});
 	$('#modal-editar-camp').modal('toggle');
 }
@@ -155,13 +183,56 @@ function initModalPreview(element) {
 // 	$('#modal-form-preview').css('width', '700px');
 	$('#modal-form-preview').modal('toggle');
 }
-
+// Mostrar/ocultar camps validació segons tipus
+function showHideValidation() {
+	const tipus = $('#modal-select-tipus').val();
+	$('#validacio').css('display', 'none');
+	if (tipus == 'TEXT' || tipus == 'NUMERIC' || tipus == 'DATA') {
+		$('#validacio').css('display', 'block');
+	}
+	$('#validacio_tipus_text').css('display', 'none');
+	$('#validacio_tipus_numeric').css('display', 'none');
+	$('#validacio_tipus_data').css('display', 'none');
+	if (tipus == 'TEXT') {
+		$('#validacio_tipus_text').css('display', 'block');
+	} else if (tipus == 'NUMERIC') {
+		$('#validacio_tipus_numeric').css('display', 'block');
+	} else if (tipus == 'DATA') {
+		$('#validacio_tipus_data').css('display', 'block');
+	}
+}
+function showHideValidationData(initValue) {
+	if (initValue) {
+		const datnumVal = $('#modal-input-val-datnum').val();
+		if (datnumVal) {
+			$('#modal-input-val-datvalcamp').val('DIFERENCIA')
+		} else {
+			$('#modal-input-val-datvalcamp').val('VALOR')
+		}
+	}
+	const dataTipus = $('#modal-input-val-datvalcamp').val();
+	$('#validacio_tipus_data_valor').css('display', 'none');
+	$('#validacio_tipus_data_diferencia').css('display', 'none');
+	if (dataTipus == 'VALOR') {
+		$('#validacio_tipus_data_valor').css('display', 'block');
+		$('#modal-input-val-datnum').val('');
+	} else {
+		$('#validacio_tipus_data_diferencia').css('display', 'block');
+	}
+	$("#modal-input-val-datcamp2 > option").each(function() {
+		const currentId = $('#modal-hidden-id').val();
+		$(this).css('display', (currentId == this.value) ? 'none' : 'block');
+	});
+	$("#modal-input-val-datcamp3 > option").each(function() {
+		const currentId = $('#modal-hidden-id').val();
+		$(this).css('display', (currentId == this.value) ? 'none' : 'block');
+	});
+}
 function onInvokeAction(id) {
 	setExportToLimit(id, '');
 	createHiddenInputFieldsForLimitAndSubmit(id);
 }
 $(function() {
-
 	// Canvi d'icones al ocultar/mostrar
 	$('.arbre-node').on('hide.bs.collapse', function (event) {
 		var iconId = '#icon-' + this.id.substring(3);
@@ -187,8 +258,6 @@ $(function() {
 		$('#modal-grup-formform').attr('action', 'campGrup/update');
 		$('#modal-grup-form').modal('toggle');
 	});
-	
-	
 	$('.btn-edit-camp').click(function (event) {
 		initModalCamp($(this).data('id'), 
 					  $(this).data('path'),
@@ -201,10 +270,17 @@ $(function() {
 					  $(this).data('valorPare'),
 					  $(this).data('obligatori'),
 					  $(this).data('modificable'),
-					  $(this).data('visible'))
-
+					  $(this).data('visible'),
+					  $(this).data('validacioRegexp'),
+					  $(this).data('validacioMin'),
+					  $(this).data('validacioMax'),
+					  $(this).data('validacioDataCmpOperacio'),
+					  $(this).data('validacioDataCmpCamp2'),
+					  $(this).data('validacioDataCmpNombre'),
+					  $(this).data('validacioDataCmpTipus'));
+		showHideValidation();
+		showHideValidationData(true);
 	});
-
 });
 </script>
 </head>
@@ -253,7 +329,7 @@ $(function() {
 					</thead>
 					<tbody>
 					<c:forEach items="${camps}" var="camp" varStatus="loopcamps">
-			   			<tr>
+						<tr>
 							<td>
 								<input type="hidden" name="id" value="${ id }"/>
 								<span title="${ camp.path }">${ camp.campNom }</span>
@@ -306,6 +382,13 @@ $(function() {
 								   data-obligatori="${ camp.obligatori }" 
 								   data-modificable="${ camp.modificable }" 
 								   data-visible="${ camp.visible }"
+								   data-validacio-regexp="${ camp.validacioRegexp }"
+								   data-validacio-min="${ camp.validacioMin }"
+								   data-validacio-max="${ camp.validacioMax }"
+								   data-validacio-data-cmp-operacio="${ camp.validacioDataCmpOperacio }"
+								   data-validacio-data-cmp-camp2="${ camp.validacioDataCmpCamp2.id }"
+								   data-validacio-data-cmp-nombre="${ camp.validacioDataCmpNombre }"
+								   data-validacio-data-cmp-tipus="${ camp.validacioDataCmpTipus }"
 								class="btn btn-default btn-edit-camp" title="<spring:message code="servei.camp.taula.accio.modificar"/>">
 									<i class="fas fa-pen"></i>
 								</a>
@@ -324,10 +407,10 @@ $(function() {
 				<div class="well well-sm">
 					<fieldset>
 					 	<legend>${grup.nom}</legend>
-	    			</fieldset>
-	    			<c:choose>
-	    				<c:when test="${not empty campsAgrupats[grup.id]}">
-   							<table id="table-camps" class="table table-striped table-bordered" style="width: 100%">
+					</fieldset>
+					<c:choose>
+						<c:when test="${not empty campsAgrupats[grup.id]}">
+							<table id="table-camps" class="table table-striped table-bordered" style="width: 100%">
 								<thead>
 									<tr>
 									<th data-data="campNom"><spring:message code="servei.camp.taula.columna.nom" /></th>
@@ -339,11 +422,12 @@ $(function() {
 									<th data-data="path" style="width: 1%"></th>
 									<th data-data="id" style="width: 1%"></th>
 									<th data-data="campPare" style="width: 1%"></th>
+									<th data-data="validacioRegexp" style="width: 1%"></th>
 									</tr>
 								</thead>
 								<tbody>
 								<c:forEach items="${campsAgrupats[grup.id]}" var="camp" varStatus="loopcamps">
-						   			<tr>
+									<tr>
 										<td>
 											<input type="hidden" name="id" value="${ id }"/>
 											<span title="${ camp.path }">${ camp.campNom }</span>
@@ -379,24 +463,31 @@ $(function() {
 										</c:if>
 										<td>
 											<a href="#modal-editar-camp" data-nrow="${ loopcamps.index }" 
-											   data-id="${ camp.id }" 
-											   data-path="${ camp.path }" 
-											   data-tipus="${ camp.tipus }" 
-											   data-etiqueta="${ camp.etiqueta }" 
-											   data-valorperdefecte="${ camp.valorPerDefecte }" 
-											   data-comentari="${ camp.comentari }" 
-											   data-dataformat="${ camp.dataFormat }" 
-											   <c:if test="${ not empty camp.campPare }">
-											   data-camppare="${ camp.campPare.id }"
-											   </c:if>
-											   <c:if test="${ empty camp.campPare }">
-											   data-camppare="0"
-											   </c:if>
-											   data-valorpare="${ camp.valorPare }"
-											   data-obligatori="${ camp.obligatori }" 
-											   data-modificable="${ camp.modificable }" 
-											   data-visible="${ camp.visible }"
-											class="btn btn-default btn-edit-camp" title="<spring:message code="servei.camp.taula.accio.modificar"/>">
+												data-id="${ camp.id }" 
+												data-path="${ camp.path }" 
+												data-tipus="${ camp.tipus }" 
+												data-etiqueta="${ camp.etiqueta }" 
+												data-valorperdefecte="${ camp.valorPerDefecte }" 
+												data-comentari="${ camp.comentari }" 
+												data-dataformat="${ camp.dataFormat }" 
+												<c:if test="${ not empty camp.campPare }">
+												data-camppare="${ camp.campPare.id }"
+												</c:if>
+												<c:if test="${ empty camp.campPare }">
+												data-camppare="0"
+												</c:if>
+												data-valorpare="${ camp.valorPare }"
+												data-obligatori="${ camp.obligatori }" 
+												data-modificable="${ camp.modificable }" 
+												data-visible="${ camp.visible }"
+												data-validacio-regexp="${ camp.validacioRegexp }"
+												data-validacio-min="${ camp.validacioMin }"
+												data-validacio-max="${ camp.validacioMax }"
+												data-validacio-data-cmp-operacio="${ camp.validacioDataCmpOperacio }"
+												data-validacio-data-cmp-camp2="${ camp.validacioDataCmpCamp2.id }"
+												data-validacio-data-cmp-nombre="${ camp.validacioDataCmpNombre }"
+												data-validacio-data-cmp-tipus="${ camp.validacioDataCmpTipus }"
+												class="btn btn-default btn-edit-camp" title="<spring:message code="servei.camp.taula.accio.modificar"/>">
 												<i class="fas fa-pen"></i>
 											</a>
 										</td>
@@ -439,140 +530,251 @@ $(function() {
 		<input type="hidden" id="hidden-hidden-path" name="path"/>
 	</form>
 
-<div id="modal-editar-camp" class="modal" tabindex="-1" role="dialog">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-		<div class="modal-header">
-			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-			<h3><spring:message code="servei.camp.titol.modificar"/></h3>
-		</div>
-		<div class="modal-body">
-			<form id="modal-form" action="camp/update" method="post">
-				<input type="hidden" id="modal-hidden-id" name="id"/>
-				<input type="hidden" id="modal-hidden-servei" name="servei" value="${servei.codi}"/>
-				<div class="form-group">
-    				<label for="modal-input-path"><spring:message code="servei.camp.path"/> *</label>
-					<input type="hidden" id="modal-hidden-path" name="path"/>
-					<input type="text" id="modal-input-path" name="path" class="form-control" disabled="disabled"/>
-				</div>
-				<div class="form-group">
-    				<label for="modal-input-tipus"><spring:message code="servei.camp.tipus"/> *</label>
-					<select id="modal-select-tipus" name="tipus" class="form-control">
-						<c:forEach var="tip" items="${serveiCampTipus}">
-							<option value="${tip}"<c:if test="${tip == 'ENUM'}"> id="modal-option-tipus-enum"</c:if>>${tip}</option>
-						</c:forEach>
-					</select>
-				</div>
-				<div class="form-group">
-    				<label for="modal-input-etiqueta"><spring:message code="servei.camp.etiqueta"/></label>
-					<input type="text" id="modal-input-etiqueta" name="etiqueta" class="form-control"/>
-				</div>
-				<div class="form-group">
-    				<label class="control-label" for="modal-input-defecte"><spring:message code="servei.camp.valor.defecte"/></label>
-					<input type="text" id="modal-input-defecte" name="valorPerDefecte" class="form-control"/>
-				</div>
-				<div class="form-group">
-    				<label for="modal-input-comentari"><spring:message code="servei.camp.comentari"/></label>
-					<input type="text" id="modal-input-comentari" name="comentari" class="form-control"/>
-				</div>
-				<div class="form-group">
-					<div class="checkbox-inline" for="modal-checkbox-obligatori">
-						<label>
-						<input type="checkbox" id="modal-checkbox-obligatori" name="obligatori"/>
-						<spring:message code="servei.camp.obligatori"/>
-						</label>
-					</div>
-					<div class="checkbox-inline" for="modal-checkbox-modificable">
-						<label>
-						<input type="checkbox" id="modal-checkbox-modificable" name="modificable"/>
-						<spring:message code="servei.camp.modificable"/>
-						</label>
-					</div>
-					<div class="checkbox-inline" for="modal-checkbox-visible">
-						<label>
-						<input type="checkbox" id="modal-checkbox-visible" name="visible"/>
-						<spring:message code="servei.camp.visible"/>
-						</label>
-					</div>
-				</div>
-				<div id="modal-grup-data" class="form-group">
-    				<label for="modal-input-comentari"><spring:message code="servei.camp.data.format"/></label>
-					<input class="form-control" type="text" id="modal-input-data-format" name="dataFormat" class="input-lg"/>
-					<span class="help-block"><small><spring:message code="servei.camp.data.format.comment"/></small></span>
-				</div>
-				<div id="modal-grup-data" class="form-group">
-    				<label for="modal-input-comentari"><spring:message code="servei.camp.data.camp.pare"/></label>
-					<select class="form-control" id="modal-select-camp-pare" name="campPareId" class="input-lg">
-						<option value=""><spring:message code="comu.opcio.sense.definir"/></option>
-						<c:forEach var="camp" items="${camps}">
-							<option value="${camp.id}">${camp.path}</option>
-						</c:forEach>
-					</select>
-				</div>
-				<div id="modal-grup-data" class="form-group">
-    				<label for="modal-input-comentari"><spring:message code="servei.camp.data.valor.pare"/></label>
-					<input class="form-control" type="text" id="modal-input-valor-pare" name="valorPare" class="input-lg"/>
-				</div>
-				<c:forEach var="camp" items="${campsEnumList}" varStatus="status">
-					<div id="modal-grup-descripcions-${camp.id}" class="form-group grup-descripcions">
-    					<label for="modal-input-descripcions"><spring:message code="servei.camp.descripcions"/></label>
-    					<c:forEach var="valor" items="${valorsEnumList[status.index]}" varStatus="statusValor">
-							<div class="input-group">
-								<span class="input-group-addon">${valor}</span>
-								<input id="modal-input-descripcio-${statusValor.index}" class="form-control" type="text" name="descripcio-${camp.id}"<c:if test="${statusValor.index lt fn:length(camp.enumDescripcions)}"> value="${camp.enumDescripcions[statusValor.index]}"</c:if>/>
-							</div>
-							<c:if test="${not statusValor.last}"><br/></c:if>
-    					</c:forEach>
-					</div>
-				</c:forEach>
-			</form>
-		</div>
-		<div class="modal-footer">
-			<button class="btn btn-default" data-dismiss="modal"><span class="fa fa-arrow-left"></span>&nbsp;<spring:message code="comu.boto.tornar"/></button>
-			<button id="modal-boto-submit" class="btn btn-primary"><spring:message code="comu.boto.guardar"/></button>
-		</div>
-	</div>
-	</div>
-</div>
-<div id="modal-form-preview" class="modal fade" role="dialog">
-	<div class="modal-dialog">
-	    <div class="modal-content">
+	<div id="modal-editar-camp" class="modal" tabindex="-1" role="dialog">
+		<div class="modal-dialog modal-lg" role="document">
+		<div class="modal-content">
 			<div class="modal-header">
 				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-				<h3><spring:message code="servei.camp.titol.previsualitzacio"/></h3>
+				<h3><spring:message code="servei.camp.titol.modificar"/></h3>
 			</div>
-			<div class="modal-body"></div>
+			<div class="modal-body">
+				<form id="modal-form" action="camp/update" method="post">
+					<input type="hidden" id="modal-hidden-id" name="id"/>
+					<input type="hidden" id="modal-hidden-servei" name="servei" value="${servei.codi}"/>
+					<div class="form-group">
+						<label for="modal-input-path"><spring:message code="servei.camp.path"/> *</label>
+						<input type="hidden" id="modal-hidden-path" name="path"/>
+						<input type="text" id="modal-input-path" name="path" class="form-control" disabled="disabled"/>
+					</div>
+					<div class="row">
+						<div class="col-md-6">
+							<div class="form-group">
+								<label for="modal-input-tipus"><spring:message code="servei.camp.tipus"/> *</label>
+								<select id="modal-select-tipus" name="tipus" class="form-control">
+									<c:forEach var="tip" items="${serveiCampTipus}">
+										<option value="${tip}"<c:if test="${tip == 'ENUM'}"> id="modal-option-tipus-enum"</c:if>>${tip}</option>
+									</c:forEach>
+								</select>
+							</div>
+							<div class="form-group">
+								<label for="modal-input-etiqueta"><spring:message code="servei.camp.etiqueta"/></label>
+								<input type="text" id="modal-input-etiqueta" name="etiqueta" class="form-control"/>
+							</div>
+							<div class="form-group">
+								<label class="control-label" for="modal-input-defecte"><spring:message code="servei.camp.valor.defecte"/></label>
+								<input type="text" id="modal-input-defecte" name="valorPerDefecte" class="form-control"/>
+							</div>
+						</div>
+						<div class="col-md-6">
+							<div id="modal-grup-data" class="form-group">
+								<label for="modal-input-comentari"><spring:message code="servei.camp.data.camp.pare"/></label>
+								<select class="form-control" id="modal-select-camp-pare" name="campPareId" class="input-lg">
+									<option value=""><spring:message code="comu.opcio.sense.definir"/></option>
+									<c:forEach var="camp" items="${camps}">
+										<option value="${camp.id}">${camp.path}</option>
+									</c:forEach>
+								</select>
+							</div>
+							<div id="modal-grup-data" class="form-group">
+								<label for="modal-input-comentari"><spring:message code="servei.camp.data.valor.pare"/></label>
+								<input class="form-control" type="text" id="modal-input-valor-pare" name="valorPare" class="input-lg"/>
+							</div>
+							<div id="modal-grup-data" class="form-group">
+								<label for="modal-input-comentari"><spring:message code="servei.camp.data.format"/></label>
+								<input class="form-control" type="text" id="modal-input-data-format" name="dataFormat" class="input-lg"/>
+								<span class="help-block"><small><spring:message code="servei.camp.data.format.comment"/></small></span>
+							</div>
+							
+						</div>
+					</div>
+					<div class="form-group">
+						<label for="modal-input-comentari"><spring:message code="servei.camp.comentari"/></label>
+						<input type="text" id="modal-input-comentari" name="comentari" class="form-control"/>
+					</div>
+					<div class="form-group">
+						<div class="checkbox-inline">
+							<label for="modal-checkbox-obligatori">
+							<input type="checkbox" id="modal-checkbox-obligatori" name="obligatori"/>
+							<spring:message code="servei.camp.obligatori"/>
+							</label>
+						</div>
+						<div class="checkbox-inline">
+							<label for="modal-checkbox-modificable">
+							<input type="checkbox" id="modal-checkbox-modificable" name="modificable"/>
+							<spring:message code="servei.camp.modificable"/>
+							</label>
+						</div>
+						<div class="checkbox-inline">
+							<label for="modal-checkbox-visible">
+							<input type="checkbox" id="modal-checkbox-visible" name="visible"/>
+							<spring:message code="servei.camp.visible"/>
+							</label>
+						</div>
+					</div>
+					<c:forEach var="camp" items="${campsEnumList}" varStatus="status">
+						<div id="modal-grup-descripcions-${camp.id}" class="form-group grup-descripcions">
+							<label for="modal-input-descripcions"><spring:message code="servei.camp.descripcions"/></label>
+							<c:forEach var="valor" items="${valorsEnumList[status.index]}" varStatus="statusValor">
+								<div class="input-group">
+									<span class="input-group-addon">${valor}</span>
+									<input id="modal-input-descripcio-${statusValor.index}" class="form-control" type="text" name="descripcio-${camp.id}"<c:if test="${statusValor.index lt fn:length(camp.enumDescripcions)}"> value="${camp.enumDescripcions[statusValor.index]}"</c:if>/>
+								</div>
+								<c:if test="${not statusValor.last}"><br/></c:if>
+							</c:forEach>
+						</div>
+					</c:forEach>
+					<div id="validacio">
+						<fieldset>
+							<legend>Validació</legend>
+							<div id="validacio_tipus_text">
+								<div class="form-group">
+									<label for="modal-input-val-regexp"><spring:message code="servei.camp.validacio.regexp"/></label>
+									<input class="form-control" type="text" id="modal-input-val-regexp" name="validacioRegexp" class="input-lg"/>
+								</div>
+							</div>
+							<div id="validacio_tipus_numeric">
+								<div class="row">
+									<div class="col-md-6">
+										<div class="form-group">
+											<label for="modal-input-val-min"><spring:message code="servei.camp.validacio.min"/></label>
+											<input class="form-control" type="number" id="modal-input-val-min" name="validacioMin" class="input-lg"/>
+										</div>
+									</div>
+									<div class="col-md-6">
+										<div class="form-group">
+											<label for="modal-input-val-max"><spring:message code="servei.camp.validacio.max"/></label>
+											<input class="form-control" type="number" id="modal-input-val-max" name="validacioMax" class="input-lg"/>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div id="validacio_tipus_data">
+								<div class="row">
+									<div class="col-md-4">
+										<div class="form-group">
+											<label for="modal-input-val-datvalcamp"><spring:message code="servei.camp.validacio.data.valorcamp"/></label>
+											<select id="modal-input-val-datvalcamp" name="validacioDataCmpValcamp" class="form-control">
+												<option value="VALOR"><spring:message code="servei.camp.validacio.enum.tipval.VALOR"/></option>
+												<option value="DIFERENCIA"><spring:message code="servei.camp.validacio.enum.tipval.DIFERENCIA"/></option>
+											</select>
+										</div>
+									</div>
+								</div>
+								<div class="row">
+									<div id="validacio_tipus_data_valor">
+										<div class="col-md-4">
+											<div class="form-group">
+												<label for="modal-input-val-datop"><spring:message code="servei.camp.validacio.data.operacio"/></label>
+												<select id="modal-input-val-datop" name="validacioDataCmpOperacio" class="form-control">
+													<c:forEach var="op" items="${serveiCampValidacioOperacio}">
+														<option value="${op}"><spring:message code="servei.camp.validacio.enum.operacio.${op}"/></option>
+													</c:forEach>
+												</select>
+											</div>
+										</div>
+										<div class="col-md-8">
+											<div class="form-group">
+												<label for="modal-input-val-datcamp2"><spring:message code="servei.camp.validacio.data.camp2"/></label>
+												<select class="form-control" id="modal-input-val-datcamp2" name="validacioDataCmpCamp2Id" class="input-lg">
+													<c:forEach var="camp" items="${camps}">
+														<c:if test="${camp.tipus=='DATA'}">
+															<option value="${camp.id}">${camp.path}</option>
+														</c:if>
+													</c:forEach>
+												</select>
+											</div>
+										</div>
+									</div>
+									<div id="validacio_tipus_data_diferencia">
+										<div class="col-md-6">
+											<div class="form-group">
+												<label for="modal-input-val-datcamp3"><spring:message code="servei.camp.validacio.data.camp2"/></label>
+												<select class="form-control" id="modal-input-val-datcamp3" name="validacioDataCmpCamp3Id" class="input-lg">
+													<c:forEach var="camp" items="${camps}">
+														<c:if test="${camp.tipus=='DATA'}">
+															<option value="${camp.id}">${camp.path}</option>
+														</c:if>
+													</c:forEach>
+												</select>
+											</div>
+										</div>
+										<div class="col-md-2">
+											<div class="form-group">
+												<label for="modal-input-val-datop2"><spring:message code="servei.camp.validacio.data.operacio"/></label>
+												<select id="modal-input-val-datop2" name="validacioDataCmpOperacio2" class="form-control">
+													<c:forEach var="op" items="${serveiCampValidacioOperacio}">
+														<option value="${op}"><spring:message code="servei.camp.validacio.enum.operacio.${op}"/></option>
+													</c:forEach>
+												</select>
+											</div>
+										</div>
+										<div class="col-md-2">
+											<div class="form-group">
+												<label for="modal-input-val-datnum"><spring:message code="servei.camp.validacio.data.nombre"/></label>
+												<input class="form-control" type="number" id="modal-input-val-datnum" name="validacioDataCmpNombre" class="input-lg"/>
+											</div>
+										</div>
+										<div class="col-md-2">
+											<div class="form-group">
+												<label for="modal-input-val-dattip"><spring:message code="servei.camp.validacio.data.tipus"/></label>
+												<select id="modal-input-val-dattip" name="validacioDataCmpTipus" class="form-control">
+													<c:forEach var="tip" items="${serveiCampValidacioDataTipus}">
+														<option value="${tip}"><spring:message code="servei.camp.validacio.enum.tipus.${tip}"/></option>
+													</c:forEach>
+												</select>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</fieldset>
+					</div>
+				</form>
+			</div>
 			<div class="modal-footer">
 				<button class="btn btn-default" data-dismiss="modal"><span class="fa fa-arrow-left"></span>&nbsp;<spring:message code="comu.boto.tornar"/></button>
+				<button id="modal-boto-submit" class="btn btn-primary"><spring:message code="comu.boto.guardar"/></button>
+			</div>
+		</div>
+		</div>
+	</div>
+	<div id="modal-form-preview" class="modal fade" role="dialog">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+					<h3><spring:message code="servei.camp.titol.previsualitzacio"/></h3>
+				</div>
+				<div class="modal-body"></div>
+				<div class="modal-footer">
+					<button class="btn btn-default" data-dismiss="modal"><span class="fa fa-arrow-left"></span>&nbsp;<spring:message code="comu.boto.tornar"/></button>
+				</div>
 			</div>
 		</div>
 	</div>
-</div>
-<div id="modal-grup-form" class="modal fade" role="dialog">
-	<div class="modal-dialog">
-	    <div class="modal-content">
-		<div class="modal-header">
-			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-			<h3 id="modal-grup-titol"></h3>
-		</div>
-		<div class="modal-body">
-			<form id="modal-grup-formform" action="" method="post">
-				<input type="hidden" id="modal-grup-hidden-id" name="id"/>
-				<input type="hidden" id="modal-grup-hidden-servei" name="servei" value="${servei.codi}"/>
-				<div class="form-group">
-    				<label for="modal-grup-input-nom"><spring:message code="servei.camp.grup.form.nom"/> *</label>
-					<input class="form-control" type="text" id="modal-grup-input-nom" name="nom"/>
-				</div>
-			</form>
-		</div>
-		<div class="modal-footer">
-			<button class="btn btn-default" data-dismiss="modal"><span class="fa fa-arrow-left"></span>&nbsp;<spring:message code="comu.boto.tornar"/></button>
-			<button id="modal-grup-boto-submit" class="btn btn-primary"><spring:message code="comu.boto.guardar"/></button>
-		</div>
+	<div id="modal-grup-form" class="modal fade" role="dialog">
+		<div class="modal-dialog">
+			<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				<h3 id="modal-grup-titol"></h3>
+			</div>
+			<div class="modal-body">
+				<form id="modal-grup-formform" action="" method="post">
+					<input type="hidden" id="modal-grup-hidden-id" name="id"/>
+					<input type="hidden" id="modal-grup-hidden-servei" name="servei" value="${servei.codi}"/>
+					<div class="form-group">
+						<label for="modal-grup-input-nom"><spring:message code="servei.camp.grup.form.nom"/> *</label>
+						<input class="form-control" type="text" id="modal-grup-input-nom" name="nom"/>
+					</div>
+				</form>
+			</div>
+			<div class="modal-footer">
+				<button class="btn btn-default" data-dismiss="modal"><span class="fa fa-arrow-left"></span>&nbsp;<spring:message code="comu.boto.tornar"/></button>
+				<button id="modal-grup-boto-submit" class="btn btn-primary"><spring:message code="comu.boto.guardar"/></button>
+			</div>
+			</div>
 		</div>
 	</div>
-</div>
-
-
 </body>
 </html>

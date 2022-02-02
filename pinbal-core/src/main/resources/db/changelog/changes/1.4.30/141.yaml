@@ -1,0 +1,29 @@
+databaseChangeLog:
+- changeSet:
+    id: 1643192041683-1
+    author: limit
+    changes:
+    - addColumn:
+        tableName: pbl_servei_camp
+        columns:
+        - column:
+            name: val_regexp
+            type: VARCHAR(100)
+        - column:
+            name: val_min
+            type: INTEGER
+        - column:
+            name: val_max
+            type: INTEGER
+        - column:
+            name: val_data_cmp_op
+            type: INTEGER
+        - column:
+            name: val_data_cmp_camp2_id
+            type: BIGINT
+        - column:
+            name: val_data_cmp_num
+            type: INTEGER
+        - column:
+            name: val_data_cmp_tipus
+            type: INTEGER

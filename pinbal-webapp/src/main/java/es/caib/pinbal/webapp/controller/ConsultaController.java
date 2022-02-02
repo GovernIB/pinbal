@@ -12,6 +12,9 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 
 import javax.naming.NamingException;
 import javax.servlet.http.HttpServletRequest;
@@ -22,6 +25,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.commons.codec.binary.Base64;
+import org.joda.time.Period;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,6 +58,8 @@ import es.caib.pinbal.core.dto.JustificantDto;
 import es.caib.pinbal.core.dto.NodeDto;
 import es.caib.pinbal.core.dto.ServeiCampDto;
 import es.caib.pinbal.core.dto.ServeiCampDto.ServeiCampDtoTipus;
+import es.caib.pinbal.core.dto.ServeiCampDto.ServeiCampDtoValidacioDataTipus;
+import es.caib.pinbal.core.dto.ServeiCampDto.ServeiCampDtoValidacioOperacio;
 import es.caib.pinbal.core.dto.ServeiDto;
 import es.caib.pinbal.core.dto.UsuariDto;
 import es.caib.pinbal.core.service.ConsultaService;
@@ -876,26 +882,129 @@ public class ConsultaController extends BaseController {
 		}
 		public void validate(Object obj, Errors errors) {
 			ConsultaCommand command = (ConsultaCommand)obj;
-			SimpleDateFormat sdf = new SimpleDateFormat(FORMAT_DATA_DADES_ESPECIFIQUES);
 			Map<String, Object> dadesEspecifiquesValors = command.getDadesEspecifiques();
 			for (ServeiCampDto camp: camps) {
-				if (dadesEspecifiquesValors.get(camp.getPath()) == null || (dadesEspecifiquesValors.get(camp.getPath()) instanceof String && ((String)dadesEspecifiquesValors.get(camp.getPath())).isEmpty())) {
+				Object valorCamp = dadesEspecifiquesValors.get(camp.getPath());
+				boolean isEmptyString = valorCamp instanceof String && ((String)valorCamp).isEmpty();
+				if (valorCamp == null || isEmptyString) {
 					if (camp.isObligatori())
 						errors.rejectValue(
 								"dadesEspecifiques[" + camp.getPath() + "]",
 								"NotEmpty",
 								"Aquest camp és obligatori");
 				} else {
-					if (ServeiCampDtoTipus.DATA.equals(camp.getTipus())) {
-						String dataText = (String)dadesEspecifiquesValors.get(camp.getPath());
+					// Validar expressió regular si n'hi ha
+					String validacioRegexp = camp.getValidacioRegexp();
+					if (ServeiCampDtoTipus.TEXT.equals(camp.getTipus()) && validacioRegexp != null && !validacioRegexp.isEmpty()) {
 						try {
-							Date dataDate = sdf.parse(dataText);
-							if (!sdf.format(dataDate).equals(dataText))
+							Matcher matcher = Pattern.compile(validacioRegexp).matcher((String)valorCamp);
+							if (!matcher.matches()) {
 								errors.rejectValue(
 										"dadesEspecifiques[" + camp.getPath() + "]",
-										"DataValida",
-										"La data és incorrecta");
-						} catch (Exception ex) {
+										"RegexpDontMatch",
+										"Valor no permès");
+							}
+						} catch (PatternSyntaxException ex) {
+							// Si l'expressió no és correcta la validació també falla
+							errors.rejectValue(
+									"dadesEspecifiques[" + camp.getPath() + "]",
+									"InvalidRegexp",
+									"Expressió de validació errònia");
+						}
+					}
+					// Validar rang numèric
+					Integer validacioMin = camp.getValidacioMin();
+					Integer validacioMax = camp.getValidacioMin();
+					if (ServeiCampDtoTipus.NUMERIC.equals(camp.getTipus()) && valorCamp != null && (validacioMin != null || validacioMax != null)) {
+						Integer valorInt = Integer.valueOf((String)valorCamp);
+						boolean validMin = (validacioMin != null) ? validacioMin <= valorInt : true;
+						boolean validMax = (validacioMax != null) ? validacioMax >= valorInt : true;
+						if (!validMin || !validMax) {
+							errors.rejectValue(
+									"dadesEspecifiques[" + camp.getPath() + "]",
+									"NumericRangeExceeded",
+									"Valor no permès");
+						}
+					}
+					if (ServeiCampDtoTipus.DATA.equals(camp.getTipus())) {
+						// Validar format data
+						String dataText = (String)dadesEspecifiquesValors.get(camp.getPath());
+						Date dataDate = checkDateFormat(dataText);
+						if (dataDate != null) {
+							// Si el format és vàlid comprova les demés validacions
+							ServeiCampDto validacioDataCamp2 = camp.getValidacioDataCmpCamp2();
+							if (validacioDataCamp2 != null) {
+								String dataText2 = (String)dadesEspecifiquesValors.get(validacioDataCamp2.getCampNom());
+								Date dataDate2 = null;
+								if (dataText2 != null) {
+									dataDate2 = checkDateFormat(dataText2);
+								}
+								if (dataDate2 != null) {
+									Integer validacioNombre = camp.getValidacioDataCmpNombre();
+									ServeiCampDtoValidacioOperacio validacioOperacio = camp.getValidacioDataCmpOperacio();
+									if (validacioNombre != null) {
+										// Validacio per diferencia
+										ServeiCampDtoValidacioDataTipus validacioTipus = camp.getValidacioDataCmpTipus();
+										Period period = new Period(dataDate.getTime(), dataDate2.getTime());
+										int diff;
+										if (ServeiCampDtoValidacioDataTipus.ANYS == validacioTipus) {
+											diff = period.getYears();
+										} else if (ServeiCampDtoValidacioDataTipus.ANYS == validacioTipus) {
+											diff = period.getMonths();
+										} else {
+											diff = period.getDays();
+										}
+										boolean valid = true;
+										if (ServeiCampDtoValidacioOperacio.LT == validacioOperacio) {
+											valid = diff < validacioNombre;
+										} else if (ServeiCampDtoValidacioOperacio.LTE == validacioOperacio) {
+											valid = diff <= validacioNombre;
+										} else if (ServeiCampDtoValidacioOperacio.GT == validacioOperacio) {
+											valid = diff > validacioNombre;
+										} else if (ServeiCampDtoValidacioOperacio.GTE == validacioOperacio) {
+											valid = diff >= validacioNombre;
+										} else if (ServeiCampDtoValidacioOperacio.EQ == validacioOperacio) {
+											valid = diff == validacioNombre;
+										} else if (ServeiCampDtoValidacioOperacio.NEQ == validacioOperacio) {
+											valid = diff != validacioNombre;
+										}
+										if (!valid) {
+											errors.rejectValue(
+													"dadesEspecifiques[" + camp.getPath() + "]",
+													"DataValida",
+													"La data és surt del rang permès");
+										}
+									} else {
+										// Validacio per comparació
+										boolean valid = true;
+										if (ServeiCampDtoValidacioOperacio.LT == validacioOperacio) {
+											valid = dataDate.getTime() < dataDate2.getTime();
+										} else if (ServeiCampDtoValidacioOperacio.LTE == validacioOperacio) {
+											valid = dataDate.getTime() <= dataDate2.getTime();
+										} else if (ServeiCampDtoValidacioOperacio.GT == validacioOperacio) {
+											valid = dataDate.getTime() > dataDate2.getTime();
+										} else if (ServeiCampDtoValidacioOperacio.GTE == validacioOperacio) {
+											valid = dataDate.getTime() >= dataDate2.getTime();
+										} else if (ServeiCampDtoValidacioOperacio.EQ == validacioOperacio) {
+											valid = dataDate.getTime() == dataDate2.getTime();
+										} else if (ServeiCampDtoValidacioOperacio.NEQ == validacioOperacio) {
+											valid = dataDate.getTime() != dataDate2.getTime();
+										}
+										if (!valid) {
+											errors.rejectValue(
+													"dadesEspecifiques[" + camp.getPath() + "]",
+													"DataValida",
+													"La comparació entre dates no passa la validació");
+										}
+									}
+								} else {
+									errors.rejectValue(
+											"dadesEspecifiques[" + camp.getPath() + "]",
+											"DataReferencia",
+											"El camp al que fa referència la comparació no és vàlid");
+								}
+							}
+						} else {
 							errors.rejectValue(
 									"dadesEspecifiques[" + camp.getPath() + "]",
 									"DataValida",
@@ -904,6 +1013,19 @@ public class ConsultaController extends BaseController {
 					}
 				}
 			}
+		}
+		private Date checkDateFormat(String dateText) {
+			SimpleDateFormat sdf = new SimpleDateFormat(FORMAT_DATA_DADES_ESPECIFIQUES);
+			Date dataDate = null;
+			try {
+				dataDate = sdf.parse(dateText);
+				if (!sdf.format(dataDate).equals(dateText)) {
+					dataDate = null;
+				}
+			} catch (Exception ex) {
+				dataDate = null;
+			}
+			return dataDate;
 		}
 	}
 

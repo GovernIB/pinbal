@@ -92,7 +92,7 @@
 		<task:scheduled ref="consultaServiceImpl" method="autoGenerarJustificantsPendents" fixed-rate="${config:es.caib.pinbal.tasca.auto.justificant.repeticio:60000}"/>
 		<task:scheduled ref="consultaServiceImpl" method="autoTancarExpedientsPendents" cron="${config:es.caib.pinbal.tasca.auto.exp.tancar.cron:0 0 2 * * ?}"/>
 		<task:scheduled ref="consultaServiceImpl" method="autoGenerarEmailReportEstat" cron="${config:es.caib.pinbal.tasca.auto.email.report.estat.cron}"/>
-		<task:scheduled ref="consultaServiceImpl" method="autoEnviarPeticionsPendents" fixed-rate="10000"/>
+		<task:scheduled ref="consultaServiceImpl" method="autoEnviarPeticionsPendents" fixed-rate="${config:es.caib.pinbal.tasca.auto.enviar.pendents.repeticio:60000}"/>
 	</task:scheduled-tasks>
 
 	<!-- Context llibreries SCSP -->

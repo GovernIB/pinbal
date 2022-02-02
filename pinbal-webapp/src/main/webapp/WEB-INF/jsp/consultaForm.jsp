@@ -47,7 +47,6 @@
 	</c:if>
 </head>
 <body>
-
 	<c:url value="/consulta/${servei.codiUrlEncoded}/plantilla/Excel" var="downloadPlantillaExcelUrl"/>
 	<c:url value="/consulta/${servei.codiUrlEncoded}/plantilla/CSV" var="downloadPlantillaCsvUrl"/>
 	<c:url value="/consulta/${servei.codiUrlEncoded}/plantilla/ODS" var="downloadPlantillaOdsUrl"/>
@@ -61,14 +60,15 @@
 		<c:set var="campErrors"><form:errors path="${campPath}"/></c:set>
 		<div class="row">
 			<div class="col-md-6">
-				 <pbl:inputSelect name="${campPath}" inline="true"
-			 					  optionItems="${procediments}" 
-								  optionValueAttribute="id"
-								  optionTextAttribute="nom"
-							      emptyOption="false"/>
+				<pbl:inputSelect
+						name="${campPath}"
+						inline="true"
+						optionItems="${procediments}"
+						optionValueAttribute="id"
+						optionTextAttribute="nom"
+						emptyOption="false"/>
 			</div>
 		</div>
-			
 		<fieldset>
 			<legend><spring:message code="consulta.form.dades.generiques"/></legend>
 			<div class="clearfix legend-margin-bottom"></div>
@@ -101,16 +101,15 @@
 				</div>
 			</div>
 		</fieldset>
-
 		<c:if test="${serveiMultiple}">
 			<ul id="tabs-simple-multiple" class="nav nav-tabs">
 				<li<c:if test="${tabSimpleActiu}"> class="active"</c:if>><a href="#tab-simple" data-toggle="tab"><spring:message code="consulta.form.tipus.simple"/></a></li>
-	 			<li<c:if test="${tabMultipleActiu}"> class="active"</c:if>><a href="#tab-multiple" data-toggle="tab"><spring:message code="consulta.form.tipus.multiple"/></a></li>
-	 		</ul>
-	 		<div class="tab-content" style="margin-top: 15px;">
-	 			<div class="tab-pane<c:if test="${tabSimpleActiu}"> active</c:if>" id="tab-simple">
-	 				<jsp:include page="import/consultaSimpleForm.jsp"/>
-	 			</div>
+				<li<c:if test="${tabMultipleActiu}"> class="active"</c:if>><a href="#tab-multiple" data-toggle="tab"><spring:message code="consulta.form.tipus.multiple"/></a></li>
+			</ul>
+			<div class="tab-content" style="margin-top: 15px;">
+				<div class="tab-pane<c:if test="${tabSimpleActiu}"> active</c:if>" id="tab-simple">
+					<jsp:include page="import/consultaSimpleForm.jsp"/>
+				</div>
 				<div class="tab-pane<c:if test="${tabMultipleActiu}"> active</c:if>" id="tab-multiple">
 					<div class="container-fluid">
 					<c:if test="${not empty consultaCommand.multipleErrorsValidacio}">
@@ -166,32 +165,27 @@
 			</c:if>
 			<a href="<c:url value="/consulta"/>" class="btn btn-default"><spring:message code="comu.boto.cancelar"/></a>
 			<button type="submit" class="btn btn-primary"><spring:message code="comu.boto.enviar"/></button>
-			
-
 		</div>
 	</form:form>
 	</div>
 	<!-- Modal ajuda-->
 	<div id="modalAjuda" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-  		<div class="modal-dialog" role="document">
-    		<div class="modal-content">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
 				<div class="modal-header">
-			    	<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-			    	<h3 id="myModalLabel"><spring:message code="comu.boto.ajuda"/></h3>
-			  	</div>
-			  	<div class="modal-body">
-			  		${servei.ajuda}
-			  	</div>
-			  	<div class="modal-footer">
-			  		<c:if test="${not empty servei.fitxerAjudaNom}">
-			  			<a href="<c:url value='/consulta/${servei.codiUrlEncoded}/downloadAjuda'/>" class="btn btn-primary pull-left"><i class="fas fa-file-download"></i> <spring:message code="comu.boto.document.ajuda"/></a>
-			  		</c:if>
-			    	<button class="btn btn-default" data-dismiss="modal" aria-hidden="true"><spring:message code="comu.boto.tancar"/></button>
-			  	</div>
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+					<h3 id="myModalLabel"><spring:message code="comu.boto.ajuda"/></h3>
+				</div>
+				<div class="modal-body">${servei.ajuda}</div>
+				<div class="modal-footer">
+					<c:if test="${not empty servei.fitxerAjudaNom}">
+						<a href="<c:url value='/consulta/${servei.codiUrlEncoded}/downloadAjuda'/>" class="btn btn-primary pull-left"><i class="fas fa-file-download"></i> <spring:message code="comu.boto.document.ajuda"/></a>
+					</c:if>
+					<button class="btn btn-default" data-dismiss="modal" aria-hidden="true"><spring:message code="comu.boto.tancar"/></button>
+				</div>
 			</div>
-	  	</div>
+		</div>
 	</div>
 	<!-- Fi modal -->
-
 </body>
 </html>

@@ -5,45 +5,38 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@ taglib tagdir="/WEB-INF/tags/pinbal" prefix="pbl" %>
-
-
 <c:if test="${empty dadesEspecifiquesDisabled}"><c:set var="dadesEspecifiquesDisabled" value="${false}"/></c:if>
 <c:set var="numColumnes" value="${2}"/>
 <c:set var="indexCamp" value="${0}"/>
-
 <c:forEach var="camp" items="${campsPerMostrar}" varStatus="status">
 	<c:set var="campId" value="camp_${camp.id}"/>
 	<c:set var="campCommandPath" value="dadesEspecifiques[${camp.path}]"/>
 	<c:set var="campError"><form:errors path="${campCommandPath}"/></c:set>
-	
 	<c:set var="ruta" value="/${camp.path}"></c:set>
 	<c:set var="valorDadaEspecifica" value="${dadesEspecifiquesValors[ruta]}"/>
-	
 	<c:if test="${not dadesEspecifiquesDisabled}"><c:set var="campValorDefecte">${camp.valorPerDefecte}</c:set></c:if>
 	<c:if test="${dadesEspecifiquesDisabled}"><c:set var="campValorDefecte">${valorDadaEspecifica}</c:set></c:if>
 	<c:if test="${pageContext.request.method == 'POST'}"><c:set var="campValorDefecte">${param[campId]}</c:set></c:if>
-
 	<c:set var="dadaEspecifica" value="${null}"/>
 	<c:forEach var="nodeDadaEspecifica" items="${llistaArbreDadesEspecifiques}">
 		<c:if test="${nodeDadaEspecifica.dades.pathAmbSeparadorDefault == camp.path}">
 			<c:set var="dadaEspecifica" value="${nodeDadaEspecifica.dades}"/>
 		</c:if>
 	</c:forEach>
-	
 	<c:choose>
 		<c:when test="${camp.visible}">
 			<c:if test="${indexCamp == 0 or (indexCamp % numColumnes) == 0}">
 				<div class="row">
 			</c:if>
 			<div class="col-md-<fmt:formatNumber value="${12 / numColumnes}" maxFractionDigits="0"/>">
-				<div class="form-group<c:if test="${not empty campError}"> error</c:if>">
-	   				<label class="control-label" for="${campId}">
-	   					<c:choose>
-	   						<c:when test="${camp.tipus == 'ETIQUETA'}">&nbsp;</c:when>
-	   						<c:when test="${not empty camp.etiqueta}">${camp.etiqueta}<c:if test="${not dadesEspecifiquesDisabled and camp.obligatori}"> *</c:if></c:when>
-	   						<c:otherwise>${camp.campNom}<c:if test="${not dadesEspecifiquesDisabled and camp.obligatori}"> *</c:if></c:otherwise>
-	   					</c:choose>
-	   				</label>
+				<div class="form-group<c:if test="${not empty campError}"> has-error</c:if>">
+					<label class="control-label" for="${campId}">
+						<c:choose>
+							<c:when test="${camp.tipus == 'ETIQUETA'}">&nbsp;</c:when>
+							<c:when test="${not empty camp.etiqueta}">${camp.etiqueta}<c:if test="${not dadesEspecifiquesDisabled and camp.obligatori}"> *</c:if></c:when>
+							<c:otherwise>${camp.campNom}<c:if test="${not dadesEspecifiquesDisabled and camp.obligatori}"> *</c:if></c:otherwise>
+						</c:choose>
+					</label>
 					<c:choose>
 						<c:when test="${camp.modificable}">
 							<c:choose>
@@ -53,8 +46,7 @@
 											<input type="text" id="${campId}" name="${campId}"<c:if test="${not empty campValorDefecte}"> value="${campValorDefecte}"</c:if><c:if test="${dadesEspecifiquesDisabled}"> disabled="disabled"</c:if><c:if test="${not empty valorDadaEspecifica}"> value="${valorDadaEspecifica}"</c:if> class="form-control"/>
 										</c:when>
 										<c:when test="${camp.tipus == 'NUMERIC'}">
-											<input type="text" id="${campId}" name="${campId}"<c:if test="${not empty campValorDefecte}"> value="${campValorDefecte}"</c:if><c:if test="${dadesEspecifiquesDisabled}"> disabled="disabled"</c:if><c:if test="${not empty valorDadaEspecifica}"> value="${valorDadaEspecifica}"</c:if> class="form-control"/>
-											<script>$("#${campId}").mask("999999999999");</script>
+											<input type="number" id="${campId}" name="${campId}"<c:if test="${not empty campValorDefecte}"> value="${campValorDefecte}"</c:if><c:if test="${dadesEspecifiquesDisabled}"> disabled="disabled"</c:if><c:if test="${not empty valorDadaEspecifica}"> value="${valorDadaEspecifica}"</c:if> class="form-control"/>
 										</c:when>
 										<c:when test="${camp.tipus == 'DATA'}">
 											<div class="input-group" style="width: 100%">
@@ -65,7 +57,7 @@
 $(document).ready(function() {
 	$('#${campId}').mask('99/99/9999');
 	$('#${campId}').datepicker({
-	    orientation: "bottom auto",
+		orientation: "bottom auto",
 		format: 'dd/mm/yyyy',
 		weekStart: 1,
 		autoclose: true,
@@ -94,28 +86,28 @@ $("#${campPareId}").change(function(event, valor) {
 	if ($('#${campPareId}').val().length > 0) {
 		$('#${campId}').append($('<option value="">').text('<spring:message code="comu.opcio.carregant"/>'));
 		$.ajax({
-		    url:'<c:url value="/dades/municipis"/>/' + $('#${campPareId}').val(),
-		    type:'GET',
-		    dataType: 'json',
-		    success: function(json) {
-		    	$('#${campId}').empty();
-	        	$('#${campId}').append($('<option value="">').text('<spring:message code="comu.opcio.sense.definir"/>'));
-		        $.each(json, function(i, value) {
-		        	var valueCodi = value.codi;
-		        	<c:if test="${codiMunicipiSenseCodiProvincia}">valueCodi = value.codi.substring(2);</c:if>
-		        	if ( $('#${campId}').data('defecte-processat')) {
-		            	$('#${campId}').append($('<option>').text(value.nom).attr('value', valueCodi));
-		        	} else {
-		        		var valorPerDefecte = '${campValorDefecte}';
-			        	if (value.codi == valorPerDefecte) {
-			        		$('#${campId}').append($('<option selected="selected">').text(value.nom).attr('value', valueCodi));
-			        	} else {
-			        		$('#${campId}').append($('<option>').text(value.nom).attr('value', valueCodi));
-			        	}
-		        	}
-		        });
-		        $('#${campId}').data('defecte-processat', true);
-		    }
+			url:'<c:url value="/dades/municipis"/>/' + $('#${campPareId}').val(),
+			type:'GET',
+			dataType: 'json',
+			success: function(json) {
+				$('#${campId}').empty();
+				$('#${campId}').append($('<option value="">').text('<spring:message code="comu.opcio.sense.definir"/>'));
+				$.each(json, function(i, value) {
+					var valueCodi = value.codi;
+					<c:if test="${codiMunicipiSenseCodiProvincia}">valueCodi = value.codi.substring(2);</c:if>
+					if ( $('#${campId}').data('defecte-processat')) {
+						$('#${campId}').append($('<option>').text(value.nom).attr('value', valueCodi));
+					} else {
+						var valorPerDefecte = '${campValorDefecte}';
+						if (value.codi == valorPerDefecte) {
+							$('#${campId}').append($('<option selected="selected">').text(value.nom).attr('value', valueCodi));
+						} else {
+							$('#${campId}').append($('<option>').text(value.nom).attr('value', valueCodi));
+						}
+					}
+				});
+				$('#${campId}').data('defecte-processat', true);
+			}
 		});
 	} else {
 		$('#${campId}').append($('<option value="">').text('<spring:message code="comu.opcio.sense.definir"/>'));
@@ -126,22 +118,21 @@ $("#${campPareId}").change(function(event, valor) {
 												<c:when test="${not empty camp.valorPare}">
 <script>
 $.ajax({
-    url:'<c:url value="/dades/municipis"/>/${camp.valorPare}',
-    type:'GET',
-    dataType: 'json',
-    success: function(json) {
-    	$('#${campId}').empty();
-    	$('#${campId}').append($('<option value="">').text('<spring:message code="comu.opcio.sense.definir"/>'));
-        $.each(json, function(i, value) {
-        	var valorPerDefecte = '${campValorDefecte}';
-        	if (value.codi == valorPerDefecte) {
-        		$('#${campId}').append($('<option selected="selected">').text(value.nom).attr('value', value.codi));
-        	} else {
-        		$('#${campId}').append($('<option>').text(value.nom).attr('value', value.codi));
-        	}
-            
-        });
-    }
+	url:'<c:url value="/dades/municipis"/>/${camp.valorPare}',
+	type:'GET',
+	dataType: 'json',
+	success: function(json) {
+		$('#${campId}').empty();
+		$('#${campId}').append($('<option value="">').text('<spring:message code="comu.opcio.sense.definir"/>'));
+		$.each(json, function(i, value) {
+			var valorPerDefecte = '${campValorDefecte}';
+			if (value.codi == valorPerDefecte) {
+				$('#${campId}').append($('<option selected="selected">').text(value.nom).attr('value', value.codi));
+			} else {
+				$('#${campId}').append($('<option>').text(value.nom).attr('value', value.codi));
+			}
+		});
+	}
 });
 </script>
 												</c:when>
@@ -157,22 +148,22 @@ $.ajax({
 											</select>
 <script>
 $.ajax({
-    url:'<c:url value="/dades/provincies"/>',
-    type:'GET',
-    dataType: 'json',
-    success: function(json) {
-    	$('#${campId}').empty();
-    	$('#${campId}').append($('<option value="">').text('<spring:message code="comu.opcio.sense.definir"/>'));
-        $.each(json, function(i, value) {
-        	var valorPerDefecte = '${campValorDefecte}';
-        	if (value.codi == valorPerDefecte) {
-            	$('#${campId}').append($('<option selected="selected">').text(value.nom).attr('value', value.codi));
-            	<c:if test="${not empty campFillId}">$('#${campFillId}').trigger('change', valorPerDefecte);</c:if>
-        	} else {
-        		$('#${campId}').append($('<option>').text(value.nom).attr('value', value.codi));
-        	}
-        });
-    }
+	url:'<c:url value="/dades/provincies"/>',
+	type:'GET',
+	dataType: 'json',
+	success: function(json) {
+		$('#${campId}').empty();
+		$('#${campId}').append($('<option value="">').text('<spring:message code="comu.opcio.sense.definir"/>'));
+		$.each(json, function(i, value) {
+			var valorPerDefecte = '${campValorDefecte}';
+			if (value.codi == valorPerDefecte) {
+				$('#${campId}').append($('<option selected="selected">').text(value.nom).attr('value', value.codi));
+				<c:if test="${not empty campFillId}">$('#${campFillId}').trigger('change', valorPerDefecte);</c:if>
+			} else {
+				$('#${campId}').append($('<option>').text(value.nom).attr('value', value.codi));
+			}
+		});
+	}
 });
 </script>
 										</c:when>
@@ -186,22 +177,22 @@ $.ajax({
 											</select>
 <script>
 $.ajax({
-    url:'<c:url value="/dades/paisos"/>',
-    type:'GET',
-    dataType: 'json',
-    success: function(json) {
-    	$('#${campId}').empty();
-    	$('#${campId}').append($('<option value="">').text('<spring:message code="comu.opcio.sense.definir"/>'));
-        $.each(json, function(i, value) {
-        	var valorPerDefecte = '${campValorDefecte}';
-        	if (value.alpha3 == valorPerDefecte) {
-            	$('#${campId}').append($('<option selected="selected">').text(value.nom).attr('value', value.alpha3));
-            	<c:if test="${not empty campFillId}">$('#${campFillId}').trigger('change', valorPerDefecte);</c:if>
-        	} else {
-        		$('#${campId}').append($('<option>').text(value.nom).attr('value', value.alpha3));
-        	}
-        });
-    }
+	url:'<c:url value="/dades/paisos"/>',
+	type:'GET',
+	dataType: 'json',
+	success: function(json) {
+		$('#${campId}').empty();
+		$('#${campId}').append($('<option value="">').text('<spring:message code="comu.opcio.sense.definir"/>'));
+		$.each(json, function(i, value) {
+			var valorPerDefecte = '${campValorDefecte}';
+			if (value.alpha3 == valorPerDefecte) {
+				$('#${campId}').append($('<option selected="selected">').text(value.nom).attr('value', value.alpha3));
+				<c:if test="${not empty campFillId}">$('#${campFillId}').trigger('change', valorPerDefecte);</c:if>
+			} else {
+				$('#${campId}').append($('<option>').text(value.nom).attr('value', value.alpha3));
+			}
+		});
+	}
 });
 </script>
 										</c:when>
@@ -257,7 +248,7 @@ $(document).ready(function() {
 			$fileHelper.attr('disabled', 'disabled');
 			$fileHelper.change();
 		}
-    });
+	});
 });
 </script>
 												</c:otherwise>
@@ -266,18 +257,18 @@ $(document).ready(function() {
 										<c:when test="${camp.tipus == 'ETIQUETA'}"></c:when>
 									</c:choose>
 								</c:when>
-   								<c:otherwise>
-   									<c:set var="selectValue" value="${valorDadaEspecifica}"/>
-   									<c:if test="${empty selectValue}"><c:set var="selectValue" value="${camp.valorPerDefecte}"/></c:if>
-   									<select id="${campId}" name="${campId}"<c:if test="${dadesEspecifiquesDisabled}"> disabled="disabled"</c:if> class="form-control">
-   										<c:if test="${dadesEspecifiquesDisabled or not camp.obligatori}">
-   											<option value=""><spring:message code="comu.opcio.sense.definir"/></option>
-   										</c:if>
-   										<c:forEach var="enumeracioValor" items="${dadaEspecifica.enumeracioValors}" varStatus="status">
-   											<option value="${enumeracioValor}"<c:if test="${enumeracioValor == selectValue}"> selected="selected"</c:if>>${camp.enumDescripcions[status.index]}</option>
-   										</c:forEach>
-   									</select>
-   								</c:otherwise>
+								<c:otherwise>
+									<c:set var="selectValue" value="${valorDadaEspecifica}"/>
+									<c:if test="${empty selectValue}"><c:set var="selectValue" value="${camp.valorPerDefecte}"/></c:if>
+									<select id="${campId}" name="${campId}"<c:if test="${dadesEspecifiquesDisabled}"> disabled="disabled"</c:if> class="form-control">
+										<c:if test="${dadesEspecifiquesDisabled or not camp.obligatori}">
+											<option value=""><spring:message code="comu.opcio.sense.definir"/></option>
+										</c:if>
+										<c:forEach var="enumeracioValor" items="${dadaEspecifica.enumeracioValors}" varStatus="status">
+											<option value="${enumeracioValor}"<c:if test="${enumeracioValor == selectValue}"> selected="selected"</c:if>>${camp.enumDescripcions[status.index]}</option>
+										</c:forEach>
+									</select>
+								</c:otherwise>
 							</c:choose>
 						</c:when>
 						<c:otherwise>
@@ -285,7 +276,8 @@ $(document).ready(function() {
 							<input type="hidden" id="${campId}_hidden" name="${campId}"<c:if test="${not empty camp.valorPerDefecte}"> value="${camp.valorPerDefecte}"</c:if>/>
 						</c:otherwise>
 					</c:choose>
-					<form:errors path="${campCommandPath}" cssClass="help-inline"/>
+					<c:set var="campErrors"><form:errors path="${campCommandPath}"/></c:set>
+					<c:if test="${not empty campErrors}"><p class="help-block"><span class="fa fa-exclamation-triangle"></span>&nbsp;<form:errors path="${campCommandPath}"/></p></c:if>
 					<c:if test="${not dadesEspecifiquesDisabled and not empty camp.comentari}"><span class="help-block">${camp.comentari}</span></c:if>
 				</div>
 			</div>

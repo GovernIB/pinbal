@@ -12,6 +12,8 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import es.caib.pinbal.core.dto.ServeiCampDto;
+import es.caib.pinbal.core.dto.ServeiCampDto.ServeiCampDtoValidacioDataTipus;
+import es.caib.pinbal.core.dto.ServeiCampDto.ServeiCampDtoValidacioOperacio;
 
 /**
  * Command per als camps dels serveis.
@@ -43,6 +45,13 @@ public class ServeiCampCommand {
 	private boolean modificable;
 	private boolean visible;
 	private int ordre;
+	private String validacioRegexp;
+	private Integer validacioMin;
+	private Integer validacioMax;
+	private ServeiCampDtoValidacioOperacio validacioDataCmpOperacio;
+	private Long validacioDataCmpCamp2Id;
+	private Integer validacioDataCmpNombre;
+	private ServeiCampDtoValidacioDataTipus validacioDataCmpTipus;
 
 	public Long getId() {
 		return id;
@@ -134,6 +143,48 @@ public class ServeiCampCommand {
 	public void setOrdre(int ordre) {
 		this.ordre = ordre;
 	}
+	public String getValidacioRegexp() {
+		return validacioRegexp;
+	}
+	public void setValidacioRegexp(String validacioRegexp) {
+		this.validacioRegexp = validacioRegexp;
+	}
+	public Integer getValidacioMin() {
+		return validacioMin;
+	}
+	public void setValidacioMin(Integer validacioMin) {
+		this.validacioMin = validacioMin;
+	}
+	public Integer getValidacioMax() {
+		return validacioMax;
+	}
+	public void setValidacioMax(Integer validacioMax) {
+		this.validacioMax = validacioMax;
+	}
+	public ServeiCampDtoValidacioOperacio getValidacioDataCmpOperacio() {
+		return validacioDataCmpOperacio;
+	}
+	public void setValidacioDataCmpOperacio(ServeiCampDtoValidacioOperacio validacioDataCmpOperacio) {
+		this.validacioDataCmpOperacio = validacioDataCmpOperacio;
+	}
+	public Long getValidacioDataCmpCamp2Id() {
+		return validacioDataCmpCamp2Id;
+	}
+	public void setValidacioDataCmpCamp2Id(Long validacioDataCmpCamp2Id) {
+		this.validacioDataCmpCamp2Id = validacioDataCmpCamp2Id;
+	}
+	public Integer getValidacioDataCmpNombre() {
+		return validacioDataCmpNombre;
+	}
+	public void setValidacioDataCmpNombre(Integer validacioDataCmpNombre) {
+		this.validacioDataCmpNombre = validacioDataCmpNombre;
+	}
+	public ServeiCampDtoValidacioDataTipus getValidacioDataCmpTipus() {
+		return validacioDataCmpTipus;
+	}
+	public void setValidacioDataCmpTipus(ServeiCampDtoValidacioDataTipus validacioDataCmpTipus) {
+		this.validacioDataCmpTipus = validacioDataCmpTipus;
+	}
 
 	public static List<ServeiCampCommand> toEntitatCommands(
 			List<ServeiCampDto> dtos) {
@@ -159,6 +210,11 @@ public class ServeiCampCommand {
 			ServeiCampDto sc = new ServeiCampDto();
 			sc.setId(command.getCampPareId());
 			dto.setCampPare(sc);
+		}
+		if (command.getValidacioDataCmpCamp2Id() != null) {
+			ServeiCampDto sc = new ServeiCampDto();
+			sc.setId(command.getValidacioDataCmpCamp2Id());
+			dto.setValidacioDataCmpCamp2(sc);
 		}
 		return dto;
 	}

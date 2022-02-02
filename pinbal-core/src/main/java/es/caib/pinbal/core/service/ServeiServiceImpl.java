@@ -882,6 +882,11 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 			campPare = serveiCampRepository.findOne(
 					modificat.getCampPare().getId());
 		}
+		ServeiCamp validacioDataCmpCamp2 = null;
+		if (modificat.getValidacioDataCmpCamp2() != null) {
+			validacioDataCmpCamp2 = serveiCampRepository.findOne(
+					modificat.getValidacioDataCmpCamp2().getId());
+		}
 		serveiCamp.update(
 				toServeiTipus(modificat.getTipus()),
 				modificat.getEtiqueta(),
@@ -894,7 +899,14 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 				serveiCamp.getGrup(),
 				modificat.isObligatori(),
 				modificat.isModificable(),
-				modificat.isVisible());
+				modificat.isVisible(),
+				modificat.getValidacioRegexp(),
+				modificat.getValidacioMin(),
+				modificat.getValidacioMax(),
+				modificat.getValidacioDataCmpOperacio(),
+				validacioDataCmpCamp2,
+				modificat.getValidacioDataCmpNombre(),
+				modificat.getValidacioDataCmpTipus());
 		return dtoMappingHelper.getMapperFacade().map(
 				serveiCamp,
 				ServeiCampDto.class);

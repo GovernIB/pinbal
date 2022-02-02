@@ -23,6 +23,8 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import es.caib.pinbal.core.audit.PinbalAuditable;
+import es.caib.pinbal.core.dto.ServeiCampDto.ServeiCampDtoValidacioDataTipus;
+import es.caib.pinbal.core.dto.ServeiCampDto.ServeiCampDtoValidacioOperacio;
 
 /**
  * Classe de model de dades que conté la informació d'un camp per
@@ -91,6 +93,23 @@ public class ServeiCamp extends PinbalAuditable<Long> {
 	private boolean visible = true;
 	@Column(name = "ordre")
 	private int ordre;
+	@Column(name = "val_regexp", length = 100)
+	private String validacioRegexp;
+	@Column(name = "val_min")
+	private Integer validacioMin;
+	@Column(name = "val_max")
+	private Integer validacioMax;
+	@Column(name = "val_data_cmp_op")
+	private ServeiCampDtoValidacioOperacio validacioDataCmpOperacio;
+	@ManyToOne(optional = true, fetch = FetchType.EAGER)
+	@JoinColumn(
+			name = "val_data_cmp_camp2_id",
+			foreignKey = @ForeignKey(name = "pbl_pare_servcamp2_fk"))
+	private ServeiCamp validacioDataCmpCamp2;
+	@Column(name = "val_data_cmp_num")
+	private Integer validacioDataCmpNombre;
+	@Column(name = "val_data_cmp_tipus")
+	private ServeiCampDtoValidacioDataTipus validacioDataCmpTipus;
 
 	@ManyToOne(optional = true, fetch = FetchType.EAGER)
 	@JoinColumn(
@@ -204,13 +223,33 @@ public class ServeiCamp extends PinbalAuditable<Long> {
 	public int getOrdre() {
 		return ordre;
 	}
+	public String getValidacioRegexp() {
+		return validacioRegexp;
+	}
+	public Integer getValidacioMin() {
+		return validacioMin;
+	}
+	public Integer getValidacioMax() {
+		return validacioMax;
+	}
+	public ServeiCampDtoValidacioOperacio getValidacioDataCmpOperacio() {
+		return validacioDataCmpOperacio;
+	}
+	public ServeiCamp getValidacioDataCmpCamp2() {
+		return validacioDataCmpCamp2;
+	}
+	public Integer getValidacioDataCmpNombre() {
+		return validacioDataCmpNombre;
+	}
+	public ServeiCampDtoValidacioDataTipus getValidacioDataCmpTipus() {
+		return validacioDataCmpTipus;
+	}
 	public ServeiCampGrup getGrup() {
 		return grup;
 	}
 	public Set<ServeiCamp> getCampsFills() {
 		return campsFills;
 	}
-
 	public long getVersion() {
 		return version;
 	}
@@ -227,7 +266,14 @@ public class ServeiCamp extends PinbalAuditable<Long> {
 			ServeiCampGrup grup,
 			boolean obligatori,
 			boolean modificable,
-			boolean visible) {
+			boolean visible,
+			String validacioRegexp,
+			Integer validacioMin,
+			Integer validacioMax,
+			ServeiCampDtoValidacioOperacio validacioDataCmpOperacio,
+			ServeiCamp validacioDataCmpCamp2,
+			Integer validacioDataCmpNombre,
+			ServeiCampDtoValidacioDataTipus validacioDataCmpTipus) {
 		this.tipus = tipus;
 		this.etiqueta = etiqueta;
 		this.valorPerDefecte = valorPerDefecte;
@@ -240,6 +286,13 @@ public class ServeiCamp extends PinbalAuditable<Long> {
 		this.obligatori = obligatori;
 		this.modificable = modificable;
 		this.visible = visible;
+		this.validacioRegexp = validacioRegexp;
+		this.validacioMin = validacioMin;
+		this.validacioMax = validacioMax;
+		this.validacioDataCmpOperacio = validacioDataCmpOperacio;
+		this.validacioDataCmpCamp2 = validacioDataCmpCamp2;
+		this.validacioDataCmpNombre = validacioDataCmpNombre;
+		this.validacioDataCmpTipus = validacioDataCmpTipus;
 	}
 	public void updateEnumDescripcions(String[] enumDescripcions) {
 		if (enumDescripcions != null) {
