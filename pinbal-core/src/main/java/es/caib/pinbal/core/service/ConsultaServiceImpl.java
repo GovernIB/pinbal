@@ -235,7 +235,7 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 			peticioScspHelper.processarIEmmagatzemarDadesEspecifiques(
 					conslt,
 					consulta.getDadesEspecifiques());
-			if (peticioScspHelper.isEnviarConsultaServei(conslt)) {
+			if (peticioScspHelper.isEnviarConsultaServei(conslt, false)) {
 				conslt.updateEstat(EstatTipus.Processant);
 				ResultatEnviamentPeticio resultat = peticioScspHelper.enviarPeticioScsp(
 						conslt,
@@ -365,7 +365,7 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 			peticioScspHelper.processarIEmmagatzemarDadesEspecifiques(
 					conslt,
 					consulta.getDadesEspecifiques());
-			if (peticioScspHelper.isEnviarConsultaServei(conslt)) {
+			if (peticioScspHelper.isEnviarConsultaServei(conslt, false)) {
 				conslt.updateEstat(EstatTipus.Processant);
 				ResultatEnviamentPeticio resultat = peticioScspHelper.enviarPeticioScsp(
 						conslt,
@@ -1932,15 +1932,20 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 		log.debug("Finalitzat el tancament automàtic dels expedients pendents (" + (System.currentTimeMillis() - t0) + "ms)");
 	}
 
+	@Transactional
 	@Override
 	public void autoEnviarPeticionsPendents() {
 		log.debug("Iniciant enviament automàtic de les peticions pendents");
 		long t0 = System.currentTimeMillis();
-		List<Consulta> pendents = consultaRepository.findByEstatAndMultipleOrderByIdAsc(EstatTipus.Pendent, false);
+		List<Consulta> pendents = consultaRepository.findByEstatAndMultipleAndConsentimentNotNullOrderByIdAsc(EstatTipus.Pendent, false);
+		int i = 0;
 		for (final Consulta pendent: pendents) {
-			peticioScspHelper.enviarPeticioScspPendent(pendent.getId(), scspHelper);
+			if (peticioScspHelper.isEnviarConsultaServei(pendent, true)) {
+				peticioScspHelper.enviarPeticioScspPendent(pendent.getId(), scspHelper);
+				i++;
+			}
 		}
-		log.debug("Finalitzat l'enviament automàtic de les " + pendents.size() + " peticions pendents (" + (System.currentTimeMillis() - t0) + "ms)");
+		log.debug("Finalitzat l'enviament automàtic de les " + i + " peticions pendents (" + (System.currentTimeMillis() - t0) + "ms)");
 	}
 
 	@Override
