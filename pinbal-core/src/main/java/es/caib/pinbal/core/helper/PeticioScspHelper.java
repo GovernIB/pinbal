@@ -24,16 +24,16 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import es.caib.pinbal.core.dto.ConsultaDto;
-import es.caib.pinbal.core.dto.IntegracioAccioTipusEnumDto;
 import es.caib.pinbal.core.dto.ConsultaDto.Consentiment;
 import es.caib.pinbal.core.dto.ConsultaDto.DocumentTipus;
+import es.caib.pinbal.core.dto.IntegracioAccioTipusEnumDto;
 import es.caib.pinbal.core.model.Consulta;
 import es.caib.pinbal.core.model.Consulta.EstatTipus;
-import es.caib.pinbal.core.model.ServeiCamp.ServeiCampTipus;
 import es.caib.pinbal.core.model.Entitat;
 import es.caib.pinbal.core.model.Procediment;
 import es.caib.pinbal.core.model.ProcedimentServei;
 import es.caib.pinbal.core.model.ServeiCamp;
+import es.caib.pinbal.core.model.ServeiCamp.ServeiCampTipus;
 import es.caib.pinbal.core.model.ServeiConfig;
 import es.caib.pinbal.core.repository.ConsultaRepository;
 import es.caib.pinbal.core.repository.ServeiCampRepository;
@@ -43,12 +43,14 @@ import es.caib.pinbal.core.service.exception.ConsultaScspGeneracioException;
 import es.caib.pinbal.scsp.ResultatEnviamentPeticio;
 import es.caib.pinbal.scsp.ScspHelper;
 import es.caib.pinbal.scsp.Solicitud;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Helper per a controlar el ritme al qual s'envien les consultes SCSP.
  * 
  * @author Limit Tecnologies <limit@limit.es>
  */
+@Slf4j
 @Component
 public class PeticioScspHelper {
 
@@ -69,31 +71,68 @@ public class PeticioScspHelper {
 	private Map<String, Date> consultaIntervalStart = new HashMap<String, Date>();
 
 	/* Retorna true si s'ha de continuar l'enviament de la consulta, fals en cas contrari. */
-	public boolean isEnviarConsultaServei(Consulta consulta) {
+	public boolean isEnviarConsultaServei(Consulta consulta, boolean auto) {
 		String serveiCodi = consulta.getProcedimentServei().getServei();
 		ServeiConfig serveiConfig = serveiConfigRepository.findByServei(serveiCodi);
+
 		if (serveiConfig.getMaxPeticionsMinut() != null) {
 			Integer count = consultaServeiCount.get(serveiCodi);
 			if (count == null) {
 				count = 0;
 			}
-			boolean isMaxPeticionsEnviades = count >= serveiConfig.getMaxPeticionsMinut();
-			Date intervalStart = consultaIntervalStart.get(serveiCodi);
-			Calendar now = Calendar.getInstance();
-			Calendar intervalStartCal = Calendar.getInstance();
-			intervalStartCal.setTime(intervalStart != null ? intervalStart : new Date(0));
-			long millisBetweenDates = now.getTime().getTime() - intervalStartCal.getTime().getTime();
-			boolean mateixMinut = millisBetweenDates < 60 * 1000 && intervalStartCal.get(Calendar.MINUTE) == now.get(Calendar.MINUTE);
+			
+			
+			boolean mateixMinut = isMateixMinut(serveiCodi);
+
 			if (mateixMinut) {
-				consultaServeiCount.put(serveiCodi, count++);
+				boolean isMaxPeticionsEnviades = count >= serveiConfig.getMaxPeticionsMinut();
+				if (isMaxPeticionsEnviades) {
+					return false;
+				} else {
+					if (!auto && existOlderFromAutoPendingToSend(consulta.getProcedimentServei())) {
+						return false;
+					} else {
+						consultaServeiCount.put(serveiCodi, ++count);
+						return true;
+					}
+				}
+
 			} else {
-				consultaIntervalStart.put(serveiCodi, new Date());
-				consultaServeiCount.put(serveiCodi, new Integer(1));
+				if (!auto && existOlderFromAutoPendingToSend(consulta.getProcedimentServei())) {
+					return false;
+				} else {
+					consultaIntervalStart.put(serveiCodi, new Date());
+					consultaServeiCount.put(serveiCodi, new Integer(1));
+					return true;
+				}
+				
+
 			}
-			return !isMaxPeticionsEnviades;
 		}
 		return true;
 	}
+	
+	private boolean existOlderFromAutoPendingToSend(ProcedimentServei procedimentServei) {
+		List<Consulta> pendents = consultaRepository.findByEstatAndMultipleAndProcedimentServeiAndConsentimentNotNullOrderByIdAsc(EstatTipus.Pendent, false, procedimentServei);
+		return pendents.size() > 1;
+	}
+
+	private boolean isMateixMinut(String serveiCodi) {
+
+		Calendar now = Calendar.getInstance();
+		Date intervalStart = consultaIntervalStart.get(serveiCodi);
+		Calendar intervalStartCal = Calendar.getInstance();
+		intervalStartCal.setTime(intervalStart != null ? intervalStart : new Date(0));
+
+		long millisBetweenDates = now.getTime().getTime() - intervalStartCal.getTime().getTime();
+		
+		log.trace(String.valueOf(Math.round(((float) millisBetweenDates) / 1000)) + " seconds passed from last reset");
+		
+		boolean mateixMinut = millisBetweenDates < 60 * 1000 && intervalStartCal.get(Calendar.MINUTE) == now.get(Calendar.MINUTE);
+
+		return mateixMinut;
+	}
+	
 
 	public ResultatEnviamentPeticio enviarPeticioScsp(
 			Consulta consulta,
