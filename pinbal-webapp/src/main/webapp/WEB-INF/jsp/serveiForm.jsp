@@ -594,7 +594,7 @@ function showModalXsd(element) {
 
 <div id="modal-redir-form" class="modal" tabindex="-1" role="dialog">
  	<div class="modal-dialog" role="document">
-    	<div class="modal-content">
+		<div class="modal-content">
 		<div class="modal-header">
 			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
 			<h3><spring:message code="servei.form.modal.bus.titol"/></h3>
@@ -610,14 +610,14 @@ function showModalXsd(element) {
 	
 <div id="modal-xsd-form" class="modal" tabindex="-1" role="dialog">
 	<div class="modal-dialog" role="document">
-	    <div class="modal-content">
+		<div class="modal-content">
 			<div class="modal-header">
 				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
 				<h3><spring:message code="servei.form.modal.xsd.titol"/></h3>
 			</div>
 			<div class="modal-body"></div>
 			<div class="modal-footer">
-				<button class="btn btn-default" data-dismiss="modal"><span class="fa fa-arrow-left"></span>&nbsp;<spring:message code="comu.boto.tornar"/></button>
+				<button class="btn btn-default" data-dismiss="modal"><span class="fa fa-arrow-left"></span>&nbsp;<spring:message code="comu.boto.cancelar"/></button>
 				<button id="modal-boto-submit-xsd" class="btn btn-primary"><spring:message code="comu.boto.guardar"/></button>
 			</div>
 		</div>
