@@ -28,8 +28,15 @@ public class UsuariFiltreCommand {
 	private RolEnumDto rol;
 	
 	private EntitatDto entitat = null;
-	
-	
+
+	// Elimina els espais en els camps de cerca
+	public void eliminarEspaisCampsCerca() {
+		this.codi = eliminarEspais(this.codi);
+		this.nif = eliminarEspais(this.nif);
+		this.nom = eliminarEspais(this.nom);
+		this.departament = eliminarEspais(this.departament);
+	}
+
 	public RolEnumDto getRol() {
 		return rol;
 	}
@@ -84,16 +91,20 @@ public class UsuariFiltreCommand {
 	public void setDepartament(String departament) {
 		this.departament = departament;
 	}
-
-	@Override
-	public String toString() {
-		return ToStringBuilder.reflectionToString(this);
-	}
 	public EntitatDto getEntitat() {
 		return entitat;
 	}
 	public void setEntitat(EntitatDto entitat) {
 		this.entitat = entitat;
+	}
+
+	@Override
+	public String toString() {
+		return ToStringBuilder.reflectionToString(this);
+	}
+
+	private String eliminarEspais(String str) {
+		return (str != null) ? str.trim() : null;
 	}
 
 }

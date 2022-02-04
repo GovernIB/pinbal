@@ -217,8 +217,10 @@ public class ConsultaAdminController extends BaseController {
 			ConsultaFiltreCommand command = (ConsultaFiltreCommand)RequestSessionHelper.obtenirObjecteSessio(
 					request,
 					SESSION_ATTRIBUTE_FILTRE);
-			if (command == null)
+			if (command == null) {
 				command = new ConsultaFiltreCommand(entitatService.findTopByTipus(EntitatTipusDto.GOVERN).getId());
+			}
+			command.eliminarEspaisCampsCerca();
 			if (command.getEntitatId() != null) {
 				model.addAttribute(
 						"filtreCommand",

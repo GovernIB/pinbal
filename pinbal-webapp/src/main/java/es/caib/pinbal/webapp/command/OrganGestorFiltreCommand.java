@@ -51,9 +51,19 @@ public class OrganGestorFiltreCommand {
 		this.estat = estat;
 	}
 
+	// Elimina els espais en els camps de cerca
+	public void eliminarEspaisCampsCerca() {
+		this.codi = eliminarEspais(this.codi);
+		this.nom = eliminarEspais(this.nom);
+	}
+
 	@Override
 	public String toString() {
 		return ToStringBuilder.reflectionToString(this);
+	}
+
+	private String eliminarEspais(String str) {
+		return (str != null) ? str.trim() : null;
 	}
 
 }

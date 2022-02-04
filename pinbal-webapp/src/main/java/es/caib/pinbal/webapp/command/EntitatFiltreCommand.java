@@ -62,4 +62,16 @@ public class EntitatFiltreCommand {
 		this.activa = activa;
 	}
 
+	// Elimina els espais en els camps de cerca
+	public void eliminarEspaisCampsCerca() {
+		this.codi = eliminarEspais(this.codi);
+		this.nom = eliminarEspais(this.nom);
+		this.cif = eliminarEspais(this.cif);
+		this.unitatArrel = eliminarEspais(this.unitatArrel);
+	}
+
+	private String eliminarEspais(String str) {
+		return (str != null) ? str.trim() : null;
+	}
+
 }

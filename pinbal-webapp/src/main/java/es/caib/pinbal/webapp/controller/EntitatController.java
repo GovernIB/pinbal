@@ -47,8 +47,6 @@ public class EntitatController extends BaseController {
 	@Autowired
 	private PropertyService propertyService;
 
-
-
 	@RequestMapping(method = RequestMethod.GET)
 	public String get(
 			HttpServletRequest request,
@@ -84,12 +82,16 @@ public class EntitatController extends BaseController {
 			@PathVariable Long entitatId,
 			Model model) {
 		EntitatDto entitat = null;
-		if (entitatId != null)
+		if (entitatId != null) {
 			entitat = entitatService.findById(entitatId);
-		if (entitat != null)
-			model.addAttribute(EntitatCommand.asCommand(entitat));
-		else
-			model.addAttribute(new EntitatCommand());
+		}
+		EntitatCommand command;
+		if (entitat != null) {
+			command = EntitatCommand.asCommand(entitat);
+		} else {
+			command = new EntitatCommand();
+		}
+		model.addAttribute(command);
 		return "entitatForm";
 	}
 
@@ -194,7 +196,7 @@ public class EntitatController extends BaseController {
 			command = new EntitatFiltreCommand();
 			command.setActiva(true);
 		}
-			
+		command.eliminarEspaisCampsCerca();
 		model.addAttribute(command);
 		model.addAttribute(
 				"propertyEsborrar",

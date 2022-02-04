@@ -52,6 +52,15 @@ public class ConsultaFiltreCommand {
 		this.dataInici = dateStartToday.minusMonths(3).toDate();
 	}
 
+	// Elimina els espais en els camps de cerca
+	public void eliminarEspaisCampsCerca() {
+		this.scspPeticionId = eliminarEspais(this.scspPeticionId);
+		this.titularNom = eliminarEspais(this.titularNom);
+		this.titularDocument = eliminarEspais(this.titularDocument);
+		this.funcionariNom = eliminarEspais(this.funcionariNom);
+		this.funcionariDocument = eliminarEspais(this.funcionariDocument);
+	}
+
 	public static ConsultaFiltreDto asDto(ConsultaFiltreCommand command) {
 		if (command == null)
 			return null;
@@ -61,6 +70,10 @@ public class ConsultaFiltreCommand {
 		dto.setProcedimentId(command.getProcediment());
 		dto.setServeiCodi(command.getServei());
 		return dto;
+	}
+
+	private String eliminarEspais(String str) {
+		return (str != null) ? str.trim() : null;
 	}
 
 }

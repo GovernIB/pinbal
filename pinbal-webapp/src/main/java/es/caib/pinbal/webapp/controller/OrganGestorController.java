@@ -149,6 +149,7 @@ public class OrganGestorController extends BaseController {
 			}
 			command.setEstat(OrganGestorEstatEnumDto.VIGENT);
 		}
+		command.eliminarEspaisCampsCerca();
 		model.addAttribute(command);
 	}
 

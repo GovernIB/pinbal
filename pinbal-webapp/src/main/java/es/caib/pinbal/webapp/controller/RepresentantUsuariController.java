@@ -439,13 +439,13 @@ public class RepresentantUsuariController extends BaseController {
 		UsuariFiltreCommand command = (UsuariFiltreCommand)RequestSessionHelper.obtenirObjecteSessio(
 				request,
 				SESSION_ATTRIBUTE_FILTRE);
-		if (command == null)
+		if (command == null) {
 			command = new UsuariFiltreCommand();
+		}
+		command.eliminarEspaisCampsCerca();
 		model.addAttribute(command);
-		
 		model.addAttribute("entitat", entitat);
 		model.addAttribute(new EntitatUsuariCommand(entitat.getId()));
-		
 //		String[] values = { EntitatUsuariCommand.CARACTER_NIF, EntitatUsuariCommand.CARACTER_CODI };
 //		String[] texts = { "representant.usuaris.tipus.nif", "representant.usuaris.tipus.codi" };
 //		model.addAttribute(
@@ -453,8 +453,6 @@ public class RepresentantUsuariController extends BaseController {
 //				EnumHelper.getOptionsForArray(
 //						values ,
 //						texts));
-		
-		
 	}
 
 }

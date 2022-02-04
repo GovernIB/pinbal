@@ -793,21 +793,18 @@ public class ServeiController extends BaseController {
 	private void omplirModelPerFiltreTaula( 
 			HttpServletRequest request, 
 			Model model) throws Exception {
-		
 		ServeiFiltreCommand command = (ServeiFiltreCommand) RequestSessionHelper.obtenirObjecteSessio( 
 				request, 
 				SESSION_ATTRIBUTE_FILTRE);
-		
 		if (command == null) {
 			command = new ServeiFiltreCommand();
 			command.setActiva(true);
 		}
-
+		command.eliminarEspaisCampsCerca();
 		model.addAttribute(command);
-		
 		model.addAttribute("emisors", serveiService.findEmisorAll());
 	} 
-	
+
 	private void omplirModelTraduccio(
 			String serveiCodi,
 			Model model) throws ServeiNotFoundException, ScspException {

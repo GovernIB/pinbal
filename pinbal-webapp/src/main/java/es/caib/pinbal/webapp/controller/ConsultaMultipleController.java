@@ -285,6 +285,7 @@ public class ConsultaMultipleController extends BaseController {
 			command = new ConsultaFiltreCommand();
 			command.filtrarDarrers3MesosPerDefecte();
 		}
+		command.eliminarEspaisCampsCerca();
 		model.addAttribute(
 				"filtreCommand",
 				command);
