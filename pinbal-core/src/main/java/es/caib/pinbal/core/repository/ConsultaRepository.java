@@ -19,6 +19,7 @@ import es.caib.pinbal.core.model.Consulta;
 import es.caib.pinbal.core.model.Consulta.EstatTipus;
 import es.caib.pinbal.core.model.Consulta.JustificantEstat;
 import es.caib.pinbal.core.model.Entitat;
+import es.caib.pinbal.core.model.ProcedimentServei;
 import es.caib.pinbal.core.model.Usuari;
 
 /**
@@ -339,6 +340,15 @@ public interface ConsultaRepository extends JpaRepository<Consulta, Long> {
 	public List<Consulta> findByEstatAndMultipleOrderByIdAsc(
 			EstatTipus estat,
 			boolean multiple);
+
+	public List<Consulta> findByEstatAndMultipleAndConsentimentNotNullOrderByIdAsc(
+			EstatTipus estat,
+			boolean multiple);
+	
+	public List<Consulta> findByEstatAndMultipleAndProcedimentServeiAndConsentimentNotNullOrderByIdAsc(
+			EstatTipus estat,
+			boolean multiple,
+			ProcedimentServei procedimentServei);
 
 	public List<Consulta> findByEstatAndJustificantEstatAndMultipleAndArxiuExpedientTancatOrderByIdAsc(
 			EstatTipus estat,
