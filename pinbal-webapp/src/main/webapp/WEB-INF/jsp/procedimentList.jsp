@@ -113,7 +113,7 @@ $(document).ready(function() {
 					emptyOptionTextKey="procediment.list.filtre.camp.opcio.cap"
 					optionItems="${organsGestors}"
 					optionValueAttribute="id"
-					optionTextAttribute="nom"
+					optionTextAttribute="nomICodi"
 					required="true"
 					optionMinimumResultsForSearch="5"/>
 			</div>
