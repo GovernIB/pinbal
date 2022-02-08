@@ -419,16 +419,20 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 			throw new ConsultaNotFoundException();
 		}
 		try {
-			ResultatEnviamentPeticio resultat = getScspHelper().recuperarResultatEnviamentPeticio(
-					consulta.getScspPeticionId());
-			if (resultat.getIdsSolicituds() != null && resultat.getIdsSolicituds().length > 0) {
-				consulta.updateScspSolicitudId(resultat.getIdsSolicituds()[0]);
-			}
-			// Si l'estat de la consulta és Error vol dir que l'error s'ha processat amb anterioritat
-			// i no és necessari actualitzar l'estat. Si l'estat s'actualitza segurament el posarà com
-			// a pendent i no seria l'estat correcte.
-			if (consulta.getEstat() != EstatTipus.Error) {
-				peticioScspHelper.updateEstatConsulta(consulta, resultat, accioParams);
+			// Si l'estat de la consulta és pendent aleshores voldrà dir que la petició encara no s'ha
+			// enviat i no te sentit refrescar el seu estat.
+			if (consulta.getEstat() != EstatTipus.Pendent) {
+				ResultatEnviamentPeticio resultat = getScspHelper().recuperarResultatEnviamentPeticio(
+						consulta.getScspPeticionId());
+				if (resultat.getIdsSolicituds() != null && resultat.getIdsSolicituds().length > 0) {
+					consulta.updateScspSolicitudId(resultat.getIdsSolicituds()[0]);
+				}
+				// Si l'estat de la consulta és Error vol dir que l'error s'ha processat amb anterioritat
+				// i no és necessari actualitzar l'estat. Si l'estat s'actualitza segurament el posarà com
+				// a pendent i no seria l'estat correcte.
+				if (consulta.getEstat() != EstatTipus.Error) {
+					peticioScspHelper.updateEstatConsulta(consulta, resultat, accioParams);
+				}
 			}
 			integracioHelper.addAccioOk(
 					IntegracioHelper.INTCODI_SERVEIS_SCSP,
