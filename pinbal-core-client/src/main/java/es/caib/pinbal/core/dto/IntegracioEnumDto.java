@@ -3,5 +3,6 @@ package es.caib.pinbal.core.dto;
 public enum IntegracioEnumDto {
 	ARXIU,
 	FIRMASERV,
-	SERVEIS_SCSP
+	SERVEIS_SCSP,
+	ORGANS
 }

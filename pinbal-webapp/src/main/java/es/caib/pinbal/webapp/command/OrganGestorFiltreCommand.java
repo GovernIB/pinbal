@@ -3,40 +3,28 @@
  */
 package es.caib.pinbal.webapp.command;
 
-import org.apache.commons.lang.builder.ToStringBuilder;
-
 import es.caib.pinbal.core.dto.OrganGestorEstatEnumDto;
+import lombok.Data;
 
 /**
  * Command per a filtrar les organs.
  * 
  * @author Limit Tecnologies <limit@limit.es>
  */
+@Data
 public class OrganGestorFiltreCommand {
+
 	private String codi;
 	private String nom;
 	private OrganGestorEstatEnumDto estat;
+	private Long entitatId;
 
-	public String getCodi() {
-		return codi;
+	public OrganGestorFiltreCommand() {
+		super();
 	}
-	public void setCodi(String codi) {
-		this.codi = codi;
+
+	public OrganGestorFiltreCommand(Long entitatId) {
+		this.entitatId = entitatId;
 	}
-	public String getNom() {
-		return nom;
-	}
-	public void setNom(String nom) {
-		this.nom = nom;
-	}
-	public OrganGestorEstatEnumDto getEstat() {
-		return estat;
-	}
-	public void setEstat(OrganGestorEstatEnumDto estat) {
-		this.estat = estat;
-	}
-	@Override
-	public String toString() {
-		return ToStringBuilder.reflectionToString(this);
-	}
+
 }

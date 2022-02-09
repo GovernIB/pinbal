@@ -44,10 +44,10 @@
 		<form:form id="form-filtre" action="" class="form-horizontal" method="post" cssClass="well form-filtre-table" commandName="filtreCommand">
 			<div class="row">
 				<div class="col-md-3">
-					<pbl:inputSelect name="entitatId" inline="true" placeholderKey="admin.consulta.list.filtre.entitat" 
-		 						 	optionItems="${entitats}"   
+					<pbl:inputSelect name="entitatId" inline="true" placeholderKey="admin.consulta.list.filtre.entitat"
+		 						 	optionItems="${entitats}"
 			 						optionValueAttribute="id"
-			 						optionTextAttribute="nom" 
+			 						optionTextAttribute="nom"
 									emptyOption="true"
 									optionMinimumResultsForSearch="0"/>
 				</div>

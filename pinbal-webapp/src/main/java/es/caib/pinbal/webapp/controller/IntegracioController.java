@@ -44,14 +44,13 @@ public class IntegracioController extends BaseController {
 	@Autowired
 	private AplicacioService aplicacioService;
 
-
-
 	@RequestMapping(method = RequestMethod.GET)
 	public String get(
 			HttpServletRequest request,
 			Model model) {
 		return getAmbCodi(request, null, model);
 	}
+
 	@RequestMapping(value = "/{codi}", method = RequestMethod.GET)
 	public String getAmbCodi(
 			HttpServletRequest request,
@@ -76,7 +75,6 @@ public class IntegracioController extends BaseController {
 			}
 			integracio.setNumErrors(nErrors);
 		}
-		
 		model.addAttribute(
 				"integracions",
 				integracions);
@@ -126,7 +124,6 @@ public class IntegracioController extends BaseController {
 			@PathVariable Long id,
 			Model model) {
 		List<IntegracioAccioDto> accions = aplicacioService.integracioFindDarreresAccionsByCodi(codi);
-		
 		IntegracioAccioDto integracio = null;
 		for (IntegracioAccioDto integracioAccioDto : accions) {
 			if (integracioAccioDto.getId().equals(id)) {
@@ -150,7 +147,6 @@ public class IntegracioController extends BaseController {
 							"integracio.list.no.existeix"));
 			
 			return "redirect:../../integracio/" + codi;
-
 		}
 	}
 

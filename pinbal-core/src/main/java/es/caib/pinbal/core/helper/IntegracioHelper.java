@@ -45,6 +45,7 @@ public class IntegracioHelper {
 	public static final String INTCODI_ARXIU = "ARXIU";
 	public static final String INTCODI_FIRMASERV = "FIRMASERV";
 	public static final String INTCODI_SERVEIS_SCSP = "SERVEIS_SCSP";
+	public static final String INTCODI_ORGANS = "ORGANS";
 	public static final String INTCODI_USUARIS = "USUARIS";
 
 	private Map<String, LinkedList<IntegracioAccioDto>> accionsIntegracio = Collections.synchronizedMap(new HashMap<String, LinkedList<IntegracioAccioDto>>());
@@ -68,6 +69,9 @@ public class IntegracioHelper {
 		integracions.add(
 				novaIntegracio(
 						INTCODI_SERVEIS_SCSP));
+		integracions.add(
+				novaIntegracio(
+						INTCODI_ORGANS));
 		return integracions;
 	}
 
@@ -213,17 +217,15 @@ public class IntegracioHelper {
 			String codi) {
 		IntegracioDto integracio = new IntegracioDto();
 		integracio.setCodi(codi);
-
 		if (INTCODI_ARXIU.equals(codi)) {
 			integracio.setNom("Arxiu digital");
 		} else if (INTCODI_FIRMASERV.equals(codi)) {
 			integracio.setNom("Firma servidor");
 		} else if (INTCODI_SERVEIS_SCSP.equals(codi)) {
 			integracio.setNom("Serveis SCSP");
+		} else if (INTCODI_ORGANS.equals(codi)) {
+			integracio.setNom("Organs gestors");
 		}
-		
-		
-		
 		return integracio;
 	}
 

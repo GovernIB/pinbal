@@ -1,9 +1,12 @@
 package es.caib.pinbal.core.helper;
 
+import java.util.HashMap;
 import java.util.Map;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import es.caib.pinbal.core.dto.IntegracioAccioTipusEnumDto;
 import es.caib.pinbal.plugin.unitat.NodeDir3;
 import es.caib.pinbal.plugin.unitat.UnitatsOrganitzativesPlugin;
 import es.caib.pinbal.plugins.SistemaExternException;
@@ -16,15 +19,37 @@ import es.caib.pinbal.plugins.SistemaExternException;
 @Component
 public class PluginOrganGestorHelper {
 
+	@Autowired
+	private IntegracioHelper integracioHelper;
+
 	private UnitatsOrganitzativesPlugin unitatsOrganitzativesPlugin;
 	private static final String PROPERTY_PLUGIN_CLASS = "es.caib.pinbal.plugin.unitats.organitzatives.class";
-	
+
 	public Map<String, NodeDir3> getOrganigramaOrganGestor(String codiDir3) throws Exception {
+		String accioDescripcio = "Consulta de l'arbre d'òrgans gestors per entitat";
+		Map<String, String> accioParams = new HashMap<String, String>();
+		accioParams.put("codiDir3Entitat", codiDir3);
+		long t0 = System.currentTimeMillis();
 		Map<String, NodeDir3> organigrama = null;
 		try {
 			organigrama = getUnitatsOrganitzativesPlugin().organigrama(codiDir3);
+			integracioHelper.addAccioOk(
+					IntegracioHelper.INTCODI_ORGANS,
+					accioDescripcio,
+					accioParams,
+					IntegracioAccioTipusEnumDto.ENVIAMENT,
+					System.currentTimeMillis() - t0);
 		} catch (SistemaExternException ex) {
-			throw new SistemaExternException("Error al obtenir l'organigrama per entitat");
+			String errorDescripcio = "Error al consultar l'arbre d'òrgans gestors per entitat";
+			integracioHelper.addAccioError(
+					IntegracioHelper.INTCODI_ORGANS,
+					accioDescripcio,
+					accioParams,
+					IntegracioAccioTipusEnumDto.ENVIAMENT,
+					System.currentTimeMillis() - t0,
+					errorDescripcio,
+					ex);
+			throw new SistemaExternException(errorDescripcio, ex);
 		}
 		return organigrama;
 	}

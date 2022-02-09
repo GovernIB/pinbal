@@ -33,7 +33,6 @@ import es.caib.pinbal.core.dto.EntitatDto;
 import es.caib.pinbal.core.dto.EntitatDto.EntitatTipusDto;
 import es.caib.pinbal.core.service.ConsultaService;
 import es.caib.pinbal.core.service.EntitatService;
-
 import es.caib.pinbal.core.service.ProcedimentService;
 import es.caib.pinbal.core.service.ServeiService;
 import es.caib.pinbal.core.service.exception.ConsultaNotFoundException;
@@ -72,7 +71,7 @@ public class ConsultaAdminController extends BaseController {
 	@RequestMapping(method = RequestMethod.GET)
 	public String get(
 			HttpServletRequest request,
-			Model model) throws Exception {		
+			Model model) throws Exception {
 		omplirModelPerFiltreTaula(request, model);
 		return "adminConsultes";
 	}
@@ -84,7 +83,6 @@ public class ConsultaAdminController extends BaseController {
 			BindingResult bindingResult,
 			@RequestParam(value = "accio", required = false) String accio,
 			Model model) throws Exception {
-		
 		if ("netejar".equals(accio)) {
 			RequestSessionHelper.esborrarObjecteSessio(
 					request,
@@ -101,30 +99,23 @@ public class ConsultaAdminController extends BaseController {
 				return "redirect:consulta";
 			}
 		}
-		
 		return "redirect:consulta";
 	}
+
 	@RequestMapping(value = "/datatable", produces="application/json", method = RequestMethod.GET)
 	@ResponseBody
 	public ServerSideResponse<ConsultaDto, Long> datatable(HttpServletRequest request, Model model)
-	      throws IllegalAccessException, InvocationTargetException, NoSuchMethodException, NamingException,
-	      SQLException, EntitatNotFoundException {
+		throws IllegalAccessException, InvocationTargetException, NoSuchMethodException, NamingException,
+		SQLException, EntitatNotFoundException {
 		ServerSideRequest serverSideRequest = new ServerSideRequest(request);
-		
-		ConsultaFiltreCommand command = (ConsultaFiltreCommand)RequestSessionHelper.obtenirObjecteSessio(
-				request,
-				SESSION_ATTRIBUTE_FILTRE);
-		if (command == null)
-			command = new ConsultaFiltreCommand(entitatService.findTopByTipus(EntitatTipusDto.GOVERN).getId());
+		ConsultaFiltreCommand command = getCommandInstance(request);
 		List<ServerSideColumn> cols = serverSideRequest.getColumns();
 		cols.get(1).setData("createdDate");
 		cols.get(2).setData("createdBy.nom");
 		cols.get(4).setData("procedimentServei.procediment.nom");
-		
 		Page<ConsultaDto> page = consultaService.findByFiltrePaginatPerAdmin(
 				ConsultaFiltreCommand.asDto(command), 
 				serverSideRequest.toPageable());
-
 		cols.get(1).setData("creacioData");
 		cols.get(2).setData("creacioUsuari.nom");
 		cols.get(3).setData("funcionariNomAmbDocument");
@@ -132,6 +123,7 @@ public class ConsultaAdminController extends BaseController {
 		cols.get(5).setData("serveiDescripcio");
 		return new ServerSideResponse<ConsultaDto, Long>(serverSideRequest, page);
 	}
+
 	@RequestMapping(value = "/entitat/seleccionar", method = RequestMethod.POST)
 	public String entitatSeleccionar(
 			HttpServletRequest request,
@@ -205,22 +197,16 @@ public class ConsultaAdminController extends BaseController {
 
 	@InitBinder
 	public void initBinder(WebDataBinder binder) {
-	    SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
-	    dateFormat.setLenient(false);
-	    binder.registerCustomEditor(Date.class, new CustomDateEditor(dateFormat, true));
+		SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+		dateFormat.setLenient(false);
+		binder.registerCustomEditor(Date.class, new CustomDateEditor(dateFormat, true));
 	}
-
-
 
 	private void omplirModelPerFiltreTaula(
 			HttpServletRequest request,
 			Model model) throws Exception {
 			model.addAttribute("entitats", entitatService.findAll());
-			ConsultaFiltreCommand command = (ConsultaFiltreCommand)RequestSessionHelper.obtenirObjecteSessio(
-					request,
-					SESSION_ATTRIBUTE_FILTRE);
-			if (command == null)
-				command = new ConsultaFiltreCommand(entitatService.findTopByTipus(EntitatTipusDto.GOVERN).getId());
+			ConsultaFiltreCommand command = getCommandInstance(request);
 			if (command.getEntitatId() != null) {
 				model.addAttribute(
 						"filtreCommand",
@@ -255,4 +241,16 @@ public class ConsultaAdminController extends BaseController {
 							serveiService.findAll());
 			}
 	}
+
+	private ConsultaFiltreCommand getCommandInstance(HttpServletRequest request) {
+		ConsultaFiltreCommand command = (ConsultaFiltreCommand)RequestSessionHelper.obtenirObjecteSessio(
+				request,
+				SESSION_ATTRIBUTE_FILTRE);
+		if (command == null) {
+			command = new ConsultaFiltreCommand(
+					entitatService.findTopByTipus(EntitatTipusDto.GOVERN).getId());
+		}
+		return command;
+	}
+
 }
