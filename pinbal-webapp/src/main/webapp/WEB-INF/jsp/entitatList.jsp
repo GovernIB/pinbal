@@ -4,13 +4,11 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib tagdir="/WEB-INF/tags/pinbal" prefix="pbl" %>
-
 <%
 	request.setAttribute(
 			"entitatTipusLlista",
 			es.caib.pinbal.core.dto.EntitatDto.EntitatTipusDto.values());
 %>
-
 <html>
 <head>
 	<title><spring:message code="entitat.list.titol"/></title>
@@ -26,14 +24,12 @@
 	<script src="<c:url value="/webjars/datatables-plugins/1.10.20/dataRender/datetime.js"/>"></script>
 	<script src="<c:url value="/webjars/momentjs/2.24.0/min/moment.min.js"/>"></script>
 
-
 	<script src="<c:url value="/webjars/select2/4.0.6-rc.1/dist/js/select2.min.js"/>"></script>
 	<script src="<c:url value="/webjars/select2/4.0.6-rc.1/dist/js/i18n/${requestLocale}.js"/>"></script>
 	<script src="<c:url value="/webjars/bootstrap-datepicker/1.6.1/dist/js/bootstrap-datepicker.min.js"/>"></script>
 
 	<script src="<c:url value="/js/webutil.common.js"/>"></script>
 	<script src="<c:url value="/js/webutil.datatable.js"/>"></script>
-
 <script>
 $(document).ready(function() {
 	$('#netejar-filtre').click(function() {
@@ -49,99 +45,87 @@ $(document).ready(function() {
 		$('#form-filtre').submit();
 	});
 	$('.confirm-esborrar').click(function() {
-		  return confirm("<spring:message code="entitat.list.confirmacio.esborrar"/>");
+		return confirm("<spring:message code="entitat.list.confirmacio.esborrar"/>");
 	});
-	
-    $('#table-entitats').DataTable({
-    	autoWidth: false,
+	$('#table-entitats').DataTable({
+		autoWidth: false,
 		processing: true,
 		serverSide: true,
 		dom: "<'row'<'col-md-6'i><'col-md-6'>><'row'<'col-md-12'rt>><'row'<'col-md-6'l><'col-md-6'p>>",
 		language: {
-            "url": "js/datatable-language.json"
-        },
+			"url": "js/datatable-language.json"
+		},
 		ajax: "entitat/datatable",
-		columnDefs: [
-			{ 
-	            targets: 0,
-	        }, { 
-	            targets: [1],
-				render: function (data, type, row, meta) {
-					row['span-label'] = '';
-					if (row.tipus=='GOVERN'){
-						row['span-label'] = '<span class="label label-default" title="<spring:message code="entitat.list.entitat.tipus.GOVERN"/>">GOV</span>';
-						
-					}else if(row.tipus=='CONSELL'){
-						row['span-label'] = '<span class="label label-default" title="<spring:message code="entitat.list.entitat.tipus.CONSELL"/>">CON</span>';
-						
-					}else if(row.tipus=='AJUNTAMENT'){
-						row['span-label'] = '<span class="label label-default" title="<spring:message code="entitat.list.entitat.tipus.AJUNTAMENT"/>">AJU</span>';
-					}
-					var template = $('#template-nom').html();
+		columnDefs: [{
+			targets: 0,
+		}, {
+			targets: [1],
+			render: function (data, type, row, meta) {
+				row['span-label'] = '';
+				if (row.tipus=='GOVERN'){
+					row['span-label'] = '<span class="label label-default" title="<spring:message code="entitat.list.entitat.tipus.GOVERN"/>">GOV</span>';
+					
+				}else if(row.tipus=='CONSELL'){
+					row['span-label'] = '<span class="label label-default" title="<spring:message code="entitat.list.entitat.tipus.CONSELL"/>">CON</span>';
+					
+				}else if(row.tipus=='AJUNTAMENT'){
+					row['span-label'] = '<span class="label label-default" title="<spring:message code="entitat.list.entitat.tipus.AJUNTAMENT"/>">AJU</span>';
+				}
+				var template = $('#template-nom').html();
+				return Mustache.render(template, row);
+			}
+		}, {
+			targets: [5],
+			render: function (data, type, row, meta) {
+					var template = $('#template-activa').html();
 					return Mustache.render(template, row);
-				}
-	        },
-			{
-				targets: [5],
-				render: function (data, type, row, meta) {
-						var template = $('#template-activa').html();
-						return Mustache.render(template, row);
-				}
-			},
-			{
-				targets: [6],
-				orderable: false,
-				width: "1%",
-				render: function (data, type, row, meta) {
-						var template = $('#template-btn-usuaris').html();
-						return Mustache.render(template, row);
-				}
-			}, 
-			{
-				targets: [7],
-				orderable: false,
-				width: "1%",
-				render: function (data, type, row, meta) {
-						var template = $('#template-btn-serveis').html();
-						return Mustache.render(template, row);
-				}
-			}, 
-			{
-				targets: [8],
-				orderable: false,
-				width: "1%",
-				render: function (data, type, row, meta) {
-						var template = $('#template-accions').html();
-						row['propertyEsborrar'] = ${propertyEsborrar};
-						return Mustache.render(template, row);
-				}
-			}, 
-	   ]
+			}
+		}, {
+			targets: [6],
+			orderable: false,
+			width: "1%",
+			render: function (data, type, row, meta) {
+					var template = $('#template-btn-usuaris').html();
+					return Mustache.render(template, row);
+			}
+		}, {
+			targets: [7],
+			orderable: false,
+			width: "1%",
+			render: function (data, type, row, meta) {
+					var template = $('#template-btn-serveis').html();
+					return Mustache.render(template, row);
+			}
+		}, {
+			targets: [8],
+			orderable: false,
+			width: "1%",
+			render: function (data, type, row, meta) {
+					var template = $('#template-accions').html();
+					row['propertyEsborrar'] = ${propertyEsborrar};
+					return Mustache.render(template, row);
+			}
+		}]
 	});
-	
 });
 </script>
 </head>
 <body>
-	
 	<c:url value="/entitat" var="formAction"/>
 	<form:form id="form-filtre" action="${formAction}" method="post" cssClass="well form-filtre-table" commandName="entitatFiltreCommand">
-
-		<div class="row">		
+		<div class="row">
 			<div class="col-md-2" >
 				<pbl:inputText name="codi" inline="true" placeholderKey="entitat.list.filtre.camp.codi"/>
-			</div>						
+			</div>
 			<div class="col-md-2">
 				<pbl:inputText name="nom" inline="true" placeholderKey="entitat.list.filtre.camp.nom"/>
 			</div>
 			<div class="col-md-2">
 				<pbl:inputText name="cif" inline="true" placeholderKey="entitat.list.filtre.camp.cif"/>
 			</div>
-			
 			<div class="col-md-2">
 				<pbl:inputText name="unitatArrel" inline="true" placeholderKey="entitat.list.filtre.camp.unitatArrel"/>
-			</div>			
-			
+			</div>
 			<div class="col-md-2">
 				<c:set var="campPath" value="activa"/>
 				<spring:message var="trueValue" code="entitat.list.filtre.camp.activa.yes"/>
@@ -153,23 +137,22 @@ $(document).ready(function() {
 				</form:select>
 			</div>	
 			<div class="col-md-2">
-				<pbl:inputSelect name="tipus" inline="true" 
-				 				 placeholderKey="entitat.list.filtre.camp.tipus"
-						 		 optionItems="${entitatTipusLlista}"
-								 emptyOption="true"/>
+				<pbl:inputSelect
+					name="tipus" inline="true"
+					placeholderKey="entitat.list.filtre.camp.tipus"
+					optionItems="${entitatTipusLlista}"
+					emptyOption="true"/>
 			</div>
 		</div>
-		<div class="row">	
+		<div class="row">
 			<div class="col-md-2 pull-right">
 				<div class="pull-right">
 					<button id="netejar-filtre" class="btn btn-default" type="button"><spring:message code="comu.boto.netejar"/></button>
 					<button type="submit" class="btn btn-primary"><span class="fa fa-filter"></span> <spring:message code="comu.boto.filtrar"/></button>
-				</div>				
-			</div>		
+				</div>
+			</div>
 		</div>
-		
 	</form:form>
-	
 	<div class="pull-right">
 		<a class="btn btn-primary" href="<c:url value="/entitat/new"/>"><i class="fa fa-plus"></i>&nbsp;<spring:message code="entitat.list.boto.nova.entitat"/></a>
 	</div>
@@ -235,6 +218,5 @@ function onInvokeAction(id) {
 	createHiddenInputFieldsForLimitAndSubmit(id);
 }
 </script>
-
 </body>
 </html>

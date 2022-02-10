@@ -113,7 +113,6 @@ public class IntegracioController extends BaseController {
 		} else {
 			accions = new ArrayList<IntegracioAccioDto>();
 		}
-		
 		return new ServerSideResponse<IntegracioAccioDto, Long>(serverSideRequest, accions);
 	}
 
