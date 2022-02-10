@@ -112,7 +112,7 @@
 				<tr>
 					<th data-data="scspPeticionId"><spring:message code="admin.consulta.list.taula.peticion.id" /></th>
 					<th data-data="creacioData"><spring:message code="admin.consulta.list.taula.data" /></th>
-					<th data-data="creacioUsuari.nom"><spring:message code="admin.consulta.list.taula.usuari" /></th>
+					<th data-data="creacioUsuari.nomCodi"><spring:message code="admin.consulta.list.taula.usuari" /></th>
 					<th data-data="funcionariNomAmbDocument"><spring:message code="admin.consulta.list.taula.funcionari" /></th>
 					<th data-data="procedimentNom"><spring:message code="admin.consulta.list.taula.procediment" /></th>
 					<th data-data="serveiDescripcio"><spring:message code="admin.consulta.list.taula.servei" /></th>
@@ -135,85 +135,72 @@
 		$('#netejar-filtre').click(function() {
 			$(':input', $('#form-filtre')).each (function() {
 				var type = this.type, tag = this.tagName.toLowerCase();
-				if (type == 'text' || type == 'password' || tag == 'textarea')
+				if (type == 'text' || type == 'password' || tag == 'textarea') {
 					this.value = '';
-				else if (type == 'checkbox' || type == 'radio')
+				} else if (type == 'checkbox' || type == 'radio') {
 					this.checked = false;
-				else if (tag == 'select')
+				} else if (tag == 'select') {
 					this.selectedIndex = 0;
+				}
 			});
-			
 			var accioInput = $("<input>")
 				.attr("type", "hidden")
-	            .attr("name", "accio").val("netejar");
+				.attr("name", "accio").val("netejar");
 			$('#form-filtre').append(accioInput);
-			
 			$('#form-filtre').submit();
 		});
 		$("#select-entitat").select2();
-		
-	    $('#table-consultes').DataTable({
-	    	autoWidth: false,
+		$('#table-consultes').DataTable({
+			autoWidth: false,
 			processing: true,
 			serverSide: true,
 			"order": [[ 1, "desc" ]],
 			language: {
-	            "url": '<c:url value="/js/datatable-language.json"/>'
-	        },
+				"url": '<c:url value="/js/datatable-language.json"/>'
+			},
 			ajax: '<c:url value="/admin/consulta/datatable/"/>',
-			columnDefs: [
-				{
-					targets: [0],
-					width: "10%",
-					render: function (data, type, row, meta) {
-							var template = $('#template-id-peticion').html();
-							return Mustache.render(template, row);
+			columnDefs: [{
+				targets: [0],
+				width: "10%",
+				render: function (data, type, row, meta) {
+					var template = $('#template-id-peticion').html();
+					return Mustache.render(template, row);
+				}
+			}, {
+				targets: [1],
+				width: "10%",
+				render: $.fn.dataTable.render.moment('x', 'DD/MM/YYYY HH:mm:ss', 'es' )
+			}, {
+				targets: [6],
+				orderable: false,
+				width: "6%",
+				render: function (data, type, row, meta) {
+					var template = $('#template-estat').html();
+					row['icon-status'] = '';
+					if (row.estat=='Error') {
+						row['icon-status'] = '<i class="fas fa-exclamation-triangle" title="' + row.error + '"></i>';
+					} else if(row.estat=='Pendent') {
+						row['icon-status'] = '<i class="fas fa-bookmark"></i>';
+					} else if(row.estat=='Processant') {
+						row['icon-status'] = '<i class="fas fa-hourglass-half"></i>';
+					} else {
+						row['icon-status'] = '<i class="fa fa-check"></i>';
 					}
-				},
-				{
-					targets: [1],
-					width: "10%",
-					render: $.fn.dataTable.render.moment('x', 'DD/MM/YYYY HH:mm:ss', 'es' )
-				},				
-				{
-					targets: [6],
-					orderable: false,
-					width: "6%",
-					render: function (data, type, row, meta) {
-							var template = $('#template-estat').html();
-							row['icon-status'] = '';
-							if (row.estat=='Error'){
-								row['icon-status'] = '<i class="fas fa-exclamation-triangle" title="' + row.error + '"></i>';
-
-							}else if(row.estat=='Pendent'){
-								row['icon-status'] = '<i class="fas fa-bookmark"></i>';
-
-							}else if(row.estat=='Processant'){
-								row['icon-status'] = '<i class="fas fa-hourglass-half"></i>';
-
-							}else{
-								row['icon-status'] = '<i class="fa fa-check"></i>';
-							}
-							return Mustache.render(template, row);
-					}
-				}, 
-				{
-					targets: [7],
-					orderable: false,
-					width: "1%",
-					render: function (data, type, row, meta) {
-							var template = $('#template-details').html();
-							return Mustache.render(template, row);
-					}
-				},
-				{
-					targets: [3, 5],
-					orderable: false,
-				},
-		   ],
-		   initComplete: function( settings, json ) {
-
-			}
+					return Mustache.render(template, row);
+				}
+			}, {
+				targets: [7],
+				orderable: false,
+				width: "1%",
+				render: function (data, type, row, meta) {
+					var template = $('#template-details').html();
+					return Mustache.render(template, row);
+				}
+			}, {
+				targets: [3, 5],
+				orderable: false,
+			}],
+			initComplete: function( settings, json ) {}
 		});
 	});
 </script>

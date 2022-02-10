@@ -112,6 +112,10 @@ public class UsuariDto extends AbstractIdentificable<Long> implements Serializab
 		}
 	}
 
+	public String getNomCodi() {
+		return nom + " (" + codi + ")";
+	}
+
 	@Override
 	public String toString() {
 		return ToStringBuilder.reflectionToString(this);
