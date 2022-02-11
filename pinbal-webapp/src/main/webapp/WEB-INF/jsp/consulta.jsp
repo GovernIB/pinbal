@@ -33,6 +33,7 @@
 	<script src="<c:url value="/webjars/datatables-plugins/1.10.20/dataRender/datetime.js"/>"></script>
 	<script src="<c:url value="/webjars/momentjs/2.24.0/min/moment.min.js"/>"></script>
 	<script src="<c:url value="/js/webutil.datatable.js"/>"></script>
+	<script src="<c:url value="/js/webutil.modal.js"/>"></script>
 	<script src="<c:url value="/js/webutil.common.js"/>"></script>
 
 <style>
@@ -74,16 +75,16 @@ table.dataTable thead > tr.selectable > :first-child, table.dataTable tbody > tr
 							 emptyOption="true"/>
 		</div>	
 	</div>
-	<div class="row">						
+	<div class="row">
 		<div class="col-md-3" >
 			<div class="row">
 				<div class="col-md-6" >
 					<pbl:inputDate name="dataInici"  inline="true" placeholderKey="consulta.list.filtre.data.inici"/>
-				</div>		
+				</div>
 				<div class="col-md-6" >
 					<pbl:inputDate name="dataFi"  inline="true" placeholderKey="consulta.list.filtre.data.fi"/>
-				</div>		
-			</div>		
+				</div>
+			</div>
 		</div>
 		<div class="col-md-3">
 			<pbl:inputText name="titularNom" inline="true" placeholderKey="consulta.list.filtre.titular.nom"/>
@@ -108,7 +109,7 @@ table.dataTable thead > tr.selectable > :first-child, table.dataTable tbody > tr
 					<th data-data="procedimentNom"><spring:message code="consulta.list.taula.procediment" /></th><%-- 2 --%>
 					<th data-data="serveiDescripcio"><spring:message code="consulta.list.taula.servei" /></th><%-- 3 --%>
 					<th data-data="titularNomSencer"><spring:message code="consulta.list.taula.titular.nom" /></th><%-- 4 --%>
-					<th data-data="titularDocumentAmbTipus"><spring:message code="consulta.list.taula.titular.document" /></th>	<%-- 5 --%>			
+					<th data-data="titularDocumentAmbTipus"><spring:message code="consulta.list.taula.titular.document" /></th><%-- 5 --%>
 					<th data-data="estat"><spring:message code="consulta.list.taula.estat" /></th><%-- 6 --%>
 					<th data-data="id"></th><%-- 7 --%>
 					<th data-data="justificantEstat"></th><%-- 8 --%>
@@ -282,8 +283,8 @@ $(document).ready(function() {
 </div>
 <div id="modal-justificant-error-{{ id }}" class="modal fade" role="dialog">
 	<div class="modal-dialog modal-lg">
-	    <!-- Modal content-->
-	    <div class="modal-content">
+		<!-- Modal content-->
+		<div class="modal-content">
 		<div class="modal-header">
 			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
 			<h3><spring:message code="consulta.list.taula.justif.error"/></h3>
@@ -304,7 +305,7 @@ $(document).ready(function() {
 </script>
 
 <script id="template-details" type="x-tmpl-mustache">
-<a href="consulta/{{ id }}" class="btn btn-default">
+<a href="consulta/{{ id }}" class="btn btn-default" data-toggle="modal">
 	<i class="fas fa-search-plus"></i>&nbsp;<spring:message code="admin.consulta.list.taula.detalls"/>
 </a>
 </script>

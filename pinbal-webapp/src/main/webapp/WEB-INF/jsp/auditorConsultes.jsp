@@ -189,7 +189,7 @@ $(document).ready(function() {
 			<tr>
 				<th data-data="scspPeticionId"><spring:message code="consulta.list.taula.peticion.id" /></th>
 				<th data-data="creacioData"><spring:message code="auditor.list.taula.data" /></th>
-				<th data-data="creacioUsuari.nom"><spring:message code="auditor.list.taula.usuari" /></th>
+				<th data-data="creacioUsuari.nomCodi"><spring:message code="auditor.list.taula.usuari" /></th>
 				<th data-data="funcionariNomAmbDocument"><spring:message code="auditor.list.taula.funcionari" /></th>
 				<th data-data="procedimentNom"><spring:message code="auditor.list.taula.procediment" /></th>
 				<th data-data="serveiDescripcio"><spring:message code="auditor.list.taula.servei" /></th>

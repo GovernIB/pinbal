@@ -2,7 +2,6 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
-
 <html>
 <head>
 	<title><spring:message code="admin.consulta.info.titol"/></title>
@@ -15,15 +14,13 @@ function initModalXml(element) {
 </script>
 </head>
 <body>
-
 	<c:if test="${consulta.estatError}">
 		<div class="alert alert-danger fade in">
-		  	<button class="close" data-dismiss="alert" aria-label="close">&times;</button>
+			<button class="close" data-dismiss="alert" aria-label="close">&times;</button>
 			<h4 class="alert-heading"><spring:message code="admin.consulta.info.recepcio.error"/>:</h4>
 			<p>${consulta.error}</p>
 		</div>
 	</c:if>
-
 	<div class="well">
 		<h3>
 			<spring:message code="admin.consulta.info.consulta.dades"/>
@@ -62,13 +59,14 @@ function initModalXml(element) {
 			</div>
 		</div>
 	</c:if>
-	<div class="well">
-		<a href="<c:url value="/admin/consulta"/>" class="btn btn-default"><span class="fa fa-arrow-left"></span>&nbsp;<spring:message code="comu.boto.tornar"/></a>
+	<div style="height:360px"></div>
+	<div id="modal-botons" class="well">
+		<a href="<c:url value="/admin/consulta"/>" class="btn btn-default" data-modal-cancel="true"><span class="fa fa-arrow-left"></span>&nbsp;<spring:message code="comu.boto.tornar"/></a>
 	</div>
 	<div id="modal-missatge-xml" class="modal fade">
-  	<div class="modal-dialog">
-    	<div class="modal-content">
-	      	<div class="modal-header">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			<div class="modal-header">
 				<button type="button" class="close" data-dismiss="modal">&times;</button>
 				<h4 class="modal-title"><spring:message code="admin.consulta.info.missatge.xml"/></h4>
 			</div>
@@ -79,6 +77,5 @@ function initModalXml(element) {
 		</div>
 	</div>
 	</div>
-
 </body>
 </html>

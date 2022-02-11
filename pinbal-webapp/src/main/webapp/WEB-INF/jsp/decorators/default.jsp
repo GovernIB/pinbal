@@ -124,8 +124,8 @@ body {
 								<c:if test="${hiHaMesEntitats}">
 									<a href="#" class="dropdown-toggle" data-toggle="dropdown">
 								</c:if>
-         						<i class="fas fa-university"></i> ${entitatActual.nom}
-         						<c:if test="${hiHaMesEntitats}"><b class="caret caret-white"></b></c:if>
+								<i class="fas fa-university"></i> ${entitatActual.nom}
+								<c:if test="${hiHaMesEntitats}"><b class="caret caret-white"></b></c:if>
 								<c:if test="${hiHaMesEntitats}"></a></c:if>
 								<c:if test="${hiHaMesEntitats}">
 									<ul class="dropdown-menu">
@@ -264,12 +264,10 @@ body {
 			<div id="accordion">
 				<c:forEach var="avis" items="${avisos}" varStatus="status">
 						<div class="card avisCard ${avis.avisNivell == 'INFO' ? 'avisCardInfo':''} ${avis.avisNivell == 'WARNING' ? 'avisCardWarning':''} ${avis.avisNivell == 'ERROR' ? 'avisCardError':''}">
-	
 							<div data-toggle="collapse" data-target="#collapse${status.index}" class="card-header avisCardHeader">
 								${avis.avisNivell == 'INFO' ? '<span class="fa fa-info-circle text-info"></span>':''} ${avis.avisNivell == 'WARNING' ? '<span class="fa fa-exclamation-triangle text-warning"></span>':''} ${avis.avisNivell == 'ERROR' ? '<span class="fa fa-exclamation-triangle text-danger"></span>':''} ${avis.assumpte}
 							<button class="btn btn-default btn-xs pull-right"><span class="fa fa-chevron-down "></span></button>										
 							</div>
-	
 							<div id="collapse${status.index}" class="collapse" data-parent="#accordion">
 								<div class="card-body avisCardBody" >${avis.missatge}</div>
 							</div>
@@ -277,7 +275,6 @@ body {
 				</c:forEach>
 			</div>
 		</c:if>
-		
 		<div class="panel panel-default">
 			<div class="panel-heading">
 				<h2>
@@ -286,20 +283,20 @@ body {
 			</div>
 			<div class="panel-body">
 				<jsp:include page="../import/alerts.jsp"/>
-    			<decorator:body />
+				<decorator:body />
 			</div>
 		</div>
 	</div>
-    <div class="container container-foot container-caib">
-    	<div class="pull-left app-version"><p>PINBAL <pbl:versio/></p></div>
-        <div class="pull-right govern-footer">
-        	<p>
-        		<img src="<c:url value="/img/govern-logo-neg.png"/>" style="height:30px" alt="<spring:message code="decorator.govern"/>" />
-	        	<img src="<c:url value="/img/una_manera.png"/>" 	 hspace="5"  style="height:30px" alt="<spring:message code='decorator.logo.manera'/>" />
-	        	<img src="<c:url value="/img/feder7.png"/>" 	     hspace="5"  style="height:35px" alt="<spring:message code='decorator.logo.feder'/>" />
-	        	<img src="<c:url value="/img/uenegroma.png"/>"	     hspace="5"  style="height:50px" alt="<spring:message code='decorator.logo.ue'/>" />
-        	</p>
-        </div>
-    </div>
+	<div class="container container-foot container-caib">
+		<div class="pull-left app-version"><p>PINBAL <pbl:versio/></p></div>
+		<div class="pull-right govern-footer">
+			<p>
+				<img src="<c:url value="/img/govern-logo-neg.png"/>" style="height:30px" alt="<spring:message code="decorator.govern"/>" />
+				<img src="<c:url value="/img/una_manera.png"/>" hspace="5" style="height:30px" alt="<spring:message code='decorator.logo.manera'/>" />
+				<img src="<c:url value="/img/feder7.png"/>" hspace="5" style="height:35px" alt="<spring:message code='decorator.logo.feder'/>" />
+				<img src="<c:url value="/img/uenegroma.png"/>" hspace="5" style="height:50px" alt="<spring:message code='decorator.logo.ue'/>" />
+			</p>
+		</div>
+	</div>
 </body>
 </html>

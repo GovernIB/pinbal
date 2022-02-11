@@ -1,8 +1,8 @@
 // Basat en http://stefangabos.ro/jquery/jquery-plugin-boilerplate-revisited/
 (function($) {
 	$.extend(true, $.fn.dataTable.defaults, {
-		"dom": "<'row'<'col-md-6'i><'col-md-6'>><'row'<'col-md-12'rt>><'row'<'col-md-6'l><'col-md-6'p>>",
-		"preDrawCallback": function(settings_) {
+		dom: "<'row'<'col-md-6'i><'col-md-6'>><'row'<'col-md-12'rt>><'row'<'col-md-6'l><'col-md-6'p>>",
+		preDrawCallback: function(settings_) {
 			if (settings_.botonsTemplate && settings_.botonsTemplate.length > 0) {
 				$.templates("templateNew", $(settings_.botonsTemplate).html());
 				var targetBotons = $('.botons', this.parent());
@@ -33,6 +33,13 @@
 			});
 			if (settings_.filtre) {
 				$(settings_.filtre).webutilNetejarErrorsCamps();
+			}
+		},
+		drawCallback: function() {
+			console.log('drawCallback');
+			if ($.fn.webutilModalEval) {
+				console.log('webutilModalEval');
+				$(this).closest('.dataTables_wrapper').webutilModalEval();
 			}
 		}
 	});

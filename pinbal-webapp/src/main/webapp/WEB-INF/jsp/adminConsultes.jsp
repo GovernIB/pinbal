@@ -11,54 +11,44 @@
 			"consultaEstats",
 			es.caib.pinbal.core.dto.ConsultaDto.EstatTipus.sortedValues());
 %>
-
 <html>
 <head>
 	<title><spring:message code="admin.consulta.list.titol"/></title>
-	
 	<link href="<c:url value="/webjars/select2/4.0.6-rc.1/dist/css/select2.min.css"/>" rel="stylesheet"/>
 	<link href="<c:url value="/webjars/select2-bootstrap-theme/0.1.0-beta.10/dist/select2-bootstrap.min.css"/>" rel="stylesheet"/>
 	<link href="<c:url value="/webjars/datatables/1.10.21/css/dataTables.bootstrap.min.css"/>" rel="stylesheet"/>
-	
 	<link href="<c:url value="/webjars/bootstrap-datepicker/1.6.1/dist/css/bootstrap-datepicker.min.css"/>" rel="stylesheet"/>
-
-	
 	<script src="<c:url value="/webjars/datatables/1.10.21/js/jquery.dataTables.min.js"/>"></script>
 	<script src="<c:url value="/webjars/datatables/1.10.21/js/dataTables.bootstrap.min.js"/>"></script>
 	<script src="<c:url value="/webjars/mustache.js/3.0.1/mustache.min.js"/>"></script>
 	<script src="<c:url value="/webjars/datatables-plugins/1.10.20/dataRender/datetime.js"/>"></script>
 	<script src="<c:url value="/webjars/momentjs/2.24.0/min/moment.min.js"/>"></script>
-
 	<script src="<c:url value="/webjars/select2/4.0.6-rc.1/dist/js/select2.min.js"/>"></script>
 	<script src="<c:url value="/webjars/select2/4.0.6-rc.1/dist/js/i18n/${requestLocale}.js"/>"></script>
-
 	<script src="<c:url value="/webjars/bootstrap-datepicker/1.6.1/dist/js/bootstrap-datepicker.min.js"/>"></script>
-
 	<script src="<c:url value="/js/webutil.datatable.js"/>"></script>
+	<script src="<c:url value="/js/webutil.modal.js"/>"></script>
 	<script src="<c:url value="/js/webutil.common.js"/>"></script>
-
-
 </head>
 <body>
-
 		<form:form id="form-filtre" action="" class="form-horizontal" method="post" cssClass="well form-filtre-table" commandName="filtreCommand">
 			<div class="row">
 				<div class="col-md-3">
 					<pbl:inputSelect name="entitatId" inline="true" placeholderKey="admin.consulta.list.filtre.entitat"
-		 						 	optionItems="${entitats}"
-			 						optionValueAttribute="id"
-			 						optionTextAttribute="nom"
+									optionItems="${entitats}"
+									optionValueAttribute="id"
+									optionTextAttribute="nom"
 									emptyOption="true"
 									optionMinimumResultsForSearch="0"/>
 				</div>
 				<div class="col-md-3">
 					<pbl:inputText name="scspPeticionId" inline="true" placeholderKey="admin.consulta.list.filtre.peticion.id"/>
-				</div>					
+				</div>
 				<div class="col-md-3">
-						 <pbl:inputSelect name="procediment" inline="true" placeholderKey="admin.consulta.list.filtre.procediment" 
-		 						 	optionItems="${procediments}"   
-			 						optionValueAttribute="id"
-			 						optionTextAttribute="nomAmbCodi" 
+						<pbl:inputSelect name="procediment" inline="true" placeholderKey="admin.consulta.list.filtre.procediment" 
+									optionItems="${procediments}" 
+									optionValueAttribute="id"
+									optionTextAttribute="nomAmbCodi" 
 									emptyOption="true"
 									optionMinimumResultsForSearch="0"/>
 				</div>
@@ -69,8 +59,8 @@
 					 				optionTextAttribute="descripcioAmbCodi" 
 									emptyOption="true"
 									optionMinimumResultsForSearch="0"/>
-				</div>		
-			</div>				
+				</div>
+			</div>
 			<div class="row">
 				<div class="col-md-3">
 					<pbl:inputSelect name="estat" inline="true" 
@@ -82,12 +72,12 @@
 					<div class="row">
 						<div class="col-md-6" >
 							<pbl:inputDate name="dataInici" inline="true" placeholderKey="auditor.list.filtre.data.inici"/>
-						</div>		
+						</div>
 						<div class="col-md-6" >
 							<pbl:inputDate name="dataFi" inline="true" placeholderKey="auditor.list.filtre.data.fi"/>
-						</div>		
-					</div>		
-				</div>		
+						</div>
+					</div>
+				</div>
 				<div class="col-md-3">
 					<pbl:inputText name="funcionariNom" inline="true" placeholderKey="admin.consulta.list.filtre.funcionari.nom"/>
 				</div>		
@@ -104,9 +94,7 @@
 				</div>
 			</div>
 		</form:form>
-
 		<div class="clearfix"></div>
-		
 		<table id="table-consultes" class="table table-striped table-bordered" style="width: 100%">
 			<thead>
 				<tr>
@@ -129,7 +117,6 @@
 				createHiddenInputFieldsForLimitAndSubmit(id);
 			}
 		</script>
-
 	<script>
 	$(document).ready(function() {
 		$('#netejar-filtre').click(function() {
@@ -204,21 +191,17 @@
 		});
 	});
 </script>
-
 <script id="template-id-peticion" type="x-tmpl-mustache">
 {{scspPeticionId}}
 {{#recobriment}}
 	<span class="badge">R</span>
 {{/recobriment}}
 </script>
-
 <script id="template-estat" type="x-tmpl-mustache">
 	{{{ icon-status }}} {{ estat }}
 </script>
-
 <script id="template-details" type="x-tmpl-mustache">
-<a href="consulta/{{ id }}" class="btn btn-default"><i class="fas fa-search-plus"></i>&nbsp;<spring:message code="admin.consulta.list.taula.detalls"/></a>
+<a href="consulta/{{ id }}" class="btn btn-default" data-toggle="modal"><i class="fas fa-search-plus"></i>&nbsp;<spring:message code="admin.consulta.list.taula.detalls"/></a>
 </script>
-
 </body>
 </html>

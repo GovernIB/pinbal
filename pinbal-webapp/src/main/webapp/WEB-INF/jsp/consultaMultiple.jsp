@@ -33,7 +33,7 @@
 	<script src="<c:url value="/webjars/datatables-plugins/1.10.20/dataRender/datetime.js"/>"></script>
 	<script src="<c:url value="/webjars/momentjs/2.24.0/min/moment.min.js"/>"></script>
 	<script src="<c:url value="/js/webutil.datatable.js"/>"></script>
-	<script src="<c:url value="/js/webutil.common.js"/>"></script>	
+	<script src="<c:url value="/js/webutil.common.js"/>"></script>
 <script>
 $(document).ready(function() {
 	$('#netejar-filtre').click(function() {
@@ -46,12 +46,10 @@ $(document).ready(function() {
 			else if (tag == 'select')
 				this.selectedIndex = 0;
 		});
-		
 		var accioInput = $("<input>")
 		.attr("type", "hidden")
-        .attr("name", "accio").val("netejar");
+		.attr("name", "accio").val("netejar");
 		$('#form-filtre').append(accioInput);
-		
 		$('#form-filtre').submit();
 	});
 	$('#select-procediment').change(function() {

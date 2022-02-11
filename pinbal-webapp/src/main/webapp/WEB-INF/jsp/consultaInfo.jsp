@@ -313,19 +313,19 @@ $('#dadesResposta').on('shown', function () {
 			<span style="color:red"><i class="icon-warning-sign"></i>&nbsp;<spring:message code="consulta.info.errors.justificant"/></span>
 		</div>
 	</c:if>
-	<div class="well">
+	<div id="modal-botons" class="well">
 		<c:choose>
 			<c:when test="${not empty consulta.pareId}">
-				<a href="<c:url value="/consulta/multiple/${consulta.pareId}"/>" class="btn btn-default"><span class="fa fa-arrow-left"></span>&nbsp;<spring:message code="comu.boto.tornar"/></a>
+				<a href="<c:url value="/consulta/multiple/${consulta.pareId}"/>" class="btn btn-default" data-modal-cancel="true"><span class="fa fa-arrow-left"></span>&nbsp;<spring:message code="comu.boto.tornar"/></a>
 			</c:when>
 			<c:otherwise>
-				<a href="<c:url value="/consulta"/>" class="btn btn-default"><span class="fa fa-arrow-left"></span>&nbsp;<spring:message code="comu.boto.tornar"/></a>
+				<a href="<c:url value="/consulta"/>" class="btn btn-default" data-modal-cancel="true"><span class="fa fa-arrow-left"></span>&nbsp;<spring:message code="comu.boto.tornar"/></a>
 			</c:otherwise>
 		</c:choose>
 	</div>
 	<div id="modal-missatge-xml" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
-  		<div class="modal-dialog modal-dialog-centered" role="document">
-	   		<div class="modal-content">
+		<div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+			<div class="modal-content">
 			<div class="modal-header">
 				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
 				<h3><spring:message code="consulta.info.missatge.xml"/></h3>
@@ -339,17 +339,17 @@ $('#dadesResposta').on('shown', function () {
 	</div>
 	<c:if test="${consulta.justificantEstatError}">
 	<div id="modal-justificant-error" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
-  		<div class="modal-dialog modal-dialog-centered" role="document">
-    		<div class="modal-content">
-    		<div class="modal-header">
-				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-				<h3><spring:message code="consulta.list.taula.justif.error"/></h3>
-			</div>
-			<div class="modal-body">
-				<textarea style="width:98%" rows="18">${consulta.justificantError}</textarea>
-			</div>
-			<div class="modal-footer">
-			</div>
+		<div class="modal-dialog modal-dialog-centered" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+					<h3><spring:message code="consulta.list.taula.justif.error"/></h3>
+				</div>
+				<div class="modal-body">
+					<textarea style="width:98%" rows="18">${consulta.justificantError}</textarea>
+				</div>
+				<div class="modal-footer">
+				</div>
 			</div>
 		</div>
 	</div>
