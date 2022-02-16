@@ -20,6 +20,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.wordnik.swagger.annotations.ApiOperation;
+import com.wordnik.swagger.annotations.ApiParam;
+
 import es.caib.pinbal.client.recobriment.model.ScspConfirmacionPeticion;
 import es.caib.pinbal.client.recobriment.model.ScspJustificante;
 import es.caib.pinbal.client.recobriment.model.ScspPeticion;
@@ -44,8 +47,12 @@ public class RecobrimentRestController extends BaseController {
 			value= "/peticionSincrona",
 			method = RequestMethod.POST,
 			produces = "application/json")
+	@ApiOperation(
+			value = "Informe de petició síncrona de tipus SCSP", 
+			notes = "Retorna una entitat de tipus ScspRespuesta i l'estatus") //, response=ArrayList.class)
 	public ResponseEntity<ScspRespuesta> peticionSincrona(
 			HttpServletRequest request,
+			@ApiParam(name="peticion", value="Petició de tipus SCSP") 
 			@RequestBody @Valid final ScspPeticion peticion) throws RecobrimentScspException {
 		ScspRespuesta respuesta = recobrimentService.peticionSincrona(peticion);
 		return new ResponseEntity<ScspRespuesta>(respuesta, HttpStatus.OK);
@@ -55,8 +62,12 @@ public class RecobrimentRestController extends BaseController {
 			value= "/peticionAsincrona",
 			method = RequestMethod.POST,
 			produces = "application/json")
+	@ApiOperation(
+			value = "Informe de petició asíncrona de tipus SCSP", 
+			notes = "Retorna una entitat de tipus ScspConfirmacionPeticion i l'estatus") //, response=ArrayList.class)
 	public ResponseEntity<ScspConfirmacionPeticion> peticionAsincrona(
 			HttpServletRequest request,
+			@ApiParam(name="peticion", value="Petició de tipus SCSP") 
 			@RequestBody @Valid final ScspPeticion peticion) throws RecobrimentScspException {
 		ScspConfirmacionPeticion respuesta = recobrimentService.peticionAsincrona(peticion);
 		return new ResponseEntity<ScspConfirmacionPeticion>(respuesta, HttpStatus.OK);
@@ -66,8 +77,12 @@ public class RecobrimentRestController extends BaseController {
 			value= "/getRespuesta",
 			method = RequestMethod.GET,
 			produces = "application/json")
+	@ApiOperation(
+			value = "Informe de petició de tipus SCSP", 
+			notes = "Retorna una entitat de tipus ScspRespuesta i l'estatus") //, response=ArrayList.class)
 	public ResponseEntity<ScspRespuesta> getRespuesta(
 			HttpServletRequest request,
+			@ApiParam(name="idPeticion", value="Id de petició") 
 			@RequestParam final String idPeticion) throws RecobrimentScspException {
 		ScspRespuesta respuesta = recobrimentService.getRespuesta(idPeticion);
 		return new ResponseEntity<ScspRespuesta>(respuesta, HttpStatus.OK);
@@ -77,10 +92,15 @@ public class RecobrimentRestController extends BaseController {
 			value= "/getJustificante",
 			method = RequestMethod.GET,
 			produces = "application/json")
+	@ApiOperation(
+			value = "Justificant de petició de tipus SCSP", 
+			notes = "Obté un justificant de la petició, de tipus ScspJustificante") //, response=ArrayList.class)
 	public void getJustificante(
 			HttpServletRequest request,
 			HttpServletResponse response,
+			@ApiParam(name="idPeticion", value="Id de petició") 
 			@RequestParam final String idPeticion,
+			@ApiParam(name="idSolicitud", value="Id de sol·licitud") 
 			@RequestParam final String idSolicitud) throws RecobrimentScspException, IOException {
 		ScspJustificante justificante = recobrimentService.getJustificante(idPeticion, idSolicitud);
 		writeFileToResponse(

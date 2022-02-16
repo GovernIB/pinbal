@@ -5,11 +5,17 @@ package es.caib.pinbal.client.dadesobertes;
 
 import java.util.Date;
 
+import javax.xml.bind.annotation.XmlRootElement;
+
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+
 /**
  * Estructura d'un element de la resposta per a les dades obertes.
  * 
  * @author Limit Tecnologies <limit@limit.es>
  */
+@JsonAutoDetect
+@XmlRootElement
 public class DadesObertesRespostaConsulta {
 
 	private String entitatCodi;
