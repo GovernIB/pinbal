@@ -79,7 +79,7 @@ $(document).ready(function() {
 	
     $('#table-users').DataTable({
     	autoWidth: false,
-    	paging: false,
+//     	paging: false,
 		processing: true,
 		serverSide: true,
 		dom: "<'row'<'col-md-6'i><'col-md-6'>><'row'<'col-md-12'rt>><'row'<'col-md-6'l><'col-md-6'p>>",
@@ -87,15 +87,15 @@ $(document).ready(function() {
             "url": '<c:url value="/js/datatable-language.json"/>',
         },
 		ajax: '<c:url value="/representant/usuari/datatable"/>',
-		order: [],
+		"order": [[ 1, "desc" ]],
 		columnDefs: [
 			{ 
 	            targets: [0, 1, 2],
-				orderable: false
+// 				orderable: false
 	        },
 			{
 				targets: [3],
-				orderable: false
+// 				orderable: false
 			}, 
 	        {
 	            targets: 4,
