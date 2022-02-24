@@ -189,3 +189,7 @@ div.exemple {
 .avisCardError button{
 	color: #721c24CC;
 }
+
+.modal-dialog {
+	width: 900px;
+}

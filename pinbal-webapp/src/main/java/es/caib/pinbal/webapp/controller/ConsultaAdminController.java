@@ -6,14 +6,21 @@ package es.caib.pinbal.webapp.controller;
 import java.lang.reflect.InvocationTargetException;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.naming.NamingException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
+import es.caib.pinbal.core.dto.DadaEspecificaDto;
+import es.caib.pinbal.core.dto.NodeDto;
+import es.caib.pinbal.core.dto.ServeiCampDto;
+import es.caib.pinbal.core.service.exception.ServeiNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
 import org.springframework.data.domain.Page;
@@ -172,7 +179,41 @@ public class ConsultaAdminController extends BaseController {
 				"servei",
 				serveiService.findAmbCodiPerAdminORepresentant(
 						consulta.getServeiCodi()));
+		omplirModelAmbDadesEspecifiques(
+				consulta.getServeiCodi(),
+				model);
 		return "adminConsultaInfo";
+	}
+
+	private void omplirModelAmbDadesEspecifiques(
+			String serveiCodi,
+			Model model) throws ScspException, ServeiNotFoundException {
+		List<NodeDto<DadaEspecificaDto>> llistaArbreDadesEspecifiques = serveiService.generarArbreDadesEspecifiques(serveiCodi).toList();
+		model.addAttribute(
+				"llistaArbreDadesEspecifiques",
+				llistaArbreDadesEspecifiques);
+		List<ServeiCampDto> camps = serveiService.findServeiCamps(serveiCodi);
+		model.addAttribute("campsDadesEspecifiques", camps);
+		Map<Long, List<ServeiCampDto>> campsAgrupats = new HashMap<Long, List<ServeiCampDto>>();
+		for (ServeiCampDto camp: camps) {
+			Long clau = (camp.getGrup() != null) ? camp.getGrup().getId() : null;
+			if (campsAgrupats.get(clau) == null) {
+				campsAgrupats.put(clau, new ArrayList<ServeiCampDto>());
+			}
+			campsAgrupats.get(clau).add(camp);
+		}
+		model.addAttribute("campsDadesEspecifiquesAgrupats", campsAgrupats);
+		model.addAttribute(
+				"grups",
+				serveiService.findServeiCampGrups(serveiCodi));
+		boolean mostraDadesEspecifiques = false;
+		for (ServeiCampDto camp: camps) {
+			if (camp.isVisible()) {
+				mostraDadesEspecifiques = true;
+				break;
+			}
+		}
+		model.addAttribute("mostrarDadesEspecifiques", mostraDadesEspecifiques);
 	}
 
 	@RequestMapping(value = "/{consultaId}/xmlPeticio", method = RequestMethod.GET)
