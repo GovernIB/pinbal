@@ -17,6 +17,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.wordnik.swagger.annotations.ApiOperation;
+import com.wordnik.swagger.annotations.ApiParam;
+
 import es.caib.pinbal.client.comu.Departament;
 import es.caib.pinbal.client.comu.Entitat;
 import es.caib.pinbal.client.comu.Procediment;
@@ -68,6 +71,17 @@ public class ExplotacioDadesInternesRestController extends BaseController {
 			value= "/reports/procediments",
 			method = RequestMethod.GET,
 			produces = "application/json")
+	@ApiOperation(
+			value = "Informe de procediments agrupats per entitat i departament", 
+			notes = "Aquest servei retorna una llista dels procediments disponibles a "
+					+ "l’aplicació agrupats per entitat i departament. També s’indica si el "
+					+ "procediment està actiu o no.<br/><br/>" 
+					+ "Lista de objetos de tipo Entitat<br/>"
+					+ "Per tant, el JSON resultant serà de la forma de array d'objectes de tipus **Entitat**:<br/>"
+					+ "[{Entitat1}, {Entitat2}, {Entitat3}, {...}]<br/>"
+					+ "El model d'**Entitat** es pot veure mes a baix en la informació del missatge de resposta.",
+			responseContainer = "List",
+			response = Entitat.class)
 	public ResponseEntity<List<Entitat>> procediments(
 			HttpServletRequest request) {
 		// Informe de procediments agrupats per entitat i departament
@@ -112,6 +126,17 @@ public class ExplotacioDadesInternesRestController extends BaseController {
 			value= "/reports/usuaris",
 			method = RequestMethod.GET,
 			produces = "application/json")
+	@ApiOperation(
+			value = "Informe d'usuaris agrupats per entitat i departament", 
+			notes = "Aquest servei retorna l’acumulat de peticions realitzades entre dues "
+					+ "dates distingint entre les peticions processades correctament o amb "
+					+ "errors.<br/><br/>"
+					+ "Lista de objetos de tipo Entitat<br/>"
+					+ "Per tant, el JSON resultant serà de la forma de array d'objectes de tipus **Entitat**:<br/>"
+					+ "[{Entitat1}, {Entitat2}, {Entitat3}, {...}]<br/>"
+					+ "El model d'**Entitat** es pot veure mes a baix en la informació del missatge de resposta.",
+			responseContainer = "List",
+			response = Entitat.class) //, response=ArrayList.class)
 	public ResponseEntity<List<Entitat>> usuaris(
 			HttpServletRequest request) {
 		// Informe d'usuaris agrupats per entitat i departament
@@ -156,6 +181,15 @@ public class ExplotacioDadesInternesRestController extends BaseController {
 			value= "/reports/serveis",
 			method = RequestMethod.GET,
 			produces = "application/json")
+	@ApiOperation(
+			value = "Informe de serveis", 
+			notes = "Retorna una llista amb les serveis i l'estatus.<br/><br/>"
+					+ "Lista de objetos de tipo Servei<br/>"
+					+ "Per tant, el JSON resultant serà de la forma de array d'objectes de tipus **Servei**:<br/>"
+					+ "[{Servei1}, {Servei2}, {Servei3}, {...}]<br/>"
+					+ "El model de **Servei** es pot veure mes a baix en la informació del missatge de resposta.",
+			responseContainer = "List",
+			response = Servei.class)
 	public ResponseEntity<List<Servei>> serveis(
 			HttpServletRequest request) {
 		// Informe de seveis
@@ -175,9 +209,20 @@ public class ExplotacioDadesInternesRestController extends BaseController {
 			value= "/reports/general",
 			method = RequestMethod.GET,
 			produces = "application/json")
+	@ApiOperation(
+			value = "Informe general d'estat", 
+			notes = "Retorna una llista amb les entitats i l'estatus.<br/><br/>"
+					+ "Lista de objetos de tipo Entitat<br/>"
+					+ "Per tant, el JSON resultant serà de la forma de array d'objectes de tipus **Entitat**:<br/>"
+					+ "[{Entitat1}, {Entitat2}, {Entitat3}, {...}]<br/>"
+					+ "El model d'**Entitat** es pot veure mes a baix en la informació del missatge de resposta.",
+			responseContainer = "List",
+			response = Entitat.class)
 	public ResponseEntity<List<Entitat>> general(
 			HttpServletRequest request,
+			@ApiParam(name="dataInici", value="Data d'inici") 
 			@RequestParam final Date dataInici,
+			@ApiParam(name="dataFi", value="Data de fi") 
 			@RequestParam final Date dataFi) {
 		// Informe general d'estat
 		List<Entitat> entitats = new ArrayList<Entitat>();
@@ -234,13 +279,30 @@ public class ExplotacioDadesInternesRestController extends BaseController {
 			value= "/stats/consultes",
 			method = RequestMethod.GET,
 			produces = "application/json")
+	@ApiOperation(
+			value = "Estadística de consultes", 
+			notes = "Aquest servei retorna una l’acumulat de peticions agrupades per "
+					+ "procediment i servei distingint entre les peticions realitzades via "
+					+ "interfície web o via recobriment i també si hi ha hagut errors o no.<br/><br/>"
+					+ "Lista de objetos de tipo Procediment<br/>"
+					+ "Per tant, el JSON resultant serà de la forma de array d'objectes de tipus **Procediment**:<br/>"
+					+ "[{Procediment}, {Procediment2}, {Procediment3}, {...}]<br/>"
+					+ "El model de **Procediment** es pot veure mes a baix en la informació del missatge de resposta.<br/>",
+			responseContainer = "List",
+			response = Procediment.class)
 	public ResponseEntity<List<Procediment>> consultes(
 			HttpServletRequest request,
+			@ApiParam(name="entitatCodi", value="Codi de l'entitat") 
 			@RequestParam final String entitatCodi,
+			@ApiParam(name="procedimentCodi", value="Codi del procediment", required=false) 
 			@RequestParam(required = false) final String procedimentCodi,
+			@ApiParam(name="serveiCodi", value="Codi del servei", required=false) 
 			@RequestParam(required = false) final String serveiCodi,
+			@ApiParam(name="estat", value="Tipus d'estat", required=false) 
 			@RequestParam(required = false) final EstatTipus estat,
+			@ApiParam(name="dataInici", value="Data d'inici", required = false)
 			@RequestParam(required = false) final Date dataInici,
+			@ApiParam(name="dataFi", value="Data de fi", required=false) 
 			@RequestParam(required = false) final Date dataFi) throws EntitatNotFoundException, ProcedimentNotFoundException {
 		// Estadística de consultes
 		List<EstadisticaDto> estadistiques = consultaService.findEstadistiquesByFiltre(
@@ -298,6 +360,17 @@ public class ExplotacioDadesInternesRestController extends BaseController {
 			value= "/stats/carrega",
 			method = RequestMethod.GET,
 			produces = "application/json")
+	@ApiOperation(
+			value = "Informe de carrega", 
+			notes = "Aquest servei retorna una l’acumulat de peticions agrupades per "
+					+ "procediment i servei distingint entre les peticions realitzades via "
+					+ "interfície web o via recobriment i també si hi ha hagut errors o no.<br/><br/>"
+					+ "Lista de objetos de tipo Entitat<br/>"
+					+ "Per tant, el JSON resultant serà de la forma de array d'objectes de tipus **Entitat**:<br/>"
+					+ "[{Entitat1}, {Entitat2}, {Entitat3}, {...}]<br/>"
+					+ "El model d'**Entitat** es pot veure mes a baix en la informació del missatge de resposta.",
+			responseContainer = "List",
+			response = Entitat.class)
 	public ResponseEntity<List<Entitat>> carrega(
 			HttpServletRequest request) {
 		// Informe de carrega
