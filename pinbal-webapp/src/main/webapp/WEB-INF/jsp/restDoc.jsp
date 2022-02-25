@@ -5,9 +5,8 @@
 <head>
   <meta charset="UTF-8">
   <title>Documentació API Rest</title>
-  <link rel="icon" type="image/png" href="<c:url value="/images/favicon-32x32.png"/>" sizes="32x32"/>
-  <link rel="icon" type="image/png" href="<c:url value="/images/favicon-16x16.png"/>" sizes="16x16"/>
-  
+  <link rel="icon" type="image/png" href="<c:url value="/img/favicon.png"/>" sizes="32x32"/>
+
   <link href='<c:url value="/js/swagger-ui/css/typography.css"/>' media='screen' rel='stylesheet' type='text/css'/>
   <link href='<c:url value="/js/swagger-ui/css/reset.css"/>' media='screen' rel='stylesheet' type='text/css'/>
   <link href='<c:url value="/js/swagger-ui/css/screen.css"/>' media='screen' rel='stylesheet' type='text/css'/>
@@ -33,74 +32,106 @@
   <script src='<c:url value="/js/swagger-ui/lang/translator.js"/>' type='text/javascript'></script>
   <script src='<c:url value="/js/swagger-ui/lang/ca.js"/>' type='text/javascript'></script>
 <%--   <script src='<c:url value="/js/swagger-ui/lang/es.js"/>' type='text/javascript'></script> --%>
-  
+
+  <style>
+    #header > div.swagger-ui-wrap { display: none; }
+  </style>
+
   <c:url var="baseUrl" value="/"/>
 
   <script type='text/javascript'>
-	  $(function () {
-	      var url = window.location.search.match(/url=([^&]+)/);
-	      if (url && url.length > 1) {
-	        url = decodeURIComponent(url[1]);
-	      } else {
-	        url = "${baseUrl}" + "/api-docs";
-	      }
-	
-	      hljs.configure({
-	        highlightSizeThreshold: 5000
-	      });
-	
-	      // Pre load translate...
-	      if(window.SwaggerTranslator) {
-	        window.SwaggerTranslator.translate();
-	      }
-	      window.swaggerUi = new SwaggerUi({
-	        url: url,
-	        dom_id: "swagger-ui-container",
-	        supportedSubmitMethods: ['get', 'post', 'put', 'delete', 'patch'],
-	        onComplete: function(swaggerApi, swaggerUi){
-	          if(typeof initOAuth == "function") {
-	            initOAuth({
-	              clientId: "your-client-id",
-	              clientSecret: "your-client-secret-if-required",
-	              realm: "your-realms",
-	              appName: "your-app-name",
-	              scopeSeparator: " ",
-	              additionalQueryStringParams: {}
-	            });
-	          }
-	
-	          if(window.SwaggerTranslator) {
-	            window.SwaggerTranslator.translate();
-	          }
-	        },
-	        onFailure: function(data) {
-	          log("Unable to Load SwaggerUI");
-	        },
-	        docExpansion: "none",
-	        jsonEditor: false,
-	        defaultModelRendering: 'schema',
-	        showRequestHeaders: false
-	      });
-	
-	      window.swaggerUi.load();
-	
-	      function log() {
-	        if ('console' in window) {
-	          console.log.apply(console, arguments);
-	        }
-	      }
-	      
-	      $("body").addClass("swagger-section");
-	  });
-		function desplegaEndpoints() {
-		  if (!$("#api\\/services_endpoint_list").is(":visible") &&
-				  $("#api\\/services_endpoint_list li").length > 0) {
-			  $("#api\\/services_endpoint_list").show();
-		  } else {
-			  setTimeout(desplegaEndpoints, 200);
-		  }
-		}
-		setTimeout(desplegaEndpoints, 200);
+    var collapsable;
+
+    $(document).ready(function () {
+
+      $("#swagger-ui-container").on("click", ".operation", function() {
+          debugger
+          collapsable = $(this).find(".content:first");
+          collapsable.slideToggle();
+          // if (collapsable.is(':visible')) {
+          //   collapsable.slideDown();
+          // } else {
+          //   collapsable.slide
+          // }
+
+      });
+
+      // toggleOperationContent: function (event) {
+      //   var elem = $('#' + Docs.escapeResourceName(this.parentId + '_' + this.nickname + '_content'));
+      //   if (elem.is(':visible')){
+      //     $.bbq.pushState('#/', 2);
+      //     event.preventDefault();
+      //     Docs.collapseOperation(elem);
+      //   } else {
+      //     Docs.expandOperation(elem);
+      //   }
+      // },
+    });
+
+    $(function () {
+      var url = window.location.search.match(/url=([^&]+)/);
+      if (url && url.length > 1) {
+        url = decodeURIComponent(url[1]);
+      } else {
+        url = "${baseUrl}" + "/api-docs";
+      }
+
+      hljs.configure({
+        highlightSizeThreshold: 5000
+      });
+
+      // Pre load translate...
+      if(window.SwaggerTranslator) {
+        window.SwaggerTranslator.translate();
+      }
+      window.swaggerUi = new SwaggerUi({
+        url: url,
+        dom_id: "swagger-ui-container",
+        supportedSubmitMethods: ['get', 'post', 'put', 'delete', 'patch'],
+        onComplete: function(swaggerApi, swaggerUi){
+          if(typeof initOAuth == "function") {
+            initOAuth({
+              clientId: "your-client-id",
+              clientSecret: "your-client-secret-if-required",
+              realm: "your-realms",
+              appName: "your-app-name",
+              scopeSeparator: " ",
+              additionalQueryStringParams: {}
+            });
+          }
+
+          if(window.SwaggerTranslator) {
+            window.SwaggerTranslator.translate();
+          }
+        },
+        onFailure: function(data) {
+          log("Unable to Load SwaggerUI");
+        },
+        docExpansion: "none",
+        jsonEditor: false,
+        defaultModelRendering: 'schema',
+        showRequestHeaders: false
+      });
+
+      window.swaggerUi.load();
+
+      function log() {
+        if ('console' in window) {
+          console.log.apply(console, arguments);
+        }
+      }
+
+      $("body").addClass("swagger-section");
+    });
+    function desplegaEndpoints() {
+      if (!$("#api\\/services_endpoint_list").is(":visible") &&
+              $("#api\\/services_endpoint_list li").length > 0) {
+        $("#api\\/services_endpoint_list").show();
+      } else {
+        setTimeout(desplegaEndpoints, 200);
+      }
+    }
+    setTimeout(desplegaEndpoints, 200);
   </script>
 </head>
 

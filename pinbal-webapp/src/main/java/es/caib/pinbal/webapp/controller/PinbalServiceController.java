@@ -19,7 +19,7 @@ import com.wordnik.swagger.annotations.Api;
 @Api(value = "/notificacio", description = "Notificaio API")
 public class PinbalServiceController extends BaseController {
 
-	@RequestMapping(value = "/apidoc", method = RequestMethod.GET)
+	@RequestMapping(value = {"/apidoc", "/rest" }, method = RequestMethod.GET)
 	public String documentacio(HttpServletRequest request) {
 		return "restDoc";
 	}
