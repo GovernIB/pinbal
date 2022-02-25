@@ -48,24 +48,8 @@
           debugger
           collapsable = $(this).find(".content:first");
           collapsable.slideToggle();
-          // if (collapsable.is(':visible')) {
-          //   collapsable.slideDown();
-          // } else {
-          //   collapsable.slide
-          // }
-
       });
 
-      // toggleOperationContent: function (event) {
-      //   var elem = $('#' + Docs.escapeResourceName(this.parentId + '_' + this.nickname + '_content'));
-      //   if (elem.is(':visible')){
-      //     $.bbq.pushState('#/', 2);
-      //     event.preventDefault();
-      //     Docs.collapseOperation(elem);
-      //   } else {
-      //     Docs.expandOperation(elem);
-      //   }
-      // },
     });
 
     $(function () {
