@@ -2321,8 +2321,8 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 				"filtre.dataFi=" + filtre.getProcedimentId() + ", " +
 				"filtre.titularNom=" + filtre.getTitularNom() + ", " +
 				"filtre.titularDocument=" + filtre.getTitularDocument() + ", " +
-				"filtre.funcionariNom=" + filtre.getFuncionariNom() + ", " +
-				"filtre.funcionariDocument=" + filtre.getFuncionariDocument() + ", ") : "") +
+				"filtre.funcionari=" + filtre.getFuncionari() + ", " +
+				"filtre.usuari=" + filtre.getUsuari() + ", ") : "") +
 				((pageable != null) ? (
 				"paginacio.paginaNum=" + pageable.getPageNumber() + ", " +
 				"paginacio.paginaTamany=" + pageable.getPageSize() + ", ") : "") +
@@ -2360,10 +2360,10 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 					filtre.getTitularNom(),
 					filtre.getTitularDocument() == null || filtre.getTitularDocument().isEmpty(),
 					filtre.getTitularDocument(),
-					filtre.getFuncionariNom() == null || filtre.getFuncionariNom().isEmpty(),
-					filtre.getFuncionariNom(),
-					filtre.getFuncionariDocument() == null || filtre.getFuncionariDocument().isEmpty(),
-					filtre.getFuncionariDocument(),
+					filtre.getFuncionari() == null || filtre.getFuncionari().isEmpty(),
+					filtre.getFuncionari(),
+					filtre.getUsuari() == null || filtre.getUsuari().isEmpty(),
+					filtre.getUsuari(),
 					multiple,
 					nomesSensePare,
 					pageable);
@@ -2423,8 +2423,8 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 				"filtre.dataFi=" + filtre.getProcedimentId() + ", " +
 				"filtre.titularNom=" + filtre.getTitularNom() + ", " +
 				"filtre.titularDocument=" + filtre.getTitularDocument() + ", " +
-				"filtre.funcionariNom=" + filtre.getFuncionariNom() + ", " +
-				"filtre.funcionariDocument=" + filtre.getFuncionariDocument() + ", ") : "") +
+				"filtre.usuari=" + filtre.getUsuari() + ", " +
+				"filtre.funcionari=" + filtre.getFuncionari() + ", ") : "") +
 				((pageable != null) ? (
 				"paginacio.paginaNum=" + pageable.getPageNumber() + ", " +
 				"paginacio.paginaTamany=" + pageable.getPageSize() + ", ") : "") + ")");
@@ -2448,10 +2448,10 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 				filtre.getTitularNom(),
 				filtre.getTitularDocument() == null || filtre.getTitularDocument().isEmpty(),
 				filtre.getTitularDocument(),
-				filtre.getFuncionariNom() == null || filtre.getFuncionariNom().isEmpty(),
-				filtre.getFuncionariNom(),
-				filtre.getFuncionariDocument() == null || filtre.getFuncionariDocument().isEmpty(),
-				filtre.getFuncionariDocument(),
+				filtre.getFuncionari() == null || filtre.getFuncionari().isEmpty(),
+				filtre.getFuncionari(),
+				filtre.getUsuari() == null || filtre.getUsuari().isEmpty(),
+				filtre.getUsuari(),
 				pageable);
 		log.debug("[S_CONS] Consulta a la base de dades (" + (System.currentTimeMillis() - t0) + " ms)");
 		t0 = System.currentTimeMillis();

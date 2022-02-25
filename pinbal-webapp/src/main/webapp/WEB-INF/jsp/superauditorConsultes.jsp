@@ -194,10 +194,10 @@ $(document).ready(function() {
 					</div>		
 				</div>	
 				<div class="col-md-3">
-					<pbl:inputText name="funcionariNom" inline="true" placeholderKey="auditor.list.filtre.funcionari.nom"/>
+					<pbl:inputText name="funcionari" inline="true" placeholderKey="auditor.list.filtre.funcionari"/>
 				</div>
 				<div class="col-md-3">
-					<pbl:inputText name="funcionariDocument" inline="true" placeholderKey="auditor.list.filtre.funcionari.document"/>
+					<pbl:inputText name="usuari" inline="true" placeholderKey="auditor.list.filtre.usuari"/>
 				</div>		
 				<div class="col-md-3">
 					<div class="pull-right">

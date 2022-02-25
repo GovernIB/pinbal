@@ -31,8 +31,8 @@ public class ConsultaFiltreCommand {
 	private Date dataFi;
 	private String titularNom;
 	private String titularDocument;
-	private String funcionariNom;
-	private String funcionariDocument;
+	private String funcionari;
+	private String usuari;
 	private Long entitatId;
 
 	public ConsultaFiltreCommand() {
@@ -57,8 +57,8 @@ public class ConsultaFiltreCommand {
 		this.scspPeticionId = eliminarEspais(this.scspPeticionId);
 		this.titularNom = eliminarEspais(this.titularNom);
 		this.titularDocument = eliminarEspais(this.titularDocument);
-		this.funcionariNom = eliminarEspais(this.funcionariNom);
-		this.funcionariDocument = eliminarEspais(this.funcionariDocument);
+		this.funcionari = eliminarEspais(this.funcionari);
+		this.usuari = eliminarEspais(this.usuari);
 	}
 
 	public static ConsultaFiltreDto asDto(ConsultaFiltreCommand command) {

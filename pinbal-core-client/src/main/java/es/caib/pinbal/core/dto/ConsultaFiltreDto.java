@@ -3,6 +3,8 @@ package es.caib.pinbal.core.dto;
 import java.io.Serializable;
 import java.util.Date;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.apache.commons.lang.builder.ToStringBuilder;
 
 import es.caib.pinbal.core.dto.ConsultaDto.EstatTipus;
@@ -12,6 +14,7 @@ import es.caib.pinbal.core.dto.ConsultaDto.EstatTipus;
  * 
  * @author Limit Tecnologies <limit@limit.es>
  */
+@Getter @Setter
 public class ConsultaFiltreDto implements Serializable {
 
 	private String scspPeticionId;
@@ -22,78 +25,9 @@ public class ConsultaFiltreDto implements Serializable {
 	private Date dataFi;
 	private String titularNom;
 	private String titularDocument;
-	private String funcionariNom;
-	private String funcionariDocument;
+	private String funcionari;
+	private String usuari;
 	private Long entitatId;
-
-
-
-	public String getScspPeticionId() {
-		return scspPeticionId;
-	}
-	public void setScspPeticionId(String scspPeticionId) {
-		this.scspPeticionId = scspPeticionId;
-	}
-	public Long getProcedimentId() {
-		return procedimentId;
-	}
-	public void setProcedimentId(Long procedimentId) {
-		this.procedimentId = procedimentId;
-	}
-	public String getServeiCodi() {
-		return serveiCodi;
-	}
-	public void setServeiCodi(String serveiCodi) {
-		this.serveiCodi = serveiCodi;
-	}
-	public EstatTipus getEstat() {
-		return estat;
-	}
-	public void setEstat(EstatTipus estat) {
-		this.estat = estat;
-	}
-	public Date getDataInici() {
-		return dataInici;
-	}
-	public void setDataInici(Date dataInici) {
-		this.dataInici = dataInici;
-	}
-	public Date getDataFi() {
-		return dataFi;
-	}
-	public void setDataFi(Date dataFi) {
-		this.dataFi = dataFi;
-	}
-	public String getTitularNom() {
-		return titularNom;
-	}
-	public void setTitularNom(String titularNom) {
-		this.titularNom = titularNom;
-	}
-	public String getTitularDocument() {
-		return titularDocument;
-	}
-	public void setTitularDocument(String titularDocument) {
-		this.titularDocument = titularDocument;
-	}
-	public String getFuncionariNom() {
-		return funcionariNom;
-	}
-	public void setFuncionariNom(String funcionariNom) {
-		this.funcionariNom = funcionariNom;
-	}
-	public String getFuncionariDocument() {
-		return funcionariDocument;
-	}
-	public void setFuncionariDocument(String funcionariDocument) {
-		this.funcionariDocument = funcionariDocument;
-	}
-	public Long getEntitatId() {
-		return entitatId;
-	}
-	public void setEntitatId(Long entitatId) {
-		this.entitatId = entitatId;
-	}
 
 	@Override
 	public String toString() {

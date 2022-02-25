@@ -89,10 +89,10 @@
 					</div>
 				</div>
 				<div class="col-md-3">
-					<pbl:inputText name="funcionariNom" inline="true" placeholderKey="admin.consulta.list.filtre.funcionari.nom"/>
+					<pbl:inputText name="funcionari" inline="true" placeholderKey="admin.consulta.list.filtre.funcionari"/>
 				</div>		
-				<div class="col-md-3">	
-					<pbl:inputText name="funcionariDocument" inline="true" placeholderKey="admin.consulta.list.filtre.funcionari.document"/>
+				<div class="col-md-3">
+					<pbl:inputText name="usuari" inline="true" placeholderKey="admin.consulta.list.filtre.usuari"/>
 				</div>
 			</div>
 			<div class="row">
