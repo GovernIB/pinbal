@@ -193,3 +193,11 @@ div.exemple {
 .modal-dialog {
 	width: 900px;
 }
+
+.titol-check-label {
+	margin-left: 10px;
+	margin-right: 15px;
+	font-weight: normal;
+	position: relative;
+	top: -8px;
+}

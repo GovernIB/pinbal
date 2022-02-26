@@ -2073,8 +2073,6 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 		this.messageSource = messageSource;
 	}
 
-
-
 	/*private ResultatEnviamentPeticio enviarPeticioScsp(
 			Long entitatId,
 			String serveiCodi,

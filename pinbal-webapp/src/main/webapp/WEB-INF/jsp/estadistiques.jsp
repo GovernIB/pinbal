@@ -24,12 +24,14 @@
 	<link href="<c:url value="/webjars/select2/4.0.6-rc.1/dist/css/select2.min.css"/>" rel="stylesheet"/>
 	<link href="<c:url value="/webjars/select2-bootstrap-theme/0.1.0-beta.10/dist/select2-bootstrap.min.css"/>" rel="stylesheet"/>
 	<link href="<c:url value="/webjars/bootstrap-datepicker/1.6.1/dist/css/bootstrap-datepicker.min.css"/>" rel="stylesheet"/>
+	<link href="<c:url value="/js/ios-checkbox/iosCheckbox.css"/>" rel="stylesheet"/>
 
 	<script src="<c:url value="/webjars/select2/4.0.6-rc.1/dist/js/select2.min.js"/>"></script>
 	<script src="<c:url value="/webjars/select2/4.0.6-rc.1/dist/js/i18n/${requestLocale}.js"/>"></script>
 
 	<script src="<c:url value="/webjars/bootstrap-datepicker/1.6.1/dist/js/bootstrap-datepicker.min.js"/>"></script>
 	<script src="<c:url value="/webjars/bootstrap-datepicker/1.6.1/dist/locales/bootstrap-datepicker.${requestLocale}.min.js"/>"></script>
+	<script src="<c:url value="/js/ios-checkbox/iosCheckbox.min.js"/>"></script>
 	
 	<script src="<c:url value="/js/webutil.common.js"/>"></script>
 <script>
@@ -92,7 +94,7 @@ $(document).ready(function() {
 </style>
 </head>
 <body>
-
+<div class="text-right" data-toggle="titol-check" data-titol-check-value="${historic}" data-titol-check-session-name="estadistiques.admin" data-titol-check-callback="checkCallback" data-titol-check-label="<spring:message code="comu.historic"/>"></div>
 	<c:if test="${isRolActualAdministrador}">
 		<c:set var="opcioEntitatTotes">&lt;&lt;<spring:message code="estadistiques.list.entitat.seleccio"/>&gt;&gt;</c:set>
 		<c:choose>

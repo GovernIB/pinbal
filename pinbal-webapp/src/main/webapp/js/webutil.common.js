@@ -311,8 +311,8 @@ $(document).ajaxError(function(event, jqxhr, ajaxSettings, thrownError) {
 			$heading.wrap( "<div class='row'></div>");
 			
 			$(this).insertAfter($heading);
-			$heading.wrap( "<div class='col-md-10'></div>");
-			$(this).wrap( "<div class='col-md-2'></div>");		
+			$heading.wrap( "<div class='col-md-9'></div>");
+			$(this).wrap( "<div class='col-md-3'></div>");
 		}
 	}
 	$.fn.webutilBotonsTitolEval = function() {
@@ -320,6 +320,58 @@ $(document).ajaxError(function(event, jqxhr, ajaxSettings, thrownError) {
 			if (!$(this).attr('data-botons-titol-eval')) {
 				$(this).webutilBotonsTitol();
 				$(this).attr('data-botons-titol-eval', 'true');
+			}
+		});
+	}
+
+	$.fn.webutilTitolCheck = function() {
+		let $checkContainer = $(this);
+		let checkLabel = $checkContainer.data("titol-check-label");
+		let sessionName = $checkContainer.data("titol-check-session-name");
+		let checkCallback = $checkContainer.data("titol-check-callback");
+		let initialValue = $checkContainer.data("titol-check-value");
+
+		$titolCkeckContainer = $('<div class="titol-check"><label for="titolCheck" class="titol-check-label" >' + checkLabel + '</label></div>');
+		$titolCkeck = $('<input type="checkbox" id="titolCheck">');
+		if (initialValue) {
+			$titolCkeck.prop("checked", true);
+		}
+		$titolCkeckContainer.prepend($titolCkeck);
+		$checkContainer.append($titolCkeckContainer);
+		$titolCkeck.iosCheckbox();
+
+
+		$(".ios-ui-select", $checkContainer).click(function () {
+			if (sessionName) {
+				$.ajax({
+					headers: {'Content-Type': 'application/json'},
+					type: "POST",
+					url: webutilContextPath() + "/sessionajax/" + sessionName,
+					data: "'" + $("#titolCheck", $checkContainer)[0].checked + "'",
+					success : function() {
+						if (checkCallback) {
+							window[checkCallback]();
+						}
+					}
+				});
+			}
+		})
+
+		var $heading = $('.panel-heading h2', $checkContainer.closest('.panel'))
+		if ($heading) {
+			$heading.wrap( "<div class='row'></div>");
+
+			$checkContainer.insertAfter($heading);
+			$heading.wrap( "<div class='col-md-9'></div>");
+			$checkContainer.wrap( "<div class='col-md-3'></div>");
+		}
+	}
+	$.fn.webutilTitolCheckEval = function() {
+		debugger
+		$('[data-toggle="titol-check"]', $(this)).each(function() {
+			if (!$(this).attr('data-titol-check-eval')) {
+				$(this).webutilTitolCheck();
+				$(this).attr('data-titol-check-eval', 'true');
 			}
 		});
 	}
@@ -604,6 +656,12 @@ $(document).ajaxError(function(event, jqxhr, ajaxSettings, thrownError) {
 			if (!$(this).attr('data-botons-titol-eval')) {
 				$(this).webutilBotonsTitol();
 				$(this).attr('data-botons-titol-eval', 'true');
+			}
+		});
+		$('[data-toggle="titol-check"]', this).each(function() {
+			if (!$(this).attr('data-titol-check-eval')) {
+				$(this).webutilTitolCheck();
+				$(this).attr('data-titol-check-eval', 'true');
 			}
 		});
 		$('[data-toggle="select2"]', this).each(function() {

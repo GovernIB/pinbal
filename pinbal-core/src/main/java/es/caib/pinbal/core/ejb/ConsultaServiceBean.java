@@ -397,4 +397,5 @@ public class ConsultaServiceBean implements ConsultaService {
 			InformeRepresentantFiltreDto filtre){
 		return delegate.informeUsuarisEntitatOrganProcedimentServei(entitatId, rolActual, filtre);
 	}
+
 }

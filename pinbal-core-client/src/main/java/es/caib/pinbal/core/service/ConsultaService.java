@@ -410,10 +410,12 @@ public interface ConsultaService {
 	 * Retorna una llista de les consultes realitzades donada una entitat
 	 * i el filtre.
 	 * 
-	 * @param entitatId
+	 * @param entitatCodi
 	 *            Atribut id de l'entitat.
-	 * @param filtre
-	 *            Filtre de consultes.
+	 * @param dataInici
+	 * @param dataFi
+	 * @param procedimentCodi
+	 * @param serveiCodi
 	 * @return la llista de consultes.
 	 * @throws EntitatNotFoundException
 	 *            Si l'entitat especificada no existeix.
@@ -624,8 +626,6 @@ public interface ConsultaService {
 	/**
 	 * Retorna una llista de consultes donada una llista d'ids.
 	 * 
-	 * @param entitatId
-	 *            Atribut id de l'entitat.
 	 * @param consultaIds
 	 *            Ids de les consultes.
 	 * @return el llistat de consultes.
@@ -660,7 +660,7 @@ public interface ConsultaService {
 	 */
 	public void autoGenerarEmailReportEstat();
 	
-	/*
+	/**
 	 * Tasca automàtica per a enviar les peticions SCSP pendents.
 	 */
 	public void autoEnviarPeticionsPendents();

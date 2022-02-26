@@ -19,10 +19,9 @@
 	<link href="<c:url value="/webjars/select2/4.0.6-rc.1/dist/css/select2.min.css"/>" rel="stylesheet"/>
 	<link href="<c:url value="/webjars/select2-bootstrap-theme/0.1.0-beta.10/dist/select2-bootstrap.min.css"/>" rel="stylesheet"/>
 	<link href="<c:url value="/webjars/datatables/1.10.21/css/dataTables.bootstrap.min.css"/>" rel="stylesheet"/>
-	
 	<link href="<c:url value="/webjars/bootstrap-datepicker/1.6.1/dist/css/bootstrap-datepicker.min.css"/>" rel="stylesheet"/>
+	<link href="<c:url value="/js/ios-checkbox/iosCheckbox.css"/>" rel="stylesheet"/>
 
-	
 	<script src="<c:url value="/webjars/datatables/1.10.21/js/jquery.dataTables.min.js"/>"></script>
 	<script src="<c:url value="/webjars/datatables/1.10.21/js/dataTables.bootstrap.min.js"/>"></script>
 	<script src="<c:url value="/webjars/mustache.js/3.0.1/mustache.min.js"/>"></script>
@@ -33,6 +32,7 @@
 	<script src="<c:url value="/webjars/select2/4.0.6-rc.1/dist/js/i18n/${requestLocale}.js"/>"></script>
 
 	<script src="<c:url value="/webjars/bootstrap-datepicker/1.6.1/dist/js/bootstrap-datepicker.min.js"/>"></script>
+	<script src="<c:url value="/js/ios-checkbox/iosCheckbox.min.js"/>"></script>
 
 	<script src="<c:url value="/js/webutil.datatable.js"/>"></script>
 	<script src="<c:url value="/js/webutil.common.js"/>"></script>
@@ -40,6 +40,7 @@
 
 </head>
 <body>
+<div class="text-right" data-toggle="titol-check" data-titol-check-value="${historic}" data-titol-check-session-name="consulta.admin" data-titol-check-callback="checkCallback" data-titol-check-label="<spring:message code="comu.historic"/>"></div>
 
 		<form:form id="form-filtre" action="" class="form-horizontal" method="post" cssClass="well form-filtre-table" commandName="filtreCommand">
 			<div class="row">

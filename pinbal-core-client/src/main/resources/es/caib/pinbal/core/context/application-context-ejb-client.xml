@@ -21,6 +21,10 @@
 			jndi-name="pinbal/ConsultaServiceBean/local"
 			business-interface="es.caib.pinbal.core.service.ConsultaService"/>
 	<jee:local-slsb
+			id="historicConsultaService"
+			jndi-name="pinbal/HistoricConsultaServiceBean/local"
+			business-interface="es.caib.pinbal.core.service.HistoricConsultaService"/>
+	<jee:local-slsb
 			id="serveiService"
 			jndi-name="pinbal/ServeiServiceBean/local"
 			business-interface="es.caib.pinbal.core.service.ServeiService"/>
