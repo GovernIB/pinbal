@@ -41,7 +41,7 @@
 
 	<script type="application/javascript">
 		function checkCallback() {
-			historicColor();
+			// historicColor();
 			$("#filtrar").click();
 		}
 

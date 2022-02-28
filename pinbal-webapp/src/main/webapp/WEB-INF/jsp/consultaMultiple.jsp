@@ -83,7 +83,7 @@
 		});
 
 		function checkCallback() {
-			historicColor();
+			// historicColor();
 			$("#filtrar").click();
 		}
 
