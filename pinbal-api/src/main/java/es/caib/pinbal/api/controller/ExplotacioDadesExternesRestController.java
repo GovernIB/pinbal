@@ -8,6 +8,7 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
+import es.caib.pinbal.core.service.HistoricConsultaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
@@ -36,6 +37,8 @@ public class ExplotacioDadesExternesRestController {
 
 	@Autowired
 	private ConsultaService consultaService;
+	@Autowired
+	private HistoricConsultaService historicConsultaService;
 
 	@RequestMapping(
 			value= "/opendata",
@@ -46,6 +49,8 @@ public class ExplotacioDadesExternesRestController {
 			notes = "Retorna una llista amb les entitats i l'estatus") //, response=ArrayList.class)
 	public ResponseEntity<List<DadesObertesRespostaConsulta>> opendata(
 			HttpServletRequest request,
+			@ApiParam(name="historic", value="S'utilitzarà la informació històrica de consultes", required = false, defaultValue = "false")
+			@RequestParam(value = "historic", required = false) boolean historic,
 			@ApiParam(name="entitatCodi", value="Codi de l'entitat", required=false) 
 			@RequestParam(required = false) final String entitatCodi,
 			@ApiParam(name="dataInici", value="Data d'inici") 
@@ -57,12 +62,22 @@ public class ExplotacioDadesExternesRestController {
 			@ApiParam(name="serveiCodi", value="Codi del servei", required=false) 
 			@RequestParam(required = false) final String serveiCodi) throws EntitatNotFoundException, ProcedimentNotFoundException {
 		// Informe de procediments agrupats per entitat i departament
-		List<DadesObertesRespostaConsulta> entitats = consultaService.findByFiltrePerOpenData(
-				entitatCodi,
-				dataInici,
-				dataFi,
-				procedimentCodi,
-				serveiCodi);
+		List<DadesObertesRespostaConsulta> entitats;
+		if (historic) {
+			entitats = historicConsultaService.findByFiltrePerOpenData(
+					entitatCodi,
+					dataInici,
+					dataFi,
+					procedimentCodi,
+					serveiCodi);
+		} else {
+			entitats = consultaService.findByFiltrePerOpenData(
+					entitatCodi,
+					dataInici,
+					dataFi,
+					procedimentCodi,
+					serveiCodi);
+		}
 		return new ResponseEntity<List<DadesObertesRespostaConsulta>>(entitats, HttpStatus.OK);
 	}
 

@@ -15,6 +15,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
+import es.caib.pinbal.core.dto.JustificantDto;
+import es.caib.pinbal.core.service.HistoricConsultaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
 import org.springframework.data.domain.Page;
@@ -59,6 +61,7 @@ import es.caib.pinbal.webapp.datatables.ServerSideResponse;
 public class ConsultaMultipleController extends BaseController {
 
 	public static final String SESSION_ATTRIBUTE_FILTRE = "ConsultaMultipleController.session.filtre";
+	public static final String SESSION_CONSULTA_HISTORIC = "consulta_multiple";
 
 	@Autowired
 	private EntitatService entitatService;
@@ -68,6 +71,8 @@ public class ConsultaMultipleController extends BaseController {
 	private ServeiService serveiService;
 	@Autowired
 	private ConsultaService consultaService;
+	@Autowired
+	private HistoricConsultaService historicConsultaService;
 
 	@RequestMapping(method = RequestMethod.GET)
 	public String get(
@@ -134,7 +139,9 @@ public class ConsultaMultipleController extends BaseController {
 				SESSION_ATTRIBUTE_FILTRE);
 		if (command == null) {
 			command = new ConsultaFiltreCommand();
-			command.filtrarDarrers3MesosPerDefecte();
+			command.filtrarDarrersMesos(isHistoric(request) ? 9 : 3);
+		} else {
+			command.updateDefaultDataInici(isHistoric(request));
 		}
 		
 		Page<ConsultaDto> page;
@@ -149,11 +156,18 @@ public class ConsultaMultipleController extends BaseController {
 			List<ServerSideColumn> cols = serverSideRequest.getColumns();
 			cols.get(1).setData("createdDate");
 			cols.get(2).setData("procedimentServei.procediment.nom");
-			
-			page = consultaService.findMultiplesByFiltrePaginatPerDelegat(
-					entitat.getId(),
-					ConsultaFiltreCommand.asDto(command),		
-					serverSideRequest.toPageable());	
+
+			if (isHistoric(request)) {
+				page = historicConsultaService.findMultiplesByFiltrePaginatPerDelegat(
+						entitat.getId(),
+						ConsultaFiltreCommand.asDto(command),
+						serverSideRequest.toPageable());
+			} else {
+				page = consultaService.findMultiplesByFiltrePaginatPerDelegat(
+						entitat.getId(),
+						ConsultaFiltreCommand.asDto(command),
+						serverSideRequest.toPageable());
+			}
 			cols.get(1).setData("creacioData");
 			cols.get(2).setData("procedimentNom");
 			
@@ -172,9 +186,7 @@ public class ConsultaMultipleController extends BaseController {
 			return "delegatNoAutoritzat";
 		EntitatDto entitat = EntitatHelper.getEntitatActual(request, entitatService);
 		if (entitat != null) {
-			ConsultaDto consulta = consultaService.findOneDelegat(consultaId);
-			model.addAttribute("consulta", consulta);
-			model.addAttribute("filles", consultaService.findAmbPare(consultaId));
+			ConsultaDto consulta = getConsultaDelegate(consultaId, isHistoric(request), model);
 			model.addAttribute(
 					"servei",
 					serveiService.findAmbCodiPerDelegat(
@@ -202,7 +214,7 @@ public class ConsultaMultipleController extends BaseController {
 		EntitatDto entitat = EntitatHelper.getEntitatActual(request, entitatService);
 		if (entitat != null) {
 			try {
-				FitxerDto fitxer = consultaService.obtenirJustificantMultipleConcatenat(consultaId);
+				FitxerDto fitxer = getJustificantMultiplePdf(consultaId, isHistoric(request));
 				writeFileToResponse(
 						fitxer.getNom(),
 						fitxer.getContingut(),
@@ -239,7 +251,7 @@ public class ConsultaMultipleController extends BaseController {
 		EntitatDto entitat = EntitatHelper.getEntitatActual(request, entitatService);
 		if (entitat != null) {
 			try {
-				FitxerDto fitxer = consultaService.obtenirJustificantMultipleZip(consultaId);
+				FitxerDto fitxer = getJustificantMultipleZip(consultaId, isHistoric(request));
 				writeFileToResponse(
 						fitxer.getNom(),
 						fitxer.getContingut(),
@@ -283,7 +295,9 @@ public class ConsultaMultipleController extends BaseController {
 				SESSION_ATTRIBUTE_FILTRE);
 		if (command == null) {
 			command = new ConsultaFiltreCommand();
-			command.filtrarDarrers3MesosPerDefecte();
+			command.filtrarDarrersMesos(isHistoric(request) ? 9 : 3);
+		} else {
+			command.updateDefaultDataInici(isHistoric(request));
 		}
 		command.eliminarEspaisCampsCerca();
 		model.addAttribute(
@@ -297,5 +311,77 @@ public class ConsultaMultipleController extends BaseController {
 				serveiService.findPermesosAmbProcedimentPerDelegat(
 						entitat.getId(),
 						command.getProcediment()));
+		model.addAttribute("historic", isHistoric(request));
+	}
+
+	private boolean isHistoric(HttpServletRequest request) {
+		Object historic = request.getSession().getAttribute(SESSION_CONSULTA_HISTORIC);
+		if (historic == null)
+			return false;
+		else
+			return ((Boolean) historic).booleanValue();
+	}
+
+	private ConsultaDto getConsultaDelegate(Long consultaId, boolean historic, Model model) throws ConsultaNotFoundException, ScspException {
+		ConsultaDto consulta;
+		List<ConsultaDto> filles;
+		if (historic) {
+			try {
+				consulta = historicConsultaService.findOneDelegat(consultaId);
+				filles = historicConsultaService.findAmbPare(consultaId);
+			} catch (Exception nfe) {
+				consulta = consultaService.findOneDelegat(consultaId);
+				filles = consultaService.findAmbPare(consultaId);
+			}
+		} else {
+			try {
+				consulta = consultaService.findOneDelegat(consultaId);
+				filles = consultaService.findAmbPare(consultaId);
+			} catch (Exception nfe) {
+				consulta = historicConsultaService.findOneDelegat(consultaId);
+				filles = historicConsultaService.findAmbPare(consultaId);
+			}
+		}
+
+		model.addAttribute("consulta", consulta);
+		model.addAttribute("filles", filles);
+
+		return consulta;
+	}
+
+	private FitxerDto getJustificantMultiplePdf(Long consultaId, boolean historic) throws Exception {
+		FitxerDto fitxer;
+		if (historic) {
+			try {
+				fitxer = historicConsultaService.obtenirJustificantMultipleConcatenat(consultaId);
+			} catch (Exception nfe) {
+				fitxer = consultaService.obtenirJustificantMultipleConcatenat(consultaId);
+			}
+		} else {
+			try {
+				fitxer = consultaService.obtenirJustificantMultipleConcatenat(consultaId);
+			} catch (Exception nfe) {
+				fitxer = historicConsultaService.obtenirJustificantMultipleConcatenat(consultaId);
+			}
+		}
+		return fitxer;
+	}
+
+	private FitxerDto getJustificantMultipleZip(Long consultaId, boolean historic) throws Exception {
+		FitxerDto fitxer;
+		if (historic) {
+			try {
+				fitxer = historicConsultaService.obtenirJustificantMultipleZip(consultaId);
+			} catch (Exception nfe) {
+				fitxer = consultaService.obtenirJustificantMultipleZip(consultaId);
+			}
+		} else {
+			try {
+				fitxer = consultaService.obtenirJustificantMultipleZip(consultaId);
+			} catch (Exception nfe) {
+				fitxer = historicConsultaService.obtenirJustificantMultipleZip(consultaId);
+			}
+		}
+		return fitxer;
 	}
 }

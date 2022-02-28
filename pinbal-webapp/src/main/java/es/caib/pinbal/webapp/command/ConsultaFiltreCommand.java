@@ -47,9 +47,21 @@ public class ConsultaFiltreCommand {
 	}
 
 	// Filtra per defecte els darrers 3 mesos (per a consultes simples i multiples del delegat)
-	public void filtrarDarrers3MesosPerDefecte() {
+	public void filtrarDarrersMesos(int mesos) {
 		DateTime dateStartToday = (new LocalDate()).toDateTimeAtStartOfDay();
-		this.dataInici = dateStartToday.minusMonths(3).toDate();
+		this.dataInici = dateStartToday.minusMonths(mesos).toDate();
+	}
+
+	public void updateDefaultDataInici(boolean historic) {
+		DateTime dateStartToday = (new LocalDate()).toDateTimeAtStartOfDay();
+		DateTime defaultDate = dateStartToday.minusMonths(3);
+		DateTime historicDefaultDate = dateStartToday.minusMonths(9);
+		if (historic && defaultDate.toDate().equals(dataInici))
+			dataInici = historicDefaultDate.toDate();
+		else if (!historic && historicDefaultDate.toDate().equals(dataInici)){
+			dataInici = defaultDate.toDate();
+		}
+
 	}
 
 	// Elimina els espais en els camps de cerca

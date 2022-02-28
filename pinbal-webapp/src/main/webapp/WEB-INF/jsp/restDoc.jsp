@@ -45,7 +45,6 @@
     $(document).ready(function () {
 
       $("#swagger-ui-container").on("click", ".operation", function() {
-          debugger
           collapsable = $(this).find(".content:first");
           collapsable.slideToggle();
       });

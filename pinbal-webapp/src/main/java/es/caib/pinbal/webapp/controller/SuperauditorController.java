@@ -16,6 +16,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
+import es.caib.pinbal.core.service.HistoricConsultaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
 import org.springframework.data.domain.Page;
@@ -61,6 +62,7 @@ public class SuperauditorController extends BaseController {
 	private static final String SESSION_ATTRIBUTE_FILTRE = "SuperauditorController.session.filtre";
 	public static final String SESSION_ATTRIBUTE_GENFORM = "SuperauditorController.session.genform";
 	public static final String SESSION_ATTRIBUTE_GENIDS = "SuperauditorController.session.genids";
+	public static final String SESSION_CONSULTA_HISTORIC = "consulta_superauditor";
 
 	@Autowired
 	private EntitatService entitatService;
@@ -70,6 +72,8 @@ public class SuperauditorController extends BaseController {
 	private ServeiService serveiService;
 	@Autowired
 	private ConsultaService consultaService;
+	@Autowired
+	private HistoricConsultaService historicConsultaService;
 
 	@RequestMapping(method = RequestMethod.GET)
 	public String get(
@@ -117,17 +121,29 @@ public class SuperauditorController extends BaseController {
 		ConsultaFiltreCommand command = (ConsultaFiltreCommand)RequestSessionHelper.obtenirObjecteSessio(
 				request,
 				SESSION_ATTRIBUTE_FILTRE);
-		if (command == null)
+		if (command == null) {
 			command = new ConsultaFiltreCommand();
+			command.filtrarDarrersMesos(isHistoric(request) ? 9 : 3);
+		} else {
+			command.updateDefaultDataInici(isHistoric(request));
+		}
 		List<ServerSideColumn> cols = serverSideRequest.getColumns();
 		cols.get(1).setData("createdDate");
 		cols.get(2).setData("createdBy.nom");
 		cols.get(4).setData("procedimentServei.procediment.nom");
-	
-		Page<ConsultaDto> page = consultaService.findByFiltrePaginatPerAuditor(
-				entitat.getId(),
-				ConsultaFiltreCommand.asDto(command),		
-				serverSideRequest.toPageable());
+
+		Page<ConsultaDto> page;
+		if (isHistoric(request)) {
+			page = historicConsultaService.findByFiltrePaginatPerAuditor(
+					entitat.getId(),
+					ConsultaFiltreCommand.asDto(command),
+					serverSideRequest.toPageable());
+		} else {
+			page = consultaService.findByFiltrePaginatPerAuditor(
+					entitat.getId(),
+					ConsultaFiltreCommand.asDto(command),
+					serverSideRequest.toPageable());
+		}
 		
 		cols.get(1).setData("creacioData");
 		cols.get(2).setData("creacioUsuari.nom");
@@ -311,8 +327,12 @@ public class SuperauditorController extends BaseController {
 			ConsultaFiltreCommand command = (ConsultaFiltreCommand)RequestSessionHelper.obtenirObjecteSessio(
 					request,
 					SESSION_ATTRIBUTE_FILTRE);
-			if (command == null)
+			if (command == null) {
 				command = new ConsultaFiltreCommand();
+				command.filtrarDarrersMesos(isHistoric(request) ? 9 : 3);
+			} else {
+				command.updateDefaultDataInici(isHistoric(request));
+			}
 			model.addAttribute(
 					"filtreCommand",
 					command);
@@ -329,6 +349,7 @@ public class SuperauditorController extends BaseController {
 				model.addAttribute(
 						"serveis",
 						serveiService.findAmbEntitat(entitatActual.getId()));
+			model.addAttribute("historic", isHistoric(request));
 		}
 	}
 
@@ -347,5 +368,13 @@ public class SuperauditorController extends BaseController {
 					consultaService.auditoriaConsultarSuperauditor(
 							ids));
 		}
+	}
+
+	private boolean isHistoric(HttpServletRequest request) {
+		Object historic = request.getSession().getAttribute(SESSION_CONSULTA_HISTORIC);
+		if (historic == null)
+			return false;
+		else
+			return ((Boolean) historic).booleanValue();
 	}
 }

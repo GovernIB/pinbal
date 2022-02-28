@@ -7,6 +7,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
+import es.caib.pinbal.core.model.HistoricConsulta;
 import org.joda.time.DateTime;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -87,6 +88,15 @@ public class DtoMappingHelper {
 				field("pare.id", "pareId").
 				exclude("dadesEspecifiques").
 				byDefault().toClassMap());
+		// Mapeig de historic de consultes
+		mapperFactory.registerClassMap(
+				ClassMapBuilder.map(HistoricConsulta.class, ConsultaDto.class).
+						field("createdBy", "creacioUsuari").
+						field("createdDate", "creacioData").
+						field("funcionariDocumentNum", "funcionariNif").
+						field("pare.id", "pareId").
+						exclude("dadesEspecifiques").
+						byDefault().toClassMap());
 		// Mapeig d'informes d'usuaris
 		mapperFactory.registerClassMap(
 				ClassMapBuilder.map(EntitatUsuari.class, InformeUsuariDto.class).

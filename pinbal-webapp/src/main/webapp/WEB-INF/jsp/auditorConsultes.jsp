@@ -5,9 +5,8 @@
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
 <%@ taglib tagdir="/WEB-INF/tags/pinbal" prefix="pbl" %>
 <%
-	request.setAttribute(
-			"consultaEstats",
-			es.caib.pinbal.core.dto.ConsultaDto.EstatTipus.sortedValues());
+	request.setAttribute("consultaEstats", es.caib.pinbal.core.dto.ConsultaDto.EstatTipus.sortedValues());
+	request.setAttribute("historicSession", es.caib.pinbal.webapp.controller.AuditorController.SESSION_CONSULTA_HISTORIC);
 %>
 <html>
 <head>
@@ -27,96 +26,115 @@
 	<script src="<c:url value="/webjars/select2/4.0.6-rc.1/dist/js/select2.min.js"/>"></script>
 	<script src="<c:url value="/webjars/select2/4.0.6-rc.1/dist/js/i18n/${requestLocale}.js"/>"></script>
 	<script src="<c:url value="/webjars/bootstrap-datepicker/1.6.1/dist/js/bootstrap-datepicker.min.js"/>"></script>
-	<script src="<c:url value="/js/ios-checkbox/iosCheckbox.min.js"/>"></script>
+	<script src="<c:url value="/js/ios-checkbox/iosCheckbox.js"/>"></script>
 
 	<script src="<c:url value="/js/webutil.common.js"/>"></script>
 	<script src="<c:url value="/js/webutil.datatable.js"/>"></script>
-<script>
-$(document).ready(function() {
-	$('#netejar-filtre').click(function() {
-		$(':input', $('#form-filtre')).each (function() {
-			var type = this.type, tag = this.tagName.toLowerCase();
-			if (type == 'text' || type == 'password' || tag == 'textarea')
-				this.value = '';
-			else if (type == 'checkbox' || type == 'radio')
-				this.checked = false;
-			else if (tag == 'select')
-				this.selectedIndex = 0;
-		});
-		$('#form-filtre').submit();
-	});
-	$('#select-procediment').change(function() {
-		var targetUrl;
-		if ($(this).val())
-			targetUrl = '<c:url value="auditor/serveisPerProcediment"/>/' + $(this).val();
-		else
-			targetUrl = '<c:url value="auditor/serveisPerProcediment"/>';
-		$.ajax({
-			url:targetUrl,
-			type:'GET',
-			dataType: 'json',
-			success: function(json) {
-				$('#select-servei').empty();
-				$('#select-servei').append($('<option>').text('<spring:message code="auditor.list.filtre.servei"/>:'));
-				$.each(json, function(i, value) {
-					$('#select-servei').append($('<option>').text(value.descripcio).attr('value', value.codi));
-				});
-			}
-		});
-	});
-	$('#table-consultes').DataTable({
-		autoWidth: false,
-		processing: true,
-		serverSide: true,
-		dom: "<'row'<'col-md-6'i><'col-md-6'>><'row'<'col-md-12'rt>><'row'<'col-md-6'l><'col-md-6'p>>",
-		"order": [[ 1, "desc" ]],
-		language: {
-			"url": '<c:url value="/js/datatable-language.json"/>'
-		},
-		ajax: '<c:url value="/auditor/datatable/"/>',
-		columnDefs: [
-			{
-				targets: [0],
-				width: "10%",
-				render: function (data, type, row, meta) {
-						var template = $('#template-id-peticion').html();
-						return Mustache.render(template, row);
-				}
-			}, {
-				targets: [1],
-				width: "10%",
-				render: $.fn.dataTable.render.moment('x', 'DD/MM/YYYY HH:mm:ss', 'es' )
-			}, {
-				targets: [3, 5],
-				orderable: false,
-			}, {
-				targets: [6],
-				orderable: false,
-				width: "10%",
-				render: function (data, type, row, meta) {
-						var template = $('#template-estat').html();
-						row['icon-status'] = '';
-						if (row.estat=='Error'){
-							row['icon-status'] = '<i class="fas fa-exclamation-triangle"></i>';
-						} else if(row.estat=='Pendent'){
-							row['icon-status'] = '<i class="fas fa-bookmark"></i>';
-						} else if(row.estat=='Processant'){
-							row['icon-status'] = '<i class="fas fa-hourglass-half"></i>';
-						} else{
-							row['icon-status'] = '<i class="fa fa-check"></i>';
-						}
-						return Mustache.render(template, row);
-				}
-			}
-		],
-		initComplete: function( settings, json ) {
+
+	<script type="application/javascript">
+		function checkCallback() {
+			historicColor();
+			$("#filtrar").click();
 		}
-	});
-});
+
+		function historicColor() {
+			let historic = $("#titolCheck").prop("checked");
+			if (historic) {
+				$(".container-caib > .panel-default > .panel-body").addClass("panel-historic");
+				$(".dataTables_info").addClass("table-info-historic");
+			} else {
+				$(".container-caib > .panel-default > .panel-body").removeClass("panel-historic")
+				$(".dataTables_info").removeClass("table-info-historic");
+			}
+		}
+
+		$(document).ready(function() {
+			$('#netejar-filtre').click(function() {
+				$(':input', $('#form-filtre')).each (function() {
+					var type = this.type, tag = this.tagName.toLowerCase();
+					if (type == 'text' || type == 'password' || tag == 'textarea')
+						this.value = '';
+					else if (type == 'checkbox' || type == 'radio')
+						this.checked = false;
+					else if (tag == 'select')
+						this.selectedIndex = 0;
+				});
+				$('#form-filtre').submit();
+			});
+			$('#select-procediment').change(function() {
+				var targetUrl;
+				if ($(this).val())
+					targetUrl = '<c:url value="auditor/serveisPerProcediment"/>/' + $(this).val();
+				else
+					targetUrl = '<c:url value="auditor/serveisPerProcediment"/>';
+				$.ajax({
+					url:targetUrl,
+					type:'GET',
+					dataType: 'json',
+					success: function(json) {
+						$('#select-servei').empty();
+						$('#select-servei').append($('<option>').text('<spring:message code="auditor.list.filtre.servei"/>:'));
+						$.each(json, function(i, value) {
+							$('#select-servei').append($('<option>').text(value.descripcio).attr('value', value.codi));
+						});
+					}
+				});
+			});
+			$('#table-consultes').DataTable({
+				autoWidth: false,
+				processing: true,
+				serverSide: true,
+				dom: "<'row'<'col-md-6'i><'col-md-6'>><'row'<'col-md-12'rt>><'row'<'col-md-6'l><'col-md-6'p>>",
+				"order": [[ 1, "desc" ]],
+				language: {
+					"url": '<c:url value="/js/datatable-language.json"/>'
+				},
+				ajax: '<c:url value="/auditor/datatable/"/>',
+				columnDefs: [
+					{
+						targets: [0],
+						width: "10%",
+						render: function (data, type, row, meta) {
+								var template = $('#template-id-peticion').html();
+								return Mustache.render(template, row);
+						}
+					}, {
+						targets: [1],
+						width: "10%",
+						render: $.fn.dataTable.render.moment('x', 'DD/MM/YYYY HH:mm:ss', 'es' )
+					}, {
+						targets: [3, 5],
+						orderable: false,
+					}, {
+						targets: [6],
+						orderable: false,
+						width: "10%",
+						render: function (data, type, row, meta) {
+								var template = $('#template-estat').html();
+								row['icon-status'] = '';
+								if (row.estat=='Error'){
+									row['icon-status'] = '<i class="fas fa-exclamation-triangle"></i>';
+								} else if(row.estat=='Pendent'){
+									row['icon-status'] = '<i class="fas fa-bookmark"></i>';
+								} else if(row.estat=='Processant'){
+									row['icon-status'] = '<i class="fas fa-hourglass-half"></i>';
+								} else{
+									row['icon-status'] = '<i class="fa fa-check"></i>';
+								}
+								return Mustache.render(template, row);
+						}
+					}
+				],
+				initComplete: function( settings, json ) {
+				}
+			});
+
+			historicColor();
+		});
 </script>
 </head>
 <body>
-	<div class="text-right" data-toggle="titol-check" data-titol-check-value="${historic}" data-titol-check-session-name="consulta.auditor" data-titol-check-callback="checkCallback" data-titol-check-label="<spring:message code="comu.historic"/>"></div>
+	<div class="text-right" data-toggle="titol-check" data-titol-check-value="${historic}" data-titol-check-session-name="${historicSession}" data-titol-check-callback="checkCallback" data-titol-check-label="<spring:message code="comu.historic"/>"></div>
 	<form:form id="form-filtre" action="" method="post" cssClass="well form-filtre-table" commandName="filtreCommand">
 		<div class="row">
 			<div class="col-md-3">
@@ -164,7 +182,7 @@ $(document).ready(function() {
 			<div class="col-md-3">
 				<div class="pull-right">
 					<button id="netejar-filtre" class="btn btn-default" type="button"><spring:message code="comu.boto.netejar"/></button>
-					<button class="btn btn-primary" type="submit"><span class="fa fa-filter"></span> <spring:message code="comu.boto.filtrar"/></button>
+					<button id="filtrar" class="btn btn-primary" type="submit"><span class="fa fa-filter"></span> <spring:message code="comu.boto.filtrar"/></button>
 				</div>
 			</div>
 		</div>	

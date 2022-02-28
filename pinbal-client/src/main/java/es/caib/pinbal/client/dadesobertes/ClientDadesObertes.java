@@ -22,7 +22,7 @@ import es.caib.pinbal.client.comu.ClientBase;
  */
 public class ClientDadesObertes extends ClientBase {
 
-	private static final String BASE_URL_SUFIX = "api/externa/";
+	private static final String BASE_URL_SUFIX = "/api/externa/";
 
 	public ClientDadesObertes(
 			String urlBase,
@@ -47,6 +47,16 @@ public class ClientDadesObertes extends ClientBase {
 			Date dataFi,
 			String procedimentCodi,
 			String serveiCodi) throws IOException {
+		return opendata(entitatCodi, dataInici, dataFi, procedimentCodi, serveiCodi, false);
+	}
+
+	public List<DadesObertesRespostaConsulta> opendata(
+			String entitatCodi,
+			Date dataInici,
+			Date dataFi,
+			String procedimentCodi,
+			String serveiCodi,
+			boolean historic) throws IOException {
 		Map<String, String> params = new HashMap<String, String>();
 		if (entitatCodi != null) {
 			params.put("entitatCodi", entitatCodi);
@@ -63,6 +73,7 @@ public class ClientDadesObertes extends ClientBase {
 		if (serveiCodi != null) {
 			params.put("serveiCodi", serveiCodi);
 		}
+		params.put("historic", historic? "true" : "false");
 		String json = restPeticioGetString("opendata", params);
 		return Arrays.asList(
 				new ObjectMapper().readValue(

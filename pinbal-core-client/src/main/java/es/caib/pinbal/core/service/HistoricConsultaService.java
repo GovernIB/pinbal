@@ -21,21 +21,21 @@ import java.util.Map;
  */
 public interface HistoricConsultaService {
 
-//	/**
-//	 * Obté el justificant de la consulta.
-//	 *
-//	 * @param id
-//	 *            Atribut id de la consulta.
-//	 * @return l'arxiu amb el document generat.
-//	 * @throws ConsultaNotFoundException
-//	 *            Si la consulta no és accessible per aquest usuari.
-//	 * @throws JustificantGeneracioException
-//	 *            Si es produeixen errors al generar el justificant.
-//	 */
-//	@PreAuthorize("hasRole('ROLE_DELEG')")
-//	public JustificantDto obtenirJustificant(
-//            Long id) throws ConsultaNotFoundException, JustificantGeneracioException;
-//
+	/**
+	 * Obté el justificant de la consulta.
+	 *
+	 * @param id
+	 *            Atribut id de la consulta.
+	 * @return l'arxiu amb el document generat.
+	 * @throws ConsultaNotFoundException
+	 *            Si la consulta no és accessible per aquest usuari.
+	 * @throws JustificantGeneracioException
+	 *            Si es produeixen errors al generar el justificant.
+	 */
+	@PreAuthorize("hasRole('ROLE_DELEG')")
+	public JustificantDto obtenirJustificant(
+            Long id) throws ConsultaNotFoundException, JustificantGeneracioException;
+
 //	/**
 //	 * Obté el justificant de la consulta.
 //	 *
@@ -53,39 +53,39 @@ public interface HistoricConsultaService {
 //	public JustificantDto obtenirJustificant(
 //            String idpeticion,
 //            String idsolicitud) throws ConsultaNotFoundException, JustificantGeneracioException;
-//
-//	/**
-//	 * Obté tots els justificants de la consulta múltiple comprimits
-//	 * en un arxiu ZIP.
-//	 *
-//	 * @param id
-//	 *            Atribut id de la consulta.
-//	 * @return l'arxiu amb el document generat.
-//	 * @throws ConsultaNotFoundException
-//	 *            Si la consulta no és accessible per aquest usuari.
-//	 * @throws JustificantGeneracioException
-//	 *            Si es produeixen errors al generar el justificant.
-//	 */
-//	@PreAuthorize("hasRole('ROLE_DELEG')")
-//	public FitxerDto obtenirJustificantMultipleConcatenat(
-//            Long id) throws ConsultaNotFoundException, JustificantGeneracioException;
-//
-//	/**
-//	 * Obté tots els justificants de la consulta múltiple comprimits
-//	 * en un arxiu ZIP.
-//	 *
-//	 * @param id
-//	 *            Atribut id de la consulta.
-//	 * @return l'arxiu amb el document generat.
-//	 * @throws ConsultaNotFoundException
-//	 *            Si la consulta no és accessible per aquest usuari.
-//	 * @throws JustificantGeneracioException
-//	 *            Si es produeixen errors al generar el justificant.
-//	 */
-//	@PreAuthorize("hasRole('ROLE_DELEG')")
-//	public FitxerDto obtenirJustificantMultipleZip(
-//            Long id) throws ConsultaNotFoundException, JustificantGeneracioException;
-//
+
+	/**
+	 * Obté tots els justificants de la consulta múltiple comprimits
+	 * en un arxiu ZIP.
+	 *
+	 * @param id
+	 *            Atribut id de la consulta.
+	 * @return l'arxiu amb el document generat.
+	 * @throws ConsultaNotFoundException
+	 *            Si la consulta no és accessible per aquest usuari.
+	 * @throws JustificantGeneracioException
+	 *            Si es produeixen errors al generar el justificant.
+	 */
+	@PreAuthorize("hasRole('ROLE_DELEG')")
+	public FitxerDto obtenirJustificantMultipleConcatenat(
+            Long id) throws ConsultaNotFoundException, JustificantGeneracioException;
+
+	/**
+	 * Obté tots els justificants de la consulta múltiple comprimits
+	 * en un arxiu ZIP.
+	 *
+	 * @param id
+	 *            Atribut id de la consulta.
+	 * @return l'arxiu amb el document generat.
+	 * @throws ConsultaNotFoundException
+	 *            Si la consulta no és accessible per aquest usuari.
+	 * @throws JustificantGeneracioException
+	 *            Si es produeixen errors al generar el justificant.
+	 */
+	@PreAuthorize("hasRole('ROLE_DELEG')")
+	public FitxerDto obtenirJustificantMultipleZip(
+            Long id) throws ConsultaNotFoundException, JustificantGeneracioException;
+
 //	/**
 //	 * Torna a intentar la generació i custòdia del justificant.
 //	 *

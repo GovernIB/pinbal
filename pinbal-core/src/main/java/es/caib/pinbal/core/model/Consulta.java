@@ -41,7 +41,7 @@ import es.caib.pinbal.core.dto.ConsultaDto.Consentiment;
 				@Index(name = "pbl_consulta_procserv_i", columnList = "procserv_id"),
 				@Index(name = "pbl_consulta_createdby_i", columnList = "createdby_codi")})
 @EntityListeners(AuditingEntityListener.class)
-public class Consulta extends PinbalAuditable<Long> {
+public class Consulta extends PinbalAuditable<Long> implements IConsulta {
 
 	public static final int ERROR_SCSP_MAX_LENGTH = 4000;
 	public static final int ERROR_JUSTIFICANT_MAX_LENGTH = 2000;

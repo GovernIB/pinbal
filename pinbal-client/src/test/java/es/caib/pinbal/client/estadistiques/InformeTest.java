@@ -6,6 +6,8 @@ package es.caib.pinbal.client.estadistiques;
 import static org.junit.Assert.assertNotNull;
 
 import java.io.IOException;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import org.junit.Test;
@@ -53,6 +55,41 @@ public class InformeTest {
 		List<Entitat> resposta = client.usuaris();
 		assertNotNull(resposta);
 		System.out.println("-> usuaris: " + objectToJsonString(resposta));
+	}
+
+	@Test
+	public void general() throws IOException {
+		Calendar cal = Calendar.getInstance();
+		cal.set(Calendar.HOUR_OF_DAY, 0);
+		cal.set(Calendar.MINUTE, 0);
+		cal.set(Calendar.SECOND, 0);
+		cal.set(Calendar.MILLISECOND, 0);
+
+		Date dataFi = cal.getTime();
+		cal.add(Calendar.MONTH, -6);
+		Date dataInici = cal.getTime();
+
+		List<Entitat> resposta = client.general(dataInici, dataFi);
+		assertNotNull(resposta);
+		System.out.println("-> entitats: " + objectToJsonString(resposta));
+	}
+
+	@Test
+	public void general_historic() throws IOException {
+		Calendar cal = Calendar.getInstance();
+		cal.set(Calendar.HOUR_OF_DAY, 0);
+		cal.set(Calendar.MINUTE, 0);
+		cal.set(Calendar.SECOND, 0);
+		cal.set(Calendar.MILLISECOND, 0);
+
+		cal.add(Calendar.MONTH, -6);
+		Date dataFi = cal.getTime();
+		cal.add(Calendar.MONTH, -6);
+		Date dataInici = cal.getTime();
+
+		List<Entitat> resposta = client.general(dataInici, dataFi, true);
+		assertNotNull(resposta);
+		System.out.println("-> entitats: " + objectToJsonString(resposta));
 	}
 
 	private String objectToJsonString(Object obj) throws JsonProcessingException {

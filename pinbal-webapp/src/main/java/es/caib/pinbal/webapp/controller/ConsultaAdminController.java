@@ -20,6 +20,7 @@ import javax.validation.Valid;
 import es.caib.pinbal.core.dto.DadaEspecificaDto;
 import es.caib.pinbal.core.dto.NodeDto;
 import es.caib.pinbal.core.dto.ServeiCampDto;
+import es.caib.pinbal.core.service.HistoricConsultaService;
 import es.caib.pinbal.core.service.exception.ServeiNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
@@ -66,6 +67,7 @@ public class ConsultaAdminController extends BaseController {
 	private static final String SESSION_ATTRIBUTE_FILTRE = "ConsultaAdminController.session.filtre";
 	public static final String SESSION_ATTRIBUTE_GENFORM = "ConsultaAdminController.session.genform";
 	public static final String SESSION_ATTRIBUTE_GENIDS = "ConsultaAdminController.session.genids";
+	public static final String SESSION_CONSULTA_HISTORIC = "consulta_admin";
 
 	@Autowired
 	private EntitatService entitatService;
@@ -75,6 +77,8 @@ public class ConsultaAdminController extends BaseController {
 	private ServeiService serveiService;
 	@Autowired
 	private ConsultaService consultaService;
+	@Autowired
+	private HistoricConsultaService historicConsultaService;
 
 	@RequestMapping(method = RequestMethod.GET)
 	public String get(
@@ -122,13 +126,21 @@ public class ConsultaAdminController extends BaseController {
 		if (command == null) {
 			command = new ConsultaFiltreCommand(entitatService.findTopByTipus(EntitatTipusDto.GOVERN).getId());
 		}
+		command.updateDefaultDataInici(isHistoric(request));
 		List<ServerSideColumn> cols = serverSideRequest.getColumns();
 		cols.get(1).setData("createdDate");
 		cols.get(2).setData("createdBy.nom");
 		cols.get(4).setData("procedimentServei.procediment.nom");
-		Page<ConsultaDto> page = consultaService.findByFiltrePaginatPerAdmin(
-				ConsultaFiltreCommand.asDto(command), 
-				serverSideRequest.toPageable());
+		Page<ConsultaDto> page;
+		if (isHistoric(request)) {
+			page = historicConsultaService.findByFiltrePaginatPerAdmin(
+					ConsultaFiltreCommand.asDto(command),
+					serverSideRequest.toPageable());
+		} else {
+			page = consultaService.findByFiltrePaginatPerAdmin(
+					ConsultaFiltreCommand.asDto(command),
+					serverSideRequest.toPageable());
+		}
 		cols.get(1).setData("creacioData");
 		cols.get(2).setData("creacioUsuari.nom");
 		cols.get(3).setData("funcionariNomAmbDocument");
@@ -173,7 +185,7 @@ public class ConsultaAdminController extends BaseController {
 			HttpServletRequest request,
 			@PathVariable Long consultaId,
 			Model model) throws Exception {
-		ConsultaDto consulta = consultaService.findOneAdmin(consultaId);
+		ConsultaDto consulta = getConsultaAdmin(consultaId, isHistoric(request));
 		model.addAttribute("consulta", consulta);
 		model.addAttribute(
 				"servei",
@@ -222,7 +234,7 @@ public class ConsultaAdminController extends BaseController {
 			HttpServletResponse response,
 			@PathVariable Long consultaId,
 			Model model) throws ConsultaNotFoundException, ScspException {
-		ConsultaDto consulta = consultaService.findOneAdmin(consultaId);
+		ConsultaDto consulta = getConsultaAdmin(consultaId, isHistoric(request));
 		model.addAttribute("consulta", consulta);
 		model.addAttribute("mostrarPeticio", new Boolean(true));
 		model.addAttribute("mostrarResposta", new Boolean(false));
@@ -235,7 +247,7 @@ public class ConsultaAdminController extends BaseController {
 			HttpServletResponse response,
 			@PathVariable Long consultaId,
 			Model model) throws ConsultaNotFoundException, ScspException {
-		ConsultaDto consulta = consultaService.findOneAdmin(consultaId);
+		ConsultaDto consulta = getConsultaAdmin(consultaId, isHistoric(request));
 		model.addAttribute("consulta", consulta);
 		model.addAttribute("mostrarPeticio", new Boolean(false));
 		model.addAttribute("mostrarResposta", new Boolean(true));
@@ -254,47 +266,74 @@ public class ConsultaAdminController extends BaseController {
 	private void omplirModelPerFiltreTaula(
 			HttpServletRequest request,
 			Model model) throws Exception {
-			model.addAttribute("entitats", entitatService.findAll());
-			ConsultaFiltreCommand command = (ConsultaFiltreCommand)RequestSessionHelper.obtenirObjecteSessio(
-					request,
-					SESSION_ATTRIBUTE_FILTRE);
-			if (command == null) {
-				command = new ConsultaFiltreCommand(entitatService.findTopByTipus(EntitatTipusDto.GOVERN).getId());
-			}
-			command.eliminarEspaisCampsCerca();
-			if (command.getEntitatId() != null) {
+		model.addAttribute("entitats", entitatService.findAll());
+		ConsultaFiltreCommand command = (ConsultaFiltreCommand)RequestSessionHelper.obtenirObjecteSessio(
+				request,
+				SESSION_ATTRIBUTE_FILTRE);
+		if (command == null) {
+			command = new ConsultaFiltreCommand(entitatService.findTopByTipus(EntitatTipusDto.GOVERN).getId());
+		}
+		command.updateDefaultDataInici(isHistoric(request));
+		command.eliminarEspaisCampsCerca();
+		if (command.getEntitatId() != null) {
+			model.addAttribute(
+					"filtreCommand",
+					command);
+			model.addAttribute(
+					"procediments",
+					procedimentService.findAmbEntitat(command.getEntitatId()));
+			if (command.getProcediment() != null)
 				model.addAttribute(
-						"filtreCommand",
-						command);
+						"serveis",
+						serveiService.findAmbEntitatIProcediment(
+								command.getEntitatId(),
+								command.getProcediment()));
+			else
 				model.addAttribute(
-						"procediments",
-						procedimentService.findAmbEntitat(command.getEntitatId()));
-				if (command.getProcediment() != null)
-					model.addAttribute(
-							"serveis",
-							serveiService.findAmbEntitatIProcediment(
-									command.getEntitatId(),
-									command.getProcediment()));
-				else
-					model.addAttribute(
-							"serveis",
-							serveiService.findAmbEntitat(command.getEntitatId()));
-			} else {
+						"serveis",
+						serveiService.findAmbEntitat(command.getEntitatId()));
+		} else {
+			model.addAttribute(
+					"filtreCommand",
+					command);
+			model.addAttribute(
+					"procediments",
+					procedimentService.findAll());
+			if (command.getProcediment() != null)
 				model.addAttribute(
-						"filtreCommand",
-						command);
+						"serveis",
+						serveiService.findAmbProcediment(command.getProcediment()));
+			else
 				model.addAttribute(
-						"procediments",
-						procedimentService.findAll());
-				if (command.getProcediment() != null)
-					model.addAttribute(
-							"serveis",
-							serveiService.findAmbProcediment(command.getProcediment()));
-				else
-					model.addAttribute(
-							"serveis",
-							serveiService.findAll());
-			}
+						"serveis",
+						serveiService.findAll());
+		}
+		model.addAttribute("historic", isHistoric(request));
 	}
 
+	private boolean isHistoric(HttpServletRequest request) {
+		Object historic = request.getSession().getAttribute(SESSION_CONSULTA_HISTORIC);
+		if (historic == null)
+			return false;
+		else
+			return ((Boolean) historic).booleanValue();
+	}
+
+	private ConsultaDto getConsultaAdmin(Long consultaId, boolean historic) throws ConsultaNotFoundException, ScspException {
+		ConsultaDto consulta;
+		if (historic) {
+			try {
+				consulta = historicConsultaService.findOneAdmin(consultaId);
+			} catch (Exception nfe) {
+				consulta = consultaService.findOneAdmin(consultaId);
+			}
+		} else {
+			try {
+				consulta = consultaService.findOneAdmin(consultaId);
+			} catch (Exception nfe) {
+				consulta = historicConsultaService.findOneAdmin(consultaId);
+			}
+		}
+		return consulta;
+	}
 }

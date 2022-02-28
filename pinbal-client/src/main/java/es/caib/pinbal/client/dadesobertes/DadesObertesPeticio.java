@@ -17,6 +17,7 @@ public class DadesObertesPeticio {
 	private String serveiCodi;
 	private Date dataInici;
 	private Date dataFi;
+	private boolean historic = false;
 
 	public String getEntitatCodi() {
 		return entitatCodi;
@@ -48,5 +49,10 @@ public class DadesObertesPeticio {
 	public void setDataFi(Date dataFi) {
 		this.dataFi = dataFi;
 	}
-
+	public boolean isHistoric() {
+		return historic;
+	}
+	public void setHistoric(boolean historic) {
+		this.historic = historic;
+	}
 }

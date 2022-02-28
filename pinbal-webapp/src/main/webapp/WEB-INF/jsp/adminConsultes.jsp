@@ -7,9 +7,8 @@
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
 <%@ taglib tagdir="/WEB-INF/tags/pinbal" prefix="pbl" %>
 <%
-	request.setAttribute(
-			"consultaEstats",
-			es.caib.pinbal.core.dto.ConsultaDto.EstatTipus.sortedValues());
+	request.setAttribute("consultaEstats", es.caib.pinbal.core.dto.ConsultaDto.EstatTipus.sortedValues());
+	request.setAttribute("historicSession", es.caib.pinbal.webapp.controller.ConsultaAdminController.SESSION_CONSULTA_HISTORIC);
 %>
 
 <html>
@@ -32,15 +31,31 @@
 	<script src="<c:url value="/webjars/select2/4.0.6-rc.1/dist/js/i18n/${requestLocale}.js"/>"></script>
 
 	<script src="<c:url value="/webjars/bootstrap-datepicker/1.6.1/dist/js/bootstrap-datepicker.min.js"/>"></script>
-	<script src="<c:url value="/js/ios-checkbox/iosCheckbox.min.js"/>"></script>
+	<script src="<c:url value="/js/ios-checkbox/iosCheckbox.js"/>"></script>
 
 	<script src="<c:url value="/js/webutil.datatable.js"/>"></script>
 	<script src="<c:url value="/js/webutil.common.js"/>"></script>
 
+	<script type="application/javascript">
+		function checkCallback() {
+			historicColor();
+			$("#filtrar").click();
+		}
 
+		function historicColor() {
+			let historic = $("#titolCheck").prop("checked");
+			if (historic) {
+				$(".container-caib > .panel-default > .panel-body").addClass("panel-historic");
+				$(".dataTables_info").addClass("table-info-historic");
+			} else {
+				$(".container-caib > .panel-default > .panel-body").removeClass("panel-historic")
+				$(".dataTables_info").removeClass("table-info-historic");
+			}
+		}
+	</script>
 </head>
 <body>
-<div class="text-right" data-toggle="titol-check" data-titol-check-value="${historic}" data-titol-check-session-name="consulta.admin" data-titol-check-callback="checkCallback" data-titol-check-label="<spring:message code="comu.historic"/>"></div>
+<div class="text-right" data-toggle="titol-check" data-titol-check-value="${historic}" data-titol-check-session-name="${historicSession}" data-titol-check-callback="checkCallback" data-titol-check-label="<spring:message code="comu.historic"/>"></div>
 
 		<form:form id="form-filtre" action="" class="form-horizontal" method="post" cssClass="well form-filtre-table" commandName="filtreCommand">
 			<div class="row">
@@ -100,7 +115,7 @@
 				<div class="col-md-2 pull-right">
 					<div class="pull-right">
 						<button id="netejar-filtre" class="btn btn-default" type="button"><spring:message code="comu.boto.netejar"/></button>
-						<button class="btn btn-primary" type="submit"><span class="fa fa-filter"></span> <spring:message code="comu.boto.filtrar"/></button>		
+						<button id="filtrar" class="btn btn-primary" type="submit"><span class="fa fa-filter"></span> <spring:message code="comu.boto.filtrar"/></button>
 					</div>
 				</div>
 			</div>
@@ -128,8 +143,7 @@
 		setExportToLimit(id, '');
 		createHiddenInputFieldsForLimitAndSubmit(id);
 	}
-</script>
-<script>
+
 	$(document).ready(function() {
 		$('#netejar-filtre').click(function() {
 			$(':input', $('#form-filtre')).each (function() {
@@ -207,6 +221,8 @@
 			initComplete: function( settings, json ) {
 			}
 		});
+
+		historicColor();
 	});
 </script>
 <script id="template-id-peticion" type="x-tmpl-mustache">

@@ -24,6 +24,8 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import es.caib.pinbal.core.service.HistoricConsultaService;
+import es.caib.pinbal.core.service.exception.*;
 import org.apache.commons.codec.binary.Base64;
 import org.joda.time.Period;
 import org.slf4j.Logger;
@@ -67,16 +69,6 @@ import es.caib.pinbal.core.service.EntitatService;
 import es.caib.pinbal.core.service.ProcedimentService;
 import es.caib.pinbal.core.service.ServeiService;
 import es.caib.pinbal.core.service.UsuariService;
-import es.caib.pinbal.core.service.exception.AccesExternException;
-import es.caib.pinbal.core.service.exception.ConsultaNotFoundException;
-import es.caib.pinbal.core.service.exception.ConsultaScspException;
-import es.caib.pinbal.core.service.exception.EntitatNotFoundException;
-import es.caib.pinbal.core.service.exception.ProcedimentNotFoundException;
-import es.caib.pinbal.core.service.exception.ProcedimentServeiNotFoundException;
-import es.caib.pinbal.core.service.exception.ScspException;
-import es.caib.pinbal.core.service.exception.ServeiNotAllowedException;
-import es.caib.pinbal.core.service.exception.ServeiNotFoundException;
-import es.caib.pinbal.core.service.exception.ValidacioDadesPeticioException;
 import es.caib.pinbal.webapp.command.ConsultaCommand;
 import es.caib.pinbal.webapp.command.ConsultaCommand.ConsultaCommandAmbDocumentObligatori;
 import es.caib.pinbal.webapp.command.ConsultaCommand.ConsultaCommandAmbDocumentTipusCif;
@@ -108,6 +100,7 @@ public class ConsultaController extends BaseController {
 
 	private static final String PREFIX_CAMP_DADES_ESPECIFIQUES = "camp_";
 	public static final String SESSION_ATTRIBUTE_FILTRE = "ConsultaController.session.filtre";
+	public static final String SESSION_CONSULTA_HISTORIC = "consulta_delegat";
 	private static final String FORMAT_DATA_DADES_ESPECIFIQUES = "dd/MM/yyyy";
 
 	@Autowired
@@ -118,6 +111,8 @@ public class ConsultaController extends BaseController {
 	private ServeiService serveiService;
 	@Autowired
 	private ConsultaService consultaService;
+	@Autowired
+	private HistoricConsultaService historicConsultaService;
 	@Autowired
 	private UsuariService usuariService;
 
@@ -192,7 +187,9 @@ public class ConsultaController extends BaseController {
 				SESSION_ATTRIBUTE_FILTRE);
 		if (command == null) {
 			command = new ConsultaFiltreCommand();
-			command.filtrarDarrers3MesosPerDefecte();
+			command.filtrarDarrersMesos(isHistoric(request) ? 9 : 3);
+		} else {
+			command.updateDefaultDataInici(isHistoric(request));
 		}
 		log.debug("[C_CONS_DT] Obtenció del filtre (" + (System.currentTimeMillis() - t0) + "ms)");
 		t0 = System.currentTimeMillis();
@@ -208,10 +205,17 @@ public class ConsultaController extends BaseController {
 			List<ServerSideColumn> cols = serverSideRequest.getColumns();
 			cols.get(1).setData("createdDate");
 			cols.get(2).setData("procedimentServei.procediment.nom");
-			page = consultaService.findSimplesByFiltrePaginatPerDelegat(
-					entitat.getId(),
-					ConsultaFiltreCommand.asDto(command),		
-					serverSideRequest.toPageable());
+			if (isHistoric(request)) {
+				page = historicConsultaService.findSimplesByFiltrePaginatPerDelegat(
+						entitat.getId(),
+						ConsultaFiltreCommand.asDto(command),
+						serverSideRequest.toPageable());
+			} else {
+				page = consultaService.findSimplesByFiltrePaginatPerDelegat(
+						entitat.getId(),
+						ConsultaFiltreCommand.asDto(command),
+						serverSideRequest.toPageable());
+			}
 			cols.get(1).setData("creacioData");
 			cols.get(2).setData("procedimentNom");
 			cols.get(3).setData("serveiDescripcio");
@@ -418,7 +422,7 @@ public class ConsultaController extends BaseController {
 			return "delegatNoAutoritzat";
 		EntitatDto entitat = EntitatHelper.getEntitatActual(request, entitatService);
 		if (entitat != null) {
-			ConsultaDto consulta = consultaService.findOneDelegat(consultaId);
+			ConsultaDto consulta = getConsultaDelegate(consultaId, isHistoric(request));
 			model.addAttribute("consulta", consulta);
 			model.addAttribute(
 					"servei",
@@ -451,7 +455,7 @@ public class ConsultaController extends BaseController {
 		EntitatDto entitat = EntitatHelper.getEntitatActual(request, entitatService);
 		if (entitat != null) {
 			try {
-				JustificantDto justificant = consultaService.obtenirJustificant(consultaId);
+				JustificantDto justificant = getJustificant(consultaId, isHistoric(request));
 				if (!justificant.isError()) {
 					writeFileToResponse(
 							justificant.getNom(),
@@ -548,7 +552,7 @@ public class ConsultaController extends BaseController {
 			return "delegatNoAutoritzat";
 		EntitatDto entitat = EntitatHelper.getEntitatActual(request, entitatService);
 		if (entitat != null) {
-			ConsultaDto consulta = consultaService.findOneDelegat(consultaId);
+			ConsultaDto consulta = getConsultaDelegate(consultaId, isHistoric(request));
 			model.addAttribute("consulta", consulta);
 			model.addAttribute("mostrarPeticio", new Boolean(true));
 			model.addAttribute("mostrarResposta", new Boolean(false));
@@ -573,7 +577,7 @@ public class ConsultaController extends BaseController {
 			return "delegatNoAutoritzat";
 		EntitatDto entitat = EntitatHelper.getEntitatActual(request, entitatService);
 		if (entitat != null) {
-			ConsultaDto consulta = consultaService.findOneDelegat(consultaId);
+			ConsultaDto consulta = getConsultaDelegate(consultaId, isHistoric(request));
 			model.addAttribute("consulta", consulta);
 			model.addAttribute("mostrarPeticio", new Boolean(false));
 			model.addAttribute("mostrarResposta", new Boolean(true));
@@ -802,7 +806,9 @@ public class ConsultaController extends BaseController {
 				SESSION_ATTRIBUTE_FILTRE);
 		if (command == null) {
 			command = new ConsultaFiltreCommand();
-			command.filtrarDarrers3MesosPerDefecte();
+			command.filtrarDarrersMesos(isHistoric(request) ? 9 : 3);
+		} else {
+			command.updateDefaultDataInici(isHistoric(request));
 		}
 		command.eliminarEspaisCampsCerca();
 		model.addAttribute(
@@ -819,6 +825,7 @@ public class ConsultaController extends BaseController {
 				serveiService.findPermesosAmbProcedimentPerDelegat(
 						entitat.getId(),
 						command.getProcediment()));
+		model.addAttribute("historic", isHistoric(request));
 		log.debug("[C_CONS] Consulta de serveis (" + (System.currentTimeMillis() - t0) + "ms)");
 	}
 
@@ -1272,6 +1279,50 @@ public class ConsultaController extends BaseController {
 			}
 		}
 		return false;
+	}
+
+	private boolean isHistoric(HttpServletRequest request) {
+		Object historic = request.getSession().getAttribute(SESSION_CONSULTA_HISTORIC);
+		if (historic == null)
+			return false;
+		else
+			return ((Boolean) historic).booleanValue();
+	}
+
+	private ConsultaDto getConsultaDelegate(Long consultaId, boolean historic) throws ConsultaNotFoundException, ScspException {
+		ConsultaDto consulta;
+		if (historic) {
+			try {
+				consulta = historicConsultaService.findOneDelegat(consultaId);
+			} catch (Exception nfe) {
+				consulta = consultaService.findOneDelegat(consultaId);
+			}
+		} else {
+			try {
+				consulta = consultaService.findOneDelegat(consultaId);
+			} catch (Exception nfe) {
+				consulta = historicConsultaService.findOneDelegat(consultaId);
+			}
+		}
+		return consulta;
+	}
+
+	private JustificantDto getJustificant(Long consultaId, boolean historic) throws Exception {
+		JustificantDto justificant;
+		if (historic) {
+			try {
+				justificant = historicConsultaService.obtenirJustificant(consultaId);
+			} catch (Exception nfe) {
+				justificant = consultaService.obtenirJustificant(consultaId);
+			}
+		} else {
+			try {
+				justificant = consultaService.obtenirJustificant(consultaId);
+			} catch (Exception nfe) {
+				justificant = historicConsultaService.obtenirJustificant(consultaId);
+			}
+		}
+		return justificant;
 	}
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(ConsultaController.class);

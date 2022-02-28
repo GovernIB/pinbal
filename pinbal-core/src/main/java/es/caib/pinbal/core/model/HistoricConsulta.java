@@ -32,7 +32,7 @@ import static es.caib.pinbal.core.model.Consulta.ERROR_SCSP_MAX_LENGTH;
 				@Index(name = "pbl_consultah_procserv_i", columnList = "procserv_id"),
 				@Index(name = "pbl_consultah_createdby_i", columnList = "createdby_codi")})
 @EntityListeners(AuditingEntityListener.class)
-public class HistoricConsulta extends PinbalAuditable<Long> {
+public class HistoricConsulta extends PinbalAuditable<Long> implements IConsulta {
 
 	private static final long serialVersionUID = -6657066865382086237L;
 
@@ -153,27 +153,27 @@ public class HistoricConsulta extends PinbalAuditable<Long> {
 //			this.error = error;
 //		}
 //	}
-//	public void updateJustificantEstat(
-//			JustificantEstat justificantEstat,
-//			boolean custodiat,
-//			String custodiaId,
-//			String custodiaUrl,
-//			String justificantError,
-//			String arxiuExpedientUuid,
-//			String arxiuDocumentUuid) {
-//		this.justificantEstat = justificantEstat;
-//		this.custodiat = custodiat;
-//		this.custodiaId = custodiaId;
-//		this.custodiaUrl = custodiaUrl;
-//		if (justificantError != null && justificantError.length() > ERROR_JUSTIFICANT_MAX_LENGTH) {
-//			String tokenFinal = " [...]";
-//			this.justificantError = justificantError.substring(0, (ERROR_JUSTIFICANT_MAX_LENGTH - tokenFinal.length() - 2)) + tokenFinal;
-//		} else {
-//			this.justificantError = justificantError;
-//		}
-//		this.arxiuExpedientUuid = arxiuExpedientUuid;
-//		this.arxiuDocumentUuid = arxiuDocumentUuid;
-//	}
+	public void updateJustificantEstat(
+			JustificantEstat justificantEstat,
+			boolean custodiat,
+			String custodiaId,
+			String custodiaUrl,
+			String justificantError,
+			String arxiuExpedientUuid,
+			String arxiuDocumentUuid) {
+		this.justificantEstat = justificantEstat;
+		this.custodiat = custodiat;
+		this.custodiaId = custodiaId;
+		this.custodiaUrl = custodiaUrl;
+		if (justificantError != null && justificantError.length() > ERROR_JUSTIFICANT_MAX_LENGTH) {
+			String tokenFinal = " [...]";
+			this.justificantError = justificantError.substring(0, (ERROR_JUSTIFICANT_MAX_LENGTH - tokenFinal.length() - 2)) + tokenFinal;
+		} else {
+			this.justificantError = justificantError;
+		}
+		this.arxiuExpedientUuid = arxiuExpedientUuid;
+		this.arxiuDocumentUuid = arxiuDocumentUuid;
+	}
 //	public void updateArxiuExpedientTancat(boolean arxiuExpedientTancat) {
 //		this.arxiuExpedientTancat = arxiuExpedientTancat;
 //	}

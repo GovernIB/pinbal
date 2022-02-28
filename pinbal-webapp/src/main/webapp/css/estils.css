@@ -201,3 +201,13 @@ div.exemple {
 	position: relative;
 	top: -8px;
 }
+
+.panel-historic {
+	background-color: #337ab726;
+}
+.table-info-historic {
+	/*color: #FFFFFF;*/
+}
+table {
+	background-color: #FFFFFF;
+}

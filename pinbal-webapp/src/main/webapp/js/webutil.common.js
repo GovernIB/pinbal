@@ -343,11 +343,13 @@ $(document).ajaxError(function(event, jqxhr, ajaxSettings, thrownError) {
 
 		$(".ios-ui-select", $checkContainer).click(function () {
 			if (sessionName) {
+				debugger
+				let checked = $("#titolCheck", $checkContainer)[0].checked;
 				$.ajax({
 					headers: {'Content-Type': 'application/json'},
 					type: "POST",
 					url: webutilContextPath() + "/sessionajax/" + sessionName,
-					data: "'" + $("#titolCheck", $checkContainer)[0].checked + "'",
+					data: JSON.stringify(checked),
 					success : function() {
 						if (checkCallback) {
 							window[checkCallback]();
@@ -367,7 +369,6 @@ $(document).ajaxError(function(event, jqxhr, ajaxSettings, thrownError) {
 		}
 	}
 	$.fn.webutilTitolCheckEval = function() {
-		debugger
 		$('[data-toggle="titol-check"]', $(this)).each(function() {
 			if (!$(this).attr('data-titol-check-eval')) {
 				$(this).webutilTitolCheck();

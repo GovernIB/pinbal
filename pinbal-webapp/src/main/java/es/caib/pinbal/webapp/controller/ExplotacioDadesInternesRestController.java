@@ -9,7 +9,10 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import es.caib.pinbal.core.service.HistoricConsultaService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -66,6 +69,8 @@ public class ExplotacioDadesInternesRestController extends BaseController {
 	private UsuariService usuariService;
 	@Autowired
 	private ConsultaService consultaService;
+	@Autowired
+	private HistoricConsultaService historicConsultaService;
 
 	@RequestMapping(
 			value= "/reports/procediments",
@@ -220,13 +225,21 @@ public class ExplotacioDadesInternesRestController extends BaseController {
 			response = Entitat.class)
 	public ResponseEntity<List<Entitat>> general(
 			HttpServletRequest request,
-			@ApiParam(name="dataInici", value="Data d'inici") 
-			@RequestParam final Date dataInici,
-			@ApiParam(name="dataFi", value="Data de fi") 
-			@RequestParam final Date dataFi) {
+			@ApiParam(name="historic", value="S'utilitzarà la informació històrica de consultes", required = false, defaultValue = "false")
+			@RequestParam(value = "historic", required = false) boolean historic,
+			@ApiParam(name="dataInici", value="Data d'inici")
+			@RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) final Date dataInici,
+			@ApiParam(name="dataFi", value="Data de fi")
+			@RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) final Date dataFi
+	) {
 		// Informe general d'estat
 		List<Entitat> entitats = new ArrayList<Entitat>();
-		List<InformeGeneralEstatDto> informeGeneralFiles = consultaService.informeGeneralEstat(dataInici, dataFi);
+		List<InformeGeneralEstatDto> informeGeneralFiles;
+		if (historic) {
+			informeGeneralFiles = historicConsultaService.informeGeneralEstat(dataInici, dataFi);
+		} else {
+			informeGeneralFiles = consultaService.informeGeneralEstat(dataInici, dataFi);
+		}
 		Entitat entitatActual = null;
 		String entitatActualCodi = null;
 		Departament departamentActual = null;
@@ -240,7 +253,8 @@ public class ExplotacioDadesInternesRestController extends BaseController {
 				entitatActual.setNif(informeGeneralFila.getEntitatCif());
 				entitats.add(entitatActual);
 			}
-			if (informeGeneralFila.getDepartament() != null) {
+//			if (informeGeneralFila.getDepartament() != null) {
+
 				if (departamentActual == null || departamentActual.getNom() != informeGeneralFila.getDepartament()) {
 					departamentActual = new Departament();
 					//departamentActual.setCodi(informeProcediment.getDepartamentCodi());
@@ -270,7 +284,7 @@ public class ExplotacioDadesInternesRestController extends BaseController {
 					procedimentActual.setServeis(new ArrayList<Servei>());
 				}
 				procedimentActual.getServeis().add(servei);
-			}
+//			}
 		}
 		return new ResponseEntity<List<Entitat>>(entitats, HttpStatus.OK);
 	}

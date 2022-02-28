@@ -34,13 +34,13 @@ public class HistoricConsultaServiceBean implements HistoricConsultaService {
 	HistoricConsultaService delegate;
 
 
-//	@Override
-//	@RolesAllowed("tothom")
-//	public JustificantDto obtenirJustificant(
-//			Long id) throws ConsultaNotFoundException, JustificantGeneracioException {
-//		return delegate.obtenirJustificant(id);
-//	}
-//
+	@Override
+	@RolesAllowed("tothom")
+	public JustificantDto obtenirJustificant(
+			Long id) throws ConsultaNotFoundException, JustificantGeneracioException {
+		return delegate.obtenirJustificant(id);
+	}
+
 //	@Override
 //	@RolesAllowed("PBL_WS")
 //	public JustificantDto obtenirJustificant(
@@ -48,21 +48,21 @@ public class HistoricConsultaServiceBean implements HistoricConsultaService {
 //			String idsolicitud) throws ConsultaNotFoundException, JustificantGeneracioException {
 //		return delegate.obtenirJustificant(idpeticion, idsolicitud);
 //	}
-//
-//	@Override
-//	@RolesAllowed("tothom")
-//	public FitxerDto obtenirJustificantMultipleConcatenat(
-//			Long id) throws ConsultaNotFoundException, JustificantGeneracioException {
-//		return delegate.obtenirJustificantMultipleConcatenat(id);
-//	}
-//
-//	@Override
-//	@RolesAllowed("tothom")
-//	public FitxerDto obtenirJustificantMultipleZip(
-//			Long id) throws ConsultaNotFoundException, JustificantGeneracioException {
-//		return delegate.obtenirJustificantMultipleZip(id);
-//	}
-//
+
+	@Override
+	@RolesAllowed("tothom")
+	public FitxerDto obtenirJustificantMultipleConcatenat(
+			Long id) throws ConsultaNotFoundException, JustificantGeneracioException {
+		return delegate.obtenirJustificantMultipleConcatenat(id);
+	}
+
+	@Override
+	@RolesAllowed("tothom")
+	public FitxerDto obtenirJustificantMultipleZip(
+			Long id) throws ConsultaNotFoundException, JustificantGeneracioException {
+		return delegate.obtenirJustificantMultipleZip(id);
+	}
+
 //	@Override
 //	@RolesAllowed("tothom")
 //	public JustificantDto reintentarGeneracioJustificant(

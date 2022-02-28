@@ -114,23 +114,23 @@ public class HistoricConsultaServiceImpl implements HistoricConsultaService, App
 	private Map<Long, Object> justificantLocks = new HashMap<Long, Object>();
 
 
-//	@Override
-//	public JustificantDto obtenirJustificant(
-//			Long id) throws ConsultaNotFoundException, JustificantGeneracioException {
-//		log.debug("Generant justificant per a la consulta (id=" + id + ")");
-//		HistoricConsulta consulta = historicConsultaRepository.findOne(id);
-//		if (consulta == null) {
-//			log.error("No s'ha trobat la consulta (id=" + id + ")");
-//			throw new ConsultaNotFoundException();
-//		}
-//		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-//		if (!auth.getName().equals(consulta.getCreatedBy().getCodi())) {
-//			log.error("La consulta (id=" + id + ") no pertany a aquest usuari");
-//			throw new ConsultaNotFoundException();
-//		}
-//		return obtenirJustificantComu(consulta, true);
-//	}
-//
+	@Override
+	public JustificantDto obtenirJustificant(
+			Long id) throws ConsultaNotFoundException, JustificantGeneracioException {
+		log.debug("Generant justificant per a la consulta (id=" + id + ")");
+		HistoricConsulta consulta = historicConsultaRepository.findOne(id);
+		if (consulta == null) {
+			log.error("No s'ha trobat la consulta (id=" + id + ")");
+			throw new ConsultaNotFoundException();
+		}
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		if (!auth.getName().equals(consulta.getCreatedBy().getCodi())) {
+			log.error("La consulta (id=" + id + ") no pertany a aquest usuari");
+			throw new ConsultaNotFoundException();
+		}
+		return obtenirJustificantComu(consulta, true);
+	}
+
 //	@Override
 //	public JustificantDto obtenirJustificant(String idpeticion, String idsolicitud)
 //			throws ConsultaNotFoundException, JustificantGeneracioException {
@@ -169,95 +169,95 @@ public class HistoricConsultaServiceImpl implements HistoricConsultaService, App
 //		}
 //		return obtenirJustificantComu(consulta, descarregar);
 //	}
-//
-//	@Transactional(rollbackFor = {ConsultaNotFoundException.class, JustificantGeneracioException.class})
-//	@Override
-//	public FitxerDto obtenirJustificantMultipleConcatenat(
-//			Long id) throws ConsultaNotFoundException, JustificantGeneracioException {
-//		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-//		log.debug("Generant justificant concatenat per a la consulta múltiple (id=" + id + ")");
-//		copiarPropertiesToDb();
-//		HistoricConsulta consulta = historicConsultaRepository.findOne(id);
-//		if (consulta == null) {
-//			log.debug("No s'ha trobat la consulta (id=" + id + ")");
-//			throw new ConsultaNotFoundException();
-//		}
-//		if (!auth.getName().equals(consulta.getCreatedBy().getCodi())) {
-//			log.debug("La consulta (id=" + id + ") no pertany a aquest usuari");
-//			throw new ConsultaNotFoundException();
-//		}
-//		if (!consulta.isMultiple()) {
-//			log.debug("La consulta (id=" + id + ") no és múltiple");
-//			throw new ConsultaNotFoundException();
-//		}
-//		try {
-//			ByteArrayOutputStream baos = new ByteArrayOutputStream();
-//			Document pdfConcatenat = new Document();
-//			PdfCopy copy = new PdfCopy(pdfConcatenat, baos);
-//			pdfConcatenat.open();
-//			for (HistoricConsulta solicitud: consulta.getFills()) {
-//				FitxerDto fitxerJustificantGenerat = justificantHelper.generar(
-//						solicitud,
-//						getScspHelper());
-//				PdfReader pdfReader = new PdfReader(fitxerJustificantGenerat.getContingut());
-//				for (int pagina = 1; pagina <= pdfReader.getNumberOfPages(); pagina++) {
-//					copy.addPage(
-//							copy.getImportedPage(pdfReader, pagina));
-//				}
-//			}
-//			pdfConcatenat.close();
-//			FitxerDto fitxer = new FitxerDto();
-//			fitxer.setNom("PBL_" + consulta.getScspPeticionId() + ".pdf");
-//			fitxer.setContingut(baos.toByteArray());
-//			return fitxer;
-//		} catch (Exception ex) {
-//			log.error("Error al generar justificant concatenat per a la consulta múltiple (id=" + id + ")", ex);
-//			throw new JustificantGeneracioException(ex.getMessage(), ex);
-//		}
-//	}
-//
-//	@Transactional(rollbackFor = {ConsultaNotFoundException.class, JustificantGeneracioException.class})
-//	@Override
-//	public FitxerDto obtenirJustificantMultipleZip(
-//			Long id) throws ConsultaNotFoundException, JustificantGeneracioException {
-//		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-//		log.debug("Generant justificant ZIP per a la consulta múltiple (id=" + id + ")");
-//		copiarPropertiesToDb();
-//		HistoricConsulta consulta = historicConsultaRepository.findOne(id);
-//		if (consulta == null) {
-//			log.debug("No s'ha trobat la consulta (id=" + id + ")");
-//			throw new ConsultaNotFoundException();
-//		}
-//		if (!auth.getName().equals(consulta.getCreatedBy().getCodi())) {
-//			log.debug("La consulta (id=" + id + ") no pertany a aquest usuari");
-//			throw new ConsultaNotFoundException();
-//		}
-//		if (!consulta.isMultiple()) {
-//			log.debug("La consulta (id=" + id + ") no és múltiple");
-//			throw new ConsultaNotFoundException();
-//		}
-//		try {
-//			ByteArrayOutputStream baos = new ByteArrayOutputStream();
-//			ZipOutputStream zos = new ZipOutputStream(baos);
-//			for (HistoricConsulta solicitud: consulta.getFills()) {
-//				FitxerDto fitxerJustificantGenerat = justificantHelper.generar(
-//						solicitud,
-//						getScspHelper());
-//				ZipEntry zipEntry = new ZipEntry(fitxerJustificantGenerat.getNom());
-//				zos.putNextEntry(zipEntry);
-//				zos.write(fitxerJustificantGenerat.getContingut());
-//				zos.closeEntry();
-//			}
-//			zos.close();
-//			FitxerDto fitxer = new FitxerDto();
-//			fitxer.setNom("PBL_" + consulta.getScspPeticionId() + ".zip");
-//			fitxer.setContingut(baos.toByteArray());
-//			return fitxer;
-//		} catch (Exception ex) {
-//			log.error("Error al generar justificant ZIP per a la consulta múltiple (id=" + id + ")", ex);
-//			throw new JustificantGeneracioException(ex.getMessage(), ex);
-//		}
-//	}
+
+	@Transactional(rollbackFor = {ConsultaNotFoundException.class, JustificantGeneracioException.class})
+	@Override
+	public FitxerDto obtenirJustificantMultipleConcatenat(
+			Long id) throws ConsultaNotFoundException, JustificantGeneracioException {
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		log.debug("Generant justificant concatenat per a la consulta múltiple (id=" + id + ")");
+		copiarPropertiesToDb();
+		HistoricConsulta consulta = historicConsultaRepository.findOne(id);
+		if (consulta == null) {
+			log.debug("No s'ha trobat la consulta (id=" + id + ")");
+			throw new ConsultaNotFoundException();
+		}
+		if (!auth.getName().equals(consulta.getCreatedBy().getCodi())) {
+			log.debug("La consulta (id=" + id + ") no pertany a aquest usuari");
+			throw new ConsultaNotFoundException();
+		}
+		if (!consulta.isMultiple()) {
+			log.debug("La consulta (id=" + id + ") no és múltiple");
+			throw new ConsultaNotFoundException();
+		}
+		try {
+			ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			Document pdfConcatenat = new Document();
+			PdfCopy copy = new PdfCopy(pdfConcatenat, baos);
+			pdfConcatenat.open();
+			for (HistoricConsulta solicitud: consulta.getFills()) {
+				FitxerDto fitxerJustificantGenerat = justificantHelper.generar(
+						solicitud,
+						getScspHelper());
+				PdfReader pdfReader = new PdfReader(fitxerJustificantGenerat.getContingut());
+				for (int pagina = 1; pagina <= pdfReader.getNumberOfPages(); pagina++) {
+					copy.addPage(
+							copy.getImportedPage(pdfReader, pagina));
+				}
+			}
+			pdfConcatenat.close();
+			FitxerDto fitxer = new FitxerDto();
+			fitxer.setNom("PBL_" + consulta.getScspPeticionId() + ".pdf");
+			fitxer.setContingut(baos.toByteArray());
+			return fitxer;
+		} catch (Exception ex) {
+			log.error("Error al generar justificant concatenat per a la consulta múltiple (id=" + id + ")", ex);
+			throw new JustificantGeneracioException(ex.getMessage(), ex);
+		}
+	}
+
+	@Transactional(rollbackFor = {ConsultaNotFoundException.class, JustificantGeneracioException.class})
+	@Override
+	public FitxerDto obtenirJustificantMultipleZip(
+			Long id) throws ConsultaNotFoundException, JustificantGeneracioException {
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		log.debug("Generant justificant ZIP per a la consulta múltiple (id=" + id + ")");
+		copiarPropertiesToDb();
+		HistoricConsulta consulta = historicConsultaRepository.findOne(id);
+		if (consulta == null) {
+			log.debug("No s'ha trobat la consulta (id=" + id + ")");
+			throw new ConsultaNotFoundException();
+		}
+		if (!auth.getName().equals(consulta.getCreatedBy().getCodi())) {
+			log.debug("La consulta (id=" + id + ") no pertany a aquest usuari");
+			throw new ConsultaNotFoundException();
+		}
+		if (!consulta.isMultiple()) {
+			log.debug("La consulta (id=" + id + ") no és múltiple");
+			throw new ConsultaNotFoundException();
+		}
+		try {
+			ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			ZipOutputStream zos = new ZipOutputStream(baos);
+			for (HistoricConsulta solicitud: consulta.getFills()) {
+				FitxerDto fitxerJustificantGenerat = justificantHelper.generar(
+						solicitud,
+						getScspHelper());
+				ZipEntry zipEntry = new ZipEntry(fitxerJustificantGenerat.getNom());
+				zos.putNextEntry(zipEntry);
+				zos.write(fitxerJustificantGenerat.getContingut());
+				zos.closeEntry();
+			}
+			zos.close();
+			FitxerDto fitxer = new FitxerDto();
+			fitxer.setNom("PBL_" + consulta.getScspPeticionId() + ".zip");
+			fitxer.setContingut(baos.toByteArray());
+			return fitxer;
+		} catch (Exception ex) {
+			log.error("Error al generar justificant ZIP per a la consulta múltiple (id=" + id + ")", ex);
+			throw new JustificantGeneracioException(ex.getMessage(), ex);
+		}
+	}
 
 	@Transactional(readOnly = true)
 	@Override
@@ -1255,82 +1255,82 @@ public class HistoricConsultaServiceImpl implements HistoricConsultaService, App
 		return paginaConsultesDto;
 	}
 
-//	private JustificantDto obtenirJustificantComu(
-//			final HistoricConsulta consulta,
-//			final boolean descarregar) throws JustificantGeneracioException {
-//		// Abans de continuar es comprova si l'estat de la consulta és "Tramitada"
-//		if (EstatTipus.Tramitada.equals(consulta.getEstat())) {
-//			// Amb aquest bloc sincronitzat aconseguim que només hi hagi un thread a la vegada
-//			// generant el justificant per a una determinada consulta. Si un altre thread intenta
-//			// generar el mateix justificant es quedarà bloquejat esperant.
-//			// Això es fa per a evitar problemes derivats de l'accés concurrent a l'arxiu digital.
-//			try {
-//				synchronized (getJustificantLockForConsulta(consulta)) {
-//					TransactionTemplate transactionTemplate = new TransactionTemplate(transactionManager);
-//					transactionTemplate.execute(new TransactionCallback<Object>() {
-//						@Override
-//						public Object doInTransaction(TransactionStatus status) {
-//							HistoricConsulta consultaRefreshed = historicConsultaRepository.getOne(consulta.getId());
-//							// Si l'estat del justificant és PENDENT o ERROR intentam tornar a generar el justificant
-//							if (JustificantEstat.PENDENT.equals(consultaRefreshed.getJustificantEstat()) || JustificantEstat.ERROR.equals(consultaRefreshed.getJustificantEstat())) {
-//								justificantHelper.generarCustodiarJustificantPendent(
-//										consultaRefreshed,
-//										getScspHelper());
-//								historicConsultaRepository.saveAndFlush(consultaRefreshed);
-//							}
-//							return null;
-//						}
-//					});
-//				}
-//			} finally {
-//				releaseJustificantLockForConsulta(consulta);
-//			}
-//			if (descarregar) {
-//				TransactionTemplate transactionTemplate = new TransactionTemplate(transactionManager);
-//				return transactionTemplate.execute(new TransactionCallback<JustificantDto>() {
-//					@Override
-//					public JustificantDto doInTransaction(TransactionStatus status) {
-//						HistoricConsulta consultaRefreshed = historicConsultaRepository.getOne(consulta.getId());
-//						JustificantDto justificant = new JustificantDto();
-//						justificant.setEstat(
-//								ConsultaDto.JustificantEstat.valueOf(
-//										consultaRefreshed.getJustificantEstat().name()));
-//						if (JustificantEstat.ERROR.equals(consultaRefreshed.getJustificantEstat())) {
-//							justificant.setError(true);
-//							justificant.setErrorDescripcio("La generació del justificant ha produït errors");
-//						}
-//						if (JustificantEstat.NO_DISPONIBLE.equals(consultaRefreshed.getJustificantEstat())) {
-//							justificant.setError(true);
-//							justificant.setErrorDescripcio("L'estat del justificant de la consulta és NO_DISPONIBLE");
-//						}
-//						if (!justificant.isError()) {
-//							try {
-//								FitxerDto justificantFitxer = justificantHelper.descarregarFitxerGenerat(
-//										consultaRefreshed,
-//										getScspHelper());
-//								justificant.setNom(justificantFitxer.getNom());
-//								justificant.setContentType(justificantFitxer.getContentType());
-//								justificant.setContingut(justificantFitxer.getContingut());
-//							} catch (Exception ex) {
-//								log.error("La descàrrega del justificant ha produït errors (" +
-//										"id=" + consultaRefreshed.getScspPeticionId() + ", " +
-//										"scspPeticionId=" + consultaRefreshed.getScspPeticionId() + ", " +
-//										"scspSolicitudId=" + consultaRefreshed.getScspSolicitudId() + ")",
-//										ex);
-//								justificant.setError(true);
-//								justificant.setErrorDescripcio("La descàrrega del justificant ha produit errors");
-//							}
-//						}
-//						return justificant;
-//					}
-//				});
-//			} else {
-//				return null;
-//			}
-//		} else {
-//			throw new JustificantGeneracioException("La consulta no està en estat TRAMITADA");
-//		}
-//	}
+	private JustificantDto obtenirJustificantComu(
+			final HistoricConsulta consulta,
+			final boolean descarregar) throws JustificantGeneracioException {
+		// Abans de continuar es comprova si l'estat de la consulta és "Tramitada"
+		if (EstatTipus.Tramitada.equals(consulta.getEstat())) {
+			// Amb aquest bloc sincronitzat aconseguim que només hi hagi un thread a la vegada
+			// generant el justificant per a una determinada consulta. Si un altre thread intenta
+			// generar el mateix justificant es quedarà bloquejat esperant.
+			// Això es fa per a evitar problemes derivats de l'accés concurrent a l'arxiu digital.
+			try {
+				synchronized (getJustificantLockForConsulta(consulta)) {
+					TransactionTemplate transactionTemplate = new TransactionTemplate(transactionManager);
+					transactionTemplate.execute(new TransactionCallback<Object>() {
+						@Override
+						public Object doInTransaction(TransactionStatus status) {
+							HistoricConsulta consultaRefreshed = historicConsultaRepository.getOne(consulta.getId());
+							// Si l'estat del justificant és PENDENT o ERROR intentam tornar a generar el justificant
+							if (JustificantEstat.PENDENT.equals(consultaRefreshed.getJustificantEstat()) || JustificantEstat.ERROR.equals(consultaRefreshed.getJustificantEstat())) {
+								justificantHelper.generarCustodiarJustificantPendent(
+										consultaRefreshed,
+										getScspHelper());
+								historicConsultaRepository.saveAndFlush(consultaRefreshed);
+							}
+							return null;
+						}
+					});
+				}
+			} finally {
+				releaseJustificantLockForConsulta(consulta);
+			}
+			if (descarregar) {
+				TransactionTemplate transactionTemplate = new TransactionTemplate(transactionManager);
+				return transactionTemplate.execute(new TransactionCallback<JustificantDto>() {
+					@Override
+					public JustificantDto doInTransaction(TransactionStatus status) {
+						HistoricConsulta consultaRefreshed = historicConsultaRepository.getOne(consulta.getId());
+						JustificantDto justificant = new JustificantDto();
+						justificant.setEstat(
+								ConsultaDto.JustificantEstat.valueOf(
+										consultaRefreshed.getJustificantEstat().name()));
+						if (JustificantEstat.ERROR.equals(consultaRefreshed.getJustificantEstat())) {
+							justificant.setError(true);
+							justificant.setErrorDescripcio("La generació del justificant ha produït errors");
+						}
+						if (JustificantEstat.NO_DISPONIBLE.equals(consultaRefreshed.getJustificantEstat())) {
+							justificant.setError(true);
+							justificant.setErrorDescripcio("L'estat del justificant de la consulta és NO_DISPONIBLE");
+						}
+						if (!justificant.isError()) {
+							try {
+								FitxerDto justificantFitxer = justificantHelper.descarregarFitxerGenerat(
+										consultaRefreshed,
+										getScspHelper());
+								justificant.setNom(justificantFitxer.getNom());
+								justificant.setContentType(justificantFitxer.getContentType());
+								justificant.setContingut(justificantFitxer.getContingut());
+							} catch (Exception ex) {
+								log.error("La descàrrega del justificant ha produït errors (" +
+										"id=" + consultaRefreshed.getScspPeticionId() + ", " +
+										"scspPeticionId=" + consultaRefreshed.getScspPeticionId() + ", " +
+										"scspSolicitudId=" + consultaRefreshed.getScspSolicitudId() + ")",
+										ex);
+								justificant.setError(true);
+								justificant.setErrorDescripcio("La descàrrega del justificant ha produit errors");
+							}
+						}
+						return justificant;
+					}
+				});
+			} else {
+				return null;
+			}
+		} else {
+			throw new JustificantGeneracioException("La consulta no està en estat TRAMITADA");
+		}
+	}
 
 	private Date configurarDataFiPerFiltre(Date dataFi) {
 		if (dataFi == null)

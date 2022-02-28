@@ -9,7 +9,9 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
+import es.caib.pinbal.core.service.HistoricConsultaService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -63,6 +65,8 @@ public class ExplotacioDadesInternesRestController {
 	private UsuariService usuariService;
 	@Autowired
 	private ConsultaService consultaService;
+	@Autowired
+	private HistoricConsultaService historicConsultaService;
 
 	@RequestMapping(
 			value= "/reports/procediments",
@@ -177,11 +181,17 @@ public class ExplotacioDadesInternesRestController {
 			produces = "application/json")
 	public ResponseEntity<List<Entitat>> general(
 			HttpServletRequest request,
-			@RequestParam final Date dataInici,
-			@RequestParam final Date dataFi) {
+			@RequestParam(value = "historic", required = false) boolean historic,
+			@RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) final Date dataInici,
+			@RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) final Date dataFi) {
 		// Informe general d'estat
 		List<Entitat> entitats = new ArrayList<Entitat>();
-		List<InformeGeneralEstatDto> informeGeneralFiles = consultaService.informeGeneralEstat(dataInici, dataFi);
+		List<InformeGeneralEstatDto> informeGeneralFiles;
+		if (historic) {
+			informeGeneralFiles = historicConsultaService.informeGeneralEstat(dataInici, dataFi);
+		} else {
+			informeGeneralFiles = consultaService.informeGeneralEstat(dataInici, dataFi);
+		}
 		Entitat entitatActual = null;
 		String entitatActualCodi = null;
 		Departament departamentActual = null;
@@ -195,7 +205,7 @@ public class ExplotacioDadesInternesRestController {
 				entitatActual.setNif(informeGeneralFila.getEntitatCif());
 				entitats.add(entitatActual);
 			}
-			if (informeGeneralFila.getDepartament() != null) {
+//			if (informeGeneralFila.getDepartament() != null) {
 				if (departamentActual == null || departamentActual.getNom() != informeGeneralFila.getDepartament()) {
 					departamentActual = new Departament();
 					//departamentActual.setCodi(informeProcediment.getDepartamentCodi());
@@ -225,7 +235,7 @@ public class ExplotacioDadesInternesRestController {
 					procedimentActual.setServeis(new ArrayList<Servei>());
 				}
 				procedimentActual.getServeis().add(servei);
-			}
+//			}
 		}
 		return new ResponseEntity<List<Entitat>>(entitats, HttpStatus.OK);
 	}

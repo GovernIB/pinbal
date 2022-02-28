@@ -1,3 +1,4 @@
+<%@ page import="es.caib.pinbal.webapp.controller.ConsultaController" %>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
@@ -5,9 +6,8 @@
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
 <%@ taglib tagdir="/WEB-INF/tags/pinbal" prefix="pbl" %>
 
-<%	request.setAttribute(
-			"consultaEstats",
-			es.caib.pinbal.core.dto.ConsultaDto.EstatTipus.sortedValues());
+<%	request.setAttribute("consultaEstats", es.caib.pinbal.core.dto.ConsultaDto.EstatTipus.sortedValues());
+	request.setAttribute("historicSession", es.caib.pinbal.webapp.controller.ConsultaController.SESSION_CONSULTA_HISTORIC);
 %>
 
 <html>
@@ -33,7 +33,7 @@
 
 	<script src="<c:url value="/webjars/datatables-plugins/1.10.20/dataRender/datetime.js"/>"></script>
 	<script src="<c:url value="/webjars/momentjs/2.24.0/min/moment.min.js"/>"></script>
-	<script src="<c:url value="/js/ios-checkbox/iosCheckbox.min.js"/>"></script>
+	<script src="<c:url value="/js/ios-checkbox/iosCheckbox.js"/>"></script>
 
 	<script src="<c:url value="/js/webutil.datatable.js"/>"></script>
 	<script src="<c:url value="/js/webutil.common.js"/>"></script>
@@ -41,7 +41,19 @@
 
 	<script type="application/javascript">
 		function checkCallback() {
-			alert("TitolCheck checked: " + $("#titolCheck").prop("checked"));
+			historicColor();
+			$("#filtrar").click();
+		}
+
+		function historicColor() {
+			let historic = $("#titolCheck").prop("checked");
+			if (historic) {
+				$(".container-caib > .panel-default > .panel-body").addClass("panel-historic");
+				$(".dataTables_info").addClass("table-info-historic");
+			} else {
+				$(".container-caib > .panel-default > .panel-body").removeClass("panel-historic")
+				$(".dataTables_info").removeClass("table-info-historic");
+			}
 		}
 	</script>
 	<style>
@@ -55,8 +67,7 @@
 	</style>
 </head>
 <body>
-
-<div class="text-right" data-toggle="titol-check" data-titol-check-value="${historic}" data-titol-check-session-name="consulta.delegat" data-titol-check-callback="checkCallback" data-titol-check-label="<spring:message code="comu.historic"/>"></div>
+<div class="text-right" data-toggle="titol-check" data-titol-check-value="${historic}" data-titol-check-session-name="${historicSession}" data-titol-check-callback="checkCallback" data-titol-check-label="<spring:message code="comu.historic"/>"></div>
 
 <form:form id="form-filtre" action="" method="post" cssClass="well form-filtre-table" commandName="filtreCommand" >
 	<div class ="row">
@@ -105,7 +116,7 @@
 		<div class="col-md-3">
 			<div class="pull-right">
 				<button id="netejar-filtre" class="btn btn-default" type="button"><spring:message code="comu.boto.netejar"/></button>
-				<button class="btn btn-primary" type="submit"><span class="fa fa-filter"></span> <spring:message code="comu.boto.filtrar"/></button>
+				<button id="filtrar" class="btn btn-primary" type="submit"><span class="fa fa-filter"></span> <spring:message code="comu.boto.filtrar"/></button>
 			</div>
 		</div>
 	</div>
@@ -198,12 +209,12 @@ $(document).ready(function() {
 				render: $.fn.dataTable.render.moment('x', 'DD/MM/YYYY HH:mm:ss', 'es' )
 			},	
 			{
-				targets: [3, 4, 5],
+				targets: [4, 5, 6],
 				width: "10%",
 				orderable: false,
 			},
 			{
-				targets: [6],
+				targets: [7],
 				orderable: false,
 				width: "5%",
 				render: function (data, type, row, meta) {
@@ -252,6 +263,8 @@ $(document).ready(function() {
 			}
 		]
 	});
+
+	historicColor();
 });
 </script>
 
