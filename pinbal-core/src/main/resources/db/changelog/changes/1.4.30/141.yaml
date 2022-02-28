@@ -8,7 +8,7 @@ databaseChangeLog:
         columns:
         - column:
             name: val_regexp
-            type: VARCHAR(100)
+            type: VARCHAR(100 CHAR)
         - column:
             name: val_min
             type: INTEGER
