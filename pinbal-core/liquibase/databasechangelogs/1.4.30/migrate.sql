@@ -55,5 +55,11 @@ CREATE TABLE pbl_consulta_hist (
     version NUMBER(38, 0) NOT NULL,
     CONSTRAINT pbl_consulta_hist_pk PRIMARY KEY (id));
 
+CREATE INDEX PBL_CONH_CREDATCOD_I ON pbl_consulta_hist(CREATEDDATE DESC, CREATEDBY_CODI);
+CREATE INDEX PBL_CONSULTAH_CREATEDBY_I ON pbl_consulta_hist(CREATEDBY_CODI);
+CREATE INDEX PBL_CONSULTAH_PARE_I ON pbl_consulta_hist(PARE_ID);
+CREATE INDEX PBL_CONSULTAH_PROCSERV_I ON pbl_consulta_hist(PROCSERV_ID);
+CREATE INDEX PBL_CONSULTAH_MULT_I ON pbl_consulta_hist(CREATEDBY_CODI, ESTAT, MULTIPLE);
+
 grant select, update, insert, delete on pbl_consulta_hist to www_pinbal;
 
