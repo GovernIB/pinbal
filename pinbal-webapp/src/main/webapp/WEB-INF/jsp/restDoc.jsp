@@ -44,8 +44,8 @@
 
     $(document).ready(function () {
 
-      $("#swagger-ui-container").on("click", ".operation", function() {
-          collapsable = $(this).find(".content:first");
+      $("#swagger-ui-container").on("click", ".operation .heading", function() {
+          collapsable = $(this).next(".content:first");
           collapsable.slideToggle();
       });
 
