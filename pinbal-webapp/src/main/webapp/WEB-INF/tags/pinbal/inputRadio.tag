@@ -54,14 +54,22 @@
 </div>
 	</c:when>
 	<c:otherwise>
-		<label class="sr-only">
-			<c:choose>
-				<c:when test="${not empty textKey}"><spring:message code="${textKey}"/></c:when>
-				<c:when test="${not empty text}">${text}</c:when>
-				<c:otherwise>${campPath}</c:otherwise>
-			</c:choose>
-			<c:if test="${required}">*</c:if>
-		</label>
+		<c:choose>
+			<c:when test="${not empty botons}">
+				<div class="controls btn-group" data-toggle="buttons">
+			</c:when>
+			<c:otherwise>
+				<label class="sr-only">
+					<c:choose>
+						<c:when test="${not empty textKey}"><spring:message code="${textKey}"/></c:when>
+						<c:when test="${not empty text}">${text}</c:when>
+						<c:otherwise>${campPath}</c:otherwise>
+					</c:choose>
+					<c:if test="${required}">*</c:if>
+				</label>
+			</c:otherwise>
+		</c:choose>
+
 		<c:forEach var="opt" items="${optionItems}">
 			<c:set var="labelClass" value="checkbox-inline"/>
 			<c:set var="labelClassActive" value=""/>
@@ -80,5 +88,6 @@
 			</c:choose>
 			</label>
 		</c:forEach>
+		<c:if test="${not empty botons}"></div></c:if>
 	</c:otherwise>
 </c:choose>

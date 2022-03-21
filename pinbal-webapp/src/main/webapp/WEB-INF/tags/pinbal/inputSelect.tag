@@ -50,12 +50,12 @@
 					id="${campId}" disabled="${disabled}" data-netejar="${netejar}"
 					data-toggle="select2" data-placeholder="${campPlaceholder}"
 					data-minimumresults="${minimumResultsForSearch}"
-					data-enum="${optionEnum}" data-enum-value="${campValue}">
+					data-enum="${optionEnum}" data-enum-value="${campValue}"
+					data-clearoption="${emptyOption == 'true'}">
 					<c:if test="${emptyOption == 'true'}">
 						<c:choose>
 							<c:when test="${not empty emptyOptionTextKey}">
-								<option value=""><spring:message
-										code="${emptyOptionTextKey}" /></option>
+								<option value=""><spring:message code="${emptyOptionTextKey}" /></option>
 							</c:when>
 							<c:when test="${not empty emptyOptionText}">
 								<option value="">${emptyOptionText}</option>

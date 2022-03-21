@@ -6,6 +6,8 @@ package es.caib.pinbal.webapp.controller;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.naming.NamingException;
@@ -13,6 +15,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
+import es.caib.pinbal.core.dto.CodiValor;
+import es.caib.pinbal.core.dto.FiltreActiuEnumDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -94,6 +98,9 @@ public class ProcedimentController extends BaseController {
 			
 		}
 		model.addAttribute("organsGestors", entitatService.getOrgansGestors(entitat.getId()));
+		model.addAttribute("filtreActiu", new ArrayList<CodiValor>(Arrays.asList(
+				CodiValor.builder().codi(FiltreActiuEnumDto.ACTIU.name()).valor("filtre.actiu.enum." + FiltreActiuEnumDto.ACTIU).build(),
+				CodiValor.builder().codi(FiltreActiuEnumDto.INACTIU.name()).valor("filtre.actiu.enum." + FiltreActiuEnumDto.INACTIU).build())));
 		omplirModelFiltreDataTable(request, entitat, model);
 		return "procedimentList";
 	}

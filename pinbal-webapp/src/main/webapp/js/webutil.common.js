@@ -402,6 +402,7 @@ $(document).ajaxError(function(event, jqxhr, ajaxSettings, thrownError) {
 		    allowClear: $(this).data('placeholder') ? true : false,
 		    minimumResultsForSearch: $(this).data('minimumresults')
 		});
+			// allowClear: $(this).data('clearoption') ? true : false,
 		$(this).on('select2:open', function() {
 			webutilModalAdjustHeight();
 		});

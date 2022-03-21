@@ -60,7 +60,7 @@ $(document).ready(function() {
 				width: "20%"
 			}, {
 				targets: [5], // actiu
-				width: "10%"
+				width: "10%",
 				render: function (data, type, row, meta) {
 						var template = $('#template-activa').html();
 						return Mustache.render(template, row);
@@ -121,14 +121,17 @@ $(document).ready(function() {
 				<pbl:inputText name="codiSia" inline="true" placeholderKey="procediment.list.filtre.camp.codisia"/>
 			</div>
 			<div class="col-md-2">
-				<pbl:inputSelect 
-					name="actiu" 
-					emptyOption="true" 
-					inline="true"
-					optionEnum="FiltreActiuEnumDto"
-					placeholderKey="procediment.list.filtre.camp.actiuOInactiu"/>
+				<pbl:inputRadio
+						name="actiu"
+						inline="true"
+						optionItems="${filtreActiu}"
+						optionValueAttribute="codi"
+						optionTextKeyAttribute="valor"
+						botons="true"/>
 			</div>
-			<div class="col-md-4"></div>
+		</div>
+		<div class="row">
+			<div class="col-md-9"></div>
 			<div class="col-md-3">
 				<div class ="pull-right">
 					<button id="netejar-filtre" class="btn btn-default" type="button"><spring:message code="comu.boto.netejar"/></button>
