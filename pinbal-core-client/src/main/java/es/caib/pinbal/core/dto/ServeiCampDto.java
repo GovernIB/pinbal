@@ -30,6 +30,20 @@ public class ServeiCampDto implements Serializable {
 		ADJUNT_XML
 	}
 
+	public enum ServeiCampDtoValidacioOperacio {
+		LT,
+		LTE,
+		GT,
+		GTE,
+		EQ,
+		NEQ
+	}
+	public enum ServeiCampDtoValidacioDataTipus {
+		DIES,
+		MESOS,
+		ANYS
+	}
+
 	private Long id;
 	private String servei;
 	private String path;
@@ -46,6 +60,13 @@ public class ServeiCampDto implements Serializable {
 	private boolean modificable;
 	private boolean visible;
 	private int ordre;
+	private String validacioRegexp;
+	private Integer validacioMin;
+	private Integer validacioMax;
+	private ServeiCampDtoValidacioOperacio validacioDataCmpOperacio;
+	private ServeiCampDto validacioDataCmpCamp2;
+	private Integer validacioDataCmpNombre;
+	private ServeiCampDtoValidacioDataTipus validacioDataCmpTipus;
 
 	public Long getId() {
 		return id;
@@ -142,6 +163,48 @@ public class ServeiCampDto implements Serializable {
 	}
 	public void setOrdre(int ordre) {
 		this.ordre = ordre;
+	}
+	public String getValidacioRegexp() {
+		return validacioRegexp;
+	}
+	public void setValidacioRegexp(String validacioRegexp) {
+		this.validacioRegexp = validacioRegexp;
+	}
+	public Integer getValidacioMin() {
+		return validacioMin;
+	}
+	public void setValidacioMin(Integer validacioMin) {
+		this.validacioMin = validacioMin;
+	}
+	public Integer getValidacioMax() {
+		return validacioMax;
+	}
+	public void setValidacioMax(Integer validacioMax) {
+		this.validacioMax = validacioMax;
+	}
+	public ServeiCampDtoValidacioOperacio getValidacioDataCmpOperacio() {
+		return validacioDataCmpOperacio;
+	}
+	public void setValidacioDataCmpOperacio(ServeiCampDtoValidacioOperacio validacioDataCmpOperacio) {
+		this.validacioDataCmpOperacio = validacioDataCmpOperacio;
+	}
+	public ServeiCampDto getValidacioDataCmpCamp2() {
+		return validacioDataCmpCamp2;
+	}
+	public void setValidacioDataCmpCamp2(ServeiCampDto validacioDataCmpCamp2) {
+		this.validacioDataCmpCamp2 = validacioDataCmpCamp2;
+	}
+	public Integer getValidacioDataCmpNombre() {
+		return validacioDataCmpNombre;
+	}
+	public void setValidacioDataCmpNombre(Integer validacioDataCmpNombre) {
+		this.validacioDataCmpNombre = validacioDataCmpNombre;
+	}
+	public ServeiCampDtoValidacioDataTipus getValidacioDataCmpTipus() {
+		return validacioDataCmpTipus;
+	}
+	public void setValidacioDataCmpTipus(ServeiCampDtoValidacioDataTipus validacioDataCmpTipus) {
+		this.validacioDataCmpTipus = validacioDataCmpTipus;
 	}
 
 	public String getCampNom() {

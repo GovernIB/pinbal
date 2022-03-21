@@ -6,15 +6,10 @@
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
 <%@ taglib tagdir="/WEB-INF/tags/pinbal" prefix="pbl" %>
 <%
-	pageContext.setAttribute(
-			"consultaEstats",
-			es.caib.pinbal.core.dto.ConsultaDto.EstatTipus.sortedValues());
-	pageContext.setAttribute(
-			"agrupacioValors",
-			es.caib.pinbal.core.dto.EstadistiquesFiltreDto.EstadistiquesAgrupacioDto.values());
-	pageContext.setAttribute(
-			"isRolActualAdministrador",
-			es.caib.pinbal.webapp.common.RolHelper.isRolActualAdministrador(request));
+	pageContext.setAttribute("consultaEstats", es.caib.pinbal.core.dto.ConsultaDto.EstatTipus.sortedValues());
+	pageContext.setAttribute("agrupacioValors", es.caib.pinbal.core.dto.EstadistiquesFiltreDto.EstadistiquesAgrupacioDto.values());
+	pageContext.setAttribute( "isRolActualAdministrador", es.caib.pinbal.webapp.common.RolHelper.isRolActualAdministrador(request));
+	request.setAttribute("historicSession", es.caib.pinbal.webapp.controller.EstadistiquesController.SESSION_CONSULTA_HISTORIC);
 %>
 
 <html>
@@ -24,62 +19,62 @@
 	<link href="<c:url value="/webjars/select2/4.0.6-rc.1/dist/css/select2.min.css"/>" rel="stylesheet"/>
 	<link href="<c:url value="/webjars/select2-bootstrap-theme/0.1.0-beta.10/dist/select2-bootstrap.min.css"/>" rel="stylesheet"/>
 	<link href="<c:url value="/webjars/bootstrap-datepicker/1.6.1/dist/css/bootstrap-datepicker.min.css"/>" rel="stylesheet"/>
+	<link href="<c:url value="/js/ios-checkbox/iosCheckbox.css"/>" rel="stylesheet"/>
 
 	<script src="<c:url value="/webjars/select2/4.0.6-rc.1/dist/js/select2.min.js"/>"></script>
 	<script src="<c:url value="/webjars/select2/4.0.6-rc.1/dist/js/i18n/${requestLocale}.js"/>"></script>
 
 	<script src="<c:url value="/webjars/bootstrap-datepicker/1.6.1/dist/js/bootstrap-datepicker.min.js"/>"></script>
 	<script src="<c:url value="/webjars/bootstrap-datepicker/1.6.1/dist/locales/bootstrap-datepicker.${requestLocale}.min.js"/>"></script>
+	<script src="<c:url value="/js/ios-checkbox/iosCheckbox.js"/>"></script>
 	
 	<script src="<c:url value="/js/webutil.common.js"/>"></script>
 <script>
-$(document).ready(function() {
-	
-	$('#netejar-filtre').click(function() {
-		$(':input', $('#form-filtre')).each (function() {
-			var type = this.type, tag = this.tagName.toLowerCase();
-			if (type == 'text' || type == 'password' || tag == 'textarea')
-				this.value = '';
-			else if (type == 'checkbox' || type == 'radio')
-				this.checked = false;
-			else if (tag == 'select')
-				this.selectedIndex = 0;
+	$(document).ready(function() {
+
+		$('#netejar-filtre').click(function() {
+			$(':input', $('#form-filtre')).each (function() {
+				var type = this.type, tag = this.tagName.toLowerCase();
+				if (type == 'text' || type == 'password' || tag == 'textarea')
+					this.value = '';
+				else if (type == 'checkbox' || type == 'radio')
+					this.checked = false;
+				else if (tag == 'select')
+					this.selectedIndex = 0;
+			});
+			$('#procediment').val(null);
+			$('#servei').val(null);
+			$('#form-filtre').submit();
 		});
-		$('#procediment').val(null);
-		$('#servei').val(null);
-		$('#form-filtre').submit();
-	});
-// 	$('#select-procediment').change(function() {
-// 		debugger;
-// 		var targetUrl;
-// 		if ($(this).val())
-// 			targetUrl = '<c:url value="estadistiques/serveisPerProcediment"/>/' + $(this).val();
-// 		else
-// 			targetUrl = '<c:url value="estadistiques/serveisPerProcediment"/>';
-// 		$.ajax({
-// 		    url:targetUrl,
-// 		    type:'GET',
-// 		    dataType: 'json',
-// 		    success: function(json) {
-// 		    	$('#select-servei').empty();
-// 	        	$('#select-servei').append($('<option value="">').text('<spring:message code="consulta.list.filtre.servei"/>:'));
-// 		        $.each(json, function(i, value) {
-// 		            $('#select-servei').append($('<option>').text(value.descripcio).attr('value', value.codi));
-// 		        });
-// 		    }
-// 		});
-// 	});
-	
-	$('#procediment').change(function() {
-		$('#servei').attr('urlParamAddicional', $(this).val());
-		$('#servei').val(null).trigger('change.select2');
+
+		$('#procediment').change(function() {
+			$('#servei').attr('urlParamAddicional', $(this).val());
+			$('#servei').val(null).trigger('change.select2');
+		});
+
+		$('#procediment').on('select2:clear', function (e) {
+			$('#servei').attr('urlParamAddicional', '');
+			$('#servei').val(null).trigger('change.select2');
+		});
+
+		historicColor();
 	});
 
-	$('#procediment').on('select2:clear', function (e) {
-		$('#servei').attr('urlParamAddicional', '');
-		$('#servei').val(null).trigger('change.select2');
-	});
-});
+	function checkCallback() {
+		// historicColor();
+		$("#filtrar").click();
+	}
+
+	function historicColor() {
+		let historic = $("#titolCheck").prop("checked");
+		if (historic) {
+			$(".container-caib > .panel-default > .panel-body").addClass("panel-historic");
+			$(".dataTables_info").addClass("table-info-historic");
+		} else {
+			$(".container-caib > .panel-default > .panel-body").removeClass("panel-historic")
+			$(".dataTables_info").removeClass("table-info-historic");
+		}
+	}
 </script>
 <style>
 .table th {
@@ -92,7 +87,7 @@ $(document).ready(function() {
 </style>
 </head>
 <body>
-
+<div class="text-right" data-toggle="titol-check" data-titol-check-value="${historic}" data-titol-check-session-name="${historicSession}" data-titol-check-callback="checkCallback" data-titol-check-label="<spring:message code="comu.historic"/>"></div>
 	<c:if test="${isRolActualAdministrador}">
 		<c:set var="opcioEntitatTotes">&lt;&lt;<spring:message code="estadistiques.list.entitat.seleccio"/>&gt;&gt;</c:set>
 		<c:choose>
@@ -205,7 +200,7 @@ $(document).ready(function() {
 				<div class="col-md-6"> 
 					<div class="pull-right">
 						<button id="netejar-filtre" class="btn btn-default" type="button"><spring:message code="comu.boto.netejar"/></button>
-						<button class="btn btn-primary" type="submit"><span class="fa fa-filter"></span> <spring:message code="comu.boto.filtrar"/></button>
+						<button id="filtrar" class="btn btn-primary" type="submit"><span class="fa fa-filter"></span> <spring:message code="comu.boto.filtrar"/></button>
 					</div>
 				</div>		
 			</div>	

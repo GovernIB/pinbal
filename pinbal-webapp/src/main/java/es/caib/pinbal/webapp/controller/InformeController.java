@@ -7,6 +7,7 @@ import java.util.Date;
 
 import javax.servlet.http.HttpServletRequest;
 
+import es.caib.pinbal.core.service.HistoricConsultaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
@@ -39,7 +40,8 @@ public class InformeController extends BaseController {
 	private ServeiService serveiService;
 	@Autowired
 	private ConsultaService consultaService;
-
+	@Autowired
+	private HistoricConsultaService historicConsultaService;
 
 
 	@RequestMapping(method = RequestMethod.GET)
@@ -82,20 +84,26 @@ public class InformeController extends BaseController {
 	@RequestMapping(value = "/generalEstat", method = RequestMethod.GET)
 	public String general(
 			HttpServletRequest request,
+			@RequestParam(value = "historic", required = false) boolean historic,
 			@RequestParam("dataInici") @DateTimeFormat(pattern="dd/MM/yyyy") Date dataInici,
 			@RequestParam("dataFi") @DateTimeFormat(pattern="dd/MM/yyyy") Date dataFi,
 			Model model) {
 
+//		if (historic == null)
+//			historic = Boolean.FALSE;
+
 		if (dataInici != null && dataFi != null) {
 			model.addAttribute(
 					"informeDades",
-					consultaService.informeGeneralEstat(dataInici, dataFi));
+					historic ?
+							historicConsultaService.informeGeneralEstat(dataInici, dataFi) :
+							consultaService.informeGeneralEstat(dataInici, dataFi));
 			return "informeGeneralEstatExcelView";
 		} else {
 			AlertHelper.warning(
-					request, 
+					request,
 					getMessage(
-							request, 
+							request,
 							"informe.missatges.dates.buides"));
 			return "redirect:../informe";
 		}

@@ -64,6 +64,13 @@ public class ClientInforme extends ClientBase {
 	public List<Entitat> general(
 			Date dataInici,
 			Date dataFi) throws IOException {
+		return general(dataInici, dataFi, false);
+	}
+
+	public List<Entitat> general(
+			Date dataInici,
+			Date dataFi,
+			boolean historic) throws IOException {
 		Map<String, String> params = new HashMap<String, String>();
 		if (dataInici != null) {
 			params.put("dataInici", dateToString(dataInici));
@@ -71,6 +78,7 @@ public class ClientInforme extends ClientBase {
 		if (dataFi != null) {
 			params.put("dataFi", dateToString(dataFi));
 		}
+		params.put("historic", historic? "true" : "false");
 		return restPeticioGetList(
 				"general",
 				params,

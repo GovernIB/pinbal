@@ -10,7 +10,7 @@ import org.apache.commons.lang.builder.ToStringBuilder;
  * 
  * @author Limit Tecnologies <limit@limit.es>
  */
-public class UsuariDto extends AbstractIdentificable<Long> implements Serializable {
+public class UsuariDto extends AbstractIdentificable<Long> implements Serializable, Comparable<UsuariDto> {
 
 	private String codi;
 	private String nif;
@@ -122,5 +122,10 @@ public class UsuariDto extends AbstractIdentificable<Long> implements Serializab
 	}
 
 	private static final long serialVersionUID = -5757581909233321212L;
+
+	@Override
+	public int compareTo(UsuariDto o) {
+		return this.getCodi().compareTo(o.getCodi());
+	}
 
 }

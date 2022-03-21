@@ -44,9 +44,9 @@ public class OrganGestorController extends BaseController {
 	private static final String SESSION_ATTRIBUTE_FILTRE = "OrganGestorController.session.filtre";
 
 	@Autowired
-	private EntitatService entitatService;
-	@Autowired
 	private OrganGestorService organGestorService;
+	@Autowired
+	private EntitatService entitatService;
 
 	@RequestMapping(method = RequestMethod.GET)
 	public String get(HttpServletRequest request, Model model) throws Exception {
@@ -94,12 +94,10 @@ public class OrganGestorController extends BaseController {
 	public String syncDir3(HttpServletRequest request) throws Exception {
 		OrganGestorFiltreCommand command = getCommandInstance(request);
 		boolean isAdmin = RolHelper.isRolActualAdministrador(request);
-		EntitatDto entitat = null;
-		if (isAdmin) {
-			entitat = entitatService.findById(command.getEntitatId());
-		} else {
-			entitat = EntitatHelper.getEntitatActual(request);
-		}
+		EntitatDto entitat = isAdmin ?
+			entitatService.findById(command.getEntitatId()) :
+			EntitatHelper.getEntitatActual(request);
+
 		if (entitat.getUnitatArrel() == null || entitat.getUnitatArrel().isEmpty()) {
 			return getAjaxControllerReturnValueError(
 					request,
@@ -125,7 +123,8 @@ public class OrganGestorController extends BaseController {
 			HttpServletRequest request,
 			Model model) throws Exception {
 		model.addAttribute(getCommandInstance(request));
-		model.addAttribute("entitats", entitatService.findAll());
+		if (RolHelper.isRolActualAdministrador(request))
+			model.addAttribute("entitats", entitatService.findAll());
 	}
 
 	private OrganGestorFiltreCommand getCommandInstance(HttpServletRequest request) {
@@ -133,9 +132,12 @@ public class OrganGestorController extends BaseController {
 				request,
 				SESSION_ATTRIBUTE_FILTRE);
 		if (command == null) {
-			command = new OrganGestorFiltreCommand(
-					entitatService.findTopByTipus(EntitatTipusDto.GOVERN).getId());
+			command = RolHelper.isRolActualAdministrador(request) ?
+					new OrganGestorFiltreCommand(entitatService.findTopByTipus(EntitatTipusDto.GOVERN).getId()) :
+					new OrganGestorFiltreCommand(null);
 			command.setEstat(OrganGestorEstatEnumDto.VIGENT);
+		} else {
+			command.eliminarEspaisCampsCerca();
 		}
 		return command;
 	}

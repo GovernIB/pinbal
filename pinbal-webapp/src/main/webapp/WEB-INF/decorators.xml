@@ -5,6 +5,8 @@
 		<pattern>/img*</pattern>
 		<pattern>/ico*</pattern>
 		<pattern>/ws*</pattern>
+		<pattern>/api/apidoc</pattern>
+		<pattern>/api/rest</pattern>
 	</excludes>
 	<decorator name="default" page="default.jsp">
 		<pattern>/*</pattern>

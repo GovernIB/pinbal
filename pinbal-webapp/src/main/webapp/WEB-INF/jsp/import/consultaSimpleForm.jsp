@@ -112,12 +112,12 @@ if (map != null) {
 			<jsp:include page="dadesEspecifiquesForm.jsp"/>
 			<c:forEach var="grup" items="${grups}">
 				<fieldset>
-				 	<legend>${grup.nom}</legend>
-				 	<div class="clearfix legend-margin-bottom"></div>
-				 	<c:set var="dadesEspecifiquesDisabled" value="${false}" scope="request"/>
-				 	<c:set var="campsPerMostrar" value="${campsDadesEspecifiquesAgrupats[grup.id]}" scope="request"/>
+					<legend>${grup.nom}</legend>
+					<div class="clearfix legend-margin-bottom"></div>
+					<c:set var="dadesEspecifiquesDisabled" value="${false}" scope="request"/>
+					<c:set var="campsPerMostrar" value="${campsDadesEspecifiquesAgrupats[grup.id]}" scope="request"/>
 					<jsp:include page="dadesEspecifiquesForm.jsp"/>
-	   			</fieldset>
+				</fieldset>
 			</c:forEach>
 		</fieldset>
 	</c:when>

@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
+import es.caib.pinbal.core.service.HistoricConsultaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
 import org.springframework.stereotype.Controller;
@@ -49,6 +50,7 @@ public class EstadistiquesController {
 
 	private static final String SESSION_ATTRIBUTE_ENTITAT_ID = "EstadistiquesController.session.entitat.id";
 	private static final String SESSION_ATTRIBUTE_FILTRE = "EstadistiquesController.session.filtre";
+	public static final String SESSION_CONSULTA_HISTORIC = "estadistiques_admin";
 
 	@Autowired
 	private EntitatService entitatService;
@@ -56,6 +58,8 @@ public class EstadistiquesController {
 	private ServeiService serveiService;
 	@Autowired
 	private ConsultaService consultaService;
+	@Autowired
+	private HistoricConsultaService historicConsultaService;
 
 	@RequestMapping(method = RequestMethod.GET)
 	public String get(
@@ -196,21 +200,37 @@ public class EstadistiquesController {
 					"entitatSeleccionada",
 					entitat);
 		}
+		boolean historic = isHistoric(request);
+
 		if (command.getEntitatId() != null) {
 			EstadistiquesFiltreDto filtre = EstadistiquesFiltreCommand.asDto(command);
 			if (command.getEntitatId() == -1) {
 				filtre.setEntitatId(null);
 			}
 			if (filtre.getEntitatId() != null) {
-				List<EstadisticaDto> estadistiques = consultaService.findEstadistiquesByFiltre(
-						filtre);
+				List<EstadisticaDto> estadistiques;
+				if (historic)
+					estadistiques = historicConsultaService.findEstadistiquesByFiltre(filtre);
+				else
+					estadistiques = consultaService.findEstadistiquesByFiltre(filtre);
 				model.addAttribute("estadistiques", estadistiques);
 			} else {
-				Map<EntitatDto, List<EstadisticaDto>> estadistiquesPerEntitat = consultaService.findEstadistiquesGlobalsByFiltre(
-						filtre);
+				Map<EntitatDto, List<EstadisticaDto>> estadistiquesPerEntitat;
+				if (historic)
+					estadistiquesPerEntitat = historicConsultaService.findEstadistiquesGlobalsByFiltre(filtre);
+				else
+					estadistiquesPerEntitat = consultaService.findEstadistiquesGlobalsByFiltre(filtre);
 				model.addAttribute("estadistiquesPerEntitat", estadistiquesPerEntitat);
 			}
 		}
+		model.addAttribute("historic", historic);
 	}
 
+	private boolean isHistoric(HttpServletRequest request) {
+		Object historic = request.getSession().getAttribute(SESSION_CONSULTA_HISTORIC);
+		if (historic == null)
+			return false;
+		else
+			return ((Boolean) historic).booleanValue();
+	}
 }

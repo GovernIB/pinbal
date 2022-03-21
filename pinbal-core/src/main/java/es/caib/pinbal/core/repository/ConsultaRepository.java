@@ -168,19 +168,6 @@ public interface ConsultaRepository extends JpaRepository<Consulta, Long> {
 			"from" +
 			"    Consulta c " +
 			"where " +
-			"    c.pare is null " +
-			"and (c.multiple = :multiple) " +
-			"and (:nomesSensePare = false or c.pare is null)")
-	public Page<Consulta> findByProcedimentServeiProcediment(
-			@Param("multiple")Boolean multiple,
-			@Param("nomesSensePare")boolean nomesSensePare,
-			Pageable pageable);
-	
-	@Query(	"select" +
-			"    c " +
-			"from" +
-			"    Consulta c " +
-			"where " +
 			"    c.procedimentServei.procediment.entitat.id = :entitatId " +
 			"and (:esNullCreatedBy = true or c.createdBy = :createdBy) " +
 			"and (:esNullScspPeticionId = true or lower(c.scspPeticionId) like lower('%'||:scspPeticionId||'%')) " +
@@ -191,8 +178,8 @@ public interface ConsultaRepository extends JpaRepository<Consulta, Long> {
 			"and (:esNullDataFi = true or c.createdDate <= :dataFi) " +
 			"and (:esNullTitularNom = true or c.titularNom = :titularNom) " +
 			"and (:esNullTitularDocument = true or c.titularDocumentNum = :titularDocument) " +
-			"and (:esNullFuncionariNom = true or c.funcionariNom = :funcionariNom) " +
-			"and (:esNullFuncionariDocument = true or c.funcionariDocumentNum = :funcionariDocument) " +
+			"and (:esNullFuncionari = true or (lower(c.funcionariDocumentNum) like lower('%'||:funcionari||'%') or lower(c.funcionariNom) like lower('%'||:funcionari||'%'))) " +
+			"and (:esNullUsuari = true or lower(c.createdBy.nom) like lower('%'||:usuari||'%')) " +
 			"and (c.multiple = :multiple) " +
 			"and (:nomesSensePare = false or c.pare is null)")
 	public Page<Consulta> findByCreatedByAndFiltrePaginat(
@@ -215,10 +202,10 @@ public interface ConsultaRepository extends JpaRepository<Consulta, Long> {
 			@Param("titularNom") String titularNom,
 			@Param("esNullTitularDocument") boolean esNullTitularDocument,
 			@Param("titularDocument") String titularDocument,
-			@Param("esNullFuncionariNom") boolean esNullFuncionariNom,
-			@Param("funcionariNom") String funcionariNom,
-			@Param("esNullFuncionariDocument") boolean esNullFuncionariDocument,
-			@Param("funcionariDocument") String funcionariDocument,
+			@Param("esNullFuncionari") boolean esNullFuncionari,
+			@Param("funcionari") String funcionari,
+			@Param("esNullUsuari") boolean esNullUsuari,
+			@Param("usuari") String usuari,
 			@Param("multiple")boolean multiple,
 			@Param("nomesSensePare")boolean nomesSensePare,
 			Pageable pageable);
@@ -237,11 +224,10 @@ public interface ConsultaRepository extends JpaRepository<Consulta, Long> {
 			"and (:esNullDataFi = true or c.createdDate <= :dataFi) " +
 			"and (:esNullTitularNom = true or c.titularNom = :titularNom) " +
 			"and (:esNullTitularDocument = true or c.titularDocumentNum = :titularDocument) " +
-			"and (:esNullFuncionariNom = true or c.funcionariNom = :funcionariNom) " +
-			"and (:esNullFuncionariDocument = true or c.funcionariDocumentNum = :funcionariDocument) " +
-			"and (c.multiple = :multiple) " +
-			"and (:nomesSensePare = false or c.pare is null)")
-	public Page<Consulta> findByFiltrePaginat(
+			"and (:esNullFuncionari = true or (lower(c.funcionariDocumentNum) like lower('%'||:funcionari||'%') or lower(c.funcionariNom) like lower('%'||:funcionari||'%'))) " +
+			"and (:esNullUsuari = true or lower(c.createdBy.nom) like lower('%'||:usuari||'%')) " +
+			"and c.pare is null")
+	public Page<Consulta> findByFiltrePaginatAdmin(
 			@Param("esNullEntitatId") boolean esNullEntitatId,
 			@Param("entitatId") Long entitatId,
 			@Param("esNullScspPeticionId") boolean esNullScspPeticionId,
@@ -260,14 +246,12 @@ public interface ConsultaRepository extends JpaRepository<Consulta, Long> {
 			@Param("titularNom") String titularNom,
 			@Param("esNullTitularDocument") boolean esNullTitularDocument,
 			@Param("titularDocument") String titularDocument,
-			@Param("esNullFuncionariNom") boolean esNullFuncionariNom,
-			@Param("funcionariNom") String funcionariNom,
-			@Param("esNullFuncionariDocument") boolean esNullFuncionariDocument,
-			@Param("funcionariDocument") String funcionariDocument,
-			@Param("multiple")boolean multiple,
-			@Param("nomesSensePare")boolean nomesSensePare,
+			@Param("esNullFuncionari") boolean esNullFuncionari,
+			@Param("funcionari") String funcionari,
+			@Param("esNullUsuari") boolean esNullUsuari,
+			@Param("usuari") String usuari,
 			Pageable pageable);
-	
+
 	@Query(	"select " +
 			"    new es.caib.pinbal.client.dadesobertes.DadesObertesRespostaConsulta(" +
 			"        c.procedimentServei.procediment.entitat.codi, " +

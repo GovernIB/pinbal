@@ -14,6 +14,7 @@ public class InformeGeneralEstatPeticio {
 
 	private Date dataInici;
 	private Date dataFi;
+	private boolean historic = false;
 
 	public Date getDataInici() {
 		return dataInici;
@@ -27,5 +28,10 @@ public class InformeGeneralEstatPeticio {
 	public void setDataFi(Date dataFi) {
 		this.dataFi = dataFi;
 	}
-	
+	public boolean isHistoric() {
+		return historic;
+	}
+	public void setHistoric(boolean historic) {
+		this.historic = historic;
+	}
 }

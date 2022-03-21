@@ -783,30 +783,28 @@ public class ServeiController extends BaseController {
 	
 	@InitBinder
 	public void initBinder(WebDataBinder binder) {
-	    SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
-	    dateFormat.setLenient(false);
-	    binder.registerCustomEditor(Date.class, new CustomDateEditor(dateFormat, true));
+		SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+		dateFormat.setLenient(false);
+		binder.registerCustomEditor(Date.class, new CustomDateEditor(dateFormat, true));
 	}
+
 
 
 	private void omplirModelPerFiltreTaula( 
 			HttpServletRequest request, 
 			Model model) throws Exception {
-		
 		ServeiFiltreCommand command = (ServeiFiltreCommand) RequestSessionHelper.obtenirObjecteSessio( 
 				request, 
 				SESSION_ATTRIBUTE_FILTRE);
-		
 		if (command == null) {
 			command = new ServeiFiltreCommand();
 			command.setActiva(true);
 		}
-
+		command.eliminarEspaisCampsCerca();
 		model.addAttribute(command);
-		
 		model.addAttribute("emisors", serveiService.findEmisorAll());
 	} 
-	
+
 	private void omplirModelTraduccio(
 			String serveiCodi,
 			Model model) throws ServeiNotFoundException, ScspException {

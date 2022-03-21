@@ -9,6 +9,17 @@
 				http://www.springframework.org/schema/security
 				http://www.springframework.org/schema/security/spring-security.xsd">
 
+	<sec:http pattern="/api/rest**" security="none"/>
+	<sec:http pattern="/api/rest/**" security="none"/>
+	<sec:http pattern="/api/apidoc/" security="none"/>
+	<sec:http pattern="/api-docs**" security="none"/>
+	<sec:http pattern="/api-docs/**" security="none"/>
+	<sec:http pattern="/**/api-docs" security="none"/>
+	<sec:http pattern="/js/**" security="none"/>
+	<sec:http pattern="/css/**" security="none"/>
+	<sec:http pattern="/webjars/**" security="none"/>
+	<sec:http pattern="/img/**" security="none"/>
+
 	<sec:http create-session="never" use-expressions="false" auto-config="false" entry-point-ref="preAuthenticatedProcessingFilterEntryPoint">
 		<sec:intercept-url pattern="/ws/recobriment*" access="IS_AUTHENTICATED_ANONYMOUSLY"/>
 		<sec:intercept-url pattern="/entitat" access="ROLE_ADMIN"/>

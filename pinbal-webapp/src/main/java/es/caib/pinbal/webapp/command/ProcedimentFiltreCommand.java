@@ -13,7 +13,6 @@ import lombok.Data;
  */
 @Data
 public class ProcedimentFiltreCommand {
-	
 
 	private String codi;
 	private String nom;
@@ -21,8 +20,17 @@ public class ProcedimentFiltreCommand {
 	private Long organGestorId;
 	private String codiSia;
 	private FiltreActiuEnumDto actiu;
-	
-	
-	
-	
+
+	// Elimina els espais en els camps de cerca
+	public void eliminarEspaisCampsCerca() {
+		this.codi = eliminarEspais(this.codi);
+		this.nom = eliminarEspais(this.nom);
+		this.departament = eliminarEspais(this.departament);
+		this.codiSia = eliminarEspais(this.codiSia);
+	}
+
+	private String eliminarEspais(String str) {
+		return (str != null) ? str.trim() : null;
+	}
+
 }

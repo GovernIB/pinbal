@@ -9,8 +9,10 @@
 <head>
 	<title><spring:message code="informe.list.titol"/></title>
 	<link href="<c:url value="/webjars/bootstrap-datepicker/1.6.1/dist/css/bootstrap-datepicker.min.css"/>" rel="stylesheet"/>
+	<link href="<c:url value="/js/ios-checkbox/iosCheckbox.css"/>" rel="stylesheet"/>
 	<script src="<c:url value="/webjars/bootstrap-datepicker/1.6.1/dist/js/bootstrap-datepicker.min.js"/>"></script>
 	<script src="<c:url value="/webjars/bootstrap-datepicker/1.6.1/dist/locales/bootstrap-datepicker.${requestLocale}.min.js"/>"></script>
+	<script src="<c:url value="/js/ios-checkbox/iosCheckbox.js"/>"></script>
 </head>
 <body>
 	<div class="container-fluid">
@@ -51,8 +53,8 @@
 		<div class="row">
 			<div class="well">
 				<h4>
-						<spring:message code="informe.list.informe.usuaris.entitat.organ.procediment.servei"/>
-						<a href="informe/usuarisEntitatOrganProcedimentServei" class="btn btn-default pull-right"><i class="fas fa-file-download"></i>&nbsp;<spring:message code="informe.list.generar"/></a>
+					<spring:message code="informe.list.informe.usuaris.entitat.organ.procediment.servei"/>
+					<a href="informe/usuarisEntitatOrganProcedimentServei" class="btn btn-default pull-right"><i class="fas fa-file-download"></i>&nbsp;<spring:message code="informe.list.generar"/></a>
 				</h4>
 			</div>
 		</div>
@@ -67,6 +69,10 @@
 			<div class="modal-body">
 				<c:url value="informe/generalEstat" var="formAction"/>
 				<form id="modal-form-filtre" action="${formAction}" method="GET">
+					<div class="form-group">
+						<input type="checkbox" id="historic" name="historic">
+						<label for="historic" class="titol-check-label"><spring:message code="comu.historic"/></label>
+					</div>
 					<div class="input-group date" data-provide="datepicker" style="margin-bottom: 20px;">
 						<spring:message var="placeholderDataInici" code="informe.general.estat.filtre.dates.inici"/>
 					    <input class="form-control" type="text" name="dataInici" id="dataInici" placeholder="${placeholderDataInici}">
@@ -95,7 +101,7 @@
 $(document).ready(function() {
 	$.fn.datepicker.defaults.format = 'dd/mm/yyyy';
 	$('.datepicker').datepicker();
-	
+	$('#historic').iosCheckbox();
 });
 function showModalFiltrar() {
 	$('#modal-filtre-dates').modal();

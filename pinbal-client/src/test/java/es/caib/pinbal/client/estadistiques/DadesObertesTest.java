@@ -49,6 +49,25 @@ public class DadesObertesTest {
 		}
 	}
 
+	@Test
+	public void opendata_historic() throws IOException {
+		Calendar cal = Calendar.getInstance();
+		cal.set(Calendar.DAY_OF_YEAR, 1);
+		cal.add(Calendar.MONTH, -6);
+		List<DadesObertesRespostaConsulta> resposta = getClient().opendata(
+				null,
+				cal.getTime(),
+				new Date(),
+				null,
+				null,
+				true);
+		assertNotNull(resposta);
+		System.out.println("-> opendata: " + resposta.size());
+		for (DadesObertesRespostaConsulta item: resposta.subList(0, 5)) {
+			System.out.println("    - " + objectToJsonString(item));
+		}
+	}
+
 	private String objectToJsonString(Object obj) throws JsonProcessingException {
 		ObjectMapper mapper = new ObjectMapper();
 		mapper.enable(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY);

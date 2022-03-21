@@ -7,7 +7,7 @@ import es.caib.pinbal.core.dto.OrganGestorEstatEnumDto;
 import lombok.Data;
 
 /**
- * Command per a filtrar les organs.
+ * Command per a filtrar els organs gestors.
  * 
  * @author Limit Tecnologies <limit@limit.es>
  */
@@ -27,4 +27,13 @@ public class OrganGestorFiltreCommand {
 		this.entitatId = entitatId;
 	}
 
+	// Elimina els espais en els camps de cerca
+	public void eliminarEspaisCampsCerca() {
+		this.codi = eliminarEspais(this.codi);
+		this.nom = eliminarEspais(this.nom);
+	}
+
+	private String eliminarEspais(String str) {
+		return (str != null) ? str.trim() : null;
+	}
 }

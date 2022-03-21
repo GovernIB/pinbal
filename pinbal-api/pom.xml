@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>es.caib.pinbal</groupId>
 		<artifactId>pinbal</artifactId>
-		<version>1.4.29</version>
+		<version>1.4.30</version>
 	</parent>
 	<artifactId>pinbal-api</artifactId>
 	<packaging>war</packaging>
@@ -70,6 +70,26 @@
 			<artifactId>pinbal-core-client</artifactId>
 			<version>${project.version}</version>
 		</dependency>
+		
+		<!-- swagger -->
+		<dependency>
+			<groupId>com.mangofactory</groupId>
+			<artifactId>swagger-springmvc</artifactId>
+			<version>1.0.2</version>
+	
+			<exclusions>
+				<exclusion>
+					<artifactId>spring-web</artifactId>
+					<groupId>org.springframework</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>org.slf4j</artifactId>
+					<groupId>slf4j-api</groupId>
+				</exclusion>
+			</exclusions>
+			
+		</dependency>
+		
 	</dependencies>
 	<build>
 		<plugins>

@@ -20,6 +20,8 @@ import java.util.Map;
 
 import javax.xml.parsers.ParserConfigurationException;
 
+import es.caib.pinbal.core.model.HistoricConsulta;
+import es.caib.pinbal.core.model.IConsulta;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -83,7 +85,7 @@ public class JustificantHelper implements MessageSourceAware {
 	private MessageSource messageSource;
 
 	public void generarCustodiarJustificantPendent(
-			Consulta consulta,
+			IConsulta consulta,
 			ScspHelper scspHelper) {
 		ResultatEnviamentPeticio resultat = getResultatEnviamentPeticio(consulta, scspHelper);
 		if (resultat != null) {
@@ -239,7 +241,7 @@ public class JustificantHelper implements MessageSourceAware {
 	}
 
 	public FitxerDto descarregarFitxerGenerat(
-			Consulta consulta,
+			IConsulta consulta,
 			ScspHelper scspHelper) throws Exception {
 		String serveiCodi = consulta.getProcedimentServei().getServei();
 		String peticionId = consulta.getScspPeticionId();
@@ -289,7 +291,7 @@ public class JustificantHelper implements MessageSourceAware {
 	}
 
 	public FitxerDto generar(
-			Consulta consulta,
+			IConsulta consulta,
 			ScspHelper scspHelper) throws IOException, DocumentTemplateException, ParserConfigurationException, DocumentException {
 		String arxiuNom = getNomArxiuGenerat(
 				consulta.getScspPeticionId(),
@@ -427,7 +429,7 @@ public class JustificantHelper implements MessageSourceAware {
 
 
 	private ResultatEnviamentPeticio getResultatEnviamentPeticio(
-			Consulta consulta,
+			IConsulta consulta,
 			ScspHelper scspHelper) {
 		ResultatEnviamentPeticio resultat = null;
 		try {
@@ -580,7 +582,7 @@ public class JustificantHelper implements MessageSourceAware {
 	}
 
 	private String custodiaObtenirId(
-			Consulta consulta) {
+			IConsulta consulta) {
 		if (consulta.getCustodiaId() != null) {
 			return consulta.getCustodiaId();
 		} else {

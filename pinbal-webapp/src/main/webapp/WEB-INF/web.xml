@@ -57,6 +57,11 @@
 		<servlet-name>pinbal</servlet-name>
 		<url-pattern>/</url-pattern>
 	</servlet-mapping>
+	<!-- swagger -->
+	<servlet-mapping>
+		<servlet-name>default</servlet-name>
+		<url-pattern>/swagger-ui.html</url-pattern>
+	</servlet-mapping>
 
 	<login-config>
 		<auth-method>BASIC</auth-method>
@@ -89,6 +94,16 @@
 		<web-resource-collection>
 			<web-resource-name>Public areas</web-resource-name>
 			<url-pattern>/ws/recobriment</url-pattern>
+			<url-pattern>/api/rest</url-pattern>
+			<url-pattern>/api/apidoc</url-pattern>
+			<url-pattern>/api-docs</url-pattern>
+			<url-pattern>/api-docs/*</url-pattern>
+			<url-pattern>/js/*</url-pattern>
+			<url-pattern>/css/*</url-pattern>
+			<url-pattern>/img/*</url-pattern>
+			<url-pattern>/ico/*</url-pattern>
+			<url-pattern>/webjars/*</url-pattern>
+			<url-pattern>/images/*</url-pattern>
 		</web-resource-collection>
 	</security-constraint>
 	<security-constraint>

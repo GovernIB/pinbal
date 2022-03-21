@@ -12,6 +12,9 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 
 import javax.naming.NamingException;
 import javax.servlet.http.HttpServletRequest;
@@ -21,7 +24,10 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import es.caib.pinbal.core.service.HistoricConsultaService;
+import es.caib.pinbal.core.service.exception.*;
 import org.apache.commons.codec.binary.Base64;
+import org.joda.time.Period;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,6 +60,8 @@ import es.caib.pinbal.core.dto.JustificantDto;
 import es.caib.pinbal.core.dto.NodeDto;
 import es.caib.pinbal.core.dto.ServeiCampDto;
 import es.caib.pinbal.core.dto.ServeiCampDto.ServeiCampDtoTipus;
+import es.caib.pinbal.core.dto.ServeiCampDto.ServeiCampDtoValidacioDataTipus;
+import es.caib.pinbal.core.dto.ServeiCampDto.ServeiCampDtoValidacioOperacio;
 import es.caib.pinbal.core.dto.ServeiDto;
 import es.caib.pinbal.core.dto.UsuariDto;
 import es.caib.pinbal.core.service.ConsultaService;
@@ -61,16 +69,6 @@ import es.caib.pinbal.core.service.EntitatService;
 import es.caib.pinbal.core.service.ProcedimentService;
 import es.caib.pinbal.core.service.ServeiService;
 import es.caib.pinbal.core.service.UsuariService;
-import es.caib.pinbal.core.service.exception.AccesExternException;
-import es.caib.pinbal.core.service.exception.ConsultaNotFoundException;
-import es.caib.pinbal.core.service.exception.ConsultaScspException;
-import es.caib.pinbal.core.service.exception.EntitatNotFoundException;
-import es.caib.pinbal.core.service.exception.ProcedimentNotFoundException;
-import es.caib.pinbal.core.service.exception.ProcedimentServeiNotFoundException;
-import es.caib.pinbal.core.service.exception.ScspException;
-import es.caib.pinbal.core.service.exception.ServeiNotAllowedException;
-import es.caib.pinbal.core.service.exception.ServeiNotFoundException;
-import es.caib.pinbal.core.service.exception.ValidacioDadesPeticioException;
 import es.caib.pinbal.webapp.command.ConsultaCommand;
 import es.caib.pinbal.webapp.command.ConsultaCommand.ConsultaCommandAmbDocumentObligatori;
 import es.caib.pinbal.webapp.command.ConsultaCommand.ConsultaCommandAmbDocumentTipusCif;
@@ -102,6 +100,7 @@ public class ConsultaController extends BaseController {
 
 	private static final String PREFIX_CAMP_DADES_ESPECIFIQUES = "camp_";
 	public static final String SESSION_ATTRIBUTE_FILTRE = "ConsultaController.session.filtre";
+	public static final String SESSION_CONSULTA_HISTORIC = "consulta_delegat";
 	private static final String FORMAT_DATA_DADES_ESPECIFIQUES = "dd/MM/yyyy";
 
 	@Autowired
@@ -112,6 +111,8 @@ public class ConsultaController extends BaseController {
 	private ServeiService serveiService;
 	@Autowired
 	private ConsultaService consultaService;
+	@Autowired
+	private HistoricConsultaService historicConsultaService;
 	@Autowired
 	private UsuariService usuariService;
 
@@ -186,7 +187,9 @@ public class ConsultaController extends BaseController {
 				SESSION_ATTRIBUTE_FILTRE);
 		if (command == null) {
 			command = new ConsultaFiltreCommand();
-			command.filtrarDarrers3MesosPerDefecte();
+			command.filtrarDarrersMesos(isHistoric(request) ? 9 : 3);
+		} else {
+			command.updateDefaultDataInici(isHistoric(request));
 		}
 		log.debug("[C_CONS_DT] Obtenció del filtre (" + (System.currentTimeMillis() - t0) + "ms)");
 		t0 = System.currentTimeMillis();
@@ -202,10 +205,17 @@ public class ConsultaController extends BaseController {
 			List<ServerSideColumn> cols = serverSideRequest.getColumns();
 			cols.get(1).setData("createdDate");
 			cols.get(2).setData("procedimentServei.procediment.nom");
-			page = consultaService.findSimplesByFiltrePaginatPerDelegat(
-					entitat.getId(),
-					ConsultaFiltreCommand.asDto(command),		
-					serverSideRequest.toPageable());
+			if (isHistoric(request)) {
+				page = historicConsultaService.findSimplesByFiltrePaginatPerDelegat(
+						entitat.getId(),
+						ConsultaFiltreCommand.asDto(command),
+						serverSideRequest.toPageable());
+			} else {
+				page = consultaService.findSimplesByFiltrePaginatPerDelegat(
+						entitat.getId(),
+						ConsultaFiltreCommand.asDto(command),
+						serverSideRequest.toPageable());
+			}
 			cols.get(1).setData("creacioData");
 			cols.get(2).setData("procedimentNom");
 			cols.get(3).setData("serveiDescripcio");
@@ -412,7 +422,7 @@ public class ConsultaController extends BaseController {
 			return "delegatNoAutoritzat";
 		EntitatDto entitat = EntitatHelper.getEntitatActual(request, entitatService);
 		if (entitat != null) {
-			ConsultaDto consulta = consultaService.findOneDelegat(consultaId);
+			ConsultaDto consulta = getConsultaDelegate(consultaId, isHistoric(request));
 			model.addAttribute("consulta", consulta);
 			model.addAttribute(
 					"servei",
@@ -445,7 +455,7 @@ public class ConsultaController extends BaseController {
 		EntitatDto entitat = EntitatHelper.getEntitatActual(request, entitatService);
 		if (entitat != null) {
 			try {
-				JustificantDto justificant = consultaService.obtenirJustificant(consultaId);
+				JustificantDto justificant = getJustificant(consultaId, isHistoric(request));
 				if (!justificant.isError()) {
 					writeFileToResponse(
 							justificant.getNom(),
@@ -542,7 +552,7 @@ public class ConsultaController extends BaseController {
 			return "delegatNoAutoritzat";
 		EntitatDto entitat = EntitatHelper.getEntitatActual(request, entitatService);
 		if (entitat != null) {
-			ConsultaDto consulta = consultaService.findOneDelegat(consultaId);
+			ConsultaDto consulta = getConsultaDelegate(consultaId, isHistoric(request));
 			model.addAttribute("consulta", consulta);
 			model.addAttribute("mostrarPeticio", new Boolean(true));
 			model.addAttribute("mostrarResposta", new Boolean(false));
@@ -567,7 +577,7 @@ public class ConsultaController extends BaseController {
 			return "delegatNoAutoritzat";
 		EntitatDto entitat = EntitatHelper.getEntitatActual(request, entitatService);
 		if (entitat != null) {
-			ConsultaDto consulta = consultaService.findOneDelegat(consultaId);
+			ConsultaDto consulta = getConsultaDelegate(consultaId, isHistoric(request));
 			model.addAttribute("consulta", consulta);
 			model.addAttribute("mostrarPeticio", new Boolean(false));
 			model.addAttribute("mostrarResposta", new Boolean(true));
@@ -796,8 +806,11 @@ public class ConsultaController extends BaseController {
 				SESSION_ATTRIBUTE_FILTRE);
 		if (command == null) {
 			command = new ConsultaFiltreCommand();
-			command.filtrarDarrers3MesosPerDefecte();
+			command.filtrarDarrersMesos(isHistoric(request) ? 9 : 3);
+		} else {
+			command.updateDefaultDataInici(isHistoric(request));
 		}
+		command.eliminarEspaisCampsCerca();
 		model.addAttribute(
 				"filtreCommand",
 				command);
@@ -812,6 +825,7 @@ public class ConsultaController extends BaseController {
 				serveiService.findPermesosAmbProcedimentPerDelegat(
 						entitat.getId(),
 						command.getProcediment()));
+		model.addAttribute("historic", isHistoric(request));
 		log.debug("[C_CONS] Consulta de serveis (" + (System.currentTimeMillis() - t0) + "ms)");
 	}
 
@@ -876,26 +890,129 @@ public class ConsultaController extends BaseController {
 		}
 		public void validate(Object obj, Errors errors) {
 			ConsultaCommand command = (ConsultaCommand)obj;
-			SimpleDateFormat sdf = new SimpleDateFormat(FORMAT_DATA_DADES_ESPECIFIQUES);
 			Map<String, Object> dadesEspecifiquesValors = command.getDadesEspecifiques();
 			for (ServeiCampDto camp: camps) {
-				if (dadesEspecifiquesValors.get(camp.getPath()) == null || (dadesEspecifiquesValors.get(camp.getPath()) instanceof String && ((String)dadesEspecifiquesValors.get(camp.getPath())).isEmpty())) {
+				Object valorCamp = dadesEspecifiquesValors.get(camp.getPath());
+				boolean isEmptyString = valorCamp instanceof String && ((String)valorCamp).isEmpty();
+				if (valorCamp == null || isEmptyString) {
 					if (camp.isObligatori())
 						errors.rejectValue(
 								"dadesEspecifiques[" + camp.getPath() + "]",
 								"NotEmpty",
 								"Aquest camp és obligatori");
 				} else {
-					if (ServeiCampDtoTipus.DATA.equals(camp.getTipus())) {
-						String dataText = (String)dadesEspecifiquesValors.get(camp.getPath());
+					// Validar expressió regular si n'hi ha
+					String validacioRegexp = camp.getValidacioRegexp();
+					if (ServeiCampDtoTipus.TEXT.equals(camp.getTipus()) && validacioRegexp != null && !validacioRegexp.isEmpty()) {
 						try {
-							Date dataDate = sdf.parse(dataText);
-							if (!sdf.format(dataDate).equals(dataText))
+							Matcher matcher = Pattern.compile(validacioRegexp).matcher((String)valorCamp);
+							if (!matcher.matches()) {
 								errors.rejectValue(
 										"dadesEspecifiques[" + camp.getPath() + "]",
-										"DataValida",
-										"La data és incorrecta");
-						} catch (Exception ex) {
+										"RegexpDontMatch",
+										"Valor no permès");
+							}
+						} catch (PatternSyntaxException ex) {
+							// Si l'expressió no és correcta la validació també falla
+							errors.rejectValue(
+									"dadesEspecifiques[" + camp.getPath() + "]",
+									"InvalidRegexp",
+									"Expressió de validació errònia");
+						}
+					}
+					// Validar rang numèric
+					Integer validacioMin = camp.getValidacioMin();
+					Integer validacioMax = camp.getValidacioMin();
+					if (ServeiCampDtoTipus.NUMERIC.equals(camp.getTipus()) && valorCamp != null && (validacioMin != null || validacioMax != null)) {
+						Integer valorInt = Integer.valueOf((String)valorCamp);
+						boolean validMin = (validacioMin != null) ? validacioMin <= valorInt : true;
+						boolean validMax = (validacioMax != null) ? validacioMax >= valorInt : true;
+						if (!validMin || !validMax) {
+							errors.rejectValue(
+									"dadesEspecifiques[" + camp.getPath() + "]",
+									"NumericRangeExceeded",
+									"Valor no permès");
+						}
+					}
+					if (ServeiCampDtoTipus.DATA.equals(camp.getTipus())) {
+						// Validar format data
+						String dataText = (String)dadesEspecifiquesValors.get(camp.getPath());
+						Date dataDate = checkDateFormat(dataText);
+						if (dataDate != null) {
+							// Si el format és vàlid comprova les demés validacions
+							ServeiCampDto validacioDataCamp2 = camp.getValidacioDataCmpCamp2();
+							if (validacioDataCamp2 != null) {
+								String dataText2 = (String)dadesEspecifiquesValors.get(validacioDataCamp2.getCampNom());
+								Date dataDate2 = null;
+								if (dataText2 != null) {
+									dataDate2 = checkDateFormat(dataText2);
+								}
+								if (dataDate2 != null) {
+									Integer validacioNombre = camp.getValidacioDataCmpNombre();
+									ServeiCampDtoValidacioOperacio validacioOperacio = camp.getValidacioDataCmpOperacio();
+									if (validacioNombre != null) {
+										// Validacio per diferencia
+										ServeiCampDtoValidacioDataTipus validacioTipus = camp.getValidacioDataCmpTipus();
+										Period period = new Period(dataDate.getTime(), dataDate2.getTime());
+										int diff;
+										if (ServeiCampDtoValidacioDataTipus.ANYS == validacioTipus) {
+											diff = period.getYears();
+										} else if (ServeiCampDtoValidacioDataTipus.ANYS == validacioTipus) {
+											diff = period.getMonths();
+										} else {
+											diff = period.getDays();
+										}
+										boolean valid = true;
+										if (ServeiCampDtoValidacioOperacio.LT == validacioOperacio) {
+											valid = diff < validacioNombre;
+										} else if (ServeiCampDtoValidacioOperacio.LTE == validacioOperacio) {
+											valid = diff <= validacioNombre;
+										} else if (ServeiCampDtoValidacioOperacio.GT == validacioOperacio) {
+											valid = diff > validacioNombre;
+										} else if (ServeiCampDtoValidacioOperacio.GTE == validacioOperacio) {
+											valid = diff >= validacioNombre;
+										} else if (ServeiCampDtoValidacioOperacio.EQ == validacioOperacio) {
+											valid = diff == validacioNombre;
+										} else if (ServeiCampDtoValidacioOperacio.NEQ == validacioOperacio) {
+											valid = diff != validacioNombre;
+										}
+										if (!valid) {
+											errors.rejectValue(
+													"dadesEspecifiques[" + camp.getPath() + "]",
+													"DataValida",
+													"La data és surt del rang permès");
+										}
+									} else {
+										// Validacio per comparació
+										boolean valid = true;
+										if (ServeiCampDtoValidacioOperacio.LT == validacioOperacio) {
+											valid = dataDate.getTime() < dataDate2.getTime();
+										} else if (ServeiCampDtoValidacioOperacio.LTE == validacioOperacio) {
+											valid = dataDate.getTime() <= dataDate2.getTime();
+										} else if (ServeiCampDtoValidacioOperacio.GT == validacioOperacio) {
+											valid = dataDate.getTime() > dataDate2.getTime();
+										} else if (ServeiCampDtoValidacioOperacio.GTE == validacioOperacio) {
+											valid = dataDate.getTime() >= dataDate2.getTime();
+										} else if (ServeiCampDtoValidacioOperacio.EQ == validacioOperacio) {
+											valid = dataDate.getTime() == dataDate2.getTime();
+										} else if (ServeiCampDtoValidacioOperacio.NEQ == validacioOperacio) {
+											valid = dataDate.getTime() != dataDate2.getTime();
+										}
+										if (!valid) {
+											errors.rejectValue(
+													"dadesEspecifiques[" + camp.getPath() + "]",
+													"DataValida",
+													"La comparació entre dates no passa la validació");
+										}
+									}
+								} else {
+									errors.rejectValue(
+											"dadesEspecifiques[" + camp.getPath() + "]",
+											"DataReferencia",
+											"El camp al que fa referència la comparació no és vàlid");
+								}
+							}
+						} else {
 							errors.rejectValue(
 									"dadesEspecifiques[" + camp.getPath() + "]",
 									"DataValida",
@@ -904,6 +1021,19 @@ public class ConsultaController extends BaseController {
 					}
 				}
 			}
+		}
+		private Date checkDateFormat(String dateText) {
+			SimpleDateFormat sdf = new SimpleDateFormat(FORMAT_DATA_DADES_ESPECIFIQUES);
+			Date dataDate = null;
+			try {
+				dataDate = sdf.parse(dateText);
+				if (!sdf.format(dataDate).equals(dateText)) {
+					dataDate = null;
+				}
+			} catch (Exception ex) {
+				dataDate = null;
+			}
+			return dataDate;
 		}
 	}
 
@@ -1149,6 +1279,50 @@ public class ConsultaController extends BaseController {
 			}
 		}
 		return false;
+	}
+
+	private boolean isHistoric(HttpServletRequest request) {
+		Object historic = request.getSession().getAttribute(SESSION_CONSULTA_HISTORIC);
+		if (historic == null)
+			return false;
+		else
+			return ((Boolean) historic).booleanValue();
+	}
+
+	private ConsultaDto getConsultaDelegate(Long consultaId, boolean historic) throws ConsultaNotFoundException, ScspException {
+		ConsultaDto consulta;
+		if (historic) {
+			try {
+				consulta = historicConsultaService.findOneDelegat(consultaId);
+			} catch (Exception nfe) {
+				consulta = consultaService.findOneDelegat(consultaId);
+			}
+		} else {
+			try {
+				consulta = consultaService.findOneDelegat(consultaId);
+			} catch (Exception nfe) {
+				consulta = historicConsultaService.findOneDelegat(consultaId);
+			}
+		}
+		return consulta;
+	}
+
+	private JustificantDto getJustificant(Long consultaId, boolean historic) throws Exception {
+		JustificantDto justificant;
+		if (historic) {
+			try {
+				justificant = historicConsultaService.obtenirJustificant(consultaId);
+			} catch (Exception nfe) {
+				justificant = consultaService.obtenirJustificant(consultaId);
+			}
+		} else {
+			try {
+				justificant = consultaService.obtenirJustificant(consultaId);
+			} catch (Exception nfe) {
+				justificant = historicConsultaService.obtenirJustificant(consultaId);
+			}
+		}
+		return justificant;
 	}
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(ConsultaController.class);

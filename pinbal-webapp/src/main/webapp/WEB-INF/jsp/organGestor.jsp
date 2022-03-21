@@ -40,7 +40,7 @@
 			<c:choose>
 				<c:when test="${isRolActualAdministrador}">
 					<div class="col-md-2">
-						<pbl:inputSelect name="entitatId" inline="true" placeholderKey="admin.consulta.list.filtre.entitat"
+						<pbl:inputSelect name="entitatId" inline="true" placeholderKey="organgestor.list.filtre.camp.entitat"
 		 						 	optionItems="${entitats}"
 			 						optionValueAttribute="id"
 			 						optionTextAttribute="nom"
@@ -81,8 +81,7 @@
 			</div>
 		</div>
 	</form:form>
-	<table id="table-organs"
-			class="table table-striped table-bordered" style="width:100%">
+	<table id="table-organs" class="table table-striped table-bordered" style="width:100%">
 		<thead>
 			<tr>
 				<th data-data="actiu"><spring:message code="organgestor.list.columna.codi"/></th>
@@ -136,6 +135,5 @@ $(document).ready(function() {
 		<span class="fa fa-exclamation-triangle text-danger pull-right" style="margin-top: 3px;" title="<spring:message code="organgestor.list.extingit"/>"></span>
 	{{/actiu}}
 </script>
-	
 </body>
 </html>

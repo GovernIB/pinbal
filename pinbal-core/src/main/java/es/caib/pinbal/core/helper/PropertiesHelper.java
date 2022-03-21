@@ -74,6 +74,12 @@ public class PropertiesHelper extends Properties {
 	public int getAsInt(String key) {
 		return new Integer(getProperty(key)).intValue();
 	}
+	public int getAsInt(String key, int defaultValue) {
+		try {
+			return new Integer(getProperty(key)).intValue();
+		} catch (NumberFormatException e) {}
+		return defaultValue;
+	}
 	public long getAsLong(String key) {
 		return new Long(getProperty(key)).longValue();
 	}

@@ -189,3 +189,25 @@ div.exemple {
 .avisCardError button{
 	color: #721c24CC;
 }
+
+.modal-dialog {
+	width: 900px;
+}
+
+.titol-check-label {
+	margin-left: 10px;
+	margin-right: 15px;
+	font-weight: normal;
+	position: relative;
+	top: -8px;
+}
+
+.panel-historic {
+	background-color: #337ab726;
+}
+.table-info-historic {
+	/*color: #FFFFFF;*/
+}
+table {
+	background-color: #FFFFFF;
+}

@@ -1,0 +1,171 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1643192041683-2
+      author: limit
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: pbl_consulta_hist_pk
+                  name: id
+                  type: BIGINT
+              - column:
+                  name: custodiat
+                  type: BOOLEAN
+              - column:
+                  constraints:
+                    nullable: false
+                  name: departament
+                  type: VARCHAR2(64 CHAR)
+              - column:
+                  name: error
+                  type: VARCHAR2(4000 CHAR)
+              - column:
+                  constraints:
+                    nullable: false
+                  name: estat
+                  type: INTEGER
+              - column:
+                  constraints:
+                    nullable: false
+                  name: peticion_id
+                  type: VARCHAR2(26 CHAR)
+              - column:
+                  name: titular_docnum
+                  type: VARCHAR2(14 CHAR)
+              - column:
+                  name: titular_doctip
+                  type: VARCHAR2(16 CHAR)
+              - column:
+                  name: titular_lling1
+                  type: VARCHAR2(64 CHAR)
+              - column:
+                  name: titular_lling2
+                  type: VARCHAR2(64 CHAR)
+              - column:
+                  name: titular_nom
+                  type: VARCHAR2(64 CHAR)
+              - column:
+                  constraints:
+                    nullable: false
+                  name: procserv_id
+                  type: BIGINT
+              - column:
+                  name: recobriment
+                  type: BOOLEAN
+              - column:
+                  name: titular_nomcomplet
+                  type: VARCHAR2(122 CHAR)
+              - column:
+                  name: funcionari_nom
+                  type: VARCHAR2(128 CHAR)
+              - column:
+                  constraints:
+                    nullable: false
+                  name: funcionari_docnum
+                  type: VARCHAR2(16 CHAR)
+              - column:
+                  name: solicitud_id
+                  type: VARCHAR2(64 CHAR)
+              - column:
+                  name: multiple
+                  type: BOOLEAN
+              - column:
+                  name: pare_id
+                  type: BIGINT
+              - column:
+                  name: custodia_url
+                  type: VARCHAR2(255 CHAR)
+              - column:
+                  name: justificant_error
+                  type: VARCHAR2(2000 CHAR)
+              - column:
+                  constraints:
+                    nullable: false
+                  name: justificant_estat
+                  type: INTEGER
+              - column:
+                  name: custodia_id
+                  type: VARCHAR2(255 CHAR)
+              - column:
+                  name: arxiu_expedient_uuid
+                  type: VARCHAR2(100 CHAR)
+              - column:
+                  name: arxiu_document_uuid
+                  type: VARCHAR2(100 CHAR)
+              - column:
+                  name: arxiu_expedient_tancat
+                  type: BOOLEAN
+              - column:
+                  name: finalitat
+                  type: VARCHAR2(250 CHAR)
+              - column:
+                  name: consentiment
+                  type: INTEGER
+              - column:
+                  name: expedient_id
+                  type: VARCHAR2(25 CHAR)
+              - column:
+                  name: dades_especifiques
+                  type: VARCHAR2(2048 CHAR)
+              - column:
+                  name: createdby_codi
+                  type: VARCHAR2(64 CHAR)
+              - column:
+                  name: createddate
+                  type: TIMESTAMP
+              - column:
+                  name: lastmodifiedby_codi
+                  type: VARCHAR2(64 CHAR)
+              - column:
+                  name: lastmodifieddate
+                  type: TIMESTAMP
+              - column:
+                  constraints:
+                    nullable: false
+                  name: version
+                  type: BIGINT
+            tableName: pbl_consulta_hist
+        - createIndex:
+            indexName: PBL_CONH_CREDATCOD_I
+            tableName: pbl_consulta_hist
+            columns:
+              - column:
+                  name: CREATEDDATE
+                  descending: true
+              - column:
+                  name: CREATEDBY_CODI
+        - createIndex:
+            indexName: PBL_CONSULTAH_CREATEDBY_I
+            tableName: pbl_consulta_hist
+            columns:
+              - column:
+                  name: CREATEDBY_CODI
+        - createIndex:
+            indexName: PBL_CONSULTAH_PARE_I
+            tableName: pbl_consulta_hist
+            columns:
+              - column:
+                  name: PARE_ID
+        - createIndex:
+            indexName: PBL_CONSULTAH_PROCSERV_I
+            tableName: pbl_consulta_hist
+            columns:
+              - column:
+                  name: PROCSERV_ID
+        - createIndex:
+            indexName: PBL_CONSULTAH_MULT_I
+            tableName: pbl_consulta_hist
+            columns:
+              - column:
+                  name: CREATEDBY_CODI
+              - column:
+                  name: ESTAT
+              - column:
+                  name: MULTIPLE
+        - sql:
+            dbms: oracle
+            sql: grant select, update, insert, delete on pbl_consulta_hist to www_pinbal;

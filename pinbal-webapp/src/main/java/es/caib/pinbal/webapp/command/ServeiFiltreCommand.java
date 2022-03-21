@@ -16,4 +16,16 @@ public class ServeiFiltreCommand {
 	private String emissor;
 	private Boolean activa;
 	private String scspVersionEsquema;
+
+	// Elimina els espais en els camps de cerca
+	public void eliminarEspaisCampsCerca() {
+		this.codi = eliminarEspais(this.codi);
+		this.descripcio = eliminarEspais(this.descripcio);
+		this.scspVersionEsquema = eliminarEspais(this.scspVersionEsquema);
+	}
+
+	private String eliminarEspais(String str) {
+		return (str != null) ? str.trim() : null;
+	}
+
 }

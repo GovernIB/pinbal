@@ -83,7 +83,6 @@ public class ProcedimentController extends BaseController {
 			Model model) throws Exception {
 		if (!EntitatHelper.isRepresentantEntitatActual(request))
 			return "representantNoAutoritzat";
-		
 		EntitatDto entitat = EntitatHelper.getEntitatActual(request, entitatService);
 		if (entitat == null) {
 			AlertHelper.error(
@@ -116,7 +115,6 @@ public class ProcedimentController extends BaseController {
 							"procediment.controller.no.entitat.seleccionada"));
 			return "redirect:../index";
 		}
-			
 		if (bindingResult.hasErrors()) {
 			omplirModelFiltreDataTable(request, entitat, model);
 			return "procedimentList";
@@ -710,10 +708,11 @@ public class ProcedimentController extends BaseController {
 		ProcedimentFiltreCommand command = (ProcedimentFiltreCommand)RequestSessionHelper.obtenirObjecteSessio(
 				request,
 				SESSION_ATTRIBUTE_FILTRE);
-		if (command == null)
+		if (command == null) {
 			command = new ProcedimentFiltreCommand();
+		}
 		model.addAttribute(command);
-		
+		command.eliminarEspaisCampsCerca();
 		model.addAttribute(
 				"propertyEsborrar",
 				propertyService.get(
@@ -730,6 +729,7 @@ public class ProcedimentController extends BaseController {
 			command = new ServeiFiltreCommand();
 //			command.setActiva(true);
 		}
+		command.eliminarEspaisCampsCerca();
 		model.addAttribute(command);
 	}
 
