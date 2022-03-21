@@ -27,7 +27,14 @@ import javax.xml.parsers.ParserConfigurationException;
 import es.caib.pinbal.core.service.HistoricConsultaService;
 import es.caib.pinbal.core.service.exception.*;
 import org.apache.commons.codec.binary.Base64;
+import org.joda.time.DateTime;
+import org.joda.time.Days;
+import org.joda.time.Duration;
+import org.joda.time.LocalDate;
+import org.joda.time.Months;
 import org.joda.time.Period;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -922,7 +929,7 @@ public class ConsultaController extends BaseController {
 					}
 					// Validar rang numèric
 					Integer validacioMin = camp.getValidacioMin();
-					Integer validacioMax = camp.getValidacioMin();
+					Integer validacioMax = camp.getValidacioMax();
 					if (ServeiCampDtoTipus.NUMERIC.equals(camp.getTipus()) && valorCamp != null && (validacioMin != null || validacioMax != null)) {
 						Integer valorInt = Integer.valueOf((String)valorCamp);
 						boolean validMin = (validacioMin != null) ? validacioMin <= valorInt : true;
@@ -942,7 +949,7 @@ public class ConsultaController extends BaseController {
 							// Si el format és vàlid comprova les demés validacions
 							ServeiCampDto validacioDataCamp2 = camp.getValidacioDataCmpCamp2();
 							if (validacioDataCamp2 != null) {
-								String dataText2 = (String)dadesEspecifiquesValors.get(validacioDataCamp2.getCampNom());
+								String dataText2 = (String)dadesEspecifiquesValors.get(validacioDataCamp2.getPath());
 								Date dataDate2 = null;
 								if (dataText2 != null) {
 									dataDate2 = checkDateFormat(dataText2);
@@ -954,27 +961,34 @@ public class ConsultaController extends BaseController {
 										// Validacio per diferencia
 										ServeiCampDtoValidacioDataTipus validacioTipus = camp.getValidacioDataCmpTipus();
 										Period period = new Period(dataDate.getTime(), dataDate2.getTime());
-										int diff;
+										int diff = 0;
+										// Si la comparació és < o ==, llavors hem de controlar que no hi hagi altres unitats amb valo
+										// Exemple si comparam 2 mesos, si el període ens diu que tenim 2 mesos, necessitam comprovar que no tenim
+										// cap any, ni cap dia 1any i 2mesos, o 2mesos i 3dies no és igual a 2 mesos!!
+										boolean detailDiff = false;
 										if (ServeiCampDtoValidacioDataTipus.ANYS == validacioTipus) {
 											diff = period.getYears();
-										} else if (ServeiCampDtoValidacioDataTipus.ANYS == validacioTipus) {
-											diff = period.getMonths();
+											detailDiff = (period.getMonths() > 0 || period.getDays() > 0);
+										} else if (ServeiCampDtoValidacioDataTipus.MESOS == validacioTipus) {
+											diff = period.getYears() * 12 + period.getMonths();
+											detailDiff = period.getDays() > 0;
 										} else {
-											diff = period.getDays();
+											DateTimeFormatter formatter = DateTimeFormat.forPattern("dd/MM/yyyy");
+											diff = Days.daysBetween(LocalDate.parse(dataText, formatter), LocalDate.parse(dataText2, formatter)).getDays();
 										}
 										boolean valid = true;
 										if (ServeiCampDtoValidacioOperacio.LT == validacioOperacio) {
 											valid = diff < validacioNombre;
 										} else if (ServeiCampDtoValidacioOperacio.LTE == validacioOperacio) {
-											valid = diff <= validacioNombre;
+											valid = diff < validacioNombre || (diff == validacioNombre && !detailDiff);
 										} else if (ServeiCampDtoValidacioOperacio.GT == validacioOperacio) {
 											valid = diff > validacioNombre;
 										} else if (ServeiCampDtoValidacioOperacio.GTE == validacioOperacio) {
 											valid = diff >= validacioNombre;
 										} else if (ServeiCampDtoValidacioOperacio.EQ == validacioOperacio) {
-											valid = diff == validacioNombre;
+											valid = diff == validacioNombre && !detailDiff;
 										} else if (ServeiCampDtoValidacioOperacio.NEQ == validacioOperacio) {
-											valid = diff != validacioNombre;
+											valid = diff != validacioNombre || detailDiff;
 										}
 										if (!valid) {
 											errors.rejectValue(
