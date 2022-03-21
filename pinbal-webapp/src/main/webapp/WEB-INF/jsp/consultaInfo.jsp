@@ -273,13 +273,15 @@ $('#dadesPeticio').on('shown', function () {
 				</p>
 			</div>
 <script type="text/javascript">
-$('#respostaXml').val(vkbeautify.xml($('#respostaXml').val()));
-$('#dadesResposta').on('hidden', function () {
-	$('#dadesRespostaIcon').attr('class', 'pull-right icon-chevron-down');
-});
-$('#dadesResposta').on('shown', function () {
-	$('#dadesRespostaIcon').attr('class', 'pull-right icon-chevron-up');
-});
+	if ($('#respostaXml').val() != null) {
+		$('#respostaXml').val(vkbeautify.xml($('#respostaXml').val()));
+	}
+	$('#dadesResposta').on('hidden', function () {
+		$('#dadesRespostaIcon').attr('class', 'pull-right icon-chevron-down');
+	});
+	$('#dadesResposta').on('shown', function () {
+		$('#dadesRespostaIcon').attr('class', 'pull-right icon-chevron-up');
+	});
 </script>
 		</div>
 	</c:if>
