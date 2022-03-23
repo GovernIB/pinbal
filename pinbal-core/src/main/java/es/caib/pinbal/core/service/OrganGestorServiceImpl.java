@@ -73,7 +73,7 @@ public class OrganGestorServiceImpl implements OrganGestorService {
 		log.debug("Sincronització dels òrgans d'una entitat (entitatId=" + entitatId + ")");
 		Entitat entitat = entitatRepository.findOne(entitatId);
 		if (entitat.getUnitatArrel() == null || entitat.getUnitatArrel().isEmpty()) {
-			throw new Exception("L'entitat actual no té cap codi DIR3 associat");
+			throw new Exception("organgestor.controller.sync.dir3.asociat.error");
 		}
 		List<OrganGestor> organismesDIR3 = new ArrayList<OrganGestor>();
 		List<OrganGestorDto> organismes = findOrganismesArbre(entitat.getUnitatArrel());
@@ -133,12 +133,12 @@ public class OrganGestorServiceImpl implements OrganGestorService {
 
 	private List<OrganGestorDto> findOrganismesArbre(String codiDir3) throws Exception {
 		if (codiDir3 == null || codiDir3.isEmpty()) {
-			throw new Exception("No es poden sincronitzar els òrgans gestors degut a que el 'codi Dir3 arrel' de l'entitat no està emplenat.");
+			throw new Exception("organgestor.controller.sync.dir3.arrel.buit.error");
 		}
 		List<OrganGestorDto> organismes = new ArrayList<OrganGestorDto>();
 		Map<String, NodeDir3> organigramaDir3 = pluginOrganGestorHelper.getOrganigramaOrganGestor(codiDir3);
 		if (organigramaDir3 == null || organigramaDir3.isEmpty() || organigramaDir3.get(codiDir3) == null) {
-			throw new Exception("No es poden sincronitzar els òrgans gestors degut a que no existeix cap òrgan arrel amb codi '" + codiDir3 + "' al DIR3. Revisar la configuració del camp 'Codi DIR3 arrel' de l'entitat.");
+			throw new Exception("organgestor.controller.sync.dir3.no.exist.error");
 		}
 		NodeDir3 arrel = organigramaDir3.get(codiDir3);
 		OrganGestorDto organisme = new OrganGestorDto();
