@@ -105,7 +105,7 @@ public class OrganGestorController extends BaseController {
 			return getAjaxControllerReturnValueError(
 					request,
 					"redirect:../../organgestor",
-					"L'entitat actual no té cap codi DIR3 associat");
+					"organgestor.controller.sync.dir3.asociat.error");
 		}
 		try {
 			organGestorService.syncDir3OrgansGestors(entitat.getId());
