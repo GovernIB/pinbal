@@ -44,7 +44,6 @@
 		 						 	optionItems="${entitats}"
 			 						optionValueAttribute="id"
 			 						optionTextAttribute="nom"
-									emptyOption="true"
 									optionMinimumResultsForSearch="0"/>
 					</div>
 					<div class="col-md-2">
@@ -126,6 +125,9 @@ $(document).ready(function() {
 		$('#estat').val('VIGENT').change();
 		$('#form-filtre').submit();
 	});
+	<c:if test="${isRolActualAdministrador}">
+		$('#entitatId').select2({theme: "bootstrap", allowClear: false, minimumResultsForSearch: 10});
+	</c:if>
 });
 </script>
 	

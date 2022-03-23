@@ -64,6 +64,9 @@ public class OrganGestorController extends BaseController {
 			omplirModelPerMostrarLlistat(request, model);
 			return "organGestor";
 		} else {
+			if (command.getEntitatId() == null) {
+				command.setEntitatId(entitatService.findTopByTipus(EntitatTipusDto.GOVERN).getId());
+			}
 			RequestSessionHelper.actualitzarObjecteSessio(
 					request,
 					SESSION_ATTRIBUTE_FILTRE,
