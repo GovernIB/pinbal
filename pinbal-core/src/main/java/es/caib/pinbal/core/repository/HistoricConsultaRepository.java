@@ -41,14 +41,14 @@ public interface HistoricConsultaRepository extends JpaRepository<HistoricConsul
 	@Modifying
 	@Query(value = 	"insert into pbl_consulta_hist(id, custodiat, departament, error, estat, peticion_id, titular_docnum, titular_doctip, titular_lling1, titular_lling2, titular_nom, procserv_id, recobriment, titular_nomcomplet, funcionari_nom, funcionari_docnum, solicitud_id, multiple, pare_id, custodia_url, justificant_error, justificant_estat, custodia_id, arxiu_expedient_uuid, arxiu_document_uuid, arxiu_expedient_tancat, finalitat, consentiment, expedient_id, dades_especifiques, createdby_codi, createddate, lastmodifiedby_codi, lastmodifieddate, version) " +
 			"select id, custodiat, departament, error, estat, peticion_id, titular_docnum, titular_doctip, titular_lling1, titular_lling2, titular_nom, procserv_id, recobriment, titular_nomcomplet, funcionari_nom, funcionari_docnum, solicitud_id, multiple, pare_id, custodia_url, justificant_error, justificant_estat, custodia_id, arxiu_expedient_uuid, arxiu_document_uuid, arxiu_expedient_tancat, finalitat, consentiment, expedient_id, dades_especifiques, createdby_codi, createddate, lastmodifiedby_codi, lastmodifieddate, version " +
-			"from pbl_consulta where createddate < TRUNC(SYSDATE) - :dies ",
+			"from pbl_consulta where createddate < current_date - :dies ",
 			nativeQuery = true)
 	public int arxivaConsultesOracle(@Param("dies") int dies);
 
 	@Modifying
 	@Query(value = 	"insert into pbl_consulta_hist(id, custodiat, departament, error, estat, peticion_id, titular_docnum, titular_doctip, titular_lling1, titular_lling2, titular_nom, procserv_id, recobriment, titular_nomcomplet, funcionari_nom, funcionari_docnum, solicitud_id, multiple, pare_id, custodia_url, justificant_error, justificant_estat, custodia_id, arxiu_expedient_uuid, arxiu_document_uuid, arxiu_expedient_tancat, finalitat, consentiment, expedient_id, dades_especifiques, createdby_codi, createddate, lastmodifiedby_codi, lastmodifieddate, version) " +
 			"select id, custodiat, departament, error, estat, peticion_id, titular_docnum, titular_doctip, titular_lling1, titular_lling2, titular_nom, procserv_id, recobriment, titular_nomcomplet, funcionari_nom, funcionari_docnum, solicitud_id, multiple, pare_id, custodia_url, justificant_error, justificant_estat, custodia_id, arxiu_expedient_uuid, arxiu_document_uuid, arxiu_expedient_tancat, finalitat, consentiment, expedient_id, dades_especifiques, createdby_codi, createddate, lastmodifiedby_codi, lastmodifieddate, version " +
-			"from pbl_consulta where createddate < date(now()) - INTERVAL ':dies days' ",
+			"from pbl_consulta where createddate < current_date - INTERVAL ':dies days' ",
 			nativeQuery = true)
 	public int arxivaConsultesPostgres(@Param("dies") int dies);
 
