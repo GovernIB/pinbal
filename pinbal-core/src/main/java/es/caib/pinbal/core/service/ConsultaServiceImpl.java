@@ -2032,6 +2032,7 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 		informeProcedimentServei.setEntitatCif(procedimentServei.getProcediment().getEntitat().getCif());
 		informeProcedimentServei.setOrganGestorCodi(procedimentServei.getProcediment().getOrganGestor() != null ? procedimentServei.getProcediment().getOrganGestor().getCodi() : null);
 		informeProcedimentServei.setOrganGestorNom(procedimentServei.getProcediment().getOrganGestor() != null ? procedimentServei.getProcediment().getOrganGestor().getNom() : null);
+		informeProcedimentServei.setOrganGestorActiu(procedimentServei.getProcediment().getOrganGestor() != null ? procedimentServei.getProcediment().getOrganGestor().isActiu() : true);
 		informeProcedimentServei.setProcedimentCodi(procedimentServei.getProcediment().getCodi());
 		informeProcedimentServei.setProcedimentNom(procedimentServei.getProcediment().getNom());
 		informeProcedimentServei.setServeiCodi(servicio != null ? servicio.getCodCertificado() : null);

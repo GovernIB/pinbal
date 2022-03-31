@@ -71,7 +71,18 @@
 				{ orderable: false },
 				{ orderable: false },
 				{ orderable: false },
+				{ orderable: false },
 				{ orderable: false } ],
+			columnDefs: [{
+				targets: [0],
+				visible: false
+			}, {
+				targets: [1],
+				render: function (data, type, row, meta) {
+					var template = $('#template-activa').html();
+					return Mustache.render(template, row);
+				}
+			}],
 			language: {
 	            "url": '<c:url value="/js/datatable-language.json"/>',
 	        },
@@ -133,6 +144,7 @@
 	<table id="table-informe-representant" class="table table-striped table-bordered" style="width: 100%">
 		<thead>
 			<tr>
+				<th data-data="organGestorActiu"></th>
 				<th data-data="organGestorCodi"><spring:message code="informe.representant.list.taula.organ.codi" /></th>
 				<th data-data="organGestorNom"><spring:message code="informe.representant.list.taula.organ.nom" /></th>
 				<th data-data="procedimentCodi"><spring:message code="informe.representant.list.taula.procediment.codi" /></th>
@@ -151,5 +163,11 @@
 		<i class="far fa-file-excel"></i>&nbsp;<spring:message code="estadistiques.list.exportar.excel"/>
 	</a>
 
+<script id="template-activa" type="x-tmpl-mustache">
+	{{organGestorCodi}}
+	{{^organGestorActiu}}
+		<span class="fa fa-exclamation-triangle text-danger pull-right" style="margin-top: 3px;" title="<spring:message code="organgestor.list.extingit"/>"></span>
+	{{/organGestorActiu}}
+</script>
 </body>
 </html>
