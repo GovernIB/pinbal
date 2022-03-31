@@ -111,7 +111,7 @@ public class JustificantHelper implements MessageSourceAware {
 					FitxerDto arxiuJustificantGenerat = generar(
 							consulta,
 							scspHelper);
-					LOGGER.debug("Inici del procés de signatura i custodia del justificant de la consulta (id=" + consulta.getId() + ")");
+					LOGGER.debug("Inici del procés de signatura i custodia del justificant de la consulta (consultaPeticioId=" + consulta.getScspPeticionId() + ", consultaSolicitudId=" + consulta.getScspSolicitudId() + ")");
 					if (pluginHelper.isPluginArxiuActiu() && (consulta.getArxiuExpedientUuid() == null || consulta.getArxiuDocumentUuid() == null)) {
 						// Signa el justificant amb firma de servidor
 						FitxerDto justificantFitxer = new FitxerDto();
@@ -144,6 +144,7 @@ public class JustificantHelper implements MessageSourceAware {
 										"Creat nou expedient a l'arxiu relacionat amb la consulta (" +
 										"id=" + consulta.getId() + ", " +
 										"scspPeticionId=" + consulta.getScspPeticionId() + ", " +
+										"scspSolicitudId=" + consulta.getScspSolicitudId() + ", " +
 										"arxiuExpedientUuid=" + arxiuExpedientUuid + ")");
 							}
 						}
@@ -173,9 +174,9 @@ public class JustificantHelper implements MessageSourceAware {
 						custodiaId = custodiaObtenirId(consulta);
 						if (custodiaUrl == null || custodiaUrl.isEmpty()) {
 							// Obté la URL de comprovació de signatura
-							LOGGER.debug("Sol·licitud de URL per a la custòdia del justificant de la consulta (id=" + consulta.getId() + ")");
+							LOGGER.debug("Sol·licitud de URL per a la custòdia del justificant de la consulta (id=" + consulta.getId() + ", consultaPeticioId=" + consulta.getScspPeticionId() + ", consultaSolicitudId=" + consulta.getScspSolicitudId() + ")");
 							custodiaUrl = pluginHelper.custodiaObtenirUrlVerificacioDocument(custodiaId);
-							LOGGER.debug("Obtinguda URL per a la custòdia del justificant de la consulta (id=" + consulta.getId() + ", custodiaUrl=" + custodiaUrl + ")");
+							LOGGER.debug("Obtinguda URL per a la custòdia del justificant de la consulta (id=" + consulta.getId() + ", consultaPeticioId=" + consulta.getScspPeticionId() + ", consultaSolicitudId=" + consulta.getScspSolicitudId() + ", custodiaUrl=" + custodiaUrl + ")");
 						}
 						byte[] justificantFirmat;
 						if (pluginHelper.isPluginFirmaServidorActiu()) {
@@ -191,7 +192,7 @@ public class JustificantHelper implements MessageSourceAware {
 									"ca");
 						} else {
 							// Signa el justificant amb IBKey
-							LOGGER.debug("Signatura amb IBKey del justificant de la consulta (id=" + consulta.getId() + ")");
+							LOGGER.debug("Signatura amb IBKey del justificant de la consulta (id=" + consulta.getId() + ", consultaPeticioId=" + consulta.getScspPeticionId() + ", consultaSolicitudId=" + consulta.getScspSolicitudId() + ")");
 							ByteArrayOutputStream signedStream = new ByteArrayOutputStream();
 							pluginHelper.signaturaIbkeySignarEstamparPdf(
 									new ByteArrayInputStream(arxiuJustificantGenerat.getContingut()),
@@ -200,7 +201,7 @@ public class JustificantHelper implements MessageSourceAware {
 							justificantFirmat = signedStream.toByteArray();
 						}
 						// Envia el justificant a custòdia
-						LOGGER.debug("Enviament a custòdia del justificant de la consulta (id=" + consulta.getId() + ")");
+						LOGGER.debug("Enviament a custòdia del justificant de la consulta (id=" + consulta.getId() + ", consultaPeticioId=" + consulta.getScspPeticionId() + ", consultaSolicitudId=" + consulta.getScspSolicitudId() + ")");
 						pluginHelper.custodiaEnviarPdfSignat(
 								custodiaId,
 								arxiuNom,
@@ -249,7 +250,7 @@ public class JustificantHelper implements MessageSourceAware {
 		ServeiConfig serveiConfig = serveiConfigRepository.findByServei(serveiCodi);
 		FitxerDto fitxerDto = new FitxerDto();
 		if (serveiConfig.getJustificantTipus() != null && JustificantTipus.ADJUNT_PDF_BASE64.equals(serveiConfig.getJustificantTipus())) {
-			LOGGER.debug("El justificant de la consulta (id=" + consulta.getId() + ") està inclòs a dins la resposta");
+			LOGGER.debug("El justificant de la consulta (id=" + consulta.getId() + ", consultaPeticioId=" + consulta.getScspPeticionId() + ", consultaSolicitudId=" + consulta.getScspSolicitudId() + ") està inclòs a dins la resposta");
 			Map<String, Object> dadesEspecifiques = scspHelper.getDadesEspecifiquesResposta(
 					peticionId,
 					solicitudId);
@@ -301,11 +302,12 @@ public class JustificantHelper implements MessageSourceAware {
 		String extensioSortida = getExtensioSortida();
 		boolean convertir = !extensioSortida.equalsIgnoreCase(arxiuExtensio);
 		ByteArrayOutputStream baosGeneracio = new ByteArrayOutputStream();
-		LOGGER.debug("Generant el justificant per a la consulta (id=" + consulta.getId() + ") a partir de la plantilla");
+		LOGGER.debug("Generant el justificant per a la consulta (consultaPeticioId=" + consulta.getScspPeticionId() + ", consultaSolicitudId=" + consulta.getScspSolicitudId() + ") a partir de la plantilla");
 		
 		String accioDescripcio = "Generant el justificant per a la consulta";
-		Map<String, String> accioParams = new HashMap<String, String>();
-		accioParams.put("consultaId", consulta.getId().toString());
+		Map<String, String> accioParams = new HashMap<>();
+		accioParams.put("consultaPeticioId", consulta.getScspPeticionId());
+		accioParams.put("consultaSolicitudId", consulta.getScspSolicitudId());
 		long t0 = System.currentTimeMillis();
 		try {
 		
@@ -353,7 +355,8 @@ public class JustificantHelper implements MessageSourceAware {
 		// Converteix el document si és necessari
 		if (convertir) {
 			LOGGER.debug("Convertint el justificant per a la consulta (" +
-					"id=" + consulta.getId() + "," +
+					"consultaPeticioId=" + consulta.getScspPeticionId() + ", " +
+					"consultaSolicitudId=" + consulta.getScspSolicitudId() + ", " +
 					"extensio=" + extensioSortida + ")");
 			ByteArrayOutputStream baosConversio = new ByteArrayOutputStream();
 			conversioTipusDocumentHelper.convertir(

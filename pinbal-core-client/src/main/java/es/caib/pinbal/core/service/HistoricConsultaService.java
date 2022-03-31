@@ -36,23 +36,23 @@ public interface HistoricConsultaService {
 	public JustificantDto obtenirJustificant(
             Long id) throws ConsultaNotFoundException, JustificantGeneracioException;
 
-//	/**
-//	 * Obté el justificant de la consulta.
-//	 *
-//	 * @param idpeticion
-//	 *            Identificador de la petició SCSP.
-//	 * @param idsolicitud
-//	 *            Identificador de la sol·licitud SCSP.
-//	 * @return l'arxiu amb el document generat.
-//	 * @throws ConsultaNotFoundException
-//	 *            Si la consulta no és accessible per aquest usuari.
-//	 * @throws JustificantGeneracioException
-//	 *            Si es produeixen errors al generar el justificant.
-//	 */
-//	@PreAuthorize("hasRole('ROLE_WS')")
-//	public JustificantDto obtenirJustificant(
-//            String idpeticion,
-//            String idsolicitud) throws ConsultaNotFoundException, JustificantGeneracioException;
+	/**
+	 * Obté el justificant de la consulta.
+	 *
+	 * @param idpeticion
+	 *            Identificador de la petició SCSP.
+	 * @param idsolicitud
+	 *            Identificador de la sol·licitud SCSP.
+	 * @return l'arxiu amb el document generat.
+	 * @throws ConsultaNotFoundException
+	 *            Si la consulta no és accessible per aquest usuari.
+	 * @throws JustificantGeneracioException
+	 *            Si es produeixen errors al generar el justificant.
+	 */
+	@PreAuthorize("hasRole('ROLE_WS')")
+	public JustificantDto obtenirJustificant(
+            String idpeticion,
+            String idsolicitud) throws ConsultaNotFoundException, JustificantGeneracioException;
 
 	/**
 	 * Obté tots els justificants de la consulta múltiple comprimits

@@ -19,6 +19,11 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
+import es.caib.pinbal.core.model.Consulta;
+import es.caib.pinbal.core.model.HistoricConsulta;
+import es.caib.pinbal.core.repository.ConsultaRepository;
+import es.caib.pinbal.core.repository.HistoricConsultaRepository;
+import es.caib.pinbal.core.service.HistoricConsultaService;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -74,7 +79,13 @@ public class RecobrimentHelper implements ApplicationContextAware, MessageSource
 	public static final String ERROR_CODE_SCSP_VALIDATION = "0226";
 
 	@Autowired
+	private ConsultaRepository consultaRepository;
+	@Autowired
+	private HistoricConsultaRepository historicConsultaRepository;
+	@Autowired
 	private ConsultaService consultaService;
+	@Autowired
+	private HistoricConsultaService historicConsultaService;
 
 	private ApplicationContext applicationContext;
 	private MessageSource messageSource;
@@ -219,9 +230,25 @@ public class RecobrimentHelper implements ApplicationContextAware, MessageSource
 			String idpeticion,
 			String idsolicitud) throws ScspException {
 		try {
-			JustificantDto justificant = consultaService.obtenirJustificant(
-					idpeticion,
-					idsolicitud);
+			Consulta consulta = consultaRepository.findByScspPeticionIdAndScspSolicitudId(idpeticion, idsolicitud);
+			HistoricConsulta historicConsulta = null;
+			if (consulta == null) {
+				historicConsulta = historicConsultaRepository.findByScspPeticionIdAndScspSolicitudId(idpeticion, idsolicitud);
+			}
+			if (consulta == null && historicConsulta == null) {
+				LOGGER.error("No s'ha trobat la consulta (idpeticion=" + idpeticion + ", idsolicitud=" + idsolicitud + ")");
+				throw new ConsultaNotFoundException();
+			}
+			JustificantDto justificant;
+			if (consulta != null) {
+				justificant = consultaService.obtenirJustificant(
+						idpeticion,
+						idsolicitud);
+			} else {
+				justificant = historicConsultaService.obtenirJustificant(
+						idpeticion,
+						idsolicitud);
+			}
 			if (!justificant.isError()) {
 				return justificant;
 			} else {

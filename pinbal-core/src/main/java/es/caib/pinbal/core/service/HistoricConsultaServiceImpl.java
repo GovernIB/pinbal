@@ -131,27 +131,27 @@ public class HistoricConsultaServiceImpl implements HistoricConsultaService, App
 		return obtenirJustificantComu(consulta, true);
 	}
 
-//	@Override
-//	public JustificantDto obtenirJustificant(String idpeticion, String idsolicitud)
-//			throws ConsultaNotFoundException, JustificantGeneracioException {
-//		log.debug("Generant justificant per a la consulta (" +
-//				"idpeticion=" + idpeticion + ", " +
-//				"idsolicitud=" + idsolicitud + ")");
-//		HistoricConsulta consulta = historicConsultaRepository.findByScspPeticionIdAndScspSolicitudId(
-//				idpeticion,
-//				idsolicitud);
-//		if (consulta == null) {
-//			log.error("No s'ha trobat la consulta (idpeticion=" + idpeticion + ", idsolicitud=" + idsolicitud + ")");
-//			throw new ConsultaNotFoundException();
-//		}
-//		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-//		if (!auth.getName().equals(consulta.getCreatedBy().getCodi())) {
-//			log.error("La consulta (idpeticion=" + idpeticion + ", idsolicitud=" + idsolicitud + ") no pertany a aquest usuari");
-//			throw new ConsultaNotFoundException();
-//		}
-//		return obtenirJustificantComu(consulta, true);
-//	}
-//
+	@Override
+	public JustificantDto obtenirJustificant(String idpeticion, String idsolicitud)
+			throws ConsultaNotFoundException, JustificantGeneracioException {
+		log.debug("Generant justificant per a la consulta (" +
+				"idpeticion=" + idpeticion + ", " +
+				"idsolicitud=" + idsolicitud + ")");
+		HistoricConsulta consulta = historicConsultaRepository.findByScspPeticionIdAndScspSolicitudId(
+				idpeticion,
+				idsolicitud);
+		if (consulta == null) {
+			log.error("No s'ha trobat la consulta (idpeticion=" + idpeticion + ", idsolicitud=" + idsolicitud + ")");
+			throw new ConsultaNotFoundException();
+		}
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		if (!auth.getName().equals(consulta.getCreatedBy().getCodi())) {
+			log.error("La consulta (idpeticion=" + idpeticion + ", idsolicitud=" + idsolicitud + ") no pertany a aquest usuari");
+			throw new ConsultaNotFoundException();
+		}
+		return obtenirJustificantComu(consulta, true);
+	}
+
 //	@Override
 //	public JustificantDto reintentarGeneracioJustificant(
 //			Long id,

@@ -41,13 +41,13 @@ public class HistoricConsultaServiceBean implements HistoricConsultaService {
 		return delegate.obtenirJustificant(id);
 	}
 
-//	@Override
-//	@RolesAllowed("PBL_WS")
-//	public JustificantDto obtenirJustificant(
-//			String idpeticion,
-//			String idsolicitud) throws ConsultaNotFoundException, JustificantGeneracioException {
-//		return delegate.obtenirJustificant(idpeticion, idsolicitud);
-//	}
+	@Override
+	@RolesAllowed("PBL_WS")
+	public JustificantDto obtenirJustificant(
+			String idpeticion,
+			String idsolicitud) throws ConsultaNotFoundException, JustificantGeneracioException {
+		return delegate.obtenirJustificant(idpeticion, idsolicitud);
+	}
 
 	@Override
 	@RolesAllowed("tothom")
