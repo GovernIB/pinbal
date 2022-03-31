@@ -136,7 +136,7 @@ $(document).ready(function() {
 			}, 
 	   ],
 	   initComplete: function( settings, json ) {
-			$('.btn-open-modal-edit').click(function() {
+			$('body').on("click", '.btn-open-modal-edit', function() {
 				var nrow = $(this).data('nrow');
 				var row = json.data[nrow];
 				var usuari = row.usuari;
