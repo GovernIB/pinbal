@@ -195,7 +195,7 @@
 					var template = $('#template-estat').html();
 					row['icon-status'] = '';
 					if (row.estat=='Error') {
-						row['icon-status'] = '<i class="fas fa-exclamation-triangle" title="' + row.error + '"></i>';
+						row['icon-status'] = '<i class="fas fa-exclamation-triangle" title="' + String(row.error).replaceAll("\"", '\'') + '"></i>';
 					} else if(row.estat=='Pendent') {
 						row['icon-status'] = '<i class="fas fa-bookmark"></i>';
 					} else if(row.estat=='Processant') {
