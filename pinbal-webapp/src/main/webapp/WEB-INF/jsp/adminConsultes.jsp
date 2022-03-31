@@ -103,7 +103,15 @@
 					<pbl:inputText name="funcionari" inline="true" placeholderKey="admin.consulta.list.filtre.funcionari"/>
 				</div>		
 				<div class="col-md-3">
-					<pbl:inputText name="usuari" inline="true" placeholderKey="admin.consulta.list.filtre.usuari"/>
+					<c:url value="/usuariajax/usuari" var="urlConsultaUsuaris"/>
+					<pbl:inputSuggest
+							name="usuari"
+							urlConsultaInicial="${urlConsultaUsuaris}"
+							urlConsultaLlistat="${urlConsultaUsuaris}"
+							placeholderKey="admin.consulta.list.filtre.usuari"
+							suggestValue="codi"
+							suggestText="nom"
+							inline="true"/>
 				</div>
 			</div>
 			<div class="row">
@@ -151,6 +159,7 @@
 					this.selectedIndex = 0;
 				}
 			});
+			$('#usuari').val('');
 			var accioInput = $("<input>")
 				.attr("type", "hidden")
 				.attr("name", "accio").val("netejar");

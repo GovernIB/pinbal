@@ -8,6 +8,7 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import es.caib.pinbal.core.dto.ServeiDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.acls.model.MutableAclService;
@@ -160,6 +161,14 @@ public class UsuariServiceImpl implements UsuariService {
 		usuari.updateIdioma(
 				dto.getIdioma());
 		return toUsuariDtoAmbRols(usuari);
+	}
+
+	@Override
+	public List<UsuariDto> findLikeCodiONom(String text) {
+		return dtoMappingHelper.getMapperFacade().mapAsList(
+				usuariRepository.findByCodiOrNom(text),
+				UsuariDto.class
+		);
 	}
 
 	@Transactional(rollbackFor = EntitatNotFoundException.class)
