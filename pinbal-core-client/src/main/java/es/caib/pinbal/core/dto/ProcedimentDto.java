@@ -56,6 +56,8 @@ public class ProcedimentDto extends AbstractIdentificable<Long> implements Seria
 		return this.organGestor.getCodi() + " - " + this.organGestor.getNom();
 	}
 	public boolean isOrganGestorActiu() {
+		if (this.organGestor == null)
+			return true;
 		return this.organGestor.isActiu();
 	}
 	
