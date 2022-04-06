@@ -285,7 +285,7 @@ $('#dadesPeticio').on('shown', function () {
 </script>
 		</div>
 	</c:if>
-	<c:if test="${consulta.justificantEstatOk}">
+	<c:if test="${consulta.justificantEstatOk or (consulta.estatTramitada && consulta.justificantEstatPendent)}">
 		<div class="well well-sm">
 			<h3>
 				<spring:message code="consulta.info.descarregar.justificant"/>

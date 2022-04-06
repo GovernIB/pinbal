@@ -210,12 +210,12 @@ $(document).ready(function() {
 				render: $.fn.dataTable.render.moment('x', 'DD/MM/YYYY HH:mm:ss', 'es' )
 			},	
 			{
-				targets: [4, 5, 6],
+				targets: [4, 5],
 				width: "10%",
 				orderable: false,
 			},
 			{
-				targets: [7],
+				targets: [6],
 				orderable: false,
 				width: "5%",
 				render: function (data, type, row, meta) {

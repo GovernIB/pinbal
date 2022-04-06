@@ -924,8 +924,10 @@ public class HistoricConsultaServiceImpl implements HistoricConsultaService, App
 	@Transactional
 	@Override
 	public void arxivarConsultesAntigues() {
-		String dialect = PropertiesHelper.getProperties().getProperty("es.caib.pinbal.hibernate.dialect");
+		log.info("[ARXIU CONSULTES] Inici");
+		String dialect = PropertiesHelper.getProperties().getProperty("es.caib.pinbal.hibernate.dialect", "Oracle");
 		int dies = PropertiesHelper.getProperties().getAsInt("es.caib.pinbal.tasca.auto.arxivar.antiguetat.dies", 180);
+		log.info("[ARXIU CONSULTES] Arxivar en {} les consultes amb una antiguitat superior a {} dies", dialect, dies);
 		int consultesArxivades = 0;
 		int consultesEliminades = 0;
 
@@ -945,8 +947,7 @@ public class HistoricConsultaServiceImpl implements HistoricConsultaService, App
 		if (consultesArxivades != consultesEliminades) {
 			throw new RuntimeException("Error inesperat al arxivar les consultes antigues");
 		}
-
-		log.info("[ARXIU CONSULTES]");
+		log.info("[ARXIU CONSULTES] Fi");
 	}
 
 
