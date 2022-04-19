@@ -210,12 +210,12 @@ $(document).ready(function() {
 				render: $.fn.dataTable.render.moment('x', 'DD/MM/YYYY HH:mm:ss', 'es' )
 			},	
 			{
-				targets: [4, 5, 6],
+				targets: [4, 5],
 				width: "10%",
 				orderable: false,
 			},
 			{
-				targets: [7],
+				targets: [6],
 				orderable: false,
 				width: "5%",
 				render: function (data, type, row, meta) {
@@ -294,7 +294,7 @@ $(document).ready(function() {
 	</a>
 	<ul class="dropdown-menu">
 		<li>
-			<a href="#" data-toggle="modal" data-target="#modal-justificant-error-{{ id }}">
+			<a href="#" data-toggle="modal_local" data-target="#modal-justificant-error-{{ id }}" onClick="$('#modal-justificant-error-{{ id }}').modal('toggle');">
 				<i class="fa fa-exclamation-triangle"></i>&nbsp;<spring:message code="consulta.list.taula.justif.error.veure"/>
 			</a>
 		</li>

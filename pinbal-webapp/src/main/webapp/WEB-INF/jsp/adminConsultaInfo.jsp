@@ -243,9 +243,8 @@ function initModalXml(element) {
 			</div>
 		</div>
 	</c:if>
-	<div style="height:360px"></div>
 	<div id="modal-botons" class="well">
-		<a href="<c:url value="/admin/consulta"/>" class="btn btn-default" data-modal-cancel="true"><span class="fa fa-arrow-left"></span>&nbsp;<spring:message code="comu.boto.tornar"/></a>
+		<a href="<c:url value="/admin/consulta"/>" class="btn btn-default" data-modal-cancel="true"><spring:message code="comu.boto.tancar"/></a>
 	</div>
 	<div id="modal-missatge-xml" class="modal fade">
 	<div class="modal-dialog modal-lg">

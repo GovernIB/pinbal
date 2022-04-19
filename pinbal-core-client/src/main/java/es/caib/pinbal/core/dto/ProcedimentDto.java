@@ -53,7 +53,12 @@ public class ProcedimentDto extends AbstractIdentificable<Long> implements Seria
 		if (this.organGestor == null) {
 			return "";
 		}
-		return this.organGestor.getNom() + " (" + this.organGestor.getCodi() + ")";
+		return this.organGestor.getCodi() + " - " + this.organGestor.getNom();
+	}
+	public boolean isOrganGestorActiu() {
+		if (this.organGestor == null)
+			return true;
+		return this.organGestor.isActiu();
 	}
 	
 	private static final long serialVersionUID = 3986823331500016935L;

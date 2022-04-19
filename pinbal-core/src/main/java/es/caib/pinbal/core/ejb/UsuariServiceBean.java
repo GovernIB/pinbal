@@ -9,6 +9,7 @@ import javax.annotation.security.RolesAllowed;
 import javax.ejb.Stateless;
 import javax.interceptor.Interceptors;
 
+import es.caib.pinbal.core.dto.ServeiDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -138,5 +139,11 @@ public class UsuariServiceBean implements UsuariService {
 	public UsuariDto updateUsuariActual(UsuariDto dto) {
 		return delegate.updateUsuariActual(dto);
 	}
+
+    @Override
+	@RolesAllowed({"PBL_ADMIN", "PBL_REPRES", "PBL_AUDIT", "PBL_SUPERAUD", "PBL_WS", "tothom"})
+    public List<UsuariDto> findLikeCodiONom(String text) {
+        return delegate.findLikeCodiONom(text);
+    }
 
 }

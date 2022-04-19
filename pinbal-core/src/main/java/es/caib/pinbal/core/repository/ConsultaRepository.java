@@ -179,7 +179,7 @@ public interface ConsultaRepository extends JpaRepository<Consulta, Long> {
 			"and (:esNullTitularNom = true or c.titularNom = :titularNom) " +
 			"and (:esNullTitularDocument = true or c.titularDocumentNum = :titularDocument) " +
 			"and (:esNullFuncionari = true or (lower(c.funcionariDocumentNum) like lower('%'||:funcionari||'%') or lower(c.funcionariNom) like lower('%'||:funcionari||'%'))) " +
-			"and (:esNullUsuari = true or lower(c.createdBy.nom) like lower('%'||:usuari||'%')) " +
+			"and (:esNullUsuari = true or c.createdBy.codi = :usuari) " +
 			"and (c.multiple = :multiple) " +
 			"and (:nomesSensePare = false or c.pare is null)")
 	public Page<Consulta> findByCreatedByAndFiltrePaginat(
@@ -225,7 +225,7 @@ public interface ConsultaRepository extends JpaRepository<Consulta, Long> {
 			"and (:esNullTitularNom = true or c.titularNom = :titularNom) " +
 			"and (:esNullTitularDocument = true or c.titularDocumentNum = :titularDocument) " +
 			"and (:esNullFuncionari = true or (lower(c.funcionariDocumentNum) like lower('%'||:funcionari||'%') or lower(c.funcionariNom) like lower('%'||:funcionari||'%'))) " +
-			"and (:esNullUsuari = true or lower(c.createdBy.nom) like lower('%'||:usuari||'%')) " +
+			"and (:esNullUsuari = true or c.createdBy.codi = :usuari) " +
 			"and c.pare is null")
 	public Page<Consulta> findByFiltrePaginatAdmin(
 			@Param("esNullEntitatId") boolean esNullEntitatId,

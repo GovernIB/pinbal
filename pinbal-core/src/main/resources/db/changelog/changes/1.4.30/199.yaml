@@ -63,8 +63,6 @@ databaseChangeLog:
                   name: funcionari_nom
                   type: VARCHAR2(128 CHAR)
               - column:
-                  constraints:
-                    nullable: false
                   name: funcionari_docnum
                   type: VARCHAR2(16 CHAR)
               - column:

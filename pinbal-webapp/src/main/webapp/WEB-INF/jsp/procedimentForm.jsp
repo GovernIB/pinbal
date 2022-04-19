@@ -18,6 +18,17 @@
 	<script src="<c:url value="/webjars/select2/4.0.6-rc.1/dist/js/select2.min.js"/>"></script>
 	<script src="<c:url value="/webjars/select2/4.0.6-rc.1/dist/js/i18n/${requestLocale}.js"/>"></script>
 	<script src="<c:url value="/js/webutil.common.js"/>"></script>
+	<script>
+		var organsGestors = [];
+		organsGestors.push({id:"", text:"<spring:message code="organgestor.form.camp.organ.opcio.cap"/>", actiu:true});
+		<c:forEach items="${organsGestors}" var="organGestor">
+		organsGestors.push({id:"${organGestor.id}", text:"${organGestor.codiINom}", actiu:${organGestor.actiu}});
+		</c:forEach>
+
+		$(document).ready(function() {
+			formatOrgansSelect($('#organGestorId'), organsGestors, "<spring:message code="organgestor.list.extingit"/>")
+		});
+	</script>
 </head>
 <body>
 	<c:url value="/procediment/save" var="formAction"/>
@@ -32,7 +43,7 @@
 				<pbl:inputSelect name="organGestorId" textKey="procediment.form.camp.organgestor" 
 								labelSize="1" inline="false" 
 								emptyOption="true" emptyOptionTextKey="organgestor.form.camp.organ.opcio.cap"
-								optionItems="${ organsGestors }" optionValueAttribute="id" optionTextAttribute="nom"
+								optionItems="${ organsGestors }" optionValueAttribute="id" optionTextAttribute="codiINom"
 								required="true" optionMinimumResultsForSearch="5"/>
 				<pbl:inputText name="codiSia" labelSize="1" inline="false" textKey="procediment.form.camp.codisia"/>
 				<%--c:set var="campPath" value="valorCampAutomatizado"/>

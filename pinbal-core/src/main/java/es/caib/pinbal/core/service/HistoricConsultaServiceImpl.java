@@ -131,27 +131,27 @@ public class HistoricConsultaServiceImpl implements HistoricConsultaService, App
 		return obtenirJustificantComu(consulta, true);
 	}
 
-//	@Override
-//	public JustificantDto obtenirJustificant(String idpeticion, String idsolicitud)
-//			throws ConsultaNotFoundException, JustificantGeneracioException {
-//		log.debug("Generant justificant per a la consulta (" +
-//				"idpeticion=" + idpeticion + ", " +
-//				"idsolicitud=" + idsolicitud + ")");
-//		HistoricConsulta consulta = historicConsultaRepository.findByScspPeticionIdAndScspSolicitudId(
-//				idpeticion,
-//				idsolicitud);
-//		if (consulta == null) {
-//			log.error("No s'ha trobat la consulta (idpeticion=" + idpeticion + ", idsolicitud=" + idsolicitud + ")");
-//			throw new ConsultaNotFoundException();
-//		}
-//		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-//		if (!auth.getName().equals(consulta.getCreatedBy().getCodi())) {
-//			log.error("La consulta (idpeticion=" + idpeticion + ", idsolicitud=" + idsolicitud + ") no pertany a aquest usuari");
-//			throw new ConsultaNotFoundException();
-//		}
-//		return obtenirJustificantComu(consulta, true);
-//	}
-//
+	@Override
+	public JustificantDto obtenirJustificant(String idpeticion, String idsolicitud)
+			throws ConsultaNotFoundException, JustificantGeneracioException {
+		log.debug("Generant justificant per a la consulta (" +
+				"idpeticion=" + idpeticion + ", " +
+				"idsolicitud=" + idsolicitud + ")");
+		HistoricConsulta consulta = historicConsultaRepository.findByScspPeticionIdAndScspSolicitudId(
+				idpeticion,
+				idsolicitud);
+		if (consulta == null) {
+			log.error("No s'ha trobat la consulta (idpeticion=" + idpeticion + ", idsolicitud=" + idsolicitud + ")");
+			throw new ConsultaNotFoundException();
+		}
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		if (!auth.getName().equals(consulta.getCreatedBy().getCodi())) {
+			log.error("La consulta (idpeticion=" + idpeticion + ", idsolicitud=" + idsolicitud + ") no pertany a aquest usuari");
+			throw new ConsultaNotFoundException();
+		}
+		return obtenirJustificantComu(consulta, true);
+	}
+
 //	@Override
 //	public JustificantDto reintentarGeneracioJustificant(
 //			Long id,
@@ -924,8 +924,10 @@ public class HistoricConsultaServiceImpl implements HistoricConsultaService, App
 	@Transactional
 	@Override
 	public void arxivarConsultesAntigues() {
-		String dialect = PropertiesHelper.getProperties().getProperty("es.caib.pinbal.hibernate.dialect");
+		log.info("[ARXIU CONSULTES] Inici");
+		String dialect = PropertiesHelper.getProperties().getProperty("es.caib.pinbal.hibernate.dialect", "Oracle");
 		int dies = PropertiesHelper.getProperties().getAsInt("es.caib.pinbal.tasca.auto.arxivar.antiguetat.dies", 180);
+		log.info("[ARXIU CONSULTES] Arxivar en {} les consultes amb una antiguitat superior a {} dies", dialect, dies);
 		int consultesArxivades = 0;
 		int consultesEliminades = 0;
 
@@ -945,8 +947,7 @@ public class HistoricConsultaServiceImpl implements HistoricConsultaService, App
 		if (consultesArxivades != consultesEliminades) {
 			throw new RuntimeException("Error inesperat al arxivar les consultes antigues");
 		}
-
-		log.info("[ARXIU CONSULTES]");
+		log.info("[ARXIU CONSULTES] Fi");
 	}
 
 

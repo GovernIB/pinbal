@@ -23,6 +23,12 @@
 	<script src="<c:url value="/js/webutil.datatable.js"/>"></script>
 	<script src="<c:url value="/js/webutil.common.js"/>"></script>
 <script>
+	var organsGestors = [];
+	organsGestors.push({id:"", text:"", actiu:true});
+	<c:forEach items="${organsGestors}" var="organGestor">
+	organsGestors.push({id:"${organGestor.id}", text:"${organGestor.codiINom}", actiu:${organGestor.actiu}});
+	</c:forEach>
+
 $(document).ready(function() {
 	$('#netejar-filtre').click(function() {
 		$(':input', $('#form-filtre')).each (function() {
@@ -56,8 +62,15 @@ $(document).ready(function() {
 				targets: [1], // codi SIA
 				width: "10%"
 			}, {
-				targets: [2, 3, 4], // nom, organ, departament
+				targets: [2, 4], // nom, departament
 				width: "20%"
+			}, {
+				targets: [3], // organ
+				width: "23%",
+				render: function (data, type, row, meta) {
+					var template = $('#template-obsoleta').html();
+					return Mustache.render(template, row);
+				}
 			}, {
 				targets: [5], // actiu
 				width: "10%",
@@ -82,12 +95,17 @@ $(document).ready(function() {
 						row['propertyEsborrar'] = ${propertyEsborrar};
 						return Mustache.render(template, row);
 				}
+			}, {
+				targets: [8], // organ Actiu
+				visible: false
 			},
 		],
 		initComplete: function( settings, json ) {}
 	});
+	formatOrgansSelect($('#organGestorId'), organsGestors, "<spring:message code="organgestor.list.extingit"/>")
 });
 </script>
+
 </head>
 <body>
 	<c:url value="/procediment" var="formAction"/>
@@ -111,7 +129,7 @@ $(document).ready(function() {
 					emptyOptionTextKey="procediment.list.filtre.camp.opcio.cap"
 					optionItems="${organsGestors}"
 					optionValueAttribute="id"
-					optionTextAttribute="nomICodi"
+					optionTextAttribute="codiINom"
 					required="true"
 					optionMinimumResultsForSearch="5"/>
 			</div>
@@ -154,9 +172,16 @@ $(document).ready(function() {
 				<th data-data="actiu"><spring:message code="procediment.list.taula.columna.actiu" /></th>
 				<th data-data="serveisActius"></th>
 				<th data-data="id"></th>
+				<th data-data="organGestorActiu"></th>
 			</tr>
 		</thead>
 	</table>
+<script id="template-obsoleta" type="x-tmpl-mustache">
+	{{organGestorStr}}
+	{{^organGestorActiu}}
+		<span class="fa fa-exclamation-triangle text-danger pull-right" style="margin-top: 3px;" title="<spring:message code="organgestor.list.extingit"/>"></span>
+	{{/organGestorActiu}}
+</script>
 <script id="template-activa" type="x-tmpl-mustache">
 {{#actiu}}
 	<i class="fa fa-check"></i>
