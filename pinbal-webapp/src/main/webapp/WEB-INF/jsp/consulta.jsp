@@ -294,7 +294,7 @@ $(document).ready(function() {
 	</a>
 	<ul class="dropdown-menu">
 		<li>
-			<a href="#" data-toggle="modal" data-target="#modal-justificant-error-{{ id }}">
+			<a href="#" data-toggle="modal_local" data-target="#modal-justificant-error-{{ id }}" onClick="$('#modal-justificant-error-{{ id }}').modal('toggle');">
 				<i class="fa fa-exclamation-triangle"></i>&nbsp;<spring:message code="consulta.list.taula.justif.error.veure"/>
 			</a>
 		</li>
