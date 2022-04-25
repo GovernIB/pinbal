@@ -30,6 +30,7 @@
 <%@ attribute name="icon" required="false" rtexprvalue="true"%>
 <%@ attribute name="iconDelete" required="false" rtexprvalue="true"%>
 <%@ attribute name="srLabel" required="false" rtexprvalue="true"%>
+<c:set var="idioma"><%=org.springframework.web.servlet.support.RequestContextUtils.getLocale(request).getLanguage()%></c:set>
 <c:set var="campPath" value="${name}"/>
 <c:set var="campId" value="${campPath}"/><c:if test="${not empty id}"><c:set var="campId" value="${id}"/></c:if>
 <c:set var="campErrors"><form:errors path="${campPath}"/></c:set>
@@ -47,10 +48,15 @@
 		<label class="control-label col-xs-${campLabelSize}" for="${campPath}">${campLabelText}</label>
 		<div class="col-xs-${campInputSize}">
 				<form:select path="${campPath}" cssClass="form-control"
-					id="${campId}" disabled="${disabled}" data-netejar="${netejar}"
-					data-toggle="select2" data-placeholder="${campPlaceholder}"
+					id="${campId}"
+					disabled="${disabled}"
+					data-netejar="${netejar}"
+					data-toggle="select2"
+					data-placeholder="${campPlaceholder}"
 					data-minimumresults="${minimumResultsForSearch}"
-					data-enum="${optionEnum}" data-enum-value="${campValue}"
+					data-idioma="${idioma}"
+					data-enum="${optionEnum}"
+					data-enum-value="${campValue}"
 					data-clearoption="${emptyOption == 'true'}">
 					<c:if test="${emptyOption == 'true'}">
 						<c:choose>
@@ -153,12 +159,17 @@
 		</div>
 	</c:when>
 	<c:otherwise>
-   		<label <c:if test="${empty srLabel}">class="sr-only" </c:if>for="${campPath}">${campLabelText}</label>
+		<label <c:if test="${empty srLabel}">class="sr-only" </c:if>for="${campPath}">${campLabelText}</label>
 		<form:select path="${campPath}" cssClass="form-control"
-			id="${campId}" disabled="${disabled}" data-netejar="${netejar}"
-			data-toggle="select2" data-placeholder="${campPlaceholder}"
+			id="${campId}"
+			disabled="${disabled}"
+			data-netejar="${netejar}"
+			data-toggle="select2"
+			data-placeholder="${campPlaceholder}"
+			data-idioma="${idioma}"
 			data-minimumresults="${minimumResultsForSearch}"
-			data-enum="${optionEnum}" data-enum-value="${campValue}">
+			data-enum="${optionEnum}"
+			data-enum-value="${campValue}">
 			<c:if test="${emptyOption == 'true'}">
 				<c:choose>
 					<c:when test="${not empty emptyOptionTextKey}">

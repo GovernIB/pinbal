@@ -11,7 +11,7 @@
 %>
 
 <html>
-<head>	
+<head>
 
 	<title><spring:message code="consulta.list.titol"/></title>	
 
@@ -76,7 +76,7 @@
 			<pbl:inputText name="scspPeticionId"  inline="true" placeholderKey="consulta.list.filtre.peticion.id"/>
 		</div>
 		<div class="col-md-3">
-			<pbl:inputSelect name="procediment"  inline="true" placeholderKey="consulta.list.filtre.procediment" 
+			<pbl:inputSelect name="procediment" inline="true" placeholderKey="consulta.list.filtre.procediment" 
 							optionItems="${procediments}"  
 							optionValueAttribute="id" 
 							optionTextAttribute="nom" 
@@ -84,7 +84,7 @@
 							optionMinimumResultsForSearch="0"/> 
 		</div>
 		<div class="col-md-3">
-			<pbl:inputSelect name="servei"  inline="true" placeholderKey="consulta.list.filtre.servei" 
+			<pbl:inputSelect name="servei" inline="true" placeholderKey="consulta.list.filtre.servei" 
 							 optionItems="${serveis}" 
 							 optionValueAttribute="codi"
 							 optionTextAttribute="descripcio"
@@ -92,7 +92,7 @@
 							 optionMinimumResultsForSearch="0"/>
 		</div>	
 		<div class="col-md-3">
-			<pbl:inputSelect name="estat"  inline="true" placeholderKey="consulta.list.filtre.estat" 
+			<pbl:inputSelect name="estat" inline="true" placeholderKey="consulta.list.filtre.estat" 
 							 optionItems="${consultaEstats}" 
 							 emptyOption="true"/>
 		</div>	
@@ -101,10 +101,10 @@
 		<div class="col-md-3" >
 			<div class="row">
 				<div class="col-md-6" >
-					<pbl:inputDate name="dataInici"  inline="true" placeholderKey="consulta.list.filtre.data.inici"/>
+					<pbl:inputDate name="dataInici" inline="true" placeholderKey="consulta.list.filtre.data.inici"/>
 				</div>
 				<div class="col-md-6" >
-					<pbl:inputDate name="dataFi"  inline="true" placeholderKey="consulta.list.filtre.data.fi"/>
+					<pbl:inputDate name="dataFi" inline="true" placeholderKey="consulta.list.filtre.data.fi"/>
 				</div>
 			</div>
 		</div>

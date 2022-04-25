@@ -172,7 +172,7 @@ $(document).ajaxError(function(event, jqxhr, ajaxSettings, thrownError) {
 						$dataTable.webutilDatatable('refresh');
 					}
 				}
-		    });
+			});
 			return false;
 		});
 	}
@@ -399,6 +399,7 @@ $(document).ajaxError(function(event, jqxhr, ajaxSettings, thrownError) {
 		$(this).select2({
 		    placeholder: $(this).data('placeholder'),
 		    theme: "bootstrap",
+		    language: $(this).data('idioma'),
 		    allowClear: $(this).data('placeholder') ? true : false,
 		    minimumResultsForSearch: $(this).data('minimumresults')
 		});
@@ -520,6 +521,7 @@ $(document).ajaxError(function(event, jqxhr, ajaxSettings, thrownError) {
 		}
 		$(this).select2({
 		    placeholder: $(this).data('placeholder'),
+		    language: $(this).data('idioma'),
 		    theme: "bootstrap",
 		    allowClear: $(this).data('placeholder') ? true : false,
 		    minimumInputLength: $(this).data('minimumInputLength'),
