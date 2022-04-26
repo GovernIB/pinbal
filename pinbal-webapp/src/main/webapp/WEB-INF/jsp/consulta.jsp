@@ -122,7 +122,6 @@
 		</div>
 	</div>
 </form:form>
-
 		<table id="table-consultes" class="table table-striped table-bordered" style="width: 100%">
 			<thead>
 				<tr>
@@ -141,7 +140,6 @@
 				</tr>
 			</thead>
 		</table>
-
 <script type="text/javascript">
 $(document).ready(function() {
 	$('#netejar-filtre').click(function() {
@@ -268,11 +266,9 @@ $(document).ready(function() {
 	historicColor();
 });
 </script>
-
 <script id="template-estat" type="x-tmpl-mustache">
 {{{ icon-status }}}&nbsp;{{ estat }}
 </script>
-
 <script id="template-justificant" type="x-tmpl-mustache">
 {{#estat-pendent}}
 <a class="btn btn-default btn-small" href="consulta/{{ id }}/justificant">
@@ -323,11 +319,9 @@ $(document).ready(function() {
 </div>
 {{/estat-error}}
 </script>
-
 <script id="template-id-peticion" type="x-tmpl-mustache">
 {{scspPeticionId}}&nbsp;{{#recobriment}}<span class="badge">R</span>{{/recobriment}}
 </script>
-
 <script id="template-details" type="x-tmpl-mustache">
 <a href="consulta/{{ id }}" class="btn btn-default" data-toggle="modal">
 	<i class="fas fa-search-plus"></i>&nbsp;<spring:message code="admin.consulta.list.taula.detalls"/>
@@ -339,6 +333,5 @@ $(document).ready(function() {
 		createHiddenInputFieldsForLimitAndSubmit(id);
 	}
 </script>
-
 </body>
 </html>

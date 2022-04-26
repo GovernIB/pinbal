@@ -3,42 +3,21 @@
  */
 package es.caib.pinbal.core.service;
 
-import com.lowagie.text.Document;
-import com.lowagie.text.pdf.PdfCopy;
-import com.lowagie.text.pdf.PdfReader;
-import es.caib.pinbal.client.dadesobertes.DadesObertesRespostaConsulta;
-import es.caib.pinbal.core.dto.*;
-import es.caib.pinbal.core.dto.ConsultaDto.Consentiment;
-import es.caib.pinbal.core.dto.ConsultaDto.DocumentTipus;
-import es.caib.pinbal.core.dto.EstadistiquesFiltreDto.EstadistiquesAgrupacioDto;
-import es.caib.pinbal.core.helper.*;
-import es.caib.pinbal.core.model.Consulta;
-import es.caib.pinbal.core.model.Consulta.EstatTipus;
-import es.caib.pinbal.core.model.Consulta.JustificantEstat;
-import es.caib.pinbal.core.model.Entitat;
-import es.caib.pinbal.core.model.EntitatUsuari;
-import es.caib.pinbal.core.model.HistoricConsulta;
-import es.caib.pinbal.core.model.Procediment;
-import es.caib.pinbal.core.model.ProcedimentServei;
-import es.caib.pinbal.core.repository.ConsultaRepository;
-import es.caib.pinbal.core.repository.EntitatRepository;
-import es.caib.pinbal.core.repository.EntitatUsuariRepository;
-import es.caib.pinbal.core.repository.HistoricConsultaRepository;
-import es.caib.pinbal.core.repository.ProcedimentRepository;
-import es.caib.pinbal.core.repository.ProcedimentServeiRepository;
-import es.caib.pinbal.core.repository.UsuariRepository;
-import es.caib.pinbal.core.service.exception.*;
-import es.caib.pinbal.plugins.DadesUsuari;
-import es.caib.pinbal.plugins.SistemaExternException;
-import es.caib.pinbal.scsp.Resposta;
-import es.caib.pinbal.scsp.ResultatEnviamentPeticio;
-import es.caib.pinbal.scsp.ScspHelper;
-import es.caib.pinbal.scsp.Solicitud;
-import es.caib.plugins.arxiu.api.Expedient;
-import es.caib.plugins.arxiu.api.ExpedientEstat;
-import es.scsp.common.domain.core.EmisorCertificado;
-import es.scsp.common.domain.core.Servicio;
-import lombok.extern.slf4j.Slf4j;
+import java.io.ByteArrayOutputStream;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
+import java.util.Set;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
+
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -58,13 +37,57 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionCallback;
-import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
-import java.io.ByteArrayOutputStream;
-import java.util.*;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipOutputStream;
+import com.lowagie.text.Document;
+import com.lowagie.text.pdf.PdfCopy;
+import com.lowagie.text.pdf.PdfReader;
+
+import es.caib.pinbal.client.dadesobertes.DadesObertesRespostaConsulta;
+import es.caib.pinbal.core.dto.CarregaDto;
+import es.caib.pinbal.core.dto.ConsultaDto;
+import es.caib.pinbal.core.dto.ConsultaDto.Consentiment;
+import es.caib.pinbal.core.dto.ConsultaFiltreDto;
+import es.caib.pinbal.core.dto.EmisorDto;
+import es.caib.pinbal.core.dto.EntitatDto;
+import es.caib.pinbal.core.dto.EstadisticaDto;
+import es.caib.pinbal.core.dto.EstadistiquesFiltreDto;
+import es.caib.pinbal.core.dto.EstadistiquesFiltreDto.EstadistiquesAgrupacioDto;
+import es.caib.pinbal.core.dto.FitxerDto;
+import es.caib.pinbal.core.dto.InformeGeneralEstatDto;
+import es.caib.pinbal.core.dto.InformeProcedimentServeiDto;
+import es.caib.pinbal.core.dto.InformeRepresentantFiltreDto;
+import es.caib.pinbal.core.dto.JustificantDto;
+import es.caib.pinbal.core.dto.ProcedimentDto;
+import es.caib.pinbal.core.helper.DtoMappingHelper;
+import es.caib.pinbal.core.helper.JustificantHelper;
+import es.caib.pinbal.core.helper.PermisosHelper;
+import es.caib.pinbal.core.helper.PeticioScspEstadistiquesHelper;
+import es.caib.pinbal.core.helper.PropertiesHelper;
+import es.caib.pinbal.core.model.Consulta.EstatTipus;
+import es.caib.pinbal.core.model.Consulta.JustificantEstat;
+import es.caib.pinbal.core.model.Entitat;
+import es.caib.pinbal.core.model.EntitatUsuari;
+import es.caib.pinbal.core.model.HistoricConsulta;
+import es.caib.pinbal.core.model.Procediment;
+import es.caib.pinbal.core.model.ProcedimentServei;
+import es.caib.pinbal.core.repository.EntitatRepository;
+import es.caib.pinbal.core.repository.EntitatUsuariRepository;
+import es.caib.pinbal.core.repository.HistoricConsultaRepository;
+import es.caib.pinbal.core.repository.ProcedimentRepository;
+import es.caib.pinbal.core.repository.ProcedimentServeiRepository;
+import es.caib.pinbal.core.repository.UsuariRepository;
+import es.caib.pinbal.core.service.exception.ConsultaNotFoundException;
+import es.caib.pinbal.core.service.exception.EntitatNotFoundException;
+import es.caib.pinbal.core.service.exception.JustificantGeneracioException;
+import es.caib.pinbal.core.service.exception.ProcedimentNotFoundException;
+import es.caib.pinbal.core.service.exception.ProcedimentServeiNotFoundException;
+import es.caib.pinbal.core.service.exception.ScspException;
+import es.caib.pinbal.scsp.Resposta;
+import es.caib.pinbal.scsp.ScspHelper;
+import es.scsp.common.domain.core.EmisorCertificado;
+import es.scsp.common.domain.core.Servicio;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Implementació dels mètodes per a gestionar les consultes al SCSP.
@@ -116,17 +139,20 @@ public class HistoricConsultaServiceImpl implements HistoricConsultaService, App
 
 	@Override
 	public JustificantDto obtenirJustificant(
-			Long id) throws ConsultaNotFoundException, JustificantGeneracioException {
+			Long id,
+			boolean isAdmin) throws ConsultaNotFoundException, JustificantGeneracioException {
 		log.debug("Generant justificant per a la consulta (id=" + id + ")");
 		HistoricConsulta consulta = historicConsultaRepository.findOne(id);
 		if (consulta == null) {
 			log.error("No s'ha trobat la consulta (id=" + id + ")");
 			throw new ConsultaNotFoundException();
 		}
-		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-		if (!auth.getName().equals(consulta.getCreatedBy().getCodi())) {
-			log.error("La consulta (id=" + id + ") no pertany a aquest usuari");
-			throw new ConsultaNotFoundException();
+		if (!isAdmin) {
+			Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+			if (!auth.getName().equals(consulta.getCreatedBy().getCodi())) {
+				log.error("La consulta (id=" + id + ") no pertany a aquest usuari");
+				throw new ConsultaNotFoundException();
+			}
 		}
 		return obtenirJustificantComu(consulta, true);
 	}

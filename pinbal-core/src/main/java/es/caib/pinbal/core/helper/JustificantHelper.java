@@ -20,12 +20,7 @@ import java.util.Map;
 
 import javax.xml.parsers.ParserConfigurationException;
 
-import es.caib.pinbal.core.model.HistoricConsulta;
-import es.caib.pinbal.core.model.IConsulta;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.exception.ExceptionUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.MessageSourceAware;
@@ -36,8 +31,8 @@ import com.lowagie.text.pdf.codec.Base64;
 
 import es.caib.pinbal.core.dto.FitxerDto;
 import es.caib.pinbal.core.dto.IntegracioAccioTipusEnumDto;
-import es.caib.pinbal.core.model.Consulta;
 import es.caib.pinbal.core.model.Consulta.JustificantEstat;
+import es.caib.pinbal.core.model.IConsulta;
 import es.caib.pinbal.core.model.Procediment;
 import es.caib.pinbal.core.model.ServeiConfig;
 import es.caib.pinbal.core.model.ServeiConfig.JustificantTipus;
@@ -57,6 +52,7 @@ import freemarker.core.NonStringException;
 import freemarker.template.TemplateException;
 import freemarker.template.TemplateExceptionHandler;
 import freemarker.template.TemplateModelException;
+import lombok.extern.slf4j.Slf4j;
 import net.sf.jooreports.templates.DocumentTemplate;
 import net.sf.jooreports.templates.DocumentTemplateException;
 import net.sf.jooreports.templates.DocumentTemplateFactory;

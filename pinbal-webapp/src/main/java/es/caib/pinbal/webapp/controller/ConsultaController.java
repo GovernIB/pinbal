@@ -24,14 +24,9 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
-import es.caib.pinbal.core.service.HistoricConsultaService;
-import es.caib.pinbal.core.service.exception.*;
 import org.apache.commons.codec.binary.Base64;
-import org.joda.time.DateTime;
 import org.joda.time.Days;
-import org.joda.time.Duration;
 import org.joda.time.LocalDate;
-import org.joda.time.Months;
 import org.joda.time.Period;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
@@ -73,9 +68,20 @@ import es.caib.pinbal.core.dto.ServeiDto;
 import es.caib.pinbal.core.dto.UsuariDto;
 import es.caib.pinbal.core.service.ConsultaService;
 import es.caib.pinbal.core.service.EntitatService;
+import es.caib.pinbal.core.service.HistoricConsultaService;
 import es.caib.pinbal.core.service.ProcedimentService;
 import es.caib.pinbal.core.service.ServeiService;
 import es.caib.pinbal.core.service.UsuariService;
+import es.caib.pinbal.core.service.exception.AccesExternException;
+import es.caib.pinbal.core.service.exception.ConsultaNotFoundException;
+import es.caib.pinbal.core.service.exception.ConsultaScspException;
+import es.caib.pinbal.core.service.exception.EntitatNotFoundException;
+import es.caib.pinbal.core.service.exception.ProcedimentNotFoundException;
+import es.caib.pinbal.core.service.exception.ProcedimentServeiNotFoundException;
+import es.caib.pinbal.core.service.exception.ScspException;
+import es.caib.pinbal.core.service.exception.ServeiNotAllowedException;
+import es.caib.pinbal.core.service.exception.ServeiNotFoundException;
+import es.caib.pinbal.core.service.exception.ValidacioDadesPeticioException;
 import es.caib.pinbal.webapp.command.ConsultaCommand;
 import es.caib.pinbal.webapp.command.ConsultaCommand.ConsultaCommandAmbDocumentObligatori;
 import es.caib.pinbal.webapp.command.ConsultaCommand.ConsultaCommandAmbDocumentTipusCif;
@@ -1325,15 +1331,15 @@ public class ConsultaController extends BaseController {
 		JustificantDto justificant;
 		if (historic) {
 			try {
-				justificant = historicConsultaService.obtenirJustificant(consultaId);
+				justificant = historicConsultaService.obtenirJustificant(consultaId, false);
 			} catch (Exception nfe) {
-				justificant = consultaService.obtenirJustificant(consultaId);
+				justificant = consultaService.obtenirJustificant(consultaId, false);
 			}
 		} else {
 			try {
-				justificant = consultaService.obtenirJustificant(consultaId);
+				justificant = consultaService.obtenirJustificant(consultaId, false);
 			} catch (Exception nfe) {
-				justificant = historicConsultaService.obtenirJustificant(consultaId);
+				justificant = historicConsultaService.obtenirJustificant(consultaId, false);
 			}
 		}
 		return justificant;

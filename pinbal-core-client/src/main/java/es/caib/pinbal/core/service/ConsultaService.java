@@ -247,15 +247,18 @@ public interface ConsultaService {
 	 * 
 	 * @param id
 	 *            Atribut id de la consulta.
+	 * @param isAdmin
+	 *            Indica si aquesta petició es fa com a administrador.
 	 * @return l'arxiu amb el document generat.
 	 * @throws ConsultaNotFoundException
 	 *            Si la consulta no és accessible per aquest usuari.
 	 * @throws JustificantGeneracioException
 	 *            Si es produeixen errors al generar el justificant.
 	 */
-	@PreAuthorize("hasRole('ROLE_DELEG')")
+	@PreAuthorize("hasRole('ROLE_DELEG') or hasRole('ROLE_ADMIN')")
 	public JustificantDto obtenirJustificant(
-			Long id) throws ConsultaNotFoundException, JustificantGeneracioException;
+			Long id,
+			boolean isAdmin) throws ConsultaNotFoundException, JustificantGeneracioException;
 
 	/**
 	 * Obté el justificant de la consulta.

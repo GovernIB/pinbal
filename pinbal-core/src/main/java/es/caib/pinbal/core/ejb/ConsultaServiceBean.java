@@ -138,10 +138,11 @@ public class ConsultaServiceBean implements ConsultaService {
 	}
 
 	@Override
-	@RolesAllowed("tothom")
+	@RolesAllowed({ "PBL_ADMIN", "tothom" })
 	public JustificantDto obtenirJustificant(
-			Long id) throws ConsultaNotFoundException, JustificantGeneracioException {
-		return delegate.obtenirJustificant(id);
+			Long id,
+			boolean isAdmin) throws ConsultaNotFoundException, JustificantGeneracioException {
+		return delegate.obtenirJustificant(id, isAdmin);
 	}
 
 	@Override

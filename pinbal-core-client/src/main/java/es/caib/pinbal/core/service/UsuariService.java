@@ -5,7 +5,6 @@ package es.caib.pinbal.core.service;
 
 import java.util.List;
 
-import es.caib.pinbal.core.dto.ServeiDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
