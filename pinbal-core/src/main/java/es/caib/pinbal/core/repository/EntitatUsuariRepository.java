@@ -31,6 +31,8 @@ public interface EntitatUsuariRepository extends JpaRepository<EntitatUsuari, Lo
 
 	public List<EntitatUsuari> findByEntitatId(Long entitatId);
 
+	public List<EntitatUsuari> findByUsuariCodi(String usuariCodi);
+
 	@Query(	"select" +
 			"    eu " +
 			"from" +

@@ -3,22 +3,37 @@
  */
 package es.caib.pinbal.core.ejb;
 
-import es.caib.pinbal.client.dadesobertes.DadesObertesRespostaConsulta;
-import es.caib.pinbal.core.dto.*;
-import es.caib.pinbal.core.service.ConsultaService;
-import es.caib.pinbal.core.service.HistoricConsultaService;
-import es.caib.pinbal.core.service.exception.*;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.security.RolesAllowed;
+import javax.ejb.Stateless;
+import javax.interceptor.Interceptors;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.ejb.interceptor.SpringBeanAutowiringInterceptor;
 
-import javax.annotation.security.RolesAllowed;
-import javax.ejb.Stateless;
-import javax.interceptor.Interceptors;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import es.caib.pinbal.client.dadesobertes.DadesObertesRespostaConsulta;
+import es.caib.pinbal.core.dto.CarregaDto;
+import es.caib.pinbal.core.dto.ConsultaDto;
+import es.caib.pinbal.core.dto.ConsultaFiltreDto;
+import es.caib.pinbal.core.dto.EntitatDto;
+import es.caib.pinbal.core.dto.EstadisticaDto;
+import es.caib.pinbal.core.dto.EstadistiquesFiltreDto;
+import es.caib.pinbal.core.dto.FitxerDto;
+import es.caib.pinbal.core.dto.InformeGeneralEstatDto;
+import es.caib.pinbal.core.dto.InformeProcedimentServeiDto;
+import es.caib.pinbal.core.dto.InformeRepresentantFiltreDto;
+import es.caib.pinbal.core.dto.JustificantDto;
+import es.caib.pinbal.core.service.HistoricConsultaService;
+import es.caib.pinbal.core.service.exception.ConsultaNotFoundException;
+import es.caib.pinbal.core.service.exception.EntitatNotFoundException;
+import es.caib.pinbal.core.service.exception.JustificantGeneracioException;
+import es.caib.pinbal.core.service.exception.ProcedimentNotFoundException;
+import es.caib.pinbal.core.service.exception.ScspException;
 
 /**
  * Implementació de ConsultaService que empra una clase delegada per accedir a la
@@ -37,8 +52,9 @@ public class HistoricConsultaServiceBean implements HistoricConsultaService {
 	@Override
 	@RolesAllowed("tothom")
 	public JustificantDto obtenirJustificant(
-			Long id) throws ConsultaNotFoundException, JustificantGeneracioException {
-		return delegate.obtenirJustificant(id);
+			Long id,
+			boolean isAdmin) throws ConsultaNotFoundException, JustificantGeneracioException {
+		return delegate.obtenirJustificant(id, isAdmin);
 	}
 
 	@Override

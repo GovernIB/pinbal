@@ -44,6 +44,7 @@ public class EntitatUsuariCommand {
 	private boolean rolAuditor;
 	private boolean rolAplicacio;
 	private boolean afegir = false;
+	private boolean actiu;
 
 	public EntitatUsuariCommand() {}
 	public EntitatUsuariCommand(Long id) {
@@ -103,6 +104,12 @@ public class EntitatUsuariCommand {
 	}
 	public void setAfegir(boolean afegir) {
 		this.afegir = afegir;
+	}
+	public boolean isActiu() {
+		return actiu;
+	}
+	public void setActiu(boolean actiu) {
+		this.actiu = actiu;
 	}
 	public String getTipus() {
 		return tipus;

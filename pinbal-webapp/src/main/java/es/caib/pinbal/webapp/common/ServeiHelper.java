@@ -16,15 +16,16 @@ import es.caib.pinbal.core.dto.ServeiDto;
  * @author Limit Tecnologies <limit@limit.es>
  */
 public class ServeiHelper {
-    public static final String REQUEST_ATTRIBUTE_SERVEIS = "serveis";
 
-    @SuppressWarnings("unchecked")
+	public static final String REQUEST_ATTRIBUTE_SERVEIS = "serveis";
+
+	@SuppressWarnings("unchecked")
 	public static List<ServeiDto> getServeis(HttpServletRequest request) {
-        // Atribute set in interceptor
-        if (request.getAttribute(REQUEST_ATTRIBUTE_SERVEIS) != null) {
-            return (List<ServeiDto>) request.getAttribute(REQUEST_ATTRIBUTE_SERVEIS);
-        } else {
-            return null;
-        }
-    }
+		if (request.getAttribute(REQUEST_ATTRIBUTE_SERVEIS) != null) {
+			return (List<ServeiDto>) request.getAttribute(REQUEST_ATTRIBUTE_SERVEIS);
+		} else {
+			return null;
+		}
+	}
+
 }

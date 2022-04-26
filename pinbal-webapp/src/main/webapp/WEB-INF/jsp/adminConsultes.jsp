@@ -30,28 +30,25 @@
 	<script src="<c:url value="/js/webutil.datatable.js"/>"></script>
 	<script src="<c:url value="/js/webutil.modal.js"/>"></script>
 	<script src="<c:url value="/js/webutil.common.js"/>"></script>
-
-	<script type="application/javascript">
-		function checkCallback() {
-			// historicColor();
-			$("#filtrar").click();
+<script type="application/javascript">
+	function checkCallback() {
+		// historicColor();
+		$("#filtrar").click();
+	}
+	function historicColor() {
+		let historic = $("#titolCheck").prop("checked");
+		if (historic) {
+			$(".container-caib > .panel-default > .panel-body").addClass("panel-historic");
+			$(".dataTables_info").addClass("table-info-historic");
+		} else {
+			$(".container-caib > .panel-default > .panel-body").removeClass("panel-historic")
+			$(".dataTables_info").removeClass("table-info-historic");
 		}
-
-		function historicColor() {
-			let historic = $("#titolCheck").prop("checked");
-			if (historic) {
-				$(".container-caib > .panel-default > .panel-body").addClass("panel-historic");
-				$(".dataTables_info").addClass("table-info-historic");
-			} else {
-				$(".container-caib > .panel-default > .panel-body").removeClass("panel-historic")
-				$(".dataTables_info").removeClass("table-info-historic");
-			}
-		}
-	</script>
+	}
+</script>
 </head>
 <body>
-<div class="text-right" data-toggle="titol-check" data-titol-check-value="${historic}" data-titol-check-session-name="${historicSession}" data-titol-check-callback="checkCallback" data-titol-check-label="<spring:message code="comu.historic"/>"></div>
-
+	<div class="text-right" data-toggle="titol-check" data-titol-check-value="${historic}" data-titol-check-session-name="${historicSession}" data-titol-check-callback="checkCallback" data-titol-check-label="<spring:message code="comu.historic"/>"></div>
 		<form:form id="form-filtre" action="" class="form-horizontal" method="post" cssClass="well form-filtre-table" commandName="filtreCommand">
 			<div class="row">
 				<div class="col-md-3">
@@ -134,7 +131,9 @@
 					<th data-data="procedimentNom"><spring:message code="admin.consulta.list.taula.procediment" /></th>
 					<th data-data="serveiDescripcio"><spring:message code="admin.consulta.list.taula.servei" /></th>
 					<th data-data="estat"><spring:message code="admin.consulta.list.taula.estat" /></th>
-					<th data-data="id"></th>
+					<th data-data="justificantEstat"></th><%-- 7 --%>
+					<th data-data="justificantError"></th><%-- 8 --%>
+					<th data-data="id"></th><%-- 9 --%>
 					<th data-data="error" data-visible="false"></th>
 					<th data-data="recobriment" data-visible="false"></th>
 					<th data-data="multiple" data-visible="false"></th>
@@ -188,6 +187,9 @@
 				width: "10%",
 				render: $.fn.dataTable.render.moment('x', 'DD/MM/YYYY HH:mm:ss', 'es' )
 			}, {
+				targets: [3, 5],
+				orderable: false,
+			}, {
 				targets: [6],
 				orderable: false,
 				width: "6%",
@@ -208,14 +210,29 @@
 			}, {
 				targets: [7],
 				orderable: false,
+				width: "3%",
+				render: function (data, type, row, meta) {
+					var template = $('#template-justificant').html();
+					if (row.estat == 'Tramitada') {
+						row["estat-pendent"] = row['justificantEstat'].toLowerCase() == 'pendent';
+						row["estat-error"] = row['justificantEstat'].toLowerCase() == 'error';
+						row["estat-nodisponible"] = row['justificantEstat'].toLowerCase() == 'no_disponible';
+						row["estat-oknocustodia"] = row['justificantEstat'].toLowerCase() == 'ok_no_custodia';
+						row["estat-ok"] = row['justificantEstat'].toLowerCase() == 'ok' || row["estat-oknocustodia"];
+					}
+					return Mustache.render(template, row);
+				}
+			}, {
+				targets: [8],
+				visible: false
+			}, {
+				targets: [9],
+				orderable: false,
 				width: "1%",
 				render: function (data, type, row, meta) {
 					var template = $('#template-details').html();
 					return Mustache.render(template, row);
 				}
-			}, {
-				targets: [3, 5],
-				orderable: false,
 			}],
 			initComplete: function( settings, json ) {}
 		});
@@ -234,6 +251,56 @@
 </script>
 <script id="template-estat" type="x-tmpl-mustache">
 	{{{ icon-status }}} {{ estat }}
+</script>
+<script id="template-justificant" type="x-tmpl-mustache">
+{{#estat-pendent}}
+<a class="btn btn-default btn-small" href="consulta/{{ id }}/justificant">
+<i class="far fa-file-pdf" title="<spring:message code="consulta.list.taula.descarregar.pdf"/>" 
+			 alt="<spring:message code="consulta.list.taula.descarregar.pdf"/>"></i>
+</a>
+{{/estat-pendent}}
+{{#estat-ok}}
+<a class="btn btn-default btn-small" href="consulta/{{ id }}/justificant">
+<i class="far fa-file-pdf" title="<spring:message code="consulta.list.taula.descarregar.pdf"/>" 
+			 alt="<spring:message code="consulta.list.taula.descarregar.pdf"/>"></i>
+</a>
+{{/estat-ok}}
+{{#estat-error}}
+<div class="btn-group">
+	<a class="btn btn-default btn-small dropdown-toggle" data-toggle="dropdown">
+		<i class="fa fa-exclamation-triangle text-danger" title="<spring:message code="consulta.list.taula.justif.error"/>" alt="<spring:message code="consulta.list.taula.justif.error"/>"></i>
+		&nbsp;<span class="caret"></span>
+	</a>
+	<ul class="dropdown-menu">
+		<li>
+			<a href="#" data-toggle="modal_local" data-target="#modal-justificant-error-{{ id }}" onClick="$('#modal-justificant-error-{{ id }}').modal('toggle');">
+				<i class="fa fa-exclamation-triangle"></i>&nbsp;<spring:message code="consulta.list.taula.justif.error.veure"/>
+			</a>
+		</li>
+		<li>
+			<a href="consulta/{{ id }}/justificantReintentar" class="justificant-reintentar">
+				<i class="fa fa-redo-alt"></i>&nbsp;<spring:message code="consulta.list.taula.justif.error.reintentar"/>
+			</a>
+		</li>
+	</ul>
+</div>
+<div id="modal-justificant-error-{{ id }}" class="modal fade" role="dialog">
+	<div class="modal-dialog modal-lg">
+		<!-- Modal content-->
+		<div class="modal-content">
+		<div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+			<h3><spring:message code="consulta.list.taula.justif.error"/></h3>
+		</div>
+		<div class="modal-body">
+			<textarea style="width:98%" rows="18">{{ justificantError }}</textarea>
+		</div>
+		<div class="modal-footer">
+		</div>
+		</div>
+	</div>
+</div>
+{{/estat-error}}
 </script>
 <script id="template-details" type="x-tmpl-mustache">
 <a href="consulta/{{ id }}" class="btn btn-default" data-toggle="modal"><i class="fas fa-search-plus"></i>&nbsp;<spring:message code="admin.consulta.list.taula.detalls"/></a>

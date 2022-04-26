@@ -9,8 +9,6 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-import es.caib.pinbal.core.service.HistoricConsultaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
@@ -43,6 +41,7 @@ import es.caib.pinbal.core.dto.ProcedimentDto;
 import es.caib.pinbal.core.dto.ServeiDto;
 import es.caib.pinbal.core.service.ConsultaService;
 import es.caib.pinbal.core.service.EntitatService;
+import es.caib.pinbal.core.service.HistoricConsultaService;
 import es.caib.pinbal.core.service.ProcedimentService;
 import es.caib.pinbal.core.service.ServeiService;
 import es.caib.pinbal.core.service.UsuariService;

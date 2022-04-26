@@ -65,7 +65,8 @@ public class DtoMappingHelper {
 						source.isRepresentant(),
 						source.isDelegat(),
 						source.isAuditor(),
-						source.isAplicacio());
+						source.isAplicacio(),
+						source.isActiu());
 				return dto;
 			}
 		});

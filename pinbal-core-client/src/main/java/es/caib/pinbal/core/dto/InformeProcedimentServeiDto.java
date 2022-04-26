@@ -2,9 +2,9 @@ package es.caib.pinbal.core.dto;
 
 import java.io.Serializable;
 
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.apache.commons.lang.builder.ToStringBuilder;
+import lombok.Setter;
 
 /**
  * Objecte DTO amb informació de l'informe d'usuaris que tenen accés a PINBAL 
@@ -12,7 +12,8 @@ import org.apache.commons.lang.builder.ToStringBuilder;
  * 
  * @author Limit Tecnologies <limit@limit.es>
  */
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 public class InformeProcedimentServeiDto extends AbstractIdentificable<Long> implements Serializable {
 

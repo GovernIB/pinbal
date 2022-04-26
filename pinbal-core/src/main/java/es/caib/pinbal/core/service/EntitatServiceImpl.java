@@ -5,11 +5,11 @@ package es.caib.pinbal.core.service;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 
-import javax.annotation.Resource;
-
 import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.MessageSource;
@@ -28,11 +28,13 @@ import es.caib.pinbal.core.helper.DtoMappingHelper;
 import es.caib.pinbal.core.model.Entitat;
 import es.caib.pinbal.core.model.Entitat.EntitatTipus;
 import es.caib.pinbal.core.model.EntitatServei;
+import es.caib.pinbal.core.model.EntitatUsuari;
 import es.caib.pinbal.core.model.OrganGestor;
 import es.caib.pinbal.core.model.OrganismeCessionari;
 import es.caib.pinbal.core.model.ServeiConfig;
 import es.caib.pinbal.core.repository.EntitatRepository;
 import es.caib.pinbal.core.repository.EntitatServeiRepository;
+import es.caib.pinbal.core.repository.EntitatUsuariRepository;
 import es.caib.pinbal.core.repository.OrganismeCessionariRepository;
 import es.caib.pinbal.core.repository.ServeiConfigRepository;
 import es.caib.pinbal.core.service.exception.EntitatNotFoundException;
@@ -52,15 +54,17 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 public class EntitatServiceImpl implements EntitatService, ApplicationContextAware, MessageSourceAware {
 
-	@Resource
+	@Autowired
 	private EntitatRepository entitatRepository;
-	@Resource
+	@Autowired
 	private EntitatServeiRepository entitatServeiRepository;
-	@Resource
+	@Autowired
+	private EntitatUsuariRepository entitatUsuariRepository;
+	@Autowired
 	private ServeiConfigRepository serveiConfigRepository;
-	@Resource
+	@Autowired
 	private OrganismeCessionariRepository organismeCessionariRepository;
-	@Resource
+	@Autowired
 	private DtoMappingHelper dtoMappingHelper;
 
 	private ApplicationContext applicationContext;
@@ -278,8 +282,23 @@ public class EntitatServiceImpl implements EntitatService, ApplicationContextAwa
 	@Override
 	public List<EntitatDto> findActivesAmbUsuariCodi(String usuariCodi) {
 		log.debug("Consulta de les entitats actives per a l'usuari (codi=" + usuariCodi + ")");
+		List<EntitatUsuari> entitatUsuaris = entitatUsuariRepository.findByUsuariCodi(usuariCodi);
+		List<Entitat> entitats = entitatRepository.findActivesAmbUsuariCodi(usuariCodi);
+		Iterator<Entitat> it = entitats.iterator();
+		while (it.hasNext()) {
+			Entitat entitat = it.next();
+			boolean trobada = false;
+			for (EntitatUsuari entitatUsuari: entitatUsuaris) {
+				if (entitatUsuari.getEntitat().getId() == entitat.getId()) {
+					trobada = true;
+				}
+			}
+			if (!trobada) {
+				it.remove();
+			}
+		}
 		return dtoMappingHelper.getMapperFacade().mapAsList(
-				entitatRepository.findActivesAmbUsuariCodi(usuariCodi),
+				entitats,
 				EntitatDto.class);
 	}
 

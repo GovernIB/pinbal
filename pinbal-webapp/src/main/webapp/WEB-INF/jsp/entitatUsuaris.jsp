@@ -56,9 +56,6 @@ $(document).ready(function() {
 		});
 		$('#form-filtre').submit();
 	});
-
-
-
 	$('input[type=radio][name=tipus]').on('change', function() {
 		if ($(this).val() == '${caracterTipusNif}') {
 			$('#modal-group-codi').addClass('hide');
@@ -68,45 +65,52 @@ $(document).ready(function() {
 			$('#modal-group-nif').addClass('hide');
 		}
 	});
-	
-
-    $('#table-users').DataTable({
-    	autoWidth: false,
+	$('#table-users').DataTable({
+		autoWidth: false,
 		processing: true,
 		serverSide: true,
 		language: {
-            "url": '<c:url value="/js/datatable-language.json"/>',
-        },
+			"url": '<c:url value="/js/datatable-language.json"/>',
+		},
 		ajax: '<c:url value="/entitat/${entitat.id}/usuari/datatable"/>',
 		columnDefs: [
-			{ 
-	            targets: [0, 1, 2]
-	        },
+			{
+				targets: [0, 1, 2]
+			},
 			{
 				targets: [3],
 				orderable: false,
 				visible: true
-			}, 
-	        {
-	            targets: 4,
-	            orderable: false,
-	            width: "20%",
+			},
+			{
+				targets: 4,
+				orderable: false,
+				width: "20%",
 				render: function (data, type, row, meta) {
 					var template = $('#template-rols').html();
 					return Mustache.render(template, row);
 				}
-	        },
-	        {
-	            targets: [5],
-	            orderable: false,
-	            width: "20%",
-	            render: function (data, type, row, meta) {
+			},
+			{
+				targets: [5],
+				orderable: false,
+				width: "10%",
+				render: function (data, type, row, meta) {
 					var template = $('#template-principal').html();
 					return Mustache.render(template, row);
-	            }
-	        },
+				}
+			},
 			{
 				targets: [6],
+				orderable: false,
+				width: "10%",
+				render: function (data, type, row, meta) {
+					var template = $('#template-actiu').html();
+					return Mustache.render(template, row);
+				}
+			},
+			{
+				targets: [7],
 				orderable: false,
 				width: "1%",
 				render: function (data, type, row, meta) {
@@ -115,7 +119,7 @@ $(document).ready(function() {
 				}
 			}, 
 			{
-				targets: [7],
+				targets: [8],
 				orderable: false,
 				width: "1%",
 				render: function (data, type, row, meta) {
@@ -125,19 +129,19 @@ $(document).ready(function() {
 				}
 			}, 
 			{
-				targets: [8, 9],
+				targets: [9, 10],
 				orderable: false,
 				visible:false
 			}, 
-	   ],
-	   initComplete: function( settings, json ) {
-		   console.log(settings)
-		   console.log(json)
+		],
+		initComplete: function( settings, json ) {
+			console.log(settings)
+			console.log(json)
 			$('.btn-open-modal-edit').click(function() {
 				var nrow = $(this).data('nrow');
 				var row = json.data[nrow];
 				console.log(row);
-		 		showModalEditar(row);
+				showModalEditar(row);
 			});
 		}
 	});
@@ -160,6 +164,7 @@ function showModalCrear() {
 	$('#modal-input-delegat').prop('checked', false);
 	$('#modal-input-auditor').prop('checked', false);
 	$('#modal-input-aplicacio').prop('checked', false);
+	$('#modal-input-actiu').prop('checked', false);
 	$('#modal-form-usuari').modal('toggle');
 }
 function showModalEditar(row) {
@@ -173,7 +178,7 @@ function showModalEditar(row) {
 	var delegat = row.delegat;
 	var auditor = row.auditor;
 	var aplicacio = row.aplicacio;
-	
+	var actiu = row.actiu;
 	$('#modal-form-usuari .modal-header h3').html("<spring:message code="entitat.usuaris.titol.modificar"/>");
 	$('#modal-hidden-codi').removeAttr('disabled');
 	$('#modal-hidden-codi').val(codi);
@@ -199,84 +204,74 @@ function showModalEditar(row) {
 			$('#modal-input-codi').val(codi);
 		}
 	}
-
 	$('#modal-input-departament').val(departament);
 	$('#modal-input-representant').prop('checked', representant);
 	$('#modal-input-delegat').prop('checked', delegat);
 	$('#modal-input-auditor').prop('checked', auditor);
 	$('#modal-input-aplicacio').prop('checked', aplicacio);
+	$('#modal-input-actiu').prop('checked', actiu);
 	$('#modal-form-usuari').modal('toggle');
 }
 </script>
 </head>
 <body>
-
 	<ul class="breadcrumb">
 		<li><spring:message code="entitat.miques.entitat" arguments="${entitat.nom}"/></li>
 		<li class="active"><spring:message code="entitat.miques.usuaris"/></li>
 	</ul>
-
 	<c:url value="/entitat/${entitat.id}/usuari" var="formAction"/>
 	<form:form id="form-filtre"action="${formAction}" method="post" cssClass="well form-filtre-table" commandName="usuariFiltreCommand">
-		
-			<div class="row">
-				<div class="col-md-3">
-					<pbl:inputText name="codi" inline="true"
-								   placeholderKey="entitat.usuaris.filtre.camp.codi"/>
-				</div>
-				<div class="col-md-3">			
-					<c:set var="campPath" value="nom"/>
-					<pbl:inputText name="${campPath}"  inline="true"
-								   placeholderKey="entitat.usuaris.filtre.camp.nom"/>
-				</div>
-				<div class="col-md-3">
-					<c:set var="campPath" value="nif"/>
-					<pbl:inputText name="${campPath}"   inline="true"
-								   placeholderKey="entitat.usuaris.filtre.camp.nif"/>
-				</div>
-				<div class="col-md-3">			
-					<c:set var="campPath" value="departament"/>
-					<pbl:inputText name="${campPath}"  inline="true"
-								   placeholderKey="entitat.usuaris.filtre.camp.departament"/>
+		<div class="row">
+			<div class="col-md-3">
+				<pbl:inputText name="codi" inline="true" placeholderKey="entitat.usuaris.filtre.camp.codi"/>
+			</div>
+			<div class="col-md-3">
+				<c:set var="campPath" value="nom"/>
+				<pbl:inputText name="${campPath}"  inline="true" placeholderKey="entitat.usuaris.filtre.camp.nom"/>
+			</div>
+			<div class="col-md-3">
+				<c:set var="campPath" value="nif"/>
+				<pbl:inputText name="${campPath}" inline="true" placeholderKey="entitat.usuaris.filtre.camp.nif"/>
+			</div>
+			<div class="col-md-3">
+				<c:set var="campPath" value="departament"/>
+				<pbl:inputText name="${campPath}"  inline="true" placeholderKey="entitat.usuaris.filtre.camp.departament"/>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-md-4">
+				<c:set var="campPath" value="isRepresentant"/>
+				<label class="checkbox-inline" for="modal-input-representant">
+					<form:checkbox  path="${campPath}" id="${campPath}"/>
+					<spring:message code="entitat.usuaris.rol.repres"/>
+				</label>
+				<c:set var="campPath" value="isDelegat"/>
+				<label class="checkbox-inline" for="modal-input-delegat">
+					<form:checkbox  path="${campPath}" id="${campPath}"/>
+					<spring:message code="entitat.usuaris.rol.deleg"/>
+				</label>
+				<c:set var="campPath" value="isAuditor"/>
+				<label class="checkbox-inline" for="modal-input-auditor">
+					<form:checkbox  path="${campPath}" id="${campPath}"/>
+					<spring:message code="entitat.usuaris.rol.audit"/>
+				</label>
+				<c:set var="campPath" value="isAplicacio"/>
+				<label class="checkbox-inline" for="modal-input-aplicacio">
+					<form:checkbox  path="${campPath}" id="${campPath}"/>
+					<spring:message code="entitat.usuaris.rol.aplic"/>
+				</label>
+			</div>
+			<div class="col-md-8">
+				<div class="pull-right">
+					<button id="netejar-filtre" class="btn btn-default" type="button"><spring:message code="comu.boto.netejar"/></button>
+					<button type="submit" class="btn btn-primary"><spring:message code="comu.boto.filtrar"/></button>
 				</div>
 			</div>
-			<div class="row">
-				<div class="col-md-4">
-					<c:set var="campPath" value="isRepresentant"/>
-					<label class="checkbox-inline" for="modal-input-representant">
-						<form:checkbox  path="${campPath}" id="${campPath}"/>
-						<spring:message code="entitat.usuaris.rol.repres"/>
-					</label>
-										<c:set var="campPath" value="isDelegat"/>
-					<label class="checkbox-inline" for="modal-input-delegat">
-						<form:checkbox  path="${campPath}" id="${campPath}"/>
-						<spring:message code="entitat.usuaris.rol.deleg"/>
-					</label>
-										<c:set var="campPath" value="isAuditor"/>
-					<label class="checkbox-inline" for="modal-input-auditor">
-						<form:checkbox  path="${campPath}" id="${campPath}"/>
-						<spring:message code="entitat.usuaris.rol.audit"/>
-					</label>
-										<c:set var="campPath" value="isAplicacio"/>
-					<label class="checkbox-inline" for="modal-input-aplicacio">
-						<form:checkbox  path="${campPath}" id="${campPath}"/>
-						<spring:message code="entitat.usuaris.rol.aplic"/>
-					</label>
-				</div>
-				<div class="col-md-8">	
-					<div class="pull-right">
-						<button id="netejar-filtre" class="btn btn-default" type="button"><spring:message code="comu.boto.netejar"/></button>
-						<button type="submit" class="btn btn-primary"><spring:message code="comu.boto.filtrar"/></button>
-					</div>
-				</div>	
-			</div>
-			
+		</div>
 	</form:form>
-
-
 	<div class="pull-right">
 		<a class="btn btn-primary" href="#modal-form-usuari" onclick="showModalCrear()"><i class="fa fa-plus"></i>&nbsp;<spring:message code="entitat.usuaris.boto.nou.usuari"/></a>
-	</div>			
+	</div>
 	<table id="table-users" class="table table-striped table-bordered" style="width: 100%">
 		<thead>
 			<tr>
@@ -285,7 +280,8 @@ function showModalEditar(row) {
 			<th data-data="usuari.nif"><spring:message code="entitat.usuaris.camp.nif" /></th>
 			<th data-data="departament"><spring:message code="entitat.usuaris.camp.departament" /></th>
 			<th data-data="representant"><spring:message code="entitat.usuaris.camp.rols" /></th>
-			<th data-data="principal"></th>
+			<th data-data="principal"><spring:message code="entitat.usuaris.camp.principal" /></th>
+			<th data-data="actiu"><spring:message code="entitat.usuaris.camp.actiu" /></th>
 			<th data-data="aplicacio"></th>
 			<th data-data="auditor"></th>
 			<th data-data="delegat"></th>
@@ -293,7 +289,6 @@ function showModalEditar(row) {
 			</tr>
 		</thead>
 	</table>
-
 <script id="template-usuari" type="x-tmpl-mustache">
 	{{ usuari.descripcio }}
 </script>
@@ -329,6 +324,11 @@ function showModalEditar(row) {
  	<i class="fas fa-certificate"></i>
 {{/principal}}
 </script>
+<script id="template-actiu" type="x-tmpl-mustache">
+{{#actiu}}
+ 	<i class="fas fa-check"></i>
+{{/actiu}}
+</script>
 <script id="template-swap-principal" type="x-tmpl-mustache">
 {{#principal}}
 	<a href="usuari/{{ usuari.codi }}/principal" class="btn btn-primary"><i class="fas fa-trash-alt"></i>&nbsp;<spring:message code="entitat.usuaris.accio.desfer.principal"/></a>
@@ -341,87 +341,89 @@ function showModalEditar(row) {
 		<a href="<c:url value="/entitat"/>" class="btn btn-default pull-right"><span class="fa fa-arrow-left"></span>&nbsp;<spring:message code="comu.boto.tornar"/></a>
 		
 	</div>
-
-<div id="modal-form-usuari" class="modal fade" role="dialog">
-  <div class="modal-dialog">
-    <div class="modal-content">
-
-		<div class="modal-header">
-			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-			<h3><spring:message code="entitat.usuaris.titol.modificar"/></h3>
-		</div>
-		<div class="modal-body">
-			<c:url value="/entitat/${entitat.id}/usuari/save" var="formAction"/>
-			<form id="modal-form" action="${formAction}" method="post">
-				<input type="hidden" id="modal-hidden-id" name="id" value="${entitat.id}"/>
-				<input type="hidden" id="modal-hidden-codi" name="codi"/>
-				<input type="hidden" id="modal-hidden-nif" name="nif"/>
-				
-				
-				<div id="modal-group-tipus" class="form-group">
-					<label class="control-label" for="modal-select-tipus"><spring:message code="entitat.usuaris.camp.tipus"/></label>
-					<div class="btn-group" data-toggle="buttons" id="modal-select-tipus" style="display: block; width: 100%; margin-bottom: 50px;">
-						<label class="btn btn-default active">
-							<input id="tipus1" name="tipus" type="radio" value="${caracterTipusNif}" checked="checked"> <spring:message code="entitat.usuaris.tipus.nif"/>
-						</label>
-						<label class="btn btn-default">
-							<input id="tipus2" name="tipus" type="radio" value="${caracterTipusCodi}"> <spring:message code="entitat.usuaris.tipus.codi"/>
-						</label>
-					</div>
+	<div id="modal-form-usuari" class="modal fade" role="dialog">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+					<h3><spring:message code="entitat.usuaris.titol.modificar"/></h3>
 				</div>
-				<div id="modal-group-codi" class="form-group">
-    				<label for="modal-input-codi"><spring:message code="entitat.usuaris.camp.codi"/></label>
-					<input class="form-control" type="text" id="modal-input-codi" name="codi" disabled="disabled"/>
+				<div class="modal-body">
+					<c:url value="/entitat/${entitat.id}/usuari/save" var="formAction"/>
+					<form id="modal-form" action="${formAction}" method="post">
+						<input type="hidden" id="modal-hidden-id" name="id" value="${entitat.id}"/>
+						<input type="hidden" id="modal-hidden-codi" name="codi"/>
+						<input type="hidden" id="modal-hidden-nif" name="nif"/>
+						<div id="modal-group-tipus" class="form-group">
+							<label class="control-label" for="modal-select-tipus"><spring:message code="entitat.usuaris.camp.tipus"/></label>
+							<div class="btn-group" data-toggle="buttons" id="modal-select-tipus" style="display: block; width: 100%; margin-bottom: 50px;">
+								<label class="btn btn-default active">
+									<input id="tipus1" name="tipus" type="radio" value="${caracterTipusNif}" checked="checked"> <spring:message code="entitat.usuaris.tipus.nif"/>
+								</label>
+								<label class="btn btn-default">
+									<input id="tipus2" name="tipus" type="radio" value="${caracterTipusCodi}"> <spring:message code="entitat.usuaris.tipus.codi"/>
+								</label>
+							</div>
+						</div>
+						<div id="modal-group-codi" class="form-group">
+							<label for="modal-input-codi"><spring:message code="entitat.usuaris.camp.codi"/></label>
+							<input class="form-control" type="text" id="modal-input-codi" name="codi" disabled="disabled"/>
+						</div>
+						<div id="modal-group-nif" class="form-group">
+							<label for="modal-input-nif"><spring:message code="entitat.usuaris.camp.nif"/></label>
+							<input class="form-control" type="text" id="modal-input-nif" name="nif" disabled="disabled"/>
+						</div>
+						<div class="form-group">
+							<label for="modal-input-departament"><spring:message code="entitat.usuaris.camp.departament"/></label>
+							<input class="form-control" type="text" id="modal-input-departament" name="departament"/>
+						</div>
+						<div class="form-group">
+							<label for="modal-input-actiu">
+								<input type="checkbox" id="modal-input-actiu" name="actiu"/>
+								<spring:message code="entitat.usuaris.camp.actiu"/>
+							</label>
+						</div>
+						<div class="form-group">
+							<label for="modal-input-representant"><spring:message code="entitat.usuaris.camp.rols"/></label>
+							<div class="checkbox" style="margin-top: 0px;">
+								<label for="modal-input-representant">
+									<input type="checkbox" id="modal-input-representant" name="rolRepresentant">
+									<spring:message code="entitat.usuaris.rol.repres"/>
+								</label>
+							</div>
+							<div class="checkbox">
+								<label for="modal-input-delegat">
+									<input type="checkbox" id="modal-input-delegat" name="rolDelegat">
+									<spring:message code="entitat.usuaris.rol.deleg"/>
+								</label>
+							</div>
+							<div class="checkbox">
+								<label for="modal-input-auditor">
+									<input type="checkbox" id="modal-input-auditor" name="rolAuditor">
+									<spring:message code="entitat.usuaris.rol.audit"/>
+								</label>
+							</div>
+							<div class="checkbox">
+								<label for="modal-input-aplicacio">
+									<input type="checkbox" id="modal-input-aplicacio" name="rolAplicacio">
+									<spring:message code="entitat.usuaris.rol.aplic"/>
+								</label>
+							</div>
+						</div>
+					</form>
 				</div>
-				<div id="modal-group-nif" class="form-group">
-    				<label for="modal-input-nif"><spring:message code="entitat.usuaris.camp.nif"/></label>
-					<input class="form-control" type="text" id="modal-input-nif" name="nif" disabled="disabled"/>
+				<div class="modal-footer">
+					<button class="btn btn-default" data-dismiss="modal"><span class="fa fa-arrow-left"></span>&nbsp;<spring:message code="comu.boto.tornar"/></button>
+					<button class="btn btn-primary" onclick="$('#modal-form').submit()"><spring:message code="comu.boto.guardar"/></button>
 				</div>
-				<div class="form-group">
-    				<label for="modal-input-departament"><spring:message code="entitat.usuaris.camp.departament"/></label>
-					<input class="form-control" type="text" id="modal-input-departament" name="departament"/>
-				</div>		
-				<div class="form-group">
-					<label for="modal-input-representant"><spring:message code="entitat.usuaris.camp.rols"/></label>
-					<div class="checkbox" for="modal-input-representant" style="margin-top: 0px;">
-						<label>
-    					<input type="checkbox" id="modal-input-representant" name="rolRepresentant">
-    					<spring:message code="entitat.usuaris.rol.repres"/>
-    					</label>
-    				</div>
-    				<div class="checkbox" for="modal-input-delegat">
-    					<label>
-    					<input type="checkbox" id="modal-input-delegat" name="rolDelegat">
-    					<spring:message code="entitat.usuaris.rol.deleg"/>
-    					</label>
-    				</div>
-    				<div class="checkbox" for="modal-input-auditor">
-    					<label>
-    					<input type="checkbox" id="modal-input-auditor" name="rolAuditor">
-    					<spring:message code="entitat.usuaris.rol.audit"/>
-    					</label>
-    				</div>
-    				<div class="checkbox" for="modal-input-aplicacio">
-	    				<label>
-	    					<input type="checkbox" id="modal-input-aplicacio" name="rolAplicacio">
-	    					<spring:message code="entitat.usuaris.rol.aplic"/>
-	    				</label>
-    				</div>
-    			</div>
-			</form>
-		</div>
-		<div class="modal-footer">
-			<button class="btn btn-default" data-dismiss="modal"><span class="fa fa-arrow-left"></span>&nbsp;<spring:message code="comu.boto.tornar"/></button>
-			<button class="btn btn-primary" onclick="$('#modal-form').submit()"><spring:message code="comu.boto.guardar"/></button>
+			</div>
 		</div>
 	</div>
-	</div>
-	</div>
-	<script type="text/javascript">
-	function onInvokeAction(id) {
-		setExportToLimit(id, '');
-		createHiddenInputFieldsForLimitAndSubmit(id);
-	}
-	</script>
+<script type="text/javascript">
+function onInvokeAction(id) {
+	setExportToLimit(id, '');
+	createHiddenInputFieldsForLimitAndSubmit(id);
+}
+</script>
 </body>
 </html>

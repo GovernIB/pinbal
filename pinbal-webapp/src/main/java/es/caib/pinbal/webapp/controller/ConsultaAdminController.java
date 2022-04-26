@@ -38,6 +38,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import es.caib.pinbal.core.dto.ConsultaDto;
 import es.caib.pinbal.core.dto.EntitatDto;
+import es.caib.pinbal.core.dto.JustificantDto;
 import es.caib.pinbal.core.dto.EntitatDto.EntitatTipusDto;
 import es.caib.pinbal.core.service.ConsultaService;
 import es.caib.pinbal.core.service.EntitatService;
@@ -48,6 +49,7 @@ import es.caib.pinbal.core.service.exception.EntitatNotFoundException;
 import es.caib.pinbal.core.service.exception.ScspException;
 import es.caib.pinbal.webapp.command.ConsultaFiltreCommand;
 import es.caib.pinbal.webapp.common.AlertHelper;
+import es.caib.pinbal.webapp.common.EntitatHelper;
 import es.caib.pinbal.webapp.common.RequestSessionHelper;
 import es.caib.pinbal.webapp.datatables.ServerSideColumn;
 import es.caib.pinbal.webapp.datatables.ServerSideRequest;
@@ -140,6 +142,53 @@ public class ConsultaAdminController extends BaseController {
 		cols.get(4).setData("procedimentNom");
 		cols.get(5).setData("serveiDescripcio");
 		return new ServerSideResponse<ConsultaDto, Long>(serverSideRequest, page);
+	}
+
+	@RequestMapping(value = "/{consultaId}/justificant", method = RequestMethod.GET)
+	public String justificant(
+			HttpServletRequest request,
+			HttpServletResponse response,
+			@PathVariable Long consultaId,
+			Model model) throws ConsultaNotFoundException {
+		if (!EntitatHelper.isDelegatEntitatActual(request))
+			return "delegatNoAutoritzat";
+		EntitatDto entitat = EntitatHelper.getEntitatActual(request, entitatService);
+		if (entitat != null) {
+			try {
+				JustificantDto justificant = getJustificant(consultaId, isHistoric(request));
+				if (!justificant.isError()) {
+					writeFileToResponse(
+							justificant.getNom(),
+							justificant.getContingut(),
+							response);
+					return null;
+				} else {
+					AlertHelper.error(
+							request,
+							getMessage(
+									request, 
+									"consulta.controller.justificant.error"));
+					return "redirect:../../consulta";
+				}
+			} catch (ConsultaNotFoundException ex) {
+				throw ex;
+			} catch (Exception ex) {
+				ex.printStackTrace();
+				AlertHelper.error(
+						request,
+						getMessage(
+								request, 
+								"consulta.controller.justificant.error"));
+				return "redirect:../../consulta";
+			}
+		} else {
+			AlertHelper.error(
+					request,
+					getMessage(
+							request, 
+							"comu.error.no.entitat"));
+			return "redirect:../../index";
+		}
 	}
 
 	@RequestMapping(value = "/entitat/seleccionar", method = RequestMethod.POST)
@@ -333,6 +382,24 @@ public class ConsultaAdminController extends BaseController {
 		}
 		command.updateDefaultDataInici(isHistoric(request));
 		return command;
+	}
+
+	private JustificantDto getJustificant(Long consultaId, boolean historic) throws Exception {
+		JustificantDto justificant;
+		if (historic) {
+			try {
+				justificant = historicConsultaService.obtenirJustificant(consultaId, true);
+			} catch (Exception nfe) {
+				justificant = consultaService.obtenirJustificant(consultaId, true);
+			}
+		} else {
+			try {
+				justificant = consultaService.obtenirJustificant(consultaId, true);
+			} catch (Exception nfe) {
+				justificant = historicConsultaService.obtenirJustificant(consultaId, true);
+			}
+		}
+		return justificant;
 	}
 
 }

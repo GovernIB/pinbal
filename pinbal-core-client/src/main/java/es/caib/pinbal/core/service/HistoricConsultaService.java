@@ -26,6 +26,8 @@ public interface HistoricConsultaService {
 	 *
 	 * @param id
 	 *            Atribut id de la consulta.
+	 * @param isAdmin
+	 *            Indica si aquesta petició es fa com a administrador.
 	 * @return l'arxiu amb el document generat.
 	 * @throws ConsultaNotFoundException
 	 *            Si la consulta no és accessible per aquest usuari.
@@ -34,7 +36,8 @@ public interface HistoricConsultaService {
 	 */
 	@PreAuthorize("hasRole('ROLE_DELEG')")
 	public JustificantDto obtenirJustificant(
-            Long id) throws ConsultaNotFoundException, JustificantGeneracioException;
+            Long id,
+            boolean isAdmin) throws ConsultaNotFoundException, JustificantGeneracioException;
 
 	/**
 	 * Obté el justificant de la consulta.

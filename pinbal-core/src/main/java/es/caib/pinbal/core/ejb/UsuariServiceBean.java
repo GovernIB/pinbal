@@ -9,7 +9,6 @@ import javax.annotation.security.RolesAllowed;
 import javax.ejb.Stateless;
 import javax.interceptor.Interceptors;
 
-import es.caib.pinbal.core.dto.ServeiDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -85,8 +84,19 @@ public class UsuariServiceBean implements UsuariService {
 			boolean delegat,
 			boolean auditor,
 			boolean aplicacio,
-			boolean afegir) throws EntitatNotFoundException, UsuariExternNotFoundException {
-		delegate.actualitzarDadesAdmin(id, codi, nif, departament, representant, delegat, auditor, aplicacio, afegir);
+			boolean afegir,
+			boolean actiu) throws EntitatNotFoundException, UsuariExternNotFoundException {
+		delegate.actualitzarDadesAdmin(
+				id,
+				codi,
+				nif,
+				departament,
+				representant,
+				delegat,
+				auditor,
+				aplicacio,
+				afegir,
+				actiu);
 	}
 
 	@Override
@@ -99,8 +109,18 @@ public class UsuariServiceBean implements UsuariService {
 			boolean representant,
 			boolean delegat,
 			boolean aplicacio,
-			boolean afegir) throws EntitatNotFoundException, EntitatUsuariProtegitException, UsuariExternNotFoundException {
-		delegate.actualitzarDadesRepresentant(id, codi, nif, departament, representant, delegat, aplicacio, afegir);
+			boolean afegir,
+			boolean actiu) throws EntitatNotFoundException, EntitatUsuariProtegitException, UsuariExternNotFoundException {
+		delegate.actualitzarDadesRepresentant(
+				id,
+				codi,
+				nif,
+				departament,
+				representant,
+				delegat,
+				aplicacio,
+				afegir,
+				actiu);
 	}
 
 	@Override

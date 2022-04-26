@@ -188,7 +188,7 @@ body {
 									</a>
 								</li>
 							</ul>
-						</li>						
+						</li>
 						
 					</ul>
 					<div class="clearfix"></div>
@@ -231,13 +231,13 @@ body {
 									<c:if test="${countConsultesMultiplesPendents gt 0}"><span class="badge badge-warning">${countConsultesMultiplesPendents}</span></c:if>
 								</a>
 								<c:if test="${not empty sessionServeis}">
-								<div class="btn-group">
-									<button data-toggle="dropdown" class="btn btn-primary dropdown-toggle"><spring:message code="decorator.menu.consulta.nova"/> <span class="caret"></span></button>
-									<ul class="dropdown-menu">
-										<c:forEach var="servei" items="${sessionServeis}">
-											<li><a href="<c:url value="/consulta/${servei.codiUrlEncoded}/new"/>">${servei.descripcio}</a></li>
-										</c:forEach>
-									</ul>
+									<div class="btn-group">
+										<button data-toggle="dropdown" class="btn btn-primary dropdown-toggle"><spring:message code="decorator.menu.consulta.nova"/> <span class="caret"></span></button>
+										<ul class="dropdown-menu">
+											<c:forEach var="servei" items="${sessionServeis}">
+												<li><a href="<c:url value="/consulta/${servei.codiUrlEncoded}/new"/>">${servei.descripcio}</a></li>
+											</c:forEach>
+										</ul>
 									</div>
 								</c:if>
 							</c:if>

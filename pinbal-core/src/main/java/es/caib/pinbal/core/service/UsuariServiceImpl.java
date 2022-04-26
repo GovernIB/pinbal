@@ -8,7 +8,6 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
-import es.caib.pinbal.core.dto.ServeiDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.acls.model.MutableAclService;
@@ -182,7 +181,8 @@ public class UsuariServiceImpl implements UsuariService {
 			boolean delegat,
 			boolean auditor,
 			boolean aplicacio,
-			boolean afegir) throws EntitatNotFoundException, UsuariExternNotFoundException {
+			boolean afegir,
+			boolean actiu) throws EntitatNotFoundException, UsuariExternNotFoundException {
 		log.debug("Actualitzant dades no auditor de l'usuari (" +
 				"codi=" + codi + ", " +
 				"nif=" + nif + ") a l'entitat (" +
@@ -205,7 +205,8 @@ public class UsuariServiceImpl implements UsuariService {
 				auditor,
 				true,
 				aplicacio,
-				afegir);
+				afegir,
+				actiu);
 	}
 
 	@Transactional(rollbackFor = EntitatNotFoundException.class)
@@ -218,8 +219,9 @@ public class UsuariServiceImpl implements UsuariService {
 			boolean representant,
 			boolean delegat,
 			boolean aplicacio,
-			boolean afegir) throws EntitatNotFoundException, EntitatUsuariProtegitException, UsuariExternNotFoundException {
-		log.debug("Actualitzant dades no auditor de l'usuari (codi=" + codi + ", nif=" + nif + ") a l'entitat (id=" + id + ")");
+			boolean afegir,
+			boolean actiu) throws EntitatNotFoundException, EntitatUsuariProtegitException, UsuariExternNotFoundException {
+		log.debug("Actualitzant dades no auditor de l'usuari (codi=" + codi + ", nif=" + nif + ", actiu=" + actiu + ") a l'entitat (id=" + id + ")");
 		Entitat entitat = entitatRepository.findOne(id);
 		if (entitat == null) {
 			log.debug("No s'ha trobat l'entitat (id=" + id + ")");
@@ -252,7 +254,8 @@ public class UsuariServiceImpl implements UsuariService {
 				false,
 				true,
 				aplicacio,
-				afegir);
+				afegir,
+				actiu);
 	}
 
 	@Transactional(rollbackFor = EntitatNotFoundException.class)
@@ -296,7 +299,8 @@ public class UsuariServiceImpl implements UsuariService {
 				auditor,
 				false,
 				false,
-				afegir);
+				afegir,
+				null);
 	}
 
 	@Transactional(rollbackFor = {EntitatNotFoundException.class, EntitatUsuariNotFoundException.class})
@@ -354,7 +358,8 @@ public class UsuariServiceImpl implements UsuariService {
 			boolean auditor,
 			boolean canviarAplicacio,
 			boolean aplicacio,
-			boolean afegir) throws UsuariExternNotFoundException {
+			boolean afegir,
+			Boolean actiu) throws UsuariExternNotFoundException {
 		boolean idPerNif = (codi == null || codi.isEmpty());
 		Usuari usuari;
 		if (idPerNif) {
@@ -431,7 +436,8 @@ public class UsuariServiceImpl implements UsuariService {
 					representant,
 					delegat,
 					auditor,
-					aplicacio).build();
+					aplicacio,
+					(actiu != null) ? actiu : true).build();
 			entitatUsuariRepository.save(entitatUsuari);
 		} else {
 			boolean representatPerUpdate = (canviarRepresentant) ? representant : entitatUsuari.isRepresentant();
@@ -449,7 +455,8 @@ public class UsuariServiceImpl implements UsuariService {
 					representatPerUpdate,
 					delegatPerUpdate,
 					auditorPerUpdate,
-					aplicacioPerUpdate);
+					aplicacioPerUpdate,
+					(actiu != null) ? actiu : entitatUsuari.isActiu());
 		}
 	}
 

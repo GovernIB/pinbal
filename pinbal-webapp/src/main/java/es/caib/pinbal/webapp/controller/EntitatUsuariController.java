@@ -194,7 +194,8 @@ public class EntitatUsuariController extends BaseController {
 						command.isRolDelegat(),
 						command.isRolAuditor(),
 						command.isRolAplicacio(),
-						command.isAfegir());
+						command.isAfegir(),
+						command.isActiu());
 				String nomUsuari = command.getNif();
 				for (EntitatUsuariDto usuari: entitat.getUsuaris()) {
 					if (usuari.getUsuari().getNif() != null && usuari.getUsuari().getNif().equalsIgnoreCase(command.getNif())) {
