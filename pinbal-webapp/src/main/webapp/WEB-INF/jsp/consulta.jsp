@@ -79,7 +79,7 @@
 								 optionMinimumResultsForSearch="0"/>
 			</div>	
 			<div class="col-md-3">
-				<pbl:inputSelect name="estat"  inline="true" placeholderKey="consulta.list.filtre.estat"
+				<pbl:inputSelect name="estat" inline="true" placeholderKey="consulta.list.filtre.estat"
 								 optionItems="${consultaEstats}"
 								 emptyOption="true"/>
 			</div>
@@ -94,34 +94,21 @@
 						<pbl:inputDate name="dataFi"  inline="true" placeholderKey="consulta.list.filtre.data.fi"/>
 					</div>
 				</div>
-			</div>
-			<div class="col-md-3">
-				<pbl:inputText name="titularNom" inline="true" placeholderKey="consulta.list.filtre.titular.nom"/>
-			</div>
-			<div class="col-md-3">
-				<pbl:inputText name="titularDocument" inline="true" placeholderKey="consulta.list.filtre.titular.document"/>
-			</div>
-			<div class="col-md-3">
-				<div class="pull-right">
-					<button id="netejar-filtre" class="btn btn-default" type="button"><spring:message code="comu.boto.netejar"/></button>
-					<button id="filtrar" class="btn btn-primary" type="submit"><span class="fa fa-filter"></span> <spring:message code="comu.boto.filtrar"/></button>
+				<div class="col-md-3">
+					<pbl:inputText name="titularNom" inline="true" placeholderKey="consulta.list.filtre.titular.nom"/>
+				</div>
+				<div class="col-md-3">
+					<pbl:inputText name="titularDocument" inline="true" placeholderKey="consulta.list.filtre.titular.document"/>
+				</div>
+				<div class="col-md-3">
+					<div class="pull-right">
+						<button id="netejar-filtre" class="btn btn-default" type="button"><spring:message code="comu.boto.netejar"/></button>
+						<button id="filtrar" class="btn btn-primary" type="submit"><span class="fa fa-filter"></span> <spring:message code="comu.boto.filtrar"/></button>
+					</div>
 				</div>
 			</div>
 		</div>
-		<div class="col-md-3">
-			<pbl:inputText name="titularNom" inline="true" placeholderKey="consulta.list.filtre.titular.nom"/>
-		</div>
-		<div class="col-md-3">
-			<pbl:inputText name="titularDocument" inline="true" placeholderKey="consulta.list.filtre.titular.document"/>
-		</div>
-		<div class="col-md-3">
-			<div class="pull-right">
-				<button id="netejar-filtre" class="btn btn-default" type="button"><spring:message code="comu.boto.netejar"/></button>
-				<button id="filtrar" class="btn btn-primary" type="submit"><span class="fa fa-filter"></span> <spring:message code="comu.boto.filtrar"/></button>
-			</div>
-		</div>
-	</div>
-</form:form>
+	</form:form>
 	<table id="table-consultes" class="table table-striped table-bordered" style="width: 100%">
 		<thead>
 			<tr>
