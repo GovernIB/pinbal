@@ -204,6 +204,7 @@ body {
 							<a href="<c:url value="/admin/consulta"/>" class="btn btn-primary"><spring:message code="decorator.menu.consultes"/></a>
 							<a href="<c:url value="/integracio"/>" class="btn btn-primary"><spring:message code="decorator.menu.integracions"/></a>
 							<a href="<c:url value="/avis"/>" class="btn btn-primary"><spring:message code="decorator.menu.avisos"/></a>
+							<a href="<c:url value="/config"/>" class="btn btn-primary"> <spring:message code="decorator.menu.config.properties"/></a>
 							<div class="btn-group">
 								<button data-toggle="dropdown" class="btn btn-primary dropdown-toggle"><spring:message code="decorator.menu.scsp"/>&nbsp;<span class="caret caret-white"></span></button>
 								<ul class="dropdown-menu">

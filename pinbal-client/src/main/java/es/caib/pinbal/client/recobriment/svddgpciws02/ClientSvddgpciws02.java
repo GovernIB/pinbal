@@ -56,7 +56,7 @@ public class ClientSvddgpciws02 extends ClientBase {
 		public String getDatosEspecificos() { // xml
 			StringBuilder xmlBuilder = new StringBuilder("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
 			xmlBuilder.append("<DatosEspecificos>");
-			if (numeroSoporte != null && !numeroSoporte.isEmpty()) {
+			if (!isEmptyString(numeroSoporte)) {
 				xmlBuilder.append("<Consulta>");
 				xmlBuilder.append(
 						xmlOptionalStringParameter(this.numeroSoporte, "NumeroSoporte")

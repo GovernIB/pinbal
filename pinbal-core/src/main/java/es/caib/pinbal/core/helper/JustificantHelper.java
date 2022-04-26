@@ -83,6 +83,8 @@ public class JustificantHelper implements MessageSourceAware {
 	private PluginHelper pluginHelper;
 	@Autowired
 	private IntegracioHelper integracioHelper;
+	@Autowired
+	private ConfigHelper configHelper;
 
 	private MessageSource messageSource;
 
@@ -623,17 +625,16 @@ public class JustificantHelper implements MessageSourceAware {
 	}
 
 	private String getExtensioSortida() {
-		String extensioSortida = PropertiesHelper.getProperties().getProperty("es.caib.pinbal.justificant.extensio.sortida");
-		return (extensioSortida != null) ? extensioSortida : "pdf";
+		return configHelper.getConfig("es.caib.pinbal.justificant.extensio.sortida", "pdf");
 	}
 	private boolean isConvertirPdfaJustificant() {
-		return PropertiesHelper.getProperties().getAsBoolean("es.caib.pinbal.justificant.convertir.pdfa");
+		return configHelper.getAsBoolean("es.caib.pinbal.justificant.convertir.pdfa", false);
 	}
 	private boolean isSignarICustodiarJustificant() {
-		return PropertiesHelper.getProperties().getAsBoolean("es.caib.pinbal.justificant.signar.i.custodiar");
+		return configHelper.getAsBoolean("es.caib.pinbal.justificant.signar.i.custodiar", false);
 	}
 	private String getJustificantSerieDocumental() {
-		return PropertiesHelper.getProperties().getProperty("es.caib.pinbal.justificant.serie.documental");
+		return configHelper.getConfig("es.caib.pinbal.justificant.serie.documental");
 	}
 
 	public class NodeInfo {

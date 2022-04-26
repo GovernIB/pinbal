@@ -31,7 +31,7 @@
 	<!-- ==================================================================== -->
 	<!-- Gestores de configuración                                            -->
 	<!-- ==================================================================== -->
-	<alias name="propertyPlaceholderConfigurer" alias="scspPropertyPlaceholderConfigurer" />
+	<alias name="sPropertyPlaceholderConfigurer" alias="scspPropertyPlaceholderConfigurer" />
 	<bean class="es.scsp.common.security.PolicyBuilder">
 		<constructor-arg index="0" value="/scsp-ws-policy.xml" />
 	</bean>

@@ -14,6 +14,7 @@ import org.odftoolkit.odfdom.converter.core.ODFConverterException;
 import org.odftoolkit.odfdom.converter.pdf.PdfConverter;
 import org.odftoolkit.odfdom.converter.pdf.PdfOptions;
 import org.odftoolkit.odfdom.doc.OdfTextDocument;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.artofsolving.jodconverter.DefaultDocumentFormatRegistry;
@@ -48,6 +49,8 @@ public class ConversioTipusDocumentHelper {
 
 	private DocumentFormatRegistry documentFormatRegistry;
 
+	@Autowired
+	private ConfigHelper configHelper;
 
 
 	public void convertir(
@@ -157,18 +160,6 @@ public class ConversioTipusDocumentHelper {
 			return null;
 	}
 
-	private boolean isConversioTipusOpenOffice() {
-		String conversioTipus = getConversioTipus();
-		return conversioTipus == null || CONVERSIO_TIPUS_OPENOFFICE.equalsIgnoreCase(conversioTipus);
-	}
-	private boolean isConversioTipusXdocreport() {
-		String conversioTipus = getConversioTipus();
-		return CONVERSIO_TIPUS_XDOCREPORT.equalsIgnoreCase(conversioTipus);
-	}
-	private String getConversioTipus() {
-		return PropertiesHelper.getProperties().getProperty("es.caib.pinbal.conversio.tipus");
-	}
-
 	private void convertAmbServeiOpenOffice(
 			InputStream in,
 			DocumentFormat inputFormat,
@@ -194,12 +185,28 @@ public class ConversioTipusDocumentHelper {
 			if (connection != null) connection.disconnect();
 		}
 	}
+
+	private String getConversioTipus() {
+		return configHelper.getConfig("es.caib.pinbal.conversio.tipus", CONVERSIO_TIPUS_OPENOFFICE);
+	}
+
+	private boolean isConversioTipusOpenOffice() {
+		String conversioTipus = getConversioTipus();
+		return conversioTipus == null || CONVERSIO_TIPUS_OPENOFFICE.equalsIgnoreCase(conversioTipus);
+	}
+	private boolean isConversioTipusXdocreport() {
+		String conversioTipus = getConversioTipus();
+		return CONVERSIO_TIPUS_XDOCREPORT.equalsIgnoreCase(conversioTipus);
+	}
+
+
 	private String getOpenOfficeHost() {
-		return PropertiesHelper.getProperties().getProperty("es.caib.pinbal.conversio.open.office.host");
+		return configHelper.getConfig("es.caib.pinbal.conversio.open.office.host");
 	}
 	private String getOpenOfficePort() {
-		return PropertiesHelper.getProperties().getProperty("es.caib.pinbal.conversio.open.office.port");
+		return configHelper.getConfig("es.caib.pinbal.conversio.open.office.port");
 	}
+
 	private DocumentFormatRegistry getDocumentFormatRegistry() {
 		if (documentFormatRegistry == null)
 			documentFormatRegistry = new DefaultDocumentFormatRegistry();

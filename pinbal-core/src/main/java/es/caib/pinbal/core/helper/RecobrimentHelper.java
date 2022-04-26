@@ -86,6 +86,8 @@ public class RecobrimentHelper implements ApplicationContextAware, MessageSource
 	private ConsultaService consultaService;
 	@Autowired
 	private HistoricConsultaService historicConsultaService;
+	@Autowired
+	private ConfigHelper configHelper;
 
 	private ApplicationContext applicationContext;
 	private MessageSource messageSource;
@@ -567,22 +569,10 @@ public class RecobrimentHelper implements ApplicationContextAware, MessageSource
 	}
 
 	private boolean getPropertyDatosEspecificosProcessar() {
-		String propertyStr = PropertiesHelper.getProperties().getProperty(
-				"es.caib.pinbal.recobriment.datos.especificos.processar");
-		if (propertyStr != null) {
-			return new Boolean(propertyStr).booleanValue();
-		} else {
-			return false;
-		}
+		return configHelper.getAsBoolean("es.caib.pinbal.recobriment.datos.especificos.processar", false);
 	}
 	private boolean getPropertyDatosEspecificosIncloureNs() {
-		String propertyStr = PropertiesHelper.getProperties().getProperty(
-				"es.caib.pinbal.recobriment.datos.especificos.incloure.ns");
-		if (propertyStr != null) {
-			return new Boolean(propertyStr).booleanValue();
-		} else {
-			return false;
-		}
+		return configHelper.getAsBoolean("es.caib.pinbal.recobriment.datos.especificos.incloure.ns", false);
 	}
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(RecobrimentHelper.class);

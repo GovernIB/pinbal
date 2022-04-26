@@ -21,6 +21,8 @@ public abstract class EmailHelper {
 
     @Autowired
 	private JavaMailSender mailSender;
+    @Autowired
+    private ConfigHelper configHelper;
 
     protected abstract String getMailHtmlBody();
     protected abstract String getMailPlainTextBody();
@@ -64,11 +66,11 @@ public abstract class EmailHelper {
     }
 
     public String getRemitent() {
-        return PropertiesHelper.getProperties().getProperty("es.caib.pinbal.email.remitent");
+        return configHelper.getConfig("es.caib.pinbal.email.remitent");
     }
     
     public String getEmailFooter() {
-        return PropertiesHelper.getProperties().getProperty("es.caib.pinbal.email.footer");
+        return configHelper.getConfig("es.caib.pinbal.email.footer", "");
     }
 
     @AllArgsConstructor
