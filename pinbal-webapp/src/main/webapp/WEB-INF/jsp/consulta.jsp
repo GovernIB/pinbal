@@ -5,47 +5,35 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
 <%@ taglib tagdir="/WEB-INF/tags/pinbal" prefix="pbl" %>
-
 <%	request.setAttribute("consultaEstats", es.caib.pinbal.core.dto.ConsultaDto.EstatTipus.sortedValues());
 	request.setAttribute("historicSession", es.caib.pinbal.webapp.controller.ConsultaController.SESSION_CONSULTA_HISTORIC);
 %>
-
 <html>
-<head>	
-
+<head>
 	<title><spring:message code="consulta.list.titol"/></title>	
-
 	<link href="<c:url value="/webjars/datatables/1.10.21/css/dataTables.bootstrap.min.css"/>" rel="stylesheet"/>
 	<link href="<c:url value="/webjars/bootstrap-datepicker/1.6.1/dist/css/bootstrap-datepicker.min.css"/>" rel="stylesheet"/>
 	<link href="<c:url value="/webjars/select2/4.0.6-rc.1/dist/css/select2.min.css"/>" rel="stylesheet"/>
 	<link href="<c:url value="/webjars/select2-bootstrap-theme/0.1.0-beta.10/dist/select2-bootstrap.min.css"/>" rel="stylesheet"/>
 	<link href="<c:url value="/js/ios-checkbox/iosCheckbox.css"/>" rel="stylesheet"/>
-
 	<script src="<c:url value="/webjars/bootstrap-datepicker/1.6.1/dist/js/bootstrap-datepicker.min.js"/>"></script>
 	<script src="<c:url value="/webjars/bootstrap-datepicker/1.6.1/dist/locales/bootstrap-datepicker.${requestLocale}.min.js"/>"></script>
-
 	<script src="<c:url value="/webjars/datatables/1.10.21/js/jquery.dataTables.min.js"/>"></script>
 	<script src="<c:url value="/webjars/datatables/1.10.21/js/dataTables.bootstrap.min.js"/>"></script>
 	<script src="<c:url value="/webjars/mustache.js/3.0.1/mustache.min.js"/>"></script>
-
 	<script src="<c:url value="/webjars/select2/4.0.6-rc.1/dist/js/select2.min.js"/>"></script>
 	<script src="<c:url value="/webjars/select2/4.0.6-rc.1/dist/js/i18n/${requestLocale}.js"/>"></script>
-
 	<script src="<c:url value="/webjars/datatables-plugins/1.10.20/dataRender/datetime.js"/>"></script>
 	<script src="<c:url value="/webjars/momentjs/2.24.0/min/moment.min.js"/>"></script>
 	<script src="<c:url value="/js/ios-checkbox/iosCheckbox.js"/>"></script>
-
 	<script src="<c:url value="/js/webutil.datatable.js"/>"></script>
 	<script src="<c:url value="/js/webutil.modal.js"/>"></script>
 	<script src="<c:url value="/js/webutil.common.js"/>"></script>
-
-
 	<script type="application/javascript">
 		function checkCallback() {
 			// historicColor();
 			$("#filtrar").click();
 		}
-
 		function historicColor() {
 			let historic = $("#titolCheck").prop("checked");
 			if (historic) {
@@ -68,43 +56,55 @@
 	</style>
 </head>
 <body>
-<div class="text-right" data-toggle="titol-check" data-titol-check-value="${historic}" data-titol-check-session-name="${historicSession}" data-titol-check-callback="checkCallback" data-titol-check-label="<spring:message code="comu.historic"/>"></div>
-
-<form:form id="form-filtre" action="" method="post" cssClass="well form-filtre-table" commandName="filtreCommand" >
-	<div class ="row">
-		<div class="col-md-3">
-			<pbl:inputText name="scspPeticionId"  inline="true" placeholderKey="consulta.list.filtre.peticion.id"/>
+	<div class="text-right" data-toggle="titol-check" data-titol-check-value="${historic}" data-titol-check-session-name="${historicSession}" data-titol-check-callback="checkCallback" data-titol-check-label="<spring:message code="comu.historic"/>"></div>
+	<form:form id="form-filtre" action="" method="post" cssClass="well form-filtre-table" commandName="filtreCommand" >
+		<div class ="row">
+			<div class="col-md-3">
+				<pbl:inputText name="scspPeticionId" inline="true" placeholderKey="consulta.list.filtre.peticion.id"/>
+			</div>
+			<div class="col-md-3">
+				<pbl:inputSelect name="procediment" inline="true" placeholderKey="consulta.list.filtre.procediment"
+								optionItems="${procediments}"
+								optionValueAttribute="id"
+								optionTextAttribute="nom"
+								emptyOption="true"
+								optionMinimumResultsForSearch="0"/>
+			</div>
+			<div class="col-md-3">
+				<pbl:inputSelect name="servei" inline="true" placeholderKey="consulta.list.filtre.servei"
+								 optionItems="${serveis}" 
+								 optionValueAttribute="codi"
+								 optionTextAttribute="descripcio"
+								 emptyOption="true"
+								 optionMinimumResultsForSearch="0"/>
+			</div>	
+			<div class="col-md-3">
+				<pbl:inputSelect name="estat"  inline="true" placeholderKey="consulta.list.filtre.estat"
+								 optionItems="${consultaEstats}"
+								 emptyOption="true"/>
+			</div>
 		</div>
-		<div class="col-md-3">
-			<pbl:inputSelect name="procediment"  inline="true" placeholderKey="consulta.list.filtre.procediment" 
-							optionItems="${procediments}"  
-							optionValueAttribute="id" 
-							optionTextAttribute="nom" 
-							emptyOption="true"
-							optionMinimumResultsForSearch="0"/> 
-		</div>
-		<div class="col-md-3">
-			<pbl:inputSelect name="servei"  inline="true" placeholderKey="consulta.list.filtre.servei" 
-							 optionItems="${serveis}" 
-							 optionValueAttribute="codi"
-							 optionTextAttribute="descripcio"
-							 emptyOption="true"
-							 optionMinimumResultsForSearch="0"/>
-		</div>	
-		<div class="col-md-3">
-			<pbl:inputSelect name="estat"  inline="true" placeholderKey="consulta.list.filtre.estat" 
-							 optionItems="${consultaEstats}" 
-							 emptyOption="true"/>
-		</div>	
-	</div>
-	<div class="row">
-		<div class="col-md-3" >
-			<div class="row">
-				<div class="col-md-6" >
-					<pbl:inputDate name="dataInici"  inline="true" placeholderKey="consulta.list.filtre.data.inici"/>
+		<div class="row">
+			<div class="col-md-3" >
+				<div class="row">
+					<div class="col-md-6" >
+						<pbl:inputDate name="dataInici"  inline="true" placeholderKey="consulta.list.filtre.data.inici"/>
+					</div>
+					<div class="col-md-6" >
+						<pbl:inputDate name="dataFi"  inline="true" placeholderKey="consulta.list.filtre.data.fi"/>
+					</div>
 				</div>
-				<div class="col-md-6" >
-					<pbl:inputDate name="dataFi"  inline="true" placeholderKey="consulta.list.filtre.data.fi"/>
+			</div>
+			<div class="col-md-3">
+				<pbl:inputText name="titularNom" inline="true" placeholderKey="consulta.list.filtre.titular.nom"/>
+			</div>
+			<div class="col-md-3">
+				<pbl:inputText name="titularDocument" inline="true" placeholderKey="consulta.list.filtre.titular.document"/>
+			</div>
+			<div class="col-md-3">
+				<div class="pull-right">
+					<button id="netejar-filtre" class="btn btn-default" type="button"><spring:message code="comu.boto.netejar"/></button>
+					<button id="filtrar" class="btn btn-primary" type="submit"><span class="fa fa-filter"></span> <spring:message code="comu.boto.filtrar"/></button>
 				</div>
 			</div>
 		</div>
@@ -122,24 +122,24 @@
 		</div>
 	</div>
 </form:form>
-		<table id="table-consultes" class="table table-striped table-bordered" style="width: 100%">
-			<thead>
-				<tr>
-					<th data-data="scspPeticionId"><spring:message code="consulta.list.taula.peticion.id" /></th><%-- 0 --%>
-					<th data-data="creacioData"><spring:message code="consulta.list.taula.data" /></th><%-- 1 --%>
-					<th data-data="procedimentNom"><spring:message code="consulta.list.taula.procediment" /></th><%-- 2 --%>
-					<th data-data="serveiDescripcio"><spring:message code="consulta.list.taula.servei" /></th><%-- 3 --%>
-					<th data-data="titularNomSencer"><spring:message code="consulta.list.taula.titular.nom" /></th><%-- 4 --%>
-					<th data-data="titularDocumentAmbTipus"><spring:message code="consulta.list.taula.titular.document" /></th><%-- 5 --%>
-					<th data-data="estat"><spring:message code="consulta.list.taula.estat" /></th><%-- 6 --%>
-					<th data-data="id"></th><%-- 7 --%>
-					<th data-data="justificantEstat"></th><%-- 8 --%>
-					<th data-data="justificantError"></th><%-- 9 --%>
-					<th data-data="recobriment"></th><%-- 10 --%>
-					<th data-data="error"></th><%-- 11 --%>
-				</tr>
-			</thead>
-		</table>
+	<table id="table-consultes" class="table table-striped table-bordered" style="width: 100%">
+		<thead>
+			<tr>
+				<th data-data="scspPeticionId"><spring:message code="consulta.list.taula.peticion.id" /></th><%-- 0 --%>
+				<th data-data="creacioData"><spring:message code="consulta.list.taula.data" /></th><%-- 1 --%>
+				<th data-data="procedimentNom"><spring:message code="consulta.list.taula.procediment" /></th><%-- 2 --%>
+				<th data-data="serveiDescripcio"><spring:message code="consulta.list.taula.servei" /></th><%-- 3 --%>
+				<th data-data="titularNomSencer"><spring:message code="consulta.list.taula.titular.nom" /></th><%-- 4 --%>
+				<th data-data="titularDocumentAmbTipus"><spring:message code="consulta.list.taula.titular.document" /></th><%-- 5 --%>
+				<th data-data="estat"><spring:message code="consulta.list.taula.estat" /></th><%-- 6 --%>
+				<th data-data="id"></th><%-- 7 --%>
+				<th data-data="justificantEstat"></th><%-- 8 --%>
+				<th data-data="justificantError"></th><%-- 9 --%>
+				<th data-data="recobriment"></th><%-- 10 --%>
+				<th data-data="error"></th><%-- 11 --%>
+			</tr>
+		</thead>
+	</table>
 <script type="text/javascript">
 $(document).ready(function() {
 	$('#netejar-filtre').click(function() {

@@ -23,29 +23,29 @@ import java.util.List;
  */
 public class ServeisInterceptor extends HandlerInterceptorAdapter {
 
-    @Autowired
-    private ServeiService serveiService;
+	@Autowired
+	private ServeiService serveiService;
 
-    @Override
-    public boolean preHandle(
-            HttpServletRequest request,
-            HttpServletResponse response,
-            Object handler) throws Exception {
-    	if (!request.getServletPath().startsWith("/api")) {
-	        EntitatDto entitatActual = EntitatHelper.getEntitatActual(request);
-	        List<ServeiDto> serveis = null;
-	        if (request.getUserPrincipal() != null && RolHelper.isRolActualDelegat(request)) { // Si hi ha algún usuari autenticat
-	            String usuari = request.getUserPrincipal().getName();
-	            LOGGER.debug("Consulta del llistat de serveis pel delegat (usuari=" + usuari + ")");
-	            serveis = serveiService.findPermesosAmbProcedimentPerDelegat(entitatActual.getId(), null);
-	        }
-	        request.setAttribute(
-	                ServeiHelper.REQUEST_ATTRIBUTE_SERVEIS,
-	                serveis);
-    	}
-        return true;
-    }
+	@Override
+	public boolean preHandle(
+		HttpServletRequest request,
+		HttpServletResponse response,
+		Object handler) throws Exception {
+		if (!request.getServletPath().startsWith("/api")) {
+			EntitatDto entitatActual = EntitatHelper.getEntitatActual(request);
+			List<ServeiDto> serveis = null;
+			if (request.getUserPrincipal() != null && RolHelper.isRolActualDelegat(request)) { // Si hi ha algún usuari autenticat
+				String usuari = request.getUserPrincipal().getName();
+				LOGGER.debug("Consulta del llistat de serveis pel delegat (usuari=" + usuari + ")");
+				serveis = serveiService.findPermesosAmbProcedimentPerDelegat(entitatActual.getId(), null);
+			}
+			request.setAttribute(
+					ServeiHelper.REQUEST_ATTRIBUTE_SERVEIS,
+					serveis);
+		}
+		return true;
+	}
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ServeisInterceptor.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(ServeisInterceptor.class);
 
 }

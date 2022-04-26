@@ -144,23 +144,6 @@ public class Entitat extends PinbalAuditable<Long> {
 						this,
 						servei).build());
 	}
-	public void addUsuari(
-			Usuari usuari,
-			String departament,
-			boolean representant,
-			boolean delegat,
-			boolean auditor,
-			boolean aplicacio) {
-		usuaris.add(
-				EntitatUsuari.getBuilder(
-						this,
-						usuari,
-						departament,
-						representant,
-						delegat,
-						auditor,
-						aplicacio).build());
-	}
 	public void addServeiBus(
 			String servei,
 			String urlDesti) {

@@ -18,6 +18,7 @@ public class EntitatUsuariDto extends AbstractIdentificable<Long> implements Ser
 	private boolean delegat;
 	private boolean auditor;
 	private boolean aplicacio;
+	private boolean actiu;
 	
 	// Propietat per a mostrar el check amb accés permés als llistats
 	private Boolean acces = false;
@@ -29,7 +30,8 @@ public class EntitatUsuariDto extends AbstractIdentificable<Long> implements Ser
 			boolean representant,
 			boolean delegat,
 			boolean auditor,
-			boolean aplicacio) {
+			boolean aplicacio,
+			boolean actiu) {
 		this.usuari = usuari;
 		this.departament = departament;
 		this.principal = principal;
@@ -37,6 +39,7 @@ public class EntitatUsuariDto extends AbstractIdentificable<Long> implements Ser
 		this.delegat = delegat;
 		this.auditor = auditor;
 		this.aplicacio = aplicacio;
+		this.actiu = actiu;
 	}
 
 	public UsuariDto getUsuari() {
@@ -81,12 +84,17 @@ public class EntitatUsuariDto extends AbstractIdentificable<Long> implements Ser
 	public void setAplicacio(boolean aplicacio) {
 		this.aplicacio = aplicacio;
 	}
-
 	public Boolean getAcces() {
 		return acces;
 	}
 	public void setAcces(Boolean acces) {
 		this.acces = acces;
+	}
+	public boolean isActiu() {
+		return actiu;
+	}
+	public void setActiu(boolean actiu) {
+		this.actiu = actiu;
 	}
 
 	@Override
@@ -94,11 +102,11 @@ public class EntitatUsuariDto extends AbstractIdentificable<Long> implements Ser
 		return ToStringBuilder.reflectionToString(this);
 	}
 
-	private static final long serialVersionUID = -5757581909233321212L;
-
 	@Override
 	public int compareTo(EntitatUsuariDto o) {
 		return this.getUsuari().compareTo(o.getUsuari());
 	}
+
+	private static final long serialVersionUID = -5757581909233321212L;
 
 }

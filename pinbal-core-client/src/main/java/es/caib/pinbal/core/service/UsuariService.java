@@ -99,6 +99,8 @@ public interface UsuariService {
 	 * @param afegir
 	 *            Si es false els rols s'han de configurar talment. Si és
 	 *            true s'han d'afegir.
+	 * @param actiu
+	 *            Indica si l'usuari està actiu.
 	 * @throws EntitatNotFoundException
 	 *            Si no hi ha cap entitat amb l'id especificat.
 	 * @throws UsuariExternNotFoundException
@@ -114,7 +116,8 @@ public interface UsuariService {
 			boolean delegat,
 			boolean auditor,
 			boolean aplicacio,
-			boolean afegir) throws EntitatNotFoundException, UsuariExternNotFoundException;
+			boolean afegir,
+			boolean actiu) throws EntitatNotFoundException, UsuariExternNotFoundException;
 
 	/**
 	 * Actualitza les dades d'un usuari per a un representant.
@@ -136,6 +139,8 @@ public interface UsuariService {
 	 * @param afegir
 	 *            Si es false els rols s'han de configurar talment. Si és
 	 *            true s'han d'afegir.
+	 * @param actiu
+	 *            Indica si l'usuari està actiu.
 	 * @throws EntitatNotFoundException
 	 *            Si no hi ha cap entitat amb l'id especificat.
 	 * @throws EntitatUsuariProtegitException
@@ -152,7 +157,8 @@ public interface UsuariService {
 			boolean representant,
 			boolean delegat,
 			boolean aplicacio,
-			boolean afegir) throws EntitatNotFoundException, EntitatUsuariProtegitException, UsuariExternNotFoundException;
+			boolean afegir,
+			boolean actiu) throws EntitatNotFoundException, EntitatUsuariProtegitException, UsuariExternNotFoundException;
 
 	/**
 	 * Actualitza les dades d'un usuari per a un auditor.

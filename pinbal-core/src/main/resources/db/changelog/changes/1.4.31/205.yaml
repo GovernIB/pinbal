@@ -1,0 +1,25 @@
+databaseChangeLog:
+- changeSet:
+    id: 1650451898721-1
+    author: limit
+    changes:
+    - addColumn:
+        tableName: pbl_entitat_usuari
+        columns:
+        - column:
+            name: actiu
+            type: BOOLEAN
+- changeSet:
+    id: 1650451898721-2
+    author: limit
+    changes:
+    - update:
+        columns:
+        - column:
+            name: actiu
+            valueBoolean: true
+        tableName: pbl_entitat_usuari
+    - addNotNullConstraint:
+        tableName: pbl_entitat_usuari
+        columnName: actiu 
+        columnDataType: BOOLEAN

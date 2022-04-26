@@ -32,7 +32,7 @@ import es.caib.pinbal.core.service.exception.ServeiNotFoundException;
 @Controller
 @RequestMapping("/usuariajax")
 public class AjaxUsuariController extends BaseController{
-	
+
 	@Autowired
 	private UsuariService usuariService;
 

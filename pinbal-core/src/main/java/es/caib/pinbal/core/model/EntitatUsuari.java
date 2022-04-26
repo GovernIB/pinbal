@@ -55,6 +55,9 @@ public class EntitatUsuari extends PinbalAuditable<Long> {
 	@Column(name = "principal")
 	private boolean principal = false;
 
+	@Column(name = "actiu")
+	private boolean actiu = true;
+
 	@ManyToOne(optional=false, fetch = FetchType.EAGER)
 	@JoinColumn(
 			name = "entitat_id",
@@ -89,6 +92,8 @@ public class EntitatUsuari extends PinbalAuditable<Long> {
 	 *            Indica si l'usuari d'una entitat actua com a auditor.
 	 * @param aplicacio
 	 *            Indica si l'usuari d'una entitat actua com a aplicacio.
+	 * @param actiu
+	 *            Indica si l'usuari està actiu.
 	 * @return Una nova instància del Builder.
 	 */
 	public static Builder getBuilder(
@@ -98,7 +103,8 @@ public class EntitatUsuari extends PinbalAuditable<Long> {
 			boolean representant,
 			boolean delegat,
 			boolean auditor,
-			boolean aplicacio) {
+			boolean aplicacio,
+			boolean actiu) {
 		return new Builder(
 				entitat,
 				usuari,
@@ -106,7 +112,8 @@ public class EntitatUsuari extends PinbalAuditable<Long> {
 				representant,
 				delegat,
 				auditor,
-				aplicacio);
+				aplicacio,
+				actiu);
 	}
 
 	public boolean isRepresentant() {
@@ -144,18 +151,24 @@ public class EntitatUsuari extends PinbalAuditable<Long> {
 	public long getVersion() {
 		return version;
 	}
+	
+	public boolean isActiu() {
+		return actiu;
+	}
 
 	public void update(
 			String departament,
 			boolean representant,
 			boolean delegat,
 			boolean auditor,
-			boolean aplicacio) {
+			boolean aplicacio,
+			boolean actiu) {
 		this.departament = departament;
 		this.representant = representant;
 		this.delegat = delegat;
 		this.auditor = auditor;
 		this.aplicacio = aplicacio;
+		this.actiu = actiu;
 	}
 	public void updatePrincipal(
 			boolean principal) {
@@ -201,7 +214,8 @@ public class EntitatUsuari extends PinbalAuditable<Long> {
 				boolean representant,
 				boolean delegat,
 				boolean auditor,
-				boolean aplicacio) {
+				boolean aplicacio,
+				boolean actiu) {
 			built = new EntitatUsuari();
 			built.entitat = entitat;
 			built.usuari = usuari;
@@ -210,6 +224,7 @@ public class EntitatUsuari extends PinbalAuditable<Long> {
 			built.delegat = delegat;
 			built.auditor = auditor;
 			built.aplicacio = aplicacio;
+			built.actiu = actiu;
 		}
 
 		/**
