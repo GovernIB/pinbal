@@ -19,7 +19,7 @@ public interface ConfigService {
 	 * @param property Informació que es vol actualitzar.
 	 * @return El DTO amb les dades modificades.
 	 */
-	@PreAuthorize("hasRole('PBL_ADMIN')")
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	ConfigDto updateProperty(ConfigDto property) throws Exception;
 
 	/**
@@ -29,7 +29,7 @@ public interface ConfigService {
 	 *
 	 * @return Retorna un llistat de tots els grups de propietats que no pertanyen a cap grup.
 	 */
-	@PreAuthorize("hasRole('PBL_ADMIN')")
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	List<ConfigGroupDto> findAll();
 
 
@@ -42,8 +42,11 @@ public interface ConfigService {
 	 *
 	 * @return Llistat de les properties editades.
 	 */
-	@PreAuthorize("hasRole('PBL_ADMIN')")
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	List<String> syncFromJBossProperties();
+
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	void reiniciarTasques();
 
 }
 

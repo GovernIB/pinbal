@@ -59,7 +59,7 @@ public class ScspPropertyPlaceholderConfigurer extends PropertyPlaceholderConfig
 	}
 
 	public String getProperty(String property) {
-		String valor = this.dataBaseProperties.getProperty(property);;
+		String valor = this.dataBaseProperties.getProperty(property);
 		if (valor != null)
 			return valor;
 

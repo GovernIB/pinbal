@@ -29,8 +29,8 @@ INSERT INTO pbl_config_group (code, parent_code, position, description_key) VALU
 INSERT INTO pbl_config_group (code, parent_code, position, description_key) VALUES ('ARXIU', 'PLUGINS', '4', 'propietat.grup.plugins.arxiu');
 INSERT INTO pbl_config_group (code, parent_code, position, description_key) VALUES ('UNITATS', 'PLUGINS', '5', 'propietat.grup.plugins.unitats');
 -- INSERT INTO pbl_config_group (code, position, description_key) VALUES ('SCSP', '2', 'propietat.grup.scsp');
-INSERT INTO pbl_config_group (code, position, description_key) VALUES ('HISTORIC', '3', 'propietat.grup.historic');
-INSERT INTO pbl_config_group (code, position, description_key) VALUES ('TASQUES', '5', 'propietat.grup.tasques');
+INSERT INTO pbl_config_group (code, position, description_key) VALUES ('HISTORIC', '2', 'propietat.grup.historic');
+INSERT INTO pbl_config_group (code, position, description_key) VALUES ('TASQUES', '3', 'propietat.grup.tasques');
 
 CREATE TABLE pbl_config_type (code VARCHAR2(128 CHAR) NOT NULL, value VARCHAR2(2048 CHAR));
 ALTER TABLE pbl_config_type ADD PRIMARY KEY (code);
@@ -44,14 +44,14 @@ INSERT INTO pbl_config_type (code) VALUES ('FLOAT');
 INSERT INTO pbl_config_type (code) VALUES ('PASS');
 INSERT INTO pbl_config_type (code) VALUES ('CRON');
 INSERT INTO pbl_config_type (code, value) VALUES ('USUARIS_CLASS', 'es.caib.pinbal.plugins.caib.DadesUsuariPluginJdbc');
-INSERT INTO pbl_config_type (code, value) VALUES ('SIGANTURA_CLASS', 'es.caib.pinbal.plugins.caib.SignaturaPluginCaib');
+INSERT INTO pbl_config_type (code, value) VALUES ('SIGNATURA_CLASS', 'es.caib.pinbal.plugins.caib.SignaturaPluginCaib');
 INSERT INTO pbl_config_type (code, value) VALUES ('FIRMA_SERVIDOR_CLASS', 'es.caib.pinbal.plugins.caib.FirmaServidorPluginPortafib');
 INSERT INTO pbl_config_type (code, value) VALUES ('CUSTODIA_CLASS', 'es.caib.pinbal.plugins.caib.CustodiaPluginCaib');
 INSERT INTO pbl_config_type (code, value) VALUES ('ARXIU_CLASS', 'es.caib.plugins.arxiu.caib.ArxiuPluginCaib');
 INSERT INTO pbl_config_type (code, value) VALUES ('UNITATS_CLASS', 'es.caib.pinbal.plugin.caib.unitat.UnitatsOrganitzativesPluginDir3');
 INSERT INTO pbl_config_type (code, value) VALUES ('CONVERSIO_TIPUS', 'xdocreport,openoffice');
 
-CREATE TABLE pbl_config (key VARCHAR2(256 CHAR) NOT NULL, value VARCHAR2(2048 CHAR), description_key VARCHAR2(2048 CHAR), group_code VARCHAR2(128 CHAR) NOT NULL, position NUMBER(3) NOT NULL, source_property VARCHAR2(16 CHAR) NOT NULL, type_code VARCHAR2(128 CHAR), lastmodifiedby VARCHAR2(64 CHAR), lastmodifieddate TIMESTAMP);
+CREATE TABLE pbl_config (key VARCHAR2(256 CHAR) NOT NULL, value VARCHAR2(2048 CHAR), description_key VARCHAR2(2048 CHAR), group_code VARCHAR2(128 CHAR) NOT NULL, position NUMBER(3) NOT NULL, source_property VARCHAR2(16 CHAR) NOT NULL, type_code VARCHAR2(128 CHAR), lastmodifiedby_codi VARCHAR2(64 CHAR), lastmodifieddate TIMESTAMP);
 ALTER TABLE pbl_config ADD PRIMARY KEY (key);
 ALTER TABLE pbl_config ADD CONSTRAINT pbl_config_group_fk FOREIGN KEY (group_code) REFERENCES pbl_config_group (code);
 
@@ -82,7 +82,7 @@ INSERT INTO pbl_config (key, value, description_key, group_code, position, sourc
 INSERT INTO pbl_config (key, value, description_key, group_code, position, source_property, type_code) VALUES ('es.caib.pinbal.plugin.dades.usuari.jdbc.query.nif', NULL, 'propietat.plugin.dades.usuari.jdbc.query.nif', 'USUARIS', '3', 'DATABASE', 'TEXT');
 INSERT INTO pbl_config (key, value, description_key, group_code, position, source_property, type_code) VALUES ('es.caib.pinbal.plugin.dades.usuari.jdbc.query.rols', NULL, 'propietat.plugin.dades.usuari.jdbc.query.rols', 'USUARIS', '4', 'DATABASE', 'TEXT');
 INSERT INTO pbl_config (key, value, description_key, group_code, position, source_property, type_code) VALUES ('es.caib.pinbal.plugin.dades.usuari.jdbc.query.grup', NULL, 'propietat.plugin.dades.usuari.jdbc.query.grup', 'USUARIS', '5', 'DATABASE', 'TEXT');
-INSERT INTO pbl_config (key, value, description_key, group_code, position, source_property, type_code) VALUES ('es.caib.plugin.signatura.class', NULL, 'propietat.plugin.signatura.class', 'SIGNATURA', '0', 'DATABASE', 'SIGNATURA_CLASS');
+INSERT INTO pbl_config (key, value, description_key, group_code, position, source_property, type_code) VALUES ('es.caib.pinbal.plugin.signatura.class', NULL, 'propietat.plugin.signatura.class', 'SIGNATURA', '0', 'DATABASE', 'SIGNATURA_CLASS');
 INSERT INTO pbl_config (key, value, description_key, group_code, position, source_property, type_code) VALUES ('es.caib.pinbal.plugin.signatura.caib.certificat.alias', NULL, 'propietat.plugin.signatura.caib.certificat.alias', 'SIGNATURA', '1', 'FILE', 'TEXT');
 INSERT INTO pbl_config (key, value, description_key, group_code, position, source_property, type_code) VALUES ('es.caib.pinbal.plugin.signatura.caib.certificat.password', NULL, 'propietat.plugin.signatura.caib.certificat.password', 'SIGNATURA', '2', 'FILE', 'TEXT');
 INSERT INTO pbl_config (key, value, description_key, group_code, position, source_property, type_code) VALUES ('es.caib.pinbal.plugin.signatura.caib.content.type', NULL, 'propietat.plugin.signatura.caib.content.type', 'SIGNATURA', '3', 'DATABASE', 'TEXT');

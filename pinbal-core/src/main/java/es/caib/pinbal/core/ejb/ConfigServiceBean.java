@@ -44,4 +44,10 @@ public class ConfigServiceBean implements ConfigService {
 		return delegate.syncFromJBossProperties();
 	}
 
+    @Override
+	@RolesAllowed({"PBL_ADMIN"})
+    public void reiniciarTasques() {
+        delegate.reiniciarTasques();
+    }
+
 }

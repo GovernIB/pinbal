@@ -45,6 +45,7 @@
 
 	<context:annotation-config />
 
+	<context:component-scan base-package="es.caib.pinbal.core.config" />
 	<context:component-scan base-package="es.caib.pinbal.core.service" />
 	<context:component-scan base-package="es.caib.pinbal.core.ws" />
 	<context:component-scan base-package="es.caib.pinbal.core.helper" />

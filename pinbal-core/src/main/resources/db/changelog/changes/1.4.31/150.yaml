@@ -279,7 +279,7 @@ databaseChangeLog:
               value: HISTORIC
           - column:
               name: position
-              value: 3
+              value: 2
           - column:
               name: description_key
               value: propietat.grup.historic
@@ -291,7 +291,7 @@ databaseChangeLog:
               value: TASQUES
           - column:
               name: position
-              value: 5
+              value: 3
           - column:
               name: description_key
               value: propietat.grup.tasques
@@ -369,7 +369,7 @@ databaseChangeLog:
         columns:
           - column:
               name: code
-              value: SIGANTURA_CLASS
+              value: SIGNATURA_CLASS
           - column:
               name: value
               value: es.caib.pinbal.plugins.caib.SignaturaPluginCaib
@@ -452,7 +452,7 @@ databaseChangeLog:
                   name: type_code
                   type: varchar(128 ${varcharUnit})
             - column:
-                  name: lastmodifiedby
+                  name: lastmodifiedby_codi
                   type: varchar(64 ${varcharUnit})
             - column:
                   name: lastmodifieddate
@@ -1287,7 +1287,7 @@ databaseChangeLog:
         columns:
           - column:
               name: key
-              value: es.caib.plugin.signatura.class
+              value: es.caib.pinbal.plugin.signatura.class
           - column:
               name: value
               value:

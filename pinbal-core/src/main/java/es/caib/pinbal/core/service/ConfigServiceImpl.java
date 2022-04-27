@@ -1,5 +1,6 @@
 package es.caib.pinbal.core.service;
 
+import es.caib.pinbal.core.config.ScheduleConfig;
 import es.caib.pinbal.core.dto.ConfigDto;
 import es.caib.pinbal.core.dto.ConfigGroupDto;
 import es.caib.pinbal.core.dto.ConfigSourceEnumDto;
@@ -40,6 +41,8 @@ public class ConfigServiceImpl implements ConfigService {
     private DtoMappingHelper dtoMappingHelper;
     @Autowired
     private PluginHelper pluginHelper;
+    @Autowired
+    private ScheduleConfig scheduleConfig;
 
     @Override
     @Transactional
@@ -90,6 +93,11 @@ public class ConfigServiceImpl implements ConfigService {
             }
         }
         return editedProperties;
+    }
+
+    @Override
+    public void reiniciarTasques() {
+        scheduleConfig.restartSchedulledTasks();
     }
 
     private void processPropertyValues(ConfigGroupDto cGroup) {

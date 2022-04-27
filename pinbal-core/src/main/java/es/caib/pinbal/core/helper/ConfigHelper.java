@@ -120,7 +120,7 @@ public class ConfigHelper {
     @Slf4j
     public static class JBossPropertiesHelper extends Properties {
 
-        private static final String APPSERV_PROPS_PATH = "es.caib.notib.properties.path";
+        private static final String APPSERV_PROPS_PATH = "es.caib.pinbal.properties.path";
 
         private static JBossPropertiesHelper instance = null;
 

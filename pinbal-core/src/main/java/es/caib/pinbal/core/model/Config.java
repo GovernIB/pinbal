@@ -32,6 +32,7 @@ public class Config {
     private String descriptionKey;
 
     @Column(name = "source_property", nullable = false)
+    @Enumerated(EnumType.STRING)
     private ConfigSourceEnumDto sourceProperty;
 
     @Column(name = "group_code", length = 2048, nullable = true)

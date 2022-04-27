@@ -7,21 +7,16 @@
 <html>
 <head>
     <title><spring:message code="config.titol"/></title>
-    <script src="<c:url value="/webjars/datatables.net/1.10.19/js/jquery.dataTables.min.js"/>"></script>
-    <script src="<c:url value="/webjars/datatables.net-bs/1.10.19/js/dataTables.bootstrap.min.js"/>"></script>
-    <link href="<c:url value="/webjars/datatables.net-bs/1.10.19/css/dataTables.bootstrap.min.css"/>" rel="stylesheet"></link>
     <link href="<c:url value="/webjars/select2/4.0.6-rc.1/dist/css/select2.min.css"/>" rel="stylesheet"/>
     <link href="<c:url value="/webjars/select2-bootstrap-theme/0.1.0-beta.10/dist/select2-bootstrap.min.css"/>" rel="stylesheet"/>
     <script src="<c:url value="/webjars/select2/4.0.6-rc.1/dist/js/select2.min.js"/>"></script>
-    <script src="<c:url value="/webjars/select2/4.0.5/dist/js/i18n/${requestLocale}.js"/>"></script>
-    <script src="<c:url value="/webjars/jquery-ui/1.12.0/jquery-ui.min.js"/>"></script>
-    <link href="<c:url value="/webjars/jquery-ui/1.12.0/jquery-ui.css"/>" rel="stylesheet"></link>
+    <script src="<c:url value="/webjars/select2/4.0.6-rc.1/dist/js/i18n/${requestLocale}.js"/>"></script>
+<%--    <script src="<c:url value="/webjars/jquery-ui/1.12.0/jquery-ui.min.js"/>"></script>--%>
+<%--    <link href="<c:url value="/webjars/jquery-ui/1.12.0/jquery-ui.css"/>" rel="stylesheet"></link>--%>
     <link href="<c:url value="/webjars/bootstrap-datepicker/1.6.1/dist/css/bootstrap-datepicker.min.css"/>" rel="stylesheet"/>
     <script src="<c:url value="/webjars/bootstrap-datepicker/1.6.1/dist/js/bootstrap-datepicker.min.js"/>"></script>
     <script src="<c:url value="/webjars/bootstrap-datepicker/1.6.1/dist/locales/bootstrap-datepicker.${requestLocale}.min.js"/>"></script>
-    <script src="<c:url value="/webjars/jsrender/1.0.0-rc.70/jsrender.min.js"/>"></script>
     <script src="<c:url value="/js/webutil.common.js"/>"></script>
-    <script src="<c:url value="/js/webutil.datatable.js"/>"></script>
     <script src="<c:url value="/js/webutil.modal.js"/>"></script>
 </head>
 <body>
@@ -31,7 +26,7 @@
             $.get('<c:url value="/config/sync"/>', function( data ) {
                 $('#syncModal-body').html(
                     '<div class="datatable-dades-carregant" style="text-align: center; padding-bottom: 100px;">' +
-                    '	<span class="fa fa-circle-o-notch fa-spin fa-3x"></span> <br>' +
+                    '	<span class="fa fa-circle-notch fa-spin fa-3x"></span> <br>' +
                     '   Sincronitzant propietats de l\'aplicació ' +
                     '</div>');
                 if (data.status) {
@@ -44,6 +39,10 @@
                 }
             });
         });
+
+        $("#btn-reiniciar").on("click", () => {
+            $.get('<c:url value="/config/reiniciarTasques"/>', () => {alert("Tasques reiniciades!")});
+        })
 
         <c:url var="urlEdit" value="/config/update"/>
         $(".form-update-config").submit(function(e) {
@@ -85,7 +84,13 @@
     });
 </script>
 <div class="text-right" data-toggle="botons-titol">
-    <a id="btn-sync" class="btn btn-default" data-toggle="modal" data-target="#syncModal"><span class="fa fa-refresh"></span>&nbsp;Sincronitzar amb JBoss</a>
+    <button data-toggle="dropdown" class="btn btn-primary dropdown-toggle"><spring:message code="comu.accions"/>&nbsp;<span class="caret caret-white"></span></button>
+    <ul class="dropdown-menu dropdown-menu-right">
+        <li><a id="btn-sync" data-toggle="modal" data-target="#syncModal"><span class="fa fa-sync-alt"></span>&nbsp;Sincronitzar amb JBoss</a></li>
+        <li><a id="btn-reiniciar"><span class="fa fa-redo-alt"></span>&nbsp;Reiniciar tasques en segon pla</a></li>
+    </ul>
+<%--    <a id="btn-reiniciar" class="btn btn-default"><span class="fa fa-redo-alt"></span>&nbsp;Reiniciar tasques en segon pla</a>--%>
+<%--    <a id="btn-sync" class="btn btn-default" data-toggle="modal" data-target="#syncModal"><span class="fa fa-sync-alt"></span>&nbsp;Sincronitzar amb JBoss</a>--%>
 </div>
 <div id="syncModal" class="modal fade" role="dialog">
     <div class="modal-dialog">

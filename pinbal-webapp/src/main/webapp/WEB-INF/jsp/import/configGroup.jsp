@@ -27,28 +27,23 @@
                     <div class="col-sm-8">
                         <c:choose>
                             <c:when test="${config.typeCode == 'INT'}">
-                                <form:input  id="config_${config.key}" cssClass="form-control" path="value" placeholder="${config.key}"
-                                             type="number" maxlength="2048" disabled="${config.jbossProperty}"/>
+                                <form:input  id="config_${config.key}" cssClass="form-control" path="value" placeholder="${config.key}" type="number" maxlength="2048" disabled="${config.sourceProperty != 'DATABASE'}"/>
                             </c:when>
                             <c:when test="${config.typeCode == 'FLOAT'}">
-                                <form:input  id="config_${config.key}" cssClass="form-control" path="value" placeholder="${config.key}"
-                                             type="number" step="0.01" maxlength="2048" disabled="${config.jbossProperty}"/>
+                                <form:input  id="config_${config.key}" cssClass="form-control" path="value" placeholder="${config.key}" type="number" step="0.01" maxlength="2048" disabled="${config.sourceProperty != 'DATABASE'}"/>
                             </c:when>
                             <c:when test="${config.typeCode == 'CREDENTIALS'}">
-                                <form:input  id="config_${config.key}" cssClass="form-control" path="value" placeholder="${config.key}"
-                                             type="password" maxlength="2048" disabled="${config.jbossProperty}"/>
+                                <form:input  id="config_${config.key}" cssClass="form-control" path="value" placeholder="${config.key}" type="password" maxlength="2048" disabled="${config.sourceProperty != 'DATABASE'}"/>
                             </c:when>
                             <c:when test="${config.typeCode == 'BOOL'}">
                             <div class="checkbox checkbox-primary">
                                 <label>
-                                <form:checkbox path="booleanValue" id="config_${config.key}" cssClass="visualitzar"
-                                                   disabled="${config.jbossProperty}"/>
+                                <form:checkbox path="booleanValue" id="config_${config.key}" cssClass="visualitzar" disabled="${config.sourceProperty != 'DATABASE'}"/>
                                 </label>
                             </div>
                             </c:when>
                             <c:when test="${config.validValues != null and fn:length(config.validValues) > 2}">
-                                <form:select path="value" cssClass="form-control" id="config_${config.key}" disabled="${config.jbossProperty}" style="width:100%" data-toggle="select2"
-                                             data-placeholder="${config.description}">
+                                <form:select path="value" cssClass="form-control" id="config_${config.key}" disabled="${config.sourceProperty != 'DATABASE'}" style="width:100%" data-toggle="select2" data-placeholder="${config.description}">
                                     <c:forEach var="opt" items="${config.validValues}">
                                         <form:option value="${opt}"/>
                                     </c:forEach>
@@ -63,14 +58,13 @@
                                 </label>
                             </c:when>
                             <c:otherwise>
-                                <form:input  id="config_${config.key}" cssClass="form-control" path="value" placeholder="${config.key}"
-                                             type="text" maxlength="2048" disabled="${config.jbossProperty}"/>
+                                <form:input  id="config_${config.key}" cssClass="form-control" path="value" placeholder="${config.key}" type="text" maxlength="2048" disabled="${config.sourceProperty != 'DATABASE'}"/>
                             </c:otherwise>
                         </c:choose>
                         <span class="help-block">${config.key}</span>
                     </div>
                     <div class="col-sm-1">
-                        <c:if test="${not config.jbossProperty}">
+                        <c:if test="${config.sourceProperty == 'DATABASE'}">
                         <button class="btn btn-success">
                             <i class="fa fa-edit"></i>
                         </button>

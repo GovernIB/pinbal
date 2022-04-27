@@ -92,6 +92,15 @@ public class ConfigController extends BaseController{
         }
     }
 
+    @ResponseBody
+    @RequestMapping(value="/reiniciarTasques", method = RequestMethod.GET)
+    public String reiniciarTasques(
+            HttpServletRequest request,
+            Model model) {
+        configService.reiniciarTasques();
+        return "OK";
+    }
+
     private void fillFormsModel(ConfigGroupDto cGroup, Model model){
         for (ConfigDto config: cGroup.getConfigs()) {
             model.addAttribute("config_" + config.getKey().replace('.', '_'),
