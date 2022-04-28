@@ -1,0 +1,2545 @@
+databaseChangeLog:
+- property:
+    name: varcharUnit
+    value: CHAR
+    dbms: oracle
+- property:
+    name: varcharUnit
+    value: ''
+    dbms: postgresql
+- property:
+    name: cert
+    value: 1
+    dbms: oracle
+- property:
+    name: cert
+    value: true
+    dbms: postgresql
+- property:
+    name: fals
+    value: 0
+    dbms: oracle
+- property:
+    name: fals
+    value: false
+    dbms: postgresql
+- changeSet:
+    id: 1650469587624-1
+    author: limit
+    changes:
+    - createTable:
+        tableName: pbl_config_group
+        columns:
+            - column:
+                name: code
+                type: varchar(128 ${varcharUnit})
+                constraints:
+                    nullable: false
+            - column:
+                name: description_key
+                type: varchar(512 ${varcharUnit})
+                constraints:
+                    nullable: true
+            - column:
+                name: position
+                type: tinyint
+                constraints:
+                    nullable: false
+            - column:
+                name: parent_code
+                type: varchar(128 ${varcharUnit})
+    - addPrimaryKey:
+        tableName: pbl_config_group
+        columnNames: code
+    - sql:
+        dbms: oracle
+        sql: grant select, update, insert, delete on pbl_config_group to www_pinbal;
+    - insert:
+        tableName: pbl_config_group
+        columns:
+        - column:
+            name: code
+            value: GENERAL
+        - column:
+            name: position
+            value: 0
+        - column:
+            name: description_key
+            value: propietat.grup.general
+    - insert:
+        tableName: pbl_config_group
+        columns:
+          - column:
+              name: code
+              value: OPCIONS_BORRAR
+          - column:
+              name: parent_code
+              value: GENERAL
+          - column:
+              name: position
+              value: 0
+          - column:
+              name: description_key
+              value: propietat.grup.general.borrar
+    - insert:
+        tableName: pbl_config_group
+        columns:
+          - column:
+              name: code
+              value: JUSTIFICANT
+          - column:
+              name: parent_code
+              value: GENERAL
+          - column:
+              name: position
+              value: 1
+          - column:
+              name: description_key
+              value: propietat.grup.general.justificant
+    - insert:
+        tableName: pbl_config_group
+        columns:
+          - column:
+              name: code
+              value: CONVERSIO
+          - column:
+              name: parent_code
+              value: GENERAL
+          - column:
+              name: position
+              value: 2
+          - column:
+              name: description_key
+              value: propietat.grup.general.conversio
+    - insert:
+        tableName: pbl_config_group
+        columns:
+          - column:
+              name: code
+              value: MAPEIG
+          - column:
+              name: parent_code
+              value: GENERAL
+          - column:
+              name: position
+              value: 3
+          - column:
+              name: description_key
+              value: propietat.grup.general.mapeig
+    - insert:
+        tableName: pbl_config_group
+        columns:
+          - column:
+              name: code
+              value: RECOBRIMENT
+          - column:
+              name: parent_code
+              value: GENERAL
+          - column:
+              name: position
+              value: 4
+          - column:
+              name: description_key
+              value: propietat.grup.general.recobriment
+    - insert:
+        tableName: pbl_config_group
+        columns:
+          - column:
+              name: code
+              value: EMAIL
+          - column:
+              name: parent_code
+              value: GENERAL
+          - column:
+              name: position
+              value: 5
+          - column:
+              name: description_key
+              value: propietat.grup.general.email
+    - insert:
+        tableName: pbl_config_group
+        columns:
+          - column:
+              name: code
+              value: PLUGINS
+          - column:
+              name: position
+              value: 1
+          - column:
+              name: description_key
+              value: propietat.grup.plugins
+    - insert:
+        tableName: pbl_config_group
+        columns:
+          - column:
+              name: code
+              value: USUARIS
+          - column:
+              name: parent_code
+              value: PLUGINS
+          - column:
+              name: position
+              value: 0
+          - column:
+              name: description_key
+              value: propietat.grup.plugins.usuaris
+    - insert:
+        tableName: pbl_config_group
+        columns:
+          - column:
+              name: code
+              value: SIGNATURA
+          - column:
+              name: parent_code
+              value: PLUGINS
+          - column:
+              name: position
+              value: 1
+          - column:
+              name: description_key
+              value: propietat.grup.plugins.signatura
+    - insert:
+        tableName: pbl_config_group
+        columns:
+          - column:
+              name: code
+              value: FIRMA_SERVIDOR
+          - column:
+              name: parent_code
+              value: PLUGINS
+          - column:
+              name: position
+              value: 2
+          - column:
+              name: description_key
+              value: propietat.grup.plugins.firma.servidor
+    - insert:
+        tableName: pbl_config_group
+        columns:
+          - column:
+              name: code
+              value: CUSTODIA
+          - column:
+              name: parent_code
+              value: PLUGINS
+          - column:
+              name: position
+              value: 3
+          - column:
+              name: description_key
+              value: propietat.grup.plugins.custodia
+    - insert:
+        tableName: pbl_config_group
+        columns:
+          - column:
+              name: code
+              value: ARXIU
+          - column:
+              name: parent_code
+              value: PLUGINS
+          - column:
+              name: position
+              value: 4
+          - column:
+              name: description_key
+              value: propietat.grup.plugins.arxiu
+    - insert:
+        tableName: pbl_config_group
+        columns:
+          - column:
+              name: code
+              value: UNITATS
+          - column:
+              name: parent_code
+              value: PLUGINS
+          - column:
+              name: position
+              value: 5
+          - column:
+              name: description_key
+              value: propietat.grup.plugins.unitats
+
+#    - insert:
+#        tableName: pbl_config_group
+#        columns:
+#          - column:
+#              name: code
+#              value: SCSP
+#          - column:
+#              name: position
+#              value: 2
+#          - column:
+#              name: description_key
+#              value: propietat.grup.scsp
+    - insert:
+        tableName: pbl_config_group
+        columns:
+          - column:
+              name: code
+              value: HISTORIC
+          - column:
+              name: position
+              value: 2
+          - column:
+              name: description_key
+              value: propietat.grup.historic
+    - insert:
+        tableName: pbl_config_group
+        columns:
+          - column:
+              name: code
+              value: TASQUES
+          - column:
+              name: position
+              value: 3
+          - column:
+              name: description_key
+              value: propietat.grup.tasques
+
+
+    - createTable:
+        tableName: pbl_config_type
+        columns:
+          - column:
+              name: code
+              type: varchar(128 ${varcharUnit})
+              constraints:
+                nullable: false
+          - column:
+              name: value
+              type: varchar(2048 ${varcharUnit})
+          - addPrimaryKey:
+              columnNames: code
+          - sql:
+              dbms: oracle
+              sql: grant select, update, insert, delete on pbl_config_group to www_pinbal;
+    - addPrimaryKey:
+        tableName: pbl_config_type
+        columnNames: code
+    - sql:
+        dbms: oracle
+        sql: grant select, update, insert, delete on pbl_config_type to www_pinbal;
+    - insert:
+        tableName: pbl_config_type
+        columns:
+          - column:
+              name: code
+              value: BOOL
+    - insert:
+        tableName: pbl_config_type
+        columns:
+          - column:
+              name: code
+              value: TEXT
+    - insert:
+        tableName: pbl_config_type
+        columns:
+          - column:
+              name: code
+              value: INT
+    - insert:
+        tableName: pbl_config_type
+        columns:
+          - column:
+              name: code
+              value: FLOAT
+    - insert:
+        tableName: pbl_config_type
+        columns:
+          - column:
+              name: code
+              value: PASS
+    - insert:
+        tableName: pbl_config_type
+        columns:
+          - column:
+              name: code
+              value: CRON
+    - insert:
+        tableName: pbl_config_type
+        columns:
+          - column:
+              name: code
+              value: USUARIS_CLASS
+          - column:
+              name: value
+              value: es.caib.pinbal.plugins.caib.DadesUsuariPluginJdbc
+    - insert:
+        tableName: pbl_config_type
+        columns:
+          - column:
+              name: code
+              value: SIGNATURA_CLASS
+          - column:
+              name: value
+              value: es.caib.pinbal.plugins.caib.SignaturaPluginCaib
+    - insert:
+        tableName: pbl_config_type
+        columns:
+          - column:
+              name: code
+              value: FIRMA_SERVIDOR_CLASS
+          - column:
+              name: value
+              value: es.caib.pinbal.plugins.caib.FirmaServidorPluginPortafib
+    - insert:
+        tableName: pbl_config_type
+        columns:
+          - column:
+              name: code
+              value: CUSTODIA_CLASS
+          - column:
+              name: value
+              value: es.caib.pinbal.plugins.caib.CustodiaPluginCaib
+    - insert:
+        tableName: pbl_config_type
+        columns:
+          - column:
+              name: code
+              value: ARXIU_CLASS
+          - column:
+              name: value
+              value: es.caib.plugins.arxiu.caib.ArxiuPluginCaib
+    - insert:
+        tableName: pbl_config_type
+        columns:
+          - column:
+              name: code
+              value: UNITATS_CLASS
+          - column:
+              name: value
+              value: es.caib.pinbal.plugin.caib.unitat.UnitatsOrganitzativesPluginDir3
+    - insert:
+        tableName: pbl_config_type
+        columns:
+          - column:
+              name: code
+              value: CONVERSIO_TIPUS
+          - column:
+              name: value
+              value: xdocreport,openoffice
+
+    - createTable:
+        tableName: pbl_config
+        columns:
+            - column:
+                name: key
+                type: varchar(256 ${varcharUnit})
+                constraints:
+                    nullable: false
+            - column:
+                  name: value
+                  type: varchar(2048 ${varcharUnit})
+            - column:
+                  name: description_key
+                  type: varchar(2048 ${varcharUnit})
+            - column:
+                  name: group_code
+                  type: varchar(128 ${varcharUnit})
+                  constraints:
+                      nullable: false
+            - column:
+                  name: position
+                  type: tinyint
+                  constraints:
+                      nullable: false
+            - column:
+                  name: source_property
+                  type: varchar(16 ${varcharUnit})
+                  constraints:
+                      nullable: false
+            - column:
+                  name: type_code
+                  type: varchar(128 ${varcharUnit})
+            - column:
+                  name: lastmodifiedby_codi
+                  type: varchar(64 ${varcharUnit})
+            - column:
+                  name: lastmodifieddate
+                  type: timestamp
+    - addPrimaryKey:
+        tableName: pbl_config
+        columnNames: key
+    - addForeignKeyConstraint:
+        baseColumnNames: group_code
+        baseTableName: pbl_config
+        constraintName: pbl_config_group_fk
+        referencedColumnNames: code
+        referencedTableName: pbl_config_group
+    - sql:
+        dbms: oracle
+        sql: grant select, update, insert, delete on pbl_config to www_pinbal;
+
+    # GENERAL
+    - insert:
+        tableName: pbl_config
+        columns:
+          - column:
+              name: key
+              value: es.caib.pinbal.xsd.base.path
+          - column:
+              name: value
+              value:
+          - column:
+              name: description_key
+              value: propietat.xsd.base.path
+          - column:
+              name: group_code
+              value: GENERAL
+          - column:
+              name: position
+              value: 0
+          - column:
+              name: source_property
+              value: FILE
+          - column:
+              name: type_code
+              value: TEXT
+    - insert:
+        tableName: pbl_config
+        columns:
+          - column:
+              name: key
+              value: es.caib.pinbal.optimitzar.transaccions.nova.consulta
+          - column:
+              name: value
+              value:
+          - column:
+              name: description_key
+              value: propietat.optimitzar.transaccions.nova.consulta
+          - column:
+              name: group_code
+              value: GENERAL
+          - column:
+              name: position
+              value: 1
+          - column:
+              name: source_property
+              value: DATABASE
+          - column:
+              name: type_code
+              value: BOOL
+
+      # Opcions d'esborrar
+    - insert:
+        tableName: pbl_config
+        columns:
+          - column:
+              name: key
+              value: es.caib.pinbal.entitat.accio.esborrar.activa
+          - column:
+              name: value
+              value:
+          - column:
+              name: description_key
+              value: propietat.entitat.accio.esborrar.activa
+          - column:
+              name: group_code
+              value: OPCIONS_BORRAR
+          - column:
+              name: position
+              value: 0
+          - column:
+              name: source_property
+              value: DATABASE
+          - column:
+              name: type_code
+              value: BOOL
+    - insert:
+        tableName: pbl_config
+        columns:
+          - column:
+              name: key
+              value: es.caib.pinbal.procediment.accio.esborrar.activa
+          - column:
+              name: value
+              value:
+          - column:
+              name: description_key
+              value: propietat.procediment.accio.esborrar.activa
+          - column:
+              name: group_code
+              value: OPCIONS_BORRAR
+          - column:
+              name: position
+              value: 1
+          - column:
+              name: source_property
+              value: DATABASE
+          - column:
+              name: type_code
+              value: BOOL
+
+    # Justificant
+    - insert:
+        tableName: pbl_config
+        columns:
+          - column:
+              name: key
+              value: es.caib.pinbal.justificant.extensio.sortida
+          - column:
+              name: value
+              value:
+          - column:
+              name: description_key
+              value: propietat.justificant.extensio.sortida
+          - column:
+              name: group_code
+              value: JUSTIFICANT
+          - column:
+              name: position
+              value: 0
+          - column:
+              name: source_property
+              value: DATABASE
+          - column:
+              name: type_code
+              value: TEXT
+    - insert:
+        tableName: pbl_config
+        columns:
+          - column:
+              name: key
+              value: es.caib.pinbal.justificant.signar.i.custodiar
+          - column:
+              name: value
+              value:
+          - column:
+              name: description_key
+              value: propietat.justificant.signar.i.custodiar
+          - column:
+              name: group_code
+              value: JUSTIFICANT
+          - column:
+              name: position
+              value: 1
+          - column:
+              name: source_property
+              value: DATABASE
+          - column:
+              name: type_code
+              value: BOOL
+    - insert:
+        tableName: pbl_config
+        columns:
+          - column:
+              name: key
+              value: es.caib.pinbal.justificant.convertir.pdfa
+          - column:
+              name: value
+              value:
+          - column:
+              name: description_key
+              value: propietat.justificant.convertir.pdfa
+          - column:
+              name: group_code
+              value: JUSTIFICANT
+          - column:
+              name: position
+              value: 2
+          - column:
+              name: source_property
+              value: DATABASE
+          - column:
+              name: type_code
+              value: BOOL
+    - insert:
+        tableName: pbl_config
+        columns:
+          - column:
+              name: key
+              value: es.caib.pinbal.justificant.serie.documental
+          - column:
+              name: value
+              value:
+          - column:
+              name: description_key
+              value: propietat.justificant.serie.documental
+          - column:
+              name: group_code
+              value: JUSTIFICANT
+          - column:
+              name: position
+              value: 3
+          - column:
+              name: source_property
+              value: DATABASE
+          - column:
+              name: type_code
+              value: TEXT
+
+    # Conversió
+    - insert:
+        tableName: pbl_config
+        columns:
+          - column:
+              name: key
+              value: es.caib.pinbal.conversio.tipus
+          - column:
+              name: value
+              value:
+          - column:
+              name: description_key
+              value: propietat.conversio.tipus
+          - column:
+              name: group_code
+              value: CONVERSIO
+          - column:
+              name: position
+              value: 0
+          - column:
+              name: source_property
+              value: DATABASE
+          - column:
+              name: type_code
+              value: CONVERSIO_TIPUS
+    - insert:
+        tableName: pbl_config
+        columns:
+          - column:
+              name: key
+              value: es.caib.pinbal.conversio.open.office.host
+          - column:
+              name: value
+              value:
+          - column:
+              name: description_key
+              value: propietat.conversio.open.office.host
+          - column:
+              name: group_code
+              value: CONVERSIO
+          - column:
+              name: position
+              value: 1
+          - column:
+              name: source_property
+              value: DATABASE
+          - column:
+              name: type_code
+              value: TEXT
+    - insert:
+        tableName: pbl_config
+        columns:
+          - column:
+              name: key
+              value: es.caib.pinbal.conversio.open.office.port
+          - column:
+              name: value
+              value:
+          - column:
+              name: description_key
+              value: propietat.conversio.open.office.port
+          - column:
+              name: group_code
+              value: CONVERSIO
+          - column:
+              name: position
+              value: 2
+          - column:
+              name: source_property
+              value: DATABASE
+          - column:
+              name: type_code
+              value: TEXT
+
+    # Mapeig de rols
+    - insert:
+        tableName: pbl_config
+        columns:
+          - column:
+              name: key
+              value: es.caib.pinbal.mapeig.rol.PBL_ADMIN
+          - column:
+              name: value
+              value:
+          - column:
+              name: description_key
+              value: propietat.mapeig.rol.PBL_ADMIN
+          - column:
+              name: group_code
+              value: MAPEIG
+          - column:
+              name: position
+              value: 0
+          - column:
+              name: source_property
+              value: DATABASE
+          - column:
+              name: type_code
+              value: TEXT
+    - insert:
+        tableName: pbl_config
+        columns:
+          - column:
+              name: key
+              value: es.caib.pinbal.mapeig.rol.PBL_REPRES
+          - column:
+              name: value
+              value:
+          - column:
+              name: description_key
+              value: propietat.mapeig.rol.PBL_REPRES
+          - column:
+              name: group_code
+              value: MAPEIG
+          - column:
+              name: position
+              value: 1
+          - column:
+              name: source_property
+              value: DATABASE
+          - column:
+              name: type_code
+              value: TEXT
+    - insert:
+        tableName: pbl_config
+        columns:
+          - column:
+              name: key
+              value: es.caib.pinbal.mapeig.rol.PBL_DELEG
+          - column:
+              name: value
+              value:
+          - column:
+              name: description_key
+              value: propietat.mapeig.rol.PBL_DELEG
+          - column:
+              name: group_code
+              value: MAPEIG
+          - column:
+              name: position
+              value: 2
+          - column:
+              name: source_property
+              value: DATABASE
+          - column:
+              name: type_code
+              value: TEXT
+    - insert:
+        tableName: pbl_config
+        columns:
+          - column:
+              name: key
+              value: es.caib.pinbal.mapeig.rol.PBL_AUDIT
+          - column:
+              name: value
+              value:
+          - column:
+              name: description_key
+              value: propietat.mapeig.rol.PBL_AUDIT
+          - column:
+              name: group_code
+              value: MAPEIG
+          - column:
+              name: position
+              value: 3
+          - column:
+              name: source_property
+              value: DATABASE
+          - column:
+              name: type_code
+              value: TEXT
+    - insert:
+        tableName: pbl_config
+        columns:
+          - column:
+              name: key
+              value: es.caib.pinbal.mapeig.rol.PBL_SUPERAUD
+          - column:
+              name: value
+              value:
+          - column:
+              name: description_key
+              value: propietat.mapeig.rol.PBL_SUPERAUD
+          - column:
+              name: group_code
+              value: MAPEIG
+          - column:
+              name: position
+              value: 4
+          - column:
+              name: source_property
+              value: DATABASE
+          - column:
+              name: type_code
+              value: TEXT
+    - insert:
+        tableName: pbl_config
+        columns:
+          - column:
+              name: key
+              value: es.caib.pinbal.mapeig.rol.PBL_WS
+          - column:
+              name: value
+              value:
+          - column:
+              name: description_key
+              value: propietat.mapeig.rol.PBL_WS
+          - column:
+              name: group_code
+              value: MAPEIG
+          - column:
+              name: position
+              value: 5
+          - column:
+              name: source_property
+              value: DATABASE
+          - column:
+              name: type_code
+              value: TEXT
+    - insert:
+        tableName: pbl_config
+        columns:
+          - column:
+              name: key
+              value: es.caib.pinbal.mapeig.rol.tothom
+          - column:
+              name: value
+              value:
+          - column:
+              name: description_key
+              value: propietat.mapeig.rol.tothom
+          - column:
+              name: group_code
+              value: MAPEIG
+          - column:
+              name: position
+              value: 6
+          - column:
+              name: source_property
+              value: DATABASE
+          - column:
+              name: type_code
+              value: TEXT
+
+    # Recobriment
+    - insert:
+        tableName: pbl_config
+        columns:
+          - column:
+              name: key
+              value: es.caib.pinbal.recobriment.base.url
+          - column:
+              name: value
+              value:
+          - column:
+              name: description_key
+              value: propietat.recobriment.base.url
+          - column:
+              name: group_code
+              value: RECOBRIMENT
+          - column:
+              name: position
+              value: 0
+          - column:
+              name: source_property
+              value: FILE
+          - column:
+              name: type_code
+              value: TEXT
+    - insert:
+        tableName: pbl_config
+        columns:
+          - column:
+              name: key
+              value: es.caib.pinbal.recobriment.datos.especificos.processar
+          - column:
+              name: value
+              value:
+          - column:
+              name: description_key
+              value: propietat.recobriment.datos.especificos.processar
+          - column:
+              name: group_code
+              value: RECOBRIMENT
+          - column:
+              name: position
+              value: 1
+          - column:
+              name: source_property
+              value: DATABASE
+          - column:
+              name: type_code
+              value: BOOL
+    - insert:
+        tableName: pbl_config
+        columns:
+          - column:
+              name: key
+              value: es.caib.pinbal.recobriment.datos.especificos.incloure.ns
+          - column:
+              name: value
+              value:
+          - column:
+              name: description_key
+              value: propietat.recobriment.datos.especificos.incloure.ns
+          - column:
+              name: group_code
+              value: RECOBRIMENT
+          - column:
+              name: position
+              value: 2
+          - column:
+              name: source_property
+              value: DATABASE
+          - column:
+              name: type_code
+              value: BOOL
+
+    # Email
+    - insert:
+        tableName: pbl_config
+        columns:
+          - column:
+              name: key
+              value: es.caib.pinbal.email.remitent
+          - column:
+              name: value
+              value:
+          - column:
+              name: description_key
+              value: propietat.email.remitent
+          - column:
+              name: group_code
+              value: EMAIL
+          - column:
+              name: position
+              value: 0
+          - column:
+              name: source_property
+              value: DATABASE
+          - column:
+              name: type_code
+              value: TEXT
+    - insert:
+        tableName: pbl_config
+        columns:
+          - column:
+              name: key
+              value: es.caib.pinbal.email.footer
+          - column:
+              name: value
+              value:
+          - column:
+              name: description_key
+              value: propietat.email.footer
+          - column:
+              name: group_code
+              value: EMAIL
+          - column:
+              name: position
+              value: 1
+          - column:
+              name: source_property
+              value: DATABASE
+          - column:
+              name: type_code
+              value: TEXT
+    # Tasques en segon pla
+    - insert:
+        tableName: pbl_config
+        columns:
+          - column:
+              name: key
+              value: es.caib.pinbal.tasca.auto.comprovacio.repeticio
+          - column:
+              name: value
+              value:
+          - column:
+              name: description_key
+              value: propietat.tasca.auto.comprovacio.repeticio
+          - column:
+              name: group_code
+              value: TASQUES
+          - column:
+              name: position
+              value: 0
+          - column:
+              name: source_property
+              value: DATABASE
+          - column:
+              name: type_code
+              value: TEXT
+    - insert:
+        tableName: pbl_config
+        columns:
+          - column:
+              name: key
+              value: es.caib.pinbal.tasca.auto.justificant.repeticio
+          - column:
+              name: value
+              value:
+          - column:
+              name: description_key
+              value: propietat.tasca.auto.justificant.repeticio
+          - column:
+              name: group_code
+              value: TASQUES
+          - column:
+              name: position
+              value: 1
+          - column:
+              name: source_property
+              value: DATABASE
+          - column:
+              name: type_code
+              value: TEXT
+    - insert:
+        tableName: pbl_config
+        columns:
+          - column:
+              name: key
+              value: es.caib.pinbal.tasca.auto.exp.tancar.cron
+          - column:
+              name: value
+              value:
+          - column:
+              name: description_key
+              value: propietat.tasca.auto.exp.tancar.cron
+          - column:
+              name: group_code
+              value: TASQUES
+          - column:
+              name: position
+              value: 2
+          - column:
+              name: source_property
+              value: DATABASE
+          - column:
+              name: type_code
+              value: TEXT
+    - insert:
+        tableName: pbl_config
+        columns:
+          - column:
+              name: key
+              value: es.caib.pinbal.tasca.auto.email.report.estat.cron
+          - column:
+              name: value
+              value:
+          - column:
+              name: description_key
+              value: propietat.tasca.auto.email.report.estat.cron
+          - column:
+              name: group_code
+              value: TASQUES
+          - column:
+              name: position
+              value: 3
+          - column:
+              name: source_property
+              value: DATABASE
+          - column:
+              name: type_code
+              value: TEXT
+
+    # PLUGINS
+
+    # Usuaris
+    - insert:
+        tableName: pbl_config
+        columns:
+          - column:
+              name: key
+              value: es.caib.pinbal.plugin.dades.usuari.class
+          - column:
+              name: value
+              value:
+          - column:
+              name: description_key
+              value: propietat.plugin.dades.usuari.class
+          - column:
+              name: group_code
+              value: USUARIS
+          - column:
+              name: position
+              value: 0
+          - column:
+              name: source_property
+              value: DATABASE
+          - column:
+              name: type_code
+              value: USUARIS_CLASS
+    - insert:
+        tableName: pbl_config
+        columns:
+          - column:
+              name: key
+              value: es.caib.pinbal.plugin.dades.usuari.jdbc.datasource.jndi.name
+          - column:
+              name: value
+              value:
+          - column:
+              name: description_key
+              value: propietat.plugin.dades.usuari.jdbc.datasource.jndi.name
+          - column:
+              name: group_code
+              value: USUARIS
+          - column:
+              name: position
+              value: 1
+          - column:
+              name: source_property
+              value: FILE
+          - column:
+              name: type_code
+              value: TEXT
+    - insert:
+        tableName: pbl_config
+        columns:
+          - column:
+              name: key
+              value: es.caib.pinbal.plugin.dades.usuari.jdbc.query.codi
+          - column:
+              name: value
+              value:
+          - column:
+              name: description_key
+              value: propietat.plugin.dades.usuari.jdbc.query.codi
+          - column:
+              name: group_code
+              value: USUARIS
+          - column:
+              name: position
+              value: 2
+          - column:
+              name: source_property
+              value: DATABASE
+          - column:
+              name: type_code
+              value: TEXT
+    - insert:
+        tableName: pbl_config
+        columns:
+          - column:
+              name: key
+              value: es.caib.pinbal.plugin.dades.usuari.jdbc.query.nif
+          - column:
+              name: value
+              value:
+          - column:
+              name: description_key
+              value: propietat.plugin.dades.usuari.jdbc.query.nif
+          - column:
+              name: group_code
+              value: USUARIS
+          - column:
+              name: position
+              value: 3
+          - column:
+              name: source_property
+              value: DATABASE
+          - column:
+              name: type_code
+              value: TEXT
+    - insert:
+        tableName: pbl_config
+        columns:
+          - column:
+              name: key
+              value: es.caib.pinbal.plugin.dades.usuari.jdbc.query.rols
+          - column:
+              name: value
+              value:
+          - column:
+              name: description_key
+              value: propietat.plugin.dades.usuari.jdbc.query.rols
+          - column:
+              name: group_code
+              value: USUARIS
+          - column:
+              name: position
+              value: 4
+          - column:
+              name: source_property
+              value: DATABASE
+          - column:
+              name: type_code
+              value: TEXT
+    - insert:
+        tableName: pbl_config
+        columns:
+          - column:
+              name: key
+              value: es.caib.pinbal.plugin.dades.usuari.jdbc.query.grup
+          - column:
+              name: value
+              value:
+          - column:
+              name: description_key
+              value: propietat.plugin.dades.usuari.jdbc.query.grup
+          - column:
+              name: group_code
+              value: USUARIS
+          - column:
+              name: position
+              value: 5
+          - column:
+              name: source_property
+              value: DATABASE
+          - column:
+              name: type_code
+              value: TEXT
+
+    # Signatura
+    - insert:
+        tableName: pbl_config
+        columns:
+          - column:
+              name: key
+              value: es.caib.pinbal.plugin.signatura.class
+          - column:
+              name: value
+              value:
+          - column:
+              name: description_key
+              value: propietat.plugin.signatura.class
+          - column:
+              name: group_code
+              value: SIGNATURA
+          - column:
+              name: position
+              value: 0
+          - column:
+              name: source_property
+              value: DATABASE
+          - column:
+              name: type_code
+              value: SIGNATURA_CLASS
+    - insert:
+        tableName: pbl_config
+        columns:
+          - column:
+              name: key
+              value: es.caib.pinbal.plugin.signatura.caib.certificat.alias
+          - column:
+              name: value
+              value:
+          - column:
+              name: description_key
+              value: propietat.plugin.signatura.caib.certificat.alias
+          - column:
+              name: group_code
+              value: SIGNATURA
+          - column:
+              name: position
+              value: 1
+          - column:
+              name: source_property
+              value: FILE
+          - column:
+              name: type_code
+              value: TEXT
+    - insert:
+        tableName: pbl_config
+        columns:
+          - column:
+              name: key
+              value: es.caib.pinbal.plugin.signatura.caib.certificat.password
+          - column:
+              name: value
+              value:
+          - column:
+              name: description_key
+              value: propietat.plugin.signatura.caib.certificat.password
+          - column:
+              name: group_code
+              value: SIGNATURA
+          - column:
+              name: position
+              value: 2
+          - column:
+              name: source_property
+              value: FILE
+          - column:
+              name: type_code
+              value: TEXT
+    - insert:
+        tableName: pbl_config
+        columns:
+          - column:
+              name: key
+              value: es.caib.pinbal.plugin.signatura.caib.content.type
+          - column:
+              name: value
+              value:
+          - column:
+              name: description_key
+              value: propietat.plugin.signatura.caib.content.type
+          - column:
+              name: group_code
+              value: SIGNATURA
+          - column:
+              name: position
+              value: 3
+          - column:
+              name: source_property
+              value: DATABASE
+          - column:
+              name: type_code
+              value: TEXT
+
+    # Firma en servidor
+    - insert:
+        tableName: pbl_config
+        columns:
+          - column:
+              name: key
+              value: es.caib.pinbal.plugin.firmaservidor.class
+          - column:
+              name: value
+              value:
+          - column:
+              name: description_key
+              value: propietat.plugin.firmaservidor.class
+          - column:
+              name: group_code
+              value: FIRMA_SERVIDOR
+          - column:
+              name: position
+              value: 0
+          - column:
+              name: source_property
+              value: DATABASE
+          - column:
+              name: type_code
+              value: FIRMA_SERVIDOR_CLASS
+    - insert:
+        tableName: pbl_config
+        columns:
+          - column:
+              name: key
+              value: es.caib.pinbal.plugin.firmaservidor.portafib.plugins.signatureserver.portafib.api_passarela_url
+          - column:
+              name: value
+              value:
+          - column:
+              name: description_key
+              value: propietat.plugin.firmaservidor.portafib.plugins.signatureserver.portafib.api_passarela_url
+          - column:
+              name: group_code
+              value: FIRMA_SERVIDOR
+          - column:
+              name: position
+              value: 1
+          - column:
+              name: source_property
+              value: FILE
+          - column:
+              name: type_code
+              value: TEXT
+    - insert:
+        tableName: pbl_config
+        columns:
+          - column:
+              name: key
+              value: es.caib.pinbal.plugin.firmaservidor.portafib.plugins.signatureserver.portafib.api_passarela_username
+          - column:
+              name: value
+              value:
+          - column:
+              name: description_key
+              value: propietat.tasca.plugin.firmaservidor.portafib.plugins.signatureserver.portafib.api_passarela_username
+          - column:
+              name: group_code
+              value: FIRMA_SERVIDOR
+          - column:
+              name: position
+              value: 2
+          - column:
+              name: source_property
+              value: FILE
+          - column:
+              name: type_code
+              value: TEXT
+    - insert:
+        tableName: pbl_config
+        columns:
+          - column:
+              name: key
+              value: es.caib.pinbal.plugin.firmaservidor.portafib.plugins.signatureserver.portafib.api_passarela_password
+          - column:
+              name: value
+              value:
+          - column:
+              name: description_key
+              value: propietat.plugin.firmaservidor.portafib.plugins.signatureserver.portafib.api_passarela_password
+          - column:
+              name: group_code
+              value: FIRMA_SERVIDOR
+          - column:
+              name: position
+              value: 3
+          - column:
+              name: source_property
+              value: FILE
+          - column:
+              name: type_code
+              value: TEXT
+    - insert:
+        tableName: pbl_config
+        columns:
+          - column:
+              name: key
+              value: es.caib.pinbal.plugin.firmaservidor.portafib.username
+          - column:
+              name: value
+              value:
+          - column:
+              name: description_key
+              value: propietat.plugin.firmaservidor.portafib.username
+          - column:
+              name: group_code
+              value: FIRMA_SERVIDOR
+          - column:
+              name: position
+              value: 4
+          - column:
+              name: source_property
+              value: DATABASE
+          - column:
+              name: type_code
+              value: TEXT
+    - insert:
+        tableName: pbl_config
+        columns:
+          - column:
+              name: key
+              value: es.caib.pinbal.plugin.firmaservidor.portafib.location
+          - column:
+              name: value
+              value:
+          - column:
+              name: description_key
+              value: propietat.plugin.firmaservidor.portafib.location
+          - column:
+              name: group_code
+              value: FIRMA_SERVIDOR
+          - column:
+              name: position
+              value: 5
+          - column:
+              name: source_property
+              value: DATABASE
+          - column:
+              name: type_code
+              value: TEXT
+    - insert:
+        tableName: pbl_config
+        columns:
+          - column:
+              name: key
+              value: es.caib.pinbal.plugin.firmaservidor.portafib.signerEmail
+          - column:
+              name: value
+              value:
+          - column:
+              name: description_key
+              value: propietat.plugin.firmaservidor.portafib.signerEmail
+          - column:
+              name: group_code
+              value: FIRMA_SERVIDOR
+          - column:
+              name: position
+              value: 6
+          - column:
+              name: source_property
+              value: DATABASE
+          - column:
+              name: type_code
+              value: TEXT
+
+    # Custòdia
+    - insert:
+        tableName: pbl_config
+        columns:
+          - column:
+              name: key
+              value: es.caib.pinbal.plugin.custodia.class
+          - column:
+              name: value
+              value:
+          - column:
+              name: description_key
+              value: propietat.plugin.custodia.class
+          - column:
+              name: group_code
+              value: CUSTODIA
+          - column:
+              name: position
+              value: 0
+          - column:
+              name: source_property
+              value: DATABASE
+          - column:
+              name: type_code
+              value: CUSTODIA_CLASS
+    - insert:
+        tableName: pbl_config
+        columns:
+          - column:
+              name: key
+              value: es.caib.pinbal.plugin.custodia.caib.url
+          - column:
+              name: value
+              value:
+          - column:
+              name: description_key
+              value: propietat.plugin.custodia.caib.url
+          - column:
+              name: group_code
+              value: CUSTODIA
+          - column:
+              name: position
+              value: 1
+          - column:
+              name: source_property
+              value: FILE
+          - column:
+              name: type_code
+              value: TEXT
+    - insert:
+        tableName: pbl_config
+        columns:
+          - column:
+              name: key
+              value: es.caib.pinbal.plugin.custodia.caib.username
+          - column:
+              name: value
+              value:
+          - column:
+              name: description_key
+              value: propietat.plugin.custodia.caib.username
+          - column:
+              name: group_code
+              value: CUSTODIA
+          - column:
+              name: position
+              value: 2
+          - column:
+              name: source_property
+              value: FILE
+          - column:
+              name: type_code
+              value: TEXT
+    - insert:
+        tableName: pbl_config
+        columns:
+          - column:
+              name: key
+              value: es.caib.pinbal.plugin.custodia.caib.password
+          - column:
+              name: value
+              value:
+          - column:
+              name: description_key
+              value: propietat.plugin.custodia.caib.password
+          - column:
+              name: group_code
+              value: CUSTODIA
+          - column:
+              name: position
+              value: 3
+          - column:
+              name: source_property
+              value: FILE
+          - column:
+              name: type_code
+              value: TEXT
+    - insert:
+        tableName: pbl_config
+        columns:
+          - column:
+              name: key
+              value: es.caib.pinbal.plugin.custodia.caib.tipus.document
+          - column:
+              name: value
+              value:
+          - column:
+              name: description_key
+              value: propietat.plugin.custodia.caib.tipus.document
+          - column:
+              name: group_code
+              value: CUSTODIA
+          - column:
+              name: position
+              value: 4
+          - column:
+              name: source_property
+              value: DATABASE
+          - column:
+              name: type_code
+              value: TEXT
+
+    # Arxiu
+    - insert:
+        tableName: pbl_config
+        columns:
+          - column:
+              name: key
+              value: es.caib.pinbal.plugin.arxiu.class
+          - column:
+              name: value
+              value:
+          - column:
+              name: description_key
+              value: propietat.plugin.arxiu.class
+          - column:
+              name: group_code
+              value: ARXIU
+          - column:
+              name: position
+              value: 0
+          - column:
+              name: source_property
+              value: DATABASE
+          - column:
+              name: type_code
+              value: ARXIU_CLASS
+    - insert:
+        tableName: pbl_config
+        columns:
+          - column:
+              name: key
+              value: es.caib.pinbal.plugin.arxiu.caib.base.url
+          - column:
+              name: value
+              value:
+          - column:
+              name: description_key
+              value: propietat.plugin.arxiu.caib.base.url
+          - column:
+              name: group_code
+              value: ARXIU
+          - column:
+              name: position
+              value: 1
+          - column:
+              name: source_property
+              value: FILE
+          - column:
+              name: type_code
+              value: TEXT
+    - insert:
+        tableName: pbl_config
+        columns:
+          - column:
+              name: key
+              value: es.caib.pinbal.plugin.arxiu.caib.aplicacio.codi
+          - column:
+              name: value
+              value:
+          - column:
+              name: description_key
+              value: propietat.plugin.arxiu.caib.aplicacio.codi
+          - column:
+              name: group_code
+              value: ARXIU
+          - column:
+              name: position
+              value: 2
+          - column:
+              name: source_property
+              value: DATABASE
+          - column:
+              name: type_code
+              value: TEXT
+    - insert:
+        tableName: pbl_config
+        columns:
+          - column:
+              name: key
+              value: es.caib.pinbal.plugin.arxiu.caib.usuari
+          - column:
+              name: value
+              value:
+          - column:
+              name: description_key
+              value: propietat.plugin.arxiu.caib.usuari
+          - column:
+              name: group_code
+              value: ARXIU
+          - column:
+              name: position
+              value: 3
+          - column:
+              name: source_property
+              value: FILE
+          - column:
+              name: type_code
+              value: TEXT
+    - insert:
+        tableName: pbl_config
+        columns:
+          - column:
+              name: key
+              value: es.caib.pinbal.plugin.arxiu.caib.contrasenya
+          - column:
+              name: value
+              value:
+          - column:
+              name: description_key
+              value: propietat.plugin.arxiu.caib.contrasenya
+          - column:
+              name: group_code
+              value: ARXIU
+          - column:
+              name: position
+              value: 4
+          - column:
+              name: source_property
+              value: FILE
+          - column:
+              name: type_code
+              value: TEXT
+    - insert:
+        tableName: pbl_config
+        columns:
+          - column:
+              name: key
+              value: es.caib.pinbal.plugin.arxiu.caib.csv.definicio
+          - column:
+              name: value
+              value:
+          - column:
+              name: description_key
+              value: propietat.plugin.arxiu.caib.csv.definicio
+          - column:
+              name: group_code
+              value: ARXIU
+          - column:
+              name: position
+              value: 5
+          - column:
+              name: source_property
+              value: DATABASE
+          - column:
+              name: type_code
+              value: TEXT
+    - insert:
+        tableName: pbl_config
+        columns:
+          - column:
+              name: key
+              value: es.caib.pinbal.plugin.arxiu.caib.conversio.imprimible.url
+          - column:
+              name: value
+              value:
+          - column:
+              name: description_key
+              value: propietat.plugin.arxiu.caib.conversio.imprimible.url
+          - column:
+              name: group_code
+              value: ARXIU
+          - column:
+              name: position
+              value: 6
+          - column:
+              name: source_property
+              value: FILE
+          - column:
+              name: type_code
+              value: TEXT
+    - insert:
+        tableName: pbl_config
+        columns:
+          - column:
+              name: key
+              value: es.caib.pinbal.plugin.arxiu.caib.conversio.imprimible.usuari
+          - column:
+              name: value
+              value:
+          - column:
+              name: description_key
+              value: propietat.tasca.plugin.arxiu.caib.conversio.imprimible.usuari
+          - column:
+              name: group_code
+              value: ARXIU
+          - column:
+              name: position
+              value: 7
+          - column:
+              name: source_property
+              value: FILE
+          - column:
+              name: type_code
+              value: TEXT
+    - insert:
+        tableName: pbl_config
+        columns:
+          - column:
+              name: key
+              value: es.caib.pinbal.plugin.arxiu.caib.conversio.imprimible.contrasenya
+          - column:
+              name: value
+              value:
+          - column:
+              name: description_key
+              value: propietat.plugin.arxiu.caib.conversio.imprimible.contrasenya
+          - column:
+              name: group_code
+              value: ARXIU
+          - column:
+              name: position
+              value: 8
+          - column:
+              name: source_property
+              value: FILE
+          - column:
+              name: type_code
+              value: TEXT
+    - insert:
+        tableName: pbl_config
+        columns:
+          - column:
+              name: key
+              value: es.caib.pinbal.plugin.arxiu.caib.timeout.connect
+          - column:
+              name: value
+              value:
+          - column:
+              name: description_key
+              value: propietat.plugin.arxiu.caib.timeout.connect
+          - column:
+              name: group_code
+              value: ARXIU
+          - column:
+              name: position
+              value: 9
+          - column:
+              name: source_property
+              value: DATABASE
+          - column:
+              name: type_code
+              value: INT
+    - insert:
+        tableName: pbl_config
+        columns:
+          - column:
+              name: key
+              value: es.caib.pinbal.plugin.arxiu.caib.timeout.read
+          - column:
+              name: value
+              value:
+          - column:
+              name: description_key
+              value: propietat.plugin.arxiu.caib.timeout.read
+          - column:
+              name: group_code
+              value: ARXIU
+          - column:
+              name: position
+              value: 10
+          - column:
+              name: source_property
+              value: DATABASE
+          - column:
+              name: type_code
+              value: INT
+
+    # Unitats
+    - insert:
+        tableName: pbl_config
+        columns:
+          - column:
+              name: key
+              value: es.caib.pinbal.plugin.unitats.organitzatives.class
+          - column:
+              name: value
+              value:
+          - column:
+              name: description_key
+              value: propietat.plugin.unitats.organitzatives.class
+          - column:
+              name: group_code
+              value: UNITATS
+          - column:
+              name: position
+              value: 0
+          - column:
+              name: source_property
+              value: DATABASE
+          - column:
+              name: type_code
+              value: UNITATS_CLASS
+    - insert:
+        tableName: pbl_config
+        columns:
+          - column:
+              name: key
+              value: es.caib.pinbal.plugin.unitats.organitzatives.dir3.service.url
+          - column:
+              name: value
+              value:
+          - column:
+              name: description_key
+              value: propietat.plugin.unitats.organitzatives.dir3.service.url
+          - column:
+              name: group_code
+              value: UNITATS
+          - column:
+              name: position
+              value: 1
+          - column:
+              name: source_property
+              value: FILE
+          - column:
+              name: type_code
+              value: TEXT
+    - insert:
+        tableName: pbl_config
+        columns:
+          - column:
+              name: key
+              value: es.caib.pinbal.plugin.unitats.organitzatives.dir3.service.username
+          - column:
+              name: value
+              value:
+          - column:
+              name: description_key
+              value: propietat.plugin.unitats.organitzatives.dir3.service.username
+          - column:
+              name: group_code
+              value: UNITATS
+          - column:
+              name: position
+              value: 2
+          - column:
+              name: source_property
+              value: FILE
+          - column:
+              name: type_code
+              value: TEXT
+    - insert:
+        tableName: pbl_config
+        columns:
+          - column:
+              name: key
+              value: es.caib.pinbal.plugin.unitats.organitzatives.dir3.service.password
+          - column:
+              name: value
+              value:
+          - column:
+              name: description_key
+              value: propietat.plugin.unitats.organitzatives.dir3.service.password
+          - column:
+              name: group_code
+              value: UNITATS
+          - column:
+              name: position
+              value: 3
+          - column:
+              name: source_property
+              value: FILE
+          - column:
+              name: type_code
+              value: TEXT
+    - insert:
+        tableName: pbl_config
+        columns:
+          - column:
+              name: key
+              value: es.caib.pinbal.plugin.unitats.organitzatives.dir3.service.log.actiu
+          - column:
+              name: value
+              value:
+          - column:
+              name: description_key
+              value: propietat.plugin.unitats.organitzatives.dir3.service.log.actiu
+          - column:
+              name: group_code
+              value: UNITATS
+          - column:
+              name: position
+              value: 4
+          - column:
+              name: source_property
+              value: DATABASE
+          - column:
+              name: type_code
+              value: BOOL
+    - insert:
+        tableName: pbl_config
+        columns:
+          - column:
+              name: key
+              value: es.caib.pinbal.plugin.unitats.cerca.dir3.service.url
+          - column:
+              name: value
+              value:
+          - column:
+              name: description_key
+              value: propietat.plugin.unitats.cerca.dir3.service.url
+          - column:
+              name: group_code
+              value: UNITATS
+          - column:
+              name: position
+              value: 5
+          - column:
+              name: source_property
+              value: FILE
+          - column:
+              name: type_code
+              value: TEXT
+
+    # SCSP
+#    - insert:
+#        tableName: pbl_config
+#        columns:
+#          - column:
+#              name: key
+#              value: es.caib.pinbal.scsp.axis2.client.xml
+#          - column:
+#              name: value
+#              value:
+#          - column:
+#              name: description_key
+#              value: propietat.scsp.axis2.client.xml
+#          - column:
+#              name: group_code
+#              value: SCSP
+#          - column:
+#              name: position
+#              value: 0
+#          - column:
+#              name: source_property
+#              value: DATABASE
+#          - column:
+#              name: type_code
+#              value: TEXT
+#    - insert:
+#        tableName: pbl_config
+#        columns:
+#          - column:
+#              name: key
+#              value: es.caib.pinbal.scsp.axis2.client.repository
+#          - column:
+#              name: value
+#              value:
+#          - column:
+#              name: description_key
+#              value: propietat.scsp.axis2.client.repository
+#          - column:
+#              name: group_code
+#              value: SCSP
+#          - column:
+#              name: position
+#              value: 1
+#          - column:
+#              name: source_property
+#              value: DATABASE
+#          - column:
+#              name: type_code
+#              value: TEXT
+#    - insert:
+#        tableName: pbl_config
+#        columns:
+#          - column:
+#              name: key
+#              value: es.caib.pinbal.scsp.almacenamiento.ficheros
+#          - column:
+#              name: value
+#              value:
+#          - column:
+#              name: description_key
+#              value: propietat.scsp.almacenamiento.ficheros
+#          - column:
+#              name: group_code
+#              value: SCSP
+#          - column:
+#              name: position
+#              value: 2
+#          - column:
+#              name: source_property
+#              value: FILE
+#          - column:
+#              name: type_code
+#              value: TEXT
+#    - insert:
+#        tableName: pbl_config
+#        columns:
+#          - column:
+#              name: key
+#              value: es.caib.pinbal.scsp.almacenamiento.transmisiones
+#          - column:
+#              name: value
+#              value:
+#          - column:
+#              name: description_key
+#              value: propietat.scsp.almacenamiento.transmisiones
+#          - column:
+#              name: group_code
+#              value: SCSP
+#          - column:
+#              name: position
+#              value: 3
+#          - column:
+#              name: source_property
+#              value: DATABASE
+#          - column:
+#              name: type_code
+#              value: TEXT
+#    - insert:
+#        tableName: pbl_config
+#        columns:
+#          - column:
+#              name: key
+#              value: es.caib.pinbal.scsp.afirma.enabled
+#          - column:
+#              name: value
+#              value:
+#          - column:
+#              name: description_key
+#              value: propietat.scsp.afirma.enabled
+#          - column:
+#              name: group_code
+#              value: SCSP
+#          - column:
+#              name: position
+#              value: 4
+#          - column:
+#              name: source_property
+#              value: DATABASE
+#          - column:
+#              name: type_code
+#              value: TEXT
+#    - insert:
+#        tableName: pbl_config
+#        columns:
+#          - column:
+#              name: key
+#              value: es.caib.pinbal.scsp.afirma.url
+#          - column:
+#              name: value
+#              value:
+#          - column:
+#              name: description_key
+#              value: propietat.scsp.afirma.url
+#          - column:
+#              name: group_code
+#              value: SCSP
+#          - column:
+#              name: position
+#              value: 5
+#          - column:
+#              name: source_property
+#              value: DATABASE
+#          - column:
+#              name: type_code
+#              value: TEXT
+#    - insert:
+#        tableName: pbl_config
+#        columns:
+#          - column:
+#              name: key
+#              value: es.caib.pinbal.scsp.afirma.idAplicacion
+#          - column:
+#              name: value
+#              value:
+#          - column:
+#              name: description_key
+#              value: propietat.scsp.afirma.idAplicacion
+#          - column:
+#              name: group_code
+#              value: SCSP
+#          - column:
+#              name: position
+#              value: 6
+#          - column:
+#              name: source_property
+#              value: DATABASE
+#          - column:
+#              name: type_code
+#              value: TEXT
+#    - insert:
+#        tableName: pbl_config
+#        columns:
+#          - column:
+#              name: key
+#              value: es.caib.pinbal.scsp.afirma.modoValidacion
+#          - column:
+#              name: value
+#              value:
+#          - column:
+#              name: description_key
+#              value: propietat.scsp.afirma.modoValidacion
+#          - column:
+#              name: group_code
+#              value: SCSP
+#          - column:
+#              name: position
+#              value: 7
+#          - column:
+#              name: source_property
+#              value: DATABASE
+#          - column:
+#              name: type_code
+#              value: TEXT
+#    - insert:
+#        tableName: pbl_config
+#        columns:
+#          - column:
+#              name: key
+#              value: es.caib.pinbal.scsp.custom.cert.validation.class
+#          - column:
+#              name: value
+#              value:
+#          - column:
+#              name: description_key
+#              value: propietat.scsp.custom.cert.validation.class
+#          - column:
+#              name: group_code
+#              value: SCSP
+#          - column:
+#              name: position
+#              value: 8
+#          - column:
+#              name: source_property
+#              value: DATABASE
+#          - column:
+#              name: type_code
+#              value: TEXT
+#    - insert:
+#        tableName: pbl_config
+#        columns:
+#          - column:
+#              name: key
+#              value: es.caib.pinbal.scsp.keystoreType
+#          - column:
+#              name: value
+#              value:
+#          - column:
+#              name: description_key
+#              value: propietat.scsp.keystoreType
+#          - column:
+#              name: group_code
+#              value: SCSP
+#          - column:
+#              name: position
+#              value: 9
+#          - column:
+#              name: source_property
+#              value: DATABASE
+#          - column:
+#              name: type_code
+#              value: TEXT
+#    - insert:
+#        tableName: pbl_config
+#        columns:
+#          - column:
+#              name: key
+#              value: es.caib.pinbal.scsp.keystoreFile
+#          - column:
+#              name: value
+#              value:
+#          - column:
+#              name: description_key
+#              value: propietat.scsp.keystoreFile
+#          - column:
+#              name: group_code
+#              value: SCSP
+#          - column:
+#              name: position
+#              value: 10
+#          - column:
+#              name: source_property
+#              value: FILE
+#          - column:
+#              name: type_code
+#              value: TEXT
+#    - insert:
+#        tableName: pbl_config
+#        columns:
+#          - column:
+#              name: key
+#              value: es.caib.pinbal.scsp.keystorePass
+#          - column:
+#              name: value
+#              value:
+#          - column:
+#              name: description_key
+#              value: propietat.scsp.keystorePass
+#          - column:
+#              name: group_code
+#              value: SCSP
+#          - column:
+#              name: position
+#              value: 11
+#          - column:
+#              name: source_property
+#              value: FILE
+#          - column:
+#              name: type_code
+#              value: TEXT
+#    - insert:
+#        tableName: pbl_config
+#        columns:
+#          - column:
+#              name: key
+#              value: es.caib.pinbal.scsp.validacion.formatoFirma
+#          - column:
+#              name: value
+#              value:
+#          - column:
+#              name: description_key
+#              value: propietat.scsp.validacion.formatoFirma
+#          - column:
+#              name: group_code
+#              value: SCSP
+#          - column:
+#              name: position
+#              value: 12
+#          - column:
+#              name: source_property
+#              value: DATABASE
+#          - column:
+#              name: type_code
+#              value: TEXT
+#    - insert:
+#        tableName: pbl_config
+#        columns:
+#          - column:
+#              name: key
+#              value: es.caib.pinbal.scsp.polling.enabled
+#          - column:
+#              name: value
+#              value:
+#          - column:
+#              name: description_key
+#              value: propietat.scsp.polling.enabled
+#          - column:
+#              name: group_code
+#              value: SCSP
+#          - column:
+#              name: position
+#              value: 13
+#          - column:
+#              name: source_property
+#              value: DATABASE
+#          - column:
+#              name: type_code
+#              value: TEXT
+#    - insert:
+#        tableName: pbl_config
+#        columns:
+#          - column:
+#              name: key
+#              value: es.caib.pinbal.scsp.task.polling.intervalo
+#          - column:
+#              name: value
+#              value:
+#          - column:
+#              name: description_key
+#              value: propietat.scsp.task.polling.intervalo
+#          - column:
+#              name: group_code
+#              value: SCSP
+#          - column:
+#              name: position
+#              value: 14
+#          - column:
+#              name: source_property
+#              value: DATABASE
+#          - column:
+#              name: type_code
+#              value: TEXT
+#    - insert:
+#        tableName: pbl_config
+#        columns:
+#          - column:
+#              name: key
+#              value: es.caib.pinbal.scsp.task.polling.espera
+#          - column:
+#              name: value
+#              value:
+#          - column:
+#              name: description_key
+#              value: propietat.scsp.task.polling.espera
+#          - column:
+#              name: group_code
+#              value: SCSP
+#          - column:
+#              name: position
+#              value: 15
+#          - column:
+#              name: source_property
+#              value: DATABASE
+#          - column:
+#              name: type_code
+#              value: TEXT
+#    - insert:
+#        tableName: pbl_config
+#        columns:
+#          - column:
+#              name: key
+#              value: es.caib.pinbal.scsp.tipoId
+#          - column:
+#              name: value
+#              value:
+#          - column:
+#              name: description_key
+#              value: propietat.scsp.tipoId
+#          - column:
+#              name: group_code
+#              value: SCSP
+#          - column:
+#              name: position
+#              value: 16
+#          - column:
+#              name: source_property
+#              value: DATABASE
+#          - column:
+#              name: type_code
+#              value: TEXT
+
+    # Històric
+    - insert:
+        tableName: pbl_config
+        columns:
+          - column:
+              name: key
+              value: es.caib.pinbal.tasca.auto.arxivar.consultes.cron
+          - column:
+              name: value
+              value:
+          - column:
+              name: description_key
+              value: propietat.tasca.auto.arxivar.consultes.cron
+          - column:
+              name: group_code
+              value: HISTORIC
+          - column:
+              name: position
+              value: 0
+          - column:
+              name: source_property
+              value: DATABASE
+          - column:
+              name: type_code
+              value: TEXT
+    - insert:
+        tableName: pbl_config
+        columns:
+          - column:
+              name: key
+              value: es.caib.pinbal.tasca.auto.arxivar.antiguetat.dies
+          - column:
+              name: value
+              value:
+          - column:
+              name: description_key
+              value: propietat.tasca.auto.arxivar.antiguetat.dies
+          - column:
+              name: group_code
+              value: HISTORIC
+          - column:
+              name: position
+              value: 1
+          - column:
+              name: source_property
+              value: DATABASE
+          - column:
+              name: type_code
+              value: INT
+

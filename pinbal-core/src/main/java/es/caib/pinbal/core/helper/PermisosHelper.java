@@ -326,12 +326,7 @@ public class PermisosHelper {
 
 
 	private static String getMapeigRol(String rol) {
-		String propertyMapeig = PropertiesHelper.getProperties().getProperty(
-				"es.caib.pinbal.mapeig.rol." + rol);
-		if (propertyMapeig != null)
-			return propertyMapeig;
-		else
-			return rol;
+		return ConfigHelper.getInstance().getConfig("es.caib.pinbal.mapeig.rol." + rol, rol);
 	}
 
 }

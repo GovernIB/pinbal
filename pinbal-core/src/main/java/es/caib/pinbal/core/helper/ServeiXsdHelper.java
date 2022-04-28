@@ -144,8 +144,7 @@ public class ServeiXsdHelper {
 	}
 
 	private String getPropertyXsdBasePath() {
-		return PropertiesHelper.getProperties().getProperty(
-				"es.caib.pinbal.xsd.base.path");
+		return ConfigHelper.getInstance().getConfig("es.caib.pinbal.xsd.base.path");
 	}
 
 }

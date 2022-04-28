@@ -6,6 +6,7 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
+import es.caib.pinbal.core.helper.PluginHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -15,7 +16,6 @@ import org.springframework.transaction.annotation.Transactional;
 import es.caib.pinbal.core.dto.OrganGestorDto;
 import es.caib.pinbal.core.dto.OrganGestorEstatEnumDto;
 import es.caib.pinbal.core.helper.DtoMappingHelper;
-import es.caib.pinbal.core.helper.PluginOrganGestorHelper;
 import es.caib.pinbal.core.model.Entitat;
 import es.caib.pinbal.core.model.OrganGestor;
 import es.caib.pinbal.core.repository.EntitatRepository;
@@ -35,7 +35,7 @@ public class OrganGestorServiceImpl implements OrganGestorService {
 	private EntitatRepository entitatRepository;
 
 	@Autowired
-	private PluginOrganGestorHelper pluginOrganGestorHelper;
+	private PluginHelper pluginHelper;
 
 	@Transactional(readOnly = true)
 	public List<OrganGestorDto> findAll() {
@@ -136,7 +136,7 @@ public class OrganGestorServiceImpl implements OrganGestorService {
 			throw new Exception("organgestor.controller.sync.dir3.arrel.buit.error");
 		}
 		List<OrganGestorDto> organismes = new ArrayList<OrganGestorDto>();
-		Map<String, NodeDir3> organigramaDir3 = pluginOrganGestorHelper.getOrganigramaOrganGestor(codiDir3);
+		Map<String, NodeDir3> organigramaDir3 = pluginHelper.getOrganigramaOrganGestor(codiDir3);
 		if (organigramaDir3 == null || organigramaDir3.isEmpty() || organigramaDir3.get(codiDir3) == null) {
 			throw new Exception("organgestor.controller.sync.dir3.no.exist.error");
 		}

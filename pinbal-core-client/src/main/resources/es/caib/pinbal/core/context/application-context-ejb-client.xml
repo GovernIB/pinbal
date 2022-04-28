@@ -63,5 +63,9 @@
 	<jee:local-slsb
 			id="avisService"
 			jndi-name="pinbal/AvisServiceBean/local"
-			business-interface="es.caib.pinbal.core.service.AvisService"/>		
+			business-interface="es.caib.pinbal.core.service.AvisService"/>
+	<jee:local-slsb
+			id="ConfigService"
+			jndi-name="pinbal/ConfigServiceBean/local"
+			business-interface="es.caib.pinbal.core.service.ConfigService"/>
 </beans>

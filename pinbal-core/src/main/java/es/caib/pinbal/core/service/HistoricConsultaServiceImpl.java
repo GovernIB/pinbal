@@ -120,6 +120,8 @@ public class HistoricConsultaServiceImpl implements HistoricConsultaService, App
 	private DtoMappingHelper dtoMappingHelper;
 	@Autowired
 	private PeticioScspEstadistiquesHelper peticioScspEstadistiquesHelper;
+	@Autowired
+	private ConfigHelper configHelper;
 
 	@Autowired
 	private MutableAclService aclService;
@@ -951,7 +953,7 @@ public class HistoricConsultaServiceImpl implements HistoricConsultaService, App
 	@Override
 	public void arxivarConsultesAntigues() {
 		log.info("[ARXIU CONSULTES] Inici");
-		String dialect = PropertiesHelper.getProperties().getProperty("es.caib.pinbal.hibernate.dialect", "Oracle");
+		String dialect = configHelper.getConfig("es.caib.pinbal.hibernate.dialect", "Oracle");
 		int dies = PropertiesHelper.getProperties().getAsInt("es.caib.pinbal.tasca.auto.arxivar.antiguetat.dies", 180);
 		log.info("[ARXIU CONSULTES] Arxivar en {} les consultes amb una antiguitat superior a {} dies", dialect, dies);
 		int consultesArxivades = 0;

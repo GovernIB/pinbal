@@ -200,8 +200,7 @@ public class EntitatController extends BaseController {
 		model.addAttribute(command);
 		model.addAttribute(
 				"propertyEsborrar",
-				propertyService.get(
-						"es.caib.pinbal.entitat.accio.esborrar.activa"));
+				propertyService.get("es.caib.pinbal.entitat.accio.esborrar.activa", "false"));
 	}
 
 }

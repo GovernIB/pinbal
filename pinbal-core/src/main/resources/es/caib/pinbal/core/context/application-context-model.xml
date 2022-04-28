@@ -19,10 +19,17 @@
 		http://www.springframework.org/schema/task
 		http://www.springframework.org/schema/task/spring-task.xsd">
 
-	<bean id="propertyPlaceholderConfigurer" class="es.scsp.common.utils.ScspPropertyPlaceholderConfigurer">
+	<bean id="propertyPlaceholderConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
 		<property name="location" value="${es.caib.pinbal.properties.path}" />
 		<property name="placeholderPrefix" value="${config:" />
 		<property name="ignoreResourceNotFound" value="true" />
+		<property name="ignoreUnresolvablePlaceholders" value="true"/>
+		<property name="systemPropertiesModeName" value="SYSTEM_PROPERTIES_MODE_OVERRIDE"/>
+	</bean>
+	<bean id="sPropertyPlaceholderConfigurer" class="es.scsp.common.utils.ScspPropertyPlaceholderConfigurer">
+		<property name="location" value="${es.caib.pinbal.properties.path}" />
+		<property name="ignoreResourceNotFound" value="true" />
+		<property name="ignoreUnresolvablePlaceholders" value="true"/>
 		<property name="systemPropertiesModeName" value="SYSTEM_PROPERTIES_MODE_OVERRIDE"/>
 	</bean>
 
@@ -30,7 +37,7 @@
 		<property name="resourceRef" value="true" />
 		<property name="jndiName" value="${config:es.caib.pinbal.datasource.jndi}" />
 	</bean>
-	
+
 	<bean id="mailSession" class="org.springframework.jndi.JndiObjectFactoryBean">
 		<property name="resourceRef" value="true"/>
 		<property name="jndiName" value="${config:es.caib.pinbal.email.jndi}"/>
@@ -38,6 +45,7 @@
 
 	<context:annotation-config />
 
+	<context:component-scan base-package="es.caib.pinbal.core.config" />
 	<context:component-scan base-package="es.caib.pinbal.core.service" />
 	<context:component-scan base-package="es.caib.pinbal.core.ws" />
 	<context:component-scan base-package="es.caib.pinbal.core.helper" />
@@ -86,16 +94,17 @@
 
 	<!-- Tasques programades -->
 	<task:annotation-driven scheduler="taskScheduler"/>
-	<task:scheduler id="taskScheduler" pool-size="1"/>
+	<task:scheduler id="taskScheduler" pool-size="10"/>
+<!--
 	<task:scheduled-tasks>
 		<task:scheduled ref="consultaServiceImpl" method="autoRevisarEstatPeticionsMultiplesPendents" fixed-rate="${config:es.caib.pinbal.tasca.auto.comprovacio.repeticio:600000}"/>
 		<task:scheduled ref="consultaServiceImpl" method="autoGenerarJustificantsPendents" fixed-rate="${config:es.caib.pinbal.tasca.auto.justificant.repeticio:60000}"/>
 		<task:scheduled ref="consultaServiceImpl" method="autoTancarExpedientsPendents" cron="${config:es.caib.pinbal.tasca.auto.exp.tancar.cron:0 0 2 * * ?}"/>
 		<task:scheduled ref="consultaServiceImpl" method="autoGenerarEmailReportEstat" cron="${config:es.caib.pinbal.tasca.auto.email.report.estat.cron}"/>
-		<!--task:scheduled ref="consultaServiceImpl" method="autoEnviarPeticionsPendents" fixed-rate="10000"/-->
 		<task:scheduled ref="historicConsultaServiceImpl" method="arxivarConsultesAntigues" cron="${config:es.caib.pinbal.tasca.auto.arxivar.consultes.cron:0 0 1 * * ?}"/>
+		<!-task:scheduled ref="consultaServiceImpl" method="autoEnviarPeticionsPendents" fixed-rate="10000"/->
 	</task:scheduled-tasks>
-
+-->
 	<!-- Context llibreries SCSP -->
 	<import resource="classpath:application-context-scsp.xml" />
 
@@ -118,12 +127,12 @@
 			<value>select currval(pg_get_serial_sequence('acl_sid', 'id'))</value>
 		</property-->
 	</bean>
-	
+
 	<!-- E-mail -->
 	<bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
 		<property name="session" ref="mailSession"/>
 	</bean>
-	
+
 	<bean id="lookupStrategy" class="org.springframework.security.acls.jdbc.BasicLookupStrategy">
 		<constructor-arg ref="dataSource" />
 		<constructor-arg ref="aclCache" />

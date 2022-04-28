@@ -6,7 +6,9 @@ package es.caib.pinbal.core.service;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
+import es.caib.pinbal.core.helper.ConfigHelper;
 import org.apache.commons.io.IOUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import es.caib.pinbal.core.helper.PropertiesHelper;
@@ -21,6 +23,9 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Service
 public class DadesExternesServiceImpl implements DadesExternesService {
+
+	@Autowired
+	private ConfigHelper configHelper;
 
 	@Override
 	public byte[] findProvincies() {
@@ -91,12 +96,7 @@ public class DadesExternesServiceImpl implements DadesExternesService {
 	}
 
 	private String getDadesComunesBaseUrl() {
-		String baseUrl = PropertiesHelper.getProperties().getProperty("es.caib.pinbal.dadescomunes.base.url");
-		if (baseUrl != null && baseUrl.length() > 0) {
-			return baseUrl;
-		} else {
-			return "https://proves.caib.es/dadescomunsfront";
-		}
+		return configHelper.getConfig("es.caib.pinbal.dadescomunes.base.url", "https://proves.caib.es/dadescomunsfront");
 	}
 
 }
