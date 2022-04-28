@@ -49,15 +49,18 @@
 
             //prevent Default functionality
             e.preventDefault();
-
-            let self = this;
             let formData = new FormData(this);
-            $('#syncModal-body').html(
-                '<div class="datatable-dades-carregant" style="text-align: center; padding-bottom: 100px;">' +
-                '	<span class="fa fa-circle-o-notch fa-spin fa-3x"></span> <br>' +
-                '   Sincronitzant la propietat: ' + formData.get('key') +
-                '</div>');
-            $("#syncModal").modal("show");
+            let id = "config_" + formData.get("key");
+            let spinnerId;
+            if (!document.getElementById(id + "_spinner")) {
+                let spinner = document.createElement("span");
+                spinner.setAttribute("aria-hidden", true);
+                spinner.className = "fa fa-circle-notch fa-spin fa-1x spinner-config";
+                spinner.setAttribute("id", id + "_spinner");
+                spinnerId = (id + "_spinner").replaceAll('.','\\.');
+                let elem = document.getElementById(id + "_key");
+                elem.append(spinner);
+            }
 
             //do your own request an handle the results
             $.ajax({
@@ -67,14 +70,27 @@
                 contentType: false,
                 enctype: 'multipart/form-data',
                 data: formData,
-                success: function(data) {
-                    $("#syncModal").modal("hide");
-                    if (data.status === 1) {
-                        alert("La propietat " + formData.get('key') + " s'ha editat satisfactoriament");
-                    } else {
-                        alert("Hi ha hagut un error editant la propietat");
-                        document.location.reload();
+                success: data => {
+                    if (spinnerId) {
+                        $("#" + spinnerId).remove();
                     }
+                    let elem = document.getElementById(id);
+                    elem = !elem ? document.getElementById(id + "_1") : elem;
+                    let msgId = elem.getAttribute("id") + "_msg";
+                    let msg = document.getElementById(msgId);
+                    if (msg) {
+                        document.getElementById(msgId).remove();
+                    }
+                    let div = document.createElement("div");
+                    div.setAttribute("id", msgId);
+                    div.className = "flex-space-between alert-config " +  (data.status === 1 ?  "alert-config-ok" : "alert-config-error");
+                    div.append(data.message);
+                    let span = document.createElement("span");
+                    span.className = "fa fa-times alert-config-boto";
+                    div.append(span);
+                    elem.closest(".col-sm-8").append(div);
+                    span.addEventListener("click", () => div.remove());
+                    window.setTimeout(() => div ? div.remove() : "", data.status === 1 ? 2250 : 4250);
                 }
             });
 

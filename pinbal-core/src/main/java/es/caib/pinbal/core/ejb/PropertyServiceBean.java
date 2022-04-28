@@ -31,4 +31,9 @@ public class PropertyServiceBean implements PropertyService {
 		return delegate.get(key);
 	}
 
+    @Override
+    public String get(String key, String defaultValue) {
+        return delegate.get(key, defaultValue);
+    }
+
 }

@@ -203,7 +203,9 @@ $(document).ready(function() {
 			{{^actiu}}
 				<li><a href="procediment/{{ id }}/enable" ><i class="fa fa-check"></i>&nbsp;<spring:message code="comu.boto.activar"/></a></li>
 			{{/actiu}}
-			<li><a href="procediment/{{ id }}/delete" confirm-esborrar"><i class="fas fa-trash-alt"></i>&nbsp;<spring:message code="comu.boto.esborrar"/></a></li>
+			{{#propertyEsborrar}}
+				<li><a href="procediment/{{ id }}/delete" confirm-esborrar"><i class="fas fa-trash-alt"></i>&nbsp;<spring:message code="comu.boto.esborrar"/></a></li>
+			{{/propertyEsborrar}}
 		</ul>
 	</div>
 </script>

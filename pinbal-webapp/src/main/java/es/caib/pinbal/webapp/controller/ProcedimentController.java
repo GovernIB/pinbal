@@ -722,8 +722,7 @@ public class ProcedimentController extends BaseController {
 		command.eliminarEspaisCampsCerca();
 		model.addAttribute(
 				"propertyEsborrar",
-				propertyService.get(
-						"es.caib.pinbal.procediment.accio.esborrar.activa"));
+				propertyService.get("es.caib.pinbal.procediment.accio.esborrar.activa", "false"));
 	}
 
 	private void setCommandFiltreServeis(

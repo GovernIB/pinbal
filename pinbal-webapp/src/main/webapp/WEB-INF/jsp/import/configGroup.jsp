@@ -50,10 +50,10 @@
                                 </form:select>
                             </c:when>
                             <c:when test="${config.validValues != null and fn:length(config.validValues) == 2}">
-                                <label class="radio-inline">
+                                <label id="config_${config.key}_1" class="radio-inline">
                                     <form:radiobutton path="value" value="${config.validValues[0]}"/> ${config.validValues[0]}
                                 </label>
-                                <label class="radio-inline">
+                                <label id="config_${config.key}_2" class="radio-inline">
                                     <form:radiobutton path="value" value="${config.validValues[1]}"/> ${config.validValues[1]}
                                 </label>
                             </c:when>
@@ -61,7 +61,7 @@
                                 <form:input  id="config_${config.key}" cssClass="form-control" path="value" placeholder="${config.key}" type="text" maxlength="2048" disabled="${config.sourceProperty != 'DATABASE'}"/>
                             </c:otherwise>
                         </c:choose>
-                        <span class="help-block">${config.key}</span>
+                        <div id="config_${config.key}_key"><span class="help-block display-inline">${config.key}</span></div>
                     </div>
                     <div class="col-sm-1">
                         <c:if test="${config.sourceProperty == 'DATABASE'}">
