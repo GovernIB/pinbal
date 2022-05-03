@@ -94,17 +94,17 @@
 						<pbl:inputDate name="dataFi"  inline="true" placeholderKey="consulta.list.filtre.data.fi"/>
 					</div>
 				</div>
-				<div class="col-md-3">
-					<pbl:inputText name="titularNom" inline="true" placeholderKey="consulta.list.filtre.titular.nom"/>
-				</div>
-				<div class="col-md-3">
-					<pbl:inputText name="titularDocument" inline="true" placeholderKey="consulta.list.filtre.titular.document"/>
-				</div>
-				<div class="col-md-3">
-					<div class="pull-right">
-						<button id="netejar-filtre" class="btn btn-default" type="button"><spring:message code="comu.boto.netejar"/></button>
-						<button id="filtrar" class="btn btn-primary" type="submit"><span class="fa fa-filter"></span> <spring:message code="comu.boto.filtrar"/></button>
-					</div>
+			</div>
+			<div class="col-md-3">
+				<pbl:inputText name="titularNom" inline="true" placeholderKey="consulta.list.filtre.titular.nom"/>
+			</div>
+			<div class="col-md-3">
+				<pbl:inputText name="titularDocument" inline="true" placeholderKey="consulta.list.filtre.titular.document"/>
+			</div>
+			<div class="col-md-3">
+				<div class="pull-right">
+					<button id="netejar-filtre" class="btn btn-default" type="button"><spring:message code="comu.boto.netejar"/></button>
+					<button id="filtrar" class="btn btn-primary" type="submit"><span class="fa fa-filter"></span> <spring:message code="comu.boto.filtrar"/></button>
 				</div>
 			</div>
 		</div>

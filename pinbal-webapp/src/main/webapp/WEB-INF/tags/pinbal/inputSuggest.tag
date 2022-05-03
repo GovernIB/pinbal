@@ -19,7 +19,7 @@
 <%@ attribute name="suggestTextAddicional" required="false" rtexprvalue="true"%>
 <%@ attribute name="urlParamAddicional" required="false" rtexprvalue="true"%>
 <%@ attribute name="icon" required="false" rtexprvalue="true"%>
-
+<c:set var="idioma"><%=org.springframework.web.servlet.support.RequestContextUtils.getLocale(request).getLanguage()%></c:set>
 <c:set var="campPath" value="${name}"/>
 <c:set var="campErrors"><form:errors path="${campPath}"/></c:set>
 <c:set var="minimumInputLength"><c:choose><c:when test="${not empty minimumInputLength}">${minimumInputLength}</c:when><c:otherwise>${3}</c:otherwise></c:choose></c:set>
@@ -54,6 +54,7 @@
 							id="${campPath}" disabled="${disabled}" style="width:100%"
 							data-toggle="suggest" data-netejar="${netejar}"
 							data-placeholder="${placeholderText}"
+							data-idioma="${idioma}"
 							data-minimum-input-length="${minimumInputLength}"
 							data-url-llistat="${urlConsultaLlistat}"
 							data-url-inicial="${urlConsultaInicial}"
@@ -72,6 +73,7 @@
 							id="${campPath}" disabled="${disabled}" style="width:100%"
 							data-toggle="suggest" data-netejar="${netejar}"
 							data-placeholder="${placeholderText}"
+							data-idioma="${idioma}"
 							data-minimum-input-length="${minimumInputLength}"
 							data-url-llistat="${urlConsultaLlistat}"
 							data-url-inicial="${urlConsultaInicial}"
@@ -90,7 +92,9 @@
 	<c:otherwise>
 		<form:select path="${campPath}" cssClass="form-control" id="${campPath}"
 			disabled="${disabled}" style="width:100%" data-toggle="suggest"
-			data-netejar="${netejar}" data-placeholder="${placeholderText}"
+			data-netejar="${netejar}"
+			data-placeholder="${placeholderText}"
+			data-idioma="${idioma}"
 			data-minimum-input-length="${minimumInputLength}"
 			data-url-llistat="${urlConsultaLlistat}" 
 			data-url-inicial="${urlConsultaInicial}"

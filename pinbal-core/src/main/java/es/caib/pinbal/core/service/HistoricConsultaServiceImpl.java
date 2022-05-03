@@ -59,6 +59,7 @@ import es.caib.pinbal.core.dto.InformeProcedimentServeiDto;
 import es.caib.pinbal.core.dto.InformeRepresentantFiltreDto;
 import es.caib.pinbal.core.dto.JustificantDto;
 import es.caib.pinbal.core.dto.ProcedimentDto;
+import es.caib.pinbal.core.helper.ConfigHelper;
 import es.caib.pinbal.core.helper.DtoMappingHelper;
 import es.caib.pinbal.core.helper.JustificantHelper;
 import es.caib.pinbal.core.helper.PermisosHelper;
