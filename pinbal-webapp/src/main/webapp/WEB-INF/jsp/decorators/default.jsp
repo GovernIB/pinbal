@@ -87,6 +87,7 @@
 	<![endif]-->
 	<script src="<c:url value="/webjars/bootstrap/3.3.6/js/bootstrap.min.js"/>"></script>
 	<script src="<c:url value="/webjars/font-awesome/5.13.1/js/all.min.js"/>"></script>
+	<script src="<c:url value="/js/webutil.modal.js"/>"></script>
 	<decorator:head />
 <style>
 body {
@@ -178,10 +179,47 @@ body {
 							</a>
 							<ul class="dropdown-menu">
 								<li>
-									<a href="<c:url value="/usuari/configuracio"/>">
-										<span class="fa fa-download"></span> <spring:message code="decorator.menu.configuracio.user"/>
+									<a href="<c:url value="/usuari/configuracio"/>" data-toggle="modal">
+										<span class="fa fa-cog"></span> <spring:message code="decorator.menu.configuracio.user"/>
 									</a>
 								</li>
+								<c:choose>
+									<c:when test="${isRolActualAdministrador}">
+										<li>
+											<a href="https://github.com/GovernIB/pinbal/raw/pinbal-1.4/doc/odt/01_pinbal_usuari_admin.odt">
+												<span class="fa fa-file"></span> <spring:message code="decorator.menu.manual.admin"/>
+											</a>
+										</li>
+									</c:when>
+									<c:when test="${isRolActualRepresentant}">
+										<li>
+											<a href="https://github.com/GovernIB/pinbal/raw/pinbal-1.4/doc/odt/02_pinbal_usuari_representant.odt">
+												<span class="fa fa-file"></span> <spring:message code="decorator.menu.manual.representant"/>
+											</a>
+										</li>
+									</c:when>
+									<c:when test="${isRolActualDelegat}">
+										<li>
+											<a href="https://github.com/GovernIB/pinbal/raw/pinbal-1.4/doc/odt/03_pinbal_usuari_delegat.odt">
+												<span class="fa fa-file"></span> <spring:message code="decorator.menu.manual.delegat"/>
+											</a>
+										</li>
+									</c:when>
+									<c:when test="${isRolActualAuditor}">
+										<li>
+											<a href="https://github.com/GovernIB/pinbal/raw/pinbal-1.4/doc/odt/04_pinbal_usuari_auditor.odt">
+												<span class="fa fa-file"></span> <spring:message code="decorator.menu.manual.auditor"/>
+											</a>
+										</li>
+									</c:when>
+									<c:when test="${isRolActualSuperAuditor}">
+										<li>
+											<a href="https://github.com/GovernIB/pinbal/raw/pinbal-1.4/doc/odt/05_pinbal_usuari_superauditor.odt">
+												<span class="fa fa-file"></span> <spring:message code="decorator.menu.manual.superauditor"/>
+											</a>
+										</li>
+									</c:when>
+								</c:choose>
 								<li>
 									<a href="<c:url value="/usuari/logout"/>">
 										<i class="fa fa-power-off"></i> <spring:message code="decorator.menu.accions.desconectar"/>
@@ -283,7 +321,7 @@ body {
 				</h2>
 			</div>
 			<div class="panel-body">
-				<jsp:include page="../import/alerts.jsp"/>
+				<div id="contingut-missatges"><pbl:missatges/></div>
 				<decorator:body />
 			</div>
 		</div>

@@ -4,7 +4,6 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib tagdir="/WEB-INF/tags/pinbal" prefix="pbl" %>
-
 <html>
 <head>
 	<title><spring:message code="usuari.form.titol"/></title>
@@ -16,7 +15,7 @@
 	
 </head>
 <body>
-	<c:url value="/usuari/configuracio" var="formAction"/>
+	<c:url value="/modal/usuari/configuracio" var="formAction"/>
 	<form:form action="${formAction}" method="post" cssClass="form-horizontal" commandName="usuariCommand" role="form">
 		<form:hidden path="codi"/>
 		<pbl:inputText name="nom" textKey="usuari.form.camp.nom" disabled="true"/>

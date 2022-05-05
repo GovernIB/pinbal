@@ -30,6 +30,7 @@
 <%@ attribute name="icon" required="false" rtexprvalue="true"%>
 <%@ attribute name="iconDelete" required="false" rtexprvalue="true"%>
 <%@ attribute name="srLabel" required="false" rtexprvalue="true"%>
+<%@ attribute name="formatResult" required="false" rtexprvalue="true"%>
 <c:set var="idioma"><%=org.springframework.web.servlet.support.RequestContextUtils.getLocale(request).getLanguage()%></c:set>
 <c:set var="campPath" value="${name}"/>
 <c:set var="campId" value="${campPath}"/><c:if test="${not empty id}"><c:set var="campId" value="${id}"/></c:if>
@@ -57,6 +58,7 @@
 					data-idioma="${idioma}"
 					data-enum="${optionEnum}"
 					data-enum-value="${campValue}"
+					data-format-result="${formatResult}"
 					data-clearoption="${emptyOption == 'true'}">
 					<c:if test="${emptyOption == 'true'}">
 						<c:choose>
@@ -76,8 +78,7 @@
 							<c:forEach var="opt" items="${optionItems}">
 								<c:set var="nivellTxt">
 									<c:if test="${not empty optionNivellAttribute}">
-										<c:forEach begin="${0}" end="${(opt[optionNivellAttribute])}"
-											varStatus="status">
+										<c:forEach begin="${0}" end="${(opt[optionNivellAttribute])}" varStatus="status">
 											<c:if test="${status.index >= 1}">&nbsp;&nbsp;&nbsp;&nbsp;</c:if>
 										</c:forEach>
 									</c:if>
@@ -89,9 +90,7 @@
 												<form:option value="${opt[optionValueAttribute]}">${nivellTxt}${opt[optionTextAttribute]}</form:option>
 											</c:when>
 											<c:when test="${not empty optionTextKeyAttribute}">
-												<form:option value="${opt[optionValueAttribute]}">${nivellTxt}<spring:message
-														code="${opt[optionTextKeyAttribute]}" />
-												</form:option>
+												<form:option value="${opt[optionValueAttribute]}">${nivellTxt}<spring:message code="${opt[optionTextKeyAttribute]}" /></form:option>
 											</c:when>
 											<c:otherwise>
 												<form:option value="${opt[optionValueAttribute]}" />
@@ -169,7 +168,8 @@
 			data-idioma="${idioma}"
 			data-minimumresults="${minimumResultsForSearch}"
 			data-enum="${optionEnum}"
-			data-enum-value="${campValue}">
+			data-enum-value="${campValue}"
+			data-format-result="${formatResult}">
 			<c:if test="${emptyOption == 'true'}">
 				<c:choose>
 					<c:when test="${not empty emptyOptionTextKey}">

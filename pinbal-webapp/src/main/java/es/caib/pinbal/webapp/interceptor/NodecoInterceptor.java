@@ -8,21 +8,22 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
-import es.caib.pinbal.webapp.helper.ModalHelper;
+import es.caib.pinbal.webapp.helper.NodecoHelper;
 
 /**
- * Interceptor per a evitar processar les pàgines amb Sitemesh.
+ * Interceptor per a redirigir les peticions a finestres sense
+ * decoració.
  * 
  * @author Limit Tecnologies <limit@limit.es>
  */
-public class ModalInterceptor extends HandlerInterceptorAdapter {
+public class NodecoInterceptor extends HandlerInterceptorAdapter {
 
 	@Override
 	public boolean preHandle(
 			HttpServletRequest request,
 			HttpServletResponse response,
 			Object handler) throws Exception {
-		boolean resposta = ModalHelper.comprovarModalInterceptor(request, response);
+		boolean resposta = NodecoHelper.comprovarNodecoInterceptor(request, response);
 		return resposta;
 	}
 

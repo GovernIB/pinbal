@@ -3,33 +3,40 @@
  */
 package es.caib.pinbal.core.helper;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
-import es.caib.pinbal.core.dto.*;
-import es.caib.pinbal.core.model.Config;
-import es.caib.pinbal.core.model.ConfigGroup;
-import es.caib.pinbal.core.model.HistoricConsulta;
-import ma.glasnost.orika.CustomMapper;
-import ma.glasnost.orika.Mapper;
-import ma.glasnost.orika.MappingContext;
 import org.joda.time.DateTime;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 
+import es.caib.pinbal.core.dto.ClauPrivadaDto;
+import es.caib.pinbal.core.dto.ConfigDto;
+import es.caib.pinbal.core.dto.ConfigGroupDto;
+import es.caib.pinbal.core.dto.ConsultaDto;
+import es.caib.pinbal.core.dto.EntitatDto;
+import es.caib.pinbal.core.dto.EntitatUsuariDto;
+import es.caib.pinbal.core.dto.InformeUsuariDto;
+import es.caib.pinbal.core.dto.ProcedimentDto;
+import es.caib.pinbal.core.dto.ServeiCampDto;
+import es.caib.pinbal.core.dto.UsuariDto;
 import es.caib.pinbal.core.model.ClauPrivada;
+import es.caib.pinbal.core.model.Config;
+import es.caib.pinbal.core.model.ConfigGroup;
 import es.caib.pinbal.core.model.Consulta;
 import es.caib.pinbal.core.model.Entitat;
 import es.caib.pinbal.core.model.EntitatUsuari;
+import es.caib.pinbal.core.model.HistoricConsulta;
 import es.caib.pinbal.core.model.Procediment;
 import es.caib.pinbal.core.model.ServeiCamp;
 import ma.glasnost.orika.CustomConverter;
+import ma.glasnost.orika.CustomMapper;
 import ma.glasnost.orika.MapperFacade;
 import ma.glasnost.orika.MapperFactory;
+import ma.glasnost.orika.MappingContext;
 import ma.glasnost.orika.impl.DefaultMapperFactory;
 import ma.glasnost.orika.metadata.ClassMapBuilder;
 import ma.glasnost.orika.metadata.Type;

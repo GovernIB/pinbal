@@ -19,14 +19,15 @@
 	<script src="<c:url value="/webjars/jquery/1.12.4/jquery.min.js"/>"></script>
 	<!-- Llibreria per a compatibilitat amb HTML5 -->
 	<!--[if lt IE 9]>
-      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
-    <![endif]-->
+		<script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+	<![endif]-->
 	<script src="<c:url value="/webjars/bootstrap/3.3.6/js/bootstrap.min.js"/>"></script>
 	<script src="<c:url value="/webjars/font-awesome/5.13.1/js/all.min.js"/>"></script>
 	<decorator:head />
 </head>
 <body>
 	<div class="panel-body">
+		<div id="contingut-missatges"><pbl:missatges/></div>
 		<decorator:body />
 	</div>
 </body>

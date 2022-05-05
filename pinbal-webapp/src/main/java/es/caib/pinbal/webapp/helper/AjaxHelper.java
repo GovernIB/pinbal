@@ -26,8 +26,6 @@ public class AjaxHelper {
 
 	public static final String ACCIO_AJAX_OK = PREFIX_AJAX + "/ok";
 
-
-
 	public static boolean isAjax(HttpServletRequest request) {
 		return request.getAttribute(REQUEST_ATTRIBUTE_AJAX) != null;
 	}
@@ -39,8 +37,8 @@ public class AjaxHelper {
 			Set<String> requestPathsMap = getRequestPathsMap(request);
 			requestPathsMap.add(uriSensePrefix);
 			RequestDispatcher dispatcher = request.getRequestDispatcher(uriSensePrefix);
-		    dispatcher.forward(request, response);
-		    return false;
+			dispatcher.forward(request, response);
+			return false;
 		} else {
 			Set<String> requestPathsMap = getRequestPathsMap(request);
 			String pathComprovacio = request.getServletPath();

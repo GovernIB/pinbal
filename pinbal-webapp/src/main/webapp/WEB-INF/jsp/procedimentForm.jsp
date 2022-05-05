@@ -18,17 +18,19 @@
 	<script src="<c:url value="/webjars/select2/4.0.6-rc.1/dist/js/select2.min.js"/>"></script>
 	<script src="<c:url value="/webjars/select2/4.0.6-rc.1/dist/js/i18n/${requestLocale}.js"/>"></script>
 	<script src="<c:url value="/js/webutil.common.js"/>"></script>
-	<script>
-		var organsGestors = [];
-		organsGestors.push({id:"", text:"<spring:message code="organgestor.form.camp.organ.opcio.cap"/>", actiu:true});
-		<c:forEach items="${organsGestors}" var="organGestor">
-		organsGestors.push({id:"${organGestor.id}", text:"${organGestor.codiINom}", actiu:${organGestor.actiu}});
-		</c:forEach>
-
-		$(document).ready(function() {
-			formatOrgansSelect($('#organGestorId'), organsGestors, "<spring:message code="organgestor.list.extingit"/>")
-		});
-	</script>
+<script>
+	var organsGestorsActiu = [];
+	<c:forEach items="${organsGestors}" var="organGestor">
+	organsGestorsActiu["${organGestor.id}"] = ${organGestor.actiu};
+	</c:forEach>
+	function formatState(organ) {
+		if (!organ.id) {
+			return organ.text;
+		} else {
+			return organsGestorsActiu[organ.id] ? organ.text : $('<span title="<spring:message code="organgestor.list.extingit"/>">' + organ.text + ' <span class="fa fa-exclamation-triangle text-danger"></span></span>');
+		}
+	}
+</script>
 </head>
 <body>
 	<c:url value="/procediment/save" var="formAction"/>
@@ -40,11 +42,18 @@
 				<pbl:inputText name="codi" required="true" labelSize="1" inline="false" textKey="procediment.form.camp.codi"/>
 				<pbl:inputText name="nom" required="true" labelSize="1" inline="false" textKey="procediment.form.camp.nom"/>
 				<pbl:inputText name="departament" labelSize="1" inline="false" textKey="procediment.form.camp.departament"/>
-				<pbl:inputSelect name="organGestorId" textKey="procediment.form.camp.organgestor" 
-								labelSize="1" inline="false" 
-								emptyOption="true" emptyOptionTextKey="organgestor.form.camp.organ.opcio.cap"
-								optionItems="${ organsGestors }" optionValueAttribute="id" optionTextAttribute="codiINom"
-								required="true" optionMinimumResultsForSearch="5"/>
+				<pbl:inputSelect
+					name="organGestorId"
+					textKey="procediment.form.camp.organgestor"
+					labelSize="1"
+					inline="false" 
+					emptyOption="true"
+					emptyOptionTextKey="organgestor.form.camp.organ.opcio.cap"
+					optionItems="${ organsGestors }"
+					optionValueAttribute="id"
+					optionTextAttribute="codiINom"
+					required="true"
+					formatResult="formatState"/>
 				<pbl:inputText name="codiSia" labelSize="1" inline="false" textKey="procediment.form.camp.codisia"/>
 				<%--c:set var="campPath" value="valorCampAutomatizado"/>
 				<c:set var="campErrors"><form:errors path="${campPath}"/></c:set>
@@ -55,10 +64,16 @@
 						<form:errors path="${campPath}" cssClass="help-block"/>
 					</div>
 				</div--%>
-				<pbl:inputSelect name="valorCampAutomatizado" textKey="procediment.form.camp.actiuCampAuto" 
-								emptyOption="true" emptyOptionTextKey="procediment.form.camp.actiuCampAuto.buit"
-								optionItems="${ procedimentAutomatizadoOptions }" optionValueAttribute="value" optionTextKeyAttribute="text"
-								required="false" labelSize="1" />
+				<pbl:inputSelect
+					name="valorCampAutomatizado"
+					textKey="procediment.form.camp.actiuCampAuto" 
+					emptyOption="true"
+					emptyOptionTextKey="procediment.form.camp.actiuCampAuto.buit"
+					optionItems="${ procedimentAutomatizadoOptions }"
+					optionValueAttribute="value"
+					optionTextKeyAttribute="text"
+					required="false"
+					labelSize="1"/>
 				<pbl:inputSelect name="valorCampClaseTramite" textKey="procediment.form.camp.claseTramite" 
 								emptyOption="true" emptyOptionTextKey="procediment.form.camp.claseTramite.buit"
 								optionItems="${ procedimentClaseTramiteOptions }" optionValueAttribute="value" optionTextKeyAttribute="text"

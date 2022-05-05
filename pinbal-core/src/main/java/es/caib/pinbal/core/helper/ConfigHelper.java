@@ -1,5 +1,17 @@
 package es.caib.pinbal.core.helper;
 
+import java.io.FileInputStream;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Properties;
+
+import javax.annotation.PostConstruct;
+import javax.validation.constraints.NotNull;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
+
 import es.caib.pinbal.core.dto.ConfigSourceEnumDto;
 import es.caib.pinbal.core.model.Config;
 import es.caib.pinbal.core.model.ConfigGroup;
@@ -7,16 +19,6 @@ import es.caib.pinbal.core.repository.ConfigGroupRepository;
 import es.caib.pinbal.core.repository.ConfigRepository;
 import es.caib.pinbal.core.service.exception.NotDefinedConfigException;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
-
-import javax.annotation.PostConstruct;
-import javax.validation.constraints.NotNull;
-import java.io.FileInputStream;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Properties;
 
 @Component
 public class ConfigHelper {
@@ -117,7 +119,8 @@ public class ConfigHelper {
         return config.getValue();
     }
 
-    @Slf4j
+	@Slf4j
+    @SuppressWarnings("serial")
     public static class JBossPropertiesHelper extends Properties {
 
         private static final String APPSERV_PROPS_PATH = "es.caib.pinbal.properties.path";

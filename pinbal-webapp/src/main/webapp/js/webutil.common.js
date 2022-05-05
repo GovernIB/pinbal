@@ -401,7 +401,8 @@ $(document).ajaxError(function(event, jqxhr, ajaxSettings, thrownError) {
 		    theme: "bootstrap",
 		    language: $(this).data('idioma'),
 		    allowClear: $(this).data('placeholder') ? true : false,
-		    minimumResultsForSearch: $(this).data('minimumresults')
+		    minimumResultsForSearch: $(this).data('minimumresults'),
+		    templateResult: $(this).data('formatResult') ? eval($(this).data('formatResult')) : undefined
 		});
 			// allowClear: $(this).data('clearoption') ? true : false,
 		$(this).on('select2:open', function() {
@@ -525,6 +526,7 @@ $(document).ajaxError(function(event, jqxhr, ajaxSettings, thrownError) {
 		    theme: "bootstrap",
 		    allowClear: $(this).data('placeholder') ? true : false,
 		    minimumInputLength: $(this).data('minimumInputLength'),
+		    templateResult: $(this).data('formatResult'),
 		    ajax: {
 		    	delay: 500,
 		    	url: function(params){
@@ -697,23 +699,3 @@ $(document).ajaxError(function(event, jqxhr, ajaxSettings, thrownError) {
 	});
 
 }(jQuery));
-
-function formatOrgansSelect($selector, organsGestors, missatgeObsolets){
-	function formatState(organ) {
-		let msgObsolet = missatgeObsolets;
-		if (organ.actiu) {
-			return organ.text;
-		}
-		return $("<span title='" + msgObsolet + "'>" + organ.text + " <span class='fa fa-exclamation-triangle text-danger'></span></span>");
-	}
-
-	$selector.empty();
-	var select2Options = {
-		theme: 'bootstrap',
-		width: 'auto',
-		data: organsGestors,
-		allowClear: true,
-		templateResult: formatState
-	};
-	$selector.select2(select2Options);
-}

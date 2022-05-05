@@ -36,9 +36,9 @@
 			}
 		},
 		drawCallback: function() {
-			console.log('drawCallback');
+			//console.log('drawCallback');
 			if ($.fn.webutilModalEval) {
-				console.log('webutilModalEval');
+				//console.log('webutilModalEval');
 				$(this).closest('.dataTables_wrapper').webutilModalEval();
 			}
 		}
