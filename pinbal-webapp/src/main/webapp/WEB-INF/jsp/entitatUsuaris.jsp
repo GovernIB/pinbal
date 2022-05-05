@@ -41,7 +41,7 @@
 	<script src="<c:url value="/webjars/select2/4.0.6-rc.1/dist/js/i18n/${requestLocale}.js"/>"></script>
 	
 	<script src="<c:url value="/js/webutil.datatable.js"/>"></script>
-    <script src="<c:url value="/js/webutil.common.js"/>"></script>
+	<script src="<c:url value="/js/webutil.common.js"/>"></script>
 <script>
 $(document).ready(function() {
 	$('#netejar-filtre').click(function() {
@@ -166,6 +166,7 @@ function showModalCrear() {
 	$('#modal-input-aplicacio').prop('checked', false);
 	$('#modal-input-actiu').prop('checked', false);
 	$('#modal-form-usuari').modal('toggle');
+	$('#modal-accio-text').html('<spring:message code="comu.boto.crear"/>');
 }
 function showModalEditar(row) {
 	var inicialitzat = row.usuari.inicialitzat;
@@ -211,6 +212,8 @@ function showModalEditar(row) {
 	$('#modal-input-aplicacio').prop('checked', aplicacio);
 	$('#modal-input-actiu').prop('checked', actiu);
 	$('#modal-form-usuari').modal('toggle');
+	$("#btnAddProfile").html('Save');
+	$('#modal-accio-text').html('<spring:message code="comu.boto.modificar"/>');
 }
 </script>
 </head>
@@ -413,8 +416,8 @@ function showModalEditar(row) {
 					</form>
 				</div>
 				<div class="modal-footer">
-					<button class="btn btn-default" data-dismiss="modal"><span class="fa fa-arrow-left"></span>&nbsp;<spring:message code="comu.boto.tornar"/></button>
-					<button class="btn btn-primary" onclick="$('#modal-form').submit()"><spring:message code="comu.boto.guardar"/></button>
+					<button class="btn btn-default" data-dismiss="modal"><span class="fa fa-times"></span>&nbsp;<spring:message code="comu.boto.tancar"/></button>
+					<button class="btn btn-primary" onclick="$('#modal-form').submit()"><span class="fa fa-save"></span>&nbsp;<span id="modal-accio-text"></span></button>
 				</div>
 			</div>
 		</div>
