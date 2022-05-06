@@ -1,19 +1,4 @@
--- Changeset db/changelog/changes/1.4.31/migrate.sql::raw::includeAll
--- *********************************************************************
--- Update Database Script
--- *********************************************************************
--- Change Log: db/changelog/db.changelog-master.yaml
--- Ran at: 22/4/22 9:04
--- Against: null@offline:oracle?changeLogFile=liquibase/databasechangelog.csv
--- Liquibase version: 4.3.3
--- *********************************************************************
-
--- Changeset db/changelog/changes/1.4.31/150.yaml::1650469587624-1::limit
-CREATE TABLE pbl_config_group (code VARCHAR2(128 CHAR) NOT NULL, description_key VARCHAR2(512 CHAR), position NUMBER(3) NOT NULL, parent_code VARCHAR2(128 CHAR));
-ALTER TABLE pbl_config_group ADD PRIMARY KEY (code);
-
-grant select, update, insert, delete on pbl_config_group to www_pinbal;
-
+-- 150
 INSERT INTO pbl_config_group (code, position, description_key) VALUES ('GENERAL', '0', 'propietat.grup.general');
 INSERT INTO pbl_config_group (code, parent_code, position, description_key) VALUES ('OPCIONS_BORRAR', 'GENERAL', '0', 'propietat.grup.general.borrar');
 INSERT INTO pbl_config_group (code, parent_code, position, description_key) VALUES ('JUSTIFICANT', 'GENERAL', '1', 'propietat.grup.general.justificant');
@@ -28,14 +13,8 @@ INSERT INTO pbl_config_group (code, parent_code, position, description_key) VALU
 INSERT INTO pbl_config_group (code, parent_code, position, description_key) VALUES ('CUSTODIA', 'PLUGINS', '3', 'propietat.grup.plugins.custodia');
 INSERT INTO pbl_config_group (code, parent_code, position, description_key) VALUES ('ARXIU', 'PLUGINS', '4', 'propietat.grup.plugins.arxiu');
 INSERT INTO pbl_config_group (code, parent_code, position, description_key) VALUES ('UNITATS', 'PLUGINS', '5', 'propietat.grup.plugins.unitats');
--- INSERT INTO pbl_config_group (code, position, description_key) VALUES ('SCSP', '2', 'propietat.grup.scsp');
 INSERT INTO pbl_config_group (code, position, description_key) VALUES ('HISTORIC', '2', 'propietat.grup.historic');
 INSERT INTO pbl_config_group (code, position, description_key) VALUES ('TASQUES', '3', 'propietat.grup.tasques');
-
-CREATE TABLE pbl_config_type (code VARCHAR2(128 CHAR) NOT NULL, value VARCHAR2(2048 CHAR));
-ALTER TABLE pbl_config_type ADD PRIMARY KEY (code);
-
-grant select, update, insert, delete on pbl_config_type to www_pinbal;
 
 INSERT INTO pbl_config_type (code) VALUES ('BOOL');
 INSERT INTO pbl_config_type (code) VALUES ('TEXT');
@@ -51,13 +30,15 @@ INSERT INTO pbl_config_type (code, value) VALUES ('ARXIU_CLASS', 'es.caib.plugin
 INSERT INTO pbl_config_type (code, value) VALUES ('UNITATS_CLASS', 'es.caib.pinbal.plugin.caib.unitat.UnitatsOrganitzativesPluginDir3');
 INSERT INTO pbl_config_type (code, value) VALUES ('CONVERSIO_TIPUS', 'xdocreport,openoffice');
 
-CREATE TABLE pbl_config (key VARCHAR2(256 CHAR) NOT NULL, value VARCHAR2(2048 CHAR), description_key VARCHAR2(2048 CHAR), group_code VARCHAR2(128 CHAR) NOT NULL, position NUMBER(3) NOT NULL, source_property VARCHAR2(16 CHAR) NOT NULL, type_code VARCHAR2(128 CHAR), lastmodifiedby_codi VARCHAR2(64 CHAR), lastmodifieddate TIMESTAMP);
-ALTER TABLE pbl_config ADD PRIMARY KEY (key);
-ALTER TABLE pbl_config ADD CONSTRAINT pbl_config_group_fk FOREIGN KEY (group_code) REFERENCES pbl_config_group (code);
-
-grant select, update, insert, delete on pbl_config to www_pinbal;
-
-INSERT INTO pbl_config (key, value, description_key, group_code, position, source_property, type_code) VALUES ('es.caib.pinbal.xsd.base.path', NULL, 'propietat.xsd.base.path', 'GENERAL', '0', 'FILE', 'TEXT');INSERT INTO pbl_config (key, value, description_key, group_code, position, source_property, type_code) VALUES ('es.caib.pinbal.optimitzar.transaccions.nova.consulta', NULL, 'propietat.optimitzar.transaccions.nova.consulta', 'GENERAL', '1', 'DATABASE', 'BOOL');INSERT INTO pbl_config (key, value, description_key, group_code, position, source_property, type_code) VALUES ('es.caib.pinbal.entitat.accio.esborrar.activa', NULL, 'propietat.entitat.accio.esborrar.activa', 'OPCIONS_BORRAR', '0', 'DATABASE', 'BOOL');INSERT INTO pbl_config (key, value, description_key, group_code, position, source_property, type_code) VALUES ('es.caib.pinbal.procediment.accio.esborrar.activa', NULL, 'propietat.procediment.accio.esborrar.activa', 'OPCIONS_BORRAR', '1', 'DATABASE', 'BOOL');INSERT INTO pbl_config (key, value, description_key, group_code, position, source_property, type_code) VALUES ('es.caib.pinbal.justificant.extensio.sortida', NULL, 'propietat.justificant.extensio.sortida', 'JUSTIFICANT', '0', 'DATABASE', 'TEXT');INSERT INTO pbl_config (key, value, description_key, group_code, position, source_property, type_code) VALUES ('es.caib.pinbal.justificant.signar.i.custodiar', NULL, 'propietat.justificant.signar.i.custodiar', 'JUSTIFICANT', '1', 'DATABASE', 'BOOL');INSERT INTO pbl_config (key, value, description_key, group_code, position, source_property, type_code) VALUES ('es.caib.pinbal.justificant.convertir.pdfa', NULL, 'propietat.justificant.convertir.pdfa', 'JUSTIFICANT', '2', 'DATABASE', 'BOOL');INSERT INTO pbl_config (key, value, description_key, group_code, position, source_property, type_code) VALUES ('es.caib.pinbal.justificant.serie.documental', NULL, 'propietat.justificant.serie.documental', 'JUSTIFICANT', '3', 'DATABASE', 'TEXT');INSERT INTO pbl_config (key, value, description_key, group_code, position, source_property, type_code) VALUES ('es.caib.pinbal.conversio.tipus', NULL, 'propietat.conversio.tipus', 'CONVERSIO', '0', 'DATABASE', 'CONVERSIO_TIPUS');
+INSERT INTO pbl_config (key, value, description_key, group_code, position, source_property, type_code) VALUES ('es.caib.pinbal.xsd.base.path', NULL, 'propietat.xsd.base.path', 'GENERAL', '0', 'FILE', 'TEXT');
+INSERT INTO pbl_config (key, value, description_key, group_code, position, source_property, type_code) VALUES ('es.caib.pinbal.optimitzar.transaccions.nova.consulta', NULL, 'propietat.optimitzar.transaccions.nova.consulta', 'GENERAL', '1', 'DATABASE', 'BOOL');
+INSERT INTO pbl_config (key, value, description_key, group_code, position, source_property, type_code) VALUES ('es.caib.pinbal.entitat.accio.esborrar.activa', NULL, 'propietat.entitat.accio.esborrar.activa', 'OPCIONS_BORRAR', '0', 'DATABASE', 'BOOL');
+INSERT INTO pbl_config (key, value, description_key, group_code, position, source_property, type_code) VALUES ('es.caib.pinbal.procediment.accio.esborrar.activa', NULL, 'propietat.procediment.accio.esborrar.activa', 'OPCIONS_BORRAR', '1', 'DATABASE', 'BOOL');
+INSERT INTO pbl_config (key, value, description_key, group_code, position, source_property, type_code) VALUES ('es.caib.pinbal.justificant.extensio.sortida', NULL, 'propietat.justificant.extensio.sortida', 'JUSTIFICANT', '0', 'DATABASE', 'TEXT');
+INSERT INTO pbl_config (key, value, description_key, group_code, position, source_property, type_code) VALUES ('es.caib.pinbal.justificant.signar.i.custodiar', NULL, 'propietat.justificant.signar.i.custodiar', 'JUSTIFICANT', '1', 'DATABASE', 'BOOL');
+INSERT INTO pbl_config (key, value, description_key, group_code, position, source_property, type_code) VALUES ('es.caib.pinbal.justificant.convertir.pdfa', NULL, 'propietat.justificant.convertir.pdfa', 'JUSTIFICANT', '2', 'DATABASE', 'BOOL');
+INSERT INTO pbl_config (key, value, description_key, group_code, position, source_property, type_code) VALUES ('es.caib.pinbal.justificant.serie.documental', NULL, 'propietat.justificant.serie.documental', 'JUSTIFICANT', '3', 'DATABASE', 'TEXT');
+INSERT INTO pbl_config (key, value, description_key, group_code, position, source_property, type_code) VALUES ('es.caib.pinbal.conversio.tipus', NULL, 'propietat.conversio.tipus', 'CONVERSIO', '0', 'DATABASE', 'CONVERSIO_TIPUS');
 INSERT INTO pbl_config (key, value, description_key, group_code, position, source_property, type_code) VALUES ('es.caib.pinbal.conversio.open.office.host', NULL, 'propietat.conversio.open.office.host', 'CONVERSIO', '1', 'DATABASE', 'TEXT');
 INSERT INTO pbl_config (key, value, description_key, group_code, position, source_property, type_code) VALUES ('es.caib.pinbal.conversio.open.office.port', NULL, 'propietat.conversio.open.office.port', 'CONVERSIO', '2', 'DATABASE', 'TEXT');
 INSERT INTO pbl_config (key, value, description_key, group_code, position, source_property, type_code) VALUES ('es.caib.pinbal.mapeig.rol.PBL_ADMIN', NULL, 'propietat.mapeig.rol.PBL_ADMIN', 'MAPEIG', '0', 'DATABASE', 'TEXT');
@@ -115,22 +96,9 @@ INSERT INTO pbl_config (key, value, description_key, group_code, position, sourc
 INSERT INTO pbl_config (key, value, description_key, group_code, position, source_property, type_code) VALUES ('es.caib.pinbal.plugin.unitats.organitzatives.dir3.service.password', NULL, 'propietat.plugin.unitats.organitzatives.dir3.service.password', 'UNITATS', '3', 'FILE', 'TEXT');
 INSERT INTO pbl_config (key, value, description_key, group_code, position, source_property, type_code) VALUES ('es.caib.pinbal.plugin.unitats.organitzatives.dir3.service.log.actiu', NULL, 'propietat.plugin.unitats.organitzatives.dir3.service.log.actiu', 'UNITATS', '4', 'DATABASE', 'BOOL');
 INSERT INTO pbl_config (key, value, description_key, group_code, position, source_property, type_code) VALUES ('es.caib.pinbal.plugin.unitats.cerca.dir3.service.url', NULL, 'propietat.plugin.unitats.cerca.dir3.service.url', 'UNITATS', '5', 'FILE', 'TEXT');
--- INSERT INTO pbl_config (key, value, description_key, group_code, position, source_property, type_code) VALUES ('es.caib.pinbal.scsp.axis2.client.xml', NULL, 'propietat.scsp.axis2.client.xml', 'SCSP', '0', 'DATABASE', 'TEXT');
--- INSERT INTO pbl_config (key, value, description_key, group_code, position, source_property, type_code) VALUES ('es.caib.pinbal.scsp.axis2.client.repository', NULL, 'propietat.scsp.axis2.client.repository', 'SCSP', '1', 'DATABASE', 'TEXT');
--- INSERT INTO pbl_config (key, value, description_key, group_code, position, source_property, type_code) VALUES ('es.caib.pinbal.scsp.almacenamiento.ficheros', NULL, 'propietat.scsp.almacenamiento.ficheros', 'SCSP', '2', 'FILE', 'TEXT');
--- INSERT INTO pbl_config (key, value, description_key, group_code, position, source_property, type_code) VALUES ('es.caib.pinbal.scsp.almacenamiento.transmisiones', NULL, 'propietat.scsp.almacenamiento.transmisiones', 'SCSP', '3', 'DATABASE', 'TEXT');
--- INSERT INTO pbl_config (key, value, description_key, group_code, position, source_property, type_code) VALUES ('es.caib.pinbal.scsp.afirma.enabled', NULL, 'propietat.scsp.afirma.enabled', 'SCSP', '4', 'DATABASE', 'TEXT');
--- INSERT INTO pbl_config (key, value, description_key, group_code, position, source_property, type_code) VALUES ('es.caib.pinbal.scsp.afirma.url', NULL, 'propietat.scsp.afirma.url', 'SCSP', '5', 'DATABASE', 'TEXT');
--- INSERT INTO pbl_config (key, value, description_key, group_code, position, source_property, type_code) VALUES ('es.caib.pinbal.scsp.afirma.idAplicacion', NULL, 'propietat.scsp.afirma.idAplicacion', 'SCSP', '6', 'DATABASE', 'TEXT');
--- INSERT INTO pbl_config (key, value, description_key, group_code, position, source_property, type_code) VALUES ('es.caib.pinbal.scsp.afirma.modoValidacion', NULL, 'propietat.scsp.afirma.modoValidacion', 'SCSP', '7', 'DATABASE', 'TEXT');
--- INSERT INTO pbl_config (key, value, description_key, group_code, position, source_property, type_code) VALUES ('es.caib.pinbal.scsp.custom.cert.validation.class', NULL, 'propietat.scsp.custom.cert.validation.class', 'SCSP', '8', 'DATABASE', 'TEXT');
--- INSERT INTO pbl_config (key, value, description_key, group_code, position, source_property, type_code) VALUES ('es.caib.pinbal.scsp.keystoreType', NULL, 'propietat.scsp.keystoreType', 'SCSP', '9', 'DATABASE', 'TEXT');
--- INSERT INTO pbl_config (key, value, description_key, group_code, position, source_property, type_code) VALUES ('es.caib.pinbal.scsp.keystoreFile', NULL, 'propietat.scsp.keystoreFile', 'SCSP', '10', 'FILE', 'TEXT');
--- INSERT INTO pbl_config (key, value, description_key, group_code, position, source_property, type_code) VALUES ('es.caib.pinbal.scsp.keystorePass', NULL, 'propietat.scsp.keystorePass', 'SCSP', '11', 'FILE', 'TEXT');
--- INSERT INTO pbl_config (key, value, description_key, group_code, position, source_property, type_code) VALUES ('es.caib.pinbal.scsp.validacion.formatoFirma', NULL, 'propietat.scsp.validacion.formatoFirma', 'SCSP', '12', 'DATABASE', 'TEXT');
--- INSERT INTO pbl_config (key, value, description_key, group_code, position, source_property, type_code) VALUES ('es.caib.pinbal.scsp.polling.enabled', NULL, 'propietat.scsp.polling.enabled', 'SCSP', '13', 'DATABASE', 'TEXT');
--- INSERT INTO pbl_config (key, value, description_key, group_code, position, source_property, type_code) VALUES ('es.caib.pinbal.scsp.task.polling.intervalo', NULL, 'propietat.scsp.task.polling.intervalo', 'SCSP', '14', 'DATABASE', 'TEXT');
--- INSERT INTO pbl_config (key, value, description_key, group_code, position, source_property, type_code) VALUES ('es.caib.pinbal.scsp.task.polling.espera', NULL, 'propietat.scsp.task.polling.espera', 'SCSP', '15', 'DATABASE', 'TEXT');
--- INSERT INTO pbl_config (key, value, description_key, group_code, position, source_property, type_code) VALUES ('es.caib.pinbal.scsp.tipoId', NULL, 'propietat.scsp.tipoId', 'SCSP', '16', 'DATABASE', 'TEXT');
 INSERT INTO pbl_config (key, value, description_key, group_code, position, source_property, type_code) VALUES ('es.caib.pinbal.tasca.auto.arxivar.consultes.cron', NULL, 'propietat.tasca.auto.arxivar.consultes.cron', 'HISTORIC', '0', 'DATABASE', 'TEXT');
 INSERT INTO pbl_config (key, value, description_key, group_code, position, source_property, type_code) VALUES ('es.caib.pinbal.tasca.auto.arxivar.antiguetat.dies', NULL, 'propietat.tasca.auto.arxivar.antiguetat.dies', 'HISTORIC', '1', 'DATABASE', 'INT');
+
+
+-- 205
+UPDATE pbl_entitat_usuari SET actiu = 1;

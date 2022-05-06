@@ -146,8 +146,19 @@ public class EntitatUsuariController extends BaseController {
 
 		return new ServerSideResponse<EntitatUsuariDto, Long>(serverSideRequest, page);
 	}
-	
+
+	@RequestMapping(value = "/{entitatId}/usuari/{codi}", method = RequestMethod.GET)
+	@ResponseBody
+	public EntitatUsuariDto usuariGet(
+			HttpServletRequest request,
+			@PathVariable Long entitatId,
+			@PathVariable String codi,
+			Model model) {
+		return usuariService.getEntitatUsuari(entitatId, codi);
+	}
+
 	@RequestMapping(value = "/{entitatId}/usuari/save", method = RequestMethod.POST)
+	@ResponseBody
 	public String usuariSave(
 			HttpServletRequest request,
 			@PathVariable Long entitatId,
@@ -182,7 +193,7 @@ public class EntitatUsuariController extends BaseController {
 						request,
 						entitat,
 						model);
-				return "entitatUsuaris";
+				return "KO";
 			}
 			try {
 				usuariService.actualitzarDadesAdmin(
@@ -209,6 +220,7 @@ public class EntitatUsuariController extends BaseController {
 								request, 
 								"entitat.controller.usuari.actualitzat",
 								new Object[] {nomUsuari}));
+				return "OK";
 			} catch (UsuariExternNotFoundException ex) {
 				AlertHelper.error(
 						request,
@@ -216,14 +228,14 @@ public class EntitatUsuariController extends BaseController {
 								request, 
 								"entitat.controller.usuari.extern.no.existeix"));
 			}
-			return "redirect:../usuari";
+			return "KO";
 		} else {
 			AlertHelper.error(
 					request, 
 					getMessage(
 							request, 
 							"entitat.controller.entitat.no.existeix"));
-			return "redirect:../../../entitat";
+			return "NO_ENTITAT";
 		}
 	}
 

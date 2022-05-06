@@ -9,7 +9,7 @@ function webutilAjaxEnumPath(enumClass) {
 	return webutilContextPath() + '/enumajax/enum/' + enumClass;
 }
 function webutilRefreshMissatges() {
-	$('#contingut-missatges').load(webutilContextPath() + "/nodeco/missatges");
+	$('#contingut-missatges').load(webutilContextPath() + "/index/missatges");
 }
 
 function webutilModalAdjustHeight(iframe) {

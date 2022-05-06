@@ -322,7 +322,6 @@ body {
 			</div>
 			<div class="panel-body">
 				<div id="contingut-missatges"><pbl:missatges/></div>
-				<decorator:body />
 			</div>
 		</div>
 	</div>

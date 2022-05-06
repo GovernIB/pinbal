@@ -233,4 +233,8 @@ public interface UsuariService {
 
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_REPRES') or hasRole('ROLE_DELEG') or hasRole('ROLE_AUDIT') or hasRole('ROLE_SUPERAUD') or hasRole('ROLE_WS')")
     public List<UsuariDto> findLikeCodiONom(String text);
+
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_REPRES') or hasRole('ROLE_DELEG') or hasRole('ROLE_AUDIT') or hasRole('ROLE_SUPERAUD') or hasRole('ROLE_WS')")
+	public EntitatUsuariDto getEntitatUsuari(Long entitatId, String usuariCodi);
+
 }

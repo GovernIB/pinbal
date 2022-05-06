@@ -8,6 +8,7 @@
 		<pattern>/api/apidoc</pattern>
 		<pattern>/api/rest</pattern>
 		<pattern>/nodeco*</pattern>
+		<pattern>/index/missatges</pattern>
 	</excludes>
 	<decorator name="default" page="default.jsp">
 		<pattern>/*</pattern>
