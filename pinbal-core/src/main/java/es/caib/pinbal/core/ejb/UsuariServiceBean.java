@@ -166,4 +166,10 @@ public class UsuariServiceBean implements UsuariService {
         return delegate.findLikeCodiONom(text);
     }
 
+    @Override
+	@RolesAllowed({"PBL_ADMIN", "PBL_REPRES", "PBL_AUDIT", "PBL_SUPERAUD", "PBL_WS", "tothom"})
+	public EntitatUsuariDto getEntitatUsuari(Long entitatId, String usuariCodi) {
+        return delegate.getEntitatUsuari(entitatId, usuariCodi);
+    }
+
 }

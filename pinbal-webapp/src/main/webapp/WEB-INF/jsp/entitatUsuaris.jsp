@@ -42,6 +42,16 @@
 	
 	<script src="<c:url value="/js/webutil.datatable.js"/>"></script>
     <script src="<c:url value="/js/webutil.common.js"/>"></script>
+
+	<style type="text/css">
+		.error {
+			border-color: #a94442;
+			box-shadow: inset 0 1px 1px rgba(0,0,0,.075);
+		}
+		.red {
+			color: #a94442;
+		}
+	</style>
 <script>
 $(document).ready(function() {
 	$('#netejar-filtre').click(function() {
@@ -137,16 +147,17 @@ $(document).ready(function() {
 		initComplete: function( settings, json ) {
 			console.log(settings)
 			console.log(json)
-			$('.btn-open-modal-edit').click(function() {
-				var nrow = $(this).data('nrow');
-				var row = json.data[nrow];
-				console.log(row);
-				showModalEditar(row);
+			$('body').on("click", '.btn-open-modal-edit', function() {
+				const usuariCodi = $(this).data("codi");
+				$.get('<c:url value="/entitat/${entitat.id}/usuari/"/>' + usuariCodi, (entitatUsuari) => {
+					showModalEditar(entitatUsuari);
+				});
 			});
 		}
 	});
 });
 function showModalCrear() {
+	cleanUsuariErrors();
 	$('#modal-form-usuari .modal-header h3').html("<spring:message code="entitat.usuaris.titol.crear"/>");
 	$('#modal-hidden-codi').attr('disabled', 'disabled');
 	$('#modal-hidden-nif').attr('disabled', 'disabled');
@@ -167,18 +178,19 @@ function showModalCrear() {
 	$('#modal-input-actiu').prop('checked', false);
 	$('#modal-form-usuari').modal('toggle');
 }
-function showModalEditar(row) {
-	var inicialitzat = row.usuari.inicialitzat;
-	var noInicialitzatNif = row.usuari.noInicialitzatNif; 
-	var noInicialitzatCodi = row.usuari.noInicialitzatCodi;
-	var codi = row.usuari.codi; 
-	var nif = row.usuari.nif;
-	var departament = row.departament;
-	var representant = row.representant; 
-	var delegat = row.delegat;
-	var auditor = row.auditor;
-	var aplicacio = row.aplicacio;
-	var actiu = row.actiu;
+function showModalEditar(entitatUsuari) {
+	cleanUsuariErrors();
+	var inicialitzat = entitatUsuari.usuari.inicialitzat;
+	var noInicialitzatNif = entitatUsuari.usuari.noInicialitzatNif;
+	var noInicialitzatCodi = entitatUsuari.usuari.noInicialitzatCodi;
+	var codi = entitatUsuari.usuari.codi;
+	var nif = entitatUsuari.usuari.nif;
+	var departament = entitatUsuari.departament;
+	var representant = entitatUsuari.representant;
+	var delegat = entitatUsuari.delegat;
+	var auditor = entitatUsuari.auditor;
+	var aplicacio = entitatUsuari.aplicacio;
+	var actiu = entitatUsuari.actiu;
 	$('#modal-form-usuari .modal-header h3').html("<spring:message code="entitat.usuaris.titol.modificar"/>");
 	$('#modal-hidden-codi').removeAttr('disabled');
 	$('#modal-hidden-codi').val(codi);
@@ -211,6 +223,75 @@ function showModalEditar(row) {
 	$('#modal-input-aplicacio').prop('checked', aplicacio);
 	$('#modal-input-actiu').prop('checked', actiu);
 	$('#modal-form-usuari').modal('toggle');
+}
+function sendUsuariForm() {
+
+	let hasError = false;
+	cleanUsuariErrors();
+
+	// Validacions
+	const inputCodi = $("#modal-input-codi");
+	const inputNif = $("#modal-input-nif");
+	const inputDep = $("#modal-input-departament");
+
+	if (inputCodi.val() == "") {
+		inputCodi.addClass("error");
+		$('<p class="help-block red" id="codiError"><spring:message code="NotEmpty"/></p>').insertAfter("#modal-input-codi");
+		hasError = true;
+	} else if (inputCodi.val().length > 64) {
+		inputCodi.addClass("error");
+		$('<p class="help-block red" id="codiError"><spring:message code="Size" arguments="1;64;1" htmlEscape="false" argumentSeparator=";"/></p>').insertAfter("#modal-input-codi");
+		hasError = true;
+	}
+	if (inputNif.val() == "") {
+		inputNif.addClass("error");
+		$('<p class="help-block red" id="nifError"><spring:message code="NotEmpty"/></p>').insertAfter("#modal-input-nif");
+		hasError = true;
+	} else if (inputNif.val().length > 64) {
+		inputNif.addClass("error");
+		$('<p class="help-block red" id="nifError"><spring:message code="Size" arguments="1;64;1" htmlEscape="false" argumentSeparator=";"/></p>').insertAfter("#modal-input-nif");
+		hasError = true;
+	}
+	if (inputDep.val().length > 64) {
+		inputDep.addClass("error");
+		$('<p class="help-block red" id="depError"><spring:message code="Size" arguments="0;64;0" htmlEscape="false" argumentSeparator=";"/></p>').insertAfter("#modal-input-departament");
+		hasError = true;
+	}
+
+	if (hasError) {
+		return;
+	}
+
+	// Enviament
+	const params = $('#modal-form').serialize();
+	$.ajax({
+		type: "post",
+		data: params,
+		url: '<c:url value="/entitat/${entitat.id}/usuari/save"/>',
+		async: false,
+		success: (response) => {
+			debugger
+			if (response === "NO_ENTITAT") {
+				window.location('<c:url value="/entitat"/>');
+			}
+
+			$('#modal-form-usuari').modal('toggle');
+			if (response === 'OK') {
+				$("#table-users").DataTable().ajax.reload(null, false);
+			}
+
+			webutilRefreshMissatges();
+		}
+	});
+}
+function cleanUsuariErrors() {
+	$("#codiError").remove();
+	$("#nifError").remove();
+	$("#depError").remove();
+
+	$("#modal-input-codi").removeClass("error");
+	$("#modal-input-nif").removeClass("error");
+	$("#modal-input-departament").removeClass("error");
 }
 </script>
 </head>
@@ -316,7 +397,7 @@ function showModalEditar(row) {
  	<a class="btn btn-primary disabled"><i class="fas fa-pen"></i>&nbsp;<spring:message code="comu.boto.modificar"/></a>
 {{/principal}}
 {{^principal}}
-	<a data-nrow="{{ nrow }}" class="btn-open-modal-edit btn btn-primary"><i class="fas fa-pen"></i>&nbsp;<spring:message code="comu.boto.modificar"/></a>
+	<a data-nrow="{{ nrow }}" data-codi="{{usuari.codi}}" class="btn-open-modal-edit btn btn-primary"><i class="fas fa-pen"></i>&nbsp;<spring:message code="comu.boto.modificar"/></a>
 {{/principal}}
 </script>
 <script id="template-principal" type="x-tmpl-mustache">
@@ -414,7 +495,7 @@ function showModalEditar(row) {
 				</div>
 				<div class="modal-footer">
 					<button class="btn btn-default" data-dismiss="modal"><span class="fa fa-arrow-left"></span>&nbsp;<spring:message code="comu.boto.tornar"/></button>
-					<button class="btn btn-primary" onclick="$('#modal-form').submit()"><spring:message code="comu.boto.guardar"/></button>
+					<button class="btn btn-primary" onclick="sendUsuariForm()"><spring:message code="comu.boto.guardar"/></button>
 				</div>
 			</div>
 		</div>

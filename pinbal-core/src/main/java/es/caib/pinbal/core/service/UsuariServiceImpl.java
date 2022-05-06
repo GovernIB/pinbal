@@ -8,6 +8,7 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import es.caib.pinbal.core.service.exception.NotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.acls.model.MutableAclService;
@@ -148,8 +149,7 @@ public class UsuariServiceImpl implements UsuariService {
 				log.error("Error al consultar les dades de l'usuari (codi=" + auth.getName() + ") al sistema extern", ex);
 			}
 		}
-		return toUsuariDtoAmbRols(
-				usuari);
+		return toUsuariDtoAmbRols(usuari);
 	}
 
 	@Transactional
@@ -168,6 +168,17 @@ public class UsuariServiceImpl implements UsuariService {
 				usuariRepository.findByCodiOrNom(text),
 				UsuariDto.class
 		);
+	}
+
+    @Override
+    public EntitatUsuariDto getEntitatUsuari(Long entitatId, String usuariCodi) {
+		EntitatUsuari entitatUsuari = entitatUsuariRepository.findByEntitatIdAndUsuariCodi(
+				entitatId,
+				usuariCodi);
+		if (entitatUsuari == null) {
+			throw new NotFoundException(entitatId + "-" + usuariCodi, EntitatUsuari.class);
+		}
+		return dtoMappingHelper.convertir(entitatUsuari, EntitatUsuariDto.class);
 	}
 
 	@Transactional(rollbackFor = EntitatNotFoundException.class)

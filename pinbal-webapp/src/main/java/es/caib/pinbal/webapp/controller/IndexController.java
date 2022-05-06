@@ -38,4 +38,8 @@ public class IndexController {
 		}
 	}
 
+	@RequestMapping(value = "/missatges", method = RequestMethod.GET)
+	public String get() {
+		return "import/alerts";
+	}
 }

@@ -276,6 +276,7 @@ public class RepresentantUsuariController extends BaseController {
 	}
 	
 	@RequestMapping(value = "/save", method = RequestMethod.POST)
+	@ResponseBody
 	public String save(
 			HttpServletRequest request,
 			@Valid EntitatUsuariCommand command,
@@ -288,11 +289,18 @@ public class RepresentantUsuariController extends BaseController {
 					getMessage(
 							request, 
 							"representant.controller.entitat.no.existeix"));
-			return "redirect:../index";
+			return "NO_ENTITAT";
 		}
 		
-		if (!EntitatHelper.isRepresentantEntitatActual(request))
-			return "representantNoAutoritzat";
+		if (!EntitatHelper.isRepresentantEntitatActual(request)) {
+			AlertHelper.error(
+					request,
+					getMessage(
+							request,
+							"representant.no.autoritzat.alert.error"));
+			return "KO";
+		}
+
 		Class<?> grup = null;
 		if (command.getTipus().equals(EntitatUsuariCommand.CARACTER_CODI)) {
 			grup = TipusCodi.class;
@@ -319,7 +327,7 @@ public class RepresentantUsuariController extends BaseController {
 					request,
 					entitat,
 					model);
-			return "representantUsuaris";
+			return "KO";
 		}
 		try {
 			usuariService.actualitzarDadesRepresentant(
@@ -345,14 +353,15 @@ public class RepresentantUsuariController extends BaseController {
 							request, 
 							"representant.controller.usuari.actualitzat",
 							new Object[] {nomUsuari}));
+			return "OK";
 		} catch (UsuariExternNotFoundException ex) {
 			AlertHelper.error(
 					request,
 					getMessage(
 							request, 
 							"representant.controller.usuari.extern.no.existeix"));
+			return "KO";
 		}
-		return "redirect:../usuari";
 
 	}
 

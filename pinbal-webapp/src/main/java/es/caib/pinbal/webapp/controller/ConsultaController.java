@@ -36,6 +36,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -243,10 +244,11 @@ public class ConsultaController extends BaseController {
 			HttpServletRequest request,
 			@PathVariable String serveiCodi,
 			Model model) throws AccesExternException, ServeiNotFoundException, ScspException, EntitatNotFoundException, IOException, ParserConfigurationException, SAXException {
-		if (!EntitatHelper.isDelegatEntitatActual(request))
+		EntitatDto entitat = EntitatHelper.getEntitatActual(request, entitatService);
+		if (!EntitatHelper.isDelegatEntitatActual(request) ||
+				!usuariService.getEntitatUsuari(entitat.getId(), SecurityContextHolder.getContext().getAuthentication().getName()).isActiu())
 			return "delegatNoAutoritzat";
 
-		EntitatDto entitat = EntitatHelper.getEntitatActual(request, entitatService);
 		if (entitat == null) {
 			AlertHelper.error(
 					request,

@@ -283,7 +283,9 @@ body {
 				</h2>
 			</div>
 			<div class="panel-body">
-				<jsp:include page="../import/alerts.jsp"/>
+				<div id="contingut-missatges">
+					<jsp:include page="../import/alerts.jsp"/>
+				</div>
 				<decorator:body />
 			</div>
 		</div>
