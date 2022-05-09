@@ -142,7 +142,13 @@ public class UsuariServiceBean implements UsuariService {
 		return delegate.establirPrincipal(id, usuariCodi);
 	}
 
-	@Override
+    @Override
+	@RolesAllowed({"PBL_ADMIN", "PBL_REPRES"})
+    public boolean canviActiu(Long entitatId, String usuariCodi) throws EntitatUsuariNotFoundException, EntitatNotFoundException {
+        return delegate.canviActiu(entitatId, usuariCodi);
+    }
+
+    @Override
 	@RolesAllowed({"PBL_ADMIN", "PBL_REPORT"})
 	public List<InformeUsuariDto> informeUsuarisAgrupatsEntitatDepartament() {
 		return delegate.informeUsuarisAgrupatsEntitatDepartament();

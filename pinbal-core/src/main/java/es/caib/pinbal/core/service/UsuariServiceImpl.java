@@ -333,7 +333,24 @@ public class UsuariServiceImpl implements UsuariService {
 		return entitatUsuari.canviPrincipal();
 	}
 
-	@Transactional(readOnly = true)
+	@Transactional(rollbackFor = {EntitatNotFoundException.class, EntitatUsuariNotFoundException.class})
+    @Override
+    public boolean canviActiu(Long entitatId, String usuariCodi) throws EntitatNotFoundException, EntitatUsuariNotFoundException {
+		log.debug("Activa l'usuari (codi=" + usuariCodi + ") a l'entitat (id=" + entitatId + ")");
+		Entitat entitat = entitatRepository.findOne(entitatId);
+		if (entitat == null) {
+			log.debug("No s'ha trobat l'entitat (id=" + entitatId + ")");
+			throw new EntitatNotFoundException();
+		}
+		EntitatUsuari entitatUsuari = entitatUsuariRepository.findByEntitatIdAndUsuariCodi(entitatId, usuariCodi);
+		if (entitatUsuari == null) {
+			log.debug("L'entitat (id=" + entitatId + ") no té configurat l'usuari (codi=" + usuariCodi + ")");
+			throw new EntitatUsuariNotFoundException();
+		}
+		return entitatUsuari.canviActiu();
+    }
+
+    @Transactional(readOnly = true)
 	@Override
 	public List<InformeUsuariDto> informeUsuarisAgrupatsEntitatDepartament() {
 		log.debug("Generant informe d'usuaris agrupats per entitat i departament");

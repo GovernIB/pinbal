@@ -10,6 +10,7 @@ import javax.naming.NamingException;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
+import es.caib.pinbal.core.service.exception.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
@@ -239,7 +240,8 @@ public class EntitatUsuariController extends BaseController {
 		}
 	}
 
-	@RequestMapping(value = "/{entitatId}/usuari/{usuariCodi}/principal", method = RequestMethod.GET)
+	@RequestMapping(value = "/{entitatId}/usuari/{usuariCodi}/principal", method = RequestMethod.POST)
+	@ResponseBody
 	public String usuariPrincipal(
 			HttpServletRequest request,
 			@PathVariable Long entitatId,
@@ -264,14 +266,51 @@ public class EntitatUsuariController extends BaseController {
 						getMessage(
 								request, 
 								"entitat.controller.usuari.principal.desmarcat", new Object[] {usuariCodi}));
-			return "redirect:../../usuari";
+			return "OK";
 		} else {
 			AlertHelper.error(
 					request, 
 					getMessage(
 							request, 
 							"entitat.controller.entitat.no.existeix"));
-			return "redirect:../../../../entitat";
+			throw new NotFoundException(entitatId, EntitatDto.class);
+		}
+	}
+
+	@RequestMapping(value = "/{entitatId}/usuari/{usuariCodi}/activar", method = RequestMethod.POST)
+	@ResponseBody
+	public String usuariActivar(
+			HttpServletRequest request,
+			@PathVariable Long entitatId,
+			@PathVariable String usuariCodi,
+			Model model) throws EntitatNotFoundException, EntitatUsuariNotFoundException {
+		EntitatDto entitat = null;
+		if (entitatId != null)
+			entitat = entitatService.findById(entitatId);
+		if (entitat != null) {
+			boolean actiu = usuariService.canviActiu(
+					entitatId,
+					usuariCodi);
+			if (actiu)
+				AlertHelper.success(
+						request,
+						getMessage(
+								request,
+								"entitat.controller.usuari.activat", new Object[] {usuariCodi}));
+			else
+				AlertHelper.success(
+						request,
+						getMessage(
+								request,
+								"entitat.controller.usuari.desactivat", new Object[] {usuariCodi}));
+			return "OK";
+		} else {
+			AlertHelper.error(
+					request,
+					getMessage(
+							request,
+							"entitat.controller.entitat.no.existeix"));
+			throw new NotFoundException(entitatId, EntitatDto.class);
 		}
 	}
 

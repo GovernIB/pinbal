@@ -75,11 +75,11 @@ public class ServeiHelper {
 			Long entitatId,
 			String procedimentCodi,
 			Authentication auth) {
-		// Valida si l'usuari és delegat i si està actiu per l'entitat
+		// Valida si l'usuari és delegat o aplicació i si està actiu per l'entitat.
 		EntitatUsuari entitatUsuari = entitatUsuariRepository.findByEntitatIdAndUsuariCodi(
 				entitatId,
 				auth.getName());
-		if (entitatUsuari != null && entitatUsuari.isDelegat() && entitatUsuari.isActiu()) {
+		if (entitatUsuari != null && (entitatUsuari.isDelegat() || entitatUsuari.isAplicacio()) && entitatUsuari.isActiu()) {
 			List<ProcedimentServei> pss = procedimentServeiRepository.findActiusByEntitatId(entitatId);
 			// Si hi ha un procedimentCodi es filtren els ProcedimentServei
 			// amb aquest codi de procediment

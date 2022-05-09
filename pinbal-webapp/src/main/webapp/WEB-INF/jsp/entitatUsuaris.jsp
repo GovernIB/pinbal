@@ -120,29 +120,20 @@ $(document).ready(function() {
 				}
 			},
 			{
-				targets: [7],
+				targets: [7, 8],
 				orderable: false,
-				width: "1%",
-				render: function (data, type, row, meta) {
-					var template = $('#template-swap-principal').html();
-					return Mustache.render(template, row);
-				}
-			}, 
+				visible: false
+			},
 			{
-				targets: [8],
+				targets: [9],
 				orderable: false,
 				width: "1%",
 				render: function (data, type, row, meta) {
-					var template = $('#template-actions').html();
+					var template = $('#template-accions').html();
 					row['nrow'] = meta['row'];
 					return Mustache.render(template, row);
 				}
-			}, 
-			{
-				targets: [9, 10],
-				orderable: false,
-				visible:false
-			}, 
+			},
 		],
 		initComplete: function( settings, json ) {
 			console.log(settings)
@@ -273,7 +264,6 @@ function sendUsuariForm() {
 		url: '<c:url value="/entitat/${entitat.id}/usuari/save"/>',
 		async: false,
 		success: (response) => {
-			debugger
 			if (response === "NO_ENTITAT") {
 				window.location('<c:url value="/entitat"/>');
 			}
@@ -295,6 +285,26 @@ function cleanUsuariErrors() {
 	$("#modal-input-codi").removeClass("error");
 	$("#modal-input-nif").removeClass("error");
 	$("#modal-input-departament").removeClass("error");
+}
+function canviActiu(usuariCodi) {
+	$.ajax({
+		type: "post",
+		url: '<c:url value="/entitat/${entitat.id}/usuari/"/>' + usuariCodi + "/activar",
+		async: false,
+		success: () => {
+			$("#table-users").DataTable().ajax.reload(null, false);
+		}
+	}).always(() => {webutilRefreshMissatges();});
+}
+function canviPrincipal(usuariCodi) {
+	$.ajax({
+		type: "post",
+		url: '<c:url value="/entitat/${entitat.id}/usuari/"/>' + usuariCodi + "/principal",
+		async: false,
+		success: () => {
+			$("#table-users").DataTable().ajax.reload(null, false);
+		}
+	}).always(() => {webutilRefreshMissatges();});
 }
 </script>
 </head>
@@ -369,7 +379,6 @@ function cleanUsuariErrors() {
 			<th data-data="aplicacio"></th>
 			<th data-data="auditor"></th>
 			<th data-data="delegat"></th>
-			<th data-data="usuari.codi"></th>
 			</tr>
 		</thead>
 	</table>
@@ -395,14 +404,6 @@ function cleanUsuariErrors() {
 		<i class="fas fa-lock"></i>&nbsp;<spring:message code="comu.boto.permisos"/>
 	</a>
 </script>
-<script id="template-actions" type="x-tmpl-mustache">
-{{#principal}}
- 	<a class="btn btn-primary disabled"><i class="fas fa-pen"></i>&nbsp;<spring:message code="comu.boto.modificar"/></a>
-{{/principal}}
-{{^principal}}
-	<a data-nrow="{{ nrow }}" data-codi="{{usuari.codi}}" class="btn-open-modal-edit btn btn-primary"><i class="fas fa-pen"></i>&nbsp;<spring:message code="comu.boto.modificar"/></a>
-{{/principal}}
-</script>
 <script id="template-principal" type="x-tmpl-mustache">
 {{#principal}}
  	<i class="fas fa-certificate"></i>
@@ -413,13 +414,26 @@ function cleanUsuariErrors() {
  	<i class="fas fa-check"></i>
 {{/actiu}}
 </script>
-<script id="template-swap-principal" type="x-tmpl-mustache">
-{{#principal}}
-	<a href="usuari/{{ usuari.codi }}/principal" class="btn btn-primary"><i class="fas fa-trash-alt"></i>&nbsp;<spring:message code="entitat.usuaris.accio.desfer.principal"/></a>
-{{/principal}}
-{{^principal}}
-	<a href="usuari/{{ usuari.codi }}/principal" class="btn btn-primary"><i class="fas fa-certificate"></i>&nbsp;<spring:message code="entitat.usuaris.accio.fer.principal"/></a>
-{{/principal}}
+<script id="template-accions" type="x-tmpl-mustache">
+	<div class="btn-group">
+		<button class="btn btn-primary dropdown-toggle" data-toggle="dropdown"><i class="fas fa-cog"></i>&nbsp;<spring:message code="comu.accions"/>&nbsp;<span class="caret"></span></button>
+		<ul class="dropdown-menu">
+			{{#principal}}
+				<li class="disabled"><a href="#"><i class="fas fa-pen"></i>&nbsp;<spring:message code="comu.boto.modificar"/></a></li>
+				<li><a href="#" onclick="canviPrincipal('{{usuari.codi}}');"><i class="fas fa-trash-alt"></i>&nbsp;<spring:message code="entitat.usuaris.accio.desfer.principal"/></a></li>
+			{{/principal}}
+			{{^principal}}
+				<li><a href="#" data-nrow="{{ nrow }}" data-codi="{{usuari.codi}}" class="btn-open-modal-edit"><i class="fas fa-pen"></i>&nbsp;<spring:message code="comu.boto.modificar"/></a></li>
+				<li><a href="#" onclick="canviPrincipal('{{usuari.codi}}');"><i class="fas fa-certificate"></i>&nbsp;<spring:message code="entitat.usuaris.accio.fer.principal"/></a></li>
+			{{/principal}}
+			{{#actiu}}
+				<li><a href="#" onclick="canviActiu('{{usuari.codi}}');"><i class="fa fa-times"></i>&nbsp;<spring:message code="comu.boto.desactivar"/></a></li>
+			{{/actiu}}
+			{{^actiu}}
+				<li><a href="#" onclick="canviActiu('{{usuari.codi}}');"><i class="fa fa-check"></i>&nbsp;<spring:message code="comu.boto.activar"/></a></li>
+			{{/actiu}}
+		</ul>
+	</div>
 </script>
 	<div>
 		<a href="<c:url value="/entitat"/>" class="btn btn-default pull-right"><span class="fa fa-arrow-left"></span>&nbsp;<spring:message code="comu.boto.tornar"/></a>
