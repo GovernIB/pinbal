@@ -75,7 +75,7 @@ public class ServeiHelper {
 			Long entitatId,
 			String procedimentCodi,
 			Authentication auth) {
-		// Valida si l'usuari és delegat o aplicació i si està actiu per l'entitat
+		// Valida si l'usuari és delegat o aplicació i si està actiu per l'entitat.
 		EntitatUsuari entitatUsuari = entitatUsuariRepository.findByEntitatIdAndUsuariCodi(
 				entitatId,
 				auth.getName());

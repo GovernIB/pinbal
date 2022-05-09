@@ -178,6 +178,10 @@ public class EntitatUsuari extends PinbalAuditable<Long> {
 		principal = !principal;
 		return principal;
 	}
+	public boolean canviActiu() {
+		actiu = !actiu;
+		return actiu;
+	}
 
 	public void updateUsuari(Usuari usuariNou) {
 		this.usuari = usuariNou;

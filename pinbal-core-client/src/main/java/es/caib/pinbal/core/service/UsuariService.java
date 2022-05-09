@@ -208,6 +208,17 @@ public interface UsuariService {
 			String usuariCodi) throws EntitatNotFoundException, EntitatUsuariNotFoundException;
 
 	/**
+	 * Activar o desactivar un usuari.
+	 *
+	 * @param entitatId Atribut id de l'entitat.
+	 * @param usuariCodi Codi de l'usuari.
+	 *
+	 * @return true si s'usuari queda en estat actiu o false en cas contrari.
+	 */
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_REPRES')")
+	boolean canviActiu(Long entitatId, String usuariCodi) throws EntitatNotFoundException, EntitatUsuariNotFoundException;
+
+	/**
 	 * Retorna les dades necessàries per a generar l'informe d'usuaris.
 	 * 
 	 * @return Les dades per a generar l'informe.

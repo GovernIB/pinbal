@@ -109,8 +109,13 @@ $(document).ready(function() {
 				var template = $('#template-actiu').html();
 				return Mustache.render(template, row);
 			}
+		},
+		{
+			targets: 6,
+			orderable: false,
+			visible: false
 		}, {
-			targets: [6],
+			targets: 7,
 			width: "1%",
 			orderable: false,
 			render: function (data, type, row, meta) {
@@ -122,18 +127,14 @@ $(document).ready(function() {
 				}
 			}
 		}, {
-			targets: [7],
+			targets: 8,
 			orderable: false,
 			width: "1%",
 			render: function (data, type, row, meta) {
-				var template = $('#template-actions').html();
+				var template = $('#template-accions').html();
 				row['nrow'] = meta['row'];
 				return Mustache.render(template, row);
 			}
-		}, {
-			targets: [8],
-			orderable: false,
-			visible:false
 		}],
 		initComplete: function( settings, json ) {
 			$('body').on("click", '.btn-open-modal-edit', function() {
@@ -296,6 +297,16 @@ function cleanUsuariErrors() {
 	$("#modal-input-nif").removeClass("error");
 	$("#modal-input-departament").removeClass("error");
 }
+function canviActiu(usuariCodi) {
+	$.ajax({
+		type: "post",
+		url: '<c:url value="/entitat/${entitat.id}/usuari/"/>' + usuariCodi + "/activar",
+		async: false,
+		success: () => {
+			$("#table-users").DataTable().ajax.reload(null, false);
+		}
+	}).always(() => {webutilRefreshMissatges();});
+}
 </script>
 </head>
 <body>
@@ -372,13 +383,24 @@ function cleanUsuariErrors() {
 		<i class="fas fa-lock"></i>&nbsp;<spring:message code="comu.boto.permisos"/>
 	</a>
 </script>
-<script id="template-actions" type="x-tmpl-mustache">
-{{#principal}}
- 	<a class="btn btn-primary disabled" href="#"><i class="fas fa-pen"></i>&nbsp;<spring:message code="comu.boto.modificar"/></a>
-{{/principal}}
-{{^principal}}
-	<a data-nrow="{{ nrow }}" data-codi="{{usuari.codi}}" class="btn-open-modal-edit btn btn-primary"><i class="fas fa-pen"></i>&nbsp;<spring:message code="comu.boto.modificar"/></a>
-{{/principal}}
+<script id="template-accions" type="x-tmpl-mustache">
+	<div class="btn-group">
+		<button class="btn btn-primary dropdown-toggle" data-toggle="dropdown"><i class="fas fa-cog"></i>&nbsp;<spring:message code="comu.accions"/>&nbsp;<span class="caret"></span></button>
+		<ul class="dropdown-menu">
+			{{#principal}}
+				<li class="disabled"><a href="#"><i class="fas fa-pen"></i>&nbsp;<spring:message code="comu.boto.modificar"/></a></li>
+			{{/principal}}
+			{{^principal}}
+				<li><a href="#" data-nrow="{{ nrow }}" data-codi="{{usuari.codi}}" class="btn-open-modal-edit"><i class="fas fa-pen"></i>&nbsp;<spring:message code="comu.boto.modificar"/></a></li>
+			{{/principal}}
+			{{#actiu}}
+				<li><a href="#" onclick="canviActiu('{{usuari.codi}}');"><i class="fa fa-times"></i>&nbsp;<spring:message code="comu.boto.desactivar"/></a></li>
+			{{/actiu}}
+			{{^actiu}}
+				<li><a href="#" onclick="canviActiu('{{usuari.codi}}');"><i class="fa fa-check"></i>&nbsp;<spring:message code="comu.boto.activar"/></a></li>
+			{{/actiu}}
+		</ul>
+	</div>
 </script>
 	<div id="modal-form-usuari" class="modal fade" role="dialog">
 		<div class="modal-dialog" role="document">
