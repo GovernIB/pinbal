@@ -9,7 +9,7 @@ import org.junit.Test;
 import es.caib.pinbal.plugins.FirmaServidorPlugin;
 import es.caib.pinbal.plugins.FirmaServidorPlugin.TipusFirma;
 import es.caib.pinbal.plugins.caib.FirmaServidorPluginPortafib;
-import es.caib.pinbal.plugins.caib.PropertiesHelper;
+import es.caib.pinbal.plugin.PropertiesHelper;
 
 /** Classe de test per provar el plugin de signatura en el servidor de RIPEA.
  * Les implementacions conegudes del plugin són l'API del Portafib i la

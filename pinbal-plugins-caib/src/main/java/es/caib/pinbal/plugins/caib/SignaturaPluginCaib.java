@@ -9,6 +9,7 @@ import java.security.cert.CertificateExpiredException;
 import java.security.cert.CertificateNotYetValidException;
 import java.security.cert.X509Certificate;
 
+import es.caib.pinbal.plugin.PropertiesHelper;
 import es.caib.pinbal.plugins.SignaturaPlugin;
 import es.caib.pinbal.plugins.SistemaExternException;
 import es.caib.signatura.api.Signer;

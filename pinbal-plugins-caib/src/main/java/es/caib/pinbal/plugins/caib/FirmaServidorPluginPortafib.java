@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.util.Properties;
 import java.util.UUID;
 
+import es.caib.pinbal.plugin.PropertiesHelper;
 import org.apache.commons.io.FileUtils;
 import org.fundaciobit.plugins.signature.api.CommonInfoSignature;
 import org.fundaciobit.plugins.signature.api.FileInfoSignature;

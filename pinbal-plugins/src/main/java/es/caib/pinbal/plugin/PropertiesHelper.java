@@ -1,13 +1,15 @@
 /**
  * 
  */
-package es.caib.pinbal.core.helper;
+package es.caib.pinbal.plugin;
+
+import lombok.Getter;
+import lombok.Setter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.FileInputStream;
 import java.util.Properties;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Utilitat per accedir a les entrades del fitxer de properties.
@@ -20,8 +22,8 @@ public class PropertiesHelper extends Properties {
 
 	private static PropertiesHelper instance = null;
 
+	@Getter @Setter
 	private boolean llegirSystem = true;
-
 
 
 	public static PropertiesHelper getProperties() {
@@ -52,10 +54,6 @@ public class PropertiesHelper extends Properties {
 		return instance;
 	}
 
-	public boolean isLlegirSystem() {
-		return llegirSystem;
-	}
-
 	public String getProperty(String key) {
 		if (llegirSystem)
 			return System.getProperty(key);
@@ -68,8 +66,7 @@ public class PropertiesHelper extends Properties {
 	}
 
 	public boolean getAsBoolean(String key) {
-		String prop = getProperty(key);
-		return (prop != null) ? new Boolean(prop).booleanValue() : false; 
+		return new Boolean(getProperty(key)).booleanValue();
 	}
 	public int getAsInt(String key) {
 		return new Integer(getProperty(key)).intValue();

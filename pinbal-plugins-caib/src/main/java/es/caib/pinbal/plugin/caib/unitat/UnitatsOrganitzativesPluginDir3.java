@@ -25,6 +25,7 @@ import javax.xml.ws.handler.MessageContext;
 import javax.xml.ws.handler.soap.SOAPHandler;
 import javax.xml.ws.handler.soap.SOAPMessageContext;
 
+import es.caib.pinbal.plugin.PropertiesHelper;
 import org.apache.commons.io.IOUtils;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -39,7 +40,6 @@ import es.caib.pinbal.plugin.unitat.NodeDir3;
 import es.caib.pinbal.plugin.unitat.UnitatOrganitzativa;
 import es.caib.pinbal.plugin.unitat.UnitatsOrganitzativesPlugin;
 import es.caib.pinbal.plugins.SistemaExternException;
-import es.caib.pinbal.plugins.caib.PropertiesHelper;
 
 /**
  * Implementació de proves del plugin d'unitats organitzatives.
