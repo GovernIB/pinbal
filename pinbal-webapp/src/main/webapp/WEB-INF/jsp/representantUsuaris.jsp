@@ -165,7 +165,10 @@ function showModalCrear() {
 	$('#modal-hidden-nif').attr('disabled', 'disabled');
 	$('#modal-group-tipus').removeClass('hide');
 	$('#modal-select-tipus').removeAttr('disabled');
-	$('#modal-select-tipus').val('${caracterTipusNif}');
+	<%--$('#modal-select-tipus').val('${caracterTipusNif}');--%>
+	$("#tipus1").prop("checked", true);
+	$("#tipus1").parent().addClass("active");
+	$("#tipus2").parent().removeClass("active");
 	$('#modal-input-nom').val('');
 	$('#modal-input-codi').removeAttr('disabled');
 	$('#modal-input-codi').val('');
@@ -239,23 +242,28 @@ function sendUsuariForm() {
 	const inputNif = $("#modal-input-nif");
 	const inputDep = $("#modal-input-departament");
 
-	if (inputCodi.val() == "") {
-		inputCodi.addClass("error");
-		$('<p class="help-block red" id="codiError"><spring:message code="NotEmpty"/></p>').insertAfter("#modal-input-codi");
-		hasError = true;
-	} else if (inputCodi.val().length > 64) {
-		inputCodi.addClass("error");
-		$('<p class="help-block red" id="codiError"><spring:message code="Size" arguments="1;64;1" htmlEscape="false" argumentSeparator=";"/></p>').insertAfter("#modal-input-codi");
-		hasError = true;
-	}
-	if (inputNif.val() == "") {
-		inputNif.addClass("error");
-		$('<p class="help-block red" id="nifError"><spring:message code="NotEmpty"/></p>').insertAfter("#modal-input-nif");
-		hasError = true;
-	} else if (inputNif.val().length > 64) {
-		inputNif.addClass("error");
-		$('<p class="help-block red" id="nifError"><spring:message code="Size" arguments="1;64;1" htmlEscape="false" argumentSeparator=";"/></p>').insertAfter("#modal-input-nif");
-		hasError = true;
+	const isNif = $('#tipus1').is(':checked');
+
+	if (!isNif) {
+		if (inputCodi.val() == "") {
+			inputCodi.addClass("error");
+			$('<p class="help-block red" id="codiError"><spring:message code="NotEmpty"/></p>').insertAfter("#modal-input-codi");
+			hasError = true;
+		} else if (inputCodi.val().length > 64) {
+			inputCodi.addClass("error");
+			$('<p class="help-block red" id="codiError"><spring:message code="Size" arguments="1;64;1" htmlEscape="false" argumentSeparator=";"/></p>').insertAfter("#modal-input-codi");
+			hasError = true;
+		}
+	} else {
+		if (inputNif.val() == "") {
+			inputNif.addClass("error");
+			$('<p class="help-block red" id="nifError"><spring:message code="NotEmpty"/></p>').insertAfter("#modal-input-nif");
+			hasError = true;
+		} else if (inputNif.val().length > 64) {
+			inputNif.addClass("error");
+			$('<p class="help-block red" id="nifError"><spring:message code="Size" arguments="1;64;1" htmlEscape="false" argumentSeparator=";"/></p>').insertAfter("#modal-input-nif");
+			hasError = true;
+		}
 	}
 	if (inputDep.val().length > 64) {
 		inputDep.addClass("error");
