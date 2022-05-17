@@ -22,16 +22,23 @@ public class PropertiesHelper extends Properties {
 
 	private static PropertiesHelper instance = null;
 
-	@Getter @Setter
-	private boolean llegirSystem = true;
-
+	private PropertiesHelper(Properties defaults) {
+		super(defaults);
+	}
 
 	public static PropertiesHelper getProperties() {
+		return getProperties(null);
+	}
+
+	public static PropertiesHelper getProperties(String path) {
 		if (instance == null) {
-			instance = new PropertiesHelper();
-			String propertiesPath = System.getProperty(APPSERV_PROPS_PATH);
+			instance = new PropertiesHelper(System.getProperties());
+			String propertiesPath = path;
+			if (propertiesPath == null) {
+				propertiesPath = System.getProperty(APPSERV_PROPS_PATH);
+			}
 			if (propertiesPath != null) {
-				instance.llegirSystem = false;
+//				instance.llegirSystem = false;
 				logger.info("Llegint les propietats de l'aplicació del path: " + propertiesPath);
 				try {
 					if (propertiesPath.startsWith("classpath:")) {
@@ -55,10 +62,7 @@ public class PropertiesHelper extends Properties {
 	}
 
 	public String getProperty(String key) {
-		if (llegirSystem)
-			return System.getProperty(key);
-		else
-			return super.getProperty(key);
+		return super.getProperty(key);
 	}
 	public String getProperty(String key, String defaultValue) {
 		String val = getProperty(key);
@@ -89,26 +93,13 @@ public class PropertiesHelper extends Properties {
 
 	public Properties findByPrefix(String prefix) {
 		Properties properties = new Properties();
-		if (llegirSystem) {
-			for (Object key: System.getProperties().keySet()) {
-				if (key instanceof String) {
-					String keystr = (String)key;
-					if (prefix == null || keystr.startsWith(prefix)) {
-						properties.put(
-								keystr,
-								System.getProperty(keystr));
-					}
-				}
-			}
-		} else {
-			for (Object key: this.keySet()) {
-				if (key instanceof String) {
-					String keystr = (String)key;
-					if (prefix == null || keystr.startsWith(prefix)) {
-						properties.put(
-								keystr,
-								getProperty(keystr));
-					}
+		for (Object key: this.keySet()) {
+			if (key instanceof String) {
+				String keystr = (String)key;
+				if (prefix == null || keystr.startsWith(prefix)) {
+					properties.put(
+							keystr,
+							getProperty(keystr));
 				}
 			}
 		}

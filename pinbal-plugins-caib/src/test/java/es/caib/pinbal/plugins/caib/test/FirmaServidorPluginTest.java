@@ -24,7 +24,7 @@ public class FirmaServidorPluginTest {
 	@Before
 	public void setUp() throws Exception {
 		// Carrega les propietats de test
-		PropertiesHelper.getProperties().setLlegirSystem(false);
+//		PropertiesHelper.getProperties().setLlegirSystem(false);
 		PropertiesHelper.getProperties().load(ClassLoader.getSystemResourceAsStream("test.properties"));
 	}
 

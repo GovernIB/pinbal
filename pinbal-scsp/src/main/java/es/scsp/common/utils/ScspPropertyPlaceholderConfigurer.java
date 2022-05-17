@@ -86,7 +86,7 @@ public class ScspPropertyPlaceholderConfigurer extends PropertyPlaceholderConfig
 		try {
 			log.info("Obtenint dataSource per a carregar les propietats de la BBDD...");
 			JndiDataSourceLookup lookup = new JndiDataSourceLookup();
-			Properties props = new Properties();
+			Properties props = new Properties(System.getProperties());
 			loadProperties(props);
 			String datasourceJndi = super.resolvePlaceholder("es.caib.pinbal.datasource.jndi", props);
 			dataSource = lookup.getDataSource(datasourceJndi);
