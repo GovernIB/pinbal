@@ -33,6 +33,10 @@ es.caib.pinbal.plugin.unitats.organitzatives.dir3.service.username=$ripea_dir3ca
 es.caib.pinbal.plugin.unitats.organitzatives.dir3.service.password=ripea_dir3caib
 es.caib.pinbal.plugin.unitats.cerca.dir3.service.url=https://dev.caib.es/dir3caib/rest/busqueda/organismos
 
+es.caib.pinbal.scsp.almacenamiento.ficheros=/opt/webapps/pinbal/scsp/ficheros
+es.caib.pinbal.scsp.keystoreFile=file:/opt/webapps/keystores/interoperabilitat.jks
+es.caib.pinbal.scsp.keystorePass=tecnologies
+
 <!--# Enviament de correus -->
 es.caib.pinbal.email.jndi=java:es.caib.pinbal.mail
 es.caib.pinbal.email.remitent=proves_limit@limit.es
