@@ -3,7 +3,7 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
 
-	<display-name>pinbalapi</display-name>
+	<display-name>pinbalrest</display-name>
 
 	<filter>
 		<filter-name>springSecurityFilterChain</filter-name>
@@ -60,18 +60,6 @@
 	</login-config>
 
 	<security-role>
-		<role-name>PBL_ADMIN</role-name>
-	</security-role>
-	<security-role>
-		<role-name>PBL_REPRES</role-name>
-	</security-role>
-	<security-role>
-		<role-name>PBL_AUDIT</role-name>
-	</security-role>
-	<security-role>
-		<role-name>PBL_SUPERAUD</role-name>
-	</security-role>
-	<security-role>
 		<role-name>PBL_WS</role-name>
 	</security-role>
 	<security-role>
@@ -88,6 +76,8 @@
 			<url-pattern>/api/apidoc</url-pattern>
 			<url-pattern>/api-docs</url-pattern>
 			<url-pattern>/api-docs/*</url-pattern>
+			<url-pattern>/externa/opendata</url-pattern>
+			<url-pattern>/externa/opendata/*</url-pattern>
 			<url-pattern>/js/*</url-pattern>
 			<url-pattern>/css/*</url-pattern>
 			<url-pattern>/img/*</url-pattern>
@@ -110,7 +100,7 @@
 		<session-timeout>480</session-timeout>
 	</session-config>
 	<welcome-file-list>
-		<welcome-file>/swagger-ui.html</welcome-file>
+		<welcome-file>/index.jsp</welcome-file>
 	</welcome-file-list>
 
 </web-app>

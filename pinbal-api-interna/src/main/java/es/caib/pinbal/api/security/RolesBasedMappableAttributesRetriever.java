@@ -1,7 +1,7 @@
 /**
  * 
  */
-package es.caib.pinbal.api.interna.security;
+package es.caib.pinbal.api.security;
 
 import es.caib.pinbal.core.service.ServeiService;
 import org.slf4j.Logger;

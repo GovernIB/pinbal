@@ -1,4 +1,4 @@
-package es.caib.pinbal.api.interna.security;
+package es.caib.pinbal.api.security;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;

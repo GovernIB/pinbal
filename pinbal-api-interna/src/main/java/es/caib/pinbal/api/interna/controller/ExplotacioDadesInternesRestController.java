@@ -50,6 +50,7 @@ import java.util.List;
  * @author Limit Tecnologies <limit@limit.es>
  */
 @Controller
+@RequestMapping("/interna")
 public class ExplotacioDadesInternesRestController {
 
 	@Autowired

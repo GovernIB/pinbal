@@ -9,6 +9,8 @@
 				http://www.springframework.org/schema/security
 				http://www.springframework.org/schema/security/spring-security.xsd">
 
+	<sec:http pattern="/externa/opendata**" security="none"/>
+	<sec:http pattern="/externa/opendata/**" security="none"/>
 	<sec:http pattern="/api/rest**" security="none"/>
 	<sec:http pattern="/api/rest/**" security="none"/>
 	<sec:http pattern="/api/apidoc/" security="none"/>
@@ -22,9 +24,9 @@
 
 	<sec:http create-session="never" use-expressions="false" auto-config="false" entry-point-ref="preAuthenticatedProcessingFilterEntryPoint">
 		<sec:intercept-url pattern="/recobriment/**" access="ROLE_WS"/>
-		<sec:intercept-url pattern="/reports/**" access="ROLE_REPORT"/>
-		<sec:intercept-url pattern="/stats/**" access="ROLE_REPORT"/>
-		<sec:intercept-url pattern="/**" access="ROLE_ADMIN,ROLE_REPRES,ROLE_DELEG,ROLE_AUDIT,ROLE_SUPERAUD,ROLE_WS,ROLE_REPORT"/>
+		<sec:intercept-url pattern="/interna/reports/**" access="ROLE_REPORT"/>
+		<sec:intercept-url pattern="/interna/stats/**" access="ROLE_REPORT"/>
+		<sec:intercept-url pattern="/**" access="ROLE_WS,ROLE_REPORT"/>
 		<sec:custom-filter position="PRE_AUTH_FILTER" ref="preauthFilter"/>
 		<sec:anonymous/>
 		<sec:session-management session-fixation-protection="none"/>
@@ -43,15 +45,11 @@
 
 	<bean id="preauthFilter" class="org.springframework.security.web.authentication.preauth.j2ee.J2eePreAuthenticatedProcessingFilter">
 		<property name="authenticationDetailsSource">
-			<bean class="es.caib.pinbal.api.interna.security.RolesBasedPreAuthenticatedWebAuthenticationDetailsSource">
+			<bean class="es.caib.pinbal.api.security.RolesBasedPreAuthenticatedWebAuthenticationDetailsSource">
 				<property name="mappableRolesRetriever">
-					<bean class="es.caib.pinbal.api.interna.security.RolesBasedMappableAttributesRetriever">
+					<bean class="es.caib.pinbal.api.security.RolesBasedMappableAttributesRetriever">
 						<property name="defaultMappableAttributes">
 							<set>
-								<value>PBL_ADMIN</value>
-								<value>PBL_REPRES</value>
-								<value>PBL_AUDIT</value>
-								<value>PBL_SUPERAUD</value>
 								<value>PBL_WS</value>
 								<value>PBL_REPORT</value>
 								<value>tothom</value>
@@ -60,13 +58,9 @@
 					</bean>
 				</property>
 				<property name="userRoles2GrantedAuthoritiesMapper">
-					<bean class="es.caib.pinbal.api.interna.security.RolesBasedAttributes2GrantedAuthoritiesMapper">
+					<bean class="es.caib.pinbal.api.security.RolesBasedAttributes2GrantedAuthoritiesMapper">
 						<property name="baseRoleMapping">
 							<map>
-								<entry key="PBL_ADMIN" value="ROLE_ADMIN"/>
-								<entry key="PBL_REPRES" value="ROLE_REPRES"/>
-								<entry key="PBL_AUDIT" value="ROLE_AUDIT"/>
-								<entry key="PBL_SUPERAUD" value="ROLE_SUPERAUD"/>
 								<entry key="PBL_WS" value="ROLE_WS"/>
 								<entry key="PBL_REPORT" value="ROLE_REPORT"/>
 								<entry key="tothom" value="ROLE_DELEG"/>

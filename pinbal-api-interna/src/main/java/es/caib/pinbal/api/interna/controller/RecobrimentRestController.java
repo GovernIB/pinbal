@@ -41,7 +41,7 @@ public class RecobrimentRestController {
 
 	@RequestMapping(
 			value= "/test",
-			method = RequestMethod.POST,
+			method = RequestMethod.GET,
 			produces = "application/json")
 	public ResponseEntity<String> test() {
 		return new ResponseEntity<String>("Test successful", HttpStatus.OK);

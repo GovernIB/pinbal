@@ -90,12 +90,12 @@
 									<contextRoot>/pinbalapi</contextRoot>
 									<bundleFileName>pinbal-api.war</bundleFileName>
 								</webModule>
-<!--								<webModule>-->
-<!--									<groupId>${project.groupId}</groupId>-->
-<!--									<artifactId>pinbal-api-interna</artifactId>-->
-<!--									<contextRoot>/pinbalrest</contextRoot>-->
-<!--									<bundleFileName>pinbal-api-interna.war</bundleFileName>-->
-<!--								</webModule>-->
+								<webModule>
+									<groupId>${project.groupId}</groupId>
+									<artifactId>pinbal-api-interna</artifactId>
+									<contextRoot>/pinbalrest</contextRoot>
+									<bundleFileName>pinbal-api-interna.war</bundleFileName>
+								</webModule>
 							</modules>
 						</configuration>
 					</plugin>
