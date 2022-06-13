@@ -21,6 +21,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import es.caib.pinbal.plugin.PropertiesHelper;
+
 import es.caib.pinbal.core.dto.FitxerDto;
 import es.caib.pinbal.core.dto.IntegracioAccioTipusEnumDto;
 import es.caib.pinbal.plugins.CustodiaPlugin;
@@ -897,17 +899,11 @@ public class PluginHelper {
 			if (pluginClass != null && pluginClass.length() > 0) {
 				try {
 					Class<?> clazz = Class.forName(pluginClass);
-					if (PropertiesHelper.getProperties().isLlegirSystem()) {
-						arxiuPlugin = (IArxiuPlugin)clazz.getDeclaredConstructor(
-								String.class).newInstance(
-								"es.caib.pinbal.");
-					} else {
-						arxiuPlugin = (IArxiuPlugin)clazz.getDeclaredConstructor(
-								String.class,
-								Properties.class).newInstance(
-								"es.caib.pinbal.",
-								PropertiesHelper.getProperties().findAll());
-					}
+					arxiuPlugin = (IArxiuPlugin)clazz.getDeclaredConstructor(
+							String.class,
+							Properties.class).newInstance(
+							"es.caib.pinbal.",
+							PropertiesHelper.getProperties().findAll());
 				} catch (Exception ex) {
 					throw new SistemaExternException(
 							"Error al crear la instància del plugin d'arxiu digital",

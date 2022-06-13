@@ -1353,7 +1353,7 @@ databaseChangeLog:
               value: FILE
           - column:
               name: type_code
-              value: TEXT
+              value: PASS
     - insert:
         tableName: pbl_config
         columns:
@@ -1475,7 +1475,7 @@ databaseChangeLog:
               value: FILE
           - column:
               name: type_code
-              value: TEXT
+              value: PASS
     - insert:
         tableName: pbl_config
         columns:
@@ -1645,7 +1645,7 @@ databaseChangeLog:
               value: FILE
           - column:
               name: type_code
-              value: TEXT
+              value: PASS
     - insert:
         tableName: pbl_config
         columns:
@@ -1791,7 +1791,7 @@ databaseChangeLog:
               value: FILE
           - column:
               name: type_code
-              value: TEXT
+              value: PASS
     - insert:
         tableName: pbl_config
         columns:
@@ -1887,7 +1887,7 @@ databaseChangeLog:
               value: FILE
           - column:
               name: type_code
-              value: TEXT
+              value: PASS
     - insert:
         tableName: pbl_config
         columns:
@@ -2033,7 +2033,7 @@ databaseChangeLog:
               value: FILE
           - column:
               name: type_code
-              value: TEXT
+              value: PASS
     - insert:
         tableName: pbl_config
         columns:

@@ -207,7 +207,7 @@ $(document).ready(function() {
 						var template = $('#template-estat').html();
 						row['icon-status'] = '';
 						if (row.estat=='Error') {
-							row['icon-status'] = '<i class="fas fa-exclamation-triangle" title="' + row.error + '"></i>';
+							row['icon-status'] = '<i class="fas fa-exclamation-triangle" title="' + row.error.replace(/'/g, '&apos;').replace(/"/g, '&quot;') + '"></i>';
 						} else if(row.estat=='Pendent') {
 							row['icon-status'] = '<i class="far fa-clock"></i>';
 						} else if(row.estat=='Processant') {

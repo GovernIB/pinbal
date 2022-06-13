@@ -92,6 +92,10 @@ public class ConfigHelper {
         return new Integer(getConfig(key));
     }
     @Transactional(readOnly = true)
+    public int getAsInt(String key, @NotNull Integer defaultValue) {
+        return new Integer(getConfig(key, defaultValue.toString()));
+    }
+    @Transactional(readOnly = true)
     public long getAsLong(String key) {
         return new Long(getConfig(key));
     }

@@ -18,6 +18,8 @@ import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
+import es.caib.pinbal.core.helper.*;
+import es.caib.pinbal.scsp.PropertiesHelper;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -63,18 +65,6 @@ import es.caib.pinbal.core.dto.IntegracioAccioTipusEnumDto;
 import es.caib.pinbal.core.dto.JustificantDto;
 import es.caib.pinbal.core.dto.ProcedimentDto;
 import es.caib.pinbal.core.dto.RecobrimentSolicitudDto;
-import es.caib.pinbal.core.helper.DtoMappingHelper;
-import es.caib.pinbal.core.helper.EmailReportEstatHelper;
-import es.caib.pinbal.core.helper.ExcelHelper;
-import es.caib.pinbal.core.helper.IntegracioHelper;
-import es.caib.pinbal.core.helper.JustificantHelper;
-import es.caib.pinbal.core.helper.PermisosHelper;
-import es.caib.pinbal.core.helper.PeticioScspEstadistiquesHelper;
-import es.caib.pinbal.core.helper.PeticioScspHelper;
-import es.caib.pinbal.core.helper.PluginHelper;
-import es.caib.pinbal.core.helper.PropertiesHelper;
-import es.caib.pinbal.core.helper.ServeiHelper;
-import es.caib.pinbal.core.helper.UsuariHelper;
 import es.caib.pinbal.core.model.Consulta;
 import es.caib.pinbal.core.model.Consulta.EstatTipus;
 import es.caib.pinbal.core.model.Consulta.JustificantEstat;
@@ -173,6 +163,8 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 	
 	@Autowired
 	private EmailReportEstatHelper emailReportEstatHelper;
+	@Autowired
+	private ConfigHelper configHelper;
 
 	private ApplicationContext applicationContext;
 	private MessageSource messageSource;
@@ -1956,7 +1948,7 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 	@Override
 	public boolean isOptimitzarTransaccionsNovaConsulta() {
 		log.debug("Consultant optimització transaccions en nova consulta");
-		return PropertiesHelper.getProperties().getAsBoolean("es.caib.pinbal.optimitzar.transaccions.nova.consulta");
+		return configHelper.getAsBoolean("es.caib.pinbal.optimitzar.transaccions.nova.consulta", false);
 	}
 
 	@Transactional(readOnly = true)

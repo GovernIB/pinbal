@@ -18,6 +18,7 @@ import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
+import es.caib.pinbal.scsp.PropertiesHelper;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -64,7 +65,6 @@ import es.caib.pinbal.core.helper.DtoMappingHelper;
 import es.caib.pinbal.core.helper.JustificantHelper;
 import es.caib.pinbal.core.helper.PermisosHelper;
 import es.caib.pinbal.core.helper.PeticioScspEstadistiquesHelper;
-import es.caib.pinbal.core.helper.PropertiesHelper;
 import es.caib.pinbal.core.model.Consulta.EstatTipus;
 import es.caib.pinbal.core.model.Consulta.JustificantEstat;
 import es.caib.pinbal.core.model.Entitat;
@@ -955,7 +955,7 @@ public class HistoricConsultaServiceImpl implements HistoricConsultaService, App
 	public void arxivarConsultesAntigues() {
 		log.info("[ARXIU CONSULTES] Inici");
 		String dialect = configHelper.getConfig("es.caib.pinbal.hibernate.dialect", "Oracle");
-		int dies = PropertiesHelper.getProperties().getAsInt("es.caib.pinbal.tasca.auto.arxivar.antiguetat.dies", 180);
+		int dies = configHelper.getAsInt("es.caib.pinbal.tasca.auto.arxivar.antiguetat.dies", 180);
 		log.info("[ARXIU CONSULTES] Arxivar en {} les consultes amb una antiguitat superior a {} dies", dialect, dies);
 		int consultesArxivades = 0;
 		int consultesEliminades = 0;
