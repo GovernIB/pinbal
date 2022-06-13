@@ -49,12 +49,6 @@
 		</dependency>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
-			<artifactId>pinbal-api-interna</artifactId>
-			<version>${project.version}</version>
-			<type>war</type>
-		</dependency>
-		<dependency>
-			<groupId>${project.groupId}</groupId>
 			<artifactId>pinbal-api</artifactId>
 			<version>${project.version}</version>
 			<type>war</type>
@@ -89,12 +83,6 @@
 									<artifactId>pinbal-api</artifactId>
 									<contextRoot>/pinbalapi</contextRoot>
 									<bundleFileName>pinbal-api.war</bundleFileName>
-								</webModule>
-								<webModule>
-									<groupId>${project.groupId}</groupId>
-									<artifactId>pinbal-api-interna</artifactId>
-									<contextRoot>/pinbalrest</contextRoot>
-									<bundleFileName>pinbal-api-interna.war</bundleFileName>
 								</webModule>
 							</modules>
 						</configuration>
