@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans	xmlns="http://www.springframework.org/schema/beans"
+		xmlns:sec="http://www.springframework.org/schema/security"
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		xsi:schemaLocation="
+				http://www.springframework.org/schema/beans
+				http://www.springframework.org/schema/beans/spring-beans.xsd
+				http://www.springframework.org/schema/security
+				http://www.springframework.org/schema/security/spring-security.xsd">
+
+	<sec:http pattern="/externa/opendata**" security="none"/>
+	<sec:http pattern="/externa/opendata/**" security="none"/>
+	<sec:http pattern="/api/rest**" security="none"/>
+	<sec:http pattern="/api/rest/**" security="none"/>
+	<sec:http pattern="/api/apidoc/" security="none"/>
+	<sec:http pattern="/api-docs**" security="none"/>
+	<sec:http pattern="/api-docs/**" security="none"/>
+	<sec:http pattern="/**/api-docs" security="none"/>
+	<sec:http pattern="/js/**" security="none"/>
+	<sec:http pattern="/css/**" security="none"/>
+	<sec:http pattern="/webjars/**" security="none"/>
+	<sec:http pattern="/img/**" security="none"/>
+
+	<sec:http create-session="never" use-expressions="false" auto-config="false" entry-point-ref="preAuthenticatedProcessingFilterEntryPoint">
+		<sec:intercept-url pattern="/recobriment/**" access="ROLE_WS"/>
+		<sec:intercept-url pattern="/interna/reports/**" access="ROLE_REPORT"/>
+		<sec:intercept-url pattern="/interna/stats/**" access="ROLE_REPORT"/>
+		<sec:intercept-url pattern="/**" access="ROLE_WS,ROLE_REPORT"/>
+		<sec:custom-filter position="PRE_AUTH_FILTER" ref="preauthFilter"/>
+		<sec:anonymous/>
+		<sec:session-management session-fixation-protection="none"/>
+	</sec:http>
+
+	<sec:authentication-manager alias="authenticationManager">
+		<sec:authentication-provider ref="preAuthenticatedAuthenticationProvider"/>
+	</sec:authentication-manager>
+
+	<bean id="preAuthenticatedProcessingFilterEntryPoint" class="org.springframework.security.web.authentication.Http403ForbiddenEntryPoint" />
+	<bean id="preAuthenticatedAuthenticationProvider" class="org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationProvider">
+		<property name="preAuthenticatedUserDetailsService">
+			<bean class="org.springframework.security.web.authentication.preauth.PreAuthenticatedGrantedAuthoritiesUserDetailsService" />
+		</property>
+	</bean>
+
+	<bean id="preauthFilter" class="org.springframework.security.web.authentication.preauth.j2ee.J2eePreAuthenticatedProcessingFilter">
+		<property name="authenticationDetailsSource">
+			<bean class="es.caib.pinbal.api.security.RolesBasedPreAuthenticatedWebAuthenticationDetailsSource">
+				<property name="mappableRolesRetriever">
+					<bean class="es.caib.pinbal.api.security.RolesBasedMappableAttributesRetriever">
+						<property name="defaultMappableAttributes">
+							<set>
+								<value>PBL_WS</value>
+								<value>PBL_REPORT</value>
+								<value>tothom</value>
+							</set>
+						</property>
+					</bean>
+				</property>
+				<property name="userRoles2GrantedAuthoritiesMapper">
+					<bean class="es.caib.pinbal.api.security.RolesBasedAttributes2GrantedAuthoritiesMapper">
+						<property name="baseRoleMapping">
+							<map>
+								<entry key="PBL_WS" value="ROLE_WS"/>
+								<entry key="PBL_REPORT" value="ROLE_REPORT"/>
+								<entry key="tothom" value="ROLE_DELEG"/>
+							</map>
+						</property>
+					</bean>
+				</property>
+			</bean>
+		</property>
+		<property name="authenticationManager" ref="authenticationManager"/>
+	</bean>
+
+	<bean class="org.springframework.security.web.access.expression.DefaultWebSecurityExpressionHandler"/>
+
+	<!-- ACL -->
+	<sec:global-method-security pre-post-annotations="enabled">
+		<sec:expression-handler ref="expressionHandler" />
+	</sec:global-method-security>
+	<bean id="expressionHandler" class="org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler">
+		<property name="permissionEvaluator" ref="permissionEvaluator" />
+		<property name="roleHierarchy" ref="roleHierarchy" />
+	</bean>
+	<bean id="permissionEvaluator" class="org.springframework.security.acls.AclPermissionEvaluator">
+		<constructor-arg ref="aclService" />
+	</bean>
+	<bean id="roleHierarchy" class="org.springframework.security.access.hierarchicalroles.RoleHierarchyImpl">
+		<property name="hierarchy">
+			<value></value>
+		</property>
+	</bean>
+	<!-- /ACL -->
+
+</beans>
