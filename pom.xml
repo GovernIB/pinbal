@@ -47,7 +47,8 @@
 		<module>pinbal-webapp</module>
 		<module>pinbal-ear</module>
 		<module>pinbal-client</module>
-		<module>pinbal-api</module>
+		<module>pinbal-api-interna</module>
+		<module>pinbal-api-externa</module>
 	</modules>
 	<build>
 		<plugins>
