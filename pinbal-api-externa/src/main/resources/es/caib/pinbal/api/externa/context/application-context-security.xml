@@ -9,8 +9,8 @@
 				http://www.springframework.org/schema/security
 				http://www.springframework.org/schema/security/spring-security.xsd">
 
-	<sec:http pattern="/externa/opendata**" security="none" disable-url-rewriting="true"/>
-	<sec:http pattern="/externa/opendata/**" security="none" disable-url-rewriting="true"/>
+	<sec:http pattern="/opendata**" security="none" disable-url-rewriting="true"/>
+	<sec:http pattern="/opendata/**" security="none" disable-url-rewriting="true"/>
 	<sec:http pattern="/api/rest**" security="none" disable-url-rewriting="true"/>
 	<sec:http pattern="/api/rest/**" security="none" disable-url-rewriting="true"/>
 	<sec:http pattern="/api/apidoc/" security="none" disable-url-rewriting="true"/>
@@ -23,8 +23,8 @@
 	<sec:http pattern="/img/**" security="none" disable-url-rewriting="true"/>
 
 	<sec:http create-session="never" use-expressions="false" auto-config="false" entry-point-ref="preAuthenticatedProcessingFilterEntryPoint">
-		<sec:intercept-url pattern="/externa/reports/**" access="ROLE_REPORT"/>
-		<sec:intercept-url pattern="/externa/stats/**" access="ROLE_REPORT"/>
+		<sec:intercept-url pattern="/reports/**" access="ROLE_REPORT"/>
+		<sec:intercept-url pattern="/stats/**" access="ROLE_REPORT"/>
 		<sec:intercept-url pattern="/**" access="ROLE_WS,ROLE_REPORT"/>
 		<sec:custom-filter position="PRE_AUTH_FILTER" ref="preauthFilter"/>
 		<sec:anonymous/>

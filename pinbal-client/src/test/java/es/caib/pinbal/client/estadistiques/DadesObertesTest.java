@@ -80,9 +80,11 @@ public class DadesObertesTest {
 	private ClientDadesObertes getClient() {
 		ClientDadesObertes client = new ClientDadesObertes(
 				URL_BASE,
-				USUARI,
-				CONTRASENYA,
-				false, null, null);
+				null, // USUARI,
+				null, // CONTRASENYA,
+				true,
+				null,
+				null);
 		//client.enableLogginFilter();
 		return client;
 	}

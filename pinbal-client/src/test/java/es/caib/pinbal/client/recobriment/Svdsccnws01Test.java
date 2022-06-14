@@ -32,7 +32,7 @@ import es.caib.pinbal.client.recobriment.svdsccnws01.ClientSvdsccnws01.Solicitud
 public class Svdsccnws01Test {
 
 	private static final String ENTITAT_CIF = "S0711001H";
-	private static final String URL_BASE = "https://proves.caib.es/pinbal";
+	private static final String URL_BASE = "https://proves.caib.es/pinbalapi";
 	private static final String USUARI = "xxxxxx";
 	private static final String CONTRASENYA = "xxxxxx";
 	private static final String CODIGO_PROCEDIMIENTO = "CODSVDR_GBA_20121107";

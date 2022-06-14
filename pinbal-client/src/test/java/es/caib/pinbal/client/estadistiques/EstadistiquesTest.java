@@ -30,7 +30,7 @@ public class EstadistiquesTest {
 	private static final String USUARI = "pblrep";
 	private static final String CONTRASENYA = "pblrep";
 
-	private ClientEstadistica client = new ClientEstadistica(URL_BASE, USUARI, CONTRASENYA, false, null, null);
+	private ClientEstadistica client = new ClientEstadistica(URL_BASE, USUARI, CONTRASENYA, true, null, null);
 
 	@Test
 	public void carrega() throws IOException {
