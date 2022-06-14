@@ -55,7 +55,7 @@ public abstract class ClientBase {
 			String urlBase,
 			String usuari,
 			String contrasenya) {
-		init(urlBase, usuari, contrasenya, false, null, null);
+		init(urlBase, usuari, contrasenya, true, null, null);
 	}
 
 	protected ClientBase(

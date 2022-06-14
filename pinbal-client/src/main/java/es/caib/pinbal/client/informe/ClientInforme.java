@@ -21,7 +21,7 @@ import es.caib.pinbal.client.comu.Servei;
  */
 public class ClientInforme extends ClientBase {
 
-	private static final String BASE_URL_SUFIX = "/api/interna/reports/";
+	private static final String BASE_URL_SUFIX = "/externa/reports/";
 
 	public ClientInforme(
 			String urlBase,
