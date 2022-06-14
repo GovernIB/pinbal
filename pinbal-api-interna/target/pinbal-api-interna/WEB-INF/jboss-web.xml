@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="UTF-8" ?>
-<jboss-web>
-	<context-root>/pinbalapi/interna</context-root>
-	<security-domain>java:/jaas/seycon</security-domain>
-</jboss-web>

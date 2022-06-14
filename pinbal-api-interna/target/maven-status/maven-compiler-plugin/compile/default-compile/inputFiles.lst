@@ -1,7 +1,0 @@
-/home/siona/git/pinbal/pinbal-api-interna/src/main/java/es/caib/pinbal/api/interna/controller/ApiRestController.java
-/home/siona/git/pinbal/pinbal-api-interna/src/main/java/es/caib/pinbal/api/config/ApiPathProvider.java
-/home/siona/git/pinbal/pinbal-api-interna/src/main/java/es/caib/pinbal/api/config/SwaggerConfig.java
-/home/siona/git/pinbal/pinbal-api-interna/src/main/java/es/caib/pinbal/api/interna/controller/RecobrimentRestController.java
-/home/siona/git/pinbal/pinbal-api-interna/src/main/java/es/caib/pinbal/api/security/RolesBasedMappableAttributesRetriever.java
-/home/siona/git/pinbal/pinbal-api-interna/src/main/java/es/caib/pinbal/api/security/RolesBasedAttributes2GrantedAuthoritiesMapper.java
-/home/siona/git/pinbal/pinbal-api-interna/src/main/java/es/caib/pinbal/api/security/RolesBasedPreAuthenticatedWebAuthenticationDetailsSource.java

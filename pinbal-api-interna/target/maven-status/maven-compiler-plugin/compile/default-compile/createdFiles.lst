@@ -1,8 +1,0 @@
-es/caib/pinbal/api/security/RolesBasedAttributes2GrantedAuthoritiesMapper.class
-es/caib/pinbal/api/interna/controller/ApiRestController.class
-es/caib/pinbal/api/security/RolesBasedMappableAttributesRetriever.class
-es/caib/pinbal/api/interna/controller/RecobrimentRestController.class
-es/caib/pinbal/api/security/RolesBasedPreAuthenticatedWebAuthenticationDetailsSource.class
-es/caib/pinbal/api/config/SwaggerConfig.class
-es/caib/pinbal/api/config/ApiPathProvider.class
-es/caib/pinbal/api/interna/controller/RecobrimentRestController$ErrorResponse.class
