@@ -33,7 +33,7 @@ public class SwaggerConfig {
  
 	private ApiInfo apiInfo() {
 		ApiInfo apiInfo = new ApiInfo(
-				"API Consulta PINBAL",
+				"API Interna de PINBAL",
 				"API INTERNA de PINBAL",
 				"", 	// URL de temes de servei
 				"limit@limit.es",
