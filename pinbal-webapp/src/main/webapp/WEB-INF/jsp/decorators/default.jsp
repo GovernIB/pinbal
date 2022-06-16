@@ -186,35 +186,35 @@ body {
 								<c:choose>
 									<c:when test="${isRolActualAdministrador}">
 										<li>
-											<a href="https://github.com/GovernIB/pinbal/raw/pinbal-1.4/doc/odt/01_pinbal_usuari_admin.odt">
+											<a href="https://github.com/GovernIB/pinbal/raw/pinbal-1.4/doc/pdf/01_pinbal_usuari_admin.pdf">
 												<span class="fa fa-file"></span> <spring:message code="decorator.menu.manual.admin"/>
 											</a>
 										</li>
 									</c:when>
 									<c:when test="${isRolActualRepresentant}">
 										<li>
-											<a href="https://github.com/GovernIB/pinbal/raw/pinbal-1.4/doc/odt/02_pinbal_usuari_representant.odt">
+											<a href="https://github.com/GovernIB/pinbal/raw/pinbal-1.4/doc/pdf/02_pinbal_usuari_representant.pdf">
 												<span class="fa fa-file"></span> <spring:message code="decorator.menu.manual.representant"/>
 											</a>
 										</li>
 									</c:when>
 									<c:when test="${isRolActualDelegat}">
 										<li>
-											<a href="https://github.com/GovernIB/pinbal/raw/pinbal-1.4/doc/odt/03_pinbal_usuari_delegat.odt">
+											<a href="https://github.com/GovernIB/pinbal/raw/pinbal-1.4/doc/pdf/03_pinbal_usuari_delegat.pdf">
 												<span class="fa fa-file"></span> <spring:message code="decorator.menu.manual.delegat"/>
 											</a>
 										</li>
 									</c:when>
 									<c:when test="${isRolActualAuditor}">
 										<li>
-											<a href="https://github.com/GovernIB/pinbal/raw/pinbal-1.4/doc/odt/04_pinbal_usuari_auditor.odt">
+											<a href="https://github.com/GovernIB/pinbal/raw/pinbal-1.4/doc/pdf/04_pinbal_usuari_auditor.pdf">
 												<span class="fa fa-file"></span> <spring:message code="decorator.menu.manual.auditor"/>
 											</a>
 										</li>
 									</c:when>
-									<c:when test="${isRolActualSuperAuditor}">
+									<c:when test="${isRolActualSuperauditor}">
 										<li>
-											<a href="https://github.com/GovernIB/pinbal/raw/pinbal-1.4/doc/odt/05_pinbal_usuari_superauditor.odt">
+											<a href="https://github.com/GovernIB/pinbal/raw/pinbal-1.4/doc/pdf/05_pinbal_usuari_superauditor.pdf">
 												<span class="fa fa-file"></span> <spring:message code="decorator.menu.manual.superauditor"/>
 											</a>
 										</li>
