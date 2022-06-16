@@ -186,35 +186,35 @@ body {
 								<c:choose>
 									<c:when test="${isRolActualAdministrador}">
 										<li>
-											<a href="https://github.com/GovernIB/pinbal/raw/pinbal-1.4/doc/pdf/01_pinbal_usuari_admin.pdf">
+											<a href="https://github.com/GovernIB/pinbal/raw/pinbal-1.4/doc/pdf/01_pinbal_usuari_admin.pdf" target="_blank">
 												<span class="fa fa-file"></span> <spring:message code="decorator.menu.manual.admin"/>
 											</a>
 										</li>
 									</c:when>
 									<c:when test="${isRolActualRepresentant}">
 										<li>
-											<a href="https://github.com/GovernIB/pinbal/raw/pinbal-1.4/doc/pdf/02_pinbal_usuari_representant.pdf">
+											<a href="https://github.com/GovernIB/pinbal/raw/pinbal-1.4/doc/pdf/02_pinbal_usuari_representant.pdf" target="_blank">
 												<span class="fa fa-file"></span> <spring:message code="decorator.menu.manual.representant"/>
 											</a>
 										</li>
 									</c:when>
 									<c:when test="${isRolActualDelegat}">
 										<li>
-											<a href="https://github.com/GovernIB/pinbal/raw/pinbal-1.4/doc/pdf/03_pinbal_usuari_delegat.pdf">
+											<a href="https://github.com/GovernIB/pinbal/raw/pinbal-1.4/doc/pdf/03_pinbal_usuari_delegat.pdf" target="_blank">
 												<span class="fa fa-file"></span> <spring:message code="decorator.menu.manual.delegat"/>
 											</a>
 										</li>
 									</c:when>
 									<c:when test="${isRolActualAuditor}">
 										<li>
-											<a href="https://github.com/GovernIB/pinbal/raw/pinbal-1.4/doc/pdf/04_pinbal_usuari_auditor.pdf">
+											<a href="https://github.com/GovernIB/pinbal/raw/pinbal-1.4/doc/pdf/04_pinbal_usuari_auditor.pdf" target="_blank">
 												<span class="fa fa-file"></span> <spring:message code="decorator.menu.manual.auditor"/>
 											</a>
 										</li>
 									</c:when>
 									<c:when test="${isRolActualSuperauditor}">
 										<li>
-											<a href="https://github.com/GovernIB/pinbal/raw/pinbal-1.4/doc/pdf/05_pinbal_usuari_superauditor.pdf">
+											<a href="https://github.com/GovernIB/pinbal/raw/pinbal-1.4/doc/pdf/05_pinbal_usuari_superauditor.pdf" target="_blank">
 												<span class="fa fa-file"></span> <spring:message code="decorator.menu.manual.superauditor"/>
 											</a>
 										</li>
