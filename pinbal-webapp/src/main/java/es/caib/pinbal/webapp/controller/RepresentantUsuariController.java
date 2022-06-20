@@ -274,7 +274,25 @@ public class RepresentantUsuariController extends BaseController {
 		
 		return new ServerSideResponse<EntitatUsuariDto, Long>(serverSideRequest, page);
 	}
-	
+
+	@RequestMapping(value = "/{codi}", method = RequestMethod.GET)
+	@ResponseBody
+	public EntitatUsuariDto usuariGet(
+			HttpServletRequest request,
+			@PathVariable String codi,
+			Model model) {
+		EntitatDto entitat = EntitatHelper.getEntitatActual(request);
+		if (entitat == null) {
+			AlertHelper.error(
+					request,
+					getMessage(
+							request,
+							"representant.controller.entitat.no.existeix"));
+			return null;
+		}
+		return usuariService.getEntitatUsuari(entitat.getId(), codi);
+	}
+
 	@RequestMapping(value = "/save", method = RequestMethod.POST)
 	@ResponseBody
 	public String save(

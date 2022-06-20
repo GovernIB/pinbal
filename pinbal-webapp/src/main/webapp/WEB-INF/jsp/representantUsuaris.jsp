@@ -139,7 +139,7 @@ $(document).ready(function() {
 		initComplete: function( settings, json ) {
 			$('body').on("click", '.btn-open-modal-edit', function() {
 				const usuariCodi = $(this).data("codi");
-				$.get('<c:url value="/entitat/${entitat.id}/usuari/"/>' + usuariCodi, (entitatUsuari) => {
+				$.get('<c:url value="/representant/usuari/"/>' + usuariCodi, (entitatUsuari) => {
 					var usuari = entitatUsuari.usuari;
 					showModalEditar(
 							usuari.inicialitzat,
@@ -282,7 +282,7 @@ function sendUsuariForm() {
 	$.ajax({
 		type: "post",
 		data: params,
-		url: '<c:url value="/entitat/${entitat.id}/usuari/save"/>',
+		url: '<c:url value="/representant/usuari/save"/>',
 		async: false,
 		success: (response) => {
 			if (response === "NO_ENTITAT") {
