@@ -111,7 +111,7 @@ $(document).ready(function() {
 			}
 		},
 		{
-			targets: 6,
+			targets: [6, 9],
 			orderable: false,
 			visible: false
 		}, {
@@ -366,6 +366,7 @@ function canviActiu(usuariCodi) {
 			<th data-data="delegat"></th>
 			<th data-data="aplicacio"></th>
 			<th data-data="principal"></th>
+			<th data-data="permisosCount"></th>
 			</tr>
 		</thead>
 	</table>
@@ -390,7 +391,7 @@ function canviActiu(usuariCodi) {
 </script>
 <script id="template-permisos" type="x-tmpl-mustache">
 	<a class="btn btn-default" href="<c:url value="/representant/usuari/{{ usuari.codi }}/permis"/>">
-		<i class="fas fa-lock"></i>&nbsp;<spring:message code="comu.boto.permisos"/>
+		<i class="fas fa-lock"></i>&nbsp;<spring:message code="comu.boto.permisos"/>&nbsp;<span class="badge">{{permisosCount}}</span>
 	</a>
 </script>
 <script id="template-accions" type="x-tmpl-mustache">

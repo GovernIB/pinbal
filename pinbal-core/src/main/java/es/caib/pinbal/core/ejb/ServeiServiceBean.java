@@ -169,7 +169,13 @@ public class ServeiServiceBean implements ServeiService {
 		return delegate.findPermesosAmbEntitatIUsuari(entitatId, usuariCodi);
 	}
 
-	@Override
+    @Override
+	@RolesAllowed("PBL_REPRES")
+    public Integer countPermesosAmbEntitatIUsuari(Long entitatId, String usuariCodi) {
+        return delegate.countPermesosAmbEntitatIUsuari(entitatId, usuariCodi);
+    }
+
+    @Override
 	@RolesAllowed("tothom")
 	public List<ServeiDto> findPermesosAmbProcedimentPerDelegat(
 			Long entitatId,

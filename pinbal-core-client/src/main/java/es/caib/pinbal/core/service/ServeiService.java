@@ -261,6 +261,11 @@ public interface ServeiService {
 			Long entitatId,
 			String usuariCodi) throws EntitatNotFoundException;
 
+	@PreAuthorize("hasRole('ROLE_REPRES')")
+	public Integer countPermesosAmbEntitatIUsuari(
+			Long entitatId,
+			String usuariCodi);
+
 	/**
 	 * Llistat amb els serveis actius per a un usuari delegat que pertanyen
 	 * a un procediment.

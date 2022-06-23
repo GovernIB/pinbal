@@ -270,8 +270,16 @@ public class RepresentantUsuariController extends BaseController {
 		
 		final int start = (int)pageable.getOffset();
 		final int end = Math.min((start + pageable.getPageSize()), listUsers.size());
-		final Page<EntitatUsuariDto> page = new PageImpl<>(listUsers.subList(start, end), pageable, listUsers.size());
-		
+		List<EntitatUsuariDto> paginaUsuaris = listUsers.subList(start, end);
+		for (EntitatUsuariDto usuari: paginaUsuaris) {
+			try {
+				usuari.setPermisosCount(serveiService.countPermesosAmbEntitatIUsuari(
+						entitat.getId(),
+						usuari.getUsuari().getCodi()));
+			} catch (Exception ex) {}
+		}
+		final Page<EntitatUsuariDto> page = new PageImpl<>(paginaUsuaris, pageable, listUsers.size());
+
 		return new ServerSideResponse<EntitatUsuariDto, Long>(serverSideRequest, page);
 	}
 
