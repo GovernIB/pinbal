@@ -234,18 +234,23 @@ body {
 					<div class="btn-group navbar-btn navbar-right">
 						<c:choose>
 						<c:when test="${isRolActualAdministrador}">
-							<a href="<c:url value="/entitat"/>" class="btn btn-primary"><spring:message code="decorator.menu.entitats"/></a>
-							<a href="<c:url value="/servei"/>" class="btn btn-primary"><spring:message code="decorator.menu.serveis"/></a>
+							<a href="<c:url value="/admin/consulta"/>" class="btn btn-primary"><spring:message code="decorator.menu.consultes.realitzades"/></a>
 							<a href="<c:url value="/estadistiques"/>" class="btn btn-primary"><spring:message code="decorator.menu.estadistiques"/></a>
 							<a href="<c:url value="/informe"/>" class="btn btn-primary"><spring:message code="decorator.menu.informes"/></a>
-							<a href="<c:url value="/organgestor"/>" class="btn btn-primary"><spring:message code="decorator.menu.organgestor"/></a>
-							<a href="<c:url value="/admin/consulta"/>" class="btn btn-primary"><spring:message code="decorator.menu.consultes"/></a>
 							<a href="<c:url value="/integracio"/>" class="btn btn-primary"><spring:message code="decorator.menu.integracions"/></a>
-							<a href="<c:url value="/avis"/>" class="btn btn-primary"><spring:message code="decorator.menu.avisos"/></a>
-							<a href="<c:url value="/config"/>" class="btn btn-primary"> <spring:message code="decorator.menu.config.properties"/></a>
 							<div class="btn-group">
-								<button data-toggle="dropdown" class="btn btn-primary dropdown-toggle"><spring:message code="decorator.menu.scsp"/>&nbsp;<span class="caret caret-white"></span></button>
+								<button data-toggle="dropdown" class="btn btn-primary dropdown-toggle"><spring:message code="decorator.menu.gestionar"/>&nbsp;<span class="caret caret-white"></span></button>
 								<ul class="dropdown-menu">
+									<li><a href="<c:url value="/entitat"/>"><spring:message code="decorator.menu.entitats"/></a></li>
+									<li><a href="<c:url value="/servei"/>"><spring:message code="decorator.menu.serveis"/></a></li>
+									<li><a href="<c:url value="/organgestor"/>"><spring:message code="decorator.menu.organgestor"/></a></li>
+								</ul>
+							</div>
+							<div class="btn-group">
+								<button data-toggle="dropdown" class="btn btn-primary dropdown-toggle"><spring:message code="decorator.menu.configurar"/>&nbsp;<span class="caret caret-white"></span></button>
+								<ul class="dropdown-menu">
+									<li><a href="<c:url value="/config"/>"> <spring:message code="decorator.menu.config.properties"/></a></li>
+									<li><a href="<c:url value="/avis"/>"><spring:message code="decorator.menu.avisos"/></a></li>
 									<li><a href="<c:url value="/scsp/paramconf"/>"><spring:message code="decorator.menu.scsp.parametres.configuracio"/></a></li>
 									<li><a href="<c:url value="/scsp/emissorcert"/>"><spring:message code="decorator.menu.scsp.emissor.certificat"/></a></li>
 									<li><a href="<c:url value="/scsp/claupublica"/>"><spring:message code="decorator.menu.scsp.claus.publiques"/></a></li>
