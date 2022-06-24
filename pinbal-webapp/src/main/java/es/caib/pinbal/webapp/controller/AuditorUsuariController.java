@@ -5,6 +5,8 @@ package es.caib.pinbal.webapp.controller;
 
 import java.lang.reflect.InvocationTargetException;
 import java.sql.SQLException;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 
@@ -15,6 +17,8 @@ import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -184,8 +188,55 @@ public class AuditorUsuariController extends BaseController {
 
 //		List<EntitatUsuariDto> listUsers = entitat.getUsuarisAuditor();
 		List<EntitatUsuariDto> listUsers = entitat.getUsuaris();
-		Page<EntitatUsuariDto> page = new PageImpl<EntitatUsuariDto>(listUsers, null, listUsers.size());
-		
+
+		PageRequest pageable = serverSideRequest.toPageable();
+		Sort sort = pageable.getSort();
+		if (sort.iterator().hasNext()) {
+			Sort.Order ordre = sort.iterator().next();
+			// Vemos por qué columna se ha filtrado
+			final String propietat = ordre.getProperty();
+			final Sort.Direction direccio = ordre.getDirection();
+			if ("usuari.codi".equals(propietat)) {
+
+				Comparator<EntitatUsuariDto> compareByCodi = new Comparator<EntitatUsuariDto>() {
+					@Override
+					public int compare(EntitatUsuariDto o1, EntitatUsuariDto o2) {
+						int result = o1.getUsuari().getCodi().compareTo(o2.getUsuari().getCodi());
+						return Sort.Direction.DESC.equals(direccio) ? result : -result;
+					}
+				};
+
+				Collections.sort(listUsers, compareByCodi);
+
+			} else if ("usuari.nom".equals(propietat)) {
+
+				Comparator<EntitatUsuariDto> compareByNom = new Comparator<EntitatUsuariDto>() {
+					@Override
+					public int compare(EntitatUsuariDto o1, EntitatUsuariDto o2) {
+						int result = o1.getUsuari().getNom().toUpperCase().compareTo(o2.getUsuari().getNom().toUpperCase());
+						return Sort.Direction.DESC.equals(direccio) ? result : -result;
+					}
+				};
+
+				Collections.sort(listUsers, compareByNom);
+
+			} else if ("usuari.nif".equals(propietat)) {
+
+				Comparator<EntitatUsuariDto> compareByNif = new Comparator<EntitatUsuariDto>() {
+					@Override
+					public int compare(EntitatUsuariDto o1, EntitatUsuariDto o2) {
+						int result = o1.getUsuari().getNif().compareTo(o2.getUsuari().getNif());
+						return Sort.Direction.DESC.equals(direccio) ? result : -result;
+					}
+				};
+
+				Collections.sort(listUsers, compareByNif);
+			}
+		}
+		final int start = (int)pageable.getOffset();
+		final int end = Math.min((start + pageable.getPageSize()), listUsers.size());
+		final Page<EntitatUsuariDto> page = new PageImpl<>(listUsers.subList(start, end), pageable, listUsers.size());
+
 		return new ServerSideResponse<EntitatUsuariDto, Long>(serverSideRequest, page);
 	}
 	

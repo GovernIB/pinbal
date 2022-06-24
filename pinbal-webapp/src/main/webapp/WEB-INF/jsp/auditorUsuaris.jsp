@@ -67,25 +67,22 @@ $(document).ready(function() {
 
     $('#table-users').DataTable({
     	autoWidth: false,
-    	paging: false,
+    	// paging: false,
 		processing: true,
 		serverSide: true,
-		order: [],
+		dom: "<'row'<'col-md-6'i><'col-md-6'>><'row'<'col-md-12'rt>><'row'<'col-md-6'l><'col-md-6'p>>",
+		order: [[ 1, "desc" ]],
 		language: {
             "url": '<c:url value="/js/datatable-language.json"/>',
         },
 		ajax: '<c:url value="/auditor/usuari/datatable"/>',
 		columnDefs: [
-			{ 
-	            targets: 0,
-	            orderable: false,
-				render: function (data, type, row, meta) {
-					var template = $('#template-usuari').html();
-					return Mustache.render(template, row);
-				}
-	        },
+			{
+				targets: [0, 1, 2],
+				//orderable: false
+			},
 	        {
-	            targets: 1,
+	            targets: 3,
 	            orderable: false,
 	            width: "20%",
 				render: function (data, type, row, meta) {
@@ -94,7 +91,7 @@ $(document).ready(function() {
 				}
 	        },
 			{
-				targets: 2,
+				targets: 4,
 				orderable: false,
 				width: "1%",
 				render: function (data, type, row, meta) {
@@ -104,7 +101,7 @@ $(document).ready(function() {
 				}
 			}, 
 			{
-				targets: [3, 4],
+				targets: [5, 6],
 				orderable: false,
 				visible:false
 			}, 
@@ -112,7 +109,7 @@ $(document).ready(function() {
 	   initComplete: function( settings, json ) {
 		   console.log(settings)
 		   console.log(json)
-			$('.btn-open-modal-edit').click(function() {
+		   $('body').on("click", '.btn-open-modal-edit', function() {
 				var nrow = $(this).data('nrow');
 				var row = json.data[nrow];
 				var usuari = row.usuari;
@@ -228,18 +225,20 @@ function showModalEditar(
 	<table id="table-users" class="table table-striped table-bordered" style="width: 100%">
 		<thead>
 			<tr>
-			<th data-data="usuari.nom"><spring:message code="entitat.usuaris.camp.usuari" /></th>
-			<th data-data="representant"><spring:message code="auditor.usuaris.camp.rols" /></th>
-			<th data-data="principal"></th>
-			<th data-data="aplicacio"></th>
-			<th data-data="auditor"></th>
+				<th data-data="usuari.codi"><spring:message code="auditor.usuaris.camp.codi" /></th>
+				<th data-data="usuari.nom"><spring:message code="auditor.usuaris.camp.nom" /></th>
+				<th data-data="usuari.nif"><spring:message code="auditor.usuaris.camp.nif" /></th>
+				<th data-data="representant"><spring:message code="auditor.usuaris.camp.rols" /></th>
+				<th data-data="principal"></th>
+				<th data-data="aplicacio"></th>
+				<th data-data="auditor"></th>
 			</tr>
 		</thead>
 	</table>	
 	
-<script id="template-usuari" type="x-tmpl-mustache">
-	{{ usuari.descripcio }}
-</script>
+<%--<script id="template-usuari" type="x-tmpl-mustache">--%>
+<%--	{{ usuari.descripcio }}--%>
+<%--</script>--%>
 <script id="template-rols" type="x-tmpl-mustache">
 	{{#auditor}}
 		<span class="badge"><spring:message code="auditor.usuaris.rol.audit"/></span>
