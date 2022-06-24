@@ -117,12 +117,16 @@ $(document).ready(function() {
 				var row = json.data[nrow];
 				var usuari = row.usuari;
 				console.log(usuari);
-		 		showModalEditar(usuari.inicialitzat, usuari.noInicialitzatNif, 
-		 				usuari.noInicialitzatCodi, usuari.descripcio, 
-		 				usuari.codi, usuari.nif, 
+				console.log(row);
+		 		showModalEditar(
+						usuari.inicialitzat,
+						usuari.noInicialitzatNif,
+		 				usuari.noInicialitzatCodi,
+						usuari.descripcio,
+		 				usuari.codi,
+						usuari.nif,
 		 				row.departament, 
-		 				row.representant, 
-		 				row.delegat, row.aplicacio);
+		 				row.auditor);
 			});
 		}
 	});
@@ -147,6 +151,7 @@ function showModalEditar(
 	inicialitzat,
 	noInicialitzatNif,
 	noInicialitzatCodi,
+	nom,
 	codi,
 	nif,
 	departament,
@@ -163,6 +168,8 @@ function showModalEditar(
 	if (inicialitzat) {
 		$('#modal-group-codi').removeClass('hide');
 		$('#modal-input-codi').val(codi);
+		$('#modal-group-nom').removeClass('hide');
+		$('#modal-input-nom').val(nom);
 		$('#modal-group-nif').removeClass('hide');
 		$('#modal-input-nif').val(nif);
 	} else {
@@ -172,8 +179,10 @@ function showModalEditar(
 			$('#modal-input-nif').val(nif);
 		} else if (noInicialitzatCodi) {
 			$('#modal-group-codi').removeClass('hide');
+			$('#modal-group-nom').removeClass('hide');
 			$('#modal-group-nif').addClass('hide');
 			$('#modal-input-codi').val(codi);
+			$('#modal-input-nom').val(nom);
 		}
 	}
 	$('#modal-input-auditor').prop('checked', auditor);
@@ -283,6 +292,12 @@ function showModalEditar(
 						<input type="text" class="form-control" id="modal-input-nif" name="nif" disabled="disabled"/>
 					</div>
 				</div>
+				<div id="modal-group-nom" class="form-group">
+					<label class="control-label col-md-2" for="modal-input-nom"><spring:message code="representant.usuaris.camp.nom"/></label>
+					<div class="col-md-10">
+						<input class="form-control" type="text" id="modal-input-nom" name="codi" disabled="disabled"/>
+					</div>
+				</div>
 				<div class="form-group">
 					<label class="control-label col-md-2" for="modal-input-auditor"><spring:message code="auditor.usuaris.camp.rols"/></label>
 					<div class="controls col-md-10">
@@ -295,8 +310,8 @@ function showModalEditar(
 			</form>
 		</div>
 		<div class="modal-footer">
-			<button class="btn btn-default" data-dismiss="modal"><span class="fa fa-arrow-left"></span>&nbsp;<spring:message code="comu.boto.tornar"/></button>
-			<button class="btn btn-primary" onclick="$('#modal-form').submit()"><spring:message code="comu.boto.guardar"/></button>
+			<button class="btn btn-default" data-dismiss="modal"><span class="fa fa-times"></span>&nbsp;<spring:message code="comu.boto.tancar"/></button>
+			<button class="btn btn-primary" onclick="$('#modal-form').submit()"><span class="fa fa-save"></span>&nbsp;<spring:message code="comu.boto.guardar"/></button>
 		</div>
 	</div>
 	</div>

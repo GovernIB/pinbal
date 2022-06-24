@@ -181,8 +181,9 @@ public class AuditorUsuariController extends BaseController {
 				it.remove();
 			}
 		}
-		
-		List<EntitatUsuariDto> listUsers = entitat.getUsuarisRepresentant();
+
+//		List<EntitatUsuariDto> listUsers = entitat.getUsuarisAuditor();
+		List<EntitatUsuariDto> listUsers = entitat.getUsuaris();
 		Page<EntitatUsuariDto> page = new PageImpl<EntitatUsuariDto>(listUsers, null, listUsers.size());
 		
 		return new ServerSideResponse<EntitatUsuariDto, Long>(serverSideRequest, page);
@@ -206,6 +207,9 @@ public class AuditorUsuariController extends BaseController {
 			} else {
 				grup = Existent.class;
 			}
+			if (command.getNif() != null) {
+				command.setNif(command.getNif().toUpperCase());
+			}
 			new ValidationHelper(validator).isValid(
 					command,
 					bindingResult,
@@ -220,9 +224,7 @@ public class AuditorUsuariController extends BaseController {
 									error.getArguments()));
 					break;
 				}
-				model.addAttribute(
-						"entitat",
-						entitatService.findById(command.getId()));
+				omplirModelPerMostrarLlistat(request, entitat, model);
 				return "auditorUsuaris";
 			}
 			try {
@@ -268,7 +270,7 @@ public class AuditorUsuariController extends BaseController {
 	private void omplirModelPerMostrarLlistat(
 			HttpServletRequest request,
 			EntitatDto entitat,
-			Model model) throws Exception {
+			Model model) {
 		UsuariFiltreCommand command = (UsuariFiltreCommand)RequestSessionHelper.obtenirObjecteSessio(
 				request,
 				SESSION_ATTRIBUTE_FILTRE);
