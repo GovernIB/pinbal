@@ -122,30 +122,34 @@ body {
 					<ul class="list-inline pull-right">
 						<c:if test="${hiHaEntitats}">
 							<li class="dropdown">
-								<c:if test="${hiHaMesEntitats}">
-									<a href="#" class="dropdown-toggle" data-toggle="dropdown">
-								</c:if>
-								<i class="fas fa-university"></i> ${entitatActual.nom}
-								<c:if test="${hiHaMesEntitats}"><b class="caret caret-white"></b></c:if>
-								<c:if test="${hiHaMesEntitats}"></a></c:if>
-								<c:if test="${hiHaMesEntitats}">
-									<ul class="dropdown-menu">
-										<c:forEach var="entitat" items="${sessionEntitats}" varStatus="status">
-											<c:if test="${entitat.id != entitatActual.id}">
-												<c:url var="urlCanviEntitat" value="/index">
-													<c:param name="${requestParameterCanviEntitat}" value="${entitat.id}"/>
-												</c:url>
-												<li><a href="${urlCanviEntitat}">${entitat.nom}</a></li>
-											</c:if>
-										</c:forEach>
-									</ul>
-								</c:if>
+								<c:choose>
+									<c:when test="${hiHaMesEntitats}">
+										<a id="menu_entitat" href="#" class="dropdown-toggle" data-toggle="dropdown">
+											<i class="fas fa-university"></i> ${entitatActual.nom}
+											<b class="caret caret-white"></b>
+										</a>
+										<ul class="dropdown-menu">
+											<c:forEach var="entitat" items="${sessionEntitats}" varStatus="status">
+												<c:if test="${entitat.id != entitatActual.id}">
+													<c:url var="urlCanviEntitat" value="/index">
+														<c:param name="${requestParameterCanviEntitat}" value="${entitat.id}"/>
+													</c:url>
+													<li><a href="${urlCanviEntitat}">${entitat.nom}</a></li>
+												</c:if>
+											</c:forEach>
+										</ul>
+										<script type="application/javascript">
+											$("#menu_entitat").dropdown();
+										</script>
+									</c:when>
+									<c:otherwise><i class="fas fa-university"></i> ${entitatActual.nom}</c:otherwise>
+								</c:choose>
 							</li>
 						</c:if>
 						<li class="dropdown">
 							<c:choose>
 								<c:when test="${fn:length(rolsUsuariActual) > 1}">
-									<a href="#" data-toggle="dropdown">
+									<a id="menu_rol" href="#" data-toggle="dropdown">
 										<i class="far fa-id-card"></i>
 										<spring:message code="decorator.menu.rol.${rolActual}"/>
 										<span class="caret caret-white"></span>
@@ -162,6 +166,9 @@ body {
 											</c:if>
 										</c:forEach>
 									</ul>
+									<script type="application/javascript">
+										$("#menu_rol").dropdown();
+									</script>
 								</c:when>
 								<c:otherwise>
 									<c:if test="${not empty rolActual}"><span class="far fa-id-card"></span>&nbsp;<spring:message code="decorator.menu.rol.${rolActual}"/></c:if>
@@ -169,7 +176,7 @@ body {
 							</c:choose>
 						</li>
 						<li class="dropdown">
-							<a href="#" data-toggle="dropdown">
+							<a id="menu_user" href="#" data-toggle="dropdown">
 								<span class="fa fa-user"></span>
 								<c:choose>
 									<c:when test="${not empty dadesUsuariActual}">${dadesUsuariActual.nom}</c:when>
@@ -226,6 +233,9 @@ body {
 									</a>
 								</li>
 							</ul>
+							<script type="application/javascript">
+								$("#menu_user").dropdown();
+							</script>
 						</li>
 						
 					</ul>
@@ -239,15 +249,18 @@ body {
 							<a href="<c:url value="/informe"/>" class="btn btn-primary"><spring:message code="decorator.menu.informes"/></a>
 							<a href="<c:url value="/integracio"/>" class="btn btn-primary"><spring:message code="decorator.menu.integracions"/></a>
 							<div class="btn-group">
-								<button data-toggle="dropdown" class="btn btn-primary dropdown-toggle"><spring:message code="decorator.menu.gestionar"/>&nbsp;<span class="caret caret-white"></span></button>
+								<button id="menu_adm_gestio" data-toggle="dropdown" class="btn btn-primary dropdown-toggle"><spring:message code="decorator.menu.gestionar"/>&nbsp;<span class="caret caret-white"></span></button>
 								<ul class="dropdown-menu">
 									<li><a href="<c:url value="/entitat"/>"><spring:message code="decorator.menu.entitats"/></a></li>
 									<li><a href="<c:url value="/servei"/>"><spring:message code="decorator.menu.serveis"/></a></li>
 									<li><a href="<c:url value="/organgestor"/>"><spring:message code="decorator.menu.organgestor"/></a></li>
 								</ul>
+								<script type="application/javascript">
+									$("#menu_adm_gestio").dropdown();
+								</script>
 							</div>
 							<div class="btn-group">
-								<button data-toggle="dropdown" class="btn btn-primary dropdown-toggle"><spring:message code="decorator.menu.configurar"/>&nbsp;<span class="caret caret-white"></span></button>
+								<button id="menu_adm_config" data-toggle="dropdown" class="btn btn-primary dropdown-toggle"><spring:message code="decorator.menu.configurar"/>&nbsp;<span class="caret caret-white"></span></button>
 								<ul class="dropdown-menu">
 									<li><a href="<c:url value="/config"/>"> <spring:message code="decorator.menu.config.properties"/></a></li>
 									<li><a href="<c:url value="/avis"/>"><spring:message code="decorator.menu.avisos"/></a></li>
@@ -256,6 +269,9 @@ body {
 									<li><a href="<c:url value="/scsp/claupublica"/>"><spring:message code="decorator.menu.scsp.claus.publiques"/></a></li>
 									<li><a href="<c:url value="/scsp/clauprivada"/>"><spring:message code="decorator.menu.scsp.clau.privada"/></a></li>
 								</ul>
+								<script type="application/javascript">
+									$("#menu_adm_config").dropdown();
+								</script>
 							</div>
 						</c:when>
 						<c:when test="${isRolActualRepresentant}">
