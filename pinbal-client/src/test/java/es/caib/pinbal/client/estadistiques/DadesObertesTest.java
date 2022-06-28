@@ -28,9 +28,7 @@ import es.caib.pinbal.client.dadesobertes.DadesObertesRespostaConsulta;
  */
 public class DadesObertesTest {
 
-	private static final String URL_BASE = "http://localhost:8180/pinbalapi";
-	private static final String USUARI = "pblrep";
-	private static final String CONTRASENYA = "pblrep";
+	private static final String URL_BASE = "https://proves.caib.es/pinbalapi";
 
 	@Test
 	public void opendata() throws IOException {
