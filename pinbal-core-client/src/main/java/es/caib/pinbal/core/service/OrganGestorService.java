@@ -62,15 +62,14 @@ public interface OrganGestorService {
 	 * aplicant el filtre.
 	 * 
 	 * @param entitatId       Identificador de l'entitat actual
-	 * @param filtreCodi 
-	 * @param filtreNom 
-	 * @param filtreEstat
-	 * @param paginacioParams Paràmetres per a dur a terme la paginació del
-	 *                        resultats.
-	 * @return La pàgina amb els organs gestors
+	 * @param filtreCodi
+	 * @param filtreNom
+	 * @param pareCodi
+     * @param filtreEstat
+     * @return La pàgina amb els organs gestors
 	 */
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_REPRES')")
-	public Page<OrganGestorDto> findPageOrgansGestorsAmbFiltrePaginat(Long entitatId, String filtreCodi, String filtreNom, OrganGestorEstatEnumDto filtreEstat, Pageable pageable);
+	public Page<OrganGestorDto> findPageOrgansGestorsAmbFiltrePaginat(Long entitatId, String filtreCodi, String filtreNom, String pareCodi, OrganGestorEstatEnumDto filtreEstat, Pageable pageable);
 
 	/**
 	 * Actualitza els organs gestors de la base de dades amb els de Dir3

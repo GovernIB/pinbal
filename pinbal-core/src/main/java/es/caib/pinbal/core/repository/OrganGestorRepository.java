@@ -27,18 +27,23 @@ public interface OrganGestorRepository extends JpaRepository<OrganGestor, Long> 
 	
 	
 	
-	@Query(	"from " +
+	@Query(	"select og " +
+			"from " +
 			"    OrganGestor og " +
+			"left outer join og.pare ogp " +
 			"where (og.entitat = :entitat)" +
 			"  and (:esNullFiltreCodi = true or lower(og.codi) like concat('%', lower(:filtreCodi), '%'))" +
 			"  and (:esNullFiltreNom = true or lower(og.nom) like concat('%', lower(:filtreNom), '%')) " + 
+			"  and (:esNullFiltrePareCodi = true or ogp.codi = :filtrePareCodi) " +
 			"  and (:esNullFiltreActiu = true or og.actiu = :actiu )")
 	public Page<OrganGestor> findByEntitatAndFiltre(
 			@Param("entitat") Entitat entitat,
 		    @Param("esNullFiltreCodi") boolean esNullFiltreCodi,
 		    @Param("filtreCodi") String filtreCodi, 
 		    @Param("esNullFiltreNom") boolean esNullFiltreNom,
-		    @Param("filtreNom") String filtreNom, 
+		    @Param("filtreNom") String filtreNom,
+			@Param("esNullFiltrePareCodi") boolean esNullFiltrePareCodi,
+			@Param("filtrePareCodi") String filtrePareCodi,
 		    @Param("esNullFiltreActiu") boolean esNullFiltreActiu,
 		    @Param("actiu") boolean actiu,
 			Pageable paginacio);

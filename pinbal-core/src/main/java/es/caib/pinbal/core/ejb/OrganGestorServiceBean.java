@@ -57,8 +57,12 @@ public class OrganGestorServiceBean implements OrganGestorService {
 	@RolesAllowed({ "PBL_ADMIN", "PBL_REPRES" })
 	public Page<OrganGestorDto> findPageOrgansGestorsAmbFiltrePaginat(
 			Long entitatId,
-			String filtreCodi, String filtreNom, OrganGestorEstatEnumDto filtreEstat, Pageable pageable) {
-		return delegate.findPageOrgansGestorsAmbFiltrePaginat(entitatId, filtreCodi, filtreNom, filtreEstat, pageable);
+			String filtreCodi,
+			String filtreNom,
+			String pareCodi,
+			OrganGestorEstatEnumDto filtreEstat,
+			Pageable pageable) {
+		return delegate.findPageOrgansGestorsAmbFiltrePaginat(entitatId, filtreCodi, filtreNom, pareCodi, filtreEstat, pageable);
 	}
 
 	@Override
