@@ -31,10 +31,10 @@ public class ScdcpajuTest {
 
 	private static final String ENTITAT_CIF = "S0711001H";
 	private static final String URL_BASE = "https://proves.caib.es/pinbalapi";
-	private static final String USUARI = "xxxxxx";
+	private static final String USUARI = "$ripea_pinbal";
 	private static final String CONTRASENYA = "xxxxxx";
 	private static final String CODIGO_PROCEDIMIENTO = "CODSVDR_GBA_20121107";
-	private static final String PETICION_SCSP_ID = "PINPRE00000000000000001761";
+	private static final String PETICION_SCSP_ID = "PINPRE00000000000000001766";
 	private static final boolean ENABLE_LOGGING = true;
 	private static final boolean BASIC_AUTH = true;
 
@@ -53,14 +53,14 @@ public class ScdcpajuTest {
 		funcionario.setNombreCompletoFuncionario("Funcionari CAIB");
 		solicitud.setFuncionario(funcionario);
 		ScspTitular titular = new ScspTitular();
-		titular.setTipoDocumentacion(ScspTipoDocumentacion.DNI);
+		titular.setTipoDocumentacion(ScspTipoDocumentacion.NIF);
 		titular.setDocumentacion("12345678Z");
 		solicitud.setTitular(titular);
 
 		solicitud.setConsultaPerDocumentIdentitat("NIF", "12345678Z", null);
 		solicitud.setConsultaPerDadesPersonals(null, null, null, null, null, null, null, null);
 		solicitud.setProvinciaSolicitud("07");
-		solicitud.setMunicipioSolicitud("001");
+		solicitud.setMunicipioSolicitud("026");
 
 		if (ENABLE_LOGGING) {
 			client.enableLogginFilter();

@@ -33,14 +33,14 @@ public class Svdreslegexws01Test {
 
 	private static final String ENTITAT_CIF = "S0711001H";
 	private static final String URL_BASE = "https://proves.caib.es/pinbalapi";
-	private static final String USUARI = "xxxxxx";
+	private static final String USUARI = "$ripea_pinbal";
 	private static final String CONTRASENYA = "xxxxxx";
 	private static final String CODIGO_PROCEDIMIENTO = "CODSVDR_GBA_20121107";
-	private static final String PETICION_SCSP_ID = "PINBAL00000000000000263714";
+	private static final String PETICION_SCSP_ID = "PINBAL00000000000000264618";
 	private static final boolean ENABLE_LOGGING = true;
-	private static final boolean IS_JBOSS = true;
+	private static final boolean BASIC_AUTH = true;
 
-	private ClientSvdreslegexws01 client = new ClientSvdreslegexws01(URL_BASE, USUARI, CONTRASENYA, !IS_JBOSS, null, null);
+	private ClientSvdreslegexws01 client = new ClientSvdreslegexws01(URL_BASE, USUARI, CONTRASENYA, BASIC_AUTH, null, null);
 
 	@Test
 	public void peticionSincrona() throws UniformInterfaceException, ClientHandlerException, IOException {

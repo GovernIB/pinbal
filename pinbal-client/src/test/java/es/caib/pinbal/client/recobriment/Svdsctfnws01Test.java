@@ -31,22 +31,16 @@ import es.caib.pinbal.client.recobriment.svdsctfnws01.ClientSvdsctfnws01.Solicit
  */
 public class Svdsctfnws01Test {
 
-//	private static final String URL_BASE = "http://localhost:8080/pinbalapi";
-//	private static final String USUARI = "user";
-//	private static final String CONTRASENYA = "passwd";
-//	private static final String ENTITAT_CIF = "B07167448";
-//	private static final String CODIGO_PROCEDIMIENTO = "ProvaConcepte";
-//	private static final String PETICION_SCSP_ID = "PBL0000000001292";
 	private static final String ENTITAT_CIF = "S0711001H";
 	private static final String URL_BASE = "https://proves.caib.es/pinbalapi";
-	private static final String USUARI = "xxxxx";
-	private static final String CONTRASENYA = "xxxxx";
+	private static final String USUARI = "$ripea_pinbal";
+	private static final String CONTRASENYA = "xxxxxx";
 	private static final String CODIGO_PROCEDIMIENTO = "CODSVDR_GBA_20121107";
-	private static final String PETICION_SCSP_ID = "PINBAL00000000000000263714";
-	private static final boolean ENABLE_LOGGING = false;
-	private static final boolean IS_JBOSS = true;
+	private static final String PETICION_SCSP_ID = "PINBAL00000000000000265520";
+	private static final boolean ENABLE_LOGGING = true;
+	private static final boolean BASIC_AUTH = true;
 
-	private ClientSvdsctfnws01 client = new ClientSvdsctfnws01(URL_BASE, USUARI, CONTRASENYA, !IS_JBOSS, null, null);
+	private ClientSvdsctfnws01 client = new ClientSvdsctfnws01(URL_BASE, USUARI, CONTRASENYA, BASIC_AUTH, null, null);
 
 	@Test
 	public void peticionSincrona() throws UniformInterfaceException, ClientHandlerException, IOException {
@@ -61,7 +55,7 @@ public class Svdsctfnws01Test {
 		funcionario.setNombreCompletoFuncionario("Funcionari CAIB");
 		solicitud.setFuncionario(funcionario);
 		ScspTitular titular = new ScspTitular();
-		titular.setTipoDocumentacion(ScspTipoDocumentacion.DNI);
+		titular.setTipoDocumentacion(ScspTipoDocumentacion.NIF);
 		titular.setDocumentacion("12345678Z");
 		solicitud.setTitular(titular);
 		solicitud.setCodigoComunidadAutonoma("04");

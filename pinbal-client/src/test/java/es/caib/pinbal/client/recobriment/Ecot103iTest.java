@@ -31,10 +31,10 @@ public class Ecot103iTest {
 
 	private static final String ENTITAT_CIF = "S0711001H";
 	private static final String URL_BASE = "https://proves.caib.es/pinbalapi";
-	private static final String USUARI = "xxxxxx";
+	private static final String USUARI = "$ripea_pinbal";
 	private static final String CONTRASENYA = "xxxxxx";
 	private static final String CODIGO_PROCEDIMIENTO = "CODSVDR_GBA_20121107";
-	private static final String PETICION_SCSP_ID = "PINBAL00000000000000265456";
+	private static final String PETICION_SCSP_ID = "PINBAL00000000000000265477";
 	private static final boolean ENABLE_LOGGING = true;
 	private static final boolean BASIC_AUTH = true;
 
@@ -54,7 +54,7 @@ public class Ecot103iTest {
 		solicitud.setFuncionario(funcionario);
 		ScspTitular titular = new ScspTitular();
 		titular.setTipoDocumentacion(ScspTipoDocumentacion.NIF);
-		titular.setDocumentacion("12345678Z");
+		titular.setDocumentacion("99999999R");
 		solicitud.setTitular(titular);
 
 		if (ENABLE_LOGGING) {
