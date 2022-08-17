@@ -154,7 +154,7 @@ $(document).ready(function() {
 		</div>
 	</form:form>
 	<div class="pull-right">
-		<a class="btn btn-primary" href="<c:url value="/entitat/new"/>"><i class="fa fa-plus"></i>&nbsp;<spring:message code="entitat.list.boto.nova.entitat"/></a>
+		<a class="btn btn-primary" href="<c:url value="/entitat/new"/>" data-toggle="modal" data-refresh-pagina="true"><i class="fa fa-plus"></i>&nbsp;<spring:message code="entitat.list.boto.nova.entitat"/></a>
 	</div>
 	<table id="table-entitats" class="table table-striped table-bordered" style="width: 100%">
 		<thead>
@@ -204,7 +204,7 @@ $(document).ready(function() {
 				{{/activa}}
 			</li>
 			<li>
-				<a href="entitat/{{ id }}"><i class="fas fa-pen"></i>&nbsp;<spring:message code="comu.boto.modificar"/></a>
+				<a href="entitat/{{ id }}" data-toggle="modal" data-refresh-pagina="true"><i class="fas fa-pen"></i>&nbsp;<spring:message code="comu.boto.modificar"/></a>
 			</li>
 			{{#propertyEsborrar}}
 				<li><a href="entitat/{{ id }}/delete" class="confirm-esborrar"><i class="fas fa-trash-alt"></i>&nbsp;<spring:message code="comu.boto.esborrar"/></a></li>

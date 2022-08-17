@@ -238,11 +238,12 @@
 							if (settings.refreshMissatges && !settings.refreshPagina) {
 								webutilRefreshMissatges();
 							}
-							if (settings.refreshDatatable) {
-								$('#' + settings.dataTableId).webutilDatatable('refresh');
-							}
 							if (settings.refreshPagina) {
 								window.location.reload(true);
+							}
+							if (settings.refreshDatatable) {
+								$('#' + settings.dataTableId).dataTable().fnDraw();
+								// $('#' + settings.dataTableId).webutilDatatable('refresh');
 							}
 						}
 					}

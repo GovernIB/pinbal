@@ -108,14 +108,16 @@ public class OrganGestorServiceImpl implements OrganGestorService {
 	@Transactional(readOnly = true)
 	public Page<OrganGestorDto> findPageOrgansGestorsAmbFiltrePaginat(
 			Long entitatId,
-			String filtreCodi, 
-			String filtreNom, 
-			OrganGestorEstatEnumDto filtreEstat, 
+			String filtreCodi,
+			String filtreNom,
+			String filtrePareCodi,
+			OrganGestorEstatEnumDto filtreEstat,
 			Pageable pageable) {
 		log.debug("Consulta pafinada i amb filtre dels òrgans d'una entitat (" +
 				"entitatId=" + entitatId + ", " +
 				"filtreCodi=" + filtreCodi + ", " +
 				"filtreNom=" + filtreNom + ", " +
+				"filtrePareCodi=" + filtrePareCodi + ", " +
 				"filtreEstat=" + filtreEstat + ", " +
 				"pageable=" + pageable + ")");
 		Entitat entitat = entitatRepository.findOne(entitatId);
@@ -125,6 +127,8 @@ public class OrganGestorServiceImpl implements OrganGestorService {
 				filtreCodi,
 				filtreNom == null || filtreNom.length() == 0,
 				filtreNom,
+				filtrePareCodi == null || filtrePareCodi.length() == 0,
+				filtrePareCodi,
 				filtreEstat == null,
 				filtreEstat == OrganGestorEstatEnumDto.VIGENT ? true : false,
 				pageable);

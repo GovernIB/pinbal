@@ -7,3 +7,6 @@
 .idea
 *.iml
 /republish.sh
+/pinbal-api/target/
+/pinbal-client-test/target/
+/pinbal-client-test2/target/

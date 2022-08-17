@@ -37,41 +37,27 @@
 	<c:url value="/organgestor" var="formAction"/>
 	<form:form id="form-filtre" action="${formAction}" method="post" cssClass="well form-filtre-table" commandName="organGestorFiltreCommand">
 		<div class="row">
-			<c:choose>
-				<c:when test="${isRolActualAdministrador}">
-					<div class="col-md-2">
-						<pbl:inputSelect name="entitatId" inline="true" placeholderKey="organgestor.list.filtre.camp.entitat"
-		 						 	optionItems="${entitats}"
-			 						optionValueAttribute="id"
-			 						optionTextAttribute="nom"
-									optionMinimumResultsForSearch="0"/>
-					</div>
-					<div class="col-md-2">
-						<pbl:inputText name="codi" inline="true" placeholderKey="organgestor.list.filtre.camp.codi"/>
-					</div>
-					<div class="col-md-2">
-						<pbl:inputText name="nom" inline="true" placeholderKey="organgestor.list.filtre.camp.nom"/>
-					</div>
-					<div class="col-md-2">
-						<pbl:inputSelect name="estat"  inline="true" placeholderKey="organgestor.list.filtre.camp.estat" optionEnum="OrganGestorEstatEnumDto" emptyOption="true"/>
-					</div>
-					<div class="col-md-2">
-					</div>
-				</c:when>
-				<c:otherwise>
-					<div class="col-md-3">
-						<pbl:inputText name="codi" inline="true" placeholderKey="organgestor.list.filtre.camp.codi"/>
-					</div>
-					<div class="col-md-3">
-						<pbl:inputText name="nom" inline="true" placeholderKey="organgestor.list.filtre.camp.nom"/>
-					</div>
-					<div class="col-md-3">
-						<pbl:inputSelect name="estat"  inline="true" placeholderKey="organgestor.list.filtre.camp.estat" optionEnum="OrganGestorEstatEnumDto" emptyOption="true"/>
-					</div>
-					<div class="col-md-1">
-					</div>
-				</c:otherwise>
-			</c:choose>
+			<c:if test="${isRolActualAdministrador}">
+				<div class="col-md-2">
+					<pbl:inputSelect name="entitatId" inline="true" placeholderKey="organgestor.list.filtre.camp.entitat"
+								optionItems="${entitats}"
+								optionValueAttribute="id"
+								optionTextAttribute="nom"
+								optionMinimumResultsForSearch="0"/>
+				</div>
+			</c:if>
+			<div class="col-md-2">
+				<pbl:inputText name="codi" inline="true" placeholderKey="organgestor.list.filtre.camp.codi"/>
+			</div>
+			<div class="col-md-2">
+				<pbl:inputText name="nom" inline="true" placeholderKey="organgestor.list.filtre.camp.nom"/>
+			</div>
+			<div class="col-md-2">
+				<pbl:inputSelect name="pareCodi"  inline="true" placeholderKey="organgestor.list.filtre.camp.pare" optionItems="${organsEntitat}" optionValueAttribute="codi" optionTextAttribute="codiINom" optionMinimumResultsForSearch="2" emptyOption="true"/>
+			</div>
+			<div class="col-md-2">
+				<pbl:inputSelect name="estat"  inline="true" placeholderKey="organgestor.list.filtre.camp.estat" optionEnum="OrganGestorEstatEnumDto" emptyOption="true"/>
+			</div>
 			<div class="col-md-2 pull-right">
 				<div class="pull-right">
 					<button id="netejar-filtre" class="btn btn-default" type="button"><spring:message code="comu.boto.netejar"/></button>
@@ -86,6 +72,7 @@
 				<th data-data="actiu"><spring:message code="organgestor.list.columna.codi"/></th>
 				<th data-data="codi" width="80px"><spring:message code="organgestor.list.columna.codi"/></th>
 				<th data-data="nom"><spring:message code="organgestor.list.columna.nom"/></th>
+				<th data-data="pareCodiINom"><spring:message code="organgestor.list.columna.pare"/></th>
 			</tr>
 		</thead>
 	</table>
