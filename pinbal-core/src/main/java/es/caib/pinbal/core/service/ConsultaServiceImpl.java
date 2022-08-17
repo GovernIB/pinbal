@@ -1888,7 +1888,7 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 				int fillsCustodiats = consultaRepository.countByPareAndCustodiat(pendent, true);
 				esPotTancar = fillsTotals == fillsCustodiats;
 			}
-			if (esPotTancar) {
+			if (esPotTancar && pluginHelper.isPluginArxiuActiu()) {
 				TransactionTemplate transactionTemplate = new TransactionTemplate(transactionManager);
 				transactionTemplate.execute(new TransactionCallback<JustificantGeneracioException>() {
 					@Override
