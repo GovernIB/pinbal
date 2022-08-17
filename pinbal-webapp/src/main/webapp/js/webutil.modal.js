@@ -15,11 +15,9 @@
 			missatgeLoading: null
 		}
 		var $element = $(element), element = element;
-	
 		var plugin = this;
 		plugin.settings = {}
 		plugin.serverParams = [];
-		
 		plugin.init = function() {
 			plugin.settings = $.extend(defaults, $element.data(), options);
 			plugin.settings.missatgeLoading = $element.data("missatgeloading");
@@ -90,7 +88,6 @@
 								segonaModal: plugin.settings.segonaModal,
 								height: plugin.settings.height
 							});
-							
 						} else {
 							$('#' + modalDivId).webutilModalShow({
 								adjustHeight: plugin.settings.adjustHeight,
@@ -137,7 +134,7 @@
 		};
 		// Mètodes privats
 		// Inicialització del plugin
-        plugin.init();
+		plugin.init();
 	}
 
 	$.fn.webutilModalShow = function(settings) {
@@ -191,7 +188,7 @@
 										return false;
 									});
 									element.on('showloading', function () {
-										console.log('>>> showloading');
+										//console.log('>>> showloading');
 									});
 								}
 								$('.modal-footer', $(iframe).parent().parent()).append(clon);
@@ -200,9 +197,6 @@
 						}
 						// Evaluar URL del formulari
 						var dataForm = $('body', $(iframe).contents()).data('modal-form');
-						
-						
-						
 						var modalForm = (dataForm) ? $(dataForm, $(iframe).contents()) : $(settings.elementForm, $(iframe).contents());
 						if (modalForm.length) {
 							modalForm.attr('action', webutilUrlAmbPrefix(modalForm.attr('action'), '/modal'));
@@ -224,13 +218,11 @@
 						webutilModalAdjustHeight(iframe);
 					});
 				});
-				
 				modalobj.on('hidden.bs.modal', function () {
 					if (settings.refreshTancar) {
 						window.location.reload(true);
 					}
 				});
-				
 				iframe.on('load', function () {
 					localStorage['relval_' + settings.dataTableId] = undefined;
 					var pathname;
@@ -295,6 +287,5 @@
 			}
 		});
 	});
-	
 
 }(jQuery));

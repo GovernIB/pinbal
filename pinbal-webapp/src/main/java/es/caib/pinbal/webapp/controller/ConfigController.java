@@ -1,12 +1,10 @@
 package es.caib.pinbal.webapp.controller;
 
-import es.caib.pinbal.core.dto.ConfigDto;
-import es.caib.pinbal.core.dto.ConfigGroupDto;
-import es.caib.pinbal.core.service.ConfigService;
-import es.caib.pinbal.webapp.command.ConfigCommand;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.extern.slf4j.Slf4j;
+import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -15,9 +13,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
-import java.util.List;
+import es.caib.pinbal.core.dto.ConfigDto;
+import es.caib.pinbal.core.dto.ConfigGroupDto;
+import es.caib.pinbal.core.service.ConfigService;
+import es.caib.pinbal.webapp.command.ConfigCommand;
+import lombok.Builder;
+import lombok.Getter;
 
 /**
  * Controlador per a la gestió de la configuració de l'aplicació.
@@ -25,7 +26,6 @@ import java.util.List;
  *
  * @author Limit Tecnologies <limit@limit.es>
  */
-@Slf4j
 @Controller
 @RequestMapping("/config")
 public class ConfigController extends BaseController{
@@ -58,7 +58,6 @@ public class ConfigController extends BaseController{
                     .message(getMessage(request, "config.controller.edit.error"))
                     .build();
         }
-
         String msg = "config.controller.edit.ok";
         int status = 1;
         try {

@@ -29,11 +29,11 @@ import es.caib.pinbal.client.informe.ClientInforme;
  */
 public class InformeTest {
 
-	private static final String URL_BASE = "http://localhost:8080/pinbal";
+	private static final String URL_BASE = "http://localhost:8180/pinbalapi";
 	private static final String USUARI = "pblrep";
 	private static final String CONTRASENYA = "pblrep";
 
-	private ClientInforme client = new ClientInforme(URL_BASE, USUARI, CONTRASENYA, false, null, null);
+	private ClientInforme client = new ClientInforme(URL_BASE, USUARI, CONTRASENYA, true, null, null);
 
 	@Test
 	public void procediments() throws IOException {

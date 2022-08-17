@@ -171,6 +171,7 @@ function showModalCrear() {
 	$('#modal-input-aplicacio').prop('checked', false);
 	$('#modal-input-actiu').prop('checked', false);
 	$('#modal-form-usuari').modal('toggle');
+	$('#modal-accio-text').html('<spring:message code="comu.boto.crear"/>');
 }
 function showModalEditar(entitatUsuari) {
 	cleanUsuariErrors();
@@ -217,6 +218,8 @@ function showModalEditar(entitatUsuari) {
 	$('#modal-input-aplicacio').prop('checked', aplicacio);
 	$('#modal-input-actiu').prop('checked', actiu);
 	$('#modal-form-usuari').modal('toggle');
+	$("#btnAddProfile").html('Save');
+	$('#modal-accio-text').html('<spring:message code="comu.boto.modificar"/>');
 }
 function sendUsuariForm() {
 
@@ -516,8 +519,8 @@ function canviPrincipal(usuariCodi) {
 					</form>
 				</div>
 				<div class="modal-footer">
-					<button class="btn btn-default" data-dismiss="modal"><span class="fa fa-arrow-left"></span>&nbsp;<spring:message code="comu.boto.tornar"/></button>
-					<button class="btn btn-primary" onclick="sendUsuariForm()"><spring:message code="comu.boto.guardar"/></button>
+					<button class="btn btn-default" data-dismiss="modal"><span class="fa fa-times"></span>&nbsp;<spring:message code="comu.boto.tancar"/></button>
+					<button class="btn btn-primary" onclick="sendUsuariForm()"><span class="fa fa-save"></span>&nbsp;<span id="modal-accio-text"></span></button>
 				</div>
 			</div>
 		</div>

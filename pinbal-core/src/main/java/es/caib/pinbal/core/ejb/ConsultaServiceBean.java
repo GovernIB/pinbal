@@ -232,7 +232,7 @@ public class ConsultaServiceBean implements ConsultaService {
 	}
 
 	@Override
-	@RolesAllowed("PBL_REPORT")
+//	@RolesAllowed("PBL_REPORT")
 	public List<DadesObertesRespostaConsulta> findByFiltrePerOpenData(
 			String entitatCodi,
 			Date dataInici,

@@ -32,7 +32,7 @@ import es.caib.pinbal.client.recobriment.model.Solicitud;
  */
 public class GenericTest {
 
-	private static final String URL_BASE = "http://localhost:8080/pinbal";
+	private static final String URL_BASE = "http://localhost:8080/pinbalapi";
 	private static final String USUARI = "user";
 	private static final String CONTRASENYA = "passwd";
 	private static final String SERVEI_SCSP = "pruebaPMI";

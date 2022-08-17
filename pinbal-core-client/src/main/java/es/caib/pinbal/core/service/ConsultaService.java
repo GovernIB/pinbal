@@ -425,7 +425,7 @@ public interface ConsultaService {
 	 * @throws ProcedimentNotFoundException
 	 *            Si el procediment especificat no existeix.
 	 */
-	@PreAuthorize("hasRole('ROLE_REPORT')")
+//	@PreAuthorize("hasRole('ROLE_REPORT')")
 	public List<DadesObertesRespostaConsulta> findByFiltrePerOpenData(
 			String entitatCodi,
 			Date dataInici,

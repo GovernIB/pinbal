@@ -1,5 +1,15 @@
 package es.caib.pinbal.core.service;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Properties;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import es.caib.pinbal.core.config.ScheduleConfig;
 import es.caib.pinbal.core.dto.ConfigDto;
 import es.caib.pinbal.core.dto.ConfigGroupDto;
@@ -10,17 +20,7 @@ import es.caib.pinbal.core.helper.PluginHelper;
 import es.caib.pinbal.core.model.Config;
 import es.caib.pinbal.core.repository.ConfigGroupRepository;
 import es.caib.pinbal.core.repository.ConfigRepository;
-import es.caib.pinbal.core.repository.ScspParametreConfiguracioRepository;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Sort;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Properties;
 
 /**
  * Classe que implementa els metodes per consultar i editar les configuracions de l'aplicació.
@@ -35,8 +35,6 @@ public class ConfigServiceImpl implements ConfigService {
     private ConfigGroupRepository configGroupRepository;
     @Autowired
     private ConfigRepository configRepository;
-    @Autowired
-    private ScspParametreConfiguracioRepository scspParametreConfiguracioRepository;
     @Autowired
     private DtoMappingHelper dtoMappingHelper;
     @Autowired

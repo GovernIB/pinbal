@@ -28,7 +28,7 @@ import es.caib.pinbal.client.dadesobertes.DadesObertesRespostaConsulta;
  */
 public class DadesObertesTest {
 
-	private static final String URL_BASE = "http://localhost:8080/pinbal";
+	private static final String URL_BASE = "http://localhost:8180/pinbalapi";
 	private static final String USUARI = "pblrep";
 	private static final String CONTRASENYA = "pblrep";
 
@@ -80,9 +80,11 @@ public class DadesObertesTest {
 	private ClientDadesObertes getClient() {
 		ClientDadesObertes client = new ClientDadesObertes(
 				URL_BASE,
-				USUARI,
-				CONTRASENYA,
-				false, null, null);
+				null, // USUARI,
+				null, // CONTRASENYA,
+				true,
+				null,
+				null);
 		//client.enableLogginFilter();
 		return client;
 	}

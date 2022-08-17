@@ -55,7 +55,7 @@ public abstract class ClientBase {
 			String urlBase,
 			String usuari,
 			String contrasenya) {
-		init(urlBase, usuari, contrasenya, false, null, null);
+		init(urlBase, usuari, contrasenya, true, null, null);
 	}
 
 	protected ClientBase(
@@ -261,26 +261,28 @@ public abstract class ClientBase {
 					}
 				}
 		);
-		if (basicAuth) {
-			logger.debug(
-					"Autenticant REST amb autenticació de tipus HTTP basic (" +
-					"usuari=" + usuari + ", " +
-					"contrasenya=********)");
-			jerseyClient.addFilter(
-					new HTTPBasicAuthFilter(usuari, contrasenya));
-		} else {
-			logger.debug(
-					"Autenticant client REST per a fer peticions cap a servei desplegat a damunt jBoss (" +
-					"usuari=" + usuari + ", " +
-					"contrasenya=********)");
-			jerseyClient.resource(getUrlAmbMetode("getRespuesta")).get(String.class);
-			Form form = new Form();
-			form.putSingle("j_username", usuari);
-			form.putSingle("j_password", contrasenya);
-			jerseyClient.
-			resource(urlBase + "/j_security_check").
-			type("application/x-www-form-urlencoded").
-			post(form);
+		if (usuari != null) {
+			if (basicAuth) {
+				logger.debug(
+						"Autenticant REST amb autenticació de tipus HTTP basic (" +
+								"usuari=" + usuari + ", " +
+								"contrasenya=********)");
+				jerseyClient.addFilter(
+						new HTTPBasicAuthFilter(usuari, contrasenya));
+			} else {
+				logger.debug(
+						"Autenticant client REST per a fer peticions cap a servei desplegat a damunt jBoss (" +
+								"usuari=" + usuari + ", " +
+								"contrasenya=********)");
+				jerseyClient.resource(getUrlAmbMetode("getRespuesta")).get(String.class);
+				Form form = new Form();
+				form.putSingle("j_username", usuari);
+				form.putSingle("j_password", contrasenya);
+				jerseyClient.
+						resource(urlBase + "/j_security_check").
+						type("application/x-www-form-urlencoded").
+						post(form);
+			}
 		}
 		//jerseyClient.addFilter(new LoggingFilter(System.out));
 		mapper = new ObjectMapper();

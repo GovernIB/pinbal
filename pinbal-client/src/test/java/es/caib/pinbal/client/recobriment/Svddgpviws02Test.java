@@ -29,7 +29,7 @@ import static org.junit.Assert.assertNotNull;
  */
 public class Svddgpviws02Test {
 
-	private static final String URL_BASE = "http://localhost:8080/pinbal";
+	private static final String URL_BASE = "http://localhost:8180/pinbalapi";
 	private static final String USUARI = "user";
 	private static final String CONTRASENYA = "passwd";
 	private static final String ENTITAT_CIF = "B07167448";
@@ -41,7 +41,7 @@ public class Svddgpviws02Test {
 	private static final boolean ENABLE_LOGGING = false;
 	private static final boolean IS_JBOSS = true;
 
-	private ClientSvddgpviws02 client = new ClientSvddgpviws02(URL_BASE, USUARI, CONTRASENYA, !IS_JBOSS, null, null);
+	private ClientSvddgpviws02 client = new ClientSvddgpviws02(URL_BASE, USUARI, CONTRASENYA, IS_JBOSS, null, null);
 
 	@Test
 	public void peticionSincrona() throws UniformInterfaceException, ClientHandlerException, IOException {

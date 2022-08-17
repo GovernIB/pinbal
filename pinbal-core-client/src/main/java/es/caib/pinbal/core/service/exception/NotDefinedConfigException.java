@@ -9,8 +9,10 @@ package es.caib.pinbal.core.service.exception;
  * 
  * @author Limit Tecnologies <limit@limit.es>
  */
+@SuppressWarnings("serial")
 public class NotDefinedConfigException extends RuntimeException {
 
+	@SuppressWarnings("unused")
 	private String message;
 
 	public NotDefinedConfigException(String key) {

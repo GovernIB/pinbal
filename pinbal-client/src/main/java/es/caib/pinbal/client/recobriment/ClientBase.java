@@ -37,7 +37,7 @@ import lombok.Setter;
  */
 public abstract class ClientBase extends es.caib.pinbal.client.comu.ClientBase {
 
-	private static final String BASE_URL_SUFIX = "/api/recobriment/";
+	private static final String BASE_URL_SUFIX = "/interna/recobriment/";
 
 	protected ClientBase(
 			String urlBase,

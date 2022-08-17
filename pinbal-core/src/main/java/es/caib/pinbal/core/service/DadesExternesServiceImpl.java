@@ -6,11 +6,11 @@ package es.caib.pinbal.core.service;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-import es.caib.pinbal.core.helper.ConfigHelper;
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import es.caib.pinbal.core.helper.ConfigHelper;
 import lombok.extern.slf4j.Slf4j;
 
 /**

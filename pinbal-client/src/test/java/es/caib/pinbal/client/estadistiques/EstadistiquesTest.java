@@ -26,11 +26,11 @@ import es.caib.pinbal.client.estadistica.ClientEstadistica;
  */
 public class EstadistiquesTest {
 
-	private static final String URL_BASE = "http://localhost:8080/pinbal";
+	private static final String URL_BASE = "http://localhost:8180/pinbalapi";
 	private static final String USUARI = "pblrep";
 	private static final String CONTRASENYA = "pblrep";
 
-	private ClientEstadistica client = new ClientEstadistica(URL_BASE, USUARI, CONTRASENYA, false, null, null);
+	private ClientEstadistica client = new ClientEstadistica(URL_BASE, USUARI, CONTRASENYA, true, null, null);
 
 	@Test
 	public void carrega() throws IOException {

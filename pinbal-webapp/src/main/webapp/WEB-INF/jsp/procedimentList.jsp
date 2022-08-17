@@ -23,12 +23,17 @@
 	<script src="<c:url value="/js/webutil.datatable.js"/>"></script>
 	<script src="<c:url value="/js/webutil.common.js"/>"></script>
 <script>
-	var organsGestors = [];
-	organsGestors.push({id:"", text:"", actiu:true});
-	<c:forEach items="${organsGestors}" var="organGestor">
-	organsGestors.push({id:"${organGestor.id}", text:"${organGestor.codiINom}", actiu:${organGestor.actiu}});
-	</c:forEach>
-
+var organsGestorsActiu = [];
+<c:forEach items="${organsGestors}" var="organGestor">
+organsGestorsActiu["${organGestor.id}"] = ${organGestor.actiu};
+</c:forEach>
+function formatState(organ) {
+	if (!organ.id) {
+		return organ.text;
+	} else {
+		return organsGestorsActiu[organ.id] ? organ.text : $('<span title="<spring:message code="organgestor.list.extingit"/>">' + organ.text + ' <span class="fa fa-exclamation-triangle text-danger"></span></span>');
+	}
+}
 $(document).ready(function() {
 	$('#netejar-filtre').click(function() {
 		$(':input', $('#form-filtre')).each (function() {
@@ -102,7 +107,6 @@ $(document).ready(function() {
 		],
 		initComplete: function( settings, json ) {}
 	});
-	formatOrgansSelect($('#organGestorId'), organsGestors, "<spring:message code="organgestor.list.extingit"/>")
 });
 </script>
 
@@ -131,7 +135,8 @@ $(document).ready(function() {
 					optionValueAttribute="id"
 					optionTextAttribute="codiINom"
 					required="true"
-					optionMinimumResultsForSearch="5"/>
+					optionMinimumResultsForSearch="5"
+					formatResult="formatState"/>
 			</div>
 		</div>
 		<div class="row">

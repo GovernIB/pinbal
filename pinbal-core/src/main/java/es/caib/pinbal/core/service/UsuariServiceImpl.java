@@ -498,7 +498,31 @@ public class UsuariServiceImpl implements UsuariService {
 			String[] rols = new String[auth.getAuthorities().size()];
 			int index = 0;
 			for (GrantedAuthority grantedAuthority: auth.getAuthorities()) {
-				rols[index++] = grantedAuthority.getAuthority();
+				switch (grantedAuthority.getAuthority()) {
+				case "ROLE_ADMIN":
+					rols[index++] = "PBL_ADMIN";
+					break;
+				case "ROLE_REPRES":
+					rols[index++] = "PBL_REPRES";
+					break;
+				case "ROLE_DELEG":
+					rols[index++] = "PBL_DELEG";
+					break;
+				case "ROLE_AUDIT":
+					rols[index++] = "PBL_AUDIT";
+					break;
+				case "ROLE_SUPERAUD":
+					rols[index++] = "PBL_SUPERAUD";
+					break;
+				case "ROLE_WS":
+					rols[index++] = "PBL_WS";
+					break;
+				case "ROLE_REPORT":
+					rols[index++] = "PBL_REPORT";
+					break;
+				default:
+					rols[index++] = grantedAuthority.getAuthority();
+				}
 			}
 			dto.setRols(rols);
 		}

@@ -87,6 +87,7 @@
 	<![endif]-->
 	<script src="<c:url value="/webjars/bootstrap/3.3.6/js/bootstrap.min.js"/>"></script>
 	<script src="<c:url value="/webjars/font-awesome/5.13.1/js/all.min.js"/>"></script>
+	<script src="<c:url value="/js/webutil.modal.js"/>"></script>
 	<decorator:head />
 <style>
 body {
@@ -178,10 +179,47 @@ body {
 							</a>
 							<ul class="dropdown-menu">
 								<li>
-									<a href="<c:url value="/usuari/configuracio"/>">
-										<span class="fa fa-download"></span> <spring:message code="decorator.menu.configuracio.user"/>
+									<a href="<c:url value="/usuari/configuracio"/>" data-toggle="modal">
+										<span class="fa fa-cog"></span> <spring:message code="decorator.menu.configuracio.user"/>
 									</a>
 								</li>
+								<c:choose>
+									<c:when test="${isRolActualAdministrador}">
+										<li>
+											<a href="https://github.com/GovernIB/pinbal/raw/pinbal-1.4/doc/pdf/01_pinbal_usuari_admin.pdf" target="_blank">
+												<span class="fa fa-file"></span> <spring:message code="decorator.menu.manual.admin"/>
+											</a>
+										</li>
+									</c:when>
+									<c:when test="${isRolActualRepresentant}">
+										<li>
+											<a href="https://github.com/GovernIB/pinbal/raw/pinbal-1.4/doc/pdf/02_pinbal_usuari_representant.pdf" target="_blank">
+												<span class="fa fa-file"></span> <spring:message code="decorator.menu.manual.representant"/>
+											</a>
+										</li>
+									</c:when>
+									<c:when test="${isRolActualDelegat}">
+										<li>
+											<a href="https://github.com/GovernIB/pinbal/raw/pinbal-1.4/doc/pdf/03_pinbal_usuari_delegat.pdf" target="_blank">
+												<span class="fa fa-file"></span> <spring:message code="decorator.menu.manual.delegat"/>
+											</a>
+										</li>
+									</c:when>
+									<c:when test="${isRolActualAuditor}">
+										<li>
+											<a href="https://github.com/GovernIB/pinbal/raw/pinbal-1.4/doc/pdf/04_pinbal_usuari_auditor.pdf" target="_blank">
+												<span class="fa fa-file"></span> <spring:message code="decorator.menu.manual.auditor"/>
+											</a>
+										</li>
+									</c:when>
+									<c:when test="${isRolActualSuperauditor}">
+										<li>
+											<a href="https://github.com/GovernIB/pinbal/raw/pinbal-1.4/doc/pdf/05_pinbal_usuari_superauditor.pdf" target="_blank">
+												<span class="fa fa-file"></span> <spring:message code="decorator.menu.manual.superauditor"/>
+											</a>
+										</li>
+									</c:when>
+								</c:choose>
 								<li>
 									<a href="<c:url value="/usuari/logout"/>">
 										<i class="fa fa-power-off"></i> <spring:message code="decorator.menu.accions.desconectar"/>
@@ -267,7 +305,7 @@ body {
 						<div class="card avisCard ${avis.avisNivell == 'INFO' ? 'avisCardInfo':''} ${avis.avisNivell == 'WARNING' ? 'avisCardWarning':''} ${avis.avisNivell == 'ERROR' ? 'avisCardError':''}">
 							<div data-toggle="collapse" data-target="#collapse${status.index}" class="card-header avisCardHeader">
 								${avis.avisNivell == 'INFO' ? '<span class="fa fa-info-circle text-info"></span>':''} ${avis.avisNivell == 'WARNING' ? '<span class="fa fa-exclamation-triangle text-warning"></span>':''} ${avis.avisNivell == 'ERROR' ? '<span class="fa fa-exclamation-triangle text-danger"></span>':''} ${avis.assumpte}
-							<button class="btn btn-default btn-xs pull-right"><span class="fa fa-chevron-down "></span></button>										
+							<button class="btn btn-default btn-xs pull-right"><span class="fa fa-chevron-down "></span></button>
 							</div>
 							<div id="collapse${status.index}" class="collapse" data-parent="#accordion">
 								<div class="card-body avisCardBody" >${avis.missatge}</div>
@@ -283,9 +321,7 @@ body {
 				</h2>
 			</div>
 			<div class="panel-body">
-				<div id="contingut-missatges">
-					<jsp:include page="../import/alerts.jsp"/>
-				</div>
+				<div id="contingut-missatges"><pbl:missatges/></div>
 				<decorator:body />
 			</div>
 		</div>

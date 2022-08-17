@@ -15,6 +15,7 @@ import org.springframework.web.servlet.support.RequestContext;
 
 import es.caib.pinbal.webapp.common.AlertHelper;
 import es.caib.pinbal.webapp.helper.AjaxHelper;
+import es.caib.pinbal.webapp.helper.ModalHelper;
 
 /**
  * Controlador base que implementa funcionalitats comunes.
@@ -66,8 +67,92 @@ public class BaseController implements MessageSourceAware {
 			return url;
 		}
 	}
-	
-	
+
+	protected String getModalControllerReturnValueSuccess(
+			HttpServletRequest request,
+			String url,
+			String messageKey) {
+		return getModalControllerReturnValueSuccess(
+				request,
+				url,
+				messageKey,
+				null);
+	}
+	protected String getModalControllerReturnValueSuccess(
+			HttpServletRequest request,
+			String url,
+			String messageKey,
+			Object[] messageArgs) {
+		if (messageKey != null) {
+			AlertHelper.success(
+					request, 
+					getMessage(
+							request, 
+							messageKey,
+							messageArgs));
+		}
+		if (ModalHelper.isModal(request)) {
+			//String redirectionPath = redirectFromModal ? url : "";
+			return modalUrlTancar();
+		} else {
+			return url;
+		}
+	}
+
+	protected String getModalControllerReturnValueWarning(
+			HttpServletRequest request,
+			String url,
+			String messageKey,
+			Object[] messageArgs) {
+		if (messageKey != null) {
+			AlertHelper.warning(
+					request, 
+					getMessage(
+							request, 
+							messageKey,
+							messageArgs));
+		}
+		if (ModalHelper.isModal(request)) {
+			//String redirectionPath = redirectFromModal ? url : "";
+			return modalUrlTancar();
+		} else {
+			return url;
+		}
+	}
+
+	protected String getModalControllerReturnValueError(
+			HttpServletRequest request,
+			String url,
+			String messageKey) {
+		return getModalControllerReturnValueError(
+				request,
+				url,
+				messageKey,
+				null);
+	}
+	protected String getModalControllerReturnValueError(
+			HttpServletRequest request,
+			String url,
+			String messageKey,
+			Object[] messageArgs) {
+		if (messageKey != null) {
+			AlertHelper.error(
+					request, 
+					getMessage(
+							request, 
+							messageKey,
+							messageArgs));
+		}
+		if (ModalHelper.isModal(request)) {
+			return modalUrlTancar();
+		} else {
+			return url;
+		}
+	}
+
+	protected String modalUrlTancar() {
+		return "redirect:" + ModalHelper.ACCIO_MODAL_TANCAR;
+	}
 
 	protected void writeFileToResponse(
 			String fileName,

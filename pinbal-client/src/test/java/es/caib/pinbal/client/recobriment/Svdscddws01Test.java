@@ -31,14 +31,14 @@ import es.caib.pinbal.client.recobriment.svdscddws01.ClientSvdscddws01.Solicitud
  */
 public class Svdscddws01Test {
 
-//	private static final String URL_BASE = "http://localhost:8080/pinbal";
+//	private static final String URL_BASE = "http://localhost:8080/pinbalapi";
 //	private static final String USUARI = "user";
 //	private static final String CONTRASENYA = "passwd";
 //	private static final String ENTITAT_CIF = "B07167448";
 //	private static final String CODIGO_PROCEDIMIENTO = "ProvaConcepte";
 //	private static final String PETICION_SCSP_ID = "PBL0000000001292";
 	private static final String ENTITAT_CIF = "S0711001H";
-	private static final String URL_BASE = "https://proves.caib.es/pinbal";
+	private static final String URL_BASE = "https://proves.caib.es/pinbalapi";
 	private static final String USUARI = "xxxxx";
 	private static final String CONTRASENYA = "xxxxx";
 	private static final String CODIGO_PROCEDIMIENTO = "CODSVDR_GBA_20121107";

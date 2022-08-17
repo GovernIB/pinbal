@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>es.caib.pinbal</groupId>
 		<artifactId>pinbal</artifactId>
-		<version>1.4.31</version>
+		<version>1.4.32</version>
 	</parent>
 	<artifactId>pinbal-ear</artifactId>
 	<packaging>ear</packaging>
@@ -49,7 +49,13 @@
 		</dependency>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
-			<artifactId>pinbal-api</artifactId>
+			<artifactId>pinbal-api-interna</artifactId>
+			<version>${project.version}</version>
+			<type>war</type>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>pinbal-api-externa</artifactId>
 			<version>${project.version}</version>
 			<type>war</type>
 		</dependency>
@@ -80,9 +86,15 @@
 								</webModule>
 								<webModule>
 									<groupId>${project.groupId}</groupId>
-									<artifactId>pinbal-api</artifactId>
-									<contextRoot>/pinbalapi</contextRoot>
-									<bundleFileName>pinbal-api.war</bundleFileName>
+									<artifactId>pinbal-api-interna</artifactId>
+									<contextRoot>/pinbalapi/interna</contextRoot>
+									<bundleFileName>pinbal-api-interna.war</bundleFileName>
+								</webModule>
+								<webModule>
+									<groupId>${project.groupId}</groupId>
+									<artifactId>pinbal-api-externa</artifactId>
+									<contextRoot>/pinbalapi/externa</contextRoot>
+									<bundleFileName>pinbal-api-externa.war</bundleFileName>
 								</webModule>
 							</modules>
 						</configuration>
@@ -137,9 +149,15 @@
 						</webModule>
 						<webModule>
 							<groupId>${project.groupId}</groupId>
-							<artifactId>pinbal-api</artifactId>
-							<contextRoot>/pinbalapi</contextRoot>
-							<bundleFileName>pinbal-api.war</bundleFileName>
+							<artifactId>pinbal-api-interna</artifactId>
+							<contextRoot>/pinbalapi/interna</contextRoot>
+							<bundleFileName>pinbal-api-interna.war</bundleFileName>
+						</webModule>
+						<webModule>
+							<groupId>${project.groupId}</groupId>
+							<artifactId>pinbal-api-externa</artifactId>
+							<contextRoot>/pinbalapi/externa</contextRoot>
+							<bundleFileName>pinbal-api-externa.war</bundleFileName>
 						</webModule>
 					</modules>
 					<artifactTypeMappings>

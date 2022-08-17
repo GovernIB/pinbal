@@ -16,7 +16,6 @@ import es.caib.pinbal.core.dto.IdiomaEnumDto;
 import es.caib.pinbal.core.dto.UsuariDto;
 import es.caib.pinbal.core.service.UsuariService;
 import es.caib.pinbal.webapp.command.UsuariCommand;
-import es.caib.pinbal.webapp.common.AlertHelper;
 import es.caib.pinbal.webapp.helper.EnumHelper;
 /**
  * Controlador per al manteniment de usuaris.
@@ -69,12 +68,10 @@ public class UsuariController extends BaseController{
 			return "usuariForm";
 		}
 		usuariService.updateUsuariActual(UsuariCommand.asDto(command));
-		AlertHelper.success(
-				request, 
-				getMessage(
-						request, 
-						"usuari.controller.modificat.ok"));
-		return "redirect:/";
+		return getModalControllerReturnValueSuccess(
+				request,
+				"redirect:/",
+				"usuari.controller.modificat.ok");
 	}
 
 }
