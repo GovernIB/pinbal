@@ -26,6 +26,7 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.MessageSource;
 import org.springframework.context.MessageSourceAware;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.acls.domain.PrincipalSid;
@@ -368,6 +369,36 @@ public class HistoricConsultaServiceImpl implements HistoricConsultaService, App
 				false,
 				false,
 				false);
+	}
+
+	@Transactional(readOnly = true)
+	@Override
+	public List<ConsultaDto> findByFiltrePerAuditor(Long entitatId, ConsultaFiltreDto filtre) throws EntitatNotFoundException {
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		log.debug("Cercant les consultes d'auditor per a l'entitat (id=" + entitatId + ")");
+		Entitat entitat = entitatRepository.findOne(entitatId);
+		if (entitat == null) {
+			log.debug("No s'ha trobat l'entitat (id=" + entitatId + ")");
+			throw new EntitatNotFoundException();
+		}
+		EntitatUsuari entitatUsuari = entitatUsuariRepository.findByEntitatIdAndUsuariCodi(
+				entitat.getId(),
+				auth.getName());
+		if (entitatUsuari == null || !entitatUsuari.isAuditor()) {
+			log.debug("Aquest usuari no té permisos per auditar l'entitat (id=" + entitatId + ", usuariCodi=" + auth.getName() + ")");
+			throw new EntitatNotFoundException();
+		}
+		copiarPropertiesToDb();
+		Page<ConsultaDto> page =  findByEntitatIUsuariFiltrePaginat(
+				entitat,
+				null,
+				filtre,
+				new PageRequest(0, Integer.MAX_VALUE, new Sort(new Sort.Order(Sort.Direction.DESC, "scspPeticionId"))),
+				false,
+				false,
+				false,
+				false);
+		return page.getContent();
 	}
 
 	@Transactional(readOnly = true)

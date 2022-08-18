@@ -153,6 +153,78 @@ public class AuditorController extends BaseController {
 		cols.get(5).setData("serveiDescripcio");
 		return new ServerSideResponse<ConsultaDto, Long>(serverSideRequest, page);
 	}
+
+	@RequestMapping(value = "/excelConsultes", method = RequestMethod.GET)
+	public String excelConsultes(
+			HttpServletRequest request,
+			Model model) throws EntitatNotFoundException {
+
+		EntitatDto entitat = EntitatHelper.getEntitatActual(request, entitatService);
+		if (entitat == null) {
+			throw new EntitatNotFoundException();
+		}
+
+		ConsultaFiltreCommand command = (ConsultaFiltreCommand)RequestSessionHelper.obtenirObjecteSessio(
+				request,
+				SESSION_ATTRIBUTE_FILTRE);
+		if (command == null) {
+			command = new ConsultaFiltreCommand();
+			command.filtrarDarrersMesos(isHistoric(request) ? 9 : 3);
+		} else {
+			command.updateDefaultDataInici(isHistoric(request));
+		}
+
+		List<ConsultaDto> llistat;
+		if (isHistoric(request)) {
+			llistat = historicConsultaService.findByFiltrePerAuditor(
+					entitat.getId(),
+					ConsultaFiltreCommand.asDto(command));
+		} else {
+			llistat = consultaService.findByFiltrePerAuditor(
+					entitat.getId(),
+					ConsultaFiltreCommand.asDto(command));
+		}
+
+		model.addAttribute("consultes", llistat);
+
+		return "auditorGenerarExcelView";
+	}
+
+	@RequestMapping(value = "/csvConsultes", method = RequestMethod.GET)
+	public String csvConsultes(
+			HttpServletRequest request,
+			Model model) throws EntitatNotFoundException {
+
+		EntitatDto entitat = EntitatHelper.getEntitatActual(request, entitatService);
+		if (entitat == null) {
+			throw new EntitatNotFoundException();
+		}
+
+		ConsultaFiltreCommand command = (ConsultaFiltreCommand)RequestSessionHelper.obtenirObjecteSessio(
+				request,
+				SESSION_ATTRIBUTE_FILTRE);
+		if (command == null) {
+			command = new ConsultaFiltreCommand();
+			command.filtrarDarrersMesos(isHistoric(request) ? 9 : 3);
+		} else {
+			command.updateDefaultDataInici(isHistoric(request));
+		}
+
+		List<ConsultaDto> llistat;
+		if (isHistoric(request)) {
+			llistat = historicConsultaService.findByFiltrePerAuditor(
+					entitat.getId(),
+					ConsultaFiltreCommand.asDto(command));
+		} else {
+			llistat = consultaService.findByFiltrePerAuditor(
+					entitat.getId(),
+					ConsultaFiltreCommand.asDto(command));
+		}
+
+		model.addAttribute("consultes", llistat);
+
+		return "auditorGenerarCsvView";
+	}
 	
 	@RequestMapping(value = "/serveisPerProcediment/{procedimentId}", method = RequestMethod.GET)
 	public String serveisPerProcediment(

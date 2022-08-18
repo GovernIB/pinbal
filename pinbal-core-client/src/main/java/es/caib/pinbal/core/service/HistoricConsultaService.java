@@ -8,6 +8,7 @@ import es.caib.pinbal.core.dto.*;
 import es.caib.pinbal.core.service.exception.*;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.access.prepost.PreAuthorize;
 
 import java.util.Date;
@@ -168,6 +169,9 @@ public interface HistoricConsultaService {
             Long entitatId,
             ConsultaFiltreDto filtre,
             Pageable pageable) throws EntitatNotFoundException;
+
+	@PreAuthorize("hasRole('ROLE_AUDIT')")
+	List<ConsultaDto> findByFiltrePerAuditor(Long entitatId, ConsultaFiltreDto filtre) throws EntitatNotFoundException;
 
 	/**
 	 * Retorna una pàgina de les consultes realitzades donada una entitat.
@@ -420,4 +424,5 @@ public interface HistoricConsultaService {
 	 * Tasca automàtica per a arxivar les consultes antigues
 	 */
     public void arxivarConsultesAntigues();
+
 }

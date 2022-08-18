@@ -21,6 +21,7 @@
 
 	<bean name="estadistiquesExcelView" class="es.caib.pinbal.webapp.view.EstadistiquesExcelView"/>
 	<bean name="auditorGenerarExcelView" class="es.caib.pinbal.webapp.view.AuditorGenerarExcelView"/>
+	<bean name="auditorGenerarCsvView" class="es.caib.pinbal.webapp.view.AuditorGenerarCsvView"/>
 	<bean name="peticioMultiplePlantillaExcelView" class="es.caib.pinbal.webapp.view.PeticioMultiplePlantillaExcelView"/>
 	<bean name="peticioMultiplePlantillaCsvView" class="es.caib.pinbal.webapp.view.PeticioMultiplePlantillaCsvView"/>
 	<bean name="peticioMultiplePlantillaOdsView" class="es.caib.pinbal.webapp.view.PeticioMultiplePlantillaOdsView"/>
@@ -29,7 +30,7 @@
 	<bean name="informeServeisExcelView" class="es.caib.pinbal.webapp.view.InformeServeisExcelView"/>
 	<bean name="informeGeneralEstatExcelView" class="es.caib.pinbal.webapp.view.InformeGeneralEstatExcelView"/>
 	<bean name="informeUsrEntOrgProcServExcelView" class="es.caib.pinbal.webapp.view.InformeUsrEntOrgProcServExcelView"/>
-	
+
 	<!-- TOMCAT: <mvc:resources mapping="/webjars/**" location="classpath:/META-INF/resources/webjars/"/> -->
 	<!-- JBOSS: <mvc:resources mapping="/webjars/**" location="/META-INF/resources/webjars/"/> -->
 	<mvc:resources mapping="/webjars/**" location="${webjars.classpath}/META-INF/resources/webjars/"/>

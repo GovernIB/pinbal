@@ -14,6 +14,7 @@ import javax.interceptor.Interceptors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.ejb.interceptor.SpringBeanAutowiringInterceptor;
 
 import es.caib.pinbal.client.dadesobertes.DadesObertesRespostaConsulta;
@@ -211,7 +212,13 @@ public class ConsultaServiceBean implements ConsultaService {
 				pageable);
 	}
 
-	@Override
+    @Override
+	@RolesAllowed("PBL_AUDIT")
+    public List<ConsultaDto> findByFiltrePerAuditor(Long entitatId, ConsultaFiltreDto filtre) throws EntitatNotFoundException {
+        return delegate.findByFiltrePerAuditor(entitatId, filtre);
+    }
+
+    @Override
 	@RolesAllowed("PBL_SUPERAUD")
 	public Page<ConsultaDto> findByFiltrePaginatPerSuperauditor(
 			Long entitatId,
