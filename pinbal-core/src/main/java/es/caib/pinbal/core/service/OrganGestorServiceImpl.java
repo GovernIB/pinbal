@@ -15,7 +15,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import es.caib.pinbal.core.dto.OrganGestorDto;
-import es.caib.pinbal.core.dto.OrganGestorEstatEnumDto;
 import es.caib.pinbal.core.helper.DtoMappingHelper;
 import es.caib.pinbal.core.model.Entitat;
 import es.caib.pinbal.core.model.OrganGestor;
@@ -58,6 +57,13 @@ public class OrganGestorServiceImpl implements OrganGestorService {
 		log.debug("Consulta dels òrgans d'una entitat (entitatId=" + entitatId + ")");
 		Entitat entitat = entitatRepository.findOne(entitatId);
 		List<OrganGestor> organs = entitat.getOrganGestors();
+		return dtoMappingHelper.convertirList(organs, OrganGestorDto.class);
+	}
+
+	@Override
+	public List<OrganGestorDto> findActivesByEntitat(Long entitatId) {
+		log.debug("Consulta dels òrgans actius d'una entitat (entitatId=" + entitatId + ")");
+		List<OrganGestor> organs = organGestorRepository.findByEntitatIdAndActiuIsTrue(entitatId);
 		return dtoMappingHelper.convertirList(organs, OrganGestorDto.class);
 	}
 

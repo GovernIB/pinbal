@@ -48,6 +48,16 @@ public interface OrganGestorService {
 	public List<OrganGestorDto> findByEntitat(Long entitatId);
 
 	/**
+	 * Obté una llista amb tots els organs gestors actius de l'entitat especificada per
+	 * paràmetre.
+	 *
+	 * @param entitatId Id de l'entitat.
+	 * @return Llistat dels organs gestors de l'entitat
+	 */
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_REPRES')")
+	public List<OrganGestorDto> findActivesByEntitat(Long entitatId);
+
+	/**
 	 * Obté una llista amb tots els organs gestors de l'entitat especificada per
 	 * paràmetre amb el filtre donat.
 	 * 
