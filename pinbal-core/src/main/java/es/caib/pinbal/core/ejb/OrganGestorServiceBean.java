@@ -6,6 +6,7 @@ import javax.annotation.security.RolesAllowed;
 import javax.ejb.Stateless;
 import javax.interceptor.Interceptors;
 
+import es.caib.pinbal.core.dto.OrganGestorEstatEnum;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -60,7 +61,7 @@ public class OrganGestorServiceBean implements OrganGestorService {
 			String filtreCodi,
 			String filtreNom,
 			String pareCodi,
-			OrganGestorEstatEnumDto filtreEstat,
+			OrganGestorEstatEnum filtreEstat,
 			Pageable pageable) {
 		return delegate.findPageOrgansGestorsAmbFiltrePaginat(entitatId, filtreCodi, filtreNom, pareCodi, filtreEstat, pageable);
 	}

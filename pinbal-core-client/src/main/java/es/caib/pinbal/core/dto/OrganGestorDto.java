@@ -26,6 +26,7 @@ public class OrganGestorDto extends AbstractIdentificable<Long> implements Seria
 	private String pareNom;
 	private String entitatNom;
 	private boolean actiu;
+	private OrganGestorEstatEnum estat;
 
 	public String getCodiINom() {
 		return codi + " - " + nom;

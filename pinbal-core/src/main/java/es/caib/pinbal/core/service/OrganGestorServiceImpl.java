@@ -6,6 +6,7 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
+import es.caib.pinbal.core.dto.OrganGestorEstatEnum;
 import es.caib.pinbal.core.helper.PluginHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -86,10 +87,12 @@ public class OrganGestorServiceImpl implements OrganGestorService {
 				organDB.setNom(o.getNom());
 				organDB.setPare(organGestorRepository.findByCodiAndEntitat(o.getPareCodi(), entitat));
 				organDB.setActiu(true);
+				organDB.setEstat(o.getEstat());
 				organGestorRepository.save(organDB);
 			} else { // update it
 				organDB.setNom(o.getNom());
 				organDB.setActiu(true);
+				organDB.setEstat(o.getEstat());
 				organDB.setPare(organGestorRepository.findByCodiAndEntitat(o.getPareCodi(), entitat));
 			}
 			organismesDIR3.add(organDB);
@@ -100,6 +103,7 @@ public class OrganGestorServiceImpl implements OrganGestorService {
 		organismesNotInDIR3.removeAll(organismesDIR3);
 		for (OrganGestor o : organismesNotInDIR3) {
 			o.setActiu(false);
+			o.setEstat(OrganGestorEstatEnum.E);
 		}
 		return true;
 	}
@@ -111,7 +115,7 @@ public class OrganGestorServiceImpl implements OrganGestorService {
 			String filtreCodi,
 			String filtreNom,
 			String filtrePareCodi,
-			OrganGestorEstatEnumDto filtreEstat,
+			OrganGestorEstatEnum filtreEstat,
 			Pageable pageable) {
 		log.debug("Consulta pafinada i amb filtre dels òrgans d'una entitat (" +
 				"entitatId=" + entitatId + ", " +
@@ -130,7 +134,7 @@ public class OrganGestorServiceImpl implements OrganGestorService {
 				filtrePareCodi == null || filtrePareCodi.length() == 0,
 				filtrePareCodi,
 				filtreEstat == null,
-				filtreEstat == OrganGestorEstatEnumDto.VIGENT ? true : false,
+				filtreEstat,
 				pageable);
 		return dtoMappingHelper.pageEntities2pageDto(organs, OrganGestorDto.class, pageable);
 	}
@@ -149,9 +153,22 @@ public class OrganGestorServiceImpl implements OrganGestorService {
 		organisme.setCodi(arrel.getCodi());
 		organisme.setNom(arrel.getDenominacio());
 		organisme.setPareCodi(null);
+		organisme.setEstat(getEstat(arrel.getEstat()));
 		organismes.add(organisme);
 		findOrganismesFills(arrel, organismes);
 		return organismes;
+	}
+
+	private OrganGestorEstatEnum getEstat(String descripcioEstat) {
+		if (descripcioEstat == null || descripcioEstat.trim().isEmpty())
+			return null;
+		switch (descripcioEstat.substring(0, 1).toUpperCase()) {
+			case "V": return OrganGestorEstatEnum.V;
+			case "E": return OrganGestorEstatEnum.E;
+			case "A": return OrganGestorEstatEnum.A;
+			case "T": return OrganGestorEstatEnum.T;
+			default: return null;
+		}
 	}
 
 	private void findOrganismesFills(NodeDir3 root, List<OrganGestorDto> organismes) {

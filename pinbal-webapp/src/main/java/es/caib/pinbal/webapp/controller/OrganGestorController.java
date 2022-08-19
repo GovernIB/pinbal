@@ -8,6 +8,7 @@ import java.lang.reflect.InvocationTargetException;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
+import es.caib.pinbal.core.dto.OrganGestorEstatEnum;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
@@ -146,7 +147,7 @@ public class OrganGestorController extends BaseController {
 			command = RolHelper.isRolActualAdministrador(request) ?
 					new OrganGestorFiltreCommand(entitatService.findTopByTipus(EntitatTipusDto.GOVERN).getId()) :
 					new OrganGestorFiltreCommand(null);
-			command.setEstat(OrganGestorEstatEnumDto.VIGENT);
+			command.setEstat(OrganGestorEstatEnum.V);
 		} else {
 			command.eliminarEspaisCampsCerca();
 		}
