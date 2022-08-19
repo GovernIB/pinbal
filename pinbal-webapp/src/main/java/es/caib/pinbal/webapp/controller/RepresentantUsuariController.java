@@ -14,6 +14,7 @@ import javax.naming.NamingException;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
+import es.caib.pinbal.core.dto.UsuariEstatEnum;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -192,6 +193,14 @@ public class RepresentantUsuariController extends BaseController {
 				} else if (command.getRol() == RolEnumDto.DELEGAT && !entitatUsuari.isDelegat()) {
 					eliminar = true;
 				} else if (command.getRol() == RolEnumDto.APLICACIO && !entitatUsuari.isAplicacio()) {
+					eliminar = true;
+				}
+			}
+
+			if (command.getActiu() != null) {
+				if (UsuariEstatEnum.ACTIU.equals(command.getActiu()) && !entitatUsuari.isActiu()) {
+					eliminar = true;
+				} else if (UsuariEstatEnum.INACTIU.equals(command.getActiu()) && entitatUsuari.isActiu()) {
 					eliminar = true;
 				}
 			}

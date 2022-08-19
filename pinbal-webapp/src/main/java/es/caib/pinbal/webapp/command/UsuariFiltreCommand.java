@@ -3,6 +3,9 @@
  */
 package es.caib.pinbal.webapp.command;
 
+import es.caib.pinbal.core.dto.UsuariEstatEnum;
+import lombok.Getter;
+import lombok.Setter;
 import org.apache.commons.lang.builder.ToStringBuilder;
 
 import es.caib.pinbal.core.dto.EntitatDto;
@@ -13,6 +16,7 @@ import es.caib.pinbal.core.dto.RolEnumDto;
  * 
  * @author Limit Tecnologies <limit@limit.es>
  */
+@Getter @Setter
 public class UsuariFiltreCommand {
 
 	private String codi;
@@ -29,6 +33,8 @@ public class UsuariFiltreCommand {
 	
 	private EntitatDto entitat = null;
 
+	private UsuariEstatEnum actiu = UsuariEstatEnum.ACTIU;
+
 	// Elimina els espais en els camps de cerca
 	public void eliminarEspaisCampsCerca() {
 		this.codi = eliminarEspais(this.codi);
@@ -37,12 +43,6 @@ public class UsuariFiltreCommand {
 		this.departament = eliminarEspais(this.departament);
 	}
 
-	public RolEnumDto getRol() {
-		return rol;
-	}
-	public void setRol(RolEnumDto rol) {
-		this.rol = rol;
-	}
 	public Boolean getIsRepresentant() {
 		return isRepresentant;
 	}
@@ -66,36 +66,6 @@ public class UsuariFiltreCommand {
 	}
 	public void setIsAplicacio(Boolean isAplicacio) {
 		this.isAplicacio = isAplicacio;
-	}
-	public String getCodi() {
-		return codi;
-	}
-	public void setCodi(String codi) {
-		this.codi = codi;
-	}
-	public String getNif() {
-		return nif;
-	}
-	public void setNif(String nif) {
-		this.nif = nif;
-	}
-	public String getNom() {
-		return nom;
-	}
-	public void setNom(String nom) {
-		this.nom = nom;
-	}
-	public String getDepartament() {
-		return departament;
-	}
-	public void setDepartament(String departament) {
-		this.departament = departament;
-	}
-	public EntitatDto getEntitat() {
-		return entitat;
-	}
-	public void setEntitat(EntitatDto entitat) {
-		this.entitat = entitat;
 	}
 
 	@Override

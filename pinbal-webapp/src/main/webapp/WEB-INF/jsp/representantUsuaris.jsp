@@ -326,24 +326,29 @@ function canviActiu(usuariCodi) {
 		 	<div class="col-md-2">
 		 		<pbl:inputText name="codi" inline="true" placeholderKey="representant.usuaris.filtre.camp.codi" />
 		 	</div>
-			<div class="col-md-2">
+			<div class="col-md-4">
 				<pbl:inputText name="nom" inline="true" placeholderKey="representant.usuaris.filtre.camp.nom" />
 			</div>	
 		 	<div class="col-md-2">
 		 		<pbl:inputText name="nif" inline="true" placeholderKey="representant.usuaris.filtre.camp.nif" />
 			</div>
-			<div class="col-md-2">
+			<div class="col-md-4">
 				<pbl:inputText name="departament" inline="true" placeholderKey="representant.usuaris.filtre.camp.departament"/>
 			</div>
+		</div>
+		<div class="row">
 			<div class="col-md-2">
 				<pbl:inputSelect
-					name="rol"
-					emptyOption="true"
-					inline="true"
-					optionEnum="RolEnumDto"
-					placeholderKey="representant.usuaris.filtre.camp.rol"/>
+						name="rol"
+						emptyOption="true"
+						inline="true"
+						optionEnum="RolEnumDto"
+						placeholderKey="representant.usuaris.filtre.camp.rol"/>
 			</div>
 			<div class="col-md-2">
+				<pbl:inputSelect name="actiu" inline="true" placeholderKey="representant.usuaris.camp.actiu" optionEnum="UsuariEstatEnum" emptyOption="true"/>
+			</div>
+			<div class="col-md-8">
 				<div class="pull-right">
 					<button id="netejar-filtre" class="btn btn-default" type="button"><spring:message code="comu.boto.netejar"/></button>
 					<button type="submit" class="btn btn-primary"><span class="fa fa-filter"></span> <spring:message code="comu.boto.filtrar"/></button>
