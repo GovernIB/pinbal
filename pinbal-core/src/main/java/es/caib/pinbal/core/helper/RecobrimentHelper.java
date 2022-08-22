@@ -281,7 +281,7 @@ public class RecobrimentHelper implements ApplicationContextAware, MessageSource
 
 
 	@SuppressWarnings("incomplete-switch")
-	private List<RecobrimentSolicitudDto> validarIObtenirSolicituds(
+	public List<RecobrimentSolicitudDto> validarIObtenirSolicituds(
 			Peticion peticion,
 			int maxSolicituds) throws ScspException {
 		// Validació dels camps principals de la petició
@@ -388,8 +388,10 @@ public class RecobrimentHelper implements ApplicationContextAware, MessageSource
 			if (solicitante.getFuncionario() == null)
 				throw getErrorValidacio(ERROR_CODE_SCSP_VALIDATION, "No s'ha trobat l'element peticion.solicitudes.solicitudTransmision.datosGenericos.solicitante.funcionario (solicitudIndex=" + index + ")");
 			// Validació del Nif del funcionari
-			if (solicitante.getFuncionario().getNifFuncionario() == null || solicitante.getFuncionario().getNifFuncionario().trim().isEmpty())
+			if (solicitante.getFuncionario().getNifFuncionario() == null)
 				throw getErrorValidacio(ERROR_CODE_SCSP_VALIDATION, "No s'ha trobat l'element peticion.solicitudes.solicitudTransmision.datosGenericos.solicitante.funcionario.nifFuncionario (solicitudIndex=" + index + ")");
+			if (solicitante.getFuncionario().getNifFuncionario().trim().isEmpty())
+				throw getErrorValidacio(ERROR_CODE_SCSP_VALIDATION, "L'element peticion.solicitudes.solicitudTransmision.datosGenericos.solicitante.funcionario.nifFuncionario (solicitudIndex=" + index + ") no pot ser buit)");
 			if (solicitante.getFuncionario().getNifFuncionario().length() > 10)
 				throw getErrorValidacio(ERROR_CODE_SCSP_VALIDATION, "Camp massa llarg. L'element peticion.solicitudes.solicitudTransmision.datosGenericos.solicitante.funcionario.nifFuncionario (solicitudIndex=" + index + ") no pot superar els 10 caràcters");
 			solicitud.setFuncionariNif(solicitante.getFuncionario().getNifFuncionario());
@@ -398,7 +400,7 @@ public class RecobrimentHelper implements ApplicationContextAware, MessageSource
 				throw getErrorValidacio(ERROR_CODE_SCSP_VALIDATION, "No s'ha trobat l'element peticion.solicitudes.solicitudTransmision.datosGenericos.solicitante.funcionario.nombreCompletoFuncionario (solicitudIndex=" + index + ")");
 			if (solicitante.getFuncionario().getNombreCompletoFuncionario().trim().isEmpty())
 				throw getErrorValidacio(ERROR_CODE_SCSP_VALIDATION, "L'element peticion.solicitudes.solicitudTransmision.datosGenericos.solicitante.funcionario.nombreCompletoFuncionario (solicitudIndex=" + index + ") no pot ser buit");
-			if (solicitante.getFuncionario().getNifFuncionario().length() > 122)
+			if (solicitante.getFuncionario().getNombreCompletoFuncionario().length() > 122)
 				throw getErrorValidacio(ERROR_CODE_SCSP_VALIDATION, "Camp massa llarg. L'element peticion.solicitudes.solicitudTransmision.datosGenericos.solicitante.funcionario.nombreCompletoFuncionario (solicitudIndex=" + index + ") no pot superar els 122 caràcters");
 			solicitud.setFuncionariNom(solicitante.getFuncionario().getNombreCompletoFuncionario());
 
@@ -463,7 +465,7 @@ public class RecobrimentHelper implements ApplicationContextAware, MessageSource
 			}
 			Object datosEspecificos = st.getDatosEspecificos();
 			if (datosEspecificos != null && !(datosEspecificos instanceof Element)) {
-				throw getErrorValidacio(ERROR_CODE_SCSP_VALIDATION, "L'element peticion.solicitudes.solicitudTransmision (solicitudIndex=" + index + ") no és del tipus org.w3c.dom.Element");
+				throw getErrorValidacio(ERROR_CODE_SCSP_VALIDATION, "L'element peticion.solicitudes.solicitudTransmision.datosEspecificos (solicitudIndex=" + index + ") no és del tipus org.w3c.dom.Element");
 			}
 			solicitud.setDadesEspecifiques((Element)st.getDatosEspecificos());
 			solicituds.add(solicitud);
