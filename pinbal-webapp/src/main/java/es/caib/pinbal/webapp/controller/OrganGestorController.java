@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import es.caib.pinbal.core.dto.OrganGestorEstatEnum;
+import es.caib.pinbal.core.dto.PaginacioAmbOrdreDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
@@ -21,7 +22,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import es.caib.pinbal.core.dto.EntitatDto;
 import es.caib.pinbal.core.dto.EntitatDto.EntitatTipusDto;
 import es.caib.pinbal.core.dto.OrganGestorDto;
-import es.caib.pinbal.core.dto.OrganGestorEstatEnumDto;
 import es.caib.pinbal.core.service.EntitatService;
 import es.caib.pinbal.core.service.OrganGestorService;
 import es.caib.pinbal.webapp.command.OrganGestorFiltreCommand;
@@ -90,8 +90,8 @@ public class OrganGestorController extends BaseController {
 				command.getCodi(), 
 				command.getNom(),
 				command.getPareCodi(),
-				command.getEstat(), 
-				serverSideRequest.toPageable());
+				command.getEstat(),
+				ServerSideRequest.getPaginacioDtoFromRequest(request));
 		return new ServerSideResponse<OrganGestorDto, Long>(serverSideRequest, page);
 	}
 

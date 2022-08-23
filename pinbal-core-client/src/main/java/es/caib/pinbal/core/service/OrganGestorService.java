@@ -3,6 +3,7 @@ package es.caib.pinbal.core.service;
 import java.util.List;
 
 import es.caib.pinbal.core.dto.OrganGestorEstatEnum;
+import es.caib.pinbal.core.dto.PaginacioAmbOrdreDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -80,7 +81,7 @@ public interface OrganGestorService {
      * @return La pàgina amb els organs gestors
 	 */
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_REPRES')")
-	public Page<OrganGestorDto> findPageOrgansGestorsAmbFiltrePaginat(Long entitatId, String filtreCodi, String filtreNom, String pareCodi, OrganGestorEstatEnum filtreEstat, Pageable pageable);
+	public Page<OrganGestorDto> findPageOrgansGestorsAmbFiltrePaginat(Long entitatId, String filtreCodi, String filtreNom, String pareCodi, OrganGestorEstatEnum filtreEstat, PaginacioAmbOrdreDto paginacioDto);
 
 	/**
 	 * Actualitza els organs gestors de la base de dades amb els de Dir3
