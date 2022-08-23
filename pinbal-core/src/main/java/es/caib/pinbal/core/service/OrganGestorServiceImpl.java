@@ -1,11 +1,14 @@
 package es.caib.pinbal.core.service;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
 
+import es.caib.pinbal.core.dto.PaginacioAmbOrdreDto;
+import es.caib.pinbal.core.helper.PaginacioHelper;
 import es.caib.pinbal.core.helper.PluginHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -36,6 +39,8 @@ public class OrganGestorServiceImpl implements OrganGestorService {
 
 	@Autowired
 	private PluginHelper pluginHelper;
+	@Resource
+	private PaginacioHelper paginacioHelper;
 
 	@Transactional(readOnly = true)
 	public List<OrganGestorDto> findAll() {
@@ -112,15 +117,20 @@ public class OrganGestorServiceImpl implements OrganGestorService {
 			String filtreNom,
 			String filtrePareCodi,
 			OrganGestorEstatEnumDto filtreEstat,
-			Pageable pageable) {
+			PaginacioAmbOrdreDto paginacioDto) {
 		log.debug("Consulta pafinada i amb filtre dels òrgans d'una entitat (" +
 				"entitatId=" + entitatId + ", " +
 				"filtreCodi=" + filtreCodi + ", " +
 				"filtreNom=" + filtreNom + ", " +
 				"filtrePareCodi=" + filtrePareCodi + ", " +
 				"filtreEstat=" + filtreEstat + ", " +
-				"pageable=" + pageable + ")");
+				"paginacioDto=" + paginacioDto + ")");
 		Entitat entitat = entitatRepository.findOne(entitatId);
+
+		Map<String, String[]> ordenacioMap = new HashMap<String, String[]>();
+		ordenacioMap.put("pareCodiINom", new String[] {"pare.codi"});
+		Pageable pageable = paginacioHelper.toSpringDataPageable(paginacioDto, ordenacioMap);
+
 		Page<OrganGestor> organs = organGestorRepository.findByEntitatAndFiltre(
 				entitat,
 				filtreCodi == null || filtreCodi.length() == 0,

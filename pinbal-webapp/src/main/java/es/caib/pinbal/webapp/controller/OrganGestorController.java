@@ -4,10 +4,13 @@
 package es.caib.pinbal.webapp.controller;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
+import es.caib.pinbal.core.dto.PaginacioAmbOrdreDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
@@ -89,8 +92,8 @@ public class OrganGestorController extends BaseController {
 				command.getCodi(), 
 				command.getNom(),
 				command.getPareCodi(),
-				command.getEstat(), 
-				serverSideRequest.toPageable());
+				command.getEstat(),
+				ServerSideRequest.getPaginacioDtoFromRequest(request));
 		return new ServerSideResponse<OrganGestorDto, Long>(serverSideRequest, page);
 	}
 
