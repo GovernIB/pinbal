@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>es.caib.pinbal</groupId>
 	<artifactId>pinbal-client</artifactId>
-	<version>1.4.33</version>
+	<version>1.4.34</version>
 
 	<properties>
 		<jersey.version>1.19.4</jersey.version>
