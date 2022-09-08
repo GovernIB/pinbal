@@ -156,7 +156,8 @@ public class XmlHelper {
 	public Element crearDadesEspecifiques(
 			Servicio servicio,
 			Map<String, Object> dadesEspecifiques,
-			boolean gestioXsdActiva) throws ConsultaScspGeneracioException {
+			boolean gestioXsdActiva,
+			boolean iniDadesEspecifiques) throws ConsultaScspGeneracioException {
 		try {
 			DocumentBuilderFactory fac = DocumentBuilderFactory.newInstance();
 			fac.setNamespaceAware(true);
@@ -166,7 +167,13 @@ public class XmlHelper {
 					"xmlns",
 					getXmlnsPerDadesEspecifiques(servicio, gestioXsdActiva));
 			if (dadesEspecifiques != null) {
-				for (Node<DadesEspecifiquesNode> node: getArbrePerDadesEspecifiques(servicio, gestioXsdActiva).toList()) {
+				
+				Tree<DadesEspecifiquesNode> arbre = getArbrePerDadesEspecifiques(servicio, gestioXsdActiva);
+				if (iniDadesEspecifiques) {
+					this.inicialitzaElements(doc, datosEspecificos, arbre.getRootElement());
+				}
+				
+				for (Node<DadesEspecifiquesNode> node: arbre.toList()) {
 					String path = node.getData().getPath().substring(1);
 					Object preValor = dadesEspecifiques.get(path);
 					if (preValor instanceof String) {
@@ -246,11 +253,31 @@ public class XmlHelper {
 		}
 	}
 
+	private void inicialitzaElements(
+			Document doc, 
+			Element element, 
+			Node<DadesEspecifiquesNode> source) {
+
+		if (source.getData() != null
+				&& source.getData().getGroupMin() > 0
+				&& source.getData().isComplex()
+				&& source.getData().getGroupType() == DadesEspecifiquesNode.GROUP_TYPE_SCHEMA) {
+			Element nou = doc.createElement(source.getData().getNom());
+			element.appendChild(nou);
+		}
+		if (source.getNumberOfChildren() > 0) {
+			for (Node<DadesEspecifiquesNode> child: source.getChildren()) {
+				inicialitzaElements(doc, element, child);
+			}
+		}
+	}
+
 	public Element copiarDadesEspecifiquesRecobriment(
 			Servicio servicio,
 			Element datosEspecificosRebuts,
-			boolean gestioXsdActiva) throws ConsultaScspGeneracioException  {
-		Element datosEspecificos = crearDadesEspecifiques(servicio, null, gestioXsdActiva);
+			boolean gestioXsdActiva,
+			boolean iniDadesEspecifiques) throws ConsultaScspGeneracioException  {
+		Element datosEspecificos = crearDadesEspecifiques(servicio, null, gestioXsdActiva, iniDadesEspecifiques);
 		NodeList nodes = datosEspecificosRebuts.getChildNodes();
 		for (int i = 0; i < nodes.getLength(); i++) {
 			datosEspecificos.appendChild(

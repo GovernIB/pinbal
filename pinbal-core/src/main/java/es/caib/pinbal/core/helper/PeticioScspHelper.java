@@ -145,16 +145,19 @@ public class PeticioScspHelper {
 				solicituds,
 				recobriment);
 		boolean gestioXsdActiva = isGestioXsdActiva(consulta.getProcedimentServei().getServei());
+		boolean iniDadesEspecifiques = isIniDadesEspecifiques(consulta.getProcedimentServei().getServei());
 		if (sincrona) {
 			return scspHelper.enviarPeticionSincrona(
 					consulta.getScspPeticionId(),
 					solicituds,
-					gestioXsdActiva);
+					gestioXsdActiva,
+					iniDadesEspecifiques);
 		} else {
 			return scspHelper.enviarPeticionAsincrona(
 					consulta.getScspPeticionId(),
 					solicituds,
-					gestioXsdActiva);
+					gestioXsdActiva,
+					iniDadesEspecifiques);
 		}
 	}
 
@@ -326,7 +329,8 @@ public class PeticioScspHelper {
 				scspHelper.copiarDadesEspecifiquesRecobriment(
 						serveiCodi,
 						dadesEspecifiques,
-						isGestioXsdActiva(serveiCodi)));
+						isGestioXsdActiva(serveiCodi),
+						isIniDadesEspecifiques(serveiCodi)));
 		return solicitud;
 	}
 
@@ -453,6 +457,12 @@ public class PeticioScspHelper {
 		ServeiConfig serveiConfig = serveiConfigRepository.findByServei(serveiCodi);
 		return serveiConfig != null && serveiConfig.isActivaGestioXsd();
 	}
+	
+	public boolean isIniDadesEspecifiques(String serveiCodi) {
+		ServeiConfig serveiConfig = serveiConfigRepository.findByServei(serveiCodi);
+		return serveiConfig != null && serveiConfig.isIniDadesEspecifiques();
+	}
+
 
 	private String dadesEspecifiquesToJson(Map<String, Object> dadesEspecifiques) throws IOException {
 		return new ObjectMapper().writeValueAsString(dadesEspecifiques);

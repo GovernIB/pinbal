@@ -118,6 +118,8 @@ public class ServeiCommand {
 	
 	private List<ServeiXsdDto>  fitxersXsd;
 	
+	private boolean pinbalIniDadesExpecifiques = false;
+	
 	public ServeiCommand() {
 		scspFechaAlta = new Date();
 		creacio = false;

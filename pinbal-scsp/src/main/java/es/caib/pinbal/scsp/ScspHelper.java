@@ -120,14 +120,16 @@ public class ScspHelper {
 	public ResultatEnviamentPeticio enviarPeticionSincrona(
 			String idPeticion,
 			List<Solicitud> solicituds,
-			boolean gestioXsdActiva) throws ConsultaScspGeneracioException, ConsultaScspComunicacioException {
+			boolean gestioXsdActiva,
+			boolean iniDadesEspecifiques) throws ConsultaScspGeneracioException, ConsultaScspComunicacioException {
 		LOGGER.debug("Nova petició SCSP (peticionId=" + idPeticion + ")");
 		Peticion peticion = null;
 		try {
 			peticion = crearPeticion(
 					idPeticion,
 					solicituds,
-					gestioXsdActiva);
+					gestioXsdActiva,
+					iniDadesEspecifiques);
 		} catch (Exception ex) {
 			throw new ConsultaScspGeneracioException(idPeticion, ex);
 			/*LOGGER.error("Error al generar nova petició SCSP síncrona (peticionId=" + idPeticion + ")", ex);
@@ -165,14 +167,16 @@ public class ScspHelper {
 	public ResultatEnviamentPeticio enviarPeticionAsincrona(
 			String idPeticion,
 			List<Solicitud> solicituds,
-			boolean gestioXsdActiva) throws ConsultaScspGeneracioException, ConsultaScspComunicacioException {
+			boolean gestioXsdActiva,
+			boolean iniDadesEspecifiques) throws ConsultaScspGeneracioException, ConsultaScspComunicacioException {
 		LOGGER.debug("Nova petició SCSP (peticionId=" + idPeticion + ")");
 		Peticion peticion = null;
 		try {
 			peticion = crearPeticion(
 					idPeticion,
 					solicituds,
-					gestioXsdActiva);
+					gestioXsdActiva,
+					iniDadesEspecifiques);
 		} catch (Exception ex) {
 			throw new ConsultaScspGeneracioException(idPeticion, ex);
 			/*LOGGER.error("Error al generar nova petició SCSP síncrona (peticionId=" + idPeticion + ")", ex);
@@ -388,14 +392,16 @@ public class ScspHelper {
 	public Element copiarDadesEspecifiquesRecobriment(
 			String codigoCertificado,
 			Element dadesEspecifiques,
-			boolean gestioXsdActiva) throws ConsultaScspGeneracioException {
+			boolean gestioXsdActiva,
+			boolean iniDadesEspecifiques) throws ConsultaScspGeneracioException {
 		LOGGER.debug("Copia dades específiques per recobriment (" +
 				"codigoCertificado=" + codigoCertificado + ")");
 		if (dadesEspecifiques != null)
 			return getXmlHelper().copiarDadesEspecifiquesRecobriment(
 					getServicioDao().select(codigoCertificado),
 					dadesEspecifiques,
-					gestioXsdActiva);
+					gestioXsdActiva,
+					iniDadesEspecifiques);
 		else
 			return null;
 	}
@@ -682,7 +688,8 @@ public class ScspHelper {
 	private Peticion crearPeticion(
 			String idPeticion,
 			List<Solicitud> solicituds,
-			boolean gestioXsdActiva) throws Exception {
+			boolean gestioXsdActiva,
+			boolean iniDadesEspecifiques) throws Exception {
 		String serveiCodi = solicituds.get(0).getServeiCodi();
 		Peticion peticion = new Peticion();
 		// Afegeix les sol·licituds
@@ -697,7 +704,8 @@ public class ScspHelper {
 							solicituds.size(),
 							solicitud,
 							indexSolicitud++,
-							gestioXsdActiva));
+							gestioXsdActiva,
+							iniDadesEspecifiques));
 		}
 		peticion.setSolicitudes(solicitudes);
 		// Afegeix els atributs
@@ -718,7 +726,8 @@ public class ScspHelper {
 			int numSolicitudes,
 			Solicitud solicitud,
 			int index,
-			boolean gestioXsdActiva) throws Exception {
+			boolean gestioXsdActiva,
+			boolean iniDadesEspecifiques) throws Exception {
 		SolicitudTransmision st = new SolicitudTransmision();
 		DatosGenericos datosGenericos = new DatosGenericos();
 		Emisor beanEmisor = new Emisor();
@@ -800,7 +809,8 @@ public class ScspHelper {
 					getXmlHelper().crearDadesEspecifiques(
 							getServicioDao().select(solicitud.getServeiCodi()),
 							solicitud.getDadesEspecifiquesMap(),
-							gestioXsdActiva));
+							gestioXsdActiva,
+							iniDadesEspecifiques));
 		}
 		return st;
 	}
