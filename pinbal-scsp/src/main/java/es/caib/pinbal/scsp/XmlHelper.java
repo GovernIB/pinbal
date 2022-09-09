@@ -253,23 +253,34 @@ public class XmlHelper {
 		}
 	}
 
-	private void inicialitzaElements(
+	private Element inicialitzaElements(
 			Document doc, 
 			Element element, 
 			Node<DadesEspecifiquesNode> source) {
 
+		Element ret = null;
+		
 		if (source.getData() != null
-				&& source.getData().getGroupMin() > 0
-				&& source.getData().isComplex()
-				&& source.getData().getGroupType() == DadesEspecifiquesNode.GROUP_TYPE_SCHEMA) {
+				&& source.getData().getGroupMin() > 0) {
+
 			Element nou = doc.createElement(source.getData().getNom());
 			element.appendChild(nou);
-		}
-		if (source.getNumberOfChildren() > 0) {
-			for (Node<DadesEspecifiquesNode> child: source.getChildren()) {
-				inicialitzaElements(doc, element, child);
+			ret = nou;
+
+			// source.getData().getGroupType() == DadesEspecifiquesNode.GROUP_TYPE_SCHEMA
+			
+			if (source.getNumberOfChildren() > 0) {
+				Element childElement;
+				for (Node<DadesEspecifiquesNode> child: source.getChildren()) {
+					childElement = inicialitzaElements(doc, element, child);
+					if (childElement != null 
+							&& source.getData().getGroupType() == DadesEspecifiquesNode.GROUP_TYPE_CHOICE) {
+						break;
+					}
+				}
 			}
 		}
+		return ret;
 	}
 
 	public Element copiarDadesEspecifiquesRecobriment(

@@ -37,6 +37,7 @@ public class GeneracioDadesEspecifiquesTest {
 		servicio.setCodCertificado("AEATIAE");
 		servicio.setVersionEsquema("V3");
 		Map<String, Object> dades = new HashMap<String, Object>();
+		/*
 		dades.put(
 				"DatosEspecificos/Solicitud/Titular/Documentacion/Tipo",
 				"NIF");
@@ -52,9 +53,10 @@ public class GeneracioDadesEspecifiquesTest {
 		dades.put(
 				"DatosEspecificos/Solicitud/MunicipioSolicitud",
 				"07033");
+		*/
 		XmlHelper helper = new XmlHelper();
 		Element resultat = helper.crearDadesEspecifiques(servicio, dades, false, iniDadesEspecifiques);
-		System.out.println(">>> " + nodeToString(resultat));
+		System.out.println("AEATIAE >>> " + nodeToString(resultat));
 	}
 
 	public void test_SVDCCAACPASWS01() throws Exception {
@@ -67,7 +69,7 @@ public class GeneracioDadesEspecifiquesTest {
 //				"01");
 		XmlHelper helper = new XmlHelper();
 		Element resultat = helper.crearDadesEspecifiques(servicio, dades, false, iniDadesEspecifiques);
-		System.out.println(">>> " + nodeToString(resultat));
+		System.out.println("SVDCCAACPASWS01 >>> " + nodeToString(resultat));
 	}
 	
 	public void test_SVDDELSEXCDIWS01() throws Exception {
@@ -80,7 +82,7 @@ public class GeneracioDadesEspecifiquesTest {
 //				"01");
 		XmlHelper helper = new XmlHelper();
 		Element resultat = helper.crearDadesEspecifiques(servicio, dades, false, iniDadesEspecifiques);
-		System.out.println(">>> " + nodeToString(resultat));
+		System.out.println("SVDDELSEXCDIWS01 >>> " + nodeToString(resultat));
 	}
 
 
