@@ -2,4 +2,4 @@
 ALTER TABLE pbl_organ_gestor ADD estat VARCHAR2(10 CHAR);
 
 -- #236 Incloure elements obligatoris en les dades específiques 
-ALTER TABLE pbl_servei_config ADD ini_dades_especifiques NUMBER(1);
+ALTER TABLE pbl_servei_config ADD ini_dades_especifiques NUMBER(1) DEFAULT 0;
