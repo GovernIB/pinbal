@@ -256,26 +256,26 @@ public class XmlHelper {
 	private Element inicialitzaElements(
 			Document doc, 
 			Element element, 
-			Node<DadesEspecifiquesNode> source) {
+			Node<DadesEspecifiquesNode> nodeDades) {
 
 		Element ret = null;
 		
-		if (source.getData() != null
-				&& source.getData().getGroupMin() > 0) {
-
-			Element nou = doc.createElement(source.getData().getNom());
-			element.appendChild(nou);
-			ret = nou;
-
-			// source.getData().getGroupType() == DadesEspecifiquesNode.GROUP_TYPE_SCHEMA
+		if (nodeDades.getData() != null
+				&& nodeDades.getData().getGroupMin() > 0) {
 			
-			if (source.getNumberOfChildren() > 0) {
-				Element childElement;
-				for (Node<DadesEspecifiquesNode> child: source.getChildren()) {
-					childElement = inicialitzaElements(doc, element, child);
-					if (childElement != null 
-							&& source.getData().getGroupType() == DadesEspecifiquesNode.GROUP_TYPE_CHOICE) {
-						break;
+			ret = element;
+			
+			if (nodeDades.getNumberOfChildren() > 0) {
+				for (Node<DadesEspecifiquesNode> child: nodeDades.getChildren()) {
+					Element childElement = inicialitzaElements(
+							doc, 
+							doc.createElement(child.getData().getNom()), 
+							child);
+					if (childElement != null) {
+						element.appendChild(childElement);
+						if (nodeDades.getData().getGroupType() == DadesEspecifiquesNode.GROUP_TYPE_CHOICE) {
+							break;
+						}
 					}
 				}
 			}
