@@ -93,8 +93,7 @@ public class RecobrimentHelper implements ApplicationContextAware, MessageSource
 	private MessageSource messageSource;
 	private ScspHelper scspHelper;
 
-	public Respuesta peticionSincrona(
-			Peticion peticion) throws ScspException {
+	public Respuesta peticionSincrona(Peticion peticion) throws ScspException {
 		String codigoCertificado = peticion.getAtributos().getCodigoCertificado();
 		LOGGER.debug("Processant petició síncrona al servei web del recobriment (" +
 				"codCertificado=" + codigoCertificado + ")");
@@ -282,78 +281,75 @@ public class RecobrimentHelper implements ApplicationContextAware, MessageSource
 
 
 	@SuppressWarnings("incomplete-switch")
-	private List<RecobrimentSolicitudDto> validarIObtenirSolicituds(
+	public List<RecobrimentSolicitudDto> validarIObtenirSolicituds(
 			Peticion peticion,
 			int maxSolicituds) throws ScspException {
+		// Validació dels camps principals de la petició
 		if (peticion == null)
-			throw getErrorValidacio(
-					ERROR_CODE_SCSP_VALIDATION,
-					"No s'ha trobat l'element peticion");
+			throw getErrorValidacio(ERROR_CODE_SCSP_VALIDATION, "No s'ha trobat l'element peticion");
 		if (peticion.getAtributos() == null)
-			throw getErrorValidacio(
-					ERROR_CODE_SCSP_VALIDATION,
-					"No s'ha trobat l'element peticion.atributos");
+			throw getErrorValidacio(ERROR_CODE_SCSP_VALIDATION, "No s'ha trobat l'element peticion.atributos");
 		if (peticion.getAtributos().getCodigoCertificado() == null)
-			throw getErrorValidacio(
-					ERROR_CODE_SCSP_VALIDATION,
-					"No s'ha trobat l'element peticion.atributos.codigoCertificado");
+			throw getErrorValidacio(ERROR_CODE_SCSP_VALIDATION, "No s'ha trobat l'element peticion.atributos.codigoCertificado");
 		if (peticion.getSolicitudes() == null)
-			throw getErrorValidacio(
-					ERROR_CODE_SCSP_VALIDATION,
-					"No s'ha trobat l'element peticion.solicitudes");
+			throw getErrorValidacio(ERROR_CODE_SCSP_VALIDATION, "No s'ha trobat l'element peticion.solicitudes");
 		if (peticion.getSolicitudes().getSolicitudTransmision() == null)
-			throw getErrorValidacio(
-					ERROR_CODE_SCSP_VALIDATION,
-					"No s'ha trobat cap element peticion.solicitudes.solicitudTransmision");
+			throw getErrorValidacio(ERROR_CODE_SCSP_VALIDATION, "No s'ha trobat cap element peticion.solicitudes.solicitudTransmision");
+
+		// Validació del nombre de solicituds
 		if (maxSolicituds != -1) {
 			int numSolicitudes = peticion.getSolicitudes().getSolicitudTransmision().size();
 			if (numSolicitudes > maxSolicituds)
-				throw getErrorValidacio(
-						ERROR_CODE_SCSP_VALIDATION,
-						"S'ha excedit el màxim nombre de sol·licituds permeses en la petició (màxim=" + maxSolicituds + ")");
+				throw getErrorValidacio(ERROR_CODE_SCSP_VALIDATION, "S'ha excedit el màxim nombre de sol·licituds permeses en la petició (màxim=" + maxSolicituds + ")");
 		}
 		List<RecobrimentSolicitudDto> solicituds = new ArrayList<RecobrimentSolicitudDto>();
 		int index = 0;
+
+		// Validació de les transmissions
 		for (SolicitudTransmision st: peticion.getSolicitudes().getSolicitudTransmision()) {
 			RecobrimentSolicitudDto solicitud = new RecobrimentSolicitudDto();
 			DatosGenericos datosGenericos = st.getDatosGenericos();
+			// Validació de les dades genèriques
 			if (datosGenericos == null)
-				throw getErrorValidacio(
-						ERROR_CODE_SCSP_VALIDATION,
-						"No s'ha trobat l'element peticion.solicitudes.solicitudTransmision.datosGenericos (solicitudIndex=" + index + ")");
+				throw getErrorValidacio(ERROR_CODE_SCSP_VALIDATION, "No s'ha trobat l'element peticion.solicitudes.solicitudTransmision.datosGenericos (solicitudIndex=" + index + ")");
+
+			// Validació de la transmissió
 			if (maxSolicituds != 1) {
 				Transmision transmision = datosGenericos.getTransmision();
 				if (transmision == null)
-					throw getErrorValidacio(
-							ERROR_CODE_SCSP_VALIDATION,
-							"No s'ha trobat l'element peticion.solicitudes.solicitudTransmision.datosGenericos.transmision (solicitudIndex=" + index + ")");
+					throw getErrorValidacio(ERROR_CODE_SCSP_VALIDATION, "No s'ha trobat l'element peticion.solicitudes.solicitudTransmision.datosGenericos.transmision (solicitudIndex=" + index + ")");
+				// Validació de l'ID de solicitud
 				if (transmision.getIdSolicitud() == null)
-					throw getErrorValidacio(
-							ERROR_CODE_SCSP_VALIDATION,
-							"No s'ha trobat l'element peticion.solicitudes.solicitudTransmision.datosGenericos.transmision.idSolicitud (solicitudIndex=" + index + ")");
+					throw getErrorValidacio(ERROR_CODE_SCSP_VALIDATION, "No s'ha trobat l'element peticion.solicitudes.solicitudTransmision.datosGenericos.transmision.idSolicitud (solicitudIndex=" + index + ")");
+				if (transmision.getIdSolicitud().trim().isEmpty())
+					throw getErrorValidacio(ERROR_CODE_SCSP_VALIDATION, "L'element peticion.solicitudes.solicitudTransmision.datosGenericos.transmision.idSolicitud (solicitudIndex=" + index + ") no pot ser buit");
+				if (transmision.getIdSolicitud().length() > 64)
+					throw getErrorValidacio(ERROR_CODE_SCSP_VALIDATION, "Camp massa llarg. L'element peticion.solicitudes.solicitudTransmision.datosGenericos.transmision.idSolicitud (solicitudIndex=" + index + ") no pot superar els 64 caràcters");
 				solicitud.setId(transmision.getIdSolicitud());
 			} else {
 				solicitud.setId("000001");
 			}
+
+			// Validació de les dades del solicitant
 			if (datosGenericos.getSolicitante() == null)
-				throw getErrorValidacio(
-						ERROR_CODE_SCSP_VALIDATION,
-						"No s'ha trobat l'element peticion.solicitudes.solicitudTransmision.datosGenericos.solicitante (solicitudIndex=" + index + ")");
+				throw getErrorValidacio(ERROR_CODE_SCSP_VALIDATION, "No s'ha trobat l'element peticion.solicitudes.solicitudTransmision.datosGenericos.solicitante (solicitudIndex=" + index + ")");
 			Solicitante solicitante = datosGenericos.getSolicitante();
 			if (solicitante.getIdentificadorSolicitante() == null)
-				throw getErrorValidacio(
-						ERROR_CODE_SCSP_VALIDATION,
-						"No s'ha trobat l'element peticion.solicitudes.solicitudTransmision.datosGenericos.solicitante.identificadorSolicitante (solicitudIndex=" + index + ")");
+				throw getErrorValidacio(ERROR_CODE_SCSP_VALIDATION, "No s'ha trobat l'element peticion.solicitudes.solicitudTransmision.datosGenericos.solicitante.identificadorSolicitante (solicitudIndex=" + index + ")");
 			solicitud.setEntitatCif(solicitante.getIdentificadorSolicitante());
+
+			// Validació de la finalitat
 			if (solicitante.getFinalidad() == null)
-				throw getErrorValidacio(
-						ERROR_CODE_SCSP_VALIDATION,
-						"No s'ha trobat l'element peticion.solicitudes.solicitudTransmision.datosGenericos.solicitante.finalidad (solicitudIndex=" + index + ")");
+				throw getErrorValidacio(ERROR_CODE_SCSP_VALIDATION, "No s'ha trobat l'element peticion.solicitudes.solicitudTransmision.datosGenericos.solicitante.finalidad (solicitudIndex=" + index + ")");
+			if (solicitante.getFinalidad().trim().isEmpty())
+				throw getErrorValidacio(ERROR_CODE_SCSP_VALIDATION, "L'element peticion.solicitudes.solicitudTransmision.datosGenericos.solicitante.finalidad (solicitudIndex=" + index + ") no pot ser buit");
+			if (solicitante.getFinalidad().length() > 250)
+				throw getErrorValidacio(ERROR_CODE_SCSP_VALIDATION, "Camp massa llarg. L'element peticion.solicitudes.solicitudTransmision.datosGenericos.solicitante.finalidad (solicitudIndex=" + index + ") no pot superar els 250 caràcters");
 			solicitud.setFinalitat(solicitante.getFinalidad());
+
+			// Validació del consentiment
 			if (solicitante.getConsentimiento() == null)
-				throw getErrorValidacio(
-						ERROR_CODE_SCSP_VALIDATION,
-						"No s'ha trobat l'element peticion.solicitudes.solicitudTransmision.datosGenericos.solicitante.consentimiento (solicitudIndex=" + index + ")");
+				throw getErrorValidacio(ERROR_CODE_SCSP_VALIDATION, "No s'ha trobat l'element peticion.solicitudes.solicitudTransmision.datosGenericos.solicitante.consentimiento (solicitudIndex=" + index + ")");
 			switch (solicitante.getConsentimiento()) {
 			case Si:
 				solicitud.setConsentiment(Consentiment.Si);
@@ -361,44 +357,65 @@ public class RecobrimentHelper implements ApplicationContextAware, MessageSource
 			case Ley:
 				solicitud.setConsentiment(Consentiment.Llei);
 				break;
+			default:
+				throw getErrorValidacio(ERROR_CODE_SCSP_VALIDATION, "Valor incorrecte. Els valors possibles de l'element peticion.solicitudes.solicitudTransmision.datosGenericos.solicitante.consentimiento (solicitudIndex=" + index + ") son: [Si | Llei]");
 			}
+
+			// Validació del departament (unitat tramitadora)
 			if (solicitante.getUnidadTramitadora() == null)
-				throw getErrorValidacio(
-						ERROR_CODE_SCSP_VALIDATION,
-						"No s'ha trobat l'element peticion.solicitudes.solicitudTransmision.datosGenericos.solicitante.unidadTramitadora (solicitudIndex=" + index + ")");
+				throw getErrorValidacio(ERROR_CODE_SCSP_VALIDATION, "No s'ha trobat l'element peticion.solicitudes.solicitudTransmision.datosGenericos.solicitante.unidadTramitadora (solicitudIndex=" + index + ")");
+			if (solicitante.getUnidadTramitadora().trim().isEmpty())
+				throw getErrorValidacio(ERROR_CODE_SCSP_VALIDATION, "L'element peticion.solicitudes.solicitudTransmision.datosGenericos.solicitante.unidadTramitadora (solicitudIndex=" + index + ") no pot ser buit");
+			if (solicitante.getUnidadTramitadora().length() > 64)
+				throw getErrorValidacio(ERROR_CODE_SCSP_VALIDATION, "Camp massa llarg. L'element peticion.solicitudes.solicitudTransmision.datosGenericos.solicitante.unidadTramitadora (solicitudIndex=" + index + ") no pot superar els 64 caràcters");
 			solicitud.setDepartamentNom(solicitante.getUnidadTramitadora());
+
+			// Validació de l'identificador d'expedient
+			if (solicitante.getIdExpediente() != null && solicitante.getIdExpediente().length() > 25)
+				throw getErrorValidacio(ERROR_CODE_SCSP_VALIDATION, "Camp massa llarg. L'element peticion.solicitudes.solicitudTransmision.datosGenericos.solicitante.idExpediente (solicitudIndex=" + index + ") no pot superar els 25 caràcters");
 			solicitud.setExpedientId(solicitante.getIdExpediente());
+
+			// Validació del procediment
 			if (solicitante.getProcedimiento() == null)
-				throw getErrorValidacio(
-						ERROR_CODE_SCSP_VALIDATION,
-						"No s'ha trobat l'element peticion.solicitudes.solicitudTransmision.datosGenericos.solicitante.procedimiento (solicitudIndex=" + index + ")");
+				throw getErrorValidacio(ERROR_CODE_SCSP_VALIDATION, "No s'ha trobat l'element peticion.solicitudes.solicitudTransmision.datosGenericos.solicitante.procedimiento (solicitudIndex=" + index + ")");
 			if (solicitante.getProcedimiento().getCodProcedimiento() == null)
-				throw getErrorValidacio(
-						ERROR_CODE_SCSP_VALIDATION,
-						"No s'ha trobat l'element peticion.solicitudes.solicitudTransmision.datosGenericos.solicitante.procedimiento.codProcedimiento (solicitudIndex=" + index + ")");
+				throw getErrorValidacio(ERROR_CODE_SCSP_VALIDATION, "No s'ha trobat l'element peticion.solicitudes.solicitudTransmision.datosGenericos.solicitante.procedimiento.codProcedimiento (solicitudIndex=" + index + ")");
+			if (solicitante.getProcedimiento().getCodProcedimiento().trim().isEmpty())
+				throw getErrorValidacio(ERROR_CODE_SCSP_VALIDATION, "L'element peticion.solicitudes.solicitudTransmision.datosGenericos.solicitante.procedimiento.codProcedimiento (solicitudIndex=" + index + ") no pot ser buit");
 			solicitud.setProcedimentCodi(solicitante.getProcedimiento().getCodProcedimiento());
+
+			// Validació de les dades del funcionari
 			if (solicitante.getFuncionario() == null)
-				throw getErrorValidacio(
-						ERROR_CODE_SCSP_VALIDATION,
-						"No s'ha trobat l'element peticion.solicitudes.solicitudTransmision.datosGenericos.solicitante.funcionario (solicitudIndex=" + index + ")");
+				throw getErrorValidacio(ERROR_CODE_SCSP_VALIDATION, "No s'ha trobat l'element peticion.solicitudes.solicitudTransmision.datosGenericos.solicitante.funcionario (solicitudIndex=" + index + ")");
+			// Validació del Nif del funcionari
 			if (solicitante.getFuncionario().getNifFuncionario() == null)
-				throw getErrorValidacio(
-						ERROR_CODE_SCSP_VALIDATION,
-						"No s'ha trobat l'element peticion.solicitudes.solicitudTransmision.datosGenericos.solicitante.funcionario.nifFuncionario (solicitudIndex=" + index + ")");
+				throw getErrorValidacio(ERROR_CODE_SCSP_VALIDATION, "No s'ha trobat l'element peticion.solicitudes.solicitudTransmision.datosGenericos.solicitante.funcionario.nifFuncionario (solicitudIndex=" + index + ")");
+			if (solicitante.getFuncionario().getNifFuncionario().trim().isEmpty())
+				throw getErrorValidacio(ERROR_CODE_SCSP_VALIDATION, "L'element peticion.solicitudes.solicitudTransmision.datosGenericos.solicitante.funcionario.nifFuncionario (solicitudIndex=" + index + ") no pot ser buit)");
+			if (solicitante.getFuncionario().getNifFuncionario().length() > 10)
+				throw getErrorValidacio(ERROR_CODE_SCSP_VALIDATION, "Camp massa llarg. L'element peticion.solicitudes.solicitudTransmision.datosGenericos.solicitante.funcionario.nifFuncionario (solicitudIndex=" + index + ") no pot superar els 10 caràcters");
 			solicitud.setFuncionariNif(solicitante.getFuncionario().getNifFuncionario());
+			// Validació del nom complet del funcionari
 			if (solicitante.getFuncionario().getNombreCompletoFuncionario() == null)
-				throw getErrorValidacio(
-						ERROR_CODE_SCSP_VALIDATION,
-						"No s'ha trobat l'element peticion.solicitudes.solicitudTransmision.datosGenericos.solicitante.funcionario.nombreCompletoFuncionario (solicitudIndex=" + index + ")");
+				throw getErrorValidacio(ERROR_CODE_SCSP_VALIDATION, "No s'ha trobat l'element peticion.solicitudes.solicitudTransmision.datosGenericos.solicitante.funcionario.nombreCompletoFuncionario (solicitudIndex=" + index + ")");
+			if (solicitante.getFuncionario().getNombreCompletoFuncionario().trim().isEmpty())
+				throw getErrorValidacio(ERROR_CODE_SCSP_VALIDATION, "L'element peticion.solicitudes.solicitudTransmision.datosGenericos.solicitante.funcionario.nombreCompletoFuncionario (solicitudIndex=" + index + ") no pot ser buit");
+			if (solicitante.getFuncionario().getNombreCompletoFuncionario().length() > 122)
+				throw getErrorValidacio(ERROR_CODE_SCSP_VALIDATION, "Camp massa llarg. L'element peticion.solicitudes.solicitudTransmision.datosGenericos.solicitante.funcionario.nombreCompletoFuncionario (solicitudIndex=" + index + ") no pot superar els 122 caràcters");
 			solicitud.setFuncionariNom(solicitante.getFuncionario().getNombreCompletoFuncionario());
+
+			// Validar les dades del titular
 			if (datosGenericos.getTitular() != null) {
 				Titular titular = datosGenericos.getTitular();
+				// Validar documentació
 				if (titular.getDocumentacion() != null) {
+					// Validar el número de document
+					if (titular.getDocumentacion().length() > 14)
+						throw getErrorValidacio(ERROR_CODE_SCSP_VALIDATION, "Camp massa llarg. L'element peticion.solicitudes.solicitudTransmision.datosGenericos.titular.documentacion (solicitudIndex=" + index + ") no pot superar els 14 caràcters");
 					solicitud.setTitularDocumentNum(titular.getDocumentacion());
+					// Validar el tipus de document
 					if (titular.getTipoDocumentacion() == null)
-						throw getErrorValidacio(
-								ERROR_CODE_SCSP_VALIDATION,
-								"No s'ha trobat l'element peticion.solicitudes.solicitudTransmision.datosGenericos.titular.tipoDocumentacion (solicitudIndex=" + index + ")");
+						throw getErrorValidacio(ERROR_CODE_SCSP_VALIDATION, "No s'ha trobat l'element peticion.solicitudes.solicitudTransmision.datosGenericos.titular.tipoDocumentacion (solicitudIndex=" + index + ")");
 					switch (titular.getTipoDocumentacion()) {
 					case CIF:
 						solicitud.setTitularDocumentTipus(DocumentTipus.CIF);
@@ -421,21 +438,36 @@ public class RecobrimentHelper implements ApplicationContextAware, MessageSource
 					case Otros:
 						solicitud.setTitularDocumentTipus(DocumentTipus.Altres);
 						break;
+					default:
+						throw getErrorValidacio(ERROR_CODE_SCSP_VALIDATION, "Valor incorrecte. Els valors possibles de l'element peticion.solicitudes.solicitudTransmision.datosGenericos.titular.tipoDocumentacion (solicitudIndex=" + index + ") son: [CIF | DNI | NIF | NIE | Pasaporte | NumeroIdentificacion | Otros]");
 					}
 				}
+
+				// Validar el nom del titular
+				if (titular.getNombre() != null && titular.getNombre().length() > 40)
+					throw getErrorValidacio(ERROR_CODE_SCSP_VALIDATION, "Camp massa llarg. L'element peticion.solicitudes.solicitudTransmision.datosGenericos.titular.nombre (solicitudIndex=" + index + ") no pot superar els 40 caràcters");
 				solicitud.setTitularNom(titular.getNombre());
+
+				// Validar el primer llinatge del titular
+				if (titular.getApellido1() != null && titular.getApellido1().length() > 40)
+					throw getErrorValidacio(ERROR_CODE_SCSP_VALIDATION, "Camp massa llarg. L'element peticion.solicitudes.solicitudTransmision.datosGenericos.titular.apellido1 (solicitudIndex=" + index + ") no pot superar els 40 caràcters");
 				solicitud.setTitularLlinatge1(titular.getApellido1());
+
+				// Validar el segon llinatge del titular
+				if (titular.getApellido2() != null && titular.getApellido2().length() > 40)
+					throw getErrorValidacio(ERROR_CODE_SCSP_VALIDATION, "Camp massa llarg. L'element peticion.solicitudes.solicitudTransmision.datosGenericos.titular.apellido2 (solicitudIndex=" + index + ") no pot superar els 40 caràcters");
 				solicitud.setTitularLlinatge2(titular.getApellido2());
+
+				// Validar el nom complet del titular
+				if (titular.getNombreCompleto() != null && titular.getNombreCompleto().length() > 122)
+					throw getErrorValidacio(ERROR_CODE_SCSP_VALIDATION, "Camp massa llarg. L'element peticion.solicitudes.solicitudTransmision.datosGenericos.titular.nombreCompleto (solicitudIndex=" + index + ") no pot superar els 122 caràcters");
 				solicitud.setTitularNomComplet(titular.getNombreCompleto());
 			}
 			Object datosEspecificos = st.getDatosEspecificos();
 			if (datosEspecificos != null && !(datosEspecificos instanceof Element)) {
-				throw getErrorValidacio(
-						ERROR_CODE_SCSP_VALIDATION,
-						"L'element peticion.solicitudes.solicitudTransmision (solicitudIndex=" + index + ") no és del tipus org.w3c.dom.Element");
+				throw getErrorValidacio(ERROR_CODE_SCSP_VALIDATION, "L'element peticion.solicitudes.solicitudTransmision.datosEspecificos (solicitudIndex=" + index + ") no és del tipus org.w3c.dom.Element");
 			}
-			solicitud.setDadesEspecifiques(
-					(Element)st.getDatosEspecificos());
+			solicitud.setDadesEspecifiques((Element)st.getDatosEspecificos());
 			solicituds.add(solicitud);
 			index++;
 		}

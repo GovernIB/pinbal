@@ -211,6 +211,15 @@
 			</tr>
 		</thead>
 	</table>
+
+	<br/>
+	<a href="auditor/excelConsultes" class="btn btn-default">
+		<i class="far fa-file-excel"></i>&nbsp;<spring:message code="auditor.list.exportar.excel"/>
+	</a>
+	<a href="auditor/csvConsultes" class="btn btn-default">
+		<i class="fa fa-file-csv"></i>&nbsp;<spring:message code="auditor.list.exportar.csv"/>
+	</a>
+
 <script id="template-id-peticion" type="x-tmpl-mustache">
 {{scspPeticionId}}
 {{#recobriment}}

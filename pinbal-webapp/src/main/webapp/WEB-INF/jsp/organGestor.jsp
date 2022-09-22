@@ -56,7 +56,7 @@
 				<pbl:inputSelect name="pareCodi"  inline="true" placeholderKey="organgestor.list.filtre.camp.pare" optionItems="${organsEntitat}" optionValueAttribute="codi" optionTextAttribute="codiINom" optionMinimumResultsForSearch="2" emptyOption="true"/>
 			</div>
 			<div class="col-md-2">
-				<pbl:inputSelect name="estat"  inline="true" placeholderKey="organgestor.list.filtre.camp.estat" optionEnum="OrganGestorEstatEnumDto" emptyOption="true"/>
+				<pbl:inputSelect name="estat"  inline="true" placeholderKey="organgestor.list.filtre.camp.estat" optionEnum="OrganGestorEstatEnum" emptyOption="true"/>
 			</div>
 			<div class="col-md-2 pull-right">
 				<div class="pull-right">
@@ -72,11 +72,17 @@
 				<th data-data="actiu"><spring:message code="organgestor.list.columna.codi"/></th>
 				<th data-data="codi" width="80px"><spring:message code="organgestor.list.columna.codi"/></th>
 				<th data-data="nom"><spring:message code="organgestor.list.columna.nom"/></th>
+				<th data-data="estat"><spring:message code="organgestor.list.columna.estat"/></th>
 				<th data-data="pareCodiINom"><spring:message code="organgestor.list.columna.pare"/></th>
 			</tr>
 		</thead>
 	</table>
 <script type="text/javascript">
+const estats = [];
+estats['V'] = "<spring:message code="organgestor.list.estat.V"/>";
+estats['E'] = "<spring:message code="organgestor.list.estat.E"/>";
+estats['A'] = "<spring:message code="organgestor.list.estat.A"/>";
+estats['T'] = "<spring:message code="organgestor.list.estat.T"/>";
 $(document).ready(function() {
 	$('#table-organs').DataTable({
 		autoWidth: false,
@@ -94,8 +100,16 @@ $(document).ready(function() {
 		}, {
 			targets: [1],
 			render: function (data, type, row, meta) {
-					var template = $('#template-activa').html();
-					return Mustache.render(template, row);
+				var template = $('#template-activa').html();
+				row.estat = estats[row.estat];
+				// const params = {...row, estatNom: estats[row.estat]}
+				return Mustache.render(template, row);
+			}
+		}, {
+			targets: [3],
+			render: function (data, type, row, meta) {
+				var template = $('#template-estat').html();
+				return Mustache.render(template, row);
 			}
 		}]
 	});
@@ -123,6 +137,9 @@ $(document).ready(function() {
 	{{^actiu}}
 		<span class="fa fa-exclamation-triangle text-danger pull-right" style="margin-top: 3px;" title="<spring:message code="organgestor.list.extingit"/>"></span>
 	{{/actiu}}
+</script>
+<script id="template-estat" type="x-tmpl-mustache">
+	{{estat}}
 </script>
 </body>
 </html>

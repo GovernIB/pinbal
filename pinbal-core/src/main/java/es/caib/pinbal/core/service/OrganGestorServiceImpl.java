@@ -7,6 +7,7 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
+import es.caib.pinbal.core.dto.OrganGestorEstatEnum;
 import es.caib.pinbal.core.dto.PaginacioAmbOrdreDto;
 import es.caib.pinbal.core.helper.PaginacioHelper;
 import es.caib.pinbal.core.helper.PluginHelper;
@@ -17,7 +18,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import es.caib.pinbal.core.dto.OrganGestorDto;
-import es.caib.pinbal.core.dto.OrganGestorEstatEnumDto;
 import es.caib.pinbal.core.helper.DtoMappingHelper;
 import es.caib.pinbal.core.model.Entitat;
 import es.caib.pinbal.core.model.OrganGestor;
@@ -65,6 +65,13 @@ public class OrganGestorServiceImpl implements OrganGestorService {
 		return dtoMappingHelper.convertirList(organs, OrganGestorDto.class);
 	}
 
+	@Override
+	public List<OrganGestorDto> findActivesByEntitat(Long entitatId) {
+		log.debug("Consulta dels òrgans actius d'una entitat (entitatId=" + entitatId + ")");
+		List<OrganGestor> organs = organGestorRepository.findByEntitatIdAndActiuIsTrue(entitatId);
+		return dtoMappingHelper.convertirList(organs, OrganGestorDto.class);
+	}
+
 	@Transactional(readOnly = true)
 	public List<OrganGestorDto> findByEntitatAmbFiltre(Long entitatId, String filtre) {
 		log.debug("Consulta dels òrgans d'una entitat (entitatId=" + entitatId + ") amb codi o nom (" + filtre + ")");
@@ -91,10 +98,12 @@ public class OrganGestorServiceImpl implements OrganGestorService {
 				organDB.setNom(o.getNom());
 				organDB.setPare(organGestorRepository.findByCodiAndEntitat(o.getPareCodi(), entitat));
 				organDB.setActiu(true);
+				organDB.setEstat(o.getEstat());
 				organGestorRepository.save(organDB);
 			} else { // update it
 				organDB.setNom(o.getNom());
 				organDB.setActiu(true);
+				organDB.setEstat(o.getEstat());
 				organDB.setPare(organGestorRepository.findByCodiAndEntitat(o.getPareCodi(), entitat));
 			}
 			organismesDIR3.add(organDB);
@@ -105,6 +114,7 @@ public class OrganGestorServiceImpl implements OrganGestorService {
 		organismesNotInDIR3.removeAll(organismesDIR3);
 		for (OrganGestor o : organismesNotInDIR3) {
 			o.setActiu(false);
+			o.setEstat(OrganGestorEstatEnum.E);
 		}
 		return true;
 	}
@@ -116,7 +126,7 @@ public class OrganGestorServiceImpl implements OrganGestorService {
 			String filtreCodi,
 			String filtreNom,
 			String filtrePareCodi,
-			OrganGestorEstatEnumDto filtreEstat,
+			OrganGestorEstatEnum filtreEstat,
 			PaginacioAmbOrdreDto paginacioDto) {
 		log.debug("Consulta pafinada i amb filtre dels òrgans d'una entitat (" +
 				"entitatId=" + entitatId + ", " +
@@ -140,7 +150,7 @@ public class OrganGestorServiceImpl implements OrganGestorService {
 				filtrePareCodi == null || filtrePareCodi.length() == 0,
 				filtrePareCodi,
 				filtreEstat == null,
-				filtreEstat == OrganGestorEstatEnumDto.VIGENT ? true : false,
+				filtreEstat,
 				pageable);
 		return dtoMappingHelper.pageEntities2pageDto(organs, OrganGestorDto.class, pageable);
 	}
@@ -159,9 +169,22 @@ public class OrganGestorServiceImpl implements OrganGestorService {
 		organisme.setCodi(arrel.getCodi());
 		organisme.setNom(arrel.getDenominacio());
 		organisme.setPareCodi(null);
+		organisme.setEstat(getEstat(arrel.getEstat()));
 		organismes.add(organisme);
 		findOrganismesFills(arrel, organismes);
 		return organismes;
+	}
+
+	private OrganGestorEstatEnum getEstat(String descripcioEstat) {
+		if (descripcioEstat == null || descripcioEstat.trim().isEmpty())
+			return null;
+		switch (descripcioEstat.substring(0, 1).toUpperCase()) {
+			case "V": return OrganGestorEstatEnum.V;
+			case "E": return OrganGestorEstatEnum.E;
+			case "A": return OrganGestorEstatEnum.A;
+			case "T": return OrganGestorEstatEnum.T;
+			default: return null;
+		}
 	}
 
 	private void findOrganismesFills(NodeDir3 root, List<OrganGestorDto> organismes) {

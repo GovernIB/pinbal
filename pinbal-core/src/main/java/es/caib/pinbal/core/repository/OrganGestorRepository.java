@@ -5,6 +5,7 @@ package es.caib.pinbal.core.repository;
 
 import java.util.List;
 
+import es.caib.pinbal.core.dto.OrganGestorEstatEnum;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -35,7 +36,7 @@ public interface OrganGestorRepository extends JpaRepository<OrganGestor, Long> 
 			"  and (:esNullFiltreCodi = true or lower(og.codi) like concat('%', lower(:filtreCodi), '%'))" +
 			"  and (:esNullFiltreNom = true or lower(og.nom) like concat('%', lower(:filtreNom), '%')) " + 
 			"  and (:esNullFiltrePareCodi = true or ogp.codi = :filtrePareCodi) " +
-			"  and (:esNullFiltreActiu = true or og.actiu = :actiu )")
+			"  and (:esNullFiltreEstat = true or og.estat = :estat )")
 	public Page<OrganGestor> findByEntitatAndFiltre(
 			@Param("entitat") Entitat entitat,
 		    @Param("esNullFiltreCodi") boolean esNullFiltreCodi,
@@ -44,8 +45,8 @@ public interface OrganGestorRepository extends JpaRepository<OrganGestor, Long> 
 		    @Param("filtreNom") String filtreNom,
 			@Param("esNullFiltrePareCodi") boolean esNullFiltrePareCodi,
 			@Param("filtrePareCodi") String filtrePareCodi,
-		    @Param("esNullFiltreActiu") boolean esNullFiltreActiu,
-		    @Param("actiu") boolean actiu,
+		    @Param("esNullFiltreEstat") boolean esNullFiltreEstat,
+		    @Param("estat") OrganGestorEstatEnum estat,
 			Pageable paginacio);
 	
 	@Query(	"from " +
@@ -68,5 +69,7 @@ public interface OrganGestorRepository extends JpaRepository<OrganGestor, Long> 
       "    OrganGestor og " +
       "where og.codi in (:codi)")
   public List<Long> findIdsByCodiDir3List(List<String> codi);
+
+	List<OrganGestor> findByEntitatIdAndActiuIsTrue(Long entitatId);
 }
 

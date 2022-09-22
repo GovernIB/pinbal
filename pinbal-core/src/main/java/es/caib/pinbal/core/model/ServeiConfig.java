@@ -100,6 +100,9 @@ public class ServeiConfig extends PinbalAuditable<Long> {
 	@Column(name = "fitxer_ajuda_contingut")
 	private byte[] fitxerAjudaContingut;
 
+	@Column(name = "ini_dades_especifiques")
+	private boolean iniDadesEspecifiques = false;
+
 	@Version
 	private long version = 0;
 
@@ -184,7 +187,8 @@ public class ServeiConfig extends PinbalAuditable<Long> {
 			boolean comprovarDocument,
 			boolean activaGestioXsd,
 			Integer maxPeticionsMinut,
-			String ajuda) {
+			String ajuda, 
+			boolean iniDadesEspecifiques) {
 		this.custodiaCodi = custodiaCodi;
 		this.roleName = roleName;
 		this.condicioBusClass = condicioBusClass;
@@ -207,6 +211,7 @@ public class ServeiConfig extends PinbalAuditable<Long> {
 		this.activaGestioXsd = activaGestioXsd;
 		this.maxPeticionsMinut = maxPeticionsMinut;
 		this.ajuda = ajuda;
+		this.iniDadesEspecifiques = iniDadesEspecifiques;
 	}
 	public void updateFitxerAjuda(
 			String fitxerAjudaNom,

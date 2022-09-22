@@ -21,9 +21,12 @@ import es.scsp.common.domain.core.Servicio;
  */
 public class GeneracioDadesEspecifiquesTest {
 
+	public static boolean iniDadesEspecifiques = true;
 	public static void main(String[] args) {
 		try {
 			new GeneracioDadesEspecifiquesTest().test();
+			new GeneracioDadesEspecifiquesTest().test_SVDCCAACPASWS01();
+			new GeneracioDadesEspecifiquesTest().test_SVDDELSEXCDIWS01();
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
@@ -34,6 +37,7 @@ public class GeneracioDadesEspecifiquesTest {
 		servicio.setCodCertificado("AEATIAE");
 		servicio.setVersionEsquema("V3");
 		Map<String, Object> dades = new HashMap<String, Object>();
+		/*
 		dades.put(
 				"DatosEspecificos/Solicitud/Titular/Documentacion/Tipo",
 				"NIF");
@@ -49,11 +53,37 @@ public class GeneracioDadesEspecifiquesTest {
 		dades.put(
 				"DatosEspecificos/Solicitud/MunicipioSolicitud",
 				"07033");
+		*/
 		XmlHelper helper = new XmlHelper();
-		Element resultat = helper.crearDadesEspecifiques(servicio, dades, false);
-		System.out.println(">>> " + nodeToString(resultat));
+		Element resultat = helper.crearDadesEspecifiques(servicio, dades, false, iniDadesEspecifiques);
+		System.out.println("AEATIAE >>> " + nodeToString(resultat));
 	}
 
+	public void test_SVDCCAACPASWS01() throws Exception {
+		Servicio servicio = new Servicio();
+		servicio.setCodCertificado("SVDCCAACPASWS01");
+		servicio.setVersionEsquema("V3");
+		Map<String, Object> dades = new HashMap<String, Object>();
+//		dades.put(
+//				"DatosEspecificos/Consulta/CodigoProvincia",
+//				"01");
+		XmlHelper helper = new XmlHelper();
+		Element resultat = helper.crearDadesEspecifiques(servicio, dades, false, iniDadesEspecifiques);
+		System.out.println("SVDCCAACPASWS01 >>> " + nodeToString(resultat));
+	}
+	
+	public void test_SVDDELSEXCDIWS01() throws Exception {
+		Servicio servicio = new Servicio();
+		servicio.setCodCertificado("SVDDELSEXCDIWS01");
+		servicio.setVersionEsquema("V3");
+		Map<String, Object> dades = new HashMap<String, Object>();
+//		dades.put(
+//				"DatosEspecificos/Consulta/AnioNacimiento",
+//				"01");
+		XmlHelper helper = new XmlHelper();
+		Element resultat = helper.crearDadesEspecifiques(servicio, dades, false, iniDadesEspecifiques);
+		System.out.println("SVDDELSEXCDIWS01 >>> " + nodeToString(resultat));
+	}
 
 
 	private String nodeToString(Node node) {

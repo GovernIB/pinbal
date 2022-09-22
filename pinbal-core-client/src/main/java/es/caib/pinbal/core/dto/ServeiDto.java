@@ -88,7 +88,12 @@ public class ServeiDto extends AbstractIdentificable<Long> implements Serializab
 	private String fitxerAjudaMimeType;
 	private byte[] fitxerAjudaContingut;
 	
+	private boolean pinbalIniDadesEspecifiques;
+
+	
 	private List<ServeiXsdDto> fitxersXsd;
+	
+	private boolean pinbalIniDadesExpecifiques = false;
 		
 	private Long numeroProcedimentsAssociats;
 

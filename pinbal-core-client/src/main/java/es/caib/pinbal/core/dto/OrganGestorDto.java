@@ -5,6 +5,7 @@ package es.caib.pinbal.core.dto;
 
 import java.io.Serializable;
 
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.lang.StringUtils;
@@ -16,6 +17,7 @@ import org.apache.commons.lang.StringUtils;
  */
 @Getter
 @Setter
+@EqualsAndHashCode
 public class OrganGestorDto extends AbstractIdentificable<Long> implements Serializable {
 
 	private Long id;
@@ -26,6 +28,7 @@ public class OrganGestorDto extends AbstractIdentificable<Long> implements Seria
 	private String pareNom;
 	private String entitatNom;
 	private boolean actiu;
+	private OrganGestorEstatEnum estat;
 
 	public String getCodiINom() {
 		return codi + " - " + nom;

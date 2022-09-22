@@ -17,6 +17,8 @@ import javax.validation.Valid;
 
 import es.caib.pinbal.core.dto.CodiValor;
 import es.caib.pinbal.core.dto.FiltreActiuEnumDto;
+import es.caib.pinbal.core.dto.OrganGestorDto;
+import es.caib.pinbal.core.service.OrganGestorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -77,6 +79,8 @@ public class ProcedimentController extends BaseController {
 	private ServeiService serveiService;
 	@Autowired
 	private PropertyService propertyService;
+	@Autowired
+	private OrganGestorService organGestorService;
 
 
 
@@ -179,17 +183,19 @@ public class ProcedimentController extends BaseController {
 		EntitatDto entitat = EntitatHelper.getEntitatActual(request, entitatService);
 		if (entitat != null) {
 			ProcedimentDto procediment = null;
+			Long organId = null;
 			if (procedimentId != null)
 				procediment = procedimentService.findById(procedimentId);
 			ProcedimentCommand command;
 			if (procediment != null) {
 				command = ProcedimentCommand.asCommand(procediment);
+				organId = procediment.getOrganGestor().getId();
 			} else {
 				command = new ProcedimentCommand();
 			}
 			command.setEntitatId(entitat.getId());
 			model.addAttribute(command);
-			fillFormModel(entitat.getId(), model);
+			fillFormModel(entitat.getId(), model, organId);
 			return "procedimentForm";
 		} else {
 			AlertHelper.error(
@@ -220,7 +226,7 @@ public class ProcedimentController extends BaseController {
 		}
 			
 		if (bindingResult.hasErrors()) {
-			fillFormModel(entitat.getId(), model);
+			fillFormModel(entitat.getId(), model, command.getOrganGestorId());
 			return "procedimentForm";
 		}
 		
@@ -739,8 +745,13 @@ public class ProcedimentController extends BaseController {
 		model.addAttribute(command);
 	}
 
-	private void fillFormModel(Long entitatId, Model model) {
-		model.addAttribute("organsGestors", entitatService.getOrgansGestors(entitatId));
+	private void fillFormModel(Long entitatId, Model model, Long organId) {
+		OrganGestorDto organActual = organId != null ? organGestorService.findItem(organId) : null;
+		List<OrganGestorDto> organs = organGestorService.findActivesByEntitat(entitatId);
+		if (organActual != null && !organs.contains(organActual)) {
+			organs.add(0, organActual);
+		}
+		model.addAttribute("organsGestors", organs);
 		model.addAttribute(
 				"procedimentClaseTramiteOptions",
 				EnumHelper.getOptionsForEnum(

@@ -225,7 +225,8 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 					servei.isPinbalComprovarDocument(),
 					servei.isActivaGestioXsd(),
 					servei.getMaxPeticionsMinut(),
-					servei.getAjuda());
+					servei.getAjuda(),
+					servei.isPinbalIniDadesExpecifiques());
 			serveiConfig.setPinbalUnitatDir3FromEntitat(servei.isPinbalUnitatDir3FromEntitat());
 			if (servei.getFitxerAjudaNom() != null && !servei.getFitxerAjudaNom().isEmpty()) {
 				serveiConfig.updateFitxerAjuda(
@@ -1520,6 +1521,7 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 			dto.setFitxerAjudaMimeType(serveiConfig.getFitxerAjudaMimeType());
 			dto.setFitxerAjudaContingut(serveiConfig.getFitxerAjudaContingut());
 			dto.setPinbalUnitatDir3FromEntitat(serveiConfig.isPinbalUnitatDir3FromEntitat());
+			dto.setPinbalIniDadesExpecifiques(serveiConfig.isIniDadesEspecifiques());
 		}
 //		Long numeroProcedimentsAssociats = procedimentRepository.countByServei(servicio.getCodCertificado());
 //		dto.setNumeroProcedimentsAssociats(numeroProcedimentsAssociats == null ? 0 : numeroProcedimentsAssociats);

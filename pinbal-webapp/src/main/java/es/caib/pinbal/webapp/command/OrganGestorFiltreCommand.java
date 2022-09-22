@@ -3,6 +3,7 @@
  */
 package es.caib.pinbal.webapp.command;
 
+import es.caib.pinbal.core.dto.OrganGestorEstatEnum;
 import es.caib.pinbal.core.dto.OrganGestorEstatEnumDto;
 import lombok.Data;
 
@@ -16,7 +17,7 @@ public class OrganGestorFiltreCommand {
 
 	private String codi;
 	private String nom;
-	private OrganGestorEstatEnumDto estat;
+	private OrganGestorEstatEnum estat;
 	private Long entitatId;
 	private String pareCodi;
 

@@ -26,7 +26,8 @@ public class XsdParserTest {
 
 	public void test() throws Exception {
 		Servicio servicio = new Servicio();
-		servicio.setCodCertificado("SVDSCDWS01");
+		//servicio.setCodCertificado("SVDSCDWS01");
+		servicio.setCodCertificado("SVDCCAACPASWS01");
 		servicio.setVersionEsquema("V3");
 		Tree<DadesEspecifiquesNode> arbre = new XmlHelper().getArbrePerDadesEspecifiques(servicio, false);
 		if (arbre.getRootElement() != null) {

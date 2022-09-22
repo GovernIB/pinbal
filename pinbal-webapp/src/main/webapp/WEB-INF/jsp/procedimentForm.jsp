@@ -53,7 +53,8 @@
 					optionValueAttribute="id"
 					optionTextAttribute="codiINom"
 					required="true"
-					formatResult="formatState"/>
+					formatResult="formatState"
+					optionMinimumResultsForSearch="2"/>
 				<pbl:inputText name="codiSia" labelSize="1" inline="false" textKey="procediment.form.camp.codisia"/>
 				<%--c:set var="campPath" value="valorCampAutomatizado"/>
 				<c:set var="campErrors"><form:errors path="${campPath}"/></c:set>

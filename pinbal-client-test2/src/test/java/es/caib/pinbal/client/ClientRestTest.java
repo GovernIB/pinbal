@@ -24,9 +24,12 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 public class ClientRestTest {
 
     private static final String ENTITAT_CIF = "S0711001H";
-    private static final String URL_BASE = "https://proves.caib.es/pinbalapi";
-    private static final String USUARI = "$ripea_pinbal";
-    private static final String CONTRASENYA = "ripea_pinbal";
+//    private static final String URL_BASE = "https://proves.caib.es/pinbalapi";
+//    private static final String USUARI = "$ripea_pinbal";
+//    private static final String CONTRASENYA = "ripea_pinbal";
+    private static final String URL_BASE = "http://localhost:8082/pinbalapi";
+    private static final String USUARI = "admin";
+    private static final String CONTRASENYA = "admin";
     private static final String CODIGO_PROCEDIMIENTO = "CODSVDR_GBA_20121107";
     private static final String PETICION_SCSP_ID = "PINBAL00000000000000265474";
     private static final boolean ENABLE_LOGGING = true;
