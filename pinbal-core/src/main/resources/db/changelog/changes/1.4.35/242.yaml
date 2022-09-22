@@ -1,0 +1,169 @@
+databaseChangeLog:
+#- property:
+#    name: varcharUnit
+#    value: CHAR
+#    dbms: oracle
+#- property:
+#    name: varcharUnit
+#    value: ''
+#    dbms: postgresql
+#- property:
+#    name: cert
+#    value: 1
+#    dbms: oracle
+#- property:
+#    name: cert
+#    value: true
+#    dbms: postgresql
+#- property:
+#    name: fals
+#    value: 0
+#    dbms: oracle
+#- property:
+#    name: fals
+#    value: false
+#    dbms: postgresql
+- changeSet:
+    id: 1663840075438-1
+    author: limit
+    changes:
+    - update:
+        tableName: pbl_procediment
+        columns:
+          - column:
+              name: valor_camp_clasetramite
+              value: 0
+        where: valor_camp_clasetramite = 19
+    - update:
+        tableName: pbl_procediment
+        columns:
+          - column:
+              name: valor_camp_clasetramite
+              value: 19
+        where: valor_camp_clasetramite = 2
+    - update:
+        tableName: pbl_procediment
+        columns:
+          - column:
+                name: valor_camp_clasetramite
+                value: 20
+        where: valor_camp_clasetramite = 3
+    - update:
+        tableName: pbl_procediment
+        columns:
+          - column:
+                name: valor_camp_clasetramite
+                value: 21
+        where: valor_camp_clasetramite = 4
+    - update:
+        tableName: pbl_procediment
+        columns:
+          - column:
+                name: valor_camp_clasetramite
+                value: 22
+        where: valor_camp_clasetramite = 5
+    - update:
+        tableName: pbl_procediment
+        columns:
+          - column:
+                name: valor_camp_clasetramite
+                value: 23
+        where: valor_camp_clasetramite = 6
+    - update:
+        tableName: pbl_procediment
+        columns:
+          - column:
+                name: valor_camp_clasetramite
+                value: 24
+        where: valor_camp_clasetramite = 7
+    - update:
+        tableName: pbl_procediment
+        columns:
+          - column:
+                name: valor_camp_clasetramite
+                value: 25
+        where: valor_camp_clasetramite = 8
+    - update:
+        tableName: pbl_procediment
+        columns:
+          - column:
+                name: valor_camp_clasetramite
+                value: 26
+        where: valor_camp_clasetramite = 9
+    - update:
+        tableName: pbl_procediment
+        columns:
+          - column:
+                name: valor_camp_clasetramite
+                value: 27
+        where: valor_camp_clasetramite = 10
+    - update:
+        tableName: pbl_procediment
+        columns:
+          - column:
+                name: valor_camp_clasetramite
+                value: 28
+        where: valor_camp_clasetramite = 11
+    - update:
+        tableName: pbl_procediment
+        columns:
+          - column:
+                name: valor_camp_clasetramite
+                value: 29
+        where: valor_camp_clasetramite = 12
+    - update:
+        tableName: pbl_procediment
+        columns:
+          - column:
+                name: valor_camp_clasetramite
+                value: 30
+        where: valor_camp_clasetramite = 14
+    - update:
+        tableName: pbl_procediment
+        columns:
+          - column:
+                name: valor_camp_clasetramite
+                value: 31
+        where: valor_camp_clasetramite = 15
+    - update:
+        tableName: pbl_procediment
+        columns:
+          - column:
+                name: valor_camp_clasetramite
+                value: 32
+        where: valor_camp_clasetramite = 16
+    - update:
+        tableName: pbl_procediment
+        columns:
+          - column:
+                name: valor_camp_clasetramite
+                value: 33
+        where: valor_camp_clasetramite = 18
+    - update:
+        tableName: pbl_procediment
+        columns:
+          - column:
+                name: valor_camp_clasetramite
+                value: 34
+        where: valor_camp_clasetramite = 1
+    - update:
+        tableName: pbl_procediment
+        columns:
+          - column:
+                name: valor_camp_clasetramite
+                value: 2
+        where: valor_camp_clasetramite = 13
+    - update:
+        tableName: pbl_procediment
+        columns:
+          - column:
+                name: valor_camp_clasetramite
+                value: 3
+        where: valor_camp_clasetramite = 0
+    - update:
+        tableName: pbl_procediment
+        columns:
+          - column:
+                name: valor_camp_clasetramite
+                value: 14
+        where: valor_camp_clasetramite = 17
