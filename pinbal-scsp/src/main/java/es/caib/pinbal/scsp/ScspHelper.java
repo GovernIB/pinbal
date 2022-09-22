@@ -752,7 +752,7 @@ public class ScspHelper {
 		procedimiento.setNombreProcedimiento(solicitud.getProcedimentNom());
 		if (solicitud.getProcedimentValorCampAutomatizado() != null) {
 			procedimiento.setAutomatizado(
-					solicitud.getProcedimentValorCampAutomatizado() ? "1" : "0");
+					solicitud.getProcedimentValorCampAutomatizado() ? "S" : "N");
 		}
 		procedimiento.setClaseTramite(
 				solicitud.getProcedimentValorCampClaseTramite());
