@@ -189,7 +189,7 @@ public class ProcedimentController extends BaseController {
 			ProcedimentCommand command;
 			if (procediment != null) {
 				command = ProcedimentCommand.asCommand(procediment);
-				organId = procediment.getOrganGestor().getId();
+				organId = procediment.getOrganGestor() != null ? procediment.getOrganGestor().getId() : null;
 			} else {
 				command = new ProcedimentCommand();
 			}

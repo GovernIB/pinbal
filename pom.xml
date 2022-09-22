@@ -28,6 +28,7 @@
 		<pluginsib.arxiu.version>2.0.5</pluginsib.arxiu.version>
 		<dir3caib.version>1.0.7</dir3caib.version>
 		<jersey.version>1.19.4</jersey.version>
+		<lombok.version>1.18.24</lombok.version>
 		<skipTests>true</skipTests>
 		<maven.compiler.source>1.7</maven.compiler.source>
 		<maven.compiler.target>1.7</maven.compiler.target>
