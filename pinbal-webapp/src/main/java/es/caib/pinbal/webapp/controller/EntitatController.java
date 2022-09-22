@@ -130,20 +130,17 @@ public class EntitatController extends BaseController {
 		}
 		if (command.getId() != null) {
 			entitatService.update(EntitatCommand.asDto(command));
-			AlertHelper.success(
-					request, 
-					getMessage(
-							request, 
-							"entitat.controller.entitat.modificada.ok"));
+			return getModalControllerReturnValueSuccess(
+					request,
+					"redirect:../entitat",
+					"entitat.controller.entitat.modificada.ok");
 		} else {
 			entitatService.create(EntitatCommand.asDto(command));
-			AlertHelper.success(
-					request, 
-					getMessage(
-							request, 
-							"entitat.controller.entitat.creada.ok"));
+			return getModalControllerReturnValueSuccess(
+					request,
+					"redirect:../entitat",
+					"entitat.controller.entitat.creada.ok");
 		}
-		return "redirect:../entitat";
 	}
 
 	@RequestMapping(value = "/{entitatId}/enable", method = RequestMethod.GET)

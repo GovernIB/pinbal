@@ -4,10 +4,13 @@
 package es.caib.pinbal.webapp.controller;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
+import es.caib.pinbal.core.dto.PaginacioAmbOrdreDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
@@ -50,7 +53,7 @@ public class OrganGestorController extends BaseController {
 
 	@RequestMapping(method = RequestMethod.GET)
 	public String get(HttpServletRequest request, Model model) throws Exception {
-		omplirModelPerMostrarLlistat(request, model);
+		omplirModelPerMostrarLlistat(request, EntitatHelper.getEntitatActual(request), model);
 		return "organGestor";
 	}
 
@@ -61,7 +64,7 @@ public class OrganGestorController extends BaseController {
 			BindingResult bindingResult,
 			Model model) throws Exception {
 		if (bindingResult.hasErrors()) {
-			omplirModelPerMostrarLlistat(request, model);
+			omplirModelPerMostrarLlistat(request, EntitatHelper.getEntitatActual(request), model);
 			return "organGestor";
 		} else {
 			if (command.getEntitatId() == null) {
@@ -87,9 +90,10 @@ public class OrganGestorController extends BaseController {
 		Page<OrganGestorDto> page = organGestorService.findPageOrgansGestorsAmbFiltrePaginat(
 				entitatId,
 				command.getCodi(), 
-				command.getNom(), 
-				command.getEstat(), 
-				serverSideRequest.toPageable());
+				command.getNom(),
+				command.getPareCodi(),
+				command.getEstat(),
+				ServerSideRequest.getPaginacioDtoFromRequest(request));
 		return new ServerSideResponse<OrganGestorDto, Long>(serverSideRequest, page);
 	}
 
@@ -124,8 +128,15 @@ public class OrganGestorController extends BaseController {
 
 	private void omplirModelPerMostrarLlistat(
 			HttpServletRequest request,
+			EntitatDto entitat,
 			Model model) throws Exception {
-		model.addAttribute(getCommandInstance(request));
+		OrganGestorFiltreCommand filtre = getCommandInstance(request);
+		Long entitatId = filtre.getEntitatId();
+		if (entitatId == null && entitat != null) {
+			entitatId = entitat.getId();
+		}
+		model.addAttribute(filtre);
+		model.addAttribute("organsEntitat", organGestorService.findByEntitat(entitatId));
 		if (RolHelper.isRolActualAdministrador(request))
 			model.addAttribute("entitats", entitatService.findAll());
 	}

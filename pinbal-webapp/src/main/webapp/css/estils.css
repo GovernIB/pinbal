@@ -193,6 +193,9 @@ div.exemple {
 .modal-dialog {
 	width: 900px;
 }
+.modal-body {
+	overflow: auto;
+}
 
 .titol-check-label {
 	margin-left: 10px;

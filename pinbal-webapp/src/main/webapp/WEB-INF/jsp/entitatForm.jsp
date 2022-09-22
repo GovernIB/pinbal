@@ -29,7 +29,7 @@
 </head>
 <body>
 
-	<c:url value="/entitat/save" var="formAction"/>
+	<c:url value="/modal/entitat/save" var="formAction"/>
 	<form:form action="${formAction}" method="post" cssClass="form-horizontal" commandName="entitatCommand">
 		<form:hidden path="id"/>
 		<div class="row">					
@@ -44,9 +44,9 @@
 						optionItems="${entitatTipusLlista}" 
 						emptyOption="true"
 						emptyOptionTextKey="comu.opcio.sense.definir"/>			
-				<div class="pull-right">
-					<button type="submit" class="btn btn-primary"><spring:message code="comu.boto.guardar"/></button>
-					<a href="<c:url value="/entitat"/>" class="btn btn-default"><spring:message code="comu.boto.cancelar"/></a>
+				<div id="modal-botons">
+					<button type="submit" class="btn btn-success"><span class="fa fa-save"></span> <spring:message code="comu.boto.guardar"/></button>
+					<a href="<c:url value="/entitat"/>" class="btn btn-default" data-modal-cancel="true"><spring:message code="comu.boto.cancelar"/></a>
 				</div>
 			</div>
 		</div>

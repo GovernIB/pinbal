@@ -18,6 +18,7 @@ public class OrganGestorFiltreCommand {
 	private String nom;
 	private OrganGestorEstatEnumDto estat;
 	private Long entitatId;
+	private String pareCodi;
 
 	public OrganGestorFiltreCommand() {
 		super();

@@ -51,11 +51,16 @@ $(document).ready(function() {
 		ajax: "avis/datatable",
 		columnDefs: [
 			{
+				targets: 0
+			},
+			{
 				targets: [1, 2],
+				width: "10%",
 				render: $.fn.dataTable.render.moment('DD/MM/YYYY')
 			},	
 			{
 				targets: [3],
+				width: "10%",
 				render: function (data, type, row, meta) {
 						var template = $('#template-activa').html();
 						return Mustache.render(template, row);
@@ -68,6 +73,7 @@ $(document).ready(function() {
 	        },			
 			{
 				targets: [7],
+				width: "10%",
 				render: function (data, type, row, meta) {
 						var template = $('#template-nivell').html();
 						return Mustache.render(template, row);
@@ -97,7 +103,7 @@ $(document).ready(function() {
 	<table id="table-avisos" class="table table-striped table-bordered" style="width:100%">
 		<thead>
 			<tr>
-				<th data-data="assumpte" width="10px"><spring:message code="avis.list.columna.assumpte"/></th>
+				<th data-data="assumpte"><spring:message code="avis.list.columna.assumpte"/></th>
 				<th data-data="dataInici"><spring:message code="avis.list.columna.dataInici"/></th>
 				<th data-data="dataFinal"><spring:message code="avis.list.columna.dataFinal"/></th>
 				<th data-data="actiu"><spring:message code="avis.list.columna.activa"/></th>
@@ -105,7 +111,7 @@ $(document).ready(function() {
 				<th data-data="warning"></th>
 				<th data-data="error"></th>
 				<th data-data="avisNivell"><spring:message code="avis.list.columna.avisNivell"/></th>			
-				<th data-data="id" width="10%"></th>
+				<th data-data="id"></th>
 			</tr>
 		</thead>
 	</table>

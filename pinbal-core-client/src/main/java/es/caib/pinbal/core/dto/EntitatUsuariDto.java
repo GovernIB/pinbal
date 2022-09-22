@@ -2,6 +2,8 @@ package es.caib.pinbal.core.dto;
 
 import java.io.Serializable;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.apache.commons.lang.builder.ToStringBuilder;
 
 /**
@@ -9,6 +11,7 @@ import org.apache.commons.lang.builder.ToStringBuilder;
  * 
  * @author Limit Tecnologies <limit@limit.es>
  */
+@Getter @Setter
 public class EntitatUsuariDto extends AbstractIdentificable<Long> implements Serializable, Comparable<EntitatUsuariDto> {
 
 	private UsuariDto usuari;
@@ -19,9 +22,9 @@ public class EntitatUsuariDto extends AbstractIdentificable<Long> implements Ser
 	private boolean auditor;
 	private boolean aplicacio;
 	private boolean actiu;
-	
-	// Propietat per a mostrar el check amb accés permés als llistats
-	private Boolean acces = false;
+
+	private Boolean acces = false; // Propietat per a mostrar el check amb accés permés als llistats
+	private Integer permisosCount;
 
 	public EntitatUsuariDto(
 			UsuariDto usuari,
@@ -42,60 +45,6 @@ public class EntitatUsuariDto extends AbstractIdentificable<Long> implements Ser
 		this.actiu = actiu;
 	}
 
-	public UsuariDto getUsuari() {
-		return usuari;
-	}
-	public void setUsuari(UsuariDto usuari) {
-		this.usuari = usuari;
-	}
-	public String getDepartament() {
-		return departament;
-	}
-	public void setDepartament(String departament) {
-		this.departament = departament;
-	}
-	public boolean isPrincipal() {
-		return principal;
-	}
-	public void setPrincipal(boolean principal) {
-		this.principal = principal;
-	}
-	public boolean isRepresentant() {
-		return representant;
-	}
-	public void setRepresentant(boolean representant) {
-		this.representant = representant;
-	}
-	public boolean isDelegat() {
-		return delegat;
-	}
-	public void setDelegat(boolean delegat) {
-		this.delegat = delegat;
-	}
-	public boolean isAuditor() {
-		return auditor;
-	}
-	public void setAuditor(boolean auditor) {
-		this.auditor = auditor;
-	}
-	public boolean isAplicacio() {
-		return aplicacio;
-	}
-	public void setAplicacio(boolean aplicacio) {
-		this.aplicacio = aplicacio;
-	}
-	public Boolean getAcces() {
-		return acces;
-	}
-	public void setAcces(Boolean acces) {
-		this.acces = acces;
-	}
-	public boolean isActiu() {
-		return actiu;
-	}
-	public void setActiu(boolean actiu) {
-		this.actiu = actiu;
-	}
 
 	@Override
 	public String toString() {

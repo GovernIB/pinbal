@@ -646,6 +646,29 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 
 	@Transactional(readOnly = true)
 	@Override
+	public Integer countPermesosAmbEntitatIUsuari(Long entitatId, String usuariCodi) {
+		List<ProcedimentServei> procedimentServeis = procedimentServeiRepository.findByEntitatId(entitatId);
+		if (procedimentServeis == null || procedimentServeis.isEmpty()) {
+			return 0;
+		}
+		PermisosHelper.filterGrantedAll(
+				procedimentServeis,
+				new ObjectIdentifierExtractor<ProcedimentServei>() {
+					public Long getObjectIdentifier(ProcedimentServei object) {
+						return object.getId();
+					}
+				},
+				ProcedimentServei.class,
+				new Permission[] {BasePermission.READ},
+				aclService,
+				usuariHelper.generarUsuariAutenticat(
+						usuariCodi,
+						false));
+		return procedimentServeis.size();
+	}
+
+	@Transactional(readOnly = true)
+	@Override
 	public List<ServeiDto> findPermesosAmbProcedimentPerDelegat(
 			Long entitatId,
 			Long procedimentId) throws EntitatNotFoundException, ProcedimentNotFoundException {

@@ -34,19 +34,16 @@ import es.caib.pinbal.client.recobriment.svdccaacpasws01.ClientSvdccaacpasws01.S
  */
 public class Svdccaacpasws01Test {
 
-	private static final String URL_BASE = "http://localhost:8080/pinbalapi";
-	private static final String USUARI = "pblws";
-	private static final String CONTRASENYA = "pblws";
-	private static final String ENTITAT_CIF = "12345678Z";
-	private static final String CODIGO_PROCEDIMIENTO = "000002";
-	private static final String PETICION_SCSP_ID = "PBL0000000001292";
-	//private static final String ENTITAT_CIF = "S0711001H";
-	//private static final String CODIGO_PROCEDIMIENTO = "CODSVDR_GBA_20121107";
-	//private static final String PETICION_SCSP_ID = "PINBAL00000000000000263447";
-	private static final boolean ENABLE_LOGGING = false;
-	private static final boolean IS_JBOSS = true;
+	private static final String ENTITAT_CIF = "S0711001H";
+	private static final String URL_BASE = "https://proves.caib.es/pinbalapi";
+	private static final String USUARI = "$ripea_pinbal";
+	private static final String CONTRASENYA = "xxxxxx";
+	private static final String CODIGO_PROCEDIMIENTO = "CODSVDR_GBA_20121107";
+	private static final String PETICION_SCSP_ID = "PINBAL00000000000000265494";
+	private static final boolean ENABLE_LOGGING = true;
+	private static final boolean BASIC_AUTH = true;
 
-	private final ClientSvdccaacpasws01 client = new ClientSvdccaacpasws01(URL_BASE, USUARI, CONTRASENYA, !IS_JBOSS, null, null);
+	private final ClientSvdccaacpasws01 client = new ClientSvdccaacpasws01(URL_BASE, USUARI, CONTRASENYA, BASIC_AUTH, null, null);
 
 	@Test
 	public void peticionSincrona() throws UniformInterfaceException, ClientHandlerException, IOException {
@@ -74,7 +71,7 @@ public class Svdccaacpasws01Test {
 		System.out.println("-> peticionSincrona = " + objectToJsonString(respuesta));
 	}
 
-	//@Test
+	@Test
 	public void getRespuesta() throws IOException {
 		if (ENABLE_LOGGING) {
 			client.enableLogginFilter();
@@ -84,7 +81,7 @@ public class Svdccaacpasws01Test {
 		System.out.println("-> getRespuesta(" + PETICION_SCSP_ID + ") = " + objectToJsonString(respuesta));
 	}
 
-	//@Test
+	@Test
 	public void getJustificante() throws IOException {
 		if (ENABLE_LOGGING) {
 			client.enableLogginFilter();
