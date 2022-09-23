@@ -100,6 +100,8 @@ public class ServeiDto extends AbstractIdentificable<Long> implements Serializab
 	// Propietat per a mostrar el check actiu als llistats
 	private Boolean actiu = false;
 
+	private boolean useAutoClasse = true;
+
 	public ServeiDto() {
 	}
 

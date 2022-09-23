@@ -302,9 +302,11 @@ public class PeticioScspHelper {
 						procedimentServei.getProcedimentCodi() : 
 						procediment.getCodi()));
 		solicitud.setProcedimentNom(procediment.getNom());
-		solicitud.setProcedimentValorCampAutomatizado(procediment.getValorCampAutomatizado());
-		if (procediment.getValorCampClaseTramite() != null) {
-			solicitud.setProcedimentValorCampClaseTramite(procediment.getValorCampClaseTramite().getShortValue());
+		if (isUseAutoClasse(serveiCodi)) {
+			solicitud.setProcedimentValorCampAutomatizado(procediment.getValorCampAutomatizado());
+			if (procediment.getValorCampClaseTramite() != null) {
+				solicitud.setProcedimentValorCampClaseTramite(procediment.getValorCampClaseTramite().getShortValue());
+			}
 		}
 		solicitud.setSolicitantIdentificacio(entitat.getCif());
 		solicitud.setSolicitantNom(entitat.getNom());
@@ -347,9 +349,11 @@ public class PeticioScspHelper {
 				Procediment procediment = procedimentServei.getProcediment();
 				solicitud.setProcedimentCodi(procediment.getCodi());
 				solicitud.setProcedimentNom(procediment.getNom());
-				solicitud.setProcedimentValorCampAutomatizado(procediment.getValorCampAutomatizado());
-				if (procediment.getValorCampClaseTramite() != null) {
-					solicitud.setProcedimentValorCampClaseTramite(procediment.getValorCampClaseTramite().getShortValue());
+				if(isUseAutoClasse(consulta.getServeiCodi())) {
+					solicitud.setProcedimentValorCampAutomatizado(procediment.getValorCampAutomatizado());
+					if (procediment.getValorCampClaseTramite() != null) {
+						solicitud.setProcedimentValorCampClaseTramite(procediment.getValorCampClaseTramite().getShortValue());
+					}
 				}
 				solicitud.setSolicitantIdentificacio(consulta.getEntitatCif());
 				solicitud.setSolicitantNom(consulta.getEntitatNom());
@@ -461,6 +465,11 @@ public class PeticioScspHelper {
 	public boolean isIniDadesEspecifiques(String serveiCodi) {
 		ServeiConfig serveiConfig = serveiConfigRepository.findByServei(serveiCodi);
 		return serveiConfig != null && serveiConfig.isIniDadesEspecifiques();
+	}
+
+	public boolean isUseAutoClasse(String serveiCodi) {
+		ServeiConfig serveiConfig = serveiConfigRepository.findByServei(serveiCodi);
+		return serveiConfig == null || serveiConfig.isUseAutoClasse();
 	}
 
 

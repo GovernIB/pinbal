@@ -166,6 +166,8 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 					null,
 					null, 
 					new byte[0],
+					false,
+					true,
 					actiu).build();
 			serveiConfigRepository.save(serveiConfig);
 		} else {
@@ -197,6 +199,8 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 					servei.getFitxerAjudaNom(),
 					servei.getFitxerAjudaMimeType(),
 					servei.getFitxerAjudaContingut(),
+					servei.isPinbalIniDadesExpecifiques(),
+					servei.isUseAutoClasse(),
 					true).build();
 			serveiConfig.setPinbalUnitatDir3FromEntitat(servei.isPinbalUnitatDir3FromEntitat());
 			serveiConfigRepository.save(serveiConfig);
@@ -226,7 +230,8 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 					servei.isActivaGestioXsd(),
 					servei.getMaxPeticionsMinut(),
 					servei.getAjuda(),
-					servei.isPinbalIniDadesExpecifiques());
+					servei.isPinbalIniDadesExpecifiques(),
+					servei.isUseAutoClasse());
 			serveiConfig.setPinbalUnitatDir3FromEntitat(servei.isPinbalUnitatDir3FromEntitat());
 			if (servei.getFitxerAjudaNom() != null && !servei.getFitxerAjudaNom().isEmpty()) {
 				serveiConfig.updateFitxerAjuda(
@@ -1522,6 +1527,7 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 			dto.setFitxerAjudaContingut(serveiConfig.getFitxerAjudaContingut());
 			dto.setPinbalUnitatDir3FromEntitat(serveiConfig.isPinbalUnitatDir3FromEntitat());
 			dto.setPinbalIniDadesExpecifiques(serveiConfig.isIniDadesEspecifiques());
+			dto.setUseAutoClasse(serveiConfig.isUseAutoClasse());
 		}
 //		Long numeroProcedimentsAssociats = procedimentRepository.countByServei(servicio.getCodCertificado());
 //		dto.setNumeroProcedimentsAssociats(numeroProcedimentsAssociats == null ? 0 : numeroProcedimentsAssociats);
