@@ -239,9 +239,11 @@ public class PeticioScspHelper {
 						procedimentServei.getProcedimentCodi() : 
 						procediment.getCodi()));
 		solicitud.setProcedimentNom(procediment.getNom());
-		solicitud.setProcedimentValorCampAutomatizado(procediment.getValorCampAutomatizado());
-		if (procediment.getValorCampClaseTramite() != null) {
-			solicitud.setProcedimentValorCampClaseTramite(procediment.getValorCampClaseTramite().getShortValue());
+		if (isUseAutoClasse(procedimentServei.getServei())) {
+			solicitud.setProcedimentValorCampAutomatizado(procediment.getValorCampAutomatizado());
+			if (procediment.getValorCampClaseTramite() != null) {
+				solicitud.setProcedimentValorCampClaseTramite(procediment.getValorCampClaseTramite().getShortValue());
+			}
 		}
 		solicitud.setSolicitantIdentificacio(entitat.getCif());
 		solicitud.setSolicitantNom(entitat.getNom());
