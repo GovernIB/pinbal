@@ -37,5 +37,13 @@ public enum ProcedimentClaseTramiteEnumDto {
 	public short getShortValue() {
 		return shortValue;
 	}
+	public static ProcedimentClaseTramiteEnumDto from(short shortValue) {
+		for(ProcedimentClaseTramiteEnumDto ct: values()) {
+			if (ct.getShortValue() == shortValue) {
+				return ct;
+			}
+		}
+		return null;
+	}
 
 };

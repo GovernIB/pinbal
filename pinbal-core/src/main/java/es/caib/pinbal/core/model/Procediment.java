@@ -8,6 +8,7 @@ import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.Convert;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
 import javax.persistence.FetchType;
@@ -69,6 +70,7 @@ public class Procediment extends PinbalAuditable<Long> {
 	private Boolean valorCampAutomatizado;
 
 	@Column(name = "valor_camp_clasetramite")
+	@Convert(converter = ProcedimentClasseTramiteConverter.class)
 	private ProcedimentClaseTramiteEnumDto valorCampClaseTramite;
 
 	@ManyToOne(optional = false, fetch = FetchType.EAGER)
