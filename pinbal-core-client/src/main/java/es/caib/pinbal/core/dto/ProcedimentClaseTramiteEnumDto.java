@@ -14,7 +14,7 @@ public enum ProcedimentClaseTramiteEnumDto {
 	TRIBUTARIO((short)3),
 	SANCIONADOR((short)14),
 	AFILIACION_COTIZACION_SS((short)19),
-	AUTORIZ_LICEN_CONCES_HOMOLOG((short)21),
+	AUTORIZ_LICEN_CONCES_HOMOLOG((short)20),
 	AYUDAS_BECAS_SUBVEN((short)21),
 	CERTIFICADOS((short)22),
 	CONTRATACION_PUB((short)23),
