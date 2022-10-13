@@ -103,6 +103,9 @@ public class ServeiConfig extends PinbalAuditable<Long> {
 	@Column(name = "ini_dades_especifiques")
 	private boolean iniDadesEspecifiques = false;
 
+	@Column(name = "use_auto_classe")
+	private boolean useAutoClasse = true;
+
 	@Version
 	private long version = 0;
 
@@ -142,7 +145,9 @@ public class ServeiConfig extends PinbalAuditable<Long> {
 			Integer maxPeticionsMinut,
 			String fitxerAjudaNom,
 			String fitxerAjudaMimeType,
-			byte[] fitxerAjudaContingut, 
+			byte[] fitxerAjudaContingut,
+			boolean iniDadesEspecifiques,
+			boolean useAutoClasse,
 			boolean actiu) {
 		return new Builder(
 				servei,
@@ -158,6 +163,8 @@ public class ServeiConfig extends PinbalAuditable<Long> {
 				fitxerAjudaNom,
 				fitxerAjudaMimeType,
 				fitxerAjudaContingut,
+				iniDadesEspecifiques,
+				useAutoClasse,
 				actiu);
 	}
 
@@ -188,7 +195,8 @@ public class ServeiConfig extends PinbalAuditable<Long> {
 			boolean activaGestioXsd,
 			Integer maxPeticionsMinut,
 			String ajuda, 
-			boolean iniDadesEspecifiques) {
+			boolean iniDadesEspecifiques,
+			boolean useAutoClasse) {
 		this.custodiaCodi = custodiaCodi;
 		this.roleName = roleName;
 		this.condicioBusClass = condicioBusClass;
@@ -212,6 +220,7 @@ public class ServeiConfig extends PinbalAuditable<Long> {
 		this.maxPeticionsMinut = maxPeticionsMinut;
 		this.ajuda = ajuda;
 		this.iniDadesEspecifiques = iniDadesEspecifiques;
+		this.useAutoClasse = useAutoClasse;
 	}
 	public void updateFitxerAjuda(
 			String fitxerAjudaNom,
@@ -257,6 +266,8 @@ public class ServeiConfig extends PinbalAuditable<Long> {
 				String fitxerAjudaNom,
 				String fitxerAjudaMimeType,
 				byte[] fitxerAjudaContingut,
+				boolean iniDadesEspecifiques,
+				boolean useAutoClasse,
 				boolean actiu) {
 			built = new ServeiConfig();
 			built.servei = servei;
@@ -272,6 +283,8 @@ public class ServeiConfig extends PinbalAuditable<Long> {
 			built.fitxerAjudaNom = fitxerAjudaNom;
 			built.fitxerAjudaMimeType = fitxerAjudaMimeType;
 			built.fitxerAjudaContingut = fitxerAjudaContingut;
+			built.iniDadesEspecifiques = iniDadesEspecifiques;
+			built.useAutoClasse = useAutoClasse;
 			built.actiu = actiu;
 		}
 		/**

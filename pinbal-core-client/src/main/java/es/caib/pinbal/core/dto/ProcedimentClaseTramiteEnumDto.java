@@ -10,25 +10,25 @@ package es.caib.pinbal.core.dto;
  */
 public enum ProcedimentClaseTramiteEnumDto {
 
-	ADUANERO((short)1),
-	AFILIACION_COTIZACION_SS((short)2),
-	AUTORIZ_LICEN_CONCES_HOMOLOG((short)3),
-	AYUDAS_BECAS_SUBVEN((short)4),
-	CERTIFICADOS((short)5),
-	CONTRATACION_PUB((short)6),
-	CONVENIOS_COMUNIC((short)7),
-	GESTION_ECON_PATRIM((short)8),
-	DECLARAC_COMUNIC_INTERESADOS((short)9),
-	INSPECTORA((short)10),
-	PREMIOS((short)11),
-	PRESTACIONES((short)12),
-	RECURSOS_HUMANOS((short)13),
-	REGISTROS_CENSOS((short)14),
-	RESP_PATRIM_INDEM((short)15),
-	REVISION_ACTOS_ADM_RECURSOS((short)16),
-	SANCIONADOR((short)17),
-	SUGEREN_QUEJAS_CIUDADANOS((short)18),
-	TRIBUTARIO((short)19);
+	RECURSOS_HUMANOS((short)2),
+	TRIBUTARIO((short)3),
+	SANCIONADOR((short)14),
+	AFILIACION_COTIZACION_SS((short)19),
+	AUTORIZ_LICEN_CONCES_HOMOLOG((short)20),
+	AYUDAS_BECAS_SUBVEN((short)21),
+	CERTIFICADOS((short)22),
+	CONTRATACION_PUB((short)23),
+	CONVENIOS_COMUNIC((short)24),
+	GESTION_ECON_PATRIM((short)25),
+	DECLARAC_COMUNIC_INTERESADOS((short)26),
+	INSPECTORA((short)27),
+	PREMIOS((short)28),
+	PRESTACIONES((short)29),
+	REGISTROS_CENSOS((short)30),
+	RESP_PATRIM_INDEM((short)31),
+	REVISION_ACTOS_ADM_RECURSOS((short)32),
+	SUGEREN_QUEJAS_CIUDADANOS((short)33),
+	ADUANERO((short)34);
 
 	private final short shortValue;
 	private ProcedimentClaseTramiteEnumDto(short shortValue) {
@@ -36,6 +36,14 @@ public enum ProcedimentClaseTramiteEnumDto {
 	}
 	public short getShortValue() {
 		return shortValue;
+	}
+	public static ProcedimentClaseTramiteEnumDto from(short shortValue) {
+		for(ProcedimentClaseTramiteEnumDto ct: values()) {
+			if (ct.getShortValue() == shortValue) {
+				return ct;
+			}
+		}
+		return null;
 	}
 
 };
