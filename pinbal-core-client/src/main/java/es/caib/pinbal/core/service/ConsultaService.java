@@ -7,6 +7,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import es.caib.pinbal.client.dadesobertes.DadesObertesResposta;
+import es.caib.pinbal.core.dto.ConsultaOpenDataDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -436,6 +438,8 @@ public interface ConsultaService {
 			Date dataFi,
 			String procedimentCodi,
 			String serveiCodi) throws EntitatNotFoundException, ProcedimentNotFoundException;
+
+	public DadesObertesResposta findByFiltrePerOpenDataV2(ConsultaOpenDataDto consultaOpenDataDto) throws EntitatNotFoundException, ProcedimentNotFoundException;
 
 	/**
 	 * Retorna una pàgina de les consultes realitzades donada una entitat.

@@ -3,6 +3,7 @@
  */
 package es.caib.pinbal.core.service;
 
+import es.caib.pinbal.client.dadesobertes.DadesObertesResposta;
 import es.caib.pinbal.client.dadesobertes.DadesObertesRespostaConsulta;
 import es.caib.pinbal.core.dto.*;
 import es.caib.pinbal.core.service.exception.*;
@@ -215,6 +216,8 @@ public interface HistoricConsultaService {
             Date dataFi,
             String procedimentCodi,
             String serveiCodi) throws EntitatNotFoundException, ProcedimentNotFoundException;
+
+	public DadesObertesResposta findByFiltrePerOpenDataV2(ConsultaOpenDataDto consultaOpenDataDto) throws EntitatNotFoundException, ProcedimentNotFoundException;
 
 	/**
 	 * Retorna una pàgina de les consultes realitzades donada una entitat.

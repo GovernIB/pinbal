@@ -11,6 +11,8 @@
 
 	<sec:http pattern="/opendata**" security="none" disable-url-rewriting="true"/>
 	<sec:http pattern="/opendata/**" security="none" disable-url-rewriting="true"/>
+	<sec:http pattern="/v2/opendata**" security="none" disable-url-rewriting="true"/>
+	<sec:http pattern="/v2/opendata/**" security="none" disable-url-rewriting="true"/>
 	<sec:http pattern="/api/rest**" security="none" disable-url-rewriting="true"/>
 	<sec:http pattern="/api/rest/**" security="none" disable-url-rewriting="true"/>
 	<sec:http pattern="/api/apidoc/" security="none" disable-url-rewriting="true"/>

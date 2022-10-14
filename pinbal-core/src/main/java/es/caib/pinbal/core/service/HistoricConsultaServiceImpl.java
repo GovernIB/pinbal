@@ -4,6 +4,8 @@
 package es.caib.pinbal.core.service;
 
 import java.io.ByteArrayOutputStream;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -15,9 +17,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
+import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
+import es.caib.pinbal.client.dadesobertes.DadesObertesResposta;
+import es.caib.pinbal.core.dto.ConsultaOpenDataDto;
 import es.caib.pinbal.scsp.PropertiesHelper;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -90,6 +95,8 @@ import es.caib.pinbal.scsp.ScspHelper;
 import es.scsp.common.domain.core.EmisorCertificado;
 import es.scsp.common.domain.core.Servicio;
 import lombok.extern.slf4j.Slf4j;
+
+import static org.apache.commons.lang.StringUtils.isBlank;
 
 /**
  * Implementació dels mètodes per a gestionar les consultes al SCSP.
@@ -455,17 +462,9 @@ public class HistoricConsultaServiceImpl implements HistoricConsultaService, App
 		Entitat entitat = null;
 		Procediment procediment = null;
 		if (entitatCodi != null) {
-			entitat = entitatRepository.findByCodi(entitatCodi);
-			if (entitat == null) {
-				log.debug("No s'ha trobat l'entitat (codi=" + entitatCodi + ")");
-				throw new EntitatNotFoundException();
-			}
+			entitat = getEntitat(entitatCodi);
 			if (procedimentCodi != null) {
-				procediment = procedimentRepository.findByEntitatAndCodi(entitat, procedimentCodi);
-				if (procediment == null) {
-					log.debug("No s'ha trobat el procediment (codi=" + procedimentCodi + ")");
-					throw new ProcedimentNotFoundException();
-				}
+				procediment = getProcediment(procedimentCodi, entitat);
 			}
 		}
 		List<DadesObertesRespostaConsulta> resposta = historicConsultaRepository.findByOpendata(
@@ -480,6 +479,84 @@ public class HistoricConsultaServiceImpl implements HistoricConsultaService, App
 				dataFi == null,
 				dataFi);
 		return resposta;
+	}
+
+	@Override
+	public DadesObertesResposta findByFiltrePerOpenDataV2(ConsultaOpenDataDto consultaOpenDataDto) throws EntitatNotFoundException, ProcedimentNotFoundException {
+		log.debug("Consultant informació per opendata (" + consultaOpenDataDto + ")");
+		DateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+
+		Entitat entitat = null;
+		Procediment procediment = null;
+		if (consultaOpenDataDto.getEntitatCodi() != null) {
+			entitat = getEntitat(consultaOpenDataDto.getEntitatCodi());
+			if (consultaOpenDataDto.getProcedimentCodi() != null) {
+				procediment = getProcediment(consultaOpenDataDto.getProcedimentCodi(), entitat);
+			}
+		}
+
+		Integer numElements = historicConsultaRepository.countByOpendata(
+				entitat == null,
+				entitat != null ? entitat.getId() : null,
+				procediment == null,
+				procediment != null ? procediment.getId() : null,
+				isBlank(consultaOpenDataDto.getServeiCodi()),
+				!isBlank(consultaOpenDataDto.getServeiCodi()) ? consultaOpenDataDto.getServeiCodi() : null,
+				consultaOpenDataDto.getDataInici() == null,
+				consultaOpenDataDto.getDataInici(),
+				consultaOpenDataDto.getDataFi() == null,
+				consultaOpenDataDto.getDataFi());
+		Page<DadesObertesRespostaConsulta> dades = historicConsultaRepository.findByOpendata(
+				entitat == null,
+				entitat != null ? entitat.getId() : null,
+				procediment == null,
+				procediment != null ? procediment.getId() : null,
+				consultaOpenDataDto.getServeiCodi() == null,
+				consultaOpenDataDto.getServeiCodi(),
+				consultaOpenDataDto.getDataInici() == null,
+				consultaOpenDataDto.getDataInici(),
+				consultaOpenDataDto.getDataFi() == null,
+				consultaOpenDataDto.getDataFi(),
+				new PageRequest(consultaOpenDataDto.getPagina(), consultaOpenDataDto.getMida()));
+
+		Integer totalPagines = (numElements.intValue() + consultaOpenDataDto.getMida() - 1)/consultaOpenDataDto.getMida();
+		String nextUrl = null;
+		if (totalPagines.intValue() > consultaOpenDataDto.getPagina().intValue() + 1) {
+			nextUrl = consultaOpenDataDto.getAppPath() + "?historic=true";
+			nextUrl += "&dataInici=" + sdf.format(consultaOpenDataDto.getDataInici());
+			nextUrl += "&dataFi=" + sdf.format(consultaOpenDataDto.getDataFi());
+			nextUrl += !isBlank(consultaOpenDataDto.getEntitatCodi()) ? "&entitatCodi=" + consultaOpenDataDto.getEntitatCodi() : "";
+			nextUrl += !isBlank(consultaOpenDataDto.getProcedimentCodi()) ? "&procedimentCodi=" + consultaOpenDataDto.getProcedimentCodi() : "";
+			nextUrl += !isBlank(consultaOpenDataDto.getServeiCodi()) ? "&serveiCodi=" + consultaOpenDataDto.getServeiCodi() : "";
+			nextUrl += "&pagina=" + (consultaOpenDataDto.getPagina() + 1);
+			nextUrl += "&mida=" + consultaOpenDataDto.getMida();
+		}
+
+		return DadesObertesResposta.builder()
+				.totalElements(numElements)
+				.paginaActual(consultaOpenDataDto.getPagina() + 1)
+				.totalPagines(totalPagines)
+				.properaPagina(nextUrl)
+				.dades(dades.getContent())
+				.build();
+	}
+
+	private Procediment getProcediment(String procedimentCodi, Entitat entitat) throws ProcedimentNotFoundException {
+		Procediment procediment = procedimentRepository.findByEntitatAndCodi(entitat, procedimentCodi);
+		if (procediment == null) {
+			log.debug("No s'ha trobat el procediment (codi=" + procedimentCodi + ")");
+			throw new ProcedimentNotFoundException();
+		}
+		return procediment;
+	}
+
+	private Entitat getEntitat(String entitatCodi) throws EntitatNotFoundException {
+		Entitat entitat = entitatRepository.findByCodi(entitatCodi);
+		if (entitat == null) {
+			log.debug("No s'ha trobat l'entitat (codi=" + entitatCodi + ")");
+			throw new EntitatNotFoundException();
+		}
+		return entitat;
 	}
 
 	@Transactional(readOnly = true)

@@ -319,6 +319,73 @@ public interface HistoricConsultaRepository extends JpaRepository<HistoricConsul
             @Param("esNullDataFi") boolean esNullDataFi,
             @Param("dataFi") Date dataFi);
 
+	@Query(	"select count(c) " +
+			"  from HistoricConsulta c " +
+			" where (:esNullEntitatId = true or c.procedimentServei.procediment.entitat.id = :entitatId) " +
+			"   and (:esNullProcedimentId = true or c.procedimentServei.procediment.id = :procedimentId) " +
+			"   and (:esNullServeiCodi = true or c.procedimentServei.servei = :serveiCodi) " +
+			"   and (:esNullDataInici = true or c.createdDate >= :dataInici) " +
+			"   and (:esNullDataFi = true or c.createdDate <= :dataFi) " +
+			"   and (c.multiple = false) " +
+			" order by " +
+			"c.createdDate asc")
+	public Integer countByOpendata(
+			@Param("esNullEntitatId") boolean esNullEntitatId,
+			@Param("entitatId") Long entitatId,
+			@Param("esNullProcedimentId") boolean esNullProcedimentId,
+			@Param("procedimentId") Long procedimentId,
+			@Param("esNullServeiCodi") boolean esNullServeiCodi,
+			@Param("serveiCodi") String serveiCodi,
+			@Param("esNullDataInici") boolean esNullDataInici,
+			@Param("dataInici") Date dataInici,
+			@Param("esNullDataFi") boolean esNullDataFi,
+			@Param("dataFi") Date dataFi);
+
+	@Query(	"select " +
+			"    new es.caib.pinbal.client.dadesobertes.DadesObertesRespostaConsulta(" +
+			"        c.procedimentServei.procediment.entitat.codi, " +
+			"        c.procedimentServei.procediment.entitat.nom, " +
+			"        c.procedimentServei.procediment.entitat.cif, " +
+			"        cast(c.procedimentServei.procediment.entitat.tipus as string), " +
+			"        c.transmision.codigoUnidadTramitadora, " +
+			"        c.transmision.unidadTramitadora, " +
+			"        c.procedimentServei.procediment.codi, " +
+			"        c.procedimentServei.procediment.nom, " +
+			"        c.procedimentServei.serveiScsp.codi, " +
+			"        c.procedimentServei.serveiScsp.descripcio, " +
+			"        c.procedimentServei.serveiScsp.scspEmisor.nom, " +
+			"        c.procedimentServei.serveiScsp.scspEmisor.cif, " +
+			"        c.transmision.consentimiento, " +
+			"        c.transmision.finalidad, " +
+			"        c.titularDocumentTipus, " +
+			"        c.scspSolicitudId, " +
+			"        c.createdDate, " +
+			"        c.recobriment, " +
+			"        cast(c.estat as string)) " +
+			"from" +
+			"    HistoricConsulta c " +
+			"where " +
+			"    (:esNullEntitatId = true or c.procedimentServei.procediment.entitat.id = :entitatId) " +
+			"and (:esNullProcedimentId = true or c.procedimentServei.procediment.id = :procedimentId) " +
+			"and (:esNullServeiCodi = true or c.procedimentServei.servei = :serveiCodi) " +
+			"and (:esNullDataInici = true or c.createdDate >= :dataInici) " +
+			"and (:esNullDataFi = true or c.createdDate <= :dataFi) " +
+			"and (c.multiple = false) " +
+			"order by " +
+			"c.createdDate asc")
+	public Page<DadesObertesRespostaConsulta> findByOpendata(
+			@Param("esNullEntitatId") boolean esNullEntitatId,
+			@Param("entitatId") Long entitatId,
+			@Param("esNullProcedimentId") boolean esNullProcedimentId,
+			@Param("procedimentId") Long procedimentId,
+			@Param("esNullServeiCodi") boolean esNullServeiCodi,
+			@Param("serveiCodi") String serveiCodi,
+			@Param("esNullDataInici") boolean esNullDataInici,
+			@Param("dataInici") Date dataInici,
+			@Param("esNullDataFi") boolean esNullDataFi,
+			@Param("dataFi") Date dataFi,
+			Pageable pageable);
+
 	@Query(	"select" +
 			"    c " +
 			"from" +
