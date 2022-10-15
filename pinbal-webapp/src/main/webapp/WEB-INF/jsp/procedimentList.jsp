@@ -164,7 +164,7 @@ $(document).ready(function() {
 		</div>
 	</form:form>
 	<div class="pull-right">
-		<a class="btn btn-primary" href="<c:url value="/procediment/new"/>"><i class="fa fa-plus"></i>&nbsp;<spring:message code="procediment.list.boto.nou.procediment"/></a>
+		<a class="btn btn-primary" href="<c:url value="/procediment/new"/>" data-toggle="modal" data-refresh-pagina="true"><i class="fa fa-plus"></i>&nbsp;<spring:message code="procediment.list.boto.nou.procediment"/></a>
 	</div>
 	<table id="table-procediments" class="table table-striped table-bordered" style="width: 100%">
 		<thead>
@@ -201,7 +201,7 @@ $(document).ready(function() {
 	<div class="btn-group">
 		<button class="btn btn-primary dropdown-toggle" data-toggle="dropdown"><i class="fas fa-cog"></i>&nbsp;<spring:message code="comu.accions"/>&nbsp;<span class="caret"></span></button>
 		<ul class="dropdown-menu">
-			<li><a href="procediment/{{ id }}" ><i class="fas fa-pen"></i>&nbsp;<spring:message code="comu.boto.modificar"/></a></li>
+			<li><a href="procediment/{{ id }}" data-toggle="modal" data-refresh-pagina="true"><i class="fas fa-pen"></i>&nbsp;<spring:message code="comu.boto.modificar"/></a></li>
 			{{#actiu}}
 				<li><a href="procediment/{{ id }}/disable" ><i class="fas fa-times"></i>&nbsp;<spring:message code="comu.boto.desactivar"/></a></li>
 			{{/actiu}}

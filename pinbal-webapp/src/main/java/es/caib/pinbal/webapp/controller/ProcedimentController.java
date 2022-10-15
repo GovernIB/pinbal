@@ -233,23 +233,20 @@ public class ProcedimentController extends BaseController {
 		ProcedimentDto procediment = command.asDto();
 		procediment.setEntitatId(entitat.getId());
 		command.setEntitatId(entitat.getId());
-		
+
 		if (command.getId() != null) {
 			procedimentService.update(procediment);
-			AlertHelper.success(
+			return getModalControllerReturnValueSuccess(
 					request,
-					getMessage(
-							request,
-							"procediment.controller.procediment.modificat.ok"));
+					"redirect:../procediment",
+					"procediment.controller.procediment.modificat.ok");
 		} else {
 			procedimentService.create(procediment);
-			AlertHelper.success(
-					request, 
-					getMessage(
-							request,
-							"procediment.controller.procediment.creat.ok"));
+			return getModalControllerReturnValueSuccess(
+					request,
+					"redirect:../procediment",
+					"procediment.controller.procediment.creat.ok");
 		}
-		return "redirect:../procediment";
 	}
 
 	@RequestMapping(value = "/{procedimentId}/delete", method = RequestMethod.GET)
