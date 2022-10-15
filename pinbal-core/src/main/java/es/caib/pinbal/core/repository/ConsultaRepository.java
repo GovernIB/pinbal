@@ -226,6 +226,7 @@ public interface ConsultaRepository extends JpaRepository<Consulta, Long> {
 			"and (:esNullTitularDocument = true or c.titularDocumentNum = :titularDocument) " +
 			"and (:esNullFuncionari = true or (lower(c.funcionariDocumentNum) like lower('%'||:funcionari||'%') or lower(c.funcionariNom) like lower('%'||:funcionari||'%'))) " +
 			"and (:esNullUsuari = true or c.createdBy.codi = :usuari) " +
+			"and (:esNullRecobriment = true or c.recobriment = :recobriment) " +
 			"and c.pare is null")
 	public Page<Consulta> findByFiltrePaginatAdmin(
 			@Param("esNullEntitatId") boolean esNullEntitatId,
@@ -250,6 +251,8 @@ public interface ConsultaRepository extends JpaRepository<Consulta, Long> {
 			@Param("funcionari") String funcionari,
 			@Param("esNullUsuari") boolean esNullUsuari,
 			@Param("usuari") String usuari,
+			@Param("esNullRecobriment") Boolean esNullRecobriment,
+			@Param("recobriment") Boolean recobriment,
 			Pageable pageable);
 
 	@Query(	"select " +

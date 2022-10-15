@@ -112,6 +112,14 @@
 				</div>
 			</div>
 			<div class="row">
+				<div class="col-md-3">
+					<pbl:inputSelect name="recobriment" inline="true"
+									 placeholderKey="admin.consulta.list.filtre.origen"
+									 optionItems="${origens}"
+									 optionValueAttribute="codi"
+									 optionTextKeyAttribute="valor"
+									 emptyOption="true"/>
+				</div>
 				<div class="col-md-2 pull-right">
 					<div class="pull-right">
 						<button id="netejar-filtre" class="btn btn-default" type="button"><spring:message code="comu.boto.netejar"/></button>

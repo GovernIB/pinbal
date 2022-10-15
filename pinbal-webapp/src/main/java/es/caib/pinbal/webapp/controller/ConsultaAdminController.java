@@ -17,6 +17,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
+import es.caib.pinbal.core.dto.CodiValor;
 import es.caib.pinbal.core.dto.DadaEspecificaDto;
 import es.caib.pinbal.core.dto.NodeDto;
 import es.caib.pinbal.core.dto.ServeiCampDto;
@@ -342,6 +343,10 @@ public class ConsultaAdminController extends BaseController {
 						serveiService.findAll());
 		}
 		model.addAttribute("historic", isHistoric(request));
+		List<CodiValor> origens = new ArrayList<>();
+		origens.add(new CodiValor("true", "admin.consulta.list.filtre.origen.recobriment"));
+		origens.add(new CodiValor("false", "admin.consulta.list.filtre.origen.web"));
+		model.addAttribute("origens", origens);
 	}
 
 	private boolean isHistoric(HttpServletRequest request) {
