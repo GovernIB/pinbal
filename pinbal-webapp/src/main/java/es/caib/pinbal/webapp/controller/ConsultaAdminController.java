@@ -343,6 +343,10 @@ public class ConsultaAdminController extends BaseController {
 						serveiService.findAll());
 		}
 		model.addAttribute("historic", isHistoric(request));
+		getOrigens(model);
+	}
+
+	private void getOrigens(Model model) {
 		List<CodiValor> origens = new ArrayList<>();
 		origens.add(new CodiValor("true", "admin.consulta.list.filtre.origen.recobriment"));
 		origens.add(new CodiValor("false", "admin.consulta.list.filtre.origen.web"));

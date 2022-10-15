@@ -15,6 +15,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
+import es.caib.pinbal.core.dto.CodiValor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
 import org.springframework.data.domain.Page;
@@ -83,8 +84,16 @@ public class ConsultaMultipleController extends BaseController {
 		if (entitat != null) {
 			omplirModelPerFiltreTaula(request, entitat, model);
 		}
+		getOrigens(model);
 		return "consultaMultiple";
 	}
+	private void getOrigens(Model model) {
+		List<CodiValor> origens = new ArrayList<>();
+		origens.add(new CodiValor("true", "admin.consulta.list.filtre.origen.recobriment"));
+		origens.add(new CodiValor("false", "admin.consulta.list.filtre.origen.web"));
+		model.addAttribute("origens", origens);
+	}
+
 
 	@RequestMapping(method = RequestMethod.POST)
 	public String post(

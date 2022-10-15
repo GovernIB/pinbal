@@ -8,6 +8,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -16,6 +17,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
+import es.caib.pinbal.core.dto.CodiValor;
 import es.caib.pinbal.core.service.HistoricConsultaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
@@ -86,7 +88,14 @@ public class SuperauditorController extends BaseController {
 		} else {
 			omplirModelPerFiltreTaula(request, model);
 		}
+		getOrigens(model);
 		return "superauditorConsultes";
+	}
+	private void getOrigens(Model model) {
+		List<CodiValor> origens = new ArrayList<>();
+		origens.add(new CodiValor("true", "admin.consulta.list.filtre.origen.recobriment"));
+		origens.add(new CodiValor("false", "admin.consulta.list.filtre.origen.web"));
+		model.addAttribute("origens", origens);
 	}
 
 	@RequestMapping(method = RequestMethod.POST)
