@@ -109,41 +109,28 @@ $(document).ready(function() {
 	});
 });
 </script>
+	<style>
+		#actius label { width: 50%; }
+		#actius > .btn-group { width: 100%; }
+	</style>
 
 </head>
 <body>
 	<c:url value="/procediment" var="formAction"/>
 	<form:form id="form-filtre" action="${formAction}" method="post" cssClass="well form-filtre-table" commandName="procedimentFiltreCommand">
 		<div class="row">
-			<div class="col-md-3">
+			<div class="col-md-4">
 				<pbl:inputText name="codi" inline="true" placeholderKey="procediment.list.filtre.camp.codi"/>
 			</div>
-			<div class="col-md-3">
+			<div class="col-md-4">
+				<pbl:inputText name="codiSia" inline="true" placeholderKey="procediment.list.filtre.camp.codisia"/>
+			</div>
+			<div class="col-md-4">
 				<pbl:inputText name="nom" inline="true" placeholderKey="procediment.list.filtre.camp.nom"/>
-			</div>
-			<div class="col-md-3">
-				<pbl:inputText name="departament" inline="true" placeholderKey="procediment.list.filtre.camp.departament"/>
-			</div>
-			<div class="col-md-3">
-				<pbl:inputSelect
-					name="organGestorId"
-					placeholderKey="procediment.list.filtre.camp.organgestor"
-					inline="true"
-					emptyOption="true"
-					emptyOptionTextKey="procediment.list.filtre.camp.opcio.cap"
-					optionItems="${organsGestors}"
-					optionValueAttribute="id"
-					optionTextAttribute="codiINom"
-					required="true"
-					optionMinimumResultsForSearch="5"
-					formatResult="formatState"/>
 			</div>
 		</div>
 		<div class="row">
-			<div class="col-md-3">
-				<pbl:inputText name="codiSia" inline="true" placeholderKey="procediment.list.filtre.camp.codisia"/>
-			</div>
-			<div class="col-md-2">
+			<div id="actius" class="col-md-2">
 				<pbl:inputRadio
 						name="actiu"
 						inline="true"
@@ -151,6 +138,23 @@ $(document).ready(function() {
 						optionValueAttribute="codi"
 						optionTextKeyAttribute="valor"
 						botons="true"/>
+			</div>
+			<div class="col-md-4">
+				<pbl:inputText name="departament" inline="true" placeholderKey="procediment.list.filtre.camp.departament"/>
+			</div>
+			<div class="col-md-6">
+				<pbl:inputSelect
+						name="organGestorId"
+						placeholderKey="procediment.list.filtre.camp.organgestor"
+						inline="true"
+						emptyOption="true"
+						emptyOptionTextKey="procediment.list.filtre.camp.opcio.cap"
+						optionItems="${organsGestors}"
+						optionValueAttribute="id"
+						optionTextAttribute="codiINom"
+						required="true"
+						optionMinimumResultsForSearch="5"
+						formatResult="formatState"/>
 			</div>
 		</div>
 		<div class="row">
