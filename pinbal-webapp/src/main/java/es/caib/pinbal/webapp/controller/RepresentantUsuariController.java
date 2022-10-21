@@ -3,8 +3,10 @@
  */
 package es.caib.pinbal.webapp.controller;
 
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
@@ -12,9 +14,18 @@ import java.util.List;
 
 import javax.naming.NamingException;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import es.caib.pinbal.core.dto.ProcedimentServeiDto;
+import es.caib.pinbal.core.dto.ProcedimentServeiNomDto;
+import es.caib.pinbal.core.dto.ProcedimentServeiSimpleDto;
 import es.caib.pinbal.core.dto.UsuariEstatEnum;
+import es.caib.pinbal.core.service.exception.ProcedimentNotFoundException;
+import es.caib.pinbal.webapp.helper.ModalHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -475,6 +486,37 @@ public class RepresentantUsuariController extends BaseController {
 		}
 	}
 
+	@RequestMapping(value = "/{usuariCodi}/permis/afegir/selected", method = RequestMethod.POST)
+	public String permisAfegirSeleccionats(
+			HttpServletRequest request,
+			@PathVariable String usuariCodi,
+			@RequestParam("persisosSeleccionats") String procedimentsServeisSeleccionatsJson,
+			Model model) throws Exception {
+		EntitatDto entitat = EntitatHelper.getEntitatActual(request);
+		if (entitat != null) {
+			if (!EntitatHelper.isRepresentantEntitatActual(request))
+				return "representantNoAutoritzat";
+
+			ObjectMapper mapper = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+			List<ProcedimentServeiSimpleDto> procedimentsServeis = mapper.readValue(procedimentsServeisSeleccionatsJson, new TypeReference<List<ProcedimentServeiSimpleDto>>(){});
+			procedimentService.serveiPermisAllowSelected(
+					usuariCodi,
+					procedimentsServeis,
+					entitat.getId());
+			UsuariDto usuari = usuariService.getDades(usuariCodi);
+			return getModalControllerReturnValueSuccess(
+					request,
+					"redirect:../../permis",
+					"representant.controller.permis.seleccionats.afegit",
+					new Object[] {usuari.getDescripcio()});
+		} else {
+			return getModalControllerReturnValueError(
+					request,
+					"redirect:/index",
+					"representant.controller.entitat.no.existeix");
+		}
+	}
+
 	@RequestMapping(value = "/{usuariCodi}/permis/deny", method = RequestMethod.POST)
 	public String permisDenegar(
 			HttpServletRequest request,
@@ -518,6 +560,41 @@ public class RepresentantUsuariController extends BaseController {
 			return "redirect:../index";
 		}
 	}
+
+	@RequestMapping(value = "/{usuariCodi}/permis/deny/selected", method = RequestMethod.POST)
+	public String permisDenegarSeleccionats(
+			HttpServletRequest request,
+			@PathVariable String usuariCodi,
+			@RequestParam("persisosSeleccionats") String procedimentsServeisSeleccionatsJson,
+			Model model) throws Exception {
+		EntitatDto entitat = EntitatHelper.getEntitatActual(request);
+		if (entitat != null) {
+			if (!EntitatHelper.isRepresentantEntitatActual(request))
+				return "representantNoAutoritzat";
+
+			ObjectMapper mapper = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+			List<ProcedimentServeiSimpleDto> procedimentsServeis = mapper.readValue(procedimentsServeisSeleccionatsJson, new TypeReference<List<ProcedimentServeiSimpleDto>>(){});
+			procedimentService.serveiPermisDenySelected(
+					usuariCodi,
+					procedimentsServeis,
+					entitat.getId());
+			UsuariDto usuari = usuariService.getDades(usuariCodi);
+			AlertHelper.success(
+					request,
+					getMessage(
+							request,
+							"representant.controller.permis.seleccionats.denegat",
+							new Object[] {usuari.getDescripcio()}));
+			return "redirect:../../permis";
+		} else {
+			AlertHelper.error(
+					request,
+					getMessage(
+							request,
+							"representant.controller.entitat.no.existeix"));
+			return "redirect:/index";
+		}
+	}
 	
 	@RequestMapping(value = "/{usuariCodi}/permis/deny/all", method = RequestMethod.GET)
 	public String permisDenegarTots(
@@ -547,6 +624,50 @@ public class RepresentantUsuariController extends BaseController {
 							"representant.controller.entitat.no.existeix"));
 			return "redirect:/index";
 		}
+	}
+
+	@RequestMapping(value = "/{usuariCodi}/permis/afegir", method = RequestMethod.GET)
+	public String permisAfegirGet(
+			HttpServletRequest request,
+			@PathVariable String usuariCodi,
+			Model model) throws EntitatNotFoundException {
+		EntitatDto entitat = EntitatHelper.getEntitatActual(request);
+		if (entitat != null) {
+			if (!EntitatHelper.isRepresentantEntitatActual(request))
+				return "representantNoAutoritzat";
+			model.addAttribute(
+					"usuari",
+					usuariService.getDades(usuariCodi));
+			model.addAttribute(
+					"procediments",
+					procedimentService.findAmbEntitat(entitat.getId()));
+			return "representantUsuariPermisForm";
+		} else {
+			AlertHelper.error(
+					request,
+					getMessage(
+							request,
+							"representant.controller.entitat.no.existeix"));
+			return "redirect:../index";
+		}
+	}
+
+	@RequestMapping(value = "/{usuariCodi}/permis/{procedimentId}/serveis/disponibles", method = RequestMethod.GET)
+	@ResponseBody
+	public List<ProcedimentServeiNomDto> serveisPerProcediment(
+			HttpServletRequest request,
+			@PathVariable String usuariCodi,
+			@PathVariable Long procedimentId,
+			Model model) throws Exception {
+		EntitatDto entitat = EntitatHelper.getEntitatActual(request);
+		if (entitat != null) {
+			if (!EntitatHelper.isRepresentantEntitatActual(request))
+				return null;
+		}
+		return procedimentService.serveiDisponibles(
+					usuariCodi,
+					procedimentId,
+					entitat.getId());
 	}
 
 	private void omplirModelPerMostrarLlistat(

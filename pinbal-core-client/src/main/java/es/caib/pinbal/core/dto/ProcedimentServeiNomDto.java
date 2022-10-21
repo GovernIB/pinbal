@@ -12,14 +12,16 @@ import java.io.Serializable;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class ProcedimentServeiSimpleDto implements Serializable {
+public class ProcedimentServeiNomDto implements Serializable {
 	
 	private static final long serialVersionUID = 6085171827817934826L;
 	
 	private String serveiCodi;
 	private String procedimentCodi;
 	@EqualsAndHashCode.Exclude
-	private boolean actiu;
+	private String serveiDescripcio;
+	@EqualsAndHashCode.Exclude
+	private String procedimentNom;
 
 
 }

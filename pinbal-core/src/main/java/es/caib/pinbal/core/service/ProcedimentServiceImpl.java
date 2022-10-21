@@ -7,6 +7,9 @@ import java.util.*;
 
 import javax.annotation.Resource;
 
+import es.caib.pinbal.core.dto.ProcedimentServeiDto;
+import es.caib.pinbal.core.dto.ProcedimentServeiNomDto;
+import es.caib.pinbal.core.dto.ProcedimentServeiSimpleDto;
 import org.springframework.data.domain.Page;
 import org.springframework.security.acls.domain.BasePermission;
 import org.springframework.security.acls.domain.PrincipalSid;
@@ -440,6 +443,121 @@ public class ProcedimentServiceImpl implements ProcedimentService {
 						aclService);
 			}
 		}
+	}
+
+	@Override
+	@Transactional(rollbackFor = {ProcedimentNotFoundException.class, ProcedimentServeiNotFoundException.class, EntitatUsuariNotFoundException.class})
+	public void serveiPermisAllowSelected(String usuariCodi, List<ProcedimentServeiSimpleDto> procedimentsServeis, Long entitatId) throws EntitatUsuariNotFoundException, ProcedimentServeiNotFoundException {
+		EntitatUsuari entitatUsuari = entitatUsuariRepository.findByEntitatIdAndUsuariCodi(
+				entitatId,
+				usuariCodi);
+		if (entitatUsuari == null) {
+			log.debug("L'entitat (id=" + entitatId + ") no té cap usuari (codi=" + usuariCodi + ")");
+			throw new EntitatUsuariNotFoundException();
+		}
+
+		for(ProcedimentServeiSimpleDto procedimentServeiDto : procedimentsServeis) {
+			ProcedimentServei procedimentServei = procedimentServeiRepository.findByEntitatIdProcedimentCodiAndServeiCodi(entitatId, procedimentServeiDto.getProcedimentCodi(), procedimentServeiDto.getServeiCodi());
+			if (procedimentServei == null) {
+				log.debug("El procediment (codi= " + procedimentServeiDto.getProcedimentCodi() + ") no té cap servei (codi=" + procedimentServeiDto.getServeiCodi() + ")");
+				throw new ProcedimentServeiNotFoundException();
+			}
+			PermisosHelper.assignarPermisUsuari(
+					usuariCodi,
+					ProcedimentServei.class,
+					procedimentServei.getId(),
+					BasePermission.READ,
+					aclService);
+		}
+	}
+
+	@Transactional(rollbackFor = {ProcedimentNotFoundException.class, ProcedimentServeiNotFoundException.class, EntitatUsuariNotFoundException.class})
+	@Override
+	public void serveiPermisDenySelected(String usuariCodi, List<ProcedimentServeiSimpleDto> procedimentsServeisSeleccionats, Long entitatId) throws EntitatUsuariNotFoundException {
+		EntitatUsuari entitatUsuari = entitatUsuariRepository.findByEntitatIdAndUsuariCodi(
+				entitatId,
+				usuariCodi);
+		if (entitatUsuari == null) {
+			log.debug("L'entitat (id=" + entitatId + ") no té cap usuari (codi=" + usuariCodi + ")");
+			throw new EntitatUsuariNotFoundException();
+		}
+		List<ProcedimentServei> procedimentServeis = procedimentServeiRepository.findByEntitatId(entitatId);
+		PermisosHelper.filterGrantedAll(
+				procedimentServeis,
+				new ObjectIdentifierExtractor<ProcedimentServei>() {
+					public Long getObjectIdentifier(ProcedimentServei object) {
+						return object.getId();
+					}
+				},
+				ProcedimentServei.class,
+				new Permission[] {BasePermission.READ},
+				aclService,
+				usuariHelper.generarUsuariAutenticat(
+						usuariCodi,
+						false));
+		if (!procedimentServeis.isEmpty()) {
+			for (ProcedimentServei procedimentServei: procedimentServeis) {
+
+				if (procedimentsServeisSeleccionats.contains(ProcedimentServeiSimpleDto.builder()
+						.procedimentCodi(procedimentServei.getProcediment().getCodi())
+						.serveiCodi(procedimentServei.getServeiScsp().getCodi()).build())) {
+					PermisosHelper.revocarPermisUsuari(
+							usuariCodi,
+							ProcedimentServei.class,
+							procedimentServei.getId(),
+							BasePermission.READ,
+							aclService);
+				}
+			}
+		}
+
+	}
+
+	@Override
+	@Transactional(readOnly = true)
+	public List<ProcedimentServeiNomDto> serveiDisponibles(String usuariCodi, Long procedimentId, Long entitatId) throws EntitatUsuariNotFoundException {
+		EntitatUsuari entitatUsuari = entitatUsuariRepository.findByEntitatIdAndUsuariCodi(
+				entitatId,
+				usuariCodi);
+		if (entitatUsuari == null) {
+			log.debug("L'entitat (id=" + entitatId + ") no té cap usuari (codi=" + usuariCodi + ")");
+			throw new EntitatUsuariNotFoundException();
+		}
+		List<ProcedimentServeiNomDto> procedimentServeisDisponibles = new ArrayList<>();
+		List<ProcedimentServei> procedimentServeis;
+		if (procedimentId == null) {
+			procedimentServeis = procedimentServeiRepository.findByEntitatId(entitatId);
+		} else {
+			procedimentServeis = procedimentServeiRepository.findByEntitatIdAndProcedimentId(entitatId, procedimentId);
+		}
+		if (procedimentServeis == null || procedimentServeis.isEmpty())
+			return new ArrayList<>();
+
+		// Filtram els disponibles
+		List<ProcedimentServei> procedimentServeisAmbPermis = new ArrayList<>(procedimentServeis);
+		PermisosHelper.filterGrantedAll(
+				procedimentServeisAmbPermis,
+				new ObjectIdentifierExtractor<ProcedimentServei>() {
+					public Long getObjectIdentifier(ProcedimentServei object) {
+						return object.getId();
+					}
+				},
+				ProcedimentServei.class,
+				new Permission[] {BasePermission.READ},
+				aclService,
+				usuariHelper.generarUsuariAutenticat(
+						usuariCodi,
+						false));
+		procedimentServeis.removeAll(procedimentServeisAmbPermis);
+
+		for(ProcedimentServei procedimentServei: procedimentServeis) {
+			procedimentServeisDisponibles.add(ProcedimentServeiNomDto.builder()
+							.procedimentCodi(procedimentServei.getProcediment().getCodi())
+							.procedimentNom(procedimentServei.getProcediment().getNom())
+							.serveiCodi(procedimentServei.getServeiScsp().getCodi())
+							.serveiDescripcio(procedimentServei.getServeiScsp().getDescripcio()).build());
+		}
+		return procedimentServeisDisponibles;
 	}
 
 	@Transactional(readOnly = true)
