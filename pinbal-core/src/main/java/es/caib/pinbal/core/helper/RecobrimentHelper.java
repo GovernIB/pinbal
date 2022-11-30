@@ -370,6 +370,14 @@ public class RecobrimentHelper implements ApplicationContextAware, MessageSource
 				throw getErrorValidacio(ERROR_CODE_SCSP_VALIDATION, "Camp massa llarg. L'element peticion.solicitudes.solicitudTransmision.datosGenericos.solicitante.unidadTramitadora (solicitudIndex=" + index + ") no pot superar els 64 caràcters");
 			solicitud.setDepartamentNom(solicitante.getUnidadTramitadora());
 
+			if (solicitante.getCodigoUnidadTramitadora() != null) {
+//				if (solicitante.getCodigoUnidadTramitadora().length() > 9)
+//					throw getErrorValidacio(ERROR_CODE_SCSP_VALIDATION, "Camp massa llarg. L'element peticion.solicitudes.solicitudTransmision.datosGenericos.solicitante.codigoUnidadTramitadora (solicitudIndex=" + index + ") no pot superar els 9 caràcters");
+//				if (!Pattern.matches("([AUIJO][0-9]|CC|G[EA]|E([AC]|[0-9])|L(A|[0-9]))[0-9]{7}", solicitante.getCodigoUnidadTramitadora()))
+//					throw getErrorValidacio(ERROR_CODE_SCSP_VALIDATION, "L'element peticion.solicitudes.solicitudTransmision.datosGenericos.solicitante.codigoUnidadTramitadora (solicitudIndex=" + index + ") no té el format correcte");
+				solicitud.setUnitatTramitadoraCodi(solicitante.getCodigoUnidadTramitadora());
+			}
+
 			// Validació de l'identificador d'expedient
 			if (solicitante.getIdExpediente() != null && solicitante.getIdExpediente().length() > 25)
 				throw getErrorValidacio(ERROR_CODE_SCSP_VALIDATION, "Camp massa llarg. L'element peticion.solicitudes.solicitudTransmision.datosGenericos.solicitante.idExpediente (solicitudIndex=" + index + ") no pot superar els 25 caràcters");
