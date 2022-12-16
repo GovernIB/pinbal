@@ -23,12 +23,12 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 public class ClientRestTest {
 
     private static final String ENTITAT_CIF = "S0711001H";
-//    private static final String URL_BASE = "https://proves.caib.es/pinbalapi";
-//    private static final String USUARI = "$ripea_pinbal";
-//    private static final String CONTRASENYA = "ripea_pinbal";
-    private static final String URL_BASE = "http://localhost:8082/pinbalapi";
-    private static final String USUARI = "admin";
-    private static final String CONTRASENYA = "admin";
+    private static final String URL_BASE = "https://proves.caib.es/pinbalapi";
+    private static final String USUARI = "$ripea_pinbal";
+    private static final String CONTRASENYA = "ripea_pinbal";
+//    private static final String URL_BASE = "http://localhost:8082/pinbalapi";
+//    private static final String USUARI = "admin";
+//    private static final String CONTRASENYA = "admin";
     private static final String CODIGO_PROCEDIMIENTO = "CODSVDR_GBA_20121107";
     private static final String PETICION_SCSP_ID = "PINBAL00000000000000265474";
     private static final boolean ENABLE_LOGGING = true;
@@ -42,6 +42,7 @@ public class ClientRestTest {
         solicitud.setIdentificadorSolicitante(ENTITAT_CIF);
         solicitud.setCodigoProcedimiento(CODIGO_PROCEDIMIENTO);
         solicitud.setUnidadTramitadora("Departament de test");
+        solicitud.setCodigoUnidadTramitadora("Departament codi");
         solicitud.setFinalidad("Test peticionSincrona");
         solicitud.setConsentimiento(ScspSolicitante.ScspConsentimiento.Si);
         ScspFuncionario funcionario = new ScspFuncionario();
@@ -51,9 +52,9 @@ public class ClientRestTest {
         ScspTitular titular = new ScspTitular();
         titular.setTipoDocumentacion(ScspTitular.ScspTipoDocumentacion.DNI);
         titular.setDocumentacion("12345678Z");
-        titular.setNombre("Antoni");
-        titular.setApellido1("Garau");
-        titular.setApellido2("Jaume");
+        titular.setNombre("Nom");
+        titular.setApellido1("Llinatge1");
+        titular.setApellido2("Llinatge2");
         solicitud.setTitular(titular);
         if (ENABLE_LOGGING) {
             client.enableLogginFilter();

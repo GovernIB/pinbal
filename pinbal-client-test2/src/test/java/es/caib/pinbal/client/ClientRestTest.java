@@ -12,6 +12,8 @@ import es.caib.pinbal.client.recobriment.model.ScspJustificante;
 import es.caib.pinbal.client.recobriment.model.ScspRespuesta;
 import es.caib.pinbal.client.recobriment.model.ScspSolicitante;
 import es.caib.pinbal.client.recobriment.model.ScspTitular;
+import es.caib.pinbal.client.recobriment.svdccaacpasws01.ClientSvdccaacpasws01;
+import es.caib.pinbal.client.recobriment.svdccaacpasws01.ClientSvdccaacpasws01.SolicitudSvdccaacpasws01;
 import es.caib.pinbal.client.recobriment.svddgpciws02.ClientSvddgpciws02;
 import es.caib.pinbal.client.recobriment.svddgpciws02.ClientSvddgpciws02.SolicitudSvddgpciws02;
 import org.junit.jupiter.api.Test;
@@ -23,26 +25,29 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class ClientRestTest {
 
-    private static final String ENTITAT_CIF = "S0711001H";
+    private static final String ENTITAT_CIF = "12345678Z";
 //    private static final String URL_BASE = "https://proves.caib.es/pinbalapi";
 //    private static final String USUARI = "$ripea_pinbal";
 //    private static final String CONTRASENYA = "ripea_pinbal";
-    private static final String URL_BASE = "http://localhost:8082/pinbalapi";
+    private static final String URL_BASE = "http://localhost:8180/pinbalapi";
     private static final String USUARI = "admin";
     private static final String CONTRASENYA = "admin";
-    private static final String CODIGO_PROCEDIMIENTO = "CODSVDR_GBA_20121107";
+    private static final String CODIGO_PROCEDIMIENTO = "TEST";
     private static final String PETICION_SCSP_ID = "PINBAL00000000000000265474";
     private static final boolean ENABLE_LOGGING = true;
     private static final boolean BASIC_AUTH = true;
 
-    private ClientSvddgpciws02 client = new ClientSvddgpciws02(URL_BASE, USUARI, CONTRASENYA, BASIC_AUTH, null, null);
+    private ClientSvddgpciws02 client_ = new ClientSvddgpciws02(URL_BASE, USUARI, CONTRASENYA, BASIC_AUTH, null, null);
+    private ClientSvdccaacpasws01 client = new ClientSvdccaacpasws01(URL_BASE, USUARI, CONTRASENYA, BASIC_AUTH, null, null);
 
     @Test
     public void peticionSincrona() throws UniformInterfaceException, ClientHandlerException, IOException {
-        SolicitudSvddgpciws02 solicitud = new SolicitudSvddgpciws02();
+        SolicitudSvdccaacpasws01 solicitud = new SolicitudSvdccaacpasws01();
+//        SolicitudSvddgpciws02 solicitud = new SolicitudSvddgpciws02();
         solicitud.setIdentificadorSolicitante(ENTITAT_CIF);
         solicitud.setCodigoProcedimiento(CODIGO_PROCEDIMIENTO);
         solicitud.setUnidadTramitadora("Departament de test");
+        solicitud.setCodigoUnidadTramitadora("A04003127");
         solicitud.setFinalidad("Test peticionSincrona");
         solicitud.setConsentimiento(ScspSolicitante.ScspConsentimiento.Si);
         ScspFuncionario funcionario = new ScspFuncionario();
@@ -56,6 +61,8 @@ public class ClientRestTest {
         titular.setApellido1("Garau");
         titular.setApellido2("Jaume");
         solicitud.setTitular(titular);
+        solicitud.setCodigoComunidadAutonoma("04");
+        solicitud.setCodigoProvincia("07");
         if (ENABLE_LOGGING) {
             client.enableLogginFilter();
         }
