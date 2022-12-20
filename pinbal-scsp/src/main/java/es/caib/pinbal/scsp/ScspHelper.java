@@ -575,6 +575,26 @@ public class ScspHelper {
 		organismoCesionario.setBloqueado(bloqueado);
 		getOrganismoCesionarioDao().save(organismoCesionario);
 	}
+
+	public void organismoCesionarioUpdate(
+			String cif,
+			String nombre,
+			boolean bloqueado) {
+		LOGGER.debug("Actualitzant organismo cesionario (" +
+				"cif=" + cif + ", " +
+				"nombre=" + nombre + ", " +
+				"bloqueado=" + bloqueado + ")");
+		OrganismoCesionario organismoCesionario = getOrganismoCesionarioAmbCif(cif);
+		if (organismoCesionario == null) {
+			organismoCesionario = new OrganismoCesionario();
+			organismoCesionario.setCif(cif);
+			organismoCesionario.setFechaAlta(new Date());
+		}
+		organismoCesionario.setNombre(nombre);
+		organismoCesionario.setBloqueado(bloqueado);
+		getOrganismoCesionarioDao().save(organismoCesionario);
+	}
+
 	public void organismoCesionarioDelete(String cif) {
 		LOGGER.debug("Esborrant organismo cesionario (" +
 				"cif=" + cif + ")");
