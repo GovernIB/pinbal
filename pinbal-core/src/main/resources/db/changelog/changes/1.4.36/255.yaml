@@ -1,0 +1,25 @@
+databaseChangeLog:
+  - property:
+      name: varcharUnit
+      value: CHAR
+      dbms: oracle
+  - property:
+      name: varcharUnit
+      value: ''
+      dbms: postgresql
+  - property:
+      name: cert
+      value: 1
+      dbms: oracle
+  - changeSet:
+      id: 1666106558105-2
+      author: limit
+      changes:
+        - modifyDataType:
+            tableName: pbl_consulta
+            columnName: departament
+            newDataType: varchar(250 ${varcharUnit})
+        - modifyDataType:
+            tableName: pbl_consulta_hist
+            columnName: departament
+            newDataType: varchar(250 ${varcharUnit})

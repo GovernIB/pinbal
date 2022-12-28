@@ -41,7 +41,7 @@ public class HistoricConsulta extends PinbalAuditable<Long> implements IConsulta
 	@Column(name = "solicitud_id", length = 64, nullable = false)
 	private String scspSolicitudId;
 
-	@Column(name = "departament", length = 64, nullable = false)
+	@Column(name = "departament", length = 250, nullable = false)
 	private String departamentNom;
 	
 	@Column(name = "funcionari_nom", length = 128)

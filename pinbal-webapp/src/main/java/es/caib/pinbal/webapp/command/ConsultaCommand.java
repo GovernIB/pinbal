@@ -45,7 +45,7 @@ public class ConsultaCommand {
 	private String entitatNom;
 	@Size(max=10)
 	private String entitatCif;
-	@NotEmpty @Size(max=64)
+	@NotEmpty @Size(max=250)
 	private String departamentNom;
 	@NotNull
 	private Consentiment consentiment;
