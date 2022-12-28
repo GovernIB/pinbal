@@ -5,7 +5,3 @@ INSERT INTO pbl_config (key, value, description_key, group_code, position, sourc
 INSERT INTO pbl_config (key, value, description_key, group_code, position, source_property, type_code) VALUES ('es.caib.pinbal.plugin.firmaservidor.portafib.auth.username', NULL, 'propietat.plugin.firmaservidor.portafib.auth.username', 'FIRMA_SERVIDOR', '8', 'FILE', 'TEXT');
 INSERT INTO pbl_config (key, value, description_key, group_code, position, source_property, type_code) VALUES ('es.caib.pinbal.plugin.firmaservidor.portafib.auth.password', NULL, 'propietat.plugin.firmaservidor.portafib.auth.password', 'FIRMA_SERVIDOR', '9', 'FILE', 'PASS');
 INSERT INTO pbl_config (key, value, description_key, group_code, position, source_property, type_code) VALUES ('es.caib.pinbal.plugin.firmaservidor.portafib.perfil', 'PADES', 'propietat.plugin.firmaservidor.portafib.perfil', 'FIRMA_SERVIDOR', '10', 'DATABASE', 'TEXT');
-
--- #255
-ALTER TABLE pbl_consulta MODIFY departament VARCHAR2(250 CHAR);
-ALTER TABLE pbl_consulta_hist MODIFY departament VARCHAR2(250 CHAR);
