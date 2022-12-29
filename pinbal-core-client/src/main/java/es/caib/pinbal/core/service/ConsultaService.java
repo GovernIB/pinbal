@@ -326,7 +326,7 @@ public interface ConsultaService {
 	 * @throws JustificantGeneracioException
 	 *            Si es produeixen errors al generar el justificant.
 	 */
-	@PreAuthorize("hasRole('ROLE_DELEG')")
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_DELEG')")
 	public JustificantDto reintentarGeneracioJustificant(
 			Long id,
 			boolean descarregar) throws ConsultaNotFoundException, JustificantGeneracioException;
