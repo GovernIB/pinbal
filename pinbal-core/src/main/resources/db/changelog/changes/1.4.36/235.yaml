@@ -130,3 +130,27 @@ databaseChangeLog:
               - column:
                   name: type_code
                   value: TEXT
+        - insert:
+            tableName: pbl_config
+            columns:
+              - column:
+                  name: key
+                  value: es.caib.pinbal.log.path
+              - column:
+                  name: value
+                  value:
+              - column:
+                  name: description_key
+                  value: propietat.log.path
+              - column:
+                  name: group_code
+                  value: GENERAL
+              - column:
+                  name: position
+                  value: 2
+              - column:
+                  name: source_property
+                  value: FILE
+              - column:
+                  name: type_code
+                  value: TEXT
