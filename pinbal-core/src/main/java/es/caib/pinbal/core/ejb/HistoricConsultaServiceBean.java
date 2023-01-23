@@ -11,6 +11,8 @@ import javax.annotation.security.RolesAllowed;
 import javax.ejb.Stateless;
 import javax.interceptor.Interceptors;
 
+import es.caib.pinbal.client.dadesobertes.DadesObertesResposta;
+import es.caib.pinbal.core.dto.ConsultaOpenDataDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -166,7 +168,12 @@ public class HistoricConsultaServiceBean implements HistoricConsultaService {
 				serveiCodi);
 	}
 
-	@Override
+    @Override
+    public DadesObertesResposta findByFiltrePerOpenDataV2(ConsultaOpenDataDto consultaOpenDataDto) throws ProcedimentNotFoundException, EntitatNotFoundException {
+        return delegate.findByFiltrePerOpenDataV2(consultaOpenDataDto);
+    }
+
+    @Override
 	@RolesAllowed("tothom")
 	public ConsultaDto findOneDelegat(
 			Long id) throws ConsultaNotFoundException, ScspException {

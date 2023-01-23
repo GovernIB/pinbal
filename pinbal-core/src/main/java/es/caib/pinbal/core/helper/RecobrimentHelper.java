@@ -366,11 +366,15 @@ public class RecobrimentHelper implements ApplicationContextAware, MessageSource
 				throw getErrorValidacio(ERROR_CODE_SCSP_VALIDATION, "No s'ha trobat l'element peticion.solicitudes.solicitudTransmision.datosGenericos.solicitante.unidadTramitadora (solicitudIndex=" + index + ")");
 			if (solicitante.getUnidadTramitadora().trim().isEmpty())
 				throw getErrorValidacio(ERROR_CODE_SCSP_VALIDATION, "L'element peticion.solicitudes.solicitudTransmision.datosGenericos.solicitante.unidadTramitadora (solicitudIndex=" + index + ") no pot ser buit");
-			if (solicitante.getUnidadTramitadora().length() > 64)
-				throw getErrorValidacio(ERROR_CODE_SCSP_VALIDATION, "Camp massa llarg. L'element peticion.solicitudes.solicitudTransmision.datosGenericos.solicitante.unidadTramitadora (solicitudIndex=" + index + ") no pot superar els 64 caràcters");
+			if (solicitante.getUnidadTramitadora().length() > 250)
+				throw getErrorValidacio(ERROR_CODE_SCSP_VALIDATION, "Camp massa llarg. L'element peticion.solicitudes.solicitudTransmision.datosGenericos.solicitante.unidadTramitadora (solicitudIndex=" + index + ") no pot superar els 250 caràcters");
 			solicitud.setDepartamentNom(solicitante.getUnidadTramitadora());
 
 			if (solicitante.getCodigoUnidadTramitadora() != null) {
+				if (solicitante.getCodigoUnidadTramitadora().length() > 9)
+					throw getErrorValidacio(ERROR_CODE_SCSP_VALIDATION, "Camp massa llarg. L'element peticion.solicitudes.solicitudTransmision.datosGenericos.solicitante.codigoUnidadTramitadora (solicitudIndex=" + index + ") no pot superar els 9 caràcters");
+//				if (!Pattern.matches("([AUIJO][0-9]|CC|G[EA]|E([AC]|[0-9])|L(A|[0-9]))[0-9]{7}", solicitante.getCodigoUnidadTramitadora()))
+//					throw getErrorValidacio(ERROR_CODE_SCSP_VALIDATION, "L'element peticion.solicitudes.solicitudTransmision.datosGenericos.solicitante.codigoUnidadTramitadora (solicitudIndex=" + index + ") no té el format correcte");
 				solicitud.setUnitatTramitadoraCodi(solicitante.getCodigoUnidadTramitadora());
 			}
 

@@ -403,7 +403,8 @@ $(document).ajaxError(function(event, jqxhr, ajaxSettings, thrownError) {
 		    language: $(this).data('idioma'),
 		    allowClear: $(this).data('placeholder') ? true : false,
 		    minimumResultsForSearch: $(this).data('minimumresults'),
-		    templateResult: $(this).data('formatResult') ? eval($(this).data('formatResult')) : undefined
+		    templateResult: $(this).data('formatResult') ? eval($(this).data('formatResult')) : undefined,
+			templateSelection: $(this).data('formatSelection') ? eval($(this).data('formatSelection')) : undefined,
 		});
 			// allowClear: $(this).data('clearoption') ? true : false,
 		$(this).on('select2:open', function() {
@@ -528,6 +529,7 @@ $(document).ajaxError(function(event, jqxhr, ajaxSettings, thrownError) {
 		    allowClear: $(this).data('placeholder') ? true : false,
 		    minimumInputLength: $(this).data('minimumInputLength'),
 		    templateResult: $(this).data('formatResult'),
+			templateSelection: $(this).data('formatSelection'),
 		    ajax: {
 		    	delay: 500,
 		    	url: function(params){

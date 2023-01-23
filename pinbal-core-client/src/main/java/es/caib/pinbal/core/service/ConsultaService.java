@@ -7,6 +7,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import es.caib.pinbal.client.dadesobertes.DadesObertesResposta;
+import es.caib.pinbal.core.dto.ConsultaOpenDataDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -324,7 +326,7 @@ public interface ConsultaService {
 	 * @throws JustificantGeneracioException
 	 *            Si es produeixen errors al generar el justificant.
 	 */
-	@PreAuthorize("hasRole('ROLE_DELEG')")
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_DELEG')")
 	public JustificantDto reintentarGeneracioJustificant(
 			Long id,
 			boolean descarregar) throws ConsultaNotFoundException, JustificantGeneracioException;
@@ -436,6 +438,8 @@ public interface ConsultaService {
 			Date dataFi,
 			String procedimentCodi,
 			String serveiCodi) throws EntitatNotFoundException, ProcedimentNotFoundException;
+
+	public DadesObertesResposta findByFiltrePerOpenDataV2(ConsultaOpenDataDto consultaOpenDataDto) throws EntitatNotFoundException, ProcedimentNotFoundException;
 
 	/**
 	 * Retorna una pàgina de les consultes realitzades donada una entitat.

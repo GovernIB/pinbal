@@ -53,6 +53,26 @@
 			}
 		}
 
+		function formatState(estat) {
+
+			const msgError = '<spring:message code="consulta.list.estat.Error"/>';
+			const msgPendent = '<spring:message code="consulta.list.estat.Pendent"/>';
+			const msgProcessant = '<spring:message code="consulta.list.estat.Processant"/>';
+			const msgTramitada = '<spring:message code="consulta.list.estat.Tramitada"/>';
+
+			if (estat.id=='Error') {
+				return $('<div><span class="fas fa-exclamation-triangle"></span> <span>' + msgError + '</span></div>');
+			} else if(estat.id=='Pendent') {
+				return $('<div><span class="far fa-clock"></span>  <span>' + msgPendent + '</span></div>');
+			} else if(estat.id=='Processant') {
+				return $('<div><span class="fa fa-cogs"></span>  <span>' + msgProcessant + '</span></div>');
+			} else if(estat.id=='Tramitada') {
+				return $('<div><span class="fa fa-check"></span>  <span>' + msgTramitada + '</span></div>');
+			} else {
+				return estat.text;
+			}
+		}
+
 		$(document).ready(function() {
 			$('#netejar-filtre').click(function() {
 				$(':input', $('#form-filtre')).each (function() {
@@ -123,9 +143,9 @@
 								if (row.estat=='Error'){
 									row['icon-status'] = '<i class="fas fa-exclamation-triangle"></i>';
 								} else if(row.estat=='Pendent'){
-									row['icon-status'] = '<i class="fas fa-bookmark"></i>';
+									row['icon-status'] = '<i class="far fa-clock"></i>';
 								} else if(row.estat=='Processant'){
-									row['icon-status'] = '<i class="fas fa-hourglass-half"></i>';
+									row['icon-status'] = '<i class="fa fa-cogs"></i>';
 								} else{
 									row['icon-status'] = '<i class="fa fa-check"></i>';
 								}
@@ -201,7 +221,9 @@
 				<div class="col-md-3">
 					<pbl:inputSelect name="estat" inline="true" placeholderKey="auditor.list.filtre.estat"
 						optionItems="${consultaEstats}"
-						emptyOption="true"/>
+						emptyOption="true"
+					 	formatResult="formatState"
+					 	formatSelection="formatState"/>
 				</div>
 			</div>
 			<div class="row">

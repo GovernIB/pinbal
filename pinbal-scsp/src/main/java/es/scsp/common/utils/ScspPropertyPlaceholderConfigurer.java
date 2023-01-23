@@ -74,6 +74,7 @@ public class ScspPropertyPlaceholderConfigurer extends PropertyPlaceholderConfig
 			}
 			resultSet.close();
 			preparedStatement.close();
+			connection.close();
 
 		} catch (Exception ex) {
 			log.debug("No ha estat possible obtenir la propietat {} de la base de dades.", property);

@@ -199,6 +199,12 @@ public abstract class ClientBase {
 		return response;
 	}
 
+	protected String simpleDateToString(Date date) {
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		sdf.setTimeZone(TimeZone.getTimeZone("CET"));
+		return sdf.format(date);
+	}
+
 	protected String dateToString(Date date) {
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
 		sdf.setTimeZone(TimeZone.getTimeZone("CET"));

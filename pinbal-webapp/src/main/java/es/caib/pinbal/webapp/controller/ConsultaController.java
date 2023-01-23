@@ -24,6 +24,7 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import es.caib.pinbal.core.dto.CodiValor;
 import org.apache.commons.codec.binary.Base64;
 import org.joda.time.Days;
 import org.joda.time.LocalDate;
@@ -143,7 +144,14 @@ public class ConsultaController extends BaseController {
 		if (entitat != null) {
 			omplirModelPerFiltreTaula(request, entitat, model);
 		}
+		getOrigens(model);
 		return "consulta";
+	}
+	private void getOrigens(Model model) {
+		List<CodiValor> origens = new ArrayList<>();
+		origens.add(new CodiValor("true", "admin.consulta.list.filtre.origen.recobriment"));
+		origens.add(new CodiValor("false", "admin.consulta.list.filtre.origen.web"));
+		model.addAttribute("origens", origens);
 	}
 
 	@RequestMapping(method = RequestMethod.POST)

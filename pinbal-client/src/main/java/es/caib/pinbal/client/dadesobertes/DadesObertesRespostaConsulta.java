@@ -8,12 +8,20 @@ import java.util.Date;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * Estructura d'un element de la resposta per a les dades obertes.
  * 
  * @author Limit Tecnologies <limit@limit.es>
  */
+@Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 @JsonAutoDetect
 @XmlRootElement
 public class DadesObertesRespostaConsulta {
@@ -37,9 +45,6 @@ public class DadesObertesRespostaConsulta {
 	private Date data;
 	private DadesObertesConsultaTipus tipus;
 	private DadesObertesConsultaResultat resultat;
-
-	public DadesObertesRespostaConsulta() {
-	}
 
 	public DadesObertesRespostaConsulta(
 			String entitatCodi,
@@ -96,121 +101,6 @@ public class DadesObertesRespostaConsulta {
 		} else if ("3".equals(estat)) {
 			this.resultat = DadesObertesConsultaResultat.ERROR;
 		}
-	}
-
-	public String getEntitatCodi() {
-		return entitatCodi;
-	}
-	public void setEntitatCodi(String entitatCodi) {
-		this.entitatCodi = entitatCodi;
-	}
-	public String getEntitatNom() {
-		return entitatNom;
-	}
-	public void setEntitatNom(String entitatNom) {
-		this.entitatNom = entitatNom;
-	}
-	public String getEntitatNif() {
-		return entitatNif;
-	}
-	public void setEntitatNif(String entitatNif) {
-		this.entitatNif = entitatNif;
-	}
-	public String getEntitatTipus() {
-		return entitatTipus;
-	}
-	public void setEntitatTipus(String entitatTipus) {
-		this.entitatTipus = entitatTipus;
-	}
-	public String getDepartamentCodi() {
-		return departamentCodi;
-	}
-	public void setDepartamentCodi(String departamentCodi) {
-		this.departamentCodi = departamentCodi;
-	}
-	public String getDepartamentNom() {
-		return departamentNom;
-	}
-	public void setDepartamentNom(String departamentNom) {
-		this.departamentNom = departamentNom;
-	}
-	public String getProcedimentCodi() {
-		return procedimentCodi;
-	}
-	public void setProcedimentCodi(String procedimentCodi) {
-		this.procedimentCodi = procedimentCodi;
-	}
-	public String getProcedimentNom() {
-		return procedimentNom;
-	}
-	public void setProcedimentNom(String procedimentNom) {
-		this.procedimentNom = procedimentNom;
-	}
-	public String getServeiCodi() {
-		return serveiCodi;
-	}
-	public void setServeiCodi(String serveiCodi) {
-		this.serveiCodi = serveiCodi;
-	}
-	public String getServeiNom() {
-		return serveiNom;
-	}
-	public void setServeiNom(String serveiNom) {
-		this.serveiNom = serveiNom;
-	}
-	public String getEmissor() {
-		return emissor;
-	}
-	public void setEmissor(String emissor) {
-		this.emissor = emissor;
-	}
-	public String getEmissorNif() {
-		return emissorNif;
-	}
-	public void setEmissorNif(String emissorNif) {
-		this.emissorNif = emissorNif;
-	}
-	public String getConsentiment() {
-		return consentiment;
-	}
-	public void setConsentiment(String consentiment) {
-		this.consentiment = consentiment;
-	}
-	public String getFinalitat() {
-		return finalitat;
-	}
-	public void setFinalitat(String finalitat) {
-		this.finalitat = finalitat;
-	}
-	public String getTitularTipusDoc() {
-		return titularTipusDoc;
-	}
-	public void setTitularTipusDoc(String titularTipusDoc) {
-		this.titularTipusDoc = titularTipusDoc;
-	}
-	public String getSolicitudId() {
-		return solicitudId;
-	}
-	public void setSolicitudId(String solicitudId) {
-		this.solicitudId = solicitudId;
-	}
-	public Date getData() {
-		return data;
-	}
-	public void setData(Date data) {
-		this.data = data;
-	}
-	public DadesObertesConsultaTipus getTipus() {
-		return tipus;
-	}
-	public void setTipus(DadesObertesConsultaTipus tipus) {
-		this.tipus = tipus;
-	}
-	public DadesObertesConsultaResultat getResultat() {
-		return resultat;
-	}
-	public void setResultat(DadesObertesConsultaResultat resultat) {
-		this.resultat = resultat;
 	}
 
 	public enum DadesObertesConsultaTipus {

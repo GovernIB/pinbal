@@ -28,6 +28,7 @@ public class ConsultaFiltreDto implements Serializable {
 	private String funcionari;
 	private String usuari;
 	private Long entitatId;
+	private Boolean recobriment;
 
 	@Override
 	public String toString() {

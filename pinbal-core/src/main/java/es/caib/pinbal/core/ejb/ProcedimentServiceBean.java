@@ -9,6 +9,9 @@ import javax.annotation.security.RolesAllowed;
 import javax.ejb.Stateless;
 import javax.interceptor.Interceptors;
 
+import es.caib.pinbal.core.dto.ProcedimentServeiDto;
+import es.caib.pinbal.core.dto.ProcedimentServeiNomDto;
+import es.caib.pinbal.core.dto.ProcedimentServeiSimpleDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.ejb.interceptor.SpringBeanAutowiringInterceptor;
@@ -145,7 +148,25 @@ public class ProcedimentServiceBean implements ProcedimentService {
 		delegate.serveiPermisDenyAll(usuariCodi, entitatId);
 	}
 
-	@Override
+    @Override
+	@RolesAllowed("PBL_REPRES")
+    public void serveiPermisAllowSelected(String usuariCodi, List<ProcedimentServeiSimpleDto> procedimentsServeis, Long entitatId) throws EntitatUsuariNotFoundException, ProcedimentServeiNotFoundException {
+        delegate.serveiPermisAllowSelected(usuariCodi, procedimentsServeis, entitatId);
+    }
+
+    @Override
+	@RolesAllowed("PBL_REPRES")
+    public void serveiPermisDenySelected(String usuariCodi, List<ProcedimentServeiSimpleDto> procedimentsServeis, Long entitatId) throws EntitatUsuariNotFoundException {
+        delegate.serveiPermisDenySelected(usuariCodi, procedimentsServeis, entitatId);
+    }
+
+    @Override
+	@RolesAllowed("PBL_REPRES")
+    public List<ProcedimentServeiNomDto> serveiDisponibles(String usuariCodi, Long procedimentId, Long entitatId) throws EntitatUsuariNotFoundException {
+        return delegate.serveiDisponibles(usuariCodi, procedimentId, entitatId);
+    }
+
+    @Override
 	@RolesAllowed("PBL_REPRES")
 	public List<String> findUsuarisAmbPermisPerServei(
 			Long id,

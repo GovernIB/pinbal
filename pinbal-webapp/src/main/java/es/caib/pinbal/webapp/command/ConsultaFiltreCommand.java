@@ -34,6 +34,7 @@ public class ConsultaFiltreCommand {
 	private String funcionari;
 	private String usuari;
 	private Long entitatId;
+	private Boolean recobriment;
 
 	public ConsultaFiltreCommand() {
 		super();

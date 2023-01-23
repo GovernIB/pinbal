@@ -51,7 +51,17 @@ public interface ProcedimentServeiRepository extends JpaRepository<ProcedimentSe
 	public List<ProcedimentServei> findByEntitatIdAndProcedimentId(
 			Long entitatId,
 			Long procedimentId);
-	
+
+	@Query(	"select " +
+			"    ps " +
+			"from " +
+			"    ProcedimentServei ps " +
+			"where " +
+			"    ps.procediment.entitat.id = ?1 " +
+			"and ps.procediment.codi = ?2 " +
+			"and ps.servei = ?3")
+	ProcedimentServei findByEntitatIdProcedimentCodiAndServeiCodi(Long entitatId, String procedimentCodi, String serveiCodi);
+
 	@Query(	"select " +
 			"    ps " +
 			"from " +
@@ -153,5 +163,5 @@ public interface ProcedimentServeiRepository extends JpaRepository<ProcedimentSe
 		    @Param("filtreProcedimentId") Long filtreProcedimentId, 
 		    @Param("esNullFiltreServeiCodi") boolean esNullFiltreServeiCodi,
 		    @Param("filtreServeiCodi") String filtreServeiCodi);
-			
+
 }

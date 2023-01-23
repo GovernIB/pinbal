@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>es.caib.pinbal</groupId>
 	<artifactId>pinbal</artifactId>
-	<version>1.4.35</version>
+	<version>1.4.36</version>
 	<properties>
 		<spring.version>3.2.16.RELEASE</spring.version>
 		<spring-security.version>3.2.9.RELEASE</spring-security.version>
@@ -26,6 +26,7 @@
 		<compiler.plugin.version>3.1</compiler.plugin.version>
 		<slf4j.version>1.7.7</slf4j.version>
 		<pluginsib.arxiu.version>2.0.5</pluginsib.arxiu.version>
+		<plugin.firma.simple.version>1.0.3</plugin.firma.simple.version>
 		<dir3caib.version>1.0.7</dir3caib.version>
 		<jersey.version>1.19.4</jersey.version>
 		<lombok.version>1.18.24</lombok.version>

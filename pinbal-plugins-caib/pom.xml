@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>es.caib.pinbal</groupId>
 		<artifactId>pinbal</artifactId>
-		<version>1.4.35</version>
+		<version>1.4.36</version>
 	</parent>
 	<artifactId>pinbal-plugins-caib</artifactId>
 	<dependencies>
@@ -82,6 +82,49 @@
 			<artifactId>caibsigner</artifactId>
 			<version>3.3.2</version>
 			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.fundaciobit.apisib.apifirmasimple</groupId>
+			<artifactId>apifirmasimple-api</artifactId>
+			<version>${plugin.firma.simple.version}</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.fundaciobit.apisib.apifirmasimple</groupId>
+			<artifactId>apifirmasimple-jersey</artifactId>
+			<version>${plugin.firma.simple.version}</version>
+			<scope>compile</scope>
+			<exclusions>
+				<exclusion>
+					<artifactId>jersey-client</artifactId>
+					<groupId>com.sun.jersey</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>slf4j-api</artifactId>
+					<groupId>org.slf4j</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>log4j</artifactId>
+					<groupId>log4j</groupId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>com.sun.jersey</groupId>
+			<artifactId>jersey-json</artifactId>
+			<version>1.19.4</version>
+			<exclusions>
+				<exclusion>
+					<groupId>com.sun.xml.bind</groupId>
+					<artifactId>jaxb-impl</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.httpcomponents</groupId>
+			<artifactId>httpclient</artifactId>
+			<version>4.1.2</version>
+<!--			<scope>test</scope>-->
 		</dependency>
 		<dependency>
 			<groupId>${project.groupId}</groupId>

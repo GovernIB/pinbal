@@ -200,9 +200,10 @@ public class EntitatServiceImpl implements EntitatService, ApplicationContextAwa
 			throw new EntitatNotFoundException();
 		}
 		modificada.setActiva(entitat.isActiva());
-		OrganismeCessionari oc = organismeCessionariRepository.findByCif(entitat.getCif());
-		oc.updateEntitat(modificada.getNom(), modificada.getCif(), !modificada.isActiva());
-		organismeCessionariRepository.saveAndFlush(oc);
+		getScspHelper().organismoCesionarioUpdate(
+				entitat.getCif(),
+				entitat.getNom(),
+				!entitat.isActiva());
 		entitat.update(
 				modificada.getCodi(),
 				modificada.getNom(),
@@ -232,9 +233,10 @@ public class EntitatServiceImpl implements EntitatService, ApplicationContextAwa
 			throw new EntitatNotFoundException();
 		}
 		entitat.updateActiva(activa);
-		OrganismeCessionari oc = organismeCessionariRepository.findByCif(entitat.getCif());
-		oc.setBloquejat(!activa);
-		organismeCessionariRepository.saveAndFlush(oc);
+		getScspHelper().organismoCesionarioUpdate(
+				entitat.getCif(),
+				entitat.getNom(),
+				!activa);
 		return dtoMappingHelper.getMapperFacade().map(
 				entitat,
 				EntitatDto.class);

@@ -109,41 +109,28 @@ $(document).ready(function() {
 	});
 });
 </script>
+	<style>
+		#actius label { width: 50%; }
+		#actius > .btn-group { width: 100%; }
+	</style>
 
 </head>
 <body>
 	<c:url value="/procediment" var="formAction"/>
 	<form:form id="form-filtre" action="${formAction}" method="post" cssClass="well form-filtre-table" commandName="procedimentFiltreCommand">
 		<div class="row">
-			<div class="col-md-3">
+			<div class="col-md-4">
 				<pbl:inputText name="codi" inline="true" placeholderKey="procediment.list.filtre.camp.codi"/>
 			</div>
-			<div class="col-md-3">
+			<div class="col-md-4">
+				<pbl:inputText name="codiSia" inline="true" placeholderKey="procediment.list.filtre.camp.codisia"/>
+			</div>
+			<div class="col-md-4">
 				<pbl:inputText name="nom" inline="true" placeholderKey="procediment.list.filtre.camp.nom"/>
-			</div>
-			<div class="col-md-3">
-				<pbl:inputText name="departament" inline="true" placeholderKey="procediment.list.filtre.camp.departament"/>
-			</div>
-			<div class="col-md-3">
-				<pbl:inputSelect
-					name="organGestorId"
-					placeholderKey="procediment.list.filtre.camp.organgestor"
-					inline="true"
-					emptyOption="true"
-					emptyOptionTextKey="procediment.list.filtre.camp.opcio.cap"
-					optionItems="${organsGestors}"
-					optionValueAttribute="id"
-					optionTextAttribute="codiINom"
-					required="true"
-					optionMinimumResultsForSearch="5"
-					formatResult="formatState"/>
 			</div>
 		</div>
 		<div class="row">
-			<div class="col-md-3">
-				<pbl:inputText name="codiSia" inline="true" placeholderKey="procediment.list.filtre.camp.codisia"/>
-			</div>
-			<div class="col-md-2">
+			<div id="actius" class="col-md-2">
 				<pbl:inputRadio
 						name="actiu"
 						inline="true"
@@ -151,6 +138,23 @@ $(document).ready(function() {
 						optionValueAttribute="codi"
 						optionTextKeyAttribute="valor"
 						botons="true"/>
+			</div>
+			<div class="col-md-4">
+				<pbl:inputText name="departament" inline="true" placeholderKey="procediment.list.filtre.camp.departament"/>
+			</div>
+			<div class="col-md-6">
+				<pbl:inputSelect
+						name="organGestorId"
+						placeholderKey="procediment.list.filtre.camp.organgestor"
+						inline="true"
+						emptyOption="true"
+						emptyOptionTextKey="procediment.list.filtre.camp.opcio.cap"
+						optionItems="${organsGestors}"
+						optionValueAttribute="id"
+						optionTextAttribute="codiINom"
+						required="true"
+						optionMinimumResultsForSearch="5"
+						formatResult="formatState"/>
 			</div>
 		</div>
 		<div class="row">
@@ -164,7 +168,7 @@ $(document).ready(function() {
 		</div>
 	</form:form>
 	<div class="pull-right">
-		<a class="btn btn-primary" href="<c:url value="/procediment/new"/>"><i class="fa fa-plus"></i>&nbsp;<spring:message code="procediment.list.boto.nou.procediment"/></a>
+		<a class="btn btn-primary" href="<c:url value="/procediment/new"/>" data-toggle="modal" data-refresh-pagina="true"><i class="fa fa-plus"></i>&nbsp;<spring:message code="procediment.list.boto.nou.procediment"/></a>
 	</div>
 	<table id="table-procediments" class="table table-striped table-bordered" style="width: 100%">
 		<thead>
@@ -201,7 +205,7 @@ $(document).ready(function() {
 	<div class="btn-group">
 		<button class="btn btn-primary dropdown-toggle" data-toggle="dropdown"><i class="fas fa-cog"></i>&nbsp;<spring:message code="comu.accions"/>&nbsp;<span class="caret"></span></button>
 		<ul class="dropdown-menu">
-			<li><a href="procediment/{{ id }}" ><i class="fas fa-pen"></i>&nbsp;<spring:message code="comu.boto.modificar"/></a></li>
+			<li><a href="procediment/{{ id }}" data-toggle="modal" data-refresh-pagina="true"><i class="fas fa-pen"></i>&nbsp;<spring:message code="comu.boto.modificar"/></a></li>
 			{{#actiu}}
 				<li><a href="procediment/{{ id }}/disable" ><i class="fas fa-times"></i>&nbsp;<spring:message code="comu.boto.desactivar"/></a></li>
 			{{/actiu}}

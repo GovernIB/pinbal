@@ -33,19 +33,19 @@
 </script>
 </head>
 <body>
-	<c:url value="/procediment/save" var="formAction"/>
+	<c:url value="/modal/procediment/save" var="formAction"/>
 	<form:form action="${formAction}" method="post" cssClass="form-horizontal" commandName="procedimentCommand">
 		<form:hidden path="id"/>
 		<form:hidden path="entitatId"/>
 		<div class="row">
 			<div class="col-md-12">
-				<pbl:inputText name="codi" required="true" labelSize="1" inline="false" textKey="procediment.form.camp.codi"/>
-				<pbl:inputText name="nom" required="true" labelSize="1" inline="false" textKey="procediment.form.camp.nom"/>
-				<pbl:inputText name="departament" labelSize="1" inline="false" textKey="procediment.form.camp.departament"/>
+				<pbl:inputText name="codi" required="true" labelSize="3" inline="false" textKey="procediment.form.camp.codi"/>
+				<pbl:inputText name="nom" required="true" labelSize="3" inline="false" textKey="procediment.form.camp.nom"/>
+				<pbl:inputText name="departament" labelSize="3" inline="false" textKey="procediment.form.camp.departament"/>
 				<pbl:inputSelect
 					name="organGestorId"
 					textKey="procediment.form.camp.organgestor"
-					labelSize="1"
+					labelSize="3"
 					inline="false" 
 					emptyOption="true"
 					emptyOptionTextKey="organgestor.form.camp.organ.opcio.cap"
@@ -55,7 +55,7 @@
 					required="true"
 					formatResult="formatState"
 					optionMinimumResultsForSearch="2"/>
-				<pbl:inputText name="codiSia" labelSize="1" inline="false" textKey="procediment.form.camp.codisia"/>
+				<pbl:inputText name="codiSia" labelSize="3" inline="false" textKey="procediment.form.camp.codisia"/>
 				<%--c:set var="campPath" value="valorCampAutomatizado"/>
 				<c:set var="campErrors"><form:errors path="${campPath}"/></c:set>
 				<div class="form-group">
@@ -74,14 +74,14 @@
 					optionValueAttribute="value"
 					optionTextKeyAttribute="text"
 					required="false"
-					labelSize="1"/>
+					labelSize="3"/>
 				<pbl:inputSelect name="valorCampClaseTramite" textKey="procediment.form.camp.claseTramite" 
 								emptyOption="true" emptyOptionTextKey="procediment.form.camp.claseTramite.buit"
 								optionItems="${ procedimentClaseTramiteOptions }" optionValueAttribute="value" optionTextKeyAttribute="text"
-								required="false" labelSize="1" />
-				<div class="pull-right">
+								required="false" labelSize="3" />
+				<div id="modal-botons">
 					<button type="submit" class="btn btn-primary"><spring:message code="comu.boto.guardar"/></button>
-					<a href="<c:url value="/procediment"/>" class="btn btn-default"><spring:message code="comu.boto.cancelar"/></a>
+					<a href="<c:url value="/procediment"/>" class="btn btn-default" data-modal-cancel="true"><spring:message code="comu.boto.cancelar"/></a>
 				</div>
 			</div>
 		</div>

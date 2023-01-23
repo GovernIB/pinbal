@@ -17,6 +17,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
+import es.caib.pinbal.core.dto.CodiValor;
 import es.caib.pinbal.core.dto.DadaEspecificaDto;
 import es.caib.pinbal.core.dto.NodeDto;
 import es.caib.pinbal.core.dto.ServeiCampDto;
@@ -296,6 +297,55 @@ public class ConsultaAdminController extends BaseController {
 		return "consultaXml";
 	}
 
+	@RequestMapping(value = "/{consultaId}/justificantReintentar", method = RequestMethod.GET)
+	public String justificantReintentar(
+			HttpServletRequest request,
+			HttpServletResponse response,
+			@PathVariable Long consultaId,
+			@RequestParam(value = "info", required = false) Boolean info) throws ConsultaNotFoundException {
+		EntitatDto entitat = EntitatHelper.getEntitatActual(request, entitatService);
+		if (entitat != null) {
+			try {
+				JustificantDto justificant = consultaService.reintentarGeneracioJustificant(
+						consultaId,
+						false);
+				if (!justificant.isError()) {
+					AlertHelper.success(
+							request,
+							getMessage(
+									request,
+									"consulta.controller.justificant.regenerat"));
+				} else {
+					AlertHelper.error(
+							request,
+							getMessage(
+									request,
+									"consulta.controller.justificant.error"));
+				}
+			} catch (ConsultaNotFoundException ex) {
+				throw ex;
+			} catch (Exception ex) {
+				AlertHelper.error(
+						request,
+						getMessage(
+								request,
+								"consulta.controller.justificant.error"));
+			}
+			if (info != null && info.booleanValue()) {
+				return "redirect:../../consulta/" + consultaId;
+			} else {
+				return "redirect:../../consulta";
+			}
+		} else {
+			AlertHelper.error(
+					request,
+					getMessage(
+							request,
+							"comu.error.no.entitat"));
+			return "redirect:../../index";
+		}
+	}
+
 	@InitBinder
 	public void initBinder(WebDataBinder binder) {
 		SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
@@ -342,6 +392,14 @@ public class ConsultaAdminController extends BaseController {
 						serveiService.findAll());
 		}
 		model.addAttribute("historic", isHistoric(request));
+		getOrigens(model);
+	}
+
+	private void getOrigens(Model model) {
+		List<CodiValor> origens = new ArrayList<>();
+		origens.add(new CodiValor("true", "admin.consulta.list.filtre.origen.recobriment"));
+		origens.add(new CodiValor("false", "admin.consulta.list.filtre.origen.web"));
+		model.addAttribute("origens", origens);
 	}
 
 	private boolean isHistoric(HttpServletRequest request) {
