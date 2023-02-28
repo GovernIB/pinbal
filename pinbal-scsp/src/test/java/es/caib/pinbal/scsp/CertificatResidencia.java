@@ -85,7 +85,7 @@ public class CertificatResidencia {
 			datosGenericos.setSolicitante(solicitante);
 			solicitante.setIdentificadorSolicitante(solicitanteCif);
 			solicitante.setNombreSolicitante(solicitanteNombre);
-			solicitante.setFinalidad(procedimentCodi + "#::##::#" + procedimentNom);
+			solicitante.setFinalidad(procedimentNom);
 			solicitante.setConsentimiento(Consentimiento.Si);
 			solicitante.setFuncionario(new Funcionario());
 			solicitante.getFuncionario().setNombreCompletoFuncionario(funcionarioNombre);
