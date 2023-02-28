@@ -145,7 +145,7 @@ public class RecobrimentHelperTest {
     private static final String MSG_ERROR_CONSENT_ENUM = "Valor incorrecte. Els valors possibles de l'element peticion.solicitudes.solicitudTransmision.datosGenericos.solicitante.consentimiento (solicitudIndex=0) son: [Si | Llei]";
     private static final String MSG_ERROR_UNITAT_NULL = "No s'ha trobat l'element peticion.solicitudes.solicitudTransmision.datosGenericos.solicitante.unidadTramitadora (solicitudIndex=0)";
     private static final String MSG_ERROR_UNITAT_EMPTY = "L'element peticion.solicitudes.solicitudTransmision.datosGenericos.solicitante.unidadTramitadora (solicitudIndex=0) no pot ser buit";
-    private static final String MSG_ERROR_UNITAT_SIZE = "Camp massa llarg. L'element peticion.solicitudes.solicitudTransmision.datosGenericos.solicitante.unidadTramitadora (solicitudIndex=0) no pot superar els 64 caràcters";
+    private static final String MSG_ERROR_UNITAT_SIZE = "Camp massa llarg. L'element peticion.solicitudes.solicitudTransmision.datosGenericos.solicitante.unidadTramitadora (solicitudIndex=0) no pot superar els 250 caràcters";
     private static final String MSG_ERROR_ID_EXP_SIZE = "Camp massa llarg. L'element peticion.solicitudes.solicitudTransmision.datosGenericos.solicitante.idExpediente (solicitudIndex=0) no pot superar els 25 caràcters";
     private static final String MSG_ERROR_PROC_NULL = "No s'ha trobat l'element peticion.solicitudes.solicitudTransmision.datosGenericos.solicitante.procedimiento (solicitudIndex=0)";
     private static final String MSG_ERROR_COD_PROC_NULL = "No s'ha trobat l'element peticion.solicitudes.solicitudTransmision.datosGenericos.solicitante.procedimiento.codProcedimiento (solicitudIndex=0)";
@@ -351,7 +351,7 @@ public class RecobrimentHelperTest {
         exceptionRule.expect(ScspException.class);
         exceptionRule.expectMessage(MSG_ERROR_UNITAT_SIZE);
 
-        peticio.getSolicitudes().getSolicitudTransmision().get(0).getDatosGenericos().getSolicitante().setUnidadTramitadora("11111111111111111111111111111111111111111111111111111111111111111111111111111111");
+        peticio.getSolicitudes().getSolicitudTransmision().get(0).getDatosGenericos().getSolicitante().setUnidadTramitadora("11111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111");
         recobrimentHelper.validarIObtenirSolicituds(peticio, 1);
     }
 

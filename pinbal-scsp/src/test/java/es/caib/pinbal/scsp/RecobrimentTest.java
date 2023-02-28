@@ -119,7 +119,7 @@ public class RecobrimentTest {
 		//Creación del elemento <Finalidad>.
 		OMElement finalidad = fac.createOMElement("Finalidad", omNs);
 		//Asignación del valor 'PRUEBA RECUBRIMIENTO' para el elemento <Finalidad>.
-		finalidad.setText(procedimentCodi + "#::##::#" + procedimentNom);
+		finalidad.setText(procedimentNom);
 		//Creación del elemento <Consentimiento>.
 		OMElement consentimiento = fac.createOMElement("Consentimiento", omNs);
 		//Asignación del valor 'Si' para el elemento <Consentimiento>.

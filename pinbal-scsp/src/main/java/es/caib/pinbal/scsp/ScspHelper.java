@@ -26,6 +26,7 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
 import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cache.annotation.Cacheable;
@@ -315,27 +316,28 @@ public class ScspHelper {
 				else
 					resposta.setConsentiment(Consentiment.Llei);
 				resposta.setExpedientId(transmision.getExpediente());
-				// Extreu l'expedient i la finalitat codificats a dins la finalidad SCSP
-				String finalitat = transmision.getFinalidad();
-				String[] finParts = finalitat.split("#::#");
-				if (finParts.length > 1) {
-					String finEid = null;
-					String finFin = null;
-					if (finParts.length == 2) {
-						if (finalitat.contains("#::##::#")) {
-							finFin = finParts[1];
-						} else {
+				resposta.setFinalitat(transmision.getFinalidad());
+				// Per compatibilitat amb consultes antigues, extreu l'expedient i la finalitat codificats a dins la finalidad SCSP
+				if (transmision.getFinalidad() != null && transmision.getFinalidad().contains("#::#")) {
+					String finalitat = transmision.getFinalidad();
+					String[] finParts = finalitat.split("#::#");
+					if (finParts.length > 1) {
+						String finEid = null;
+						String finFin = null;
+						if (finParts.length == 2) {
+							if (finalitat.contains("#::##::#")) {
+								finFin = finParts[1];
+							} else {
+								finEid = finParts[1];
+							}
+						} else if (finParts.length == 3) {
 							finEid = finParts[1];
+							finFin = finParts[2];
 						}
-					} else if (finParts.length == 3) {
-						finEid = finParts[1];
-						finFin = finParts[2];
-					}
-					if (resposta.getExpedientId() == null) {
-						resposta.setExpedientId(finEid);
-					}
-					if (resposta.getFinalitat() == null) {
-						resposta.setFinalitat(finFin);
+						if (resposta.getExpedientId() == null)
+							resposta.setExpedientId(finEid);
+						if (finFin != null)
+							resposta.setFinalitat(finFin);
 					}
 				}
 				if (multiple) {
@@ -875,15 +877,10 @@ public class ScspHelper {
 		return emisorCertificado.getNombre();
 	}
 	private String generarFinalidad(Solicitud solicitud) {
-		StringBuilder sb = new StringBuilder();
-		sb.append(solicitud.getProcedimentCodi());
-		sb.append("#::#");
-		if (solicitud.getExpedientId() != null)
-			sb.append(solicitud.getExpedientId());
-		sb.append("#::#");
-		if (solicitud.getFinalitat() != null)
-			sb.append(solicitud.getFinalitat());
-		return sb.toString();
+		if (StringUtils.isBlank(solicitud.getFinalitat())) {
+			return solicitud.getProcedimentCodi();
+		}
+		return solicitud.getFinalitat();
 	}
 
 	private ResultatEnviamentPeticio getResultatEnviamentPeticio(

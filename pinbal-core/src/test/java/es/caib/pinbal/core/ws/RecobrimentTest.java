@@ -117,7 +117,7 @@ public class RecobrimentTest {
 		funcionario.setNombreCompletoFuncionario(funcionarioNombre);
 		funcionario.setNifFuncionario(funcionarioNif);
 		solicitante.setFuncionario(funcionario);
-		solicitante.setFinalidad(procedimentCodi + "#::##::#" + procedimentNom);
+		solicitante.setFinalidad(procedimentNom);
 		solicitante.setUnidadTramitadora(solicitanteUnidadTramitadora);
 		solicitante.setConsentimiento(Consentimiento.Si);
 		datosGenericos.setSolicitante(solicitante);

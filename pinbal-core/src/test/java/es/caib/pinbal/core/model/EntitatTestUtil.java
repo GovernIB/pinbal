@@ -18,6 +18,7 @@ public class EntitatTestUtil {
 		EntitatDto dto = new EntitatDto();
 		dto.setId(id);
 		dto.setNom(nom);
+		dto.setTipus(EntitatDto.EntitatTipusDto.GOVERN);
 		return dto;
 	}
 
