@@ -47,6 +47,7 @@ public class Svddgpciws02Test {
 		solicitud.setCodigoProcedimiento(CODIGO_PROCEDIMIENTO);
 		solicitud.setUnidadTramitadora("Departament de test");
 		solicitud.setFinalidad("Test peticionSincrona");
+		solicitud.setIdExpediente("testPinbal/799");
 		solicitud.setConsentimiento(ScspConsentimiento.Si);
 		ScspFuncionario funcionario = new ScspFuncionario();
 		funcionario.setNifFuncionario("00000000T");
@@ -65,6 +66,7 @@ public class Svddgpciws02Test {
 		ScspRespuesta respuesta = client.peticionSincrona(Arrays.asList(solicitud));
 		assertNotNull(respuesta);
 		System.out.println("-> peticionSincrona = " + objectToJsonString(respuesta));
+
 	}
 
 	@Test

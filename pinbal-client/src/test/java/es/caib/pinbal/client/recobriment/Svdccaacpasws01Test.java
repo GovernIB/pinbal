@@ -39,7 +39,7 @@ public class Svdccaacpasws01Test {
 	private static final String USUARI = "$ripea_pinbal";
 	private static final String CONTRASENYA = "xxxxxx";
 	private static final String CODIGO_PROCEDIMIENTO = "CODSVDR_GBA_20121107";
-	private static final String PETICION_SCSP_ID = "PINBAL00000000000000265494";
+	private static final String PETICION_SCSP_ID = "PINBAL00000000000000268212";
 	private static final boolean ENABLE_LOGGING = true;
 	private static final boolean BASIC_AUTH = true;
 

@@ -48,16 +48,19 @@ public class ScdcpajuTest {
 		solicitud.setUnidadTramitadora("Departament de test");
 		solicitud.setFinalidad("Test peticionSincrona");
 		solicitud.setConsentimiento(ScspConsentimiento.Si);
+		solicitud.setIdExpediente("testPinbal/999");
 		ScspFuncionario funcionario = new ScspFuncionario();
 		funcionario.setNifFuncionario("00000000T");
 		funcionario.setNombreCompletoFuncionario("Funcionari CAIB");
 		solicitud.setFuncionario(funcionario);
 		ScspTitular titular = new ScspTitular();
-		titular.setTipoDocumentacion(ScspTipoDocumentacion.NIF);
-		titular.setDocumentacion("12345678Z");
+		titular.setTipoDocumentacion(ScspTipoDocumentacion.DNI);
+		titular.setDocumentacion("43105084W");
+		titular.setNombre("Usuari");
+		titular.setApellido1("Test");
 		solicitud.setTitular(titular);
 
-		solicitud.setConsultaPerDocumentIdentitat("NIF", "12345678Z", null);
+		solicitud.setConsultaPerDocumentIdentitat("NIF", "43105084W", null);
 		solicitud.setConsultaPerDadesPersonals(null, null, null, null, null, null, null, null);
 		solicitud.setProvinciaSolicitud("07");
 		solicitud.setMunicipioSolicitud("026");

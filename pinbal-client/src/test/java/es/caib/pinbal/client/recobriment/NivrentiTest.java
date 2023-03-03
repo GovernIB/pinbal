@@ -54,10 +54,10 @@ public class NivrentiTest {
 		solicitud.setFuncionario(funcionario);
 		ScspTitular titular = new ScspTitular();
 		titular.setTipoDocumentacion(ScspTipoDocumentacion.NIF);
-		titular.setDocumentacion("99999992V");
+		titular.setDocumentacion("89890006A");
 		solicitud.setTitular(titular);
 
-		solicitud.setEjercicio(2020);
+		solicitud.setEjercicio(2021);
 
 		if (ENABLE_LOGGING) {
 			client.enableLogginFilter();

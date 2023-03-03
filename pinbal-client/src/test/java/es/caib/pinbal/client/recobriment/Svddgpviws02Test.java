@@ -47,6 +47,7 @@ public class Svddgpviws02Test {
 		solicitud.setCodigoProcedimiento(CODIGO_PROCEDIMIENTO);
 		solicitud.setUnidadTramitadora("Departament de test");
 		solicitud.setFinalidad("Test peticionSincrona");
+		solicitud.setIdExpediente("testPinbal/979");
 		solicitud.setConsentimiento(ScspConsentimiento.Si);
 		ScspFuncionario funcionario = new ScspFuncionario();
 		funcionario.setNifFuncionario("00000000T");
