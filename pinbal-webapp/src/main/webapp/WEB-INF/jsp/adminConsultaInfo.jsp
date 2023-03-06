@@ -32,6 +32,13 @@ function initModalXml(element) {
 	$('#modal-missatge-xml .modal-body').load(element.href);
 	$('#modal-missatge-xml').modal('toggle');
 }
+
+$(document).ready(function () {
+	$("#cbcopy").click(() => {
+		let xml = $('#modal-missatge-xml .modal-body').find('#missatgeXml').val();
+		navigator.clipboard.writeText(xml);
+	});
+});
 </script>
 </head>
 <body>
@@ -276,6 +283,7 @@ function initModalXml(element) {
 			</div>
 			<div class="modal-body"></div>
 			<div class="modal-footer">
+				<button id="cbcopy" class="btn btn-default"><span class="fa fa-clipboard"></span> <spring:message code="comu.clipboard.copy"/></button>
 				<a href="#" class="btn btn-default" data-dismiss="modal"><spring:message code="comu.boto.tancar"/></a>
 			</div>
 		</div>
