@@ -28,7 +28,7 @@ public class IndexController {
 		} else if (RolHelper.isRolActualRepresentant(request)) {
 			return "redirect:representant/usuari";
 		} else if (RolHelper.isRolActualAdministrador(request)) {
-			return "redirect:entitat";
+			return "redirect:admin/consulta";
 		} else if (RolHelper.isRolActualAuditor(request)) {
 			return "redirect:auditor";
 		} else if (RolHelper.isRolActualSuperauditor(request)) {
