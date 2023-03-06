@@ -27,6 +27,7 @@
 	<script src="<c:url value="/webjars/momentjs/2.24.0/min/moment.min.js"/>"></script>
 	<script src="<c:url value="/js/webutil.datatable.js"/>"></script>
     <script src="<c:url value="/js/webutil.common.js"/>"></script>
+	<script src="<c:url value="/js/webutil.modal.js"/>"></script>
 
 <script>
 $(document).ready(function() {
@@ -138,7 +139,7 @@ $(document).ready(function() {
 </script>
 
 <script id="template-accions" type="x-tmpl-mustache">
-	<a href="<c:url value="/integracio/${codiActual}/{{id}}"/>" class="btn btn-default" ><span class="fa fa-info-circle"></span>&nbsp;&nbsp;<spring:message code="comu.boto.detalls"/></a>
+	<a href="<c:url value="/modal/integracio/${codiActual}/{{id}}"/>" class="btn btn-default" data-toggle="modal"><span class="fa fa-info-circle"></span>&nbsp;&nbsp;<spring:message code="comu.boto.detalls"/></a>
 </script>
 
 

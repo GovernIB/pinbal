@@ -44,7 +44,7 @@
 		</c:if>
 	</c:if>
 	<div id="modal-botons">
-		<a href="<c:url value="/integracio/${codiActual}"/>" class="btn btn-default" ><span class="fa fa-arrow-left"></span>&nbsp;<spring:message code="comu.boto.tornar"/></a>
+		<a href="#" class="btn btn-default" data-modal-cancel="true"><spring:message code="comu.boto.tancar"/></a>
 	</div>
 
 </body>
