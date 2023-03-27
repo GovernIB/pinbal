@@ -351,6 +351,9 @@ public class XmlHelper {
 			XmlSchemaElement element) {
 		long minOccurs = element.getMinOccurs();
 		long maxOccurs = element.getMaxOccurs();
+		if (element.getRefName() != null) {
+			element = schema.getElementByName(element.getRefName());
+		}
 		DadesEspecifiquesNode dadesNode = new DadesEspecifiquesNode();
 		Node<DadesEspecifiquesNode> node = new Node<DadesEspecifiquesNode>(dadesNode);
 		if (!path.isEmpty()) {
@@ -380,9 +383,6 @@ public class XmlHelper {
 					Object item = iti.next();
 					if (item instanceof XmlSchemaElement) {
 						XmlSchemaElement elementPerAfegir = (XmlSchemaElement)item;
-						if (elementPerAfegir.getRefName() != null) {
-							elementPerAfegir = schema.getElementByName(elementPerAfegir.getRefName());
-						}
 						if (elementPerAfegir != null) {
 							afegirElement(
 									servicio,
@@ -398,8 +398,6 @@ public class XmlHelper {
 							XmlSchemaObject itemn = seq.getItems().getItem(i);
 							if (itemn instanceof XmlSchemaElement) {
 								XmlSchemaElement elementPerAfegir = (XmlSchemaElement)itemn;
-								if (elementPerAfegir.getRefName() != null)
-									elementPerAfegir = schema.getElementByName(elementPerAfegir.getRefName());
 								afegirElement(
 										servicio,
 										tree,
@@ -417,8 +415,6 @@ public class XmlHelper {
 							XmlSchemaObject itemn = cho.getItems().getItem(i);
 							if (itemn instanceof XmlSchemaElement) {
 								XmlSchemaElement elementPerAfegir = (XmlSchemaElement)itemn;
-								if (elementPerAfegir.getRefName() != null)
-									elementPerAfegir = schema.getElementByName(elementPerAfegir.getRefName());
 								afegirElement(
 										servicio,
 										tree,
@@ -438,6 +434,8 @@ public class XmlHelper {
 		} else {
 			dadesNode.setNom(element.getName());
 			dadesNode.setComplex(false);
+			dadesNode.setGroupMin(minOccurs);
+			dadesNode.setGroupMax(maxOccurs);
 			XmlSchemaSimpleType simpleType = (XmlSchemaSimpleType)element.getSchemaType();
 			if (simpleType != null && simpleType.getContent() != null && simpleType.getContent() instanceof XmlSchemaSimpleTypeRestriction) {
 				XmlSchemaSimpleTypeRestriction restriction = (XmlSchemaSimpleTypeRestriction)simpleType.getContent();
