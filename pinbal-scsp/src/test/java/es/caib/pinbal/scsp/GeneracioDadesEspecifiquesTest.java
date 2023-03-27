@@ -6,6 +6,7 @@ package es.caib.pinbal.scsp;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.junit.Test;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -83,6 +84,18 @@ public class GeneracioDadesEspecifiquesTest {
 		XmlHelper helper = new XmlHelper();
 		Element resultat = helper.crearDadesEspecifiques(servicio, dades, false, iniDadesEspecifiques);
 		System.out.println("SVDDELSEXCDIWS01 >>> " + nodeToString(resultat));
+	}
+
+//	@Test
+	public void test_SVDRRCCNACIMIENTOWS01() throws Exception {
+		System.setProperty("es.caib.pinbal.xsd.base.path", "/home/siona/Feina/AppData/Pinbal/xsd");
+		Servicio servicio = new Servicio();
+		servicio.setCodCertificado("SVDRRCCNACIMIENTOWS01");
+		servicio.setVersionEsquema("V3");
+		Map<String, Object> dades = new HashMap<String, Object>();
+		XmlHelper helper = new XmlHelper();
+		Element resultat = helper.crearDadesEspecifiques(servicio, dades, true, iniDadesEspecifiques);
+		System.out.println("SVDRRCCNACIMIENTOWS01 >>> " + nodeToString(resultat));
 	}
 
 
