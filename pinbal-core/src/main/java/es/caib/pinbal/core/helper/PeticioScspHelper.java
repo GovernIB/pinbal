@@ -176,7 +176,10 @@ public class PeticioScspHelper {
 					consulta.isRecobriment(),
 					scspHelper);
 			Map<String, String> accioParams = new HashMap<String, String>();
-			accioParams.put("codi", consulta.getProcedimentServei().getServei());
+			ProcedimentServei procedimentServei = consulta.getProcedimentServei();
+			accioParams.put("codi", procedimentServei.getServei());
+			accioParams.put("procediment", procedimentServei.getProcediment() != null ? procedimentServei.getProcediment().getCodi() + " - " + procedimentServei.getProcediment().getNom() : "");
+			accioParams.put("servei", procedimentServei.getServeiScsp() != null ? procedimentServei.getServeiScsp().getCodi() + " - " + procedimentServei.getServeiScsp().getDescripcio() : "");
 			updateEstatConsulta(consulta, resultat, accioParams);
 			if (resultat.getIdsSolicituds() != null && resultat.getIdsSolicituds().length > 0) {
 				consulta.updateScspSolicitudId(resultat.getIdsSolicituds()[0]);

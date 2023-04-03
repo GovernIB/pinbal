@@ -20,6 +20,7 @@ import java.util.Map;
 
 import javax.xml.parsers.ParserConfigurationException;
 
+import es.caib.pinbal.core.model.ProcedimentServei;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
@@ -310,7 +311,8 @@ public class JustificantHelper implements MessageSourceAware {
 				consulta.getScspPeticionId(),
 				consulta.getScspSolicitudId());
 		String arxiuExtensio = getExtensioArxiu(arxiuNom);
-		String serveiCodi = consulta.getProcedimentServei().getServei();
+		ProcedimentServei procedimentServei = consulta.getProcedimentServei();
+		String serveiCodi = procedimentServei.getServei();
 		String extensioSortida = getExtensioSortida();
 		boolean convertir = !extensioSortida.equalsIgnoreCase(arxiuExtensio);
 		ByteArrayOutputStream baosGeneracio = new ByteArrayOutputStream();
@@ -320,6 +322,8 @@ public class JustificantHelper implements MessageSourceAware {
 		Map<String, String> accioParams = new HashMap<>();
 		accioParams.put("consultaPeticioId", consulta.getScspPeticionId());
 		accioParams.put("consultaSolicitudId", consulta.getScspSolicitudId());
+		accioParams.put("procediment", procedimentServei.getProcediment() != null ? procedimentServei.getProcediment().getCodi() + " - " + procedimentServei.getProcediment().getNom() : "");
+		accioParams.put("servei", procedimentServei.getServeiScsp() != null ? procedimentServei.getServeiScsp().getCodi() + " - " + procedimentServei.getServeiScsp().getDescripcio() : "");
 		long t0 = System.currentTimeMillis();
 		try {
 		
