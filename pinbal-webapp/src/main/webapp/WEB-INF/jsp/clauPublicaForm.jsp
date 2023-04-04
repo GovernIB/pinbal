@@ -39,7 +39,7 @@
 </head>
 <body>
 
-	<c:url value="/scsp/claupublica/save" var="formAction"/>
+	<c:url value="/modal/scsp/claupublica/save" var="formAction"/>
 	<form:form action="${formAction}" method="post" cssClass="form-horizontal" commandName="clauPublicaCommand">
 		<form:hidden path="id"/>
 		<div class="row">
@@ -49,12 +49,14 @@
 				<pbl:inputText name="numSerie" required="true" labelSize="1" inline="false" textKey="claupublica.form.camp.numserie"/>
 				<pbl:inputDate name="dataAlta" required="true" labelSize="1" inline="false" textKey="claupublica.form.camp.dataalta"/>
 				<pbl:inputDate name="dataBaixa" required="false" labelSize="1" inline="false" textKey="claupublica.form.camp.databaixa"/>
-				<div class="pull-right">
-					<button type="submit" class="btn btn-primary" ><spring:message code="comu.boto.guardar" /></button>
-					<a href="<c:url value="/scsp/claupublica"/>" class="btn btn-default"><spring:message code="comu.boto.cancelar"/></a>
-				</div>
-			</div>	
-		</div>		
+			</div>
+		</div>
+<%--		<div class="pull-right">--%>
+		<div id="modal-botons">
+			<button type="submit" class="btn btn-primary" ><spring:message code="comu.boto.guardar" /></button>
+<%--					<a href="<c:url value="/scsp/claupublica"/>" class="btn btn-default"><spring:message code="comu.boto.cancelar"/></a>--%>
+			<a href="#" class="btn btn-default" data-modal-cancel="true"><spring:message code="comu.boto.tancar"/></a>
+		</div>
 	</form:form>
 
 </body>

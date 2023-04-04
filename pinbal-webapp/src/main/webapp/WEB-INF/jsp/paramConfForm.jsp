@@ -16,7 +16,7 @@
 </head>
 <body>
 
-	<c:url value="/scsp/paramconf/save" var="formAction"/>
+	<c:url value="/modal/scsp/paramconf/save" var="formAction"/>
 	<form:form action="${formAction}" method="post" cssClass="form-horizontal" commandName="paramConfCommand">
 	
 	<form:hidden path="forcreate"/>
@@ -25,13 +25,14 @@
 				<pbl:inputText name="nom" required="true" labelSize="1" inline="false" textKey="paramconf.form.camp.nom"/>
 				<pbl:inputText name="valor" required="true" labelSize="1" inline="false" textKey="paramconf.form.camp.valor"/>
 				<pbl:inputText name="descripcio" required="false" labelSize="1" inline="false" textKey="paramconf.form.camp.descripcio"/>
-				<div class="pull-right">
-					<button type="submit" class="btn btn-primary"><spring:message code="comu.boto.guardar"/></button>
-					<a href="<c:url value="/scsp/paramconf"/>" class="btn btn-default"><spring:message code="comu.boto.cancelar"/></a>
-				</div>
 			</div>
-		</div>		
-		
+		</div>
+		<%--				<div class="pull-right">--%>
+		<div id="modal-botons">
+			<button type="submit" class="btn btn-primary"><spring:message code="comu.boto.guardar"/></button>
+				<%--					<a href="<c:url value="/scsp/paramconf"/>" class="btn btn-default"><spring:message code="comu.boto.cancelar"/></a>--%>
+			<a href="#" class="btn btn-default" data-modal-cancel="true"><spring:message code="comu.boto.tancar"/></a>
+		</div>
 	</form:form>
 
 </body>

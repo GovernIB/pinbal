@@ -37,7 +37,7 @@
 </head>
 <body>
 
-	<c:url value="/scsp/emissorcert/save" var="formAction"/>
+	<c:url value="/modal/scsp/emissorcert/save" var="formAction"/>
 	<form:form action="${formAction}" method="post" cssClass="form-horizontal" commandName="emissorCertCommand">
 		<form:hidden path="id"/>
 		<div class="row">
@@ -45,11 +45,13 @@
 				<pbl:inputText name="nom" required="true" labelSize="1" inline="false" textKey="emissorcert.form.camp.nom"/>
 				<pbl:inputDate name="dataBaixa" required="false" labelSize="1" inline="false" textKey="emissorcert.form.camp.data.baixa"/>
 				<pbl:inputText name="cif" required="true" labelSize="1" inline="false" textKey="emissorcert.form.camp.cif"/>
-				<div class="pull-right">	
-					<button type="submit" class="btn btn-primary" ><spring:message code="comu.boto.guardar" /></button>
-					<a href="<c:url value="/scsp/emissorcert"/>" class="btn btn-default"><spring:message code="comu.boto.cancelar"/></a>
-				</div>
-			</div>	
+			</div>
+		</div>
+<%--		<div class="pull-right">	--%>
+		<div id="modal-botons">
+			<button type="submit" class="btn btn-primary" ><spring:message code="comu.boto.guardar" /></button>
+<%--			<a href="<c:url value="/scsp/emissorcert"/>" class="btn btn-default"><spring:message code="comu.boto.cancelar"/></a>--%>
+			<a href="#" class="btn btn-default" data-modal-cancel="true"><spring:message code="comu.boto.tancar"/></a>
 		</div>
 	</form:form>
 

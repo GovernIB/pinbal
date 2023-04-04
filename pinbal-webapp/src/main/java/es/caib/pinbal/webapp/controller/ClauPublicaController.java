@@ -97,13 +97,17 @@ public class ClauPublicaController extends BaseController {
 
 		if (command.getId() == null) {
 			scspService.createClauPublica(ClauPublicaCommand.asDto(command));
-			AlertHelper.success(request, getMessage(request, "claupublica.controller.creat.ok"));
+			return getModalControllerReturnValueSuccess(
+					request,
+					"redirect:./",
+					"claupublica.controller.creat.ok");
 		} else {
 			scspService.updateClauPublica(ClauPublicaCommand.asDto(command));
-			AlertHelper.success(request, getMessage(request, "claupublica.controller.modificat.ok"));
+			return getModalControllerReturnValueSuccess(
+					request,
+					"redirect:./",
+					"claupublica.controller.modificat.ok");
 		}
-
-		return "redirect:./";
 	}
 
 	@RequestMapping(value = "/{clauPublicaId}/delete", method = RequestMethod.GET)

@@ -15,7 +15,9 @@
 	<script src="<c:url value="/webjars/bootstrap-datepicker/1.6.1/dist/locales/bootstrap-datepicker.ca.min.js"/>"></script>
 	<script src="<c:url value="/webjars/datatables-plugins/1.10.20/dataRender/datetime.js"/>"></script>
 	<script src="<c:url value="/webjars/momentjs/2.24.0/min/moment.min.js"/>"></script>
+	<script src="<c:url value="/js/webutil.common.js"/>"></script>
 	<script src="<c:url value="/js/webutil.datatable.js"/>"></script>
+	<script src="<c:url value="/js/webutil.modal.js"/>"></script>
 	
 	<script>
 	$(document).ready(function() {
@@ -80,7 +82,7 @@
 
 	<div class="container-fluid">
 		<div class="pull-right">
-			<a class="btn btn-primary " href="<c:url value="/scsp/emissorcert/new"/>">
+			<a class="btn btn-primary " href="<c:url value="/scsp/emissorcert/new"/>" data-toggle="modal" data-refresh-pagina="true">
 				<i class="fas fa-plus"></i>&nbsp;<spring:message code="emissorcert.list.boto.nou.registre"/>
 			</a>
 		</div>
@@ -100,7 +102,7 @@
 	<div class="btn-group">
 		<a class="btn btn-primary dropdown-toggle" data-toggle="dropdown"><i class="fas fa-cog"></i>&nbsp;<spring:message code="comu.accions"/>&nbsp;<span class="caret"></span></a>
 		<ul class="dropdown-menu">
-			<li><a href="<c:url value="/scsp/emissorcert/{{ id }}"/>" ><i class="fas fa-pen"></i>&nbsp;<spring:message code="comu.boto.modificar"/></a></li>
+			<li><a href="<c:url value="/scsp/emissorcert/{{ id }}"/>" data-toggle="modal" data-refresh-pagina="true"><i class="fas fa-pen"></i>&nbsp;<spring:message code="comu.boto.modificar"/></a></li>
 			<li><a href="<c:url value="/scsp/emissorcert/{{ id }}/delete"/>" class="confirm-esborrar"><i class="fas fa-trash-alt"></i>&nbsp;<spring:message code="comu.boto.esborrar"/></a></li>
 		</ul>
 	</div>

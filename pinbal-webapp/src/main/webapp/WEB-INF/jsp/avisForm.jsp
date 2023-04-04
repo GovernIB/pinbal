@@ -24,7 +24,7 @@
 	<script src="<c:url value="/js/webutil.common.js"/>"></script>
 </head>
 <body>
-	<c:set var="formAction"><c:url value="/avis/save"/></c:set>
+	<c:set var="formAction"><c:url value="/modal/avis/save"/></c:set>
 	<form:form action="${formAction}" method="post" cssClass="form-horizontal" commandName="avisCommand" role="form">
 		<form:hidden path="id"/>
 		<pbl:inputText name="assumpte" textKey="avis.form.camp.assumpte" required="true"/>
@@ -33,9 +33,11 @@
 		<pbl:inputDate name="dataFinal" textKey="avis.form.camp.dataFinal" required="true"/>
 		<pbl:inputSelect name="avisNivell" textKey="avis.form.camp.avisNivell" optionEnum="AvisNivellEnumDto" required="true"/>
 		
-		<<div class="pull-right">
+<%--		<<div class="pull-right">--%>
+		<div id="modal-botons">
 			<button type="submit" class="btn btn-primary"><span class="fa fa-save"></span> <spring:message code="comu.boto.guardar"/></button>
-			<a href="<c:url value="/avis"/>" class="btn btn-default"><spring:message code="comu.boto.cancelar"/></a>
+			<a href="#" class="btn btn-default" data-modal-cancel="true"><spring:message code="comu.boto.tancar"/></a>
+<%--			<a href="<c:url value="/avis"/>" class="btn btn-default"><spring:message code="comu.boto.cancelar"/></a>--%>
 		</div>
 	</form:form>
 </body>

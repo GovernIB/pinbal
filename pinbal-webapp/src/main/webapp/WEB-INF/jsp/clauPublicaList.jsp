@@ -13,7 +13,9 @@
 	<script src="<c:url value="/webjars/datatables/1.10.21/js/jquery.dataTables.min.js"/>"></script>
 	<script src="<c:url value="/webjars/datatables/1.10.21/js/dataTables.bootstrap.min.js"/>"></script>
 	<script src="<c:url value="/webjars/datatables-plugins/1.10.20/dataRender/datetime.js"/>"></script>
+	<script src="<c:url value="/js/webutil.common.js"/>"></script>
 	<script src="<c:url value="/js/webutil.datatable.js"/>"></script>
+	<script src="<c:url value="/js/webutil.modal.js"/>"></script>
 	
 	<script src="<c:url value="/webjars/mustache.js/3.0.1/mustache.min.js"/>"></script>
 	<script src="<c:url value="/webjars/momentjs/2.24.0/min/moment.min.js"/>"></script>
@@ -60,7 +62,7 @@
 <body>
 
 	<div class="containter-fluid">
-		<a class="btn btn-primary pull-right" href="<c:url value="/scsp/claupublica/new"/>"><i class="fa fa-plus"></i>&nbsp;<spring:message code="claupublica.list.boto.nou.registre"/></a>
+		<a class="btn btn-primary pull-right" href="<c:url value="/scsp/claupublica/new"/>" data-toggle="modal" data-refresh-pagina="true"><i class="fa fa-plus"></i>&nbsp;<spring:message code="claupublica.list.boto.nou.registre"/></a>
 
 		<table id="table-claus" class="table table-striped table-bordered" style="width: 100%">
 			<thead>
@@ -79,7 +81,7 @@
 	<div class="btn-group">
 		<a class="btn btn-primary dropdown-toggle" data-toggle="dropdown"><i class="fas fa-cog"></i>&nbsp;<spring:message code="comu.accions"/>&nbsp;<span class="caret"></span></a>
 		<ul class="dropdown-menu">
-			<li><a href="<c:url value="/scsp/claupublica/{{ id }}"/>" ><i class="fas fa-pen"></i>&nbsp;<spring:message code="comu.boto.modificar"/></a></li>
+			<li><a href="<c:url value="/scsp/claupublica/{{ id }}"/>" data-toggle="modal" data-refresh-pagina="true"><i class="fas fa-pen"></i>&nbsp;<spring:message code="comu.boto.modificar"/></a></li>
 			<li><a href="<c:url value="/scsp/claupublica/{{ id }}/delete"/>" class="confirm-esborrar"><i class="fas fa-trash-alt"></i>&nbsp;<spring:message code="comu.boto.esborrar"/></a></li>
 		</ul>
 	</div>

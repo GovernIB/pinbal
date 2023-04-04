@@ -59,7 +59,7 @@
 </head>
 <body>
 
-	<c:url value="/scsp/clauprivada/save" var="formAction"/>
+	<c:url value="/modal/scsp/clauprivada/save" var="formAction"/>
 	<form:form action="${formAction}" method="post" cssClass="form-horizontal" commandName="clauPrivadaCommand">
 	
 		<form:hidden path="id"/>	
@@ -91,16 +91,14 @@
 								emptyOptionTextKey="comu.opcio.sense.definir"/>
 				</div>
 			</div>
-			<div class="row">
-				<div class="col-md-12">
-					<div class="pull-right">
-						<button type="submit" class="btn btn-primary" ><spring:message code="comu.boto.guardar" /></button>
-						<a href="<c:url value="/scsp/clauprivada"/>" class="btn btn-default"><spring:message code="comu.boto.cancelar"/></a>
-					</div>
-				</div>	
-			</div>
-		</div>						
-		</fieldset>		
+		</div>
+			<%--					<div class="pull-right">--%>
+		<div id="modal-botons">
+			<button type="submit" class="btn btn-primary" ><spring:message code="comu.boto.guardar" /></button>
+				<%--						<a href="<c:url value="/scsp/clauprivada"/>" class="btn btn-default"><spring:message code="comu.boto.cancelar"/></a>--%>
+			<a href="#" class="btn btn-default" data-modal-cancel="true"><spring:message code="comu.boto.tancar"/></a>
+		</div>
+		</fieldset>
 	</form:form>
 
 </body>

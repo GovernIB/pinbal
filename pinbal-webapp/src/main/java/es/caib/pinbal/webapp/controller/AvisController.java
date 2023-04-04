@@ -95,20 +95,17 @@ public class AvisController extends BaseController {
 		}
 		if (command.getId() != null) {
 			avisService.update(AvisCommand.asDto(command));
-			AlertHelper.success(
-					request, 
-					getMessage(
-							request, 
-							"avis.controller.modificat.ok"));
+			return getModalControllerReturnValueSuccess(
+					request,
+					"redirect:../avis",
+					"avis.controller.modificat.ok");
 		} else {
 			avisService.create(AvisCommand.asDto(command));
-			AlertHelper.success(
-					request, 
-					getMessage(
-							request, 
-							"avis.controller.creat.ok"));
+			return getModalControllerReturnValueSuccess(
+					request,
+					"redirect:../avis",
+					"avis.controller.creat.ok");
 		}
-		return "redirect:../avis";
 	}
 
 	@RequestMapping(value = "/{avisId}/enable", method = RequestMethod.GET)

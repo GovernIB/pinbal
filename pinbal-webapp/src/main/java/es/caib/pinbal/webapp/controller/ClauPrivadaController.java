@@ -106,21 +106,17 @@ public class ClauPrivadaController extends BaseController {
 		
 		if (command.getId() == null) {
 			scspService.createClauPrivada(ClauPrivadaCommand.asDto(command));
-			AlertHelper.success(
-					request, 
-					getMessage(
-							request, 
-							"clau.privada.controller.creat.ok"));
+			return getModalControllerReturnValueSuccess(
+					request,
+					"redirect:./",
+					"clau.privada.controller.creat.ok");
 		} else {
 			scspService.updateClauPrivada(ClauPrivadaCommand.asDto(command));
-			AlertHelper.success(
-					request, 
-					getMessage(
-							request, 
-							"clau.privada.controller.modificat.ok"));
+			return getModalControllerReturnValueSuccess(
+					request,
+					"redirect:./",
+					"clau.privada.controller.modificat.ok");
 		}
-		
-		return "redirect:./";
 	}
 	
 	@RequestMapping(value = "/{clauPrivadaId:.+}/delete", method = RequestMethod.GET)

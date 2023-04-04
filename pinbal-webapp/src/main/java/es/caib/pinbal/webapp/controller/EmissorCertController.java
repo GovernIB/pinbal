@@ -98,13 +98,17 @@ public class EmissorCertController extends BaseController {
 
 		if (command.getId() == null) {
 			scspService.createEmissorCert(EmissorCertCommand.asDto(command));
-			AlertHelper.success(request, getMessage(request, "emissorcert.controller.creat.ok"));
+			return getModalControllerReturnValueSuccess(
+					request,
+					"redirect:./",
+					"emissorcert.controller.creat.ok");
 		} else {
 			scspService.updateEmissorCert(EmissorCertCommand.asDto(command));
-			AlertHelper.success(request, getMessage(request, "emissorcert.controller.modificat.ok"));
+			return getModalControllerReturnValueSuccess(
+					request,
+					"redirect:./",
+					"emissorcert.controller.modificat.ok");
 		}
-
-		return "redirect:./";
 	}
 
 	@RequestMapping(value = "/{emissorCertId}/delete", method = RequestMethod.GET)

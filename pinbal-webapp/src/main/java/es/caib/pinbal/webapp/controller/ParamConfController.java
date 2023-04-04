@@ -100,21 +100,17 @@ public class ParamConfController extends BaseController {
 		
 		if (command.isForcreate()) {
 			scspService.createParamConf(ParamConfCommand.asDto(command));
-			AlertHelper.success(
-					request, 
-					getMessage(
-							request, 
-							"paramconf.controller.creat.ok"));
+			return getModalControllerReturnValueSuccess(
+					request,
+					"redirect:./",
+					"paramconf.controller.creat.ok");
 		} else {
 			scspService.updateParamConf(ParamConfCommand.asDto(command));
-			AlertHelper.success(
-					request, 
-					getMessage(
-							request, 
-							"paramconf.controller.modificat.ok"));
+			return getModalControllerReturnValueSuccess(
+					request,
+					"redirect:./",
+					"paramconf.controller.modificat.ok");
 		}
-		
-		return "redirect:./";
 	}
 	
 	@RequestMapping(value = "/{paramConfNom:.+}/delete", method = RequestMethod.GET)

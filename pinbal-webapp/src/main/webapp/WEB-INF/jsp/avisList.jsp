@@ -28,6 +28,7 @@
 
 	<script src="<c:url value="/js/webutil.common.js"/>"></script>
 	<script src="<c:url value="/js/webutil.datatable.js"/>"></script>
+	<script src="<c:url value="/js/webutil.modal.js"/>"></script>
 	
 	
 <script>
@@ -98,7 +99,7 @@ $(document).ready(function() {
 </head>
 <body>
 	<div class="pull-right">
-		<a class="btn btn-default" href="<c:url value="/avis/new"/>"><i class="fa fa-plus"></i>&nbsp;<spring:message code="avis.list.boto.nova.avis"/></a>
+		<a class="btn btn-default" href="<c:url value="/avis/new"/>" data-toggle="modal" data-refresh-pagina="true"><i class="fa fa-plus"></i>&nbsp;<spring:message code="avis.list.boto.nova.avis"/></a>
 	</div>
 	<table id="table-avisos" class="table table-striped table-bordered" style="width:100%">
 		<thead>
@@ -140,7 +141,7 @@ $(document).ready(function() {
 		<a class="btn btn-primary dropdown-toggle" data-toggle="dropdown"><i class="fas fa-cog"></i>&nbsp;<spring:message code="comu.accions"/>&nbsp;<span class="caret"></span></a>
 		<ul class="dropdown-menu">
 			<li>
-				<a href="avis/{{ id }}"><i class="fas fa-pen"></i>&nbsp;<spring:message code="comu.boto.modificar"/></a>
+				<a href="avis/{{ id }}" data-toggle="modal" data-refresh-pagina="true"><i class="fas fa-pen"></i>&nbsp;<spring:message code="comu.boto.modificar"/></a>
 			</li>
 			<li>
 				{{#actiu}}

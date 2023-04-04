@@ -15,7 +15,9 @@
 	<script src="<c:url value="/webjars/mustache.js/3.0.1/mustache.min.js"/>"></script>
 	<script src="<c:url value="/webjars/bootstrap-datepicker/1.6.1/dist/js/bootstrap-datepicker.min.js"/>"></script>
 	<script src="<c:url value="/webjars/bootstrap-datepicker/1.6.1/dist/locales/bootstrap-datepicker.ca.min.js"/>"></script>
+	<script src="<c:url value="/js/webutil.common.js"/>"></script>
 	<script src="<c:url value="/js/webutil.datatable.js"/>"></script>
+	<script src="<c:url value="/js/webutil.modal.js"/>"></script>
 	
 	<script>
 	$(document).ready(function() {
@@ -62,7 +64,7 @@
 	
 	<div class="container-fluid">
 		<div class="pull-right">
-			<a class="btn btn-primary" href="<c:url value="/scsp/paramconf/new"/>">
+			<a class="btn btn-primary" href="<c:url value="/scsp/paramconf/new"/>" data-toggle="modal" data-refresh-pagina="true">
 				<i class="fas fa-plus"></i>&nbsp;<spring:message code="paramconf.list.boto.nou.registre"/>
 			</a>
 		</div>
@@ -81,7 +83,7 @@
 	<div class="btn-group">
 		<a class="btn btn-primary dropdown-toggle" data-toggle="dropdown" href="#"><i class="fas fa-cog"></i>&nbsp;<spring:message code="comu.accions"/>&nbsp;<span class="caret"></span></a>
 		<ul class="dropdown-menu">
-			<li><a href="<c:url value="/scsp/paramconf/{{ nom }}"/>" ><i class="fas fa-pen"></i>&nbsp;<spring:message code="comu.boto.modificar"/></a></li>
+			<li><a href="<c:url value="/scsp/paramconf/{{ nom }}"/>" data-toggle="modal" data-refresh-pagina="true"><i class="fas fa-pen"></i>&nbsp;<spring:message code="comu.boto.modificar"/></a></li>
 			<li><a href="<c:url value="/scsp/paramconf/{{ nom }}/delete"/>" class="confirm-esborrar"><i class="fas fa-trash-alt"></i>&nbsp;<spring:message code="comu.boto.esborrar"/></a></li>
 		</ul>
 	</div>
