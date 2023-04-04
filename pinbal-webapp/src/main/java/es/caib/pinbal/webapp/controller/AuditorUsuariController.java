@@ -14,6 +14,7 @@ import javax.naming.NamingException;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
+import es.caib.pinbal.webapp.command.EntitatUsuariCommand.TipusNie;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -254,7 +255,11 @@ public class AuditorUsuariController extends BaseController {
 			if (command.getTipus().equals(EntitatUsuariCommand.CARACTER_CODI)) {
 				grup = TipusCodi.class;
 			} else if (command.getTipus().equals(EntitatUsuariCommand.CARACTER_NIF)) {
-				grup = TipusNif.class;
+				if (command.getNif() != null && command.getNif().toUpperCase().matches("[XYZ][0-9]{7}[A-Z]")) {
+					grup = TipusNie.class;
+				} else {
+					grup = TipusNif.class;
+				}
 			} else {
 				grup = Existent.class;
 			}

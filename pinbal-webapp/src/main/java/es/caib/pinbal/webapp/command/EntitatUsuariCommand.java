@@ -6,6 +6,8 @@ package es.caib.pinbal.webapp.command;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import es.caib.pinbal.webapp.validation.DocumentIdentitatNie;
+import es.caib.pinbal.webapp.validation.DocumentIdentitatNif;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.hibernate.validator.constraints.NotEmpty;
 
@@ -35,7 +37,8 @@ public class EntitatUsuariCommand {
 	private String tipus;
 	@Size(max = 64)
 	@NotEmpty(groups = {TipusNif.class, Existent.class})
-	@DocumentIdentitat(documentTipus = DocumentTipus.NIF, groups = {TipusNif.class})
+	@DocumentIdentitatNif(groups = {TipusNif.class})
+	@DocumentIdentitatNie(groups = {TipusNie.class})
 	private String nif;
 	@Size(max = 64)
 	private String departament;
@@ -144,6 +147,7 @@ public class EntitatUsuariCommand {
 	}
 
 	public interface TipusNif {}
+	public interface TipusNie {}
 	public interface TipusCodi {}
 	public interface Existent {}
 

@@ -25,6 +25,7 @@ import es.caib.pinbal.core.dto.ProcedimentServeiNomDto;
 import es.caib.pinbal.core.dto.ProcedimentServeiSimpleDto;
 import es.caib.pinbal.core.dto.UsuariEstatEnum;
 import es.caib.pinbal.core.service.exception.ProcedimentNotFoundException;
+import es.caib.pinbal.webapp.command.EntitatUsuariCommand.TipusNie;
 import es.caib.pinbal.webapp.helper.ModalHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -351,7 +352,11 @@ public class RepresentantUsuariController extends BaseController {
 		if (command.getTipus().equals(EntitatUsuariCommand.CARACTER_CODI)) {
 			grup = TipusCodi.class;
 		} else if (command.getTipus().equals(EntitatUsuariCommand.CARACTER_NIF)) {
-			grup = TipusNif.class;
+			if (command.getNif() != null && command.getNif().toUpperCase().matches("[XYZ][0-9]{7}[A-Z]")) {
+				grup = TipusNie.class;
+			} else {
+				grup = TipusNif.class;
+			}
 		} else {
 			grup = Existent.class;
 		}
