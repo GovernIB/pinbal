@@ -29,6 +29,7 @@
 	<script src="<c:url value="/js/webutil.datatable.js"/>"></script>
 	<script src="<c:url value="/js/webutil.modal.js"/>"></script>
 	<script src="<c:url value="/js/webutil.common.js"/>"></script>
+	<script src="<c:url value="/js/justificant-viewer.js"/>"></script>
 	<script type="application/javascript">
 		function checkCallback() {
 			// historicColor();
@@ -149,6 +150,11 @@
 		</thead>
 	</table>
 <script type="text/javascript">
+	const urlViewer = '<c:url value="/webjars/pdf-js/2.13.216/web/viewer.html"/>';
+	let msgViewer = [];
+	msgViewer['error'] = '<spring:message code="consulta.justificant.previsualitzacio.error"/>';
+	msgViewer['warning'] = '<spring:message code="consulta.justificant.previsualitzacio.warning"/>';
+
 $(document).ready(function() {
 	$('#netejar-filtre').click(function() {
 		$(':input', $('#form-filtre')).each (function() {
@@ -271,6 +277,17 @@ $(document).ready(function() {
 		]
 	});
 
+	$("#table-consultes").on('click', 'tbody tr', (event) => {
+		if (event.target.cellIndex === undefined || event.target.cellIndex > 6)
+			return;
+
+		<%-- Obrim una nova fila amb la previsualització del justificant --%>
+		let fila = $(event.currentTarget);
+		if (fila.find('.btn-justificant').length) {
+			toggleDocJustificant(fila);
+		}
+	});
+
 	historicColor();
 });
 </script>
@@ -279,13 +296,13 @@ $(document).ready(function() {
 </script>
 <script id="template-justificant" type="x-tmpl-mustache">
 {{#estat-pendent}}
-<a class="btn btn-default btn-small" href="consulta/{{ id }}/justificant">
+<a class="btn btn-default btn-small btn-justificant" href="consulta/{{ id }}/justificant">
 <i class="far fa-file-pdf" title="<spring:message code="consulta.list.taula.descarregar.pdf"/>" 
 			 alt="<spring:message code="consulta.list.taula.descarregar.pdf"/>"></i>
 </a>
 {{/estat-pendent}}
 {{#estat-ok}}
-<a class="btn btn-default btn-small" href="consulta/{{ id }}/justificant">
+<a class="btn btn-default btn-small btn-justificant" href="consulta/{{ id }}/justificant">
 <i class="far fa-file-pdf" title="<spring:message code="consulta.list.taula.descarregar.pdf"/>" 
 			 alt="<spring:message code="consulta.list.taula.descarregar.pdf"/>"></i>
 </a>

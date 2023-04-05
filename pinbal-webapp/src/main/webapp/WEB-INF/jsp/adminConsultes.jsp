@@ -30,41 +30,42 @@
 	<script src="<c:url value="/js/webutil.datatable.js"/>"></script>
 	<script src="<c:url value="/js/webutil.modal.js"/>"></script>
 	<script src="<c:url value="/js/webutil.common.js"/>"></script>
-<script type="application/javascript">
-	function checkCallback() {
-		// historicColor();
-		$("#filtrar").click();
-	}
-	function historicColor() {
-		let historic = $("#titolCheck").prop("checked");
-		if (historic) {
-			$(".container-caib > .panel-default > .panel-body").addClass("panel-historic");
-			$(".dataTables_info").addClass("table-info-historic");
-		} else {
-			$(".container-caib > .panel-default > .panel-body").removeClass("panel-historic")
-			$(".dataTables_info").removeClass("table-info-historic");
+	<script src="<c:url value="/js/justificant-viewer.js"/>"></script>
+	<script type="application/javascript">
+		function checkCallback() {
+			// historicColor();
+			$("#filtrar").click();
 		}
-	}
-	function formatState(estat) {
-
-		const msgError = '<spring:message code="consulta.list.estat.Error"/>';
-		const msgPendent = '<spring:message code="consulta.list.estat.Pendent"/>';
-		const msgProcessant = '<spring:message code="consulta.list.estat.Processant"/>';
-		const msgTramitada = '<spring:message code="consulta.list.estat.Tramitada"/>';
-
-		if (estat.id=='Error') {
-			return $('<div><span class="fas fa-exclamation-triangle"></span> <span>' + msgError + '</span></div>');
-		} else if(estat.id=='Pendent') {
-			return $('<div><span class="far fa-clock"></span>  <span>' + msgPendent + '</span></div>');
-		} else if(estat.id=='Processant') {
-			return $('<div><span class="fa fa-cogs"></span>  <span>' + msgProcessant + '</span></div>');
-		} else if(estat.id=='Tramitada') {
-			return $('<div><span class="fa fa-check"></span>  <span>' + msgTramitada + '</span></div>');
-		} else {
-			return estat.text;
+		function historicColor() {
+			let historic = $("#titolCheck").prop("checked");
+			if (historic) {
+				$(".container-caib > .panel-default > .panel-body").addClass("panel-historic");
+				$(".dataTables_info").addClass("table-info-historic");
+			} else {
+				$(".container-caib > .panel-default > .panel-body").removeClass("panel-historic")
+				$(".dataTables_info").removeClass("table-info-historic");
+			}
 		}
-	}
-</script>
+		function formatState(estat) {
+
+			const msgError = '<spring:message code="consulta.list.estat.Error"/>';
+			const msgPendent = '<spring:message code="consulta.list.estat.Pendent"/>';
+			const msgProcessant = '<spring:message code="consulta.list.estat.Processant"/>';
+			const msgTramitada = '<spring:message code="consulta.list.estat.Tramitada"/>';
+
+			if (estat.id=='Error') {
+				return $('<div><span class="fas fa-exclamation-triangle"></span> <span>' + msgError + '</span></div>');
+			} else if(estat.id=='Pendent') {
+				return $('<div><span class="far fa-clock"></span>  <span>' + msgPendent + '</span></div>');
+			} else if(estat.id=='Processant') {
+				return $('<div><span class="fa fa-cogs"></span>  <span>' + msgProcessant + '</span></div>');
+			} else if(estat.id=='Tramitada') {
+				return $('<div><span class="fa fa-check"></span>  <span>' + msgTramitada + '</span></div>');
+			} else {
+				return estat.text;
+			}
+		}
+	</script>
 </head>
 <body>
 	<div class="text-right" data-toggle="titol-check" data-titol-check-value="${historic}" data-titol-check-session-name="${historicSession}" data-titol-check-callback="checkCallback" data-titol-check-label="<spring:message code="comu.historic"/>"></div>
@@ -175,6 +176,11 @@
 		createHiddenInputFieldsForLimitAndSubmit(id);
 	}
 
+	const urlViewer = '<c:url value="/webjars/pdf-js/2.13.216/web/viewer.html"/>';
+	let msgViewer = [];
+	msgViewer['error'] = '<spring:message code="consulta.justificant.previsualitzacio.error"/>';
+	msgViewer['warning'] = '<spring:message code="consulta.justificant.previsualitzacio.warning"/>';
+
 	$(document).ready(function() {
 		$('#netejar-filtre').click(function() {
 			$(':input', $('#form-filtre')).each (function() {
@@ -266,6 +272,17 @@
 			initComplete: function( settings, json ) {}
 		});
 
+		$("#table-consultes").on('click', 'tbody tr', (event) => {
+			if (event.target.cellIndex === undefined || event.target.cellIndex > 6)
+				return;
+
+			<%-- Obrim una nova fila amb la previsualització del justificant --%>
+			let fila = $(event.currentTarget);
+			if (fila.find('.btn-justificant').length) {
+				toggleDocJustificant(fila);
+			}
+		});
+
 		historicColor();
 	});
 </script>
@@ -283,13 +300,13 @@
 </script>
 <script id="template-justificant" type="x-tmpl-mustache">
 {{#estat-pendent}}
-<a class="btn btn-default btn-small" href="consulta/{{ id }}/justificant">
+<a class="btn btn-default btn-small btn-justificant" href="consulta/{{ id }}/justificant">
 <i class="far fa-file-pdf" title="<spring:message code="consulta.list.taula.descarregar.pdf"/>" 
 			 alt="<spring:message code="consulta.list.taula.descarregar.pdf"/>"></i>
 </a>
 {{/estat-pendent}}
 {{#estat-ok}}
-<a class="btn btn-default btn-small" href="consulta/{{ id }}/justificant">
+<a class="btn btn-default btn-small btn-justificant" href="consulta/{{ id }}/justificant">
 <i class="far fa-file-pdf" title="<spring:message code="consulta.list.taula.descarregar.pdf"/>" 
 			 alt="<spring:message code="consulta.list.taula.descarregar.pdf"/>"></i>
 </a>

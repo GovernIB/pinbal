@@ -19,6 +19,7 @@ import javax.validation.Valid;
 
 import es.caib.pinbal.core.dto.CodiValor;
 import es.caib.pinbal.core.dto.DadaEspecificaDto;
+import es.caib.pinbal.core.dto.JsonResponse;
 import es.caib.pinbal.core.dto.NodeDto;
 import es.caib.pinbal.core.dto.ServeiCampDto;
 import es.caib.pinbal.core.service.HistoricConsultaService;
@@ -167,7 +168,7 @@ public class ConsultaAdminController extends BaseController {
 					AlertHelper.error(
 							request,
 							getMessage(
-									request, 
+									request,
 									"consulta.controller.justificant.error"));
 					return "redirect:../../consulta";
 				}
@@ -178,7 +179,7 @@ public class ConsultaAdminController extends BaseController {
 				AlertHelper.error(
 						request,
 						getMessage(
-								request, 
+								request,
 								"consulta.controller.justificant.error"));
 				return "redirect:../../consulta";
 			}
@@ -186,9 +187,33 @@ public class ConsultaAdminController extends BaseController {
 			AlertHelper.error(
 					request,
 					getMessage(
-							request, 
+							request,
 							"comu.error.no.entitat"));
 			return "redirect:../../index";
+		}
+	}
+
+	@RequestMapping(value="/{consultaId}/justificant/previsualitzacio", method = RequestMethod.GET)
+	@ResponseBody
+	public JsonResponse justificantPrevisualitzacio(
+			HttpServletRequest request,
+			@PathVariable Long consultaId) {
+
+		if (!EntitatHelper.isDelegatEntitatActual(request))
+			return new JsonResponse(true, "delegatNoAutoritzat");
+		EntitatDto entitat = EntitatHelper.getEntitatActual(request, entitatService);
+		if (entitat == null)
+			return new JsonResponse(true, getMessage(request, "comu.error.no.entitat"));
+
+		try {
+			JustificantDto justificant = getJustificant(consultaId, isHistoric(request));
+			if (justificant.isError())
+				return new JsonResponse(true, getMessage(request, "consulta.controller.justificant.error"));
+			return new JsonResponse(justificant);
+		} catch (ConsultaNotFoundException ex) {
+			return new JsonResponse(true, ex.getMessage());
+		} catch (Exception ex) {
+			return new JsonResponse(true, getMessage(request, "consulta.controller.justificant.error"));
 		}
 	}
 
@@ -198,9 +223,9 @@ public class ConsultaAdminController extends BaseController {
 			@RequestParam(value = "entitatId", required = false) Long entitatId) {
 		if (entitatId == null) {
 			AlertHelper.error(
-					request, 
+					request,
 					getMessage(
-							request, 
+							request,
 							"admin.consulta.controller.entitat.no.especificada"));
 		} else {
 			EntitatDto entitat = entitatService.findById(entitatId);

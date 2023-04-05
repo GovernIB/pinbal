@@ -12,6 +12,9 @@
 		<pattern>/log/download</pattern>
 		<pattern>/log/download/*</pattern>
 	</excludes>
+	<decorator name="viewerPdfDecorator" page="viewerPdfDecorator.jsp">
+		<pattern>*/viewer.html*</pattern>
+	</decorator>
 	<decorator name="default" page="default.jsp">
 		<pattern>/*</pattern>
 	</decorator>

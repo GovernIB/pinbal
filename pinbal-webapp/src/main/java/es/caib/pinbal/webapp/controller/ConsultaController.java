@@ -25,6 +25,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 import es.caib.pinbal.core.dto.CodiValor;
+import es.caib.pinbal.core.dto.JsonResponse;
 import org.apache.commons.codec.binary.Base64;
 import org.joda.time.Days;
 import org.joda.time.LocalDate;
@@ -511,6 +512,30 @@ public class ConsultaController extends BaseController {
 							request, 
 							"comu.error.no.entitat"));
 			return "redirect:../../index";
+		}
+	}
+
+	@RequestMapping(value="/{consultaId}/justificant/previsualitzacio", method = RequestMethod.GET)
+	@ResponseBody
+	public JsonResponse justificantPrevisualitzacio(
+			HttpServletRequest request,
+			@PathVariable Long consultaId) {
+
+		if (!EntitatHelper.isDelegatEntitatActual(request))
+			return new JsonResponse(true, "delegatNoAutoritzat");
+		EntitatDto entitat = EntitatHelper.getEntitatActual(request, entitatService);
+		if (entitat == null)
+			return new JsonResponse(true, getMessage(request, "comu.error.no.entitat"));
+
+		try {
+			JustificantDto justificant = getJustificant(consultaId, isHistoric(request));
+			if (justificant.isError())
+				return new JsonResponse(true, getMessage(request, "consulta.controller.justificant.error"));
+			return new JsonResponse(justificant);
+		} catch (ConsultaNotFoundException ex) {
+			return new JsonResponse(true, ex.getMessage());
+		} catch (Exception ex) {
+			return new JsonResponse(true, getMessage(request, "consulta.controller.justificant.error"));
 		}
 	}
 
