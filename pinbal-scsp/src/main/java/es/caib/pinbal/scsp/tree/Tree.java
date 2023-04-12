@@ -42,7 +42,8 @@ public class Tree<T> {
 	 */
 	public List<Node<T>> toList() {
 		List<Node<T>> list = new ArrayList<Node<T>>();
-		walk(rootElement, list);
+		if (rootElement != null)
+			walk(rootElement, list);
 		return list;
 	}
 

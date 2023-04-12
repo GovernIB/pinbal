@@ -34,7 +34,7 @@
 	<script src="<c:url value="/webjars/momentjs/2.24.0/min/moment.min.js"/>"></script>
 	<script src="<c:url value="/js/ios-checkbox/iosCheckbox.js"/>"></script>
 	<script src="<c:url value="/js/webutil.datatable.js"/>"></script>
-	<script src="<c:url value="/js/webutil.common.js"/>"></script>	
+	<script src="<c:url value="/js/webutil.common.js"/>"></script>
 	<script>
 		$(document).ready(function() {
 			$('#netejar-filtre').click(function() {

@@ -37,6 +37,7 @@ import org.apache.ws.commons.schema.XmlSchemaGroupBase;
 import org.apache.ws.commons.schema.XmlSchemaMaxLengthFacet;
 import org.apache.ws.commons.schema.XmlSchemaMinLengthFacet;
 import org.apache.ws.commons.schema.XmlSchemaObject;
+import org.apache.ws.commons.schema.XmlSchemaParticle;
 import org.apache.ws.commons.schema.XmlSchemaSequence;
 import org.apache.ws.commons.schema.XmlSchemaSimpleType;
 import org.apache.ws.commons.schema.XmlSchemaSimpleTypeRestriction;
@@ -60,7 +61,7 @@ import es.scsp.common.domain.core.Servicio;
  * @author Limit Tecnologies <limit@limit.es>
  */
 public class XmlHelper {
-	
+
 	public Tree<DadesEspecifiquesNode> getArbrePerDadesEspecifiques(
 			final Servicio servicio,
 			final boolean gestioXsdActiva) throws ConsultaScspGeneracioException {
@@ -99,7 +100,7 @@ public class XmlHelper {
 		}
 		return tree;
 	}
-	
+
 	public boolean hasCodigoUnidadTramitadora(
 			final Servicio servicio,
 			final boolean gestioXsdActiva) throws Exception {
@@ -167,13 +168,18 @@ public class XmlHelper {
 					"xmlns",
 					getXmlnsPerDadesEspecifiques(servicio, gestioXsdActiva));
 			if (dadesEspecifiques != null) {
-				
+
 				Tree<DadesEspecifiquesNode> arbre = getArbrePerDadesEspecifiques(servicio, gestioXsdActiva);
 				if (iniDadesEspecifiques) {
 					this.inicialitzaElements(doc, datosEspecificos, arbre.getRootElement());
 				}
-				
+
 				for (Node<DadesEspecifiquesNode> node: arbre.toList()) {
+					// ALL, CHOICE i SEQUENCE sense nom al XSD
+					if (node.getData().getNom() != null && node.getData().getNom().startsWith("__")) {
+						continue;
+					}
+
 					String path = node.getData().getPath().substring(1);
 					Object preValor = dadesEspecifiques.get(path);
 					if (preValor instanceof String) {
@@ -254,23 +260,31 @@ public class XmlHelper {
 	}
 
 	private Element inicialitzaElements(
-			Document doc, 
-			Element element, 
+			Document doc,
+			Element element,
 			Node<DadesEspecifiquesNode> nodeDades) {
 
 		Element ret = null;
-		
-		if (nodeDades.getData() != null
-				&& nodeDades.getData().getGroupMin() > 0) {
-			
+
+		if (nodeDades.getData() != null	&& nodeDades.getData().getGroupMin() > 0) {
+
 			ret = element;
-			
+
 			if (nodeDades.getNumberOfChildren() > 0) {
 				for (Node<DadesEspecifiquesNode> child: nodeDades.getChildren()) {
-					Element childElement = inicialitzaElements(
-							doc, 
-							doc.createElement(child.getData().getNom()), 
-							child);
+					Element childElement = null;
+					// ALL, CHOICE i SEQUENCE sense nom al XSD
+					if (child.getData() != null && child.getData().getNom().startsWith("__")) {
+						childElement = inicialitzaElements(
+								doc,
+								element,
+								child);
+					} else {
+						childElement = inicialitzaElements(
+								doc,
+								doc.createElement(child.getData().getNom()),
+								child);
+					}
 					if (childElement != null) {
 						element.appendChild(childElement);
 						if (nodeDades.getData().getGroupType() == DadesEspecifiquesNode.GROUP_TYPE_CHOICE) {
@@ -340,7 +354,6 @@ public class XmlHelper {
 	}
 
 
-
 	@SuppressWarnings("unchecked")
 	private void afegirElement(
 			Servicio servicio,
@@ -348,119 +361,159 @@ public class XmlHelper {
 			Node<DadesEspecifiquesNode> pare,
 			List<String> path,
 			XmlSchema schema,
-			XmlSchemaElement element) {
-		long minOccurs = element.getMinOccurs();
-		long maxOccurs = element.getMaxOccurs();
-		if (element.getRefName() != null) {
-			element = schema.getElementByName(element.getRefName());
-		}
+			XmlSchemaParticle particle) {
+
+		long minOccurs = particle.getMinOccurs();
+		long maxOccurs = particle.getMaxOccurs();
+
 		DadesEspecifiquesNode dadesNode = new DadesEspecifiquesNode();
 		Node<DadesEspecifiquesNode> node = new Node<DadesEspecifiquesNode>(dadesNode);
-		if (!path.isEmpty()) {
-			dadesNode.setPath(pathToString(path) + "/" + element.getName());
-		} else {
-			dadesNode.setPath("/" + element.getName());
-		}
-		path.add(element.getName());
-		if (element.getSchemaType() instanceof XmlSchemaComplexType) {
-			XmlSchemaComplexType complexType = (XmlSchemaComplexType)element.getSchemaType();
-			if (complexType.getParticle() instanceof XmlSchemaGroupBase) {
-				XmlSchemaGroupBase gb = (XmlSchemaGroupBase)complexType.getParticle();
-				int groupType = 0;
-				if (gb instanceof XmlSchemaAll)
-					groupType = DadesEspecifiquesNode.GROUP_TYPE_ALL;
-				else if (gb instanceof XmlSchemaChoice)
-					groupType = DadesEspecifiquesNode.GROUP_TYPE_CHOICE;
-				else if (gb instanceof XmlSchemaSequence)
-					groupType = DadesEspecifiquesNode.GROUP_TYPE_SCHEMA;
+
+		if (particle instanceof XmlSchemaElement) {
+			XmlSchemaElement element = (XmlSchemaElement) particle;
+			if (element.getRefName() != null) {
+				element = schema.getElementByName(element.getRefName());
+			}
+			if (!path.isEmpty()) {
+				dadesNode.setPath(pathToString(path) + "/" + element.getName());
+			} else {
+				dadesNode.setPath("/" + element.getName());
+			}
+			path.add(element.getName());
+			if (element.getSchemaType() instanceof XmlSchemaComplexType) {
+				XmlSchemaComplexType complexType = (XmlSchemaComplexType)element.getSchemaType();
+				if (complexType.getParticle() instanceof XmlSchemaGroupBase) {
+					XmlSchemaGroupBase gb = (XmlSchemaGroupBase)complexType.getParticle();
+					int groupType = 0;
+					if (gb instanceof XmlSchemaAll)
+						groupType = DadesEspecifiquesNode.GROUP_TYPE_ALL;
+					else if (gb instanceof XmlSchemaChoice)
+						groupType = DadesEspecifiquesNode.GROUP_TYPE_CHOICE;
+					else if (gb instanceof XmlSchemaSequence)
+						groupType = DadesEspecifiquesNode.GROUP_TYPE_SCHEMA;
+					dadesNode.setNom(element.getName());
+					dadesNode.setComplex(true);
+					dadesNode.setGroupType(groupType);
+					dadesNode.setGroupMin(minOccurs);
+					dadesNode.setGroupMax(maxOccurs);
+					Iterator<?> iti = gb.getItems().getIterator();
+					while (iti.hasNext()) {
+						Object item = iti.next();
+						afegirElementMultiple(servicio, tree, path, schema, node, (XmlSchemaParticle)item);
+					}
+				}
+			} else {
 				dadesNode.setNom(element.getName());
-				dadesNode.setComplex(true);
-				dadesNode.setGroupType(groupType);
+				dadesNode.setComplex(false);
 				dadesNode.setGroupMin(minOccurs);
 				dadesNode.setGroupMax(maxOccurs);
-				Iterator<?> iti = gb.getItems().getIterator();
-				while (iti.hasNext()) {
-					Object item = iti.next();
-					if (item instanceof XmlSchemaElement) {
-						XmlSchemaElement elementPerAfegir = (XmlSchemaElement)item;
-						if (elementPerAfegir != null) {
-							afegirElement(
-									servicio,
-									tree,
-									node,
-									path,
-									schema,
-									elementPerAfegir);
+				XmlSchemaSimpleType simpleType = (XmlSchemaSimpleType)element.getSchemaType();
+				if (simpleType != null && simpleType.getContent() != null && simpleType.getContent() instanceof XmlSchemaSimpleTypeRestriction) {
+					XmlSchemaSimpleTypeRestriction restriction = (XmlSchemaSimpleTypeRestriction)simpleType.getContent();
+					Iterator<XmlSchemaFacet> it = restriction.getFacets().getIterator();
+					while (it.hasNext()) {
+						XmlSchemaFacet facet = (XmlSchemaFacet)it.next();
+						if (facet instanceof XmlSchemaMinLengthFacet) {
+							XmlSchemaMinLengthFacet mlFacet = (XmlSchemaMinLengthFacet)facet;
+							dadesNode.setMinLength(new Integer((String)mlFacet.getValue()));
+						} else if (facet instanceof XmlSchemaMaxLengthFacet) {
+							XmlSchemaMaxLengthFacet mlFacet = (XmlSchemaMaxLengthFacet)facet;
+							dadesNode.setMaxLength(new Integer((String)mlFacet.getValue()));
+						} else if (facet instanceof XmlSchemaEnumerationFacet) {
+							XmlSchemaEnumerationFacet enumFacet = (XmlSchemaEnumerationFacet)facet;
+							dadesNode.addEnumValue((String)enumFacet.getValue());
 						}
-					} else if (item instanceof XmlSchemaSequence) {
-						XmlSchemaSequence seq = (XmlSchemaSequence)item;
-						for (int i = 0; i < seq.getItems().getCount(); i++) {
-							XmlSchemaObject itemn = seq.getItems().getItem(i);
-							if (itemn instanceof XmlSchemaElement) {
-								XmlSchemaElement elementPerAfegir = (XmlSchemaElement)itemn;
-								afegirElement(
-										servicio,
-										tree,
-										node,
-										path,
-										schema,
-										elementPerAfegir);
-							} else {
-								LOGGER.error("No s'ha pogut processar element dins seqüència de les dades específiques (servei=" + servicio.getCodCertificado() + ", className=" + itemn.getClass().getName() + ")");
-							}
-						}
-					} else if (item instanceof XmlSchemaChoice) {
-						XmlSchemaChoice cho = (XmlSchemaChoice)item;
-						for (int i = 0; i < cho.getItems().getCount(); i++) {
-							XmlSchemaObject itemn = cho.getItems().getItem(i);
-							if (itemn instanceof XmlSchemaElement) {
-								XmlSchemaElement elementPerAfegir = (XmlSchemaElement)itemn;
-								afegirElement(
-										servicio,
-										tree,
-										node,
-										path,
-										schema,
-										elementPerAfegir);
-							} else {
-								LOGGER.error("No s'ha pogut processar element dins choice de les dades específiques (servei=" + servicio.getCodCertificado() + ", className=" + itemn.getClass().getName() + ")");
-							}
-						}
-					} else {
-						LOGGER.error("No s'ha pogut processar element de les dades específiques (servei=" + servicio.getCodCertificado() + ", className=" + item.getClass().getName() + ")");
 					}
 				}
 			}
-		} else {
-			dadesNode.setNom(element.getName());
-			dadesNode.setComplex(false);
-			dadesNode.setGroupMin(minOccurs);
-			dadesNode.setGroupMax(maxOccurs);
-			XmlSchemaSimpleType simpleType = (XmlSchemaSimpleType)element.getSchemaType();
-			if (simpleType != null && simpleType.getContent() != null && simpleType.getContent() instanceof XmlSchemaSimpleTypeRestriction) {
-				XmlSchemaSimpleTypeRestriction restriction = (XmlSchemaSimpleTypeRestriction)simpleType.getContent();
-				Iterator<XmlSchemaFacet> it = restriction.getFacets().getIterator();
-				while (it.hasNext()) {
-					XmlSchemaFacet facet = (XmlSchemaFacet)it.next();
-					if (facet instanceof XmlSchemaMinLengthFacet) {
-						XmlSchemaMinLengthFacet mlFacet = (XmlSchemaMinLengthFacet)facet;
-						dadesNode.setMinLength(new Integer((String)mlFacet.getValue()));
-					} else if (facet instanceof XmlSchemaMaxLengthFacet) {
-						XmlSchemaMaxLengthFacet mlFacet = (XmlSchemaMaxLengthFacet)facet;
-						dadesNode.setMaxLength(new Integer((String)mlFacet.getValue()));
-					} else if (facet instanceof XmlSchemaEnumerationFacet) {
-						XmlSchemaEnumerationFacet enumFacet = (XmlSchemaEnumerationFacet)facet;
-						dadesNode.addEnumValue((String)enumFacet.getValue());
-					}
-				}
+			path.remove(path.size() - 1);
+			if (pare == null) {
+				tree.setRootElement(node);
+			} else {
+				pare.addChild(node);
 			}
-		}
-		path.remove(path.size() - 1);
-		if (pare == null) {
-			tree.setRootElement(node);
 		} else {
-			pare.addChild(node);
+			dadesNode.setPath(pathToString(path));
+			afegirElementMultiple(servicio, tree, path, schema, pare, particle);
 		}
+	}
+
+	private void afegirElementMultiple(
+			Servicio servicio,
+			Tree<DadesEspecifiquesNode> tree,
+			List<String> path,
+			XmlSchema schema,
+			Node<DadesEspecifiquesNode> pare,
+			XmlSchemaParticle item) {
+		if (item instanceof XmlSchemaElement) {
+			XmlSchemaElement elementPerAfegir = (XmlSchemaElement) item;
+			if (elementPerAfegir != null) {
+				afegirElement(
+						servicio,
+						tree,
+						pare,
+						path,
+						schema,
+						elementPerAfegir);
+			}
+		} else if (item instanceof XmlSchemaSequence) {
+			pare = afegirNodeComplex(path, DadesEspecifiquesNode.GROUP_TYPE_SCHEMA, pare);
+			XmlSchemaSequence seq = (XmlSchemaSequence) item;
+			for (int i = 0; i < seq.getItems().getCount(); i++) {
+				XmlSchemaObject itemn = seq.getItems().getItem(i);
+				XmlSchemaParticle elementPerAfegir = (XmlSchemaParticle) itemn;
+				afegirElement(
+						servicio,
+						tree,
+						pare,
+						path,
+						schema,
+						elementPerAfegir);
+			}
+		} else if (item instanceof XmlSchemaChoice) {
+			pare = afegirNodeComplex(path, DadesEspecifiquesNode.GROUP_TYPE_CHOICE, pare);
+			XmlSchemaChoice cho = (XmlSchemaChoice) item;
+			for (int i = 0; i < cho.getItems().getCount(); i++) {
+				XmlSchemaObject itemn = cho.getItems().getItem(i);
+				XmlSchemaParticle elementPerAfegir = (XmlSchemaParticle)itemn;
+				afegirElement(
+						servicio,
+						tree,
+						pare,
+						path,
+						schema,
+						elementPerAfegir);
+			}
+		} else {
+			LOGGER.error("No s'ha pogut processar element de les dades específiques (servei=" + servicio.getCodCertificado() + ", className=" + item.getClass().getName() + ")");
+		}
+	}
+
+	private Node<DadesEspecifiquesNode> afegirNodeComplex(List<String> path, int tipus, Node<DadesEspecifiquesNode> pare) {
+		DadesEspecifiquesNode dadesNode = new DadesEspecifiquesNode();
+		Node<DadesEspecifiquesNode> node = new Node<DadesEspecifiquesNode>(dadesNode);
+
+		int groupType = tipus;
+		switch (tipus) {
+			case DadesEspecifiquesNode.GROUP_TYPE_ALL:
+				dadesNode.setNom("__ALL");
+				dadesNode.setPath(pathToString(path) + "/__ALL");
+				break;
+			case DadesEspecifiquesNode.GROUP_TYPE_CHOICE:
+				dadesNode.setNom("__CHOICE");
+				dadesNode.setPath(pathToString(path) + "/__CHOICE");
+				break;
+			case DadesEspecifiquesNode.GROUP_TYPE_SCHEMA:
+				dadesNode.setNom("__SEQUENCE");
+				dadesNode.setPath(pathToString(path) + "/__SEQUENCE");
+				break;
+		}
+		dadesNode.setComplex(true);
+		dadesNode.setGroupType(tipus);
+
+		pare.addChild(node);
+
+		return node;
 	}
 
 	private void recorrerDocument(
@@ -502,6 +555,7 @@ public class XmlHelper {
 			path.remove(path.size() - 1);
 		}
 	}
+
 	private Document xmlToDocument(InputStream is) throws ParserConfigurationException, SAXException, IOException {
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 		factory.setNamespaceAware(true);
@@ -511,12 +565,14 @@ public class XmlHelper {
 		is.close();
 		return doc;
 	}
+
 	private String nodeToString(org.w3c.dom.Node node) throws TransformerException {
 		StringWriter writer = new StringWriter();
 		Transformer transformer = TransformerFactory.newInstance().newTransformer();
 		transformer.transform(new DOMSource(node), new StreamResult(writer));
 		return writer.toString();
 	}
+
 	private String pathToString(List<String> path) {
 		StringBuilder sb = new StringBuilder();
 		for (int i = 0 ; i < path.size(); i++) {
@@ -589,7 +645,7 @@ public class XmlHelper {
 			return null;
 		XmlSchemaCollection schemaCol = new XmlSchemaCollection();
 		schemaCol.setSchemaResolver(new SchemaUriResolver(
-				servicio.getCodCertificado(), 
+				servicio.getCodCertificado(),
 				servicio.getVersionEsquema()));
 		XmlSchema schema = schemaCol.read(new StreamSource(is), null);
 		XmlSchemaElement datosEspecificosElement = schema.getElementByName("DatosEspecificos");
@@ -633,79 +689,100 @@ public class XmlHelper {
 		private int maxLength = 0;
 		private List<String> enumValues = new ArrayList<String>();
 		private String path;
+
 		public String getNom() {
 			return nom;
 		}
+
 		public void setNom(String nom) {
 			this.nom = nom;
 		}
+
 		public boolean isComplex() {
 			return complex;
 		}
+
 		public void setComplex(boolean complex) {
 			this.complex = complex;
 		}
+
 		public int getGroupType() {
 			return groupType;
 		}
+
 		public void setGroupType(int groupType) {
 			this.groupType = groupType;
 		}
+
 		public long getGroupMin() {
 			return groupMin;
 		}
+
 		public void setGroupMin(long groupMin) {
 			this.groupMin = groupMin;
 		}
+
 		public long getGroupMax() {
 			return groupMax;
 		}
+
 		public void setGroupMax(long groupMax) {
 			this.groupMax = groupMax;
 		}
+
 		public int getMinLength() {
 			return minLength;
 		}
+
 		public void setMinLength(int minLength) {
 			this.minLength = minLength;
 		}
+
 		public int getMaxLength() {
 			return maxLength;
 		}
+
 		public void setMaxLength(int maxLength) {
 			this.maxLength = maxLength;
 		}
+
 		public List<String> getEnumValues() {
 			return enumValues;
 		}
+
 		public void setEnumValues(List<String> enumValues) {
 			this.enumValues = enumValues;
 		}
+
 		public void addEnumValue(String value) {
 			this.enumValues.add(value);
 		}
+
 		public boolean isEnum() {
 			return enumValues.size() > 0;
 		}
+
 		public String getPath() {
 			return path;
 		}
+
 		public void setPath(String path) {
 			this.path = path;
 		}
+
 		public String toString() {
 			if (complex) {
 				String groupTypeStr = "";
 				switch (groupType) {
-				case 0:
-					groupTypeStr = "A";
-					break;
-				case 1:
-					groupTypeStr = "C";
-					break;
-				case 2:
-					groupTypeStr = "S";
-					break;
+					case 0:
+						groupTypeStr = "A";
+						break;
+					case 1:
+						groupTypeStr = "C";
+						break;
+					case 2:
+						groupTypeStr = "S";
+						break;
 				}
 				return nom + " (C, " + groupTypeStr + ", " + groupMin + ", " + groupMax + ")";
 			} else {

@@ -5,6 +5,8 @@ package es.caib.pinbal.core.dto;
 
 import java.io.Serializable;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.apache.commons.lang.builder.ToStringBuilder;
 
 /**
@@ -12,40 +14,32 @@ import org.apache.commons.lang.builder.ToStringBuilder;
  * 
  * @author Limit Tecnologies <limit@limit.es>
  */
+@Getter @Setter
 public class DadaEspecificaDto implements Serializable {
 
 	public static final String SEPARADOR_PATH_DEFAULT = "/";
 	public static final String SEPARADOR_PATH_ALTERNATIU = "-";
 
+	public enum TipusDadaComplexaEnum {
+		ALL, CHOICE, SEQUENCE;
+
+		public static TipusDadaComplexaEnum getTipus(Integer ordinal) {
+			switch (ordinal) {
+				case 0:	return ALL;
+				case 1: return CHOICE;
+				case 2:	return SEQUENCE;
+				default: return null;
+			}
+		}
+	}
+
 	private String[] path;
 	private String nom;
 	private String[] enumeracioValors;
 	private boolean complexa;
+	private TipusDadaComplexaEnum tipusDadaComplexa;
 
-	public String[] getPath() {
-		return path;
-	}
-	public void setPath(String[] path) {
-		this.path = path;
-	}
-	public String getNom() {
-		return nom;
-	}
-	public void setNom(String nom) {
-		this.nom = nom;
-	}
-	public boolean isComplexa() {
-		return complexa;
-	}
-	public void setComplexa(boolean complexa) {
-		this.complexa = complexa;
-	}
-	public String[] getEnumeracioValors() {
-		return enumeracioValors;
-	}
-	public void setEnumeracioValors(String[] enumeracioValors) {
-		this.enumeracioValors = enumeracioValors;
-	}
+
 
 	public String getPathAmbSeparadorDefault() {
 		return getPathAmbSeparador(SEPARADOR_PATH_DEFAULT);

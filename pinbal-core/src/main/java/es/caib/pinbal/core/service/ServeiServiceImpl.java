@@ -10,6 +10,7 @@ import java.util.Locale;
 
 import javax.annotation.Resource;
 
+import es.caib.pinbal.core.dto.DadaEspecificaDto.TipusDadaComplexaEnum;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -1548,6 +1549,7 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 						source.getData().getEnumValues().toArray(
 								new String[source.getData().getEnumValues().size()]));
 			dada.setComplexa(source.getData().isComplex());
+			dada.setTipusDadaComplexa(TipusDadaComplexaEnum.getTipus(source.getData().getGroupType()));
 			target.setDades(dada);
 		}
 		if (source.getNumberOfChildren() > 0) {
