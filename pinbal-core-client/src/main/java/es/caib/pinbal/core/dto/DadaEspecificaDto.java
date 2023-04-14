@@ -56,6 +56,8 @@ public class DadaEspecificaDto implements Serializable {
 		StringBuilder sb = new StringBuilder();
 		if (path != null) {
 			for (int i = 0; i < path.length; i++) {
+				if (path[i].startsWith("__"))
+					continue;
 				sb.append(path[i]);
 				sb.append(separador);
 			}

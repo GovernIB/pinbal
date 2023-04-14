@@ -122,7 +122,8 @@ public class ScspHelper {
 			String idPeticion,
 			List<Solicitud> solicituds,
 			boolean gestioXsdActiva,
-			boolean iniDadesEspecifiques) throws ConsultaScspGeneracioException, ConsultaScspComunicacioException {
+			boolean iniDadesEspecifiques,
+			List<String> pathCampsInicialitzar) throws ConsultaScspGeneracioException, ConsultaScspComunicacioException {
 		LOGGER.debug("Nova petició SCSP (peticionId=" + idPeticion + ")");
 		Peticion peticion = null;
 		try {
@@ -130,7 +131,8 @@ public class ScspHelper {
 					idPeticion,
 					solicituds,
 					gestioXsdActiva,
-					iniDadesEspecifiques);
+					iniDadesEspecifiques,
+					pathCampsInicialitzar);
 		} catch (Exception ex) {
 			throw new ConsultaScspGeneracioException(idPeticion, ex);
 			/*LOGGER.error("Error al generar nova petició SCSP síncrona (peticionId=" + idPeticion + ")", ex);
@@ -169,7 +171,8 @@ public class ScspHelper {
 			String idPeticion,
 			List<Solicitud> solicituds,
 			boolean gestioXsdActiva,
-			boolean iniDadesEspecifiques) throws ConsultaScspGeneracioException, ConsultaScspComunicacioException {
+			boolean iniDadesEspecifiques,
+			List<String> pathCampsInicialitzar) throws ConsultaScspGeneracioException, ConsultaScspComunicacioException {
 		LOGGER.debug("Nova petició SCSP (peticionId=" + idPeticion + ")");
 		Peticion peticion = null;
 		try {
@@ -177,7 +180,8 @@ public class ScspHelper {
 					idPeticion,
 					solicituds,
 					gestioXsdActiva,
-					iniDadesEspecifiques);
+					iniDadesEspecifiques,
+					pathCampsInicialitzar);
 		} catch (Exception ex) {
 			throw new ConsultaScspGeneracioException(idPeticion, ex);
 			/*LOGGER.error("Error al generar nova petició SCSP síncrona (peticionId=" + idPeticion + ")", ex);
@@ -395,7 +399,8 @@ public class ScspHelper {
 			String codigoCertificado,
 			Element dadesEspecifiques,
 			boolean gestioXsdActiva,
-			boolean iniDadesEspecifiques) throws ConsultaScspGeneracioException {
+			boolean iniDadesEspecifiques,
+			List<String> pathCampsInicialitzar) throws ConsultaScspGeneracioException {
 		LOGGER.debug("Copia dades específiques per recobriment (" +
 				"codigoCertificado=" + codigoCertificado + ")");
 		if (dadesEspecifiques != null)
@@ -403,7 +408,8 @@ public class ScspHelper {
 					getServicioDao().select(codigoCertificado),
 					dadesEspecifiques,
 					gestioXsdActiva,
-					iniDadesEspecifiques);
+					iniDadesEspecifiques,
+					pathCampsInicialitzar);
 		else
 			return null;
 	}
@@ -711,7 +717,8 @@ public class ScspHelper {
 			String idPeticion,
 			List<Solicitud> solicituds,
 			boolean gestioXsdActiva,
-			boolean iniDadesEspecifiques) throws Exception {
+			boolean iniDadesEspecifiques,
+			List<String> pathCampsInicialitzar) throws Exception {
 		String serveiCodi = solicituds.get(0).getServeiCodi();
 		Peticion peticion = new Peticion();
 		// Afegeix les sol·licituds
@@ -727,7 +734,8 @@ public class ScspHelper {
 							solicitud,
 							indexSolicitud++,
 							gestioXsdActiva,
-							iniDadesEspecifiques));
+							iniDadesEspecifiques,
+							pathCampsInicialitzar));
 		}
 		peticion.setSolicitudes(solicitudes);
 		// Afegeix els atributs
@@ -749,7 +757,8 @@ public class ScspHelper {
 			Solicitud solicitud,
 			int index,
 			boolean gestioXsdActiva,
-			boolean iniDadesEspecifiques) throws Exception {
+			boolean iniDadesEspecifiques,
+			List<String> pathCampsInicialitzar) throws Exception {
 		SolicitudTransmision st = new SolicitudTransmision();
 		DatosGenericos datosGenericos = new DatosGenericos();
 		Emisor beanEmisor = new Emisor();
@@ -832,7 +841,8 @@ public class ScspHelper {
 							getServicioDao().select(solicitud.getServeiCodi()),
 							solicitud.getDadesEspecifiquesMap(),
 							gestioXsdActiva,
-							iniDadesEspecifiques));
+							iniDadesEspecifiques,
+							pathCampsInicialitzar));
 		}
 		return st;
 	}

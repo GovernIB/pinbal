@@ -40,6 +40,8 @@
 	<script src="<c:url value="/webjars/jasny-bootstrap/3.1.3/dist/js/jasny-bootstrap.min.js"/>"></script> 
 
 <script>
+const inicialitzarDadesEspecifiques = ${servei.pinbalIniDadesExpecifiques};
+
 $(document).ready(function() {
 	// Confirmació al esborrar el camp
 	$('.confirm-esborrar').click(function() {
@@ -76,7 +78,7 @@ function serveiCampAfegir(servei, path) {
 // Modal per editar camps
 function initModalCamp(
 		id, path, tipus, etiqueta, defecte, comentari, dataFormat,
-		campPareId, valorPare, obligatori, modificable, visible,
+		campPareId, valorPare, inicialitzar, obligatori, modificable, visible,
 		validacioRegexp, validacioMin, validacioMax, validacioDataCmpOperacio,
 		validacioDataCmpCamp2, validacioDataCmpNombre, validacioDataCmpTipus) {
 	$('#modal-hidden-id').val(id);
@@ -119,6 +121,12 @@ function initModalCamp(
 	} else {
 		$('#modal-input-etiqueta').removeAttr('disabled');
 		$('#modal-input-defecte').removeAttr('disabled');
+	}
+	if (inicialitzarDadesEspecifiques) {
+		if (inicialitzar)
+			$('#modal-checkbox-inicialitzar').attr('checked', 'checked');
+		else
+			$('#modal-checkbox-inicialitzar').removeAttr('checked');
 	}
 	if (obligatori)
 		$('#modal-checkbox-obligatori').attr('checked', 'checked');
@@ -259,7 +267,7 @@ $(function() {
 		$('#modal-grup-form').modal('toggle');
 	});
 	$('.btn-edit-camp').click(function (event) {
-		initModalCamp($(this).data('id'), 
+		initModalCamp($(this).data('id'),
 					  $(this).data('path'),
 					  $(this).data('tipus'),
 					  $(this).data('etiqueta'),
@@ -268,6 +276,7 @@ $(function() {
 					  $(this).data('dataformat'),
 					  $(this).data('camppare'),
 					  $(this).data('valorPare'),
+					  $(this).data('inicialitzar'),
 					  $(this).data('obligatori'),
 					  $(this).data('modificable'),
 					  $(this).data('visible'),
@@ -317,6 +326,9 @@ $(function() {
 						<th><spring:message code="servei.camp.taula.columna.nom" /></th>
 						<th><spring:message code="servei.camp.taula.columna.tipus" /></th>
 						<th><spring:message code="servei.camp.taula.columna.etiqueta" /></th>
+						<c:if test="${servei.pinbalIniDadesExpecifiques}">
+							<th style="width: 1%"><spring:message code="servei.camp.taula.columna.i" /></th>
+						</c:if>
 						<th style="width: 1%"><spring:message code="servei.camp.taula.columna.o" /></th>
 						<th style="width: 1%"><spring:message code="servei.camp.taula.columna.m" /></th>
 						<th style="width: 1%"><spring:message code="servei.camp.taula.columna.v" /></th>
@@ -339,6 +351,9 @@ $(function() {
 							</td>
 							<td>
 								${ camp.etiqueta }
+							</td>
+							<td>
+								<c:if test="${ camp.inicialitzar }"><i class="fa fa-check"></i></c:if>
 							</td>
 							<td>
 								<c:if test="${ camp.obligatori }"><i class="fa fa-check"></i></c:if>
@@ -379,6 +394,7 @@ $(function() {
 								   data-camppare="0"
 								   </c:if>
 								   data-valorpare="${ camp.valorPare }"
+								   data-inicialitzar="${ camp.inicialitzar }"
 								   data-obligatori="${ camp.obligatori }" 
 								   data-modificable="${ camp.modificable }" 
 								   data-visible="${ camp.visible }"
@@ -416,6 +432,9 @@ $(function() {
 									<th data-data="campNom"><spring:message code="servei.camp.taula.columna.nom" /></th>
 									<th data-data="tipus"><spring:message code="servei.camp.taula.columna.tipus" /></th>
 									<th data-data="etiqueta"><spring:message code="servei.camp.taula.columna.etiqueta" /></th>
+									<c:if test="${servei.pinbalIniDadesExpecifiques}">
+										<th data-data="inicialitzar" style="width: 1%"><spring:message code="servei.camp.taula.columna.i" /></th>
+									</c:if>
 									<th data-data="obligatori" style="width: 1%"><spring:message code="servei.camp.taula.columna.o" /></th>
 									<th data-data="modificable" style="width: 1%"><spring:message code="servei.camp.taula.columna.m" /></th>
 									<th data-data="visible" style="width: 1%"><spring:message code="servei.camp.taula.columna.v" /></th>
@@ -437,6 +456,9 @@ $(function() {
 										</td>
 										<td>
 											${ camp.etiqueta }
+										</td>
+										<td>
+											<c:if test="${ camp.inicialitzar }"><i class="fa fa-check"></i></c:if>
 										</td>
 										<td>
 											<c:if test="${ camp.obligatori }"><i class="fa fa-check"></i></c:if>
@@ -477,8 +499,9 @@ $(function() {
 												data-camppare="0"
 												</c:if>
 												data-valorpare="${ camp.valorPare }"
-												data-obligatori="${ camp.obligatori }" 
-												data-modificable="${ camp.modificable }" 
+												data-inicialitzar="${ camp.inicialitzar }"
+												data-obligatori="${ camp.obligatori }"
+												data-modificable="${ camp.modificable }"
 												data-visible="${ camp.visible }"
 												data-validacio-regexp="${ camp.validacioRegexp }"
 												data-validacio-min="${ camp.validacioMin }"
@@ -592,6 +615,17 @@ $(function() {
 						<input type="text" id="modal-input-comentari" name="comentari" class="form-control"/>
 					</div>
 					<div class="form-group">
+						<c:if test="${servei.pinbalIniDadesExpecifiques}">
+							<div class="checkbox-inline">
+								<label for="modal-checkbox-inicialitzar">
+								<input type="checkbox" id="modal-checkbox-inicialitzar" name="inicialitzar"/>
+								<spring:message code="servei.camp.inicialitzar"/>
+								</label>
+							</div>
+						</c:if>
+						<c:if test="${!servei.pinbalIniDadesExpecifiques}">
+							<input type="hidden" name="inicialitzar" value="false"/>
+						</c:if>
 						<div class="checkbox-inline">
 							<label for="modal-checkbox-obligatori">
 							<input type="checkbox" id="modal-checkbox-obligatori" name="obligatori"/>

@@ -927,6 +927,7 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 				campPare,
 				modificat.getValorPare(),
 				serveiCamp.getGrup(),
+				modificat.isInicialitzar(),
 				modificat.isObligatori(),
 				modificat.isModificable(),
 				modificat.isVisible(),

@@ -151,13 +151,15 @@ public class PeticioScspHelper {
 					consulta.getScspPeticionId(),
 					solicituds,
 					gestioXsdActiva,
-					iniDadesEspecifiques);
+					iniDadesEspecifiques,
+					serveiCampRepository.findPathInicialitzablesByServei(consulta.getServeiCodi()));
 		} else {
 			return scspHelper.enviarPeticionAsincrona(
 					consulta.getScspPeticionId(),
 					solicituds,
 					gestioXsdActiva,
-					iniDadesEspecifiques);
+					iniDadesEspecifiques,
+					serveiCampRepository.findPathInicialitzablesByServei(consulta.getServeiCodi()));
 		}
 	}
 
@@ -339,7 +341,8 @@ public class PeticioScspHelper {
 						serveiCodi,
 						dadesEspecifiques,
 						isGestioXsdActiva(serveiCodi),
-						isIniDadesEspecifiques(serveiCodi)));
+						isIniDadesEspecifiques(serveiCodi),
+						serveiCampRepository.findPathInicialitzablesByServei(serveiCodi)));
 		return solicitud;
 	}
 

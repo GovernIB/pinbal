@@ -64,7 +64,7 @@ public class GeneracioDadesEspecifiquesTest {
 				"07033");
 		*/
 		XmlHelper helper = new XmlHelper();
-		Element resultat = helper.crearDadesEspecifiques(servicio, dades, false, iniDadesEspecifiques);
+		Element resultat = helper.crearDadesEspecifiques(servicio, dades, false, iniDadesEspecifiques, null);
 		System.out.println("AEATIAE >>> " + nodeToString(resultat));
 	}
 
@@ -77,7 +77,7 @@ public class GeneracioDadesEspecifiquesTest {
 //				"DatosEspecificos/Consulta/CodigoProvincia",
 //				"01");
 		XmlHelper helper = new XmlHelper();
-		Element resultat = helper.crearDadesEspecifiques(servicio, dades, false, iniDadesEspecifiques);
+		Element resultat = helper.crearDadesEspecifiques(servicio, dades, false, iniDadesEspecifiques, null);
 		System.out.println("SVDCCAACPASWS01 >>> " + nodeToString(resultat));
 	}
 	
@@ -90,7 +90,7 @@ public class GeneracioDadesEspecifiquesTest {
 //				"DatosEspecificos/Consulta/AnioNacimiento",
 //				"01");
 		XmlHelper helper = new XmlHelper();
-		Element resultat = helper.crearDadesEspecifiques(servicio, dades, false, iniDadesEspecifiques);
+		Element resultat = helper.crearDadesEspecifiques(servicio, dades, false, iniDadesEspecifiques, null);
 		System.out.println("SVDDELSEXCDIWS01 >>> " + nodeToString(resultat));
 	}
 
@@ -99,12 +99,25 @@ public class GeneracioDadesEspecifiquesTest {
 		System.setProperty("es.caib.pinbal.xsd.base.path", "/home/siona/Feina/AppData/Pinbal/xsd");
 		Servicio servicio = new Servicio();
 		servicio.setCodCertificado("SVDRRCCNACIMIENTOWS01");
-//		servicio.setCodCertificado("SVDINESECOPACONVIVENCIAACTUALWS01");
 		servicio.setVersionEsquema("V3");
 		Map<String, Object> dades = new HashMap<String, Object>();
 		XmlHelper helper = new XmlHelper();
-		Element resultat = helper.crearDadesEspecifiques(servicio, dades, true, iniDadesEspecifiques);
+		Element resultat = helper.crearDadesEspecifiques(servicio, dades, true, iniDadesEspecifiques, null);
 		System.out.println("SVDRRCCNACIMIENTOWS01 >>> " + nodeToString(resultat));
+	}
+
+//	@Test
+	public void test_SVDINESECOPACONVIVENCIAACTUALWS01() throws Exception {
+		System.setProperty("es.caib.pinbal.xsd.base.path", "/home/siona/Feina/AppData/Pinbal/xsd");
+		Servicio servicio = new Servicio();
+		servicio.setCodCertificado("SVDINESECOPACONVIVENCIAACTUALWS01");
+		servicio.setVersionEsquema("V3");
+		Map<String, Object> dades = new HashMap<String, Object>();
+		XmlHelper helper = new XmlHelper();
+		List<String> pathCampsInicialitzar = new ArrayList<>();
+		pathCampsInicialitzar.add("DatosEspecificos/Consulta/DatosAdicionalesTitular/Nacimiento/FechaNacimiento");
+		Element resultat = helper.crearDadesEspecifiques(servicio, dades, true, iniDadesEspecifiques, pathCampsInicialitzar);
+		System.out.println("SVDINESECOPACONVIVENCIAACTUALWS01 >>> " + nodeToString(resultat));
 	}
 
 //	@Test

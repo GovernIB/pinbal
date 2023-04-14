@@ -85,6 +85,9 @@ public class ServeiCamp extends PinbalAuditable<Long> {
 	private ServeiCamp campPare;
 	@Column(name = "valor_pare", length = 64)
 	private String valorPare;
+
+	@Column(name = "inicialitzar")
+	private boolean inicialitzar = false;
 	@Column(name = "obligatori")
 	private boolean obligatori = false;
 	@Column(name = "modificable")
@@ -211,6 +214,11 @@ public class ServeiCamp extends PinbalAuditable<Long> {
 	public String getValorPare() {
 		return valorPare;
 	}
+
+	public boolean isInicialitzar() {
+		return inicialitzar;
+	}
+
 	public boolean isObligatori() {
 		return obligatori;
 	}
@@ -264,6 +272,7 @@ public class ServeiCamp extends PinbalAuditable<Long> {
 			ServeiCamp campPare,
 			String valorPare,
 			ServeiCampGrup grup,
+			boolean inicialitzar,
 			boolean obligatori,
 			boolean modificable,
 			boolean visible,
@@ -283,6 +292,7 @@ public class ServeiCamp extends PinbalAuditable<Long> {
 		this.campPare = campPare;
 		this.valorPare = valorPare;
 		this.grup = grup;
+		this.inicialitzar = inicialitzar;
 		this.obligatori = obligatori;
 		this.modificable = modificable;
 		this.visible = visible;

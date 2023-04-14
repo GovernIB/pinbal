@@ -59,6 +59,7 @@ public class ServeiCampDto implements Serializable {
 	private ServeiCampDto campPare;
 	private String valorPare;
 	private ServeiCampGrupDto grup;
+	private boolean inicialitzar;
 	private boolean obligatori;
 	private boolean modificable;
 	private boolean visible;

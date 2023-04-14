@@ -8,6 +8,8 @@ import java.util.List;
 
 import javax.validation.constraints.Size;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.hibernate.validator.constraints.NotEmpty;
 
@@ -20,6 +22,7 @@ import es.caib.pinbal.core.dto.ServeiCampDto.ServeiCampDtoValidacioOperacio;
  * 
  * @author Limit Tecnologies <limit@limit.es>
  */
+@Getter @Setter
 public class ServeiCampCommand {
 
 	private Long id;
@@ -41,6 +44,7 @@ public class ServeiCampCommand {
 	private Long campPareId;
 	@Size(max=64)
 	private String valorPare;
+	private boolean inicialitzar;
 	private boolean obligatori;
 	private boolean modificable;
 	private boolean visible;
@@ -53,141 +57,8 @@ public class ServeiCampCommand {
 	private Integer validacioDataCmpNombre;
 	private ServeiCampDtoValidacioDataTipus validacioDataCmpTipus;
 
-	public Long getId() {
-		return id;
-	}
-	public void setId(Long id) {
-		this.id = id;
-	}
-	public String getServei() {
-		return servei;
-	}
-	public void setServei(String servei) {
-		this.servei = servei;
-	}
-	public String getPath() {
-		return path;
-	}
-	public void setPath(String path) {
-		this.path = path;
-	}
-	public String getTipus() {
-		return tipus;
-	}
-	public void setTipus(String tipus) {
-		this.tipus = tipus;
-	}
-	public String getEtiqueta() {
-		return etiqueta;
-	}
-	public void setEtiqueta(String etiqueta) {
-		this.etiqueta = etiqueta;
-	}
-	public String getValorPerDefecte() {
-		return valorPerDefecte;
-	}
-	public void setValorPerDefecte(String valorPerDefecte) {
-		this.valorPerDefecte = valorPerDefecte;
-	}
-	public String getComentari() {
-		return comentari;
-	}
-	public void setComentari(String comentari) {
-		this.comentari = comentari;
-	}
-	public String[] getEnumDescripcions() {
-		return enumDescripcions;
-	}
-	public void setEnumDescripcions(String[] enumDescripcions) {
-		this.enumDescripcions = enumDescripcions;
-	}
-	public String getDataFormat() {
-		return dataFormat;
-	}
-	public void setDataFormat(String dataFormat) {
-		this.dataFormat = dataFormat;
-	}
-	public Long getCampPareId() {
-		return campPareId;
-	}
-	public void setCampPareId(Long campPareId) {
-		this.campPareId = campPareId;
-	}
-	public String getValorPare() {
-		return valorPare;
-	}
-	public void setValorPare(String valorPare) {
-		this.valorPare = valorPare;
-	}
-	public boolean isObligatori() {
-		return obligatori;
-	}
-	public void setObligatori(boolean obligatori) {
-		this.obligatori = obligatori;
-	}
-	public boolean isModificable() {
-		return modificable;
-	}
-	public void setModificable(boolean modificable) {
-		this.modificable = modificable;
-	}
-	public boolean isVisible() {
-		return visible;
-	}
-	public void setVisible(boolean visible) {
-		this.visible = visible;
-	}
-	public int getOrdre() {
-		return ordre;
-	}
-	public void setOrdre(int ordre) {
-		this.ordre = ordre;
-	}
-	public String getValidacioRegexp() {
-		return validacioRegexp;
-	}
-	public void setValidacioRegexp(String validacioRegexp) {
-		this.validacioRegexp = validacioRegexp;
-	}
-	public Integer getValidacioMin() {
-		return validacioMin;
-	}
-	public void setValidacioMin(Integer validacioMin) {
-		this.validacioMin = validacioMin;
-	}
-	public Integer getValidacioMax() {
-		return validacioMax;
-	}
-	public void setValidacioMax(Integer validacioMax) {
-		this.validacioMax = validacioMax;
-	}
-	public ServeiCampDtoValidacioOperacio getValidacioDataCmpOperacio() {
-		return validacioDataCmpOperacio;
-	}
-	public void setValidacioDataCmpOperacio(ServeiCampDtoValidacioOperacio validacioDataCmpOperacio) {
-		this.validacioDataCmpOperacio = validacioDataCmpOperacio;
-	}
-	public Long getValidacioDataCmpCamp2Id() {
-		return validacioDataCmpCamp2Id;
-	}
-	public void setValidacioDataCmpCamp2Id(Long validacioDataCmpCamp2Id) {
-		this.validacioDataCmpCamp2Id = validacioDataCmpCamp2Id;
-	}
-	public Integer getValidacioDataCmpNombre() {
-		return validacioDataCmpNombre;
-	}
-	public void setValidacioDataCmpNombre(Integer validacioDataCmpNombre) {
-		this.validacioDataCmpNombre = validacioDataCmpNombre;
-	}
-	public ServeiCampDtoValidacioDataTipus getValidacioDataCmpTipus() {
-		return validacioDataCmpTipus;
-	}
-	public void setValidacioDataCmpTipus(ServeiCampDtoValidacioDataTipus validacioDataCmpTipus) {
-		this.validacioDataCmpTipus = validacioDataCmpTipus;
-	}
 
-	public static List<ServeiCampCommand> toEntitatCommands(
-			List<ServeiCampDto> dtos) {
+	public static List<ServeiCampCommand> toEntitatCommands(List<ServeiCampDto> dtos) {
 		List<ServeiCampCommand> commands = new ArrayList<ServeiCampCommand>();
 		for (ServeiCampDto dto: dtos)
 			commands.add(asCommand(dto));

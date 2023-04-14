@@ -158,7 +158,8 @@ public class XmlHelper {
 			Servicio servicio,
 			Map<String, Object> dadesEspecifiques,
 			boolean gestioXsdActiva,
-			boolean iniDadesEspecifiques) throws ConsultaScspGeneracioException {
+			boolean iniDadesEspecifiques,
+			List<String> pathCampsInicialitzar) throws ConsultaScspGeneracioException {
 		try {
 			DocumentBuilderFactory fac = DocumentBuilderFactory.newInstance();
 			fac.setNamespaceAware(true);
@@ -171,7 +172,7 @@ public class XmlHelper {
 
 				Tree<DadesEspecifiquesNode> arbre = getArbrePerDadesEspecifiques(servicio, gestioXsdActiva);
 				if (iniDadesEspecifiques) {
-					this.inicialitzaElements(doc, datosEspecificos, arbre.getRootElement());
+					this.inicialitzaElements(doc, datosEspecificos, arbre.getRootElement(), pathCampsInicialitzar);
 				}
 
 				for (Node<DadesEspecifiquesNode> node: arbre.toList()) {
@@ -262,11 +263,12 @@ public class XmlHelper {
 	private Element inicialitzaElements(
 			Document doc,
 			Element element,
-			Node<DadesEspecifiquesNode> nodeDades) {
+			Node<DadesEspecifiquesNode> nodeDades,
+			List<String> pathCampsInicialitzar) {
 
 		Element ret = null;
 
-		if (nodeDades.getData() != null	&& nodeDades.getData().getGroupMin() > 0) {
+		if (nodeDades.getData() != null	&& (nodeDades.getData().getGroupMin() > 0 || isCampInicialitzable(nodeDades, pathCampsInicialitzar))) {
 
 			ret = element;
 
@@ -278,12 +280,14 @@ public class XmlHelper {
 						childElement = inicialitzaElements(
 								doc,
 								element,
-								child);
+								child,
+								pathCampsInicialitzar);
 					} else {
 						childElement = inicialitzaElements(
 								doc,
 								doc.createElement(child.getData().getNom()),
-								child);
+								child,
+								pathCampsInicialitzar);
 					}
 					if (childElement != null) {
 						element.appendChild(childElement);
@@ -297,12 +301,25 @@ public class XmlHelper {
 		return ret;
 	}
 
+	private boolean isCampInicialitzable(Node<DadesEspecifiquesNode> nodeDades, List<String> pathCampsInicialitzar) {
+		if (pathCampsInicialitzar == null || pathCampsInicialitzar.isEmpty())
+			return false;
+
+		for (String pathCamp: pathCampsInicialitzar) {
+			String pathComplert = (pathCamp.startsWith("/") ? "" : "/") + pathCamp;
+			if (pathComplert.startsWith(nodeDades.getData().getPath()))
+				return true;
+		}
+		return false;
+	}
+
 	public Element copiarDadesEspecifiquesRecobriment(
 			Servicio servicio,
 			Element datosEspecificosRebuts,
 			boolean gestioXsdActiva,
-			boolean iniDadesEspecifiques) throws ConsultaScspGeneracioException  {
-		Element datosEspecificos = crearDadesEspecifiques(servicio, null, gestioXsdActiva, iniDadesEspecifiques);
+			boolean iniDadesEspecifiques,
+			List<String> pathCampsInicialitzar) throws ConsultaScspGeneracioException  {
+		Element datosEspecificos = crearDadesEspecifiques(servicio, null, gestioXsdActiva, iniDadesEspecifiques, pathCampsInicialitzar);
 		NodeList nodes = datosEspecificosRebuts.getChildNodes();
 		for (int i = 0; i < nodes.getLength(); i++) {
 			datosEspecificos.appendChild(

@@ -10,6 +10,7 @@ import org.springframework.data.jpa.repository.Query;
 
 import es.caib.pinbal.core.model.ServeiCamp;
 import es.caib.pinbal.core.model.ServeiCampGrup;
+import org.springframework.data.repository.query.Param;
 
 /**
  * Especifica els mètodes que s'han d'emprar per obtenir i modificar la
@@ -41,5 +42,11 @@ public interface ServeiCampRepository extends JpaRepository<ServeiCamp, Long> {
 			String servei,
 			boolean esNullGrup,
 			ServeiCampGrup grup);
+
+	@Query(	"select sc.path " +
+			"  from ServeiCamp sc " +
+			" where sc.servei=:servei " +
+			"   and sc.inicialitzar is true")
+	List<String> findPathInicialitzablesByServei(@Param("servei") String servei);
 
 }
