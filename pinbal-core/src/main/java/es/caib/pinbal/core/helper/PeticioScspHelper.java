@@ -332,7 +332,7 @@ public class PeticioScspHelper {
 		solicitud.setConsentiment(
 				es.caib.pinbal.scsp.Consentiment.valueOf(consentiment.toString()));
 		setUnitatTramitadoraSolicitud(solicitud, procediment, departamentNom);
-		if (unitatTramitadoraCodi != null && !unitatTramitadoraCodi.trim().isEmpty()) {
+		if (solicitud.getUnitatTramitadoraCodi() == null && unitatTramitadoraCodi != null && !unitatTramitadoraCodi.trim().isEmpty()) {
 			solicitud.setUnitatTramitadoraCodi(unitatTramitadoraCodi);
 		}
 		solicitud.setExpedientId(expedientId);
