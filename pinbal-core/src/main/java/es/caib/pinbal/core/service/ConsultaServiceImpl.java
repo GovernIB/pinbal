@@ -184,7 +184,7 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 	public ConsultaDto novaConsulta(
 			ConsultaDto consulta) throws ProcedimentServeiNotFoundException, ServeiNotAllowedException, ConsultaScspException {
 		log.debug("Executant consulta del servei (codi=" + consulta.getServeiCodi() + "): " + consulta);
-		String accioDescripcio = "Consulta del servei";
+		String accioDescripcio = "Consulta del servei " + consulta.getServeiCodi();
 		Map<String, String> accioParams = new HashMap<String, String>();
 		accioParams.put("codi", consulta.getServeiCodi());
 		long t0 = System.currentTimeMillis();
@@ -285,7 +285,7 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 	public ConsultaDto novaConsultaInit(
 			ConsultaDto consulta) throws ProcedimentServeiNotFoundException, ServeiNotAllowedException, ConsultaScspGeneracioException {
 		log.debug("Executant consulta del servei (init) (codi=" + consulta.getServeiCodi() + "): " + consulta);
-		String accioDescripcio = "Consulta del servei (init)";
+		String accioDescripcio = "Consulta del servei "  + consulta.getServeiCodi() + " (init)";
 		Map<String, String> accioParams = new HashMap<String, String>();
 		accioParams.put("codi", consulta.getServeiCodi());
 		long t0 = System.currentTimeMillis();
@@ -348,7 +348,7 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 			Long consultaId,
 			ConsultaDto consulta) throws ProcedimentServeiNotFoundException, ConsultaNotFoundException, ConsultaScspException {
 		log.debug("Executant consulta del servei (enviament) (consultaId=" + consultaId + ")");
-		String accioDescripcio = "Consulta del servei (enviament)";
+		String accioDescripcio = "Consulta del servei " + consulta.getServeiCodi() + " (enviament)";
 		Map<String, String> accioParams = new HashMap<String, String>();
 		accioParams.put("consultaId", consultaId.toString());
 		long t0 = System.currentTimeMillis();
@@ -414,7 +414,6 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 	public ConsultaDto novaConsultaEstat(
 			Long consultaId) throws ConsultaNotFoundException, ConsultaScspException {
 		log.debug("Executant consulta del servei (estat) (consultaId=" + consultaId + ")");
-		String accioDescripcio = "Consulta del servei (estat)";
 		Map<String, String> accioParams = new HashMap<String, String>();
 		accioParams.put("consultaId", consultaId.toString());
 		long t0 = System.currentTimeMillis();
@@ -423,6 +422,7 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 			log.debug("No s'ha trobat la consulta (id=" + consultaId + ")");
 			throw new ConsultaNotFoundException();
 		}
+		String accioDescripcio = "Consulta del servei " + consulta.getServeiCodi() +" (estat)";
 		if (consulta.getProcedimentServei() != null) {
 			ProcedimentServei procedimentServei = consulta.getProcedimentServei();
 			accioParams.put("procediment", consulta.getProcedimentServei().getProcediment() != null ? procedimentServei.getProcediment().getCodi() + " - " + procedimentServei.getProcediment().getNom() : "");
@@ -473,7 +473,7 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 	public ConsultaDto novaConsultaMultiple(
 			ConsultaDto consulta) throws ValidacioDadesPeticioException, ProcedimentServeiNotFoundException, ServeiNotAllowedException, ConsultaScspException {
 		log.debug("Executant consulta múltiple del servei (codi=" + consulta.getServeiCodi() + "): " + consulta);
-		String accioDescripcio = "Consulta múltiple del servei";
+		String accioDescripcio = "Consulta múltiple del servei " + consulta.getServeiCodi();
 		Map<String, String> accioParams = new HashMap<String, String>();
 		accioParams.put("codi", consulta.getServeiCodi());
 		long t0 = System.currentTimeMillis();
@@ -594,7 +594,7 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 				"entitatCif=" + solicitud.getEntitatCif() + ", " +
 				"procedimentCodi=" + solicitud.getProcedimentCodi() + ", " +
 				"serveiCodi=" + serveiCodi + ")");
-		String accioDescripcio = "Consulta del servei via recobriment";
+		String accioDescripcio = "Consulta del servei " + serveiCodi + " via recobriment";
 		Map<String, String> accioParams = new HashMap<String, String>();
 		accioParams.put("entitatCif", solicitud.getEntitatCif());
 		accioParams.put("procedimentCodi", solicitud.getProcedimentCodi());
@@ -736,7 +736,7 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 				"entitatCif=" + solicitud.getEntitatCif() + ", " +
 				"procedimentCodi=" + solicitud.getProcedimentCodi() + ", " +
 				"serveiCodi=" + serveiCodi + ")");
-		String accioDescripcio = "Consulta del servei via recobriment (init)";
+		String accioDescripcio = "Consulta del servei " + serveiCodi + " via recobriment (init)";
 		Map<String, String> accioParams = new HashMap<String, String>();
 		accioParams.put("entitatCif", solicitud.getEntitatCif());
 //		accioParams.put("procedimentCodi", solicitud.getProcedimentCodi());
@@ -818,7 +818,6 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 			RecobrimentSolicitudDto solicitud) throws ConsultaNotFoundException, ConsultaScspException {
 		log.debug("Executant consulta del servei via recobriment (enviament) (" +
 				"consultaId=" + consultaId + ")");
-		String accioDescripcio = "Consulta del servei via recobriment (enviament)";
 		Map<String, String> accioParams = new HashMap<String, String>();
 		accioParams.put("consultaId", consultaId.toString());
 		long t0 = System.currentTimeMillis();
@@ -827,6 +826,7 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 			log.debug("No s'ha trobat la consulta (id=" + consultaId + ")");
 			throw new ConsultaNotFoundException();
 		}
+		String accioDescripcio = "Consulta del servei " + consulta.getServeiCodi() + " via recobriment (enviament)";
 		ProcedimentServei procedimentServei = consulta.getProcedimentServei();
 		if (procedimentServei != null) {
 			accioParams.put("procediment", procedimentServei.getProcediment() != null ? procedimentServei.getProcediment().getCodi() + " - " + procedimentServei.getProcediment().getNom() : "");
@@ -898,7 +898,6 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 			Long consultaId) throws ConsultaNotFoundException, ConsultaScspException {
 		log.debug("Executant consulta del servei via recobriment (estat) (" +
 				"consultaId=" + consultaId + ")");
-		String accioDescripcio = "Consulta del servei via recobriment (estat)";
 		Map<String, String> accioParams = new HashMap<String, String>();
 		accioParams.put("consultaId", consultaId.toString());
 		long t0 = System.currentTimeMillis();
@@ -907,6 +906,7 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 			log.debug("No s'ha trobat la consulta (id=" + consultaId + ")");
 			throw new ConsultaNotFoundException();
 		}
+		String accioDescripcio = "Consulta del servei " + consulta.getServeiCodi() + " via recobriment (estat)";
 		if (consulta.getProcedimentServei() != null) {
 			ProcedimentServei procedimentServei = consulta.getProcedimentServei();
 			accioParams.put("procediment", procedimentServei.getProcediment() != null ? procedimentServei.getProcediment().getCodi() + " - " + procedimentServei.getProcediment().getNom() : "");
@@ -956,7 +956,7 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 		log.debug("Executant consulta múltiple del servei via recobriment (" +
 				"serveiCodi=" + serveiCodi + ", " +
 				"solicituds=" + ((solicituds != null) ? solicituds.size() : "") + ")");
-		String accioDescripcio = "Consulta múltiple del servei via recobriment";
+		String accioDescripcio = "Consulta múltiple del servei " + serveiCodi + " via recobriment";
 		Map<String, String> accioParams = new HashMap<String, String>();
 		accioParams.put("serveiCodi", serveiCodi);
 		accioParams.put("serveiCodi", (solicituds != null) ? String.valueOf(solicituds.size()) : "");
