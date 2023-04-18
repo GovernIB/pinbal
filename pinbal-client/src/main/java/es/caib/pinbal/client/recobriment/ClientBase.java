@@ -69,7 +69,12 @@ public abstract class ClientBase extends es.caib.pinbal.client.comu.ClientBase {
 			return response;
 		} catch (UniformInterfaceException ex) {
 			ClientResponse response = ex.getResponse();
-			ErrorResponse errorResponse = ex.getResponse().getEntity(ErrorResponse.class);
+			ErrorResponse errorResponse;
+			try {
+				errorResponse = response.getEntity(ErrorResponse.class);
+			} catch (Exception e) {
+				throw new RecobrimentException(ex.getMessage(), response.getStatus(), null);
+			}
 			String[] errorMessageParts = errorResponse.getMessage() != null ? errorResponse.getMessage().split("\n", 2) : null;
 			throw new RecobrimentException(
 					(errorMessageParts != null && errorMessageParts.length > 0) ? errorMessageParts[0] : null,
@@ -78,15 +83,9 @@ public abstract class ClientBase extends es.caib.pinbal.client.comu.ClientBase {
 		} catch (ClientHandlerException ex) {
 			boolean isErrorAutenticacio = ex.getMessage().contains("media type text/html");
 			if (isErrorAutenticacio) {
-				throw new RecobrimentException(
-						"Error d'autenticació: usuari o contrasenya incorrectes.",
-						403,
-						null);
+				throw new RecobrimentException("Error d'autenticació: usuari o contrasenya incorrectes.", 403, null);
 			} else {
-				throw new RecobrimentException(
-						ex.getMessage(),
-						500,
-						null);
+				throw new RecobrimentException(ex.getMessage(), 500, null);
 			}
 		}
 	}
