@@ -15,7 +15,7 @@
 	<c:if test="${not empty integracio}">
 		<dl class="dl-horizontal">
 			<dt><spring:message code="integracio.detall.camp.data"/></dt>
-			<dd><fmt:formatDate value="${integracio.data}" pattern="dd/MM/yyyy HH:mm:ss"/></dd>
+			<dd><fmt:formatDate value="${integracio.data}" pattern="dd/MM/yyyy HH:mm:ss" timeZone="Europe/Madrid"/></dd>
 			<dt><spring:message code="integracio.detall.camp.descripcio"/></dt>
 			<dd>${integracio.descripcio}</dd>
 			<dt><spring:message code="integracio.detall.camp.tipus"/></dt>
