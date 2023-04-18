@@ -23672,6 +23672,7 @@ SwaggerUi.Views.OperationView = Backbone.View.extend({
     } else {
       Docs.expandOperation(elem);
     }
+      event.stopPropagation();
   },
 
   getTextAreaValue: function(textArea) {

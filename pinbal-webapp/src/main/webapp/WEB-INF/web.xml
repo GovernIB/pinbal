@@ -95,6 +95,7 @@
 			<web-resource-name>Public areas</web-resource-name>
 			<url-pattern>/ws/recobriment</url-pattern>
 			<url-pattern>/api/rest</url-pattern>
+			<url-pattern>/api/rest/</url-pattern>
 			<url-pattern>/api/apidoc</url-pattern>
 			<url-pattern>/api-docs</url-pattern>
 			<url-pattern>/api-docs/*</url-pattern>
