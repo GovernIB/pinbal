@@ -352,9 +352,11 @@ $(function() {
 							<td>
 								${ camp.etiqueta }
 							</td>
-							<td>
-								<c:if test="${ camp.inicialitzar }"><i class="fa fa-check"></i></c:if>
-							</td>
+							<c:if test="${servei.pinbalIniDadesExpecifiques}">
+								<td>
+									<c:if test="${ camp.inicialitzar }"><i class="fa fa-check"></i></c:if>
+								</td>
+							</c:if>
 							<td>
 								<c:if test="${ camp.obligatori }"><i class="fa fa-check"></i></c:if>
 							</td>
@@ -457,9 +459,11 @@ $(function() {
 										<td>
 											${ camp.etiqueta }
 										</td>
-										<td>
-											<c:if test="${ camp.inicialitzar }"><i class="fa fa-check"></i></c:if>
-										</td>
+										<c:if test="${servei.pinbalIniDadesExpecifiques}">
+											<td>
+												<c:if test="${ camp.inicialitzar }"><i class="fa fa-check"></i></c:if>
+											</td>
+										</c:if>
 										<td>
 											<c:if test="${ camp.obligatori }"><i class="fa fa-check"></i></c:if>
 										</td>
@@ -537,7 +541,12 @@ $(function() {
 				</div>
 			</c:forEach>
 			<c:if test="${not empty camps}">
-				<p style="text-align:right"><spring:message code="servei.camp.opcions"/></p>
+				<p style="text-align:right">
+				<c:choose>
+					<c:when test="${servei.pinbalIniDadesExpecifiques}"><spring:message code="servei.camp.iopcions"/></c:when>
+					<c:otherwise><spring:message code="servei.camp.opcions"/></c:otherwise>
+				</c:choose>
+				</p>
 			</c:if>
 		</div>
 	</div>

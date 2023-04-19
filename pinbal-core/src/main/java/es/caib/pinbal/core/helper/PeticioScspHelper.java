@@ -146,20 +146,21 @@ public class PeticioScspHelper {
 				recobriment);
 		boolean gestioXsdActiva = isGestioXsdActiva(consulta.getProcedimentServei().getServei());
 		boolean iniDadesEspecifiques = isIniDadesEspecifiques(consulta.getProcedimentServei().getServei());
+		List<String> pathCampsInicialitzar = serveiCampRepository.findPathInicialitzablesByServei(consulta.getProcedimentServei().getServei());
 		if (sincrona) {
 			return scspHelper.enviarPeticionSincrona(
 					consulta.getScspPeticionId(),
 					solicituds,
 					gestioXsdActiva,
 					iniDadesEspecifiques,
-					serveiCampRepository.findPathInicialitzablesByServei(consulta.getServeiCodi()));
+					pathCampsInicialitzar);
 		} else {
 			return scspHelper.enviarPeticionAsincrona(
 					consulta.getScspPeticionId(),
 					solicituds,
 					gestioXsdActiva,
 					iniDadesEspecifiques,
-					serveiCampRepository.findPathInicialitzablesByServei(consulta.getServeiCodi()));
+					pathCampsInicialitzar);
 		}
 	}
 

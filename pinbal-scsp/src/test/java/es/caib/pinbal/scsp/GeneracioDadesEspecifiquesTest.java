@@ -102,6 +102,9 @@ public class GeneracioDadesEspecifiquesTest {
 		servicio.setVersionEsquema("V3");
 		Map<String, Object> dades = new HashMap<String, Object>();
 		XmlHelper helper = new XmlHelper();
+//		List<String> pathCampsInicialitzar = new ArrayList<>();
+//		pathCampsInicialitzar.add("DatosEspecificos/Consulta/DatosAdicionalesTitular/Nacimiento/FechaNacimiento");
+//		Element resultat = helper.crearDadesEspecifiques(servicio, dades, true, iniDadesEspecifiques, pathCampsInicialitzar);
 		Element resultat = helper.crearDadesEspecifiques(servicio, dades, true, iniDadesEspecifiques, null);
 		System.out.println("SVDRRCCNACIMIENTOWS01 >>> " + nodeToString(resultat));
 	}

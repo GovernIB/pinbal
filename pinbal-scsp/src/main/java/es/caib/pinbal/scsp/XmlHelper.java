@@ -265,34 +265,51 @@ public class XmlHelper {
 			Element element,
 			Node<DadesEspecifiquesNode> nodeDades,
 			List<String> pathCampsInicialitzar) {
+		return inicialitzaElements(doc, element, nodeDades, pathCampsInicialitzar, true);
+	}
+
+	private Element inicialitzaElements(
+			Document doc,
+			Element element,
+			Node<DadesEspecifiquesNode> nodeDades,
+			List<String> pathCampsInicialitzar,
+			boolean pareObligatori) {
 
 		Element ret = null;
 
-		if (nodeDades.getData() != null	&& (nodeDades.getData().getGroupMin() > 0 || isCampInicialitzable(nodeDades, pathCampsInicialitzar))) {
+		if (nodeDades.getData() != null) {
+			boolean inicialitzar = isCampInicialitzable(nodeDades, pathCampsInicialitzar);
+			boolean obligatori = pareObligatori && nodeDades.getData().getGroupMin() > 0;
 
-			ret = element;
+			if (obligatori || inicialitzar) {
 
-			if (nodeDades.getNumberOfChildren() > 0) {
-				for (Node<DadesEspecifiquesNode> child: nodeDades.getChildren()) {
-					Element childElement = null;
-					// ALL, CHOICE i SEQUENCE sense nom al XSD
-					if (child.getData() != null && child.getData().getNom().startsWith("__")) {
-						childElement = inicialitzaElements(
-								doc,
-								element,
-								child,
-								pathCampsInicialitzar);
-					} else {
-						childElement = inicialitzaElements(
-								doc,
-								doc.createElement(child.getData().getNom()),
-								child,
-								pathCampsInicialitzar);
-					}
-					if (childElement != null) {
-						element.appendChild(childElement);
-						if (nodeDades.getData().getGroupType() == DadesEspecifiquesNode.GROUP_TYPE_CHOICE) {
-							break;
+				ret = element;
+
+				if (nodeDades.getNumberOfChildren() > 0) {
+					for (Node<DadesEspecifiquesNode> child : nodeDades.getChildren()) {
+						Element childElement = null;
+						// ALL, CHOICE i SEQUENCE sense nom al XSD
+						boolean nodeComplexAuxiliar = child.getData() != null && child.getData().getNom().startsWith("__");
+						if (nodeComplexAuxiliar) {
+							childElement = inicialitzaElements(
+									doc,
+									element,
+									child,
+									pathCampsInicialitzar,
+									obligatori);
+						} else {
+							childElement = inicialitzaElements(
+									doc,
+									doc.createElement(child.getData().getNom()),
+									child,
+									pathCampsInicialitzar,
+									obligatori);
+						}
+						if (childElement != null && !nodeComplexAuxiliar && (obligatori || isCampInicialitzable(child, pathCampsInicialitzar))) {
+							element.appendChild(childElement);
+							if (nodeDades.getData().getGroupType() == DadesEspecifiquesNode.GROUP_TYPE_CHOICE) {
+								break;
+							}
 						}
 					}
 				}
@@ -305,9 +322,15 @@ public class XmlHelper {
 		if (pathCampsInicialitzar == null || pathCampsInicialitzar.isEmpty())
 			return false;
 
+		String nodePath = nodeDades.getData().getPath();
+		if (nodePath.contains("__"))
+			nodePath = nodePath.replace("/__ALL", "").replace("/__SEQUENCE", "").replace("/__CHOICE", "");
 		for (String pathCamp: pathCampsInicialitzar) {
 			String pathComplert = (pathCamp.startsWith("/") ? "" : "/") + pathCamp;
-			if (pathComplert.startsWith(nodeDades.getData().getPath()))
+			if (pathComplert.equals(nodePath))
+				return true;
+			// Si es tracta d'un node intermig també s'ha d'incloure.
+			if (pathComplert.startsWith(nodePath) && pathComplert.substring(nodePath.length()).contains("/"))
 				return true;
 		}
 		return false;
