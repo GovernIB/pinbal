@@ -10,12 +10,18 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
+import javax.persistence.FetchType;
+import javax.persistence.ForeignKey;
 import javax.persistence.Index;
+import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import javax.persistence.Table;
 import javax.persistence.Version;
 
+import lombok.Getter;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
@@ -33,6 +39,7 @@ import es.caib.pinbal.core.audit.PinbalAuditable;
 		indexes = {
 				@Index(name = "pbl_servei_campgr_servei_i", columnList = "servei_id")})
 @EntityListeners(AuditingEntityListener.class)
+@Getter
 public class ServeiCampGrup extends PinbalAuditable<Long> {
 
 	private static final long serialVersionUID = -6657066865382086237L;
@@ -44,9 +51,24 @@ public class ServeiCampGrup extends PinbalAuditable<Long> {
 	@Column(name = "ordre")
 	private int ordre;
 
+	// Ajuda
+	@Lob
+	@Column(name = "ajuda")
+	private String ajuda;
+
 	@OneToMany(mappedBy="grup", cascade={CascadeType.ALL})
 	@OrderBy("ordre asc")
 	private List<ServeiCamp> camps = new ArrayList<ServeiCamp>();
+
+	@ManyToOne(optional = true, fetch = FetchType.EAGER)
+	@JoinColumn(
+			name = "pare_id",
+			foreignKey = @ForeignKey(name = "pbl_pare_grup_fk"))
+	private ServeiCampGrup pare;
+
+	@OneToMany(mappedBy="pare", cascade={CascadeType.ALL})
+	@OrderBy("ordre asc")
+	private List<ServeiCampGrup> fills = new ArrayList<ServeiCampGrup>();
 
 	@Version
 	private long version = 0;
@@ -66,41 +88,30 @@ public class ServeiCampGrup extends PinbalAuditable<Long> {
 	 */
 	public static Builder getBuilder(
 			String servei,
+			ServeiCampGrup pare,
 			String nom,
+			String ajuda,
 			int ordre) {
 		return new Builder(
 				servei,
+				pare,
 				nom,
+				ajuda,
 				ordre);
 	}
 
-	public String getServei() {
-		return servei;
-	}
-
-	public String getNom() {
-		return nom;
-	}
-
-	public List<ServeiCamp> getCamps() {
-		return camps;
-	}
-
-	public int getOrdre() {
-		return ordre;
-	}
-
-	public long getVersion() {
-		return version;
-	}
-
 	public void update(
-			String nom) {
+			String nom,
+			String ajuda) {
 		this.nom = nom;
+		this.ajuda = ajuda;
 	}
 	public void updateOrdre(
 			int ordre) {
 		this.ordre = ordre;
+	}
+	public void updatePare(ServeiCampGrup pare) {
+		this.pare = pare;
 	}
 
 	/**
@@ -120,11 +131,15 @@ public class ServeiCampGrup extends PinbalAuditable<Long> {
 		 */
 		Builder(
 				String servei,
+				ServeiCampGrup pare,
 				String nom,
+				String ajuda,
 				int ordre) {
 			built = new ServeiCampGrup();
 			built.servei = servei;
+			built.pare = pare;
 			built.nom = nom;
+			built.ajuda = ajuda;
 			built.ordre = ordre;
 		}
 

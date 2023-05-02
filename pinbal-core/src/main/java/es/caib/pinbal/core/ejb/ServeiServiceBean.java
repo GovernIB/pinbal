@@ -234,11 +234,11 @@ public class ServeiServiceBean implements ServeiService {
 
 	@Override
 	@RolesAllowed("PBL_ADMIN")
-	public ServeiCampDto moveServeiCamp(
+	public void moveServeiCamp(
 			String serveiCodi,
 			Long serveiCampId,
 			int indexDesti) throws ServeiCampNotFoundException {
-		return delegate.moveServeiCamp(serveiCodi, serveiCampId, indexDesti);
+		delegate.moveServeiCamp(serveiCodi, serveiCampId, indexDesti);
 	}
 
 	@Override

@@ -5,9 +5,12 @@ package es.caib.pinbal.core.repository;
 
 import java.util.List;
 
+import org.apache.poi.ss.formula.functions.T;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import es.caib.pinbal.core.model.ServeiCampGrup;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
 
 /**
  * Especifica els mètodes que s'han d'emprar per obtenir i modificar la
@@ -18,6 +21,28 @@ import es.caib.pinbal.core.model.ServeiCampGrup;
  */
 public interface ServeiCampGrupRepository extends JpaRepository<ServeiCampGrup, Long> {
 
-	List<ServeiCampGrup> findByServeiOrderByOrdreAsc(String servei);
+	List<ServeiCampGrup> findByServeiAndPareIsNullOrderByOrdreAsc(String servei);
+
+	@Query(	" from ServeiCampGrup scg " +
+			"where scg.servei=?1 " +
+			"  and ((?2 = true and scg.pare is null) " +
+			"   or (?2 = false and scg.pare = ?3)) " +
+			"order by scg.ordre asc")
+	List<ServeiCampGrup> findByServeiAndPareOrderByOrdreAsc(String servei, boolean esNullPare, ServeiCampGrup pare);
+
+	@Query(	"select count(scg) " +
+			"  from ServeiCampGrup scg " +
+			" where scg.servei=?1 " +
+			"   and ((?2 = true and scg.pare is null) " +
+			"    or (?2 = false and scg.pare = ?3)) " +
+			" order by scg.ordre asc")
+	int countByServeiAndPareOrderByOrdreAsc(String servei, boolean esNullPare, ServeiCampGrup pare);
+
+	@Modifying
+	void delete(ServeiCampGrup serveiCampGrup);
+
+	@Modifying
+	@Query("delete ServeiCampGrup where id=?1")
+	void deleteById(Long id);
 
 }

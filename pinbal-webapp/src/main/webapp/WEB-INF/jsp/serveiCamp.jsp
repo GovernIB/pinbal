@@ -34,13 +34,50 @@
 	<script src="<c:url value="/webjars/select2/4.0.6-rc.1/dist/js/select2.min.js"/>"></script>
 	<script src="<c:url value="/webjars/select2/4.0.6-rc.1/dist/js/i18n/${requestLocale}.js"/>"></script>
 	<script src="<c:url value="/webjars/bootstrap-datepicker/1.6.1/dist/js/bootstrap-datepicker.min.js"/>"></script>
+	<link href="<c:url value="/js/jHtmlArea/style/jHtmlArea.css"/>" rel="stylesheet"/>
+	<link href="<c:url value="/js/jHtmlArea/style/jHtmlArea.ColorPickerMenu.css"/>" rel="stylesheet"/>
+	<script src="<c:url value="/js/jHtmlArea/scripts/jHtmlArea-0.8.min.js"/>"></script>
+	<script src="<c:url value="/js/jHtmlArea/scripts/jHtmlArea.ColorPickerMenu-0.8.min.js"/>"></script>
+
 	<script src="<c:url value="/js/webutil.common.js"/>"></script>
 
 	<link href="<c:url value="/webjars/jasny-bootstrap/3.1.3/dist/css/jasny-bootstrap.min.css"/>" rel="stylesheet"> 
 	<script src="<c:url value="/webjars/jasny-bootstrap/3.1.3/dist/js/jasny-bootstrap.min.js"/>"></script> 
-
+	<script src="<c:url value="/js/jquery.tablednd.1.0.5.js"/>"></script>
+<style>
+	.jHtmlArea {width: 100% !important;}
+	.jHtmlArea > div {width: 100% !important;}
+	.jHtmlArea iframe, .content {width: 100% !important; height: 200px !important;}
+	.jHtmlArea .h1, .jHtmlArea .h2, .jHtmlArea .h3, .jHtmlArea .h4, .jHtmlArea .h5, .jHtmlArea .h6 {margin-top: 0px; margin-bottom: 0px;}
+	.dropdown-submenu {padding-left: 0px;}
+	.dropdown-submenu > li {list-style: none; padding-left: 40px;}
+	.dropdown-submenu > li:hover {color: #262626; text-decoration: none; background-color: #f5f5f5;}
+	.dropdown-submenu > li > a {color: #777; text-decoration: none; white-space: nowrap;}
+	.dropdown-submenu > li > a:focus, .dropdown-menu > li > a:hover {color: #262626; text-decoration: none; background-color: #f5f5f5;}
+	.drag {border: 2px solid #e0cfb9;}
+	.drag td {background-color: #fef7ee}
+	.btn-ppv {border-radius: 16px; padding: 2px 7px 0px 7px; margin-left: 8px; top: -2px; position: relative; font-size: 10px;}
+	.popover {max-width: 800px !important;}
+	.popover-content {min-width: 400px !important;}
+</style>
 <script>
 const inicialitzarDadesEspecifiques = ${servei.pinbalIniDadesExpecifiques};
+let filaMovem;
+let campMovem;
+
+document.addEventListener("DOMContentLoaded", function(event) {
+	console.log('update position');
+	var scrollpos = localStorage.getItem('scrollpos');
+	if (scrollpos) {
+		window.scrollTo(0, scrollpos);
+		localStorage.removeItem(scrollpos);
+	}
+});
+
+window.onscroll = function(e) {
+	console.log('scroll');
+	localStorage.setItem('scrollpos', window.scrollY);
+};
 
 $(document).ready(function() {
 	// Confirmació al esborrar el camp
@@ -68,7 +105,93 @@ $(document).ready(function() {
 	$('#accio-expandir-all').click(function() {
 		$('.arbre-ul').collapse('show');
 	});
+	$('#modal-grup-input-ajuda').htmlarea({
+		toolbar: [
+			["html"],
+			["bold", "italic", "underline", "strikethrough", "|", "forecolor"],
+			["subscript", "superscript", "|" , "increasefontsize", "decreasefontsize"],
+			["orderedList", "unorderedList"],
+			["indent", "outdent"],
+			["justifyleft", "justifycenter", "justifyright"],
+			["link", "unlink", "image", "horizontalrule"],
+			[ "p", "h1", "h2", "h3", "h4", "h5", "h6"],
+			["cut", "copy", "paste"]
+		],
+		toolbarText: $.extend({}, jHtmlArea.defaultOptions.toolbarText, {
+			"html": "Mostra/Oculta el codi HTML",
+			"bold": "Negreta",
+			"italic": "Cursiva",
+			"underline": "Subrallat",
+			"strikethrough": "Ratllat",
+			"forecolor": "Color del text",
+			"subscript": "Subíndex",
+			"superscript": "Superíndex",
+			"increasefontsize": "Augmenta la mida de la font",
+			"decreasefontsize": "Disminueix la mida de la font",
+			"orderedlist": "Insereix una llista ordenada",
+			"unorderedlist": "Insereix una llista no ordenada",
+			"indent": "Augmenta el sagnat",
+			"outdent": "Disminueix el sagnat",
+			"justifyleft": "Alinea a l'esquerra",
+			"justifycenter": "Alinea al centre",
+			"justifyright": "Alinea a la dreta",
+			"link": "Insereix un enllaç",
+			"unlink": "Elimina un enllaç",
+			"image": "Insereix una imatge",
+			"horizontalrule": "Insereix una separació horitzontal",
+			"p": "Paràgraf",
+			"h1": "Capçalera 1",
+			"h2": "Capçalera 2",
+			"h3": "Capçalera 3",
+			"h4": "Capçalera 4",
+			"h5": "Capçalera 5",
+			"h6": "Capçalera 6",
+			"cut": "Retalla",
+			"copy": "Còpia",
+			"paste": "Enganxa"
+		})
+	});
+	// Ordenació dels camps dins cada grup
+	$('.taula-camps').each(function() {
+		$(this).tableDnD({
+			onDragClass: "drag",
+			onDrop: function (table, row) {
+				let pos = row.rowIndex - 1;
+				console.log('Drop. Fila destí:' + pos);
+				// let id = obtenirId(pos, $(table).attr('id'));
+				if (pos != filaMovem) {
+					canviarOrdreCamp(campMovem, pos);
+				}
+			},
+			onDragStop: function (table, row) {
+				console.log('Drag stop. Fila destí:' + (row.rowIndex - 1));
+			},
+			onDragStart: function (table, row) {
+				filaMovem = row.rowIndex - 1;
+				campMovem = $(row).data('campid');
+				console.log('Drag start. Fila origen: ' + filaMovem + ', camp: ' + campMovem);
+			}
+		});
+	});
+	$('.btn-ppv').popover();
 });
+
+let canviarOrdreCamp = (campId, pos) => {
+	const baseUrl = '<c:url value="/servei/${servei.codiUrlEncoded}/camp/"/>';
+	$.ajax({
+		type: 'POST',
+		url: baseUrl + campId + '/move/' + pos,
+		async: true,
+		success: () => {
+			// webutilRefreshMissatges();
+		},
+		error: (e) => {
+			console.log("Error canviant l'ordre: " + e);
+			location.reload();
+		}
+	});
+}
+
 // Afegir nou camp
 function serveiCampAfegir(servei, path) {
 	$('#hidden-hidden-servei').val(servei);
@@ -240,6 +363,13 @@ function onInvokeAction(id) {
 	setExportToLimit(id, '');
 	createHiddenInputFieldsForLimitAndSubmit(id);
 }
+function htmlDecode(input){
+	var e = document.createElement('textarea');
+	e.innerHTML = input;
+	// handle case of empty input
+	return e.childNodes.length === 0 ? "" : e.childNodes[0].nodeValue;
+}
+
 $(function() {
 	// Canvi d'icones al ocultar/mostrar
 	$('.arbre-node').on('hide.bs.collapse', function (event) {
@@ -252,17 +382,24 @@ $(function() {
 		$(iconId).attr('class', 'fas fa-chevron-down');
 		event.stopPropagation();
 	});
-	$('#boto-nou-grup').click(function (event) {
+	$('.boto-grup-nou').click(function (event) {
 		$('#modal-grup-titol').html('<spring:message code="servei.camp.grup.crear"/>');
 		$('#modal-grup-hidden-id').val(null);
+		$('#modal-grup-hidden-pare-id').val($(this).data('pare'));
 		$('#modal-grup-input-nom').val(null);
+		// $('#modal-grup-input-ajuda').val(null);
+		$('#modal-grup-form').find('iframe').contents().find("body").html('');
 		$('#modal-grup-formform').attr('action', 'campGrup/add');
 		$('#modal-grup-form').modal('toggle');
 	});
 	$('.boto-grup-editar').click(function (event) {
 		$('#modal-grup-titol').html('<spring:message code="servei.camp.grup.modificar"/>');
 		$('#modal-grup-hidden-id').val($(this).data('id'));
+		$('#modal-grup-hidden-pare-id').val($(this).data('pare'));
 		$('#modal-grup-input-nom').val($(this).data('nom'));
+		// $('#modal-grup-input-ajuda').val($(this).data('ajuda'));
+		$('#modal-grup-form').find('iframe').contents().find("body").html(htmlDecode($(this).data('ajuda')));
+		$('#modal-grup-input-ajuda').val($(this).data('ajuda'));
 		$('#modal-grup-formform').attr('action', 'campGrup/update');
 		$('#modal-grup-form').modal('toggle');
 	});
@@ -307,20 +444,19 @@ $(function() {
 				</div>
 				<br />
 				<ul style="list-style: none; margin: 0; padding: 0;">
-					<c:set var="nodeArbreActual" value="${arbreDadesEspecifiques.arrel}"
-						scope="request" />
+					<c:set var="nodeArbreActual" value="${arbreDadesEspecifiques.arrel}" scope="request" />
 					<jsp:include page="import/dadesEspecifiquesArbreNode.jsp" />
 				</ul>
 			</div>
 		</div>
 		<div class="col-md-8">
-			<a id="boto-nou-grup" class="btn btn-primary pull-right"><i class="fas fa-plus"></i>&nbsp;Nou grup</a><br/><br/>
+			<a id="boto-boto-grup-nou" class="btn btn-primary pull-right boto-grup-nou"><i class="fas fa-plus"></i>&nbsp;Nou grup</a><br/><br/>
 			<c:set var="hiHaCampsSenseGrup" value="${false}"/>
 			<c:forEach var="camp" items="${camps}">
 				<c:if test="${empty camp.grup}"><c:set var="hiHaCampsSenseGrup" value="${true}"/></c:if>
 			</c:forEach>
 			<c:if test="${hiHaCampsSenseGrup}">
-				<table id="table-camps" class="table table-striped table-bordered" style="width: 100%">
+				<table id="table-camps" class="table table-striped table-bordered taula-camps" style="width: 100%">
 					<thead>
 						<tr>
 						<th><spring:message code="servei.camp.taula.columna.nom" /></th>
@@ -341,204 +477,21 @@ $(function() {
 					</thead>
 					<tbody>
 					<c:forEach items="${camps}" var="camp" varStatus="loopcamps">
-						<tr>
-							<td>
-								<input type="hidden" name="id" value="${ id }"/>
-								<span title="${ camp.path }">${ camp.campNom }</span>
-							</td>
-							<td>
-								${ camp.tipus }
-							</td>
-							<td>
-								${ camp.etiqueta }
-							</td>
-							<c:if test="${servei.pinbalIniDadesExpecifiques}">
-								<td>
-									<c:if test="${ camp.inicialitzar }"><i class="fa fa-check"></i></c:if>
-								</td>
-							</c:if>
-							<td>
-								<c:if test="${ camp.obligatori }"><i class="fa fa-check"></i></c:if>
-							</td>
-							<td>
-								<c:if test="${ camp.modificable }"><i class="fa fa-check"></i></c:if>
-							</td>
-							<td>
-								<c:if test="${ camp.visible }"><i class="fa fa-check"></i></c:if>
-							</td>
-							<c:if test="${not empty grups}">
-							<td>
-								<div class="btn-group">
-									<a href="#" title="<spring:message code="servei.camp.taula.accio.agrupar"/>" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
-										<i class="far fa-arrow-alt-circle-down"></i>&nbsp;<span class="caret"></span>
-									</a>
-									<ul class="dropdown-menu">
-										<c:forEach var="grup" items="${grups}">
-											<li><a href="camp/${ camp.id }/agrupar/${grup.id}">${grup.nom}</a></li>
-										</c:forEach>
-									</ul>
-								</div>
-							</td>
-							</c:if>
-							<td>
-								<a href="#modal-editar-camp" data-nrow="${ loopcamps.index }" 
-								   data-id="${ camp.id }" 
-								   data-path="${ camp.path }" 
-								   data-tipus="${ camp.tipus }" 
-								   data-etiqueta="${ camp.etiqueta }" 
-								   data-valorperdefecte="${ camp.valorPerDefecte }" 
-								   data-comentari="${ camp.comentari }" 
-								   data-dataformat="${ camp.dataFormat }" 
-								   <c:if test="${ not empty camp.campPare }">
-								   data-camppare="${ camp.campPare.id }"
-								   </c:if>
-								   <c:if test="${ empty camp.campPare }">
-								   data-camppare="0"
-								   </c:if>
-								   data-valorpare="${ camp.valorPare }"
-								   data-inicialitzar="${ camp.inicialitzar }"
-								   data-obligatori="${ camp.obligatori }" 
-								   data-modificable="${ camp.modificable }" 
-								   data-visible="${ camp.visible }"
-								   data-validacio-regexp="${ camp.validacioRegexp }"
-								   data-validacio-min="${ camp.validacioMin }"
-								   data-validacio-max="${ camp.validacioMax }"
-								   data-validacio-data-cmp-operacio="${ camp.validacioDataCmpOperacio }"
-								   data-validacio-data-cmp-camp2="${ camp.validacioDataCmpCamp2.id }"
-								   data-validacio-data-cmp-nombre="${ camp.validacioDataCmpNombre }"
-								   data-validacio-data-cmp-tipus="${ camp.validacioDataCmpTipus }"
-								class="btn btn-default btn-edit-camp" title="<spring:message code="servei.camp.taula.accio.modificar"/>">
-									<i class="fas fa-pen"></i>
-								</a>
-							</td>
-							<td>
-								<a href="camp/${ camp.id }/delete" title="<spring:message code="servei.camp.taula.accio.esborrar"/>" class="btn btn-default confirm-esborrar">
-									<i class="fas fa-trash-alt"></i>
-								</a>
-							</td>
-						</tr>
+						<c:if test="${empty camp.grup}">
+							<c:set var="camp" value="${camp}" scope="request"/>
+							<c:set var="loopcamps" value="${loopcamps}" scope="request"/>
+							<jsp:include page="serveiCampGrupFila.jsp"/>
+						</c:if>
 					</c:forEach>
 					</tbody>
 				</table>
 			</c:if>
 			<c:forEach var="grup" items="${grups}" varStatus="grupStatus">
-				<div class="well well-sm">
-					<fieldset>
-					 	<legend>${grup.nom}</legend>
-					</fieldset>
-					<c:choose>
-						<c:when test="${not empty campsAgrupats[grup.id]}">
-							<table id="table-camps" class="table table-striped table-bordered" style="width: 100%">
-								<thead>
-									<tr>
-									<th data-data="campNom"><spring:message code="servei.camp.taula.columna.nom" /></th>
-									<th data-data="tipus"><spring:message code="servei.camp.taula.columna.tipus" /></th>
-									<th data-data="etiqueta"><spring:message code="servei.camp.taula.columna.etiqueta" /></th>
-									<c:if test="${servei.pinbalIniDadesExpecifiques}">
-										<th data-data="inicialitzar" style="width: 1%"><spring:message code="servei.camp.taula.columna.i" /></th>
-									</c:if>
-									<th data-data="obligatori" style="width: 1%"><spring:message code="servei.camp.taula.columna.o" /></th>
-									<th data-data="modificable" style="width: 1%"><spring:message code="servei.camp.taula.columna.m" /></th>
-									<th data-data="visible" style="width: 1%"><spring:message code="servei.camp.taula.columna.v" /></th>
-									<th data-data="path" style="width: 1%"></th>
-									<th data-data="id" style="width: 1%"></th>
-									<th data-data="campPare" style="width: 1%"></th>
-									<th data-data="validacioRegexp" style="width: 1%"></th>
-									</tr>
-								</thead>
-								<tbody>
-								<c:forEach items="${campsAgrupats[grup.id]}" var="camp" varStatus="loopcamps">
-									<tr>
-										<td>
-											<input type="hidden" name="id" value="${ id }"/>
-											<span title="${ camp.path }">${ camp.campNom }</span>
-										</td>
-										<td>
-											${ camp.tipus }
-										</td>
-										<td>
-											${ camp.etiqueta }
-										</td>
-										<c:if test="${servei.pinbalIniDadesExpecifiques}">
-											<td>
-												<c:if test="${ camp.inicialitzar }"><i class="fa fa-check"></i></c:if>
-											</td>
-										</c:if>
-										<td>
-											<c:if test="${ camp.obligatori }"><i class="fa fa-check"></i></c:if>
-										</td>
-										<td>
-											<c:if test="${ camp.modificable }"><i class="fa fa-check"></i></c:if>
-										</td>
-										<td>
-											<c:if test="${ camp.visible }"><i class="fa fa-check"></i></c:if>
-										</td>
-										<c:if test="${not empty grups}">
-										<td>
-											<div class="btn-group">
-												<a href="#" title="<spring:message code="servei.camp.taula.accio.agrupar"/>" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
-													<i class="far fa-arrow-alt-circle-down"></i>&nbsp;<span class="caret"></span>
-												</a>
-												<ul class="dropdown-menu">
-													<c:forEach var="grup" items="${grups}">
-														<li><a href="camp/${ camp.id }/agrupar/${grup.id}">${grup.nom}</a></li>
-													</c:forEach>
-												</ul>
-											</div>
-										</td>
-										</c:if>
-										<td>
-											<a href="#modal-editar-camp" data-nrow="${ loopcamps.index }" 
-												data-id="${ camp.id }" 
-												data-path="${ camp.path }" 
-												data-tipus="${ camp.tipus }" 
-												data-etiqueta="${ camp.etiqueta }" 
-												data-valorperdefecte="${ camp.valorPerDefecte }" 
-												data-comentari="${ camp.comentari }" 
-												data-dataformat="${ camp.dataFormat }" 
-												<c:if test="${ not empty camp.campPare }">
-												data-camppare="${ camp.campPare.id }"
-												</c:if>
-												<c:if test="${ empty camp.campPare }">
-												data-camppare="0"
-												</c:if>
-												data-valorpare="${ camp.valorPare }"
-												data-inicialitzar="${ camp.inicialitzar }"
-												data-obligatori="${ camp.obligatori }"
-												data-modificable="${ camp.modificable }"
-												data-visible="${ camp.visible }"
-												data-validacio-regexp="${ camp.validacioRegexp }"
-												data-validacio-min="${ camp.validacioMin }"
-												data-validacio-max="${ camp.validacioMax }"
-												data-validacio-data-cmp-operacio="${ camp.validacioDataCmpOperacio }"
-												data-validacio-data-cmp-camp2="${ camp.validacioDataCmpCamp2.id }"
-												data-validacio-data-cmp-nombre="${ camp.validacioDataCmpNombre }"
-												data-validacio-data-cmp-tipus="${ camp.validacioDataCmpTipus }"
-												class="btn btn-default btn-edit-camp" title="<spring:message code="servei.camp.taula.accio.modificar"/>">
-												<i class="fas fa-pen"></i>
-											</a>
-										</td>
-										<td>
-											<a href="camp/${ camp.id }/delete" title="<spring:message code="servei.camp.taula.accio.esborrar"/>" class="btn btn-default confirm-esborrar">
-												<i class="fas fa-trash-alt"></i>
-											</a>
-										</td>
-									</tr>
-								</c:forEach>
-								</tbody>
-							</table>
-						</c:when>
-						<c:otherwise>
-							<p style="text-align:center"><spring:message code="servei.camp.grup.buit"/></p>
-						</c:otherwise>
-					</c:choose>
-					<div style="text-align: right">
-						<a href="campGrup/${grup.id}/up" title="<spring:message code="comu.boto.pujar"/>" class="btn btn-default <c:if test="${grupStatus.first}"> disabled</c:if>"><i class="fas fa-arrow-up"></i></a>
-						<a href="campGrup/${grup.id}/down" title="<spring:message code="comu.boto.baixar"/>" class="btn btn-default <c:if test="${grupStatus.last}"> disabled</c:if>"><i class="fas fa-arrow-down"></i></a>
-						<a href="#modal-grup-form" title="<spring:message code="comu.boto.modificar"/>" class="btn btn-default boto-grup-editar" data-id="${grup.id}" data-nom="${grup.nom}"><i class="fas fa-pen"></i></a>
-						<a href="campGrup/${grup.id}/delete" title="<spring:message code="comu.boto.esborrar"/>" class="btn btn-default confirm-esborrar-grup"><i class="fas fa-trash-alt"></i></a>
-					</div>
-				</div>
+				<c:set var="grup" value="${grup}" scope="request"/>
+				<c:set var="grupStatus" value="${grupStatus}" scope="request"/>
+				<jsp:include page="serveiCampGrup.jsp">
+					<jsp:param name="esSubgrup" value="${false}"/>
+				</jsp:include>
 			</c:forEach>
 			<c:if test="${not empty camps}">
 				<p style="text-align:right">
@@ -805,10 +758,15 @@ $(function() {
 			<div class="modal-body">
 				<form id="modal-grup-formform" action="" method="post">
 					<input type="hidden" id="modal-grup-hidden-id" name="id"/>
+					<input type="hidden" id="modal-grup-hidden-pare-id" name="pareId"/>
 					<input type="hidden" id="modal-grup-hidden-servei" name="servei" value="${servei.codi}"/>
 					<div class="form-group">
 						<label for="modal-grup-input-nom"><spring:message code="servei.camp.grup.form.nom"/> *</label>
 						<input class="form-control" type="text" id="modal-grup-input-nom" name="nom"/>
+					</div>
+					<div class="form-group">
+						<label for="modal-grup-input-ajuda"><spring:message code="servei.camp.grup.form.ajuda"/></label>
+						<div class="rich-editor"><textarea id="modal-grup-input-ajuda" name="ajuda" class="content"></textarea></div>
 					</div>
 				</form>
 			</div>

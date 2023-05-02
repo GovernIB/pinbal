@@ -1,0 +1,27 @@
+databaseChangeLog:
+  - property:
+      name: fals
+      value: 0
+      dbms: oracle
+  - changeSet:
+      id: 1682416448843-1
+      author: limit
+      changes:
+        - addColumn:
+            tableName: pbl_servei_camp_grup
+            columns:
+              - column:
+                  name: pare_id
+                  type: BIGINT
+              - column:
+                  name: ajuda
+                  type: CLOB
+        - addForeignKeyConstraint:
+            constraintName: pbl_grup_pare_fk
+            baseTableName: pbl_servei_camp_grup
+            baseColumnNames: pare_id
+            referencedTableName: pbl_servei_camp_grup
+            referencedColumnNames: id
+        - sql:
+            dbms: oracle
+            sql: ALTER TABLE pbl_servei_camp_grup MOVE LOB(ajuda) STORE AS pbl_grup_ajuda_lob(TABLESPACE pinbal_lob INDEX pbl_grup_ajuda_lob_i);

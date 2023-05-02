@@ -390,7 +390,7 @@ public interface ServeiService {
 	 *             Si no s'ha trobat el camp amb l'id especificat.
 	 */
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
-	public ServeiCampDto moveServeiCamp(
+	public void moveServeiCamp(
 			String serveiCodi,
 			Long serveiCampId,
 			int indexDesti) throws ServeiCampNotFoundException;

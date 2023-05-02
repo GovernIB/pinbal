@@ -4,7 +4,13 @@
 package es.caib.pinbal.core.dto;
 
 import java.io.Serializable;
+import java.util.List;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.apache.commons.lang.builder.ToStringBuilder;
 
 /**
@@ -12,36 +18,27 @@ import org.apache.commons.lang.builder.ToStringBuilder;
  * 
  * @author Limit Tecnologies <limit@limit.es>
  */
+@Builder
+@Getter @Setter
+@NoArgsConstructor @AllArgsConstructor
 public class ServeiCampGrupDto implements Serializable {
 
 	private Long id;
 	private String servei;
 	private String nom;
+	private Long pareId;
+	private String ajuda;
 	private int ordre;
+	private List<ServeiCampGrupDto> fills;
 
-	public Long getId() {
-		return id;
-	}
-	public void setId(Long id) {
-		this.id = id;
-	}
-	public String getServei() {
-		return servei;
-	}
-	public void setServei(String servei) {
-		this.servei = servei;
-	}
-	public String getNom() {
-		return nom;
-	}
-	public void setNom(String nom) {
-		this.nom = nom;
-	}
-	public int getOrdre() {
-		return ordre;
-	}
-	public void setOrdre(int ordre) {
-		this.ordre = ordre;
+	public String getAjudaHtml() {
+		String ajudaHtml = ajuda;
+		if (ajudaHtml != null) {
+			ajudaHtml = ajudaHtml.replace("\n", "<br/>");
+			ajudaHtml = ajudaHtml.replace(" ", "&nbsp;");
+			ajudaHtml = ajudaHtml.replace("\t", "&nbsp;&nbsp;&nbsp;&nbsp;");
+		}
+		return ajudaHtml;
 	}
 
 	@Override

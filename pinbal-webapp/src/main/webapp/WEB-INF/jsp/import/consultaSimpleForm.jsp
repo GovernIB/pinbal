@@ -111,12 +111,35 @@ if (map != null) {
 			<c:set var="campsPerMostrar" value="${campsSenseAgrupar}" scope="request"/>
 			<jsp:include page="dadesEspecifiquesForm.jsp"/>
 			<c:forEach var="grup" items="${grups}">
-				<fieldset>
-					<legend>${grup.nom}</legend>
+				<fieldset class="fs-grup">
+					<legend>
+						<span class="fs-grup-nom">${grup.nom}</span>
+						<c:if test="${not empty grup.ajuda}">
+							<button type="button" class="btn btn-sm btn-info btn-ppv pull-right" data-toggle="popover" title="Ajuda" data-placement="left" data-html="true" data-content='${grup.ajuda}'><span class="fa fa-info"></span></button>
+						</c:if>
+					</legend>
 					<div class="clearfix legend-margin-bottom"></div>
 					<c:set var="dadesEspecifiquesDisabled" value="${false}" scope="request"/>
 					<c:set var="campsPerMostrar" value="${campsDadesEspecifiquesAgrupats[grup.id]}" scope="request"/>
 					<jsp:include page="dadesEspecifiquesForm.jsp"/>
+
+						<%-- Subgrups --%>
+					<c:if test="${not empty grup.fills}">
+						<c:forEach var="subgrup" items="${grup.fills}">
+							<div class="panel panel-default fs-subgrup">
+								<div class="panel-heading">
+									<h3 class="panel-title">${subgrup.nom}</h3>
+									<c:if test="${not empty subgrup.ajuda}">
+										<button type="button" class="btn btn-sm btn-info btn-ppv pull-right" data-toggle="popover" title="Ajuda" data-placement="left" data-html="true" data-content='${subgrup.ajuda}'><span class="fa fa-info"></span></button>
+									</c:if>
+								</div>
+								<div class="panel-body">
+									<c:set var="campsPerMostrar" value="${campsDadesEspecifiquesAgrupats[subgrup.id]}" scope="request"/>
+									<jsp:include page="dadesEspecifiquesForm.jsp"/>
+								</div>
+							</div>
+						</c:forEach>
+					</c:if>
 				</fieldset>
 			</c:forEach>
 		</fieldset>

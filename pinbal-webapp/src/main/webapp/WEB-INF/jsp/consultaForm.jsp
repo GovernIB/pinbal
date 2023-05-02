@@ -31,20 +31,34 @@
 	<script src="<c:url value="/js/bootstrap.file-input.js"/>"></script>
 	<script src="<c:url value="/js/jquery.maskedinput.js"/>"></script>
 
-	<link href="<c:url value="/webjars/jasny-bootstrap/3.1.3/dist/css/jasny-bootstrap.min.css"/>" rel="stylesheet"> 
-	<script src="<c:url value="/webjars/jasny-bootstrap/3.1.3/dist/js/jasny-bootstrap.min.js"/>"></script> 
-	<c:if test="${serveiMultiple}">
+	<link href="<c:url value="/webjars/jasny-bootstrap/3.1.3/dist/css/jasny-bootstrap.min.css"/>" rel="stylesheet">
+	<script src="<c:url value="/webjars/jasny-bootstrap/3.1.3/dist/js/jasny-bootstrap.min.js"/>"></script>
 	<script>
 		$(document).ready(function() {
-			$('#tabs-simple-multiple a:first').click(function (e) {
-				$("#multiple").val('false');
-			});
-			$('#tabs-simple-multiple a:last').click(function (e) {
-				$("#multiple").val('true');
-			});
+			<c:if test="${serveiMultiple}">
+				$('#tabs-simple-multiple a:first').click(function (e) {
+					$("#multiple").val('false');
+				});
+				$('#tabs-simple-multiple a:last').click(function (e) {
+					$("#multiple").val('true');
+				});
+			</c:if>
+			$('.btn-ppv').popover();
 		});
 	</script>
-	</c:if>
+	<style>
+		legend {font-weight: bold;}
+		.btn-ppv {border-radius: 16px; padding: 2px 7px 0px 7px; margin-left: 8px; position: relative; font-size: 10px;}
+		.popover {max-width: 1000px !important;}
+		.popover-content {min-width: 600px !important;}
+		.fs-grup {margin-top: 20px;}
+		.fs-grup .fs-grup-nom {color: darkorange;}
+		.fs-grup .btn-ppv {top: 4px;}
+		.fs-grup legend {font-weight: normal;}
+		.fs-subgrup {margin-top: 15px;}
+		.fs-subgrup .panel-title {font-weight: bold;}
+		.fs-subgrup .btn-ppv {top: -18px;}
+	</style>
 </head>
 <body>
 	<c:url value="/consulta/${servei.codiUrlEncoded}/plantilla/Excel" var="downloadPlantillaExcelUrl"/>
@@ -76,20 +90,20 @@
 				<div class="col-md-6">
 					<label class="control-label" for="${campPath}"><spring:message code="consulta.form.camp.funcionari.nom"/> *</label>
 					<pbl:inputText name="funcionariNom" inline="true"/>
-					
-					<label class="control-label" for="${campPath}"><spring:message code="consulta.form.camp.entitat.nom"/></label> 
+
+					<label class="control-label" for="${campPath}"><spring:message code="consulta.form.camp.entitat.nom"/></label>
 					<pbl:inputText name="entitatNom" inline="true" disabled="true"/>
-					
+
 					<label class="control-label" for="${campPath}"><spring:message code="consulta.form.camp.consentiment"/> *</label>
 					<pbl:inputSelect name="consentiment" inline="true" optionItems="${consentimentValors}" emptyOption="false"/>
 				</div>
-				<div class="col-md-6">			
+				<div class="col-md-6">
 					<label class="control-label" for="${campPath}"><spring:message code="consulta.form.camp.funcionari.nif"/></label>
 					<pbl:inputText name="funcionariNif" inline="true"/>
-					
-					<label class="control-label" for="${campPath}"><spring:message code="consulta.form.camp.entitat.cif"/></label> 
+
+					<label class="control-label" for="${campPath}"><spring:message code="consulta.form.camp.entitat.cif"/></label>
 					<pbl:inputText name="entitatCif" inline="true"/>
-					
+
 					<label class="control-label" for="${campPath}"><spring:message code="consulta.form.camp.departament"/> *</label>
 					<pbl:inputText name="departamentNom" inline="true"/>
 				</div>

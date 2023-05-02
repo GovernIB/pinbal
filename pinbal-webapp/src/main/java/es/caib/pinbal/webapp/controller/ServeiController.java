@@ -386,14 +386,20 @@ public class ServeiController extends BaseController {
 		return "redirect:../../camp";
 	}
 
-	@RequestMapping(value = "/{serveiCodi}/camp/move/{serveiCampId}/{indexDesti}", method = RequestMethod.GET)
-	public String serveiCampMove(
+	@RequestMapping(value = "/{serveiCodi}/camp/{serveiCampId}/move/{posicio}", method = RequestMethod.POST)
+	@ResponseBody
+	public String serveiCampOrdre(
 			HttpServletRequest request,
 			@PathVariable String serveiCodi,
 			@PathVariable Long serveiCampId,
-			@PathVariable int indexDesti) throws ServeiCampNotFoundException {
-		serveiService.moveServeiCamp(serveiCodi, serveiCampId, indexDesti);
-		return "redirect:../../../camp";
+			@PathVariable Integer posicio) throws Exception {
+		try {
+			serveiService.moveServeiCamp(serveiCodi, serveiCampId, posicio);
+			return "ok";
+		} catch (Exception ex) {
+			AlertHelper.error(request, getMessage(request, "servei.controller.camp.moure.error") + ": " + ex.getMessage());
+			throw ex;
+		}
 	}
 
 	@RequestMapping(value = "/{serveiCodi}/camp/{serveiCampId}/agrupar/{serveiCampGrupId}", method = RequestMethod.GET)
@@ -412,7 +418,7 @@ public class ServeiController extends BaseController {
 			@PathVariable String serveiCodi,
 			@PathVariable Long serveiCampId) throws ServeiCampNotFoundException, ServeiCampGrupNotFoundException {
 		serveiService.agrupaServeiCamp(serveiCampId, null);
-		return "redirect:../../camp";
+		return "redirect:../../../camp";
 	}
 
 	@RequestMapping(value = "/{serveiCodi}/preview", method = RequestMethod.GET)

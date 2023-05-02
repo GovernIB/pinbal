@@ -146,7 +146,7 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 	private ApplicationContext applicationContext;
 	private MessageSource messageSource;
 	private ScspHelper scspHelper;
-	
+
 	@Transactional
 	@Override
 	public void saveActiu(String serveiCodi, boolean actiu) {
@@ -162,10 +162,10 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 					JustificantTipus.GENERAT,
 					null,
 					null,
-					false, 
+					false,
 					null,
 					null,
-					null, 
+					null,
 					new byte[0],
 					false,
 					true,
@@ -286,7 +286,7 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 	public ServeiDto findAmbCodiPerAdminORepresentant(
 			String serveiCodi) throws ServeiNotFoundException {
 		log.debug("Obtenint informació del servicio (codi=" + serveiCodi + ") per a administrador o representant");
-			
+
 		Servicio servicio =  getServicioByCode(serveiCodi);
 		return toServeiDto(servicio);
 	}
@@ -346,10 +346,10 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 		List<ServeiDto> resposta = new ArrayList<ServeiDto>();
 		List<Servicio> servicios = getScspHelper().findServicioAll();
 		for (Servicio servicio : servicios) {
-			if ((filtre == null || filtre.isEmpty()) || 
-					(filtre != null && !filtre.isEmpty() && 
-						(servicio.getCodCertificado().toLowerCase().contains(filtre.toLowerCase()) ||
-						 servicio.getDescripcion().toLowerCase().contains(filtre.toLowerCase()))))  
+			if ((filtre == null || filtre.isEmpty()) ||
+					(filtre != null && !filtre.isEmpty() &&
+							(servicio.getCodCertificado().toLowerCase().contains(filtre.toLowerCase()) ||
+									servicio.getDescripcion().toLowerCase().contains(filtre.toLowerCase()))))
 				resposta.add(toServeiDto(servicio));
 		}
 		return resposta;
@@ -366,7 +366,7 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 			Pageable pageable) {
 		log.debug("Consulta de serveis segons filtre (codi=" + codi + ", descripcio=" + descripcio + ""
 				+ "emisor=" + emisor + " activa=" + activa + ")");
-		
+
 		Page<Servei> paginaServeis = serveiRepository.findByFiltre(
 				codi == null || codi.length() == 0,
 				codi,
@@ -379,7 +379,7 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 				scspVersionEsquema == null || scspVersionEsquema.length() == 0,
 				scspVersionEsquema,
 				pageable);
-		
+
 		Page<ServeiDto> paginaDtos = dtoMappingHelper.pageEntities2pageDto(
 				paginaServeis,
 				ServeiDto.class,
@@ -392,7 +392,7 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 				servei.setActiu(false);
 			}
 		}
-		
+
 		return paginaDtos;
 	}
 
@@ -412,28 +412,28 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 		List<ProcedimentServei> serveisProcediment = procedimentServeiRepository.findServeisProcediment(
 				entitatRepository.findByCodi(entitat.getCodi()),
 				procedimentRepository.findOne(procediment.getId())
-				);
+		);
 		List<String> serveisProcedimentActiusIds = procedimentServeiRepository.findServeisProcedimenActiustServeisIds(
 				entitatRepository.findByCodi(entitat.getCodi()),
 				procedimentRepository.findOne(procediment.getId())
-				);
+		);
 		if (serveisProcedimentActiusIds != null && serveisProcedimentActiusIds.isEmpty()) {
 			serveisProcedimentActiusIds = null;
 		}
 		Page<Servei> paginaServeis = serveiRepository.findByFiltre(
-					serveisEntitat, 
-					serveisProcedimentActiusIds,
-					codi == null || codi.length() == 0,
-					codi,
-					descripcio == null || descripcio.length() == 0,
-					descripcio,
-					emisor == null || emisor.length() == 0,
-					(emisor != null && emisor.length() > 0) ? Long.parseLong(emisor) : null,
-					activa == null,
-					activa,
-					pageable
-					);
-			
+				serveisEntitat,
+				serveisProcedimentActiusIds,
+				codi == null || codi.length() == 0,
+				codi,
+				descripcio == null || descripcio.length() == 0,
+				descripcio,
+				emisor == null || emisor.length() == 0,
+				(emisor != null && emisor.length() > 0) ? Long.parseLong(emisor) : null,
+				activa == null,
+				activa,
+				pageable
+		);
+
 		Page<ServeiDto> paginaDtos = dtoMappingHelper.pageEntities2pageDto(paginaServeis, ServeiDto.class, pageable);
 		for (ServeiDto servei: paginaDtos.getContent()) {
 			for (ProcedimentServei procedimentServei: serveisProcediment) {
@@ -442,7 +442,7 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 					servei.setProcedimentCodi(procedimentServei.getProcediment().getCodi());
 					break;
 				}
-			}	
+			}
 		}
 		return paginaDtos;
 	}
@@ -491,10 +491,10 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 			boolean trobat = false;
 			for (String servei : entitat.getServeis()) {
 				if (servei.equals(servicio.getCodCertificado()) &&
-						((filtre == null || filtre.isEmpty()) || 
-								(filtre != null && !filtre.isEmpty() && 
+						((filtre == null || filtre.isEmpty()) ||
+								(filtre != null && !filtre.isEmpty() &&
 										(servicio.getCodCertificado().toLowerCase().contains(filtre.toLowerCase()) ||
-										 servicio.getDescripcion().toLowerCase().contains(filtre.toLowerCase()))))) {
+												servicio.getDescripcion().toLowerCase().contains(filtre.toLowerCase()))))) {
 					trobat = true;
 					break;
 				}
@@ -539,7 +539,7 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 		}
 		return resposta;
 	}
-	
+
 	@Transactional(readOnly = true)
 	@Override
 	public List<ServeiDto> findAmbProcediment(
@@ -593,11 +593,11 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 		for (Servicio servicio : servicios) {
 			boolean trobat = false;
 			for (ProcedimentServei procedimentServei : procedimentServeis) {
-				if (procedimentServei.getServei().equals(servicio.getCodCertificado()) && 
-						((filtre == null || filtre.isEmpty()) || 
-								(filtre != null && !filtre.isEmpty() &&	
-										(servicio.getCodCertificado().toLowerCase().contains(filtre.toLowerCase()) || 
-										 servicio.getDescripcion().toLowerCase().contains(filtre.toLowerCase()))))) {
+				if (procedimentServei.getServei().equals(servicio.getCodCertificado()) &&
+						((filtre == null || filtre.isEmpty()) ||
+								(filtre != null && !filtre.isEmpty() &&
+										(servicio.getCodCertificado().toLowerCase().contains(filtre.toLowerCase()) ||
+												servicio.getDescripcion().toLowerCase().contains(filtre.toLowerCase()))))) {
 					trobat = true;
 					break;
 				}
@@ -804,7 +804,7 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 		}
 	}
 
-	/*@Transactional(readOnly = true)
+    /*@Transactional(readOnly = true)
 	@Override
 	public ArbreDto<DadaEspecificaDto> generarArbreDadesEspecifiques(
 			String serveiCodi,
@@ -972,7 +972,7 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 
 	@Transactional(rollbackFor = ServeiCampNotFoundException.class)
 	@Override
-	public ServeiCampDto moveServeiCamp(
+	public void moveServeiCamp(
 			String serveiCodi,
 			Long serveiCampId,
 			int indexDesti) throws ServeiCampNotFoundException {
@@ -992,22 +992,10 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 			throw new ServeiCampNotFoundException();
 		}
 		if (indexOrigen != indexDesti) {
-			if (indexOrigen < indexDesti) {
-				camps.add(
-						indexDesti,
-						camps.remove(indexOrigen));
-			} else {
-				camps.add(
-						indexDesti,
-						camps.remove(indexOrigen));
-			}
+			camps.add(indexDesti, camps.remove(indexOrigen));
 			for (int i = 0; i < camps.size(); i++)
 				camps.get(i).updateOrdre(i);
 		}
-		
-		return dtoMappingHelper.getMapperFacade().map(
-				camps.get(indexDesti),
-				ServeiCampDto.class);
 	}
 
 	@Transactional(rollbackFor = {ServeiCampNotFoundException.class, ServeiCampGrupNotFoundException.class})
@@ -1070,12 +1058,20 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 			log.debug("No s'ha trobat el servicio (codi=" + serveiCampGrup.getServei() + ")");
 			throw new ServeiNotFoundException();
 		}
-		List<ServeiCampGrup> grupsExistents = serveiCampGrupRepository.findByServeiOrderByOrdreAsc(
-				serveiCampGrup.getServei());
+		ServeiCampGrup pare = null;
+		if (serveiCampGrup.getPareId() != null) {
+			pare = serveiCampGrupRepository.findOne(serveiCampGrup.getPareId());
+		}
+		int grupsExistents = serveiCampGrupRepository.countByServeiAndPareOrderByOrdreAsc(
+				serveiCampGrup.getServei(),
+				pare == null,
+				pare);
 		ServeiCampGrup perCrear = ServeiCampGrup.getBuilder(
 				serveiCampGrup.getServei(),
+				pare,
 				serveiCampGrup.getNom(),
-				grupsExistents.size()).build(); 
+				serveiCampGrup.getAjuda(),
+				grupsExistents).build();
 		return dtoMappingHelper.getMapperFacade().map(
 				serveiCampGrupRepository.save(perCrear),
 				ServeiCampGrupDto.class);
@@ -1091,7 +1087,7 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 			log.debug("No s'ha trobat el grup de camps (id=" + serveiCampGrup.getId() + ")");
 			throw new ServeiCampGrupNotFoundException();
 		}
-		perModificar.update(serveiCampGrup.getNom());
+		perModificar.update(serveiCampGrup.getNom(), serveiCampGrup.getAjuda());
 		return dtoMappingHelper.getMapperFacade().map(
 				perModificar,
 				ServeiCampGrupDto.class);
@@ -1107,12 +1103,20 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 			log.debug("No s'ha trobat el grup de camps (id=" + serveiCampGrupId + ")");
 			throw new ServeiCampGrupNotFoundException();
 		}
-		// Deslliga els camps del grup per a evitar esborrar-los
-		for (ServeiCamp camp: perEsborrar.getCamps())
-			camp.updateGrup(null);
+		// Deslliga els camps del grup per a evitar esborrar-los, i reordena
+		int index = serveiCampRepository.countByServeiAndGrupOrderByOrdreAsc(
+				perEsborrar.getServei(),
+				perEsborrar.getPare() == null,
+				perEsborrar.getPare());
+		for (ServeiCamp camp: perEsborrar.getCamps()) {
+			camp.updateGrup(perEsborrar.getPare());
+			camp.updateOrdre(index++);
+		}
 		perEsborrar.getCamps().clear();
+		perEsborrar.updatePare(null);
+		serveiCampGrupRepository.flush();
 		// Esborra el grup
-		serveiCampGrupRepository.delete(perEsborrar);
+		serveiCampGrupRepository.deleteById(perEsborrar.getId());
 		return dtoMappingHelper.getMapperFacade().map(
 				perEsborrar,
 				ServeiCampGrupDto.class);
@@ -1130,8 +1134,10 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 			log.debug("No s'ha trobat el grup de camps (id=" + serveiCampGrupId + ")");
 			throw new ServeiCampGrupNotFoundException();
 		}
-		List<ServeiCampGrup> grups = serveiCampGrupRepository.findByServeiOrderByOrdreAsc(
-				perMoure.getServei());
+		List<ServeiCampGrup> grups = serveiCampGrupRepository.findByServeiAndPareOrderByOrdreAsc(
+				perMoure.getServei(),
+				perMoure.getPare() == null,
+				perMoure.getPare());
 		if (up && perMoure.getOrdre() > 0) {
 			grups.get(perMoure.getOrdre() - 1).updateOrdre(perMoure.getOrdre());
 			perMoure.updateOrdre(perMoure.getOrdre() - 1);
@@ -1151,8 +1157,9 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 			log.debug("No s'ha trobat el servicio (codi=" + serveiCodi + ")");
 			throw new ServeiNotFoundException();
 		}
+		List<ServeiCampGrup> serveiCampGrups = serveiCampGrupRepository.findByServeiAndPareIsNullOrderByOrdreAsc(serveiCodi);
 		return dtoMappingHelper.getMapperFacade().mapAsList(
-				serveiCampGrupRepository.findByServeiOrderByOrdreAsc(serveiCodi),
+				serveiCampGrups,
 				ServeiCampGrupDto.class);
 	}
 
@@ -1297,7 +1304,7 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 						serveiCodi,
 						DEFAULT_TRADUCCIO_LOCALE.getLanguage(),
 						DEFAULT_TRADUCCIO_LOCALE.getCountry()),
-						ServeiJustificantCampDto.class);
+				ServeiJustificantCampDto.class);
 	}
 
 	@Transactional(readOnly = true)
@@ -1307,7 +1314,7 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 		log.debug("Obtenint tots els fitxers XSD per a un servei (" +
 				"serveiCodi=" + serveiCodi + ")");
 		Servicio servicio = getServicioByCode(serveiCodi);
-		
+
 		return serveiXsdHelper.findAll(servicio.getCodCertificado());
 	}
 
@@ -1321,7 +1328,7 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 			if (serveiConfig.getRoleName() != null)
 				resposta.add(serveiConfig.getRoleName());
 		}
-		/*List<ServeiCampDto> camps = dtoMappingHelper.getMapperFacade().mapAsList(
+        /*List<ServeiCampDto> camps = dtoMappingHelper.getMapperFacade().mapAsList(
 				serveiCampRepository.findAll(),
 				ServeiCampDto.class);
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -1337,6 +1344,7 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 			ApplicationContext applicationContext) throws BeansException {
 		this.applicationContext = applicationContext;
 	}
+
 	@Override
 	public void setMessageSource(MessageSource messageSource) {
 		this.messageSource = messageSource;
@@ -1380,7 +1388,7 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 		}
 		return resposta;
 	}
-	
+
 	private Servicio toServicioScsp(ServeiDto dto) {
 		Servicio servicio = getScspHelper().getServicio(dto.getCodi());
 		if (servicio == null) {
@@ -1439,6 +1447,7 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 		servicio.setTimeout(dto.getScspTimeout());
 		return servicio;
 	}
+
 	private ServeiDto toServeiDto(Servicio servicio) {
 		ServeiDto dto = new ServeiDto();
 		dto.setCodi(servicio.getCodCertificado());
@@ -1661,9 +1670,9 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 
 	/**
 	 * Obté una instància Servicio a partir del codi.
-	 * 
+	 *
 	 * Es fa amb dues consultes per integrar correctament la llibreria scsp
-	 * 
+	 *
 	 * @param serveiCodi
 	 * @return
 	 * @throws ServeiNotFoundException
@@ -1674,7 +1683,7 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 			log.debug("No s'ha trobat el servicio (codi=" + serveiCodi + ")");
 			throw new ServeiNotFoundException();
 		}
-		
+
 		Servicio servicio =  getScspHelper().getServicioById(serveis.get(0).getId());
 		if (servicio == null) {
 			log.debug("No s'ha trobat el servicio SCSP (codi=" + serveiCodi + ")");

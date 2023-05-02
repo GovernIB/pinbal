@@ -5,6 +5,8 @@ package es.caib.pinbal.webapp.command;
 
 import javax.validation.constraints.Size;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.hibernate.validator.constraints.NotEmpty;
 
@@ -15,6 +17,7 @@ import es.caib.pinbal.core.dto.ServeiCampGrupDto;
  * 
  * @author Limit Tecnologies <limit@limit.es>
  */
+@Getter @Setter
 public class ServeiCampGrupCommand {
 
 	private Long id;
@@ -23,32 +26,10 @@ public class ServeiCampGrupCommand {
 	private String servei;
 	@NotEmpty @Size(max=255)
 	private String nom;
+	private Long pareId;
+	private String ajuda;
 	private int ordre;
 
-	public Long getId() {
-		return id;
-	}
-	public void setId(Long id) {
-		this.id = id;
-	}
-	public String getServei() {
-		return servei;
-	}
-	public void setServei(String servei) {
-		this.servei = servei;
-	}
-	public String getNom() {
-		return nom;
-	}
-	public void setNom(String nom) {
-		this.nom = nom;
-	}
-	public int getOrdre() {
-		return ordre;
-	}
-	public void setOrdre(int ordre) {
-		this.ordre = ordre;
-	}
 
 	public static ServeiCampGrupCommand asCommand(ServeiCampGrupDto dto) {
 		ServeiCampGrupCommand command = CommandMappingHelper.getMapperFacade().map(
@@ -60,6 +41,9 @@ public class ServeiCampGrupCommand {
 		ServeiCampGrupDto dto = CommandMappingHelper.getMapperFacade().map(
 				command,
 				ServeiCampGrupDto.class);
+		if ("<br>".equals(command.getAjuda())) {
+			dto.setAjuda(null);
+		}
 		return dto;
 	}
 

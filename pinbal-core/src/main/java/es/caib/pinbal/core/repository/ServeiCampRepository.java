@@ -43,6 +43,20 @@ public interface ServeiCampRepository extends JpaRepository<ServeiCamp, Long> {
 			boolean esNullGrup,
 			ServeiCampGrup grup);
 
+	@Query(	"select count(sc) " +
+			"from " +
+			"    ServeiCamp sc " +
+			"where " +
+			"    sc.servei=?1 " +
+			"and ((?2 = true and sc.grup is null) " +
+			" or (?2 = false and sc.grup = ?3)) " +
+			"order by " +
+			"    sc.ordre asc")
+	int countByServeiAndGrupOrderByOrdreAsc(
+			String servei,
+			boolean esNullGrup,
+			ServeiCampGrup grup);
+
 	@Query(	"select sc.path " +
 			"  from ServeiCamp sc " +
 			" where sc.servei=:servei " +

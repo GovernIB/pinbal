@@ -67,17 +67,17 @@ public class DtoMappingHelper {
 		// Mapeig de consultes
 		mapperFactory.registerClassMap(
 				ClassMapBuilder.map(Consulta.class, ConsultaDto.class).
-				/*field("procedimentServei.procediment.entitat.nom", "entitatNom").
-				field("procedimentServei.procediment.entitat.cif", "entitatCif").
-				field("procedimentServei.procediment.id", "procedimentId").
-				field("procedimentServei.procediment.nom", "procedimentNom").
-				field("procedimentServei.servei", "serveiCodi").*/
-				field("createdBy", "creacioUsuari").
-				field("createdDate", "creacioData").
-				field("funcionariDocumentNum", "funcionariNif").
-				field("pare.id", "pareId").
-				exclude("dadesEspecifiques").
-				byDefault().toClassMap());
+						/*field("procedimentServei.procediment.entitat.nom", "entitatNom").
+                        field("procedimentServei.procediment.entitat.cif", "entitatCif").
+                        field("procedimentServei.procediment.id", "procedimentId").
+                        field("procedimentServei.procediment.nom", "procedimentNom").
+                        field("procedimentServei.servei", "serveiCodi").*/
+								field("createdBy", "creacioUsuari").
+						field("createdDate", "creacioData").
+						field("funcionariDocumentNum", "funcionariNif").
+						field("pare.id", "pareId").
+						exclude("dadesEspecifiques").
+						byDefault().toClassMap());
 		// Mapeig de historic de consultes
 		mapperFactory.registerClassMap(
 				ClassMapBuilder.map(HistoricConsulta.class, ConsultaDto.class).
@@ -90,11 +90,11 @@ public class DtoMappingHelper {
 		// Mapeig d'informes d'usuaris
 		mapperFactory.registerClassMap(
 				ClassMapBuilder.map(EntitatUsuari.class, InformeUsuariDto.class).
-				field("usuari.codi", "codi").
-				field("usuari.nif", "nif").
-				field("usuari.nom", "nom").
-				field("departament", "departament").
-				field("entitat", "entitat").byDefault().toClassMap());
+						field("usuari.codi", "codi").
+						field("usuari.nif", "nif").
+						field("usuari.nom", "nom").
+						field("departament", "departament").
+						field("entitat", "entitat").byDefault().toClassMap());
 		mapperFactory.getConverterFactory().registerConverter(new CustomConverter<DateTime, Date>() {
 			public Date convert(DateTime source, Type<? extends Date> destinationClass) {
 				return source.toDate();
@@ -106,8 +106,8 @@ public class DtoMappingHelper {
 		// Mapeig de camps de organismes cessionaris
 		mapperFactory.registerClassMap(
 				ClassMapBuilder.map(ClauPrivada.class, ClauPrivadaDto.class).
-				field("organisme.id", "organisme").
-				byDefault().toClassMap());
+						field("organisme.id", "organisme").
+						byDefault().toClassMap());
 		mapperFactory.registerClassMap(
 				ClassMapBuilder.map(ConfigGroup.class, ConfigGroupDto.class).byDefault().toClassMap());
 		mapperFactory.registerClassMap(
@@ -126,6 +126,10 @@ public class DtoMappingHelper {
 						field("pare.codi", "pareCodi").
 						field("pare.nom", "pareNom").
 						field("entitat.nom", "entitatNom").
+						byDefault().toClassMap());
+		mapperFactory.registerClassMap(
+				ClassMapBuilder.map(ServeiCampGrup.class, ServeiCampGrupDto.class).
+						field("pare.id", "pareId").
 						byDefault().toClassMap());
 		mapperFactory.build();
 	}
