@@ -3,19 +3,6 @@
  */
 package es.caib.pinbal.core.ejb;
 
-import java.io.IOException;
-import java.util.List;
-
-import javax.annotation.security.PermitAll;
-import javax.annotation.security.RolesAllowed;
-import javax.ejb.Stateless;
-import javax.interceptor.Interceptors;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.ejb.interceptor.SpringBeanAutowiringInterceptor;
-
 import es.caib.pinbal.core.dto.ArbreDto;
 import es.caib.pinbal.core.dto.ClauPrivadaDto;
 import es.caib.pinbal.core.dto.ClauPublicaDto;
@@ -32,6 +19,7 @@ import es.caib.pinbal.core.dto.ServeiDto;
 import es.caib.pinbal.core.dto.ServeiJustificantCampDto;
 import es.caib.pinbal.core.dto.ServeiXsdDto;
 import es.caib.pinbal.core.dto.XsdTipusEnumDto;
+import es.caib.pinbal.core.dto.regles.ServeiReglaDto;
 import es.caib.pinbal.core.service.ServeiService;
 import es.caib.pinbal.core.service.exception.EntitatNotFoundException;
 import es.caib.pinbal.core.service.exception.ProcedimentNotFoundException;
@@ -41,6 +29,17 @@ import es.caib.pinbal.core.service.exception.ServeiBusNotFoundException;
 import es.caib.pinbal.core.service.exception.ServeiCampGrupNotFoundException;
 import es.caib.pinbal.core.service.exception.ServeiCampNotFoundException;
 import es.caib.pinbal.core.service.exception.ServeiNotFoundException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.ejb.interceptor.SpringBeanAutowiringInterceptor;
+
+import javax.annotation.security.PermitAll;
+import javax.annotation.security.RolesAllowed;
+import javax.ejb.Stateless;
+import javax.interceptor.Interceptors;
+import java.io.IOException;
+import java.util.List;
 
 /**
  * Implementació de ServeiService que empra una clase delegada per accedir a la
@@ -377,6 +376,60 @@ public class ServeiServiceBean implements ServeiService {
 	@RolesAllowed("PBL_ADMIN")
 	public List<ServeiDto> findAll() {
 		return delegate.findAll();
+	}
+
+    @Override
+	@RolesAllowed("PBL_ADMIN")
+    public ServeiReglaDto serveiReglaFindByNom(Long serveiId, String nom) {
+        return delegate.serveiReglaFindByNom(serveiId, nom);
+    }
+
+    @Override
+	@RolesAllowed("PBL_ADMIN")
+    public ServeiReglaDto serveiReglaFindById(Long reglaId) {
+        return delegate.serveiReglaFindById(reglaId);
+    }
+
+    @Override
+	@RolesAllowed("PBL_ADMIN")
+    public ServeiReglaDto serveiReglaCreate(String serveiCodi, ServeiReglaDto reglaDto) throws ServeiNotFoundException {
+        return delegate.serveiReglaCreate(serveiCodi, reglaDto);
+    }
+
+	@Override
+	@RolesAllowed("PBL_ADMIN")
+	public ServeiReglaDto serveiReglaUpdate(String serveiCodi, ServeiReglaDto reglaDto) throws ServeiNotFoundException {
+		return delegate.serveiReglaUpdate(serveiCodi, reglaDto);
+	}
+
+	@Override
+	@RolesAllowed("PBL_ADMIN")
+	public void serveiReglaDelete(String serveiCodi, Long reglaId) throws ServeiNotFoundException {
+		delegate.serveiReglaDelete(serveiCodi, reglaId);
+	}
+
+	@Override
+	@RolesAllowed("PBL_ADMIN")
+	public boolean serveiReglaMoure(Long reglaId, int posicio) {
+		return delegate.serveiReglaMoure(reglaId, posicio);
+	}
+
+    @Override
+	@RolesAllowed({"PBL_ADMIN"})
+    public List<ServeiReglaDto> serveiReglesFindAll(String serveiCodi) throws ServeiNotFoundException {
+        return delegate.serveiReglesFindAll(serveiCodi);
+    }
+
+    @Override
+	@RolesAllowed("PBL_ADMIN, tothom")
+    public List<Long> findCampIdsByReglesServei(String serveiCodi) throws ServeiNotFoundException {
+        return delegate.findCampIdsByReglesServei(serveiCodi);
+    }
+
+	@Override
+	@RolesAllowed("PBL_ADMIN, tothom")
+	public List<Long> findGrupIdsByReglesServei(String serveiCodi) throws ServeiNotFoundException {
+		return delegate.findGrupIdsByReglesServei(serveiCodi);
 	}
 
 }

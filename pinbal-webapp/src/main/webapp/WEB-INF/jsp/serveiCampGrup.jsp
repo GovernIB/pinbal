@@ -31,7 +31,7 @@
                 <th data-data="visible" style="width: 1%"><spring:message code="servei.camp.taula.columna.v" /></th>
                 <th data-data="path" style="width: 1%"></th>
                 <th data-data="id" style="width: 1%"></th>
-                <th data-data="campPare" style="width: 1%"></th>
+<%--                <th data-data="campPare" style="width: 1%"></th>--%>
                 <th data-data="validacioRegexp" style="width: 1%"></th>
             </tr>
             </thead>

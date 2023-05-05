@@ -40,6 +40,7 @@
 	<script src="<c:url value="/js/jHtmlArea/scripts/jHtmlArea.ColorPickerMenu-0.8.min.js"/>"></script>
 
 	<script src="<c:url value="/js/webutil.common.js"/>"></script>
+	<script src="<c:url value="/js/webutil.modal.js"/>"></script>
 
 	<link href="<c:url value="/webjars/jasny-bootstrap/3.1.3/dist/css/jasny-bootstrap.min.css"/>" rel="stylesheet"> 
 	<script src="<c:url value="/webjars/jasny-bootstrap/3.1.3/dist/js/jasny-bootstrap.min.js"/>"></script> 
@@ -59,6 +60,9 @@
 	.btn-ppv {border-radius: 16px; padding: 2px 7px 0px 7px; margin-left: 8px; top: -2px; position: relative; font-size: 10px;}
 	.popover {max-width: 800px !important;}
 	.popover-content {min-width: 400px !important;}
+	.boto-regla-nova {position: relative; top: -28px;}
+	.rgl-valors > span {display: inline flow-root; margin-right: 4px;}
+	.rgl-title {font-size: 24px;}
 </style>
 <script>
 const inicialitzarDadesEspecifiques = ${servei.pinbalIniDadesExpecifiques};
@@ -173,6 +177,26 @@ $(document).ready(function() {
 			}
 		});
 	});
+	// Ordenació de les regles
+	$('#taula-regles').tableDnD({
+		onDragClass: "drag",
+		onDrop: function (table, row) {
+			let pos = row.rowIndex - 1;
+			console.log('Drop. Fila destí:' + pos);
+			// let id = obtenirId(pos, $(table).attr('id'));
+			if (pos != filaMovem) {
+				canviarOrdreRela(campMovem, pos);
+			}
+		},
+		onDragStop: function (table, row) {
+			console.log('Drag stop. Fila destí:' + (row.rowIndex - 1));
+		},
+		onDragStart: function (table, row) {
+			filaMovem = row.rowIndex - 1;
+			campMovem = $(row).data('campid');
+			console.log('Drag start. Fila origen: ' + filaMovem + ', camp: ' + campMovem);
+		}
+	});
 	$('.btn-ppv').popover();
 });
 
@@ -181,6 +205,22 @@ let canviarOrdreCamp = (campId, pos) => {
 	$.ajax({
 		type: 'POST',
 		url: baseUrl + campId + '/move/' + pos,
+		async: true,
+		success: () => {
+			// webutilRefreshMissatges();
+		},
+		error: (e) => {
+			console.log("Error canviant l'ordre: " + e);
+			location.reload();
+		}
+	});
+}
+
+let canviarOrdreRegla = (reglaId, pos) => {
+	const baseUrl = '<c:url value="/servei/${servei.codiUrlEncoded}/regla/"/>';
+	$.ajax({
+		type: 'POST',
+		url: baseUrl + reglaId + '/move/' + pos,
 		async: true,
 		success: () => {
 			// webutilRefreshMissatges();
@@ -501,9 +541,86 @@ $(function() {
 				</c:choose>
 				</p>
 			</c:if>
+
+			<hr/>
+
+			<%-- Regles --%>
+			<div class="panel panel-default fs-subgrup">
+				<div class="panel-heading" style="min-height: 50px;">
+					<h3 class="panel-title rgl-title">Regles</h3>
+					<a href="<c:url value="/servei/${servei.codiUrlEncoded}/regla/new"/>" data-toggle="modal" data-refresh-pagina="true" class="btn btn-primary pull-right boto-regla-nova"><i class="fas fa-plus"></i>&nbsp;Nova regla</a>
+				</div>
+				<div class="panel-body">
+					<table id="taula-regles" class="table table-striped table-bordered taula-camps" style="width: 100%">
+						<thead>
+						<tr>
+							<th style="width: 19%"><spring:message code="servei.regla.nom" /></th>
+							<th style="width: 15%"><spring:message code="servei.regla.modificat" /></th>
+							<th style="width: 30%"><spring:message code="servei.regla.modificat.valor" /></th>
+							<th style="width: 30%"><spring:message code="servei.regla.afectat.valor" /></th>
+							<th style="width: 25%"><spring:message code="servei.regla.accio" /></th>
+							<th style="width: 1%"></th>
+						</tr>
+						</thead>
+						<tbody>
+						<c:choose>
+							<c:when test="${empty regles}">
+								<tr><td colspan="6"><spring:message code="servei.regla.llista.buida" /></td></tr>
+							</c:when>
+							<c:otherwise>
+								<c:forEach items="${regles}" var="regla">
+									<tr id="${regla.ordre}">
+										<td data-id="${regla.id}">${regla.nom}</td>
+										<td>
+											<c:choose>
+												<c:when test="${regla.modificat == 'CAMPS'}"><span class="fas fa-bars"></span> <spring:message code="servei.regla.enum.modificat.CAMPS" /></c:when>
+												<c:when test="${regla.modificat == 'ALGUN_CAMP'}"><span class="fas fa-minus"></span> <spring:message code="servei.regla.enum.modificat.ALGUN_CAMP" /></c:when>
+												<c:when test="${regla.modificat == 'GRUPS'}"><span class="fas fa-cubes"></span> <spring:message code="servei.regla.enum.modificat.GRUPS" /></c:when>
+												<c:when test="${regla.modificat == 'ALGUN_GRUP'}"><span class="fas fa-cube"></span> <spring:message code="servei.regla.enum.modificat.ALGUN_GRUP" /></c:when>
+												<c:otherwise>${regla.modificat}</c:otherwise>
+											</c:choose>
+										</td>
+										<td>
+											<div class="rgl-valors">
+												<c:forEach items="${regla.modificatCodiValor}" var="valor"><span class="label label-default" title="${valor.valor}">${valor.codi}</span></c:forEach>
+											</div>
+										</td>
+										<td>
+											<div class="rgl-valors">
+												<c:forEach items="${regla.afectatCodiValor}" var="valor"><span class="label label-default" title="${valor.valor}">${valor.codi}</span></c:forEach>
+											</div>
+										</td>
+										<td>
+											<c:choose>
+												<c:when test="${regla.accio == 'MOSTRAR'}"><span class="label label-info label-accio"><span class="fas fa-eye"></span> <spring:message code="servei.regla.enum.accio.MOSTRAR"/></span></c:when>
+												<c:when test="${regla.accio == 'OCULTAR'}"><span class="label label-danger label-accio"><span class="fas fa-eye-slash"></span> <spring:message code="servei.regla.enum.accio.OCULTAR"/></span></c:when>
+												<c:when test="${regla.accio == 'EDITAR'}"><span class="label label-success label-accio"><span class="fas fa-pencil-square-o"></span> <spring:message code="servei.regla.enum.accio.EDITAR"/></span></c:when>
+												<c:when test="${regla.accio == 'BLOQUEJAR'}"><span class="label label-warning label-accio"><span class="fas fa-lock"></span> <spring:message code="servei.regla.enum.accio.BLOQUEJAR"/></span></c:when>
+												<c:when test="${regla.accio == 'OBLIGATORI'}"><span class="label label-primary label-accio"><span class="fas fa-asterisk"></span> <spring:message code="servei.regla.enum.accio.OBLIGATORI"/></span></c:when>
+												<c:when test="${regla.accio == 'OPCIONAL'}"><span class="label label-default label-accio"><span class="fas fa-circle"></span> <spring:message code="servei.regla.enum.accio.OPCIONAL"/></span></c:when>
+												<c:otherwise>${regla.modificat}</c:otherwise>
+											</c:choose>
+										</td>
+										<td>
+											<div class="dropdown">
+												<button class="btn btn-primary" data-toggle="dropdown"><span class="fa fa-cog"></span>&nbsp;<spring:message code="comu.accions"/>&nbsp;<span class="caret"></span></button>
+												<ul class="dropdown-menu">
+													<li><a data-toggle="modal" data-maximized="true" data-refresh-pagina="true" href="<c:url value="/servei/${servei.codiUrlEncoded}/regla/${regla.id}"/>"><span class="fas fa-pencil-alt"></span>&nbsp;<spring:message code="comu.boto.modificar"/></a></li>
+													<li><a href="<c:url value="/servei/${servei.codiUrlEncoded}/regla/${regla.id}/delete"/>" data-confirm="<spring:message code="servei.regla.confirmacio.esborrar"/>"><span class="far fa-trash-alt"></span>&nbsp;<spring:message code="comu.boto.esborrar"/></a></li>
+												</ul>
+											</div>
+										</td>
+									</tr>
+								</c:forEach>
+							</c:otherwise>
+						</c:choose>
+						</tbody>
+					</table>
+				</div>
+			</div>
 		</div>
 	</div>
-	
+
 	<div class="well">
 		<a href="<c:url value="/servei"/>" class="btn btn-default pull-right"><span class="fa fa-arrow-left"></span>&nbsp;<spring:message code="comu.boto.tornar"/></a>
 		<c:set var="initModalPreview">initModalPreview(this);return false</c:set>

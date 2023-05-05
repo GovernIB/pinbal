@@ -16,6 +16,13 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
+import es.caib.pinbal.core.dto.CodiValor;
+import es.caib.pinbal.core.dto.ServeiCampGrupDto;
+import es.caib.pinbal.core.dto.regles.AccioEnum;
+import es.caib.pinbal.core.dto.regles.ModificatEnum;
+import es.caib.pinbal.core.dto.regles.ServeiReglaDto;
+import es.caib.pinbal.webapp.command.ServeiReglaCommand;
+import es.caib.pinbal.webapp.helper.EnumHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
 import org.springframework.data.domain.Page;
@@ -334,9 +341,8 @@ public class ServeiController extends BaseController {
 			campsAgrupats.get(clau).add(camp);
 		}
 		model.addAttribute("campsAgrupats", campsAgrupats);
-		model.addAttribute(
-				"grups",
-				serveiService.findServeiCampGrups(serveiCodi));
+		model.addAttribute("grups", serveiService.findServeiCampGrups(serveiCodi));
+		model.addAttribute("regles", serveiService.serveiReglesFindAll(serveiCodi));
 		return "serveiCamp";
 	}
 
@@ -443,9 +449,7 @@ public class ServeiController extends BaseController {
 			campsAgrupats.get(clau).add(camp);
 		}
 		model.addAttribute("campsDadesEspecifiquesAgrupats", campsAgrupats);
-		model.addAttribute(
-				"grups",
-				serveiService.findServeiCampGrups(serveiCodi));
+		model.addAttribute("grups", serveiService.findServeiCampGrups(serveiCodi));
 		return "serveiPreview";
 	}
 
@@ -714,6 +718,178 @@ public class ServeiController extends BaseController {
 		}
 		return "serveiBus";
 	}
+
+	@RequestMapping(value = "/{serveiCodi}/regla/new", method = RequestMethod.GET)
+	public String reglaNewGet(
+			HttpServletRequest request,
+			@PathVariable String serveiCodi,
+			Model model) throws ServeiNotFoundException {
+		ServeiDto servei = serveiService.findAmbCodiPerAdminORepresentant(serveiCodi);
+		model.addAttribute("servei", servei);
+		model.addAttribute(ServeiReglaCommand.builder().serveiId(servei.getId()).build());
+		modelRegles(model, servei.getCodi(), null);
+		return "serveiReglaForm";
+	}
+
+	@RequestMapping(value = "/{serveiCodi}/regla/new", method = RequestMethod.POST)
+	public String reglaNewPost(
+			HttpServletRequest request,
+			@PathVariable String serveiCodi,
+			@Valid ServeiReglaCommand command,
+			BindingResult bindingResult,
+			Model model) throws ServeiNotFoundException {
+		return reglaUpdatePost(
+				request,
+				serveiCodi,
+				null,
+				command,
+				bindingResult,
+				model);
+	}
+
+	@RequestMapping(value = "/{serveiCodi}/regla/{reglaId}", method = RequestMethod.GET)
+	public String reglaUpdateGet(
+			HttpServletRequest request,
+			@PathVariable String serveiCodi,
+			@PathVariable Long reglaId,
+			Model model) throws ServeiNotFoundException {
+		ServeiDto servei = serveiService.findAmbCodiPerAdminORepresentant(serveiCodi);
+		model.addAttribute("servei", servei);
+		ServeiReglaDto regla = serveiService.serveiReglaFindById(reglaId);
+		model.addAttribute(ServeiReglaCommand.asCommand(regla));
+		modelRegles(model, serveiCodi, regla.getModificat());
+		return "serveiReglaForm";
+	}
+
+	@RequestMapping(value = "/{serveiCodi}/regla/{reglaId}", method = RequestMethod.POST)
+	public String reglaUpdatePost(
+			HttpServletRequest request,
+			@PathVariable String serveiCodi,
+			@PathVariable Long reglaId,
+			@Valid ServeiReglaCommand command,
+			BindingResult bindingResult,
+			Model model) throws ServeiNotFoundException {
+		ServeiDto servei = serveiService.findAmbCodiPerAdminORepresentant(serveiCodi);
+		if (bindingResult.hasErrors()) {
+			model.addAttribute("servei", servei);
+			modelRegles(model, serveiCodi, command.getModificat());
+			return "serveiReglaForm";
+		} else {
+			if (reglaId == null) {
+				serveiService.serveiReglaCreate(serveiCodi, ServeiReglaCommand.asDto(command));
+//				AlertHelper.success(request, getMessage(request, "servei.regla.controller.regla.creat"));
+				return getModalControllerReturnValueSuccess(
+						request,
+						"redirect:../..",
+						"servei.regla.controller.regla.creat");
+			} else {
+				serveiService.serveiReglaUpdate(serveiCodi, ServeiReglaCommand.asDto(command));
+//				AlertHelper.success(request, getMessage(request, "servei.regla.controller.regla.actualitzat"));
+				return getModalControllerReturnValueSuccess(
+						request,
+						"redirect:../..",
+						"servei.regla.controller.regla.actualitzat");
+			}
+//			return modalUrlTancar();
+		}
+	}
+
+	@RequestMapping(value = "/{serveiCodi}/regla/{reglaId}/delete")
+	public String reglaDelete(
+			HttpServletRequest request,
+			@PathVariable String serveiCodi,
+			@PathVariable Long reglaId,
+			Model model) throws ServeiNotFoundException {
+		ServeiDto servei = serveiService.findAmbCodiPerAdminORepresentant(serveiCodi);
+
+		serveiService.serveiReglaDelete(serveiCodi, reglaId);
+
+		model.addAttribute("servei", servei);
+		return getAjaxControllerReturnValueSuccess(
+				request,
+				"redirect:/servei/" + serveiCodi + "/camp",
+				"servei.regla.controller.regla.borrat");
+//		return "redirect:/servei/" + serveiCodi + "/camp";
+	}
+
+	@RequestMapping(value = "/{serveiCodi}/regla/{reglaId}/move/{posicio}", method = RequestMethod.GET)
+	@ResponseBody
+	public boolean moureRegla(
+			HttpServletRequest request,
+			@PathVariable String serveiCodi,
+			@PathVariable Long reglaId,
+			@PathVariable int posicio,
+			Model model) throws ServeiNotFoundException {
+		boolean ret = false;
+
+		ServeiDto servei = serveiService.findAmbCodiPerAdminORepresentant(serveiCodi);
+
+		return serveiService.serveiReglaMoure(reglaId, posicio);
+	}
+
+	@RequestMapping(value = "/{serveiCodi}/regla/camp/select", method = RequestMethod.GET)
+	@ResponseBody
+	public List<CodiValor> reglaGetCamps(
+			HttpServletRequest request,
+			@PathVariable String serveiCodi,
+			Model model) throws ServeiNotFoundException {
+
+		List<ServeiCampDto> campsDto = serveiService.findServeiCamps(serveiCodi);
+		// Crea les parelles de codi i valor
+		List<CodiValor> dades = new ArrayList<CodiValor>();
+		for (ServeiCampDto camp : campsDto) {
+			dades.add(CodiValor.builder().codi(camp.getEtiqueta() != null ? camp.getEtiqueta() : camp.getCampNom()).valor(camp.getPath()).build());
+		}
+		return dades;
+	}
+
+	@RequestMapping(value = "/{serveiCodi}/regla/grup/select", method = RequestMethod.GET)
+	@ResponseBody
+	public List<CodiValor> reglaGetGrups(
+			HttpServletRequest request,
+			@PathVariable String serveiCodi,
+			Model model) throws ServeiNotFoundException {
+		List<ServeiCampGrupDto> grupsDto = serveiService.findServeiCampGrups(serveiCodi);
+		// Crea les parelles de codi i valor
+		List<CodiValor> dades = new ArrayList<CodiValor>();
+		for (ServeiCampGrupDto grup : grupsDto) {
+			dades.add(CodiValor.builder().codi(grup.getId().toString()).valor(grup.getNom()).build());
+			if (grup.getFills() != null) {
+				for (ServeiCampGrupDto fill: grup.getFills()) {
+					dades.add(CodiValor.builder().codi(fill.getId().toString()).valor(fill.getNom()).build());
+				}
+			}
+		}
+		return dades;
+	}
+
+	private void modelRegles(Model model, String serveiCodi, ModificatEnum tipus) throws ServeiNotFoundException {
+		model.addAttribute("modificatOptions", EnumHelper.getOptionsForEnum(ModificatEnum.class, "servei.regla.enum.modificat."));
+		model.addAttribute("accioOptions", EnumHelper.getOptionsForEnum(AccioEnum.class, "servei.regla.enum.accio."));
+
+		List<CodiValor> valors = new ArrayList<CodiValor>();
+
+		if (tipus != null) {
+			if (ModificatEnum.CAMPS.equals(tipus) || ModificatEnum.ALGUN_CAMP.equals(tipus)) {
+				List<ServeiCampDto> camps = serveiService.findServeiCamps(serveiCodi);
+				if (camps != null && !camps.isEmpty())
+					for(ServeiCampDto camp: camps)
+						valors.add(CodiValor.builder().valor((camp.getEtiqueta() != null ? camp.getEtiqueta() : camp.getCampNom()) + " | " + camp.getPath()).build());
+			} else {
+				List<ServeiCampGrupDto> grups = serveiService.findServeiCampGrups(serveiCodi);
+				if (grups != null && !grups.isEmpty())
+					for(ServeiCampGrupDto grup: grups) {
+						valors.add(CodiValor.builder().valor(grup.getNom()).build());
+						if (grup.getFills() != null) {
+							for (ServeiCampGrupDto fill: grup.getFills()) {
+								valors.add(CodiValor.builder().valor(fill.getNom()).build());
+							}
+						}
+					}
+			}
+		}
+		model.addAttribute("valors", valors);
+	}
 	
 	@RequestMapping(value = "/{serveiCodi}/redir/save", method = RequestMethod.POST)
 	public String redirPost(
@@ -785,6 +961,8 @@ public class ServeiController extends BaseController {
 		model.addAttribute("procedimentsEntitat", procedimentsEntitat);
 		return "serveiProcedimentList";
 	}
+
+
 	
 	@InitBinder
 	public void initBinder(WebDataBinder binder) {

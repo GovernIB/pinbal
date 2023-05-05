@@ -72,6 +72,8 @@ public class ServeiCampDto implements Serializable {
 	private Integer validacioDataCmpNombre;
 	private ServeiCampDtoValidacioDataTipus validacioDataCmpTipus;
 
+	private boolean campRegla = false;
+
 
 	public String getCampNom() {
 		int index = path.lastIndexOf("/");

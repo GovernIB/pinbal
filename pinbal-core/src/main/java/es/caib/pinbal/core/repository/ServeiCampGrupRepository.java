@@ -3,14 +3,12 @@
  */
 package es.caib.pinbal.core.repository;
 
-import java.util.List;
-
-import org.apache.poi.ss.formula.functions.T;
-import org.springframework.data.jpa.repository.JpaRepository;
-
 import es.caib.pinbal.core.model.ServeiCampGrup;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+
+import java.util.List;
 
 /**
  * Especifica els mètodes que s'han d'emprar per obtenir i modificar la
@@ -21,6 +19,7 @@ import org.springframework.data.jpa.repository.Query;
  */
 public interface ServeiCampGrupRepository extends JpaRepository<ServeiCampGrup, Long> {
 
+	List<ServeiCampGrup> findByServei(String servei);
 	List<ServeiCampGrup> findByServeiAndPareIsNullOrderByOrdreAsc(String servei);
 
 	@Query(	" from ServeiCampGrup scg " +

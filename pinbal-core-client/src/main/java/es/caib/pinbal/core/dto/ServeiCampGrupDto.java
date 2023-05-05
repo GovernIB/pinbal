@@ -3,15 +3,15 @@
  */
 package es.caib.pinbal.core.dto;
 
-import java.io.Serializable;
-import java.util.List;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.apache.commons.lang.builder.ToStringBuilder;
+
+import java.io.Serializable;
+import java.util.List;
 
 /**
  * Dades d'un grup de camps per al formulari d'un servei.
@@ -30,6 +30,9 @@ public class ServeiCampGrupDto implements Serializable {
 	private String ajuda;
 	private int ordre;
 	private List<ServeiCampGrupDto> fills;
+
+	@Builder.Default
+	private boolean grupRegla = false;
 
 	public String getAjudaHtml() {
 		String ajudaHtml = ajuda;

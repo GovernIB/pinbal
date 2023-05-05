@@ -21,7 +21,7 @@
 		<axiom.version>1.2.15</axiom.version>
 		<rampart.version>1.6.4</rampart.version>
 		<cxf.version>2.7.8</cxf.version>
-		<orika.version>1.4.5</orika.version>
+		<orika.version>1.4.6</orika.version>
 		<xdocreport.version>1.0.3</xdocreport.version>
 		<compiler.plugin.version>3.1</compiler.plugin.version>
 		<slf4j.version>1.7.7</slf4j.version>

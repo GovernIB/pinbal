@@ -3,33 +3,11 @@
  */
 package es.caib.pinbal.core.service;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-
-import javax.annotation.Resource;
-
-import es.caib.pinbal.core.dto.DadaEspecificaDto.TipusDadaComplexaEnum;
-import org.springframework.beans.BeansException;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
-import org.springframework.context.MessageSource;
-import org.springframework.context.MessageSourceAware;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.security.acls.domain.BasePermission;
-import org.springframework.security.acls.model.MutableAclService;
-import org.springframework.security.acls.model.Permission;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import es.caib.pinbal.core.dto.ArbreDto;
 import es.caib.pinbal.core.dto.ClauPrivadaDto;
 import es.caib.pinbal.core.dto.ClauPublicaDto;
 import es.caib.pinbal.core.dto.DadaEspecificaDto;
+import es.caib.pinbal.core.dto.DadaEspecificaDto.TipusDadaComplexaEnum;
 import es.caib.pinbal.core.dto.EmisorDto;
 import es.caib.pinbal.core.dto.EntitatDto;
 import es.caib.pinbal.core.dto.FitxerDto;
@@ -46,6 +24,7 @@ import es.caib.pinbal.core.dto.ServeiDto.JustificantTipusDto;
 import es.caib.pinbal.core.dto.ServeiJustificantCampDto;
 import es.caib.pinbal.core.dto.ServeiXsdDto;
 import es.caib.pinbal.core.dto.XsdTipusEnumDto;
+import es.caib.pinbal.core.dto.regles.ServeiReglaDto;
 import es.caib.pinbal.core.helper.DtoMappingHelper;
 import es.caib.pinbal.core.helper.PermisosHelper;
 import es.caib.pinbal.core.helper.PermisosHelper.ObjectIdentifierExtractor;
@@ -66,6 +45,7 @@ import es.caib.pinbal.core.model.ServeiConfig;
 import es.caib.pinbal.core.model.ServeiConfig.EntitatTipus;
 import es.caib.pinbal.core.model.ServeiConfig.JustificantTipus;
 import es.caib.pinbal.core.model.ServeiJustificantCamp;
+import es.caib.pinbal.core.model.ServeiRegla;
 import es.caib.pinbal.core.repository.EntitatRepository;
 import es.caib.pinbal.core.repository.EntitatServeiRepository;
 import es.caib.pinbal.core.repository.EntitatUsuariRepository;
@@ -76,8 +56,10 @@ import es.caib.pinbal.core.repository.ServeiCampGrupRepository;
 import es.caib.pinbal.core.repository.ServeiCampRepository;
 import es.caib.pinbal.core.repository.ServeiConfigRepository;
 import es.caib.pinbal.core.repository.ServeiJustificantCampRepository;
+import es.caib.pinbal.core.repository.ServeiReglaRepository;
 import es.caib.pinbal.core.repository.ServeiRepository;
 import es.caib.pinbal.core.service.exception.EntitatNotFoundException;
+import es.caib.pinbal.core.service.exception.NotFoundException;
 import es.caib.pinbal.core.service.exception.ProcedimentNotFoundException;
 import es.caib.pinbal.core.service.exception.ScspException;
 import es.caib.pinbal.core.service.exception.ServeiAmbConsultesException;
@@ -94,6 +76,26 @@ import es.scsp.common.domain.core.ClavePublica;
 import es.scsp.common.domain.core.EmisorCertificado;
 import es.scsp.common.domain.core.Servicio;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.BeansException;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
+import org.springframework.context.MessageSource;
+import org.springframework.context.MessageSourceAware;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.security.acls.domain.BasePermission;
+import org.springframework.security.acls.model.MutableAclService;
+import org.springframework.security.acls.model.Permission;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import javax.annotation.Resource;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
 
 /**
  * Implementació dels mètodes per a interactuar amb les funcionalitats SCSP.
@@ -128,6 +130,8 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 	private ServeiJustificantCampRepository serveiJustificantCampRepository;
 	@Resource
 	private EntitatServeiRepository entitatServeiRepository;
+	@Resource
+	private ServeiReglaRepository serveiReglaRepository;
 
 	@Resource
 	private ServeiHelper serveiHelper;
@@ -1387,6 +1391,122 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 			resposta.add(toServeiDto(servicio));
 		}
 		return resposta;
+	}
+
+    @Override
+	@Transactional(readOnly = true)
+    public ServeiReglaDto serveiReglaFindByNom(Long serveiId, String nom) {
+        return dtoMappingHelper.getMapperFacade().map(
+				serveiReglaRepository.findByNom(serveiId, nom),
+				ServeiReglaDto.class);
+    }
+
+    @Override
+	@Transactional(readOnly = true)
+    public ServeiReglaDto serveiReglaFindById(Long reglaId) {
+//		Servei servei = serveiRepository.findOne(serveiId);
+//		if (servei == null)
+//			throw new ServeiNotFoundException();
+		return dtoMappingHelper.getMapperFacade().map(
+				serveiReglaRepository.findOne(reglaId),
+				ServeiReglaDto.class);
+    }
+
+	@Override
+	@Transactional
+	public ServeiReglaDto serveiReglaCreate(String serveiCodi, ServeiReglaDto reglaDto) throws ServeiNotFoundException {
+		Servei servei = getServeiByCodi(serveiCodi);
+		Integer seguentOrdre = serveiReglaRepository.getSeguentOrdre(servei.getId());
+		seguentOrdre = seguentOrdre == null ? 0 : seguentOrdre + 1;
+		ServeiRegla regla = ServeiRegla.builder()
+				.nom(reglaDto.getNom())
+				.ordre(seguentOrdre)
+				.modificat(reglaDto.getModificat())
+				.modificatValor(reglaDto.getModificatValor())
+				.afectatValor(reglaDto.getAfectatValor())
+				.accio(reglaDto.getAccio())
+				.servei(servei)
+				.build();
+		return dtoMappingHelper.getMapperFacade().map(serveiReglaRepository.save(regla), ServeiReglaDto.class);
+	}
+
+	@Override
+	@Transactional
+	public ServeiReglaDto serveiReglaUpdate(String serveiCodi, ServeiReglaDto reglaDto) throws ServeiNotFoundException {
+		Servei servei = getServeiByCodi(serveiCodi);
+		ServeiRegla regla = serveiReglaRepository.findOne(reglaDto.getId());
+		if (regla == null)
+			throw new NotFoundException(reglaDto.getId(), ServeiRegla.class);
+
+		regla.setNom(reglaDto.getNom());
+		regla.setModificat(reglaDto.getModificat());
+		regla.setModificatValor(reglaDto.getModificatValor());
+		regla.setAfectatValor(reglaDto.getAfectatValor());
+		regla.setAccio(reglaDto.getAccio());
+		return dtoMappingHelper.getMapperFacade().map(serveiReglaRepository.save(regla), ServeiReglaDto.class);
+	}
+
+	@Override
+	@Transactional
+	public void serveiReglaDelete(String serveiCodi, Long reglaId) throws ServeiNotFoundException {
+		Servei servei = getServeiByCodi(serveiCodi);
+		ServeiRegla regla = serveiReglaRepository.findOne(reglaId);
+		if (regla == null)
+			throw new NotFoundException(reglaId, ServeiRegla.class);
+		serveiReglaRepository.delete(regla);
+	}
+
+	@Override
+	@Transactional
+	public boolean serveiReglaMoure(Long reglaId, int posicio) {
+		log.debug("Moguent la regla (reglaId=" + reglaId + ", posicio=" + posicio + ")");
+		boolean ret = false;
+		ServeiRegla regla = serveiReglaRepository.findOne(reglaId);
+		if (regla == null)
+			throw new NotFoundException(reglaId, ServeiRegla.class);
+
+		List<ServeiRegla> regles = serveiReglaRepository.findByServeiOrderByOrdreAsc(regla.getServei());
+		if(posicio != regles.indexOf(regla)) {
+			regles.remove(regla);
+			regles.add(posicio, regla);
+			int i = 0;
+			for (ServeiRegla r : regles) {
+				r.setOrdre(i++);
+				serveiReglaRepository.save(r);
+			}
+		}
+		return ret;
+	}
+
+	@Override
+	@Transactional
+	public List<ServeiReglaDto> serveiReglesFindAll(String serveiCodi) throws ServeiNotFoundException {
+		Servei servei = getServeiByCodi(serveiCodi);
+		List<ServeiRegla> regles = serveiReglaRepository.findByServeiOrderByOrdreAsc(servei);
+		return dtoMappingHelper.getMapperFacade().mapAsList(regles, ServeiReglaDto.class);
+	}
+
+	@Override
+	@Transactional(readOnly = true)
+	public List<Long> findCampIdsByReglesServei(String serveiCodi) throws ServeiNotFoundException {
+		Servei servei = getServeiByCodi(serveiCodi);
+		return serveiReglaRepository.findCampsRegles(serveiCodi);
+	}
+
+	@Override
+	@Transactional(readOnly = true)
+	public List<Long> findGrupIdsByReglesServei(String serveiCodi) throws ServeiNotFoundException {
+//		Servei servei = getServeiByCodi(serveiCodi);
+		return serveiReglaRepository.findGrupsRegles(serveiCodi);
+	}
+
+	private Servei getServeiByCodi(String serveiCodi) throws ServeiNotFoundException {
+		List<Servei> serveis = serveiRepository.findByCode(serveiCodi);
+		if (serveis.size() == 0) {
+			log.debug("No s'ha trobat el servicio (codi=" + serveiCodi + ")");
+			throw new ServeiNotFoundException();
+		}
+		return serveis.get(0);
 	}
 
 	private Servicio toServicioScsp(ServeiDto dto) {

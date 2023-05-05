@@ -22,6 +22,131 @@ databaseChangeLog:
             baseColumnNames: pare_id
             referencedTableName: pbl_servei_camp_grup
             referencedColumnNames: id
+
+        - createTable:
+            tableName: pbl_servei_regla
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: pbl_servei_regla_pk
+              - column:
+                  name: nom
+                  type: VARCHAR2(255 CHAR)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: servei_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: modificat
+                  type: VARCHAR2(32 CHAR)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: accio
+                  type: VARCHAR2(32 CHAR)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: ordre
+                  type: INTEGER
+                  constraints:
+                    nullable: false
+              - column:
+                  name: createdby_codi
+                  type: VARCHAR2(64 CHAR)
+              - column:
+                  name: createddate
+                  type: TIMESTAMP
+              - column:
+                  name: lastmodifiedby_codi
+                  type: VARCHAR2(64 CHAR)
+              - column:
+                  name: lastmodifieddate
+                  type: TIMESTAMP
+        - addUniqueConstraint:
+            tableName: pbl_servei_regla
+            constraintName: pbl_servei_regla_uk
+            columnNames: nom, servei_id
+        - addForeignKeyConstraint:
+            constraintName: pbl_regla_servei_fk
+            baseTableName: pbl_servei_regla
+            baseColumnNames: servei_id
+            referencedTableName: core_servicio
+            referencedColumnNames: id
+        - createIndex:
+            indexName: pbl_regla_servei_fk_i
+            tableName: pbl_servei_regla
+            columns:
+              - column:
+                  name: servei_id
+
+        - createTable:
+            tableName: pbl_servei_regla_valor_mod
+            columns:
+              - column:
+                  name: regla_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: valor
+                  type: VARCHAR2(255 CHAR)
+        - addPrimaryKey:
+            tableName: pbl_servei_regla_valor_mod
+            constraintName: pbl_servei_regla_valor_mod_pk
+            columnNames: regla_id, valor
+        - addForeignKeyConstraint:
+            constraintName: pbl_regla_valor_mod_fk
+            baseTableName: pbl_servei_regla_valor_mod
+            baseColumnNames: regla_id
+            referencedTableName: pbl_servei_regla
+            referencedColumnNames: id
+        - createIndex:
+            indexName: pbl_regla_valor_mod_fk_i
+            tableName: pbl_servei_regla_valor_mod
+            columns:
+              - column:
+                  name: regla_id
+
+        - createTable:
+            tableName: pbl_servei_regla_valor_afc
+            columns:
+              - column:
+                  name: regla_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: valor
+                  type: VARCHAR2(255 CHAR)
+        - addPrimaryKey:
+            tableName: pbl_servei_regla_valor_afc
+            constraintName: pbl_servei_regla_valor_afc_pk
+            columnNames: regla_id, valor
+        - addForeignKeyConstraint:
+            constraintName: pbl_regla_valor_afc_fk
+            baseTableName: pbl_servei_regla_valor_afc
+            baseColumnNames: regla_id
+            referencedTableName: pbl_servei_regla
+            referencedColumnNames: id
+        - createIndex:
+            indexName: pbl_regla_valor_afc_fk_i
+            tableName: pbl_servei_regla_valor_afc
+            columns:
+              - column:
+                  name: regla_id
         - sql:
             dbms: oracle
-            sql: ALTER TABLE pbl_servei_camp_grup MOVE LOB(ajuda) STORE AS pbl_grup_ajuda_lob(TABLESPACE pinbal_lob INDEX pbl_grup_ajuda_lob_i);
+            sql: "
+            ALTER TABLE pbl_servei_camp_grup MOVE LOB(ajuda) STORE AS pbl_grup_ajuda_lob(TABLESPACE pinbal_lob INDEX pbl_grup_ajuda_lob_i);
+            grant select, update, insert, delete on pbl_servei_regla to www_pinbal;
+            grant select, update, insert, delete on pbl_servei_regla_valor_mod to www_pinbal;
+            grant select, update, insert, delete on pbl_servei_regla_valor_afc to www_pinbal;
+            "

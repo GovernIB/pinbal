@@ -1,72 +1,19 @@
 package es.caib.pinbal.webapp.controller;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.lang.reflect.InvocationTargetException;
-import java.sql.SQLException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.regex.PatternSyntaxException;
-
-import javax.naming.NamingException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.validation.Valid;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-
 import es.caib.pinbal.core.dto.CodiValor;
-import es.caib.pinbal.core.dto.JsonResponse;
-import org.apache.commons.codec.binary.Base64;
-import org.joda.time.Days;
-import org.joda.time.LocalDate;
-import org.joda.time.Period;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.propertyeditors.CustomDateEditor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
-import org.springframework.validation.Errors;
-import org.springframework.validation.Validator;
-import org.springframework.web.bind.WebDataBinder;
-import org.springframework.web.bind.annotation.InitBinder;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.multipart.MultipartHttpServletRequest;
-import org.w3c.dom.Document;
-import org.xml.sax.SAXException;
-
 import es.caib.pinbal.core.dto.ConsultaDto;
 import es.caib.pinbal.core.dto.ConsultaDto.DocumentTipus;
 import es.caib.pinbal.core.dto.DadaEspecificaDto;
 import es.caib.pinbal.core.dto.EntitatDto;
 import es.caib.pinbal.core.dto.EntitatUsuariDto;
+import es.caib.pinbal.core.dto.JsonResponse;
 import es.caib.pinbal.core.dto.JustificantDto;
 import es.caib.pinbal.core.dto.NodeDto;
 import es.caib.pinbal.core.dto.ServeiCampDto;
 import es.caib.pinbal.core.dto.ServeiCampDto.ServeiCampDtoTipus;
 import es.caib.pinbal.core.dto.ServeiCampDto.ServeiCampDtoValidacioDataTipus;
 import es.caib.pinbal.core.dto.ServeiCampDto.ServeiCampDtoValidacioOperacio;
+import es.caib.pinbal.core.dto.ServeiCampGrupDto;
 import es.caib.pinbal.core.dto.ServeiDto;
 import es.caib.pinbal.core.dto.UsuariDto;
 import es.caib.pinbal.core.service.ConsultaService;
@@ -103,6 +50,58 @@ import es.caib.pinbal.webapp.datatables.ServerSideRequest;
 import es.caib.pinbal.webapp.datatables.ServerSideResponse;
 import es.caib.pinbal.webapp.view.SpreadSheetReader;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.codec.binary.Base64;
+import org.joda.time.Days;
+import org.joda.time.LocalDate;
+import org.joda.time.Period;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.propertyeditors.CustomDateEditor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.Errors;
+import org.springframework.validation.Validator;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.InitBinder;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
+import org.w3c.dom.Document;
+import org.xml.sax.SAXException;
+
+import javax.naming.NamingException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.lang.reflect.InvocationTargetException;
+import java.sql.SQLException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 
 /**
  * Controlador per a la pàgina de consultes.
@@ -913,10 +912,9 @@ public class ConsultaController extends BaseController {
 			}
 			campsAgrupats.get(clau).add(camp);
 		}
+		List<ServeiCampGrupDto> grups = serveiService.findServeiCampGrups(serveiCodi);
 		model.addAttribute("campsDadesEspecifiquesAgrupats", campsAgrupats);
-		model.addAttribute(
-				"grups",
-				serveiService.findServeiCampGrups(serveiCodi));
+		model.addAttribute("grups", grups);
 		boolean mostraDadesEspecifiques = false;
 		for (ServeiCampDto camp: camps) {
 			if (camp.isVisible()) {
@@ -925,6 +923,29 @@ public class ConsultaController extends BaseController {
 			}
 		}
 		model.addAttribute("mostrarDadesEspecifiques", mostraDadesEspecifiques);
+		if (mostraDadesEspecifiques) {
+			List<Long> campsRegles = serveiService.findCampIdsByReglesServei(serveiCodi);
+			List<Long> grupsRegles = serveiService.findGrupIdsByReglesServei(serveiCodi);
+
+			if (campsRegles != null && !campsRegles.isEmpty()) {
+				for (ServeiCampDto camp: camps) {
+					if (campsRegles.contains(camp.getId()))
+						camp.setCampRegla(true);
+				}
+			}
+			if (grupsRegles != null && !grupsRegles.isEmpty()) {
+				for (ServeiCampGrupDto grup: grups) {
+					if (grupsRegles.contains(grup.getId()))
+						grup.setGrupRegla(true);
+				}
+			}
+//			List<ServeiReglaDto> serveiReglaDtos = serveiService.serveiReglesFindAll(serveiCodi);
+//			if (serveiReglaDtos != null && !serveiReglaDtos.isEmpty()) {
+//
+//				model.addAttribute("campsRegles", );
+//				model.addAttribute("grupsRegles", "");
+//			}
+		}
 	}
 	
 	@SuppressWarnings("rawtypes")

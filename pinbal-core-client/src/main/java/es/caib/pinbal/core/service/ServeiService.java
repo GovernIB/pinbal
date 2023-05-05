@@ -1,12 +1,5 @@
 package es.caib.pinbal.core.service;
 
-import java.io.IOException;
-import java.util.List;
-
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.security.access.prepost.PreAuthorize;
-
 import es.caib.pinbal.core.dto.ArbreDto;
 import es.caib.pinbal.core.dto.ClauPrivadaDto;
 import es.caib.pinbal.core.dto.ClauPublicaDto;
@@ -23,6 +16,7 @@ import es.caib.pinbal.core.dto.ServeiDto;
 import es.caib.pinbal.core.dto.ServeiJustificantCampDto;
 import es.caib.pinbal.core.dto.ServeiXsdDto;
 import es.caib.pinbal.core.dto.XsdTipusEnumDto;
+import es.caib.pinbal.core.dto.regles.ServeiReglaDto;
 import es.caib.pinbal.core.service.exception.EntitatNotFoundException;
 import es.caib.pinbal.core.service.exception.ProcedimentNotFoundException;
 import es.caib.pinbal.core.service.exception.ScspException;
@@ -31,6 +25,12 @@ import es.caib.pinbal.core.service.exception.ServeiBusNotFoundException;
 import es.caib.pinbal.core.service.exception.ServeiCampGrupNotFoundException;
 import es.caib.pinbal.core.service.exception.ServeiCampNotFoundException;
 import es.caib.pinbal.core.service.exception.ServeiNotFoundException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.prepost.PreAuthorize;
+
+import java.io.IOException;
+import java.util.List;
 
 /**
  * Declaració dels mètodes per a interactuar amb les funcionalitats SCSP.
@@ -671,4 +671,66 @@ public interface ServeiService {
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public List<ServeiDto> findAll();
 
+	/**
+	 * Obté una regla donat el servei i el nom
+	 *
+	 * @param serveiId
+	 * @param nom
+	 * @return
+	 */
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	public ServeiReglaDto serveiReglaFindByNom(Long serveiId, String nom);
+
+	/**
+	 * Obté una regla donat el servei i l'identificador
+	 */
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	public ServeiReglaDto serveiReglaFindById(Long reglaId);
+
+	/**
+	 * Crea una nova regla
+	 * @param serveiCodi
+	 * @param reglaDto
+	 */
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	ServeiReglaDto serveiReglaCreate(String serveiCodi, ServeiReglaDto reglaDto) throws ServeiNotFoundException;
+
+	/**
+	 * Actualitza una regla existent
+	 * @param serveiCodi
+	 * @param reglaDto
+	 */
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	ServeiReglaDto serveiReglaUpdate(String serveiCodi, ServeiReglaDto reglaDto) throws ServeiNotFoundException;
+
+	/**
+	 * Elimina una regla existent
+	 * @param serveiCodi
+	 * @param reglaId
+	 */
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	void serveiReglaDelete(String serveiCodi, Long reglaId) throws ServeiNotFoundException;
+
+	/**
+	 * Canvia l'ordre d'una regla
+	 * @param reglaId
+	 * @param posicio
+	 * @return
+	 */
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	boolean serveiReglaMoure(Long reglaId, int posicio);
+
+	/**
+	 * Consulta totes les regles d'un servei
+	 * @param serveiCodi
+	 * @return
+	 */
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	List<ServeiReglaDto> serveiReglesFindAll(String serveiCodi) throws ServeiNotFoundException;
+
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_DELEG')")
+	List<Long> findCampIdsByReglesServei(String serveiCodi) throws ServeiNotFoundException;
+
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_DELEG')")
+	List<Long> findGrupIdsByReglesServei(String serveiCodi) throws ServeiNotFoundException;
 }
