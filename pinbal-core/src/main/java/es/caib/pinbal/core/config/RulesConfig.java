@@ -1,7 +1,8 @@
 package es.caib.pinbal.core.config;
 
 import es.caib.pinbal.core.regles.accio.RuleAccio;
-import es.caib.pinbal.core.regles.condicio.RuleCondicio;
+import es.caib.pinbal.core.regles.condicio.RuleCampCondicio;
+import es.caib.pinbal.core.regles.condicio.RuleGrupCondicio;
 import org.jeasy.rules.api.Rules;
 import org.jeasy.rules.api.RulesEngine;
 import org.jeasy.rules.core.DefaultRulesEngine;
@@ -18,10 +19,19 @@ public class RulesConfig {
         return rulesEngine;
     }
 
-    @Bean
-    public Rules getRules() {
+    @Bean(name = "campRules")
+    public Rules getCampRules() {
         Rules rules = new Rules();
-        rules.register(new RuleCondicio());
+        rules.register(new RuleCampCondicio());
+        rules.register(new RuleAccio());
+
+        return rules;
+    }
+
+    @Bean(name = "grupRules")
+    public Rules getGrupRules() {
+        Rules rules = new Rules();
+        rules.register(new RuleGrupCondicio());
         rules.register(new RuleAccio());
 
         return rules;

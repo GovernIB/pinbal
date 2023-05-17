@@ -29,7 +29,7 @@
 				<div class="row">
 			</c:if>
 			<div class="col-md-<fmt:formatNumber value="${12 / numColumnes}" maxFractionDigits="0"/>">
-				<div class="form-group<c:if test="${not empty campError}"> has-error</c:if>">
+				<div class="form-group<c:if test="${not empty campError}"> has-error</c:if><c:if test='${camp.campRegla}'> camp-regla</c:if>" data-path="${camp.path}">
 					<label class="control-label" for="${campId}">
 						<c:choose>
 							<c:when test="${camp.tipus == 'ETIQUETA'}">&nbsp;</c:when>

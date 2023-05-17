@@ -16,6 +16,7 @@ import es.caib.pinbal.core.dto.ServeiCampDto.ServeiCampDtoValidacioOperacio;
 import es.caib.pinbal.core.dto.ServeiCampGrupDto;
 import es.caib.pinbal.core.dto.ServeiDto;
 import es.caib.pinbal.core.dto.UsuariDto;
+import es.caib.pinbal.core.dto.regles.CampFormProperties;
 import es.caib.pinbal.core.service.ConsultaService;
 import es.caib.pinbal.core.service.EntitatService;
 import es.caib.pinbal.core.service.HistoricConsultaService;
@@ -726,6 +727,26 @@ public class ConsultaController extends BaseController {
 		return "redirect:servei";
 	}
 
+	// Regles
+
+	@ResponseBody
+	@RequestMapping(value = "/{serveiCodi}/camps/regles", method = RequestMethod.POST)
+	public List<CampFormProperties> campsRegles(
+			HttpServletRequest request,
+			@PathVariable String serveiCodi,
+			@RequestParam(value = "campsModificats[]", required = false) String[] campsModificats) throws ServeiNotFoundException {
+		return serveiService.getCampsByserveiRegla(serveiCodi, campsModificats);
+	}
+
+	@ResponseBody
+	@RequestMapping(value = "/{serveiCodi}/grups/regles", method = RequestMethod.POST)
+	public List<CampFormProperties> grupsRegles(
+			HttpServletRequest request,
+			@PathVariable String serveiCodi,
+			@RequestParam(value = "grupsModificats[]", required = false) String[] grupsModificats) throws ServeiNotFoundException {
+		return serveiService.getGrupsByserveiRegla(serveiCodi, grupsModificats);
+	}
+
 	@InitBinder
 	public void initBinder(WebDataBinder binder) {
 	    SimpleDateFormat dateFormat = new SimpleDateFormat(FORMAT_DATA_DADES_ESPECIFIQUES);
@@ -937,13 +958,19 @@ public class ConsultaController extends BaseController {
 				for (ServeiCampGrupDto grup: grups) {
 					if (grupsRegles.contains(grup.getId()))
 						grup.setGrupRegla(true);
+					if (grup.getFills() != null && !grup.getFills().isEmpty()) {
+						for (ServeiCampGrupDto subgrup: grup.getFills()) {
+							if (grupsRegles.contains(subgrup.getId()))
+								subgrup.setGrupRegla(true);
+						}
+					}
 				}
 			}
 //			List<ServeiReglaDto> serveiReglaDtos = serveiService.serveiReglesFindAll(serveiCodi);
 //			if (serveiReglaDtos != null && !serveiReglaDtos.isEmpty()) {
 //
 //				model.addAttribute("campsRegles", );
-//				model.addAttribute("grupsRegles", "");
+				model.addAttribute("grupsRegles_", "");
 //			}
 		}
 	}

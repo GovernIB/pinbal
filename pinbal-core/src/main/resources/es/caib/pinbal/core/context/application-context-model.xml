@@ -49,6 +49,7 @@
 	<context:component-scan base-package="es.caib.pinbal.core.service" />
 	<context:component-scan base-package="es.caib.pinbal.core.ws" />
 	<context:component-scan base-package="es.caib.pinbal.core.helper" />
+	<context:component-scan base-package="es.caib.pinbal.core.regles" />
 
 	<jpa:repositories base-package="es.caib.pinbal.core.repository" />
 

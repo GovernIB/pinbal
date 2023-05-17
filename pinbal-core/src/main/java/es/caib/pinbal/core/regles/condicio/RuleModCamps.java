@@ -17,6 +17,7 @@ public class RuleModCamps {
         return ModificatEnum.CAMPS.equals(fact.getModificat())
                 && TipusVarEnum.CAMP.equals(fact.getTipus())
                 && fact.getAfectatValors().contains(fact.getVarCodi())
+                && fact.getCampsModificats() != null
                 && fact.getCampsModificats().containsAll(fact.getModificatValors());
     }
 

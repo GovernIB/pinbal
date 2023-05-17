@@ -44,7 +44,109 @@
 				});
 			</c:if>
 			$('.btn-ppv').popover();
+
+			$(".grup-regla input, .grup-regla select").change( (event) => {
+				updateGrupsRegles();
+			});
+			$(".camp-regla input, .camp-regla select").change( () => {
+				updateCampsRegles();
+			});
+			updateCampsRegles();
 		});
+
+		const campsModificats = () => {
+			let campsModiicats = $("#dades-especifiques-grup").find("input, select").filter(function () {
+				return $.trim($(this).val()).length > 0
+			}).map(function() {
+				return $(this).closest(".form-group").data('path')
+			}).get();
+			return campsModiicats;
+		}
+		const grupModificats = () => {
+			let grupsModificats = $("#dades-especifiques-grup").find("input, select").filter(function () {
+				return $.trim($(this).val()).length > 0
+			}).map(function() {
+				return $(this).parents(".grup-regla").get()
+			}).map(function() {
+				return $(this).data('nom')
+			}).get();
+			return grupsModificats;
+		}
+
+		const updateCampsRegles = () => {
+			const params = campsModificats();
+			$.ajax({
+				type: "post",
+				dataType: 'json',
+				data: {campsModificats: params},
+				url: '<c:url value="/consulta/${servei.codiUrlEncoded}/camps/regles"/>',
+				async: false,
+				success: (response) => {
+					updateCamps(response);
+				}
+			});
+		}
+		const updateCamps = (campsRegles) => {
+			console.log("Regles de camps: ", campsRegles);
+			if (campsRegles) {
+				campsRegles.forEach( function(campRegla) {
+					if ($("#camp_" + campRegla.varId).length) {
+						let camp = $("#camp_" + campRegla.varId);
+						const grup = camp.closest(".fs-grup");
+						const subgrup = camp.closest(".fs-subgrup");
+						const editable = grup.length ? (grup.hasClass('editable') ? (subgrup.length ? subgrup.hasClass('editable') : true) : false) : true;
+						camp.prop("disabled", !(editable && campRegla.editable));
+						camp.toggleClass("ocult", !campRegla.visible);
+						let etiqueta = camp.closest(".form-group").find('label');
+						let etiquetaText = etiqueta.text().trim();
+						if (etiquetaText.endsWith("*"))
+							etiquetaText = etiquetaText.substring(0, etiquetaText.size() - 2);
+						if (campRegla.obligatori)
+							etiquetaText = etiquetaText + " *";
+						etiqueta.text(etiquetaText);
+					}
+				});
+			}
+		}
+		const updateGrupsRegles = () => {
+			const params = grupModificats();
+			$.ajax({
+				type: "post",
+				dataType: 'json',
+				data: {grupsModificats: params},
+				url: '<c:url value="/consulta/${servei.codiUrlEncoded}/grups/regles"/>',
+				async: false,
+				success: (response) => {
+					updateGrups(response);
+				}
+			});
+		}
+		const updateGrups = (grupsRegles) => {
+			console.log("Regles de grups: ", grupsRegles);
+			if (grupsRegles) {
+				grupsRegles.forEach( function(grupRegla) {
+					if ($("#grup_" + grupRegla.varId).length) {
+						let grup = $("#grup_" + grupRegla.varId);
+						const isGrup = grup.is("fieldset");
+
+						// Editable
+						grup.toggleClass("editable", grupRegla.editable);
+
+						// Visible
+						grup.toggleClass("ocult", !grupRegla.visible);
+
+						// Obligatori
+						let etiqueta = isGrup ? grup.find(".fs-grup-nom") : grup.find(".panel-title");
+						let etiquetaText = etiqueta.text().trim();
+						if (etiquetaText.endsWith("*"))
+							etiquetaText = etiquetaText.substring(0, etiquetaText.size() - 2);
+						if (grupRegla.obligatori)
+							etiquetaText = etiquetaText + " *";
+						etiqueta.text(etiquetaText);
+					}
+				});
+			}
+		}
 	</script>
 	<style>
 		legend {font-weight: bold;}
@@ -66,7 +168,7 @@
 	<c:url value="/consulta/${servei.codiUrlEncoded}/plantilla/ODS" var="downloadPlantillaOdsUrl"/>
 	<c:url value="/consulta/${servei.codiUrlEncoded}/new" var="formAction"/>
 	<div class="container-fluid">
-	<form:form action="${formAction}" method="post" cssClass="" commandName="consultaCommand" enctype="multipart/form-data">
+	<form:form id="consultaForm" action="${formAction}" method="post" cssClass="" commandName="consultaCommand" enctype="multipart/form-data">
 		<form:hidden path="serveiCodi"/>
 		<form:hidden path="multiple" />
 		<br/>

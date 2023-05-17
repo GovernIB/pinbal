@@ -24,6 +24,18 @@ public interface ServeiReglaRepository extends JpaRepository<ServeiRegla, Long> 
 
 	public List<ServeiRegla> findByServeiOrderByOrdreAsc(Servei servei);
 
+	@Query("from ServeiRegla r " +
+			"where r.servei=:servei " +
+			"  and r.modificat in (es.caib.pinbal.core.dto.regles.ModificatEnum.ALGUN_CAMP, es.caib.pinbal.core.dto.regles.ModificatEnum.CAMPS) " +
+			"order by r.ordre asc")
+	public List<ServeiRegla> findReglesCamps(@Param("servei") Servei servei);
+
+	@Query("from ServeiRegla r " +
+			"where r.servei=:servei " +
+			"  and r.modificat in (es.caib.pinbal.core.dto.regles.ModificatEnum.ALGUN_GRUP, es.caib.pinbal.core.dto.regles.ModificatEnum.GRUPS) " +
+			"order by r.ordre asc")
+	public List<ServeiRegla> findReglesGrups(@Param("servei") Servei servei);
+
 //	@Query("select count(sr) from ServeiRegla sr where sr.servei.id = :serveiId ")
 //	public Long countByServeiId(@Param("serveiId") Long serveiId);
 

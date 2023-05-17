@@ -6,6 +6,7 @@ import lombok.Data;
 @Data
 @Builder
 public class CampFormProperties {
+    private Long varId;
     private boolean visible;
     private boolean editable;
     private boolean obligatori;

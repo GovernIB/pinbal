@@ -18,6 +18,7 @@ public class RuleModGrups {
         return ModificatEnum.GRUPS.equals(fact.getModificat())
                 && TipusVarEnum.GRUP.equals(fact.getTipus())
                 && fact.getAfectatValors().contains(fact.getVarCodi())
+                && fact.getGrupsModificats() != null
                 && fact.getGrupsModificats().containsAll(fact.getModificatValors());
     }
 

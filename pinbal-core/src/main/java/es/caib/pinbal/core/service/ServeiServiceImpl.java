@@ -24,6 +24,7 @@ import es.caib.pinbal.core.dto.ServeiDto.JustificantTipusDto;
 import es.caib.pinbal.core.dto.ServeiJustificantCampDto;
 import es.caib.pinbal.core.dto.ServeiXsdDto;
 import es.caib.pinbal.core.dto.XsdTipusEnumDto;
+import es.caib.pinbal.core.dto.regles.CampFormProperties;
 import es.caib.pinbal.core.dto.regles.ServeiReglaDto;
 import es.caib.pinbal.core.helper.DtoMappingHelper;
 import es.caib.pinbal.core.helper.PermisosHelper;
@@ -46,6 +47,7 @@ import es.caib.pinbal.core.model.ServeiConfig.EntitatTipus;
 import es.caib.pinbal.core.model.ServeiConfig.JustificantTipus;
 import es.caib.pinbal.core.model.ServeiJustificantCamp;
 import es.caib.pinbal.core.model.ServeiRegla;
+import es.caib.pinbal.core.regles.ReglaHelper;
 import es.caib.pinbal.core.repository.EntitatRepository;
 import es.caib.pinbal.core.repository.EntitatServeiRepository;
 import es.caib.pinbal.core.repository.EntitatUsuariRepository;
@@ -94,6 +96,8 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.annotation.Resource;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 
@@ -143,6 +147,8 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 	private UsuariHelper usuariHelper;
 	@Resource
 	private ServeiXsdHelper serveiXsdHelper;
+	@Resource
+	private ReglaHelper reglaHelper;
 
 	@Resource
 	private MutableAclService aclService;
@@ -1498,6 +1504,20 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 	public List<Long> findGrupIdsByReglesServei(String serveiCodi) throws ServeiNotFoundException {
 //		Servei servei = getServeiByCodi(serveiCodi);
 		return serveiReglaRepository.findGrupsRegles(serveiCodi);
+	}
+
+	@Override
+	@Transactional(readOnly = true)
+	public List<CampFormProperties> getCampsByserveiRegla(String serveiCodi, String[] campsModificats) throws ServeiNotFoundException {
+		Servei servei = getServeiByCodi(serveiCodi);
+		return reglaHelper.getCampFormProperties(servei, new HashSet<String>(Arrays.asList(campsModificats)));
+	}
+
+	@Override
+	@Transactional(readOnly = true)
+	public List<CampFormProperties> getGrupsByserveiRegla(String serveiCodi, String[] grupsModificats) throws ServeiNotFoundException {
+		Servei servei = getServeiByCodi(serveiCodi);
+		return reglaHelper.getGrupFormProperties(servei, new HashSet<String>(Arrays.asList(grupsModificats)));
 	}
 
 	private Servei getServeiByCodi(String serveiCodi) throws ServeiNotFoundException {

@@ -95,13 +95,13 @@ if (map != null) {
 		</c:forEach>
 	</fieldset>
 </c:if>
-<c:set var="mostrarDadesEspecifiques" value="${false}"/>
-<c:forEach var="camp" items="${campsDadesEspecifiques}">
-	<c:if test="${camp.visible}"><c:set var="mostrarDadesEspecifiques" value="${true}"/></c:if>
-</c:forEach>
+<%--<c:set var="mostrarDadesEspecifiques" value="${false}"/>--%>
+<%--<c:forEach var="camp" items="${campsDadesEspecifiques}">--%>
+<%--	<c:if test="${camp.visible}"><c:set var="mostrarDadesEspecifiques" value="${true}"/></c:if>--%>
+<%--</c:forEach>--%>
 <c:choose>
 	<c:when test="${mostrarDadesEspecifiques}">
-		<fieldset>
+		<fieldset id="dades-especifiques-grup">
 			<c:if test="${not empty campsSenseAgrupar}">
 				<legend><spring:message code="consulta.form.dades.especifiques"/></legend>
 				<div class="clearfix legend-margin-bottom"></div>
@@ -111,7 +111,7 @@ if (map != null) {
 			<c:set var="campsPerMostrar" value="${campsSenseAgrupar}" scope="request"/>
 			<jsp:include page="dadesEspecifiquesForm.jsp"/>
 			<c:forEach var="grup" items="${grups}">
-				<fieldset class="fs-grup">
+				<fieldset id="grup_${grup.id}" class="fs-grup<c:if test='${grup.grupRegla}'> grup-regla</c:if> editable" data-nom="${grup.nom}">
 					<legend>
 						<span class="fs-grup-nom">${grup.nom}</span>
 						<c:if test="${not empty grup.ajuda}">
@@ -126,7 +126,7 @@ if (map != null) {
 						<%-- Subgrups --%>
 					<c:if test="${not empty grup.fills}">
 						<c:forEach var="subgrup" items="${grup.fills}">
-							<div class="panel panel-default fs-subgrup">
+							<div id="grup_${subgrup.id}" class="panel panel-default fs-subgrup<c:if test='${subgrup.grupRegla}'> grup-regla</c:if> editable" data-nom="${subgrup.nom}">
 								<div class="panel-heading">
 									<h3 class="panel-title">${subgrup.nom}</h3>
 									<c:if test="${not empty subgrup.ajuda}">

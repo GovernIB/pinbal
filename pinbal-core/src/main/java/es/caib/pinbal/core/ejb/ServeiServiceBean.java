@@ -19,6 +19,7 @@ import es.caib.pinbal.core.dto.ServeiDto;
 import es.caib.pinbal.core.dto.ServeiJustificantCampDto;
 import es.caib.pinbal.core.dto.ServeiXsdDto;
 import es.caib.pinbal.core.dto.XsdTipusEnumDto;
+import es.caib.pinbal.core.dto.regles.CampFormProperties;
 import es.caib.pinbal.core.dto.regles.ServeiReglaDto;
 import es.caib.pinbal.core.service.ServeiService;
 import es.caib.pinbal.core.service.exception.EntitatNotFoundException;
@@ -430,6 +431,18 @@ public class ServeiServiceBean implements ServeiService {
 	@RolesAllowed("PBL_ADMIN, tothom")
 	public List<Long> findGrupIdsByReglesServei(String serveiCodi) throws ServeiNotFoundException {
 		return delegate.findGrupIdsByReglesServei(serveiCodi);
+	}
+
+    @Override
+	@RolesAllowed("PBL_ADMIN, tothom")
+    public List<CampFormProperties> getCampsByserveiRegla(String serveiCodi, String[] campsModificats) throws ServeiNotFoundException {
+        return delegate.getCampsByserveiRegla(serveiCodi, campsModificats);
+    }
+
+	@Override
+	@RolesAllowed("PBL_ADMIN, tothom")
+	public List<CampFormProperties> getGrupsByserveiRegla(String serveiCodi, String[] grupsModificats) throws ServeiNotFoundException {
+		return delegate.getGrupsByserveiRegla(serveiCodi, grupsModificats);
 	}
 
 }

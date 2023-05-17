@@ -16,6 +16,7 @@ import es.caib.pinbal.core.dto.ServeiDto;
 import es.caib.pinbal.core.dto.ServeiJustificantCampDto;
 import es.caib.pinbal.core.dto.ServeiXsdDto;
 import es.caib.pinbal.core.dto.XsdTipusEnumDto;
+import es.caib.pinbal.core.dto.regles.CampFormProperties;
 import es.caib.pinbal.core.dto.regles.ServeiReglaDto;
 import es.caib.pinbal.core.service.exception.EntitatNotFoundException;
 import es.caib.pinbal.core.service.exception.ProcedimentNotFoundException;
@@ -733,4 +734,10 @@ public interface ServeiService {
 
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_DELEG')")
 	List<Long> findGrupIdsByReglesServei(String serveiCodi) throws ServeiNotFoundException;
+
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_DELEG')")
+	List<CampFormProperties> getCampsByserveiRegla(String serveiCodi, String[] campsModificats) throws ServeiNotFoundException;
+
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_DELEG')")
+	List<CampFormProperties> getGrupsByserveiRegla(String serveiCodi, String[] grupsModificats) throws ServeiNotFoundException;
 }
