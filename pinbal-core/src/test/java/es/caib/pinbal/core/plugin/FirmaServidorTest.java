@@ -8,9 +8,9 @@ import es.caib.pinbal.core.helper.ConfigHelper;
 import es.caib.pinbal.core.helper.IntegracioHelper;
 import es.caib.pinbal.core.helper.PluginHelper;
 import es.caib.pinbal.plugins.FirmaServidorPlugin;
+import es.caib.pinbal.plugins.SignaturaResposta;
 import org.apache.commons.io.IOUtils;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -21,8 +21,6 @@ import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -72,20 +70,20 @@ public class FirmaServidorTest {
         fitxer.setContentType("application/pdf");
         fitxer.setContingut(IOUtils.toByteArray(getClass().getClassLoader().getResourceAsStream("buit.pdf")));
 
-        byte[] contingutFitxerFirmat = pluginHelper.firmaServidorFirmar(
+        SignaturaResposta contingutFitxerFirmat = pluginHelper.firmaServidorFirmar(
                 fitxer,
                 FirmaServidorPlugin.TipusFirma.PADES,
                 "Firma justificant PINBAL",
                 "ca");
 
-        Assert.notNull(contingutFitxerFirmat);
+        Assert.notNull(contingutFitxerFirmat.getContingut());
 
 //        FileOutputStream outputStream = new FileOutputStream("fitxerfirmat.pdf");
 //        outputStream.write(contingutFitxerFirmat);
 //        File fitxerFirmat = new File("fitxerfirmat.pdf");
 //        outputStream.close();
 
-        PdfReader reader = new PdfReader(contingutFitxerFirmat);
+        PdfReader reader = new PdfReader(contingutFitxerFirmat.getContingut());
         AcroFields acroFields = reader.getAcroFields();
         List<String> signatureNames = acroFields.getSignatureNames();
         Assert.notNull(signatureNames);

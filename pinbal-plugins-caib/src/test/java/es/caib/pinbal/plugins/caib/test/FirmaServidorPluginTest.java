@@ -1,15 +1,16 @@
 package es.caib.pinbal.plugins.caib.test;
 
-import static org.junit.Assert.assertNotNull;
-
+import es.caib.pinbal.plugin.PropertiesHelper;
+import es.caib.pinbal.plugins.FirmaServidorPlugin;
+import es.caib.pinbal.plugins.FirmaServidorPlugin.TipusFirma;
+import es.caib.pinbal.plugins.SignaturaDades;
+import es.caib.pinbal.plugins.SignaturaResposta;
+import es.caib.pinbal.plugins.caib.FirmaServidorPluginPortafib;
 import org.apache.commons.io.IOUtils;
 import org.junit.Before;
 import org.junit.Test;
 
-import es.caib.pinbal.plugins.FirmaServidorPlugin;
-import es.caib.pinbal.plugins.FirmaServidorPlugin.TipusFirma;
-import es.caib.pinbal.plugins.caib.FirmaServidorPluginPortafib;
-import es.caib.pinbal.plugin.PropertiesHelper;
+import static org.junit.Assert.assertNotNull;
 
 /** Classe de test per provar el plugin de signatura en el servidor de RIPEA.
  * Les implementacions conegudes del plugin són l'API del Portafib i la
@@ -35,13 +36,16 @@ public class FirmaServidorPluginTest {
 		byte[] contingut = this.obtenirContingutPerFirmar();
 		FirmaServidorPlugin signaturaPlugin = new FirmaServidorPluginPortafib();
 		try {
-			byte[] signatura = signaturaPlugin.firmar(
-					nom,
-					motiu,
-					contingut,
-					TipusFirma.PADES,
-					"ca");
-			assertNotNull("La firma retornada no pot ser nul·la", signatura);
+			SignaturaResposta signatura = signaturaPlugin.signar(
+					SignaturaDades.builder()
+							.nom(nom)
+							.motiu(motiu)
+							.contingut(contingut)
+							.contentType("application/pdf")
+							.tipusFirma(TipusFirma.PADES)
+							.idioma("ca")
+							.build());
+			assertNotNull("La firma retornada no pot ser nul·la", signatura.getContingut());
 		} catch (Exception ex) {
 			System.err.println("Excepció obtinguda signant: " + ex.getMessage());
 			ex.printStackTrace();

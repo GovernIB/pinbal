@@ -7,12 +7,7 @@ package es.caib.pinbal.plugins;
  */
 public interface FirmaServidorPlugin {
 
-	public byte[] firmar(
-			String nom,
-			String motiu,
-			byte[] contingut,
-			TipusFirma tipusFirma,
-			String idioma) throws SistemaExternException;
+	public SignaturaResposta signar(SignaturaDades signaturaDades) throws SistemaExternException;
 
 	public static enum TipusFirma {
 		PADES,

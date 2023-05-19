@@ -3,13 +3,11 @@
  */
 package es.caib.pinbal.plugins.caib;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.util.Properties;
-import java.util.UUID;
-
 import es.caib.pinbal.plugin.PropertiesHelper;
+import es.caib.pinbal.plugins.FirmaServidorPlugin;
+import es.caib.pinbal.plugins.SignaturaDades;
+import es.caib.pinbal.plugins.SignaturaResposta;
+import es.caib.pinbal.plugins.SistemaExternException;
 import org.apache.commons.io.FileUtils;
 import org.fundaciobit.plugins.signature.api.CommonInfoSignature;
 import org.fundaciobit.plugins.signature.api.FileInfoSignature;
@@ -24,8 +22,11 @@ import org.fundaciobit.plugins.signature.api.StatusSignaturesSet;
 import org.fundaciobit.plugins.signatureserver.api.ISignatureServerPlugin;
 import org.fundaciobit.plugins.signatureserver.portafib.PortaFIBSignatureServerPlugin;
 
-import es.caib.pinbal.plugins.FirmaServidorPlugin;
-import es.caib.pinbal.plugins.SistemaExternException;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.Properties;
+import java.util.UUID;
 
 /**
  * Implementació del plugin de firma en servidor emprant PortaFIB.
@@ -51,26 +52,21 @@ public class FirmaServidorPluginPortafib implements FirmaServidorPlugin {
 	}
 
 	@Override
-	public byte[] firmar(
-			String nom,
-			String motiu,
-			byte[] contingut,
-			TipusFirma tipusFirma,
-			String idioma) throws SistemaExternException {
+	public SignaturaResposta signar(SignaturaDades dades) throws SistemaExternException {
 		File sourceFile = null;
 		File destFile = null;
 		String uuid = UUID.randomUUID().toString();
 		try {
 			// Guarda el contingut en un arxiu temporal
-			sourceFile = getArxiuTemporal(uuid, contingut);
+			sourceFile = getArxiuTemporal(uuid, dades.getContingut());
 			String sourcePath = sourceFile.getAbsolutePath();
 			String destPath = sourcePath + "_PADES.pdf";
 			String signType;
 			int signMode;
-			if (tipusFirma == TipusFirma.CADES) {
+			if (dades.getTipusFirma() == TipusFirma.CADES) {
 				signType = FileInfoSignature.SIGN_TYPE_CADES;
 				signMode = FileInfoSignature.SIGN_MODE_EXPLICIT; // Detached
-			} else if (tipusFirma == TipusFirma.XADES) {
+			} else if (dades.getTipusFirma() == TipusFirma.XADES) {
 				signType = FileInfoSignature.SIGN_TYPE_XADES;
 				signMode = FileInfoSignature.SIGN_MODE_EXPLICIT; // Detached
 			} else {
@@ -79,9 +75,14 @@ public class FirmaServidorPluginPortafib implements FirmaServidorPlugin {
 				signMode = FileInfoSignature.SIGN_MODE_IMPLICIT; // Attached
 			}
 			boolean userRequiresTimeStamp = false;
-			signFile(uuid, sourcePath, destPath, signType, signMode, motiu, idioma, userRequiresTimeStamp);
+			signFile(uuid, sourcePath, destPath, signType, signMode, dades.getMotiu(), dades.getIdioma(), userRequiresTimeStamp);
 			destFile = new File(destPath);
-			return FileUtils.readFileToByteArray(destFile);
+			SignaturaResposta resposta = SignaturaResposta.builder()
+					.contingut(FileUtils.readFileToByteArray(destFile))
+					.nom(destFile.getName())
+					.mime("application/pdf")
+					.build();
+			return resposta;
 		} catch (Exception ex) {
 			throw new SistemaExternException(ex);
 		} finally {

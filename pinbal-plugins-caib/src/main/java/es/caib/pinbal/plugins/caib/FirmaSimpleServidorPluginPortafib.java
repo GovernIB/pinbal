@@ -5,6 +5,8 @@ package es.caib.pinbal.plugins.caib;
 
 import es.caib.pinbal.plugin.PropertiesHelper;
 import es.caib.pinbal.plugins.FirmaServidorPlugin;
+import es.caib.pinbal.plugins.SignaturaDades;
+import es.caib.pinbal.plugins.SignaturaResposta;
 import es.caib.pinbal.plugins.SistemaExternException;
 import org.fundaciobit.apisib.apifirmasimple.v1.ApiFirmaEnServidorSimple;
 import org.fundaciobit.apisib.apifirmasimple.v1.beans.FirmaSimpleAvailableProfile;
@@ -45,25 +47,39 @@ import java.util.Properties;
 		this.properties = properties;
 	}
 
+//	@Override
+//	public SignaturaResposta firmar(String nom, String motiu, byte[] contingut, String idioma, String contentType) throws SistemaExternException {
+//
+//		return signar(SignaturaDades.builder().nom(nom).motiu(motiu).contentType(contentType).contingut(contingut).contentType("application/pdf").build());
+//	}
+
 	@Override
-	public byte[] firmar(String nom, String motiu, byte[] contingut, TipusFirma tipusFirma, String idioma) throws SistemaExternException {
+	public SignaturaResposta signar(SignaturaDades dades) throws SistemaExternException {
 
 		try {
 			ApiFirmaEnServidorSimple api = new ApiFirmaEnServidorSimpleJersey(getPropertyEndpoint(), getPropertyUsername(), getPropertyPassword());
-			FirmaSimpleFile fileToSign = new FirmaSimpleFile(nom, "application/pdf", contingut);
+			FirmaSimpleFile fileToSign = new FirmaSimpleFile(dades.getNom(), dades.getContentType(), dades.getContingut());
 
 //			getAvailableProfiles(api);
-			String tipusDocumental = null;
 			String perfil = getPropertyPerfil();
 			FirmaSimpleSignatureResult result = internalSignDocument(
 					api,
 					perfil,
 					fileToSign,
-					motiu,
-					tipusDocumental,
-					idioma);
-			
-			return result.getSignedFile().getData();
+					dades.getMotiu(),
+					dades.getTipusDocumental(),
+					dades.getIdioma());
+
+			SignaturaResposta resposta = SignaturaResposta.builder()
+					.contingut(result.getSignedFile() != null ? result.getSignedFile().getData() : null)
+					.nom(result.getSignedFile() != null ? result.getSignedFile().getNom() : null)
+					.mime(result.getSignedFile() != null ? result.getSignedFile().getMime() : null)
+					.tipusFirma(result.getSignedFileInfo() != null ? result.getSignedFileInfo().getSignType() : null)
+					.tipusFirmaEni(result.getSignedFileInfo() != null ? result.getSignedFileInfo().getEniTipoFirma() : null)
+					.perfilFirmaEni(result.getSignedFileInfo() != null ? result.getSignedFileInfo().getEniPerfilFirma() : null)
+					.build();
+
+			return resposta;
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}

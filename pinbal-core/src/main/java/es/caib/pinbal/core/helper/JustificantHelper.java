@@ -3,38 +3,14 @@
  */
 package es.caib.pinbal.core.helper;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.Writer;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-
-import javax.xml.parsers.ParserConfigurationException;
-
-import es.caib.pinbal.core.model.ProcedimentServei;
-import org.apache.commons.lang.exception.ExceptionUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.MessageSource;
-import org.springframework.context.MessageSourceAware;
-import org.springframework.stereotype.Component;
-
 import com.lowagie.text.DocumentException;
 import com.lowagie.text.pdf.codec.Base64;
-
 import es.caib.pinbal.core.dto.FitxerDto;
 import es.caib.pinbal.core.dto.IntegracioAccioTipusEnumDto;
 import es.caib.pinbal.core.model.Consulta.JustificantEstat;
 import es.caib.pinbal.core.model.IConsulta;
 import es.caib.pinbal.core.model.Procediment;
+import es.caib.pinbal.core.model.ProcedimentServei;
 import es.caib.pinbal.core.model.ServeiConfig;
 import es.caib.pinbal.core.model.ServeiConfig.JustificantTipus;
 import es.caib.pinbal.core.model.ServeiJustificantCamp;
@@ -42,6 +18,7 @@ import es.caib.pinbal.core.repository.ServeiConfigRepository;
 import es.caib.pinbal.core.repository.ServeiJustificantCampRepository;
 import es.caib.pinbal.core.service.ServeiServiceImpl;
 import es.caib.pinbal.plugins.FirmaServidorPlugin.TipusFirma;
+import es.caib.pinbal.plugins.SignaturaResposta;
 import es.caib.pinbal.scsp.JustificantArbreHelper.ElementArbre;
 import es.caib.pinbal.scsp.ResultatEnviamentPeticio;
 import es.caib.pinbal.scsp.ScspHelper;
@@ -57,6 +34,27 @@ import lombok.extern.slf4j.Slf4j;
 import net.sf.jooreports.templates.DocumentTemplate;
 import net.sf.jooreports.templates.DocumentTemplateException;
 import net.sf.jooreports.templates.DocumentTemplateFactory;
+import org.apache.commons.lang.exception.ExceptionUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
+import org.springframework.context.MessageSourceAware;
+import org.springframework.stereotype.Component;
+
+import javax.xml.parsers.ParserConfigurationException;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.Writer;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
 /**
  * Helper per a generar el justificant.
@@ -125,7 +123,7 @@ public class JustificantHelper implements MessageSourceAware {
 						justificantFitxer.setNom(arxiuJustificantGenerat.getNom());
 						justificantFitxer.setContentType("application/pdf");
 						justificantFitxer.setContingut(arxiuJustificantGenerat.getContingut());
-						byte[] justificantFirmat = pluginHelper.firmaServidorFirmar(
+						SignaturaResposta justificantFirmat = pluginHelper.firmaServidorFirmar(
 								justificantFitxer,
 								TipusFirma.PADES,
 								"Firma justificant PINBAL",
@@ -156,7 +154,7 @@ public class JustificantHelper implements MessageSourceAware {
 										"arxiuExpedientUuid=" + arxiuExpedientUuid + ")");
 							}
 						}
-						justificantFitxer.setContingut(justificantFirmat);
+						justificantFitxer.setContingut(justificantFirmat.getContingut());
 						arxiuDocumentUuid = pluginHelper.arxiuDocumentGuardarFirmaPades(
 								arxiuExpedientUuid,
 								consulta.getScspSolicitudId(),
@@ -198,7 +196,7 @@ public class JustificantHelper implements MessageSourceAware {
 									justificantFitxer,
 									TipusFirma.PADES,
 									"Firma justificant PINBAL",
-									"ca");
+									"ca").getContingut();
 							log.debug("Firmat justificant de la consulta (consultaPeticioId=" + consulta.getScspPeticionId() + ", consultaSolicitudId=" + consulta.getScspSolicitudId() + ")");
 						} else {
 							// Signa el justificant amb IBKey

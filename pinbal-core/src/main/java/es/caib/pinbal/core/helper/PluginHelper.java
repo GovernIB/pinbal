@@ -3,6 +3,27 @@
  */
 package es.caib.pinbal.core.helper;
 
+import es.caib.pinbal.core.dto.FitxerDto;
+import es.caib.pinbal.core.dto.IntegracioAccioTipusEnumDto;
+import es.caib.pinbal.plugin.PropertiesHelper;
+import es.caib.pinbal.plugin.unitat.NodeDir3;
+import es.caib.pinbal.plugin.unitat.UnitatsOrganitzativesPlugin;
+import es.caib.pinbal.plugins.CustodiaPlugin;
+import es.caib.pinbal.plugins.DadesUsuari;
+import es.caib.pinbal.plugins.DadesUsuariPlugin;
+import es.caib.pinbal.plugins.FirmaServidorPlugin;
+import es.caib.pinbal.plugins.FirmaServidorPlugin.TipusFirma;
+import es.caib.pinbal.plugins.SignaturaDades;
+import es.caib.pinbal.plugins.SignaturaPlugin;
+import es.caib.pinbal.plugins.SignaturaResposta;
+import es.caib.pinbal.plugins.SistemaExternException;
+import es.caib.plugins.arxiu.api.*;
+import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
@@ -12,46 +33,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-
-import es.caib.pinbal.plugin.unitat.NodeDir3;
-import es.caib.pinbal.plugin.unitat.UnitatsOrganitzativesPlugin;
-import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
-import es.caib.pinbal.plugin.PropertiesHelper;
-
-import es.caib.pinbal.core.dto.FitxerDto;
-import es.caib.pinbal.core.dto.IntegracioAccioTipusEnumDto;
-import es.caib.pinbal.plugins.CustodiaPlugin;
-import es.caib.pinbal.plugins.DadesUsuari;
-import es.caib.pinbal.plugins.DadesUsuariPlugin;
-import es.caib.pinbal.plugins.FirmaServidorPlugin;
-import es.caib.pinbal.plugins.FirmaServidorPlugin.TipusFirma;
-import es.caib.pinbal.plugins.SignaturaPlugin;
-import es.caib.pinbal.plugins.SistemaExternException;
-import es.caib.plugins.arxiu.api.ConsultaFiltre;
-import es.caib.plugins.arxiu.api.ConsultaOperacio;
-import es.caib.plugins.arxiu.api.ConsultaResultat;
-import es.caib.plugins.arxiu.api.ContingutArxiu;
-import es.caib.plugins.arxiu.api.ContingutOrigen;
-import es.caib.plugins.arxiu.api.Document;
-import es.caib.plugins.arxiu.api.DocumentContingut;
-import es.caib.plugins.arxiu.api.DocumentEstat;
-import es.caib.plugins.arxiu.api.DocumentEstatElaboracio;
-import es.caib.plugins.arxiu.api.DocumentExtensio;
-import es.caib.plugins.arxiu.api.DocumentFormat;
-import es.caib.plugins.arxiu.api.DocumentMetadades;
-import es.caib.plugins.arxiu.api.DocumentTipus;
-import es.caib.plugins.arxiu.api.Expedient;
-import es.caib.plugins.arxiu.api.ExpedientEstat;
-import es.caib.plugins.arxiu.api.ExpedientMetadades;
-import es.caib.plugins.arxiu.api.Firma;
-import es.caib.plugins.arxiu.api.FirmaPerfil;
-import es.caib.plugins.arxiu.api.FirmaTipus;
-import es.caib.plugins.arxiu.api.IArxiuPlugin;
 
 /**
  * Helper per a interactuar amb sistemes externs.
@@ -214,7 +195,7 @@ public class PluginHelper {
 		return propertyPlugin != null && !propertyPlugin.isEmpty();
 	}
 
-	public byte[] firmaServidorFirmar(
+	public SignaturaResposta firmaServidorFirmar(
 			FitxerDto fitxer,
 			TipusFirma tipusFirma,
 			String motiu,
@@ -225,12 +206,15 @@ public class PluginHelper {
 		accioParams.put("nom", fitxer.getNom());
 		long t0 = System.currentTimeMillis();
 		try {
-			byte[] firmaContingut = getFirmaServidorPlugin().firmar(
-					fitxer.getNom(),
-					motiu,
-					fitxer.getContingut(),
-					tipusFirma,
-					idioma);
+			SignaturaResposta resposta = getFirmaServidorPlugin().signar(
+					SignaturaDades.builder()
+							.nom(fitxer.getNom())
+							.motiu(motiu)
+							.contingut(fitxer.getContingut())
+							.contentType(fitxer.getContentType())
+							.tipusFirma(tipusFirma)
+							.idioma(idioma)
+							.build());
 			
 			integracioHelper.addAccioOk(
 					IntegracioHelper.INTCODI_FIRMASERV,
@@ -239,7 +223,7 @@ public class PluginHelper {
 					IntegracioAccioTipusEnumDto.ENVIAMENT,
 					System.currentTimeMillis() - t0);
 			
-			return firmaContingut;
+			return resposta;
 		} catch (Exception ex) {
 			String errorDescripcio = "Error al accedir al plugin de firma en servidor: " + ex.getMessage();
 			integracioHelper.addAccioError(
