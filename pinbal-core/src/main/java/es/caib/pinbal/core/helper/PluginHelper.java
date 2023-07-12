@@ -7,6 +7,7 @@ import es.caib.pinbal.core.dto.FitxerDto;
 import es.caib.pinbal.core.dto.IntegracioAccioTipusEnumDto;
 import es.caib.pinbal.plugin.PropertiesHelper;
 import es.caib.pinbal.plugin.unitat.NodeDir3;
+import es.caib.pinbal.plugin.unitat.UnitatOrganitzativa;
 import es.caib.pinbal.plugin.unitat.UnitatsOrganitzativesPlugin;
 import es.caib.pinbal.plugins.CustodiaPlugin;
 import es.caib.pinbal.plugins.DadesUsuari;
@@ -582,6 +583,35 @@ public class PluginHelper {
 			throw new SistemaExternException(errorDescripcio, ex);
 		}
 		return organigrama;
+	}
+
+	public List<UnitatOrganitzativa> getOrganigramaAmbPare(String codiDir3) throws Exception {
+		String accioDescripcio = "Consulta dels òrgans gestors per entitat";
+		Map<String, String> accioParams = new HashMap<String, String>();
+		accioParams.put("codiDir3Entitat", codiDir3);
+		long t0 = System.currentTimeMillis();
+		List<UnitatOrganitzativa> organs = null;
+		try {
+			organs = getUnitatsOrganitzativesPlugin().findAmbPare(codiDir3);
+			integracioHelper.addAccioOk(
+					IntegracioHelper.INTCODI_ORGANS,
+					accioDescripcio,
+					accioParams,
+					IntegracioAccioTipusEnumDto.ENVIAMENT,
+					System.currentTimeMillis() - t0);
+		} catch (SistemaExternException ex) {
+			String errorDescripcio = "Error al consultar els òrgans gestors per entitat";
+			integracioHelper.addAccioError(
+					IntegracioHelper.INTCODI_ORGANS,
+					accioDescripcio,
+					accioParams,
+					IntegracioAccioTipusEnumDto.ENVIAMENT,
+					System.currentTimeMillis() - t0,
+					errorDescripcio,
+					ex);
+			throw new SistemaExternException(errorDescripcio, ex);
+		}
+		return organs;
 	}
 
 	private Expedient toArxiuExpedient(

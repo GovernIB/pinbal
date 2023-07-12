@@ -1,30 +1,29 @@
 package es.caib.pinbal.core.service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.annotation.Resource;
-
+import es.caib.pinbal.core.dto.OrganGestorDto;
 import es.caib.pinbal.core.dto.OrganGestorEstatEnum;
 import es.caib.pinbal.core.dto.PaginacioAmbOrdreDto;
+import es.caib.pinbal.core.helper.DtoMappingHelper;
 import es.caib.pinbal.core.helper.PaginacioHelper;
 import es.caib.pinbal.core.helper.PluginHelper;
+import es.caib.pinbal.core.model.Entitat;
+import es.caib.pinbal.core.model.OrganGestor;
+import es.caib.pinbal.core.repository.EntitatRepository;
+import es.caib.pinbal.core.repository.OrganGestorRepository;
+import es.caib.pinbal.plugin.unitat.NodeDir3;
+import es.caib.pinbal.plugin.unitat.UnitatOrganitzativa;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import es.caib.pinbal.core.dto.OrganGestorDto;
-import es.caib.pinbal.core.helper.DtoMappingHelper;
-import es.caib.pinbal.core.model.Entitat;
-import es.caib.pinbal.core.model.OrganGestor;
-import es.caib.pinbal.core.repository.EntitatRepository;
-import es.caib.pinbal.core.repository.OrganGestorRepository;
-import es.caib.pinbal.plugin.unitat.NodeDir3;
-import lombok.extern.slf4j.Slf4j;
+import javax.annotation.Resource;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @Service
@@ -155,23 +154,45 @@ public class OrganGestorServiceImpl implements OrganGestorService {
 		return dtoMappingHelper.pageEntities2pageDto(organs, OrganGestorDto.class, pageable);
 	}
 
+//	private List<OrganGestorDto> findOrganismesArbreOld(String codiDir3) throws Exception {
+//		if (codiDir3 == null || codiDir3.isEmpty()) {
+//			throw new Exception("organgestor.controller.sync.dir3.arrel.buit.error");
+//		}
+//		List<OrganGestorDto> organismes = new ArrayList<OrganGestorDto>();
+//		Map<String, NodeDir3> organigramaDir3 = pluginHelper.getOrganigramaOrganGestor(codiDir3);
+//		if (organigramaDir3 == null || organigramaDir3.isEmpty() || organigramaDir3.get(codiDir3) == null) {
+//			throw new Exception("organgestor.controller.sync.dir3.no.exist.error");
+//		}
+//		NodeDir3 arrel = organigramaDir3.get(codiDir3);
+//		OrganGestorDto organisme = new OrganGestorDto();
+//		organisme.setCodi(arrel.getCodi());
+//		organisme.setNom(arrel.getDenominacio());
+//		organisme.setPareCodi(null);
+//		organisme.setEstat(getEstat(arrel.getEstat()));
+//		organismes.add(organisme);
+//		findOrganismesFills(arrel, organismes);
+//		return organismes;
+//	}
+
 	private List<OrganGestorDto> findOrganismesArbre(String codiDir3) throws Exception {
 		if (codiDir3 == null || codiDir3.isEmpty()) {
 			throw new Exception("organgestor.controller.sync.dir3.arrel.buit.error");
 		}
-		List<OrganGestorDto> organismes = new ArrayList<OrganGestorDto>();
-		Map<String, NodeDir3> organigramaDir3 = pluginHelper.getOrganigramaOrganGestor(codiDir3);
-		if (organigramaDir3 == null || organigramaDir3.isEmpty() || organigramaDir3.get(codiDir3) == null) {
+		List<OrganGestorDto> organismes = new ArrayList<>();
+		List<UnitatOrganitzativa> organigramaDir3 = pluginHelper.getOrganigramaAmbPare(codiDir3);
+
+		if (organigramaDir3 == null || organigramaDir3.isEmpty()) {
 			throw new Exception("organgestor.controller.sync.dir3.no.exist.error");
 		}
-		NodeDir3 arrel = organigramaDir3.get(codiDir3);
-		OrganGestorDto organisme = new OrganGestorDto();
-		organisme.setCodi(arrel.getCodi());
-		organisme.setNom(arrel.getDenominacio());
-		organisme.setPareCodi(null);
-		organisme.setEstat(getEstat(arrel.getEstat()));
-		organismes.add(organisme);
-		findOrganismesFills(arrel, organismes);
+
+		for(UnitatOrganitzativa unitat: organigramaDir3) {
+			OrganGestorDto organisme = new OrganGestorDto();
+			organisme.setCodi(unitat.getCodi());
+			organisme.setNom(unitat.getDenominacio());
+			organisme.setPareCodi(unitat.getCodiUnitatSuperior());
+			organisme.setEstat(getEstat(unitat.getEstat()));
+			organismes.add(organisme);
+		}
 		return organismes;
 	}
 
