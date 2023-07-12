@@ -3,6 +3,26 @@
  */
 package es.caib.pinbal.core.helper;
 
+import es.caib.pinbal.core.dto.FitxerDto;
+import es.caib.pinbal.core.dto.IntegracioAccioTipusEnumDto;
+import es.caib.pinbal.plugin.PropertiesHelper;
+import es.caib.pinbal.plugin.unitat.NodeDir3;
+import es.caib.pinbal.plugin.unitat.UnitatOrganitzativa;
+import es.caib.pinbal.plugin.unitat.UnitatsOrganitzativesPlugin;
+import es.caib.pinbal.plugins.CustodiaPlugin;
+import es.caib.pinbal.plugins.DadesUsuari;
+import es.caib.pinbal.plugins.DadesUsuariPlugin;
+import es.caib.pinbal.plugins.FirmaServidorPlugin;
+import es.caib.pinbal.plugins.FirmaServidorPlugin.TipusFirma;
+import es.caib.pinbal.plugins.SignaturaPlugin;
+import es.caib.pinbal.plugins.SistemaExternException;
+import es.caib.plugins.arxiu.api.*;
+import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
@@ -12,46 +32,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-
-import es.caib.pinbal.plugin.unitat.NodeDir3;
-import es.caib.pinbal.plugin.unitat.UnitatsOrganitzativesPlugin;
-import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
-import es.caib.pinbal.plugin.PropertiesHelper;
-
-import es.caib.pinbal.core.dto.FitxerDto;
-import es.caib.pinbal.core.dto.IntegracioAccioTipusEnumDto;
-import es.caib.pinbal.plugins.CustodiaPlugin;
-import es.caib.pinbal.plugins.DadesUsuari;
-import es.caib.pinbal.plugins.DadesUsuariPlugin;
-import es.caib.pinbal.plugins.FirmaServidorPlugin;
-import es.caib.pinbal.plugins.FirmaServidorPlugin.TipusFirma;
-import es.caib.pinbal.plugins.SignaturaPlugin;
-import es.caib.pinbal.plugins.SistemaExternException;
-import es.caib.plugins.arxiu.api.ConsultaFiltre;
-import es.caib.plugins.arxiu.api.ConsultaOperacio;
-import es.caib.plugins.arxiu.api.ConsultaResultat;
-import es.caib.plugins.arxiu.api.ContingutArxiu;
-import es.caib.plugins.arxiu.api.ContingutOrigen;
-import es.caib.plugins.arxiu.api.Document;
-import es.caib.plugins.arxiu.api.DocumentContingut;
-import es.caib.plugins.arxiu.api.DocumentEstat;
-import es.caib.plugins.arxiu.api.DocumentEstatElaboracio;
-import es.caib.plugins.arxiu.api.DocumentExtensio;
-import es.caib.plugins.arxiu.api.DocumentFormat;
-import es.caib.plugins.arxiu.api.DocumentMetadades;
-import es.caib.plugins.arxiu.api.DocumentTipus;
-import es.caib.plugins.arxiu.api.Expedient;
-import es.caib.plugins.arxiu.api.ExpedientEstat;
-import es.caib.plugins.arxiu.api.ExpedientMetadades;
-import es.caib.plugins.arxiu.api.Firma;
-import es.caib.plugins.arxiu.api.FirmaPerfil;
-import es.caib.plugins.arxiu.api.FirmaTipus;
-import es.caib.plugins.arxiu.api.IArxiuPlugin;
 
 /**
  * Helper per a interactuar amb sistemes externs.
@@ -598,6 +578,35 @@ public class PluginHelper {
 			throw new SistemaExternException(errorDescripcio, ex);
 		}
 		return organigrama;
+	}
+
+	public List<UnitatOrganitzativa> getOrganigramaAmbPare(String codiDir3) throws Exception {
+		String accioDescripcio = "Consulta dels òrgans gestors per entitat";
+		Map<String, String> accioParams = new HashMap<String, String>();
+		accioParams.put("codiDir3Entitat", codiDir3);
+		long t0 = System.currentTimeMillis();
+		List<UnitatOrganitzativa> organs = null;
+		try {
+			organs = getUnitatsOrganitzativesPlugin().findAmbPare(codiDir3);
+			integracioHelper.addAccioOk(
+					IntegracioHelper.INTCODI_ORGANS,
+					accioDescripcio,
+					accioParams,
+					IntegracioAccioTipusEnumDto.ENVIAMENT,
+					System.currentTimeMillis() - t0);
+		} catch (SistemaExternException ex) {
+			String errorDescripcio = "Error al consultar els òrgans gestors per entitat";
+			integracioHelper.addAccioError(
+					IntegracioHelper.INTCODI_ORGANS,
+					accioDescripcio,
+					accioParams,
+					IntegracioAccioTipusEnumDto.ENVIAMENT,
+					System.currentTimeMillis() - t0,
+					errorDescripcio,
+					ex);
+			throw new SistemaExternException(errorDescripcio, ex);
+		}
+		return organs;
 	}
 
 	private Expedient toArxiuExpedient(
