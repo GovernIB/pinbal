@@ -55,7 +55,10 @@
 		});
 
 		const campsModificats = () => {
-			let campsModiicats = $("#dades-especifiques-grup").find("input, select").filter(function () {
+			let campsModiicats = $("#dades-especifiques-grup").find("input:not([type=hidden]), select").filter(function () {
+				if ($(this).is(':checkbox')) {
+					return $(this).is(":checked");
+				}
 				return $.trim($(this).val()).length > 0
 			}).map(function() {
 				return $(this).closest(".form-group").data('path')
@@ -63,7 +66,10 @@
 			return campsModiicats;
 		}
 		const grupModificats = () => {
-			let grupsModificats = $("#dades-especifiques-grup").find("input, select").filter(function () {
+			let grupsModificats = $("#dades-especifiques-grup").find("input:not([type=hidden]), select").filter(function () {
+				if ($(this).is(':checkbox')) {
+					return $(this).is(":checked");
+				}
 				return $.trim($(this).val()).length > 0
 			}).map(function() {
 				return $(this).parents(".grup-regla").get()
