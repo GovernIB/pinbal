@@ -116,44 +116,30 @@ import java.util.Properties;
 		String administrationID = null;
 		String signerEmail = getPropertySignerEmail();
 
-		FirmaSimpleCommonInfo commonInfo;
-		commonInfo = new FirmaSimpleCommonInfo(perfil, languageUI, certificat, administrationID, signerEmail);
-
 		logger.debug("languageUI = |" + languageUI + "|");
 
-		FirmaSimpleSignDocumentRequest signature;
-		signature = new FirmaSimpleSignDocumentRequest(commonInfo, fileInfoSignature);
-
+		FirmaSimpleCommonInfo commonInfo = new FirmaSimpleCommonInfo(perfil, languageUI, certificat, administrationID, signerEmail);
+		FirmaSimpleSignDocumentRequest signature = new FirmaSimpleSignDocumentRequest(commonInfo, fileInfoSignature);
 		FirmaSimpleSignatureResult fullResults = api.signDocument(signature);
-
 		FirmaSimpleStatus transactionStatus = fullResults.getStatus();
-
 		int status = transactionStatus.getStatus();
 
 		switch (status) {
-
-		case FirmaSimpleStatus.STATUS_INITIALIZING: // = 0;
-			throw new SistemaExternException("API de firma simple ha tornat status erroni: Initializing ...Unknown Error (???)");
-
-		case FirmaSimpleStatus.STATUS_IN_PROGRESS: // = 1;
-			throw new SistemaExternException("API de firma simple ha tornat status erroni: In PROGRESS ...Unknown Error (???)");
-
-		case FirmaSimpleStatus.STATUS_FINAL_ERROR: // = -1;
-			throw new SistemaExternException("Error durant la realització de les firmes: " + transactionStatus.getErrorMessage() +"\r\n" +transactionStatus.getErrorStackTrace());
-
-		case FirmaSimpleStatus.STATUS_CANCELLED: // = -2;
-			throw new SistemaExternException("S'ha cancel·lat el procés de firmat.");
-
-		case FirmaSimpleStatus.STATUS_FINAL_OK: // = 2;
-		{
-			logger.debug(" ===== RESULTAT  =========");
-			logger.debug(" ---- Signature [ " + fullResults.getSignID() + " ]");
-			logger.debug(FirmaSimpleSignedFileInfo.toString(fullResults.getSignedFileInfo()));
-
-			return fullResults;
-		}
-		default:
-			throw new SistemaExternException("Status de firma desconegut");
+			case FirmaSimpleStatus.STATUS_INITIALIZING: // = 0;
+				throw new SistemaExternException("API de firma simple ha tornat status erroni: Initializing ...Unknown Error (???)");
+			case FirmaSimpleStatus.STATUS_IN_PROGRESS: // = 1;
+				throw new SistemaExternException("API de firma simple ha tornat status erroni: In PROGRESS ...Unknown Error (???)");
+			case FirmaSimpleStatus.STATUS_FINAL_ERROR: // = -1;
+				throw new SistemaExternException("Error durant la realització de les firmes: " + transactionStatus.getErrorMessage() +"\r\n" +transactionStatus.getErrorStackTrace());
+			case FirmaSimpleStatus.STATUS_CANCELLED: // = -2;
+				throw new SistemaExternException("S'ha cancel·lat el procés de firmat.");
+			case FirmaSimpleStatus.STATUS_FINAL_OK: // = 2;
+				logger.debug(" ===== RESULTAT  =========");
+				logger.debug(" ---- Signature [ " + fullResults.getSignID() + " ]");
+				logger.debug(FirmaSimpleSignedFileInfo.toString(fullResults.getSignedFileInfo()));
+				return fullResults;
+			default:
+				throw new SistemaExternException("Status de firma desconegut");
 		}
 	}
 

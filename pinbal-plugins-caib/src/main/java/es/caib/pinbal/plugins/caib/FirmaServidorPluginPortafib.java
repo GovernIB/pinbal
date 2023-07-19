@@ -8,12 +8,12 @@ import es.caib.pinbal.plugins.FirmaServidorPlugin;
 import es.caib.pinbal.plugins.SignaturaDades;
 import es.caib.pinbal.plugins.SignaturaResposta;
 import es.caib.pinbal.plugins.SistemaExternException;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.fundaciobit.plugins.signature.api.CommonInfoSignature;
 import org.fundaciobit.plugins.signature.api.FileInfoSignature;
 import org.fundaciobit.plugins.signature.api.ITimeStampGenerator;
 import org.fundaciobit.plugins.signature.api.PdfVisibleSignature;
-import org.fundaciobit.plugins.signature.api.PolicyInfoSignature;
 import org.fundaciobit.plugins.signature.api.SecureVerificationCodeStampInfo;
 import org.fundaciobit.plugins.signature.api.SignaturesSet;
 import org.fundaciobit.plugins.signature.api.SignaturesTableHeader;
@@ -33,10 +33,11 @@ import java.util.UUID;
  * 
  * @author Limit Tecnologies <limit@limit.es>
  */
+@Slf4j
 public class FirmaServidorPluginPortafib implements FirmaServidorPlugin {
 
 	private static final String PROPERTIES_BASE = "es.caib.pinbal.plugin.firmaservidor.portafib.";
-	private static final String FIRMASERVIDOR_TMPDIR = "avacat_firmaservidor";
+	private static final String FIRMASERVIDOR_TMPDIR = "pinbal_firmaservidor";
 
 	private ISignatureServerPlugin plugin;
 	private String tempDirPath;
@@ -116,32 +117,19 @@ public class FirmaServidorPluginPortafib implements FirmaServidorPlugin {
 		String filtreCertificats = "";
 		String username = PropertiesHelper.getProperties().getProperty(PROPERTIES_BASE + "username", null);
 		String administrationID = null; // No te sentit en API Firma En Servidor
-		PolicyInfoSignature policyInfoSignature = null;
 		CommonInfoSignature commonInfoSignature = new CommonInfoSignature(
 				language,
 				filtreCertificats,
 				username,
-				administrationID,
-				policyInfoSignature);
+				administrationID);
 		File source = new File(sourcePath);
 		String fileName = source.getName();
 		String location = PropertiesHelper.getProperties().getProperty(PROPERTIES_BASE + "location", "Palma");
-		String signerEmail = PropertiesHelper.getProperties().getProperty(
-				PROPERTIES_BASE + "signerEmail",
-				"suport@caib.es");
+		String signerEmail = PropertiesHelper.getProperties().getProperty(PROPERTIES_BASE + "signerEmail", "suport@caib.es");
 		int signNumber = 1;
 		String signAlgorithm = FileInfoSignature.SIGN_ALGORITHM_SHA1;
 		int signaturesTableLocation = FileInfoSignature.SIGNATURESTABLELOCATION_WITHOUT;
 		PdfVisibleSignature pdfInfoSignature = null;
-		/*
-		 * IRubricGenerator rubricGenerator = null; if
-		 * (FileInfoSignature.SIGN_TYPE_PADES.equals(signType) && rubricGenerator !=
-		 * null) { signaturesTableLocation =
-		 * FileInfoSignature.SIGNATURESTABLELOCATION_LASTPAGE; PdfRubricRectangle
-		 * pdfRubricRectangle = new PdfRubricRectangle(106, 650, 555, 710);
-		 * pdfInfoSignature = new PdfVisibleSignature(pdfRubricRectangle,
-		 * rubricGenerator); }
-		 */
 		final ITimeStampGenerator timeStampGenerator = null;
 		// Valors per defecte
 		final SignaturesTableHeader signaturesTableHeader = null;
@@ -171,35 +159,35 @@ public class FirmaServidorPluginPortafib implements FirmaServidorPlugin {
 				signaturesSetID + "_" + uuid,
 				commonInfoSignature,
 				new FileInfoSignature[] { fileInfo });
+
 		// Signa el document
 		String timestampUrlBase = null;
-		SignaturesSet signaturesSetResponse = plugin.signDocuments(signaturesSetRequest, timestampUrlBase);
+		SignaturesSet signaturesSetResponse = plugin.signDocuments(signaturesSetRequest, timestampUrlBase, null);
 		StatusSignaturesSet signaturesSetStatus = signaturesSetResponse.getStatusSignaturesSet();
+
 		if (signaturesSetStatus.getStatus() != StatusSignaturesSet.STATUS_FINAL_OK) {
 			// Error en el procés de firma
-			String exceptionMessage = "Error en la firma de servidor: [" + signaturesSetStatus.getStatus() + "] " +
-					signaturesSetStatus.getErrorMsg();
+			String exceptionMessage = "Error en la firma de servidor: [" + signaturesSetStatus.getStatus() + "] " + signaturesSetStatus.getErrorMsg();
 			if (signaturesSetStatus.getErrorException() != null) {
 				throw new SistemaExternException(exceptionMessage, signaturesSetStatus.getErrorException());
-			} else {
-				throw new SistemaExternException(exceptionMessage);
+			}
+			throw new SistemaExternException(exceptionMessage);
+		}
+
+		FileInfoSignature fis = signaturesSetResponse.getFileInfoSignatureArray()[0];
+		StatusSignature status = fis.getStatusSignature();
+		if (status.getStatus() == StatusSignaturesSet.STATUS_FINAL_OK) {
+			// Document firmat correctament
+			if(!status.getSignedData().renameTo(new File(destPath))) {
+				log.error("Error renombrant el fitxer firmat " + status.getSignedData());
 			}
 		} else {
-			FileInfoSignature fis = signaturesSetResponse.getFileInfoSignatureArray()[0];
-			StatusSignature status = fis.getStatusSignature();
-			if (status.getStatus() != StatusSignaturesSet.STATUS_FINAL_OK) {
-				// Error en el document a firmar
-				String exceptionMessage = "Error al firmar en servidor el document (status=" + status.getStatus() +
-						"): " + status.getErrorMsg();
-				if (signaturesSetStatus.getErrorException() != null) {
-					throw new SistemaExternException(exceptionMessage, signaturesSetStatus.getErrorException());
-				} else {
-					throw new SistemaExternException(exceptionMessage);
-				}
-			} else {
-				// Document firmat correctament
-				status.getSignedData().renameTo(new File(destPath));
+			// Error en el document a firmar
+			String exceptionMessage = "Error al firmar en servidor el document (status=" + status.getStatus() + "): " + status.getErrorMsg();
+			if (signaturesSetStatus.getErrorException() != null) {
+				throw new SistemaExternException(exceptionMessage, signaturesSetStatus.getErrorException());
 			}
+			throw new SistemaExternException(exceptionMessage);
 		}
 	}
 
