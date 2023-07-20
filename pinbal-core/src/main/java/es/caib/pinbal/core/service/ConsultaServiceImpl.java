@@ -3,60 +3,17 @@
  */
 package es.caib.pinbal.core.service;
 
-import java.io.ByteArrayOutputStream;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
-import java.util.Set;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipOutputStream;
-
-import es.caib.pinbal.client.dadesobertes.DadesObertesResposta;
-import es.caib.pinbal.core.dto.ConsultaOpenDataDto;
-import es.caib.pinbal.core.helper.*;
-import es.caib.pinbal.scsp.PropertiesHelper;
-import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
-import org.springframework.context.MessageSource;
-import org.springframework.context.MessageSourceAware;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.security.acls.domain.PrincipalSid;
-import org.springframework.security.acls.model.AccessControlEntry;
-import org.springframework.security.acls.model.MutableAclService;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.transaction.support.TransactionCallback;
-import org.springframework.transaction.support.TransactionCallbackWithoutResult;
-import org.springframework.transaction.support.TransactionTemplate;
-
 import com.lowagie.text.Document;
 import com.lowagie.text.pdf.PdfCopy;
 import com.lowagie.text.pdf.PdfReader;
-
+import es.caib.pinbal.client.dadesobertes.DadesObertesResposta;
 import es.caib.pinbal.client.dadesobertes.DadesObertesRespostaConsulta;
 import es.caib.pinbal.core.dto.CarregaDto;
 import es.caib.pinbal.core.dto.ConsultaDto;
 import es.caib.pinbal.core.dto.ConsultaDto.Consentiment;
 import es.caib.pinbal.core.dto.ConsultaDto.DocumentTipus;
 import es.caib.pinbal.core.dto.ConsultaFiltreDto;
+import es.caib.pinbal.core.dto.ConsultaOpenDataDto;
 import es.caib.pinbal.core.dto.EmisorDto;
 import es.caib.pinbal.core.dto.EntitatDto;
 import es.caib.pinbal.core.dto.EstadisticaDto;
@@ -70,6 +27,18 @@ import es.caib.pinbal.core.dto.IntegracioAccioTipusEnumDto;
 import es.caib.pinbal.core.dto.JustificantDto;
 import es.caib.pinbal.core.dto.ProcedimentDto;
 import es.caib.pinbal.core.dto.RecobrimentSolicitudDto;
+import es.caib.pinbal.core.helper.ConfigHelper;
+import es.caib.pinbal.core.helper.DtoMappingHelper;
+import es.caib.pinbal.core.helper.EmailReportEstatHelper;
+import es.caib.pinbal.core.helper.ExcelHelper;
+import es.caib.pinbal.core.helper.IntegracioHelper;
+import es.caib.pinbal.core.helper.JustificantHelper;
+import es.caib.pinbal.core.helper.PermisosHelper;
+import es.caib.pinbal.core.helper.PeticioScspEstadistiquesHelper;
+import es.caib.pinbal.core.helper.PeticioScspHelper;
+import es.caib.pinbal.core.helper.PluginHelper;
+import es.caib.pinbal.core.helper.ServeiHelper;
+import es.caib.pinbal.core.helper.UsuariHelper;
 import es.caib.pinbal.core.model.Consulta;
 import es.caib.pinbal.core.model.Consulta.EstatTipus;
 import es.caib.pinbal.core.model.Consulta.JustificantEstat;
@@ -99,6 +68,7 @@ import es.caib.pinbal.core.service.exception.ServeiNotAllowedException;
 import es.caib.pinbal.core.service.exception.ValidacioDadesPeticioException;
 import es.caib.pinbal.plugins.DadesUsuari;
 import es.caib.pinbal.plugins.SistemaExternException;
+import es.caib.pinbal.scsp.PropertiesHelper;
 import es.caib.pinbal.scsp.Resposta;
 import es.caib.pinbal.scsp.ResultatEnviamentPeticio;
 import es.caib.pinbal.scsp.ScspHelper;
@@ -108,6 +78,46 @@ import es.caib.plugins.arxiu.api.ExpedientEstat;
 import es.scsp.common.domain.core.EmisorCertificado;
 import es.scsp.common.domain.core.Servicio;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
+import org.springframework.context.MessageSource;
+import org.springframework.context.MessageSourceAware;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.security.acls.domain.PrincipalSid;
+import org.springframework.security.acls.model.AccessControlEntry;
+import org.springframework.security.acls.model.MutableAclService;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionCallback;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
+
+import javax.xml.ws.soap.SOAPFaultException;
+import java.io.ByteArrayOutputStream;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
+import java.util.Set;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 import static org.apache.commons.lang.StringUtils.isBlank;
 
@@ -2713,7 +2723,7 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 		Procediment procediment = procedimentRepository.findOne(procedimentServei.getProcediment().getId());
 		solicitud.setProcedimentCodi(
 				(procedimentServei.getProcedimentCodi() != null && !("".equalsIgnoreCase(procedimentServei.getProcedimentCodi())) ? 
-						procedimentServei.getProcedimentCodi() : 
+						procedimentServei.getProcedimentCodi("[" + scspException.getScspCode() + "] " + ) :
 						procediment.getCodi()));
 		solicitud.setProcedimentNom(procediment.getNom());
 		solicitud.setProcedimentValorCampAutomatizado(procediment.getValorCampAutomatizado());
@@ -2867,13 +2877,7 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 			Map<String, String> accioParams,
 			long t0) throws ConsultaScspException {
 		if (conslt != null && ex instanceof ConsultaScspComunicacioException || ex instanceof ConsultaScspRespostaException) {
-			String error;
-			if (ex.getCause() != null && ex.getCause() instanceof es.scsp.common.exceptions.ScspException) {
-				es.scsp.common.exceptions.ScspException scspException = (es.scsp.common.exceptions.ScspException)ex.getCause();
-				error = "[" + scspException.getScspCode() + "] " + scspException.getMessage();
-			} else {
-				error = ex.getMessage();
-			}
+			String error = generateErrorMessage(ex);
 			peticioScspHelper.updateEstatConsultaError(
 					conslt,
 					error);
@@ -2892,6 +2896,552 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 		} else {
 			throw ex;
 		}
+	}
+
+	private String generateErrorMessage(Throwable throwable) {
+		String error;
+		if (throwable.getCause() != null && throwable.getCause() instanceof es.scsp.common.exceptions.ScspException) {
+			es.scsp.common.exceptions.ScspException scspException = (es.scsp.common.exceptions.ScspException) throwable.getCause();
+			switch (scspException.getScspCode()) {
+				case "0001":
+					error = "[" + scspException.getScspCode() + "] " + "La petició està pendent de ser tramitada.";
+					break;
+				case "0002":
+					error = "[" + scspException.getScspCode() + "] " + "La petició està en procés.";
+					break;
+				case "0003":
+					error = "[" + scspException.getScspCode() + "] " + "La petició ha estat tramitada.";
+					break;
+				case "0101":
+				case "0102":
+					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
+							"El servei no es troba actualment disponible. En cas de serveis síncrons, es recomana intentar l'enviament passat uns minuts. En cas de serveis asíncrons, o de que l'error persisteixi es recomana contactar amb el centre de suport.";
+					break;
+				case "0103":
+				case "0201":
+				case "0202":
+				case "0203":
+				case "0204":
+				case "0205":
+				case "0206":
+				case "0207":
+				case "0208":
+				case "0209":
+				case "0210":
+				case "0211":
+				case "0212":
+				case "0213":
+				case "0214":
+				case "0215":
+				case "0216":
+				case "0217":
+				case "0218":
+				case "0219":
+				case "0220":
+				case "0221":
+				case "0222":
+				case "0223":
+				case "0224":
+					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
+							"Es recomana contactar amb el centre de suport.";
+					break;
+				case "0225":
+					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
+							"Es recomana tornar a realitzar la petició.";
+					break;
+				case "0226":
+					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
+							"Revisi els valors informats en els diferents camps del formulari de consulta.";
+					break;
+				case "0227":
+				case "0228":
+					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
+							"Revisi els valors informats en els diferents camps del formulari de consulta. En cas de persistir l'error es recomana contactar amb el centre de suport.";
+					break;
+				case "0229":
+					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
+							"Ja s'ha enviat una petició amb el mateix identificador que la que està enviant. Comprovi si al llistat de consultes ja es troba la consulta, o provi de realitzar una nova consulta.";
+					break;
+				case "0230":
+					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
+							".";
+					break;
+				case "0231":
+					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
+							".";
+					break;
+				case "0232":
+					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
+							".";
+					break;
+				case "0233":
+					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
+							".";
+					break;
+				case "0234":
+					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
+							".";
+					break;
+				case "0235":
+					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
+							".";
+					break;
+				case "0236":
+					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
+							".";
+					break;
+				case "0237":
+					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
+							".";
+					break;
+				case "0238":
+					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
+							".";
+					break;
+				case "0239":
+					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
+							".";
+					break;
+				case "0240":
+					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
+							".";
+					break;
+				case "0241":
+					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
+							".";
+					break;
+				case "0242":
+					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
+							".";
+					break;
+				case "0243":
+					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
+							".";
+					break;
+				case "0244":
+					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
+							".";
+					break;
+				case "0245":
+					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
+							".";
+					break;
+				case "0246":
+					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
+							".";
+					break;
+				case "0247":
+					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
+							".";
+					break;
+				case "0248":
+					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
+							".";
+					break;
+				case "0249":
+					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
+							".";
+					break;
+				case "0250":
+					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
+							".";
+					break;
+				case "0251":
+					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
+							".";
+					break;
+				case "0252":
+					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
+							".";
+					break;
+				case "0253":
+					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
+							".";
+					break;
+				case "0254":
+					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
+							".";
+					break;
+				case "0255":
+					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
+							".";
+					break;
+				case "0256":
+					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
+							".";
+					break;
+				case "0257":
+					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
+							".";
+					break;
+				case "0258":
+					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
+							".";
+					break;
+				case "0259":
+					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
+							".";
+					break;
+				case "0301":
+					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
+							".";
+					break;
+				case "0302":
+					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
+							".";
+					break;
+				case "0303":
+					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
+							".";
+					break;
+				case "0304":
+					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
+							".";
+					break;
+				case "0305":
+					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
+							".";
+					break;
+				case "0306":
+					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
+							".";
+					break;
+				case "0307":
+					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
+							".";
+					break;
+				case "0308":
+					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
+							".";
+					break;
+				case "0309":
+					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
+							".";
+					break;
+				case "0310":
+					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
+							".";
+					break;
+				case "0311":
+					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
+							".";
+					break;
+				case "0312":
+					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
+							".";
+					break;
+				case "0313":
+					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
+							".";
+					break;
+				case "0314":
+					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
+							".";
+					break;
+				case "0315":
+					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
+							".";
+					break;
+				case "0316":
+					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
+							".";
+					break;
+				case "0317":
+					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
+							".";
+					break;
+				case "0318":
+					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
+							".";
+					break;
+				case "0319":
+					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
+							".";
+					break;
+				case "0320":
+					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
+							".";
+					break;
+				case "0321":
+					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
+							".";
+					break;
+				case "0322":
+					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
+							".";
+					break;
+				case "0323":
+					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
+							".";
+					break;
+				case "0324":
+					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
+							".";
+					break;
+				case "0325":
+					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
+							".";
+					break;
+				case "0326":
+					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
+							".";
+					break;
+				case "0327":
+					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
+							".";
+					break;
+				case "0328":
+					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
+							".";
+					break;
+				case "0329":
+					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
+							".";
+					break;
+				case "0330":
+					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
+							".";
+					break;
+				case "0331":
+					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
+							".";
+					break;
+				case "0332":
+					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
+							".";
+					break;
+				case "0333":
+					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
+							".";
+					break;
+				case "0334":
+					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
+							".";
+					break;
+				case "0335":
+					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
+							".";
+					break;
+				case "0336":
+					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
+							".";
+					break;
+				case "0337":
+					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
+							".";
+					break;
+				case "0338":
+					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
+							".";
+					break;
+				case "0339":
+					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
+							".";
+					break;
+				case "0340":
+					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
+							".";
+					break;
+				case "0341":
+					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
+							".";
+					break;
+				case "0342":
+					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
+							".";
+					break;
+				case "0343":
+					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
+							".";
+					break;
+				case "0344":
+					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
+							".";
+					break;
+				case "0345":
+					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
+							".";
+					break;
+				case "0346":
+					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
+							".";
+					break;
+				case "0347":
+					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
+							".";
+					break;
+				case "0348":
+					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
+							".";
+					break;
+				case "0349":
+					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
+							".";
+					break;
+				case "0350":
+					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
+							".";
+					break;
+				case "0401":
+					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
+							".";
+					break;
+				case "0402":
+					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
+							".";
+					break;
+				case "0403":
+					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
+							".";
+					break;
+				case "0404":
+					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
+							".";
+					break;
+				case "0405":
+					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
+							".";
+					break;
+				case "0406":
+					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
+							".";
+					break;
+				case "0407":
+					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
+							".";
+					break;
+				case "0408":
+					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
+							".";
+					break;
+				case "0409":
+					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
+							".";
+					break;
+				case "0410":
+					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
+							".";
+					break;
+				case "0411":
+					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
+							".";
+					break;
+				case "0412":
+					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
+							".";
+					break;
+				case "0413":
+					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
+							".";
+					break;
+				case "0414":
+					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
+							".";
+					break;
+				case "0415":
+					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
+							".";
+					break;
+				case "0416":
+					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
+							".";
+					break;
+				case "0417":
+					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
+							".";
+					break;
+				case "0418":
+					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
+							".";
+					break;
+				case "0419":
+					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
+							".";
+					break;
+				case "0501":
+					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
+							".";
+					break;
+				case "0502":
+					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
+							".";
+					break;
+				case "0503":
+					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
+							".";
+					break;
+				case "0504":
+					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
+							".";
+					break;
+				case "0505":
+					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
+							".";
+					break;
+				case "0506":
+					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
+							".";
+					break;
+				case "0507":
+					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
+							".";
+					break;
+				case "0508":
+					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
+							".";
+					break;
+				case "0509":
+					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
+							".";
+					break;
+				case "0510":
+					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
+							".";
+					break;
+				case "0511":
+					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
+							".";
+					break;
+				case "0512":
+					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
+							".";
+					break;
+				case "0513":
+					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
+							".";
+					break;
+				case "0514":
+					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
+							".";
+					break;
+				case "0901":
+					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
+							".";
+					break;
+				case "0902":
+					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
+							".";
+					break;
+				case "0903":
+					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
+							".";
+					break;
+				case "0904":
+					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
+							".";
+					break;
+				default:
+					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage();
+					break;
+			}
+
+		} else if (throwable.getCause() != null && throwable.getCause() instanceof SOAPFaultException) {
+			SOAPFaultException soapFaultException = (SOAPFaultException) throwable.getCause();
+			error = "[" + soapFaultException.getFault().getFaultCode() + "]" + soapFaultException.getFault().getFaultString();
+		} else {
+			error = throwable.getMessage();
+		}
+		return error;
 	}
 
 }
