@@ -45,6 +45,8 @@ import es.caib.pinbal.core.service.exception.ValidacioDadesPeticioException;
  */
 public interface ConsultaService {
 
+	public static String ERROR_SEPARADOR = "|||";
+
 	/**
 	 * Realitza una consulta mitjançant les llibreries SCSP.
 	 * 

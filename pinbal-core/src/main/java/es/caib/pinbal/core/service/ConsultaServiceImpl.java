@@ -2914,8 +2914,11 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 					break;
 				case "0101":
 				case "0102":
-					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
-							"El servei no es troba actualment disponible. En cas de serveis síncrons, es recomana intentar l'enviament passat uns minuts. En cas de serveis asíncrons, o de que l'error persisteixi es recomana contactar amb el centre de suport.";
+					error = "[" + scspException.getScspCode() + "] " +
+							"El servei no es troba actualment disponible. " +
+							"En cas de serveis síncrons, es recomana intentar l'enviament passat uns minuts. " +
+							"En cas de serveis asíncrons, o de que l'error persisteixi es recomana contactar amb el centre de suport." +
+							ERROR_SEPARADOR + scspException.getMessage();
 					break;
 				case "0103":
 				case "0201":
@@ -2942,496 +2945,569 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 				case "0222":
 				case "0223":
 				case "0224":
-					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
-							"Es recomana contactar amb el centre de suport.";
+					error = "[" + scspException.getScspCode() + "] " +
+							scspException.getMessage() + " Es recomana contactar amb el centre de suport.";
 					break;
 				case "0225":
-					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
-							"Es recomana tornar a realitzar la petició.";
+					error = "[" + scspException.getScspCode() + "] " +
+							"Ha arribat al nombre màxim de respostes per la petició servida. Es recomana tornar a realitzar la petició." +
+							ERROR_SEPARADOR + scspException.getMessage();
 					break;
 				case "0226":
-					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
-							"Revisi els valors informats en els diferents camps del formulari de consulta.";
+					error = "[" + scspException.getScspCode() + "] " +
+							"Error al obtenir les dades de la petició. Revisi els valors informats en els diferents camps del formulari de consulta." +
+							ERROR_SEPARADOR + scspException.getMessage();
 					break;
-				case "0227":
+				case "0227": // TODO: Obtenir informació de unmarshall Ex. [0227] El servidor ha devuelto un mensaje SOAP Fault. Error al generar la respuesta. BackofficeException: Error processant petició síncrona: UnmarshalException: elemento inesperado (URI:"", local:"CodigoEstado"). Los elementos esperados son <{}codigoEstadoSecundario>,<{}tiempoEstimadoRespuesta>,<{}codigoEstado>,<{}literalError>
 				case "0228":
-					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
-							"Revisi els valors informats en els diferents camps del formulari de consulta. En cas de persistir l'error es recomana contactar amb el centre de suport.";
+					error = "[" + scspException.getScspCode() + "] " +
+							"Revisi els valors informats en els diferents camps del formulari de consulta. " +
+							"En cas de persistir l'error es recomana contactar amb el centre de suport." +
+							ERROR_SEPARADOR + scspException.getMessage();
 					break;
 				case "0229":
-					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
-							"Ja s'ha enviat una petició amb el mateix identificador que la que està enviant. Comprovi si al llistat de consultes ja es troba la consulta, o provi de realitzar una nova consulta.";
+					error = "[" + scspException.getScspCode() + "] " +
+							"Ja s'ha enviat una petició amb el mateix identificador que la que està enviant. " +
+							"Comprovi si al llistat de consultes ja es troba la consulta, o provi de realitzar una nova consulta." +
+							ERROR_SEPARADOR + scspException.getMessage();
 					break;
 				case "0230":
-					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
-							".";
+					error = "[" + scspException.getScspCode() + "] " +
+							"El timestamp de la petició no és correcte. " +
+							"Es recomana contactar amb el centre de suport." +
+							ERROR_SEPARADOR + scspException.getMessage();
 					break;
 				case "0231":
-					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
-							".";
+					error = "[" + scspException.getScspCode() + "] " +
+							"El document del titular no és correcte. " +
+							"Revisi que el format del document del titular sigui correcte. " +
+							"Possiblement el tipus de document informat no està acceptat per aquest servei, o el número de document és incorrecte." +
+							ERROR_SEPARADOR + scspException.getMessage();
 					break;
 				case "0232":
-					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
-							".";
+					error = "[" + scspException.getScspCode() + "] " +
+							"El document informat té més d'un identificador. " +
+							"Es recomana contactar amb el centre de suport." +
+							ERROR_SEPARADOR + scspException.getMessage();
 					break;
 				case "0233":
-					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
-							".";
+					error = "[" + scspException.getScspCode() + "] " +
+							"No ha estat possible identificar el titular. " +
+							"Comprovi els valors introduïts en els camps del titular." +
+							ERROR_SEPARADOR + scspException.getMessage();
 					break;
 				case "0234":
-					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
-							".";
+					error = "[" + scspException.getScspCode() + "] " +
+							"El codi del certificat enviat en la petició és desconegut. " +
+							"Es recomana contactar amb el centre de suport." +
+							ERROR_SEPARADOR + scspException.getMessage();
 					break;
 				case "0235":
-					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
-							".";
+					error = "[" + scspException.getScspCode() + "] " +
+							"El nif del certificat no es correspon amb el NifSolicitante. " +
+							"Es recomana contactar amb el centre de suport." +
+							ERROR_SEPARADOR + scspException.getMessage();
 					break;
 				case "0236":
-					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
-							".";
+					error = "[" + scspException.getScspCode() + "] " +
+							"El consentiment enviat en la petició no es correspon al sol·licitat en la autorització del procediment. " +
+							"Revisi que el consentiment del procediment es correspongui al sol·licitat." +
+							ERROR_SEPARADOR + scspException.getMessage();
 					break;
 				case "0237":
-					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
-							".";
+					error = "[" + scspException.getScspCode() + "] " +
+							"El camp NumElements de la petició, o sol·licitud de resposta, no és el mateix que es va enviar en la petició asíncrona. " +
+							"Es recomana contactar amb el centre de suport." +
+							ERROR_SEPARADOR + scspException.getMessage();
 					break;
 				case "0238":
-					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
-							".";
+					error = "[" + scspException.getScspCode() + "] " +
+							"Informació no disponible. " +
+							"Es recomana contactar amb el centre de suport." +
+							ERROR_SEPARADOR + scspException.getMessage();
 					break;
 				case "0239":
-					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
-							".";
+					error = "[" + scspException.getScspCode() + "] " +
+							"S'ha produït un error al tractar les dades específiques de la petició. " +
+							"Revisi que aquestes siguin correctes i s'adeqüin a l'especificat per aquest servei. " +
+							"En cas de que les dades siguin correctes, es recomana contactar amb el cente de soport." +
+							ERROR_SEPARADOR + scspException.getMessage();
 					break;
 				case "0240":
-					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
-							".";
+					error = "[" + scspException.getScspCode() + "] " +
+							"El NIE enviat en la petició pet al titular consultat no té el format adequat. " +
+							"Revisi el document del titular." +
+							ERROR_SEPARADOR + scspException.getMessage();
 					break;
 				case "0241":
-					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
-							".";
+					error = "[" + scspException.getScspCode() + "] " +
+							"La sol·licitut de resposta s'ha realitzat posteriorment a la caducitat de la petició. " +
+							"Torni a realitzar la consulta." +
+							ERROR_SEPARADOR + scspException.getMessage();
 					break;
 				case "0242":
-					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
-							".";
+					error = "[" + scspException.getScspCode() + "] " +
+							"S'ha produït un error no esperat en la resposta dal cedent. " +
+							"Es recomana contactar amb el centre de suport." +
+							ERROR_SEPARADOR + scspException.getMessage();
 					break;
 				case "0243":
-					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
-							".";
+					error = "[" + scspException.getScspCode() + "] " +
+							"No totes les peticions són al servei de la consulta. " +
+							"Es recomana contactar amb el centre de suport." +
+							ERROR_SEPARADOR + scspException.getMessage();
 					break;
 				case "0244":
-					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
-							".";
+					error = "[" + scspException.getScspCode() + "] " +
+							"S'ha enviat una sol·licitud de resposta per una petició que no existeix al sistema. " +
+							"Es recomana contactar amb el centre de suport." +
+							ERROR_SEPARADOR + scspException.getMessage();
 					break;
 				case "0245":
-					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
-							".";
+					error = "[" + scspException.getScspCode() + "] " +
+							"S'ha enviat una sol·licitud de resposta per una petició síncrona. " +
+							"Es recomana contactar amb el centre de suport." +
+							ERROR_SEPARADOR + scspException.getMessage();
 					break;
 				case "0246":
-					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
-							".";
+					error = "[" + scspException.getScspCode() + "] " +
+							"S'ha produït un error al generar l'identificador de transmissió. " +
+							"Torni a provar de realitzar la consulta. " +
+							"En cas de persistir l'error, es recomana contactar amb el centre de suport." +
+							ERROR_SEPARADOR + scspException.getMessage();
 					break;
 				case "0247":
-					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
-							".";
+					error = "[" + scspException.getScspCode() + "] " +
+							"El camp TER (Temps esperat de resposta) de la petició no és vàlid. " +
+							"Torni a provar de realitzar la consulta. " +
+							"En cas de persistir l'error, es recomana contactar amb el centre de suport." +
+							ERROR_SEPARADOR + scspException.getMessage();
 					break;
 				case "0248":
-					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
-							".";
+					error = "[" + scspException.getScspCode() + "] " +
+							"El nombre de transmissions és diferent al nombre de sol·licituds incloses en la petició asíncrona. " +
+							"Es recomana contactar amb el centre de suport." +
+							ERROR_SEPARADOR + scspException.getMessage();
 					break;
 				case "0249":
-					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
-							".";
+					error = "[" + scspException.getScspCode() + "] " +
+							"S'han detectat caràcters no admesos en la petició. " +
+							"Revisi els valors introduïts als camps del formulari. " +
+							"En cas de no detectar cap caràcter no admés, es recomana contactar amb el centre de suport." +
+							ERROR_SEPARADOR + scspException.getMessage();
 					break;
 				case "0250":
-					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
-							".";
+					error = "[" + scspException.getScspCode() + "] " +
+							"S'ha superat el nombre màxim de reinitents per a obtenir resposta del servei. " +
+							"Es recomana contactar amb el centre de suport." +
+							ERROR_SEPARADOR + scspException.getMessage();
 					break;
 				case "0251":
-					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
-							".";
+					error = "[" + scspException.getScspCode() + "] " +
+							"La sol·licitud ha sobrepassat la data límit de caducitat sense havers-se tramitat. " +
+							"Es recomana contactar amb el centre de suport." +
+							ERROR_SEPARADOR + scspException.getMessage();
 					break;
 				case "0252":
-					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
-							".";
+					error = "[" + scspException.getScspCode() + "] " +
+							"Valors incorrectes per als camps " + // TODO: Obtenir camps amb valors incorrectes
+							ERROR_SEPARADOR + scspException.getMessage();
 					break;
 				case "0253":
-					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
-							".";
+					error = "[" + scspException.getScspCode() + "] " +
+							"No totes les sol·licituds tenen el mateix identificador de sol·licitant. " +
+							"Es recomana contactar amb el centre de suport." +
+							ERROR_SEPARADOR + scspException.getMessage();
 					break;
 				case "0254":
-					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
-							".";
+					error = "[" + scspException.getScspCode() + "] " +
+							"No s'ha aportat la informació mínima necessària per a tramitar la petició. " +
+							"Algun dels blocs obligatoris del servei no ha estat informat." + // TODO: Obtenir el bloc obligatori no informat
+							ERROR_SEPARADOR + scspException.getMessage();
 					break;
 				case "0255":
-					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
-							".";
+					error = "[" + scspException.getScspCode() + "] " +
+							"El servei al que s'ha enviat la petició no té el servei disponible. " +
+							"S'han de revisar els cedents que tenen disponible el servei. " +
+							"Es recomana contactar amb el centre de suport." +
+							ERROR_SEPARADOR + scspException.getMessage();
 					break;
 				case "0256":
-					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
-							".";
+					error = "[" + scspException.getScspCode() + "] " +
+							"El NIF del titular coincideix amb el NIF del funcionari que realitza la petició. " +
+							"L'auto accés no està permés." +
+							ERROR_SEPARADOR + scspException.getMessage();
 					break;
 				case "0257":
-					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
-							".";
+					error = "[" + scspException.getScspCode() + "] " +
+							"La data informada és posterior a la data actual. " +
+							"Es recomana contactar amb el centre de suport." +
+							ERROR_SEPARADOR + scspException.getMessage();
 					break;
 				case "0258":
-					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
-							".";
+					error = "[" + scspException.getScspCode() + "] " +
+							"No s'ha podgut realitzar la petició amb les dades obtingudes de la consulta intermitja al servei. " +
+							"Es recomana contactar amb el centre de suport." +
+							ERROR_SEPARADOR + scspException.getMessage();
 					break;
 				case "0259":
-					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
-							".";
+					error = "[" + scspException.getScspCode() + "] " +
+							"S'han indicat dos serveis del INE. " +
+							"Només es pot autoritzar un dels serveis de l'INE per a un mateix procediment. " +
+							"Es recomana contactar amb el centre de suport." +
+							ERROR_SEPARADOR + scspException.getMessage();
 					break;
 				case "0301":
-					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
-							".";
+					error = "[" + scspException.getScspCode() + "] " +
+							ERROR_SEPARADOR + scspException.getMessage();
 					break;
 				case "0302":
-					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
-							".";
+					error = "[" + scspException.getScspCode() + "] " +
+							ERROR_SEPARADOR + scspException.getMessage();
 					break;
 				case "0303":
-					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
-							".";
+					error = "[" + scspException.getScspCode() + "] " +
+							ERROR_SEPARADOR + scspException.getMessage();
 					break;
 				case "0304":
-					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
-							".";
+					error = "[" + scspException.getScspCode() + "] " +
+							ERROR_SEPARADOR + scspException.getMessage();
 					break;
 				case "0305":
-					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
-							".";
+					error = "[" + scspException.getScspCode() + "] " +
+							ERROR_SEPARADOR + scspException.getMessage();
 					break;
 				case "0306":
-					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
-							".";
+					error = "[" + scspException.getScspCode() + "] " +
+							ERROR_SEPARADOR + scspException.getMessage();
 					break;
 				case "0307":
-					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
-							".";
+					error = "[" + scspException.getScspCode() + "] " +
+							ERROR_SEPARADOR + scspException.getMessage();
 					break;
 				case "0308":
-					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
-							".";
+					error = "[" + scspException.getScspCode() + "] " +
+							ERROR_SEPARADOR + scspException.getMessage();
 					break;
 				case "0309":
-					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
-							".";
+					error = "[" + scspException.getScspCode() + "] " +
+							ERROR_SEPARADOR + scspException.getMessage();
 					break;
 				case "0310":
-					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
-							".";
+					error = "[" + scspException.getScspCode() + "] " +
+							ERROR_SEPARADOR + scspException.getMessage();
 					break;
 				case "0311":
-					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
-							".";
+					error = "[" + scspException.getScspCode() + "] " +
+							ERROR_SEPARADOR + scspException.getMessage();
 					break;
 				case "0312":
-					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
-							".";
+					error = "[" + scspException.getScspCode() + "] " +
+							ERROR_SEPARADOR + scspException.getMessage();
 					break;
 				case "0313":
-					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
-							".";
+					error = "[" + scspException.getScspCode() + "] " +
+							ERROR_SEPARADOR + scspException.getMessage();
 					break;
 				case "0314":
-					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
-							".";
+					error = "[" + scspException.getScspCode() + "] " +
+							ERROR_SEPARADOR + scspException.getMessage();
 					break;
 				case "0315":
-					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
-							".";
+					error = "[" + scspException.getScspCode() + "] " +
+							ERROR_SEPARADOR + scspException.getMessage();
 					break;
 				case "0316":
-					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
-							".";
+					error = "[" + scspException.getScspCode() + "] " +
+							ERROR_SEPARADOR + scspException.getMessage();
 					break;
 				case "0317":
-					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
-							".";
+					error = "[" + scspException.getScspCode() + "] " +
+							ERROR_SEPARADOR + scspException.getMessage();
 					break;
 				case "0318":
-					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
-							".";
+					error = "[" + scspException.getScspCode() + "] " +
+							ERROR_SEPARADOR + scspException.getMessage();
 					break;
 				case "0319":
-					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
-							".";
+					error = "[" + scspException.getScspCode() + "] " +
+							ERROR_SEPARADOR + scspException.getMessage();
 					break;
 				case "0320":
-					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
-							".";
+					error = "[" + scspException.getScspCode() + "] " +
+							ERROR_SEPARADOR + scspException.getMessage();
 					break;
 				case "0321":
-					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
-							".";
+					error = "[" + scspException.getScspCode() + "] " +
+							ERROR_SEPARADOR + scspException.getMessage();
 					break;
 				case "0322":
-					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
-							".";
+					error = "[" + scspException.getScspCode() + "] " +
+							ERROR_SEPARADOR + scspException.getMessage();
 					break;
 				case "0323":
-					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
-							".";
+					error = "[" + scspException.getScspCode() + "] " +
+							ERROR_SEPARADOR + scspException.getMessage();
 					break;
 				case "0324":
-					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
-							".";
+					error = "[" + scspException.getScspCode() + "] " +
+							ERROR_SEPARADOR + scspException.getMessage();
 					break;
 				case "0325":
-					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
-							".";
+					error = "[" + scspException.getScspCode() + "] " +
+							ERROR_SEPARADOR + scspException.getMessage();
 					break;
 				case "0326":
-					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
-							".";
+					error = "[" + scspException.getScspCode() + "] " +
+							ERROR_SEPARADOR + scspException.getMessage();
 					break;
 				case "0327":
-					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
-							".";
+					error = "[" + scspException.getScspCode() + "] " +
+							ERROR_SEPARADOR + scspException.getMessage();
 					break;
 				case "0328":
-					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
-							".";
+					error = "[" + scspException.getScspCode() + "] " +
+							ERROR_SEPARADOR + scspException.getMessage();
 					break;
 				case "0329":
-					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
-							".";
+					error = "[" + scspException.getScspCode() + "] " +
+							ERROR_SEPARADOR + scspException.getMessage();
 					break;
 				case "0330":
-					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
-							".";
+					error = "[" + scspException.getScspCode() + "] " +
+							ERROR_SEPARADOR + scspException.getMessage();
 					break;
 				case "0331":
-					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
-							".";
+					error = "[" + scspException.getScspCode() + "] " +
+							ERROR_SEPARADOR + scspException.getMessage();
 					break;
 				case "0332":
-					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
-							".";
+					error = "[" + scspException.getScspCode() + "] " +
+							ERROR_SEPARADOR + scspException.getMessage();
 					break;
 				case "0333":
-					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
-							".";
+					error = "[" + scspException.getScspCode() + "] " +
+							ERROR_SEPARADOR + scspException.getMessage();
 					break;
 				case "0334":
-					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
-							".";
+					error = "[" + scspException.getScspCode() + "] " +
+							ERROR_SEPARADOR + scspException.getMessage();
 					break;
 				case "0335":
-					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
-							".";
+					error = "[" + scspException.getScspCode() + "] " +
+							ERROR_SEPARADOR + scspException.getMessage();
 					break;
 				case "0336":
-					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
-							".";
+					error = "[" + scspException.getScspCode() + "] " +
+							ERROR_SEPARADOR + scspException.getMessage();
 					break;
 				case "0337":
-					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
-							".";
+					error = "[" + scspException.getScspCode() + "] " +
+							ERROR_SEPARADOR + scspException.getMessage();
 					break;
 				case "0338":
-					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
-							".";
+					error = "[" + scspException.getScspCode() + "] " +
+							ERROR_SEPARADOR + scspException.getMessage();
 					break;
 				case "0339":
-					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
-							".";
+					error = "[" + scspException.getScspCode() + "] " +
+							ERROR_SEPARADOR + scspException.getMessage();
 					break;
 				case "0340":
-					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
-							".";
+					error = "[" + scspException.getScspCode() + "] " +
+							ERROR_SEPARADOR + scspException.getMessage();
 					break;
 				case "0341":
-					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
-							".";
+					error = "[" + scspException.getScspCode() + "] " +
+							ERROR_SEPARADOR + scspException.getMessage();
 					break;
 				case "0342":
-					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
-							".";
+					error = "[" + scspException.getScspCode() + "] " +
+							ERROR_SEPARADOR + scspException.getMessage();
 					break;
 				case "0343":
-					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
-							".";
+					error = "[" + scspException.getScspCode() + "] " +
+							ERROR_SEPARADOR + scspException.getMessage();
 					break;
 				case "0344":
-					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
-							".";
+					error = "[" + scspException.getScspCode() + "] " +
+							ERROR_SEPARADOR + scspException.getMessage();
 					break;
 				case "0345":
-					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
-							".";
+					error = "[" + scspException.getScspCode() + "] " +
+							ERROR_SEPARADOR + scspException.getMessage();
 					break;
 				case "0346":
-					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
-							".";
+					error = "[" + scspException.getScspCode() + "] " +
+							ERROR_SEPARADOR + scspException.getMessage();
 					break;
 				case "0347":
-					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
-							".";
+					error = "[" + scspException.getScspCode() + "] " +
+							ERROR_SEPARADOR + scspException.getMessage();
 					break;
 				case "0348":
-					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
-							".";
+					error = "[" + scspException.getScspCode() + "] " +
+							ERROR_SEPARADOR + scspException.getMessage();
 					break;
 				case "0349":
-					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
-							".";
+					error = "[" + scspException.getScspCode() + "] " +
+							ERROR_SEPARADOR + scspException.getMessage();
 					break;
 				case "0350":
-					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
-							".";
+					error = "[" + scspException.getScspCode() + "] " +
+							ERROR_SEPARADOR + scspException.getMessage();
 					break;
 				case "0401":
-					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
-							".";
+					error = "[" + scspException.getScspCode() + "] " +
+							ERROR_SEPARADOR + scspException.getMessage();
 					break;
 				case "0402":
-					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
-							".";
+					error = "[" + scspException.getScspCode() + "] " +
+							ERROR_SEPARADOR + scspException.getMessage();
 					break;
 				case "0403":
-					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
-							".";
+					error = "[" + scspException.getScspCode() + "] " +
+							ERROR_SEPARADOR + scspException.getMessage();
 					break;
 				case "0404":
-					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
-							".";
+					error = "[" + scspException.getScspCode() + "] " +
+							ERROR_SEPARADOR + scspException.getMessage();
 					break;
 				case "0405":
-					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
-							".";
+					error = "[" + scspException.getScspCode() + "] " +
+							ERROR_SEPARADOR + scspException.getMessage();
 					break;
 				case "0406":
-					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
-							".";
+					error = "[" + scspException.getScspCode() + "] " +
+							ERROR_SEPARADOR + scspException.getMessage();
 					break;
 				case "0407":
-					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
-							".";
+					error = "[" + scspException.getScspCode() + "] " +
+							ERROR_SEPARADOR + scspException.getMessage();
 					break;
 				case "0408":
-					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
-							".";
+					error = "[" + scspException.getScspCode() + "] " +
+							ERROR_SEPARADOR + scspException.getMessage();
 					break;
 				case "0409":
-					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
-							".";
+					error = "[" + scspException.getScspCode() + "] " +
+							ERROR_SEPARADOR + scspException.getMessage();
 					break;
 				case "0410":
-					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
-							".";
+					error = "[" + scspException.getScspCode() + "] " +
+							ERROR_SEPARADOR + scspException.getMessage();
 					break;
 				case "0411":
-					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
-							".";
+					error = "[" + scspException.getScspCode() + "] " +
+							ERROR_SEPARADOR + scspException.getMessage();
 					break;
 				case "0412":
-					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
-							".";
+					error = "[" + scspException.getScspCode() + "] " +
+							ERROR_SEPARADOR + scspException.getMessage();
 					break;
 				case "0413":
-					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
-							".";
+					error = "[" + scspException.getScspCode() + "] " +
+							ERROR_SEPARADOR + scspException.getMessage();
 					break;
 				case "0414":
-					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
-							".";
+					error = "[" + scspException.getScspCode() + "] " +
+							ERROR_SEPARADOR + scspException.getMessage();
 					break;
 				case "0415":
-					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
-							".";
+					error = "[" + scspException.getScspCode() + "] " +
+							ERROR_SEPARADOR + scspException.getMessage();
 					break;
 				case "0416":
-					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
-							".";
+					error = "[" + scspException.getScspCode() + "] " +
+							ERROR_SEPARADOR + scspException.getMessage();
 					break;
 				case "0417":
-					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
-							".";
+					error = "[" + scspException.getScspCode() + "] " +
+							ERROR_SEPARADOR + scspException.getMessage();
 					break;
 				case "0418":
-					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
-							".";
+					error = "[" + scspException.getScspCode() + "] " +
+							ERROR_SEPARADOR + scspException.getMessage();
 					break;
 				case "0419":
-					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
-							".";
+					error = "[" + scspException.getScspCode() + "] " +
+							ERROR_SEPARADOR + scspException.getMessage();
 					break;
 				case "0501":
-					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
-							".";
+					error = "[" + scspException.getScspCode() + "] " +
+							ERROR_SEPARADOR + scspException.getMessage();
 					break;
 				case "0502":
-					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
-							".";
+					error = "[" + scspException.getScspCode() + "] " +
+							ERROR_SEPARADOR + scspException.getMessage();
 					break;
 				case "0503":
-					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
-							".";
+					error = "[" + scspException.getScspCode() + "] " +
+							ERROR_SEPARADOR + scspException.getMessage();
 					break;
 				case "0504":
-					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
-							".";
+					error = "[" + scspException.getScspCode() + "] " +
+							ERROR_SEPARADOR + scspException.getMessage();
 					break;
 				case "0505":
-					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
-							".";
+					error = "[" + scspException.getScspCode() + "] " +
+							ERROR_SEPARADOR + scspException.getMessage();
 					break;
 				case "0506":
-					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
-							".";
+					error = "[" + scspException.getScspCode() + "] " +
+							ERROR_SEPARADOR + scspException.getMessage();
 					break;
 				case "0507":
-					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
-							".";
+					error = "[" + scspException.getScspCode() + "] " +
+							ERROR_SEPARADOR + scspException.getMessage();
 					break;
 				case "0508":
-					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
-							".";
+					error = "[" + scspException.getScspCode() + "] " +
+							ERROR_SEPARADOR + scspException.getMessage();
 					break;
 				case "0509":
-					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
-							".";
+					error = "[" + scspException.getScspCode() + "] " +
+							ERROR_SEPARADOR + scspException.getMessage();
 					break;
 				case "0510":
-					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
-							".";
+					error = "[" + scspException.getScspCode() + "] " +
+							ERROR_SEPARADOR + scspException.getMessage();
 					break;
 				case "0511":
-					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
-							".";
+					error = "[" + scspException.getScspCode() + "] " +
+							ERROR_SEPARADOR + scspException.getMessage();
 					break;
 				case "0512":
-					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
-							".";
+					error = "[" + scspException.getScspCode() + "] " +
+							ERROR_SEPARADOR + scspException.getMessage();
 					break;
 				case "0513":
-					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
-							".";
+					error = "[" + scspException.getScspCode() + "] " +
+							ERROR_SEPARADOR + scspException.getMessage();
 					break;
 				case "0514":
-					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
-							".";
+					error = "[" + scspException.getScspCode() + "] " +
+							ERROR_SEPARADOR + scspException.getMessage();
 					break;
 				case "0901":
-					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
-							".";
+					error = "[" + scspException.getScspCode() + "] " +
+							ERROR_SEPARADOR + scspException.getMessage();
 					break;
 				case "0902":
-					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
-							".";
+					error = "[" + scspException.getScspCode() + "] " +
+							ERROR_SEPARADOR + scspException.getMessage();
 					break;
 				case "0903":
-					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
-							".";
+					error = "[" + scspException.getScspCode() + "] " +
+							ERROR_SEPARADOR + scspException.getMessage();
 					break;
 				case "0904":
-					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + "\n" +
-							".";
+					error = "[" + scspException.getScspCode() + "] " +
+							ERROR_SEPARADOR + scspException.getMessage();
 					break;
 				default:
-					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage();
+					error = "[" + scspException.getScspCode() + "] " +
+							ERROR_SEPARADOR + scspException.getMessage();
 					break;
 			}
 
