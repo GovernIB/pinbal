@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 
@@ -44,10 +45,26 @@ $(document).ready(function () {
 <body>
 
 	<c:if test="${consulta.estatError}">
+		<c:set var="msg" value="${consulta.error}" />
+		<c:if test="${fn:contains(consulta.error, '|||')}">
+			<c:set var="splitted" value="${fn:split(consulta.error, '|||')}" />
+			<c:set var="msg" value="${splitted[0]}" />
+			<c:set var="trace" value="${splitted[1]}" />
+		</c:if>
 		<div class="alert alert-danger fade in">
 		  	<button class="close" data-dismiss="alert" aria-label="close">&times;</button>
 			<h4 class="alert-heading"><spring:message code="consulta.controller.recepcio.error"/>:</h4>
-			<p>${consulta.error}</p>
+			<p>${msg}</p>
+			<c:if test="${not empty trace}">
+				<div id="trace-container">
+					<a class="detall-trace-titol" data-toggle="collapse" href="#errtrace" aria-expanded="false" aria-controls="errtrace">
+						<spring:message code="comu.error.detall" />
+					</a>
+					<div id=errtrace class="collapse">
+						<div class="well">${trace}</div>
+					</div>
+				</div>
+			</c:if>
 		</div>
 	</c:if>
 

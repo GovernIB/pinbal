@@ -21,9 +21,25 @@
 		session.getAttribute(es.caib.pinbal.webapp.common.AlertHelper.SESSION_ATTRIBUTE_ERROR));
 %>
 <c:forEach var="text" items="${sessionErrors}">
+	<c:set var="msg" value="${text}" />
+	<c:if test="${fn:contains(text, '|||')}">
+		<c:set var="splitted" value="${fn:split(text, '|||')}" />
+		<c:set var="msg" value="${splitted[0]}" />
+		<c:set var="trace" value="${splitted[1]}" />
+	</c:if>
 	<div class="alert alert-danger">
-		<button class="close" data-dismiss="alert">×</button>
-		${text}
+		<button class="close" data-dismiss="alert" aria-label="close">&times;</button>
+		${msg}
+		<c:if test="${not empty trace}">
+			<div id="trace-container">
+				<a class="detall-trace-titol" data-toggle="collapse" href="#errtrace" aria-expanded="false" aria-controls="errtrace">
+					<spring:message code="comu.error.detall" />
+				</a>
+				<div id=errtrace class="collapse">
+					<div class="well">${trace}</div>
+				</div>
+			</div>
+		</c:if>
 	</div>
 </c:forEach>
 <%
@@ -37,7 +53,7 @@
 %>
 <c:forEach var="text" items="${sessionWarnings}">
 	<div class="alert alert-warning">
-		<button class="close" data-dismiss="alert">×</button>
+		<button class="close" data-dismiss="alert">&times;</button>
 		${text}
 	</div>
 </c:forEach>
@@ -52,7 +68,7 @@
 %>
 <c:forEach var="text" items="${sessionSuccesses}">
 	<div class="alert alert-success">
-		<button class="close" data-dismiss="alert">×</button>
+		<button class="close" data-dismiss="alert">&times;</button>
 		${text}
 	</div>
 </c:forEach>
@@ -67,7 +83,7 @@
 %>
 <c:forEach var="text" items="${sessionInfos}">
 	<div class="alert alert-info">
-		<button class="close" data-dismiss="alert">×</button>
+		<button class="close" data-dismiss="alert">&times;</button>
 		${text}
 	</div>
 </c:forEach>

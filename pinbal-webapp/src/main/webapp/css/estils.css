@@ -283,3 +283,20 @@ table {
 	display:flex;
 	justify-content: space-around;
 }
+
+#trace-container {
+	margin-top: 10px;
+}
+
+.detall-trace-titol {
+	color: white;
+	font-weight: bold;
+}
+.detall-trace-titol:hover {
+	color: white;
+	font-weight: bold;
+}
+.detall-trace-titol:focus {
+	color: white;
+	font-weight: bold;
+}

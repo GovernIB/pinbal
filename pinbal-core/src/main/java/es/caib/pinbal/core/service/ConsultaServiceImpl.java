@@ -2911,22 +2911,17 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 			String detall = ERROR_SEPARADOR + scspException.getMessage();
 			switch (scspException.getScspCode()) {
 				case "0001":
-//					error = "[" + scspException.getScspCode() + "] " + "La petició està pendent de ser tramitada.";
 					error = messageSource.getMessage("consulta.scsp.processar.error.0001", new Object[] {codi}, locale);
 					break;
 				case "0002":
-//					error = "[" + scspException.getScspCode() + "] " + "La petició està en procés.";
 					error = messageSource.getMessage("consulta.scsp.processar.error.0002", new Object[] {codi}, locale);
 					break;
 				case "0003":
-//					error = "[" + scspException.getScspCode() + "] " + "La petició ha estat tramitada.";
 					error = messageSource.getMessage("consulta.scsp.processar.error.0003", new Object[] {codi}, locale);
 					break;
 				case "0101":
 				case "0102":
-//					error = "[" + scspException.getScspCode() + "] El servei no es troba actualment disponible. En cas de serveis síncrons, es recomana intentar l'enviament passat uns minuts. En cas de serveis asíncrons, o de que l'error persisteixi es recomana contactar amb el centre de suport." +
-					error = messageSource.getMessage("consulta.scsp.processar.error.0102", new Object[] {codi}, locale) +
-							ERROR_SEPARADOR + scspException.getMessage();
+					error = messageSource.getMessage("consulta.scsp.processar.error.0102", new Object[] {codi}, locale) + detall;
 					break;
 				case "0103":
 				case "0201":
@@ -2953,403 +2948,306 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 				case "0222":
 				case "0223":
 				case "0224":
-//					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage() + " Es recomana contactar amb el centre de suport.";
 					error = messageSource.getMessage("consulta.scsp.processar.error.0224", new Object[] {codi, msg}, locale);
 					break;
 				case "0225":
-//					error = "[" + scspException.getScspCode() + "] Ha arribat al nombre màxim de respostes per la petició servida. Es recomana tornar a realitzar la petició." +
-					error = messageSource.getMessage("consulta.scsp.processar.error.0225", new Object[] {codi}, locale) +
-							ERROR_SEPARADOR + scspException.getMessage();
+					error = messageSource.getMessage("consulta.scsp.processar.error.0225", new Object[] {codi}, locale) + detall;
 					break;
 				case "0226":
-//					error = "[" + scspException.getScspCode() + "] Error al obtenir les dades de la petició. Revisi els valors informats en els diferents camps del formulari de consulta." +
-					error = messageSource.getMessage("consulta.scsp.processar.error.0226", new Object[] {codi}, locale) +
-							ERROR_SEPARADOR + scspException.getMessage();
+					error = messageSource.getMessage("consulta.scsp.processar.error.0226", new Object[] {codi}, locale) + detall;
 					break;
 				case "0227":
-//					error = "[" + scspException.getScspCode() + "] S'ha produït un error al intentar generar la resposta a la consulta: " + getError227(scspException.getMessage()) +
-							error = messageSource.getMessage("consulta.scsp.processar.error.0227", new Object[] {codi, getError227(msg)}, locale) +
-							ERROR_SEPARADOR + scspException.getMessage();
+					error = messageSource.getMessage("consulta.scsp.processar.error.0227", new Object[] {codi, getError227(msg, locale)}, locale) + detall;
 					break;
 				case "0228":
-					error = "[" + scspException.getScspCode() + "] Revisi els valors informats en els diferents camps del formulari de consulta. En cas de persistir l'error es recomana contactar amb el centre de suport." +
-							ERROR_SEPARADOR + scspException.getMessage();
+					error = messageSource.getMessage("consulta.scsp.processar.error.0228", new Object[] {codi}, locale) + detall;
 					break;
 				case "0229":
-					error = "[" + scspException.getScspCode() + "] Ja s'ha enviat una petició amb el mateix identificador que la que està enviant. Comprovi si al llistat de consultes ja es troba la consulta, o provi de realitzar una nova consulta." +
-							ERROR_SEPARADOR + scspException.getMessage();
+					error = messageSource.getMessage("consulta.scsp.processar.error.0229", new Object[] {codi}, locale) + detall;
 					break;
 				case "0230":
-					error = "[" + scspException.getScspCode() + "] El timestamp de la petició no és correcte. Es recomana contactar amb el centre de suport." +
-							ERROR_SEPARADOR + scspException.getMessage();
+					error = messageSource.getMessage("consulta.scsp.processar.error.0230", new Object[] {codi}, locale) + detall;
 					break;
 				case "0231":
-					error = "[" + scspException.getScspCode() + "] El document del titular no és correcte. Revisi que el format del document del titular sigui correcte. Possiblement el tipus de document informat no està acceptat per aquest servei, o el número de document és incorrecte." +
-							ERROR_SEPARADOR + scspException.getMessage();
+					error = messageSource.getMessage("consulta.scsp.processar.error.0231", new Object[] {codi}, locale) + detall;
 					break;
 				case "0232":
-					error = "[" + scspException.getScspCode() + "] El document informat té més d'un identificador. Es recomana contactar amb el centre de suport." +
-							ERROR_SEPARADOR + scspException.getMessage();
+					error = messageSource.getMessage("consulta.scsp.processar.error.0232", new Object[] {codi}, locale) + detall;
 					break;
 				case "0233":
-					error = "[" + scspException.getScspCode() + "] No ha estat possible identificar el titular. Comprovi els valors introduïts en els camps del titular." +
-							ERROR_SEPARADOR + scspException.getMessage();
+					error = messageSource.getMessage("consulta.scsp.processar.error.0233", new Object[] {codi}, locale) + detall;
 					break;
 				case "0234":
-					error = "[" + scspException.getScspCode() + "] El codi del certificat enviat en la petició és desconegut. Es recomana contactar amb el centre de suport." +
-							ERROR_SEPARADOR + scspException.getMessage();
+					error = messageSource.getMessage("consulta.scsp.processar.error.0234", new Object[] {codi}, locale) + detall;
 					break;
 				case "0235":
-					error = "[" + scspException.getScspCode() + "] El nif del certificat no es correspon amb el NifSolicitante. Es recomana contactar amb el centre de suport." +
-							ERROR_SEPARADOR + scspException.getMessage();
+					error = messageSource.getMessage("consulta.scsp.processar.error.0235", new Object[] {codi}, locale) + detall;
 					break;
 				case "0236":
-					error = "[" + scspException.getScspCode() + "] El consentiment enviat en la petició no es correspon al sol·licitat en la autorització del procediment. Revisi que el consentiment del procediment es correspongui al sol·licitat." +
-							ERROR_SEPARADOR + scspException.getMessage();
+					error = messageSource.getMessage("consulta.scsp.processar.error.0236", new Object[] {codi}, locale) + detall;
 					break;
 				case "0237":
-					error = "[" + scspException.getScspCode() + "] El camp NumElements de la petició, o sol·licitud de resposta, no és el mateix que es va enviar en la petició asíncrona. Es recomana contactar amb el centre de suport." +
-							ERROR_SEPARADOR + scspException.getMessage();
+					error = messageSource.getMessage("consulta.scsp.processar.error.0237", new Object[] {codi}, locale) + detall;
 					break;
 				case "0238":
-					error = "[" + scspException.getScspCode() + "] Informació no disponible. Es recomana contactar amb el centre de suport." +
-							ERROR_SEPARADOR + scspException.getMessage();
+					error = messageSource.getMessage("consulta.scsp.processar.error.0238", new Object[] {codi}, locale) + detall;
 					break;
 				case "0239":
-					error = "[" + scspException.getScspCode() + "] S'ha produït un error al tractar les dades específiques de la petició. Revisi que aquestes siguin correctes i s'adeqüin a l'especificat per aquest servei. En cas de que les dades siguin correctes, es recomana contactar amb el cente de soport." +
-							ERROR_SEPARADOR + scspException.getMessage();
+					error = messageSource.getMessage("consulta.scsp.processar.error.0239", new Object[] {codi}, locale) + detall;
 					break;
 				case "0240":
-					error = "[" + scspException.getScspCode() + "] El NIE enviat en la petició pet al titular consultat no té el format adequat. Revisi el document del titular." +
-							ERROR_SEPARADOR + scspException.getMessage();
+					error = messageSource.getMessage("consulta.scsp.processar.error.0240", new Object[] {codi}, locale) + detall;
 					break;
 				case "0241":
-					error = "[" + scspException.getScspCode() + "] La sol·licitut de resposta s'ha realitzat posteriorment a la caducitat de la petició. Torni a realitzar la consulta." +
-							ERROR_SEPARADOR + scspException.getMessage();
+					error = messageSource.getMessage("consulta.scsp.processar.error.0241", new Object[] {codi}, locale) + detall;
 					break;
 				case "0242":
-					error = "[" + scspException.getScspCode() + "] S'ha produït un error no esperat en la resposta dal cedent: " + getError242(scspException.getMessage()) + "En cas necessari contacti amb el centre de suport." +
-							ERROR_SEPARADOR + scspException.getMessage();
+					error = messageSource.getMessage("consulta.scsp.processar.error.0242", new Object[] {codi, getError242(msg, locale)}, locale) + detall;
 					break;
 				case "0243":
-					error = "[" + scspException.getScspCode() + "] No totes les peticions són al servei de la consulta. Es recomana contactar amb el centre de suport." +
-							ERROR_SEPARADOR + scspException.getMessage();
+					error = messageSource.getMessage("consulta.scsp.processar.error.0243", new Object[] {codi}, locale) + detall;
 					break;
 				case "0244":
-					error = "[" + scspException.getScspCode() + "] S'ha enviat una sol·licitud de resposta per una petició que no existeix al sistema. Es recomana contactar amb el centre de suport." +
-							ERROR_SEPARADOR + scspException.getMessage();
+					error = messageSource.getMessage("consulta.scsp.processar.error.0244", new Object[] {codi}, locale) + detall;
 					break;
 				case "0245":
-					error = "[" + scspException.getScspCode() + "] S'ha enviat una sol·licitud de resposta per una petició síncrona. Es recomana contactar amb el centre de suport." +
-							ERROR_SEPARADOR + scspException.getMessage();
+					error = messageSource.getMessage("consulta.scsp.processar.error.0245", new Object[] {codi}, locale) + detall;
 					break;
 				case "0246":
-					error = "[" + scspException.getScspCode() + "] S'ha produït un error al generar l'identificador de transmissió. Torni a provar de realitzar la consulta. En cas de persistir l'error, es recomana contactar amb el centre de suport." +
-							ERROR_SEPARADOR + scspException.getMessage();
+					error = messageSource.getMessage("consulta.scsp.processar.error.0246", new Object[] {codi}, locale) + detall;
 					break;
 				case "0247":
-					error = "[" + scspException.getScspCode() + "] El camp TER (Temps esperat de resposta) de la petició no és vàlid. Torni a provar de realitzar la consulta. En cas de persistir l'error, es recomana contactar amb el centre de suport." +
-							ERROR_SEPARADOR + scspException.getMessage();
+					error = messageSource.getMessage("consulta.scsp.processar.error.0247", new Object[] {codi}, locale) + detall;
 					break;
 				case "0248":
-					error = "[" + scspException.getScspCode() + "] El nombre de transmissions és diferent al nombre de sol·licituds incloses en la petició asíncrona. Es recomana contactar amb el centre de suport." +
-							ERROR_SEPARADOR + scspException.getMessage();
+					error = messageSource.getMessage("consulta.scsp.processar.error.0248", new Object[] {codi}, locale) + detall;
 					break;
 				case "0249":
-					error = "[" + scspException.getScspCode() + "] S'han detectat caràcters no admesos en la petició. Revisi els valors introduïts als camps del formulari. En cas de no detectar cap caràcter no admés, es recomana contactar amb el centre de suport." +
-							ERROR_SEPARADOR + scspException.getMessage();
+					error = messageSource.getMessage("consulta.scsp.processar.error.0249", new Object[] {codi}, locale) + detall;
 					break;
 				case "0250":
-					error = "[" + scspException.getScspCode() + "] S'ha superat el nombre màxim de reinitents per a obtenir resposta del servei. Es recomana contactar amb el centre de suport." +
-							ERROR_SEPARADOR + scspException.getMessage();
+					error = messageSource.getMessage("consulta.scsp.processar.error.0250", new Object[] {codi}, locale) + detall;
 					break;
 				case "0251":
-					error = "[" + scspException.getScspCode() + "] La sol·licitud ha sobrepassat la data límit de caducitat sense havers-se tramitat. Es recomana contactar amb el centre de suport." +
-							ERROR_SEPARADOR + scspException.getMessage();
+					error = messageSource.getMessage("consulta.scsp.processar.error.0251", new Object[] {codi}, locale) + detall;
 					break;
 				case "0252":
-					error = "[" + scspException.getScspCode() + "] Valors incorrectes per als camps: " + getError252(scspException.getMessage()) +
-							ERROR_SEPARADOR + scspException.getMessage();
+					error = messageSource.getMessage("consulta.scsp.processar.error.0252", new Object[] {codi, getError252(msg, locale)}, locale) + detall;
 					break;
 				case "0253":
-					error = "[" + scspException.getScspCode() + "] No totes les sol·licituds tenen el mateix identificador de sol·licitant. Es recomana contactar amb el centre de suport." +
-							ERROR_SEPARADOR + scspException.getMessage();
+					error = messageSource.getMessage("consulta.scsp.processar.error.0253", new Object[] {codi}, locale) + detall;
 					break;
 				case "0254":
-					error = "[" + scspException.getScspCode() + "] No s'ha aportat la informació mínima necessària per a tramitar la petició. Algun dels blocs obligatoris del servei no ha estat informat:" + getError254(scspException.getMessage()) +
-							ERROR_SEPARADOR + scspException.getMessage();
+					error = messageSource.getMessage("consulta.scsp.processar.error.0254", new Object[] {codi, getError254(msg, locale)}, locale) + detall;
 					break;
 				case "0255":
-					error = "[" + scspException.getScspCode() + "] El servei al que s'ha enviat la petició no té el servei disponible. S'han de revisar els cedents que tenen disponible el servei. Es recomana contactar amb el centre de suport." +
-							ERROR_SEPARADOR + scspException.getMessage();
+					error = messageSource.getMessage("consulta.scsp.processar.error.0255", new Object[] {codi}, locale) + detall;
 					break;
 				case "0256":
-					error = "[" + scspException.getScspCode() + "] El NIF del titular coincideix amb el NIF del funcionari que realitza la petició. L'auto accés no està permés." +
-							ERROR_SEPARADOR + scspException.getMessage();
+					error = messageSource.getMessage("consulta.scsp.processar.error.0256", new Object[] {codi}, locale) + detall;
 					break;
 				case "0257":
-					error = "[" + scspException.getScspCode() + "] No es pot realitzar una consulta amb la data posterior a la data actual." +
-							ERROR_SEPARADOR + scspException.getMessage();
+					error = messageSource.getMessage("consulta.scsp.processar.error.0257", new Object[] {codi}, locale) + detall;
 					break;
 				case "0258":
-					error = "[" + scspException.getScspCode() + "] No s'ha podgut realitzar la petició amb les dades obtingudes de la consulta intermitja al servei. Es recomana contactar amb el centre de suport." +
-							ERROR_SEPARADOR + scspException.getMessage();
+					error = messageSource.getMessage("consulta.scsp.processar.error.0258", new Object[] {codi}, locale) + detall;
 					break;
 				case "0259":
-					error = "[" + scspException.getScspCode() + "] S'han indicat dos serveis del INE. Només es pot autoritzar un dels serveis de l'INE per a un mateix procediment. Es recomana contactar amb el centre de suport." +
-							ERROR_SEPARADOR + scspException.getMessage();
+					error = messageSource.getMessage("consulta.scsp.processar.error.0259", new Object[] {codi}, locale) + detall;
 					break;
 				case "0301":
-					error = "[" + scspException.getScspCode() + "] L'òrgan des del que es realitza la consulta no està autoritzat. Contacti amb el centre de suport." +
-							ERROR_SEPARADOR + scspException.getMessage();
+					error = messageSource.getMessage("consulta.scsp.processar.error.0301", new Object[] {codi}, locale) + detall;
 					break;
 				case "0302":
-					error = "[" + scspException.getScspCode() + "] El certificat del l'òrgan utilitzat per a firmar la petició ha caducat. Contacti amb el centre de suport." +
-							ERROR_SEPARADOR + scspException.getMessage();
+					error = messageSource.getMessage("consulta.scsp.processar.error.0302", new Object[] {codi}, locale) + detall;
 					break;
 				case "0303":
-					error = "[" + scspException.getScspCode() + "] El certificat del l'òrgan utilitzat per a firmar la petició ha estat revocat. Contacti amb el centre de suport." +
-							ERROR_SEPARADOR + scspException.getMessage();
+					error = messageSource.getMessage("consulta.scsp.processar.error.0303", new Object[] {codi}, locale) + detall;
 					break;
 				case "0304":
-					error = "[" + scspException.getScspCode() + "] La resposta de la petició ha estat firmada amb un certificat diferent al de la petició. Contacti amb el centre de suport." +
-							ERROR_SEPARADOR + scspException.getMessage();
+					error = messageSource.getMessage("consulta.scsp.processar.error.0304", new Object[] {codi}, locale) + detall;
 					break;
 				case "0305":
-					error = "[" + scspException.getScspCode() + "] El firma de la petició no és vàlida. Contacti amb el centre de suport." +
-							ERROR_SEPARADOR + scspException.getMessage();
+					error = messageSource.getMessage("consulta.scsp.processar.error.0305", new Object[] {codi}, locale) + detall;
 					break;
 				case "0306":
-					error = "[" + scspException.getScspCode() + "] S'ha produït un error al generar la firma de la petició. Provi de realitzar la petició en uns minuts. Si l'error persisteix contacti amb el centre de suport." +
-							ERROR_SEPARADOR + scspException.getMessage();
+					error = messageSource.getMessage("consulta.scsp.processar.error.0306", new Object[] {codi}, locale) + detall;
 					break;
 				case "0307":
-					error = "[" + scspException.getScspCode() + "] La petició no s'ha firmat. Provi de realitzar la petició en uns minuts. Si l'error persisteix contacti amb el centre de suport." +
-							ERROR_SEPARADOR + scspException.getMessage();
+					error = messageSource.getMessage("consulta.scsp.processar.error.0307", new Object[] {codi}, locale) + detall;
 					break;
 				case "0308":
-					error = "[" + scspException.getScspCode() + "] S'ha produït un error al obtenir la firma de la petició. Contacti amb el centre de suport." +
-							ERROR_SEPARADOR + scspException.getMessage();
+					error = messageSource.getMessage("consulta.scsp.processar.error.0308", new Object[] {codi}, locale) + detall;
 					break;
 				case "0309":
-					error = "[" + scspException.getScspCode() + "] S'ha prodüit un error al versificar el certificat de la petició. Contacti amb el centre de suport." +
-							ERROR_SEPARADOR + scspException.getMessage();
+					error = messageSource.getMessage("consulta.scsp.processar.error.0309", new Object[] {codi}, locale) + detall;
 					break;
 				case "0310":
-					error = "[" + scspException.getScspCode() + "] No s'ha pogut validar l'Autoritat de Certificació del certificat utilitzat per a firmar la petició. Contacti amb el centre de suport." +
-							ERROR_SEPARADOR + scspException.getMessage();
+					error = messageSource.getMessage("consulta.scsp.processar.error.0310", new Object[] {codi}, locale) + detall;
 					break;
 				case "0311":
-					error = "[" + scspException.getScspCode() + "] En la petició no apareix el certificat firmant. Contacti amb el centre de suport." +
-							ERROR_SEPARADOR + scspException.getMessage();
+					error = messageSource.getMessage("consulta.scsp.processar.error.0311", new Object[] {codi}, locale) + detall;
 					break;
 				case "0312":
-					error = "[" + scspException.getScspCode() + "] El NIF de l'emisor no es correspon amb el de l'Òrgan emisor. Contacti amb el centre de suport." +
-							ERROR_SEPARADOR + scspException.getMessage();
+					error = messageSource.getMessage("consulta.scsp.processar.error.0312", new Object[] {codi}, locale) + detall;
 					break;
 				case "0313":
-					error = "[" + scspException.getScspCode() + "] S'ha produït un error al xifrar o desxifrar el missatge. Provi de realitzar la petició en uns minuts. Si l'error persisteix contacti amb el centre de suport." +
-							ERROR_SEPARADOR + scspException.getMessage();
+					error = messageSource.getMessage("consulta.scsp.processar.error.0313", new Object[] {codi}, locale) + detall;
 					break;
 				case "0314":
-					error = "[" + scspException.getScspCode() + "] El procediments no està autoritzat per a realitzar la consulta. Contacti amb el centre de suport." +
-							ERROR_SEPARADOR + scspException.getMessage();
+					error = messageSource.getMessage("consulta.scsp.processar.error.0314", new Object[] {codi}, locale) + detall;
 					break;
 				case "0315":
-					error = "[" + scspException.getScspCode() + "] L'aplicació no està autoritzada per a realitzar la consulta. Contacti amb el centre de suport." +
-							ERROR_SEPARADOR + scspException.getMessage();
+					error = messageSource.getMessage("consulta.scsp.processar.error.0315", new Object[] {codi}, locale) + detall;
 					break;
 				case "0316":
-					error = "[" + scspException.getScspCode() + "] El servei subministra informació en funció de l'àmbit de competència. No es té autorització per l'àmbit sol·licitat." +
-							ERROR_SEPARADOR + scspException.getMessage();
+					error = messageSource.getMessage("consulta.scsp.processar.error.0316", new Object[] {codi}, locale) + detall;
 					break;
 				case "0317":
-					error = "[" + scspException.getScspCode() + "] L'organisme qeu realitza la sol·licitud de resposta no és el mateix amb el que s'ha realitzat la petició. Torni a realitzar la petició. Si l'error persisteix contacti amb el centre de suport." +
-							ERROR_SEPARADOR + scspException.getMessage();
+					error = messageSource.getMessage("consulta.scsp.processar.error.0317", new Object[] {codi}, locale) + detall;
 					break;
 				case "0318":
-					error = "[" + scspException.getScspCode() + "] Les consultes al procediment no poden ser per llei, si no per consentiment. Revisi les dades de la petició, i el tipus d'autorització. En cas de ser correcte i persistir l'error, contacti amb el centre de suport." +
-							ERROR_SEPARADOR + scspException.getMessage();
+					error = messageSource.getMessage("consulta.scsp.processar.error.0318", new Object[] {codi}, locale) + detall;
 					break;
 				case "0319":
-					error = "[" + scspException.getScspCode() + "] L'organisme té bloquejada la autorització per consumir el servei. Contacti amb el centre de suport." +
-							ERROR_SEPARADOR + scspException.getMessage();
+					error = messageSource.getMessage("consulta.scsp.processar.error.0319", new Object[] {codi}, locale) + detall;
 					break;
 				case "0320":
-					error = "[" + scspException.getScspCode() + "] L'organisme té donada de baixa la autorització per consumir el servei. Contacti amb el centre de suport." +
-							ERROR_SEPARADOR + scspException.getMessage();
+					error = messageSource.getMessage("consulta.scsp.processar.error.0320", new Object[] {codi}, locale) + detall;
 					break;
 				case "0321":
-					error = "[" + scspException.getScspCode() + "] L'aplicació està bloquejada. Contacti amb el centre de suport." +
-							ERROR_SEPARADOR + scspException.getMessage();
+					error = messageSource.getMessage("consulta.scsp.processar.error.0321", new Object[] {codi}, locale) + detall;
 					break;
 				case "0322":
-					error = "[" + scspException.getScspCode() + "] L'aplicació està donada de baixa. Contacti amb el centre de suport." +
-							ERROR_SEPARADOR + scspException.getMessage();
+					error = messageSource.getMessage("consulta.scsp.processar.error.0322", new Object[] {codi}, locale) + detall;
 					break;
 				case "0323":
-					error = "[" + scspException.getScspCode() + "] L'òrgan gestor utilitzat està bloquejat. Contacti amb el centre de suport." +
-							ERROR_SEPARADOR + scspException.getMessage();
+					error = messageSource.getMessage("consulta.scsp.processar.error.0323", new Object[] {codi}, locale) + detall;
 					break;
 				case "0324":
-					error = "[" + scspException.getScspCode() + "] L'òrgan gestor utilitzat està donada de baixa. Contacti amb el centre de suport." +
-							ERROR_SEPARADOR + scspException.getMessage();
+					error = messageSource.getMessage("consulta.scsp.processar.error.0324", new Object[] {codi}, locale) + detall;
 					break;
 				case "0325":
-					error = "[" + scspException.getScspCode() + "] El certificat utilitzar per l'òrgan gestor emisor està donada de baixa. Contacti amb el centre de suport." +
-							ERROR_SEPARADOR + scspException.getMessage();
+					error = messageSource.getMessage("consulta.scsp.processar.error.0325", new Object[] {codi}, locale) + detall;
 					break;
 				case "0326":
-					error = "[" + scspException.getScspCode() + "] El certificat utilitzar per l'òrgan gestor emisor està bloquejat. Contacti amb el centre de suport." +
-							ERROR_SEPARADOR + scspException.getMessage();
+					error = messageSource.getMessage("consulta.scsp.processar.error.0326", new Object[] {codi}, locale) + detall;
 					break;
 				case "0327":
-					error = "[" + scspException.getScspCode() + "] El tipus de tramitació del procediment no és correcte. Contacti amb el centre de suport." +
-							ERROR_SEPARADOR + scspException.getMessage();
+					error = messageSource.getMessage("consulta.scsp.processar.error.0327", new Object[] {codi}, locale) + detall;
 					break;
 				case "0328":
-					error = "[" + scspException.getScspCode() + "] El NIF del funcionari no té el format correcte. Revisi les dades de la petició. En cas de ser correctes, contacti amb el centre de suport." +
-							ERROR_SEPARADOR + scspException.getMessage();
+					error = messageSource.getMessage("consulta.scsp.processar.error.0328", new Object[] {codi}, locale) + detall;
 					break;
 				case "0329":
-					error = "[" + scspException.getScspCode() + "] El funcionari amb el nom complet enviat no està autoritzat per a realitzat la consulta. Revisi la petició, i en cas de ser correcte, contacti amb el centre de suport." +
-							ERROR_SEPARADOR + scspException.getMessage();
+					error = messageSource.getMessage("consulta.scsp.processar.error.0329", new Object[] {codi}, locale) + detall;
 					break;
 				case "0330":
-					error = "[" + scspException.getScspCode() + "] El codi de procediment utilitzat es troba bloquejat per l'organisme sol·licitant. Si l'organisme sol·licitant i el procediment són els correctes, contacti amb el centre de suport." +
-							ERROR_SEPARADOR + scspException.getMessage();
+					error = messageSource.getMessage("consulta.scsp.processar.error.0330", new Object[] {codi}, locale) + detall;
 					break;
 				case "0331":
-					error = "[" + scspException.getScspCode() + "] El NIF del funcionari és incorrecte o no vàlid. Revisi la petició, i en cas de ser correcte, contacti amb el centre de suport." +
-							ERROR_SEPARADOR + scspException.getMessage();
+					error = messageSource.getMessage("consulta.scsp.processar.error.0331", new Object[] {codi}, locale) + detall;
 					break;
 				case "0332":
-					error = "[" + scspException.getScspCode() + "] El nom complert del funcionari és incorrecte o no vàlid. Revisi la petició, i en cas de ser correcte, contacti amb el centre de suport." +
-							ERROR_SEPARADOR + scspException.getMessage();
+					error = messageSource.getMessage("consulta.scsp.processar.error.0332", new Object[] {codi}, locale) + detall;
 					break;
 				case "0350":
-					error = "[" + scspException.getScspCode() + "] El certificat utilitzat per firmar les peticions no està donat d'alta. Contacti amb el centre de suport." +
-							ERROR_SEPARADOR + scspException.getMessage();
+					error = messageSource.getMessage("consulta.scsp.processar.error.0350", new Object[] {codi}, locale) + detall;
 					break;
 				case "0401":
-					error = "[" + scspException.getScspCode() + "] La petició rebuda no es correspon amb l'estructura definida en l'XSD del servei. Revisi que no faltin camps per emplenar, i que esl camps emplenats siguin correctes i tinguin el format correcte. En cas contrari contacti amb el centre de suport.Error retornat: " + getError401(scspException.getMessage()) +
-							ERROR_SEPARADOR + scspException.getMessage();
+					error = messageSource.getMessage("consulta.scsp.processar.error.0401", new Object[] {codi, getError401(msg, locale)}, locale) + detall;
 					break;
 				case "0402":
-					error = "[" + scspException.getScspCode() + "] Falta informar algun camp obligatori de la petició: Revisi que no faltin camps per emplenar. En cas contrari contacti amb el centre de suport.Error retornat: " + getError402(scspException.getMessage()) +
-							ERROR_SEPARADOR + scspException.getMessage();
+					error = messageSource.getMessage("consulta.scsp.processar.error.0402", new Object[] {codi, getError402(msg, locale)}, locale) + detall;
 					break;
 				case "0403":
-					error = "[" + scspException.getScspCode() + "] Ha estat impossible obtenir el contingut XML del missatge. Contacti amb el centre de suport." +
-							ERROR_SEPARADOR + scspException.getMessage();
+					error = messageSource.getMessage("consulta.scsp.processar.error.0403", new Object[] {codi}, locale) + detall;
 					break;
 				case "0404":
-					error = "[" + scspException.getScspCode() + "] El tipus de document del titular no és vàlid o no està acceptat per aquest servei.  Revisi que tipus de document del titular sigui correcte. " +
-							ERROR_SEPARADOR + scspException.getMessage();
+					error = messageSource.getMessage("consulta.scsp.processar.error.0404", new Object[] {codi}, locale) + detall;
 					break;
 				case "0405":
-					error = "[" + scspException.getScspCode() + "] Ha estat impossible transformar el contingut XML del missatge. Contacti amb el centre de suport." +
-							ERROR_SEPARADOR + scspException.getMessage();
+					error = messageSource.getMessage("consulta.scsp.processar.error.0405", new Object[] {codi}, locale) + detall;
 					break;
 				case "0406":
-					error = "[" + scspException.getScspCode() + "] S'ha trobat una inconsistència en els camps obligatoris enviats. Revisi la petició per assegurar que s'han emplenat totes les dades correctament. En cas de persistir l'error, contacti amb el centre de suport." +
-							ERROR_SEPARADOR + scspException.getMessage();
+					error = messageSource.getMessage("consulta.scsp.processar.error.0406", new Object[] {codi}, locale) + detall;
 					break;
-				case "0407":
-				case "0408":
-				case "0409":
-				case "0410":
-				case "0418":
-					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage();
-					break;
+//				case "0407":
+//				case "0408":
+//				case "0409":
+//				case "0410":
+//				case "0418":
+//					error = "[" + codi + "] " + msg;
+//					break;
 				case "0411":
-					error = "[" + scspException.getScspCode() + "] El nombre de sol·licituds ha de ser major que 0. Revisi la consulta per assegurar que hi hagi peticions." +
-							ERROR_SEPARADOR + scspException.getMessage();
+					error = messageSource.getMessage("consulta.scsp.processar.error.0411", new Object[] {codi}, locale) + detall;
 					break;
 				case "0412":
-					error = "[" + scspException.getScspCode() + "] Falten atributs obligatoris per aquesta consulta. Revisi la petició per assegurar que s'han emplenat totes les dades. Un cop revisada la petició, si l'error persisteix es recomana contactar amb el centre de suport." +
-							ERROR_SEPARADOR + scspException.getMessage();
+					error = messageSource.getMessage("consulta.scsp.processar.error.0412", new Object[] {codi}, locale) + detall;
 					break;
 				case "0413":
-					error = "[" + scspException.getScspCode() + "] No s'han emplenat totes les dades obligatòries de la sol·licitud. Revisi la petició per assegurar que s'han emplenat totes les dades. Un cop revisada la petició, si l'error persisteix es recomana contactar amb el centre de suport." +
-							ERROR_SEPARADOR + scspException.getMessage();
+					error = messageSource.getMessage("consulta.scsp.processar.error.0413", new Object[] {codi}, locale) + detall;
 					break;
 				case "0414":
-					error = "[" + scspException.getScspCode() + "] El nombre d'elements no coincideix amb el nombre de sol·licituds rebudes. Contacti amb el centre de suport." +
-							ERROR_SEPARADOR + scspException.getMessage();
+					error = messageSource.getMessage("consulta.scsp.processar.error.0414", new Object[] {codi}, locale) + detall;
 					break;
 				case "0415":
-					error = "[" + scspException.getScspCode() + "] La consulta inclou més d'una sol·licitud. Realitzi aquesta consulta utilitzat el mode asíncron (consulta múltiple)." +
-							ERROR_SEPARADOR + scspException.getMessage();
+					error = messageSource.getMessage("consulta.scsp.processar.error.0415", new Object[] {codi}, locale) + detall;
 					break;
 				case "0416":
-					error = "[" + scspException.getScspCode() + "] La consulta supera el màxim de sol·licituds permeses en una única consulta per aquest servei. Redueixi el nombre de sol·licituds de la consulta. " +
-							// TODO: posar el nombre màxim de sol·licitus per a cada servei
-							ERROR_SEPARADOR + scspException.getMessage();
+					// TODO: posar el nombre màxim de sol·licitus per a cada servei
+					error = messageSource.getMessage("consulta.scsp.processar.error.0416", new Object[] {codi}, locale) + detall;
 					break;
 				case "0417":
-					error = "[" + scspException.getScspCode() + "] L'identificador de la sol·licitud i el de la petició no coincideixen. Si realitza la petició des del servei de recobriment, revisi les dades de la consulta. En cas contrari contacti amb el centre de suport." +
-							ERROR_SEPARADOR + scspException.getMessage();
+					error = messageSource.getMessage("consulta.scsp.processar.error.0417", new Object[] {codi}, locale) + detall;
 					break;
 				case "0419":
-					error = "[" + scspException.getScspCode() + "] La petició inclou identificadors de sol·licitud repetits. Si realitza la petició des del servei de recobriment, revisi les dades de la consulta. En cas contrari contacti amb el centre de suport." +
-							ERROR_SEPARADOR + scspException.getMessage();
+					error = messageSource.getMessage("consulta.scsp.processar.error.0419", new Object[] {codi}, locale) + detall;
 					break;
 				case "0501":
-					error = "[" + scspException.getScspCode() + "] S'ha produït algun error amb la base de dades. Contacti amb el centre de suport." +
-							ERROR_SEPARADOR + scspException.getMessage();
+					error = messageSource.getMessage("consulta.scsp.processar.error.0501", new Object[] {codi}, locale) + detall;
 					break;
 				case "0502":
-					error = "[" + scspException.getScspCode() + "] S'ha produït un error intern que impedeix el correcte funcionament del sistema. Contacti amb el centre de suport." +
-							ERROR_SEPARADOR + scspException.getMessage();
+					error = messageSource.getMessage("consulta.scsp.processar.error.0502", new Object[] {codi}, locale) + detall;
 					break;
 				case "0503":
-					error = "[" + scspException.getScspCode() + "] El backoffice ha donat un error al processar la petició. Contacti amb el centre de suport." +
-							ERROR_SEPARADOR + scspException.getMessage();
+					error = messageSource.getMessage("consulta.scsp.processar.error.0503", new Object[] {codi}, locale) + detall;
 					break;
 				case "0504":
-					error = "[" + scspException.getScspCode() + "] El sistema té algun error de configuració. Contacti amb el centre de suport." +
-							ERROR_SEPARADOR + scspException.getMessage();
+					error = messageSource.getMessage("consulta.scsp.processar.error.0504", new Object[] {codi}, locale) + detall;
 					break;
-				case "0505":
-				case "0506":
-				case "0507":
-				case "0508":
-				case "0509":
-				case "0510":
-				case "0511":
-					error = "[" + scspException.getScspCode() + "] " + scspException.getMessage();
-					break;
+//				case "0505":
+//				case "0506":
+//				case "0507":
+//				case "0508":
+//				case "0509":
+//				case "0510":
+//				case "0511":
+//					error = "[" + codi + "] " + msg;
+//					break;
 				case "0512":
-					error = "[" + scspException.getScspCode() + "] S'ha produït un error al registrar la petició. Provi de realitzar la petició en uns minuts. Si l'error persisteix contacti amb el centre de suport." +
-							ERROR_SEPARADOR + scspException.getMessage();
+					error = messageSource.getMessage("consulta.scsp.processar.error.0512", new Object[] {codi}, locale) + detall;
 					break;
 				case "0513":
-					error = "[" + scspException.getScspCode() + "] S'ha produït un error al registrar la resposta. Provi de realitzar la petició en uns minuts. Si l'error persisteix contacti amb el centre de suport." +
-							ERROR_SEPARADOR + scspException.getMessage();
+					error = messageSource.getMessage("consulta.scsp.processar.error.0513", new Object[] {codi}, locale) + detall;
 					break;
 				case "0514":
-					error = "[" + scspException.getScspCode() + "] La petició realitzada és massa pesada. Torni a realitzar la petició en mode asíncron (consulta múltiple). " +
-							ERROR_SEPARADOR + scspException.getMessage();
+					error = messageSource.getMessage("consulta.scsp.processar.error.0514", new Object[] {codi}, locale) + detall;
 					break;
 				case "0901":
-					error = "[" + scspException.getScspCode() + "] Es servei no està actualment disponible. Provi de realitzar la petició en uns minuts. Si l'error persisteix contacti amb el centre de suport." +
-							ERROR_SEPARADOR + scspException.getMessage();
+					error = messageSource.getMessage("consulta.scsp.processar.error.0901", new Object[] {codi}, locale) + detall;
 					break;
 				case "0902":
-					error = "[" + scspException.getScspCode() + "] El servei consultat no disposa de mode síncron (consulta simple). Realitzi la consulta utilitzant la opció de consulta múltiple." +
-							ERROR_SEPARADOR + scspException.getMessage();
+					error = messageSource.getMessage("consulta.scsp.processar.error.0902", new Object[] {codi}, locale) + detall;
 					break;
 				case "0903":
-					error = "[" + scspException.getScspCode() + "] El servei consultat no disposa de mode asíncron (consulta múltiple). Realitzi la consulta utilitzant la opció de consulta simple." +
-							ERROR_SEPARADOR + scspException.getMessage();
+					error = messageSource.getMessage("consulta.scsp.processar.error.0903", new Object[] {codi}, locale) + detall;
 					break;
 				case "0904":
-					error = "[" + scspException.getScspCode() + "] S'ha produït un error no esperat. Contacti amb el centre de suport." +
-							ERROR_SEPARADOR + scspException.getMessage();
+					error = messageSource.getMessage("consulta.scsp.processar.error.0904", new Object[] {codi}, locale) + detall;
 					break;
 				default:
-					error = "[" + scspException.getScspCode() + "] " + ERROR_SEPARADOR + scspException.getMessage();
+					error = "[" + codi + "] " + msg;
 					break;
 			}
 
@@ -3362,54 +3260,54 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 		return error;
 	}
 
-	private String getError402(String message) {
-		if (message == null) return "El servidor no informa de l'error";
-		else if (message.startsWith("Falta informar campo obligatorio")) return message.length() > 32 ? message.substring(32) : "No hi ha informació de l'error";
+	private String getError402(String message, Locale locale) {
+		if (message == null) return messageSource.getMessage("consulta.scsp.processar.suberror.buid", null, locale);
+		else if (message.startsWith("Falta informar campo obligatorio")) return message.length() > 32 ? message.substring(32) : messageSource.getMessage("consulta.scsp.processar.suberror.sense.informacio", null, locale);
 		else return message;
 	}
 
-	private String getError401(String message) {
-		if (message == null) return "El servidor no informa de l'error";
+	private String getError401(String message, Locale locale) {
+		if (message == null) return messageSource.getMessage("consulta.scsp.processar.suberror.buid", null, locale);
 		else if (message.contains("cvc-")) return message.substring(message.indexOf(":"));
 		else return message;
 	}
 
-	private String getError227(String message) {
-		if (message == null) return "El servidor no informa de l'error";
-		else if (message.contains("Connection refused")) return "El servidor ha refusat la connexió. Provi de realitzar la petició en uns minuts. Si l'error persisteix contacti amb el centre de suport.";
-		else if (message.contains("text/html") && message.contains("j_security")) return "S'ha produït un error al intentar autenticar amb el servei a consultar. Contacti amb el centre de suport.";
-		else if (message.contains("HTTP") &&  message.contains("404")) return "El servei consultat no està actualment accessible. Provi de realitzar la petició en uns minuts. Si l'error persisteix contacti amb el centre de suport.";
-		else if (message.contains("HTTP") &&  message.contains("502")) return "No ha estat possible comunicar-se amb el servei a consultar. Provi de realitzar la petició en uns minuts. Si l'error persisteix contacti amb el centre de suport.";
-		else if (message.contains("HTTP") &&  message.contains("503")) return "El servei consultat no està actualment disponible. Provi de realitzar la petició en uns minuts. Si l'error persisteix contacti amb el centre de suport.";
-		else if (message.contains("HTTP") &&  message.contains("500")) return "El servei consultat està fallant de manera inesperada. Provi de realitzar la petició en uns minuts. Si l'error persisteix contacti amb el centre de suport.";
-		else if (message.contains("Host unreachable")) return "";
-		else if (message.contains("[0254]")) return "No s'ha aportat la informació mínima necessària per a tramitar la petició. Algun dels blocs obligatoris del servei no ha estat informat. Revisi els valors informats en els diferents camps del formulari de consulta.";
-		else if (message.contains("\"code\":233")) return "No ha estat possible identificar el titular. Comprovi els valors introduïts en els camps del titular.";
-		else if (message.startsWith("El servidor ha devuelto un mensaje SOAP Fault. Error al generar la respuesta. BackofficeException:")) return message.length() > 98 ? message.substring(98) : "No hi ha informació de l'error";
-		else if (message.startsWith("El servidor ha devuelto un mensaje SOAP Fault.")) return message.length() > 46 ? message.substring(46) : "No hi ha informació de l'error";
+	private String getError227(String message, Locale locale) {
+		if (message == null) return messageSource.getMessage("consulta.scsp.processar.suberror.buid", null, locale);
+		else if (message.contains("Connection refused")) return messageSource.getMessage("consulta.scsp.processar.suberror.0227.connection.refused", null, locale);
+		else if (message.contains("text/html") && message.contains("j_security")) return messageSource.getMessage("consulta.scsp.processar.suberror.0227.autenticacio", null, locale);
+		else if (message.contains("HTTP") &&  message.contains("404")) return messageSource.getMessage("consulta.scsp.processar.suberror.0227.404", null, locale);
+		else if (message.contains("HTTP") &&  message.contains("502")) return messageSource.getMessage("consulta.scsp.processar.suberror.0227.502", null, locale);
+		else if (message.contains("HTTP") &&  message.contains("503")) return messageSource.getMessage("consulta.scsp.processar.suberror.0227.503", null, locale);
+		else if (message.contains("HTTP") &&  message.contains("500")) return messageSource.getMessage("consulta.scsp.processar.suberror.0227.500", null, locale);
+		else if (message.contains("Host unreachable")) return messageSource.getMessage("consulta.scsp.processar.suberror.0227.host.unreachable", null, locale);
+		else if (message.contains("[0254]")) return messageSource.getMessage("consulta.scsp.processar.suberror.0227.0254", null, locale);
+		else if (message.contains("\"code\":233")) return messageSource.getMessage("consulta.scsp.processar.suberror.0227.0233", null, locale);
+		else if (message.startsWith("El servidor ha devuelto un mensaje SOAP Fault. Error al generar la respuesta. BackofficeException:")) return message.length() > 98 ? message.substring(98) : messageSource.getMessage("consulta.scsp.processar.suberror.sense.informacio", null, locale);
+		else if (message.startsWith("El servidor ha devuelto un mensaje SOAP Fault.")) return message.length() > 46 ? message.substring(46) : messageSource.getMessage("consulta.scsp.processar.suberror.sense.informacio", null, locale);
 		else return message;
 	}
 
-	private String getError242(String message) {
-		if (message == null) return "El servidor no informa de l'error";
-		else if (message.contains("La estructura del fichero recibido no corresponde con el esquema")) return "L'estructura de la consulta no es correspon amb l'esperat per el servidor. Revisi els valors informats en els diferents camps del formulari de consulta. En cas de persistir l'error es recomana contactar amb el centre de suport.";
-		else if (message.contains("Organismo no autorizado")) return "L'òrgan des del que es realitza la consulta no està autoritzat. Contacti amb el centre de suport.";
-		else if (message.contains("Tiempo de espera superado")) return "La consulta ha tardat massa en processar-se. Provi de realitzar la petició en uns minuts. Si l'error persisteix contacti amb el centre de suport.";
-		else if (message.startsWith("El servidor ha devuelto un mensaje SOAP Fault. Error Genérico devuelto por el BackOffice")) return message.length() > 88 ? message.substring(88) : "No hi ha informació de l'error";
-		else if (message.startsWith("El servidor ha devuelto un mensaje SOAP Fault.")) return message.length() > 46 ? message.substring(46) : "No hi ha informació de l'error";
+	private String getError242(String message, Locale locale) {
+		if (message == null) return messageSource.getMessage("consulta.scsp.processar.suberror.buid", null, locale);
+		else if (message.contains("La estructura del fichero recibido no corresponde con el esquema")) return messageSource.getMessage("consulta.scsp.processar.suberror.0242.estructura", null, locale);
+		else if (message.contains("Organismo no autorizado")) return messageSource.getMessage("consulta.scsp.processar.suberror.0242.organ.permis", null, locale);
+		else if (message.contains("Tiempo de espera superado")) return messageSource.getMessage("consulta.scsp.processar.suberror.0242.timeout", null, locale);
+		else if (message.startsWith("El servidor ha devuelto un mensaje SOAP Fault. Error Genérico devuelto por el BackOffice")) return message.length() > 88 ? message.substring(88) : messageSource.getMessage("consulta.scsp.processar.suberror.sense.informacio", null, locale);
+		else if (message.startsWith("El servidor ha devuelto un mensaje SOAP Fault.")) return message.length() > 46 ? message.substring(46) : messageSource.getMessage("consulta.scsp.processar.suberror.sense.informacio", null, locale);
 		else return message;
 
 	}
 
-	private String getError252(String message) {
-		if (message == null) return "El servidor no informa de l'error";
-		else if (message.startsWith("El servidor ha devuelto un mensaje SOAP Fault.")) return message.length() > 46 ? message.substring(46) : "No hi ha informació de l'error";
+	private String getError252(String message, Locale locale) {
+		if (message == null) return messageSource.getMessage("consulta.scsp.processar.suberror.buid", null, locale);
+		else if (message.startsWith("El servidor ha devuelto un mensaje SOAP Fault.")) return message.length() > 46 ? message.substring(46) : messageSource.getMessage("consulta.scsp.processar.suberror.sense.informacio", null, locale);
 		else return message;
 	}
 
-	private String getError254(String message) {
-		if (message == null) return "El servidor no informa de l'error";
-		else if (message.startsWith("El servidor ha devuelto un mensaje SOAP Fault. No se ha aportado la información mínima necesaria para tramitar la petición")) return message.length() > 123 ? message.substring(123) : "No hi ha informació de l'error";
+	private String getError254(String message, Locale locale) {
+		if (message == null) return messageSource.getMessage("consulta.scsp.processar.suberror.buid", null, locale);
+		else if (message.startsWith("El servidor ha devuelto un mensaje SOAP Fault. No se ha aportado la información mínima necesaria para tramitar la petición")) return message.length() > 123 ? message.substring(123) : messageSource.getMessage("consulta.scsp.processar.suberror.sense.informacio", null, locale);
 		else return message;
 	}
 
