@@ -5,11 +5,25 @@ package es.caib.pinbal.core.service;
 
 import es.caib.pinbal.client.dadesobertes.DadesObertesResposta;
 import es.caib.pinbal.client.dadesobertes.DadesObertesRespostaConsulta;
-import es.caib.pinbal.core.dto.*;
-import es.caib.pinbal.core.service.exception.*;
+import es.caib.pinbal.core.dto.CarregaDto;
+import es.caib.pinbal.core.dto.ConsultaDto;
+import es.caib.pinbal.core.dto.ConsultaFiltreDto;
+import es.caib.pinbal.core.dto.ConsultaOpenDataDto;
+import es.caib.pinbal.core.dto.EntitatDto;
+import es.caib.pinbal.core.dto.EstadisticaDto;
+import es.caib.pinbal.core.dto.EstadistiquesFiltreDto;
+import es.caib.pinbal.core.dto.FitxerDto;
+import es.caib.pinbal.core.dto.InformeGeneralEstatDto;
+import es.caib.pinbal.core.dto.InformeProcedimentServeiDto;
+import es.caib.pinbal.core.dto.InformeRepresentantFiltreDto;
+import es.caib.pinbal.core.dto.JustificantDto;
+import es.caib.pinbal.core.service.exception.ConsultaNotFoundException;
+import es.caib.pinbal.core.service.exception.EntitatNotFoundException;
+import es.caib.pinbal.core.service.exception.JustificantGeneracioException;
+import es.caib.pinbal.core.service.exception.ProcedimentNotFoundException;
+import es.caib.pinbal.core.service.exception.ScspException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.security.access.prepost.PreAuthorize;
 
 import java.util.Date;
@@ -91,23 +105,23 @@ public interface HistoricConsultaService {
 	public FitxerDto obtenirJustificantMultipleZip(
             Long id) throws ConsultaNotFoundException, JustificantGeneracioException;
 
-//	/**
-//	 * Torna a intentar la generació i custòdia del justificant.
-//	 *
-//	 * @param id
-//	 *            Atribut id de la consulta.
-//	 * @param descarregar
-//	 *            Indica si la s'ha de retornar el fitxer amb el justificant.
-//	 * @return l'arxiu amb el document generat.
-//	 * @throws ConsultaNotFoundException
-//	 *            Si la consulta no és accessible per aquest usuari.
-//	 * @throws JustificantGeneracioException
-//	 *            Si es produeixen errors al generar el justificant.
-//	 */
-//	@PreAuthorize("hasRole('ROLE_DELEG')")
-//	public JustificantDto reintentarGeneracioJustificant(
-//            Long id,
-//            boolean descarregar) throws ConsultaNotFoundException, JustificantGeneracioException;
+	/**
+	 * Torna a intentar la generació i custòdia del justificant.
+	 *
+	 * @param id
+	 *            Atribut id de la consulta.
+	 * @param descarregar
+	 *            Indica si la s'ha de retornar el fitxer amb el justificant.
+	 * @return l'arxiu amb el document generat.
+	 * @throws ConsultaNotFoundException
+	 *            Si la consulta no és accessible per aquest usuari.
+	 * @throws JustificantGeneracioException
+	 *            Si es produeixen errors al generar el justificant.
+	 */
+	@PreAuthorize("hasRole('ROLE_DELEG')")
+	public JustificantDto reintentarGeneracioJustificant(
+            Long id,
+            boolean descarregar) throws ConsultaNotFoundException, JustificantGeneracioException;
 
 	/**
 	 * Retorna una pàgina de les consultes simples realitzades donada

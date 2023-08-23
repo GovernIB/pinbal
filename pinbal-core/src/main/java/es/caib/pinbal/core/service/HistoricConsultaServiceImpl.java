@@ -3,57 +3,16 @@
  */
 package es.caib.pinbal.core.service;
 
-import java.io.ByteArrayOutputStream;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
-import java.util.Set;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipOutputStream;
-
-import es.caib.pinbal.client.dadesobertes.DadesObertesResposta;
-import es.caib.pinbal.core.dto.ConsultaOpenDataDto;
-import es.caib.pinbal.scsp.PropertiesHelper;
-import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
-import org.springframework.context.MessageSource;
-import org.springframework.context.MessageSourceAware;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.security.acls.domain.PrincipalSid;
-import org.springframework.security.acls.model.AccessControlEntry;
-import org.springframework.security.acls.model.MutableAclService;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.transaction.support.TransactionCallback;
-import org.springframework.transaction.support.TransactionTemplate;
-
 import com.lowagie.text.Document;
 import com.lowagie.text.pdf.PdfCopy;
 import com.lowagie.text.pdf.PdfReader;
-
+import es.caib.pinbal.client.dadesobertes.DadesObertesResposta;
 import es.caib.pinbal.client.dadesobertes.DadesObertesRespostaConsulta;
 import es.caib.pinbal.core.dto.CarregaDto;
 import es.caib.pinbal.core.dto.ConsultaDto;
 import es.caib.pinbal.core.dto.ConsultaDto.Consentiment;
 import es.caib.pinbal.core.dto.ConsultaFiltreDto;
+import es.caib.pinbal.core.dto.ConsultaOpenDataDto;
 import es.caib.pinbal.core.dto.EmisorDto;
 import es.caib.pinbal.core.dto.EntitatDto;
 import es.caib.pinbal.core.dto.EstadisticaDto;
@@ -89,11 +48,50 @@ import es.caib.pinbal.core.service.exception.JustificantGeneracioException;
 import es.caib.pinbal.core.service.exception.ProcedimentNotFoundException;
 import es.caib.pinbal.core.service.exception.ProcedimentServeiNotFoundException;
 import es.caib.pinbal.core.service.exception.ScspException;
+import es.caib.pinbal.scsp.PropertiesHelper;
 import es.caib.pinbal.scsp.Resposta;
 import es.caib.pinbal.scsp.ScspHelper;
 import es.scsp.common.domain.core.EmisorCertificado;
 import es.scsp.common.domain.core.Servicio;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
+import org.springframework.context.MessageSource;
+import org.springframework.context.MessageSourceAware;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.security.acls.domain.PrincipalSid;
+import org.springframework.security.acls.model.AccessControlEntry;
+import org.springframework.security.acls.model.MutableAclService;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionCallback;
+import org.springframework.transaction.support.TransactionTemplate;
+
+import java.io.ByteArrayOutputStream;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
+import java.util.Set;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 import static org.apache.commons.lang.StringUtils.isBlank;
 
@@ -188,23 +186,23 @@ public class HistoricConsultaServiceImpl implements HistoricConsultaService, App
 		return obtenirJustificantComu(consulta, true);
 	}
 
-//	@Override
-//	public JustificantDto reintentarGeneracioJustificant(
-//			Long id,
-//			boolean descarregar) throws ConsultaNotFoundException, JustificantGeneracioException {
-//		log.debug("Reintentant generació del justificant per a la consulta (id=" + id + ")");
-//		HistoricConsulta consulta = historicConsultaRepository.findOne(id);
-//		if (consulta == null) {
-//			log.error("No s'ha trobat la consulta (id=" + id + ")");
-//			throw new ConsultaNotFoundException();
-//		}
-//		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-//		if (!auth.getName().equals(consulta.getCreatedBy().getCodi())) {
-//			log.error("La consulta (id=" + id + ") no pertany a aquest usuari");
-//			throw new ConsultaNotFoundException();
-//		}
-//		return obtenirJustificantComu(consulta, descarregar);
-//	}
+	@Override
+	public JustificantDto reintentarGeneracioJustificant(
+			Long id,
+			boolean descarregar) throws ConsultaNotFoundException, JustificantGeneracioException {
+		log.debug("Reintentant generació del justificant per a la consulta (id=" + id + ")");
+		HistoricConsulta consulta = historicConsultaRepository.findOne(id);
+		if (consulta == null) {
+			log.error("No s'ha trobat la consulta (id=" + id + ")");
+			throw new ConsultaNotFoundException();
+		}
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		if (!auth.getName().equals(consulta.getCreatedBy().getCodi())) {
+			log.error("La consulta (id=" + id + ") no pertany a aquest usuari");
+			throw new ConsultaNotFoundException();
+		}
+		return obtenirJustificantComu(consulta, descarregar);
+	}
 
 	@Transactional(rollbackFor = {ConsultaNotFoundException.class, JustificantGeneracioException.class})
 	@Override

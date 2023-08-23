@@ -63,6 +63,7 @@ public class PluginHelper {
 	@Autowired
 	private ConfigHelper configHelper;
 
+
 	public DadesUsuari dadesUsuariConsultarAmbUsuariCodi(
 			String usuariCodi) throws SistemaExternException {
 		try {
@@ -281,6 +282,7 @@ public class PluginHelper {
 							ExpedientEstat.OBERT,
 							Arrays.asList(interessatDocumentNum),
 							serieDocumental));
+			accioParams.put("uuid", expedientCreat.getIdentificador());
 			integracioHelper.addAccioOk(
 					IntegracioHelper.INTCODI_FIRMASERV,
 					accioDescripcio,
@@ -486,6 +488,7 @@ public class PluginHelper {
 							DocumentEstat.DEFINITIU,
 							serieDocumental),
 					expedientUuid);
+			accioParams.put("uuid", documentModificat.getIdentificador());
 			integracioHelper.addAccioOk(
 					IntegracioHelper.INTCODI_ARXIU,
 					accioDescripcio,

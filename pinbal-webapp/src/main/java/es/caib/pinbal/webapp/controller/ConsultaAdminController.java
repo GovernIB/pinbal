@@ -3,27 +3,31 @@
  */
 package es.caib.pinbal.webapp.controller;
 
-import java.lang.reflect.InvocationTargetException;
-import java.sql.SQLException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.naming.NamingException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.validation.Valid;
-
 import es.caib.pinbal.core.dto.CodiValor;
+import es.caib.pinbal.core.dto.ConsultaDto;
 import es.caib.pinbal.core.dto.DadaEspecificaDto;
+import es.caib.pinbal.core.dto.EntitatDto;
+import es.caib.pinbal.core.dto.EntitatDto.EntitatTipusDto;
 import es.caib.pinbal.core.dto.JsonResponse;
+import es.caib.pinbal.core.dto.JustificantDto;
 import es.caib.pinbal.core.dto.NodeDto;
 import es.caib.pinbal.core.dto.ServeiCampDto;
+import es.caib.pinbal.core.service.ConsultaService;
+import es.caib.pinbal.core.service.EntitatService;
 import es.caib.pinbal.core.service.HistoricConsultaService;
+import es.caib.pinbal.core.service.ProcedimentService;
+import es.caib.pinbal.core.service.ServeiService;
+import es.caib.pinbal.core.service.exception.ConsultaNotFoundException;
+import es.caib.pinbal.core.service.exception.EntitatNotFoundException;
+import es.caib.pinbal.core.service.exception.ScspException;
 import es.caib.pinbal.core.service.exception.ServeiNotFoundException;
+import es.caib.pinbal.webapp.command.ConsultaFiltreCommand;
+import es.caib.pinbal.webapp.common.AlertHelper;
+import es.caib.pinbal.webapp.common.EntitatHelper;
+import es.caib.pinbal.webapp.common.RequestSessionHelper;
+import es.caib.pinbal.webapp.datatables.ServerSideColumn;
+import es.caib.pinbal.webapp.datatables.ServerSideRequest;
+import es.caib.pinbal.webapp.datatables.ServerSideResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
 import org.springframework.data.domain.Page;
@@ -38,24 +42,18 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import es.caib.pinbal.core.dto.ConsultaDto;
-import es.caib.pinbal.core.dto.EntitatDto;
-import es.caib.pinbal.core.dto.JustificantDto;
-import es.caib.pinbal.core.dto.EntitatDto.EntitatTipusDto;
-import es.caib.pinbal.core.service.ConsultaService;
-import es.caib.pinbal.core.service.EntitatService;
-import es.caib.pinbal.core.service.ProcedimentService;
-import es.caib.pinbal.core.service.ServeiService;
-import es.caib.pinbal.core.service.exception.ConsultaNotFoundException;
-import es.caib.pinbal.core.service.exception.EntitatNotFoundException;
-import es.caib.pinbal.core.service.exception.ScspException;
-import es.caib.pinbal.webapp.command.ConsultaFiltreCommand;
-import es.caib.pinbal.webapp.common.AlertHelper;
-import es.caib.pinbal.webapp.common.EntitatHelper;
-import es.caib.pinbal.webapp.common.RequestSessionHelper;
-import es.caib.pinbal.webapp.datatables.ServerSideColumn;
-import es.caib.pinbal.webapp.datatables.ServerSideRequest;
-import es.caib.pinbal.webapp.datatables.ServerSideResponse;
+import javax.naming.NamingException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
+import java.lang.reflect.InvocationTargetException;
+import java.sql.SQLException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Controlador per a les auditories dels superauditors.
@@ -331,9 +329,16 @@ public class ConsultaAdminController extends BaseController {
 		EntitatDto entitat = EntitatHelper.getEntitatActual(request, entitatService);
 		if (entitat != null) {
 			try {
-				JustificantDto justificant = consultaService.reintentarGeneracioJustificant(
-						consultaId,
-						false);
+				JustificantDto justificant;
+				if (isHistoric(request)) {
+					justificant = historicConsultaService.reintentarGeneracioJustificant(
+							consultaId,
+							false);
+				} else {
+					justificant = consultaService.reintentarGeneracioJustificant(
+							consultaId,
+							false);
+				}
 				if (!justificant.isError()) {
 					AlertHelper.success(
 							request,

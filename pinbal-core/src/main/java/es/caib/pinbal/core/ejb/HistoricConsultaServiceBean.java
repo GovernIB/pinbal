@@ -3,26 +3,12 @@
  */
 package es.caib.pinbal.core.ejb;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-
-import javax.annotation.security.RolesAllowed;
-import javax.ejb.Stateless;
-import javax.interceptor.Interceptors;
-
 import es.caib.pinbal.client.dadesobertes.DadesObertesResposta;
-import es.caib.pinbal.core.dto.ConsultaOpenDataDto;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.ejb.interceptor.SpringBeanAutowiringInterceptor;
-
 import es.caib.pinbal.client.dadesobertes.DadesObertesRespostaConsulta;
 import es.caib.pinbal.core.dto.CarregaDto;
 import es.caib.pinbal.core.dto.ConsultaDto;
 import es.caib.pinbal.core.dto.ConsultaFiltreDto;
+import es.caib.pinbal.core.dto.ConsultaOpenDataDto;
 import es.caib.pinbal.core.dto.EntitatDto;
 import es.caib.pinbal.core.dto.EstadisticaDto;
 import es.caib.pinbal.core.dto.EstadistiquesFiltreDto;
@@ -37,6 +23,17 @@ import es.caib.pinbal.core.service.exception.EntitatNotFoundException;
 import es.caib.pinbal.core.service.exception.JustificantGeneracioException;
 import es.caib.pinbal.core.service.exception.ProcedimentNotFoundException;
 import es.caib.pinbal.core.service.exception.ScspException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.ejb.interceptor.SpringBeanAutowiringInterceptor;
+
+import javax.annotation.security.RolesAllowed;
+import javax.ejb.Stateless;
+import javax.interceptor.Interceptors;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Implementació de ConsultaService que empra una clase delegada per accedir a la
@@ -82,13 +79,13 @@ public class HistoricConsultaServiceBean implements HistoricConsultaService {
 		return delegate.obtenirJustificantMultipleZip(id);
 	}
 
-//	@Override
-//	@RolesAllowed("tothom")
-//	public JustificantDto reintentarGeneracioJustificant(
-//			Long id,
-//			boolean descarregar) throws ConsultaNotFoundException, JustificantGeneracioException {
-//		return delegate.reintentarGeneracioJustificant(id, descarregar);
-//	}
+	@Override
+	@RolesAllowed("tothom")
+	public JustificantDto reintentarGeneracioJustificant(
+			Long id,
+			boolean descarregar) throws ConsultaNotFoundException, JustificantGeneracioException {
+		return delegate.reintentarGeneracioJustificant(id, descarregar);
+	}
 	
 	@Override
 	@RolesAllowed("tothom")
