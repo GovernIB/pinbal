@@ -6,6 +6,7 @@ package es.caib.pinbal.webapp.command;
 import javax.validation.constraints.Size;
 
 import es.caib.pinbal.core.dto.InformeRepresentantFiltreDto;
+import es.caib.pinbal.webapp.helper.CommandMappingHelper;
 import lombok.Data;
 
 /**

@@ -13,7 +13,8 @@
 	<c:set var="campCommandPath" value="dadesEspecifiques[${camp.path}]"/>
 	<c:set var="campError"><form:errors path="${campCommandPath}"/></c:set>
 	<c:set var="ruta" value="/${camp.path}"></c:set>
-	<c:set var="valorDadaEspecifica" value="${dadesEspecifiquesValors[ruta]}"/>
+<%--	<c:set var="valorDadaEspecifica" value="${dadesEspecifiquesValors[ruta]}"/>--%>
+	<c:set var="valorDadaEspecifica" value="${dadesEspecifiquesValors[camp.path]}"/>
 	<c:if test="${not dadesEspecifiquesDisabled}"><c:set var="campValorDefecte">${camp.valorPerDefecte}</c:set></c:if>
 	<c:if test="${dadesEspecifiquesDisabled}"><c:set var="campValorDefecte">${valorDadaEspecifica}</c:set></c:if>
 	<c:if test="${pageContext.request.method == 'POST'}"><c:set var="campValorDefecte">${param[campId]}</c:set></c:if>
@@ -260,7 +261,7 @@ $(document).ready(function() {
 								<c:otherwise>
 									<c:set var="selectValue" value="${valorDadaEspecifica}"/>
 									<c:if test="${empty selectValue}"><c:set var="selectValue" value="${camp.valorPerDefecte}"/></c:if>
-									<select id="${campId}" name="${campId}"<c:if test="${dadesEspecifiquesDisabled}"> disabled="disabled"</c:if> class="form-control">
+									<select id="${campId}" name="${campId}"<c:if test="${dadesEspecifiquesDisabled}"> disabled="disabled"</c:if> class="form-control" autocomplete="off">
 										<c:if test="${dadesEspecifiquesDisabled or not camp.obligatori}">
 											<option value=""><spring:message code="comu.opcio.sense.definir"/></option>
 										</c:if>

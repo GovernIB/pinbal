@@ -43,6 +43,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -155,8 +156,21 @@ public class DtoMappingHelper {
 						byDefault().toClassMap());
 		mapperFactory.registerClassMap(
 				ClassMapBuilder.map(ServeiRegla.class, ServeiReglaDto.class).
-						field("servei.id", "serveiId").
-						byDefault().toClassMap());
+						customize(new CustomMapper<ServeiRegla, ServeiReglaDto>() {
+							@Override
+							public void mapAtoB(ServeiRegla serveiRegla, ServeiReglaDto serveiReglaDto, MappingContext context) {
+								serveiReglaDto.setId(serveiRegla.getId());
+								serveiReglaDto.setNom(serveiRegla.getNom());
+								serveiReglaDto.setServeiId(serveiRegla.getServei().getId());
+								serveiReglaDto.setModificat(serveiRegla.getModificat());
+								serveiReglaDto.setModificatValor(serveiRegla.getModificatValor() != null ? new LinkedHashSet<String>(serveiRegla.getModificatValor()) : new LinkedHashSet<String>());
+								serveiReglaDto.setAfectatValor(serveiRegla.getAfectatValor() != null ? new LinkedHashSet<String>(serveiRegla.getAfectatValor()) : new LinkedHashSet<String>());
+								serveiReglaDto.setAccio(serveiRegla.getAccio());
+								serveiReglaDto.setOrdre(serveiRegla.getOrdre());
+							}
+						}).
+//						byDefault().
+						toClassMap());
 		mapperFactory.build();
 	}
 

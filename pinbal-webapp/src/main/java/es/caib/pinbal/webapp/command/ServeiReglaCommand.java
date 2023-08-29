@@ -13,8 +13,8 @@ import org.hibernate.validator.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.TreeSet;
 
 @Data
 @Builder
@@ -55,8 +55,8 @@ public class ServeiReglaCommand {
                 .nom(command.getNom())
                 .serveiId(command.getServeiId())
                 .modificat(command.getModificat())
-                .modificatValor(command.getModificatValor() != null ? new TreeSet<String>(command.getModificatValor()) : new TreeSet<String>())
-                .afectatValor(command.getAfectatValor() != null ? new TreeSet<String>(command.getAfectatValor()) : new TreeSet<String>())
+                .modificatValor(command.getModificatValor() != null ? new LinkedHashSet<String>(command.getModificatValor()) : new LinkedHashSet<String>())
+                .afectatValor(command.getAfectatValor() != null ? new LinkedHashSet<String>(command.getAfectatValor()) : new LinkedHashSet<String>())
                 .accio(command.getAccio())
                 .build();
     }

@@ -3,6 +3,18 @@ databaseChangeLog:
       name: fals
       value: 0
       dbms: oracle
+  - property:
+      name: fals
+      value: false
+      dbms: postgresql
+  - property:
+      name: cert
+      value: 1
+      dbms: oracle
+  - property:
+      name: cert
+      value: true
+      dbms: postgresql
   - changeSet:
       id: 1682416448843-1
       author: limit
@@ -16,6 +28,10 @@ databaseChangeLog:
               - column:
                   name: ajuda
                   type: CLOB
+        - addUniqueConstraint:
+            tableName: pbl_servei_camp_grup
+            constraintName: pbl_servei_camp_grup_uk
+            columnNames: nom, servei_id
         - addForeignKeyConstraint:
             constraintName: pbl_grup_pare_fk
             baseTableName: pbl_servei_camp_grup

@@ -7,6 +7,7 @@ import java.util.Date;
 
 import javax.validation.constraints.Size;
 
+import es.caib.pinbal.webapp.helper.CommandMappingHelper;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 

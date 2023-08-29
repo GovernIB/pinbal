@@ -7,9 +7,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.SortedSet;
-import java.util.TreeSet;
 
 @Data
 @Builder
@@ -20,8 +19,8 @@ public class ServeiReglaDto {
     private String nom;
     private Long serveiId;
     private ModificatEnum modificat;
-    private SortedSet<String> modificatValor;
-    private SortedSet<String> afectatValor;
+    private LinkedHashSet<String> modificatValor;
+    private LinkedHashSet<String> afectatValor;
     private AccioEnum accio;
     private int ordre;
 
@@ -33,7 +32,7 @@ public class ServeiReglaDto {
         return getValorSetCodiValor(afectatValor);
     }
 
-    private List<CodiValor> getValorSetCodiValor(SortedSet<String> valors) {
+    private List<CodiValor> getValorSetCodiValor(LinkedHashSet<String> valors) {
         List<CodiValor> codisValor = new ArrayList<>();
         boolean isCamp = isValorCamp();
         for (String valor: valors) {

@@ -491,6 +491,9 @@ public interface ServeiService {
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_DELEG')")
 	public List<ServeiCampGrupDto> findServeiCampGrups(String serveiCodi) throws ServeiNotFoundException;
 
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	public ServeiCampGrupDto serveiCampGrupFindByNom(Long serveiId, String nom);
+
 	/**
 	 * Crea una redirecció d'una consulta a un servei per al bus 
 	 * de serveis. 
@@ -588,7 +591,7 @@ public interface ServeiService {
 	/**
 	 * Retorna tots els fitxers XSD del servei.
 	 * 
-	 * @param serveiCodi
+	 * @param codi
 	 *            El codi del servei.
 	 * @return Un llistat amb tots els fitxers XSD del servei.
 	 * @throws IOException
@@ -604,7 +607,7 @@ public interface ServeiService {
 	 * Retorna tots els camps de de dades específiques del 
 	 * justificant del servei.
 	 * 
-	 * @param serveiCodi
+	 * @param codi
 	 *            El codi del servei.
 	 * @return Un llistat amb les traduccions del servei.
 	 * @throws ServeiNotFoundException
@@ -621,7 +624,7 @@ public interface ServeiService {
 	 * Retorna tots els camps de de dades específiques del 
 	 * justificant del servei.
 	 * 
-	 * @param serveiCodi
+	 * @param codi
 	 *            El codi del servei.
 	 * @return Un llistat amb les traduccions del servei.
 	 * @throws ServeiNotFoundException
@@ -638,7 +641,7 @@ public interface ServeiService {
 	 * Retorna tots els camps de de dades específiques del 
 	 * justificant del servei.
 	 * 
-	 * @param serveiCodi
+	 * @param codi
 	 *            El codi del servei.
 	 * @return Un llistat amb les traduccions del servei.
 	 * @throws ServeiNotFoundException
@@ -740,4 +743,5 @@ public interface ServeiService {
 
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_DELEG')")
 	List<CampFormProperties> getGrupsByserveiRegla(String serveiCodi, String[] grupsModificats) throws ServeiNotFoundException;
+
 }

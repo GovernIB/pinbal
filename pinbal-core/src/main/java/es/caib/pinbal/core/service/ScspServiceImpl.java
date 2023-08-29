@@ -3,16 +3,6 @@
  */
 package es.caib.pinbal.core.service;
 
-import java.util.List;
-
-import javax.annotation.Resource;
-
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import es.caib.pinbal.core.dto.ClauPrivadaDto;
 import es.caib.pinbal.core.dto.ClauPublicaDto;
 import es.caib.pinbal.core.dto.EmissorCertDto;
@@ -34,6 +24,14 @@ import es.caib.pinbal.core.service.exception.ClauPublicaNotFoundException;
 import es.caib.pinbal.core.service.exception.EmissorCertNotFoundException;
 import es.caib.pinbal.core.service.exception.ParamConfNotFoundException;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import javax.annotation.Resource;
+import java.util.List;
 
 /**
  * Implementació d'un paràmetre de configuració que es comunica amb la base de
@@ -217,7 +215,7 @@ public class ScspServiceImpl implements ScspService {
 				dto.getNumSerie(),
 				dto.getDataBaixa(),
 				dto.getDataAlta(),
-				dto.getInteroperabilitat(),
+				dto.isInteroperabilitat(),
 				organisme).build();
 		return dtoMappingHelper.getMapperFacade().map(
 				clauPrivadaRepository.save(entity),
@@ -243,7 +241,7 @@ public class ScspServiceImpl implements ScspService {
 				dto.getNumSerie(),
 				dto.getDataBaixa(),
 				dto.getDataAlta(),
-				dto.getInteroperabilitat(),
+				dto.isInteroperabilitat(),
 				organisme);
 		return dtoMappingHelper.getMapperFacade().map(
 				entity,

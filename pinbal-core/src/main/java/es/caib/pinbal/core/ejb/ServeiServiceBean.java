@@ -287,7 +287,13 @@ public class ServeiServiceBean implements ServeiService {
 		return delegate.findServeiCampGrups(serveiCodi);
 	}
 
-	@Override
+    @Override
+	@RolesAllowed("PBL_ADMIN")
+    public ServeiCampGrupDto serveiCampGrupFindByNom(Long serveiId, String nom) {
+        return delegate.serveiCampGrupFindByNom(serveiId, nom);
+    }
+
+    @Override
 	@RolesAllowed("PBL_ADMIN")
 	public ServeiBusDto createServeiBus(
 			ServeiBusDto creat) throws ServeiNotFoundException, EntitatNotFoundException {
@@ -422,25 +428,25 @@ public class ServeiServiceBean implements ServeiService {
     }
 
     @Override
-	@RolesAllowed("PBL_ADMIN, tothom")
+	@RolesAllowed({"PBL_ADMIN", "tothom"})
     public List<Long> findCampIdsByReglesServei(String serveiCodi) throws ServeiNotFoundException {
         return delegate.findCampIdsByReglesServei(serveiCodi);
     }
 
 	@Override
-	@RolesAllowed("PBL_ADMIN, tothom")
+	@RolesAllowed({"PBL_ADMIN", "tothom"})
 	public List<Long> findGrupIdsByReglesServei(String serveiCodi) throws ServeiNotFoundException {
 		return delegate.findGrupIdsByReglesServei(serveiCodi);
 	}
 
     @Override
-	@RolesAllowed("PBL_ADMIN, tothom")
+	@RolesAllowed({"PBL_ADMIN", "tothom"})
     public List<CampFormProperties> getCampsByserveiRegla(String serveiCodi, String[] campsModificats) throws ServeiNotFoundException {
         return delegate.getCampsByserveiRegla(serveiCodi, campsModificats);
     }
 
 	@Override
-	@RolesAllowed("PBL_ADMIN, tothom")
+	@RolesAllowed({"PBL_ADMIN", "tothom"})
 	public List<CampFormProperties> getGrupsByserveiRegla(String serveiCodi, String[] grupsModificats) throws ServeiNotFoundException {
 		return delegate.getGrupsByserveiRegla(serveiCodi, grupsModificats);
 	}

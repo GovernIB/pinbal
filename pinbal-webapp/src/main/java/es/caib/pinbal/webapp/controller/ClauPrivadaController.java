@@ -3,15 +3,14 @@
  */
 package es.caib.pinbal.webapp.controller;
 
-import java.lang.reflect.InvocationTargetException;
-import java.sql.SQLException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
-import javax.naming.NamingException;
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
-
+import es.caib.pinbal.core.dto.ClauPrivadaDto;
+import es.caib.pinbal.core.service.ScspService;
+import es.caib.pinbal.core.service.exception.ClauPrivadaNotFoundException;
+import es.caib.pinbal.core.service.exception.EntitatNotFoundException;
+import es.caib.pinbal.webapp.command.ClauPrivadaCommand;
+import es.caib.pinbal.webapp.common.AlertHelper;
+import es.caib.pinbal.webapp.datatables.ServerSideRequest;
+import es.caib.pinbal.webapp.datatables.ServerSideResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
 import org.springframework.data.domain.Page;
@@ -25,14 +24,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import es.caib.pinbal.core.dto.ClauPrivadaDto;
-import es.caib.pinbal.core.service.ScspService;
-import es.caib.pinbal.core.service.exception.ClauPrivadaNotFoundException;
-import es.caib.pinbal.core.service.exception.EntitatNotFoundException;
-import es.caib.pinbal.webapp.command.ClauPrivadaCommand;
-import es.caib.pinbal.webapp.common.AlertHelper;
-import es.caib.pinbal.webapp.datatables.ServerSideRequest;
-import es.caib.pinbal.webapp.datatables.ServerSideResponse;
+import javax.naming.NamingException;
+import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
+import java.lang.reflect.InvocationTargetException;
+import java.sql.SQLException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /**
  * Controlador per al manteniment de claus privades.
@@ -45,7 +43,8 @@ public class ClauPrivadaController extends BaseController {
 	
 	@Autowired
 	private ScspService scspService;
-	
+//	@Autowired
+//	private ClauPrivadaMapper clauPrivadaMapper;
 	
 	@RequestMapping(method = RequestMethod.GET)
 	public String get(
@@ -84,6 +83,7 @@ public class ClauPrivadaController extends BaseController {
 		
 		if (dto != null)
 			model.addAttribute( ClauPrivadaCommand.asCommand(dto) );
+//			model.addAttribute( clauPrivadaMapper.dtoToCommand(dto) );
 		else
 			model.addAttribute( new ClauPrivadaCommand() );
 		
@@ -106,12 +106,14 @@ public class ClauPrivadaController extends BaseController {
 		
 		if (command.getId() == null) {
 			scspService.createClauPrivada(ClauPrivadaCommand.asDto(command));
+//			scspService.createClauPrivada(clauPrivadaMapper.commandToDto(command));
 			return getModalControllerReturnValueSuccess(
 					request,
 					"redirect:./",
 					"clau.privada.controller.creat.ok");
 		} else {
 			scspService.updateClauPrivada(ClauPrivadaCommand.asDto(command));
+//			scspService.updateClauPrivada(clauPrivadaMapper.commandToDto(command));
 			return getModalControllerReturnValueSuccess(
 					request,
 					"redirect:./",

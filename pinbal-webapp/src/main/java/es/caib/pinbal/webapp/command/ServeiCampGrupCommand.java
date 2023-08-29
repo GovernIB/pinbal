@@ -3,14 +3,15 @@
  */
 package es.caib.pinbal.webapp.command;
 
-import javax.validation.constraints.Size;
-
+import es.caib.pinbal.core.dto.ServeiCampGrupDto;
+import es.caib.pinbal.webapp.helper.CommandMappingHelper;
+import es.caib.pinbal.webapp.validation.ServeiGrup;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.hibernate.validator.constraints.NotEmpty;
 
-import es.caib.pinbal.core.dto.ServeiCampGrupDto;
+import javax.validation.constraints.Size;
 
 /**
  * Command per als camps dels serveis.
@@ -18,6 +19,7 @@ import es.caib.pinbal.core.dto.ServeiCampGrupDto;
  * @author Limit Tecnologies <limit@limit.es>
  */
 @Getter @Setter
+@ServeiGrup
 public class ServeiCampGrupCommand {
 
 	private Long id;

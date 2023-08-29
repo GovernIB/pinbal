@@ -3,18 +3,10 @@
  */
 package es.caib.pinbal.webapp.command;
 
-import java.util.List;
-import java.util.Map;
-
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
-
-import org.hibernate.validator.constraints.NotEmpty;
-import org.springframework.web.multipart.MultipartFile;
-
 import es.caib.pinbal.core.dto.ConsultaDto;
 import es.caib.pinbal.core.dto.ConsultaDto.Consentiment;
 import es.caib.pinbal.core.dto.ConsultaDto.DocumentTipus;
+import es.caib.pinbal.webapp.helper.CommandMappingHelper;
 import es.caib.pinbal.webapp.validation.ArxiuNoBuit;
 import es.caib.pinbal.webapp.validation.DocumentIdentitatCif;
 import es.caib.pinbal.webapp.validation.DocumentIdentitatDni;
@@ -23,6 +15,13 @@ import es.caib.pinbal.webapp.validation.DocumentIdentitatNif;
 import es.caib.pinbal.webapp.validation.DocumentIdentitatPass;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.validator.constraints.NotEmpty;
+import org.springframework.web.multipart.MultipartFile;
+
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Command per a realitzar consultes SCSP.

@@ -103,15 +103,27 @@
 						const editable = grup.length ? (grup.hasClass('editable') ? (subgrup.length ? subgrup.hasClass('editable') : true) : false) : true;
 						camp.prop("disabled", !(editable && campRegla.editable));
 						camp.toggleClass("ocult", !campRegla.visible);
+						// Netejar camp
+						if (!campRegla.editable || !campRegla.visible) {
+							clearCamp(camp.attr('id'));
+						}
 						let etiqueta = camp.closest(".form-group").find('label');
 						let etiquetaText = etiqueta.text().trim();
 						if (etiquetaText.endsWith("*"))
-							etiquetaText = etiquetaText.substring(0, etiquetaText.size() - 2);
+							etiquetaText = etiquetaText.substring(0, etiquetaText.length - 2);
 						if (campRegla.obligatori)
 							etiquetaText = etiquetaText + " *";
 						etiqueta.text(etiquetaText);
 					}
 				});
+			}
+		}
+		const clearCamp = (campId) => {
+			let camp = $("#campId");
+			if (camp.is(':checkbox')) {
+				camp.prop("checked", false);
+			} else {
+				camp.val('');
 			}
 		}
 		const updateGrupsRegles = () => {
@@ -141,6 +153,11 @@
 						// Visible
 						grup.toggleClass("ocult", !grupRegla.visible);
 
+						// Netejar camps
+						if (!grupRegla.editable || !grupRegla.visible) {
+							clearGrup(grup.attr('id'));
+						}
+
 						// Obligatori
 						let etiqueta = isGrup ? grup.find(".fs-grup-nom") : grup.find(".panel-title");
 						let etiquetaText = etiqueta.text().trim();
@@ -152,6 +169,9 @@
 					}
 				});
 			}
+		}
+		const clearGrup = (grupId) => {
+			$("#grupId").find("input, select").each(i => {clearCamp(i.attr('id'))})
 		}
 	</script>
 	<style>

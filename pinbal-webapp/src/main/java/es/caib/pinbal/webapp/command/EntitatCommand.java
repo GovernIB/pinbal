@@ -9,6 +9,7 @@ import java.util.List;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import es.caib.pinbal.webapp.helper.CommandMappingHelper;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import es.caib.pinbal.core.dto.ConsultaDto.DocumentTipus;

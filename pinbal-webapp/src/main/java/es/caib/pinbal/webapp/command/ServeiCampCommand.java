@@ -8,6 +8,7 @@ import java.util.List;
 
 import javax.validation.constraints.Size;
 
+import es.caib.pinbal.webapp.helper.CommandMappingHelper;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.lang.builder.ToStringBuilder;

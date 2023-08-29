@@ -21,7 +21,7 @@
 		<axiom.version>1.2.15</axiom.version>
 		<rampart.version>1.6.4</rampart.version>
 		<cxf.version>2.7.8</cxf.version>
-		<orika.version>1.4.6</orika.version>
+		<orika.version>1.4.5</orika.version>
 		<xdocreport.version>1.0.3</xdocreport.version>
 		<compiler.plugin.version>3.1</compiler.plugin.version>
 		<slf4j.version>1.7.7</slf4j.version>
@@ -30,6 +30,7 @@
 		<dir3caib.version>1.0.7</dir3caib.version>
 		<jersey.version>1.19.4</jersey.version>
 		<lombok.version>1.18.24</lombok.version>
+		<mapstruct.version>1.2.0.Final</mapstruct.version>
 		<skipTests>true</skipTests>
 		<maven.compiler.source>1.7</maven.compiler.source>
 		<maven.compiler.target>1.7</maven.compiler.target>

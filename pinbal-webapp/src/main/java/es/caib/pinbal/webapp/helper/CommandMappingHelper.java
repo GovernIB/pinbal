@@ -1,16 +1,17 @@
 /**
  * 
  */
-package es.caib.pinbal.webapp.command;
+package es.caib.pinbal.webapp.helper;
 
-import java.util.Map;
-
+import es.caib.pinbal.core.dto.EntitatDto;
+import es.caib.pinbal.webapp.command.EntitatCommand;
 import ma.glasnost.orika.MapperFacade;
 import ma.glasnost.orika.MapperFactory;
 import ma.glasnost.orika.converter.builtin.PassThroughConverter;
 import ma.glasnost.orika.impl.DefaultMapperFactory;
 import ma.glasnost.orika.metadata.ClassMapBuilder;
-import es.caib.pinbal.core.dto.EntitatDto;
+
+import java.util.Map;
 
 /**
  * Helper per al mapeig de DTOS a commands.

@@ -344,10 +344,7 @@ public class ConsultaController extends BaseController {
 					serveiCodi,
 					entitat,
 					false);
-			new DadesEspecifiquesValidator(
-					serveiService.findServeiCamps(serveiCodi)).validate(
-							command,
-							bindingResult);
+			new DadesEspecifiquesValidator(serveiCodi).validate(command, bindingResult);
 		} else {
 			MultipartFile fitxer = command.getMultipleFitxer();
 			grups.add(ConsultaCommandMultiple.class);
@@ -974,12 +971,13 @@ public class ConsultaController extends BaseController {
 //			}
 		}
 	}
-	
+
 	@SuppressWarnings("rawtypes")
 	private class DadesEspecifiquesValidator implements Validator {
 		private List<ServeiCampDto> camps;
-		public DadesEspecifiquesValidator(List<ServeiCampDto> camps) {
-			this.camps = camps;
+		String serveiCodi;
+		public DadesEspecifiquesValidator(String serveiCodi) {
+			this.serveiCodi = serveiCodi;
 		}
 		public boolean supports(Class clazz) {
 			return ConsultaCommand.class.equals(clazz);
@@ -987,8 +985,20 @@ public class ConsultaController extends BaseController {
 		public void validate(Object obj, Errors errors) {
 			ConsultaCommand command = (ConsultaCommand)obj;
 			Map<String, Object> dadesEspecifiquesValors = command.getDadesEspecifiques();
+			List<String> campsModificats = new ArrayList<>(); // Path
+			List<String> grupsModificats = new ArrayList<>(); // Nom
+			List<ServeiCampDto> camps = null;
+			List<ServeiCampGrupDto> grups = null;
+			try {
+				camps = serveiService.findServeiCamps(serveiCodi);
+				grups = serveiService.findServeiCampGrups(serveiCodi);
+			} catch (ServeiNotFoundException e) {
+				throw new RuntimeException("Error obtenint els camps i grups del servei", e);
+			}
+			int i = 0;
 			for (ServeiCampDto camp: camps) {
 				Object valorCamp = dadesEspecifiquesValors.get(camp.getPath());
+
 				boolean isEmptyString = valorCamp instanceof String && ((String)valorCamp).isEmpty();
 				if (valorCamp == null || isEmptyString) {
 					if (camp.isObligatori())
@@ -997,6 +1007,12 @@ public class ConsultaController extends BaseController {
 								"NotEmpty",
 								"Aquest camp és obligatori");
 				} else {
+					// Valors necessaris per validar regles
+					campsModificats.add(camp.getPath());
+					if (camp.getGrup() != null) {
+						grupsModificats.add(camp.getGrup().getNom());
+					}
+
 					// Validar expressió regular si n'hi ha
 					String validacioRegexp = camp.getValidacioRegexp();
 					if (ServeiCampDtoTipus.TEXT.equals(camp.getTipus()) && validacioRegexp != null && !validacioRegexp.isEmpty()) {
@@ -1124,7 +1140,97 @@ public class ConsultaController extends BaseController {
 					}
 				}
 			}
+
+			// Validacions de regles
+			List<CampFormProperties> campsRegles = null;
+			List<CampFormProperties> grupsRegles = null;
+			try {
+				campsRegles = serveiService.getCampsByserveiRegla(serveiCodi, campsModificats.toArray(new String[]{}));
+				grupsRegles = serveiService.getGrupsByserveiRegla(serveiCodi, grupsModificats.toArray(new String[]{}));
+			} catch (ServeiNotFoundException e) {
+				throw new RuntimeException("Error obtenint les regles del servei", e);
+			}
+
+			// Validacions de regles de camps
+			if (campsRegles != null) {
+				for (ServeiCampDto camp : camps) {
+					CampFormProperties campRegla = campsRegles.get(i++);
+
+					if (!campsModificats.contains(camp.getPath())) {
+						if (campRegla.isObligatori()) {
+							errors.rejectValue(
+									"dadesEspecifiques[" + camp.getPath() + "]",
+									"consulta.form.camp.regla.obligatori",
+									"Amb les dades actuals, aquest camp és obligatori");
+						}
+					} else {
+						if (!campRegla.isVisible()){
+							errors.reject(
+									"consulta.form.camp.regla.visible",
+									new Object[]{camp.getEtiqueta() != null ? camp.getEtiqueta() : camp.getCampNom()},
+									"Amb les dades actuals, aquest camp ha d'estar buit");
+						} else if (!campRegla.isEditable()) {
+							errors.rejectValue(
+									"dadesEspecifiques[" + camp.getPath() + "]",
+									"consulta.form.camp.regla.editable",
+									"Amb les dades actuals, aquest camp ha d'estar buit");
+						}
+					}
+				}
+			}
+			// Validacions de regles de grup
+			if (grupsRegles != null) {
+				for (CampFormProperties grupRegla : grupsRegles) {
+					ServeiCampGrupDto grup = getGrupById(grups, grupRegla.getVarId());
+					if (!grupsModificats.contains(grup.getNom())) {
+						if (grupRegla.isObligatori()) {
+							errors.reject(
+									"consulta.form.grup.regla.obligatori",
+									new Object[] {grup != null ? grup.getNom() : ""},
+									"El grup ha de tenir dades emplenades");
+						}
+
+					} else {
+						if (!grupRegla.isEditable()) {
+							errors.reject(
+									"consulta.form.grup.regla.editable",
+									new Object[] {grup != null ? grup.getNom() : ""},
+									"El grup no pot tenir dades emplenades");
+						} else if (!grupRegla.isVisible()) {
+							errors.reject(
+									"consulta.form.grup.regla.visible",
+									new Object[] {grup != null ? grup.getNom() : ""},
+									"El grup no pot tenir dades emplenades");
+						}
+					}
+				}
+			}
 		}
+
+		private ServeiCampGrupDto getGrupById(List<ServeiCampGrupDto> grups, Long grupId) {
+			if (grups == null) {
+				return null;
+			}
+			for (ServeiCampGrupDto grup: grups) {
+				if (grup.getId().equals(grupId)) {
+					return grup;
+				}
+			}
+			return null;
+		}
+
+//		private CampFormProperties getGrupRegla(ServeiCampDto camp, List<CampFormProperties> grupsRegles) {
+//			if (camp.getGrup() == null) {
+//				return null;
+//			}
+//			for (CampFormProperties grupRegles: grupsRegles) {
+//				if (grupRegles.getVarId().equals(camp.getGrup().getId()) {
+//					return grupRegles;
+//				}
+//			}
+//			return null;
+//		}
+
 		private Date checkDateFormat(String dateText) {
 			SimpleDateFormat sdf = new SimpleDateFormat(FORMAT_DATA_DADES_ESPECIFIQUES);
 			Date dataDate = null;

@@ -1,13 +1,13 @@
 package es.caib.pinbal.webapp.helper;
 
-import java.util.List;
-import java.util.Set;
-
-import org.springframework.stereotype.Component;
-
 import ma.glasnost.orika.MapperFacade;
 import ma.glasnost.orika.MapperFactory;
 import ma.glasnost.orika.impl.DefaultMapperFactory;
+import ma.glasnost.orika.impl.generator.JavassistCompilerStrategy;
+import org.springframework.stereotype.Component;
+
+import java.util.List;
+import java.util.Set;
 
 /**
  * Helper per a convertir entre diferents formats de documents.
@@ -39,7 +39,7 @@ public class ConversioTipusHelper {
 
 	private static MapperFacade getMapperFacade() {
 		if (mapperFactory == null)
-			mapperFactory = new DefaultMapperFactory.Builder().build();
+			mapperFactory = new DefaultMapperFactory.Builder().compilerStrategy(new JavassistCompilerStrategy()).build();
 		/*mapperFactory.getConverterFactory().registerConverter(
 				new CustomConverter<MultipartFile, byte[]>() {
 					public byte[] convert(MultipartFile source, Type<? extends byte[]> destinationClass) {

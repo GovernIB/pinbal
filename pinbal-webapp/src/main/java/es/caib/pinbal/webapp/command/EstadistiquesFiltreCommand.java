@@ -10,6 +10,7 @@ import javax.validation.constraints.Size;
 import es.caib.pinbal.core.dto.ConsultaDto.EstatTipus;
 import es.caib.pinbal.core.dto.EstadistiquesFiltreDto;
 import es.caib.pinbal.core.dto.EstadistiquesFiltreDto.EstadistiquesAgrupacioDto;
+import es.caib.pinbal.webapp.helper.CommandMappingHelper;
 import lombok.Data;
 
 /**

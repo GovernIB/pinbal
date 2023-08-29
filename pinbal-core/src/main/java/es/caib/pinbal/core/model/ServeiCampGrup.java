@@ -3,8 +3,10 @@
  */
 package es.caib.pinbal.core.model;
 
-import java.util.ArrayList;
-import java.util.List;
+import es.caib.pinbal.core.audit.PinbalAuditable;
+import lombok.Getter;
+import org.apache.commons.lang.builder.ToStringBuilder;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -19,13 +21,10 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 import javax.persistence.Version;
-
-import lombok.Getter;
-import org.apache.commons.lang.builder.ToStringBuilder;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-
-import es.caib.pinbal.core.audit.PinbalAuditable;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Classe de model de dades que conté la informació d'un camp per
@@ -36,6 +35,8 @@ import es.caib.pinbal.core.audit.PinbalAuditable;
 @Entity
 @Table(
 		name = "pbl_servei_camp_grup",
+		uniqueConstraints = {
+				@UniqueConstraint(columnNames={"servei_id", "nom"})},
 		indexes = {
 				@Index(name = "pbl_servei_campgr_servei_i", columnList = "servei_id")})
 @EntityListeners(AuditingEntityListener.class)

@@ -8,6 +8,7 @@ import java.util.List;
 
 import javax.validation.constraints.Size;
 
+import es.caib.pinbal.webapp.helper.CommandMappingHelper;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.hibernate.validator.constraints.NotEmpty;
 
