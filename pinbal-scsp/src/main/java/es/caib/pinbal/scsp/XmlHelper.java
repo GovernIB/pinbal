@@ -3,27 +3,10 @@
  */
 package es.caib.pinbal.scsp;
 
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.StringWriter;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
-import javax.xml.transform.stream.StreamSource;
-
+import es.caib.pinbal.core.service.exception.ConsultaScspGeneracioException;
+import es.caib.pinbal.scsp.tree.Node;
+import es.caib.pinbal.scsp.tree.Tree;
+import es.scsp.common.domain.core.Servicio;
 import org.apache.commons.io.FileUtils;
 import org.apache.ws.commons.schema.XmlSchema;
 import org.apache.ws.commons.schema.XmlSchemaAll;
@@ -50,10 +33,25 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
-import es.caib.pinbal.core.service.exception.ConsultaScspGeneracioException;
-import es.caib.pinbal.scsp.tree.Node;
-import es.caib.pinbal.scsp.tree.Tree;
-import es.scsp.common.domain.core.Servicio;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+import javax.xml.transform.stream.StreamSource;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.StringWriter;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Mètodes d'ajuda per a la gestió de dades específiques.
@@ -159,7 +157,8 @@ public class XmlHelper {
 			Map<String, Object> dadesEspecifiques,
 			boolean gestioXsdActiva,
 			boolean iniDadesEspecifiques,
-			List<String> pathCampsInicialitzar) throws ConsultaScspGeneracioException {
+			List<String> pathCampsInicialitzar,
+			boolean addDadesEspecifiques) throws ConsultaScspGeneracioException {
 		try {
 			DocumentBuilderFactory fac = DocumentBuilderFactory.newInstance();
 			fac.setNamespaceAware(true);
@@ -250,6 +249,10 @@ public class XmlHelper {
 						}
 					}
 				}
+			}
+			if (!addDadesEspecifiques && !datosEspecificos.hasChildNodes()) {
+				LOGGER.debug("No hi ha dades específiques. No es genera el node de 'DatosEspecificos'.");
+				return null;
 			}
 			doc.appendChild(datosEspecificos);
 			Element docElement = doc.getDocumentElement();
@@ -342,7 +345,7 @@ public class XmlHelper {
 			boolean gestioXsdActiva,
 			boolean iniDadesEspecifiques,
 			List<String> pathCampsInicialitzar) throws ConsultaScspGeneracioException  {
-		Element datosEspecificos = crearDadesEspecifiques(servicio, null, gestioXsdActiva, iniDadesEspecifiques, pathCampsInicialitzar);
+		Element datosEspecificos = crearDadesEspecifiques(servicio, null, gestioXsdActiva, iniDadesEspecifiques, pathCampsInicialitzar, true);
 		NodeList nodes = datosEspecificosRebuts.getChildNodes();
 		for (int i = 0; i < nodes.getLength(); i++) {
 			datosEspecificos.appendChild(

@@ -1,18 +1,17 @@
 package es.caib.pinbal.core.model;
 
+import es.caib.pinbal.core.audit.PinbalAuditable;
+import lombok.Getter;
+import lombok.Setter;
+import org.apache.commons.lang.builder.ToStringBuilder;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
 import javax.persistence.Lob;
 import javax.persistence.Table;
 import javax.persistence.Version;
-
-import org.apache.commons.lang.builder.ToStringBuilder;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-
-import es.caib.pinbal.core.audit.PinbalAuditable;
-import lombok.Getter;
-import lombok.Setter;
 
 /**
  * Dades d'un camp per al formulari de configuracio d'un servei.
@@ -102,6 +101,8 @@ public class ServeiConfig extends PinbalAuditable<Long> {
 
 	@Column(name = "ini_dades_especifiques")
 	private boolean iniDadesEspecifiques = false;
+	@Column(name = "add_dades_especifiques")
+	private boolean addDadesEspecifiques = true;
 
 	@Column(name = "use_auto_classe")
 	private boolean useAutoClasse = true;
@@ -147,6 +148,7 @@ public class ServeiConfig extends PinbalAuditable<Long> {
 			String fitxerAjudaMimeType,
 			byte[] fitxerAjudaContingut,
 			boolean iniDadesEspecifiques,
+			boolean addDadesEspecifiques,
 			boolean useAutoClasse,
 			boolean actiu) {
 		return new Builder(
@@ -164,6 +166,7 @@ public class ServeiConfig extends PinbalAuditable<Long> {
 				fitxerAjudaMimeType,
 				fitxerAjudaContingut,
 				iniDadesEspecifiques,
+				addDadesEspecifiques,
 				useAutoClasse,
 				actiu);
 	}
@@ -196,6 +199,7 @@ public class ServeiConfig extends PinbalAuditable<Long> {
 			Integer maxPeticionsMinut,
 			String ajuda, 
 			boolean iniDadesEspecifiques,
+			boolean addDadesEspecifiques,
 			boolean useAutoClasse) {
 		this.custodiaCodi = custodiaCodi;
 		this.roleName = roleName;
@@ -220,6 +224,7 @@ public class ServeiConfig extends PinbalAuditable<Long> {
 		this.maxPeticionsMinut = maxPeticionsMinut;
 		this.ajuda = ajuda;
 		this.iniDadesEspecifiques = iniDadesEspecifiques;
+		this.addDadesEspecifiques = addDadesEspecifiques;
 		this.useAutoClasse = useAutoClasse;
 	}
 	public void updateFitxerAjuda(
@@ -267,6 +272,7 @@ public class ServeiConfig extends PinbalAuditable<Long> {
 				String fitxerAjudaMimeType,
 				byte[] fitxerAjudaContingut,
 				boolean iniDadesEspecifiques,
+				boolean addDadesEspecifiques,
 				boolean useAutoClasse,
 				boolean actiu) {
 			built = new ServeiConfig();
@@ -284,6 +290,7 @@ public class ServeiConfig extends PinbalAuditable<Long> {
 			built.fitxerAjudaMimeType = fitxerAjudaMimeType;
 			built.fitxerAjudaContingut = fitxerAjudaContingut;
 			built.iniDadesEspecifiques = iniDadesEspecifiques;
+			built.addDadesEspecifiques = addDadesEspecifiques;
 			built.useAutoClasse = useAutoClasse;
 			built.actiu = actiu;
 		}

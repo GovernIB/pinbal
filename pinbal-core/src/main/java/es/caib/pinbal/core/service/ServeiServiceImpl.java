@@ -100,6 +100,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 
 /**
  * Implementació dels mètodes per a interactuar amb les funcionalitats SCSP.
@@ -179,6 +180,7 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 					new byte[0],
 					false,
 					true,
+					true,
 					actiu).build();
 			serveiConfigRepository.save(serveiConfig);
 		} else {
@@ -211,6 +213,7 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 					servei.getFitxerAjudaMimeType(),
 					servei.getFitxerAjudaContingut(),
 					servei.isPinbalIniDadesExpecifiques(),
+					servei.isPinbalAddDadesEspecifiques(),
 					servei.isUseAutoClasse(),
 					true).build();
 			serveiConfig.setPinbalUnitatDir3FromEntitat(servei.isPinbalUnitatDir3FromEntitat());
@@ -242,6 +245,7 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 					servei.getMaxPeticionsMinut(),
 					servei.getAjuda(),
 					servei.isPinbalIniDadesExpecifiques(),
+					servei.isPinbalAddDadesEspecifiques(),
 					servei.isUseAutoClasse());
 			serveiConfig.setPinbalUnitatDir3FromEntitat(servei.isPinbalUnitatDir3FromEntitat());
 			if (servei.getFitxerAjudaNom() != null && !servei.getFitxerAjudaNom().isEmpty()) {
@@ -1173,7 +1177,15 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 				ServeiCampGrupDto.class);
 	}
 
-	@Transactional(rollbackFor = ServeiNotFoundException.class)
+	@Transactional(readOnly = true)
+    @Override
+    public ServeiCampGrupDto serveiCampGrupFindByNom(Long serveiId, String nom) {
+		return dtoMappingHelper.getMapperFacade().map(
+				serveiCampGrupRepository.findByNom(serveiId, nom),
+				ServeiCampGrupDto.class);
+    }
+
+    @Transactional(rollbackFor = ServeiNotFoundException.class)
 	@Override
 	public ServeiBusDto createServeiBus(
 			ServeiBusDto creat) throws ServeiNotFoundException, EntitatNotFoundException {
@@ -1510,14 +1522,22 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 	@Transactional(readOnly = true)
 	public List<CampFormProperties> getCampsByserveiRegla(String serveiCodi, String[] campsModificats) throws ServeiNotFoundException {
 		Servei servei = getServeiByCodi(serveiCodi);
-		return reglaHelper.getCampFormProperties(servei, new HashSet<String>(Arrays.asList(campsModificats)));
+		Set<String> modificats = new HashSet<>();
+		if (campsModificats != null) {
+			modificats.addAll(Arrays.asList(campsModificats));
+		}
+		return reglaHelper.getCampFormProperties(servei, modificats);
 	}
 
 	@Override
 	@Transactional(readOnly = true)
 	public List<CampFormProperties> getGrupsByserveiRegla(String serveiCodi, String[] grupsModificats) throws ServeiNotFoundException {
 		Servei servei = getServeiByCodi(serveiCodi);
-		return reglaHelper.getGrupFormProperties(servei, new HashSet<String>(Arrays.asList(grupsModificats)));
+		Set<String> modificats = new HashSet<>();
+		if (grupsModificats != null) {
+			modificats.addAll(Arrays.asList(grupsModificats));
+		}
+		return reglaHelper.getGrupFormProperties(servei, modificats);
 	}
 
 	private Servei getServeiByCodi(String serveiCodi) throws ServeiNotFoundException {
@@ -1678,6 +1698,7 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 			dto.setFitxerAjudaContingut(serveiConfig.getFitxerAjudaContingut());
 			dto.setPinbalUnitatDir3FromEntitat(serveiConfig.isPinbalUnitatDir3FromEntitat());
 			dto.setPinbalIniDadesExpecifiques(serveiConfig.isIniDadesEspecifiques());
+			dto.setPinbalAddDadesEspecifiques(serveiConfig.isAddDadesEspecifiques());
 			dto.setUseAutoClasse(serveiConfig.isUseAutoClasse());
 		}
 //		Long numeroProcedimentsAssociats = procedimentRepository.countByServei(servicio.getCodCertificado());

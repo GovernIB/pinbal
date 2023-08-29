@@ -3,17 +3,12 @@
  */
 package es.caib.pinbal.scsp;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import es.caib.pinbal.core.dto.ArbreDto;
 import es.caib.pinbal.core.dto.DadaEspecificaDto;
 import es.caib.pinbal.core.dto.NodeDto;
-import es.caib.pinbal.core.service.ServeiService;
 import es.caib.pinbal.scsp.XmlHelper.DadesEspecifiquesNode;
 import es.caib.pinbal.scsp.tree.Tree;
+import es.scsp.common.domain.core.Servicio;
 import org.junit.Test;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -21,7 +16,10 @@ import org.w3c.dom.Node;
 import org.w3c.dom.ls.DOMImplementationLS;
 import org.w3c.dom.ls.LSSerializer;
 
-import es.scsp.common.domain.core.Servicio;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Test per a fer consultes amb xpath de les dades dels DatosEspecificos.
@@ -64,7 +62,7 @@ public class GeneracioDadesEspecifiquesTest {
 				"07033");
 		*/
 		XmlHelper helper = new XmlHelper();
-		Element resultat = helper.crearDadesEspecifiques(servicio, dades, false, iniDadesEspecifiques, null);
+		Element resultat = helper.crearDadesEspecifiques(servicio, dades, false, iniDadesEspecifiques, null, true);
 		System.out.println("AEATIAE >>> " + nodeToString(resultat));
 	}
 
@@ -77,7 +75,7 @@ public class GeneracioDadesEspecifiquesTest {
 //				"DatosEspecificos/Consulta/CodigoProvincia",
 //				"01");
 		XmlHelper helper = new XmlHelper();
-		Element resultat = helper.crearDadesEspecifiques(servicio, dades, false, iniDadesEspecifiques, null);
+		Element resultat = helper.crearDadesEspecifiques(servicio, dades, false, iniDadesEspecifiques, null, true);
 		System.out.println("SVDCCAACPASWS01 >>> " + nodeToString(resultat));
 	}
 	
@@ -90,7 +88,7 @@ public class GeneracioDadesEspecifiquesTest {
 //				"DatosEspecificos/Consulta/AnioNacimiento",
 //				"01");
 		XmlHelper helper = new XmlHelper();
-		Element resultat = helper.crearDadesEspecifiques(servicio, dades, false, iniDadesEspecifiques, null);
+		Element resultat = helper.crearDadesEspecifiques(servicio, dades, false, iniDadesEspecifiques, null, true);
 		System.out.println("SVDDELSEXCDIWS01 >>> " + nodeToString(resultat));
 	}
 
@@ -105,7 +103,7 @@ public class GeneracioDadesEspecifiquesTest {
 //		List<String> pathCampsInicialitzar = new ArrayList<>();
 //		pathCampsInicialitzar.add("DatosEspecificos/Consulta/DatosAdicionalesTitular/Nacimiento/FechaNacimiento");
 //		Element resultat = helper.crearDadesEspecifiques(servicio, dades, true, iniDadesEspecifiques, pathCampsInicialitzar);
-		Element resultat = helper.crearDadesEspecifiques(servicio, dades, true, iniDadesEspecifiques, null);
+		Element resultat = helper.crearDadesEspecifiques(servicio, dades, true, iniDadesEspecifiques, null, true);
 		System.out.println("SVDRRCCNACIMIENTOWS01 >>> " + nodeToString(resultat));
 	}
 
@@ -119,7 +117,7 @@ public class GeneracioDadesEspecifiquesTest {
 		XmlHelper helper = new XmlHelper();
 		List<String> pathCampsInicialitzar = new ArrayList<>();
 		pathCampsInicialitzar.add("DatosEspecificos/Consulta/DatosAdicionalesTitular/Nacimiento/FechaNacimiento");
-		Element resultat = helper.crearDadesEspecifiques(servicio, dades, true, iniDadesEspecifiques, pathCampsInicialitzar);
+		Element resultat = helper.crearDadesEspecifiques(servicio, dades, true, iniDadesEspecifiques, pathCampsInicialitzar, true);
 		System.out.println("SVDINESECOPACONVIVENCIAACTUALWS01 >>> " + nodeToString(resultat));
 	}
 
@@ -143,6 +141,21 @@ public class GeneracioDadesEspecifiquesTest {
 				new ArrayList<String>());
 		arbre.setArrel(arrel);
 		System.out.println("SVDRRCCNACIMIENTOWS01 >>> " + arbre.toString());
+	}
+
+	@Test
+	public void test_SVDCTITWS02() throws Exception {
+		System.setProperty("es.caib.pinbal.xsd.base.path", "/home/siona/Feina/AppData/Pinbal/xsd");
+		Servicio servicio = new Servicio();
+		servicio.setCodCertificado("SVDCTITWS02");
+		servicio.setVersionEsquema("V3");
+		Map<String, Object> dades = new HashMap<String, Object>();
+		XmlHelper helper = new XmlHelper();
+		List<String> pathCampsInicialitzar = new ArrayList<>();
+//		pathCampsInicialitzar.add("DatosEspecificos/Consulta/DatosAdicionalesTitular/Nacimiento/FechaNacimiento");
+		Element resultat = helper.crearDadesEspecifiques(servicio, dades, true, iniDadesEspecifiques, pathCampsInicialitzar, true);
+
+		System.out.println("SVDCTITWS02 >>> " + nodeToString(resultat));
 	}
 
 	private void copiarArbreDadesEspecifiques(

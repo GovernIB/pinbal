@@ -1,25 +1,24 @@
 package es.caib.pinbal.webapp.command;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
-
-import org.hibernate.validator.constraints.NotEmpty;
-import org.springframework.web.multipart.MultipartFile;
-
 import es.caib.pinbal.core.dto.ClauPrivadaDto;
 import es.caib.pinbal.core.dto.ClauPublicaDto;
 import es.caib.pinbal.core.dto.EmisorDto;
 import es.caib.pinbal.core.dto.ServeiDto;
 import es.caib.pinbal.core.dto.ServeiDto.JustificantTipusDto;
 import es.caib.pinbal.core.dto.ServeiXsdDto;
+import es.caib.pinbal.webapp.helper.CommandMappingHelper;
 import es.caib.pinbal.webapp.helper.ConversioTipusHelper;
 import es.caib.pinbal.webapp.validation.CodiServeiNoRepetit;
 import lombok.Data;
+import org.hibernate.validator.constraints.NotEmpty;
+import org.springframework.web.multipart.MultipartFile;
+
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 /**
  * Command que representa la informació d'un servei SCSP.
@@ -119,6 +118,7 @@ public class ServeiCommand {
 	private List<ServeiXsdDto>  fitxersXsd;
 	
 	private boolean pinbalIniDadesExpecifiques = false;
+	private boolean pinbalAddDadesEspecifiques = true;
 	private boolean useAutoClasse = true;
 	
 	public ServeiCommand() {

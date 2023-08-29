@@ -1,0 +1,20 @@
+databaseChangeLog:
+  - property:
+      name: cert
+      value: 1
+      dbms: oracle
+  - property:
+      name: cert
+      value: true
+      dbms: postgresql
+  - changeSet:
+      id: 1692857224629-1
+      author: limit
+      changes:
+        - addColumn:
+            tableName: pbl_servei_config
+            columns:
+              - column:
+                  name: add_dades_especifiques
+                  type: BOOLEAN
+                  defaultValue: ${cert}

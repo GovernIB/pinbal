@@ -3,26 +3,8 @@
  */
 package es.caib.pinbal.core.helper;
 
-import java.io.IOException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
-import org.w3c.dom.Element;
-
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
 import es.caib.pinbal.core.dto.ConsultaDto;
 import es.caib.pinbal.core.dto.ConsultaDto.Consentiment;
 import es.caib.pinbal.core.dto.ConsultaDto.DocumentTipus;
@@ -44,6 +26,22 @@ import es.caib.pinbal.scsp.ResultatEnviamentPeticio;
 import es.caib.pinbal.scsp.ScspHelper;
 import es.caib.pinbal.scsp.Solicitud;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
+import org.w3c.dom.Element;
+
+import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Helper per a controlar el ritme al qual s'envien les consultes SCSP.
@@ -146,6 +144,7 @@ public class PeticioScspHelper {
 				recobriment);
 		boolean gestioXsdActiva = isGestioXsdActiva(consulta.getProcedimentServei().getServei());
 		boolean iniDadesEspecifiques = isIniDadesEspecifiques(consulta.getProcedimentServei().getServei());
+		boolean addDadesEspecifiques = isAddDadesEspecifiques(consulta.getProcedimentServei().getServei());
 		List<String> pathCampsInicialitzar = serveiCampRepository.findPathInicialitzablesByServei(consulta.getProcedimentServei().getServei());
 		if (sincrona) {
 			return scspHelper.enviarPeticionSincrona(
@@ -153,16 +152,20 @@ public class PeticioScspHelper {
 					solicituds,
 					gestioXsdActiva,
 					iniDadesEspecifiques,
-					pathCampsInicialitzar);
+					pathCampsInicialitzar,
+					addDadesEspecifiques);
 		} else {
 			return scspHelper.enviarPeticionAsincrona(
 					consulta.getScspPeticionId(),
 					solicituds,
 					gestioXsdActiva,
 					iniDadesEspecifiques,
-					pathCampsInicialitzar);
+					pathCampsInicialitzar,
+					addDadesEspecifiques);
 		}
 	}
+
+
 
 	@Transactional(propagation = Propagation.REQUIRES_NEW)
 	public void enviarPeticioScspPendent(
@@ -476,6 +479,11 @@ public class PeticioScspHelper {
 	public boolean isIniDadesEspecifiques(String serveiCodi) {
 		ServeiConfig serveiConfig = serveiConfigRepository.findByServei(serveiCodi);
 		return serveiConfig != null && serveiConfig.isIniDadesEspecifiques();
+	}
+
+	private boolean isAddDadesEspecifiques(String serveiCodi) {
+		ServeiConfig serveiConfig = serveiConfigRepository.findByServei(serveiCodi);
+		return serveiConfig == null || serveiConfig.isAddDadesEspecifiques();
 	}
 
 	public boolean isUseAutoClasse(String serveiCodi) {

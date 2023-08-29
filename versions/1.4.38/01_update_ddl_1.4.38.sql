@@ -1,13 +1,4 @@
--- *********************************************************************
--- Update Database Script
--- *********************************************************************
--- Change Log: db/changelog/db.changelog-master.yaml
--- Ran at: 03/05/23 08:43
--- Against: null@offline:oracle?changeLogFile=liquibase/databasechangelog.csv
--- Liquibase version: 4.3.3
--- *********************************************************************
-
--- Changeset db/changelog/changes/1.4.38/269.yaml::1682416448843-1::limit
+-- #269
 ALTER TABLE pbl_servei_camp_grup ADD pare_id NUMBER(38, 0);
 ALTER TABLE pbl_servei_camp_grup ADD ajuda CLOB;
 ALTER TABLE pbl_servei_camp_grup ADD CONSTRAINT pbl_grup_pare_fk FOREIGN KEY (pare_id) REFERENCES pbl_servei_camp_grup (id);
@@ -34,6 +25,5 @@ grant select, update, insert, delete on pbl_servei_regla to www_pinbal;
 grant select, update, insert, delete on pbl_servei_regla_valor_mod to www_pinbal;
 grant select, update, insert, delete on pbl_servei_regla_valor_afc to www_pinbal;
 
--- Changeset db/changelog/changes/1.4.38/277.yaml::1692857224629-1::limit
+-- #279
 ALTER TABLE pbl_servei_config ADD add_dades_especifiques NUMBER(1) DEFAULT '1';
-

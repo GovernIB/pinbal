@@ -3,38 +3,6 @@
  */
 package es.caib.pinbal.scsp;
 
-import java.io.ByteArrayOutputStream;
-import java.io.StringWriter;
-import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Properties;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.OutputKeys;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
-
-import org.apache.commons.lang.ObjectUtils;
-import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.cache.annotation.Cacheable;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.MessageSource;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-
 import es.caib.pinbal.core.service.exception.ConsultaScspComunicacioException;
 import es.caib.pinbal.core.service.exception.ConsultaScspGeneracioException;
 import es.caib.pinbal.scsp.JustificantArbreHelper.ElementArbre;
@@ -83,6 +51,36 @@ import es.scsp.common.domain.req.ServicioOrganismoCesionario;
 import es.scsp.common.exceptions.ScspException;
 import es.scsp.common.utils.DateUtils;
 import es.scsp.common.utils.StaticContextSupport;
+import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.MessageSource;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+import java.io.ByteArrayOutputStream;
+import java.io.StringWriter;
+import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Properties;
 
 /**
  * Mètodes d'ajuda per invocar els serveis SCSP.
@@ -123,7 +121,8 @@ public class ScspHelper {
 			List<Solicitud> solicituds,
 			boolean gestioXsdActiva,
 			boolean iniDadesEspecifiques,
-			List<String> pathCampsInicialitzar) throws ConsultaScspGeneracioException, ConsultaScspComunicacioException {
+			List<String> pathCampsInicialitzar,
+			boolean addDadesEspecifiques) throws ConsultaScspGeneracioException, ConsultaScspComunicacioException {
 		LOGGER.debug("Nova petició SCSP (peticionId=" + idPeticion + ")");
 		Peticion peticion = null;
 		try {
@@ -132,7 +131,8 @@ public class ScspHelper {
 					solicituds,
 					gestioXsdActiva,
 					iniDadesEspecifiques,
-					pathCampsInicialitzar);
+					pathCampsInicialitzar,
+					addDadesEspecifiques);
 		} catch (Exception ex) {
 			throw new ConsultaScspGeneracioException(idPeticion, ex);
 			/*LOGGER.error("Error al generar nova petició SCSP síncrona (peticionId=" + idPeticion + ")", ex);
@@ -172,7 +172,8 @@ public class ScspHelper {
 			List<Solicitud> solicituds,
 			boolean gestioXsdActiva,
 			boolean iniDadesEspecifiques,
-			List<String> pathCampsInicialitzar) throws ConsultaScspGeneracioException, ConsultaScspComunicacioException {
+			List<String> pathCampsInicialitzar,
+			boolean addDadesEspecifiques) throws ConsultaScspGeneracioException, ConsultaScspComunicacioException {
 		LOGGER.debug("Nova petició SCSP (peticionId=" + idPeticion + ")");
 		Peticion peticion = null;
 		try {
@@ -181,7 +182,8 @@ public class ScspHelper {
 					solicituds,
 					gestioXsdActiva,
 					iniDadesEspecifiques,
-					pathCampsInicialitzar);
+					pathCampsInicialitzar,
+					addDadesEspecifiques);
 		} catch (Exception ex) {
 			throw new ConsultaScspGeneracioException(idPeticion, ex);
 			/*LOGGER.error("Error al generar nova petició SCSP síncrona (peticionId=" + idPeticion + ")", ex);
@@ -718,7 +720,8 @@ public class ScspHelper {
 			List<Solicitud> solicituds,
 			boolean gestioXsdActiva,
 			boolean iniDadesEspecifiques,
-			List<String> pathCampsInicialitzar) throws Exception {
+			List<String> pathCampsInicialitzar,
+			boolean addDadesEspecifiques) throws Exception {
 		String serveiCodi = solicituds.get(0).getServeiCodi();
 		Peticion peticion = new Peticion();
 		// Afegeix les sol·licituds
@@ -735,7 +738,8 @@ public class ScspHelper {
 							indexSolicitud++,
 							gestioXsdActiva,
 							iniDadesEspecifiques,
-							pathCampsInicialitzar));
+							pathCampsInicialitzar,
+							addDadesEspecifiques));
 		}
 		peticion.setSolicitudes(solicitudes);
 		// Afegeix els atributs
@@ -758,7 +762,8 @@ public class ScspHelper {
 			int index,
 			boolean gestioXsdActiva,
 			boolean iniDadesEspecifiques,
-			List<String> pathCampsInicialitzar) throws Exception {
+			List<String> pathCampsInicialitzar,
+			boolean addDadesEspecifiques) throws Exception {
 		SolicitudTransmision st = new SolicitudTransmision();
 		DatosGenericos datosGenericos = new DatosGenericos();
 		Emisor beanEmisor = new Emisor();
@@ -842,7 +847,8 @@ public class ScspHelper {
 							solicitud.getDadesEspecifiquesMap(),
 							gestioXsdActiva,
 							iniDadesEspecifiques,
-							pathCampsInicialitzar));
+							pathCampsInicialitzar,
+							addDadesEspecifiques));
 		}
 		return st;
 	}
