@@ -3,14 +3,17 @@
  */
 package es.caib.pinbal.core.ejb;
 
-import javax.annotation.security.RolesAllowed;
-import javax.ejb.Stateless;
-import javax.interceptor.Interceptors;
-
+import es.caib.pinbal.core.dto.dadesexternes.Municipi;
+import es.caib.pinbal.core.dto.dadesexternes.Pais;
+import es.caib.pinbal.core.dto.dadesexternes.Provincia;
+import es.caib.pinbal.core.service.DadesExternesService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ejb.interceptor.SpringBeanAutowiringInterceptor;
 
-import es.caib.pinbal.core.service.DadesExternesService;
+import javax.annotation.security.RolesAllowed;
+import javax.ejb.Stateless;
+import javax.interceptor.Interceptors;
+import java.util.List;
 
 /**
  * Implementació de DadesExternesService que empra una clase delegada per accedir a la
@@ -29,19 +32,19 @@ public class DadesExternesServiceBean implements DadesExternesService {
 
 	@Override
 	@RolesAllowed("tothom")
-	public byte[] findProvincies() {
+	public List<Provincia> findProvincies() {
 		return delegate.findProvincies();
 	}
 
 	@Override
 	@RolesAllowed("tothom")
-	public byte[] findMunicipisPerProvincia(String provinciaCodi) {
+	public List<Municipi> findMunicipisPerProvincia(String provinciaCodi) {
 		return delegate.findMunicipisPerProvincia(provinciaCodi);
 	}
 
 	@Override
 	@RolesAllowed("tothom")
-	public byte[] findPaisos() {
+	public List<Pais> findPaisos() {
 		return delegate.findPaisos();
 	}
 

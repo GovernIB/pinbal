@@ -452,7 +452,7 @@ $(function() {
 					  $(this).data('comentari'),
 					  $(this).data('dataformat'),
 					  $(this).data('camppare'),
-					  $(this).data('valorPare'),
+					  $(this).data('valorpare'),
 					  $(this).data('inicialitzar'),
 					  $(this).data('obligatori'),
 					  $(this).data('modificable'),
