@@ -1,15 +1,14 @@
 package es.caib.pinbal.core.dto;
 
+import lombok.Getter;
+import lombok.Setter;
+import org.apache.commons.lang.builder.ToStringBuilder;
+
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.Date;
 import java.util.List;
-
-import org.apache.commons.lang.builder.ToStringBuilder;
-
-import lombok.Getter;
-import lombok.Setter;
 
 /**
  * Objecte DTO amb informació d'un servei SCSP.
@@ -89,6 +88,7 @@ public class ServeiDto extends AbstractIdentificable<Long> implements Serializab
 	private byte[] fitxerAjudaContingut;
 	
 	private boolean pinbalIniDadesEspecifiques;
+	private boolean pinbalAddDadesEspecifiques;
 
 	
 	private List<ServeiXsdDto> fitxersXsd;
