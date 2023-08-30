@@ -255,14 +255,24 @@ $(document).ready(function () {
 						<c:set var="campsPerMostrar" value="${campsSenseAgrupar}" scope="request"/>
 						<jsp:include page="import/dadesEspecifiquesForm.jsp"/>
 						<c:forEach var="grup" items="${grups}">
-							<fieldset>
-							 	<legend>${grup.nom}</legend>
-							 	<div class="clearfix legend-margin-bottom"></div>
-							 	<c:set var="dadesEspecifiquesDisabled" value="${true}" scope="request"/>
-								<c:set var="dadesEspecifiquesValors" value="${consulta.dadesEspecifiques}" scope="request"/>
+							<fieldset id="grup_${grup.id}" class="fs-grup<c:if test='${grup.grupRegla}'> grup-regla</c:if> editable" data-nom="${grup.nom}">
+								<legend><span class="fs-grup-nom">${grup.nom}</span></legend>
+								<div class="clearfix legend-margin-bottom"></div>
 								<c:set var="campsPerMostrar" value="${campsDadesEspecifiquesAgrupats[grup.id]}" scope="request"/>
 								<jsp:include page="import/dadesEspecifiquesForm.jsp"/>
-				   			</fieldset>
+								<%-- Subgrups --%>
+								<c:if test="${not empty grup.fills}">
+									<c:forEach var="subgrup" items="${grup.fills}">
+										<div id="grup_${subgrup.id}" class="panel panel-default fs-subgrup<c:if test='${subgrup.grupRegla}'> grup-regla</c:if> editable" data-nom="${subgrup.nom}">
+											<div class="panel-heading"><h3 class="panel-title">${subgrup.nom}</h3></div>
+											<div class="panel-body">
+												<c:set var="campsPerMostrar" value="${campsDadesEspecifiquesAgrupats[subgrup.id]}" scope="request"/>
+												<jsp:include page="import/dadesEspecifiquesForm.jsp"/>
+											</div>
+										</div>
+									</c:forEach>
+								</c:if>
+							</fieldset>
 						</c:forEach>
 					</fieldset>
 				</c:if>
