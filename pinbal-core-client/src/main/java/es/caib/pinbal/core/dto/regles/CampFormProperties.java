@@ -10,4 +10,7 @@ public class CampFormProperties {
     private boolean visible;
     private boolean editable;
     private boolean obligatori;
+    private String reglaVisible;
+    private String reglaEditable;
+    private String reglaObligatori;
 }

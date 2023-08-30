@@ -24,6 +24,7 @@ public class RuleAccioBloquejar {
         VariableFact fact = facts.get("fact");
         fact.setVisible(true);
         fact.setEditable(false);
+        fact.setReglaEditable(fact.getReglaNom());
     }
 
 }

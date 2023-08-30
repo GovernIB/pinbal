@@ -112,11 +112,13 @@ if (map != null) {
 			<jsp:include page="dadesEspecifiquesForm.jsp"/>
 			<c:forEach var="grup" items="${grups}">
 				<fieldset id="grup_${grup.id}" class="fs-grup<c:if test='${grup.grupRegla}'> grup-regla</c:if> editable" data-nom="${grup.nom}">
+					<c:set var="grupErrors"><form:errors path="dadesEspecifiques[${grup.id}]"/></c:set>
 					<legend>
 						<span class="fs-grup-nom">${grup.nom}</span>
 						<c:if test="${not empty grup.ajuda}">
 							<button type="button" class="btn btn-sm btn-info btn-ppv pull-right" data-toggle="popover" title="Ajuda" data-placement="left" data-html="true" data-content='${grup.ajuda}'><span class="fa fa-info"></span></button>
 						</c:if>
+						<c:if test="${not empty grupErrors}"><p class="help-block" style="font-size: 14px;"><span class="fa fa-exclamation-triangle"></span>&nbsp;<form:errors path="dadesEspecifiques[${grup.id}]"/></p></c:if>
 					</legend>
 					<div class="clearfix legend-margin-bottom"></div>
 					<c:set var="dadesEspecifiquesDisabled" value="${false}" scope="request"/>
@@ -126,12 +128,14 @@ if (map != null) {
 						<%-- Subgrups --%>
 					<c:if test="${not empty grup.fills}">
 						<c:forEach var="subgrup" items="${grup.fills}">
+							<c:set var="subgrupErrors"><form:errors path="dadesEspecifiques[${subgrup.id}]"/></c:set>
 							<div id="grup_${subgrup.id}" class="panel panel-default fs-subgrup<c:if test='${subgrup.grupRegla}'> grup-regla</c:if> editable" data-nom="${subgrup.nom}">
-								<div class="panel-heading">
+								<div class="panel-heading<c:if test="${not empty subgrupErrors}"> has-error</c:if>">
 									<h3 class="panel-title">${subgrup.nom}</h3>
 									<c:if test="${not empty subgrup.ajuda}">
 										<button type="button" class="btn btn-sm btn-info btn-ppv pull-right" data-toggle="popover" title="Ajuda" data-placement="left" data-html="true" data-content='${subgrup.ajuda}'><span class="fa fa-info"></span></button>
 									</c:if>
+									<c:if test="${not empty subgrupErrors}"><p class="help-block"><span class="fa fa-exclamation-triangle"></span>&nbsp;<form:errors path="dadesEspecifiques[${subgrup.id}]"/></p></c:if>
 								</div>
 								<div class="panel-body">
 									<c:set var="campsPerMostrar" value="${campsDadesEspecifiquesAgrupats[subgrup.id]}" scope="request"/>

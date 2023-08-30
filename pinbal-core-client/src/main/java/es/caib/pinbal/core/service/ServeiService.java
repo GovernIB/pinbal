@@ -440,7 +440,7 @@ public interface ServeiService {
 
 	/**
 	 * Modifica un grup de camps pel servei.
-	 * 
+	 *
 	 * @param serveiCampGrup
 	 *            La informació per a modificar el grup de camps.
 	 * @return El grup de camps modificat.
@@ -452,7 +452,7 @@ public interface ServeiService {
 
 	/**
 	 * Esborra un grup de camps pel servei.
-	 * 
+	 *
 	 * @param serveiCampGrupId
 	 *             Atribut id del grup de camps.
 	 * @return El grup de camps esborrat.
@@ -464,7 +464,7 @@ public interface ServeiService {
 
 	/**
 	 * Mou un grup de camps pel servei amunt o avall.
-	 * 
+	 *
 	 * @param serveiCampGrupId
 	 *             Atribut id del grup de camps.
 	 * @param up
@@ -481,7 +481,7 @@ public interface ServeiService {
 
 	/**
 	 * Llistat amb els grups de camps d'un servei.
-	 * 
+	 *
 	 * @param serveiCodi
 	 *            El codi del servei.
 	 * @return Un llistat amb els grups de camps del servei.
@@ -491,7 +491,10 @@ public interface ServeiService {
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_DELEG')")
 	public List<ServeiCampGrupDto> findServeiCampGrups(String serveiCodi) throws ServeiNotFoundException;
 
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_DELEG')")
+	public List<ServeiCampGrupDto> findServeiCampGrupsAndSubgrups(String serveiCodi) throws ServeiNotFoundException;
+
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_DELEG')")
 	public ServeiCampGrupDto serveiCampGrupFindByNom(Long serveiId, String nom);
 
 	/**

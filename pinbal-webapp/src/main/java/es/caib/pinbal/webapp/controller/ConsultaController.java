@@ -991,7 +991,7 @@ public class ConsultaController extends BaseController {
 			List<ServeiCampGrupDto> grups = null;
 			try {
 				camps = serveiService.findServeiCamps(serveiCodi);
-				grups = serveiService.findServeiCampGrups(serveiCodi);
+				grups = serveiService.findServeiCampGrupsAndSubgrups(serveiCodi);
 			} catch (ServeiNotFoundException e) {
 				throw new RuntimeException("Error obtenint els camps i grups del servei", e);
 			}
@@ -1161,18 +1161,20 @@ public class ConsultaController extends BaseController {
 							errors.rejectValue(
 									"dadesEspecifiques[" + camp.getPath() + "]",
 									"consulta.form.camp.regla.obligatori",
+									new Object[]{ campRegla.getReglaObligatori() },
 									"Amb les dades actuals, aquest camp és obligatori");
 						}
 					} else {
 						if (!campRegla.isVisible()){
 							errors.reject(
 									"consulta.form.camp.regla.visible",
-									new Object[]{camp.getEtiqueta() != null ? camp.getEtiqueta() : camp.getCampNom()},
+									new Object[]{ camp.getEtiqueta() != null ? camp.getEtiqueta() : camp.getCampNom(), campRegla.getReglaVisible() },
 									"Amb les dades actuals, aquest camp ha d'estar buit");
 						} else if (!campRegla.isEditable()) {
 							errors.rejectValue(
 									"dadesEspecifiques[" + camp.getPath() + "]",
 									"consulta.form.camp.regla.editable",
+									new Object[]{ campRegla.getReglaEditable() },
 									"Amb les dades actuals, aquest camp ha d'estar buit");
 						}
 					}
@@ -1184,22 +1186,24 @@ public class ConsultaController extends BaseController {
 					ServeiCampGrupDto grup = getGrupById(grups, grupRegla.getVarId());
 					if (!grupsModificats.contains(grup.getNom())) {
 						if (grupRegla.isObligatori()) {
-							errors.reject(
+							errors.rejectValue(
+									"dadesEspecifiques[" + grup.getId() + "]",
 									"consulta.form.grup.regla.obligatori",
-									new Object[] {grup != null ? grup.getNom() : ""},
+									new Object[] { grup != null ? grup.getNom() : "", grupRegla.getReglaObligatori()},
 									"El grup ha de tenir dades emplenades");
 						}
 
 					} else {
 						if (!grupRegla.isEditable()) {
-							errors.reject(
+							errors.rejectValue(
+									"dadesEspecifiques[" + grup.getId() + "]" ,
 									"consulta.form.grup.regla.editable",
-									new Object[] {grup != null ? grup.getNom() : ""},
+									new Object[] {grup != null ? grup.getNom() : "", grupRegla.getReglaEditable()},
 									"El grup no pot tenir dades emplenades");
 						} else if (!grupRegla.isVisible()) {
 							errors.reject(
 									"consulta.form.grup.regla.visible",
-									new Object[] {grup != null ? grup.getNom() : ""},
+									new Object[] {grup != null ? grup.getNom() : "", grupRegla.getReglaVisible()},
 									"El grup no pot tenir dades emplenades");
 						}
 					}

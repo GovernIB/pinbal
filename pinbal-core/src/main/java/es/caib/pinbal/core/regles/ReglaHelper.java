@@ -58,6 +58,7 @@ public class ReglaHelper {
             CampFormProperties campFormProperties = getDefaultCampFormProperties();
             for(ServeiRegla regla: regles) {
                 VariableFact variableFact = VariableFact.builder()
+                        .reglaNom(regla.getNom())
                         .modificat(regla.getModificat())
                         .modificatValors(getPathValors(regla.getModificatValor()))
                         .afectatValors(getPathValors(regla.getAfectatValor()))
@@ -67,12 +68,15 @@ public class ReglaHelper {
                         .varCodi(camp.getPath())
                         .campsModificats(campsModificats)
                         .visible(campFormProperties.isVisible())
+                        .reglaVisible(campFormProperties.getReglaVisible())
                         .editable(campFormProperties.isEditable())
+                        .reglaEditable(campFormProperties.getReglaEditable())
                         .obligatori(campFormProperties.isObligatori())
+                        .reglaObligatori(campFormProperties.getReglaObligatori())
                         .build();
                 facts.put("fact", variableFact);
                 rulesEngine.fire(campRules, facts);
-                campFormProperties = getCampFormProperties(variableFact);
+                campFormProperties = getCampFormProperties(variableFact, regla.getId());
             }
             campFormPropertiesMap.add(campFormProperties);
         }
@@ -113,6 +117,7 @@ public class ReglaHelper {
             CampFormProperties campFormProperties = getDefaultCampFormProperties();
             for(ServeiRegla regla: regles) {
                 VariableFact variableFact = VariableFact.builder()
+                        .reglaNom(regla.getNom())
                         .modificat(regla.getModificat())
                         .modificatValors(regla.getModificatValor())
                         .afectatValors(regla.getAfectatValor())
@@ -122,12 +127,15 @@ public class ReglaHelper {
                         .varCodi(grup.getNom())
                         .grupsModificats(grupsModificats)
                         .visible(campFormProperties.isVisible())
+                        .reglaVisible(campFormProperties.getReglaVisible())
                         .editable(campFormProperties.isEditable())
+                        .reglaEditable(campFormProperties.getReglaEditable())
                         .obligatori(campFormProperties.isObligatori())
+                        .reglaObligatori(campFormProperties.getReglaObligatori())
                         .build();
                 facts.put("fact", variableFact);
                 rulesEngine.fire(grupRules, facts);
-                campFormProperties = getCampFormProperties(variableFact);
+                campFormProperties = getCampFormProperties(variableFact, regla.getId());
             }
             campFormPropertiesMap.add(campFormProperties);
         }
@@ -135,12 +143,15 @@ public class ReglaHelper {
         return campFormPropertiesMap;
     }
 
-    private CampFormProperties getCampFormProperties(VariableFact fact) {
+    private CampFormProperties getCampFormProperties(VariableFact fact, Long reglaId) {
         return CampFormProperties.builder()
                 .varId(fact.getVarId())
                 .visible(fact.isVisible())
+                .reglaVisible(fact.getReglaVisible())
                 .editable(fact.isEditable())
+                .reglaEditable(fact.getReglaEditable())
                 .obligatori(fact.isObligatori())
+                .reglaObligatori(fact.getReglaObligatori())
                 .build();
     }
 

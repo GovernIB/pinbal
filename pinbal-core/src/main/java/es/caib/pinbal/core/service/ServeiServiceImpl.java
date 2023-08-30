@@ -1178,6 +1178,21 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 	}
 
 	@Transactional(readOnly = true)
+	@Override
+	public List<ServeiCampGrupDto> findServeiCampGrupsAndSubgrups(String serveiCodi) throws ServeiNotFoundException {
+		log.debug("Cercant els grups i subgrups de camps pel servicio (codi=" + serveiCodi + ")");
+		Servicio servicio = getServicioByCode(serveiCodi);
+		if (servicio == null) {
+			log.debug("No s'ha trobat el servicio (codi=" + serveiCodi + ")");
+			throw new ServeiNotFoundException();
+		}
+		List<ServeiCampGrup> serveiCampGrups = serveiCampGrupRepository.findByServei(serveiCodi);
+		return dtoMappingHelper.getMapperFacade().mapAsList(
+				serveiCampGrups,
+				ServeiCampGrupDto.class);
+	}
+
+	@Transactional(readOnly = true)
     @Override
     public ServeiCampGrupDto serveiCampGrupFindByNom(Long serveiId, String nom) {
 		return dtoMappingHelper.getMapperFacade().map(

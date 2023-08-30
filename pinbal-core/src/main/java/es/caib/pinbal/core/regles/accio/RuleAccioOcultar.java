@@ -23,6 +23,7 @@ public class RuleAccioOcultar {
     public void then(Facts facts) {
         VariableFact fact = facts.get("fact");
         fact.setVisible(false);
+        fact.setReglaVisible(fact.getReglaNom());
     }
 
 }

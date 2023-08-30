@@ -25,6 +25,7 @@ public class RuleAccioObligatori {
         fact.setVisible(true);
         fact.setEditable(true);
         fact.setObligatori(true);
+        fact.setReglaObligatori(fact.getReglaNom());
     }
 
 }

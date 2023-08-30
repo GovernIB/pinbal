@@ -11,6 +11,7 @@ import java.util.Set;
 public class VariableFact {
 
     // Regla
+    private String reglaNom;
     private ModificatEnum modificat;
     private Set<String> modificatValors;
     private Set<String> afectatValors;
@@ -30,6 +31,9 @@ public class VariableFact {
     private boolean visible;
     private boolean editable;
     private boolean obligatori;
+    private String reglaVisible;
+    private String reglaEditable;
+    private String reglaObligatori;
 
 }
 

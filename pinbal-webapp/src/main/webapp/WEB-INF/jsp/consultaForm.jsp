@@ -119,7 +119,7 @@
 			}
 		}
 		const clearCamp = (campId) => {
-			let camp = $("#campId");
+			let camp = $("#" + campId);
 			if (camp.is(':checkbox')) {
 				camp.prop("checked", false);
 			} else {
@@ -171,7 +171,7 @@
 			}
 		}
 		const clearGrup = (grupId) => {
-			$("#grupId").find("input, select").each(i => {clearCamp(i.attr('id'))})
+			$("#" + grupId).find("input, select").each((index, element) => {clearCamp($(element).attr('id'))})
 		}
 	</script>
 	<style>

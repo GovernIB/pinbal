@@ -261,7 +261,7 @@ public class ServeiServiceBean implements ServeiService {
 		return delegate.createServeiCampGrup(serveiCampGrup);
 	}
 
-	@Override
+    @Override
 	@RolesAllowed("PBL_ADMIN")
 	public ServeiCampGrupDto updateServeiCampGrup(ServeiCampGrupDto serveiCampGrup) throws ServeiCampGrupNotFoundException {
 		return delegate.updateServeiCampGrup(serveiCampGrup);
@@ -287,8 +287,14 @@ public class ServeiServiceBean implements ServeiService {
 		return delegate.findServeiCampGrups(serveiCodi);
 	}
 
+	@Override
+	@RolesAllowed({"PBL_ADMIN", "tothom"})
+	public List<ServeiCampGrupDto> findServeiCampGrupsAndSubgrups(String serveiCodi) throws ServeiNotFoundException {
+		return delegate.findServeiCampGrupsAndSubgrups(serveiCodi);
+	}
+
     @Override
-	@RolesAllowed("PBL_ADMIN")
+	@RolesAllowed({"PBL_ADMIN", "tothom"})
     public ServeiCampGrupDto serveiCampGrupFindByNom(Long serveiId, String nom) {
         return delegate.serveiCampGrupFindByNom(serveiId, nom);
     }
