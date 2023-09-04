@@ -995,7 +995,6 @@ public class ConsultaController extends BaseController {
 			} catch (ServeiNotFoundException e) {
 				throw new RuntimeException("Error obtenint els camps i grups del servei", e);
 			}
-			int i = 0;
 			for (ServeiCampDto camp: camps) {
 				Object valorCamp = dadesEspecifiquesValors.get(camp.getPath());
 
@@ -1152,7 +1151,8 @@ public class ConsultaController extends BaseController {
 			}
 
 			// Validacions de regles de camps
-			if (campsRegles != null) {
+			int i = 0;
+			if (campsRegles != null && !campsRegles.isEmpty()) {
 				for (ServeiCampDto camp : camps) {
 					CampFormProperties campRegla = campsRegles.get(i++);
 
@@ -1181,7 +1181,7 @@ public class ConsultaController extends BaseController {
 				}
 			}
 			// Validacions de regles de grup
-			if (grupsRegles != null) {
+			if (grupsRegles != null && !grupsRegles.isEmpty()) {
 				for (CampFormProperties grupRegla : grupsRegles) {
 					ServeiCampGrupDto grup = getGrupById(grups, grupRegla.getVarId());
 					if (!grupsModificats.contains(grup.getNom())) {
