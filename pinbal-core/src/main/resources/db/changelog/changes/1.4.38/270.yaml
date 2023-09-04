@@ -1,0 +1,29 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1693824675471-1
+      author: limit
+      changes:
+        - insert:
+            tableName: pbl_config
+            columns:
+              - column:
+                  name: key
+                  value: es.caib.pinbal.plugin.arxiu.serie.documental
+              - column:
+                  name: description_key
+                  value: propietat.plugin.arxiu.serie.documental
+              - column:
+                  name: group_code
+                  value: ARXIU
+              - column:
+                  name: position
+                  value: 11
+              - column:
+                  name: source_property
+                  value: DATABASE
+              - column:
+                  name: type_code
+                  value: TEXT
+        - delete:
+            tableName: pbl_config
+            where: key = 'es.caib.pinbal.justificant.serie.documental'

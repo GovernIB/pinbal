@@ -34,6 +34,10 @@ grant select, update, insert, delete on pbl_servei_regla to www_pinbal;
 grant select, update, insert, delete on pbl_servei_regla_valor_mod to www_pinbal;
 grant select, update, insert, delete on pbl_servei_regla_valor_afc to www_pinbal;
 
+-- Changeset db/changelog/changes/1.4.38/270.yaml::1693824675471-1::limit
+INSERT INTO pbl_config (key, description_key, group_code, position, source_property, type_code) VALUES ('es.caib.pinbal.plugin.arxiu.serie.documental', 'propietat.plugin.arxiu.serie.documental', 'ARXIU', '11', 'DATABASE', 'TEXT');
+DELETE FROM pbl_config WHERE key = 'es.caib.pinbal.justificant.serie.documental';
+
 -- Changeset db/changelog/changes/1.4.38/277.yaml::1692857224629-1::limit
 ALTER TABLE pbl_servei_config ADD add_dades_especifiques NUMBER(1) DEFAULT '1';
 

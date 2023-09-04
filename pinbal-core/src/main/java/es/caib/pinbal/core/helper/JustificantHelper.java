@@ -632,7 +632,8 @@ public class JustificantHelper implements MessageSourceAware {
 		return configHelper.getAsBoolean("es.caib.pinbal.justificant.signar.i.custodiar", false);
 	}
 	private String getJustificantSerieDocumental() {
-		return configHelper.getConfig("es.caib.pinbal.justificant.serie.documental");
+//		return configHelper.getConfig("es.caib.pinbal.justificant.serie.documental");
+		return configHelper.getConfig("es.caib.pinbal.plugin.arxiu.serie.documental");
 	}
 
 	public class NodeInfo {
