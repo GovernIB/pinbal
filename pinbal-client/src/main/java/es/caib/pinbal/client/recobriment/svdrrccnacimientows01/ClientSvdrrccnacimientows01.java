@@ -61,7 +61,7 @@ public class ClientSvdrrccnacimientows01 extends ClientBase {
 			xmlBuilder.append("<DatosEspecificos>");
 			xmlBuilder.append("<Consulta>");
 
-			if (titularDadesAdicionals != null && !titularDadesAdicionals.isEmpty()) {
+			if (titularDadesAdicionals != null) {
 				xmlBuilder.append("<DatosAdicionalesTitular>");
 				FetRegistral fetRegistral = titularDadesAdicionals.getFetregistral();
 				if (fetRegistral != null && !fetRegistral.isEmpty()) {

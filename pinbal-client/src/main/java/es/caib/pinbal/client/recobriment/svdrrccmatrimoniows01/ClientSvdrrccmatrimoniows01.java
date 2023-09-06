@@ -4,19 +4,13 @@
 package es.caib.pinbal.client.recobriment.svdrrccmatrimoniows01;
 
 import es.caib.pinbal.client.recobriment.ClientBase;
-import es.caib.pinbal.client.recobriment.model.CampFormatException;
-import es.caib.pinbal.client.recobriment.model.MissingCampObligatoriException;
 import es.caib.pinbal.client.recobriment.model.ScspConfirmacionPeticion;
 import es.caib.pinbal.client.recobriment.model.ScspRespuesta;
-import es.caib.pinbal.client.recobriment.model.SolicitudBase;
 import es.caib.pinbal.client.recobriment.model.SolicitudBaseSvdrrcc;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import java.io.IOException;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -67,7 +61,7 @@ public class ClientSvdrrccmatrimoniows01 extends ClientBase {
 			xmlBuilder.append("<DatosEspecificos>");
 			xmlBuilder.append("<Consulta>");
 
-			if (titularDadesAdicionals != null && !titularDadesAdicionals.isEmpty()) {
+			if (titularDadesAdicionals != null) {
 				xmlBuilder.append("<DatosAdicionalesTitular>");
 				FetRegistral fetRegistral = titularDadesAdicionals.getFetregistral();
 				if (fetRegistral != null && !fetRegistral.isEmpty()) {
