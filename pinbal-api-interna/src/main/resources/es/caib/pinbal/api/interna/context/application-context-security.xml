@@ -22,6 +22,7 @@
 
 	<sec:http create-session="never" use-expressions="false" auto-config="false" entry-point-ref="preAuthenticatedProcessingFilterEntryPoint">
 		<sec:intercept-url pattern="/recobriment/**" access="ROLE_WS"/>
+		<sec:intercept-url pattern="/api/entitats" access="ROLE_WS"/>
 		<sec:intercept-url pattern="/**" access="ROLE_WS,ROLE_REPORT"/>
 		<sec:custom-filter position="PRE_AUTH_FILTER" ref="preauthFilter"/>
 		<sec:anonymous/>

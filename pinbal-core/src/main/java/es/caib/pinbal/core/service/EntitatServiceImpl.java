@@ -3,11 +3,28 @@
  */
 package es.caib.pinbal.core.service;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
-
+import es.caib.pinbal.client.comu.EntitatInfo;
+import es.caib.pinbal.core.dto.EntitatDto;
+import es.caib.pinbal.core.dto.EntitatDto.EntitatTipusDto;
+import es.caib.pinbal.core.dto.OrganGestorDto;
+import es.caib.pinbal.core.helper.DtoMappingHelper;
+import es.caib.pinbal.core.model.Entitat;
+import es.caib.pinbal.core.model.Entitat.EntitatTipus;
+import es.caib.pinbal.core.model.EntitatServei;
+import es.caib.pinbal.core.model.EntitatUsuari;
+import es.caib.pinbal.core.model.OrganGestor;
+import es.caib.pinbal.core.model.ServeiConfig;
+import es.caib.pinbal.core.repository.EntitatRepository;
+import es.caib.pinbal.core.repository.EntitatServeiRepository;
+import es.caib.pinbal.core.repository.EntitatUsuariRepository;
+import es.caib.pinbal.core.repository.OrganismeCessionariRepository;
+import es.caib.pinbal.core.repository.ServeiConfigRepository;
+import es.caib.pinbal.core.service.exception.EntitatNotFoundException;
+import es.caib.pinbal.core.service.exception.EntitatServeiNotFoundException;
+import es.caib.pinbal.core.service.exception.ServeiNotFoundException;
+import es.caib.pinbal.scsp.ScspHelper;
+import es.scsp.common.domain.core.Servicio;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -21,28 +38,10 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import es.caib.pinbal.core.dto.EntitatDto;
-import es.caib.pinbal.core.dto.EntitatDto.EntitatTipusDto;
-import es.caib.pinbal.core.dto.OrganGestorDto;
-import es.caib.pinbal.core.helper.DtoMappingHelper;
-import es.caib.pinbal.core.model.Entitat;
-import es.caib.pinbal.core.model.Entitat.EntitatTipus;
-import es.caib.pinbal.core.model.EntitatServei;
-import es.caib.pinbal.core.model.EntitatUsuari;
-import es.caib.pinbal.core.model.OrganGestor;
-import es.caib.pinbal.core.model.OrganismeCessionari;
-import es.caib.pinbal.core.model.ServeiConfig;
-import es.caib.pinbal.core.repository.EntitatRepository;
-import es.caib.pinbal.core.repository.EntitatServeiRepository;
-import es.caib.pinbal.core.repository.EntitatUsuariRepository;
-import es.caib.pinbal.core.repository.OrganismeCessionariRepository;
-import es.caib.pinbal.core.repository.ServeiConfigRepository;
-import es.caib.pinbal.core.service.exception.EntitatNotFoundException;
-import es.caib.pinbal.core.service.exception.EntitatServeiNotFoundException;
-import es.caib.pinbal.core.service.exception.ServeiNotFoundException;
-import es.caib.pinbal.scsp.ScspHelper;
-import es.scsp.common.domain.core.Servicio;
-import lombok.extern.slf4j.Slf4j;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * Implementació de EntitatService que es comunica amb la base de dades emprant
@@ -121,6 +120,16 @@ public class EntitatServiceImpl implements EntitatService, ApplicationContextAwa
 	}
 
 	@Transactional(readOnly = true)
+    @Override
+    public List<EntitatInfo> getEntitatsInfo() {
+		log.debug("Consulta de totes les entitats");
+		return dtoMappingHelper.getMapperFacade().mapAsList(
+				entitatRepository.findAll(
+						new Sort(Sort.Direction.ASC, "nom")),
+				EntitatInfo.class);
+    }
+
+    @Transactional(readOnly = true)
 	@Override
 	public Page<EntitatDto> findAmbFiltrePaginat(
 			String codi,

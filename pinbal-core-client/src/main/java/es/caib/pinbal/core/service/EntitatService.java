@@ -3,18 +3,18 @@
  */
 package es.caib.pinbal.core.service;
 
-import java.util.List;
-
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.security.access.prepost.PreAuthorize;
-
+import es.caib.pinbal.client.comu.EntitatInfo;
 import es.caib.pinbal.core.dto.EntitatDto;
 import es.caib.pinbal.core.dto.EntitatDto.EntitatTipusDto;
 import es.caib.pinbal.core.dto.OrganGestorDto;
 import es.caib.pinbal.core.service.exception.EntitatNotFoundException;
 import es.caib.pinbal.core.service.exception.EntitatServeiNotFoundException;
 import es.caib.pinbal.core.service.exception.ServeiNotFoundException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.prepost.PreAuthorize;
+
+import java.util.List;
 
 /**
  * Declaració dels mètodes per a obtenir i modificar informació d'una entitat.
@@ -64,6 +64,9 @@ public interface EntitatService {
 	 */
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public List<EntitatDto> findAll();
+
+
+	public List<EntitatInfo> getEntitatsInfo();
 
 	/**
 	 * Consulta les entitats segons el filtre.

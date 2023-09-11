@@ -3,17 +3,7 @@
  */
 package es.caib.pinbal.core.ejb;
 
-import java.util.List;
-
-import javax.annotation.security.RolesAllowed;
-import javax.ejb.Stateless;
-import javax.interceptor.Interceptors;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.ejb.interceptor.SpringBeanAutowiringInterceptor;
-
+import es.caib.pinbal.client.comu.EntitatInfo;
 import es.caib.pinbal.core.dto.EntitatDto;
 import es.caib.pinbal.core.dto.EntitatDto.EntitatTipusDto;
 import es.caib.pinbal.core.dto.OrganGestorDto;
@@ -21,6 +11,15 @@ import es.caib.pinbal.core.service.EntitatService;
 import es.caib.pinbal.core.service.exception.EntitatNotFoundException;
 import es.caib.pinbal.core.service.exception.EntitatServeiNotFoundException;
 import es.caib.pinbal.core.service.exception.ServeiNotFoundException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.ejb.interceptor.SpringBeanAutowiringInterceptor;
+
+import javax.annotation.security.RolesAllowed;
+import javax.ejb.Stateless;
+import javax.interceptor.Interceptors;
+import java.util.List;
 
 /**
  * Implementació de EntitatService que empra una clase delegada per accedir a la
@@ -53,7 +52,13 @@ public class EntitatServiceBean implements EntitatService {
 		return delegate.findAll();
 	}
 
-	@Override
+    @Override
+	@RolesAllowed("PBL_WS")
+    public List<EntitatInfo> getEntitatsInfo() {
+        return delegate.getEntitatsInfo();
+    }
+
+    @Override
 	@RolesAllowed("PBL_ADMIN")
 	public Page<EntitatDto> findAmbFiltrePaginat(
 			String codi,
