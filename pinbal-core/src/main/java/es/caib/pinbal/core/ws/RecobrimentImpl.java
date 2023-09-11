@@ -3,16 +3,15 @@
  */
 package es.caib.pinbal.core.ws;
 
-import javax.jws.WebService;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import es.caib.pinbal.core.helper.RecobrimentHelper;
 import es.scsp.bean.common.ConfirmacionPeticion;
 import es.scsp.bean.common.Peticion;
 import es.scsp.bean.common.Respuesta;
 import es.scsp.common.exceptions.ScspException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import javax.jws.WebService;
 
 /**
  * Implementació dels mètodes per al recobriment de les peticions
@@ -54,7 +53,7 @@ public class RecobrimentImpl implements Recobriment {
 	public byte[] getJustificante(
 			String idpeticion,
 			String idsolicitud) throws ScspException {
-		return recobrimentHelper.getJustificante(idpeticion, idsolicitud).getContingut();
+		return recobrimentHelper.getJustificante(idpeticion, idsolicitud, false, true).getContingut();
 	}
 
 }

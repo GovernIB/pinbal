@@ -118,6 +118,64 @@ public class RecobrimentRestController {
 				response);
 	}
 
+	@RequestMapping(
+			value= "/getJustificanteOriginal",
+			method = RequestMethod.GET,
+			produces = "application/json")
+	@ApiOperation(
+			value = "Versió imprimible del justificant de petició de tipus SCSP",
+			notes = "Obté la versió imprimible del justificant de la petició, de tipus ScspJustificante") //, response=ArrayList.class)
+	public void getJustificanteImprimible(
+			HttpServletRequest request,
+			HttpServletResponse response,
+			@ApiParam(name="idPeticion", value="Id de petició")
+			@RequestParam final String idPeticion,
+			@ApiParam(name="idSolicitud", value="Id de sol·licitud")
+			@RequestParam final String idSolicitud) throws RecobrimentScspException, IOException {
+		ScspJustificante justificante = recobrimentService.getJustificanteImprimible(idPeticion, idSolicitud);
+		writeFileToResponse(
+				justificante.getNom(),
+				justificante.getContentType(),
+				justificante.getContingut(),
+				response);
+	}
+
+	@RequestMapping(
+			value= "/getJustificanteCsv",
+			method = RequestMethod.GET,
+			produces = "application/json")
+	@ApiOperation(
+			value = "CSV del justificant de petició de tipus SCSP",
+			notes = "Obté el CSV del justificant de la petició, de tipus ScspJustificante") //, response=ArrayList.class)
+	public ResponseEntity<String> getJustificanteCsv(
+			HttpServletRequest request,
+			HttpServletResponse response,
+			@ApiParam(name="idPeticion", value="Id de petició")
+			@RequestParam final String idPeticion,
+			@ApiParam(name="idSolicitud", value="Id de sol·licitud")
+			@RequestParam final String idSolicitud) throws RecobrimentScspException, IOException {
+		String justificanteCsv = recobrimentService.getJustificanteCsv(idPeticion, idSolicitud);
+		return new ResponseEntity<String>("", HttpStatus.OK);
+	}
+
+	@RequestMapping(
+			value= "/getJustificanteUuId",
+			method = RequestMethod.GET,
+			produces = "application/json")
+	@ApiOperation(
+			value = "Uuid del justificant de petició de tipus SCSP",
+			notes = "Obté l'Uuid del justificant de la petició, de tipus ScspJustificante") //, response=ArrayList.class)
+	public ResponseEntity<String> getJustificanteUuid(
+			HttpServletRequest request,
+			HttpServletResponse response,
+			@ApiParam(name="idPeticion", value="Id de petició")
+			@RequestParam final String idPeticion,
+			@ApiParam(name="idSolicitud", value="Id de sol·licitud")
+			@RequestParam final String idSolicitud) throws RecobrimentScspException, IOException {
+		String justificanteUuid = recobrimentService.getJustificanteUuid(idPeticion, idSolicitud);
+		return new ResponseEntity<String>("", HttpStatus.OK);
+	}
+
 	@ExceptionHandler(Exception.class)
 	public ResponseEntity<ErrorResponse> handleError(
 			HttpServletRequest request,

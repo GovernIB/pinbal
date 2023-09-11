@@ -3,21 +3,12 @@
  */
 package es.caib.pinbal.core.service;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-
 import es.caib.pinbal.client.dadesobertes.DadesObertesResposta;
-import es.caib.pinbal.core.dto.ConsultaOpenDataDto;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.security.access.prepost.PreAuthorize;
-
 import es.caib.pinbal.client.dadesobertes.DadesObertesRespostaConsulta;
 import es.caib.pinbal.core.dto.CarregaDto;
 import es.caib.pinbal.core.dto.ConsultaDto;
 import es.caib.pinbal.core.dto.ConsultaFiltreDto;
+import es.caib.pinbal.core.dto.ConsultaOpenDataDto;
 import es.caib.pinbal.core.dto.EntitatDto;
 import es.caib.pinbal.core.dto.EstadisticaDto;
 import es.caib.pinbal.core.dto.EstadistiquesFiltreDto;
@@ -37,6 +28,13 @@ import es.caib.pinbal.core.service.exception.ProcedimentServeiNotFoundException;
 import es.caib.pinbal.core.service.exception.ScspException;
 import es.caib.pinbal.core.service.exception.ServeiNotAllowedException;
 import es.caib.pinbal.core.service.exception.ValidacioDadesPeticioException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.prepost.PreAuthorize;
+
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Declaració dels mètodes per a gestionar les consultes a SCSP.
@@ -281,7 +279,9 @@ public interface ConsultaService {
 	@PreAuthorize("hasRole('ROLE_WS')")
 	public JustificantDto obtenirJustificant(
 			String idpeticion,
-			String idsolicitud) throws ConsultaNotFoundException, JustificantGeneracioException;
+			String idsolicitud,
+			boolean versioImprimible,
+			boolean ambContingut) throws ConsultaNotFoundException, JustificantGeneracioException;
 
 	/**
 	 * Obté tots els justificants de la consulta múltiple comprimits

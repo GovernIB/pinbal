@@ -53,7 +53,7 @@ public interface RecobrimentService {
 			String idPeticion) throws RecobrimentScspException;
 
 	/**
-	 * 
+	 *
 	 * @param idPeticion
 	 *            id de la petició SCSP enviada.
 	 * @param idSolicitud
@@ -63,6 +63,48 @@ public interface RecobrimentService {
 	 *            Si hi s'han produit excepcions SCSP al fer la petició.
 	 */
 	public ScspJustificante getJustificante(
+			String idPeticion,
+			String idSolicitud) throws RecobrimentScspException;
+
+	/**
+	 *
+	 * @param idPeticion
+	 *            id de la petició SCSP enviada.
+	 * @param idSolicitud
+	 *            id de la sol·licitud dins la petició SCSP.
+	 * @return el fitxer amb la versió imprimible del justificant.
+	 * @throws RecobrimentScspException
+	 *            Si hi s'han produit excepcions SCSP al fer la petició.
+	 */
+	public ScspJustificante getJustificanteImprimible(
+			String idPeticion,
+			String idSolicitud) throws RecobrimentScspException;
+
+	/**
+	 *
+	 * @param idPeticion
+	 *            id de la petició SCSP enviada.
+	 * @param idSolicitud
+	 *            id de la sol·licitud dins la petició SCSP.
+	 * @return el CSV del justificant.
+	 * @throws RecobrimentScspException
+	 *            Si hi s'han produit excepcions SCSP al fer la petició.
+	 */
+	public String getJustificanteCsv(
+			String idPeticion,
+			String idSolicitud) throws RecobrimentScspException;
+
+	/**
+	 *
+	 * @param idPeticion
+	 *            id de la petició SCSP enviada.
+	 * @param idSolicitud
+	 *            id de la sol·licitud dins la petició SCSP.
+	 * @return l'UUID del justificant.
+	 * @throws RecobrimentScspException
+	 *            Si hi s'han produit excepcions SCSP al fer la petició.
+	 */
+	public String getJustificanteUuid(
 			String idPeticion,
 			String idSolicitud) throws RecobrimentScspException;
 

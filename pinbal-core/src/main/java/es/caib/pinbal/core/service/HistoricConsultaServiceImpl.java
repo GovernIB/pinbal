@@ -29,6 +29,7 @@ import es.caib.pinbal.core.helper.DtoMappingHelper;
 import es.caib.pinbal.core.helper.JustificantHelper;
 import es.caib.pinbal.core.helper.PermisosHelper;
 import es.caib.pinbal.core.helper.PeticioScspEstadistiquesHelper;
+import es.caib.pinbal.core.helper.PluginHelper;
 import es.caib.pinbal.core.model.Consulta.EstatTipus;
 import es.caib.pinbal.core.model.Consulta.JustificantEstat;
 import es.caib.pinbal.core.model.Entitat;
@@ -125,6 +126,8 @@ public class HistoricConsultaServiceImpl implements HistoricConsultaService, App
 	@Autowired
 	private DtoMappingHelper dtoMappingHelper;
 	@Autowired
+	private PluginHelper pluginHelper;
+	@Autowired
 	private PeticioScspEstadistiquesHelper peticioScspEstadistiquesHelper;
 	@Autowired
 	private ConfigHelper configHelper;
@@ -162,11 +165,15 @@ public class HistoricConsultaServiceImpl implements HistoricConsultaService, App
 				throw new ConsultaNotFoundException();
 			}
 		}
-		return obtenirJustificantComu(consulta, true);
+		return obtenirJustificantComu(consulta, true, true);
 	}
 
 	@Override
-	public JustificantDto obtenirJustificant(String idpeticion, String idsolicitud)
+	public JustificantDto obtenirJustificant(
+			String idpeticion,
+			String idsolicitud,
+			boolean versioImprimible,
+			boolean ambContingut)
 			throws ConsultaNotFoundException, JustificantGeneracioException {
 		log.debug("Generant justificant per a la consulta (" +
 				"idpeticion=" + idpeticion + ", " +
@@ -183,7 +190,7 @@ public class HistoricConsultaServiceImpl implements HistoricConsultaService, App
 			log.error("La consulta (idpeticion=" + idpeticion + ", idsolicitud=" + idsolicitud + ") no pertany a aquest usuari");
 			throw new ConsultaNotFoundException();
 		}
-		return obtenirJustificantComu(consulta, true);
+		return obtenirJustificantComu(consulta, ambContingut, versioImprimible);
 	}
 
 	@Override
@@ -201,7 +208,7 @@ public class HistoricConsultaServiceImpl implements HistoricConsultaService, App
 			log.error("La consulta (id=" + id + ") no pertany a aquest usuari");
 			throw new ConsultaNotFoundException();
 		}
-		return obtenirJustificantComu(consulta, descarregar);
+		return obtenirJustificantComu(consulta, descarregar, true);
 	}
 
 	@Transactional(rollbackFor = {ConsultaNotFoundException.class, JustificantGeneracioException.class})
@@ -1395,7 +1402,8 @@ public class HistoricConsultaServiceImpl implements HistoricConsultaService, App
 
 	private JustificantDto obtenirJustificantComu(
 			final HistoricConsulta consulta,
-			final boolean descarregar) throws JustificantGeneracioException {
+			final boolean descarregar,
+			final boolean versioImprimible) throws JustificantGeneracioException {
 		// Abans de continuar es comprova si l'estat de la consulta és "Tramitada"
 		if (EstatTipus.Tramitada.equals(consulta.getEstat())) {
 			// Amb aquest bloc sincronitzat aconseguim que només hi hagi un thread a la vegada
@@ -1445,7 +1453,8 @@ public class HistoricConsultaServiceImpl implements HistoricConsultaService, App
 							try {
 								FitxerDto justificantFitxer = justificantHelper.descarregarFitxerGenerat(
 										consultaRefreshed,
-										getScspHelper());
+										getScspHelper(),
+										versioImprimible);
 								justificant.setNom(justificantFitxer.getNom());
 								justificant.setContentType(justificantFitxer.getContentType());
 								justificant.setContingut(justificantFitxer.getContingut());
@@ -1463,7 +1472,32 @@ public class HistoricConsultaServiceImpl implements HistoricConsultaService, App
 					}
 				});
 			} else {
-				return null;
+				HistoricConsulta consultaRefreshed = historicConsultaRepository.getOne(consulta.getId());
+				if (JustificantEstat.OK.equals(consultaRefreshed.getJustificantEstat())) {
+					return JustificantDto.builder().error(true).errorDescripcio("El justificant no s'ha generat, o no s'ha desat a l'arxiu").build();
+				}
+				if (consultaRefreshed.getArxiuDocumentUuid() == null) {
+					return JustificantDto.builder().error(true).errorDescripcio("El justificant no es troba a l'arxiu").build();
+				}
+				if (versioImprimible) {
+					try {
+						es.caib.plugins.arxiu.api.Document documentArxiu = pluginHelper.arxiuDocumentConsultar(
+								consultaRefreshed.getArxiuDocumentUuid(),
+								null,
+								false,
+								false);
+						if (documentArxiu != null && documentArxiu.getMetadades() != null && documentArxiu.getMetadades().getCsv() != null) {
+							return JustificantDto.builder().arxiuCsv(documentArxiu.getMetadades().getCsv()).build();
+						} else {
+							return JustificantDto.builder().error(true).errorDescripcio("No s'ha pogut recuperar el CSV del justificant").build();
+						}
+					} catch (Exception ex) {
+						log.error("No ha estat possible obtenir el document de l'arxiu.", ex);
+						throw new JustificantGeneracioException("No ha estat possible recuperar la informació del docuement a l'arxiu.");
+					}
+				} else {
+					return JustificantDto.builder().arxiuUuid(consultaRefreshed.getArxiuDocumentUuid()).build();
+				}
 			}
 		} else {
 			throw new JustificantGeneracioException("La consulta no està en estat TRAMITADA");

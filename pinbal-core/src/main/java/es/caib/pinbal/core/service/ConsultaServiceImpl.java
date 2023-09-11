@@ -1145,12 +1145,15 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 				throw new ConsultaNotFoundException();
 			}
 		}
-		return obtenirJustificantComu(consulta, true);
+		return obtenirJustificantComu(consulta, true, true);
 	}
 
 	@Override
-	public JustificantDto obtenirJustificant(String idpeticion, String idsolicitud)
-			throws ConsultaNotFoundException, JustificantGeneracioException {
+	public JustificantDto obtenirJustificant(
+			String idpeticion,
+			String idsolicitud,
+			boolean versioImprimible,
+			boolean ambContingut) throws ConsultaNotFoundException, JustificantGeneracioException {
 		log.debug("Generant justificant per a la consulta (" +
 				"idpeticion=" + idpeticion + ", " +
 				"idsolicitud=" + idsolicitud + ")");
@@ -1166,7 +1169,7 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 			log.error("La consulta (idpeticion=" + idpeticion + ", idsolicitud=" + idsolicitud + ") no pertany a aquest usuari");
 			throw new ConsultaNotFoundException();
 		}
-		return obtenirJustificantComu(consulta, true);
+		return obtenirJustificantComu(consulta, ambContingut, versioImprimible);
 	}
 
 	@Override
@@ -1184,7 +1187,7 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 			log.error("La consulta (id=" + id + ") no pertany a aquest usuari");
 			throw new ConsultaNotFoundException();
 		}
-		return obtenirJustificantComu(consulta, descarregar);
+		return obtenirJustificantComu(consulta, descarregar, true);
 	}
 
 	@Transactional(rollbackFor = {ConsultaNotFoundException.class, JustificantGeneracioException.class})
@@ -2005,7 +2008,7 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 				false);
 		for (Consulta pendent: pendents) {
 			try {
-				obtenirJustificantComu(pendent, false);
+				obtenirJustificantComu(pendent, false, false);
 			} catch (JustificantGeneracioException ex) {
 				log.error(
 						"Error al generar automàticament el justificant per la consulta (" +
@@ -2642,7 +2645,8 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 
 	private JustificantDto obtenirJustificantComu(
 			final Consulta consulta,
-			final boolean descarregar) throws JustificantGeneracioException {
+			final boolean descarregar,
+			final boolean versioImprimible) throws JustificantGeneracioException {
 		// Abans de continuar es comprova si l'estat de la consulta és "Tramitada"
 		if (EstatTipus.Tramitada.equals(consulta.getEstat())) {
 			// Amb aquest bloc sincronitzat aconseguim que només hi hagi un thread a la vegada
@@ -2692,7 +2696,8 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 							try {
 								FitxerDto justificantFitxer = justificantHelper.descarregarFitxerGenerat(
 										consultaRefreshed,
-										getScspHelper());
+										getScspHelper(),
+										versioImprimible);
 								justificant.setNom(justificantFitxer.getNom());
 								justificant.setContentType(justificantFitxer.getContentType());
 								justificant.setContingut(justificantFitxer.getContingut());
@@ -2710,7 +2715,32 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 					}
 				});
 			} else {
-				return null;
+				Consulta consultaRefreshed = consultaRepository.getOne(consulta.getId());
+				if (JustificantEstat.OK.equals(consultaRefreshed.getJustificantEstat())) {
+					return JustificantDto.builder().error(true).errorDescripcio("El justificant no s'ha generat, o no s'ha desat a l'arxiu").build();
+				}
+				if (consultaRefreshed.getArxiuDocumentUuid() == null) {
+					return JustificantDto.builder().error(true).errorDescripcio("El justificant no es troba a l'arxiu").build();
+				}
+				if (versioImprimible) {
+					try {
+						es.caib.plugins.arxiu.api.Document documentArxiu = pluginHelper.arxiuDocumentConsultar(
+								consultaRefreshed.getArxiuDocumentUuid(),
+								null,
+								false,
+								false);
+						if (documentArxiu != null && documentArxiu.getMetadades() != null && documentArxiu.getMetadades().getCsv() != null) {
+							return JustificantDto.builder().arxiuCsv(documentArxiu.getMetadades().getCsv()).build();
+						} else {
+							return JustificantDto.builder().error(true).errorDescripcio("No s'ha pogut recuperar el CSV del justificant").build();
+						}
+					} catch (Exception ex) {
+						log.error("No ha estat possible obtenir el document de l'arxiu.", ex);
+						throw new JustificantGeneracioException("No ha estat possible recuperar la informació del docuement a l'arxiu.");
+					}
+				} else {
+					return JustificantDto.builder().arxiuUuid(consultaRefreshed.getArxiuDocumentUuid()).build();
+				}
 			}
 		} else {
 			throw new JustificantGeneracioException("La consulta no està en estat TRAMITADA");
@@ -2880,7 +2910,11 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 			long t0) throws ConsultaScspException {
 		if (conslt != null && ex instanceof ConsultaScspComunicacioException || ex instanceof ConsultaScspRespostaException) {
 			Usuari usuariActual = usuariHelper.getUsuariAutenticat();
+			if (usuariActual != null) {
+				log.info("[CNS_ERR] L'usuari '" + usuariActual.getCodi() + "' amb idioma '" + usuariActual.getIdioma() + "' ha ralitzat una consulta que ha donat error.");
+			}
 			Locale locale = usuariActual != null && usuariActual.getIdioma() != null ? new Locale(usuariActual.getIdioma().toLowerCase()) : new Locale("ca");
+			log.info("[CNS_ERR] S'utilitza el locale '" + locale.toString() + "' per a generar el missatge d'error.");
 			String error = generateErrorMessage(ex, locale);
 			peticioScspHelper.updateEstatConsultaError(
 					conslt,

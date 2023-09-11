@@ -3,29 +3,6 @@
  */
 package es.caib.pinbal.core.service;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.StringWriter;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.OutputKeys;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.xml.sax.SAXException;
-
 import es.caib.pinbal.client.recobriment.model.ScspAtributos;
 import es.caib.pinbal.client.recobriment.model.ScspConfirmacionPeticion;
 import es.caib.pinbal.client.recobriment.model.ScspDatosGenericos;
@@ -65,6 +42,27 @@ import es.scsp.bean.common.Titular;
 import es.scsp.bean.common.Transmision;
 import es.scsp.bean.common.TransmisionDatos;
 import es.scsp.common.exceptions.ScspException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.xml.sax.SAXException;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.StringWriter;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Implementació dels mètodes per a fer peticions al recobriment SCSP.
@@ -160,12 +158,52 @@ public class RecobrimentServiceImpl implements RecobrimentService {
 			String idPeticion,
 			String idSolicitud) throws RecobrimentScspException {
 		try {
-			JustificantDto justificant = recobrimentHelper.getJustificante(idPeticion, idSolicitud);
+			JustificantDto justificant = recobrimentHelper.getJustificante(idPeticion, idSolicitud, false, true);
 			ScspJustificante justificante = new ScspJustificante();
 			justificante.setNom(justificant.getNom());
 			justificante.setContentType(justificant.getContentType());
 			justificante.setContingut(justificant.getContingut());
 			return justificante;
+		} catch (ScspException ex) {
+			throw new RecobrimentScspException(
+					ex.getMessage(),
+					ex);
+		}
+	}
+
+	@Override
+	public ScspJustificante getJustificanteImprimible(String idPeticion, String idSolicitud) throws RecobrimentScspException {
+		try {
+			JustificantDto justificant = recobrimentHelper.getJustificante(idPeticion, idSolicitud, true, true);
+			ScspJustificante justificante = new ScspJustificante();
+			justificante.setNom(justificant.getNom());
+			justificante.setContentType(justificant.getContentType());
+			justificante.setContingut(justificant.getContingut());
+			return justificante;
+		} catch (ScspException ex) {
+			throw new RecobrimentScspException(
+					ex.getMessage(),
+					ex);
+		}
+	}
+
+	@Override
+	public String getJustificanteCsv(String idPeticion, String idSolicitud) throws RecobrimentScspException {
+		try {
+			JustificantDto justificant = recobrimentHelper.getJustificante(idPeticion, idSolicitud, true, false);
+			return justificant.getArxiuCsv();
+		} catch (ScspException ex) {
+			throw new RecobrimentScspException(
+					ex.getMessage(),
+					ex);
+		}
+	}
+
+	@Override
+	public String getJustificanteUuid(String idPeticion, String idSolicitud) throws RecobrimentScspException {
+		try {
+			JustificantDto justificant = recobrimentHelper.getJustificante(idPeticion, idSolicitud, false, false);
+			return justificant.getArxiuUuid();
 		} catch (ScspException ex) {
 			throw new RecobrimentScspException(
 					ex.getMessage(),

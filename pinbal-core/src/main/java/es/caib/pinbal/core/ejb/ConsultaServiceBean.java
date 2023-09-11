@@ -3,26 +3,12 @@
  */
 package es.caib.pinbal.core.ejb;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-
-import javax.annotation.security.RolesAllowed;
-import javax.ejb.Stateless;
-import javax.interceptor.Interceptors;
-
 import es.caib.pinbal.client.dadesobertes.DadesObertesResposta;
-import es.caib.pinbal.core.dto.ConsultaOpenDataDto;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.ejb.interceptor.SpringBeanAutowiringInterceptor;
-
 import es.caib.pinbal.client.dadesobertes.DadesObertesRespostaConsulta;
 import es.caib.pinbal.core.dto.CarregaDto;
 import es.caib.pinbal.core.dto.ConsultaDto;
 import es.caib.pinbal.core.dto.ConsultaFiltreDto;
+import es.caib.pinbal.core.dto.ConsultaOpenDataDto;
 import es.caib.pinbal.core.dto.EntitatDto;
 import es.caib.pinbal.core.dto.EstadisticaDto;
 import es.caib.pinbal.core.dto.EstadistiquesFiltreDto;
@@ -43,6 +29,17 @@ import es.caib.pinbal.core.service.exception.ProcedimentServeiNotFoundException;
 import es.caib.pinbal.core.service.exception.ScspException;
 import es.caib.pinbal.core.service.exception.ServeiNotAllowedException;
 import es.caib.pinbal.core.service.exception.ValidacioDadesPeticioException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.ejb.interceptor.SpringBeanAutowiringInterceptor;
+
+import javax.annotation.security.RolesAllowed;
+import javax.ejb.Stateless;
+import javax.interceptor.Interceptors;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Implementació de ConsultaService que empra una clase delegada per accedir a la
@@ -152,8 +149,10 @@ public class ConsultaServiceBean implements ConsultaService {
 	@RolesAllowed("PBL_WS")
 	public JustificantDto obtenirJustificant(
 			String idpeticion,
-			String idsolicitud) throws ConsultaNotFoundException, JustificantGeneracioException {
-		return delegate.obtenirJustificant(idpeticion, idsolicitud);
+			String idsolicitud,
+			boolean versioImprimible,
+			boolean ambContingut) throws ConsultaNotFoundException, JustificantGeneracioException {
+		return delegate.obtenirJustificant(idpeticion, idsolicitud, versioImprimible, ambContingut);
 	}
 
 	@Override

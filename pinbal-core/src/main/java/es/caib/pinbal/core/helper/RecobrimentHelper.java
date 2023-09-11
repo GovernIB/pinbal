@@ -3,49 +3,18 @@
  */
 package es.caib.pinbal.core.helper;
 
-import java.io.IOException;
-import java.io.StringReader;
-import java.io.StringWriter;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.OutputKeys;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
-
-import es.caib.pinbal.core.model.Consulta;
-import es.caib.pinbal.core.model.HistoricConsulta;
-import es.caib.pinbal.core.repository.ConsultaRepository;
-import es.caib.pinbal.core.repository.HistoricConsultaRepository;
-import es.caib.pinbal.core.service.HistoricConsultaService;
-import org.apache.commons.lang.exception.ExceptionUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
-import org.springframework.context.MessageSource;
-import org.springframework.context.MessageSourceAware;
-import org.springframework.stereotype.Component;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
-
 import es.caib.pinbal.core.dto.ConsultaDto;
 import es.caib.pinbal.core.dto.ConsultaDto.Consentiment;
 import es.caib.pinbal.core.dto.ConsultaDto.DocumentTipus;
 import es.caib.pinbal.core.dto.JustificantDto;
 import es.caib.pinbal.core.dto.RecobrimentSolicitudDto;
 import es.caib.pinbal.core.dto.RespostaAtributsDto;
+import es.caib.pinbal.core.model.Consulta;
+import es.caib.pinbal.core.model.HistoricConsulta;
+import es.caib.pinbal.core.repository.ConsultaRepository;
+import es.caib.pinbal.core.repository.HistoricConsultaRepository;
 import es.caib.pinbal.core.service.ConsultaService;
+import es.caib.pinbal.core.service.HistoricConsultaService;
 import es.caib.pinbal.core.service.exception.ConsultaNotFoundException;
 import es.caib.pinbal.core.service.exception.ConsultaScspException;
 import es.caib.pinbal.core.service.exception.EntitatNotFoundException;
@@ -66,6 +35,35 @@ import es.scsp.bean.common.Titular;
 import es.scsp.bean.common.Transmision;
 import es.scsp.bean.common.TransmisionDatos;
 import es.scsp.common.exceptions.ScspException;
+import org.apache.commons.lang.exception.ExceptionUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
+import org.springframework.context.MessageSource;
+import org.springframework.context.MessageSourceAware;
+import org.springframework.stereotype.Component;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+import java.io.IOException;
+import java.io.StringReader;
+import java.io.StringWriter;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Mètodes comuns per a les consultes al servei de recobriment fetes
@@ -229,7 +227,9 @@ public class RecobrimentHelper implements ApplicationContextAware, MessageSource
 
 	public JustificantDto getJustificante(
 			String idpeticion,
-			String idsolicitud) throws ScspException {
+			String idsolicitud,
+			boolean versioImprimible,
+			boolean ambContingut) throws ScspException {
 		try {
 			Consulta consulta = consultaRepository.findByScspPeticionIdAndScspSolicitudId(idpeticion, idsolicitud);
 			HistoricConsulta historicConsulta = null;
@@ -244,11 +244,15 @@ public class RecobrimentHelper implements ApplicationContextAware, MessageSource
 			if (consulta != null) {
 				justificant = consultaService.obtenirJustificant(
 						idpeticion,
-						idsolicitud);
+						idsolicitud,
+						versioImprimible,
+						ambContingut);
 			} else {
 				justificant = historicConsultaService.obtenirJustificant(
 						idpeticion,
-						idsolicitud);
+						idsolicitud,
+						versioImprimible,
+						ambContingut);
 			}
 			if (!justificant.isError()) {
 				return justificant;

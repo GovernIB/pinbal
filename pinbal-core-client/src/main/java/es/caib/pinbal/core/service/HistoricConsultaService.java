@@ -71,7 +71,9 @@ public interface HistoricConsultaService {
 	@PreAuthorize("hasRole('ROLE_WS')")
 	public JustificantDto obtenirJustificant(
             String idpeticion,
-            String idsolicitud) throws ConsultaNotFoundException, JustificantGeneracioException;
+            String idsolicitud,
+			boolean versioImprimible,
+			boolean ambContingut) throws ConsultaNotFoundException, JustificantGeneracioException;
 
 	/**
 	 * Obté tots els justificants de la consulta múltiple comprimits

@@ -251,7 +251,8 @@ public class JustificantHelper implements MessageSourceAware {
 
 	public FitxerDto descarregarFitxerGenerat(
 			IConsulta consulta,
-			ScspHelper scspHelper) throws Exception {
+			ScspHelper scspHelper,
+			boolean versioImprimible) throws Exception {
 		String serveiCodi = consulta.getProcedimentServei().getServei();
 		String peticionId = consulta.getScspPeticionId();
 		String solicitudId = consulta.getScspSolicitudId();
@@ -285,8 +286,8 @@ public class JustificantHelper implements MessageSourceAware {
 				es.caib.plugins.arxiu.api.Document documentArxiu = pluginHelper.arxiuDocumentConsultar(
 						consulta.getArxiuDocumentUuid(),
 						null,
-						false,
-						true);
+						!versioImprimible,
+						versioImprimible);
 				fitxerDto.setContingut(documentArxiu.getContingut().getContingut());
 			} else {
 				fitxerDto.setContingut(
