@@ -13,6 +13,7 @@ public class EntitatInfo {
 	private String codi;
 	private String nom;
 	private String cif;
+	private String unitatArrel;
 
 	public String getCodi() {
 		return codi;
@@ -31,6 +32,12 @@ public class EntitatInfo {
 	}
 	public void setCif(String cif) {
 		this.cif = cif;
+	}
+	public String getUnitatArrel() {
+		return unitatArrel;
+	}
+	public void setUnitatArrel(String unitatArrel) {
+		this.unitatArrel = unitatArrel;
 	}
 
 }
