@@ -3,16 +3,6 @@
  */
 package es.caib.pinbal.core.repository;
 
-import java.util.Date;
-import java.util.List;
-
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Modifying;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
-
 import es.caib.pinbal.client.dadesobertes.DadesObertesRespostaConsulta;
 import es.caib.pinbal.core.dto.CarregaDto;
 import es.caib.pinbal.core.model.Consulta;
@@ -21,6 +11,15 @@ import es.caib.pinbal.core.model.Consulta.JustificantEstat;
 import es.caib.pinbal.core.model.Entitat;
 import es.caib.pinbal.core.model.ProcedimentServei;
 import es.caib.pinbal.core.model.Usuari;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+
+import java.util.Date;
+import java.util.List;
 
 /**
  * Especifica els mètodes que s'han d'emprar per obtenir i modificar la
@@ -257,7 +256,7 @@ public interface ConsultaRepository extends JpaRepository<Consulta, Long> {
 
 	@Query(	"select " +
 			"    new es.caib.pinbal.client.dadesobertes.DadesObertesRespostaConsulta(" +
-			"        c.procedimentServei.procediment.entitat.codi, " +
+			"        c.procedimentServei.procediment.entitat.unitatArrel, " +
 			"        c.procedimentServei.procediment.entitat.nom, " +
 			"        c.procedimentServei.procediment.entitat.cif, " +
 			"        cast(c.procedimentServei.procediment.entitat.tipus as string), " +
@@ -323,7 +322,7 @@ public interface ConsultaRepository extends JpaRepository<Consulta, Long> {
 
 	@Query(	"select " +
 			"    new es.caib.pinbal.client.dadesobertes.DadesObertesRespostaConsulta(" +
-			"        c.procedimentServei.procediment.entitat.codi, " +
+			"        c.procedimentServei.procediment.entitat.unitatArrel, " +
 			"        c.procedimentServei.procediment.entitat.nom, " +
 			"        c.procedimentServei.procediment.entitat.cif, " +
 			"        cast(c.procedimentServei.procediment.entitat.tipus as string), " +
