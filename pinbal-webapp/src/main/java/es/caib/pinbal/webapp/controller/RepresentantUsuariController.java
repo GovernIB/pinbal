@@ -3,30 +3,36 @@
  */
 package es.caib.pinbal.webapp.controller;
 
-import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Iterator;
-import java.util.List;
-
-import javax.naming.NamingException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.validation.Valid;
-
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import es.caib.pinbal.core.dto.ProcedimentServeiDto;
+import com.google.common.base.Strings;
+import es.caib.pinbal.core.dto.EntitatDto;
+import es.caib.pinbal.core.dto.EntitatUsuariDto;
 import es.caib.pinbal.core.dto.ProcedimentServeiNomDto;
 import es.caib.pinbal.core.dto.ProcedimentServeiSimpleDto;
+import es.caib.pinbal.core.dto.RolEnumDto;
+import es.caib.pinbal.core.dto.ServeiDto;
+import es.caib.pinbal.core.dto.UsuariDto;
 import es.caib.pinbal.core.dto.UsuariEstatEnum;
-import es.caib.pinbal.core.service.exception.ProcedimentNotFoundException;
+import es.caib.pinbal.core.service.EntitatService;
+import es.caib.pinbal.core.service.ProcedimentService;
+import es.caib.pinbal.core.service.ServeiService;
+import es.caib.pinbal.core.service.UsuariService;
+import es.caib.pinbal.core.service.exception.EntitatNotFoundException;
+import es.caib.pinbal.core.service.exception.UsuariExternNotFoundException;
+import es.caib.pinbal.webapp.command.EntitatUsuariCommand;
+import es.caib.pinbal.webapp.command.EntitatUsuariCommand.Existent;
+import es.caib.pinbal.webapp.command.EntitatUsuariCommand.TipusCodi;
 import es.caib.pinbal.webapp.command.EntitatUsuariCommand.TipusNie;
-import es.caib.pinbal.webapp.helper.ModalHelper;
+import es.caib.pinbal.webapp.command.EntitatUsuariCommand.TipusNif;
+import es.caib.pinbal.webapp.command.UsuariFiltreCommand;
+import es.caib.pinbal.webapp.common.AlertHelper;
+import es.caib.pinbal.webapp.common.EntitatHelper;
+import es.caib.pinbal.webapp.common.RequestSessionHelper;
+import es.caib.pinbal.webapp.common.ValidationHelper;
+import es.caib.pinbal.webapp.datatables.ServerSideRequest;
+import es.caib.pinbal.webapp.datatables.ServerSideResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -44,28 +50,15 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import es.caib.pinbal.core.dto.EntitatDto;
-import es.caib.pinbal.core.dto.EntitatUsuariDto;
-import es.caib.pinbal.core.dto.RolEnumDto;
-import es.caib.pinbal.core.dto.ServeiDto;
-import es.caib.pinbal.core.dto.UsuariDto;
-import es.caib.pinbal.core.service.EntitatService;
-import es.caib.pinbal.core.service.ProcedimentService;
-import es.caib.pinbal.core.service.ServeiService;
-import es.caib.pinbal.core.service.UsuariService;
-import es.caib.pinbal.core.service.exception.EntitatNotFoundException;
-import es.caib.pinbal.core.service.exception.UsuariExternNotFoundException;
-import es.caib.pinbal.webapp.command.EntitatUsuariCommand;
-import es.caib.pinbal.webapp.command.EntitatUsuariCommand.Existent;
-import es.caib.pinbal.webapp.command.EntitatUsuariCommand.TipusCodi;
-import es.caib.pinbal.webapp.command.EntitatUsuariCommand.TipusNif;
-import es.caib.pinbal.webapp.command.UsuariFiltreCommand;
-import es.caib.pinbal.webapp.common.AlertHelper;
-import es.caib.pinbal.webapp.common.EntitatHelper;
-import es.caib.pinbal.webapp.common.RequestSessionHelper;
-import es.caib.pinbal.webapp.common.ValidationHelper;
-import es.caib.pinbal.webapp.datatables.ServerSideRequest;
-import es.caib.pinbal.webapp.datatables.ServerSideResponse;
+import javax.naming.NamingException;
+import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
+import java.lang.reflect.InvocationTargetException;
+import java.sql.SQLException;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * Controlador per a la configuració d'usuaris per al representant.
@@ -349,16 +342,26 @@ public class RepresentantUsuariController extends BaseController {
 		}
 
 		Class<?> grup = null;
-		if (command.getTipus().equals(EntitatUsuariCommand.CARACTER_CODI)) {
+		if (command.getTipus().equals(EntitatUsuariCommand.CARACTER_CODI) || !Strings.isNullOrEmpty(command.getCodi())) {
 			grup = TipusCodi.class;
-		} else if (command.getTipus().equals(EntitatUsuariCommand.CARACTER_NIF)) {
+		} else if (command.getTipus().equals(EntitatUsuariCommand.CARACTER_NIF) || !Strings.isNullOrEmpty(command.getNif())) {
 			if (command.getNif() != null && command.getNif().toUpperCase().matches("[XYZ][0-9]{7}[A-Z]")) {
 				grup = TipusNie.class;
 			} else {
 				grup = TipusNif.class;
 			}
 		} else {
-			grup = Existent.class;
+			if (!Strings.isNullOrEmpty(command.getCodi())) {
+				grup = TipusCodi.class;
+			} else if (!Strings.isNullOrEmpty(command.getNif())) {
+				if (command.getNif() != null && command.getNif().toUpperCase().matches("[XYZ][0-9]{7}[A-Z]")) {
+					grup = TipusNie.class;
+				} else {
+					grup = TipusNif.class;
+				}
+			} else {
+				grup = Existent.class;
+			}
 		}
 		new ValidationHelper(validator).isValid(
 				command,
