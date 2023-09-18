@@ -25,5 +25,5 @@ grant select, update, insert, delete on pbl_servei_regla to www_pinbal;
 grant select, update, insert, delete on pbl_servei_regla_valor_mod to www_pinbal;
 grant select, update, insert, delete on pbl_servei_regla_valor_afc to www_pinbal;
 
--- #279
+-- #277
 ALTER TABLE pbl_servei_config ADD add_dades_especifiques NUMBER(1) DEFAULT '1';
