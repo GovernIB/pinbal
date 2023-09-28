@@ -1117,6 +1117,11 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 			log.debug("No s'ha trobat el grup de camps (id=" + serveiCampGrupId + ")");
 			throw new ServeiCampGrupNotFoundException();
 		}
+		// Esborra els subgrups
+		List<ServeiCampGrup> subgrups = serveiCampGrupRepository.findByServeiAndPareOrderByOrdreAsc(perEsborrar.getServei(), false, perEsborrar);
+		for (ServeiCampGrup subgrup: subgrups) {
+			deleteServeiCampGrup(subgrup.getId());
+		}
 		// Deslliga els camps del grup per a evitar esborrar-los, i reordena
 		int index = serveiCampRepository.countByServeiAndGrupOrderByOrdreAsc(
 				perEsborrar.getServei(),
@@ -1125,6 +1130,9 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 		for (ServeiCamp camp: perEsborrar.getCamps()) {
 			camp.updateGrup(perEsborrar.getPare());
 			camp.updateOrdre(index++);
+			if (perEsborrar.getPare() != null) {
+				perEsborrar.getPare().getCamps().add(camp);
+			}
 		}
 		perEsborrar.getCamps().clear();
 		perEsborrar.updatePare(null);
@@ -1193,14 +1201,14 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 	}
 
 	@Transactional(readOnly = true)
-    @Override
-    public ServeiCampGrupDto serveiCampGrupFindByNom(Long serveiId, String nom) {
+	@Override
+	public ServeiCampGrupDto serveiCampGrupFindByNom(String serveiCodi, String nom) {
 		return dtoMappingHelper.getMapperFacade().map(
-				serveiCampGrupRepository.findByNom(serveiId, nom),
+				serveiCampGrupRepository.findByNom(serveiCodi, nom),
 				ServeiCampGrupDto.class);
-    }
+	}
 
-    @Transactional(rollbackFor = ServeiNotFoundException.class)
+	@Transactional(rollbackFor = ServeiNotFoundException.class)
 	@Override
 	public ServeiBusDto createServeiBus(
 			ServeiBusDto creat) throws ServeiNotFoundException, EntitatNotFoundException {

@@ -495,7 +495,7 @@ public interface ServeiService {
 	public List<ServeiCampGrupDto> findServeiCampGrupsAndSubgrups(String serveiCodi) throws ServeiNotFoundException;
 
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_DELEG')")
-	public ServeiCampGrupDto serveiCampGrupFindByNom(Long serveiId, String nom);
+	public ServeiCampGrupDto serveiCampGrupFindByNom(String serveiCodi, String nom);
 
 	/**
 	 * Crea una redirecció d'una consulta a un servei per al bus 
@@ -746,5 +746,4 @@ public interface ServeiService {
 
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_DELEG')")
 	List<CampFormProperties> getGrupsByserveiRegla(String serveiCodi, String[] grupsModificats) throws ServeiNotFoundException;
-
 }

@@ -119,7 +119,7 @@ public class RecobrimentRestController {
 	}
 
 	@RequestMapping(
-			value= "/getJustificanteOriginal",
+			value= "/getJustificanteImprimible",
 			method = RequestMethod.GET,
 			produces = "application/json")
 	@ApiOperation(

@@ -1,43 +1,7 @@
 package es.caib.pinbal.webapp.controller;
 
-import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
-import java.sql.SQLException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.naming.NamingException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.validation.Valid;
-
-import es.caib.pinbal.core.dto.CodiValor;
-import es.caib.pinbal.core.dto.ServeiCampGrupDto;
-import es.caib.pinbal.core.dto.regles.AccioEnum;
-import es.caib.pinbal.core.dto.regles.ModificatEnum;
-import es.caib.pinbal.core.dto.regles.ServeiReglaDto;
-import es.caib.pinbal.webapp.command.ServeiReglaCommand;
-import es.caib.pinbal.webapp.helper.EnumHelper;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.propertyeditors.CustomDateEditor;
-import org.springframework.data.domain.Page;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
-import org.springframework.validation.FieldError;
-import org.springframework.web.bind.WebDataBinder;
-import org.springframework.web.bind.annotation.InitBinder;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
-
 import es.caib.pinbal.core.dto.ArbreDto;
+import es.caib.pinbal.core.dto.CodiValor;
 import es.caib.pinbal.core.dto.DadaEspecificaDto;
 import es.caib.pinbal.core.dto.FitxerDto;
 import es.caib.pinbal.core.dto.NodeDto;
@@ -45,9 +9,13 @@ import es.caib.pinbal.core.dto.ProcedimentDto;
 import es.caib.pinbal.core.dto.ServeiBusDto;
 import es.caib.pinbal.core.dto.ServeiCampDto;
 import es.caib.pinbal.core.dto.ServeiCampDto.ServeiCampDtoTipus;
+import es.caib.pinbal.core.dto.ServeiCampGrupDto;
 import es.caib.pinbal.core.dto.ServeiDto;
 import es.caib.pinbal.core.dto.ServeiXsdDto;
 import es.caib.pinbal.core.dto.XsdTipusEnumDto;
+import es.caib.pinbal.core.dto.regles.AccioEnum;
+import es.caib.pinbal.core.dto.regles.ModificatEnum;
+import es.caib.pinbal.core.dto.regles.ServeiReglaDto;
 import es.caib.pinbal.core.service.EntitatService;
 import es.caib.pinbal.core.service.ProcedimentService;
 import es.caib.pinbal.core.service.ServeiService;
@@ -64,11 +32,41 @@ import es.caib.pinbal.webapp.command.ServeiCampGrupCommand;
 import es.caib.pinbal.webapp.command.ServeiCommand;
 import es.caib.pinbal.webapp.command.ServeiFiltreCommand;
 import es.caib.pinbal.webapp.command.ServeiJustificantCampCommand;
+import es.caib.pinbal.webapp.command.ServeiReglaCommand;
 import es.caib.pinbal.webapp.command.ServeiXsdCommand;
 import es.caib.pinbal.webapp.common.AlertHelper;
 import es.caib.pinbal.webapp.common.RequestSessionHelper;
 import es.caib.pinbal.webapp.datatables.ServerSideRequest;
 import es.caib.pinbal.webapp.datatables.ServerSideResponse;
+import es.caib.pinbal.webapp.helper.EnumHelper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.propertyeditors.CustomDateEditor;
+import org.springframework.data.domain.Page;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.InitBinder;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import javax.naming.NamingException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
+import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.sql.SQLException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Controlador per al manteniment de serveis.
@@ -460,11 +458,14 @@ public class ServeiController extends BaseController {
 			@Valid ServeiCampGrupCommand command,
 			BindingResult bindingResult) throws ServeiNotFoundException {
 		if (bindingResult.hasErrors()) {
+			String msg = "";
+			if (bindingResult.hasFieldErrors()) {
+				FieldError fieldError = bindingResult.getFieldError();
+				msg = " [" + fieldError.getField() + " (" + fieldError.getRejectedValue() + "): " + fieldError.getDefaultMessage() + "]";
+			}
 			AlertHelper.error(
 					request, 
-					getMessage(
-							request, 
-							"servei.controller.camp.grup.creat.error"));
+					getMessage(request, "servei.controller.camp.grup.creat.error") + msg);
 			return "redirect:../camp";
 		}
 		serveiService.createServeiCampGrup(

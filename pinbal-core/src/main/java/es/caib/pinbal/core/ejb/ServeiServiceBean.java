@@ -295,8 +295,8 @@ public class ServeiServiceBean implements ServeiService {
 
     @Override
 	@RolesAllowed({"PBL_ADMIN", "tothom"})
-    public ServeiCampGrupDto serveiCampGrupFindByNom(Long serveiId, String nom) {
-        return delegate.serveiCampGrupFindByNom(serveiId, nom);
+    public ServeiCampGrupDto serveiCampGrupFindByNom(String serveiCodi, String nom) {
+        return delegate.serveiCampGrupFindByNom(serveiCodi, nom);
     }
 
     @Override

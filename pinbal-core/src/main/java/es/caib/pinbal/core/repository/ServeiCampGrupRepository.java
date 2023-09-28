@@ -4,7 +4,6 @@
 package es.caib.pinbal.core.repository;
 
 import es.caib.pinbal.core.model.ServeiCampGrup;
-import es.caib.pinbal.core.model.ServeiRegla;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -39,8 +38,8 @@ public interface ServeiCampGrupRepository extends JpaRepository<ServeiCampGrup, 
 			" order by scg.ordre asc")
 	int countByServeiAndPareOrderByOrdreAsc(String servei, boolean esNullPare, ServeiCampGrup pare);
 
-	@Query("from ServeiCampGrup scg where scg.servei=:serveiId and scg.nom = :nom")
-	ServeiRegla findByNom(@Param("serveiId") Long serveiId, @Param("nom") String nom);
+	@Query("from ServeiCampGrup scg where scg.servei=:serveiCodi and scg.nom = :nom")
+	ServeiCampGrup findByNom(@Param("serveiCodi") String serveiCodi, @Param("nom") String nom);
 
 	@Modifying
 	void delete(ServeiCampGrup serveiCampGrup);
