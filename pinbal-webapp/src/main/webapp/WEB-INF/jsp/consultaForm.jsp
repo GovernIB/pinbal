@@ -48,7 +48,7 @@
 			$(".grup-regla input, .grup-regla select").change( (event) => {
 				updateGrupsRegles();
 			});
-			$(".camp-regla input, .camp-regla select").change( () => {
+			$(".camp-regla input, .camp-regla select").change( function() {
 				updateCampsRegles();
 			});
 			updateCampsRegles();
@@ -102,6 +102,7 @@
 						const subgrup = camp.closest(".fs-subgrup");
 						const editable = grup.length ? (grup.hasClass('editable') ? (subgrup.length ? subgrup.hasClass('editable') : true) : false) : true;
 						camp.prop("disabled", !(editable && campRegla.editable));
+						camp.toggleClass("bloquejat", !campRegla.editable);
 						camp.toggleClass("ocult", !campRegla.visible);
 						// Netejar camp
 						if (!campRegla.editable || !campRegla.visible) {
@@ -149,6 +150,9 @@
 
 						// Editable
 						grup.toggleClass("editable", grupRegla.editable);
+						$(grup).find("input, select").each((index, element) => {
+							$(element).prop("disabled", (!grupRegla.editable || $(element).hasClass('bloquejat')))
+						});
 
 						// Visible
 						grup.toggleClass("ocult", !grupRegla.visible);
