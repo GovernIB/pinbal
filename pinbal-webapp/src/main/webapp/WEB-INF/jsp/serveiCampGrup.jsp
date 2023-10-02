@@ -11,7 +11,7 @@
         <legend>
             ${grup.nom}
             <c:if test="${not empty grup.ajuda}">
-                <button type="button" class="btn btn-sm btn-info btn-ppv" data-toggle="popover" title="Ajuda" data-html="true" data-content='${grup.ajuda}'><span class="fa fa-info"></span></button>
+                <button type="button" class="btn btn-sm btn-info btn-ppv" data-toggle="popover" title="Ajuda" data-html="true" data-content='${grup.ajudaScaped}'><span class="fa fa-info"></span></button>
             </c:if>
             <c:if test="${!param.esSubgrup}"><a id="boto-nou-grup" class="btn btn-primary pull-right boto-grup-nou" data-pare="${grup.id}" style="margin-bottom: 10px;"><i class="fas fa-plus"></i>&nbsp;Nou subgrup</a></c:if>
         </legend>

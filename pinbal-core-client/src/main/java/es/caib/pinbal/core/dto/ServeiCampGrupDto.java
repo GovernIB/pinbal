@@ -37,11 +37,22 @@ public class ServeiCampGrupDto implements Serializable {
 	public String getAjudaHtml() {
 		String ajudaHtml = ajuda;
 		if (ajudaHtml != null) {
-			ajudaHtml = ajudaHtml.replace("\n", "<br/>");
-			ajudaHtml = ajudaHtml.replace(" ", "&nbsp;");
-			ajudaHtml = ajudaHtml.replace("\t", "&nbsp;&nbsp;&nbsp;&nbsp;");
+			ajudaHtml = ajudaHtml
+					.replace("\n", "<br/>")
+					.replace(" ", "&nbsp;")
+					.replace("\t", "&nbsp;&nbsp;&nbsp;&nbsp;");
 		}
 		return ajudaHtml;
+	}
+
+	public String getAjudaScaped() {
+		String ajudaScaped = ajuda;
+		if (ajudaScaped != null) {
+			ajudaScaped = ajudaScaped
+					.replace("'", "&apos;")
+					.replace("\"", "&quot;");
+		}
+		return ajudaScaped;
 	}
 
 	@Override

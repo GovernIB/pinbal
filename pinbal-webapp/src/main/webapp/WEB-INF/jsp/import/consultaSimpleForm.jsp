@@ -116,7 +116,7 @@ if (map != null) {
 					<legend>
 						<span class="fs-grup-nom">${grup.nom}</span>
 						<c:if test="${not empty grup.ajuda}">
-							<button type="button" class="btn btn-sm btn-info btn-ppv pull-right" data-toggle="popover" title="Ajuda" data-placement="left" data-html="true" data-content='${grup.ajuda}'><span class="fa fa-info"></span></button>
+							<button type="button" class="btn btn-sm btn-info btn-ppv pull-right" data-toggle="popover" title="Ajuda" data-placement="left" data-html="true" data-content='${grup.ajudaScaped}'><span class="fa fa-info"></span></button>
 						</c:if>
 						<c:if test="${not empty grupErrors}"><p class="help-block" style="font-size: 14px;"><span class="fa fa-exclamation-triangle"></span>&nbsp;<form:errors path="dadesEspecifiques[${grup.id}]"/></p></c:if>
 					</legend>
@@ -133,7 +133,7 @@ if (map != null) {
 								<div class="panel-heading<c:if test="${not empty subgrupErrors}"> has-error</c:if>">
 									<h3 class="panel-title">${subgrup.nom}</h3>
 									<c:if test="${not empty subgrup.ajuda}">
-										<button type="button" class="btn btn-sm btn-info btn-ppv pull-right" data-toggle="popover" title="Ajuda" data-placement="left" data-html="true" data-content='${subgrup.ajuda}'><span class="fa fa-info"></span></button>
+										<button type="button" class="btn btn-sm btn-info btn-ppv pull-right" data-toggle="popover" title="Ajuda" data-placement="left" data-html="true" data-content='${subgrup.ajudaScaped}'><span class="fa fa-info"></span></button>
 									</c:if>
 									<c:if test="${not empty subgrupErrors}"><p class="help-block"><span class="fa fa-exclamation-triangle"></span>&nbsp;<form:errors path="dadesEspecifiques[${subgrup.id}]"/></p></c:if>
 								</div>
