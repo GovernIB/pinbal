@@ -322,6 +322,8 @@ public interface ConsultaService {
 	 *            Atribut id de la consulta.
 	 * @param descarregar
 	 *            Indica si la s'ha de retornar el fitxer amb el justificant.
+	 * @param isAdmin
+	 *            Indica si la petició prové d'un usuari administrador.
 	 * @return l'arxiu amb el document generat.
 	 * @throws ConsultaNotFoundException
 	 *            Si la consulta no és accessible per aquest usuari.
@@ -331,7 +333,8 @@ public interface ConsultaService {
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_DELEG')")
 	public JustificantDto reintentarGeneracioJustificant(
 			Long id,
-			boolean descarregar) throws ConsultaNotFoundException, JustificantGeneracioException;
+			boolean descarregar,
+			boolean isAdmin) throws ConsultaNotFoundException, JustificantGeneracioException;
 
 	/**
 	 * Retorna una pàgina de les consultes simples realitzades donada

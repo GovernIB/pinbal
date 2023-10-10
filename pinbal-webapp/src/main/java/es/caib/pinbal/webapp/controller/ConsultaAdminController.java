@@ -337,7 +337,8 @@ public class ConsultaAdminController extends BaseController {
 				} else {
 					justificant = consultaService.reintentarGeneracioJustificant(
 							consultaId,
-							false);
+							false,
+							true);
 				}
 				if (!justificant.isError()) {
 					AlertHelper.success(

@@ -1175,17 +1175,20 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 	@Override
 	public JustificantDto reintentarGeneracioJustificant(
 			Long id,
-			boolean descarregar) throws ConsultaNotFoundException, JustificantGeneracioException {
+			boolean descarregar,
+			boolean isAdmin) throws ConsultaNotFoundException, JustificantGeneracioException {
 		log.debug("Reintentant generació del justificant per a la consulta (id=" + id + ")");
 		Consulta consulta = consultaRepository.findOne(id);
 		if (consulta == null) {
 			log.error("No s'ha trobat la consulta (id=" + id + ")");
 			throw new ConsultaNotFoundException();
 		}
-		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-		if (!auth.getName().equals(consulta.getCreatedBy().getCodi())) {
-			log.error("La consulta (id=" + id + ") no pertany a aquest usuari");
-			throw new ConsultaNotFoundException();
+		if (!isAdmin) {
+			Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+			if (!auth.getName().equals(consulta.getCreatedBy().getCodi())) {
+				log.error("La consulta (id=" + id + ") no pertany a aquest usuari");
+				throw new ConsultaNotFoundException();
+			}
 		}
 		return obtenirJustificantComu(consulta, descarregar, true);
 	}

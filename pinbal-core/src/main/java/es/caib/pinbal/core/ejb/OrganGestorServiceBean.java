@@ -6,15 +6,13 @@ import javax.annotation.security.RolesAllowed;
 import javax.ejb.Stateless;
 import javax.interceptor.Interceptors;
 
-import es.caib.pinbal.core.dto.OrganGestorEstatEnum;
-import es.caib.pinbal.core.dto.PaginacioAmbOrdreDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.ejb.interceptor.SpringBeanAutowiringInterceptor;
 
 import es.caib.pinbal.core.dto.OrganGestorDto;
-import es.caib.pinbal.core.dto.OrganGestorEstatEnumDto;
+import es.caib.pinbal.core.dto.OrganGestorEstatEnum;
+import es.caib.pinbal.core.dto.PaginacioAmbOrdreDto;
 import es.caib.pinbal.core.service.OrganGestorService;
 
 

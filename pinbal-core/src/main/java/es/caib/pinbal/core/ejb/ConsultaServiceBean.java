@@ -173,8 +173,9 @@ public class ConsultaServiceBean implements ConsultaService {
 	@RolesAllowed("tothom")
 	public JustificantDto reintentarGeneracioJustificant(
 			Long id,
-			boolean descarregar) throws ConsultaNotFoundException, JustificantGeneracioException {
-		return delegate.reintentarGeneracioJustificant(id, descarregar);
+			boolean descarregar,
+			boolean isAdmin) throws ConsultaNotFoundException, JustificantGeneracioException {
+		return delegate.reintentarGeneracioJustificant(id, descarregar, isAdmin);
 	}
 	
 	@Override
