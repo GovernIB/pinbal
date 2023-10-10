@@ -186,7 +186,8 @@
 		<repository>
 			<id>github-governib-maven-repos</id>
 			<name>GitHub GovernIB Maven Repository</name>
-			<url>http://governib.github.io/maven/maven/</url>
+			<!--url>http://governib.github.io/maven/maven/</url-->
+			<url>https://raw.githubusercontent.com/GovernIB/maven/gh-pages/maven</url>
 		</repository>
 		<repository>
 			<id>mvn-local-repo</id>

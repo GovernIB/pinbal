@@ -2,16 +2,16 @@
 <datasources>
 	<no-tx-datasource>
 		<jndi-name>es.caib.pinbal.db</jndi-name>
-		<connection-url>DATABASE_URL</connection-url>
-		<driver-class>oracle.jdbc.driver.OracleDriver</driver-class>
-		<user-name>DATABASE_USERNAME</user-name>
-		<password>DATABASE_PASSWORD</password>
+		<driver-class>PINBAL_DB_DRIVER</driver-class>
+		<connection-url>PINBAL_DB_URL</connection-url>
+		<user-name>PINBAL_DB_USERNAME</user-name>
+		<password>PINBAL_DB_PASSWORD</password>
 	</no-tx-datasource>
 	<no-tx-datasource>
 		<jndi-name>es.caib.pinbal.usuaris.db</jndi-name>
-		<connection-url>SEYCON_URL</connection-url>
-		<driver-class>oracle.jdbc.driver.OracleDriver</driver-class>
-		<user-name>SEYCON_USERNAME</user-name>
-		<password>SEYCON_PASSWORD</password>
+		<driver-class>PINBAL_SEYCON_DB_DRIVER</driver-class>
+		<connection-url>PINBAL_SEYCON_DB_URL</connection-url>
+		<user-name>PINBAL_SEYCON_DB_USERNAME</user-name>
+		<password>PINBAL_SEYCON_DB_PASSWORD</password>
 	</no-tx-datasource>
 </datasources>

@@ -21,36 +21,35 @@ import es.caib.pinbal.client.recobriment.model.ScspRespuesta;
 import es.caib.pinbal.client.recobriment.model.ScspSolicitante.ScspConsentimiento;
 import es.caib.pinbal.client.recobriment.model.ScspTitular;
 import es.caib.pinbal.client.recobriment.model.ScspTitular.ScspTipoDocumentacion;
-import es.caib.pinbal.client.recobriment.svddelsexws01.ClientSvddelsexws01;
-import es.caib.pinbal.client.recobriment.svddelsexws01.ClientSvddelsexws01.SolicitudSvddelsexws01;
-import es.caib.pinbal.client.recobriment.svddelsexws01.ClientSvddelsexws01.SolicitudSvddelsexws01.Sexe;
+import es.caib.pinbal.client.recobriment.svdbecaws01.ClientSvdbecaws01;
+import es.caib.pinbal.client.recobriment.svdbecaws01.ClientSvdbecaws01.SolicitudSvdbecaws01;
 
 /**
  * Test del client genèric del recobriment.
  * 
  * @author Limit Tecnologies <limit@limit.es>
  */
-public class Svddelsexws01Test {
+public class Svdbecaws01Test {
 
 	private static final String ENTITAT_CIF = "S0711001H";
 	private static final String URL_BASE = "https://proves.caib.es/pinbalapi";
 	private static final String USUARI = "$ripea_pinbal";
 	private static final String CONTRASENYA = "xxxxxx";
 	private static final String CODIGO_PROCEDIMIENTO = "CODSVDR_GBA_20121107";
-	private static final String PETICION_SCSP_ID = "PINBAL00000000000000265497";
+	private static final String PETICION_SCSP_ID = "PINBAL00000000000000265512";
 	private static final boolean ENABLE_LOGGING = true;
 	private static final boolean BASIC_AUTH = true;
 
-	private ClientSvddelsexws01 client = new ClientSvddelsexws01(URL_BASE, USUARI, CONTRASENYA, BASIC_AUTH, null, null);
+	private ClientSvdbecaws01 client = new ClientSvdbecaws01(URL_BASE, USUARI, CONTRASENYA, BASIC_AUTH, null, null);
 
 	@Test
 	public void peticionSincrona() throws UniformInterfaceException, ClientHandlerException, IOException {
-		SolicitudSvddelsexws01 solicitud = new SolicitudSvddelsexws01();
+		SolicitudSvdbecaws01 solicitud = new SolicitudSvdbecaws01();
 		solicitud.setIdentificadorSolicitante(ENTITAT_CIF);
 		solicitud.setCodigoProcedimiento(CODIGO_PROCEDIMIENTO);
 		solicitud.setUnidadTramitadora("Departament de test");
 		solicitud.setFinalidad("Test peticionSincrona");
-		solicitud.setIdExpediente("testPinbal/899");
+		solicitud.setIdExpediente("testPinbal/989");
 		solicitud.setConsentimiento(ScspConsentimiento.Si);
 		ScspFuncionario funcionario = new ScspFuncionario();
 		funcionario.setNifFuncionario("00000000T");
@@ -60,12 +59,10 @@ public class Svddelsexws01Test {
 		titular.setTipoDocumentacion(ScspTipoDocumentacion.NIF);
 		titular.setDocumentacion("12345678Z");
 		titular.setNombre("Usuario");
-		titular.setApellido1("De");
-		titular.setApellido2("Pruebas");
+		titular.setApellido1("Prueba");
 		solicitud.setTitular(titular);
 
-		solicitud.setDadesNaixament("724", "07", "07033", null, "22/03/1974");
-		solicitud.setDadesPersonals("724", Sexe.H, "Francisco", null, null, null);
+		solicitud.setCurso("2020");
 
 		if (ENABLE_LOGGING) {
 			client.enableLogginFilter();

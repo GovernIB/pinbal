@@ -3,8 +3,10 @@
  */
 package es.caib.pinbal.client.recobriment.scmcedu;
 
+import java.io.IOException;
+import java.util.List;
+
 import es.caib.pinbal.client.recobriment.ClientBase;
-import es.caib.pinbal.client.recobriment.model.MissingCampObligatoriException;
 import es.caib.pinbal.client.recobriment.model.ScspConfirmacionPeticion;
 import es.caib.pinbal.client.recobriment.model.ScspRespuesta;
 import es.caib.pinbal.client.recobriment.model.SolicitudBase;
@@ -12,10 +14,6 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
-
-import java.io.IOException;
-import java.util.Date;
-import java.util.List;
 
 /**
  * Client del recobriment per a fer peticions al servei SCSP SCMCEDU:

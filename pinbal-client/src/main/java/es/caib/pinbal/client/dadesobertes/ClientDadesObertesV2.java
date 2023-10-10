@@ -3,15 +3,13 @@
  */
 package es.caib.pinbal.client.dadesobertes;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import es.caib.pinbal.client.comu.ClientBase;
-
-import java.io.IOException;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import es.caib.pinbal.client.comu.ClientBase;
 
 /**
  * Client amb la lògica bàsica per a accedir al servei de consulta
