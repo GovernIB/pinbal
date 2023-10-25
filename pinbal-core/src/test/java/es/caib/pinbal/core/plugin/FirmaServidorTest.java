@@ -58,8 +58,8 @@ public class FirmaServidorTest {
         MockitoAnnotations.initMocks(this);
         when(configHelper.getGroupProperties(Mockito.eq("FIRMA_SERVIDOR"))).thenReturn(propietats);
         when(configHelper.getConfig(Mockito.eq("es.caib.pinbal.plugin.firmaservidor.class"))).thenReturn("es.caib.pinbal.plugins.caib.FirmaSimpleServidorPluginPortafib");
-        doNothing().when(integracioHelper).addAccioOk(anyString(), anyString(), Mockito.<Map<String, String>>any(), Mockito.<IntegracioAccioTipusEnumDto>any(), anyLong());
-        doNothing().when(integracioHelper).addAccioError(anyString(), anyString(), Mockito.<Map<String, String>>any(), Mockito.<IntegracioAccioTipusEnumDto>any(), anyLong(), anyString());
+        doNothing().when(integracioHelper).addAccioOk(anyString(), anyString(), anyString(), Mockito.<Map<String, String>>any(), Mockito.<IntegracioAccioTipusEnumDto>any(), anyLong());
+        doNothing().when(integracioHelper).addAccioError(anyString(), anyString(), anyString(), Mockito.<Map<String, String>>any(), Mockito.<IntegracioAccioTipusEnumDto>any(), anyLong(), anyString());
     }
 
     @Test

@@ -209,6 +209,7 @@ public class PeticioScspHelper {
 						System.currentTimeMillis() - t0);
 			}*/
 			integracioHelper.addAccioOk(
+					consulta.getScspPeticionId(),
 					IntegracioHelper.INTCODI_SERVEIS_SCSP,
 					accioDescripcio,
 					accioParams,

@@ -324,13 +324,10 @@ public class JustificantHelper implements MessageSourceAware {
 		accioParams.put("procediment", procedimentServei.getProcediment() != null ? procedimentServei.getProcediment().getCodi() + " - " + procedimentServei.getProcediment().getNom() : "");
 		accioParams.put("servei", procedimentServei.getServeiScsp() != null ? procedimentServei.getServeiScsp().getCodi() + " - " + procedimentServei.getServeiScsp().getDescripcio() : "");
 		long t0 = System.currentTimeMillis();
+		String idPeticio = consulta.getScspPeticionId();
 		try {
-		
 			generarAmbPlantillaFreemarker(
-					scspHelper.generarArbreJustificant(
-							consulta.getScspPeticionId(),
-							consulta.getScspSolicitudId(),
-							null),
+					scspHelper.generarArbreJustificant(idPeticio, consulta.getScspSolicitudId(), null),
 					"[" + serveiCodi + "] " + scspHelper.getServicioDescripcion(serveiCodi),
 					serveiJustificantCampRepository.findByServeiAndLocaleIdiomaAndLocaleRegio(
 							serveiCodi,
@@ -339,6 +336,7 @@ public class JustificantHelper implements MessageSourceAware {
 					null,
 					baosGeneracio);
 			integracioHelper.addAccioOk(
+					idPeticio,
 					IntegracioHelper.INTCODI_SERVEIS_SCSP,
 					accioDescripcio,
 					accioParams,
@@ -351,6 +349,7 @@ public class JustificantHelper implements MessageSourceAware {
 			String errorDescripcio = "Error generant el justificant per a la consulta";
 			
 			integracioHelper.addAccioError(
+					idPeticio,
 					IntegracioHelper.INTCODI_SERVEIS_SCSP,
 					accioDescripcio,
 					accioParams,

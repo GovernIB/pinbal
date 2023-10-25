@@ -3,6 +3,9 @@
  */
 package es.caib.pinbal.core.dto;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import java.io.Serializable;
 import java.util.Date;
 import java.util.Map;
@@ -13,10 +16,13 @@ import java.util.Map;
  * 
  * @author Limit Tecnologies <limit@limit.es>
  */
+@Getter
+@Setter
 public class IntegracioAccioDto extends AbstractIdentificable<Long> implements Serializable {
 
 
 
+	private String idPeticio;
 	private Date data;
 	private String descripcio;
 	private Map<String, String> parametres;

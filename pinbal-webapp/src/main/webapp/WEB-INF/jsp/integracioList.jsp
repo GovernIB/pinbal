@@ -113,6 +113,7 @@ $(document).ready(function() {
 			<tr>
 				<th data-data="excepcioMessage"></th>
 				<th data-data="excepcioStacktrace"></th>
+				<th data-data="idPeticio"><spring:message code="integracio.list.columna.peticio.id"/></th>
 				<th data-data="data"><spring:message code="integracio.list.columna.data"/></th>
 				<th data-data="descripcio"><spring:message code="integracio.list.columna.descripcio"/></th>
 				<th data-data="tipus"><spring:message code="integracio.list.columna.tipus"/></th>

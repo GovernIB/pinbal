@@ -75,18 +75,26 @@ public class IntegracioHelper {
 		return integracions;
 	}
 
-	public List<IntegracioAccioDto> findAccionsByIntegracioCodi(
-			String integracioCodi) {
+
+
+	public List<IntegracioAccioDto> findAccionsByIntegracioCodi(String integracioCodi) {
 		return getLlistaAccions(integracioCodi);
 	}
 
+	public void addAccioOk(String integracioCodi, String descripcio, Map<String, String> parametres, IntegracioAccioTipusEnumDto tipus, long tempsResposta) {
+		addAccioOk("", integracioCodi, descripcio, parametres, tipus, tempsResposta);
+	}
+
 	public void addAccioOk(
+			String idPeticio,
 			String integracioCodi,
 			String descripcio,
 			Map<String, String> parametres,
 			IntegracioAccioTipusEnumDto tipus,
 			long tempsResposta) {
+
 		IntegracioAccioDto accio = new IntegracioAccioDto();
+		accio.setIdPeticio(idPeticio);
 		accio.setIntegracio(novaIntegracio(integracioCodi));
 		accio.setData(new Date());
 		accio.setDescripcio(descripcio);
@@ -94,13 +102,18 @@ public class IntegracioHelper {
 		accio.setTipus(tipus);
 		accio.setTempsResposta(tempsResposta);
 		accio.setEstat(IntegracioAccioEstatEnumDto.OK);
-		addAccio(
-				integracioCodi,
-				accio);
+		addAccio(integracioCodi, accio);
 		
 		logger.debug(descripcio + ", Parametres: " + parametres + ", Temps resposta: " + tempsResposta);
 	}
+
+
+	public void addAccioError(String integracioCodi, String desc, Map<String, String> params, IntegracioAccioTipusEnumDto tipus, long tempsResposta, String errorDesc, Throwable t) {
+		addAccioError("", integracioCodi, desc, params, tipus, tempsResposta, errorDesc, t);
+	}
+
 	public void addAccioError(
+			String idPeticio,
 			String integracioCodi,
 			String descripcio,
 			Map<String, String> parametres,
@@ -108,6 +121,7 @@ public class IntegracioHelper {
 			long tempsResposta,
 			String errorDescripcio) {
 		addAccioError(
+				idPeticio,
 				integracioCodi,
 				descripcio,
 				parametres,
@@ -119,6 +133,7 @@ public class IntegracioHelper {
 
 	@Transactional(propagation = Propagation.REQUIRES_NEW)
 	public void addAccioError(
+			String idPeticio,
 			String integracioCodi,
 			String descripcio,
 			Map<String, String> parametres,
@@ -126,7 +141,9 @@ public class IntegracioHelper {
 			long tempsResposta,
 			String errorDescripcio,
 			Throwable throwable) {
+
 		IntegracioAccioDto accio = new IntegracioAccioDto();
+		accio.setIdPeticio(idPeticio);
 		accio.setIntegracio(novaIntegracio(integracioCodi));
 		accio.setData(new Date());
 		accio.setDescripcio(descripcio);
@@ -136,14 +153,10 @@ public class IntegracioHelper {
 		accio.setEstat(IntegracioAccioEstatEnumDto.ERROR);
 		accio.setErrorDescripcio(errorDescripcio);
 		if (throwable != null){
-			accio.setExcepcioMessage(
-					ExceptionUtils.getMessage(throwable));
-			accio.setExcepcioStacktrace(
-					ExceptionUtils.getStackTrace(throwable));
+			accio.setExcepcioMessage(ExceptionUtils.getMessage(throwable));
+			accio.setExcepcioStacktrace(ExceptionUtils.getStackTrace(throwable));
 		} 
-		addAccio(
-				integracioCodi,
-				accio);
+		addAccio(integracioCodi, accio);
 		/*logger.error("Error d'integracio " + descripcio + ": " + errorDescripcio + "("
 				+ "integracioCodi=" + integracioCodi + ", "
 				+ "parametres=" + parametres + ", "
@@ -152,15 +165,13 @@ public class IntegracioHelper {
 				throwable);*/
 	}
 
-	private LinkedList<IntegracioAccioDto> getLlistaAccions(
-			String integracioCodi) {
+	private LinkedList<IntegracioAccioDto> getLlistaAccions(String integracioCodi) {
+
 		synchronized(accionsIntegracio){
-		LinkedList<IntegracioAccioDto> accions = accionsIntegracio.get(integracioCodi);
-		if (accions == null) {
-				accions = new LinkedList<IntegracioAccioDto>();
-				accionsIntegracio.put(
-						integracioCodi,
-						accions);
+			LinkedList<IntegracioAccioDto> accions = accionsIntegracio.get(integracioCodi);
+			if (accions == null) {
+				accions = new LinkedList<>();
+				accionsIntegracio.put(integracioCodi, accions);
 			}
 			return accions;
 		} 
