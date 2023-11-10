@@ -92,15 +92,14 @@ public class PluginHelper {
 		}
 	}
 	
-	public List<DadesUsuari> dadesUsuariFindAmbGrup(
-			String grupCodi) throws SistemaExternException {
+	public List<DadesUsuari> dadesUsuariFindAmbGrup(String grupCodi) throws SistemaExternException {
+
 		String accioDescripcio = "Consulta d'usuaris d'un grup";
 		Map<String, String> accioParams = new HashMap<String, String>();
 		accioParams.put("grup", grupCodi);
 		long t0 = System.currentTimeMillis();
 		try {
-			List<DadesUsuari> dadesUsuari = getDadesUsuariPlugin().findAmbGrup(
-					grupCodi);
+			List<DadesUsuari> dadesUsuari = getDadesUsuariPlugin().findAmbGrup(grupCodi);
 			integracioHelper.addAccioOk(
 					IntegracioHelper.INTCODI_USUARIS,
 					accioDescripcio,
@@ -118,9 +117,7 @@ public class PluginHelper {
 					System.currentTimeMillis() - t0,
 					errorDescripcio,
 					ex);
-			throw new SistemaExternException(
-					errorDescripcio,
-					ex);
+			throw new SistemaExternException(errorDescripcio, ex);
 		}
 	}
 

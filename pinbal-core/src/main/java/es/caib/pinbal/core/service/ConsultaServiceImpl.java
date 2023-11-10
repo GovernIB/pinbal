@@ -265,6 +265,7 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 				peticioScspHelper.updateEstatConsulta(conslt, resultat, accioParams);
 				if (resultat.isError()) {
 					integracioHelper.addAccioError(
+							idPeticion,
 							IntegracioHelper.INTCODI_SERVEIS_SCSP,
 							accioDescripcio,
 							accioParams,
@@ -274,6 +275,7 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 							(Throwable)null);
 				} else {
 					integracioHelper.addAccioOk(
+							idPeticion,
 							IntegracioHelper.INTCODI_SERVEIS_SCSP,
 							accioDescripcio,
 							accioParams,
@@ -324,6 +326,7 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 		accioParams.put("procediment", procedimentServei.getProcediment() != null ? procedimentServei.getProcediment().getCodi() + " - " + procedimentServei.getProcediment().getNom() : "");
 		accioParams.put("servei", procedimentServei.getServeiScsp() != null ? procedimentServei.getServeiScsp().getCodi() + " - " + procedimentServei.getServeiScsp().getDescripcio() : "");
 		integracioHelper.addAccioOk(
+				idPeticion,
 				IntegracioHelper.INTCODI_SERVEIS_SCSP,
 				accioDescripcio,
 				accioParams,
@@ -398,6 +401,7 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 				accioParams.put("estat", "[" + resultat.getEstatCodi() + "] " + resultat.getEstatDescripcio());
 				if (resultat.isError()) {
 					integracioHelper.addAccioError(
+							conslt.getScspPeticionId(),
 							IntegracioHelper.INTCODI_SERVEIS_SCSP,
 							accioDescripcio,
 							accioParams,
@@ -407,6 +411,7 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 							(Throwable)null);
 				} else {
 					integracioHelper.addAccioOk(
+							conslt.getScspPeticionId(),
 							IntegracioHelper.INTCODI_SERVEIS_SCSP,
 							accioDescripcio,
 							accioParams,
@@ -460,6 +465,7 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 				}
 			}
 			integracioHelper.addAccioOk(
+					consulta.getScspPeticionId(),
 					IntegracioHelper.INTCODI_SERVEIS_SCSP,
 					accioDescripcio,
 					accioParams,
@@ -472,6 +478,7 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 			String errorDescripcio = "Error al obtenir l'estat de la petició corresponent a la consulta (consultaId=" + consultaId + ")";
 			log.error(errorDescripcio, ex);
 			integracioHelper.addAccioError(
+					consulta.getScspPeticionId(),
 					IntegracioHelper.INTCODI_SERVEIS_SCSP,
 					accioDescripcio,
 					accioParams,
@@ -543,6 +550,7 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 			peticioScspHelper.updateEstatConsulta(conslt, resultat, accioParams);
 			if (resultat.isError()) {
 				integracioHelper.addAccioError(
+						idPeticion,
 						IntegracioHelper.INTCODI_SERVEIS_SCSP,
 						accioDescripcio,
 						accioParams,
@@ -552,6 +560,7 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 						(Throwable)null);
 			} else {
 				integracioHelper.addAccioOk(
+						idPeticion,
 						IntegracioHelper.INTCODI_SERVEIS_SCSP,
 						accioDescripcio,
 						accioParams,
@@ -701,6 +710,7 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 			peticioScspHelper.updateEstatConsulta(conslt, resultat, accioParams);
 			if (resultat.isError()) {
 				integracioHelper.addAccioError(
+						idPeticion,
 						IntegracioHelper.INTCODI_SERVEIS_SCSP,
 						accioDescripcio,
 						accioParams,
@@ -710,6 +720,7 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 						(Throwable)null);
 			} else {
 				integracioHelper.addAccioOk(
+						idPeticion,
 						IntegracioHelper.INTCODI_SERVEIS_SCSP,
 						accioDescripcio,
 						accioParams,
@@ -795,6 +806,7 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 		}
 		String idPeticion = getScspHelper().generarIdPeticion(serveiCodi);
 		integracioHelper.addAccioOk(
+				idPeticion,
 				IntegracioHelper.INTCODI_SERVEIS_SCSP,
 				accioDescripcio,
 				accioParams,
@@ -882,6 +894,7 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 			accioParams.put("estat", "[" + resultat.getEstatCodi() + "] " + resultat.getEstatDescripcio());
 			if (resultat.isError()) {
 				integracioHelper.addAccioError(
+						consulta.getScspPeticionId(),
 						IntegracioHelper.INTCODI_SERVEIS_SCSP,
 						accioDescripcio,
 						accioParams,
@@ -891,6 +904,7 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 						(Throwable)null);
 			} else {
 				integracioHelper.addAccioOk(
+						consulta.getScspPeticionId(),
 						IntegracioHelper.INTCODI_SERVEIS_SCSP,
 						accioDescripcio,
 						accioParams,
@@ -940,6 +954,7 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 				peticioScspHelper.updateEstatConsulta(consulta, resultat, accioParams);
 			}
 			integracioHelper.addAccioOk(
+					consulta.getScspPeticionId(),
 					IntegracioHelper.INTCODI_SERVEIS_SCSP,
 					accioDescripcio,
 					accioParams,
@@ -952,6 +967,7 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 			String errorDescripcio = "Error al obtenir l'estat de la petició corresponent a la consulta (consultaId=" + consultaId + ")";
 			log.error(errorDescripcio, ex);
 			integracioHelper.addAccioError(
+					consulta.getScspPeticionId(),
 					IntegracioHelper.INTCODI_SERVEIS_SCSP,
 					accioDescripcio,
 					accioParams,
@@ -1067,6 +1083,7 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 			peticioScspHelper.updateEstatConsulta(conslt, resultat, accioParams);
 			if (resultat.isError()) {
 				integracioHelper.addAccioError(
+						idPeticion,
 						IntegracioHelper.INTCODI_SERVEIS_SCSP,
 						accioDescripcio,
 						accioParams,
@@ -1076,6 +1093,7 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 						(Throwable)null);
 			} else {
 				integracioHelper.addAccioOk(
+						idPeticion,
 						IntegracioHelper.INTCODI_SERVEIS_SCSP,
 						accioDescripcio,
 						accioParams,
@@ -2930,6 +2948,7 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 					error);
 			Consulta saved = consultaRepository.save(conslt);
 			integracioHelper.addAccioError(
+					conslt.getScspPeticionId(),
 					IntegracioHelper.INTCODI_SERVEIS_SCSP,
 					accioDescripcio,
 					accioParams,

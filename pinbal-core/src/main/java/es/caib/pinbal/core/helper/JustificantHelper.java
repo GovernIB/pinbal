@@ -324,13 +324,10 @@ public class JustificantHelper implements MessageSourceAware {
 		accioParams.put("procediment", procedimentServei.getProcediment() != null ? procedimentServei.getProcediment().getCodi() + " - " + procedimentServei.getProcediment().getNom() : "");
 		accioParams.put("servei", procedimentServei.getServeiScsp() != null ? procedimentServei.getServeiScsp().getCodi() + " - " + procedimentServei.getServeiScsp().getDescripcio() : "");
 		long t0 = System.currentTimeMillis();
+		String idPeticio = consulta.getScspPeticionId();
 		try {
-		
 			generarAmbPlantillaFreemarker(
-					scspHelper.generarArbreJustificant(
-							consulta.getScspPeticionId(),
-							consulta.getScspSolicitudId(),
-							null),
+					scspHelper.generarArbreJustificant(idPeticio, consulta.getScspSolicitudId(), null),
 					"[" + serveiCodi + "] " + scspHelper.getServicioDescripcion(serveiCodi),
 					serveiJustificantCampRepository.findByServeiAndLocaleIdiomaAndLocaleRegio(
 							serveiCodi,
@@ -339,6 +336,7 @@ public class JustificantHelper implements MessageSourceAware {
 					null,
 					baosGeneracio);
 			integracioHelper.addAccioOk(
+					idPeticio,
 					IntegracioHelper.INTCODI_SERVEIS_SCSP,
 					accioDescripcio,
 					accioParams,
@@ -351,6 +349,7 @@ public class JustificantHelper implements MessageSourceAware {
 			String errorDescripcio = "Error generant el justificant per a la consulta";
 			
 			integracioHelper.addAccioError(
+					idPeticio,
 					IntegracioHelper.INTCODI_SERVEIS_SCSP,
 					accioDescripcio,
 					accioParams,
@@ -489,54 +488,27 @@ public class JustificantHelper implements MessageSourceAware {
 		return resultat;
 	}
 
-	private Map<String, Object> generarModel(
-			ElementArbre arbre,
-			String serveiDescripcio,
-			List<ServeiJustificantCamp> traduccions,
-			Locale locale) {
+	private Map<String, Object> generarModel(ElementArbre arbre, String serveiDescripcio, List<ServeiJustificantCamp> traduccions, Locale locale) {
+
 		Map<String, Object> model = new HashMap<String, Object>();
-		model.put(
-				"text_titol_capsalera",
-				messageSource.getMessage(
-						"justificant.plantilla.titol.capsalera",
-						null,
-						locale));
-		model.put(
-				"text_titol_servei",
-				serveiDescripcio);
-		model.put(
-				"text_titol_limitacio",
-				messageSource.getMessage(
-						"justificant.plantilla.titol.limitacio",
-						null,
-						locale));
-		model.put(
-				"text_legal",
-				messageSource.getMessage(
-						"justificant.plantilla.text.legal",
-						null,
-						locale));
-		model.put(
-				"text_data_eldia",
-				messageSource.getMessage(
-						"justificant.plantilla.data.eldia",
-						null,
-						locale));
+		model.put("text_titol_capsalera", messageSource.getMessage("justificant.plantilla.titol.capsalera", null, locale));
+		model.put("text_titol_servei", serveiDescripcio);
+		model.put("text_titol_limitacio", messageSource.getMessage("justificant.plantilla.titol.limitacio", null, locale));
+		model.put("text_legal", messageSource.getMessage("justificant.plantilla.text.legal", null, locale));
+		model.put("text_data_eldia", messageSource.getMessage("justificant.plantilla.data.eldia", null, locale));
 		Date ara = new Date();
-		model.put(
-				"text_data_data",
-				formatDate(ara, locale));
-		model.put(
-				"text_data_ales",
-				messageSource.getMessage(
-						"justificant.plantilla.data.ales",
-						null,
-						locale));
-		model.put(
-				"text_data_hora",
-				(locale == null) ? 
-						DateFormat.getTimeInstance(DateFormat.SHORT).format(ara) : 
-						DateFormat.getTimeInstance(DateFormat.SHORT, locale).format(ara));
+		model.put("text_data_data", formatDate(ara, locale));
+//		model.put(
+//				"text_data_ales",
+//				messageSource.getMessage(
+//						"justificant.plantilla.data.ales",
+//						null,
+//						locale));
+//		model.put(
+//				"text_data_hora",
+//				(locale == null) ?
+//						DateFormat.getTimeInstance(DateFormat.SHORT).format(ara) :
+//						DateFormat.getTimeInstance(DateFormat.SHORT, locale).format(ara));
 		List<NodeInfo> nodes = new ArrayList<NodeInfo>();
 		convertirArbreEnLlista(arbre, 0, nodes);
 		if (traduccions != null) {
@@ -568,22 +540,22 @@ public class JustificantHelper implements MessageSourceAware {
 		}
 	}
 
-	private String formatDate(
-			Date date,
-			Locale locale) {
-		if (locale == null || locale.getLanguage().equalsIgnoreCase("ca")) {
-			String data = DateFormat.getDateInstance(DateFormat.LONG, new Locale("ca", "ES")).format(date);
-			Calendar cal = Calendar.getInstance();
-			cal.setTime(date);
-			int month = cal.get(Calendar.MONTH);
-			if (month == Calendar.APRIL || month == Calendar.AUGUST || month == Calendar.OCTOBER) {
-				return data.replaceFirst("/ ", "d'").replace("/", "de");
-			} else {
-				return data.replace("/", "de");
-			}
-		} else {
-			return DateFormat.getDateInstance(DateFormat.LONG, locale).format(date);
-		}
+	private String formatDate(Date date, Locale locale) {
+
+		return new SimpleDateFormat("dd/MM/yyyy HH:mm").format(date);
+//		if (locale == null || locale.getLanguage().equalsIgnoreCase("ca")) {
+//			String data = DateFormat.getDateInstance(DateFormat.LONG, new Locale("ca", "ES")).format(date);
+//			Calendar cal = Calendar.getInstance();
+//			cal.setTime(date);
+//			int month = cal.get(Calendar.MONTH);
+//			if (month == Calendar.APRIL || month == Calendar.AUGUST || month == Calendar.OCTOBER) {
+//				return data.replaceFirst("/ ", "d'").replace("/", "de");
+//			} else {
+//				return data.replace("/", "de");
+//			}
+//		} else {
+//			return DateFormat.getDateInstance(DateFormat.LONG, locale).format(date);
+//		}
 	}
 
 	private String getNomArxiuGenerat(
@@ -637,7 +609,7 @@ public class JustificantHelper implements MessageSourceAware {
 		return configHelper.getConfig("es.caib.pinbal.plugin.arxiu.serie.documental");
 	}
 
-	public class NodeInfo {
+	public static class NodeInfo {
 		private int nivell;
 		private String xpathDadaEspecifica;
 		private String titol;

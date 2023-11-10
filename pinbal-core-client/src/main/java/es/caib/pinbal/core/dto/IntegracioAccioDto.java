@@ -17,6 +17,7 @@ public class IntegracioAccioDto extends AbstractIdentificable<Long> implements S
 
 
 
+	private String idPeticio;
 	private Date data;
 	private String descripcio;
 	private Map<String, String> parametres;
@@ -30,7 +31,15 @@ public class IntegracioAccioDto extends AbstractIdentificable<Long> implements S
 	private String excepcioStacktrace;
 	private Long id;
 
-	
+
+	public String getIdPeticio() {
+		return idPeticio;
+	}
+
+	public void setIdPeticio(String idPeticio) {
+		this.idPeticio = idPeticio;
+	}
+
 	public Long getId() {
 		return id;
 	}
