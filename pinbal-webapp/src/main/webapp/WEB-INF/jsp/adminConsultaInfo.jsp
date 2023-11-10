@@ -280,23 +280,27 @@ $(document).ready(function () {
 		</div>
 	</div>
 	<c:if test="${consulta.hiHaResposta}">
-		<div class="well">
-			<h3>
-				<spring:message code="admin.consulta.info.resposta.dades"/>
-			</h3>
-			<div id="dadesResposta">
+	<div class="well well-sm">
+		<div class="row">
+			<div class="col-xs-8">
+				<h3><spring:message code="admin.consulta.info.resposta.dades"/></h3>
+			</div>
+			<div class="col-xs-2 mt15 pull-right">
 				<c:set var="initModalXml">initModalXml(this);return false</c:set>
-				<a class="btn btn-default pull-right" href="<c:url value="/modal/admin/consulta/${consulta.id}/xmlResposta"/>" onclick="${initModalXml}">
-					<i class="fas fa-info-circle"></i> <spring:message code="admin.consulta.info.veure.xml"/>
-				</a>
-				<p>
-					<spring:message code="admin.consulta.info.resposta.rebuda.dia"/>
-					<fmt:formatDate pattern="dd/MM/yyyy" value="${consulta.respostaData}"/>
-					<spring:message code="admin.consulta.info.resposta.rebuda.ales"/>
-					<fmt:formatDate pattern="HH:mm:ss" value="${consulta.respostaData}"/>
-				</p>
+				<a class="btn btn-default pull-right" href="<c:url value="/modal/admin/consulta/${consulta.id}/xmlResposta"/>" onclick="${initModalXml}"><i class="fas fa-info-circle"></i> <spring:message code="admin.consulta.info.veure.xml"/></a>
 			</div>
 		</div>
+		<c:if test="${consulta.respostaData}">
+		<div id="dadesResposta">
+			<p>
+				<spring:message code="admin.consulta.info.resposta.rebuda.dia"/>
+				<fmt:formatDate pattern="dd/MM/yyyy" value="${consulta.respostaData}"/>
+				<spring:message code="admin.consulta.info.resposta.rebuda.ales"/>
+				<fmt:formatDate pattern="HH:mm:ss" value="${consulta.respostaData}"/>
+			</p>
+		</div>
+		</c:if>
+	</div>
 	</c:if>
 	<div id="modal-botons" class="well">
 		<a href="<c:url value="/admin/consulta"/>" class="btn btn-default" data-modal-cancel="true"><spring:message code="comu.boto.tancar"/></a>

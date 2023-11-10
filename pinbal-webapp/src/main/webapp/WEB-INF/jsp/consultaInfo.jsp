@@ -289,15 +289,17 @@ $('#dadesPeticio').on('shown', function () {
 	</div>
 	<c:if test="${consulta.hiHaResposta}">
 		<div class="well well-sm">
-			<h3>
-				<spring:message code="consulta.info.resposta.dades"/>
-				<button class="btn btn-link pull-right" data-toggle="collapse" data-target="#dadesResposta" style="color:black">
-					<i id="dadesRespostaIcon" class="fas fa-chevron-down"></i>
-				</button>
-			</h3>
-			<div id="dadesResposta" class="collapse out">
-				<c:set var="initModalXml">initModalXml(this);return false</c:set>
-				<a class="btn btn-default pull-right" href="<c:url value="/modal/consulta/${consulta.id}/xmlResposta"/>" onclick="${initModalXml}"><i class="fas fa-info-circle"></i> <spring:message code="consulta.info.veure.xml"/></a>
+			<div class="row">
+				<div class="col-xs-8">
+					<h3><spring:message code="consulta.info.resposta.dades"/></h3>
+				</div>
+				<div class="col-xs-2 mt15 pull-right">
+					<c:set var="initModalXml">initModalXml(this);return false</c:set>
+					<a class="btn btn-default pull-right" href="<c:url value="/modal/consulta/${consulta.id}/xmlResposta"/>" onclick="${initModalXml}"><i class="fas fa-info-circle"></i> <spring:message code="consulta.info.veure.xml"/></a>
+				</div>
+			</div>
+			<c:if test="${consulta.respostaData}">
+			<div id="dadesResposta">
 				<p>
 					<spring:message code="consulta.info.resposta.rebuda.dia"/>
 					<fmt:formatDate pattern="dd/MM/yyyy" value="${consulta.respostaData}"/>
@@ -305,17 +307,18 @@ $('#dadesPeticio').on('shown', function () {
 					<fmt:formatDate pattern="HH:mm:ss" value="${consulta.respostaData}"/>
 				</p>
 			</div>
-<script type="text/javascript">
-	if ($('#respostaXml').val() != null) {
-		$('#respostaXml').val(vkbeautify.xml($('#respostaXml').val()));
-	}
-	$('#dadesResposta').on('hidden', function () {
-		$('#dadesRespostaIcon').attr('class', 'pull-right icon-chevron-down');
-	});
-	$('#dadesResposta').on('shown', function () {
-		$('#dadesRespostaIcon').attr('class', 'pull-right icon-chevron-up');
-	});
-</script>
+			</c:if>
+			<script type="text/javascript">
+				if ($('#respostaXml').val() != null) {
+					$('#respostaXml').val(vkbeautify.xml($('#respostaXml').val()));
+				}
+				// $('#dadesResposta').on('hidden', function () {
+				// 	$('#dadesRespostaIcon').attr('class', 'pull-right icon-chevron-down');
+				// });
+				// $('#dadesResposta').on('shown', function () {
+				// 	$('#dadesRespostaIcon').attr('class', 'pull-right icon-chevron-up');
+				// });
+			</script>
 		</div>
 	</c:if>
 	<c:if test="${consulta.justificantEstatOk or (consulta.estatTramitada && consulta.justificantEstatPendent)}">

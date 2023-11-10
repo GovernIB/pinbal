@@ -265,7 +265,9 @@ $(document).ready(function() {
 	{{{ icon-status }}} {{ estat }}
 </script>
 <script id="template-details" type="x-tmpl-mustache">
-<a href="multiple/{{ id }}" class="btn btn-default"><i class="fas fa-search-plus"></i>&nbsp;<spring:message code="admin.consulta.list.taula.detalls"/></a>
+<a href="multiple/{{ id }}" class="btn btn-default" data-toggle="modal">
+	<i class="fas fa-search-plus"></i>&nbsp;<spring:message code="admin.consulta.list.taula.detalls"/>
+</a>
 </script>
 	<script type="text/javascript">
 		function onInvokeAction(id) {

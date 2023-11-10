@@ -42,6 +42,7 @@ import es.caib.pinbal.core.repository.EntitatUsuariRepository;
 import es.caib.pinbal.core.repository.HistoricConsultaRepository;
 import es.caib.pinbal.core.repository.ProcedimentRepository;
 import es.caib.pinbal.core.repository.ProcedimentServeiRepository;
+import es.caib.pinbal.core.repository.TokenRepository;
 import es.caib.pinbal.core.repository.UsuariRepository;
 import es.caib.pinbal.core.service.exception.ConsultaNotFoundException;
 import es.caib.pinbal.core.service.exception.EntitatNotFoundException;
@@ -120,6 +121,8 @@ public class HistoricConsultaServiceImpl implements HistoricConsultaService, App
 	private UsuariRepository usuariRepository;
 	@Autowired
 	private EntitatUsuariRepository entitatUsuariRepository;
+	@Autowired
+	private TokenRepository tokenRepository;
 
 	@Autowired
 	private JustificantHelper justificantHelper;
@@ -1188,11 +1191,8 @@ public class HistoricConsultaServiceImpl implements HistoricConsultaService, App
 				resposta.setExpedientId(rpt.getExpedientId());
 				resposta.setDepartamentNom(rpt.getUnitatTramitadora());
 				resposta.setUnitatTramitadoraCodi(rpt.getUnitatTramitadoraCodi());
-				if (rpt.getRespostaXml() != null) {
-					resposta.setHiHaResposta(true);
-					resposta.setRespostaData(rpt.getRespostaData());
-					resposta.setRespostaXml(rpt.getRespostaXml());
-				}
+				resposta.setRespostaData(rpt.getRespostaData());
+				resposta.setRespostaXml(rpt.getRespostaXml());
 				if (rpt.getPeticioXml() != null) {
 					resposta.setHiHaPeticio(true);
 					resposta.setPeticioXml(rpt.getPeticioXml());
@@ -1203,6 +1203,12 @@ public class HistoricConsultaServiceImpl implements HistoricConsultaService, App
 									consulta.getScspPeticionId(),
 									consulta.getScspSolicitudId()));
 				}
+			}
+			if (resposta.isEstatError()) {
+				resposta.setRespostaXml(tokenRepository.getFaultError(consulta.getScspPeticionId()));
+			}
+			if (resposta.getRespostaXml() != null && !resposta.getRespostaXml().isEmpty()) {
+				resposta.setHiHaResposta(true);
 			}
 		} catch (Exception ex) {
 			log.error("No s'han pogut consultar les dades de la petició (peticionId=" + consulta.getScspPeticionId() + ", solicitudId=" + consulta.getScspSolicitudId() + ")", ex);

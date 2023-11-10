@@ -41,6 +41,9 @@
 	display: block;
 	padding: 0 0 0 12px;
 }
+.mt15 {
+	margin-top: 15px;
+}
 
 .container-main, .container-foot {
 	padding-right: 0;

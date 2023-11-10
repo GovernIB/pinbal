@@ -144,6 +144,14 @@
 								}
 								return Mustache.render(template, row);
 						}
+					}, {
+						targets: [7],
+						orderable: false,
+						width: "1%",
+						render: function (data, type, row, meta) {
+							var template = $('#template-details').html();
+							return Mustache.render(template, row);
+						}
 					}
 				],
 				initComplete: function( settings, json ) {
@@ -228,6 +236,7 @@
 				<th data-data="procedimentNom"><spring:message code="auditor.list.taula.procediment" /></th>
 				<th data-data="serveiDescripcio"><spring:message code="auditor.list.taula.servei" /></th>
 				<th data-data="estat"><spring:message code="auditor.list.taula.estat" /></th>
+				<th data-data="id"></th><%-- 7 --%>
 				<th data-data="recobriment" data-visible="false"></th>
 				<th data-data="multiple" data-visible="false"></th>
 			</tr>
@@ -260,5 +269,8 @@
 		createHiddenInputFieldsForLimitAndSubmit(id);
 	}
 </script>
+	<script id="template-details" type="x-tmpl-mustache">
+		<a href="consulta/{{ id }}" class="btn btn-default" data-toggle="modal"><i class="fas fa-search-plus"></i>&nbsp;<spring:message code="admin.consulta.list.taula.detalls"/></a>
+	</script>
 </body>
 </html>

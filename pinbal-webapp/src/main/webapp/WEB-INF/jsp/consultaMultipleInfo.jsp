@@ -232,24 +232,27 @@ $('#dadesSolicitud').on('shown', function () {
 });
 </script>
 	<c:if test="${consulta.hiHaResposta}">
-		<div class="well-lg">
-			<h3>
-				<spring:message code="consulta.info.resposta.dades"/>
-				<a href="#dadesResposta" data-toggle="collapse" data-target="#dadesResposta">
-					<i id="dadesRespostaIcon" class="pull-right glyphicon-chevron-down"></i>
-				</a>
-			</h3>
-			<div id="dadesResposta" class="collapse out">
+	<div class="well well-sm">
+		<div class="row">
+			<div class="col-xs-8">
+				<h3><spring:message code="consulta.info.resposta.dades"/></h3>
+			</div>
+			<div class="col-xs-2 mt15 pull-right">
 				<c:set var="initModalXml">initModalXml(this);return false</c:set>
 				<a class="btn btn-default pull-right" href="<c:url value="/modal/consulta/${consulta.id}/xmlResposta"/>" onclick="${initModalXml}"><i class="fas fa-info-circle"></i> <spring:message code="consulta.info.veure.xml"/></a>
-				<p>
-					<spring:message code="consulta.info.resposta.rebuda.dia"/>
-					<fmt:formatDate pattern="dd/MM/yyyy" value="${consulta.respostaData}"/>
-					<spring:message code="consulta.info.resposta.rebuda.ales"/>
-					<fmt:formatDate pattern="HH:mm:ss" value="${consulta.respostaData}"/>
-				</p>
 			</div>
 		</div>
+		<c:if test="${consulta.respostaData}">
+		<div id="dadesResposta">
+			<p>
+				<spring:message code="consulta.info.resposta.rebuda.dia"/>
+				<fmt:formatDate pattern="dd/MM/yyyy" value="${consulta.respostaData}"/>
+				<spring:message code="consulta.info.resposta.rebuda.ales"/>
+				<fmt:formatDate pattern="HH:mm:ss" value="${consulta.respostaData}"/>
+			</p>
+		</div>
+		</c:if>
+	</div>
 <script type="text/javascript">
 $('#respostaXml').val(vkbeautify.xml($('#respostaXml').val()));
 $('#dadesResposta').on('hidden', function () {
