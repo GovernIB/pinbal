@@ -14,6 +14,7 @@
 <c:set var="serveiMultiple" value="${servei.consultaMultiplePermesa}"/>
 <c:set var="tabSimpleActiu" value="${not consultaCommand.multiple}"/>
 <c:set var="tabMultipleActiu" value="${not tabSimpleActiu}"/>
+<c:url var="urlFitxerErrors" value="/consulta/errors/${fitxerAmbErrors}/download" />
 
 <html>
 <head>
@@ -34,6 +35,14 @@
 	<link href="<c:url value="/webjars/jasny-bootstrap/3.1.3/dist/css/jasny-bootstrap.min.css"/>" rel="stylesheet">
 	<script src="<c:url value="/webjars/jasny-bootstrap/3.1.3/dist/js/jasny-bootstrap.min.js"/>"></script>
 	<script>
+
+		<c:if test="${not empty consultaCommand.multipleErrorsValidacio}">
+		let errorMsgs = '<spring:message code="consulta.form.camp.multiple.errors.fitxer"/>:\n';
+		<c:forEach items="${consultaCommand.multipleErrorsValidacioScaped}" var="err">errorMsgs += '\t - ${err}\n';
+		</c:forEach>
+		let fitxerErrorUrl = "${urlFitxerErrors}";
+		</c:if>
+
 		$(document).ready(function() {
 			<c:if test="${serveiMultiple}">
 				$('#tabs-simple-multiple a:first').click(function (e) {
@@ -45,6 +54,11 @@
 			</c:if>
 			$('.btn-ppv').popover();
 
+			$("#cbcopy").click((e) => {
+				e.stopPropagation();
+				navigator.clipboard.writeText(errorMsgs);
+			});
+
 			$(".grup-regla input, .grup-regla select").change( (event) => {
 				updateGrupsRegles();
 			});
@@ -52,7 +66,71 @@
 				updateCampsRegles();
 			});
 			updateCampsRegles();
+			debugger
+
+			<c:if test="${not empty fitxerAmbErrors}">loadFitxerErrors();</c:if>
 		});
+
+		const loadFitxerErrors = () => {
+			debugger
+			$.ajax({
+				type: 'GET',
+				url: fitxerErrorUrl,
+				responseType: 'arraybuffer',
+				success: function(json) {
+					debugger
+					if (json.error) {
+						console.log("Error al descarregar el fitxer de consultes amb els errors: " + json.errorMsg);
+					} else {
+						const response = json.data;
+						const blob = base64toBlob(response.contingut, response.contentType);
+						const file = new File([blob], response.contentType, {type: response.contentType});
+						const url = URL.createObjectURL(file);
+
+						// Create a new anchor element
+						const a = document.createElement('a');
+						a.href = url;
+						a.download = response.nom || 'download';
+
+						// Click handler that releases the object URL after the element has been clicked
+						const clickHandler = () => {
+							setTimeout(() => {
+								URL.revokeObjectURL(url);
+								removeEventListener('click', clickHandler);
+							}, 150);
+						};
+
+						// Add the click event listener on the anchor element
+						a.addEventListener('click', clickHandler, false);
+
+						// Programmatically trigger a click on the anchor element
+						// Useful if you want the download to happen automatically without attaching the anchor element to the DOM
+						a.click();
+					}
+				},
+				error: function(xhr, ajaxOptions, thrownError) {
+					console.log("Error al descarregar el fitxer de consultes amb els errors");
+				}
+			});
+		}
+
+		const base64toBlob = (b64Data, contentType) => {
+			var contentType = contentType || '';
+			var sliceSize = 512;
+			var byteCharacters = atob(b64Data);
+			var byteArrays = [];
+			for (var offset = 0; offset < byteCharacters.length; offset += sliceSize) {
+				var slice = byteCharacters.slice(offset, offset + sliceSize);
+				var byteNumbers = new Array(slice.length);
+				for (var i=0; i<slice.length; i++) {
+					byteNumbers[i] = slice.charCodeAt(i);
+				}
+				var byteArray = new Uint8Array(byteNumbers);
+				byteArrays.push(byteArray);
+			}
+			var blob = new Blob(byteArrays, {type: contentType});
+			return blob;
+		}
 
 		const campsModificats = () => {
 			let campsModiicats = $("#dades-especifiques-grup").find("input:not([type=hidden]), select").filter(function () {
@@ -260,10 +338,13 @@
 					<div class="container-fluid">
 					<c:if test="${not empty consultaCommand.multipleErrorsValidacio}">
 						<div id="errorsFitxer" class="errorsFitxer well alert-danger">
+							<div id="errorsFitxerBody">
 							<h4><spring:message code="consulta.form.camp.multiple.errors.fitxer"/></h4>
 						<c:forEach items="${consultaCommand.multipleErrorsValidacio}" var="error">
 							<p style="margin-left:20px">${error}</p>
 						</c:forEach>
+							</div>
+							<button type="button" id="cbcopy" class="btn btn-default pull-right"><span class="fa fa-clipboard"></span> <spring:message code="comu.clipboard.copy"/></button>
 						</div>
 					</c:if>
 					<div class="row">

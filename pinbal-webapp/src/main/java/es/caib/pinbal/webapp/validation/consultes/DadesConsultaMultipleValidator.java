@@ -379,6 +379,15 @@ public class DadesConsultaMultipleValidator {
         return errorsValidacio;
     }
 
+    public List<List<String>> getErrorsValidacioPerLinia() {
+        List<List<String>> errorsValidacio = new ArrayList<>();
+        if (consultaLinies != null && !consultaLinies.isEmpty())
+            for (ConsultaLinia consultaLinia : consultaLinies) {
+                errorsValidacio.add(consultaLinia.getErrorsLinia());
+            }
+        return errorsValidacio;
+    }
+
     public List<String> getErrorValidacioConsulta(int numConsulta) {
         return consultaLinies.get(numConsulta).getErrorsLinia();
     }

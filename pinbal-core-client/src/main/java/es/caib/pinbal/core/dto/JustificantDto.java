@@ -5,17 +5,17 @@ package es.caib.pinbal.core.dto;
 
 import es.caib.pinbal.core.dto.ConsultaDto.JustificantEstat;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.experimental.SuperBuilder;
 
 /**
  * Informació d'un fitxer.
  * 
  * @author Limit Tecnologies <limit@limit.es>
  */
-@Builder
+@SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter

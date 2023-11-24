@@ -20,6 +20,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -78,6 +79,17 @@ public class ConsultaCommand {
 	private boolean multiple = false;
 	@ArxiuNoBuit(groups=ConsultaCommandMultiple.class)
 	private MultipartFile multipleFitxer;
+
+	public List<String> getMultipleErrorsValidacioScaped() {
+		List<String> scapedErrors = new ArrayList<>();
+		if (multipleErrorsValidacio != null) {
+			for (String error: multipleErrorsValidacio) {
+				scapedErrors.add(error.replace("'", "\\'").replace("\"", "\\\""));
+			}
+		}
+		return scapedErrors;
+	}
+
 	private List<String> multipleErrorsValidacio;
 
 	public ConsultaCommand() {
