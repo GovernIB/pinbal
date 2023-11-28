@@ -144,16 +144,22 @@ public class ConsultaAdminController extends BaseController {
 		return new ServerSideResponse<ConsultaDto, Long>(serverSideRequest, page);
 	}
 
+	@RequestMapping(value = "/{consultaId}/justificant/arxiu/detall", method = RequestMethod.GET)
+	public String justificantArxiuDetall(HttpServletRequest request, HttpServletResponse response, @PathVariable Long consultaId, Model model) {
+
+		model.addAttribute(consultaService.obtenirArxiuInfo(consultaId));
+		model.addAttribute("mostrarArxiuInfo", true);
+		return "contingutArxiu";
+	}
+
 	@RequestMapping(value = "/{consultaId}/justificant", method = RequestMethod.GET)
-	public String justificant(
-			HttpServletRequest request,
-			HttpServletResponse response,
-			@PathVariable Long consultaId,
-			Model model) throws ConsultaNotFoundException {
-		if (!EntitatHelper.isDelegatEntitatActual(request))
+	public String justificant(HttpServletRequest request, HttpServletResponse response, @PathVariable Long consultaId, Model model) throws ConsultaNotFoundException {
+
+		if (!EntitatHelper.isDelegatEntitatActual(request)) {
 			return "delegatNoAutoritzat";
+		}
 		EntitatDto entitat = EntitatHelper.getEntitatActual(request, entitatService);
-		if (entitat != null) {
+		if  (entitat != null) {
 			try {
 				JustificantDto justificant = getJustificant(consultaId, isHistoric(request));
 				if (!justificant.isError()) {
@@ -238,28 +244,19 @@ public class ConsultaAdminController extends BaseController {
 	}
 
 	@RequestMapping(value = "/entitat/deseleccionar", method = RequestMethod.GET)
-	public String entitatDeseleccionar(
-			HttpServletRequest request) {
-		RequestSessionHelper.esborrarObjecteSessio(
-				request,
-				SESSION_ATTRIBUTE_ENTITAT);
+	public String entitatDeseleccionar(HttpServletRequest request) {
+
+		RequestSessionHelper.esborrarObjecteSessio(request, SESSION_ATTRIBUTE_ENTITAT);
 		return "redirect:../../consulta";
 	}
 
 	@RequestMapping(value = "/{consultaId}", method = RequestMethod.GET)
-	public String get(
-			HttpServletRequest request,
-			@PathVariable Long consultaId,
-			Model model) throws Exception {
+	public String get(HttpServletRequest request, @PathVariable Long consultaId, Model model) throws Exception {
+
 		ConsultaDto consulta = getConsultaAdmin(consultaId, isHistoric(request));
 		model.addAttribute("consulta", consulta);
-		model.addAttribute(
-				"servei",
-				serveiService.findAmbCodiPerAdminORepresentant(
-						consulta.getServeiCodi()));
-		omplirModelAmbDadesEspecifiques(
-				consulta.getServeiCodi(),
-				model);
+		model.addAttribute("servei", serveiService.findAmbCodiPerAdminORepresentant(consulta.getServeiCodi()));
+		omplirModelAmbDadesEspecifiques(consulta.getServeiCodi(), model);
 		return "adminConsultaInfo";
 	}
 
