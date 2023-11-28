@@ -1,15 +1,5 @@
 package es.caib.pinbal.webapp.view;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
@@ -28,6 +18,16 @@ import org.odftoolkit.simple.table.Table;
 import org.supercsv.io.CsvListReader;
 import org.supercsv.io.ICsvListReader;
 import org.supercsv.prefs.CsvPreference;
+
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 public class SpreadSheetReader {
 
@@ -187,11 +187,10 @@ public class SpreadSheetReader {
 						"currency".equalsIgnoreCase(cellType) ||
 						"percentage".equalsIgnoreCase(cellType)) {
 						finalValue = String.valueOf(cell.getDoubleValue());
-					} else if ("date".equalsIgnoreCase(cellType) ||
-							   "time".equalsIgnoreCase(cellType)) {
-						finalValue = dateFormat.format(cell.getTimeValue());
+					} else if ("time".equalsIgnoreCase(cellType)) {
+						finalValue = dateFormat.format(cell.getTimeValue().getTime());
 					} else if ("date".equalsIgnoreCase(cellType)) {
-						finalValue = dateFormat.format(cell.getDateValue());
+						finalValue = dateFormat.format(cell.getDateValue().getTime());
 					} else {
 						finalValue = cell.getStringValue();
 					}

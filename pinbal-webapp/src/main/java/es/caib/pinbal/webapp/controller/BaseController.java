@@ -3,19 +3,18 @@
  */
 package es.caib.pinbal.webapp.controller;
 
-import java.io.IOException;
-
-import javax.activation.MimetypesFileTypeMap;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
+import es.caib.pinbal.webapp.common.AlertHelper;
+import es.caib.pinbal.webapp.helper.AjaxHelper;
+import es.caib.pinbal.webapp.helper.ModalHelper;
 import org.springframework.context.MessageSource;
 import org.springframework.context.MessageSourceAware;
 import org.springframework.web.servlet.support.RequestContext;
 
-import es.caib.pinbal.webapp.common.AlertHelper;
-import es.caib.pinbal.webapp.helper.AjaxHelper;
-import es.caib.pinbal.webapp.helper.ModalHelper;
+import javax.activation.MimetypesFileTypeMap;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.Locale;
 
 /**
  * Controlador base que implementa funcionalitats comunes.
@@ -189,9 +188,20 @@ public class BaseController implements MessageSourceAware {
 				new RequestContext(request).getLocale());
 		return message;
 	}
+	protected String getMessage(String key, Object[] args, Locale locale) {
+		String message = messageSource.getMessage(
+				key,
+				args,
+				"???" + key + "???",
+				locale);
+		return message;
+	}
 
 	protected String getMessage(HttpServletRequest request, String key) {
 		return getMessage(request, key, null);
+	}
+	protected String getMessage(String key, Locale locale) {
+		return getMessage(key, null, locale);
 	}
 
 	public void setMessageSource(MessageSource messageSource) {

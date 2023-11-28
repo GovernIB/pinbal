@@ -1,59 +1,5 @@
 package es.caib.pinbal.webapp.controller;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.lang.reflect.InvocationTargetException;
-import java.sql.SQLException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.regex.PatternSyntaxException;
-
-import javax.naming.NamingException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.validation.Valid;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-
-import org.apache.commons.codec.binary.Base64;
-import org.joda.time.Days;
-import org.joda.time.LocalDate;
-import org.joda.time.Period;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.propertyeditors.CustomDateEditor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
-import org.springframework.validation.Errors;
-import org.springframework.validation.Validator;
-import org.springframework.web.bind.WebDataBinder;
-import org.springframework.web.bind.annotation.InitBinder;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.multipart.MultipartHttpServletRequest;
-import org.w3c.dom.Document;
-import org.xml.sax.SAXException;
-
 import es.caib.pinbal.core.dto.CodiValor;
 import es.caib.pinbal.core.dto.ConsultaDto;
 import es.caib.pinbal.core.dto.ConsultaDto.DocumentTipus;
@@ -65,8 +11,6 @@ import es.caib.pinbal.core.dto.JustificantDto;
 import es.caib.pinbal.core.dto.NodeDto;
 import es.caib.pinbal.core.dto.ServeiCampDto;
 import es.caib.pinbal.core.dto.ServeiCampDto.ServeiCampDtoTipus;
-import es.caib.pinbal.core.dto.ServeiCampDto.ServeiCampDtoValidacioDataTipus;
-import es.caib.pinbal.core.dto.ServeiCampDto.ServeiCampDtoValidacioOperacio;
 import es.caib.pinbal.core.dto.ServeiCampGrupDto;
 import es.caib.pinbal.core.dto.ServeiDto;
 import es.caib.pinbal.core.dto.UsuariDto;
@@ -103,8 +47,53 @@ import es.caib.pinbal.webapp.common.ValidationHelper;
 import es.caib.pinbal.webapp.datatables.ServerSideColumn;
 import es.caib.pinbal.webapp.datatables.ServerSideRequest;
 import es.caib.pinbal.webapp.datatables.ServerSideResponse;
+import es.caib.pinbal.webapp.validation.consultes.DadesConsultaMultipleValidator;
+import es.caib.pinbal.webapp.validation.consultes.DadesConsultaSimpleValidator;
 import es.caib.pinbal.webapp.view.SpreadSheetReader;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.codec.binary.Base64;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.propertyeditors.CustomDateEditor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.Errors;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.InitBinder;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
+import org.w3c.dom.Document;
+import org.xml.sax.SAXException;
+
+import javax.naming.NamingException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.lang.reflect.InvocationTargetException;
+import java.sql.SQLException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Controlador per a la pàgina de consultes.
@@ -119,7 +108,7 @@ public class ConsultaController extends BaseController {
 	private static final String PREFIX_CAMP_DADES_ESPECIFIQUES = "camp_";
 	public static final String SESSION_ATTRIBUTE_FILTRE = "ConsultaController.session.filtre";
 	public static final String SESSION_CONSULTA_HISTORIC = "consulta_delegat";
-	private static final String FORMAT_DATA_DADES_ESPECIFIQUES = "dd/MM/yyyy";
+	public static final String FORMAT_DATA_DADES_ESPECIFIQUES = "dd/MM/yyyy";
 
 	@Autowired
 	private EntitatService entitatService;
@@ -346,7 +335,7 @@ public class ConsultaController extends BaseController {
 					serveiCodi,
 					entitat,
 					false);
-			new DadesEspecifiquesValidator(serveiCodi).validate(command, bindingResult);
+			new DadesConsultaSimpleValidator(serveiService, serveiCodi).validate(command, bindingResult);
 		} else {
 			MultipartFile fitxer = command.getMultipleFitxer();
 			grups.add(ConsultaCommandMultiple.class);
@@ -372,8 +361,16 @@ public class ConsultaController extends BaseController {
 					
 					if (!bindingResult.hasErrors()) {
 						List<String> errorsValidacio = new ArrayList<String>();
-						validatePeticioMultipleFile(request, liniesFitxer, servei, camps, bindingResult, errorsValidacio);
-						command.setMultipleErrorsValidacio(errorsValidacio);
+//						validatePeticioMultipleFile(request, liniesFitxer, servei, camps, bindingResult, errorsValidacio);
+//						command.setMultipleErrorsValidacio(errorsValidacio);
+						DadesConsultaMultipleValidator dadesConsultaMultipleValidator = new DadesConsultaMultipleValidator(serveiService, liniesFitxer, camps, servei, bindingResult, request.getLocale());
+						dadesConsultaMultipleValidator.validate();
+						command.setMultipleErrorsValidacio(dadesConsultaMultipleValidator.getErrorsValidacio());
+
+						if (dadesConsultaMultipleValidator.hasErrors()) {
+							// TODO: Afegir els errors al fitxer, i que es pugui descarregar
+//							addErrorLines(fitxer, dadesConsultaMultipleValidator);
+						}
 					}
 				} catch (Exception ex) {
 					LOGGER.error(
@@ -975,284 +972,6 @@ public class ConsultaController extends BaseController {
 		}
 	}
 
-	@SuppressWarnings("rawtypes")
-	private class DadesEspecifiquesValidator implements Validator {
-		private List<ServeiCampDto> camps;
-		String serveiCodi;
-		public DadesEspecifiquesValidator(String serveiCodi) {
-			this.serveiCodi = serveiCodi;
-		}
-		public boolean supports(Class clazz) {
-			return ConsultaCommand.class.equals(clazz);
-		}
-		public void validate(Object obj, Errors errors) {
-			ConsultaCommand command = (ConsultaCommand)obj;
-			Map<String, Object> dadesEspecifiquesValors = command.getDadesEspecifiques();
-			List<String> campsModificats = new ArrayList<>(); // Path
-			List<String> grupsModificats = new ArrayList<>(); // Nom
-			List<ServeiCampDto> camps = null;
-			List<ServeiCampGrupDto> grups = null;
-			try {
-				camps = serveiService.findServeiCamps(serveiCodi);
-				grups = serveiService.findServeiCampGrupsAndSubgrups(serveiCodi);
-			} catch (ServeiNotFoundException e) {
-				throw new RuntimeException("Error obtenint els camps i grups del servei", e);
-			}
-			for (ServeiCampDto camp: camps) {
-				Object valorCamp = dadesEspecifiquesValors.get(camp.getPath());
-
-				boolean isEmptyString = valorCamp instanceof String && ((String)valorCamp).isEmpty();
-				if (valorCamp == null || isEmptyString) {
-					if (camp.isObligatori())
-						errors.rejectValue(
-								"dadesEspecifiques[" + camp.getPath() + "]",
-								"NotEmpty",
-								"Aquest camp és obligatori");
-				} else {
-					// Valors necessaris per validar regles
-					campsModificats.add(camp.getPath());
-					if (camp.getGrup() != null) {
-						grupsModificats.add(camp.getGrup().getNom());
-					}
-
-					// Validar expressió regular si n'hi ha
-					String validacioRegexp = camp.getValidacioRegexp();
-					if (ServeiCampDtoTipus.TEXT.equals(camp.getTipus()) && validacioRegexp != null && !validacioRegexp.isEmpty()) {
-						try {
-							Matcher matcher = Pattern.compile(validacioRegexp).matcher((String)valorCamp);
-							if (!matcher.matches()) {
-								errors.rejectValue(
-										"dadesEspecifiques[" + camp.getPath() + "]",
-										"RegexpDontMatch",
-										"Valor no permès");
-							}
-						} catch (PatternSyntaxException ex) {
-							// Si l'expressió no és correcta la validació també falla
-							errors.rejectValue(
-									"dadesEspecifiques[" + camp.getPath() + "]",
-									"InvalidRegexp",
-									"Expressió de validació errònia");
-						}
-					}
-					// Validar rang numèric
-					Integer validacioMin = camp.getValidacioMin();
-					Integer validacioMax = camp.getValidacioMax();
-					if (ServeiCampDtoTipus.NUMERIC.equals(camp.getTipus()) && valorCamp != null && (validacioMin != null || validacioMax != null)) {
-						Integer valorInt = Integer.valueOf((String)valorCamp);
-						boolean validMin = (validacioMin != null) ? validacioMin <= valorInt : true;
-						boolean validMax = (validacioMax != null) ? validacioMax >= valorInt : true;
-						if (!validMin || !validMax) {
-							errors.rejectValue(
-									"dadesEspecifiques[" + camp.getPath() + "]",
-									"NumericRangeExceeded",
-									"Valor no permès");
-						}
-					}
-					if (ServeiCampDtoTipus.DATA.equals(camp.getTipus())) {
-						// Validar format data
-						String dataText = (String)dadesEspecifiquesValors.get(camp.getPath());
-						Date dataDate = checkDateFormat(dataText);
-						if (dataDate != null) {
-							// Si el format és vàlid comprova les demés validacions
-							ServeiCampDto validacioDataCamp2 = camp.getValidacioDataCmpCamp2();
-							if (validacioDataCamp2 != null) {
-								String dataText2 = (String)dadesEspecifiquesValors.get(validacioDataCamp2.getPath());
-								Date dataDate2 = null;
-								if (dataText2 != null) {
-									dataDate2 = checkDateFormat(dataText2);
-								}
-								if (dataDate2 != null) {
-									Integer validacioNombre = camp.getValidacioDataCmpNombre();
-									ServeiCampDtoValidacioOperacio validacioOperacio = camp.getValidacioDataCmpOperacio();
-									if (validacioNombre != null) {
-										// Validacio per diferencia
-										ServeiCampDtoValidacioDataTipus validacioTipus = camp.getValidacioDataCmpTipus();
-										Period period = new Period(dataDate.getTime(), dataDate2.getTime());
-										int diff = 0;
-										// Si la comparació és < o ==, llavors hem de controlar que no hi hagi altres unitats amb valo
-										// Exemple si comparam 2 mesos, si el període ens diu que tenim 2 mesos, necessitam comprovar que no tenim
-										// cap any, ni cap dia 1any i 2mesos, o 2mesos i 3dies no és igual a 2 mesos!!
-										boolean detailDiff = false;
-										if (ServeiCampDtoValidacioDataTipus.ANYS == validacioTipus) {
-											diff = period.getYears();
-											detailDiff = (period.getMonths() > 0 || period.getDays() > 0);
-										} else if (ServeiCampDtoValidacioDataTipus.MESOS == validacioTipus) {
-											diff = period.getYears() * 12 + period.getMonths();
-											detailDiff = period.getDays() > 0;
-										} else {
-											DateTimeFormatter formatter = DateTimeFormat.forPattern("dd/MM/yyyy");
-											diff = Days.daysBetween(LocalDate.parse(dataText, formatter), LocalDate.parse(dataText2, formatter)).getDays();
-										}
-										boolean valid = true;
-										if (ServeiCampDtoValidacioOperacio.LT == validacioOperacio) {
-											valid = diff < validacioNombre;
-										} else if (ServeiCampDtoValidacioOperacio.LTE == validacioOperacio) {
-											valid = diff < validacioNombre || (diff == validacioNombre && !detailDiff);
-										} else if (ServeiCampDtoValidacioOperacio.GT == validacioOperacio) {
-											valid = diff > validacioNombre;
-										} else if (ServeiCampDtoValidacioOperacio.GTE == validacioOperacio) {
-											valid = diff >= validacioNombre;
-										} else if (ServeiCampDtoValidacioOperacio.EQ == validacioOperacio) {
-											valid = diff == validacioNombre && !detailDiff;
-										} else if (ServeiCampDtoValidacioOperacio.NEQ == validacioOperacio) {
-											valid = diff != validacioNombre || detailDiff;
-										}
-										if (!valid) {
-											errors.rejectValue(
-													"dadesEspecifiques[" + camp.getPath() + "]",
-													"DataValida",
-													"La data és surt del rang permès");
-										}
-									} else {
-										// Validacio per comparació
-										boolean valid = true;
-										if (ServeiCampDtoValidacioOperacio.LT == validacioOperacio) {
-											valid = dataDate.getTime() < dataDate2.getTime();
-										} else if (ServeiCampDtoValidacioOperacio.LTE == validacioOperacio) {
-											valid = dataDate.getTime() <= dataDate2.getTime();
-										} else if (ServeiCampDtoValidacioOperacio.GT == validacioOperacio) {
-											valid = dataDate.getTime() > dataDate2.getTime();
-										} else if (ServeiCampDtoValidacioOperacio.GTE == validacioOperacio) {
-											valid = dataDate.getTime() >= dataDate2.getTime();
-										} else if (ServeiCampDtoValidacioOperacio.EQ == validacioOperacio) {
-											valid = dataDate.getTime() == dataDate2.getTime();
-										} else if (ServeiCampDtoValidacioOperacio.NEQ == validacioOperacio) {
-											valid = dataDate.getTime() != dataDate2.getTime();
-										}
-										if (!valid) {
-											errors.rejectValue(
-													"dadesEspecifiques[" + camp.getPath() + "]",
-													"DataValida",
-													"La comparació entre dates no passa la validació");
-										}
-									}
-								} else {
-									errors.rejectValue(
-											"dadesEspecifiques[" + camp.getPath() + "]",
-											"DataReferencia",
-											"El camp al que fa referència la comparació no és vàlid");
-								}
-							}
-						} else {
-							errors.rejectValue(
-									"dadesEspecifiques[" + camp.getPath() + "]",
-									"DataValida",
-									"La data és incorrecta");
-						}
-					}
-				}
-			}
-
-			// Validacions de regles
-			List<CampFormProperties> campsRegles = null;
-			List<CampFormProperties> grupsRegles = null;
-			try {
-				campsRegles = serveiService.getCampsByserveiRegla(serveiCodi, campsModificats.toArray(new String[]{}));
-				grupsRegles = serveiService.getGrupsByserveiRegla(serveiCodi, grupsModificats.toArray(new String[]{}));
-			} catch (ServeiNotFoundException e) {
-				throw new RuntimeException("Error obtenint les regles del servei", e);
-			}
-
-			// Validacions de regles de camps
-			int i = 0;
-			if (campsRegles != null && !campsRegles.isEmpty()) {
-				for (ServeiCampDto camp : camps) {
-					CampFormProperties campRegla = campsRegles.get(i++);
-
-					if (!campsModificats.contains(camp.getPath())) {
-						if (campRegla.isObligatori()) {
-							errors.rejectValue(
-									"dadesEspecifiques[" + camp.getPath() + "]",
-									"consulta.form.camp.regla.obligatori",
-									new Object[]{ campRegla.getReglaObligatori() },
-									"Amb les dades actuals, aquest camp és obligatori");
-						}
-					} else {
-						if (!campRegla.isVisible()){
-							errors.reject(
-									"consulta.form.camp.regla.visible",
-									new Object[]{ camp.getEtiqueta() != null ? camp.getEtiqueta() : camp.getCampNom(), campRegla.getReglaVisible() },
-									"Amb les dades actuals, aquest camp ha d'estar buit");
-						} else if (!campRegla.isEditable()) {
-							errors.rejectValue(
-									"dadesEspecifiques[" + camp.getPath() + "]",
-									"consulta.form.camp.regla.editable",
-									new Object[]{ campRegla.getReglaEditable() },
-									"Amb les dades actuals, aquest camp ha d'estar buit");
-						}
-					}
-				}
-			}
-			// Validacions de regles de grup
-			if (grupsRegles != null && !grupsRegles.isEmpty()) {
-				for (CampFormProperties grupRegla : grupsRegles) {
-					ServeiCampGrupDto grup = getGrupById(grups, grupRegla.getVarId());
-					if (!grupsModificats.contains(grup.getNom())) {
-						if (grupRegla.isObligatori()) {
-							errors.rejectValue(
-									"dadesEspecifiques[" + grup.getId() + "]",
-									"consulta.form.grup.regla.obligatori",
-									new Object[] { grup != null ? grup.getNom() : "", grupRegla.getReglaObligatori()},
-									"El grup ha de tenir dades emplenades");
-						}
-
-					} else {
-						if (!grupRegla.isEditable()) {
-							errors.rejectValue(
-									"dadesEspecifiques[" + grup.getId() + "]" ,
-									"consulta.form.grup.regla.editable",
-									new Object[] {grup != null ? grup.getNom() : "", grupRegla.getReglaEditable()},
-									"El grup no pot tenir dades emplenades");
-						} else if (!grupRegla.isVisible()) {
-							errors.reject(
-									"consulta.form.grup.regla.visible",
-									new Object[] {grup != null ? grup.getNom() : "", grupRegla.getReglaVisible()},
-									"El grup no pot tenir dades emplenades");
-						}
-					}
-				}
-			}
-		}
-
-		private ServeiCampGrupDto getGrupById(List<ServeiCampGrupDto> grups, Long grupId) {
-			if (grups == null) {
-				return null;
-			}
-			for (ServeiCampGrupDto grup: grups) {
-				if (grup.getId().equals(grupId)) {
-					return grup;
-				}
-			}
-			return null;
-		}
-
-//		private CampFormProperties getGrupRegla(ServeiCampDto camp, List<CampFormProperties> grupsRegles) {
-//			if (camp.getGrup() == null) {
-//				return null;
-//			}
-//			for (CampFormProperties grupRegles: grupsRegles) {
-//				if (grupRegles.getVarId().equals(camp.getGrup().getId()) {
-//					return grupRegles;
-//				}
-//			}
-//			return null;
-//		}
-
-		private Date checkDateFormat(String dateText) {
-			SimpleDateFormat sdf = new SimpleDateFormat(FORMAT_DATA_DADES_ESPECIFIQUES);
-			Date dataDate = null;
-			try {
-				dataDate = sdf.parse(dateText);
-				if (!sdf.format(dataDate).equals(dateText)) {
-					dataDate = null;
-				}
-			} catch (Exception ex) {
-				dataDate = null;
-			}
-			return dataDate;
-		}
-	}
-
 	private ConsultaDto novaConsulta(
 			ConsultaCommand command) throws ProcedimentServeiNotFoundException, ConsultaNotFoundException, ServeiNotAllowedException, ConsultaScspException {
 		ConsultaDto consulta = ConsultaCommand.asDto(command);
@@ -1287,178 +1006,50 @@ public class ConsultaController extends BaseController {
 			Errors errors) throws Exception {
 		List<String[]> linies = new ArrayList<String[]>();
 		// Obtenir dades del fitxer
-		if (	"text/csv".equals(fitxer.getContentType()) ||
+		if ("text/csv".equals(fitxer.getContentType()) ||
 				isFilenameExtension(fitxer.getOriginalFilename(), "csv")) {
 			linies = SpreadSheetReader.getLinesFromCsv(fitxer.getInputStream());
 		} else if ("application/vnd.ms-excel".equals(fitxer.getContentType()) ||
-			"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet".equals(fitxer.getContentType()) ||
-			isFilenameExtension(fitxer.getOriginalFilename(), "xls")) {
+				"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet".equals(fitxer.getContentType()) ||
+				isFilenameExtension(fitxer.getOriginalFilename(), "xls")) {
 			linies = SpreadSheetReader.getLinesFromXls(fitxer.getBytes());
 		} else if (
 				"application/vnd.oasis.opendocument.spreadsheet".equals(fitxer.getContentType()) ||
-				isFilenameExtension(fitxer.getOriginalFilename(), "ods")) {
+						isFilenameExtension(fitxer.getOriginalFilename(), "ods")) {
 			linies = SpreadSheetReader.getLinesFromOds(fitxer.getInputStream());
-		} else {	
+		} else {
 			errors.rejectValue(
-					"multipleFitxer", 
-					"PeticioMultiple.fitxer.tipus", 
+					"multipleFitxer",
+					"PeticioMultiple.fitxer.tipus",
 					"Tipus de fitxer no suportat. Tipus acceptats: Excel i CSV.");
 		}
 		// 1. Mínim 1 registre de dades (fila 4)
 		if (linies.size() < 4) {
 			errors.rejectValue(
-					"multipleFitxer", 
-					"PeticioMultiple.fitxer.buit", 
+					"multipleFitxer",
+					"PeticioMultiple.fitxer.buit",
 					"El fitxer és buit. No te dades de peticions.");
 		} else {
 			linies = linies.subList(2, linies.size());
 		}
 		return linies;
 	}
-	
-	private void validatePeticioMultipleFile(
-			HttpServletRequest request,
-			List<String[]> linies,
-			ServeiDto servei, 
-			List<ServeiCampDto> camps, 
-			Errors errors,
-			List<String> errorsValidacio) throws Exception {
-		// 2. Tots els camps obligatoris del servei s'han inclòs al fitxer
-		String[] pathsFitxer = linies.get(0);
-		linies = linies.subList(1, linies.size());
-		List<ServeiCampDto> campsObligatoris = getCampsObligatoris(request, servei, camps);
-		if (!campsObligatoris.isEmpty()) {
-			Integer[] posicioCampsObligatoris = new Integer[campsObligatoris.size()];
-			int posOb = 0;
-			for (ServeiCampDto campObligatori: campsObligatoris) {
-				// Comprovam si el camp obligatori existeix en el fitxer
-				for (int pos = 0; pos < pathsFitxer.length; pos++) {
-					if (campObligatori.getPath().equals(pathsFitxer[pos])) {
-						posicioCampsObligatoris[posOb] = pos;
-						break;
-					}
-				}
-				// Si no hi es es genera un missatge d'error
-				if (posicioCampsObligatoris[posOb] == null) {
-					errorsValidacio.add(
-							getMessage(
-									request, 
-									"consulta.fitxer.camp.obligatori",
-									new Object[] {campObligatori.getEtiqueta()}));
-				}
-				posOb++;
-			}
-			// 3. Tots els camps obligatoris s'han emplenat
-			for (int i = 0; i < campsObligatoris.size(); i++) {
-				ServeiCampDto campObligatori = campsObligatoris.get(i);
-				Integer posicioCampObligatori = posicioCampsObligatoris[i];
-				if (posicioCampObligatori != null) {
-					int numLinia = 4;
-					for (String[] linia: linies) {
-						if (linia[posicioCampObligatori] == null || "".equals(linia[posicioCampObligatori])) {
-							String campEtiqueta = (campObligatori.getEtiqueta() != null) ? campObligatori.getEtiqueta() : campObligatori.getCampNom();
-							errorsValidacio.add(
-									getMessage(
-											request, 
-											"consulta.fitxer.camp.obligatori.null",
-											new Object[] {numLinia, campEtiqueta}));
-						}
-						numLinia++;
-					}
-				}
-			}
-		}
-		// 4. Tipus documents és un dels acceptats pel servei
-		if (servei.isPinbalActiuCampDocument()) {
-			Integer posDocumentTip = null;
-			for (int pos = 0; pos < pathsFitxer.length; pos++) {
-				if ("DatosGenericos/Titular/TipoDocumentacion".equals(pathsFitxer[pos])) {
-					posDocumentTip = pos;
-					break;
-				}
-			}
-			if (posDocumentTip != null) {
-				List<String> documentsPermesos = new ArrayList<String>();
-				if (servei.isPinbalPermesDocumentTipusCif()) documentsPermesos.add("CIF");
-				if (servei.isPinbalPermesDocumentTipusDni()) documentsPermesos.add("DNI");
-				if (servei.isPinbalPermesDocumentTipusNie()) documentsPermesos.add("NIE");
-				if (servei.isPinbalPermesDocumentTipusNif()) documentsPermesos.add("NIF");
-				if (servei.isPinbalPermesDocumentTipusPas()) documentsPermesos.add("PASSAPORT");
-				int numLinia = 4;
-				for (String[] linia: linies) {
-					if (linia[posDocumentTip] != null && !"".equals(linia[posDocumentTip])) {
-						if (!documentsPermesos.contains(linia[posDocumentTip].toUpperCase())) {
-							errorsValidacio.add(
-									getMessage(
-											request, 
-											"consulta.fitxer.camp.document.tipus",
-											new Object[] {numLinia}));
-						}
-					}
-					numLinia++;
-				}
-				
-			}
-		}
-		// 5. Els camps de tipus date tenen el format correcte
-		List<ServeiCampDto> campsData = getCampsData(camps);
-		if (!campsData.isEmpty()) {
-			Integer[] posicioCampsData = new Integer[campsData.size()];
-			int posData = 0;
-			for (ServeiCampDto campData: campsData) {
-				for (int pos = 0; pos < pathsFitxer.length; pos++) {
-					if (campData.getPath().equals(pathsFitxer[pos])) {
-						posicioCampsData[posData] = pos;
-						break;
-					}
-				}
-				posData++;
-			}
-			SimpleDateFormat sdf = new SimpleDateFormat(FORMAT_DATA_DADES_ESPECIFIQUES);
-			for (int i = 0; i < campsData.size(); i++) {
-				ServeiCampDto campData = campsData.get(i);
-				Integer posicioCampData = posicioCampsData[i];
-				if (posicioCampData != null) {
-					int numLinia = 4;
-					for (String[] linia: linies) {
-						String data = linia[posicioCampData];
-						if (data != null && !"".equals(data)) {
-							try {
-								Date dataDate = sdf.parse(data);
-								if (!sdf.format(dataDate).equals(data)) {
-									String campEtiqueta = (campData.getEtiqueta() != null) ? campData.getEtiqueta() : campData.getCampNom();
-									errorsValidacio.add(
-											getMessage(
-													request,
-													"consulta.fitxer.camp.data",
-													new Object[] {numLinia, campEtiqueta}));
-								}
-							} catch (Exception ex) {
-								String campEtiqueta = (campData.getEtiqueta() != null) ? campData.getEtiqueta() : campData.getCampNom();
-								errorsValidacio.add(
-										getMessage(
-												request,
-												"consulta.fitxer.camp.data",
-												new Object[] {numLinia, campEtiqueta}));
-							}
-						}
-						numLinia++;
-					}
-				}
-			}
-		}
-		if (!errorsValidacio.isEmpty()) {
-			errors.rejectValue(
-					"multipleFitxer", 
-					"PeticioMultiple.fitxer", 
-					"Errors en el contingut del fitxer");
-		}
-	}
 
 	private List<ServeiCampDto> getCampsObligatoris(
-			HttpServletRequest request, 
-			ServeiDto servei, 
+			HttpServletRequest request,
+			ServeiDto servei,
 			List<ServeiCampDto> camps) {
+		List<ServeiCampDto> campsObligatoris = getCampsGenericsObligatoris(request, servei);
+		for (ServeiCampDto camp: camps) {
+			if (camp.isObligatori())
+				campsObligatoris.add(camp);
+		}
+		return campsObligatoris;
+	}
+
+	private List<ServeiCampDto> getCampsGenericsObligatoris(
+			HttpServletRequest request,
+			ServeiDto servei) {
 		List<ServeiCampDto> campsObligatoris = new ArrayList<ServeiCampDto>();
 		if (servei.isPinbalDocumentObligatori()) {
 			ServeiCampDto documentTipus = new ServeiCampDto();
@@ -1470,21 +1061,7 @@ public class ConsultaController extends BaseController {
 			documentNum.setPath("DatosGenericos/Titular/Documentacion");
 			campsObligatoris.add(documentNum);
 		}
-		for (ServeiCampDto camp: camps) {
-			if (camp.isObligatori())
-				campsObligatoris.add(camp);
-		}
 		return campsObligatoris;
-	}
-
-	private List<ServeiCampDto> getCampsData(
-			List<ServeiCampDto> camps) {
-		List<ServeiCampDto> campsData = new ArrayList<ServeiCampDto>();
-		for (ServeiCampDto camp: camps) {
-			if (ServeiCampDtoTipus.DATA.equals(camp.getTipus()))
-				campsData.add(camp);
-		}
-		return campsData;
 	}
 
 	private boolean isFilenameExtension(String fileName, String extension) {
@@ -1541,6 +1118,6 @@ public class ConsultaController extends BaseController {
 		return justificant;
 	}
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(ConsultaController.class);
 
+	private static final Logger LOGGER = LoggerFactory.getLogger(ConsultaController.class);
 }
