@@ -12,6 +12,7 @@
 %>
 
 <c:set var="serveiMultiple" value="${servei.consultaMultiplePermesa}"/>
+<c:set var="serveiSimple" value="${servei.consultaSimplePermesa}"/>
 <c:set var="tabSimpleActiu" value="${not consultaCommand.multiple}"/>
 <c:set var="tabMultipleActiu" value="${not tabSimpleActiu}"/>
 <c:url var="urlFitxerErrors" value="/consulta/errors/${fitxerAmbErrors}/download" />
@@ -44,7 +45,7 @@
 		</c:if>
 
 		$(document).ready(function() {
-			<c:if test="${serveiMultiple}">
+			<c:if test="${serveiMultiple && serveiSimple}">
 				$('#tabs-simple-multiple a:first').click(function (e) {
 					$("#multiple").val('false');
 				});
@@ -66,19 +67,16 @@
 				updateCampsRegles();
 			});
 			updateCampsRegles();
-			debugger
 
 			<c:if test="${not empty fitxerAmbErrors}">loadFitxerErrors();</c:if>
 		});
 
 		const loadFitxerErrors = () => {
-			debugger
 			$.ajax({
 				type: 'GET',
 				url: fitxerErrorUrl,
 				responseType: 'arraybuffer',
 				success: function(json) {
-					debugger
 					if (json.error) {
 						console.log("Error al descarregar el fitxer de consultes amb els errors: " + json.errorMsg);
 					} else {
@@ -325,7 +323,8 @@
 				</div>
 			</div>
 		</fieldset>
-		<c:if test="${serveiMultiple}">
+		<c:choose>
+		<c:when test="${serveiMultiple && serveiSimple}">
 			<ul id="tabs-simple-multiple" class="nav nav-tabs">
 				<li<c:if test="${tabSimpleActiu}"> class="active"</c:if>><a href="#tab-simple" data-toggle="tab"><spring:message code="consulta.form.tipus.simple"/></a></li>
 				<li<c:if test="${tabMultipleActiu}"> class="active"</c:if>><a href="#tab-multiple" data-toggle="tab"><spring:message code="consulta.form.tipus.multiple"/></a></li>
@@ -335,57 +334,17 @@
 					<jsp:include page="import/consultaSimpleForm.jsp"/>
 				</div>
 				<div class="tab-pane<c:if test="${tabMultipleActiu}"> active</c:if>" id="tab-multiple">
-					<div class="container-fluid">
-					<c:if test="${not empty consultaCommand.multipleErrorsValidacio}">
-						<div id="errorsFitxer" class="errorsFitxer well alert-danger">
-							<div id="errorsFitxerBody">
-							<h4><spring:message code="consulta.form.camp.multiple.errors.fitxer"/></h4>
-						<c:forEach items="${consultaCommand.multipleErrorsValidacio}" var="error">
-							<p style="margin-left:20px">${error}</p>
-						</c:forEach>
-							</div>
-							<button type="button" id="cbcopy" class="btn btn-default pull-right"><span class="fa fa-clipboard"></span> <spring:message code="comu.clipboard.copy"/></button>
-						</div>
-					</c:if>
-					<div class="row">
-						<div class="col-md-12">
-						<br />
-							<p>	<spring:message code="consulta.form.multiple.info.titular"/><br />
-							<spring:message code="consulta.form.multiple.info.plantilla"/>
-							</p>
-						</div>
-					</div>
-					<div class="row">
-						<div class="col-md-6">
-							<div class="form-group">
-								<label class="control-label" for="plantilla"><spring:message code="consulta.form.camp.multiple.plantilla"/></label>
-								<div class="controls">
-									<a href="${downloadPlantillaExcelUrl}" class="btn btn-default btn-editar" title="<spring:message code="consulta.form.camp.multiple.plantilla.excel" />">
-										<i class="far fa-file-excel"></i> <spring:message code="consulta.form.camp.multiple.fitxer.excel" />
-									</a>
-									<a href="${downloadPlantillaOdsUrl}" class="btn btn-default btn-editar" title="<spring:message code="consulta.form.camp.multiple.plantilla.ods" />">
-										<i class="fas fa-file-excel"></i> <spring:message code="consulta.form.camp.multiple.fitxer.ods" />
-									</a>
-									<a href="${downloadPlantillaCsvUrl}" class="btn btn-default btn-editar" title="<spring:message code="consulta.form.camp.multiple.plantilla.csv" />">
-										<i class="fas fa-file-csv"></i> <spring:message code="consulta.form.camp.multiple.fitxer.csv" />
-									</a>
-								</div>
-							</div>
-						</div>
-					</div>
-					<div class="row">
-						<div class="col-md-12">
-							<c:set var="campPath" value="multipleFitxer"/>
-							<pbl:inputFile inline="false" name="${campPath}" textKey="consulta.form.camp.multiple.fitxer" required="true"/>
-						</div>
-					</div>
-					</div>
+					<jsp:include page="import/consultaMultipleForm.jsp"/>
 				</div>
 			</div>
-		</c:if>
-		<c:if test="${not serveiMultiple}">
+		</c:when>
+		<c:when test="${serveiMultiple && not serveiSimple}">
+			<jsp:include page="import/consultaMultipleForm.jsp"/>
+		</c:when>
+		<c:otherwise>
 			<jsp:include page="import/consultaSimpleForm.jsp"/>
-		</c:if>
+		</c:otherwise>
+		</c:choose>
 		<div class="pull-right">
 			<c:if test="${not empty servei.ajuda or not empty servei.fitxerAjudaNom}">
 				<button type="button" class="btn btn-default" data-toggle="modal" data-target="#modalAjuda"><spring:message code="comu.boto.ajuda"/></button>

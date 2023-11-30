@@ -9,6 +9,7 @@ import es.caib.pinbal.core.dto.ServeiXsdDto;
 import es.caib.pinbal.webapp.helper.CommandMappingHelper;
 import es.caib.pinbal.webapp.helper.ConversioTipusHelper;
 import es.caib.pinbal.webapp.validation.CodiServeiNoRepetit;
+import es.caib.pinbal.webapp.validation.ServeiUrl;
 import lombok.Data;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.springframework.web.multipart.MultipartFile;
@@ -27,6 +28,7 @@ import java.util.List;
  */
 @Data
 @CodiServeiNoRepetit(campCodi = "codi", campCreacio="creacio")
+@ServeiUrl
 public class ServeiCommand {
 
 	@NotEmpty @Size(max=64)

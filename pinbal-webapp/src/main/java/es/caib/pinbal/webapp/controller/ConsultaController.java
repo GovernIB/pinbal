@@ -229,7 +229,8 @@ public class ConsultaController extends BaseController {
 		} else {
 			List<ServerSideColumn> cols = serverSideRequest.getColumns();
 			cols.get(1).setData("createdDate");
-			cols.get(2).setData("procedimentServei.procediment.nom");
+			cols.get(2).setData("procediment.nom");
+			cols.get(3).setData("serveiScsp.descripcio");
 			if (isHistoric(request)) {
 				page = historicConsultaService.findSimplesByFiltrePaginatPerDelegat(
 						entitat.getId(),
@@ -859,6 +860,12 @@ public class ConsultaController extends BaseController {
 						request,
 						serveiCodi));
 		command.setMultipleFitxer(null);
+		ServeiDto servei = serveiService.findAmbCodiPerDelegat(
+				entitat.getId(),
+				serveiCodi);
+		if (servei.isConsultaMultiplePermesa() && !servei.isConsultaSimplePermesa()) {
+			command.setMultiple(true);
+		}
 	}
 
 	@SuppressWarnings("unchecked")
