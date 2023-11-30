@@ -18,6 +18,7 @@ import es.caib.pinbal.core.dto.InformeProcedimentServeiDto;
 import es.caib.pinbal.core.dto.InformeRepresentantFiltreDto;
 import es.caib.pinbal.core.dto.JustificantDto;
 import es.caib.pinbal.core.dto.RecobrimentSolicitudDto;
+import es.caib.pinbal.core.dto.arxiu.ArxiuDetallDto;
 import es.caib.pinbal.core.service.exception.ConsultaNotFoundException;
 import es.caib.pinbal.core.service.exception.ConsultaScspException;
 import es.caib.pinbal.core.service.exception.ConsultaScspGeneracioException;
@@ -245,7 +246,9 @@ public interface ConsultaService {
 			String serveiCodi,
 			List<RecobrimentSolicitudDto> solicituds) throws EntitatNotFoundException, ProcedimentNotFoundException, ProcedimentServeiNotFoundException, ServeiNotAllowedException, ConsultaScspException;
 
-	/**
+    ArxiuDetallDto obtenirArxiuInfo(Long consultaId);
+
+    /**
 	 * Obté el justificant de la consulta.
 	 * 
 	 * @param id

@@ -510,51 +510,101 @@ public class PluginHelper {
 		}
 	}
 
-	public Document arxiuDocumentConsultar(
-			String arxiuUuid,
-			String versio,
-			boolean ambContingut,
-			boolean ambVersioImprimible) throws SistemaExternException {
-		
+	public Document arxiuDocumentConsultar(String arxiuUuid, String versio, boolean ambContingut, boolean ambVersioImprimible) throws SistemaExternException {
+
+
+		boolean throwException = false; // throwException = true;
+		if (throwException) {
+			throw new RuntimeException("Mock exception al consultar document arxiu");
+		}
+
 		String accioDescripcio = "Consulta d'un document";
 		Map<String, String> accioParams = new HashMap<String, String>();
-		accioParams.put("nodeId", arxiuUuid);
-		accioParams.put("arxiuUuidCalculat", arxiuUuid);
+//		if (document != null) {
+//			accioParams.put("contingutId", document.getId().toString());
+//			accioParams.put("contingutNom", document.getNom());
+//		}
+		if (arxiuUuid != null) {
+			accioParams.put("arxiuUuid", arxiuUuid);
+		}
 		accioParams.put("versio", versio);
 		accioParams.put("ambContingut", new Boolean(ambContingut).toString());
+		accioParams.put("ambVersioImprimible", new Boolean(ambVersioImprimible).toString());
 		long t0 = System.currentTimeMillis();
 		try {
-			Document documentDetalls = getArxiuPlugin().documentDetalls(
-					arxiuUuid,
-					versio,
-					ambContingut);
-			integracioHelper.addAccioOk(
-					IntegracioHelper.INTCODI_ARXIU,
-					accioDescripcio,
-					accioParams,
-					IntegracioAccioTipusEnumDto.ENVIAMENT,
-					System.currentTimeMillis() - t0);
-			
-			if (ambVersioImprimible && documentDetalls.getFirmes() != null && !documentDetalls.getFirmes().isEmpty()) {
+			String arxiuUuidConsulta = arxiuUuid; //(document != null && document instanceof DocumentEntity) ? document.getArxiuUuid() : arxiuUuid;
+			accioParams.put("arxiuUuidConsulta", arxiuUuidConsulta);
+			Document documentDetalls = getArxiuPlugin().documentDetalls(arxiuUuidConsulta, versio, ambContingut);
+			if (ambContingut && documentDetalls.getContingut() == null) {
+				LOGGER.error("El plugin no ha retornat el contingut del document ({})", accioParams.toString());
+			}
+			boolean generarVersioImprimible = false;
+			if (ambVersioImprimible && ambContingut && documentDetalls.getFirmes() != null && !documentDetalls.getFirmes().isEmpty()) {
+				for (Firma firma : documentDetalls.getFirmes()) {
+					if (documentDetalls.getContingut().getTipusMime().equals("application/pdf") && (firma.getTipus() == FirmaTipus.PADES || firma.getTipus() == FirmaTipus.CADES_ATT || firma.getTipus() == FirmaTipus.CADES_DET)) {
+						generarVersioImprimible = true;
+					}
+				}
+			}
+			if (generarVersioImprimible) {
 				documentDetalls.setContingut(getArxiuPlugin().documentImprimible(documentDetalls.getIdentificador()));
 			}
+			integracioHelper.addAccioOk(IntegracioHelper.INTCODI_ARXIU, accioDescripcio, accioParams, IntegracioAccioTipusEnumDto.ENVIAMENT, System.currentTimeMillis() - t0);
 			return documentDetalls;
 		} catch (Exception ex) {
-			String errorDescripcio = "Error al accedir al plugin d'arxiu digital: " + ex.getMessage();
-			integracioHelper.addAccioError(
-					IntegracioHelper.INTCODI_ARXIU,
-					accioDescripcio,
-					accioParams,
-					IntegracioAccioTipusEnumDto.ENVIAMENT,
-					System.currentTimeMillis() - t0,
-					errorDescripcio,
-					ex);
-			
-			throw new SistemaExternException(
-					errorDescripcio,
-					ex);
+			String msg = "";
+			if (ex.getCause() != null && !ex.getCause().equals(ex)) {
+				msg = ex.getMessage() + ": " + ex.getCause().getMessage();
+			} else {
+				msg = ex.getMessage();
+			}
+			String errorDescripcio = "Error al accedir al plugin d'arxiu digital: " + msg;
+			integracioHelper.addAccioError(IntegracioHelper.INTCODI_ARXIU, accioDescripcio, accioParams, IntegracioAccioTipusEnumDto.ENVIAMENT, System.currentTimeMillis() - t0, errorDescripcio, ex);
+			throw new SistemaExternException(errorDescripcio, ex);
 		}
 	}
+
+//	public Document arxiuDocumentConsultar(String arxiuUuid, String versio, boolean ambContingut, boolean ambVersioImprimible) throws SistemaExternException {
+//
+//		String accioDescripcio = "Consulta d'un document";
+//		Map<String, String> accioParams = new HashMap<String, String>();
+//		accioParams.put("nodeId", arxiuUuid);
+//		accioParams.put("arxiuUuidCalculat", arxiuUuid);
+//		accioParams.put("versio", versio);
+//		accioParams.put("ambContingut", new Boolean(ambContingut).toString());
+//		long t0 = System.currentTimeMillis();
+//		try {
+//			Document documentDetalls = getArxiuPlugin().documentDetalls(
+//					arxiuUuid,
+//					versio,
+//					ambContingut);
+//			integracioHelper.addAccioOk(
+//					IntegracioHelper.INTCODI_ARXIU,
+//					accioDescripcio,
+//					accioParams,
+//					IntegracioAccioTipusEnumDto.ENVIAMENT,
+//					System.currentTimeMillis() - t0);
+//
+//			if (ambVersioImprimible && documentDetalls.getFirmes() != null && !documentDetalls.getFirmes().isEmpty()) {
+//				documentDetalls.setContingut(getArxiuPlugin().documentImprimible(documentDetalls.getIdentificador()));
+//			}
+//			return documentDetalls;
+//		} catch (Exception ex) {
+//			String errorDescripcio = "Error al accedir al plugin d'arxiu digital: " + ex.getMessage();
+//			integracioHelper.addAccioError(
+//					IntegracioHelper.INTCODI_ARXIU,
+//					accioDescripcio,
+//					accioParams,
+//					IntegracioAccioTipusEnumDto.ENVIAMENT,
+//					System.currentTimeMillis() - t0,
+//					errorDescripcio,
+//					ex);
+//
+//			throw new SistemaExternException(
+//					errorDescripcio,
+//					ex);
+//		}
+//	}
 
 	public Map<String, NodeDir3> getOrganigramaOrganGestor(String codiDir3) throws Exception {
 		String accioDescripcio = "Consulta de l'arbre d'òrgans gestors per entitat";

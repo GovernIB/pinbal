@@ -39,6 +39,17 @@ $(document).ready(function () {
 		let xml = $('#modal-missatge-xml .modal-body').find('#missatgeXml').val();
 		navigator.clipboard.writeText(xml);
 	});
+
+	$("#justificantInfo").click(() => {
+		console.log("clicked");
+		$.ajax({
+			url:'<c:url value="${consulta.id}/justificant/arxiu/detall"/>',
+			type:'GET',
+			success: jsp => {
+				$("#arxiuDetall").html(jsp);
+			}
+		});
+	});
 });
 </script>
 </head>
@@ -302,6 +313,42 @@ $(document).ready(function () {
 		</c:if>
 	</div>
 	</c:if>
+<%--	<c:if test="${consulta.justificantEstatOk or (consulta.estatTramitada && consulta.justificantEstatPendent)}">--%>
+		<div class="well well-sm">
+			<h3>
+<%--				<a href="${consulta.id}/justificant/arxiu/detall" data-target="#modal-justificant-arxiu-info" data-toggle="modal"><span class="fa fa-info-circle"></span><spring:message code="consulta.info.justificant"/></a>--%>
+				<a id="justificantInfo" data-target="#modal-justificant-arxiu-info" data-toggle="modal" style="cursor:pointer"><span class="fa fa-info-circle"></span><spring:message code="consulta.info.justificant"/></a>
+			</h3>
+		</div>
+		<div class="well well-sm">
+			<h3>
+				<spring:message code="consulta.info.descarregar.justificant"/>
+				<a href="${consulta.id}/justificant" class="pull-right" style="color:black;margin-right: 5px;">
+					<i class="far fa-file-pdf"></i>
+				</a>
+			</h3>
+		</div>
+<%--	</c:if>--%>
+	<c:if test="${consulta.justificantEstatError}">
+		<div class="well">
+			<h3>
+				<spring:message code="consulta.info.descarregar.justificant"/>
+				<div class="dropdown pull-right">
+					<a class="btn btn-default dropdown-toggle" data-toggle="dropdown" href="#"><i class="icon-"><img src="<c:url value="/img/error_icon.png"/>" title="<spring:message code="consulta.list.taula.justif.error"/>" alt="<spring:message code="consulta.list.taula.justif.error"/>"/></i>&nbsp;&nbsp;<span class="caret"></span></a>
+					<ul class="dropdown-menu">
+						<li>
+							<a href="#" data-toggle="modal" data-target="#modal-justificant-error">
+								<i class="fas fa-exclamation-triangle"></i>&nbsp;<spring:message code="consulta.list.taula.justif.error.veure"/>
+							</a>
+						</li>
+						<li><a href="../admin/consulta/${consulta.id}/justificantReintentar?info=true" class="justificant-reintentar">
+							<i class="fas fa-redo-alt"></i>&nbsp;<spring:message code="consulta.list.taula.justif.error.reintentar"/></a></li>
+					</ul>
+				</div>
+			</h3>
+			<span style="color:red"><i class="icon-warning-sign"></i>&nbsp;<spring:message code="consulta.info.errors.justificant"/></span>
+		</div>
+	</c:if>
 	<div id="modal-botons" class="well">
 		<a href="<c:url value="/admin/consulta"/>" class="btn btn-default" data-modal-cancel="true"><spring:message code="comu.boto.tancar"/></a>
 	</div>
@@ -319,6 +366,20 @@ $(document).ready(function () {
 			</div>
 		</div>
 	</div>
+	</div>
+	<div id="modal-justificant-arxiu-info" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+		<div class="modal-dialog modal-dialog-centered" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+					<h3><spring:message code="consulta.info.justificant"/></h3>
+				</div>
+				<div class="modal-body" id="arxiuDetall">
+				</div>
+				<div class="modal-footer">
+				</div>
+			</div>
+		</div>
 	</div>
 </body>
 </html>

@@ -18,6 +18,7 @@ import es.caib.pinbal.core.dto.InformeProcedimentServeiDto;
 import es.caib.pinbal.core.dto.InformeRepresentantFiltreDto;
 import es.caib.pinbal.core.dto.JustificantDto;
 import es.caib.pinbal.core.dto.RecobrimentSolicitudDto;
+import es.caib.pinbal.core.dto.arxiu.ArxiuDetallDto;
 import es.caib.pinbal.core.service.ConsultaService;
 import es.caib.pinbal.core.service.exception.ConsultaNotFoundException;
 import es.caib.pinbal.core.service.exception.ConsultaScspException;
@@ -122,26 +123,25 @@ public class ConsultaServiceBean implements ConsultaService {
 	}
 	@Override
 	@RolesAllowed("PBL_WS")
-	public ConsultaDto novaConsultaRecobrimentEstat(
-			Long consultaId) throws ConsultaNotFoundException, ConsultaScspException {
+	public ConsultaDto novaConsultaRecobrimentEstat(Long consultaId) throws ConsultaNotFoundException, ConsultaScspException {
 		return delegate.novaConsultaRecobrimentEstat(consultaId);
 	}
 
 	@Override
 	@RolesAllowed("PBL_WS")
-	public ConsultaDto novaConsultaRecobrimentMultiple(
-			String serveiCodi,
-			List<RecobrimentSolicitudDto> solicituds) throws EntitatNotFoundException, ProcedimentNotFoundException, ProcedimentServeiNotFoundException, ServeiNotAllowedException, ConsultaScspException {
-		return delegate.novaConsultaRecobrimentMultiple(
-				serveiCodi,
-				solicituds);
+	public ConsultaDto novaConsultaRecobrimentMultiple(String serveiCodi, List<RecobrimentSolicitudDto> solicituds) throws EntitatNotFoundException, ProcedimentNotFoundException, ProcedimentServeiNotFoundException, ServeiNotAllowedException, ConsultaScspException {
+		return delegate.novaConsultaRecobrimentMultiple(serveiCodi, solicituds);
+	}
+
+	@Override
+	@RolesAllowed({"PBL_ADMIN"})
+	public ArxiuDetallDto obtenirArxiuInfo(Long consultaId) {
+		return delegate.obtenirArxiuInfo(consultaId);
 	}
 
 	@Override
 	@RolesAllowed({ "PBL_ADMIN", "tothom" })
-	public JustificantDto obtenirJustificant(
-			Long id,
-			boolean isAdmin) throws ConsultaNotFoundException, JustificantGeneracioException {
+	public JustificantDto obtenirJustificant(Long id, boolean isAdmin) throws ConsultaNotFoundException, JustificantGeneracioException {
 		return delegate.obtenirJustificant(id, isAdmin);
 	}
 
