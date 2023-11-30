@@ -125,7 +125,8 @@ public class ConsultaAdminController extends BaseController {
 		List<ServerSideColumn> cols = serverSideRequest.getColumns();
 		cols.get(1).setData("createdDate");
 		cols.get(2).setData("createdBy.nom");
-		cols.get(4).setData("procedimentServei.procediment.nom");
+		cols.get(4).setData("procediment.nom");
+		cols.get(5).setData("serveiScsp.descripcio");
 		Page<ConsultaDto> page;
 		if (isHistoric(request)) {
 			page = historicConsultaService.findByFiltrePaginatPerAdmin(

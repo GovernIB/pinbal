@@ -139,7 +139,7 @@ public class SuperauditorController extends BaseController {
 		List<ServerSideColumn> cols = serverSideRequest.getColumns();
 		cols.get(1).setData("createdDate");
 		cols.get(2).setData("createdBy.nom");
-		cols.get(4).setData("procedimentServei.procediment.nom");
+		cols.get(4).setData("procediment.nom");
 
 		Page<ConsultaDto> page;
 		if (isHistoric(request)) {

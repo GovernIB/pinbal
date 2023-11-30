@@ -9,10 +9,23 @@ import es.caib.pinbal.core.model.Consulta.EstatTipus;
 import es.caib.pinbal.core.model.Consulta.JustificantEstat;
 import lombok.Getter;
 import org.apache.commons.lang.builder.ToStringBuilder;
-import org.hibernate.annotations.Formula;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import javax.persistence.*;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.ConstraintMode;
+import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
+import javax.persistence.FetchType;
+import javax.persistence.ForeignKey;
+import javax.persistence.Index;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinColumns;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
+import javax.persistence.Table;
+import javax.persistence.Version;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -123,23 +136,62 @@ public class HistoricConsulta extends PinbalAuditable<Long> implements IConsulta
 			foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
 	private Transmision transmision;
 
-	@Formula("(SELECT pps.servei_id FROM pbl_procediment_servei pps WHERE pps.id = procserv_id)")
+	@ManyToOne(optional = false, fetch = FetchType.LAZY)
+	@JoinColumn(
+			name = "procediment_id",
+			foreignKey = @ForeignKey(name = "pbl_consultah_proced_fk"))
+	private Procediment procediment;
+	@Column(name = "servei_codi", length = 64)
 	private String serveiCodi;
-	@Formula("(SELECT cs.descripcion FROM pbl_procediment_servei pps, core_servicio cs WHERE pps.id = procserv_id AND cs.codcertificado = pps.servei_id)")
-	private String serveiDescripcio;
-	@Formula("(SELECT pps.procediment_id FROM pbl_procediment_servei pps WHERE pps.id = procserv_id)")
-	private Long procedimentId;
-	@Formula("(SELECT ppr.nom FROM pbl_procediment_servei pps, pbl_procediment ppr WHERE pps.id = procserv_id AND ppr.id = pps.procediment_id)")
-	private String procedimentNom;
-	@Formula("(SELECT ppr.entitat_id FROM pbl_procediment_servei pps, pbl_procediment ppr WHERE pps.id = procserv_id AND ppr.id = pps.procediment_id)")
-	private Long entitatId;
-	@Formula("(SELECT pen.nom FROM pbl_procediment_servei pps, pbl_procediment ppr, pbl_entitat pen WHERE pps.id = procserv_id AND ppr.id = pps.procediment_id AND pen.id = ppr.entitat_id)")
-	private String entitatNom;
-	@Formula("(SELECT pen.cif FROM pbl_procediment_servei pps, pbl_procediment ppr, pbl_entitat pen WHERE pps.id = procserv_id AND ppr.id = pps.procediment_id AND pen.id = ppr.entitat_id)")
-	private String entitatCif;
+	@ManyToOne(optional = true, fetch = FetchType.LAZY)
+	@JoinColumn(
+			name = "servei_codi",
+			referencedColumnName = "CODCERTIFICADO",
+			insertable = false, updatable = false,
+			foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
+	private Servei serveiScsp;
+	@ManyToOne(optional = false, fetch = FetchType.EAGER)
+	@JoinColumn(
+			name = "entitat_id",
+			foreignKey = @ForeignKey(name = "pbl_consultah_entitat_fk"))
+	private Entitat entitat;
+
+//	@Formula("(SELECT pps.servei_id FROM pbl_procediment_servei pps WHERE pps.id = procserv_id)")
+//	private String serveiCodi;
+//	@Formula("(SELECT cs.descripcion FROM pbl_procediment_servei pps, core_servicio cs WHERE pps.id = procserv_id AND cs.codcertificado = pps.servei_id)")
+//	private String serveiDescripcio;
+//	@Formula("(SELECT pps.procediment_id FROM pbl_procediment_servei pps WHERE pps.id = procserv_id)")
+//	private Long procedimentId;
+//	@Formula("(SELECT ppr.nom FROM pbl_procediment_servei pps, pbl_procediment ppr WHERE pps.id = procserv_id AND ppr.id = pps.procediment_id)")
+//	private String procedimentNom;
+//	@Formula("(SELECT ppr.entitat_id FROM pbl_procediment_servei pps, pbl_procediment ppr WHERE pps.id = procserv_id AND ppr.id = pps.procediment_id)")
+//	private Long entitatId;
+//	@Formula("(SELECT pen.nom FROM pbl_procediment_servei pps, pbl_procediment ppr, pbl_entitat pen WHERE pps.id = procserv_id AND ppr.id = pps.procediment_id AND pen.id = ppr.entitat_id)")
+//	private String entitatNom;
+//	@Formula("(SELECT pen.cif FROM pbl_procediment_servei pps, pbl_procediment ppr, pbl_entitat pen WHERE pps.id = procserv_id AND ppr.id = pps.procediment_id AND pen.id = ppr.entitat_id)")
+//	private String entitatCif;
 
 	@Version
 	private long version = 0;
+
+	public Long getProcedimentId() {
+		return procediment.getId();
+	}
+	public String getProcedimentNom() {
+		return procediment.getNom();
+	}
+	public Long getEntitatId() {
+		return entitat.getId();
+	}
+	public String getEntitatNom() {
+		return entitat.getNom();
+	}
+	public String getEntitatCif() {
+		return entitat.getCif();
+	}
+	public String getServeiDescriptio() {
+		return serveiScsp.getDescripcio();
+	}
 
 //	public void updateEstat(EstatTipus estat) {
 //		this.estat = estat;

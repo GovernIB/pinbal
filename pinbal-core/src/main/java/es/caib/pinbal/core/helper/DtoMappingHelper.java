@@ -90,12 +90,7 @@ public class DtoMappingHelper {
 		// Mapeig de consultes
 		mapperFactory.registerClassMap(
 				ClassMapBuilder.map(Consulta.class, ConsultaDto.class).
-						/*field("procedimentServei.procediment.entitat.nom", "entitatNom").
-                        field("procedimentServei.procediment.entitat.cif", "entitatCif").
-                        field("procedimentServei.procediment.id", "procedimentId").
-                        field("procedimentServei.procediment.nom", "procedimentNom").
-                        field("procedimentServei.servei", "serveiCodi").*/
-								field("createdBy", "creacioUsuari").
+						field("createdBy", "creacioUsuari").
 						field("createdDate", "creacioData").
 						field("funcionariDocumentNum", "funcionariNif").
 						field("pare.id", "pareId").

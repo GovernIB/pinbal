@@ -41,20 +41,20 @@ public interface ConsultaRepository extends JpaRepository<Consulta, Long> {
 			"from " +
 			"    Consulta c " +
 			"where " +
-			"    (:esNullEntitatId = true or c.procedimentServei.procediment.entitat.id = :entitatId) " +
+			"    (:esNullEntitatId = true or c.entitat.id = :entitatId) " +
 			"and (:esNullCreatedBy = true or c.createdBy = :createdBy) " +
-			"and (:esNullProcedimentId = true or c.procedimentServei.procediment.id = :procedimentId) " +
-			"and (:esNullServeiCodi = true or c.procedimentServei.servei = :serveiCodi) " +
+			"and (:esNullProcedimentId = true or c.procediment.id = :procedimentId) " +
+			"and (:esNullServeiCodi = true or c.serveiCodi = :serveiCodi) " +
 			"and (:esNullEstat = true or c.estat = :estat) " +
 			"and (:esNullDataInici = true or c.createdDate >= :dataInici) " +
 			"and (:esNullDataFi = true or c.createdDate <= :dataFi) " +
 			"group by " +
 			"    c.procedimentServei.id," +
-			"    c.procedimentServei.procediment.nom, " +
-			"    c.procedimentServei.servei " +
+			"    c.procediment.nom, " +
+			"    c.serveiCodi " +
 			"order by " +
-			"    c.procedimentServei.procediment.nom, " +
-			"    c.procedimentServei.servei")
+			"    c.procediment.nom, " +
+			"    c.serveiCodi")
 	public List<Object[]> countByProcedimentServei(
 			@Param("esNullEntitatId") boolean esNullEntitatId,
 			@Param("entitatId") Long entitatId,
@@ -84,20 +84,20 @@ public interface ConsultaRepository extends JpaRepository<Consulta, Long> {
 			"from " +
 			"    Consulta c " +
 			"where " +
-			"    (:esNullEntitatId = true or c.procedimentServei.procediment.entitat.id = :entitatId) " +
+			"    (:esNullEntitatId = true or c.entitat.id = :entitatId) " +
 			"and (:esNullCreatedBy = true or c.createdBy = :createdBy) " +
-			"and (:esNullProcedimentId = true or c.procedimentServei.procediment.id = :procedimentId) " +
-			"and (:esNullServeiCodi = true or c.procedimentServei.servei = :serveiCodi) " +
+			"and (:esNullProcedimentId = true or c.procediment.id = :procedimentId) " +
+			"and (:esNullServeiCodi = true or c.serveiCodi = :serveiCodi) " +
 			"and (:esNullEstat = true or c.estat = :estat) " +
 			"and (:esNullDataInici = true or c.createdDate >= :dataInici) " +
 			"and (:esNullDataFi = true or c.createdDate <= :dataFi) " +
 			"group by " +
 			"    c.procedimentServei.id," +
-			"    c.procedimentServei.servei, " +
-			"    c.procedimentServei.procediment.nom " +
+			"    c.serveiCodi, " +
+			"    c.procediment.nom " +
 			"order by " +
-			"    c.procedimentServei.servei, " +
-			"    c.procedimentServei.procediment.nom")
+			"    c.serveiCodi, " +
+			"    c.procediment.nom")
 	public List<Object[]> countByServeiProcediment(
 			@Param("esNullEntitatId") boolean esNullEntitatId,
 			@Param("entitatId") Long entitatId,
@@ -117,19 +117,19 @@ public interface ConsultaRepository extends JpaRepository<Consulta, Long> {
 			@Param("estatError") EstatTipus estatError);
 
 	@Query(	"select " +
-			"    c.procedimentServei.procediment.entitat.id, " +
+			"    c.entitat.id, " +
 			"    count(*) " +
 			"from " +
 			"    Consulta c " +
 			"where " +
 			"    (:esNullCreatedBy = true or c.createdBy = :createdBy) " +
-			"and (:esNullProcedimentId = true or c.procedimentServei.procediment.id = :procedimentId) " +
-			"and (:esNullServeiCodi = true or c.procedimentServei.servei = :serveiCodi) " +
+			"and (:esNullProcedimentId = true or c.procediment.id = :procedimentId) " +
+			"and (:esNullServeiCodi = true or c.serveiCodi = :serveiCodi) " +
 			"and (:esNullEstat = true or c.estat = :estat) " +
 			"and (:esNullDataInici = true or c.createdDate >= :dataInici) " +
 			"and (:esNullDataFi = true or c.createdDate <= :dataFi) " +
 			"group by " +
-			"    c.procedimentServei.procediment.entitat.id")
+			"    c.entitat.id")
 	public List<Object[]> countByEntitat(
 			@Param("esNullCreatedBy") boolean esNullCreatedBy,
 			@Param("createdBy") Usuari createdBy,
@@ -149,7 +149,7 @@ public interface ConsultaRepository extends JpaRepository<Consulta, Long> {
 			"from" +
 			"    Consulta c " +
 			"where " +
-			"    c.procedimentServei.procediment.entitat.id = :entitatId " +
+			"    c.entitat.id = :entitatId " +
 			"and c.pare is null " +
 			"and (:esNullCreatedBy = true or c.createdBy = :createdBy) " +
 			"and (c.multiple = :multiple) " +
@@ -167,11 +167,11 @@ public interface ConsultaRepository extends JpaRepository<Consulta, Long> {
 			"from" +
 			"    Consulta c " +
 			"where " +
-			"    c.procedimentServei.procediment.entitat.id = :entitatId " +
+			"    c.entitat.id = :entitatId " +
 			"and (:esNullCreatedBy = true or c.createdBy = :createdBy) " +
 			"and (:esNullScspPeticionId = true or lower(c.scspPeticionId) like lower('%'||:scspPeticionId||'%')) " +
-			"and (:esNullProcedimentId = true or c.procedimentServei.procediment.id = :procedimentId) " +
-			"and (:esNullServeiCodi = true or c.procedimentServei.servei = :serveiCodi) " +
+			"and (:esNullProcedimentId = true or c.procediment.id = :procedimentId) " +
+			"and (:esNullServeiCodi = true or c.serveiCodi = :serveiCodi) " +
 			"and (:esNullEstat = true or c.estat = :estat) " +
 			"and (:esNullDataInici = true or c.createdDate >= :dataInici) " +
 			"and (:esNullDataFi = true or c.createdDate <= :dataFi) " +
@@ -214,10 +214,10 @@ public interface ConsultaRepository extends JpaRepository<Consulta, Long> {
 			"from" +
 			"    Consulta c " +
 			"where " +
-			"    (:esNullEntitatId = true or c.procedimentServei.procediment.entitat.id = :entitatId) " +
+			"    (:esNullEntitatId = true or c.entitat.id = :entitatId) " +
 			"and (:esNullScspPeticionId = true or lower(c.scspPeticionId) like lower('%'||:scspPeticionId||'%')) " +
-			"and (:esNullProcedimentId = true or c.procedimentServei.procediment.id = :procedimentId) " +
-			"and (:esNullServeiCodi = true or c.procedimentServei.servei = :serveiCodi) " +
+			"and (:esNullProcedimentId = true or c.procediment.id = :procedimentId) " +
+			"and (:esNullServeiCodi = true or c.serveiCodi = :serveiCodi) " +
 			"and (:esNullEstat = true or c.estat = :estat) " +
 			"and (:esNullDataInici = true or c.createdDate >= :dataInici) " +
 			"and (:esNullDataFi = true or c.createdDate <= :dataFi) " +
@@ -256,18 +256,18 @@ public interface ConsultaRepository extends JpaRepository<Consulta, Long> {
 
 	@Query(	"select " +
 			"    new es.caib.pinbal.client.dadesobertes.DadesObertesRespostaConsulta(" +
-			"        c.procedimentServei.procediment.entitat.unitatArrel, " +
-			"        c.procedimentServei.procediment.entitat.nom, " +
-			"        c.procedimentServei.procediment.entitat.cif, " +
-			"        cast(c.procedimentServei.procediment.entitat.tipus as string), " +
+			"        c.entitat.unitatArrel, " +
+			"        c.entitat.nom, " +
+			"        c.entitat.cif, " +
+			"        cast(c.entitat.tipus as string), " +
 			"        c.transmision.codigoUnidadTramitadora, " +
 			"        c.transmision.unidadTramitadora, " +
-			"        c.procedimentServei.procediment.codi, " +
-			"        c.procedimentServei.procediment.nom, " +
-			"        c.procedimentServei.serveiScsp.codi, " +
-			"        c.procedimentServei.serveiScsp.descripcio, " +
-			"        c.procedimentServei.serveiScsp.scspEmisor.nom, " +
-			"        c.procedimentServei.serveiScsp.scspEmisor.cif, " +
+			"        c.procediment.codi, " +
+			"        c.procediment.nom, " +
+			"        c.serveiScsp.codi, " +
+			"        c.serveiScsp.descripcio, " +
+			"        c.serveiScsp.scspEmisor.nom, " +
+			"        c.serveiScsp.scspEmisor.cif, " +
 			"        c.transmision.consentimiento, " +
 			"        c.transmision.finalidad, " +
 			"        c.titularDocumentTipus, " +
@@ -278,9 +278,9 @@ public interface ConsultaRepository extends JpaRepository<Consulta, Long> {
 			"from" +
 			"    Consulta c " +
 			"where " +
-			"    (:esNullEntitatId = true or c.procedimentServei.procediment.entitat.id = :entitatId) " +
-			"and (:esNullProcedimentId = true or c.procedimentServei.procediment.id = :procedimentId) " +
-			"and (:esNullServeiCodi = true or c.procedimentServei.servei = :serveiCodi) " +
+			"    (:esNullEntitatId = true or c.entitat.id = :entitatId) " +
+			"and (:esNullProcedimentId = true or c.procediment.id = :procedimentId) " +
+			"and (:esNullServeiCodi = true or c.serveiCodi = :serveiCodi) " +
 			"and (:esNullDataInici = true or c.createdDate >= :dataInici) " +
 			"and (:esNullDataFi = true or c.createdDate <= :dataFi) " +
 			"and (c.multiple = false) " +
@@ -300,9 +300,9 @@ public interface ConsultaRepository extends JpaRepository<Consulta, Long> {
 
 	@Query(	"select count(c) " +
 			"  from Consulta c " +
-			" where (:esNullEntitatId = true or c.procedimentServei.procediment.entitat.id = :entitatId) " +
-			"   and (:esNullProcedimentId = true or c.procedimentServei.procediment.id = :procedimentId) " +
-			"   and (:esNullServeiCodi = true or c.procedimentServei.servei = :serveiCodi) " +
+			" where (:esNullEntitatId = true or c.entitat.id = :entitatId) " +
+			"   and (:esNullProcedimentId = true or c.procediment.id = :procedimentId) " +
+			"   and (:esNullServeiCodi = true or c.serveiCodi = :serveiCodi) " +
 			"   and (:esNullDataInici = true or c.createdDate >= :dataInici) " +
 			"   and (:esNullDataFi = true or c.createdDate <= :dataFi) " +
 			"   and (c.multiple = false) " +
@@ -322,18 +322,18 @@ public interface ConsultaRepository extends JpaRepository<Consulta, Long> {
 
 	@Query(	"select " +
 			"    new es.caib.pinbal.client.dadesobertes.DadesObertesRespostaConsulta(" +
-			"        c.procedimentServei.procediment.entitat.unitatArrel, " +
-			"        c.procedimentServei.procediment.entitat.nom, " +
-			"        c.procedimentServei.procediment.entitat.cif, " +
-			"        cast(c.procedimentServei.procediment.entitat.tipus as string), " +
+			"        c.entitat.unitatArrel, " +
+			"        c.entitat.nom, " +
+			"        c.entitat.cif, " +
+			"        cast(c.entitat.tipus as string), " +
 			"        c.transmision.codigoUnidadTramitadora, " +
 			"        c.transmision.unidadTramitadora, " +
-			"        c.procedimentServei.procediment.codi, " +
-			"        c.procedimentServei.procediment.nom, " +
-			"        c.procedimentServei.serveiScsp.codi, " +
-			"        c.procedimentServei.serveiScsp.descripcio, " +
-			"        c.procedimentServei.serveiScsp.scspEmisor.nom, " +
-			"        c.procedimentServei.serveiScsp.scspEmisor.cif, " +
+			"        c.procediment.codi, " +
+			"        c.procediment.nom, " +
+			"        c.serveiScsp.codi, " +
+			"        c.serveiScsp.descripcio, " +
+			"        c.serveiScsp.scspEmisor.nom, " +
+			"        c.serveiScsp.scspEmisor.cif, " +
 			"        c.transmision.consentimiento, " +
 			"        c.transmision.finalidad, " +
 			"        c.titularDocumentTipus, " +
@@ -344,9 +344,9 @@ public interface ConsultaRepository extends JpaRepository<Consulta, Long> {
 			"from" +
 			"    Consulta c " +
 			"where " +
-			"    (:esNullEntitatId = true or c.procedimentServei.procediment.entitat.id = :entitatId) " +
-			"and (:esNullProcedimentId = true or c.procedimentServei.procediment.id = :procedimentId) " +
-			"and (:esNullServeiCodi = true or c.procedimentServei.servei = :serveiCodi) " +
+			"    (:esNullEntitatId = true or c.entitat.id = :entitatId) " +
+			"and (:esNullProcedimentId = true or c.procediment.id = :procedimentId) " +
+			"and (:esNullServeiCodi = true or c.serveiCodi = :serveiCodi) " +
 			"and (:esNullDataInici = true or c.createdDate >= :dataInici) " +
 			"and (:esNullDataFi = true or c.createdDate <= :dataFi) " +
 			"and (c.multiple = false) " +
@@ -370,7 +370,7 @@ public interface ConsultaRepository extends JpaRepository<Consulta, Long> {
 			"from" +
 			"    Consulta c " +
 			"where " +
-			"    c.procedimentServei.procediment.entitat = :entitat " +
+			"    c.entitat = :entitat " +
 			"and c.createdDate >= :dataInici " +
 			"and c.createdDate <= :dataFi")
 	public List<Consulta> findByEntitatAndDataIniciAndDataFi(
@@ -383,7 +383,7 @@ public interface ConsultaRepository extends JpaRepository<Consulta, Long> {
 			"from" +
 			"    Consulta c " +
 			"where " +
-			"    c.procedimentServei.procediment.entitat = :entitat " +
+			"    c.entitat = :entitat " +
 			"and c.id in :ids " +
 			"order by " +
 			"    c.createdDate")
@@ -393,13 +393,13 @@ public interface ConsultaRepository extends JpaRepository<Consulta, Long> {
 
 	@Query(	"select" +
 			"    c, " +
-			"    c.procedimentServei.procediment.entitat.id " +
+			"    c.entitat.id " +
 			"from" +
 			"    Consulta c " +
 			"where " +
 			"    c.id in :ids " +
 			"order by " +
-			"    c.procedimentServei.procediment.entitat.id, " +
+			"    c.entitat.id, " +
 			"    c.createdDate")
 	public List<Object[]> findByIds(
 			@Param("ids") List<Long> ids);
@@ -444,9 +444,9 @@ public interface ConsultaRepository extends JpaRepository<Consulta, Long> {
 			@Param("createdBy") Usuari createdBy);
 	
 	@Query(	"select " +
-			"    c.procedimentServei.procediment.entitat.id, " +
-			"    c.procedimentServei.procediment.id, " +
-			"    c.procedimentServei.servei, " +
+			"    c.entitat.id, " +
+			"    c.procediment.id, " +
+			"    c.serveiCodi, " +
 			"    c.estat, " +
 			"    count(*) " +
 			"from " +
@@ -455,14 +455,14 @@ public interface ConsultaRepository extends JpaRepository<Consulta, Long> {
 			"    c.createdDate >= :dataInici " +
 			"and c.createdDate <= :dataFi " +
 			"group by " +
-			"    c.procedimentServei.procediment.entitat.id, " +
-			"    c.procedimentServei.procediment.id, " +
-			"    c.procedimentServei.servei, " +
+			"    c.entitat.id, " +
+			"    c.procediment.id, " +
+			"    c.serveiCodi, " +
 			"    c.estat " +
 			"order by " +
-			"    c.procedimentServei.procediment.entitat.id asc, " +
-			"    c.procedimentServei.procediment.id asc, " +
-			"    c.procedimentServei.servei asc, " +
+			"    c.entitat.id asc, " +
+			"    c.procediment.id asc, " +
+			"    c.serveiCodi asc, " +
 			"    c.estat asc")
 	public List<Object[]> countGroupByProcedimentServeiEstat(
 			@Param("dataInici") Date dataInici,
@@ -476,14 +476,14 @@ public interface ConsultaRepository extends JpaRepository<Consulta, Long> {
 			"	new es.caib.pinbal.core.dto.CarregaDto( " +
 			"		sum(case c.recobriment when true then 0 else 1 end), " +
 			"		sum(case c.recobriment when true then 1 else 0 end), " +
-			"		c.procedimentServei.procediment.entitat.id, " +
-			"		c.procedimentServei.procediment.entitat.codi, " +
-			"		c.procedimentServei.procediment.entitat.nom, " +
-			"		c.procedimentServei.procediment.entitat.cif, " +
+			"		c.entitat.id, " +
+			"		c.entitat.codi, " +
+			"		c.entitat.nom, " +
+			"		c.entitat.cif, " +
 			"		c.departamentNom, " +
 			"		c.procedimentServei.id, " +
-			"		c.procedimentServei.procediment.codi, " +
-			"		c.procedimentServei.procediment.nom, " +
+			"		c.procediment.codi, " +
+			"		c.procediment.nom, " +
 			"		s.codi, " +
 			"		s.descripcio) " +
 			"from " +
@@ -491,22 +491,22 @@ public interface ConsultaRepository extends JpaRepository<Consulta, Long> {
 			"	Servei s " +
 			"where " +
 			"	 c.createdDate >= :dataInici " +
-			"and s.codi = c.procedimentServei.servei " +
+			"and s.codi = c.serveiCodi " +
 			"group by " +
-			"	c.procedimentServei.procediment.entitat.id, " +
-			"	c.procedimentServei.procediment.entitat.codi, " +
-			"	c.procedimentServei.procediment.entitat.nom, " +
-			"	c.procedimentServei.procediment.entitat.cif, " +
+			"	c.entitat.id, " +
+			"	c.entitat.codi, " +
+			"	c.entitat.nom, " +
+			"	c.entitat.cif, " +
 			"	c.departamentNom, " +
 			"	c.procedimentServei.id, " +
-			"	c.procedimentServei.procediment.codi, " +
-			"	c.procedimentServei.procediment.nom, " +
+			"	c.procediment.codi, " +
+			"	c.procediment.nom, " +
 			"	s.codi, " +
 			"	s.descripcio " +
 			"order by " +
-			"	c.procedimentServei.procediment.entitat.nom, " +
+			"	c.entitat.nom, " +
 			"	c.departamentNom, " +
-			"	c.procedimentServei.procediment.nom, " +
+			"	c.procediment.nom, " +
 			"	s.descripcio")
 	public List<CarregaDto> findCarrega(
 			@Param("dataInici") Date dataInici);

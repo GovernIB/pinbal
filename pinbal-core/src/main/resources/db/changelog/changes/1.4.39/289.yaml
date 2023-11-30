@@ -1,0 +1,72 @@
+databaseChangeLog:
+  - property:
+      name: varcharUnit
+      value: CHAR
+      dbms: oracle
+  - property:
+      name: varcharUnit
+      value: ''
+      dbms: postgresql
+  - changeSet:
+      id: 1701243665282-1
+      author: limit
+      changes:
+        - addColumn:
+            tableName: pbl_consulta
+            columns:
+              - column:
+                  name: entitat_id
+                  type: BIGINT
+              - column:
+                  name: servei_codi
+                  type: VARCHAR(64 ${varcharUnit})
+              - column:
+                  name: procediment_id
+                  type: BIGINT
+        - addForeignKeyConstraint:
+            constraintName: pbl_consulta_proced_fk
+            baseTableName: pbl_consulta
+            baseColumnNames: procediment_id
+            referencedTableName: pbl_procediment
+            referencedColumnNames: id
+        - addForeignKeyConstraint:
+            constraintName: pbl_consulta_entitat_fk
+            baseTableName: pbl_consulta
+            baseColumnNames: entitat_id
+            referencedTableName: pbl_entitat
+            referencedColumnNames: id
+        - addColumn:
+            tableName: pbl_consulta_hist
+            columns:
+              - column:
+                  name: entitat_id
+                  type: BIGINT
+              - column:
+                  name: servei_codi
+                  type: VARCHAR(64 ${varcharUnit})
+              - column:
+                  name: procediment_id
+                  type: BIGINT
+        - addForeignKeyConstraint:
+            constraintName: pbl_consultah_proced_fk
+            baseTableName: pbl_consulta_hist
+            baseColumnNames: procediment_id
+            referencedTableName: pbl_procediment
+            referencedColumnNames: id
+        - addForeignKeyConstraint:
+            constraintName: pbl_consultah_entitat_fk
+            baseTableName: pbl_consulta_hist
+            baseColumnNames: entitat_id
+            referencedTableName: pbl_entitat
+            referencedColumnNames: id
+
+        - sql:
+            dbms: oracle
+            sql: "
+            UPDATE PBL_CONSULTA c SET c.entitat_id = (SELECT ppr.entitat_id FROM pbl_procediment_servei pps, pbl_procediment ppr WHERE pps.id = c.procserv_id AND ppr.id = pps.procediment_id);
+            UPDATE PBL_CONSULTA c SET c.servei_codi = (SELECT pps.servei_id FROM pbl_procediment_servei pps WHERE pps.id = c.procserv_id);
+            UPDATE PBL_CONSULTA c SET c.procediment_id = (SELECT pps.procediment_id FROM pbl_procediment_servei pps WHERE pps.id = c.procserv_id);
+            UPDATE PBL_CONSULTA_HIST c SET c.entitat_id = (SELECT ppr.entitat_id FROM pbl_procediment_servei pps, pbl_procediment ppr WHERE pps.id = c.procserv_id AND ppr.id = pps.procediment_id);
+            UPDATE PBL_CONSULTA_HIST c SET c.servei_codi = (SELECT pps.servei_id FROM pbl_procediment_servei pps WHERE pps.id = c.procserv_id);
+            UPDATE PBL_CONSULTA_HIST c SET c.procediment_id = (SELECT pps.procediment_id FROM pbl_procediment_servei pps WHERE pps.id = c.procserv_id);
+            "
