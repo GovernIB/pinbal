@@ -3,39 +3,12 @@
  */
 package es.caib.pinbal.webapp.controller;
 
-import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
-import java.sql.SQLException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
-import javax.naming.NamingException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.validation.Valid;
-
 import es.caib.pinbal.core.dto.CodiValor;
-import es.caib.pinbal.core.service.HistoricConsultaService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.propertyeditors.CustomDateEditor;
-import org.springframework.data.domain.Page;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.WebDataBinder;
-import org.springframework.web.bind.annotation.InitBinder;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
-
 import es.caib.pinbal.core.dto.ConsultaDto;
 import es.caib.pinbal.core.dto.EntitatDto;
 import es.caib.pinbal.core.service.ConsultaService;
 import es.caib.pinbal.core.service.EntitatService;
+import es.caib.pinbal.core.service.HistoricConsultaService;
 import es.caib.pinbal.core.service.ProcedimentService;
 import es.caib.pinbal.core.service.ServeiService;
 import es.caib.pinbal.core.service.exception.EntitatNotFoundException;
@@ -49,6 +22,31 @@ import es.caib.pinbal.webapp.common.RequestSessionHelper;
 import es.caib.pinbal.webapp.datatables.ServerSideColumn;
 import es.caib.pinbal.webapp.datatables.ServerSideRequest;
 import es.caib.pinbal.webapp.datatables.ServerSideResponse;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.propertyeditors.CustomDateEditor;
+import org.springframework.data.domain.Page;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.InitBinder;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import javax.naming.NamingException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
+import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.sql.SQLException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 /**
  * Controlador per a les auditories dels auditors normals.
@@ -141,7 +139,7 @@ public class AuditorController extends BaseController {
 		List<ServerSideColumn> cols = serverSideRequest.getColumns();
 		cols.get(1).setData("createdDate");
 		cols.get(2).setData("createdBy.nom");
-		cols.get(4).setData("procedimentServei.procediment.nom");
+		cols.get(4).setData("procediment.nom");
 
 		Page<ConsultaDto> page;
 		if (isHistoric(request)) {

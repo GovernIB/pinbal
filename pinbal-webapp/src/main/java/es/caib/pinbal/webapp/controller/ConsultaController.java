@@ -6,6 +6,7 @@ import es.caib.pinbal.core.dto.ConsultaDto.DocumentTipus;
 import es.caib.pinbal.core.dto.DadaEspecificaDto;
 import es.caib.pinbal.core.dto.EntitatDto;
 import es.caib.pinbal.core.dto.EntitatUsuariDto;
+import es.caib.pinbal.core.dto.FitxerDto;
 import es.caib.pinbal.core.dto.JsonResponse;
 import es.caib.pinbal.core.dto.JustificantDto;
 import es.caib.pinbal.core.dto.NodeDto;
@@ -25,6 +26,7 @@ import es.caib.pinbal.core.service.exception.AccesExternException;
 import es.caib.pinbal.core.service.exception.ConsultaNotFoundException;
 import es.caib.pinbal.core.service.exception.ConsultaScspException;
 import es.caib.pinbal.core.service.exception.EntitatNotFoundException;
+import es.caib.pinbal.core.service.exception.FileTypeException;
 import es.caib.pinbal.core.service.exception.ProcedimentNotFoundException;
 import es.caib.pinbal.core.service.exception.ProcedimentServeiNotFoundException;
 import es.caib.pinbal.core.service.exception.ScspException;
@@ -50,6 +52,8 @@ import es.caib.pinbal.webapp.datatables.ServerSideResponse;
 import es.caib.pinbal.webapp.validation.consultes.DadesConsultaMultipleValidator;
 import es.caib.pinbal.webapp.validation.consultes.DadesConsultaSimpleValidator;
 import es.caib.pinbal.webapp.view.SpreadSheetReader;
+import lombok.Builder;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.binary.Base64;
 import org.slf4j.Logger;
@@ -85,6 +89,8 @@ import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -94,6 +100,9 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
+
+import static es.caib.pinbal.webapp.view.SpreadSheetReader.SEPARADOR;
 
 /**
  * Controlador per a la pàgina de consultes.
@@ -109,6 +118,8 @@ public class ConsultaController extends BaseController {
 	public static final String SESSION_ATTRIBUTE_FILTRE = "ConsultaController.session.filtre";
 	public static final String SESSION_CONSULTA_HISTORIC = "consulta_delegat";
 	public static final String FORMAT_DATA_DADES_ESPECIFIQUES = "dd/MM/yyyy";
+
+	private static Map<String, FitxerErrors> fitxersAmbErrors = new HashMap<>();
 
 	@Autowired
 	private EntitatService entitatService;
@@ -218,7 +229,8 @@ public class ConsultaController extends BaseController {
 		} else {
 			List<ServerSideColumn> cols = serverSideRequest.getColumns();
 			cols.get(1).setData("createdDate");
-			cols.get(2).setData("procedimentServei.procediment.nom");
+			cols.get(2).setData("procediment.nom");
+			cols.get(3).setData("serveiScsp.descripcio");
 			if (isHistoric(request)) {
 				page = historicConsultaService.findSimplesByFiltrePaginatPerDelegat(
 						entitat.getId(),
@@ -346,7 +358,11 @@ public class ConsultaController extends BaseController {
 			// Validar fitxer					
 			if (!bindingResult.hasErrors()) {
 				try {
-					liniesFitxer = readFile(fitxer, bindingResult);
+					FitxerDto fitxerDto = FitxerDto.builder()
+							.nom(fitxer.getOriginalFilename())
+							.contentType(fitxer.getContentType())
+							.contingut(fitxer.getBytes()).build();
+					liniesFitxer = readFile(fitxerDto, bindingResult);
 					int numPeticions = liniesFitxer.size() - 1;
 					if (servei.getScspMaxSolicitudesPeticion() > 0 && 
 							numPeticions > servei.getScspMaxSolicitudesPeticion()) {
@@ -360,16 +376,28 @@ public class ConsultaController extends BaseController {
 					}
 					
 					if (!bindingResult.hasErrors()) {
-						List<String> errorsValidacio = new ArrayList<String>();
-//						validatePeticioMultipleFile(request, liniesFitxer, servei, camps, bindingResult, errorsValidacio);
-//						command.setMultipleErrorsValidacio(errorsValidacio);
 						DadesConsultaMultipleValidator dadesConsultaMultipleValidator = new DadesConsultaMultipleValidator(serveiService, liniesFitxer, camps, servei, bindingResult, request.getLocale());
 						dadesConsultaMultipleValidator.validate();
 						command.setMultipleErrorsValidacio(dadesConsultaMultipleValidator.getErrorsValidacio());
 
 						if (dadesConsultaMultipleValidator.hasErrors()) {
-							// TODO: Afegir els errors al fitxer, i que es pugui descarregar
-//							addErrorLines(fitxer, dadesConsultaMultipleValidator);
+							// Afegir els errors al fitxer, i que es pugui descarregar
+							try {
+								FitxerDto fitxerErrors = SpreadSheetReader.addColumnaToSpreadSheat(fitxerDto, getErrorsPerFila(dadesConsultaMultipleValidator.getErrorsValidacioPerLinia()));
+								Path tempFile = Files.createTempFile(null, fitxerErrors.getExtensio());
+								Files.write(tempFile, fitxerErrors.getContingut());
+								String fitxerUuid = UUID.randomUUID().toString();
+								fitxersAmbErrors.put(
+										fitxerUuid,
+										FitxerErrors.builder()
+												.nom(fitxerErrors.getNomSenseExtensio())
+												.extensio(fitxerErrors.getExtensio())
+												.path(tempFile)
+												.contentType(fitxerErrors.getContentType()).build());
+								model.addAttribute("fitxerAmbErrors", fitxerUuid);
+							} catch (Exception ex) {
+								log.error("No ha estat possible generar el fitxer de consulta multiple amb els errors", ex);
+							}
 						}
 					}
 				} catch (Exception ex) {
@@ -431,6 +459,55 @@ public class ConsultaController extends BaseController {
 			return "redirect:../../consulta";
 		else
 			return "redirect:../../consulta/multiple";
+	}
+
+	@RequestMapping(value = "/errors/{uuid}/download", method = RequestMethod.GET)
+	@ResponseBody
+	public JsonResponse errorsDownload(
+			HttpServletRequest request,
+			HttpServletResponse response,
+			@PathVariable String uuid) throws Exception {
+		FitxerErrors fitxerErrors = fitxersAmbErrors.get(uuid);
+		fitxersAmbErrors.remove(uuid);
+
+		if (fitxerErrors == null) {
+			return new JsonResponse(true, "Fitxer no trobat");
+		}
+
+		try {
+			FitxerDto fitxer = FitxerDto.builder()
+					.nom(fitxerErrors.getNom() + "_errors." + fitxerErrors.getExtensio())
+					.contentType(fitxerErrors.getContentType())
+					.contingut(Files.readAllBytes(fitxerErrors.getPath()))
+					.build();
+			Files.deleteIfExists(fitxerErrors.getPath());
+			return new JsonResponse(fitxer);
+		} catch (Exception ex) {
+			return new JsonResponse(true, "Error llegint el fitxer amb els errors");
+		}
+	}
+
+	private List<String> getErrorsPerFila(List<List<String>> errors) {
+		List<String> errorsFilaUnificats = new ArrayList<>();
+		// Les 3 primeres files no son consultes
+		errorsFilaUnificats.add(null);
+		errorsFilaUnificats.add(null);
+		errorsFilaUnificats.add(null);
+		for (List<String> errorsFila: errors) {
+			errorsFilaUnificats.add(unificaErrors(errorsFila));
+		}
+		return errorsFilaUnificats;
+	}
+
+	private String unificaErrors(List<String> errorsFila) {
+		String errors = "";
+		if (errorsFila != null && !errorsFila.isEmpty()) {
+			for (String error: errorsFila) {
+				errors += error + SEPARADOR;
+			}
+			errors = errors.substring(0, errors.length() - SEPARADOR.length());
+		}
+		return errors;
 	}
 
 	@RequestMapping(value = "/{consultaId}", method = RequestMethod.GET)
@@ -783,6 +860,12 @@ public class ConsultaController extends BaseController {
 						request,
 						serveiCodi));
 		command.setMultipleFitxer(null);
+		ServeiDto servei = serveiService.findAmbCodiPerDelegat(
+				entitat.getId(),
+				serveiCodi);
+		if (servei.isConsultaMultiplePermesa() && !servei.isConsultaSimplePermesa()) {
+			command.setMultiple(true);
+		}
 	}
 
 	@SuppressWarnings("unchecked")
@@ -1002,50 +1085,41 @@ public class ConsultaController extends BaseController {
 	}
 
 	private List<String[]> readFile(
-			MultipartFile fitxer,
+			FitxerDto fitxer,
 			Errors errors) throws Exception {
 		List<String[]> linies = new ArrayList<String[]>();
 		// Obtenir dades del fitxer
-		if ("text/csv".equals(fitxer.getContentType()) ||
-				isFilenameExtension(fitxer.getOriginalFilename(), "csv")) {
-			linies = SpreadSheetReader.getLinesFromCsv(fitxer.getInputStream());
-		} else if ("application/vnd.ms-excel".equals(fitxer.getContentType()) ||
-				"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet".equals(fitxer.getContentType()) ||
-				isFilenameExtension(fitxer.getOriginalFilename(), "xls")) {
-			linies = SpreadSheetReader.getLinesFromXls(fitxer.getBytes());
-		} else if (
-				"application/vnd.oasis.opendocument.spreadsheet".equals(fitxer.getContentType()) ||
-						isFilenameExtension(fitxer.getOriginalFilename(), "ods")) {
-			linies = SpreadSheetReader.getLinesFromOds(fitxer.getInputStream());
-		} else {
+		try {
+			linies = SpreadSheetReader.getLinesFromSpreadSheat(fitxer);
+			// 1. Mínim 1 registre de dades (fila 4)
+			if (linies.size() < 4) {
+				errors.rejectValue(
+						"multipleFitxer",
+						"PeticioMultiple.fitxer.buit",
+						"El fitxer és buit. No te dades de peticions.");
+			} else {
+				linies = linies.subList(2, linies.size());
+			}
+		} catch (FileTypeException fte) {
 			errors.rejectValue(
 					"multipleFitxer",
 					"PeticioMultiple.fitxer.tipus",
 					"Tipus de fitxer no suportat. Tipus acceptats: Excel i CSV.");
 		}
-		// 1. Mínim 1 registre de dades (fila 4)
-		if (linies.size() < 4) {
-			errors.rejectValue(
-					"multipleFitxer",
-					"PeticioMultiple.fitxer.buit",
-					"El fitxer és buit. No te dades de peticions.");
-		} else {
-			linies = linies.subList(2, linies.size());
-		}
 		return linies;
 	}
 
-	private List<ServeiCampDto> getCampsObligatoris(
-			HttpServletRequest request,
-			ServeiDto servei,
-			List<ServeiCampDto> camps) {
-		List<ServeiCampDto> campsObligatoris = getCampsGenericsObligatoris(request, servei);
-		for (ServeiCampDto camp: camps) {
-			if (camp.isObligatori())
-				campsObligatoris.add(camp);
-		}
-		return campsObligatoris;
-	}
+//	private List<ServeiCampDto> getCampsObligatoris(
+//			HttpServletRequest request,
+//			ServeiDto servei,
+//			List<ServeiCampDto> camps) {
+//		List<ServeiCampDto> campsObligatoris = getCampsGenericsObligatoris(request, servei);
+//		for (ServeiCampDto camp: camps) {
+//			if (camp.isObligatori())
+//				campsObligatoris.add(camp);
+//		}
+//		return campsObligatoris;
+//	}
 
 	private List<ServeiCampDto> getCampsGenericsObligatoris(
 			HttpServletRequest request,
@@ -1062,16 +1136,6 @@ public class ConsultaController extends BaseController {
 			campsObligatoris.add(documentNum);
 		}
 		return campsObligatoris;
-	}
-
-	private boolean isFilenameExtension(String fileName, String extension) {
-		if (fileName != null && !fileName.isEmpty()) {
-			int dotIndex = fileName.lastIndexOf(".");
-			if (dotIndex != -1) {
-				return fileName.substring(dotIndex + 1).equalsIgnoreCase(extension);
-			}
-		}
-		return false;
 	}
 
 	private boolean isHistoric(HttpServletRequest request) {
@@ -1118,6 +1182,14 @@ public class ConsultaController extends BaseController {
 		return justificant;
 	}
 
+	@Builder
+	@Getter
+	public static class FitxerErrors {
+		private Path path;
+		private String nom;
+		private String extensio;
+		private String contentType;
+	}
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(ConsultaController.class);
 }

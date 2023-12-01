@@ -76,7 +76,6 @@
 			}
 		}
 		let selectedNumberClick = () => {
-			debugger
 			if (selectedRows() == 0) {
 				return false;
 			}

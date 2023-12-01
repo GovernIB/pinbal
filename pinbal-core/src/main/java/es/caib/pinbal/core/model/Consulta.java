@@ -3,8 +3,11 @@
  */
 package es.caib.pinbal.core.model;
 
-import java.util.ArrayList;
-import java.util.List;
+import es.caib.pinbal.core.audit.PinbalAuditable;
+import es.caib.pinbal.core.dto.ConsultaDto.Consentiment;
+import lombok.Getter;
+import org.apache.commons.lang.builder.ToStringBuilder;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -21,19 +24,15 @@ import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import javax.persistence.Table;
 import javax.persistence.Version;
-
-import org.apache.commons.lang.builder.ToStringBuilder;
-import org.hibernate.annotations.Formula;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-
-import es.caib.pinbal.core.audit.PinbalAuditable;
-import es.caib.pinbal.core.dto.ConsultaDto.Consentiment;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Classe de model de dades que conté la informació d'una consulta.
  * 
  * @author Limit Tecnologies <limit@limit.es>
  */
+@Getter
 @Entity
 @Table(
 		name = "pbl_consulta",
@@ -149,20 +148,40 @@ public class Consulta extends PinbalAuditable<Long> implements IConsulta {
 			foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
 	private Transmision transmision;
 
-	@Formula("(SELECT pps.servei_id FROM pbl_procediment_servei pps WHERE pps.id = procserv_id)")
+	@ManyToOne(optional = false, fetch = FetchType.LAZY)
+	@JoinColumn(
+			name = "procediment_id",
+			foreignKey = @ForeignKey(name = "pbl_consultah_proced_fk"))
+	private Procediment procediment;
+	@Column(name = "servei_codi", length = 64)
 	private String serveiCodi;
-	@Formula("(SELECT cs.descripcion FROM pbl_procediment_servei pps, core_servicio cs WHERE pps.id = procserv_id AND cs.codcertificado = pps.servei_id)")
-	private String serveiDescripcio;
-	@Formula("(SELECT pps.procediment_id FROM pbl_procediment_servei pps WHERE pps.id = procserv_id)")
-	private Long procedimentId;
-	@Formula("(SELECT ppr.nom FROM pbl_procediment_servei pps, pbl_procediment ppr WHERE pps.id = procserv_id AND ppr.id = pps.procediment_id)")
-	private String procedimentNom;
-	@Formula("(SELECT ppr.entitat_id FROM pbl_procediment_servei pps, pbl_procediment ppr WHERE pps.id = procserv_id AND ppr.id = pps.procediment_id)")
-	private Long entitatId;
-	@Formula("(SELECT pen.nom FROM pbl_procediment_servei pps, pbl_procediment ppr, pbl_entitat pen WHERE pps.id = procserv_id AND ppr.id = pps.procediment_id AND pen.id = ppr.entitat_id)")
-	private String entitatNom;
-	@Formula("(SELECT pen.cif FROM pbl_procediment_servei pps, pbl_procediment ppr, pbl_entitat pen WHERE pps.id = procserv_id AND ppr.id = pps.procediment_id AND pen.id = ppr.entitat_id)")
-	private String entitatCif;
+	@ManyToOne(optional = true, fetch = FetchType.LAZY)
+	@JoinColumn(
+			name = "servei_codi",
+			referencedColumnName = "CODCERTIFICADO",
+			insertable = false, updatable = false,
+			foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
+	private Servei serveiScsp;
+	@ManyToOne(optional = false, fetch = FetchType.EAGER)
+	@JoinColumn(
+			name = "entitat_id",
+			foreignKey = @ForeignKey(name = "pbl_consultah_entitat_fk"))
+	private Entitat entitat;
+
+//	@Formula("(SELECT pps.servei_id FROM pbl_procediment_servei pps WHERE pps.id = procserv_id)")
+//	private String serveiCodi;
+//	@Formula("(SELECT cs.descripcion FROM pbl_procediment_servei pps, core_servicio cs WHERE pps.id = procserv_id AND cs.codcertificado = pps.servei_id)")
+//	private String serveiDescripcio;
+//	@Formula("(SELECT pps.procediment_id FROM pbl_procediment_servei pps WHERE pps.id = procserv_id)")
+//	private Long procedimentId;
+//	@Formula("(SELECT ppr.nom FROM pbl_procediment_servei pps, pbl_procediment ppr WHERE pps.id = procserv_id AND ppr.id = pps.procediment_id)")
+//	private String procedimentNom;
+//	@Formula("(SELECT ppr.entitat_id FROM pbl_procediment_servei pps, pbl_procediment ppr WHERE pps.id = procserv_id AND ppr.id = pps.procediment_id)")
+//	private Long entitatId;
+//	@Formula("(SELECT pen.nom FROM pbl_procediment_servei pps, pbl_procediment ppr, pbl_entitat pen WHERE pps.id = procserv_id AND ppr.id = pps.procediment_id AND pen.id = ppr.entitat_id)")
+//	private String entitatNom;
+//	@Formula("(SELECT pen.cif FROM pbl_procediment_servei pps, pbl_procediment ppr, pbl_entitat pen WHERE pps.id = procserv_id AND ppr.id = pps.procediment_id AND pen.id = ppr.entitat_id)")
+//	private String entitatCif;
 
 	@Version
 	private long version = 0;
@@ -238,120 +257,23 @@ public class Consulta extends PinbalAuditable<Long> implements IConsulta {
 				pare);
 	}
 
-	public String getFuncionariNom() {
-		return funcionariNom;
-	}
-	public String getFuncionariDocumentNum() {
-		return funcionariDocumentNum;
-	}
-	public String getTitularNom() {
-		return titularNom;
-	}
-	public String getTitularLlinatge1() {
-		return titularLlinatge1;
-	}
-	public String getTitularLlinatge2() {
-		return titularLlinatge2;
-	}
-	public String getTitularNomComplet() {
-		return titularNomComplet;
-	}
-	public String getTitularDocumentTipus() {
-		return titularDocumentTipus;
-	}
-	public String getTitularDocumentNum() {
-		return titularDocumentNum;
-	}
-	public ProcedimentServei getProcedimentServei() {
-		return procedimentServei;
-	}
-	public String getFinalitat() {
-		return finalitat;
-	}
-	public Consentiment getConsentiment() {
-		return consentiment;
-	}
-	public String getExpedientId() {
-		return expedientId;
-	}
-	public String getDadesEspecifiques() {
-		return dadesEspecifiques;
-	}
-	public EstatTipus getEstat() {
-		return estat;
-	}
-	public String getScspPeticionId() {
-		return scspPeticionId;
-	}
-	public String getScspSolicitudId() {
-		return scspSolicitudId;
-	}
-	public String getDepartamentNom() {
-		return departamentNom;
-	}
-	public String getError() {
-		return error;
-	}
-	public boolean isRecobriment() {
-		return recobriment;
-	}
-	public boolean isMultiple() {
-		return multiple;
-	}
-	public boolean isCustodiat() {
-		return custodiat;
-	}
-	public String getCustodiaId() {
-		return custodiaId;
-	}
-	public String getCustodiaUrl() {
-		return custodiaUrl;
-	}
-	public JustificantEstat getJustificantEstat() {
-		return justificantEstat;
-	}
-	public String getJustificantError() {
-		return justificantError;
-	}
-	public String getArxiuExpedientUuid() {
-		return arxiuExpedientUuid;
-	}
-	public String getArxiuDocumentUuid() {
-		return arxiuDocumentUuid;
-	}
-	public boolean isArxiuExpedientTancat() {
-		return arxiuExpedientTancat;
-	}
-	public Consulta getPare() {
-		return pare;
-	}
-	public List<Consulta> getFills() {
-		return fills;
-	}
-	public Transmision getTransmision() {
-		return transmision;
-	}
-
-	public String getServeiCodi() {
-		return serveiCodi;
-	}
-	public String getServeiDescripcio() {
-		return serveiDescripcio;
-	}
 	public Long getProcedimentId() {
-		return procedimentId;
+		return procediment.getId();
 	}
 	public String getProcedimentNom() {
-		return procedimentNom;
+		return procediment.getNom();
 	}
 	public Long getEntitatId() {
-		return entitatId;
+		return entitat.getId();
 	}
 	public String getEntitatNom() {
-		return entitatNom;
+		return entitat.getNom();
 	}
 	public String getEntitatCif() {
-		return entitatCif;
+		return entitat.getCif();
+	}
+	public String getServeiDescriptio() {
+		return serveiScsp.getDescripcio();
 	}
 
 	public void updateEstat(EstatTipus estat) {
@@ -466,6 +388,9 @@ public class Consulta extends PinbalAuditable<Long> implements IConsulta {
 			built.titularLlinatge2 = titularLlinatge2;
 			built.titularNomComplet = titularNomComplet;
 			built.procedimentServei = procedimentServei;
+			built.procediment = procedimentServei.getProcediment();
+			built.entitat = procedimentServei.getProcediment().getEntitat();
+			built.serveiCodi = procedimentServei.getServei();
 			built.finalitat = finalitat;
 			built.consentiment = consentiment;
 			built.expedientId = expedientId;
