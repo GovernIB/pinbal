@@ -1168,7 +1168,9 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 				throw new ConsultaNotFoundException();
 			}
 			ArxiuDetallDto arxiuDetall = new ArxiuDetallDto();
-			es.caib.plugins.arxiu.api.Document arxiuDocument = pluginHelper.arxiuDocumentConsultar(consulta.getArxiuDocumentUuid(), null, false, false);
+			boolean mock = !"true".equalsIgnoreCase(System.getProperty("es.caib.pinbal.arxiu.document.consultar.mock"));
+			es.caib.plugins.arxiu.api.Document arxiuDocument = mock ? pluginHelper.arxiuDocumentConsultar(consulta.getArxiuDocumentUuid(), null, false, false)
+																: pluginHelper.arxiuDocumentConsultarMock();
 			List<Firma> firmes = arxiuDocument.getFirmes();
 			arxiuDetall.setIdentificador(arxiuDocument.getIdentificador());
 			arxiuDetall.setNom(arxiuDocument.getNom());
@@ -1221,7 +1223,7 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 				arxiuDetall.setEniDocumentOrigenId(metadades.getIdentificadorOrigen());
 
 				final String fechaSelladoKey = "eni:fecha_sellado";
-				if (metadades.getMetadadesAddicionals().containsKey(fechaSelladoKey)) {
+				if (metadades.getMetadadesAddicionals() != null && metadades.getMetadadesAddicionals().containsKey(fechaSelladoKey)) {
 					try {
 						DateFormat dfIn= new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSX");
 						DateFormat dfOut = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");

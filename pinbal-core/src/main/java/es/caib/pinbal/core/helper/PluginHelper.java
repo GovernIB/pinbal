@@ -510,6 +510,12 @@ public class PluginHelper {
 		}
 	}
 
+	public Document arxiuDocumentConsultarMock() {
+
+		ArxiuDocumentMock mock = new ArxiuDocumentMock();
+		return mock.getDocument();
+	}
+
 	public Document arxiuDocumentConsultar(String arxiuUuid, String versio, boolean ambContingut, boolean ambVersioImprimible) throws SistemaExternException {
 
 
