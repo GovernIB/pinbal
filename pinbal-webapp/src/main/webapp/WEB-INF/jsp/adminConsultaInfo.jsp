@@ -313,7 +313,7 @@ $(document).ready(function () {
 		</c:if>
 	</div>
 	</c:if>
-<%--	<c:if test="${consulta.justificantEstatOk or (consulta.estatTramitada && consulta.justificantEstatPendent)}">--%>
+	<c:if test="${consulta.justificantEstatOk or (consulta.estatTramitada && consulta.justificantEstatPendent)}">
 		<div class="well well-sm">
 			<h3>
 <%--				<a href="${consulta.id}/justificant/arxiu/detall" data-target="#modal-justificant-arxiu-info" data-toggle="modal"><span class="fa fa-info-circle"></span><spring:message code="consulta.info.justificant"/></a>--%>
@@ -328,7 +328,7 @@ $(document).ready(function () {
 				</a>
 			</h3>
 		</div>
-<%--	</c:if>--%>
+	</c:if>
 	<c:if test="${consulta.justificantEstatError}">
 		<div class="well">
 			<h3>
