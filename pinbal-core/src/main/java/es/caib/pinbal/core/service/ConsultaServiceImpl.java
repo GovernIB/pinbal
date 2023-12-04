@@ -27,15 +27,12 @@ import es.caib.pinbal.core.dto.IntegracioAccioTipusEnumDto;
 import es.caib.pinbal.core.dto.JustificantDto;
 import es.caib.pinbal.core.dto.ProcedimentDto;
 import es.caib.pinbal.core.dto.RecobrimentSolicitudDto;
-import es.caib.pinbal.core.dto.arxiu.ArxiuContingutDto;
-import es.caib.pinbal.core.dto.arxiu.ArxiuContingutTipusEnumDto;
 import es.caib.pinbal.core.dto.arxiu.ArxiuConversions;
 import es.caib.pinbal.core.dto.arxiu.ArxiuDetallDto;
 import es.caib.pinbal.core.dto.arxiu.ArxiuEstatEnumDto;
 import es.caib.pinbal.core.dto.arxiu.ArxiuFirmaDto;
 import es.caib.pinbal.core.dto.arxiu.ArxiuFirmaPerfilEnumDto;
 import es.caib.pinbal.core.dto.arxiu.ArxiuFirmaTipusEnumDto;
-import es.caib.pinbal.core.dto.arxiu.TipusDocumental;
 import es.caib.pinbal.core.helper.ConfigHelper;
 import es.caib.pinbal.core.helper.DtoMappingHelper;
 import es.caib.pinbal.core.helper.EmailReportEstatHelper;
@@ -84,7 +81,6 @@ import es.caib.pinbal.scsp.Resposta;
 import es.caib.pinbal.scsp.ResultatEnviamentPeticio;
 import es.caib.pinbal.scsp.ScspHelper;
 import es.caib.pinbal.scsp.Solicitud;
-import es.caib.plugins.arxiu.api.ContingutArxiu;
 import es.caib.plugins.arxiu.api.DocumentEstat;
 import es.caib.plugins.arxiu.api.DocumentMetadades;
 import es.caib.plugins.arxiu.api.Expedient;
@@ -1168,9 +1164,13 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 				throw new ConsultaNotFoundException();
 			}
 			ArxiuDetallDto arxiuDetall = new ArxiuDetallDto();
-			boolean mock = !"true".equalsIgnoreCase(System.getProperty("es.caib.pinbal.arxiu.document.consultar.mock"));
-			es.caib.plugins.arxiu.api.Document arxiuDocument = mock ? pluginHelper.arxiuDocumentConsultar(consulta.getArxiuDocumentUuid(), null, false, false)
-																: pluginHelper.arxiuDocumentConsultarMock();
+			boolean noMock = !"true".equalsIgnoreCase(System.getProperty("es.caib.pinbal.arxiu.document.consultar.mock"));
+			es.caib.plugins.arxiu.api.Document arxiuDocument = noMock ? pluginHelper.arxiuDocumentConsultar(
+					consulta.getScspPeticionId(),
+					consulta.getArxiuDocumentUuid(),
+					null,
+					false,
+					false) : pluginHelper.arxiuDocumentConsultarMock();
 			List<Firma> firmes = arxiuDocument.getFirmes();
 			arxiuDetall.setIdentificador(arxiuDocument.getIdentificador());
 			arxiuDetall.setNom(arxiuDocument.getNom());
@@ -2318,9 +2318,9 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 					@Override
 					public JustificantGeneracioException doInTransaction(TransactionStatus status) {
 						try {
-							Expedient expedient = pluginHelper.arxiuExpedientConsultar(pendent.getArxiuExpedientUuid());
+							Expedient expedient = pluginHelper.arxiuExpedientConsultar(pendent.getScspPeticionId(), pendent.getArxiuExpedientUuid());
 							if (!expedient.getMetadades().getEstat().equals(ExpedientEstat.TANCAT)) {
-								pluginHelper.arxiuExpedientTancar(pendent.getArxiuExpedientUuid());
+								pluginHelper.arxiuExpedientTancar(pendent.getScspPeticionId(), pendent.getArxiuExpedientUuid());
 							}
 							if (pare == null) {
 								pendent.updateArxiuExpedientTancat(true);
@@ -2998,6 +2998,7 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 				if (versioImprimible) {
 					try {
 						es.caib.plugins.arxiu.api.Document documentArxiu = pluginHelper.arxiuDocumentConsultar(
+								consultaRefreshed.getScspPeticionId(),
 								consultaRefreshed.getArxiuDocumentUuid(),
 								null,
 								false,

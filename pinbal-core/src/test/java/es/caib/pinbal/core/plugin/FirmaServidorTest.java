@@ -74,7 +74,8 @@ public class FirmaServidorTest {
                 fitxer,
                 FirmaServidorPlugin.TipusFirma.PADES,
                 "Firma justificant PINBAL",
-                "ca");
+                "ca",
+                "idConsulta");
 
         Assert.notNull(contingutFitxerFirmat.getContingut());
 

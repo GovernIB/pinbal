@@ -198,7 +198,8 @@ public class PluginHelper {
 			FitxerDto fitxer,
 			TipusFirma tipusFirma,
 			String motiu,
-			String idioma) throws SistemaExternException {
+			String idioma,
+			String peticioId) throws SistemaExternException {
 		
 		String accioDescripcio = "Firma en servidor d'un fitxer";
 		Map<String, String> accioParams = new HashMap<String, String>();
@@ -216,6 +217,7 @@ public class PluginHelper {
 							.build());
 			
 			integracioHelper.addAccioOk(
+					peticioId,
 					IntegracioHelper.INTCODI_FIRMASERV,
 					accioDescripcio,
 					accioParams,
@@ -226,6 +228,7 @@ public class PluginHelper {
 		} catch (Exception ex) {
 			String errorDescripcio = "Error al accedir al plugin de firma en servidor: " + ex.getMessage();
 			integracioHelper.addAccioError(
+					peticioId,
 					IntegracioHelper.INTCODI_FIRMASERV,
 					accioDescripcio,
 					accioParams,
@@ -281,6 +284,7 @@ public class PluginHelper {
 							serieDocumental));
 			accioParams.put("uuid", expedientCreat.getIdentificador());
 			integracioHelper.addAccioOk(
+					titol,
 					IntegracioHelper.INTCODI_FIRMASERV,
 					accioDescripcio,
 					accioParams,
@@ -291,6 +295,7 @@ public class PluginHelper {
 		} catch (Exception ex) {
 			String errorDescripcio = "Error al accedir al plugin de firma en servidor: " + ex.getMessage();
 			integracioHelper.addAccioError(
+					titol,
 					IntegracioHelper.INTCODI_FIRMASERV,
 					accioDescripcio,
 					accioParams,
@@ -306,6 +311,7 @@ public class PluginHelper {
 	}
 
 	public Expedient arxiuExpedientConsultar(
+			String peticioId,
 			String uuid) throws SistemaExternException {
 		String accioDescripcio = "Consulta d'un expedient per uuid";
 		Map<String, String> accioParams = new HashMap<String, String>();
@@ -316,6 +322,7 @@ public class PluginHelper {
 					uuid,
 					null);
 			integracioHelper.addAccioOk(
+					peticioId,
 					IntegracioHelper.INTCODI_ARXIU,
 					accioDescripcio,
 					accioParams,
@@ -325,6 +332,7 @@ public class PluginHelper {
 		} catch (Exception ex) {
 			String errorDescripcio = "Error al accedir al plugin d'arxiu digital: " + ex.getMessage();
 			integracioHelper.addAccioError(
+					peticioId,
 					IntegracioHelper.INTCODI_ARXIU,
 					accioDescripcio,
 					accioParams,
@@ -352,6 +360,7 @@ public class PluginHelper {
 			ConsultaResultat resultat = getArxiuPlugin().expedientConsulta(Arrays.asList(filtre), 0, 1);
 			
 			integracioHelper.addAccioOk(
+					nom,
 					IntegracioHelper.INTCODI_ARXIU,
 					accioDescripcio,
 					accioParams,
@@ -366,6 +375,7 @@ public class PluginHelper {
 			
 			String errorDescripcio = "Error al accedir al plugin d'arxiu digital: " + ex.getMessage();
 			integracioHelper.addAccioError(
+					nom,
 					IntegracioHelper.INTCODI_ARXIU,
 					accioDescripcio,
 					accioParams,
@@ -380,6 +390,7 @@ public class PluginHelper {
 	}
 
 	public void arxiuExpedientTancar(
+			String peticioId,
 			String uuid) throws SistemaExternException {
 		String accioDescripcio = "Tancament d'un expedient";
 		Map<String, String> accioParams = new HashMap<String, String>();
@@ -389,6 +400,7 @@ public class PluginHelper {
 		try {
 			getArxiuPlugin().expedientTancar(uuid);
 			integracioHelper.addAccioOk(
+					peticioId,
 					IntegracioHelper.INTCODI_ARXIU,
 					accioDescripcio,
 					accioParams,
@@ -397,6 +409,7 @@ public class PluginHelper {
 		} catch (Exception ex) {
 			String errorDescripcio = "Error al accedir al plugin d'arxiu digital: " + ex.getMessage();
 			integracioHelper.addAccioError(
+					peticioId,
 					IntegracioHelper.INTCODI_ARXIU,
 					accioDescripcio,
 					accioParams,
@@ -411,6 +424,7 @@ public class PluginHelper {
 	}
 
 	public void arxiuExpedientEsborrar(
+			String peticioId,
 			String uuid) throws SistemaExternException {
 		String accioDescripcio = "Eliminació d'un expedient";
 		Map<String, String> accioParams = new HashMap<String, String>();
@@ -419,6 +433,7 @@ public class PluginHelper {
 		try {
 			getArxiuPlugin().expedientEsborrar(uuid);
 			integracioHelper.addAccioOk(
+					peticioId,
 					IntegracioHelper.INTCODI_ARXIU,
 					accioDescripcio,
 					accioParams,
@@ -427,6 +442,7 @@ public class PluginHelper {
 		} catch (Exception ex) {
 			String errorDescripcio = "Error al accedir al plugin d'arxiu digital: " + ex.getMessage();
 			integracioHelper.addAccioError(
+					peticioId,
 					IntegracioHelper.INTCODI_ARXIU,
 					accioDescripcio,
 					accioParams,
@@ -441,6 +457,7 @@ public class PluginHelper {
 	}
 
 	public String arxiuDocumentGuardarFirmaPades(
+			String peticioId,
 			String expedientUuid,
 			String titol,
 			String codiDir3,
@@ -487,6 +504,7 @@ public class PluginHelper {
 					expedientUuid);
 			accioParams.put("uuid", documentModificat.getIdentificador());
 			integracioHelper.addAccioOk(
+					peticioId,
 					IntegracioHelper.INTCODI_ARXIU,
 					accioDescripcio,
 					accioParams,
@@ -497,6 +515,7 @@ public class PluginHelper {
 		} catch (Exception ex) {
 			String errorDescripcio = "Error al accedir al plugin d'arxiu digital: " + ex.getMessage();
 			integracioHelper.addAccioError(
+					peticioId,
 					IntegracioHelper.INTCODI_ARXIU,
 					accioDescripcio,
 					accioParams,
@@ -516,7 +535,12 @@ public class PluginHelper {
 		return mock.getDocument();
 	}
 
-	public Document arxiuDocumentConsultar(String arxiuUuid, String versio, boolean ambContingut, boolean ambVersioImprimible) throws SistemaExternException {
+	public Document arxiuDocumentConsultar(
+			String peticioId,
+			String arxiuUuid,
+			String versio,
+			boolean ambContingut,
+			boolean ambVersioImprimible) throws SistemaExternException {
 
 
 		boolean throwException = false; // throwException = true;
@@ -555,7 +579,13 @@ public class PluginHelper {
 			if (generarVersioImprimible) {
 				documentDetalls.setContingut(getArxiuPlugin().documentImprimible(documentDetalls.getIdentificador()));
 			}
-			integracioHelper.addAccioOk(IntegracioHelper.INTCODI_ARXIU, accioDescripcio, accioParams, IntegracioAccioTipusEnumDto.ENVIAMENT, System.currentTimeMillis() - t0);
+			integracioHelper.addAccioOk(
+					peticioId,
+					IntegracioHelper.INTCODI_ARXIU,
+					accioDescripcio,
+					accioParams,
+					IntegracioAccioTipusEnumDto.ENVIAMENT,
+					System.currentTimeMillis() - t0);
 			return documentDetalls;
 		} catch (Exception ex) {
 			String msg = "";
@@ -565,52 +595,18 @@ public class PluginHelper {
 				msg = ex.getMessage();
 			}
 			String errorDescripcio = "Error al accedir al plugin d'arxiu digital: " + msg;
-			integracioHelper.addAccioError(IntegracioHelper.INTCODI_ARXIU, accioDescripcio, accioParams, IntegracioAccioTipusEnumDto.ENVIAMENT, System.currentTimeMillis() - t0, errorDescripcio, ex);
+			integracioHelper.addAccioError(
+					peticioId,
+					IntegracioHelper.INTCODI_ARXIU,
+					accioDescripcio,
+					accioParams,
+					IntegracioAccioTipusEnumDto.ENVIAMENT,
+					System.currentTimeMillis() - t0,
+					errorDescripcio,
+					ex);
 			throw new SistemaExternException(errorDescripcio, ex);
 		}
 	}
-
-//	public Document arxiuDocumentConsultar(String arxiuUuid, String versio, boolean ambContingut, boolean ambVersioImprimible) throws SistemaExternException {
-//
-//		String accioDescripcio = "Consulta d'un document";
-//		Map<String, String> accioParams = new HashMap<String, String>();
-//		accioParams.put("nodeId", arxiuUuid);
-//		accioParams.put("arxiuUuidCalculat", arxiuUuid);
-//		accioParams.put("versio", versio);
-//		accioParams.put("ambContingut", new Boolean(ambContingut).toString());
-//		long t0 = System.currentTimeMillis();
-//		try {
-//			Document documentDetalls = getArxiuPlugin().documentDetalls(
-//					arxiuUuid,
-//					versio,
-//					ambContingut);
-//			integracioHelper.addAccioOk(
-//					IntegracioHelper.INTCODI_ARXIU,
-//					accioDescripcio,
-//					accioParams,
-//					IntegracioAccioTipusEnumDto.ENVIAMENT,
-//					System.currentTimeMillis() - t0);
-//
-//			if (ambVersioImprimible && documentDetalls.getFirmes() != null && !documentDetalls.getFirmes().isEmpty()) {
-//				documentDetalls.setContingut(getArxiuPlugin().documentImprimible(documentDetalls.getIdentificador()));
-//			}
-//			return documentDetalls;
-//		} catch (Exception ex) {
-//			String errorDescripcio = "Error al accedir al plugin d'arxiu digital: " + ex.getMessage();
-//			integracioHelper.addAccioError(
-//					IntegracioHelper.INTCODI_ARXIU,
-//					accioDescripcio,
-//					accioParams,
-//					IntegracioAccioTipusEnumDto.ENVIAMENT,
-//					System.currentTimeMillis() - t0,
-//					errorDescripcio,
-//					ex);
-//
-//			throw new SistemaExternException(
-//					errorDescripcio,
-//					ex);
-//		}
-//	}
 
 	public Map<String, NodeDir3> getOrganigramaOrganGestor(String codiDir3) throws Exception {
 		String accioDescripcio = "Consulta de l'arbre d'òrgans gestors per entitat";

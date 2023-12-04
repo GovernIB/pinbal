@@ -46,10 +46,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.Writer;
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -127,7 +125,8 @@ public class JustificantHelper implements MessageSourceAware {
 								justificantFitxer,
 								TipusFirma.PADES,
 								"Firma justificant PINBAL",
-								"ca");
+								"ca",
+								consulta.getScspPeticionId());
 						log.debug("Firmat justificant de la consulta (consultaPeticioId=" + consulta.getScspPeticionId() + ", consultaSolicitudId=" + consulta.getScspSolicitudId() + ")");
 						// Guarda el justificant a dins l'expedient
 						Procediment procediment = consulta.getProcedimentServei().getProcediment();
@@ -156,6 +155,7 @@ public class JustificantHelper implements MessageSourceAware {
 						}
 						justificantFitxer.setContingut(justificantFirmat.getContingut());
 						arxiuDocumentUuid = pluginHelper.arxiuDocumentGuardarFirmaPades(
+								consulta.getScspPeticionId(),
 								arxiuExpedientUuid,
 								consulta.getScspSolicitudId(),
 								procediment.getOrganGestor().getCodi(),
@@ -196,7 +196,8 @@ public class JustificantHelper implements MessageSourceAware {
 									justificantFitxer,
 									TipusFirma.PADES,
 									"Firma justificant PINBAL",
-									"ca").getContingut();
+									"ca",
+									consulta.getScspPeticionId()).getContingut();
 							log.debug("Firmat justificant de la consulta (consultaPeticioId=" + consulta.getScspPeticionId() + ", consultaSolicitudId=" + consulta.getScspSolicitudId() + ")");
 						} else {
 							// Signa el justificant amb IBKey
@@ -284,6 +285,7 @@ public class JustificantHelper implements MessageSourceAware {
 							consulta.getScspSolicitudId()));
 			if (consulta.getArxiuDocumentUuid() != null) {
 				es.caib.plugins.arxiu.api.Document documentArxiu = pluginHelper.arxiuDocumentConsultar(
+						consulta.getScspPeticionId(),
 						consulta.getArxiuDocumentUuid(),
 						null,
 						!versioImprimible,

@@ -191,23 +191,6 @@ public class PeticioScspHelper {
 				consulta.updateScspSolicitudId(resultat.getIdsSolicituds()[0]);
 			}
 			String accioDescripcio = "Enviament de la consulta pendent al servei SCSP";
-			/*if (resultat.isError()) {
-				integracioHelper.addAccioError(
-						IntegracioHelper.INTCODI_SERVEIS_SCSP,
-						accioDescripcio,
-						accioParams,
-						IntegracioAccioTipusEnumDto.ENVIAMENT,
-						System.currentTimeMillis() - t0,
-						"[" + resultat.getErrorCodi() + "] " + resultat.getErrorDescripcio(),
-						(Throwable)null);
-			} else {
-				integracioHelper.addAccioOk(
-						IntegracioHelper.INTCODI_SERVEIS_SCSP,
-						accioDescripcio,
-						accioParams,
-						IntegracioAccioTipusEnumDto.ENVIAMENT,
-						System.currentTimeMillis() - t0);
-			}*/
 			integracioHelper.addAccioOk(
 					consulta.getScspPeticionId(),
 					IntegracioHelper.INTCODI_SERVEIS_SCSP,

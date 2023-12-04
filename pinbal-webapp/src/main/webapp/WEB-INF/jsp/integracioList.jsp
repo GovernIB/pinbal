@@ -53,11 +53,11 @@ $(document).ready(function() {
 				render: $.fn.dataTable.render.moment('x', 'DD/MM/YYYY HH:mm:ss', 'es' )
 			},
 			{ 
-	            targets: [3, 4],
+	            targets: [3, 4, 5],
 				orderable: false
 	        },
 			{
-				targets: [5],
+				targets: [6],
 				orderable: false,
 				render: function (data, type, row, meta) {
 						var template = $('#template-temps-resposta').html();
@@ -65,13 +65,13 @@ $(document).ready(function() {
 				}
 			},
 			{
-				targets: [6],
+				targets: [7],
 				orderable: false,
 				visible: false
 				
 			},
 			{
-				targets: [7],
+				targets: [8],
 				orderable: false,
 				render: function (data, type, row, meta) {
 						var template = $('#template-estat').html();
@@ -79,7 +79,7 @@ $(document).ready(function() {
 				}
 			},
 			{
-				targets: [8],
+				targets: [9],
 				orderable: false,
 				width: "1%",
 				render: function (data, type, row, meta) {
@@ -113,10 +113,10 @@ $(document).ready(function() {
 			<tr>
 				<th data-data="excepcioMessage"></th>
 				<th data-data="excepcioStacktrace"></th>
-				<th data-data="idPeticio"><spring:message code="integracio.list.columna.peticio.id"/></th>
 				<th data-data="data"><spring:message code="integracio.list.columna.data"/></th>
 				<th data-data="descripcio"><spring:message code="integracio.list.columna.descripcio"/></th>
 				<th data-data="tipus"><spring:message code="integracio.list.columna.tipus"/></th>
+				<th data-data="idPeticio"><spring:message code="integracio.list.columna.peticio.id"/></th>
 				<th data-data="tempsResposta"><spring:message code="integracio.list.columna.temps.resposta"/></th>
 				<th data-data="estatOk"></th>
 				<th data-data="estat"><spring:message code="integracio.list.columna.estat"/></th>

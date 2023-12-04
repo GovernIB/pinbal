@@ -1488,6 +1488,7 @@ public class HistoricConsultaServiceImpl implements HistoricConsultaService, App
 				if (versioImprimible) {
 					try {
 						es.caib.plugins.arxiu.api.Document documentArxiu = pluginHelper.arxiuDocumentConsultar(
+								consultaRefreshed.getScspPeticionId(),
 								consultaRefreshed.getArxiuDocumentUuid(),
 								null,
 								false,

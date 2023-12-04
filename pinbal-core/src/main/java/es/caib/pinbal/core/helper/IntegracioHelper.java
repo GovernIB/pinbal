@@ -3,16 +3,11 @@
  */
 package es.caib.pinbal.core.helper;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-
-import javax.annotation.Resource;
-
+import es.caib.pinbal.core.dto.IntegracioAccioDto;
+import es.caib.pinbal.core.dto.IntegracioAccioEstatEnumDto;
+import es.caib.pinbal.core.dto.IntegracioAccioTipusEnumDto;
+import es.caib.pinbal.core.dto.IntegracioDto;
+import es.caib.pinbal.core.model.Usuari;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,11 +17,14 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import es.caib.pinbal.core.dto.IntegracioAccioDto;
-import es.caib.pinbal.core.dto.IntegracioAccioEstatEnumDto;
-import es.caib.pinbal.core.dto.IntegracioAccioTipusEnumDto;
-import es.caib.pinbal.core.dto.IntegracioDto;
-import es.caib.pinbal.core.model.Usuari;
+import javax.annotation.Resource;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Mètodes per a la gestió d'integracions.
@@ -82,7 +80,7 @@ public class IntegracioHelper {
 	}
 
 	public void addAccioOk(String integracioCodi, String descripcio, Map<String, String> parametres, IntegracioAccioTipusEnumDto tipus, long tempsResposta) {
-		addAccioOk("", integracioCodi, descripcio, parametres, tipus, tempsResposta);
+		addAccioOk("--", integracioCodi, descripcio, parametres, tipus, tempsResposta);
 	}
 
 	public void addAccioOk(
@@ -143,7 +141,7 @@ public class IntegracioHelper {
 			Throwable throwable) {
 
 		IntegracioAccioDto accio = new IntegracioAccioDto();
-		accio.setIdPeticio(idPeticio);
+		accio.setIdPeticio(idPeticio != null ? idPeticio : "--");
 		accio.setIntegracio(novaIntegracio(integracioCodi));
 		accio.setData(new Date());
 		accio.setDescripcio(descripcio);
