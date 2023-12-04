@@ -1,15 +1,14 @@
 package es.caib.pinbal.webapp.view;
 
-import java.io.IOException;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.springframework.web.servlet.view.AbstractView;
 import org.supercsv.io.CsvListWriter;
 import org.supercsv.io.ICsvListWriter;
 import org.supercsv.prefs.CsvPreference;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.Map;
 
 public abstract class AbstractCsvView extends AbstractView {
 
@@ -19,7 +18,8 @@ public abstract class AbstractCsvView extends AbstractView {
 			throws Exception {
 		response.setHeader("Content-Disposition","attachment; filename=\"file.csv\"");
 		response.setContentType("text/csv");
-		
+		response.setCharacterEncoding("UTF-8");
+
 		ICsvListWriter csvWriter = new CsvListWriter(
 				response.getWriter(),
                 CsvPreference.STANDARD_PREFERENCE);
