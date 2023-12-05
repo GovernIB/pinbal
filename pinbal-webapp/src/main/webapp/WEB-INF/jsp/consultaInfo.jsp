@@ -39,6 +39,17 @@ $(document).ready(function () {
 		let xml = $('#modal-missatge-xml .modal-body').find('#missatgeXml').val();
 		navigator.clipboard.writeText(xml);
 	});
+
+	$("#justificantInfo").click(() => {
+		console.log("clicked");
+		$.ajax({
+			url:'<c:url value="${consulta.id}/justificant/arxiu/detall"/>',
+			type:'GET',
+			success: jsp => {
+				$("#arxiuDetall").html(jsp);
+			}
+		});
+	});
 });
 </script>
 </head>
@@ -325,9 +336,8 @@ $('#dadesPeticio').on('shown', function () {
 		<div class="well well-sm">
 			<h3>
 				<spring:message code="consulta.info.descarregar.justificant"/>
-				<a href="${consulta.id}/justificant" class="pull-right" style="color:black;margin-right: 5px;">
-					<i class="far fa-file-pdf"></i>
-				</a>
+				<a href="${consulta.id}/justificant" class="pull-right" style="color:black;margin-right: 5px;"><i class="far fa-file-pdf"></i></a>
+				<a id="justificantInfo" class="pull-right" data-target="#modal-justificant-arxiu-info" data-toggle="modal" style="cursor:pointer; padding-right: 10px; text-decoration: none;"><span class="label label-info" style="font-size: 11px;">ARXIU</span></a>
 			</h3>
 		</div>
 	</c:if>
@@ -393,5 +403,19 @@ $('#dadesPeticio').on('shown', function () {
 		</div>
 	</div>
 	</c:if>
+	<div id="modal-justificant-arxiu-info" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+		<div class="modal-dialog modal-dialog-centered" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+					<h3><spring:message code="consulta.info.justificant"/></h3>
+				</div>
+				<div class="modal-body" id="arxiuDetall">
+				</div>
+				<div class="modal-footer">
+				</div>
+			</div>
+		</div>
+	</div>
 </body>
 </html>

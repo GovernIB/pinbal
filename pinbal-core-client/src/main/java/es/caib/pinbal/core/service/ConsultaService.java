@@ -246,6 +246,7 @@ public interface ConsultaService {
 			String serveiCodi,
 			List<RecobrimentSolicitudDto> solicituds) throws EntitatNotFoundException, ProcedimentNotFoundException, ProcedimentServeiNotFoundException, ServeiNotAllowedException, ConsultaScspException;
 
+	@PreAuthorize("hasRole('ROLE_DELEG') or hasRole('ROLE_ADMIN')")
     ArxiuDetallDto obtenirArxiuInfo(Long consultaId);
 
     /**

@@ -301,7 +301,7 @@ $(document).ready(function () {
 				<a class="btn btn-default pull-right" href="<c:url value="/modal/admin/consulta/${consulta.id}/xmlResposta"/>" onclick="${initModalXml}"><i class="fas fa-info-circle"></i> <spring:message code="admin.consulta.info.veure.xml"/></a>
 			</div>
 		</div>
-		<c:if test="${consulta.respostaData}">
+		<c:if test="${not empty consulta.respostaData}">
 		<div id="dadesResposta">
 			<p>
 				<spring:message code="admin.consulta.info.resposta.rebuda.dia"/>
@@ -316,16 +316,9 @@ $(document).ready(function () {
 	<c:if test="${consulta.justificantEstatOk or (consulta.estatTramitada && consulta.justificantEstatPendent)}">
 		<div class="well well-sm">
 			<h3>
-<%--				<a href="${consulta.id}/justificant/arxiu/detall" data-target="#modal-justificant-arxiu-info" data-toggle="modal"><span class="fa fa-info-circle"></span><spring:message code="consulta.info.justificant"/></a>--%>
-				<a id="justificantInfo" data-target="#modal-justificant-arxiu-info" data-toggle="modal" style="cursor:pointer"><span class="fa fa-info-circle"></span><spring:message code="consulta.info.justificant"/></a>
-			</h3>
-		</div>
-		<div class="well well-sm">
-			<h3>
 				<spring:message code="consulta.info.descarregar.justificant"/>
-				<a href="${consulta.id}/justificant" class="pull-right" style="color:black;margin-right: 5px;">
-					<i class="far fa-file-pdf"></i>
-				</a>
+				<a href="${consulta.id}/justificant" class="pull-right" style="color:black;margin-right: 5px;"><i class="far fa-file-pdf"></i></a>
+				<a id="justificantInfo" class="pull-right" data-target="#modal-justificant-arxiu-info" data-toggle="modal" style="cursor:pointer; padding-right: 10px; text-decoration: none;"><span class="label label-info" style="font-size: 11px;">ARXIU</span></a>
 			</h3>
 		</div>
 	</c:if>

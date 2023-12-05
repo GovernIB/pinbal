@@ -134,7 +134,7 @@ public class ConsultaServiceBean implements ConsultaService {
 	}
 
 	@Override
-	@RolesAllowed({"PBL_ADMIN"})
+	@RolesAllowed({"PBL_ADMIN", "tothom"})
 	public ArxiuDetallDto obtenirArxiuInfo(Long consultaId) {
 		return delegate.obtenirArxiuInfo(consultaId);
 	}
