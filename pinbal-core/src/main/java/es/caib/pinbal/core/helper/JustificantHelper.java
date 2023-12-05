@@ -288,7 +288,7 @@ public class JustificantHelper implements MessageSourceAware {
 						consulta.getScspPeticionId(),
 						consulta.getArxiuDocumentUuid(),
 						null,
-						!versioImprimible,
+						true,
 						versioImprimible);
 				fitxerDto.setContingut(documentArxiu.getContingut().getContingut());
 			} else {

@@ -298,7 +298,7 @@ $('#dadesPeticio').on('shown', function () {
 					<a class="btn btn-default pull-right" href="<c:url value="/modal/consulta/${consulta.id}/xmlResposta"/>" onclick="${initModalXml}"><i class="fas fa-info-circle"></i> <spring:message code="consulta.info.veure.xml"/></a>
 				</div>
 			</div>
-			<c:if test="${consulta.respostaData}">
+			<c:if test="${not empty consulta.respostaData}">
 			<div id="dadesResposta">
 				<p>
 					<spring:message code="consulta.info.resposta.rebuda.dia"/>

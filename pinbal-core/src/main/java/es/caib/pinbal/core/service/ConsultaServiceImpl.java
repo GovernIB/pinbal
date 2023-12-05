@@ -2988,18 +2988,33 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 					}
 				});
 			} else {
-				Consulta consultaRefreshed = consultaRepository.getOne(consulta.getId());
-				if (JustificantEstat.OK.equals(consultaRefreshed.getJustificantEstat())) {
+				TransactionTemplate transactionTemplate = new TransactionTemplate(transactionManager);
+				Object[] params = transactionTemplate.execute(new TransactionCallback<Object[]>() {
+					@Override
+					public Object[] doInTransaction(TransactionStatus status) {
+						Consulta consultaRef = consultaRepository.getOne(consulta.getId());
+						Object[] params = new Object[3];
+						params[0] = consultaRef.getJustificantEstat();
+						params[1] = consultaRef.getArxiuDocumentUuid();
+						params[2] = consultaRef.getScspPeticionId();
+						return params;
+					}
+				});
+				JustificantEstat estat = (JustificantEstat) params[0];
+				String documentUuid = (String) params[1];
+				String peticioId = (String) params[2];
+
+				if (JustificantEstat.OK.equals(estat)) {
 					return JustificantDto.builder().error(true).errorDescripcio("El justificant no s'ha generat, o no s'ha desat a l'arxiu").build();
 				}
-				if (consultaRefreshed.getArxiuDocumentUuid() == null) {
+				if (documentUuid == null) {
 					return JustificantDto.builder().error(true).errorDescripcio("El justificant no es troba a l'arxiu").build();
 				}
 				if (versioImprimible) {
 					try {
 						es.caib.plugins.arxiu.api.Document documentArxiu = pluginHelper.arxiuDocumentConsultar(
-								consultaRefreshed.getScspPeticionId(),
-								consultaRefreshed.getArxiuDocumentUuid(),
+								peticioId,
+								documentUuid,
 								null,
 								false,
 								false);
@@ -3013,7 +3028,7 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 						throw new JustificantGeneracioException("No ha estat possible recuperar la informació del docuement a l'arxiu.");
 					}
 				} else {
-					return JustificantDto.builder().arxiuUuid(consultaRefreshed.getArxiuDocumentUuid()).build();
+					return JustificantDto.builder().arxiuUuid(documentUuid).build();
 				}
 			}
 		} else {
