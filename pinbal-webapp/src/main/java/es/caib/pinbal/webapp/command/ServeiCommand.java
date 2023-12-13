@@ -122,6 +122,7 @@ public class ServeiCommand {
 	private boolean pinbalIniDadesExpecifiques = false;
 	private boolean pinbalAddDadesEspecifiques = true;
 	private boolean useAutoClasse = true;
+	private boolean enviarSolicitant = false;
 	
 	public ServeiCommand() {
 		scspFechaAlta = new Date();

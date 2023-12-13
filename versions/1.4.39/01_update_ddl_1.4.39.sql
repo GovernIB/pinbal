@@ -10,3 +10,5 @@ ALTER TABLE pbl_consulta_hist ADD servei_codi VARCHAR2(64 CHAR);
 ALTER TABLE pbl_consulta_hist ADD procediment_id NUMBER(38, 0);
 ALTER TABLE pbl_consulta_hist ADD CONSTRAINT pbl_consultah_proced_fk FOREIGN KEY (procediment_id) REFERENCES pbl_procediment (id);
 ALTER TABLE pbl_consulta_hist ADD CONSTRAINT pbl_consultah_entitat_fk FOREIGN KEY (entitat_id) REFERENCES pbl_entitat (id);
+
+ALTER TABLE pbl_servei_config ADD enviar_solicitant NUMBER(1) DEFAULT 0 NOT NULL;

@@ -85,6 +85,8 @@ public class ServeiConfig extends PinbalAuditable<Long> {
 	private Integer maxPeticionsMinut;
 	@Column(name = "actiu", nullable = false)
 	private boolean actiu;
+	@Column(name = "enviar_solicitant", nullable = false)
+	private boolean enviarSolicitant;
 	
 	// Ajuda
 	@Lob
@@ -150,6 +152,7 @@ public class ServeiConfig extends PinbalAuditable<Long> {
 			boolean iniDadesEspecifiques,
 			boolean addDadesEspecifiques,
 			boolean useAutoClasse,
+			boolean enviarSolicitant,
 			boolean actiu) {
 		return new Builder(
 				servei,
@@ -168,6 +171,7 @@ public class ServeiConfig extends PinbalAuditable<Long> {
 				iniDadesEspecifiques,
 				addDadesEspecifiques,
 				useAutoClasse,
+				enviarSolicitant,
 				actiu);
 	}
 
@@ -200,7 +204,8 @@ public class ServeiConfig extends PinbalAuditable<Long> {
 			String ajuda, 
 			boolean iniDadesEspecifiques,
 			boolean addDadesEspecifiques,
-			boolean useAutoClasse) {
+			boolean useAutoClasse,
+			boolean enviarSolicitant) {
 		this.custodiaCodi = custodiaCodi;
 		this.roleName = roleName;
 		this.condicioBusClass = condicioBusClass;
@@ -226,6 +231,7 @@ public class ServeiConfig extends PinbalAuditable<Long> {
 		this.iniDadesEspecifiques = iniDadesEspecifiques;
 		this.addDadesEspecifiques = addDadesEspecifiques;
 		this.useAutoClasse = useAutoClasse;
+		this.enviarSolicitant = enviarSolicitant;
 	}
 	public void updateFitxerAjuda(
 			String fitxerAjudaNom,
@@ -274,6 +280,7 @@ public class ServeiConfig extends PinbalAuditable<Long> {
 				boolean iniDadesEspecifiques,
 				boolean addDadesEspecifiques,
 				boolean useAutoClasse,
+				boolean enviarSolicitant,
 				boolean actiu) {
 			built = new ServeiConfig();
 			built.servei = servei;
@@ -292,6 +299,7 @@ public class ServeiConfig extends PinbalAuditable<Long> {
 			built.iniDadesEspecifiques = iniDadesEspecifiques;
 			built.addDadesEspecifiques = addDadesEspecifiques;
 			built.useAutoClasse = useAutoClasse;
+			built.enviarSolicitant = enviarSolicitant;
 			built.actiu = actiu;
 		}
 		/**

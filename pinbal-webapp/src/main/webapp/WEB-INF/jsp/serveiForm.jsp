@@ -314,34 +314,55 @@ function showModalXsd(element) {
 					<c:set var="campPath" value="fitxerAjuda"/>				
 					<pbl:inputFile name="${campPath}" labelSize="1" inline="true" textKey="servei.form.camp.fitxer.ajuda"/>
 					<form:errors path="${campPath}" cssClass="help-block"/>
-					
-					<c:set var="campPath" value="pinbalIniDadesExpecifiques"/>
-					<c:set var="campErrors"><form:errors path="${campPath}"/></c:set>
-					<div class="form-group vcenter<c:if test="${not empty campErrors}"> error</c:if>">
-						<label class="control-label col-md-2" for="${campPath}" title="<spring:message code="servei.form.camp.pinbal.ini.dades.especifiques.info"/>"><spring:message code="servei.form.camp.pinbal.ini.dades.especifiques"/></label>
-						<div class="col-md-10">
-							<form:checkbox path="${campPath}" id="${campPath}"/>
-							<form:errors path="${campPath}" cssClass="help-block"/>
+
+					<div class="row">
+						<div class="col-md-6">
+							<c:set var="campPath" value="pinbalIniDadesExpecifiques"/>
+							<c:set var="campErrors"><form:errors path="${campPath}"/></c:set>
+							<div class="form-group vcenter<c:if test="${not empty campErrors}"> error</c:if>">
+								<label class="control-label col-md-4" for="${campPath}" title="<spring:message code="servei.form.camp.pinbal.ini.dades.especifiques.info"/>"><spring:message code="servei.form.camp.pinbal.ini.dades.especifiques"/></label>
+								<div class="col-md-8">
+									<form:checkbox path="${campPath}" id="${campPath}"/>
+									<form:errors path="${campPath}" cssClass="help-block"/>
+								</div>
+							</div>
+						</div>
+						<div class="col-md-6">
+							<c:set var="campPath" value="pinbalAddDadesEspecifiques"/>
+							<c:set var="campErrors"><form:errors path="${campPath}"/></c:set>
+							<div class="form-group vcenter<c:if test="${not empty campErrors}"> error</c:if>">
+								<label class="control-label col-md-4" for="${campPath}" title="<spring:message code="servei.form.camp.pinbal.add.dades.especifiques.buid.info"/>"><spring:message code="servei.form.camp.pinbal.add.dades.especifiques.buid"/></label>
+								<div class="col-md-8">
+									<form:checkbox path="${campPath}" id="${campPath}"/>
+									<form:errors path="${campPath}" cssClass="help-block"/>
+								</div>
+							</div>
 						</div>
 					</div>
 
-					<c:set var="campPath" value="pinbalAddDadesEspecifiques"/>
-					<c:set var="campErrors"><form:errors path="${campPath}"/></c:set>
-					<div class="form-group vcenter<c:if test="${not empty campErrors}"> error</c:if>">
-						<label class="control-label col-md-2" for="${campPath}" title="<spring:message code="servei.form.camp.pinbal.add.dades.especifiques.buid.info"/>"><spring:message code="servei.form.camp.pinbal.add.dades.especifiques.buid"/></label>
-						<div class="col-md-10">
-							<form:checkbox path="${campPath}" id="${campPath}"/>
-							<form:errors path="${campPath}" cssClass="help-block"/>
+					<div class="row">
+						<div class="col-md-6">
+							<c:set var="campPath" value="useAutoClasse"/>
+							<c:set var="campErrors"><form:errors path="${campPath}"/></c:set>
+							<div class="form-group vcenter<c:if test="${not empty campErrors}"> error</c:if>">
+								<label class="control-label col-md-4" for="${campPath}" title="<spring:message code="servei.form.camp.pinbal.use.auto.classe.info"/>"><spring:message code="servei.form.camp.pinbal.use.auto.classe"/></label>
+								<div class="col-md-8">
+									<form:checkbox path="${campPath}" id="${campPath}"/>
+									<form:errors path="${campPath}" cssClass="help-block"/>
+								</div>
+							</div>
 						</div>
-					</div>
 
-					<c:set var="campPath" value="useAutoClasse"/>
-					<c:set var="campErrors"><form:errors path="${campPath}"/></c:set>
-					<div class="form-group vcenter<c:if test="${not empty campErrors}"> error</c:if>">
-						<label class="control-label col-md-2" for="${campPath}" title="<spring:message code="servei.form.camp.pinbal.use.auto.classe.info"/>"><spring:message code="servei.form.camp.pinbal.use.auto.classe"/></label>
-						<div class="col-md-10">
-							<form:checkbox path="${campPath}" id="${campPath}"/>
-							<form:errors path="${campPath}" cssClass="help-block"/>
+						<div class="col-md-6">
+							<c:set var="campPath" value="enviarSolicitant"/>
+							<c:set var="campErrors"><form:errors path="${campPath}"/></c:set>
+							<div class="form-group vcenter<c:if test="${not empty campErrors}"> error</c:if>">
+								<label class="control-label col-md-4" for="${campPath}" title="<spring:message code="servei.form.camp.pinbal.enviar.solicitant.info"/>"><spring:message code="servei.form.camp.pinbal.enviar.solicitant"/></label>
+								<div class="col-md-8">
+									<form:checkbox path="${campPath}" id="${campPath}"/>
+									<form:errors path="${campPath}" cssClass="help-block"/>
+								</div>
+							</div>
 						</div>
 					</div>
 				</div>

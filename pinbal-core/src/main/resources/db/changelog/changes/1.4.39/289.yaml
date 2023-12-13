@@ -7,6 +7,14 @@ databaseChangeLog:
       name: varcharUnit
       value: ''
       dbms: postgresql
+  - property:
+      name: fals
+      value: 0
+      dbms: oracle
+  - property:
+      name: fals
+      value: false
+      dbms: postgresql
   - changeSet:
       id: 1701243665282-1
       author: limit
@@ -59,7 +67,15 @@ databaseChangeLog:
             baseColumnNames: entitat_id
             referencedTableName: pbl_entitat
             referencedColumnNames: id
-
+        - addColumn:
+            tableName: pbl_servei_config
+            columns:
+              - column:
+                  name: enviar_solicitant
+                  type: BOOLEAN
+                  defaultValue: ${fals}
+                  constraints:
+                    nullable: false
         - sql:
             dbms: oracle
             sql: "

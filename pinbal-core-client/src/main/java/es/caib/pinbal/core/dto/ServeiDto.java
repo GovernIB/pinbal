@@ -101,6 +101,7 @@ public class ServeiDto extends AbstractIdentificable<Long> implements Serializab
 	private Boolean actiu = false;
 
 	private boolean useAutoClasse = true;
+	private boolean enviarSolicitant = false;
 
 	public ServeiDto() {
 	}
