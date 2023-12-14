@@ -1,0 +1,691 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns="http://intermediacion.redsara.es/scsp/esquemas/datosespecificos" xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://intermediacion.redsara.es/scsp/esquemas/datosespecificos" elementFormDefault="qualified">
+	<xs:element name="DatosEspecificos" type="DatosEspecificos"/>
+	<xs:complexType name="DatosEspecificos">
+		<xs:choice>
+			<xs:element ref="Consulta">
+				<xs:annotation>
+					<xs:documentation>Solo en el mensaje PETICION</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element ref="Retorno">
+				<xs:annotation>
+					<xs:documentation>Solo en el mensaje RESPUESTA</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:choice>
+		<xs:attribute name="Id" type="xs:string" use="optional"/>
+	</xs:complexType>
+	<xs:element name="Consulta">
+		<xs:complexType>
+			<xs:all>
+				<xs:element ref="DatosAdicionalesTitular"/>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<!-- Datos de consulta -->
+	<xs:element name="DatosAdicionalesTitular">
+		<xs:complexType>
+			<xs:all>
+				<xs:element ref="Residencia" minOccurs="0"/>
+				<xs:element ref="Nacimiento" minOccurs="0"/>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Residencia">
+		<xs:complexType>
+			<xs:all>
+				<xs:element name="Provincia" type="CodigoProvincia">
+					<xs:annotation>
+						<xs:documentation>Código de la provincia de residencia</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="Municipio" type="CodigoMunicipio" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>Código del municipio de residencia</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Nacimiento">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="FechaNacimiento" minOccurs="0"/>
+				<xs:choice minOccurs="0">
+					<xs:element name="Pais" type="CodigoPais">
+						<xs:annotation>
+							<xs:documentation>Código del pais de nacimiento</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:sequence>
+						<xs:element name="Provincia" type="CodigoProvincia">
+							<xs:annotation>
+								<xs:documentation>Código de la provincia de nacimiento</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="Municipio" type="CodigoMunicipio" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Código del municipio de nacimiento</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+					</xs:sequence>
+				</xs:choice>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="DatosPersonales">
+		<xs:complexType>
+			<xs:all>
+				<xs:element ref="FechaDesde"/>
+				<xs:element ref="UltimaVariacion" minOccurs="0"/>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="FechaNacimiento" type="xs:date">
+		<xs:annotation>
+			<xs:documentation>Formato: AAAA-MM-DD</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<!-- Datos de retorno -->
+	<xs:element name="Retorno">
+		<xs:complexType>
+			<xs:all>
+				<xs:element ref="Estado"/>
+				<xs:element ref="Convivencia" minOccurs="0"/>
+				<xs:element ref="OrigenDatos" minOccurs="0"/>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="OrigenDatos">
+		<xs:complexType>
+			<xs:all>
+				<xs:element name="Provincia" type="CodigoProvincia"/>
+				<xs:element name="Municipio" type="CodigoMunicipio"/>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<!-- Datos Estado -->
+	<xs:element name="Estado">
+		<xs:annotation>
+			<xs:documentation>Estado de la transmisión</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:all>
+				<xs:element ref="CodigoEstado"/>
+				<xs:element ref="CodigoEstadoSecundario" minOccurs="0"/>
+				<xs:element ref="LiteralError"/>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="CodigoEstado">
+		<xs:annotation>
+			<xs:documentation>Código de Estado de la transmisión</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="4"/>
+				<xs:whiteSpace value="collapse"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="CodigoEstadoSecundario">
+		<xs:annotation>
+			<xs:documentation>Código de estado secundario de la transmisión</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="16"/>
+				<xs:whiteSpace value="collapse"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="LiteralError">
+		<xs:annotation>
+			<xs:documentation>Literal del estado de la transmisión</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="5"/>
+				<xs:maxLength value="1024"/>
+				<xs:whiteSpace value="collapse"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<!-- VE -->
+	<xs:element name="Convivencia">
+		<xs:annotation>
+			<xs:documentation>Datos de convivencia del titular consultado</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:all>
+				<xs:element ref="DatosPersonales"/>
+				<xs:element ref="NumeroAcompanantes"/>
+				<xs:element ref="Acompanantes" minOccurs="0"/>
+				<xs:element ref="Domicilio"/>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="NumeroAcompanantes">
+		<xs:simpleType>
+			<xs:restriction base="xs:integer">
+				<xs:totalDigits value="3"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Acompanantes">
+		<xs:annotation>
+			<xs:documentation>Lista de acompañantes</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="Acompanante" minOccurs="1" maxOccurs="unbounded"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Acompanante">
+		<xs:complexType>
+			<xs:all>
+				<xs:element ref="TipoDocumentacion" minOccurs="0"/>
+				<xs:element ref="Documentacion" minOccurs="0"/>
+				<xs:element ref="Nombre"/>
+				<xs:element ref="PrimerApellido"/>
+				<xs:element ref="SegundoApellido" minOccurs="0"/>
+				<xs:element ref="FechaDesde"/>
+				<xs:element ref="UltimaVariacion" minOccurs="0"/>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Nombre">
+		<xs:annotation>
+			<xs:documentation>Nombre del titular o acompañante consultado</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="40"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="PrimerApellido">
+		<xs:annotation>
+			<xs:documentation>Primer apellido del titular o acompañante consultado</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="40"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="SegundoApellido">
+		<xs:annotation>
+			<xs:documentation>Segundo apellido del titular o acompañante consultado</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="40"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="TipoDocumentacion">
+		<xs:annotation>
+			<xs:documentation>Indica el tipo de documentación del titular consultado</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:enumeration value="DNI"/>
+				<xs:enumeration value="NIE"/>
+				<xs:enumeration value="Pasaporte"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Documentacion">
+		<xs:annotation>
+			<xs:documentation>Documentacion del titular o acompañante consultado</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="30"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Domicilio">
+		<xs:annotation>
+			<xs:documentation>Domicilio de empadronamiento de los convivientes</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:all>
+				<xs:element ref="Localidad"/>
+				<xs:element ref="CodigoPostal"/>
+				<xs:element ref="Direccion"/>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Localidad">
+		<xs:annotation>
+			<xs:documentation>Localidad de empadronamiento</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:all>
+				<xs:element ref="Provincia"/>
+				<xs:element ref="Municipio"/>
+				<xs:element ref="CodigoUnidadPoblacional"/>
+				<xs:element ref="EntidadColectiva"/>
+				<xs:element ref="EntidadSingular"/>
+				<xs:element ref="Nucleo"/>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Provincia">
+		<xs:annotation>
+			<xs:documentation>Provincia de la dirección</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:all>
+				<xs:element name="Codigo" type="CodigoProvincia">
+					<xs:annotation>
+						<xs:documentation>Código de la provincia de la dirección</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="Nombre" type="NombreUP">
+					<xs:annotation>
+						<xs:documentation>Nombre de la provincia de la dirección</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Municipio">
+		<xs:annotation>
+			<xs:documentation>Municipio de la dirección</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:all>
+				<xs:element name="Codigo" type="CodigoMunicipio">
+					<xs:annotation>
+						<xs:documentation>Código del municipio de la dirección</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="Nombre" type="NombreUP">
+					<xs:annotation>
+						<xs:documentation>Nombre del municipio de la dirección</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:simpleType name="CodigoPais">
+		<xs:restriction base="xs:integer">
+			<xs:pattern value="\d{3}"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:element name="Direccion">
+		<xs:annotation>
+			<xs:documentation>Dirección de empadronamiento</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:all>
+				<xs:element ref="Via" minOccurs="0"/>
+				<xs:element ref="Numeracion"/>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="EntidadColectiva">
+		<xs:annotation>
+			<xs:documentation>Entidad colectiva de la dirección</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:all>
+				<xs:element name="Codigo" type="CodigoUP">
+					<xs:annotation>
+						<xs:documentation>Código de la entidad colectiva de la dirección</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="Nombre" type="NombreUP" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>Nombre de la entidad colectiva de la dirección</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="EntidadSingular">
+		<xs:annotation>
+			<xs:documentation>Entidad singular de la dirección</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:all>
+				<xs:element name="Codigo" type="CodigoUP">
+					<xs:annotation>
+						<xs:documentation>Código de la entidad singular de la dirección</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="Nombre" type="NombreUP">
+					<xs:annotation>
+						<xs:documentation>Nombre de la entidad singular de la dirección</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Nucleo">
+		<xs:annotation>
+			<xs:documentation>Nucleo de la dirección</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:all>
+				<xs:element name="Codigo" type="CodigoUP">
+					<xs:annotation>
+						<xs:documentation>Código del nucleo de la dirección</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="Nombre" type="NombreUP">
+					<xs:annotation>
+						<xs:documentation>Nombre del nucleo de la dirección</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="UltimaVariacion">
+		<xs:annotation>
+			<xs:documentation>Datos del motivo de la ultima variación del empadronamiento</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:all>
+				<xs:element ref="Codigo" minOccurs="0"/>
+				<xs:element ref="Descripcion"/>
+				<xs:element ref="Fecha"/>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Via">
+		<xs:annotation>
+			<xs:documentation>Datos de la vía de empadronamiento</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:all>
+				<xs:element name="Codigo" type="CodigoVia" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>Código de la vía</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="Tipo" type="TipoVia" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>Tipo de vía</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="Nombre" type="NombreVia" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>Nombre de la vía</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element ref="Pseudovia" minOccurs="0"/>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Numeracion">
+		<xs:annotation>
+			<xs:documentation>Numeración de la vía de empadronamiento</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:all>
+				<xs:element ref="Numero" minOccurs="0"/>
+				<xs:element ref="CalificadorNumero" minOccurs="0"/>
+				<xs:element ref="NumeroSuperior" minOccurs="0"/>
+				<xs:element ref="CalificadorNumeroSuperior" minOccurs="0"/>
+				<xs:element ref="Kilometro" minOccurs="0"/>
+				<xs:element ref="Hectometro" minOccurs="0"/>
+				<xs:element ref="Bloque" minOccurs="0"/>
+				<xs:element ref="Portal" minOccurs="0"/>
+				<xs:element ref="Escalera" minOccurs="0"/>
+				<xs:element ref="Planta" minOccurs="0"/>
+				<xs:element ref="Puerta" minOccurs="0"/>
+				<xs:element ref="TipoLocal" minOccurs="0"/>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:simpleType name="CodigoProvincia">
+		<xs:restriction base="xs:string">
+			<xs:whiteSpace value="collapse"/>
+			<xs:pattern value="\d{2}"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="CodigoMunicipio">
+		<xs:restriction base="xs:string">
+			<xs:whiteSpace value="collapse"/>
+			<xs:pattern value="\d{3}"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:element name="CodigoUnidadPoblacional">
+		<xs:annotation>
+			<xs:documentation>Código de unidad poblacional de la dirección Formado por: Entidad colectiva + Entidad Singular + Nucleo o diseminado</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:whiteSpace value="collapse"/>
+				<xs:pattern value="\d{7}"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="CodigoPostal">
+		<xs:annotation>
+			<xs:documentation>Código postal de la dirección del domicilio</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:whiteSpace value="collapse"/>
+				<xs:pattern value="\d{5}"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:simpleType name="CodigoUP">
+		<xs:restriction base="xs:integer">
+			<xs:pattern value="\d{2}"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="NombreUP">
+		<xs:restriction base="xs:string">
+			<xs:minLength value="1"/>
+			<xs:maxLength value="70"/>
+			<xs:whiteSpace value="collapse"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="CodigoVia">
+		<xs:restriction base="xs:integer">
+			<xs:minInclusive value="0"/>
+			<xs:maxInclusive value="99999"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="TipoVia">
+		<xs:restriction base="xs:string">
+			<xs:minLength value="1"/>
+			<xs:maxLength value="5"/>
+			<xs:whiteSpace value="collapse"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="NombreVia">
+		<xs:restriction base="xs:string">
+			<xs:minLength value="1"/>
+			<xs:maxLength value="70"/>
+			<xs:whiteSpace value="collapse"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:element name="Pseudovia">
+		<xs:annotation>
+			<xs:documentation>Pseudovia de la vía de la dirección</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="50"/>
+				<xs:whiteSpace value="collapse"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Numero">
+		<xs:annotation>
+			<xs:documentation>Número de la vía de la dirección</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="4"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="CalificadorNumero">
+		<xs:annotation>
+			<xs:documentation>Calificador del número de la vía de la dirección</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:length value="1"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="NumeroSuperior">
+		<xs:annotation>
+			<xs:documentation>Número superior de la vía de la dirección</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="4"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="CalificadorNumeroSuperior">
+		<xs:annotation>
+			<xs:documentation>Calificador del número superior de la vía de la dirección</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:length value="1"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Kilometro">
+		<xs:annotation>
+			<xs:documentation>Kilómetro de la dirección del domicilio</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:integer">
+				<xs:totalDigits value="3"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Hectometro">
+		<xs:annotation>
+			<xs:documentation>Hectómetro de la dirección del domicilio</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:integer">
+				<xs:totalDigits value="1"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Bloque">
+		<xs:annotation>
+			<xs:documentation>Bloque de la dirección del domicilio</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="2"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Portal">
+		<xs:annotation>
+			<xs:documentation>Portal de la dirección del domicilio</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="2"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Escalera">
+		<xs:annotation>
+			<xs:documentation>Escalera de la dirección del domicilio</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="2"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Planta">
+		<xs:annotation>
+			<xs:documentation>Planta de la dirección del domicilio</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="3"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Puerta">
+		<xs:annotation>
+			<xs:documentation>Puerta de la dirección del domicilio</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="4"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="TipoLocal">
+		<xs:annotation>
+			<xs:documentation>Tipo de local de la dirección del domicilio</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:integer">
+				<xs:minInclusive value="1"/>
+				<xs:maxInclusive value="2"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<!-- Ultima variacion -->
+	<xs:element name="Codigo">
+		<xs:annotation>
+			<xs:documentation>Código de la ultima variación del padrón</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:length value="3"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Descripcion">
+		<xs:annotation>
+			<xs:documentation>Descripcion de la ultima variación del padrón</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="100"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Fecha" type="xs:date">
+		<xs:annotation>
+			<xs:documentation>Fecha de la últimavariación del padrón Formato: AAAA-MM-DD</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="FechaDesde" type="xs:date">
+		<xs:annotation>
+			<xs:documentation>Fecha desde que está dado de alta en esta dirección Formato: AAAA-MM-DD</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+</xs:schema>

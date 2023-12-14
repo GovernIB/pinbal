@@ -10,11 +10,10 @@ import es.caib.pinbal.webapp.controller.ConsultaController;
 import org.joda.time.Days;
 import org.joda.time.LocalDate;
 import org.joda.time.Period;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -93,7 +92,12 @@ public class DadesConsultaSimpleValidator implements Validator {
                 Integer validacioMin = camp.getValidacioMin();
                 Integer validacioMax = camp.getValidacioMax();
                 if (ServeiCampDto.ServeiCampDtoTipus.NUMERIC.equals(camp.getTipus()) && valorCamp != null && (validacioMin != null || validacioMax != null)) {
-                    Integer valorInt = Integer.valueOf((String) valorCamp);
+                    Integer valorInt = null;
+                    if (valorCamp instanceof Number) {
+                        valorInt = ((Number) valorCamp).intValue();
+                    } else if (valorCamp instanceof String) {
+                        valorInt = Integer.valueOf((String) valorCamp);
+                    }
                     boolean validMin = (validacioMin != null) ? validacioMin <= valorInt : true;
                     boolean validMax = (validacioMax != null) ? validacioMax >= valorInt : true;
                     if (!validMin || !validMax) {
@@ -104,18 +108,14 @@ public class DadesConsultaSimpleValidator implements Validator {
                     }
                 }
                 if (ServeiCampDto.ServeiCampDtoTipus.DATA.equals(camp.getTipus())) {
-                    // Validar format data
-                    String dataText = (String) dadesEspecifiquesValors.get(camp.getPath());
-                    Date dataDate = checkDateFormat(dataText);
+                    Object dataObj = dadesEspecifiquesValors.get(camp.getPath());
+                    Date dataDate = checkDateFormat(dataObj);
                     if (dataDate != null) {
                         // Si el format és vàlid comprova les demés validacions
                         ServeiCampDto validacioDataCamp2 = camp.getValidacioDataCmpCamp2();
                         if (validacioDataCamp2 != null) {
-                            String dataText2 = (String) dadesEspecifiquesValors.get(validacioDataCamp2.getPath());
-                            Date dataDate2 = null;
-                            if (dataText2 != null) {
-                                dataDate2 = checkDateFormat(dataText2);
-                            }
+                            Object dataObj2 = dadesEspecifiquesValors.get(validacioDataCamp2.getPath());
+                            Date dataDate2 = checkDateFormat(dataObj2);
                             if (dataDate2 != null) {
                                 Integer validacioNombre = camp.getValidacioDataCmpNombre();
                                 ServeiCampDto.ServeiCampDtoValidacioOperacio validacioOperacio = camp.getValidacioDataCmpOperacio();
@@ -135,8 +135,9 @@ public class DadesConsultaSimpleValidator implements Validator {
                                         diff = period.getYears() * 12 + period.getMonths();
                                         detailDiff = period.getDays() > 0;
                                     } else {
-                                        DateTimeFormatter formatter = DateTimeFormat.forPattern("dd/MM/yyyy");
-                                        diff = Days.daysBetween(LocalDate.parse(dataText, formatter), LocalDate.parse(dataText2, formatter)).getDays();
+//                                        DateTimeFormatter formatter = DateTimeFormat.forPattern("dd/MM/yyyy");
+//                                        diff = Days.daysBetween(LocalDate.parse(dataText, formatter), LocalDate.parse(dataText2, formatter)).getDays();
+                                        diff = Days.daysBetween(LocalDate.fromDateFields(dataDate), LocalDate.fromDateFields(dataDate2)).getDays();
                                     }
                                     boolean valid = true;
                                     if (ServeiCampDto.ServeiCampDtoValidacioOperacio.LT == validacioOperacio) {
@@ -293,17 +294,44 @@ public class DadesConsultaSimpleValidator implements Validator {
 //			return null;
 //		}
 
-    private Date checkDateFormat(String dateText) {
+//    public static final String FORMAT_DATA_DADES_ESPECIFIQUES = "dd/MM/yyyy";
+    public static final String FORMAT2 = "dd-MM-yyyy";
+    public static final String FORMAT3 = "dd/MM/yy";
+    public static final String FORMAT4 = "dd-MM-yy";
+    public static final String FORMAT5 = "yyyy/MM/dd";
+    public static final String FORMAT6 = "yyyy-MM-dd";
+
+    private Date checkDateFormat(Object dateObj) {
         SimpleDateFormat sdf = new SimpleDateFormat(ConsultaController.FORMAT_DATA_DADES_ESPECIFIQUES);
         Date dataDate = null;
-        try {
-            dataDate = sdf.parse(dateText);
-            if (!sdf.format(dataDate).equals(dateText)) {
+
+
+        if (dateObj instanceof Date) {
+            dataDate = (Date) dateObj;
+        } else if (dateObj instanceof String) {
+            // Validar format data
+            String dataText = (String) dateObj;
+            try {
+//                dataDate = sdf.parse(dataText);
+                dataDate = parseDate(dataText, ConsultaController.FORMAT_DATA_DADES_ESPECIFIQUES, FORMAT2, FORMAT3, FORMAT4, FORMAT5, FORMAT6);
+                if (!sdf.format(dataDate).equals(dataText)) {
+                    dataDate = null;
+                }
+            } catch (Exception ex) {
                 dataDate = null;
             }
-        } catch (Exception ex) {
-            dataDate = null;
         }
+
         return dataDate;
+    }
+
+    public static Date parseDate(String dateString, String... formatStrings) {
+        for (String formatString : formatStrings) {
+            try {
+                return new SimpleDateFormat(formatString).parse(dateString);
+            } catch (ParseException e) {
+            }
+        }
+        return null;
     }
 }

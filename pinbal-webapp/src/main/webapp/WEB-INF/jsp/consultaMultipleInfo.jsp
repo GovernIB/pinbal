@@ -44,7 +44,7 @@ $(document).ready(function () {
 				<i id="dadesPeticioIcon" class="pull-right fas fa-chevron-down"></i>
 			</button>
 		</h3>
-		<div id="dadesPeticio" class="collapse">
+		<div id="dadesPeticio" class="collapse in">
 			<c:if test="${consulta.hiHaPeticio}">
 				<c:set var="initModalXml">initModalXml(this);return false</c:set>
 				<a class="btn btn-default pull-right" href="<c:url value="/modal/consulta/${consulta.id}/xmlPeticio"/>" onclick="${initModalXml}">

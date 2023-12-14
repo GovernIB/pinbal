@@ -1,5 +1,6 @@
 package es.caib.pinbal.webapp.view;
 
+import com.google.common.base.Strings;
 import es.caib.pinbal.core.dto.FitxerDto;
 import es.caib.pinbal.core.service.exception.FileTypeException;
 import org.apache.poi.hssf.usermodel.HSSFCell;
@@ -254,26 +255,34 @@ public class SpreadSheetReader {
 		SpreadsheetDocument odsDocument = SpreadsheetDocument.loadDocument(inputStream);
 		if (odsDocument != null && odsDocument.getTableList().size() > 0) {
 			Table table = odsDocument.getTableList().get(0);
+			int columns = table.getColumnCount();
+			// Pegat per resoldre problema de ods generats per excel
+			if (columns >= 255) {
+				columns = getConsecutiveCellsCountInThirdRow(odsDocument, columns);
+			}
+
 			for (org.odftoolkit.simple.table.Row row: table.getRowList()) {
-				String line[] = new String[row.getCellCount()];
-				for (int i = 0; i < row.getCellCount(); i++) {
-					org.odftoolkit.simple.table.Cell cell = row.getCellByIndex(i);
-					String cellType = cell.getValueType();
+				String line[] = new String[columns];
+				for (int i = 0; i < columns; i++) {
 					String finalValue = null;
-					if ("float".equalsIgnoreCase(cellType) || 
-						"currency".equalsIgnoreCase(cellType) ||
-						"percentage".equalsIgnoreCase(cellType)) {
-						finalValue = String.valueOf(cell.getDoubleValue());
-					} else if ("time".equalsIgnoreCase(cellType)) {
-						finalValue = dateFormat.format(cell.getTimeValue().getTime());
-					} else if ("date".equalsIgnoreCase(cellType)) {
-						finalValue = dateFormat.format(cell.getDateValue().getTime());
-					} else {
-						finalValue = cell.getStringValue();
-					}
-					
-					if (finalValue.isEmpty())
-						finalValue = null;
+					try {
+						org.odftoolkit.simple.table.Cell cell = row.getCellByIndex(i);
+						String cellType = cell.getValueType();
+						if ("float".equalsIgnoreCase(cellType) ||
+								"currency".equalsIgnoreCase(cellType) ||
+								"percentage".equalsIgnoreCase(cellType)) {
+							finalValue = String.valueOf(cell.getDoubleValue());
+						} else if ("time".equalsIgnoreCase(cellType)) {
+							finalValue = dateFormat.format(cell.getTimeValue().getTime());
+						} else if ("date".equalsIgnoreCase(cellType)) {
+							finalValue = dateFormat.format(cell.getDateValue().getTime());
+						} else {
+							finalValue = cell.getStringValue();
+						}
+
+						if (finalValue.isEmpty())
+							finalValue = null;
+					} catch (Exception ex) {}
 					
 					line[i] = finalValue;
 				}
@@ -282,6 +291,29 @@ public class SpreadSheetReader {
 		}
 		
 		return cellDataList;
+	}
+
+	public static int getConsecutiveCellsCountInThirdRow(SpreadsheetDocument spreadsheetDocument, int maxColumns) {
+		if (spreadsheetDocument != null && spreadsheetDocument.getTableList().size() > 0) {
+			Table table = spreadsheetDocument.getTableList().get(0);
+			if (table.getRowCount() < 3) {
+				return maxColumns; // Third row does not exist
+			}
+
+			org.odftoolkit.simple.table.Row thirdRow = table.getRowByIndex(2); // Rows are 0-based
+			int consecutiveCellsWithValue = 0;
+			for (int i = 0; i < maxColumns; i++) {
+				org.odftoolkit.simple.table.Cell cell = thirdRow.getCellByIndex(i);
+				String currentValue = cell.getDisplayText();
+				if (Strings.isNullOrEmpty(currentValue)) {
+					break;
+				}
+				consecutiveCellsWithValue++;
+			}
+			return consecutiveCellsWithValue;
+		} else {
+			return 0; // Spreadsheet document is null or has no tables
+		}
 	}
 
 	private static byte[] addColumnaToOds(byte[] contingut, List<String> novaColumna) throws Exception {

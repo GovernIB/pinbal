@@ -1,0 +1,302 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://intermediacion.redsara.es/scsp/esquemas/datosespecificos" targetNamespace="http://intermediacion.redsara.es/scsp/esquemas/datosespecificos" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<xs:element name="DatosEspecificos">
+		<xs:complexType>
+			<xs:choice>
+				<xs:element ref="Consulta"/>
+				<xs:element ref="Retorno"/>
+			</xs:choice>
+			<xs:attribute name="Id" type="xs:string" use="optional"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Consulta">
+		<xs:annotation>
+			<xs:documentation>Datos de consulta para el servicio</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:choice>
+				<xs:element ref="NumeroSoporte"/>
+				<xs:element name="Pasaporte">
+					<xs:annotation>
+						<xs:documentation>Datos del pasaporte complementarios del titular de la consulta</xs:documentation>
+					</xs:annotation>
+					<xs:complexType>
+						<xs:all>
+							<xs:element name="Tipo" type="TipoPasaporte"/>
+							<xs:element ref="Nacionalidad">
+								<xs:annotation>
+									<xs:documentation>Nacionalidad del pasaporte del titular de la consulta</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+							<xs:element ref="FechaExpedicion" minOccurs="0"/>
+							<xs:element ref="FechaCaducidad" minOccurs="0"/>
+						</xs:all>
+					</xs:complexType>
+				</xs:element>
+			</xs:choice>
+		</xs:complexType>
+	</xs:element>
+	<!-- Consulta -->
+	<xs:element name="NumeroSoporte">
+		<xs:annotation>
+			<xs:documentation>Número de soporte del documento del ciudadano extranjero a consultar</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:pattern value="[E|C]\d{8}"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:simpleType name="TipoPasaporte">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="AR"/>
+			<xs:enumeration value="AS"/>
+			<xs:enumeration value="CE"/>
+			<xs:enumeration value="DN"/>
+			<xs:enumeration value="IN"/>
+			<xs:enumeration value="LN"/>
+			<xs:enumeration value="OT"/>
+			<xs:enumeration value="PA"/>
+			<xs:enumeration value="PD"/>
+			<xs:enumeration value="SC"/>
+			<xs:enumeration value="TA"/>
+			<xs:enumeration value="TD"/>
+			<xs:enumeration value="TU"/>
+			<xs:enumeration value="TV"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:element name="Nacionalidad">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="75"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="FechaExpedicion">
+		<xs:annotation>
+			<xs:documentation>Fecha de expedición del pasaporte del titular consultado. Formato: YYYY-MM-DD</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:date"/>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="FechaCaducidad">
+		<xs:annotation>
+			<xs:documentation>Fecha de caducidad del pasaporte del titular consultado. Formato: YYYY-MM-DD</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:date"/>
+		</xs:simpleType>
+	</xs:element>
+	<!-- Retorno -->
+	<xs:element name="Retorno">
+		<xs:annotation>
+			<xs:documentation>Datos de retorno para servicio de consulta de vida Laboral</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:all>
+				<xs:element name="Estado">
+					<xs:annotation>
+						<xs:documentation>Estado de la respuesta</xs:documentation>
+					</xs:annotation>
+					<xs:complexType>
+						<xs:all>
+							<xs:element ref="CodigoEstado"/>
+							<xs:element ref="CodigoEstadoSecundario" minOccurs="0"/>
+							<xs:element ref="LiteralError"/>
+						</xs:all>
+					</xs:complexType>
+				</xs:element>
+				<xs:element ref="ResidenciaLegal" minOccurs="0"/>
+				<xs:element ref="DNINacionalizado" minOccurs="0"/>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="CodigoEstado">
+		<xs:annotation>
+			<xs:documentation>Codigo de estado de la transmisión</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:maxLength value="4"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="CodigoEstadoSecundario">
+		<xs:annotation>
+			<xs:documentation>Codigo de estado secundario de la transmisión</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="10"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="LiteralError">
+		<xs:annotation>
+			<xs:documentation>Descripcion del estado</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="1024"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="ResidenciaLegal">
+		<xs:complexType>
+			<xs:all>
+				<xs:element ref="Residente"/>
+				<xs:element ref="Tipo" minOccurs="0"/>
+				<xs:element ref="Motivo" minOccurs="0"/>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Residente">
+		<xs:annotation>
+			<xs:documentation>Indicador de si el ciudadano es residente legal</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:enumeration value="S"/>
+				<xs:enumeration value="N"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Tipo">
+		<xs:annotation>
+			<xs:documentation>Tipo de residente</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:all>
+				<xs:element ref="Codigo">
+					<xs:annotation>
+						<xs:documentation>Código del tipo de residencte</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element ref="Literal">
+					<xs:annotation>
+						<xs:documentation>literal del tipo de residente</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Motivo">
+		<xs:annotation>
+			<xs:documentation>Motivo de residente</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:all>
+				<xs:element ref="Codigo">
+					<xs:annotation>
+						<xs:documentation>Código del motivo de residencte</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element ref="Literal" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>Literal del motivo de residente</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="ResidenteAmpliado">
+		<xs:annotation>
+			<xs:documentation>Indicador de si el ciudadano es residente teniendo en cuenta otras residencias</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:maxLength value="2"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Estado">
+		<xs:annotation>
+			<xs:documentation>Estado actual del documento</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:all>
+				<xs:element ref="Codigo">
+					<xs:annotation>
+						<xs:documentation>Código del estado actual del documento</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element ref="Literal">
+					<xs:annotation>
+						<xs:documentation>Estado actual del documento</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Fechas">
+		<xs:complexType>
+			<xs:sequence minOccurs="1" maxOccurs="unbounded">
+				<xs:element ref="Fecha"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Fecha">
+		<xs:annotation>
+			<xs:documentation>Fecha del estado del documento</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:all>
+				<xs:element name="Estado">
+					<xs:annotation>
+						<xs:documentation>Código de estado en el que se encuentra el documento</xs:documentation>
+					</xs:annotation>
+					<xs:simpleType>
+						<xs:restriction base="xs:string">
+							<xs:minLength value="1"/>
+							<xs:maxLength value="50"/>
+							<xs:whiteSpace value="collapse"/>
+						</xs:restriction>
+					</xs:simpleType>
+				</xs:element>
+				<xs:element ref="Literal">
+					<xs:annotation>
+						<xs:documentation>Estado en el que se encuentra el documento</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="Fecha">
+					<xs:annotation>
+						<xs:documentation>Fecha del estado del documento. Formato: YYYY-MM-DD</xs:documentation>
+					</xs:annotation>
+					<xs:simpleType>
+						<xs:restriction base="xs:date"/>
+					</xs:simpleType>
+				</xs:element>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Codigo">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="15"/>
+				<xs:whiteSpace value="collapse"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Literal">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="250"/>
+				<xs:whiteSpace value="collapse"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="DNINacionalizado">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:whiteSpace value="collapse"/>
+				<xs:pattern value="[0-9]{8}[A-Z]"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+</xs:schema>
