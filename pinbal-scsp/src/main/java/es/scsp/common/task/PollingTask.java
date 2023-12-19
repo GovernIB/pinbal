@@ -4,9 +4,6 @@
 package es.scsp.common.task;
 
 import es.scsp.bean.common.Atributos;
-import es.scsp.bean.common.Consentimiento;
-import es.scsp.bean.common.Funcionario;
-import es.scsp.bean.common.Procedimiento;
 import es.scsp.bean.common.Solicitante;
 import es.scsp.bean.common.SolicitudRespuesta;
 import es.scsp.client.ClienteUnico;
@@ -160,26 +157,26 @@ import java.util.TimerTask;
 		Solicitante solicitante = new Solicitante();
 		solicitante.setIdentificadorSolicitante(transmision.getIdSolicitante());
 		solicitante.setNombreSolicitante(transmision.getNombreSolicitante());
-		solicitante.setFinalidad(transmision.getFinalidad());
-		solicitante.setConsentimiento(Consentimiento.valueOf(transmision.getConsentimiento()));
-		solicitante.setUnidadTramitadora(transmision.getUnidadTramitadora());
-		solicitante.setCodigoUnidadTramitadora(transmision.getCodigoUnidadTramitadora());
-		solicitante.setIdExpediente(transmision.getExpediente());
-
-		Procedimiento procedimiento = new Procedimiento();
-		procedimiento.setNombreProcedimiento(transmision.getNombreProcedimiento());
-		procedimiento.setCodProcedimiento(transmision.getCodigoProcedimiento());
-		if (transmision.getAutomatizado() != null) {
-			procedimiento.setAutomatizado(transmision.getAutomatizado() == 0 ? "N" : "S");
-		}
-		procedimiento.setClaseTramite(transmision.getClaseTramite());
-		solicitante.setProcedimiento(procedimiento);
-
-		Funcionario funcionario = new Funcionario();
-		funcionario.setNombreCompletoFuncionario(transmision.getNombreFuncionario());
-		funcionario.setNifFuncionario(transmision.getDocFuncionario());
-		funcionario.setSeudonimo(transmision.getSeudonimoFuncionario());
-		solicitante.setFuncionario(funcionario);
+//		solicitante.setFinalidad(transmision.getFinalidad());
+//		solicitante.setConsentimiento(Consentimiento.valueOf(transmision.getConsentimiento()));
+//		solicitante.setUnidadTramitadora(transmision.getUnidadTramitadora());
+//		solicitante.setCodigoUnidadTramitadora(transmision.getCodigoUnidadTramitadora());
+//		solicitante.setIdExpediente(transmision.getExpediente());
+//
+//		Procedimiento procedimiento = new Procedimiento();
+//		procedimiento.setNombreProcedimiento(transmision.getNombreProcedimiento());
+//		procedimiento.setCodProcedimiento(transmision.getCodigoProcedimiento());
+//		if (transmision.getAutomatizado() != null) {
+//			procedimiento.setAutomatizado(transmision.getAutomatizado() == 0 ? "N" : "S");
+//		}
+//		procedimiento.setClaseTramite(transmision.getClaseTramite());
+//		solicitante.setProcedimiento(procedimiento);
+//
+//		Funcionario funcionario = new Funcionario();
+//		funcionario.setNombreCompletoFuncionario(transmision.getNombreFuncionario());
+//		funcionario.setNifFuncionario(transmision.getDocFuncionario());
+//		funcionario.setSeudonimo(transmision.getSeudonimoFuncionario());
+//		solicitante.setFuncionario(funcionario);
 		return solicitante;
 	}
 
