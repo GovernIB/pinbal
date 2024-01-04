@@ -84,8 +84,12 @@ public class SpreadSheetReader {
 						next++;
 					}
 					switch(hssfCell.getCellType()){
-                        case HSSFCell.CELL_TYPE_BLANK: cellTempList.add(""); break;
-                        //case HSSFCell.CELL_TYPE_BOOLEAN: cellTempList.add(hssfCell.getBooleanCellValue()); break;
+                        case HSSFCell.CELL_TYPE_BLANK:
+							cellTempList.add("");
+							break;
+                        case HSSFCell.CELL_TYPE_BOOLEAN:
+							cellTempList.add(hssfCell.getBooleanCellValue() + "");
+							break;
                         //case HSSFCell.CELL_TYPE_FORMULA: informacionFila.add(hssfCell.getStringCellValue()) ; break;
                         case HSSFCell.CELL_TYPE_NUMERIC: 
                             if(DateUtil.isCellDateFormatted(hssfCell)) {
@@ -94,8 +98,12 @@ public class SpreadSheetReader {
                             	cellTempList.add(String.valueOf((int)(hssfCell.getNumericCellValue())));
                             }
                             break;
-                        case HSSFCell.CELL_TYPE_STRING: cellTempList.add(hssfCell.getStringCellValue()) ; break;
-                        default: cellTempList.add(hssfCell.getStringCellValue()); break;
+                        case HSSFCell.CELL_TYPE_STRING:
+							cellTempList.add(hssfCell.getStringCellValue()) ;
+							break;
+                        default:
+							cellTempList.add(hssfCell.getStringCellValue());
+							break;
 					}
 					next++;	
 				}
@@ -131,7 +139,12 @@ public class SpreadSheetReader {
 						next++;
 					}
 					switch(hssfCell.getCellType()){
-                        case XSSFCell.CELL_TYPE_BLANK: cellTempList.add(""); break;
+                        case XSSFCell.CELL_TYPE_BLANK:
+							cellTempList.add("");
+							break;
+						case XSSFCell.CELL_TYPE_BOOLEAN:
+							cellTempList.add(hssfCell.getBooleanCellValue() + "");
+							break;
                         case XSSFCell.CELL_TYPE_NUMERIC:
                         	if(DateUtil.isCellDateFormatted(hssfCell)) {
                             	cellTempList.add(dateFormat.format(hssfCell.getDateCellValue()));
@@ -139,8 +152,12 @@ public class SpreadSheetReader {
                             	cellTempList.add(String.valueOf((int)(hssfCell.getNumericCellValue())));
                             }
                             break;
-                        case XSSFCell.CELL_TYPE_STRING: cellTempList.add(hssfCell.getStringCellValue()) ; break;
-                        default: cellTempList.add(hssfCell.getStringCellValue()); break;
+                        case XSSFCell.CELL_TYPE_STRING:
+							cellTempList.add(hssfCell.getStringCellValue());
+							break;
+                        default:
+							cellTempList.add(hssfCell.getStringCellValue());
+							break;
 					}
 					next++;
 				}
@@ -268,14 +285,14 @@ public class SpreadSheetReader {
 					try {
 						org.odftoolkit.simple.table.Cell cell = row.getCellByIndex(i);
 						String cellType = cell.getValueType();
-						if ("float".equalsIgnoreCase(cellType) ||
-								"currency".equalsIgnoreCase(cellType) ||
-								"percentage".equalsIgnoreCase(cellType)) {
+						if ("float".equalsIgnoreCase(cellType) || "currency".equalsIgnoreCase(cellType) || "percentage".equalsIgnoreCase(cellType)) {
 							finalValue = String.valueOf(cell.getDoubleValue());
 						} else if ("time".equalsIgnoreCase(cellType)) {
 							finalValue = dateFormat.format(cell.getTimeValue().getTime());
 						} else if ("date".equalsIgnoreCase(cellType)) {
 							finalValue = dateFormat.format(cell.getDateValue().getTime());
+						} else if ("boolean".equalsIgnoreCase(cell.getValueType())) {
+							finalValue = cell.getBooleanValue() + "";
 						} else {
 							finalValue = cell.getStringValue();
 						}
