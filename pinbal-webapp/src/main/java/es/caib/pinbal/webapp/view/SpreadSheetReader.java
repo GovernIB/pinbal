@@ -3,6 +3,7 @@ package es.caib.pinbal.webapp.view;
 import com.google.common.base.Strings;
 import es.caib.pinbal.core.dto.FitxerDto;
 import es.caib.pinbal.core.service.exception.FileTypeException;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
@@ -28,6 +29,8 @@ import org.supercsv.prefs.CsvPreference;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -453,5 +456,33 @@ public class SpreadSheetReader {
 				.contentType(fitxer.getContentType())
 				.contingut(contingutAmbErrors).build();
 	}
+
+	public static void main(String[] args){
+
+		//Descomentar dependencies de dom4j i xerces al pom de pinbal-webapp
+		String xls = ""; // Afegir ruta
+		String xlsx = ""; // Afegir ruta
+		String odt = ""; // Afegir ruta
+		try {
+			FileInputStream fis = new FileInputStream(xls);
+			readExcelFileInputStream(fis, "2003");
+			fis.close();
+			FileInputStream fis2 = new FileInputStream(xlsx);
+			readExcelFileInputStream(fis2, "2007");
+			fis2.close();
+			FileInputStream fis3 = new FileInputStream(odt);
+			getLinesFromOds(fis3);
+			fis3.close();
+		} catch (FileNotFoundException ex) {
+			System.out.println("Fitxer no trobat ");
+			ex.printStackTrace();
+		} catch (IOException ex) {
+			System.out.println("Error lllegint el fitxer");
+			ex.printStackTrace();
+        } catch (Exception ex) {
+			System.out.println("Error llegint el fitxer ods");
+			ex.printStackTrace();
+        }
+    }
 
 }
