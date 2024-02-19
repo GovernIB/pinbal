@@ -215,8 +215,9 @@ public class RepresentantUsuariController extends BaseController {
 			}
 		}
 		
-		List<EntitatUsuariDto> listUsers = entitat.getUsuarisRepresentant();
-		
+//		List<EntitatUsuariDto> listUsers = entitat.getUsuarisRepresentant();
+		List<EntitatUsuariDto> listUsers = entitat.getUsuaris();
+
 		PageRequest pageable = serverSideRequest.toPageable();
 		Sort sort = pageable.getSort();
 		if (sort.iterator().hasNext()) {

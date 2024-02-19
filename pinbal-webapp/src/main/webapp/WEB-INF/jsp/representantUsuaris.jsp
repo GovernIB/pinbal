@@ -111,7 +111,7 @@ $(document).ready(function() {
 			}
 		},
 		{
-			targets: [6, 9],
+			targets: [6, 8, 10],
 			orderable: false,
 			visible: false
 		}, {
@@ -127,7 +127,7 @@ $(document).ready(function() {
 				}
 			}
 		}, {
-			targets: 8,
+			targets: 9,
 			orderable: false,
 			width: "1%",
 			render: function (data, type, row, meta) {
@@ -370,6 +370,7 @@ function canviActiu(usuariCodi) {
 			<th data-data="actiu"><spring:message code="representant.usuaris.camp.actiu" /></th>
 			<th data-data="delegat"></th>
 			<th data-data="aplicacio"></th>
+			<th data-data="auditor"></th>
 			<th data-data="principal"></th>
 			<th data-data="permisosCount"></th>
 			</tr>
@@ -388,6 +389,9 @@ function canviActiu(usuariCodi) {
 	{{#aplicacio}}
 		<span class="badge"><spring:message code="representant.usuaris.rol.aplic"/></span>
 	{{/aplicacio}}
+	{{#auditor}}
+		<span class="badge"><spring:message code="auditor.usuaris.rol.audit"/></span>
+	{{/auditor}}
 </script>
 <script id="template-actiu" type="x-tmpl-mustache">
 {{#actiu}}
