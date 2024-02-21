@@ -3,14 +3,13 @@
  */
 package es.caib.pinbal.core.dto;
 
+import lombok.Getter;
+import lombok.Setter;
+import org.apache.commons.lang.builder.ToStringBuilder;
+
 import java.io.Serializable;
 import java.util.Date;
 import java.util.Map;
-
-import org.apache.commons.lang.builder.ToStringBuilder;
-
-import lombok.Getter;
-import lombok.Setter;
 
 
 /**
@@ -89,6 +88,7 @@ public class ConsultaDto extends AbstractIdentificable<Long> implements Serializ
 
 	private String serveiDescripcio;
 	private String procedimentNom;
+	private String procedimentCodi;
 	private Date creacioData;
 	private UsuariDto creacioUsuari;
 	private String estat;
@@ -113,6 +113,9 @@ public class ConsultaDto extends AbstractIdentificable<Long> implements Serializ
 	private RespostaAtributsDto respostaAtributs;
 
 	private String error;
+
+	private String procedimentCodiNom;
+	private String serveiCodiNom;
 
 	public String getTitularDocumentNum() {
 		if (this.titularDocumentNum != null) {
@@ -213,6 +216,13 @@ public class ConsultaDto extends AbstractIdentificable<Long> implements Serializ
 
 	public static DocumentTipus[] getDocumentTipusValorsPerFormulari() {
 		return DocumentTipus.values();
+	}
+
+	public String getProcedimentCodiNom() {
+		return procedimentCodi + " - " + procedimentNom;
+	}
+	public String getServeiCodiNom() {
+		return serveiCodi + " - " + serveiDescripcio;
 	}
 
 	@Override

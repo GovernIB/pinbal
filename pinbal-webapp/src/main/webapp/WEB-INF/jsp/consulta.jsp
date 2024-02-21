@@ -86,7 +86,7 @@
 				<pbl:inputSelect name="procediment" inline="true" placeholderKey="consulta.list.filtre.procediment"
 								optionItems="${procediments}"
 								optionValueAttribute="id"
-								optionTextAttribute="nom"
+								optionTextAttribute="codiNom"
 								emptyOption="true"
 								optionMinimumResultsForSearch="0"/>
 			</div>
@@ -94,7 +94,7 @@
 				<pbl:inputSelect name="servei" inline="true" placeholderKey="consulta.list.filtre.servei"
 								 optionItems="${serveis}" 
 								 optionValueAttribute="codi"
-								 optionTextAttribute="descripcio"
+								 optionTextAttribute="codiNom"
 								 emptyOption="true"
 								 optionMinimumResultsForSearch="0"/>
 			</div>	
@@ -136,8 +136,8 @@
 			<tr>
 				<th data-data="scspPeticionId"><spring:message code="consulta.list.taula.peticion.id" /></th><%-- 0 --%>
 				<th data-data="creacioData"><spring:message code="consulta.list.taula.data" /></th><%-- 1 --%>
-				<th data-data="procedimentNom"><spring:message code="consulta.list.taula.procediment" /></th><%-- 2 --%>
-				<th data-data="serveiDescripcio"><spring:message code="consulta.list.taula.servei" /></th><%-- 3 --%>
+				<th data-data="procedimentCodiNom"><spring:message code="consulta.list.taula.procediment" /></th><%-- 2 --%>
+				<th data-data="serveiCodiNom"><spring:message code="consulta.list.taula.servei" /></th><%-- 3 --%>
 				<th data-data="titularNomSencer"><spring:message code="consulta.list.taula.titular.nom" /></th><%-- 4 --%>
 				<th data-data="titularDocumentAmbTipus"><spring:message code="consulta.list.taula.titular.document" /></th><%-- 5 --%>
 				<th data-data="estat"><spring:message code="consulta.list.taula.estat" /></th><%-- 6 --%>

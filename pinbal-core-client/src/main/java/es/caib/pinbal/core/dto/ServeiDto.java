@@ -139,6 +139,9 @@ public class ServeiDto extends AbstractIdentificable<Long> implements Serializab
 	public String getDescripcioAmbCodi() {
 		return descripcio + " (" + codi + ")";
 	}
+	public String getCodiNom() {
+		return codi + " - " + descripcio;
+	}
 
 	@Override
 	public String toString() {

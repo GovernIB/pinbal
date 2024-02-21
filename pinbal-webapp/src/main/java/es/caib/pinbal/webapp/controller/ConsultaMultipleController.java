@@ -176,8 +176,8 @@ public class ConsultaMultipleController extends BaseController {
 						serverSideRequest.toPageable());
 			}
 			cols.get(1).setData("creacioData");
-			cols.get(2).setData("procedimentNom");
-			cols.get(3).setData("serveiDescripcio");
+			cols.get(2).setData("procedimentCodiNom");
+			cols.get(3).setData("serveiCodiNom");
 
 			response = new ServerSideResponse<ConsultaDto, Long>(serverSideRequest, page);
 		}

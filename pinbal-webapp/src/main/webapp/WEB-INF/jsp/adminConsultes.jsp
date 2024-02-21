@@ -86,7 +86,7 @@
 						 <pbl:inputSelect name="procediment" inline="true" placeholderKey="admin.consulta.list.filtre.procediment" 
 								 	optionItems="${procediments}"
 									optionValueAttribute="id"
-									optionTextAttribute="nomAmbCodi"
+									optionTextAttribute="codiNom"
 									emptyOption="true"
 									optionMinimumResultsForSearch="0"/>
 				</div>
@@ -94,7 +94,7 @@
 					<pbl:inputSelect name="servei" inline="true" placeholderKey="admin.consulta.list.filtre.servei"
 									optionItems="${serveis}"
 									optionValueAttribute="codi"
-					 				optionTextAttribute="descripcioAmbCodi"
+					 				optionTextAttribute="codiNom"
 									emptyOption="true"
 									optionMinimumResultsForSearch="0"/>
 				</div>
@@ -158,8 +158,8 @@
 					<th data-data="creacioData"><spring:message code="admin.consulta.list.taula.data" /></th>
 					<th data-data="creacioUsuari.nomCodi"><spring:message code="admin.consulta.list.taula.usuari" /></th>
 					<th data-data="funcionariNomAmbDocument"><spring:message code="admin.consulta.list.taula.funcionari" /></th>
-					<th data-data="procedimentNom"><spring:message code="admin.consulta.list.taula.procediment" /></th>
-					<th data-data="serveiDescripcio"><spring:message code="admin.consulta.list.taula.servei" /></th>
+					<th data-data="procedimentCodiNom"><spring:message code="admin.consulta.list.taula.procediment" /></th>
+					<th data-data="serveiCodiNom"><spring:message code="admin.consulta.list.taula.servei" /></th>
 					<th data-data="estat"><spring:message code="admin.consulta.list.taula.estat" /></th>
 					<th data-data="justificantEstat"></th><%-- 7 --%>
 					<th data-data="justificantError"></th><%-- 8 --%>

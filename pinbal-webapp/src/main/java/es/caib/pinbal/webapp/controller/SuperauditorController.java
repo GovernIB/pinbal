@@ -3,22 +3,25 @@
  */
 package es.caib.pinbal.webapp.controller;
 
-import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
-import java.sql.SQLException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
-import javax.naming.NamingException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.validation.Valid;
-
 import es.caib.pinbal.core.dto.CodiValor;
+import es.caib.pinbal.core.dto.ConsultaDto;
+import es.caib.pinbal.core.dto.EntitatDto;
+import es.caib.pinbal.core.service.ConsultaService;
+import es.caib.pinbal.core.service.EntitatService;
 import es.caib.pinbal.core.service.HistoricConsultaService;
+import es.caib.pinbal.core.service.ProcedimentService;
+import es.caib.pinbal.core.service.ServeiService;
+import es.caib.pinbal.core.service.exception.EntitatNotFoundException;
+import es.caib.pinbal.core.service.exception.ProcedimentNotFoundException;
+import es.caib.pinbal.core.service.exception.ScspException;
+import es.caib.pinbal.webapp.command.AuditoriaGenerarCommand;
+import es.caib.pinbal.webapp.command.ConsultaFiltreCommand;
+import es.caib.pinbal.webapp.common.AlertHelper;
+import es.caib.pinbal.webapp.common.EntitatHelper;
+import es.caib.pinbal.webapp.common.RequestSessionHelper;
+import es.caib.pinbal.webapp.datatables.ServerSideColumn;
+import es.caib.pinbal.webapp.datatables.ServerSideRequest;
+import es.caib.pinbal.webapp.datatables.ServerSideResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
 import org.springframework.data.domain.Page;
@@ -33,23 +36,18 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import es.caib.pinbal.core.dto.ConsultaDto;
-import es.caib.pinbal.core.dto.EntitatDto;
-import es.caib.pinbal.core.service.ConsultaService;
-import es.caib.pinbal.core.service.EntitatService;
-import es.caib.pinbal.core.service.ProcedimentService;
-import es.caib.pinbal.core.service.ServeiService;
-import es.caib.pinbal.core.service.exception.EntitatNotFoundException;
-import es.caib.pinbal.core.service.exception.ProcedimentNotFoundException;
-import es.caib.pinbal.core.service.exception.ScspException;
-import es.caib.pinbal.webapp.command.AuditoriaGenerarCommand;
-import es.caib.pinbal.webapp.command.ConsultaFiltreCommand;
-import es.caib.pinbal.webapp.common.AlertHelper;
-import es.caib.pinbal.webapp.common.EntitatHelper;
-import es.caib.pinbal.webapp.common.RequestSessionHelper;
-import es.caib.pinbal.webapp.datatables.ServerSideColumn;
-import es.caib.pinbal.webapp.datatables.ServerSideRequest;
-import es.caib.pinbal.webapp.datatables.ServerSideResponse;
+import javax.naming.NamingException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
+import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.sql.SQLException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 /**
  * Controlador per a les auditories dels superauditors.
@@ -157,8 +155,8 @@ public class SuperauditorController extends BaseController {
 		cols.get(1).setData("creacioData");
 		cols.get(2).setData("creacioUsuari.nom");
 		cols.get(3).setData("funcionariNomAmbDocument");
-		cols.get(4).setData("procedimentNom");
-		cols.get(5).setData("serveiDescripcio");
+		cols.get(4).setData("procedimentCodiNom");
+		cols.get(5).setData("serveiCodiNom");
 
 		return new ServerSideResponse<ConsultaDto, Long>(serverSideRequest, page);
 	}

@@ -94,6 +94,8 @@ public class DtoMappingHelper {
 						field("createdDate", "creacioData").
 						field("funcionariDocumentNum", "funcionariNif").
 						field("pare.id", "pareId").
+						field("procediment.codi", "procedimentCodi").
+						field("serveiScsp.descripcio", "serveiDescripcio").
 						exclude("dadesEspecifiques").
 						byDefault().toClassMap());
 		// Mapeig de historic de consultes
@@ -103,6 +105,8 @@ public class DtoMappingHelper {
 						field("createdDate", "creacioData").
 						field("funcionariDocumentNum", "funcionariNif").
 						field("pare.id", "pareId").
+						field("procediment.codi", "procedimentCodi").
+						field("serveiScsp.descripcio", "serveiDescripcio").
 						exclude("dadesEspecifiques").
 						byDefault().toClassMap());
 		// Mapeig d'informes d'usuaris

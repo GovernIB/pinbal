@@ -216,15 +216,17 @@
 					<pbl:inputSelect name="procediment" inline="true" placeholderKey="auditor.list.filtre.procediment"
 										optionItems="${procediments}"
 										optionValueAttribute="id"
-										optionTextAttribute="nom"
-										emptyOption="true"/>
+										optionTextAttribute="codiNom"
+										emptyOption="true"
+									 	optionMinimumResultsForSearch="0"/>
 				</div>
 				<div class="col-md-3">
 					<pbl:inputSelect name="servei" inline="true" placeholderKey="auditor.list.filtre.servei"
 									optionItems="${serveis}"
 									optionValueAttribute="codi"
-									optionTextAttribute="descripcio"
-									emptyOption="true"/>
+									optionTextAttribute="codiNom"
+									emptyOption="true"
+								 	optionMinimumResultsForSearch="0"/>
 				</div>
 				<div class="col-md-3">
 					<pbl:inputSelect name="estat" inline="true" placeholderKey="auditor.list.filtre.estat"
@@ -274,8 +276,8 @@
 					<th data-data="creacioData"><spring:message code="auditor.list.taula.data" /></th>
 					<th data-data="creacioUsuari.nom"><spring:message code="auditor.list.taula.usuari" /></th>
 					<th data-data="funcionariNomAmbDocument"><spring:message code="auditor.list.taula.funcionari" /></th>
-					<th data-data="procedimentNom"><spring:message code="auditor.list.taula.procediment" /></th>
-					<th data-data="serveiDescripcio"><spring:message code="auditor.list.taula.servei" /></th>
+					<th data-data="procedimentCodiNom"><spring:message code="auditor.list.taula.procediment" /></th>
+					<th data-data="serveiCodiNom"><spring:message code="auditor.list.taula.servei" /></th>
 					<th data-data="estat"><spring:message code="auditor.list.taula.estat" /></th>
 					<th data-data="id"></th><%-- 7 --%>
 					<th data-data="recobriment" data-visible="false"></th>

@@ -130,8 +130,9 @@
 								 placeholderKey="consulta.list.filtre.procediment" 
 								 optionItems="${procediments}"  
 								 optionValueAttribute="id"
-								 optionTextAttribute="nom"
-								 emptyOption="true"/>
+								 optionTextAttribute="codiNom"
+								 emptyOption="true"
+								 optionMinimumResultsForSearch="0"/>
 			</div>
 			<div class="col-md-3">
 				<pbl:inputSelect 
@@ -140,8 +141,9 @@
 						placeholderKey="consulta.list.filtre.servei"
  						optionItems="${serveis}" 
 	 					optionValueAttribute="codi" 
-	 					optionTextAttribute="descripcio" 
-	 					emptyOption="true"/> 
+	 					optionTextAttribute="codiNom"
+	 					emptyOption="true"
+						optionMinimumResultsForSearch="0"/>
 			</div>
 			<div class="col-md-3">
 				<pbl:inputSelect 
@@ -178,8 +180,8 @@
 			<tr>
 				<th data-data="scspPeticionId"><spring:message code="consulta.list.taula.peticion.id" /></th>
 				<th data-data="creacioData"><spring:message code="consulta.list.taula.data" /></th>
-				<th data-data="procedimentNom"><spring:message code="consulta.list.taula.procediment" /></th>
-				<th data-data="serveiDescripcio"><spring:message code="consulta.list.taula.servei" /></th>
+				<th data-data="procedimentCodiNom"><spring:message code="consulta.list.taula.procediment" /></th>
+				<th data-data="serveiCodiNom"><spring:message code="consulta.list.taula.servei" /></th>
 				<th data-data="titularNomSencer"><spring:message code="consulta.list.taula.titular.nom" /></th>		
 				<th data-data="estat"><spring:message code="consulta.list.taula.estat" /></th>
 				<th data-data="error" data-visible="false"></th>

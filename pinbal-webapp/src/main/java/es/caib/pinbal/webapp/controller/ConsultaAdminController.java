@@ -140,8 +140,8 @@ public class ConsultaAdminController extends BaseController {
 		cols.get(1).setData("creacioData");
 		cols.get(2).setData("creacioUsuari.nom");
 		cols.get(3).setData("funcionariNomAmbDocument");
-		cols.get(4).setData("procedimentNom");
-		cols.get(5).setData("serveiDescripcio");
+		cols.get(4).setData("procedimentCodiNom");
+		cols.get(5).setData("serveiCodiNom");
 		return new ServerSideResponse<ConsultaDto, Long>(serverSideRequest, page);
 	}
 

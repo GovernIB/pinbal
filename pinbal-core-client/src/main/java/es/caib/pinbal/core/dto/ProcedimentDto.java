@@ -1,11 +1,11 @@
 package es.caib.pinbal.core.dto;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-
-import lombok.Getter;
-import lombok.Setter;
 
 /**
  * Objecte DTO amb informació d'un procediment.
@@ -39,6 +39,9 @@ public class ProcedimentDto extends AbstractIdentificable<Long> implements Seria
 
 	public String getNomAmbCodi() {
 		return nom + " (" + codi + ")";
+	}
+	public String getCodiNom() {
+		return codi + " - " + nom;
 	}
 
 	public String getNomAmbDepartament() {
