@@ -1,10 +1,5 @@
 package es.caib.pinbal.core.justificant;
 
-import es.caib.arxiudigital.apirest.facade.resultados.Resultado;
-import es.caib.pinbal.core.helper.JustificantHelper;
-import es.caib.pinbal.core.model.ServeiJustificantCamp;
-import es.caib.pinbal.scsp.JustificantArbreHelper;
-import es.scsp.bean.common.Titular;
 import freemarker.core.Environment;
 import freemarker.core.NonStringException;
 import freemarker.template.TemplateException;
@@ -20,17 +15,13 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.Writer;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;

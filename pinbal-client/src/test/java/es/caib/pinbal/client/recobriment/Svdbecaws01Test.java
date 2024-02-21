@@ -1,12 +1,5 @@
 package es.caib.pinbal.client.recobriment;
 
-import static org.junit.Assert.assertNotNull;
-
-import java.io.IOException;
-import java.util.Arrays;
-
-import org.junit.Test;
-
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -14,7 +7,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.sun.jersey.api.client.ClientHandlerException;
 import com.sun.jersey.api.client.UniformInterfaceException;
-
 import es.caib.pinbal.client.recobriment.model.ScspFuncionario;
 import es.caib.pinbal.client.recobriment.model.ScspJustificante;
 import es.caib.pinbal.client.recobriment.model.ScspRespuesta;
@@ -23,6 +15,12 @@ import es.caib.pinbal.client.recobriment.model.ScspTitular;
 import es.caib.pinbal.client.recobriment.model.ScspTitular.ScspTipoDocumentacion;
 import es.caib.pinbal.client.recobriment.svdbecaws01.ClientSvdbecaws01;
 import es.caib.pinbal.client.recobriment.svdbecaws01.ClientSvdbecaws01.SolicitudSvdbecaws01;
+import org.junit.Test;
+
+import java.io.IOException;
+import java.util.Arrays;
+
+import static org.junit.Assert.assertNotNull;
 
 /**
  * Test del client genèric del recobriment.
@@ -52,7 +50,7 @@ public class Svdbecaws01Test {
 		solicitud.setIdExpediente("testPinbal/989");
 		solicitud.setConsentimiento(ScspConsentimiento.Si);
 		ScspFuncionario funcionario = new ScspFuncionario();
-		funcionario.setNifFuncionario("00000000T");
+		funcionario.setNifFuncionario("18225486x");
 		funcionario.setNombreCompletoFuncionario("Funcionari CAIB");
 		solicitud.setFuncionario(funcionario);
 		ScspTitular titular = new ScspTitular();

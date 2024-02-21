@@ -15,7 +15,6 @@ import es.caib.pinbal.client.recobriment.model.ScspTitular;
 import es.caib.pinbal.client.recobriment.svdccaacpasws01.ClientSvdccaacpasws01;
 import es.caib.pinbal.client.recobriment.svdccaacpasws01.ClientSvdccaacpasws01.SolicitudSvdccaacpasws01;
 import es.caib.pinbal.client.recobriment.svddgpciws02.ClientSvddgpciws02;
-import es.caib.pinbal.client.recobriment.svddgpciws02.ClientSvddgpciws02.SolicitudSvddgpciws02;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -28,12 +27,12 @@ public class ClientRestTest {
     private static final String ENTITAT_CIF = "12345678Z";
 //    private static final String URL_BASE = "https://proves.caib.es/pinbalapi";
 //    private static final String USUARI = "$ripea_pinbal";
-//    private static final String CONTRASENYA = "ripea_pinbal";
+//    private static final String CONTRASENYA = "******";
     private static final String URL_BASE = "http://localhost:8180/pinbalapi";
     private static final String USUARI = "admin";
     private static final String CONTRASENYA = "admin";
     private static final String CODIGO_PROCEDIMIENTO = "TEST";
-    private static final String PETICION_SCSP_ID = "PINBAL00000000000000265474";
+    private static final String PETICION_SCSP_ID = "PINBAL00000000000000000032";
     private static final boolean ENABLE_LOGGING = true;
     private static final boolean BASIC_AUTH = true;
 
