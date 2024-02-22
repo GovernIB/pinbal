@@ -7,11 +7,13 @@ import es.caib.pinbal.core.dto.CodiValor;
 import es.caib.pinbal.core.dto.ConsultaDto;
 import es.caib.pinbal.core.dto.EntitatDto;
 import es.caib.pinbal.core.dto.FitxerDto;
+import es.caib.pinbal.core.dto.UsuariDto;
 import es.caib.pinbal.core.service.ConsultaService;
 import es.caib.pinbal.core.service.EntitatService;
 import es.caib.pinbal.core.service.HistoricConsultaService;
 import es.caib.pinbal.core.service.ProcedimentService;
 import es.caib.pinbal.core.service.ServeiService;
+import es.caib.pinbal.core.service.UsuariService;
 import es.caib.pinbal.core.service.exception.ConsultaNotFoundException;
 import es.caib.pinbal.core.service.exception.EntitatNotFoundException;
 import es.caib.pinbal.core.service.exception.ScspException;
@@ -71,6 +73,8 @@ public class ConsultaMultipleController extends BaseController {
 	private ConsultaService consultaService;
 	@Autowired
 	private HistoricConsultaService historicConsultaService;
+	@Autowired
+	private UsuariService usuariService;
 
 	@RequestMapping(method = RequestMethod.GET)
 	public String get(
@@ -304,6 +308,13 @@ public class ConsultaMultipleController extends BaseController {
 		if (command == null) {
 			command = new ConsultaFiltreCommand();
 			command.filtrarDarrersMesos(isHistoric(request) ? 9 : 3);
+			UsuariDto usuari = usuariService.getDades();
+			command.setProcediment(usuari.getProcedimentId());
+			command.setServei(usuari.getServeiCodi());
+			RequestSessionHelper.actualitzarObjecteSessio(
+					request,
+					SESSION_ATTRIBUTE_FILTRE,
+					command);
 		} else {
 			command.updateDefaultDataInici(isHistoric(request));
 		}

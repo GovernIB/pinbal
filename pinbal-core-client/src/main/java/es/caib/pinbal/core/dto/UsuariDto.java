@@ -1,15 +1,17 @@
 package es.caib.pinbal.core.dto;
 
-import java.io.Serializable;
-
-
+import lombok.Getter;
+import lombok.Setter;
 import org.apache.commons.lang.builder.ToStringBuilder;
+
+import java.io.Serializable;
 
 /**
  * Objecte DTO amb informació d'un servei SCSP.
  * 
  * @author Limit Tecnologies <limit@limit.es>
  */
+@Getter @Setter
 public class UsuariDto extends AbstractIdentificable<Long> implements Serializable, Comparable<UsuariDto> {
 
 	private String codi;
@@ -21,6 +23,12 @@ public class UsuariDto extends AbstractIdentificable<Long> implements Serializab
 	private String[] rols;
 	private String email;
 	private String idioma;
+	// Valors per defecte
+	private Long procedimentId;
+	private String serveiCodi;
+	private Long entitatId;
+	private String departament;
+	private String finalitat;
 
 	public UsuariDto() {
 	}
@@ -31,67 +39,22 @@ public class UsuariDto extends AbstractIdentificable<Long> implements Serializab
 			boolean inicialitzat,
 			boolean noInicialitzatNif,
 			boolean noInicialitzatCodi) {
+//			Long procedimentId,
+//			String serveiCodi,
+//			Long entitatId,
+//			String departament,
+//			String finalitat) {
 		this.codi = codi;
 		this.nif = nif;
 		this.nom = nom;
 		this.inicialitzat = inicialitzat;
 		this.noInicialitzatNif = noInicialitzatNif;
 		this.noInicialitzatCodi = noInicialitzatCodi;
-	}
-
-	public String getEmail() {
-		return email;
-	}
-	public void setEmail(String email) {
-		this.email = email;
-	}
-	public String getIdioma() {
-		return idioma;
-	}
-	public void setIdioma(String idioma) {
-		this.idioma = idioma;
-	}
-	public String[] getRols() {
-		return rols;
-	}
-	public void setRols(String[] rols) {
-		this.rols = rols;
-	}
-	public String getCodi() {
-		return codi;
-	}
-	public void setCodi(String codi) {
-		this.codi = codi;
-	}
-	public String getNif() {
-		return nif;
-	}
-	public void setNif(String nif) {
-		this.nif = nif;
-	}
-	public String getNom() {
-		return nom;
-	}
-	public void setNom(String nom) {
-		this.nom = nom;
-	}
-	public boolean isInicialitzat() {
-		return inicialitzat;
-	}
-	public void setInicialitzat(boolean inicialitzat) {
-		this.inicialitzat = inicialitzat;
-	}
-	public boolean isNoInicialitzatNif() {
-		return noInicialitzatNif;
-	}
-	public void setNoInicialitzatNif(boolean noInicialitzatNif) {
-		this.noInicialitzatNif = noInicialitzatNif;
-	}
-	public boolean isNoInicialitzatCodi() {
-		return noInicialitzatCodi;
-	}
-	public void setNoInicialitzatCodi(boolean noInicialitzatCodi) {
-		this.noInicialitzatCodi = noInicialitzatCodi;
+//		this.procedimentId = procedimentId;
+//		this.serveiCodi = serveiCodi;
+//		this.entitatId = entitatId;
+//		this.departament = departament;
+//		this.finalitat = finalitat;
 	}
 
 	public String getDescripcio() {

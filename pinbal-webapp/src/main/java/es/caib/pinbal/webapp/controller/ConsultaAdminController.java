@@ -12,11 +12,13 @@ import es.caib.pinbal.core.dto.JsonResponse;
 import es.caib.pinbal.core.dto.JustificantDto;
 import es.caib.pinbal.core.dto.NodeDto;
 import es.caib.pinbal.core.dto.ServeiCampDto;
+import es.caib.pinbal.core.dto.UsuariDto;
 import es.caib.pinbal.core.service.ConsultaService;
 import es.caib.pinbal.core.service.EntitatService;
 import es.caib.pinbal.core.service.HistoricConsultaService;
 import es.caib.pinbal.core.service.ProcedimentService;
 import es.caib.pinbal.core.service.ServeiService;
+import es.caib.pinbal.core.service.UsuariService;
 import es.caib.pinbal.core.service.exception.ConsultaNotFoundException;
 import es.caib.pinbal.core.service.exception.EntitatNotFoundException;
 import es.caib.pinbal.core.service.exception.ScspException;
@@ -80,6 +82,8 @@ public class ConsultaAdminController extends BaseController {
 	private ConsultaService consultaService;
 	@Autowired
 	private HistoricConsultaService historicConsultaService;
+	@Autowired
+	private UsuariService usuariService;
 
 	@RequestMapping(method = RequestMethod.GET)
 	public String get(
@@ -462,8 +466,15 @@ public class ConsultaAdminController extends BaseController {
 				request,
 				SESSION_ATTRIBUTE_FILTRE);
 		if (command == null) {
-			command = new ConsultaFiltreCommand(
-					entitatService.findTopByTipus(EntitatTipusDto.GOVERN).getId());
+			command = new ConsultaFiltreCommand(entitatService.findTopByTipus(EntitatTipusDto.GOVERN).getId());
+			UsuariDto usuari = usuariService.getDades();
+			command.setEntitatId(usuari.getEntitatId());
+			command.setProcediment(usuari.getProcedimentId());
+			command.setServei(usuari.getServeiCodi());
+			RequestSessionHelper.actualitzarObjecteSessio(
+					request,
+					SESSION_ATTRIBUTE_FILTRE,
+					command);
 		} else {
 			command.eliminarEspaisCampsCerca();
 		}

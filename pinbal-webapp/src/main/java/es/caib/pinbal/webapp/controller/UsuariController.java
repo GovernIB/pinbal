@@ -1,10 +1,18 @@
 package es.caib.pinbal.webapp.controller;
 
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.validation.Valid;
-
+import es.caib.pinbal.core.dto.EntitatDto;
+import es.caib.pinbal.core.dto.IdiomaEnumDto;
+import es.caib.pinbal.core.dto.UsuariDto;
+import es.caib.pinbal.core.service.EntitatService;
+import es.caib.pinbal.core.service.ProcedimentService;
+import es.caib.pinbal.core.service.ServeiService;
+import es.caib.pinbal.core.service.UsuariService;
+import es.caib.pinbal.core.service.exception.EntitatNotFoundException;
+import es.caib.pinbal.webapp.command.UsuariCommand;
+import es.caib.pinbal.webapp.common.EntitatHelper;
+import es.caib.pinbal.webapp.common.RolHelper;
+import es.caib.pinbal.webapp.helper.EnumHelper;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -12,22 +20,28 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import es.caib.pinbal.core.dto.IdiomaEnumDto;
-import es.caib.pinbal.core.dto.UsuariDto;
-import es.caib.pinbal.core.service.UsuariService;
-import es.caib.pinbal.webapp.command.UsuariCommand;
-import es.caib.pinbal.webapp.helper.EnumHelper;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
 /**
  * Controlador per al manteniment de usuaris.
  * 
  * @author Limit Tecnologies <limit@limit.es>
  */
+@Slf4j
 @Controller
 @RequestMapping("/usuari")
 public class UsuariController extends BaseController{
 
 	@Autowired
 	private UsuariService usuariService;
+	@Autowired
+	private EntitatService entitatService;
+	@Autowired
+	private ProcedimentService procedimentService;
+	@Autowired
+	private ServeiService serveiService;
 
 	@RequestMapping(value = "/logout", method = RequestMethod.GET)
 	public String logout(HttpServletRequest request, HttpServletResponse response) {
@@ -49,11 +63,7 @@ public class UsuariController extends BaseController{
 		UsuariDto usuari = usuariService.getUsuariActual();
 		UsuariCommand command = UsuariCommand.asCommand(usuari);
 		model.addAttribute(command);
-		model.addAttribute(
-				"idiomaEnumOptions",
-				EnumHelper.getOptionsForEnum(
-						IdiomaEnumDto.class,
-						"usuari.form.camp.idioma.enum."));
+		emplenaModel(request, model, usuari.getEntitatId());
 		return "usuariForm";
 	}
 
@@ -65,13 +75,46 @@ public class UsuariController extends BaseController{
 			BindingResult bindingResult,
 			Model model) {
 		if (bindingResult.hasErrors()) {
+			emplenaModel(request, model, command.getEntitatId());
 			return "usuariForm";
 		}
-		usuariService.updateUsuariActual(UsuariCommand.asDto(command));
+		boolean updateEntitat = false;
+		if (RolHelper.isRolActualAdministrador(request) || RolHelper.isRolActualSuperauditor(request)) {
+			updateEntitat = true;
+		} else {
+			UsuariDto usuari = usuariService.getUsuariActual();
+			updateEntitat = !usuari.getProcedimentId().equals(command.getProcedimentId()) || !usuari.getServeiCodi().equals(command.getServeiCodi());
+			if (updateEntitat) {
+				EntitatDto entitatActual = EntitatHelper.getEntitatActual(request, entitatService);
+				command.setEntitatId(entitatActual != null ? entitatActual.getId() : null);
+			}
+		}
+		usuariService.updateUsuariActual(UsuariCommand.asDto(command), updateEntitat);
 		return getModalControllerReturnValueSuccess(
 				request,
 				"redirect:/",
 				"usuari.controller.modificat.ok");
 	}
 
+	private void emplenaModel(HttpServletRequest request, Model model, Long entitatId) {
+		model.addAttribute(
+				"idiomaEnumOptions",
+				EnumHelper.getOptionsForEnum(
+						IdiomaEnumDto.class,
+						"usuari.form.camp.idioma.enum."));
+		EntitatDto entitatActual = EntitatHelper.getEntitatActual(request, entitatService);
+		try {
+			if (RolHelper.isRolActualAdministrador(request) || RolHelper.isRolActualSuperauditor(request)) {
+				model.addAttribute("entitats", EntitatHelper.getEntitats(request, entitatService, true));
+				model.addAttribute("procediments", procedimentService.findAmbEntitat(entitatId != null ? entitatId : entitatActual.getId()));
+				model.addAttribute("serveis", serveiService.findAmbEntitat(entitatId != null ? entitatId : entitatActual.getId()));
+			} else {
+				model.addAttribute("procediments", procedimentService.findAmbEntitat(entitatActual.getId()));
+				model.addAttribute("serveis", serveiService.findAmbEntitat(entitatActual.getId()));
+			}
+		} catch (EntitatNotFoundException e) {
+			log.error("Error recuperant procediments i serveis", e);
+//			throw new RuntimeException(e);
+		}
+	}
 }

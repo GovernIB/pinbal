@@ -1,13 +1,12 @@
 package es.caib.pinbal.webapp.controller;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.servlet.http.HttpServletRequest;
-
+import es.caib.pinbal.core.dto.ServeiDto;
+import es.caib.pinbal.core.service.ServeiService;
+import es.caib.pinbal.core.service.exception.EntitatNotFoundException;
+import es.caib.pinbal.core.service.exception.ProcedimentNotFoundException;
+import es.caib.pinbal.core.service.exception.ServeiNotFoundException;
+import es.caib.pinbal.webapp.common.EntitatHelper;
+import es.caib.pinbal.webapp.common.RequestSessionHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -16,13 +15,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import es.caib.pinbal.core.dto.ServeiDto;
-import es.caib.pinbal.core.service.ServeiService;
-import es.caib.pinbal.core.service.exception.EntitatNotFoundException;
-import es.caib.pinbal.core.service.exception.ProcedimentNotFoundException;
-import es.caib.pinbal.core.service.exception.ServeiNotFoundException;
-import es.caib.pinbal.webapp.common.EntitatHelper;
-import es.caib.pinbal.webapp.common.RequestSessionHelper;
+import javax.servlet.http.HttpServletRequest;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Controlador per a les consultes ajax dels serveis.
@@ -63,7 +61,14 @@ public class AjaxServeiController extends BaseController{
 
 		return getWithParam(request, text, procediment, model, false);
 	}
-	
+
+	@RequestMapping(value = "/procediment/{procedimentId}/servei", method = RequestMethod.GET)
+	@ResponseBody
+	public List<ServeiDto> getByProcediment(HttpServletRequest request, @PathVariable Long procedimentId, Model model) throws EntitatNotFoundException, ProcedimentNotFoundException {
+
+		return serveiService.findAmbProcediment(procedimentId);
+	}
+
 	private List<ServeiDto> getWithParam(HttpServletRequest request, String text, Long procedimentId, Model model, boolean directOrganPermisRequired) throws EntitatNotFoundException, ProcedimentNotFoundException {
 		
 		Long entitatId = (Long)RequestSessionHelper.obtenirObjecteSessio(
@@ -74,7 +79,8 @@ public class AjaxServeiController extends BaseController{
 			entitatId = EntitatHelper.getEntitatActual(request).getId();
 		
 		try {
-			text = URLDecoder.decode(request.getRequestURI().split("/")[4], StandardCharsets.UTF_8.name());
+			String[] requestSegments = request.getRequestURI().split("/");
+			text = requestSegments.length > 4 ? URLDecoder.decode(requestSegments[4], StandardCharsets.UTF_8.name()) : null;
 		} catch (UnsupportedEncodingException e) { }
 		
 		List<ServeiDto> serveisList = new ArrayList<ServeiDto>();

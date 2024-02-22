@@ -3,18 +3,17 @@
  */
 package es.caib.pinbal.webapp.common;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
+import es.caib.pinbal.core.dto.UsuariDto;
+import es.caib.pinbal.core.service.UsuariService;
+import es.caib.pinbal.core.service.exception.AccesExternException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.support.RequestContextUtils;
 
-import es.caib.pinbal.core.dto.UsuariDto;
-import es.caib.pinbal.core.service.UsuariService;
-import es.caib.pinbal.core.service.exception.AccesExternException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * Utilitat per a gestionar les dades de l'usuari actual.
@@ -67,7 +66,7 @@ public class UsuariHelper {
 			UsuariService usuariService) {
 		if (request.getUserPrincipal() != null) {
 			try {
-				String idiomaUsuari = usuariService.getUsuariActual().getIdioma();
+				String idiomaUsuari = usuariService.getIdiomaUsuariActual();
 				if (idiomaUsuari != null) {
 					LocaleResolver localeResolver = RequestContextUtils.getLocaleResolver(request);
 					localeResolver.setLocale(

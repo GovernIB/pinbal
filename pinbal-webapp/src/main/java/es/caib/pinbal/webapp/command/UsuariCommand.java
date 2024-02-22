@@ -3,12 +3,14 @@
  */
 package es.caib.pinbal.webapp.command;
 
-import java.io.Serializable;
-
-import org.apache.commons.lang.builder.ToStringBuilder;
-
 import es.caib.pinbal.core.dto.UsuariDto;
 import es.caib.pinbal.webapp.helper.ConversioTipusHelper;
+import lombok.Getter;
+import lombok.Setter;
+import org.apache.commons.lang.builder.ToStringBuilder;
+
+import javax.validation.constraints.Size;
+import java.io.Serializable;
 
 
 /**
@@ -16,6 +18,7 @@ import es.caib.pinbal.webapp.helper.ConversioTipusHelper;
  * 
  * @author Limit Tecnologies <limit@limit.es>
  */
+@Getter @Setter
 public class UsuariCommand implements Serializable {
 
 	private String codi;
@@ -24,44 +27,14 @@ public class UsuariCommand implements Serializable {
 	private String email;
 	private String[] rols;
 	private String idioma;
+	private Long procedimentId;
+	private String serveiCodi;
+	private Long entitatId;
+	@Size(max = 250)
+	private String departament;
+	@Size(max = 250)
+	private String finalitat;
 
-
-	public String getCodi() {
-		return codi;
-	}
-	public void setCodi(String codi) {
-		this.codi = codi;
-	}
-	public String getNom() {
-		return nom;
-	}
-	public void setNom(String nom) {
-		this.nom = nom;
-	}
-	public String getNif() {
-		return nif;
-	}
-	public void setNif(String nif) {
-		this.nif = nif;
-	}
-	public String getEmail() {
-		return email;
-	}
-	public void setEmail(String email) {
-		this.email = email;
-	}
-	public String[] getRols() {
-		return rols;
-	}
-	public void setRols(String[] rols) {
-		this.rols = rols;
-	}
-	public String getIdioma() {
-		return idioma;
-	}
-	public void setIdioma(String idioma) {
-		this.idioma = idioma;
-	}
 
 	public static UsuariCommand asCommand(UsuariDto dto) {
 		return ConversioTipusHelper.convertir(

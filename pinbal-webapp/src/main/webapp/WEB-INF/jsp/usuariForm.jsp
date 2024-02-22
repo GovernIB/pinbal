@@ -4,6 +4,10 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib tagdir="/WEB-INF/tags/pinbal" prefix="pbl" %>
+<%
+	pageContext.setAttribute("isRolActualAdministrador", es.caib.pinbal.webapp.common.RolHelper.isRolActualAdministrador(request));
+	pageContext.setAttribute("isRolActualSuperauditor", es.caib.pinbal.webapp.common.RolHelper.isRolActualSuperauditor(request));
+%>
 <html>
 <head>
 	<title><spring:message code="usuari.form.titol"/></title>
@@ -12,16 +16,94 @@
 	<script src="<c:url value="/webjars/select2/4.0.6-rc.1/dist/js/select2.min.js"/>"></script>
 	<script src="<c:url value="/webjars/select2/4.0.6-rc.1/dist/js/i18n/${requestLocale}.js"/>"></script>
 	<script src="<c:url value="/js/webutil.common.js"/>"></script>
+	<script type="application/javascript">
+		$(document).ready(function() {
+			$('#entitatId').change(function() {
+				let procedimentsPerEntitatUrl = '<c:url value="/procedimentajax/entitat/"/>' + $('#entitatId').val() + '/procediment';
+				if ($('#entitatId').val() == '') {
+					procedimentsPerEntitatUrl = '<c:url value="/procedimentajax/procediment/"/>';
+				}
+				$.ajax({
+					url:procedimentsPerEntitatUrl,
+					type:'GET',
+					dataType: 'json',
+					success: function(json) {
+						$('#procedimentId').empty();
+						$('#procedimentId').append($('<option>'));
+						$.each(json, function(i, value) {
+							$('#procedimentId').append($('<option>').text(value.codi + " - " + value.nom).attr('value', value.id));
+						});
+						$('#procedimentId').trigger('change');
+					}
+				});
+			});
+			$('#procedimentId').change(function() {
+				let serveisPerProcedimentsUrl = '<c:url value="/serveiajax/procediment/"/>' + $('#procedimentId').val() + '/servei';
+				if ($('#procedimentId').val() == '') {
+					serveisPerProcedimentsUrl = '<c:url value="/serveiajax/servei/"/>';
+				}
+				$.ajax({
+					url:serveisPerProcedimentsUrl,
+					type:'GET',
+					dataType: 'json',
+					success: function(json) {
+						$('#serveiCodi').empty();
+						$('#serveiCodi').append($('<option>'));
+						$.each(json, function(i, value) {
+							$('#serveiCodi').append($('<option>').text(value.codi + " - " + value.descripcio).attr('value', value.codi));
+						});
+					}
+				});
+			});
+		});
+	</script>
+	<style>
+		legend { color: #484848; font-weight: bold; padding-top: 20px; }
+	</style>
 </head>
 <body>
 	<c:url value="/modal/usuari/configuracio" var="formAction"/>
 	<form:form action="${formAction}" method="post" cssClass="form-horizontal" commandName="usuariCommand" role="form">
 		<form:hidden path="codi"/>
-		<pbl:inputText name="nom" textKey="usuari.form.camp.nom" disabled="true"/>
-		<pbl:inputText name="nif" textKey="usuari.form.camp.nif" disabled="true"/>
-		<pbl:inputText name="email" textKey="usuari.form.camp.email" disabled="true"/>
-		<pbl:inputSelect name="rols" textKey="usuari.form.camp.rols" optionItems="${usuariCommand.rols}" disabled="true"/>
-		<pbl:inputSelect name="idioma" optionItems="${idiomaEnumOptions}" textKey="usuari.form.camp.idioma" optionValueAttribute="value" optionTextKeyAttribute="text" disabled="false"/>
+		<pbl:inputText name="nom" textKey="usuari.form.camp.nom" labelSize="2" disabled="true"/>
+		<pbl:inputText name="nif" textKey="usuari.form.camp.nif" labelSize="2" disabled="true"/>
+		<pbl:inputText name="email" textKey="usuari.form.camp.email" labelSize="2" disabled="true"/>
+		<pbl:inputSelect name="rols" textKey="usuari.form.camp.rols" optionItems="${usuariCommand.rols}" labelSize="2" disabled="true"/>
+		<pbl:inputSelect name="idioma" optionItems="${idiomaEnumOptions}" textKey="usuari.form.camp.idioma" optionValueAttribute="value" optionTextKeyAttribute="text" labelSize="2" disabled="false"/>
+		<fieldset>
+			<legend>Valors per defecte: Filtres consultes realitzades</legend>
+			<c:if test="${isRolActualAdministrador or isRolActualSuperauditor}">
+				<pbl:inputSelect name="entitatId"
+								 optionItems="${entitats}"
+								 optionValueAttribute="id"
+								 optionTextAttribute="nom"
+								 textKey="usuari.form.camp.entitat"
+								 emptyOption="true"
+								 labelSize="2"
+								 optionMinimumResultsForSearch="0"/>
+				</c:if>
+			<pbl:inputSelect name="procedimentId"
+							 optionItems="${procediments}"
+							 optionValueAttribute="id"
+							 optionTextAttribute="codiNom"
+							 textKey="usuari.form.camp.procediment"
+							 emptyOption="true"
+							 labelSize="2"
+							 optionMinimumResultsForSearch="0"/>
+			<pbl:inputSelect name="serveiCodi"
+							 optionItems="${serveis}"
+							 optionValueAttribute="codi"
+							 optionTextAttribute="codiNom"
+							 textKey="usuari.form.camp.servei"
+							 emptyOption="true"
+							 labelSize="2"
+							 optionMinimumResultsForSearch="0"/>
+		</fieldset>
+	<fieldset>
+		<legend>Valors per defecte: Formulari nova consulta</legend>
+		<pbl:inputText name="departament" textKey="consulta.form.camp.departament" labelSize="2"/>
+		<pbl:inputTextarea name="finalitat" textKey="consulta.form.camp.finalitat" labelSize="2"/>
+	</fieldset>
 		<div id="modal-botons">
 			<button type="submit" class="btn btn-success">
 				<span class="fa fa-save"></span>

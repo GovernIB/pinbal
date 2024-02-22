@@ -1,0 +1,39 @@
+databaseChangeLog:
+  - property:
+      name: varcharUnit
+      value: CHAR
+      dbms: oracle
+  - property:
+      name: varcharUnit
+      value: ''
+      dbms: postgresql
+  - property:
+      name: fals
+      value: 0
+      dbms: oracle
+  - property:
+      name: fals
+      value: false
+      dbms: postgresql
+  - changeSet:
+      id: 1708502769667-1
+      author: limit
+      changes:
+        - addColumn:
+            tableName: pbl_usuari
+            columns:
+              - column:
+                  name: procediment_id
+                  type: BIGINT
+              - column:
+                  name: servei_codi
+                  type: VARCHAR(64 ${varcharUnit})
+              - column:
+                  name: entitat_id
+                  type: BIGINT
+              - column:
+                  name: departament
+                  type: VARCHAR(250 ${varcharUnit})
+              - column:
+                  name: finalitat
+                  type: VARCHAR(250 ${varcharUnit})

@@ -849,6 +849,8 @@ public class ConsultaController extends BaseController {
 		if (dadesUsuari != null) {
 			if (inicialitzacioCommand) {
 				command.setFuncionariNom(dadesUsuari.getNom());
+				command.setDepartamentNom(dadesUsuari.getDepartament());
+				command.setFinalitat(dadesUsuari.getFinalitat());
 			}
 			command.setFuncionariNif(dadesUsuari.getNif());
 		}
@@ -963,6 +965,13 @@ public class ConsultaController extends BaseController {
 		if (command == null) {
 			command = new ConsultaFiltreCommand();
 			command.filtrarDarrersMesos(isHistoric(request) ? 9 : 3);
+			UsuariDto usuari = usuariService.getDades();
+			command.setProcediment(usuari.getProcedimentId());
+			command.setServei(usuari.getServeiCodi());
+			RequestSessionHelper.actualitzarObjecteSessio(
+					request,
+					SESSION_ATTRIBUTE_FILTRE,
+					command);
 		} else {
 			command.updateDefaultDataInici(isHistoric(request));
 		}

@@ -3,21 +3,6 @@
  */
 package es.caib.pinbal.core.service;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.annotation.Resource;
-
-import es.caib.pinbal.core.service.exception.NotFoundException;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.security.acls.model.MutableAclService;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import es.caib.pinbal.core.dto.EntitatUsuariDto;
 import es.caib.pinbal.core.dto.InformeUsuariDto;
 import es.caib.pinbal.core.dto.UsuariDto;
@@ -29,15 +14,29 @@ import es.caib.pinbal.core.model.EntitatUsuari;
 import es.caib.pinbal.core.model.Usuari;
 import es.caib.pinbal.core.repository.EntitatRepository;
 import es.caib.pinbal.core.repository.EntitatUsuariRepository;
+import es.caib.pinbal.core.repository.ProcedimentRepository;
 import es.caib.pinbal.core.repository.ProcedimentServeiRepository;
 import es.caib.pinbal.core.repository.UsuariRepository;
 import es.caib.pinbal.core.service.exception.EntitatNotFoundException;
 import es.caib.pinbal.core.service.exception.EntitatUsuariNotFoundException;
 import es.caib.pinbal.core.service.exception.EntitatUsuariProtegitException;
+import es.caib.pinbal.core.service.exception.NotFoundException;
 import es.caib.pinbal.core.service.exception.UsuariExternNotFoundException;
 import es.caib.pinbal.plugins.DadesUsuari;
 import es.caib.pinbal.plugins.SistemaExternException;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.security.acls.model.MutableAclService;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import javax.annotation.Resource;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Implementació dels mètodes per al manteniment de la taula d'usuaris.
@@ -56,6 +55,8 @@ public class UsuariServiceImpl implements UsuariService {
 	private EntitatUsuariRepository entitatUsuariRepository;
 	@Resource
 	private ProcedimentServeiRepository procedimentServeiRepository;
+	@Resource
+	private ProcedimentRepository procedimentRepository;
 
 	@Resource
 	private DtoMappingHelper dtoMappingHelper;
@@ -152,13 +153,36 @@ public class UsuariServiceImpl implements UsuariService {
 		return toUsuariDtoAmbRols(usuari);
 	}
 
+	@Override
+	public String getIdiomaUsuariActual() {
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		log.debug("Obtenint idioma de usuari actual");
+		Usuari usuari = usuariRepository.findOne(auth.getName());
+		return usuari != null ? usuari.getIdioma() : null;
+	}
+
 	@Transactional
 	@Override
-	public UsuariDto updateUsuariActual(UsuariDto dto) {
+	public UsuariDto updateUsuariActual(UsuariDto dto, boolean updateEntitat) {
 		log.debug("Actualitzant configuració de usuari actual");
 		Usuari usuari = usuariRepository.findOne(dto.getCodi());
-		usuari.updateIdioma(
-				dto.getIdioma());
+//		usuari.updateIdioma(dto.getIdioma());
+		if (updateEntitat) {
+			usuari.updateValorsPerDefecte(
+					dto.getIdioma(),
+					dto.getProcedimentId(),
+					dto.getServeiCodi(),
+					dto.getEntitatId(),
+					dto.getDepartament(),
+					dto.getFinalitat());
+		} else {
+			usuari.updateValorsPerDefecte(
+					dto.getIdioma(),
+					dto.getProcedimentId(),
+					dto.getServeiCodi(),
+					dto.getDepartament(),
+					dto.getFinalitat());
+		}
 		return toUsuariDtoAmbRols(usuari);
 	}
 

@@ -3,12 +3,6 @@
  */
 package es.caib.pinbal.core.service;
 
-import java.util.List;
-
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.security.access.prepost.PreAuthorize;
-
 import es.caib.pinbal.core.dto.EntitatUsuariDto;
 import es.caib.pinbal.core.dto.InformeUsuariDto;
 import es.caib.pinbal.core.dto.UsuariDto;
@@ -16,6 +10,11 @@ import es.caib.pinbal.core.service.exception.EntitatNotFoundException;
 import es.caib.pinbal.core.service.exception.EntitatUsuariNotFoundException;
 import es.caib.pinbal.core.service.exception.EntitatUsuariProtegitException;
 import es.caib.pinbal.core.service.exception.UsuariExternNotFoundException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.prepost.PreAuthorize;
+
+import java.util.List;
 
 /**
  * Declaració dels mètodes per al manteniment dels usuaris.
@@ -233,6 +232,8 @@ public interface UsuariService {
 	 */
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_REPRES') or hasRole('ROLE_DELEG') or hasRole('ROLE_AUDIT')")
 	public UsuariDto getUsuariActual();
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_REPRES') or hasRole('ROLE_DELEG') or hasRole('ROLE_AUDIT')")
+	public String getIdiomaUsuariActual();
 
 	/**
 	 * Modifica la configuració de l'usuari actual
@@ -240,7 +241,7 @@ public interface UsuariService {
 	 * @return L'usuari actual.
 	 */
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_REPRES') or hasRole('ROLE_DELEG') or hasRole('ROLE_AUDIT')")
-	public UsuariDto updateUsuariActual(UsuariDto dto);
+	public UsuariDto updateUsuariActual(UsuariDto dto, boolean updateEntitat);
 
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_REPRES') or hasRole('ROLE_DELEG') or hasRole('ROLE_AUDIT') or hasRole('ROLE_SUPERAUD') or hasRole('ROLE_WS')")
     public List<UsuariDto> findLikeCodiONom(String text);

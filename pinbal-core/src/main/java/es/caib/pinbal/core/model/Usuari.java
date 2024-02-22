@@ -3,19 +3,24 @@
  */
 package es.caib.pinbal.core.model;
 
-import java.io.Serializable;
-import java.util.HashSet;
-import java.util.Set;
+import lombok.Getter;
+import org.apache.commons.lang.builder.ToStringBuilder;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.ConstraintMode;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.ForeignKey;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Version;
-
-import org.apache.commons.lang.builder.ToStringBuilder;
+import java.io.Serializable;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Classe de model de dades que conté la informació d'un usuari. L'única
@@ -24,6 +29,7 @@ import org.apache.commons.lang.builder.ToStringBuilder;
  * 
  * @author Limit Tecnologies <limit@limit.es>
  */
+@Getter
 @Entity
 @Table(name = "pbl_usuari")
 public class Usuari implements Serializable {
@@ -52,6 +58,36 @@ public class Usuari implements Serializable {
 
 	@OneToMany(mappedBy="usuari", cascade={CascadeType.ALL})
 	private Set<EntitatUsuari> entitats = new HashSet<EntitatUsuari>();
+
+	// Valors per defecte
+	// ==============================================================
+	// Filtres
+	@ManyToOne(optional = true, fetch = FetchType.LAZY)
+	@JoinColumn(name = "procediment_id", insertable = false, updatable = false)
+	private Procediment procediment;
+	@Column(name = "procediment_id")
+	private Long procedimentId;
+
+	@ManyToOne(optional = true, fetch = FetchType.LAZY)
+	@JoinColumn(
+			name = "servei_codi",
+			referencedColumnName = "CODCERTIFICADO",
+			insertable = false, updatable = false,
+			foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
+	private Servei servei;
+	@Column(name = "servei_codi", length = 64)
+	private String serveiCodi;
+
+	@ManyToOne(optional = true, fetch = FetchType.LAZY)
+	@JoinColumn(name = "entitat_id", insertable = false, updatable = false)
+	private Entitat entitat;
+	@Column(name = "entitat_id")
+	private Long entitatId;
+	// Formulari
+	@Column(name = "departament", length = 250)
+	private String departament;
+	@Column(name = "finalitat", length = 250)
+	private String finalitat;
 
 	@Version
 	private long version = 0;
@@ -110,36 +146,11 @@ public class Usuari implements Serializable {
 				false);
 	}
 
-	public String getEmail() {
-		return email;
-	}
-	public String getIdioma() {
-		return idioma;
-	}
-	public String getCodi() {
-		return codi;
-	}
-	public String getNom() {
-		return nom;
-	}
-	public String getNif() {
-		return nif;
-	}
-	public boolean isInicialitzat() {
-		return inicialitzat;
-	}
 	public boolean isNoInicialitzatNif() {
 		return !inicialitzat && NOM_USUARI_NOINIT_NIF.equals(nom);
 	}
 	public boolean isNoInicialitzatCodi() {
 		return !inicialitzat && NOM_USUARI_NOINIT_CODI.equals(nom);
-	}
-	public Set<EntitatUsuari> getEntitats() {
-		return entitats;
-	}
-
-	public long getVersion() {
-		return version;
 	}
 
 	public void update(
@@ -153,8 +164,36 @@ public class Usuari implements Serializable {
 	public void updateEmail(String email) {
 		this.email = email;
 	}
-	public void updateIdioma(String idioma) {
+//	public void updateIdioma(String idioma) {
+//		this.idioma = idioma;
+//	}
+	public void updateValorsPerDefecte(
+			String idioma,
+			Long procedimentId,
+			String serveiCodi,
+			String departament,
+			String finalitat) {
+
 		this.idioma = idioma;
+		this.procedimentId = procedimentId;
+        this.serveiCodi = serveiCodi;
+        this.departament = departament;
+        this.finalitat = finalitat;
+	}
+	public void updateValorsPerDefecte(
+			String idioma,
+			Long procedimentId,
+			String serveiCodi,
+			Long entitatId,
+			String departament,
+			String finalitat) {
+
+		this.idioma = idioma;
+		this.procedimentId = procedimentId;
+		this.serveiCodi = serveiCodi;
+		this.entitatId = entitatId;
+		this.departament = departament;
+		this.finalitat = finalitat;
 	}
 	public void moureEntitats(
 			Usuari usuariNou) {

@@ -3,17 +3,6 @@
  */
 package es.caib.pinbal.core.ejb;
 
-import java.util.List;
-
-import javax.annotation.security.RolesAllowed;
-import javax.ejb.Stateless;
-import javax.interceptor.Interceptors;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.ejb.interceptor.SpringBeanAutowiringInterceptor;
-
 import es.caib.pinbal.core.dto.EntitatUsuariDto;
 import es.caib.pinbal.core.dto.InformeUsuariDto;
 import es.caib.pinbal.core.dto.UsuariDto;
@@ -22,6 +11,15 @@ import es.caib.pinbal.core.service.exception.EntitatNotFoundException;
 import es.caib.pinbal.core.service.exception.EntitatUsuariNotFoundException;
 import es.caib.pinbal.core.service.exception.EntitatUsuariProtegitException;
 import es.caib.pinbal.core.service.exception.UsuariExternNotFoundException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.ejb.interceptor.SpringBeanAutowiringInterceptor;
+
+import javax.annotation.security.RolesAllowed;
+import javax.ejb.Stateless;
+import javax.interceptor.Interceptors;
+import java.util.List;
 
 /**
  * Implementació de UsuariService que empra una clase delegada per accedir a la
@@ -162,8 +160,14 @@ public class UsuariServiceBean implements UsuariService {
 
 	@Override
 	@RolesAllowed({"PBL_ADMIN", "PBL_REPRES", "PBL_AUDIT", "tothom"})
-	public UsuariDto updateUsuariActual(UsuariDto dto) {
-		return delegate.updateUsuariActual(dto);
+	public String getIdiomaUsuariActual() {
+		return delegate.getIdiomaUsuariActual();
+	}
+
+	@Override
+	@RolesAllowed({"PBL_ADMIN", "PBL_REPRES", "PBL_AUDIT", "tothom"})
+	public UsuariDto updateUsuariActual(UsuariDto dto, boolean updateEntitat) {
+		return delegate.updateUsuariActual(dto, updateEntitat);
 	}
 
     @Override
