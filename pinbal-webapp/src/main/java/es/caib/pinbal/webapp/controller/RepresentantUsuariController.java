@@ -199,7 +199,8 @@ public class RepresentantUsuariController extends BaseController {
 					eliminar = true;
 				} else if (command.getRol() == RolEnumDto.APLICACIO && !entitatUsuari.isAplicacio()) {
 					eliminar = true;
-				}
+				} else if (command.getRol() == RolEnumDto.AUDITOR && !entitatUsuari.isAuditor()) {
+					eliminar = true;}
 			}
 
 			if (command.getActiu() != null) {
@@ -255,7 +256,15 @@ public class RepresentantUsuariController extends BaseController {
 				Comparator<EntitatUsuariDto> compareByNif = new Comparator<EntitatUsuariDto>() {
 					@Override
 					public int compare(EntitatUsuariDto o1, EntitatUsuariDto o2) {
-						int result = o1.getUsuari().getNif().compareTo(o2.getUsuari().getNif());
+						String nif1 = (o1 != null && o1.getUsuari() != null) ? o1.getUsuari().getNif() : null;
+						String nif2 = (o2 != null && o2.getUsuari() != null) ? o2.getUsuari().getNif() : null;
+
+						int result = 0;
+						if (nif1 == null && nif2 == null) result = 0; // Both nifs are null, consider them as equal
+						else if (nif1 == null) result = 1; 	// Consider any object with null nif to be greater
+						else if (nif2 == null) result = -1; // Consider any object with non-null nif to be lower
+						else result = nif1.compareTo(nif2);
+
 						return Direction.DESC.equals(direccio) ? result : -result;
 					}
 				};

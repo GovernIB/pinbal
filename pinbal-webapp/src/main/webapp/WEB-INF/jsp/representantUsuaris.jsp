@@ -46,7 +46,7 @@
 	</style>
 <script>
 $(document).ready(function() {
-	$("option[value='AUDITOR']").remove();
+	// $("option[value='AUDITOR']").remove();
 	$('#netejar-filtre').click(function() {
 		$(':input', $('#form-filtre')).each (function() {
 			var type = this.type, tag = this.tagName.toLowerCase();
