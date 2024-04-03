@@ -25,6 +25,7 @@ import es.caib.pinbal.core.service.exception.ConsultaScspGeneracioException;
 import es.caib.pinbal.scsp.ResultatEnviamentPeticio;
 import es.caib.pinbal.scsp.ScspHelper;
 import es.caib.pinbal.scsp.Solicitud;
+import es.scsp.bean.common.Peticion;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -62,6 +63,7 @@ public class PeticioScspHelper {
 	private PeticioScspEstadistiquesHelper peticionsScspEstadistiquesHelper;
 	@Autowired
 	private IntegracioHelper integracioHelper;
+
 
 	/* Emmagatzema el comptador de peticions fetes dins linterval actual per a cada servei */
 	private Map<String, Integer> consultaServeiCount = new HashMap<String, Integer>();
@@ -586,6 +588,18 @@ public class PeticioScspHelper {
 			solicitud.setUnitatTramitadoraCodi(procediment.getOrganGestor().getCodi());
 		}
 		solicitud.setUnitatTramitadora(defaultUnitatTramitadora);
+	}
+
+	public String generarPeticioXml(Consulta consulta, ScspHelper scspHelper) throws Exception {
+		ServeiConfig serveiConfig = serveiConfigRepository.findByServei(consulta.getProcedimentServei().getServei());
+		Peticion peticio = scspHelper.crearPeticion(consulta.getScspPeticionId(),
+				Arrays.asList(convertirEnSolicitud(consulta)),
+				serveiConfig.isActivaGestioXsd(),
+				serveiConfig.isIniDadesEspecifiques(),
+				serveiCampRepository.findPathInicialitzablesByServei(consulta.getProcedimentServei().getServei()),
+				serveiConfig.isAddDadesEspecifiques());
+
+		return scspHelper.generaPeticioXml(peticio);
 	}
 
 }

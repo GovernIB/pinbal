@@ -715,7 +715,7 @@ public class ScspHelper {
 
 
 
-	private Peticion crearPeticion(
+	public Peticion crearPeticion(
 			String idPeticion,
 			List<Solicitud> solicituds,
 			boolean gestioXsdActiva,
@@ -753,6 +753,10 @@ public class ScspHelper {
 						peticion.getSolicitudes().getSolicitudTransmision().size()));
 		peticion.setAtributos(atributos);
 		return peticion;
+	}
+
+	public String generaPeticioXml(Peticion peticio) throws Exception {
+		return getXmlHelper().generatePeticioXml(peticio);
 	}
 
 	private SolicitudTransmision crearSolicitudTransmision(

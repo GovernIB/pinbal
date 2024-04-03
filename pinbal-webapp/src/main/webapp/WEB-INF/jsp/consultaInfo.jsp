@@ -89,7 +89,10 @@ $(document).ready(function () {
 		<div id="dadesPeticio" class="collapse in">
 			<c:if test="${consulta.hiHaPeticio}">
 				<c:set var="initModalXml">initModalXml(this);return false</c:set>
-				<a class="btn btn-default pull-right" href="<c:url value="/modal/consulta/${consulta.id}/xmlPeticio"/>" onclick="${initModalXml}"><i class="fas fa-info-circle"></i> <spring:message code="consulta.info.veure.xml"/></a>
+				<a class="btn btn-default pull-right" href="<c:url value="/modal/consulta/${consulta.id}/xmlPeticio"/>" onclick="${initModalXml}">
+					<i class="fas fa-info-circle"></i> <spring:message code="consulta.info.veure.xml"/>
+					<c:if test="${consulta.peticioGenerada}"><spring:message code="admin.consulta.info.veure.xml.autogenerat"/></c:if>
+				</a>
 			</c:if>
 			<p>
 				<spring:message code="consulta.info.consulta.enviada.dia"/>

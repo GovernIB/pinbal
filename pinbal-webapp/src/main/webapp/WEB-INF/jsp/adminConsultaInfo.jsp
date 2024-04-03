@@ -89,6 +89,7 @@ $(document).ready(function () {
 				<c:set var="initModalXml">initModalXml(this);return false</c:set>
 				<a class="btn btn-default pull-right" href="<c:url value="/modal/admin/consulta/${consulta.id}/xmlPeticio"/>" onclick="${initModalXml}">
 					<i class="fas fa-info-circle"></i> <spring:message code="admin.consulta.info.veure.xml"/>
+					<c:if test="${consulta.peticioGenerada}"><spring:message code="admin.consulta.info.veure.xml.autogenerat"/></c:if>
 				</a>
 			</c:if>
 			<p>

@@ -6,6 +6,7 @@ package es.caib.pinbal.scsp;
 import es.caib.pinbal.core.service.exception.ConsultaScspGeneracioException;
 import es.caib.pinbal.scsp.tree.Node;
 import es.caib.pinbal.scsp.tree.Tree;
+import es.scsp.bean.common.Peticion;
 import es.scsp.common.domain.core.Servicio;
 import org.apache.commons.io.FileUtils;
 import org.apache.ws.commons.schema.XmlSchema;
@@ -33,6 +34,10 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBElement;
+import javax.xml.bind.Marshaller;
+import javax.xml.namespace.QName;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -396,6 +401,64 @@ public class XmlHelper {
 		return path.toString();
 	}
 
+	public String generatePeticioXml(Peticion peticio) throws Exception {
+		// Convert the 'Peticion' object to XML using JAXB
+		JAXBContext context = JAXBContext.newInstance(Peticion.class);
+		Marshaller m = context.createMarshaller();
+		m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+
+		StringWriter sw = new StringWriter();
+//		JAXBElement<Peticion> jePeticio = new JAXBElement<Peticion>( new QName("http://intermediacion.redsara.es/scsp/esquemas/V3/peticion", "peticion"), Peticion.class, peticio);
+		JAXBElement<Peticion> jePeticio = new JAXBElement<Peticion>( new QName("", "Peticion"), Peticion.class, peticio);
+		m.marshal(jePeticio, sw);
+		return sw.toString();
+//		String peticioXml = removeXmlDeclaration(sw.toString());
+//
+//		// Create SOAP request
+//		MessageFactory messageFactory = MessageFactory.newInstance();
+//		SOAPMessage soapMessage = messageFactory.createMessage();
+//		SOAPPart soapPart = soapMessage.getSOAPPart();
+//
+//		// SOAP Envelope
+//		SOAPEnvelope envelope = soapPart.getEnvelope();
+//		envelope.addNamespaceDeclaration("xsd", "http://www.w3.org/2001/XMLSchema");
+//
+//		// SOAP Body
+//		SOAPBody soapBody = envelope.getBody();
+//		// Parse the peticioXml string to a DOM document
+//		DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance();
+//		builderFactory.setNamespaceAware(true);
+//		Document doc = builderFactory.newDocumentBuilder().parse(new ByteArrayInputStream(peticioXml.getBytes()));
+//
+//		// Add the node to SOAPBody
+//		soapBody.addDocument(doc);
+//		SOAPElement soapBodyElem = soapBody.addChildElement("Peticion", "", "http://www.w3.org/2001/XMLSchema");
+//		soapBodyElem.addTextNode(peticioXml);
+//
+//		// DOMSource for SOAPRequest
+//		StringWriter stringResult = new StringWriter();
+//		Transformer transformer = TransformerFactory.newInstance().newTransformer();
+//		transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+//		transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
+//		transformer.transform(new DOMSource(soapMessage.getSOAPPart()),new StreamResult(stringResult));
+//
+//		return stringResult.toString();
+	}
+
+//	private String removeXmlDeclaration(String xml) {
+//		if (xml.trim().startsWith("<?xml")) {
+//			int index = xml.indexOf("\n");
+//			if(index != -1) {
+//				return xml.substring(index + 1);
+//			} else {
+//				index = xml.indexOf(">");
+//				if(index != -1) {
+//					return xml.substring(index + 1);
+//				}
+//			}
+//		}
+//		return xml;
+//	}
 
 	@SuppressWarnings("unchecked")
 	private void afegirElement(

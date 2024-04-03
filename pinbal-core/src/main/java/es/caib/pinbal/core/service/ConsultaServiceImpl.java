@@ -1830,7 +1830,8 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 		}
 		return toConsultaDto(
 				null,
-				consulta);
+				consulta,
+				true);
 	}
 
 	@Transactional(readOnly = true)
@@ -1881,7 +1882,8 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 		}
 		return toConsultaDto(
 				null,
-				consulta);
+				consulta,
+				true);
 	}
 
 	@Transactional(readOnly = true)
@@ -2674,6 +2676,13 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 	private ConsultaDto toConsultaDto(
 			Long entitatId,
 			Consulta consulta) throws ScspException {
+		return toConsultaDto(entitatId, consulta, false);
+	}
+
+	private ConsultaDto toConsultaDto(
+			Long entitatId,
+			Consulta consulta,
+			boolean generaXmlPeticio) throws ScspException {
 		ConsultaDto resposta = dtoMappingHelper.getMapperFacade().map(
 				consulta,
 				ConsultaDto.class);
@@ -2699,6 +2708,14 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 				if (rpt.getPeticioXml() != null) {
 					resposta.setHiHaPeticio(true);
 					resposta.setPeticioXml(rpt.getPeticioXml());
+				} else if (generaXmlPeticio && !consulta.isMultiple()) {
+                    try {
+						resposta.setPeticioXml(peticioScspHelper.generarPeticioXml(consulta, getScspHelper()));
+						resposta.setHiHaPeticio(true);
+						resposta.setPeticioGenerada(true);
+                    } catch (Exception ex) {
+                        log.error("No s'ha pogut generar l'XML de la petició (peticionId=" + consulta.getScspPeticionId() + ", solicitudId=" + consulta.getScspSolicitudId() + ")", ex);
+                    }
 				}
 				if (!consulta.isMultiple()) {
 					resposta.setDadesEspecifiques(

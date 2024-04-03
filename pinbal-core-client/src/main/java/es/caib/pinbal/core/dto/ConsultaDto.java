@@ -103,6 +103,7 @@ public class ConsultaDto extends AbstractIdentificable<Long> implements Serializ
 	private String justificantError;
 
 	private boolean hiHaPeticio = false;
+	private boolean peticioGenerada = false;
 	private String peticioXml;
 
 	private boolean hiHaResposta = false;
