@@ -221,9 +221,9 @@
 				targets: [1],
 				width: "10%",
 				render: $.fn.dataTable.render.moment('x', 'DD/MM/YYYY HH:mm:ss', 'es' )
-			}, {
-				targets: [3, 5],
-				orderable: false,
+			// }, {
+			// 	targets: [3, 5],
+			// 	orderable: false,
 			}, {
 				targets: [6],
 				orderable: false,

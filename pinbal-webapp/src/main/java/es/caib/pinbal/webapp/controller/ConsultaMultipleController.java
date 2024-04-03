@@ -165,8 +165,10 @@ public class ConsultaMultipleController extends BaseController {
 		}else { 
 			List<ServerSideColumn> cols = serverSideRequest.getColumns();
 			cols.get(1).setData("createdDate");
-			cols.get(2).setData("procediment.nom");
-			cols.get(3).setData("serveiScsp.descripcio");
+//			cols.get(2).setData("procediment.nom");
+			cols.get(2).setData("procediment.codi");
+//			cols.get(3).setData("serveiScsp.descripcio");
+			cols.get(3).setData("serveiScsp.codi");
 
 			if (isHistoric(request)) {
 				page = historicConsultaService.findMultiplesByFiltrePaginatPerDelegat(
