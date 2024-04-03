@@ -24,6 +24,8 @@ import es.caib.pinbal.core.dto.InformeProcedimentServeiDto;
 import es.caib.pinbal.core.dto.InformeRepresentantFiltreDto;
 import es.caib.pinbal.core.dto.JustificantDto;
 import es.caib.pinbal.core.dto.ProcedimentDto;
+import es.caib.pinbal.core.dto.arxiu.ArxiuDetallDto;
+import es.caib.pinbal.core.helper.ArxiuHelper;
 import es.caib.pinbal.core.helper.ConfigHelper;
 import es.caib.pinbal.core.helper.DtoMappingHelper;
 import es.caib.pinbal.core.helper.JustificantHelper;
@@ -150,6 +152,30 @@ public class HistoricConsultaServiceImpl implements HistoricConsultaService, App
 
 	private Map<Long, Object> justificantLocks = new HashMap<Long, Object>();
 
+
+	@Override
+	public ArxiuDetallDto obtenirArxiuInfo(Long consultaId) {
+		try {
+			HistoricConsulta consulta = historicConsultaRepository.findOne(consultaId);
+			if (consulta == null) {
+				log.error("No s'ha trobat la consulta (id=" + consultaId + ")");
+				throw new ConsultaNotFoundException();
+			}
+			ArxiuDetallDto arxiuDetall = new ArxiuDetallDto();
+			boolean noMock = !"true".equalsIgnoreCase(System.getProperty("es.caib.pinbal.arxiu.document.consultar.mock"));
+			es.caib.plugins.arxiu.api.Document arxiuDocument = noMock ? pluginHelper.arxiuDocumentConsultar(
+					consulta.getScspPeticionId(),
+					consulta.getArxiuDocumentUuid(),
+					null,
+					false,
+					false) : pluginHelper.arxiuDocumentConsultarMock();
+			arxiuDetall = ArxiuHelper.getArxiuDetall(arxiuDocument);
+			return arxiuDetall;
+		} catch (Exception ex) {
+			log.error("Error consultat la informació del arxiu", ex);
+			return new ArxiuDetallDto();
+		}
+	}
 
 	@Override
 	public JustificantDto obtenirJustificant(

@@ -17,6 +17,7 @@ import es.caib.pinbal.core.dto.InformeGeneralEstatDto;
 import es.caib.pinbal.core.dto.InformeProcedimentServeiDto;
 import es.caib.pinbal.core.dto.InformeRepresentantFiltreDto;
 import es.caib.pinbal.core.dto.JustificantDto;
+import es.caib.pinbal.core.dto.arxiu.ArxiuDetallDto;
 import es.caib.pinbal.core.service.exception.ConsultaNotFoundException;
 import es.caib.pinbal.core.service.exception.EntitatNotFoundException;
 import es.caib.pinbal.core.service.exception.JustificantGeneracioException;
@@ -36,6 +37,9 @@ import java.util.Map;
  * @author Limit Tecnologies <limit@limit.es>
  */
 public interface HistoricConsultaService {
+
+	@PreAuthorize("hasRole('ROLE_DELEG') or hasRole('ROLE_ADMIN')")
+	ArxiuDetallDto obtenirArxiuInfo(Long consultaId);
 
 	/**
 	 * Obté el justificant de la consulta.

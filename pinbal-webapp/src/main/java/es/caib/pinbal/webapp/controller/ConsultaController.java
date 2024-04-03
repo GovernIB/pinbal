@@ -544,7 +544,9 @@ public class ConsultaController extends BaseController {
 	@RequestMapping(value = "/{consultaId}/justificant/arxiu/detall", method = RequestMethod.GET)
 	public String justificantArxiuDetall(HttpServletRequest request, HttpServletResponse response, @PathVariable Long consultaId, Model model) {
 
-		model.addAttribute("arxiuDetall", consultaService.obtenirArxiuInfo(consultaId));
+		model.addAttribute("arxiuDetall", isHistoric(request) ?
+				historicConsultaService.obtenirArxiuInfo(consultaId) :
+				consultaService.obtenirArxiuInfo(consultaId));
 		model.addAttribute("mostrarArxiuInfo", true);
 		return "contingutArxiu";
 	}

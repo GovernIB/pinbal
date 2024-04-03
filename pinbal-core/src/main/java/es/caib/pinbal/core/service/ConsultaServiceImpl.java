@@ -27,12 +27,8 @@ import es.caib.pinbal.core.dto.IntegracioAccioTipusEnumDto;
 import es.caib.pinbal.core.dto.JustificantDto;
 import es.caib.pinbal.core.dto.ProcedimentDto;
 import es.caib.pinbal.core.dto.RecobrimentSolicitudDto;
-import es.caib.pinbal.core.dto.arxiu.ArxiuConversions;
 import es.caib.pinbal.core.dto.arxiu.ArxiuDetallDto;
-import es.caib.pinbal.core.dto.arxiu.ArxiuEstatEnumDto;
-import es.caib.pinbal.core.dto.arxiu.ArxiuFirmaDto;
-import es.caib.pinbal.core.dto.arxiu.ArxiuFirmaPerfilEnumDto;
-import es.caib.pinbal.core.dto.arxiu.ArxiuFirmaTipusEnumDto;
+import es.caib.pinbal.core.helper.ArxiuHelper;
 import es.caib.pinbal.core.helper.ConfigHelper;
 import es.caib.pinbal.core.helper.DtoMappingHelper;
 import es.caib.pinbal.core.helper.EmailReportEstatHelper;
@@ -81,11 +77,8 @@ import es.caib.pinbal.scsp.Resposta;
 import es.caib.pinbal.scsp.ResultatEnviamentPeticio;
 import es.caib.pinbal.scsp.ScspHelper;
 import es.caib.pinbal.scsp.Solicitud;
-import es.caib.plugins.arxiu.api.DocumentEstat;
-import es.caib.plugins.arxiu.api.DocumentMetadades;
 import es.caib.plugins.arxiu.api.Expedient;
 import es.caib.plugins.arxiu.api.ExpedientEstat;
-import es.caib.plugins.arxiu.api.Firma;
 import es.scsp.common.domain.core.EmisorCertificado;
 import es.scsp.common.domain.core.Servicio;
 import lombok.extern.slf4j.Slf4j;
@@ -115,7 +108,6 @@ import org.springframework.transaction.support.TransactionTemplate;
 import javax.xml.ws.soap.SOAPFaultException;
 import java.io.ByteArrayOutputStream;
 import java.text.DateFormat;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -1171,230 +1163,13 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 					null,
 					false,
 					false) : pluginHelper.arxiuDocumentConsultarMock();
-			List<Firma> firmes = arxiuDocument.getFirmes();
-			arxiuDetall.setIdentificador(arxiuDocument.getIdentificador());
-			arxiuDetall.setNom(arxiuDocument.getNom());
-			DocumentMetadades metadades = arxiuDocument.getMetadades();
-			if (metadades != null) {
-				arxiuDetall.setEniVersio(metadades.getVersioNti());
-				arxiuDetall.setEniIdentificador(metadades.getIdentificador());
-				arxiuDetall.setSerieDocumental(metadades.getSerieDocumental());
-				arxiuDetall.setEniDataCaptura(metadades.getDataCaptura());
-
-				arxiuDetall.setEniOrigen(ArxiuConversions.getOrigen(metadades.getOrigen()));
-
-				arxiuDetall.setEniEstatElaboracio(ArxiuConversions.getEstatElaboracio(metadades.getEstatElaboracio()));
-
-//				if (metadades.getTipusDocumental() != null) {
-//					List<TipusDocumentalEntity> tipos = tipusDocumentalRepository.findByCodi(metadades.getTipusDocumental().toString());
-//					if (Utils.isNotEmpty(tipos)) {
-//						TipusDocumentalDto tipus = conversioTipusHelper.convertir(tipos.get(0), TipusDocumentalDto.class);
-//						arxiuDetall.setEniTipusDocumental(tipus.getCodiNom());
-//					} else {
-//						arxiuDetall.setEniTipusDocumental(metadades.getTipusDocumental().toString());
-//					}
-//				}
-//
-//				if (metadades.getTipusDocumental() == null && metadades.getTipusDocumentalAddicional() != null) {
-//					log.info("Tipus documental addicional: " + metadades.getTipusDocumentalAddicional());
-//					TipusDocumentalEntity tipusDocumental = tipusDocumentalRepository.findByCodiAndEntitat(
-//							metadades.getTipusDocumentalAddicional(),
-//							entitat);
-//
-//					if (tipusDocumental != null) {
-//						arxiuDetall.setEniTipusDocumentalAddicional(tipusDocumental.getNomEspanyol());
-//					} else {
-//						List<TipusDocumental> docsAddicionals = pluginHelper.documentTipusAddicionals();
-//
-//						for (TipusDocumental docAddicional : docsAddicionals) {
-//							if (docAddicional.getCodi().equals(metadades.getTipusDocumentalAddicional())) {
-//								arxiuDetall.setEniTipusDocumentalAddicional(docAddicional.getNom());
-//							}
-//						}
-//					}
-//
-//					arxiuDetall.setEniTipusDocumentalAddicional(tipusDocumental.getNomEspanyol());
-//				}
-
-//				arxiuDetall.setEniOrgans(getOrgansAmbNoms(metadades.getOrgans()));
-				if (metadades.getFormat() != null) {
-					arxiuDetall.setEniFormat(metadades.getFormat().toString());
-				}
-				arxiuDetall.setEniDocumentOrigenId(metadades.getIdentificadorOrigen());
-
-				final String fechaSelladoKey = "eni:fecha_sellado";
-				if (metadades.getMetadadesAddicionals() != null && metadades.getMetadadesAddicionals().containsKey(fechaSelladoKey)) {
-					try {
-						DateFormat dfIn= new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSX");
-						DateFormat dfOut = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
-						Date fechaSelladoValor = dfIn.parse(metadades.getMetadadesAddicionals().get(fechaSelladoKey).toString());
-						String fechaSelladoValorStr = dfOut.format(fechaSelladoValor);
-						metadades.getMetadadesAddicionals().put(fechaSelladoKey, fechaSelladoValorStr);
-					} catch (ParseException e) {
-						log.error(e.getMessage(), e);
-					}
-				}
-				arxiuDetall.setMetadadesAddicionals(metadades.getMetadadesAddicionals());
-
-				if (arxiuDocument.getContingut() != null) {
-					arxiuDetall.setContingutArxiuNom(arxiuDocument.getContingut().getArxiuNom());
-					arxiuDetall.setContingutTipusMime(arxiuDocument.getContingut().getTipusMime());
-				}
-			}
-			if (arxiuDocument.getEstat() != null) {
-				if (DocumentEstat.ESBORRANY.equals(arxiuDocument.getEstat())) {
-					arxiuDetall.setArxiuEstat(ArxiuEstatEnumDto.ESBORRANY);
-				} else if (DocumentEstat.DEFINITIU.equals(arxiuDocument.getEstat())) {
-					arxiuDetall.setArxiuEstat(ArxiuEstatEnumDto.DEFINITIU);
-				}
-			}
-
-			// ##################### CONTINGUT ##################################
-//			if (continguts != null) {
-//				List<ArxiuContingutDto> detallFills = new ArrayList<ArxiuContingutDto>();
-//				for (ContingutArxiu cont: continguts) {
-//					ArxiuContingutDto detallFill = new ArxiuContingutDto();
-//					detallFill.setIdentificador(
-//							cont.getIdentificador());
-//					detallFill.setNom(
-//							cont.getNom());
-//					if (cont.getTipus() != null) {
-//						switch (cont.getTipus()) {
-//							case EXPEDIENT:
-//								detallFill.setTipus(ArxiuContingutTipusEnumDto.EXPEDIENT);
-//								break;
-//							case DOCUMENT:
-//								detallFill.setTipus(ArxiuContingutTipusEnumDto.DOCUMENT);
-//								break;
-//							case CARPETA:
-//								detallFill.setTipus(ArxiuContingutTipusEnumDto.CARPETA);
-//								break;
-//						}
-//					}
-//					detallFills.add(detallFill);
-//				}
-//				arxiuDetall.setFills(detallFills);
-//			}
-			if (firmes != null) {
-				List<ArxiuFirmaDto> dtos = new ArrayList<>();
-				for (Firma firma : firmes) {
-					ArxiuFirmaDto dto = new ArxiuFirmaDto();
-
-					if (firma.getTipus() != null) {
-						switch (firma.getTipus()) {
-							case CSV:
-								dto.setTipus(ArxiuFirmaTipusEnumDto.CSV);
-								break;
-							case XADES_DET:
-								dto.setTipus(ArxiuFirmaTipusEnumDto.XADES_DET);
-								break;
-							case XADES_ENV:
-								dto.setTipus(ArxiuFirmaTipusEnumDto.XADES_ENV);
-								break;
-							case CADES_DET:
-								dto.setTipus(ArxiuFirmaTipusEnumDto.CADES_DET);
-								break;
-							case CADES_ATT:
-								dto.setTipus(ArxiuFirmaTipusEnumDto.CADES_ATT);
-								break;
-							case PADES:
-								dto.setTipus(ArxiuFirmaTipusEnumDto.PADES);
-								break;
-							case SMIME:
-								dto.setTipus(ArxiuFirmaTipusEnumDto.SMIME);
-								break;
-							case ODT:
-								dto.setTipus(ArxiuFirmaTipusEnumDto.ODT);
-								break;
-							case OOXML:
-								dto.setTipus(ArxiuFirmaTipusEnumDto.OOXML);
-								break;
-						}
-					}
-					if (firma.getPerfil() != null) {
-						switch (firma.getPerfil()) {
-							case BES:
-								dto.setPerfil(ArxiuFirmaPerfilEnumDto.BES);
-								break;
-							case EPES:
-								dto.setPerfil(ArxiuFirmaPerfilEnumDto.EPES);
-								break;
-							case LTV:
-								dto.setPerfil(ArxiuFirmaPerfilEnumDto.LTV);
-								break;
-							case T:
-								dto.setPerfil(ArxiuFirmaPerfilEnumDto.T);
-								break;
-							case C:
-								dto.setPerfil(ArxiuFirmaPerfilEnumDto.C);
-								break;
-							case X:
-								dto.setPerfil(ArxiuFirmaPerfilEnumDto.X);
-								break;
-							case XL:
-								dto.setPerfil(ArxiuFirmaPerfilEnumDto.XL);
-								break;
-							case A:
-								dto.setPerfil(ArxiuFirmaPerfilEnumDto.A);
-								break;
-							case BASIC:
-								dto.setPerfil(ArxiuFirmaPerfilEnumDto.BASIC);
-								break;
-							case Basic:
-								dto.setPerfil(ArxiuFirmaPerfilEnumDto.Basic);
-								break;
-							case BASELINE_B_LEVEL:
-								dto.setPerfil(ArxiuFirmaPerfilEnumDto.BASELINE_B_LEVEL);
-								break;
-							case BASELINE_LTA_LEVEL:
-								dto.setPerfil(ArxiuFirmaPerfilEnumDto.BASELINE_LTA_LEVEL);
-								break;
-							case BASELINE_LT_LEVEL:
-								dto.setPerfil(ArxiuFirmaPerfilEnumDto.BASELINE_LT_LEVEL);
-								break;
-							case BASELINE_T:
-								dto.setPerfil(ArxiuFirmaPerfilEnumDto.BASELINE_T);
-								break;
-							case BASELINE_T_LEVEL:
-								dto.setPerfil(ArxiuFirmaPerfilEnumDto.BASELINE_T_LEVEL);
-								break;
-							case LTA:
-								dto.setPerfil(ArxiuFirmaPerfilEnumDto.LTA);
-								break;
-						}
-					}
-					dto.setFitxerNom(firma.getFitxerNom());
-					if (ArxiuFirmaTipusEnumDto.CSV.equals(dto.getTipus())) {
-						dto.setContingut(firma.getContingut());
-					}
-					dto.setTipusMime(firma.getTipusMime());
-					dto.setCsvRegulacio(firma.getCsvRegulacio());
-					dtos.add(dto);
-				}
-				arxiuDetall.setFirmes(dtos);
-			}
+			arxiuDetall = ArxiuHelper.getArxiuDetall(arxiuDocument);
 			return arxiuDetall;
 		} catch (Exception ex) {
 			log.error("Error consultat la informació del arxiu", ex);
 			return new ArxiuDetallDto();
 		}
 	}
-
-//	private List<String> getOrgansAmbNoms(List<String> organsCodis) {
-//		List<String> organsCodisNoms = new ArrayList<>();
-//		if (Utils.isNotEmpty(organsCodis)) {
-//			for (String organCodi : organsCodis) {
-//				OrganGestorEntity organ = organGestorRepository.findByCodi(organCodi);
-//				if (organ != null) {
-//					organsCodisNoms.add(organ.getCodiINom());
-//				} else {
-//					organsCodisNoms.add(organCodi);
-//				}
-//			}
-//		}
-//
-//		return organsCodisNoms;
-//	}
 
 	@Override
 	public JustificantDto obtenirJustificant(Long id, boolean isAdmin) throws ConsultaNotFoundException, JustificantGeneracioException {

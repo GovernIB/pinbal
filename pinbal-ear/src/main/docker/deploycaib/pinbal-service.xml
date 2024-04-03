@@ -46,6 +46,8 @@ es.caib.pinbal.email.remitent=proves_limit@limit.es
 es.caib.pinbal.email.footer=PINBAL - Govern de les Illes Balears
 es.caib.pinbal.tasca.auto.email.report.estat.cron=0 0 22 * * *
 
+<!--es.caib.pinbal.arxiu.document.consultar.mock=true-->
+
 		</attribute>
 	</mbean>
 </server>

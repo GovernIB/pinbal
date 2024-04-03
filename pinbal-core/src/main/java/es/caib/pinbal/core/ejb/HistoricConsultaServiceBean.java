@@ -17,6 +17,7 @@ import es.caib.pinbal.core.dto.InformeGeneralEstatDto;
 import es.caib.pinbal.core.dto.InformeProcedimentServeiDto;
 import es.caib.pinbal.core.dto.InformeRepresentantFiltreDto;
 import es.caib.pinbal.core.dto.JustificantDto;
+import es.caib.pinbal.core.dto.arxiu.ArxiuDetallDto;
 import es.caib.pinbal.core.service.HistoricConsultaService;
 import es.caib.pinbal.core.service.exception.ConsultaNotFoundException;
 import es.caib.pinbal.core.service.exception.EntitatNotFoundException;
@@ -49,7 +50,13 @@ public class HistoricConsultaServiceBean implements HistoricConsultaService {
 	HistoricConsultaService delegate;
 
 
-	@Override
+    @Override
+	@RolesAllowed({"PBL_ADMIN", "tothom"})
+    public ArxiuDetallDto obtenirArxiuInfo(Long consultaId) {
+        return delegate.obtenirArxiuInfo(consultaId);
+    }
+
+    @Override
 	@RolesAllowed("tothom")
 	public JustificantDto obtenirJustificant(
 			Long id,

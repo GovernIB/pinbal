@@ -340,7 +340,9 @@ $('#dadesPeticio').on('shown', function () {
 			<h3>
 				<spring:message code="consulta.info.descarregar.justificant"/>
 				<a href="${consulta.id}/justificant" class="pull-right" style="color:black;margin-right: 5px;"><i class="far fa-file-pdf"></i></a>
-				<a id="justificantInfo" class="pull-right" data-target="#modal-justificant-arxiu-info" data-toggle="modal" style="cursor:pointer; padding-right: 10px; text-decoration: none;"><span class="label label-info" style="font-size: 11px;">ARXIU</span></a>
+				<c:if test="${not empty consulta.arxiuDocumentUuid}">
+					<a id="justificantInfo" class="pull-right" data-target="#modal-justificant-arxiu-info" data-toggle="modal" style="cursor:pointer; padding-right: 10px; text-decoration: none;"><span class="label label-info" style="font-size: 11px;">ARXIU</span></a>
+				</c:if>
 			</h3>
 		</div>
 	</c:if>

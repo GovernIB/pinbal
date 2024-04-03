@@ -100,6 +100,7 @@ public class ConsultaDto extends AbstractIdentificable<Long> implements Serializ
 	private JustificantEstat justificantEstat;
 	private boolean custodiat = false;
 	private String custodiaUrl;
+	private String arxiuDocumentUuid;
 	private String justificantError;
 
 	private boolean hiHaPeticio = false;
