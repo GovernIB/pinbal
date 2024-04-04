@@ -37,6 +37,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Implementació dels mètodes per al manteniment de la taula d'usuaris.
@@ -517,6 +518,19 @@ public class UsuariServiceImpl implements UsuariService {
 		UsuariDto dto = dtoMappingHelper.convertir(
 				usuari,
 				UsuariDto.class);
+		if (usuari.getEntitats() != null && usuari.getEntitats().size() > 1) {
+			Set<EntitatUsuari> entitats = usuari.getEntitats();
+			int entitatsUsuariActives = 0;
+			for (EntitatUsuari entitatUsuari : entitats) {
+                if (entitatUsuari.getEntitat().isActiva()) {
+					entitatsUsuariActives++;
+					if (entitatsUsuariActives > 1) {
+						dto.setHasMultiplesEntitats(entitatsUsuariActives > 1);
+						break;
+					}
+				}
+			}
+		}
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 		if (auth.getAuthorities() != null) {
 			String[] rols = new String[auth.getAuthorities().size()];

@@ -14,11 +14,13 @@ import es.caib.pinbal.core.model.EntitatServei;
 import es.caib.pinbal.core.model.EntitatUsuari;
 import es.caib.pinbal.core.model.OrganGestor;
 import es.caib.pinbal.core.model.ServeiConfig;
+import es.caib.pinbal.core.model.Usuari;
 import es.caib.pinbal.core.repository.EntitatRepository;
 import es.caib.pinbal.core.repository.EntitatServeiRepository;
 import es.caib.pinbal.core.repository.EntitatUsuariRepository;
 import es.caib.pinbal.core.repository.OrganismeCessionariRepository;
 import es.caib.pinbal.core.repository.ServeiConfigRepository;
+import es.caib.pinbal.core.repository.UsuariRepository;
 import es.caib.pinbal.core.service.exception.EntitatNotFoundException;
 import es.caib.pinbal.core.service.exception.EntitatServeiNotFoundException;
 import es.caib.pinbal.core.service.exception.ServeiNotFoundException;
@@ -61,6 +63,8 @@ public class EntitatServiceImpl implements EntitatService, ApplicationContextAwa
 	private EntitatUsuariRepository entitatUsuariRepository;
 	@Autowired
 	private ServeiConfigRepository serveiConfigRepository;
+	@Autowired
+	private UsuariRepository usuariRepository;
 	@Autowired
 	private OrganismeCessionariRepository organismeCessionariRepository;
 	@Autowired
@@ -301,7 +305,10 @@ public class EntitatServiceImpl implements EntitatService, ApplicationContextAwa
 			boolean trobada = false;
 			for (EntitatUsuari entitatUsuari: entitatUsuaris) {
 				if (entitatUsuari.getEntitat().getId() == entitat.getId()) {
-					trobada = true;
+					if (entitatUsuari.isActiu()) {
+						trobada = true;
+					}
+					break;
 				}
 			}
 			if (!trobada) {
@@ -336,6 +343,21 @@ public class EntitatServiceImpl implements EntitatService, ApplicationContextAwa
 					EntitatDto.class);
 		}
 		return new ArrayList<EntitatDto>();
+	}
+
+    @Override
+	@Transactional(readOnly = true)
+    public Long getEntitatIdPerDefecte(String usuariCodi) {
+		Usuari usuari = usuariRepository.findByCodi(usuariCodi);
+        return usuari != null ? usuari.getEntitatId() : null;
+    }
+
+	@Override
+	@Transactional(readOnly = true)
+	public List<EntitatDto> findActives() {
+		return dtoMappingHelper.getMapperFacade().mapAsList(
+				entitatRepository.findByActivaTrue(),
+				EntitatDto.class);
 	}
 
 	/**

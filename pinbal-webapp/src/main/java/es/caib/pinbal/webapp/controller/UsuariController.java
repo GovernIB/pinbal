@@ -79,10 +79,10 @@ public class UsuariController extends BaseController{
 			return "usuariForm";
 		}
 		boolean updateEntitat = false;
-		if (RolHelper.isRolActualAdministrador(request) || RolHelper.isRolActualSuperauditor(request)) {
+		UsuariDto usuari = usuariService.getUsuariActual();
+		if (RolHelper.isRolActualAdministrador(request) || RolHelper.isRolActualSuperauditor(request) || usuari.isHasMultiplesEntitats()) {
 			updateEntitat = true;
 		} else {
-			UsuariDto usuari = usuariService.getUsuariActual();
 			updateEntitat = !usuari.getProcedimentId().equals(command.getProcedimentId()) || !usuari.getServeiCodi().equals(command.getServeiCodi());
 			if (updateEntitat) {
 				EntitatDto entitatActual = EntitatHelper.getEntitatActual(request, entitatService);
@@ -105,10 +105,11 @@ public class UsuariController extends BaseController{
 		EntitatDto entitatActual = EntitatHelper.getEntitatActual(request, entitatService);
 		try {
 			if (RolHelper.isRolActualAdministrador(request) || RolHelper.isRolActualSuperauditor(request)) {
-				model.addAttribute("entitats", EntitatHelper.getEntitats(request, entitatService, true));
+				model.addAttribute("entitats", entitatService.findActives());
 				model.addAttribute("procediments", procedimentService.findAmbEntitat(entitatId != null ? entitatId : entitatActual.getId()));
 				model.addAttribute("serveis", serveiService.findAmbEntitat(entitatId != null ? entitatId : entitatActual.getId()));
 			} else {
+				model.addAttribute("entitats", EntitatHelper.getEntitats(request, entitatService, true));
 				model.addAttribute("procediments", procedimentService.findAmbEntitat(entitatActual.getId()));
 				model.addAttribute("serveis", serveiService.findAmbEntitat(entitatActual.getId()));
 			}

@@ -29,6 +29,7 @@ public class UsuariDto extends AbstractIdentificable<Long> implements Serializab
 	private Long entitatId;
 	private String departament;
 	private String finalitat;
+	private boolean hasMultiplesEntitats;
 
 	public UsuariDto() {
 	}

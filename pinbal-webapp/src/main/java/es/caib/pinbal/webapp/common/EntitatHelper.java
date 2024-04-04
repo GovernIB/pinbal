@@ -3,13 +3,6 @@
  */
 package es.caib.pinbal.webapp.common;
 
-import java.util.List;
-
-import javax.servlet.http.HttpServletRequest;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import es.caib.pinbal.core.dto.EntitatDto;
 import es.caib.pinbal.core.dto.EntitatUsuariDto;
 import es.caib.pinbal.core.service.EntitatService;
@@ -18,6 +11,11 @@ import es.caib.pinbal.webapp.controller.AuditorUsuariController;
 import es.caib.pinbal.webapp.controller.ConsultaController;
 import es.caib.pinbal.webapp.controller.ProcedimentController;
 import es.caib.pinbal.webapp.controller.RepresentantUsuariController;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 /**
  * Utilitat per a gestionar les entitats de l'usuari actual.
@@ -43,8 +41,7 @@ public class EntitatHelper {
 			HttpServletRequest request,
 			EntitatService entitatService,
 			boolean refrescarSiNoExisteixen) {
-		List<EntitatDto> entitats = (List<EntitatDto>)request.getSession().getAttribute(
-				SESSION_ATTRIBUTE_ENTITATS);
+		List<EntitatDto> entitats = (List<EntitatDto>)request.getSession().getAttribute(SESSION_ATTRIBUTE_ENTITATS);
 		if (request.getUserPrincipal() != null) {
 			String usuari = request.getUserPrincipal().getName();
 			if (entitats == null && refrescarSiNoExisteixen) {
@@ -53,10 +50,20 @@ public class EntitatHelper {
 				request.getSession().setAttribute(
 						SESSION_ATTRIBUTE_ENTITATS,
 						entitats);
+				Long entitatIdPerDefecte = entitatService.getEntitatIdPerDefecte(usuari);
+				int indexEntitat = 0;
+				if (entitats != null && !entitats.isEmpty() && entitatIdPerDefecte != null) {
+					for (int i = 0; i < entitats.size(); i++) {
+                        if (entitatIdPerDefecte.equals(entitats.get(i).getId())) {
+                            indexEntitat = i;
+                            break;
+                        }
+                    }
+				}
 				canviEntitatActual(
 						request,
 						entitatService,
-						0);
+						indexEntitat);
 			}
 		}
 		return entitats;

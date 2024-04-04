@@ -3,17 +3,16 @@
  */
 package es.caib.pinbal.core.repository;
 
-import java.util.List;
-
+import es.caib.pinbal.core.model.Entitat;
+import es.caib.pinbal.core.model.Entitat.EntitatTipus;
+import es.caib.pinbal.core.model.EntitatUsuari;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import es.caib.pinbal.core.model.Entitat;
-import es.caib.pinbal.core.model.Entitat.EntitatTipus;
-import es.caib.pinbal.core.model.EntitatUsuari;
+import java.util.List;
 
 /**
  * Especifica els mètodes que s'han d'emprar per obtenir i modificar la
@@ -81,4 +80,6 @@ public interface EntitatRepository extends JpaRepository<Entitat, Long> {
 			@Param("esNullUnitatArrel") boolean esNullUnitatArrel,
 			@Param("unitatArrel") String unitatArrel,
 			Pageable pageable);
+
+    List<Entitat> findByActivaTrue();
 }

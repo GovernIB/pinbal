@@ -133,7 +133,19 @@ public class EntitatServiceBean implements EntitatService {
 		return delegate.findDisponiblesPerRedireccionsBus(serveiCodi);
 	}
 
-	@Override
+    @Override
+	@RolesAllowed({ "PBL_ADMIN", "PBL_REPRES", "PBL_AUDIT", "PBL_SUPERAUD", "tothom" })
+    public Long getEntitatIdPerDefecte(String usuari) {
+        return delegate.getEntitatIdPerDefecte(usuari);
+    }
+
+    @Override
+	@RolesAllowed({ "PBL_ADMIN", "PBL_SUPERAUD" })
+    public List<EntitatDto> findActives() {
+        return delegate.findActives();
+    }
+
+    @Override
 	@RolesAllowed({"PBL_ADMIN", "PBL_REPRES"})
 	public List<OrganGestorDto> getOrgansGestors(Long id) {
 		return delegate.getOrgansGestors(id);

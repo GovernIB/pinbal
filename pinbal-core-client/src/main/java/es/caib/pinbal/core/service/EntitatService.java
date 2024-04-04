@@ -210,4 +210,9 @@ public interface EntitatService {
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public List<EntitatDto> findDisponiblesPerRedireccionsBus(String serveiCodi) throws ServeiNotFoundException;
 
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_REPRES') or hasRole('ROLE_DELEG') or hasRole('ROLE_AUDIT') or hasRole('ROLE_SUPERAUD')")
+    public Long getEntitatIdPerDefecte(String usuari);
+
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_SUPERAUD')")
+	public List<EntitatDto> findActives();
 }

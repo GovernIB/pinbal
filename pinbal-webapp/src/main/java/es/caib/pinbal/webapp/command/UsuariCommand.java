@@ -34,6 +34,7 @@ public class UsuariCommand implements Serializable {
 	private String departament;
 	@Size(max = 250)
 	private String finalitat;
+	private boolean hasMultiplesEntitats;
 
 
 	public static UsuariCommand asCommand(UsuariDto dto) {

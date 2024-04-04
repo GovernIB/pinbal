@@ -70,8 +70,21 @@
 		<pbl:inputText name="email" textKey="usuari.form.camp.email" labelSize="2" disabled="true"/>
 		<pbl:inputSelect name="rols" textKey="usuari.form.camp.rols" optionItems="${usuariCommand.rols}" labelSize="2" disabled="true"/>
 		<pbl:inputSelect name="idioma" optionItems="${idiomaEnumOptions}" textKey="usuari.form.camp.idioma" optionValueAttribute="value" optionTextKeyAttribute="text" labelSize="2" disabled="false"/>
+		<c:if test="${not isRolActualAdministrador and not isRolActualSuperauditor and usuariCommand.hasMultiplesEntitats}">
+			<fieldset>
+				<legend><spring:message code="usuari.form.valors.defecte"/>: <spring:message code="usuari.form.valors.defecte.entitat"/></legend>
+				<pbl:inputSelect name="entitatId"
+								 optionItems="${entitats}"
+								 optionValueAttribute="id"
+								 optionTextAttribute="nom"
+								 textKey="usuari.form.camp.entitat"
+								 emptyOption="true"
+								 labelSize="2"
+								 optionMinimumResultsForSearch="0"/>
+			</fieldset>
+		</c:if>
 		<fieldset>
-			<legend>Valors per defecte: Filtres consultes realitzades</legend>
+			<legend><spring:message code="usuari.form.valors.defecte"/>: <spring:message code="usuari.form.valors.defecte.consulta.filtre"/></legend>
 			<c:if test="${isRolActualAdministrador or isRolActualSuperauditor}">
 				<pbl:inputSelect name="entitatId"
 								 optionItems="${entitats}"
@@ -87,6 +100,7 @@
 							 optionValueAttribute="id"
 							 optionTextAttribute="codiNom"
 							 textKey="usuari.form.camp.procediment"
+							 placeholderKey="consulta.list.filtre.procediment"
 							 emptyOption="true"
 							 labelSize="2"
 							 optionMinimumResultsForSearch="0"/>
@@ -95,12 +109,13 @@
 							 optionValueAttribute="codi"
 							 optionTextAttribute="codiNom"
 							 textKey="usuari.form.camp.servei"
+							 placeholderKey="consulta.list.filtre.servei"
 							 emptyOption="true"
 							 labelSize="2"
 							 optionMinimumResultsForSearch="0"/>
 		</fieldset>
 	<fieldset>
-		<legend>Valors per defecte: Formulari nova consulta</legend>
+		<legend><spring:message code="usuari.form.valors.defecte"/>: <spring:message code="usuari.form.valors.defecte.consulta.form"/></legend>
 		<pbl:inputText name="departament" textKey="consulta.form.camp.departament" labelSize="2"/>
 		<pbl:inputTextarea name="finalitat" textKey="consulta.form.camp.finalitat" labelSize="2"/>
 	</fieldset>
