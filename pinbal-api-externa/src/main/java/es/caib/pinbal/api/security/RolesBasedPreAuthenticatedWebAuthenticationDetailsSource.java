@@ -3,8 +3,7 @@
  */
 package es.caib.pinbal.api.security;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.authority.mapping.MappableAttributesRetriever;
 import org.springframework.security.web.authentication.preauth.j2ee.J2eeBasedPreAuthenticatedWebAuthenticationDetailsSource;
 
@@ -19,6 +18,7 @@ import java.util.Set;
  * 
  * @author Limit Tecnologies <limit@limit.es>
  */
+@Slf4j
 public class RolesBasedPreAuthenticatedWebAuthenticationDetailsSource extends J2eeBasedPreAuthenticatedWebAuthenticationDetailsSource {
 
 	MappableAttributesRetriever mappableAttributesRetriever;
@@ -36,7 +36,7 @@ public class RolesBasedPreAuthenticatedWebAuthenticationDetailsSource extends J2
 				j2eeUserRolesList.add(role);
 			}
 		}
-		LOGGER.debug(
+		log.debug(
 				"Rols SEYCON de l'usuari " + request.getUserPrincipal().getName() + ": " +
 				Arrays.toString(j2eeUserRolesList.toArray(new String[j2eeUserRolesList.size()])));
 		return j2eeUserRolesList;
@@ -48,6 +48,6 @@ public class RolesBasedPreAuthenticatedWebAuthenticationDetailsSource extends J2
 		this.j2eeMappableRoles = new HashSet<String>();
 	}
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(RolesBasedPreAuthenticatedWebAuthenticationDetailsSource.class);
+//	private static final Logger LOGGER = LoggerFactory.getLogger(RolesBasedPreAuthenticatedWebAuthenticationDetailsSource.class);
 
 }

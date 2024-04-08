@@ -4,8 +4,7 @@
 package es.caib.pinbal.api.security;
 
 import es.caib.pinbal.core.service.ServeiService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -19,6 +18,7 @@ import java.util.Set;
  * 
  * @author Limit Tecnologies <limit@limit.es>
  */
+@Slf4j
 public class RolesBasedMappableAttributesRetriever implements MappableAttributesRetriever, ApplicationContextAware {
 
 	private ApplicationContext applicationContext;
@@ -53,21 +53,21 @@ public class RolesBasedMappableAttributesRetriever implements MappableAttributes
 
 
 	private void refrescarMappableAttributes() {
-		LOGGER.debug("Refrescant el llistat de rols per mapejar");
+		log.debug("Refrescant el llistat de rols per mapejar");
 		mappableAttributes.clear();
 		if (defaultMappableAttributes != null)
 			mappableAttributes.addAll(defaultMappableAttributes);
 		if (serveiService == null) {
-			LOGGER.debug("El serveiService és null. Obtenint el serveiService mitjançant l'applicationContext");
+			log.debug("El serveiService és null. Obtenint el serveiService mitjançant l'applicationContext");
 			serveiService = applicationContext.getBean(ServeiService.class);
 		}
 		if (serveiService != null) {
 			mappableAttributes.addAll(serveiService.getRolsConfigurats());
 		} else {
-			LOGGER.error("No s'han pogut obtenir els rols addicionals del serveiService: El service és null");
+			log.error("No s'han pogut obtenir els rols addicionals del serveiService: El service és null");
 		}
 	}
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(RolesBasedMappableAttributesRetriever.class);
+//	private static final Logger LOGGER = LoggerFactory.getLogger(RolesBasedMappableAttributesRetriever.class);
 
 }

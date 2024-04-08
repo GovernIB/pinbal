@@ -5,7 +5,7 @@
     <parent>
         <artifactId>pinbal</artifactId>
         <groupId>es.caib.pinbal</groupId>
-        <version>1.4.39</version>
+        <version>1.4.40</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -192,7 +192,7 @@
             <plugin>
                 <artifactId>maven-war-plugin</artifactId>
                 <configuration>
-                    <warName>pinbal</warName>
+                    <warName>pinbal-api-interna</warName>
                     <webResources>
                         <webResource>
                             <directory>${basedir}/src/main/webapp/WEB-INF</directory>
