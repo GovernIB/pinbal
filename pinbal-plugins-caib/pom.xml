@@ -168,6 +168,12 @@
 			<groupId>org.fundaciobit.pluginsib.signatureserver</groupId>
 			<artifactId>pluginsib-signatureserver-portafib</artifactId>
 			<version>3.0.0</version>
+			<exclusions>
+				<exclusion>
+					<groupId>org.fundaciobit.genapp</groupId>
+					<artifactId>genapp-ws</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 <!--	    <dependency>-->
 <!--	      <groupId>log4j</groupId>-->
