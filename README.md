@@ -10,15 +10,15 @@ La Plataforma d'Interoperabilitat de les Illes Balears (PINBAL) és una solució
 * [Manual d'integració](https://github.com/GovernIB/pinbal/raw/pinbal-1.4/doc/pdf/10_pinbal_integracio.pdf)
 * [Manual d'integració amb API REST](https://github.com/GovernIB/pinbal/raw/pinbal-1.4/doc/pdf/11_pinbal_integracio_rest.pdf)
 ## <a name="versions"></a> Versions
-- <a name="v_estable"></a> Versió Estable: __pinbal-1.4.38__ (tag [PINBAL 1.4.38](https://github.com/GovernIB/pinbal/releases/tag/v1.4.38))
-- <a name="b_activa"></a> Versió Desenvolupament: __pinbal-1.4.39__ (branca [pinbal-dev](https://github.com/GovernIB/pinbal/tree/pinbal-dev))  
+- <a name="v_estable"></a> Versió Estable: __pinbal-1.4.40__ (tag [PINBAL 1.4.38](https://github.com/GovernIB/pinbal/releases/tag/v1.4.40))
+- <a name="b_activa"></a> Versió Desenvolupament: __pinbal-1.4.41__ (branca [pinbal-dev](https://github.com/GovernIB/pinbal/tree/pinbal-dev))  
  
-- Versió actual del client REST: __1.4.38__ ([pinbal-client-1.4.38.jar](https://github.com/GovernIB/maven/raw/gh-pages/maven/es/caib/pinbal/pinbal-client/1.4.38/pinbal-client-1.4.38.jar))  
+- Versió actual del client REST: __1.4.40__ ([pinbal-client-1.4.40.jar](https://github.com/GovernIB/maven/raw/gh-pages/maven/es/caib/pinbal/pinbal-client/1.4.40/pinbal-client-1.4.40.jar))  
     ```
     <dependency>  
         <groupId>es.caib.pinbal</groupId>  
         <artifactId>pinbal-client</artifactId>  
-        <version>1.4.38</version>  
+        <version>1.4.40</version>  
     </dependency>
     ```
 - Configuració del client REST:
