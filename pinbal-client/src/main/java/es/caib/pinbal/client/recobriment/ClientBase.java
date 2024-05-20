@@ -3,20 +3,9 @@
  */
 package es.caib.pinbal.client.recobriment;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.ws.rs.core.MediaType;
-
-import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.ClientHandlerException;
+import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.UniformInterfaceException;
-
 import es.caib.pinbal.client.recobriment.model.ScspAtributos;
 import es.caib.pinbal.client.recobriment.model.ScspConfirmacionPeticion;
 import es.caib.pinbal.client.recobriment.model.ScspDatosGenericos;
@@ -29,6 +18,15 @@ import es.caib.pinbal.client.recobriment.model.ScspSolicitud;
 import es.caib.pinbal.client.recobriment.model.SolicitudBase;
 import lombok.Getter;
 import lombok.Setter;
+
+import javax.ws.rs.core.MediaType;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Client amb la lògica bàsica per a accedir al servei de recobriment.
@@ -96,7 +94,7 @@ public abstract class ClientBase extends es.caib.pinbal.client.comu.ClientBase {
 		try {
 			ScspPeticion peticion = toScspPeticion(serveiCodi, solicituds);
 			ScspConfirmacionPeticion response = restPeticioPost(
-					"peticionSincrona",
+					"peticionAsincrona",
 					peticion,
 					ScspConfirmacionPeticion.class,
 					MediaType.APPLICATION_JSON_TYPE);

@@ -1344,9 +1344,9 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 				filtre,
 				pageable,
 				false,
-				true,
-				false,
-				false);
+				true);
+//				false,
+//				false);
 	}
 
 	@Transactional(readOnly = true)
@@ -1369,9 +1369,9 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 				filtre,
 				pageable,
 				true,
-				true,
-				false,
-				false);
+				true);
+//				false,
+//				false);
 	}
 
 	@Transactional(readOnly = true)
@@ -1401,9 +1401,9 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 				filtre,
 				pageable,
 				false,
-				false,
-				false,
 				false);
+//				false,
+//				false);
 	}
 
 	@Transactional(readOnly = true)
@@ -1430,9 +1430,9 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 				filtre,
 				new PageRequest(0, Integer.MAX_VALUE, new Sort(new Sort.Order(Sort.Direction.DESC, "scspPeticionId"))),
 				false,
-				false,
-				false,
 				false);
+//				false,
+//				false);
 
 		return page.getContent();
     }
@@ -1456,9 +1456,9 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 				filtre,
 				pageable,
 				false,
-				false,
-				false,
 				false);
+//				false,
+//				false);
 	}
 
 	@Transactional(readOnly = true)
@@ -2518,9 +2518,9 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 			ConsultaFiltreDto filtre,
 			Pageable pageable,
 			boolean multiple,
-			boolean nomesSensePare,
-			boolean consultaHihaPeticio,
-			boolean consultaTerData) throws EntitatNotFoundException {
+			boolean nomesSensePare) {
+//			boolean consultaHihaPeticio,
+//			boolean consultaTerData) throws EntitatNotFoundException {
 		copiarPropertiesToDb();
 		log.debug("Consulta de peticions findByEntitatIUsuariFiltrePaginat (" +
 				"entitat=" + entitat.getCodi() + ", " +
@@ -2592,30 +2592,23 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 							consulta.getServeiCodi()));
 		}
 		log.debug("[S_CONS] Consulta de descripcions de serveis (" + (System.currentTimeMillis() - t0) + " ms)");*/
-		t0 = System.currentTimeMillis();
-		if (consultaHihaPeticio) {
-			for (ConsultaDto consulta: paginaConsultesDto.getContent()) {
-				try {
-					consulta.setHiHaPeticio(
-							getScspHelper().isPeticionEnviada(
-									consulta.getScspPeticionId()));
-				} catch (es.scsp.common.exceptions.ScspException ex) {
-					log.error("No s'han pogut consultar l'enviament de la petició (id=" + consulta.getScspPeticionId() + ")", ex);
-					consulta.setHiHaPeticio(false);
-				}
-			}
-		}
-		if (consultaHihaPeticio) {
-			for (ConsultaDto consulta: paginaConsultesDto.getContent()) {
-				try {
-					consulta.setTerData(getScspHelper().getTerPeticion(
-							consulta.getScspPeticionId()));
-				} catch (es.scsp.common.exceptions.ScspException ex) {
-					log.error("No s'han pogut consultar el TER de la petició (id=" + consulta.getScspPeticionId() + ")", ex);
-				}
-			}
-		}
-		log.debug("[S_CONS] Consulta de peticions addicionals (" + (System.currentTimeMillis() - t0) + " ms)");
+//		t0 = System.currentTimeMillis();
+//		if (consultaHihaPeticio) {
+//			for (ConsultaDto consulta: paginaConsultesDto.getContent()) {
+//				try {
+//					consulta.setHiHaPeticio(getScspHelper().isPeticionEnviada(consulta.getScspPeticionId()));
+//				} catch (es.scsp.common.exceptions.ScspException ex) {
+//					log.error("No s'han pogut consultar l'enviament de la petició (id=" + consulta.getScspPeticionId() + ")", ex);
+//					consulta.setHiHaPeticio(false);
+//				}
+//				try {
+//					consulta.setTerData(getScspHelper().getTerPeticion(consulta.getScspPeticionId()));
+//				} catch (es.scsp.common.exceptions.ScspException ex) {
+//					log.error("No s'han pogut consultar el TER de la petició (id=" + consulta.getScspPeticionId() + ")", ex);
+//				}
+//			}
+//		}
+//		log.debug("[S_CONS] Consulta de peticions addicionals (" + (System.currentTimeMillis() - t0) + " ms)");
 		return  paginaConsultesDto;
 	}
 
