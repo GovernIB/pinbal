@@ -50,7 +50,7 @@ public class UnitatsOrganitzativesPluginDir3 implements UnitatsOrganitzativesPlu
 
 	@Override
 	public Map<String, NodeDir3> organigrama(String codiEntitat) throws SistemaExternException {
-		Map<String, NodeDir3> organigrama = new HashMap<String, NodeDir3>();
+		Map<String, NodeDir3> organigrama = new HashMap<>();
 		try {
 			URL url = new URL(getServiceUrl() + SERVEI_ORGANIGRAMA + "?codigo=" + codiEntitat);
 			logger.debug("URL: " + url);
@@ -111,7 +111,7 @@ public class UnitatsOrganitzativesPluginDir3 implements UnitatsOrganitzativesPlu
 	}
 
 	public UnitatOrganitzativa findAmbCodi(String codi, Date dataActualitzacio, Date dataSincronitzacio) throws SistemaExternException {
-		DateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+//		DateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 		try {
 			UnidadTF unidad = null;
 			URL url = new URL(getServiceUrl() + SERVEI_UNITATS + "obtenerUnidad?codigo=" + codi +
@@ -140,7 +140,7 @@ public class UnitatsOrganitzativesPluginDir3 implements UnitatsOrganitzativesPlu
 			Long provincia,
 			String municipi) throws SistemaExternException {
 
-		List<UnitatOrganitzativa> unitats = new ArrayList();
+		List<UnitatOrganitzativa> unitats = new ArrayList<>();
 		List<NodeDir3> unidades = new ArrayList<>();
 		try {
 			URL url = new URL(getServiceUrl() + SERVEI_CERCA + "organismos?"
@@ -227,15 +227,13 @@ public class UnitatsOrganitzativesPluginDir3 implements UnitatsOrganitzativesPlu
 		httpConnection.setRequestProperty("Authorization", createBasicAuthHeaderValue());
 		httpConnection.setDoInput(true);
 		httpConnection.setDoOutput(true);
-		byte[] response = IOUtils.toByteArray(httpConnection.getInputStream());
-		return response;
+		return IOUtils.toByteArray(httpConnection.getInputStream());
 	}
 
 	private String createBasicAuthHeaderValue() {
 		String auth = getServiceUsername() + ":" + getServicePassword();
 		byte[] encodedAuth = Base64.encodeBase64(auth.getBytes(StandardCharsets.UTF_8));
-		String authHeaderValue = "Basic " + new String(encodedAuth);
-		return authHeaderValue;
+		return "Basic " + new String(encodedAuth);
 	}
 
 	private String getServiceUrl() {

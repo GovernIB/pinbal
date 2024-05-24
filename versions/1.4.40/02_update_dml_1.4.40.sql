@@ -1,0 +1,1 @@
+INSERT INTO pbl_config (key, description_key, group_code, position, source_property, type_code, value) VALUES ('es.caib.pinbal.justificant.recobriment.generar', 'propietat.justificant.recobriment.generar', 'JUSTIFICANT', '3', 'DATABASE', 'BOOL', 'true');
