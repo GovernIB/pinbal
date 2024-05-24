@@ -82,7 +82,7 @@
 <script id="template-actions" type="x-tmpl-mustache">
 	<div class="btn-group">
 		<a class="btn btn-primary dropdown-toggle" data-toggle="dropdown" href="#"><i class="fas fa-cog"></i>&nbsp;<spring:message code="comu.accions"/>&nbsp;<span class="caret"></span></a>
-		<ul class="dropdown-menu">
+		<ul class="dropdown-menu dropdown-menu-right">
 			<li><a href="<c:url value="/scsp/paramconf/{{ nom }}"/>" data-toggle="modal" data-refresh-pagina="true"><i class="fas fa-pen"></i>&nbsp;<spring:message code="comu.boto.modificar"/></a></li>
 			<li><a href="<c:url value="/scsp/paramconf/{{ nom }}/delete"/>" class="confirm-esborrar"><i class="fas fa-trash-alt"></i>&nbsp;<spring:message code="comu.boto.esborrar"/></a></li>
 		</ul>

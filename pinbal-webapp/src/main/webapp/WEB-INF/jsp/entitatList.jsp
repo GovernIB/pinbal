@@ -194,7 +194,7 @@ $(document).ready(function() {
 <script id="template-accions" type="x-tmpl-mustache">
 	<div class="btn-group">
 		<a class="btn btn-primary dropdown-toggle" data-toggle="dropdown"><i class="fas fa-cog"></i>&nbsp;<spring:message code="comu.accions"/>&nbsp;<span class="caret"></span></a>
-		<ul class="dropdown-menu">
+		<ul class="dropdown-menu dropdown-menu-right">
 			<li>
 				{{#activa}}
 				<a href="entitat/{{ id }}/disable"><i class="fas fa-times"></i>&nbsp;<spring:message code="comu.boto.desactivar"/></a>

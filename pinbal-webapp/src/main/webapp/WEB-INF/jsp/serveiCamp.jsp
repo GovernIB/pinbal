@@ -604,7 +604,7 @@ $(function() {
 										<td>
 											<div class="dropdown">
 												<button class="btn btn-primary" data-toggle="dropdown"><span class="fa fa-cog"></span>&nbsp;<spring:message code="comu.accions"/>&nbsp;<span class="caret"></span></button>
-												<ul class="dropdown-menu">
+												<ul class="dropdown-menu dropdown-menu-right">
 													<li><a data-toggle="modal" data-maximized="true" data-refresh-pagina="true" href="<c:url value="/servei/${servei.codiUrlEncoded}/regla/${regla.id}"/>"><span class="fas fa-pencil-alt"></span>&nbsp;<spring:message code="comu.boto.modificar"/></a></li>
 													<li><a href="<c:url value="/servei/${servei.codiUrlEncoded}/regla/${regla.id}/delete"/>" data-confirm="<spring:message code="servei.regla.confirmacio.esborrar"/>"><span class="far fa-trash-alt"></span>&nbsp;<spring:message code="comu.boto.esborrar"/></a></li>
 												</ul>
