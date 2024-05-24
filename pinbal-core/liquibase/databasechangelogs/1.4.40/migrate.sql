@@ -14,3 +14,5 @@ ALTER TABLE pbl_usuari ADD entitat_id NUMBER(38, 0);
 ALTER TABLE pbl_usuari ADD departament VARCHAR2(250 CHAR);
 ALTER TABLE pbl_usuari ADD finalitat VARCHAR2(250 CHAR);
 
+INSERT INTO pbl_config (key, description_key, group_code, position, source_property, type_code, value) VALUES ('es.caib.pinbal.justificant.recobriment.generar', 'propietat.justificant.recobriment.generar', 'JUSTIFICANT', '3', 'DATABASE', 'BOOL', 'true');
+

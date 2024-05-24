@@ -37,3 +37,28 @@ databaseChangeLog:
               - column:
                   name: finalitat
                   type: VARCHAR(250 ${varcharUnit})
+        - insert:
+            tableName: pbl_config
+            columns:
+              - column:
+                  name: key
+                  value: es.caib.pinbal.generar.justificant.recobriment
+              - column:
+                  name: description_key
+                  value: propietat.justificant.recobriment.generar
+              - column:
+                  name: group_code
+                  value: JUSTIFICANT
+              - column:
+                  name: position
+                  value: 3
+              - column:
+                  name: source_property
+                  value: DATABASE
+              - column:
+                  name: type_code
+                  value: BOOL
+              - column:
+                  name: value
+                  value: true
+

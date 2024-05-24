@@ -2048,11 +2048,16 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 	public void autoGenerarJustificantsPendents() {
 		log.debug("Iniciant generació automàtica dels justificants pendents");
 		long t0 = System.currentTimeMillis();
-		List<Consulta> pendents = consultaRepository.findByEstatAndJustificantEstatAndMultipleAndArxiuExpedientTancatOrderByIdAsc(
-				EstatTipus.Tramitada,
-				JustificantEstat.PENDENT,
-				false,
-				false);
+		List<Consulta> pendents;
+		if (configHelper.getAsBoolean("es.caib.pinbal.justificant.recobriment.generar", true)) {
+			pendents = consultaRepository.findByEstatAndJustificantEstatAndMultipleFalseAndArxiuExpedientTancatFalseOrderByIdAsc(
+					EstatTipus.Tramitada,
+					JustificantEstat.PENDENT);
+		} else {
+			pendents = consultaRepository.findByEstatAndJustificantEstatAndMultipleFalseAndArxiuExpedientTancatFalseAndRecobrimentFalseOrderByIdAsc(
+					EstatTipus.Tramitada,
+					JustificantEstat.PENDENT);
+		}
 		for (Consulta pendent: pendents) {
 			try {
 				obtenirJustificantComu(pendent, false, false);
@@ -2072,11 +2077,9 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 	public void autoTancarExpedientsPendents() {
 		log.debug("Iniciant tancament automàtic dels expedients pendents");
 		long t0 = System.currentTimeMillis();
-		List<Consulta> pendents = consultaRepository.findByEstatAndJustificantEstatAndMultipleAndArxiuExpedientTancatOrderByIdAsc(
+		List<Consulta> pendents = consultaRepository.findByEstatAndJustificantEstatAndMultipleFalseAndArxiuExpedientTancatFalseOrderByIdAsc(
 				EstatTipus.Tramitada,
-				JustificantEstat.OK,
-				false,
-				false);
+				JustificantEstat.OK);
 		for (final Consulta pendent: pendents) {
 			boolean esPotTancar = false;
 			final Consulta pare = pendent.getPare();
