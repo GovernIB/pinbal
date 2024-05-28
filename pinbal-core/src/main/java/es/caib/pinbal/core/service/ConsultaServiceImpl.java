@@ -27,6 +27,7 @@ import es.caib.pinbal.core.dto.IntegracioAccioTipusEnumDto;
 import es.caib.pinbal.core.dto.JustificantDto;
 import es.caib.pinbal.core.dto.ProcedimentDto;
 import es.caib.pinbal.core.dto.RecobrimentSolicitudDto;
+import es.caib.pinbal.core.dto.RespostaAtributsDto;
 import es.caib.pinbal.core.dto.arxiu.ArxiuDetallDto;
 import es.caib.pinbal.core.helper.ArxiuHelper;
 import es.caib.pinbal.core.helper.ConfigHelper;
@@ -79,6 +80,7 @@ import es.caib.pinbal.scsp.ScspHelper;
 import es.caib.pinbal.scsp.Solicitud;
 import es.caib.plugins.arxiu.api.Expedient;
 import es.caib.plugins.arxiu.api.ExpedientEstat;
+import es.scsp.bean.common.ConfirmacionPeticion;
 import es.scsp.common.domain.core.EmisorCertificado;
 import es.scsp.common.domain.core.Servicio;
 import lombok.extern.slf4j.Slf4j;
@@ -1139,6 +1141,20 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 			if (resultat.isError()) {
 				resposta.setRespostaEstadoCodigo(resultat.getErrorCodi());
 				resposta.setRespostaEstadoError(resultat.getErrorDescripcio());
+			} else {
+				ConfirmacionPeticion confirmacionPeticion = resultat.getConfirmacionPeticion();
+				RespostaAtributsDto respostaAtributs = new RespostaAtributsDto();
+				if (confirmacionPeticion != null && confirmacionPeticion.getAtributos() != null) {
+					if (confirmacionPeticion.getAtributos().getEstado() != null) {
+						respostaAtributs.setEstatCodi(confirmacionPeticion.getAtributos().getEstado().getCodigoEstado());
+						respostaAtributs.setEstatCodiSecundari(confirmacionPeticion.getAtributos().getEstado().getCodigoEstadoSecundario());
+						respostaAtributs.setEstatTempsEstimatResposta(confirmacionPeticion.getAtributos().getEstado().getTiempoEstimadoRespuesta());
+					}
+					respostaAtributs.setPeticioId(confirmacionPeticion.getAtributos().getIdPeticion());
+					respostaAtributs.setNumElements(String.valueOf(confirmacionPeticion.getAtributos().getNumElementos()));
+					respostaAtributs.setTimestamp(confirmacionPeticion.getAtributos().getTimeStamp());
+				}
+				resposta.setRespostaAtributs(respostaAtributs);
 			}
 			return resposta;
 		} catch (ConsultaScspException ex) {
