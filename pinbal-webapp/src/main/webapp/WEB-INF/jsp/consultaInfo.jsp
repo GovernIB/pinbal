@@ -265,7 +265,7 @@ $(document).ready(function () {
 							<div class="clearfix legend-margin-bottom"></div>
 						</c:if>
 						<c:set var="dadesEspecifiquesDisabled" value="${true}" scope="request"/>
-						<c:set var="dadesEspecifiquesValors" value="${consulta.dadesEspecifiques}" scope="request"/>
+						<c:set var="dadesEspecifiquesValors" value="${consulta.dadesEspecifiquesMap}" scope="request"/>
 						<c:set var="campsPerMostrar" value="${campsSenseAgrupar}" scope="request"/>
 						<jsp:include page="import/dadesEspecifiquesForm.jsp"/>
 						<c:forEach var="grup" items="${grups}">

@@ -3,6 +3,8 @@
  */
 package es.caib.pinbal.core.service;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.lowagie.text.Document;
 import com.lowagie.text.pdf.PdfCopy;
 import com.lowagie.text.pdf.PdfReader;
@@ -81,6 +83,7 @@ import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -1224,10 +1227,16 @@ public class HistoricConsultaServiceImpl implements HistoricConsultaService, App
 					resposta.setPeticioXml(rpt.getPeticioXml());
 				}
 				if (!consulta.isMultiple()) {
-					resposta.setDadesEspecifiques(
-							getScspHelper().getDadesEspecifiquesPeticio(
-									consulta.getScspPeticionId(),
-									consulta.getScspSolicitudId()));
+					Map<String, Object> dadesEspecifiquesPeticio = null;
+					dadesEspecifiquesPeticio = getScspHelper().getDadesEspecifiquesPeticio(
+							consulta.getScspPeticionId(),
+							consulta.getScspSolicitudId());
+					if (dadesEspecifiquesPeticio.isEmpty() && consulta.getDadesEspecifiques() != null && !consulta.getDadesEspecifiques().trim().isEmpty()) {
+						try {
+							dadesEspecifiquesPeticio = new ObjectMapper().readValue(consulta.getDadesEspecifiques(), new TypeReference<HashMap<String, String>>() {});
+						} catch (IOException ex) {}
+					}
+					resposta.setDadesEspecifiques(dadesEspecifiquesPeticio);
 				}
 			}
 			if (resposta.isEstatError()) {

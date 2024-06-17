@@ -3,6 +3,9 @@
  */
 package es.caib.pinbal.core.service;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.lowagie.text.Document;
 import com.lowagie.text.pdf.PdfCopy;
 import com.lowagie.text.pdf.PdfReader;
@@ -106,9 +109,12 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 import javax.xml.ws.soap.SOAPFaultException;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -702,6 +708,13 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 					solicitud.getDadesEspecifiques(),
 					procedimentServei,
 					getScspHelper());
+			if (solicitud.getDadesEspecifiques() != null) {
+				try {
+					conslt.updateDadesEspecifiques(nodeToJson(solicitud.getDadesEspecifiques()));
+				} catch (Exception e) {
+					log.error("No s'ha pogut generar el json de dades específiques a partir de l'xml.", e);
+				}
+			}
 			ResultatEnviamentPeticio resultat = peticioScspHelper.enviarPeticioScsp(
 					conslt,
 					Arrays.asList(solicitudEnviar),
@@ -754,6 +767,37 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 					accioDescripcio,
 					accioParams,
 					t0);
+		}
+	}
+
+	private String nodeToJson(Node node) throws Exception {
+		ObjectMapper mapper = new ObjectMapper();
+		ObjectNode jsonNode = mapper.createObjectNode();
+		String path = "";
+
+		nodeToJson(node, "", jsonNode, mapper);
+		return jsonNode.toString();
+	}
+
+	private void nodeToJson(Node node, String path, ObjectNode jsonNode, ObjectMapper mapper) throws Exception {
+
+		NodeList nodeList = node.getChildNodes();
+		if (node.getNodeType() == Node.ELEMENT_NODE) {
+			path += node.getNodeName() + "/";
+		}
+
+		for(int i = 0; i < nodeList.getLength(); i++) {
+			Node currentNode = nodeList.item(i);
+			// Only add 'leaf' nodes (nodes without children) to JSON
+			if(currentNode.getChildNodes().getLength() == 1 && currentNode.getChildNodes().item(0).getNodeType() == Node.TEXT_NODE) {
+				jsonNode.put(path + currentNode.getNodeName(), currentNode.getTextContent());
+			} else if (currentNode.getNodeType() == Node.ELEMENT_NODE && currentNode.getChildNodes().getLength() == 0) {
+				jsonNode.put(path + currentNode.getNodeName(), "");
+			}
+			// Recursive call for children if it's not a 'leaf' node
+			if(currentNode.getChildNodes().getLength() > 0) {
+				nodeToJson(currentNode, path, jsonNode, mapper);
+			}
 		}
 	}
 
@@ -2512,10 +2556,18 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
                     }
 				}
 				if (!consulta.isMultiple()) {
-					resposta.setDadesEspecifiques(
-							getScspHelper().getDadesEspecifiquesPeticio(
-									consulta.getScspPeticionId(),
-									consulta.getScspSolicitudId()));
+					Map<String, Object> dadesEspecifiquesPeticio = null;
+					dadesEspecifiquesPeticio = getScspHelper().getDadesEspecifiquesPeticio(
+							consulta.getScspPeticionId(),
+							consulta.getScspSolicitudId());
+					if (dadesEspecifiquesPeticio.isEmpty() && consulta.getDadesEspecifiques() != null && !consulta.getDadesEspecifiques().trim().isEmpty()) {
+						try {
+							dadesEspecifiquesPeticio = new ObjectMapper().readValue(consulta.getDadesEspecifiques(), new TypeReference<HashMap<String, String>>() {});
+						} catch (IOException ex) {
+							log.error("Excepció al convertir el node de dades específiques a Json", ex);
+						}
+					}
+					resposta.setDadesEspecifiques(dadesEspecifiquesPeticio);
 				}
 			}
 			if (resposta.isEstatError()) {

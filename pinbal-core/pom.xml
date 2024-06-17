@@ -432,6 +432,11 @@
 			<artifactId>easy-rules-support</artifactId>
 			<version>3.4.0</version>
 		</dependency>
+		<dependency>
+			<groupId>com.fasterxml.jackson.dataformat</groupId>
+			<artifactId>jackson-dataformat-xml</artifactId>
+			<version>${jackson.version}</version>
+		</dependency>
 	</dependencies>
 	<build>
 		<plugins>
