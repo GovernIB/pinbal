@@ -1125,7 +1125,7 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 			ResultatEnviamentPeticio resultat = peticioScspHelper.enviarPeticioScsp(
 					conslt,
 					solicitudsEnviar,
-					true,
+					false,
 					conslt.isRecobriment(),
 					getScspHelper());
 			peticioScspHelper.updateEstatConsulta(conslt, resultat, accioParams);

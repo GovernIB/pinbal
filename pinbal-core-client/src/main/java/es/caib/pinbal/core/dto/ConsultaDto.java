@@ -232,12 +232,14 @@ public class ConsultaDto extends AbstractIdentificable<Long> implements Serializ
 		// removeLeadingSlashesFromKeys
 		Map<String, Object> processedMap = new HashMap<>();
 
-		for(Map.Entry<String, Object> entry : dadesEspecifiques.entrySet()) {
-			String key = entry.getKey();
-			while(key.startsWith("/")) {
-				key = key.substring(1);
+		if (dadesEspecifiques != null) {
+			for (Map.Entry<String, Object> entry : dadesEspecifiques.entrySet()) {
+				String key = entry.getKey();
+				while (key.startsWith("/")) {
+					key = key.substring(1);
+				}
+				processedMap.put(key, entry.getValue());
 			}
-			processedMap.put(key, entry.getValue());
 		}
 
 		return processedMap;
