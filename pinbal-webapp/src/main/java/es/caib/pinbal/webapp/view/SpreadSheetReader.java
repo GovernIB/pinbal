@@ -3,7 +3,6 @@ package es.caib.pinbal.webapp.view;
 import com.google.common.base.Strings;
 import es.caib.pinbal.core.dto.FitxerDto;
 import es.caib.pinbal.core.service.exception.FileTypeException;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
@@ -420,7 +419,7 @@ public class SpreadSheetReader {
 	}
 
 	public static List<String[]> getLinesFromSpreadSheat(FitxerDto fitxer) throws Exception {
-		List<String[]> linies = new ArrayList<String[]>();
+		List<String[]> linies;
 		// Obtenir dades del fitxer
 		if ("text/csv".equals(fitxer.getContentType()) || "csv".equals(fitxer.getExtensio())) {
 			linies = getLinesFromCsv(fitxer.getContingut());
@@ -434,7 +433,34 @@ public class SpreadSheetReader {
 		} else {
 			throw new FileTypeException();
 		}
+		if (linies != null)
+			removeLastEmptyLines(linies);
 		return linies;
+	}
+
+	static void removeLastEmptyLines(List<String[]> lines) {
+		// Find the index of the last non-empty line
+		int lastContentIndex = -1;
+		for (int i = 0; i < lines.size(); i++) {
+			if (!isEmptyLine(lines.get(i))) {
+				lastContentIndex = i;
+			}
+		}
+
+		// If there is at least one non-empty line,
+		// remove all the lines after the last non-empty line
+		if (lastContentIndex != -1) {
+			lines.subList(lastContentIndex + 1, lines.size()).clear();
+		}
+	}
+
+	static boolean isEmptyLine(String[] line) {
+		for (String s : line) {
+			if (s != null && !s.isEmpty()) {
+				return false;
+			}
+		}
+		return true;
 	}
 
 	public static FitxerDto addColumnaToSpreadSheat(FitxerDto fitxer, List<String> novaColumna) throws Exception {

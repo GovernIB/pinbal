@@ -1,6 +1,6 @@
 package es.caib.pinbal.webapp.validation.consultes;
 
-import es.caib.pinbal.core.dto.ConsultaDto;
+import es.caib.pinbal.core.dto.ConsultaDto.DocumentTipus;
 import es.caib.pinbal.core.dto.DadaEspecificaDto;
 import es.caib.pinbal.core.dto.NodeDto;
 import es.caib.pinbal.core.dto.ServeiCampDto;
@@ -26,7 +26,7 @@ public class DadesConsultaMultipleValidator {
     private final ServeiDto servei;
     private final List<ServeiCampDto> camps;
     private final List<CampPathInfo> campsPaths;
-    private final List<String> documentsPermesos;
+    private final List<DocumentTipus> documentsPermesos;
     private final Locale locale;
     private final int numLines;
     private final PosicionsDadesGeneriques posicionsDadesGeneriques;
@@ -180,14 +180,14 @@ public class DadesConsultaMultipleValidator {
         return posicions;
     }
 
-    private List<String> getDocumentsPermesos(ServeiDto servei) {
-        List<String> documentsPermesos = new ArrayList<>();
+    private List<DocumentTipus> getDocumentsPermesos(ServeiDto servei) {
+        List<DocumentTipus> documentsPermesos = new ArrayList<>();
         if (servei.isPinbalActiuCampDocument()) {
-            if (servei.isPinbalPermesDocumentTipusCif()) documentsPermesos.add("CIF");
-            if (servei.isPinbalPermesDocumentTipusDni()) documentsPermesos.add("DNI");
-            if (servei.isPinbalPermesDocumentTipusNie()) documentsPermesos.add("NIE");
-            if (servei.isPinbalPermesDocumentTipusNif()) documentsPermesos.add("NIF");
-            if (servei.isPinbalPermesDocumentTipusPas()) documentsPermesos.add("PASSAPORT");
+            if (servei.isPinbalPermesDocumentTipusCif()) documentsPermesos.add(DocumentTipus.CIF);
+            if (servei.isPinbalPermesDocumentTipusDni()) documentsPermesos.add(DocumentTipus.DNI);
+            if (servei.isPinbalPermesDocumentTipusNie()) documentsPermesos.add(DocumentTipus.NIE);
+            if (servei.isPinbalPermesDocumentTipusNif()) documentsPermesos.add(DocumentTipus.NIF);
+            if (servei.isPinbalPermesDocumentTipusPas()) documentsPermesos.add(DocumentTipus.Passaport);
         }
         return documentsPermesos;
     }
@@ -231,42 +231,42 @@ public class DadesConsultaMultipleValidator {
     }
 
     private void addDadesGeneriques(String[] linia, int posicioLinia, ConsultaCommand commandLinia, List<String> errorsLinia) {
-        if (isDadaGenericaNullOrEmpty(posicionsDadesGeneriques.getPosicioExpedient(), linia)) {
+        if (isDadaGenericaNotNullNorEmpty(posicionsDadesGeneriques.getPosicioExpedient(), linia)) {
             commandLinia.setExpedientId(linia[posicionsDadesGeneriques.getPosicioExpedient()].trim());
         }
-        if (isDadaGenericaNullOrEmpty(posicionsDadesGeneriques.getPosicioTitularDocumentTipus(), linia)) {
-            ConsultaDto.DocumentTipus docTipus = documentTipusByName(linia[posicionsDadesGeneriques.getPosicioTitularDocumentTipus()].trim());
+        if (isDadaGenericaNotNullNorEmpty(posicionsDadesGeneriques.getPosicioTitularDocumentTipus(), linia)) {
+            DocumentTipus docTipus = documentTipusByName(linia[posicionsDadesGeneriques.getPosicioTitularDocumentTipus()].trim());
             if (docTipus == null) {
                 errorsLinia.add(MessageHelper.getInstance().getMessage("consulta.fitxer.camp.document.tipus.invalid", new Object[]{posicioLinia}, locale));
                 hasErrorsLinies = true;
             }
             commandLinia.setTitularDocumentTipus(docTipus);
         }
-        if (isDadaGenericaNullOrEmpty(posicionsDadesGeneriques.getPosiciotitularDocumentNumero(), linia)) {
+        if (isDadaGenericaNotNullNorEmpty(posicionsDadesGeneriques.getPosiciotitularDocumentNumero(), linia)) {
             commandLinia.setTitularDocumentNum(linia[posicionsDadesGeneriques.getPosiciotitularDocumentNumero()].trim());
         }
-        if (isDadaGenericaNullOrEmpty(posicionsDadesGeneriques.getPosicioTitularNom(), linia)) {
+        if (isDadaGenericaNotNullNorEmpty(posicionsDadesGeneriques.getPosicioTitularNom(), linia)) {
             commandLinia.setTitularNom(linia[posicionsDadesGeneriques.getPosicioTitularNom()].trim());
         }
-        if (isDadaGenericaNullOrEmpty(posicionsDadesGeneriques.getPosicioTitularLlinatge1(), linia)) {
+        if (isDadaGenericaNotNullNorEmpty(posicionsDadesGeneriques.getPosicioTitularLlinatge1(), linia)) {
             commandLinia.setTitularLlinatge1(linia[posicionsDadesGeneriques.getPosicioTitularLlinatge1()].trim());
         }
-        if (isDadaGenericaNullOrEmpty(posicionsDadesGeneriques.getPosicioTitularLlinatge2(), linia)) {
+        if (isDadaGenericaNotNullNorEmpty(posicionsDadesGeneriques.getPosicioTitularLlinatge2(), linia)) {
             commandLinia.setTitularLlinatge2(linia[posicionsDadesGeneriques.getPosicioTitularLlinatge2()].trim());
         }
-        if (isDadaGenericaNullOrEmpty(posicionsDadesGeneriques.getPosicioTitularNomComplet(), linia)) {
+        if (isDadaGenericaNotNullNorEmpty(posicionsDadesGeneriques.getPosicioTitularNomComplet(), linia)) {
             commandLinia.setTitularNomComplet(linia[posicionsDadesGeneriques.getPosicioTitularNomComplet()].trim());
         }
     }
 
-    private boolean isDadaGenericaNullOrEmpty(int posicio, String[] linia) {
+    private boolean isDadaGenericaNotNullNorEmpty(int posicio, String[] linia) {
         return posicio >= 0 && linia[posicio] != null && !linia[posicio].trim().isEmpty();
     }
 
-    public ConsultaDto.DocumentTipus documentTipusByName(String name) {
-        ConsultaDto.DocumentTipus result = null;
-        for (ConsultaDto.DocumentTipus tipus : ConsultaDto.DocumentTipus.values()) {
-            if (tipus.name().equalsIgnoreCase(name)) {
+    public DocumentTipus documentTipusByName(String name) {
+        DocumentTipus result = null;
+        for (DocumentTipus tipus : DocumentTipus.values()) {
+            if ((DocumentTipus.Passaport.equals(tipus) && "Pasaporte".equalsIgnoreCase(name)) || tipus.name().equalsIgnoreCase(name)) {
                 result = tipus;
                 break;
             }
@@ -326,7 +326,7 @@ public class DadesConsultaMultipleValidator {
                 int numLinia = 4;
                 for (ConsultaLinia consultaLinia : consultaLinies) {
                     if (consultaLinia.getCommandLinia().getTitularDocumentTipus() != null) {
-                        if (!documentsPermesos.contains(consultaLinia.getCommandLinia().getTitularDocumentTipus().name())) {
+                        if (!documentsPermesos.contains(consultaLinia.getCommandLinia().getTitularDocumentTipus())) {
                             consultaLinia.getErrorsLinia().add(
                                     MessageHelper.getInstance().getMessage("consulta.fitxer.camp.document.tipus", new Object[] {numLinia}, locale));
                             hasErrorsLinies = true;
