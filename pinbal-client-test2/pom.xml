@@ -17,7 +17,7 @@
         <dependency>
             <groupId>es.caib.pinbal</groupId>
             <artifactId>pinbal-client</artifactId>
-            <version>1.4.40.3</version>
+            <version>1.4.40.4</version>
         </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>
