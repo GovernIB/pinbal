@@ -686,11 +686,16 @@ public interface ConsultaService {
 	public void autoEnviarPeticionsPendents();
 
 	/**
+	 * Genera les dades d'explotació del dia anterior
+	 */
+	public void generarDadesExplotacio();
+
+	/**
 	 * Retorna si les peticions al SCSP s'han de fer en una sola passa o en
 	 * 3 passes per a optimitzar el temps que la transacció bloqueja les
 	 * connexions del pool.
-	 * 
-	 * @return true si s'ha d'optimitzar en 3 peticions o false en cas contrari. 
+	 *
+	 * @return true si s'ha d'optimitzar en 3 peticions o false en cas contrari.
 	 */
 	@PreAuthorize("hasRole('ROLE_DELEG') or hasRole('ROLE_WS')")
 	public boolean isOptimitzarTransaccionsNovaConsulta();
@@ -702,7 +707,8 @@ public interface ConsultaService {
 
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_REPRES')")
 	public List<InformeProcedimentServeiDto> informeUsuarisEntitatOrganProcedimentServei(
-			Long entitatId, 
-			String rolActual, 
+			Long entitatId,
+			String rolActual,
 			InformeRepresentantFiltreDto filtre);
+
 }

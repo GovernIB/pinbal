@@ -1,0 +1,96 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1719641276939
+      author: limit
+      changes:
+        - createTable:
+            tableName: pbl_explot_temps
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: data
+                  type: date
+              - column:
+                  name: anualitat
+                  type: int
+              - column:
+                  name: mes
+                  type: int
+              - column:
+                  name: trimestre
+                  type: int
+              - column:
+                  name: setmana
+                  type: int
+              - column:
+                  name: dia
+                  type: varchar(3)
+                  constraints:
+                    nullable: true
+        - createTable:
+            tableName: pbl_explot_consulta_fet
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: num_rec_ok
+                  type: bigint
+              - column:
+                  name: num_rec_error
+                  type: bigint
+              - column:
+                  name: num_rec_pend
+                  type: bigint
+              - column:
+                  name: num_web_ok
+                  type: bigint
+              - column:
+                  name: num_web_error
+                  type: bigint
+              - column:
+                  name: num_web_pend
+                  type: bigint
+              - column:
+                  name: dimensio_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+                    foreignKeyName: pbl_fet_dim_fk
+                    references: pbl_explot_consulta_dimensio(id)
+              - column:
+                  name: temps_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+                    foreignKeyName: pbl_fet_tmp_fk
+                    references: pbl_explot_temps(id)
+        - createTable:
+            tableName: pbl_explot_consulta_dim
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: entitat_id
+                  type: bigint
+              - column:
+                  name: procediment_id
+                  type: bigint
+              - column:
+                  name: servei_codi
+                  type: varchar(255)
+              - column:
+                  name: usuari_codi
+                  type: varchar(255)

@@ -516,4 +516,41 @@ public interface ConsultaRepository extends JpaRepository<Consulta, Long> {
 			value = "ALTER SESSION SET OPTIMIZER_MODE = RULE",
 			nativeQuery = true)
 	public void setSessionOptimizerModeToRule();
+
+	@Query(	"select " +
+			"    c.entitat.id, " +
+//			"    c.procedimentServei.id, " +
+			"    c.procediment.id, " +
+			"    c.serveiCodi, " +
+			"    c.createdBy.codi, " +
+			"    sum(case when c.recobriment = true and c.estat = :estatOk then 1 else 0 end), " +
+			"    sum(case when c.recobriment = true and c.estat = :estatError then 1 else 0 end), " +
+			"    sum(case when c.recobriment = true and c.estat <> :estatOk and c.estat <> :estatError then 1 else 0 end), " +
+			"    sum(case when c.recobriment = false and c.estat = :estatOk then 1 else 0 end), " +
+			"    sum(case when c.recobriment = false and c.estat = :estatError then 1 else 0 end), " +
+			"    sum(case when c.recobriment = false and c.estat <> :estatOk and c.estat <> :estatError then 1 else 0 end)" +
+			"from " +
+			"    Consulta c " +
+			"group by " +
+			"    c.entitat.id, " +
+//			"    c.procedimentServei.id," +
+			"    c.procediment.id, " +
+			"    c.serveiCodi, " +
+			"    c.createdBy.codi " +
+			"order by " +
+			"    c.entitat.codi, " +
+			"    c.procediment.nom, " +
+			"    c.serveiCodi, " +
+			"    c.createdBy.codi ")
+	public List<Object[]> getDadesEstadistiques(
+			@Param("esNullCreatedBy") boolean esNullCreatedBy,
+			@Param("createdBy") Usuari createdBy,
+			@Param("esNullEstat") boolean esNullEstat,
+			@Param("estat") EstatTipus estat,
+			@Param("esNullDataInici") boolean esNullDataInici,
+			@Param("dataInici") Date dataInici,
+			@Param("esNullDataFi") boolean esNullDataFi,
+			@Param("dataFi") Date dataFi,
+			@Param("estatOk") EstatTipus estatOk,
+			@Param("estatError") EstatTipus estatError);
 }
