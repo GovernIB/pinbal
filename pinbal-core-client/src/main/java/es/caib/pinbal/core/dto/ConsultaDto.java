@@ -9,6 +9,7 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
 
 
@@ -225,6 +226,23 @@ public class ConsultaDto extends AbstractIdentificable<Long> implements Serializ
 	}
 	public String getServeiCodiNom() {
 		return serveiCodi + " - " + serveiDescripcio;
+	}
+
+	public Map<String, Object> getDadesEspecifiquesMap() {
+		// removeLeadingSlashesFromKeys
+		Map<String, Object> processedMap = new HashMap<>();
+
+		if (dadesEspecifiques != null) {
+			for (Map.Entry<String, Object> entry : dadesEspecifiques.entrySet()) {
+				String key = entry.getKey();
+				while (key.startsWith("/")) {
+					key = key.substring(1);
+				}
+				processedMap.put(key, entry.getValue());
+			}
+		}
+
+		return processedMap;
 	}
 
 	@Override

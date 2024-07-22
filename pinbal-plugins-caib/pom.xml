@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>es.caib.pinbal</groupId>
 		<artifactId>pinbal</artifactId>
-		<version>1.4.40</version>
+		<version>1.4.41</version>
 	</parent>
 	<artifactId>pinbal-plugins-caib</artifactId>
 	<dependencies>
@@ -191,11 +191,6 @@
 			<groupId>es.caib.dir3caib</groupId>
 			<artifactId>dir3caib-ws-api</artifactId>
 			<version>${dir3caib.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>commons-io</groupId>
-			<artifactId>commons-io</artifactId>
-			<version>2.2</version>
 		</dependency>
 		<dependency>
 			<groupId>org.projectlombok</groupId>

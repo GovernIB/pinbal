@@ -1,9 +1,9 @@
 .container-caib {
-	width: 96% !important;
-	padding-left: 60px !important;
-	padding-right: 20px !important;
-	margin-left: 0 !important;
-	margin-right: 0 !important;
+	/*width: 96% !important;*/
+	/*padding-left: 60px !important;*/
+	/*padding-right: 20px !important;*/
+	margin-left: 1em !important;
+	margin-right: 1em !important;
 	min-width: 1000px;
 }
 .navbar-app {

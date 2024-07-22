@@ -106,7 +106,7 @@ body {
 </head>
 <body>
 	<div class="navbar navbar-default navbar-fixed-top navbar-app" role="navigation">
-		<div class="container container-caib">
+		<div class="container-fluid container-caib">
 			<div class="navbar-header">
 				<div class="navbar-brand">
 					<div id="govern-logo" class="pull-left">
@@ -319,7 +319,7 @@ body {
 			</div>		
 		</div>
 	</div>
-	<div class="container container-main container-caib">
+	<div class="container-fluid container-main container-caib">
 		<c:if test="${not empty avisos}">
 			<div id="accordion">
 				<c:forEach var="avis" items="${avisos}" varStatus="status">
@@ -347,7 +347,7 @@ body {
 			</div>
 		</div>
 	</div>
-	<div class="container container-foot container-caib">
+	<div class="container-fluid container-foot container-caib">
 		<div class="pull-left app-version"><p>PINBAL <pbl:versio/></p></div>
 		<div class="pull-right govern-footer">
 			<p>

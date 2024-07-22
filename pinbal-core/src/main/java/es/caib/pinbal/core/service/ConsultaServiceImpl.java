@@ -3,6 +3,9 @@
  */
 package es.caib.pinbal.core.service;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.lowagie.text.Document;
 import com.lowagie.text.pdf.PdfCopy;
 import com.lowagie.text.pdf.PdfReader;
@@ -27,6 +30,7 @@ import es.caib.pinbal.core.dto.IntegracioAccioTipusEnumDto;
 import es.caib.pinbal.core.dto.JustificantDto;
 import es.caib.pinbal.core.dto.ProcedimentDto;
 import es.caib.pinbal.core.dto.RecobrimentSolicitudDto;
+import es.caib.pinbal.core.dto.RespostaAtributsDto;
 import es.caib.pinbal.core.dto.arxiu.ArxiuDetallDto;
 import es.caib.pinbal.core.helper.ArxiuHelper;
 import es.caib.pinbal.core.helper.ConfigHelper;
@@ -88,6 +92,7 @@ import es.caib.pinbal.scsp.ScspHelper;
 import es.caib.pinbal.scsp.Solicitud;
 import es.caib.plugins.arxiu.api.Expedient;
 import es.caib.plugins.arxiu.api.ExpedientEstat;
+import es.scsp.bean.common.ConfirmacionPeticion;
 import es.scsp.common.domain.core.EmisorCertificado;
 import es.scsp.common.domain.core.Servicio;
 import lombok.extern.slf4j.Slf4j;
@@ -114,9 +119,12 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 import javax.xml.ws.soap.SOAPFaultException;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -720,6 +728,13 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 					solicitud.getDadesEspecifiques(),
 					procedimentServei,
 					getScspHelper());
+			if (solicitud.getDadesEspecifiques() != null) {
+				try {
+					conslt.updateDadesEspecifiques(nodeToJson(solicitud.getDadesEspecifiques()));
+				} catch (Exception e) {
+					log.error("No s'ha pogut generar el json de dades específiques a partir de l'xml.", e);
+				}
+			}
 			ResultatEnviamentPeticio resultat = peticioScspHelper.enviarPeticioScsp(
 					conslt,
 					Arrays.asList(solicitudEnviar),
@@ -772,6 +787,37 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 					accioDescripcio,
 					accioParams,
 					t0);
+		}
+	}
+
+	private String nodeToJson(Node node) throws Exception {
+		ObjectMapper mapper = new ObjectMapper();
+		ObjectNode jsonNode = mapper.createObjectNode();
+		String path = "";
+
+		nodeToJson(node, "", jsonNode, mapper);
+		return jsonNode.toString();
+	}
+
+	private void nodeToJson(Node node, String path, ObjectNode jsonNode, ObjectMapper mapper) throws Exception {
+
+		NodeList nodeList = node.getChildNodes();
+		if (node.getNodeType() == Node.ELEMENT_NODE) {
+			path += node.getNodeName() + "/";
+		}
+
+		for(int i = 0; i < nodeList.getLength(); i++) {
+			Node currentNode = nodeList.item(i);
+			// Only add 'leaf' nodes (nodes without children) to JSON
+			if(currentNode.getChildNodes().getLength() == 1 && currentNode.getChildNodes().item(0).getNodeType() == Node.TEXT_NODE) {
+				jsonNode.put(path + currentNode.getNodeName(), currentNode.getTextContent());
+			} else if (currentNode.getNodeType() == Node.ELEMENT_NODE && currentNode.getChildNodes().getLength() == 0) {
+				jsonNode.put(path + currentNode.getNodeName(), "");
+			}
+			// Recursive call for children if it's not a 'leaf' node
+			if(currentNode.getChildNodes().getLength() > 0) {
+				nodeToJson(currentNode, path, jsonNode, mapper);
+			}
 		}
 	}
 
@@ -1099,7 +1145,7 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 			ResultatEnviamentPeticio resultat = peticioScspHelper.enviarPeticioScsp(
 					conslt,
 					solicitudsEnviar,
-					true,
+					false,
 					conslt.isRecobriment(),
 					getScspHelper());
 			peticioScspHelper.updateEstatConsulta(conslt, resultat, accioParams);
@@ -1159,6 +1205,20 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 			if (resultat.isError()) {
 				resposta.setRespostaEstadoCodigo(resultat.getErrorCodi());
 				resposta.setRespostaEstadoError(resultat.getErrorDescripcio());
+			} else {
+				ConfirmacionPeticion confirmacionPeticion = resultat.getConfirmacionPeticion();
+				RespostaAtributsDto respostaAtributs = new RespostaAtributsDto();
+				if (confirmacionPeticion != null && confirmacionPeticion.getAtributos() != null) {
+					if (confirmacionPeticion.getAtributos().getEstado() != null) {
+						respostaAtributs.setEstatCodi(confirmacionPeticion.getAtributos().getEstado().getCodigoEstado());
+						respostaAtributs.setEstatCodiSecundari(confirmacionPeticion.getAtributos().getEstado().getCodigoEstadoSecundario());
+						respostaAtributs.setEstatTempsEstimatResposta(confirmacionPeticion.getAtributos().getEstado().getTiempoEstimadoRespuesta());
+					}
+					respostaAtributs.setPeticioId(confirmacionPeticion.getAtributos().getIdPeticion());
+					respostaAtributs.setNumElements(String.valueOf(confirmacionPeticion.getAtributos().getNumElementos()));
+					respostaAtributs.setTimestamp(confirmacionPeticion.getAtributos().getTimeStamp());
+				}
+				resposta.setRespostaAtributs(respostaAtributs);
 			}
 			return resposta;
 		} catch (ConsultaScspException ex) {
@@ -1364,9 +1424,9 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 				filtre,
 				pageable,
 				false,
-				true,
-				false,
-				false);
+				true);
+//				false,
+//				false);
 	}
 
 	@Transactional(readOnly = true)
@@ -1389,9 +1449,9 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 				filtre,
 				pageable,
 				true,
-				true,
-				false,
-				false);
+				true);
+//				false,
+//				false);
 	}
 
 	@Transactional(readOnly = true)
@@ -1421,9 +1481,9 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 				filtre,
 				pageable,
 				false,
-				false,
-				false,
 				false);
+//				false,
+//				false);
 	}
 
 	@Transactional(readOnly = true)
@@ -1450,9 +1510,9 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 				filtre,
 				new PageRequest(0, Integer.MAX_VALUE, new Sort(new Sort.Order(Sort.Direction.DESC, "scspPeticionId"))),
 				false,
-				false,
-				false,
 				false);
+//				false,
+//				false);
 
 		return page.getContent();
     }
@@ -1476,9 +1536,9 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 				filtre,
 				pageable,
 				false,
-				false,
-				false,
 				false);
+//				false,
+//				false);
 	}
 
 	@Transactional(readOnly = true)
@@ -2068,11 +2128,16 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 	public void autoGenerarJustificantsPendents() {
 		log.debug("Iniciant generació automàtica dels justificants pendents");
 		long t0 = System.currentTimeMillis();
-		List<Consulta> pendents = consultaRepository.findByEstatAndJustificantEstatAndMultipleAndArxiuExpedientTancatOrderByIdAsc(
-				EstatTipus.Tramitada,
-				JustificantEstat.PENDENT,
-				false,
-				false);
+		List<Consulta> pendents;
+		if (configHelper.getAsBoolean("es.caib.pinbal.justificant.recobriment.generar", true)) {
+			pendents = consultaRepository.findByEstatAndJustificantEstatAndMultipleFalseAndArxiuExpedientTancatFalseOrderByIdAsc(
+					EstatTipus.Tramitada,
+					JustificantEstat.PENDENT);
+		} else {
+			pendents = consultaRepository.findByEstatAndJustificantEstatAndMultipleFalseAndArxiuExpedientTancatFalseAndRecobrimentFalseOrderByIdAsc(
+					EstatTipus.Tramitada,
+					JustificantEstat.PENDENT);
+		}
 		for (Consulta pendent: pendents) {
 			try {
 				obtenirJustificantComu(pendent, false, false);
@@ -2092,11 +2157,9 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 	public void autoTancarExpedientsPendents() {
 		log.debug("Iniciant tancament automàtic dels expedients pendents");
 		long t0 = System.currentTimeMillis();
-		List<Consulta> pendents = consultaRepository.findByEstatAndJustificantEstatAndMultipleAndArxiuExpedientTancatOrderByIdAsc(
+		List<Consulta> pendents = consultaRepository.findByEstatAndJustificantEstatAndMultipleFalseAndArxiuExpedientTancatFalseOrderByIdAsc(
 				EstatTipus.Tramitada,
-				JustificantEstat.OK,
-				false,
-				false);
+				JustificantEstat.OK);
 		for (final Consulta pendent: pendents) {
 			boolean esPotTancar = false;
 			final Consulta pare = pendent.getPare();
@@ -2661,10 +2724,18 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
                     }
 				}
 				if (!consulta.isMultiple()) {
-					resposta.setDadesEspecifiques(
-							getScspHelper().getDadesEspecifiquesPeticio(
-									consulta.getScspPeticionId(),
-									consulta.getScspSolicitudId()));
+					Map<String, Object> dadesEspecifiquesPeticio = null;
+					dadesEspecifiquesPeticio = getScspHelper().getDadesEspecifiquesPeticio(
+							consulta.getScspPeticionId(),
+							consulta.getScspSolicitudId());
+					if (dadesEspecifiquesPeticio.isEmpty() && consulta.getDadesEspecifiques() != null && !consulta.getDadesEspecifiques().trim().isEmpty()) {
+						try {
+							dadesEspecifiquesPeticio = new ObjectMapper().readValue(consulta.getDadesEspecifiques(), new TypeReference<HashMap<String, String>>() {});
+						} catch (IOException ex) {
+							log.error("Excepció al convertir el node de dades específiques a Json", ex);
+						}
+					}
+					resposta.setDadesEspecifiques(dadesEspecifiquesPeticio);
 				}
 			}
 			if (resposta.isEstatError()) {
@@ -2686,9 +2757,9 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 			ConsultaFiltreDto filtre,
 			Pageable pageable,
 			boolean multiple,
-			boolean nomesSensePare,
-			boolean consultaHihaPeticio,
-			boolean consultaTerData) throws EntitatNotFoundException {
+			boolean nomesSensePare) {
+//			boolean consultaHihaPeticio,
+//			boolean consultaTerData) throws EntitatNotFoundException {
 		copiarPropertiesToDb();
 		log.debug("Consulta de peticions findByEntitatIUsuariFiltrePaginat (" +
 				"entitat=" + entitat.getCodi() + ", " +
@@ -2760,30 +2831,23 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 							consulta.getServeiCodi()));
 		}
 		log.debug("[S_CONS] Consulta de descripcions de serveis (" + (System.currentTimeMillis() - t0) + " ms)");*/
-		t0 = System.currentTimeMillis();
-		if (consultaHihaPeticio) {
-			for (ConsultaDto consulta: paginaConsultesDto.getContent()) {
-				try {
-					consulta.setHiHaPeticio(
-							getScspHelper().isPeticionEnviada(
-									consulta.getScspPeticionId()));
-				} catch (es.scsp.common.exceptions.ScspException ex) {
-					log.error("No s'han pogut consultar l'enviament de la petició (id=" + consulta.getScspPeticionId() + ")", ex);
-					consulta.setHiHaPeticio(false);
-				}
-			}
-		}
-		if (consultaHihaPeticio) {
-			for (ConsultaDto consulta: paginaConsultesDto.getContent()) {
-				try {
-					consulta.setTerData(getScspHelper().getTerPeticion(
-							consulta.getScspPeticionId()));
-				} catch (es.scsp.common.exceptions.ScspException ex) {
-					log.error("No s'han pogut consultar el TER de la petició (id=" + consulta.getScspPeticionId() + ")", ex);
-				}
-			}
-		}
-		log.debug("[S_CONS] Consulta de peticions addicionals (" + (System.currentTimeMillis() - t0) + " ms)");
+//		t0 = System.currentTimeMillis();
+//		if (consultaHihaPeticio) {
+//			for (ConsultaDto consulta: paginaConsultesDto.getContent()) {
+//				try {
+//					consulta.setHiHaPeticio(getScspHelper().isPeticionEnviada(consulta.getScspPeticionId()));
+//				} catch (es.scsp.common.exceptions.ScspException ex) {
+//					log.error("No s'han pogut consultar l'enviament de la petició (id=" + consulta.getScspPeticionId() + ")", ex);
+//					consulta.setHiHaPeticio(false);
+//				}
+//				try {
+//					consulta.setTerData(getScspHelper().getTerPeticion(consulta.getScspPeticionId()));
+//				} catch (es.scsp.common.exceptions.ScspException ex) {
+//					log.error("No s'han pogut consultar el TER de la petició (id=" + consulta.getScspPeticionId() + ")", ex);
+//				}
+//			}
+//		}
+//		log.debug("[S_CONS] Consulta de peticions addicionals (" + (System.currentTimeMillis() - t0) + " ms)");
 		return  paginaConsultesDto;
 	}
 

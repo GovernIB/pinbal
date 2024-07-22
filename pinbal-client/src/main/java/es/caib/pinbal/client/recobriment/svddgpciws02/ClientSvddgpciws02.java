@@ -51,16 +51,16 @@ public class ClientSvddgpciws02 extends ClientBase {
 	@Data
 	public static class SolicitudSvddgpciws02 extends SolicitudBase {
 		private String numeroSoporte;
+		private String anioNacimiento;
 
 		@Override
 		public String getDatosEspecificos() { // xml
 			StringBuilder xmlBuilder = new StringBuilder("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
 			xmlBuilder.append("<DatosEspecificos>");
-			if (!isEmptyString(numeroSoporte)) {
+			if (!isEmptyString(numeroSoporte) || !isEmptyString(anioNacimiento)) {
 				xmlBuilder.append("<Consulta>");
-				xmlBuilder.append(
-						xmlOptionalStringParameter(this.numeroSoporte, "NumeroSoporte")
-				);
+				xmlBuilder.append(xmlOptionalStringParameter(this.numeroSoporte, "NumeroSoporte"));
+				xmlBuilder.append(xmlOptionalStringParameter(this.anioNacimiento, "AnioNacimiento"));
 				xmlBuilder.append("</Consulta>");
 			}
 			xmlBuilder.append("</DatosEspecificos>");

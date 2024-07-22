@@ -23,7 +23,6 @@ import org.fundaciobit.plugins.signatureserver.api.ISignatureServerPlugin;
 import org.fundaciobit.plugins.signatureserver.portafib.PortaFIBSignatureServerPlugin;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Properties;
 import java.util.UUID;
@@ -78,12 +77,11 @@ public class FirmaServidorPluginPortafib implements FirmaServidorPlugin {
 			boolean userRequiresTimeStamp = false;
 			signFile(uuid, sourcePath, destPath, signType, signMode, dades.getMotiu(), dades.getIdioma(), userRequiresTimeStamp);
 			destFile = new File(destPath);
-			SignaturaResposta resposta = SignaturaResposta.builder()
+			return SignaturaResposta.builder()
 					.contingut(FileUtils.readFileToByteArray(destFile))
 					.nom(destFile.getName())
 					.mime("application/pdf")
 					.build();
-			return resposta;
 		} catch (Exception ex) {
 			throw new SistemaExternException(ex);
 		} finally {
@@ -104,6 +102,7 @@ public class FirmaServidorPluginPortafib implements FirmaServidorPlugin {
 		return fitxerTmp;
 	}
 
+	@SuppressWarnings("deprecation")
 	private void signFile(
 			String uuid,
 			String sourcePath,
@@ -112,7 +111,7 @@ public class FirmaServidorPluginPortafib implements FirmaServidorPlugin {
 			int signMode,
 			String reason,
 			String language,
-			boolean userRequiresTimeStamp) throws Exception, FileNotFoundException, IOException {
+			boolean userRequiresTimeStamp) throws Exception {
 		// Informació comú per a totes les signatures
 		String filtreCertificats = "";
 		String username = PropertiesHelper.getProperties().getProperty(PROPERTIES_BASE + "username", null);

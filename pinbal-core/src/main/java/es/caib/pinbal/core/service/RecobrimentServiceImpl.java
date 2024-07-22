@@ -42,6 +42,7 @@ import es.scsp.bean.common.Titular;
 import es.scsp.bean.common.Transmision;
 import es.scsp.bean.common.TransmisionDatos;
 import es.scsp.common.exceptions.ScspException;
+import es.scsp.common.utils.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.w3c.dom.Document;
@@ -62,6 +63,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -80,7 +82,7 @@ public class RecobrimentServiceImpl implements RecobrimentService {
 			ScspPeticion peticion) throws RecobrimentScspException {
 		try {
 			return toScspRespuesta(
-					recobrimentHelper.peticionSincrona(toPeticion(peticion)));
+					recobrimentHelper.peticionSincrona(toPeticion(peticion, false)));
 		} catch (ScspException ex) {
 			if (RecobrimentHelper.ERROR_CODE_SCSP_VALIDATION.equals(ex.getScspCode())) {
 				throw new RecobrimentScspValidationException(
@@ -115,8 +117,7 @@ public class RecobrimentServiceImpl implements RecobrimentService {
 			ScspPeticion peticion) throws RecobrimentScspException {
 		try {
 			return toScspConfirmacionPeticion(
-					recobrimentHelper.peticionAsincrona(
-							toPeticion(peticion)));
+					recobrimentHelper.peticionAsincrona(toPeticion(peticion, true)));
 		} catch (ScspException ex) {
 			throw new RecobrimentScspException(
 					ex.getMessage(), 
@@ -211,7 +212,7 @@ public class RecobrimentServiceImpl implements RecobrimentService {
 		}
 	}
 
-	private Peticion toPeticion(ScspPeticion scspPeticion) throws ParserConfigurationException, SAXException, IOException {
+	private Peticion toPeticion(ScspPeticion scspPeticion, boolean multiple) throws ParserConfigurationException, SAXException, IOException {
 		if (scspPeticion != null) {
 			Peticion peticion = new Peticion();
 			if (scspPeticion.getAtributos() != null) {
@@ -233,6 +234,8 @@ public class RecobrimentServiceImpl implements RecobrimentService {
 			if (scspPeticion.getSolicitudes() != null) {
 				Solicitudes solicitudes = new Solicitudes();
 				ArrayList<SolicitudTransmision> solicitudesTransmision = new ArrayList<SolicitudTransmision>();
+				int index = 1;
+				String timeStamp = DateUtils.parseISO8601(new Date());
 				for (ScspSolicitud solicitud: scspPeticion.getSolicitudes()) {
 					SolicitudTransmision solicitudTransmision = new SolicitudTransmision();
 					solicitudTransmision.setId(solicitud.getId());
@@ -310,28 +313,26 @@ public class RecobrimentServiceImpl implements RecobrimentService {
 							if (ScspTipoDocumentacion.Otros.equals(solicitud.getDatosGenericos().getTitular().getTipoDocumentacion())) {
 								titular.setTipoDocumentacion(TipoDocumentacion.Otros);
 							}
-							titular.setDocumentacion(
-									solicitud.getDatosGenericos().getTitular().getDocumentacion());
-							titular.setNombreCompleto(
-									solicitud.getDatosGenericos().getTitular().getNombreCompleto());
-							titular.setNombre(
-									solicitud.getDatosGenericos().getTitular().getNombre());
-							titular.setApellido1(
-									solicitud.getDatosGenericos().getTitular().getApellido1());
-							titular.setApellido2(
-									solicitud.getDatosGenericos().getTitular().getApellido2());
+							titular.setDocumentacion(solicitud.getDatosGenericos().getTitular().getDocumentacion());
+							titular.setNombreCompleto(solicitud.getDatosGenericos().getTitular().getNombreCompleto());
+							titular.setNombre(solicitud.getDatosGenericos().getTitular().getNombre());
+							titular.setApellido1(solicitud.getDatosGenericos().getTitular().getApellido1());
+							titular.setApellido2(solicitud.getDatosGenericos().getTitular().getApellido2());
 							datosGenericos.setTitular(titular);
 						}
 						if (solicitud.getDatosGenericos().getTransmision() != null) {
 							Transmision transmision = new Transmision();
-							transmision.setCodigoCertificado(
-									solicitud.getDatosGenericos().getTransmision().getCodigoCertificado());
-							transmision.setIdSolicitud(
-									solicitud.getDatosGenericos().getTransmision().getIdSolicitud());
-							transmision.setIdTransmision(
-									solicitud.getDatosGenericos().getTransmision().getIdTransmision());
-							transmision.setFechaGeneracion(
-									solicitud.getDatosGenericos().getTransmision().getFechaGeneracion());
+							transmision.setCodigoCertificado(solicitud.getDatosGenericos().getTransmision().getCodigoCertificado());
+							transmision.setIdSolicitud(solicitud.getDatosGenericos().getTransmision().getIdSolicitud());
+							transmision.setIdTransmision(solicitud.getDatosGenericos().getTransmision().getIdTransmision());
+							transmision.setFechaGeneracion(solicitud.getDatosGenericos().getTransmision().getFechaGeneracion());
+							datosGenericos.setTransmision(transmision);
+						} else if (multiple) {
+							Transmision transmision = new Transmision();
+							transmision.setCodigoCertificado(scspPeticion.getAtributos().getCodigoCertificado());
+							transmision.setIdSolicitud(String.format("%06d", index));
+//							transmision.setIdTransmision(solicitud.getDatosGenericos().getTransmision().getIdTransmision());
+							transmision.setFechaGeneracion(timeStamp);
 							datosGenericos.setTransmision(transmision);
 						}
 						solicitudTransmision.setDatosGenericos(datosGenericos);
@@ -341,6 +342,7 @@ public class RecobrimentServiceImpl implements RecobrimentService {
 								stringToElement(solicitud.getDatosEspecificos()));
 					}
 					solicitudesTransmision.add(solicitudTransmision);
+					index++;
 				}
 				solicitudes.setSolicitudTransmision(solicitudesTransmision);
 				peticion.setSolicitudes(solicitudes);

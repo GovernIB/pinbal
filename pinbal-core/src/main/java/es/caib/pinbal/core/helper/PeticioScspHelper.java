@@ -369,9 +369,7 @@ public class PeticioScspHelper {
 						consulta.getCampsPeticioMultiple(),
 						dades);
 				if (titularDocumentTipus != null) {
-					solicitud.setTitularDocumentTipus(
-							es.caib.pinbal.scsp.DocumentTipus.valueOf(
-									titularDocumentTipus));
+					solicitud.setTitularDocumentTipus(documentTipusByName(titularDocumentTipus));
 				}
 				solicitud.setTitularDocument(
 						getValorCampPeticioMultiple(
@@ -400,7 +398,7 @@ public class PeticioScspHelper {
 								dades));
 				solicitud.setExpedientId(
 						getValorCampPeticioMultiple(
-								"DatosGenericos",
+								"DatosGenericos/Solicitante/IdExpediente",
 								consulta.getCampsPeticioMultiple(),
 								dades));
 				Map<String, Object> dadesEspecifiques = getDadesEspecifiquesPeticioMultiple(
@@ -421,6 +419,17 @@ public class PeticioScspHelper {
 				throw new ConsultaScspGeneracioException(ex);
 			}
 		}
+	}
+
+	private es.caib.pinbal.scsp.DocumentTipus documentTipusByName(String name) {
+		es.caib.pinbal.scsp.DocumentTipus result = null;
+		for (es.caib.pinbal.scsp.DocumentTipus tipus : es.caib.pinbal.scsp.DocumentTipus.values()) {
+			if ((es.caib.pinbal.scsp.DocumentTipus.Passaport.equals(tipus) && "Pasaporte".equalsIgnoreCase(name)) || tipus.name().equalsIgnoreCase(name)) {
+				result = tipus;
+				break;
+			}
+		}
+		return result;
 	}
 
 	public void updateEstatConsulta(

@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>es.caib.pinbal</groupId>
 		<artifactId>pinbal</artifactId>
-		<version>1.4.40</version>
+		<version>1.4.41</version>
 	</parent>
 	<artifactId>pinbal-core</artifactId>
 	<packaging>ejb</packaging>
@@ -431,6 +431,11 @@
 			<groupId>org.jeasy</groupId>
 			<artifactId>easy-rules-support</artifactId>
 			<version>3.4.0</version>
+		</dependency>
+		<dependency>
+			<groupId>com.fasterxml.jackson.dataformat</groupId>
+			<artifactId>jackson-dataformat-xml</artifactId>
+			<version>${jackson.version}</version>
 		</dependency>
 	</dependencies>
 	<build>

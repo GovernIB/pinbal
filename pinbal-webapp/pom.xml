@@ -6,7 +6,7 @@
 	<parent>
 		<groupId>es.caib.pinbal</groupId>
 		<artifactId>pinbal</artifactId>
-		<version>1.4.40</version>
+		<version>1.4.41</version>
 	</parent>
 	<artifactId>pinbal-webapp</artifactId>
 	<packaging>war</packaging>
@@ -410,6 +410,7 @@
 				<plugins>
 					<plugin>
 						<artifactId>maven-war-plugin</artifactId>
+						<version>2.2</version>
 						<configuration>
 							<packagingExcludes>META-INF/context.xml</packagingExcludes>
 						</configuration>
@@ -511,6 +512,7 @@
 		<plugins>
 			<plugin>
 				<artifactId>maven-war-plugin</artifactId>
+				<version>2.2</version>
 				<configuration>
 					<warName>pinbal</warName>
 					<webResources>

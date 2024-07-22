@@ -419,11 +419,13 @@ public interface ConsultaRepository extends JpaRepository<Consulta, Long> {
 			boolean multiple,
 			ProcedimentServei procedimentServei);
 
-	public List<Consulta> findByEstatAndJustificantEstatAndMultipleAndArxiuExpedientTancatOrderByIdAsc(
+	public List<Consulta> findByEstatAndJustificantEstatAndMultipleFalseAndArxiuExpedientTancatFalseOrderByIdAsc(
 			EstatTipus estat,
-			JustificantEstat justificantEstat,
-			boolean multiple,
-			boolean arxiuExpedientTancat);
+			JustificantEstat justificantEstat);
+
+	public List<Consulta> findByEstatAndJustificantEstatAndMultipleFalseAndArxiuExpedientTancatFalseAndRecobrimentFalseOrderByIdAsc(
+			EstatTipus estat,
+			JustificantEstat justificantEstat);
 
 	public int countByPare(Consulta pare);
 

@@ -9,6 +9,7 @@ import es.caib.pinbal.scsp.JustificantArbreHelper.ElementArbre;
 import es.caib.pinbal.scsp.XmlHelper.DadesEspecifiquesNode;
 import es.caib.pinbal.scsp.tree.Tree;
 import es.scsp.bean.common.Atributos;
+import es.scsp.bean.common.ConfirmacionPeticion;
 import es.scsp.bean.common.Consentimiento;
 import es.scsp.bean.common.DatosGenericos;
 import es.scsp.bean.common.Emisor;
@@ -201,8 +202,10 @@ public class ScspHelper {
 			return estat;*/
 		}
 		try {
-			getClienteUnico().realizaPeticionAsincrona(peticion);
-			return getResultatEnviamentPeticio(idPeticion);
+			ConfirmacionPeticion confirmacionPeticion = getClienteUnico().realizaPeticionAsincrona(peticion);
+			ResultatEnviamentPeticio resultat =  getResultatEnviamentPeticio(idPeticion);
+			resultat.setConfirmacionPeticion(confirmacionPeticion);
+			return resultat;
 		} catch (ScspException ex) {
 			throw new ConsultaScspComunicacioException(idPeticion, ex);
 			/*LOGGER.error("Error al enviar petició SCSP asíncrona (peticionId=" + idPeticion + ")", ex);

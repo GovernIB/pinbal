@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.sun.jersey.api.client.ClientHandlerException;
 import com.sun.jersey.api.client.UniformInterfaceException;
+import es.caib.pinbal.client.recobriment.model.ScspConfirmacionPeticion;
 import es.caib.pinbal.client.recobriment.model.ScspFuncionario;
 import es.caib.pinbal.client.recobriment.model.ScspJustificante;
 import es.caib.pinbal.client.recobriment.model.ScspRespuesta;
@@ -32,9 +33,15 @@ public class Svddgpciws02Test {
 	private static final String ENTITAT_CIF = "S0711001H";
 	private static final String URL_BASE = "https://proves.caib.es/pinbalapi";
 	private static final String USUARI = "$ripea_pinbal";
-	private static final String CONTRASENYA = "xxxxxx";
+	private static final String CONTRASENYA = "******";
 	private static final String CODIGO_PROCEDIMIENTO = "CODSVDR_GBA_20121107";
-	private static final String PETICION_SCSP_ID = "PINBAL00000000000000335668";
+//	private static final String ENTITAT_CIF = "12345678Z";
+//	private static final String URL_BASE = "http://localhost:8180/pinbalapi";
+//	private static final String USUARI = "admin";
+//	private static final String CONTRASENYA = "******";
+//	private static final String CODIGO_PROCEDIMIENTO = "TEST";
+
+	private static final String PETICION_SCSP_ID = "PINBAL00000000000000336780";
 	private static final boolean ENABLE_LOGGING = true;
 	private static final boolean BASIC_AUTH = true;
 
@@ -66,6 +73,35 @@ public class Svddgpciws02Test {
 		ScspRespuesta respuesta = client.peticionSincrona(Arrays.asList(solicitud));
 		assertNotNull(respuesta);
 		System.out.println("-> peticionSincrona = " + objectToJsonString(respuesta));
+
+	}
+
+	@Test
+	public void peticionAsincrona() throws UniformInterfaceException, ClientHandlerException, IOException {
+		SolicitudSvddgpciws02 solicitud = new SolicitudSvddgpciws02();
+		solicitud.setIdentificadorSolicitante(ENTITAT_CIF);
+		solicitud.setCodigoProcedimiento(CODIGO_PROCEDIMIENTO);
+		solicitud.setUnidadTramitadora("Departament de test");
+		solicitud.setFinalidad("Test peticionSincrona");
+		solicitud.setIdExpediente("testPinbal/799");
+		solicitud.setConsentimiento(ScspConsentimiento.Si);
+		ScspFuncionario funcionario = new ScspFuncionario();
+		funcionario.setNifFuncionario("00000000T");
+		funcionario.setNombreCompletoFuncionario("Funcionari CAIB");
+		solicitud.setFuncionario(funcionario);
+		ScspTitular titular = new ScspTitular();
+		titular.setTipoDocumentacion(ScspTipoDocumentacion.DNI);
+		titular.setDocumentacion("12345678Z");
+		titular.setNombre("Antoni");
+		titular.setApellido1("Garau");
+		titular.setApellido2("Jaume");
+		solicitud.setTitular(titular);
+		if (ENABLE_LOGGING) {
+			client.enableLogginFilter();
+		}
+		ScspConfirmacionPeticion confirmacionPeticion = client.peticionAsincrona(Arrays.asList(solicitud));
+		assertNotNull(confirmacionPeticion);
+		System.out.println("-> peticionSincrona = " + objectToJsonString(confirmacionPeticion));
 
 	}
 
