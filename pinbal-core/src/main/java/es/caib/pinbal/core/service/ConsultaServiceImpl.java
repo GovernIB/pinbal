@@ -69,7 +69,6 @@ import es.caib.pinbal.core.repository.TokenRepository;
 import es.caib.pinbal.core.repository.UsuariRepository;
 import es.caib.pinbal.core.repository.explotacio.ExplotConsultaDimensioRepository;
 import es.caib.pinbal.core.repository.explotacio.ExplotConsultaFetsRepository;
-import es.caib.pinbal.core.repository.explotacio.ExplotConsultaFetsViewRepository;
 import es.caib.pinbal.core.repository.explotacio.ExplotTempsRepository;
 import es.caib.pinbal.core.service.exception.AccesExternException;
 import es.caib.pinbal.core.service.exception.ConsultaNotFoundException;
@@ -219,8 +218,6 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
     private ServeiRepository serveiRepository;
     @Autowired
     private ExplotConsultaDimensioRepository explotConsultaDimensioRepository;
-    @Autowired
-    private ExplotConsultaFetsViewRepository explotConsultaViewRepository;
     @Autowired
     private ExplotConsultaFetsRepository explotConsultaFetsRepository;
     @Autowired
@@ -2246,6 +2243,7 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 		String accioDesc = "generarDadesExplotacio - Recupera dades per taules d'explotació.";
 		HashMap<String, String> accioParams = new HashMap<>();
 		long t0 = System.currentTimeMillis();
+		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 
 		try {
 
@@ -2258,6 +2256,8 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 				ete = new ExplotTempsEntity(data);
 				ete = explotTempsRepository.save(ete);
 			}
+
+			accioParams.put("Data de recollida de dades", sdf.format(ete.getData()));
 
 			List<ExplotConsultaDimensioEntity> dimensions = obtenirDimensions();
 			actualitzarDadesConsultes(ete, dimensions);
@@ -2272,7 +2272,10 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 					System.currentTimeMillis() - t0);
 
 			log.debug("Finalitzat procés de generarDadesExplotacio.");
-
+			PdfReader reader = new PdfReader("");
+			reader.getPdfVersion();
+			reader.getNumberOfPages();
+			reader.isEncrypted();
 		} catch (Exception ex) {
 			integracioHelper.addAccioError(
 					IntegracioHelper.INTCODI_EXPLOTACIO,
