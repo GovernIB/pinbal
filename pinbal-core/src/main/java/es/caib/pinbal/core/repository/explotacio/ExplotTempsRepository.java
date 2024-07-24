@@ -7,6 +7,6 @@ import java.util.Date;
 
 public interface ExplotTempsRepository extends JpaRepository<ExplotTempsEntity, Long> {
 
-    ExplotTempsEntity findFirstByFecha(Date time);
+    ExplotTempsEntity findFirstByData(Date data);
 
 }

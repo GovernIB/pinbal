@@ -1,36 +1,27 @@
 package es.caib.pinbal.core.model.explotacio;
 
-import es.caib.pinbal.core.dto.ConsultaDto.EstatTipus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.data.jpa.domain.AbstractPersistable;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
-import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import java.io.Serializable;
 
-import static es.caib.pinbal.client.dadesobertes.DadesObertesRespostaConsulta.DadesObertesConsultaTipus;
-
 @Entity
 @Table(name = "pbl_explot_consulta_fet")
 @Getter @Setter
 @Builder @NoArgsConstructor @AllArgsConstructor
-public class ExplotConsultaFetsEntity implements Serializable {
+public class ExplotConsultaFetsEntity extends AbstractPersistable<Long> implements Serializable {
 
 	private static final long serialVersionUID = 2900135379128738307L;
-
-	@Id
-	@Column(name = "id")
-	private Long id;
 
 	@Column(name = "num_rec_ok")
 	private long numRecobrimentOk;

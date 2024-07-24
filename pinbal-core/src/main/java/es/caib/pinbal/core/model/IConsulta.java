@@ -1,12 +1,14 @@
 package es.caib.pinbal.core.model;
 
+import es.caib.pinbal.core.dto.JustificantEstat;
+
 public interface IConsulta {
 
     Long getId();
     ProcedimentServei getProcedimentServei();
     String getScspPeticionId();
     String getScspSolicitudId();
-    Consulta.JustificantEstat getJustificantEstat();
+    JustificantEstat getJustificantEstat();
     String getArxiuDocumentUuid();
     String getCustodiaId();
     boolean isCustodiat();
@@ -15,7 +17,7 @@ public interface IConsulta {
     String getTitularDocumentNum();
 
     void updateJustificantEstat(
-            Consulta.JustificantEstat justificantEstat,
+            JustificantEstat justificantEstat,
             boolean custodiat,
             String custodiaId,
             String custodiaUrl,

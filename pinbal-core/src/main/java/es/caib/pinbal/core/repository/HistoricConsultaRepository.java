@@ -4,7 +4,7 @@
 package es.caib.pinbal.core.repository;
 
 import es.caib.pinbal.client.dadesobertes.DadesObertesRespostaConsulta;
-import es.caib.pinbal.core.model.Consulta.EstatTipus;
+import es.caib.pinbal.core.dto.EstatTipus;
 import es.caib.pinbal.core.model.Entitat;
 import es.caib.pinbal.core.model.HistoricConsulta;
 import es.caib.pinbal.core.model.Usuari;

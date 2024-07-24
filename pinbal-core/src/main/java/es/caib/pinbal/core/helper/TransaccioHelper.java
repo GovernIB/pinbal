@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import es.caib.pinbal.core.model.Consulta;
-import es.caib.pinbal.core.model.Consulta.EstatTipus;
+import es.caib.pinbal.core.dto.EstatTipus;
 import es.caib.pinbal.core.repository.ConsultaRepository;
 
 

@@ -689,6 +689,7 @@ public interface ConsultaService {
 	 * Genera les dades d'explotació del dia anterior
 	 */
 	public void generarDadesExplotacio();
+	public void generarDadesExplotacio(Date date);
 
 	/**
 	 * Retorna si les peticions al SCSP s'han de fer en una sola passa o en

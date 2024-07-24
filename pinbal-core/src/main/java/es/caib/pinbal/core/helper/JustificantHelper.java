@@ -7,7 +7,7 @@ import com.lowagie.text.DocumentException;
 import com.lowagie.text.pdf.codec.Base64;
 import es.caib.pinbal.core.dto.FitxerDto;
 import es.caib.pinbal.core.dto.IntegracioAccioTipusEnumDto;
-import es.caib.pinbal.core.model.Consulta.JustificantEstat;
+import es.caib.pinbal.core.dto.JustificantEstat;
 import es.caib.pinbal.core.model.IConsulta;
 import es.caib.pinbal.core.model.Procediment;
 import es.caib.pinbal.core.model.ProcedimentServei;

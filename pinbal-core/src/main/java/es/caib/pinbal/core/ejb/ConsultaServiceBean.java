@@ -387,10 +387,16 @@ public class ConsultaServiceBean implements ConsultaService {
 		delegate.autoEnviarPeticionsPendents();
 	}
 
-    @Override
+	@Override
 	@TransactionTimeout(value = 3600)
-    public void generarDadesExplotacio() {
-        delegate.generarDadesExplotacio();
+	public void generarDadesExplotacio() {
+		delegate.generarDadesExplotacio();
+	}
+
+	@Override
+	@TransactionTimeout(value = 3600)
+    public void generarDadesExplotacio(Date data) {
+        delegate.generarDadesExplotacio(data);
     }
 
     @Override

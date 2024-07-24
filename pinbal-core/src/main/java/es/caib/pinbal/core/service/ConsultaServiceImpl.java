@@ -22,12 +22,14 @@ import es.caib.pinbal.core.dto.EntitatDto;
 import es.caib.pinbal.core.dto.EstadisticaDto;
 import es.caib.pinbal.core.dto.EstadistiquesFiltreDto;
 import es.caib.pinbal.core.dto.EstadistiquesFiltreDto.EstadistiquesAgrupacioDto;
+import es.caib.pinbal.core.dto.EstatTipus;
 import es.caib.pinbal.core.dto.FitxerDto;
 import es.caib.pinbal.core.dto.InformeGeneralEstatDto;
 import es.caib.pinbal.core.dto.InformeProcedimentServeiDto;
 import es.caib.pinbal.core.dto.InformeRepresentantFiltreDto;
 import es.caib.pinbal.core.dto.IntegracioAccioTipusEnumDto;
 import es.caib.pinbal.core.dto.JustificantDto;
+import es.caib.pinbal.core.dto.JustificantEstat;
 import es.caib.pinbal.core.dto.ProcedimentDto;
 import es.caib.pinbal.core.dto.RecobrimentSolicitudDto;
 import es.caib.pinbal.core.dto.RespostaAtributsDto;
@@ -46,16 +48,15 @@ import es.caib.pinbal.core.helper.PluginHelper;
 import es.caib.pinbal.core.helper.ServeiHelper;
 import es.caib.pinbal.core.helper.UsuariHelper;
 import es.caib.pinbal.core.model.Consulta;
-import es.caib.pinbal.core.model.Consulta.EstatTipus;
-import es.caib.pinbal.core.model.Consulta.JustificantEstat;
 import es.caib.pinbal.core.model.Entitat;
 import es.caib.pinbal.core.model.EntitatUsuari;
 import es.caib.pinbal.core.model.Procediment;
 import es.caib.pinbal.core.model.ProcedimentServei;
 import es.caib.pinbal.core.model.Usuari;
+import es.caib.pinbal.core.model.explotacio.ExplotConsultaDimensio;
 import es.caib.pinbal.core.model.explotacio.ExplotConsultaDimensioEntity;
+import es.caib.pinbal.core.model.explotacio.ExplotConsultaFets;
 import es.caib.pinbal.core.model.explotacio.ExplotConsultaFetsEntity;
-import es.caib.pinbal.core.model.explotacio.ExplotConsultaView;
 import es.caib.pinbal.core.model.explotacio.ExplotTempsEntity;
 import es.caib.pinbal.core.repository.ConsultaRepository;
 import es.caib.pinbal.core.repository.EntitatRepository;
@@ -63,11 +64,12 @@ import es.caib.pinbal.core.repository.EntitatUsuariRepository;
 import es.caib.pinbal.core.repository.ProcedimentRepository;
 import es.caib.pinbal.core.repository.ProcedimentServeiRepository;
 import es.caib.pinbal.core.repository.ServeiRepository;
+import es.caib.pinbal.core.repository.SuperConsultaRepository;
 import es.caib.pinbal.core.repository.TokenRepository;
 import es.caib.pinbal.core.repository.UsuariRepository;
 import es.caib.pinbal.core.repository.explotacio.ExplotConsultaDimensioRepository;
 import es.caib.pinbal.core.repository.explotacio.ExplotConsultaFetsRepository;
-import es.caib.pinbal.core.repository.explotacio.ExplotConsultaViewRepository;
+import es.caib.pinbal.core.repository.explotacio.ExplotConsultaFetsViewRepository;
 import es.caib.pinbal.core.repository.explotacio.ExplotTempsRepository;
 import es.caib.pinbal.core.service.exception.AccesExternException;
 import es.caib.pinbal.core.service.exception.ConsultaNotFoundException;
@@ -130,8 +132,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -220,9 +220,11 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
     @Autowired
     private ExplotConsultaDimensioRepository explotConsultaDimensioRepository;
     @Autowired
-    private ExplotConsultaViewRepository explotConsultaViewRepository;
+    private ExplotConsultaFetsViewRepository explotConsultaViewRepository;
     @Autowired
     private ExplotConsultaFetsRepository explotConsultaFetsRepository;
+    @Autowired
+    private SuperConsultaRepository superConsultaRepository;
 
 	@Transactional(rollbackFor = {ProcedimentServeiNotFoundException.class, ServeiNotAllowedException.class, ConsultaScspException.class})
 	@Override
@@ -1797,7 +1799,7 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 					filtre.getServeiCodi() == null || filtre.getServeiCodi().isEmpty(),
 					filtre.getServeiCodi(),
 					filtre.getEstat() == null,
-					(filtre.getEstat() != null) ? Consulta.EstatTipus.valueOf(filtre.getEstat().toString()) : null,
+					(filtre.getEstat() != null) ? EstatTipus.valueOf(filtre.getEstat().toString()) : null,
 					filtre.getDataInici() == null,
 					filtre.getDataInici(),
 					filtre.getDataFi() == null,
@@ -1815,7 +1817,7 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 					filtre.getServeiCodi() == null || filtre.getServeiCodi().isEmpty(),
 					filtre.getServeiCodi(),
 					filtre.getEstat() == null,
-					(filtre.getEstat() != null) ? Consulta.EstatTipus.valueOf(filtre.getEstat().toString()) : null,
+					(filtre.getEstat() != null) ? EstatTipus.valueOf(filtre.getEstat().toString()) : null,
 					filtre.getDataInici() == null,
 					filtre.getDataInici(),
 					filtre.getDataFi() == null,
@@ -1883,7 +1885,7 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 				filtre.getServeiCodi() == null || filtre.getServeiCodi().isEmpty(),
 				filtre.getServeiCodi(),
 				filtre.getEstat() == null,
-				(filtre.getEstat() != null) ? Consulta.EstatTipus.valueOf(filtre.getEstat().toString()) : null,
+				(filtre.getEstat() != null) ? EstatTipus.valueOf(filtre.getEstat().toString()) : null,
 				filtre.getDataInici() == null,
 				filtre.getDataInici(),
 				filtre.getDataFi() == null,
@@ -2229,11 +2231,17 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 		log.debug("Finalitzat l'enviament automàtic de les " + i + " peticions pendents (" + (System.currentTimeMillis() - t0) + "ms)");
 	}
 
-
 	@Async
 	@Override
 	@Transactional(timeout = 3600)
 	public void generarDadesExplotacio() {
+		generarDadesExplotacio(ahir());
+	}
+
+
+	@Override
+	@Transactional(timeout = 3600)
+	public void generarDadesExplotacio(Date data) {
 		// Generar dades d'explotació
 		String accioDesc = "generarDadesExplotacio - Recupera dades per taules d'explotació.";
 		HashMap<String, String> accioParams = new HashMap<>();
@@ -2241,17 +2249,17 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 
 		try {
 
-			log.debug("Iniciant procés de syncExplotacioDadesConvocatories.");
+			log.debug("Iniciant procés de syncExplotacioDadesConvocatories. Data: " + data);
+			if (data == null) data = ahir();
 
-			Calendar cal = Calendar.getInstance();
-			ExplotTempsEntity ete = explotTempsRepository.findFirstByFecha(cal.getTime());
+			ExplotTempsEntity ete = explotTempsRepository.findFirstByData(data(data));
 
-			if(ete == null) {
-				ete = new ExplotTempsEntity();
+			if (ete == null) {
+				ete = new ExplotTempsEntity(data);
 				ete = explotTempsRepository.save(ete);
 			}
 
-			List<ExplotConsultaDimensioEntity> dimensions =obtenirDimensions();
+			List<ExplotConsultaDimensioEntity> dimensions = obtenirDimensions();
 			actualitzarDadesConsultes(ete, dimensions);
 
 			log.debug("Finalitzant procés de syncExplotacioDadesConvocatories, guardant a monitor de integracions.");
@@ -2278,19 +2286,45 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 
 	}
 
+	private Date ahir() {
+		Calendar cal = Calendar.getInstance();
+		cal.add(Calendar.DAY_OF_YEAR, -1);
+		return getDateZero(cal);
+	}
+
+	private Date data(Date date) {
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(date);
+		// Set the time components to zero
+		return getDateZero(cal);
+	}
+
+	private static Date getDateZero(Calendar cal) {
+		// Set the time components to zero
+		cal.set(Calendar.HOUR_OF_DAY, 0);
+		cal.set(Calendar.MINUTE, 0);
+		cal.set(Calendar.SECOND, 0);
+		cal.set(Calendar.MILLISECOND, 0);
+
+		return cal.getTime();
+	}
+
 	private void actualitzarDadesConsultes(ExplotTempsEntity ete, List<ExplotConsultaDimensioEntity> dimensions) {
-		List<ExplotConsultaView> dades = explotConsultaViewRepository.findAll();
+		// Eliminam les dades d'explotació de la data
+		explotConsultaFetsRepository.deleteAllByTemps(ete);
+		List<ExplotConsultaFets> estadistiquesConsultes = superConsultaRepository.getConsultesPerEstadistiques(false, ete.getDataPerConsulta());
 
 		int dadaIndex = 0;
 		int dimensionIndex = 0;
 
-		while (dadaIndex < dades.size() && dimensionIndex < dimensions.size()) {
-			ExplotConsultaView view = dades.get(dadaIndex);
+		// Les dues llistes estan ordenades
+		while (dadaIndex < estadistiquesConsultes.size() && dimensionIndex < dimensions.size()) {
+			ExplotConsultaFets estadistiquesConsulta = estadistiquesConsultes.get(dadaIndex);
 			ExplotConsultaDimensioEntity dimension = dimensions.get(dimensionIndex);
 
-			int comparison = compareViewsAndDimensions(view, dimension);
+			int comparison = compareEstadistiquesConsultaAndDimensions(estadistiquesConsulta, dimension);
 			if (comparison == 0) {
-				saveToFetsEntity(view, dimension, ete);
+				saveToFetsEntity(estadistiquesConsulta, dimension, ete);
 				dadaIndex++;
 			} else if (comparison < 0) {
 				dadaIndex++;
@@ -2301,80 +2335,131 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 
 	}
 
-	private int compareViewsAndDimensions(ExplotConsultaView view, ExplotConsultaDimensioEntity dimension) {
-		int comparison = view.getEntitatId().compareTo(dimension.getEntitatId());
+	private int compareEstadistiquesConsultaAndDimensions(ExplotConsultaFets estadistiquesConsulta, ExplotConsultaDimensioEntity dimension) {
+		int comparison = estadistiquesConsulta.getEntitatId().compareTo(dimension.getEntitatId());
 		if (comparison != 0) return comparison;
 
-		comparison = view.getProcedimentId().compareTo(dimension.getProcedimentId());
+		comparison = estadistiquesConsulta.getProcedimentId().compareTo(dimension.getProcedimentId());
 		if (comparison != 0) return comparison;
 
-		comparison = view.getServeiCodi().compareTo(dimension.getServeiCodi());
+		comparison = estadistiquesConsulta.getServeiCodi().compareTo(dimension.getServeiCodi());
 		if (comparison != 0) return comparison;
 
-		return view.getUsuariCodi().compareTo(dimension.getUsuariCodi());
+		return estadistiquesConsulta.getUsuariCodi().compareTo(dimension.getUsuariCodi());
 	}
 
-	private void saveToFetsEntity(ExplotConsultaView view, ExplotConsultaDimensioEntity dimension, ExplotTempsEntity ete) {
+	private void saveToFetsEntity(ExplotConsultaFets estadistiquesConsulta, ExplotConsultaDimensioEntity dimension, ExplotTempsEntity ete) {
 		ExplotConsultaFetsEntity fetsEntity = new ExplotConsultaFetsEntity();
 		fetsEntity.setConsultaDimensio(dimension);
 		fetsEntity.setTemps(ete);
-		fetsEntity.setNumRecobrimentOk(view.getRecobrimentOk());
-		fetsEntity.setNumRecobrimentError(view.getRecobrimentError());
-		fetsEntity.setNumRecobrimentPendent(view.getRecobrimentPend());
+		fetsEntity.setNumRecobrimentOk(estadistiquesConsulta.getRecobrimentOk());
+		fetsEntity.setNumRecobrimentError(estadistiquesConsulta.getRecobrimentError());
+		fetsEntity.setNumRecobrimentPendent(estadistiquesConsulta.getRecobrimentPend());
 
 
 		explotConsultaFetsRepository.save(fetsEntity);
 	}
 
 	private List<ExplotConsultaDimensioEntity> obtenirDimensions() {
-		// Obtenim totes les dimensions per procedimentServei/usuari. Si no existeix la cream
-		List<ProcedimentServei> procedimentServeis = procedimentServeiRepository.findAll();
-		List<Usuari> usuaris = usuariRepository.findAll();
-
 		// Llista a on afegirem les dimensio creades o actualitzades
 		List<ExplotConsultaDimensioEntity> dimensions = new ArrayList<>();
 
-		if (procedimentServeis != null && usuaris != null) {
+		// Obtenim totes les dimensions per procedimentServei/usuari. Les que no existeixin les crearem
+		List<ExplotConsultaDimensio> dimensionsPerConsultes = superConsultaRepository.getDimensionsPerEstadistiques();
+		List<ExplotConsultaDimensioEntity> dimensionsEnDb = explotConsultaDimensioRepository.findAllOrdered();
 
-			for(ProcedimentServei procedimentServei: procedimentServeis) {
-				for(Usuari usuari: usuaris) {
-					ExplotConsultaDimensioEntity dimensio = explotConsultaDimensioRepository.findByProcedimentIdAndServeiCodiAndUsuariCodi(
-							procedimentServei.getProcediment().getId(),
-							procedimentServei.getServei(),
-							usuari.getCodi());
+		dimensions = actualitzarDimensionsConsultes(dimensionsEnDb, dimensionsPerConsultes);
 
-					if (dimensio == null) {
-
-						dimensio = ExplotConsultaDimensioEntity.builder()
-								.entitatId(procedimentServei.getProcediment().getEntitat().getId())
-								.procedimentId(procedimentServei.getProcediment().getId())
-								.serveiCodi(procedimentServei.getServei())
-								.usuariCodi(usuari.getCodi())
-								.build();
-						dimensio = explotConsultaDimensioRepository.save(dimensio);
-					}
-
-					dimensions.add(dimensio);
-				}
-			}
-
-		}
-		Collections.sort(dimensions, new Comparator<ExplotConsultaDimensioEntity>() {
-			@Override
-            public int compare(ExplotConsultaDimensioEntity dimensio1, ExplotConsultaDimensioEntity dimensio2) {
-				int comparison = dimensio1.getEntitatId().compareTo(dimensio2.getEntitatId());
-				if (comparison != 0) return comparison;
-
-				comparison = dimensio1.getProcedimentId().compareTo(dimensio2.getProcedimentId());
-				if (comparison != 0) return comparison;
-
-				comparison = dimensio1.getServeiCodi().compareTo(dimensio2.getServeiCodi());
-				if (comparison != 0) return comparison;
-
-				return dimensio1.getUsuariCodi().compareTo(dimensio2.getUsuariCodi());
-            }
-		});
+//		if (dimensionsPerConsultes != null) {
+//
+//			for(ExplotConsultaDimensio dimensioExplotacio: dimensionsPerConsultes) {
+//				ExplotConsultaDimensioEntity dimensio = explotConsultaDimensioRepository.findByEntitatIdAndProcedimentIdAndServeiCodiAndUsuariCodi(
+//						dimensioExplotacio.getEntitatId(),
+//						dimensioExplotacio.getProcedimentId(),
+//						dimensioExplotacio.getServeiCodi(),
+//						dimensioExplotacio.getUsuariCodi());
+//
+//				if (dimensio == null) {
+//
+//					dimensio = ExplotConsultaDimensioEntity.builder()
+//							.entitatId(procedimentServei.getProcediment().getEntitat().getId())
+//							.procedimentId(procedimentServei.getProcediment().getId())
+//							.serveiCodi(procedimentServei.getServei())
+//							.usuariCodi(usuari.getCodi())
+//							.build();
+//					dimensio = explotConsultaDimensioRepository.save(dimensio);
+//				}
+//
+//				dimensions.add(dimensio);
+//			}
+//
+//		}
+//		Collections.sort(dimensions, new Comparator<ExplotConsultaDimensioEntity>() {
+//			@Override
+//            public int compare(ExplotConsultaDimensioEntity dimensio1, ExplotConsultaDimensioEntity dimensio2) {
+//				int comparison = dimensio1.getEntitatId().compareTo(dimensio2.getEntitatId());
+//				if (comparison != 0) return comparison;
+//
+//				comparison = dimensio1.getProcedimentId().compareTo(dimensio2.getProcedimentId());
+//				if (comparison != 0) return comparison;
+//
+//				comparison = dimensio1.getServeiCodi().compareTo(dimensio2.getServeiCodi());
+//				if (comparison != 0) return comparison;
+//
+//				return dimensio1.getUsuariCodi().compareTo(dimensio2.getUsuariCodi());
+//  		          }
+//		});
 		return dimensions;
+	}
+
+	private List<ExplotConsultaDimensioEntity> actualitzarDimensionsConsultes(List<ExplotConsultaDimensioEntity> dimensionsEnDb, List<ExplotConsultaDimensio> dimensionsPerConsultes) {
+		List<ExplotConsultaDimensioEntity> dimensions = new ArrayList<>();
+
+		for (ExplotConsultaDimensio dimensioConsulta : dimensionsPerConsultes) {
+			// Converteix la instància de ExplotConsultaDimensio a ExplotConsultaDimensioEntity
+			ExplotConsultaDimensioEntity dimensioEntity = toConsultaDimensioEntity(dimensioConsulta); // Habràs de fer aquest mètode tú
+
+			// Comprova si existeix a la base de dades, si no, la guarda
+			int dimensioEntityIndex = dimensionsEnDb.indexOf(dimensioEntity);
+			if (dimensioEntityIndex == -1) {
+				dimensioEntity = explotConsultaDimensioRepository.save(dimensioEntity);
+				dimensionsEnDb.add(dimensioEntity);
+				dimensions.add(dimensioEntity);
+			} else {
+				dimensions.add(dimensionsEnDb.get(dimensioEntityIndex));
+			}
+		}
+
+		return dimensions;
+
+//		int conIndex = 0;
+//		int dbIndex = 0;
+//
+//		// Les dues llistes estan ordenades
+//		while (conIndex < estadistiquesConsultes.size() && dimensionIndex < dimensions.size()) {
+//			ExplotConsultaFets estadistiquesConsulta = estadistiquesConsultes.get(dadaIndex);
+//			ExplotConsultaDimensioEntity dimension = dimensions.get(dimensionIndex);
+//
+//			int comparison = compareEstadistiquesConsultaAndDimensions(estadistiquesConsulta, dimension);
+//			if (comparison == 0) {
+//				saveToFetsEntity(estadistiquesConsulta, dimension, ete);
+//				dadaIndex++;
+//			} else if (comparison < 0) {
+//				dadaIndex++;
+//			} else {
+//				dimensionIndex++;
+//			}
+//		}
+
+	}
+
+	private ExplotConsultaDimensioEntity toConsultaDimensioEntity(ExplotConsultaDimensio dimensio) {
+		return ExplotConsultaDimensioEntity.builder()
+				.entitatId(dimensio.getEntitatId())
+				.procedimentId(dimensio.getProcedimentId())
+				.serveiCodi(dimensio.getServeiCodi())
+				.usuariCodi(dimensio.getUsuariCodi())
+				.build();
 	}
 
 	@Override
@@ -2803,7 +2888,7 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 					filtre.getServeiCodi() == null || filtre.getServeiCodi().isEmpty(),
 					filtre.getServeiCodi(),
 					filtre.getEstat() == null,
-					(filtre.getEstat() != null) ? Consulta.EstatTipus.valueOf(filtre.getEstat().toString()) : null,
+					(filtre.getEstat() != null) ? EstatTipus.valueOf(filtre.getEstat().toString()) : null,
 					filtre.getDataInici() == null,
 					filtre.getDataInici(),
 					filtre.getDataFi() == null,
@@ -2885,7 +2970,7 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 				filtre.getServeiCodi() == null || filtre.getServeiCodi().isEmpty(),
 				filtre.getServeiCodi(),
 				filtre.getEstat() == null,
-				(filtre.getEstat() != null) ? Consulta.EstatTipus.valueOf(filtre.getEstat().toString()) : null,
+				(filtre.getEstat() != null) ? EstatTipus.valueOf(filtre.getEstat().toString()) : null,
 				filtre.getDataInici() == null,
 				filtre.getDataInici(),
 				filtre.getDataFi() == null,

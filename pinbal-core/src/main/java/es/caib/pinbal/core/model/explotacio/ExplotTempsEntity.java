@@ -5,12 +5,12 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.data.jpa.domain.AbstractPersistable;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -22,14 +22,10 @@ import java.util.Date;
 @Table(name = "pbl_explot_temps")
 @Getter @Setter
 @Builder @AllArgsConstructor
-public class ExplotTempsEntity implements Serializable {
+public class ExplotTempsEntity extends AbstractPersistable<Long> implements Serializable {
 
 	private static final long serialVersionUID = -2144138256112639860L;
 
-	@Id
-	@Column(name = "id")
-	private Long id;
-	
 	@Temporal(TemporalType.DATE)
 	@Column(name = "data")
 	private Date data;
@@ -55,6 +51,19 @@ public class ExplotTempsEntity implements Serializable {
 
 		Calendar cal = Calendar.getInstance();
 		this.anualitat = cal.get(Calendar.YEAR);
+		emplenarCamps(cal);
+	}
+
+	public ExplotTempsEntity(Date data) {
+		super();
+
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(data);
+		this.anualitat = cal.get(Calendar.YEAR);
+		emplenarCamps(cal);
+	}
+
+	private void emplenarCamps(Calendar cal) {
 		Integer diaSem = cal.get(Calendar.DAY_OF_WEEK);
 		if (diaSem.compareTo(Calendar.MONDAY)==0) { this.dia = DiaSetmanaEnum.LUN; }
 		if (diaSem.compareTo(Calendar.TUESDAY)==0) { this.dia = DiaSetmanaEnum.MAR; }
@@ -78,5 +87,13 @@ public class ExplotTempsEntity implements Serializable {
 		if (month.compareTo(Calendar.OCTOBER)==0) { this.mes = 10; this.trimestre=4; }
 		if (month.compareTo(Calendar.NOVEMBER)==0) { this.mes = 11; this.trimestre=4; }
 		if (month.compareTo(Calendar.DECEMBER)==0) { this.mes = 12; this.trimestre=4; }
+	}
+
+	public Date getDataPerConsulta() {
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(this.data);
+		cal.add(Calendar.DAY_OF_YEAR, 1);
+
+		return cal.getTime();
 	}
 }

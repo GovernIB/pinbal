@@ -10,7 +10,7 @@ import es.caib.pinbal.core.dto.ConsultaDto.Consentiment;
 import es.caib.pinbal.core.dto.ConsultaDto.DocumentTipus;
 import es.caib.pinbal.core.dto.IntegracioAccioTipusEnumDto;
 import es.caib.pinbal.core.model.Consulta;
-import es.caib.pinbal.core.model.Consulta.EstatTipus;
+import es.caib.pinbal.core.dto.EstatTipus;
 import es.caib.pinbal.core.model.Entitat;
 import es.caib.pinbal.core.model.Procediment;
 import es.caib.pinbal.core.model.ProcedimentServei;
