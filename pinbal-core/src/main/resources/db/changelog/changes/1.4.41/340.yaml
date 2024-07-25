@@ -1,4 +1,12 @@
 databaseChangeLog:
+  - property:
+      name: varcharUnit
+      value: CHAR
+      dbms: oracle
+  - property:
+      name: varcharUnit
+      value: ''
+      dbms: postgresql
   - changeSet:
       id: 1719641276939
       author: limit
@@ -29,7 +37,7 @@ databaseChangeLog:
                   type: int
               - column:
                   name: dia
-                  type: varchar(3)
+                  type: varchar(3 ${varcharUnit})
                   constraints:
                     nullable: true
         - createTable:
@@ -49,10 +57,10 @@ databaseChangeLog:
                   type: bigint
               - column:
                   name: servei_codi
-                  type: varchar(255)
+                  type: varchar(64 ${varcharUnit})
               - column:
                   name: usuari_codi
-                  type: varchar(255)
+                  type: varchar(255 ${varcharUnit})
         - addUniqueConstraint:
             constraintName: pbl_explot_consulta_dim_uk
             tableName: pbl_explot_consulta_dim
@@ -76,6 +84,21 @@ databaseChangeLog:
                   name: num_rec_pend
                   type: bigint
               - column:
+                  name: num_rec_proc
+                  type: bigint
+              - column:
+                  name: num_rec_mass_ok
+                  type: bigint
+              - column:
+                  name: num_rec_mass_error
+                  type: bigint
+              - column:
+                  name: num_rec_mass_pend
+                  type: bigint
+              - column:
+                  name: num_rec_mass_proc
+                  type: bigint
+              - column:
                   name: num_web_ok
                   type: bigint
               - column:
@@ -83,6 +106,21 @@ databaseChangeLog:
                   type: bigint
               - column:
                   name: num_web_pend
+                  type: bigint
+              - column:
+                  name: num_web_proc
+                  type: bigint
+              - column:
+                  name: num_web_mass_ok
+                  type: bigint
+              - column:
+                  name: num_web_mass_error
+                  type: bigint
+              - column:
+                  name: num_web_mass_pend
+                  type: bigint
+              - column:
+                  name: num_web_mass_proc
                   type: bigint
               - column:
                   name: dimensio_id

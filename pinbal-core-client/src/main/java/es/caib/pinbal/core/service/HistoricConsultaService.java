@@ -10,8 +10,6 @@ import es.caib.pinbal.core.dto.ConsultaDto;
 import es.caib.pinbal.core.dto.ConsultaFiltreDto;
 import es.caib.pinbal.core.dto.ConsultaOpenDataDto;
 import es.caib.pinbal.core.dto.EntitatDto;
-import es.caib.pinbal.core.dto.EstadisticaDto;
-import es.caib.pinbal.core.dto.EstadistiquesFiltreDto;
 import es.caib.pinbal.core.dto.FitxerDto;
 import es.caib.pinbal.core.dto.InformeGeneralEstatDto;
 import es.caib.pinbal.core.dto.InformeProcedimentServeiDto;
@@ -324,31 +322,6 @@ public interface HistoricConsultaService {
 	 */
 	@PreAuthorize("hasRole('ROLE_DELEG')")
 	public List<ConsultaDto> findAmbPare(Long pareId) throws ConsultaNotFoundException, ScspException;
-
-	/**
-	 * Retorna una estadística d'us dels procediments i serveis
-	 * d'una entitat.
-	 * 
-	 * @param filtre
-	 *            Filtre de consultes.
-	 * @return el llistat amb les estadístiques.
-	 * @throws EntitatNotFoundException
-	 *            Si l'entitat especificada no existeix.
-	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_REPRES') or hasRole('ROLE_REPORT')")
-	public List<EstadisticaDto> findEstadistiquesByFiltre(EstadistiquesFiltreDto filtre) throws EntitatNotFoundException;
-
-	/**
-	 * Retorna les estadístiques per a totes les entitats amb consultes fetes i les
-	 * estadístiques globals. Les estadístiques globals es fiquen a la resposta amb
-	 * la clau null.
-	 * 
-	 * @param filtre
-	 * @return una taula hash amb les estadístiques organitzades per entitat.
-	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_REPORT')")
-	public Map<EntitatDto, List<EstadisticaDto>> findEstadistiquesGlobalsByFiltre(
-            EstadistiquesFiltreDto filtre);
 
 	/**
 	 * Retorna informació sobre la càrrega del sistema.

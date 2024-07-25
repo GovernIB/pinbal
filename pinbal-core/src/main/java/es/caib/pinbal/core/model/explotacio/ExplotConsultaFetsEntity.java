@@ -32,14 +32,44 @@ public class ExplotConsultaFetsEntity extends AbstractPersistable<Long> implemen
 	@Column(name = "num_rec_pend")
 	private long numRecobrimentPendent;
 
+	@Column(name = "num_rec_proc")
+	private long numRecobrimentProcessant;
+
+	@Column(name = "num_rec_mass_ok")
+	private long numRecobrimentMassiuOk;
+
+	@Column(name = "num_rec_mass_error")
+	private long numRecobrimentMassiuError;
+
+	@Column(name = "num_rec_mass_pend")
+	private long numRecobrimentMassiuPendent;
+
+	@Column(name = "num_rec_mass_proc")
+	private long numRecobrimentMassiuProcessant;
+
 	@Column(name = "num_web_ok")
-	private long numWebUIOk;
+	private long numWebOk;
 
 	@Column(name = "num_web_error")
-	private long numWebUIError;
+	private long numWebError;
 
 	@Column(name = "num_web_pend")
 	private long numWebPendent;
+
+	@Column(name = "num_web_proc")
+	private long numWebProcessant;
+
+	@Column(name = "num_web_mass_ok")
+	private long numWebMassiuOk;
+
+	@Column(name = "num_web_mass_error")
+	private long numWebMassiuError;
+
+	@Column(name = "num_web_mass_pend")
+	private long numWebMassiuPendent;
+
+	@Column(name = "num_web_mass_proc")
+	private long numWebMassiuProcessant;
 
 	@ManyToOne(optional = false, fetch = FetchType.LAZY)
 	@JoinColumn(name="dimensio_id")
@@ -54,7 +84,7 @@ public class ExplotConsultaFetsEntity extends AbstractPersistable<Long> implemen
 	}
 
 	private long getNumWebUITotal() {
-		return numWebUIOk + numWebUIError + numWebPendent;
+		return numWebOk + numWebError + numWebPendent;
 	}
 
 	private long getNumTotal() {

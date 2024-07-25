@@ -3,12 +3,10 @@
  */
 package es.caib.pinbal.webapp.view;
 
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
+import es.caib.pinbal.core.dto.EntitatDto;
+import es.caib.pinbal.core.dto.EstadisticaDto;
+import es.caib.pinbal.core.dto.EstadistiquesFiltreDto.EstadistiquesAgrupacioDto;
+import es.caib.pinbal.webapp.command.EstadistiquesFiltreCommand;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFFont;
@@ -22,10 +20,10 @@ import org.springframework.context.MessageSourceAware;
 import org.springframework.web.servlet.support.RequestContext;
 import org.springframework.web.servlet.view.document.AbstractExcelView;
 
-import es.caib.pinbal.core.dto.EntitatDto;
-import es.caib.pinbal.core.dto.EstadisticaDto;
-import es.caib.pinbal.core.dto.EstadistiquesFiltreDto.EstadistiquesAgrupacioDto;
-import es.caib.pinbal.webapp.command.EstadistiquesFiltreCommand;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Vista per a generar els fitxers amb format Excel de les estadístiques.
@@ -335,12 +333,12 @@ public class EstadistiquesExcelView extends AbstractExcelView implements Message
 				// Mostra la fila d'estadístiques
 				HSSFRow filaActual = sheet.createRow(filaInicial + 1 + rowIndex);
 				if (command.getAgrupacio().equals(EstadistiquesAgrupacioDto.PROCEDIMENT_SERVEI)) {
-					if (agrupacioActual == null || !agrupacioActual.equals(estadistica.getProcediment().getId().toString())) {
+					if (agrupacioActual == null || !agrupacioActual.equals(estadistica.getProcedimentId().toString())) {
 						primeraFilaAgrupacioActual = filaInicial + 1 + rowIndex;
 						HSSFCell procCell = filaActual.createCell(columnaInicial + 0);
-						procCell.setCellValue(estadistica.getProcediment().getNomAmbDepartament());
+						procCell.setCellValue(estadistica.getProcedimentNomAmbDepartament());
 						procCell.setCellStyle(contingutTextStyle);
-						agrupacioActual = estadistica.getProcediment().getId().toString();
+						agrupacioActual = estadistica.getProcedimentId().toString();
 					}
 					HSSFCell serCell = filaActual.createCell(columnaInicial + 1);
 					serCell.setCellValue(estadistica.getServeiNom());
@@ -355,7 +353,7 @@ public class EstadistiquesExcelView extends AbstractExcelView implements Message
 					}
 					HSSFCell procCell = filaActual.createCell(columnaInicial + 1);
 					procCell.setCellStyle(contingutTextStyle);
-					procCell.setCellValue(estadistica.getProcediment().getNomAmbDepartament());
+					procCell.setCellValue(estadistica.getProcedimentNomAmbDepartament());
 				}
 				HSSFCell numRecOkCell = filaActual.createCell(columnaInicial + 2);
 				numRecOkCell.setCellValue(estadistica.getNumRecobrimentOk());

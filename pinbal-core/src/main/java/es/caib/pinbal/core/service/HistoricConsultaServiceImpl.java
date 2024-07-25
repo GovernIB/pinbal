@@ -17,15 +17,13 @@ import es.caib.pinbal.core.dto.ConsultaFiltreDto;
 import es.caib.pinbal.core.dto.ConsultaOpenDataDto;
 import es.caib.pinbal.core.dto.EmisorDto;
 import es.caib.pinbal.core.dto.EntitatDto;
-import es.caib.pinbal.core.dto.EstadisticaDto;
-import es.caib.pinbal.core.dto.EstadistiquesFiltreDto;
-import es.caib.pinbal.core.dto.EstadistiquesFiltreDto.EstadistiquesAgrupacioDto;
+import es.caib.pinbal.core.dto.EstatTipus;
 import es.caib.pinbal.core.dto.FitxerDto;
 import es.caib.pinbal.core.dto.InformeGeneralEstatDto;
 import es.caib.pinbal.core.dto.InformeProcedimentServeiDto;
 import es.caib.pinbal.core.dto.InformeRepresentantFiltreDto;
 import es.caib.pinbal.core.dto.JustificantDto;
-import es.caib.pinbal.core.dto.ProcedimentDto;
+import es.caib.pinbal.core.dto.JustificantEstat;
 import es.caib.pinbal.core.dto.arxiu.ArxiuDetallDto;
 import es.caib.pinbal.core.helper.ArxiuHelper;
 import es.caib.pinbal.core.helper.ConfigHelper;
@@ -34,8 +32,6 @@ import es.caib.pinbal.core.helper.JustificantHelper;
 import es.caib.pinbal.core.helper.PermisosHelper;
 import es.caib.pinbal.core.helper.PeticioScspEstadistiquesHelper;
 import es.caib.pinbal.core.helper.PluginHelper;
-import es.caib.pinbal.core.dto.EstatTipus;
-import es.caib.pinbal.core.dto.JustificantEstat;
 import es.caib.pinbal.core.model.Entitat;
 import es.caib.pinbal.core.model.EntitatUsuari;
 import es.caib.pinbal.core.model.HistoricConsulta;
@@ -686,152 +682,6 @@ public class HistoricConsultaServiceImpl implements HistoricConsultaService, App
 		return resposta;
 	}
 
-	@Transactional(readOnly = true)
-	@Override
-	public List<EstadisticaDto> findEstadistiquesByFiltre(EstadistiquesFiltreDto filtre) throws EntitatNotFoundException {
-		log.debug("Consultant estadístiques per a l'entitat (id=" + filtre.getEntitatId() + ")");
-		if (filtre.getEntitatId() != null) {
-			Entitat entitat = entitatRepository.findOne(filtre.getEntitatId());
-			if (entitat == null) {
-				log.debug("No s'ha trobat l'entitat (id=" + filtre.getEntitatId() + ")");
-				throw new EntitatNotFoundException();
-			}
-		}
-		List<EstadisticaDto> resposta = new ArrayList<EstadisticaDto>();
-		List<Object[]> resultats;
-		if (EstadistiquesAgrupacioDto.PROCEDIMENT_SERVEI.equals(filtre.getAgrupacio())) {
-			resultats = historicConsultaRepository.countByProcedimentServei(
-					filtre.getEntitatId() == null,
-					filtre.getEntitatId(),
-					filtre.getUsuariCodi() == null,
-					(filtre.getUsuariCodi() != null) ? usuariRepository.findOne(filtre.getUsuariCodi()) : null,
-					filtre.getProcedimentId() == null,
-					filtre.getProcedimentId(),
-					filtre.getServeiCodi() == null || filtre.getServeiCodi().isEmpty(),
-					filtre.getServeiCodi(),
-					filtre.getEstat() == null,
-					(filtre.getEstat() != null) ? EstatTipus.valueOf(filtre.getEstat().toString()) : null,
-					filtre.getDataInici() == null,
-					filtre.getDataInici(),
-					filtre.getDataFi() == null,
-					configurarDataFiPerFiltre(filtre.getDataFi()),
-					EstatTipus.Tramitada,
-					EstatTipus.Error);
-		} else {
-			resultats = historicConsultaRepository.countByServeiProcediment(
-					filtre.getEntitatId() == null,
-					filtre.getEntitatId(),
-					filtre.getUsuariCodi() == null,
-					(filtre.getUsuariCodi() != null) ? usuariRepository.findOne(filtre.getUsuariCodi()) : null,
-					filtre.getProcedimentId() == null,
-					filtre.getProcedimentId(),
-					filtre.getServeiCodi() == null || filtre.getServeiCodi().isEmpty(),
-					filtre.getServeiCodi(),
-					filtre.getEstat() == null,
-					(filtre.getEstat() != null) ? EstatTipus.valueOf(filtre.getEstat().toString()) : null,
-					filtre.getDataInici() == null,
-					filtre.getDataInici(),
-					filtre.getDataFi() == null,
-					configurarDataFiPerFiltre(filtre.getDataFi()),
-					EstatTipus.Tramitada,
-					EstatTipus.Error);
-		}
-		for (Object[] resultat: resultats) {
-			Long procedimentServeiId = (Long)resultat[0];
-			Long numRecobrimentOk = (Long)resultat[1];
-			Long numRecobrimentError = (Long)resultat[2];
-			Long numWebUIOk = (Long)resultat[4];
-			Long numWebUIError = (Long)resultat[5];
-			ProcedimentServei procedimentServei = procedimentServeiRepository.findOne(procedimentServeiId);
-			EstadisticaDto dto = new EstadisticaDto();
-			dto.setProcediment(
-					dtoMappingHelper.getMapperFacade().map(
-							procedimentServei.getProcediment(),
-							ProcedimentDto.class));
-			dto.setServeiCodi(procedimentServei.getServei());
-			dto.setServeiNom(
-					getScspHelper().getServicioDescripcion(
-							procedimentServei.getServei()));
-			dto.setNumRecobrimentOk(numRecobrimentOk);
-			dto.setNumRecobrimentError(numRecobrimentError);
-			dto.setNumWebUIOk(numWebUIOk);
-			dto.setNumWebUIError(numWebUIError);
-			resposta.add(dto);
-		}
-		EstadisticaDto estadisticaActual = null;
-		for (EstadisticaDto estadistica: resposta) {
-			boolean coincideixProcediment = estadisticaActual != null && estadisticaActual.getProcediment().getId().equals(estadistica.getProcediment().getId());
-			boolean coincideixServei = estadisticaActual != null && estadisticaActual.getServeiCodi().equals(estadistica.getServeiCodi());
-			if (	estadisticaActual == null || 
-					(EstadistiquesAgrupacioDto.PROCEDIMENT_SERVEI.equals(filtre.getAgrupacio()) && !coincideixProcediment) ||
-					(EstadistiquesAgrupacioDto.SERVEI_PROCEDIMENT.equals(filtre.getAgrupacio()) && !coincideixServei)) {
-				estadisticaActual = estadistica;
-				estadisticaActual.setConteSumatori(true);
-			}
-			estadisticaActual.setSumatoriNumRegistres(
-					estadisticaActual.getSumatoriNumRegistres() + 1);
-			estadisticaActual.setSumatoriNumRecobrimentOk(
-					estadisticaActual.getSumatoriNumRecobrimentOk() + estadistica.getNumRecobrimentOk());
-			estadisticaActual.setSumatoriNumRecobrimentError(
-					estadisticaActual.getSumatoriNumRecobrimentError() + estadistica.getNumRecobrimentError());
-			estadisticaActual.setSumatoriNumWebUIOk(
-					estadisticaActual.getSumatoriNumWebUIOk() + estadistica.getNumWebUIOk());
-			estadisticaActual.setSumatoriNumWebUIError(
-					estadisticaActual.getSumatoriNumWebUIError() + estadistica.getNumWebUIError());
-		}
-		return resposta;
-	}
-
-	@Transactional(readOnly = true)
-	@Override
-	public Map<EntitatDto, List<EstadisticaDto>> findEstadistiquesGlobalsByFiltre(
-			EstadistiquesFiltreDto filtre) {
-		log.debug("Consultant estadístiques globals");
-		Map<EntitatDto, List<EstadisticaDto>> resposta = new HashMap<EntitatDto, List<EstadisticaDto>>();
-		List<Object[]> resultats = historicConsultaRepository.countByEntitat(
-				filtre.getUsuariCodi() == null,
-				(filtre.getUsuariCodi() != null) ? usuariRepository.findOne(filtre.getUsuariCodi()) : null,
-				filtre.getProcedimentId() == null,
-				filtre.getProcedimentId(),
-				filtre.getServeiCodi() == null || filtre.getServeiCodi().isEmpty(),
-				filtre.getServeiCodi(),
-				filtre.getEstat() == null,
-				(filtre.getEstat() != null) ? EstatTipus.valueOf(filtre.getEstat().toString()) : null,
-				filtre.getDataInici() == null,
-				filtre.getDataInici(),
-				filtre.getDataFi() == null,
-				configurarDataFiPerFiltre(filtre.getDataFi()));
-		// Omple les estadístiques per cada entitat
-		for (Object[] resultat: resultats) {
-			Long entitatId = (Long)resultat[0];
-			Long numConsultes = (Long)resultat[1];
-			if (numConsultes > 0) {
-				filtre.setEntitatId(entitatId);
-				try {
-					resposta.put(
-							dtoMappingHelper.getMapperFacade().map(
-									entitatRepository.findOne(entitatId),
-									EntitatDto.class),
-							findEstadistiquesByFiltre(filtre));
-				} catch (EntitatNotFoundException ex) {
-					// És impossible però ho traurem pel log
-					log.error("No s'ha trobat l'entitat (entitatId=" + entitatId + ")", ex);
-				}
-			}
-		}
-		// Omple l'estadística global
-		filtre.setEntitatId(null);
-		try {
-			resposta.put(
-					null,
-					findEstadistiquesByFiltre(filtre));
-		} catch (EntitatNotFoundException ex) {
-			// És impossible però ho traurem pel log
-			log.error("No s'ha trobat l'entitat (entitatId=null)", ex);
-		}
-		return resposta;
-	}
-	
 	@Transactional(readOnly = true)
 	@Override
 	public List<CarregaDto> findEstadistiquesCarrega() {

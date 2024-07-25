@@ -27,14 +27,23 @@ public interface SuperConsultaRepository extends JpaRepository<SuperConsulta, Lo
 			"    c.procediment.id, " +
 			"    c.serveiCodi, " +
 			"    c.createdBy.codi, " +
-			"    sum(case when c.recobriment = true and c.estat = es.caib.pinbal.core.dto.EstatTipus.Tramitada then 1 else 0 end), " +
-			"    sum(case when c.recobriment = true and c.estat = es.caib.pinbal.core.dto.EstatTipus.Error then 1 else 0 end), " +
-			"    sum(case when c.recobriment = true and c.estat <> es.caib.pinbal.core.dto.EstatTipus.Tramitada and c.estat <> es.caib.pinbal.core.dto.EstatTipus.Error then 1 else 0 end), " +
-			"    sum(case when c.recobriment = false and c.estat = es.caib.pinbal.core.dto.EstatTipus.Tramitada then 1 else 0 end), " +
-			"    sum(case when c.recobriment = false and c.estat = es.caib.pinbal.core.dto.EstatTipus.Error then 1 else 0 end), " +
-			"    sum(case when c.recobriment = false and c.estat <> es.caib.pinbal.core.dto.EstatTipus.Tramitada and c.estat <> es.caib.pinbal.core.dto.EstatTipus.Error then 1 else 0 end)) " +
-			"from " +
-			"    SuperConsulta c " +
+			"    sum(case when c.recobriment = true and c.multiple = false and c.estat = es.caib.pinbal.core.dto.EstatTipus.Tramitada then 1 else 0 end), " +
+			"    sum(case when c.recobriment = true and c.multiple = false and c.estat = es.caib.pinbal.core.dto.EstatTipus.Error then 1 else 0 end), " +
+			"    sum(case when c.recobriment = true and c.multiple = false and c.estat = es.caib.pinbal.core.dto.EstatTipus.Pendent then 1 else 0 end), " +
+			"    sum(case when c.recobriment = true and c.multiple = false and c.estat = es.caib.pinbal.core.dto.EstatTipus.Processant then 1 else 0 end), " +
+			"    sum(case when c.recobriment = true and c.multiple = true and c.estat = es.caib.pinbal.core.dto.EstatTipus.Tramitada then 1 else 0 end), " +
+			"    sum(case when c.recobriment = true and c.multiple = true  and c.estat = es.caib.pinbal.core.dto.EstatTipus.Error then 1 else 0 end), " +
+			"    sum(case when c.recobriment = true and c.multiple = true  and c.estat = es.caib.pinbal.core.dto.EstatTipus.Pendent then 1 else 0 end), " +
+			"    sum(case when c.recobriment = true and c.multiple = true  and c.estat = es.caib.pinbal.core.dto.EstatTipus.Processant then 1 else 0 end), " +
+			"    sum(case when c.recobriment = false and c.multiple = false and c.estat = es.caib.pinbal.core.dto.EstatTipus.Tramitada then 1 else 0 end), " +
+			"    sum(case when c.recobriment = false and c.multiple = false and c.estat = es.caib.pinbal.core.dto.EstatTipus.Error then 1 else 0 end), " +
+			"    sum(case when c.recobriment = false and c.multiple = false and c.estat = es.caib.pinbal.core.dto.EstatTipus.Pendent then 1 else 0 end), " +
+			"    sum(case when c.recobriment = false and c.multiple = false and c.estat = es.caib.pinbal.core.dto.EstatTipus.Processant then 1 else 0 end), " +
+			"    sum(case when c.recobriment = false and c.multiple = true  and c.estat = es.caib.pinbal.core.dto.EstatTipus.Tramitada then 1 else 0 end), " +
+			"    sum(case when c.recobriment = false and c.multiple = true  and c.estat = es.caib.pinbal.core.dto.EstatTipus.Error then 1 else 0 end), " +
+			"    sum(case when c.recobriment = false and c.multiple = true  and c.estat = es.caib.pinbal.core.dto.EstatTipus.Pendent then 1 else 0 end), " +
+			"    sum(case when c.recobriment = false and c.multiple = true  and c.estat = es.caib.pinbal.core.dto.EstatTipus.Processant then 1 else 0 end)) " +
+			"from SuperConsulta c " +
 			"where (:esNullData = true or c.createdDate < :data) " +
 			"  and c.procediment.id is not null " +
 			"  and c.serveiCodi is not null " +

@@ -30,7 +30,6 @@ import es.caib.pinbal.core.dto.InformeRepresentantFiltreDto;
 import es.caib.pinbal.core.dto.IntegracioAccioTipusEnumDto;
 import es.caib.pinbal.core.dto.JustificantDto;
 import es.caib.pinbal.core.dto.JustificantEstat;
-import es.caib.pinbal.core.dto.ProcedimentDto;
 import es.caib.pinbal.core.dto.RecobrimentSolicitudDto;
 import es.caib.pinbal.core.dto.RespostaAtributsDto;
 import es.caib.pinbal.core.dto.arxiu.ArxiuDetallDto;
@@ -52,7 +51,9 @@ import es.caib.pinbal.core.model.Entitat;
 import es.caib.pinbal.core.model.EntitatUsuari;
 import es.caib.pinbal.core.model.Procediment;
 import es.caib.pinbal.core.model.ProcedimentServei;
+import es.caib.pinbal.core.model.Servei;
 import es.caib.pinbal.core.model.Usuari;
+import es.caib.pinbal.core.model.explotacio.EstadisticaKey;
 import es.caib.pinbal.core.model.explotacio.ExplotConsultaDimensio;
 import es.caib.pinbal.core.model.explotacio.ExplotConsultaDimensioEntity;
 import es.caib.pinbal.core.model.explotacio.ExplotConsultaFets;
@@ -131,10 +132,13 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -1783,74 +1787,126 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 				throw new EntitatNotFoundException();
 			}
 		}
-		List<EstadisticaDto> resposta = new ArrayList<EstadisticaDto>();
-		List<Object[]> resultats;
-		if (EstadistiquesAgrupacioDto.PROCEDIMENT_SERVEI.equals(filtre.getAgrupacio())) {
-			resultats = consultaRepository.countByProcedimentServei(
+		List<EstadisticaDto> resposta = new ArrayList<>();
+		boolean ordreProcediment = EstadistiquesAgrupacioDto.PROCEDIMENT_SERVEI.equals(filtre.getAgrupacio());
+
+		Date dataFi = filtre.getDataFi();
+		if (filtre.getDataFi() == null) dataFi = ahir();
+		ExplotTempsEntity tempsFinal = explotTempsRepository.findFirstByData(dataFi);
+
+		Map<EstadisticaKey, ExplotConsultaFets> fetsMap = new LinkedHashMap<>();
+		List<ExplotConsultaFets> fetsAcumulatFinal = explotConsultaFetsRepository.findByFiltre(
+				tempsFinal,
+				filtre.getEntitatId() == null,
+				filtre.getEntitatId(),
+				filtre.getProcedimentId() == null,
+				filtre.getProcedimentId(),
+				filtre.getServeiCodi() == null || filtre.getServeiCodi().isEmpty(),
+				filtre.getServeiCodi(),
+				filtre.getUsuariCodi() == null,
+				filtre.getUsuariCodi());
+
+		if (fetsAcumulatFinal == null || fetsAcumulatFinal.isEmpty()) {
+			return resposta;
+		}
+
+		for (ExplotConsultaFets fet: fetsAcumulatFinal) {
+			fetsMap.put(new EstadisticaKey(fet.getEntitatId(), fet.getProcedimentId(), fet.getServeiCodi()), fet);
+		}
+
+		if (filtre.getDataInici() != null) {
+			ExplotTempsEntity tempsInicial = explotTempsRepository.findFirstByData(filtre.getDataInici());
+			List<ExplotConsultaFets> fetsAcumulatInicial = explotConsultaFetsRepository.findByFiltre(
+					tempsInicial,
 					filtre.getEntitatId() == null,
 					filtre.getEntitatId(),
-					filtre.getUsuariCodi() == null,
-					(filtre.getUsuariCodi() != null) ? usuariRepository.findOne(filtre.getUsuariCodi()) : null,
 					filtre.getProcedimentId() == null,
 					filtre.getProcedimentId(),
 					filtre.getServeiCodi() == null || filtre.getServeiCodi().isEmpty(),
 					filtre.getServeiCodi(),
-					filtre.getEstat() == null,
-					(filtre.getEstat() != null) ? EstatTipus.valueOf(filtre.getEstat().toString()) : null,
-					filtre.getDataInici() == null,
-					filtre.getDataInici(),
-					filtre.getDataFi() == null,
-					configurarDataFiPerFiltre(filtre.getDataFi()),
-					EstatTipus.Tramitada,
-					EstatTipus.Error);
-		} else {
-			resultats = consultaRepository.countByServeiProcediment(
-					filtre.getEntitatId() == null,
-					filtre.getEntitatId(),
 					filtre.getUsuariCodi() == null,
-					(filtre.getUsuariCodi() != null) ? usuariRepository.findOne(filtre.getUsuariCodi()) : null,
-					filtre.getProcedimentId() == null,
-					filtre.getProcedimentId(),
-					filtre.getServeiCodi() == null || filtre.getServeiCodi().isEmpty(),
-					filtre.getServeiCodi(),
-					filtre.getEstat() == null,
-					(filtre.getEstat() != null) ? EstatTipus.valueOf(filtre.getEstat().toString()) : null,
-					filtre.getDataInici() == null,
-					filtre.getDataInici(),
-					filtre.getDataFi() == null,
-					configurarDataFiPerFiltre(filtre.getDataFi()),
-					EstatTipus.Tramitada,
-					EstatTipus.Error);
+					filtre.getUsuariCodi());
+
+			if (fetsAcumulatInicial != null && !fetsAcumulatInicial.isEmpty()) {
+				for (ExplotConsultaFets fet : fetsAcumulatInicial) {
+					EstadisticaKey key = new EstadisticaKey(fet.getEntitatId(), fet.getProcedimentId(), fet.getServeiCodi());
+					fetsMap.put(key, fetsMap.get(key).minus(fet));
+				}
+			}
+
 		}
-		for (Object[] resultat: resultats) {
-			Long procedimentServeiId = (Long)resultat[0];
-			Long numRecobrimentOk = (Long)resultat[1];
-			Long numRecobrimentError = (Long)resultat[2];
-			Long numWebUIOk = (Long)resultat[4];
-			Long numWebUIError = (Long)resultat[5];
-			ProcedimentServei procedimentServei = procedimentServeiRepository.findOne(procedimentServeiId);
-			EstadisticaDto dto = new EstadisticaDto();
-			dto.setProcediment(
-					dtoMappingHelper.getMapperFacade().map(
-							procedimentServei.getProcediment(),
-							ProcedimentDto.class));
-			dto.setServeiCodi(procedimentServei.getServei());
-			dto.setServeiNom(
-					getScspHelper().getServicioDescripcion(
-							procedimentServei.getServei()));
-			dto.setNumRecobrimentOk(numRecobrimentOk);
-			dto.setNumRecobrimentError(numRecobrimentError);
-			dto.setNumWebUIOk(numWebUIOk);
-			dto.setNumWebUIError(numWebUIError);
-			resposta.add(dto);
-		}
+
+		return toEstadistiquesDto(fetsMap, ordreProcediment, filtre.getEstat());
+
+	}
+
+	private List<EstadisticaDto> toEstadistiquesDto(Map<EstadisticaKey, ExplotConsultaFets> fetsMap, final boolean ordreProcediment, es.caib.pinbal.core.dto.ConsultaDto.EstatTipus filtreEstat) {
+		List<EstadisticaDto> resposta = new ArrayList<>();
+		Map<Long, Procediment> procedimentsMap = new HashMap<>();
+		Map<String, Servei> serveiMap = new HashMap<>();
+
+        for (Map.Entry<EstadisticaKey, ExplotConsultaFets> entry : fetsMap.entrySet()) {
+            EstadisticaKey key = entry.getKey();
+            ExplotConsultaFets fet = entry.getValue();
+
+			// Procediments
+			Procediment procediment = procedimentsMap.get(key.getProcedimentId());
+			if (procediment == null) {
+				procediment = procedimentRepository.findOne(key.getProcedimentId());
+				procedimentsMap.put(key.getProcedimentId(), procediment);
+			}
+			if (procediment == null) continue;
+
+			// Serveis
+			Servei servei = serveiMap.get(key.getServeiCodi());
+			if (servei == null) {
+				servei = getServeiByCodi(key.getServeiCodi());
+				serveiMap.put(key.getServeiCodi(), servei);
+			}
+			if (servei == null) continue;
+
+			// Filtre per estat
+			boolean filtrarOk = filtreEstat != null && !es.caib.pinbal.core.dto.ConsultaDto.EstatTipus.Tramitada.equals(filtreEstat);
+			boolean filtrarError = filtreEstat != null && !es.caib.pinbal.core.dto.ConsultaDto.EstatTipus.Error.equals(filtreEstat);
+
+            EstadisticaDto dto = EstadisticaDto.builder()
+					.procedimentId(key.getProcedimentId())
+					.procedimentNom(procediment.getNom())
+					.procedimentCodi(procediment.getCodi())
+					.procedimentDepartament(procediment.getDepartament())
+					.serveiCodi(key.getServeiCodi())
+					.serveiNom(servei.getDescripcio())
+					.numRecobrimentOk(filtrarOk ? 0 : fet.getRecOk() + fet.getRecMassOk())
+					.numRecobrimentError(filtrarError ? 0 : fet.getRecError() + fet.getRecMassError())
+					.numWebUIOk(filtrarOk ? 0 : fet.getWebOk() + fet.getWebMassOk())
+					.numWebUIError(filtrarError ? 0 : fet.getWebError() + fet.getWebMassError())
+					.build();
+            resposta.add(dto);
+        }
+
+		Collections.sort(resposta, new Comparator<EstadisticaDto>() {
+			@Override
+			public int compare(EstadisticaDto o1, EstadisticaDto o2) {
+				if (ordreProcediment) {
+					int res = o1.getProcedimentNom().compareTo(o2.getProcedimentNom());
+					if (res != 0) return res;
+
+					return o1.getServeiNom().compareTo(o2.getServeiNom());
+				} else {
+					int res = o1.getServeiNom().compareTo(o2.getServeiNom());
+					if (res != 0) return res;
+
+					return o1.getProcedimentNom().compareTo(o2.getProcedimentNom());
+				}
+			}
+		});
+
+		// Sumatoris
 		EstadisticaDto estadisticaActual = null;
 		for (EstadisticaDto estadistica: resposta) {
-			boolean coincideixProcediment = estadisticaActual != null && estadisticaActual.getProcediment().getId().equals(estadistica.getProcediment().getId());
+			boolean coincideixProcediment = estadisticaActual != null && estadisticaActual.getProcedimentId().equals(estadistica.getProcedimentId());
 			boolean coincideixServei = estadisticaActual != null && estadisticaActual.getServeiCodi().equals(estadistica.getServeiCodi());
-			if (estadisticaActual == null ||
-					(EstadistiquesAgrupacioDto.PROCEDIMENT_SERVEI.equals(filtre.getAgrupacio()) && !coincideixProcediment) ||
-					(EstadistiquesAgrupacioDto.SERVEI_PROCEDIMENT.equals(filtre.getAgrupacio()) && !coincideixServei)) {
+			if (estadisticaActual == null || (ordreProcediment && !coincideixProcediment) || (!ordreProcediment && !coincideixServei)) {
 				estadisticaActual = estadistica;
 				estadisticaActual.setConteSumatori(true);
 			}
@@ -1866,6 +1922,15 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 					estadisticaActual.getSumatoriNumWebUIError() + estadistica.getNumWebUIError());
 		}
 		return resposta;
+	}
+
+	private Servei getServeiByCodi(String serveiCodi) {
+		List<Servei> serveis = serveiRepository.findByCode(serveiCodi);
+		if (serveis.size() == 0) {
+			log.debug("No s'ha trobat el servicio (codi=" + serveiCodi + ")");
+			return null;
+		}
+		return serveis.get(0);
 	}
 
 	@Transactional(readOnly = true)
@@ -2355,10 +2420,23 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 		ExplotConsultaFetsEntity fetsEntity = new ExplotConsultaFetsEntity();
 		fetsEntity.setConsultaDimensio(dimension);
 		fetsEntity.setTemps(ete);
-		fetsEntity.setNumRecobrimentOk(estadistiquesConsulta.getRecobrimentOk());
-		fetsEntity.setNumRecobrimentError(estadistiquesConsulta.getRecobrimentError());
-		fetsEntity.setNumRecobrimentPendent(estadistiquesConsulta.getRecobrimentPend());
 
+		fetsEntity.setNumRecobrimentOk(estadistiquesConsulta.getRecOk());
+		fetsEntity.setNumRecobrimentError(estadistiquesConsulta.getRecError());
+		fetsEntity.setNumRecobrimentPendent(estadistiquesConsulta.getRecPend());
+		fetsEntity.setNumRecobrimentProcessant(estadistiquesConsulta.getRecProc());
+		fetsEntity.setNumRecobrimentMassiuOk(estadistiquesConsulta.getRecMassOk());
+		fetsEntity.setNumRecobrimentMassiuError(estadistiquesConsulta.getRecMassError());
+		fetsEntity.setNumRecobrimentMassiuPendent(estadistiquesConsulta.getRecMassPend());
+		fetsEntity.setNumRecobrimentMassiuProcessant(estadistiquesConsulta.getRecMassProc());
+		fetsEntity.setNumWebOk(estadistiquesConsulta.getWebOk());
+		fetsEntity.setNumWebError(estadistiquesConsulta.getWebError());
+		fetsEntity.setNumWebPendent(estadistiquesConsulta.getWebPend());
+		fetsEntity.setNumWebProcessant(estadistiquesConsulta.getWebProc());
+		fetsEntity.setNumWebMassiuOk(estadistiquesConsulta.getWebMassOk());
+		fetsEntity.setNumWebMassiuError(estadistiquesConsulta.getWebMassError());
+		fetsEntity.setNumWebMassiuPendent(estadistiquesConsulta.getWebMassPend());
+		fetsEntity.setNumWebMassiuProcessant(estadistiquesConsulta.getWebMassProc());
 
 		explotConsultaFetsRepository.save(fetsEntity);
 	}
@@ -2371,48 +2449,7 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 		List<ExplotConsultaDimensio> dimensionsPerConsultes = superConsultaRepository.getDimensionsPerEstadistiques();
 		List<ExplotConsultaDimensioEntity> dimensionsEnDb = explotConsultaDimensioRepository.findAllOrdered();
 
-		dimensions = actualitzarDimensionsConsultes(dimensionsEnDb, dimensionsPerConsultes);
-
-//		if (dimensionsPerConsultes != null) {
-//
-//			for(ExplotConsultaDimensio dimensioExplotacio: dimensionsPerConsultes) {
-//				ExplotConsultaDimensioEntity dimensio = explotConsultaDimensioRepository.findByEntitatIdAndProcedimentIdAndServeiCodiAndUsuariCodi(
-//						dimensioExplotacio.getEntitatId(),
-//						dimensioExplotacio.getProcedimentId(),
-//						dimensioExplotacio.getServeiCodi(),
-//						dimensioExplotacio.getUsuariCodi());
-//
-//				if (dimensio == null) {
-//
-//					dimensio = ExplotConsultaDimensioEntity.builder()
-//							.entitatId(procedimentServei.getProcediment().getEntitat().getId())
-//							.procedimentId(procedimentServei.getProcediment().getId())
-//							.serveiCodi(procedimentServei.getServei())
-//							.usuariCodi(usuari.getCodi())
-//							.build();
-//					dimensio = explotConsultaDimensioRepository.save(dimensio);
-//				}
-//
-//				dimensions.add(dimensio);
-//			}
-//
-//		}
-//		Collections.sort(dimensions, new Comparator<ExplotConsultaDimensioEntity>() {
-//			@Override
-//            public int compare(ExplotConsultaDimensioEntity dimensio1, ExplotConsultaDimensioEntity dimensio2) {
-//				int comparison = dimensio1.getEntitatId().compareTo(dimensio2.getEntitatId());
-//				if (comparison != 0) return comparison;
-//
-//				comparison = dimensio1.getProcedimentId().compareTo(dimensio2.getProcedimentId());
-//				if (comparison != 0) return comparison;
-//
-//				comparison = dimensio1.getServeiCodi().compareTo(dimensio2.getServeiCodi());
-//				if (comparison != 0) return comparison;
-//
-//				return dimensio1.getUsuariCodi().compareTo(dimensio2.getUsuariCodi());
-//  		          }
-//		});
-		return dimensions;
+		return actualitzarDimensionsConsultes(dimensionsEnDb, dimensionsPerConsultes);
 	}
 
 	private List<ExplotConsultaDimensioEntity> actualitzarDimensionsConsultes(List<ExplotConsultaDimensioEntity> dimensionsEnDb, List<ExplotConsultaDimensio> dimensionsPerConsultes) {
@@ -2434,26 +2471,6 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 		}
 
 		return dimensions;
-
-//		int conIndex = 0;
-//		int dbIndex = 0;
-//
-//		// Les dues llistes estan ordenades
-//		while (conIndex < estadistiquesConsultes.size() && dimensionIndex < dimensions.size()) {
-//			ExplotConsultaFets estadistiquesConsulta = estadistiquesConsultes.get(dadaIndex);
-//			ExplotConsultaDimensioEntity dimension = dimensions.get(dimensionIndex);
-//
-//			int comparison = compareEstadistiquesConsultaAndDimensions(estadistiquesConsulta, dimension);
-//			if (comparison == 0) {
-//				saveToFetsEntity(estadistiquesConsulta, dimension, ete);
-//				dadaIndex++;
-//			} else if (comparison < 0) {
-//				dadaIndex++;
-//			} else {
-//				dimensionIndex++;
-//			}
-//		}
-
 	}
 
 	private ExplotConsultaDimensioEntity toConsultaDimensioEntity(ExplotConsultaDimensio dimensio) {

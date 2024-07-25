@@ -9,7 +9,7 @@
 	pageContext.setAttribute("consultaEstats", es.caib.pinbal.core.dto.ConsultaDto.EstatTipus.sortedValues());
 	pageContext.setAttribute("agrupacioValors", es.caib.pinbal.core.dto.EstadistiquesFiltreDto.EstadistiquesAgrupacioDto.values());
 	pageContext.setAttribute( "isRolActualAdministrador", es.caib.pinbal.webapp.common.RolHelper.isRolActualAdministrador(request));
-	request.setAttribute("historicSession", es.caib.pinbal.webapp.controller.EstadistiquesController.SESSION_CONSULTA_HISTORIC);
+//	request.setAttribute("historicSession", es.caib.pinbal.webapp.controller.EstadistiquesController.SESSION_CONSULTA_HISTORIC);
 %>
 
 <html>
@@ -57,7 +57,7 @@
 			$('#servei').val(null).trigger('change.select2');
 		});
 
-		historicColor();
+		// historicColor();
 	});
 
 	function checkCallback() {
@@ -65,16 +65,16 @@
 		$("#filtrar").click();
 	}
 
-	function historicColor() {
-		let historic = $("#titolCheck").prop("checked");
-		if (historic) {
-			$(".container-caib > .panel-default > .panel-body").addClass("panel-historic");
-			$(".dataTables_info").addClass("table-info-historic");
-		} else {
-			$(".container-caib > .panel-default > .panel-body").removeClass("panel-historic")
-			$(".dataTables_info").removeClass("table-info-historic");
-		}
-	}
+	// function historicColor() {
+	// 	let historic = $("#titolCheck").prop("checked");
+	// 	if (historic) {
+	// 		$(".container-caib > .panel-default > .panel-body").addClass("panel-historic");
+	// 		$(".dataTables_info").addClass("table-info-historic");
+	// 	} else {
+	// 		$(".container-caib > .panel-default > .panel-body").removeClass("panel-historic")
+	// 		$(".dataTables_info").removeClass("table-info-historic");
+	// 	}
+	// }
 </script>
 <style>
 .table th {
@@ -87,7 +87,7 @@
 </style>
 </head>
 <body>
-<div class="text-right" data-toggle="titol-check" data-titol-check-value="${historic}" data-titol-check-session-name="${historicSession}" data-titol-check-callback="checkCallback" data-titol-check-label="<spring:message code="comu.historic"/>"></div>
+<%--<div class="text-right" data-toggle="titol-check" data-titol-check-value="${historic}" data-titol-check-session-name="${historicSession}" data-titol-check-callback="checkCallback" data-titol-check-label="<spring:message code="comu.historic"/>"></div>--%>
 	<c:if test="${isRolActualAdministrador}">
 		<c:set var="opcioEntitatTotes">&lt;&lt;<spring:message code="estadistiques.list.entitat.seleccio"/>&gt;&gt;</c:set>
 		<c:choose>

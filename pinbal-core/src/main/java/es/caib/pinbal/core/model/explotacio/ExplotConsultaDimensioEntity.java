@@ -38,12 +38,4 @@ public class ExplotConsultaDimensioEntity extends AbstractPersistable<Long> impl
 	@Column(name = "usuari_codi")
 	private String usuariCodi;
 
-//	@Column(name = "tipus")
-//	@Enumerated(EnumType.STRING)
-//	private DadesObertesConsultaTipus tipus;
-//
-//	@Column(name = "estat")
-//	@Enumerated(EnumType.STRING)
-//	private EstatTipus estat;
-
 }

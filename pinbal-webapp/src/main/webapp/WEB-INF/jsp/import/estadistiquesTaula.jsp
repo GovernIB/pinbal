@@ -47,13 +47,13 @@
 			<tr>
 				<c:if test="${estadistica.conteSumatori}">
 					<c:choose>
-						<c:when test="${param.agrupacio == 'PROCEDIMENT_SERVEI'}"><td rowspan="${estadistica.sumatoriNumRegistres + 1}">${estadistica.procediment.nomAmbDepartament}</td></c:when>
+						<c:when test="${param.agrupacio == 'PROCEDIMENT_SERVEI'}"><td rowspan="${estadistica.sumatoriNumRegistres + 1}">${estadistica.procedimentNomAmbDepartament}</td></c:when>
 						<c:otherwise><td rowspan="${estadistica.sumatoriNumRegistres + 1}">${estadistica.serveiNom}</td></c:otherwise>
 					</c:choose>
 				</c:if>
 				<c:choose>
 					<c:when test="${param.agrupacio == 'PROCEDIMENT_SERVEI'}"><td>${estadistica.serveiNom}</td></c:when>
-					<c:otherwise><td>${estadistica.procediment.nomAmbDepartament}</td></c:otherwise>
+					<c:otherwise><td>${estadistica.procedimentNomAmbDepartament}</td></c:otherwise>
 				</c:choose>
 				<td class="numeric">${estadistica.numRecobrimentOk}</td>
 				<td class="numeric">${estadistica.numWebUIOk}</td>
