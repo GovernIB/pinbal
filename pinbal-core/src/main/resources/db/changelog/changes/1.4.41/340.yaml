@@ -184,3 +184,574 @@ databaseChangeLog:
               - column:
                   name: createdby_codi
             indexName: pbl_consultah_est_i
+        - createTable:
+            tableName: pbl_consulta_do
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: entitatCodi
+                  type: varchar(64 ${varcharUnit})
+                  constraints:
+                    nullable: false
+              - column:
+                  name: entitatNom
+                  type: varchar(255 ${varcharUnit})
+                  constraints:
+                    nullable: false
+              - column:
+                  name: entitatNif
+                  type: varchar(255 ${varcharUnit})
+                  constraints:
+                    nullable: false
+              - column:
+                  name: entitatTipus
+                  type: varchar(16 ${varcharUnit})
+                  constraints:
+                    nullable: false
+              - column:
+                  name: departamentCodi
+                  type: varchar(250 ${varcharUnit})
+              - column:
+                  name: departamentNom
+                  type: varchar(250 ${varcharUnit})
+              - column:
+                  name: procedimentCodi
+                  type: varchar(20 ${varcharUnit})
+                  constraints:
+                    nullable: false
+              - column:
+                  name: procedimentNom
+                  type: varchar(255 ${varcharUnit})
+                  constraints:
+                    nullable: false
+              - column:
+                  name: serveiCodi
+                  type: varchar(64 ${varcharUnit})
+                  constraints:
+                    nullable: false
+              - column:
+                  name: serveiNom
+                  type: varchar(512 ${varcharUnit})
+                  constraints:
+                    nullable: false
+              - column:
+                  name: emissorNom
+                  type: varchar(50 ${varcharUnit})
+                  constraints:
+                    nullable: false
+              - column:
+                  name: emissorNif
+                  type: varchar(16 ${varcharUnit})
+                  constraints:
+                    nullable: false
+              - column:
+                  name: consentiment
+                  type: varchar(16 ${varcharUnit})
+              - column:
+                  name: finalitat
+                  type: varchar(250 ${varcharUnit})
+              - column:
+                  name: titularDoctip
+                  type: varchar(16 ${varcharUnit})
+              - column:
+                  name: solicitudId
+                  type: varchar(64 ${varcharUnit})
+                  constraints:
+                    nullable: false
+              - column:
+                  name: data
+                  type: timestamp
+                  constraints:
+                    nullable: false
+              - column:
+                  name: tipus
+                  type: varchar(16 ${varcharUnit})
+                  constraints:
+                    nullable: false
+              - column:
+                  name: resultat
+                  type: varchar(16 ${varcharUnit})
+              - column:
+                  name: multiple
+                  type: boolean
+        - createTable:
+            tableName: pbl_consulta_hist_do
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: entitatCodi
+                  type: varchar(64 ${varcharUnit})
+              - column:
+                  name: entitatNom
+                  type: varchar(255 ${varcharUnit})
+              - column:
+                  name: entitatNif
+                  type: varchar(255 ${varcharUnit})
+              - column:
+                  name: entitatTipus
+                  type: varchar(16 ${varcharUnit})
+              - column:
+                  name: departamentCodi
+                  type: varchar(250 ${varcharUnit})
+              - column:
+                  name: departamentNom
+                  type: varchar(250 ${varcharUnit})
+              - column:
+                  name: procedimentCodi
+                  type: varchar(20 ${varcharUnit})
+              - column:
+                  name: procedimentNom
+                  type: varchar(255 ${varcharUnit})
+              - column:
+                  name: serveiCodi
+                  type: varchar(64 ${varcharUnit})
+              - column:
+                  name: serveiNom
+                  type: varchar(512 ${varcharUnit})
+              - column:
+                  name: emissorNom
+                  type: varchar(50 ${varcharUnit})
+              - column:
+                  name: emissorNif
+                  type: varchar(16 ${varcharUnit})
+              - column:
+                  name: consentiment
+                  type: varchar(16 ${varcharUnit})
+              - column:
+                  name: finalitat
+                  type: varchar(250 ${varcharUnit})
+              - column:
+                  name: titularDoctip
+                  type: varchar(16 ${varcharUnit})
+              - column:
+                  name: solicitudId
+                  type: varchar(64 ${varcharUnit})
+              - column:
+                  name: data
+                  type: timestamp
+              - column:
+                  name: tipus
+                  type: varchar(16 ${varcharUnit})
+              - column:
+                  name: resultat
+                  type: varchar(16 ${varcharUnit})
+              - column:
+                  name: multiple
+                  type: boolean
+        - createTable:
+            tableName: pbl_consulta_list
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: peticioId
+                  type: varchar(26 ${varcharUnit})
+                  constraints:
+                    nullable: false
+              - column:
+                  name: solicitudId
+                  type: varchar(64 ${varcharUnit})
+              - column:
+                  name: data
+                  type: timestamp
+                  constraints:
+                    nullable: false
+              - column:
+                  name: departament
+                  type: varchar(250 ${varcharUnit})
+                  constraints:
+                    nullable: false
+              - column:
+                  name: recobriment
+                  type: boolean
+              - column:
+                  name: multiple
+                  type: boolean
+              - column:
+                  name: usuariCodi
+                  type: varchar(64 ${varcharUnit})
+                  constraints:
+                    nullable: false
+              - column:
+                  name: usuariNom
+                  type: varchar(200 ${varcharUnit})
+              - column:
+                  name: funcionariNif
+                  type: varchar(16 ${varcharUnit})
+              - column:
+                  name: funcionariNom
+                  type: varchar(128 ${varcharUnit})
+              - column:
+                  name: titularNom
+                  type: varchar(122 ${varcharUnit})
+              - column:
+                  name: titularDoctip
+                  type: varchar(16 ${varcharUnit})
+              - column:
+                  name: titularDocnum
+                  type: varchar(14 ${varcharUnit})
+              - column:
+                  name: procedimentId
+                  type: bigint
+                  constraints:
+                    nullable: false
+              - column:
+                  name: procedimentCodi
+                  type: varchar(20 ${varcharUnit})
+                  constraints:
+                    nullable: false
+              - column:
+                  name: procedimentNom
+                  type: varchar(255 ${varcharUnit})
+                  constraints:
+                    nullable: false
+              - column:
+                  name: serveiCodi
+                  type: varchar(64 ${varcharUnit})
+                  constraints:
+                    nullable: false
+              - column:
+                  name: serveiNom
+                  type: varchar(512 ${varcharUnit})
+                  constraints:
+                    nullable: false
+              - column:
+                  name: estat
+                  type: varchar(16 ${varcharUnit})
+                  constraints:
+                    nullable: false
+              - column:
+                  name: error
+                  type: varchar(4000 ${varcharUnit})
+              - column:
+                  name: justificantEstat
+                  type: varchar(16 ${varcharUnit})
+              - column:
+                  name: entitatId
+                  type: bigint
+                  constraints:
+                    nullable: false
+              - column:
+                  name: entitatCodi
+                  type: varchar(64 ${varcharUnit})
+                  constraints:
+                    nullable: false
+              - column:
+                  name: pareId
+                  type: bigint
+        - createTable:
+            tableName: pbl_consulta_hist_list
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: peticioId
+                  type: varchar(26 ${varcharUnit})
+                  constraints:
+                    nullable: false
+              - column:
+                  name: solicitudId
+                  type: varchar(64 ${varcharUnit})
+              - column:
+                  name: data
+                  type: timestamp
+                  constraints:
+                    nullable: false
+              - column:
+                  name: departament
+                  type: varchar(250 ${varcharUnit})
+              - column:
+                  name: recobriment
+                  type: boolean
+              - column:
+                  name: multiple
+                  type: boolean
+              - column:
+                  name: usuariCodi
+                  type: varchar(64 ${varcharUnit})
+              - column:
+                  name: usuariNom
+                  type: varchar(200 ${varcharUnit})
+              - column:
+                  name: funcionariNif
+                  type: varchar(16 ${varcharUnit})
+              - column:
+                  name: funcionariNom
+                  type: varchar(128 ${varcharUnit})
+              - column:
+                  name: titularNom
+                  type: varchar(122 ${varcharUnit})
+              - column:
+                  name: titularDoctip
+                  type: varchar(16 ${varcharUnit})
+              - column:
+                  name: titularDocnum
+                  type: varchar(14 ${varcharUnit})
+              - column:
+                  name: procedimentId
+                  type: bigint
+              - column:
+                  name: procedimentCodi
+                  type: varchar(20 ${varcharUnit})
+              - column:
+                  name: procedimentNom
+                  type: varchar(255 ${varcharUnit})
+              - column:
+                  name: serveiCodi
+                  type: varchar(64 ${varcharUnit})
+              - column:
+                  name: serveiNom
+                  type: varchar(512 ${varcharUnit})
+              - column:
+                  name: estat
+                  type: varchar(16 ${varcharUnit})
+              - column:
+                  name: error
+                  type: varchar(4000 ${varcharUnit})
+              - column:
+                  name: justificantEstat
+                  type: varchar(16 ${varcharUnit})
+              - column:
+                  name: entitatId
+                  type: bigint
+              - column:
+                  name: entitatCodi
+                  type: varchar(64 ${varcharUnit})
+              - column:
+                  name: pareId
+                  type: bigint
+        - sql:
+            sql:
+              "INSERT INTO pbl_consulta_do (
+                  id,
+                  entitatCodi,
+                  entitatNom,
+                  entitatNif,
+                  entitatTipus,
+                  departamentCodi,
+                  departamentNom,
+                  procedimentCodi,
+                  procedimentNom,
+                  serveiCodi,
+                  serveiNom,
+                  emissorNom,
+                  emissorNif,
+                  consentiment,
+                  finalitat,
+                  titularDoctip,
+                  solicitudId,
+                  data,
+                  tipus,
+                  resultat,
+                  multiple)
+              SELECT c.ID,
+                  e.CODI,
+                  e.NOM,
+                  e.CIF,
+                  CASE WHEN e.TIPUS = 0 THEN 'ALTRES' WHEN e.TIPUS = 1 THEN 'GOVERN' WHEN e.TIPUS = 2 THEN 'CONSELL' WHEN e.TIPUS = 3 THEN 'AJUNTAMENT' END,
+                  t.CODIGOUNIDADTRAMITADORA,
+                  c.DEPARTAMENT,
+                  p.CODI,
+                  p.NOM,
+                  c.SERVEI_CODI,
+                  s.DESCRIPCION,
+                  em.NOMBRE,
+                  em.CIF,
+                  CASE WHEN c.CONSENTIMENT = 0 THEN 'Si' WHEN c.CONSENTIMENT = 1 THEN 'Llei' ELSE NULL END,
+                  CASE WHEN INSTR(c.finalitat, '#') != 0 THEN SUBSTR(c.finalitat, INSTR(c.finalitat, '#') + 1) ELSE finalitat END,
+                  c.TITULAR_DOCTIP,
+                  c.SOLICITUD_ID,
+                  c.CREATEDDATE,
+                  CASE WHEN c.RECOBRIMENT = 1 THEN 'RECOBRIMENT' ELSE 'WEB' END,
+                  CASE WHEN c.estat IN (0, 1) THEN 'PROCES' WHEN c.estat = 2 THEN 'OK' WHEN c.estat = 3 THEN 'ERROR' ELSE NULL END,
+                  c.MULTIPLE
+              FROM pbl_consulta c
+              LEFT OUTER JOIN PBL_ENTITAT e on c.ENTITAT_ID = e.ID
+              LEFT OUTER JOIN CORE_TRANSMISION t on c.PETICION_ID = t.IDPETICION AND c.SOLICITUD_ID = t.IDSOLICITUD
+              LEFT OUTER JOIN PBL_PROCEDIMENT p on c.PROCEDIMENT_ID = p.ID
+              LEFT OUTER JOIN CORE_SERVICIO s on c.SERVEI_CODI = s.CODCERTIFICADO
+              LEFT OUTER JOIN CORE_EMISOR_CERTIFICADO em on s.EMISOR = em.ID;
+              
+              INSERT INTO pbl_consulta_hist_do (
+                  id,
+                  entitatCodi,
+                  entitatNom,
+                  entitatNif,
+                  entitatTipus,
+                  departamentCodi,
+                  departamentNom,
+                  procedimentCodi,
+                  procedimentNom,
+                  serveiCodi,
+                  serveiNom,
+                  emissorNom,
+                  emissorNif,
+                  consentiment,
+                  finalitat,
+                  titularDoctip,
+                  solicitudId,
+                  data,
+                  tipus,
+                  resultat,
+                  multiple)
+              SELECT c.ID,
+                     e.CODI,
+                     e.NOM,
+                     e.CIF,
+                     CASE WHEN e.TIPUS = 0 THEN 'ALTRES' WHEN e.TIPUS = 1 THEN 'GOVERN' WHEN e.TIPUS = 2 THEN 'CONSELL' WHEN e.TIPUS = 3 THEN 'AJUNTAMENT' END,
+                     t.CODIGOUNIDADTRAMITADORA,
+                     c.DEPARTAMENT,
+                     p.CODI,
+                     p.NOM,
+                     c.SERVEI_CODI,
+                     s.DESCRIPCION,
+                     em.NOMBRE,
+                     em.CIF,
+                     CASE WHEN c.CONSENTIMENT = 0 THEN 'Si' WHEN c.CONSENTIMENT = 1 THEN 'Llei' ELSE NULL END,
+                     CASE WHEN INSTR(c.finalitat, '#') != 0 THEN SUBSTR(c.finalitat, INSTR(c.finalitat, '#') + 1) ELSE finalitat END,
+                     c.TITULAR_DOCTIP,
+                     c.SOLICITUD_ID,
+                     c.CREATEDDATE,
+                     CASE WHEN c.RECOBRIMENT = 1 THEN 'RECOBRIMENT' ELSE 'WEB' END,
+                     CASE WHEN c.estat IN (0, 1) THEN 'PROCES' WHEN c.estat = 2 THEN 'OK' WHEN c.estat = 3 THEN 'ERROR' ELSE NULL END,
+                     c.MULTIPLE
+              FROM PBL_CONSULTA_HIST c
+                       LEFT OUTER JOIN PBL_ENTITAT e on c.ENTITAT_ID = e.ID
+                       LEFT OUTER JOIN CORE_TRANSMISION t on c.PETICION_ID = t.IDPETICION AND c.SOLICITUD_ID = t.IDSOLICITUD
+                       LEFT OUTER JOIN PBL_PROCEDIMENT p on c.PROCEDIMENT_ID = p.ID
+                       LEFT OUTER JOIN CORE_SERVICIO s on c.SERVEI_CODI = s.CODCERTIFICADO
+                       LEFT OUTER JOIN CORE_EMISOR_CERTIFICADO em on s.EMISOR = em.ID;
+                       
+              INSERT INTO pbl_consulta_list (
+                  id,
+                  peticioId,
+                  solicitudId,
+                  data,
+                  departament,
+                  recobriment,
+                  multiple,
+                  usuariCodi,
+                  usuariNom,
+                  funcionariNom,
+                  funcionariNif,
+                  titularNom,
+                  titularDoctip,
+                  titularDocnum,
+                  procedimentId,
+                  procedimentCodi,
+                  procedimentNom,
+                  serveiCodi,
+                  serveiNom,
+                  estat,
+                  error,
+                  justificantEstat,
+                  entitatId,
+                  entitatCodi,
+                  pareId)
+              SELECT c.ID,
+                     c.PETICION_ID,
+                     c.SOLICITUD_ID,
+                     c.CREATEDDATE,
+                     c.DEPARTAMENT,
+                     c.RECOBRIMENT,
+                     c.MULTIPLE,
+                     c.CREATEDBY_CODI,
+                     u.NOM,
+                     c.FUNCIONARI_NOM,
+                     c.FUNCIONARI_DOCNUM,
+                     COALESCE(c.TITULAR_NOMCOMPLET, NULLIF(CONCAT(COALESCE(CONCAT(c.TITULAR_NOM, ' '), ''), CONCAT(COALESCE(CONCAT(c.TITULAR_LLING1, ' '), ''), COALESCE(c.TITULAR_LLING2, ''))), '')),
+                     c.TITULAR_DOCTIP,
+                     c.TITULAR_DOCNUM,
+                     p.ID,
+                     p.CODI,
+                     p.NOM,
+                     c.SERVEI_CODI,
+                     s.DESCRIPCION,
+                     CASE WHEN c.ESTAT = '0' THEN 'Pendent' WHEN c.ESTAT = '1' THEN 'Processant' WHEN c.ESTAT = '2' THEN 'Tramitada' WHEN c.ESTAT = '3' THEN 'Error' WHEN c.ESTAT = '4' THEN 'Encua' END,
+                     c.ERROR,
+                     CASE WHEN c.JUSTIFICANT_ESTAT = '0' THEN 'PENDENT' WHEN c.JUSTIFICANT_ESTAT = '1' THEN 'OK' WHEN c.JUSTIFICANT_ESTAT = '2' THEN 'ERROR' WHEN c.JUSTIFICANT_ESTAT = '3' THEN 'NO_DISPONIBLE' WHEN c.JUSTIFICANT_ESTAT = '4' THEN 'OK_NO_CUSTODIA' END,
+                     e.ID,
+                     e.CODI,
+                     c.PARE_ID
+              FROM pbl_consulta c
+                       LEFT OUTER JOIN PBL_ENTITAT e on c.ENTITAT_ID = e.ID
+                       LEFT OUTER JOIN PBL_PROCEDIMENT p on c.PROCEDIMENT_ID = p.ID
+                       LEFT OUTER JOIN CORE_SERVICIO s on c.SERVEI_CODI = s.CODCERTIFICADO
+                       LEFT OUTER JOIN PBL_USUARI u on c.CREATEDBY_CODI = u.CODI
+              order by c.CREATEDDATE DESC;
+
+              INSERT INTO pbl_consulta_hist_list (
+                  id,
+                  peticioId,
+                  solicitudId,
+                  data,
+                  departament,
+                  recobriment,
+                  multiple,
+                  usuariCodi,
+                  usuariNom,
+                  funcionariNom,
+                  funcionariNif,
+                  titularNom,
+                  titularDoctip,
+                  titularDocnum,
+                  procedimentId,
+                  procedimentCodi,
+                  procedimentNom,
+                  serveiCodi,
+                  serveiNom,
+                  estat,
+                  error,
+                  justificantEstat,
+                  entitatId,
+                  entitatCodi,
+                  pareId)
+              SELECT c.ID,
+                     c.PETICION_ID,
+                     c.SOLICITUD_ID,
+                     c.CREATEDDATE,
+                     c.DEPARTAMENT,
+                     c.RECOBRIMENT,
+                     c.MULTIPLE,
+                     c.CREATEDBY_CODI,
+                     u.NOM,
+                     c.FUNCIONARI_NOM,
+                     c.FUNCIONARI_DOCNUM,
+                     COALESCE(c.TITULAR_NOMCOMPLET, NULLIF(CONCAT(COALESCE(CONCAT(c.TITULAR_NOM, ' '), ''), CONCAT(COALESCE(CONCAT(c.TITULAR_LLING1, ' '), ''), COALESCE(c.TITULAR_LLING2, ''))), '')),
+                     c.TITULAR_DOCTIP,
+                     c.TITULAR_DOCNUM,
+                     p.ID,
+                     p.CODI,
+                     p.NOM,
+                     c.SERVEI_CODI,
+                     s.DESCRIPCION,
+                     CASE WHEN c.ESTAT = '0' THEN 'Pendent' WHEN c.ESTAT = '1' THEN 'Processant' WHEN c.ESTAT = '2' THEN 'Tramitada' WHEN c.ESTAT = '3' THEN 'Error' WHEN c.ESTAT = '4' THEN 'Encua' END,
+                     c.ERROR,
+                     CASE WHEN c.JUSTIFICANT_ESTAT = '0' THEN 'PENDENT' WHEN c.JUSTIFICANT_ESTAT = '1' THEN 'OK' WHEN c.JUSTIFICANT_ESTAT = '2' THEN 'ERROR' WHEN c.JUSTIFICANT_ESTAT = '3' THEN 'NO_DISPONIBLE' WHEN c.JUSTIFICANT_ESTAT = '4' THEN 'OK_NO_CUSTODIA' END,
+                     e.ID,
+                     e.CODI,
+                     c.PARE_ID
+              FROM pbl_consulta c
+                       LEFT OUTER JOIN PBL_ENTITAT e on c.ENTITAT_ID = e.ID
+                       LEFT OUTER JOIN PBL_PROCEDIMENT p on c.PROCEDIMENT_ID = p.ID
+                       LEFT OUTER JOIN CORE_SERVICIO s on c.SERVEI_CODI = s.CODCERTIFICADO
+                       LEFT OUTER JOIN PBL_USUARI u on c.CREATEDBY_CODI = u.CODI;
+              "

@@ -141,13 +141,12 @@ public class AuditorController extends BaseController {
 			command.updateDefaultDataInici(isHistoric(request));
 		}
 		List<ServerSideColumn> cols = serverSideRequest.getColumns();
-		cols.get(1).setData("createdDate");
-		cols.get(2).setData("createdBy.nom");
+		cols.get(0).setData("peticioId");
+		cols.get(1).setData("data");
+		cols.get(2).setData("usuariNom");
 		cols.get(3).setData("funcionariNom");
-//		cols.get(4).setData("procediment.nom");
-		cols.get(4).setData("procediment.codi");
-//		cols.get(5).setData("serveiScsp.descripcio");
-		cols.get(5).setData("serveiScsp.codi");
+		cols.get(4).setData("procedimentCodi");
+		cols.get(5).setData("serveiCodi");
 
 		Page<ConsultaDto> page;
 		if (isHistoric(request)) {
@@ -161,6 +160,7 @@ public class AuditorController extends BaseController {
 					ConsultaFiltreCommand.asDto(command),
 					serverSideRequest.toPageable());
 		}
+		cols.get(0).setData("scspPeticionId");
 		cols.get(1).setData("creacioData");
 		cols.get(2).setData("creacioUsuari.nom");
 		cols.get(3).setData("funcionariNomAmbDocument");

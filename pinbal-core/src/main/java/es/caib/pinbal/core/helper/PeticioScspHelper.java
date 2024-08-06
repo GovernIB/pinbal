@@ -69,6 +69,8 @@ public class PeticioScspHelper {
 	private Map<String, Integer> consultaServeiCount = new HashMap<String, Integer>();
 	/* Emmagatzema l'inici de l'interval actual per a cada servei */
 	private Map<String, Date> consultaIntervalStart = new HashMap<String, Date>();
+    @Autowired
+    private ConsultaHelper consultaHelper;
 
 	/* Retorna true si s'ha de continuar l'enviament de la consulta, fals en cas contrari. */
 	public boolean isEnviarConsultaServei(Consulta consulta, boolean auto) {
@@ -205,6 +207,7 @@ public class PeticioScspHelper {
 		} catch (ConsultaScspComunicacioException ex) {
 			consulta.updateEstatError("Error en la comunicació SCSP: " + ex.getMessage());
 		}
+		consultaHelper.propagaCanviConsulta(consulta);
 	}
 
 	public void processarIEmmagatzemarDadesEspecifiques(
@@ -457,6 +460,7 @@ public class PeticioScspHelper {
 				accioParams.put("error", error);
 			}
 		}
+		consultaHelper.propagaCanviConsulta(consulta);
 	}
 
 	public void updateEstatConsultaError(
@@ -464,6 +468,7 @@ public class PeticioScspHelper {
 			String error) {
 		consulta.updateEstat(EstatTipus.Error);
 		consulta.updateEstatError(error);
+		consultaHelper.propagaCanviConsulta(consulta);
 	}
 
 	public boolean isGestioXsdActiva(String serveiCodi) {
