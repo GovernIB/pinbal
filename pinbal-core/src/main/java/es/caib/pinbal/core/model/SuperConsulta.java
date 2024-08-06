@@ -5,6 +5,7 @@ import es.caib.pinbal.core.dto.ConsultaDto;
 import es.caib.pinbal.core.dto.EstatTipus;
 import es.caib.pinbal.core.dto.JustificantEstat;
 import lombok.Getter;
+import org.apache.commons.lang.StringUtils;
 
 import javax.persistence.Column;
 import javax.persistence.ConstraintMode;
@@ -135,6 +136,23 @@ public abstract class SuperConsulta extends PinbalAuditable<Long> implements ICo
             },
             foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
     protected Transmision transmision;
+
+    public String getTitularNomSencer() {
+        if (!StringUtils.isBlank(this.titularNomComplet))
+            return this.titularNomComplet;
+
+        String nomSencer = "";
+        if (!StringUtils.isBlank(this.titularNom)) {
+            nomSencer += this.titularNom;
+        }
+        if (!StringUtils.isBlank(this.titularLlinatge1)) {
+            nomSencer += (nomSencer.length() > 0 ? " " : "") + this.titularLlinatge1;
+        }
+        if (!StringUtils.isBlank(this.titularLlinatge2)) {
+            nomSencer += (nomSencer.length() > 0 ? " " : "") + this.titularLlinatge2;
+        }
+        return nomSencer;
+    }
 
     @Version
     protected long version = 0;

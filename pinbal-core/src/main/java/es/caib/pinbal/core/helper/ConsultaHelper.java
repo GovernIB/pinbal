@@ -45,7 +45,7 @@ public class ConsultaHelper {
                 .usuariNom(consulta.getCreatedBy().getNom())
                 .funcionariNom(consulta.getFuncionariNom())
                 .funcionariNif(consulta.getFuncionariDocumentNum())
-                .titularNom(consulta.getTitularNomComplet())
+                .titularNom(consulta.getTitularNomSencer())
                 .titularDocumentTipus(consulta.getTitularDocumentTipus())
                 .titularDocumentNum(consulta.getTitularDocumentNum())
                 .procedimentId(procediment.getId())

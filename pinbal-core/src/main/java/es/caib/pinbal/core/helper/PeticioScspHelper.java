@@ -460,7 +460,8 @@ public class PeticioScspHelper {
 				accioParams.put("error", error);
 			}
 		}
-		consultaHelper.propagaCanviConsulta(consulta);
+		if (consulta.getId() != null)
+			consultaHelper.propagaCanviConsulta(consulta);
 	}
 
 	public void updateEstatConsultaError(
@@ -468,7 +469,8 @@ public class PeticioScspHelper {
 			String error) {
 		consulta.updateEstat(EstatTipus.Error);
 		consulta.updateEstatError(error);
-		consultaHelper.propagaCanviConsulta(consulta);
+		if (consulta.getId() != null)
+			consultaHelper.propagaCanviConsulta(consulta);
 	}
 
 	public boolean isGestioXsdActiva(String serveiCodi) {

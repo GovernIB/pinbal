@@ -3359,6 +3359,7 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 					conslt,
 					error);
 			Consulta saved = consultaRepository.save(conslt);
+			consultaHelper.propagaCanviConsulta(saved);
 			integracioHelper.addAccioError(
 					conslt.getScspPeticionId(),
 					IntegracioHelper.INTCODI_SERVEIS_SCSP,
