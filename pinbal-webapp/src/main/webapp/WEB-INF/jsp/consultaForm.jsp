@@ -350,7 +350,7 @@
 				<button type="button" class="btn btn-default" data-toggle="modal" data-target="#modalAjuda"><spring:message code="comu.boto.ajuda"/></button>
 			</c:if>
 			<a href="<c:url value="/consulta"/>" class="btn btn-default"><spring:message code="comu.boto.cancelar"/></a>
-			<button type="submit" class="btn btn-primary"><spring:message code="comu.boto.enviar"/></button>
+			<button type="submit" class="btn btn-primary"><c:choose><c:when test="${reintentar}"><spring:message code="comu.boto.reintentar"/></c:when><c:otherwise><spring:message code="comu.boto.enviar"/></c:otherwise></c:choose></button>
 		</div>
 	</form:form>
 	</div>

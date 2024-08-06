@@ -426,7 +426,8 @@ public class ConsultaController extends BaseController {
 					model);
 			return "consultaForm";
 		}
-		
+
+		boolean error = false;
 		try {
 			ConsultaDto consulta = null;
 			if (!command.isMultiple()) {
@@ -443,6 +444,7 @@ public class ConsultaController extends BaseController {
 						getMessage(
 								request, 
 								"consulta.controller.recepcio.error") + ": " + consulta.getError());
+				error = true;
 			} else {
 				AlertHelper.success(
 						request,
@@ -456,10 +458,20 @@ public class ConsultaController extends BaseController {
 					getMessage(
 							request, 
 							"consulta.controller.enviament.error") + ": " + ex.getMessage());
+			error = true;
 		}
-		if (!command.isMultiple())
+
+		if (error) {
+			omplirModelPerMostrarFormulari(
+					entitat.getId(),
+					serveiCodi,
+					model);
+			model.addAttribute("reintentar", true);
+			return "consultaForm";
+		}
+		if (!command.isMultiple()) {
 			return "redirect:../../consulta";
-		else
+		} else
 			return "redirect:../../consulta/multiple";
 	}
 
