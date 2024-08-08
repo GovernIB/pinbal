@@ -6,7 +6,6 @@ package es.caib.pinbal.webapp.controller;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.base.Strings;
 import es.caib.pinbal.core.dto.EntitatDto;
 import es.caib.pinbal.core.dto.EntitatUsuariDto;
 import es.caib.pinbal.core.dto.ProcedimentServeiNomDto;
@@ -22,17 +21,13 @@ import es.caib.pinbal.core.service.UsuariService;
 import es.caib.pinbal.core.service.exception.EntitatNotFoundException;
 import es.caib.pinbal.core.service.exception.UsuariExternNotFoundException;
 import es.caib.pinbal.webapp.command.EntitatUsuariCommand;
-import es.caib.pinbal.webapp.command.EntitatUsuariCommand.Existent;
-import es.caib.pinbal.webapp.command.EntitatUsuariCommand.TipusCodi;
-import es.caib.pinbal.webapp.command.EntitatUsuariCommand.TipusNie;
-import es.caib.pinbal.webapp.command.EntitatUsuariCommand.TipusNif;
 import es.caib.pinbal.webapp.command.UsuariFiltreCommand;
 import es.caib.pinbal.webapp.common.AlertHelper;
 import es.caib.pinbal.webapp.common.EntitatHelper;
 import es.caib.pinbal.webapp.common.RequestSessionHelper;
-import es.caib.pinbal.webapp.common.ValidationHelper;
 import es.caib.pinbal.webapp.datatables.ServerSideRequest;
 import es.caib.pinbal.webapp.datatables.ServerSideResponse;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -307,92 +302,58 @@ public class RepresentantUsuariController extends BaseController {
 		return new ServerSideResponse<EntitatUsuariDto, Long>(serverSideRequest, page);
 	}
 
+	@RequestMapping(value = "/new", method = RequestMethod.GET)
+	public String usuariGet(
+			HttpServletRequest request,
+			Model model) {
+		return usuariGet(request, null, model);
+	}
+
 	@RequestMapping(value = "/{codi}", method = RequestMethod.GET)
-	@ResponseBody
-	public EntitatUsuariDto usuariGet(
+	public String usuariGet(
 			HttpServletRequest request,
 			@PathVariable String codi,
 			Model model) {
 		EntitatDto entitat = EntitatHelper.getEntitatActual(request);
 		if (entitat == null) {
-			AlertHelper.error(
-					request,
-					getMessage(
-							request,
-							"representant.controller.entitat.no.existeix"));
-			return null;
+			AlertHelper.error(request, getMessage(request, "representant.controller.entitat.no.existeix"));
+			return "redirect:usuari";
 		}
-		return usuariService.getEntitatUsuari(entitat.getId(), codi);
+
+		EntitatUsuariCommand entitatUsuariCommand;
+		if (StringUtils.isBlank(codi)) {
+			entitatUsuariCommand = new EntitatUsuariCommand(entitat.getId());
+		} else {
+			EntitatUsuariDto entitatUsuari = usuariService.getEntitatUsuari(entitat.getId(), codi);
+			entitatUsuariCommand = EntitatUsuariCommand.asCommand(entitatUsuari, entitat.getId());
+		}
+		model.addAttribute(entitatUsuariCommand);
+		return "representantUsuariForm";
 	}
 
 	@RequestMapping(value = "/save", method = RequestMethod.POST)
-	@ResponseBody
-	public String save(
+	public String usuariPost(
 			HttpServletRequest request,
 			@Valid EntitatUsuariCommand command,
 			BindingResult bindingResult,
 			Model model) throws Exception {
-		EntitatDto entitat = EntitatHelper.getEntitatActual(request);
-		if (entitat == null) {
-			AlertHelper.error(
-					request,
-					getMessage(
-							request, 
-							"representant.controller.entitat.no.existeix"));
-			return "NO_ENTITAT";
-		}
-		
-		if (!EntitatHelper.isRepresentantEntitatActual(request)) {
-			AlertHelper.error(
-					request,
-					getMessage(
-							request,
-							"representant.no.autoritzat.alert.error"));
-			return "KO";
-		}
 
-		Class<?> grup = null;
-		if (command.getTipus().equals(EntitatUsuariCommand.CARACTER_CODI) || !Strings.isNullOrEmpty(command.getCodi())) {
-			grup = TipusCodi.class;
-		} else if (command.getTipus().equals(EntitatUsuariCommand.CARACTER_NIF) || !Strings.isNullOrEmpty(command.getNif())) {
-			if (command.getNif() != null && command.getNif().toUpperCase().matches("[XYZ][0-9]{7}[A-Z]")) {
-				grup = TipusNie.class;
-			} else {
-				grup = TipusNif.class;
-			}
-		} else {
-			if (!Strings.isNullOrEmpty(command.getCodi())) {
-				grup = TipusCodi.class;
-			} else if (!Strings.isNullOrEmpty(command.getNif())) {
-				if (command.getNif() != null && command.getNif().toUpperCase().matches("[XYZ][0-9]{7}[A-Z]")) {
-					grup = TipusNie.class;
-				} else {
-					grup = TipusNif.class;
-				}
-			} else {
-				grup = Existent.class;
-			}
-		}
-		new ValidationHelper(validator).isValid(
-				command,
-				bindingResult,
-				grup);
 		if (bindingResult.hasErrors()) {
 			for (FieldError error: bindingResult.getFieldErrors()) {
-				AlertHelper.error(
-						request,
-						getMessage(
-								request, 
-								error.getCode(),
-								error.getArguments()));
+				AlertHelper.error(request, getMessage(request, error.getCode(), error.getArguments()));
 				break;
 			}
-			omplirModelPerMostrarLlistat(
-					request,
-					entitat,
-					model);
-			return "KO";
+			return "representantUsuariForm";
 		}
+
+		EntitatDto entitat = EntitatHelper.getEntitatActual(request);
+		if (entitat == null) {
+			return getModalControllerReturnValueError(request, "redirect:../usuari", "representant.controller.entitat.no.existeix");
+		}
+		if (!EntitatHelper.isRepresentantEntitatActual(request)) {
+			return getModalControllerReturnValueError(request, "redirect:../usuari", "representant.no.autoritzat.alert.error");
+		}
+
 		try {
 			usuariService.actualitzarDadesRepresentant(
 					command.getId(),
@@ -404,30 +365,117 @@ public class RepresentantUsuariController extends BaseController {
 					command.isRolAplicacio(),
 					command.isAfegir(),
 					command.isActiu());
-			String nomUsuari = command.getNif();
-			for (EntitatUsuariDto usuari: entitat.getUsuaris()) {
-				if (usuari.getUsuari().getNif() != null && usuari.getUsuari().getNif() != null && usuari.getUsuari().getNif().equalsIgnoreCase(command.getNif())) {
-					nomUsuari = usuari.getUsuari().getDescripcio();
-					break;
-				}
-			}
-			AlertHelper.success(
-					request,
-					getMessage(
-							request, 
-							"representant.controller.usuari.actualitzat",
-							new Object[] {nomUsuari}));
-			return "OK";
+
+			return getModalControllerReturnValueSuccess(request, "redirect:../usuari", "representant.controller.usuari.actualitzat", new Object[] {command.getNom()});
 		} catch (UsuariExternNotFoundException ex) {
-			AlertHelper.error(
-					request,
-					getMessage(
-							request, 
-							"representant.controller.usuari.extern.no.existeix"));
-			return "KO";
+			return getModalControllerReturnValueError(request, "redirect:../usuari", "representant.controller.usuari.extern.no.existeix");
 		}
 
 	}
+
+//	@RequestMapping(value = "/save", method = RequestMethod.POST)
+//	@ResponseBody
+//	public String save(
+//			HttpServletRequest request,
+//			@Valid EntitatUsuariCommand command,
+//			BindingResult bindingResult,
+//			Model model) throws Exception {
+//		EntitatDto entitat = EntitatHelper.getEntitatActual(request);
+//		if (entitat == null) {
+//			AlertHelper.error(
+//					request,
+//					getMessage(
+//							request,
+//							"representant.controller.entitat.no.existeix"));
+//			return "NO_ENTITAT";
+//		}
+//
+//		if (!EntitatHelper.isRepresentantEntitatActual(request)) {
+//			AlertHelper.error(
+//					request,
+//					getMessage(
+//							request,
+//							"representant.no.autoritzat.alert.error"));
+//			return "KO";
+//		}
+//
+//		Class<?> grup = null;
+//		if (command.getTipus().equals(EntitatUsuariCommand.CARACTER_CODI) || !Strings.isNullOrEmpty(command.getCodi())) {
+//			grup = TipusCodi.class;
+//		} else if (command.getTipus().equals(EntitatUsuariCommand.CARACTER_NIF) || !Strings.isNullOrEmpty(command.getNif())) {
+//			if (command.getNif() != null && command.getNif().toUpperCase().matches("[XYZ][0-9]{7}[A-Z]")) {
+//				grup = TipusNie.class;
+//			} else {
+//				grup = TipusNif.class;
+//			}
+//		} else {
+//			if (!Strings.isNullOrEmpty(command.getCodi())) {
+//				grup = TipusCodi.class;
+//			} else if (!Strings.isNullOrEmpty(command.getNif())) {
+//				if (command.getNif() != null && command.getNif().toUpperCase().matches("[XYZ][0-9]{7}[A-Z]")) {
+//					grup = TipusNie.class;
+//				} else {
+//					grup = TipusNif.class;
+//				}
+//			} else {
+//				grup = Existent.class;
+//			}
+//		}
+//		new ValidationHelper(validator).isValid(
+//				command,
+//				bindingResult,
+//				grup);
+//		if (bindingResult.hasErrors()) {
+//			for (FieldError error: bindingResult.getFieldErrors()) {
+//				AlertHelper.error(
+//						request,
+//						getMessage(
+//								request,
+//								error.getCode(),
+//								error.getArguments()));
+//				break;
+//			}
+//			omplirModelPerMostrarLlistat(
+//					request,
+//					entitat,
+//					model);
+//			return "KO";
+//		}
+//		try {
+//			usuariService.actualitzarDadesRepresentant(
+//					command.getId(),
+//					command.getCodi(),
+//					command.getNif(),
+//					command.getDepartament(),
+//					command.isRolRepresentant(),
+//					command.isRolDelegat(),
+//					command.isRolAplicacio(),
+//					command.isAfegir(),
+//					command.isActiu());
+//			String nomUsuari = command.getNif();
+//			for (EntitatUsuariDto usuari: entitat.getUsuaris()) {
+//				if (usuari.getUsuari().getNif() != null && usuari.getUsuari().getNif() != null && usuari.getUsuari().getNif().equalsIgnoreCase(command.getNif())) {
+//					nomUsuari = usuari.getUsuari().getDescripcio();
+//					break;
+//				}
+//			}
+//			AlertHelper.success(
+//					request,
+//					getMessage(
+//							request,
+//							"representant.controller.usuari.actualitzat",
+//							new Object[] {nomUsuari}));
+//			return "OK";
+//		} catch (UsuariExternNotFoundException ex) {
+//			AlertHelper.error(
+//					request,
+//					getMessage(
+//							request,
+//							"representant.controller.usuari.extern.no.existeix"));
+//			return "KO";
+//		}
+//
+//	}
 
 	@RequestMapping(value = "/{usuariCodi}/permis", method = RequestMethod.GET)
 	public String permisGet(

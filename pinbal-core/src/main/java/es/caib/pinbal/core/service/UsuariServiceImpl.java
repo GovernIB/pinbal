@@ -206,6 +206,18 @@ public class UsuariServiceImpl implements UsuariService {
 		return dtoMappingHelper.convertir(entitatUsuari, EntitatUsuariDto.class);
 	}
 
+	@Transactional(readOnly = true)
+	@Override
+	public UsuariDto getUsuariExtern(String codi) throws Exception {
+		DadesUsuari dadesUsuari = externHelper.dadesUsuariConsultarAmbUsuariCodi(codi);
+		return UsuariDto.builder()
+				.codi(dadesUsuari.getCodi())
+				.nom(dadesUsuari.getNom())
+				.nif(dadesUsuari.getNif())
+				.email(dadesUsuari.getEmail())
+				.build();
+	}
+
 	@Transactional(rollbackFor = EntitatNotFoundException.class)
 	@Override
 	public void actualitzarDadesAdmin(

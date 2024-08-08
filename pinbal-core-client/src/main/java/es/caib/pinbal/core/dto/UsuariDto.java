@@ -1,6 +1,9 @@
 package es.caib.pinbal.core.dto;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.apache.commons.lang.builder.ToStringBuilder;
 
@@ -11,6 +14,9 @@ import java.io.Serializable;
  * 
  * @author Limit Tecnologies <limit@limit.es>
  */
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 @Getter @Setter
 public class UsuariDto extends AbstractIdentificable<Long> implements Serializable, Comparable<UsuariDto> {
 
@@ -31,8 +37,6 @@ public class UsuariDto extends AbstractIdentificable<Long> implements Serializab
 	private String finalitat;
 	private boolean hasMultiplesEntitats;
 
-	public UsuariDto() {
-	}
 	public UsuariDto(
 			String codi,
 			String nif,
@@ -40,22 +44,12 @@ public class UsuariDto extends AbstractIdentificable<Long> implements Serializab
 			boolean inicialitzat,
 			boolean noInicialitzatNif,
 			boolean noInicialitzatCodi) {
-//			Long procedimentId,
-//			String serveiCodi,
-//			Long entitatId,
-//			String departament,
-//			String finalitat) {
 		this.codi = codi;
 		this.nif = nif;
 		this.nom = nom;
 		this.inicialitzat = inicialitzat;
 		this.noInicialitzatNif = noInicialitzatNif;
 		this.noInicialitzatCodi = noInicialitzatCodi;
-//		this.procedimentId = procedimentId;
-//		this.serveiCodi = serveiCodi;
-//		this.entitatId = entitatId;
-//		this.departament = departament;
-//		this.finalitat = finalitat;
 	}
 
 	public String getDescripcio() {

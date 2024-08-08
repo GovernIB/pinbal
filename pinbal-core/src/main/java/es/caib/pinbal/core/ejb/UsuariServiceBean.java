@@ -182,4 +182,10 @@ public class UsuariServiceBean implements UsuariService {
         return delegate.getEntitatUsuari(entitatId, usuariCodi);
     }
 
+    @Override
+	@RolesAllowed({"PBL_ADMIN", "PBL_REPRES", "PBL_AUDIT"})
+    public UsuariDto getUsuariExtern(String codi) throws Exception {
+        return delegate.getUsuariExtern(codi);
+    }
+
 }
