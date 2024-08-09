@@ -3,16 +3,16 @@
  */
 package es.caib.pinbal.webapp.command;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.validation.constraints.Size;
-
+import es.caib.pinbal.core.dto.ServeiJustificantCampDto;
 import es.caib.pinbal.webapp.helper.CommandMappingHelper;
+import lombok.Getter;
+import lombok.Setter;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.hibernate.validator.constraints.NotEmpty;
 
-import es.caib.pinbal.core.dto.ServeiJustificantCampDto;
+import javax.validation.constraints.Size;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Command per a les traduccions dels camps de dades específiques
@@ -20,6 +20,7 @@ import es.caib.pinbal.core.dto.ServeiJustificantCampDto;
  * 
  * @author Limit Tecnologies <limit@limit.es>
  */
+@Getter @Setter
 public class ServeiJustificantCampCommand {
 
 	private Long id;
@@ -30,35 +31,11 @@ public class ServeiJustificantCampCommand {
 	private String xpath;
 	@Size(max=255)
 	private String traduccio;
+	private boolean document;
 
-	public Long getId() {
-		return id;
-	}
-	public void setId(Long id) {
-		this.id = id;
-	}
-	public String getServei() {
-		return servei;
-	}
-	public void setServei(String servei) {
-		this.servei = servei;
-	}
-	public String getXpath() {
-		return xpath;
-	}
-	public void setXpath(String xpath) {
-		this.xpath = xpath;
-	}
-	public String getTraduccio() {
-		return traduccio;
-	}
-	public void setTraduccio(String traduccio) {
-		this.traduccio = traduccio;
-	}
 
-	public static List<ServeiJustificantCampCommand> toEntitatCommands(
-			List<ServeiJustificantCampDto> dtos) {
-		List<ServeiJustificantCampCommand> commands = new ArrayList<ServeiJustificantCampCommand>();
+	public static List<ServeiJustificantCampCommand> toEntitatCommands(List<ServeiJustificantCampDto> dtos) {
+		List<ServeiJustificantCampCommand> commands = new ArrayList<>();
 		for (ServeiJustificantCampDto dto: dtos)
 			commands.add(asCommand(dto));
 		return commands;

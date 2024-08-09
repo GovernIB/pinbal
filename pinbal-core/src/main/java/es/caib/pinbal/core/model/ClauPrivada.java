@@ -3,8 +3,9 @@
  */
 package es.caib.pinbal.core.model;
 
-import java.io.Serializable;
-import java.util.Date;
+import org.apache.commons.lang.builder.ToStringBuilder;
+import org.hibernate.annotations.ForeignKey;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -18,10 +19,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-
-import org.apache.commons.lang.builder.ToStringBuilder;
-import org.hibernate.annotations.ForeignKey;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import java.io.Serializable;
+import java.util.Date;
 
 /**
  * Classe de model de dades que conté la informació d'una
@@ -29,7 +28,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
  * 
  * @author Limit Tecnologies <limit@limit.es>
  */
-@SuppressWarnings("deprecation")
+//@SuppressWarnings("deprecation")
 @Entity
 @Table(name = "core_clave_privada")
 @EntityListeners(AuditingEntityListener.class)

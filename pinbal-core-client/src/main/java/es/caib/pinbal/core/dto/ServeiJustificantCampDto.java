@@ -3,9 +3,11 @@
  */
 package es.caib.pinbal.core.dto;
 
-import java.io.Serializable;
-
+import lombok.Getter;
+import lombok.Setter;
 import org.apache.commons.lang.builder.ToStringBuilder;
+
+import java.io.Serializable;
 
 /**
  * Dades d'una traducció d'un camp de dades específiques d'un
@@ -13,37 +15,14 @@ import org.apache.commons.lang.builder.ToStringBuilder;
  * 
  * @author Limit Tecnologies <limit@limit.es>
  */
+@Getter @Setter
 public class ServeiJustificantCampDto implements Serializable {
 
 	private Long id;
 	private String servei;
 	private String xpath;
 	private String traduccio;
-
-	public Long getId() {
-		return id;
-	}
-	public void setId(Long id) {
-		this.id = id;
-	}
-	public String getServei() {
-		return servei;
-	}
-	public void setServei(String servei) {
-		this.servei = servei;
-	}
-	public String getXpath() {
-		return xpath;
-	}
-	public void setXpath(String xpath) {
-		this.xpath = xpath;
-	}
-	public String getTraduccio() {
-		return traduccio;
-	}
-	public void setTraduccio(String traduccio) {
-		this.traduccio = traduccio;
-	}
+	private boolean document;
 
 	@Override
 	public String toString() {
