@@ -20,7 +20,7 @@ import java.util.Date;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "pbl_consulta_hist_do")
+@Table(name = "pbl_consulta_do")
 public class DadesObertesConsulta {
 
     @Id

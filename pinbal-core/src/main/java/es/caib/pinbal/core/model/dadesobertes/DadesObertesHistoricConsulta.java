@@ -19,7 +19,7 @@ import java.util.Date;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "pbl_consulta_do")
+@Table(name = "pbl_consulta_hist_do")
 public class DadesObertesHistoricConsulta {
 
     @Id
@@ -67,7 +67,7 @@ public class DadesObertesHistoricConsulta {
     @Column(name = "finalitat", length = 250)
     private String finalitat;
 
-    @Column(name = "titular_doctip", length = 16, nullable = false)
+    @Column(name = "titularDoctip", length = 16, nullable = false)
     private String titularDocumentTipus;
 
     @Column(name = "solicitudId", length = 64, nullable = false)
