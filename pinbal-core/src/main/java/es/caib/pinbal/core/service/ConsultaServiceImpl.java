@@ -22,18 +22,20 @@ import es.caib.pinbal.core.dto.EntitatDto;
 import es.caib.pinbal.core.dto.EstadisticaDto;
 import es.caib.pinbal.core.dto.EstadistiquesFiltreDto;
 import es.caib.pinbal.core.dto.EstadistiquesFiltreDto.EstadistiquesAgrupacioDto;
+import es.caib.pinbal.core.dto.EstatTipus;
 import es.caib.pinbal.core.dto.FitxerDto;
 import es.caib.pinbal.core.dto.InformeGeneralEstatDto;
 import es.caib.pinbal.core.dto.InformeProcedimentServeiDto;
 import es.caib.pinbal.core.dto.InformeRepresentantFiltreDto;
 import es.caib.pinbal.core.dto.IntegracioAccioTipusEnumDto;
 import es.caib.pinbal.core.dto.JustificantDto;
-import es.caib.pinbal.core.dto.ProcedimentDto;
+import es.caib.pinbal.core.dto.JustificantEstat;
 import es.caib.pinbal.core.dto.RecobrimentSolicitudDto;
 import es.caib.pinbal.core.dto.RespostaAtributsDto;
 import es.caib.pinbal.core.dto.arxiu.ArxiuDetallDto;
 import es.caib.pinbal.core.helper.ArxiuHelper;
 import es.caib.pinbal.core.helper.ConfigHelper;
+import es.caib.pinbal.core.helper.ConsultaHelper;
 import es.caib.pinbal.core.helper.DtoMappingHelper;
 import es.caib.pinbal.core.helper.EmailReportEstatHelper;
 import es.caib.pinbal.core.helper.ExcelHelper;
@@ -46,20 +48,33 @@ import es.caib.pinbal.core.helper.PluginHelper;
 import es.caib.pinbal.core.helper.ServeiHelper;
 import es.caib.pinbal.core.helper.UsuariHelper;
 import es.caib.pinbal.core.model.Consulta;
-import es.caib.pinbal.core.model.Consulta.EstatTipus;
-import es.caib.pinbal.core.model.Consulta.JustificantEstat;
 import es.caib.pinbal.core.model.Entitat;
 import es.caib.pinbal.core.model.EntitatUsuari;
 import es.caib.pinbal.core.model.Procediment;
 import es.caib.pinbal.core.model.ProcedimentServei;
+import es.caib.pinbal.core.model.Servei;
 import es.caib.pinbal.core.model.Usuari;
+import es.caib.pinbal.core.model.explotacio.EstadisticaKey;
+import es.caib.pinbal.core.model.explotacio.ExplotConsultaDimensio;
+import es.caib.pinbal.core.model.explotacio.ExplotConsultaDimensioEntity;
+import es.caib.pinbal.core.model.explotacio.ExplotConsultaFets;
+import es.caib.pinbal.core.model.explotacio.ExplotConsultaFetsEntity;
+import es.caib.pinbal.core.model.explotacio.ExplotTempsEntity;
+import es.caib.pinbal.core.model.llistat.LlistatConsulta;
 import es.caib.pinbal.core.repository.ConsultaRepository;
 import es.caib.pinbal.core.repository.EntitatRepository;
 import es.caib.pinbal.core.repository.EntitatUsuariRepository;
 import es.caib.pinbal.core.repository.ProcedimentRepository;
 import es.caib.pinbal.core.repository.ProcedimentServeiRepository;
+import es.caib.pinbal.core.repository.ServeiRepository;
+import es.caib.pinbal.core.repository.SuperConsultaRepository;
 import es.caib.pinbal.core.repository.TokenRepository;
 import es.caib.pinbal.core.repository.UsuariRepository;
+import es.caib.pinbal.core.repository.dadesobertes.DadesObertesConsultaRepository;
+import es.caib.pinbal.core.repository.explotacio.ExplotConsultaDimensioRepository;
+import es.caib.pinbal.core.repository.explotacio.ExplotConsultaFetsRepository;
+import es.caib.pinbal.core.repository.explotacio.ExplotTempsRepository;
+import es.caib.pinbal.core.repository.llistat.LlistatConsultaRepository;
 import es.caib.pinbal.core.service.exception.AccesExternException;
 import es.caib.pinbal.core.service.exception.ConsultaNotFoundException;
 import es.caib.pinbal.core.service.exception.ConsultaScspComunicacioException;
@@ -97,6 +112,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.acls.domain.PrincipalSid;
 import org.springframework.security.acls.model.AccessControlEntry;
 import org.springframework.security.acls.model.MutableAclService;
@@ -120,10 +136,13 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -160,13 +179,13 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 	private EntitatUsuariRepository entitatUsuariRepository;
 	@Autowired
 	private TokenRepository tokenRepository;
+	@Autowired
+	private ExplotTempsRepository explotTempsRepository;
 
 	@Autowired
 	private JustificantHelper justificantHelper;
 	@Autowired
 	private DtoMappingHelper dtoMappingHelper;
-	/*@Autowired
-    private TransaccioHelper transaccioHelper;*/
 	@Autowired
 	private UsuariHelper usuariHelper;
 	@Autowired
@@ -203,6 +222,21 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 	private ScspHelper scspHelper;
 
 	private Map<Long, Object> justificantLocks = new HashMap<Long, Object>();
+    @Autowired
+    private ServeiRepository serveiRepository;
+    @Autowired
+    private ExplotConsultaDimensioRepository explotConsultaDimensioRepository;
+    @Autowired
+    private ExplotConsultaFetsRepository explotConsultaFetsRepository;
+    @Autowired
+    private SuperConsultaRepository superConsultaRepository;
+
+	@Autowired
+	private ConsultaHelper consultaHelper;
+    @Autowired
+    private DadesObertesConsultaRepository dadesObertesConsultaRepository;
+    @Autowired
+    private LlistatConsultaRepository llistatConsultaRepository;
 
 	@Transactional(rollbackFor = {ProcedimentServeiNotFoundException.class, ServeiNotAllowedException.class, ConsultaScspException.class})
 	@Override
@@ -294,6 +328,7 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 				}
 			}
 			Consulta saved = consultaRepository.save(conslt);
+			consultaHelper.propagaCreacioConsulta(saved);
 			return dtoMappingHelper.getMapperFacade().map(
 					saved,
 					ConsultaDto.class);
@@ -365,6 +400,7 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 						null).
 				build();
 		Consulta saved = consultaRepository.save(constl);
+		consultaHelper.propagaCreacioConsulta(saved);
 		return dtoMappingHelper.getMapperFacade().map(
 				saved,
 				ConsultaDto.class);
@@ -400,6 +436,7 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 					consulta.getDadesEspecifiques());
 			if (peticioScspHelper.isEnviarConsultaServei(conslt, false)) {
 				conslt.updateEstat(EstatTipus.Processant);
+				consultaHelper.propagaCanviConsulta(conslt);
 				ResultatEnviamentPeticio resultat = peticioScspHelper.enviarPeticioScsp(
 						conslt,
 						Arrays.asList(peticioScspHelper.convertirEnSolicitud(conslt)),
@@ -462,10 +499,10 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 			// Si l'estat de la consulta és pendent aleshores voldrà dir que la petició encara no s'ha
 			// enviat i no te sentit refrescar el seu estat.
 			if (consulta.getEstat() != EstatTipus.Pendent) {
-				ResultatEnviamentPeticio resultat = getScspHelper().recuperarResultatEnviamentPeticio(
-						consulta.getScspPeticionId());
+				ResultatEnviamentPeticio resultat = getScspHelper().recuperarResultatEnviamentPeticio(consulta.getScspPeticionId());
 				if (resultat.getIdsSolicituds() != null && resultat.getIdsSolicituds().length > 0) {
 					consulta.updateScspSolicitudId(resultat.getIdsSolicituds()[0]);
+					consultaHelper.propagaCanviConsulta(consulta);
 				}
 				// Si l'estat de la consulta és Error vol dir que l'error s'ha processat amb anterioritat
 				// i no és necessari actualitzar l'estat. Si l'estat s'actualitza segurament el posarà com
@@ -473,6 +510,7 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 				if (consulta.getEstat() != EstatTipus.Error) {
 					peticioScspHelper.updateEstatConsulta(consulta, resultat, accioParams);
 				}
+
 			}
 			integracioHelper.addAccioOk(
 					consulta.getScspPeticionId(),
@@ -578,6 +616,7 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 						System.currentTimeMillis() - t0);
 			}
 			Consulta saved = consultaRepository.save(conslt);
+			consultaHelper.propagaCreacioConsulta(saved);
 			int solicitudIndex = 0;
 			for (Solicitud solicitud: solicituds) {
 				String titularDocumentTipus = null;
@@ -605,6 +644,7 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 				cs.updateScspSolicitudId(resultat.getIdsSolicituds()[solicitudIndex++]);
 				peticioScspHelper.updateEstatConsulta(cs, resultat, null);
 				consultaRepository.save(cs);
+				consultaHelper.propagaCreacioConsulta(cs);
 			}
 			return dtoMappingHelper.getMapperFacade().map(
 					saved,
@@ -745,6 +785,7 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 						System.currentTimeMillis() - t0);
 			}
 			Consulta saved = consultaRepository.save(conslt);
+			consultaHelper.propagaCreacioConsulta(saved);
 			ConsultaDto resposta = dtoMappingHelper.getMapperFacade().map(
 					saved,
 					ConsultaDto.class);
@@ -880,6 +921,7 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 						null).
 				build();
 		Consulta saved = consultaRepository.save(conslt);
+		consultaHelper.propagaCreacioConsulta(saved);
 		ConsultaDto resposta = dtoMappingHelper.getMapperFacade().map(
 				saved,
 				ConsultaDto.class);
@@ -931,6 +973,7 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 					procedimentServei,
 					getScspHelper());
 			consulta.updateEstat(EstatTipus.Processant);
+			consultaHelper.propagaCanviConsulta(consulta);
 			ResultatEnviamentPeticio resultat = peticioScspHelper.enviarPeticioScsp(
 					consulta,
 					Arrays.asList(solicitudEnviar),
@@ -994,6 +1037,7 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 					consulta.getScspPeticionId());
 			if (resultat.getIdsSolicituds() != null && resultat.getIdsSolicituds().length > 0) {
 				consulta.updateScspSolicitudId(resultat.getIdsSolicituds()[0]);
+				consultaHelper.propagaCanviConsulta(consulta);
 			}
 			// Si l'estat de la consulta és Error vol dir que l'error s'ha processat amb anterioritat
 			// i no és necessari actualitzar l'estat. Si l'estat s'actualitza segurament el posarà com
@@ -1149,6 +1193,7 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 						System.currentTimeMillis() - t0);
 			}
 			Consulta saved = consultaRepository.save(conslt);
+			consultaHelper.propagaCreacioConsulta(saved);
 			int solicitudIndex = 0;
 			for (RecobrimentSolicitudDto solicitud: solicituds) {
 				String titularDocumentTipus = null;
@@ -1176,6 +1221,7 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 				cs.updateScspSolicitudId(resultat.getIdsSolicituds()[solicitudIndex++]);
 				peticioScspHelper.updateEstatConsulta(cs, resultat, null);
 				consultaRepository.save(cs);
+				consultaHelper.propagaCreacioConsulta(cs);
 			}
 			ConsultaDto resposta = dtoMappingHelper.getMapperFacade().map(
 					saved,
@@ -1548,24 +1594,23 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 				"dataFi" + dataFi + ", " +
 				"procedimentCodi=" + procedimentCodi + ", " +
 				"serveiCodi=" + serveiCodi + ")");
-		Entitat entitat = null;
-		Procediment procediment = null;
-		if (entitatCodi != null) {
-			entitat = getEntitat(entitatCodi);
-			if (procedimentCodi != null) {
-				procediment = getProcediment(procedimentCodi, entitat);
-			}
-		}
-		List<DadesObertesRespostaConsulta> resposta = consultaRepository.findByOpendata(
-				entitat == null,
-				entitat != null ? entitat.getId() : null,
-				procediment == null,
-				procediment != null ? procediment.getId() : null,
-				serveiCodi == null,
+
+		boolean esNullEntitatCodi = isBlank(entitatCodi);
+		boolean esNullProcedimentCodi = isBlank(procedimentCodi);
+		boolean esNullServeiCodi = isBlank(serveiCodi);
+		boolean isNullDataInici = dataInici == null;
+		boolean isNullDataFi = dataFi == null;
+
+		List<DadesObertesRespostaConsulta> resposta = dadesObertesConsultaRepository.findByOpendata(
+				esNullEntitatCodi,
+				entitatCodi,
+				esNullProcedimentCodi,
+				procedimentCodi,
+				esNullServeiCodi,
 				serveiCodi,
-				dataInici == null,
+				isNullDataInici,
 				dataInici,
-				dataFi == null,
+				isNullDataFi,
 				dataFi);
 		return resposta;
 	}
@@ -1575,48 +1620,52 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 		log.debug("Consultant informació per opendata (" + consultaOpenDataDto + ")");
 		DateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 
-		Entitat entitat = null;
-		Procediment procediment = null;
-		if (consultaOpenDataDto.getEntitatCodi() != null) {
-			entitat = getEntitat(consultaOpenDataDto.getEntitatCodi());
-			if (consultaOpenDataDto.getProcedimentCodi() != null) {
-				procediment = getProcediment(consultaOpenDataDto.getProcedimentCodi(), entitat);
-			}
-		}
+		boolean esNullEntitatCodi = isBlank(consultaOpenDataDto.getEntitatCodi());
+		String entitatCodi = consultaOpenDataDto.getEntitatCodi();
+		boolean esNullProcedimentCodi = isBlank(consultaOpenDataDto.getProcedimentCodi());
+		String procedimentCodi = consultaOpenDataDto.getProcedimentCodi();
+		boolean esNullServeiCodi = isBlank(consultaOpenDataDto.getServeiCodi());
+		String serveiCodi = consultaOpenDataDto.getServeiCodi();
+		boolean isNullDataInici = consultaOpenDataDto.getDataInici() == null;
+		Date dataInici = consultaOpenDataDto.getDataInici();
+		boolean isNullDataFi = consultaOpenDataDto.getDataFi() == null;
+		Date dataFi = consultaOpenDataDto.getDataFi();
+		Pageable pageable = new PageRequest(consultaOpenDataDto.getPagina(), consultaOpenDataDto.getMida());
 
-		Integer numElements = consultaRepository.countByOpendata(
-				entitat == null,
-				entitat != null ? entitat.getId() : null,
-				procediment == null,
-				procediment != null ? procediment.getId() : null,
-				isBlank(consultaOpenDataDto.getServeiCodi()),
-				!isBlank(consultaOpenDataDto.getServeiCodi()) ? consultaOpenDataDto.getServeiCodi() : null,
-				consultaOpenDataDto.getDataInici() == null,
-				consultaOpenDataDto.getDataInici(),
-				consultaOpenDataDto.getDataFi() == null,
-				consultaOpenDataDto.getDataFi());
-		Page<DadesObertesRespostaConsulta> dades = consultaRepository.findByOpendata(
-				entitat == null,
-				entitat != null ? entitat.getId() : null,
-				procediment == null,
-				procediment != null ? procediment.getId() : null,
-				consultaOpenDataDto.getServeiCodi() == null,
-				consultaOpenDataDto.getServeiCodi(),
-				consultaOpenDataDto.getDataInici() == null,
-				consultaOpenDataDto.getDataInici(),
-				consultaOpenDataDto.getDataFi() == null,
-				consultaOpenDataDto.getDataFi(),
-				new PageRequest(consultaOpenDataDto.getPagina(), consultaOpenDataDto.getMida()));
+		Integer numElements = dadesObertesConsultaRepository.countByOpendata(
+				esNullEntitatCodi,
+				entitatCodi,
+				esNullProcedimentCodi,
+				procedimentCodi,
+				esNullServeiCodi,
+				serveiCodi,
+				isNullDataInici,
+				dataInici,
+				isNullDataFi,
+				dataFi);
+
+		Page<DadesObertesRespostaConsulta> dades = dadesObertesConsultaRepository.findByOpendata(
+				esNullEntitatCodi,
+				entitatCodi,
+				esNullProcedimentCodi,
+				procedimentCodi,
+				esNullServeiCodi,
+				serveiCodi,
+				isNullDataInici,
+				dataInici,
+				isNullDataFi,
+				dataFi,
+				pageable);
 
 		Integer totalPagines = (numElements.intValue() + consultaOpenDataDto.getMida() - 1)/consultaOpenDataDto.getMida();
 		String nextUrl = null;
 		if (totalPagines.intValue() > consultaOpenDataDto.getPagina().intValue() + 1) {
 			nextUrl = consultaOpenDataDto.getAppPath() + "?historic=false";
-			nextUrl += "&dataInici=" + sdf.format(consultaOpenDataDto.getDataInici());
-			nextUrl += "&dataFi=" + sdf.format(consultaOpenDataDto.getDataFi());
-			nextUrl += !isBlank(consultaOpenDataDto.getEntitatCodi()) ? "&entitatCodi=" + consultaOpenDataDto.getEntitatCodi() : "";
-			nextUrl += !isBlank(consultaOpenDataDto.getProcedimentCodi()) ? "&procedimentCodi=" + consultaOpenDataDto.getProcedimentCodi() : "";
-			nextUrl += !isBlank(consultaOpenDataDto.getServeiCodi()) ? "&serveiCodi=" + consultaOpenDataDto.getServeiCodi() : "";
+			nextUrl += !isNullDataInici ? "&dataInici=" + sdf.format(dataInici) : "";
+			nextUrl += !isNullDataFi ? "&dataFi=" + sdf.format(dataFi) : "";
+			nextUrl += !esNullEntitatCodi ? "&entitatCodi=" + entitatCodi : "";
+			nextUrl += !esNullProcedimentCodi ? "&procedimentCodi=" + procedimentCodi : "";
+			nextUrl += !esNullServeiCodi ? "&serveiCodi=" + serveiCodi : "";
 			nextUrl += "&pagina=" + (consultaOpenDataDto.getPagina() + 1);
 			nextUrl += "&mida=" + consultaOpenDataDto.getMida();
 		}
@@ -1764,74 +1813,126 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 				throw new EntitatNotFoundException();
 			}
 		}
-		List<EstadisticaDto> resposta = new ArrayList<EstadisticaDto>();
-		List<Object[]> resultats;
-		if (EstadistiquesAgrupacioDto.PROCEDIMENT_SERVEI.equals(filtre.getAgrupacio())) {
-			resultats = consultaRepository.countByProcedimentServei(
+		List<EstadisticaDto> resposta = new ArrayList<>();
+		boolean ordreProcediment = EstadistiquesAgrupacioDto.PROCEDIMENT_SERVEI.equals(filtre.getAgrupacio());
+
+		Date dataFi = filtre.getDataFi();
+		if (filtre.getDataFi() == null) dataFi = ahir();
+		ExplotTempsEntity tempsFinal = explotTempsRepository.findFirstByData(dataFi);
+
+		Map<EstadisticaKey, ExplotConsultaFets> fetsMap = new LinkedHashMap<>();
+		List<ExplotConsultaFets> fetsAcumulatFinal = explotConsultaFetsRepository.findByFiltre(
+				tempsFinal,
+				filtre.getEntitatId() == null,
+				filtre.getEntitatId(),
+				filtre.getProcedimentId() == null,
+				filtre.getProcedimentId(),
+				filtre.getServeiCodi() == null || filtre.getServeiCodi().isEmpty(),
+				filtre.getServeiCodi(),
+				filtre.getUsuariCodi() == null,
+				filtre.getUsuariCodi());
+
+		if (fetsAcumulatFinal == null || fetsAcumulatFinal.isEmpty()) {
+			return resposta;
+		}
+
+		for (ExplotConsultaFets fet: fetsAcumulatFinal) {
+			fetsMap.put(new EstadisticaKey(fet.getEntitatId(), fet.getProcedimentId(), fet.getServeiCodi()), fet);
+		}
+
+		if (filtre.getDataInici() != null) {
+			ExplotTempsEntity tempsInicial = explotTempsRepository.findFirstByData(filtre.getDataInici());
+			List<ExplotConsultaFets> fetsAcumulatInicial = explotConsultaFetsRepository.findByFiltre(
+					tempsInicial,
 					filtre.getEntitatId() == null,
 					filtre.getEntitatId(),
-					filtre.getUsuariCodi() == null,
-					(filtre.getUsuariCodi() != null) ? usuariRepository.findOne(filtre.getUsuariCodi()) : null,
 					filtre.getProcedimentId() == null,
 					filtre.getProcedimentId(),
 					filtre.getServeiCodi() == null || filtre.getServeiCodi().isEmpty(),
 					filtre.getServeiCodi(),
-					filtre.getEstat() == null,
-					(filtre.getEstat() != null) ? Consulta.EstatTipus.valueOf(filtre.getEstat().toString()) : null,
-					filtre.getDataInici() == null,
-					filtre.getDataInici(),
-					filtre.getDataFi() == null,
-					configurarDataFiPerFiltre(filtre.getDataFi()),
-					EstatTipus.Tramitada,
-					EstatTipus.Error);
-		} else {
-			resultats = consultaRepository.countByServeiProcediment(
-					filtre.getEntitatId() == null,
-					filtre.getEntitatId(),
 					filtre.getUsuariCodi() == null,
-					(filtre.getUsuariCodi() != null) ? usuariRepository.findOne(filtre.getUsuariCodi()) : null,
-					filtre.getProcedimentId() == null,
-					filtre.getProcedimentId(),
-					filtre.getServeiCodi() == null || filtre.getServeiCodi().isEmpty(),
-					filtre.getServeiCodi(),
-					filtre.getEstat() == null,
-					(filtre.getEstat() != null) ? Consulta.EstatTipus.valueOf(filtre.getEstat().toString()) : null,
-					filtre.getDataInici() == null,
-					filtre.getDataInici(),
-					filtre.getDataFi() == null,
-					configurarDataFiPerFiltre(filtre.getDataFi()),
-					EstatTipus.Tramitada,
-					EstatTipus.Error);
+					filtre.getUsuariCodi());
+
+			if (fetsAcumulatInicial != null && !fetsAcumulatInicial.isEmpty()) {
+				for (ExplotConsultaFets fet : fetsAcumulatInicial) {
+					EstadisticaKey key = new EstadisticaKey(fet.getEntitatId(), fet.getProcedimentId(), fet.getServeiCodi());
+					fetsMap.put(key, fetsMap.get(key).minus(fet));
+				}
+			}
+
 		}
-		for (Object[] resultat: resultats) {
-			Long procedimentServeiId = (Long)resultat[0];
-			Long numRecobrimentOk = (Long)resultat[1];
-			Long numRecobrimentError = (Long)resultat[2];
-			Long numWebUIOk = (Long)resultat[4];
-			Long numWebUIError = (Long)resultat[5];
-			ProcedimentServei procedimentServei = procedimentServeiRepository.findOne(procedimentServeiId);
-			EstadisticaDto dto = new EstadisticaDto();
-			dto.setProcediment(
-					dtoMappingHelper.getMapperFacade().map(
-							procedimentServei.getProcediment(),
-							ProcedimentDto.class));
-			dto.setServeiCodi(procedimentServei.getServei());
-			dto.setServeiNom(
-					getScspHelper().getServicioDescripcion(
-							procedimentServei.getServei()));
-			dto.setNumRecobrimentOk(numRecobrimentOk);
-			dto.setNumRecobrimentError(numRecobrimentError);
-			dto.setNumWebUIOk(numWebUIOk);
-			dto.setNumWebUIError(numWebUIError);
-			resposta.add(dto);
-		}
+
+		return toEstadistiquesDto(fetsMap, ordreProcediment, filtre.getEstat());
+
+	}
+
+	private List<EstadisticaDto> toEstadistiquesDto(Map<EstadisticaKey, ExplotConsultaFets> fetsMap, final boolean ordreProcediment, es.caib.pinbal.core.dto.ConsultaDto.EstatTipus filtreEstat) {
+		List<EstadisticaDto> resposta = new ArrayList<>();
+		Map<Long, Procediment> procedimentsMap = new HashMap<>();
+		Map<String, Servei> serveiMap = new HashMap<>();
+
+        for (Map.Entry<EstadisticaKey, ExplotConsultaFets> entry : fetsMap.entrySet()) {
+            EstadisticaKey key = entry.getKey();
+            ExplotConsultaFets fet = entry.getValue();
+
+			// Procediments
+			Procediment procediment = procedimentsMap.get(key.getProcedimentId());
+			if (procediment == null) {
+				procediment = procedimentRepository.findOne(key.getProcedimentId());
+				procedimentsMap.put(key.getProcedimentId(), procediment);
+			}
+			if (procediment == null) continue;
+
+			// Serveis
+			Servei servei = serveiMap.get(key.getServeiCodi());
+			if (servei == null) {
+				servei = getServeiByCodi(key.getServeiCodi());
+				serveiMap.put(key.getServeiCodi(), servei);
+			}
+			if (servei == null) continue;
+
+			// Filtre per estat
+			boolean filtrarOk = filtreEstat != null && !es.caib.pinbal.core.dto.ConsultaDto.EstatTipus.Tramitada.equals(filtreEstat);
+			boolean filtrarError = filtreEstat != null && !es.caib.pinbal.core.dto.ConsultaDto.EstatTipus.Error.equals(filtreEstat);
+
+            EstadisticaDto dto = EstadisticaDto.builder()
+					.procedimentId(key.getProcedimentId())
+					.procedimentNom(procediment.getNom())
+					.procedimentCodi(procediment.getCodi())
+					.procedimentDepartament(procediment.getDepartament())
+					.serveiCodi(key.getServeiCodi())
+					.serveiNom(servei.getDescripcio())
+					.numRecobrimentOk(filtrarOk ? 0 : fet.getRecOk() + fet.getRecMassOk())
+					.numRecobrimentError(filtrarError ? 0 : fet.getRecError() + fet.getRecMassError())
+					.numWebUIOk(filtrarOk ? 0 : fet.getWebOk() + fet.getWebMassOk())
+					.numWebUIError(filtrarError ? 0 : fet.getWebError() + fet.getWebMassError())
+					.build();
+            resposta.add(dto);
+        }
+
+		Collections.sort(resposta, new Comparator<EstadisticaDto>() {
+			@Override
+			public int compare(EstadisticaDto o1, EstadisticaDto o2) {
+				if (ordreProcediment) {
+					int res = o1.getProcedimentNom().compareTo(o2.getProcedimentNom());
+					if (res != 0) return res;
+
+					return o1.getServeiNom().compareTo(o2.getServeiNom());
+				} else {
+					int res = o1.getServeiNom().compareTo(o2.getServeiNom());
+					if (res != 0) return res;
+
+					return o1.getProcedimentNom().compareTo(o2.getProcedimentNom());
+				}
+			}
+		});
+
+		// Sumatoris
 		EstadisticaDto estadisticaActual = null;
 		for (EstadisticaDto estadistica: resposta) {
-			boolean coincideixProcediment = estadisticaActual != null && estadisticaActual.getProcediment().getId().equals(estadistica.getProcediment().getId());
+			boolean coincideixProcediment = estadisticaActual != null && estadisticaActual.getProcedimentId().equals(estadistica.getProcedimentId());
 			boolean coincideixServei = estadisticaActual != null && estadisticaActual.getServeiCodi().equals(estadistica.getServeiCodi());
-			if (estadisticaActual == null ||
-					(EstadistiquesAgrupacioDto.PROCEDIMENT_SERVEI.equals(filtre.getAgrupacio()) && !coincideixProcediment) ||
-					(EstadistiquesAgrupacioDto.SERVEI_PROCEDIMENT.equals(filtre.getAgrupacio()) && !coincideixServei)) {
+			if (estadisticaActual == null || (ordreProcediment && !coincideixProcediment) || (!ordreProcediment && !coincideixServei)) {
 				estadisticaActual = estadistica;
 				estadisticaActual.setConteSumatori(true);
 			}
@@ -1849,6 +1950,15 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 		return resposta;
 	}
 
+	private Servei getServeiByCodi(String serveiCodi) {
+		List<Servei> serveis = serveiRepository.findByCode(serveiCodi);
+		if (serveis.size() == 0) {
+			log.debug("No s'ha trobat el servicio (codi=" + serveiCodi + ")");
+			return null;
+		}
+		return serveis.get(0);
+	}
+
 	@Transactional(readOnly = true)
 	@Override
 	public Map<EntitatDto, List<EstadisticaDto>> findEstadistiquesGlobalsByFiltre(
@@ -1863,7 +1973,7 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 				filtre.getServeiCodi() == null || filtre.getServeiCodi().isEmpty(),
 				filtre.getServeiCodi(),
 				filtre.getEstat() == null,
-				(filtre.getEstat() != null) ? Consulta.EstatTipus.valueOf(filtre.getEstat().toString()) : null,
+				(filtre.getEstat() != null) ? EstatTipus.valueOf(filtre.getEstat().toString()) : null,
 				filtre.getDataInici() == null,
 				filtre.getDataInici(),
 				filtre.getDataFi() == null,
@@ -2207,6 +2317,191 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 			}
 		}
 		log.debug("Finalitzat l'enviament automàtic de les " + i + " peticions pendents (" + (System.currentTimeMillis() - t0) + "ms)");
+	}
+
+	@Async
+	@Override
+	@Transactional(timeout = 3600)
+	public void generarDadesExplotacio() {
+		generarDadesExplotacio(ahir());
+	}
+
+
+	@Override
+	@Transactional(timeout = 3600)
+	public void generarDadesExplotacio(Date data) {
+		// Generar dades d'explotació
+		String accioDesc = "generarDadesExplotacio - Recupera dades per taules d'explotació.";
+		HashMap<String, String> accioParams = new HashMap<>();
+		long t0 = System.currentTimeMillis();
+		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+
+		try {
+
+			log.debug("Iniciant procés de syncExplotacioDadesConvocatories. Data: " + data);
+			if (data == null) data = ahir();
+
+			ExplotTempsEntity ete = explotTempsRepository.findFirstByData(data(data));
+
+			if (ete == null) {
+				ete = new ExplotTempsEntity(data);
+				ete = explotTempsRepository.save(ete);
+			}
+
+			accioParams.put("Data de recollida de dades", sdf.format(ete.getData()));
+
+			List<ExplotConsultaDimensioEntity> dimensions = obtenirDimensions();
+			actualitzarDadesConsultes(ete, dimensions);
+
+			log.debug("Finalitzant procés de syncExplotacioDadesConvocatories, guardant a monitor de integracions.");
+
+			integracioHelper.addAccioOk(
+					IntegracioHelper.INTCODI_EXPLOTACIO,
+					accioDesc,
+					accioParams,
+					IntegracioAccioTipusEnumDto.ENVIAMENT,
+					System.currentTimeMillis() - t0);
+
+			log.debug("Finalitzat procés de generarDadesExplotacio.");
+		} catch (Exception ex) {
+			integracioHelper.addAccioError(
+					IntegracioHelper.INTCODI_EXPLOTACIO,
+					accioDesc,
+					accioParams,
+					IntegracioAccioTipusEnumDto.ENVIAMENT,
+					System.currentTimeMillis() - t0,
+					"ERROR",
+					ex);
+		}
+
+	}
+
+	private Date ahir() {
+		Calendar cal = Calendar.getInstance();
+		cal.add(Calendar.DAY_OF_YEAR, -1);
+		return getDateZero(cal);
+	}
+
+	private Date data(Date date) {
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(date);
+		// Set the time components to zero
+		return getDateZero(cal);
+	}
+
+	private static Date getDateZero(Calendar cal) {
+		// Set the time components to zero
+		cal.set(Calendar.HOUR_OF_DAY, 0);
+		cal.set(Calendar.MINUTE, 0);
+		cal.set(Calendar.SECOND, 0);
+		cal.set(Calendar.MILLISECOND, 0);
+
+		return cal.getTime();
+	}
+
+	private void actualitzarDadesConsultes(ExplotTempsEntity ete, List<ExplotConsultaDimensioEntity> dimensions) {
+		// Eliminam les dades d'explotació de la data
+		explotConsultaFetsRepository.deleteAllByTemps(ete);
+		List<ExplotConsultaFets> estadistiquesConsultes = superConsultaRepository.getConsultesPerEstadistiques(false, ete.getDataPerConsulta());
+
+		int dadaIndex = 0;
+		int dimensionIndex = 0;
+
+		// Les dues llistes estan ordenades
+		while (dadaIndex < estadistiquesConsultes.size() && dimensionIndex < dimensions.size()) {
+			ExplotConsultaFets estadistiquesConsulta = estadistiquesConsultes.get(dadaIndex);
+			ExplotConsultaDimensioEntity dimension = dimensions.get(dimensionIndex);
+
+			int comparison = compareEstadistiquesConsultaAndDimensions(estadistiquesConsulta, dimension);
+			if (comparison == 0) {
+				saveToFetsEntity(estadistiquesConsulta, dimension, ete);
+				dadaIndex++;
+			} else if (comparison < 0) {
+				dadaIndex++;
+			} else {
+				dimensionIndex++;
+			}
+		}
+
+	}
+
+	private int compareEstadistiquesConsultaAndDimensions(ExplotConsultaFets estadistiquesConsulta, ExplotConsultaDimensioEntity dimension) {
+		int comparison = estadistiquesConsulta.getEntitatId().compareTo(dimension.getEntitatId());
+		if (comparison != 0) return comparison;
+
+		comparison = estadistiquesConsulta.getProcedimentId().compareTo(dimension.getProcedimentId());
+		if (comparison != 0) return comparison;
+
+		comparison = estadistiquesConsulta.getServeiCodi().compareTo(dimension.getServeiCodi());
+		if (comparison != 0) return comparison;
+
+		return estadistiquesConsulta.getUsuariCodi().compareTo(dimension.getUsuariCodi());
+	}
+
+	private void saveToFetsEntity(ExplotConsultaFets estadistiquesConsulta, ExplotConsultaDimensioEntity dimension, ExplotTempsEntity ete) {
+		ExplotConsultaFetsEntity fetsEntity = new ExplotConsultaFetsEntity();
+		fetsEntity.setConsultaDimensio(dimension);
+		fetsEntity.setTemps(ete);
+
+		fetsEntity.setNumRecobrimentOk(estadistiquesConsulta.getRecOk());
+		fetsEntity.setNumRecobrimentError(estadistiquesConsulta.getRecError());
+		fetsEntity.setNumRecobrimentPendent(estadistiquesConsulta.getRecPend());
+		fetsEntity.setNumRecobrimentProcessant(estadistiquesConsulta.getRecProc());
+		fetsEntity.setNumRecobrimentMassiuOk(estadistiquesConsulta.getRecMassOk());
+		fetsEntity.setNumRecobrimentMassiuError(estadistiquesConsulta.getRecMassError());
+		fetsEntity.setNumRecobrimentMassiuPendent(estadistiquesConsulta.getRecMassPend());
+		fetsEntity.setNumRecobrimentMassiuProcessant(estadistiquesConsulta.getRecMassProc());
+		fetsEntity.setNumWebOk(estadistiquesConsulta.getWebOk());
+		fetsEntity.setNumWebError(estadistiquesConsulta.getWebError());
+		fetsEntity.setNumWebPendent(estadistiquesConsulta.getWebPend());
+		fetsEntity.setNumWebProcessant(estadistiquesConsulta.getWebProc());
+		fetsEntity.setNumWebMassiuOk(estadistiquesConsulta.getWebMassOk());
+		fetsEntity.setNumWebMassiuError(estadistiquesConsulta.getWebMassError());
+		fetsEntity.setNumWebMassiuPendent(estadistiquesConsulta.getWebMassPend());
+		fetsEntity.setNumWebMassiuProcessant(estadistiquesConsulta.getWebMassProc());
+
+		explotConsultaFetsRepository.save(fetsEntity);
+	}
+
+	private List<ExplotConsultaDimensioEntity> obtenirDimensions() {
+		// Llista a on afegirem les dimensio creades o actualitzades
+		List<ExplotConsultaDimensioEntity> dimensions = new ArrayList<>();
+
+		// Obtenim totes les dimensions per procedimentServei/usuari. Les que no existeixin les crearem
+		List<ExplotConsultaDimensio> dimensionsPerConsultes = superConsultaRepository.getDimensionsPerEstadistiques();
+		List<ExplotConsultaDimensioEntity> dimensionsEnDb = explotConsultaDimensioRepository.findAllOrdered();
+
+		return actualitzarDimensionsConsultes(dimensionsEnDb, dimensionsPerConsultes);
+	}
+
+	private List<ExplotConsultaDimensioEntity> actualitzarDimensionsConsultes(List<ExplotConsultaDimensioEntity> dimensionsEnDb, List<ExplotConsultaDimensio> dimensionsPerConsultes) {
+		List<ExplotConsultaDimensioEntity> dimensions = new ArrayList<>();
+
+		for (ExplotConsultaDimensio dimensioConsulta : dimensionsPerConsultes) {
+			// Converteix la instància de ExplotConsultaDimensio a ExplotConsultaDimensioEntity
+			ExplotConsultaDimensioEntity dimensioEntity = toConsultaDimensioEntity(dimensioConsulta); // Habràs de fer aquest mètode tú
+
+			// Comprova si existeix a la base de dades, si no, la guarda
+			int dimensioEntityIndex = dimensionsEnDb.indexOf(dimensioEntity);
+			if (dimensioEntityIndex == -1) {
+				dimensioEntity = explotConsultaDimensioRepository.save(dimensioEntity);
+				dimensionsEnDb.add(dimensioEntity);
+				dimensions.add(dimensioEntity);
+			} else {
+				dimensions.add(dimensionsEnDb.get(dimensioEntityIndex));
+			}
+		}
+
+		return dimensions;
+	}
+
+	private ExplotConsultaDimensioEntity toConsultaDimensioEntity(ExplotConsultaDimensio dimensio) {
+		return ExplotConsultaDimensioEntity.builder()
+				.entitatId(dimensio.getEntitatId())
+				.procedimentId(dimensio.getProcedimentId())
+				.serveiCodi(dimensio.getServeiCodi())
+				.usuariCodi(dimensio.getUsuariCodi())
+				.build();
 	}
 
 	@Override
@@ -2590,19 +2885,17 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 			Pageable pageable,
 			boolean multiple,
 			boolean nomesSensePare) {
-//			boolean consultaHihaPeticio,
-//			boolean consultaTerData) throws EntitatNotFoundException {
 		copiarPropertiesToDb();
 		log.debug("Consulta de peticions findByEntitatIUsuariFiltrePaginat (" +
-				"entitat=" + entitat.getCodi() + ", " +
+				"entitatId=" + entitat.getId() + ", " +
 				"usuariCodi=" + usuariCodi + ", " +
 				((filtre != null) ? (
 						"filtre.scspPeticionId=" + filtre.getScspPeticionId() + ", " +
 								"filtre.procedimentId=" + filtre.getProcedimentId() + ", " +
 								"filtre.serveiCodi=" + filtre.getServeiCodi() + ", " +
-								"filtre.estat=" + filtre.getProcedimentId() + ", " +
-								"filtre.dataInici=" + filtre.getProcedimentId() + ", " +
-								"filtre.dataFi=" + filtre.getProcedimentId() + ", " +
+								"filtre.estat=" + filtre.getEstat() + ", " +
+								"filtre.dataInici=" + filtre.getDataInici() + ", " +
+								"filtre.dataFi=" + filtre.getDataFi() + ", " +
 								"filtre.titularNom=" + filtre.getTitularNom() + ", " +
 								"filtre.titularDocument=" + filtre.getTitularDocument() + ", " +
 								"filtre.funcionari=" + filtre.getFuncionari() + ", " +
@@ -2613,9 +2906,9 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 				"multiple=" + multiple + ", " +
 				"nomesSensePare=" + nomesSensePare + ")");
 		long t0 = System.currentTimeMillis();
-		Page<Consulta> paginaConsultes;
+		Page<LlistatConsulta> paginaConsultes;
 		if (filtre == null) {
-			paginaConsultes = consultaRepository.findByProcedimentServeiProcedimentEntitatIdAndCreatedBy(
+			paginaConsultes = llistatConsultaRepository.findByProcedimentServeiProcedimentEntitatIdAndCreatedBy(
 					entitat.getId(),
 					usuariCodi == null,
 					(usuariCodi != null) ? usuariRepository.findOne(usuariCodi) : null,
@@ -2624,10 +2917,11 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 					pageable);
 		} else {
 			consultaRepository.setSessionOptimizerModeToRule();
-			paginaConsultes = consultaRepository.findByCreatedByAndFiltrePaginat(
+			paginaConsultes = llistatConsultaRepository.findByCreatedByAndFiltrePaginat(
 					entitat.getId(),
 					usuariCodi == null,
-					(usuariCodi != null) ? usuariRepository.findOne(usuariCodi) : null,
+//					(usuariCodi != null) ? usuariRepository.findOne(usuariCodi) : null,
+					usuariCodi,
 					filtre.getScspPeticionId() == null || filtre.getScspPeticionId().isEmpty(),
 					filtre.getScspPeticionId(),
 					filtre.getProcedimentId() == null,
@@ -2635,7 +2929,7 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 					filtre.getServeiCodi() == null || filtre.getServeiCodi().isEmpty(),
 					filtre.getServeiCodi(),
 					filtre.getEstat() == null,
-					(filtre.getEstat() != null) ? Consulta.EstatTipus.valueOf(filtre.getEstat().toString()) : null,
+					(filtre.getEstat() != null) ? EstatTipus.valueOf(filtre.getEstat().toString()) : null,
 					filtre.getDataInici() == null,
 					filtre.getDataInici(),
 					filtre.getDataFi() == null,
@@ -2695,9 +2989,9 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 								"filtre.scspPeticionId=" + filtre.getScspPeticionId() + ", " +
 								"filtre.procedimentId=" + filtre.getProcedimentId() + ", " +
 								"filtre.serveiCodi=" + filtre.getServeiCodi() + ", " +
-								"filtre.estat=" + filtre.getProcedimentId() + ", " +
-								"filtre.dataInici=" + filtre.getProcedimentId() + ", " +
-								"filtre.dataFi=" + filtre.getProcedimentId() + ", " +
+								"filtre.estat=" + filtre.getEstat() + ", " +
+								"filtre.dataInici=" + filtre.getDataInici() + ", " +
+								"filtre.dataFi=" + filtre.getDataFi() + ", " +
 								"filtre.titularNom=" + filtre.getTitularNom() + ", " +
 								"filtre.titularDocument=" + filtre.getTitularDocument() + ", " +
 								"filtre.usuari=" + filtre.getUsuari() + ", " +
@@ -2707,7 +3001,7 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 						"paginacio.paginaNum=" + pageable.getPageNumber() + ", " +
 								"paginacio.paginaTamany=" + pageable.getPageSize() + ", ") : "") + ")");
 		long t0 = System.currentTimeMillis();
-		Page<Consulta> paginaConsultes = consultaRepository.findByFiltrePaginatAdmin(
+		Page<LlistatConsulta> paginaConsultes = llistatConsultaRepository.findByFiltrePaginatAdmin(
 				filtre.getEntitatId() == null,
 				filtre.getEntitatId(),
 				filtre.getScspPeticionId() == null || filtre.getScspPeticionId().isEmpty(),
@@ -2717,7 +3011,7 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 				filtre.getServeiCodi() == null || filtre.getServeiCodi().isEmpty(),
 				filtre.getServeiCodi(),
 				filtre.getEstat() == null,
-				(filtre.getEstat() != null) ? Consulta.EstatTipus.valueOf(filtre.getEstat().toString()) : null,
+				(filtre.getEstat() != null) ? EstatTipus.valueOf(filtre.getEstat().toString()) : null,
 				filtre.getDataInici() == null,
 				filtre.getDataInici(),
 				filtre.getDataFi() == null,
@@ -3065,6 +3359,7 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 					conslt,
 					error);
 			Consulta saved = consultaRepository.save(conslt);
+			consultaHelper.propagaCanviConsulta(saved);
 			integracioHelper.addAccioError(
 					conslt.getScspPeticionId(),
 					IntegracioHelper.INTCODI_SERVEIS_SCSP,

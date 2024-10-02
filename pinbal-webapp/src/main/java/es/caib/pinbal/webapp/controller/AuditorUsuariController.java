@@ -3,18 +3,22 @@
  */
 package es.caib.pinbal.webapp.controller;
 
-import java.lang.reflect.InvocationTargetException;
-import java.sql.SQLException;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Iterator;
-import java.util.List;
-
-import javax.naming.NamingException;
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
-
-import es.caib.pinbal.webapp.command.EntitatUsuariCommand.TipusNie;
+import es.caib.pinbal.core.dto.EntitatDto;
+import es.caib.pinbal.core.dto.EntitatUsuariDto;
+import es.caib.pinbal.core.dto.RolEnumDto;
+import es.caib.pinbal.core.dto.UsuariDto;
+import es.caib.pinbal.core.service.EntitatService;
+import es.caib.pinbal.core.service.UsuariService;
+import es.caib.pinbal.core.service.exception.EntitatNotFoundException;
+import es.caib.pinbal.core.service.exception.UsuariExternNotFoundException;
+import es.caib.pinbal.webapp.command.EntitatUsuariCommand;
+import es.caib.pinbal.webapp.command.UsuariFiltreCommand;
+import es.caib.pinbal.webapp.common.AlertHelper;
+import es.caib.pinbal.webapp.common.EntitatHelper;
+import es.caib.pinbal.webapp.common.RequestSessionHelper;
+import es.caib.pinbal.webapp.datatables.ServerSideRequest;
+import es.caib.pinbal.webapp.datatables.ServerSideResponse;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -24,30 +28,20 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import es.caib.pinbal.core.dto.EntitatDto;
-import es.caib.pinbal.core.dto.EntitatUsuariDto;
-import es.caib.pinbal.core.dto.RolEnumDto;
-import es.caib.pinbal.core.dto.UsuariDto;
-import es.caib.pinbal.core.service.EntitatService;
-import es.caib.pinbal.core.service.UsuariService;
-import es.caib.pinbal.core.service.exception.EntitatNotFoundException;
-import es.caib.pinbal.core.service.exception.EntitatUsuariProtegitException;
-import es.caib.pinbal.core.service.exception.UsuariExternNotFoundException;
-import es.caib.pinbal.webapp.command.EntitatUsuariCommand;
-import es.caib.pinbal.webapp.command.EntitatUsuariCommand.Existent;
-import es.caib.pinbal.webapp.command.EntitatUsuariCommand.TipusCodi;
-import es.caib.pinbal.webapp.command.EntitatUsuariCommand.TipusNif;
-import es.caib.pinbal.webapp.command.UsuariFiltreCommand;
-import es.caib.pinbal.webapp.common.AlertHelper;
-import es.caib.pinbal.webapp.common.EntitatHelper;
-import es.caib.pinbal.webapp.common.RequestSessionHelper;
-import es.caib.pinbal.webapp.common.ValidationHelper;
-import es.caib.pinbal.webapp.datatables.ServerSideRequest;
-import es.caib.pinbal.webapp.datatables.ServerSideResponse;
+import javax.naming.NamingException;
+import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
+import java.lang.reflect.InvocationTargetException;
+import java.sql.SQLException;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * Controlador per a la configuració d'usuaris per a l'auditor.
@@ -240,88 +234,73 @@ public class AuditorUsuariController extends BaseController {
 
 		return new ServerSideResponse<EntitatUsuariDto, Long>(serverSideRequest, page);
 	}
-	
+
+	@RequestMapping(value = "/new", method = RequestMethod.GET)
+	public String usuariGet(
+			HttpServletRequest request,
+			Model model) {
+		return usuariGet(request, null, model);
+	}
+
+	@RequestMapping(value = "/{codi}", method = RequestMethod.GET)
+	public String usuariGet(
+			HttpServletRequest request,
+			@PathVariable String codi,
+			Model model) {
+		EntitatDto entitat = EntitatHelper.getEntitatActual(request);
+		if (entitat == null) {
+			AlertHelper.error(request, getMessage(request, "representant.controller.entitat.no.existeix"));
+			return "redirect:usuari";
+		}
+
+		EntitatUsuariCommand entitatUsuariCommand;
+		if (StringUtils.isBlank(codi)) {
+			entitatUsuariCommand = new EntitatUsuariCommand(entitat.getId());
+		} else {
+			EntitatUsuariDto entitatUsuari = usuariService.getEntitatUsuari(entitat.getId(), codi);
+			entitatUsuariCommand = EntitatUsuariCommand.asCommand(entitatUsuari, entitat.getId());
+		}
+		model.addAttribute(entitatUsuariCommand);
+		return "auditorUsuariForm";
+	}
+
 	@RequestMapping(value = "/save", method = RequestMethod.POST)
-	public String add(
+	public String usuariPost(
 			HttpServletRequest request,
 			@Valid EntitatUsuariCommand command,
 			BindingResult bindingResult,
-			Model model) throws EntitatNotFoundException, EntitatUsuariProtegitException {
-		EntitatDto entitat = EntitatHelper.getEntitatActual(request);
-		if (entitat != null) {
-			if (!EntitatHelper.isAuditorEntitatActual(request))
-				return "auditorNoAutoritzat";
-			Class<?> grup = null;
-			if (command.getTipus().equals(EntitatUsuariCommand.CARACTER_CODI)) {
-				grup = TipusCodi.class;
-			} else if (command.getTipus().equals(EntitatUsuariCommand.CARACTER_NIF)) {
-				if (command.getNif() != null && command.getNif().toUpperCase().matches("[XYZ][0-9]{7}[A-Z]")) {
-					grup = TipusNie.class;
-				} else {
-					grup = TipusNif.class;
-				}
-			} else {
-				grup = Existent.class;
+			Model model) throws Exception {
+
+		if (bindingResult.hasErrors()) {
+			for (FieldError error: bindingResult.getFieldErrors()) {
+				AlertHelper.error(request, getMessage(request, error.getCode(), error.getArguments()));
+				break;
 			}
-			if (command.getNif() != null) {
-				command.setNif(command.getNif().toUpperCase());
-			}
-			new ValidationHelper(validator).isValid(
-					command,
-					bindingResult,
-					grup);
-			if (bindingResult.hasErrors()) {
-				for (FieldError error: bindingResult.getFieldErrors()) {
-					AlertHelper.error(
-							request,
-							getMessage(
-									request, 
-									error.getCode(),
-									error.getArguments()));
-					break;
-				}
-				omplirModelPerMostrarLlistat(request, entitat, model);
-				return "auditorUsuaris";
-			}
-			try {
-				usuariService.actualitzarDadesAuditor(
-						command.getId(),
-						command.getCodi(),
-						command.getNif(),
-						command.isRolAuditor(),
-						command.isAfegir());
-				String nomUsuari = command.getNif();
-				for (EntitatUsuariDto usuari: entitat.getUsuaris()) {
-					if (usuari.getUsuari().getNif() != null && usuari.getUsuari().getNif().equalsIgnoreCase(command.getNif())) {
-						nomUsuari = usuari.getUsuari().getDescripcio();
-						break;
-					}
-				}
-				AlertHelper.success(
-						request,
-						getMessage(
-								request, 
-								"auditor.controller.usuari.actualitzat",
-								new Object[] {nomUsuari}));
-			} catch (UsuariExternNotFoundException ex) {
-				AlertHelper.error(
-						request,
-						getMessage(
-								request, 
-								"auditor.controller.usuari.extern.no.existeix"));
-			}
-			return "redirect:../usuari";
-		} else {
-			AlertHelper.error(
-					request,
-					getMessage(
-							request, 
-							"auditor.controller.entitat.no.existeix"));
-			return "redirect:../../index";
+			return "auditorUsuariForm";
 		}
+
+		EntitatDto entitat = EntitatHelper.getEntitatActual(request);
+		if (entitat == null) {
+			return getModalControllerReturnValueError(request, "redirect:../usuari", "representant.controller.entitat.no.existeix");
+		}
+		if (!EntitatHelper.isAuditorEntitatActual(request)) {
+			return getModalControllerReturnValueError(request, "redirect:../usuari", "auditor.no.autoritzat.alert.error");
+		}
+
+		try {
+			usuariService.actualitzarDadesAuditor(
+					entitat.getId(),
+					command.getCodi(),
+					command.getNif(),
+					command.isRolAuditor(),
+					command.isAfegir());
+
+			return getModalControllerReturnValueSuccess(request, "redirect:../usuari", "representant.controller.usuari.actualitzat", new Object[] {command.getNom()});
+		} catch (UsuariExternNotFoundException ex) {
+			return getModalControllerReturnValueError(request, "redirect:../usuari", "representant.controller.usuari.extern.no.existeix");
+		}
+
 	}
-
-
 
 	private void omplirModelPerMostrarLlistat(
 			HttpServletRequest request,

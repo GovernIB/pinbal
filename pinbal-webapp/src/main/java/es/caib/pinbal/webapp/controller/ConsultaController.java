@@ -228,11 +228,10 @@ public class ConsultaController extends BaseController {
 			log.debug("[C_CONS_DT] Retornar resposta error (" + (System.currentTimeMillis() - t0) + "ms)");
 		} else {
 			List<ServerSideColumn> cols = serverSideRequest.getColumns();
-			cols.get(1).setData("createdDate");
-//			cols.get(2).setData("procediment.nom");
-			cols.get(2).setData("procediment.codi");
-//			cols.get(3).setData("serveiScsp.descripcio");
-			cols.get(3).setData("serveiScsp.codi");
+			cols.get(0).setData("peticioId");
+			cols.get(1).setData("data");
+			cols.get(2).setData("procedimentCodi");
+			cols.get(3).setData("serveiCodi");
 			if (isHistoric(request)) {
 				page = historicConsultaService.findSimplesByFiltrePaginatPerDelegat(
 						entitat.getId(),
@@ -244,6 +243,7 @@ public class ConsultaController extends BaseController {
 						ConsultaFiltreCommand.asDto(command),
 						serverSideRequest.toPageable());
 			}
+			cols.get(0).setData("scspPeticionId");
 			cols.get(1).setData("creacioData");
 			cols.get(2).setData("procedimentCodiNom");
 			cols.get(3).setData("serveiCodiNom");
@@ -426,7 +426,8 @@ public class ConsultaController extends BaseController {
 					model);
 			return "consultaForm";
 		}
-		
+
+		boolean error = false;
 		try {
 			ConsultaDto consulta = null;
 			if (!command.isMultiple()) {
@@ -443,6 +444,7 @@ public class ConsultaController extends BaseController {
 						getMessage(
 								request, 
 								"consulta.controller.recepcio.error") + ": " + consulta.getError());
+				error = true;
 			} else {
 				AlertHelper.success(
 						request,
@@ -456,10 +458,20 @@ public class ConsultaController extends BaseController {
 					getMessage(
 							request, 
 							"consulta.controller.enviament.error") + ": " + ex.getMessage());
+			error = true;
 		}
-		if (!command.isMultiple())
+
+		if (error) {
+			omplirModelPerMostrarFormulari(
+					entitat.getId(),
+					serveiCodi,
+					model);
+			model.addAttribute("reintentar", true);
+			return "consultaForm";
+		}
+		if (!command.isMultiple()) {
 			return "redirect:../../consulta";
-		else
+		} else
 			return "redirect:../../consulta/multiple";
 	}
 

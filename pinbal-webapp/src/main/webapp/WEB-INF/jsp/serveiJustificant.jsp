@@ -17,10 +17,17 @@ $(document).ready(function() {
 	$('.justificant-modificar').click(function() {
 		$('#modal-justificant-hidden-xpath').val($(this).data('xpath'));
 		$('#modal-justificant-input-traduccio').val($(this).data('traduccio'));
+		$('#modal-justificant-input-document').prop('checked', $(this).data('document'));
 		$('#modal-justificant').modal('toggle');
 	});
-	$('#modal-justificant-boto-submit').click(function() {
-		$('#modal-justificant-form').submit();
+	$('#modal-justificant-boto-submit').click(function(event) {
+		event.preventDefault();
+		if ($('#modal-justificant-input-traduccio').val() === '') {
+			$('#div-traduccio').addClass("has-error");
+			$('.help-block').removeClass("ocult");
+		} else {
+			$('#modal-justificant-form').submit();
+		}
 	});
 });
 </script>
@@ -31,6 +38,7 @@ $(document).ready(function() {
 		<tr>
 		<th><spring:message code="servei.justificant.taula.columna.path" /></th>
 		<th><spring:message code="servei.justificant.taula.columna.traduccio" /></th>
+		<th><spring:message code="servei.justificant.taula.columna.document" /></th>
 		<th></th>
 		</tr>
 	</thead>
@@ -54,9 +62,12 @@ $(document).ready(function() {
 						</c:choose>
 					</td>
 					<td>
+						<c:if test="${not empty traduccioCoincident and traduccioCoincident.document}"><span class="fa fa-check"></span></c:if>
+					</td>
+					<td>
 						<c:choose>
 							<c:when test="${not empty traduccioCoincident}">
-								<button title="<spring:message code="comu.boto.modificar"/>" class="btn btn-primary justificant-modificar" data-xpath="${registre.dades.pathAmbSeparadorDefault}" data-traduccio="${traduccioCoincident.traduccio}"><i class="icon-pencil"></i> <spring:message code="comu.boto.modificar"/></button>
+								<button title="<spring:message code="comu.boto.modificar"/>" class="btn btn-primary justificant-modificar" data-xpath="${registre.dades.pathAmbSeparadorDefault}" data-traduccio="${traduccioCoincident.traduccio}" data-document="${traduccioCoincident.document}"><i class="icon-pencil"></i> <spring:message code="comu.boto.modificar"/></button>
 							</c:when>
 							<c:otherwise>
 								<button title="<spring:message code="comu.boto.modificar"/>" class="btn btn-primary justificant-modificar" data-xpath="${registre.dades.pathAmbSeparadorDefault}"><i class="icon-pencil"></i> <spring:message code="comu.boto.modificar"/></button>
@@ -77,25 +88,31 @@ $(document).ready(function() {
 <div id="modal-justificant" class="modal fade" role="dialog">
 	<div class="modal-dialog">
 	    <div class="modal-content">
-		<div class="modal-header">
-			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-			<h3 id="modal-justificant-titol"><spring:message code="servei.justificant.modal.titol"/></h3>
-		</div>
-		<div class="modal-body">
-			<form id="modal-justificant-form" action="" method="post">
-				<input type="hidden" id="modal-justificant-hidden-id" name="id"/>
-				<input type="hidden" id="modal-justificant-hidden-servei" name="servei" value="${servei.codi}"/>
-				<input type="hidden" id="modal-justificant-hidden-xpath" name="xpath"/>
-				<div class="form-group">
-    				<label for="modal-justificant-input-traduccio"><spring:message code="servei.justificant.modal.camp.traduccio"/></label>
-					<input type="text" id="modal-justificant-input-traduccio" name="traduccio" class="form-control"/>
-				</div>
-			</form>
-		</div>
-		<div class="modal-footer">
-			<button class="btn btn-default" data-dismiss="modal"><span class="fa fa-arrow-left"></span>&nbsp;<spring:message code="comu.boto.tornar"/></button>
-			<button id="modal-justificant-boto-submit" class="btn btn-primary"><spring:message code="comu.boto.guardar"/></button>
-		</div>
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				<h3 id="modal-justificant-titol"><spring:message code="servei.justificant.modal.titol"/></h3>
+			</div>
+			<div class="modal-body">
+				<form id="modal-justificant-form" action="" method="post">
+					<input type="hidden" id="modal-justificant-hidden-id" name="id"/>
+					<input type="hidden" id="modal-justificant-hidden-servei" name="servei" value="${servei.codi}"/>
+					<input type="hidden" id="modal-justificant-hidden-xpath" name="xpath"/>
+					<div id="div-traduccio" class="form-group">
+						<label for="modal-justificant-input-traduccio"><spring:message code="servei.justificant.modal.camp.traduccio"/> *</label>
+						<input type="text" id="modal-justificant-input-traduccio" name="traduccio" class="form-control"/>
+						<p class="help-block ocult"><span class="fa fa-exclamation-triangle"></span>&nbsp;<spring:message code="NotEmpty"/></p>
+					</div>
+					<div class="form-group">
+						<label for="modal-justificant-input-document"><spring:message code="servei.justificant.modal.camp.document"/>
+							<input type="checkbox" id="modal-justificant-input-document" name="document" class="form-control"/>
+						</label>
+					</div>
+				</form>
+			</div>
+			<div class="modal-footer">
+				<button class="btn btn-default" data-dismiss="modal"><span class="fa fa-arrow-left"></span>&nbsp;<spring:message code="comu.boto.tornar"/></button>
+				<button id="modal-justificant-boto-submit" class="btn btn-primary"><spring:message code="comu.boto.guardar"/></button>
+			</div>
 		</div>
 	</div>
 </div>

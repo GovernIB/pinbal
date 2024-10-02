@@ -214,20 +214,6 @@ public class HistoricConsultaServiceBean implements HistoricConsultaService {
 	}
 
 	@Override
-	@RolesAllowed({"PBL_ADMIN", "PBL_REPRES", "PBL_REPORT"})
-	public List<EstadisticaDto> findEstadistiquesByFiltre(
-			EstadistiquesFiltreDto filtre) throws EntitatNotFoundException {
-		return delegate.findEstadistiquesByFiltre(filtre);
-	}
-
-	@Override
-	@RolesAllowed("PBL_ADMIN")
-	public Map<EntitatDto, List<EstadisticaDto>> findEstadistiquesGlobalsByFiltre(
-			EstadistiquesFiltreDto filtre) {
-		return delegate.findEstadistiquesGlobalsByFiltre(filtre);
-	}
-
-	@Override
 	@RolesAllowed("PBL_AUDIT")
 	public List<Long> auditoriaGenerarAuditor(
 			Long entitatId,

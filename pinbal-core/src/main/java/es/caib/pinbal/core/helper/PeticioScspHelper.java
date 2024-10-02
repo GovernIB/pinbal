@@ -10,7 +10,7 @@ import es.caib.pinbal.core.dto.ConsultaDto.Consentiment;
 import es.caib.pinbal.core.dto.ConsultaDto.DocumentTipus;
 import es.caib.pinbal.core.dto.IntegracioAccioTipusEnumDto;
 import es.caib.pinbal.core.model.Consulta;
-import es.caib.pinbal.core.model.Consulta.EstatTipus;
+import es.caib.pinbal.core.dto.EstatTipus;
 import es.caib.pinbal.core.model.Entitat;
 import es.caib.pinbal.core.model.Procediment;
 import es.caib.pinbal.core.model.ProcedimentServei;
@@ -69,6 +69,8 @@ public class PeticioScspHelper {
 	private Map<String, Integer> consultaServeiCount = new HashMap<String, Integer>();
 	/* Emmagatzema l'inici de l'interval actual per a cada servei */
 	private Map<String, Date> consultaIntervalStart = new HashMap<String, Date>();
+    @Autowired
+    private ConsultaHelper consultaHelper;
 
 	/* Retorna true si s'ha de continuar l'enviament de la consulta, fals en cas contrari. */
 	public boolean isEnviarConsultaServei(Consulta consulta, boolean auto) {
@@ -205,6 +207,7 @@ public class PeticioScspHelper {
 		} catch (ConsultaScspComunicacioException ex) {
 			consulta.updateEstatError("Error en la comunicació SCSP: " + ex.getMessage());
 		}
+		consultaHelper.propagaCanviConsulta(consulta);
 	}
 
 	public void processarIEmmagatzemarDadesEspecifiques(
@@ -457,6 +460,8 @@ public class PeticioScspHelper {
 				accioParams.put("error", error);
 			}
 		}
+		if (consulta.getId() != null)
+			consultaHelper.propagaCanviConsulta(consulta);
 	}
 
 	public void updateEstatConsultaError(
@@ -464,6 +469,8 @@ public class PeticioScspHelper {
 			String error) {
 		consulta.updateEstat(EstatTipus.Error);
 		consulta.updateEstatError(error);
+		if (consulta.getId() != null)
+			consultaHelper.propagaCanviConsulta(consulta);
 	}
 
 	public boolean isGestioXsdActiva(String serveiCodi) {

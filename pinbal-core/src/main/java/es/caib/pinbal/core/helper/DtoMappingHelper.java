@@ -28,6 +28,8 @@ import es.caib.pinbal.core.model.Procediment;
 import es.caib.pinbal.core.model.ServeiCamp;
 import es.caib.pinbal.core.model.ServeiCampGrup;
 import es.caib.pinbal.core.model.ServeiRegla;
+import es.caib.pinbal.core.model.llistat.LlistatConsulta;
+import es.caib.pinbal.core.model.llistat.LlistatHistoricConsulta;
 import ma.glasnost.orika.CustomConverter;
 import ma.glasnost.orika.CustomMapper;
 import ma.glasnost.orika.MapperFacade;
@@ -98,6 +100,23 @@ public class DtoMappingHelper {
 						field("serveiScsp.descripcio", "serveiDescripcio").
 						exclude("dadesEspecifiques").
 						byDefault().toClassMap());
+		// Mapeig de llistat de consultes
+		mapperFactory.registerClassMap(
+				ClassMapBuilder.map(LlistatConsulta.class, ConsultaDto.class).
+						field("peticioId", "scspPeticionId").
+						field("solicitudId", "scspSolicitudId").
+						field("serveiNom", "serveiDescripcio").
+						field("data", "creacioData").
+						field("usuariCodi", "creacioUsuari.codi").
+						field("usuariNom", "creacioUsuari.nom").
+						customize(new CustomMapper<LlistatConsulta, ConsultaDto>() {
+							@Override
+							public void mapAtoB(LlistatConsulta llistatConsulta, ConsultaDto consultaDto, MappingContext context) {
+								super.mapAtoB(llistatConsulta, consultaDto, context);
+								consultaDto.setEstat(llistatConsulta.getEstat().name());
+							}
+						}).
+						byDefault().toClassMap());
 		// Mapeig de historic de consultes
 		mapperFactory.registerClassMap(
 				ClassMapBuilder.map(HistoricConsulta.class, ConsultaDto.class).
@@ -108,6 +127,23 @@ public class DtoMappingHelper {
 						field("procediment.codi", "procedimentCodi").
 						field("serveiScsp.descripcio", "serveiDescripcio").
 						exclude("dadesEspecifiques").
+						byDefault().toClassMap());
+		// Mapeig de historic de llistat de consultes
+		mapperFactory.registerClassMap(
+				ClassMapBuilder.map(LlistatHistoricConsulta.class, ConsultaDto.class).
+						field("peticioId", "scspPeticionId").
+						field("solicitudId", "scspSolicitudId").
+						field("serveiNom", "serveiDescripcio").
+						field("data", "creacioData").
+						field("usuariCodi", "creacioUsuari.codi").
+						field("usuariNom", "creacioUsuari.nom").
+						customize(new CustomMapper<LlistatHistoricConsulta, ConsultaDto>() {
+							@Override
+							public void mapAtoB(LlistatHistoricConsulta llistatConsulta, ConsultaDto consultaDto, MappingContext context) {
+								super.mapAtoB(llistatConsulta, consultaDto, context);
+								consultaDto.setEstat(llistatConsulta.getEstat().name());
+							}
+						}).
 						byDefault().toClassMap());
 		// Mapeig d'informes d'usuaris
 		mapperFactory.registerClassMap(

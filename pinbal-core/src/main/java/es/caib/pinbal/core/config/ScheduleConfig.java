@@ -29,6 +29,7 @@ public class ScheduleConfig implements SchedulingConfigurer {
     public static final String TANCAR_EXPEDIENTS_CRON = "es.caib.pinbal.tasca.auto.exp.tancar.cron";
     public static final String GENERAR_REPORT_EMAIL_CRON = "es.caib.pinbal.tasca.auto.email.report.estat.cron";
     public static final String ARXIVAR_CONSULTES_CRON = "es.caib.pinbal.tasca.auto.arxivar.consultes.cron";
+    public static final String GENERAR_DADES_EXPLOTACIO_CRON = "es.caib.pinbal.tasca.auto.generar.explotacio.cron";
 
     @Autowired
     private ConsultaService consultaService;
@@ -155,6 +156,27 @@ public class ScheduleConfig implements SchedulingConfigurer {
                     @Override
                     public Date nextExecutionTime(TriggerContext triggerContext) {
                         CronTrigger trigger = new CronTrigger(configHelper.getConfig(ARXIVAR_CONSULTES_CRON, "0 0 1 * * ?"));
+                        Date nextExecution = trigger.nextExecutionTime(triggerContext);
+                        return nextExecution;
+                    }
+                }
+        );
+
+        // 6. Generar dades d'explotació
+        /////////////////////////////////////////////////////////////////////////
+        taskRegistrar.addTriggerTask(
+                new Runnable() {
+                    @SneakyThrows
+                    @Override
+                    public void run() {
+                        log.info("[SCH] generarDadesExplotacio");
+                        consultaService.generarDadesExplotacio();
+                    }
+                },
+                new Trigger() {
+                    @Override
+                    public Date nextExecutionTime(TriggerContext triggerContext) {
+                        CronTrigger trigger = new CronTrigger(configHelper.getConfig(GENERAR_DADES_EXPLOTACIO_CRON, "0 30 3 * * ?"));
                         Date nextExecution = trigger.nextExecutionTime(triggerContext);
                         return nextExecution;
                     }

@@ -3,11 +3,21 @@
  */
 package es.caib.pinbal.core.helper;
 
+import com.lowagie.text.Document;
 import com.lowagie.text.DocumentException;
+import com.lowagie.text.Element;
+import com.lowagie.text.Font;
+import com.lowagie.text.Phrase;
+import com.lowagie.text.pdf.ColumnText;
+import com.lowagie.text.pdf.PdfContentByte;
+import com.lowagie.text.pdf.PdfCopy;
+import com.lowagie.text.pdf.PdfGState;
+import com.lowagie.text.pdf.PdfReader;
+import com.lowagie.text.pdf.PdfStamper;
 import com.lowagie.text.pdf.codec.Base64;
 import es.caib.pinbal.core.dto.FitxerDto;
 import es.caib.pinbal.core.dto.IntegracioAccioTipusEnumDto;
-import es.caib.pinbal.core.model.Consulta.JustificantEstat;
+import es.caib.pinbal.core.dto.JustificantEstat;
 import es.caib.pinbal.core.model.IConsulta;
 import es.caib.pinbal.core.model.Procediment;
 import es.caib.pinbal.core.model.ProcedimentServei;
@@ -41,6 +51,7 @@ import org.springframework.context.MessageSourceAware;
 import org.springframework.stereotype.Component;
 
 import javax.xml.parsers.ParserConfigurationException;
+import java.awt.*;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -327,8 +338,9 @@ public class JustificantHelper implements MessageSourceAware {
 		accioParams.put("servei", procedimentServei.getServeiScsp() != null ? procedimentServei.getServeiScsp().getCodi() + " - " + procedimentServei.getServeiScsp().getDescripcio() : "");
 		long t0 = System.currentTimeMillis();
 		String idPeticio = consulta.getScspPeticionId();
+		List<NodeInfo> nodesTipusDocument = null;
 		try {
-			generarAmbPlantillaFreemarker(
+			nodesTipusDocument = generarAmbPlantillaFreemarker(
 					scspHelper.generarArbreJustificant(idPeticio, consulta.getScspSolicitudId(), null),
 					"[" + serveiCodi + "] " + scspHelper.getServicioDescripcion(serveiCodi),
 					serveiJustificantCampRepository.findByServeiAndLocaleIdiomaAndLocaleRegio(
@@ -381,6 +393,9 @@ public class JustificantHelper implements MessageSourceAware {
 					new ByteArrayInputStream(baosGeneracio.toByteArray()),
 					extensioSortida,
 					baosConversio);
+			if ("pdf".equalsIgnoreCase(extensioSortida) && nodesTipusDocument != null) {
+				baosConversio = mergePdfFiles(baosConversio.toByteArray(), nodesTipusDocument);
+			}
 			boolean convertirPdfa = isConvertirPdfaJustificant() && "pdf".equalsIgnoreCase(extensioSortida);
 			if (convertirPdfa) {
 				log.debug("[JUSTIFICANT] Convertint justificant a PDFA");
@@ -399,7 +414,70 @@ public class JustificantHelper implements MessageSourceAware {
 		return fitxerDto;
 	}
 
-	public void generarAmbPlantillaFreemarker(
+	private ByteArrayOutputStream mergePdfFiles(byte[] justifiant, List<NodeInfo> nodesTipusDocument) {
+		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+		Document document = new Document();
+		try {
+			PdfCopy copy = new PdfCopy(document, outputStream);
+			document.open();
+			// El primer és el justificant
+			PdfReader justificantReader = new PdfReader(justifiant);
+			for (int page = 0; page < justificantReader.getNumberOfPages(); ++page) {
+				copy.addPage(copy.getImportedPage(justificantReader, ++page));
+			}
+			copy.freeReader(justificantReader);
+
+			for (NodeInfo nodeTipusDocument : nodesTipusDocument) {
+				PdfReader reader = new PdfReader(getPdfAmbTitol(nodeTipusDocument));
+				int n = reader.getNumberOfPages();
+				for (int page = 0; page < n;) {
+					copy.addPage(copy.getImportedPage(reader, ++page));
+				}
+				copy.freeReader(reader);
+				reader.close();
+			}
+			document.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return outputStream;
+	}
+
+	private byte[] getPdfAmbTitol(NodeInfo nodeTipusDocument) {
+		byte[] documentResposta = org.apache.commons.codec.binary.Base64.decodeBase64(nodeTipusDocument.getDescripcio());
+
+		// Afegim el títol a la primera pàgina
+		ByteArrayOutputStream adjuntOutputStream = new ByteArrayOutputStream();
+		PdfReader reader = null;
+		PdfStamper stamper = null;
+
+		try {
+			reader = new PdfReader(documentResposta);
+			stamper = new PdfStamper(reader, adjuntOutputStream);
+
+			PdfContentByte over = stamper.getOverContent(1);
+
+			Font f = new Font(Font.HELVETICA, 11, Font.BOLD, new Color(195, 0, 69));
+			Phrase p = new Phrase(nodeTipusDocument.getTitol(), f);
+			over.saveState();
+			PdfGState gs1 = new PdfGState();
+			gs1.setFillOpacity(0.5f);
+			over.setGState(gs1);
+			ColumnText.showTextAligned(over, Element.ALIGN_CENTER, p, 297, 800, 0);
+			over.restoreState();
+			stamper.close();
+			reader.close();
+
+		} catch (Exception ex) {
+			log.error("Error afegint titol al PDF", ex);
+			return documentResposta;
+		}
+
+		return adjuntOutputStream.toByteArray();
+	}
+
+	public List<NodeInfo> generarAmbPlantillaFreemarker(
 			ElementArbre arbre,
 			String serveiDescripcio,
 			List<ServeiJustificantCamp> traduccions,
@@ -424,13 +502,10 @@ public class JustificantHelper implements MessageSourceAware {
 				(locale != null) ? locale : new Locale("ca", "ES"));
 		DocumentTemplate template = documentTemplateFactory.getTemplate(
 				getClass().getResourceAsStream(PLANTILLA_ODT_RESOURCE));
-		template.createDocument(
-				generarModel(
-						arbre,
-						serveiDescripcio,
-						traduccions,
-						locale),
-				out);
+		Map<String, Object> model = generarModel(arbre, serveiDescripcio, traduccions, locale);
+		template.createDocument(model, out);
+
+		return (List<NodeInfo>) model.get("nodesTipusDocument");
 	}
 
 	/*public void imprimirAmbPlantillaProva(ElementArbre arbre) throws Exception {
@@ -500,30 +575,26 @@ public class JustificantHelper implements MessageSourceAware {
 		model.put("text_data_eldia", messageSource.getMessage("justificant.plantilla.data.eldia", null, locale));
 		Date ara = new Date();
 		model.put("text_data_data", formatDate(ara, locale));
-//		model.put(
-//				"text_data_ales",
-//				messageSource.getMessage(
-//						"justificant.plantilla.data.ales",
-//						null,
-//						locale));
-//		model.put(
-//				"text_data_hora",
-//				(locale == null) ?
-//						DateFormat.getTimeInstance(DateFormat.SHORT).format(ara) :
-//						DateFormat.getTimeInstance(DateFormat.SHORT, locale).format(ara));
-		List<NodeInfo> nodes = new ArrayList<NodeInfo>();
+		List<NodeInfo> nodes = new ArrayList<>();
+		List<NodeInfo> nodesTipusDocument = new ArrayList<>();
+
 		convertirArbreEnLlista(arbre, 0, nodes);
 		if (traduccions != null) {
 			for (NodeInfo node: nodes) {
 				for (ServeiJustificantCamp traduccio: traduccions) {
 					if (traduccio.getXpath().equals(node.getXpathDadaEspecifica())) {
 						node.setTitol(traduccio.getTraduccio());
+						if (traduccio.isDocument()) {
+							nodesTipusDocument.add(node);
+						}
 						break;
 					}
 				}
 			}
 		}
+		nodes.removeAll(nodesTipusDocument);
 		model.put("nodes", nodes);
+		model.put("nodesTipusDocument", nodesTipusDocument);
 		return model;
 	}
 	private void convertirArbreEnLlista(ElementArbre element, int nivell, List<NodeInfo> nodes) {

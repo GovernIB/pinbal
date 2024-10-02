@@ -1,15 +1,10 @@
 package es.caib.pinbal.webapp.controller;
 
-import static org.apache.commons.lang.StringUtils.isBlank;
-
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.servlet.http.HttpServletRequest;
-
+import es.caib.pinbal.core.dto.UsuariDto;
+import es.caib.pinbal.core.service.UsuariService;
+import es.caib.pinbal.core.service.exception.EntitatNotFoundException;
+import es.caib.pinbal.core.service.exception.ProcedimentNotFoundException;
+import es.caib.pinbal.core.service.exception.ServeiNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -18,11 +13,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import es.caib.pinbal.core.dto.UsuariDto;
-import es.caib.pinbal.core.service.UsuariService;
-import es.caib.pinbal.core.service.exception.EntitatNotFoundException;
-import es.caib.pinbal.core.service.exception.ProcedimentNotFoundException;
-import es.caib.pinbal.core.service.exception.ServeiNotFoundException;
+import javax.servlet.http.HttpServletRequest;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.apache.commons.lang.StringUtils.isBlank;
 
 /**
  * Controlador per a les consultes ajax dels serveis.
@@ -53,6 +51,12 @@ public class AjaxUsuariController extends BaseController{
 	@ResponseBody
 	public UsuariDto getItem(HttpServletRequest request, @PathVariable String codi, Model model) throws ServeiNotFoundException {
 		return usuariService.getDades(codi);
+	}
+
+	@RequestMapping(value = "/usuari/extern/{codi}", method = RequestMethod.GET)
+	@ResponseBody
+	public UsuariDto getUsuariExtern(HttpServletRequest request, @PathVariable String codi, Model model) throws Exception {
+		return usuariService.getUsuariExtern(codi);
 	}
 	
 	private List<UsuariDto> getWithParam(HttpServletRequest request, String text, Model model) {

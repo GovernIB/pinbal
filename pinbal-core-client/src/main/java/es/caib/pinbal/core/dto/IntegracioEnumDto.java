@@ -4,5 +4,7 @@ public enum IntegracioEnumDto {
 	ARXIU,
 	FIRMASERV,
 	SERVEIS_SCSP,
-	ORGANS
+	ORGANS,
+	USUARIS,
+	EXPLOTACIO
 }

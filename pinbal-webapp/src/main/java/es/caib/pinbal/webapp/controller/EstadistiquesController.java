@@ -3,17 +3,18 @@
  */
 package es.caib.pinbal.webapp.controller;
 
-import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.validation.Valid;
-
+import es.caib.pinbal.core.dto.EntitatDto;
+import es.caib.pinbal.core.dto.EstadistiquesFiltreDto;
+import es.caib.pinbal.core.service.ConsultaService;
+import es.caib.pinbal.core.service.EntitatService;
 import es.caib.pinbal.core.service.HistoricConsultaService;
+import es.caib.pinbal.core.service.ServeiService;
+import es.caib.pinbal.core.service.exception.EntitatNotFoundException;
+import es.caib.pinbal.core.service.exception.ProcedimentNotFoundException;
+import es.caib.pinbal.webapp.command.EstadistiquesFiltreCommand;
+import es.caib.pinbal.webapp.common.EntitatHelper;
+import es.caib.pinbal.webapp.common.RequestSessionHelper;
+import es.caib.pinbal.webapp.common.RolHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
 import org.springframework.stereotype.Controller;
@@ -26,18 +27,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import es.caib.pinbal.core.dto.EntitatDto;
-import es.caib.pinbal.core.dto.EstadisticaDto;
-import es.caib.pinbal.core.dto.EstadistiquesFiltreDto;
-import es.caib.pinbal.core.service.ConsultaService;
-import es.caib.pinbal.core.service.EntitatService;
-import es.caib.pinbal.core.service.ServeiService;
-import es.caib.pinbal.core.service.exception.EntitatNotFoundException;
-import es.caib.pinbal.core.service.exception.ProcedimentNotFoundException;
-import es.caib.pinbal.webapp.command.EstadistiquesFiltreCommand;
-import es.caib.pinbal.webapp.common.EntitatHelper;
-import es.caib.pinbal.webapp.common.RequestSessionHelper;
-import es.caib.pinbal.webapp.common.RolHelper;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /**
  * Controlador per les estadístiques.
@@ -200,7 +195,6 @@ public class EstadistiquesController {
 					"entitatSeleccionada",
 					entitat);
 		}
-		boolean historic = isHistoric(request);
 
 		if (command.getEntitatId() != null) {
 			EstadistiquesFiltreDto filtre = EstadistiquesFiltreCommand.asDto(command);
@@ -208,22 +202,11 @@ public class EstadistiquesController {
 				filtre.setEntitatId(null);
 			}
 			if (filtre.getEntitatId() != null) {
-				List<EstadisticaDto> estadistiques;
-				if (historic)
-					estadistiques = historicConsultaService.findEstadistiquesByFiltre(filtre);
-				else
-					estadistiques = consultaService.findEstadistiquesByFiltre(filtre);
-				model.addAttribute("estadistiques", estadistiques);
+				model.addAttribute("estadistiques", consultaService.findEstadistiquesByFiltre(filtre));
 			} else {
-				Map<EntitatDto, List<EstadisticaDto>> estadistiquesPerEntitat;
-				if (historic)
-					estadistiquesPerEntitat = historicConsultaService.findEstadistiquesGlobalsByFiltre(filtre);
-				else
-					estadistiquesPerEntitat = consultaService.findEstadistiquesGlobalsByFiltre(filtre);
-				model.addAttribute("estadistiquesPerEntitat", estadistiquesPerEntitat);
+				model.addAttribute("estadistiquesPerEntitat", consultaService.findEstadistiquesGlobalsByFiltre(filtre));
 			}
 		}
-		model.addAttribute("historic", historic);
 	}
 
 	private boolean isHistoric(HttpServletRequest request) {

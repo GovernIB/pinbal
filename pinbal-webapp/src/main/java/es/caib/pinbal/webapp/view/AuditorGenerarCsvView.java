@@ -24,6 +24,7 @@ public class AuditorGenerarCsvView extends AbstractView implements MessageSource
     private MessageSource messageSource;
 
     @Override
+    @SuppressWarnings("unchecked")
     protected void renderMergedOutputModel(Map<String, Object> model, HttpServletRequest request, HttpServletResponse response) throws Exception {
 
         response.setHeader("Content-Disposition", "Inline; filename=auditoria.csv");

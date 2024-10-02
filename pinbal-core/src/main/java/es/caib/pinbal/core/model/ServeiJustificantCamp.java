@@ -3,6 +3,11 @@
  */
 package es.caib.pinbal.core.model;
 
+import es.caib.pinbal.core.audit.PinbalAuditable;
+import lombok.Getter;
+import org.apache.commons.lang.builder.ToStringBuilder;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
@@ -11,17 +16,13 @@ import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.persistence.Version;
 
-import org.apache.commons.lang.builder.ToStringBuilder;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-
-import es.caib.pinbal.core.audit.PinbalAuditable;
-
 /**
  * Classe de model de dades que conté la traducció d'un camp de
  * les dades específiques d'un servei.
  * 
  * @author Limit Tecnologies <limit@limit.es>
  */
+@Getter
 @Entity
 @Table(
 		name = "pbl_servei_justif_camp",
@@ -45,6 +46,9 @@ public class ServeiJustificantCamp extends PinbalAuditable<Long> {
 	@Column(name = "traduccio", length = 255)
 	private String traduccio;
 
+	@Column(name = "document")
+	private boolean document;
+
 	@Version
 	private long version = 0;
 
@@ -55,7 +59,7 @@ public class ServeiJustificantCamp extends PinbalAuditable<Long> {
 	 * 
 	 * @param servei
 	 *            El codi del servei.
-	 * @param xpath
+	 * @param path
 	 *            El xpath del camp.
 	 * @param localeIdioma
 	 *            Codi d'idioma del locale segons ISO-639.
@@ -70,38 +74,21 @@ public class ServeiJustificantCamp extends PinbalAuditable<Long> {
 			String path,
 			String localeIdioma,
 			String localeRegio,
-			String traduccio) {
+			String traduccio,
+			boolean document) {
 		return new Builder(
 				servei,
 				path,
 				localeIdioma,
 				localeRegio,
-				traduccio);
+				traduccio,
+				document);
 	}
 
-	public String getServei() {
-		return servei;
-	}
-	public String getXpath() {
-		return xpath;
-	}
-	public String getLocaleIdioma() {
-		return localeIdioma;
-	}
-	public String getLocaleRegio() {
-		return localeRegio;
-	}
-	public String getTraduccio() {
-		return traduccio;
-	}
 
-	public long getVersion() {
-		return version;
-	}
-
-	public void update(
-			String traduccio) {
+	public void update(String traduccio, boolean document) {
 		this.traduccio = traduccio;
+		this.document = document;
 	}
 
 	/**
@@ -128,13 +115,15 @@ public class ServeiJustificantCamp extends PinbalAuditable<Long> {
 				String xpath,
 				String localeIdioma,
 				String localeRegio,
-				String traduccio) {
+				String traduccio,
+				boolean document) {
 			built = new ServeiJustificantCamp();
 			built.servei = servei;
 			built.xpath = xpath;
 			built.localeIdioma = localeIdioma;
 			built.localeRegio = localeRegio;
 			built.traduccio = traduccio;
+			built.document = document;
 		}
 
 		/**

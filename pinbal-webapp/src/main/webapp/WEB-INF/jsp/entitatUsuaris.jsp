@@ -372,7 +372,8 @@ function canviPrincipal(usuariCodi) {
 		</div>
 	</form:form>
 	<div class="pull-right">
-		<a class="btn btn-primary" href="#modal-form-usuari" onclick="showModalCrear()"><i class="fa fa-plus"></i>&nbsp;<spring:message code="entitat.usuaris.boto.nou.usuari"/></a>
+<%--		<a class="btn btn-primary" href="#modal-form-usuari" onclick="showModalCrear()"><i class="fa fa-plus"></i>&nbsp;<spring:message code="entitat.usuaris.boto.nou.usuari"/></a>--%>
+		<a class="btn btn-primary" href="<c:url value="/entitat/${entitat.id}/usuari/new"/>" data-toggle="modal" data-refresh-pagina="true"><i class="fa fa-plus"></i>&nbsp;<spring:message code="entitat.usuaris.boto.nou.usuari"/></a>
 	</div>
 	<table id="table-users" class="table table-striped table-bordered" style="width: 100%">
 		<thead>
@@ -431,7 +432,7 @@ function canviPrincipal(usuariCodi) {
 				<li><a href="#" onclick="canviPrincipal('{{usuari.codi}}');"><i class="fas fa-trash-alt"></i>&nbsp;<spring:message code="entitat.usuaris.accio.desfer.principal"/></a></li>
 			{{/principal}}
 			{{^principal}}
-				<li><a href="#" data-nrow="{{ nrow }}" data-codi="{{usuari.codi}}" class="btn-open-modal-edit"><i class="fas fa-pen"></i>&nbsp;<spring:message code="comu.boto.modificar"/></a></li>
+				<li><a href="<c:url value="/entitat/${entitat.id}/usuari/{{ usuari.codi }}"/>" data-toggle="modal" data-refresh-pagina="true" class="btn-open-modal-edit"><i class="fas fa-pen"></i>&nbsp;<spring:message code="comu.boto.modificar"/></a></li>
 				<li><a href="#" onclick="canviPrincipal('{{usuari.codi}}');"><i class="fas fa-certificate"></i>&nbsp;<spring:message code="entitat.usuaris.accio.fer.principal"/></a></li>
 			{{/principal}}
 			{{#actiu}}

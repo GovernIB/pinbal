@@ -78,6 +78,7 @@ import es.scsp.common.domain.core.ClavePublica;
 import es.scsp.common.domain.core.EmisorCertificado;
 import es.scsp.common.domain.core.Servicio;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -1306,8 +1307,7 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 
 	@Transactional(rollbackFor = ServeiNotFoundException.class)
 	@Override
-	public void addServeiJustificantCamp(
-			ServeiJustificantCampDto camp) throws ServeiNotFoundException {
+	public void addServeiJustificantCamp(ServeiJustificantCampDto camp) throws ServeiNotFoundException {
 		log.debug("Traducció del camp de dades específiques (codi=" + camp.getServei() + ", campPath=" + camp.getXpath() + ")");
 		Servicio servicio = getScspHelper().getServicio(camp.getServei());
 		if (servicio == null) {
@@ -1321,18 +1321,18 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 				DEFAULT_TRADUCCIO_LOCALE.getCountry());
 		if (serveiTraduccio != null) {
 			if (camp.getTraduccio() != null && !camp.getTraduccio().isEmpty()) {
-				serveiTraduccio.update(
-						camp.getTraduccio());
+				serveiTraduccio.update(camp.getTraduccio(), camp.isDocument());
 			} else {
 				serveiJustificantCampRepository.delete(serveiTraduccio);
 			}
-		} else if (camp.getTraduccio() != null && !camp.getTraduccio().isEmpty()) {
+		} else if (!StringUtils.isBlank(camp.getTraduccio())) {
 			serveiTraduccio = ServeiJustificantCamp.getBuilder(
 					camp.getServei(),
 					camp.getXpath(),
 					DEFAULT_TRADUCCIO_LOCALE.getLanguage(),
 					DEFAULT_TRADUCCIO_LOCALE.getCountry(),
-					camp.getTraduccio()).build();
+					camp.getTraduccio(),
+					camp.isDocument()).build();
 			serveiJustificantCampRepository.save(serveiTraduccio);
 		}
 	}

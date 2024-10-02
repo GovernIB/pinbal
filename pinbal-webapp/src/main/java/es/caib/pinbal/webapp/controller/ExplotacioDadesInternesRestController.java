@@ -3,24 +3,8 @@
  */
 package es.caib.pinbal.webapp.controller;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
-import javax.servlet.http.HttpServletRequest;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-
 import com.wordnik.swagger.annotations.ApiOperation;
 import com.wordnik.swagger.annotations.ApiParam;
-
 import es.caib.pinbal.client.comu.Departament;
 import es.caib.pinbal.client.comu.Entitat;
 import es.caib.pinbal.client.comu.Procediment;
@@ -48,6 +32,19 @@ import es.caib.pinbal.core.service.UsuariService;
 import es.caib.pinbal.core.service.exception.EntitatNotFoundException;
 import es.caib.pinbal.core.service.exception.ProcedimentNotFoundException;
 import es.caib.pinbal.webapp.command.EstadistiquesFiltreCommand;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 /**
  * Controlador pel servei REST de consulta d'informes.
@@ -331,11 +328,11 @@ public class ExplotacioDadesInternesRestController extends BaseController {
 		Procediment procedimentActual = null;
 		Long procedimentActualId = null;
 		for (EstadisticaDto estadistica: estadistiques) {
-			if (procedimentActual == null || !procedimentActualId.equals(estadistica.getProcediment().getId())) {
-				procedimentActualId = estadistica.getProcediment().getId();
+			if (procedimentActual == null || !procedimentActualId.equals(estadistica.getProcedimentId())) {
+				procedimentActualId = estadistica.getProcedimentId();
 				procedimentActual = new Procediment();
-				procedimentActual.setCodi(estadistica.getProcediment().getCodi());
-				procedimentActual.setNom(estadistica.getProcediment().getNom());
+				procedimentActual.setCodi(estadistica.getProcedimentCodi());
+				procedimentActual.setNom(estadistica.getProcedimentNom());
 				estadisticaProcediments.add(procedimentActual);
 			}
 			Servei servei = new Servei();

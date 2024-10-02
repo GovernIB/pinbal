@@ -17,15 +17,13 @@ import es.caib.pinbal.core.dto.ConsultaFiltreDto;
 import es.caib.pinbal.core.dto.ConsultaOpenDataDto;
 import es.caib.pinbal.core.dto.EmisorDto;
 import es.caib.pinbal.core.dto.EntitatDto;
-import es.caib.pinbal.core.dto.EstadisticaDto;
-import es.caib.pinbal.core.dto.EstadistiquesFiltreDto;
-import es.caib.pinbal.core.dto.EstadistiquesFiltreDto.EstadistiquesAgrupacioDto;
+import es.caib.pinbal.core.dto.EstatTipus;
 import es.caib.pinbal.core.dto.FitxerDto;
 import es.caib.pinbal.core.dto.InformeGeneralEstatDto;
 import es.caib.pinbal.core.dto.InformeProcedimentServeiDto;
 import es.caib.pinbal.core.dto.InformeRepresentantFiltreDto;
 import es.caib.pinbal.core.dto.JustificantDto;
-import es.caib.pinbal.core.dto.ProcedimentDto;
+import es.caib.pinbal.core.dto.JustificantEstat;
 import es.caib.pinbal.core.dto.arxiu.ArxiuDetallDto;
 import es.caib.pinbal.core.helper.ArxiuHelper;
 import es.caib.pinbal.core.helper.ConfigHelper;
@@ -34,13 +32,12 @@ import es.caib.pinbal.core.helper.JustificantHelper;
 import es.caib.pinbal.core.helper.PermisosHelper;
 import es.caib.pinbal.core.helper.PeticioScspEstadistiquesHelper;
 import es.caib.pinbal.core.helper.PluginHelper;
-import es.caib.pinbal.core.model.Consulta.EstatTipus;
-import es.caib.pinbal.core.model.Consulta.JustificantEstat;
 import es.caib.pinbal.core.model.Entitat;
 import es.caib.pinbal.core.model.EntitatUsuari;
 import es.caib.pinbal.core.model.HistoricConsulta;
 import es.caib.pinbal.core.model.Procediment;
 import es.caib.pinbal.core.model.ProcedimentServei;
+import es.caib.pinbal.core.model.llistat.LlistatHistoricConsulta;
 import es.caib.pinbal.core.repository.EntitatRepository;
 import es.caib.pinbal.core.repository.EntitatUsuariRepository;
 import es.caib.pinbal.core.repository.HistoricConsultaRepository;
@@ -48,6 +45,8 @@ import es.caib.pinbal.core.repository.ProcedimentRepository;
 import es.caib.pinbal.core.repository.ProcedimentServeiRepository;
 import es.caib.pinbal.core.repository.TokenRepository;
 import es.caib.pinbal.core.repository.UsuariRepository;
+import es.caib.pinbal.core.repository.dadesobertes.DadesObertesHistoricConsultaRepository;
+import es.caib.pinbal.core.repository.llistat.LlistatHistoricConsultaRepository;
 import es.caib.pinbal.core.service.exception.ConsultaNotFoundException;
 import es.caib.pinbal.core.service.exception.EntitatNotFoundException;
 import es.caib.pinbal.core.service.exception.JustificantGeneracioException;
@@ -154,6 +153,10 @@ public class HistoricConsultaServiceImpl implements HistoricConsultaService, App
 	private ScspHelper scspHelper;
 
 	private Map<Long, Object> justificantLocks = new HashMap<Long, Object>();
+    @Autowired
+    private DadesObertesHistoricConsultaRepository dadesObertesHistoricConsultaRepository;
+    @Autowired
+    private LlistatHistoricConsultaRepository llistatHistoricConsultaRepository;
 
 
 	@Override
@@ -495,24 +498,23 @@ public class HistoricConsultaServiceImpl implements HistoricConsultaService, App
 				"dataFi" + dataFi + ", " +
 				"procedimentCodi=" + procedimentCodi + ", " +
 				"serveiCodi=" + serveiCodi + ")");
-		Entitat entitat = null;
-		Procediment procediment = null;
-		if (entitatCodi != null) {
-			entitat = getEntitat(entitatCodi);
-			if (procedimentCodi != null) {
-				procediment = getProcediment(procedimentCodi, entitat);
-			}
-		}
-		List<DadesObertesRespostaConsulta> resposta = historicConsultaRepository.findByOpendata(
-				entitat == null,
-				entitat != null ? entitat.getId() : null,
-				procediment == null,
-				procediment != null ? procediment.getId() : null,
-				serveiCodi == null,
+
+		boolean esNullEntitatCodi = isBlank(entitatCodi);
+		boolean esNullProcedimentCodi = isBlank(procedimentCodi);
+		boolean esNullServeiCodi = isBlank(serveiCodi);
+		boolean isNullDataInici = dataInici == null;
+		boolean isNullDataFi = dataFi == null;
+
+		List<DadesObertesRespostaConsulta> resposta = dadesObertesHistoricConsultaRepository.findByOpendata(
+				esNullEntitatCodi,
+				entitatCodi,
+				esNullProcedimentCodi,
+				procedimentCodi,
+				esNullServeiCodi,
 				serveiCodi,
-				dataInici == null,
+				isNullDataInici,
 				dataInici,
-				dataFi == null,
+				isNullDataFi,
 				dataFi);
 		return resposta;
 	}
@@ -522,48 +524,52 @@ public class HistoricConsultaServiceImpl implements HistoricConsultaService, App
 		log.debug("Consultant informació per opendata (" + consultaOpenDataDto + ")");
 		DateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 
-		Entitat entitat = null;
-		Procediment procediment = null;
-		if (consultaOpenDataDto.getEntitatCodi() != null) {
-			entitat = getEntitat(consultaOpenDataDto.getEntitatCodi());
-			if (consultaOpenDataDto.getProcedimentCodi() != null) {
-				procediment = getProcediment(consultaOpenDataDto.getProcedimentCodi(), entitat);
-			}
-		}
+		boolean esNullEntitatCodi = isBlank(consultaOpenDataDto.getEntitatCodi());
+		String entitatCodi = consultaOpenDataDto.getEntitatCodi();
+		boolean esNullProcedimentCodi = isBlank(consultaOpenDataDto.getProcedimentCodi());
+		String procedimentCodi = consultaOpenDataDto.getProcedimentCodi();
+		boolean esNullServeiCodi = isBlank(consultaOpenDataDto.getServeiCodi());
+		String serveiCodi = consultaOpenDataDto.getServeiCodi();
+		boolean isNullDataInici = consultaOpenDataDto.getDataInici() == null;
+		Date dataInici = consultaOpenDataDto.getDataInici();
+		boolean isNullDataFi = consultaOpenDataDto.getDataFi() == null;
+		Date dataFi = consultaOpenDataDto.getDataFi();
+		Pageable pageable = new PageRequest(consultaOpenDataDto.getPagina(), consultaOpenDataDto.getMida());
 
-		Integer numElements = historicConsultaRepository.countByOpendata(
-				entitat == null,
-				entitat != null ? entitat.getId() : null,
-				procediment == null,
-				procediment != null ? procediment.getId() : null,
-				isBlank(consultaOpenDataDto.getServeiCodi()),
-				!isBlank(consultaOpenDataDto.getServeiCodi()) ? consultaOpenDataDto.getServeiCodi() : null,
-				consultaOpenDataDto.getDataInici() == null,
-				consultaOpenDataDto.getDataInici(),
-				consultaOpenDataDto.getDataFi() == null,
-				consultaOpenDataDto.getDataFi());
-		Page<DadesObertesRespostaConsulta> dades = historicConsultaRepository.findByOpendata(
-				entitat == null,
-				entitat != null ? entitat.getId() : null,
-				procediment == null,
-				procediment != null ? procediment.getId() : null,
-				consultaOpenDataDto.getServeiCodi() == null,
-				consultaOpenDataDto.getServeiCodi(),
-				consultaOpenDataDto.getDataInici() == null,
-				consultaOpenDataDto.getDataInici(),
-				consultaOpenDataDto.getDataFi() == null,
-				consultaOpenDataDto.getDataFi(),
-				new PageRequest(consultaOpenDataDto.getPagina(), consultaOpenDataDto.getMida()));
+		Integer numElements = dadesObertesHistoricConsultaRepository.countByOpendata(
+				esNullEntitatCodi,
+				entitatCodi,
+				esNullProcedimentCodi,
+				procedimentCodi,
+				esNullServeiCodi,
+				serveiCodi,
+				isNullDataInici,
+				dataInici,
+				isNullDataFi,
+				dataFi);
+
+		Page<DadesObertesRespostaConsulta> dades = dadesObertesHistoricConsultaRepository.findByOpendata(
+				esNullEntitatCodi,
+				entitatCodi,
+				esNullProcedimentCodi,
+				procedimentCodi,
+				esNullServeiCodi,
+				serveiCodi,
+				isNullDataInici,
+				dataInici,
+				isNullDataFi,
+				dataFi,
+				pageable);
 
 		Integer totalPagines = (numElements.intValue() + consultaOpenDataDto.getMida() - 1)/consultaOpenDataDto.getMida();
 		String nextUrl = null;
 		if (totalPagines.intValue() > consultaOpenDataDto.getPagina().intValue() + 1) {
-			nextUrl = consultaOpenDataDto.getAppPath() + "?historic=true";
-			nextUrl += "&dataInici=" + sdf.format(consultaOpenDataDto.getDataInici());
-			nextUrl += "&dataFi=" + sdf.format(consultaOpenDataDto.getDataFi());
-			nextUrl += !isBlank(consultaOpenDataDto.getEntitatCodi()) ? "&entitatCodi=" + consultaOpenDataDto.getEntitatCodi() : "";
-			nextUrl += !isBlank(consultaOpenDataDto.getProcedimentCodi()) ? "&procedimentCodi=" + consultaOpenDataDto.getProcedimentCodi() : "";
-			nextUrl += !isBlank(consultaOpenDataDto.getServeiCodi()) ? "&serveiCodi=" + consultaOpenDataDto.getServeiCodi() : "";
+			nextUrl = consultaOpenDataDto.getAppPath() + "?historic=false";
+			nextUrl += !isNullDataInici ? "&dataInici=" + sdf.format(dataInici) : "";
+			nextUrl += !isNullDataFi ? "&dataFi=" + sdf.format(dataFi) : "";
+			nextUrl += !esNullEntitatCodi ? "&entitatCodi=" + entitatCodi : "";
+			nextUrl += !esNullProcedimentCodi ? "&procedimentCodi=" + procedimentCodi : "";
+			nextUrl += !esNullServeiCodi ? "&serveiCodi=" + serveiCodi : "";
 			nextUrl += "&pagina=" + (consultaOpenDataDto.getPagina() + 1);
 			nextUrl += "&mida=" + consultaOpenDataDto.getMida();
 		}
@@ -686,152 +692,6 @@ public class HistoricConsultaServiceImpl implements HistoricConsultaService, App
 		return resposta;
 	}
 
-	@Transactional(readOnly = true)
-	@Override
-	public List<EstadisticaDto> findEstadistiquesByFiltre(EstadistiquesFiltreDto filtre) throws EntitatNotFoundException {
-		log.debug("Consultant estadístiques per a l'entitat (id=" + filtre.getEntitatId() + ")");
-		if (filtre.getEntitatId() != null) {
-			Entitat entitat = entitatRepository.findOne(filtre.getEntitatId());
-			if (entitat == null) {
-				log.debug("No s'ha trobat l'entitat (id=" + filtre.getEntitatId() + ")");
-				throw new EntitatNotFoundException();
-			}
-		}
-		List<EstadisticaDto> resposta = new ArrayList<EstadisticaDto>();
-		List<Object[]> resultats;
-		if (EstadistiquesAgrupacioDto.PROCEDIMENT_SERVEI.equals(filtre.getAgrupacio())) {
-			resultats = historicConsultaRepository.countByProcedimentServei(
-					filtre.getEntitatId() == null,
-					filtre.getEntitatId(),
-					filtre.getUsuariCodi() == null,
-					(filtre.getUsuariCodi() != null) ? usuariRepository.findOne(filtre.getUsuariCodi()) : null,
-					filtre.getProcedimentId() == null,
-					filtre.getProcedimentId(),
-					filtre.getServeiCodi() == null || filtre.getServeiCodi().isEmpty(),
-					filtre.getServeiCodi(),
-					filtre.getEstat() == null,
-					(filtre.getEstat() != null) ? EstatTipus.valueOf(filtre.getEstat().toString()) : null,
-					filtre.getDataInici() == null,
-					filtre.getDataInici(),
-					filtre.getDataFi() == null,
-					configurarDataFiPerFiltre(filtre.getDataFi()),
-					EstatTipus.Tramitada,
-					EstatTipus.Error);
-		} else {
-			resultats = historicConsultaRepository.countByServeiProcediment(
-					filtre.getEntitatId() == null,
-					filtre.getEntitatId(),
-					filtre.getUsuariCodi() == null,
-					(filtre.getUsuariCodi() != null) ? usuariRepository.findOne(filtre.getUsuariCodi()) : null,
-					filtre.getProcedimentId() == null,
-					filtre.getProcedimentId(),
-					filtre.getServeiCodi() == null || filtre.getServeiCodi().isEmpty(),
-					filtre.getServeiCodi(),
-					filtre.getEstat() == null,
-					(filtre.getEstat() != null) ? EstatTipus.valueOf(filtre.getEstat().toString()) : null,
-					filtre.getDataInici() == null,
-					filtre.getDataInici(),
-					filtre.getDataFi() == null,
-					configurarDataFiPerFiltre(filtre.getDataFi()),
-					EstatTipus.Tramitada,
-					EstatTipus.Error);
-		}
-		for (Object[] resultat: resultats) {
-			Long procedimentServeiId = (Long)resultat[0];
-			Long numRecobrimentOk = (Long)resultat[1];
-			Long numRecobrimentError = (Long)resultat[2];
-			Long numWebUIOk = (Long)resultat[4];
-			Long numWebUIError = (Long)resultat[5];
-			ProcedimentServei procedimentServei = procedimentServeiRepository.findOne(procedimentServeiId);
-			EstadisticaDto dto = new EstadisticaDto();
-			dto.setProcediment(
-					dtoMappingHelper.getMapperFacade().map(
-							procedimentServei.getProcediment(),
-							ProcedimentDto.class));
-			dto.setServeiCodi(procedimentServei.getServei());
-			dto.setServeiNom(
-					getScspHelper().getServicioDescripcion(
-							procedimentServei.getServei()));
-			dto.setNumRecobrimentOk(numRecobrimentOk);
-			dto.setNumRecobrimentError(numRecobrimentError);
-			dto.setNumWebUIOk(numWebUIOk);
-			dto.setNumWebUIError(numWebUIError);
-			resposta.add(dto);
-		}
-		EstadisticaDto estadisticaActual = null;
-		for (EstadisticaDto estadistica: resposta) {
-			boolean coincideixProcediment = estadisticaActual != null && estadisticaActual.getProcediment().getId().equals(estadistica.getProcediment().getId());
-			boolean coincideixServei = estadisticaActual != null && estadisticaActual.getServeiCodi().equals(estadistica.getServeiCodi());
-			if (	estadisticaActual == null || 
-					(EstadistiquesAgrupacioDto.PROCEDIMENT_SERVEI.equals(filtre.getAgrupacio()) && !coincideixProcediment) ||
-					(EstadistiquesAgrupacioDto.SERVEI_PROCEDIMENT.equals(filtre.getAgrupacio()) && !coincideixServei)) {
-				estadisticaActual = estadistica;
-				estadisticaActual.setConteSumatori(true);
-			}
-			estadisticaActual.setSumatoriNumRegistres(
-					estadisticaActual.getSumatoriNumRegistres() + 1);
-			estadisticaActual.setSumatoriNumRecobrimentOk(
-					estadisticaActual.getSumatoriNumRecobrimentOk() + estadistica.getNumRecobrimentOk());
-			estadisticaActual.setSumatoriNumRecobrimentError(
-					estadisticaActual.getSumatoriNumRecobrimentError() + estadistica.getNumRecobrimentError());
-			estadisticaActual.setSumatoriNumWebUIOk(
-					estadisticaActual.getSumatoriNumWebUIOk() + estadistica.getNumWebUIOk());
-			estadisticaActual.setSumatoriNumWebUIError(
-					estadisticaActual.getSumatoriNumWebUIError() + estadistica.getNumWebUIError());
-		}
-		return resposta;
-	}
-
-	@Transactional(readOnly = true)
-	@Override
-	public Map<EntitatDto, List<EstadisticaDto>> findEstadistiquesGlobalsByFiltre(
-			EstadistiquesFiltreDto filtre) {
-		log.debug("Consultant estadístiques globals");
-		Map<EntitatDto, List<EstadisticaDto>> resposta = new HashMap<EntitatDto, List<EstadisticaDto>>();
-		List<Object[]> resultats = historicConsultaRepository.countByEntitat(
-				filtre.getUsuariCodi() == null,
-				(filtre.getUsuariCodi() != null) ? usuariRepository.findOne(filtre.getUsuariCodi()) : null,
-				filtre.getProcedimentId() == null,
-				filtre.getProcedimentId(),
-				filtre.getServeiCodi() == null || filtre.getServeiCodi().isEmpty(),
-				filtre.getServeiCodi(),
-				filtre.getEstat() == null,
-				(filtre.getEstat() != null) ? EstatTipus.valueOf(filtre.getEstat().toString()) : null,
-				filtre.getDataInici() == null,
-				filtre.getDataInici(),
-				filtre.getDataFi() == null,
-				configurarDataFiPerFiltre(filtre.getDataFi()));
-		// Omple les estadístiques per cada entitat
-		for (Object[] resultat: resultats) {
-			Long entitatId = (Long)resultat[0];
-			Long numConsultes = (Long)resultat[1];
-			if (numConsultes > 0) {
-				filtre.setEntitatId(entitatId);
-				try {
-					resposta.put(
-							dtoMappingHelper.getMapperFacade().map(
-									entitatRepository.findOne(entitatId),
-									EntitatDto.class),
-							findEstadistiquesByFiltre(filtre));
-				} catch (EntitatNotFoundException ex) {
-					// És impossible però ho traurem pel log
-					log.error("No s'ha trobat l'entitat (entitatId=" + entitatId + ")", ex);
-				}
-			}
-		}
-		// Omple l'estadística global
-		filtre.setEntitatId(null);
-		try {
-			resposta.put(
-					null,
-					findEstadistiquesByFiltre(filtre));
-		} catch (EntitatNotFoundException ex) {
-			// És impossible però ho traurem pel log
-			log.error("No s'ha trobat l'entitat (entitatId=null)", ex);
-		}
-		return resposta;
-	}
-	
 	@Transactional(readOnly = true)
 	@Override
 	public List<CarregaDto> findEstadistiquesCarrega() {
@@ -1103,22 +963,38 @@ public class HistoricConsultaServiceImpl implements HistoricConsultaService, App
 		log.info("[ARXIU CONSULTES] Arxivar en {} les consultes amb una antiguitat superior a {} dies", dialect, dies);
 		int consultesArxivades = 0;
 		int consultesEliminades = 0;
+		int consultesDOArxivades = 0;
+		int consultesDOEliminades = 0;
+		int consultesListArxivades = 0;
+		int consultesListEliminades = 0;
 
 		if (dialect != null && dialect.toLowerCase().contains("postgres")) {
 			log.info("[ARXIU CONSULTES] Inici d'arxivat de les consultes dels últims {}dies - PostgreSql", dies);
 			consultesArxivades = historicConsultaRepository.arxivaConsultesPostgres(dies);
+			consultesDOArxivades = dadesObertesHistoricConsultaRepository.arxivaConsultesPostgres(dies);
+			consultesListArxivades = llistatHistoricConsultaRepository.arxivaConsultesPostgres(dies);
 		} else {
 			log.info("[ARXIU CONSULTES] Inici d'arxivat de les consultes dels últims {}dies - Oracle", dies);
 			consultesArxivades = historicConsultaRepository.arxivaConsultesOracle(dies);
+			consultesDOArxivades = dadesObertesHistoricConsultaRepository.arxivaConsultesOracle(dies);
+			consultesListArxivades = llistatHistoricConsultaRepository.arxivaConsultesOracle(dies);
 		}
 		log.info("[ARXIU CONSULTES] {} Consultes arxivades a la taula d'històric", consultesArxivades);
 		if (consultesArxivades > 0) {
 			consultesEliminades = historicConsultaRepository.purgaConsultes(dies);
+			consultesDOEliminades = dadesObertesHistoricConsultaRepository.purgaConsultes(dies);
+			consultesListEliminades = llistatHistoricConsultaRepository.purgaConsultes(dies);
 			log.info("[ARXIU CONSULTES] {} Consultes eliminades de la taula de consultes", consultesEliminades);
 		}
 
 		if (consultesArxivades != consultesEliminades) {
 			throw new RuntimeException("Error inesperat al arxivar les consultes antigues");
+		}
+		if (consultesDOArxivades != consultesDOEliminades) {
+			throw new RuntimeException("Error inesperat al arxivar les dades obertes antigues");
+		}
+		if (consultesListArxivades != consultesListEliminades) {
+			throw new RuntimeException("Error inesperat al arxivar la informació del llistat de consultes antigues");
 		}
 		log.info("[ARXIU CONSULTES] Fi");
 	}
@@ -1263,15 +1139,15 @@ public class HistoricConsultaServiceImpl implements HistoricConsultaService, App
 			boolean consultaTerData) throws EntitatNotFoundException {
 		copiarPropertiesToDb();
 		log.debug("HistoricConsulta de peticions findByEntitatIUsuariFiltrePaginat (" +
-				"entitat=" + entitat.getCodi() + ", " +
+				"entitatId=" + entitat.getId() + ", " +
 				"usuariCodi=" + usuariCodi + ", " +
 				((filtre != null) ? (
 				"filtre.scspPeticionId=" + filtre.getScspPeticionId() + ", " +
 				"filtre.procedimentId=" + filtre.getProcedimentId() + ", " +
 				"filtre.serveiCodi=" + filtre.getServeiCodi() + ", " +
-				"filtre.estat=" + filtre.getProcedimentId() + ", " +
-				"filtre.dataInici=" + filtre.getProcedimentId() + ", " +
-				"filtre.dataFi=" + filtre.getProcedimentId() + ", " +
+				"filtre.estat=" + filtre.getEstat() + ", " +
+				"filtre.dataInici=" + filtre.getDataInici() + ", " +
+				"filtre.dataFi=" + filtre.getDataFi() + ", " +
 				"filtre.titularNom=" + filtre.getTitularNom() + ", " +
 				"filtre.titularDocument=" + filtre.getTitularDocument() + ", " +
 				"filtre.funcionari=" + filtre.getFuncionari() + ", " +
@@ -1282,9 +1158,9 @@ public class HistoricConsultaServiceImpl implements HistoricConsultaService, App
 				"multiple=" + multiple + ", " +
 				"nomesSensePare=" + nomesSensePare + ")");
 		long t0 = System.currentTimeMillis();
-		Page<HistoricConsulta> paginaConsultes;
+		Page<LlistatHistoricConsulta> paginaConsultes;
 		if (filtre == null) {
-			paginaConsultes = historicConsultaRepository.findByProcedimentServeiProcedimentEntitatIdAndCreatedBy(
+			paginaConsultes = llistatHistoricConsultaRepository.findByProcedimentServeiProcedimentEntitatIdAndCreatedBy(
 					entitat.getId(),
 					usuariCodi == null,
 					(usuariCodi != null) ? usuariRepository.findOne(usuariCodi) : null,
@@ -1293,7 +1169,7 @@ public class HistoricConsultaServiceImpl implements HistoricConsultaService, App
 					pageable);
 		} else {
 			historicConsultaRepository.setSessionOptimizerModeToRule();
-			paginaConsultes = historicConsultaRepository.findByCreatedByAndFiltrePaginat(
+			paginaConsultes = llistatHistoricConsultaRepository.findByCreatedByAndFiltrePaginat(
 					entitat.getId(),
 					usuariCodi == null,
 					(usuariCodi != null) ? usuariRepository.findOne(usuariCodi) : null,
@@ -1364,9 +1240,9 @@ public class HistoricConsultaServiceImpl implements HistoricConsultaService, App
 				"filtre.scspPeticionId=" + filtre.getScspPeticionId() + ", " +
 				"filtre.procedimentId=" + filtre.getProcedimentId() + ", " +
 				"filtre.serveiCodi=" + filtre.getServeiCodi() + ", " +
-				"filtre.estat=" + filtre.getProcedimentId() + ", " +
-				"filtre.dataInici=" + filtre.getProcedimentId() + ", " +
-				"filtre.dataFi=" + filtre.getProcedimentId() + ", " +
+				"filtre.estat=" + filtre.getEstat() + ", " +
+				"filtre.dataInici=" + filtre.getDataInici() + ", " +
+				"filtre.dataFi=" + filtre.getDataFi() + ", " +
 				"filtre.titularNom=" + filtre.getTitularNom() + ", " +
 				"filtre.titularDocument=" + filtre.getTitularDocument() + ", " +
 				"filtre.usuari=" + filtre.getUsuari() + ", " +
@@ -1376,7 +1252,7 @@ public class HistoricConsultaServiceImpl implements HistoricConsultaService, App
 				"paginacio.paginaNum=" + pageable.getPageNumber() + ", " +
 				"paginacio.paginaTamany=" + pageable.getPageSize() + ", ") : "") + ")");
 		long t0 = System.currentTimeMillis();
-		Page<HistoricConsulta> paginaConsultes = historicConsultaRepository.findByFiltrePaginatAdmin(
+		Page<LlistatHistoricConsulta> paginaConsultes = llistatHistoricConsultaRepository.findByFiltrePaginatAdmin(
 				filtre.getEntitatId() == null,
 				filtre.getEntitatId(),
 				filtre.getScspPeticionId() == null || filtre.getScspPeticionId().isEmpty(),

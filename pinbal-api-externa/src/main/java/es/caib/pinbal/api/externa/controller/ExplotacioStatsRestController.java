@@ -10,18 +10,13 @@ import es.caib.pinbal.client.comu.Procediment;
 import es.caib.pinbal.client.comu.Servei;
 import es.caib.pinbal.client.comu.Servei.ConsultesOkError;
 import es.caib.pinbal.client.comu.TotalAcumulat;
-import es.caib.pinbal.client.comu.Usuari;
 import es.caib.pinbal.core.dto.CarregaDto;
 import es.caib.pinbal.core.dto.ConsultaDto.EstatTipus;
 import es.caib.pinbal.core.dto.EntitatDto;
 import es.caib.pinbal.core.dto.EstadisticaDto;
 import es.caib.pinbal.core.dto.EstadistiquesFiltreDto;
 import es.caib.pinbal.core.dto.EstadistiquesFiltreDto.EstadistiquesAgrupacioDto;
-import es.caib.pinbal.core.dto.InformeGeneralEstatDto;
-import es.caib.pinbal.core.dto.InformeProcedimentDto;
-import es.caib.pinbal.core.dto.InformeUsuariDto;
 import es.caib.pinbal.core.dto.ProcedimentDto;
-import es.caib.pinbal.core.dto.ServeiDto;
 import es.caib.pinbal.core.service.ConsultaService;
 import es.caib.pinbal.core.service.EntitatService;
 import es.caib.pinbal.core.service.HistoricConsultaService;
@@ -31,7 +26,6 @@ import es.caib.pinbal.core.service.UsuariService;
 import es.caib.pinbal.core.service.exception.EntitatNotFoundException;
 import es.caib.pinbal.core.service.exception.ProcedimentNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -93,11 +87,11 @@ public class ExplotacioStatsRestController {
 		Procediment procedimentActual = null;
 		Long procedimentActualId = null;
 		for (EstadisticaDto estadistica: estadistiques) {
-			if (procedimentActual == null || !procedimentActualId.equals(estadistica.getProcediment().getId())) {
-				procedimentActualId = estadistica.getProcediment().getId();
+			if (procedimentActual == null || !procedimentActualId.equals(estadistica.getProcedimentId())) {
+				procedimentActualId = estadistica.getProcedimentId();
 				procedimentActual = new Procediment();
-				procedimentActual.setCodi(estadistica.getProcediment().getCodi());
-				procedimentActual.setNom(estadistica.getProcediment().getNom());
+				procedimentActual.setCodi(estadistica.getProcedimentCodi());
+				procedimentActual.setNom(estadistica.getProcedimentNom());
 				estadisticaProcediments.add(procedimentActual);
 			}
 			Servei servei = new Servei();

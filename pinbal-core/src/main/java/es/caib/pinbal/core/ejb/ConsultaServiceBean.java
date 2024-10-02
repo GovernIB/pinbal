@@ -30,6 +30,7 @@ import es.caib.pinbal.core.service.exception.ProcedimentServeiNotFoundException;
 import es.caib.pinbal.core.service.exception.ScspException;
 import es.caib.pinbal.core.service.exception.ServeiNotAllowedException;
 import es.caib.pinbal.core.service.exception.ValidacioDadesPeticioException;
+import org.jboss.annotation.ejb.TransactionTimeout;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -387,6 +388,18 @@ public class ConsultaServiceBean implements ConsultaService {
 	}
 
 	@Override
+	@TransactionTimeout(value = 3600)
+	public void generarDadesExplotacio() {
+		delegate.generarDadesExplotacio();
+	}
+
+	@Override
+	@TransactionTimeout(value = 3600)
+    public void generarDadesExplotacio(Date data) {
+        delegate.generarDadesExplotacio(data);
+    }
+
+    @Override
 	@RolesAllowed("tothom")
 	public boolean isOptimitzarTransaccionsNovaConsulta() {
 		return delegate.isOptimitzarTransaccionsNovaConsulta();

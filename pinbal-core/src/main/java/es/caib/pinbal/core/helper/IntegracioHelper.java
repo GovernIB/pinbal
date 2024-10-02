@@ -45,6 +45,8 @@ public class IntegracioHelper {
 	public static final String INTCODI_SERVEIS_SCSP = "SERVEIS_SCSP";
 	public static final String INTCODI_ORGANS = "ORGANS";
 	public static final String INTCODI_USUARIS = "USUARIS";
+	public static final String INTCODI_EXPLOTACIO = "EXPLOTACIO";
+
 
 	private Map<String, LinkedList<IntegracioAccioDto>> accionsIntegracio = Collections.synchronizedMap(new HashMap<String, LinkedList<IntegracioAccioDto>>());
 	private Map<String, Integer> maxAccionsIntegracio = new HashMap<String, Integer>();
@@ -58,18 +60,12 @@ public class IntegracioHelper {
 
 	public List<IntegracioDto> findAll() {
 		List<IntegracioDto> integracions = new ArrayList<IntegracioDto>();
-		integracions.add(
-				novaIntegracio(
-						INTCODI_ARXIU));
-		integracions.add(
-				novaIntegracio(
-						INTCODI_FIRMASERV));
-		integracions.add(
-				novaIntegracio(
-						INTCODI_SERVEIS_SCSP));
-		integracions.add(
-				novaIntegracio(
-						INTCODI_ORGANS));
+		integracions.add(novaIntegracio(INTCODI_ARXIU));
+		integracions.add(novaIntegracio(INTCODI_FIRMASERV));
+		integracions.add(novaIntegracio(INTCODI_SERVEIS_SCSP));
+		integracions.add(novaIntegracio(INTCODI_ORGANS));
+		integracions.add(novaIntegracio(INTCODI_USUARIS));
+		integracions.add(novaIntegracio(INTCODI_EXPLOTACIO));
 		return integracions;
 	}
 
@@ -155,12 +151,6 @@ public class IntegracioHelper {
 			accio.setExcepcioStacktrace(ExceptionUtils.getStackTrace(throwable));
 		} 
 		addAccio(integracioCodi, accio);
-		/*logger.error("Error d'integracio " + descripcio + ": " + errorDescripcio + "("
-				+ "integracioCodi=" + integracioCodi + ", "
-				+ "parametres=" + parametres + ", "
-				+ "tipus=" + tipus + ", "
-				+ "tempsResposta=" + tempsResposta + ")",
-				throwable);*/
 	}
 
 	private LinkedList<IntegracioAccioDto> getLlistaAccions(String integracioCodi) {
@@ -234,6 +224,10 @@ public class IntegracioHelper {
 			integracio.setNom("Serveis SCSP");
 		} else if (INTCODI_ORGANS.equals(codi)) {
 			integracio.setNom("Organs gestors");
+		} else if (INTCODI_USUARIS.equals(codi)) {
+			integracio.setNom("Usuaris");
+		} else if (INTCODI_EXPLOTACIO.equals(codi)) {
+			integracio.setNom("Explotació de dades");
 		}
 		return integracio;
 	}

@@ -3,11 +3,10 @@
  */
 package es.caib.pinbal.core.repository;
 
-import es.caib.pinbal.client.dadesobertes.DadesObertesRespostaConsulta;
 import es.caib.pinbal.core.dto.CarregaDto;
+import es.caib.pinbal.core.dto.EstatTipus;
+import es.caib.pinbal.core.dto.JustificantEstat;
 import es.caib.pinbal.core.model.Consulta;
-import es.caib.pinbal.core.model.Consulta.EstatTipus;
-import es.caib.pinbal.core.model.Consulta.JustificantEstat;
 import es.caib.pinbal.core.model.Entitat;
 import es.caib.pinbal.core.model.ProcedimentServei;
 import es.caib.pinbal.core.model.Usuari;
@@ -29,92 +28,6 @@ import java.util.List;
  * @author Limit Tecnologies <limit@limit.es>
  */
 public interface ConsultaRepository extends JpaRepository<Consulta, Long> {
-
-	@Query(	"select " +
-			"    c.procedimentServei.id, " +
-			"    sum(case when c.recobriment = true and c.estat = :estatOk then 1 else 0 end), " +
-			"    sum(case when c.recobriment = true and c.estat = :estatError then 1 else 0 end), " +
-			"    sum(case when c.recobriment = true and c.estat <> :estatOk and c.estat <> :estatError then 1 else 0 end), " +
-			"    sum(case when c.recobriment = false and c.estat = :estatOk then 1 else 0 end), " +
-			"    sum(case when c.recobriment = false and c.estat = :estatError then 1 else 0 end), " +
-			"    sum(case when c.recobriment = false and c.estat <> :estatOk and c.estat <> :estatError then 1 else 0 end) " +
-			"from " +
-			"    Consulta c " +
-			"where " +
-			"    (:esNullEntitatId = true or c.entitat.id = :entitatId) " +
-			"and (:esNullCreatedBy = true or c.createdBy = :createdBy) " +
-			"and (:esNullProcedimentId = true or c.procediment.id = :procedimentId) " +
-			"and (:esNullServeiCodi = true or c.serveiCodi = :serveiCodi) " +
-			"and (:esNullEstat = true or c.estat = :estat) " +
-			"and (:esNullDataInici = true or c.createdDate >= :dataInici) " +
-			"and (:esNullDataFi = true or c.createdDate <= :dataFi) " +
-			"group by " +
-			"    c.procedimentServei.id," +
-			"    c.procediment.nom, " +
-			"    c.serveiCodi " +
-			"order by " +
-			"    c.procediment.nom, " +
-			"    c.serveiCodi")
-	public List<Object[]> countByProcedimentServei(
-			@Param("esNullEntitatId") boolean esNullEntitatId,
-			@Param("entitatId") Long entitatId,
-			@Param("esNullCreatedBy") boolean esNullCreatedBy,
-			@Param("createdBy") Usuari createdBy,
-			@Param("esNullProcedimentId") boolean esNullProcedimentId,
-			@Param("procedimentId") Long procedimentId,
-			@Param("esNullServeiCodi") boolean esNullServeiCodi,
-			@Param("serveiCodi") String serveiCodi,
-			@Param("esNullEstat") boolean esNullEstat,
-			@Param("estat") EstatTipus estat,
-			@Param("esNullDataInici") boolean esNullDataInici,
-			@Param("dataInici") Date dataInici,
-			@Param("esNullDataFi") boolean esNullDataFi,
-			@Param("dataFi") Date dataFi,
-			@Param("estatOk") EstatTipus estatOk,
-			@Param("estatError") EstatTipus estatError);
-
-	@Query(	"select " +
-			"    c.procedimentServei.id, " +
-			"    sum(case when c.recobriment = true and c.estat = :estatOk then 1 else 0 end), " +
-			"    sum(case when c.recobriment = true and c.estat = :estatError then 1 else 0 end), " +
-			"    sum(case when c.recobriment = true and c.estat <> :estatOk and c.estat <> :estatError then 1 else 0 end), " +
-			"    sum(case when c.recobriment = false and c.estat = :estatOk then 1 else 0 end), " +
-			"    sum(case when c.recobriment = false and c.estat = :estatError then 1 else 0 end), " +
-			"    sum(case when c.recobriment = false and c.estat <> :estatOk and c.estat <> :estatError then 1 else 0 end) " +
-			"from " +
-			"    Consulta c " +
-			"where " +
-			"    (:esNullEntitatId = true or c.entitat.id = :entitatId) " +
-			"and (:esNullCreatedBy = true or c.createdBy = :createdBy) " +
-			"and (:esNullProcedimentId = true or c.procediment.id = :procedimentId) " +
-			"and (:esNullServeiCodi = true or c.serveiCodi = :serveiCodi) " +
-			"and (:esNullEstat = true or c.estat = :estat) " +
-			"and (:esNullDataInici = true or c.createdDate >= :dataInici) " +
-			"and (:esNullDataFi = true or c.createdDate <= :dataFi) " +
-			"group by " +
-			"    c.procedimentServei.id," +
-			"    c.serveiCodi, " +
-			"    c.procediment.nom " +
-			"order by " +
-			"    c.serveiCodi, " +
-			"    c.procediment.nom")
-	public List<Object[]> countByServeiProcediment(
-			@Param("esNullEntitatId") boolean esNullEntitatId,
-			@Param("entitatId") Long entitatId,
-			@Param("esNullCreatedBy") boolean esNullCreatedBy,
-			@Param("createdBy") Usuari createdBy,
-			@Param("esNullProcedimentId") boolean esNullProcedimentId,
-			@Param("procedimentId") Long procedimentId,
-			@Param("esNullServeiCodi") boolean esNullServeiCodi,
-			@Param("serveiCodi") String serveiCodi,
-			@Param("esNullEstat") boolean esNullEstat,
-			@Param("estat") EstatTipus estat,
-			@Param("esNullDataInici") boolean esNullDataInici,
-			@Param("dataInici") Date dataInici,
-			@Param("esNullDataFi") boolean esNullDataFi,
-			@Param("dataFi") Date dataFi,
-			@Param("estatOk") EstatTipus estatOk,
-			@Param("estatError") EstatTipus estatError);
 
 	@Query(	"select " +
 			"    c.entitat.id, " +
@@ -252,117 +165,6 @@ public interface ConsultaRepository extends JpaRepository<Consulta, Long> {
 			@Param("usuari") String usuari,
 			@Param("esNullRecobriment") Boolean esNullRecobriment,
 			@Param("recobriment") Boolean recobriment,
-			Pageable pageable);
-
-	@Query(	"select " +
-			"    new es.caib.pinbal.client.dadesobertes.DadesObertesRespostaConsulta(" +
-			"        c.entitat.unitatArrel, " +
-			"        c.entitat.nom, " +
-			"        c.entitat.cif, " +
-			"        cast(c.entitat.tipus as string), " +
-			"        c.transmision.codigoUnidadTramitadora, " +
-			"        c.transmision.unidadTramitadora, " +
-			"        c.procediment.codi, " +
-			"        c.procediment.nom, " +
-			"        c.serveiScsp.codi, " +
-			"        c.serveiScsp.descripcio, " +
-			"        c.serveiScsp.scspEmisor.nom, " +
-			"        c.serveiScsp.scspEmisor.cif, " +
-			"        c.transmision.consentimiento, " +
-			"        c.transmision.finalidad, " +
-			"        c.titularDocumentTipus, " +
-			"        c.scspSolicitudId, " +
-			"        c.createdDate, " +
-			"        c.recobriment, " +
-			"        cast(c.estat as string)) " +
-			"from" +
-			"    Consulta c " +
-			"where " +
-			"    (:esNullEntitatId = true or c.entitat.id = :entitatId) " +
-			"and (:esNullProcedimentId = true or c.procediment.id = :procedimentId) " +
-			"and (:esNullServeiCodi = true or c.serveiCodi = :serveiCodi) " +
-			"and (:esNullDataInici = true or c.createdDate >= :dataInici) " +
-			"and (:esNullDataFi = true or c.createdDate <= :dataFi) " +
-			"and (c.multiple = false) " +
-			"order by " +
-			"c.createdDate asc")
-	public List<DadesObertesRespostaConsulta> findByOpendata(
-			@Param("esNullEntitatId") boolean esNullEntitatId,
-			@Param("entitatId") Long entitatId,
-			@Param("esNullProcedimentId") boolean esNullProcedimentId,
-			@Param("procedimentId") Long procedimentId,
-			@Param("esNullServeiCodi") boolean esNullServeiCodi,
-			@Param("serveiCodi") String serveiCodi,
-			@Param("esNullDataInici") boolean esNullDataInici,
-			@Param("dataInici") Date dataInici,
-			@Param("esNullDataFi") boolean esNullDataFi,
-			@Param("dataFi") Date dataFi);
-
-	@Query(	"select count(c) " +
-			"  from Consulta c " +
-			" where (:esNullEntitatId = true or c.entitat.id = :entitatId) " +
-			"   and (:esNullProcedimentId = true or c.procediment.id = :procedimentId) " +
-			"   and (:esNullServeiCodi = true or c.serveiCodi = :serveiCodi) " +
-			"   and (:esNullDataInici = true or c.createdDate >= :dataInici) " +
-			"   and (:esNullDataFi = true or c.createdDate <= :dataFi) " +
-			"   and (c.multiple = false) " +
-			" order by " +
-			"c.createdDate asc")
-	Integer countByOpendata(
-			@Param("esNullEntitatId") boolean esNullEntitatId,
-			@Param("entitatId") Long entitatId,
-			@Param("esNullProcedimentId") boolean esNullProcedimentId,
-			@Param("procedimentId") Long procedimentId,
-			@Param("esNullServeiCodi") boolean esNullServeiCodi,
-			@Param("serveiCodi") String serveiCodi,
-			@Param("esNullDataInici") boolean esNullDataInici,
-			@Param("dataInici") Date dataInici,
-			@Param("esNullDataFi") boolean esNullDataFi,
-			@Param("dataFi") Date dataFi);
-
-	@Query(	"select " +
-			"    new es.caib.pinbal.client.dadesobertes.DadesObertesRespostaConsulta(" +
-			"        c.entitat.unitatArrel, " +
-			"        c.entitat.nom, " +
-			"        c.entitat.cif, " +
-			"        cast(c.entitat.tipus as string), " +
-			"        c.transmision.codigoUnidadTramitadora, " +
-			"        c.transmision.unidadTramitadora, " +
-			"        c.procediment.codi, " +
-			"        c.procediment.nom, " +
-			"        c.serveiScsp.codi, " +
-			"        c.serveiScsp.descripcio, " +
-			"        c.serveiScsp.scspEmisor.nom, " +
-			"        c.serveiScsp.scspEmisor.cif, " +
-			"        c.transmision.consentimiento, " +
-			"        c.transmision.finalidad, " +
-			"        c.titularDocumentTipus, " +
-			"        c.scspSolicitudId, " +
-			"        c.createdDate, " +
-			"        c.recobriment, " +
-			"        cast(c.estat as string)) " +
-			"from" +
-			"    Consulta c " +
-			"where " +
-			"    (:esNullEntitatId = true or c.entitat.id = :entitatId) " +
-			"and (:esNullProcedimentId = true or c.procediment.id = :procedimentId) " +
-			"and (:esNullServeiCodi = true or c.serveiCodi = :serveiCodi) " +
-			"and (:esNullDataInici = true or c.createdDate >= :dataInici) " +
-			"and (:esNullDataFi = true or c.createdDate <= :dataFi) " +
-			"and (c.multiple = false) " +
-			"order by " +
-			"c.createdDate asc")
-	public Page<DadesObertesRespostaConsulta> findByOpendata(
-			@Param("esNullEntitatId") boolean esNullEntitatId,
-			@Param("entitatId") Long entitatId,
-			@Param("esNullProcedimentId") boolean esNullProcedimentId,
-			@Param("procedimentId") Long procedimentId,
-			@Param("esNullServeiCodi") boolean esNullServeiCodi,
-			@Param("serveiCodi") String serveiCodi,
-			@Param("esNullDataInici") boolean esNullDataInici,
-			@Param("dataInici") Date dataInici,
-			@Param("esNullDataFi") boolean esNullDataFi,
-			@Param("dataFi") Date dataFi,
 			Pageable pageable);
 
 	@Query(	"select" +
@@ -518,4 +320,5 @@ public interface ConsultaRepository extends JpaRepository<Consulta, Long> {
 			value = "ALTER SESSION SET OPTIMIZER_MODE = RULE",
 			nativeQuery = true)
 	public void setSessionOptimizerModeToRule();
+
 }

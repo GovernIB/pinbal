@@ -221,7 +221,8 @@ function showModalEditar(
 		</div>	
 	</form:form>
 
-	<a class="btn btn-primary pull-right" onclick="showModalCrear()"><i class="fas fa-plus"></i>&nbsp;<spring:message code="entitat.usuaris.boto.nou.usuari"/></a>
+<%--	<a class="btn btn-primary pull-right" onclick="showModalCrear()"><i class="fas fa-plus"></i>&nbsp;<spring:message code="entitat.usuaris.boto.nou.usuari"/></a>--%>
+	<a class="btn btn-primary pull-right" href="<c:url value="/auditor/usuari/new"/>" data-toggle="modal" data-refresh-pagina="true"><i class="fa fa-plus"></i>&nbsp;<spring:message code="entitat.usuaris.boto.nou.usuari"/></a>
 	<table id="table-users" class="table table-striped table-bordered" style="width: 100%">
 		<thead>
 			<tr>
@@ -249,7 +250,7 @@ function showModalEditar(
  	<a class="btn btn-primary disabled"><i class="fas fa-pen"></i>&nbsp;<spring:message code="comu.boto.modificar"/></a>
 {{/principal}}
 {{^principal}}
-	<a data-nrow="{{ nrow }}" class="btn-open-modal-edit btn btn-primary"><i class="fas fa-pen"></i>&nbsp;<spring:message code="comu.boto.modificar"/></a>
+	<a href="<c:url value="/auditor/usuari/{{ usuari.codi }}"/>" data-toggle="modal" data-refresh-pagina="true" class="btn-open-modal-edit btn btn-primary"><i class="fas fa-pen"></i>&nbsp;<spring:message code="comu.boto.modificar"/></a>
 {{/principal}}
 </script>
 
