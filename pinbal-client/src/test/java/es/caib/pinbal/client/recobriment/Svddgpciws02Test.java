@@ -70,6 +70,7 @@ public class Svddgpciws02Test {
 		if (ENABLE_LOGGING) {
 			client.enableLogginFilter();
 		}
+		solicitud.setAnioNacimiento("1970");
 		ScspRespuesta respuesta = client.peticionSincrona(Arrays.asList(solicitud));
 		assertNotNull(respuesta);
 		System.out.println("-> peticionSincrona = " + objectToJsonString(respuesta));

@@ -106,7 +106,7 @@ public class ClientSvddgpresidencialegaldocws01 extends ClientBase {
 				if (tipo != null || !isEmptyString(nacionalidad) || fechaExpedicion != null || fechaCaducidad != null) {
 					xmlBuilder.append("<Pasaporte>");
 					if (tipo != null)
-						xmlBuilder.append(xmlOptionalStringParameter(this.tipo.name(), "Sexo"));
+						xmlBuilder.append(xmlOptionalStringParameter(this.tipo.name(), "Tipo"));
 					xmlBuilder.append(xmlOptionalStringParameter(this.nacionalidad, "Nacionalidad"));
 					xmlBuilder.append(xmlOptionalDateParameter(this.fechaExpedicion, "FechaExpedicion"));
 					xmlBuilder.append(xmlOptionalDateParameter(this.fechaCaducidad, "FechaCaducidad"));
