@@ -36,6 +36,7 @@ public class UsuariDto extends AbstractIdentificable<Long> implements Serializab
 	private String departament;
 	private String finalitat;
 	private boolean hasMultiplesEntitats;
+	private NumElementsPaginaEnum numElementsPagina;
 
 	public UsuariDto(
 			String codi,

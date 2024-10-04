@@ -2,6 +2,7 @@ package es.caib.pinbal.webapp.controller;
 
 import es.caib.pinbal.core.dto.EntitatDto;
 import es.caib.pinbal.core.dto.IdiomaEnumDto;
+import es.caib.pinbal.core.dto.NumElementsPaginaEnum;
 import es.caib.pinbal.core.dto.UsuariDto;
 import es.caib.pinbal.core.service.EntitatService;
 import es.caib.pinbal.core.service.ProcedimentService;
@@ -12,6 +13,7 @@ import es.caib.pinbal.webapp.command.UsuariCommand;
 import es.caib.pinbal.webapp.common.EntitatHelper;
 import es.caib.pinbal.webapp.common.RolHelper;
 import es.caib.pinbal.webapp.helper.EnumHelper;
+import es.caib.pinbal.webapp.helper.EnumHelper.HtmlOption;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -24,6 +26,9 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Controlador per al manteniment de usuaris.
  * 
@@ -97,11 +102,8 @@ public class UsuariController extends BaseController{
 	}
 
 	private void emplenaModel(HttpServletRequest request, Model model, Long entitatId) {
-		model.addAttribute(
-				"idiomaEnumOptions",
-				EnumHelper.getOptionsForEnum(
-						IdiomaEnumDto.class,
-						"usuari.form.camp.idioma.enum."));
+		model.addAttribute("idiomaEnumOptions", EnumHelper.getOptionsForEnum(IdiomaEnumDto.class, "usuari.form.camp.idioma.enum."));
+		model.addAttribute("numElementsPaginaEnumOptions", getOptionsForNumElementsPaginaEnum());
 		EntitatDto entitatActual = EntitatHelper.getEntitatActual(request, entitatService);
 		try {
 			if (RolHelper.isRolActualAdministrador(request) || RolHelper.isRolActualSuperauditor(request)) {
@@ -117,5 +119,13 @@ public class UsuariController extends BaseController{
 			log.error("Error recuperant procediments i serveis", e);
 //			throw new RuntimeException(e);
 		}
+	}
+
+	public static List<HtmlOption> getOptionsForNumElementsPaginaEnum() {
+		List<HtmlOption> resposta = new ArrayList<>();
+		for (NumElementsPaginaEnum e: NumElementsPaginaEnum.values()) {
+			resposta.add(new HtmlOption(e.name(), String.valueOf(e.getElements())));
+		}
+		return resposta;
 	}
 }

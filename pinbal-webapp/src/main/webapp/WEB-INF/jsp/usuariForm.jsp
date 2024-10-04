@@ -65,60 +65,87 @@
 	<c:url value="/modal/usuari/configuracio" var="formAction"/>
 	<form:form action="${formAction}" method="post" cssClass="form-horizontal" commandName="usuariCommand" role="form">
 		<form:hidden path="codi"/>
-		<pbl:inputText name="nom" textKey="usuari.form.camp.nom" labelSize="2" disabled="true"/>
-		<pbl:inputText name="nif" textKey="usuari.form.camp.nif" labelSize="2" disabled="true"/>
-		<pbl:inputText name="email" textKey="usuari.form.camp.email" labelSize="2" disabled="true"/>
-		<pbl:inputSelect name="rols" textKey="usuari.form.camp.rols" optionItems="${usuariCommand.rols}" labelSize="2" disabled="true"/>
-		<pbl:inputSelect name="idioma" optionItems="${idiomaEnumOptions}" textKey="usuari.form.camp.idioma" optionValueAttribute="value" optionTextKeyAttribute="text" labelSize="2" disabled="false"/>
+		<div class="panel panel-primary">
+			<div class="panel-heading">
+				<h3 class="panel-title"><spring:message code="usuari.form.valors.usuari" /></h3>
+			</div>
+			<div class="panel-body">
+				<pbl:inputText name="nom" textKey="usuari.form.camp.nom" labelSize="2" disabled="true"/>
+				<pbl:inputText name="nif" textKey="usuari.form.camp.nif" labelSize="2" disabled="true"/>
+				<pbl:inputText name="email" textKey="usuari.form.camp.email" labelSize="2" disabled="true"/>
+				<pbl:inputSelect name="rols" textKey="usuari.form.camp.rols" optionItems="${usuariCommand.rols}" labelSize="2" disabled="true"/>
+				<pbl:inputSelect name="idioma" optionItems="${idiomaEnumOptions}" textKey="usuari.form.camp.idioma" optionValueAttribute="value" optionTextKeyAttribute="text" labelSize="2" disabled="false"/>
+			</div>
+		</div>
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<h3 class="panel-title"><spring:message code="usuari.form.valors.defecte"/></h3>
+			</div>
+			<div class="panel-body">
+				<pbl:inputSelect name="numElementsPagina" optionItems="${numElementsPaginaEnumOptions}" textKey="usuari.form.camp.elements.pagina" optionValueAttribute="value" optionTextAttribute="text" labelSize="2" disabled="false"/>
+			</div>
+		</div>
 		<c:if test="${not isRolActualAdministrador and not isRolActualSuperauditor and usuariCommand.hasMultiplesEntitats}">
-			<fieldset>
-				<legend><spring:message code="usuari.form.valors.defecte"/>: <spring:message code="usuari.form.valors.defecte.entitat"/></legend>
-				<pbl:inputSelect name="entitatId"
-								 optionItems="${entitats}"
-								 optionValueAttribute="id"
-								 optionTextAttribute="nom"
-								 textKey="usuari.form.camp.entitat"
-								 emptyOption="true"
-								 labelSize="2"
-								 optionMinimumResultsForSearch="0"/>
-			</fieldset>
+			<div class="panel panel-default">
+				<div class="panel-heading">
+					<h3 class="panel-title"><spring:message code="usuari.form.valors.defecte"/>: <spring:message code="usuari.form.valors.defecte.entitat"/></h3>
+				</div>
+				<div class="panel-body">
+					<pbl:inputSelect name="entitatId"
+									 optionItems="${entitats}"
+									 optionValueAttribute="id"
+									 optionTextAttribute="nom"
+									 textKey="usuari.form.camp.entitat"
+									 emptyOption="true"
+									 labelSize="2"
+									 optionMinimumResultsForSearch="0"/>
+				</div>
+			</div>
 		</c:if>
-		<fieldset>
-			<legend><spring:message code="usuari.form.valors.defecte"/>: <spring:message code="usuari.form.valors.defecte.consulta.filtre"/></legend>
-			<c:if test="${isRolActualAdministrador or isRolActualSuperauditor}">
-				<pbl:inputSelect name="entitatId"
-								 optionItems="${entitats}"
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<h3 class="panel-title"><spring:message code="usuari.form.valors.defecte"/>: <spring:message code="usuari.form.valors.defecte.consulta.filtre"/></h3>
+			</div>
+			<div class="panel-body">
+				<c:if test="${isRolActualAdministrador or isRolActualSuperauditor}">
+					<pbl:inputSelect name="entitatId"
+									 optionItems="${entitats}"
+									 optionValueAttribute="id"
+									 optionTextAttribute="nom"
+									 textKey="usuari.form.camp.entitat"
+									 emptyOption="true"
+									 labelSize="2"
+									 optionMinimumResultsForSearch="0"/>
+				</c:if>
+				<pbl:inputSelect name="procedimentId"
+								 optionItems="${procediments}"
 								 optionValueAttribute="id"
-								 optionTextAttribute="nom"
-								 textKey="usuari.form.camp.entitat"
+								 optionTextAttribute="codiNom"
+								 textKey="usuari.form.camp.procediment"
+								 placeholderKey="consulta.list.filtre.procediment"
 								 emptyOption="true"
 								 labelSize="2"
 								 optionMinimumResultsForSearch="0"/>
-				</c:if>
-			<pbl:inputSelect name="procedimentId"
-							 optionItems="${procediments}"
-							 optionValueAttribute="id"
-							 optionTextAttribute="codiNom"
-							 textKey="usuari.form.camp.procediment"
-							 placeholderKey="consulta.list.filtre.procediment"
-							 emptyOption="true"
-							 labelSize="2"
-							 optionMinimumResultsForSearch="0"/>
-			<pbl:inputSelect name="serveiCodi"
-							 optionItems="${serveis}"
-							 optionValueAttribute="codi"
-							 optionTextAttribute="codiNom"
-							 textKey="usuari.form.camp.servei"
-							 placeholderKey="consulta.list.filtre.servei"
-							 emptyOption="true"
-							 labelSize="2"
-							 optionMinimumResultsForSearch="0"/>
-		</fieldset>
-	<fieldset>
-		<legend><spring:message code="usuari.form.valors.defecte"/>: <spring:message code="usuari.form.valors.defecte.consulta.form"/></legend>
-		<pbl:inputText name="departament" textKey="consulta.form.camp.departament" labelSize="2"/>
-		<pbl:inputTextarea name="finalitat" textKey="consulta.form.camp.finalitat" labelSize="2"/>
-	</fieldset>
+				<pbl:inputSelect name="serveiCodi"
+								 optionItems="${serveis}"
+								 optionValueAttribute="codi"
+								 optionTextAttribute="codiNom"
+								 textKey="usuari.form.camp.servei"
+								 placeholderKey="consulta.list.filtre.servei"
+								 emptyOption="true"
+								 labelSize="2"
+								 optionMinimumResultsForSearch="0"/>
+			</div>
+		</div>
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<h3 class="panel-title"><spring:message code="usuari.form.valors.defecte"/>: <spring:message code="usuari.form.valors.defecte.consulta.form"/></h3>
+			</div>
+			<div class="panel-body">
+				<pbl:inputText name="departament" textKey="consulta.form.camp.departament" labelSize="2"/>
+				<pbl:inputTextarea name="finalitat" textKey="consulta.form.camp.finalitat" labelSize="2"/>
+			</div>
+		</div>
 		<div id="modal-botons">
 			<button type="submit" class="btn btn-success">
 				<span class="fa fa-save"></span>

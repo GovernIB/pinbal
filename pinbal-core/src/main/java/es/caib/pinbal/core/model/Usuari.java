@@ -3,6 +3,7 @@
  */
 package es.caib.pinbal.core.model;
 
+import es.caib.pinbal.core.dto.NumElementsPaginaEnum;
 import lombok.Getter;
 import org.apache.commons.lang.builder.ToStringBuilder;
 
@@ -88,6 +89,8 @@ public class Usuari implements Serializable {
 	private String departament;
 	@Column(name = "finalitat", length = 250)
 	private String finalitat;
+	@Column(name = "num_elements_pagina")
+	private Integer numElementsPagina;
 
 	@Version
 	private long version = 0;
@@ -172,13 +175,15 @@ public class Usuari implements Serializable {
 			Long procedimentId,
 			String serveiCodi,
 			String departament,
-			String finalitat) {
+			String finalitat,
+			Integer numElementsPagina) {
 
 		this.idioma = idioma;
 		this.procedimentId = procedimentId;
         this.serveiCodi = serveiCodi;
         this.departament = departament;
         this.finalitat = finalitat;
+		this.numElementsPagina = numElementsPagina;
 	}
 	public void updateValorsPerDefecte(
 			String idioma,
@@ -186,7 +191,8 @@ public class Usuari implements Serializable {
 			String serveiCodi,
 			Long entitatId,
 			String departament,
-			String finalitat) {
+			String finalitat,
+			Integer numElementsPagina) {
 
 		this.idioma = idioma;
 		this.procedimentId = procedimentId;
@@ -194,6 +200,7 @@ public class Usuari implements Serializable {
 		this.entitatId = entitatId;
 		this.departament = departament;
 		this.finalitat = finalitat;
+		this.numElementsPagina = numElementsPagina;
 	}
 	public void moureEntitats(
 			Usuari usuariNou) {
@@ -235,6 +242,7 @@ public class Usuari implements Serializable {
 			built.nom = nom;
 			built.nif = nif;
 			built.inicialitzat = inicialitzat;
+			built.numElementsPagina = NumElementsPaginaEnum.DEU.getElements();
 		}
 
 		/**

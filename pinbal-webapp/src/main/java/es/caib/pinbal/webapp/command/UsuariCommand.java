@@ -3,6 +3,7 @@
  */
 package es.caib.pinbal.webapp.command;
 
+import es.caib.pinbal.core.dto.NumElementsPaginaEnum;
 import es.caib.pinbal.core.dto.UsuariDto;
 import es.caib.pinbal.webapp.helper.ConversioTipusHelper;
 import lombok.Getter;
@@ -35,6 +36,7 @@ public class UsuariCommand implements Serializable {
 	@Size(max = 250)
 	private String finalitat;
 	private boolean hasMultiplesEntitats;
+	private NumElementsPaginaEnum numElementsPagina;
 
 
 	public static UsuariCommand asCommand(UsuariDto dto) {

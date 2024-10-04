@@ -10,6 +10,7 @@ import es.caib.pinbal.core.dto.ConsultaDto;
 import es.caib.pinbal.core.dto.EntitatDto;
 import es.caib.pinbal.core.dto.EntitatUsuariDto;
 import es.caib.pinbal.core.dto.InformeUsuariDto;
+import es.caib.pinbal.core.dto.NumElementsPaginaEnum;
 import es.caib.pinbal.core.dto.OrganGestorDto;
 import es.caib.pinbal.core.dto.ProcedimentDto;
 import es.caib.pinbal.core.dto.ServeiCampDto;
@@ -28,6 +29,7 @@ import es.caib.pinbal.core.model.Procediment;
 import es.caib.pinbal.core.model.ServeiCamp;
 import es.caib.pinbal.core.model.ServeiCampGrup;
 import es.caib.pinbal.core.model.ServeiRegla;
+import es.caib.pinbal.core.model.Usuari;
 import es.caib.pinbal.core.model.llistat.LlistatConsulta;
 import es.caib.pinbal.core.model.llistat.LlistatHistoricConsulta;
 import ma.glasnost.orika.CustomConverter;
@@ -153,6 +155,17 @@ public class DtoMappingHelper {
 						field("usuari.nom", "nom").
 						field("departament", "departament").
 						field("entitat", "entitat").byDefault().toClassMap());
+		mapperFactory.registerClassMap(
+				ClassMapBuilder.map(Usuari.class, UsuariDto.class)
+						.customize(new CustomMapper<Usuari, UsuariDto>() {
+							@Override
+							public void mapAtoB(Usuari usuari, UsuariDto usuariDto, MappingContext context) {
+								super.mapAtoB(usuari, usuariDto, context);
+								usuariDto.setNumElementsPagina(NumElementsPaginaEnum.fromElements(usuari.getNumElementsPagina()));
+							}
+						})
+						.exclude("numElementsPagina")
+						.byDefault().toClassMap());
 		mapperFactory.getConverterFactory().registerConverter(new CustomConverter<DateTime, Date>() {
 			public Date convert(DateTime source, Type<? extends Date> destinationClass) {
 				return source.toDate();

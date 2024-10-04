@@ -175,14 +175,16 @@ public class UsuariServiceImpl implements UsuariService {
 					dto.getServeiCodi(),
 					dto.getEntitatId(),
 					dto.getDepartament(),
-					dto.getFinalitat());
+					dto.getFinalitat(),
+					dto.getNumElementsPagina() != null ? dto.getNumElementsPagina().getElements() : null);
 		} else {
 			usuari.updateValorsPerDefecte(
 					dto.getIdioma(),
 					dto.getProcedimentId(),
 					dto.getServeiCodi(),
 					dto.getDepartament(),
-					dto.getFinalitat());
+					dto.getFinalitat(),
+					dto.getNumElementsPagina() != null ? dto.getNumElementsPagina().getElements() : null);
 		}
 		return toUsuariDtoAmbRols(usuari);
 	}
