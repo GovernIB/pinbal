@@ -393,7 +393,9 @@ public class JustificantHelper implements MessageSourceAware {
 					new ByteArrayInputStream(baosGeneracio.toByteArray()),
 					extensioSortida,
 					baosConversio);
-			if ("pdf".equalsIgnoreCase(extensioSortida) && nodesTipusDocument != null) {
+			boolean mergeDocuments = nodesTipusDocument != null && !nodesTipusDocument.isEmpty();
+			if ("pdf".equalsIgnoreCase(extensioSortida) && mergeDocuments) {
+				log.info("[JUSTIFICANT] Generant justificant amb documents adjunts");
 				baosConversio = mergePdfFiles(baosConversio.toByteArray(), nodesTipusDocument);
 			}
 			boolean convertirPdfa = isConvertirPdfaJustificant() && "pdf".equalsIgnoreCase(extensioSortida);
@@ -422,16 +424,16 @@ public class JustificantHelper implements MessageSourceAware {
 			document.open();
 			// El primer és el justificant
 			PdfReader justificantReader = new PdfReader(justifiant);
-			for (int page = 0; page < justificantReader.getNumberOfPages(); ++page) {
-				copy.addPage(copy.getImportedPage(justificantReader, ++page));
+			for (int page = 1; page <= justificantReader.getNumberOfPages(); page++) {
+				copy.addPage(copy.getImportedPage(justificantReader, page));
 			}
 			copy.freeReader(justificantReader);
 
 			for (NodeInfo nodeTipusDocument : nodesTipusDocument) {
 				PdfReader reader = new PdfReader(getPdfAmbTitol(nodeTipusDocument));
 				int n = reader.getNumberOfPages();
-				for (int page = 0; page < n;) {
-					copy.addPage(copy.getImportedPage(reader, ++page));
+				for (int page = 1; page <= n; page++) {
+					copy.addPage(copy.getImportedPage(reader, page));
 				}
 				copy.freeReader(reader);
 				reader.close();
