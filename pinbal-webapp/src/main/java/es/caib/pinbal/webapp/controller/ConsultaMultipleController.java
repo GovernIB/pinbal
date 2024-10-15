@@ -164,6 +164,7 @@ public class ConsultaMultipleController extends BaseController {
 
 		}else { 
 			List<ServerSideColumn> cols = serverSideRequest.getColumns();
+			cols.get(0).setData("peticioId");
 			cols.get(1).setData("data");
 			cols.get(2).setData("procedimentCodi");
 			cols.get(3).setData("serveiCodi");
@@ -179,6 +180,7 @@ public class ConsultaMultipleController extends BaseController {
 						ConsultaFiltreCommand.asDto(command),
 						serverSideRequest.toPageable());
 			}
+			cols.get(0).setData("scspPeticionId");
 			cols.get(1).setData("creacioData");
 			cols.get(2).setData("procedimentCodiNom");
 			cols.get(3).setData("serveiCodiNom");
