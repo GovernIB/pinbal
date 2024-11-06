@@ -64,7 +64,7 @@ public class UsuariServiceImpl implements UsuariService {
 	@Resource
 	private UsuariHelper usuariHelper;
 	@Resource
-	private PluginHelper externHelper;
+	private PluginHelper pluginHelper;
 
 	@Resource
 	private MutableAclService aclService;
@@ -145,7 +145,7 @@ public class UsuariServiceImpl implements UsuariService {
 		Usuari usuari = usuariRepository.findOne(auth.getName());
 		if (usuari.getEmail() == null || usuari.getEmail().isEmpty()) {
 			try {
-				DadesUsuari dadesUsuari = externHelper.dadesUsuariConsultarAmbUsuariCodi(auth.getName());
+				DadesUsuari dadesUsuari = pluginHelper.dadesUsuariConsultarAmbUsuariCodi(auth.getName());
 				usuari.updateEmail(dadesUsuari.getEmail());
 			} catch (SistemaExternException ex) {
 				log.error("Error al consultar les dades de l'usuari (codi=" + auth.getName() + ") al sistema extern", ex);
@@ -205,7 +205,15 @@ public class UsuariServiceImpl implements UsuariService {
 		);
 	}
 
-    @Override
+	@Override
+	public List<UsuariDto> findLikeCodiONomONif(String text) {
+		return dtoMappingHelper.getMapperFacade().mapAsList(
+				usuariRepository.findByCodiOrNomOrNif(text),
+				UsuariDto.class
+		);
+	}
+
+	@Override
     public EntitatUsuariDto getEntitatUsuari(Long entitatId, String usuariCodi) {
 		EntitatUsuari entitatUsuari = entitatUsuariRepository.findByEntitatIdAndUsuariCodi(
 				entitatId,
@@ -219,13 +227,31 @@ public class UsuariServiceImpl implements UsuariService {
 	@Transactional(readOnly = true)
 	@Override
 	public UsuariDto getUsuariExtern(String codi) throws Exception {
-		DadesUsuari dadesUsuari = externHelper.dadesUsuariConsultarAmbUsuariCodi(codi);
+		DadesUsuari dadesUsuari = pluginHelper.dadesUsuariConsultarAmbUsuariCodi(codi);
 		return UsuariDto.builder()
 				.codi(dadesUsuari.getCodi())
 				.nom(dadesUsuari.getNom())
 				.nif(dadesUsuari.getNif())
 				.email(dadesUsuari.getEmail())
 				.build();
+	}
+
+	@Override
+	public List<UsuariDto> getUsuarisExterns(String text) throws Exception {
+		List<UsuariDto> usuaris = new ArrayList<>();
+
+		List<DadesUsuari> dadesUsuaris = pluginHelper.dadesUsuariLikeCodiNomOrNif(text);
+		if (dadesUsuaris != null) {
+			for (DadesUsuari dadesUsuari : dadesUsuaris) {
+				usuaris.add(UsuariDto.builder()
+						.codi(dadesUsuari.getCodi())
+						.nom(dadesUsuari.getNom())
+						.nif(dadesUsuari.getNif())
+						.email(dadesUsuari.getEmail())
+						.build());
+			}
+		}
+		return usuaris;
 	}
 
 	@Transactional(rollbackFor = EntitatNotFoundException.class)
@@ -447,14 +473,14 @@ public class UsuariServiceImpl implements UsuariService {
 			DadesUsuari dadesUsuari = null;
 			if (idPerNif) {
 				try {
-					dadesUsuari = externHelper.dadesUsuariConsultarAmbUsuariNif(nif);
+					dadesUsuari = pluginHelper.dadesUsuariConsultarAmbUsuariNif(nif);
 				} catch (SistemaExternException ex) {
 					log.warn("No s'han trobat les dades de l'usuari (nif=" + nif + ") al sistema extern");
 					throw new UsuariExternNotFoundException();
 				}
 			} else {
 				try {
-					dadesUsuari = externHelper.dadesUsuariConsultarAmbUsuariCodi(codi);
+					dadesUsuari = pluginHelper.dadesUsuariConsultarAmbUsuariCodi(codi);
 				} catch (SistemaExternException ex) {
 					log.warn("No s'han trobat les dades de l'usuari (codi=" + codi + ") al sistema extern");
 					throw new UsuariExternNotFoundException();

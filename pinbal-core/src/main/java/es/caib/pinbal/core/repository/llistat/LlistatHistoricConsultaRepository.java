@@ -54,7 +54,7 @@ public interface LlistatHistoricConsultaRepository extends JpaRepository<Llistat
     public Page<LlistatHistoricConsulta> findByCreatedByAndFiltrePaginat(
             @Param("entitatId") Long entitatId,
             @Param("esNullUsuariCodi") boolean esNullUsuariCodi,
-            @Param("usuariCodi") Usuari usuariCodi,
+            @Param("usuariCodi") String usuariCodi,
             @Param("esNullPeticioId") boolean esNullPeticioId,
             @Param("peticioId") String peticioId,
             @Param("esNullProcedimentId") boolean esNullProcedimentId,

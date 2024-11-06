@@ -182,16 +182,28 @@ public class UsuariServiceBean implements UsuariService {
         return delegate.findLikeCodiONom(text);
     }
 
-    @Override
+	@Override
+	@RolesAllowed({"PBL_ADMIN", "PBL_REPRES", "PBL_AUDIT", "PBL_SUPERAUD", "PBL_WS", "tothom"})
+	public List<UsuariDto> findLikeCodiONomONif(String text) {
+		return delegate.findLikeCodiONomONif(text);
+	}
+
+	@Override
 	@RolesAllowed({"PBL_ADMIN", "PBL_REPRES", "PBL_AUDIT", "PBL_SUPERAUD", "PBL_WS", "tothom"})
 	public EntitatUsuariDto getEntitatUsuari(Long entitatId, String usuariCodi) {
         return delegate.getEntitatUsuari(entitatId, usuariCodi);
     }
 
     @Override
-	@RolesAllowed({"PBL_ADMIN", "PBL_REPRES", "PBL_AUDIT"})
+	@RolesAllowed({"PBL_ADMIN", "PBL_REPRES", "PBL_AUDIT", "PBL_SUPERAUD", "PBL_WS", "tothom"})
     public UsuariDto getUsuariExtern(String codi) throws Exception {
         return delegate.getUsuariExtern(codi);
     }
+
+	@Override
+	@RolesAllowed({"PBL_ADMIN", "PBL_REPRES", "PBL_AUDIT", "PBL_SUPERAUD", "PBL_WS", "tothom"})
+	public List<UsuariDto> getUsuarisExterns(String text) throws Exception {
+		return delegate.getUsuarisExterns(text);
+	}
 
 }

@@ -8,7 +8,7 @@
 	pageContext.setAttribute("isRolActualAdministrador", es.caib.pinbal.webapp.common.RolHelper.isRolActualAdministrador(request));
 	pageContext.setAttribute("isRolActualSuperauditor", es.caib.pinbal.webapp.common.RolHelper.isRolActualSuperauditor(request));
 %>
-<c:url value="/usuariajax/usuari/item/" var="urlConsultaUsuari"/>
+<c:url value="/usuariajax/usuari/extern/" var="urlConsultaUsuariExtern"/>
 <html>
 <head>
 	<title>
@@ -26,7 +26,7 @@
 	<script>
 		function getUserData(codi) {
 			$.ajax({
-				url: '${urlConsultaUsuari}' + codi,
+				url: '${urlConsultaUsuariExtern}' + codi,
 				type: 'GET',
 				success: function (resposta) {
 					$('#codi_').val(resposta.codi);
@@ -65,12 +65,13 @@
 	</script>
 </head>
 <body>
-	<c:url value="/usuariajax/usuari" var="urlConsultaUsuaris"/>
+	<c:url value="/usuariajax/usuari" var="urlConsultaUsuari"/>
+	<c:url value="/usuariajax/usuari/externs" var="urlConsultaUsuaris"/>
 	<c:url value="/modal/representant/usuari/save" var="formAction"/>
 	<form:form action="${formAction}" method="post" cssClass="form-horizontal" commandName="entitatUsuariCommand" role="form">
 		<pbl:inputSuggest
 				name="codi"
-				urlConsultaInicial="${urlConsultaUsuaris}"
+				urlConsultaInicial="${urlConsultaUsuari}"
 				urlConsultaLlistat="${urlConsultaUsuaris}"
 				textKey="admin.consulta.list.filtre.usuari"
 				suggestValue="codi"

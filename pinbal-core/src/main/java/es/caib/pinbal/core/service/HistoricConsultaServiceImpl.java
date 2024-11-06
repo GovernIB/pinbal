@@ -1172,7 +1172,7 @@ public class HistoricConsultaServiceImpl implements HistoricConsultaService, App
 			paginaConsultes = llistatHistoricConsultaRepository.findByCreatedByAndFiltrePaginat(
 					entitat.getId(),
 					usuariCodi == null,
-					(usuariCodi != null) ? usuariRepository.findOne(usuariCodi) : null,
+					usuariCodi,
 					filtre.getScspPeticionId() == null || filtre.getScspPeticionId().isEmpty(),
 					filtre.getScspPeticionId(),
 					filtre.getProcedimentId() == null,

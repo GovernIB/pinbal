@@ -50,7 +50,7 @@ public class EntitatUsuariCommand {
 	private boolean rolAuditor;
 	private boolean rolAplicacio;
 	private boolean afegir = false;
-	private boolean actiu;
+	private boolean actiu = true;
 
 	public EntitatUsuariCommand() {}
 	public EntitatUsuariCommand(Long id) {

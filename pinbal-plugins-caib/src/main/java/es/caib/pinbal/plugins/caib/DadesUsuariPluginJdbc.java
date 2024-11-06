@@ -3,23 +3,21 @@
  */
 package es.caib.pinbal.plugins.caib;
 
+import es.caib.pinbal.plugin.PropertiesHelper;
+import es.caib.pinbal.plugins.DadesUsuari;
+import es.caib.pinbal.plugins.DadesUsuariPlugin;
+import es.caib.pinbal.plugins.SistemaExternException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.naming.Context;
-import javax.naming.InitialContext;
-import javax.sql.DataSource;
-
-import es.caib.pinbal.plugin.PropertiesHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import es.caib.pinbal.plugins.DadesUsuari;
-import es.caib.pinbal.plugins.DadesUsuariPlugin;
-import es.caib.pinbal.plugins.SistemaExternException;
 
 /**
  * Implementació del plugin de consulta de dades d'usuaris emprant JDBC.
@@ -44,6 +42,24 @@ public class DadesUsuariPluginJdbc implements DadesUsuariPlugin {
 				getJdbcQueryUsuariNif(),
 				"nif",
 				usuariNif);
+	}
+
+	@Override
+	public DadesUsuari consultarAmbUsuariNom(String usuariNom) throws SistemaExternException {
+		LOGGER.debug("Consulta de les dades de l'usuari (nom=" + usuariNom + ")");
+		return consultaDadesUsuari(
+				getJdbcQueryUsuariNom(),
+				"nom",
+				usuariNom);
+	}
+
+	@Override
+	public List<DadesUsuari> consultarAmbUsuariAny(String text) throws SistemaExternException {
+		LOGGER.debug("Consulta de les dades dels usuaris (text=" + text + ")");
+		return consultaDadesUsuariList(
+				getJdbcQueryUsuariAny(),
+				"text",
+				text);
 	}
 
 
@@ -206,6 +222,12 @@ public class DadesUsuariPluginJdbc implements DadesUsuariPlugin {
 	}
 	private String getJdbcQueryUsuariNif() {
 		return PropertiesHelper.getProperties().getProperty("es.caib.pinbal.plugin.dades.usuari.jdbc.query.nif");
+	}
+	private String getJdbcQueryUsuariNom() {
+		return PropertiesHelper.getProperties().getProperty("es.caib.pinbal.plugin.dades.usuari.jdbc.query.nom");
+	}
+	private String getJdbcQueryUsuariAny() {
+		return PropertiesHelper.getProperties().getProperty("es.caib.pinbal.plugin.dades.usuari.jdbc.query.any");
 	}
 	private String getJdbcQueryUsuariRols() {
 		return PropertiesHelper.getProperties().getProperty("es.caib.pinbal.plugin.dades.usuari.jdbc.query.rols");
