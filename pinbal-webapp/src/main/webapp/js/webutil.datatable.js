@@ -9,7 +9,6 @@
 			length = elements;
 		}
 	});
-	debugger;
 	$.extend(true, $.fn.dataTable.defaults, {
 		dom: "<'row'<'col-md-6'i><'col-md-6'>><'row'<'col-md-12'rt>><'row'<'col-md-6'l><'col-md-6'p>>",
 		pageLength: length,
@@ -29,10 +28,8 @@
 					var botons = $('<div class="btn-group"></div>');
 					$('option', label).each(function() {
 						var active = ($(this).val() == settings_.pageLength);
-						debugger;
 						botons.append('<button value="' + $(this).val() + '" class="btn btn-default' + ((active) ? ' active' : '') + '">' + $(this).val() + '</button>')
 					});
-					debugger;
 					var botoActiu = $('button.active', botons);
 					if (botoActiu.length == 0) {
 						botons.find('button[value="' + length + '"]').addClass('active');
