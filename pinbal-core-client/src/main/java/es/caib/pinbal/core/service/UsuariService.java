@@ -234,6 +234,8 @@ public interface UsuariService {
 	public UsuariDto getUsuariActual();
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_REPRES') or hasRole('ROLE_DELEG') or hasRole('ROLE_AUDIT')")
 	public String getIdiomaUsuariActual();
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_REPRES') or hasRole('ROLE_DELEG') or hasRole('ROLE_AUDIT')")
+	public Integer getNumElementsPaginaDefecte();
 
 	/**
 	 * Modifica la configuració de l'usuari actual

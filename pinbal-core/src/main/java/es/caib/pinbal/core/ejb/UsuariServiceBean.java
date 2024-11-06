@@ -166,6 +166,12 @@ public class UsuariServiceBean implements UsuariService {
 
 	@Override
 	@RolesAllowed({"PBL_ADMIN", "PBL_REPRES", "PBL_AUDIT", "tothom"})
+	public Integer getNumElementsPaginaDefecte() {
+		return delegate.getNumElementsPaginaDefecte();
+	}
+
+	@Override
+	@RolesAllowed({"PBL_ADMIN", "PBL_REPRES", "PBL_AUDIT", "tothom"})
 	public UsuariDto updateUsuariActual(UsuariDto dto, boolean updateEntitat) {
 		return delegate.updateUsuariActual(dto, updateEntitat);
 	}

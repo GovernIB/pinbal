@@ -162,6 +162,14 @@ public class UsuariServiceImpl implements UsuariService {
 		return usuari != null ? usuari.getIdioma() : null;
 	}
 
+	@Override
+	public Integer getNumElementsPaginaDefecte() {
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		log.debug("Obtenint numElementsPaginaDefecte de usuari actual");
+		Usuari usuari = usuariRepository.findOne(auth.getName());
+		return usuari != null && usuari.getNumElementsPagina() != null ? usuari.getNumElementsPagina(): 10;
+	}
+
 	@Transactional
 	@Override
 	public UsuariDto updateUsuariActual(UsuariDto dto, boolean updateEntitat) {
