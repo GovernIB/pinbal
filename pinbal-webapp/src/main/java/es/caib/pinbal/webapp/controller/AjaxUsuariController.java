@@ -53,6 +53,16 @@ public class AjaxUsuariController extends BaseController{
 		return usuariService.getDades(codi);
 	}
 
+	@RequestMapping(value = "/usuari/externs/{text}", method = RequestMethod.GET)
+	@ResponseBody
+	public List<UsuariDto> getUsuarisExterns(HttpServletRequest request, @PathVariable String text, Model model) throws Exception {
+		try {
+			text = URLDecoder.decode(request.getRequestURI().split("/")[5], StandardCharsets.UTF_8.name());
+		} catch (UnsupportedEncodingException e) { }
+
+		return usuariService.getUsuarisExterns(text);
+	}
+
 	@RequestMapping(value = "/usuari/extern/{codi}", method = RequestMethod.GET)
 	@ResponseBody
 	public UsuariDto getUsuariExtern(HttpServletRequest request, @PathVariable String codi, Model model) throws Exception {
@@ -68,7 +78,7 @@ public class AjaxUsuariController extends BaseController{
 		List<UsuariDto> usuariList = new ArrayList<UsuariDto>();
 
 		if (!isBlank(text)) {
-			usuariList = usuariService.findLikeCodiONom(text);
+			usuariList = usuariService.findLikeCodiONomONif(text);
 		}
 		
 		return usuariList;

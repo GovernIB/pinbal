@@ -234,6 +234,8 @@ public interface UsuariService {
 	public UsuariDto getUsuariActual();
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_REPRES') or hasRole('ROLE_DELEG') or hasRole('ROLE_AUDIT')")
 	public String getIdiomaUsuariActual();
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_REPRES') or hasRole('ROLE_DELEG') or hasRole('ROLE_AUDIT')")
+	public Integer getNumElementsPaginaDefecte();
 
 	/**
 	 * Modifica la configuració de l'usuari actual
@@ -247,8 +249,14 @@ public interface UsuariService {
     public List<UsuariDto> findLikeCodiONom(String text);
 
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_REPRES') or hasRole('ROLE_DELEG') or hasRole('ROLE_AUDIT') or hasRole('ROLE_SUPERAUD') or hasRole('ROLE_WS')")
+	public List<UsuariDto> findLikeCodiONomONif(String text);
+
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_REPRES') or hasRole('ROLE_DELEG') or hasRole('ROLE_AUDIT') or hasRole('ROLE_SUPERAUD') or hasRole('ROLE_WS')")
 	public EntitatUsuariDto getEntitatUsuari(Long entitatId, String usuariCodi);
 
-	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_REPRES') or hasRole('ROLE_AUDIT')")
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_REPRES') or hasRole('ROLE_DELEG') or hasRole('ROLE_AUDIT') or hasRole('ROLE_SUPERAUD') or hasRole('ROLE_WS')")
     public UsuariDto getUsuariExtern(String codi) throws Exception;
+
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_REPRES') or hasRole('ROLE_DELEG') or hasRole('ROLE_AUDIT') or hasRole('ROLE_SUPERAUD') or hasRole('ROLE_WS')")
+	List<UsuariDto> getUsuarisExterns(String text) throws Exception;
 }

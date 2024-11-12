@@ -91,6 +91,25 @@ public class PluginHelper {
 					ex);
 		}
 	}
+
+	public DadesUsuari dadesUsuariConsultarAmbUsuariCodiOrNif(String codiOrNif) throws SistemaExternException {
+		DadesUsuari dadesUsuari = dadesUsuariConsultarAmbUsuariCodi(codiOrNif);
+		if (dadesUsuari == null) {
+			dadesUsuari = dadesUsuariConsultarAmbUsuariNif(codiOrNif);
+		}
+		return dadesUsuari;
+	}
+
+	public List<DadesUsuari> dadesUsuariLikeCodiNomOrNif(String text) throws SistemaExternException {
+		try {
+			return getDadesUsuariPlugin().consultarAmbUsuariAny(text);
+		} catch (SistemaExternException ex) {
+			LOGGER.error("Error al consultar en el plugin de dades d'usuari", ex);
+			throw ex;
+		} catch (Exception ex) {
+			throw new SistemaExternException("Error al crear la instància del plugin de dades d'usuari", ex);
+		}
+	}
 	
 	public List<DadesUsuari> dadesUsuariFindAmbGrup(String grupCodi) throws SistemaExternException {
 

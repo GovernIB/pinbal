@@ -21,6 +21,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -99,6 +100,12 @@ public class UsuariController extends BaseController{
 				request,
 				"redirect:/",
 				"usuari.controller.modificat.ok");
+	}
+
+	@RequestMapping(value = "/num/elements/pagina/defecte", method = RequestMethod.GET)
+	@ResponseBody
+	public Integer getNumElementsPaginaDefecte(HttpServletRequest request, Model model) {
+		return usuariService.getNumElementsPaginaDefecte();
 	}
 
 	private void emplenaModel(HttpServletRequest request, Model model, Long entitatId) {

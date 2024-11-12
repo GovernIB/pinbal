@@ -29,4 +29,9 @@ public interface UsuariRepository extends JpaRepository<Usuari, String> {
 			"   or lower(nom) like lower(concat('%', :text, '%'))")
 	public List<Usuari> findByCodiOrNom(@Param("text") String text);
 
+	@Query("from Usuari " +
+			"where lower(codi) like lower(concat('%', :text, '%')) " +
+			"   or lower(nom) like lower(concat('%', :text, '%')) " +
+			"   or lower(nif) like lower(concat('%', :text, '%'))")
+	public List<Usuari> findByCodiOrNomOrNif(String text);
 }

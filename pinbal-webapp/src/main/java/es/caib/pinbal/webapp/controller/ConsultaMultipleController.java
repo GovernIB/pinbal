@@ -164,11 +164,10 @@ public class ConsultaMultipleController extends BaseController {
 
 		}else { 
 			List<ServerSideColumn> cols = serverSideRequest.getColumns();
-			cols.get(1).setData("createdDate");
-//			cols.get(2).setData("procediment.nom");
-			cols.get(2).setData("procediment.codi");
-//			cols.get(3).setData("serveiScsp.descripcio");
-			cols.get(3).setData("serveiScsp.codi");
+			cols.get(0).setData("peticioId");
+			cols.get(1).setData("data");
+			cols.get(2).setData("procedimentCodi");
+			cols.get(3).setData("serveiCodi");
 
 			if (isHistoric(request)) {
 				page = historicConsultaService.findMultiplesByFiltrePaginatPerDelegat(
@@ -181,6 +180,7 @@ public class ConsultaMultipleController extends BaseController {
 						ConsultaFiltreCommand.asDto(command),
 						serverSideRequest.toPageable());
 			}
+			cols.get(0).setData("scspPeticionId");
 			cols.get(1).setData("creacioData");
 			cols.get(2).setData("procedimentCodiNom");
 			cols.get(3).setData("serveiCodiNom");

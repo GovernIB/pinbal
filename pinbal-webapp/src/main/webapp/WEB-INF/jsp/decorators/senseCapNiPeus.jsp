@@ -11,6 +11,7 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 	<meta name="description" content=""/>
 	<meta name="author" content=""/>
+	<script type="text/javascript">const ctxPath = "${pageContext.request.contextPath}"</script>
 	<!-- Estils CSS -->
 	<link href="<c:url value="/webjars/bootstrap/3.3.6/css/bootstrap.min.css"/>" rel="stylesheet"/>
 	<link href="<c:url value="/webjars/font-awesome/5.13.1/css/all.min.css"/>" rel="stylesheet"/>

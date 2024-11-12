@@ -1,0 +1,2 @@
+-- #305
+INSERT INTO pbl_config (key, value, description_key, group_code, position, source_property, type_code) VALUES ('es.caib.pinbal.plugin.dades.usuari.jdbc.query.any', 'select usu_codi, usu_nom, usu_nif, usu_codi||''@caib.es'' from sc_wl_usuari where usu_codi like ''%'' || :text || ''%'' or usu_nif like ''%'' || :text || ''%'' or usu_nom like ''%'' || :text || ''%''', 'propietat.plugin.dades.usuari.jdbc.query.any', 'USUARIS', '6', 'DATABASE', 'TEXT');
