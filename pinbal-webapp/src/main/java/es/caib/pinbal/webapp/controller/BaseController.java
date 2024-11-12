@@ -3,18 +3,23 @@
  */
 package es.caib.pinbal.webapp.controller;
 
-import es.caib.pinbal.webapp.common.AlertHelper;
-import es.caib.pinbal.webapp.helper.AjaxHelper;
-import es.caib.pinbal.webapp.helper.ModalHelper;
-import org.springframework.context.MessageSource;
-import org.springframework.context.MessageSourceAware;
-import org.springframework.web.servlet.support.RequestContext;
+import java.io.IOException;
+import java.util.Locale;
 
 import javax.activation.MimetypesFileTypeMap;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.util.Locale;
+
+import org.springframework.beans.propertyeditors.StringTrimmerEditor;
+import org.springframework.context.MessageSource;
+import org.springframework.context.MessageSourceAware;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.InitBinder;
+import org.springframework.web.servlet.support.RequestContext;
+
+import es.caib.pinbal.webapp.common.AlertHelper;
+import es.caib.pinbal.webapp.helper.AjaxHelper;
+import es.caib.pinbal.webapp.helper.ModalHelper;
 
 /**
  * Controlador base que implementa funcionalitats comunes.
@@ -206,6 +211,17 @@ public class BaseController implements MessageSourceAware {
 
 	public void setMessageSource(MessageSource messageSource) {
 		this.messageSource = messageSource;
+	}
+	
+	/** Per afegir el trim de les dades provinents dels formularis per evitar espais en blanc davant i darrera
+	 * els valors.
+	 * 
+	 * @param binder
+	 */
+	@InitBinder
+	public void initBinderBaseController ( WebDataBinder binder ) {
+		StringTrimmerEditor stringtrimmer = new StringTrimmerEditor(true);
+		binder.registerCustomEditor(String.class, stringtrimmer);
 	}
 
 }

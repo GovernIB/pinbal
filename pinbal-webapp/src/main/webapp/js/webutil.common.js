@@ -699,6 +699,21 @@ $(document).ajaxError(function(event, jqxhr, ajaxSettings, thrownError) {
 	}
 	$(document).ready(function() {
 		$(this).webutilTogglesEval();
+		
+		// Esborram tots els espais en blanc introduïts al principi i al final dels inputs de formulari
+		let $body = $('body');
+		$body.on('change', 'input', function() {
+			if(this.type !== "file"){
+				this.value = this.value.trim();
+			}
+		});
+
+		$body.on('change', 'textarea', function() {
+			if(this.type !== "file"){
+				this.value = this.value.trim();
+			}
+		});
+		
 	});
 
 }(jQuery));
