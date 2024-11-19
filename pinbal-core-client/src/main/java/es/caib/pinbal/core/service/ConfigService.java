@@ -32,7 +32,6 @@ public interface ConfigService {
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	List<ConfigGroupDto> findAll();
 
-
 	/**
 	 * Procediment que actualitza totes les propietats de configuració per a configurar-les amb
 	 * el valor de les properties configurades a JBoss.
@@ -47,6 +46,9 @@ public interface ConfigService {
 
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	void reiniciarTasques();
+	
+	@PreAuthorize("isAuthenticated()")
+	public String getTempsErrorsMonitorIntegracio() ;
 
 }
 

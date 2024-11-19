@@ -8,6 +8,12 @@ function webutilModalTancarPath() {
 function webutilAjaxEnumPath(enumClass) {
 	return webutilContextPath() + '/enumajax/enum/' + enumClass;
 }
+function webutilClearMissatges(divMissatges) {
+	if (!divMissatges) {		
+		divMissatges = '#contingut-missatges';
+	}
+	$(divMissatges).empty();
+}
 function webutilRefreshMissatges() {
 	$('#contingut-missatges').load(webutilContextPath() + "/index/missatges");
 }

@@ -4,8 +4,9 @@
 package es.caib.pinbal.core.dto;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
-import java.util.Map;
+import java.util.List;
 
 
 /**
@@ -15,13 +16,17 @@ import java.util.Map;
  */
 public class IntegracioAccioDto extends AbstractIdentificable<Long> implements Serializable {
 
-
-
-	private String idPeticio;
+	private Long id;
+	private String idPeticio;	
 	private Date data;
 	private String descripcio;
-	private Map<String, String> parametres;
-	private IntegracioDto integracio;
+
+	//	private Map<String, String> parametres;
+	private List<IntegracioAccioParamDto> parametres = new ArrayList<IntegracioAccioParamDto>();
+
+	//	private IntegracioDto integracio;
+	private String codi;
+	
 	private IntegracioAccioTipusEnumDto tipus;
 	private long tempsResposta;
 	private IntegracioAccioEstatEnumDto estat;
@@ -29,8 +34,6 @@ public class IntegracioAccioDto extends AbstractIdentificable<Long> implements S
 	private String errorDescripcio;
 	private String excepcioMessage;
 	private String excepcioStacktrace;
-	private Long id;
-
 
 	public String getIdPeticio() {
 		return idPeticio;
@@ -40,6 +43,14 @@ public class IntegracioAccioDto extends AbstractIdentificable<Long> implements S
 		this.idPeticio = idPeticio;
 	}
 
+	public String getCodi() {
+		return codi;
+	}
+
+	public void setCodi(String codi) {
+		this.codi = codi;
+	}
+	
 	public Long getId() {
 		return id;
 	}
@@ -58,18 +69,28 @@ public class IntegracioAccioDto extends AbstractIdentificable<Long> implements S
 	public void setDescripcio(String descripcio) {
 		this.descripcio = descripcio;
 	}
-	public Map<String, String> getParametres() {
+	
+//	public Map<String, String> getParametres() {
+//		return parametres;
+//	}
+//	public void setParametres(Map<String, String> parametres) {
+//		this.parametres = parametres;
+//	}
+	
+	public List<IntegracioAccioParamDto> getParametres() {
 		return parametres;
 	}
-	public void setParametres(Map<String, String> parametres) {
+
+	public void setParametres(List<IntegracioAccioParamDto> parametres) {
 		this.parametres = parametres;
 	}
-	public IntegracioDto getIntegracio() {
-		return integracio;
-	}
-	public void setIntegracio(IntegracioDto integracio) {
-		this.integracio = integracio;
-	}
+	
+//	public IntegracioDto getIntegracio() {
+//		return integracio;
+//	}
+//	public void setIntegracio(IntegracioDto integracio) {
+//		this.integracio = integracio;
+//	}
 	public IntegracioAccioTipusEnumDto getTipus() {
 		return tipus;
 	}

@@ -3,6 +3,17 @@
  */
 package es.caib.pinbal.core.helper;
 
+import java.util.Date;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
+
+import org.joda.time.DateTime;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Component;
+
 import es.caib.pinbal.core.dto.ClauPrivadaDto;
 import es.caib.pinbal.core.dto.ConfigDto;
 import es.caib.pinbal.core.dto.ConfigGroupDto;
@@ -10,6 +21,8 @@ import es.caib.pinbal.core.dto.ConsultaDto;
 import es.caib.pinbal.core.dto.EntitatDto;
 import es.caib.pinbal.core.dto.EntitatUsuariDto;
 import es.caib.pinbal.core.dto.InformeUsuariDto;
+import es.caib.pinbal.core.dto.IntegracioAccioDto;
+import es.caib.pinbal.core.dto.IntegracioAccioParamDto;
 import es.caib.pinbal.core.dto.NumElementsPaginaEnum;
 import es.caib.pinbal.core.dto.OrganGestorDto;
 import es.caib.pinbal.core.dto.ProcedimentDto;
@@ -24,6 +37,8 @@ import es.caib.pinbal.core.model.Consulta;
 import es.caib.pinbal.core.model.Entitat;
 import es.caib.pinbal.core.model.EntitatUsuari;
 import es.caib.pinbal.core.model.HistoricConsulta;
+import es.caib.pinbal.core.model.IntegracioAccioEntity;
+import es.caib.pinbal.core.model.IntegracioAccioParamEntity;
 import es.caib.pinbal.core.model.OrganGestor;
 import es.caib.pinbal.core.model.Procediment;
 import es.caib.pinbal.core.model.ServeiCamp;
@@ -40,16 +55,6 @@ import ma.glasnost.orika.MappingContext;
 import ma.glasnost.orika.impl.DefaultMapperFactory;
 import ma.glasnost.orika.metadata.ClassMapBuilder;
 import ma.glasnost.orika.metadata.Type;
-import org.joda.time.DateTime;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
-import org.springframework.stereotype.Component;
-
-import java.util.Date;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
 
 /**
  * Helper per al mapeig de classes del model a DTOs.
@@ -197,6 +202,12 @@ public class DtoMappingHelper {
 						field("pare.codi", "pareCodi").
 						field("pare.nom", "pareNom").
 						field("entitat.nom", "entitatNom").
+						byDefault().toClassMap());
+		mapperFactory.registerClassMap(
+				ClassMapBuilder.map(IntegracioAccioEntity.class, IntegracioAccioDto.class).						
+						byDefault().toClassMap());
+		mapperFactory.registerClassMap(
+				ClassMapBuilder.map(IntegracioAccioParamEntity.class, IntegracioAccioParamDto.class).						
 						byDefault().toClassMap());
 		mapperFactory.registerClassMap(
 				ClassMapBuilder.map(ServeiCampGrup.class, ServeiCampGrupDto.class).

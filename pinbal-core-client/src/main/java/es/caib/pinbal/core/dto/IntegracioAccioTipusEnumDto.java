@@ -11,5 +11,10 @@ package es.caib.pinbal.core.dto;
  */
 public enum IntegracioAccioTipusEnumDto {
 	ENVIAMENT,
-	RECEPCIO
+	RECEPCIO;
+	public static IntegracioAccioTipusEnumDto[] sortedValues() {
+		return new IntegracioAccioTipusEnumDto[] {
+				IntegracioAccioTipusEnumDto.ENVIAMENT,
+				IntegracioAccioTipusEnumDto.RECEPCIO};
+	}
 }

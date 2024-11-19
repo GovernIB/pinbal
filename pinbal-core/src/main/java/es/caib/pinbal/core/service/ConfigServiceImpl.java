@@ -41,6 +41,8 @@ public class ConfigServiceImpl implements ConfigService {
     private PluginHelper pluginHelper;
     @Autowired
     private ScheduleConfig scheduleConfig;
+	@Autowired
+	private ConfigHelper configHelper;
 
     @Override
     @Transactional
@@ -114,4 +116,10 @@ public class ConfigServiceImpl implements ConfigService {
             }
         }
     }
+    
+//    configHelper.getConfig("es.caib.pinbal.monitor.integracio.errors.temps");
+	@Override
+	public String getTempsErrorsMonitorIntegracio() {
+		return "48";
+	}
 }

@@ -18,9 +18,6 @@ import es.caib.pinbal.core.service.exception.NotFoundException;
  */
 public interface AplicacioService {
 
-
-
-
 	/**
 	 * Obté les integracions disponibles.
 	 * 
