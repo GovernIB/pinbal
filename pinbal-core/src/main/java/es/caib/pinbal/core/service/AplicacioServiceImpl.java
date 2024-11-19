@@ -19,6 +19,7 @@ import lombok.extern.slf4j.Slf4j;
  * 
  * @author Limit Tecnologies <limit@limit.es>
  */
+//TODO: Hauriem de convertir aquest Service en el IntegracioAccioService (interficie i implementacio)
 @Slf4j
 @Service
 public class AplicacioServiceImpl implements AplicacioService {

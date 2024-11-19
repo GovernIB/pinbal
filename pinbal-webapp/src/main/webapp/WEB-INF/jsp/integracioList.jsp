@@ -4,6 +4,9 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib tagdir="/WEB-INF/tags/pinbal" prefix="pbl" %>
+<%	request.setAttribute("integracioAccioEstats", es.caib.pinbal.core.dto.IntegracioAccioEstatEnumDto.sortedValues());
+	request.setAttribute("integracioAccioTipus", es.caib.pinbal.core.dto.IntegracioAccioTipusEnumDto.sortedValues());
+%>
 
 <html>
 <head>
@@ -31,6 +34,13 @@
 
 <script>
 $(document).ready(function() {
+	
+	  $('#btnDelete').click(function() {
+	    	$('#btnDelete').addClass('disabled');
+	    	$('#trash-btn-esborrar').hide();
+	    	$('#spin-btn-esborrar').show();
+	    	esborrarEntrades();
+	    });
 	
     $('#table-entitats').DataTable({
     	autoWidth: false,
@@ -91,9 +101,99 @@ $(document).ready(function() {
 	});
 	
 });
+
+function esborrarEntrades() {
+	webutilClearMissatges();
+	$.ajax({
+		url: "<c:url value='/integracio'/>/${codiActual.codi}/esborrar"
+	}).done(function(){
+		refrescarInformacio()
+    	$('#spin-btn-esborrar').hide();
+    	$('#trash-btn-esborrar').show();
+    	$('#btnDelete').removeClass('disabled');
+	});
+}
+
+function refrescarInformacio() {	
+		// Refresca la taula
+		$('#table-entitats').dataTable().fnDraw();
+}
+
+function formatarEstat(estat) {
+
+	const msgOk= '<spring:message code="integracio.list.estat.Ok"/>';
+	const msgError= '<spring:message code="integracio.list.estat.Error"/>';
+	
+	if (estat.id=='OK') {
+		return $('<div><span class="fa fa-check"></span> <span>' + msgOk + '</span></div>');
+	} else if(estat.id=='ERROR') {
+		return $('<div><span class="fas fa-exclamation-triangle"></span> <span>' + msgError + '</span></div>');	
+	} else {
+		return estat.text;
+	}
+}
+
+function formatarTipus(tipus) {
+
+	const msgEnviament= '<spring:message code="integracio.list.tipus.Enviament"/>';
+	const msgRecepcio = '<spring:message code="integracio.list.tipus.Recepcio"/>';
+	
+	if (tipus.id=='ENVIAMENT') {
+		return $('<div><span>' + msgEnviament + '</span></div>');
+	} else if(tipus.id=='RECEPCIO') {
+		return $('<div><span>' + msgRecepcio + '</span></div>');	
+	} else {
+		return tipus.text;
+	}
+}
+
 </script>
 </head>
 <body>
+	
+	<c:set var="formAction"><c:url value='/integracio'></c:url></c:set>
+	<form:form action="${formAction}/${integracioFiltreCommand.codi}" method="post" cssClass="well" modelAttribute="integracioFiltreCommand">
+		
+		<button id="filtrar" type="submit" name="accio" value="filtrar" class="btn btn-primary" style="display:none"></button>
+		
+		<div class="row">
+			<div class="col-md-3">
+				<pbl:inputDate name="data" inline="true" placeholderKey="integracio.list.filtre.data"/>
+			</div>
+			<div class="col-md-3">
+				<pbl:inputText name="descripcio" inline="true" placeholderKey="integracio.list.filtre.descripcio"/>
+			</div>
+			<div class="col-md-3">
+				<pbl:inputText name="idPeticio" inline="true" placeholderKey="integracio.list.filtre.peticio"/>
+			</div> 			
+			<div class="col-md-3">				
+				<pbl:inputSelect
+					name="tipus"
+					inline="true"
+					placeholderKey="integracio.list.filtre.tipus"
+					optionItems="${integracioAccioTipus}"
+					emptyOption="true"
+					formatResult="formatarTipus"
+					formatSelection="formatarTipus"/>				
+			</div>
+			<div class="col-md-3">				
+				<pbl:inputSelect
+					name="estat"
+					inline="true"
+					placeholderKey="integracio.list.filtre.estat"
+					optionItems="${integracioAccioEstats}"
+					emptyOption="true"
+					formatResult="formatarEstat"
+					formatSelection="formatarEstat"/>				
+			</div>
+			<div class="col-md-4 pull-right">
+				<div class="pull-right">					
+					<button id="netejarFiltre" type="submit" name="accio" value="netejar" class="btn btn-default"><spring:message code="comu.boto.netejar"/></button>
+					<button id="filtrar" type="submit" name="accio" value="filtrar" class="ml-2 btn btn-primary"><span class="fa fa-filter"></span> <spring:message code="comu.boto.filtrar"/></button>
+				</div>
+			</div>	
+		</div>
+	</form:form>
 	
 	<ul class="nav nav-tabs" role="tablist">
 		<c:forEach var="integracio" items="${integracions}">
@@ -108,7 +208,16 @@ $(document).ready(function() {
 	</ul>
 	<br/>
 
-	<table id="table-entitats" class="table table-striped table-bordered" style="width: 100%">
+	<table 
+		id="table-entitats"
+		data-toggle="datatable"
+		data-url="<c:url value="/integracio/datatable"/>" 
+		data-search-enabled="false"
+		data-info-type="search"
+		data-default-order="2" 
+		data-default-dir="desc"
+		class="table table-striped table-bordered"
+		style="width: 100%">
 		<thead>
 			<tr>
 				<th data-data="excepcioMessage"></th>
@@ -123,6 +232,17 @@ $(document).ready(function() {
 				<th data-data="id"></th>
 			</tr>
 		</thead>
+	</table>
+	
+	<table style="margin-top: 25px; margin-bottom: 20px; margin-right: 10px; width:100%;">
+		<tr>
+			<td>
+				<button id="btnDelete" type="button" class="btn btn-danger pull-left"><span id="trash-btn-esborrar" class="fa fa-trash-o"></span><span id="spin-btn-esborrar" class="fa fa-cog fa-spin" style="display:none;"></span>&nbsp;&nbsp;<spring:message code="comu.boto.esborrar"/></button>
+			</td>
+<!-- 			<td> -->
+<%-- 				<button id="btnRefresh" type="button" class="btn btn-info pull-right"><span class="fa fa-refresh"></span>&nbsp;&nbsp;<spring:message code="comu.boto.refrescar"/></button> --%>
+<!-- 			</td> -->
+		</tr>
 	</table>
 
 

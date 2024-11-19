@@ -3,21 +3,6 @@
  */
 package es.caib.pinbal.core.helper;
 
-import es.caib.pinbal.core.dto.IntegracioAccioDto;
-import es.caib.pinbal.core.dto.IntegracioAccioEstatEnumDto;
-import es.caib.pinbal.core.dto.IntegracioAccioTipusEnumDto;
-import es.caib.pinbal.core.dto.IntegracioDto;
-import es.caib.pinbal.core.model.Usuari;
-import org.apache.commons.lang.exception.ExceptionUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
-
-import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -25,6 +10,23 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+
+import javax.annotation.Resource;
+
+import org.apache.commons.lang.exception.ExceptionUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
+
+import es.caib.pinbal.core.dto.IntegracioAccioDto;
+import es.caib.pinbal.core.dto.IntegracioAccioEstatEnumDto;
+import es.caib.pinbal.core.dto.IntegracioAccioParamDto;
+import es.caib.pinbal.core.dto.IntegracioAccioTipusEnumDto;
+import es.caib.pinbal.core.dto.IntegracioDto;
+import es.caib.pinbal.core.service.IntegracioAccioService;
 
 /**
  * Mètodes per a la gestió d'integracions.
@@ -46,17 +48,24 @@ public class IntegracioHelper {
 	public static final String INTCODI_ORGANS = "ORGANS";
 	public static final String INTCODI_USUARIS = "USUARIS";
 	public static final String INTCODI_EXPLOTACIO = "EXPLOTACIO";
-
+	
+	@Autowired 
+	private IntegracioAccioService integracioAccioService;
 
 	private Map<String, LinkedList<IntegracioAccioDto>> accionsIntegracio = Collections.synchronizedMap(new HashMap<String, LinkedList<IntegracioAccioDto>>());
-	private Map<String, Integer> maxAccionsIntegracio = new HashMap<String, Integer>();
 	
-	private Long idAccio = 0L;
+// 	JA NO ES FA SERVIR	
+//	private Map<String, Integer> maxAccionsIntegracio = new HashMap<String, Integer>();
 	
-	private Long generateIdAccio() {
-		idAccio++;
-		return idAccio;
-	}
+	
+// 	JA NO ES FA SERVIR	
+//	private Long idAccio = 0L;	
+	
+// 	JA NO ES FA SERVIR
+//	private Long generateIdAccio() {
+//		idAccio++;
+//		return idAccio;
+//	}
 
 	public List<IntegracioDto> findAll() {
 		List<IntegracioDto> integracions = new ArrayList<IntegracioDto>();
@@ -69,8 +78,6 @@ public class IntegracioHelper {
 		return integracions;
 	}
 
-
-
 	public List<IntegracioAccioDto> findAccionsByIntegracioCodi(String integracioCodi) {
 		return getLlistaAccions(integracioCodi);
 	}
@@ -79,6 +86,7 @@ public class IntegracioHelper {
 		addAccioOk("--", integracioCodi, descripcio, parametres, tipus, tempsResposta);
 	}
 
+	// Adaptat per BBDD
 	public void addAccioOk(
 			String idPeticio,
 			String integracioCodi,
@@ -89,19 +97,40 @@ public class IntegracioHelper {
 
 		IntegracioAccioDto accio = new IntegracioAccioDto();
 		accio.setIdPeticio(idPeticio);
-		accio.setIntegracio(novaIntegracio(integracioCodi));
+		
+//		accio.setIntegracio(novaIntegracio(integracioCodi));
+		accio.setCodi(integracioCodi);
+		
 		accio.setData(new Date());
 		accio.setDescripcio(descripcio);
-		accio.setParametres(parametres);
+		
+//		accio.setParametres(parametres);
+		accio.setParametres(this.buildParams(parametres));
+		
 		accio.setTipus(tipus);
 		accio.setTempsResposta(tempsResposta);
 		accio.setEstat(IntegracioAccioEstatEnumDto.OK);
-		addAccio(integracioCodi, accio);
+		
+//		addAccio(integracioCodi, accio);
+		integracioAccioService.create(accio);		
 		
 		logger.debug(descripcio + ", Parametres: " + parametres + ", Temps resposta: " + tempsResposta);
 	}
 
-
+//	Adaptat per BBDD
+	private List<IntegracioAccioParamDto> buildParams(Map<String, String> parametres) {
+		List<IntegracioAccioParamDto> parametresDto = new ArrayList<>();
+		if (parametres != null && !parametres.isEmpty()) {
+			for (String nom : parametres.keySet()) {
+				IntegracioAccioParamDto paramDto = new IntegracioAccioParamDto();
+				paramDto.setNom(nom);
+				paramDto.setDescripcio(parametres.get(nom));
+				parametresDto.add(paramDto);
+			}
+		}
+		return parametresDto;
+	}
+	
 	public void addAccioError(String integracioCodi, String desc, Map<String, String> params, IntegracioAccioTipusEnumDto tipus, long tempsResposta, String errorDesc, Throwable t) {
 		addAccioError("", integracioCodi, desc, params, tipus, tempsResposta, errorDesc, t);
 	}
@@ -125,7 +154,7 @@ public class IntegracioHelper {
 				null);
 	}
 
-	@Transactional(propagation = Propagation.REQUIRES_NEW)
+//	Adaptat per BBDD	
 	public void addAccioError(
 			String idPeticio,
 			String integracioCodi,
@@ -138,10 +167,16 @@ public class IntegracioHelper {
 
 		IntegracioAccioDto accio = new IntegracioAccioDto();
 		accio.setIdPeticio(idPeticio != null ? idPeticio : "--");
-		accio.setIntegracio(novaIntegracio(integracioCodi));
+		
+//		accio.setIntegracio(novaIntegracio(integracioCodi));
+		accio.setCodi(integracioCodi);
+		
 		accio.setData(new Date());
 		accio.setDescripcio(descripcio);
-		accio.setParametres(parametres);
+		
+//		accio.setParametres(parametres);
+		accio.setParametres(this.buildParams(parametres));
+		
 		accio.setTipus(tipus);
 		accio.setTempsResposta(tempsResposta);
 		accio.setEstat(IntegracioAccioEstatEnumDto.ERROR);
@@ -150,7 +185,9 @@ public class IntegracioHelper {
 			accio.setExcepcioMessage(ExceptionUtils.getMessage(throwable));
 			accio.setExcepcioStacktrace(ExceptionUtils.getStackTrace(throwable));
 		} 
-		addAccio(integracioCodi, accio);
+		
+//		addAccio(integracioCodi, accio);
+		integracioAccioService.create(accio);
 	}
 
 	private LinkedList<IntegracioAccioDto> getLlistaAccions(String integracioCodi) {
@@ -164,53 +201,57 @@ public class IntegracioHelper {
 			return accions;
 		} 
 	}
-	private int getMaxAccions(
-			String integracioCodi) {
-		Integer max = maxAccionsIntegracio.get(integracioCodi);
-		if (max == null) {
-			max = new Integer(DEFAULT_MAX_ACCIONS);
-			maxAccionsIntegracio.put(
-					integracioCodi,
-					max);
-		}
-		return max.intValue();
-	}
+	
+// 	JA NO ES FA SERVIR	
+//	private int getMaxAccions(
+//			String integracioCodi) {
+//		Integer max = maxAccionsIntegracio.get(integracioCodi);
+//		if (max == null) {
+//			max = new Integer(DEFAULT_MAX_ACCIONS);
+//			maxAccionsIntegracio.put(
+//					integracioCodi,
+//					max);
+//		}
+//		return max.intValue();
+//	}
 
-	private void addAccio(
-			String integracioCodi,
-			IntegracioAccioDto accio) {
-		afegirParametreUsuari(accio);
-		LinkedList<IntegracioAccioDto> accions = getLlistaAccions(integracioCodi);
-		synchronized(accions) {
-			int max = getMaxAccions(integracioCodi);
-			while (accions.size() >= max) {
-				accions.remove(accions.size() - 1);
-			}
-			accio.setId(generateIdAccio());
-			
-			accions.add(
-					0,
-					accio);
-		}
-	}
+// 	JA NO ES FA SERVIR
+//	private void addAccio(
+//			String integracioCodi,
+//			IntegracioAccioDto accio) {
+//		afegirParametreUsuari(accio);
+//		LinkedList<IntegracioAccioDto> accions = getLlistaAccions(integracioCodi);
+//		synchronized(accions) {
+//			int max = getMaxAccions(integracioCodi);
+//			while (accions.size() >= max) {
+//				accions.remove(accions.size() - 1);
+//			}
+//			accio.setId(generateIdAccio());
+//			
+//			accions.add(
+//					0,
+//					accio);
+//		}
+//	}
 
-	private void afegirParametreUsuari(
-			IntegracioAccioDto accio) {
-		String usuariNomCodi = "";
-		Usuari usuari = usuariHelper.getUsuariAutenticat();
-		if (usuari != null) {
-			usuariNomCodi = usuari.getNom();
-			if (!usuari.getNom().equals(usuari.getCodi()))
-				usuariNomCodi = usuariNomCodi + " (" + usuari.getCodi() + ")";
-		} else {
-			Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-			if (auth != null)
-				usuariNomCodi = auth.getName();
-		}
-		if(accio.getParametres() == null)
-			accio.setParametres(new HashMap<String, String>());
-		accio.getParametres().put("usuari", usuariNomCodi);
-	}
+// 	JA NO ES FA SERVIR
+//	private void afegirParametreUsuari(
+//			IntegracioAccioDto accio) {
+//		String usuariNomCodi = "";
+//		Usuari usuari = usuariHelper.getUsuariAutenticat();
+//		if (usuari != null) {
+//			usuariNomCodi = usuari.getNom();
+//			if (!usuari.getNom().equals(usuari.getCodi()))
+//				usuariNomCodi = usuariNomCodi + " (" + usuari.getCodi() + ")";
+//		} else {
+//			Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+//			if (auth != null)
+//				usuariNomCodi = auth.getName();
+//		}
+//		if(accio.getParametres() == null)
+//			accio.setParametres(new HashMap<String, String>());
+//		accio.getParametres().put("usuari", usuariNomCodi);
+//	}
 
 	private IntegracioDto novaIntegracio(
 			String codi) {

@@ -3,16 +3,19 @@
  */
 package es.caib.pinbal.core.ejb;
 
-import es.caib.pinbal.core.dto.ConfigDto;
-import es.caib.pinbal.core.dto.ConfigGroupDto;
-import es.caib.pinbal.core.service.ConfigService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.ejb.interceptor.SpringBeanAutowiringInterceptor;
+import java.util.List;
 
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.Stateless;
 import javax.interceptor.Interceptors;
-import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.ejb.interceptor.SpringBeanAutowiringInterceptor;
+import org.springframework.security.access.prepost.PreAuthorize;
+
+import es.caib.pinbal.core.dto.ConfigDto;
+import es.caib.pinbal.core.dto.ConfigGroupDto;
+import es.caib.pinbal.core.service.ConfigService;
 
 /**
  * Implementació de ConfigService com a EJB que empra una clase
@@ -48,6 +51,12 @@ public class ConfigServiceBean implements ConfigService {
 	@RolesAllowed({"PBL_ADMIN"})
     public void reiniciarTasques() {
         delegate.reiniciarTasques();
+    }
+    
+    @Override
+	@PreAuthorize("isAuthenticated()")
+	public String getTempsErrorsMonitorIntegracio() {
+    	return delegate.getTempsErrorsMonitorIntegracio();
     }
 
 }

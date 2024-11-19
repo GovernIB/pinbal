@@ -3,7 +3,6 @@
  */
 package es.caib.pinbal.core.dto;
 
-
 /**
  * Enumeració amb els possibles estats d'accions d'integració.
  * 
@@ -11,5 +10,10 @@ package es.caib.pinbal.core.dto;
  */
 public enum IntegracioAccioEstatEnumDto {
 	OK,
-	ERROR
+	ERROR;
+	public static IntegracioAccioEstatEnumDto[] sortedValues() {
+		return new IntegracioAccioEstatEnumDto[] {
+				IntegracioAccioEstatEnumDto.OK,
+				IntegracioAccioEstatEnumDto.ERROR};
+	}
 }

@@ -22,14 +22,13 @@ import es.caib.pinbal.core.service.AplicacioService;
  * 
  * @author Limit Tecnologies <limit@limit.es>
  */
+
 @Stateless
 @Interceptors(SpringBeanAutowiringInterceptor.class)
 public class AplicacioServiceBean implements AplicacioService {
 
 	@Autowired
 	AplicacioService delegate;
-
-
 
 	@Override
 	@RolesAllowed({"PBL_ADMIN"})
