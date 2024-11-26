@@ -19,6 +19,11 @@
 	<mvc:annotation-driven/>
 	<mvc:default-servlet-handler/>
 
+	<bean name="consultaExcelView" class="es.caib.pinbal.webapp.view.ConsultaExcelView"/>
+	<bean name="consultaMultipleExcelView" class="es.caib.pinbal.webapp.view.ConsultaMultipleExcelView"/>
+	<bean name="consultaAdminExcelView" class="es.caib.pinbal.webapp.view.ConsultaAdminExcelView"/>
+	<bean name="consultaAuditorExcelView" class="es.caib.pinbal.webapp.view.ConsultaAuditorExcelView"/>
+	<bean name="consultaSuperauditorExcelView" class="es.caib.pinbal.webapp.view.ConsultaSuperauditorExcelView"/>
 	<bean name="estadistiquesExcelView" class="es.caib.pinbal.webapp.view.EstadistiquesExcelView"/>
 	<bean name="auditorGenerarExcelView" class="es.caib.pinbal.webapp.view.AuditorGenerarExcelView"/>
 	<bean name="auditorGenerarCsvView" class="es.caib.pinbal.webapp.view.AuditorGenerarCsvView"/>

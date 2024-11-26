@@ -131,6 +131,9 @@
 			</div>
 		</div>
 	</form:form>
+	<div class="pull-right">		
+		<a class="btn btn-default" href="consulta/excel"><i class="far fa-file-excel"></i>&nbsp;<spring:message code="estadistiques.list.exportar.excel"/></a>	
+	</div>
 	<table id="table-consultes" class="table table-striped table-bordered" style="width: 100%">
 		<thead>
 			<tr>

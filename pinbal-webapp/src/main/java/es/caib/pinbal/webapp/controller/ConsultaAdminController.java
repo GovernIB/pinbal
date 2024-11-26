@@ -27,6 +27,7 @@ import es.caib.pinbal.webapp.command.ConsultaFiltreCommand;
 import es.caib.pinbal.webapp.common.AlertHelper;
 import es.caib.pinbal.webapp.common.EntitatHelper;
 import es.caib.pinbal.webapp.common.RequestSessionHelper;
+import es.caib.pinbal.webapp.common.RolHelper;
 import es.caib.pinbal.webapp.datatables.ServerSideColumn;
 import es.caib.pinbal.webapp.datatables.ServerSideRequest;
 import es.caib.pinbal.webapp.datatables.ServerSideResponse;
@@ -150,6 +151,29 @@ public class ConsultaAdminController extends BaseController {
 		cols.get(4).setData("procedimentCodiNom");
 		cols.get(5).setData("serveiCodiNom");
 		return new ServerSideResponse<ConsultaDto, Long>(serverSideRequest, page);
+	}
+	
+	@RequestMapping(value = "/excel")
+	public String excel(HttpServletRequest request, Model model) throws Exception {
+		ConsultaFiltreCommand command = (ConsultaFiltreCommand) RequestSessionHelper.obtenirObjecteSessio(request,
+				SESSION_ATTRIBUTE_FILTRE);
+		if (command == null)
+			command = new ConsultaFiltreCommand();
+		model.addAttribute(command);
+
+		Page<ConsultaDto> page;
+		if (isHistoric(request)) {
+			page = historicConsultaService.findByFiltrePaginatPerAdmin(
+					ConsultaFiltreCommand.asDto(command),
+					null);
+		} else {
+			page = consultaService.findByFiltrePaginatPerAdmin(
+					ConsultaFiltreCommand.asDto(command),
+					null);
+		}
+		model.addAttribute("consultaList", page.getContent());
+
+		return "consultaAdminExcelView";
 	}
 
 	@RequestMapping(value = "/{consultaId}/justificant/arxiu/detall", method = RequestMethod.GET)

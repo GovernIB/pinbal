@@ -22,6 +22,7 @@ import es.caib.pinbal.webapp.command.ConsultaFiltreCommand;
 import es.caib.pinbal.webapp.common.AlertHelper;
 import es.caib.pinbal.webapp.common.EntitatHelper;
 import es.caib.pinbal.webapp.common.RequestSessionHelper;
+import es.caib.pinbal.webapp.common.RolHelper;
 import es.caib.pinbal.webapp.datatables.ServerSideColumn;
 import es.caib.pinbal.webapp.datatables.ServerSideRequest;
 import es.caib.pinbal.webapp.datatables.ServerSideResponse;
@@ -189,6 +190,38 @@ public class ConsultaMultipleController extends BaseController {
 		}
 		
 		return response;
+	}
+	
+	@RequestMapping(value = "/excel")
+	public String excel(HttpServletRequest request, Model model) throws Exception {
+		if (!RolHelper.isRolActualAdministrador(request) && !EntitatHelper.isRepresentantEntitatActual(request))
+			return "representantNoAutoritzat";
+		ConsultaFiltreCommand command = (ConsultaFiltreCommand) RequestSessionHelper.obtenirObjecteSessio(request,
+				SESSION_ATTRIBUTE_FILTRE);
+		EntitatDto entitat = EntitatHelper.getEntitatActual(request, entitatService);
+		if (command == null) {
+			command = new ConsultaFiltreCommand();
+			command.filtrarDarrersMesos(isHistoric(request) ? 9 : 3);
+		} else {
+			command.updateDefaultDataInici(isHistoric(request));
+		}
+		model.addAttribute(command);
+
+		Page<ConsultaDto> page;
+		if (isHistoric(request)) {
+			page = historicConsultaService.findMultiplesByFiltrePaginatPerDelegat(
+					entitat.getId(),
+					ConsultaFiltreCommand.asDto(command),
+					null);
+		} else {
+			page = consultaService.findMultiplesByFiltrePaginatPerDelegat(
+					entitat.getId(),
+					ConsultaFiltreCommand.asDto(command),
+					null);
+		}
+		model.addAttribute("consultaList", page.getContent());
+
+		return "consultaMultipleExcelView";
 	}
 	
 	@RequestMapping(value = "/{consultaId}", method = RequestMethod.GET)
