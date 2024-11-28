@@ -4,11 +4,11 @@
 package es.caib.pinbal.api.externa.controller;
 
 import es.caib.pinbal.api.externa.command.EstadistiquesFiltreCommand;
-import es.caib.pinbal.client.comu.Departament;
-import es.caib.pinbal.client.comu.Entitat;
-import es.caib.pinbal.client.comu.Procediment;
-import es.caib.pinbal.client.comu.Servei;
-import es.caib.pinbal.client.comu.Servei.ConsultesOkError;
+import es.caib.pinbal.client.comu.DepartamentEstadistiques;
+import es.caib.pinbal.client.comu.EntitatEstadistiques;
+import es.caib.pinbal.client.comu.ProcedimentEstadistiques;
+import es.caib.pinbal.client.comu.ServeiEstadistiques;
+import es.caib.pinbal.client.comu.ServeiEstadistiques.ConsultesOkError;
 import es.caib.pinbal.client.comu.TotalAcumulat;
 import es.caib.pinbal.core.dto.CarregaDto;
 import es.caib.pinbal.core.dto.ConsultaDto.EstatTipus;
@@ -65,7 +65,7 @@ public class ExplotacioStatsRestController {
 			value= "/consultes",
 			method = RequestMethod.GET,
 			produces = "application/json")
-	public ResponseEntity<List<Procediment>> consultes(
+	public ResponseEntity<List<ProcedimentEstadistiques>> consultes(
 			HttpServletRequest request,
 			@RequestParam final String entitatCodi,
 			@RequestParam(required = false) final String procedimentCodi,
@@ -83,18 +83,18 @@ public class ExplotacioStatsRestController {
 						null,
 						dataInici,
 						dataFi));
-		List<Procediment> estadisticaProcediments = new ArrayList<Procediment>();
-		Procediment procedimentActual = null;
+		List<ProcedimentEstadistiques> estadisticaProcediments = new ArrayList<ProcedimentEstadistiques>();
+		ProcedimentEstadistiques procedimentActual = null;
 		Long procedimentActualId = null;
 		for (EstadisticaDto estadistica: estadistiques) {
 			if (procedimentActual == null || !procedimentActualId.equals(estadistica.getProcedimentId())) {
 				procedimentActualId = estadistica.getProcedimentId();
-				procedimentActual = new Procediment();
+				procedimentActual = new ProcedimentEstadistiques();
 				procedimentActual.setCodi(estadistica.getProcedimentCodi());
 				procedimentActual.setNom(estadistica.getProcedimentNom());
 				estadisticaProcediments.add(procedimentActual);
 			}
-			Servei servei = new Servei();
+			ServeiEstadistiques servei = new ServeiEstadistiques();
 			servei.setCodi(estadistica.getServeiCodi());
 			servei.setNom(estadistica.getServeiNom());
 			servei.setConsultesWeb(new ConsultesOkError(
@@ -118,30 +118,30 @@ public class ExplotacioStatsRestController {
 						estadistica.getSumatoriNumWebUIError() + estadistica.getSumatoriNumRecobrimentError()));
 			}
 			if (procedimentActual.getServeis() == null) {
-				procedimentActual.setServeis(new ArrayList<Servei>());
+				procedimentActual.setServeis(new ArrayList<ServeiEstadistiques>());
 			}
 			procedimentActual.getServeis().add(servei);
 		}
-		return new ResponseEntity<List<Procediment>>(estadisticaProcediments, HttpStatus.OK);
+		return new ResponseEntity<List<ProcedimentEstadistiques>>(estadisticaProcediments, HttpStatus.OK);
 	}
 
 	@RequestMapping(
 			value= "/carrega",
 			method = RequestMethod.GET,
 			produces = "application/json")
-	public ResponseEntity<List<Entitat>> carrega(
+	public ResponseEntity<List<EntitatEstadistiques>> carrega(
 			HttpServletRequest request) {
 		// Informe de carrega
 		List<CarregaDto> carregues = consultaService.findEstadistiquesCarrega();
-		Entitat entitatActual = null;
+		EntitatEstadistiques entitatActual = null;
 		Long entitatActualId = null;
-		Departament departamentActual = null;
-		Procediment procedimentActual = null;
-		List<Entitat> entitats = new ArrayList<Entitat>();
+		DepartamentEstadistiques departamentActual = null;
+		ProcedimentEstadistiques procedimentActual = null;
+		List<EntitatEstadistiques> entitats = new ArrayList<EntitatEstadistiques>();
 		for (CarregaDto carrega: carregues) {
 			if (entitatActual == null || !entitatActualId.equals(carrega.getEntitatId())) {
 				entitatActualId = carrega.getEntitatId();
-				entitatActual = new Entitat();
+				entitatActual = new EntitatEstadistiques();
 				entitatActual.setCodi(carrega.getEntitatCodi());
 				entitatActual.setNom(carrega.getEntitatNom());
 				entitatActual.setNif(carrega.getEntitatCif());
@@ -149,24 +149,24 @@ public class ExplotacioStatsRestController {
 			}
 			if (carrega.getDepartamentNom() != null) {
 				if (departamentActual == null || departamentActual.getNom() != carrega.getDepartamentNom()) {
-					departamentActual = new Departament();
+					departamentActual = new DepartamentEstadistiques();
 					//departamentActual.setCodi(informeProcediment.getDepartamentCodi());
 					departamentActual.setNom(carrega.getDepartamentNom());
 					if (entitatActual.getDepartaments() == null) {
-						entitatActual.setDepartaments(new ArrayList<Departament>());
+						entitatActual.setDepartaments(new ArrayList<DepartamentEstadistiques>());
 					}
 					entitatActual.getDepartaments().add(departamentActual);
 				}
 				if (procedimentActual == null || procedimentActual.getCodi() != carrega.getProcedimentCodi()) {
-					procedimentActual = new Procediment();
+					procedimentActual = new ProcedimentEstadistiques();
 					procedimentActual.setCodi(carrega.getProcedimentCodi());
 					procedimentActual.setNom(carrega.getProcedimentNom());
 					if (departamentActual.getProcediments() == null) {
-						departamentActual.setProcediments(new ArrayList<Procediment>());
+						departamentActual.setProcediments(new ArrayList<ProcedimentEstadistiques>());
 					}
 					departamentActual.getProcediments().add(procedimentActual);
 				}
-				Servei servei = new Servei();
+				ServeiEstadistiques servei = new ServeiEstadistiques();
 				servei.setCodi(carrega.getServeiCodi());
 				servei.setNom(carrega.getServeiDescripcio());
 				if (carrega.getDetailedWebCount() != null) {
@@ -186,12 +186,12 @@ public class ExplotacioStatsRestController {
 							carrega.getDetailedRecobrimentCount().getMinut()));
 				}
 				if (procedimentActual.getServeis() == null) {
-					procedimentActual.setServeis(new ArrayList<Servei>());
+					procedimentActual.setServeis(new ArrayList<ServeiEstadistiques>());
 				}
 				procedimentActual.getServeis().add(servei);
 			}
 		}
-		return new ResponseEntity<List<Entitat>>(entitats, HttpStatus.OK);
+		return new ResponseEntity<List<EntitatEstadistiques>>(entitats, HttpStatus.OK);
 	}
 
 	private EstadistiquesFiltreDto getEstadistiquesFiltre(

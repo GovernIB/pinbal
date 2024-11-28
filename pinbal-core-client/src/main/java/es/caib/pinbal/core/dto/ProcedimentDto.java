@@ -1,6 +1,9 @@
 package es.caib.pinbal.core.dto;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.io.Serializable;
@@ -14,6 +17,9 @@ import java.util.List;
  */
 @Getter
 @Setter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class ProcedimentDto extends AbstractIdentificable<Long> implements Serializable {
 
 	private Long id;
@@ -32,10 +38,6 @@ public class ProcedimentDto extends AbstractIdentificable<Long> implements Seria
 	private ProcedimentClaseTramiteEnumDto valorCampClaseTramite;
 
 	private List<ProcedimentServeiSimpleDto> serveisActius = new ArrayList<ProcedimentServeiSimpleDto>();
-
-	public ProcedimentDto() {
-
-	}
 
 	public String getNomAmbCodi() {
 		return nom + " (" + codi + ")";

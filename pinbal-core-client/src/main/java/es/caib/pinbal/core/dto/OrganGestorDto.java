@@ -3,12 +3,15 @@
  */
 package es.caib.pinbal.core.dto;
 
-import java.io.Serializable;
-
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.apache.commons.lang.StringUtils;
+
+import java.io.Serializable;
 
 /**
  * Informació d'una dada.
@@ -17,6 +20,9 @@ import org.apache.commons.lang.StringUtils;
  */
 @Getter
 @Setter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @EqualsAndHashCode
 public class OrganGestorDto extends AbstractIdentificable<Long> implements Serializable {
 

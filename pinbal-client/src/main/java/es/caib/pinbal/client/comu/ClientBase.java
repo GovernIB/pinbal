@@ -3,22 +3,6 @@
  */
 package es.caib.pinbal.client.comu;
 
-import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.TimeZone;
-
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.MultivaluedMap;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriBuilder;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -38,6 +22,20 @@ import com.sun.jersey.api.client.filter.HTTPBasicAuthFilter;
 import com.sun.jersey.api.client.filter.LoggingFilter;
 import com.sun.jersey.api.representation.Form;
 import com.sun.jersey.core.util.MultivaluedMapImpl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.MultivaluedMap;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriBuilder;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.TimeZone;
 
 /**
  * Client amb la lògica bàsica per a accedir al servei de consulta
@@ -195,6 +193,27 @@ public abstract class ClientBase {
 			logger.debug("Rebuda resposta HTTP POST de PINBAL (" +
 					"url=" + urlAmbMetode + ", " +
 					"body=" + mapper.writeValueAsString(response) + ")");
+		}
+		return response;
+	}
+
+	protected <R> R restPeticioPatch(
+			String metode,
+			Object request,
+			Class<R> responseType,
+			MediaType acceptedMediaType) throws UniformInterfaceException, ClientHandlerException, IOException {
+		String urlAmbMetode = getUrlAmbMetode(metode);
+		String body = mapper.writeValueAsString(request);
+		logger.debug("Enviant petició HTTP PATCH a PINBAL (url=" + urlAmbMetode + ", body=" + body + ")");
+
+		ClientRequest clientRequest = PatchRequestFilter.createPatchRequest(java.net.URI.create(urlAmbMetode), body, MediaType.APPLICATION_JSON_TYPE);
+		clientRequest.getHeaders().add("Accept", acceptedMediaType.toString());
+
+		ClientResponse clientResponse = jerseyClient.handle(clientRequest);
+		R response = clientResponse.getEntity(responseType);
+
+		if (logger.isDebugEnabled()) {
+			logger.debug("Rebuda resposta HTTP POST de PINBAL (url=" + urlAmbMetode + ", body=" + mapper.writeValueAsString(response) + ")");
 		}
 		return response;
 	}

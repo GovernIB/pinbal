@@ -3,28 +3,12 @@
  */
 package es.caib.pinbal.core.service;
 
-import java.util.*;
-
-import javax.annotation.Resource;
-
-import es.caib.pinbal.core.dto.ProcedimentServeiDto;
-import es.caib.pinbal.core.dto.ProcedimentServeiNomDto;
-import es.caib.pinbal.core.dto.ProcedimentServeiSimpleDto;
-import org.springframework.data.domain.Page;
-import org.springframework.security.acls.domain.BasePermission;
-import org.springframework.security.acls.domain.PrincipalSid;
-import org.springframework.security.acls.model.AccessControlEntry;
-import org.springframework.security.acls.model.MutableAclService;
-import org.springframework.security.acls.model.Permission;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import es.caib.pinbal.core.dto.FiltreActiuEnumDto;
 import es.caib.pinbal.core.dto.InformeProcedimentDto;
 import es.caib.pinbal.core.dto.PaginacioAmbOrdreDto;
 import es.caib.pinbal.core.dto.ProcedimentDto;
+import es.caib.pinbal.core.dto.ProcedimentServeiNomDto;
+import es.caib.pinbal.core.dto.ProcedimentServeiSimpleDto;
 import es.caib.pinbal.core.helper.DtoMappingHelper;
 import es.caib.pinbal.core.helper.PaginacioHelper;
 import es.caib.pinbal.core.helper.PermisosHelper;
@@ -48,6 +32,26 @@ import es.caib.pinbal.core.service.exception.ProcedimentNotFoundException;
 import es.caib.pinbal.core.service.exception.ProcedimentServeiNotFoundException;
 import es.caib.pinbal.core.service.exception.ServeiNotFoundException;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.security.acls.domain.BasePermission;
+import org.springframework.security.acls.domain.PrincipalSid;
+import org.springframework.security.acls.model.AccessControlEntry;
+import org.springframework.security.acls.model.MutableAclService;
+import org.springframework.security.acls.model.Permission;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import javax.annotation.Resource;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Implementació de ProcedimentService que es comunica amb la base de dades emprant
@@ -460,7 +464,7 @@ public class ProcedimentServiceImpl implements ProcedimentService {
 			ProcedimentServei procedimentServei = procedimentServeiRepository.findByEntitatIdProcedimentCodiAndServeiCodi(entitatId, procedimentServeiDto.getProcedimentCodi(), procedimentServeiDto.getServeiCodi());
 			if (procedimentServei == null) {
 				log.debug("El procediment (codi= " + procedimentServeiDto.getProcedimentCodi() + ") no té cap servei (codi=" + procedimentServeiDto.getServeiCodi() + ")");
-				throw new ProcedimentServeiNotFoundException();
+				throw new ProcedimentServeiNotFoundException(procedimentServeiDto.getProcedimentCodi(), procedimentServeiDto.getServeiCodi());
 			}
 			PermisosHelper.assignarPermisUsuari(
 					usuariCodi,

@@ -1,6 +1,9 @@
 package es.caib.pinbal.core.dto;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.apache.commons.lang.builder.ToStringBuilder;
 
@@ -16,6 +19,9 @@ import java.util.List;
  * @author Limit Tecnologies <limit@limit.es>
  */
 @Getter @Setter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class ServeiDto extends AbstractIdentificable<Long> implements Serializable {
 
 	public enum EntitatTipusDto {
@@ -102,9 +108,6 @@ public class ServeiDto extends AbstractIdentificable<Long> implements Serializab
 
 	private boolean useAutoClasse = true;
 	private boolean enviarSolicitant = false;
-
-	public ServeiDto() {
-	}
 
 	public String getAjudaHtml() {
 		String ajudaHtml = ajuda;

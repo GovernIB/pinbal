@@ -3,26 +3,24 @@
  */
 package es.caib.pinbal.client.comu;
 
-import java.util.List;
-
-import es.caib.pinbal.client.comu.Servei.ConsultesOkError;
-
 /**
- * Informació d'un procediment associat a un informe.
+ * Informació d'un servei associat a un informe.
  * 
  * @author Limit Tecnologies <limit@limit.es>
  */
-public class Procediment {
+public class ServeiEstadistiques {
 
 	private String codi;
 	private String nom;
-	private boolean actiu;
+	private String emisor;
+	private Integer usuarisAmbPermisos;
+	private Integer consultesOk;
+	private Integer consultesError;
 	private ConsultesOkError consultesWeb;
 	private ConsultesOkError consultesRecobriment;
 	private ConsultesOkError consultesTotal;
 	private TotalAcumulat totalWeb;
 	private TotalAcumulat totalRecobriment;
-	private List<Servei> serveis;
 	
 	public String getCodi() {
 		return codi;
@@ -36,11 +34,29 @@ public class Procediment {
 	public void setNom(String nom) {
 		this.nom = nom;
 	}
-	public boolean isActiu() {
-		return actiu;
+	public String getEmisor() {
+		return emisor;
 	}
-	public void setActiu(boolean actiu) {
-		this.actiu = actiu;
+	public void setEmisor(String emisor) {
+		this.emisor = emisor;
+	}
+	public Integer getUsuarisAmbPermisos() {
+		return usuarisAmbPermisos;
+	}
+	public void setUsuarisAmbPermisos(Integer usuarisAmbPermisos) {
+		this.usuarisAmbPermisos = usuarisAmbPermisos;
+	}
+	public Integer getConsultesOk() {
+		return consultesOk;
+	}
+	public void setConsultesOk(Integer consultesOk) {
+		this.consultesOk = consultesOk;
+	}
+	public Integer getConsultesError() {
+		return consultesError;
+	}
+	public void setConsultesError(Integer consultesError) {
+		this.consultesError = consultesError;
 	}
 	public ConsultesOkError getConsultesWeb() {
 		return consultesWeb;
@@ -72,11 +88,27 @@ public class Procediment {
 	public void setTotalRecobriment(TotalAcumulat totalRecobriment) {
 		this.totalRecobriment = totalRecobriment;
 	}
-	public List<Servei> getServeis() {
-		return serveis;
-	}
-	public void setServeis(List<Servei> serveis) {
-		this.serveis = serveis;
+
+	public static class ConsultesOkError {
+		private Long ok;
+		private Long error;
+		public ConsultesOkError(Long ok, Long error) {
+			super();
+			this.ok = ok;
+			this.error = error;
+		}
+		public Long getOk() {
+			return ok;
+		}
+		public void setOk(Long ok) {
+			this.ok = ok;
+		}
+		public Long getError() {
+			return error;
+		}
+		public void setError(Long error) {
+			this.error = error;
+		}
 	}
 
 }

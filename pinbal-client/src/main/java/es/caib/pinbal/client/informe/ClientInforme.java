@@ -10,8 +10,8 @@ import java.util.List;
 import java.util.Map;
 
 import es.caib.pinbal.client.comu.ClientBase;
-import es.caib.pinbal.client.comu.Entitat;
-import es.caib.pinbal.client.comu.Servei;
+import es.caib.pinbal.client.comu.EntitatEstadistiques;
+import es.caib.pinbal.client.comu.ServeiEstadistiques;
 
 /**
  * Client amb la lògica bàsica per a accedir al servei de consulta
@@ -40,34 +40,34 @@ public class ClientInforme extends ClientBase {
 		super(urlBase + BASE_URL_SUFIX, usuari, contrasenya, basicAuth, timeoutConnect, timeoutRead);
 	}
 
-	public List<Entitat> procediments() throws IOException {
+	public List<EntitatEstadistiques> procediments() throws IOException {
 		return restPeticioGetList(
 				"procediments",
 				null,
-				Entitat.class);
+				EntitatEstadistiques.class);
 	}
 
-	public List<Entitat> usuaris() throws IOException {
+	public List<EntitatEstadistiques> usuaris() throws IOException {
 		return restPeticioGetList(
 				"usuaris",
 				null,
-				Entitat.class);
+				EntitatEstadistiques.class);
 	}
 
-	public List<Servei> serveis() throws IOException {
+	public List<ServeiEstadistiques> serveis() throws IOException {
 		return restPeticioGetList(
 				"serveis",
 				null,
-				Servei.class);
+				ServeiEstadistiques.class);
 	}
 
-	public List<Entitat> general(
+	public List<EntitatEstadistiques> general(
 			Date dataInici,
 			Date dataFi) throws IOException {
 		return general(dataInici, dataFi, false);
 	}
 
-	public List<Entitat> general(
+	public List<EntitatEstadistiques> general(
 			Date dataInici,
 			Date dataFi,
 			boolean historic) throws IOException {
@@ -82,7 +82,7 @@ public class ClientInforme extends ClientBase {
 		return restPeticioGetList(
 				"general",
 				params,
-				Entitat.class);
+				EntitatEstadistiques.class);
 	}
 
 }

@@ -3,8 +3,13 @@
  */
 package es.caib.pinbal.core.model;
 
-import java.util.ArrayList;
-import java.util.List;
+import es.caib.pinbal.core.audit.PinbalAuditable;
+import es.caib.pinbal.core.dto.ProcedimentClaseTramiteEnumDto;
+import es.caib.pinbal.core.dto.ProcedimentServeiSimpleDto;
+import lombok.Getter;
+import lombok.Setter;
+import org.apache.commons.lang.builder.ToStringBuilder;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -21,14 +26,8 @@ import javax.persistence.OrderBy;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.persistence.Version;
-
-import org.apache.commons.lang.builder.ToStringBuilder;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-
-import es.caib.pinbal.core.audit.PinbalAuditable;
-import es.caib.pinbal.core.dto.ProcedimentClaseTramiteEnumDto;
-import es.caib.pinbal.core.dto.ProcedimentServeiSimpleDto;
-import lombok.Getter;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Classe de model de dades que conté la informació d'un procediment.
@@ -47,32 +46,41 @@ public class Procediment extends PinbalAuditable<Long> {
 
 	private static final long serialVersionUID = -6657066865382086237L;
 
+	@Setter
 	@Column(name = "codi", length = 20, nullable = false)
 	private String codi;
 
+	@Setter
 	@Column(name = "nom", length = 255, nullable = false)
 	private String nom;
 
+	@Setter
 	@Column(name = "departament", length = 64)
 	private String departament;
 
+	@Setter
 	@Column(name = "actiu")
 	private boolean actiu = true;
 
+	@Setter
 	@ManyToOne(optional = true, fetch = FetchType.EAGER)
 	@JoinColumn(name = "organ_gestor_id")
 	private OrganGestor organGestor;
 
+	@Setter
 	@Column(name = "codi_sia")
 	private String codiSia;
 
+	@Setter
 	@Column(name = "valor_camp_automatizado")
 	private Boolean valorCampAutomatizado;
 
+	@Setter
 	@Column(name = "valor_camp_clasetramite")
 	@Convert(converter = ProcedimentClasseTramiteConverter.class)
 	private ProcedimentClaseTramiteEnumDto valorCampClaseTramite;
 
+	@Setter
 	@ManyToOne(optional = false, fetch = FetchType.EAGER)
 	@JoinColumn(
 			name = "entitat_id",

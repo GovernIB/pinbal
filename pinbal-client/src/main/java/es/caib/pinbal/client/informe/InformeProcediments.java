@@ -5,7 +5,7 @@ package es.caib.pinbal.client.informe;
 
 import java.util.List;
 
-import es.caib.pinbal.client.comu.Entitat;
+import es.caib.pinbal.client.comu.EntitatEstadistiques;
 
 /**
  * Estructura de l'informe de procediments agrupats per entitat i departament.
@@ -14,12 +14,12 @@ import es.caib.pinbal.client.comu.Entitat;
  */
 public class InformeProcediments {
 
-	private List<Entitat> entitats;
+	private List<EntitatEstadistiques> entitats;
 
-	public List<Entitat> getEntitats() {
+	public List<EntitatEstadistiques> getEntitats() {
 		return entitats;
 	}
-	public void setEntitats(List<Entitat> entitats) {
+	public void setEntitats(List<EntitatEstadistiques> entitats) {
 		this.entitats = entitats;
 	}
 	

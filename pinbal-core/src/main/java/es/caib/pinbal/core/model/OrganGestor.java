@@ -1,15 +1,25 @@
 package es.caib.pinbal.core.model;
 
-import java.util.List;
-
-import javax.persistence.*;
-
-import es.caib.pinbal.core.dto.OrganGestorEstatEnum;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-
 import es.caib.pinbal.core.audit.PinbalAuditable;
+import es.caib.pinbal.core.dto.OrganGestorEstatEnum;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.PreRemove;
+import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
+import java.util.List;
 
 /**
  * Classe de model de dades que conté la informació dels organs gestors.
@@ -60,4 +70,8 @@ public class OrganGestor extends PinbalAuditable<Long> {
 
 	private static final long serialVersionUID = 458331024861203562L;
 
+	@Deprecated
+	public void fillIdForTesting(Long id) {
+		super.setId(id);
+	}
 }
