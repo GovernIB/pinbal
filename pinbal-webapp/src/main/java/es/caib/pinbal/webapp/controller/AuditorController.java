@@ -168,6 +168,36 @@ public class AuditorController extends BaseController {
 		cols.get(5).setData("serveiCodiNom");
 		return new ServerSideResponse<ConsultaDto, Long>(serverSideRequest, page);
 	}
+	
+	@RequestMapping(value = "/excel")
+	public String excel(HttpServletRequest request, Model model) throws Exception {
+		ConsultaFiltreCommand command = (ConsultaFiltreCommand) RequestSessionHelper.obtenirObjecteSessio(request,
+				SESSION_ATTRIBUTE_FILTRE);
+		if (command == null) {
+			command = new ConsultaFiltreCommand();
+			command.filtrarDarrersMesos(isHistoric(request) ? 9 : 3);
+		} else {
+			command.updateDefaultDataInici(isHistoric(request));
+		}
+		model.addAttribute(command);
+		EntitatDto entitat = EntitatHelper.getEntitatActual(request, entitatService);
+
+		Page<ConsultaDto> page;
+		if (isHistoric(request)) {
+			page = historicConsultaService.findByFiltrePaginatPerAuditor(
+					entitat.getId(),
+					ConsultaFiltreCommand.asDto(command),
+					null);
+		} else {
+			page = consultaService.findByFiltrePaginatPerAuditor(
+					entitat.getId(),
+					ConsultaFiltreCommand.asDto(command),
+					null);
+		}
+		model.addAttribute("consultaList", page.getContent());
+
+		return "consultaAuditorExcelView";
+	}
 
 	@RequestMapping(value = "/excelConsultes", method = RequestMethod.GET)
 	public String excelConsultes(

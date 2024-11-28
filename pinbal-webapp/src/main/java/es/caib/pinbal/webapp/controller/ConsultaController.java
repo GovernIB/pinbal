@@ -1,5 +1,55 @@
 package es.caib.pinbal.webapp.controller;
 
+import static es.caib.pinbal.webapp.view.SpreadSheetReader.SEPARADOR;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.lang.reflect.InvocationTargetException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.sql.SQLException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+
+import javax.naming.NamingException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+
+import org.apache.commons.codec.binary.Base64;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.propertyeditors.CustomDateEditor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.Errors;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.InitBinder;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
+import org.w3c.dom.Document;
+import org.xml.sax.SAXException;
+
 import es.caib.pinbal.core.dto.CodiValor;
 import es.caib.pinbal.core.dto.ConsultaDto;
 import es.caib.pinbal.core.dto.ConsultaDto.DocumentTipus;
@@ -45,6 +95,7 @@ import es.caib.pinbal.webapp.command.ConsultaFiltreCommand;
 import es.caib.pinbal.webapp.common.AlertHelper;
 import es.caib.pinbal.webapp.common.EntitatHelper;
 import es.caib.pinbal.webapp.common.RequestSessionHelper;
+import es.caib.pinbal.webapp.common.RolHelper;
 import es.caib.pinbal.webapp.common.ValidationHelper;
 import es.caib.pinbal.webapp.datatables.ServerSideColumn;
 import es.caib.pinbal.webapp.datatables.ServerSideRequest;
@@ -55,54 +106,6 @@ import es.caib.pinbal.webapp.view.SpreadSheetReader;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.codec.binary.Base64;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.propertyeditors.CustomDateEditor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
-import org.springframework.validation.Errors;
-import org.springframework.web.bind.WebDataBinder;
-import org.springframework.web.bind.annotation.InitBinder;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.multipart.MultipartHttpServletRequest;
-import org.w3c.dom.Document;
-import org.xml.sax.SAXException;
-
-import javax.naming.NamingException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.validation.Valid;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.lang.reflect.InvocationTargetException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.sql.SQLException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-
-import static es.caib.pinbal.webapp.view.SpreadSheetReader.SEPARADOR;
 
 /**
  * Controlador per a la pàgina de consultes.
@@ -138,9 +141,7 @@ public class ConsultaController extends BaseController {
 	private javax.validation.Validator validator;
 
 	@RequestMapping(method = RequestMethod.GET)
-	public String get(
-			HttpServletRequest request,
-			Model model) throws Exception {
+	public String get(HttpServletRequest request, Model model) throws Exception {
 		if (!EntitatHelper.isDelegatEntitatActual(request))
 			return "delegatNoAutoritzat";
 		EntitatDto entitat = EntitatHelper.getEntitatActual(request, entitatService);
@@ -150,6 +151,7 @@ public class ConsultaController extends BaseController {
 		getOrigens(model);
 		return "consulta";
 	}
+
 	private void getOrigens(Model model) {
 		List<CodiValor> origens = new ArrayList<>();
 		origens.add(new CodiValor("true", "admin.consulta.list.filtre.origen.recobriment"));
@@ -158,18 +160,12 @@ public class ConsultaController extends BaseController {
 	}
 
 	@RequestMapping(method = RequestMethod.POST)
-	public String post(
-			HttpServletRequest request,
-			@Valid ConsultaFiltreCommand command,
-			BindingResult bindingResult,
-			@RequestParam(value = "accio", required = false) String accio,
-			Model model) throws Exception {
+	public String post(HttpServletRequest request, @Valid ConsultaFiltreCommand command, BindingResult bindingResult,
+			@RequestParam(value = "accio", required = false) String accio, Model model) throws Exception {
 		if (!EntitatHelper.isDelegatEntitatActual(request))
 			return "delegatNoAutoritzat";
 		if ("netejar".equals(accio)) {
-			RequestSessionHelper.esborrarObjecteSessio(
-					request,
-					SESSION_ATTRIBUTE_FILTRE);
+			RequestSessionHelper.esborrarObjecteSessio(request, SESSION_ATTRIBUTE_FILTRE);
 			return "redirect:.";
 		} else {
 			EntitatDto entitat = EntitatHelper.getEntitatActual(request, entitatService);
@@ -177,10 +173,7 @@ public class ConsultaController extends BaseController {
 				if (bindingResult.hasErrors()) {
 					omplirModelPerFiltreTaula(request, entitat, model);
 				} else {
-					RequestSessionHelper.actualitzarObjecteSessio(
-							request,
-							SESSION_ATTRIBUTE_FILTRE,
-							command);
+					RequestSessionHelper.actualitzarObjecteSessio(request, SESSION_ATTRIBUTE_FILTRE, command);
 					return "redirect:.";
 				}
 			}
@@ -188,10 +181,11 @@ public class ConsultaController extends BaseController {
 		return "consulta";
 	}
 
-	@RequestMapping(value = "/datatable", produces="application/json", method = RequestMethod.GET)
+	@RequestMapping(value = "/datatable", produces = "application/json", method = RequestMethod.GET)
 	@ResponseBody
 	public ServerSideResponse<ConsultaDto, Long> datatable(HttpServletRequest request, Model model)
-			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException, NamingException, SQLException, EntitatNotFoundException {
+			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException, NamingException,
+			SQLException, EntitatNotFoundException {
 		long t0 = System.currentTimeMillis();
 		String error = null;
 		ServerSideRequest serverSideRequest = new ServerSideRequest(request);
@@ -207,8 +201,7 @@ public class ConsultaController extends BaseController {
 		}
 		log.debug("[C_CONS_DT] Consulta de l'entitat actual (" + (System.currentTimeMillis() - t0) + "ms)");
 		t0 = System.currentTimeMillis();
-		ConsultaFiltreCommand command = (ConsultaFiltreCommand)RequestSessionHelper.obtenirObjecteSessio(
-				request,
+		ConsultaFiltreCommand command = (ConsultaFiltreCommand) RequestSessionHelper.obtenirObjecteSessio(request,
 				SESSION_ATTRIBUTE_FILTRE);
 		if (command == null) {
 			command = new ConsultaFiltreCommand();
@@ -233,15 +226,11 @@ public class ConsultaController extends BaseController {
 			cols.get(2).setData("procedimentCodi");
 			cols.get(3).setData("serveiCodi");
 			if (isHistoric(request)) {
-				page = historicConsultaService.findSimplesByFiltrePaginatPerDelegat(
-						entitat.getId(),
-						ConsultaFiltreCommand.asDto(command),
-						serverSideRequest.toPageable());
+				page = historicConsultaService.findSimplesByFiltrePaginatPerDelegat(entitat.getId(),
+						ConsultaFiltreCommand.asDto(command), serverSideRequest.toPageable());
 			} else {
-				page = consultaService.findSimplesByFiltrePaginatPerDelegat(
-						entitat.getId(),
-						ConsultaFiltreCommand.asDto(command),
-						serverSideRequest.toPageable());
+				page = consultaService.findSimplesByFiltrePaginatPerDelegat(entitat.getId(),
+						ConsultaFiltreCommand.asDto(command), serverSideRequest.toPageable());
 			}
 			cols.get(0).setData("scspPeticionId");
 			cols.get(1).setData("creacioData");
@@ -254,72 +243,47 @@ public class ConsultaController extends BaseController {
 	}
 
 	@RequestMapping(value = "/{serveiCodi}/new", method = RequestMethod.GET)
-	public String newGet(
-			HttpServletRequest request,
-			@PathVariable String serveiCodi,
-			Model model) throws AccesExternException, ServeiNotFoundException, ScspException, EntitatNotFoundException, IOException, ParserConfigurationException, SAXException {
+	public String newGet(HttpServletRequest request, @PathVariable String serveiCodi, Model model)
+			throws AccesExternException, ServeiNotFoundException, ScspException, EntitatNotFoundException, IOException,
+			ParserConfigurationException, SAXException {
 		EntitatDto entitat = EntitatHelper.getEntitatActual(request, entitatService);
-		if (!EntitatHelper.isDelegatEntitatActual(request) ||
-				!usuariService.getEntitatUsuari(entitat.getId(), SecurityContextHolder.getContext().getAuthentication().getName()).isActiu())
+		if (!EntitatHelper.isDelegatEntitatActual(request) || !usuariService
+				.getEntitatUsuari(entitat.getId(), SecurityContextHolder.getContext().getAuthentication().getName())
+				.isActiu())
 			return "delegatNoAutoritzat";
 
 		if (entitat == null) {
-			AlertHelper.error(
-					request,
-					getMessage(
-							request, 
-							"comu.error.no.entitat"));
+			AlertHelper.error(request, getMessage(request, "comu.error.no.entitat"));
 			return "redirect:../../../index";
 		}
-		omplirModelPerMostrarFormulari(
-				entitat.getId(),
-				serveiCodi,
-				model);
+		omplirModelPerMostrarFormulari(entitat.getId(), serveiCodi, model);
 		ConsultaCommand command = new ConsultaCommand(serveiCodi);
-		emplenarCommand(
-				request,
-				command,
-				serveiCodi,
-				entitat,
-				true);
+		emplenarCommand(request, command, serveiCodi, entitat, true);
 		model.addAttribute(command);
 		return "consultaForm";
 
 	}
 
 	@RequestMapping(value = "/{serveiCodi}/new", method = RequestMethod.POST)
-	public String newPost(
-			HttpServletRequest request,
-			@PathVariable String serveiCodi,
-			@Valid ConsultaCommand command,
-			BindingResult bindingResult,
-			Model model) throws AccesExternException, ProcedimentServeiNotFoundException, ServeiNotFoundException, ConsultaNotFoundException, ServeiNotAllowedException, ScspException, EntitatNotFoundException, ValidacioDadesPeticioException, IOException, ParserConfigurationException, SAXException {
+	public String newPost(HttpServletRequest request, @PathVariable String serveiCodi, @Valid ConsultaCommand command,
+			BindingResult bindingResult, Model model)
+			throws AccesExternException, ProcedimentServeiNotFoundException, ServeiNotFoundException,
+			ConsultaNotFoundException, ServeiNotAllowedException, ScspException, EntitatNotFoundException,
+			ValidacioDadesPeticioException, IOException, ParserConfigurationException, SAXException {
 		if (!EntitatHelper.isDelegatEntitatActual(request))
 			return "delegatNoAutoritzat";
 		EntitatDto entitat = EntitatHelper.getEntitatActual(request, entitatService);
 		List<String[]> liniesFitxer = null;
 		if (entitat == null) {
-			AlertHelper.error(
-					request,
-					getMessage(
-							request, 
-							"comu.error.no.entitat"));
+			AlertHelper.error(request, getMessage(request, "comu.error.no.entitat"));
 			return "redirect:../../index";
 		}
 		if (bindingResult.hasErrors()) {
 			// El command te errors d'anotacions sense grups
-			omplirModelPerMostrarFormulari(
-					entitat.getId(),
-					serveiCodi,
-					model);
-			emplenarCommand(
-					request,
-					command,
-					serveiCodi,
-					entitat,
-					false);
+			omplirModelPerMostrarFormulari(entitat.getId(), serveiCodi, model);
+			emplenarCommand(request, command, serveiCodi, entitat, false);
 			return "consultaForm";
-		} 
+		}
 		List<Class<?>> grups = new ArrayList<Class<?>>();
 		ServeiDto servei = serveiService.findAmbCodiPerDelegat(entitat.getId(), serveiCodi);
 		List<ServeiCampDto> camps = serveiService.findServeiCamps(serveiCodi);
@@ -339,91 +303,63 @@ public class ConsultaController extends BaseController {
 				if (DocumentTipus.Passaport.equals(command.getTitularDocumentTipus()))
 					grups.add(ConsultaCommandAmbDocumentTipusPass.class);
 			}
-			new ValidationHelper(validator).isValid(
-					command,
-					bindingResult,
-					grups.toArray(new Class[grups.size()]));
-			emplenarCommand(
-					request,
-					command,
-					serveiCodi,
-					entitat,
-					false);
+			new ValidationHelper(validator).isValid(command, bindingResult, grups.toArray(new Class[grups.size()]));
+			emplenarCommand(request, command, serveiCodi, entitat, false);
 			new DadesConsultaSimpleValidator(serveiService, serveiCodi).validate(command, bindingResult);
 		} else {
 			MultipartFile fitxer = command.getMultipleFitxer();
 			grups.add(ConsultaCommandMultiple.class);
-			new ValidationHelper(validator).isValid(
-					command,
-					bindingResult,
-					grups.toArray(new Class[grups.size()]));
-			// Validar fitxer					
+			new ValidationHelper(validator).isValid(command, bindingResult, grups.toArray(new Class[grups.size()]));
+			// Validar fitxer
 			if (!bindingResult.hasErrors()) {
 				try {
-					FitxerDto fitxerDto = FitxerDto.builder()
-							.nom(fitxer.getOriginalFilename())
-							.contentType(fitxer.getContentType())
-							.contingut(fitxer.getBytes()).build();
+					FitxerDto fitxerDto = FitxerDto.builder().nom(fitxer.getOriginalFilename())
+							.contentType(fitxer.getContentType()).contingut(fitxer.getBytes()).build();
 					liniesFitxer = readFile(fitxerDto, bindingResult);
 					int numPeticions = liniesFitxer.size() - 1;
-					if (servei.getScspMaxSolicitudesPeticion() > 0 && 
-							numPeticions > servei.getScspMaxSolicitudesPeticion()) {
-						LOGGER.error(
-								"Error al processar dades de la petició múltiple",
+					if (servei.getScspMaxSolicitudesPeticion() > 0
+							&& numPeticions > servei.getScspMaxSolicitudesPeticion()) {
+						LOGGER.error("Error al processar dades de la petició múltiple",
 								"El fitxer excedeix el màxim de sol·licituds permeses pel servei");
-						bindingResult.rejectValue(
-								"multipleFitxer", 
-								"PeticioMultiple.fitxer.massa.peticions", 
+						bindingResult.rejectValue("multipleFitxer", "PeticioMultiple.fitxer.massa.peticions",
 								"El fitxer excedeix el màxim de sol·licituds permeses pel servei");
 					}
-					
+
 					if (!bindingResult.hasErrors()) {
-						DadesConsultaMultipleValidator dadesConsultaMultipleValidator = new DadesConsultaMultipleValidator(serveiService, liniesFitxer, camps, servei, bindingResult, request.getLocale());
+						DadesConsultaMultipleValidator dadesConsultaMultipleValidator = new DadesConsultaMultipleValidator(
+								serveiService, liniesFitxer, camps, servei, bindingResult, request.getLocale());
 						dadesConsultaMultipleValidator.validate();
 						command.setMultipleErrorsValidacio(dadesConsultaMultipleValidator.getErrorsValidacio());
 
 						if (dadesConsultaMultipleValidator.hasErrors()) {
 							// Afegir els errors al fitxer, i que es pugui descarregar
 							try {
-								FitxerDto fitxerErrors = SpreadSheetReader.addColumnaToSpreadSheat(fitxerDto, getErrorsPerFila(dadesConsultaMultipleValidator.getErrorsValidacioPerLinia()));
+								FitxerDto fitxerErrors = SpreadSheetReader.addColumnaToSpreadSheat(fitxerDto,
+										getErrorsPerFila(dadesConsultaMultipleValidator.getErrorsValidacioPerLinia()));
 								Path tempFile = Files.createTempFile(null, fitxerErrors.getExtensio());
 								Files.write(tempFile, fitxerErrors.getContingut());
 								String fitxerUuid = UUID.randomUUID().toString();
-								fitxersAmbErrors.put(
-										fitxerUuid,
-										FitxerErrors.builder()
-												.nom(fitxerErrors.getNomSenseExtensio())
-												.extensio(fitxerErrors.getExtensio())
-												.path(tempFile)
+								fitxersAmbErrors.put(fitxerUuid,
+										FitxerErrors.builder().nom(fitxerErrors.getNomSenseExtensio())
+												.extensio(fitxerErrors.getExtensio()).path(tempFile)
 												.contentType(fitxerErrors.getContentType()).build());
 								model.addAttribute("fitxerAmbErrors", fitxerUuid);
 							} catch (Exception ex) {
-								log.error("No ha estat possible generar el fitxer de consulta multiple amb els errors", ex);
+								log.error("No ha estat possible generar el fitxer de consulta multiple amb els errors",
+										ex);
 							}
 						}
 					}
 				} catch (Exception ex) {
-					LOGGER.error(
-							"Error al processar dades de la petició múltiple",
-							ex);
-					bindingResult.rejectValue(
-							"multipleFitxer", 
-							"PeticioMultiple.fitxer.format", 
+					LOGGER.error("Error al processar dades de la petició múltiple", ex);
+					bindingResult.rejectValue("multipleFitxer", "PeticioMultiple.fitxer.format",
 							"Errors en el contingut del fitxer");
 				}
 			}
-			emplenarCommand(
-					request,
-					command,
-					serveiCodi,
-					entitat,
-					false);
+			emplenarCommand(request, command, serveiCodi, entitat, false);
 		}
 		if (bindingResult.hasErrors()) {
-			omplirModelPerMostrarFormulari(
-					entitat.getId(),
-					serveiCodi,
-					model);
+			omplirModelPerMostrarFormulari(entitat.getId(), serveiCodi, model);
 			return "consultaForm";
 		}
 
@@ -433,39 +369,24 @@ public class ConsultaController extends BaseController {
 			if (!command.isMultiple()) {
 				consulta = novaConsulta(command);
 			} else {
-				consulta = novaConsultaMultiple(
-						command, 
-						liniesFitxer.get(0),
+				consulta = novaConsultaMultiple(command, liniesFitxer.get(0),
 						liniesFitxer.subList(1, liniesFitxer.size()));
 			}
 			if (consulta.isEstatError()) {
-				AlertHelper.error(
-						request,
-						getMessage(
-								request, 
-								"consulta.controller.recepcio.error") + ": " + consulta.getError());
+				AlertHelper.error(request,
+						getMessage(request, "consulta.controller.recepcio.error") + ": " + consulta.getError());
 				error = true;
 			} else {
-				AlertHelper.success(
-						request,
-						getMessage(
-								request, 
-								"consulta.controller.recepcio.ok"));
+				AlertHelper.success(request, getMessage(request, "consulta.controller.recepcio.ok"));
 			}
 		} catch (ConsultaScspException ex) {
-			AlertHelper.error(
-					request,
-					getMessage(
-							request, 
-							"consulta.controller.enviament.error") + ": " + ex.getMessage());
+			AlertHelper.error(request,
+					getMessage(request, "consulta.controller.enviament.error") + ": " + ex.getMessage());
 			error = true;
 		}
 
 		if (error) {
-			omplirModelPerMostrarFormulari(
-					entitat.getId(),
-					serveiCodi,
-					model);
+			omplirModelPerMostrarFormulari(entitat.getId(), serveiCodi, model);
 			model.addAttribute("reintentar", true);
 			return "consultaForm";
 		}
@@ -477,9 +398,7 @@ public class ConsultaController extends BaseController {
 
 	@RequestMapping(value = "/errors/{uuid}/download", method = RequestMethod.GET)
 	@ResponseBody
-	public JsonResponse errorsDownload(
-			HttpServletRequest request,
-			HttpServletResponse response,
+	public JsonResponse errorsDownload(HttpServletRequest request, HttpServletResponse response,
 			@PathVariable String uuid) throws Exception {
 		FitxerErrors fitxerErrors = fitxersAmbErrors.get(uuid);
 		fitxersAmbErrors.remove(uuid);
@@ -489,10 +408,8 @@ public class ConsultaController extends BaseController {
 		}
 
 		try {
-			FitxerDto fitxer = FitxerDto.builder()
-					.nom(fitxerErrors.getNom() + "_errors." + fitxerErrors.getExtensio())
-					.contentType(fitxerErrors.getContentType())
-					.contingut(Files.readAllBytes(fitxerErrors.getPath()))
+			FitxerDto fitxer = FitxerDto.builder().nom(fitxerErrors.getNom() + "_errors." + fitxerErrors.getExtensio())
+					.contentType(fitxerErrors.getContentType()).contingut(Files.readAllBytes(fitxerErrors.getPath()))
 					.build();
 			Files.deleteIfExists(fitxerErrors.getPath());
 			return new JsonResponse(fitxer);
@@ -507,7 +424,7 @@ public class ConsultaController extends BaseController {
 		errorsFilaUnificats.add(null);
 		errorsFilaUnificats.add(null);
 		errorsFilaUnificats.add(null);
-		for (List<String> errorsFila: errors) {
+		for (List<String> errorsFila : errors) {
 			errorsFilaUnificats.add(unificaErrors(errorsFila));
 		}
 		return errorsFilaUnificats;
@@ -516,7 +433,7 @@ public class ConsultaController extends BaseController {
 	private String unificaErrors(List<String> errorsFila) {
 		String errors = "";
 		if (errorsFila != null && !errorsFila.isEmpty()) {
-			for (String error: errorsFila) {
+			for (String error : errorsFila) {
 				errors += error + SEPARADOR;
 			}
 			errors = errors.substring(0, errors.length() - SEPARADOR.length());
@@ -525,51 +442,37 @@ public class ConsultaController extends BaseController {
 	}
 
 	@RequestMapping(value = "/{consultaId}", method = RequestMethod.GET)
-	public String info(
-			HttpServletRequest request,
-			@PathVariable Long consultaId,
-			Model model) throws ConsultaNotFoundException, ScspException, ServeiNotFoundException {
+	public String info(HttpServletRequest request, @PathVariable Long consultaId, Model model)
+			throws ConsultaNotFoundException, ScspException, ServeiNotFoundException {
 		if (!EntitatHelper.isDelegatEntitatActual(request))
 			return "delegatNoAutoritzat";
 		EntitatDto entitat = EntitatHelper.getEntitatActual(request, entitatService);
 		if (entitat != null) {
 			ConsultaDto consulta = getConsultaDelegate(consultaId, isHistoric(request));
 			model.addAttribute("consulta", consulta);
-			model.addAttribute(
-					"servei",
-					serveiService.findAmbCodiPerDelegat(
-							entitat.getId(),
-							consulta.getServeiCodi()));
+			model.addAttribute("servei",
+					serveiService.findAmbCodiPerDelegat(entitat.getId(), consulta.getServeiCodi()));
 
-			omplirModelAmbDadesEspecifiques(
-					consulta.getServeiCodi(),
-					model);
+			omplirModelAmbDadesEspecifiques(consulta.getServeiCodi(), model);
 			return "consultaInfo";
 		} else {
-			AlertHelper.error(
-					request,
-					getMessage(
-							request, 
-							"comu.error.no.entitat"));
+			AlertHelper.error(request, getMessage(request, "comu.error.no.entitat"));
 			return "redirect:../../../index";
 		}
 	}
 
 	@RequestMapping(value = "/{consultaId}/justificant/arxiu/detall", method = RequestMethod.GET)
-	public String justificantArxiuDetall(HttpServletRequest request, HttpServletResponse response, @PathVariable Long consultaId, Model model) {
+	public String justificantArxiuDetall(HttpServletRequest request, HttpServletResponse response,
+			@PathVariable Long consultaId, Model model) {
 
-		model.addAttribute("arxiuDetall", isHistoric(request) ?
-				historicConsultaService.obtenirArxiuInfo(consultaId) :
-				consultaService.obtenirArxiuInfo(consultaId));
+		model.addAttribute("arxiuDetall", isHistoric(request) ? historicConsultaService.obtenirArxiuInfo(consultaId)
+				: consultaService.obtenirArxiuInfo(consultaId));
 		model.addAttribute("mostrarArxiuInfo", true);
 		return "contingutArxiu";
 	}
 
 	@RequestMapping(value = "/{consultaId}/justificant", method = RequestMethod.GET)
-	public String justificant(
-			HttpServletRequest request,
-			HttpServletResponse response,
-			@PathVariable Long consultaId,
+	public String justificant(HttpServletRequest request, HttpServletResponse response, @PathVariable Long consultaId,
 			Model model) throws ConsultaNotFoundException {
 		if (!EntitatHelper.isDelegatEntitatActual(request))
 			return "delegatNoAutoritzat";
@@ -578,45 +481,28 @@ public class ConsultaController extends BaseController {
 			try {
 				JustificantDto justificant = getJustificant(consultaId, isHistoric(request));
 				if (!justificant.isError()) {
-					writeFileToResponse(
-							justificant.getNom(),
-							justificant.getContingut(),
-							response);
+					writeFileToResponse(justificant.getNom(), justificant.getContingut(), response);
 					return null;
 				} else {
-					AlertHelper.error(
-							request,
-							getMessage(
-									request, 
-									"consulta.controller.justificant.error"));
+					AlertHelper.error(request, getMessage(request, "consulta.controller.justificant.error"));
 					return "redirect:../../consulta";
 				}
 			} catch (ConsultaNotFoundException ex) {
 				throw ex;
 			} catch (Exception ex) {
 				ex.printStackTrace();
-				AlertHelper.error(
-						request,
-						getMessage(
-								request, 
-								"consulta.controller.justificant.error"));
+				AlertHelper.error(request, getMessage(request, "consulta.controller.justificant.error"));
 				return "redirect:../../consulta";
 			}
 		} else {
-			AlertHelper.error(
-					request,
-					getMessage(
-							request, 
-							"comu.error.no.entitat"));
+			AlertHelper.error(request, getMessage(request, "comu.error.no.entitat"));
 			return "redirect:../../index";
 		}
 	}
 
-	@RequestMapping(value="/{consultaId}/justificant/previsualitzacio", method = RequestMethod.GET)
+	@RequestMapping(value = "/{consultaId}/justificant/previsualitzacio", method = RequestMethod.GET)
 	@ResponseBody
-	public JsonResponse justificantPrevisualitzacio(
-			HttpServletRequest request,
-			@PathVariable Long consultaId) {
+	public JsonResponse justificantPrevisualitzacio(HttpServletRequest request, @PathVariable Long consultaId) {
 
 		if (!EntitatHelper.isDelegatEntitatActual(request))
 			return new JsonResponse(true, "delegatNoAutoritzat");
@@ -637,41 +523,24 @@ public class ConsultaController extends BaseController {
 	}
 
 	@RequestMapping(value = "/{consultaId}/justificantReintentar", method = RequestMethod.GET)
-	public String justificantReintentar(
-			HttpServletRequest request,
-			HttpServletResponse response,
-			@PathVariable Long consultaId,
-			@RequestParam(value = "info", required = false) Boolean info) throws ConsultaNotFoundException {
+	public String justificantReintentar(HttpServletRequest request, HttpServletResponse response,
+			@PathVariable Long consultaId, @RequestParam(value = "info", required = false) Boolean info)
+			throws ConsultaNotFoundException {
 		if (!EntitatHelper.isDelegatEntitatActual(request))
 			return "delegatNoAutoritzat";
 		EntitatDto entitat = EntitatHelper.getEntitatActual(request, entitatService);
 		if (entitat != null) {
 			try {
-				JustificantDto justificant = consultaService.reintentarGeneracioJustificant(
-						consultaId,
-						false,
-						false);
+				JustificantDto justificant = consultaService.reintentarGeneracioJustificant(consultaId, false, false);
 				if (!justificant.isError()) {
-					AlertHelper.success(
-							request,
-							getMessage(
-									request, 
-									"consulta.controller.justificant.regenerat"));
+					AlertHelper.success(request, getMessage(request, "consulta.controller.justificant.regenerat"));
 				} else {
-					AlertHelper.error(
-							request,
-							getMessage(
-									request, 
-									"consulta.controller.justificant.error"));
+					AlertHelper.error(request, getMessage(request, "consulta.controller.justificant.error"));
 				}
 			} catch (ConsultaNotFoundException ex) {
 				throw ex;
 			} catch (Exception ex) {
-				AlertHelper.error(
-						request,
-						getMessage(
-								request, 
-								"consulta.controller.justificant.error"));
+				AlertHelper.error(request, getMessage(request, "consulta.controller.justificant.error"));
 			}
 			if (info != null && info.booleanValue()) {
 				return "redirect:../../consulta/" + consultaId;
@@ -679,20 +548,13 @@ public class ConsultaController extends BaseController {
 				return "redirect:../../consulta";
 			}
 		} else {
-			AlertHelper.error(
-					request,
-					getMessage(
-							request, 
-							"comu.error.no.entitat"));
+			AlertHelper.error(request, getMessage(request, "comu.error.no.entitat"));
 			return "redirect:../../index";
 		}
 	}
 
 	@RequestMapping(value = "/{consultaId}/xmlPeticio", method = RequestMethod.GET)
-	public String xmlPeticio(
-			HttpServletRequest request,
-			HttpServletResponse response,
-			@PathVariable Long consultaId,
+	public String xmlPeticio(HttpServletRequest request, HttpServletResponse response, @PathVariable Long consultaId,
 			Model model) throws ConsultaNotFoundException, ScspException {
 		if (!EntitatHelper.isDelegatEntitatActual(request))
 			return "delegatNoAutoritzat";
@@ -704,20 +566,13 @@ public class ConsultaController extends BaseController {
 			model.addAttribute("mostrarResposta", new Boolean(false));
 			return "consultaXml";
 		} else {
-			AlertHelper.error(
-					request,
-					getMessage(
-							request, 
-							"comu.error.no.entitat"));
+			AlertHelper.error(request, getMessage(request, "comu.error.no.entitat"));
 			return "redirect:../../index";
 		}
 	}
 
 	@RequestMapping(value = "/{consultaId}/xmlResposta", method = RequestMethod.GET)
-	public String xmlResposta(
-			HttpServletRequest request,
-			HttpServletResponse response,
-			@PathVariable Long consultaId,
+	public String xmlResposta(HttpServletRequest request, HttpServletResponse response, @PathVariable Long consultaId,
 			Model model) throws ConsultaNotFoundException, ScspException {
 		if (!EntitatHelper.isDelegatEntitatActual(request))
 			return "delegatNoAutoritzat";
@@ -729,50 +584,34 @@ public class ConsultaController extends BaseController {
 			model.addAttribute("mostrarResposta", new Boolean(true));
 			return "consultaXml";
 		} else {
-			AlertHelper.error(
-					request,
-					getMessage(
-							request, 
-							"comu.error.no.entitat"));
+			AlertHelper.error(request, getMessage(request, "comu.error.no.entitat"));
 			return "redirect:../../index";
 		}
 	}
 
 	@RequestMapping(value = "/serveisPermesosPerProcediment/{procedimentId}", method = RequestMethod.GET)
-	public String serveisPermesosPerProcedimentAmbId(
-			HttpServletRequest request,
-			HttpServletResponse response,
-			@PathVariable Long procedimentId,
-			Model model) throws IOException, EntitatNotFoundException, ProcedimentNotFoundException {
+	public String serveisPermesosPerProcedimentAmbId(HttpServletRequest request, HttpServletResponse response,
+			@PathVariable Long procedimentId, Model model)
+			throws IOException, EntitatNotFoundException, ProcedimentNotFoundException {
 		if (EntitatHelper.isDelegatEntitatActual(request)) {
 			EntitatDto entitat = EntitatHelper.getEntitatActual(request, entitatService);
-			model.addAttribute(
-					"serveis",
-					serveiService.findPermesosAmbProcedimentPerDelegat(
-							entitat.getId(),
-							procedimentId));
+			model.addAttribute("serveis",
+					serveiService.findPermesosAmbProcedimentPerDelegat(entitat.getId(), procedimentId));
 		}
 		return "serveiSelectJson";
 	}
+
 	@RequestMapping(value = "/serveisPermesosPerProcediment", method = RequestMethod.GET)
-	public String serveisPermesosPerProcedimentSenseId(
-			HttpServletRequest request,
-			HttpServletResponse response,
+	public String serveisPermesosPerProcedimentSenseId(HttpServletRequest request, HttpServletResponse response,
 			Model model) throws IOException, EntitatNotFoundException, ProcedimentNotFoundException {
-		return serveisPermesosPerProcedimentAmbId(
-				request,
-				response,
-				null,
-				model);
+		return serveisPermesosPerProcedimentAmbId(request, response, null, model);
 	}
-	
+
 	@RequestMapping(value = "/{serveiCodi}/plantilla/{tipusPlantilla}", method = RequestMethod.GET)
-	public String plantillaCsvGet(
-			HttpServletRequest request,
-			@PathVariable String serveiCodi,
-			@PathVariable String tipusPlantilla,
-			Model model) throws ScspException, ServeiNotFoundException, EntitatNotFoundException {
-		
+	public String plantillaCsvGet(HttpServletRequest request, @PathVariable String serveiCodi,
+			@PathVariable String tipusPlantilla, Model model)
+			throws ScspException, ServeiNotFoundException, EntitatNotFoundException {
+
 		if (!EntitatHelper.isDelegatEntitatActual(request))
 			return "delegatNoAutoritzat";
 		EntitatDto entitat = EntitatHelper.getEntitatActual(request, entitatService);
@@ -786,41 +625,30 @@ public class ConsultaController extends BaseController {
 			}
 			return "peticioMultiplePlantillaExcelView";
 		} else {
-			AlertHelper.error(
-					request,
-					getMessage(
-							request, 
-							"comu.error.no.entitat"));
+			AlertHelper.error(request, getMessage(request, "comu.error.no.entitat"));
 			return "redirect:../../../index";
 		}
 	}
-	
+
 	@RequestMapping(value = "/{serveiCodi}/downloadAjuda", method = RequestMethod.GET)
-	public String downloadAjuda(
-			HttpServletRequest request,
-			HttpServletResponse response,
+	public String downloadAjuda(HttpServletRequest request, HttpServletResponse response,
 			@PathVariable String serveiCodi) throws ServeiNotFoundException {
 		try {
 			ServeiDto servei = null;
 			if (serveiCodi != null)
 				servei = serveiService.findAmbCodiPerDelegat(
-						EntitatHelper.getEntitatActual(request, entitatService).getId(),
-						serveiCodi);
-			
+						EntitatHelper.getEntitatActual(request, entitatService).getId(), serveiCodi);
+
 			response.setHeader("Pragma", "");
 			response.setHeader("Expires", "");
 			response.setHeader("Cache-Control", "");
 			response.setHeader("Content-Disposition", "attachment; filename=\"" + servei.getFitxerAjudaNom() + "\"");
 			response.setContentType(servei.getFitxerAjudaMimeType());
 			response.getOutputStream().write(servei.getFitxerAjudaContingut());
-			
+
 			return null;
 		} catch (Exception e) {
-			AlertHelper.error(
-					request, 
-					getMessage(
-							request, 
-							"servei.controller.servei.download.ajuda"));
+			AlertHelper.error(request, getMessage(request, "servei.controller.servei.download.ajuda"));
 		}
 		return "redirect:servei";
 	}
@@ -829,37 +657,58 @@ public class ConsultaController extends BaseController {
 
 	@ResponseBody
 	@RequestMapping(value = "/{serveiCodi}/camps/regles", method = RequestMethod.POST)
-	public List<CampFormProperties> campsRegles(
-			HttpServletRequest request,
-			@PathVariable String serveiCodi,
-			@RequestParam(value = "campsModificats[]", required = false) String[] campsModificats) throws ServeiNotFoundException {
+	public List<CampFormProperties> campsRegles(HttpServletRequest request, @PathVariable String serveiCodi,
+			@RequestParam(value = "campsModificats[]", required = false) String[] campsModificats)
+			throws ServeiNotFoundException {
 		return serveiService.getCampsByserveiRegla(serveiCodi, campsModificats);
 	}
 
 	@ResponseBody
 	@RequestMapping(value = "/{serveiCodi}/grups/regles", method = RequestMethod.POST)
-	public List<CampFormProperties> grupsRegles(
-			HttpServletRequest request,
-			@PathVariable String serveiCodi,
-			@RequestParam(value = "grupsModificats[]", required = false) String[] grupsModificats) throws ServeiNotFoundException {
+	public List<CampFormProperties> grupsRegles(HttpServletRequest request, @PathVariable String serveiCodi,
+			@RequestParam(value = "grupsModificats[]", required = false) String[] grupsModificats)
+			throws ServeiNotFoundException {
 		return serveiService.getGrupsByserveiRegla(serveiCodi, grupsModificats);
 	}
 
 	@InitBinder
 	public void initBinder(WebDataBinder binder) {
-	    SimpleDateFormat dateFormat = new SimpleDateFormat(FORMAT_DATA_DADES_ESPECIFIQUES);
-	    dateFormat.setLenient(false);
-	    binder.registerCustomEditor(Date.class, new CustomDateEditor(dateFormat, true));
+		SimpleDateFormat dateFormat = new SimpleDateFormat(FORMAT_DATA_DADES_ESPECIFIQUES);
+		dateFormat.setLenient(false);
+		binder.registerCustomEditor(Date.class, new CustomDateEditor(dateFormat, true));
 	}
 
+	@RequestMapping(value = "/excel")
+	public String excel(HttpServletRequest request, Model model) throws Exception {
+		if (!RolHelper.isRolActualAdministrador(request) && !EntitatHelper.isRepresentantEntitatActual(request))
+			return "representantNoAutoritzat";
+		ConsultaFiltreCommand command = (ConsultaFiltreCommand) RequestSessionHelper.obtenirObjecteSessio(request,
+				SESSION_ATTRIBUTE_FILTRE);
+		EntitatDto entitat = EntitatHelper.getEntitatActual(request, entitatService);
+		if (command == null) {
+			command = new ConsultaFiltreCommand();
+			command.filtrarDarrersMesos(isHistoric(request) ? 9 : 3);
+		} else {
+			command.updateDefaultDataInici(isHistoric(request));
+		}
+		model.addAttribute(command);
 
+		Page<ConsultaDto> page;
+		if (isHistoric(request)) {
+			page = historicConsultaService.findSimplesByFiltrePaginatPerDelegat(entitat.getId(),
+					ConsultaFiltreCommand.asDto(command), null);
+		} else {
+			page = consultaService.findSimplesByFiltrePaginatPerDelegat(entitat.getId(),
+					ConsultaFiltreCommand.asDto(command), null);
+		}
+		model.addAttribute("consultaList", page.getContent());
 
-	private void emplenarCommand(
-			HttpServletRequest request,
-			ConsultaCommand command,
-			String serveiCodi,
-			EntitatDto entitat,
-			boolean inicialitzacioCommand) throws AccesExternException, ServeiNotFoundException, ScspException, IOException, ParserConfigurationException, SAXException {
+		return "consultaExcelView";
+	}
+
+	private void emplenarCommand(HttpServletRequest request, ConsultaCommand command, String serveiCodi,
+			EntitatDto entitat, boolean inicialitzacioCommand) throws AccesExternException, ServeiNotFoundException,
+			ScspException, IOException, ParserConfigurationException, SAXException {
 		command.setServeiCodi(serveiCodi);
 		UsuariDto dadesUsuari = usuariService.getDades();
 		if (dadesUsuari != null) {
@@ -874,30 +723,24 @@ public class ConsultaController extends BaseController {
 		command.setEntitatCif(entitat.getCif());
 		if (command.getDepartamentNom() == null || command.getDepartamentNom().isEmpty()) {
 			String usuariActual = request.getUserPrincipal().getName();
-			for (EntitatUsuariDto entitatUsuari: entitat.getUsuarisDelegat()) {
+			for (EntitatUsuariDto entitatUsuari : entitat.getUsuarisDelegat()) {
 				if (entitatUsuari.getUsuari().getCodi().equals(usuariActual)) {
 					command.setDepartamentNom(entitatUsuari.getDepartament());
 					break;
 				}
 			}
 		}
-		command.setDadesEspecifiques(
-				getDadesEspecifiques(
-						request,
-						serveiCodi));
+		command.setDadesEspecifiques(getDadesEspecifiques(request, serveiCodi));
 		command.setMultipleFitxer(null);
-		ServeiDto servei = serveiService.findAmbCodiPerDelegat(
-				entitat.getId(),
-				serveiCodi);
+		ServeiDto servei = serveiService.findAmbCodiPerDelegat(entitat.getId(), serveiCodi);
 		if (servei.isConsultaMultiplePermesa() && !servei.isConsultaSimplePermesa()) {
 			command.setMultiple(true);
 		}
 	}
 
 	@SuppressWarnings("unchecked")
-	private Map<String, Object> getDadesEspecifiques(
-			HttpServletRequest request,
-			String serveiCodi) throws ScspException, ServeiNotFoundException, IOException, ParserConfigurationException, SAXException {
+	private Map<String, Object> getDadesEspecifiques(HttpServletRequest request, String serveiCodi)
+			throws ScspException, ServeiNotFoundException, IOException, ParserConfigurationException, SAXException {
 		List<ServeiCampDto> serveiCamps = serveiService.findServeiCamps(serveiCodi);
 		Map<String, Object> resposta = new HashMap<String, Object>();
 		Enumeration<String> paramNames = request.getParameterNames();
@@ -905,23 +748,19 @@ public class ConsultaController extends BaseController {
 			String paramName = paramNames.nextElement();
 			if (paramName.startsWith(PREFIX_CAMP_DADES_ESPECIFIQUES)) {
 				String campId = paramName.substring(PREFIX_CAMP_DADES_ESPECIFIQUES.length());
-				for (ServeiCampDto serveiCamp: serveiCamps) {
+				for (ServeiCampDto serveiCamp : serveiCamps) {
 					if (serveiCamp.getId().equals(new Long(campId))) {
 						// Si es un BOOLEA hi pot haver més d'un valor
 						String[] valors = request.getParameterValues(paramName);
 						if (valors.length != 1) {
-							for (String valor: valors) {
+							for (String valor : valors) {
 								if (valor.equalsIgnoreCase("on")) {
-									resposta.put(
-											serveiCamp.getPath(),
-											request.getParameter(paramName));
+									resposta.put(serveiCamp.getPath(), request.getParameter(paramName));
 									break;
 								}
 							}
 						} else {
-							resposta.put(
-									serveiCamp.getPath(),
-									request.getParameter(paramName));
+							resposta.put(serveiCamp.getPath(), request.getParameter(paramName));
 						}
 						break;
 					}
@@ -929,40 +768,40 @@ public class ConsultaController extends BaseController {
 			}
 		}
 		if (request instanceof MultipartHttpServletRequest) {
-			MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest)request;
+			MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) request;
 			Iterator<String> fileNamesIt = multipartRequest.getFileNames();
 			while (fileNamesIt.hasNext()) {
 				String fileName = fileNamesIt.next();
 				if (fileName.startsWith(PREFIX_CAMP_DADES_ESPECIFIQUES)) {
 					String campId = fileName.substring(PREFIX_CAMP_DADES_ESPECIFIQUES.length());
-					for (ServeiCampDto serveiCamp: serveiCamps) {
+					for (ServeiCampDto serveiCamp : serveiCamps) {
 						// ARXIU BINARI
-						if (ServeiCampDtoTipus.ADJUNT_BINARI.equals(serveiCamp.getTipus()) && serveiCamp.getId().equals(new Long(campId))) {
+						if (ServeiCampDtoTipus.ADJUNT_BINARI.equals(serveiCamp.getTipus())
+								&& serveiCamp.getId().equals(new Long(campId))) {
 							MultipartFile multipartFile = multipartRequest.getFile(fileName);
-							resposta.put(
-									serveiCamp.getPath(),
+							resposta.put(serveiCamp.getPath(),
 									new String(Base64.encodeBase64(multipartFile.getBytes())));
 						}
-						
+
 						// ARXIU XML
-						if (ServeiCampDtoTipus.ADJUNT_XML.equals(serveiCamp.getTipus()) && serveiCamp.getId().equals(new Long(campId))) {
+						if (ServeiCampDtoTipus.ADJUNT_XML.equals(serveiCamp.getTipus())
+								&& serveiCamp.getId().equals(new Long(campId))) {
 							MultipartFile multipartFile = multipartRequest.getFile(fileName);
-							
+
 							String contentType = multipartFile.getContentType();
-							
-							if (!"text/xml".equalsIgnoreCase(contentType) && !"application/xml".equalsIgnoreCase(contentType))
+
+							if (!"text/xml".equalsIgnoreCase(contentType)
+									&& !"application/xml".equalsIgnoreCase(contentType))
 								throw new IOException(getMessage(request, "consulta.fitxer.camp.document.xml"));
-							
+
 							////////////
-						    DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
-						    DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-						    InputStream inputStream = multipartFile.getInputStream();
-						    Document docXml = dBuilder.parse(inputStream);
+							DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+							DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+							InputStream inputStream = multipartFile.getInputStream();
+							Document docXml = dBuilder.parse(inputStream);
 							////////////
-							
-							resposta.put(
-									serveiCamp.getPath(),
-									docXml);
+
+							resposta.put(serveiCamp.getPath(), docXml);
 						}
 					}
 				}
@@ -971,12 +810,9 @@ public class ConsultaController extends BaseController {
 		return resposta;
 	}
 
-	private void omplirModelPerFiltreTaula(
-			HttpServletRequest request,
-			EntitatDto entitat,
-			Model model) throws Exception {
-		ConsultaFiltreCommand command = (ConsultaFiltreCommand)RequestSessionHelper.obtenirObjecteSessio(
-				request,
+	private void omplirModelPerFiltreTaula(HttpServletRequest request, EntitatDto entitat, Model model)
+			throws Exception {
+		ConsultaFiltreCommand command = (ConsultaFiltreCommand) RequestSessionHelper.obtenirObjecteSessio(request,
 				SESSION_ATTRIBUTE_FILTRE);
 		if (command == null) {
 			command = new ConsultaFiltreCommand();
@@ -984,62 +820,38 @@ public class ConsultaController extends BaseController {
 			UsuariDto usuari = usuariService.getDades();
 			command.setProcediment(usuari.getProcedimentId());
 			command.setServei(usuari.getServeiCodi());
-			RequestSessionHelper.actualitzarObjecteSessio(
-					request,
-					SESSION_ATTRIBUTE_FILTRE,
-					command);
+			RequestSessionHelper.actualitzarObjecteSessio(request, SESSION_ATTRIBUTE_FILTRE, command);
 		} else {
 			command.updateDefaultDataInici(isHistoric(request));
 		}
 		command.eliminarEspaisCampsCerca();
-		model.addAttribute(
-				"filtreCommand",
-				command);
+		model.addAttribute("filtreCommand", command);
 		long t0 = System.currentTimeMillis();
-		model.addAttribute(
-				"procediments",
-				procedimentService.findAmbEntitatPerDelegat(entitat.getId()));
+		model.addAttribute("procediments", procedimentService.findAmbEntitatPerDelegat(entitat.getId()));
 		log.debug("[C_CONS] Consulta de procediments (" + (System.currentTimeMillis() - t0) + "ms)");
 		t0 = System.currentTimeMillis();
-		model.addAttribute(
-				"serveis",
-				serveiService.findPermesosAmbProcedimentPerDelegat(
-						entitat.getId(),
-						command.getProcediment()));
+		model.addAttribute("serveis",
+				serveiService.findPermesosAmbProcedimentPerDelegat(entitat.getId(), command.getProcediment()));
 		model.addAttribute("historic", isHistoric(request));
 		log.debug("[C_CONS] Consulta de serveis (" + (System.currentTimeMillis() - t0) + "ms)");
 	}
 
-	private void omplirModelPerMostrarFormulari(
-			Long entitatId,
-			String serveiCodi,
-			Model model) throws ScspException, ServeiNotFoundException, EntitatNotFoundException {
-		model.addAttribute(
-				"procediments",
-				procedimentService.findActiusAmbEntitatIServeiCodi(
-						entitatId,
-						serveiCodi));
-		model.addAttribute(
-				"servei",
-				serveiService.findAmbCodiPerDelegat(
-						entitatId,
-						serveiCodi));
-		omplirModelAmbDadesEspecifiques(
-				serveiCodi,
-				model);
+	private void omplirModelPerMostrarFormulari(Long entitatId, String serveiCodi, Model model)
+			throws ScspException, ServeiNotFoundException, EntitatNotFoundException {
+		model.addAttribute("procediments", procedimentService.findActiusAmbEntitatIServeiCodi(entitatId, serveiCodi));
+		model.addAttribute("servei", serveiService.findAmbCodiPerDelegat(entitatId, serveiCodi));
+		omplirModelAmbDadesEspecifiques(serveiCodi, model);
 	}
 
-	private void omplirModelAmbDadesEspecifiques(
-			String serveiCodi,
-			Model model) throws ScspException, ServeiNotFoundException {
-		List<NodeDto<DadaEspecificaDto>> llistaArbreDadesEspecifiques = serveiService.generarArbreDadesEspecifiques(serveiCodi).toList();
-		model.addAttribute(
-				"llistaArbreDadesEspecifiques",
-				llistaArbreDadesEspecifiques);
+	private void omplirModelAmbDadesEspecifiques(String serveiCodi, Model model)
+			throws ScspException, ServeiNotFoundException {
+		List<NodeDto<DadaEspecificaDto>> llistaArbreDadesEspecifiques = serveiService
+				.generarArbreDadesEspecifiques(serveiCodi).toList();
+		model.addAttribute("llistaArbreDadesEspecifiques", llistaArbreDadesEspecifiques);
 		List<ServeiCampDto> camps = serveiService.findServeiCamps(serveiCodi);
 		model.addAttribute("campsDadesEspecifiques", camps);
 		Map<Long, List<ServeiCampDto>> campsAgrupats = new HashMap<Long, List<ServeiCampDto>>();
-		for (ServeiCampDto camp: camps) {
+		for (ServeiCampDto camp : camps) {
 			Long clau = (camp.getGrup() != null) ? camp.getGrup().getId() : null;
 			if (campsAgrupats.get(clau) == null) {
 				campsAgrupats.put(clau, new ArrayList<ServeiCampDto>());
@@ -1050,7 +862,7 @@ public class ConsultaController extends BaseController {
 		model.addAttribute("campsDadesEspecifiquesAgrupats", campsAgrupats);
 		model.addAttribute("grups", grups);
 		boolean mostraDadesEspecifiques = false;
-		for (ServeiCampDto camp: camps) {
+		for (ServeiCampDto camp : camps) {
 			if (camp.isVisible()) {
 				mostraDadesEspecifiques = true;
 				break;
@@ -1062,101 +874,88 @@ public class ConsultaController extends BaseController {
 			List<Long> grupsRegles = serveiService.findGrupIdsByReglesServei(serveiCodi);
 
 			if (campsRegles != null && !campsRegles.isEmpty()) {
-				for (ServeiCampDto camp: camps) {
+				for (ServeiCampDto camp : camps) {
 					if (campsRegles.contains(camp.getId()))
 						camp.setCampRegla(true);
 				}
 			}
 			if (grupsRegles != null && !grupsRegles.isEmpty()) {
-				for (ServeiCampGrupDto grup: grups) {
+				for (ServeiCampGrupDto grup : grups) {
 					if (grupsRegles.contains(grup.getId()))
 						grup.setGrupRegla(true);
 					if (grup.getFills() != null && !grup.getFills().isEmpty()) {
-						for (ServeiCampGrupDto subgrup: grup.getFills()) {
+						for (ServeiCampGrupDto subgrup : grup.getFills()) {
 							if (grupsRegles.contains(subgrup.getId()))
 								subgrup.setGrupRegla(true);
 						}
 					}
 				}
 			}
-//			List<ServeiReglaDto> serveiReglaDtos = serveiService.serveiReglesFindAll(serveiCodi);
-//			if (serveiReglaDtos != null && !serveiReglaDtos.isEmpty()) {
-//
-//				model.addAttribute("campsRegles", );
-				model.addAttribute("grupsRegles_", "");
-//			}
+			// List<ServeiReglaDto> serveiReglaDtos =
+			// serveiService.serveiReglesFindAll(serveiCodi);
+			// if (serveiReglaDtos != null && !serveiReglaDtos.isEmpty()) {
+			//
+			// model.addAttribute("campsRegles", );
+			model.addAttribute("grupsRegles_", "");
+			// }
 		}
 	}
 
-	private ConsultaDto novaConsulta(
-			ConsultaCommand command) throws ProcedimentServeiNotFoundException, ConsultaNotFoundException, ServeiNotAllowedException, ConsultaScspException {
+	private ConsultaDto novaConsulta(ConsultaCommand command) throws ProcedimentServeiNotFoundException,
+			ConsultaNotFoundException, ServeiNotAllowedException, ConsultaScspException {
 		ConsultaDto consulta = ConsultaCommand.asDto(command);
 		if (consultaService.isOptimitzarTransaccionsNovaConsulta()) {
-			ConsultaDto consultaInit = consultaService.novaConsultaInit(
-					consulta);
-			consultaService.novaConsultaEnviament(
-					consultaInit.getId(),
-					consulta);
-			return consultaService.novaConsultaEstat(
-					consultaInit.getId());
+			ConsultaDto consultaInit = consultaService.novaConsultaInit(consulta);
+			consultaService.novaConsultaEnviament(consultaInit.getId(), consulta);
+			return consultaService.novaConsultaEstat(consultaInit.getId());
 		} else {
-			return consultaService.novaConsulta(
-					ConsultaCommand.asDto(command));
+			return consultaService.novaConsulta(ConsultaCommand.asDto(command));
 		}
 	}
 
-	private ConsultaDto novaConsultaMultiple(
-			ConsultaCommand command,
-			String[] campsPeticioMultiple,
-			List<String[]> dadesPeticioMultiple) throws ProcedimentServeiNotFoundException, ConsultaNotFoundException, ServeiNotAllowedException, ConsultaScspException, ValidacioDadesPeticioException {
+	private ConsultaDto novaConsultaMultiple(ConsultaCommand command, String[] campsPeticioMultiple,
+			List<String[]> dadesPeticioMultiple) throws ProcedimentServeiNotFoundException, ConsultaNotFoundException,
+			ServeiNotAllowedException, ConsultaScspException, ValidacioDadesPeticioException {
 		ConsultaDto consulta = ConsultaCommand.asDto(command);
 		consulta.setCampsPeticioMultiple(campsPeticioMultiple);
 		consulta.setDadesPeticioMultiple(
-				dadesPeticioMultiple.toArray(
-						new String[dadesPeticioMultiple.size()][campsPeticioMultiple.length]));
+				dadesPeticioMultiple.toArray(new String[dadesPeticioMultiple.size()][campsPeticioMultiple.length]));
 		return consultaService.novaConsultaMultiple(consulta);
 	}
 
-	private List<String[]> readFile(
-			FitxerDto fitxer,
-			Errors errors) throws Exception {
+	private List<String[]> readFile(FitxerDto fitxer, Errors errors) throws Exception {
 		List<String[]> linies = new ArrayList<String[]>();
 		// Obtenir dades del fitxer
 		try {
 			linies = SpreadSheetReader.getLinesFromSpreadSheat(fitxer);
 			// 1. Mínim 1 registre de dades (fila 4)
 			if (linies.size() < 4) {
-				errors.rejectValue(
-						"multipleFitxer",
-						"PeticioMultiple.fitxer.buit",
+				errors.rejectValue("multipleFitxer", "PeticioMultiple.fitxer.buit",
 						"El fitxer és buit. No te dades de peticions.");
 			} else {
 				linies = linies.subList(2, linies.size());
 			}
 		} catch (FileTypeException fte) {
-			errors.rejectValue(
-					"multipleFitxer",
-					"PeticioMultiple.fitxer.tipus",
+			errors.rejectValue("multipleFitxer", "PeticioMultiple.fitxer.tipus",
 					"Tipus de fitxer no suportat. Tipus acceptats: Excel i CSV.");
 		}
 		return linies;
 	}
 
-//	private List<ServeiCampDto> getCampsObligatoris(
-//			HttpServletRequest request,
-//			ServeiDto servei,
-//			List<ServeiCampDto> camps) {
-//		List<ServeiCampDto> campsObligatoris = getCampsGenericsObligatoris(request, servei);
-//		for (ServeiCampDto camp: camps) {
-//			if (camp.isObligatori())
-//				campsObligatoris.add(camp);
-//		}
-//		return campsObligatoris;
-//	}
+	// private List<ServeiCampDto> getCampsObligatoris(
+	// HttpServletRequest request,
+	// ServeiDto servei,
+	// List<ServeiCampDto> camps) {
+	// List<ServeiCampDto> campsObligatoris = getCampsGenericsObligatoris(request,
+	// servei);
+	// for (ServeiCampDto camp: camps) {
+	// if (camp.isObligatori())
+	// campsObligatoris.add(camp);
+	// }
+	// return campsObligatoris;
+	// }
 
-	private List<ServeiCampDto> getCampsGenericsObligatoris(
-			HttpServletRequest request,
-			ServeiDto servei) {
+	private List<ServeiCampDto> getCampsGenericsObligatoris(HttpServletRequest request, ServeiDto servei) {
 		List<ServeiCampDto> campsObligatoris = new ArrayList<ServeiCampDto>();
 		if (servei.isPinbalDocumentObligatori()) {
 			ServeiCampDto documentTipus = new ServeiCampDto();
@@ -1179,7 +978,8 @@ public class ConsultaController extends BaseController {
 			return ((Boolean) historic).booleanValue();
 	}
 
-	private ConsultaDto getConsultaDelegate(Long consultaId, boolean historic) throws ConsultaNotFoundException, ScspException {
+	private ConsultaDto getConsultaDelegate(Long consultaId, boolean historic)
+			throws ConsultaNotFoundException, ScspException {
 		ConsultaDto consulta;
 		if (historic) {
 			try {
