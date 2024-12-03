@@ -6,6 +6,7 @@
         <td><span title="${ camp.path }">${ camp.campNom }</span></td>
         <td>${ camp.tipus }</td>
         <td>${ camp.etiqueta }</td>
+        <td>${ camp.mida }</td>
         <c:if test="${servei.pinbalIniDadesExpecifiques}">
             <td><c:if test="${ camp.inicialitzar }"><i class="fa fa-check"></i></c:if></td>
         </c:if>
@@ -43,6 +44,7 @@
                 data-path="${ camp.path }"
                 data-tipus="${ camp.tipus }"
                 data-etiqueta="${ camp.etiqueta }"
+                data-mida="${ camp.mida }"
                 data-valorperdefecte="${ camp.valorPerDefecte }"
                 data-comentari="${ camp.comentari }"
                 data-dataformat="${ camp.dataFormat }"

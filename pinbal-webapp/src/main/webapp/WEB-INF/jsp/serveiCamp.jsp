@@ -240,10 +240,10 @@ function serveiCampAfegir(servei, path) {
 }
 // Modal per editar camps
 function initModalCamp(
-		id, path, tipus, etiqueta, defecte, comentari, dataFormat,
+		id, path, tipus, etiqueta, mida, defecte, comentari, dataFormat,
 		campPareId, valorPare, inicialitzar, obligatori, modificable, visible,
 		validacioRegexp, validacioMin, validacioMax, validacioDataCmpOperacio,
-		validacioDataCmpCamp2, validacioDataCmpNombre, validacioDataCmpTipus) {
+		validacioDataCmpCamp2, validacioDataCmpNombre, validacioDataCmpTipus) {	
 	$('#modal-hidden-id').val(id);
 	$('#modal-input-path').val(path);
 	$('#modal-hidden-path').val(path);
@@ -263,6 +263,7 @@ function initModalCamp(
 		$('#modal-input-data-format').attr('disabled', 'disabled');
 	}
 	$('#modal-input-etiqueta').val(etiqueta);
+	$('#modal-input-mida').val(mida);
 	$('#modal-input-defecte').val(defecte);
 	$('#modal-input-comentari').val(comentari);
 	$('#modal-input-data-format').val(dataFormat);
@@ -444,10 +445,12 @@ $(function() {
 		$('#modal-grup-form').modal('toggle');
 	});
 	$('.btn-edit-camp').click(function (event) {
+		
 		initModalCamp($(this).data('id'),
 					  $(this).data('path'),
 					  $(this).data('tipus'),
 					  $(this).data('etiqueta'),
+					  $(this).data('mida'),
 					  $(this).data('valorperdefecte'),
 					  $(this).data('comentari'),
 					  $(this).data('dataformat'),
@@ -502,6 +505,7 @@ $(function() {
 						<th><spring:message code="servei.camp.taula.columna.nom" /></th>
 						<th><spring:message code="servei.camp.taula.columna.tipus" /></th>
 						<th><spring:message code="servei.camp.taula.columna.etiqueta" /></th>
+						<th style="width: 10%"><spring:message code="servei.camp.taula.columna.mida" /></th>
 						<c:if test="${servei.pinbalIniDadesExpecifiques}">
 							<th style="width: 1%"><spring:message code="servei.camp.taula.columna.i" /></th>
 						</c:if>
@@ -643,10 +647,21 @@ $(function() {
 				<form id="modal-form" action="camp/update" method="post">
 					<input type="hidden" id="modal-hidden-id" name="id"/>
 					<input type="hidden" id="modal-hidden-servei" name="servei" value="${servei.codi}"/>
-					<div class="form-group">
-						<label for="modal-input-path"><spring:message code="servei.camp.path"/> *</label>
-						<input type="hidden" id="modal-hidden-path" name="path"/>
-						<input type="text" id="modal-input-path" name="path" class="form-control" disabled="disabled"/>
+					<div class="row">
+						<div class="col-md-6">
+							<div class="form-group">
+								<label for="modal-input-path"><spring:message code="servei.camp.path"/> *</label>
+								<input type="hidden" id="modal-hidden-path" name="path"/>
+								<input type="text" id="modal-input-path" name="path" class="form-control" disabled="disabled"/>
+							</div>
+						</div>
+						<div class="col-md-6">
+							<div class="form-group">
+								<label for="modal-input-mida"><spring:message code="servei.camp.mida"/></label>
+								<input type="number" id="modal-input-mida" name="mida" class="form-control"/>
+							</div>
+						
+						</div>
 					</div>
 					<div class="row">
 						<div class="col-md-6">

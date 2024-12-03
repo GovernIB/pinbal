@@ -6,8 +6,12 @@
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@ taglib tagdir="/WEB-INF/tags/pinbal" prefix="pbl" %>
 <c:if test="${empty dadesEspecifiquesDisabled}"><c:set var="dadesEspecifiquesDisabled" value="${false}"/></c:if>
-<c:set var="numColumnes" value="${2}"/>
-<c:set var="indexCamp" value="${0}"/>
+
+<c:set var="newRow" value="true" />
+<c:set var="midaTotsElsCamps" value="0"></c:set>
+<c:set var="midaTotsElsCampsPerEvaluar" value="0"></c:set>
+
+
 <c:forEach var="camp" items="${campsPerMostrar}" varStatus="status">
 	<c:set var="campId" value="camp_${camp.id}"/>
 	<c:set var="campCommandPath" value="dadesEspecifiques[${camp.path}]"/>
@@ -26,10 +30,25 @@
 	</c:forEach>
 	<c:choose>
 		<c:when test="${camp.visible}">
-			<c:if test="${indexCamp == 0 or (indexCamp % numColumnes) == 0}">
-				<div class="row">
-			</c:if>
-			<div class="col-md-<fmt:formatNumber value="${12 / numColumnes}" maxFractionDigits="0"/>">
+			<c:choose>
+				<c:when test="${newRow}">
+					<div class="row">					
+					<c:set var="midaTotsElsCamps" value="${camp.mida}" />
+					<c:set var="newRow" value="false" />					
+				</c:when>
+				<c:when test="${!newRow}">		
+					<c:set var="midaTotsElsCampsPerEvaluar" value="${midaTotsElsCamps}"></c:set>	
+					<c:if test="${(midaTotsElsCampsPerEvaluar + camp.mida > 12)}">
+						</div>
+						<div class="row">					
+						<c:set var="midaTotsElsCamps" value="${camp.mida}" />							
+					</c:if>
+					<c:if test="${(midaTotsElsCampsPerEvaluar + camp.mida <= 12)}">							
+						<c:set var="midaTotsElsCamps" value="${midaTotsElsCamps + camp.mida}" />						
+					</c:if>				
+				</c:when>
+			</c:choose>
+			<div class="col-md-<fmt:formatNumber value="${camp.mida}" maxFractionDigits="0"/>">
 				<div class="form-group<c:if test="${not empty campError}"> has-error</c:if><c:if test='${camp.campRegla}'> camp-regla</c:if>" data-path="${camp.path}">
 					<label class="control-label" for="${campId}">
 						<c:choose>
@@ -281,11 +300,12 @@ $(document).ready(function() {
 					<c:if test="${not empty campErrors}"><p class="help-block"><span class="fa fa-exclamation-triangle"></span>&nbsp;<form:errors path="${campCommandPath}"/></p></c:if>
 					<c:if test="${not dadesEspecifiquesDisabled and not empty camp.comentari}"><span class="help-block">${camp.comentari}</span></c:if>
 				</div>
-			</div>
-			<c:if test="${status.last or (indexCamp % numColumnes) == (numColumnes - 1)}">
+			</div>			
+			<c:if test="${status.last}">				
 				</div>
-			</c:if>
-			<c:set var="indexCamp" value="${indexCamp + 1}"/>
+				<c:set var="newRow" value="true" />
+				<c:set var="midaTotsElsCamps" value="0" />				
+			</c:if>			
 		</c:when>
 		<c:otherwise>
 			<input type="hidden" id="${campId}" name="${campId}"<c:if test="${not empty camp.valorPerDefecte}"> value="${camp.valorPerDefecte}"</c:if>/>

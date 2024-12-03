@@ -96,6 +96,8 @@ public class ServeiCamp extends PinbalAuditable<Long> {
 	private boolean visible = true;
 	@Column(name = "ordre")
 	private int ordre;
+	@Column(name = "mida")
+	private int mida;
 	@Column(name = "val_regexp", length = 100)
 	private String validacioRegexp;
 	@Column(name = "val_min")
@@ -137,16 +139,20 @@ public class ServeiCamp extends PinbalAuditable<Long> {
 	 *            El path del camp.
 	 * @param ordre
 	 *            L'ordre del camp.
+	 * @param mida
+	 *            La mida del camp.
 	 * @return Una nova instància del Builder.
 	 */
 	public static Builder getBuilder(
 			String servei,
 			String path,
-			int ordre) {
+			int ordre,
+			int mida) {
 		return new Builder(
 				servei,
 				path,
-				ordre);
+				ordre,
+				mida);
 	}
 	/**
 	 * Obté el Builder per a crear objectes de tipus ServeiCamp.
@@ -163,6 +169,8 @@ public class ServeiCamp extends PinbalAuditable<Long> {
 	 *            El valorPerDefecte del camp.
 	 * @param ordre
 	 *            L'ordre del camp.
+	 * @param mida
+	 *            La mida del camp.
 	 * @return Una nova instància del Builder.
 	 */
 	public static Builder getBuilder(
@@ -171,14 +179,16 @@ public class ServeiCamp extends PinbalAuditable<Long> {
 			ServeiCampTipus tipus,
 			String etiqueta,
 			String valorPerDefecte,
-			int ordre) {
+			int ordre,
+			int mida) {
 		return new Builder(
 				servei,
 				path,
 				tipus,
 				etiqueta,
 				valorPerDefecte,
-				ordre);
+				ordre,
+				mida);
 	}
 
 	public String getServei() {
@@ -231,6 +241,9 @@ public class ServeiCamp extends PinbalAuditable<Long> {
 	public int getOrdre() {
 		return ordre;
 	}
+	public int getMida() {
+		return mida;
+	}
 	public String getValidacioRegexp() {
 		return validacioRegexp;
 	}
@@ -265,6 +278,7 @@ public class ServeiCamp extends PinbalAuditable<Long> {
 	public void update(
 			ServeiCampTipus tipus,
 			String etiqueta,
+			int mida,
 			String valorPerDefecte,
 			String comentari,
 			String[] enumDescripcions,
@@ -285,6 +299,7 @@ public class ServeiCamp extends PinbalAuditable<Long> {
 			ServeiCampDtoValidacioDataTipus validacioDataCmpTipus) {
 		this.tipus = tipus;
 		this.etiqueta = etiqueta;
+		this.mida = mida;
 		this.valorPerDefecte = valorPerDefecte;
 		this.comentari = comentari;
 		updateEnumDescripcions(enumDescripcions);
@@ -328,6 +343,10 @@ public class ServeiCamp extends PinbalAuditable<Long> {
 			int ordre) {
 		this.ordre = ordre;
 	}
+	public void updateMida(
+			int mida) {
+		this.mida = mida;
+	}
 	public void updateGrup(
 			ServeiCampGrup grup) {
 		this.grup = grup;
@@ -351,12 +370,15 @@ public class ServeiCamp extends PinbalAuditable<Long> {
 		 *            El path del camp.
 		 * @param ordre
 		 *            L'ordre del camp.
+		 * @param mida
+		 *            La mida del camp.
 		 */
-		Builder(String servei, String path, int ordre) {
+		Builder(String servei, String path, int ordre, int mida) {
 			built = new ServeiCamp();
 			built.servei = servei;
 			built.path = path;
 			built.ordre = ordre;
+			built.mida = mida;
 		}
 
 		/**
@@ -374,6 +396,8 @@ public class ServeiCamp extends PinbalAuditable<Long> {
 		 *            El valorPerDefecte del camp.
 		 * @param ordre
 		 *            L'ordre del camp.
+		 * @param mida
+		 *            La mida del camp.
 		 */
 		Builder(
 				String servei,
@@ -381,7 +405,8 @@ public class ServeiCamp extends PinbalAuditable<Long> {
 				ServeiCampTipus tipus,
 				String etiqueta,
 				String valorPerDefecte,
-				int ordre) {
+				int ordre,
+				int mida) {
 			built = new ServeiCamp();
 			built.servei = servei;
 			built.path = path;
@@ -389,6 +414,7 @@ public class ServeiCamp extends PinbalAuditable<Long> {
 			built.etiqueta = etiqueta;
 			built.valorPerDefecte = valorPerDefecte;
 			built.ordre = ordre;
+			built.mida = mida;
 		}
 
 		/**
