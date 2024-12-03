@@ -3,23 +3,21 @@
  */
 package es.caib.pinbal.core.service;
 
-import java.util.List;
-
-import es.caib.pinbal.core.dto.ProcedimentServeiDto;
-import es.caib.pinbal.core.dto.ProcedimentServeiNomDto;
-import es.caib.pinbal.core.dto.ProcedimentServeiSimpleDto;
-import org.springframework.data.domain.Page;
-import org.springframework.security.access.prepost.PreAuthorize;
-
 import es.caib.pinbal.core.dto.FiltreActiuEnumDto;
 import es.caib.pinbal.core.dto.InformeProcedimentDto;
 import es.caib.pinbal.core.dto.PaginacioAmbOrdreDto;
 import es.caib.pinbal.core.dto.ProcedimentDto;
+import es.caib.pinbal.core.dto.ProcedimentServeiNomDto;
+import es.caib.pinbal.core.dto.ProcedimentServeiSimpleDto;
 import es.caib.pinbal.core.service.exception.EntitatNotFoundException;
 import es.caib.pinbal.core.service.exception.EntitatUsuariNotFoundException;
 import es.caib.pinbal.core.service.exception.ProcedimentNotFoundException;
 import es.caib.pinbal.core.service.exception.ProcedimentServeiNotFoundException;
 import es.caib.pinbal.core.service.exception.ServeiNotFoundException;
+import org.springframework.data.domain.Page;
+import org.springframework.security.access.prepost.PreAuthorize;
+
+import java.util.List;
 
 /**
  * Declaració dels mètodes per a obtenir i modificar informació d'un procediment.
@@ -260,7 +258,7 @@ public interface ProcedimentService {
 	@PreAuthorize("hasRole('ROLE_REPRES')")
 	public void serveiPermisDenyAll(String usuariCodi, Long entitatId) throws EntitatUsuariNotFoundException;
 
-	@PreAuthorize("hasRole('ROLE_REPRES')")
+	@PreAuthorize("hasRole('ROLE_REPRES') or hasRole('ROLE_WS')")
 	public void serveiPermisAllowSelected(String usuariCodi, List<ProcedimentServeiSimpleDto> procedimentsServeis, Long entitatId) throws EntitatUsuariNotFoundException, ProcedimentServeiNotFoundException;
 
 	@PreAuthorize("hasRole('ROLE_REPRES')")

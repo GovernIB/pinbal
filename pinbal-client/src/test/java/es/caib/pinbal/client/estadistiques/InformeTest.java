@@ -18,8 +18,8 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
-import es.caib.pinbal.client.comu.Entitat;
-import es.caib.pinbal.client.comu.Servei;
+import es.caib.pinbal.client.comu.EntitatEstadistiques;
+import es.caib.pinbal.client.comu.ServeiEstadistiques;
 import es.caib.pinbal.client.informe.ClientInforme;
 
 /**
@@ -38,21 +38,21 @@ public class InformeTest {
 	@Test
 	public void procediments() throws IOException {
 		client.enableLogginFilter();
-		List<Entitat> resposta = client.procediments();
+		List<EntitatEstadistiques> resposta = client.procediments();
 		assertNotNull(resposta);
 		System.out.println("-> procediments: " + objectToJsonString(resposta));
 	}
 
 	@Test
 	public void serveis() throws IOException {
-		List<Servei> resposta = client.serveis();
+		List<ServeiEstadistiques> resposta = client.serveis();
 		assertNotNull(resposta);
 		System.out.println("-> serveis: " + objectToJsonString(resposta));
 	}
 
 	@Test
 	public void usuaris() throws IOException {
-		List<Entitat> resposta = client.usuaris();
+		List<EntitatEstadistiques> resposta = client.usuaris();
 		assertNotNull(resposta);
 		System.out.println("-> usuaris: " + objectToJsonString(resposta));
 	}
@@ -69,7 +69,7 @@ public class InformeTest {
 		cal.add(Calendar.MONTH, -6);
 		Date dataInici = cal.getTime();
 
-		List<Entitat> resposta = client.general(dataInici, dataFi);
+		List<EntitatEstadistiques> resposta = client.general(dataInici, dataFi);
 		assertNotNull(resposta);
 		System.out.println("-> entitats: " + objectToJsonString(resposta));
 	}
@@ -87,7 +87,7 @@ public class InformeTest {
 		cal.add(Calendar.MONTH, -6);
 		Date dataInici = cal.getTime();
 
-		List<Entitat> resposta = client.general(dataInici, dataFi, true);
+		List<EntitatEstadistiques> resposta = client.general(dataInici, dataFi, true);
 		assertNotNull(resposta);
 		System.out.println("-> entitats: " + objectToJsonString(resposta));
 	}

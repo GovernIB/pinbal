@@ -1,4 +1,4 @@
-package es.caib.pinbal.core.dto.apiresponse;
+package es.caib.pinbal.client.comu;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

@@ -1,6 +1,6 @@
 package es.caib.pinbal.api.interna.controller;
 
-import es.caib.pinbal.core.dto.apiresponse.ErrorResponse;
+import es.caib.pinbal.client.comu.ErrorResponse;
 import es.caib.pinbal.core.dto.apiresponse.ValidationErrorResponse;
 import es.caib.pinbal.core.service.exception.InvalidInputException;
 import es.caib.pinbal.core.service.exception.ResourceNotFoundException;

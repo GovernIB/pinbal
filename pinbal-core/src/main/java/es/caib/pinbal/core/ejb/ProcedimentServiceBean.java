@@ -3,16 +3,6 @@
  */
 package es.caib.pinbal.core.ejb;
 
-import java.util.List;
-
-import javax.annotation.security.RolesAllowed;
-import javax.ejb.Stateless;
-import javax.interceptor.Interceptors;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.ejb.interceptor.SpringBeanAutowiringInterceptor;
-
 import es.caib.pinbal.core.dto.FiltreActiuEnumDto;
 import es.caib.pinbal.core.dto.InformeProcedimentDto;
 import es.caib.pinbal.core.dto.PaginacioAmbOrdreDto;
@@ -25,6 +15,14 @@ import es.caib.pinbal.core.service.exception.EntitatUsuariNotFoundException;
 import es.caib.pinbal.core.service.exception.ProcedimentNotFoundException;
 import es.caib.pinbal.core.service.exception.ProcedimentServeiNotFoundException;
 import es.caib.pinbal.core.service.exception.ServeiNotFoundException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.ejb.interceptor.SpringBeanAutowiringInterceptor;
+
+import javax.annotation.security.RolesAllowed;
+import javax.ejb.Stateless;
+import javax.interceptor.Interceptors;
+import java.util.List;
 
 /**
  * Implementació de ProcedimentService que empra una clase delegada per accedir
@@ -148,7 +146,7 @@ public class ProcedimentServiceBean implements ProcedimentService {
 	}
 
     @Override
-	@RolesAllowed("PBL_REPRES")
+	@RolesAllowed({"PBL_REPRES", "PBL_WS"})
     public void serveiPermisAllowSelected(String usuariCodi, List<ProcedimentServeiSimpleDto> procedimentsServeis, Long entitatId) throws EntitatUsuariNotFoundException, ProcedimentServeiNotFoundException {
         delegate.serveiPermisAllowSelected(usuariCodi, procedimentsServeis, entitatId);
     }

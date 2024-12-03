@@ -1,5 +1,6 @@
 package es.caib.pinbal.core.dto.apiresponse;
 
+import es.caib.pinbal.client.comu.ErrorResponse;
 import lombok.Getter;
 import lombok.Setter;
 

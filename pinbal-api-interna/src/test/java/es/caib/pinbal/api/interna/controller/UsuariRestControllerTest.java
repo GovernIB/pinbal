@@ -240,7 +240,7 @@ public class UsuariRestControllerTest {
         mockMvc.perform(get("/usuaris/{usuariCodi}", "testCodi")
                         .param("entitatCodi", "testEntitatCodi")
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isNotFound());
+                .andExpect(status().isNoContent());
     }
 
     @Test

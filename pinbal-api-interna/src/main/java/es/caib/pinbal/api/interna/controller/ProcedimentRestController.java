@@ -27,6 +27,7 @@ import org.springframework.hateoas.PagedResources;
 import org.springframework.hateoas.Resource;
 import org.springframework.hateoas.mvc.ControllerLinkBuilder;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
@@ -57,7 +58,7 @@ public class ProcedimentRestController extends PinbalHalRestController {
      */
     @ApiVersion("1")
     @PreAuthorize("hasRole('PBL_WS')")
-    @RequestMapping(value = "/procediments", method = RequestMethod.POST)
+    @RequestMapping(value = "/procediments", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation(value = "Crear un nou procediment", response = Procediment.class)
 //    @ApiImplicitParams({
 //            @ApiImplicitParam(name = "Authorization", value = "Basic auth credentials", required = true, dataType = "string", paramType = "header")
@@ -78,6 +79,8 @@ public class ProcedimentRestController extends PinbalHalRestController {
                     createdProcediment,
                     ControllerLinkBuilder.linkTo(ControllerLinkBuilder.methodOn(ProcedimentRestController.class).getProcediment(createdProcediment.getId())).withSelfRel());
             return new ResponseEntity<>(procedimentResource, HttpStatus.CREATED);
+        } catch (EntitatNotFoundException e) {
+            throw new ResourceNotFoundException(e.getDefaultMessage());
         } catch (Exception e) {
             throw new ServiceExecutionException(e.getMessage(), e);
         }
@@ -91,7 +94,7 @@ public class ProcedimentRestController extends PinbalHalRestController {
      */
     @ApiVersion("1")
     @PreAuthorize("hasRole('PBL_WS')")
-    @RequestMapping(value = "/procediments/{procedimentId}", method = RequestMethod.POST)
+    @RequestMapping(value = "/procediments/{procedimentId}", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation(value = "Modifica un procediment pel seu ID", response = Procediment.class)
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Procediment modificat amb èxit"),
@@ -123,7 +126,7 @@ public class ProcedimentRestController extends PinbalHalRestController {
 
     @ApiVersion("1")
     @PreAuthorize("hasRole('PBL_WS')")
-    @RequestMapping(value = "/procediments/{procedimentId}", method = RequestMethod.PATCH)
+    @RequestMapping(value = "/procediments/{procedimentId}", method = RequestMethod.PATCH, produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation(value = "Modifica parcialment un procediment pel seu ID", response = Procediment.class)
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Procediment modificat amb èxit"),
@@ -152,7 +155,7 @@ public class ProcedimentRestController extends PinbalHalRestController {
      */
     @ApiVersion("1")
     @PreAuthorize("hasRole('PBL_WS')")
-    @RequestMapping(value = "/procediments/{procedimentId}/serveis/{serveiCodi}/enable", method = RequestMethod.POST)
+    @RequestMapping(value = "/procediments/{procedimentId}/serveis/{serveiCodi}/enable", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation(value = "Habilita un servei per a un procediment")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Servei habilitat amb èxit"),
@@ -181,7 +184,7 @@ public class ProcedimentRestController extends PinbalHalRestController {
      */
     @ApiVersion("1")
     @PreAuthorize("hasRole('PBL_WS')")
-    @RequestMapping(value = "/procediments", method = RequestMethod.GET)
+    @RequestMapping(value = "/procediments", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation(value = "Obtén procediments amb filtratge i paginació",
             response = PagedResources.class,
             notes = "Els paràmetres de pàgina inclouen: " +
@@ -241,7 +244,7 @@ public class ProcedimentRestController extends PinbalHalRestController {
      */
     @ApiVersion("1")
     @PreAuthorize("hasRole('PBL_WS')")
-    @RequestMapping(value = "/procediments/{procedimentId}", method = RequestMethod.GET)
+    @RequestMapping(value = "/procediments/{procedimentId}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation(value = "Obtén un procediment pel seu ID",
             response = Procediment.class,
             notes = "Aquest mètode retorna els detalls d'un procediment específic identificat pel seu ID.")
@@ -277,7 +280,7 @@ public class ProcedimentRestController extends PinbalHalRestController {
      */
     @ApiVersion("1")
     @PreAuthorize("hasRole('PBL_WS')")
-    @RequestMapping(value = "/procediments/byCodi/{procedimentCodi}", method = RequestMethod.GET)
+    @RequestMapping(value = "/procediments/byCodi/{procedimentCodi}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation(value = "Obtén un procediment pel seu ID",
             response = Procediment.class,
             notes = "Aquest mètode retorna els detalls d'un procediment específic identificat pel seu ID.")
@@ -317,7 +320,7 @@ public class ProcedimentRestController extends PinbalHalRestController {
      */
     @ApiVersion("1")
     @PreAuthorize("hasRole('PBL_WS')")
-    @RequestMapping(value = "/procediments/{procedimentId}/serveis", method = RequestMethod.GET)
+    @RequestMapping(value = "/procediments/{procedimentId}/serveis", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation(value = "Obtén els serveis d'un procediment amb filtratge i paginació",
             response = PagedResources.class,
             notes = "Els paràmetres de pàgina inclouen: " +
@@ -351,7 +354,7 @@ public class ProcedimentRestController extends PinbalHalRestController {
      */
     @ApiVersion("1")
     @PreAuthorize("hasRole('PBL_WS')")
-    @RequestMapping(value = "/procediments/byCodi/{procedimentCodi}/serveis", method = RequestMethod.GET)
+    @RequestMapping(value = "/procediments/byCodi/{procedimentCodi}/serveis", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation(value = "Obtén els serveis d'un procediment amb filtratge i paginació",
             response = PagedResources.class,
             notes = "Els paràmetres de pàgina inclouen: " +

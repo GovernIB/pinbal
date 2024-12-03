@@ -71,15 +71,18 @@ public class GestioRestServiceImpl implements GestioRestService {
 
 
     @Override
-    @Transactional //(rollbackFor = EntitatNotFoundException.class)
     public Procediment create(Procediment procediment) throws EntitatNotFoundException, OrganNotFoundException {
-        
-        ProcedimentDto creat = procedimentService.create(toProcedimentDto(procediment));
-        return toProcediment(creat);
+
+        try {
+            ProcedimentDto creat = procedimentService.create(toProcedimentDto(procediment));
+            return toProcediment(creat);
+        } catch (Exception e) {
+            log.error("S'ha produït un error al crear el procediment " + procediment.toString() + " : " + e.getMessage());
+            throw e;
+        }
     }
 
     @Override
-    @Transactional //(rollbackFor = {EntitatNotFoundException.class, ProcedimentNotFoundException.class})
     public Procediment update(Procediment procediment) throws EntitatNotFoundException, ProcedimentNotFoundException, OrganNotFoundException {
         
         ProcedimentDto creat = procedimentService.update(toProcedimentDto(procediment));
@@ -144,7 +147,6 @@ public class GestioRestServiceImpl implements GestioRestService {
     }
 
     @Override
-    @Transactional
     public void serveiEnable(Long procedimentId, String serveiCodi) throws ProcedimentNotFoundException, ServeiNotFoundException {
         procedimentService.serveiEnable(procedimentId, serveiCodi);
     }
@@ -249,22 +251,29 @@ public class GestioRestServiceImpl implements GestioRestService {
         if (entitat == null)
             throw new EntitatNotFoundException(usuariEntitat.getEntitatCodi());
 
-        String text = usuariEntitat.getNom();
-        if (usuariEntitat.getNif() != null && !usuariEntitat.getNif().trim().isEmpty()) {
-            text = usuariEntitat.getNif();
-        }
+        UsuariDto usuariDto = null;
         if (usuariEntitat.getCodi() != null && !usuariEntitat.getCodi().trim().isEmpty()) {
-            text = usuariEntitat.getCodi();
+            usuariDto = usuariService.getUsuariExtern(usuariEntitat.getCodi());
         }
-        List<UsuariDto> usuarisExterns = usuariService.getUsuarisExterns(text);
 
-        if (usuarisExterns == null || usuarisExterns.size() == 0) {
-            throw new UsuariExternNotFoundException(text);
+        if (usuariDto == null) {
+            String text = usuariEntitat.getNom();
+            if (usuariEntitat.getNif() != null && !usuariEntitat.getNif().trim().isEmpty()) {
+                text = usuariEntitat.getNif();
+            }
+            if (usuariEntitat.getCodi() != null && !usuariEntitat.getCodi().trim().isEmpty()) {
+                text = usuariEntitat.getCodi();
+            }
+            List<UsuariDto> usuarisExterns = usuariService.getUsuarisExterns(text);
+
+            if (usuarisExterns == null || usuarisExterns.size() == 0) {
+                throw new UsuariExternNotFoundException(text);
+            }
+            if (usuarisExterns.size() > 1) {
+                throw new MultiplesUsuarisExternsException();
+            }
+            usuariDto = usuarisExterns.get(0);
         }
-        if (usuarisExterns.size() > 1) {
-            throw new MultiplesUsuarisExternsException();
-        }
-        UsuariDto usuariDto = usuarisExterns.get(0);
 
         usuariService.actualitzarDadesAdmin(
                 entitat.getId(),
@@ -275,7 +284,7 @@ public class GestioRestServiceImpl implements GestioRestService {
                 usuariEntitat.isDelegat(),
                 usuariEntitat.isAuditor(),
                 usuariEntitat.isAplicacio(),
-                true,
+                false,
                 usuariEntitat.isActiu());
     }
 
@@ -293,7 +302,7 @@ public class GestioRestServiceImpl implements GestioRestService {
     }
 
     @Override
-    @Transactional
+//    @Transactional(noRollbackFor = {EntitatNotFoundException.class, EntitatUsuariNotFoundException.class, ProcedimentServeiNotFoundException.class})
     public void serveiGrantPermis(PermisosServei permisosServei) throws EntitatNotFoundException, EntitatUsuariNotFoundException, ProcedimentServeiNotFoundException {
 
         Entitat entitat = entitatRepository.findByCodi(permisosServei.getEntitatCodi());
@@ -308,10 +317,14 @@ public class GestioRestServiceImpl implements GestioRestService {
                     .build());
         }
 
-        procedimentService.serveiPermisAllowSelected(
-                permisosServei.getUsuariCodi(),
-                procedimentServeiSimpleDtos,
-                entitat.getId());
+        try {
+            procedimentService.serveiPermisAllowSelected(
+                    permisosServei.getUsuariCodi(),
+                    procedimentServeiSimpleDtos,
+                    entitat.getId());
+        } catch (EntitatUsuariNotFoundException | ProcedimentServeiNotFoundException e) {
+            throw e;
+        }
     }
 
     @Override

@@ -18,6 +18,7 @@ import org.springframework.hateoas.PagedResources;
 import org.springframework.hateoas.Resource;
 import org.springframework.hateoas.mvc.ControllerLinkBuilder;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
@@ -48,7 +49,7 @@ public class ServeiRestController extends PinbalHalRestController {
      */
     @ApiVersion("1")
     @PreAuthorize("hasRole('PBL_WS')")
-    @RequestMapping(value = "/serveis", method = RequestMethod.GET)
+    @RequestMapping(value = "/serveis", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation(value = "Obtén tots els serveis amb paginació",
             response = PagedResources.class,
             notes = "Els paràmetres de pàgina inclouen: " +
@@ -103,7 +104,7 @@ public class ServeiRestController extends PinbalHalRestController {
      */
     @ApiVersion("1")
     @PreAuthorize("hasRole('PBL_WS')")
-    @RequestMapping(value = "/serveis/{serveiCodi}", method = RequestMethod.GET)
+    @RequestMapping(value = "/serveis/{serveiCodi}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation(value = "Obtén un servei pel seu codi",
             response = Servei.class,
             notes = "Aquest mètode retorna els detalls d'un servei específic identificat pel seu codi.")

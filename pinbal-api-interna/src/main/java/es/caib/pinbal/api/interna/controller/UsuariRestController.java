@@ -18,6 +18,7 @@ import es.caib.pinbal.core.service.exception.EntitatNotFoundException;
 import es.caib.pinbal.core.service.exception.EntitatUsuariNotFoundException;
 import es.caib.pinbal.core.service.exception.InvalidInputException;
 import es.caib.pinbal.core.service.exception.MultiplesUsuarisExternsException;
+import es.caib.pinbal.core.service.exception.NotFoundException;
 import es.caib.pinbal.core.service.exception.ProcedimentServeiNotFoundException;
 import es.caib.pinbal.core.service.exception.ResourceNotFoundException;
 import es.caib.pinbal.core.service.exception.UsuariExternNotFoundException;
@@ -31,9 +32,11 @@ import org.springframework.hateoas.PagedResources;
 import org.springframework.hateoas.Resource;
 import org.springframework.hateoas.mvc.ControllerLinkBuilder;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
 import org.springframework.validation.annotation.Validated;
@@ -45,6 +48,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.validation.Valid;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -62,7 +66,7 @@ public class UsuariRestController extends PinbalHalRestController {
      */
     @ApiVersion("1")
     @PreAuthorize("hasRole('PBL_WS')")
-    @RequestMapping(value = "/usuaris", method = RequestMethod.POST)
+    @RequestMapping(value = "/usuaris", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation(value = "Crear o actualitzar un usuari")
     @ApiResponses(value = {
             @ApiResponse(code = 201, message = "Usuari creat/actualitzat amb èxit"),
@@ -97,7 +101,7 @@ public class UsuariRestController extends PinbalHalRestController {
      */
     @ApiVersion("1")
     @PreAuthorize("hasRole('PBL_WS')")
-    @RequestMapping(value = "/usuaris", method = RequestMethod.GET)
+    @RequestMapping(value = "/usuaris", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation(value = "Obtén usuaris amb filtratge i paginació",
             response = PagedResources.class,
             notes = "Els paràmetres de pàgina inclouen: " +
@@ -114,11 +118,14 @@ public class UsuariRestController extends PinbalHalRestController {
     })
     public @ResponseBody ResponseEntity<PagedResources<Resource<UsuariEntitat>>> getUsuaris(
             @ApiParam(value = "Codi de l'entitat", required = true) @RequestParam("entitatCodi") String entitatCodi,
-            @ApiParam(value = "Filtre per els usuaris. Exemple: {\"codi\":\"12345\", \"nif\":\"12345678A\", \"nom\":\"NomUsuari\"}", required = false) @RequestParam("filtreUsuaris") String filtreUsuarisString,
+            @ApiParam(value = "Filtre per els usuaris. Exemple: {\"codi\":\"12345\", \"nif\":\"12345678A\", \"nom\":\"NomUsuari\"}", required = false) @RequestParam(value = "filtreUsuaris", required = false) String filtreUsuarisString,
             @PageableDefault(size = 10) Pageable pageable) {
         try {
+            FiltreUsuaris filtreUsuaris = new FiltreUsuaris();
             // Converteix el filtreUsuarisString a l'objecte FiltreUsuaris
-            FiltreUsuaris filtreUsuaris = new ObjectMapper().readValue(filtreUsuarisString, FiltreUsuaris.class);
+            if (filtreUsuarisString != null && !filtreUsuarisString.isEmpty()) {
+                filtreUsuaris = new ObjectMapper().readValue(filtreUsuarisString, FiltreUsuaris.class);
+            }
 
             Page<UsuariEntitat> usuarisPage = gestioRestService.findUsuarisPaginat(entitatCodi, filtreUsuaris, pageable);
             if (usuarisPage == null || usuarisPage.getContent().isEmpty()) {
@@ -135,8 +142,9 @@ public class UsuariRestController extends PinbalHalRestController {
                 usuariResources.add(resource);
             }
 
+            String filtre = filtreUsuarisString == null ? "" : URLEncoder.encode(filtreUsuarisString, "UTF-8");
             Link link = ControllerLinkBuilder.linkTo(
-                    ControllerLinkBuilder.methodOn(this.getClass()).getUsuaris(entitatCodi, filtreUsuarisString, pageable)
+                    ControllerLinkBuilder.methodOn(this.getClass()).getUsuaris(entitatCodi, filtre, pageable)
             ).withSelfRel();
 
             PagedResources.PageMetadata metadata = new PagedResources.PageMetadata(
@@ -161,14 +169,14 @@ public class UsuariRestController extends PinbalHalRestController {
      */
     @ApiVersion("1")
     @PreAuthorize("hasRole('PBL_WS')")
-    @RequestMapping(value = "/usuaris/{usuariCodi}", method = RequestMethod.GET)
+    @RequestMapping(value = "/usuaris/{usuariCodi}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation(value = "Obtén un usauri pel seu Codi",
             response = UsuariEntitat.class,
             notes = "Aquest mètode retorna els detalls d'un usuuari específic en una entitat identificat pel seu Codi.")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Usuari obtingut amb èxit"),
             @ApiResponse(code = 204, message = "No s'ha trobat l'usuari"),
-            @ApiResponse(code = 404, message = "Usuari no trobat")
+            @ApiResponse(code = 404, message = "Entitat no trobada")
     })
     public @ResponseBody ResponseEntity<Resource<UsuariEntitat>> getUsuari(
             @ApiParam(value = "Codi de l'usuari", required = true) @PathVariable("usuariCodi") String usuariCodi,
@@ -176,7 +184,7 @@ public class UsuariRestController extends PinbalHalRestController {
         try {
             UsuariEntitat usuari = gestioRestService.getUsuariAmbEntitatICodi(entitatCodi, usuariCodi);
             if (usuari == null) {
-                return new ResponseEntity<Resource<UsuariEntitat>>(HttpStatus.NOT_FOUND);
+                return new ResponseEntity<Resource<UsuariEntitat>>(HttpStatus.NO_CONTENT);
             }
 
             Resource<UsuariEntitat> resource = new Resource<UsuariEntitat>(usuari);
@@ -185,9 +193,19 @@ public class UsuariRestController extends PinbalHalRestController {
             ).withSelfRel();
             resource.add(selfLink);
             return new ResponseEntity<Resource<UsuariEntitat>>(resource, HttpStatus.OK);
+        } catch (NotFoundException e) {
+            return new ResponseEntity<Resource<UsuariEntitat>>(HttpStatus.NO_CONTENT);
         } catch (EntitatNotFoundException e) {
             throw new ResourceNotFoundException(e.getDefaultMessage());
         } catch (Exception e) {
+            if ("EJBException".equals(e.getClass().getSimpleName())) {
+                Throwable cause = e.getCause();
+                if (cause != null && cause instanceof EntitatNotFoundException) {
+                    throw new ResourceNotFoundException(((EntitatNotFoundException)e).getDefaultMessage());
+                } else if (cause != null && cause instanceof NotFoundException) {
+                    return new ResponseEntity<Resource<UsuariEntitat>>(HttpStatus.NO_CONTENT);
+                }
+            }
             throw new ServiceExecutionException(e.getMessage(), e);
         }
     }
@@ -200,7 +218,7 @@ public class UsuariRestController extends PinbalHalRestController {
      */
     @ApiVersion("1")
     @PreAuthorize("hasRole('PBL_WS')")
-    @RequestMapping(value = "/usuaris/{usuariCodi}/permisos", method = RequestMethod.POST)
+    @RequestMapping(value = "/usuaris/{usuariCodi}/permisos", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation(value = "Atorgar permisos seleccionats a un usuari per a procediments i serveis")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Permisos atorgats amb èxit"),
@@ -239,7 +257,7 @@ public class UsuariRestController extends PinbalHalRestController {
      */
     @ApiVersion("1")
     @PreAuthorize("hasRole('PBL_WS')")
-    @RequestMapping(value = "/usuaris/{usuariCodi}/permisos", method = RequestMethod.GET)
+    @RequestMapping(value = "/usuaris/{usuariCodi}/permisos", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation(value = "Obtén permisos associats a un usuari", response = PermisosServei.class)
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Permisos obtinguts amb èxit"),
@@ -250,6 +268,11 @@ public class UsuariRestController extends PinbalHalRestController {
             @ApiParam(value = "Codi de l'usuari", required = true) @PathVariable("usuariCodi") String usuariCodi,
             @ApiParam(value = "ID de l'entitat", required = true) @RequestParam("entitatCodi") String entitatCodi) {
 
+        if ("null".equals(usuariCodi) || usuariCodi == null || usuariCodi.isEmpty()) {
+            BindingResult errors = new BeanPropertyBindingResult(this, "usuariCodi");
+            errors.addError(new ObjectError("usuariCodi", "El codi d'usuari del permís no coincideix amb el de l'usuari al que atorgar el permís"));
+            throw new InvalidInputException(errors);
+        }
         try {
             PermisosServei permisos = gestioRestService.permisosPerUsuariEntitat(entitatCodi, usuariCodi);
 

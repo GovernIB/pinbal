@@ -16,7 +16,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
-import es.caib.pinbal.client.comu.Entitat;
+import es.caib.pinbal.client.comu.EntitatEstadistiques;
 import es.caib.pinbal.client.estadistica.ClientEstadistica;
 
 /**
@@ -35,7 +35,7 @@ public class EstadistiquesTest {
 	@Test
 	public void carrega() throws IOException {
 		client.enableLogginFilter();
-		List<Entitat> resposta = client.carrega();
+		List<EntitatEstadistiques> resposta = client.carrega();
 		assertNotNull(resposta);
 		System.out.println("-> carrega: " + objectToJsonString(resposta));
 	}
