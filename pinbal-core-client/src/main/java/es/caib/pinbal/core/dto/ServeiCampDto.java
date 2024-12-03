@@ -64,6 +64,7 @@ public class ServeiCampDto implements Serializable {
 	private boolean modificable;
 	private boolean visible;
 	private int ordre;
+	private int mida;
 	private String validacioRegexp;
 	private Integer validacioMin;
 	private Integer validacioMax;

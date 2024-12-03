@@ -113,6 +113,8 @@ import java.util.Set;
 public class ServeiServiceImpl implements ServeiService, ApplicationContextAware, MessageSourceAware {
 
 	public static final Locale DEFAULT_TRADUCCIO_LOCALE = new Locale("ca", "ES");
+	
+	public static final Integer DEFAULT_FIELD_SIZE = 6;
 
 	@Resource
 	private EntitatRepository entitatRepository;
@@ -888,7 +890,8 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 			serveiCamp = ServeiCamp.getBuilder(
 					serveiCodi,
 					path,
-					camps.size()).build();
+					camps.size(),
+					DEFAULT_FIELD_SIZE).build();
 			if (esServeiCampEnum(serveiCodi, path)) {
 				serveiCamp.updateTipus(ServeiCampTipus.ENUM);
 				// Configura les descripcions de les opcions del enumerat
@@ -938,6 +941,7 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 		serveiCamp.update(
 				toServeiTipus(modificat.getTipus()),
 				modificat.getEtiqueta(),
+				modificat.getMida(),
 				modificat.getValorPerDefecte(),
 				modificat.getComentari(),
 				modificat.getEnumDescripcions(),
