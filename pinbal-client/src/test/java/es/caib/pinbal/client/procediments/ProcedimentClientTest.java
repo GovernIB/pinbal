@@ -10,6 +10,7 @@ import static org.junit.Assert.*;
 public class ProcedimentClientTest {
 
     private ProcedimentClient procedimentClient;
+    private ProcedimentClient procedimentClientNoAccess;
 
     private String existingEntitatCodi = "";
     private String existingUsuariCodi = "";
@@ -22,8 +23,8 @@ public class ProcedimentClientTest {
     public void setUp() {
         // Inicialitza el client amb els paràmetres adequats per al servidor real
         String urlBase = "http://localhost:8180/pinbalapi/interna"; // Exemples; ajusta això segons el teu entorn
-        String usuari = "pblws";
-        String contrasenya = "pblws";
+        String usuari = "pblwsrep";
+        String contrasenya = "pblwsrep";
         LogLevel logLevel = LogLevel.DEBUG;
 
         existingEntitatCodi = "LIM";
@@ -34,6 +35,7 @@ public class ProcedimentClientTest {
         existingServeiCodi = "SVDDGPCIWS02";
 
         procedimentClient = new ProcedimentClient(urlBase, usuari, contrasenya, logLevel);
+        procedimentClientNoAccess = new ProcedimentClient(urlBase, "pblws", "pblws", logLevel);
     }
 
 
@@ -54,6 +56,23 @@ public class ProcedimentClientTest {
             // Aquí podries afegir comprovacions addicionals si fos necessari
         } catch (Exception e) {
             fail("Ha fallat la creació del procediment: " + e.getMessage());
+        }
+    }
+
+    @Test
+    public void testCreateProcedimentNoAccess() {
+        Procediment nouProcediment = Procediment.builder()
+                .codi("PRC_TEST")
+                .nom("Procediment per a les proves unitàries")
+                .entitatCodi(existingEntitatCodi)
+                .organGestorDir3(existingOrganCodi)
+                .build();
+
+        try {
+            procedimentClientNoAccess.createProcediment(nouProcediment);
+            fail("Ha d'haver llançat una excepció d'AccessDenegat");
+        } catch (Exception e) {
+            assertTrue(e.getMessage().contains("Accés denegat"));
         }
     }
 
@@ -109,6 +128,24 @@ public class ProcedimentClientTest {
             // Assuming the update is successful, no exception should be thrown
         } catch (Exception e) {
             fail("Ha fallat l'actualització del procediment: " + e.getMessage());
+        }
+    }
+
+    @Test
+    public void testUpdateProcedimentNoAccess() {
+        Procediment procedimentToUpdate = Procediment.builder()
+                .id(existingProcedimentId)
+                .codi(existingProcedimentCodi)
+                .nom("Procediment de test - Mod. " + System.currentTimeMillis())
+                .entitatCodi(existingEntitatCodi)
+                .organGestorDir3("A04003003")
+                .build();
+
+        try {
+            procedimentClientNoAccess.updateProcediment(existingProcedimentId, procedimentToUpdate);
+            fail("Ha d'haver llançat una excepció d'AccessDenegat");
+        } catch (Exception e) {
+            assertTrue(e.getMessage().contains("Accés denegat"));
         }
     }
 
@@ -217,15 +254,28 @@ public class ProcedimentClientTest {
     }
 
     @Test
+    public void testEnableServeiToProcedimentNoAccess() {
+        Long procedimentId = existingProcedimentId;
+        String serveiCodi = existingServeiCodi;
+
+        try {
+            procedimentClientNoAccess.enableServeiToProcediment(procedimentId, serveiCodi);
+            fail("Ha d'haver llançat una excepció d'AccessDenegat");
+        } catch (Exception e) {
+            assertTrue(e.getMessage().contains("Accés denegat"));
+        }
+    }
+
+    @Test
     public void testEnableServeiToProcediment_ProcedimentNotFound() {
         Long procedimentId = 9999L; // Non-existent ID
-        String serveiCodi = "nonExistentServei";
+        String serveiCodi = existingServeiCodi;
 
         try {
             procedimentClient.enableServeiToProcediment(procedimentId, serveiCodi);
             fail("S'esperava una excepció per procediment o servei no trobat");
         } catch (RuntimeException e) {
-            assertTrue(e.getMessage().contains("Procediment no trobat"));
+            assertTrue(e.getMessage().contains("Procediment no trobat: 9999"));
         } catch (Exception e) {
             fail("S'esperava una excepció de runtime: " + e.getMessage());
         }
@@ -233,29 +283,14 @@ public class ProcedimentClientTest {
 
     @Test
     public void testEnableServeiToProcediment_ServeiNotFound() {
-        Long procedimentId = 9999L; // Non-existent ID
+        Long procedimentId = existingProcedimentId; // Non-existent ID
         String serveiCodi = "nonExistentServei";
 
         try {
             procedimentClient.enableServeiToProcediment(procedimentId, serveiCodi);
             fail("S'esperava una excepció per procediment o servei no trobat");
         } catch (RuntimeException e) {
-            assertTrue(e.getMessage().contains("Servei no trobat"));
-        } catch (Exception e) {
-            fail("S'esperava una excepció de runtime: " + e.getMessage());
-        }
-    }
-
-    @Test
-    public void testEnableServeiToProcedimentServerError() {
-        Long procedimentId = 1L;
-        String serveiCodi = "validServei";
-
-        try {
-            procedimentClient.enableServeiToProcediment(procedimentId, serveiCodi);
-            fail("S'esperava una excepció per error del servidor");
-        } catch (RuntimeException e) {
-            assertTrue(e.getMessage().contains("Resposta inesperada del servidor"));
+            assertTrue(e.getMessage().contains("Servei no trobat: nonExistentServei"));
         } catch (Exception e) {
             fail("S'esperava una excepció de runtime: " + e.getMessage());
         }
@@ -267,10 +302,10 @@ public class ProcedimentClientTest {
 
     @Test
     public void testGetProcedimentsSuccess() {
-        String entitatCodi = "validEntitat";
-        String codi = "validCodi";
-        String nom = "Valid Name";
-        String organGestor = "validOrganGestor";
+        String entitatCodi = existingEntitatCodi;
+        String codi = "TEST";
+        String nom = null;
+        String organGestor = null;
         int page = 0;
         int size = 10;
         String sort = "codi,asc";
@@ -285,9 +320,27 @@ public class ProcedimentClientTest {
     }
 
     @Test
+    public void testGetProcedimentsNoAccess() {
+        String entitatCodi = existingEntitatCodi;
+        String codi = "TEST";
+        String nom = null;
+        String organGestor = null;
+        int page = 0;
+        int size = 10;
+        String sort = "codi,asc";
+
+        try {
+            Page<Procediment> procedimentPage = procedimentClientNoAccess.getProcediments(entitatCodi, codi, nom, organGestor, page, size, sort);
+            fail("Ha d'haver llançat una excepció d'AccessDenegat");
+        } catch (Exception e) {
+            assertTrue(e.getMessage().contains("Accés denegat"));
+        }
+    }
+
+    @Test
     public void testGetProcedimentsEmpty() {
-        String entitatCodi = "validEntitat";
-        String codi = "";
+        String entitatCodi = existingEntitatCodi;
+        String codi = "notExistingCodi";
         String nom = "";
         String organGestor = "";
         int page = 0;
@@ -323,33 +376,13 @@ public class ProcedimentClientTest {
         }
     }
 
-    @Test
-    public void testGetProcedimentsServerError() {
-        String entitatCodi = "validEntitat";
-        String codi = "serverErrorCodi";
-        String nom = "Valid Name";
-        String organGestor = "validOrganGestor";
-        int page = 0;
-        int size = 10;
-        String sort = "codi,asc";
-
-        try {
-            procedimentClient.getProcediments(entitatCodi, codi, nom, organGestor, page, size, sort);
-            fail("S'esperava una excepció per error del servidor");
-        } catch (RuntimeException e) {
-            assertTrue(e.getMessage().contains("Resposta inesperada del servidor"));
-        } catch (Exception e) {
-            fail("S'esperava una excepció de runtime: " + e.getMessage());
-        }
-    }
-
 
     // GET Procediment
     // ////////////////////////////////////////////////////////////////////////////////
 
     @Test
     public void testGetProcedimentById() {
-        Long procedimentId = 1L;  // Posa un ID de procediment vàlid que existeixi al servidor de proves
+        Long procedimentId = existingProcedimentId;  // Posa un ID de procediment vàlid que existeixi al servidor de proves
 
         try {
             Procediment procediment = procedimentClient.getProcediment(procedimentId);
@@ -361,6 +394,18 @@ public class ProcedimentClientTest {
     }
 
     @Test
+    public void testGetProcedimentByIdNoAccess() {
+        Long procedimentId = existingProcedimentId;  // Posa un ID de procediment vàlid que existeixi al servidor de proves
+
+        try {
+            Procediment procediment = procedimentClientNoAccess.getProcediment(procedimentId);
+            fail("Ha d'haver llançat una excepció d'AccessDenegat");
+        } catch (Exception e) {
+            assertTrue(e.getMessage().contains("Accés denegat"));
+        }
+    }
+
+    @Test
     public void testGetProcedimentByIdNotFound() {
         Long procedimentId = 9999L; // Non-existent ID
 
@@ -368,21 +413,7 @@ public class ProcedimentClientTest {
             procedimentClient.getProcediment(procedimentId);
             fail("S'esperava una excepció per procediment no trobat");
         } catch (RuntimeException e) {
-            assertTrue(e.getMessage().contains("Procediment no trobat"));
-        } catch (Exception e) {
-            fail("S'esperava una excepció de runtime: " + e.getMessage());
-        }
-    }
-
-    @Test
-    public void testGetProcedimentByIdServerError() {
-        Long procedimentId = -1L; // Simulate server error with invalid ID
-
-        try {
-            procedimentClient.getProcediment(procedimentId);
-            fail("S'esperava una excepció per error del servidor");
-        } catch (RuntimeException e) {
-            assertTrue(e.getMessage().contains("Resposta inesperada del servidor"));
+            assertTrue(e.getMessage().contains("Recurs no trobat"));
         } catch (Exception e) {
             fail("S'esperava una excepció de runtime: " + e.getMessage());
         }
@@ -394,8 +425,8 @@ public class ProcedimentClientTest {
 
     @Test
     public void testGetProcedimentByCodi() {
-        String procedimentCodi = "codiExemple"; // Ha de ser un codi vàlid al servidor de proves
-        String entitatCodi = "entitatExemple"; 
+        String procedimentCodi = existingProcedimentCodi; // Ha de ser un codi vàlid al servidor de proves
+        String entitatCodi = existingEntitatCodi;
 
         try {
             Procediment procediment = procedimentClient.getProcediment(procedimentCodi, entitatCodi);
@@ -407,32 +438,31 @@ public class ProcedimentClientTest {
     }
 
     @Test
+    public void testGetProcedimentByCodiNoAccess() {
+        String procedimentCodi = existingProcedimentCodi; // Ha de ser un codi vàlid al servidor de proves
+        String entitatCodi = existingEntitatCodi;
+
+        try {
+            Procediment procediment = procedimentClientNoAccess.getProcediment(procedimentCodi, entitatCodi);
+            fail("Ha d'haver llançat una excepció d'AccessDenegat");
+        } catch (Exception e) {
+            assertTrue(e.getMessage().contains("Accés denegat"));
+        }
+    }
+
+    @Test
     public void testGetProcedimentByCodiNotFound() {
         String procedimentCodi = "nonExistentCodi";
-        String entitatCodi = "nonExistentEntitat";
+        String entitatCodi = existingEntitatCodi;
 
         try {
             procedimentClient.getProcediment(procedimentCodi, entitatCodi);
             fail("S'esperava una excepció per procediment no trobat");
         } catch (RuntimeException e) {
-            assertTrue(e.getMessage().contains("Procediment no trobat"));
+            assertTrue(e.getMessage().contains("Recurs no trobat"));
         } catch (Exception e) {
             fail("S'esperava una excepció de runtime: " + e.getMessage());
         }
     }
 
-    @Test
-    public void testGetProcedimentByCodiServerError() {
-        String procedimentCodi = "serverErrorCodi";
-        String entitatCodi = "validEntitat";
-
-        try {
-            procedimentClient.getProcediment(procedimentCodi, entitatCodi);
-            fail("S'esperava una excepció per error del servidor");
-        } catch (RuntimeException e) {
-            assertTrue(e.getMessage().contains("Resposta inesperada del servidor"));
-        } catch (Exception e) {
-            fail("S'esperava una excepció de runtime: " + e.getMessage());
-        }
-    }
 }

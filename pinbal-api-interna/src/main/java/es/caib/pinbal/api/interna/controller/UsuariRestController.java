@@ -14,6 +14,7 @@ import es.caib.pinbal.client.usuaris.ProcedimentServei;
 import es.caib.pinbal.client.usuaris.UsuariEntitat;
 import es.caib.pinbal.core.dto.apiresponse.ServiceExecutionException;
 import es.caib.pinbal.core.service.GestioRestService;
+import es.caib.pinbal.core.service.exception.AccessDenegatException;
 import es.caib.pinbal.core.service.exception.EntitatNotFoundException;
 import es.caib.pinbal.core.service.exception.EntitatUsuariNotFoundException;
 import es.caib.pinbal.core.service.exception.InvalidInputException;
@@ -34,6 +35,7 @@ import org.springframework.hateoas.mvc.ControllerLinkBuilder;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BeanPropertyBindingResult;
@@ -50,6 +52,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import javax.validation.Valid;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @Controller
@@ -65,7 +68,7 @@ public class UsuariRestController extends PinbalHalRestController {
      * @param usuariEntitat Dades de l'usuari.
      */
     @ApiVersion("1")
-    @PreAuthorize("hasRole('PBL_WS')")
+    @PreAuthorize("hasRole('PBL_WS') and hasRole('PBL_REPRES')")
     @RequestMapping(value = "/usuaris", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation(value = "Crear o actualitzar un usuari")
     @ApiResponses(value = {
@@ -87,6 +90,8 @@ public class UsuariRestController extends PinbalHalRestController {
         } catch (MultiplesUsuarisExternsException e) {
             bindingResult.addError(new ObjectError("usuariEntitat", "Multiples usuaris coincideixen amb les dades aportades"));
             throw new InvalidInputException(bindingResult);
+        } catch (AccessDeniedException ade) {
+            throw new AccessDenegatException(Arrays.asList("PBL_WS", "PBL_REPRES"));
         } catch (Exception e) {
             throw new ServiceExecutionException(e.getMessage(), e);
         }
@@ -100,7 +105,7 @@ public class UsuariRestController extends PinbalHalRestController {
      * @return Pàgina d'usuaris.
      */
     @ApiVersion("1")
-    @PreAuthorize("hasRole('PBL_WS')")
+    @PreAuthorize("hasRole('PBL_WS') and hasRole('PBL_REPRES')")
     @RequestMapping(value = "/usuaris", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation(value = "Obtén usuaris amb filtratge i paginació",
             response = PagedResources.class,
@@ -156,6 +161,8 @@ public class UsuariRestController extends PinbalHalRestController {
 
         } catch (EntitatNotFoundException e) {
             throw new ResourceNotFoundException(e.getDefaultMessage());
+        } catch (AccessDeniedException ade) {
+            throw new AccessDenegatException(Arrays.asList("PBL_WS", "PBL_REPRES"));
         } catch (Exception e) {
             throw new ServiceExecutionException(e.getMessage(), e);
         }
@@ -168,7 +175,7 @@ public class UsuariRestController extends PinbalHalRestController {
      * @return Dades del procediment.
      */
     @ApiVersion("1")
-    @PreAuthorize("hasRole('PBL_WS')")
+    @PreAuthorize("hasRole('PBL_WS') and hasRole('PBL_REPRES')")
     @RequestMapping(value = "/usuaris/{usuariCodi}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation(value = "Obtén un usauri pel seu Codi",
             response = UsuariEntitat.class,
@@ -197,6 +204,8 @@ public class UsuariRestController extends PinbalHalRestController {
             return new ResponseEntity<Resource<UsuariEntitat>>(HttpStatus.NO_CONTENT);
         } catch (EntitatNotFoundException e) {
             throw new ResourceNotFoundException(e.getDefaultMessage());
+        } catch (AccessDeniedException ade) {
+            throw new AccessDenegatException(Arrays.asList("PBL_WS", "PBL_REPRES"));
         } catch (Exception e) {
             if ("EJBException".equals(e.getClass().getSimpleName())) {
                 Throwable cause = e.getCause();
@@ -217,7 +226,7 @@ public class UsuariRestController extends PinbalHalRestController {
      * @param permisosServei Dades dels permisos a atorgar.
      */
     @ApiVersion("1")
-    @PreAuthorize("hasRole('PBL_WS')")
+    @PreAuthorize("hasRole('PBL_WS') and hasRole('PBL_REPRES')")
     @RequestMapping(value = "/usuaris/{usuariCodi}/permisos", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation(value = "Atorgar permisos seleccionats a un usuari per a procediments i serveis")
     @ApiResponses(value = {
@@ -243,6 +252,8 @@ public class UsuariRestController extends PinbalHalRestController {
             throw new ResourceNotFoundException("Entitat-usuari no trobat: " + permisosServei.getEntitatCodi() + " - " + usuariCodi);
         } catch (ProcedimentServeiNotFoundException e) {
             throw new ResourceNotFoundException(e.getDefaultMessage());
+        } catch (AccessDeniedException ade) {
+            throw new AccessDenegatException(Arrays.asList("PBL_WS", "PBL_REPRES"));
         } catch (Exception e) {
             throw new ServiceExecutionException(e.getMessage(), e);
         }
@@ -256,7 +267,7 @@ public class UsuariRestController extends PinbalHalRestController {
      * @return Llista de recursos HATOAS de tipus PermisDto.
      */
     @ApiVersion("1")
-    @PreAuthorize("hasRole('PBL_WS')")
+    @PreAuthorize("hasRole('PBL_WS') and hasRole('PBL_REPRES')")
     @RequestMapping(value = "/usuaris/{usuariCodi}/permisos", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation(value = "Obtén permisos associats a un usuari", response = PermisosServei.class)
     @ApiResponses(value = {
@@ -308,6 +319,8 @@ public class UsuariRestController extends PinbalHalRestController {
             throw new ResourceNotFoundException(e.getDefaultMessage());
         } catch (UsuariNotFoundException e) {
             throw new ResourceNotFoundException(e.getDefaultMessage());
+        } catch (AccessDeniedException ade) {
+            throw new AccessDenegatException(Arrays.asList("PBL_WS", "PBL_REPRES"));
         } catch (Exception e) {
             throw new ServiceExecutionException(e.getMessage(), e);
         }

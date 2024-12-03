@@ -148,7 +148,13 @@ public class GestioRestServiceImpl implements GestioRestService {
 
     @Override
     public void serveiEnable(Long procedimentId, String serveiCodi) throws ProcedimentNotFoundException, ServeiNotFoundException {
-        procedimentService.serveiEnable(procedimentId, serveiCodi);
+        try {
+            procedimentService.serveiEnable(procedimentId, serveiCodi);
+        } catch (ProcedimentNotFoundException e) {
+            throw new ProcedimentNotFoundException(procedimentId.toString());
+        } catch (ServeiNotFoundException e) {
+            throw new ServeiNotFoundException(serveiCodi);
+        }
     }
 
     @Override

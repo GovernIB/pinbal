@@ -49,6 +49,7 @@
 							<set>
 								<value>PBL_WS</value>
 								<value>PBL_REPORT</value>
+								<value>PBL_REPRES</value>
 								<value>tothom</value>
 							</set>
 						</property>
@@ -60,6 +61,7 @@
 							<map>
 								<entry key="PBL_WS" value="ROLE_WS"/>
 								<entry key="PBL_REPORT" value="ROLE_REPORT"/>
+								<entry key="PBL_REPRES" value="ROLE_REPRES"/>
 								<entry key="tothom" value="ROLE_DELEG"/>
 							</map>
 						</property>

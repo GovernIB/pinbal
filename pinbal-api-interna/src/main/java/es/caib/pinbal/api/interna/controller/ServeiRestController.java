@@ -9,6 +9,7 @@ import es.caib.pinbal.api.config.ApiVersion;
 import es.caib.pinbal.client.serveis.Servei;
 import es.caib.pinbal.core.dto.apiresponse.ServiceExecutionException;
 import es.caib.pinbal.core.service.GestioRestService;
+import es.caib.pinbal.core.service.exception.AccessDenegatException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -20,6 +21,7 @@ import org.springframework.hateoas.mvc.ControllerLinkBuilder;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -29,6 +31,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @Controller
@@ -48,7 +51,7 @@ public class ServeiRestController extends PinbalHalRestController {
      * @return Pàgina de procediments.
      */
     @ApiVersion("1")
-    @PreAuthorize("hasRole('PBL_WS')")
+    @PreAuthorize("hasRole('PBL_WS') and hasRole('PBL_REPRES')")
     @RequestMapping(value = "/serveis", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation(value = "Obtén tots els serveis amb paginació",
             response = PagedResources.class,
@@ -92,6 +95,8 @@ public class ServeiRestController extends PinbalHalRestController {
             PagedResources<Resource<Servei>> pagedResources = new PagedResources<>(serveiResources, metadata, link);
             return new ResponseEntity<PagedResources<Resource<Servei>>>(pagedResources, HttpStatus.OK);
 
+        } catch (AccessDeniedException ade) {
+            throw new AccessDenegatException(Arrays.asList("PBL_WS", "PBL_REPRES"));
         } catch (Exception e) {
             throw new ServiceExecutionException(e.getMessage(), e);
         }
@@ -103,7 +108,7 @@ public class ServeiRestController extends PinbalHalRestController {
      * @return Dades del servei.
      */
     @ApiVersion("1")
-    @PreAuthorize("hasRole('PBL_WS')")
+    @PreAuthorize("hasRole('PBL_WS') and hasRole('PBL_REPRES')")
     @RequestMapping(value = "/serveis/{serveiCodi}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation(value = "Obtén un servei pel seu codi",
             response = Servei.class,
@@ -126,6 +131,8 @@ public class ServeiRestController extends PinbalHalRestController {
             ).withSelfRel();
             resource.add(selfLink);
             return new ResponseEntity<Resource<Servei>>(resource, HttpStatus.OK);
+        } catch (AccessDeniedException ade) {
+            throw new AccessDenegatException(Arrays.asList("PBL_WS", "PBL_REPRES"));
         } catch (Exception e) {
             throw new ServiceExecutionException(e.getMessage(), e);
         }
