@@ -1,12 +1,15 @@
 package es.caib.pinbal.core.dto;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
 
 /**
  * Objecte DTO amb informació d'una entitat.
@@ -14,6 +17,9 @@ import lombok.ToString;
  * @author Limit Tecnologies <limit@limit.es>
  */
 @Getter @Setter @ToString
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class EntitatDto extends AbstractIdentificable<Long> implements Serializable {
 
 	public enum EntitatTipusDto {
@@ -34,9 +40,6 @@ public class EntitatDto extends AbstractIdentificable<Long> implements Serializa
 
 	private List<EntitatUsuariDto> usuaris = new ArrayList<EntitatUsuariDto>();
 	private List<String> serveis = new ArrayList<String>();
-
-	public EntitatDto() {
-	}
 
 	public List<EntitatUsuariDto> getUsuarisAdmin() {
 		List<EntitatUsuariDto> resposta = new ArrayList<EntitatUsuariDto>();

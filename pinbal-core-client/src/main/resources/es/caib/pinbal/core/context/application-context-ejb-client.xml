@@ -68,4 +68,12 @@
 			id="ConfigService"
 			jndi-name="pinbal/ConfigServiceBean/local"
 			business-interface="es.caib.pinbal.core.service.ConfigService"/>
+	<jee:local-slsb
+			id="IntegracioAccioService"
+			jndi-name="pinbal/IntegracioAccioServiceBean/local"
+			business-interface="es.caib.pinbal.core.service.IntegracioAccioService"/>
+	<jee:local-slsb
+			id="GestioRestService"
+			jndi-name="pinbal/GestioRestServiceBean/local"
+			business-interface="es.caib.pinbal.core.service.GestioRestService"/>
 </beans>

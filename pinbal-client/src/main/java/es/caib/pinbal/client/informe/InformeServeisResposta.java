@@ -5,7 +5,7 @@ package es.caib.pinbal.client.informe;
 
 import java.util.List;
 
-import es.caib.pinbal.client.comu.Servei;
+import es.caib.pinbal.client.comu.ServeiEstadistiques;
 
 /**
  * Estructura de l'informe de serveis.
@@ -14,12 +14,12 @@ import es.caib.pinbal.client.comu.Servei;
  */
 public class InformeServeisResposta {
 
-	private List<Servei> serveis;
+	private List<ServeiEstadistiques> serveis;
 	
-	public List<Servei> getServeis() {
+	public List<ServeiEstadistiques> getServeis() {
 		return serveis;
 	}
-	public void setServeis(List<Servei> serveis) {
+	public void setServeis(List<ServeiEstadistiques> serveis) {
 		this.serveis = serveis;
 	}
 	

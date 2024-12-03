@@ -10,8 +10,8 @@ import java.util.List;
 import java.util.Map;
 
 import es.caib.pinbal.client.comu.ClientBase;
-import es.caib.pinbal.client.comu.Entitat;
-import es.caib.pinbal.client.comu.Procediment;
+import es.caib.pinbal.client.comu.EntitatEstadistiques;
+import es.caib.pinbal.client.comu.ProcedimentEstadistiques;
 
 /**
  * Client amb la lògica bàsica per a accedir al servei de consulta
@@ -40,7 +40,7 @@ public class ClientEstadistica extends ClientBase {
 		super(urlBase + BASE_URL_SUFIX, usuari, contrasenya, basicAuth, timeoutConnect, timeoutRead);
 	}
 
-	public List<Procediment> consultes(
+	public List<ProcedimentEstadistiques> consultes(
 			String entitatCodi,
 			String procedimentCodi,
 			String serveiCodi,
@@ -69,14 +69,14 @@ public class ClientEstadistica extends ClientBase {
 		return restPeticioGetList(
 				"consultes",
 				params,
-				Procediment.class);
+				ProcedimentEstadistiques.class);
 	}
 
-	public List<Entitat> carrega() throws IOException {
+	public List<EntitatEstadistiques> carrega() throws IOException {
 		return restPeticioGetList(
 				"carrega",
 				null,
-				Entitat.class);
+				EntitatEstadistiques.class);
 	}
 
 }

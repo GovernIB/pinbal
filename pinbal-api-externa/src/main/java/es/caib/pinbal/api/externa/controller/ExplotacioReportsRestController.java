@@ -3,24 +3,14 @@
  */
 package es.caib.pinbal.api.externa.controller;
 
-import es.caib.pinbal.api.externa.command.EstadistiquesFiltreCommand;
-import es.caib.pinbal.client.comu.Departament;
-import es.caib.pinbal.client.comu.Entitat;
-import es.caib.pinbal.client.comu.Procediment;
-import es.caib.pinbal.client.comu.Servei;
-import es.caib.pinbal.client.comu.Servei.ConsultesOkError;
-import es.caib.pinbal.client.comu.TotalAcumulat;
+import es.caib.pinbal.client.comu.DepartamentEstadistiques;
+import es.caib.pinbal.client.comu.EntitatEstadistiques;
+import es.caib.pinbal.client.comu.ProcedimentEstadistiques;
+import es.caib.pinbal.client.comu.ServeiEstadistiques;
 import es.caib.pinbal.client.comu.Usuari;
-import es.caib.pinbal.core.dto.CarregaDto;
-import es.caib.pinbal.core.dto.ConsultaDto.EstatTipus;
-import es.caib.pinbal.core.dto.EntitatDto;
-import es.caib.pinbal.core.dto.EstadisticaDto;
-import es.caib.pinbal.core.dto.EstadistiquesFiltreDto;
-import es.caib.pinbal.core.dto.EstadistiquesFiltreDto.EstadistiquesAgrupacioDto;
 import es.caib.pinbal.core.dto.InformeGeneralEstatDto;
 import es.caib.pinbal.core.dto.InformeProcedimentDto;
 import es.caib.pinbal.core.dto.InformeUsuariDto;
-import es.caib.pinbal.core.dto.ProcedimentDto;
 import es.caib.pinbal.core.dto.ServeiDto;
 import es.caib.pinbal.core.service.ConsultaService;
 import es.caib.pinbal.core.service.EntitatService;
@@ -28,8 +18,6 @@ import es.caib.pinbal.core.service.HistoricConsultaService;
 import es.caib.pinbal.core.service.ProcedimentService;
 import es.caib.pinbal.core.service.ServeiService;
 import es.caib.pinbal.core.service.UsuariService;
-import es.caib.pinbal.core.service.exception.EntitatNotFoundException;
-import es.caib.pinbal.core.service.exception.ProcedimentNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
@@ -70,18 +58,18 @@ public class ExplotacioReportsRestController {
 			value= "/procediments",
 			method = RequestMethod.GET,
 			produces = "application/json")
-	public ResponseEntity<List<Entitat>> procediments(
+	public ResponseEntity<List<EntitatEstadistiques>> procediments(
 			HttpServletRequest request) {
 		// Informe de procediments agrupats per entitat i departament
 		List<InformeProcedimentDto> informeProcediments = procedimentService.informeProcedimentsAgrupatsEntitatDepartament();
-		List<Entitat> entitats = new ArrayList<Entitat>();
-		Entitat entitatActual = null;
+		List<EntitatEstadistiques> entitats = new ArrayList<EntitatEstadistiques>();
+		EntitatEstadistiques entitatActual = null;
 		Long entitatActualId = null;
-		Departament departamentActual = null;
+		DepartamentEstadistiques departamentActual = null;
 		for (InformeProcedimentDto informeProcediment: informeProcediments) {
 			if (entitatActual == null || !entitatActualId.equals(informeProcediment.getEntitat().getId())) {
 				entitatActualId = informeProcediment.getEntitat().getId();
-				entitatActual = new Entitat();
+				entitatActual = new EntitatEstadistiques();
 				entitatActual.setCodi(informeProcediment.getEntitat().getCodi());
 				entitatActual.setNom(informeProcediment.getEntitat().getNom());
 				entitatActual.setNif(informeProcediment.getEntitat().getCif());
@@ -89,43 +77,43 @@ public class ExplotacioReportsRestController {
 			}
 			if (informeProcediment.getDepartament() != null) {
 				if (departamentActual == null || departamentActual.getNom() != informeProcediment.getDepartament()) {
-					departamentActual = new Departament();
+					departamentActual = new DepartamentEstadistiques();
 					//departamentActual.setCodi(informeProcediment.getDepartamentCodi());
 					departamentActual.setNom(informeProcediment.getDepartament());
 					if (entitatActual.getDepartaments() == null) {
-						entitatActual.setDepartaments(new ArrayList<Departament>());
+						entitatActual.setDepartaments(new ArrayList<DepartamentEstadistiques>());
 					}
 					entitatActual.getDepartaments().add(departamentActual);
 				}
-				Procediment procediment = new Procediment();
+				ProcedimentEstadistiques procediment = new ProcedimentEstadistiques();
 				procediment.setCodi(informeProcediment.getCodi());
 				procediment.setNom(informeProcediment.getNom());
 				procediment.setActiu(informeProcediment.isActiu());
 				if (departamentActual.getProcediments() == null) {
-					departamentActual.setProcediments(new ArrayList<Procediment>());
+					departamentActual.setProcediments(new ArrayList<ProcedimentEstadistiques>());
 				}
 				departamentActual.getProcediments().add(procediment);
 			}
 		}
-		return new ResponseEntity<List<Entitat>>(entitats, HttpStatus.OK);
+		return new ResponseEntity<List<EntitatEstadistiques>>(entitats, HttpStatus.OK);
 	}
 
 	@RequestMapping(
 			value= "/usuaris",
 			method = RequestMethod.GET,
 			produces = "application/json")
-	public ResponseEntity<List<Entitat>> usuaris(
+	public ResponseEntity<List<EntitatEstadistiques>> usuaris(
 			HttpServletRequest request) {
 		// Informe d'usuaris agrupats per entitat i departament
 		List<InformeUsuariDto> informeUsuaris = usuariService.informeUsuarisAgrupatsEntitatDepartament();
-		List<Entitat> entitats = new ArrayList<Entitat>();
-		Entitat entitatActual = null;
+		List<EntitatEstadistiques> entitats = new ArrayList<EntitatEstadistiques>();
+		EntitatEstadistiques entitatActual = null;
 		Long entitatActualId = null;
-		Departament departamentActual = null;
+		DepartamentEstadistiques departamentActual = null;
 		for (InformeUsuariDto informeUsuari: informeUsuaris) {
 			if (entitatActual == null || !entitatActualId.equals(informeUsuari.getEntitat().getId())) {
 				entitatActualId = informeUsuari.getEntitat().getId();
-				entitatActual = new Entitat();
+				entitatActual = new EntitatEstadistiques();
 				entitatActual.setCodi(informeUsuari.getEntitat().getCodi());
 				entitatActual.setNom(informeUsuari.getEntitat().getNom());
 				entitatActual.setNif(informeUsuari.getEntitat().getCif());
@@ -133,11 +121,11 @@ public class ExplotacioReportsRestController {
 			}
 			if (informeUsuari.getDepartament() != null) {
 				if (departamentActual == null || departamentActual.getNom() != informeUsuari.getDepartament()) {
-					departamentActual = new Departament();
+					departamentActual = new DepartamentEstadistiques();
 					//departamentActual.setCodi(informeProcediment.getDepartamentCodi());
 					departamentActual.setNom(informeUsuari.getDepartament());
 					if (entitatActual.getDepartaments() == null) {
-						entitatActual.setDepartaments(new ArrayList<Departament>());
+						entitatActual.setDepartaments(new ArrayList<DepartamentEstadistiques>());
 					}
 					entitatActual.getDepartaments().add(departamentActual);
 				}
@@ -151,53 +139,53 @@ public class ExplotacioReportsRestController {
 				departamentActual.getUsuaris().add(usuari);
 			}
 		}
-		return new ResponseEntity<List<Entitat>>(entitats, HttpStatus.OK);
+		return new ResponseEntity<List<EntitatEstadistiques>>(entitats, HttpStatus.OK);
 	}
 
 	@RequestMapping(
 			value= "/serveis",
 			method = RequestMethod.GET,
 			produces = "application/json")
-	public ResponseEntity<List<Servei>> serveis(
+	public ResponseEntity<List<ServeiEstadistiques>> serveis(
 			HttpServletRequest request) {
 		// Informe de seveis
 		List<ServeiDto> informeServeis = serveiService.findActius();
-		List<Servei> serveis = new ArrayList<Servei>();
+		List<ServeiEstadistiques> serveis = new ArrayList<ServeiEstadistiques>();
 		for (ServeiDto informeServei: informeServeis) {
-			Servei servei = new Servei();
+			ServeiEstadistiques servei = new ServeiEstadistiques();
 			servei.setCodi(informeServei.getCodi());
 			servei.setNom(informeServei.getDescripcio());
 			servei.setEmisor(informeServei.getScspEmisorNom());
 			serveis.add(servei);
 		}
-		return new ResponseEntity<List<Servei>>(serveis, HttpStatus.OK);
+		return new ResponseEntity<List<ServeiEstadistiques>>(serveis, HttpStatus.OK);
 	}
 
 	@RequestMapping(
 			value= "/general",
 			method = RequestMethod.GET,
 			produces = "application/json")
-	public ResponseEntity<List<Entitat>> general(
+	public ResponseEntity<List<EntitatEstadistiques>> general(
 			HttpServletRequest request,
 			@RequestParam(value = "historic", required = false) boolean historic,
 			@RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) final Date dataInici,
 			@RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) final Date dataFi) {
 		// Informe general d'estat
-		List<Entitat> entitats = new ArrayList<Entitat>();
+		List<EntitatEstadistiques> entitats = new ArrayList<EntitatEstadistiques>();
 		List<InformeGeneralEstatDto> informeGeneralFiles;
 		if (historic) {
 			informeGeneralFiles = historicConsultaService.informeGeneralEstat(dataInici, dataFi);
 		} else {
 			informeGeneralFiles = consultaService.informeGeneralEstat(dataInici, dataFi);
 		}
-		Entitat entitatActual = null;
+		EntitatEstadistiques entitatActual = null;
 		String entitatActualCodi = null;
-		Departament departamentActual = null;
-		Procediment procedimentActual = null;
+		DepartamentEstadistiques departamentActual = null;
+		ProcedimentEstadistiques procedimentActual = null;
 		for (InformeGeneralEstatDto informeGeneralFila: informeGeneralFiles) {
 			if (entitatActual == null || !entitatActualCodi.equals(informeGeneralFila.getEntitatCodi())) {
 				entitatActualCodi = informeGeneralFila.getEntitatCodi();
-				entitatActual = new Entitat();
+				entitatActual = new EntitatEstadistiques();
 				entitatActual.setCodi(informeGeneralFila.getEntitatCodi());
 				entitatActual.setNom(informeGeneralFila.getEntitatNom());
 				entitatActual.setNif(informeGeneralFila.getEntitatCif());
@@ -205,24 +193,24 @@ public class ExplotacioReportsRestController {
 			}
 //			if (informeGeneralFila.getDepartament() != null) {
 				if (departamentActual == null || departamentActual.getNom() != informeGeneralFila.getDepartament()) {
-					departamentActual = new Departament();
+					departamentActual = new DepartamentEstadistiques();
 					//departamentActual.setCodi(informeProcediment.getDepartamentCodi());
 					departamentActual.setNom(informeGeneralFila.getDepartament());
 					if (entitatActual.getDepartaments() == null) {
-						entitatActual.setDepartaments(new ArrayList<Departament>());
+						entitatActual.setDepartaments(new ArrayList<DepartamentEstadistiques>());
 					}
 					entitatActual.getDepartaments().add(departamentActual);
 				}
 				if (procedimentActual == null || procedimentActual.getCodi() != informeGeneralFila.getProcedimentCodi()) {
-					procedimentActual = new Procediment();
+					procedimentActual = new ProcedimentEstadistiques();
 					procedimentActual.setCodi(informeGeneralFila.getProcedimentCodi());
 					procedimentActual.setNom(informeGeneralFila.getProcedimentNom());
 					if (departamentActual.getProcediments() == null) {
-						departamentActual.setProcediments(new ArrayList<Procediment>());
+						departamentActual.setProcediments(new ArrayList<ProcedimentEstadistiques>());
 					}
 					departamentActual.getProcediments().add(procedimentActual);
 				}
-				Servei servei = new Servei();
+				ServeiEstadistiques servei = new ServeiEstadistiques();
 				servei.setCodi(informeGeneralFila.getServeiCodi());
 				servei.setNom(informeGeneralFila.getServeiNom());
 				servei.setEmisor(informeGeneralFila.getServeiEmisor().getNom());
@@ -230,12 +218,12 @@ public class ExplotacioReportsRestController {
 				servei.setConsultesOk(informeGeneralFila.getPeticionsCorrectes());
 				servei.setConsultesError(informeGeneralFila.getPeticionsErronees());
 				if (procedimentActual.getServeis() == null) {
-					procedimentActual.setServeis(new ArrayList<Servei>());
+					procedimentActual.setServeis(new ArrayList<ServeiEstadistiques>());
 				}
 				procedimentActual.getServeis().add(servei);
 //			}
 		}
-		return new ResponseEntity<List<Entitat>>(entitats, HttpStatus.OK);
+		return new ResponseEntity<List<EntitatEstadistiques>>(entitats, HttpStatus.OK);
 	}
 
 }

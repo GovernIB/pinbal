@@ -518,25 +518,29 @@ create table ACL_ENTRY
     constraint ACL_ENTRY_UK unique (ACL_OBJECT_IDENTITY, ACE_ORDER)
 );
 
-create trigger ACL_CLASS_IDGEN before insert on ACL_CLASS for each row
+CREATE OR REPLACE trigger ACL_CLASS_IDGEN before insert on ACL_CLASS for each row
 BEGIN
     SELECT acl_class_seq.NEXTVAL INTO :NEW.ID FROM DUAL;
 END;
+/
 
-create trigger ACL_ENTRY_IDGEN before insert on ACL_ENTRY for each row
+CREATE OR REPLACE trigger ACL_ENTRY_IDGEN before insert on ACL_ENTRY for each row
 BEGIN
     SELECT acl_entry_seq.NEXTVAL INTO :NEW.ID FROM DUAL;
 END;
+/
 
-create trigger ACL_OID_IDGEN before insert on ACL_OBJECT_IDENTITY for each row
+CREATE OR REPLACE trigger ACL_OID_IDGEN before insert on ACL_OBJECT_IDENTITY for each row
 BEGIN
     SELECT acl_oid_seq.NEXTVAL INTO :NEW.ID FROM DUAL;
 END;
+/
 
-create trigger ACL_SID_IDGEN before insert on ACL_SID for each row
+CREATE OR REPLACE trigger ACL_SID_IDGEN before insert on ACL_SID for each row
 BEGIN
     SELECT acl_sid_seq.NEXTVAL INTO :NEW.ID FROM DUAL;
 END;
+/
 
 --------------------------------------------------------
 --  DDL for Table PBL_AVIS
@@ -1244,12 +1248,13 @@ create table PBL_CONSULTA_HIST_LIST
 --  Creació del procedimiento almacenado para generar las secuencias del id de petición
 --------------------------------------------------------
 
-create PROCEDURE "GETSECUENCIAIDPETICION" (prefijo_param in varchar2, on CHAR_Secuencial out number) as rRegistro ROWID;
+CREATE OR REPLACE PROCEDURE "GETSECUENCIAIDPETICION" (prefijo_param in varchar2, on_Secuencial out number) AS rRegistro ROWID;
 begin
-select ROWID, secuencia+1 into rRegistro, on_Secuencial from core_req_secuencia_id_peticion where prefijo = prefijo_param for update;
-update core_req_secuencia_id_peticion set secuencia = on_Secuencial, fechageneracion=sysdate where rowid = rRegistro;
-commit;
-exception when no_data_found then on_Secuencial := 1;
-insert into core_req_secuencia_id_peticion (prefijo, secuencia,fechageneracion) values (prefijo_param, on_Secuencial,(SELECT SYSDATE FROM DUAL));
+    select ROWID, SECUENCIA+1 into rRegistro, on_Secuencial from core_req_secuencia_id_peticion where PREFIJO = prefijo_param for update;
+    update CORE_REQ_SECUENCIA_ID_PETICION set SECUENCIA = on_Secuencial, FECHAGENERACION=sysdate where rowid = rRegistro;
+    commit;
+    exception when no_data_found then on_Secuencial := 1;
+    insert into CORE_REQ_SECUENCIA_ID_PETICION (PREFIJO, SECUENCIA, FECHAGENERACION) values (prefijo_param, on_Secuencial,SYSDATE);
 commit;
 end;
+/

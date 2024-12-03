@@ -3,8 +3,11 @@
  */
 package es.caib.pinbal.core.model;
 
-import java.util.ArrayList;
-import java.util.List;
+import es.caib.pinbal.core.audit.PinbalAuditable;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -15,13 +18,8 @@ import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import javax.persistence.Table;
 import javax.persistence.Version;
-
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-
-import es.caib.pinbal.core.audit.PinbalAuditable;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Classe de model de dades que conté la informació d'una entitat.
@@ -223,4 +221,8 @@ public class Entitat extends PinbalAuditable<Long> {
 		return true;
 	}
 
+	@Deprecated
+	public void fillIdForTesting(Long id) {
+		super.setId(id);
+	}
 }

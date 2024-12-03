@@ -5,7 +5,7 @@ package es.caib.pinbal.client.estadistica;
 
 import java.util.List;
 
-import es.caib.pinbal.client.comu.Entitat;
+import es.caib.pinbal.client.comu.EntitatEstadistiques;
 import es.caib.pinbal.client.comu.TotalAcumulat;
 
 /**
@@ -15,14 +15,14 @@ import es.caib.pinbal.client.comu.TotalAcumulat;
  */
 public class EstadisticaCarregaResposta {
 
-	private List<Entitat> entitats;
+	private List<EntitatEstadistiques> entitats;
 	private TotalAcumulat totalWeb;
 	private TotalAcumulat totalRecobriment;
 
-	public List<Entitat> getEntitats() {
+	public List<EntitatEstadistiques> getEntitats() {
 		return entitats;
 	}
-	public void setEntitats(List<Entitat> entitats) {
+	public void setEntitats(List<EntitatEstadistiques> entitats) {
 		this.entitats = entitats;
 	}
 	public TotalAcumulat getTotalWeb() {

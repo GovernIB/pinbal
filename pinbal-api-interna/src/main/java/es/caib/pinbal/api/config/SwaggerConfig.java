@@ -28,9 +28,10 @@ public class SwaggerConfig {
                 .apiInfo(apiInfo())
                 .apiVersion("1.0")
                 .ignoredParameterTypes(ResponseEntity.class)
-				.includePatterns(".*/recobriment/*.*");
+				.includePatterns(".*/recobriment/*.*", ".*/procediments/*.*", ".*/serveis/*.*", ".*/usuaris/*.*")
+				.useDefaultResponseMessages(false);
     }
- 
+
 	private ApiInfo apiInfo() {
 		ApiInfo apiInfo = new ApiInfo(
 				"API Interna de PINBAL",

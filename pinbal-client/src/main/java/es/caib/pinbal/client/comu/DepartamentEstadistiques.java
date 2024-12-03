@@ -6,16 +6,16 @@ package es.caib.pinbal.client.comu;
 import java.util.List;
 
 /**
- * Informació d'una entitat associada a un informe.
+ * Informació d'un departament associat a un informe.
  * 
  * @author Limit Tecnologies <limit@limit.es>
  */
-public class Entitat {
+public class DepartamentEstadistiques {
 
 	private String codi;
 	private String nom;
-	private String nif;
-	private List<Departament> departaments;
+	private List<ProcedimentEstadistiques> procediments;
+	private List<Usuari> usuaris;
 	private TotalAcumulat totalWeb;
 	private TotalAcumulat totalRecobriment;
 	
@@ -31,17 +31,17 @@ public class Entitat {
 	public void setNom(String nom) {
 		this.nom = nom;
 	}
-	public String getNif() {
-		return nif;
+	public List<ProcedimentEstadistiques> getProcediments() {
+		return procediments;
 	}
-	public void setNif(String nif) {
-		this.nif = nif;
+	public void setProcediments(List<ProcedimentEstadistiques> procediments) {
+		this.procediments = procediments;
 	}
-	public List<Departament> getDepartaments() {
-		return departaments;
+	public List<Usuari> getUsuaris() {
+		return usuaris;
 	}
-	public void setDepartaments(List<Departament> departaments) {
-		this.departaments = departaments;
+	public void setUsuaris(List<Usuari> usuaris) {
+		this.usuaris = usuaris;
 	}
 	public TotalAcumulat getTotalWeb() {
 		return totalWeb;
