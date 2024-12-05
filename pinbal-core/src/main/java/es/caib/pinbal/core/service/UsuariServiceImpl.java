@@ -254,6 +254,42 @@ public class UsuariServiceImpl implements UsuariService {
 		return usuaris;
 	}
 
+	@Override
+	public UsuariDto getUsuariEntitat(Long entitatId, String usuariCodi) {
+		EntitatUsuari entitatUsuari = entitatUsuariRepository.findByEntitatIdAndUsuariCodi(
+				entitatId,
+				usuariCodi);
+		if (entitatUsuari == null) {
+			throw new NotFoundException(entitatId + "-" + usuariCodi, EntitatUsuari.class);
+		}
+		return UsuariDto.builder()
+				.codi(entitatUsuari.getUsuari().getCodi())
+				.nom(entitatUsuari.getUsuari().getNom())
+				.nif(entitatUsuari.getUsuari().getNif())
+				.email(entitatUsuari.getUsuari().getEmail())
+				.entitatId(entitatId)
+				.build();
+	}
+
+	@Override
+	public List<UsuariDto> getUsuarisEntitat(Long entitatId, String text) {
+		List<UsuariDto> usuaris = new ArrayList<>();
+
+		List<Usuari> usuarisEntitat = entitatUsuariRepository.findByEntitatIdAndUsuariLikeText(entitatId, text);
+		if (usuarisEntitat != null) {
+			for (Usuari usuari : usuarisEntitat) {
+				usuaris.add(UsuariDto.builder()
+						.codi(usuari.getCodi())
+						.nom(usuari.getNom())
+						.nif(usuari.getNif())
+						.email(usuari.getEmail())
+						.entitatId(entitatId)
+						.build());
+			}
+		}
+		return usuaris;
+	}
+
 	@Transactional(rollbackFor = EntitatNotFoundException.class)
 	@Override
 	public void actualitzarDadesAdmin(

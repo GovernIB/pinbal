@@ -75,6 +75,10 @@ public class UsuariDto extends AbstractIdentificable<Long> implements Serializab
 		return nom + " (" + codi + ")";
 	}
 
+	public String getUsuariCodiNomNif() {
+		return codi + " - " + nom + (nif == null || nif.isEmpty() ? "" : " (" + nif + ")");
+	}
+
 	@Override
 	public String toString() {
 		return ToStringBuilder.reflectionToString(this);

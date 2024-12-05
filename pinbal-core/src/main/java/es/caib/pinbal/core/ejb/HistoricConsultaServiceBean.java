@@ -10,12 +10,8 @@ import es.caib.pinbal.core.dto.ConsultaDto;
 import es.caib.pinbal.core.dto.ConsultaFiltreDto;
 import es.caib.pinbal.core.dto.ConsultaOpenDataDto;
 import es.caib.pinbal.core.dto.EntitatDto;
-import es.caib.pinbal.core.dto.EstadisticaDto;
-import es.caib.pinbal.core.dto.EstadistiquesFiltreDto;
 import es.caib.pinbal.core.dto.FitxerDto;
 import es.caib.pinbal.core.dto.InformeGeneralEstatDto;
-import es.caib.pinbal.core.dto.InformeProcedimentServeiDto;
-import es.caib.pinbal.core.dto.InformeRepresentantFiltreDto;
 import es.caib.pinbal.core.dto.JustificantDto;
 import es.caib.pinbal.core.dto.arxiu.ArxiuDetallDto;
 import es.caib.pinbal.core.service.HistoricConsultaService;
@@ -268,15 +264,6 @@ public class HistoricConsultaServiceBean implements HistoricConsultaService {
 	@RolesAllowed({"PBL_ADMIN", "PBL_REPORT"})
 	public List<CarregaDto> findEstadistiquesCarrega() {
 		return delegate.findEstadistiquesCarrega();
-	}
-
-	@Override
-	@RolesAllowed({"PBL_ADMIN", "PBL_REPRES"})
-	public List<InformeProcedimentServeiDto> informeUsuarisEntitatOrganProcedimentServei(
-			Long entitatId, 
-			String rolActual, 
-			InformeRepresentantFiltreDto filtre){
-		return delegate.informeUsuarisEntitatOrganProcedimentServei(entitatId, rolActual, filtre);
 	}
 
 	@Override

@@ -3,6 +3,7 @@
  */
 package es.caib.pinbal.core.service;
 
+import es.caib.pinbal.core.dto.EntitatUsuariDto;
 import es.caib.pinbal.core.dto.FiltreActiuEnumDto;
 import es.caib.pinbal.core.dto.InformeProcedimentDto;
 import es.caib.pinbal.core.dto.PaginacioAmbOrdreDto;
@@ -15,6 +16,7 @@ import es.caib.pinbal.core.service.exception.ProcedimentNotFoundException;
 import es.caib.pinbal.core.service.exception.ProcedimentServeiNotFoundException;
 import es.caib.pinbal.core.service.exception.ServeiNotFoundException;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
 
 import java.util.List;
@@ -92,7 +94,7 @@ public interface ProcedimentService {
 	 * @param organGestorId TODO
 	 * @param codiSia TODO
 	 * @param actiu TODO
-	 * @param paginacioAmbOrdre
+	 * @param paginacioParams
 	 *            Paràmetres per a la paginació i ordenació dels resultats.
 	 * @return El llistat de procediments paginat.
 	 * @throws EntitatNotFoundException
@@ -281,7 +283,29 @@ public interface ProcedimentService {
 	 *            Si el procediment no té aquest servei afegit.
 	 */
 	@PreAuthorize("hasRole('ROLE_REPRES')")
-	public List<String> findUsuarisAmbPermisPerServei(Long id, String serveiCodi) throws ProcedimentNotFoundException, ProcedimentServeiNotFoundException;
+	public List<EntitatUsuariDto> findUsuarisAmbPermisPerServei(Long id, String serveiCodi) throws ProcedimentNotFoundException, ProcedimentServeiNotFoundException;
+
+	/**
+	 * Consulta d'usuaris amb permisos per a accedir a un servei determinat.
+	 *
+	 * @param procedimentId
+	 *            Atribut id del procediment.
+	 * @param serveiCodi
+	 *            Codi del servei.
+	 * @return la llista d'usuaris amb accés
+	 * @throws ProcedimentNotFoundException
+	 *            Si no hi ha cap procediment amb l'id especificat.
+	 * @throws ProcedimentServeiNotFoundException
+	 *            Si el procediment no té aquest servei afegit.
+	 */
+	@PreAuthorize("hasRole('ROLE_REPRES')")
+	public Page<EntitatUsuariDto> findUsuarisAmbPermisPerServei(
+			Long procedimentId,
+			String serveiCodi,
+			String codi,
+			String nif,
+			String nom,
+			Pageable pageable) throws ProcedimentNotFoundException, ProcedimentServeiNotFoundException;
 
 	/**
 	 * Consulta dels procediments d'una entitat accessibles per un

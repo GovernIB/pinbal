@@ -47,6 +47,7 @@ import es.caib.pinbal.core.helper.PeticioScspHelper;
 import es.caib.pinbal.core.helper.PluginHelper;
 import es.caib.pinbal.core.helper.ServeiHelper;
 import es.caib.pinbal.core.helper.UsuariHelper;
+import es.caib.pinbal.core.helper.UtilsHelper;
 import es.caib.pinbal.core.model.Consulta;
 import es.caib.pinbal.core.model.Entitat;
 import es.caib.pinbal.core.model.EntitatUsuari;
@@ -2557,24 +2558,38 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 					filtre.getServeiCodi());
 		}
 		for (ProcedimentServei procedimentServei : procedimentServeis) {
-			List<String> usuarisAmbPermis = new ArrayList<String>();
-			try {
-				usuarisAmbPermis = procedimentService.findUsuarisAmbPermisPerServei(procedimentServei.getProcediment().getId(), procedimentServei.getServei());
-			} catch (ProcedimentNotFoundException e) {
-				log.error("No s'ha trobat el Procediment (id=" + procedimentServei.getProcediment().getId() + ")");
-			} catch (ProcedimentServeiNotFoundException e) {
-				log.error("No s'ha trobat el Servei (codi=" + procedimentServei.getServei() + ")");
-			}
-
-			for (String usuariAmbPermis: usuarisAmbPermis) {
-				EntitatUsuari entitatUsuari = entitatUsuariRepository.findByEntitatIdAndUsuariCodi(procedimentServei.getProcediment().getEntitat().getId(), usuariAmbPermis);
-				if (entitatUsuari != null) {
-					resposta.add(toInformeProcedimentServeiDto(procedimentServei, entitatUsuari));
-				}
+			List<EntitatUsuari> usuarisAmbPermis = findUsuarisAmbPermisPerProcedimentServei(procedimentServei);
+			for (EntitatUsuari usuariAmbPermis: usuarisAmbPermis) {
+				resposta.add(toInformeProcedimentServeiDto(procedimentServei, usuariAmbPermis));
 			}
 		}
 
 		return resposta;
+	}
+
+	private List<EntitatUsuari> findUsuarisAmbPermisPerProcedimentServei(ProcedimentServei procedimentServei) {
+		log.debug("Cercant usuaris amb permisos per a accedir al procediment-servei (procedimentServeiId= " + procedimentServei.getId() + ")");
+		List<AccessControlEntry> aces = PermisosHelper.getAclSids(
+				ProcedimentServei.class,
+				procedimentServei.getId(),
+				aclService);
+		if (aces == null || aces.isEmpty()) {
+			return new ArrayList<>();
+		}
+
+		List<String> usuariCodis = new ArrayList<>();
+		for (AccessControlEntry ace: aces)
+			usuariCodis.add(((PrincipalSid)ace.getSid()).getPrincipal());
+
+		List<List<String>> usuarisCodisSplits = UtilsHelper.listSplit(usuariCodis);
+		List<EntitatUsuari> usuariList = entitatUsuariRepository.findByEntitatIdAndUsuariCodis(
+				procedimentServei.getProcediment().getEntitat().getId(),
+				UtilsHelper.getListPartition(usuarisCodisSplits, 0),
+				UtilsHelper.getListPartition(usuarisCodisSplits, 1),
+				UtilsHelper.getListPartition(usuarisCodisSplits, 2),
+				UtilsHelper.getListPartition(usuarisCodisSplits, 3),
+				UtilsHelper.getListPartition(usuarisCodisSplits, 4));
+		return usuariList;
 	}
 
 	private InformeProcedimentServeiDto toInformeProcedimentServeiDto(ProcedimentServei procedimentServei,

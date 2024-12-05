@@ -20,8 +20,6 @@ import es.caib.pinbal.core.dto.EntitatDto;
 import es.caib.pinbal.core.dto.EstatTipus;
 import es.caib.pinbal.core.dto.FitxerDto;
 import es.caib.pinbal.core.dto.InformeGeneralEstatDto;
-import es.caib.pinbal.core.dto.InformeProcedimentServeiDto;
-import es.caib.pinbal.core.dto.InformeRepresentantFiltreDto;
 import es.caib.pinbal.core.dto.JustificantDto;
 import es.caib.pinbal.core.dto.JustificantEstat;
 import es.caib.pinbal.core.dto.arxiu.ArxiuDetallDto;
@@ -51,7 +49,6 @@ import es.caib.pinbal.core.service.exception.ConsultaNotFoundException;
 import es.caib.pinbal.core.service.exception.EntitatNotFoundException;
 import es.caib.pinbal.core.service.exception.JustificantGeneracioException;
 import es.caib.pinbal.core.service.exception.ProcedimentNotFoundException;
-import es.caib.pinbal.core.service.exception.ProcedimentServeiNotFoundException;
 import es.caib.pinbal.core.service.exception.ScspException;
 import es.caib.pinbal.scsp.PropertiesHelper;
 import es.caib.pinbal.scsp.Resposta;
@@ -884,65 +881,6 @@ public class HistoricConsultaServiceImpl implements HistoricConsultaService, App
 		return resposta;
 	}
 	
-	@Transactional(readOnly = true)
-	@Override
-	public List<InformeProcedimentServeiDto> informeUsuarisEntitatOrganProcedimentServei(Long entitatId, String rolActual, InformeRepresentantFiltreDto filtre) {
-		log.debug("Obtenint informe usuaris agrupats per entitat, òrgan gestor, procediment i servei");
-		List<InformeProcedimentServeiDto> resposta = new ArrayList<InformeProcedimentServeiDto>();
-	
-		List<ProcedimentServei> procedimentServeis = new ArrayList<ProcedimentServei>();
-		if (ROLE_ADMIN.equals(rolActual)) {
-			procedimentServeis = procedimentServeiRepository.findAllActius();
-		} else if (ROLE_REPRES.equals(rolActual)) {
-			procedimentServeis = procedimentServeiRepository.findAllActiusAmbFiltre(
-					entitatId,
-					filtre.getOrganGestorId() == null,
-					filtre.getOrganGestorId(),
-					filtre.getProcedimentId() == null,
-					filtre.getProcedimentId(),
-					filtre.getServeiCodi() == null,
-					filtre.getServeiCodi());
-		}
-		for (ProcedimentServei procedimentServei : procedimentServeis) {
-			List<String> usuarisAmbPermis = new ArrayList<String>();
-			try {
-				usuarisAmbPermis = procedimentService.findUsuarisAmbPermisPerServei(procedimentServei.getProcediment().getId(), procedimentServei.getServei());
-			} catch (ProcedimentNotFoundException e) {
-				log.error("No s'ha trobat el Procediment (id=" + procedimentServei.getProcediment().getId() + ")");
-			} catch (ProcedimentServeiNotFoundException e) {
-				log.error("No s'ha trobat el Servei (codi=" + procedimentServei.getServei() + ")");
-			}
-			
-			for (String usuariAmbPermis: usuarisAmbPermis) {
-				EntitatUsuari entitatUsuari = entitatUsuariRepository.findByEntitatIdAndUsuariCodi(procedimentServei.getProcediment().getEntitat().getId(), usuariAmbPermis);
-				if (entitatUsuari != null) {
-					resposta.add(toInformeProcedimentServeiDto(procedimentServei, entitatUsuari));	
-				}
-			}
-		}
-		
-		return resposta;
-	}
-	
-	private InformeProcedimentServeiDto toInformeProcedimentServeiDto(ProcedimentServei procedimentServei,
-			EntitatUsuari entitatUsuari) {
-		InformeProcedimentServeiDto informeProcedimentServei = new InformeProcedimentServeiDto();
-		Servicio servicio = getScspHelper().getServicio(procedimentServei.getServei());
-		informeProcedimentServei.setEntitatCodi(procedimentServei.getProcediment().getEntitat().getCodi());
-		informeProcedimentServei.setEntitatNom(procedimentServei.getProcediment().getEntitat().getNom());
-		informeProcedimentServei.setEntitatCif(procedimentServei.getProcediment().getEntitat().getCif());
-		informeProcedimentServei.setOrganGestorCodi(procedimentServei.getProcediment().getOrganGestor() != null ? procedimentServei.getProcediment().getOrganGestor().getCodi() : null);
-		informeProcedimentServei.setOrganGestorNom(procedimentServei.getProcediment().getOrganGestor() != null ? procedimentServei.getProcediment().getOrganGestor().getNom() : null);
-		informeProcedimentServei.setProcedimentCodi(procedimentServei.getProcediment().getCodi());
-		informeProcedimentServei.setProcedimentNom(procedimentServei.getProcediment().getNom());
-		informeProcedimentServei.setServeiCodi(servicio != null ? servicio.getCodCertificado() : null);
-		informeProcedimentServei.setServeiNom(servicio != null ? servicio.getDescripcion() : null);
-		informeProcedimentServei.setUsuariCodi(entitatUsuari.getUsuari().getCodi());
-		informeProcedimentServei.setUsuariNif(entitatUsuari.getUsuari().getNif());
-		informeProcedimentServei.setUsuariNom(entitatUsuari.getUsuari().getNom());
-		return informeProcedimentServei;
-	}
-
 	@Override
 	public void setApplicationContext(
 			ApplicationContext applicationContext) throws BeansException {
