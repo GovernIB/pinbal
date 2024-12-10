@@ -423,6 +423,10 @@ public abstract class ClientBase {
 				errorMsg = "Entrada invàlida: " + getErrorMessage(response);
 				logError(errorMsg);
 				throw new RuntimeException(errorMsg);
+			case 401:
+				errorMsg = "Accés denegat: " + getErrorMessage(response);
+				logError(errorMsg);
+				throw new RuntimeException(errorMsg);
 			case 404:
 				errorMsg = "Recurs no trobat : " + getErrorMessage(response);
 				logError(errorMsg);
@@ -446,6 +450,10 @@ public abstract class ClientBase {
 				return null;
 			case 400:
 				errorMsg = "Entrada invàlida: " + getErrorMessage(response);
+				logError(errorMsg);
+				throw new RuntimeException(errorMsg);
+			case 401:
+				errorMsg = "Accés denegat: " + getErrorMessage(response);
 				logError(errorMsg);
 				throw new RuntimeException(errorMsg);
 			case 404:
@@ -478,6 +486,10 @@ public abstract class ClientBase {
 				return Page.<T>builder().number(page).size(size).totalPages(0).totalElements(0).content(new ArrayList<T>()).build();
 			case 400:
 				errorMsg = "Entrada invàlida: " + getErrorMessage(response);
+				logError(errorMsg);
+				throw new RuntimeException(errorMsg);
+			case 401:
+				errorMsg = "Accés denegat: " + getErrorMessage(response);
 				logError(errorMsg);
 				throw new RuntimeException(errorMsg);
 			case 404:

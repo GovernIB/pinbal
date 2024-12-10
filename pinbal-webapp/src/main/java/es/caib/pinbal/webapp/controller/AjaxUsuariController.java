@@ -84,4 +84,35 @@ public class AjaxUsuariController extends BaseController{
 		return usuariList;
 	}
 
+
+	@RequestMapping(value = "/entitat/{entitatId}/usuari/item/{codi}", method = RequestMethod.GET)
+	@ResponseBody
+	public UsuariDto getItem(
+			HttpServletRequest request,
+			@PathVariable Long entitatId,
+			@PathVariable String codi)  {
+		return usuariService.getUsuariEntitat(entitatId, codi);
+	}
+
+	@RequestMapping(value = "/entitat/{entitatId}/usuari/{codi}", method = RequestMethod.GET)
+	@ResponseBody
+	public UsuariDto getUsuariEntitat(
+			HttpServletRequest request,
+			@PathVariable Long entitatId,
+			@PathVariable String codi) throws Exception {
+		return usuariService.getUsuariEntitat(entitatId, codi);
+	}
+
+	@RequestMapping(value = "/entitat/{entitatId}/usuaris/{text}", method = RequestMethod.GET)
+	@ResponseBody
+	public List<UsuariDto> getUsuarisExterns(
+			HttpServletRequest request,
+			@PathVariable Long entitatId,
+			@PathVariable String text) throws Exception {
+		try {
+			text = URLDecoder.decode(request.getRequestURI().split("/")[6], StandardCharsets.UTF_8.name());
+		} catch (UnsupportedEncodingException e) { }
+
+		return usuariService.getUsuarisEntitat(entitatId, text);
+	}
 }

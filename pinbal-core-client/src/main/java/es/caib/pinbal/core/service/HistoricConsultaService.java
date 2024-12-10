@@ -12,8 +12,6 @@ import es.caib.pinbal.core.dto.ConsultaOpenDataDto;
 import es.caib.pinbal.core.dto.EntitatDto;
 import es.caib.pinbal.core.dto.FitxerDto;
 import es.caib.pinbal.core.dto.InformeGeneralEstatDto;
-import es.caib.pinbal.core.dto.InformeProcedimentServeiDto;
-import es.caib.pinbal.core.dto.InformeRepresentantFiltreDto;
 import es.caib.pinbal.core.dto.JustificantDto;
 import es.caib.pinbal.core.dto.arxiu.ArxiuDetallDto;
 import es.caib.pinbal.core.service.exception.ConsultaNotFoundException;
@@ -409,12 +407,6 @@ public interface HistoricConsultaService {
 	public List<InformeGeneralEstatDto> informeGeneralEstat(
             Date dataInici,
             Date dataFi);
-
-	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_REPRES')")
-	public List<InformeProcedimentServeiDto> informeUsuarisEntitatOrganProcedimentServei(
-            Long entitatId,
-            String rolActual,
-            InformeRepresentantFiltreDto filtre);
 
 	/**
 	 * Tasca automàtica per a arxivar les consultes antigues

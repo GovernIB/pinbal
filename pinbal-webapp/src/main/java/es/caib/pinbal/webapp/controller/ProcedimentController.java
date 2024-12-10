@@ -3,25 +3,38 @@
  */
 package es.caib.pinbal.webapp.controller;
 
-import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
-import javax.naming.NamingException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.validation.Valid;
-
 import es.caib.pinbal.core.dto.CodiValor;
+import es.caib.pinbal.core.dto.EntitatDto;
+import es.caib.pinbal.core.dto.EntitatUsuariDto;
 import es.caib.pinbal.core.dto.FiltreActiuEnumDto;
 import es.caib.pinbal.core.dto.OrganGestorDto;
+import es.caib.pinbal.core.dto.ProcedimentClaseTramiteEnumDto;
+import es.caib.pinbal.core.dto.ProcedimentDto;
+import es.caib.pinbal.core.dto.ServeiDto;
+import es.caib.pinbal.core.service.EntitatService;
 import es.caib.pinbal.core.service.OrganGestorService;
+import es.caib.pinbal.core.service.ProcedimentService;
+import es.caib.pinbal.core.service.PropertyService;
+import es.caib.pinbal.core.service.ServeiService;
+import es.caib.pinbal.core.service.UsuariService;
+import es.caib.pinbal.core.service.exception.EntitatNotFoundException;
+import es.caib.pinbal.core.service.exception.EntitatUsuariNotFoundException;
+import es.caib.pinbal.core.service.exception.ProcedimentNotFoundException;
+import es.caib.pinbal.core.service.exception.ProcedimentServeiNotFoundException;
+import es.caib.pinbal.core.service.exception.ServeiNotFoundException;
+import es.caib.pinbal.webapp.command.ProcedimentCommand;
+import es.caib.pinbal.webapp.command.ProcedimentFiltreCommand;
+import es.caib.pinbal.webapp.command.ProcedimentServeiPermisFiltreCommand;
+import es.caib.pinbal.webapp.command.ServeiFiltreCommand;
+import es.caib.pinbal.webapp.command.UsuariPermisiCommand;
+import es.caib.pinbal.webapp.common.AlertHelper;
+import es.caib.pinbal.webapp.common.EntitatHelper;
+import es.caib.pinbal.webapp.common.RequestSessionHelper;
+import es.caib.pinbal.webapp.datatables.ServerSideRequest;
+import es.caib.pinbal.webapp.datatables.ServerSideResponse;
+import es.caib.pinbal.webapp.helper.EnumHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -31,29 +44,16 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import es.caib.pinbal.core.dto.EntitatDto;
-import es.caib.pinbal.core.dto.EntitatUsuariDto;
-import es.caib.pinbal.core.dto.ProcedimentClaseTramiteEnumDto;
-import es.caib.pinbal.core.dto.ProcedimentDto;
-import es.caib.pinbal.core.dto.ServeiDto;
-import es.caib.pinbal.core.service.EntitatService;
-import es.caib.pinbal.core.service.ProcedimentService;
-import es.caib.pinbal.core.service.PropertyService;
-import es.caib.pinbal.core.service.ServeiService;
-import es.caib.pinbal.core.service.exception.EntitatNotFoundException;
-import es.caib.pinbal.core.service.exception.EntitatUsuariNotFoundException;
-import es.caib.pinbal.core.service.exception.ProcedimentNotFoundException;
-import es.caib.pinbal.core.service.exception.ProcedimentServeiNotFoundException;
-import es.caib.pinbal.core.service.exception.ServeiNotFoundException;
-import es.caib.pinbal.webapp.command.ProcedimentCommand;
-import es.caib.pinbal.webapp.command.ProcedimentFiltreCommand;
-import es.caib.pinbal.webapp.command.ServeiFiltreCommand;
-import es.caib.pinbal.webapp.common.AlertHelper;
-import es.caib.pinbal.webapp.common.EntitatHelper;
-import es.caib.pinbal.webapp.common.RequestSessionHelper;
-import es.caib.pinbal.webapp.datatables.ServerSideRequest;
-import es.caib.pinbal.webapp.datatables.ServerSideResponse;
-import es.caib.pinbal.webapp.helper.EnumHelper;
+import javax.naming.NamingException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
+import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * Controlador per al manteniment de procediments.
@@ -66,6 +66,7 @@ public class ProcedimentController extends BaseController {
 
 	public static final String SESSION_ATTRIBUTE_FILTRE = "ProcedimentController.session.filtre";
 	private static final String SESSION_ATTRIBUTE_FILTRE_PROCEDIMENT = "ServeiController.session.filtre.procediment";
+	private static final String SESSION_ATTRIBUTE_FILTRE_PERMIS = "ProcedimentController.session.filtre.permis";
 
 	public static String getSessionAttributeFiltreProcediment() {
 		return SESSION_ATTRIBUTE_FILTRE_PROCEDIMENT;
@@ -81,6 +82,8 @@ public class ProcedimentController extends BaseController {
 	private PropertyService propertyService;
 	@Autowired
 	private OrganGestorService organGestorService;
+	@Autowired
+	private UsuariService usuariService;
 
 
 
@@ -504,17 +507,49 @@ public class ProcedimentController extends BaseController {
 	}
 
 	@RequestMapping(value = "/{procedimentId}/servei/{serveiCodi}/permis", method = RequestMethod.GET)
-	public String serveiPermis(
+	public String serveiPermisGet(
 			HttpServletRequest request,
 			@PathVariable Long procedimentId,
 			@PathVariable String serveiCodi,
 			Model model) throws ProcedimentNotFoundException, ServeiNotFoundException, ProcedimentServeiNotFoundException {
+		String urlRetorn = processServeiPermis(request, procedimentId, serveiCodi, model);
+		if (urlRetorn != null) return urlRetorn;
+
+		setCommandFiltreProcedimentServeiPermis(request, model);
+		return "procedimentServeiPermisos";
+
+	}
+
+	@RequestMapping(value = "/{procedimentId}/servei/{serveiCodi}/permis", method = RequestMethod.POST)
+	public String serveiPermisPost(
+			HttpServletRequest request,
+			@PathVariable Long procedimentId,
+			@PathVariable String serveiCodi,
+			@Valid ProcedimentServeiPermisFiltreCommand command,
+			BindingResult bindingResult,
+			Model model) throws ProcedimentNotFoundException, ServeiNotFoundException, ProcedimentServeiNotFoundException {
+		String urlRetorn = processServeiPermis(request, procedimentId, serveiCodi, model);
+		if (urlRetorn != null) return urlRetorn;
+
+		if (bindingResult.hasErrors()) {
+			setCommandFiltreProcedimentServeiPermis(request, model);
+		} else {
+			RequestSessionHelper.actualitzarObjecteSessio(
+					request,
+					SESSION_ATTRIBUTE_FILTRE_PERMIS,
+					command);
+		}
+		return "procedimentServeiPermisos";
+
+	}
+
+	private String processServeiPermis(HttpServletRequest request, Long procedimentId, String serveiCodi, Model model) throws ServeiNotFoundException {
 		if (!EntitatHelper.isRepresentantEntitatActual(request))
 			return "representantNoAutoritzat";
 		EntitatDto entitat = EntitatHelper.getEntitatActual(request, entitatService);
 		if (entitat == null) {
 			AlertHelper.error(
-					request, 
+					request,
 					getMessage(
 							request,
 							"procediment.controller.no.entitat.seleccionada"));
@@ -523,21 +558,20 @@ public class ProcedimentController extends BaseController {
 		ProcedimentDto procediment = null;
 		if (procedimentId != null)
 			procediment = procedimentService.findById(procedimentId);
-		
+
 		if (procediment == null) {
 			AlertHelper.error(
-					request, 
+					request,
 					getMessage(
 							request,
 							"procediment.controller.procediment.no.existeix"));
 			return "redirect:../../../../procediment";
 		}
-		
+
 		model.addAttribute("entitat", entitat);
 		model.addAttribute("procediment", procediment);
 		model.addAttribute("servei", serveiService.findAmbCodiPerAdminORepresentant(serveiCodi));
-		return "procedimentServeiPermisos";
-
+		return null;
 	}
 
 	@RequestMapping(value = "/{procedimentId}/servei/{serveiCodi}/permis/datatable", produces="application/json", method = RequestMethod.GET)
@@ -545,8 +579,16 @@ public class ProcedimentController extends BaseController {
 	public ServerSideResponse<EntitatUsuariDto, Long> datatableServeiPermis(HttpServletRequest request, 
 																			@PathVariable Long procedimentId, 
 																			@PathVariable String serveiCodi,
-																			Model model)
-	      throws Exception {
+																			Model model) throws Exception {
+
+		ServerSideRequest serverSideRequest = new ServerSideRequest(request);
+		ProcedimentServeiPermisFiltreCommand command = (ProcedimentServeiPermisFiltreCommand) RequestSessionHelper.obtenirObjecteSessio(
+				request,
+				SESSION_ATTRIBUTE_FILTRE_PERMIS);
+		if (command == null) {
+			command = new ProcedimentServeiPermisFiltreCommand();
+		}
+
 		if (!EntitatHelper.isRepresentantEntitatActual(request))
 			throw new Exception("Representant no autoritzat");
 							
@@ -563,22 +605,31 @@ public class ProcedimentController extends BaseController {
 		if (procediment == null) {
 			throw new ProcedimentNotFoundException();
 		}
-	
-		List<String> usuarisAmbPermis = procedimentService.findUsuarisAmbPermisPerServei(procedimentId, serveiCodi);
-		
-		for (EntitatUsuariDto usuari: entitat.getUsuarisRepresentant()) {
-			for (String usuariAmbPermis: usuarisAmbPermis) {
-				if (usuari.getUsuari().getCodi().equals(usuariAmbPermis)) {
-					usuari.setAcces(true);
-					break;
-				}
-			}
-		}
-		ServerSideRequest serverSideRequest = new ServerSideRequest(request);	
-		
-		List<EntitatUsuariDto> list =  entitat.getUsuarisRepresentant();
-		Page<EntitatUsuariDto> page = new PageImpl<EntitatUsuariDto>(list, null, list.size());
-		return new ServerSideResponse<EntitatUsuariDto, Long>(serverSideRequest, page);
+
+//		List<UsuariEntitat> usuaris = procedimentService.findUsuarisAmbPermisPerServei(procedimentId, serveiCodi);
+
+		Page<EntitatUsuariDto> usuarisAmbPermisPage = procedimentService.findUsuarisAmbPermisPerServei(
+				procedimentId,
+				serveiCodi,
+				command.getCodi(),
+				command.getNif(),
+				command.getNom(),
+				serverSideRequest.toPageable());
+		return new ServerSideResponse<>(serverSideRequest, usuarisAmbPermisPage);
+//		List<EntitatUsuariDto> list =  new ArrayList<>();
+
+//		for (EntitatUsuariDto usuari: entitat.getUsuarisRepresentant()) {
+//			for (String usuariAmbPermis: usuarisAmbPermis) {
+//				list.add(usuari);
+//				if (usuari.getUsuari().getCodi().equals(usuariAmbPermis)) {
+//					usuari.setAcces(true);
+//					break;
+//				}
+//			}
+//		}
+//		List<EntitatUsuariDto> list =  entitat.getUsuarisRepresentant();
+//		Page<EntitatUsuariDto> page = new PageImpl<EntitatUsuariDto>(usuarisAmbPermis, null, usuarisAmbPermis.size());
+//		return new ServerSideResponse<EntitatUsuariDto, Long>(serverSideRequest, page);
 
 	}
 	@RequestMapping(value = "/{procedimentId}/servei/{serveiCodi}/permis/{usuariCodi}/allow", method = RequestMethod.GET)
@@ -683,6 +734,75 @@ public class ProcedimentController extends BaseController {
 		}
 	}
 
+	@RequestMapping(value = "/{procedimentId}/servei/{serveiCodi}/permis/new", method = RequestMethod.GET)
+	public String serveiPermisPost(
+			HttpServletRequest request,
+			@PathVariable Long procedimentId,
+			@PathVariable String serveiCodi,
+			Model model) {
+		if (!EntitatHelper.isRepresentantEntitatActual(request))
+			return "representantNoAutoritzat";
+		EntitatDto entitat = EntitatHelper.getEntitatActual(request, entitatService);
+		if (entitat == null) {
+			AlertHelper.error(
+					request,
+					getMessage(request, "procediment.controller.no.entitat.seleccionada"));
+			return "redirect:index";
+		}
+		model.addAttribute("procedimentId", procedimentId);
+		model.addAttribute("serveiCodi", serveiCodi);
+		model.addAttribute("entitatId", entitat.getId());
+		model.addAttribute(new UsuariPermisiCommand());
+		return "procedimentServeiPermis";
+	}
+
+	@RequestMapping(value = "/{procedimentId}/servei/{serveiCodi}/permis/save", method = RequestMethod.POST)
+	public String getProcedimentServeiPermis(
+			HttpServletRequest request,
+			@PathVariable Long procedimentId,
+			@PathVariable String serveiCodi,
+			@Valid UsuariPermisiCommand command,
+			BindingResult bindingResult,
+			Model model) throws ProcedimentNotFoundException, EntitatUsuariNotFoundException, ProcedimentServeiNotFoundException, ServeiNotFoundException {
+
+		if (!EntitatHelper.isRepresentantEntitatActual(request))
+			return "representantNoAutoritzat";
+
+		if (bindingResult.hasErrors()) {
+			EntitatDto entitat = EntitatHelper.getEntitatActual(request, entitatService);
+			model.addAttribute("procedimentId", procedimentId);
+			model.addAttribute("serveiCodi", serveiCodi);
+			model.addAttribute("entitatId", entitat.getId());
+			return "procedimentServeiPermis";
+		}
+
+		EntitatDto entitat = EntitatHelper.getEntitatActual(request, entitatService);
+		if (entitat != null) {
+			ProcedimentDto procediment = null;
+			if (procedimentId != null)
+				procediment = procedimentService.findById(procedimentId);
+			if (procediment != null) {
+				ServeiDto servei = serveiService.findAmbCodiPerAdminORepresentant(serveiCodi);
+				procedimentService.serveiPermisAllow(procedimentId, serveiCodi, command.getUsuariCodi());
+				return getModalControllerReturnValueSuccess(
+						request,
+						"redirect:../../permis",
+						"procediment.controller.permis.atorgat",
+						new Object[] {servei.getDescripcio(), command.getUsuariNom()});
+			} else {
+				return getModalControllerReturnValueError(
+						request,
+						"redirect:../../permis",
+						"procediment.controller.procediment.no.existeix");
+			}
+		} else {
+			return getModalControllerReturnValueError(
+					request,
+					"redirect:index",
+					"procediment.controller.no.entitat.seleccionada");
+		}
+	}
+
 	@ResponseBody
 	@RequestMapping(value = "/{procedimentId}/servei/{serveiCodi}/procedimentCodi", method = RequestMethod.GET)
 	public String putProcedimentCodi(
@@ -737,6 +857,19 @@ public class ProcedimentController extends BaseController {
 		if (command == null) {
 			command = new ServeiFiltreCommand();
 //			command.setActiva(true);
+		}
+		command.eliminarEspaisCampsCerca();
+		model.addAttribute(command);
+	}
+
+	private void setCommandFiltreProcedimentServeiPermis(
+			HttpServletRequest request,
+			Model model) {
+		ProcedimentServeiPermisFiltreCommand command = (ProcedimentServeiPermisFiltreCommand) RequestSessionHelper.obtenirObjecteSessio(
+				request,
+				SESSION_ATTRIBUTE_FILTRE_PERMIS);
+		if (command == null) {
+			command = new ProcedimentServeiPermisFiltreCommand();
 		}
 		command.eliminarEspaisCampsCerca();
 		model.addAttribute(command);

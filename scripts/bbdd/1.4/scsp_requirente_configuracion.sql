@@ -72,6 +72,7 @@ INSERT INTO CORE_EMISOR_CERTIFICADO (CIF,NOMBRE) VALUES ('S2812001B','MAEC');
 INSERT INTO CORE_EMISOR_CERTIFICADO (CIF,NOMBRE) VALUES ('Q2826039F','INE');
 INSERT INTO CORE_EMISOR_CERTIFICADO (CIF,NOMBRE) VALUES ('S2816015H','DGP');
 INSERT INTO CORE_EMISOR_CERTIFICADO (CIF,NOMBRE) VALUES ('Q2863008E','C.G.Notariado');
+
 --------------------------------------------------------
 --  Inserts for Table CORE_SERVICIO
 -- Se deben eliminar los inserts correspondientes a los servicios que no vamos a consumir

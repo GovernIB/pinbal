@@ -94,7 +94,7 @@ public interface ServeiService {
 	 * @param activa Si cercar actius (true) o inactius (false).
 	 * @param entitat Entitat de la sessió
 	 * @param procediment Procediment al que es volen consultar els serveis.
-	 * @param paginacioAmbOrdre
+	 * @param pageable
 	 * 				Paràmetres per a la paginació i ordenació dels resultats.
 	 * @return
 	 */

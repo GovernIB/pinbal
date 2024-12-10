@@ -12,19 +12,22 @@ import static org.junit.Assert.*;
 public class ServeiClientTest {
 
     private ServeiClient serveiClient;
+    private ServeiClient serveiClientNoAccess;
 
     private String existingServeiCodi = "";
 
     @Before
     public void setUp() {
         String urlBase = "http://localhost:8180/pinbalapi/interna"; // Exemples; ajusta això segons el teu entorn
-        String usuari = "pblws";
-        String contrasenya = "pblws";
+        String usuari = "pblwsrep";
+        String contrasenya = "pblwsrep";
         LogLevel logLevel = LogLevel.DEBUG;
 
         existingServeiCodi = "SVDDGPCIWS02";
 
         serveiClient = new ServeiClient(urlBase, usuari, contrasenya, logLevel);
+        serveiClientNoAccess = new ServeiClient(urlBase, "pblws", "pblws", logLevel);
+
     }
 
     // GET Serveis
@@ -43,29 +46,27 @@ public class ServeiClientTest {
     }
 
     @Test
+    public void testGetServeisNoAccess () {
+        try {
+            // Assuming getServeis is correctly setup to return 204 with no results for these parameters
+            Page<Servei> serveis = serveiClientNoAccess.getServeis("SVDD", null, 0, 10, "asc");
+            fail("Ha d'haver llançat una excepció d'AccessDenegat");
+        } catch (Exception e) {
+            assertTrue(e.getMessage().contains("Accés denegat"));
+        }
+    }
+
+    @Test
     public void testGetServeisNoResults () {
         try {
             // Assuming getServeis is correctly setup to return 204 with no results for these parameters
             Page<Servei> serveis = serveiClient.getServeis("codiInexistent", "descripcioInexistent", 0, 10, "asc");
-            assertNotNull("La pàgina de serveis no hauria de ser nul·la", serveis);
-            assertTrue("El contingut de la pàgina de serveis hauria de ser buit", serveis.getContent().isEmpty());
+            assertNotNull("La pàgina de procediments no hauria de ser nul·la", serveis);
+            assertTrue("La llista de procediments hauria d'estar buida", serveis.getContent().isEmpty());
         } catch (Exception e) {
-            fail("La crida a getServeis ha fallat: " + e.getMessage());
+            fail("Ha fallat la verificació per a pàgina buida de serveis: " + e.getMessage());
         }
     }
-
-//    @Test(expected = RuntimeException.class)
-//    public void testGetServeisInvalidEntry () throws IOException {
-//        // Assuming passing null or invalid parameters triggers a 404 error
-//        serveiClient.getServeis(null, null, 0, 10, "asc");
-//    }
-//
-//    @Test(expected = RuntimeException.class)
-//    public void testGetServeisServerError () throws IOException {
-//        // Simulating a call that triggers a 500 server error
-//        // Adjust necessary setup in ServeiClient or mock Server to produce a 500 response
-//        serveiClient.getServeis("trigger500Error", "", 0, 10, "asc");
-//    }
 
 
     // GET Servei
@@ -83,6 +84,16 @@ public class ServeiClientTest {
     }
 
     @Test
+    public void testGetServeiNoAccess() {
+        try {
+            Servei servei = serveiClientNoAccess.getServei(existingServeiCodi);
+            fail("Ha d'haver llançat una excepció d'AccessDenegat");
+        } catch (Exception e) {
+            assertTrue(e.getMessage().contains("Accés denegat"));
+        }
+    }
+
+    @Test
     public void testGetServeiNoResults() {
         try {
             String serveiCodi = "serveiInexistentCodi"; // Servei codi that does not exist
@@ -95,13 +106,4 @@ public class ServeiClientTest {
         }
     }
 
-//    @Test(expected = RuntimeException.class)
-//    public void testGetServeiNotFound() throws IOException {
-//        serveiClient.getServei("codiNoTrobat");
-//    }
-//
-//    @Test(expected = RuntimeException.class)
-//    public void testGetServeiServerError() throws IOException {
-//        serveiClient.getServei("trigger500Error");
-//    }
 }

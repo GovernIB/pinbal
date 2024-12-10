@@ -13,6 +13,7 @@ import es.caib.pinbal.client.procediments.ProcedimentPatch;
 import es.caib.pinbal.client.serveis.Servei;
 import es.caib.pinbal.core.dto.apiresponse.ServiceExecutionException;
 import es.caib.pinbal.core.service.GestioRestService;
+import es.caib.pinbal.core.service.exception.AccessDenegatException;
 import es.caib.pinbal.core.service.exception.EntitatNotFoundException;
 import es.caib.pinbal.core.service.exception.InvalidInputException;
 import es.caib.pinbal.core.service.exception.ProcedimentNotFoundException;
@@ -29,6 +30,7 @@ import org.springframework.hateoas.mvc.ControllerLinkBuilder;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -41,6 +43,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @Controller
@@ -57,7 +60,7 @@ public class ProcedimentRestController extends PinbalHalRestController {
      * @return Procédiment creat amb enllaç HATEOAS.
      */
     @ApiVersion("1")
-    @PreAuthorize("hasRole('PBL_WS')")
+    @PreAuthorize("hasRole('PBL_WS') and hasRole('PBL_REPRES')")
     @RequestMapping(value = "/procediments", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation(value = "Crear un nou procediment", response = Procediment.class)
 //    @ApiImplicitParams({
@@ -81,6 +84,8 @@ public class ProcedimentRestController extends PinbalHalRestController {
             return new ResponseEntity<>(procedimentResource, HttpStatus.CREATED);
         } catch (EntitatNotFoundException e) {
             throw new ResourceNotFoundException(e.getDefaultMessage());
+        } catch (AccessDeniedException ade) {
+            throw new AccessDenegatException(Arrays.asList("PBL_WS", "PBL_REPRES"));
         } catch (Exception e) {
             throw new ServiceExecutionException(e.getMessage(), e);
         }
@@ -93,7 +98,7 @@ public class ProcedimentRestController extends PinbalHalRestController {
      * @return Procédiment creat amb enllaç HATEOAS.
      */
     @ApiVersion("1")
-    @PreAuthorize("hasRole('PBL_WS')")
+    @PreAuthorize("hasRole('PBL_WS') and hasRole('PBL_REPRES')")
     @RequestMapping(value = "/procediments/{procedimentId}", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation(value = "Modifica un procediment pel seu ID", response = Procediment.class)
     @ApiResponses(value = {
@@ -119,13 +124,15 @@ public class ProcedimentRestController extends PinbalHalRestController {
                     ControllerLinkBuilder.linkTo(ControllerLinkBuilder.methodOn(ProcedimentRestController.class).getProcediment(createdProcediment.getId())).withSelfRel());
         } catch (ProcedimentNotFoundException e) {
             throw new ResourceNotFoundException("Procediment no trobat");
+        } catch (AccessDeniedException ade) {
+            throw new AccessDenegatException(Arrays.asList("PBL_WS", "PBL_REPRES"));
         } catch (Exception e) {
             throw new ServiceExecutionException(e.getMessage(), e);
         }
     }
 
     @ApiVersion("1")
-    @PreAuthorize("hasRole('PBL_WS')")
+    @PreAuthorize("hasRole('PBL_WS') and hasRole('PBL_REPRES')")
     @RequestMapping(value = "/procediments/{procedimentId}", method = RequestMethod.PATCH, produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation(value = "Modifica parcialment un procediment pel seu ID", response = Procediment.class)
     @ApiResponses(value = {
@@ -143,6 +150,8 @@ public class ProcedimentRestController extends PinbalHalRestController {
                     ControllerLinkBuilder.linkTo(ControllerLinkBuilder.methodOn(ProcedimentRestController.class).getProcediment(updatedProcediment.getId())).withSelfRel());
         } catch (ProcedimentNotFoundException e) {
             throw new ResourceNotFoundException(e.getDefaultMessage());
+        } catch (AccessDeniedException ade) {
+            throw new AccessDenegatException(Arrays.asList("PBL_WS", "PBL_REPRES"));
         } catch (Exception e) {
             throw new ServiceExecutionException(e.getMessage(), e);
         }
@@ -154,7 +163,7 @@ public class ProcedimentRestController extends PinbalHalRestController {
      * @param serveiCodi Codi del servei.
      */
     @ApiVersion("1")
-    @PreAuthorize("hasRole('PBL_WS')")
+    @PreAuthorize("hasRole('PBL_WS') and hasRole('PBL_REPRES')")
     @RequestMapping(value = "/procediments/{procedimentId}/serveis/{serveiCodi}/enable", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation(value = "Habilita un servei per a un procediment")
     @ApiResponses(value = {
@@ -166,8 +175,12 @@ public class ProcedimentRestController extends PinbalHalRestController {
             @ApiParam(value = "Codi del servei", required = true) @PathVariable("serveiCodi") String serveiCodi) {
         try {
             gestioRestService.serveiEnable(procedimentId, serveiCodi);
-        } catch (ProcedimentNotFoundException | ServeiNotFoundException e) {
-            throw new ResourceNotFoundException(e.getMessage(), e);
+        } catch (ProcedimentNotFoundException e) {
+            throw new ResourceNotFoundException(e.getDefaultMessage(), e);
+        } catch (ServeiNotFoundException e) {
+            throw new ResourceNotFoundException(e.getDefaultMessage(), e);
+        } catch (AccessDeniedException ade) {
+            throw new AccessDenegatException(Arrays.asList("PBL_WS", "PBL_REPRES"));
         } catch (Exception e) {
             throw new ServiceExecutionException(e.getMessage(), e);
         }
@@ -183,7 +196,7 @@ public class ProcedimentRestController extends PinbalHalRestController {
      * @return Pàgina de procediments.
      */
     @ApiVersion("1")
-    @PreAuthorize("hasRole('PBL_WS')")
+    @PreAuthorize("hasRole('PBL_WS') and hasRole('PBL_REPRES')")
     @RequestMapping(value = "/procediments", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation(value = "Obtén procediments amb filtratge i paginació",
             response = PagedResources.class,
@@ -232,6 +245,8 @@ public class ProcedimentRestController extends PinbalHalRestController {
 
         } catch (EntitatNotFoundException e) {
             throw new ResourceNotFoundException(e.getDefaultMessage(), e);
+        } catch (AccessDeniedException ade) {
+            throw new AccessDenegatException(Arrays.asList("PBL_WS", "PBL_REPRES"));
         } catch (Exception e) {
             throw new ServiceExecutionException(e.getMessage(), e);
         }
@@ -243,7 +258,7 @@ public class ProcedimentRestController extends PinbalHalRestController {
      * @return Dades del procediment.
      */
     @ApiVersion("1")
-    @PreAuthorize("hasRole('PBL_WS')")
+    @PreAuthorize("hasRole('PBL_WS') and hasRole('PBL_REPRES')")
     @RequestMapping(value = "/procediments/{procedimentId}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation(value = "Obtén un procediment pel seu ID",
             response = Procediment.class,
@@ -267,6 +282,8 @@ public class ProcedimentRestController extends PinbalHalRestController {
             ).withSelfRel();
             resource.add(selfLink);
             return new ResponseEntity<Resource<Procediment>>(resource, HttpStatus.OK);
+        } catch (AccessDeniedException ade) {
+            throw new AccessDenegatException(Arrays.asList("PBL_WS", "PBL_REPRES"));
         } catch (Exception e) {
             throw new ServiceExecutionException(e.getMessage(), e);
         }
@@ -279,7 +296,7 @@ public class ProcedimentRestController extends PinbalHalRestController {
      * @return Dades del procediment.
      */
     @ApiVersion("1")
-    @PreAuthorize("hasRole('PBL_WS')")
+    @PreAuthorize("hasRole('PBL_WS') and hasRole('PBL_REPRES')")
     @RequestMapping(value = "/procediments/byCodi/{procedimentCodi}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation(value = "Obtén un procediment pel seu ID",
             response = Procediment.class,
@@ -306,6 +323,8 @@ public class ProcedimentRestController extends PinbalHalRestController {
             return new ResponseEntity<Resource<Procediment>>(resource, HttpStatus.OK);
         } catch (EntitatNotFoundException e) {
             throw new ResourceNotFoundException(e.getDefaultMessage(), e);
+        } catch (AccessDeniedException ade) {
+            throw new AccessDenegatException(Arrays.asList("PBL_WS", "PBL_REPRES"));
         } catch (Exception e) {
             throw new ServiceExecutionException(e.getMessage(), e);
         }
@@ -319,7 +338,7 @@ public class ProcedimentRestController extends PinbalHalRestController {
      * @return Pàgina de procediments.
      */
     @ApiVersion("1")
-    @PreAuthorize("hasRole('PBL_WS')")
+    @PreAuthorize("hasRole('PBL_WS') and hasRole('PBL_REPRES')")
     @RequestMapping(value = "/procediments/{procedimentId}/serveis", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation(value = "Obtén els serveis d'un procediment amb filtratge i paginació",
             response = PagedResources.class,
@@ -341,6 +360,8 @@ public class ProcedimentRestController extends PinbalHalRestController {
 
         } catch (ProcedimentNotFoundException e) {
             throw new ResourceNotFoundException(e.getDefaultMessage(), e);
+        } catch (AccessDeniedException ade) {
+            throw new AccessDenegatException(Arrays.asList("PBL_WS", "PBL_REPRES"));
         } catch (Exception e) {
             throw new ServiceExecutionException(e.getMessage(), e);
         }
@@ -353,7 +374,7 @@ public class ProcedimentRestController extends PinbalHalRestController {
      * @return Pàgina de procediments.
      */
     @ApiVersion("1")
-    @PreAuthorize("hasRole('PBL_WS')")
+    @PreAuthorize("hasRole('PBL_WS') and hasRole('PBL_REPRES')")
     @RequestMapping(value = "/procediments/byCodi/{procedimentCodi}/serveis", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation(value = "Obtén els serveis d'un procediment amb filtratge i paginació",
             response = PagedResources.class,
@@ -381,6 +402,8 @@ public class ProcedimentRestController extends PinbalHalRestController {
 
         } catch (ProcedimentNotFoundException e) {
             throw new ResourceNotFoundException(e.getDefaultMessage(), e);
+        } catch (AccessDeniedException ade) {
+            throw new AccessDenegatException(Arrays.asList("PBL_WS", "PBL_REPRES"));
         } catch (Exception e) {
             throw new ServiceExecutionException(e.getMessage(), e);
         }

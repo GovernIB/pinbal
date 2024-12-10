@@ -13,6 +13,7 @@ import static org.junit.Assert.*;
 public class UsuariClientTest {
 
     private UsuariClient usuariClient;
+    private UsuariClient usuariClientNoAccess;
 
     private String existingEntitatCodi = "";
     private String existingUsuariCodi = "";
@@ -23,8 +24,8 @@ public class UsuariClientTest {
     public void setUp() {
         // La URL base ha de corresponder-se amb el teu servidor real
         String urlBase = "http://localhost:8180/pinbalapi/interna"; // Exemples; ajusta això segons el teu entorn
-        String usuari = "pblws";
-        String contrasenya = "pblws";
+        String usuari = "pblwsrep";
+        String contrasenya = "pblwsrep";
         LogLevel logLevel = LogLevel.DEBUG;
 
         existingEntitatCodi = "LIM";
@@ -33,6 +34,7 @@ public class UsuariClientTest {
         existingServeiCodi = "SVDDGPCIWS02";
         
         usuariClient = new UsuariClient(urlBase, usuari, contrasenya, logLevel);
+        usuariClientNoAccess = new UsuariClient(urlBase, "pblws", "pblws", logLevel);
     }
 
     // CREATE or UPDATE Usuari
@@ -48,6 +50,19 @@ public class UsuariClientTest {
             // If no exceptions, the method executes successfully
         } catch (Exception e) {
             fail("No hauria d'haver llançat excepció: " + e.getMessage());
+        }
+    }
+
+    @Test
+    public void testCreateOrUpdateUsuari_NoAccess() throws Exception {
+        UsuariEntitat usuariEntitat = UsuariEntitat.builder().codi("admin").representant(true).delegat(false).actiu(true).build();
+        usuariEntitat.setEntitatCodi(existingEntitatCodi);
+
+        try {
+            usuariClientNoAccess.createOrUpdateUsuari(usuariEntitat);
+            fail("Ha d'haver llançat una excepció d'AccessDenegat");
+        } catch (Exception e) {
+            assertTrue(e.getMessage().contains("Accés denegat"));
         }
     }
 
@@ -101,6 +116,24 @@ public class UsuariClientTest {
     }
 
     @Test
+    public void testGetUsuarisNoAccess() throws Exception {
+        String entitatCodi = existingEntitatCodi;
+        FiltreUsuaris filtreUsuaris = FiltreUsuaris.builder().nom("adm").build();
+        int page = 0;
+        int size = 10;
+        String sort = "usuari.codi,asc";
+
+        try {
+            // Realitza la petició i obté el resultat
+            Page<UsuariEntitat> usuarisPage = usuariClientNoAccess.getUsuaris(entitatCodi, filtreUsuaris, page, size, sort);
+            fail("Ha d'haver llançat una excepció d'AccessDenegat");
+        } catch (Exception e) {
+            assertTrue(e.getMessage().contains("Accés denegat"));
+        }
+
+    }
+
+    @Test
     public void testGetUsuaris_NoUsersFound () throws Exception {
         FiltreUsuaris filtreUsuaris = FiltreUsuaris.builder().codi("emptyFiltre").build();
         int page = 0;
@@ -129,23 +162,6 @@ public class UsuariClientTest {
         }
     }
 
-//    @Test
-//    public void testGetUsuaris_ServerError () throws Exception {
-//        String entitatCodi = existingEntitatCodi;
-//        FiltreUsuaris filtreUsuaris = FiltreUsuaris.builder().nom("John%O'Brien").build();
-//        int page = 0;
-//        int size = 10;
-//        String sort = "usuari.codi,asc";
-//
-//        try {
-//            usuariClient.getUsuaris(entitatCodi, null, page, size, sort);
-//            fail("Ha d'haver llançat una excepció per error del servidor");
-//        } catch (RuntimeException e) {
-//            assertTrue(e.getMessage().contains("Resposta inesperada del servidor"));
-//        }
-//    }
-
-
     // GET Usuari
     // ////////////////////////////////////////////////////////////////////////////////
 
@@ -159,6 +175,19 @@ public class UsuariClientTest {
             assertNotNull("L'usuari no hauria de ser nul", usuariEntitat);
         } catch (Exception e) {
             fail("No hauria d'haver llançat excepció: " + e.getMessage());
+        }
+    }
+
+    @Test
+    public void testGetUsuari_NoAccess() throws Exception {
+        String usuariCodi = existingUsuariCodi;
+        String entitatCodi = existingEntitatCodi;
+
+        try {
+            UsuariEntitat usuariEntitat = usuariClientNoAccess.getUsuari(usuariCodi, entitatCodi);
+            fail("Ha d'haver llançat una excepció d'AccessDenegat");
+        } catch (Exception e) {
+            assertTrue(e.getMessage().contains("Accés denegat"));
         }
     }
 
@@ -184,20 +213,6 @@ public class UsuariClientTest {
         }
     }
 
-//    @Test
-//    public void testGetUsuari_ServerError() throws Exception {
-//        String usuariCodi = "John%O'Brien";
-//        String entitatCodi = existingEntitatCodi;
-//
-//        try {
-//            usuariClient.getUsuari(usuariCodi, entitatCodi);
-//            fail("Ha d'haver llançat una excepció per error del servidor");
-//        } catch (RuntimeException e) {
-//            assertTrue(e.getMessage().contains("Resposta inesperada del servidor"));
-//        }
-//    }
-
-
     // GRANT Permisos usuari
     // ////////////////////////////////////////////////////////////////////////////////
 
@@ -214,6 +229,22 @@ public class UsuariClientTest {
             // If no exceptions, the method executes successfully
         } catch (Exception e) {
             fail("No hauria d'haver llançat excepció: " + e.getMessage());
+        }
+    }
+
+    @Test
+    public void testGrantPermissions_NoAccess() throws Exception {
+        String usuariCodi = existingUsuariCodi;
+        PermisosServei permisosServei = new PermisosServei(
+                usuariCodi,
+                existingEntitatCodi,
+                Arrays.asList(ProcedimentServei.builder().procedimentCodi(existingProcedimentCodi).serveiCodi(existingServeiCodi).build()));
+
+        try {
+            usuariClientNoAccess.grantPermissions(usuariCodi, permisosServei);
+            fail("Ha d'haver llançat una excepció d'AccessDenegat");
+        } catch (Exception e) {
+            assertTrue(e.getMessage().contains("Accés denegat"));
         }
     }
 
@@ -249,22 +280,6 @@ public class UsuariClientTest {
         }
     }
 
-//    @Test
-//    public void testGrantPermissions_ServerError() throws Exception {
-//        String usuariCodi = "serverErrorUser";
-//        PermisosServei permisosServei = new PermisosServei(
-//                "John%O'Brien",
-//                existingEntitatCodi,
-//                new ArrayList<ProcedimentServei>());
-//
-//        try {
-//            usuariClient.grantPermissions(usuariCodi, permisosServei);
-//            fail("Ha d'haver llançat una excepció per error del servidor");
-//        } catch (RuntimeException e) {
-//            assertTrue(e.getMessage().contains("Resposta inesperada del servidor"));
-//        }
-//    }
-
 
     // GET Permisos usuari
     // ////////////////////////////////////////////////////////////////////////////////
@@ -279,6 +294,19 @@ public class UsuariClientTest {
             assertNotNull("Els permisos no haurien de ser nuls", permisosServei);
         } catch (Exception e) {
             fail("No hauria d'haver llançat excepció: " + e.getMessage());
+        }
+    }
+
+    @Test
+    public void testGetUserPermissions_NoAccess() throws Exception {
+        String usuariCodi = existingUsuariCodi;
+        String entitatCodi = existingEntitatCodi;
+
+        try {
+            PermisosServei permisosServei = usuariClientNoAccess.getUserPermissions(usuariCodi, entitatCodi);
+            fail("Ha d'haver llançat una excepció d'AccessDenegat");
+        } catch (Exception e) {
+            assertTrue(e.getMessage().contains("Accés denegat"));
         }
     }
 
@@ -304,16 +332,4 @@ public class UsuariClientTest {
         }
     }
 
-//    @Test
-//    public void testGetUserPermissions_ServerError() throws Exception {
-//        String usuariCodi = "John%O'Brien";
-//        String entitatCodi = existingEntitatCodi;
-//
-//        try {
-//            usuariClient.getUserPermissions(URLEncoder.encode(usuariCodi, "UTF-8"), entitatCodi);
-//            fail("Ha d'haver llançat una excepció per error del servidor");
-//        } catch (RuntimeException e) {
-//            assertTrue(e.getMessage().contains("Resposta inesperada del servidor"));
-//        }
-//    }
 }

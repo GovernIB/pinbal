@@ -3,6 +3,7 @@
  */
 package es.caib.pinbal.core.service;
 
+import es.caib.pinbal.core.dto.EntitatUsuariDto;
 import es.caib.pinbal.core.dto.FiltreActiuEnumDto;
 import es.caib.pinbal.core.dto.InformeProcedimentDto;
 import es.caib.pinbal.core.dto.PaginacioAmbOrdreDto;
@@ -14,6 +15,7 @@ import es.caib.pinbal.core.helper.PaginacioHelper;
 import es.caib.pinbal.core.helper.PermisosHelper;
 import es.caib.pinbal.core.helper.PermisosHelper.ObjectIdentifierExtractor;
 import es.caib.pinbal.core.helper.UsuariHelper;
+import es.caib.pinbal.core.helper.UtilsHelper;
 import es.caib.pinbal.core.model.Entitat;
 import es.caib.pinbal.core.model.EntitatServei;
 import es.caib.pinbal.core.model.EntitatUsuari;
@@ -33,6 +35,8 @@ import es.caib.pinbal.core.service.exception.ProcedimentServeiNotFoundException;
 import es.caib.pinbal.core.service.exception.ServeiNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.acls.domain.BasePermission;
 import org.springframework.security.acls.domain.PrincipalSid;
 import org.springframework.security.acls.model.AccessControlEntry;
@@ -566,7 +570,7 @@ public class ProcedimentServiceImpl implements ProcedimentService {
 
 	@Transactional(readOnly = true)
 	@Override
-	public List<String> findUsuarisAmbPermisPerServei(Long id, String serveiCodi) throws ProcedimentNotFoundException, ProcedimentServeiNotFoundException {
+	public List<EntitatUsuariDto> findUsuarisAmbPermisPerServei(Long id, String serveiCodi) throws ProcedimentNotFoundException, ProcedimentServeiNotFoundException {
 		log.debug("Cercant usuaris amb permisos per a accedir al servei (codi=" + serveiCodi + ") del procediment (id= " + id + ")");
 		Procediment procediment = procedimentRepository.findOne(id);
 		if (procediment == null) {
@@ -578,16 +582,80 @@ public class ProcedimentServiceImpl implements ProcedimentService {
 			log.debug("El procediment (id= " + id + ") no té cap servei (codi=" + serveiCodi + ")");
 			throw new ProcedimentServeiNotFoundException();
 		}
-		List<String> resposta = new ArrayList<String>();
 		List<AccessControlEntry> aces = PermisosHelper.getAclSids(
 				ProcedimentServei.class,
 				procedimentServei.getId(),
 				aclService);
-		if (aces != null) {
-			for (AccessControlEntry ace: aces)
-				resposta.add(((PrincipalSid)ace.getSid()).getPrincipal());
+		if (aces == null || aces.isEmpty()) {
+			return new ArrayList<>();
 		}
-		return resposta;
+
+		List<String> usuariCodis = new ArrayList<>();
+		for (AccessControlEntry ace: aces)
+			usuariCodis.add(((PrincipalSid)ace.getSid()).getPrincipal());
+
+		List<List<String>> usuarisCodisSplits = UtilsHelper.listSplit(usuariCodis);
+		List<EntitatUsuari> usuariList = entitatUsuariRepository.findByEntitatIdAndUsuariCodis(
+				procediment.getEntitat().getId(),
+				UtilsHelper.getListPartition(usuarisCodisSplits, 0),
+				UtilsHelper.getListPartition(usuarisCodisSplits, 1),
+				UtilsHelper.getListPartition(usuarisCodisSplits, 2),
+				UtilsHelper.getListPartition(usuarisCodisSplits, 3),
+				UtilsHelper.getListPartition(usuarisCodisSplits, 4));
+		return dtoMappingHelper.convertirList(usuariList,EntitatUsuariDto.class);
+	}
+
+	@Transactional(readOnly = true)
+	@Override
+	public Page<EntitatUsuariDto> findUsuarisAmbPermisPerServei(
+			Long procedimentId,
+			String serveiCodi,
+			String codi,
+			String nif,
+			String nom,
+			Pageable pageable) throws ProcedimentNotFoundException, ProcedimentServeiNotFoundException {
+		log.debug("Cercant usuaris amb permisos per a accedir al servei (codi=" + serveiCodi + ") del procediment (id= " + procedimentId + ")");
+		Procediment procediment = procedimentRepository.findOne(procedimentId);
+		if (procediment == null) {
+			log.debug("No s'ha trobat cap procediment (id= " + procedimentId + ")");
+			throw new ProcedimentNotFoundException();
+		}
+		ProcedimentServei procedimentServei = procedimentServeiRepository.findByProcedimentIdAndServei(procedimentId, serveiCodi);
+		if (procedimentServei == null) {
+			log.debug("El procediment (id= " + procedimentId + ") no té cap servei (codi=" + serveiCodi + ")");
+			throw new ProcedimentServeiNotFoundException();
+		}
+		List<AccessControlEntry> aces = PermisosHelper.getAclSids(
+				ProcedimentServei.class,
+				procedimentServei.getId(),
+				aclService);
+		if (aces == null || aces.isEmpty()) {
+			return new PageImpl<>(new ArrayList<EntitatUsuariDto>(), pageable, 0);
+		}
+
+		List<String> usuariCodis = new ArrayList<>();
+		for (AccessControlEntry ace: aces)
+			usuariCodis.add(((PrincipalSid)ace.getSid()).getPrincipal());
+
+		List<List<String>> usuarisCodisSplits = UtilsHelper.listSplit(usuariCodis);
+		Page<EntitatUsuari> usuariPage = entitatUsuariRepository.findByEntitatIdAndUsuariCodis(
+				procediment.getEntitat().getId(),
+				UtilsHelper.getListPartition(usuarisCodisSplits, 0),
+				UtilsHelper.getListPartition(usuarisCodisSplits, 1),
+				UtilsHelper.getListPartition(usuarisCodisSplits, 2),
+				UtilsHelper.getListPartition(usuarisCodisSplits, 3),
+				UtilsHelper.getListPartition(usuarisCodisSplits, 4),
+				codi == null || codi.length() == 0,
+				codi,
+				nif == null || nif.length() == 0,
+				codi,
+				nom == null || nom.length() == 0,
+				codi,
+				pageable);
+		return dtoMappingHelper.pageEntities2pageDto(
+				usuariPage,
+				EntitatUsuariDto.class,
+				pageable);
 	}
 
 	@Transactional(readOnly = true)

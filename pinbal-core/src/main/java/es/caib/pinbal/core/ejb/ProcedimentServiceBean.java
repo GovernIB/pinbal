@@ -3,6 +3,7 @@
  */
 package es.caib.pinbal.core.ejb;
 
+import es.caib.pinbal.core.dto.EntitatUsuariDto;
 import es.caib.pinbal.core.dto.FiltreActiuEnumDto;
 import es.caib.pinbal.core.dto.InformeProcedimentDto;
 import es.caib.pinbal.core.dto.PaginacioAmbOrdreDto;
@@ -17,6 +18,7 @@ import es.caib.pinbal.core.service.exception.ProcedimentServeiNotFoundException;
 import es.caib.pinbal.core.service.exception.ServeiNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.ejb.interceptor.SpringBeanAutowiringInterceptor;
 
 import javax.annotation.security.RolesAllowed;
@@ -165,13 +167,19 @@ public class ProcedimentServiceBean implements ProcedimentService {
 
     @Override
 	@RolesAllowed("PBL_REPRES")
-	public List<String> findUsuarisAmbPermisPerServei(
+	public List<EntitatUsuariDto> findUsuarisAmbPermisPerServei(
 			Long id,
 			String serveiCodi) throws ProcedimentNotFoundException, ProcedimentServeiNotFoundException {
 		return delegate.findUsuarisAmbPermisPerServei(id, serveiCodi);
 	}
 
-	@Override
+    @Override
+	@RolesAllowed("PBL_REPRES")
+    public Page<EntitatUsuariDto> findUsuarisAmbPermisPerServei(Long id, String serveiCodi, String codi, String nif, String nom, Pageable pageable) throws ProcedimentNotFoundException, ProcedimentServeiNotFoundException {
+        return delegate.findUsuarisAmbPermisPerServei(id, serveiCodi, codi, nif, nom, pageable);
+    }
+
+    @Override
 	@RolesAllowed("tothom")
 	public List<ProcedimentDto> findAmbEntitatPerDelegat(Long entitatId) throws EntitatNotFoundException {
 		return delegate.findAmbEntitatPerDelegat(entitatId);

@@ -31,7 +31,7 @@ public interface GestioRestService {
      * @throws EntitatNotFoundException
      *             Si no s'ha trobat cap entitat amb el codi especificat al camp entitatCodi.
      */
-    @PreAuthorize("hasRole('ROLE_WS')")
+    @PreAuthorize("hasRole('ROLE_WS') and hasRole('ROLE_REPRES')")
     public Procediment create(Procediment procediment) throws EntitatNotFoundException, OrganNotFoundException;
 
     /**
@@ -43,7 +43,7 @@ public interface GestioRestService {
      * @throws EntitatNotFoundException
      *             Si no s'ha trobat cap entitat amb el codi especificat al camp entitatCodi.
      */
-    @PreAuthorize("hasRole('ROLE_WS')")
+    @PreAuthorize("hasRole('ROLE_WS') and hasRole('ROLE_REPRES')")
     public Procediment update(Procediment procediment) throws EntitatNotFoundException, ProcedimentNotFoundException, OrganNotFoundException;
 
     /**
@@ -55,7 +55,7 @@ public interface GestioRestService {
      * @throws EntitatNotFoundException
      *             Si no s'ha trobat cap entitat amb el codi especificat al camp entitatCodi.
      */
-    @PreAuthorize("hasRole('ROLE_WS')")
+    @PreAuthorize("hasRole('ROLE_WS') and hasRole('ROLE_REPRES')")
     public Procediment updateParcial(Long procedimentId, ProcedimentPatch procedimentPatch) throws EntitatNotFoundException, ProcedimentNotFoundException, OrganNotFoundException;
 
     /**
@@ -63,7 +63,7 @@ public interface GestioRestService {
      * @param procedimentId ID del procediment.
      * @param serveiCodi Codi del servei.
      */
-    @PreAuthorize("hasRole('ROLE_WS')")
+    @PreAuthorize("hasRole('ROLE_WS') and hasRole('ROLE_REPRES')")
     void serveiEnable(Long procedimentId, String serveiCodi) throws ProcedimentNotFoundException, ServeiNotFoundException;
 
     /**
@@ -73,7 +73,7 @@ public interface GestioRestService {
      * @param pageable Informació de paginació.
      * @return Pàgina de procediments.
      */
-    @PreAuthorize("hasRole('ROLE_WS')")
+    @PreAuthorize("hasRole('ROLE_WS') and hasRole('ROLE_REPRES')")
     Page<Procediment> findProcedimentsPaginat(String entitatCodi, String codi, String nom, String organGestor, Pageable pageable) throws EntitatNotFoundException, OrganNotFoundException;
 
     /**
@@ -81,7 +81,7 @@ public interface GestioRestService {
      * @param procedimentId ID del procediment.
      * @return Dades del procediment.
      */
-    @PreAuthorize("hasRole('ROLE_WS')")
+    @PreAuthorize("hasRole('ROLE_WS') and hasRole('ROLE_REPRES')")
     Procediment getProcedimentById(Long procedimentId);
 
     /**
@@ -90,7 +90,7 @@ public interface GestioRestService {
      * @param entitatCodi Codi de l'entitat.
      * @return Dades del procediment.
      */
-    @PreAuthorize("hasRole('ROLE_WS')")
+    @PreAuthorize("hasRole('ROLE_WS') and hasRole('ROLE_REPRES')")
     Procediment getProcedimentAmbEntitatICodi(String entitatCodi, String procedimentCodi) throws EntitatNotFoundException;
 
     /**
@@ -99,7 +99,7 @@ public interface GestioRestService {
      * @param pageable Informació de paginació.
      * @return Pàgina de procediments.
      */
-    @PreAuthorize("hasRole('ROLE_WS')")
+    @PreAuthorize("hasRole('ROLE_WS') and hasRole('ROLE_REPRES')")
     Page<Servei> findServeisByProcedimentPaginat(Long procedimentId, Pageable pageable) throws ProcedimentNotFoundException;
 
     /**
@@ -109,7 +109,7 @@ public interface GestioRestService {
      * @param pageable Informació de paginació.
      * @return Pàgina de procediments.
      */
-    @PreAuthorize("hasRole('ROLE_WS')")
+    @PreAuthorize("hasRole('ROLE_WS') and hasRole('ROLE_REPRES')")
     Page<Servei> findServeisPaginat(String codi, String descripcio, Pageable pageable);
 
     /**
@@ -117,14 +117,14 @@ public interface GestioRestService {
      * @param serveiCodi Codi del servei.
      * @return Dades del procediment.
      */
-    @PreAuthorize("hasRole('ROLE_WS')")
+    @PreAuthorize("hasRole('ROLE_WS') and hasRole('ROLE_REPRES')")
     Servei getServeiByCodi(String serveiCodi);
 
     /**
      * Crea o actualitza un usuari.
      * @param usuariEntitat Dades de l'usuari.
      */
-    @PreAuthorize("hasRole('ROLE_WS')")
+    @PreAuthorize("hasRole('ROLE_WS') and hasRole('ROLE_REPRES')")
     void createOrUpdateUsuari(UsuariEntitat usuariEntitat) throws Exception;
 
     /**
@@ -134,7 +134,7 @@ public interface GestioRestService {
      * @param pageable Informació de paginació.
      * @return Pàgina d'usuaris.
      */
-    @PreAuthorize("hasRole('ROLE_WS')")
+    @PreAuthorize("hasRole('ROLE_WS') and hasRole('ROLE_REPRES')")
     Page<UsuariEntitat> findUsuarisPaginat(String entitatCodi, FiltreUsuaris filtreUsuaris, Pageable pageable) throws EntitatNotFoundException ;
 
     /**
@@ -143,14 +143,14 @@ public interface GestioRestService {
      * @param entitatCodi Codi de l'entitat.
      * @return Dades del procediment.
      */
-    @PreAuthorize("hasRole('ROLE_WS')")
+    @PreAuthorize("hasRole('ROLE_WS') and hasRole('ROLE_REPRES')")
     UsuariEntitat getUsuariAmbEntitatICodi(String entitatCodi, String usuariCodi) throws EntitatNotFoundException ;
 
     /**
      * Atorga permisos seleccionats a un usuari per a procediments i serveis.
      * @param permisosServei Dades dels permisos a atorgar.
      */
-    @PreAuthorize("hasRole('ROLE_WS')")
+    @PreAuthorize("hasRole('ROLE_WS') and hasRole('ROLE_REPRES')")
     void serveiGrantPermis(PermisosServei permisosServei) throws EntitatNotFoundException, EntitatUsuariNotFoundException, ProcedimentServeiNotFoundException;
 
     /**
@@ -160,6 +160,6 @@ public interface GestioRestService {
      * @param entitatCodi Codi de l'entitat.
      * @return Llista de recursos HATOAS de tipus PermisDto.
      */
-    @PreAuthorize("hasRole('ROLE_WS')")
+    @PreAuthorize("hasRole('ROLE_WS') and hasRole('ROLE_REPRES')")
     PermisosServei permisosPerUsuariEntitat(String entitatCodi, String usuariCodi) throws EntitatNotFoundException, UsuariNotFoundException;
 }
