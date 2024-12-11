@@ -42,7 +42,7 @@ public class DadesExternesServiceImpl implements DadesExternesService {
 
 		List<Provincia> provincies = new ArrayList<>();
 		try {
-			URL url = new URL(getDadesComunesBaseUrl() + "/services/provincies/format/JSON/idioma/ca");
+			URL url = new URL(getDadesComunesBaseUrl() + "/services/provincies/format/JSON");
 			HttpURLConnection httpConnection = (HttpURLConnection)url.openConnection();
 			httpConnection.setRequestMethod("GET");
 			httpConnection.setDoInput(true);
@@ -122,7 +122,7 @@ public class DadesExternesServiceImpl implements DadesExternesService {
 		log.debug("Cercant tots els paisos");
 		List<Pais> paisos = new ArrayList<>();
 		try {
-			URL url = new URL(getDadesComunesBaseUrl() + "/services/paisos/format/JSON/idioma/ca");
+			URL url = new URL(getDadesComunesBaseUrl() + "/services/paisos/format/JSON");
 			HttpURLConnection httpConnection = (HttpURLConnection)url.openConnection();
 			httpConnection.setRequestMethod("GET");
 			httpConnection.setDoInput(true);
