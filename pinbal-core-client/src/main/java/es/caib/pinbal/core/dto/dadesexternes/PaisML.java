@@ -9,7 +9,10 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Provincia {
-    private String codi;
-    private String nom;
+public class PaisML {
+    private String codi_numeric;
+    private String alpha2;
+    private String alpha3;
+    private String nom_ca;
+    private String nom_es;
 }

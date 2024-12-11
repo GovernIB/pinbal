@@ -9,7 +9,8 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Provincia {
+public class ProvinciaML {
     private String codi;
-    private String nom;
+    private String nom_ca;
+    private String nom_es;
 }

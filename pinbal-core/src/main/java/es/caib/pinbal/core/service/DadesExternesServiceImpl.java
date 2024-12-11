@@ -8,7 +8,9 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import es.caib.pinbal.core.dto.dadesexternes.Municipi;
 import es.caib.pinbal.core.dto.dadesexternes.Pais;
+import es.caib.pinbal.core.dto.dadesexternes.PaisML;
 import es.caib.pinbal.core.dto.dadesexternes.Provincia;
+import es.caib.pinbal.core.dto.dadesexternes.ProvinciaML;
 import es.caib.pinbal.core.helper.ConfigHelper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
@@ -52,7 +54,13 @@ public class DadesExternesServiceImpl implements DadesExternesService {
 			ObjectMapper mapper = new ObjectMapper();
 			mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
 			if (response != null && response.length > 0) {
-				provincies = mapper.readValue(response, new TypeReference<List<Provincia>>() {});
+				List<ProvinciaML> provinciesML = mapper.readValue(response, new TypeReference<List<ProvinciaML>>() {});
+				for(ProvinciaML provinciaML: provinciesML) {
+					provincies.add(Provincia.builder()
+							.codi(provinciaML.getCodi())
+							.nom(provinciaML.getNom_ca())
+							.build());
+				}
 				final Collator collator = Collator.getInstance();
 				collator.setStrength(Collator.PRIMARY);
 				Collections.sort(provincies, new Comparator<Provincia>() {
@@ -132,7 +140,15 @@ public class DadesExternesServiceImpl implements DadesExternesService {
 			ObjectMapper mapper = new ObjectMapper();
 			mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
 			if (response != null && response.length > 0) {
-				paisos = mapper.readValue(response, new TypeReference<List<Pais>>() {});
+				List<PaisML> paisosML = mapper.readValue(response, new TypeReference<List<PaisML>>() {});
+				for(PaisML paisML: paisosML) {
+					paisos.add(Pais.builder()
+							.codi_numeric(paisML.getCodi_numeric())
+							.alpha2(paisML.getAlpha2())
+							.alpha3(paisML.getAlpha3())
+							.nom(paisML.getNom_ca())
+							.build());
+				}
 				final Collator collator = Collator.getInstance();
 				collator.setStrength(Collator.PRIMARY);
 				Collections.sort(paisos, new Comparator<Pais>() {
