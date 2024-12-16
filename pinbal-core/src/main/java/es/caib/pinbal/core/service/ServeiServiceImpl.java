@@ -3,6 +3,33 @@
  */
 package es.caib.pinbal.core.service;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Locale;
+import java.util.Set;
+
+import javax.annotation.Resource;
+
+import org.apache.commons.lang.StringUtils;
+import org.springframework.beans.BeansException;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
+import org.springframework.context.MessageSource;
+import org.springframework.context.MessageSourceAware;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.security.acls.domain.BasePermission;
+import org.springframework.security.acls.model.AccessControlEntry;
+import org.springframework.security.acls.model.MutableAclService;
+import org.springframework.security.acls.model.Permission;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import es.caib.pinbal.core.dto.ArbreDto;
 import es.caib.pinbal.core.dto.ClauPrivadaDto;
 import es.caib.pinbal.core.dto.ClauPublicaDto;
@@ -78,30 +105,6 @@ import es.scsp.common.domain.core.ClavePublica;
 import es.scsp.common.domain.core.EmisorCertificado;
 import es.scsp.common.domain.core.Servicio;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang.StringUtils;
-import org.springframework.beans.BeansException;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
-import org.springframework.context.MessageSource;
-import org.springframework.context.MessageSourceAware;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.security.acls.domain.BasePermission;
-import org.springframework.security.acls.model.MutableAclService;
-import org.springframework.security.acls.model.Permission;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import javax.annotation.Resource;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.Set;
 
 /**
  * Implementació dels mètodes per a interactuar amb les funcionalitats SCSP.
@@ -460,6 +463,12 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 				if (servei.getCodi().equals(procedimentServei.getServei())) {
 					servei.setActiu(procedimentServei.isActiu());
 					servei.setProcedimentCodi(procedimentServei.getProcediment().getCodi());
+					
+					List<AccessControlEntry> aces = PermisosHelper.getAclSids(
+							ProcedimentServei.class,
+							procedimentServei.getId(),
+							aclService);					
+					servei.setUsuarisAmbPermis(aces.size());					
 					break;
 				}
 			}
@@ -1568,8 +1577,30 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 			modificats.addAll(Arrays.asList(grupsModificats));
 		}
 		return reglaHelper.getGrupFormProperties(servei, modificats);
+	}	
+	
+	@Override
+	public List<ServeiDto> getServeis(String text) {		
+		List<Servei> serveiList = serveiRepository.findByCodiAndDescripcioLikeText(text);		
+		List<ServeiDto> serveiDtoList = new ArrayList<ServeiDto>();
+		for (Servei servei: serveiList) {
+			ServeiDto serveiDto = new ServeiDto();
+			serveiDto.setId(servei.getId());
+			serveiDto.setCodi(servei.getCodi());
+			serveiDto.setDescripcio(servei.getDescripcio());
+			serveiDtoList.add(serveiDto);
+		}		
+		return serveiDtoList;		
 	}
-
+	
+	@Override
+	@Transactional
+	public ServeiDto getServeiDtoByCodi(String serveiCodi) throws ServeiNotFoundException {
+		Servicio servicio = getServicioByCode(serveiCodi);
+		ServeiDto serveiDto = toServeiDto(servicio);
+		return serveiDto;		
+	}
+	
 	private Servei getServeiByCodi(String serveiCodi) throws ServeiNotFoundException {
 		List<Servei> serveis = serveiRepository.findByCode(serveiCodi);
 		if (serveis.size() == 0) {

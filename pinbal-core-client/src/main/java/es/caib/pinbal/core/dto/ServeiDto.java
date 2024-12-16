@@ -108,6 +108,8 @@ public class ServeiDto extends AbstractIdentificable<Long> implements Serializab
 
 	private boolean useAutoClasse = true;
 	private boolean enviarSolicitant = false;
+	
+	private int usuarisAmbPermis;
 
 	public String getAjudaHtml() {
 		String ajudaHtml = ajuda;
@@ -145,6 +147,7 @@ public class ServeiDto extends AbstractIdentificable<Long> implements Serializab
 	public String getCodiNom() {
 		return codi + " - " + descripcio;
 	}
+	
 
 	@Override
 	public String toString() {

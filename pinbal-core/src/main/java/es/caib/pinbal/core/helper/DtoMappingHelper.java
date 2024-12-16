@@ -28,6 +28,7 @@ import es.caib.pinbal.core.dto.OrganGestorDto;
 import es.caib.pinbal.core.dto.ProcedimentDto;
 import es.caib.pinbal.core.dto.ServeiCampDto;
 import es.caib.pinbal.core.dto.ServeiCampGrupDto;
+import es.caib.pinbal.core.dto.ServeiDto;
 import es.caib.pinbal.core.dto.UsuariDto;
 import es.caib.pinbal.core.dto.regles.ServeiReglaDto;
 import es.caib.pinbal.core.model.ClauPrivada;
@@ -41,6 +42,7 @@ import es.caib.pinbal.core.model.IntegracioAccioEntity;
 import es.caib.pinbal.core.model.IntegracioAccioParamEntity;
 import es.caib.pinbal.core.model.OrganGestor;
 import es.caib.pinbal.core.model.Procediment;
+import es.caib.pinbal.core.model.Servei;
 import es.caib.pinbal.core.model.ServeiCamp;
 import es.caib.pinbal.core.model.ServeiCampGrup;
 import es.caib.pinbal.core.model.ServeiRegla;
@@ -70,6 +72,7 @@ public class DtoMappingHelper {
 	public DtoMappingHelper() {
 		mapperFactory = new DefaultMapperFactory.Builder().build();
 		// Mapeig d'entitats
+		mapperFactory.registerClassMap(ClassMapBuilder.map(Servei.class, ServeiDto.class).byDefault().toClassMap());
 		mapperFactory.registerClassMap(ClassMapBuilder.map(Entitat.class, EntitatDto.class).byDefault().toClassMap());
 		mapperFactory.getConverterFactory().registerConverter(new CustomConverter<EntitatUsuari, EntitatUsuariDto>() {
 			public EntitatUsuariDto convert(EntitatUsuari source, Type<? extends EntitatUsuariDto> destinationClass) {

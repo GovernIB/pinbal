@@ -3,6 +3,32 @@
  */
 package es.caib.pinbal.webapp.controller;
 
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.lang.reflect.InvocationTargetException;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+import javax.naming.NamingException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+
 import es.caib.pinbal.core.dto.CodiValor;
 import es.caib.pinbal.core.dto.EntitatDto;
 import es.caib.pinbal.core.dto.EntitatUsuariDto;
@@ -24,6 +50,7 @@ import es.caib.pinbal.core.service.exception.ProcedimentServeiNotFoundException;
 import es.caib.pinbal.core.service.exception.ServeiNotFoundException;
 import es.caib.pinbal.webapp.command.ProcedimentCommand;
 import es.caib.pinbal.webapp.command.ProcedimentFiltreCommand;
+import es.caib.pinbal.webapp.command.ProcedimentServeiCommand;
 import es.caib.pinbal.webapp.command.ProcedimentServeiPermisFiltreCommand;
 import es.caib.pinbal.webapp.command.ServeiFiltreCommand;
 import es.caib.pinbal.webapp.command.UsuariPermisiCommand;
@@ -33,27 +60,6 @@ import es.caib.pinbal.webapp.common.RequestSessionHelper;
 import es.caib.pinbal.webapp.datatables.ServerSideRequest;
 import es.caib.pinbal.webapp.datatables.ServerSideResponse;
 import es.caib.pinbal.webapp.helper.EnumHelper;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-
-import javax.naming.NamingException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.validation.Valid;
-import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 /**
  * Controlador per al manteniment de procediments.
@@ -271,6 +277,27 @@ public class ProcedimentController extends BaseController {
 			return "redirect:../../../index";
 		}
 	}
+	
+	@RequestMapping(value = "/{procedimentId}/new", method = RequestMethod.GET)
+	public String procedimentServeiPost(
+			HttpServletRequest request,
+			@PathVariable Long procedimentId,			
+			Model model) {
+		if (!EntitatHelper.isRepresentantEntitatActual(request))
+			return "representantNoAutoritzat";
+		EntitatDto entitat = EntitatHelper.getEntitatActual(request, entitatService);
+		if (entitat == null) {
+			AlertHelper.error(
+					request,
+					getMessage(request, "procediment.controller.no.entitat.seleccionada"));
+			return "redirect:index";
+		}
+//		model.addAttribute("serveiCodi");
+//		model.addAttribute("procedimentId", procedimentId);		
+//		model.addAttribute("entitatId", entitat.getId());
+		model.addAttribute(new ProcedimentServeiCommand());
+		return "procedimentServeiForm";
+	}
 
 	@RequestMapping(value = "/{procedimentId}/enable", method = RequestMethod.GET)
 	public String enable(
@@ -325,8 +352,9 @@ public class ProcedimentController extends BaseController {
 				SESSION_ATTRIBUTE_FILTRE_PROCEDIMENT);
 		if (command == null) {
 			command = new ServeiFiltreCommand();
-//			command.setActiva(true);
 		}
+		command.setActiva(true);
+		
 		if (!EntitatHelper.isRepresentantEntitatActual(request))
 			throw new Exception("Representant no autoritzat");
 		EntitatDto entitat = EntitatHelper.getEntitatActual(request, entitatService);
@@ -346,6 +374,26 @@ public class ProcedimentController extends BaseController {
 													procediment,			
 													serverSideRequest.toPageable());
 		return new ServerSideResponse<ServeiDto, Long>(serverSideRequest, page);
+	}
+	
+	@RequestMapping(value = "/servei/{codi}", method = RequestMethod.GET)
+	@ResponseBody
+	public ServeiDto getServei(
+			HttpServletRequest request,			
+			@PathVariable String codi) throws Exception {
+		return serveiService.getServeiDtoByCodi(codi);
+	}
+	
+	@RequestMapping(value = "/serveis/{text}", produces="application/json", method = RequestMethod.GET)
+	@ResponseBody
+	public List<ServeiDto> getServeis(
+			HttpServletRequest request,
+			@PathVariable String text) throws Exception {
+		try {
+			text = URLDecoder.decode(request.getRequestURI().split("/")[4], StandardCharsets.UTF_8.name());
+		} catch (UnsupportedEncodingException e) { }
+
+		return serveiService.getServeis(text);
 	}
 
 	@RequestMapping(value = "/{procedimentId}/servei", method = RequestMethod.GET)
@@ -424,6 +472,53 @@ public class ProcedimentController extends BaseController {
 		return "procedimentServeis";
 	}
 	
+	@RequestMapping(value = "/{procedimentId}/servei/save", method = RequestMethod.POST)
+	public String procedimentServeiSave(
+			HttpServletRequest request,
+			@PathVariable Long procedimentId,			
+			@Valid ProcedimentServeiCommand command,
+			BindingResult bindingResult,
+			Model model) throws ProcedimentNotFoundException, ServeiNotFoundException {
+		
+		if (!EntitatHelper.isRepresentantEntitatActual(request))
+			return "representantNoAutoritzat";
+		
+		if (bindingResult.hasErrors()) {
+			EntitatDto entitat = EntitatHelper.getEntitatActual(request, entitatService);
+			model.addAttribute("procedimentId", procedimentId);			
+			model.addAttribute("entitatId", entitat.getId());
+			return "procedimentServeiForm";
+		}
+		
+		EntitatDto entitat = EntitatHelper.getEntitatActual(request, entitatService);
+		
+		if (entitat != null) {
+			ProcedimentDto procediment = null;
+			if (procedimentId != null)
+				procediment = procedimentService.findById(procedimentId);
+			if (procediment != null) {
+				procedimentService.serveiEnable(procedimentId, command.getServeiCodi());
+				ServeiDto servei = serveiService.findAmbCodiPerAdminORepresentant(command.getServeiCodi());
+				
+				return getModalControllerReturnValueSuccess(
+						request,
+						"redirect:../../servei",
+						"procediment.controller.servei.activat",
+						new Object[] {servei.getDescripcio()});				
+			} else {						
+				return getModalControllerReturnValueError(
+						request,
+						"redirect:../../servei",
+						"procediment.controller.procediment.no.existeix");				
+			}
+		} else {			
+			return getModalControllerReturnValueError(
+					request,
+					"redirect:../../../../../index",
+					"procediment.controller.no.entitat.seleccionada");			
+		}		
+	}
+		
 	@RequestMapping(value = "/{procedimentId}/servei/{serveiCodi}/enable", method = RequestMethod.GET)
 	public String serveiEnable(
 			HttpServletRequest request,
@@ -485,7 +580,7 @@ public class ProcedimentController extends BaseController {
 						request, 
 						getMessage(
 								request,
-								"procediment.controller.servei.desactivat",
+								"procediment.controller.servei.esborrat",
 								new Object[] {servei.getDescripcio()}));
 				return "redirect:../../servei";
 			} else {
@@ -504,7 +599,8 @@ public class ProcedimentController extends BaseController {
 							"procediment.controller.no.entitat.seleccionada"));
 			return "redirect:../../../../../index";
 		}
-	}
+	}	
+	
 
 	@RequestMapping(value = "/{procedimentId}/servei/{serveiCodi}/permis", method = RequestMethod.GET)
 	public String serveiPermisGet(

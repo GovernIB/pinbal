@@ -12,6 +12,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import es.caib.pinbal.core.model.Servei;
+import es.caib.pinbal.core.model.Usuari;
 
 /**
  * Mètodes per a accedir a tots els serveis.
@@ -112,4 +113,9 @@ public interface ServeiRepository extends JpaRepository<Servei, Long> {
 			String codi
 			);
 	
+	@Query("select s " +
+			" from Servei s " +
+			"where (lower(s.codi) like concat('%', lower(:text), '%') " +
+			"  		or lower(s.descripcio) like concat('%', lower(:text), '%'))")
+	public List<Servei> findByCodiAndDescripcioLikeText(@Param("text") String text);
 }

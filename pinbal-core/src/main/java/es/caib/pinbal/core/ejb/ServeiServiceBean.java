@@ -34,6 +34,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.ejb.interceptor.SpringBeanAutowiringInterceptor;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.security.PermitAll;
 import javax.annotation.security.RolesAllowed;
@@ -55,7 +56,17 @@ public class ServeiServiceBean implements ServeiService {
 	@Autowired
 	ServeiService delegate;
 
-
+	@Override
+	@RolesAllowed({"PBL_ADMIN", "PBL_REPRES"})
+	public ServeiDto getServeiDtoByCodi(String serveiCodi) throws ServeiNotFoundException {
+		return delegate.getServeiDtoByCodi(serveiCodi);
+	}
+	
+	@Override
+	@RolesAllowed({"PBL_ADMIN", "PBL_REPRES"})
+	public List<ServeiDto> getServeis(String text) {
+		return delegate.getServeis(text);
+	}
 
 	@Override
 	@RolesAllowed("PBL_ADMIN")

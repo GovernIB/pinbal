@@ -35,29 +35,18 @@
 		<li><spring:message code="procediment.serveis.miques.procediment" arguments="${procediment.nom}"/> </li>
 		<li class="active"><spring:message code="procediment.serveis.miques.serveis"/></li>
 	</ul>
+	
 
 	<c:url value="/procediment/${procediment.id}/servei" var="formAction"/>
 	<form:form id="form-filtre" action="${formAction}" method="post" cssClass="well" commandName="serveiFiltreCommand">
 		<div class="row">
-			<div class="col-md-3">	
+			<div class="col-md-4">	
 				<pbl:inputText name="codi" inline="true" placeholderKey="servei.list.filtre.camp.codi"/>
 			</div>
-			<div class="col-md-3">	
+			<div class="col-md-4">	
 				<pbl:inputText name="descripcio" inline="true" placeholderKey="servei.list.filtre.camp.descripcio"/>
-			</div>
-			<div class="col-md-3">
-				<c:set var="campPath" value="activa"/>
-				<spring:message var="trueValue" code="entitat.list.filtre.camp.activa.yes"/>
-				<spring:message var="falseValue" code="entitat.list.filtre.camp.activa.no"/>
-				<form:select path="${campPath}" class="form-control" data-toggle="select2"
-							 data-minimumresults="5">
-<%--					<option value=""><spring:message code="entitat.list.filtre.camp.activa"/></option>>--%>
-					<option value=""><spring:message code="servei.list.filtre.camp.actiu.tots"/></option>>
-					<form:option value="true">${trueValue}</form:option>>
-					<form:option value="false">${falseValue}</form:option>>
-				</form:select>
-			</div>
-			<div class="col-md-3">
+			</div>			
+			<div class="col-md-4">
 				<div class="pull-right">
 					<button id="netejar-filtre" class="btn btn-default" type="button"><spring:message code="comu.boto.netejar"/></button>
 					<button type="submit" class="btn btn-primary"><spring:message code="comu.boto.filtrar"/></button>
@@ -65,15 +54,19 @@
 			</div>
 		</div>
 	</form:form>
-
+	
+	<div class="pull-right">
+		<a class="btn btn-default" href="<c:url value="/procediment/${procediment.id}/new"/>" data-toggle="modal" data-refresh-pagina="true"><i class="fa fa-plus"></i>&nbsp;<spring:message code="procediment.serveis.nou"/></a>
+	</div>
+	
 	<table id="table-serveis" class="table table-striped table-bordered" style="width: 100%">
 		<thead>
 			<tr>
 				<th data-data="codi"><spring:message code="procediment.serveis.taula.columna.codi" /></th>
-				<th data-data="descripcio"><spring:message code="procediment.serveis.taula.columna.descripcio" /></th>
-				<th data-data="actiu"><spring:message code="procediment.serveis.taula.columna.actiu" /></th>
+				<th data-data="descripcio"><spring:message code="procediment.serveis.taula.columna.descripcio" /></th>				
 				<th data-data="procedimentCodi"><spring:message code="procediment.serveis.taula.columna.procediment.codi.adicional" /></th>
-				<th data-data="actiu"><spring:message code="entitat.list.taula.columna.activa" /></th>
+				<th data-data="actiu"></th>
+				<th data-data="usuarisAmbPermis"></th>
 				<th></th>
 			</tr>
 		</thead>
@@ -121,22 +114,12 @@ $(document).ready(function() {
 				orderable: false,
 				width: "10%",
 				render: function (data, type, row, meta) {
-						var template = $('#template-activa').html();
-						console.log(row)
-						return Mustache.render(template, row);
-				}
-			},
-			{
-				targets: [3],
-				orderable: false,
-				width: "10%",
-				render: function (data, type, row, meta) {
 						var template = $('#template-procediment').html();
 						return Mustache.render(template, row);
 				}
 			}, 
 			{
-				targets: [4],
+				targets: [3],
 				orderable: false,
 				width: "1%",
 				render: function (data, type, row, meta) {
@@ -145,7 +128,7 @@ $(document).ready(function() {
 				}
 			}, 
 			{
-				targets: [5],
+				targets: [4],
 				orderable: false,
 				width: "1%",
 				render: function (data, type, row, meta) {
@@ -153,6 +136,10 @@ $(document).ready(function() {
 						return Mustache.render(template, row);
 				}
 			}, 
+			{
+				targets: [5],
+				visible: false				
+			}
 	   ],
 	   initComplete: function( settings, json ) {
 			$('button.edit-codi-procediment').click(function() {
@@ -211,7 +198,7 @@ function actualitzaCodiProcediment(servei_codi, codi_procediment) {
 </script>
 <script id="template-status" type="x-tmpl-mustache">
 	{{#actiu}}
-		<a href="servei/{{ codi }}/disable" class="btn btn-default confirm-remove"><i class="fa fa-times"></i>&nbsp;<spring:message code="comu.boto.desactivar"/></a>
+		<a href="servei/{{ codi }}/disable" class="btn btn-default confirm-remove"><i class="fa fa-times"></i>&nbsp;<spring:message code="comu.boto.esborrar"/></a>
 	{{/actiu}}
 	{{^actiu}}
 		<a href="servei/{{ codi }}/enable" class="btn btn-default"><i class="fa fa-check"></i>&nbsp;<spring:message code="comu.boto.activar"/></a>
@@ -219,7 +206,14 @@ function actualitzaCodiProcediment(servei_codi, codi_procediment) {
 </script>
 <script id="template-permisos" type="x-tmpl-mustache">
 	{{#actiu}}
-		<a href="servei/{{ codi }}/permis" class="btn btn-primary"><i class="icon-lock"></i>&nbsp;<spring:message code="procediment.serveis.taula.boto.permisos"/></a>
+		<a href="servei/{{ codi }}/permis" class="btn btn-primary">
+
+			<i class="fas fa-briefcase"></i>&nbsp;
+			<spring:message code="procediment.serveis.taula.boto.permisos"/>&nbsp;<span class="badge">{{ usuarisAmbPermis }}</span>
+
+
+			
+		</a>
 	{{/actiu}}
 	{{^actiu}}
 		<a href="#" class="btn btn-primary disabled"><i class="icon-lock"></i>&nbsp;<spring:message code="procediment.serveis.taula.boto.permisos"/></a>

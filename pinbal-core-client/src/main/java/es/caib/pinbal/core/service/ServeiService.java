@@ -1,5 +1,12 @@
 package es.caib.pinbal.core.service;
 
+import java.io.IOException;
+import java.util.List;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.prepost.PreAuthorize;
+
 import es.caib.pinbal.core.dto.ArbreDto;
 import es.caib.pinbal.core.dto.ClauPrivadaDto;
 import es.caib.pinbal.core.dto.ClauPublicaDto;
@@ -26,12 +33,6 @@ import es.caib.pinbal.core.service.exception.ServeiBusNotFoundException;
 import es.caib.pinbal.core.service.exception.ServeiCampGrupNotFoundException;
 import es.caib.pinbal.core.service.exception.ServeiCampNotFoundException;
 import es.caib.pinbal.core.service.exception.ServeiNotFoundException;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.security.access.prepost.PreAuthorize;
-
-import java.io.IOException;
-import java.util.List;
 
 /**
  * Declaració dels mètodes per a interactuar amb les funcionalitats SCSP.
@@ -84,6 +85,10 @@ public interface ServeiService {
 			Boolean activa,
 			String scspVersionEsquema,
 			Pageable pageable);
+	
+	public ServeiDto getServeiDtoByCodi(String serveiCodi) throws ServeiNotFoundException;
+	
+	public List<ServeiDto> getServeis(String text);
 	
 	/**
 	 * Consulta els serveis d'un procediment segons el filtre.
