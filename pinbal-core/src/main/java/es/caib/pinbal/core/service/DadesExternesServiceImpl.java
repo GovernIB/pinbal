@@ -56,9 +56,10 @@ public class DadesExternesServiceImpl implements DadesExternesService {
 			if (response != null && response.length > 0) {
 				List<ProvinciaML> provinciesML = mapper.readValue(response, new TypeReference<List<ProvinciaML>>() {});
 				for(ProvinciaML provinciaML: provinciesML) {
+					String nom = provinciaML.getNom() != null && !provinciaML.getNom().isEmpty() ? provinciaML.getNom() : provinciaML.getNom_ca();
 					provincies.add(Provincia.builder()
 							.codi(provinciaML.getCodi())
-							.nom(provinciaML.getNom_ca())
+							.nom(nom)
 							.build());
 				}
 				final Collator collator = Collator.getInstance();
@@ -142,11 +143,12 @@ public class DadesExternesServiceImpl implements DadesExternesService {
 			if (response != null && response.length > 0) {
 				List<PaisML> paisosML = mapper.readValue(response, new TypeReference<List<PaisML>>() {});
 				for(PaisML paisML: paisosML) {
+					String nom = paisML.getNom() != null && !paisML.getNom().isEmpty() ? paisML.getNom() : paisML.getNom_ca();
 					paisos.add(Pais.builder()
 							.codi_numeric(paisML.getCodi_numeric())
 							.alpha2(paisML.getAlpha2())
 							.alpha3(paisML.getAlpha3())
-							.nom(paisML.getNom_ca())
+							.nom(nom)
 							.build());
 				}
 				final Collator collator = Collator.getInstance();

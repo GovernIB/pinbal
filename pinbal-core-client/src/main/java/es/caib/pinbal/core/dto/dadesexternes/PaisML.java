@@ -15,4 +15,5 @@ public class PaisML {
     private String alpha3;
     private String nom_ca;
     private String nom_es;
+    private String nom;
 }
