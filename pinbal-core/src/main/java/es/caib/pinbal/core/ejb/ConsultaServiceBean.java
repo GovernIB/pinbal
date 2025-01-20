@@ -5,6 +5,7 @@ package es.caib.pinbal.core.ejb;
 
 import es.caib.pinbal.client.dadesobertes.DadesObertesResposta;
 import es.caib.pinbal.client.dadesobertes.DadesObertesRespostaConsulta;
+import es.caib.pinbal.core.dto.ArbreRespostaDto;
 import es.caib.pinbal.core.dto.CarregaDto;
 import es.caib.pinbal.core.dto.ConsultaDto;
 import es.caib.pinbal.core.dto.ConsultaFiltreDto;
@@ -424,6 +425,12 @@ public class ConsultaServiceBean implements ConsultaService {
 			String rolActual, 
 			InformeRepresentantFiltreDto filtre){
 		return delegate.informeUsuarisEntitatOrganProcedimentServei(entitatId, rolActual, filtre);
+	}
+
+	@Override
+	@RolesAllowed({"PBL_ADMIN", "PBL_DELEG"})
+	public ArbreRespostaDto generarArbreResposta(Long consultaId) throws Exception {
+		return delegate.generarArbreResposta(consultaId);
 	}
 
 }

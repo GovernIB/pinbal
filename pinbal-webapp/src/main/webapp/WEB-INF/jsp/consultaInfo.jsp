@@ -362,16 +362,20 @@ $(document).ready(function () {
 						</p>
 					</div>
 					</c:if>
+					<c:if test="${not empty dadesResposta}">
+						<div id="arbreDadesResposta">
+							<c:if test="${not empty dadesResposta.fills}">
+								<c:set var="fills" value="${dadesResposta.fills}" scope="request"/>
+								<jsp:include page="import/renderFills.jsp" >
+									<jsp:param name="margin" value="20" />
+								</jsp:include>
+							</c:if>
+						</div>
+					</c:if>
 					<script type="text/javascript">
 						if ($('#respostaXml').val() != null) {
 							$('#respostaXml').val(vkbeautify.xml($('#respostaXml').val()));
 						}
-						// $('#dadesResposta').on('hidden', function () {
-						// 	$('#dadesRespostaIcon').attr('class', 'pull-right icon-chevron-down');
-						// });
-						// $('#dadesResposta').on('shown', function () {
-						// 	$('#dadesRespostaIcon').attr('class', 'pull-right icon-chevron-up');
-						// });
 					</script>
 				</div>
 			</c:if>
@@ -405,12 +409,30 @@ $(document).ready(function () {
 					<h3>
 						<spring:message code="consulta.info.descarregar.justificant.vistaPrevia"/>
 					</h3>
-					<div class="well">
-						<object data="${consulta.id}/justificant" type="application/pdf">					                    
-						    <embed src="${consulta.id}/justificant" width="600" height="500" alt="pdf" pluginspage="http://www.adobe.com/products/acrobat/readstep2.html">
+					<div id="pdf-container" class="well">
+						<object id="pdfObject" data="${consulta.id}/justificant" type="application/pdf">
+						    <embed id="pdfEmbed" src="${consulta.id}/justificant" width="600" height="500" alt="pdf" pluginspage="http://www.adobe.com/products/acrobat/readstep2.html">
 						</object>					
 					</div>
 				</div>
+				<div id="error-container" style="display: none; color: red; font-weight: bold;">
+					Error: No s'ha pogut carregar el document PDF.
+				</div>
+
+				<script>
+					document.addEventListener('DOMContentLoaded', function () {
+						const pdfObject = document.getElementById('pdfObject');
+						const errorContainer = document.getElementById('error-container');
+						const pdfContainer = document.getElementById('pdf-container');
+
+						// Verificar si el PDF es carrega
+						pdfObject.onerror = function () {
+							// Mostrar missatge d'error
+							errorContainer.style.display = 'block';
+							pdfContainer.style.display = 'none';
+						};
+					});
+				</script>
 			</c:if>			
 			<c:if test="${consulta.justificantEstatError}">
 				<div class="well">

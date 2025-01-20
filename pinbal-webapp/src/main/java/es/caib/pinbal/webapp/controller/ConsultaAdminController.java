@@ -3,6 +3,7 @@
  */
 package es.caib.pinbal.webapp.controller;
 
+import es.caib.pinbal.core.dto.ArbreRespostaDto;
 import es.caib.pinbal.core.dto.CodiValor;
 import es.caib.pinbal.core.dto.ConsultaDto;
 import es.caib.pinbal.core.dto.DadaEspecificaDto;
@@ -27,7 +28,6 @@ import es.caib.pinbal.webapp.command.ConsultaFiltreCommand;
 import es.caib.pinbal.webapp.common.AlertHelper;
 import es.caib.pinbal.webapp.common.EntitatHelper;
 import es.caib.pinbal.webapp.common.RequestSessionHelper;
-import es.caib.pinbal.webapp.common.RolHelper;
 import es.caib.pinbal.webapp.datatables.ServerSideColumn;
 import es.caib.pinbal.webapp.datatables.ServerSideRequest;
 import es.caib.pinbal.webapp.datatables.ServerSideResponse;
@@ -291,6 +291,8 @@ public class ConsultaAdminController extends BaseController {
 		model.addAttribute("consulta", consulta);
 		model.addAttribute("servei", serveiService.findAmbCodiPerAdminORepresentant(consulta.getServeiCodi()));
 		omplirModelAmbDadesEspecifiques(consulta.getServeiCodi(), model);
+		ArbreRespostaDto dadesResposta = consultaService.generarArbreResposta(consultaId);
+		model.addAttribute("dadesResposta", dadesResposta);
 		return "adminConsultaInfo";
 	}
 

@@ -1,55 +1,6 @@
 package es.caib.pinbal.webapp.controller;
 
-import static es.caib.pinbal.webapp.view.SpreadSheetReader.SEPARADOR;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.lang.reflect.InvocationTargetException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.sql.SQLException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-
-import javax.naming.NamingException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.validation.Valid;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-
-import org.apache.commons.codec.binary.Base64;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.propertyeditors.CustomDateEditor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
-import org.springframework.validation.Errors;
-import org.springframework.web.bind.WebDataBinder;
-import org.springframework.web.bind.annotation.InitBinder;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.multipart.MultipartHttpServletRequest;
-import org.w3c.dom.Document;
-import org.xml.sax.SAXException;
-
+import es.caib.pinbal.core.dto.ArbreRespostaDto;
 import es.caib.pinbal.core.dto.CodiValor;
 import es.caib.pinbal.core.dto.ConsultaDto;
 import es.caib.pinbal.core.dto.ConsultaDto.DocumentTipus;
@@ -106,6 +57,54 @@ import es.caib.pinbal.webapp.view.SpreadSheetReader;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.codec.binary.Base64;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.propertyeditors.CustomDateEditor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.Errors;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.InitBinder;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
+import org.w3c.dom.Document;
+import org.xml.sax.SAXException;
+
+import javax.naming.NamingException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.lang.reflect.InvocationTargetException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.sql.SQLException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+
+import static es.caib.pinbal.webapp.view.SpreadSheetReader.SEPARADOR;
 
 /**
  * Controlador per a la pàgina de consultes.
@@ -442,8 +441,7 @@ public class ConsultaController extends BaseController {
 	}
 
 	@RequestMapping(value = "/{consultaId}", method = RequestMethod.GET)
-	public String info(HttpServletRequest request, @PathVariable Long consultaId, Model model)
-			throws ConsultaNotFoundException, ScspException, ServeiNotFoundException {
+	public String info(HttpServletRequest request, @PathVariable Long consultaId, Model model) throws Exception {
 		if (!EntitatHelper.isDelegatEntitatActual(request))
 			return "delegatNoAutoritzat";
 		EntitatDto entitat = EntitatHelper.getEntitatActual(request, entitatService);
@@ -454,6 +452,9 @@ public class ConsultaController extends BaseController {
 					serveiService.findAmbCodiPerDelegat(entitat.getId(), consulta.getServeiCodi()));
 
 			omplirModelAmbDadesEspecifiques(consulta.getServeiCodi(), model);
+
+			ArbreRespostaDto dadesResposta = consultaService.generarArbreResposta(consultaId);
+			model.addAttribute("dadesResposta", dadesResposta);
 			return "consultaInfo";
 		} else {
 			AlertHelper.error(request, getMessage(request, "comu.error.no.entitat"));
@@ -845,8 +846,7 @@ public class ConsultaController extends BaseController {
 
 	private void omplirModelAmbDadesEspecifiques(String serveiCodi, Model model)
 			throws ScspException, ServeiNotFoundException {
-		List<NodeDto<DadaEspecificaDto>> llistaArbreDadesEspecifiques = serveiService
-				.generarArbreDadesEspecifiques(serveiCodi).toList();
+		List<NodeDto<DadaEspecificaDto>> llistaArbreDadesEspecifiques = serveiService.generarArbreDadesEspecifiques(serveiCodi).toList();
 		model.addAttribute("llistaArbreDadesEspecifiques", llistaArbreDadesEspecifiques);
 		List<ServeiCampDto> camps = serveiService.findServeiCamps(serveiCodi);
 		model.addAttribute("campsDadesEspecifiques", camps);

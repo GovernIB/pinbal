@@ -354,6 +354,16 @@ $(document).ready(function () {
 					</p>
 				</div>
 				</c:if>
+				<c:if test="${not empty dadesResposta}">
+					<div id="arbreDadesResposta">
+						<c:if test="${not empty dadesResposta.fills}">
+							<c:set var="fills" value="${dadesResposta.fills}" scope="request"/>
+							<jsp:include page="import/renderFills.jsp" >
+								<jsp:param name="margin" value="20" />
+							</jsp:include>
+						</c:if>
+					</div>
+				</c:if>
 			</div>
 			</c:if>
 		</div>

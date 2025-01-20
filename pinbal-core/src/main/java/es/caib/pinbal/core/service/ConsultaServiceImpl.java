@@ -11,27 +11,10 @@ import com.lowagie.text.pdf.PdfCopy;
 import com.lowagie.text.pdf.PdfReader;
 import es.caib.pinbal.client.dadesobertes.DadesObertesResposta;
 import es.caib.pinbal.client.dadesobertes.DadesObertesRespostaConsulta;
-import es.caib.pinbal.core.dto.CarregaDto;
-import es.caib.pinbal.core.dto.ConsultaDto;
+import es.caib.pinbal.core.dto.*;
 import es.caib.pinbal.core.dto.ConsultaDto.Consentiment;
 import es.caib.pinbal.core.dto.ConsultaDto.DocumentTipus;
-import es.caib.pinbal.core.dto.ConsultaFiltreDto;
-import es.caib.pinbal.core.dto.ConsultaOpenDataDto;
-import es.caib.pinbal.core.dto.EmisorDto;
-import es.caib.pinbal.core.dto.EntitatDto;
-import es.caib.pinbal.core.dto.EstadisticaDto;
-import es.caib.pinbal.core.dto.EstadistiquesFiltreDto;
 import es.caib.pinbal.core.dto.EstadistiquesFiltreDto.EstadistiquesAgrupacioDto;
-import es.caib.pinbal.core.dto.EstatTipus;
-import es.caib.pinbal.core.dto.FitxerDto;
-import es.caib.pinbal.core.dto.InformeGeneralEstatDto;
-import es.caib.pinbal.core.dto.InformeProcedimentServeiDto;
-import es.caib.pinbal.core.dto.InformeRepresentantFiltreDto;
-import es.caib.pinbal.core.dto.IntegracioAccioTipusEnumDto;
-import es.caib.pinbal.core.dto.JustificantDto;
-import es.caib.pinbal.core.dto.JustificantEstat;
-import es.caib.pinbal.core.dto.RecobrimentSolicitudDto;
-import es.caib.pinbal.core.dto.RespostaAtributsDto;
 import es.caib.pinbal.core.dto.arxiu.ArxiuDetallDto;
 import es.caib.pinbal.core.helper.ArxiuHelper;
 import es.caib.pinbal.core.helper.ConfigHelper;
@@ -92,6 +75,7 @@ import es.caib.pinbal.core.service.exception.ServeiNotAllowedException;
 import es.caib.pinbal.core.service.exception.ValidacioDadesPeticioException;
 import es.caib.pinbal.plugins.DadesUsuari;
 import es.caib.pinbal.plugins.SistemaExternException;
+import es.caib.pinbal.scsp.JustificantArbreHelper.ElementArbre;
 import es.caib.pinbal.scsp.PropertiesHelper;
 import es.caib.pinbal.scsp.Resposta;
 import es.caib.pinbal.scsp.ResultatEnviamentPeticio;
@@ -2565,6 +2549,41 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 		}
 
 		return resposta;
+	}
+
+	@Override
+	public ArbreRespostaDto generarArbreResposta(Long consultaId) throws Exception {
+
+		Consulta consulta = consultaRepository.findOne(consultaId);
+		ElementArbre elementArbre = scspHelper.generarArbreJustificant(consulta.getScspPeticionId(), consulta.getScspSolicitudId(), null);
+		ArbreRespostaDto arbreResposta = convertirElementArbre(elementArbre);
+
+		return arbreResposta;
+	}
+
+	private ArbreRespostaDto convertirElementArbre(ElementArbre elementArbre) {
+		// Creem un arbre de resposta inicialment buit
+		ArbreRespostaDto arbreResposta = new ArbreRespostaDto();
+
+		// Funció recursiva per mapejar cada node del `Arrel` al nou arbre
+		processarElementArbre(elementArbre, arbreResposta);
+		return arbreResposta;
+	}
+
+	private void processarElementArbre(ElementArbre origen, ArbreRespostaDto desti) {
+		// Afegim aquest valor al node actual del destí
+		desti.setTitol(origen.getTitol());
+		desti.setDescripcio(origen.getDescripcio());
+		desti.setXpath(origen.getXpathDatoEspecifico());
+
+		// Iterem sobre els nodes fills, si existeixen, i els mapejem recursivament
+		if (origen.getFills() != null) {
+			for (ElementArbre fill : origen.getFills()) {
+				ArbreRespostaDto fillArbre = new ArbreRespostaDto();
+				processarElementArbre(fill, fillArbre);
+				desti.addFill(fillArbre);
+			}
+		}
 	}
 
 	private List<EntitatUsuari> findUsuarisAmbPermisPerProcedimentServei(ProcedimentServei procedimentServei) {

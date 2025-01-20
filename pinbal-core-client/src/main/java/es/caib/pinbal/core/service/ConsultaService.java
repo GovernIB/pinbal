@@ -5,6 +5,7 @@ package es.caib.pinbal.core.service;
 
 import es.caib.pinbal.client.dadesobertes.DadesObertesResposta;
 import es.caib.pinbal.client.dadesobertes.DadesObertesRespostaConsulta;
+import es.caib.pinbal.core.dto.ArbreRespostaDto;
 import es.caib.pinbal.core.dto.CarregaDto;
 import es.caib.pinbal.core.dto.ConsultaDto;
 import es.caib.pinbal.core.dto.ConsultaFiltreDto;
@@ -711,5 +712,9 @@ public interface ConsultaService {
 			Long entitatId,
 			String rolActual,
 			InformeRepresentantFiltreDto filtre);
+
+
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_DELEG')")
+	public ArbreRespostaDto generarArbreResposta(Long consultaId) throws Exception;
 
 }
