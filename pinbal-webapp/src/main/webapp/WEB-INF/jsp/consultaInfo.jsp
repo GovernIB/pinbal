@@ -114,7 +114,7 @@ $(document).ready(function () {
 						<div class="col-md-12">
 							<div class="form-group">
 								<label class="control-label" for=""><spring:message code="consulta.form.camp.procediment"/></label>
-								<input type="text" value="${consulta.procedimentNom}" class="form-control" disabled="disabled"/>
+								<input type="text" value="${consulta.procedimentCodi} - ${consulta.procedimentNom}" class="form-control" disabled="disabled"/>
 							</div>
 						</div>
 					</div>
@@ -122,7 +122,7 @@ $(document).ready(function () {
 						<div class="col-md-12">
 							<div class="form-group">
 								<label class="control-label" for=""><spring:message code="consulta.form.camp.servei"/></label>
-								<input type="text" value="${servei.descripcio}" class="form-control" disabled="disabled"/>
+								<input type="text" value="${servei.codi} - ${servei.descripcio}" class="form-control" disabled="disabled"/>
 							</div>
 						</div>
 					</div>				
