@@ -467,4 +467,11 @@ public class ServeiServiceBean implements ServeiService {
 		return delegate.getGrupsByserveiRegla(serveiCodi, grupsModificats);
 	}
 
+
+	// TODO: BORRAR en versió 1.1.43
+    @Override
+    public void updateFitxersXsd() {
+        delegate.updateFitxersXsd();
+    }
+
 }

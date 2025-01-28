@@ -2,6 +2,7 @@ package es.caib.pinbal.webapp.controller;
 
 import es.caib.pinbal.core.service.ConsultaService;
 import es.caib.pinbal.core.service.PropertyService;
+import es.caib.pinbal.core.service.ServeiService;
 import es.caib.pinbal.webapp.helper.AjaxHelper;
 import es.caib.pinbal.webapp.helper.ModalHelper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
+import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Calendar;
 
@@ -28,6 +30,8 @@ public class PinbalController extends BaseController {
 	private PropertyService propertyService;
 	@Autowired
 	private ConsultaService consultaService;
+	@Autowired
+	private ServeiService serveiService;
 
 
 	@RequestMapping(value = ModalHelper.ACCIO_MODAL_TANCAR, method = RequestMethod.GET)
@@ -62,6 +66,11 @@ public class PinbalController extends BaseController {
 			cal.add(Calendar.DAY_OF_YEAR, -1);
 		}
 		return "Done";
+	}
+
+	@PostConstruct
+	public void init() {
+		serveiService.updateFitxersXsd();
 	}
 
 //	@RequestMapping(value = "/log/download", method = RequestMethod.GET)

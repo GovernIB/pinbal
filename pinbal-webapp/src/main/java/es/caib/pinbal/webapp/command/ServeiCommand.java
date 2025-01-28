@@ -17,6 +17,8 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -123,6 +125,8 @@ public class ServeiCommand {
 	private boolean pinbalAddDadesEspecifiques = true;
 	private boolean useAutoClasse = true;
 	private boolean enviarSolicitant = false;
+
+	private Date dataDarreraActualitzacio;
 	
 	public ServeiCommand() {
 		scspFechaAlta = new Date();
@@ -131,6 +135,13 @@ public class ServeiCommand {
 	public ServeiCommand(boolean creacio) {
 		scspFechaAlta = new Date();
 		this.creacio = creacio;
+	}
+
+	public String getDataDarreraActualitzacioString() {
+		if (dataDarreraActualitzacio == null) return null;
+
+		DateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+		return sdf.format(dataDarreraActualitzacio);
 	}
 	
 	

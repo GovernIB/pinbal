@@ -3,20 +3,19 @@
  */
 package es.caib.pinbal.core.helper;
 
+import es.caib.pinbal.core.dto.FitxerDto;
+import es.caib.pinbal.core.dto.ServeiXsdDto;
+import es.caib.pinbal.core.dto.XsdTipusEnumDto;
+import es.scsp.common.domain.core.Servicio;
+import org.apache.commons.io.IOUtils;
+import org.springframework.stereotype.Component;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-
-import org.apache.commons.io.IOUtils;
-import org.springframework.stereotype.Component;
-
-import es.caib.pinbal.core.dto.FitxerDto;
-import es.caib.pinbal.core.dto.ServeiXsdDto;
-import es.caib.pinbal.core.dto.XsdTipusEnumDto;
-import es.scsp.common.domain.core.Servicio;
 
 
 /**
@@ -28,10 +27,10 @@ import es.scsp.common.domain.core.Servicio;
 public class ServeiXsdHelper {
 
 	public void modificarXsd(
-			Servicio servei,
+			String serveiCodi,
 			ServeiXsdDto xsd,
 			byte[] contingut) throws IOException {
-		String fitxerPath = getPathPerFitxerXsd(servei, xsd.getTipus());
+		String fitxerPath = getPathPerFitxerXsd(serveiCodi, xsd.getTipus());
 		File file = new File(fitxerPath);
 		file.getParentFile().mkdirs();
 		file.delete();
@@ -41,16 +40,16 @@ public class ServeiXsdHelper {
 	}
 
 	public void esborrarXsd(
-			Servicio servei,
+			String serveiCodi,
 			XsdTipusEnumDto tipus) throws IOException {
-		String fitxerPath = getPathPerFitxerXsd(servei, tipus);
+		String fitxerPath = getPathPerFitxerXsd(serveiCodi, tipus);
 		new File(fitxerPath).delete();
 	}
 
 	public FitxerDto descarregarXsd(
-			Servicio servei,
+			String serveiCodi,
 			XsdTipusEnumDto tipus) throws IOException {
-		String fitxerPath = getPathPerFitxerXsd(servei, tipus);
+		String fitxerPath = getPathPerFitxerXsd(serveiCodi, tipus);
 		FitxerDto fitxer = new FitxerDto();
 		fitxer.setNom(getXsdTipusNom(tipus));
 		fitxer.setContingut(IOUtils.toByteArray(new FileInputStream(fitxerPath)));
@@ -58,15 +57,15 @@ public class ServeiXsdHelper {
 		return fitxer;
 	}
 	
-	public FitxerDto descarregarXsdDadesEspecifiques(
-			Servicio servei) throws IOException {
-		String fitxerPath = getPathPerFitxerXsdDadesEspecifiques(servei);
-		FitxerDto fitxer = new FitxerDto();
-		fitxer.setNom(getXsdTipusNom(XsdTipusEnumDto.DATOS_ESPECIFICOS));
-		fitxer.setContingut(IOUtils.toByteArray(new FileInputStream(fitxerPath)));
-		fitxer.setContentType("text/xml");
-		return fitxer;
-	}
+//	public FitxerDto descarregarXsdDadesEspecifiques(
+//			Servicio servei) throws IOException {
+//		String fitxerPath = getPathPerFitxerXsdDadesEspecifiques(servei);
+//		FitxerDto fitxer = new FitxerDto();
+//		fitxer.setNom(getXsdTipusNom(XsdTipusEnumDto.DATOS_ESPECIFICOS));
+//		fitxer.setContingut(IOUtils.toByteArray(new FileInputStream(fitxerPath)));
+//		fitxer.setContentType("text/xml");
+//		return fitxer;
+//	}
 
 	public List<ServeiXsdDto> findAll(
 			String serveiCodi) {
@@ -87,8 +86,11 @@ public class ServeiXsdHelper {
 				} else if ("solicitud-respuesta.xsd".equals(file.getName())) {
 					dto.setTipus(XsdTipusEnumDto.SOLICITUD_RESPOSTA);
 				}
-				dto.setNomArxiu(file.getName());
-				fitxers.add(dto);
+
+				if (dto.getTipus() != null) {
+					dto.setNomArxiu(file.getName());
+					fitxers.add(dto);
+				}
 			}
 		}
 		return fitxers;
@@ -118,16 +120,16 @@ public class ServeiXsdHelper {
 	}
 	
 	private String getPathPerFitxerXsd(
-			Servicio servei,
+			String serveiCodi,
 			XsdTipusEnumDto tipus) {
 		StringBuilder path = new StringBuilder();
-		path.append(getPathPerServei(servei.getCodCertificado()));
+		path.append(getPathPerServei(serveiCodi));
 		path.append(File.separator);
 		path.append(getXsdTipusNom(tipus));
 		return path.toString();
 	}
 
-	private String getXsdTipusNom(XsdTipusEnumDto tipus) {
+	public String getXsdTipusNom(XsdTipusEnumDto tipus) {
 		switch (tipus) {
 		case PETICIO:
 			return "peticion.xsd";

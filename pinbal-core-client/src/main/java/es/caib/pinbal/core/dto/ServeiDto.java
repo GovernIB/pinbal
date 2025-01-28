@@ -111,6 +111,8 @@ public class ServeiDto extends AbstractIdentificable<Long> implements Serializab
 	
 	private int usuarisAmbPermis;
 
+	private Date dataDarreraActualitzacio;
+
 	public String getAjudaHtml() {
 		String ajudaHtml = ajuda;
 		if (ajudaHtml != null) {

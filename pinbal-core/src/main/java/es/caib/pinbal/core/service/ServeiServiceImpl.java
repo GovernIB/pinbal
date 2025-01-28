@@ -3,33 +3,6 @@
  */
 package es.caib.pinbal.core.service;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.Set;
-
-import javax.annotation.Resource;
-
-import org.apache.commons.lang.StringUtils;
-import org.springframework.beans.BeansException;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
-import org.springframework.context.MessageSource;
-import org.springframework.context.MessageSourceAware;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.security.acls.domain.BasePermission;
-import org.springframework.security.acls.model.AccessControlEntry;
-import org.springframework.security.acls.model.MutableAclService;
-import org.springframework.security.acls.model.Permission;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import es.caib.pinbal.core.dto.ArbreDto;
 import es.caib.pinbal.core.dto.ClauPrivadaDto;
 import es.caib.pinbal.core.dto.ClauPublicaDto;
@@ -74,6 +47,7 @@ import es.caib.pinbal.core.model.ServeiConfig.EntitatTipus;
 import es.caib.pinbal.core.model.ServeiConfig.JustificantTipus;
 import es.caib.pinbal.core.model.ServeiJustificantCamp;
 import es.caib.pinbal.core.model.ServeiRegla;
+import es.caib.pinbal.core.model.ServeiXsd;
 import es.caib.pinbal.core.regles.ReglaHelper;
 import es.caib.pinbal.core.repository.EntitatRepository;
 import es.caib.pinbal.core.repository.EntitatServeiRepository;
@@ -87,6 +61,7 @@ import es.caib.pinbal.core.repository.ServeiConfigRepository;
 import es.caib.pinbal.core.repository.ServeiJustificantCampRepository;
 import es.caib.pinbal.core.repository.ServeiReglaRepository;
 import es.caib.pinbal.core.repository.ServeiRepository;
+import es.caib.pinbal.core.repository.ServeiXsdRepository;
 import es.caib.pinbal.core.service.exception.EntitatNotFoundException;
 import es.caib.pinbal.core.service.exception.NotFoundException;
 import es.caib.pinbal.core.service.exception.ProcedimentNotFoundException;
@@ -105,6 +80,36 @@ import es.scsp.common.domain.core.ClavePublica;
 import es.scsp.common.domain.core.EmisorCertificado;
 import es.scsp.common.domain.core.Servicio;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.StringUtils;
+import org.springframework.beans.BeansException;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
+import org.springframework.context.MessageSource;
+import org.springframework.context.MessageSourceAware;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.security.acls.domain.BasePermission;
+import org.springframework.security.acls.model.AccessControlEntry;
+import org.springframework.security.acls.model.MutableAclService;
+import org.springframework.security.acls.model.Permission;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import javax.annotation.Resource;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Locale;
+import java.util.Set;
 
 /**
  * Implementació dels mètodes per a interactuar amb les funcionalitats SCSP.
@@ -143,6 +148,8 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 	private EntitatServeiRepository entitatServeiRepository;
 	@Resource
 	private ServeiReglaRepository serveiReglaRepository;
+	@Resource
+    private ServeiXsdRepository serveiXsdRepository;
 
 	@Resource
 	private ServeiHelper serveiHelper;
@@ -1370,13 +1377,14 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 
 	@Transactional(readOnly = true)
 	@Override
-	public List<ServeiXsdDto> xsdFindByServei(
-			String serveiCodi) throws IOException, ServeiNotFoundException {
-		log.debug("Obtenint tots els fitxers XSD per a un servei (" +
-				"serveiCodi=" + serveiCodi + ")");
+	public List<ServeiXsdDto> xsdFindByServei(String serveiCodi) throws IOException, ServeiNotFoundException {
+		log.debug("Obtenint tots els fitxers XSD per a un servei (serveiCodi=" + serveiCodi + ")");
 		Servicio servicio = getServicioByCode(serveiCodi);
 
-		return serveiXsdHelper.findAll(servicio.getCodCertificado());
+		List<ServeiXsd> serveiXsds = serveiXsdRepository.findByServei(servicio.getCodCertificado());
+		return dtoMappingHelper.getMapperFacade().mapAsList(serveiXsds, ServeiXsdDto.class);
+
+//		return serveiXsdHelper.findAll(servicio.getCodCertificado());
 	}
 
 	@Transactional(readOnly = true)
@@ -1416,8 +1424,22 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 		log.debug("Esborra un fitxer XSD per a un servei (" +
 				"codi=" + codi + ", " +
 				"tipus=" + tipus + ")");
-		Servicio servei = scspHelper.getServicio(codi);
-		serveiXsdHelper.esborrarXsd(servei, tipus);
+
+		ServeiXsd serveiXsd = serveiXsdRepository.findByServeiAndTipus(codi, tipus);
+		if (serveiXsd != null) {
+			String filePath = serveiXsd.getPath() + File.separator + serveiXsd.getNomArxiu();
+			// Borrar xsd de la taula de XSDs
+			serveiXsdRepository.delete(serveiXsd);
+			// Eliminar l'XSD del disc
+			try {
+				new File(filePath).delete();
+			} catch (Exception e) {
+				log.error("No s'ha eliminat el fitxer físic de disc", e);
+			}
+		}
+
+//		Servicio servei = scspHelper.getServicio(codi);
+//		serveiXsdHelper.esborrarXsd(servei.getCodCertificado(), tipus);
 	}
 
 	@Override
@@ -1425,8 +1447,16 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 		log.debug("Descarrega un fitxer XSD per a un servei (" +
 				"codi=" + codi + ", " +
 				"tipus=" + tipus + ")");
-		Servicio servei = scspHelper.getServicio(codi);
-		return serveiXsdHelper.descarregarXsd(servei, tipus);
+		ServeiXsd serveiXsd = serveiXsdRepository.findByServeiAndTipus(codi, tipus);
+		String filePath = serveiXsd.getPath() + File.separator + serveiXsd.getNomArxiu();
+		FitxerDto fitxer = new FitxerDto();
+		fitxer.setNom(serveiXsd.getNomArxiu());
+		fitxer.setContingut(IOUtils.toByteArray(new FileInputStream(filePath)));
+		fitxer.setContentType("text/xml");
+		return fitxer;
+
+//		Servicio servei = scspHelper.getServicio(codi);
+//		return serveiXsdHelper.descarregarXsd(servei, tipus);
 	}
 
 	@Override
@@ -1434,8 +1464,36 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 		log.debug("Afegeix un fitxer XSD per a un servei (" +
 				"codi=" + codi + ", " +
 				"xsd=" + xsd.getNomArxiu() + ")");
-		Servicio servei = scspHelper.getServicio(codi);
-		serveiXsdHelper.modificarXsd(servei, xsd, contingut);
+
+		ServeiXsd serveiXsd = serveiXsdRepository.findByServeiAndTipus(codi, xsd.getTipus());
+		String nomArxiu = serveiXsdHelper.getXsdTipusNom(xsd.getTipus());
+		String serveiPath = serveiXsdHelper.getPathPerServei(codi);
+
+		if (serveiXsd == null) {
+			serveiXsd = ServeiXsd.builder()
+					.servei(codi)
+					.tipus(xsd.getTipus())
+					.nomArxiu(nomArxiu)
+					.path(serveiPath)
+					.dataModificacio(new Date())
+					.build();
+		} else {
+			File oldFile = new File(serveiXsd.getPath() + File.separator + serveiXsd.getNomArxiu());
+			oldFile.delete();
+			serveiXsd.updateServeiXsd();
+		}
+
+		// Actualitza el fitxer al disc
+		String filePath = serveiPath + File.separator + nomArxiu;
+		File file = new File(filePath);
+		file.getParentFile().mkdirs();
+		FileOutputStream outputStream = new FileOutputStream(filePath);
+		outputStream.write(contingut);
+		outputStream.close();
+		serveiXsdRepository.save(serveiXsd);
+
+//		Servicio servei = scspHelper.getServicio(codi);
+//		serveiXsdHelper.modificarXsd(servei, xsd, contingut);
 	}
 
 	@Transactional(readOnly = true)
@@ -1762,6 +1820,8 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 			dto.setPinbalAddDadesEspecifiques(serveiConfig.isAddDadesEspecifiques());
 			dto.setUseAutoClasse(serveiConfig.isUseAutoClasse());
 			dto.setEnviarSolicitant(serveiConfig.isEnviarSolicitant());
+
+			dto.setDataDarreraActualitzacio(serveiConfig.getLastModifiedDate() != null ? serveiConfig.getLastModifiedDate().toDate() : null);
 		}
 //		Long numeroProcedimentsAssociats = procedimentRepository.countByServei(servicio.getCodCertificado());
 //		dto.setNumeroProcedimentsAssociats(numeroProcedimentsAssociats == null ? 0 : numeroProcedimentsAssociats);
@@ -1918,6 +1978,36 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 	private boolean isGestioXsdActiva(String serveiCodi) {
 		ServeiConfig serveiConfig = serveiConfigRepository.findByServei(serveiCodi);
 		return serveiConfig != null && serveiConfig.isActivaGestioXsd();
+	}
+
+
+	// TODO: BORRAR en versió 1.1.43
+	@Override
+	public void updateFitxersXsd() {
+		if (serveiXsdRepository.count() > 0) {
+			log.info("El mètode updateFitxersXsd() no pot ser utilitzat degut a que ja hi ha entrades a la taula de XSDs.");
+			return;
+		}
+
+		Date ara = new Date();
+		List<Servei> serveis = serveiRepository.findAll();
+
+		for (Servei servei: serveis) {
+			String serveiCodi = servei.getCodi();
+			String serveiPath = serveiXsdHelper.getPathPerServei(serveiCodi);
+
+			List<ServeiXsdDto> serveiXsdDtos = serveiXsdHelper.findAll(serveiCodi);
+			for (ServeiXsdDto serveiXsdDto: serveiXsdDtos) {
+				ServeiXsd serveiXsd = ServeiXsd.builder()
+						.servei(serveiCodi)
+						.tipus(serveiXsdDto.getTipus())
+						.nomArxiu(serveiXsdDto.getNomArxiu())
+						.path(serveiPath)
+						.dataModificacio(ara)
+						.build();
+				serveiXsdRepository.save(serveiXsd);
+			}
+		}
 	}
 
 }

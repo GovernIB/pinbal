@@ -1,12 +1,5 @@
 package es.caib.pinbal.core.service;
 
-import java.io.IOException;
-import java.util.List;
-
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.security.access.prepost.PreAuthorize;
-
 import es.caib.pinbal.core.dto.ArbreDto;
 import es.caib.pinbal.core.dto.ClauPrivadaDto;
 import es.caib.pinbal.core.dto.ClauPublicaDto;
@@ -33,6 +26,12 @@ import es.caib.pinbal.core.service.exception.ServeiBusNotFoundException;
 import es.caib.pinbal.core.service.exception.ServeiCampGrupNotFoundException;
 import es.caib.pinbal.core.service.exception.ServeiCampNotFoundException;
 import es.caib.pinbal.core.service.exception.ServeiNotFoundException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.prepost.PreAuthorize;
+
+import java.io.IOException;
+import java.util.List;
 
 /**
  * Declaració dels mètodes per a interactuar amb les funcionalitats SCSP.
@@ -751,4 +750,8 @@ public interface ServeiService {
 
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_DELEG')")
 	List<CampFormProperties> getGrupsByserveiRegla(String serveiCodi, String[] grupsModificats) throws ServeiNotFoundException;
+
+
+	// TODO: BORRAR en versió 1.1.43
+	void updateFitxersXsd();
 }

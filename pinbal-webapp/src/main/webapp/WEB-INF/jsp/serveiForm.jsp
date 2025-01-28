@@ -43,6 +43,10 @@
 	.h1, .h2, .h3, .h4, .h5, .h6 {
 	    margin: 0px;
 	}
+	.data-info {
+		position: relative;
+		top: 40px;
+	}
 	</style>
 <script>
 
@@ -546,29 +550,28 @@ function showModalXsd(element) {
 							<table id="arxiusXsd" class="table table-striped table-bordered" style="width: 100%">
 							<thead>
 								<tr>
-								<th width="30%"><spring:message code="servei.xsd.camp.tipus" /></th>
-								<th width="60%"><spring:message code="servei.xsd.camp.arxiu" /></th>
-								<th width="10%"></th>
+									<th width="30%"><spring:message code="servei.xsd.camp.tipus" /></th>
+									<th><spring:message code="servei.xsd.camp.arxiu" /></th>
+									<th width="15%"><spring:message code="servei.xsd.camp.data.modificacio" /></th>
+									<th width="1%"></th>
+									<th width="1%"></th>
 								</tr>
 							</thead>
 							<tbody>
 								<c:forEach items="${serveiCommand.fitxersXsd}" var="registre">
 						   			<tr>
+										<td>${ registre.tipus }</td>
+										<td>${registre.nomArxiu}</td>
+										<td>${registre.dataModificacioString}</td>
 										<td>
-										${ registre.tipus }
-										</td>
-										<td>
-										<div style="width: 90%; display: inline-block;">${registre.nomArxiu}</div>
-										<div style="width: 10%; display: inline;">
 											<a class="btn btn-default btn-sm" href="<c:url value="/servei/${serveiCommand.codi}/xsd/${registre.tipus}/download"/>">
 												<i class="fas fa-download"></i>&nbsp;<spring:message code="comu.boto.baixar"/>
 											</a>
-										</div>
 										</td>
 										<td>
-										<button class="btn btn-default" onclick="esborraFitxerXsd('${registre.tipus}');" type="button">
-											<i class="fas fa-trash-alt"></i>&nbsp;<spring:message code="comu.boto.esborrar"/>
-										</button>
+											<button class="btn btn-default" onclick="esborraFitxerXsd('${registre.tipus}');" type="button">
+												<i class="fas fa-trash-alt"></i>&nbsp;<spring:message code="comu.boto.esborrar"/>
+											</button>
 										</td>
 									</tr>
 								</c:forEach>
@@ -633,6 +636,7 @@ function showModalXsd(element) {
 				</div>
 			</div>
 		</fieldset>
+		<div class="data-info"><spring:message code="servei.form.camp.data.ultima.actualitzacio"/>: ${serveiCommand.dataDarreraActualitzacioString} </div>
 		<div class="container-fluid">
 			<div class="row">
 				<div class="pull-right">

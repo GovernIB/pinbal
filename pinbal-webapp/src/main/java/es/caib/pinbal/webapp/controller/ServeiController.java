@@ -151,19 +151,17 @@ public class ServeiController extends BaseController {
 			@PathVariable String serveiCodi,
 			Model model) throws ServeiNotFoundException, IOException {
 		ServeiDto serveiDto = null;
-		List<ServeiXsdDto> llistatFitxers = new ArrayList<ServeiXsdDto>();
 		if (serveiCodi != null) {
 			serveiDto = serveiService.findAmbCodiPerAdminORepresentant(serveiCodi);
-			llistatFitxers = serveiService.xsdFindByServei(serveiCodi);
 		}
 		if (serveiDto != null) {
-			serveiDto.setFitxersXsd(llistatFitxers);
+			serveiDto.setFitxersXsd(serveiService.xsdFindByServei(serveiCodi));
 			model.addAttribute(ServeiCommand.asCommand(serveiDto));
 		} else {
 			model.addAttribute(new ServeiCommand(true));
 		}
 		model.addAttribute("serveiXsdCommand", new ServeiXsdCommand());
-		
+
 		if (serveiDto != null) {
 			model.addAttribute("serveisBus", serveiService.findServeisBus(serveiDto.getCodi()));
 		}
@@ -602,6 +600,7 @@ public class ServeiController extends BaseController {
 		serveiService.xsdDelete(
 				serveiCodi,
 				tipus);
+
 		AlertHelper.success(
 				request, 
 				getMessage(
