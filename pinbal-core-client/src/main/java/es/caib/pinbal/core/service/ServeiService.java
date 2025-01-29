@@ -663,6 +663,14 @@ public interface ServeiService {
 			byte[] contingut) throws IOException;
 
 	/**
+	 * Actualitza la versió del servei
+	 *
+	 * @param codi Codi del servei
+	 */
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	public void updateVersio(String codi);
+
+	/**
 	 * Retorna tots els rols configurats als serveis.
 	 * 
 	 * @return Un llistat amb tots els rols.

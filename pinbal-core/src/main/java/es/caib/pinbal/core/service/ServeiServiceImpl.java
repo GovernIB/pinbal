@@ -1496,6 +1496,18 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 //		serveiXsdHelper.modificarXsd(servei, xsd, contingut);
 	}
 
+	@Transactional
+	@Override
+	public void updateVersio(String codi) {
+		try {
+			ServeiConfig serveiConfig = serveiConfigRepository.findByServei(codi);
+			serveiConfig.setVersion(serveiConfig.getVersion() + 1);
+			serveiConfigRepository.save(serveiConfig);
+		} catch (Exception e) {
+			log.error("No s'ha pogut actualitzar la data de modificació del serveiConfig", e);
+		}
+	}
+
 	@Transactional(readOnly = true)
 	@Override
 	public List<ServeiDto> findAll() {

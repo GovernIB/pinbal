@@ -583,11 +583,6 @@ public class ServeiController extends BaseController {
 			@PathVariable String serveiCodi,
 			Model model) throws ServeiNotFoundException {
 		model.addAttribute("serveiCodi", serveiCodi);
-//		model.addAttribute(
-//				"xsdTipusEnumOptions",
-//				HtmlSelectOptionHelper.getOptionsForEnum(
-//						XsdTipusEnumDto.class,
-//						"xsd.tipus.enum."));
 		return xsdGet(request, serveiCodi, null, model);
 	}
 	
@@ -597,9 +592,11 @@ public class ServeiController extends BaseController {
 			HttpServletRequest request,
 			@PathVariable XsdTipusEnumDto tipus,
 			@PathVariable String serveiCodi) throws IOException {
-		serveiService.xsdDelete(
-				serveiCodi,
-				tipus);
+
+		// Eliminar el fitxer XSD
+		serveiService.xsdDelete(serveiCodi, tipus);
+		// Actualitzar data al modificar xsd
+		serveiService.updateVersio(serveiCodi);
 
 		AlertHelper.success(
 				request, 
@@ -665,6 +662,8 @@ public class ServeiController extends BaseController {
 		}
 		ServeiXsdDto dto = ServeiXsdCommand.asDto(command);
 		serveiService.xsdCreate(command.getCodi(), dto, command.getContingut().getBytes());
+		// Actualitzar data al modificar xsd
+		serveiService.updateVersio(serveiCodi);
 		if (!llistatTipusFitxersXsd.contains(dto.getTipus())) {
 			AlertHelper.success(
 					request, 

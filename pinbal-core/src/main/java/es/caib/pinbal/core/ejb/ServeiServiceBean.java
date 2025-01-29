@@ -387,6 +387,12 @@ public class ServeiServiceBean implements ServeiService {
 	}
 
 	@Override
+	@RolesAllowed("PBL_ADMIN")
+	public void updateVersio(String codi) {
+		delegate.updateVersio(codi);
+	}
+
+	@Override
 	public void saveActiu(
 			String serveiCodi,
 			boolean actiu) {
