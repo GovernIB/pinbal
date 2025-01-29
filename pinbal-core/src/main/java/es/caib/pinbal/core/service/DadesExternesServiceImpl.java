@@ -6,12 +6,14 @@ package es.caib.pinbal.core.service;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import es.caib.pinbal.core.dto.IdiomaEnumDto;
 import es.caib.pinbal.core.dto.dadesexternes.Municipi;
 import es.caib.pinbal.core.dto.dadesexternes.Pais;
 import es.caib.pinbal.core.dto.dadesexternes.PaisML;
 import es.caib.pinbal.core.dto.dadesexternes.Provincia;
 import es.caib.pinbal.core.dto.dadesexternes.ProvinciaML;
 import es.caib.pinbal.core.helper.ConfigHelper;
+import es.caib.pinbal.core.helper.UsuariHelper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,6 +39,60 @@ public class DadesExternesServiceImpl implements DadesExternesService {
 
 	@Autowired
 	private ConfigHelper configHelper;
+	@Autowired
+	private UsuariHelper usuariHelper;
+
+	@Override
+	public List<Pais> findPaisos() {
+		log.debug("Cercant tots els paisos");
+		List<Pais> paisos = new ArrayList<>();
+		try {
+			URL url = new URL(getDadesComunesBaseUrl() + "/services/paisos/format/JSON");
+			HttpURLConnection httpConnection = (HttpURLConnection)url.openConnection();
+			httpConnection.setRequestMethod("GET");
+			httpConnection.setDoInput(true);
+			httpConnection.setDoOutput(true);
+			byte[] response = IOUtils.toByteArray(httpConnection.getInputStream());
+
+			ObjectMapper mapper = new ObjectMapper();
+			mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
+			if (response != null && response.length > 0) {
+				IdiomaEnumDto idiomaActual = usuariHelper.getIdiomaUsuariActual();
+
+				List<PaisML> paisosML = mapper.readValue(response, new TypeReference<List<PaisML>>() {});
+				for(PaisML paisML: paisosML) {
+					String nom = getPaisNom(paisML, idiomaActual);
+					paisos.add(Pais.builder()
+							.codi_numeric(paisML.getCodi_numeric())
+							.alpha2(paisML.getAlpha2())
+							.alpha3(paisML.getAlpha3())
+							.nom(nom)
+							.build());
+				}
+				final Collator collator = Collator.getInstance();
+				collator.setStrength(Collator.PRIMARY);
+				Collections.sort(paisos, new Comparator<Pais>() {
+					@Override
+					public int compare(Pais p1, Pais p2) {
+						return collator.compare(p1.getNom(), p2.getNom());
+					}
+				});
+			}
+			return paisos;
+		} catch (Exception ex) {
+			log.error("Error al obtenir les províncies de la font externa", ex);
+			return null;
+		}
+	}
+
+	private String getPaisNom(PaisML paisML, IdiomaEnumDto idiomaActual) {
+
+		if (IdiomaEnumDto.ES.equals(idiomaActual)) {
+			return paisML.getNom_es() != null ? paisML.getNom_es() : paisML.getNom();
+		}
+
+		return paisML.getNom_ca() != null ? paisML.getNom_ca() : paisML.getNom();
+	}
 
 	@Override
 	public List<Provincia> findProvincies() {
@@ -54,9 +110,11 @@ public class DadesExternesServiceImpl implements DadesExternesService {
 			ObjectMapper mapper = new ObjectMapper();
 			mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
 			if (response != null && response.length > 0) {
+				IdiomaEnumDto idiomaActual = usuariHelper.getIdiomaUsuariActual();
+
 				List<ProvinciaML> provinciesML = mapper.readValue(response, new TypeReference<List<ProvinciaML>>() {});
 				for(ProvinciaML provinciaML: provinciesML) {
-					String nom = provinciaML.getNom() != null && !provinciaML.getNom().isEmpty() ? provinciaML.getNom() : provinciaML.getNom_ca();
+					String nom = getProvinciaNom(provinciaML, idiomaActual);
 					provincies.add(Provincia.builder()
 							.codi(provinciaML.getCodi())
 							.nom(nom)
@@ -76,6 +134,15 @@ public class DadesExternesServiceImpl implements DadesExternesService {
 			log.error("Error al obtenir les províncies de la font externa", ex);
 			return null;
 		}
+	}
+
+	private String getProvinciaNom(ProvinciaML provinciaML, IdiomaEnumDto idiomaActual) {
+
+		if (IdiomaEnumDto.ES.equals(idiomaActual)) {
+			return provinciaML.getNom_es() != null ? provinciaML.getNom_es() : provinciaML.getNom();
+		}
+
+		return provinciaML.getNom_ca() != null ? provinciaML.getNom_ca() : provinciaML.getNom();
 	}
 
 	@Override
@@ -120,47 +187,6 @@ public class DadesExternesServiceImpl implements DadesExternesService {
 				});
 			}
 			return municipis;
-		} catch (Exception ex) {
-			log.error("Error al obtenir les províncies de la font externa", ex);
-			return null;
-		}
-	}
-
-	@Override
-	public List<Pais> findPaisos() {
-		log.debug("Cercant tots els paisos");
-		List<Pais> paisos = new ArrayList<>();
-		try {
-			URL url = new URL(getDadesComunesBaseUrl() + "/services/paisos/format/JSON");
-			HttpURLConnection httpConnection = (HttpURLConnection)url.openConnection();
-			httpConnection.setRequestMethod("GET");
-			httpConnection.setDoInput(true);
-			httpConnection.setDoOutput(true);
-			byte[] response = IOUtils.toByteArray(httpConnection.getInputStream());
-
-			ObjectMapper mapper = new ObjectMapper();
-			mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
-			if (response != null && response.length > 0) {
-				List<PaisML> paisosML = mapper.readValue(response, new TypeReference<List<PaisML>>() {});
-				for(PaisML paisML: paisosML) {
-					String nom = paisML.getNom() != null && !paisML.getNom().isEmpty() ? paisML.getNom() : paisML.getNom_ca();
-					paisos.add(Pais.builder()
-							.codi_numeric(paisML.getCodi_numeric())
-							.alpha2(paisML.getAlpha2())
-							.alpha3(paisML.getAlpha3())
-							.nom(nom)
-							.build());
-				}
-				final Collator collator = Collator.getInstance();
-				collator.setStrength(Collator.PRIMARY);
-				Collections.sort(paisos, new Comparator<Pais>() {
-					@Override
-					public int compare(Pais p1, Pais p2) {
-						return collator.compare(p1.getNom(), p2.getNom());
-					}
-				});
-			}
-			return paisos;
 		} catch (Exception ex) {
 			log.error("Error al obtenir les províncies de la font externa", ex);
 			return null;

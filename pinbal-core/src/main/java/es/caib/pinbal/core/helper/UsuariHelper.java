@@ -3,12 +3,14 @@
  */
 package es.caib.pinbal.core.helper;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-
-import javax.annotation.Resource;
-
+import es.caib.pinbal.core.dto.IdiomaEnumDto;
+import es.caib.pinbal.core.helper.PermisosHelper.ObjectIdentifierExtractor;
+import es.caib.pinbal.core.model.ProcedimentServei;
+import es.caib.pinbal.core.model.Usuari;
+import es.caib.pinbal.core.repository.ProcedimentServeiRepository;
+import es.caib.pinbal.core.repository.UsuariRepository;
+import es.caib.pinbal.plugins.DadesUsuari;
+import es.caib.pinbal.plugins.SistemaExternException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.acls.domain.BasePermission;
@@ -21,13 +23,10 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
-import es.caib.pinbal.core.helper.PermisosHelper.ObjectIdentifierExtractor;
-import es.caib.pinbal.core.model.ProcedimentServei;
-import es.caib.pinbal.core.model.Usuari;
-import es.caib.pinbal.core.repository.ProcedimentServeiRepository;
-import es.caib.pinbal.core.repository.UsuariRepository;
-import es.caib.pinbal.plugins.DadesUsuari;
-import es.caib.pinbal.plugins.SistemaExternException;
+import javax.annotation.Resource;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 
 /**
@@ -204,6 +203,22 @@ public class UsuariHelper {
 	}
 
 
+	public IdiomaEnumDto getIdiomaUsuariActual() {
+		// Cal tenir present que l'idioma per defecte és el català
+		Usuari usuari = getUsuariAutenticat();
+		if (usuari == null)
+			return IdiomaEnumDto.CA;
+
+		String idioma = usuari.getIdioma();
+		if (idioma == null || idioma.isEmpty())
+			return IdiomaEnumDto.CA;
+
+		try {
+			return IdiomaEnumDto.valueOf(idioma.toUpperCase());
+		} catch (IllegalArgumentException e) {
+			return IdiomaEnumDto.CA;
+		}
+	}
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(UsuariHelper.class);
 
