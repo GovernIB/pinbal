@@ -8,7 +8,9 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import es.caib.pinbal.core.dto.dadesexternes.Municipi;
 import es.caib.pinbal.core.dto.dadesexternes.Pais;
+import es.caib.pinbal.core.dto.dadesexternes.PaisML;
 import es.caib.pinbal.core.dto.dadesexternes.Provincia;
+import es.caib.pinbal.core.dto.dadesexternes.ProvinciaML;
 import es.caib.pinbal.core.helper.ConfigHelper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
@@ -42,7 +44,7 @@ public class DadesExternesServiceImpl implements DadesExternesService {
 
 		List<Provincia> provincies = new ArrayList<>();
 		try {
-			URL url = new URL(getDadesComunesBaseUrl() + "/services/provincies/format/JSON/idioma/ca");
+			URL url = new URL(getDadesComunesBaseUrl() + "/services/provincies/format/JSON");
 			HttpURLConnection httpConnection = (HttpURLConnection)url.openConnection();
 			httpConnection.setRequestMethod("GET");
 			httpConnection.setDoInput(true);
@@ -52,7 +54,14 @@ public class DadesExternesServiceImpl implements DadesExternesService {
 			ObjectMapper mapper = new ObjectMapper();
 			mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
 			if (response != null && response.length > 0) {
-				provincies = mapper.readValue(response, new TypeReference<List<Provincia>>() {});
+				List<ProvinciaML> provinciesML = mapper.readValue(response, new TypeReference<List<ProvinciaML>>() {});
+				for(ProvinciaML provinciaML: provinciesML) {
+					String nom = provinciaML.getNom() != null && !provinciaML.getNom().isEmpty() ? provinciaML.getNom() : provinciaML.getNom_ca();
+					provincies.add(Provincia.builder()
+							.codi(provinciaML.getCodi())
+							.nom(nom)
+							.build());
+				}
 				final Collator collator = Collator.getInstance();
 				collator.setStrength(Collator.PRIMARY);
 				Collections.sort(provincies, new Comparator<Provincia>() {
@@ -122,7 +131,7 @@ public class DadesExternesServiceImpl implements DadesExternesService {
 		log.debug("Cercant tots els paisos");
 		List<Pais> paisos = new ArrayList<>();
 		try {
-			URL url = new URL(getDadesComunesBaseUrl() + "/services/paisos/format/JSON/idioma/ca");
+			URL url = new URL(getDadesComunesBaseUrl() + "/services/paisos/format/JSON");
 			HttpURLConnection httpConnection = (HttpURLConnection)url.openConnection();
 			httpConnection.setRequestMethod("GET");
 			httpConnection.setDoInput(true);
@@ -132,7 +141,16 @@ public class DadesExternesServiceImpl implements DadesExternesService {
 			ObjectMapper mapper = new ObjectMapper();
 			mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
 			if (response != null && response.length > 0) {
-				paisos = mapper.readValue(response, new TypeReference<List<Pais>>() {});
+				List<PaisML> paisosML = mapper.readValue(response, new TypeReference<List<PaisML>>() {});
+				for(PaisML paisML: paisosML) {
+					String nom = paisML.getNom() != null && !paisML.getNom().isEmpty() ? paisML.getNom() : paisML.getNom_ca();
+					paisos.add(Pais.builder()
+							.codi_numeric(paisML.getCodi_numeric())
+							.alpha2(paisML.getAlpha2())
+							.alpha3(paisML.getAlpha3())
+							.nom(nom)
+							.build());
+				}
 				final Collator collator = Collator.getInstance();
 				collator.setStrength(Collator.PRIMARY);
 				Collections.sort(paisos, new Comparator<Pais>() {
