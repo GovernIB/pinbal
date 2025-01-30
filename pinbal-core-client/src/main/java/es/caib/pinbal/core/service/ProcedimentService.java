@@ -10,6 +10,7 @@ import es.caib.pinbal.core.dto.PaginacioAmbOrdreDto;
 import es.caib.pinbal.core.dto.ProcedimentDto;
 import es.caib.pinbal.core.dto.ProcedimentServeiNomDto;
 import es.caib.pinbal.core.dto.ProcedimentServeiSimpleDto;
+import es.caib.pinbal.core.dto.ServeiDto;
 import es.caib.pinbal.core.service.exception.EntitatNotFoundException;
 import es.caib.pinbal.core.service.exception.EntitatUsuariNotFoundException;
 import es.caib.pinbal.core.service.exception.ProcedimentNotFoundException;
@@ -360,4 +361,13 @@ public interface ProcedimentService {
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public List<ProcedimentDto> findAll();
 
+	/**
+	 * Obté tots els serveis actius que encara no han estat associats al procediment.
+	 * Els objectes ServeiDto no estan emplenats completament. ünicament tenen emplenats els camps codi i descripció
+	 *
+	 * @param procedimentId identificador del procediment
+	 * @return Llistat de codi i nom dels serveis
+	 */
+	@PreAuthorize("hasRole('ROLE_REPRES')")
+	List<ServeiDto> serveisDisponiblesPerProcediment(Long procedimentId);
 }

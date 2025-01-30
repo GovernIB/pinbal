@@ -26,17 +26,18 @@
 <c:url var="formAction" value="/modal/procediment/${procedimentId}/servei/save"/>
 <!--  TODO per desar -->
 <form:form action="${formAction}" method="post" cssClass="form-horizontal" commandName="procedimentServeiCommand" role="form">
-<%-- 	<form:hidden path="serveiCodi"/> --%>
-	<pbl:inputSuggest
+	<pbl:inputSelect
 			name="serveiCodi"
-			urlConsultaInicial="${urlConsultaProcedimentServei}"
-			urlConsultaLlistat="${urlConsultaProcedimentServeis}"
+			optionItems="${serveis}"
+			optionValueAttribute="codi"
+			optionTextAttribute="codiNom"
+			emptyOption="false"
+			optionMinimumResultsForSearch="0"
 			textKey="admin.consulta.list.filtre.servei"
-			suggestValue="codi"
-			suggestText="codiNom"
-			inline="false"
+			formatResult="formatState"
+			formatSelection="formatState"
 			labelSize="2"/>
-	<div style="height: 160px;"></div>
+	<div style="height: 220px;"></div>
 
 	<div id="modal-botons">
 		<button type="submit" class="btn btn-primary"><span class="fa fa-save"></span> <spring:message code="comu.boto.guardar"/></button>
@@ -45,33 +46,19 @@
 </form:form>
 
 <script>
-	///
-	function getServeiData(codi) {
-		$.ajax({
-			url: '${urlConsultaProcedimentServei}/' + codi,
-			type: 'GET',
-			success: function (resposta) {
-				console.log("He rebut del servidor: " + resposta.descripcio);
-				$('#serveiNom').val(resposta.descripcio);
-			},
-			error: function (error) {
-				console.error(error);
-			}
-		});
+	var serveisActius = {};
+	<c:forEach items="${serveis}" var="servei">
+	serveisActius["${servei.codi}"] = ${servei.actiu};
+	</c:forEach>
+
+	function formatState(servei) {
+		debugger;
+		if (!servei.id) {
+			return servei.text;
+		} else {
+			return serveisActius[servei.id] ? servei.text : $('<span title="<spring:message code="servei.inactiu"/>">' + servei.text + ' <span class="fa fa-exclamation-triangle text-danger"></span></span>');
+		}
 	}
-
-	$(document).ready(function() {
-
-		$('#serveiCodi').change(function() {
-			console.log("Valor canviat a: " + $(this).val());
-			const codi = $(this).val();
-			if (codi) {
-				getServeiData(codi);
-			} else {
-				$('#nom').val();
-			}
-		});	
-	});
 </script>
 </body>
 </html>

@@ -126,10 +126,9 @@
 					optionTextAttribute="nom" emptyOption="true" />
 			</div>
 			<div class="col-md-2">	
-				<c:set var="campPath" value="activa"/>
 				<spring:message var="trueValue" code="servei.list.filtre.camp.actiu.yes"/>
 				<spring:message var="falseValue" code="servei.list.filtre.camp.actiu.no"/>
-				<form:select path="${campPath}" cssClass="form-control" data-toggle="select2" data-minimumresults="5">
+				<form:select path="actiu" cssClass="form-control" data-toggle="select2" data-minimumresults="5">
 					<option value=""><spring:message code="comu.opcio.sense.definir"/></option>
 					<form:option value="true">${trueValue}</form:option>
 					<form:option value="false">${falseValue}</form:option>

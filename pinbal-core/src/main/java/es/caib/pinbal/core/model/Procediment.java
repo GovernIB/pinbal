@@ -131,12 +131,13 @@ public class Procediment extends PinbalAuditable<Long> {
 	public List<ProcedimentServeiSimpleDto> getServeisActius() {
 		List<ProcedimentServeiSimpleDto> resposta = new ArrayList<ProcedimentServeiSimpleDto>();
 		for (ProcedimentServei servei: serveis) {
-			ProcedimentServeiSimpleDto nodeProcedimentServei = new ProcedimentServeiSimpleDto();
-			nodeProcedimentServei.setProcedimentCodi(servei.getProcedimentCodi());
-			nodeProcedimentServei.setServeiCodi(servei.getServei());
-			nodeProcedimentServei.setActiu(servei.isActiu());
-			
-			resposta.add(nodeProcedimentServei);
+			if (servei.isActiu()) {
+				ProcedimentServeiSimpleDto nodeProcedimentServei = new ProcedimentServeiSimpleDto();
+				nodeProcedimentServei.setProcedimentCodi(servei.getProcedimentCodi());
+				nodeProcedimentServei.setServeiCodi(servei.getServei());
+				nodeProcedimentServei.setActiu(servei.isActiu());
+				resposta.add(nodeProcedimentServei);
+			}
 		}
 		return resposta;
 	}

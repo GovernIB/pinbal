@@ -88,6 +88,7 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.MessageSource;
 import org.springframework.context.MessageSourceAware;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.acls.domain.BasePermission;
 import org.springframework.security.acls.model.AccessControlEntry;
@@ -106,9 +107,11 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -432,17 +435,17 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 			String codi,
 			String descripcio,
 			String emisor,
-			Boolean activa,
+			Boolean actiu,
 			EntitatDto entitat,
 			ProcedimentDto procediment,
 			Pageable pageable) {
 		log.debug("Consulta de serveis segons filtre (codi=" + codi + ", descripcio=" + descripcio + ""
-				+ "emisor=" + emisor + " activa=" + activa + ")");
+				+ "emisor=" + emisor + " actiu=" + actiu + ")");
 		List<String> serveisEntitat = entitatServeiRepository.findServeisByEntitatId(entitat.getId());
-		List<ProcedimentServei> serveisProcediment = procedimentServeiRepository.findServeisProcediment(
-				entitatRepository.findByCodi(entitat.getCodi()),
-				procedimentRepository.findOne(procediment.getId())
-		);
+		if (serveisEntitat == null || serveisEntitat.isEmpty()) {
+			return new PageImpl<>(new ArrayList<ServeiDto>(), pageable, 0);
+		}
+
 		List<String> serveisProcedimentActiusIds = procedimentServeiRepository.findServeisProcedimenActiustServeisIds(
 				entitatRepository.findByCodi(entitat.getCodi()),
 				procedimentRepository.findOne(procediment.getId())
@@ -459,26 +462,46 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 				descripcio,
 				emisor == null || emisor.length() == 0,
 				(emisor != null && emisor.length() > 0) ? Long.parseLong(emisor) : null,
-				activa == null,
-				activa,
+				actiu == null,
+				actiu,
 				pageable
 		);
 
+		List<ProcedimentServei> serveisProcediment = procedimentServeiRepository.findServeisProcediment(
+				entitatRepository.findByCodi(entitat.getCodi()),
+				procedimentRepository.findOne(procediment.getId())
+		);
+		List<ServeiConfig> serveisConfig = serveiConfigRepository.findByServeiIn(serveisEntitat);
+
+		Map<String, Object[]> mapServeisProcedient = new HashMap<>();
+		for (ProcedimentServei procedimentServei: serveisProcediment) {
+			Object[] element = new Object[3];
+			element[0] = procedimentServei.getId();
+			element[1] = procedimentServei.getProcediment().getCodi();
+			mapServeisProcedient.put(procedimentServei.getServei(), element);
+		}
+		for (ServeiConfig config: serveisConfig) {
+			if (mapServeisProcedient.containsKey(config.getServei())) {
+				Object[] element = mapServeisProcedient.get(config.getServei());
+				element[2] = config.isActiu();
+			}
+		}
+
 		Page<ServeiDto> paginaDtos = dtoMappingHelper.pageEntities2pageDto(paginaServeis, ServeiDto.class, pageable);
 		for (ServeiDto servei: paginaDtos.getContent()) {
-			for (ProcedimentServei procedimentServei: serveisProcediment) {
-				if (servei.getCodi().equals(procedimentServei.getServei())) {
-					servei.setActiu(procedimentServei.isActiu());
-					servei.setProcedimentCodi(procedimentServei.getProcediment().getCodi());
-					
-					List<AccessControlEntry> aces = PermisosHelper.getAclSids(
-							ProcedimentServei.class,
-							procedimentServei.getId(),
-							aclService);					
-					servei.setUsuarisAmbPermis(aces.size());					
-					break;
+			if (mapServeisProcedient.containsKey(servei.getCodi())) {
+				Long procedimetServeiId = (Long) mapServeisProcedient.get(servei.getCodi())[0];
+				String procedimentCodi = (String) mapServeisProcedient.get(servei.getCodi())[1];
+				boolean serveiActiu = (boolean) mapServeisProcedient.get(servei.getCodi())[2];
+
+				servei.setActiu(serveiActiu);
+				servei.setProcedimentCodi(procedimentCodi);
+				List<AccessControlEntry> aces = PermisosHelper.getAclSids(
+						ProcedimentServei.class,
+						procedimetServeiId,
+						aclService);
+				servei.setUsuarisAmbPermis(aces != null ? aces.size() : 0);
 				}
-			}
 		}
 		return paginaDtos;
 	}

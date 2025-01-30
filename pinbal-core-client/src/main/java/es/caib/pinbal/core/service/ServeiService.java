@@ -95,7 +95,7 @@ public interface ServeiService {
 	 * @param codi Codi a cercar.
 	 * @param descripcio Nom a cercar.
 	 * @param emisor Emisor a cercar.
-	 * @param activa Si cercar actius (true) o inactius (false).
+	 * @param actiu Si cercar actius (true) o inactius (false).
 	 * @param entitat Entitat de la sessió
 	 * @param procediment Procediment al que es volen consultar els serveis.
 	 * @param pageable
@@ -107,7 +107,7 @@ public interface ServeiService {
 			String codi,
 			String descripcio,
 			String emisor,
-			Boolean activa,
+			Boolean actiu,
 			EntitatDto entitat,
 			ProcedimentDto procediment,
 			Pageable pageable);

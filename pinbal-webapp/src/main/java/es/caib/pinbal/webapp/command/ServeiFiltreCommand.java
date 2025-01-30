@@ -14,7 +14,7 @@ public class ServeiFiltreCommand {
 	private String codi;
 	private String descripcio;
 	private String emissor;
-	private Boolean activa;
+	private Boolean actiu;
 	private String scspVersionEsquema;
 
 	// Elimina els espais en els camps de cerca

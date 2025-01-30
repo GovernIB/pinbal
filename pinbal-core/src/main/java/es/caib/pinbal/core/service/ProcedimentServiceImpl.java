@@ -10,6 +10,7 @@ import es.caib.pinbal.core.dto.PaginacioAmbOrdreDto;
 import es.caib.pinbal.core.dto.ProcedimentDto;
 import es.caib.pinbal.core.dto.ProcedimentServeiNomDto;
 import es.caib.pinbal.core.dto.ProcedimentServeiSimpleDto;
+import es.caib.pinbal.core.dto.ServeiDto;
 import es.caib.pinbal.core.helper.DtoMappingHelper;
 import es.caib.pinbal.core.helper.PaginacioHelper;
 import es.caib.pinbal.core.helper.PermisosHelper;
@@ -22,18 +23,22 @@ import es.caib.pinbal.core.model.EntitatUsuari;
 import es.caib.pinbal.core.model.OrganGestor;
 import es.caib.pinbal.core.model.Procediment;
 import es.caib.pinbal.core.model.ProcedimentServei;
+import es.caib.pinbal.core.model.Servei;
 import es.caib.pinbal.core.repository.EntitatRepository;
 import es.caib.pinbal.core.repository.EntitatServeiRepository;
 import es.caib.pinbal.core.repository.EntitatUsuariRepository;
 import es.caib.pinbal.core.repository.OrganGestorRepository;
 import es.caib.pinbal.core.repository.ProcedimentRepository;
 import es.caib.pinbal.core.repository.ProcedimentServeiRepository;
+import es.caib.pinbal.core.repository.ServeiConfigRepository;
+import es.caib.pinbal.core.repository.ServeiRepository;
 import es.caib.pinbal.core.service.exception.EntitatNotFoundException;
 import es.caib.pinbal.core.service.exception.EntitatUsuariNotFoundException;
 import es.caib.pinbal.core.service.exception.ProcedimentNotFoundException;
 import es.caib.pinbal.core.service.exception.ProcedimentServeiNotFoundException;
 import es.caib.pinbal.core.service.exception.ServeiNotFoundException;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -80,6 +85,8 @@ public class ProcedimentServiceImpl implements ProcedimentService {
 	@Resource
 	private OrganGestorRepository organGestorRepository;
 	@Resource
+    private ServeiRepository serveiRepository;
+	@Resource
 	private DtoMappingHelper dtoMappingHelper;
 
 	@Resource
@@ -89,6 +96,8 @@ public class ProcedimentServiceImpl implements ProcedimentService {
 
 	@Resource
 	private PaginacioHelper paginacioHelper;
+    @Autowired
+    private ServeiConfigRepository serveiConfigRepository;
 
 	@Transactional(rollbackFor = EntitatNotFoundException.class)
 	@Override
@@ -785,5 +794,23 @@ public class ProcedimentServiceImpl implements ProcedimentService {
 		return dtoMappingHelper.getMapperFacade().mapAsList(
 				procedimentRepository.findAll(),
 				ProcedimentDto.class);
+	}
+
+	@Transactional(readOnly = true)
+	@Override
+	public List<ServeiDto> serveisDisponiblesPerProcediment(Long procedimentId) {
+		List<ServeiDto> serveisDto = new ArrayList<>();
+
+		List<Servei> serveisDisponibles = serveiRepository.findActiuNotInProcediment(procedimentId);
+		if (serveisDisponibles == null)
+			return serveisDto;
+
+		List<String> serveisInactius = serveiConfigRepository.findByActiuFalse();
+
+		for (Servei s: serveisDisponibles) {
+			boolean serveiActiu = !serveisInactius.contains(s.getCodi());
+			serveisDto.add(ServeiDto.builder().id(s.getId()).codi(s.getCodi()).descripcio(s.getDescripcio()).actiu(serveiActiu).build());
+		}
+		return serveisDto;
 	}
 }

@@ -127,14 +127,14 @@ public class ServeiController extends BaseController {
 		
 		if (command == null) {
 			command = new ServeiFiltreCommand();
-			command.setActiva(true);
+			command.setActiu(true);
 		}
 		
 		Page<ServeiDto> page = serveiService.findAmbFiltrePaginat(
 				command.getCodi(),
 				command.getDescripcio(),
 				command.getEmissor(),
-				command.getActiva(),				
+				command.getActiu(),
 				command.getScspVersionEsquema(),
 				serverSideRequest.toPageable());
 
@@ -980,7 +980,7 @@ public class ServeiController extends BaseController {
 				SESSION_ATTRIBUTE_FILTRE);
 		if (command == null) {
 			command = new ServeiFiltreCommand();
-			command.setActiva(true);
+			command.setActiu(true);
 		}
 		command.eliminarEspaisCampsCerca();
 		model.addAttribute(command);

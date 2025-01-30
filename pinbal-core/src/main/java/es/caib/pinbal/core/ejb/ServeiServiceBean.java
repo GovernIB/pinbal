@@ -126,11 +126,11 @@ public class ServeiServiceBean implements ServeiService {
 			String codi,
 			String descripcio,
 			String emisor,
-			Boolean activa,
+			Boolean actiu,
 			EntitatDto entitat,
 			ProcedimentDto procediment,
 			Pageable pageable) {
-		return delegate.findAmbFiltrePaginat(codi, descripcio, emisor, activa, entitat, procediment, pageable);
+		return delegate.findAmbFiltrePaginat(codi, descripcio, emisor, actiu, entitat, procediment, pageable);
 	}
 	
 	@Override

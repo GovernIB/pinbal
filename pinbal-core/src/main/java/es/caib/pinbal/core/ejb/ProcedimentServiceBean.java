@@ -10,6 +10,7 @@ import es.caib.pinbal.core.dto.PaginacioAmbOrdreDto;
 import es.caib.pinbal.core.dto.ProcedimentDto;
 import es.caib.pinbal.core.dto.ProcedimentServeiNomDto;
 import es.caib.pinbal.core.dto.ProcedimentServeiSimpleDto;
+import es.caib.pinbal.core.dto.ServeiDto;
 import es.caib.pinbal.core.service.ProcedimentService;
 import es.caib.pinbal.core.service.exception.EntitatNotFoundException;
 import es.caib.pinbal.core.service.exception.EntitatUsuariNotFoundException;
@@ -220,5 +221,11 @@ public class ProcedimentServiceBean implements ProcedimentService {
 	public List<ProcedimentDto> findAll() {
 		return delegate.findAll();
 	}
+
+    @Override
+	@RolesAllowed("PBL_REPRES")
+    public List<ServeiDto> serveisDisponiblesPerProcediment(Long procedimentId) {
+        return delegate.serveisDisponiblesPerProcediment(procedimentId);
+    }
 
 }

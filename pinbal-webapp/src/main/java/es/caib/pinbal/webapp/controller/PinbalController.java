@@ -68,6 +68,8 @@ public class PinbalController extends BaseController {
 		return "Done";
 	}
 
+
+	// TODO: BORRAR en versió 1.1.43
 	@PostConstruct
 	public void init() {
 		serveiService.updateFitxersXsd();
