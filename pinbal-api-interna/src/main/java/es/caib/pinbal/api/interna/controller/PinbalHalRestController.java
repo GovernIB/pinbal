@@ -71,8 +71,8 @@ public class PinbalHalRestController {
     @ExceptionHandler(AccessDenegatException.class)
     public ResponseEntity<ErrorResponse> handleAccesDenegat(AccessDenegatException ex) {
 
-        ErrorResponse errorResponse = new ErrorResponse("401", ex.getMessage());
-        return new ResponseEntity<>(errorResponse, HttpStatus.UNAUTHORIZED);
+        ErrorResponse errorResponse = new ErrorResponse("403", ex.getMessage());
+        return new ResponseEntity<>(errorResponse, HttpStatus.FORBIDDEN);
     }
 
 }

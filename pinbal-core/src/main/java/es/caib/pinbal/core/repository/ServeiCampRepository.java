@@ -3,14 +3,13 @@
  */
 package es.caib.pinbal.core.repository;
 
-import java.util.List;
-
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-
 import es.caib.pinbal.core.model.ServeiCamp;
 import es.caib.pinbal.core.model.ServeiCampGrup;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+
+import java.util.List;
 
 /**
  * Especifica els mètodes que s'han d'emprar per obtenir i modificar la
@@ -62,5 +61,7 @@ public interface ServeiCampRepository extends JpaRepository<ServeiCamp, Long> {
 			" where sc.servei=:servei " +
 			"   and sc.inicialitzar is true")
 	List<String> findPathInicialitzablesByServei(@Param("servei") String servei);
+
+	ServeiCamp findByPath(String path);
 
 }

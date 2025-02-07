@@ -782,7 +782,7 @@ public class XmlHelper {
 		return is;
 	}
 
-	public class DadesEspecifiquesNode {
+	public static class DadesEspecifiquesNode {
 		public static final int GROUP_TYPE_ALL = 0;
 		public static final int GROUP_TYPE_CHOICE = 1;
 		public static final int GROUP_TYPE_SCHEMA = 2;

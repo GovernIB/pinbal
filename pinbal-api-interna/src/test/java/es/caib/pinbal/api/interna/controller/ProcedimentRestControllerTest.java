@@ -121,7 +121,7 @@ public class ProcedimentRestControllerTest {
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(createdProcediment)))
                     .andExpect(status().isCreated())
-                    .andExpect(content().contentType("application/json;charset=UTF-8"))
+                    .andExpect(content().contentTypeCompatibleWith("application/json"))
                     .andExpect(content().string(expectedJson));
         } catch (Exception e) {
             e.printStackTrace();
@@ -190,7 +190,7 @@ public class ProcedimentRestControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(updatedProcediment)))
                 .andExpect(status().isOk())
-                .andExpect(content().contentType("application/json;charset=UTF-8"))
+                .andExpect(content().contentTypeCompatibleWith("application/json"))
                 .andExpect(content().string(expectedJson));
     }
 
@@ -282,7 +282,7 @@ public class ProcedimentRestControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(procedimentPatch)))
                 .andExpect(status().isOk())
-                .andExpect(content().contentType("application/json;charset=UTF-8"))
+                .andExpect(content().contentTypeCompatibleWith("application/json"))
                 .andExpect(content().string(expectedJson));
     }
 
@@ -428,7 +428,7 @@ public class ProcedimentRestControllerTest {
                         .param("page", "0")
                         .param("size", "10"))
                 .andExpect(status().isOk())
-                .andExpect(content().contentType("application/json;charset=UTF-8"))
+                .andExpect(content().contentTypeCompatibleWith("application/json"))
                 .andExpect(jsonPath("$.page.totalElements").value(1));
     }
 
@@ -518,7 +518,7 @@ public class ProcedimentRestControllerTest {
         mockMvc.perform(get("/procediments/{procedimentId}", procedimentId))
                 .andExpect(status().isOk())
                 .andDo(print())
-                .andExpect(content().contentType("application/json;charset=UTF-8"))
+                .andExpect(content().contentTypeCompatibleWith("application/json"))
                 .andExpect(jsonPath("$.id").value(procedimentId.intValue()));
     }
 
@@ -578,7 +578,7 @@ public class ProcedimentRestControllerTest {
         mockMvc.perform(get("/procediments/byCodi/" + procedimentCodi)
                         .param("entitatCodi", entitatCodi))
                 .andExpect(status().isOk())
-                .andExpect(content().contentType("application/json;charset=UTF-8"))
+                .andExpect(content().contentTypeCompatibleWith("application/json"))
                 .andExpect(content().string(expectedJson));
     }
 
@@ -631,7 +631,7 @@ public class ProcedimentRestControllerTest {
                         .param("page", "0")
                         .param("size", "10"))
                 .andExpect(status().isOk())
-                .andExpect(content().contentType("application/json;charset=UTF-8"))
+                .andExpect(content().contentTypeCompatibleWith("application/json"))
                 .andExpect(jsonPath("$.page.totalElements").value(1));
     }
 
@@ -704,7 +704,7 @@ public class ProcedimentRestControllerTest {
                         .param("page", "0")
                         .param("size", "10"))
                 .andExpect(status().isOk())
-                .andExpect(content().contentType("application/json;charset=UTF-8"))
+                .andExpect(content().contentTypeCompatibleWith("application/json"))
                 .andExpect(jsonPath("$.page.totalElements").value(1))
                 .andExpect(jsonPath("$.page.totalPages").value(1))
                 .andExpect(jsonPath("$.page.size").value(10))

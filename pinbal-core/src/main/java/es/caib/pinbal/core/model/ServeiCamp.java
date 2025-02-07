@@ -3,8 +3,11 @@
  */
 package es.caib.pinbal.core.model;
 
-import java.util.HashSet;
-import java.util.Set;
+import es.caib.pinbal.core.audit.PinbalAuditable;
+import es.caib.pinbal.core.dto.ServeiCampDto.ServeiCampDtoValidacioDataTipus;
+import es.caib.pinbal.core.dto.ServeiCampDto.ServeiCampDtoValidacioOperacio;
+import org.apache.commons.lang.builder.ToStringBuilder;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -18,13 +21,8 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.persistence.Version;
-
-import org.apache.commons.lang.builder.ToStringBuilder;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-
-import es.caib.pinbal.core.audit.PinbalAuditable;
-import es.caib.pinbal.core.dto.ServeiCampDto.ServeiCampDtoValidacioDataTipus;
-import es.caib.pinbal.core.dto.ServeiCampDto.ServeiCampDtoValidacioOperacio;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Classe de model de dades que conté la informació d'un camp per
@@ -232,11 +230,20 @@ public class ServeiCamp extends PinbalAuditable<Long> {
 	public boolean isObligatori() {
 		return obligatori;
 	}
+	public void setObligatori(boolean obligatori) {
+		this.obligatori = obligatori;
+	}
 	public boolean isModificable() {
 		return modificable;
 	}
+	public void setModificable(boolean modificable) {
+		this.modificable = modificable;
+	}
 	public boolean isVisible() {
 		return visible;
+	}
+	public void setVisible(boolean visible) {
+		this.visible = visible;
 	}
 	public int getOrdre() {
 		return ordre;

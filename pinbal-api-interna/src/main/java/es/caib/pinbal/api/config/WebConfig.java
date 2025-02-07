@@ -6,7 +6,9 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
+import org.springframework.web.servlet.mvc.annotation.DefaultAnnotationHandlerMapping;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
+import org.springframework.web.util.UrlPathHelper;
 
 import java.util.List;
 
@@ -29,4 +31,19 @@ public class WebConfig extends WebMvcConfigurerAdapter {
     public void addArgumentResolvers(List<HandlerMethodArgumentResolver> argumentResolvers) {
         argumentResolvers.add(pageableResolver());
     }
+
+    @Bean
+    public DefaultAnnotationHandlerMapping defaultAnnotationHandlerMapping() {
+        DefaultAnnotationHandlerMapping mapping = new DefaultAnnotationHandlerMapping();
+        UrlPathHelper urlPathHelper = new UrlPathHelper();
+
+        // Permetre barres codificades (%2F) en el path
+        urlPathHelper.setUrlDecode(true);
+        urlPathHelper.setAlwaysUseFullPath(false);
+        urlPathHelper.setRemoveSemicolonContent(false);
+
+        mapping.setUrlPathHelper(urlPathHelper);
+        return mapping;
+    }
+
 }

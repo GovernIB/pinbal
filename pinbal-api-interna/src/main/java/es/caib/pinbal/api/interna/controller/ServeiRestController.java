@@ -1,11 +1,13 @@
 package es.caib.pinbal.api.interna.controller;
 
+import com.fasterxml.jackson.annotation.JsonView;
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
 import com.wordnik.swagger.annotations.ApiParam;
 import com.wordnik.swagger.annotations.ApiResponse;
 import com.wordnik.swagger.annotations.ApiResponses;
 import es.caib.pinbal.api.config.ApiVersion;
+import es.caib.pinbal.client.comu.Vistes;
 import es.caib.pinbal.client.serveis.Servei;
 import es.caib.pinbal.core.dto.apiresponse.ServiceExecutionException;
 import es.caib.pinbal.core.service.GestioRestService;
@@ -63,6 +65,7 @@ public class ServeiRestController extends PinbalHalRestController {
             @ApiResponse(code = 200, message = "Serveis obtinguts amb èxit"),
             @ApiResponse(code = 204, message = "No s'han trobat serveis")
     })
+    @JsonView(Vistes.VistaDetallada.class)
     public @ResponseBody ResponseEntity<PagedResources<Resource<Servei>>> getServeis(
             @ApiParam(value = "Part del codi del servei. Per filtrar (opcional)") @RequestParam(required = false) String codi,
             @ApiParam(value = "Part de la descripcio del servei. Per filtrar (opcional)") @RequestParam(required = false) String descripcio,
@@ -117,6 +120,7 @@ public class ServeiRestController extends PinbalHalRestController {
             @ApiResponse(code = 200, message = "Servei obtingut amb èxit"),
             @ApiResponse(code = 404, message = "Servei no trobat")
     })
+    @JsonView(Vistes.VistaDetallada.class)
     public @ResponseBody ResponseEntity<Resource<Servei>> getServei(
             @ApiParam(value = "Codi del servei", required = true) @PathVariable("serveiCodi") String serveiCodi) {
         try {

@@ -119,6 +119,10 @@ public class Entitat extends PinbalAuditable<Long> {
 		return resposta;
 	}
 
+	public List<EntitatServei> getEntitatServeis() {
+		return serveis;
+	}
+
 	public void update(
 			String codi,
 			String nom,

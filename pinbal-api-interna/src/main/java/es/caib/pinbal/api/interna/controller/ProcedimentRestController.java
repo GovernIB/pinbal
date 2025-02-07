@@ -1,5 +1,6 @@
 package es.caib.pinbal.api.interna.controller;
 
+import com.fasterxml.jackson.annotation.JsonView;
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
 import com.wordnik.swagger.annotations.ApiParam;
@@ -8,6 +9,7 @@ import com.wordnik.swagger.annotations.ApiResponses;
 import es.caib.pinbal.api.config.ApiVersion;
 import es.caib.pinbal.client.comu.Create;
 import es.caib.pinbal.client.comu.Update;
+import es.caib.pinbal.client.comu.Vistes;
 import es.caib.pinbal.client.procediments.Procediment;
 import es.caib.pinbal.client.procediments.ProcedimentPatch;
 import es.caib.pinbal.client.serveis.Servei;
@@ -70,6 +72,7 @@ public class ProcedimentRestController extends PinbalHalRestController {
             @ApiResponse(code = 201, message = "Procediment creat amb èxit"),
             @ApiResponse(code = 400, message = "Entrada invàlida")
     })
+    @JsonView(Vistes.VistaDetallada.class)
     public @ResponseBody ResponseEntity<Resource<Procediment>> createProcediment(
             @ApiParam(value = "Dades del procediment a crear", required = true) @Validated(Create.class) @RequestBody Procediment procediment,
             BindingResult bindingResult) {
@@ -106,6 +109,7 @@ public class ProcedimentRestController extends PinbalHalRestController {
             @ApiResponse(code = 404, message = "Procediment no trobat"),
             @ApiResponse(code = 400, message = "Entrada invàlida")
     })
+    @JsonView(Vistes.VistaDetallada.class)
     public @ResponseBody Resource<Procediment> updateProcediment(
             @ApiParam(value = "ID del procediment", required = true) @PathVariable("procedimentId") Long procedimentId,
             @ApiParam(value = "Dades del procediment a crear", required = true) @Validated(Update.class) @RequestBody Procediment procediment,
@@ -140,6 +144,7 @@ public class ProcedimentRestController extends PinbalHalRestController {
             @ApiResponse(code = 404, message = "Procediment no trobat"),
             @ApiResponse(code = 400, message = "Entrada invàlida")
     })
+    @JsonView(Vistes.VistaDetallada.class)
     public @ResponseBody Resource<Procediment> patchProcediment(
             @ApiParam(value = "ID del procediment", required = true) @PathVariable("procedimentId") Long procedimentId,
             @ApiParam(value = "Dades del procediment a modificar", required = true) @RequestBody ProcedimentPatch procedimentPatch) {
@@ -209,6 +214,7 @@ public class ProcedimentRestController extends PinbalHalRestController {
             @ApiResponse(code = 204, message = "No s'han trobat procediments"),
             @ApiResponse(code = 404, message = "Entitat no trobada")
     })
+    @JsonView(Vistes.VistaDetallada.class)
     public @ResponseBody ResponseEntity<PagedResources<Resource<Procediment>>> getProcediments(
             @ApiParam(value = "Codi de l'entitat", required = true) @RequestParam("entitatCodi") String entitatCodi,
             @ApiParam(value = "Part del codi del procediment. Per filtrar (opcional)") @RequestParam(required = false) String codi,
@@ -268,6 +274,7 @@ public class ProcedimentRestController extends PinbalHalRestController {
             @ApiResponse(code = 204, message = "No s'ha trobat el procediment"),
             @ApiResponse(code = 404, message = "Procediment no trobat")
     })
+    @JsonView(Vistes.VistaDetallada.class)
     public @ResponseBody ResponseEntity<Resource<Procediment>> getProcediment(
             @ApiParam(value = "ID del procediment", required = true) @PathVariable("procedimentId") Long procedimentId) {
         try {
@@ -306,6 +313,7 @@ public class ProcedimentRestController extends PinbalHalRestController {
             @ApiResponse(code = 204, message = "No s'ha trobat el procediment"),
             @ApiResponse(code = 404, message = "Procediment no trobat")
     })
+    @JsonView(Vistes.VistaDetallada.class)
     public @ResponseBody ResponseEntity<Resource<Procediment>> getProcediment(
             @ApiParam(value = "Codi del procediment", required = true) @PathVariable("procedimentCodi") String procedimentCodi,
             @ApiParam(value = "Codi de l'entitat", required = true) @RequestParam("entitatCodi") String entitatCodi) {
@@ -352,6 +360,7 @@ public class ProcedimentRestController extends PinbalHalRestController {
             @ApiResponse(code = 404, message = "Entitat no trobada"),
             @ApiResponse(code = 404, message = "Procediment no trobat"),
     })
+    @JsonView(Vistes.VistaDetallada.class)
     public @ResponseBody ResponseEntity<PagedResources<Resource<Servei>>> getProcedimentServeis(
             @ApiParam(value = "ID del procediment", required = true) @PathVariable("procedimentId") Long procedimentId,
             @PageableDefault(size = 10) Pageable pageable) {
@@ -388,6 +397,7 @@ public class ProcedimentRestController extends PinbalHalRestController {
             @ApiResponse(code = 404, message = "Entitat no trobada"),
             @ApiResponse(code = 404, message = "Procediment no trobat"),
     })
+    @JsonView(Vistes.VistaDetallada.class)
     public @ResponseBody ResponseEntity<PagedResources<Resource<Servei>>> getProcedimentServeisByCodi(
             @ApiParam(value = "Codi del procediment", required = true) @PathVariable("procedimentCodi") String procedimentCodi,
             @ApiParam(value = "Codi de l'entitat", required = true) @RequestParam("entitatCodi") String entitatCodi,

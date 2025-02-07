@@ -92,4 +92,43 @@ public interface ServeiRepository extends JpaRepository<Servei, Long> {
 			"	and s.codi not in (select ps.servei from ProcedimentServei ps where ps.procediment.id = :procedimentId and ps.actiu = true)" +
 			"order by s.codi asc")
 	List<Servei> findActiuNotInProcediment(@Param("procedimentId") Long procedimentId);
+
+
+	// Serveis - Client
+
+	@Query("select new es.caib.pinbal.client.serveis.Servei(" +
+			"	s.codi, " +
+			"	s.descripcio, " +
+			"	sc.actiu " +
+			") " +
+			"  from Servei s, " +
+			" 		ServeiConfig sc " +
+			" where s.codi = sc.servei ")
+	List<es.caib.pinbal.client.serveis.Servei> findAllServeisClient();
+
+	@Query("select new es.caib.pinbal.client.serveis.Servei(" +
+			"	s.codi, " +
+			"	s.descripcio, " +
+			"	sc.actiu " +
+			") " +
+			"  from Servei s, " +
+			" 		ServeiConfig sc," +
+			" 		EntitatServei es " +
+			" where s.codi = sc.servei" +
+			"	and es.servei = s.codi " +
+			"   and es.entitat.codi = :entitatCodi")
+	List<es.caib.pinbal.client.serveis.Servei> findServeisClientByEntitatCodi(@Param("entitatCodi") String entitatCodi);
+
+	@Query("select new es.caib.pinbal.client.serveis.Servei(" +
+			"	s.codi, " +
+			"	s.descripcio, " +
+			"	sc.actiu " +
+			") " +
+			"  from Servei s, " +
+			" 		ServeiConfig sc," +
+			" 		ProcedimentServei ps " +
+			" where s.codi = sc.servei" +
+			"	and ps.servei = s.codi " +
+			"   and ps.procedimentCodi = :procedimentCodi")
+	List<es.caib.pinbal.client.serveis.Servei> findServeisClientByProcedimentCodi(@Param("procedimentCodi") String procedimentCodi);
 }

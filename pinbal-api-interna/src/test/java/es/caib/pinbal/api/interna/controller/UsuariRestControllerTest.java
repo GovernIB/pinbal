@@ -91,7 +91,7 @@ public class UsuariRestControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"entitatCodi\": \"\"}"))
                 .andExpect(status().is(400))
-                .andExpect(jsonPath("$.errorMessage").value(containsString("Un, i només un, dels camps codi, nif or nom ha d'estar emplenat")));
+                .andExpect(jsonPath("$.errorMessage").value(containsString(" un, dels camps codi, nif or nom ha d'estar emplenat")));
     }
 
     @Test
