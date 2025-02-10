@@ -24,6 +24,7 @@ import es.caib.pinbal.core.helper.EmailReportEstatHelper;
 import es.caib.pinbal.core.helper.ExcelHelper;
 import es.caib.pinbal.core.helper.IntegracioHelper;
 import es.caib.pinbal.core.helper.JustificantHelper;
+import es.caib.pinbal.core.helper.LoggerHelper;
 import es.caib.pinbal.core.helper.PermisosHelper;
 import es.caib.pinbal.core.helper.PeticioScspEstadistiquesHelper;
 import es.caib.pinbal.core.helper.PeticioScspHelper;
@@ -227,7 +228,7 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 	@Override
 	public ConsultaDto novaConsulta(
 			ConsultaDto consulta) throws ProcedimentServeiNotFoundException, ServeiNotAllowedException, ConsultaScspException {
-		log.debug("Executant consulta del servei (codi=" + consulta.getServeiCodi() + "): " + consulta);
+		LoggerHelper.getInstance().info("Executant consulta del servei (codi=" + consulta.getServeiCodi() + "): " + consulta, log, LoggerHelper.LoggingTipus.CONSULTA);
 		String accioDescripcio = "Consulta del servei " + consulta.getServeiCodi();
 		Map<String, String> accioParams = new HashMap<String, String>();
 		accioParams.put("codi", consulta.getServeiCodi());
@@ -238,7 +239,7 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 				consulta.getProcedimentId(),
 				consulta.getServeiCodi());
 		if (procedimentServei == null || !procedimentServei.isActiu()) {
-			log.debug("No s'ha trobat el servei (codi=" + consulta.getServeiCodi() + ") del procediment (id=" + consulta.getProcedimentId() + ")");
+			LoggerHelper.getInstance().error("No s'ha trobat el servei (codi=" + consulta.getServeiCodi() + ") del procediment (id=" + consulta.getProcedimentId() + ")", log, LoggerHelper.LoggingTipus.CONSULTA);
 			throw new ProcedimentServeiNotFoundException();
 		}
 		accioParams.put("procediment", procedimentServei.getProcediment() != null ? procedimentServei.getProcediment().getCodi() + " - " + procedimentServei.getProcediment().getNom() : "");
@@ -248,12 +249,14 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 				entitat,
 				procedimentServei.getProcediment(),
 				consulta.getServeiCodi())) {
-			log.debug("L'usuari no te accés al servei (codi=" + auth.getName() + ")");
+			LoggerHelper.getInstance().error("L'usuari no te accés al servei (codi=" + auth.getName() + ")", log, LoggerHelper.LoggingTipus.CONSULTA);
 			throw new ServeiNotAllowedException();
 		}
 		Consulta conslt = null;
+		String idPeticion = null;
 		try {
-			String idPeticion = getScspHelper().generarIdPeticion(consulta.getServeiCodi());
+			idPeticion = getScspHelper().generarIdPeticion(consulta.getServeiCodi());
+			LoggerHelper.getInstance().info("Generada idPeticio (" + idPeticion + ") per consulta del servei (codi=" + consulta.getServeiCodi() + ")", log, LoggerHelper.LoggingTipus.CONSULTA);
 			String titularDocumentTipus = null;
 			if (consulta.getTitularDocumentTipus() != null) {
 				titularDocumentTipus = consulta.getTitularDocumentTipus().toString();
@@ -280,7 +283,9 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 			peticioScspHelper.processarIEmmagatzemarDadesEspecifiques(
 					conslt,
 					consulta.getDadesEspecifiques());
+			LoggerHelper.getInstance().info("Processades i emmagatzemades les dades especifiques. idPeticio (" + idPeticion + ")", log, LoggerHelper.LoggingTipus.CONSULTA);
 			if (peticioScspHelper.isEnviarConsultaServei(conslt, false)) {
+				LoggerHelper.getInstance().info("Enviarem la consulta. idPeticio (" + idPeticion + ")", log, LoggerHelper.LoggingTipus.CONSULTA);
 				conslt.updateEstat(EstatTipus.Processant);
 				ResultatEnviamentPeticio resultat = peticioScspHelper.enviarPeticioScsp(
 						conslt,
@@ -291,6 +296,7 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 				if (resultat.getIdsSolicituds() != null && resultat.getIdsSolicituds().length > 0) {
 					conslt.updateScspSolicitudId(resultat.getIdsSolicituds()[0]);
 				}
+				LoggerHelper.getInstance().info("Consulta realitzada. Estat del resultat: " + resultat.getEstatCodi() + ". idPeticio (" + idPeticion + ")", log, LoggerHelper.LoggingTipus.CONSULTA);
 				peticioScspHelper.updateEstatConsulta(conslt, resultat, accioParams);
 				if (resultat.isError()) {
 					integracioHelper.addAccioError(
@@ -313,11 +319,14 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 				}
 			}
 			Consulta saved = consultaRepository.save(conslt);
+			LoggerHelper.getInstance().info("Consulta guardada. idPeticio (" + idPeticion + ")", log, LoggerHelper.LoggingTipus.CONSULTA);
 			consultaHelper.propagaCreacioConsulta(saved);
+			LoggerHelper.getInstance().info("Consulta propagada. idPeticio (" + idPeticion + ")", log, LoggerHelper.LoggingTipus.CONSULTA);
 			return dtoMappingHelper.getMapperFacade().map(
 					saved,
 					ConsultaDto.class);
 		} catch (ConsultaScspException ex) {
+			log.error("Error processant la consulta. idPeticio (" + idPeticion + ")", ex);
 			return processarConsultaScspException(
 					ex,
 					conslt,
@@ -331,7 +340,7 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 	@Override
 	public ConsultaDto novaConsultaInit(
 			ConsultaDto consulta) throws ProcedimentServeiNotFoundException, ServeiNotAllowedException, ConsultaScspGeneracioException {
-		log.debug("Executant consulta del servei (init) (codi=" + consulta.getServeiCodi() + "): " + consulta);
+		LoggerHelper.getInstance().info("Executant consulta del servei (init) (codi=" + consulta.getServeiCodi() + "): " + consulta, log, LoggerHelper.LoggingTipus.CONSULTA);
 		String accioDescripcio = "Consulta del servei "  + consulta.getServeiCodi() + " (init)";
 		Map<String, String> accioParams = new HashMap<String, String>();
 		accioParams.put("codi", consulta.getServeiCodi());
@@ -342,17 +351,18 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 				consulta.getProcedimentId(),
 				consulta.getServeiCodi());
 		if (procedimentServei == null || !procedimentServei.isActiu()) {
-			log.debug("No s'ha trobat el servei (codi=" + consulta.getServeiCodi() + ") del procediment (id=" + consulta.getProcedimentId() + ")");
+			LoggerHelper.getInstance().error("(init) No s'ha trobat el servei (codi=" + consulta.getServeiCodi() + ") del procediment (id=" + consulta.getProcedimentId() + ")", log, LoggerHelper.LoggingTipus.CONSULTA);
 			throw new ProcedimentServeiNotFoundException();
 		}
 		if (!serveiHelper.isServeiPermesPerUsuari(
 				procedimentServei.getProcediment().getEntitat(),
 				procedimentServei.getProcediment(),
 				consulta.getServeiCodi())) {
-			log.debug("L'usuari no te accés al servei (codi=" + auth.getName() + ")");
+			LoggerHelper.getInstance().error("(init) L'usuari no te accés al servei (codi=" + auth.getName() + ")", log, LoggerHelper.LoggingTipus.CONSULTA);
 			throw new ServeiNotAllowedException();
 		}
 		String idPeticion = getScspHelper().generarIdPeticion(consulta.getServeiCodi());
+		LoggerHelper.getInstance().info("(init) Generada idPeticio (" + idPeticion + ") per consulta del servei (codi=" + consulta.getServeiCodi() + ")", log, LoggerHelper.LoggingTipus.CONSULTA);
 		accioParams.put("procediment", procedimentServei.getProcediment() != null ? procedimentServei.getProcediment().getCodi() + " - " + procedimentServei.getProcediment().getNom() : "");
 		accioParams.put("servei", procedimentServei.getServeiScsp() != null ? procedimentServei.getServeiScsp().getCodi() + " - " + procedimentServei.getServeiScsp().getDescripcio() : "");
 		integracioHelper.addAccioOk(
@@ -385,7 +395,9 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 						null).
 				build();
 		Consulta saved = consultaRepository.save(constl);
+		LoggerHelper.getInstance().info("(init) Consulta desada. idPeticio (" + idPeticion + ")", log, LoggerHelper.LoggingTipus.CONSULTA);
 		consultaHelper.propagaCreacioConsulta(saved);
+		LoggerHelper.getInstance().info("(init) Consulta propagada. idPeticio (" + idPeticion + ")", log, LoggerHelper.LoggingTipus.CONSULTA);
 		return dtoMappingHelper.getMapperFacade().map(
 				saved,
 				ConsultaDto.class);
@@ -396,7 +408,8 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 	public void novaConsultaEnviament(
 			Long consultaId,
 			ConsultaDto consulta) throws ProcedimentServeiNotFoundException, ConsultaNotFoundException, ConsultaScspException {
-		log.debug("Executant consulta del servei (enviament) (consultaId=" + consultaId + ")");
+		String idPeticion = consulta.getScspPeticionId();
+		LoggerHelper.getInstance().info("Executant consulta del servei (enviament) (idPeticion=" + idPeticion + ")", log, LoggerHelper.LoggingTipus.CONSULTA);
 		String accioDescripcio = "Consulta del servei " + consulta.getServeiCodi() + " (enviament)";
 		Map<String, String> accioParams = new HashMap<String, String>();
 		accioParams.put("consultaId", consultaId.toString());
@@ -405,7 +418,7 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 				consulta.getProcedimentId(),
 				consulta.getServeiCodi());
 		if (procedimentServei == null || !procedimentServei.isActiu()) {
-			log.debug("No s'ha trobat el servei (codi=" + consulta.getServeiCodi() + ") del procediment (id=" + consulta.getProcedimentId() + ")");
+			LoggerHelper.getInstance().error("(enviament) No s'ha trobat el servei (codi=" + consulta.getServeiCodi() + ") del procediment (id=" + consulta.getProcedimentId() + ") per la peticio: " + idPeticion, log, LoggerHelper.LoggingTipus.CONSULTA);
 			throw new ProcedimentServeiNotFoundException();
 		}
 		accioParams.put("procediment", procedimentServei.getProcediment() != null ? procedimentServei.getProcediment().getCodi() + " - " + procedimentServei.getProcediment().getNom() : "");
@@ -419,16 +432,20 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 			peticioScspHelper.processarIEmmagatzemarDadesEspecifiques(
 					conslt,
 					consulta.getDadesEspecifiques());
+			LoggerHelper.getInstance().info("(enviament) Processades i emmagatzemades les dades especifiques. idPeticio (" + idPeticion + ")", log, LoggerHelper.LoggingTipus.CONSULTA);
 			if (peticioScspHelper.isEnviarConsultaServei(conslt, false)) {
+				LoggerHelper.getInstance().info("(enviament) Enviarem la consulta. idPeticio (" + idPeticion + ")", log, LoggerHelper.LoggingTipus.CONSULTA);
 				conslt.updateEstat(EstatTipus.Processant);
 				consultaHelper.propagaCanviConsulta(conslt);
+				LoggerHelper.getInstance().info("(enviament) Consulta canvi propagada. idPeticio (" + idPeticion + ")", log, LoggerHelper.LoggingTipus.CONSULTA);
 				ResultatEnviamentPeticio resultat = peticioScspHelper.enviarPeticioScsp(
 						conslt,
 						Arrays.asList(peticioScspHelper.convertirEnSolicitud(conslt)),
 						true,
 						conslt.isRecobriment(),
 						getScspHelper());
-				accioParams.put("idPeticion", consulta.getScspPeticionId());
+				LoggerHelper.getInstance().info("Consulta realitzada. Estat del resultat: " + resultat.getEstatCodi() + ". idPeticio (" + idPeticion + ")", log, LoggerHelper.LoggingTipus.CONSULTA);
+				accioParams.put("idPeticion", idPeticion);
 				accioParams.put("idSolicitud", consulta.getScspSolicitudId());
 				accioParams.put("estat", "[" + resultat.getEstatCodi() + "] " + resultat.getEstatDescripcio());
 				if (resultat.isError()) {
@@ -452,6 +469,7 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 				}
 			}
 		} catch (ConsultaScspException ex) {
+			log.error("Error enviant consulta (idPeticion=" + idPeticion + ")", ex);
 			processarConsultaScspException(
 					ex,
 					conslt,
@@ -465,15 +483,16 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 	@Override
 	public ConsultaDto novaConsultaEstat(
 			Long consultaId) throws ConsultaNotFoundException, ConsultaScspException {
-		log.debug("Executant consulta del servei (estat) (consultaId=" + consultaId + ")");
+		LoggerHelper.getInstance().info("Executant consulta del servei (estat) (consultaId=" + consultaId + ")", log, LoggerHelper.LoggingTipus.CONSULTA);
 		Map<String, String> accioParams = new HashMap<String, String>();
 		accioParams.put("consultaId", consultaId.toString());
 		long t0 = System.currentTimeMillis();
 		Consulta consulta = consultaRepository.findOne(consultaId);
 		if (consulta == null) {
-			log.debug("No s'ha trobat la consulta (id=" + consultaId + ")");
+			LoggerHelper.getInstance().error("(estat) No s'ha trobat la consulta (id=" + consultaId + ")", log, LoggerHelper.LoggingTipus.CONSULTA);
 			throw new ConsultaNotFoundException();
 		}
+		String idPeticion = consulta.getScspPeticionId();
 		String accioDescripcio = "Consulta del servei " + consulta.getServeiCodi() +" (estat)";
 		if (consulta.getProcedimentServei() != null) {
 			ProcedimentServei procedimentServei = consulta.getProcedimentServei();
@@ -488,12 +507,14 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 				if (resultat.getIdsSolicituds() != null && resultat.getIdsSolicituds().length > 0) {
 					consulta.updateScspSolicitudId(resultat.getIdsSolicituds()[0]);
 					consultaHelper.propagaCanviConsulta(consulta);
+					LoggerHelper.getInstance().info("(estat) Consulta canvi propagada. idPeticio (" + idPeticion + ")", log, LoggerHelper.LoggingTipus.CONSULTA);
 				}
 				// Si l'estat de la consulta és Error vol dir que l'error s'ha processat amb anterioritat
 				// i no és necessari actualitzar l'estat. Si l'estat s'actualitza segurament el posarà com
 				// a pendent i no seria l'estat correcte.
 				if (consulta.getEstat() != EstatTipus.Error) {
 					peticioScspHelper.updateEstatConsulta(consulta, resultat, accioParams);
+					LoggerHelper.getInstance().info("(estat) Estat actualitzat. idPeticio (" + idPeticion + ")", log, LoggerHelper.LoggingTipus.CONSULTA);
 				}
 
 			}
@@ -509,7 +530,7 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 					ConsultaDto.class);
 		} catch (Exception ex) {
 			String errorDescripcio = "Error al obtenir l'estat de la petició corresponent a la consulta (consultaId=" + consultaId + ")";
-			log.error(errorDescripcio, ex);
+			log.error(errorDescripcio + ". idPeticio (" + idPeticion + ")", ex);
 			integracioHelper.addAccioError(
 					consulta.getScspPeticionId(),
 					IntegracioHelper.INTCODI_SERVEIS_SCSP,
@@ -527,7 +548,7 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 	@Override
 	public ConsultaDto novaConsultaMultiple(
 			ConsultaDto consulta) throws ValidacioDadesPeticioException, ProcedimentServeiNotFoundException, ServeiNotAllowedException, ConsultaScspException {
-		log.debug("Executant consulta múltiple del servei (codi=" + consulta.getServeiCodi() + "): " + consulta);
+		LoggerHelper.getInstance().info("Executant consulta del servei (codi=" + consulta.getServeiCodi() + "): " + consulta, log, LoggerHelper.LoggingTipus.CONS_MULT);
 		String accioDescripcio = "Consulta múltiple del servei " + consulta.getServeiCodi();
 		Map<String, String> accioParams = new HashMap<String, String>();
 		accioParams.put("codi", consulta.getServeiCodi());
@@ -538,7 +559,7 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 				consulta.getProcedimentId(),
 				consulta.getServeiCodi());
 		if (procedimentServei == null || !procedimentServei.isActiu()) {
-			log.debug("No s'ha trobat el servei (codi=" + consulta.getServeiCodi() + ") del procediment (id=" + consulta.getProcedimentId() + ")");
+			LoggerHelper.getInstance().info("No s'ha trobat el servei (codi=" + consulta.getServeiCodi() + ") del procediment (id=" + consulta.getProcedimentId() + ")", log, LoggerHelper.LoggingTipus.CONS_MULT);
 			throw new ProcedimentServeiNotFoundException();
 		}
 		accioParams.put("procediment", procedimentServei.getProcediment() != null ? procedimentServei.getProcediment().getCodi() + " - " + procedimentServei.getProcediment().getNom() : "");
@@ -547,12 +568,13 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 				procedimentServei.getProcediment().getEntitat(),
 				procedimentServei.getProcediment(),
 				consulta.getServeiCodi())) {
-			log.debug("L'usuari no te accés al servei (codi=" + auth.getName() + ")");
+			LoggerHelper.getInstance().info("L'usuari no te accés al servei (codi=" + auth.getName() + ")", log, LoggerHelper.LoggingTipus.CONS_MULT);
 			throw new ServeiNotAllowedException();
 		}
 		Consulta conslt = null;
+		String idPeticion = null;
 		try {
-			String idPeticion = getScspHelper().generarIdPeticion(consulta.getServeiCodi());
+			idPeticion = getScspHelper().generarIdPeticion(consulta.getServeiCodi());
 			conslt = Consulta.getBuilder(
 							idPeticion,
 							consulta.getFuncionariNom(),
@@ -574,13 +596,16 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 					build();
 			conslt.updateEstat(EstatTipus.Pendent);
 			List<Solicitud> solicituds = peticioScspHelper.convertirEnMultiplesSolicituds(consulta, procedimentServei);
+			LoggerHelper.getInstance().info("Consulta convertida en múltiples solicituds (idPeticio: " + idPeticion + ")", log, LoggerHelper.LoggingTipus.CONS_MULT);
 			ResultatEnviamentPeticio resultat = peticioScspHelper.enviarPeticioScsp(
 					conslt,
 					solicituds,
 					false,
 					conslt.isRecobriment(),
 					getScspHelper());
+			LoggerHelper.getInstance().info("Consulta enviada (idPeticio: " + idPeticion + ")", log, LoggerHelper.LoggingTipus.CONS_MULT);
 			peticioScspHelper.updateEstatConsulta(conslt, resultat, accioParams);
+			LoggerHelper.getInstance().info("Consulta actualitzat estat (idPeticio: " + idPeticion + ")", log, LoggerHelper.LoggingTipus.CONS_MULT);
 			if (resultat.isError()) {
 				integracioHelper.addAccioError(
 						idPeticion,
@@ -602,6 +627,7 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 			}
 			Consulta saved = consultaRepository.save(conslt);
 			consultaHelper.propagaCreacioConsulta(saved);
+			LoggerHelper.getInstance().info("Consulta propagada (idPeticio: " + idPeticion + ")", log, LoggerHelper.LoggingTipus.CONS_MULT);
 			int solicitudIndex = 0;
 			for (Solicitud solicitud: solicituds) {
 				String titularDocumentTipus = null;
@@ -630,11 +656,13 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 				peticioScspHelper.updateEstatConsulta(cs, resultat, null);
 				consultaRepository.save(cs);
 				consultaHelper.propagaCreacioConsulta(cs);
+				LoggerHelper.getInstance().info("Consulta individual propagada (idPeticio: " + cs.getId() + ")", log, LoggerHelper.LoggingTipus.CONS_MULT);
 			}
 			return dtoMappingHelper.getMapperFacade().map(
 					saved,
 					ConsultaDto.class);
 		} catch (ConsultaScspException ex) {
+			log.error("Error realitzant consulta múltiple", ex);
 			return processarConsultaScspException(
 					ex,
 					conslt,
@@ -649,10 +677,7 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 	public ConsultaDto novaConsultaRecobriment(
 			String serveiCodi,
 			RecobrimentSolicitudDto solicitud) throws EntitatNotFoundException, ProcedimentNotFoundException, ProcedimentServeiNotFoundException, ServeiNotAllowedException, ConsultaScspException {
-		log.debug("Executant consulta del servei via recobriment (" +
-				"entitatCif=" + solicitud.getEntitatCif() + ", " +
-				"procedimentCodi=" + solicitud.getProcedimentCodi() + ", " +
-				"serveiCodi=" + serveiCodi + ")");
+		LoggerHelper.getInstance().info("Executant consulta del servei via recobriment (entitatCif=" + solicitud.getEntitatCif() + ", procedimentCodi=" + solicitud.getProcedimentCodi() + ", serveiCodi=" + serveiCodi + ")", log, LoggerHelper.LoggingTipus.CONS_REC);
 		String accioDescripcio = "Consulta del servei " + serveiCodi + " via recobriment";
 		Map<String, String> accioParams = new HashMap<String, String>();
 		accioParams.put("entitatCif", solicitud.getEntitatCif());
@@ -664,19 +689,19 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 		String procedimentCodi = solicitud.getProcedimentCodi();
 		Entitat entitat = entitatRepository.findByCif(entitatCif);
 		if (entitat == null) {
-			log.debug("No s'ha trobat l'entitat (entitatCif=" + entitatCif + ")");
+			LoggerHelper.getInstance().error("No s'ha trobat l'entitat (entitatCif=" + entitatCif + ")", log, LoggerHelper.LoggingTipus.CONS_REC);
 			throw new EntitatNotFoundException();
 		}
 		Procediment procediment = procedimentRepository.findByEntitatAndCodi(entitat, procedimentCodi);
 		if (procediment == null) {
-			log.debug("No s'ha trobat el procediment (entitatCif=" + entitatCif + ", procedimentCodi=" + procedimentCodi + ")");
+			LoggerHelper.getInstance().error("No s'ha trobat el procediment (entitatCif=" + entitatCif + ", procedimentCodi=" + procedimentCodi + ")", log, LoggerHelper.LoggingTipus.CONS_REC);
 			throw new ProcedimentNotFoundException();
 		}
 		ProcedimentServei procedimentServei = procedimentServeiRepository.findByProcedimentIdAndServei(
 				procediment.getId(),
 				serveiCodi);
 		if (procedimentServei == null || !procedimentServei.isActiu()) {
-			log.debug("No s'ha trobat el servei (serveiCodi=" + serveiCodi + ") del procediment (id=" + procediment.getId() + ")");
+			LoggerHelper.getInstance().error("No s'ha trobat el servei (serveiCodi=" + serveiCodi + ") del procediment (id=" + procediment.getId() + ")", log, LoggerHelper.LoggingTipus.CONS_REC);
 			throw new ProcedimentServeiNotFoundException();
 		}
 		accioParams.put("procediment", procedimentServei.getProcediment() != null ? procedimentServei.getProcediment().getCodi() + " - " + procedimentServei.getProcediment().getNom() : "");
@@ -687,12 +712,14 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 				entitat,
 				procediment,
 				serveiCodi)) {
-			log.debug("L'usuari no te accés al servei (usuari=" + auth.getName() + ")");
+			LoggerHelper.getInstance().error("L'usuari no te accés al servei (usuari=" + auth.getName() + ")", log, LoggerHelper.LoggingTipus.CONS_REC);
 			throw new ServeiNotAllowedException();
 		}
 		Consulta conslt = null;
+		String idPeticion = null;
 		try {
-			String idPeticion = getScspHelper().generarIdPeticion(serveiCodi);
+			idPeticion = getScspHelper().generarIdPeticion(serveiCodi);
+			LoggerHelper.getInstance().info("Generada idPeticio (" + idPeticion + ") per consulta del servei (codi=" + serveiCodi + ")", log, LoggerHelper.LoggingTipus.CONS_REC);
 			conslt = Consulta.getBuilder(
 							idPeticion,
 							solicitud.getFuncionariNom(),
@@ -740,6 +767,7 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 					log.error("No s'ha pogut generar el json de dades específiques a partir de l'xml.", e);
 				}
 			}
+			LoggerHelper.getInstance().info("Solicitud generada. idPeticio (" + idPeticion + ")", log, LoggerHelper.LoggingTipus.CONS_REC);
 			ResultatEnviamentPeticio resultat = peticioScspHelper.enviarPeticioScsp(
 					conslt,
 					Arrays.asList(solicitudEnviar),
@@ -749,6 +777,7 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 			if (resultat.getIdsSolicituds() != null && resultat.getIdsSolicituds().length > 0) {
 				conslt.updateScspSolicitudId(resultat.getIdsSolicituds()[0]);
 			}
+			LoggerHelper.getInstance().info("Consulta realitzada. Estat del resultat: " + resultat.getEstatCodi() + ". idPeticio (" + idPeticion + ")", log, LoggerHelper.LoggingTipus.CONS_REC);
 			peticioScspHelper.updateEstatConsulta(conslt, resultat, accioParams);
 			if (resultat.isError()) {
 				integracioHelper.addAccioError(
@@ -770,7 +799,9 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 						System.currentTimeMillis() - t0);
 			}
 			Consulta saved = consultaRepository.save(conslt);
+			LoggerHelper.getInstance().info("Consulta guardada. idPeticio (" + idPeticion + ")", log, LoggerHelper.LoggingTipus.CONS_REC);
 			consultaHelper.propagaCreacioConsulta(saved);
+			LoggerHelper.getInstance().info("Consulta propagada. idPeticio (" + idPeticion + ")", log, LoggerHelper.LoggingTipus.CONS_REC);
 			ConsultaDto resposta = dtoMappingHelper.getMapperFacade().map(
 					saved,
 					ConsultaDto.class);
@@ -787,6 +818,7 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 			}
 			return resposta;
 		} catch (ConsultaScspException ex) {
+			log.error("Error processant la consulta via recobriment. idPeticio (" + idPeticion + ")", ex);
 			return processarConsultaScspException(
 					ex,
 					conslt,
@@ -832,10 +864,7 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 	public ConsultaDto novaConsultaRecobrimentInit(
 			String serveiCodi,
 			RecobrimentSolicitudDto solicitud) throws EntitatNotFoundException, ProcedimentNotFoundException, ProcedimentServeiNotFoundException, ServeiNotAllowedException, ConsultaScspException {
-		log.debug("Executant consulta del servei via recobriment (init) (" +
-				"entitatCif=" + solicitud.getEntitatCif() + ", " +
-				"procedimentCodi=" + solicitud.getProcedimentCodi() + ", " +
-				"serveiCodi=" + serveiCodi + ")");
+		LoggerHelper.getInstance().info("Executant consulta del servei via recobriment (init) (entitatCif=" + solicitud.getEntitatCif() + ", procedimentCodi=" + solicitud.getProcedimentCodi() + ", serveiCodi=" + serveiCodi + ")", log, LoggerHelper.LoggingTipus.CONS_REC);
 		String accioDescripcio = "Consulta del servei " + serveiCodi + " via recobriment (init)";
 		Map<String, String> accioParams = new HashMap<String, String>();
 		accioParams.put("entitatCif", solicitud.getEntitatCif());
@@ -845,26 +874,22 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 		copiarPropertiesToDb();
 		Entitat entitat = entitatRepository.findByCif(solicitud.getEntitatCif());
 		if (entitat == null) {
-			log.debug("No s'ha trobat l'entitat (entitatCif=" + solicitud.getEntitatCif() + ")");
+			LoggerHelper.getInstance().error("(init) No s'ha trobat l'entitat (entitatCif=" + solicitud.getEntitatCif() + ")", log, LoggerHelper.LoggingTipus.CONS_REC);
 			throw new EntitatNotFoundException();
 		}
-		Procediment procediment = procedimentRepository.findByEntitatAndCodi(
-				entitat,
-				solicitud.getProcedimentCodi());
+		Procediment procediment = procedimentRepository.findByEntitatAndCodi(entitat, solicitud.getProcedimentCodi());
 		if (procediment == null) {
-			procediment = procedimentRepository.findByEntitatAndCodiSia(
-					entitat,
-					solicitud.getProcedimentCodi());
+			procediment = procedimentRepository.findByEntitatAndCodiSia(entitat, solicitud.getProcedimentCodi());
 		}
 		if (procediment == null) {
-			log.debug("No s'ha trobat el procediment (entitatCif=" + solicitud.getEntitatCif() + ", procedimentCodi=" + solicitud.getProcedimentCodi() + ")");
+			LoggerHelper.getInstance().error("(init) No s'ha trobat el procediment (entitatCif=" + solicitud.getEntitatCif() + ", procedimentCodi=" + solicitud.getProcedimentCodi() + ")", log, LoggerHelper.LoggingTipus.CONS_REC);
 			throw new ProcedimentNotFoundException();
 		}
 		ProcedimentServei procedimentServei = procedimentServeiRepository.findByProcedimentIdAndServei(
 				procediment.getId(),
 				serveiCodi);
 		if (procedimentServei == null || !procedimentServei.isActiu()) {
-			log.debug("No s'ha trobat el servei (serveiCodi=" + serveiCodi + ") del procediment (id=" + procediment.getId() + ")");
+			LoggerHelper.getInstance().error("(init) No s'ha trobat el servei (serveiCodi=" + serveiCodi + ") del procediment (id=" + procediment.getId() + ")", log, LoggerHelper.LoggingTipus.CONS_REC);
 			throw new ProcedimentServeiNotFoundException();
 		}
 		accioParams.put("procediment", procedimentServei.getProcediment() != null ? procedimentServei.getProcediment().getCodi() + " - " + procedimentServei.getProcediment().getNom() : "");
@@ -875,10 +900,11 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 				entitat,
 				procediment,
 				serveiCodi)) {
-			log.debug("L'usuari no te accés al servei (usuari=" + auth.getName() + ")");
+			LoggerHelper.getInstance().error("(init) L'usuari no te accés al servei (usuari=" + auth.getName() + ")", log, LoggerHelper.LoggingTipus.CONS_REC);
 			throw new ServeiNotAllowedException();
 		}
 		String idPeticion = getScspHelper().generarIdPeticion(serveiCodi);
+		LoggerHelper.getInstance().info("(init) Generada idPeticio (" + idPeticion + ") per consulta del servei (codi=" + serveiCodi + ")", log, LoggerHelper.LoggingTipus.CONS_REC);
 		integracioHelper.addAccioOk(
 				idPeticion,
 				IntegracioHelper.INTCODI_SERVEIS_SCSP,
@@ -906,7 +932,9 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 						null).
 				build();
 		Consulta saved = consultaRepository.save(conslt);
+		LoggerHelper.getInstance().info("(init) Consulta desada. idPeticio (" + idPeticion + ")", log, LoggerHelper.LoggingTipus.CONS_REC);
 		consultaHelper.propagaCreacioConsulta(saved);
+		LoggerHelper.getInstance().info("(init) Consulta propagada. idPeticio (" + idPeticion + ")", log, LoggerHelper.LoggingTipus.CONS_REC);
 		ConsultaDto resposta = dtoMappingHelper.getMapperFacade().map(
 				saved,
 				ConsultaDto.class);
@@ -918,16 +946,17 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 	public void novaConsultaRecobrimentEnviament(
 			Long consultaId,
 			RecobrimentSolicitudDto solicitud) throws ConsultaNotFoundException, ConsultaScspException {
-		log.debug("Executant consulta del servei via recobriment (enviament) (" +
-				"consultaId=" + consultaId + ")");
+		LoggerHelper.getInstance().info("Executant consulta del servei via recobriment (enviament) (consultaId=" + consultaId + ")", log, LoggerHelper.LoggingTipus.CONS_REC);
 		Map<String, String> accioParams = new HashMap<String, String>();
 		accioParams.put("consultaId", consultaId.toString());
 		long t0 = System.currentTimeMillis();
 		Consulta consulta = consultaRepository.findOne(consultaId);
 		if (consulta == null) {
 			log.debug("No s'ha trobat la consulta (id=" + consultaId + ")");
+			LoggerHelper.getInstance().error("(enviament) No s'ha trobat la consulta (id=" + consultaId + ")", log, LoggerHelper.LoggingTipus.CONS_REC);
 			throw new ConsultaNotFoundException();
 		}
+		String idPeticion = consulta.getScspPeticionId();
 		String accioDescripcio = "Consulta del servei " + consulta.getServeiCodi() + " via recobriment (enviament)";
 		ProcedimentServei procedimentServei = consulta.getProcedimentServei();
 		if (procedimentServei != null) {
@@ -959,18 +988,20 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 					getScspHelper());
 			consulta.updateEstat(EstatTipus.Processant);
 			consultaHelper.propagaCanviConsulta(consulta);
+			LoggerHelper.getInstance().info("(enviament) Consulta canvi propagada. idPeticio (" + idPeticion + ")", log, LoggerHelper.LoggingTipus.CONS_REC);
 			ResultatEnviamentPeticio resultat = peticioScspHelper.enviarPeticioScsp(
 					consulta,
 					Arrays.asList(solicitudEnviar),
 					true,
 					consulta.isRecobriment(),
 					getScspHelper());
-			accioParams.put("idPeticion", consulta.getScspPeticionId());
+			LoggerHelper.getInstance().info("(enviament) Consulta realitzada. Estat del resultat: " + resultat.getEstatCodi() + ". idPeticio (" + idPeticion + ")", log, LoggerHelper.LoggingTipus.CONS_REC);
+			accioParams.put("idPeticion", idPeticion);
 			accioParams.put("idSolicitud", consulta.getScspSolicitudId());
 			accioParams.put("estat", "[" + resultat.getEstatCodi() + "] " + resultat.getEstatDescripcio());
 			if (resultat.isError()) {
 				integracioHelper.addAccioError(
-						consulta.getScspPeticionId(),
+						idPeticion,
 						IntegracioHelper.INTCODI_SERVEIS_SCSP,
 						accioDescripcio,
 						accioParams,
@@ -980,7 +1011,7 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 						(Throwable)null);
 			} else {
 				integracioHelper.addAccioOk(
-						consulta.getScspPeticionId(),
+						idPeticion,
 						IntegracioHelper.INTCODI_SERVEIS_SCSP,
 						accioDescripcio,
 						accioParams,
@@ -988,6 +1019,7 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 						System.currentTimeMillis() - t0);
 			}
 		} catch (ConsultaScspException ex) {
+			log.error("(enviament) Error enviant consulta via recobriment (idPeticion=" + idPeticion + ")", ex);
 			processarConsultaScspException(
 					ex,
 					consulta,
@@ -1001,16 +1033,16 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 	@Override
 	public ConsultaDto novaConsultaRecobrimentEstat(
 			Long consultaId) throws ConsultaNotFoundException, ConsultaScspException {
-		log.debug("Executant consulta del servei via recobriment (estat) (" +
-				"consultaId=" + consultaId + ")");
+		LoggerHelper.getInstance().info("Executant consulta del servei via recobriment (estat) (consultaId=" + consultaId + ")", log, LoggerHelper.LoggingTipus.CONS_REC);
 		Map<String, String> accioParams = new HashMap<String, String>();
 		accioParams.put("consultaId", consultaId.toString());
 		long t0 = System.currentTimeMillis();
 		Consulta consulta = consultaRepository.findOne(consultaId);
 		if (consulta == null) {
-			log.debug("No s'ha trobat la consulta (id=" + consultaId + ")");
+			LoggerHelper.getInstance().error("(estat) No s'ha trobat la consulta (id=" + consultaId + ")", log, LoggerHelper.LoggingTipus.CONS_REC);
 			throw new ConsultaNotFoundException();
 		}
+		String idPeticion = consulta.getScspPeticionId();
 		String accioDescripcio = "Consulta del servei " + consulta.getServeiCodi() + " via recobriment (estat)";
 		if (consulta.getProcedimentServei() != null) {
 			ProcedimentServei procedimentServei = consulta.getProcedimentServei();
@@ -1018,20 +1050,21 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 			accioParams.put("servei", procedimentServei.getServeiScsp() != null ? procedimentServei.getServeiScsp().getCodi() + " - " + procedimentServei.getServeiScsp().getDescripcio() : "");
 		}
 		try {
-			ResultatEnviamentPeticio resultat = getScspHelper().recuperarResultatEnviamentPeticio(
-					consulta.getScspPeticionId());
+			ResultatEnviamentPeticio resultat = getScspHelper().recuperarResultatEnviamentPeticio(idPeticion);
 			if (resultat.getIdsSolicituds() != null && resultat.getIdsSolicituds().length > 0) {
 				consulta.updateScspSolicitudId(resultat.getIdsSolicituds()[0]);
 				consultaHelper.propagaCanviConsulta(consulta);
+				LoggerHelper.getInstance().info("(estat) Consulta canvi propagada. idPeticio (" + idPeticion + ")", log, LoggerHelper.LoggingTipus.CONS_REC);
 			}
 			// Si l'estat de la consulta és Error vol dir que l'error s'ha processat amb anterioritat
 			// i no és necessari actualitzar l'estat. Si l'estat s'actualitza segurament el posarà com
 			// a pendent i no seria l'estat correcte.
 			if (consulta.getEstat() != EstatTipus.Error) {
 				peticioScspHelper.updateEstatConsulta(consulta, resultat, accioParams);
+				LoggerHelper.getInstance().info("(estat) Estat actualitzat. idPeticio (" + idPeticion + ")", log, LoggerHelper.LoggingTipus.CONS_REC);
 			}
 			integracioHelper.addAccioOk(
-					consulta.getScspPeticionId(),
+					idPeticion,
 					IntegracioHelper.INTCODI_SERVEIS_SCSP,
 					accioDescripcio,
 					accioParams,
@@ -1042,9 +1075,9 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 					ConsultaDto.class);
 		} catch (Exception ex) {
 			String errorDescripcio = "Error al obtenir l'estat de la petició corresponent a la consulta (consultaId=" + consultaId + ")";
-			log.error(errorDescripcio, ex);
+			log.error("(estat) " + errorDescripcio + ". idPeticio (" + idPeticion + ")", ex);
 			integracioHelper.addAccioError(
-					consulta.getScspPeticionId(),
+					idPeticion,
 					IntegracioHelper.INTCODI_SERVEIS_SCSP,
 					accioDescripcio,
 					accioParams,
@@ -1052,7 +1085,7 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 					System.currentTimeMillis() - t0,
 					errorDescripcio,
 					ex);
-			throw new ConsultaScspEstatException(consulta.getScspPeticionId(), ex);
+			throw new ConsultaScspEstatException(idPeticion, ex);
 		}
 	}
 
@@ -1061,9 +1094,7 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 	public ConsultaDto novaConsultaRecobrimentMultiple(
 			String serveiCodi,
 			List<RecobrimentSolicitudDto> solicituds) throws EntitatNotFoundException, ProcedimentNotFoundException, ProcedimentServeiNotFoundException, ServeiNotAllowedException, ConsultaScspException {
-		log.debug("Executant consulta múltiple del servei via recobriment (" +
-				"serveiCodi=" + serveiCodi + ", " +
-				"solicituds=" + ((solicituds != null) ? solicituds.size() : "") + ")");
+		LoggerHelper.getInstance().info("Executant consulta múltiple del servei via recobriment (serveiCodi=" + serveiCodi + ", solicituds=" + ((solicituds != null) ? solicituds.size() : "") + ")", log, LoggerHelper.LoggingTipus.CONS_REC_MULT);
 		String accioDescripcio = "Consulta múltiple del servei " + serveiCodi + " via recobriment";
 		Map<String, String> accioParams = new HashMap<String, String>();
 		accioParams.put("serveiCodi", serveiCodi);
@@ -1078,19 +1109,19 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 		String departamentNom = primeraSolicitud.getDepartamentNom();
 		Entitat entitat = entitatRepository.findByCif(entitatCif);
 		if (entitat == null) {
-			log.debug("No s'ha trobat l'entitat (entitatCif=" + entitatCif + ")");
+			LoggerHelper.getInstance().error("No s'ha trobat l'entitat (entitatCif=" + entitatCif + ")", log, LoggerHelper.LoggingTipus.CONS_REC_MULT);
 			throw new EntitatNotFoundException();
 		}
 		Procediment procediment = procedimentRepository.findByEntitatAndCodi(entitat, procedimentCodi);
 		if (procediment == null) {
-			log.debug("No s'ha trobat el procediment (entitatCif=" + entitatCif + ", procedimentCodi=" + procedimentCodi + ")");
+			LoggerHelper.getInstance().error("No s'ha trobat el procediment (entitatCif=" + entitatCif + ", procedimentCodi=" + procedimentCodi + ")", log, LoggerHelper.LoggingTipus.CONS_REC_MULT);
 			throw new ProcedimentNotFoundException();
 		}
 		ProcedimentServei procedimentServei = procedimentServeiRepository.findByProcedimentIdAndServei(
 				procediment.getId(),
 				serveiCodi);
 		if (procedimentServei == null || !procedimentServei.isActiu()) {
-			log.debug("No s'ha trobat el servei (serveiCodi=" + serveiCodi + ") del procediment (id=" + procediment.getId() + ")");
+			LoggerHelper.getInstance().error("No s'ha trobat el servei (serveiCodi=" + serveiCodi + ") del procediment (id=" + procediment.getId() + ")", log, LoggerHelper.LoggingTipus.CONS_REC_MULT);
 			throw new ProcedimentServeiNotFoundException();
 		}
 		accioParams.put("procediment", procedimentServei.getProcediment() != null ? procedimentServei.getProcediment().getCodi() + " - " + procedimentServei.getProcediment().getNom() : "");
@@ -1101,12 +1132,13 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 				entitat,
 				procediment,
 				serveiCodi)) {
-			log.debug("L'usuari no te accés al servei (usuari=" + auth.getName() + ")");
+			LoggerHelper.getInstance().error("L'usuari no te accés al servei (usuari=" + auth.getName() + ")", log, LoggerHelper.LoggingTipus.CONS_REC_MULT);
 			throw new ServeiNotAllowedException();
 		}
 		Consulta conslt = null;
+		String idPeticion = null;
 		try {
-			String idPeticion = getScspHelper().generarIdPeticion(serveiCodi);
+			idPeticion = getScspHelper().generarIdPeticion(serveiCodi);
 			conslt = Consulta.getBuilder(
 							idPeticion,
 							funcionariNom,
@@ -1151,13 +1183,16 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 						getScspHelper());
 				solicitudsEnviar.add(solicitudEnviar);
 			}
+			LoggerHelper.getInstance().info("Solicitud generada. idPeticio (" + idPeticion + ")", log, LoggerHelper.LoggingTipus.CONS_REC_MULT);
 			ResultatEnviamentPeticio resultat = peticioScspHelper.enviarPeticioScsp(
 					conslt,
 					solicitudsEnviar,
 					false,
 					conslt.isRecobriment(),
 					getScspHelper());
+			LoggerHelper.getInstance().info("Consulta realitzada. Estat del resultat: " + resultat.getEstatCodi() + ". idPeticio (" + idPeticion + ")", log, LoggerHelper.LoggingTipus.CONS_REC_MULT);
 			peticioScspHelper.updateEstatConsulta(conslt, resultat, accioParams);
+			LoggerHelper.getInstance().info("Consulta actualitzat estat (idPeticio: " + idPeticion + ")", log, LoggerHelper.LoggingTipus.CONS_REC_MULT);
 			if (resultat.isError()) {
 				integracioHelper.addAccioError(
 						idPeticion,
@@ -1178,7 +1213,9 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 						System.currentTimeMillis() - t0);
 			}
 			Consulta saved = consultaRepository.save(conslt);
+			LoggerHelper.getInstance().info("Consulta guardada. idPeticio (" + idPeticion + ")", log, LoggerHelper.LoggingTipus.CONS_REC_MULT);
 			consultaHelper.propagaCreacioConsulta(saved);
+			LoggerHelper.getInstance().info("Consulta propagada. idPeticio (" + idPeticion + ")", log, LoggerHelper.LoggingTipus.CONS_REC_MULT);
 			int solicitudIndex = 0;
 			for (RecobrimentSolicitudDto solicitud: solicituds) {
 				String titularDocumentTipus = null;
@@ -1207,6 +1244,7 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 				peticioScspHelper.updateEstatConsulta(cs, resultat, null);
 				consultaRepository.save(cs);
 				consultaHelper.propagaCreacioConsulta(cs);
+				LoggerHelper.getInstance().info("Consulta individual propagada (idPeticio: " + cs.getId() + ")", log, LoggerHelper.LoggingTipus.CONS_REC_MULT);
 			}
 			ConsultaDto resposta = dtoMappingHelper.getMapperFacade().map(
 					saved,
@@ -1233,6 +1271,7 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 			}
 			return resposta;
 		} catch (ConsultaScspException ex) {
+			log.error("Error realitzant consulta múltiple via recobriment", ex);
 			return processarConsultaScspException(ex, conslt, accioDescripcio, accioParams, t0);
 		}
 	}
