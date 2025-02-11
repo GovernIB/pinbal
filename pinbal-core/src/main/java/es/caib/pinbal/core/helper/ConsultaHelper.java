@@ -3,19 +3,29 @@ package es.caib.pinbal.core.helper;
 import es.caib.pinbal.client.dadesobertes.DadesObertesRespostaConsulta.DadesObertesConsultaResultat;
 import es.caib.pinbal.client.dadesobertes.DadesObertesRespostaConsulta.DadesObertesConsultaTipus;
 import es.caib.pinbal.core.dto.EstatTipus;
+import es.caib.pinbal.core.dto.IntegracioAccioTipusEnumDto;
 import es.caib.pinbal.core.model.Consulta;
 import es.caib.pinbal.core.model.EmissorCert;
 import es.caib.pinbal.core.model.Entitat;
 import es.caib.pinbal.core.model.Procediment;
+import es.caib.pinbal.core.model.ProcedimentServei;
 import es.caib.pinbal.core.model.Servei;
 import es.caib.pinbal.core.model.Transmision;
 import es.caib.pinbal.core.model.dadesobertes.DadesObertesConsulta;
 import es.caib.pinbal.core.model.llistat.LlistatConsulta;
+import es.caib.pinbal.core.repository.ConsultaRepository;
 import es.caib.pinbal.core.repository.dadesobertes.DadesObertesConsultaRepository;
 import es.caib.pinbal.core.repository.llistat.LlistatConsultaRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashMap;
+import java.util.Map;
+
+@Slf4j
 @Component
 public class ConsultaHelper {
 
@@ -23,6 +33,10 @@ public class ConsultaHelper {
     private LlistatConsultaRepository llistatConsultaRepository;
     @Autowired
     private DadesObertesConsultaRepository dadesObertesConsultaRepository;
+    @Autowired
+    private ConsultaRepository consultaRepository;
+    @Autowired
+    private IntegracioHelper integracioHelper;
 
 
     public void propagaCreacioConsulta(Consulta consulta) {
@@ -133,5 +147,40 @@ public class ConsultaHelper {
         } else {
             return finalitat;
         }
+    }
+
+
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    public void processarErrorConsulta(Long consultaId, String descripcio, Long temps, Exception ex) {
+        Consulta consulta = consultaRepository.getOne(consultaId);
+        if (consulta == null) {
+            log.error("No s'ha trobat la consulta amb id: " + consultaId);
+            return;
+        }
+        ProcedimentServei procedimentServei = consulta.getProcedimentServei();
+        if (procedimentServei == null) {
+            log.error("No s'ha trobat el procediment-servei de la consulta amb id: " + consultaId);
+        }
+
+        String error = "Error inesperat en l'enviament de la petició SCSP: " + ex.getMessage();
+        Map<String, String> accioParams = new HashMap<String, String>();
+        accioParams.put("consultaId", consulta.getId().toString());
+        accioParams.put("procediment", procedimentServei.getProcediment() != null ? procedimentServei.getProcediment().getCodi() + " - " + procedimentServei.getProcediment().getNom() : "");
+        accioParams.put("servei", procedimentServei.getServeiScsp() != null ? procedimentServei.getServeiScsp().getCodi() + " - " + procedimentServei.getServeiScsp().getDescripcio() : "");
+        accioParams.put("idPeticion", consulta.getScspPeticionId());
+        accioParams.put("idSolicitud", consulta.getScspSolicitudId());
+        accioParams.put("estat", "[ERROR] " + error);
+
+        consulta.updateEstatError(error);
+        integracioHelper.addAccioError(
+                consulta.getScspPeticionId(),
+                IntegracioHelper.INTCODI_SERVEIS_SCSP,
+                descripcio,
+                accioParams,
+                IntegracioAccioTipusEnumDto.ENVIAMENT,
+                temps,
+                error,
+                ex);
+        propagaCanviConsulta(consulta);
     }
 }

@@ -11,10 +11,28 @@ import com.lowagie.text.pdf.PdfCopy;
 import com.lowagie.text.pdf.PdfReader;
 import es.caib.pinbal.client.dadesobertes.DadesObertesResposta;
 import es.caib.pinbal.client.dadesobertes.DadesObertesRespostaConsulta;
-import es.caib.pinbal.core.dto.*;
+import es.caib.pinbal.core.dto.ArbreRespostaDto;
+import es.caib.pinbal.core.dto.CarregaDto;
+import es.caib.pinbal.core.dto.ConsultaDto;
 import es.caib.pinbal.core.dto.ConsultaDto.Consentiment;
 import es.caib.pinbal.core.dto.ConsultaDto.DocumentTipus;
+import es.caib.pinbal.core.dto.ConsultaFiltreDto;
+import es.caib.pinbal.core.dto.ConsultaOpenDataDto;
+import es.caib.pinbal.core.dto.EmisorDto;
+import es.caib.pinbal.core.dto.EntitatDto;
+import es.caib.pinbal.core.dto.EstadisticaDto;
+import es.caib.pinbal.core.dto.EstadistiquesFiltreDto;
 import es.caib.pinbal.core.dto.EstadistiquesFiltreDto.EstadistiquesAgrupacioDto;
+import es.caib.pinbal.core.dto.EstatTipus;
+import es.caib.pinbal.core.dto.FitxerDto;
+import es.caib.pinbal.core.dto.InformeGeneralEstatDto;
+import es.caib.pinbal.core.dto.InformeProcedimentServeiDto;
+import es.caib.pinbal.core.dto.InformeRepresentantFiltreDto;
+import es.caib.pinbal.core.dto.IntegracioAccioTipusEnumDto;
+import es.caib.pinbal.core.dto.JustificantDto;
+import es.caib.pinbal.core.dto.JustificantEstat;
+import es.caib.pinbal.core.dto.RecobrimentSolicitudDto;
+import es.caib.pinbal.core.dto.RespostaAtributsDto;
 import es.caib.pinbal.core.dto.arxiu.ArxiuDetallDto;
 import es.caib.pinbal.core.helper.ArxiuHelper;
 import es.caib.pinbal.core.helper.ConfigHelper;
@@ -223,6 +241,7 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
     private DadesObertesConsultaRepository dadesObertesConsultaRepository;
     @Autowired
     private LlistatConsultaRepository llistatConsultaRepository;
+
 
 	@Transactional(rollbackFor = {ProcedimentServeiNotFoundException.class, ServeiNotAllowedException.class, ConsultaScspException.class})
 	@Override
@@ -2336,12 +2355,20 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 		int i = 0;
 		for (final Consulta pendent: pendents) {
 			if (peticioScspHelper.isEnviarConsultaServei(pendent, true)) {
-				peticioScspHelper.enviarPeticioScspPendent(pendent.getId(), scspHelper);
+				try {
+					peticioScspHelper.enviarPeticioScspPendent(pendent.getId(), scspHelper);
+				} catch (Exception ex) {
+					// Si es produeix un error no esperat
+					String accioDescripcio = "Enviament de la consulta pendent al servei SCSP  " + pendent.getServeiCodi() + " (pendent)";
+					Long temps = System.currentTimeMillis() - t0;
+					consultaHelper.processarErrorConsulta(pendent.getId(), accioDescripcio, temps, ex);
+				}
 				i++;
 			}
 		}
 		log.debug("Finalitzat l'enviament automàtic de les " + i + " peticions pendents (" + (System.currentTimeMillis() - t0) + "ms)");
 	}
+
 
 	@Async
 	@Override

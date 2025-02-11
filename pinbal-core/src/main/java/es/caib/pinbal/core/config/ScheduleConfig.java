@@ -1,8 +1,11 @@
 package es.caib.pinbal.core.config;
 
-import java.util.Date;
-import java.util.concurrent.TimeUnit;
-
+import es.caib.pinbal.core.helper.ConfigHelper;
+import es.caib.pinbal.core.service.ConsultaService;
+import es.caib.pinbal.core.service.HistoricConsultaService;
+import es.caib.pinbal.core.service.IntegracioAccioService;
+import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.TaskScheduler;
@@ -14,12 +17,8 @@ import org.springframework.scheduling.config.ScheduledTaskRegistrar;
 import org.springframework.scheduling.support.CronTrigger;
 import org.springframework.scheduling.support.PeriodicTrigger;
 
-import es.caib.pinbal.core.helper.ConfigHelper;
-import es.caib.pinbal.core.service.ConsultaService;
-import es.caib.pinbal.core.service.HistoricConsultaService;
-import es.caib.pinbal.core.service.IntegracioAccioService;
-import lombok.SneakyThrows;
-import lombok.extern.slf4j.Slf4j;
+import java.util.Date;
+import java.util.concurrent.TimeUnit;
 
 @Slf4j
 @Configuration
@@ -28,6 +27,7 @@ public class ScheduleConfig implements SchedulingConfigurer {
 
     public static final String REVISAR_ESTAT_PETICIONS_MULTIPLES_DELAY = "es.caib.pinbal.tasca.auto.comprovacio.repeticio";
     public static final String GENERAR_JUSTIFICANTS_DELAY = "es.caib.pinbal.tasca.auto.justificant.repeticio";
+    public static final String CONSULTA_PENDENTS_DELAY = "es.caib.pinbal.tasca.auto.consulta.pendent.repeticio";
     public static final String TANCAR_EXPEDIENTS_CRON = "es.caib.pinbal.tasca.auto.exp.tancar.cron";
     public static final String ESBORRAR_CONTINGUT_INTEGRACIO = "es.caib.pinbal.tasca.auto.exp.esborrar.monitor";
     public static final String GENERAR_REPORT_EMAIL_CRON = "es.caib.pinbal.tasca.auto.email.report.estat.cron";
@@ -61,7 +61,7 @@ public class ScheduleConfig implements SchedulingConfigurer {
         this.taskRegistrar = taskRegistrar;
 
         // 1. Revisar l'estat de les peticions múltiples pendents per veure si ja han estat processades
-        ////////////////////////////////////////////////////////////////
+        // //////////////////////////////////////////////////////////////
         taskRegistrar.addTriggerTask(
                 new Runnable() {
                     @SneakyThrows
@@ -88,7 +88,7 @@ public class ScheduleConfig implements SchedulingConfigurer {
         );
 
         // 2. Generar els justificants pendents de les peticions SCSP ja tramitades
-        ////////////////////////////////////////////////////////////////
+        // //////////////////////////////////////////////////////////////
         taskRegistrar.addTriggerTask(
                 new Runnable() {
                     @SneakyThrows
@@ -115,7 +115,7 @@ public class ScheduleConfig implements SchedulingConfigurer {
         );
 
         // 3. Tancar els expedients pendents que contenen els justificants pendents ja generats
-        /////////////////////////////////////////////////////////////////////////
+        // ///////////////////////////////////////////////////////////////////////
         taskRegistrar.addTriggerTask(
                 new Runnable() {
                     @SneakyThrows
@@ -141,7 +141,7 @@ public class ScheduleConfig implements SchedulingConfigurer {
         );
 
         // 4. Generar al final del dia un petit report de l'estat de PINBAL, que s'envia per correu als administradors
-        /////////////////////////////////////////////////////////////////////////
+        // ///////////////////////////////////////////////////////////////////////
         taskRegistrar.addTriggerTask(
                 new Runnable() {
                     @SneakyThrows
@@ -167,7 +167,7 @@ public class ScheduleConfig implements SchedulingConfigurer {
         );
 
         // 5. Arxivar les consultes antigues
-        /////////////////////////////////////////////////////////////////////////
+        // ///////////////////////////////////////////////////////////////////////
         taskRegistrar.addTriggerTask(
                 new Runnable() {
                     @SneakyThrows
@@ -193,7 +193,7 @@ public class ScheduleConfig implements SchedulingConfigurer {
         );
 
         // 6. Generar dades d'explotació
-        /////////////////////////////////////////////////////////////////////////
+        // ///////////////////////////////////////////////////////////////////////
         taskRegistrar.addTriggerTask(
                 new Runnable() {
                     @SneakyThrows
@@ -219,7 +219,7 @@ public class ScheduleConfig implements SchedulingConfigurer {
         );
         
         // 7. Esborrar el monitor d'integracions
-        /////////////////////////////////////////////////////////////////////////
+        // ///////////////////////////////////////////////////////////////////////
         taskRegistrar.addTriggerTask(
                 new Runnable() {
                     @SneakyThrows
@@ -239,6 +239,27 @@ public class ScheduleConfig implements SchedulingConfigurer {
                     	} catch (Exception e) {
                     		trigger = new PeriodicTrigger(3600L, TimeUnit.SECONDS);
                     	}
+                        trigger.setFixedRate(true);
+                        Date nextExecution = trigger.nextExecutionTime(triggerContext);
+                        return nextExecution;
+                    }
+                }
+        );
+
+        // 8. Enviar les peticions SCSP pendents
+        // //////////////////////////////////////////////////////////////
+        taskRegistrar.addTriggerTask(
+                new Runnable() {
+                    @SneakyThrows
+                    @Override
+                    public void run() {
+                        consultaService.autoEnviarPeticionsPendents();
+                    }
+                },
+                new Trigger() {
+                    @Override
+                    public Date nextExecutionTime(TriggerContext triggerContext) {
+                        PeriodicTrigger trigger = new PeriodicTrigger(configHelper.getAsLong(CONSULTA_PENDENTS_DELAY, 10000L), TimeUnit.SECONDS);
                         trigger.setFixedRate(true);
                         Date nextExecution = trigger.nextExecutionTime(triggerContext);
                         return nextExecution;

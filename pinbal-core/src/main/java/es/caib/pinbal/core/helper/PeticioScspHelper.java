@@ -8,9 +8,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import es.caib.pinbal.core.dto.ConsultaDto;
 import es.caib.pinbal.core.dto.ConsultaDto.Consentiment;
 import es.caib.pinbal.core.dto.ConsultaDto.DocumentTipus;
+import es.caib.pinbal.core.dto.EstatTipus;
 import es.caib.pinbal.core.dto.IntegracioAccioTipusEnumDto;
 import es.caib.pinbal.core.model.Consulta;
-import es.caib.pinbal.core.dto.EstatTipus;
 import es.caib.pinbal.core.model.Entitat;
 import es.caib.pinbal.core.model.Procediment;
 import es.caib.pinbal.core.model.ProcedimentServei;
@@ -170,42 +170,80 @@ public class PeticioScspHelper {
 	}
 
 
-
 	@Transactional(propagation = Propagation.REQUIRES_NEW)
 	public void enviarPeticioScspPendent(
 			Long consultaId,
 			ScspHelper scspHelper) {
+
 		Consulta consulta = consultaRepository.getOne(consultaId);
+		String idPeticion = consulta.getScspPeticionId();
+		LoggerHelper.getInstance().info("Enviant consulta pendent (idPeticion=" + idPeticion + ")", log, LoggerHelper.LoggingTipus.CONSULTA);
+		String accioDescripcio = "nviament de la consulta pendent al servei SCSP  " + consulta.getServeiCodi() + " (pendent)";
+		Map<String, String> accioParams = new HashMap<String, String>();
+		long t0 = System.currentTimeMillis();
+
 		try {
-			long t0 = System.currentTimeMillis();
+			ProcedimentServei procedimentServei = consulta.getProcedimentServei();
+			accioParams.put("consultaId", consulta.getId().toString());
+			accioParams.put("procediment", procedimentServei.getProcediment() != null ? procedimentServei.getProcediment().getCodi() + " - " + procedimentServei.getProcediment().getNom() : "");
+			accioParams.put("servei", procedimentServei.getServeiScsp() != null ? procedimentServei.getServeiScsp().getCodi() + " - " + procedimentServei.getServeiScsp().getDescripcio() : "");
+			accioParams.put("idPeticion", consulta.getScspPeticionId());
+			accioParams.put("idSolicitud", consulta.getScspSolicitudId());
+
+			LoggerHelper.getInstance().info("(pendent) Enviarem la consulta. idPeticio (" + idPeticion + ")", log, LoggerHelper.LoggingTipus.CONSULTA);
 			consulta.updateEstat(EstatTipus.Processant);
+			consultaHelper.propagaCanviConsulta(consulta);
+			LoggerHelper.getInstance().info("(pendent) Consulta canvi propagada. idPeticio (" + idPeticion + ")", log, LoggerHelper.LoggingTipus.CONSULTA);
+
 			ResultatEnviamentPeticio resultat = enviarPeticioScsp(
 					consulta,
 					Arrays.asList(convertirEnSolicitud(consulta)),
 					true,
 					consulta.isRecobriment(),
 					scspHelper);
-			Map<String, String> accioParams = new HashMap<String, String>();
-			ProcedimentServei procedimentServei = consulta.getProcedimentServei();
-			accioParams.put("codi", procedimentServei.getServei());
-			accioParams.put("procediment", procedimentServei.getProcediment() != null ? procedimentServei.getProcediment().getCodi() + " - " + procedimentServei.getProcediment().getNom() : "");
-			accioParams.put("servei", procedimentServei.getServeiScsp() != null ? procedimentServei.getServeiScsp().getCodi() + " - " + procedimentServei.getServeiScsp().getDescripcio() : "");
-			updateEstatConsulta(consulta, resultat, accioParams);
+
+			accioParams.put("estat", "[" + resultat.getEstatCodi() + "] " + resultat.getEstatDescripcio());
+			updateEstatConsulta(consulta, resultat, null);
 			if (resultat.getIdsSolicituds() != null && resultat.getIdsSolicituds().length > 0) {
 				consulta.updateScspSolicitudId(resultat.getIdsSolicituds()[0]);
 			}
-			String accioDescripcio = "Enviament de la consulta pendent al servei SCSP";
-			integracioHelper.addAccioOk(
+
+			if (resultat.isError()) {
+				integracioHelper.addAccioError(
+						consulta.getScspPeticionId(),
+						IntegracioHelper.INTCODI_SERVEIS_SCSP,
+						accioDescripcio,
+						accioParams,
+						IntegracioAccioTipusEnumDto.ENVIAMENT,
+						System.currentTimeMillis() - t0,
+						"[" + resultat.getErrorCodi() + "] " + resultat.getErrorDescripcio(),
+						(Throwable)null);
+			} else {
+				integracioHelper.addAccioOk(
+						consulta.getScspPeticionId(),
+						IntegracioHelper.INTCODI_SERVEIS_SCSP,
+						accioDescripcio,
+						accioParams,
+						IntegracioAccioTipusEnumDto.ENVIAMENT,
+						System.currentTimeMillis() - t0);
+			}
+
+		} catch (ConsultaScspGeneracioException | ConsultaScspComunicacioException ex) {
+			String error = (ex instanceof ConsultaScspGeneracioException)
+					? "Error al generar la petició SCSP: " + ex.getMessage()
+					: (ex instanceof ConsultaScspComunicacioException)
+						? "Error en la comunicació SCSP: " + ex.getMessage()
+						: "Error inesperat en l'enviament de la petició SCSP: " + ex.getMessage();
+			consulta.updateEstatError(error);
+			integracioHelper.addAccioError(
 					consulta.getScspPeticionId(),
 					IntegracioHelper.INTCODI_SERVEIS_SCSP,
 					accioDescripcio,
 					accioParams,
 					IntegracioAccioTipusEnumDto.ENVIAMENT,
-					System.currentTimeMillis() - t0);
-		} catch (ConsultaScspGeneracioException ex) {
-			consulta.updateEstatError("Error al generar la petició SCSP: " + ex.getMessage());
-		} catch (ConsultaScspComunicacioException ex) {
-			consulta.updateEstatError("Error en la comunicació SCSP: " + ex.getMessage());
+					System.currentTimeMillis() - t0,
+					error,
+					ex);
 		}
 		consultaHelper.propagaCanviConsulta(consulta);
 	}
