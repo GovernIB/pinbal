@@ -10,6 +10,10 @@ import es.caib.pinbal.client.recobriment.model.ScspPeticion;
 import es.caib.pinbal.client.recobriment.model.ScspRespuesta;
 import es.caib.pinbal.client.recobriment.v2.DadaEspecifica;
 import es.caib.pinbal.client.recobriment.v2.Entitat;
+import es.caib.pinbal.client.recobriment.v2.PeticioAsincrona;
+import es.caib.pinbal.client.recobriment.v2.PeticioRespostaAsincrona;
+import es.caib.pinbal.client.recobriment.v2.PeticioRespostaSincrona;
+import es.caib.pinbal.client.recobriment.v2.PeticioSincrona;
 import es.caib.pinbal.client.recobriment.v2.ValorEnum;
 import es.caib.pinbal.client.serveis.Servei;
 import es.caib.pinbal.core.service.exception.EntitatNotFoundException;
@@ -19,6 +23,7 @@ import es.caib.pinbal.core.service.exception.ServeiNotFoundException;
 import org.springframework.security.access.prepost.PreAuthorize;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Declaració dels mètodes per a fer peticions al recobriment SCSP.
@@ -176,4 +181,47 @@ public interface RecobrimentService {
 	@PreAuthorize("hasRole('ROLE_WS')")
 	List<ValorEnum> getValorsEnumByServei(String serveiCodi, String campCodi, String enumCodi, String filtre) throws Exception;
 
+	/**
+	 * Valida les dades d'una petició síncrona
+	 *
+	 * @param peticio Dades de la petició síncrona a validar
+	 * @return Mapa amb els errors detectats a la petició.
+	 * La clau correspon al path del camp amb error, i el valor al missatge d'error
+	 */
+	@PreAuthorize("hasRole('ROLE_WS')")
+	Map<String, List<String>> validatePeticio(PeticioSincrona peticio);
+
+	/**
+	 * Valida les dades d'una petició asíncrona
+	 *
+	 * @param peticio Dades de la petició asíncrona a validar
+	 * @return Mapa amb els errors detectats a la petició.
+	 * La clau correspon al path del camp amb error, i el valor al missatge d'error
+	 */
+	@PreAuthorize("hasRole('ROLE_WS')")
+	Map<String, List<String>> validatePeticio(PeticioAsincrona peticio);
+
+	/**
+	 * Realitza una petició síncrona al recobriment SCSP.
+	 *
+	 * @param peticio
+	 *            petició a enviar.
+	 * @return la resposta a la petició.
+	 * @throws RecobrimentScspException
+	 *            Si hi s'han produit excepcions al fer la petició.
+	 */
+	@PreAuthorize("hasRole('ROLE_WS')")
+	public PeticioRespostaSincrona peticionSincrona(PeticioSincrona peticio);
+
+	/**
+	 * Realitza una petició asíncrona al recobriment SCSP.
+	 *
+	 * @param peticio
+	 *            petició a enviar.
+	 * @return la resposta a la petició.
+	 * @throws RecobrimentScspException
+	 *            Si hi s'han produit excepcions al fer la petició.
+	 */
+	@PreAuthorize("hasRole('ROLE_WS')")
+	public PeticioRespostaAsincrona peticionAsincrona(PeticioAsincrona peticio);
 }

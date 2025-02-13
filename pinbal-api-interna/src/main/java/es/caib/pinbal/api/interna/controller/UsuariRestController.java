@@ -8,12 +8,14 @@ import com.wordnik.swagger.annotations.ApiResponse;
 import com.wordnik.swagger.annotations.ApiResponses;
 import es.caib.pinbal.api.config.ApiVersion;
 import es.caib.pinbal.client.comu.Create;
+import es.caib.pinbal.client.recobriment.v2.Entitat;
 import es.caib.pinbal.client.usuaris.FiltreUsuaris;
 import es.caib.pinbal.client.usuaris.PermisosServei;
 import es.caib.pinbal.client.usuaris.ProcedimentServei;
 import es.caib.pinbal.client.usuaris.UsuariEntitat;
 import es.caib.pinbal.core.dto.apiresponse.ServiceExecutionException;
 import es.caib.pinbal.core.service.GestioRestService;
+import es.caib.pinbal.core.service.RecobrimentService;
 import es.caib.pinbal.core.service.exception.AccessDenegatException;
 import es.caib.pinbal.core.service.exception.EntitatNotFoundException;
 import es.caib.pinbal.core.service.exception.EntitatUsuariNotFoundException;
@@ -62,6 +64,38 @@ public class UsuariRestController extends PinbalHalRestController {
 
     @Autowired
     private GestioRestService gestioRestService;
+    @Autowired
+    private RecobrimentService recobrimentService;
+
+
+    /**
+     * @return llista d'entitats a les que l'usuari autenticat té permís
+     */
+    @ApiOperation(value = "Obtén les entitat",
+            notes = "Aquesta operació retorna la llista d'entitats a les que l'usuari autenticat té permís.",
+            response = Entitat.class,
+            responseContainer = "List"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Entitats obtingudes amb èxit"),
+            @ApiResponse(code = 204, message = "No s'han trobat entitats"),
+            @ApiResponse(code = 500, message = "Error intern del servidor")
+    })
+    @RequestMapping(value = "/usuari/entitats", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<Entitat>> getEntitats() {
+        try {
+            List<Entitat> entitats = recobrimentService.getEntitats();
+
+            if (entitats == null || entitats.isEmpty() ) {
+                return new ResponseEntity<List<Entitat>>(HttpStatus.NO_CONTENT);
+            }
+            return new ResponseEntity<List<Entitat>>(entitats, HttpStatus.OK);
+        } catch (AccessDeniedException | AccessDenegatException ade) {
+            throw new AccessDenegatException(Arrays.asList("PBL_WS"));
+        } catch (Exception ex) {
+            throw new ServiceExecutionException(ex.getMessage(), ex);
+        }
+    }
 
     /**
      * Crea o actualitza un usuari.

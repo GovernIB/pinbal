@@ -6,12 +6,12 @@ import com.wordnik.swagger.annotations.ApiResponse;
 import com.wordnik.swagger.annotations.ApiResponses;
 import es.caib.pinbal.api.config.ApiVersion;
 import es.caib.pinbal.client.procediments.Procediment;
-import es.caib.pinbal.client.recobriment.model.ScspConfirmacionPeticion;
 import es.caib.pinbal.client.recobriment.model.ScspJustificante;
-import es.caib.pinbal.client.recobriment.model.ScspRespuesta;
 import es.caib.pinbal.client.recobriment.v2.DadaEspecifica;
 import es.caib.pinbal.client.recobriment.v2.Entitat;
 import es.caib.pinbal.client.recobriment.v2.PeticioAsincrona;
+import es.caib.pinbal.client.recobriment.v2.PeticioRespostaAsincrona;
+import es.caib.pinbal.client.recobriment.v2.PeticioRespostaSincrona;
 import es.caib.pinbal.client.recobriment.v2.PeticioSincrona;
 import es.caib.pinbal.client.recobriment.v2.ValorEnum;
 import es.caib.pinbal.client.serveis.Servei;
@@ -141,10 +141,10 @@ public interface RecobrimentRestV2Intf {
     // Realització de consultes
     // /////////////////////////////////////////////////////////////
 
-    ResponseEntity<ScspRespuesta> peticioSincrona(PeticioSincrona peticio);
-    ResponseEntity<ScspConfirmacionPeticion> peticioAsincrona(PeticioAsincrona peticio);
-    ResponseEntity<ScspRespuesta> getRespuesta(String idPeticio);
-    ResponseEntity<ScspJustificante> getJustificant(String idPeticio, String idSolicitud);
-    ResponseEntity<ScspJustificante> getJustificanteImprimible(String idPeticio, String idSolicitud);
+    ResponseEntity<PeticioRespostaSincrona> peticioSincrona(PeticioSincrona peticio);
+    ResponseEntity<PeticioRespostaAsincrona> peticioAsincrona(PeticioAsincrona peticio);
+    ResponseEntity<PeticioRespostaSincrona> getRespuesta(String idPeticio);
+    ResponseEntity<ScspJustificante> getJustificant(String idPeticio, String idSolicitud) throws Exception;
+    ResponseEntity<ScspJustificante> getJustificanteImprimible(String idPeticio, String idSolicitud) throws Exception;
 
 }

@@ -887,6 +887,22 @@ public class ScspHelper {
 		}
 	}
 
+	public Emisor getEmisor(String certificado) {
+		configurarAccesScsp();
+		ServicioDao servicioDao = (ServicioDao)applicationContext.getBean("servicioDao");
+		Servicio servicio = servicioDao.select(certificado);
+		String cifEmisor = servicio.getEmisor().getCif();
+
+		EmisorCertificadoDao emisorCertificadoDao = (EmisorCertificadoDao)applicationContext.getBean("emisorCertificadoDao");
+		EmisorCertificado emisorCertificado = emisorCertificadoDao.selectByCif(cifEmisor);
+		String nombreEmisor = emisorCertificado.getNombre();
+
+		Emisor emisor = new Emisor();
+		emisor.setNifEmisor(cifEmisor);
+		emisor.setNombreEmisor(nombreEmisor);
+		return emisor;
+	}
+
 	private String getCifEmisor(String certificado) {
 		configurarAccesScsp();
 		ServicioDao servicioDao = (ServicioDao)applicationContext.getBean("servicioDao");

@@ -10,6 +10,10 @@ import es.caib.pinbal.client.recobriment.model.ScspPeticion;
 import es.caib.pinbal.client.recobriment.model.ScspRespuesta;
 import es.caib.pinbal.client.recobriment.v2.DadaEspecifica;
 import es.caib.pinbal.client.recobriment.v2.Entitat;
+import es.caib.pinbal.client.recobriment.v2.PeticioAsincrona;
+import es.caib.pinbal.client.recobriment.v2.PeticioRespostaAsincrona;
+import es.caib.pinbal.client.recobriment.v2.PeticioRespostaSincrona;
+import es.caib.pinbal.client.recobriment.v2.PeticioSincrona;
 import es.caib.pinbal.client.recobriment.v2.ValorEnum;
 import es.caib.pinbal.client.serveis.Servei;
 import es.caib.pinbal.core.service.RecobrimentService;
@@ -24,6 +28,7 @@ import javax.annotation.security.RolesAllowed;
 import javax.ejb.Stateless;
 import javax.interceptor.Interceptors;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Implementació de RecobrimentService que empra una clase delegada per accedir a la
@@ -128,6 +133,30 @@ public class RecobrimentServiceBean implements RecobrimentService {
 	@RolesAllowed("PBL_WS")
 	public List<ValorEnum> getValorsEnumByServei(String serveiCodi, String campCodi, String enumCodi, String filtre) throws Exception {
 		return delegate.getValorsEnumByServei(serveiCodi, campCodi, enumCodi, filtre);
+	}
+
+	@Override
+	@RolesAllowed("PBL_WS")
+	public Map<String, List<String>> validatePeticio(PeticioSincrona peticio) {
+		return delegate.validatePeticio(peticio);
+	}
+
+	@Override
+	@RolesAllowed("PBL_WS")
+	public Map<String, List<String>> validatePeticio(PeticioAsincrona peticio) {
+		return delegate.validatePeticio(peticio);
+	}
+
+	@Override
+	@RolesAllowed("PBL_WS")
+	public PeticioRespostaSincrona peticionSincrona(PeticioSincrona peticio) {
+		return delegate.peticionSincrona(peticio);
+	}
+
+	@Override
+	@RolesAllowed("PBL_WS")
+	public PeticioRespostaAsincrona peticionAsincrona(PeticioAsincrona peticio) {
+		return delegate.peticionAsincrona(peticio);
 	}
 
 }

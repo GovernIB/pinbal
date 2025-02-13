@@ -9,7 +9,7 @@ import javax.validation.ConstraintValidatorContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import es.caib.pinbal.webapp.common.DocumentIdentitatHelper;
+import es.caib.pinbal.core.helper.DocumentIdentitatHelper;
 
 /**
  * Valida que el nombre de document d'identitat de tipus DNI

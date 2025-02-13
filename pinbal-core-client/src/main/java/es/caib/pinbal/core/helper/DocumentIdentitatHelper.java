@@ -1,7 +1,7 @@
 /**
  * 
  */
-package es.caib.pinbal.webapp.common;
+package es.caib.pinbal.core.helper;
 
 import java.util.regex.Pattern;
 

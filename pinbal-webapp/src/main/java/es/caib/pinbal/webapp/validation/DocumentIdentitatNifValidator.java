@@ -3,13 +3,12 @@
  */
 package es.caib.pinbal.webapp.validation;
 
-import javax.validation.ConstraintValidator;
-import javax.validation.ConstraintValidatorContext;
-
+import es.caib.pinbal.core.helper.DocumentIdentitatHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import es.caib.pinbal.webapp.common.DocumentIdentitatHelper;
+import javax.validation.ConstraintValidator;
+import javax.validation.ConstraintValidatorContext;
 
 /**
  * Valida que el nombre de document d'identitat de tipus NIF
