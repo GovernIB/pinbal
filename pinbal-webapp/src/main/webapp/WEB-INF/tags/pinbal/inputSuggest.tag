@@ -19,6 +19,7 @@
 <%@ attribute name="suggestTextAddicional" required="false" rtexprvalue="true"%>
 <%@ attribute name="urlParamAddicional" required="false" rtexprvalue="true"%>
 <%@ attribute name="icon" required="false" rtexprvalue="true"%>
+<%@ attribute name="comment" required="false" rtexprvalue="true"%>
 <c:set var="idioma"><%=org.springframework.web.servlet.support.RequestContextUtils.getLocale(request).getLanguage()%></c:set>
 <c:set var="campPath" value="${name}"/>
 <c:set var="campErrors"><form:errors path="${campPath}"/></c:set>
@@ -67,6 +68,7 @@
 							<a class="input-group-addon btn btn-default ${campPath}_btn" onclick="toggleCarrecs()"><i class="${icon}"></i></a>
 					</div>
 					<c:if test="${not empty campErrors}"><p class="help-block"><span class="fa fa-exclamation-triangle"></span>&nbsp;<form:errors path="${campPath}"/></p></c:if>
+					<c:if test="${not empty comment}"><p class="comentari"><spring:message code="${comment}"/></p></c:if>
 				</c:when>
 				<c:otherwise>
 					<form:select path="${campPath}" cssClass="form-control"
@@ -83,7 +85,8 @@
 							data-suggest-text-addicional="${suggestTextAddicional}" 
 							data-url-param-addicional="${urlParamAddicional}" 
 							/>
-						<c:if test="${not empty campErrors}"><p class="help-block"><span class="fa fa-exclamation-triangle"></span>&nbsp;<form:errors path="${campPath}"/></p></c:if>
+					<c:if test="${not empty campErrors}"><p class="help-block"><span class="fa fa-exclamation-triangle"></span>&nbsp;<form:errors path="${campPath}"/></p></c:if>
+					<c:if test="${not empty comment}"><p class="comentari"><spring:message code="${comment}"/></p></c:if>
 				</c:otherwise>
 			</c:choose>
 			</div>

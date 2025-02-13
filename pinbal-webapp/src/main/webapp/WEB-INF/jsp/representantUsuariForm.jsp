@@ -77,7 +77,8 @@
 				suggestValue="codi"
 				suggestText="nom"
 				inline="false"
-				labelSize="2"/>
+				labelSize="2"
+				comment="usuari.form.camp.codi.comment"/>
 
 <%--		<pbl:inputText name="codi" textKey="representant.usuaris.filtre.camp.codi" labelSize="2" readonly="true"/>--%>
 		<div class="form-group">
