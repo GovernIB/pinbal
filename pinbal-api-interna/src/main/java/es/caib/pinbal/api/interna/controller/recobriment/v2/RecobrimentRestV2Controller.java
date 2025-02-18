@@ -19,6 +19,7 @@ import es.caib.pinbal.client.serveis.Servei;
 import es.caib.pinbal.core.dto.apiresponse.ServiceExecutionException;
 import es.caib.pinbal.core.service.RecobrimentService;
 import es.caib.pinbal.core.service.exception.AccessDenegatException;
+import es.caib.pinbal.core.service.exception.ConsultaNotFoundException;
 import es.caib.pinbal.core.service.exception.EntitatNotFoundException;
 import es.caib.pinbal.core.service.exception.ProcedimentNotFoundException;
 import es.caib.pinbal.core.service.exception.ResourceNotFoundException;
@@ -31,13 +32,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import javax.activation.MimetypesFileTypeMap;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -112,7 +111,7 @@ public class RecobrimentRestV2Controller extends PinbalHalRestController impleme
 		}
 	}
 
-	@RequestMapping(value = "/entitat/{entitatCodi}/serveis", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	@RequestMapping(value = "/entitats/{entitatCodi}/serveis", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<Servei>> getServeisPerEntitat(@PathVariable("entitatCodi") String entitatCodi) {
 		try {
 			List<Servei> serveis = recobrimentService.getServeisByEntitat(entitatCodi);
@@ -130,7 +129,7 @@ public class RecobrimentRestV2Controller extends PinbalHalRestController impleme
 		}
 	}
 
-	@RequestMapping(value = "/procediment/{procedimentCodi}/serveis", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	@RequestMapping(value = "/procediments/{procedimentCodi}/serveis", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<Servei>> getServeisPerProcediment(@PathVariable("procedimentCodi") String procedimentCodi) {
 		try {
 			List<Servei> serveis = recobrimentService.getServeisByProcediment(procedimentCodi);
@@ -197,223 +196,135 @@ public class RecobrimentRestV2Controller extends PinbalHalRestController impleme
 	// Realització de consultes
 	// /////////////////////////////////////////////////////////////
 
-	//	@RequestMapping(
-	//			value= "/peticionSincrona",
-	//			method = RequestMethod.POST,
-	//			produces = "application/json")
-	//	@ApiOperation(
-	//			value = "Informe de petició síncrona de tipus SCSP",
-	//			notes = "Retorna una entitat de tipus ScspRespuesta i l'estatus") //, response=ArrayList.class)
-	//	public ResponseEntity<ScspRespuesta> peticionSincrona(
-	//			HttpServletRequest request,
-	//			@ApiParam(name="peticion", value="Petició de tipus SCSP")
-	//			@RequestBody @Valid final ScspPeticion peticion) throws RecobrimentScspException {
-	public ResponseEntity<PeticioRespostaSincrona> peticioSincrona(PeticioSincrona peticio) {
-		Map<String, List<String>> errors = recobrimentService.validatePeticio(peticio);
-		if (!errors.isEmpty()) {
-			PeticioRespostaSincrona respuesta = PeticioRespostaSincrona.builder()
-					.error(true)
-					.errorsValidacio(errors)
-					.messageError("S'han produït errors en la validació de les dades de la petició.")
-					.build();
-			return new ResponseEntity<PeticioRespostaSincrona>(respuesta, HttpStatus.OK);
+	@RequestMapping(value= "/serveis/{serveiCodi}/peticioSincrona", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<PeticioRespostaSincrona> peticioSincrona(@RequestBody PeticioSincrona peticio) {
+		try {
+			Map<String, List<String>> errors = recobrimentService.validatePeticio(peticio);
+			if (!errors.isEmpty()) {
+				PeticioRespostaSincrona respuesta = PeticioRespostaSincrona.builder()
+						.error(true)
+						.errorsValidacio(errors)
+						.messageError("S'han produït errors en la validació de les dades de la petició.")
+						.build();
+				return new ResponseEntity<>(respuesta, HttpStatus.OK);
+			}
+			PeticioRespostaSincrona respuesta = recobrimentService.peticionSincrona(peticio);
+			return new ResponseEntity<>(respuesta, HttpStatus.OK);
+		} catch (Exception ex) {
+			throw new ServiceExecutionException(ex.getMessage(), ex);
 		}
-		PeticioRespostaSincrona respuesta = recobrimentService.peticionSincrona(peticio);
-
-		return new ResponseEntity<PeticioRespostaSincrona>(respuesta, HttpStatus.OK);
 	}
 
-	public ResponseEntity<PeticioRespostaAsincrona> peticioAsincrona(PeticioAsincrona peticio) {
-		Map<String, List<String>> errors = recobrimentService.validatePeticio(peticio);
-		if (!errors.isEmpty()) {
-			PeticioRespostaAsincrona respuesta = PeticioRespostaAsincrona.builder()
-					.error(true)
-					.errorsValidacio(errors)
-					.messageError("S'han produït errors en la validació de les dades de la petició.")
-					.build();
-			return new ResponseEntity<PeticioRespostaAsincrona>(respuesta, HttpStatus.OK);
+	@RequestMapping(value= "/serveis/{serveiCodi}/peticioAsincrona", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<PeticioRespostaAsincrona> peticioAsincrona(@RequestBody PeticioAsincrona peticio) {
+		try{
+			Map<String, List<String>> errors = recobrimentService.validatePeticio(peticio);
+			if (!errors.isEmpty()) {
+				PeticioRespostaAsincrona respuesta = PeticioRespostaAsincrona.builder()
+						.error(true)
+						.errorsValidacio(errors)
+						.messageError("S'han produït errors en la validació de les dades de la petició.")
+						.build();
+				return new ResponseEntity<>(respuesta, HttpStatus.OK);
+			}
+			PeticioRespostaAsincrona respuesta = recobrimentService.peticionAsincrona(peticio);
+			return new ResponseEntity<>(respuesta, HttpStatus.OK);
+		} catch (Exception ex) {
+			throw new ServiceExecutionException(ex.getMessage(), ex);
 		}
-		PeticioRespostaAsincrona respuesta = recobrimentService.peticionAsincrona(peticio);
-
-		return new ResponseEntity<PeticioRespostaAsincrona>(respuesta, HttpStatus.OK);
 	}
 
-	//	@RequestMapping(
-	//			value= "/getRespuesta",
-	//			method = RequestMethod.GET,
-	//			produces = "application/json")
-	//	@ApiOperation(
-	//			value = "Informe de petició de tipus SCSP",
-	//			notes = "Retorna una entitat de tipus ScspRespuesta i l'estatus") //, response=ArrayList.class)
-	//	public ResponseEntity<ScspRespuesta> getRespuesta(
-	//			HttpServletRequest request,
-	//			@ApiParam(name="idPeticion", value="Id de petició")
-	//			@RequestParam final String idPeticion) throws RecobrimentScspException {
-	public ResponseEntity<PeticioRespostaSincrona> getRespuesta(String idPeticio) {
+	// Obtenció de respostes
+	// /////////////////////////////////////////////////////////////
+
+	@RequestMapping(value= "/consultes/{idPeticio}/resposta", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<PeticioRespostaSincrona> getResposta(String idPeticio) {
 
 		PeticioRespostaSincrona resposta = null;
 		try {
-			ScspRespuesta scspRespuesta = recobrimentService.getRespuesta(idPeticio);
+
+			ScspRespuesta scspRespuesta = recobrimentService.getResposta(idPeticio);
+			if (scspRespuesta == null) {
+				return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+			}
 			resposta = PeticioRespostaSincrona.builder()
 					.error(!scspRespuesta.getAtributos().getEstado().getCodigoEstado().startsWith("00"))
 					.messageError(scspRespuesta.getAtributos().getEstado().getLiteralError())
 					.resposta(scspRespuesta)
 					.build();
-			return new ResponseEntity<PeticioRespostaSincrona>(resposta, HttpStatus.OK);
-		} catch (Exception e) {
-			log.error("Error al obtenir la resposta de la petició amb solicitudId= " + idPeticio, e);
-			resposta = PeticioRespostaSincrona.builder()
-					.error(true)
-					.messageError(e.getMessage())
-					.build();
-			return new ResponseEntity<PeticioRespostaSincrona>(resposta, HttpStatus.INTERNAL_SERVER_ERROR);
+			return new ResponseEntity<>(resposta, HttpStatus.OK);
+		} catch (ConsultaNotFoundException ce) {
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+		} catch (Exception ex) {
+			throw new ServiceExecutionException(ex.getMessage(), ex);
 		}
 
 	}
 
-	//	@RequestMapping(
-	//			value= "/getJustificante",
-	//			method = RequestMethod.GET,
-	//			produces = "application/json")
-	//	@ApiOperation(
-	//			value = "Justificant de petició de tipus SCSP",
-	//			notes = "Obté un justificant de la petició, de tipus ScspJustificante") //, response=ArrayList.class)
-	//	public void getJustificante(
-	//			HttpServletRequest request,
-	//			HttpServletResponse response,
-	//			@ApiParam(name="idPeticion", value="Id de petició")
-	//			@RequestParam final String idPeticion,
-	//			@ApiParam(name="idSolicitud", value="Id de sol·licitud")
-	//			@RequestParam final String idSolicitud) throws RecobrimentScspException, IOException {
+	@RequestMapping(value= "/consultes/{idPeticio}/solicitud/{idSolicitud}/justificant", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<ScspJustificante> getJustificant(String idPeticio, String idSolicitud) throws Exception {
 
-		ScspJustificante justificante = recobrimentService.getJustificante(idPeticio, idSolicitud);
-		return new ResponseEntity<ScspJustificante>(justificante, HttpStatus.OK);
-	}
-
-	//	@RequestMapping(
-	//			value= "/getJustificanteImprimible",
-	//			method = RequestMethod.GET,
-	//			produces = "application/json")
-	//	@ApiOperation(
-	//			value = "Versió imprimible del justificant de petició de tipus SCSP",
-	//			notes = "Obté la versió imprimible del justificant de la petició, de tipus ScspJustificante") //, response=ArrayList.class)
-	//	public void getJustificanteImprimible(
-	//			HttpServletRequest request,
-	//			HttpServletResponse response,
-	//			@ApiParam(name="idPeticion", value="Id de petició")
-	//			@RequestParam final String idPeticion,
-	//			@ApiParam(name="idSolicitud", value="Id de sol·licitud")
-	//			@RequestParam final String idSolicitud) throws RecobrimentScspException, IOException {
-	public ResponseEntity<ScspJustificante> getJustificanteImprimible(String idPeticio, String idSolicitud) throws Exception {
-
-		ScspJustificante justificante = recobrimentService.getJustificanteImprimible(idPeticio, idSolicitud);
-		return new ResponseEntity<ScspJustificante>(justificante, HttpStatus.OK);
-	}
-
-
-//	@RequestMapping(
-//			value= "/peticionAsincrona",
-//			method = RequestMethod.POST,
-//			produces = "application/json")
-//	@ApiOperation(
-//			value = "Informe de petició asíncrona de tipus SCSP",
-//			notes = "Retorna una entitat de tipus ScspConfirmacionPeticion i l'estatus") //, response=ArrayList.class)
-//	public ResponseEntity<ScspConfirmacionPeticion> peticionAsincrona(
-//			HttpServletRequest request,
-//			@ApiParam(name="peticion", value="Petició de tipus SCSP")
-//			@RequestBody @Valid final ScspPeticion peticion) throws RecobrimentScspException {
-//		ScspConfirmacionPeticion respuesta = recobrimentService.peticionAsincrona(peticion);
-//		return new ResponseEntity<ScspConfirmacionPeticion>(respuesta, HttpStatus.OK);
-//	}
-//
-//	@RequestMapping(
-//			value= "/getJustificanteCsv",
-//			method = RequestMethod.GET,
-//			produces = "application/json")
-//	@ApiOperation(
-//			value = "CSV del justificant de petició de tipus SCSP",
-//			notes = "Obté el CSV del justificant de la petició, de tipus ScspJustificante") //, response=ArrayList.class)
-//	public ResponseEntity<String> getJustificanteCsv(
-//			HttpServletRequest request,
-//			HttpServletResponse response,
-//			@ApiParam(name="idPeticion", value="Id de petició")
-//			@RequestParam final String idPeticion,
-//			@ApiParam(name="idSolicitud", value="Id de sol·licitud")
-//			@RequestParam final String idSolicitud) throws RecobrimentScspException, IOException {
-//		String justificanteCsv = recobrimentService.getJustificanteCsv(idPeticion, idSolicitud);
-//		return new ResponseEntity<String>("", HttpStatus.OK);
-//	}
-//
-//	@RequestMapping(
-//			value= "/getJustificanteUuId",
-//			method = RequestMethod.GET,
-//			produces = "application/json")
-//	@ApiOperation(
-//			value = "Uuid del justificant de petició de tipus SCSP",
-//			notes = "Obté l'Uuid del justificant de la petició, de tipus ScspJustificante") //, response=ArrayList.class)
-//	public ResponseEntity<String> getJustificanteUuid(
-//			HttpServletRequest request,
-//			HttpServletResponse response,
-//			@ApiParam(name="idPeticion", value="Id de petició")
-//			@RequestParam final String idPeticion,
-//			@ApiParam(name="idSolicitud", value="Id de sol·licitud")
-//			@RequestParam final String idSolicitud) throws RecobrimentScspException, IOException {
-//		String justificanteUuid = recobrimentService.getJustificanteUuid(idPeticion, idSolicitud);
-//		return new ResponseEntity<String>("", HttpStatus.OK);
-//	}
-//
-//	@ExceptionHandler(Exception.class)
-//	public ResponseEntity<ErrorResponse> handleError(
-//			HttpServletRequest request,
-//			HttpServletResponse response,
-//			Exception ex) {
-//		if (ex instanceof RecobrimentScspValidationException) {
-//			return new ResponseEntity<ErrorResponse>(
-//					new ErrorResponse(ex.getMessage()),
-//					HttpStatus.BAD_REQUEST);
-//		} else {
-//			return new ResponseEntity<ErrorResponse>(
-//					new ErrorResponse(ex.getMessage(), ExceptionUtils.getStackTrace(ex)),
-//					HttpStatus.INTERNAL_SERVER_ERROR);
-//		}
-//	}
-
-	public class ErrorResponse {
-		private String message;
-		private String trace;
-		public ErrorResponse(String message) {
-			super();
-			this.message = message;
-		}
-		public ErrorResponse(String message, String trace) {
-			super();
-			this.message = message;
-			this.trace = trace;
-		}
-		public String getMessage() {
-			return message;
-		}
-		public String getTrace() {
-			return trace;
+		ScspJustificante justificant = null;
+		try {
+			justificant = recobrimentService.getJustificant(idPeticio, idSolicitud);
+			if (justificant == null) {
+				return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+			}
+			return new ResponseEntity<>(justificant, HttpStatus.OK);
+		} catch (ConsultaNotFoundException ce) {
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+		} catch (Exception ex) {
+			throw new ServiceExecutionException(ex.getMessage(), ex);
 		}
 	}
 
-	private void writeFileToResponse(
-			String fileName,
-			String contentType,
-			byte[] fileContent,
-			HttpServletResponse response) throws IOException {
-		response.setHeader("Pragma", "");
-		response.setHeader("Expires", "");
-		response.setHeader("Cache-Control", "");
-		response.setHeader("Content-Disposition", "attachment; filename=\"" + fileName + "\"");
-		if (contentType != null) {
-			response.setContentType(contentType);
-		} else {
-			response.setContentType(new MimetypesFileTypeMap().getContentType(fileName));
+	@RequestMapping(value= "/consultes/{idPeticio}/solicitud/{idSolicitud}/justificantImprimible", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<ScspJustificante> getJustificantImprimible(String idPeticio, String idSolicitud) throws Exception {
+
+		ScspJustificante justificant = null;
+		try {
+			justificant = recobrimentService.getJustificantImprimible(idPeticio, idSolicitud);
+			if (justificant == null) {
+				return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+			}
+			return new ResponseEntity<>(justificant, HttpStatus.OK);
+		} catch (ConsultaNotFoundException ce) {
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+		} catch (Exception ex) {
+			throw new ServiceExecutionException(ex.getMessage(), ex);
 		}
-		response.getOutputStream().write(fileContent);
+	}
+
+	@RequestMapping(value= "/consultes/{idPeticio}/solicitud/{idSolicitud}/justificantCsv", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<String> getJustificantCsv(String idPeticio, String idSolicitud) throws Exception {
+		String justificanteCsv = null;
+		try {
+			justificanteCsv = recobrimentService.getJustificantCsv(idPeticio, idSolicitud);
+			if (justificanteCsv == null) {
+				return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+			}
+			return new ResponseEntity<>(justificanteCsv, HttpStatus.OK);
+		} catch (ConsultaNotFoundException ce) {
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+		} catch (Exception ex) {
+			throw new ServiceExecutionException(ex.getMessage(), ex);
+		}
+	}
+
+	@RequestMapping(value= "/consultes/{idPeticio}/solicitud/{idSolicitud}/justificantUuid", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<String> getJustificantUuid(String idPeticio, String idSolicitud) throws Exception {
+		String justificantUuid = null;
+		try {
+			justificantUuid = recobrimentService.getJustificantUuid(idPeticio, idSolicitud);
+			if (justificantUuid == null) {
+				return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+			}
+			return new ResponseEntity<>(justificantUuid, HttpStatus.OK);
+		} catch (ConsultaNotFoundException ce) {
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+		} catch (Exception ex) {
+			throw new ServiceExecutionException(ex.getMessage(), ex);
+		}
 	}
 
 }

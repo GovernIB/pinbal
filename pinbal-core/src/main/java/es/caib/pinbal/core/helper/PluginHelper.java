@@ -23,6 +23,7 @@ import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Component;
 
 import java.io.InputStream;
@@ -64,6 +65,7 @@ public class PluginHelper {
 	private ConfigHelper configHelper;
 
 
+	@Cacheable(value = "usuariAmbCodi", key = "#usuariCodi")
 	public DadesUsuari dadesUsuariConsultarAmbUsuariCodi(
 			String usuariCodi) throws SistemaExternException {
 		try {
@@ -78,6 +80,7 @@ public class PluginHelper {
 		}
 	}
 
+	@Cacheable(value = "usuariAmbNif", key = "#usuariNif")
 	public DadesUsuari dadesUsuariConsultarAmbUsuariNif(
 			String usuariNif) throws SistemaExternException {
 		try {

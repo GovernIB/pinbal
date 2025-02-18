@@ -55,7 +55,17 @@ public class ServeiCamp extends PinbalAuditable<Long> {
 		PAIS,
 		MUNICIPI_3,
 		ADJUNT_BINARI,
-		ADJUNT_XML
+		ADJUNT_XML;
+
+		public static boolean isEnumOLloc(ServeiCampTipus tipus) {
+			if (tipus == null) return false;
+
+			return tipus == ServeiCampTipus.ENUM
+					|| tipus == ServeiCampTipus.PAIS
+					|| tipus == ServeiCampTipus.PROVINCIA
+					|| tipus == ServeiCampTipus.MUNICIPI_5
+					|| tipus == ServeiCampTipus.MUNICIPI_3;
+		}
 	}
 
 	private static final long serialVersionUID = -6657066865382086237L;

@@ -3,13 +3,14 @@
  */
 package es.caib.pinbal.core.service;
 
-import java.util.List;
-
-import org.springframework.security.access.prepost.PreAuthorize;
-
+import es.caib.pinbal.core.dto.CacheDto;
 import es.caib.pinbal.core.dto.IntegracioAccioDto;
 import es.caib.pinbal.core.dto.IntegracioDto;
+import es.caib.pinbal.core.dto.PaginaDto;
 import es.caib.pinbal.core.service.exception.NotFoundException;
+import org.springframework.security.access.prepost.PreAuthorize;
+
+import java.util.List;
 
 /**
  * Declaració dels mètodes comuns de l'aplicació.
@@ -40,5 +41,12 @@ public interface AplicacioService {
 			String codi) throws NotFoundException;
 
 
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+    public PaginaDto<CacheDto> getAllCaches();
 
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	public void removeCache(String value);
+
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	public void removeAllCaches();
 }

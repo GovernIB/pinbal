@@ -16,6 +16,7 @@ import es.caib.pinbal.client.recobriment.v2.PeticioRespostaSincrona;
 import es.caib.pinbal.client.recobriment.v2.PeticioSincrona;
 import es.caib.pinbal.client.recobriment.v2.ValorEnum;
 import es.caib.pinbal.client.serveis.Servei;
+import es.caib.pinbal.core.service.exception.ConsultaNotFoundException;
 import es.caib.pinbal.core.service.exception.EntitatNotFoundException;
 import es.caib.pinbal.core.service.exception.ProcedimentNotFoundException;
 import es.caib.pinbal.core.service.exception.RecobrimentScspException;
@@ -224,4 +225,76 @@ public interface RecobrimentService {
 	 */
 	@PreAuthorize("hasRole('ROLE_WS')")
 	public PeticioRespostaAsincrona peticionAsincrona(PeticioAsincrona peticio);
+
+	/**
+	 * Obté la resposta d'una petició SCSP enviada.
+	 *
+	 * @param idPeticion
+	 *            id de la petició SCSP enviada.
+	 * @return la resposta associada a la petició.
+	 * @throws RecobrimentScspException
+	 *            Si hi s'han produit excepcions SCSP al fer la petició.
+	 */
+	@PreAuthorize("hasRole('ROLE_WS')")
+	public ScspRespuesta getResposta(String idPeticion) throws RecobrimentScspException, ConsultaNotFoundException;
+
+	/**
+	 *
+	 * @param idPeticion
+	 *            id de la petició SCSP enviada.
+	 * @param idSolicitud
+	 *            id de la sol·licitud dins la petició SCSP.
+	 * @return el fitxer amb el justificant.
+	 * @throws RecobrimentScspException
+	 *            Si hi s'han produit excepcions SCSP al fer la petició.
+	 */
+	@PreAuthorize("hasRole('ROLE_WS')")
+	public ScspJustificante getJustificant(
+			String idPeticion,
+			String idSolicitud) throws RecobrimentScspException, ConsultaNotFoundException;
+
+	/**
+	 *
+	 * @param idPeticion
+	 *            id de la petició SCSP enviada.
+	 * @param idSolicitud
+	 *            id de la sol·licitud dins la petició SCSP.
+	 * @return el fitxer amb la versió imprimible del justificant.
+	 * @throws RecobrimentScspException
+	 *            Si hi s'han produit excepcions SCSP al fer la petició.
+	 */
+	@PreAuthorize("hasRole('ROLE_WS')")
+	public ScspJustificante getJustificantImprimible(
+			String idPeticion,
+			String idSolicitud) throws RecobrimentScspException, ConsultaNotFoundException;
+
+	/**
+	 *
+	 * @param idPeticion
+	 *            id de la petició SCSP enviada.
+	 * @param idSolicitud
+	 *            id de la sol·licitud dins la petició SCSP.
+	 * @return el CSV del justificant.
+	 * @throws RecobrimentScspException
+	 *            Si hi s'han produit excepcions SCSP al fer la petició.
+	 */
+	@PreAuthorize("hasRole('ROLE_WS')")
+	public String getJustificantCsv(
+			String idPeticion,
+			String idSolicitud) throws RecobrimentScspException, ConsultaNotFoundException;
+
+	/**
+	 *
+	 * @param idPeticion
+	 *            id de la petició SCSP enviada.
+	 * @param idSolicitud
+	 *            id de la sol·licitud dins la petició SCSP.
+	 * @return l'UUID del justificant.
+	 * @throws RecobrimentScspException
+	 *            Si hi s'han produit excepcions SCSP al fer la petició.
+	 */
+	@PreAuthorize("hasRole('ROLE_WS')")
+	public String getJustificantUuid(
+			String idPeticion,
+			String idSolicitud) throws RecobrimentScspException, ConsultaNotFoundException;
 }

@@ -43,17 +43,20 @@ import es.caib.pinbal.core.helper.DadesConsultaSimpleValidator;
 import es.caib.pinbal.core.helper.DocumentIdentitatHelper;
 import es.caib.pinbal.core.helper.PluginHelper;
 import es.caib.pinbal.core.helper.RecobrimentHelper;
+import es.caib.pinbal.core.helper.ServeiHelper;
+import es.caib.pinbal.core.model.Consulta;
 import es.caib.pinbal.core.model.Entitat;
 import es.caib.pinbal.core.model.ServeiCamp;
 import es.caib.pinbal.core.model.ServeiCamp.ServeiCampTipus;
 import es.caib.pinbal.core.model.ServeiCampGrup;
 import es.caib.pinbal.core.model.ServeiConfig;
+import es.caib.pinbal.core.repository.ConsultaRepository;
 import es.caib.pinbal.core.repository.EntitatRepository;
 import es.caib.pinbal.core.repository.ProcedimentRepository;
-import es.caib.pinbal.core.repository.ServeiCampGrupRepository;
 import es.caib.pinbal.core.repository.ServeiCampRepository;
 import es.caib.pinbal.core.repository.ServeiConfigRepository;
 import es.caib.pinbal.core.repository.ServeiRepository;
+import es.caib.pinbal.core.service.exception.ConsultaNotFoundException;
 import es.caib.pinbal.core.service.exception.ConsultaScspGeneracioException;
 import es.caib.pinbal.core.service.exception.EntitatNotFoundException;
 import es.caib.pinbal.core.service.exception.ProcedimentNotFoundException;
@@ -89,6 +92,7 @@ import es.scsp.common.utils.DateUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.MessageSource;
@@ -155,7 +159,9 @@ public class RecobrimentServiceImpl implements RecobrimentService, ApplicationCo
     @Autowired
     private PluginHelper pluginHelper;
     @Autowired
-    private ServeiCampGrupRepository serveiCampGrupRepository;
+    private ServeiHelper serveiHelper;
+    @Autowired
+    private ConsultaRepository consultaRepository;
 
     @Override
 	public void setApplicationContext(
@@ -641,6 +647,7 @@ public class RecobrimentServiceImpl implements RecobrimentService, ApplicationCo
     }
 
     @Override
+    @Cacheable(value = "procediments", key = "#entitatCodi")
     @Transactional(readOnly = true)
     public List<Procediment> getProcediments(String entitatCodi) throws EntitatNotFoundException {
         log.debug("Cercant els procediments de l'entitat (codi=" + entitatCodi + ")");
@@ -653,17 +660,19 @@ public class RecobrimentServiceImpl implements RecobrimentService, ApplicationCo
     }
 
     @Override
+    @Cacheable(value = "serveis")
     @Transactional(readOnly = true)
     public List<Servei> getServeis() {
-        log.debug("Cercant tots els servicios");
+        log.debug("Cercant tots els serveis");
 
         return serveiRepository.findAllServeisClient();
     }
 
     @Override
+    @Cacheable(value = "serveisEntitat", key = "#entitatCodi")
     @Transactional(readOnly = true)
     public List<Servei> getServeisByEntitat(String entitatCodi) throws EntitatNotFoundException {
-        log.debug("Cercant els servicios per a l'entitat (codi=" + entitatCodi + ")");
+        log.debug("Cercant els serveis per a l'entitat (codi=" + entitatCodi + ")");
         Entitat entitat = entitatRepository.findByCodi(entitatCodi);
         if (entitat == null)
             throw new EntitatNotFoundException();
@@ -672,9 +681,10 @@ public class RecobrimentServiceImpl implements RecobrimentService, ApplicationCo
     }
 
     @Override
+    @Cacheable(value = "serveisProcediment", key = "#procedimentCodi")
     @Transactional(readOnly = true)
     public List<Servei> getServeisByProcediment(String procedimentCodi) throws ProcedimentNotFoundException {
-        log.debug("Cercant els servicios actius per al procediment (codi=" + procedimentCodi + ")");
+        log.debug("Cercant els serveis actius per al procediment (codi=" + procedimentCodi + ")");
         es.caib.pinbal.core.model.Procediment procediment = procedimentRepository.findByCodi(procedimentCodi);
         if (procediment == null)
             throw new ProcedimentNotFoundException();
@@ -683,6 +693,7 @@ public class RecobrimentServiceImpl implements RecobrimentService, ApplicationCo
     }
 
     @Override
+    @Cacheable(value = "dadesEspecifiques", key = "#serveiCodi")
     @Transactional(readOnly = true)
     public List<DadaEspecifica> getDadesEspecifiquesByServei(String serveiCodi) throws ServeiNotFoundException {
         log.debug("Cercant les dades especifiques del servei (codi=" + serveiCodi + ")");
@@ -696,6 +707,7 @@ public class RecobrimentServiceImpl implements RecobrimentService, ApplicationCo
 
     @Override
     @Transactional(readOnly = true)
+    @Cacheable(value = "enumerats", key = "#serveiCodi + ':' + #campPath + ':' + (#enumCodi == null ? 'null' : #enumCodi) + ':' + (#filtre == null ? 'null' : #filtre)")
     public List<ValorEnum> getValorsEnumByServei(String serveiCodi, String campPath, String enumCodi, String filtre) throws Exception {
         log.debug("Cercant els valors de l'enumerat (serveicodi={}, codi={}, filtre={})", serveiCodi, enumCodi, filtre);
 
@@ -1312,8 +1324,6 @@ public class RecobrimentServiceImpl implements RecobrimentService, ApplicationCo
         }
     }
 
-
-
     private List<ValorEnum> obtenirPaisos() {
         List<Pais> paisos = dadesExternesService.findPaisos();
         if (paisos == null)
@@ -1420,6 +1430,96 @@ public class RecobrimentServiceImpl implements RecobrimentService, ApplicationCo
             }
         }
         return null;
+    }
+
+
+    @Override
+    public ScspRespuesta getResposta(String idPeticion) throws RecobrimentScspException, ConsultaNotFoundException {
+        try {
+            Consulta consulta = consultaRepository.findByScspPeticionId(idPeticion);
+            if (consulta == null) {
+                throw new ConsultaNotFoundException();
+            }
+            return toScspRespuesta(recobrimentHelper.getRespuesta(idPeticion));
+        } catch (TransformerException ex) {
+            throw new RecobrimentScspException(ex.getMessage(), ex);
+        } catch (ScspException ex) {
+            throw new RecobrimentScspException(ex.getMessage(), ex);
+        }
+    }
+
+    @Override
+    public ScspJustificante getJustificant(
+            String idPeticion,
+            String idSolicitud) throws RecobrimentScspException, ConsultaNotFoundException {
+        try {
+            Consulta consulta = consultaRepository.findByScspPeticionIdAndScspSolicitudId(idPeticion, idSolicitud);
+            if (consulta == null) {
+                throw new ConsultaNotFoundException();
+            }
+            JustificantDto justificant = recobrimentHelper.getJustificante(idPeticion, idSolicitud, false, true);
+            ScspJustificante justificante = new ScspJustificante();
+            justificante.setNom(justificant.getNom());
+            justificante.setContentType(justificant.getContentType());
+            justificante.setContingut(justificant.getContingut());
+            return justificante;
+        } catch (ScspException ex) {
+            throw new RecobrimentScspException(
+                    ex.getMessage(),
+                    ex);
+        }
+    }
+
+    @Override
+    public ScspJustificante getJustificantImprimible(String idPeticion, String idSolicitud) throws RecobrimentScspException, ConsultaNotFoundException {
+        try {
+            Consulta consulta = consultaRepository.findByScspPeticionIdAndScspSolicitudId(idPeticion, idSolicitud);
+            if (consulta == null) {
+                throw new ConsultaNotFoundException();
+            }
+            JustificantDto justificant = recobrimentHelper.getJustificante(idPeticion, idSolicitud, true, true);
+            ScspJustificante justificante = new ScspJustificante();
+            justificante.setNom(justificant.getNom());
+            justificante.setContentType(justificant.getContentType());
+            justificante.setContingut(justificant.getContingut());
+            return justificante;
+        } catch (ScspException ex) {
+            throw new RecobrimentScspException(
+                    ex.getMessage(),
+                    ex);
+        }
+    }
+
+    @Override
+    public String getJustificantCsv(String idPeticion, String idSolicitud) throws RecobrimentScspException, ConsultaNotFoundException {
+        try {
+            Consulta consulta = consultaRepository.findByScspPeticionIdAndScspSolicitudId(idPeticion, idSolicitud);
+            if (consulta == null) {
+                throw new ConsultaNotFoundException();
+            }
+            JustificantDto justificant = recobrimentHelper.getJustificante(idPeticion, idSolicitud, true, false);
+            return justificant.getArxiuCsv();
+        } catch (ScspException ex) {
+            throw new RecobrimentScspException(
+                    ex.getMessage(),
+                    ex);
+        }
+    }
+
+    @Override
+    public String getJustificantUuid(String idPeticion, String idSolicitud) throws RecobrimentScspException, ConsultaNotFoundException {
+        try {
+            Consulta consulta = consultaRepository.findByScspPeticionIdAndScspSolicitudId(idPeticion, idSolicitud);
+            if (consulta == null) {
+                throw new ConsultaNotFoundException();
+            }
+            JustificantDto justificant = recobrimentHelper.getJustificante(idPeticion, idSolicitud, true, false);
+            return justificant.getArxiuUuid();
+        } catch (ScspException ex) {
+            throw new RecobrimentScspException(
+                    ex.getMessage(),
+                    ex);
+        }
     }
 
 

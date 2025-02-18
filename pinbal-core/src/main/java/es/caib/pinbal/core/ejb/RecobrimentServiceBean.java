@@ -17,6 +17,7 @@ import es.caib.pinbal.client.recobriment.v2.PeticioSincrona;
 import es.caib.pinbal.client.recobriment.v2.ValorEnum;
 import es.caib.pinbal.client.serveis.Servei;
 import es.caib.pinbal.core.service.RecobrimentService;
+import es.caib.pinbal.core.service.exception.ConsultaNotFoundException;
 import es.caib.pinbal.core.service.exception.EntitatNotFoundException;
 import es.caib.pinbal.core.service.exception.ProcedimentNotFoundException;
 import es.caib.pinbal.core.service.exception.RecobrimentScspException;
@@ -157,6 +158,36 @@ public class RecobrimentServiceBean implements RecobrimentService {
 	@RolesAllowed("PBL_WS")
 	public PeticioRespostaAsincrona peticionAsincrona(PeticioAsincrona peticio) {
 		return delegate.peticionAsincrona(peticio);
+	}
+
+	@Override
+	@RolesAllowed("PBL_WS")
+	public ScspRespuesta getResposta(String idPeticion) throws RecobrimentScspException, ConsultaNotFoundException {
+		return delegate.getResposta(idPeticion);
+	}
+
+	@Override
+	@RolesAllowed("PBL_WS")
+	public ScspJustificante getJustificant(String idPeticion, String idSolicitud) throws RecobrimentScspException, ConsultaNotFoundException {
+		return delegate.getJustificant(idPeticion, idSolicitud);
+	}
+
+	@Override
+	@RolesAllowed("PBL_WS")
+	public ScspJustificante getJustificantImprimible(String idPeticion, String idSolicitud) throws RecobrimentScspException, ConsultaNotFoundException {
+		return delegate.getJustificantImprimible(idPeticion, idSolicitud);
+	}
+
+	@Override
+	@RolesAllowed("PBL_WS")
+	public String getJustificantCsv(String idPeticion, String idSolicitud) throws RecobrimentScspException, ConsultaNotFoundException {
+		return getJustificantCsv(idPeticion, idSolicitud);
+	}
+
+	@Override
+	@RolesAllowed("PBL_WS")
+	public String getJustificantUuid(String idPeticion, String idSolicitud) throws RecobrimentScspException, ConsultaNotFoundException {
+		return delegate.getJustificantUuid(idPeticion, idSolicitud);
 	}
 
 }

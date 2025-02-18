@@ -276,6 +276,8 @@ public interface ConsultaRepository extends JpaRepository<Consulta, Long> {
 			String scspPeticionId,
 			String scspSolicitudId);
 
+	public Consulta findByScspPeticionId(String scspPeticionId);
+
 	@Query(	"select " +
 			"	new es.caib.pinbal.core.dto.CarregaDto( " +
 			"		sum(case c.recobriment when true then 0 else 1 end), " +

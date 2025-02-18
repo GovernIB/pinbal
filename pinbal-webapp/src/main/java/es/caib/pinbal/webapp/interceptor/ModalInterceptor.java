@@ -3,12 +3,12 @@
  */
 package es.caib.pinbal.webapp.interceptor;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
+import es.caib.pinbal.webapp.helper.AjaxHelper;
+import es.caib.pinbal.webapp.helper.ModalHelper;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
-import es.caib.pinbal.webapp.helper.ModalHelper;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * Interceptor per a evitar processar les pàgines amb Sitemesh.
@@ -23,6 +23,8 @@ public class ModalInterceptor extends HandlerInterceptorAdapter {
 			HttpServletResponse response,
 			Object handler) throws Exception {
 		boolean resposta = ModalHelper.comprovarModalInterceptor(request, response);
+		if (resposta)
+			resposta = AjaxHelper.comprovarAjaxInterceptor(request, response);
 		return resposta;
 	}
 

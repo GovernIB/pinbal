@@ -7,4 +7,18 @@
     <cache name="clavePrivadaNumeroSerie" maxElementsInMemory="100" eternal="false" timeToLiveSeconds="3600" overflowToDisk="false" />
     <cache name="clavePublicaNombre" maxElementsInMemory="100" eternal="false" timeToLiveSeconds="3600" overflowToDisk="false" />
     <cache name="clavePublicaNumeroSerie" maxElementsInMemory="100" eternal="false" timeToLiveSeconds="3600" overflowToDisk="false" />
+
+    <cache name="procediments" maxElementsInMemory="100" eternal="false" timeToLiveSeconds="86400" overflowToDisk="false" />
+    <cache name="serveis" maxElementsInMemory="100" eternal="false" timeToLiveSeconds="86400" overflowToDisk="false" />
+    <cache name="serveisEntitat" maxElementsInMemory="100" eternal="false" timeToLiveSeconds="86400" overflowToDisk="false" />
+    <cache name="serveisProcediment" maxElementsInMemory="100" eternal="false" timeToLiveSeconds="86400" overflowToDisk="false" />
+    <cache name="dadesEspecifiques" maxElementsInMemory="300" eternal="false" timeToLiveSeconds="86400" overflowToDisk="false" />
+    <cache name="enumerats" maxElementsInMemory="300" eternal="false" timeToLiveSeconds="86400" overflowToDisk="false" />
+
+    <cache name="paisos" maxElementsInMemory="100" eternal="false" timeToLiveSeconds="86400" overflowToDisk="false" />
+    <cache name="provincies" maxElementsInMemory="100" eternal="false" timeToLiveSeconds="86400" overflowToDisk="false" />
+    <cache name="municipis" maxElementsInMemory="100" eternal="false" timeToLiveSeconds="86400" overflowToDisk="false" />
+
+    <cache name="usuariAmbCodi" maxElementsInMemory="300" eternal="false" timeToLiveSeconds="86400" overflowToDisk="false" />
+    <cache name="usuariAmbNif" maxElementsInMemory="300" eternal="false" timeToLiveSeconds="86400" overflowToDisk="false" />
 </ehcache>

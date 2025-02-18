@@ -115,8 +115,8 @@ public class UsuariController extends BaseController{
 		try {
 			if (RolHelper.isRolActualAdministrador(request) || RolHelper.isRolActualSuperauditor(request)) {
 				model.addAttribute("entitats", entitatService.findActives());
-				model.addAttribute("procediments", procedimentService.findAmbEntitat(entitatId != null ? entitatId : entitatActual.getId()));
-				model.addAttribute("serveis", serveiService.findAmbEntitat(entitatId != null ? entitatId : entitatActual.getId()));
+				model.addAttribute("procediments", entitatId != null ? procedimentService.findAmbEntitat(entitatId) : procedimentService.findAll());
+				model.addAttribute("serveis", entitatId != null ? serveiService.findAmbEntitat(entitatId) : serveiService.findActius());
 			} else {
 				model.addAttribute("entitats", EntitatHelper.getEntitats(request, entitatService, true));
 				model.addAttribute("procediments", procedimentService.findAmbEntitat(entitatActual.getId()));

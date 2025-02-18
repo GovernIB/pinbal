@@ -7,6 +7,7 @@ import es.caib.pinbal.client.comu.EntitatInfo;
 import es.caib.pinbal.core.dto.EntitatDto;
 import es.caib.pinbal.core.dto.EntitatDto.EntitatTipusDto;
 import es.caib.pinbal.core.dto.OrganGestorDto;
+import es.caib.pinbal.core.helper.CacheHelper;
 import es.caib.pinbal.core.helper.DtoMappingHelper;
 import es.caib.pinbal.core.model.Entitat;
 import es.caib.pinbal.core.model.Entitat.EntitatTipus;
@@ -69,6 +70,8 @@ public class EntitatServiceImpl implements EntitatService, ApplicationContextAwa
 	private OrganismeCessionariRepository organismeCessionariRepository;
 	@Autowired
 	private DtoMappingHelper dtoMappingHelper;
+	@Autowired
+	private CacheHelper cacheHelper;
 
 	private ApplicationContext applicationContext;
 	private MessageSource messageSource;
@@ -273,6 +276,7 @@ public class EntitatServiceImpl implements EntitatService, ApplicationContextAwa
 				serveiCodi).build();
 		entitatServeiRepository.save(entitatServei);
 		actualitzarServeisScspActiusEntitat(entitat);
+		cacheHelper.evictServeisEntitat(entitat.getCodi());
 	}
 
 	@Transactional(rollbackFor = {EntitatNotFoundException.class, ServeiNotFoundException.class})
@@ -291,6 +295,7 @@ public class EntitatServiceImpl implements EntitatService, ApplicationContextAwa
 		}
 		entitatServeiRepository.delete(entitatServei);
 		actualitzarServeisScspActiusEntitat(entitat);
+		cacheHelper.evictServeisEntitat(entitat.getCodi());
 	}
 
 	@Transactional(readOnly = true)

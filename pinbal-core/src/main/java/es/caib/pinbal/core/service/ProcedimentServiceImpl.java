@@ -11,6 +11,7 @@ import es.caib.pinbal.core.dto.ProcedimentDto;
 import es.caib.pinbal.core.dto.ProcedimentServeiNomDto;
 import es.caib.pinbal.core.dto.ProcedimentServeiSimpleDto;
 import es.caib.pinbal.core.dto.ServeiDto;
+import es.caib.pinbal.core.helper.CacheHelper;
 import es.caib.pinbal.core.helper.DtoMappingHelper;
 import es.caib.pinbal.core.helper.PaginacioHelper;
 import es.caib.pinbal.core.helper.PermisosHelper;
@@ -98,6 +99,8 @@ public class ProcedimentServiceImpl implements ProcedimentService {
 	private PaginacioHelper paginacioHelper;
     @Autowired
     private ServeiConfigRepository serveiConfigRepository;
+	@Resource
+	private CacheHelper cacheHelper;
 
 	@Transactional(rollbackFor = EntitatNotFoundException.class)
 	@Override
@@ -115,6 +118,7 @@ public class ProcedimentServiceImpl implements ProcedimentService {
 				creat.getCodiSia(),
 				creat.getValorCampAutomatizado(),
 				creat.getValorCampClaseTramite()).build();
+		cacheHelper.evictProcedimentsPerEntitat(entitat.getCodi());
 		return dtoMappingHelper.getMapperFacade().map(
 				procedimentRepository.save(procediment),
 				ProcedimentDto.class);
@@ -129,7 +133,9 @@ public class ProcedimentServiceImpl implements ProcedimentService {
 			log.debug("No s'ha trobat cap procediment (id= " + procedimentId + ")");
 			throw new ProcedimentNotFoundException();
 		}
+		String entitatCodi = esborrat.getEntitat().getCodi();
 		procedimentRepository.delete(esborrat);
+		cacheHelper.evictProcedimentsPerEntitat(entitatCodi);
 		return dtoMappingHelper.getMapperFacade().map(
 				esborrat,
 				ProcedimentDto.class);
@@ -266,6 +272,7 @@ public class ProcedimentServiceImpl implements ProcedimentService {
 			throw new ProcedimentNotFoundException();
 		}
 		procediment.updateActiu(actiu);
+		cacheHelper.evictProcedimentsPerEntitat(procediment.getEntitat().getCodi());
 		return dtoMappingHelper.getMapperFacade().map(
 				procediment,
 				ProcedimentDto.class);
@@ -298,6 +305,7 @@ public class ProcedimentServiceImpl implements ProcedimentService {
 					serveiCodi).build();
 			procedimentServeiRepository.save(procedimentServei);
 		}
+		cacheHelper.evictServeisProcediment(procediment.getCodi());
 	}
 	
 	@Transactional(rollbackFor = {ProcedimentNotFoundException.class, ServeiNotFoundException.class})
@@ -355,6 +363,7 @@ public class ProcedimentServiceImpl implements ProcedimentService {
 				procedimentServei.getId(),
 				aclService);
 		//		BasePermission.READ);
+		cacheHelper.evictServeisProcediment(procediment.getCodi());
 	}
 
 	@Transactional(rollbackFor = {ProcedimentNotFoundException.class, ProcedimentServeiNotFoundException.class, EntitatUsuariNotFoundException.class})
@@ -813,4 +822,5 @@ public class ProcedimentServiceImpl implements ProcedimentService {
 		}
 		return serveisDto;
 	}
+
 }

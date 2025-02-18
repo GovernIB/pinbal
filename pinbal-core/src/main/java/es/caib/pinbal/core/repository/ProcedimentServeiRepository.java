@@ -164,4 +164,5 @@ public interface ProcedimentServeiRepository extends JpaRepository<ProcedimentSe
 		    @Param("esNullFiltreServeiCodi") boolean esNullFiltreServeiCodi,
 		    @Param("filtreServeiCodi") String filtreServeiCodi);
 
+    List<ProcedimentServei> findByServei(String serveiCodi);
 }

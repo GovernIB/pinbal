@@ -26,6 +26,7 @@ import es.caib.pinbal.core.dto.ServeiXsdDto;
 import es.caib.pinbal.core.dto.XsdTipusEnumDto;
 import es.caib.pinbal.core.dto.regles.CampFormProperties;
 import es.caib.pinbal.core.dto.regles.ServeiReglaDto;
+import es.caib.pinbal.core.helper.CacheHelper;
 import es.caib.pinbal.core.helper.DtoMappingHelper;
 import es.caib.pinbal.core.helper.PermisosHelper;
 import es.caib.pinbal.core.helper.PermisosHelper.ObjectIdentifierExtractor;
@@ -34,6 +35,7 @@ import es.caib.pinbal.core.helper.ServeiHelper;
 import es.caib.pinbal.core.helper.ServeiXsdHelper;
 import es.caib.pinbal.core.helper.UsuariHelper;
 import es.caib.pinbal.core.model.Entitat;
+import es.caib.pinbal.core.model.EntitatServei;
 import es.caib.pinbal.core.model.EntitatUsuari;
 import es.caib.pinbal.core.model.Procediment;
 import es.caib.pinbal.core.model.ProcedimentServei;
@@ -166,6 +168,8 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 	private ServeiXsdHelper serveiXsdHelper;
 	@Resource
 	private ReglaHelper reglaHelper;
+	@Resource
+	private CacheHelper cacheHelper;
 
 	@Resource
 	private MutableAclService aclService;
@@ -203,6 +207,17 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 		} else {
 			serveiConfig.updateActiu(actiu);
 		}
+
+		// Buidar caches
+		cacheHelper.evictServeis();
+		List<EntitatServei> entitatServeis = entitatServeiRepository.findByServei(serveiCodi);
+		for(EntitatServei entitatServei : entitatServeis) {
+			cacheHelper.evictServeisEntitat(entitatServei.getEntitat().getCodi());
+		}
+		List<ProcedimentServei> procedimentServeis = procedimentServeiRepository.findByServei(serveiCodi);
+		for (ProcedimentServei procedimentServei: procedimentServeis) {
+			cacheHelper.evictServeisProcediment(procedimentServei.getProcediment().getCodi());
+		}
 	}
 
 	@Transactional
@@ -236,6 +251,7 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 					true).build();
 			serveiConfig.setPinbalUnitatDir3FromEntitat(servei.isPinbalUnitatDir3FromEntitat());
 			serveiConfigRepository.save(serveiConfig);
+			cacheHelper.evictServeis();
 		} else {
 			// Si ja està creat l'actualitza
 			rolAntic = serveiConfig.getRoleName();
@@ -311,6 +327,7 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 		ServeiConfig serveiConfig = serveiConfigRepository.findByServei(serveiCodi);
 		if (serveiConfig != null)
 			serveiConfigRepository.delete(serveiConfig);
+		cacheHelper.evictDadesEspecifiques(serveiCodi);
 		return servei;
 	}
 
@@ -951,6 +968,10 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 							ex);
 				}
 			}
+			cacheHelper.evictDadesEspecifiques(serveiCodi);
+			if (ServeiCampTipus.isEnumOLloc(serveiCamp.getTipus())) {
+				cacheHelper.evictEnumeratsPerServei(serveiCamp.getServei());
+			}
 		}
 		return dtoMappingHelper.getMapperFacade().map(
 				serveiCampRepository.save(serveiCamp),
@@ -999,6 +1020,10 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 				validacioDataCmpCamp2,
 				modificat.getValidacioDataCmpNombre(),
 				modificat.getValidacioDataCmpTipus());
+		cacheHelper.evictDadesEspecifiques(serveiCamp.getServei());
+		if (ServeiCampTipus.isEnumOLloc(serveiCamp.getTipus())) {
+			cacheHelper.evictEnumeratsPerServei(serveiCamp.getServei());
+		}
 		return dtoMappingHelper.getMapperFacade().map(
 				serveiCamp,
 				ServeiCampDto.class);
@@ -1026,6 +1051,7 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 				perEsborrar.getGrup());
 		for (int i = 0; i < serveis.size(); i++)
 			serveis.get(i).updateOrdre(i);
+		cacheHelper.evictDadesEspecifiques(perEsborrar.getServei());
 		return dtoMappingHelper.getMapperFacade().map(
 				perEsborrar,
 				ServeiCampDto.class);
@@ -1093,6 +1119,8 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 				grupOrigen);
 		for (int i = 0; i < campsGrupOrigen.size(); i++)
 			campsGrupOrigen.get(i).updateOrdre(i);
+
+		cacheHelper.evictDadesEspecifiques(perAgrupar.getServei());
 	}
 
 	@Transactional(readOnly = true)
@@ -1149,6 +1177,7 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 			throw new ServeiCampGrupNotFoundException();
 		}
 		perModificar.update(serveiCampGrup.getNom(), serveiCampGrup.getAjuda());
+		cacheHelper.evictDadesEspecifiques(perModificar.getServei());
 		return dtoMappingHelper.getMapperFacade().map(
 				perModificar,
 				ServeiCampGrupDto.class);
@@ -1186,6 +1215,7 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 		serveiCampGrupRepository.flush();
 		// Esborra el grup
 		serveiCampGrupRepository.deleteById(perEsborrar.getId());
+		cacheHelper.evictDadesEspecifiques(perEsborrar.getServei());
 		return dtoMappingHelper.getMapperFacade().map(
 				perEsborrar,
 				ServeiCampGrupDto.class);
@@ -1459,6 +1489,7 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 			} catch (Exception e) {
 				log.error("No s'ha eliminat el fitxer físic de disc", e);
 			}
+			cacheHelper.evictEnumeratsPerServei(codi);
 		}
 
 //		Servicio servei = scspHelper.getServicio(codi);
@@ -1515,6 +1546,7 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 		outputStream.close();
 		serveiXsdRepository.save(serveiXsd);
 
+		cacheHelper.evictEnumeratsPerServei(codi);
 //		Servicio servei = scspHelper.getServicio(codi);
 //		serveiXsdHelper.modificarXsd(servei, xsd, contingut);
 	}

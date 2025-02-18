@@ -3,13 +3,12 @@
  */
 package es.caib.pinbal.core.repository;
 
-import java.util.List;
-
+import es.caib.pinbal.core.model.Entitat;
+import es.caib.pinbal.core.model.EntitatServei;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
-import es.caib.pinbal.core.model.Entitat;
-import es.caib.pinbal.core.model.EntitatServei;
+import java.util.List;
 
 /**
  * Especifica els mètodes que s'han d'emprar per obtenir i modificar la
@@ -32,4 +31,5 @@ public interface EntitatServeiRepository extends JpaRepository<EntitatServei, Lo
 	@Query("select es from EntitatServei es where es.entitat.id = ?1 and es.servei = ?2")
 	public EntitatServei findByEntitatIdAndServei(Long entitatId, String servei);
 
+    List<EntitatServei> findByServei(String serveiCodi);
 }

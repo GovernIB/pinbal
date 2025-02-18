@@ -17,6 +17,7 @@ import es.caib.pinbal.core.helper.UsuariHelper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.net.HttpURLConnection;
@@ -43,6 +44,7 @@ public class DadesExternesServiceImpl implements DadesExternesService {
 	private UsuariHelper usuariHelper;
 
 	@Override
+	@Cacheable(value = "paisos")
 	public List<Pais> findPaisos() {
 		log.debug("Cercant tots els paisos");
 		List<Pais> paisos = new ArrayList<>();
@@ -95,6 +97,7 @@ public class DadesExternesServiceImpl implements DadesExternesService {
 	}
 
 	@Override
+	@Cacheable(value = "provincies")
 	public List<Provincia> findProvincies() {
 		log.debug("Cercant totes les províncies");
 
@@ -146,6 +149,7 @@ public class DadesExternesServiceImpl implements DadesExternesService {
 	}
 
 	@Override
+	@Cacheable(value = "municipis", key = "#provinciaCodi")
 	public List<Municipi> findMunicipisPerProvincia(String provinciaCodi) {
 		log.debug("Cercant els municipis de la província (provinciaCodi=" + provinciaCodi + ")");
 		List<Municipi> municipis = new ArrayList<>();

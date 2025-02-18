@@ -3,18 +3,18 @@
  */
 package es.caib.pinbal.core.ejb;
 
-import java.util.List;
+import es.caib.pinbal.core.dto.CacheDto;
+import es.caib.pinbal.core.dto.IntegracioAccioDto;
+import es.caib.pinbal.core.dto.IntegracioDto;
+import es.caib.pinbal.core.dto.PaginaDto;
+import es.caib.pinbal.core.service.AplicacioService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.ejb.interceptor.SpringBeanAutowiringInterceptor;
 
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.Stateless;
 import javax.interceptor.Interceptors;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.ejb.interceptor.SpringBeanAutowiringInterceptor;
-
-import es.caib.pinbal.core.dto.IntegracioAccioDto;
-import es.caib.pinbal.core.dto.IntegracioDto;
-import es.caib.pinbal.core.service.AplicacioService;
+import java.util.List;
 
 /**
  * Implementació de AplicacioService com a EJB que empra una clase
@@ -42,6 +42,23 @@ public class AplicacioServiceBean implements AplicacioService {
 		return delegate.integracioFindDarreresAccionsByCodi(codi);
 	}
 
+    @Override
+	@RolesAllowed({"PBL_ADMIN"})
+    public PaginaDto<CacheDto> getAllCaches() {
+        return delegate.getAllCaches();
+    }
+
+	@Override
+	@RolesAllowed({"PBL_ADMIN"})
+	public void removeCache(String value) {
+		delegate.removeCache(value);
+	}
+
+	@Override
+	@RolesAllowed({"PBL_ADMIN"})
+	public void removeAllCaches() {
+		delegate.removeAllCaches();
+	}
 
 
 }
