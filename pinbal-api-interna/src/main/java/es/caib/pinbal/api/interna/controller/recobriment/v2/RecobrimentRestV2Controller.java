@@ -170,9 +170,9 @@ public class RecobrimentRestV2Controller extends PinbalHalRestController impleme
 
 	@RequestMapping(value = "/serveis/{serveiCodi}/camps/{campCodi}/enumerat/{enumCodi}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<ValorEnum>> getValorsEnum(
-			@PathVariable("serveiCodi")String serveiCodi,
-			@PathVariable("campCodi")String campCodi,
-			@PathVariable("enumCodi")String enumCodi,
+			@PathVariable("serveiCodi") String serveiCodi,
+			@PathVariable("campCodi") String campCodi,
+			@PathVariable("enumCodi") String enumCodi,
 			@RequestParam(required = false)String filtre) {
 		try {
 			// Decodificació del camp si conté caràcters especials
@@ -238,7 +238,7 @@ public class RecobrimentRestV2Controller extends PinbalHalRestController impleme
 	// /////////////////////////////////////////////////////////////
 
 	@RequestMapping(value= "/consultes/{idPeticio}/resposta", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<PeticioRespostaSincrona> getResposta(String idPeticio) {
+	public ResponseEntity<PeticioRespostaSincrona> getResposta(@PathVariable("idPeticio") String idPeticio) {
 
 		PeticioRespostaSincrona resposta = null;
 		try {
@@ -262,7 +262,9 @@ public class RecobrimentRestV2Controller extends PinbalHalRestController impleme
 	}
 
 	@RequestMapping(value= "/consultes/{idPeticio}/solicitud/{idSolicitud}/justificant", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<ScspJustificante> getJustificant(String idPeticio, String idSolicitud) throws Exception {
+	public ResponseEntity<ScspJustificante> getJustificant(
+			@PathVariable("idPeticio") String idPeticio,
+			@PathVariable("idSolicitud") String idSolicitud) throws Exception {
 
 		ScspJustificante justificant = null;
 		try {
@@ -279,7 +281,9 @@ public class RecobrimentRestV2Controller extends PinbalHalRestController impleme
 	}
 
 	@RequestMapping(value= "/consultes/{idPeticio}/solicitud/{idSolicitud}/justificantImprimible", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<ScspJustificante> getJustificantImprimible(String idPeticio, String idSolicitud) throws Exception {
+	public ResponseEntity<ScspJustificante> getJustificantImprimible(
+			@PathVariable("idPeticio") String idPeticio,
+			@PathVariable("idSolicitud") String idSolicitud) throws Exception {
 
 		ScspJustificante justificant = null;
 		try {
@@ -296,7 +300,9 @@ public class RecobrimentRestV2Controller extends PinbalHalRestController impleme
 	}
 
 	@RequestMapping(value= "/consultes/{idPeticio}/solicitud/{idSolicitud}/justificantCsv", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<String> getJustificantCsv(String idPeticio, String idSolicitud) throws Exception {
+	public ResponseEntity<String> getJustificantCsv(
+			@PathVariable("idPeticio") String idPeticio,
+			@PathVariable("idSolicitud") String idSolicitud) throws Exception {
 		String justificanteCsv = null;
 		try {
 			justificanteCsv = recobrimentService.getJustificantCsv(idPeticio, idSolicitud);
@@ -312,7 +318,9 @@ public class RecobrimentRestV2Controller extends PinbalHalRestController impleme
 	}
 
 	@RequestMapping(value= "/consultes/{idPeticio}/solicitud/{idSolicitud}/justificantUuid", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<String> getJustificantUuid(String idPeticio, String idSolicitud) throws Exception {
+	public ResponseEntity<String> getJustificantUuid(
+			@PathVariable("idPeticio") String idPeticio,
+			@PathVariable("idSolicitud") String idSolicitud) throws Exception {
 		String justificantUuid = null;
 		try {
 			justificantUuid = recobrimentService.getJustificantUuid(idPeticio, idSolicitud);

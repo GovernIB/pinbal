@@ -16,8 +16,10 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
@@ -45,6 +47,8 @@ public class DadesConsultaSimpleValidator implements Validator {
 
         List<String> campsModificats = new ArrayList<>(); // Path
         List<String> grupsModificats = new ArrayList<>(); // Nom
+        Set<String> pathsValids = new HashSet<>();
+
         List<ServeiCampDto> camps = null;
         List<ServeiCampGrupDto> grups = null;
         try {
@@ -54,6 +58,7 @@ public class DadesConsultaSimpleValidator implements Validator {
             throw new RuntimeException("Error obtenint els camps i grups del servei", e);
         }
         for (ServeiCampDto camp : camps) {
+            pathsValids.add(camp.getPath());
             Object valorCamp = dadesEspecifiquesValors.get(camp.getPath());
 
             boolean isEmptyString = valorCamp instanceof String && ((String) valorCamp).isEmpty();
@@ -200,6 +205,23 @@ public class DadesConsultaSimpleValidator implements Validator {
             }
         }
 
+        // Validació de dades especifiques no definits com a camps
+        if (dadesEspecifiquesValors != null && !dadesEspecifiquesValors.isEmpty()) {
+            StringBuilder clausNoValides = new StringBuilder();
+            for (String clau : dadesEspecifiquesValors.keySet()) {
+                if (!pathsValids.contains(clau)) {
+                    clausNoValides.append(clau).append(", ");
+                }
+            }
+            if (clausNoValides.length() > 0) {
+                clausNoValides.setLength(clausNoValides.length() - 2);
+                errors.rejectValue(
+                        "dadesEspecifiques",
+                        "campsNoDefinits",
+                        "Els següents camps no estan definits al servei: " + clausNoValides);
+            }
+        }
+
         // Validacions de regles
         List<CampFormProperties> campsRegles = null;
         List<CampFormProperties> grupsRegles = null;
@@ -226,7 +248,8 @@ public class DadesConsultaSimpleValidator implements Validator {
                     }
                 } else {
                     if (!campRegla.isVisible()) {
-                        errors.reject(
+                        errors.rejectValue(
+                                "dadesEspecifiques[" + camp.getPath() + "]",
                                 "consulta.form.camp.regla.visible",
                                 new Object[]{camp.getEtiqueta() != null ? camp.getEtiqueta() : camp.getCampNom(), campRegla.getReglaVisible()},
                                 "Amb les dades actuals, aquest camp ha d'estar buit");

@@ -23,13 +23,10 @@ import es.caib.pinbal.client.recobriment.model.ScspTransmision;
 import es.caib.pinbal.client.recobriment.model.ScspTransmisionDatos;
 import es.caib.pinbal.client.recobriment.v2.DadaEspecifica;
 import es.caib.pinbal.client.recobriment.v2.DadaTipusEnum;
-import es.caib.pinbal.client.recobriment.v2.DadesComunes;
-import es.caib.pinbal.client.recobriment.v2.Funcionari;
 import es.caib.pinbal.client.recobriment.v2.PeticioAsincrona;
 import es.caib.pinbal.client.recobriment.v2.PeticioRespostaAsincrona;
 import es.caib.pinbal.client.recobriment.v2.PeticioRespostaSincrona;
 import es.caib.pinbal.client.recobriment.v2.PeticioSincrona;
-import es.caib.pinbal.client.recobriment.v2.SolicitudSimple;
 import es.caib.pinbal.client.recobriment.v2.Validacio;
 import es.caib.pinbal.client.recobriment.v2.ValorEnum;
 import es.caib.pinbal.client.serveis.Servei;
@@ -39,11 +36,8 @@ import es.caib.pinbal.core.dto.ServeiCampDto;
 import es.caib.pinbal.core.dto.dadesexternes.Municipi;
 import es.caib.pinbal.core.dto.dadesexternes.Pais;
 import es.caib.pinbal.core.dto.dadesexternes.Provincia;
-import es.caib.pinbal.core.helper.DadesConsultaSimpleValidator;
-import es.caib.pinbal.core.helper.DocumentIdentitatHelper;
-import es.caib.pinbal.core.helper.PluginHelper;
 import es.caib.pinbal.core.helper.RecobrimentHelper;
-import es.caib.pinbal.core.helper.ServeiHelper;
+import es.caib.pinbal.core.helper.RecobrimentV2Helper;
 import es.caib.pinbal.core.model.Consulta;
 import es.caib.pinbal.core.model.Entitat;
 import es.caib.pinbal.core.model.ServeiCamp;
@@ -57,15 +51,12 @@ import es.caib.pinbal.core.repository.ServeiCampRepository;
 import es.caib.pinbal.core.repository.ServeiConfigRepository;
 import es.caib.pinbal.core.repository.ServeiRepository;
 import es.caib.pinbal.core.service.exception.ConsultaNotFoundException;
-import es.caib.pinbal.core.service.exception.ConsultaScspGeneracioException;
 import es.caib.pinbal.core.service.exception.EntitatNotFoundException;
 import es.caib.pinbal.core.service.exception.ProcedimentNotFoundException;
 import es.caib.pinbal.core.service.exception.RecobrimentScspException;
 import es.caib.pinbal.core.service.exception.RecobrimentScspValidationException;
 import es.caib.pinbal.core.service.exception.ServeiCampNotFoundException;
 import es.caib.pinbal.core.service.exception.ServeiNotFoundException;
-import es.caib.pinbal.plugins.DadesUsuari;
-import es.caib.pinbal.plugins.SistemaExternException;
 import es.caib.pinbal.scsp.ScspHelper;
 import es.caib.pinbal.scsp.XmlHelper;
 import es.caib.pinbal.scsp.tree.Tree;
@@ -86,7 +77,6 @@ import es.scsp.bean.common.TipoDocumentacion;
 import es.scsp.bean.common.Titular;
 import es.scsp.bean.common.Transmision;
 import es.scsp.bean.common.TransmisionDatos;
-import es.scsp.common.domain.core.Servicio;
 import es.scsp.common.exceptions.ScspException;
 import es.scsp.common.utils.DateUtils;
 import lombok.extern.slf4j.Slf4j;
@@ -120,7 +110,6 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -142,6 +131,8 @@ public class RecobrimentServiceImpl implements RecobrimentService, ApplicationCo
     @Autowired
     private RecobrimentHelper recobrimentHelper;
     @Autowired
+    private RecobrimentV2Helper recobrimentV2Helper;
+    @Autowired
     private EntitatRepository entitatRepository;
     @Autowired
     private ProcedimentRepository procedimentRepository;
@@ -155,11 +146,6 @@ public class RecobrimentServiceImpl implements RecobrimentService, ApplicationCo
 	private ApplicationContext applicationContext;
 	private MessageSource messageSource;
 	private ScspHelper scspHelper;
-    private XmlHelper xmlHelper;
-    @Autowired
-    private PluginHelper pluginHelper;
-    @Autowired
-    private ServeiHelper serveiHelper;
     @Autowired
     private ConsultaRepository consultaRepository;
 
@@ -749,22 +735,10 @@ public class RecobrimentServiceImpl implements RecobrimentService, ApplicationCo
 
         BindException errors = new BindException(peticio, "peticio");
         String serveiCodi = peticio.getDadesComunes() != null ? peticio.getDadesComunes().getServeiCodi().trim() : null;
-        validateDadesComunes(peticio.getDadesComunes(), errors);
-        validateDadesSolicitud(peticio.getSolicitud(), serveiCodi, errors);
-        
-        Map<String, List<String>> errorsCamps = new HashMap<>();
-        for (FieldError fieldError : errors.getFieldErrors()) {
-            String campNom = fieldError.getField(); // Nom del camp
-            String campErrorMsg = fieldError.getDefaultMessage(); // Missatge d'error
+        recobrimentV2Helper.validateDadesComunes(peticio.getDadesComunes(), errors);
+        recobrimentV2Helper.validateDadesSolicitud(peticio.getSolicitud(), serveiCodi, errors, serveiService);
 
-            // Si el camp no existeix al mapa, inicialitzar una nova llista
-            if (!errorsCamps.containsKey(campNom)) {
-                errorsCamps.put(campNom, new ArrayList<String>());
-            }
-
-            // Afegir el missatge d'error a la llista del camp
-            errorsCamps.get(campNom).add(campErrorMsg);
-        }
+        Map<String, List<String>> errorsCamps = errorsToMap(errors);
 
         return errorsCamps;
     }
@@ -775,277 +749,30 @@ public class RecobrimentServiceImpl implements RecobrimentService, ApplicationCo
 
         BindException errors = new BindException(peticio, "peticio");
         String serveiCodi = peticio.getDadesComunes() != null ? peticio.getDadesComunes().getServeiCodi().trim() : null;
-        validateDadesComunes(peticio.getDadesComunes(), errors);
+        recobrimentV2Helper.validateDadesComunes(peticio.getDadesComunes(), errors);
 
-        validateDadesSolicituds(peticio.getSolicituds(), serveiCodi, errors);
+        Map<String, List<String>> errorsSolicituds = recobrimentV2Helper.validateDadesSolicituds(peticio.getSolicituds(), serveiCodi, serveiService);
+        Map<String, List<String>> errorsDadesComunes = errorsToMap(errors);
+        errorsDadesComunes.putAll(errorsSolicituds);
 
-        Map<String, List<String>> errorsCamps = new HashMap<>();
+        return errorsDadesComunes;
+    }
+
+    private static Map<String, List<String>> errorsToMap(BindException errors) {
+        Map<String, List<String>> errorsDadesComunes = new HashMap<>();
         for (FieldError fieldError : errors.getFieldErrors()) {
             String campNom = fieldError.getField(); // Nom del camp
             String campErrorMsg = fieldError.getDefaultMessage(); // Missatge d'error
 
             // Si el camp no existeix al mapa, inicialitzar una nova llista
-            if (!errorsCamps.containsKey(campNom)) {
-                errorsCamps.put(campNom, new ArrayList<String>());
+            if (!errorsDadesComunes.containsKey(campNom)) {
+                errorsDadesComunes.put(campNom, new ArrayList<String>());
             }
 
             // Afegir el missatge d'error a la llista del camp
-            errorsCamps.get(campNom).add(campErrorMsg);
+            errorsDadesComunes.get(campNom).add(campErrorMsg);
         }
-
-        return errorsCamps;
-    }
-
-    private void validateDadesComunes(DadesComunes dadesComunes, BindException errors) {
-        if (dadesComunes == null) {
-            errors.rejectValue("dadesComunes", "rec.val.err.dadesComunes", "No s'ha trobat l'element dadesComunes");
-            return;
-        }
-
-        // Validem cada camp de "dadesComunes"
-        validateCamp(dadesComunes.getServeiCodi(), "serveiCodi", errors);
-        ServeiConfig serveiConfig = serveiConfigRepository.findByServei(dadesComunes.getServeiCodi());
-        if (serveiConfig == null) {
-            errors.rejectValue("dadesComunes.serveiCodi", "rec.val.err.serveiCodi.notfound", "No s'ha trobat el servei amb codi " + dadesComunes.getServeiCodi());
-        }
-
-        validateCamp(dadesComunes.getEntitatCif(), "entitatCif", errors);
-        Entitat entitat = entitatRepository.findByCif(dadesComunes.getEntitatCif());
-        if (entitat == null) {
-            errors.rejectValue("dadesComunes.entitatCif", "rec.val.err.entitatCif.notfound", "No s'ha trobat l'entitat amb el CIF " + dadesComunes.getEntitatCif());
-        }
-
-        validateCamp(dadesComunes.getProcedimentCodi(), "procedimentCodi", errors);
-        es.caib.pinbal.core.model.Procediment procediment = procedimentRepository.findByCodi(dadesComunes.getProcedimentCodi());
-        if (procediment == null) {
-            errors.rejectValue("dadesComunes.procedimentCodi", "rec.val.err.procedimentCodi.notfound", "No s'ha trobat el procediment amb el codi " + dadesComunes.getProcedimentCodi());
-        }
-
-        // Velidam que l'entitat del procediment és l'enitat amb el cif informat a la petició
-        if (procediment != null && entitat != null && !procediment.getEntitat().equals(entitat)) {
-            errors.rejectValue("dadesComunes.procedimentCodi", "rec.val.procedimentCodi.entitat.differs", "L'entitat del procediment no té el CIF indicant al camp dadesComunes.entitatCif");
-        }
-        
-        validateFuncionari(dadesComunes.getFuncionari(), errors);
-
-        validateCamp(dadesComunes.getDepartament(), "departament", 250, errors);
-        validateCamp(dadesComunes.getFinalitat(), "finalitat", 250, errors);
-
-        if (dadesComunes.getConsentiment() == null) {
-            errors.rejectValue("dadesComunes.consentiment", "rec.val.err.consentiment", "No s'ha trobat l'element dadesComunes.consentiment");
-        }
-
-
-    }
-
-    // Validació genèrica de camps: nul·litat i mida
-    private void validateCamp(String valor, String campNom, int maxLongitud, BindException errors) {
-        valor = valor != null ? valor.trim() : null;
-        if (valor == null || valor.isEmpty()) {
-            errors.rejectValue("dadesComunes." + campNom, "rec.val.err." + campNom, "No s'ha trobat l'element dadesComunes." + campNom);
-        } else if (valor.length() > maxLongitud) {
-            errors.rejectValue("dadesComunes." + campNom, "rec.val.err." + campNom + ".length", "Camp massa llarg. L'element dadesComunes." + campNom + " no pot superar els " + maxLongitud + " caràcters.");
-        }
-    }
-
-    // Validació genèrica de camps: nul·litat
-    private void validateCamp(String valor, String campNom, BindException errors) {
-        valor = valor != null ? valor.trim() : null;
-        if (valor == null || valor.isEmpty()) {
-            errors.rejectValue("dadesComunes." + campNom, "rec.val.err." + campNom, "No s'ha trobat l'element dadesComunes." + campNom);
-        }
-    }
-
-    // Validar la longitud d'un camp
-    private void validateCampLength(String valor, String campNom, int maxLongitud, BindException errors) {
-        if (valor != null && valor.length() > maxLongitud) {
-            errors.rejectValue(campNom, "rec.val.err." + campNom + ".length", "Camp massa llarg. L'element " + campNom + " no pot superar els " + maxLongitud + " caràcters.");
-        }
-    }
-
-    // Validació del funcionari (personalitzat segons regles complexes)
-    private void validateFuncionari(Funcionari funcionari, BindException errors) {
-        if (funcionari == null) {
-            errors.rejectValue("dadesComunes.funcionari", "rec.val.err.funcionari", "No s'ha trobat l'element dadesComunes.funcionari");
-            return;
-        }
-
-        // És obligatori informar o bé el codi o el nif.
-        // No fa falta informar els dos, però si s'informen els dos es validarà que el codi i el nif corresponguin al mateix usuari.
-        // Tampoc fa falta informar el nom del funcionari. Però si s'informa es validarà que el nom corresponguin al de l'usuari.
-        String funcionariCodi = funcionari.getCodi() != null ? funcionari.getCodi().trim() : null;
-        String funcionariNif = funcionari.getNif() != null ? funcionari.getNif().trim() : null;
-        String funcionariNom = funcionari.getNom() != null ? funcionari.getNom().trim() : null;
-
-        // Validació bàsica: codi o nif han d'estar informats
-        if ((funcionariCodi == null || funcionariCodi.isEmpty()) && (funcionariNif == null || funcionariNif.isEmpty())) {
-            errors.rejectValue("dadesComunes.funcionari", "rec.val.err.funcionari.missing", "És obligatori informar o bé el codi o el nif del funcionari.");
-            return;
-        }
-
-        DadesUsuari funcionariDades = consultarFuncionari(funcionariCodi, funcionariNif, errors);
-
-        // Validem longitud per a codi i NIF
-        validateCampLength(funcionariCodi, "dadesComunes.funcionari.codi", 16, errors);
-        validateCampLength(funcionariNif, "dadesComunes.funcionari.nif", 10, errors);
-
-        if (funcionariDades != null) {
-            if (funcionariNif != null && !funcionariNif.equals(funcionariDades.getNif())) {
-                errors.rejectValue("dadesComunes.funcionari.nif", "rec.val.err.funcionari.nif.mismatch", "El NIF del funcionari no coincideix amb el NIF del funcionari amb codi " + funcionariCodi);
-            }
-            if (funcionariNom != null && !funcionariNom.equalsIgnoreCase(funcionariDades.getNom())) {
-                errors.rejectValue("dadesComunes.funcionari.nom", "rec.val.err.funcionari.nom.mismatch", "El nom indicat no coincideix amb el nom del funcionari amb codi " + funcionariDades.getCodi());
-            }
-        }
-
-        validateCampLength(funcionariNom, "dadesComunes.funcionari.nom", 122, errors);
-    }
-
-    // Mètode que consulta el funcionari a partir del codi o nif indicat
-    private DadesUsuari consultarFuncionari(String codi, String nif, BindException errors) {
-        try {
-            if (codi != null && !codi.isEmpty()) {
-                DadesUsuari funcionari = pluginHelper.dadesUsuariConsultarAmbUsuariCodi(codi);
-                if (funcionari == null) {
-                    errors.rejectValue("dadesComunes.funcionari.codi", "rec.val.err.funcionari.codi.notfound", "No s'ha trobat el funcionari amb el codi " + codi);
-                }
-                return funcionari;
-            } else if (nif != null && !nif.isEmpty()) {
-                DadesUsuari funcionari = pluginHelper.dadesUsuariConsultarAmbUsuariNif(nif);
-                if (funcionari == null) {
-                    errors.rejectValue("dadesComunes.funcionari.nif", "rec.val.err.funcionari.nif.notfound", "No s'ha trobat el funcionari amb el nif " + nif);
-                }
-                return funcionari;
-            }
-        } catch (SistemaExternException e) {
-            String identificador = codi != null ? codi : nif;
-            log.error("No s'han pogut obtenir les dades del funcionari amb identificador: " + identificador, e);
-        }
-        return null;
-    }
-
-    private void validateDadesSolicitud(SolicitudSimple solicitud, String serveiCodi, BindException errors) {
-        if (solicitud == null) {
-            errors.rejectValue("solicitud", "rec.val.err.solicitud", "No s'ha trobat l'element solicitud");
-            return;
-        }
-
-        String solicitudId = solicitud.getId() != null ? solicitud.getId().trim() : null;
-        es.caib.pinbal.client.recobriment.v2.Titular titular = solicitud.getTitular();
-        String expedientId = solicitud.getExpedient() != null ? solicitud.getExpedient().trim() : null;
-        Map<String, String> dadesEspedifiques = solicitud.getDadesEspecifiques();
-
-        validateCampLength(solicitudId, "solicitud.solicitudId", 64, errors);
-
-        validateTitular(titular, serveiCodi, errors);
-
-        validateCampLength(expedientId, "solicitud.expedient", 25, errors);
-
-        validateDadesEspecifiques(dadesEspedifiques, serveiCodi, errors);
-    }
-
-
-    private void validateTitular(es.caib.pinbal.client.recobriment.v2.Titular titular, String serveiCodi, BindException errors) {
-        ServeiConfig servei = serveiConfigRepository.findByServei(serveiCodi);
-        if (titular == null) {
-            if (servei.isDocumentObligatori())
-                errors.rejectValue("solicitud.titular", "rec.val.err.titular", "No s'ha trobat l'element solicitud.titular");
-            return;
-        }
-
-        es.caib.pinbal.client.recobriment.v2.Titular.DocumentTipus titularDocTipus = titular.getDocumentTipus();
-        String titularDocNum = titular.getDocumentNumero() != null ? titular.getDocumentNumero().trim() : null;
-        String titularNom = titular.getNom() != null ? titular.getNom().trim() : null;
-        String titularLlinatge1 = titular.getLlinatge1() != null ? titular.getLlinatge1().trim() : null;
-        String titularLlinatge2 = titular.getLlinatge2() != null ? titular.getLlinatge2().trim() : null;
-        String titularNomComplet = titular.getNomComplet() != null ? titular.getNomComplet().trim() : null;
-
-        if (servei.isDocumentObligatori() || (titularDocNum != null && !titularDocNum.isEmpty())) {
-            if (titularDocTipus == null) {
-                errors.rejectValue("dadesComunes.titular.documentTipus", "rec.val.err.titular.documentTipus", "No s'ha trobat l'element dadesComunes.titular.documentTipus");
-            }
-        }
-        if (servei.isDocumentObligatori())
-            validateCamp(titular.getDocumentNumero(), "solicitud.titular.documentNumero", errors);
-
-        validateCampLength(titularDocNum, "solicitud.titular.documentNumero", 14, errors);
-
-        if (titularDocTipus != null && titularDocNum != null && !titularDocNum.isEmpty() && servei.isComprovarDocument()) {
-            if (es.caib.pinbal.client.recobriment.v2.Titular.DocumentTipus.NIF.equals(titularDocTipus)) {
-                if (!DocumentIdentitatHelper.validacioNif(titularDocNum))
-                    errors.rejectValue("dadesComunes.titular.documentNumero", "rec.val.err.titular.nif", "El valor de l'element dadesComunes.titular.documentTipus no és un NIF vàlid");
-            } if (es.caib.pinbal.client.recobriment.v2.Titular.DocumentTipus.DNI.equals(titularDocTipus)) {
-                if (!DocumentIdentitatHelper.validacioDni(titularDocNum))
-                    errors.rejectValue("dadesComunes.titular.documentNumero", "rec.val.err.titular.dni", "El valor de l'element dadesComunes.titular.documentTipus no és un DNI vàlid");
-            } if (es.caib.pinbal.client.recobriment.v2.Titular.DocumentTipus.CIF.equals(titularDocTipus)) {
-                if (!DocumentIdentitatHelper.validacioCif(titularDocNum))
-                    errors.rejectValue("dadesComunes.titular.documentNumero", "rec.val.err.titular.cif", "El valor de l'element dadesComunes.titular.documentTipus no és un CIF vàlid");
-            } if (es.caib.pinbal.client.recobriment.v2.Titular.DocumentTipus.NIE.equals(titularDocTipus)) {
-                if (!DocumentIdentitatHelper.validacioNie(titularDocNum))
-                    errors.rejectValue("dadesComunes.titular.documentNumero", "rec.val.err.titular.nie", "El valor de l'element dadesComunes.titular.documentTipus no és un NIE vàlid");
-            } if (es.caib.pinbal.client.recobriment.v2.Titular.DocumentTipus.Pasaporte.equals(titularDocTipus)) {
-                if (!DocumentIdentitatHelper.validacioPass(titularDocNum))
-                    errors.rejectValue("dadesComunes.titular.documentNumero", "rec.val.err.titular.pass", "El valor de l'element dadesComunes.titular.documentTipus no és un Passaport vàlid");
-            }
-
-        }
-
-        validateCampLength(titularNom, "solicitud.titular.nom", 40, errors);
-        validateCampLength(titularLlinatge1, "solicitud.titular.llinatge1", 40, errors);
-        validateCampLength(titularLlinatge2, "solicitud.titular.llinatge2", 40, errors);
-        validateCampLength(titularNomComplet, "solicitud.titular.nomComplet", 122, errors);
-
-    }
-
-    private void validateDadesEspecifiques(Map<String, String> dadesEspedifiques, String serveiCodi, BindException errors) {
-
-        Map<String, Object> dades = new HashMap<>();
-
-        DadesConsultaSimpleValidator validatorDadesEspecifiques = new DadesConsultaSimpleValidator(serveiService, serveiCodi);
-        validatorDadesEspecifiques.validate(dadesEspedifiques, errors);
-    }
-
-    private Map<String, List<String>> validateDadesSolicituds(List<SolicitudSimple> solicituds, String serveiCodi, BindException errors) {
-
-        Map<String, List<String>> errorsSolicituds = new HashMap<>();
-
-        Servicio servicio = getScspHelper().getServicio(serveiCodi);
-        int maxSolicituds = servicio.getMaxSolicitudesPeticion();
-        int numPeticions = solicituds != null ? solicituds.size() : 0;
-
-        if (numPeticions == 0) {
-            log.error("Consulta asíncrona via recobriment sense sol·licituds", "La consulta ha de tenir al manco una sol·licitud");
-            errorsSolicituds.put("GLOBAL", Collections.singletonList("La consulta excedeix el màxim de sol·licituds permeses pel servei"));
-        }
-
-        if (maxSolicituds > 0 && numPeticions > maxSolicituds) {
-            log.error("Error al processar dades de la petició múltiple via recobriment", "La consulta excedeix el màxim de sol·licituds permeses pel servei");
-            errorsSolicituds.put("GLOBAL", Collections.singletonList("La consulta excedeix el màxim de sol·licituds permeses pel servei"));
-        }
-
-        int index = 1;
-        for (SolicitudSimple solicitud : solicituds) {
-            BindException errorsSolicitud = new BindException(solicitud, "solicitud " + index);
-            validateDadesSolicitud(solicitud, serveiCodi, errors);
-            Map<String, List<String>> errorsCamps = new HashMap<>();
-            String solIndex = String.format("%06d", index);
-
-            for (FieldError fieldError : errors.getFieldErrors()) {
-                String campNom = solIndex + ":" + fieldError.getField(); // Nom del camp
-                String campErrorMsg = fieldError.getDefaultMessage(); // Missatge d'error
-
-                // Si el camp no existeix al mapa, inicialitzar una nova llista
-                if (!errorsCamps.containsKey(campNom)) {
-                    errorsCamps.put(campNom, new ArrayList<String>());
-                }
-
-                // Afegir el missatge d'error a la llista del camp
-                errorsCamps.get(campNom).add(campErrorMsg);
-            }
-            errorsSolicituds.putAll(errorsCamps);
-        }
-
-        return errorsSolicituds;
+        return errorsDadesComunes;
     }
 
     @Override
@@ -1053,7 +780,7 @@ public class RecobrimentServiceImpl implements RecobrimentService, ApplicationCo
     public PeticioRespostaSincrona peticionSincrona(PeticioSincrona peticio) {
         PeticioRespostaSincrona respuesta = null;
         try {
-            Peticion peticion = toPeticion(peticio);
+            Peticion peticion = recobrimentV2Helper.toPeticion(peticio);
             ScspRespuesta scspRespuesta = toScspRespuesta(recobrimentHelper.peticionSincrona(peticion));
             respuesta = PeticioRespostaSincrona.builder()
                     .error(!scspRespuesta.getAtributos().getEstado().getCodigoEstado().startsWith("00"))
@@ -1075,7 +802,7 @@ public class RecobrimentServiceImpl implements RecobrimentService, ApplicationCo
     public PeticioRespostaAsincrona peticionAsincrona(PeticioAsincrona peticio) {
         PeticioRespostaAsincrona respuesta = null;
         try {
-            Peticion peticion = toPeticion(peticio);
+            Peticion peticion = recobrimentV2Helper.toPeticion(peticio);
             ScspConfirmacionPeticion scspConfirmacionPeticion = toScspConfirmacionPeticion(recobrimentHelper.peticionAsincrona(peticion));
             String errorMsg = scspConfirmacionPeticion.getAtributos().getEstado() != null
                     ? scspConfirmacionPeticion.getAtributos().getEstado().getLiteralError()
@@ -1093,235 +820,6 @@ public class RecobrimentServiceImpl implements RecobrimentService, ApplicationCo
                     .build();
         }
         return respuesta;
-    }
-
-    private Peticion toPeticion(PeticioSincrona peticio) throws ConsultaScspGeneracioException {
-        if (peticio == null)
-            return null;
-
-        String timeStamp = DateUtils.parseISO8601(new Date());
-        DadesComunes dadesComunes = peticio.getDadesComunes();
-        SolicitudSimple solicitud = peticio.getSolicitud();
-
-        String serveiCodi = dadesComunes.getServeiCodi();
-        ServeiConfig serveiConfig = serveiConfigRepository.findByServei(serveiCodi);
-
-        String idPeticion = getScspHelper().generarIdPeticion(serveiCodi);
-        String idSolicitud = getIdSolicitud(idPeticion, 1, 1);
-
-        // Crear objecte Peticion
-        Peticion peticion = new Peticion();
-        peticion.setAtributos(crearAtributos(idPeticion, timeStamp, serveiCodi, 1));
-
-        // Crear Solicitudes i SolicitudTransmision
-        Solicitudes solicitudes = new Solicitudes();
-        SolicitudTransmision solicitudTransmision = new SolicitudTransmision();
-        solicitudTransmision.setId(solicitud.getId());
-        solicitudTransmision.setDatosGenericos(crearDatosGenericos(dadesComunes, solicitud, serveiConfig, serveiCodi, idPeticion, idSolicitud, timeStamp));
-
-        // Dades específiques (si n'hi ha)
-        if (solicitud.getDadesEspecifiques() != null && !solicitud.getDadesEspecifiques().isEmpty()) {
-            Servicio servicio = getScspHelper().getServicio(serveiCodi);
-            List<String> pathInicialitzablesByServei = serveiCampRepository.findPathInicialitzablesByServei(serveiCodi);
-            solicitudTransmision.setDatosEspecificos(processarDadesEspecifiques(solicitud.getDadesEspecifiques(), serveiCodi, serveiConfig, servicio, pathInicialitzablesByServei));
-        }
-
-        // Afegir SolicitudTransmision a Solicitudes
-        ArrayList<SolicitudTransmision> solicitudesTransmision = new ArrayList<>();
-        solicitudesTransmision.add(solicitudTransmision);
-        solicitudes.setSolicitudTransmision(solicitudesTransmision);
-        peticion.setSolicitudes(solicitudes);
-
-        return peticion;
-
-    }
-
-    private Peticion toPeticion(PeticioAsincrona peticio) throws ConsultaScspGeneracioException {
-        if (peticio == null)
-            return null;
-
-        String timeStamp = DateUtils.parseISO8601(new Date());
-        DadesComunes dadesComunes = peticio.getDadesComunes();
-        List<SolicitudSimple> solicituds = peticio.getSolicituds();
-
-        String serveiCodi = dadesComunes.getServeiCodi();
-        ServeiConfig serveiConfig = serveiConfigRepository.findByServei(serveiCodi);
-        Servicio servicio = getScspHelper().getServicio(serveiCodi);
-        List<String> pathInicialitzablesByServei = serveiCampRepository.findPathInicialitzablesByServei(serveiCodi);
-
-        String idPeticion = getScspHelper().generarIdPeticion(serveiCodi);
-        int numSolicituds = solicituds.size();
-        int index = 1;
-
-
-        // Crear objecte Peticion
-        Peticion peticion = new Peticion();
-        peticion.setAtributos(crearAtributos(idPeticion, timeStamp, serveiCodi, numSolicituds));
-
-        // Crear Solicitudes i SolicitudTransmision
-        Solicitudes solicitudes = new Solicitudes();
-        ArrayList<SolicitudTransmision> solicitudesTransmision = new ArrayList<>();
-
-        for (SolicitudSimple solicitud : solicituds) {
-            String idSolicitud = getIdSolicitud(idPeticion, numSolicituds, index++);
-
-            SolicitudTransmision solicitudTransmision = new SolicitudTransmision();
-            solicitudTransmision.setId(solicitud.getId());
-            solicitudTransmision.setDatosGenericos(crearDatosGenericos(dadesComunes, solicitud, serveiConfig, serveiCodi, idPeticion, idSolicitud, timeStamp));
-
-            // Dades específiques (si n'hi ha)
-            if (solicitud.getDadesEspecifiques() != null && !solicitud.getDadesEspecifiques().isEmpty()) {
-                solicitudTransmision.setDatosEspecificos(processarDadesEspecifiques(solicitud.getDadesEspecifiques(), serveiCodi, serveiConfig, servicio, pathInicialitzablesByServei));
-            }
-
-            // Afegir SolicitudTransmision a Solicitudes
-            solicitudesTransmision.add(solicitudTransmision);
-        }
-        solicitudes.setSolicitudTransmision(solicitudesTransmision);
-        peticion.setSolicitudes(solicitudes);
-
-        return peticion;
-
-    }
-
-    private static Atributos crearAtributos(String idPeticion, String timeStamp, String serveiCodi, int numSolicituds) {
-        Atributos atributos = new Atributos();
-        atributos.setIdPeticion(idPeticion);
-        atributos.setNumElementos(String.valueOf(numSolicituds));
-        atributos.setTimeStamp(timeStamp);
-        atributos.setCodigoCertificado(serveiCodi);
-        return atributos;
-    }
-
-    // Crear DatosGenericos
-    private DatosGenericos crearDatosGenericos(DadesComunes dadesComunes, SolicitudSimple solicitud, ServeiConfig serveiConfig, String serveiCodi, String idPeticion, String idSolicitud, String timeStamp) {
-        DatosGenericos datosGenericos = new DatosGenericos();
-
-        // Configurar Emisor
-        datosGenericos.setEmisor(getScspHelper().getEmisor(serveiCodi));
-
-        // Configurar Solicitant
-        datosGenericos.setSolicitante(crearSolicitante(dadesComunes, solicitud, serveiConfig));
-
-        // Configurar Titular (si existeix)
-        if (solicitud.getTitular() != null) {
-            datosGenericos.setTitular(crearTitular(solicitud.getTitular()));
-        }
-
-        // Configurar Transmissió
-        Transmision transmision = new Transmision();
-        transmision.setCodigoCertificado(serveiCodi);
-        transmision.setIdSolicitud(idSolicitud);
-        transmision.setFechaGeneracion(timeStamp);
-        datosGenericos.setTransmision(transmision);
-
-        return datosGenericos;
-    }
-
-    // Crear Solicitante
-    private Solicitante crearSolicitante(DadesComunes dadesComunes, SolicitudSimple solicitud, ServeiConfig serveiConfig) {
-        Solicitante solicitante = new Solicitante();
-
-        // Procediment
-        es.caib.pinbal.core.model.Procediment procediment = procedimentRepository.findByCodi(dadesComunes.getProcedimentCodi());
-        Procedimiento procedimiento = new Procedimiento();
-        procedimiento.setCodProcedimiento(procediment.getCodi());
-        procedimiento.setNombreProcedimiento(procediment.getNom());
-        solicitante.setProcedimiento(procedimiento);
-
-        // Funcionari
-        solicitante.setFuncionario(crearFuncionario(dadesComunes.getFuncionari()));
-
-        // Unitat tramitadora
-        solicitante.setUnidadTramitadora(dadesComunes.getDepartament());
-        solicitante.setCodigoUnidadTramitadora(determinarUnitatTramitadora(serveiConfig, procediment));
-
-        // Solicitant
-        Entitat entitat = entitatRepository.findByCif(dadesComunes.getEntitatCif());
-        solicitante.setIdentificadorSolicitante(entitat.getCif());
-        solicitante.setNombreSolicitante(entitat.getNom());
-        solicitante.setIdExpediente(solicitud.getExpedient());
-        solicitante.setFinalidad(dadesComunes.getFinalitat());
-        solicitante.setConsentimiento(Consentimiento.valueOf(dadesComunes.getConsentiment().name()));
-
-        return solicitante;
-    }
-
-    private Funcionario crearFuncionario(Funcionari funcionari) {
-        if (funcionari == null) {
-            return null;
-        }
-
-        String funcionariCodi = funcionari.getCodi() != null ? funcionari.getCodi().trim() : null;
-        String funcionariNif = funcionari.getNif() != null ? funcionari.getNif().trim() : null;
-
-        DadesUsuari funcionariDades = null;
-        try {
-            funcionariDades = funcionariCodi != null && !funcionariCodi.isEmpty()
-                    ? pluginHelper.dadesUsuariConsultarAmbUsuariCodi(funcionariCodi)
-                    : pluginHelper.dadesUsuariConsultarAmbUsuariNif(funcionariNif);
-        } catch (SistemaExternException e) {
-            // Gestionar errors, si escau
-        }
-
-        Funcionario funcionario = new Funcionario();
-        funcionario.setNombreCompletoFuncionario(funcionariDades != null ? funcionariDades.getNom() : funcionari.getNom());
-        funcionario.setNifFuncionario(funcionariDades != null ? funcionariDades.getNif() : funcionariNif);
-        return funcionario;
-    }
-
-    private String determinarUnitatTramitadora(ServeiConfig serveiConfig, es.caib.pinbal.core.model.Procediment procediment) {
-        return serveiConfig.isPinbalUnitatDir3FromEntitat()
-                ? procediment.getEntitat().getUnitatArrel()
-                : serveiConfig.getPinbalUnitatDir3() != null && !serveiConfig.getPinbalUnitatDir3().isEmpty()
-                ? serveiConfig.getPinbalUnitatDir3()
-                : procediment.getOrganGestor() != null
-                ? procediment.getOrganGestor().getCodi()
-                : null;
-    }
-
-    private Titular crearTitular(es. caib. pinbal. client. recobriment. v2.Titular titularModel) {
-        Titular titular = new Titular();
-        if (titularModel.getDocumentTipus() != null) {
-            titular.setTipoDocumentacion(TipoDocumentacion.valueOf(titularModel.getDocumentTipus().name()));
-        }
-        titular.setDocumentacion(titularModel.getDocumentNumero());
-        titular.setNombreCompleto(titularModel.getNomComplet());
-        titular.setNombre(titularModel.getNom());
-        titular.setApellido1(titularModel.getLlinatge1());
-        titular.setApellido2(titularModel.getLlinatge2());
-        return titular;
-    }
-
-    // Processar dades específiques
-    private Element processarDadesEspecifiques(Map<String, String> dadesEspecifiques,
-                                               String serveiCodi,
-                                               ServeiConfig serveiConfig,
-                                               Servicio servicio,
-                                               List<String> pathInicialitzablesByServei) throws ConsultaScspGeneracioException {
-        Map<String, Object> dadesEspecifiquesConverted = new HashMap<>();
-        for (Map.Entry<String, String> entry : dadesEspecifiques.entrySet()) {
-            dadesEspecifiquesConverted.put(entry.getKey(), entry.getValue());
-        }
-        return getXmlHelper().crearDadesEspecifiques(
-                servicio,
-                dadesEspecifiquesConverted,
-                serveiConfig.isActivaGestioXsd(),
-                serveiConfig.isIniDadesEspecifiques(),
-                pathInicialitzablesByServei,
-                serveiConfig.isAddDadesEspecifiques()
-        );
-    }
-
-    private String getIdSolicitud(
-            String idPeticion,
-            int numSolicitudes,
-            int index) {
-        if (numSolicitudes == 1) {
-            return idPeticion;
-        } else {
-            return String.format("%06d", index);
-        }
     }
 
     private List<ValorEnum> obtenirPaisos() {
@@ -1711,74 +1209,11 @@ public class RecobrimentServiceImpl implements RecobrimentService, ApplicationCo
     }
 
 
-//	private List<Servei> toServeis(List<es.caib.pinbal.core.model.Servei> serveiEntities) {
-//		List<Servei> serveisList = new ArrayList<Servei>();
-//
-//		for (es.caib.pinbal.core.model.Servei entity : serveiEntities) {
-//			serveisList.add(toServei(entity));
-//		}
-//
-//		return serveisList;
-//	}
-
-//	private List<Servei> toServeis(List<ProcedimentServei> procedimentServeis) {
-//		List<Servei> serveisList = new ArrayList<Servei>();
-//
-//		if (procedimentServeis == null)
-//			return serveisList;
-//
-//		for (ProcedimentServei procedimentServei : procedimentServeis) {
-//			serveisList.add(toServei(procedimentServei));
-//		}
-//
-//		return serveisList;
-//	}
-//
-//	private Servei toServei(EntitatServei entitatServeis) {
-//		if (entitatServeis == null)
-//			return null;
-//
-//		ServeiConfig serveiConfig = serveiConfigRepository.findByServei(entitatServeis.getServei());
-//		return Servei.builder()
-//				.codi(servicio.getCodCertificado())
-//				.descripcio(servicio.getDescripcion())
-//				.emisor(servicio.getEmisor().getNombre())
-//				.actiu(serveiConfig != null ? serveiConfig.isActiu() : false)
-//				.build();
-//	}
-//
-//	private Servei toServei(es.caib.pinbal.core.model.Servei serveiEntity) {
-//		if (serveiEntity == null)
-//			return null;
-//
-//		ServeiConfig serveiConfig = serveiConfigRepository.findByServei(serveiEntity.getCodi());
-//		return Servei.builder()
-//				.codi(serveiEntity.getCodi())
-//				.descripcio(serveiEntity.getDescripcio())
-//				.emisor(serveiEntity.getScspEmisor().getNom())
-//				.actiu(serveiConfig != null ? serveiConfig.isActiu() : false)
-//				.build();
-//	}
-//
-//	private Servei toServei(ProcedimentServei procedimentServei) {
-//		if (procedimentServei == null)
-//			return null;
-//
-//		return toServei(procedimentServei.getServeiScsp());
-//	}
-
 	private ScspHelper getScspHelper() {
 		if (scspHelper == null) {
 			scspHelper = new ScspHelper(applicationContext, messageSource);
 		}
 		return scspHelper;
 	}
-
-    private XmlHelper getXmlHelper() {
-        if (xmlHelper == null) {
-            xmlHelper = new XmlHelper();
-        }
-        return xmlHelper;
-    }
 
 }
