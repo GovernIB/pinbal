@@ -89,7 +89,10 @@ public class UsuariController extends BaseController{
 		if (RolHelper.isRolActualAdministrador(request) || RolHelper.isRolActualSuperauditor(request) || usuari.isHasMultiplesEntitats()) {
 			updateEntitat = true;
 		} else {
-			updateEntitat = !usuari.getProcedimentId().equals(command.getProcedimentId()) || !usuari.getServeiCodi().equals(command.getServeiCodi());
+			boolean procedimentIdChanged = hasChanged(usuari.getProcedimentId(), command.getProcedimentId());
+			boolean serveiCodiChanged = hasChanged(usuari.getServeiCodi(), command.getServeiCodi());
+			updateEntitat = procedimentIdChanged || serveiCodiChanged;
+
 			if (updateEntitat) {
 				EntitatDto entitatActual = EntitatHelper.getEntitatActual(request, entitatService);
 				command.setEntitatId(entitatActual != null ? entitatActual.getId() : null);
@@ -101,6 +104,13 @@ public class UsuariController extends BaseController{
 				"redirect:/",
 				"usuari.controller.modificat.ok");
 	}
+
+	private boolean hasChanged(Object oldValue, Object newValue) {
+		return (oldValue == null && newValue != null)
+				|| (oldValue != null && newValue == null)
+				|| (oldValue != null && !oldValue.equals(newValue));
+	}
+
 
 	@RequestMapping(value = "/num/elements/pagina/defecte", method = RequestMethod.GET)
 	@ResponseBody
