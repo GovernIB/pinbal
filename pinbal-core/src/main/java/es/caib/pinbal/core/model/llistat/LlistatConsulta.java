@@ -14,6 +14,8 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import java.util.Date;
 
 @Getter
@@ -104,12 +106,18 @@ public class LlistatConsulta {
     @Column(name = "pareId")
     private Long pareId;
 
+    @Column(name = "der")
+    @Temporal(TemporalType.TIMESTAMP)
+    protected Date dataEsperadaResposta;
+
 
     public void update(EstatTipus estat,
                        String solicitudId,
-                       String error) {
+                       String error,
+                       Date dataEsperadaResposta) {
         this.estat = estat;
         this.solicitudId = solicitudId;
         this.error = error;
+        this.dataEsperadaResposta = dataEsperadaResposta;
     }
 }

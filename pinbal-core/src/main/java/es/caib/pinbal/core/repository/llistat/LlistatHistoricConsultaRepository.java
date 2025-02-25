@@ -126,15 +126,15 @@ public interface LlistatHistoricConsultaRepository extends JpaRepository<Llistat
 
 
     @Modifying
-    @Query(value = 	"insert into pbl_consulta_hist_list(id, peticioId, solicitudId, data, departament, recobriment, multiple, usuariCodi, usuariNom, funcionariNif, funcionariNom, titularNom, titularDoctip, titularDocnum, procedimentCodi, procedimentNom, serveiCodi, serveiNom, estat, error, justificantEstat, entitatCodi, pareId) " +
-            "select id, peticioId, solicitudId, data, departament, recobriment, multiple, usuariCodi, usuariNom, funcionariNif, funcionariNom, titularNom, titularDoctip, titularDocnum, procedimentCodi, procedimentNom, serveiCodi, serveiNom, estat, error, justificantEstat, entitatCodi, pareId " +
+    @Query(value = 	"insert into pbl_consulta_hist_list(id, peticioId, solicitudId, data, departament, recobriment, multiple, usuariCodi, usuariNom, funcionariNif, funcionariNom, titularNom, titularDoctip, titularDocnum, procedimentCodi, procedimentNom, serveiCodi, serveiNom, estat, error, justificantEstat, entitatCodi, pareId, der) " +
+            "select id, peticioId, solicitudId, data, departament, recobriment, multiple, usuariCodi, usuariNom, funcionariNif, funcionariNom, titularNom, titularDoctip, titularDocnum, procedimentCodi, procedimentNom, serveiCodi, serveiNom, estat, error, justificantEstat, entitatCodi, pareId, der " +
             "from pbl_consulta_list where data < current_date - :dies ",
             nativeQuery = true)
     public int arxivaConsultesOracle(@Param("dies") int dies);
 
     @Modifying
-    @Query(value = 	"insert into pbl_consulta_hist_list(id, peticioId, solicitudId, data, departament, recobriment, multiple, usuariCodi, usuariNom, funcionariNif, funcionariNom, titularNom, titularDoctip, titularDocnum, procedimentCodi, procedimentNom, serveiCodi, serveiNom, estat, error, justificantEstat, entitatCodi, pareId) " +
-            "select id, peticioId, solicitudId, data, departament, recobriment, multiple, usuariCodi, usuariNom, funcionariNif, funcionariNom, titularNom, titularDoctip, titularDocnum, procedimentCodi, procedimentNom, serveiCodi, serveiNom, estat, error, justificantEstat, entitatCodi, pareId " +
+    @Query(value = 	"insert into pbl_consulta_hist_list(id, peticioId, solicitudId, data, departament, recobriment, multiple, usuariCodi, usuariNom, funcionariNif, funcionariNom, titularNom, titularDoctip, titularDocnum, procedimentCodi, procedimentNom, serveiCodi, serveiNom, estat, error, justificantEstat, entitatCodi, pareId, der) " +
+            "select id, peticioId, solicitudId, data, departament, recobriment, multiple, usuariCodi, usuariNom, funcionariNif, funcionariNom, titularNom, titularDoctip, titularDocnum, procedimentCodi, procedimentNom, serveiCodi, serveiNom, estat, error, justificantEstat, entitatCodi, pareId, der " +
             "from pbl_consulta_list where data < current_date - INTERVAL ':dies days' ",
             nativeQuery = true)
     public int arxivaConsultesPostgres(@Param("dies") int dies);

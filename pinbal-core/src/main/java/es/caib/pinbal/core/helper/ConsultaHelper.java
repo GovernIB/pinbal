@@ -73,6 +73,7 @@ public class ConsultaHelper {
                 .entitatId(entitat.getId())
                 .entitatCodi(entitat.getCodi())
                 .pareId(consulta.getPare() != null ? consulta.getPare().getId() : null)
+                .dataEsperadaResposta(consulta.getDataEsperadaResposta())
                 .build();
         llistatConsultaRepository.save(llistatConsulta);
 
@@ -115,7 +116,8 @@ public class ConsultaHelper {
         llistatConsulta.update(
                 consulta.getEstat(),
                 consulta.getScspSolicitudId(),
-                consulta.getError());
+                consulta.getError(),
+                consulta.getDataEsperadaResposta());
         llistatConsultaRepository.save(llistatConsulta);
         DadesObertesConsulta dadesObertesConsulta = dadesObertesConsultaRepository.findOne(consulta.getId());
         dadesObertesConsulta.update(

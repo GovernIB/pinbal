@@ -64,6 +64,7 @@ public class PeticioScspHelper {
 	@Autowired
 	private IntegracioHelper integracioHelper;
 
+	private static final long MILISEGONS_PER_HORA = 3600000L;
 
 	/* Emmagatzema el comptador de peticions fetes dins linterval actual per a cada servei */
 	private Map<String, Integer> consultaServeiCount = new HashMap<String, Integer>();
@@ -498,9 +499,36 @@ public class PeticioScspHelper {
 				accioParams.put("error", error);
 			}
 		}
+		if (consulta.isMultiple()) {
+			Integer horesEstimadesResposta = null;
+			if (resultat != null &&
+					resultat.getConfirmacionPeticion() != null &&
+					resultat.getConfirmacionPeticion().getAtributos() != null &&
+					resultat.getConfirmacionPeticion().getAtributos().getEstado() != null) {
+				horesEstimadesResposta = resultat.getConfirmacionPeticion()
+						.getAtributos()
+						.getEstado()
+						.getTiempoEstimadoRespuesta();
+
+			}
+
+			Date dataEsperadaResposta = calcularDataResposta(horesEstimadesResposta);
+			if (dataEsperadaResposta != null) {
+				consulta.updateDateEsperadaResposta(dataEsperadaResposta);
+			}
+		}
 		if (consulta.getId() != null)
 			consultaHelper.propagaCanviConsulta(consulta);
 	}
+
+	public Date calcularDataResposta(Integer horesEstimades) {
+		if (horesEstimades == null) {
+			return null;
+		}
+		long milisegonsAfegits = horesEstimades * MILISEGONS_PER_HORA;
+		return new Date(System.currentTimeMillis() + milisegonsAfegits);
+	}
+
 
 	public void updateEstatConsultaError(
 			Consulta consulta,

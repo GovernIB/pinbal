@@ -120,6 +120,8 @@ public class ConsultaDto extends AbstractIdentificable<Long> implements Serializ
 	private String procedimentCodiNom;
 	private String serveiCodiNom;
 
+	private Date dataEsperadaResposta;
+
 	public String getTitularDocumentNum() {
 		if (this.titularDocumentNum != null) {
 			return this.titularDocumentNum.toUpperCase();

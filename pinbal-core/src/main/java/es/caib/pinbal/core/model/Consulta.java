@@ -23,6 +23,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import javax.persistence.Table;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -151,6 +152,10 @@ public class Consulta extends SuperConsulta {
 	}
 	public void updateDadesEspecifiques(String dadesEspecifiques) {
 		this.dadesEspecifiques = dadesEspecifiques;
+	}
+
+	public void updateDateEsperadaResposta(Date dataEsperadaResposta) {
+		this.dataEsperadaResposta = dataEsperadaResposta;
 	}
 
 	/**

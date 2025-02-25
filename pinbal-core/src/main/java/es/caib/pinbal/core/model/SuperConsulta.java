@@ -17,7 +17,10 @@ import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinColumns;
 import javax.persistence.ManyToOne;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.persistence.Version;
+import java.util.Date;
 
 @Getter
 @Entity
@@ -88,6 +91,10 @@ public abstract class SuperConsulta extends PinbalAuditable<Long> implements ICo
     protected String arxiuDocumentUuid;
     @Column(name = "arxiu_expedient_tancat")
     protected boolean arxiuExpedientTancat = false;
+
+    @Column(name = "der")
+    @Temporal(TemporalType.TIMESTAMP)
+    protected Date dataEsperadaResposta;
 
 //    @ManyToOne(optional=true, fetch = FetchType.LAZY)
 //    @JoinColumn(

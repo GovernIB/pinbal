@@ -187,6 +187,7 @@
 				<th data-data="serveiCodiNom"><spring:message code="consulta.list.taula.servei" /></th>
 				<th data-data="titularNomSencer"><spring:message code="consulta.list.taula.titular.nom" /></th>		
 				<th data-data="estat"><spring:message code="consulta.list.taula.estat" /></th>
+				<th data-data="dataEsperadaResposta"><spring:message code="consulta.list.taula.der" /></th>
 				<th data-data="error" data-visible="false"></th>
 				<th data-data="id"></th>
 			</tr>
@@ -247,9 +248,21 @@ $(document).ready(function() {
 						}
 						return Mustache.render(template, row);
 				}
-			}, 
+			},
 			{
-				targets: [7],
+				targets: [6],
+				width: "10%",
+				render: function (data, type, row) {
+					var formattedDate = moment(data, 'x', true);
+					// Verifica si és vàlid
+					if (!formattedDate.isValid()) {
+						return ""; // Retorna cadena buida si la data no és vàlida
+					}
+					return formattedDate.format('DD/MM/YYYY HH:mm:ss'); // Formata la data si és vàlida
+				}
+			},
+			{
+				targets: [8],
 				orderable: false,
 				width: "10%",
 				render: function (data, type, row, meta) {
