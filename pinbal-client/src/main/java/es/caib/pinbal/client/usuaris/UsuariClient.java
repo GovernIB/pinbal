@@ -17,8 +17,10 @@ import java.util.Map;
 @Slf4j
 public class UsuariClient extends ClientBase {
 
+    private static final String BASE_URL_SUFIX = "/interna/";
+
     public UsuariClient(String urlBase, String usuari, String contrasenya, LogLevel logLevel) {
-        super(urlBase, usuari, contrasenya, logLevel);
+        super(urlBase + BASE_URL_SUFIX, usuari, contrasenya, logLevel);
     }
 
     public void createOrUpdateUsuari(UsuariEntitat usuariEntitat) throws UniformInterfaceException, ClientHandlerException, IOException {

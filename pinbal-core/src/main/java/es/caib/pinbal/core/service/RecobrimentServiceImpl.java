@@ -628,7 +628,7 @@ public class RecobrimentServiceImpl implements RecobrimentService, ApplicationCo
     public List<es.caib.pinbal.client.recobriment.v2.Entitat> getEntitats() {
         log.debug("Cercant entitats");
 
-        List<Entitat> entitats = entitatRepository.findActivesAmbUsuariCodi(SecurityContextHolder.getContext().getAuthentication().getName());
+        List<Entitat> entitats = entitatRepository.findActivesPerUsuari(SecurityContextHolder.getContext().getAuthentication().getName());
         return toEntitats(entitats);
     }
 
@@ -866,7 +866,7 @@ public class RecobrimentServiceImpl implements RecobrimentService, ApplicationCo
         List<ValorEnum> municipisCodiValor = new ArrayList<>();
         for (Municipi municipi : municipis) {
             municipisCodiValor.add(ValorEnum.builder()
-                    .codi(("MUNICIPI_5".equals(enumCodi) ? filtre : "") + municipi.getCodi())
+                    .codi("MUNICIPI_5".equals(enumCodi) ? municipi.getCodi() : municipi.getCodi() != null ? municipi.getCodi().substring(2) : null)
                     .valor(municipi.getNom())
                     .build());
         }

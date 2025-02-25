@@ -22,6 +22,7 @@ import org.springframework.stereotype.Service;
 
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.text.Collator;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -161,7 +162,8 @@ public class DadesExternesServiceImpl implements DadesExternesService {
 			httpConnection.setDoOutput(true);
 			String resposta = new String(
 					IOUtils.toByteArray(
-							httpConnection.getInputStream()));
+							httpConnection.getInputStream()),
+					StandardCharsets.UTF_8);
 			boolean afegirCodiProvincia = false;
 			String tokenInici = "{\"codi\":\""; // {"codi":"
 			String tokenFi = "\","; // ",

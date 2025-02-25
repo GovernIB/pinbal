@@ -1,0 +1,20 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1740397830
+      author: limit
+      changes:
+        - addColumn:
+            tableName: pbl_consulta
+            columns:
+              - name: der
+                type: TIMESTAMP
+        - addColumn:
+            tableName: pbl_consulta_hist
+            columns:
+              - name: der
+                type: TIMESTAMP
+        - addColumn:
+            tableName: pbl_consulta_list
+            columns:
+              - name: der
+                type: TIMESTAMP

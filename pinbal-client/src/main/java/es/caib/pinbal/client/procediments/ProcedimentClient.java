@@ -16,8 +16,10 @@ import java.util.Map;
 @Slf4j
 public class ProcedimentClient extends ClientBase {
 
+    private static final String BASE_URL_SUFIX = "/interna/";
+
     public ProcedimentClient(String urlBase, String usuari, String contrasenya, LogLevel logLevel) {
-        super(urlBase, usuari, contrasenya, logLevel);
+        super(urlBase + BASE_URL_SUFIX, usuari, contrasenya, logLevel);
     }
 
     public void createProcediment(Procediment procediment) throws UniformInterfaceException, ClientHandlerException, IOException {

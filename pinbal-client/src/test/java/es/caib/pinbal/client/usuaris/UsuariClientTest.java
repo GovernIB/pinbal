@@ -23,7 +23,7 @@ public class UsuariClientTest {
     @Before
     public void setUp() {
         // La URL base ha de corresponder-se amb el teu servidor real
-        String urlBase = "http://localhost:8180/pinbalapi/interna"; // Exemples; ajusta això segons el teu entorn
+        String urlBase = "http://localhost:8180/pinbalapi"; // Exemples; ajusta això segons el teu entorn
         String usuari = "pblwsrep";
         String contrasenya = "pblwsrep";
         LogLevel logLevel = LogLevel.DEBUG;

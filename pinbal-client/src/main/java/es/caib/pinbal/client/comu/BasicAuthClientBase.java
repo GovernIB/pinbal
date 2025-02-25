@@ -5,6 +5,7 @@ package es.caib.pinbal.client.comu;
 
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
@@ -386,6 +387,43 @@ public abstract class BasicAuthClientBase {
 		}
 		String jsonOutput = response.getEntity(String.class);
 		T recurs =  mapper.readValue(jsonOutput, clazz);
+		return recurs;
+	}
+
+	protected <T> List<T> processListResponse(ClientResponse response, Class<T> clazz) throws IOException {
+		String errorMsg = "";
+		int statusCode = response.getStatus();
+		switch(statusCode) {
+			case 200:
+				logDebug("Operació realitzada amb èxit: " + response.getLocation());
+				break;
+			case 204:
+				logInfo("Sense contingut (" + clazz.getSimpleName() + ")");
+				return null;
+			case 400:
+				errorMsg = "Entrada invàlida: " + getErrorMessage(response);
+				logError(errorMsg);
+				throw new RuntimeException(errorMsg);
+			case 401:
+				errorMsg = "Accés denegat: " + getErrorMessage(response);
+				logError(errorMsg);
+				throw new RuntimeException(errorMsg);
+			case 404:
+				errorMsg = "Recurs no trobat : " + getErrorMessage(response);
+				logError(errorMsg);
+				throw new RuntimeException(errorMsg);
+			case 500:
+				errorMsg = "Resposta inesperada del servidor: " + getErrorMessage(response);
+				logError(errorMsg);
+				throw new RuntimeException(errorMsg);
+		}
+
+		if (!response.hasEntity()) {
+			return null;
+		}
+		String jsonOutput = response.getEntity(String.class);
+		JavaType listType = mapper.getTypeFactory().constructCollectionType(List.class, clazz);
+		List<T> recurs =  mapper.readValue(jsonOutput, listType);
 		return recurs;
 	}
 

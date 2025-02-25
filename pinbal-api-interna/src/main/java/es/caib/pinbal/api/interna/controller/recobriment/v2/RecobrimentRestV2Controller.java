@@ -3,6 +3,7 @@
  */
 package es.caib.pinbal.api.interna.controller.recobriment.v2;
 
+import com.mangofactory.swagger.annotations.ApiIgnore;
 import es.caib.pinbal.api.interna.controller.PinbalHalRestController;
 import es.caib.pinbal.api.interna.openapi.interficies.recobriment.v2.RecobrimentRestV2Intf;
 import es.caib.pinbal.client.procediments.Procediment;
@@ -23,6 +24,7 @@ import es.caib.pinbal.core.service.exception.ConsultaNotFoundException;
 import es.caib.pinbal.core.service.exception.EntitatNotFoundException;
 import es.caib.pinbal.core.service.exception.ProcedimentNotFoundException;
 import es.caib.pinbal.core.service.exception.ResourceNotFoundException;
+import es.caib.pinbal.core.service.exception.ServeiCampNotFoundException;
 import es.caib.pinbal.core.service.exception.ServeiNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,7 +38,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.util.UrlPathHelper;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -168,6 +172,36 @@ public class RecobrimentRestV2Controller extends PinbalHalRestController impleme
 		}
 	}
 
+	@ApiIgnore
+	@RequestMapping(value = "/serveis/{serveiCodi}/camps/**", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<List<ValorEnum>> getValorsEnum(
+			@PathVariable("serveiCodi") String serveiCodi,
+			@RequestParam(required = false)String filtre,
+			HttpServletRequest request
+	) {
+		String fullPath = new UrlPathHelper().getPathWithinApplication(request);
+
+		String prefix = "/recobriment/v2/serveis/" + serveiCodi + "/camps/";
+		String remainingPath = fullPath.substring(prefix.length());
+
+		// Verificar si el camí restant està buit per evitar errors
+		if (remainingPath.isEmpty()) {
+			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+		}
+
+		// Processar el camí restant (per exemple, dividir-lo o processar-lo segons el format)
+		String[] pathSegments = remainingPath.split("/enumerat/");
+		if (pathSegments.length != 2) {
+			return new ResponseEntity<>(HttpStatus.BAD_REQUEST); // Camí mal format
+		}
+
+		String campCodi = pathSegments[0]; // Primera part abans de "/enumerat/"
+		String enumCodi = pathSegments[1]; // Segona part després de "/enumerat/"
+
+		return getValorsEnum(serveiCodi, campCodi, enumCodi, filtre);
+
+	}
+
 	@RequestMapping(value = "/serveis/{serveiCodi}/camps/{campCodi}/enumerat/{enumCodi}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<ValorEnum>> getValorsEnum(
 			@PathVariable("serveiCodi") String serveiCodi,
@@ -186,6 +220,8 @@ public class RecobrimentRestV2Controller extends PinbalHalRestController impleme
 			return new ResponseEntity<>(valorsEnum, HttpStatus.OK);
 		} catch (ServeiNotFoundException e) {
 			throw new ResourceNotFoundException(e.getDefaultMessage(), e);
+		} catch (ServeiCampNotFoundException ce) {
+			throw new ResourceNotFoundException(ce.getDefaultMessage(), ce);
 		} catch (AccessDeniedException | AccessDenegatException ade) {
 			throw new AccessDenegatException(Arrays.asList("PBL_WS"));
 		} catch (Exception ex) {

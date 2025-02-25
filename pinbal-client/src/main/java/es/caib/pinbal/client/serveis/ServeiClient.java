@@ -15,8 +15,10 @@ import java.util.Map;
 @Slf4j
 public class ServeiClient extends ClientBase {
 
+    private static final String BASE_URL_SUFIX = "/interna/";
+
     public ServeiClient(String urlBase, String usuari, String contrasenya, LogLevel logLevel) {
-        super(urlBase, usuari, contrasenya, logLevel);
+        super(urlBase + BASE_URL_SUFIX, usuari, contrasenya, logLevel);
     }
 
     public Page<Servei> getServeis(String codi, String descripcio, int page, int size, String sort)

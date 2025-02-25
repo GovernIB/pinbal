@@ -52,6 +52,12 @@ public interface EntitatRepository extends JpaRepository<Entitat, Long> {
 			"and (eu.representant = true or eu.delegat=true or eu.auditor=true)")
 	List<Entitat> findActivesAmbUsuariCodi(String usuariCodi);
 
+	@Query(	"select eu.entitat " +
+			"from EntitatUsuari eu " +
+			"where eu.usuari.codi = ?1 " +
+			"and eu.entitat.activa = true ")
+	List<Entitat> findActivesPerUsuari(String usuariCodi);
+
 	List<Entitat> findByTipusOrderByNomAsc(EntitatTipus tipus);
 
 	@Query(	"select" +

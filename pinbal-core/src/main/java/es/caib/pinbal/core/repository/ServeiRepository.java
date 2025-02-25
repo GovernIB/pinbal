@@ -129,6 +129,6 @@ public interface ServeiRepository extends JpaRepository<Servei, Long> {
 			" 		ProcedimentServei ps " +
 			" where s.codi = sc.servei" +
 			"	and ps.servei = s.codi " +
-			"   and ps.procedimentCodi = :procedimentCodi")
+			"   and ps.procediment.codi = :procedimentCodi")
 	List<es.caib.pinbal.client.serveis.Servei> findServeisClientByProcedimentCodi(@Param("procedimentCodi") String procedimentCodi);
 }
