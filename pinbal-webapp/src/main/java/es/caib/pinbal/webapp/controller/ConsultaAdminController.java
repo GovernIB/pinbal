@@ -291,8 +291,10 @@ public class ConsultaAdminController extends BaseController {
 		model.addAttribute("consulta", consulta);
 		model.addAttribute("servei", serveiService.findAmbCodiPerAdminORepresentant(consulta.getServeiCodi()));
 		omplirModelAmbDadesEspecifiques(consulta.getServeiCodi(), model);
-		ArbreRespostaDto dadesResposta = consultaService.generarArbreResposta(consultaId);
-		model.addAttribute("dadesResposta", dadesResposta);
+		if (!consulta.isEstatError()) {
+			ArbreRespostaDto dadesResposta = consultaService.generarArbreResposta(consultaId);
+			model.addAttribute("dadesResposta", dadesResposta);
+		}
 		return "adminConsultaInfo";
 	}
 

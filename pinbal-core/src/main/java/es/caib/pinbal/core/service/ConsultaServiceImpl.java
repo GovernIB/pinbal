@@ -2620,9 +2620,15 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 	@Override
 	public ArbreRespostaDto generarArbreResposta(Long consultaId) throws Exception {
 
-		Consulta consulta = consultaRepository.findOne(consultaId);
-		ElementArbre elementArbre = scspHelper.generarArbreJustificant(consulta.getScspPeticionId(), consulta.getScspSolicitudId(), null);
-		ArbreRespostaDto arbreResposta = convertirElementArbre(elementArbre);
+		ArbreRespostaDto arbreResposta = null;
+
+		try {
+			Consulta consulta = consultaRepository.findOne(consultaId);
+			ElementArbre elementArbre = scspHelper.generarArbreJustificant(consulta.getScspPeticionId(), consulta.getScspSolicitudId(), null);
+			arbreResposta = convertirElementArbre(elementArbre);
+		} catch (Exception e) {
+			log.error("Error al obtenir l'arbre de la resposta", e);
+		}
 
 		return arbreResposta;
 	}

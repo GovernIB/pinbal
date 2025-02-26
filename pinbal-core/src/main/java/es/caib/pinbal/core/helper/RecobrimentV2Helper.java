@@ -103,40 +103,44 @@ public class RecobrimentV2Helper implements ApplicationContextAware, MessageSour
 	}
 
 
-	public void validateDadesComunes(DadesComunes dadesComunes, BindException errors) {
+	public void validateDadesComunes(DadesComunes dadesComunes, String serveiCodi, BindException errors) {
 		if (dadesComunes == null) {
 			errors.rejectValue("dadesComunes", "rec.val.err.dadesComunes", "No s'ha trobat l'element dadesComunes");
 			return;
 		}
 
+		// ServeiCodi
+		if (!serveiCodi.equals(dadesComunes.getServeiCodi())) {
+			errors.rejectValue("dadesComunes.serveiCodi", "rec.val.err.serveiCodi.mismatch", "El servei informat a la petició " + serveiCodi + " no coindideix amb el de la solicitud " + dadesComunes.getServeiCodi());
+		}
 		// Validem cada camp de "dadesComunes"
-		validateCamp(dadesComunes.getServeiCodi(), "serveiCodi", errors);
+		validateCamp(dadesComunes.getServeiCodi(), "dadesComunes.serveiCodi", errors);
 		ServeiConfig serveiConfig = serveiConfigRepository.findByServei(dadesComunes.getServeiCodi());
 		if (serveiConfig == null) {
 			errors.rejectValue("dadesComunes.serveiCodi", "rec.val.err.serveiCodi.notfound", "No s'ha trobat el servei amb codi " + dadesComunes.getServeiCodi());
 		}
 
-		validateCamp(dadesComunes.getEntitatCif(), "entitatCif", errors);
+		validateCamp(dadesComunes.getEntitatCif(), "dadesComunes.entitatCif", errors);
 		Entitat entitat = entitatRepository.findByCif(dadesComunes.getEntitatCif());
 		if (entitat == null) {
 			errors.rejectValue("dadesComunes.entitatCif", "rec.val.err.entitatCif.notfound", "No s'ha trobat l'entitat amb el CIF " + dadesComunes.getEntitatCif());
 		}
 
-		validateCamp(dadesComunes.getProcedimentCodi(), "procedimentCodi", errors);
+		validateCamp(dadesComunes.getProcedimentCodi(), "dadesComunes.procedimentCodi", errors);
 		es.caib.pinbal.core.model.Procediment procediment = procedimentRepository.findByCodi(dadesComunes.getProcedimentCodi());
 		if (procediment == null) {
 			errors.rejectValue("dadesComunes.procedimentCodi", "rec.val.err.procedimentCodi.notfound", "No s'ha trobat el procediment amb el codi " + dadesComunes.getProcedimentCodi());
 		}
 
 		// Velidam que l'entitat del procediment és l'enitat amb el cif informat a la petició
-		if (procediment != null && entitat != null && !procediment.getEntitat().equals(entitat)) {
+		if (procediment != null && entitat != null && procediment.getEntitat() != null && !procediment.getEntitat().getCodi().equals(entitat.getCodi())) {
 			errors.rejectValue("dadesComunes.procedimentCodi", "rec.val.procedimentCodi.entitat.differs", "L'entitat del procediment no té el CIF indicant al camp dadesComunes.entitatCif");
 		}
 
 		validateFuncionari(dadesComunes.getFuncionari(), errors);
 
-		validateCamp(dadesComunes.getDepartament(), "departament", 250, errors);
-		validateCamp(dadesComunes.getFinalitat(), "finalitat", 250, errors);
+		validateCamp(dadesComunes.getDepartament(), "dadesComunes.departament", 250, errors);
+		validateCamp(dadesComunes.getFinalitat(), "dadesComunes.finalitat", 250, errors);
 
 		if (dadesComunes.getConsentiment() == null) {
 			errors.rejectValue("dadesComunes.consentiment", "rec.val.err.consentiment", "No s'ha trobat l'element dadesComunes.consentiment");
@@ -302,9 +306,9 @@ public class RecobrimentV2Helper implements ApplicationContextAware, MessageSour
 	private void validateCamp(String valor, String campNom, int maxLongitud, BindException errors) {
 		valor = valor != null ? valor.trim() : null;
 		if (valor == null || valor.isEmpty()) {
-			errors.rejectValue("dadesComunes." + campNom, "rec.val.err." + campNom, "No s'ha trobat l'element dadesComunes." + campNom);
+			errors.rejectValue(campNom, "rec.val.err." + campNom, "No s'ha trobat l'element " + campNom);
 		} else if (valor.length() > maxLongitud) {
-			errors.rejectValue("dadesComunes." + campNom, "rec.val.err." + campNom + ".length", "Camp massa llarg. L'element dadesComunes." + campNom + " no pot superar els " + maxLongitud + " caràcters.");
+			errors.rejectValue(campNom, "rec.val.err." + campNom + ".length", "Camp massa llarg. L'element " + campNom + " no pot superar els " + maxLongitud + " caràcters.");
 		}
 	}
 
@@ -312,7 +316,7 @@ public class RecobrimentV2Helper implements ApplicationContextAware, MessageSour
 	private void validateCamp(String valor, String campNom, BindException errors) {
 		valor = valor != null ? valor.trim() : null;
 		if (valor == null || valor.isEmpty()) {
-			errors.rejectValue("dadesComunes." + campNom, "rec.val.err." + campNom, "No s'ha trobat l'element dadesComunes." + campNom);
+			errors.rejectValue(campNom, "rec.val.err." + campNom, "No s'ha trobat l'element " + campNom);
 		}
 	}
 
@@ -350,7 +354,7 @@ public class RecobrimentV2Helper implements ApplicationContextAware, MessageSour
 		validateCampLength(funcionariNif, "dadesComunes.funcionari.nif", 10, errors);
 
 		if (funcionariDades != null) {
-			if (funcionariNif != null && !funcionariNif.equals(funcionariDades.getNif())) {
+			if (funcionariNif != null && !funcionariNif.equalsIgnoreCase(funcionariDades.getNif())) {
 				errors.rejectValue("dadesComunes.funcionari.nif", "rec.val.err.funcionari.nif.mismatch", "El NIF del funcionari no coincideix amb el NIF del funcionari amb codi " + funcionariCodi);
 			}
 			if (funcionariNom != null && !funcionariNom.equalsIgnoreCase(funcionariDades.getNom())) {
@@ -409,7 +413,7 @@ public class RecobrimentV2Helper implements ApplicationContextAware, MessageSour
 
 		validateCampLength(titularDocNum, "solicitud.titular.documentNumero", 14, errors);
 
-		if (titularDocTipus != null && titularDocNum != null && !titularDocNum.isEmpty() && servei.isComprovarDocument()) {
+		if (titularDocTipus != null && titularDocNum != null && !titularDocNum.isEmpty() && servei != null && servei.isComprovarDocument()) {
 			if (es.caib.pinbal.client.recobriment.v2.Titular.DocumentTipus.NIF.equals(titularDocTipus)) {
 				if (!DocumentIdentitatHelper.validacioNif(titularDocNum))
 					errors.rejectValue("solicitud.titular.documentNumero", "rec.val.err.titular.nif", "El valor de l'element dadesComunes.titular.documentTipus no és un NIF vàlid");

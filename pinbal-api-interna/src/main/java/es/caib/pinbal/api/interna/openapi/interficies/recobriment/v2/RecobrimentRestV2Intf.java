@@ -154,6 +154,7 @@ public interface RecobrimentRestV2Intf {
     })
     @RequestMapping(value= "/serveis/{serveiCodi}/peticioSincrona", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     ResponseEntity<PeticioRespostaSincrona> peticioSincrona(
+            @ApiParam(value = "Codi del servei") @PathVariable("serveiCodi") String serveiCodi,
             @ApiParam(name="peticio", value="Petició síncrona") @RequestBody PeticioSincrona peticio);
 
     @ApiOperation(
@@ -168,6 +169,7 @@ public interface RecobrimentRestV2Intf {
     })
     @RequestMapping(value= "/serveis/{serveiCodi}/peticioAsincrona", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     ResponseEntity<PeticioRespostaAsincrona> peticioAsincrona(
+            @ApiParam(value = "Codi del servei") @PathVariable("serveiCodi") String serveiCodi,
             @ApiParam(name="peticio", value="Petició asíncrona") @RequestBody PeticioAsincrona peticio);
 
 

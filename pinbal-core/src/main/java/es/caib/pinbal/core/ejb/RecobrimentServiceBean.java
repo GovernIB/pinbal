@@ -138,14 +138,14 @@ public class RecobrimentServiceBean implements RecobrimentService {
 
 	@Override
 	@RolesAllowed("PBL_WS")
-	public Map<String, List<String>> validatePeticio(PeticioSincrona peticio) {
-		return delegate.validatePeticio(peticio);
+	public Map<String, List<String>> validatePeticio(String serveiCodi, PeticioSincrona peticio) {
+		return delegate.validatePeticio(serveiCodi, peticio);
 	}
 
 	@Override
 	@RolesAllowed("PBL_WS")
-	public Map<String, List<String>> validatePeticio(PeticioAsincrona peticio) {
-		return delegate.validatePeticio(peticio);
+	public Map<String, List<String>> validatePeticio(String serveiCodi, PeticioAsincrona peticio) {
+		return delegate.validatePeticio(serveiCodi, peticio);
 	}
 
 	@Override

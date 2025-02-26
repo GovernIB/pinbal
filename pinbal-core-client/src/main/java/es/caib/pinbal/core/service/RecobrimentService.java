@@ -190,7 +190,7 @@ public interface RecobrimentService {
 	 * La clau correspon al path del camp amb error, i el valor al missatge d'error
 	 */
 	@PreAuthorize("hasRole('ROLE_WS')")
-	Map<String, List<String>> validatePeticio(PeticioSincrona peticio);
+	Map<String, List<String>> validatePeticio(String serveiCodi, PeticioSincrona peticio);
 
 	/**
 	 * Valida les dades d'una petició asíncrona
@@ -200,7 +200,7 @@ public interface RecobrimentService {
 	 * La clau correspon al path del camp amb error, i el valor al missatge d'error
 	 */
 	@PreAuthorize("hasRole('ROLE_WS')")
-	Map<String, List<String>> validatePeticio(PeticioAsincrona peticio);
+	Map<String, List<String>> validatePeticio(String serveiCodi, PeticioAsincrona peticio);
 
 	/**
 	 * Realitza una petició síncrona al recobriment SCSP.

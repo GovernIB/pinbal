@@ -40,6 +40,8 @@ import java.util.List;
 import java.util.Map;
 
 import static org.hamcrest.CoreMatchers.containsString;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -473,7 +475,7 @@ public class RecobrimentRestV2ControllerTest {
         PeticioRespostaSincrona resposta = PeticioRespostaSincrona.builder().error(false).build();
         Map<String, List<String>> respostaValidacio = new java.util.HashMap<>();
 
-        when(recobrimentService.validatePeticio(peticio)).thenReturn(respostaValidacio);
+        when(recobrimentService.validatePeticio(anyString(), eq(peticio))).thenReturn(respostaValidacio);
         when(recobrimentService.peticionSincrona(peticio)).thenReturn(resposta);
 
         mockMvc.perform(post("/recobriment/v2/serveis/SERVEI001/peticioSincrona")
@@ -495,7 +497,7 @@ public class RecobrimentRestV2ControllerTest {
                 .messageError("S'han produït errors en la validació de les dades de la petició.")
                 .build();
 
-        when(recobrimentService.validatePeticio(peticio)).thenReturn(errors);
+        when(recobrimentService.validatePeticio(anyString(), eq(peticio))).thenReturn(errors);
 
         mockMvc.perform(post("/recobriment/v2/serveis/SERVEI001/peticioSincrona")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -509,7 +511,7 @@ public class RecobrimentRestV2ControllerTest {
     public void testPeticioSincrona_ReturnsInternalServerErrorWhenExceptionOccurs() throws Exception {
         PeticioSincrona peticio = PeticioSincrona.builder().build();
 
-        when(recobrimentService.validatePeticio(peticio)).thenThrow(new ServiceExecutionException("Error occurred"));
+        when(recobrimentService.validatePeticio(anyString(), eq(peticio))).thenThrow(new ServiceExecutionException("Error occurred"));
 
         mockMvc.perform(post("/recobriment/v2/serveis/SERVEI001/peticioSincrona")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -527,7 +529,7 @@ public class RecobrimentRestV2ControllerTest {
         PeticioRespostaAsincrona resposta = PeticioRespostaAsincrona.builder().error(false).build();
         Map<String, List<String>> respostaValidacio = new java.util.HashMap<>();
 
-        when(recobrimentService.validatePeticio(peticio)).thenReturn(respostaValidacio);
+        when(recobrimentService.validatePeticio(anyString(), eq(peticio))).thenReturn(respostaValidacio);
         when(recobrimentService.peticionAsincrona(peticio)).thenReturn(resposta);
 
         mockMvc.perform(post("/recobriment/v2/serveis/SERVEI001/peticioAsincrona")
@@ -549,7 +551,7 @@ public class RecobrimentRestV2ControllerTest {
                 .messageError("S'han produït errors en la validació de les dades de la petició.")
                 .build();
 
-        when(recobrimentService.validatePeticio(peticio)).thenReturn(errors);
+        when(recobrimentService.validatePeticio(anyString(), eq(peticio))).thenReturn(errors);
 
         mockMvc.perform(post("/recobriment/v2/serveis/SERVEI001/peticioAsincrona")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -563,7 +565,7 @@ public class RecobrimentRestV2ControllerTest {
     public void testPeticioAsincrona_ReturnsInternalServerErrorWhenExceptionOccurs() throws Exception {
         PeticioAsincrona peticio = PeticioAsincrona.builder().build();
 
-        when(recobrimentService.validatePeticio(peticio)).thenThrow(new ServiceExecutionException("Error occurred"));
+        when(recobrimentService.validatePeticio(anyString(), eq(peticio))).thenThrow(new ServiceExecutionException("Error occurred"));
 
         mockMvc.perform(post("/recobriment/v2/serveis/SERVEI001/peticioAsincrona")
                         .contentType(MediaType.APPLICATION_JSON)

@@ -77,7 +77,7 @@ public class RecobrimentV2HelperTest {
         PeticioSincrona peticio = PeticioSincrona.builder().build();
         BindException errors = new BindException(peticio, "peticio");
 
-        recobrimentV2Helper.validateDadesComunes(null, errors);
+        recobrimentV2Helper.validateDadesComunes(null, "SERVEI_CODI", errors);
 
         assertFalse(errors.getAllErrors().isEmpty());
         verifyZeroInteractions(serveiConfigRepository, entitatRepository, procedimentRepository);
@@ -93,7 +93,7 @@ public class RecobrimentV2HelperTest {
 
         when(serveiConfigRepository.findByServei("INVALID_CODI")).thenReturn(null);
 
-        recobrimentV2Helper.validateDadesComunes(dadesComunes, errors);
+        recobrimentV2Helper.validateDadesComunes(dadesComunes, "INVALID_CODI", errors);
 
         assertFalse(errors.getFieldErrors("dadesComunes.serveiCodi").isEmpty());
         verify(serveiConfigRepository).findByServei("INVALID_CODI");
@@ -109,7 +109,7 @@ public class RecobrimentV2HelperTest {
 
         when(entitatRepository.findByCif("INVALID_CIF")).thenReturn(null);
 
-        recobrimentV2Helper.validateDadesComunes(dadesComunes, errors);
+        recobrimentV2Helper.validateDadesComunes(dadesComunes, "SERVEI_CODI", errors);
 
         assertFalse(errors.getFieldErrors("dadesComunes.entitatCif").isEmpty());
         verify(entitatRepository).findByCif("INVALID_CIF");
@@ -125,7 +125,7 @@ public class RecobrimentV2HelperTest {
 
         when(procedimentRepository.findByCodi("INVALID_PROCEDIMENT")).thenReturn(null);
 
-        recobrimentV2Helper.validateDadesComunes(dadesComunes, errors);
+        recobrimentV2Helper.validateDadesComunes(dadesComunes, "SERVEI_CODI", errors);
 
         assertFalse(errors.getFieldErrors("dadesComunes.procedimentCodi").isEmpty());
         verify(procedimentRepository).findByCodi("INVALID_PROCEDIMENT");
@@ -153,7 +153,7 @@ public class RecobrimentV2HelperTest {
         when(entitatRepository.findByCif("VALID_CIF")).thenReturn(entitat);
         when(procedimentRepository.findByCodi("VALID_CODE")).thenReturn(procediment);
 
-        recobrimentV2Helper.validateDadesComunes(dadesComunes, errors);
+        recobrimentV2Helper.validateDadesComunes(dadesComunes, "SERVEI_CODI", errors);
 
         assertFalse(errors.getFieldErrors("dadesComunes.procedimentCodi").isEmpty());
         verify(entitatRepository).findByCif("VALID_CIF");
@@ -168,7 +168,7 @@ public class RecobrimentV2HelperTest {
         PeticioSincrona peticio = PeticioSincrona.builder().dadesComunes(dadesComunes).build();
         BindException errors = new BindException(peticio, "peticio");
 
-        recobrimentV2Helper.validateDadesComunes(dadesComunes, errors);
+        recobrimentV2Helper.validateDadesComunes(dadesComunes, "SERVEI_CODI", errors);
 
         assertFalse(errors.getFieldErrors("dadesComunes.consentiment").isEmpty());
     }
@@ -181,7 +181,7 @@ public class RecobrimentV2HelperTest {
         PeticioSincrona peticio = PeticioSincrona.builder().dadesComunes(dadesComunes).build();
         BindException errors = new BindException(peticio, "peticio");
 
-        recobrimentV2Helper.validateDadesComunes(dadesComunes, errors);
+        recobrimentV2Helper.validateDadesComunes(dadesComunes, "SERVEI_CODI", errors);
 
         assertFalse(errors.getFieldErrors("dadesComunes.funcionari").isEmpty());
     }
@@ -198,7 +198,7 @@ public class RecobrimentV2HelperTest {
         PeticioSincrona peticio = PeticioSincrona.builder().dadesComunes(dadesComunes).build();
         BindException errors = new BindException(peticio, "peticio");
 
-        recobrimentV2Helper.validateDadesComunes(dadesComunes, errors);
+        recobrimentV2Helper.validateDadesComunes(dadesComunes, "SERVEI_CODI", errors);
 
         assertFalse(errors.getFieldErrors("dadesComunes.funcionari").isEmpty());
     }

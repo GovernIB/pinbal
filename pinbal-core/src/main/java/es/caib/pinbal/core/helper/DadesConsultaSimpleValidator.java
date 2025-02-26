@@ -5,6 +5,7 @@ import es.caib.pinbal.core.dto.ServeiCampGrupDto;
 import es.caib.pinbal.core.dto.regles.CampFormProperties;
 import es.caib.pinbal.core.service.ServeiService;
 import es.caib.pinbal.core.service.exception.ServeiNotFoundException;
+import lombok.extern.slf4j.Slf4j;
 import org.joda.time.Days;
 import org.joda.time.LocalDate;
 import org.joda.time.Period;
@@ -24,6 +25,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
+@Slf4j
 // Classes auxiliars
 @SuppressWarnings("rawtypes")
 public class DadesConsultaSimpleValidator implements Validator {
@@ -55,7 +57,13 @@ public class DadesConsultaSimpleValidator implements Validator {
             camps = serveiService.findServeiCamps(serveiCodi);
             grups = serveiService.findServeiCampGrupsAndSubgrups(serveiCodi);
         } catch (ServeiNotFoundException e) {
-            throw new RuntimeException("Error obtenint els camps i grups del servei", e);
+//            throw new RuntimeException("Error obtenint els camps i grups del servei", e);
+            log.error("Error obtenint els camps i grups del servei. No s'han pogut validar les dades específiques.", e);
+            errors.rejectValue(
+                    "dadesEspecifiques",
+                    "campsNoObtinguts",
+                    "Error obtenint els camps i grups del servei. No s'han pogut validar les dades específiques.");
+            return;
         }
         for (ServeiCampDto camp : camps) {
             pathsValids.add(camp.getPath());

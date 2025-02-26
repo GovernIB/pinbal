@@ -731,11 +731,10 @@ public class RecobrimentServiceImpl implements RecobrimentService, ApplicationCo
 
     @Override
     @Transactional(readOnly = true)
-    public Map<String, List<String>> validatePeticio(PeticioSincrona peticio) {
+    public Map<String, List<String>> validatePeticio(String serveiCodi, PeticioSincrona peticio) {
 
         BindException errors = new BindException(peticio, "peticio");
-        String serveiCodi = peticio.getDadesComunes() != null ? peticio.getDadesComunes().getServeiCodi().trim() : null;
-        recobrimentV2Helper.validateDadesComunes(peticio.getDadesComunes(), errors);
+        recobrimentV2Helper.validateDadesComunes(peticio.getDadesComunes(), serveiCodi, errors);
         recobrimentV2Helper.validateDadesSolicitud(peticio.getSolicitud(), serveiCodi, errors, serveiService);
 
         Map<String, List<String>> errorsCamps = errorsToMap(errors);
@@ -745,11 +744,10 @@ public class RecobrimentServiceImpl implements RecobrimentService, ApplicationCo
 
     @Override
     @Transactional(readOnly = true)
-    public Map<String, List<String>> validatePeticio(PeticioAsincrona peticio) {
+    public Map<String, List<String>> validatePeticio(String serveiCodi, PeticioAsincrona peticio) {
 
         BindException errors = new BindException(peticio, "peticio");
-        String serveiCodi = peticio.getDadesComunes() != null ? peticio.getDadesComunes().getServeiCodi().trim() : null;
-        recobrimentV2Helper.validateDadesComunes(peticio.getDadesComunes(), errors);
+        recobrimentV2Helper.validateDadesComunes(peticio.getDadesComunes(), serveiCodi, errors);
 
         Map<String, List<String>> errorsSolicituds = recobrimentV2Helper.validateDadesSolicituds(peticio.getSolicituds(), serveiCodi, serveiService);
         Map<String, List<String>> errorsDadesComunes = errorsToMap(errors);
@@ -776,7 +774,7 @@ public class RecobrimentServiceImpl implements RecobrimentService, ApplicationCo
     }
 
     @Override
-    @Transactional
+//    @Transactional
     public PeticioRespostaSincrona peticionSincrona(PeticioSincrona peticio) {
         PeticioRespostaSincrona respuesta = null;
         try {
@@ -798,7 +796,7 @@ public class RecobrimentServiceImpl implements RecobrimentService, ApplicationCo
     }
 
     @Override
-    @Transactional
+//    @Transactional
     public PeticioRespostaAsincrona peticionAsincrona(PeticioAsincrona peticio) {
         PeticioRespostaAsincrona respuesta = null;
         try {

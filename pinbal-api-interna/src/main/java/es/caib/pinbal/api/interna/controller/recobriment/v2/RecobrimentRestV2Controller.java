@@ -233,9 +233,11 @@ public class RecobrimentRestV2Controller extends PinbalHalRestController impleme
 	// /////////////////////////////////////////////////////////////
 
 	@RequestMapping(value= "/serveis/{serveiCodi}/peticioSincrona", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<PeticioRespostaSincrona> peticioSincrona(@RequestBody PeticioSincrona peticio) {
+	public ResponseEntity<PeticioRespostaSincrona> peticioSincrona(
+			@PathVariable("serveiCodi") String serveiCodi,
+			@RequestBody PeticioSincrona peticio) {
 		try {
-			Map<String, List<String>> errors = recobrimentService.validatePeticio(peticio);
+			Map<String, List<String>> errors = recobrimentService.validatePeticio(serveiCodi, peticio);
 			if (!errors.isEmpty()) {
 				PeticioRespostaSincrona respuesta = PeticioRespostaSincrona.builder()
 						.error(true)
@@ -252,9 +254,11 @@ public class RecobrimentRestV2Controller extends PinbalHalRestController impleme
 	}
 
 	@RequestMapping(value= "/serveis/{serveiCodi}/peticioAsincrona", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<PeticioRespostaAsincrona> peticioAsincrona(@RequestBody PeticioAsincrona peticio) {
+	public ResponseEntity<PeticioRespostaAsincrona> peticioAsincrona(
+			@PathVariable("serveiCodi") String serveiCodi,
+			@RequestBody PeticioAsincrona peticio) {
 		try{
-			Map<String, List<String>> errors = recobrimentService.validatePeticio(peticio);
+			Map<String, List<String>> errors = recobrimentService.validatePeticio(serveiCodi, peticio);
 			if (!errors.isEmpty()) {
 				PeticioRespostaAsincrona respuesta = PeticioRespostaAsincrona.builder()
 						.error(true)
