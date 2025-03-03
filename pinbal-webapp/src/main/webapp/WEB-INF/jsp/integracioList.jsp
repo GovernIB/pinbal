@@ -237,7 +237,7 @@ function formatarTipus(tipus) {
 	<table style="margin-top: 25px; margin-bottom: 20px; margin-right: 10px; width:100%;">
 		<tr>
 			<td>
-				<button id="btnDelete" type="button" class="btn btn-danger pull-left"><span id="trash-btn-esborrar" class="fa fa-trash-o"></span><span id="spin-btn-esborrar" class="fa fa-cog fa-spin" style="display:none;"></span>&nbsp;&nbsp;<spring:message code="comu.boto.esborrar"/></button>
+				<button id="btnDelete" type="button" class="btn btn-danger pull-left"><span id="trash-btn-esborrar" class="fas fa-trash-alt"></span><span id="spin-btn-esborrar" class="fas fa-cog fa-spin" style="display:none;"></span>&nbsp;&nbsp;<spring:message code="comu.boto.esborrar"/></button>
 			</td>
 <!-- 			<td> -->
 <%-- 				<button id="btnRefresh" type="button" class="btn btn-info pull-right"><span class="fa fa-refresh"></span>&nbsp;&nbsp;<spring:message code="comu.boto.refrescar"/></button> --%>
@@ -260,7 +260,7 @@ function formatarTipus(tipus) {
 </script>
 
 <script id="template-accions" type="x-tmpl-mustache">
-	<a href="<c:url value="/modal/integracio/${codiActual}/{{id}}"/>" class="btn btn-default" data-toggle="modal"><span class="fa fa-info-circle"></span>&nbsp;&nbsp;<spring:message code="comu.boto.detalls"/></a>
+	<a href="<c:url value="/modal/integracio/${codiActual.codi}/{{id}}"/>" class="btn btn-default" data-toggle="modal"><span class="fa fa-info-circle"></span>&nbsp;&nbsp;<spring:message code="comu.boto.detalls"/></a>
 </script>
 
 

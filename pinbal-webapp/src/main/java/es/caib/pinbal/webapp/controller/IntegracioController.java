@@ -3,14 +3,18 @@
  */
 package es.caib.pinbal.webapp.controller;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
-
+import es.caib.pinbal.core.dto.IntegracioAccioDto;
+import es.caib.pinbal.core.dto.IntegracioDto;
+import es.caib.pinbal.core.dto.IntegracioEnumDto;
+import es.caib.pinbal.core.service.ConfigService;
+import es.caib.pinbal.core.service.IntegracioAccioService;
+import es.caib.pinbal.webapp.command.IntegracioFiltreCommand;
+import es.caib.pinbal.webapp.common.AlertHelper;
+import es.caib.pinbal.webapp.common.RequestSessionHelper;
+import es.caib.pinbal.webapp.datatables.DatatablesHelper;
+import es.caib.pinbal.webapp.datatables.DatatablesHelper.DatatablesResponse;
+import es.caib.pinbal.webapp.helper.EnumHelper;
+import es.caib.pinbal.webapp.helper.MissatgesHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,20 +30,11 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import es.caib.pinbal.core.dto.IntegracioAccioDto;
-import es.caib.pinbal.core.dto.IntegracioAccioEstatEnumDto;
-import es.caib.pinbal.core.dto.IntegracioDto;
-import es.caib.pinbal.core.dto.IntegracioEnumDto;
-import es.caib.pinbal.core.service.AplicacioService;
-import es.caib.pinbal.core.service.ConfigService;
-import es.caib.pinbal.core.service.IntegracioAccioService;
-import es.caib.pinbal.webapp.command.IntegracioFiltreCommand;
-import es.caib.pinbal.webapp.common.AlertHelper;
-import es.caib.pinbal.webapp.common.RequestSessionHelper;
-import es.caib.pinbal.webapp.datatables.DatatablesHelper;
-import es.caib.pinbal.webapp.datatables.DatatablesHelper.DatatablesResponse;
-import es.caib.pinbal.webapp.helper.EnumHelper;
-import es.caib.pinbal.webapp.helper.MissatgesHelper;
+import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
 
 /**
  * Controlador per a la consulta d'accions de les integracions.
@@ -60,8 +55,8 @@ public class IntegracioController extends BaseController {
 	    binder.registerCustomEditor(Date.class, new CustomDateEditor(dateFormat, true));
 	}
 	
-	@Autowired
-	private AplicacioService aplicacioService;
+//	@Autowired
+//	private AplicacioService aplicacioService;
 	
 	@Autowired
 	private ConfigService configService;
@@ -76,7 +71,6 @@ public class IntegracioController extends BaseController {
 		return getAmbCodi(request, null, model);
 	}
 
-	//TODO: S'ha d'obtenir el llistat d'integracions per codi a partir de consulta a bbdd
 	@RequestMapping(value = "/{codi}", method = RequestMethod.GET)
 	public String getAmbCodi(
 			HttpServletRequest request,
@@ -85,7 +79,7 @@ public class IntegracioController extends BaseController {
 		
 		IntegracioFiltreCommand filtreCommand = getFiltreCommand(request);
 		
-		List<IntegracioDto> integracions = aplicacioService.integracioFindAll();
+		List<IntegracioDto> integracions = integracioAccioService.getAll();
 		for (IntegracioDto integracio: integracions) {
 			for (IntegracioEnumDto integracioEnum: IntegracioEnumDto.values()) {
 				if (integracio.getCodi() == integracioEnum.name()) {
@@ -95,21 +89,9 @@ public class IntegracioController extends BaseController {
 									"integracio.list.pipella." + integracio.getCodi()).getText());
 				}
 			}
-			int nErrors = 0;
-			
-			// TODO: Obtenir les integracions per codi a nivell de bbdd
-			List<IntegracioAccioDto> accions = aplicacioService.integracioFindDarreresAccionsByCodi(integracio.getCodi());
-			
-			for (IntegracioAccioDto integracioAccioDto : accions) {
-				if (integracioAccioDto.getEstat() == IntegracioAccioEstatEnumDto.ERROR) {
-					nErrors++;
-				}
-			}
-			integracio.setNumErrors(nErrors);
 		}
-		model.addAttribute(
-				"integracions",
-				integracions);
+		model.addAttribute("integracions", integracions);
+
 		if (codi != null) {
 			filtreCommand.setCodi(codi);
 			RequestSessionHelper.actualitzarObjecteSessio(
@@ -155,31 +137,6 @@ public class IntegracioController extends BaseController {
 		return "redirect:/integracio/" + codi;
 	}
 
-//	@RequestMapping(value = "/datatable", method = RequestMethod.GET)
-//	@ResponseBody
-//	public ServerSideResponse<IntegracioAccioDto, Long> datatable(
-//			HttpServletRequest request) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException, NamingException, SQLException {
-//		
-//		ServerSideRequest serverSideRequest = new ServerSideRequest(request);
-//		
-//		String codi = (String)RequestSessionHelper.obtenirObjecteSessio(
-//				request,
-//				SESSION_ATTRIBUTE_FILTRE);
-//		List<IntegracioAccioDto> accions = null;
-//		if (codi != null) {
-//			
-//			// TODO: Obtenir les integracions per codi a nivell de bbdd
-////			accions = aplicacioService.integracioFindDarreresAccionsByCodi(codi);
-////			accions = integracioAccioService.findAccionsByCodi(codi);
-//			
-//			accions = integracioAccioService.findAll();
-//			
-//		} else {
-//			accions = new ArrayList<IntegracioAccioDto>();
-//		}
-//		return new ServerSideResponse<IntegracioAccioDto, Long>(serverSideRequest, accions);
-//	}
-	
 	@RequestMapping(value = "/datatable", method = RequestMethod.GET)
 	@ResponseBody
 	public DatatablesResponse datatable(
@@ -227,14 +184,7 @@ public class IntegracioController extends BaseController {
 			Model model) {
 		
 		// TODO: Obtenir les integracions per codi a nivell de bbdd
-		List<IntegracioAccioDto> accions = aplicacioService.integracioFindDarreresAccionsByCodi(codi);
-		
-		IntegracioAccioDto integracio = null;
-		for (IntegracioAccioDto integracioAccioDto : accions) {
-			if (integracioAccioDto.getId().equals(id)) {
-				integracio = integracioAccioDto;
-			}
-		}
+		IntegracioAccioDto integracio = integracioAccioService.findById(id);
 		if (integracio != null) {
 			model.addAttribute(
 					"integracio",
@@ -282,34 +232,34 @@ public class IntegracioController extends BaseController {
 		return "redirect:/integracio/" + codi;
 	}
 	
-	/** Mètode per consultar les integracions i els errors.*/
-	@ResponseBody
-	@RequestMapping(value = "integracions", method = RequestMethod.GET)
-	public List<IntegracioDto> getIntegracionsIErrors(String numeroHoresPropietat) {
-		List<IntegracioDto> integracions = integracioAccioService.integracioFindAll();
-		if (numeroHoresPropietat == null) {
-			numeroHoresPropietat = configService.getTempsErrorsMonitorIntegracio();
-		}
-		int numeroHores = Integer.parseInt(numeroHoresPropietat != null ? numeroHoresPropietat : "48");
-		
-		// Consulta el número d'errors per codi d'integracio
-		Map<String, Integer> errors = integracioAccioService.countErrors(numeroHores);
-		
-		for (IntegracioDto integracio: integracions) {
-			for (IntegracioEnumDto integracioEnum: IntegracioEnumDto.values()) {
-				if (integracio.getCodi() == integracioEnum.name()) {
-					integracio.setNom(
-							EnumHelper.getOneOptionForEnum(
-									IntegracioEnumDto.class,
-									"integracio.list.pipella." + integracio.getCodi()).getText());
-				}
-			}
-			if (errors.containsKey(integracio.getCodi())) {
-				integracio.setNumErrors(errors.get(integracio.getCodi()).intValue());
-			}
-		}
-		return integracions;
-	}
+//	/** Mètode per consultar les integracions i els errors.*/
+//	@ResponseBody
+//	@RequestMapping(value = "integracions", method = RequestMethod.GET)
+//	public List<IntegracioDto> getIntegracionsIErrors(String numeroHoresPropietat) {
+//		List<IntegracioDto> integracions = integracioAccioService.integracioFindAll();
+//		if (numeroHoresPropietat == null) {
+//			numeroHoresPropietat = configService.getTempsErrorsMonitorIntegracio();
+//		}
+//		int numeroHores = Integer.parseInt(numeroHoresPropietat != null ? numeroHoresPropietat : "48");
+//
+//		// Consulta el número d'errors per codi d'integracio
+//		Map<String, Integer> errors = integracioAccioService.countErrors(numeroHores);
+//
+//		for (IntegracioDto integracio: integracions) {
+//			for (IntegracioEnumDto integracioEnum: IntegracioEnumDto.values()) {
+//				if (integracio.getCodi() == integracioEnum.name()) {
+//					integracio.setNom(
+//							EnumHelper.getOneOptionForEnum(
+//									IntegracioEnumDto.class,
+//									"integracio.list.pipella." + integracio.getCodi()).getText());
+//				}
+//			}
+//			if (errors.containsKey(integracio.getCodi())) {
+//				integracio.setNumErrors(errors.get(integracio.getCodi()).intValue());
+//			}
+//		}
+//		return integracions;
+//	}
 	
 	private static final Logger logger = LoggerFactory.getLogger(IntegracioController.class);
 

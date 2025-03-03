@@ -12,6 +12,7 @@ import es.caib.pinbal.core.service.exception.EntitatNotFoundException;
 import es.caib.pinbal.webapp.command.UsuariCommand;
 import es.caib.pinbal.webapp.common.EntitatHelper;
 import es.caib.pinbal.webapp.common.RolHelper;
+import es.caib.pinbal.webapp.common.UsuariHelper;
 import es.caib.pinbal.webapp.helper.EnumHelper;
 import es.caib.pinbal.webapp.helper.EnumHelper.HtmlOption;
 import lombok.extern.slf4j.Slf4j;
@@ -99,6 +100,7 @@ public class UsuariController extends BaseController{
 			}
 		}
 		usuariService.updateUsuariActual(UsuariCommand.asDto(command), updateEntitat);
+		UsuariHelper.resetUsuariActual(request);
 		return getModalControllerReturnValueSuccess(
 				request,
 				"redirect:/",

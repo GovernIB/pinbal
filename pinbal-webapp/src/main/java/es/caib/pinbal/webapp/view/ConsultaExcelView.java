@@ -3,14 +3,11 @@
  */
 package es.caib.pinbal.webapp.view;
 
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
+import es.caib.pinbal.core.dto.ConsultaDto;
+import es.caib.pinbal.webapp.command.ConsultaFiltreCommand;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
+import org.apache.poi.hssf.usermodel.HSSFDataFormat;
 import org.apache.poi.hssf.usermodel.HSSFFont;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
@@ -21,8 +18,12 @@ import org.springframework.context.MessageSourceAware;
 import org.springframework.web.servlet.support.RequestContext;
 import org.springframework.web.servlet.view.document.AbstractExcelView;
 
-import es.caib.pinbal.core.dto.ConsultaDto;
-import es.caib.pinbal.webapp.command.ConsultaFiltreCommand;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.text.SimpleDateFormat;
+import java.util.List;
+import java.util.Map;
+import java.util.TimeZone;
 
 /**
  * Vista per a generar els fitxers amb format Excel de les estadístiques.
@@ -48,8 +49,6 @@ public class ConsultaExcelView extends AbstractExcelView implements MessageSourc
 				getMessage(
 						request,
 						"consulta.excel.fulla.titol"));
-		int filaInicial = 0;
-		int columnaInicial = 0;
 		List<ConsultaDto> consulta = (List<ConsultaDto>)model.get("consultaList");
 		if (consulta != null) {
 			taulaConsulta(
@@ -57,13 +56,11 @@ public class ConsultaExcelView extends AbstractExcelView implements MessageSourc
 					command,					
 					request,
 					workbook,
-					sheet,
-					filaInicial,
-					columnaInicial);
+					sheet);
 		}
 		
 		//Auto size all the columns
-	    for (int x = 0; x < 8; x++) {
+	    for (int x = 0; x < 7; x++) {
 	    	sheet.autoSizeColumn(x);
 	    }
 	}
@@ -77,9 +74,7 @@ public class ConsultaExcelView extends AbstractExcelView implements MessageSourc
 			ConsultaFiltreCommand command,			
 			HttpServletRequest request,
 			HSSFWorkbook workbook,
-			HSSFSheet sheet,
-			int filaInicial,
-			int columnaInicial) {
+			HSSFSheet sheet) {
 		
 		// Configuració dels estils
 		HSSFCellStyle titolStyle = workbook.createCellStyle();
@@ -106,14 +101,27 @@ public class ConsultaExcelView extends AbstractExcelView implements MessageSourc
 		HSSFFont contingutFont = workbook.createFont();
 		contingutFont.setFontName("Arial");
 		contingutFont.setFontHeightInPoints((short)10);
-		contingutTextStyle.setFont(contingutFont);	
-		
+		contingutTextStyle.setFont(contingutFont);
+
+		HSSFCellStyle contingutDataStyle = workbook.createCellStyle();
+		contingutDataStyle.setAlignment(HSSFCellStyle.ALIGN_LEFT);
+		contingutDataStyle.setVerticalAlignment(HSSFCellStyle.VERTICAL_TOP);
+		contingutDataStyle.setFont(contingutFont);
+		HSSFDataFormat dataFormat = workbook.createDataFormat();
+		contingutDataStyle.setDataFormat(dataFormat.getFormat("dd/mm/yyyy hh:mm:ss"));
+
+		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+		sdf.setTimeZone(TimeZone.getDefault());
+
+		int indexFila = 0;
+		int indexColumna = 0;
+
 		// Capçaleres
-		HSSFRow capsalera0 = sheet.createRow(filaInicial + 1);
-		HSSFRow capsalera1 = sheet.createRow(filaInicial + 2);
+		HSSFRow capsalera0 = sheet.createRow(indexFila++);
+		HSSFRow capsalera1 = sheet.createRow(indexFila++);
 
 		// Capçalera de títol
-		HSSFCell capsaleraCell = capsalera0.createCell(columnaInicial + 2);
+		HSSFCell capsaleraCell = capsalera0.createCell(indexColumna);
 		capsaleraCell.setCellStyle(titolStyle);
 		capsaleraCell.setCellValue(
 				getMessage(
@@ -121,89 +129,88 @@ public class ConsultaExcelView extends AbstractExcelView implements MessageSourc
 						"consulta.list.taula.capsalera.titol"));
 		
 		// Capçaleres de columnes
-		HSSFCell numPeticioCellColumnName = capsalera1.createCell(columnaInicial + 2);
+		HSSFCell numPeticioCellColumnName = capsalera1.createCell(indexColumna++);
 		numPeticioCellColumnName.setCellStyle(capsaleraStyle);
 		numPeticioCellColumnName.setCellValue(
 				getMessage(
 						request,
 						"consulta.list.taula.numero_peticio"));
-		HSSFCell dataCellColumnName = capsalera1.createCell(columnaInicial + 3);
+		HSSFCell dataCellColumnName = capsalera1.createCell(indexColumna++);
 		dataCellColumnName.setCellStyle(capsaleraStyle);
 		dataCellColumnName.setCellValue(
 				getMessage(
 						request,
 						"consulta.list.taula.data"));
-		HSSFCell procedimentCellColumnName = capsalera1.createCell(columnaInicial + 4);
+		HSSFCell procedimentCellColumnName = capsalera1.createCell(indexColumna++);
 		procedimentCellColumnName.setCellStyle(capsaleraStyle);
 		procedimentCellColumnName.setCellValue(
 				getMessage(
 						request,
 						"consulta.list.taula.procediment"));
-		HSSFCell serveiCellColumnName = capsalera1.createCell(columnaInicial + 5);
+		HSSFCell serveiCellColumnName = capsalera1.createCell(indexColumna++);
 		serveiCellColumnName.setCellStyle(capsaleraStyle);
 		serveiCellColumnName.setCellValue(
 				getMessage(
 						request,
 						"consulta.list.taula.servei"));
-		HSSFCell titularNomCellColumnName = capsalera1.createCell(columnaInicial + 6);
+		HSSFCell titularNomCellColumnName = capsalera1.createCell(indexColumna++);
 		titularNomCellColumnName.setCellStyle(capsaleraStyle);
 		titularNomCellColumnName.setCellValue(
 				getMessage(
 						request,
 						"consulta.list.taula.titular_nom"));
-		HSSFCell titularDocumentCellColumnName = capsalera1.createCell(columnaInicial + 7);
+		HSSFCell titularDocumentCellColumnName = capsalera1.createCell(indexColumna++);
 		titularDocumentCellColumnName.setCellStyle(capsaleraStyle);
 		titularDocumentCellColumnName.setCellValue(
 				getMessage(
 						request,
 						"consulta.list.taula.titular_document"));
-		HSSFCell estatCellColumnName = capsalera1.createCell(columnaInicial + 8);
+		HSSFCell estatCellColumnName = capsalera1.createCell(indexColumna);
 		estatCellColumnName.setCellStyle(capsaleraStyle);
 		estatCellColumnName.setCellValue(
 				getMessage(
 						request,
 						"consulta.list.taula.estat"));		
 		
-		int rowIndex = 2;
 		// Contigut de la taula
 		if (consultes != null) {
 		
 			for (ConsultaDto consulta: consultes) {				
 				// Mostra la fila d'estadístiques
-				HSSFRow filaActual = sheet.createRow(filaInicial + 1 + rowIndex);
+				HSSFRow filaActual = sheet.createRow(indexFila++);
+				indexColumna = 0;
 				
-				HSSFCell numPeticioCell = filaActual.createCell(columnaInicial + 2);
+				HSSFCell numPeticioCell = filaActual.createCell(indexColumna++);
 				numPeticioCell.setCellValue(consulta.getScspPeticionId());
 				numPeticioCell.setCellStyle(contingutTextStyle);
 				
-				HSSFCell dataCell = filaActual.createCell(columnaInicial + 3);
-				dataCell.setCellValue(consulta.getCreacioData());
-				dataCell.setCellStyle(contingutTextStyle);
+				HSSFCell dataCell = filaActual.createCell(indexColumna++);
+				dataCell.setCellValue(sdf.format(consulta.getCreacioData()));
+				dataCell.setCellStyle(contingutDataStyle);
 				
-				HSSFCell procedimentCell = filaActual.createCell(columnaInicial + 4);
+				HSSFCell procedimentCell = filaActual.createCell(indexColumna++);
 				procedimentCell.setCellValue(consulta.getProcedimentCodiNom());
 				procedimentCell.setCellStyle(contingutTextStyle);
 				
-				HSSFCell serveiCell = filaActual.createCell(columnaInicial + 5);
+				HSSFCell serveiCell = filaActual.createCell(indexColumna++);
 				serveiCell.setCellValue(consulta.getServeiCodiNom());
 				serveiCell.setCellStyle(contingutTextStyle);
 				
-				HSSFCell titularNomCell = filaActual.createCell(columnaInicial + 6);
+				HSSFCell titularNomCell = filaActual.createCell(indexColumna++);
 				titularNomCell.setCellValue(consulta.getTitularNomSencer());
 				titularNomCell.setCellStyle(contingutTextStyle);
 				
-				HSSFCell titularDocumentCell = filaActual.createCell(columnaInicial + 7);
+				HSSFCell titularDocumentCell = filaActual.createCell(indexColumna++);
 				titularDocumentCell.setCellValue(consulta.getTitularDocumentAmbTipus());
 				titularDocumentCell.setCellStyle(contingutTextStyle);
 				
-				HSSFCell estatCell = filaActual.createCell(columnaInicial + 8);
+				HSSFCell estatCell = filaActual.createCell(indexColumna);
 				estatCell.setCellValue(consulta.getEstat());
 				estatCell.setCellStyle(contingutTextStyle);
 				
-				rowIndex++;				
 			}
 		}
-		return filaInicial + 1 + rowIndex;
+		return indexFila;
 	}
 
 	private String getMessage(

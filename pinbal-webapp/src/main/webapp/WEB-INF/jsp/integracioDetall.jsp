@@ -29,7 +29,7 @@
 				<dd>
 					<ul>
 						<c:forEach var="parametre" items="${integracio.parametres}">
-							<li><strong>${parametre.key}:</strong> ${parametre.value}</li>
+							<li><strong>${parametre.nom}:</strong> ${parametre.descripcio}</li>
 						</c:forEach>
 					</ul>
 				</dd>

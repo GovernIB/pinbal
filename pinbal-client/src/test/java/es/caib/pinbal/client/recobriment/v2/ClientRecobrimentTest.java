@@ -15,6 +15,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -1093,7 +1094,36 @@ public class ClientRecobrimentTest {
 
     // TESTS peticioAsincrona
     // /////////////////////////////////////////////////////////
+//    @Test
+    public void peticionAsincrona_success() throws UniformInterfaceException, ClientHandlerException, IOException {
+        String entitatCif = EXISTING_ENTITAT_CIF;
+        String procedimentCodi = EXISTING_PROCEDIMENT_CODI;
+        String serveiCodi = EXISTING_SERVEI_CODI;
 
+        Map<String, String> dadesEspecifiques = new HashMap<>();
+        dadesEspecifiques.put("DatosEspecificos/Solicitud/ProvinciaSolicitud", "07");
+        dadesEspecifiques.put("DatosEspecificos/Solicitud/MunicipioSolicitud", "033");
+        dadesEspecifiques.put("DatosEspecificos/Solicitud/Titular/Documentacion/Tipo", "DNI");
+        dadesEspecifiques.put("DatosEspecificos/Solicitud/Titular/Documentacion/Valor", "18225486x");
+
+        PeticioSincrona peticioSincrona = getPeticioSincrona(entitatCif, procedimentCodi, serveiCodi, dadesEspecifiques);
+        List<SolicitudSimple> solicituds = new ArrayList<>();
+        solicituds.add(peticioSincrona.getSolicitud());
+        solicituds.add(peticioSincrona.getSolicitud());
+        PeticioAsincrona peticioAsincrona = PeticioAsincrona.builder()
+                .dadesComunes(peticioSincrona.getDadesComunes())
+                .solicituds(solicituds)
+                .build();
+
+        try {
+            PeticioRespostaAsincrona respuesta = clientRecobriment.peticioAsincrona(serveiCodi, peticioAsincrona);
+            assertNotNull(respuesta);
+            assertFalse("La resposta indica que s'ha produit un error en l'enviament", respuesta.isError());
+            System.out.println("-> peticionSincrona = " + objectToJsonString(respuesta));
+        } catch (Exception e) {
+            fail("Excepció no esperada: " + e.getMessage());
+        }
+    }
 
     // TESTS getResposta
     // /////////////////////////////////////////////////////////

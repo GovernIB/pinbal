@@ -18,3 +18,8 @@ databaseChangeLog:
             columns:
               - name: der
                 type: TIMESTAMP
+        - addColumn:
+            tableName: pbl_consulta_hist_list
+            columns:
+              - name: der
+                type: TIMESTAMP

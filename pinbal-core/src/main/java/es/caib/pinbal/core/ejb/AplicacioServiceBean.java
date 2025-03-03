@@ -4,8 +4,6 @@
 package es.caib.pinbal.core.ejb;
 
 import es.caib.pinbal.core.dto.CacheDto;
-import es.caib.pinbal.core.dto.IntegracioAccioDto;
-import es.caib.pinbal.core.dto.IntegracioDto;
 import es.caib.pinbal.core.dto.PaginaDto;
 import es.caib.pinbal.core.service.AplicacioService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +12,6 @@ import org.springframework.ejb.interceptor.SpringBeanAutowiringInterceptor;
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.Stateless;
 import javax.interceptor.Interceptors;
-import java.util.List;
 
 /**
  * Implementació de AplicacioService com a EJB que empra una clase
@@ -29,18 +26,6 @@ public class AplicacioServiceBean implements AplicacioService {
 
 	@Autowired
 	AplicacioService delegate;
-
-	@Override
-	@RolesAllowed({"PBL_ADMIN"})
-	public List<IntegracioDto> integracioFindAll() {
-		return delegate.integracioFindAll();
-	}
-
-	@Override
-	@RolesAllowed({"PBL_ADMIN"})
-	public List<IntegracioAccioDto> integracioFindDarreresAccionsByCodi(String codi) {
-		return delegate.integracioFindDarreresAccionsByCodi(codi);
-	}
 
     @Override
 	@RolesAllowed({"PBL_ADMIN"})

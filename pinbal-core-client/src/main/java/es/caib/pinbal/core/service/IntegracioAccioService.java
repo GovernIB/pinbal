@@ -1,16 +1,15 @@
 package es.caib.pinbal.core.service;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-
-import org.springframework.security.access.prepost.PreAuthorize;
-
 import es.caib.pinbal.core.dto.IntegracioAccioDto;
 import es.caib.pinbal.core.dto.IntegracioDto;
 import es.caib.pinbal.core.dto.IntegracioFiltreDto;
 import es.caib.pinbal.core.dto.PaginaDto;
 import es.caib.pinbal.core.dto.PaginacioAmbOrdreDto;
+import org.springframework.security.access.prepost.PreAuthorize;
+
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Declaració dels mètodes per a la gestió de meta-expedients.
@@ -19,8 +18,8 @@ import es.caib.pinbal.core.dto.PaginacioAmbOrdreDto;
  */
 public interface IntegracioAccioService {
 	
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
-	public List<IntegracioAccioDto> findAll();
+//	@PreAuthorize("hasRole('ROLE_ADMIN')")
+//	public List<IntegracioAccioDto> findAll();
 	
 	/**
 	 * Crea un nou item monitorIntegracio.
@@ -69,4 +68,10 @@ public interface IntegracioAccioService {
 	 * @return La llista d'integracions.
 	 */
 	public List<IntegracioDto> integracioFindAll();
+
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	List<IntegracioDto> getAll();
+
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	IntegracioAccioDto findById(Long id);
 }

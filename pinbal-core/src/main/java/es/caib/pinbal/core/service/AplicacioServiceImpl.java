@@ -4,8 +4,6 @@
 package es.caib.pinbal.core.service;
 
 import es.caib.pinbal.core.dto.CacheDto;
-import es.caib.pinbal.core.dto.IntegracioAccioDto;
-import es.caib.pinbal.core.dto.IntegracioDto;
 import es.caib.pinbal.core.dto.PaginaDto;
 import es.caib.pinbal.core.helper.CacheHelper;
 import es.caib.pinbal.core.helper.IntegracioHelper;
@@ -59,19 +57,6 @@ public class AplicacioServiceImpl implements AplicacioService {
 		ordreCaches.put("municipis", 14);
 		ordreCaches.put("usuariAmbCodi", 15);
 		ordreCaches.put("usuariAmbNif", 16);
-	}
-
-	@Override
-	public List<IntegracioDto> integracioFindAll() {
-		log.debug("Consultant les integracions");
-		return integracioHelper.findAll();
-	}
-
-	@Override
-	public List<IntegracioAccioDto> integracioFindDarreresAccionsByCodi(String codi) {
-		log.debug("Consultant les darreres accions per a la integració (" +
-				"codi=" + codi + ")");
-		return integracioHelper.findAccionsByIntegracioCodi(codi);
 	}
 
 	@Override

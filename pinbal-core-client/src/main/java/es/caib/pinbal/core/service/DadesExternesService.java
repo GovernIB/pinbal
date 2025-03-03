@@ -3,6 +3,7 @@
  */
 package es.caib.pinbal.core.service;
 
+import es.caib.pinbal.core.dto.IdiomaEnumDto;
 import es.caib.pinbal.core.dto.dadesexternes.Municipi;
 import es.caib.pinbal.core.dto.dadesexternes.Pais;
 import es.caib.pinbal.core.dto.dadesexternes.Provincia;
@@ -24,7 +25,7 @@ public interface DadesExternesService {
 	 * @return el llistat de províncies.
 	 */
 	@PreAuthorize("hasRole('ROLE_DELEG')")
-	public List<Provincia> findProvincies();
+	List<Provincia> findProvincies(IdiomaEnumDto idioma);
 
 	/**
 	 * Retorna el llistat dels municipis d'una província en
@@ -43,6 +44,6 @@ public interface DadesExternesService {
 	 * 
 	 * @return el llistat de països.
 	 */
-	public List<Pais> findPaisos();
+	List<Pais> findPaisos(IdiomaEnumDto idioma);
 
 }

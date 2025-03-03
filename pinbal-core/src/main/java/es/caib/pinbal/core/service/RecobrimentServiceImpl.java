@@ -31,6 +31,7 @@ import es.caib.pinbal.client.recobriment.v2.Validacio;
 import es.caib.pinbal.client.recobriment.v2.ValorEnum;
 import es.caib.pinbal.client.serveis.Servei;
 import es.caib.pinbal.core.dto.DadaEspecificaDto;
+import es.caib.pinbal.core.dto.IdiomaEnumDto;
 import es.caib.pinbal.core.dto.JustificantDto;
 import es.caib.pinbal.core.dto.ServeiCampDto;
 import es.caib.pinbal.core.dto.dadesexternes.Municipi;
@@ -705,13 +706,16 @@ public class RecobrimentServiceImpl implements RecobrimentService, ApplicationCo
         if (serveiCamp == null)
             throw new ServeiCampNotFoundException(campPath);
 
+        IdiomaEnumDto idioma = IdiomaEnumDto.CA;
         List<ValorEnum> enumerat = new ArrayList<>();
         switch (enumCodi) {
             case "PAIS":
-                enumerat.addAll(obtenirPaisos());
+                idioma = getIdioma(filtre);
+                enumerat.addAll(obtenirPaisos(idioma));
                 break;
             case "PROVINCIA":
-                enumerat.addAll(obtenirProvincies());
+                idioma = getIdioma(filtre);
+                enumerat.addAll(obtenirProvincies(idioma));
                 break;
             case "MUNICIPI_3":
             case "MUNICIPI_5":
@@ -727,6 +731,13 @@ public class RecobrimentServiceImpl implements RecobrimentService, ApplicationCo
         }
 
         return enumerat;
+    }
+
+    private static IdiomaEnumDto getIdioma(String filtre) {
+        IdiomaEnumDto idioma = IdiomaEnumDto.CA;
+        if (filtre != null && "ES".equalsIgnoreCase(filtre))
+            idioma = IdiomaEnumDto.ES;
+        return idioma;
     }
 
     @Override
@@ -820,8 +831,8 @@ public class RecobrimentServiceImpl implements RecobrimentService, ApplicationCo
         return respuesta;
     }
 
-    private List<ValorEnum> obtenirPaisos() {
-        List<Pais> paisos = dadesExternesService.findPaisos();
+    private List<ValorEnum> obtenirPaisos(IdiomaEnumDto idioma) {
+        List<Pais> paisos = dadesExternesService.findPaisos(idioma);
         if (paisos == null)
             return new ArrayList<>();
 
@@ -835,8 +846,8 @@ public class RecobrimentServiceImpl implements RecobrimentService, ApplicationCo
         return paisosCodiValor;
     }
 
-    private List<ValorEnum> obtenirProvincies() {
-        List<Provincia> provincias = dadesExternesService.findProvincies();
+    private List<ValorEnum> obtenirProvincies(IdiomaEnumDto idioma) {
+        List<Provincia> provincias = dadesExternesService.findProvincies(idioma);
         if (provincias == null)
             return new ArrayList<>();
 

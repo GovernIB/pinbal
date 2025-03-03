@@ -1,21 +1,5 @@
 package es.caib.pinbal.core.service;
 
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.annotation.Resource;
-
-import org.joda.time.DateTime;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
-
 import es.caib.pinbal.core.dto.IntegracioAccioDto;
 import es.caib.pinbal.core.dto.IntegracioAccioEstatEnumDto;
 import es.caib.pinbal.core.dto.IntegracioAccioParamDto;
@@ -33,6 +17,20 @@ import es.caib.pinbal.core.model.IntegracioAccioParamEntity;
 import es.caib.pinbal.core.repository.IntegracioAccioParamRepository;
 import es.caib.pinbal.core.repository.IntegracioAccioRepository;
 import lombok.extern.slf4j.Slf4j;
+import org.joda.time.DateTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
+
+import javax.annotation.Resource;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @Service
@@ -40,7 +38,7 @@ public class IntegracioAccioServiceImpl implements IntegracioAccioService {
 	
 	@Resource
 	private DtoMappingHelper dtoMappingHelper;
-	
+
 	@Resource
 	private IntegracioAccioRepository integracioAccioRepository;
 	
@@ -56,12 +54,12 @@ public class IntegracioAccioServiceImpl implements IntegracioAccioService {
 	@Resource
 	private ConfigHelper configHelper;
 	
-	@Transactional(readOnly = true)
-	public List<IntegracioAccioDto> findAll() {
-		log.debug("Consulta de tots el monitor d'integració");
-		List<IntegracioAccioEntity> integracioAccions = integracioAccioRepository.findAll();
-		return dtoMappingHelper.convertirList(integracioAccions, IntegracioAccioDto.class);
-	}
+//	@Transactional(readOnly = true)
+//	public List<IntegracioAccioDto> findAll() {
+//		log.debug("Consulta de tots el monitor d'integració");
+//		List<IntegracioAccioEntity> integracioAccions = integracioAccioRepository.findAll();
+//		return dtoMappingHelper.convertirList(integracioAccions, IntegracioAccioDto.class);
+//	}
 	
 	@Transactional(propagation = Propagation.REQUIRES_NEW)
 	@Override
@@ -218,7 +216,33 @@ public class IntegracioAccioServiceImpl implements IntegracioAccioService {
 		logger.trace("Consultant les integracions");
 		return integracioHelper.findAll();
 	}
-	
+
+	@Override
+	@Transactional(readOnly = true)
+	public List<IntegracioDto> getAll() {
+		List<IntegracioDto> integracions = integracioHelper.findAll();
+		List<Object[]> objects = integracioAccioRepository.countErrorsGroupByCodi();
+		for (IntegracioDto integracio : integracions) {
+			for (Object[] object : objects) {
+				if (integracio.getCodi().equals(object[0])) {
+					integracio.setNumErrors(((Long) object[1]).intValue());
+					break;
+				}
+			}
+//			integracio.setNumErrors((int) integracioAccioRepository.countErrorsByCodi(integracio.getCodi()));
+		}
+		return integracions;
+	}
+
+	@Override
+	@Transactional(readOnly = true)
+	public IntegracioAccioDto findById(Long id) {
+		IntegracioAccioEntity integracio = integracioAccioRepository.getOne(id);
+		return dtoMappingHelper.convertir(
+				integracio,
+				IntegracioAccioDto.class);
+	}
+
 	private static final Logger logger = LoggerFactory.getLogger(IntegracioAccioServiceImpl.class);
 
 }

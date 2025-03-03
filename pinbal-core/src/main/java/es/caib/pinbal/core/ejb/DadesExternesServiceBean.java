@@ -3,6 +3,7 @@
  */
 package es.caib.pinbal.core.ejb;
 
+import es.caib.pinbal.core.dto.IdiomaEnumDto;
 import es.caib.pinbal.core.dto.dadesexternes.Municipi;
 import es.caib.pinbal.core.dto.dadesexternes.Pais;
 import es.caib.pinbal.core.dto.dadesexternes.Provincia;
@@ -32,8 +33,8 @@ public class DadesExternesServiceBean implements DadesExternesService {
 
 	@Override
 	@RolesAllowed("tothom")
-	public List<Provincia> findProvincies() {
-		return delegate.findProvincies();
+	public List<Provincia> findProvincies(IdiomaEnumDto idioma) {
+		return delegate.findProvincies(idioma);
 	}
 
 	@Override
@@ -44,8 +45,8 @@ public class DadesExternesServiceBean implements DadesExternesService {
 
 	@Override
 	@RolesAllowed("tothom")
-	public List<Pais> findPaisos() {
-		return delegate.findPaisos();
+	public List<Pais> findPaisos(IdiomaEnumDto idioma) {
+		return delegate.findPaisos(idioma);
 	}
 
 }

@@ -12,6 +12,7 @@ import es.caib.pinbal.client.recobriment.v2.PeticioSincrona;
 import es.caib.pinbal.client.recobriment.v2.SolicitudSimple;
 import es.caib.pinbal.client.recobriment.v2.ValorEnum;
 import es.caib.pinbal.client.serveis.Servei;
+import es.caib.pinbal.core.dto.IdiomaEnumDto;
 import es.caib.pinbal.core.dto.JustificantDto;
 import es.caib.pinbal.core.dto.dadesexternes.Municipi;
 import es.caib.pinbal.core.dto.dadesexternes.Pais;
@@ -615,7 +616,7 @@ public class RecobrimentServiceImplTest {
         List<Pais> mockPaisos = new ArrayList<>();
         mockPaisos.add(Pais.builder().codi_numeric("01").nom("Andorra").alpha2("AN").build());
         mockPaisos.add(Pais.builder().codi_numeric("73").nom("España").alpha2("ES").build());
-        when(dadesExternesService.findPaisos()).thenReturn(mockPaisos);
+        when(dadesExternesService.findPaisos(IdiomaEnumDto.CA)).thenReturn(mockPaisos);
 
         List<ValorEnum> result = recobrimentServiceImpl.getValorsEnumByServei(serveiCodi, campPath, enumCodi, null);
 
@@ -640,7 +641,7 @@ public class RecobrimentServiceImplTest {
         List<Provincia> mockProvincies = new ArrayList<>();
         mockProvincies.add(Provincia.builder().codi("07").nom("Illes Balears").build());
         mockProvincies.add(Provincia.builder().codi("08").nom("Barcelona").build());
-        when(dadesExternesService.findProvincies()).thenReturn(mockProvincies);
+        when(dadesExternesService.findProvincies(any(IdiomaEnumDto.class))).thenReturn(mockProvincies);
 
         List<ValorEnum> result = recobrimentServiceImpl.getValorsEnumByServei(serveiCodi, campPath, enumCodi, null);
 

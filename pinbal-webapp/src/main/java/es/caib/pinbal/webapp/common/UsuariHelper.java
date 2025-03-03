@@ -80,6 +80,10 @@ public class UsuariHelper {
 		}
 	}
 
+	public static void resetUsuariActual(HttpServletRequest request) {
+		request.getSession().removeAttribute(SESSION_ATTRIBUTE_DADES_USUARI_ACTUAL);
+	}
+
 	private static boolean isUsuariCreacioExecutat(HttpServletRequest request) {
 		Boolean refrescat = (Boolean)request.getSession().getAttribute(
 				SESSION_ATTRIBUTE_USUARI_CREACIO_EXEC);

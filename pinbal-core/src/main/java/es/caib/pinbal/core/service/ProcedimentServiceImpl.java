@@ -666,9 +666,9 @@ public class ProcedimentServiceImpl implements ProcedimentService {
 				codi == null || codi.length() == 0,
 				codi,
 				nif == null || nif.length() == 0,
-				codi,
+				nif,
 				nom == null || nom.length() == 0,
-				codi,
+				nom,
 				pageable);
 		return dtoMappingHelper.pageEntities2pageDto(
 				usuariPage,

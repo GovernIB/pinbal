@@ -1,22 +1,20 @@
 package es.caib.pinbal.core.ejb;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-
-import javax.annotation.security.RolesAllowed;
-import javax.ejb.Stateless;
-import javax.interceptor.Interceptors;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.ejb.interceptor.SpringBeanAutowiringInterceptor;
-
 import es.caib.pinbal.core.dto.IntegracioAccioDto;
 import es.caib.pinbal.core.dto.IntegracioDto;
 import es.caib.pinbal.core.dto.IntegracioFiltreDto;
 import es.caib.pinbal.core.dto.PaginaDto;
 import es.caib.pinbal.core.dto.PaginacioAmbOrdreDto;
 import es.caib.pinbal.core.service.IntegracioAccioService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.ejb.interceptor.SpringBeanAutowiringInterceptor;
+
+import javax.annotation.security.RolesAllowed;
+import javax.ejb.Stateless;
+import javax.interceptor.Interceptors;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -32,11 +30,11 @@ public class IntegracioAccioServiceBean implements IntegracioAccioService {
 	@Autowired
 	IntegracioAccioService delegate;
 
-	@Override
-	@RolesAllowed({ "PBL_ADMIN" })
-	public List<IntegracioAccioDto> findAll() {
-		return delegate.findAll();
-	}
+//	@Override
+//	@RolesAllowed({ "PBL_ADMIN" })
+//	public List<IntegracioAccioDto> findAll() {
+//		return delegate.findAll();
+//	}
 	
 	@Override
 	@RolesAllowed({ "PBL_ADMIN" })
@@ -79,5 +77,17 @@ public class IntegracioAccioServiceBean implements IntegracioAccioService {
 	@Override
 	public List<IntegracioDto> integracioFindAll() {
 		return delegate.integracioFindAll();
+	}
+
+    @Override
+	@RolesAllowed({ "PBL_ADMIN" })
+    public List<IntegracioDto> getAll() {
+        return delegate.getAll();
+    }
+
+	@Override
+	@RolesAllowed({ "PBL_ADMIN" })
+	public IntegracioAccioDto findById(Long id) {
+		return delegate.findById(id);
 	}
 }

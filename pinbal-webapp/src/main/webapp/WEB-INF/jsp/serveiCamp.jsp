@@ -199,6 +199,20 @@ $(document).ready(function() {
 		}
 	});
 	$('.btn-ppv').popover();
+
+	$("#modal-input-mida").on("blur", function() {
+		var value = parseInt($(this).val(), 10);
+
+		if (isNaN(value))
+			$(this).val(6);
+		 else if (value < 1)
+			$(this).val(1);
+		 else if (value > 12)
+			$(this).val(12);
+
+	});
+
+
 });
 
 let canviarOrdreCamp = (campId, pos) => {
@@ -659,7 +673,7 @@ $(function() {
 						<div class="col-md-6">
 							<div class="form-group">
 								<label for="modal-input-mida"><spring:message code="servei.camp.mida"/></label>
-								<input type="number" id="modal-input-mida" name="mida" class="form-control"/>
+								<input type="number" id="modal-input-mida" name="mida" class="form-control" min="1" max="12"/>
 							</div>
 						
 						</div>

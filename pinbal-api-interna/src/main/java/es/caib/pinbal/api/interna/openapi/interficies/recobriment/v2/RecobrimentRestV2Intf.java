@@ -122,7 +122,8 @@ public interface RecobrimentRestV2Intf {
     ResponseEntity<List<DadaEspecifica>> getDadesEspecifiques(@ApiParam(value = "Codi del servei") @PathVariable("serveiCodi") String serveiCodi);
 
     @ApiOperation(value = "Obtén tots els valors d'un camp de tipus enumerat",
-            notes = "Aquesta operació retorna llistes de valors, siguin de enumerats o de valors de dades externes. Se li passa el codi enum que s’obté de la cridada anterior quant el camp és de tipus enumerat. També se li passa opcionalment un filtre a aplicar que pot tenir varis comportaments segons el enumerat",
+            notes = "Aquesta operació retorna llistes de valors, siguin de enumerats o de valors de dades externes. Se li passa el codi enum que s’obté de la cridada anterior quant el camp és de tipus enumerat. També se li passa opcionalment un filtre a aplicar que pot tenir varis comportaments segons el enumerat. " +
+                    "Quan l'enumerat és PAIS o PROVINCIA, com a filtre es pot passar el valor 'CA' o 'ES' per indicar l'idioma amb el qual es volen recuperar els paisos o províncies.",
             response = ValorEnum.class,
             responseContainer = "List"
     )

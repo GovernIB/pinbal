@@ -68,10 +68,31 @@ public class PluginHelper {
 	@Cacheable(value = "usuariAmbCodi", key = "#usuariCodi")
 	public DadesUsuari dadesUsuariConsultarAmbUsuariCodi(
 			String usuariCodi) throws SistemaExternException {
+
+		String accioDescripcio = "Consulta d'usuari amb codi";
+		Map<String, String> accioParams = new HashMap<String, String>();
+		accioParams.put("codi", usuariCodi);
+		long t0 = System.currentTimeMillis();
 		try {
-			return getDadesUsuariPlugin().consultarAmbUsuariCodi(usuariCodi);
+			DadesUsuari result = getDadesUsuariPlugin().consultarAmbUsuariCodi(usuariCodi);
+			integracioHelper.addAccioOk(
+					IntegracioHelper.INTCODI_USUARIS,
+					accioDescripcio,
+					accioParams,
+					IntegracioAccioTipusEnumDto.ENVIAMENT,
+					System.currentTimeMillis() - t0);
+			return result;
 		} catch (SistemaExternException ex) {
-			LOGGER.error("Error en el plugin de dades d'usuari", ex);
+			String errorDescripcio = "Error en el plugin de dades d'usuari";
+			integracioHelper.addAccioError(
+					IntegracioHelper.INTCODI_USUARIS,
+					accioDescripcio,
+					accioParams,
+					IntegracioAccioTipusEnumDto.ENVIAMENT,
+					System.currentTimeMillis() - t0,
+					errorDescripcio,
+					ex);
+			LOGGER.error(errorDescripcio, ex);
 			throw ex;
 		} catch (Exception ex) {
 			throw new SistemaExternException(
@@ -83,10 +104,31 @@ public class PluginHelper {
 	@Cacheable(value = "usuariAmbNif", key = "#usuariNif")
 	public DadesUsuari dadesUsuariConsultarAmbUsuariNif(
 			String usuariNif) throws SistemaExternException {
+
+		String accioDescripcio = "Consulta d'usuari amb NIF";
+		Map<String, String> accioParams = new HashMap<String, String>();
+		accioParams.put("nif", usuariNif);
+		long t0 = System.currentTimeMillis();
 		try {
-			return getDadesUsuariPlugin().consultarAmbUsuariNif(usuariNif);
+			DadesUsuari result = getDadesUsuariPlugin().consultarAmbUsuariNif(usuariNif);
+			integracioHelper.addAccioOk(
+					IntegracioHelper.INTCODI_USUARIS,
+					accioDescripcio,
+					accioParams,
+					IntegracioAccioTipusEnumDto.ENVIAMENT,
+					System.currentTimeMillis() - t0);
+			return result;
 		} catch (SistemaExternException ex) {
-			LOGGER.error("Error en el plugin de dades d'usuari", ex);
+			String errorDescripcio = "Error en el plugin de dades d'usuari";
+			integracioHelper.addAccioError(
+					IntegracioHelper.INTCODI_USUARIS,
+					accioDescripcio,
+					accioParams,
+					IntegracioAccioTipusEnumDto.ENVIAMENT,
+					System.currentTimeMillis() - t0,
+					errorDescripcio,
+					ex);
+			LOGGER.error(errorDescripcio, ex);
 			throw ex;
 		} catch (Exception ex) {
 			throw new SistemaExternException(
@@ -96,6 +138,7 @@ public class PluginHelper {
 	}
 
 	public DadesUsuari dadesUsuariConsultarAmbUsuariCodiOrNif(String codiOrNif) throws SistemaExternException {
+
 		DadesUsuari dadesUsuari = dadesUsuariConsultarAmbUsuariCodi(codiOrNif);
 		if (dadesUsuari == null) {
 			dadesUsuari = dadesUsuariConsultarAmbUsuariNif(codiOrNif);
@@ -104,10 +147,31 @@ public class PluginHelper {
 	}
 
 	public List<DadesUsuari> dadesUsuariLikeCodiNomOrNif(String text) throws SistemaExternException {
+
+		String accioDescripcio = "Consulta d'usuari amb codi o NIF";
+		Map<String, String> accioParams = new HashMap<String, String>();
+		accioParams.put("text", text);
+		long t0 = System.currentTimeMillis();
 		try {
-			return getDadesUsuariPlugin().consultarAmbUsuariAny(text);
+			List<DadesUsuari> dades = getDadesUsuariPlugin().consultarAmbUsuariAny(text);
+			integracioHelper.addAccioOk(
+					IntegracioHelper.INTCODI_USUARIS,
+					accioDescripcio,
+					accioParams,
+					IntegracioAccioTipusEnumDto.ENVIAMENT,
+					System.currentTimeMillis() - t0);
+			return dades;
 		} catch (SistemaExternException ex) {
-			LOGGER.error("Error al consultar en el plugin de dades d'usuari", ex);
+			String errorDescripcio = "Error al consultar en el plugin de dades d'usuari";
+			integracioHelper.addAccioError(
+					IntegracioHelper.INTCODI_USUARIS,
+					accioDescripcio,
+					accioParams,
+					IntegracioAccioTipusEnumDto.ENVIAMENT,
+					System.currentTimeMillis() - t0,
+					errorDescripcio,
+					ex);
+			LOGGER.error(errorDescripcio, ex);
 			throw ex;
 		} catch (Exception ex) {
 			throw new SistemaExternException("Error al crear la instància del plugin de dades d'usuari", ex);

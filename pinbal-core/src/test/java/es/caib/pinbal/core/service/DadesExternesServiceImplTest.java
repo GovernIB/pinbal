@@ -1,5 +1,6 @@
 package es.caib.pinbal.core.service;
 
+import es.caib.pinbal.core.dto.IdiomaEnumDto;
 import es.caib.pinbal.core.dto.dadesexternes.Municipi;
 import es.caib.pinbal.core.dto.dadesexternes.Pais;
 import es.caib.pinbal.core.dto.dadesexternes.Provincia;
@@ -38,7 +39,7 @@ public class DadesExternesServiceImplTest {
     public void testFindPaisos_Success() throws Exception {
 
         // Call method under test
-        List<Pais> result = dadesExternesService.findPaisos();
+        List<Pais> result = dadesExternesService.findPaisos(IdiomaEnumDto.CA);
 
         // Assertions
         assertEquals(244, result.size());
@@ -50,7 +51,7 @@ public class DadesExternesServiceImplTest {
     public void testFindProvincies_Success() throws Exception {
 
         // Call method under test
-        List<Provincia> result = dadesExternesService.findProvincies();
+        List<Provincia> result = dadesExternesService.findProvincies(IdiomaEnumDto.CA);
 
         // Assertions
         assertEquals(52, result.size());

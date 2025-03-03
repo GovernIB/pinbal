@@ -44,13 +44,17 @@ public class DadesExternesServiceImpl implements DadesExternesService {
 	@Autowired
 	private UsuariHelper usuariHelper;
 
+	@Cacheable(value = "paisos", key = "#idioma")
 	@Override
-	@Cacheable(value = "paisos")
-	public List<Pais> findPaisos() {
+	public List<Pais> findPaisos(IdiomaEnumDto idioma) {
 		log.debug("Cercant tots els paisos");
+		if (idioma == null) {
+			idioma = IdiomaEnumDto.CA;
+		}
+
 		List<Pais> paisos = new ArrayList<>();
 		try {
-			URL url = new URL(getDadesComunesBaseUrl() + "/services/paisos/format/JSON");
+			URL url = new URL(getDadesComunesBaseUrl() + "/services/paisos/format/JSON/idioma/" + idioma.name().toLowerCase());
 			HttpURLConnection httpConnection = (HttpURLConnection)url.openConnection();
 			httpConnection.setRequestMethod("GET");
 			httpConnection.setDoInput(true);
@@ -60,11 +64,11 @@ public class DadesExternesServiceImpl implements DadesExternesService {
 			ObjectMapper mapper = new ObjectMapper();
 			mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
 			if (response != null && response.length > 0) {
-				IdiomaEnumDto idiomaActual = usuariHelper.getIdiomaUsuariActual();
+//				IdiomaEnumDto idiomaActual = usuariHelper.getIdiomaUsuariActual();
 
 				List<PaisML> paisosML = mapper.readValue(response, new TypeReference<List<PaisML>>() {});
 				for(PaisML paisML: paisosML) {
-					String nom = getPaisNom(paisML, idiomaActual);
+					String nom = getPaisNom(paisML, idioma);
 					paisos.add(Pais.builder()
 							.codi_numeric(paisML.getCodi_numeric())
 							.alpha2(paisML.getAlpha2())
@@ -97,14 +101,18 @@ public class DadesExternesServiceImpl implements DadesExternesService {
 		return paisML.getNom_ca() != null ? paisML.getNom_ca() : paisML.getNom();
 	}
 
+	@Cacheable(value = "provincies", key = "#idioma")
 	@Override
-	@Cacheable(value = "provincies")
-	public List<Provincia> findProvincies() {
+	public List<Provincia> findProvincies(IdiomaEnumDto idioma) {
 		log.debug("Cercant totes les províncies");
+
+		if (idioma == null) {
+			idioma = IdiomaEnumDto.CA;
+		}
 
 		List<Provincia> provincies = new ArrayList<>();
 		try {
-			URL url = new URL(getDadesComunesBaseUrl() + "/services/provincies/format/JSON");
+			URL url = new URL(getDadesComunesBaseUrl() + "/services/provincies/format/JSON/idioma/" + idioma.name().toLowerCase());
 			HttpURLConnection httpConnection = (HttpURLConnection)url.openConnection();
 			httpConnection.setRequestMethod("GET");
 			httpConnection.setDoInput(true);
@@ -114,11 +122,11 @@ public class DadesExternesServiceImpl implements DadesExternesService {
 			ObjectMapper mapper = new ObjectMapper();
 			mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
 			if (response != null && response.length > 0) {
-				IdiomaEnumDto idiomaActual = usuariHelper.getIdiomaUsuariActual();
+//				IdiomaEnumDto idiomaActual = usuariHelper.getIdiomaUsuariActual();
 
 				List<ProvinciaML> provinciesML = mapper.readValue(response, new TypeReference<List<ProvinciaML>>() {});
 				for(ProvinciaML provinciaML: provinciesML) {
-					String nom = getProvinciaNom(provinciaML, idiomaActual);
+					String nom = getProvinciaNom(provinciaML, idioma);
 					provincies.add(Provincia.builder()
 							.codi(provinciaML.getCodi())
 							.nom(nom)

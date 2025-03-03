@@ -164,9 +164,10 @@
 					<th data-data="procedimentCodiNom"><spring:message code="admin.consulta.list.taula.procediment" /></th>
 					<th data-data="serveiCodiNom"><spring:message code="admin.consulta.list.taula.servei" /></th>
 					<th data-data="estat"><spring:message code="admin.consulta.list.taula.estat" /></th>
-					<th data-data="justificantEstat"></th><%-- 7 --%>
-					<th data-data="justificantError"></th><%-- 8 --%>
-					<th data-data="id"></th><%-- 9 --%>
+					<th data-data="dataEsperadaResposta"><spring:message code="consulta.list.taula.der" /></th>
+					<th data-data="justificantEstat"></th><%-- 8 --%>
+					<th data-data="justificantError"></th><%-- 9 --%>
+					<th data-data="id"></th><%-- 10 --%>
 					<th data-data="error" data-visible="false"></th>
 					<th data-data="recobriment" data-visible="false"></th>
 					<th data-data="multiple" data-visible="false"></th>
@@ -247,6 +248,17 @@
 				}
 			}, {
 				targets: [7],
+				width: "10%",
+				render: function (data, type, row) {
+					var formattedDate = moment(data, 'x', true);
+					// Verifica si és vàlid
+					if (!formattedDate.isValid()) {
+						return ""; // Retorna cadena buida si la data no és vàlida
+					}
+					return formattedDate.format('DD/MM/YYYY HH:mm:ss'); // Formata la data si és vàlida
+				}
+			}, {
+				targets: [8],
 				orderable: false,
 				width: "3%",
 				render: function (data, type, row, meta) {
@@ -261,10 +273,10 @@
 					return Mustache.render(template, row);
 				}
 			}, {
-				targets: [8],
+				targets: [9],
 				visible: false
 			}, {
-				targets: [9],
+				targets: [10],
 				orderable: false,
 				width: "1%",
 				render: function (data, type, row, meta) {
