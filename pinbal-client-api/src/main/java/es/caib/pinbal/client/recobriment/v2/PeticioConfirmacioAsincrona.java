@@ -12,14 +12,13 @@ import java.util.Map;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class PeticioRespostaSincrona {
+public class PeticioConfirmacioAsincrona {
 
     private boolean error;
     private String messageError;
     private Map<String, List<String>> errorsValidacio;
-//    private ScspRespuesta respostaScsp;
+//    private ScspConfirmacionPeticion resposta;
 
-    private DadesComunesResposta dadesComunes;
-    private PeticioResposta resposta;
+    private ConfirmacioPeticio confirmacioPeticio;
 
 }

@@ -3,7 +3,7 @@
  */
 package es.caib.pinbal.core.ejb;
 
-import es.caib.pinbal.client.procediments.Procediment;
+import es.caib.pinbal.client.procediments.ProcedimentBasic;
 import es.caib.pinbal.client.recobriment.model.ScspConfirmacionPeticion;
 import es.caib.pinbal.client.recobriment.model.ScspJustificante;
 import es.caib.pinbal.client.recobriment.model.ScspPeticion;
@@ -11,11 +11,12 @@ import es.caib.pinbal.client.recobriment.model.ScspRespuesta;
 import es.caib.pinbal.client.recobriment.v2.DadaEspecifica;
 import es.caib.pinbal.client.recobriment.v2.Entitat;
 import es.caib.pinbal.client.recobriment.v2.PeticioAsincrona;
+import es.caib.pinbal.client.recobriment.v2.PeticioConfirmacioAsincrona;
 import es.caib.pinbal.client.recobriment.v2.PeticioRespostaAsincrona;
 import es.caib.pinbal.client.recobriment.v2.PeticioRespostaSincrona;
 import es.caib.pinbal.client.recobriment.v2.PeticioSincrona;
 import es.caib.pinbal.client.recobriment.v2.ValorEnum;
-import es.caib.pinbal.client.serveis.Servei;
+import es.caib.pinbal.client.serveis.ServeiBasic;
 import es.caib.pinbal.core.service.RecobrimentService;
 import es.caib.pinbal.core.service.exception.ConsultaNotFoundException;
 import es.caib.pinbal.core.service.exception.EntitatNotFoundException;
@@ -102,25 +103,25 @@ public class RecobrimentServiceBean implements RecobrimentService {
 
     @Override
 	@RolesAllowed("PBL_WS")
-    public List<Procediment> getProcediments(String entitatCodi) throws EntitatNotFoundException {
+    public List<ProcedimentBasic> getProcediments(String entitatCodi) throws EntitatNotFoundException {
         return delegate.getProcediments(entitatCodi);
     }
 
 	@Override
 	@RolesAllowed("PBL_WS")
-	public List<Servei> getServeis() {
+	public List<ServeiBasic> getServeis() {
 		return delegate.getServeis();
 	}
 
 	@Override
 	@RolesAllowed("PBL_WS")
-	public List<Servei> getServeisByEntitat(String entitatCodi) throws EntitatNotFoundException {
+	public List<ServeiBasic> getServeisByEntitat(String entitatCodi) throws EntitatNotFoundException {
 		return delegate.getServeisByEntitat(entitatCodi);
 	}
 
 	@Override
 	@RolesAllowed("PBL_WS")
-	public List<Servei> getServeisByProcediment(String procedimentCodi) throws ProcedimentNotFoundException {
+	public List<ServeiBasic> getServeisByProcediment(String procedimentCodi) throws ProcedimentNotFoundException {
 		return delegate.getServeisByProcediment(procedimentCodi);
 	}
 
@@ -156,13 +157,13 @@ public class RecobrimentServiceBean implements RecobrimentService {
 
 	@Override
 	@RolesAllowed("PBL_WS")
-	public PeticioRespostaAsincrona peticionAsincrona(PeticioAsincrona peticio) {
+	public PeticioConfirmacioAsincrona peticionAsincrona(PeticioAsincrona peticio) {
 		return delegate.peticionAsincrona(peticio);
 	}
 
 	@Override
 	@RolesAllowed("PBL_WS")
-	public ScspRespuesta getResposta(String idPeticion) throws RecobrimentScspException, ConsultaNotFoundException {
+	public PeticioRespostaAsincrona getResposta(String idPeticion) throws RecobrimentScspException, ConsultaNotFoundException {
 		return delegate.getResposta(idPeticion);
 	}
 

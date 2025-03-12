@@ -2,6 +2,8 @@ package es.caib.pinbal.api.config;
 
 import com.mangofactory.swagger.configuration.SpringSwaggerConfig;
 import com.mangofactory.swagger.models.dto.ApiInfo;
+import com.mangofactory.swagger.models.dto.AuthorizationType;
+import com.mangofactory.swagger.models.dto.BasicAuth;
 import com.mangofactory.swagger.plugin.EnableSwagger;
 import com.mangofactory.swagger.plugin.SwaggerSpringMvcPlugin;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +11,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.ResponseEntity;
+
+import java.util.Arrays;
 
 @Configuration
 @EnableSwagger
@@ -24,9 +28,11 @@ public class SwaggerConfig {
  
     @Bean
     public SwaggerSpringMvcPlugin customImplementation() {
-        return new SwaggerSpringMvcPlugin(this.springSwaggerConfig)
+		AuthorizationType basicAuth = new BasicAuth();
+		return new SwaggerSpringMvcPlugin(this.springSwaggerConfig)
                 .apiInfo(apiInfo())
                 .apiVersion("1.0")
+				.authorizationTypes(Arrays.asList(basicAuth))
                 .ignoredParameterTypes(ResponseEntity.class)
 				.includePatterns(".*/recobriment/*.*", ".*/procediments/*.*", ".*/serveis/*.*", ".*/usuaris/*.*")
 				.useDefaultResponseMessages(false);

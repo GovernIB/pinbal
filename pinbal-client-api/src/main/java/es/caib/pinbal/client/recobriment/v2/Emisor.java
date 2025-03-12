@@ -5,17 +5,11 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.Map;
-
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class SolicitudSimple {
-
-//    private String id;
-    private Titular titular;
-    private String expedient;
-    private Map<String, String> dadesEspecifiques;
-
+public class Emisor {
+    private String nif;
+    private String nom;
 }

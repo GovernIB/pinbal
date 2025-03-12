@@ -6,17 +6,17 @@ package es.caib.pinbal.api.interna.controller.recobriment.v2;
 import com.mangofactory.swagger.annotations.ApiIgnore;
 import es.caib.pinbal.api.interna.controller.PinbalHalRestController;
 import es.caib.pinbal.api.interna.openapi.interficies.recobriment.v2.RecobrimentRestV2Intf;
-import es.caib.pinbal.client.procediments.Procediment;
+import es.caib.pinbal.client.procediments.ProcedimentBasic;
 import es.caib.pinbal.client.recobriment.model.ScspJustificante;
-import es.caib.pinbal.client.recobriment.model.ScspRespuesta;
 import es.caib.pinbal.client.recobriment.v2.DadaEspecifica;
 import es.caib.pinbal.client.recobriment.v2.Entitat;
 import es.caib.pinbal.client.recobriment.v2.PeticioAsincrona;
+import es.caib.pinbal.client.recobriment.v2.PeticioConfirmacioAsincrona;
 import es.caib.pinbal.client.recobriment.v2.PeticioRespostaAsincrona;
 import es.caib.pinbal.client.recobriment.v2.PeticioRespostaSincrona;
 import es.caib.pinbal.client.recobriment.v2.PeticioSincrona;
 import es.caib.pinbal.client.recobriment.v2.ValorEnum;
-import es.caib.pinbal.client.serveis.Servei;
+import es.caib.pinbal.client.serveis.ServeiBasic;
 import es.caib.pinbal.core.dto.apiresponse.ServiceExecutionException;
 import es.caib.pinbal.core.service.RecobrimentService;
 import es.caib.pinbal.core.service.exception.AccessDenegatException;
@@ -80,14 +80,14 @@ public class RecobrimentRestV2Controller extends PinbalHalRestController impleme
 	// Obtencio de procediments
 	// /////////////////////////////////////////////////////////////
 	@RequestMapping(value = "/entitats/{entitatCodi}/procediments", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<List<Procediment>> getProcediments(@PathVariable("entitatCodi") String entitatCodi) {
+	public ResponseEntity<List<ProcedimentBasic>> getProcediments(@PathVariable("entitatCodi") String entitatCodi) {
 		try {
-			List<Procediment> procediments = recobrimentService.getProcediments(entitatCodi);
+			List<ProcedimentBasic> procediments = recobrimentService.getProcediments(entitatCodi);
 
 			if (procediments == null || procediments.isEmpty() ) {
-				return new ResponseEntity<List<Procediment>>(HttpStatus.NO_CONTENT);
+				return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 			}
-			return new ResponseEntity<List<Procediment>>(procediments, HttpStatus.OK);
+			return new ResponseEntity<>(procediments, HttpStatus.OK);
 		} catch (EntitatNotFoundException e) {
 			throw new ResourceNotFoundException(e.getDefaultMessage(), e);
 		} catch (AccessDeniedException | AccessDenegatException ade) {
@@ -100,14 +100,14 @@ public class RecobrimentRestV2Controller extends PinbalHalRestController impleme
 	// Obtenció de serveis
 	// /////////////////////////////////////////////////////////////
 	@RequestMapping(value = "/serveis", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<List<Servei>> getServeis() {
+	public ResponseEntity<List<ServeiBasic>> getServeis() {
 		try {
-			List<Servei> serveis = recobrimentService.getServeis();
+			List<ServeiBasic> serveis = recobrimentService.getServeis();
 
 			if (serveis == null || serveis.isEmpty() ) {
-				return new ResponseEntity<List<Servei>>(HttpStatus.NO_CONTENT);
+				return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 			}
-			return new ResponseEntity<List<Servei>>(serveis, HttpStatus.OK);
+			return new ResponseEntity<>(serveis, HttpStatus.OK);
 		} catch (AccessDeniedException | AccessDenegatException ade) {
 			throw new AccessDenegatException(Arrays.asList("PBL_WS"));
 		} catch (Exception ex) {
@@ -116,14 +116,14 @@ public class RecobrimentRestV2Controller extends PinbalHalRestController impleme
 	}
 
 	@RequestMapping(value = "/entitats/{entitatCodi}/serveis", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<List<Servei>> getServeisPerEntitat(@PathVariable("entitatCodi") String entitatCodi) {
+	public ResponseEntity<List<ServeiBasic>> getServeisPerEntitat(@PathVariable("entitatCodi") String entitatCodi) {
 		try {
-			List<Servei> serveis = recobrimentService.getServeisByEntitat(entitatCodi);
+			List<ServeiBasic> serveis = recobrimentService.getServeisByEntitat(entitatCodi);
 
 			if (serveis == null || serveis.isEmpty() ) {
-				return new ResponseEntity<List<Servei>>(HttpStatus.NO_CONTENT);
+				return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 			}
-			return new ResponseEntity<List<Servei>>(serveis, HttpStatus.OK);
+			return new ResponseEntity<>(serveis, HttpStatus.OK);
 		} catch (EntitatNotFoundException e) {
 			throw new ResourceNotFoundException(e.getDefaultMessage(), e);
 		} catch (AccessDeniedException | AccessDenegatException ade) {
@@ -134,14 +134,14 @@ public class RecobrimentRestV2Controller extends PinbalHalRestController impleme
 	}
 
 	@RequestMapping(value = "/procediments/{procedimentCodi}/serveis", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<List<Servei>> getServeisPerProcediment(@PathVariable("procedimentCodi") String procedimentCodi) {
+	public ResponseEntity<List<ServeiBasic>> getServeisPerProcediment(@PathVariable("procedimentCodi") String procedimentCodi) {
 		try {
-			List<Servei> serveis = recobrimentService.getServeisByProcediment(procedimentCodi);
+			List<ServeiBasic> serveis = recobrimentService.getServeisByProcediment(procedimentCodi);
 
 			if (serveis == null || serveis.isEmpty() ) {
-				return new ResponseEntity<List<Servei>>(HttpStatus.NO_CONTENT);
+				return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 			}
-			return new ResponseEntity<List<Servei>>(serveis, HttpStatus.OK);
+			return new ResponseEntity<>(serveis, HttpStatus.OK);
 		} catch (ProcedimentNotFoundException e) {
 			throw new ResourceNotFoundException(e.getDefaultMessage(), e);
 		} catch (AccessDeniedException | AccessDenegatException ade) {
@@ -254,20 +254,20 @@ public class RecobrimentRestV2Controller extends PinbalHalRestController impleme
 	}
 
 	@RequestMapping(value= "/serveis/{serveiCodi}/peticioAsincrona", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<PeticioRespostaAsincrona> peticioAsincrona(
+	public ResponseEntity<PeticioConfirmacioAsincrona> peticioAsincrona(
 			@PathVariable("serveiCodi") String serveiCodi,
 			@RequestBody PeticioAsincrona peticio) {
 		try{
 			Map<String, List<String>> errors = recobrimentService.validatePeticio(serveiCodi, peticio);
 			if (!errors.isEmpty()) {
-				PeticioRespostaAsincrona respuesta = PeticioRespostaAsincrona.builder()
+				PeticioConfirmacioAsincrona respuesta = PeticioConfirmacioAsincrona.builder()
 						.error(true)
 						.errorsValidacio(errors)
 						.messageError("S'han produït errors en la validació de les dades de la petició.")
 						.build();
 				return new ResponseEntity<>(respuesta, HttpStatus.OK);
 			}
-			PeticioRespostaAsincrona respuesta = recobrimentService.peticionAsincrona(peticio);
+			PeticioConfirmacioAsincrona respuesta = recobrimentService.peticionAsincrona(peticio);
 			return new ResponseEntity<>(respuesta, HttpStatus.OK);
 		} catch (Exception ex) {
 			throw new ServiceExecutionException(ex.getMessage(), ex);
@@ -278,20 +278,19 @@ public class RecobrimentRestV2Controller extends PinbalHalRestController impleme
 	// /////////////////////////////////////////////////////////////
 
 	@RequestMapping(value= "/consultes/{idPeticio}/resposta", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<PeticioRespostaSincrona> getResposta(@PathVariable("idPeticio") String idPeticio) {
+	public ResponseEntity<PeticioRespostaAsincrona> getResposta(@PathVariable("idPeticio") String idPeticio) {
 
-		PeticioRespostaSincrona resposta = null;
+		PeticioRespostaAsincrona resposta = null;
 		try {
-
-			ScspRespuesta scspRespuesta = recobrimentService.getResposta(idPeticio);
-			if (scspRespuesta == null) {
+			resposta = recobrimentService.getResposta(idPeticio);
+			if (resposta == null) {
 				return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 			}
-			resposta = PeticioRespostaSincrona.builder()
-					.error(!scspRespuesta.getAtributos().getEstado().getCodigoEstado().startsWith("00"))
-					.messageError(scspRespuesta.getAtributos().getEstado().getLiteralError())
-					.resposta(scspRespuesta)
-					.build();
+//			resposta = PeticioRespostaAsincrona.builder()
+//					.error(!resposta.getAtributos().getEstado().getCodigoEstado().startsWith("00"))
+//					.messageError(resposta.getAtributos().getEstado().getLiteralError())
+//					.respostes(resposta)
+//					.build();
 			return new ResponseEntity<>(resposta, HttpStatus.OK);
 		} catch (ConsultaNotFoundException ce) {
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND);

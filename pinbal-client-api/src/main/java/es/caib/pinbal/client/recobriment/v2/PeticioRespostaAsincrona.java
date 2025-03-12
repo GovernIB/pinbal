@@ -1,6 +1,5 @@
 package es.caib.pinbal.client.recobriment.v2;
 
-import es.caib.pinbal.client.recobriment.model.ScspConfirmacionPeticion;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -18,6 +17,9 @@ public class PeticioRespostaAsincrona {
     private boolean error;
     private String messageError;
     private Map<String, List<String>> errorsValidacio;
-    private ScspConfirmacionPeticion resposta;
+//    private ScspConfirmacionPeticion resposta;
+
+    private DadesComunesResposta dadesComunes;
+    private List<PeticioResposta> respostes;
 
 }

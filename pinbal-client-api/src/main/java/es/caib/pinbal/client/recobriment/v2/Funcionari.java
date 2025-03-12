@@ -17,7 +17,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class Funcionari {
 
-    private String codi;
     private String nom;
     private String nif;
 }

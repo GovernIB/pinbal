@@ -189,8 +189,8 @@ public class RecobrimentV2HelperTest {
     @Test
     public void testValidateDadesComunes_InvalidFuncionari() {
         Funcionari funcionari = new Funcionari();
-        funcionari.setCodi(null);
-        funcionari.setNif(null);
+        funcionari.setNom(null);
+        funcionari.setNif("123546789132456789Z");
 
         DadesComunes dadesComunes = DadesComunes.builder()
                 .funcionari(funcionari)
@@ -200,7 +200,8 @@ public class RecobrimentV2HelperTest {
 
         recobrimentV2Helper.validateDadesComunes(dadesComunes, "SERVEI_CODI", errors);
 
-        assertFalse(errors.getFieldErrors("dadesComunes.funcionari").isEmpty());
+        assertFalse(errors.getFieldErrors("dadesComunes.funcionari.nom").isEmpty());
+        assertFalse(errors.getFieldErrors("dadesComunes.funcionari.nif").isEmpty());
     }
 
 
@@ -220,7 +221,7 @@ public class RecobrimentV2HelperTest {
     @Test
     public void testValidateDadesSolicitud_InvalidSolicitudId() {
         SolicitudSimple solicitud = SolicitudSimple.builder()
-                .id("ID_TOO_LONG_EXCEEDING_MAX_CHARACTERS_12345678901234567890_MORE_THAN_ALLOWED_64")
+                .expedient("EXPEDIENT_TOO_LONG_EXCEEDING_MAX_CHARACTERS_12345678901234567890_MORE_THAN_ALLOWED_25")
                 .build();
         PeticioSincrona peticio = PeticioSincrona.builder().solicitud(solicitud).build();
         BindException errors = new BindException(peticio, "peticio");
@@ -231,7 +232,7 @@ public class RecobrimentV2HelperTest {
 
         recobrimentV2Helper.validateDadesSolicitud(solicitud, "SERVEI_CODI", errors, serveiService);
 
-        assertFalse(errors.getFieldErrors("solicitud.id").isEmpty());
+        assertFalse(errors.getFieldErrors("solicitud.expedient").isEmpty());
     }
 
     @Test
@@ -390,14 +391,14 @@ public class RecobrimentV2HelperTest {
                 .serveiCodi("VALID_SERVICE_CODE")
                 .entitatCif("VALID_CIF")
                 .procedimentCodi("VALID_PROCEDIMENT_CODE")
-                .funcionari(Funcionari.builder().codi("FUNC123").nif("12345678Z").build())
+                .funcionari(Funcionari.builder().nom("FUNC123").nif("12345678Z").build())
                 .departament("Valid Department")
                 .finalitat("Valid Finality")
                 .consentiment(DadesComunes.Consentiment.Si)
                 .build();
 
         SolicitudSimple solicitud = SolicitudSimple.builder()
-                .id("SOL123")
+//                .id("SOL123")
                 .titular(es.caib.pinbal.client.recobriment.v2.Titular.builder()
                         .documentTipus(es.caib.pinbal.client.recobriment.v2.Titular.DocumentTipus.NIE)
                         .documentNumero("X1234567L")
@@ -433,7 +434,7 @@ public class RecobrimentV2HelperTest {
 
         assertNotNull(peticion);
         assertEquals("VALID_SERVICE_CODE", peticion.getAtributos().getCodigoCertificado());
-        assertEquals("SOL123", peticion.getSolicitudes().getSolicitudTransmision().get(0).getId());
+//        assertEquals("SOL123", peticion.getSolicitudes().getSolicitudTransmision().get(0).getId());
     }
 
     @Test

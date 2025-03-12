@@ -3,15 +3,20 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <parent>
-        <artifactId>pinbal</artifactId>
-        <groupId>es.caib.pinbal</groupId>
-        <version>1.4.42</version>
-    </parent>
+<!--    <parent>-->
+<!--        <artifactId>pinbal</artifactId>-->
+<!--        <groupId>es.caib.pinbal</groupId>-->
+<!--        <version>1.4.42</version>-->
+<!--    </parent>-->
 
+    <groupId>es.caib.pinbal</groupId>
     <artifactId>pinbal-client-api</artifactId>
+    <version>1.4.42</version>
 
     <properties>
+        <hibernate.validator.version>4.1.0.Final</hibernate.validator.version>
+        <jackson.version>2.6.3</jackson.version>
+        <lombok.version>1.18.24</lombok.version>
         <maven.compiler.source>1.7</maven.compiler.source>
         <maven.compiler.target>1.7</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

@@ -9,17 +9,10 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Servei {
+public class ServeiBasic {
 
     private String codi;
     private String descripcio;
     private Boolean actiu = false;
 
-    private String emisor;
-
-    public Servei(String codi, String descripcio, Boolean actiu) {
-        this.codi = codi;
-        this.descripcio = descripcio;
-        this.actiu = actiu;
-    }
 }

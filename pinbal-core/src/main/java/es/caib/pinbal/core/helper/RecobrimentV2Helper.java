@@ -3,10 +3,19 @@
  */
 package es.caib.pinbal.core.helper;
 
+import es.caib.pinbal.client.helper.ClasseTramitHelper;
+import es.caib.pinbal.client.recobriment.v2.ConfirmacioPeticio;
 import es.caib.pinbal.client.recobriment.v2.DadesComunes;
+import es.caib.pinbal.client.recobriment.v2.DadesComunesResposta;
+import es.caib.pinbal.client.recobriment.v2.Emisor;
 import es.caib.pinbal.client.recobriment.v2.Funcionari;
 import es.caib.pinbal.client.recobriment.v2.PeticioAsincrona;
+import es.caib.pinbal.client.recobriment.v2.PeticioConfirmacioAsincrona;
+import es.caib.pinbal.client.recobriment.v2.PeticioResposta;
+import es.caib.pinbal.client.recobriment.v2.PeticioRespostaAsincrona;
+import es.caib.pinbal.client.recobriment.v2.PeticioRespostaSincrona;
 import es.caib.pinbal.client.recobriment.v2.PeticioSincrona;
+import es.caib.pinbal.client.recobriment.v2.Solicitant;
 import es.caib.pinbal.client.recobriment.v2.SolicitudSimple;
 import es.caib.pinbal.core.model.Entitat;
 import es.caib.pinbal.core.model.ServeiConfig;
@@ -21,17 +30,20 @@ import es.caib.pinbal.plugins.SistemaExternException;
 import es.caib.pinbal.scsp.ScspHelper;
 import es.caib.pinbal.scsp.XmlHelper;
 import es.scsp.bean.common.Atributos;
+import es.scsp.bean.common.ConfirmacionPeticion;
 import es.scsp.bean.common.Consentimiento;
 import es.scsp.bean.common.DatosGenericos;
 import es.scsp.bean.common.Funcionario;
 import es.scsp.bean.common.Peticion;
 import es.scsp.bean.common.Procedimiento;
+import es.scsp.bean.common.Respuesta;
 import es.scsp.bean.common.Solicitante;
 import es.scsp.bean.common.SolicitudTransmision;
 import es.scsp.bean.common.Solicitudes;
 import es.scsp.bean.common.TipoDocumentacion;
 import es.scsp.bean.common.Titular;
 import es.scsp.bean.common.Transmision;
+import es.scsp.bean.common.TransmisionDatos;
 import es.scsp.common.domain.core.Servicio;
 import es.scsp.common.utils.DateUtils;
 import lombok.extern.slf4j.Slf4j;
@@ -45,13 +57,20 @@ import org.springframework.stereotype.Component;
 import org.springframework.validation.BindException;
 import org.springframework.validation.FieldError;
 import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TimeZone;
 
 /**
  * Mètodes comuns per a les consultes al servei de recobriment fetes
@@ -79,6 +98,8 @@ public class RecobrimentV2Helper implements ApplicationContextAware, MessageSour
     private ServeiCampRepository serveiCampRepository;
 
 	private XmlHelper xmlHelper;
+
+	private static final long MILISEGONS_PER_HORA = 3600000L;
 
 	@Override
 	public void setMessageSource(MessageSource messageSource) {
@@ -153,12 +174,12 @@ public class RecobrimentV2Helper implements ApplicationContextAware, MessageSour
 			return;
 		}
 
-		String solicitudId = solicitud.getId() != null ? solicitud.getId().trim() : null;
+//		String solicitudId = solicitud.getId() != null ? solicitud.getId().trim() : null;
 		es.caib.pinbal.client.recobriment.v2.Titular titular = solicitud.getTitular();
 		String expedientId = solicitud.getExpedient() != null ? solicitud.getExpedient().trim() : null;
 		Map<String, String> dadesEspedifiques = solicitud.getDadesEspecifiques();
 
-		validateCampLength(solicitudId, "solicitud.id", 64, errors);
+//		validateCampLength(solicitudId, "solicitud.id", 64, errors);
 
 		validateTitular(titular, serveiCodi, errors);
 
@@ -234,7 +255,7 @@ public class RecobrimentV2Helper implements ApplicationContextAware, MessageSour
 		// Crear Solicitudes i SolicitudTransmision
 		Solicitudes solicitudes = new Solicitudes();
 		SolicitudTransmision solicitudTransmision = new SolicitudTransmision();
-		solicitudTransmision.setId(solicitud.getId());
+//		solicitudTransmision.setId(solicitud.getId());
 		solicitudTransmision.setDatosGenericos(crearDatosGenericos(dadesComunes, solicitud, serveiConfig, serveiCodi, idPeticion, idSolicitud, timeStamp));
 
 		// Dades específiques (si n'hi ha)
@@ -284,7 +305,7 @@ public class RecobrimentV2Helper implements ApplicationContextAware, MessageSour
 			String idSolicitud = getIdSolicitud(idPeticion, numSolicituds, index++);
 
 			SolicitudTransmision solicitudTransmision = new SolicitudTransmision();
-			solicitudTransmision.setId(solicitud.getId());
+//			solicitudTransmision.setId(solicitud.getId());
 			solicitudTransmision.setDatosGenericos(crearDatosGenericos(dadesComunes, solicitud, serveiConfig, serveiCodi, idPeticion, idSolicitud, timeStamp));
 
 			// Dades específiques (si n'hi ha)
@@ -337,32 +358,32 @@ public class RecobrimentV2Helper implements ApplicationContextAware, MessageSour
 		// És obligatori informar o bé el codi o el nif.
 		// No fa falta informar els dos, però si s'informen els dos es validarà que el codi i el nif corresponguin al mateix usuari.
 		// Tampoc fa falta informar el nom del funcionari. Però si s'informa es validarà que el nom corresponguin al de l'usuari.
-		String funcionariCodi = funcionari.getCodi() != null ? funcionari.getCodi().trim() : null;
+//		String funcionariCodi = funcionari.getCodi() != null ? funcionari.getCodi().trim() : null;
 		String funcionariNif = funcionari.getNif() != null ? funcionari.getNif().trim() : null;
 		String funcionariNom = funcionari.getNom() != null ? funcionari.getNom().trim() : null;
 
-		// Validació bàsica: codi o nif han d'estar informats
-		if ((funcionariCodi == null || funcionariCodi.isEmpty()) && (funcionariNif == null || funcionariNif.isEmpty())) {
-			errors.rejectValue("dadesComunes.funcionari", "rec.val.err.funcionari.missing", "És obligatori informar o bé el codi o el nif del funcionari.");
-			return;
-		}
+//		// Validació bàsica: codi o nif han d'estar informats
+//		if ((funcionariCodi == null || funcionariCodi.isEmpty()) && (funcionariNif == null || funcionariNif.isEmpty())) {
+//			errors.rejectValue("dadesComunes.funcionari", "rec.val.err.funcionari.missing", "És obligatori informar o bé el codi o el nif del funcionari.");
+//			return;
+//		}
 
-		DadesUsuari funcionariDades = consultarFuncionari(funcionariCodi, funcionariNif, errors);
+//		DadesUsuari funcionariDades = consultarFuncionari(funcionariCodi, funcionariNif, errors);
 
 		// Validem longitud per a codi i NIF
-		validateCampLength(funcionariCodi, "dadesComunes.funcionari.codi", 16, errors);
-		validateCampLength(funcionariNif, "dadesComunes.funcionari.nif", 10, errors);
+		validateCamp(funcionariNom, "dadesComunes.funcionari.nom", 122, errors);
+		validateCamp(funcionariNif, "dadesComunes.funcionari.nif", 10, errors);
 
-		if (funcionariDades != null) {
-			if (funcionariNif != null && !funcionariNif.equalsIgnoreCase(funcionariDades.getNif())) {
-				errors.rejectValue("dadesComunes.funcionari.nif", "rec.val.err.funcionari.nif.mismatch", "El NIF del funcionari no coincideix amb el NIF del funcionari amb codi " + funcionariCodi);
-			}
-			if (funcionariNom != null && !funcionariNom.equalsIgnoreCase(funcionariDades.getNom())) {
-				errors.rejectValue("dadesComunes.funcionari.nom", "rec.val.err.funcionari.nom.mismatch", "El nom indicat no coincideix amb el nom del funcionari amb codi " + funcionariDades.getCodi());
-			}
-		}
-
-		validateCampLength(funcionariNom, "dadesComunes.funcionari.nom", 122, errors);
+//		if (funcionariDades != null) {
+//			if (funcionariNif != null && !funcionariNif.equalsIgnoreCase(funcionariDades.getNif())) {
+//				errors.rejectValue("dadesComunes.funcionari.nif", "rec.val.err.funcionari.nif.mismatch", "El NIF del funcionari no coincideix amb el NIF del funcionari amb codi " + funcionariCodi);
+//			}
+//			if (funcionariNom != null && !funcionariNom.equalsIgnoreCase(funcionariDades.getNom())) {
+//				errors.rejectValue("dadesComunes.funcionari.nom", "rec.val.err.funcionari.nom.mismatch", "El nom indicat no coincideix amb el nom del funcionari amb codi " + funcionariDades.getCodi());
+//			}
+//		}
+//
+//		validateCampLength(funcionariNom, "dadesComunes.funcionari.nom", 122, errors);
 	}
 
 	// Mètode que consulta el funcionari a partir del codi o nif indicat
@@ -527,21 +548,9 @@ public class RecobrimentV2Helper implements ApplicationContextAware, MessageSour
 			return null;
 		}
 
-		String funcionariCodi = funcionari.getCodi() != null ? funcionari.getCodi().trim() : null;
-		String funcionariNif = funcionari.getNif() != null ? funcionari.getNif().trim() : null;
-
-		DadesUsuari funcionariDades = null;
-		try {
-			funcionariDades = funcionariCodi != null && !funcionariCodi.isEmpty()
-					? pluginHelper.dadesUsuariConsultarAmbUsuariCodi(funcionariCodi)
-					: pluginHelper.dadesUsuariConsultarAmbUsuariNif(funcionariNif);
-		} catch (SistemaExternException e) {
-			// Gestionar errors, si escau
-		}
-
 		Funcionario funcionario = new Funcionario();
-		funcionario.setNombreCompletoFuncionario(funcionariDades != null ? funcionariDades.getNom() : funcionari.getNom());
-		funcionario.setNifFuncionario(funcionariDades != null ? funcionariDades.getNif() : funcionariNif);
+		funcionario.setNombreCompletoFuncionario(funcionari.getNom());
+		funcionario.setNifFuncionario(funcionari.getNif());
 		return funcionario;
 	}
 
@@ -606,4 +615,219 @@ public class RecobrimentV2Helper implements ApplicationContextAware, MessageSour
 		return xmlHelper;
 	}
 
+	public PeticioRespostaSincrona toRespostaSincrona(Respuesta scspRespuesta) {
+		TransmisionDatos transmisionDatos = null;
+		if (scspRespuesta != null && scspRespuesta.getTransmisiones() != null && scspRespuesta.getTransmisiones().getTransmisionDatos() != null && !scspRespuesta.getTransmisiones().getTransmisionDatos().isEmpty()) {
+			transmisionDatos = scspRespuesta.getTransmisiones().getTransmisionDatos().get(0);
+		}
+		return PeticioRespostaSincrona.builder()
+				.error(!scspRespuesta.getAtributos().getEstado().getCodigoEstado().startsWith("00"))
+				.messageError(scspRespuesta.getAtributos().getEstado().getLiteralError())
+				.dadesComunes(toDadesComunesResposta(scspRespuesta))
+				.resposta(toResposta(transmisionDatos))
+				.build();
+	}
+
+	public PeticioConfirmacioAsincrona toConfirmacio(ConfirmacionPeticion resposta) {
+		String errorMsg = resposta.getAtributos().getEstado() != null
+				? resposta.getAtributos().getEstado().getLiteralError()
+				: null;
+		return PeticioConfirmacioAsincrona.builder()
+				.error(errorMsg != null && !errorMsg.trim().isEmpty())
+				.messageError(errorMsg)
+				.confirmacioPeticio(toConfirmacioPeticio(resposta))
+				.build();
+	}
+
+	public PeticioRespostaAsincrona toRespostaAsincrona(Respuesta scspRespuesta) {
+		boolean error = scspRespuesta.getAtributos() == null
+				|| scspRespuesta.getAtributos().getEstado() == null
+				|| scspRespuesta.getAtributos().getEstado().getCodigoEstado() == null
+				|| !scspRespuesta.getAtributos().getEstado().getCodigoEstado().startsWith("00");
+		String errorMsg = scspRespuesta.getAtributos() != null && scspRespuesta.getAtributos().getEstado() != null
+				? scspRespuesta.getAtributos().getEstado().getLiteralError()
+				: "La resposta SCSP no ha retornat l'estat de la petició.";
+
+		return PeticioRespostaAsincrona.builder()
+				.error(error)
+				.messageError(errorMsg)
+				.dadesComunes(toDadesComunesResposta(scspRespuesta))
+				.respostes(toRespostes(scspRespuesta))
+				.build();
+	}
+
+	public DadesComunesResposta toDadesComunesResposta(Respuesta respuesta) {
+		if (respuesta == null) return null;
+
+		DadesComunesResposta dadesComunes = new DadesComunesResposta();
+		if (respuesta.getAtributos() != null) {
+			dadesComunes.setServeiCodi(respuesta.getAtributos().getCodigoCertificado());
+			dadesComunes.setIdPeticio(respuesta.getAtributos().getIdPeticion());
+		}
+		if (respuesta.getTransmisiones() != null && respuesta.getTransmisiones().getTransmisionDatos() != null && !respuesta.getTransmisiones().getTransmisionDatos().isEmpty()) {
+			TransmisionDatos transmisionDatos = respuesta.getTransmisiones().getTransmisionDatos().get(0);
+			if (transmisionDatos.getDatosGenericos() != null) {
+				if (transmisionDatos.getDatosGenericos().getEmisor() != null) {
+					Emisor emisor = Emisor.builder()
+							.nif(transmisionDatos.getDatosGenericos().getEmisor().getNifEmisor())
+							.nom(transmisionDatos.getDatosGenericos().getEmisor().getNombreEmisor())
+							.build();
+					dadesComunes.setEmisor(emisor);
+				}
+				Solicitante solicitante = transmisionDatos.getDatosGenericos().getSolicitante();
+				if (solicitante != null) {
+					Funcionari funcionari = null;
+					if (solicitante.getFuncionario() != null) {
+						funcionari = Funcionari.builder()
+								.nom(solicitante.getFuncionario().getNombreCompletoFuncionario())
+								.nif(solicitante.getFuncionario().getNifFuncionario())
+								.build();
+					}
+					Solicitant solicitant = Solicitant.builder()
+							.identificador(solicitante.getIdentificadorSolicitante())
+							.nom(solicitante.getNombreSolicitante())
+							.unitatTramitadora(solicitante.getUnidadTramitadora())
+							.codiUnitatTramitadora(solicitante.getCodigoUnidadTramitadora())
+							.procedimentCodi(solicitante.getProcedimiento() != null ? solicitante.getProcedimiento().getCodProcedimiento() : null)
+							.procedimentNom(solicitante.getProcedimiento() != null ? solicitante.getProcedimiento().getNombreProcedimiento() : null)
+							.automatitzat(solicitante.getProcedimiento() != null ? "S".equalsIgnoreCase(solicitante.getProcedimiento().getAutomatizado()) : null)
+							.classeTramit(solicitante.getProcedimiento() != null ? ClasseTramitHelper.getClasseTramitById(solicitante.getProcedimiento().getClaseTramite()) : null)
+							.finalitat(solicitante.getFinalidad())
+							.consentiment(solicitante.getConsentimiento() != null ? DadesComunes.Consentiment.valueOf(solicitante.getConsentimiento().name()) : null)
+							.funcionari(funcionari)
+							.build();
+					dadesComunes.setSolicitant(solicitant);
+				}
+			}
+		}
+		return dadesComunes;
+	}
+
+	private List<PeticioResposta> toRespostes(Respuesta scspRespuesta) {
+		if (scspRespuesta.getTransmisiones() == null
+				|| scspRespuesta.getTransmisiones().getTransmisionDatos() == null
+				|| scspRespuesta.getTransmisiones().getTransmisionDatos().isEmpty())
+			return null;
+
+		List<PeticioResposta> peticioRespostes = new ArrayList<>();
+		ArrayList<TransmisionDatos> transmisionesDatos = scspRespuesta.getTransmisiones().getTransmisionDatos();
+		for (TransmisionDatos transmisionDatos : transmisionesDatos) {
+			peticioRespostes.add(toResposta(transmisionDatos));
+		}
+		return peticioRespostes;
+	}
+
+	public PeticioResposta toResposta(TransmisionDatos transmisionDatos) {
+		if (transmisionDatos == null) return null;
+
+		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX");
+		format.setTimeZone(TimeZone.getTimeZone("Europe/Madrid"));
+
+		PeticioResposta peticioResposta = new PeticioResposta();
+		if (transmisionDatos.getDatosGenericos() != null) {
+			Solicitante solicitante = transmisionDatos.getDatosGenericos().getSolicitante();
+			peticioResposta.setExpedient(solicitante != null ? solicitante.getIdExpediente() : null);
+
+			Titular titular = transmisionDatos.getDatosGenericos().getTitular();
+			if (titular != null) {
+				peticioResposta.setTitular(
+						es.caib.pinbal.client.recobriment.v2.Titular.builder()
+								.documentTipus(titular.getTipoDocumentacion() != null ? es.caib.pinbal.client.recobriment.v2.Titular.DocumentTipus.valueOf(titular.getTipoDocumentacion().name()) : null)
+								.documentNumero(titular.getDocumentacion())
+								.nomComplet(titular.getNombreCompleto())
+								.nom(titular.getNombre())
+								.llinatge1(titular.getApellido1())
+								.llinatge2(titular.getApellido2())
+								.build()
+				);
+			}
+
+			Transmision transmision = transmisionDatos.getDatosGenericos().getTransmision();
+			if (transmision != null) {
+				peticioResposta.setIdSolicitud(transmision.getIdSolicitud());
+				peticioResposta.setIdTransmissio(transmision.getIdTransmision());
+				if (transmision.getFechaGeneracion() != null) {
+					try {
+						Date dataResposta = format.parse(transmision.getFechaGeneracion());
+						peticioResposta.setDataResposta(dataResposta);
+					} catch (ParseException e) {
+						log.error("Error al convertir la data de resposta", e);
+					}
+				}
+
+				if (transmisionDatos.getDatosEspecificos() != null && transmisionDatos.getDatosEspecificos() instanceof Node) {
+					Map<String, String> dadesEspecifiques = convertirXMLAMap((Node) transmisionDatos.getDatosEspecificos(), "DatosEspecificos");
+					peticioResposta.setDadesEspecifiques(dadesEspecifiques);
+				}
+			}
+		}
+		return peticioResposta;
+	}
+	private ConfirmacioPeticio toConfirmacioPeticio(ConfirmacionPeticion resposta) {
+		if (resposta == null || resposta.getAtributos() == null) {
+			return null;
+		}
+
+		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX");
+		format.setTimeZone(TimeZone.getTimeZone("Europe/Madrid"));
+
+		int numPeticions = 0;
+		Date dataResposta = null;
+		Date dataEstimadaResposta = null;
+		try {
+			numPeticions = Integer.parseInt(resposta.getAtributos().getNumElementos());
+		} catch (Exception e) {
+			log.error("Error al convertir el número de peticions", e);
+		}
+		try {
+			dataResposta = format.parse(resposta.getAtributos().getTimeStamp());
+		} catch (Exception e) {
+			log.error("Error al convertir la data de resposta", e);
+		}
+		if (resposta.getAtributos().getEstado() != null && resposta.getAtributos().getEstado().getTiempoEstimadoRespuesta() != null) {
+			dataEstimadaResposta = calcularDataEstimada(resposta.getAtributos().getEstado().getTiempoEstimadoRespuesta());
+		}
+
+		return ConfirmacioPeticio.builder()
+				.serveiCodi(resposta.getAtributos().getCodigoCertificado())
+				.idPeticio(resposta.getAtributos().getIdPeticion())
+				.numSolicituds(numPeticions)
+				.dataEnviamentPeticio(dataResposta)
+				.dataEstimadaResposta(dataEstimadaResposta)
+				.build();
+	}
+
+	private Date calcularDataEstimada(Integer horesEstimades) {
+		if (horesEstimades == null) {
+			return null;
+		}
+		long milisegonsAfegits = horesEstimades * MILISEGONS_PER_HORA;
+		return new Date(System.currentTimeMillis() + milisegonsAfegits);
+	}
+
+
+	private Map<String, String> convertirXMLAMap(Node node, String currentPath) {
+		Map<String, String> map = new LinkedHashMap<>();
+
+		if (node.getNodeType() == Node.ELEMENT_NODE && node.hasChildNodes() && node.getFirstChild().getNodeType()==Node.TEXT_NODE)
+			map.put(currentPath, node.getTextContent().trim());
+
+		if (node.hasAttributes()) {
+			NamedNodeMap attributes = node.getAttributes();
+			for (int i = 0; i < attributes.getLength(); i++) {
+				Node attribute = attributes.item(i);
+				map.put(currentPath + "/@" + attribute.getLocalName(), attribute.getNodeValue());
+			}
+		}
+
+		NodeList childNodes = node.getChildNodes();
+		for (int i = 0; i < childNodes.getLength(); i++) {
+			Node child = childNodes.item(i);
+			if (child.getNodeType() == Node.ELEMENT_NODE) {
+				String nodeName = child.getLocalName(); // Utilitza getLocalName() per obtenir el nom sense namespace
+				map.putAll(convertirXMLAMap(child, currentPath + "/" + nodeName));
+			}
+		}
+		return map;
+	}
 }

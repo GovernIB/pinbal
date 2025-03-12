@@ -3,7 +3,7 @@
  */
 package es.caib.pinbal.core.service;
 
-import es.caib.pinbal.client.procediments.Procediment;
+import es.caib.pinbal.client.procediments.ProcedimentBasic;
 import es.caib.pinbal.client.recobriment.model.ScspConfirmacionPeticion;
 import es.caib.pinbal.client.recobriment.model.ScspJustificante;
 import es.caib.pinbal.client.recobriment.model.ScspPeticion;
@@ -11,11 +11,12 @@ import es.caib.pinbal.client.recobriment.model.ScspRespuesta;
 import es.caib.pinbal.client.recobriment.v2.DadaEspecifica;
 import es.caib.pinbal.client.recobriment.v2.Entitat;
 import es.caib.pinbal.client.recobriment.v2.PeticioAsincrona;
+import es.caib.pinbal.client.recobriment.v2.PeticioConfirmacioAsincrona;
 import es.caib.pinbal.client.recobriment.v2.PeticioRespostaAsincrona;
 import es.caib.pinbal.client.recobriment.v2.PeticioRespostaSincrona;
 import es.caib.pinbal.client.recobriment.v2.PeticioSincrona;
 import es.caib.pinbal.client.recobriment.v2.ValorEnum;
-import es.caib.pinbal.client.serveis.Servei;
+import es.caib.pinbal.client.serveis.ServeiBasic;
 import es.caib.pinbal.core.service.exception.ConsultaNotFoundException;
 import es.caib.pinbal.core.service.exception.EntitatNotFoundException;
 import es.caib.pinbal.core.service.exception.ProcedimentNotFoundException;
@@ -142,13 +143,13 @@ public interface RecobrimentService {
 	 * @throws EntitatNotFoundException
 	 */
 	@PreAuthorize("hasRole('ROLE_WS')")
-	List<Procediment> getProcediments(String entitatCodi) throws EntitatNotFoundException;
+	List<ProcedimentBasic> getProcediments(String entitatCodi) throws EntitatNotFoundException;
 
 	/**
 	 * @return llista de tots els elements de tipus Servei configurats a PINBAL
 	 */
 	@PreAuthorize("hasRole('ROLE_WS')")
-	List<Servei> getServeis();
+	List<ServeiBasic> getServeis();
 
 	/**
 	 * @param entitatCodi codi de l'entitat
@@ -156,7 +157,7 @@ public interface RecobrimentService {
 	 * @throws EntitatNotFoundException
 	 */
 	@PreAuthorize("hasRole('ROLE_WS')")
-	List<Servei> getServeisByEntitat(String entitatCodi) throws EntitatNotFoundException;
+	List<ServeiBasic> getServeisByEntitat(String entitatCodi) throws EntitatNotFoundException;
 
 	/**
 	 * @param procedimentCodi codi del procediment
@@ -164,7 +165,7 @@ public interface RecobrimentService {
 	 * @throws ProcedimentNotFoundException
 	 */
 	@PreAuthorize("hasRole('ROLE_WS')")
-	List<Servei> getServeisByProcediment(String procedimentCodi) throws ProcedimentNotFoundException;
+	List<ServeiBasic> getServeisByProcediment(String procedimentCodi) throws ProcedimentNotFoundException;
 
 	/**
 	 * @param serveiCodi codi del servei
@@ -224,7 +225,7 @@ public interface RecobrimentService {
 	 *            Si hi s'han produit excepcions al fer la petició.
 	 */
 	@PreAuthorize("hasRole('ROLE_WS')")
-	public PeticioRespostaAsincrona peticionAsincrona(PeticioAsincrona peticio);
+	public PeticioConfirmacioAsincrona peticionAsincrona(PeticioAsincrona peticio);
 
 	/**
 	 * Obté la resposta d'una petició SCSP enviada.
@@ -236,7 +237,7 @@ public interface RecobrimentService {
 	 *            Si hi s'han produit excepcions SCSP al fer la petició.
 	 */
 	@PreAuthorize("hasRole('ROLE_WS')")
-	public ScspRespuesta getResposta(String idPeticion) throws RecobrimentScspException, ConsultaNotFoundException;
+	public PeticioRespostaAsincrona getResposta(String idPeticion) throws RecobrimentScspException, ConsultaNotFoundException;
 
 	/**
 	 *

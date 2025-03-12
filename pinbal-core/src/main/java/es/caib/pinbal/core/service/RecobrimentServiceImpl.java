@@ -3,7 +3,7 @@
  */
 package es.caib.pinbal.core.service;
 
-import es.caib.pinbal.client.procediments.Procediment;
+import es.caib.pinbal.client.procediments.ProcedimentBasic;
 import es.caib.pinbal.client.recobriment.model.ScspAtributos;
 import es.caib.pinbal.client.recobriment.model.ScspConfirmacionPeticion;
 import es.caib.pinbal.client.recobriment.model.ScspDatosGenericos;
@@ -24,12 +24,13 @@ import es.caib.pinbal.client.recobriment.model.ScspTransmisionDatos;
 import es.caib.pinbal.client.recobriment.v2.DadaEspecifica;
 import es.caib.pinbal.client.recobriment.v2.DadaTipusEnum;
 import es.caib.pinbal.client.recobriment.v2.PeticioAsincrona;
+import es.caib.pinbal.client.recobriment.v2.PeticioConfirmacioAsincrona;
 import es.caib.pinbal.client.recobriment.v2.PeticioRespostaAsincrona;
 import es.caib.pinbal.client.recobriment.v2.PeticioRespostaSincrona;
 import es.caib.pinbal.client.recobriment.v2.PeticioSincrona;
 import es.caib.pinbal.client.recobriment.v2.Validacio;
 import es.caib.pinbal.client.recobriment.v2.ValorEnum;
-import es.caib.pinbal.client.serveis.Servei;
+import es.caib.pinbal.client.serveis.ServeiBasic;
 import es.caib.pinbal.core.dto.DadaEspecificaDto;
 import es.caib.pinbal.core.dto.IdiomaEnumDto;
 import es.caib.pinbal.core.dto.JustificantDto;
@@ -636,7 +637,7 @@ public class RecobrimentServiceImpl implements RecobrimentService, ApplicationCo
     @Override
     @Cacheable(value = "procediments", key = "#entitatCodi")
     @Transactional(readOnly = true)
-    public List<Procediment> getProcediments(String entitatCodi) throws EntitatNotFoundException {
+    public List<ProcedimentBasic> getProcediments(String entitatCodi) throws EntitatNotFoundException {
         log.debug("Cercant els procediments de l'entitat (codi=" + entitatCodi + ")");
         Entitat entitat = entitatRepository.findByCodi(entitatCodi);
         if (entitat == null)
@@ -649,7 +650,7 @@ public class RecobrimentServiceImpl implements RecobrimentService, ApplicationCo
     @Override
     @Cacheable(value = "serveis")
     @Transactional(readOnly = true)
-    public List<Servei> getServeis() {
+    public List<ServeiBasic> getServeis() {
         log.debug("Cercant tots els serveis");
 
         return serveiRepository.findAllServeisClient();
@@ -658,7 +659,7 @@ public class RecobrimentServiceImpl implements RecobrimentService, ApplicationCo
     @Override
     @Cacheable(value = "serveisEntitat", key = "#entitatCodi")
     @Transactional(readOnly = true)
-    public List<Servei> getServeisByEntitat(String entitatCodi) throws EntitatNotFoundException {
+    public List<ServeiBasic> getServeisByEntitat(String entitatCodi) throws EntitatNotFoundException {
         log.debug("Cercant els serveis per a l'entitat (codi=" + entitatCodi + ")");
         Entitat entitat = entitatRepository.findByCodi(entitatCodi);
         if (entitat == null)
@@ -670,7 +671,7 @@ public class RecobrimentServiceImpl implements RecobrimentService, ApplicationCo
     @Override
     @Cacheable(value = "serveisProcediment", key = "#procedimentCodi")
     @Transactional(readOnly = true)
-    public List<Servei> getServeisByProcediment(String procedimentCodi) throws ProcedimentNotFoundException {
+    public List<ServeiBasic> getServeisByProcediment(String procedimentCodi) throws ProcedimentNotFoundException {
         log.debug("Cercant els serveis actius per al procediment (codi=" + procedimentCodi + ")");
         es.caib.pinbal.core.model.Procediment procediment = procedimentRepository.findByCodi(procedimentCodi);
         if (procediment == null)
@@ -787,48 +788,39 @@ public class RecobrimentServiceImpl implements RecobrimentService, ApplicationCo
     @Override
 //    @Transactional
     public PeticioRespostaSincrona peticionSincrona(PeticioSincrona peticio) {
-        PeticioRespostaSincrona respuesta = null;
+        PeticioRespostaSincrona resposta = null;
         try {
             Peticion peticion = recobrimentV2Helper.toPeticion(peticio);
-            ScspRespuesta scspRespuesta = toScspRespuesta(recobrimentHelper.peticionSincrona(peticion));
-            respuesta = PeticioRespostaSincrona.builder()
-                    .error(!scspRespuesta.getAtributos().getEstado().getCodigoEstado().startsWith("00"))
-                    .messageError(scspRespuesta.getAtributos().getEstado().getLiteralError())
-                    .resposta(scspRespuesta)
-                    .build();
+            Respuesta scspRespuesta = recobrimentHelper.peticionSincrona(peticion);
+            resposta = recobrimentV2Helper.toRespostaSincrona(scspRespuesta);
         } catch (Exception e) {
-            log.error("Error al realitzar la petició sincrona amb solicitudId= " + (peticio.getSolicitud() != null ? peticio.getSolicitud().getId() : ""), e);
-            respuesta = PeticioRespostaSincrona.builder()
+            log.error("Error al realitzar petició sincrona al servei= " +
+                    (peticio != null && peticio.getDadesComunes() != null ? peticio.getDadesComunes().getServeiCodi() : ""), e);
+            resposta = PeticioRespostaSincrona.builder()
                     .error(true)
                     .messageError(e.getMessage())
                     .build();
         }
-        return respuesta;
+        return resposta;
     }
 
     @Override
 //    @Transactional
-    public PeticioRespostaAsincrona peticionAsincrona(PeticioAsincrona peticio) {
-        PeticioRespostaAsincrona respuesta = null;
+    public PeticioConfirmacioAsincrona peticionAsincrona(PeticioAsincrona peticio) {
+        PeticioConfirmacioAsincrona resposta = null;
         try {
             Peticion peticion = recobrimentV2Helper.toPeticion(peticio);
-            ScspConfirmacionPeticion scspConfirmacionPeticion = toScspConfirmacionPeticion(recobrimentHelper.peticionAsincrona(peticion));
-            String errorMsg = scspConfirmacionPeticion.getAtributos().getEstado() != null
-                    ? scspConfirmacionPeticion.getAtributos().getEstado().getLiteralError()
-                    : null;
-            respuesta = PeticioRespostaAsincrona.builder()
-                    .error(errorMsg != null && !errorMsg.trim().isEmpty())
-                    .messageError(errorMsg)
-                    .resposta(scspConfirmacionPeticion)
-                    .build();
+            ConfirmacionPeticion respuesta = recobrimentHelper.peticionAsincrona(peticion);
+            resposta = recobrimentV2Helper.toConfirmacio(respuesta);
         } catch (Exception e) {
-            log.error("Error al realitzar la petició asincrona al servei= " + peticio.getDadesComunes().getServeiCodi(), e);
-            respuesta = PeticioRespostaAsincrona.builder()
+            log.error("Error al realitzar la petició asincrona al servei= " +
+                    (peticio != null && peticio.getDadesComunes() != null ? peticio.getDadesComunes().getServeiCodi() : ""), e);
+            resposta = PeticioConfirmacioAsincrona.builder()
                     .error(true)
                     .messageError(e.getMessage())
                     .build();
         }
-        return respuesta;
+        return resposta;
     }
 
     private List<ValorEnum> obtenirPaisos(IdiomaEnumDto idioma) {
@@ -941,16 +933,16 @@ public class RecobrimentServiceImpl implements RecobrimentService, ApplicationCo
 
 
     @Override
-    public ScspRespuesta getResposta(String idPeticion) throws RecobrimentScspException, ConsultaNotFoundException {
+    public PeticioRespostaAsincrona getResposta(String idPeticion) throws RecobrimentScspException, ConsultaNotFoundException {
         try {
             Consulta consulta = consultaRepository.findByScspPeticionId(idPeticion);
             if (consulta == null) {
                 throw new ConsultaNotFoundException();
             }
-            return toScspRespuesta(recobrimentHelper.getRespuesta(idPeticion));
-        } catch (TransformerException ex) {
-            throw new RecobrimentScspException(ex.getMessage(), ex);
-        } catch (ScspException ex) {
+            return recobrimentV2Helper.toRespostaAsincrona(recobrimentHelper.getRespuesta(idPeticion));
+        } catch (ConsultaNotFoundException cnfe) {
+            throw cnfe; // Torna a llançar l'excepció específica
+        } catch (Exception ex) {
             throw new RecobrimentScspException(ex.getMessage(), ex);
         }
     }
@@ -970,6 +962,8 @@ public class RecobrimentServiceImpl implements RecobrimentService, ApplicationCo
             justificante.setContentType(justificant.getContentType());
             justificante.setContingut(justificant.getContingut());
             return justificante;
+        } catch (ConsultaNotFoundException cnfe) {
+            throw cnfe; // Torna a llançar l'excepció específica
         } catch (ScspException ex) {
             throw new RecobrimentScspException(
                     ex.getMessage(),
@@ -990,6 +984,8 @@ public class RecobrimentServiceImpl implements RecobrimentService, ApplicationCo
             justificante.setContentType(justificant.getContentType());
             justificante.setContingut(justificant.getContingut());
             return justificante;
+        } catch (ConsultaNotFoundException cnfe) {
+            throw cnfe; // Torna a llançar l'excepció específica
         } catch (ScspException ex) {
             throw new RecobrimentScspException(
                     ex.getMessage(),
@@ -1006,6 +1002,8 @@ public class RecobrimentServiceImpl implements RecobrimentService, ApplicationCo
             }
             JustificantDto justificant = recobrimentHelper.getJustificante(idPeticion, idSolicitud, true, false);
             return justificant.getArxiuCsv();
+        } catch (ConsultaNotFoundException cnfe) {
+            throw cnfe; // Torna a llançar l'excepció específica
         } catch (ScspException ex) {
             throw new RecobrimentScspException(
                     ex.getMessage(),
@@ -1022,6 +1020,8 @@ public class RecobrimentServiceImpl implements RecobrimentService, ApplicationCo
             }
             JustificantDto justificant = recobrimentHelper.getJustificante(idPeticion, idSolicitud, true, false);
             return justificant.getArxiuUuid();
+        } catch (ConsultaNotFoundException cnfe) {
+            throw cnfe; // Torna a llançar l'excepció específica
         } catch (ScspException ex) {
             throw new RecobrimentScspException(
                     ex.getMessage(),
@@ -1054,10 +1054,10 @@ public class RecobrimentServiceImpl implements RecobrimentService, ApplicationCo
         return entitatList;
     }
 
-    private Procediment toProcediment(es.caib.pinbal.core.model.Procediment procedimentEntity) {
+    private ProcedimentBasic toProcediment(es.caib.pinbal.core.model.Procediment procedimentEntity) {
         if (procedimentEntity == null) return null;
 
-        return Procediment.builder()
+        return ProcedimentBasic.builder()
                 .codi(procedimentEntity.getCodi())
                 .nom(procedimentEntity.getNom())
                 .organGestorDir3(procedimentEntity.getOrganGestor().getCodi())
@@ -1065,10 +1065,10 @@ public class RecobrimentServiceImpl implements RecobrimentService, ApplicationCo
                 .build();
     }
 
-    private List<Procediment> toProcediments(List<es.caib.pinbal.core.model.Procediment> procedimentEntities) {
+    private List<ProcedimentBasic> toProcediments(List<es.caib.pinbal.core.model.Procediment> procedimentEntities) {
         if (procedimentEntities == null) return new ArrayList<>();
 
-        List<Procediment> procedimentsList = new ArrayList<>();
+        List<ProcedimentBasic> procedimentsList = new ArrayList<>();
         for (es.caib.pinbal.core.model.Procediment entity : procedimentEntities) {
             procedimentsList.add(toProcediment(entity));
         }

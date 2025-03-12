@@ -1,19 +1,18 @@
 package es.caib.pinbal.api.interna.controller.recobriment.v2;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import es.caib.pinbal.client.procediments.Procediment;
-import es.caib.pinbal.client.recobriment.model.ScspAtributos;
-import es.caib.pinbal.client.recobriment.model.ScspEstado;
+import es.caib.pinbal.client.procediments.ProcedimentBasic;
 import es.caib.pinbal.client.recobriment.model.ScspJustificante;
-import es.caib.pinbal.client.recobriment.model.ScspRespuesta;
 import es.caib.pinbal.client.recobriment.v2.DadaEspecifica;
+import es.caib.pinbal.client.recobriment.v2.DadesComunesResposta;
 import es.caib.pinbal.client.recobriment.v2.Entitat;
 import es.caib.pinbal.client.recobriment.v2.PeticioAsincrona;
+import es.caib.pinbal.client.recobriment.v2.PeticioConfirmacioAsincrona;
 import es.caib.pinbal.client.recobriment.v2.PeticioRespostaAsincrona;
 import es.caib.pinbal.client.recobriment.v2.PeticioRespostaSincrona;
 import es.caib.pinbal.client.recobriment.v2.PeticioSincrona;
 import es.caib.pinbal.client.recobriment.v2.ValorEnum;
-import es.caib.pinbal.client.serveis.Servei;
+import es.caib.pinbal.client.serveis.ServeiBasic;
 import es.caib.pinbal.core.dto.apiresponse.ServiceExecutionException;
 import es.caib.pinbal.core.service.RecobrimentService;
 import es.caib.pinbal.core.service.exception.AccessDenegatException;
@@ -128,9 +127,9 @@ public class RecobrimentRestV2ControllerTest {
 
     @Test
     public void testGetProcediments_ReturnsOkWithProcediments() throws Exception {
-        List<Procediment> procediments = Arrays.asList(
-                Procediment.builder().id(1L).codi("PROC_001").nom("Procediment 1").build(),
-                Procediment.builder().id(1L).codi("PROC_002").nom("Procediment 2").build()
+        List<ProcedimentBasic> procediments = Arrays.asList(
+                ProcedimentBasic.builder().codi("PROC_001").nom("Procediment 1").build(),
+                ProcedimentBasic.builder().codi("PROC_002").nom("Procediment 2").build()
         );
 
         when(recobrimentService.getProcediments("ENTITAT01")).thenReturn(procediments);
@@ -146,7 +145,7 @@ public class RecobrimentRestV2ControllerTest {
 
     @Test
     public void testGetProcediments_ReturnsNoContentWhenEmpty() throws Exception {
-        when(recobrimentService.getProcediments("ENTITAT01")).thenReturn(new ArrayList<Procediment>());
+        when(recobrimentService.getProcediments("ENTITAT01")).thenReturn(new ArrayList<ProcedimentBasic>());
 
         mockMvc.perform(get("/recobriment/v2/entitats/ENTITAT01/procediments")
                         .accept(MediaType.APPLICATION_JSON))
@@ -185,9 +184,9 @@ public class RecobrimentRestV2ControllerTest {
 
     @Test
     public void testGetServeis_ReturnsOkWithServeis() throws Exception {
-        List<Servei> serveis = Arrays.asList(
-                Servei.builder().codi("SERVEI_001").descripcio("Servei 1").build(),
-                Servei.builder().codi("SERVEI_002").descripcio("Servei 2").build()
+        List<ServeiBasic> serveis = Arrays.asList(
+                ServeiBasic.builder().codi("SERVEI_001").descripcio("Servei 1").build(),
+                ServeiBasic.builder().codi("SERVEI_002").descripcio("Servei 2").build()
         );
 
         when(recobrimentService.getServeis()).thenReturn(serveis);
@@ -203,7 +202,7 @@ public class RecobrimentRestV2ControllerTest {
 
     @Test
     public void testGetServeis_ReturnsNoContentWhenEmpty() throws Exception {
-        when(recobrimentService.getServeis()).thenReturn(new ArrayList<Servei>());
+        when(recobrimentService.getServeis()).thenReturn(new ArrayList<ServeiBasic>());
 
         mockMvc.perform(get("/recobriment/v2/serveis")
                         .accept(MediaType.APPLICATION_JSON))
@@ -233,9 +232,9 @@ public class RecobrimentRestV2ControllerTest {
 
     @Test
     public void testGetServeisPerEntitat_ReturnsOkWithServeis() throws Exception {
-        List<Servei> serveis = Arrays.asList(
-                Servei.builder().codi("SERVEI_001").descripcio("Servei 1").build(),
-                Servei.builder().codi("SERVEI_002").descripcio("Servei 2").build()
+        List<ServeiBasic> serveis = Arrays.asList(
+                ServeiBasic.builder().codi("SERVEI_001").descripcio("Servei 1").build(),
+                ServeiBasic.builder().codi("SERVEI_002").descripcio("Servei 2").build()
         );
 
         when(recobrimentService.getServeisByEntitat("ENTITAT01")).thenReturn(serveis);
@@ -251,7 +250,7 @@ public class RecobrimentRestV2ControllerTest {
 
     @Test
     public void testGetServeisPerEntitat_ReturnsNoContentWhenEmpty() throws Exception {
-        when(recobrimentService.getServeisByEntitat("ENTITAT01")).thenReturn(new ArrayList<Servei>());
+        when(recobrimentService.getServeisByEntitat("ENTITAT01")).thenReturn(new ArrayList<ServeiBasic>());
 
         mockMvc.perform(get("/recobriment/v2/entitats/ENTITAT01/serveis")
                         .accept(MediaType.APPLICATION_JSON))
@@ -290,9 +289,9 @@ public class RecobrimentRestV2ControllerTest {
 
     @Test
     public void testGetServeisPerProcediment_ReturnsOkWithServeis() throws Exception {
-        List<Servei> serveis = Arrays.asList(
-                Servei.builder().codi("SERVEI_001").descripcio("Servei 1").build(),
-                Servei.builder().codi("SERVEI_002").descripcio("Servei 2").build()
+        List<ServeiBasic> serveis = Arrays.asList(
+                ServeiBasic.builder().codi("SERVEI_001").descripcio("Servei 1").build(),
+                ServeiBasic.builder().codi("SERVEI_002").descripcio("Servei 2").build()
         );
 
         when(recobrimentService.getServeisByProcediment("PROC001")).thenReturn(serveis);
@@ -308,7 +307,7 @@ public class RecobrimentRestV2ControllerTest {
 
     @Test
     public void testGetServeisPerProcediment_ReturnsNoContentWhenEmpty() throws Exception {
-        when(recobrimentService.getServeisByProcediment("PROC001")).thenReturn(new ArrayList<Servei>());
+        when(recobrimentService.getServeisByProcediment("PROC001")).thenReturn(new ArrayList<ServeiBasic>());
 
         mockMvc.perform(get("/recobriment/v2/procediments/PROC001/serveis")
                         .accept(MediaType.APPLICATION_JSON))
@@ -526,7 +525,7 @@ public class RecobrimentRestV2ControllerTest {
     @Test
     public void testPeticioAsincrona_ReturnsOkWithValidRequest() throws Exception {
         PeticioAsincrona peticio = PeticioAsincrona.builder().build();
-        PeticioRespostaAsincrona resposta = PeticioRespostaAsincrona.builder().error(false).build();
+        PeticioConfirmacioAsincrona resposta = PeticioConfirmacioAsincrona.builder().error(false).build();
         Map<String, List<String>> respostaValidacio = new java.util.HashMap<>();
 
         when(recobrimentService.validatePeticio(anyString(), eq(peticio))).thenReturn(respostaValidacio);
@@ -579,13 +578,8 @@ public class RecobrimentRestV2ControllerTest {
 
     @Test
     public void testGetResposta_ReturnsOkWithResponse() throws Exception {
-        ScspRespuesta mockResposta = new ScspRespuesta();
-        ScspAtributos atributos = new ScspAtributos();
-        ScspEstado estado = new ScspEstado();
-        estado.setCodigoEstado("001");
-        estado.setLiteralError(null);
-        atributos.setEstado(estado);
-        mockResposta.setAtributos(atributos);
+        PeticioRespostaAsincrona mockResposta = new PeticioRespostaAsincrona();
+        mockResposta.setDadesComunes(DadesComunesResposta.builder().idPeticio("001").build());
 
         when(recobrimentService.getResposta("REQUEST001")).thenReturn(mockResposta);
 
@@ -593,7 +587,7 @@ public class RecobrimentRestV2ControllerTest {
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.error").value(false))
-                .andExpect(jsonPath("$.resposta.atributos.estado.codigoEstado").value("001"));
+                .andExpect(jsonPath("$.dadesComunes.idPeticio").value("001"));
     }
 
     @Test

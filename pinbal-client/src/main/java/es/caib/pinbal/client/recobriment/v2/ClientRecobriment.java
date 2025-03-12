@@ -3,9 +3,9 @@ package es.caib.pinbal.client.recobriment.v2;
 import com.sun.jersey.api.client.ClientResponse;
 import es.caib.pinbal.client.comu.BasicAuthClientBase;
 import es.caib.pinbal.client.comu.LogLevel;
-import es.caib.pinbal.client.procediments.Procediment;
+import es.caib.pinbal.client.procediments.ProcedimentBasic;
 import es.caib.pinbal.client.recobriment.model.ScspJustificante;
-import es.caib.pinbal.client.serveis.Servei;
+import es.caib.pinbal.client.serveis.ServeiBasic;
 
 import javax.ws.rs.core.MediaType;
 import java.io.IOException;
@@ -73,9 +73,9 @@ public class ClientRecobriment extends BasicAuthClientBase {
      * @param entitatCodi
      * @return llista de procediments disponibles per l'entitat especificada a 'entitatCodi'
      */
-    List<Procediment> getProcediments(String entitatCodi) throws IOException {
+    List<ProcedimentBasic> getProcediments(String entitatCodi) throws IOException {
         ClientResponse response = restPeticioGet("entitats/" + entitatCodi + "/procediments", null, ClientResponse.class);
-        return processListResponse(response, Procediment.class);
+        return processListResponse(response, ProcedimentBasic.class);
     }
 
     // Obtenció de serveis
@@ -85,9 +85,9 @@ public class ClientRecobriment extends BasicAuthClientBase {
      * Obtén tots els serveis de Pinbal
      * @return llista de serveis disponibles a Pinbal
      */
-    List<Servei> getServeis() throws IOException {
+    List<ServeiBasic> getServeis() throws IOException {
         ClientResponse response = restPeticioGet("serveis", null, ClientResponse.class);
-        return processListResponse(response, Servei.class);
+        return processListResponse(response, ServeiBasic.class);
     }
 
     /**
@@ -95,9 +95,9 @@ public class ClientRecobriment extends BasicAuthClientBase {
      * @param entitatCodi Codi de l'entitat
      * @return llista dels serveis disponibles a Pinbal per una entitat
      */
-    List<Servei> getServeisPerEntitat(String entitatCodi) throws IOException {
+    List<ServeiBasic> getServeisPerEntitat(String entitatCodi) throws IOException {
         ClientResponse response = restPeticioGet("entitats/" + entitatCodi + "/serveis", null, ClientResponse.class);
-        return processListResponse(response, Servei.class);
+        return processListResponse(response, ServeiBasic.class);
     }
 
     /**
@@ -105,9 +105,9 @@ public class ClientRecobriment extends BasicAuthClientBase {
      * @param procedimentCodi Codi del procediment
      * @return llista de serveis disponibles a Pinbal per un procediment
      */
-    List<Servei> getServeisPerProcediment(String procedimentCodi) throws IOException {
+    List<ServeiBasic> getServeisPerProcediment(String procedimentCodi) throws IOException {
         ClientResponse response = restPeticioGet("procediments/" + procedimentCodi + "/serveis", null, ClientResponse.class);
-        return processListResponse(response, Servei.class);
+        return processListResponse(response, ServeiBasic.class);
     }
 
     // Obtenció de dades específiques
@@ -168,9 +168,9 @@ public class ClientRecobriment extends BasicAuthClientBase {
      * @param peticio Petició asíncrona
      * @return informació dels possilbes errors de validació de les dades o en la consulta, i una entitat de tipus ScspConfirmacionPeticion que conté informació de la resposta en cas d'havers-se realitzat correctament
      */
-    PeticioRespostaAsincrona peticioAsincrona(String serveiCodi, PeticioAsincrona peticio) throws IOException {
+    PeticioConfirmacioAsincrona peticioAsincrona(String serveiCodi, PeticioAsincrona peticio) throws IOException {
         ClientResponse response = restPeticioPost("serveis/" + serveiCodi + "/peticioAsincrona", peticio, ClientResponse.class, MediaType.APPLICATION_JSON_TYPE);
-        return processResponse(response, PeticioRespostaAsincrona.class);
+        return processResponse(response, PeticioConfirmacioAsincrona.class);
     }
 
     // Obtenció de respostes
@@ -181,9 +181,9 @@ public class ClientRecobriment extends BasicAuthClientBase {
      * @param idPeticio Identificador de la petició
      * @return informació de la resposta de la petició
      */
-    PeticioRespostaSincrona getResposta(String idPeticio) throws IOException {
+    PeticioRespostaAsincrona getResposta(String idPeticio) throws IOException {
         ClientResponse response = restPeticioGet("consultes/" + idPeticio + "/resposta", null, ClientResponse.class);
-        return processResponse(response, PeticioRespostaSincrona.class);
+        return processResponse(response, PeticioRespostaAsincrona.class);
     }
 
     /**

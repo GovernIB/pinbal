@@ -96,7 +96,7 @@ public interface ServeiRepository extends JpaRepository<Servei, Long> {
 
 	// Serveis - Client
 
-	@Query("select new es.caib.pinbal.client.serveis.Servei(" +
+	@Query("select new es.caib.pinbal.client.serveis.ServeiBasic(" +
 			"	s.codi, " +
 			"	s.descripcio, " +
 			"	sc.actiu " +
@@ -104,9 +104,9 @@ public interface ServeiRepository extends JpaRepository<Servei, Long> {
 			"  from Servei s, " +
 			" 		ServeiConfig sc " +
 			" where s.codi = sc.servei ")
-	List<es.caib.pinbal.client.serveis.Servei> findAllServeisClient();
+	List<es.caib.pinbal.client.serveis.ServeiBasic> findAllServeisClient();
 
-	@Query("select new es.caib.pinbal.client.serveis.Servei(" +
+	@Query("select new es.caib.pinbal.client.serveis.ServeiBasic(" +
 			"	s.codi, " +
 			"	s.descripcio, " +
 			"	sc.actiu " +
@@ -117,9 +117,9 @@ public interface ServeiRepository extends JpaRepository<Servei, Long> {
 			" where s.codi = sc.servei" +
 			"	and es.servei = s.codi " +
 			"   and es.entitat.codi = :entitatCodi")
-	List<es.caib.pinbal.client.serveis.Servei> findServeisClientByEntitatCodi(@Param("entitatCodi") String entitatCodi);
+	List<es.caib.pinbal.client.serveis.ServeiBasic> findServeisClientByEntitatCodi(@Param("entitatCodi") String entitatCodi);
 
-	@Query("select new es.caib.pinbal.client.serveis.Servei(" +
+	@Query("select new es.caib.pinbal.client.serveis.ServeiBasic(" +
 			"	s.codi, " +
 			"	s.descripcio, " +
 			"	sc.actiu " +
@@ -130,5 +130,5 @@ public interface ServeiRepository extends JpaRepository<Servei, Long> {
 			" where s.codi = sc.servei" +
 			"	and ps.servei = s.codi " +
 			"   and ps.procediment.codi = :procedimentCodi")
-	List<es.caib.pinbal.client.serveis.Servei> findServeisClientByProcedimentCodi(@Param("procedimentCodi") String procedimentCodi);
+	List<es.caib.pinbal.client.serveis.ServeiBasic> findServeisClientByProcedimentCodi(@Param("procedimentCodi") String procedimentCodi);
 }
