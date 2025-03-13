@@ -365,19 +365,19 @@ public class UsuariRestController extends PinbalHalRestController {
         }
     }
 
-    @ApiIgnore
-    @RequestMapping(value = "/executesql", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<String> executeSql(
-            HttpServletRequest request,
-            @RequestBody String sql) {
-        String usuari = SecurityContextHolder.getContext().getAuthentication().getName();
-        if ("localhost".equals(request.getServerName()) || ("e18225486x".equals(usuari) && "dev.caib.es".equals(request.getServerName()))) {
-            return new ResponseEntity<>(gestioRestService.executeSql(sql), HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(
-                    "Només el responsable de l'aplicació en DEV o local pot executar aquest mètode.",
-                    HttpStatus.FORBIDDEN);
-        }
-    }
+//    @ApiIgnore
+//    @RequestMapping(value = "/executesql", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+//    public ResponseEntity<String> executeSql(
+//            HttpServletRequest request,
+//            @RequestBody String sql) {
+//        String usuari = SecurityContextHolder.getContext().getAuthentication().getName();
+//        if ("localhost".equals(request.getServerName()) || ("e18225486x".equals(usuari) && "dev.caib.es".equals(request.getServerName()))) {
+//            return new ResponseEntity<>(gestioRestService.executeSql(sql), HttpStatus.OK);
+//        } else {
+//            return new ResponseEntity<>(
+//                    "Només el responsable de l'aplicació en DEV o local pot executar aquest mètode.",
+//                    HttpStatus.FORBIDDEN);
+//        }
+//    }
 
 }

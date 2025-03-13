@@ -671,9 +671,9 @@ public class RecobrimentServiceImpl implements RecobrimentService, ApplicationCo
     @Override
     @Cacheable(value = "serveisProcediment", key = "#procedimentCodi")
     @Transactional(readOnly = true)
-    public List<ServeiBasic> getServeisByProcediment(String procedimentCodi) throws ProcedimentNotFoundException {
-        log.debug("Cercant els serveis actius per al procediment (codi=" + procedimentCodi + ")");
-        es.caib.pinbal.core.model.Procediment procediment = procedimentRepository.findByCodi(procedimentCodi);
+    public List<ServeiBasic> getServeisByProcediment(String entitatCodi, String procedimentCodi) throws ProcedimentNotFoundException {
+        log.debug("Cercant els serveis actius per entitat i procediment (codi=" + procedimentCodi + ", entitat=" + entitatCodi + ")");
+        es.caib.pinbal.core.model.Procediment procediment = procedimentRepository.findByEntitatCodiAndCodi(entitatCodi, procedimentCodi);
         if (procediment == null)
             throw new ProcedimentNotFoundException();
 
@@ -703,7 +703,7 @@ public class RecobrimentServiceImpl implements RecobrimentService, ApplicationCo
         if (serveiConfig == null)
             throw new ServeiNotFoundException(serveiCodi);
 
-        ServeiCamp serveiCamp = serveiCampRepository.findByPath(campPath);
+        ServeiCamp serveiCamp = serveiCampRepository.findByServeiAndPath(serveiCodi, campPath);
         if (serveiCamp == null)
             throw new ServeiCampNotFoundException(campPath);
 

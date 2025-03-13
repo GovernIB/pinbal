@@ -165,7 +165,7 @@ public interface RecobrimentService {
 	 * @throws ProcedimentNotFoundException
 	 */
 	@PreAuthorize("hasRole('ROLE_WS')")
-	List<ServeiBasic> getServeisByProcediment(String procedimentCodi) throws ProcedimentNotFoundException;
+	List<ServeiBasic> getServeisByProcediment(String entitatCodi, String procedimentCodi) throws ProcedimentNotFoundException;
 
 	/**
 	 * @param serveiCodi codi del servei

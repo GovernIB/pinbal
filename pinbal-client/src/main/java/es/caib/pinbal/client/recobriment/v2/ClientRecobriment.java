@@ -105,8 +105,8 @@ public class ClientRecobriment extends BasicAuthClientBase {
      * @param procedimentCodi Codi del procediment
      * @return llista de serveis disponibles a Pinbal per un procediment
      */
-    List<ServeiBasic> getServeisPerProcediment(String procedimentCodi) throws IOException {
-        ClientResponse response = restPeticioGet("procediments/" + procedimentCodi + "/serveis", null, ClientResponse.class);
+    List<ServeiBasic> getServeisPerProcediment(String entitatCodi, String procedimentCodi) throws IOException {
+        ClientResponse response = restPeticioGet("entitats/" + entitatCodi + "/procediments/" + procedimentCodi + "/serveis", null, ClientResponse.class);
         return processListResponse(response, ServeiBasic.class);
     }
 

@@ -109,8 +109,10 @@ public interface RecobrimentRestV2Intf {
             @ApiResponse(code = 204, message = "No s'han trobat serveis"),
             @ApiResponse(code = 500, message = "Error intern del servidor")
     })
-    @RequestMapping(value = "/procediments/{procedimentCodi}/serveis", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    ResponseEntity<List<ServeiBasic>> getServeisPerProcediment(@ApiParam(value = "Codi del procediment") @PathVariable("procedimentCodi") String procedimentCodi);
+    @RequestMapping(value = "/entitats/{entitatCodi}/procediments/{procedimentCodi}/serveis", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<ServeiBasic>> getServeisPerProcediment(
+            @PathVariable("entitatCodi") String entitatCodi,
+            @PathVariable("procedimentCodi") String procedimentCodi);
 
     // Obtenció de dades específiques
     // /////////////////////////////////////////////////////////////

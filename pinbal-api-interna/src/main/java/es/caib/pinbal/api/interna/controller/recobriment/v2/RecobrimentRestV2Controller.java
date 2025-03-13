@@ -137,10 +137,12 @@ public class RecobrimentRestV2Controller extends PinbalHalRestController impleme
 		}
 	}
 
-	@RequestMapping(value = "/procediments/{procedimentCodi}/serveis", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<List<ServeiBasic>> getServeisPerProcediment(@PathVariable("procedimentCodi") String procedimentCodi) {
+	@RequestMapping(value = "/entitats/{entitatCodi}/procediments/{procedimentCodi}/serveis", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<List<ServeiBasic>> getServeisPerProcediment(
+			@PathVariable("entitatCodi") String entitatCodi,
+			@PathVariable("procedimentCodi") String procedimentCodi) {
 		try {
-			List<ServeiBasic> serveis = recobrimentService.getServeisByProcediment(procedimentCodi);
+			List<ServeiBasic> serveis = recobrimentService.getServeisByProcediment(entitatCodi, procedimentCodi);
 
 			if (serveis == null || serveis.isEmpty() ) {
 				return new ResponseEntity<>(HttpStatus.NO_CONTENT);

@@ -121,8 +121,8 @@ public class RecobrimentServiceBean implements RecobrimentService {
 
 	@Override
 	@RolesAllowed("PBL_WS")
-	public List<ServeiBasic> getServeisByProcediment(String procedimentCodi) throws ProcedimentNotFoundException {
-		return delegate.getServeisByProcediment(procedimentCodi);
+	public List<ServeiBasic> getServeisByProcediment(String entitatCodi, String procedimentCodi) throws ProcedimentNotFoundException {
+		return delegate.getServeisByProcediment(entitatCodi, procedimentCodi);
 	}
 
 	@Override

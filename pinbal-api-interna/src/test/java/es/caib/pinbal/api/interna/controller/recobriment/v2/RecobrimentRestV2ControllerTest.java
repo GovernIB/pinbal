@@ -294,9 +294,9 @@ public class RecobrimentRestV2ControllerTest {
                 ServeiBasic.builder().codi("SERVEI_002").descripcio("Servei 2").build()
         );
 
-        when(recobrimentService.getServeisByProcediment("PROC001")).thenReturn(serveis);
+        when(recobrimentService.getServeisByProcediment("ENT001", "PROC001")).thenReturn(serveis);
 
-        mockMvc.perform(get("/recobriment/v2/procediments/PROC001/serveis")
+        mockMvc.perform(get("/recobriment/v2/entitats/ENT001/procediments/PROC001/serveis")
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.[0].codi").value("SERVEI_001"))
@@ -307,36 +307,36 @@ public class RecobrimentRestV2ControllerTest {
 
     @Test
     public void testGetServeisPerProcediment_ReturnsNoContentWhenEmpty() throws Exception {
-        when(recobrimentService.getServeisByProcediment("PROC001")).thenReturn(new ArrayList<ServeiBasic>());
+        when(recobrimentService.getServeisByProcediment("ENT001", "PROC001")).thenReturn(new ArrayList<ServeiBasic>());
 
-        mockMvc.perform(get("/recobriment/v2/procediments/PROC001/serveis")
+        mockMvc.perform(get("/recobriment/v2/entitats/ENT001/procediments/PROC001/serveis")
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNoContent());
     }
 
     @Test
     public void testGetServeisPerProcediment_ReturnsNotFoundWhenProcedimentNotFound() throws Exception {
-        when(recobrimentService.getServeisByProcediment("PROC001")).thenThrow(new ProcedimentNotFoundException("Procediment not found"));
+        when(recobrimentService.getServeisByProcediment("ENT001", "PROC001")).thenThrow(new ProcedimentNotFoundException("Procediment not found"));
 
-        mockMvc.perform(get("/recobriment/v2/procediments/PROC001/serveis")
+        mockMvc.perform(get("/recobriment/v2/entitats/ENT001/procediments/PROC001/serveis")
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound());
     }
 
     @Test
     public void testGetServeisPerProcediment_ReturnsForbiddenWhenAccessDenied() throws Exception {
-        when(recobrimentService.getServeisByProcediment("PROC001")).thenThrow(new AccessDenegatException(Arrays.asList("PBL_WS")));
+        when(recobrimentService.getServeisByProcediment("ENT001", "PROC001")).thenThrow(new AccessDenegatException(Arrays.asList("PBL_WS")));
 
-        mockMvc.perform(get("/recobriment/v2/procediments/PROC001/serveis")
+        mockMvc.perform(get("/recobriment/v2/entitats/ENT001/procediments/PROC001/serveis")
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isForbidden());
     }
 
     @Test
     public void testGetServeisPerProcediment_ReturnsInternalServerErrorWhenServiceException() throws Exception {
-        when(recobrimentService.getServeisByProcediment("PROC001")).thenThrow(new ServiceExecutionException("Error occurred"));
+        when(recobrimentService.getServeisByProcediment("ENT001", "PROC001")).thenThrow(new ServiceExecutionException("Error occurred"));
 
-        mockMvc.perform(get("/recobriment/v2/procediments/PROC001/serveis")
+        mockMvc.perform(get("/recobriment/v2/entitats/ENT001/procediments/PROC001/serveis")
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isInternalServerError());
     }

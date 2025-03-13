@@ -123,12 +123,12 @@ public class RecobrimentV2HelperTest {
         PeticioSincrona peticio = PeticioSincrona.builder().dadesComunes(dadesComunes).build();
         BindException errors = new BindException(peticio, "peticio");
 
-        when(procedimentRepository.findByCodi("INVALID_PROCEDIMENT")).thenReturn(null);
+        when(procedimentRepository.findByEntitatAndCodi(any(Entitat.class), eq("INVALID_PROCEDIMENT"))).thenReturn(null);
 
         recobrimentV2Helper.validateDadesComunes(dadesComunes, "SERVEI_CODI", errors);
 
         assertFalse(errors.getFieldErrors("dadesComunes.procedimentCodi").isEmpty());
-        verify(procedimentRepository).findByCodi("INVALID_PROCEDIMENT");
+        verify(procedimentRepository).findByEntitatAndCodi(any(Entitat.class), eq("INVALID_PROCEDIMENT"));
     }
 
     @Test
@@ -151,13 +151,13 @@ public class RecobrimentV2HelperTest {
         BindException errors = new BindException(peticio, "peticio");
 
         when(entitatRepository.findByCif("VALID_CIF")).thenReturn(entitat);
-        when(procedimentRepository.findByCodi("VALID_CODE")).thenReturn(procediment);
+        when(procedimentRepository.findByEntitatAndCodi(any(Entitat.class), eq("VALID_CODE"))).thenReturn(procediment);
 
         recobrimentV2Helper.validateDadesComunes(dadesComunes, "SERVEI_CODI", errors);
 
         assertFalse(errors.getFieldErrors("dadesComunes.procedimentCodi").isEmpty());
         verify(entitatRepository).findByCif("VALID_CIF");
-        verify(procedimentRepository).findByCodi("VALID_CODE");
+        verify(procedimentRepository).findByEntitatAndCodi(any(Entitat.class), eq("VALID_CODE"));
     }
 
     @Test
@@ -426,7 +426,7 @@ public class RecobrimentV2HelperTest {
         dadesUsuari.setNom("Funcionari Name");
 
         when(serveiConfigRepository.findByServei("VALID_SERVICE_CODE")).thenReturn(new ServeiConfig());
-        when(procedimentRepository.findByCodi("VALID_PROCEDIMENT_CODE")).thenReturn(mockProcediment);
+        when(procedimentRepository.findByEntitatAndCodi(any(Entitat.class), eq("VALID_PROCEDIMENT_CODE"))).thenReturn(mockProcediment);
         when(entitatRepository.findByCif("VALID_CIF")).thenReturn(mockEntitat);
         when(pluginHelper.dadesUsuariConsultarAmbUsuariCodi(anyString())).thenReturn(dadesUsuari);
 

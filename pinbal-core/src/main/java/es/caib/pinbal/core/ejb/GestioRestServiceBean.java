@@ -115,11 +115,11 @@ public class GestioRestServiceBean implements GestioRestService {
         return delegate.permisosPerUsuariEntitat(entitatCodi, usuariCodi);
     }
 
-    @Override
-    @RolesAllowed("PBL_ADMIN")
-    public String executeSql(String sql) {
-        return delegate.executeSql(sql);
-    }
+//    @Override
+//    @RolesAllowed("PBL_ADMIN")
+//    public String executeSql(String sql) {
+//        return delegate.executeSql(sql);
+//    }
 
     @Override
     @RolesAllowed("PBL_WS")

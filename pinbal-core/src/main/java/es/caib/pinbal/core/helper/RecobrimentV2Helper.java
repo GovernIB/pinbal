@@ -148,7 +148,7 @@ public class RecobrimentV2Helper implements ApplicationContextAware, MessageSour
 		}
 
 		validateCamp(dadesComunes.getProcedimentCodi(), "dadesComunes.procedimentCodi", errors);
-		es.caib.pinbal.core.model.Procediment procediment = procedimentRepository.findByCodi(dadesComunes.getProcedimentCodi());
+		es.caib.pinbal.core.model.Procediment procediment = procedimentRepository.findByEntitatAndCodi(entitat, dadesComunes.getProcedimentCodi());
 		if (procediment == null) {
 			errors.rejectValue("dadesComunes.procedimentCodi", "rec.val.err.procedimentCodi.notfound", "No s'ha trobat el procediment amb el codi " + dadesComunes.getProcedimentCodi());
 		}
@@ -518,8 +518,11 @@ public class RecobrimentV2Helper implements ApplicationContextAware, MessageSour
 	private Solicitante crearSolicitante(DadesComunes dadesComunes, SolicitudSimple solicitud, ServeiConfig serveiConfig) {
 		Solicitante solicitante = new Solicitante();
 
+		// Entitat
+		Entitat entitat = entitatRepository.findByCif(dadesComunes.getEntitatCif());
+
 		// Procediment
-		es.caib.pinbal.core.model.Procediment procediment = procedimentRepository.findByCodi(dadesComunes.getProcedimentCodi());
+		es.caib.pinbal.core.model.Procediment procediment = procedimentRepository.findByEntitatAndCodi(entitat, dadesComunes.getProcedimentCodi());
 		Procedimiento procedimiento = new Procedimiento();
 		procedimiento.setCodProcedimiento(procediment.getCodi());
 		procedimiento.setNombreProcedimiento(procediment.getNom());
@@ -533,7 +536,6 @@ public class RecobrimentV2Helper implements ApplicationContextAware, MessageSour
 		solicitante.setCodigoUnidadTramitadora(determinarUnitatTramitadora(serveiConfig, procediment));
 
 		// Solicitant
-		Entitat entitat = entitatRepository.findByCif(dadesComunes.getEntitatCif());
 		solicitante.setIdentificadorSolicitante(entitat.getCif());
 		solicitante.setNombreSolicitante(entitat.getNom());
 		solicitante.setIdExpediente(solicitud.getExpedient());

@@ -360,53 +360,53 @@ public class GestioRestServiceImpl implements GestioRestService {
         return toPermisosServei(entitatCodi, usuariCodi, permesosAmbEntitatIUsuari);
     }
 
-    @Transactional
-    @Override
-    public String executeSql(String sql) {
-        ObjectMapper objectMapper = new ObjectMapper()
-                .configure(SerializationFeature.FAIL_ON_SELF_REFERENCES, false)
-                .configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
-        try {
-            // Detectar el tipus de consulta
-            if (sql.trim().toUpperCase().startsWith("SELECT")) {
-                // Executar consulta SELECT
-                List<?> result = entityManager.createNativeQuery(sql).getResultList();
-
-                // Convertim els resultats a una estructura JSON adequada
-                List<Object> safeResults = new ArrayList<>();
-                for (Object row : result) {
-                    if (row instanceof Object[]) {
-                        Object[] columns = (Object[]) row;
-                        List<Object> safeRow = new ArrayList<>();
-                        for (Object column : columns) {
-                            if (column instanceof Clob) {
-                                safeRow.add(convertClobToString((Clob) column));
-                            } else {
-                                safeRow.add(column);
-                            }
-                        }
-                        safeResults.add(safeRow);
-                    } else {
-                        safeResults.add(row);
-                    }
-                }
-
-                return objectMapper.writeValueAsString(safeResults);
-            } else {
-                // Executar consulta de modificació (INSERT, UPDATE, DELETE)
-                int rowsAffected = entityManager.createNativeQuery(sql).executeUpdate();
-                return objectMapper.writeValueAsString("Rows affected: " + rowsAffected);
-            }
-        } catch (Exception e) {
-            // Captura d'errors i conversió del missatge a JSON
-            try {
-                return objectMapper.writeValueAsString("Error executant l'SQL: " + e.getMessage());
-            } catch (Exception ex) {
-                return "{\"error\":\"Error serialitzant el missatge d'error: " + ex.getMessage() + "\"}";
-            }
-        }
-
-    }
+//    @Transactional
+//    @Override
+//    public String executeSql(String sql) {
+//        ObjectMapper objectMapper = new ObjectMapper()
+//                .configure(SerializationFeature.FAIL_ON_SELF_REFERENCES, false)
+//                .configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
+//        try {
+//            // Detectar el tipus de consulta
+//            if (sql.trim().toUpperCase().startsWith("SELECT")) {
+//                // Executar consulta SELECT
+//                List<?> result = entityManager.createNativeQuery(sql).getResultList();
+//
+//                // Convertim els resultats a una estructura JSON adequada
+//                List<Object> safeResults = new ArrayList<>();
+//                for (Object row : result) {
+//                    if (row instanceof Object[]) {
+//                        Object[] columns = (Object[]) row;
+//                        List<Object> safeRow = new ArrayList<>();
+//                        for (Object column : columns) {
+//                            if (column instanceof Clob) {
+//                                safeRow.add(convertClobToString((Clob) column));
+//                            } else {
+//                                safeRow.add(column);
+//                            }
+//                        }
+//                        safeResults.add(safeRow);
+//                    } else {
+//                        safeResults.add(row);
+//                    }
+//                }
+//
+//                return objectMapper.writeValueAsString(safeResults);
+//            } else {
+//                // Executar consulta de modificació (INSERT, UPDATE, DELETE)
+//                int rowsAffected = entityManager.createNativeQuery(sql).executeUpdate();
+//                return objectMapper.writeValueAsString("Rows affected: " + rowsAffected);
+//            }
+//        } catch (Exception e) {
+//            // Captura d'errors i conversió del missatge a JSON
+//            try {
+//                return objectMapper.writeValueAsString("Error executant l'SQL: " + e.getMessage());
+//            } catch (Exception ex) {
+//                return "{\"error\":\"Error serialitzant el missatge d'error: " + ex.getMessage() + "\"}";
+//            }
+//        }
+//
+//    }
 
     private String convertClobToString(Clob clob) {
         try {

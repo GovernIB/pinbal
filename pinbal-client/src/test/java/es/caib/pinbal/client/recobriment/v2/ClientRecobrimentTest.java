@@ -34,9 +34,10 @@ public class ClientRecobrimentTest {
     private static final String EXISTING_PROCEDIMENT_CODI = "TEST";
     private static final String EMPTY_PROCEDIMENT_CODI = "BUIT";
     private static final String EXISTING_SERVEI_CODI = "SCDCPAJU";
+    private static final String EXISTING_SERVEI_CODI_PAIS = "SVDDGPRESIDENCIALEGALDOCWS01";
     private static final String EMPTY_SERVEI_CODI = "SCDHPAJU";
     private static final String ENUM_CAMP_CODI = "DatosEspecificos/Solicitud/Titular/Documentacion/Tipo";
-    private static final String PAIS_ENUM_CAMP_CODI = "DatosEspecificos/Solicitud/Titular/DatosPersonales/Nombre";
+    private static final String PAIS_ENUM_CAMP_CODI = "DatosEspecificos/Consulta/Pasaporte/Nacionalidad";
     private static final String PROVINCIA_ENUM_CAMP_CODI = "DatosEspecificos/Solicitud/ProvinciaSolicitud";
     private static final String MUNICIPI_ENUM_CAMP_CODI = "DatosEspecificos/Solicitud/MunicipioSolicitud";
     private static final String FUNCIONARI_NIF = "18225486x";
@@ -191,10 +192,11 @@ public class ClientRecobrimentTest {
 
     @Test
     public void testGetServeisPerProcediment_success() throws IOException {
+        String entitatCodi = EXISTING_ENTITAT_CODI;
         String procedimentCodi = EXISTING_PROCEDIMENT_CODI; // Example procedure code; adjust as needed
 
         // Act
-        List<ServeiBasic> result = clientRecobriment.getServeisPerProcediment(procedimentCodi);
+        List<ServeiBasic> result = clientRecobriment.getServeisPerProcediment(entitatCodi, procedimentCodi);
 
         // Assert
         Assert.assertNotNull("The result list should not be null", result);
@@ -204,10 +206,11 @@ public class ClientRecobrimentTest {
 
     @Test
     public void testGetServeisPerProcediment_ProcedimentNotFound() {
+        String entitatCodi = EXISTING_ENTITAT_CODI;
         String procedimentCodi = "PROC_NO_EXIST"; // Example of a non-existent procedure code
 
         try {
-            clientRecobrimentNoContent.getServeisPerProcediment(procedimentCodi);
+            clientRecobrimentNoContent.getServeisPerProcediment(entitatCodi, procedimentCodi);
             fail("Expected exception not thrown for non-existent procedure");
         } catch (RuntimeException e) {
             assertTrue(e.getMessage().contains("Recurs no trobat"));
@@ -218,10 +221,11 @@ public class ClientRecobrimentTest {
 
     @Test
     public void testGetServeisPerProcediment_EmptyResponse() {
+        String entitatCodi = EXISTING_ENTITAT_CODI;
         String procedimentCodi = EMPTY_PROCEDIMENT_CODI; // Example of a procedure code returning no services
 
         try {
-            List<ServeiBasic> result = clientRecobrimentNoContent.getServeisPerProcediment(procedimentCodi);
+            List<ServeiBasic> result = clientRecobrimentNoContent.getServeisPerProcediment(entitatCodi, procedimentCodi);
             assertNull("The result list should be null for an empty response", result);
         } catch (Exception e) {
             fail("Verification failed for procedure with no services: " + e.getMessage());
@@ -290,7 +294,7 @@ public class ClientRecobrimentTest {
 
     @Test
     public void testGetValorsEnumPais_success() throws IOException {
-        String serveiCodi = EXISTING_SERVEI_CODI; // Example procedure code; adjust as needed
+        String serveiCodi = EXISTING_SERVEI_CODI_PAIS; // Example procedure code; adjust as needed
         String campPath = PAIS_ENUM_CAMP_CODI;
 
         // Act
@@ -371,7 +375,7 @@ public class ClientRecobrimentTest {
     // TESTS peticioSincrona
     // /////////////////////////////////////////////////////////
 
-//    @Test
+    @Test
     public void peticionSincrona_success() throws UniformInterfaceException, ClientHandlerException, IOException {
         String entitatCif = EXISTING_ENTITAT_CIF;
         String procedimentCodi = EXISTING_PROCEDIMENT_CODI;

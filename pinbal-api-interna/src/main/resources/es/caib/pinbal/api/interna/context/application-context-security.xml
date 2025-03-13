@@ -30,7 +30,7 @@
 		<sec:intercept-url pattern="/usuaris" access="ROLE_WS"/>
 		<sec:intercept-url pattern="/usuaris/**" access="ROLE_WS"/>
 		<sec:intercept-url pattern="/api/entitats" access="ROLE_WS"/>
-		<sec:intercept-url pattern="/**" access="ROLE_WS,ROLE_REPORT,ROLE_ADMIN"/>
+		<sec:intercept-url pattern="/**" access="ROLE_WS,ROLE_REPORT"/>
 		<sec:custom-filter position="PRE_AUTH_FILTER" ref="preauthFilter"/>
 		<sec:anonymous/>
 		<sec:session-management session-fixation-protection="none"/>
@@ -54,7 +54,6 @@
 					<bean class="es.caib.pinbal.api.security.RolesBasedMappableAttributesRetriever">
 						<property name="defaultMappableAttributes">
 							<set>
-								<value>PBL_ADMIN</value>
 								<value>PBL_WS</value>
 								<value>PBL_REPORT</value>
 								<value>PBL_REPRES</value>
@@ -67,7 +66,6 @@
 					<bean class="es.caib.pinbal.api.security.RolesBasedAttributes2GrantedAuthoritiesMapper">
 						<property name="baseRoleMapping">
 							<map>
-								<entry key="PBL_ADMIN" value="ROLE_ADMIN"/>
 								<entry key="PBL_WS" value="ROLE_WS"/>
 								<entry key="PBL_REPORT" value="ROLE_REPORT"/>
 								<entry key="PBL_REPRES" value="ROLE_REPRES"/>

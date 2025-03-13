@@ -383,6 +383,7 @@ public class RecobrimentServiceImplTest {
     @Test
     public void testGetServeisByProcediment_Success() throws ProcedimentNotFoundException {
         // Mock data
+        String entitatCodi = "ENT001";
         String procedimentCodi = "PROC001";
         ServeiBasic servei1 = new ServeiBasic("SERV001", "Servei 1", true);
         ServeiBasic servei2 = new ServeiBasic("SERV002", "Servei 2", false);
@@ -391,11 +392,11 @@ public class RecobrimentServiceImplTest {
         mockServeis.add(servei2);
 
         // Mock behavior
-        when(procedimentRepository.findByCodi(procedimentCodi)).thenReturn(new es.caib.pinbal.core.model.Procediment());
+        when(procedimentRepository.findByEntitatCodiAndCodi(entitatCodi, procedimentCodi)).thenReturn(new es.caib.pinbal.core.model.Procediment());
         when(serveiRepository.findServeisClientByProcedimentCodi(procedimentCodi)).thenReturn(mockServeis);
 
         // Call method
-        List<ServeiBasic> serveis = recobrimentServiceImpl.getServeisByProcediment(procedimentCodi);
+        List<ServeiBasic> serveis = recobrimentServiceImpl.getServeisByProcediment(entitatCodi, procedimentCodi);
 
         // Verify results
         Assert.assertNotNull(serveis);
@@ -411,14 +412,15 @@ public class RecobrimentServiceImplTest {
     @Test
     public void testGetServeisByProcediment_NoServeisFound() throws ProcedimentNotFoundException {
         // Mock data
+        String entitatCodi = "ENT001";
         String procedimentCodi = "PROC002";
 
         // Mock behavior
-        when(procedimentRepository.findByCodi(procedimentCodi)).thenReturn(new es.caib.pinbal.core.model.Procediment());
+        when(procedimentRepository.findByEntitatCodiAndCodi(entitatCodi, procedimentCodi)).thenReturn(new es.caib.pinbal.core.model.Procediment());
         when(serveiRepository.findServeisClientByProcedimentCodi(procedimentCodi)).thenReturn(new ArrayList<ServeiBasic>());
 
         // Call method
-        List<ServeiBasic> serveis = recobrimentServiceImpl.getServeisByProcediment(procedimentCodi);
+        List<ServeiBasic> serveis = recobrimentServiceImpl.getServeisByProcediment(entitatCodi, procedimentCodi);
 
         // Verify results
         Assert.assertNotNull(serveis);
@@ -428,13 +430,14 @@ public class RecobrimentServiceImplTest {
     @Test(expected = ProcedimentNotFoundException.class)
     public void testGetServeisByProcediment_ProcedimentNotFoundException() throws ProcedimentNotFoundException {
         // Mock data
+        String entitatCodi = "ENT001";
         String procedimentCodi = "PROC003";
 
         // Mock behavior
-        when(procedimentRepository.findByCodi(procedimentCodi)).thenReturn(null);
+        when(procedimentRepository.findByEntitatCodiAndCodi(entitatCodi, procedimentCodi)).thenReturn(null);
 
         // Call method
-        recobrimentServiceImpl.getServeisByProcediment(procedimentCodi);
+        recobrimentServiceImpl.getServeisByProcediment(entitatCodi, procedimentCodi);
     }
 
     // TESTS getDadesEspecifiques
@@ -516,7 +519,7 @@ public class RecobrimentServiceImplTest {
         when(serveiConfigRepository.findByServei(serveiCodi)).thenReturn(mockServeiConfig);
 
         ServeiCamp mockServeiCamp = Mockito.mock(ServeiCamp.class);
-        when(serveiCampRepository.findByPath(campCodi)).thenReturn(mockServeiCamp);
+        when(serveiCampRepository.findByServeiAndPath(serveiCodi, campCodi)).thenReturn(mockServeiCamp);
 
         Tree<XmlHelper.DadesEspecifiquesNode> arbre = getDadesEspecifiquesNodeTree();
         when(scspHelper.generarArbreDadesEspecifiques(anyString(), Mockito.anyBoolean())).thenReturn(arbre);
@@ -541,7 +544,7 @@ public class RecobrimentServiceImplTest {
         when(serveiConfigRepository.findByServei(serveiCodi)).thenReturn(mockServeiConfig);
 
         ServeiCamp mockServeiCamp = Mockito.mock(ServeiCamp.class);
-        when(serveiCampRepository.findByPath(campCodi)).thenReturn(mockServeiCamp);
+        when(serveiCampRepository.findByServeiAndPath(serveiCodi, campCodi)).thenReturn(mockServeiCamp);
 
         Tree<XmlHelper.DadesEspecifiquesNode> arbre = getDadesEspecifiquesNodeTree();
         when(scspHelper.generarArbreDadesEspecifiques(anyString(), Mockito.anyBoolean())).thenReturn(arbre);
@@ -596,7 +599,7 @@ public class RecobrimentServiceImplTest {
         ServeiConfig mockServeiConfig = Mockito.mock(ServeiConfig.class);
         when(serveiConfigRepository.findByServei(serveiCodi)).thenReturn(mockServeiConfig);
 
-        when(serveiCampRepository.findByPath(campCodi)).thenReturn(null);
+        when(serveiCampRepository.findByServeiAndPath(serveiCodi, campCodi)).thenReturn(null);
 
         recobrimentServiceImpl.getValorsEnumByServei(serveiCodi, campCodi, "ENUM1", "Test");
     }
@@ -611,7 +614,7 @@ public class RecobrimentServiceImplTest {
         when(serveiConfigRepository.findByServei(serveiCodi)).thenReturn(mockServeiConfig);
 
         ServeiCamp mockServeiCamp = Mockito.mock(ServeiCamp.class);
-        when(serveiCampRepository.findByPath(campPath)).thenReturn(mockServeiCamp);
+        when(serveiCampRepository.findByServeiAndPath(serveiCodi, campPath)).thenReturn(mockServeiCamp);
 
         List<Pais> mockPaisos = new ArrayList<>();
         mockPaisos.add(Pais.builder().codi_numeric("01").nom("Andorra").alpha2("AN").build());
@@ -636,7 +639,7 @@ public class RecobrimentServiceImplTest {
         when(serveiConfigRepository.findByServei(serveiCodi)).thenReturn(mockServeiConfig);
 
         ServeiCamp mockServeiCamp = Mockito.mock(ServeiCamp.class);
-        when(serveiCampRepository.findByPath(campPath)).thenReturn(mockServeiCamp);
+        when(serveiCampRepository.findByServeiAndPath(serveiCodi, campPath)).thenReturn(mockServeiCamp);
 
         List<Provincia> mockProvincies = new ArrayList<>();
         mockProvincies.add(Provincia.builder().codi("07").nom("Illes Balears").build());
@@ -662,7 +665,7 @@ public class RecobrimentServiceImplTest {
         when(serveiConfigRepository.findByServei(serveiCodi)).thenReturn(mockServeiConfig);
 
         ServeiCamp mockServeiCamp = Mockito.mock(ServeiCamp.class);
-        when(serveiCampRepository.findByPath(campPath)).thenReturn(mockServeiCamp);
+        when(serveiCampRepository.findByServeiAndPath(serveiCodi, campPath)).thenReturn(mockServeiCamp);
 
         List<Municipi> mockMunicipis = new ArrayList<>();
         mockMunicipis.add(Municipi.builder().codi("07033").nom("Manacor").build());
@@ -689,7 +692,7 @@ public class RecobrimentServiceImplTest {
         when(serveiConfigRepository.findByServei(serveiCodi)).thenReturn(mockServeiConfig);
 
         ServeiCamp mockServeiCamp = Mockito.mock(ServeiCamp.class);
-        when(serveiCampRepository.findByPath(campPath)).thenReturn(mockServeiCamp);
+        when(serveiCampRepository.findByServeiAndPath(serveiCodi, campPath)).thenReturn(mockServeiCamp);
 
         recobrimentServiceImpl.getValorsEnumByServei(serveiCodi, campPath, enumCodi, filtre);
     }
@@ -705,7 +708,7 @@ public class RecobrimentServiceImplTest {
         when(serveiConfigRepository.findByServei(serveiCodi)).thenReturn(mockServeiConfig);
 
         ServeiCamp mockServeiCamp = Mockito.mock(ServeiCamp.class);
-        when(serveiCampRepository.findByPath(campPath)).thenReturn(mockServeiCamp);
+        when(serveiCampRepository.findByServeiAndPath(serveiCodi, campPath)).thenReturn(mockServeiCamp);
 
         recobrimentServiceImpl.getValorsEnumByServei(serveiCodi, campPath, enumCodi, filtre);
     }

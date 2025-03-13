@@ -62,6 +62,6 @@ public interface ServeiCampRepository extends JpaRepository<ServeiCamp, Long> {
 			"   and sc.inicialitzar is true")
 	List<String> findPathInicialitzablesByServei(@Param("servei") String servei);
 
-	ServeiCamp findByPath(String path);
+	ServeiCamp findByServeiAndPath(String servei, String path);
 
 }
