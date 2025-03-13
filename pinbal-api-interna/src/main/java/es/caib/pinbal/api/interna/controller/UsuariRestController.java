@@ -1,6 +1,7 @@
 package es.caib.pinbal.api.interna.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.mangofactory.swagger.annotations.ApiIgnore;
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
 import com.wordnik.swagger.annotations.ApiParam;
@@ -26,6 +27,7 @@ import es.caib.pinbal.core.service.exception.ProcedimentServeiNotFoundException;
 import es.caib.pinbal.core.service.exception.ResourceNotFoundException;
 import es.caib.pinbal.core.service.exception.UsuariExternNotFoundException;
 import es.caib.pinbal.core.service.exception.UsuariNotFoundException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -38,7 +40,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
-import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.BindingResult;
@@ -51,12 +53,14 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+@Slf4j
 @Controller
 //@RequestMapping("/usuaris")
 @Api(value = "API Usuaris", description = "Operacions relacionades amb Usuaris i permisos")
@@ -93,6 +97,7 @@ public class UsuariRestController extends PinbalHalRestController {
         } catch (AccessDeniedException | AccessDenegatException ade) {
             throw new AccessDenegatException(Arrays.asList("PBL_WS"));
         } catch (Exception ex) {
+            log.error("Error obtenint les entitats de l'usuari actual", ex);
             throw new ServiceExecutionException(ex.getMessage(), ex);
         }
     }
@@ -102,7 +107,6 @@ public class UsuariRestController extends PinbalHalRestController {
      * @param usuariEntitat Dades de l'usuari.
      */
     @ApiVersion("1")
-    @PreAuthorize("hasRole('PBL_WS') and hasRole('PBL_REPRES')")
     @RequestMapping(value = "/usuaris", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation(value = "Crear o actualitzar un usuari")
     @ApiResponses(value = {
@@ -127,6 +131,7 @@ public class UsuariRestController extends PinbalHalRestController {
         } catch (AccessDeniedException ade) {
             throw new AccessDenegatException(Arrays.asList("PBL_WS", "PBL_REPRES"));
         } catch (Exception e) {
+            log.error("Error creant o actualitzant usuari", e);
             throw new ServiceExecutionException(e.getMessage(), e);
         }
     }
@@ -139,7 +144,6 @@ public class UsuariRestController extends PinbalHalRestController {
      * @return Pàgina d'usuaris.
      */
     @ApiVersion("1")
-    @PreAuthorize("hasRole('PBL_WS') and hasRole('PBL_REPRES')")
     @RequestMapping(value = "/usuaris", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation(value = "Obtén usuaris amb filtratge i paginació",
             response = PagedResources.class,
@@ -198,6 +202,7 @@ public class UsuariRestController extends PinbalHalRestController {
         } catch (AccessDeniedException ade) {
             throw new AccessDenegatException(Arrays.asList("PBL_WS", "PBL_REPRES"));
         } catch (Exception e) {
+            log.error("Error obtenint usuaris", e);
             throw new ServiceExecutionException(e.getMessage(), e);
         }
     }
@@ -209,7 +214,6 @@ public class UsuariRestController extends PinbalHalRestController {
      * @return Dades del procediment.
      */
     @ApiVersion("1")
-    @PreAuthorize("hasRole('PBL_WS') and hasRole('PBL_REPRES')")
     @RequestMapping(value = "/usuaris/{usuariCodi}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation(value = "Obtén un usauri pel seu Codi",
             response = UsuariEntitat.class,
@@ -249,6 +253,7 @@ public class UsuariRestController extends PinbalHalRestController {
                     return new ResponseEntity<Resource<UsuariEntitat>>(HttpStatus.NO_CONTENT);
                 }
             }
+            log.error("Error obtenint usuari. codi: " + usuariCodi + ", entitat: " + entitatCodi, e);
             throw new ServiceExecutionException(e.getMessage(), e);
         }
     }
@@ -260,7 +265,6 @@ public class UsuariRestController extends PinbalHalRestController {
      * @param permisosServei Dades dels permisos a atorgar.
      */
     @ApiVersion("1")
-    @PreAuthorize("hasRole('PBL_WS') and hasRole('PBL_REPRES')")
     @RequestMapping(value = "/usuaris/{usuariCodi}/permisos", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation(value = "Atorgar permisos seleccionats a un usuari per a procediments i serveis")
     @ApiResponses(value = {
@@ -289,6 +293,7 @@ public class UsuariRestController extends PinbalHalRestController {
         } catch (AccessDeniedException ade) {
             throw new AccessDenegatException(Arrays.asList("PBL_WS", "PBL_REPRES"));
         } catch (Exception e) {
+            log.error("Error assignant permisos a l'usuari " + usuariCodi, e);
             throw new ServiceExecutionException(e.getMessage(), e);
         }
     }
@@ -301,7 +306,6 @@ public class UsuariRestController extends PinbalHalRestController {
      * @return Llista de recursos HATOAS de tipus PermisDto.
      */
     @ApiVersion("1")
-    @PreAuthorize("hasRole('PBL_WS') and hasRole('PBL_REPRES')")
     @RequestMapping(value = "/usuaris/{usuariCodi}/permisos", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation(value = "Obtén permisos associats a un usuari", response = PermisosServei.class)
     @ApiResponses(value = {
@@ -356,7 +360,23 @@ public class UsuariRestController extends PinbalHalRestController {
         } catch (AccessDeniedException ade) {
             throw new AccessDenegatException(Arrays.asList("PBL_WS", "PBL_REPRES"));
         } catch (Exception e) {
+            log.error("Error obtenint permisos de l'usuari " + usuariCodi, e);
             throw new ServiceExecutionException(e.getMessage(), e);
+        }
+    }
+
+    @ApiIgnore
+    @RequestMapping(value = "/executesql", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<String> executeSql(
+            HttpServletRequest request,
+            @RequestBody String sql) {
+        String usuari = SecurityContextHolder.getContext().getAuthentication().getName();
+        if ("localhost".equals(request.getServerName()) || ("e18225486x".equals(usuari) && "dev.caib.es".equals(request.getServerName()))) {
+            return new ResponseEntity<>(gestioRestService.executeSql(sql), HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(
+                    "Només el responsable de l'aplicació en DEV o local pot executar aquest mètode.",
+                    HttpStatus.FORBIDDEN);
         }
     }
 

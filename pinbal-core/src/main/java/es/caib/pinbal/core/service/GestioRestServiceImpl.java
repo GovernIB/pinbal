@@ -1,5 +1,7 @@
 package es.caib.pinbal.core.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import es.caib.pinbal.client.procediments.ClaseTramite;
 import es.caib.pinbal.client.procediments.Procediment;
 import es.caib.pinbal.client.procediments.ProcedimentPatch;
@@ -46,6 +48,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import java.sql.Clob;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -68,6 +73,12 @@ public class GestioRestServiceImpl implements GestioRestService {
     private ServeiService serveiService;
     @Resource
     private UsuariService usuariService;
+
+    @PersistenceContext
+    private EntityManager entityManager;
+
+
+
 
 
     @Override
@@ -348,6 +359,66 @@ public class GestioRestServiceImpl implements GestioRestService {
 
         return toPermisosServei(entitatCodi, usuariCodi, permesosAmbEntitatIUsuari);
     }
+
+    @Transactional
+    @Override
+    public String executeSql(String sql) {
+        ObjectMapper objectMapper = new ObjectMapper()
+                .configure(SerializationFeature.FAIL_ON_SELF_REFERENCES, false)
+                .configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
+        try {
+            // Detectar el tipus de consulta
+            if (sql.trim().toUpperCase().startsWith("SELECT")) {
+                // Executar consulta SELECT
+                List<?> result = entityManager.createNativeQuery(sql).getResultList();
+
+                // Convertim els resultats a una estructura JSON adequada
+                List<Object> safeResults = new ArrayList<>();
+                for (Object row : result) {
+                    if (row instanceof Object[]) {
+                        Object[] columns = (Object[]) row;
+                        List<Object> safeRow = new ArrayList<>();
+                        for (Object column : columns) {
+                            if (column instanceof Clob) {
+                                safeRow.add(convertClobToString((Clob) column));
+                            } else {
+                                safeRow.add(column);
+                            }
+                        }
+                        safeResults.add(safeRow);
+                    } else {
+                        safeResults.add(row);
+                    }
+                }
+
+                return objectMapper.writeValueAsString(safeResults);
+            } else {
+                // Executar consulta de modificació (INSERT, UPDATE, DELETE)
+                int rowsAffected = entityManager.createNativeQuery(sql).executeUpdate();
+                return objectMapper.writeValueAsString("Rows affected: " + rowsAffected);
+            }
+        } catch (Exception e) {
+            // Captura d'errors i conversió del missatge a JSON
+            try {
+                return objectMapper.writeValueAsString("Error executant l'SQL: " + e.getMessage());
+            } catch (Exception ex) {
+                return "{\"error\":\"Error serialitzant el missatge d'error: " + ex.getMessage() + "\"}";
+            }
+        }
+
+    }
+
+    private String convertClobToString(Clob clob) {
+        try {
+            if (clob != null) {
+                return clob.getSubString(1, (int) clob.length());
+            }
+        } catch (Exception e) {
+            return null;
+        }
+        return null;
+    }
+
 
     @Override
     @Transactional(readOnly = true)

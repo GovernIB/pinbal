@@ -1,17 +1,16 @@
 package es.caib.pinbal.api.interna.controller;
 
-import com.fasterxml.jackson.annotation.JsonView;
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
 import com.wordnik.swagger.annotations.ApiParam;
 import com.wordnik.swagger.annotations.ApiResponse;
 import com.wordnik.swagger.annotations.ApiResponses;
 import es.caib.pinbal.api.config.ApiVersion;
-import es.caib.pinbal.client.comu.Vistes;
 import es.caib.pinbal.client.serveis.Servei;
 import es.caib.pinbal.core.dto.apiresponse.ServiceExecutionException;
 import es.caib.pinbal.core.service.GestioRestService;
 import es.caib.pinbal.core.service.exception.AccessDenegatException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -24,7 +23,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -36,6 +34,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+@Slf4j
 @Controller
 //@RequestMapping("/entitats/{entitatCodi}")
 @Api(value = "API Serveis v1", description = "Operacions relacionades amb Serveis")
@@ -53,7 +52,6 @@ public class ServeiRestController extends PinbalHalRestController {
      * @return Pàgina de procediments.
      */
     @ApiVersion("1")
-    @PreAuthorize("hasRole('PBL_WS') and hasRole('PBL_REPRES')")
     @RequestMapping(value = "/serveis", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation(value = "Obtén tots els serveis amb paginació",
             response = PagedResources.class,
@@ -100,6 +98,7 @@ public class ServeiRestController extends PinbalHalRestController {
         } catch (AccessDeniedException ade) {
             throw new AccessDenegatException(Arrays.asList("PBL_WS", "PBL_REPRES"));
         } catch (Exception e) {
+            log.error("Error obtenint serveis", e);
             throw new ServiceExecutionException(e.getMessage(), e);
         }
     }
@@ -110,7 +109,6 @@ public class ServeiRestController extends PinbalHalRestController {
      * @return Dades del servei.
      */
     @ApiVersion("1")
-    @PreAuthorize("hasRole('PBL_WS') and hasRole('PBL_REPRES')")
     @RequestMapping(value = "/serveis/{serveiCodi}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation(value = "Obtén un servei pel seu codi",
             response = Servei.class,
@@ -136,6 +134,7 @@ public class ServeiRestController extends PinbalHalRestController {
         } catch (AccessDeniedException ade) {
             throw new AccessDenegatException(Arrays.asList("PBL_WS", "PBL_REPRES"));
         } catch (Exception e) {
+            log.error("Error obtenint el servei " + serveiCodi, e);
             throw new ServiceExecutionException(e.getMessage(), e);
         }
     }

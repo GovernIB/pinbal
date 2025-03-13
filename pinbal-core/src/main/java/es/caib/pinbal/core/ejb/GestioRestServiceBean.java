@@ -116,6 +116,12 @@ public class GestioRestServiceBean implements GestioRestService {
     }
 
     @Override
+    @RolesAllowed("PBL_ADMIN")
+    public String executeSql(String sql) {
+        return delegate.executeSql(sql);
+    }
+
+    @Override
     @RolesAllowed("PBL_WS")
     public Page<UsuariEntitat> findUsuarisPaginat(String entitatCodi, FiltreUsuaris filtreUsuaris, Pageable pageable) throws EntitatNotFoundException {
         return delegate.findUsuarisPaginat(entitatCodi, filtreUsuaris, pageable);

@@ -60,6 +60,9 @@
 	</login-config>
 
 	<security-role>
+		<role-name>PBL_ADMIN</role-name>
+	</security-role>
+	<security-role>
 		<role-name>PBL_WS</role-name>
 	</security-role>
 	<security-role>

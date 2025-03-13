@@ -162,4 +162,7 @@ public interface GestioRestService {
      */
     @PreAuthorize("hasRole('ROLE_WS') and hasRole('ROLE_REPRES')")
     PermisosServei permisosPerUsuariEntitat(String entitatCodi, String usuariCodi) throws EntitatNotFoundException, UsuariNotFoundException;
+
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    String executeSql(String sql);
 }

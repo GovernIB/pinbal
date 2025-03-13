@@ -73,6 +73,7 @@ public class RecobrimentRestV2Controller extends PinbalHalRestController impleme
 		} catch (AccessDeniedException | AccessDenegatException ade) {
 			throw new AccessDenegatException(Arrays.asList("PBL_WS"));
 		} catch (Exception ex) {
+			log.error("Error obtenint les entitats", ex);
 			throw new ServiceExecutionException(ex.getMessage(), ex);
 		}
 	}
@@ -93,6 +94,7 @@ public class RecobrimentRestV2Controller extends PinbalHalRestController impleme
 		} catch (AccessDeniedException | AccessDenegatException ade) {
 			throw new AccessDenegatException(Arrays.asList("PBL_WS"));
 		} catch (Exception ex) {
+			log.error("Error obtenint els procediments", ex);
 			throw new ServiceExecutionException(ex.getMessage(), ex);
 		}
 	}
@@ -111,6 +113,7 @@ public class RecobrimentRestV2Controller extends PinbalHalRestController impleme
 		} catch (AccessDeniedException | AccessDenegatException ade) {
 			throw new AccessDenegatException(Arrays.asList("PBL_WS"));
 		} catch (Exception ex) {
+			log.error("Error obtenint els serveis", ex);
 			throw new ServiceExecutionException(ex.getMessage(), ex);
 		}
 	}
@@ -129,6 +132,7 @@ public class RecobrimentRestV2Controller extends PinbalHalRestController impleme
 		} catch (AccessDeniedException | AccessDenegatException ade) {
 			throw new AccessDenegatException(Arrays.asList("PBL_WS"));
 		} catch (Exception ex) {
+			log.error("Error obtenint els serveis per entitat", ex);
 			throw new ServiceExecutionException(ex.getMessage(), ex);
 		}
 	}
@@ -147,6 +151,7 @@ public class RecobrimentRestV2Controller extends PinbalHalRestController impleme
 		} catch (AccessDeniedException | AccessDenegatException ade) {
 			throw new AccessDenegatException(Arrays.asList("PBL_WS"));
 		} catch (Exception ex) {
+			log.error("Error obtenint els serveis per procediment", ex);
 			throw new ServiceExecutionException(ex.getMessage(), ex);
 		}
 	}
@@ -168,6 +173,7 @@ public class RecobrimentRestV2Controller extends PinbalHalRestController impleme
 		} catch (AccessDeniedException | AccessDenegatException ade) {
 			throw new AccessDenegatException(Arrays.asList("PBL_WS"));
 		} catch (Exception ex) {
+			log.error("Error obtenint les dades especifiques del servei " + serveiCodi, ex);
 			throw new ServiceExecutionException(ex.getMessage(), ex);
 		}
 	}
@@ -225,6 +231,7 @@ public class RecobrimentRestV2Controller extends PinbalHalRestController impleme
 		} catch (AccessDeniedException | AccessDenegatException ade) {
 			throw new AccessDenegatException(Arrays.asList("PBL_WS"));
 		} catch (Exception ex) {
+			log.error("Error obtenint els valors de l'enumerat " + enumCodi + " del camp " + campCodi + " del servei " + serveiCodi, ex);
 			throw new ServiceExecutionException(ex.getMessage(), ex);
 		}
 	}
@@ -249,6 +256,7 @@ public class RecobrimentRestV2Controller extends PinbalHalRestController impleme
 			PeticioRespostaSincrona respuesta = recobrimentService.peticionSincrona(peticio);
 			return new ResponseEntity<>(respuesta, HttpStatus.OK);
 		} catch (Exception ex) {
+			log.error("Error realitzant petició síncrona al servei " + serveiCodi, ex);
 			throw new ServiceExecutionException(ex.getMessage(), ex);
 		}
 	}
@@ -270,6 +278,7 @@ public class RecobrimentRestV2Controller extends PinbalHalRestController impleme
 			PeticioConfirmacioAsincrona respuesta = recobrimentService.peticionAsincrona(peticio);
 			return new ResponseEntity<>(respuesta, HttpStatus.OK);
 		} catch (Exception ex) {
+			log.error("Error realitzant petició asíncrona al servei " + serveiCodi, ex);
 			throw new ServiceExecutionException(ex.getMessage(), ex);
 		}
 	}
@@ -295,6 +304,7 @@ public class RecobrimentRestV2Controller extends PinbalHalRestController impleme
 		} catch (ConsultaNotFoundException ce) {
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		} catch (Exception ex) {
+			log.error("Error consultat resposta de la petició " + idPeticio, ex);
 			throw new ServiceExecutionException(ex.getMessage(), ex);
 		}
 
@@ -315,6 +325,7 @@ public class RecobrimentRestV2Controller extends PinbalHalRestController impleme
 		} catch (ConsultaNotFoundException ce) {
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		} catch (Exception ex) {
+			log.error("Error obtenint el justificant de la petició " + idPeticio + ", solicitud " + idSolicitud, ex);
 			throw new ServiceExecutionException(ex.getMessage(), ex);
 		}
 	}
@@ -334,6 +345,7 @@ public class RecobrimentRestV2Controller extends PinbalHalRestController impleme
 		} catch (ConsultaNotFoundException ce) {
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		} catch (Exception ex) {
+			log.error("Error obtenint el justificant imprimible de la petició " + idPeticio + ", solicitud " + idSolicitud, ex);
 			throw new ServiceExecutionException(ex.getMessage(), ex);
 		}
 	}
@@ -352,6 +364,7 @@ public class RecobrimentRestV2Controller extends PinbalHalRestController impleme
 		} catch (ConsultaNotFoundException ce) {
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		} catch (Exception ex) {
+			log.error("Error obtenint el csv del justificant de la petició " + idPeticio + ", solicitud " + idSolicitud, ex);
 			throw new ServiceExecutionException(ex.getMessage(), ex);
 		}
 	}
@@ -370,6 +383,7 @@ public class RecobrimentRestV2Controller extends PinbalHalRestController impleme
 		} catch (ConsultaNotFoundException ce) {
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		} catch (Exception ex) {
+			log.error("Error obtenint l'UUID del justificant de la petició " + idPeticio + ", solicitud " + idSolicitud, ex);
 			throw new ServiceExecutionException(ex.getMessage(), ex);
 		}
 	}

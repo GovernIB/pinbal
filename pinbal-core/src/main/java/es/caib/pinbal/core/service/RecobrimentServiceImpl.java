@@ -1060,7 +1060,7 @@ public class RecobrimentServiceImpl implements RecobrimentService, ApplicationCo
         return ProcedimentBasic.builder()
                 .codi(procedimentEntity.getCodi())
                 .nom(procedimentEntity.getNom())
-                .organGestorDir3(procedimentEntity.getOrganGestor().getCodi())
+                .organGestorDir3(procedimentEntity.getOrganGestor() != null ? procedimentEntity.getOrganGestor().getCodi() : null)
                 .actiu(procedimentEntity.isActiu())
                 .build();
     }
