@@ -669,7 +669,7 @@ public class RecobrimentServiceImpl implements RecobrimentService, ApplicationCo
     }
 
     @Override
-    @Cacheable(value = "serveisProcediment", key = "#procedimentCodi")
+    @Cacheable(value = "serveisProcediment", key = "#entitatCodi + ':' + #procedimentCodi")
     @Transactional(readOnly = true)
     public List<ServeiBasic> getServeisByProcediment(String entitatCodi, String procedimentCodi) throws ProcedimentNotFoundException {
         log.debug("Cercant els serveis actius per entitat i procediment (codi=" + procedimentCodi + ", entitat=" + entitatCodi + ")");

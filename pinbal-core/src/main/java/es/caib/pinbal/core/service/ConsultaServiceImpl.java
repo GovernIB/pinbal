@@ -1089,9 +1089,16 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 					accioParams,
 					IntegracioAccioTipusEnumDto.ENVIAMENT,
 					System.currentTimeMillis() - t0);
-			return dtoMappingHelper.getMapperFacade().map(
+			ConsultaDto resposta = dtoMappingHelper.getMapperFacade().map(
 					consulta,
 					ConsultaDto.class);
+			if (resultat.isError()) {
+				// Si la petició ha produit un error ompl els camps per permetre
+				// al recobriment generar el missatge amb informació de l'error.
+				resposta.setRespostaEstadoCodigo(resultat.getErrorCodi());
+				resposta.setRespostaEstadoError(resultat.getErrorDescripcio());
+			}
+			return resposta;
 		} catch (Exception ex) {
 			String errorDescripcio = "Error al obtenir l'estat de la petició corresponent a la consulta (consultaId=" + consultaId + ")";
 			log.error("(estat) " + errorDescripcio + ". idPeticio (" + idPeticion + ")", ex);
@@ -3475,9 +3482,12 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 					System.currentTimeMillis() - t0,
 					error,
 					ex);
-			return dtoMappingHelper.getMapperFacade().map(
+			ConsultaDto resposta = dtoMappingHelper.getMapperFacade().map(
 					saved,
 					ConsultaDto.class);
+			resposta.setRespostaEstadoCodigo("ERROR");
+			resposta.setRespostaEstadoError(error);
+			return resposta;
 		} else {
 			throw ex;
 		}
