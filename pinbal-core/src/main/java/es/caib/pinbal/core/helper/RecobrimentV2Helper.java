@@ -18,6 +18,7 @@ import es.caib.pinbal.client.recobriment.v2.PeticioSincrona;
 import es.caib.pinbal.client.recobriment.v2.Solicitant;
 import es.caib.pinbal.client.recobriment.v2.SolicitudSimple;
 import es.caib.pinbal.core.model.Entitat;
+import es.caib.pinbal.core.model.ServeiCamp;
 import es.caib.pinbal.core.model.ServeiConfig;
 import es.caib.pinbal.core.repository.EntitatRepository;
 import es.caib.pinbal.core.repository.ProcedimentRepository;
@@ -598,7 +599,12 @@ public class RecobrimentV2Helper implements ApplicationContextAware, MessageSour
 											   List<String> pathInicialitzablesByServei) throws ConsultaScspGeneracioException {
 		Map<String, Object> dadesEspecifiquesConverted = new HashMap<>();
 		for (Map.Entry<String, String> entry : dadesEspecifiques.entrySet()) {
-			dadesEspecifiquesConverted.put(entry.getKey(), entry.getValue());
+			String valor = entry.getValue();
+			ServeiCamp camp = serveiCampRepository.findByServeiAndPath(serveiCodi, entry.getKey());
+			if (camp != null && ServeiCamp.ServeiCampTipus.DATA.equals(camp.getTipus()) && camp.getDataFormat() != null && !camp.getDataFormat().isEmpty()) {
+				valor = getDateFormat(valor, camp.getDataFormat());
+			}
+			dadesEspecifiquesConverted.put(entry.getKey(), valor);
 		}
 		return getXmlHelper().crearDadesEspecifiques(
 				servicio,
@@ -608,6 +614,65 @@ public class RecobrimentV2Helper implements ApplicationContextAware, MessageSour
 				pathInicialitzablesByServei,
 				serveiConfig.isAddDadesEspecifiques()
 		);
+	}
+
+//	public String dadesEspecifiquesToJson(Element dadesEspecifiques) {
+//		if (dadesEspecifiques == null) {
+//			return null;
+//		}
+//		try {
+//			Map<String, String> dadesEspecifiquesMap = convertirXMLAMap(dadesEspecifiques, "DatosEspecificos");
+//			ObjectMapper objectMapper = new ObjectMapper();
+//			return objectMapper.writeValueAsString(dadesEspecifiquesMap);
+//		} catch (Exception e) {
+//			log.error("Error converting dadesEspecifiques to JSON", e);
+//			return null;
+//		}
+//	}
+
+	public static final String FORMAT_DEFAULT = "dd/MM/yyyy";
+	public static final String FORMAT2 = "dd-MM-yyyy";
+	public static final String FORMAT3 = "dd/MM/yy";
+	public static final String FORMAT4 = "dd-MM-yy";
+	public static final String FORMAT5 = "yyyy/MM/dd";
+	public static final String FORMAT6 = "yyyy-MM-dd";
+
+	private String getDateFormat(Object dateObj, String format) {
+
+		if (dateObj == null) {
+			return null;
+		}
+
+		SimpleDateFormat sdf = new SimpleDateFormat(format != null ? format: FORMAT_DEFAULT);
+		Date dataDate = null;
+
+		if (dateObj instanceof Date) {
+			dataDate = (Date) dateObj;
+		} else if (dateObj instanceof String) {
+			// Validar format data
+			String dataText = (String) dateObj;
+			try {
+				if (format != null && !format.isEmpty()) {
+					dataDate = parseDate(dataText, FORMAT_DEFAULT, FORMAT2, FORMAT3, FORMAT4, FORMAT5, FORMAT6, format);
+				} else {
+					dataDate = parseDate(dataText, FORMAT_DEFAULT, FORMAT2, FORMAT3, FORMAT4, FORMAT5, FORMAT6);
+				}
+			} catch (Exception ex) {
+				return dataText;
+			}
+		}
+
+		return dataDate != null ? sdf.format(dataDate) : null;
+	}
+
+	private Date parseDate(String dateString, String... formatStrings) {
+		for (String formatString : formatStrings) {
+			try {
+				return new SimpleDateFormat(formatString).parse(dateString);
+			} catch (ParseException e) {
+			}
+		}
+		return null;
 	}
 
 	private XmlHelper getXmlHelper() {

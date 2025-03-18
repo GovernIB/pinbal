@@ -926,6 +926,11 @@ public class ScspHelper {
 			String idPeticion) throws ScspException {
 		ResultatEnviamentPeticio resultat = new ResultatEnviamentPeticio();
 		PeticionRespuesta peticionRespuesta = getPeticionRespuestaDao().select(idPeticion);
+		if (peticionRespuesta == null) {
+			resultat.setErrorRecepcio(true);
+			resultat.setEstatDescripcio("No s'ha pogut obtenir la resposta de la petició amb id " + idPeticion);
+			return resultat;
+		}
 		resultat.setEstatCodi(peticionRespuesta.getEstado());
 		resultat.setErrorRecepcio(!peticionRespuesta.getEstado().startsWith("00"));
 		if (resultat.isErrorRecepcio()) {

@@ -522,7 +522,8 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 			// Si l'estat de la consulta és pendent aleshores voldrà dir que la petició encara no s'ha
 			// enviat i no te sentit refrescar el seu estat.
 			if (consulta.getEstat() != EstatTipus.Pendent) {
-				ResultatEnviamentPeticio resultat = getScspHelper().recuperarResultatEnviamentPeticio(consulta.getScspPeticionId());
+				LoggerHelper.getInstance().info("(estat) Obtenir resultat enviament. ScspPeticionId (" + idPeticion + ")", log, LoggerHelper.LoggingTipus.CONSULTA);
+				ResultatEnviamentPeticio resultat = getScspHelper().recuperarResultatEnviamentPeticio(idPeticion);
 				if (resultat.getIdsSolicituds() != null && resultat.getIdsSolicituds().length > 0) {
 					consulta.updateScspSolicitudId(resultat.getIdsSolicituds()[0]);
 					consultaHelper.propagaCanviConsulta(consulta);
@@ -950,6 +951,14 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 						false,
 						null).
 				build();
+//		conslt.updateDadesEspecifiques(recobrimentV2Helper.dadesEspecifiquesToJson(solicitud.getDadesEspecifiques()));
+		if (solicitud.getDadesEspecifiques() != null) {
+			try {
+				conslt.updateDadesEspecifiques(nodeToJson(solicitud.getDadesEspecifiques()));
+			} catch (Exception e) {
+				log.error("No s'ha pogut generar el json de dades específiques a partir de l'xml.", e);
+			}
+		}
 		Consulta saved = consultaRepository.save(conslt);
 		LoggerHelper.getInstance().info("(init) Consulta desada. idPeticio (" + idPeticion + ")", log, LoggerHelper.LoggingTipus.CONS_REC);
 		consultaHelper.propagaCreacioConsulta(saved);

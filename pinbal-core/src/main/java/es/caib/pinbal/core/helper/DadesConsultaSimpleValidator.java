@@ -123,13 +123,13 @@ public class DadesConsultaSimpleValidator implements Validator {
                 }
                 if (ServeiCampDto.ServeiCampDtoTipus.DATA.equals(camp.getTipus())) {
                     Object dataObj = dadesEspecifiquesValors.get(camp.getPath());
-                    Date dataDate = checkDateFormat(dataObj);
+                    Date dataDate = checkDate(dataObj, camp.getDataFormat());
                     if (dataDate != null) {
                         // Si el format és vàlid comprova les demés validacions
                         ServeiCampDto validacioDataCamp2 = camp.getValidacioDataCmpCamp2();
                         if (validacioDataCamp2 != null) {
                             Object dataObj2 = dadesEspecifiquesValors.get(validacioDataCamp2.getPath());
-                            Date dataDate2 = checkDateFormat(dataObj2);
+                            Date dataDate2 = checkDate(dataObj2, validacioDataCamp2.getDataFormat());
                             if (dataDate2 != null) {
                                 Integer validacioNombre = camp.getValidacioDataCmpNombre();
                                 ServeiCampDto.ServeiCampDtoValidacioOperacio validacioOperacio = camp.getValidacioDataCmpOperacio();
@@ -333,7 +333,7 @@ public class DadesConsultaSimpleValidator implements Validator {
     public static final String FORMAT5 = "yyyy/MM/dd";
     public static final String FORMAT6 = "yyyy-MM-dd";
 
-    private Date checkDateFormat(Object dateObj) {
+    private Date checkDate(Object dateObj, String format) {
         SimpleDateFormat sdf = new SimpleDateFormat(FORMAT_DATA_DADES_ESPECIFIQUES);
         Date dataDate = null;
 
@@ -344,10 +344,11 @@ public class DadesConsultaSimpleValidator implements Validator {
             // Validar format data
             String dataText = (String) dateObj;
             try {
-//                dataDate = sdf.parse(dataText);
-                dataDate = parseDate(dataText, FORMAT_DATA_DADES_ESPECIFIQUES, FORMAT2, FORMAT3, FORMAT4, FORMAT5, FORMAT6);
-                if (!sdf.format(dataDate).equals(dataText)) {
-                    dataDate = null;
+                String[] formats = {format, FORMAT2, FORMAT3, FORMAT4, FORMAT5, FORMAT6};
+                if (format != null && !format.isEmpty()) {
+                    dataDate = parseDate(dataText, FORMAT_DATA_DADES_ESPECIFIQUES, FORMAT2, FORMAT3, FORMAT4, FORMAT5, FORMAT6, format);
+                } else {
+                    dataDate = parseDate(dataText, FORMAT_DATA_DADES_ESPECIFIQUES, FORMAT2, FORMAT3, FORMAT4, FORMAT5, FORMAT6);
                 }
             } catch (Exception ex) {
                 dataDate = null;

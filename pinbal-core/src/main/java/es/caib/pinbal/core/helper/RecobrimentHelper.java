@@ -527,7 +527,7 @@ public class RecobrimentHelper implements ApplicationContextAware, MessageSource
 					"serveiCodi=" + serveiCodi + ", " +
 					"scspId=" + consultaInit.getScspPeticionSolicitudId() + ")");
 			t0 = System.currentTimeMillis();
-			ConsultaDto resposta = consultaService.novaConsultaEstat(
+			ConsultaDto resposta = consultaService.novaConsultaRecobrimentEstat(
 					consultaInit.getId());
 			log.debug("\tpetició SCSP amb optimització fase ESTAT resposta (" +
 					"serveiCodi=" + serveiCodi + ", " +
