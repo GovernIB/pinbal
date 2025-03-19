@@ -23,6 +23,7 @@ import es.caib.pinbal.client.recobriment.model.ScspTransmision;
 import es.caib.pinbal.client.recobriment.model.ScspTransmisionDatos;
 import es.caib.pinbal.client.recobriment.v2.DadaEspecifica;
 import es.caib.pinbal.client.recobriment.v2.DadaTipusEnum;
+import es.caib.pinbal.client.recobriment.v2.EstatEnum;
 import es.caib.pinbal.client.recobriment.v2.PeticioAsincrona;
 import es.caib.pinbal.client.recobriment.v2.PeticioConfirmacioAsincrona;
 import es.caib.pinbal.client.recobriment.v2.PeticioRespostaAsincrona;
@@ -798,7 +799,8 @@ public class RecobrimentServiceImpl implements RecobrimentService, ApplicationCo
                     (peticio != null && peticio.getDadesComunes() != null ? peticio.getDadesComunes().getServeiCodi() : ""), e);
             resposta = PeticioRespostaSincrona.builder()
                     .error(true)
-                    .messageError(e.getMessage())
+                    .missatge(e.getMessage())
+                    .estat(EstatEnum.ERROR)
                     .build();
         }
         return resposta;
@@ -817,7 +819,8 @@ public class RecobrimentServiceImpl implements RecobrimentService, ApplicationCo
                     (peticio != null && peticio.getDadesComunes() != null ? peticio.getDadesComunes().getServeiCodi() : ""), e);
             resposta = PeticioConfirmacioAsincrona.builder()
                     .error(true)
-                    .messageError(e.getMessage())
+                    .missatge(e.getMessage())
+                    .estat(EstatEnum.ERROR)
                     .build();
         }
         return resposta;

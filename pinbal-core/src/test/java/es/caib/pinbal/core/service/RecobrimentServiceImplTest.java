@@ -834,7 +834,7 @@ public class RecobrimentServiceImplTest {
         // Assertions
         Assert.assertNotNull(response);
         Assert.assertFalse(response.isError());
-        Assert.assertNull(response.getMessageError());
+        Assert.assertNull(response.getMissatge());
 //        Assert.assertNotNull(response.getResposta());
     }
 
@@ -861,7 +861,7 @@ public class RecobrimentServiceImplTest {
         // Assertions
         Assert.assertNotNull(response);
         Assert.assertTrue(response.isError());
-        Assert.assertEquals("Validation failed", response.getMessageError());
+        Assert.assertEquals("Validation failed", response.getMissatge());
     }
 
     @Test
@@ -876,7 +876,7 @@ public class RecobrimentServiceImplTest {
         // Assertions
         Assert.assertNotNull(response);
         Assert.assertTrue(response.isError());
-        Assert.assertEquals("Unexpected error", response.getMessageError());
+        Assert.assertEquals("Unexpected error", response.getMissatge());
     }
 
 
@@ -899,7 +899,7 @@ public class RecobrimentServiceImplTest {
         // Assertions
         Assert.assertNotNull(response);
         Assert.assertFalse(response.isError());
-        Assert.assertNull(response.getMessageError());
+        Assert.assertNull(response.getMissatge());
         Assert.assertNotNull(response.getConfirmacioPeticio());
     }
 
@@ -925,7 +925,7 @@ public class RecobrimentServiceImplTest {
         // Assertions
         Assert.assertNotNull(response);
         Assert.assertTrue(response.isError());
-        Assert.assertEquals("Error occurred", response.getMessageError());
+        Assert.assertEquals("Error occurred", response.getMissatge());
     }
 
     @Test
@@ -940,7 +940,7 @@ public class RecobrimentServiceImplTest {
         // Assertions
         Assert.assertNotNull(response);
         Assert.assertTrue(response.isError());
-        Assert.assertEquals("Unexpected exception", response.getMessageError());
+        Assert.assertEquals("Unexpected exception", response.getMissatge());
     }
 
 

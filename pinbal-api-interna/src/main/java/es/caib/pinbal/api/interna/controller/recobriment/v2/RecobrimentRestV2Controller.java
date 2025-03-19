@@ -10,6 +10,7 @@ import es.caib.pinbal.client.procediments.ProcedimentBasic;
 import es.caib.pinbal.client.recobriment.model.ScspJustificante;
 import es.caib.pinbal.client.recobriment.v2.DadaEspecifica;
 import es.caib.pinbal.client.recobriment.v2.Entitat;
+import es.caib.pinbal.client.recobriment.v2.EstatEnum;
 import es.caib.pinbal.client.recobriment.v2.PeticioAsincrona;
 import es.caib.pinbal.client.recobriment.v2.PeticioConfirmacioAsincrona;
 import es.caib.pinbal.client.recobriment.v2.PeticioRespostaAsincrona;
@@ -251,7 +252,8 @@ public class RecobrimentRestV2Controller extends PinbalHalRestController impleme
 				PeticioRespostaSincrona respuesta = PeticioRespostaSincrona.builder()
 						.error(true)
 						.errorsValidacio(errors)
-						.messageError("S'han produït errors en la validació de les dades de la petició.")
+						.estat(EstatEnum.ERROR)
+						.missatge("S'han produït errors en la validació de les dades de la petició.")
 						.build();
 				return new ResponseEntity<>(respuesta, HttpStatus.OK);
 			}
@@ -273,7 +275,8 @@ public class RecobrimentRestV2Controller extends PinbalHalRestController impleme
 				PeticioConfirmacioAsincrona respuesta = PeticioConfirmacioAsincrona.builder()
 						.error(true)
 						.errorsValidacio(errors)
-						.messageError("S'han produït errors en la validació de les dades de la petició.")
+						.estat(EstatEnum.ERROR)
+						.missatge("S'han produït errors en la validació de les dades de la petició.")
 						.build();
 				return new ResponseEntity<>(respuesta, HttpStatus.OK);
 			}
@@ -297,11 +300,6 @@ public class RecobrimentRestV2Controller extends PinbalHalRestController impleme
 			if (resposta == null) {
 				return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 			}
-//			resposta = PeticioRespostaAsincrona.builder()
-//					.error(!resposta.getAtributos().getEstado().getCodigoEstado().startsWith("00"))
-//					.messageError(resposta.getAtributos().getEstado().getLiteralError())
-//					.respostes(resposta)
-//					.build();
 			return new ResponseEntity<>(resposta, HttpStatus.OK);
 		} catch (ConsultaNotFoundException ce) {
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND);

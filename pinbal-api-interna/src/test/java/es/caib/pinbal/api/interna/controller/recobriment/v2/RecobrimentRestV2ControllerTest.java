@@ -493,7 +493,7 @@ public class RecobrimentRestV2ControllerTest {
         PeticioRespostaSincrona resposta = PeticioRespostaSincrona.builder()
                 .error(true)
                 .errorsValidacio(errors)
-                .messageError("S'han produït errors en la validació de les dades de la petició.")
+                .missatge("S'han produït errors en la validació de les dades de la petició.")
                 .build();
 
         when(recobrimentService.validatePeticio(anyString(), eq(peticio))).thenReturn(errors);
@@ -547,7 +547,7 @@ public class RecobrimentRestV2ControllerTest {
         PeticioRespostaAsincrona resposta = PeticioRespostaAsincrona.builder()
                 .error(true)
                 .errorsValidacio(errors)
-                .messageError("S'han produït errors en la validació de les dades de la petició.")
+                .missatge("S'han produït errors en la validació de les dades de la petició.")
                 .build();
 
         when(recobrimentService.validatePeticio(anyString(), eq(peticio))).thenReturn(errors);

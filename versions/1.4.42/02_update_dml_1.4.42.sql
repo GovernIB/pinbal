@@ -1,11 +1,7 @@
 -- #298
 
-INSERT INTO PBL_CONFIG
-("KEY", VALUE, DESCRIPTION_KEY, GROUP_CODE, "POSITION", SOURCE_PROPERTY, TYPE_CODE, LASTMODIFIEDBY_CODI, LASTMODIFIEDDATE)
-VALUES('es.caib.pinbal.tasca.auto.exp.esborrar.monitor', '8', 'propietat.tasca.auto.exp.esborrar.monitor', 'TASQUES', 5, 'DATABASE', 'TEXT', NULL, NULL);
-INSERT INTO PBL_CONFIG
-("KEY", VALUE, DESCRIPTION_KEY, GROUP_CODE, "POSITION", SOURCE_PROPERTY, TYPE_CODE, LASTMODIFIEDBY_CODI, LASTMODIFIEDDATE)
-VALUES('es.caib.pinbal.tasca.auto.exp.esborrar.monitor.dies.antiguitat', '14', 'propietat.tasca.auto.exp.esborrar.monitor.dies.antiguitat', 'TASQUES', 6, 'DATABASE', 'TEXT', NULL, NULL);
+INSERT INTO pbl_config (key, value, description_key, group_code, position, source_property, type_code) VALUES('es.caib.pinbal.tasca.auto.exp.esborrar.monitor', '3600', 'propietat.tasca.auto.exp.esborrar.monitor', 'TASQUES', 5, 'DATABASE', 'TEXT');
+INSERT INTO pbl_config (key, value, description_key, group_code, position, source_property, type_code) VALUES('es.caib.pinbal.tasca.auto.exp.esborrar.monitor.dies.antiguitat', '14', 'propietat.tasca.auto.exp.esborrar.monitor.dies.antiguitat', 'TASQUES', 6, 'DATABASE', 'TEXT');
 
 -- #311
 UPDATE PBL_SERVEI_CAMP SET MIDA = 6;
@@ -20,4 +16,4 @@ INSERT INTO pbl_config (key, value, description_key, group_code, position, sourc
 INSERT INTO pbl_config (key, value, description_key, group_code, position, source_property, type_code) VALUES ('es.caib.pinbal.log.tipus.CONS_REC_MULT', 'false', 'propietat.log.tipus.CONS_REC_MULT', 'LOGS', '4', 'DATABASE', 'BOOL');
 
 -- #335
-INSERT INTO pbl_config (key, value, description_key, group_code, position, source_property, type_code) VALUES ('es.caib.pinbal.tasca.auto.consulta.pendent.repeticio', 'false', 'propietat.tasca.auto.consulta.pendent.repeticio', 'TASQUES', '7', 'DATABASE', 'TEXT');
+INSERT INTO pbl_config (key, value, description_key, group_code, position, source_property, type_code) VALUES ('es.caib.pinbal.tasca.auto.consulta.pendent.repeticio', '10000', 'propietat.tasca.auto.consulta.pendent.repeticio', 'TASQUES', '7', 'DATABASE', 'TEXT');

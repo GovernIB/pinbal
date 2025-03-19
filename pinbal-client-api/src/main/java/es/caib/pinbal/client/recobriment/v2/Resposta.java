@@ -5,17 +5,18 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
-import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 @Data
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
-public class PeticioRespostaAsincrona extends Resposta {
+public abstract class Resposta {
 
-    private Date dataEstimadaResposta;
-    private DadesComunesResposta dadesComunes;
-    private List<PeticioResposta> respostes;
+    protected boolean error;
+    protected String missatge;
+    protected EstatEnum estat;
+    protected Map<String, List<String>> errorsValidacio;
 
 }

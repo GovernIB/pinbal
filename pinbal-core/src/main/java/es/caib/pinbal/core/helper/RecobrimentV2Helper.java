@@ -8,6 +8,7 @@ import es.caib.pinbal.client.recobriment.v2.ConfirmacioPeticio;
 import es.caib.pinbal.client.recobriment.v2.DadesComunes;
 import es.caib.pinbal.client.recobriment.v2.DadesComunesResposta;
 import es.caib.pinbal.client.recobriment.v2.Emisor;
+import es.caib.pinbal.client.recobriment.v2.EstatEnum;
 import es.caib.pinbal.client.recobriment.v2.Funcionari;
 import es.caib.pinbal.client.recobriment.v2.PeticioAsincrona;
 import es.caib.pinbal.client.recobriment.v2.PeticioConfirmacioAsincrona;
@@ -17,9 +18,11 @@ import es.caib.pinbal.client.recobriment.v2.PeticioRespostaSincrona;
 import es.caib.pinbal.client.recobriment.v2.PeticioSincrona;
 import es.caib.pinbal.client.recobriment.v2.Solicitant;
 import es.caib.pinbal.client.recobriment.v2.SolicitudSimple;
+import es.caib.pinbal.core.model.Consulta;
 import es.caib.pinbal.core.model.Entitat;
 import es.caib.pinbal.core.model.ServeiCamp;
 import es.caib.pinbal.core.model.ServeiConfig;
+import es.caib.pinbal.core.repository.ConsultaRepository;
 import es.caib.pinbal.core.repository.EntitatRepository;
 import es.caib.pinbal.core.repository.ProcedimentRepository;
 import es.caib.pinbal.core.repository.ServeiCampRepository;
@@ -97,6 +100,8 @@ public class RecobrimentV2Helper implements ApplicationContextAware, MessageSour
     private EntitatRepository entitatRepository;
     @Autowired
     private ServeiCampRepository serveiCampRepository;
+    @Autowired
+    private ConsultaRepository consultaRepository;
 
 	private XmlHelper xmlHelper;
 
@@ -683,41 +688,98 @@ public class RecobrimentV2Helper implements ApplicationContextAware, MessageSour
 	}
 
 	public PeticioRespostaSincrona toRespostaSincrona(Respuesta scspRespuesta) {
+		if (scspRespuesta == null)
+			return PeticioRespostaSincrona.builder().error(true).missatge("No s'ha pobut recuperar la resposta.").estat(EstatEnum.ERROR).build();
+
 		TransmisionDatos transmisionDatos = null;
-		if (scspRespuesta != null && scspRespuesta.getTransmisiones() != null && scspRespuesta.getTransmisiones().getTransmisionDatos() != null && !scspRespuesta.getTransmisiones().getTransmisionDatos().isEmpty()) {
+		if (scspRespuesta.getTransmisiones() != null && scspRespuesta.getTransmisiones().getTransmisionDatos() != null && !scspRespuesta.getTransmisiones().getTransmisionDatos().isEmpty()) {
 			transmisionDatos = scspRespuesta.getTransmisiones().getTransmisionDatos().get(0);
 		}
+		String msg = scspRespuesta.getAtributos() != null && scspRespuesta.getAtributos().getEstado() != null
+				? scspRespuesta.getAtributos().getEstado().getLiteralError()
+				: null;
+		Consulta consulta = scspRespuesta.getAtributos() != null && scspRespuesta.getAtributos().getIdPeticion() != null
+				? consultaRepository.findByScspPeticionId(scspRespuesta.getAtributos().getIdPeticion())
+				: null;
+		EstatEnum estat = consulta != null && consulta.getEstat() != null
+				? EstatEnum.valorAsEnum(consulta.getEstat().name())
+				: EstatEnum.ERROR;
+		boolean error = consulta != null && consulta.getEstat() != null
+				? EstatEnum.ERROR.equals(estat)
+				: scspRespuesta.getAtributos() == null
+					|| scspRespuesta.getAtributos().getEstado() == null
+					|| scspRespuesta.getAtributos().getEstado().getCodigoEstado() == null
+					|| !scspRespuesta.getAtributos().getEstado().getCodigoEstado().startsWith("00");
+
 		return PeticioRespostaSincrona.builder()
-				.error(!scspRespuesta.getAtributos().getEstado().getCodigoEstado().startsWith("00"))
-				.messageError(scspRespuesta.getAtributos().getEstado().getLiteralError())
-				.dadesComunes(toDadesComunesResposta(scspRespuesta))
-				.resposta(toResposta(transmisionDatos))
-				.build();
+			.error(error)
+			.missatge(msg)
+			.estat(estat)
+			.dadesComunes(toDadesComunesResposta(scspRespuesta))
+			.resposta(toResposta(transmisionDatos))
+			.build();
 	}
 
 	public PeticioConfirmacioAsincrona toConfirmacio(ConfirmacionPeticion resposta) {
-		String errorMsg = resposta.getAtributos().getEstado() != null
+		if (resposta == null)
+			return null;
+
+		String msg = resposta.getAtributos() != null && resposta.getAtributos().getEstado() != null
 				? resposta.getAtributos().getEstado().getLiteralError()
 				: null;
+		Consulta consulta = resposta.getAtributos() != null && resposta.getAtributos().getIdPeticion() != null
+				? consultaRepository.findByScspPeticionId(resposta.getAtributos().getIdPeticion())
+				: null;
+		EstatEnum estat = consulta != null && consulta.getEstat() != null
+				? EstatEnum.valorAsEnum(consulta.getEstat().name())
+				: EstatEnum.ERROR;
+//		boolean error = consulta != null && consulta.getEstat() != null
+//				? EstatEnum.ERROR.equals(estat)
+//				: msg != null && !msg.trim().isEmpty();
+		boolean error = consulta != null && consulta.getEstat() != null
+				? EstatEnum.ERROR.equals(estat)
+				: resposta.getAtributos() == null
+					|| resposta.getAtributos().getEstado() == null
+					|| resposta.getAtributos().getEstado().getCodigoEstado() == null
+					|| !resposta.getAtributos().getEstado().getCodigoEstado().startsWith("00");
+
 		return PeticioConfirmacioAsincrona.builder()
-				.error(errorMsg != null && !errorMsg.trim().isEmpty())
-				.messageError(errorMsg)
+				.error(error)
+				.missatge(msg)
+				.estat(estat)
 				.confirmacioPeticio(toConfirmacioPeticio(resposta))
 				.build();
 	}
 
 	public PeticioRespostaAsincrona toRespostaAsincrona(Respuesta scspRespuesta) {
-		boolean error = scspRespuesta.getAtributos() == null
-				|| scspRespuesta.getAtributos().getEstado() == null
-				|| scspRespuesta.getAtributos().getEstado().getCodigoEstado() == null
-				|| !scspRespuesta.getAtributos().getEstado().getCodigoEstado().startsWith("00");
-		String errorMsg = scspRespuesta.getAtributos() != null && scspRespuesta.getAtributos().getEstado() != null
+
+		Consulta consulta = scspRespuesta.getAtributos() != null && scspRespuesta.getAtributos().getIdPeticion() != null
+				? consultaRepository.findByScspPeticionId(scspRespuesta.getAtributos().getIdPeticion())
+				: null;
+		EstatEnum estat = consulta != null && consulta.getEstat() != null
+				? EstatEnum.valorAsEnum(consulta.getEstat().name())
+				: EstatEnum.ERROR;
+		boolean error = consulta != null && consulta.getEstat() != null
+				? EstatEnum.ERROR.equals(estat)
+				: scspRespuesta.getAtributos() == null
+					|| scspRespuesta.getAtributos().getEstado() == null
+					|| scspRespuesta.getAtributos().getEstado().getCodigoEstado() == null
+					|| !scspRespuesta.getAtributos().getEstado().getCodigoEstado().startsWith("00");
+		String msg = scspRespuesta.getAtributos() != null && scspRespuesta.getAtributos().getEstado() != null
 				? scspRespuesta.getAtributos().getEstado().getLiteralError()
 				: "La resposta SCSP no ha retornat l'estat de la petició.";
+		Date dataEstimadaResposta = EstatEnum.PROCESSANT.equals(estat)
+					&& scspRespuesta.getAtributos() != null
+					&& scspRespuesta.getAtributos().getEstado() != null
+					&& scspRespuesta.getAtributos().getEstado().getTiempoEstimadoRespuesta() != null
+				? calcularDataEstimada(scspRespuesta.getAtributos().getEstado().getTiempoEstimadoRespuesta())
+				: null;
 
 		return PeticioRespostaAsincrona.builder()
 				.error(error)
-				.messageError(errorMsg)
+				.missatge(msg)
+				.estat(estat)
+				.dataEstimadaResposta(dataEstimadaResposta)
 				.dadesComunes(toDadesComunesResposta(scspRespuesta))
 				.respostes(toRespostes(scspRespuesta))
 				.build();

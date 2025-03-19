@@ -1,23 +1,15 @@
 package es.caib.pinbal.client.recobriment.v2;
 
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.util.List;
-import java.util.Map;
+import lombok.experimental.SuperBuilder;
 
 @Data
-@Builder
+@SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
-public class PeticioRespostaSincrona {
-
-    private boolean error;
-    private String messageError;
-    private Map<String, List<String>> errorsValidacio;
-//    private ScspRespuesta respostaScsp;
+public class PeticioRespostaSincrona extends Resposta {
 
     private DadesComunesResposta dadesComunes;
     private PeticioResposta resposta;
