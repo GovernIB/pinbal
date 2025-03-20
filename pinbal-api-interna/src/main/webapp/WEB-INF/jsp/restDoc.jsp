@@ -46,7 +46,8 @@
 
       $("#swagger-ui-container").on("click", ".operation .heading", function(event) {
         event.preventDefault();
-        collapsable = $(this).next(".content:first");
+        event.stopPropagation();
+        collapsable = $(this).closest(".operation").find(".content:first");
         collapsable.slideToggle();
       });
 

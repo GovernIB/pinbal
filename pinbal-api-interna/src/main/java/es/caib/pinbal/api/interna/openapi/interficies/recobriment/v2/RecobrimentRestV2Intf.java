@@ -1,5 +1,6 @@
 package es.caib.pinbal.api.interna.openapi.interficies.recobriment.v2;
 
+import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
 import com.wordnik.swagger.annotations.ApiParam;
 import com.wordnik.swagger.annotations.ApiResponse;
@@ -28,7 +29,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
-@ApiVersion("2")
+@Api(value = "recobrimentV2")
+@ApiVersion("2.0")
 public interface RecobrimentRestV2Intf {
 
     // Obtencio d'entitats
@@ -38,7 +40,8 @@ public interface RecobrimentRestV2Intf {
             notes = "Aquesta operació retorna la llista d'entitats a les que l'usuari autenticat té permís.",
             response = Entitat.class,
             responseContainer = "List",
-            authorizations = @Authorization(value = "basicAuth")
+            authorizations = @Authorization(value = "basicAuth"),
+            tags = "recobrimentV2"
     )
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Entitats obtingudes amb èxit"),
@@ -55,7 +58,8 @@ public interface RecobrimentRestV2Intf {
             notes = "Aquesta operació retorna una llista de procediments disponibles per l'entitat especificada a 'entitatCodi'.",
             response = ProcedimentBasic.class,
             responseContainer = "List",
-            authorizations = @Authorization(value = "basicAuth")
+            authorizations = @Authorization(value = "basicAuth"),
+            tags = "recobrimentV2"
     )
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Procediments obtinguts amb èxit"),
@@ -73,7 +77,8 @@ public interface RecobrimentRestV2Intf {
             notes = "Aquesta operació retorna una llista de serveis disponibles a Pinbal",
             response = Servei.class,
             responseContainer = "List",
-            authorizations = @Authorization(value = "basicAuth")
+            authorizations = @Authorization(value = "basicAuth"),
+            tags = "recobrimentV2"
     )
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Serveis obtinguts amb èxit"),
@@ -87,13 +92,14 @@ public interface RecobrimentRestV2Intf {
             notes = "Aquesta operació retorna una llista dels serveis disponibles a Pinbal d'una entitat",
             response = Servei.class,
             responseContainer = "List",
-            authorizations = @Authorization(value = "basicAuth")
+            authorizations = @Authorization(value = "basicAuth"),
+            tags = "recobrimentV2"
     )
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Serveis obtinguts amb èxit"),
             @ApiResponse(code = 204, message = "No s'han trobat serveis"),
             @ApiResponse(code = 404, message = "Entitat no trobada"),
-            @ApiResponse(code = 500, message = "Error intern del servidor")
+            @ApiResponse(code = 500, message = "Error intern del servidor"),
     })
     @RequestMapping(value = "/entitats/{entitatCodi}/serveis", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     ResponseEntity<List<ServeiBasic>> getServeisPerEntitat(@ApiParam(value = "Codi de l'entitat") @PathVariable("entitatCodi") String entitatCodi);
@@ -102,7 +108,8 @@ public interface RecobrimentRestV2Intf {
             notes = "Aquesta operació retorna una llista de serveis disponibles a Pinbal per un procediment",
             response = Servei.class,
             responseContainer = "List",
-            authorizations = @Authorization(value = "basicAuth")
+            authorizations = @Authorization(value = "basicAuth"),
+            tags = "recobrimentV2"
     )
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Serveis obtinguts amb èxit"),
@@ -121,7 +128,8 @@ public interface RecobrimentRestV2Intf {
             notes = "Aquesta operació retorna lista de camps que son necessaris per emplenar l’apartat de dades específiques de la petició SCSP al servei web final.",
             response = DadaEspecifica.class,
             responseContainer = "List",
-            authorizations = @Authorization(value = "basicAuth")
+            authorizations = @Authorization(value = "basicAuth"),
+            tags = "recobrimentV2"
     )
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Dades específiqeus obtingudes amb èxit"),
@@ -137,7 +145,8 @@ public interface RecobrimentRestV2Intf {
                     "Quan l'enumerat és PAIS o PROVINCIA, com a filtre es pot passar el valor 'CA' o 'ES' per indicar l'idioma amb el qual es volen recuperar els paisos o províncies.",
             response = ValorEnum.class,
             responseContainer = "List",
-            authorizations = @Authorization(value = "basicAuth")
+            authorizations = @Authorization(value = "basicAuth"),
+            tags = "recobrimentV2"
     )
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Valors d'enumerats obtinguts amb èxit"),
@@ -159,7 +168,8 @@ public interface RecobrimentRestV2Intf {
             value = "Realització una consulta síncrona al servei indicat",
     		notes = "Aquesta operació retorna informació dels possilbes errors de validació de les dades o en la consulta, i una entitat de tipus ScspRespuesta que conté la resposta a la consulta en cas d'havers-se realitzat correctament",
             response = PeticioRespostaSincrona.class,
-            authorizations = @Authorization(value = "basicAuth")
+            authorizations = @Authorization(value = "basicAuth"),
+            tags = "recobrimentV2"
     )
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Consulta realitzada. Aquesta pot retornar errors de validació, error en la consulta, o haver-se realitzat correctament"),
@@ -175,7 +185,8 @@ public interface RecobrimentRestV2Intf {
             value = "Realització d'una consulta asíncrona al servei indicat",
             notes = "Aquesta operació retorna informació dels possilbes errors de validació de les dades o en la consulta, i una entitat de tipus ScspConfirmacionPeticion que conté informació de la resposta en cas d'havers-se realitzat correctament",
             response = PeticioConfirmacioAsincrona.class,
-            authorizations = @Authorization(value = "basicAuth")
+            authorizations = @Authorization(value = "basicAuth"),
+            tags = "recobrimentV2"
     )
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Consulta realitzada. Aquesta pot retornar errors de validació, error en la consulta, o haver-se realitzat correctament"),
@@ -195,7 +206,8 @@ public interface RecobrimentRestV2Intf {
             value = "Obtenció del resultat d'una petició asíncrona ja realitzada",
             notes = "Aquesta operació retorna informació de la resposta de la petició asíncrona",
             response = PeticioRespostaAsincrona.class,
-            authorizations = @Authorization(value = "basicAuth")
+            authorizations = @Authorization(value = "basicAuth"),
+            tags = "recobrimentV2"
     )
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Consulta realitzada. Aquesta pot retornar errors de validació, error en la consulta, o haver-se realitzat correctament"),
@@ -211,7 +223,8 @@ public interface RecobrimentRestV2Intf {
             value = "Obtenció del justificant",
             notes = "Obté el justificant de la petició",
             response = ScspJustificante.class,
-            authorizations = @Authorization(value = "basicAuth")
+            authorizations = @Authorization(value = "basicAuth"),
+            tags = "recobrimentV2"
     )
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Justificant obtingut correctament"),
@@ -228,7 +241,8 @@ public interface RecobrimentRestV2Intf {
             value = "Obtenció de la versió imprimible del justificant",
             notes = "Obté la versió imprimible del justificant de la petició",
             response = ScspJustificante.class,
-            authorizations = @Authorization(value = "basicAuth")
+            authorizations = @Authorization(value = "basicAuth"),
+            tags = "recobrimentV2"
     )
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Justificant obtingut correctament"),
@@ -245,7 +259,8 @@ public interface RecobrimentRestV2Intf {
             value = "Obtenció del CSV del justificant",
             notes = "Obté el codi CSV del justificant de la petició a l'arxiu",
             response = String.class,
-            authorizations = @Authorization(value = "basicAuth")
+            authorizations = @Authorization(value = "basicAuth"),
+            tags = "recobrimentV2"
     )
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Justificant obtingut correctament"),
@@ -262,7 +277,8 @@ public interface RecobrimentRestV2Intf {
             value = "Obtenció del UUID del justificant",
             notes = "Obté el codi UUID del justificant de la petició a l'arxiu",
             response = String.class,
-            authorizations = @Authorization(value = "basicAuth")
+            authorizations = @Authorization(value = "basicAuth"),
+            tags = "recobrimentV2"
     )
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Justificant obtingut correctament"),
