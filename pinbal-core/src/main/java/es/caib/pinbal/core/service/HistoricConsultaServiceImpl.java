@@ -1185,7 +1185,8 @@ public class HistoricConsultaServiceImpl implements HistoricConsultaService, App
 				"filtre.titularDocument=" + filtre.getTitularDocument() + ", " +
 				"filtre.usuari=" + filtre.getUsuari() + ", " +
 				"filtre.funcionari=" + filtre.getFuncionari() + ", " +
-				"filtre.recobriment=" + filtre.getRecobriment() + ", ") : "") +
+				"filtre.recobriment=" + filtre.getRecobriment() + ", " +
+				"filtre.multiple=" + filtre.getMultiple() + ", ") : "") +
 				((pageable != null) ? (
 				"paginacio.paginaNum=" + pageable.getPageNumber() + ", " +
 				"paginacio.paginaTamany=" + pageable.getPageSize() + ", ") : "") + ")");
@@ -1215,6 +1216,8 @@ public class HistoricConsultaServiceImpl implements HistoricConsultaService, App
 				filtre.getUsuari(),
 				filtre.getRecobriment() == null,
 				filtre.getRecobriment(),
+				filtre.getMultiple() == null,
+				filtre.getMultiple(),
 				pageable);
 		log.debug("[S_CONS] HistoricConsulta a la base de dades (" + (System.currentTimeMillis() - t0) + " ms)");
 		t0 = System.currentTimeMillis();

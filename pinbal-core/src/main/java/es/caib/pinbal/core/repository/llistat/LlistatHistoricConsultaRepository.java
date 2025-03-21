@@ -96,6 +96,7 @@ public interface LlistatHistoricConsultaRepository extends JpaRepository<Llistat
             "and (:esNullFuncionari = true or (lower(c.funcionariNif) like lower('%'||:funcionari||'%') or lower(c.funcionariNom) like lower('%'||:funcionari||'%'))) " +
             "and (:esNullUsuari = true or c.usuariCodi = :usuari) " +
             "and (:esNullRecobriment = true or c.recobriment = :recobriment) " +
+            "and (:esNullMultiple = true or c.multiple = :multiple) " +
             "and c.pareId is null")
     public Page<LlistatHistoricConsulta> findByFiltrePaginatAdmin(
             @Param("esNullEntitatId") boolean esNullEntitatId,
@@ -122,6 +123,8 @@ public interface LlistatHistoricConsultaRepository extends JpaRepository<Llistat
             @Param("usuari") String usuari,
             @Param("esNullRecobriment") Boolean esNullRecobriment,
             @Param("recobriment") Boolean recobriment,
+            @Param("esNullMultiple") Boolean esNullMultiple,
+            @Param("multiple") Boolean multiple,
             Pageable pageable);
 
 

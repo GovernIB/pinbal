@@ -812,7 +812,7 @@ public class RecobrimentServiceImplTest {
     // /////////////////////////////////////////////////////////
 
     @Test
-    public void testPeticionSincrona_Success() throws ConsultaScspGeneracioException, ScspException {
+    public void testPeticionSincrona_Success() throws Exception {
         // Mocking
         PeticioSincrona mockPeticio = PeticioSincrona.builder().build();
         Respuesta mockRespuesta = new Respuesta();
@@ -839,7 +839,7 @@ public class RecobrimentServiceImplTest {
     }
 
     @Test
-    public void testPeticionSincrona_ValidationError() throws ConsultaScspGeneracioException, ScspException {
+    public void testPeticionSincrona_ValidationError() throws Exception {
         // Mocking
         PeticioSincrona mockPeticio = PeticioSincrona.builder().build();
         Respuesta mockRespuesta = new Respuesta();
@@ -884,7 +884,7 @@ public class RecobrimentServiceImplTest {
     // /////////////////////////////////////////////////////////
 
     @Test
-    public void testPeticionAsincrona_Success() throws ConsultaScspGeneracioException, ScspException {
+    public void testPeticionAsincrona_Success() throws Exception {
         // Mocking
         PeticioAsincrona mockPeticio = PeticioAsincrona.builder().build();
         ConfirmacionPeticion mockConfirmacion = new ConfirmacionPeticion();
@@ -904,7 +904,7 @@ public class RecobrimentServiceImplTest {
     }
 
     @Test
-    public void testPeticionAsincrona_WithError() throws ConsultaScspGeneracioException, ScspException {
+    public void testPeticionAsincrona_WithError() throws Exception {
         // Mocking
         PeticioAsincrona mockPeticio = PeticioAsincrona.builder().build();
         ConfirmacionPeticion confirmacionPeticion = new ConfirmacionPeticion();
@@ -948,7 +948,7 @@ public class RecobrimentServiceImplTest {
     // /////////////////////////////////////////////////////////
 
     @Test
-    public void testGetResposta_Success() throws RecobrimentScspException, ConsultaNotFoundException, ScspException {
+    public void testGetResposta_Success() throws Exception {
         // Mocking
         String idPeticion = "12345";
         Respuesta mockRespuesta = new Respuesta();
@@ -958,7 +958,7 @@ public class RecobrimentServiceImplTest {
         atributos.setEstado(estado);
         mockRespuesta.setAtributos(atributos);
         when(recobrimentHelper.getRespuesta(anyString())).thenReturn(mockRespuesta);
-        when(consultaRepository.findByScspPeticionId(idPeticion)).thenReturn(new Consulta());
+        when(recobrimentV2Helper.getConsultaBypeticioId(idPeticion)).thenReturn(new Consulta());
         when(recobrimentV2Helper.toRespostaAsincrona(any(Respuesta.class))).thenCallRealMethod();
 
         // Call the method
@@ -992,10 +992,10 @@ public class RecobrimentServiceImplTest {
     }
 
     @Test
-    public void testGetResposta_ThrowsException() throws ScspException {
+    public void testGetResposta_ThrowsException() throws Exception {
         // Mocking
         String idPeticion = "12345";
-        when(consultaRepository.findByScspPeticionId(idPeticion)).thenReturn(new Consulta());
+        when(recobrimentV2Helper.getConsultaBypeticioId(idPeticion)).thenReturn(new Consulta());
         when(recobrimentHelper.getRespuesta(anyString())).thenThrow(new ScspException("Unexpected error", "error code"));
 
         // Call the method

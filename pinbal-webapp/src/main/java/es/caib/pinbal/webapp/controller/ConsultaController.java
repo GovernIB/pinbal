@@ -24,10 +24,12 @@ import es.caib.pinbal.core.service.ProcedimentService;
 import es.caib.pinbal.core.service.ServeiService;
 import es.caib.pinbal.core.service.UsuariService;
 import es.caib.pinbal.core.service.exception.AccesExternException;
+import es.caib.pinbal.core.service.exception.AccessDenegatException;
 import es.caib.pinbal.core.service.exception.ConsultaNotFoundException;
 import es.caib.pinbal.core.service.exception.ConsultaScspException;
 import es.caib.pinbal.core.service.exception.EntitatNotFoundException;
 import es.caib.pinbal.core.service.exception.FileTypeException;
+import es.caib.pinbal.core.service.exception.JustificantGeneracioException;
 import es.caib.pinbal.core.service.exception.ProcedimentNotFoundException;
 import es.caib.pinbal.core.service.exception.ProcedimentServeiNotFoundException;
 import es.caib.pinbal.core.service.exception.ScspException;
@@ -96,6 +98,7 @@ import java.nio.file.Path;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -499,6 +502,25 @@ public class ConsultaController extends BaseController {
 			AlertHelper.error(request, getMessage(request, "comu.error.no.entitat"));
 			return "redirect:../../index";
 		}
+	}
+
+	@RequestMapping(value = "/{consultaId}/justificant/inline", method = RequestMethod.GET)
+	public void justificantInline(
+			HttpServletRequest request,
+			HttpServletResponse response,
+			@PathVariable Long consultaId,
+			Model model) throws Exception {
+		if (!EntitatHelper.isDelegatEntitatActual(request)) {
+			throw new AccessDenegatException(Arrays.asList("Delegat"));
+		}
+		if (EntitatHelper.getEntitatActual(request, entitatService) == null)
+			throw new EntitatNotFoundException("Actual");
+
+		JustificantDto justificant = getJustificant(consultaId, isHistoric(request));
+		if (justificant.isError()) {
+			throw new JustificantGeneracioException();
+		}
+		writeEmbeddedPdfToResponse(justificant.getNom(), justificant.getContingut(), response);
 	}
 
 	@RequestMapping(value = "/{consultaId}/justificant/previsualitzacio", method = RequestMethod.GET)

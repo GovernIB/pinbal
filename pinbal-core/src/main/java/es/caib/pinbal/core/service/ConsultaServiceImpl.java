@@ -3108,20 +3108,21 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 		log.debug("Consulta de peticions findByFiltrePaginat (" +
 				((filtre != null) ? (
 						"filtre.entitatId=" + filtre.getEntitatId() + ", " +
-								"filtre.scspPeticionId=" + filtre.getScspPeticionId() + ", " +
-								"filtre.procedimentId=" + filtre.getProcedimentId() + ", " +
-								"filtre.serveiCodi=" + filtre.getServeiCodi() + ", " +
-								"filtre.estat=" + filtre.getEstat() + ", " +
-								"filtre.dataInici=" + filtre.getDataInici() + ", " +
-								"filtre.dataFi=" + filtre.getDataFi() + ", " +
-								"filtre.titularNom=" + filtre.getTitularNom() + ", " +
-								"filtre.titularDocument=" + filtre.getTitularDocument() + ", " +
-								"filtre.usuari=" + filtre.getUsuari() + ", " +
-								"filtre.funcionari=" + filtre.getFuncionari() + ", " +
-								"filtre.recobriment=" + filtre.getRecobriment() + ", ") : "") +
+						"filtre.scspPeticionId=" + filtre.getScspPeticionId() + ", " +
+						"filtre.procedimentId=" + filtre.getProcedimentId() + ", " +
+						"filtre.serveiCodi=" + filtre.getServeiCodi() + ", " +
+						"filtre.estat=" + filtre.getEstat() + ", " +
+						"filtre.dataInici=" + filtre.getDataInici() + ", " +
+						"filtre.dataFi=" + filtre.getDataFi() + ", " +
+						"filtre.titularNom=" + filtre.getTitularNom() + ", " +
+						"filtre.titularDocument=" + filtre.getTitularDocument() + ", " +
+						"filtre.usuari=" + filtre.getUsuari() + ", " +
+						"filtre.funcionari=" + filtre.getFuncionari() + ", " +
+						"filtre.recobriment=" + filtre.getRecobriment() + ", " +
+						"filtre.multiple=" + filtre.getMultiple() + ", ") : "" ) +
 				((pageable != null) ? (
 						"paginacio.paginaNum=" + pageable.getPageNumber() + ", " +
-								"paginacio.paginaTamany=" + pageable.getPageSize() + ", ") : "") + ")");
+						"paginacio.paginaTamany=" + pageable.getPageSize() + ", ") : "") + ")");
 		long t0 = System.currentTimeMillis();
 		Page<LlistatConsulta> paginaConsultes = llistatConsultaRepository.findByFiltrePaginatAdmin(
 				filtre.getEntitatId() == null,
@@ -3148,6 +3149,8 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 				filtre.getUsuari(),
 				filtre.getRecobriment() == null,
 				filtre.getRecobriment(),
+				filtre.getMultiple() == null,
+				filtre.getMultiple(),
 				pageable);
 		log.debug("[S_CONS] Consulta a la base de dades (" + (System.currentTimeMillis() - t0) + " ms)");
 		t0 = System.currentTimeMillis();

@@ -938,7 +938,7 @@ public class RecobrimentServiceImpl implements RecobrimentService, ApplicationCo
     @Override
     public PeticioRespostaAsincrona getResposta(String idPeticion) throws RecobrimentScspException, ConsultaNotFoundException {
         try {
-            Consulta consulta = consultaRepository.findByScspPeticionId(idPeticion);
+            Consulta consulta = recobrimentV2Helper.getConsultaBypeticioId(idPeticion);
             if (consulta == null) {
                 throw new ConsultaNotFoundException();
             }

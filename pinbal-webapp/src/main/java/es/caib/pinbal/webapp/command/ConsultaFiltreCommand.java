@@ -3,17 +3,15 @@
  */
 package es.caib.pinbal.webapp.command;
 
-import java.util.Date;
-
-import javax.validation.constraints.Size;
-
+import es.caib.pinbal.core.dto.ConsultaDto.EstatTipus;
+import es.caib.pinbal.core.dto.ConsultaFiltreDto;
 import es.caib.pinbal.webapp.helper.CommandMappingHelper;
+import lombok.Data;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
-import es.caib.pinbal.core.dto.ConsultaDto.EstatTipus;
-import es.caib.pinbal.core.dto.ConsultaFiltreDto;
-import lombok.Data;
+import javax.validation.constraints.Size;
+import java.util.Date;
 
 /**
  * Command per a filtrar les consultes.
@@ -36,6 +34,7 @@ public class ConsultaFiltreCommand {
 	private String usuari;
 	private Long entitatId;
 	private Boolean recobriment;
+	private Boolean multiple;
 
 	public ConsultaFiltreCommand() {
 		super();

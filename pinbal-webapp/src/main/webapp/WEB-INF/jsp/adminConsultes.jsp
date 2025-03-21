@@ -142,6 +142,14 @@
 									 optionTextKeyAttribute="valor"
 									 emptyOption="true"/>
 				</div>
+				<div class="col-md-3">
+					<pbl:inputSelect name="multiple" inline="true"
+									 placeholderKey="admin.consulta.list.filtre.tipus"
+									 optionItems="${tipus}"
+									 optionValueAttribute="codi"
+									 optionTextKeyAttribute="valor"
+									 emptyOption="true"/>
+				</div>
 				<div class="col-md-2 pull-right">
 					<div class="pull-right">
 						<button id="netejar-filtre" class="btn btn-default" type="button"><spring:message code="comu.boto.netejar"/></button>

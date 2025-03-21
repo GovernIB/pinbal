@@ -161,7 +161,7 @@ $(document).ready(function () {
 						<legend><spring:message code="consulta.form.dades.generiques"/>						
 							<c:if test="${consulta.hiHaPeticio}">
 								<c:set var="initModalXml">initModalXml(this);return false</c:set>
-								<a class="btn btn-default pull-right" href="<c:url value="/modal/admin/consulta/${consulta.id}/xmlPeticio"/>" onclick="${initModalXml}">
+								<a class="btn btn-default pull-right" style="top: -4px; position: relative;" href="<c:url value="/modal/admin/consulta/${consulta.id}/xmlPeticio"/>" onclick="${initModalXml}">
 									<i class="fas fa-info-circle"></i> <spring:message code="admin.consulta.info.veure.xml"/>
 									<c:if test="${consulta.peticioGenerada}"><spring:message code="admin.consulta.info.veure.xml.autogenerat"/></c:if>
 								</a>
@@ -335,35 +335,35 @@ $(document).ready(function () {
 		<div class="tab-pane" id="dadesRespostaTab" role="tabpanel">
 			<c:if test="${consulta.hiHaResposta}">
 			<div class="well well-sm">
-				<div class="row">
-					<div class="col-xs-8">
-						<h3><spring:message code="admin.consulta.info.resposta.dades"/></h3>
-					</div>
-					<div class="col-xs-2 mt15 pull-right">
+				<fieldset>
+					<legend><spring:message code="admin.consulta.info.resposta.dades"/>
 						<c:set var="initModalXml">initModalXml(this);return false</c:set>
-						<a class="btn btn-default pull-right" href="<c:url value="/modal/admin/consulta/${consulta.id}/xmlResposta"/>" onclick="${initModalXml}"><i class="fas fa-info-circle"></i> <spring:message code="admin.consulta.info.veure.xml"/></a>
+						<a class="btn btn-default pull-right" style="top: -4px; position: relative;" href="<c:url value="/modal/admin/consulta/${consulta.id}/xmlResposta"/>" onclick="${initModalXml}">
+							<i class="fas fa-info-circle"></i> <spring:message code="admin.consulta.info.veure.xml"/>
+						</a>
+					</legend>
+					<div class="clearfix legend-margin-bottom"></div>
+					<c:if test="${not empty consulta.respostaData}">
+					<div id="dadesResposta">
+						<p>
+							<spring:message code="admin.consulta.info.resposta.rebuda.dia"/>
+							<fmt:formatDate pattern="dd/MM/yyyy" value="${consulta.respostaData}"/>
+							<spring:message code="admin.consulta.info.resposta.rebuda.ales"/>
+							<fmt:formatDate pattern="HH:mm:ss" value="${consulta.respostaData}"/>
+						</p>
 					</div>
-				</div>
-				<c:if test="${not empty consulta.respostaData}">
-				<div id="dadesResposta">
-					<p>
-						<spring:message code="admin.consulta.info.resposta.rebuda.dia"/>
-						<fmt:formatDate pattern="dd/MM/yyyy" value="${consulta.respostaData}"/>
-						<spring:message code="admin.consulta.info.resposta.rebuda.ales"/>
-						<fmt:formatDate pattern="HH:mm:ss" value="${consulta.respostaData}"/>
-					</p>
-				</div>
-				</c:if>
-				<c:if test="${not empty dadesResposta}">
-					<div id="arbreDadesResposta">
-						<c:if test="${not empty dadesResposta.fills}">
-							<c:set var="fills" value="${dadesResposta.fills}" scope="request"/>
-							<jsp:include page="import/renderFills.jsp" >
-								<jsp:param name="margin" value="20" />
-							</jsp:include>
-						</c:if>
-					</div>
-				</c:if>
+					</c:if>
+					<c:if test="${not empty dadesResposta}">
+						<div id="arbreDadesResposta">
+							<c:if test="${not empty dadesResposta.fills}">
+								<c:set var="fills" value="${dadesResposta.fills}" scope="request"/>
+								<jsp:include page="import/renderFills.jsp" >
+									<jsp:param name="margin" value="20" />
+								</jsp:include>
+							</c:if>
+						</div>
+					</c:if>
+				</fieldset>
 			</div>
 			</c:if>
 		</div>
@@ -371,61 +371,91 @@ $(document).ready(function () {
 		
 		<!-- JUSTIFICANTS TAB -->
 		<div class="tab-pane" id="descarregaJustificantsTab" role="tabpanel">
-			<c:if test="${consulta.justificantEstatOk or (consulta.estatTramitada && consulta.justificantEstatPendent)}">
-				<div class="well well-sm">
-					<h3>
-						<spring:message code="consulta.info.descarregar.justificant"/>
-						<a href="${consulta.id}/justificant" class="pull-right" style="color:black;margin-right: 5px;">
-							<i class="far fa-file-pdf"></i>
-						</a>			
-						<c:if test="${not empty consulta.arxiuDocumentUuid}">
-							<div class="well well-sm">
-								<h3>
-									<spring:message code="consulta.info.descarregar.justificant.consultaArxiuDigital"/>
-									<a id="justificantInfo" class="pull-right" data-target="#modal-justificant-arxiu-info" data-toggle="modal" style="cursor:pointer; padding-right: 10px; text-decoration: none;">
-										<span class="label label-info" style="font-size: 11px;">ARXIU</span>
-									</a>
-								</h3>
+			<div class="well well-sm">
+				<fieldset>
+					<legend><spring:message code="consulta.info.descarregar.justificant.etiqueta"/></legend>
+
+					<c:if test="${consulta.justificantEstatError}">
+						<div class="row">
+							<div class="col-md-12">
+								<strong><spring:message code="consulta.info.descarregar.justificant"/></strong>
+								<div class="dropdown pull-right">
+									<a class="btn btn-default dropdown-toggle" data-toggle="dropdown" href="#"><i class="icon-"><img src="<c:url value="/img/error_icon.png"/>" title="<spring:message code="consulta.list.taula.justif.error"/>" alt="<spring:message code="consulta.list.taula.justif.error"/>"/></i>&nbsp;&nbsp;<span class="caret"></span></a>
+									<ul class="dropdown-menu">
+										<li>
+											<a href="#" data-toggle="modal" data-target="#modal-justificant-error">
+												<i class="fas fa-exclamation-triangle"></i>&nbsp;<spring:message code="consulta.list.taula.justif.error.veure"/>
+											</a>
+										</li>
+										<li>
+											<a href="../admin/consulta/${consulta.id}/justificantReintentar?info=true" class="justificant-reintentar">
+												<i class="fas fa-redo-alt"></i>&nbsp;<spring:message code="consulta.list.taula.justif.error.reintentar"/>
+											</a>
+										</li>
+									</ul>
+								</div>
 							</div>
-						</c:if>								
-					</h3>
-				</div>				
-			</c:if>			
-			<c:if test="${consulta.justificantEstatOk or (consulta.estatTramitada && consulta.justificantEstatPendent)}">
-				<div class="well well-sm">
-					<h3>
-						<spring:message code="consulta.info.descarregar.justificant.vistaPrevia"/>
-					</h3>
-					<div class="well">
-						<object data="${consulta.id}/justificant" type="application/pdf">					                    
-						    <embed src="${consulta.id}/justificant" width="600" height="500" alt="pdf" pluginspage="http://www.adobe.com/products/acrobat/readstep2.html">
-						</object>					
-					</div>
-				</div>
-			</c:if>			
-			<c:if test="${consulta.justificantEstatError}">
-				<div class="well">
-					<h3>
-						<spring:message code="consulta.info.descarregar.justificant"/>
-						<div class="dropdown pull-right">
-							<a class="btn btn-default dropdown-toggle" data-toggle="dropdown" href="#"><i class="icon-"><img src="<c:url value="/img/error_icon.png"/>" title="<spring:message code="consulta.list.taula.justif.error"/>" alt="<spring:message code="consulta.list.taula.justif.error"/>"/></i>&nbsp;&nbsp;<span class="caret"></span></a>
-							<ul class="dropdown-menu">
-								<li>
-									<a href="#" data-toggle="modal" data-target="#modal-justificant-error">
-										<i class="fas fa-exclamation-triangle"></i>&nbsp;<spring:message code="consulta.list.taula.justif.error.veure"/>
-									</a>
-								</li>
-								<li>
-									<a href="../admin/consulta/${consulta.id}/justificantReintentar?info=true" class="justificant-reintentar">
-										<i class="fas fa-redo-alt"></i>&nbsp;<spring:message code="consulta.list.taula.justif.error.reintentar"/>
-									</a>
-								</li>
-							</ul>
+							<div class="col-md-12">
+								<span style="color:#a94442; font-size: smaller;"><i class="fas fa-exclamation-triangle"></i>&nbsp;<spring:message code="consulta.info.errors.justificant"/></span>
+							</div>
 						</div>
-					</h3>
-					<span style="color:red"><i class="icon-warning-sign"></i>&nbsp;<spring:message code="consulta.info.errors.justificant"/></span>
-				</div>
-			</c:if>
+					</c:if>
+
+					<c:if test="${consulta.justificantEstatOk or (consulta.estatTramitada && consulta.justificantEstatPendent)}">
+						<div class="row">
+							<div class="col-md-12">
+								<strong><spring:message code="consulta.info.descarregar.justificant"/></strong>
+								<a href="${consulta.id}/justificant" class="btn btn-default pull-right" style="width: 120px;">
+									<i class="far fa-file-pdf"></i> <spring:message code="comu.boto.descarregar"/>
+								</a>
+							</div>
+						</div>
+						<c:if test="${not empty consulta.arxiuDocumentUuid}">
+							<div class="row">
+								<div class="col-md-12">
+									<strong><spring:message code="consulta.info.descarregar.justificant.consultaArxiuDigital"/></strong>
+									<a id="justificantInfo" class="btn btn-default pull-right" data-target="#modal-justificant-arxiu-info" data-toggle="modal" style="cursor:pointer; padding-right: 10px; text-decoration: none; width: 120px;">
+										<i class="fas fa-info-circle"></i> Info ARXIU
+									</a>
+								</div>
+							</div>
+						</c:if>
+
+						<div class="row">
+							<div class="col-md-12">
+								<legend>
+									<spring:message code="consulta.info.descarregar.justificant.vistaPrevia"/>
+								</legend>
+								<div id="pdf-container" class="well">
+									<object id="pdfObject"
+											data="${consulta.id}/justificant/inline"
+											type="application/pdf"
+											width="100%" height="500px">
+									</object>
+								</div>
+								<div id="error-container" style="display: none; color: #a94442; font-size: smaller;">
+									<i class="fas fa-exclamation-triangle"></i> Error: No s'ha pogut carregar el document PDF.
+								</div>
+							</div>
+						</div>
+
+						<script>
+							document.addEventListener('DOMContentLoaded', function () {
+								const pdfObject = document.getElementById('pdfObject');
+								const errorContainer = document.getElementById('error-container');
+								const pdfContainer = document.getElementById('pdf-container');
+
+								// Verificar si el PDF es carrega
+								pdfObject.onerror = function () {
+									// Mostrar missatge d'error
+									errorContainer.style.display = 'block';
+									pdfContainer.style.display = 'none';
+								};
+							});
+						</script>
+					</c:if>
+				</fieldset>
+			</div>
 		</div>
 		<!-- FI JUSTIFICANTS TAB -->
 	
@@ -433,7 +463,14 @@ $(document).ready(function () {
 	<!-- FI DEFINICIO DEL CONTINGUT DE LES TABS -->
 	
 	<div id="modal-botons" class="well">
-		<a href="<c:url value="/admin/consulta"/>" class="btn btn-default" data-modal-cancel="true"><spring:message code="comu.boto.tancar"/></a>
+		<c:choose>
+			<c:when test="${not empty consulta.pareId}">
+				<a href="<c:url value="/consulta/multiple/${consulta.pareId}"/>" class="btn btn-default" data-modal-cancel="true"><spring:message code="comu.boto.tancar"/></a>
+			</c:when>
+			<c:otherwise>
+				<a href="<c:url value="/admin/consulta"/>" class="btn btn-default" data-modal-cancel="true"><spring:message code="comu.boto.tancar"/></a>
+			</c:otherwise>
+		</c:choose>
 	</div>
 	<div id="modal-missatge-xml" class="modal fade">
 		<div class="modal-dialog modal-lg">

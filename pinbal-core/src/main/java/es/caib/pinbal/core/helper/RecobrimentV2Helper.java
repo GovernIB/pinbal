@@ -687,7 +687,7 @@ public class RecobrimentV2Helper implements ApplicationContextAware, MessageSour
 		return xmlHelper;
 	}
 
-	public PeticioRespostaSincrona toRespostaSincrona(Respuesta scspRespuesta) {
+	public PeticioRespostaSincrona toRespostaSincrona(Respuesta scspRespuesta) throws Exception {
 		if (scspRespuesta == null)
 			return PeticioRespostaSincrona.builder().error(true).missatge("No s'ha pobut recuperar la resposta.").estat(EstatEnum.ERROR).build();
 
@@ -699,7 +699,7 @@ public class RecobrimentV2Helper implements ApplicationContextAware, MessageSour
 				? scspRespuesta.getAtributos().getEstado().getLiteralError()
 				: null;
 		Consulta consulta = scspRespuesta.getAtributos() != null && scspRespuesta.getAtributos().getIdPeticion() != null
-				? consultaRepository.findByScspPeticionId(scspRespuesta.getAtributos().getIdPeticion())
+				? getConsultaSimpleBypeticioId(scspRespuesta.getAtributos().getIdPeticion())
 				: null;
 		EstatEnum estat = consulta != null && consulta.getEstat() != null
 				? EstatEnum.valorAsEnum(consulta.getEstat().name())
@@ -720,7 +720,7 @@ public class RecobrimentV2Helper implements ApplicationContextAware, MessageSour
 			.build();
 	}
 
-	public PeticioConfirmacioAsincrona toConfirmacio(ConfirmacionPeticion resposta) {
+	public PeticioConfirmacioAsincrona toConfirmacio(ConfirmacionPeticion resposta) throws Exception {
 		if (resposta == null)
 			return null;
 
@@ -728,7 +728,7 @@ public class RecobrimentV2Helper implements ApplicationContextAware, MessageSour
 				? resposta.getAtributos().getEstado().getLiteralError()
 				: null;
 		Consulta consulta = resposta.getAtributos() != null && resposta.getAtributos().getIdPeticion() != null
-				? consultaRepository.findByScspPeticionId(resposta.getAtributos().getIdPeticion())
+				? getConsultaBypeticioId(resposta.getAtributos().getIdPeticion())
 				: null;
 		EstatEnum estat = consulta != null && consulta.getEstat() != null
 				? EstatEnum.valorAsEnum(consulta.getEstat().name())
@@ -751,10 +751,10 @@ public class RecobrimentV2Helper implements ApplicationContextAware, MessageSour
 				.build();
 	}
 
-	public PeticioRespostaAsincrona toRespostaAsincrona(Respuesta scspRespuesta) {
+	public PeticioRespostaAsincrona toRespostaAsincrona(Respuesta scspRespuesta) throws Exception {
 
 		Consulta consulta = scspRespuesta.getAtributos() != null && scspRespuesta.getAtributos().getIdPeticion() != null
-				? consultaRepository.findByScspPeticionId(scspRespuesta.getAtributos().getIdPeticion())
+				? getConsultaBypeticioId(scspRespuesta.getAtributos().getIdPeticion())
 				: null;
 		EstatEnum estat = consulta != null && consulta.getEstat() != null
 				? EstatEnum.valorAsEnum(consulta.getEstat().name())
@@ -830,6 +830,45 @@ public class RecobrimentV2Helper implements ApplicationContextAware, MessageSour
 			}
 		}
 		return dadesComunes;
+	}
+
+	// Obtenim la consulta per el seu id de petició.
+	// Aquesta consulta pot ser simple o múltiple
+	public Consulta getConsultaBypeticioId(String idPeticio) throws Exception {
+		// Obtenim la consulta múltiple
+		Consulta consulta = consultaRepository.findByScspPeticionIdAndMultipleIsTrue(idPeticio);
+		if (consulta != null)
+			return consulta;
+
+		// Si no hem obtingut una consulta múltiple, llavors ha de ser una consulta simple
+		List<Consulta> consultes = consultaRepository.findByScspPeticionId(idPeticio);
+
+		if (consultes == null || consultes.isEmpty())
+			return null;
+
+		// Si hi ha més d'una consulta amb el matiex idPeticio, i cap és múltiple, és que hi ha un problema
+		if (consultes.size() > 1)
+			throw new RuntimeException("S'han trobat múltiples consultes simples amb el mateix id de petició");
+
+		// És una consulta simple
+		return consultes.get(0);
+	}
+
+	// Obtenim la consulta simple per el seu id de petició.
+	public Consulta getConsultaSimpleBypeticioId(String idPeticio) throws Exception {
+		// Obtenim totes les consultes amb idPeticio.
+		// Si és una consulta simple, només ni hauria d'haver una
+		List<Consulta> consultes = consultaRepository.findByScspPeticionId(idPeticio);
+
+		if (consultes == null || consultes.isEmpty())
+			return null;
+
+		// Si hi ha més d'una consulta amb el matiex idPeticio, és qeu és múltiple o hi ha un problema
+		if (consultes.size() > 1) {
+			throw new RuntimeException("S'han trobat múltiples consultes amb el mateix id de petició");
+		}
+
+		return consultes.get(0);
 	}
 
 	private List<PeticioResposta> toRespostes(Respuesta scspRespuesta) {

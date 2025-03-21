@@ -3,13 +3,9 @@
  */
 package es.caib.pinbal.webapp.controller;
 
-import java.io.IOException;
-import java.util.Locale;
-
-import javax.activation.MimetypesFileTypeMap;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
+import es.caib.pinbal.webapp.common.AlertHelper;
+import es.caib.pinbal.webapp.helper.AjaxHelper;
+import es.caib.pinbal.webapp.helper.ModalHelper;
 import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.context.MessageSource;
 import org.springframework.context.MessageSourceAware;
@@ -17,9 +13,11 @@ import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.servlet.support.RequestContext;
 
-import es.caib.pinbal.webapp.common.AlertHelper;
-import es.caib.pinbal.webapp.helper.AjaxHelper;
-import es.caib.pinbal.webapp.helper.ModalHelper;
+import javax.activation.MimetypesFileTypeMap;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.Locale;
 
 /**
  * Controlador base que implementa funcionalitats comunes.
@@ -182,6 +180,18 @@ public class BaseController implements MessageSourceAware {
 		} else {
 			response.setContentType(new MimetypesFileTypeMap().getContentType(fileName));
 		}
+		response.getOutputStream().write(fileContent);
+	}
+
+	protected void writeEmbeddedPdfToResponse(
+			String fileName,
+			byte[] fileContent,
+			HttpServletResponse response) throws IOException {
+		response.setHeader("Pragma", "");
+		response.setHeader("Expires", "");
+		response.setHeader("Cache-Control", "");
+		response.setHeader("Content-Disposition", "inline; filename=\"" + fileName + "\"");
+		response.setContentType("application/pdf");
 		response.getOutputStream().write(fileContent);
 	}
 

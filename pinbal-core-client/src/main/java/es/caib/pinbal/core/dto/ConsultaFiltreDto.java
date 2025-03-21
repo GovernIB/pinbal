@@ -1,13 +1,12 @@
 package es.caib.pinbal.core.dto;
 
-import java.io.Serializable;
-import java.util.Date;
-
+import es.caib.pinbal.core.dto.ConsultaDto.EstatTipus;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.lang.builder.ToStringBuilder;
 
-import es.caib.pinbal.core.dto.ConsultaDto.EstatTipus;
+import java.io.Serializable;
+import java.util.Date;
 
 /**
  * Objecte DTO amb informació per filtrar el llistat de consultes.
@@ -29,6 +28,7 @@ public class ConsultaFiltreDto implements Serializable {
 	private String usuari;
 	private Long entitatId;
 	private Boolean recobriment;
+	private Boolean multiple;
 
 	@Override
 	public String toString() {
