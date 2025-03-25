@@ -138,6 +138,15 @@ public class ScspServiceImpl implements ScspService {
 	}
 
 	@Override
+	@Transactional(readOnly = true)
+	public EmissorCertDto findEmissorCertByCif(String cif) {
+		log.debug("Consulta un emissor certificat (cif = " + cif + ")");
+		return dtoMappingHelper.getMapperFacade().map(
+				emissorCertRepository.findByCif(cif),
+				EmissorCertDto.class);
+	}
+
+	@Override
 	@Transactional
 	public EmissorCertDto createEmissorCert(EmissorCertDto dto) {
 		log.debug("Creant una nou emissor de certificat : " + dto);
@@ -199,6 +208,24 @@ public class ScspServiceImpl implements ScspService {
 		log.debug("Consulta una clau privada (id = " + id + ")");
 		return dtoMappingHelper.getMapperFacade().map(
 				clauPrivadaRepository.findById(id),
+				ClauPrivadaDto.class);
+	}
+
+	@Override
+	@Transactional(readOnly = true)
+	public ClauPrivadaDto findClauPrivadaByNom(String nom) {
+		log.debug("Consulta una clau privada (nom = " + nom + ")");
+		return dtoMappingHelper.getMapperFacade().map(
+				clauPrivadaRepository.findByNom(nom),
+				ClauPrivadaDto.class);
+	}
+
+	@Override
+	@Transactional(readOnly = true)
+	public ClauPrivadaDto findClauPrivadaByAlies(String alies) {
+		log.debug("Consulta una clau privada (alies = " + alies + ")");
+		return dtoMappingHelper.getMapperFacade().map(
+				clauPrivadaRepository.findByAlies(alies),
 				ClauPrivadaDto.class);
 	}
 
@@ -289,6 +316,24 @@ public class ScspServiceImpl implements ScspService {
 		log.debug("Consulta un clau publica (id = " + id + ")");
 		return dtoMappingHelper.getMapperFacade().map(
 				clauPublicaRepository.findById(id),
+				ClauPublicaDto.class);
+	}
+
+	@Override
+	@Transactional(readOnly = true)
+	public ClauPublicaDto findClauPublicaByNom(String nom) {
+		log.debug("Consulta una clau privada (nom = " + nom + ")");
+		return dtoMappingHelper.getMapperFacade().map(
+				clauPublicaRepository.findByNom(nom),
+				ClauPublicaDto.class);
+	}
+
+	@Override
+	@Transactional(readOnly = true)
+	public ClauPublicaDto findClauPublicaByAlies(String alies) {
+		log.debug("Consulta una clau privada (alies = " + alies + ")");
+		return dtoMappingHelper.getMapperFacade().map(
+				clauPublicaRepository.findByAlies(alies),
 				ClauPublicaDto.class);
 	}
 

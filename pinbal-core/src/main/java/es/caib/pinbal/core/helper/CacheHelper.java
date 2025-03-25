@@ -33,28 +33,26 @@ public class CacheHelper {
     public void evictDadesEspecifiques(String serveiCodi){}
 
     public void evictEnumeratsPerServei(String serveiCodi) {
+        evictByKeyPrefix("enumerats", serveiCodi);
+    }
 
-        Cache cache = cacheManager.getCache("enumerats");
+    public void evictPermisosPerDelegat(String usuariCodi) {
+        evictByKeyPrefix("serveiPermesosPerDelegat", usuariCodi);
+    }
 
+    public void evictByKeyPrefix(String cacheName, String keyPrefix) {
+        Cache cache = cacheManager.getCache(cacheName);
         if (cache != null) {
             net.sf.ehcache.Ehcache nativeCache = (net.sf.ehcache.Ehcache) Objects.requireNonNull(cache.getNativeCache());
-            // Itera per la llista de claus a EhCache
             for (Object key : nativeCache.getKeys()) {
                 String keyString = String.valueOf(key);
-                // Si la key comença amb "serveiCodi:"
-                if (keyString.startsWith(serveiCodi + ":")) {
-                    cache.evict(key); // Evict de la key
+                if (keyString.startsWith(keyPrefix + ":")) {
+                    cache.evict(key);
                 }
             }
         }
     }
 
-//    public void clearCache(String key) {
-//        var cache = cacheManager.getCache("conCache");
-//        if (cache != null) {
-//            cache.evict(key);
-//        }
-//    }
 
     public void clearCache(String cacheName) {
 

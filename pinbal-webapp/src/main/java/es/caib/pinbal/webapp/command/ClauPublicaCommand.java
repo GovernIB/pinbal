@@ -3,22 +3,32 @@
  */
 package es.caib.pinbal.webapp.command;
 
-import java.util.Date;
-
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
-
+import es.caib.pinbal.core.dto.ClauPublicaDto;
 import es.caib.pinbal.webapp.helper.CommandMappingHelper;
+import es.caib.pinbal.webapp.validation.ClauPublicaNoRepetida;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.hibernate.validator.constraints.NotEmpty;
 
-import es.caib.pinbal.core.dto.ClauPublicaDto;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+import java.util.Date;
 
 /**
  * Command per al manteniment de claus públiques
  * 
  * @author Limit Tecnologies <limit@limit.es>
  */
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+@ClauPublicaNoRepetida
 public class ClauPublicaCommand {
 
 	private Long id;
@@ -34,56 +44,6 @@ public class ClauPublicaCommand {
 	private Date dataAlta;
 	private Date dataBaixa;
 	
-	
-
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
-	}
-
-	public String getNom() {
-		return nom;
-	}
-
-	public void setNom(String nom) {
-		this.nom = nom;
-	}
-
-	public String getAlies() {
-		return alies;
-	}
-
-	public void setAlies(String alies) {
-		this.alies = alies;
-	}
-
-	public String getNumSerie() {
-		return numSerie;
-	}
-
-	public void setNumSerie(String numSerie) {
-		this.numSerie = numSerie;
-	}
-
-	public Date getDataAlta() {
-		return dataAlta;
-	}
-
-	public void setDataAlta(Date dataAlta) {
-		this.dataAlta = dataAlta;
-	}
-
-	public Date getDataBaixa() {
-		return dataBaixa;
-	}
-
-	public void setDataBaixa(Date dataBaixa) {
-		this.dataBaixa = dataBaixa;
-	}
-
 	public static ClauPublicaCommand asCommand(ClauPublicaDto dto) {
 		return CommandMappingHelper.getMapperFacade().map(
 				dto,

@@ -307,15 +307,28 @@ public class ConsultaAdminController extends BaseController {
 	}
 
 	@RequestMapping(value = "/{consultaId}", method = RequestMethod.GET)
-	public String get(HttpServletRequest request, @PathVariable Long consultaId, Model model) throws Exception {
+	public String get(
+			HttpServletRequest request,
+			@PathVariable Long consultaId,
+			@RequestParam(value = "multiple", required = false) Boolean multiple,
+			Model model) throws Exception {
 
 		ConsultaDto consulta = getConsultaAdmin(consultaId, isHistoric(request));
 		model.addAttribute("consulta", consulta);
 		model.addAttribute("servei", serveiService.findAmbCodiPerAdminORepresentant(consulta.getServeiCodi()));
+
+		if (consulta.isMultiple()) {
+			model.addAttribute("filles", getConsultesFilles(consultaId, isHistoric(request)));
+			return "adminConsultaMultipleInfo";
+		}
+
 		omplirModelAmbDadesEspecifiques(consulta.getServeiCodi(), model);
 		if (!consulta.isEstatError()) {
 			ArbreRespostaDto dadesResposta = consultaService.generarArbreResposta(consultaId);
 			model.addAttribute("dadesResposta", dadesResposta);
+		}
+		if (multiple != null && multiple) {
+			model.addAttribute("multiple", true);
 		}
 		return "adminConsultaInfo";
 	}
@@ -522,6 +535,25 @@ public class ConsultaAdminController extends BaseController {
 			}
 		}
 		return consulta;
+	}
+
+	private List<ConsultaDto> getConsultesFilles(Long consultaId, boolean historic) throws ConsultaNotFoundException, ScspException {
+		List<ConsultaDto> filles;
+		if (historic) {
+			try {
+				filles = historicConsultaService.findAmbPare(consultaId);
+			} catch (Exception nfe) {
+				filles = consultaService.findAmbPare(consultaId);
+			}
+		} else {
+			try {
+				filles = consultaService.findAmbPare(consultaId);
+			} catch (Exception nfe) {
+				filles = historicConsultaService.findAmbPare(consultaId);
+			}
+		}
+
+		return filles;
 	}
 
 	private ConsultaFiltreCommand getCommandInstance(HttpServletRequest request) {

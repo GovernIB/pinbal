@@ -184,7 +184,7 @@
 											$('.modal-body .datatable-dades-carregant').show();
 											$(this).attr('disabled', true);
 										}
-										element.click();
+										element[0].click();
 										return false;
 									});
 									element.on('showloading', function () {

@@ -3,21 +3,20 @@
  */
 package es.caib.pinbal.core.service;
 
-import java.util.List;
-
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.security.access.prepost.PreAuthorize;
-
 import es.caib.pinbal.core.dto.ClauPrivadaDto;
+import es.caib.pinbal.core.dto.ClauPublicaDto;
 import es.caib.pinbal.core.dto.EmissorCertDto;
 import es.caib.pinbal.core.dto.OrganismeCessionariDto;
 import es.caib.pinbal.core.dto.ParamConfDto;
 import es.caib.pinbal.core.service.exception.ClauPrivadaNotFoundException;
-import es.caib.pinbal.core.dto.ClauPublicaDto;
 import es.caib.pinbal.core.service.exception.ClauPublicaNotFoundException;
 import es.caib.pinbal.core.service.exception.EmissorCertNotFoundException;
 import es.caib.pinbal.core.service.exception.ParamConfNotFoundException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.prepost.PreAuthorize;
+
+import java.util.List;
 
 /**
  * Declaració dels mètodes per a obtenir i modificar
@@ -103,7 +102,18 @@ public interface ScspService {
 	 */
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public EmissorCertDto findEmissorCertById(Long id);
-	
+
+	/**
+	 * Consulta un emissor certificat donat el seu cif.
+	 *
+	 * @param cif
+	 * 			El CIF del emissor certificat a trobar.
+	 *
+	 * @return	L'emissor certificat trobat. Si no s'ha trobat cap retorna null.
+	 */
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	public EmissorCertDto findEmissorCertByCif(String cif);
+
 	/**
 	 * Crea un nou emissor certificat.
 	 * 
@@ -167,7 +177,29 @@ public interface ScspService {
 	 */
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public ClauPrivadaDto findClauPrivadaById(Long id);
-	
+
+	/**
+	 * Consulta una clau privada donat el seu nom.
+	 *
+	 * @param nom
+	 * 			El nom de la clau privada a trobar.
+	 *
+	 * @return	La clau privada trobada. Si no s'ha trobat cap retorna null.
+	 */
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+    ClauPrivadaDto findClauPrivadaByNom(String nom);
+
+	/**
+	 * Consulta una clau privada donat el seu alies.
+	 *
+	 * @param alies
+	 * 			El alies de la clau privada a trobar.
+	 *
+	 * @return	La clau privada trobada. Si no s'ha trobat cap retorna null.
+	 */
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	ClauPrivadaDto findClauPrivadaByAlies(String alies);
+
 	/**
 	 * Crea una clau privada.
 	 * 
@@ -241,6 +273,28 @@ public interface ScspService {
 	 */
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public ClauPublicaDto findClauPublicaById(Long id);
+
+	/**
+	 * Consulta una clau pública donat el seu nom.
+	 *
+	 * @param nom
+	 * 			El nom de la clau privada a trobar.
+	 *
+	 * @return	La clau privada trobada. Si no s'ha trobat cap retorna null.
+	 */
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	ClauPublicaDto findClauPublicaByNom(String nom);
+
+	/**
+	 * Consulta una clau pública donat el seu alies.
+	 *
+	 * @param alies
+	 * 			El alies de la clau privada a trobar.
+	 *
+	 * @return	La clau privada trobada. Si no s'ha trobat cap retorna null.
+	 */
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	ClauPublicaDto findClauPublicaByAlies(String alies);
 	
 	/**
 	 * Crea una nova clau pública.

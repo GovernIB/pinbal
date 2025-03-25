@@ -21,4 +21,6 @@
 
     <cache name="usuariAmbCodi" maxElementsInMemory="300" eternal="false" timeToLiveSeconds="86400" overflowToDisk="false" />
     <cache name="usuariAmbNif" maxElementsInMemory="300" eternal="false" timeToLiveSeconds="86400" overflowToDisk="false" />
+
+    <cache name="serveiPermesosPerDelegat" maxElementsInMemory="300" eternal="false" timeToLiveSeconds="86400" overflowToDisk="false" />
 </ehcache>

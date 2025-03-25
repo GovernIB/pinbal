@@ -52,7 +52,6 @@
 	</c:forEach>
 
 	function formatState(servei) {
-		debugger;
 		if (!servei.id) {
 			return servei.text;
 		} else {

@@ -3,23 +3,23 @@
  */
 package es.caib.pinbal.webapp.command;
 
-import java.util.Date;
-
-import javax.validation.constraints.Size;
-
+import es.caib.pinbal.core.dto.ConsultaDto.DocumentTipus;
+import es.caib.pinbal.core.dto.EmissorCertDto;
 import es.caib.pinbal.webapp.helper.CommandMappingHelper;
+import es.caib.pinbal.webapp.validation.CifEmisorNoRepetit;
+import es.caib.pinbal.webapp.validation.DocumentIdentitat;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.hibernate.validator.constraints.NotEmpty;
 
-import es.caib.pinbal.core.dto.ConsultaDto.DocumentTipus;
-import es.caib.pinbal.core.dto.EmissorCertDto;
-import es.caib.pinbal.webapp.validation.DocumentIdentitat;
+import javax.validation.constraints.Size;
+import java.util.Date;
 
 /**
  * Command per al manteniment d'emisors certificats
  * 
  * @author Limit Tecnologies <limit@limit.es>
  */
+@CifEmisorNoRepetit
 public class EmissorCertCommand {
 
 	private Long id;

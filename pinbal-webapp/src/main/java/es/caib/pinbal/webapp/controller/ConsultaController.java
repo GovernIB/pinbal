@@ -444,7 +444,11 @@ public class ConsultaController extends BaseController {
 	}
 
 	@RequestMapping(value = "/{consultaId}", method = RequestMethod.GET)
-	public String info(HttpServletRequest request, @PathVariable Long consultaId, Model model) throws Exception {
+	public String info(
+			HttpServletRequest request,
+			@PathVariable Long consultaId,
+			@RequestParam(value = "multiple", required = false) Boolean multiple,
+			Model model) throws Exception {
 		if (!EntitatHelper.isDelegatEntitatActual(request))
 			return "delegatNoAutoritzat";
 		EntitatDto entitat = EntitatHelper.getEntitatActual(request, entitatService);
@@ -456,8 +460,13 @@ public class ConsultaController extends BaseController {
 
 			omplirModelAmbDadesEspecifiques(consulta.getServeiCodi(), model);
 
-			ArbreRespostaDto dadesResposta = consultaService.generarArbreResposta(consultaId);
-			model.addAttribute("dadesResposta", dadesResposta);
+			if (!consulta.isEstatError()) {
+				ArbreRespostaDto dadesResposta = consultaService.generarArbreResposta(consultaId);
+				model.addAttribute("dadesResposta", dadesResposta);
+			}
+			if (multiple != null && multiple) {
+				model.addAttribute("multiple", true);
+			}
 			return "consultaInfo";
 		} else {
 			AlertHelper.error(request, getMessage(request, "comu.error.no.entitat"));

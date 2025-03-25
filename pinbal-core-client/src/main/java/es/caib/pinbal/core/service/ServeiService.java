@@ -29,6 +29,7 @@ import es.caib.pinbal.core.service.exception.ServeiNotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 
 import java.io.IOException;
 import java.util.List;
@@ -288,7 +289,10 @@ public interface ServeiService {
 			Long entitatId,
 			Long procedimentId) throws EntitatNotFoundException, ProcedimentNotFoundException;
 
-	/**
+	@PreAuthorize("hasRole('ROLE_DELEG')")
+    List<ServeiDto> getServeiPermesosPerDelegat(Long entitatId, Long procedimentId, Authentication auth) throws EntitatNotFoundException, ProcedimentNotFoundException;
+
+    /**
 	 * Llistat amb els emisors donats d'alta a les taules SCSP.
 	 * 
 	 * @return Un llistat amb els emisors.

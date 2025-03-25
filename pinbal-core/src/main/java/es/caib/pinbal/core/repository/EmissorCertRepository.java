@@ -3,13 +3,12 @@
  */
 package es.caib.pinbal.core.repository;
 
-import java.util.List;
-
+import es.caib.pinbal.core.model.EmissorCert;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import es.caib.pinbal.core.model.EmissorCert;
+import java.util.List;
 
 /**
  * Especifica els mètodes que s'han d'emprar per obtenir i modificar la
@@ -26,4 +25,5 @@ public interface EmissorCertRepository extends JpaRepository<EmissorCert, Long> 
 
 	public EmissorCert findById(Long id);
 
+	public EmissorCert  findByCif(String cif);
 }

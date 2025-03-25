@@ -3,12 +3,6 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 
-<%
-	java.util.Map<?,?> map = (java.util.Map<?,?>)request.getAttribute("campsDadesEspecifiquesAgrupats");
-	if (map != null)
-		pageContext.setAttribute("campsSenseAgrupar", map.get(null));
-%>
-
 <html>
 <head>
 	<title><spring:message code="consulta.multiple.info.titol"/></title>
@@ -47,7 +41,7 @@ $(document).ready(function () {
 		<div id="dadesPeticio" class="collapse in">
 			<c:if test="${consulta.hiHaPeticio}">
 				<c:set var="initModalXml">initModalXml(this);return false</c:set>
-				<a class="btn btn-default pull-right" href="<c:url value="/modal/consulta/${consulta.id}/xmlPeticio"/>" onclick="${initModalXml}">
+				<a class="btn btn-default pull-right" href="<c:url value="/modal/admin/consulta/${consulta.id}/xmlPeticio"/>" onclick="${initModalXml}">
 					<i class="fas fa-info-circle"></i> <spring:message code="consulta.info.veure.xml"/>
 				</a>
 			</c:if>
@@ -194,20 +188,20 @@ $('#dadesPeticio').on('shown', function () {
 								<td>${filla.titularDocumentAmbTipus}</td>
 								<c:if test="${consulta.hiHaPeticio}">
 									<td>
-										<a class="btn btn-default pull-right" href="<c:url value="/modal/consulta/${filla.id}/xmlPeticio"/>" onclick="${initModalXml}">
+										<a class="btn btn-default pull-right" href="<c:url value="/modal/admin/consulta/${filla.id}/xmlPeticio"/>" onclick="${initModalXml}">
 											<i class="fas fa-info-circle"></i>
 											<spring:message code="consulta.info.veure.xml"/>
 										</a>
 									</td>
 									<td>
-										<a class="btn btn-default pull-right" href="<c:url value="/modal/consulta/${filla.id}/xmlResposta"/>" onclick="${initModalXml}">
+										<a class="btn btn-default pull-right" href="<c:url value="/modal/admin/consulta/${filla.id}/xmlResposta"/>" onclick="${initModalXml}">
 											<i class="fas fa-info-circle"></i>
 											<spring:message code="consulta.info.veure.xml"/>
 										</a>
 									</td>
 								</c:if>
 								<td>
-									<a href="<c:url value="/modal/consulta/${filla.id}?multiple=true"/>" class="btn btn-default"><i class="fas fa-search-plus"></i>&nbsp;<spring:message code="consulta.list.taula.detalls"/></a>
+									<a href="<c:url value="/modal/admin/consulta/${filla.id}?multiple=true"/>" class="btn btn-default"><i class="fas fa-search-plus"></i>&nbsp;<spring:message code="consulta.list.taula.detalls"/></a>
 								</td>
 								<c:if test="${consulta.estatTramitada}">
 									<td>
@@ -239,7 +233,7 @@ $('#dadesSolicitud').on('shown', function () {
 			</div>
 			<div class="col-xs-2 mt15 pull-right">
 				<c:set var="initModalXml">initModalXml(this);return false</c:set>
-				<a class="btn btn-default pull-right" href="<c:url value="/modal/consulta/${consulta.id}/xmlResposta"/>" onclick="${initModalXml}"><i class="fas fa-info-circle"></i> <spring:message code="consulta.info.veure.xml"/></a>
+				<a class="btn btn-default pull-right" href="<c:url value="/modal/admin/consulta/${consulta.id}/xmlResposta"/>" onclick="${initModalXml}"><i class="fas fa-info-circle"></i> <spring:message code="consulta.info.veure.xml"/></a>
 			</div>
 		</div>
 		<c:if test="${consulta.respostaData}">
@@ -284,7 +278,7 @@ $('#dadesResposta').on('shown', function () {
 		</div>
 	</c:if>
 	<div id="modal-botons" class="well">
-		<a href="<c:url value="/consulta/multiple"/>" class="btn btn-default" data-modal-cancel="true"><spring:message code="comu.boto.tancar"/></a>
+		<a href="<c:url value="/admin/consulta"/>" class="btn btn-default" data-modal-cancel="true"><spring:message code="comu.boto.tancar"/></a>
 	</div>
 	<div id="modal-missatge-xml" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
   		<div class="modal-dialog modal-dialog-centered" role="document">

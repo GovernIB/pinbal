@@ -34,6 +34,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.ejb.interceptor.SpringBeanAutowiringInterceptor;
+import org.springframework.security.core.Authentication;
 
 import javax.annotation.security.PermitAll;
 import javax.annotation.security.RolesAllowed;
@@ -195,7 +196,13 @@ public class ServeiServiceBean implements ServeiService {
 				procedimentId);
 	}
 
-	@Override
+    @Override
+	@RolesAllowed("tothom")
+    public List<ServeiDto> getServeiPermesosPerDelegat(Long entitatId, Long procedimentId, Authentication auth) throws EntitatNotFoundException, ProcedimentNotFoundException {
+        return delegate.getServeiPermesosPerDelegat(entitatId, procedimentId, auth);
+    }
+
+    @Override
 	@RolesAllowed("PBL_ADMIN")
 	public List<EmisorDto> findEmisorAll() {
 		return delegate.findEmisorAll();

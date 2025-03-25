@@ -475,11 +475,10 @@ $(document).ready(function () {
 		
 	</div>
 	<!-- FI DEFINICIO DEL CONTINGUT DE LES TABS -->
-	
 	<div id="modal-botons" class="well">
 		<c:choose>
-			<c:when test="${not empty consulta.pareId}">
-				<a href="<c:url value="/consulta/multiple/${consulta.pareId}"/>" class="btn btn-default" data-modal-cancel="true"><spring:message code="comu.boto.tancar"/></a>
+			<c:when test="${multiple and not empty consulta.pareId}">
+				<a href="<c:url value="/modal/consulta/multiple/${consulta.pareId}"/>" class="btn btn-default"><span class="fa fa-arrow-left"></span>&nbsp;<spring:message code="comu.boto.tornar"/></a>
 			</c:when>
 			<c:otherwise>
 				<a href="<c:url value="/consulta"/>" class="btn btn-default" data-modal-cancel="true"><spring:message code="comu.boto.tancar"/></a>

@@ -3,11 +3,10 @@
  */
 package es.caib.pinbal.core.repository;
 
-import java.util.List;
-
+import es.caib.pinbal.core.model.ClauPublica;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import es.caib.pinbal.core.model.ClauPublica;
+import java.util.List;
 
 /**
  * Especifica els mètodes que s'han d'emprar per obtenir i modificar la
@@ -22,4 +21,6 @@ public interface ClauPublicaRepository extends JpaRepository<ClauPublica, Long> 
 
 	public ClauPublica findById(Long id);
 
+	public ClauPublica findByNom(String nom);
+	public ClauPublica findByAlies(String alies);
 }

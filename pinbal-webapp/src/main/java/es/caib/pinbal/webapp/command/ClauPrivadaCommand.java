@@ -5,6 +5,7 @@ package es.caib.pinbal.webapp.command;
 
 import es.caib.pinbal.core.dto.ClauPrivadaDto;
 import es.caib.pinbal.webapp.helper.CommandMappingHelper;
+import es.caib.pinbal.webapp.validation.ClauPrivadaNoRepetida;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -27,6 +28,7 @@ import java.util.Date;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@ClauPrivadaNoRepetida
 public class ClauPrivadaCommand {
 	
 	private Long id;

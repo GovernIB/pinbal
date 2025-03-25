@@ -13,6 +13,7 @@ import es.caib.pinbal.plugins.DadesUsuari;
 import es.caib.pinbal.plugins.SistemaExternException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.acls.domain.BasePermission;
 import org.springframework.security.acls.model.MutableAclService;
 import org.springframework.security.acls.model.Permission;
@@ -47,8 +48,10 @@ public class UsuariHelper {
 
 	@Resource
 	private MutableAclService aclService;
+    @Autowired
+    private CacheHelper cacheHelper;
 
-	
+
 	public Usuari getUsuariAutenticat() {
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 		if (auth == null)
@@ -151,6 +154,7 @@ public class UsuariHelper {
 					BasePermission.READ,
 					aclService);
 		}
+		cacheHelper.evictPermisosPerDelegat(usuari.getCodi());
 		return usuariNou;
 	}
 

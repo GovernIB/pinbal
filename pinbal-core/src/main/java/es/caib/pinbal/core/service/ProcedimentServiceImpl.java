@@ -399,6 +399,7 @@ public class ProcedimentServiceImpl implements ProcedimentService {
 				procedimentServei.getId(),
 				BasePermission.READ,
 				aclService);
+		cacheHelper.evictPermisosPerDelegat(usuariCodi);
 	}
 
 	@Transactional(rollbackFor = {ProcedimentNotFoundException.class, ProcedimentServeiNotFoundException.class, EntitatUsuariNotFoundException.class})
@@ -431,6 +432,7 @@ public class ProcedimentServiceImpl implements ProcedimentService {
 				procedimentServei.getId(),
 				BasePermission.READ,
 				aclService);
+		cacheHelper.evictPermisosPerDelegat(usuariCodi);
 	}
 	
 	@Transactional(rollbackFor = {ProcedimentNotFoundException.class, ProcedimentServeiNotFoundException.class, EntitatUsuariNotFoundException.class})
@@ -468,6 +470,7 @@ public class ProcedimentServiceImpl implements ProcedimentService {
 						BasePermission.READ, 
 						aclService);
 			}
+			cacheHelper.evictPermisosPerDelegat(usuariCodi);
 		}
 	}
 
@@ -482,18 +485,21 @@ public class ProcedimentServiceImpl implements ProcedimentService {
 			throw new EntitatUsuariNotFoundException();
 		}
 
-		for(ProcedimentServeiSimpleDto procedimentServeiDto : procedimentsServeis) {
-			ProcedimentServei procedimentServei = procedimentServeiRepository.findByEntitatIdProcedimentCodiAndServeiCodi(entitatId, procedimentServeiDto.getProcedimentCodi(), procedimentServeiDto.getServeiCodi());
-			if (procedimentServei == null) {
-				log.debug("El procediment (codi= " + procedimentServeiDto.getProcedimentCodi() + ") no té cap servei (codi=" + procedimentServeiDto.getServeiCodi() + ")");
-				throw new ProcedimentServeiNotFoundException(procedimentServeiDto.getProcedimentCodi(), procedimentServeiDto.getServeiCodi());
+		if (!procedimentsServeis.isEmpty()) {
+			for (ProcedimentServeiSimpleDto procedimentServeiDto : procedimentsServeis) {
+				ProcedimentServei procedimentServei = procedimentServeiRepository.findByEntitatIdProcedimentCodiAndServeiCodi(entitatId, procedimentServeiDto.getProcedimentCodi(), procedimentServeiDto.getServeiCodi());
+				if (procedimentServei == null) {
+					log.debug("El procediment (codi= " + procedimentServeiDto.getProcedimentCodi() + ") no té cap servei (codi=" + procedimentServeiDto.getServeiCodi() + ")");
+					throw new ProcedimentServeiNotFoundException(procedimentServeiDto.getProcedimentCodi(), procedimentServeiDto.getServeiCodi());
+				}
+				PermisosHelper.assignarPermisUsuari(
+						usuariCodi,
+						ProcedimentServei.class,
+						procedimentServei.getId(),
+						BasePermission.READ,
+						aclService);
 			}
-			PermisosHelper.assignarPermisUsuari(
-					usuariCodi,
-					ProcedimentServei.class,
-					procedimentServei.getId(),
-					BasePermission.READ,
-					aclService);
+			cacheHelper.evictPermisosPerDelegat(usuariCodi);
 		}
 	}
 
@@ -535,6 +541,7 @@ public class ProcedimentServiceImpl implements ProcedimentService {
 							aclService);
 				}
 			}
+			cacheHelper.evictPermisosPerDelegat(usuariCodi);
 		}
 
 	}

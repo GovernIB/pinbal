@@ -6,6 +6,7 @@ package es.caib.pinbal.core.service;
 import es.caib.pinbal.core.dto.EntitatUsuariDto;
 import es.caib.pinbal.core.dto.InformeUsuariDto;
 import es.caib.pinbal.core.dto.UsuariDto;
+import es.caib.pinbal.core.helper.CacheHelper;
 import es.caib.pinbal.core.helper.DtoMappingHelper;
 import es.caib.pinbal.core.helper.PluginHelper;
 import es.caib.pinbal.core.helper.UsuariHelper;
@@ -25,6 +26,7 @@ import es.caib.pinbal.core.service.exception.UsuariExternNotFoundException;
 import es.caib.pinbal.plugins.DadesUsuari;
 import es.caib.pinbal.plugins.SistemaExternException;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.acls.model.MutableAclService;
@@ -68,6 +70,8 @@ public class UsuariServiceImpl implements UsuariService {
 
 	@Resource
 	private MutableAclService aclService;
+    @Autowired
+    private CacheHelper cacheHelper;
 
 	@Transactional
 	@Override
@@ -595,6 +599,7 @@ public class UsuariServiceImpl implements UsuariService {
 					aplicacioPerUpdate,
 					(actiu != null) ? actiu : entitatUsuari.isActiu());
 		}
+		cacheHelper.evictPermisosPerDelegat(usuari.getCodi());
 	}
 
 	private UsuariDto toUsuariDtoAmbRols(

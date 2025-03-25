@@ -85,6 +85,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.BeansException;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.MessageSource;
@@ -177,6 +178,7 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 	private ApplicationContext applicationContext;
 	private MessageSource messageSource;
 	private ScspHelper scspHelper;
+	private ServeiService self;
 
 	@Transactional
 	@Override
@@ -505,8 +507,11 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 		}
 
 		Page<ServeiDto> paginaDtos = dtoMappingHelper.pageEntities2pageDto(paginaServeis, ServeiDto.class, pageable);
+		if (mapServeisProcedient == null || mapServeisProcedient.isEmpty() || paginaDtos.getContent() == null || paginaDtos.getContent().isEmpty()) {
+			return paginaDtos;
+		}
 		for (ServeiDto servei: paginaDtos.getContent()) {
-			if (mapServeisProcedient.containsKey(servei.getCodi())) {
+			if (servei != null && servei.getCodi() != null && mapServeisProcedient.containsKey(servei.getCodi())) {
 				Long procedimetServeiId = (Long) mapServeisProcedient.get(servei.getCodi())[0];
 				String procedimentCodi = (String) mapServeisProcedient.get(servei.getCodi())[1];
 				boolean serveiActiu = (boolean) mapServeisProcedient.get(servei.getCodi())[2];
@@ -518,7 +523,7 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 						procedimetServeiId,
 						aclService);
 				servei.setUsuarisAmbPermis(aces != null ? aces.size() : 0);
-				}
+			}
 		}
 		return paginaDtos;
 	}
@@ -757,39 +762,36 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 			Long procedimentId) throws EntitatNotFoundException, ProcedimentNotFoundException {
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 		log.debug("Cercant serveis permesos pel delegat (entitatId=" + entitatId + ", procedimentId=" + procedimentId + ", usuariCodi=" + auth.getName() + ")");
-		// long t0 = System.currentTimeMillis();
+		return self.getServeiPermesosPerDelegat(entitatId, procedimentId, auth);
+	}
+
+	@Cacheable(value = "serveiPermesosPerDelegat", key = "#auth.name + ':' + #entitatId + ':' + #procedimentId")
+	@Transactional(readOnly = true)
+	@Override
+	public List<ServeiDto> getServeiPermesosPerDelegat(Long entitatId, Long procedimentId, Authentication auth) throws EntitatNotFoundException, ProcedimentNotFoundException {
 		Entitat entitat = entitatRepository.findOne(entitatId);
 		if (entitat == null) {
-			log.debug("No s'ha trobat l'entitat (id=" + entitatId + ")");
+			log.error("No s'ha trobat l'entitat (id=" + entitatId + ")");
 			throw new EntitatNotFoundException();
 		}
-		// System.out.println(">>> 0 (" + (System.currentTimeMillis() - t0) + "ms)");
-		// t0 = System.currentTimeMillis();
 		Procediment procediment = null;
 		if (procedimentId != null) {
 			procediment = procedimentRepository.findOne(procedimentId);
 			if (procediment == null)
 				throw new ProcedimentNotFoundException();
 		}
-		// System.out.println(">>> 1 (" + (System.currentTimeMillis() - t0) + "ms)");
-		// t0 = System.currentTimeMillis();
 		EntitatUsuari entitatUsuari = entitatUsuariRepository.findByEntitatIdAndUsuariCodi(
 				entitat.getId(),
 				auth.getName());
 		if (entitatUsuari != null && entitatUsuari.isDelegat() && entitatUsuari.isActiu()) {
-			// System.out.println(">>> 2 (" + (System.currentTimeMillis() - t0) + "ms)");
-			// t0 = System.currentTimeMillis();
 			List<String> permesos = serveiHelper.findServeisPermesosPerUsuari(
 					entitat.getId(),
 					(procediment != null) ? procediment.getCodi() : null,
 					auth);
-			// System.out.println(">>> 3 (" + (System.currentTimeMillis() - t0) + "ms)");
-			// t0 = System.currentTimeMillis();
 			List<ServeiDto> resposta = new ArrayList<ServeiDto>();
 			for (String servei: permesos) {
 				resposta.add(toServeiDto(getScspHelper().getServicio(servei)));
 			}
-			// System.out.println(">>> 4 (" + (System.currentTimeMillis() - t0) + "ms)");
 			return resposta;
 		} else {
 			return new ArrayList<ServeiDto>();
@@ -1465,6 +1467,7 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 	public void setApplicationContext(
 			ApplicationContext applicationContext) throws BeansException {
 		this.applicationContext = applicationContext;
+		this.self = applicationContext.getBean(ServeiService.class);
 	}
 
 	@Override

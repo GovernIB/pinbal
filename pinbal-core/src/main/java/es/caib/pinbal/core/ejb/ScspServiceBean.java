@@ -3,17 +3,6 @@
  */
 package es.caib.pinbal.core.ejb;
 
-import java.util.List;
-
-import javax.annotation.security.RolesAllowed;
-import javax.ejb.Stateless;
-import javax.interceptor.Interceptors;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.ejb.interceptor.SpringBeanAutowiringInterceptor;
-
 import es.caib.pinbal.core.dto.ClauPrivadaDto;
 import es.caib.pinbal.core.dto.ClauPublicaDto;
 import es.caib.pinbal.core.dto.EmissorCertDto;
@@ -24,6 +13,15 @@ import es.caib.pinbal.core.service.exception.ClauPrivadaNotFoundException;
 import es.caib.pinbal.core.service.exception.ClauPublicaNotFoundException;
 import es.caib.pinbal.core.service.exception.EmissorCertNotFoundException;
 import es.caib.pinbal.core.service.exception.ParamConfNotFoundException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.ejb.interceptor.SpringBeanAutowiringInterceptor;
+
+import javax.annotation.security.RolesAllowed;
+import javax.ejb.Stateless;
+import javax.interceptor.Interceptors;
+import java.util.List;
 
 /**
  * Implementació de ConsultaService que empra una clase delegada per accedir a la
@@ -76,6 +74,12 @@ public class ScspServiceBean implements ScspService {
 
 	@Override
 	@RolesAllowed("PBL_ADMIN")
+	public EmissorCertDto findEmissorCertByCif(String cif) {
+		return delegate.findEmissorCertByCif(cif);
+	}
+
+	@Override
+	@RolesAllowed("PBL_ADMIN")
 	public EmissorCertDto createEmissorCert(EmissorCertDto dto) {
 		return delegate.createEmissorCert(dto);
 	}
@@ -104,7 +108,19 @@ public class ScspServiceBean implements ScspService {
 		return delegate.findClauPrivadaById(id);
 	}
 
+    @Override
+	@RolesAllowed("PBL_ADMIN")
+    public ClauPrivadaDto findClauPrivadaByNom(String nom) {
+        return delegate.findClauPrivadaByNom(nom);
+    }
+
 	@Override
+	@RolesAllowed("PBL_ADMIN")
+	public ClauPrivadaDto findClauPrivadaByAlies(String alies) {
+		return delegate.findClauPrivadaByAlies(alies);
+	}
+
+    @Override
 	@RolesAllowed("PBL_ADMIN")
 	public ClauPrivadaDto createClauPrivada(ClauPrivadaDto dto) {
 		return delegate.createClauPrivada(dto);
@@ -138,6 +154,18 @@ public class ScspServiceBean implements ScspService {
 	@RolesAllowed("PBL_ADMIN")
 	public ClauPublicaDto findClauPublicaById(Long id) {
 		return delegate.findClauPublicaById(id);
+	}
+
+	@Override
+	@RolesAllowed("PBL_ADMIN")
+	public ClauPublicaDto findClauPublicaByNom(String nom) {
+		return delegate.findClauPublicaByNom(nom);
+	}
+
+	@Override
+	@RolesAllowed("PBL_ADMIN")
+	public ClauPublicaDto findClauPublicaByAlies(String alies) {
+		return delegate.findClauPublicaByAlies(alies);
 	}
 
 	@Override
