@@ -12,6 +12,7 @@ import es.caib.pinbal.client.recobriment.v2.PeticioSincrona;
 import es.caib.pinbal.client.recobriment.v2.SolicitudSimple;
 import es.caib.pinbal.client.recobriment.v2.ValorEnum;
 import es.caib.pinbal.client.serveis.ServeiBasic;
+import es.caib.pinbal.core.dto.EstatTipus;
 import es.caib.pinbal.core.dto.IdiomaEnumDto;
 import es.caib.pinbal.core.dto.JustificantDto;
 import es.caib.pinbal.core.dto.dadesexternes.Municipi;
@@ -72,8 +73,7 @@ import java.util.Map;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class RecobrimentServiceImplTest {
@@ -139,10 +139,10 @@ public class RecobrimentServiceImplTest {
         mockEntitats.add(mockEntitat2);
 
         // Simular autenticació
-        Authentication authentication = Mockito.mock(Authentication.class);
+        Authentication authentication = mock(Authentication.class);
         when(authentication.getName()).thenReturn(username);
 
-        SecurityContext securityContext = Mockito.mock(SecurityContext.class);
+        SecurityContext securityContext = mock(SecurityContext.class);
         when(securityContext.getAuthentication()).thenReturn(authentication);
 
         // Establir el SecurityContext simulat a SecurityContextHolder
@@ -171,10 +171,10 @@ public class RecobrimentServiceImplTest {
         List<Entitat> mockEntitats = new ArrayList<>();
 
         // Simular autenticació
-        Authentication authentication = Mockito.mock(Authentication.class);
+        Authentication authentication = mock(Authentication.class);
         when(authentication.getName()).thenReturn(username);
 
-        SecurityContext securityContext = Mockito.mock(SecurityContext.class);
+        SecurityContext securityContext = mock(SecurityContext.class);
         when(securityContext.getAuthentication()).thenReturn(authentication);
 
         // Establir el SecurityContext simulat a SecurityContextHolder
@@ -515,10 +515,10 @@ public class RecobrimentServiceImplTest {
         String enumCodi = "enumerat";
         String filtre = null;
 
-        ServeiConfig mockServeiConfig = Mockito.mock(ServeiConfig.class);
+        ServeiConfig mockServeiConfig = mock(ServeiConfig.class);
         when(serveiConfigRepository.findByServei(serveiCodi)).thenReturn(mockServeiConfig);
 
-        ServeiCamp mockServeiCamp = Mockito.mock(ServeiCamp.class);
+        ServeiCamp mockServeiCamp = mock(ServeiCamp.class);
         when(serveiCampRepository.findByServeiAndPath(serveiCodi, campCodi)).thenReturn(mockServeiCamp);
 
         Tree<XmlHelper.DadesEspecifiquesNode> arbre = getDadesEspecifiquesNodeTree();
@@ -540,10 +540,10 @@ public class RecobrimentServiceImplTest {
         String enumCodi = "enumerat";
         String filtre = "B";
 
-        ServeiConfig mockServeiConfig = Mockito.mock(ServeiConfig.class);
+        ServeiConfig mockServeiConfig = mock(ServeiConfig.class);
         when(serveiConfigRepository.findByServei(serveiCodi)).thenReturn(mockServeiConfig);
 
-        ServeiCamp mockServeiCamp = Mockito.mock(ServeiCamp.class);
+        ServeiCamp mockServeiCamp = mock(ServeiCamp.class);
         when(serveiCampRepository.findByServeiAndPath(serveiCodi, campCodi)).thenReturn(mockServeiCamp);
 
         Tree<XmlHelper.DadesEspecifiquesNode> arbre = getDadesEspecifiquesNodeTree();
@@ -596,7 +596,7 @@ public class RecobrimentServiceImplTest {
         String serveiCodi = "SERV001";
         String campCodi = "INVALID";
 
-        ServeiConfig mockServeiConfig = Mockito.mock(ServeiConfig.class);
+        ServeiConfig mockServeiConfig = mock(ServeiConfig.class);
         when(serveiConfigRepository.findByServei(serveiCodi)).thenReturn(mockServeiConfig);
 
         when(serveiCampRepository.findByServeiAndPath(serveiCodi, campCodi)).thenReturn(null);
@@ -610,10 +610,10 @@ public class RecobrimentServiceImplTest {
         String campPath = "DatosEspecificos/pais";
         String enumCodi = "PAIS";
 
-        ServeiConfig mockServeiConfig = Mockito.mock(ServeiConfig.class);
+        ServeiConfig mockServeiConfig = mock(ServeiConfig.class);
         when(serveiConfigRepository.findByServei(serveiCodi)).thenReturn(mockServeiConfig);
 
-        ServeiCamp mockServeiCamp = Mockito.mock(ServeiCamp.class);
+        ServeiCamp mockServeiCamp = mock(ServeiCamp.class);
         when(serveiCampRepository.findByServeiAndPath(serveiCodi, campPath)).thenReturn(mockServeiCamp);
 
         List<Pais> mockPaisos = new ArrayList<>();
@@ -635,10 +635,10 @@ public class RecobrimentServiceImplTest {
         String campPath = "DatosEspecificos/provincia";
         String enumCodi = "PROVINCIA";
 
-        ServeiConfig mockServeiConfig = Mockito.mock(ServeiConfig.class);
+        ServeiConfig mockServeiConfig = mock(ServeiConfig.class);
         when(serveiConfigRepository.findByServei(serveiCodi)).thenReturn(mockServeiConfig);
 
-        ServeiCamp mockServeiCamp = Mockito.mock(ServeiCamp.class);
+        ServeiCamp mockServeiCamp = mock(ServeiCamp.class);
         when(serveiCampRepository.findByServeiAndPath(serveiCodi, campPath)).thenReturn(mockServeiCamp);
 
         List<Provincia> mockProvincies = new ArrayList<>();
@@ -661,10 +661,10 @@ public class RecobrimentServiceImplTest {
         String enumCodi = "MUNICIPI_3";
         String filtre = "07";
 
-        ServeiConfig mockServeiConfig = Mockito.mock(ServeiConfig.class);
+        ServeiConfig mockServeiConfig = mock(ServeiConfig.class);
         when(serveiConfigRepository.findByServei(serveiCodi)).thenReturn(mockServeiConfig);
 
-        ServeiCamp mockServeiCamp = Mockito.mock(ServeiCamp.class);
+        ServeiCamp mockServeiCamp = mock(ServeiCamp.class);
         when(serveiCampRepository.findByServeiAndPath(serveiCodi, campPath)).thenReturn(mockServeiCamp);
 
         List<Municipi> mockMunicipis = new ArrayList<>();
@@ -688,10 +688,10 @@ public class RecobrimentServiceImplTest {
         String enumCodi = "MUNICIPI_3";
         String filtre = "60";
 
-        ServeiConfig mockServeiConfig = Mockito.mock(ServeiConfig.class);
+        ServeiConfig mockServeiConfig = mock(ServeiConfig.class);
         when(serveiConfigRepository.findByServei(serveiCodi)).thenReturn(mockServeiConfig);
 
-        ServeiCamp mockServeiCamp = Mockito.mock(ServeiCamp.class);
+        ServeiCamp mockServeiCamp = mock(ServeiCamp.class);
         when(serveiCampRepository.findByServeiAndPath(serveiCodi, campPath)).thenReturn(mockServeiCamp);
 
         recobrimentServiceImpl.getValorsEnumByServei(serveiCodi, campPath, enumCodi, filtre);
@@ -704,10 +704,10 @@ public class RecobrimentServiceImplTest {
         String enumCodi = "MUNICIPI_3";
         String filtre = "";
 
-        ServeiConfig mockServeiConfig = Mockito.mock(ServeiConfig.class);
+        ServeiConfig mockServeiConfig = mock(ServeiConfig.class);
         when(serveiConfigRepository.findByServei(serveiCodi)).thenReturn(mockServeiConfig);
 
-        ServeiCamp mockServeiCamp = Mockito.mock(ServeiCamp.class);
+        ServeiCamp mockServeiCamp = mock(ServeiCamp.class);
         when(serveiCampRepository.findByServeiAndPath(serveiCodi, campPath)).thenReturn(mockServeiCamp);
 
         recobrimentServiceImpl.getValorsEnumByServei(serveiCodi, campPath, enumCodi, filtre);
@@ -887,11 +887,17 @@ public class RecobrimentServiceImplTest {
     public void testPeticionAsincrona_Success() throws Exception {
         // Mocking
         PeticioAsincrona mockPeticio = PeticioAsincrona.builder().build();
-        ConfirmacionPeticion mockConfirmacion = new ConfirmacionPeticion();
-        mockConfirmacion.setAtributos(new Atributos());
+        ConfirmacionPeticion mockConfirmacion = mock(ConfirmacionPeticion.class);
+        Atributos mockAtributos = mock(Atributos.class);
+        Consulta mockConsulta = mock(Consulta.class);
+//        mockConfirmacion.setAtributos(new Atributos());
         when(recobrimentV2Helper.toPeticion(any(PeticioAsincrona.class))).thenReturn(new Peticion());
         when(recobrimentHelper.peticionAsincrona(any(Peticion.class))).thenReturn(mockConfirmacion);
         when(recobrimentV2Helper.toConfirmacio(any(ConfirmacionPeticion.class))).thenCallRealMethod();
+        when(recobrimentV2Helper.getConsultaBypeticioId("PETICION_ID")).thenReturn(mockConsulta);
+        when(mockConfirmacion.getAtributos()).thenReturn(mockAtributos);
+        when(mockAtributos.getIdPeticion()).thenReturn("PETICION_ID");
+        when(mockConsulta.getEstat()).thenReturn(EstatTipus.Processant);
 
         // Call the method
         PeticioConfirmacioAsincrona response = recobrimentServiceImpl.peticionAsincrona(mockPeticio);
@@ -1021,7 +1027,7 @@ public class RecobrimentServiceImplTest {
         // Mocking
         String idPeticion = "12345";
         String idSolicitud = "54321";
-        JustificantDto mockJustificantDto = Mockito.mock(JustificantDto.class);
+        JustificantDto mockJustificantDto = mock(JustificantDto.class);
         when(mockJustificantDto.getNom()).thenReturn("sampleName");
         when(mockJustificantDto.getContentType()).thenReturn("application/pdf");
         when(mockJustificantDto.getContingut()).thenReturn(new byte[]{1, 2, 3});
@@ -1086,7 +1092,7 @@ public class RecobrimentServiceImplTest {
         // Mocking
         String idPeticion = "12345";
         String idSolicitud = "54321";
-        JustificantDto mockJustificantDto = Mockito.mock(JustificantDto.class);
+        JustificantDto mockJustificantDto = mock(JustificantDto.class);
         when(mockJustificantDto.getNom()).thenReturn("imprimibleName");
         when(mockJustificantDto.getContentType()).thenReturn("application/pdf");
         when(mockJustificantDto.getContingut()).thenReturn(new byte[]{4, 5, 6});
@@ -1152,7 +1158,7 @@ public class RecobrimentServiceImplTest {
         // Mocking
         String idPeticion = "12345";
         String idSolicitud = "54321";
-        JustificantDto mockJustificantDto = Mockito.mock(JustificantDto.class);
+        JustificantDto mockJustificantDto = mock(JustificantDto.class);
         when(mockJustificantDto.getArxiuCsv()).thenReturn("CSV_CODE");
         when(consultaRepository.findByScspPeticionIdAndScspSolicitudId(idPeticion, idSolicitud)).thenReturn(new Consulta());
         when(recobrimentHelper.getJustificante(idPeticion, idSolicitud, true, false)).thenReturn(mockJustificantDto);
@@ -1213,7 +1219,7 @@ public class RecobrimentServiceImplTest {
         // Mocking
         String idPeticion = "12345";
         String idSolicitud = "54321";
-        JustificantDto mockJustificantDto = Mockito.mock(JustificantDto.class);
+        JustificantDto mockJustificantDto = mock(JustificantDto.class);
         when(mockJustificantDto.getArxiuUuid()).thenReturn("UUID_CODE");
         when(consultaRepository.findByScspPeticionIdAndScspSolicitudId(idPeticion, idSolicitud)).thenReturn(new Consulta());
         when(recobrimentHelper.getJustificante(idPeticion, idSolicitud, true, false)).thenReturn(mockJustificantDto);

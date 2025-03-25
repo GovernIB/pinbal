@@ -503,7 +503,7 @@ public class RecobrimentRestV2ControllerTest {
                         .content(new ObjectMapper().writeValueAsString(peticio)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.error").value(true))
-                .andExpect(jsonPath("$.messageError").value(containsString("errors en la validaci")));
+                .andExpect(jsonPath("$.missatge").value(containsString("errors en la validaci")));
     }
 
     @Test
@@ -557,7 +557,7 @@ public class RecobrimentRestV2ControllerTest {
                         .content(new ObjectMapper().writeValueAsString(peticio)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.error").value(true))
-                .andExpect(jsonPath("$.messageError").value(containsString("errors en la validaci")));
+                .andExpect(jsonPath("$.missatge").value(containsString("errors en la validaci")));
     }
 
     @Test
