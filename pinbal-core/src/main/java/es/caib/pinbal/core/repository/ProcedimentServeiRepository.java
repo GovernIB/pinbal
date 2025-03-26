@@ -3,15 +3,14 @@
  */
 package es.caib.pinbal.core.repository;
 
-import java.util.List;
-
+import es.caib.pinbal.core.model.Entitat;
+import es.caib.pinbal.core.model.Procediment;
+import es.caib.pinbal.core.model.ProcedimentServei;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import es.caib.pinbal.core.model.Entitat;
-import es.caib.pinbal.core.model.Procediment;
-import es.caib.pinbal.core.model.ProcedimentServei;
+import java.util.List;
 
 /**
  * Especifica els mètodes que s'han d'emprar per obtenir i modificar la
@@ -114,9 +113,7 @@ public interface ProcedimentServeiRepository extends JpaRepository<ProcedimentSe
 			"    ProcedimentServei ps " +
 			"where " +
 			"      ps.procediment.entitat = :entitat " +
-			"  and ps.procediment = :procediment " +
-			") " +
-			"")
+			"  and ps.procediment = :procediment ")
 	public List<ProcedimentServei> findServeisProcediment(
 			@Param("entitat") Entitat entitat,
 			@Param("procediment") Procediment procediment);
@@ -128,9 +125,7 @@ public interface ProcedimentServeiRepository extends JpaRepository<ProcedimentSe
 			"where " +
 			"  ps.actiu = true" +
 			"  and ps.procediment.entitat = :entitat " +
-			"  and ps.procediment = :procediment " +
-			") " +
-			"")
+			"  and ps.procediment = :procediment ")
 	public List<String> findServeisProcedimenActiustServeisIds(
 			@Param("entitat") Entitat entitat,
 			@Param("procediment") Procediment procediment);

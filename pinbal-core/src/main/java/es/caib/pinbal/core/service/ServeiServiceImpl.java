@@ -512,9 +512,13 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 		}
 		for (ServeiDto servei: paginaDtos.getContent()) {
 			if (servei != null && servei.getCodi() != null && mapServeisProcedient.containsKey(servei.getCodi())) {
-				Long procedimetServeiId = (Long) mapServeisProcedient.get(servei.getCodi())[0];
-				String procedimentCodi = (String) mapServeisProcedient.get(servei.getCodi())[1];
-				boolean serveiActiu = (boolean) mapServeisProcedient.get(servei.getCodi())[2];
+				Object[] serveiData = mapServeisProcedient.get(servei.getCodi());
+				Long procedimetServeiId = (Long) serveiData[0];
+				String procedimentCodi = (String) serveiData[1];
+				boolean serveiActiu = serveiData[2] != null && (Boolean) serveiData[2];
+				if (serveiData[2] == null) {
+					log.error("No s'ha torbat el ServeiConfig del servei " + servei.getCodi());
+				}
 
 				servei.setActiu(serveiActiu);
 				servei.setProcedimentCodi(procedimentCodi);
