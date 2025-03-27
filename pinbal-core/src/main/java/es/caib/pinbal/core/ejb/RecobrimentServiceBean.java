@@ -182,7 +182,7 @@ public class RecobrimentServiceBean implements RecobrimentService {
 	@Override
 	@RolesAllowed("PBL_WS")
 	public String getJustificantCsv(String idPeticion, String idSolicitud) throws RecobrimentScspException, ConsultaNotFoundException {
-		return getJustificantCsv(idPeticion, idSolicitud);
+		return delegate.getJustificantCsv(idPeticion, idSolicitud);
 	}
 
 	@Override

@@ -302,7 +302,7 @@ public class RecobrimentRestV2Controller extends PinbalHalRestController impleme
 			}
 			return new ResponseEntity<>(resposta, HttpStatus.OK);
 		} catch (ConsultaNotFoundException ce) {
-			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+			throw  new ResourceNotFoundException(ce.getMessage(), ce);
 		} catch (Exception ex) {
 			log.error("Error consultat resposta de la petició " + idPeticio, ex);
 			throw new ServiceExecutionException(ex.getMessage(), ex);
@@ -323,7 +323,7 @@ public class RecobrimentRestV2Controller extends PinbalHalRestController impleme
 			}
 			return new ResponseEntity<>(justificant, HttpStatus.OK);
 		} catch (ConsultaNotFoundException ce) {
-			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+			throw  new ResourceNotFoundException(ce.getMessage(), ce);
 		} catch (Exception ex) {
 			log.error("Error obtenint el justificant de la petició " + idPeticio + ", solicitud " + idSolicitud, ex);
 			throw new ServiceExecutionException(ex.getMessage(), ex);
@@ -343,7 +343,7 @@ public class RecobrimentRestV2Controller extends PinbalHalRestController impleme
 			}
 			return new ResponseEntity<>(justificant, HttpStatus.OK);
 		} catch (ConsultaNotFoundException ce) {
-			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+			throw  new ResourceNotFoundException(ce.getMessage(), ce);
 		} catch (Exception ex) {
 			log.error("Error obtenint el justificant imprimible de la petició " + idPeticio + ", solicitud " + idSolicitud, ex);
 			throw new ServiceExecutionException(ex.getMessage(), ex);
@@ -362,7 +362,7 @@ public class RecobrimentRestV2Controller extends PinbalHalRestController impleme
 			}
 			return new ResponseEntity<>(justificanteCsv, HttpStatus.OK);
 		} catch (ConsultaNotFoundException ce) {
-			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+			throw  new ResourceNotFoundException(ce.getMessage(), ce);
 		} catch (Exception ex) {
 			log.error("Error obtenint el csv del justificant de la petició " + idPeticio + ", solicitud " + idSolicitud, ex);
 			throw new ServiceExecutionException(ex.getMessage(), ex);
@@ -381,7 +381,7 @@ public class RecobrimentRestV2Controller extends PinbalHalRestController impleme
 			}
 			return new ResponseEntity<>(justificantUuid, HttpStatus.OK);
 		} catch (ConsultaNotFoundException ce) {
-			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+			throw  new ResourceNotFoundException(ce.getMessage(), ce);
 		} catch (Exception ex) {
 			log.error("Error obtenint l'UUID del justificant de la petició " + idPeticio + ", solicitud " + idSolicitud, ex);
 			throw new ServiceExecutionException(ex.getMessage(), ex);

@@ -39,6 +39,7 @@ import es.caib.pinbal.core.dto.ServeiCampDto;
 import es.caib.pinbal.core.dto.dadesexternes.Municipi;
 import es.caib.pinbal.core.dto.dadesexternes.Pais;
 import es.caib.pinbal.core.dto.dadesexternes.Provincia;
+import es.caib.pinbal.core.helper.PluginHelper;
 import es.caib.pinbal.core.helper.RecobrimentHelper;
 import es.caib.pinbal.core.helper.RecobrimentV2Helper;
 import es.caib.pinbal.core.model.Consulta;
@@ -55,6 +56,7 @@ import es.caib.pinbal.core.repository.ServeiConfigRepository;
 import es.caib.pinbal.core.repository.ServeiRepository;
 import es.caib.pinbal.core.service.exception.ConsultaNotFoundException;
 import es.caib.pinbal.core.service.exception.EntitatNotFoundException;
+import es.caib.pinbal.core.service.exception.JustificantGeneracioException;
 import es.caib.pinbal.core.service.exception.ProcedimentNotFoundException;
 import es.caib.pinbal.core.service.exception.RecobrimentScspException;
 import es.caib.pinbal.core.service.exception.RecobrimentScspValidationException;
@@ -135,6 +137,8 @@ public class RecobrimentServiceImpl implements RecobrimentService, ApplicationCo
     private RecobrimentHelper recobrimentHelper;
     @Autowired
     private RecobrimentV2Helper recobrimentV2Helper;
+    @Autowired
+    private PluginHelper pluginHelper;
     @Autowired
     private EntitatRepository entitatRepository;
     @Autowired
@@ -1003,11 +1007,30 @@ public class RecobrimentServiceImpl implements RecobrimentService, ApplicationCo
             if (consulta == null) {
                 throw new ConsultaNotFoundException();
             }
+            if (consulta.getArxiuDocumentUuid() != null && !consulta.getArxiuDocumentUuid().isEmpty()) {
+                try {
+                    es.caib.plugins.arxiu.api.Document documentArxiu = pluginHelper.arxiuDocumentConsultar(
+                            idPeticion,
+                            consulta.getArxiuDocumentUuid(),
+                            null,
+                            false,
+                            false);
+                    if (documentArxiu != null && documentArxiu.getMetadades() != null && documentArxiu.getMetadades().getCsv() != null) {
+                        return documentArxiu.getMetadades().getCsv();
+                    } else {
+                        return null;
+                    }
+                } catch (Exception ex) {
+                    log.error("No ha estat possible obtenir el justificant de l'arxiu.", ex);
+                    throw new JustificantGeneracioException("No ha estat possible recuperar la informació del justificant a l'arxiu.");
+                }
+            }
+            // Encara no té justificant
             JustificantDto justificant = recobrimentHelper.getJustificante(idPeticion, idSolicitud, true, false);
             return justificant.getArxiuCsv();
         } catch (ConsultaNotFoundException cnfe) {
             throw cnfe; // Torna a llançar l'excepció específica
-        } catch (ScspException ex) {
+        } catch (JustificantGeneracioException | ScspException ex) {
             throw new RecobrimentScspException(
                     ex.getMessage(),
                     ex);
@@ -1021,6 +1044,10 @@ public class RecobrimentServiceImpl implements RecobrimentService, ApplicationCo
             if (consulta == null) {
                 throw new ConsultaNotFoundException();
             }
+            if (consulta.getArxiuDocumentUuid() != null && !consulta.getArxiuDocumentUuid().isEmpty()) {
+                return consulta.getArxiuDocumentUuid();
+            }
+            // Encara no té justificant
             JustificantDto justificant = recobrimentHelper.getJustificante(idPeticion, idSolicitud, true, false);
             return justificant.getArxiuUuid();
         } catch (ConsultaNotFoundException cnfe) {
