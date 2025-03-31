@@ -369,5 +369,5 @@ public interface ProcedimentService {
 	 * @return Llistat de codi i nom dels serveis
 	 */
 	@PreAuthorize("hasRole('ROLE_REPRES')")
-	List<ServeiDto> serveisDisponiblesPerProcediment(Long procedimentId);
+	List<ServeiDto> serveisDisponiblesPerProcediment(Long procedimentId) throws ProcedimentNotFoundException;
 }

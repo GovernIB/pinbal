@@ -814,17 +814,22 @@ public class ProcedimentServiceImpl implements ProcedimentService {
 
 	@Transactional(readOnly = true)
 	@Override
-	public List<ServeiDto> serveisDisponiblesPerProcediment(Long procedimentId) {
+	public List<ServeiDto> serveisDisponiblesPerProcediment(Long procedimentId) throws ProcedimentNotFoundException {
 		List<ServeiDto> serveisDto = new ArrayList<>();
 
+		Procediment procediment = procedimentRepository.findOne(procedimentId);
+		if (procediment == null) {
+			throw new ProcedimentNotFoundException(procedimentId.toString());
+		}
 		List<Servei> serveisDisponibles = serveiRepository.findActiuNotInProcediment(procedimentId);
 		if (serveisDisponibles == null)
 			return serveisDto;
 
 		List<String> serveisInactius = serveiConfigRepository.findByActiuFalse();
+		List<String> serveisEntitat = procediment.getEntitat().getServeis();
 
 		for (Servei s: serveisDisponibles) {
-			boolean serveiActiu = !serveisInactius.contains(s.getCodi());
+			boolean serveiActiu = !serveisInactius.contains(s.getCodi()) && serveisEntitat.contains(s.getCodi());
 			serveisDto.add(ServeiDto.builder().id(s.getId()).codi(s.getCodi()).descripcio(s.getDescripcio()).actiu(serveiActiu).build());
 		}
 		return serveisDto;

@@ -97,6 +97,7 @@ import org.springframework.security.acls.domain.BasePermission;
 import org.springframework.security.acls.model.AccessControlEntry;
 import org.springframework.security.acls.model.MutableAclService;
 import org.springframework.security.acls.model.Permission;
+import org.springframework.security.acls.model.Sid;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -325,12 +326,52 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 			throw new ServeiAmbConsultesException();
 		}
 		ServeiDto servei = toServeiDto(servicio);
+
+		// Eliminar Servicio SCSP
 		getScspHelper().deleteServicio(serveiCodi);
+
+		// Eliminar Procediment-Servei
+		List<ProcedimentServei> procedimentsServei = procedimentServeiRepository.findByServei(serveiCodi);
+		for(ProcedimentServei procedimentServei: procedimentsServei) {
+			Procediment procediment = procedimentServei.getProcediment();
+			procediment.getServeis().remove(procedimentServei);
+			// Esborrar permisos assignats al servei
+			PermisosHelper.revocarPermisosServei(
+					ProcedimentServei.class,
+					procedimentServei.getId(),
+					aclService);
+			procedimentServeiRepository.delete(procedimentsServei);
+			cacheHelper.evictServeisProcediment(procediment.getCodi());
+		}
+
+		// Eliminar Entitat-Servei
+		List<EntitatServei> entitatsServei = entitatServeiRepository.findByServei(serveiCodi);
+		for(EntitatServei entitatServei: entitatsServei) {
+			Entitat entitat = entitatServei.getEntitat();
+			entitat.getServeis().remove(entitatsServei);
+			entitatServeiRepository.deleteById(entitatServei.getId());
+			actualitzarServeisScspActiusEntitat(entitat);
+			cacheHelper.evictServeisEntitat(entitat.getCodi());
+		}
+
+		// Eliminar ServeiConfig
 		ServeiConfig serveiConfig = serveiConfigRepository.findByServei(serveiCodi);
 		if (serveiConfig != null)
 			serveiConfigRepository.delete(serveiConfig);
 		cacheHelper.evictDadesEspecifiques(serveiCodi);
+		cacheHelper.evictServeis();
 		return servei;
+	}
+
+	private void actualitzarServeisScspActiusEntitat(Entitat entitat) {
+		List<EntitatServei> entitatServeis = entitatServeiRepository.findByEntitat(entitat);
+		String[] serveisActius = new String[entitatServeis.size()];
+		for (int i = 0; i < serveisActius.length; i++) {
+			serveisActius[i] = entitatServeis.get(i).getServei();
+		}
+		getScspHelper().actualitzarServiciosActivosOrganismoCesionario(
+				entitat.getCif(),
+				serveisActius);
 	}
 
 	@Transactional(readOnly = true)
@@ -386,8 +427,12 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 		log.debug("Cercant els servicios actius");
 		List<ServeiDto> resposta = new ArrayList<ServeiDto>();
 		List<Servicio> servicios = getScspHelper().findServicioAll();
-		for (Servicio servicio : servicios)
-			resposta.add(toServeiDto(servicio));
+		List<String> serveiConfigCodis = serveiConfigRepository.findAllCodis();
+		for (Servicio servicio : servicios) {
+			if (serveiConfigCodis.contains(servicio.getCodCertificado())) {
+				resposta.add(toServeiDto(servicio));
+			}
+		}
 		return resposta;
 	}
 
@@ -526,11 +571,60 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 						ProcedimentServei.class,
 						procedimetServeiId,
 						aclService);
-				servei.setUsuarisAmbPermis(aces != null ? aces.size() : 0);
+				servei.setUsuarisAmbPermis(aces != null ? eliminarDuplicats(aces).size() : 0);
 			}
 		}
 		return paginaDtos;
 	}
+
+	private static List<AccessControlEntry> eliminarDuplicats(List<AccessControlEntry> aces) {
+		// Utilitzem un Set per identificar les claus úniques.
+		Set<AceKey> uniques = new HashSet<>();
+		List<AccessControlEntry> result = new ArrayList<>();
+
+		// Iterem sobre la llista original
+		for (AccessControlEntry ace : aces) {
+			AceKey key = new AceKey(ace.getAcl(), ace.getSid(), ace.getPermission());
+			if (uniques.add(key)) { // Si no està duplicat, afegim
+				result.add(ace);
+			}
+		}
+
+		return result; // Retornem la llista sense duplicats
+	}
+
+	// Classe auxiliar per definir els camps que determinen un duplicat
+	private static class AceKey {
+		private final org.springframework.security.acls.model.Acl acl;
+		private final Sid sid;
+		private final Permission permission;
+
+		public AceKey(org.springframework.security.acls.model.Acl acl, Sid sid, Permission permission) {
+			this.acl = acl;
+			this.sid = sid;
+			this.permission = permission;
+		}
+
+		@Override
+		public boolean equals(Object o) {
+			if (this == o) return true;
+			if (o == null || getClass() != o.getClass()) return false;
+			AceKey that = (AceKey) o;
+			return acl.equals(that.acl) &&
+					sid.equals(that.sid) &&
+					permission.equals(that.permission);
+		}
+
+		@Override
+		public int hashCode() {
+			int result = acl.hashCode();
+			result = 31 * result + sid.hashCode();
+			result = 31 * result + permission.hashCode();
+			return result;
+		}
+	}
+
+
 
 	@Transactional(readOnly = true)
 	@Override

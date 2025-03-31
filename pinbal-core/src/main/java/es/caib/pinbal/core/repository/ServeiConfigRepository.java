@@ -21,6 +21,9 @@ public interface ServeiConfigRepository extends JpaRepository<ServeiConfig, Long
 
 	ServeiConfig findByServei(String servei);
 
+    @Query("select sc.servei from ServeiConfig sc")
+	List<String> findAllCodis();
+
     @Query("select sc.servei from ServeiConfig sc where sc.actiu = false")
     List<String> findByActiuFalse();
 

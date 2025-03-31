@@ -224,7 +224,7 @@ public class ProcedimentServiceBean implements ProcedimentService {
 
     @Override
 	@RolesAllowed("PBL_REPRES")
-    public List<ServeiDto> serveisDisponiblesPerProcediment(Long procedimentId) {
+    public List<ServeiDto> serveisDisponiblesPerProcediment(Long procedimentId) throws ProcedimentNotFoundException {
         return delegate.serveisDisponiblesPerProcediment(procedimentId);
     }
 

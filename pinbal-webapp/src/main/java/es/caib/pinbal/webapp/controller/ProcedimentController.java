@@ -433,7 +433,7 @@ public class ProcedimentController extends BaseController {
 	public String procedimentServeiPost(
 			HttpServletRequest request,
 			@PathVariable Long procedimentId,
-			Model model) {
+			Model model) throws ProcedimentNotFoundException {
 		if (!EntitatHelper.isRepresentantEntitatActual(request))
 			return "representantNoAutoritzat";
 		EntitatDto entitat = EntitatHelper.getEntitatActual(request, entitatService);
