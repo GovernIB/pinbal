@@ -259,4 +259,14 @@ public interface HistoricConsultaRepository extends JpaRepository<HistoricConsul
 			nativeQuery = true)
 	public void setSessionOptimizerModeToRule();
 
+
+
+
+	@Modifying
+	@Query(value = "UPDATE PBL_CONSULTA_HIST " +
+			"SET CREATEDBY_CODI = CASE WHEN CREATEDBY_CODI = :codiAntic THEN :codiNou ELSE CREATEDBY_CODI END, " +
+			"    LASTMODIFIEDBY_CODI = CASE WHEN LASTMODIFIEDBY_CODI = :codiAntic THEN :codiNou ELSE LASTMODIFIEDBY_CODI END " +
+			"WHERE CREATEDBY_CODI = :codiAntic OR LASTMODIFIEDBY_CODI = :codiAntic",
+			nativeQuery = true)
+	void updateUsuariAuditoria(@Param("codiAntic") String codiAntic, @Param("codiNou") String codiNou);
 }

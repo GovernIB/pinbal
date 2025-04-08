@@ -255,6 +255,7 @@ body {
 									<li><a href="<c:url value="/entitat"/>"><spring:message code="decorator.menu.entitats"/></a></li>
 									<li><a href="<c:url value="/servei"/>"><spring:message code="decorator.menu.serveis"/></a></li>
 									<li><a href="<c:url value="/organgestor"/>"><spring:message code="decorator.menu.organgestor"/></a></li>
+									<li><a href="<c:url value="/usuari/username"/>"><spring:message code="decorator.menu.canvi.usuari.codi"/></a></li>
 								</ul>
 								<script type="application/javascript">
 									$("#menu_adm_gestio").dropdown();

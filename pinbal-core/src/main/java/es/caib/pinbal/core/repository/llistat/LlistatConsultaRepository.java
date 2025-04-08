@@ -6,6 +6,7 @@ import es.caib.pinbal.core.model.llistat.LlistatConsulta;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -125,5 +126,11 @@ public interface LlistatConsultaRepository extends JpaRepository<LlistatConsulta
             @Param("esNullMultiple") Boolean esNullMultiple,
             @Param("multiple") Boolean multiple,
             Pageable pageable);
+
+
+
+    @Modifying
+    @Query(value = "UPDATE PBL_CONSULTA_LIST SET USUARICODI = :codiNou WHERE USUARICODI = :codiAntic", nativeQuery = true)
+    void updateUsuariCodi(@Param("codiAntic") String codiAntic, @Param("codiNou") String codiNou);
 
 }

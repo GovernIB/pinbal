@@ -145,4 +145,9 @@ public interface LlistatHistoricConsultaRepository extends JpaRepository<Llistat
     @Modifying
     @Query(value = "delete LlistatConsulta where data < current_date - :dies")
     public int purgaConsultes(@Param("dies") int dies);
+
+
+    @Modifying
+    @Query(value = "UPDATE PBL_CONSULTA_HIST_LIST SET USUARICODI = :codiNou WHERE USUARICODI = :codiAntic", nativeQuery = true)
+    void updateUsuariCodi(@Param("codiAntic") String codiAntic, @Param("codiNou") String codiNou);
 }

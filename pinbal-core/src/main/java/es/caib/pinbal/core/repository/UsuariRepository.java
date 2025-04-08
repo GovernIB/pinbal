@@ -6,6 +6,7 @@ package es.caib.pinbal.core.repository;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import es.caib.pinbal.core.model.Usuari;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -34,4 +35,11 @@ public interface UsuariRepository extends JpaRepository<Usuari, String> {
 			"   or lower(nom) like lower(concat('%', :text, '%')) " +
 			"   or lower(nif) like lower(concat('%', :text, '%'))")
 	public List<Usuari> findByCodiOrNomOrNif(@Param("text") String text);
+
+
+
+
+	@Modifying
+	@Query(value = "UPDATE ACL_SID SET SID = :codiNou WHERE SID = :codiAntic AND PRINCIPAL = 1", nativeQuery = true)
+	void updateUsuariPermis(@Param("codiAntic") String codiAntic, @Param("codiNou") String codiNou);
 }

@@ -9,6 +9,7 @@ import es.caib.pinbal.core.model.EntitatUsuari;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -88,4 +89,14 @@ public interface EntitatRepository extends JpaRepository<Entitat, Long> {
 			Pageable pageable);
 
     List<Entitat> findByActivaTrue();
+
+
+
+	@Modifying
+	@Query(value = "UPDATE PBL_ENTITAT " +
+			"SET CREATEDBY_CODI = CASE WHEN CREATEDBY_CODI = :codiAntic THEN :codiNou ELSE CREATEDBY_CODI END, " +
+			"    LASTMODIFIEDBY_CODI = CASE WHEN LASTMODIFIEDBY_CODI = :codiAntic THEN :codiNou ELSE LASTMODIFIEDBY_CODI END " +
+			"WHERE CREATEDBY_CODI = :codiAntic OR LASTMODIFIEDBY_CODI = :codiAntic",
+			nativeQuery = true)
+	void updateUsuariAuditoria(@Param("codiAntic") String codiAntic, @Param("codiNou") String codiNou);
 }

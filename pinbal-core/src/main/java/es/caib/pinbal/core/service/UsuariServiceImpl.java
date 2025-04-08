@@ -13,11 +13,28 @@ import es.caib.pinbal.core.helper.UsuariHelper;
 import es.caib.pinbal.core.model.Entitat;
 import es.caib.pinbal.core.model.EntitatUsuari;
 import es.caib.pinbal.core.model.Usuari;
+import es.caib.pinbal.core.repository.AvisRepository;
+import es.caib.pinbal.core.repository.ConfigRepository;
+import es.caib.pinbal.core.repository.ConsultaRepository;
 import es.caib.pinbal.core.repository.EntitatRepository;
+import es.caib.pinbal.core.repository.EntitatServeiRepository;
 import es.caib.pinbal.core.repository.EntitatUsuariRepository;
+import es.caib.pinbal.core.repository.HistoricConsultaRepository;
+import es.caib.pinbal.core.repository.IntegracioAccioParamRepository;
+import es.caib.pinbal.core.repository.IntegracioAccioRepository;
+import es.caib.pinbal.core.repository.OrganGestorRepository;
 import es.caib.pinbal.core.repository.ProcedimentRepository;
 import es.caib.pinbal.core.repository.ProcedimentServeiRepository;
+import es.caib.pinbal.core.repository.ServeiBusRepository;
+import es.caib.pinbal.core.repository.ServeiCampGrupRepository;
+import es.caib.pinbal.core.repository.ServeiCampRepository;
+import es.caib.pinbal.core.repository.ServeiConfigRepository;
+import es.caib.pinbal.core.repository.ServeiJustificantCampRepository;
+import es.caib.pinbal.core.repository.ServeiReglaRepository;
 import es.caib.pinbal.core.repository.UsuariRepository;
+import es.caib.pinbal.core.repository.explotacio.ExplotConsultaDimensioRepository;
+import es.caib.pinbal.core.repository.llistat.LlistatConsultaRepository;
+import es.caib.pinbal.core.repository.llistat.LlistatHistoricConsultaRepository;
 import es.caib.pinbal.core.service.exception.EntitatNotFoundException;
 import es.caib.pinbal.core.service.exception.EntitatUsuariNotFoundException;
 import es.caib.pinbal.core.service.exception.EntitatUsuariProtegitException;
@@ -72,6 +89,41 @@ public class UsuariServiceImpl implements UsuariService {
 	private MutableAclService aclService;
     @Autowired
     private CacheHelper cacheHelper;
+
+    @Autowired
+    private AvisRepository avisRepository;
+    @Autowired
+    private ConfigRepository configRepository;
+    @Autowired
+    private ConsultaRepository consultaRepository;
+    @Autowired
+    private HistoricConsultaRepository historicConsultaRepository;
+    @Autowired
+    private EntitatServeiRepository entitatServeiRepository;
+    @Autowired
+    private OrganGestorRepository organGestorRepository;
+    @Autowired
+    private ServeiBusRepository serveiBusRepository;
+    @Autowired
+    private ServeiCampRepository serveiCampRepository;
+    @Autowired
+    private ServeiConfigRepository serveiConfigRepository;
+    @Autowired
+    private ServeiJustificantCampRepository serveiJustificantCampRepository;
+    @Autowired
+    private ServeiReglaRepository serveiReglaRepository;
+    @Autowired
+    private IntegracioAccioRepository integracioAccioRepository;
+    @Autowired
+    private IntegracioAccioParamRepository integracioAccioParamRepository;
+    @Autowired
+    private ServeiCampGrupRepository serveiCampGrupRepository;
+    @Autowired
+    private LlistatConsultaRepository llistatConsultaRepository;
+    @Autowired
+    private LlistatHistoricConsultaRepository llistatHistoricConsultaRepository;
+    @Autowired
+    private ExplotConsultaDimensioRepository explotConsultaDimensioRepository;
 
 	@Transactional
 	@Override
@@ -292,6 +344,118 @@ public class UsuariServiceImpl implements UsuariService {
 			}
 		}
 		return usuaris;
+	}
+
+	@Transactional(timeout = 1200)
+    @Override
+    public void updateUsuariCodi(String codiAntic, String codiNou) {
+        Usuari usuariAntic = usuariRepository.findByCodi(codiAntic);
+		if (usuariAntic == null) {
+			throw new NotFoundException(codiAntic, Usuari.class);
+		}
+
+		Usuari usuariNou = cloneUsuari(codiNou, usuariAntic);
+
+		// Actualitzam la informació de auditoria de les taules:
+		updateUsuariAuditoria(codiAntic, codiNou);
+
+		// Actualitazam els permisos assignats per ACL
+		updateUsuariPermisos(codiAntic, codiNou);
+
+		// Actualitzam les referencis a l'usuari a taules:
+		updateUsuariReferencies(codiAntic, codiNou);
+
+		// Eliminam l'usuari antic
+		usuariRepository.delete(usuariAntic);
+	}
+
+	private void updateUsuariPermisos(String codiAntic, String codiNou) {
+		usuariRepository.updateUsuariPermis(codiAntic, codiNou);
+		usuariRepository.flush();
+	}
+
+	private void updateUsuariReferencies(String codiAntic, String codiNou) {
+		//		PBL_CONSULTA_HIST_LIST.USUARICODI
+		llistatHistoricConsultaRepository.updateUsuariCodi(codiAntic, codiNou);
+		//		PBL_CONSULTA_LIST.USUARICODI
+		llistatConsultaRepository.updateUsuariCodi(codiAntic, codiNou);
+		//		PBL_EXPLOT_CONSULTA_DIM.USUARI_CODI
+		explotConsultaDimensioRepository.updateUsuariCodi(codiAntic, codiNou);
+		//		PBL_ENTITAT_USUARI.USUARI_ID
+		entitatUsuariRepository.updateUsuariCodi(codiAntic, codiNou);
+	}
+
+	private void updateUsuariAuditoria(String codiAntic, String codiNou) {
+		//		PBL_AVIS
+		avisRepository.updateUsuariAuditoria(codiAntic, codiNou);
+		avisRepository.flush();
+		//		PBL_CONFIG
+		configRepository.updateUsuariAuditoria(codiAntic, codiNou);
+		avisRepository.flush();
+		//		PBL_CONSULTA
+		consultaRepository.updateUsuariAuditoria(codiAntic, codiNou);
+		avisRepository.flush();
+		//		PBL_CONSULTA_HIST
+		historicConsultaRepository.updateUsuariAuditoria(codiAntic, codiNou);
+		avisRepository.flush();
+		//		PBL_ENTITAT
+		entitatRepository.updateUsuariAuditoria(codiAntic, codiNou);
+		avisRepository.flush();
+		//		PBL_ENTITAT_SERVEI
+		entitatServeiRepository.updateUsuariAuditoria(codiAntic, codiNou);
+		avisRepository.flush();
+		//		PBL_ENTITAT_USUARI
+		entitatUsuariRepository.updateUsuariAuditoria(codiAntic, codiNou);
+		avisRepository.flush();
+		//		PBL_MON_INT
+		integracioAccioRepository.updateUsuariAuditoria(codiAntic, codiNou);
+		avisRepository.flush();
+		//		PBL_MON_INT_PARAM
+		integracioAccioParamRepository.updateUsuariAuditoria(codiAntic, codiNou);
+		avisRepository.flush();
+		//		PBL_ORGAN_GESTOR
+		organGestorRepository.updateUsuariAuditoria(codiAntic, codiNou);
+		avisRepository.flush();
+		//		PBL_PROCEDIMENT
+		procedimentRepository.updateUsuariAuditoria(codiAntic, codiNou);
+		avisRepository.flush();
+		//		PBL_PROCEDIMENT_SERVEI
+		procedimentServeiRepository.updateUsuariAuditoria(codiAntic, codiNou);
+		avisRepository.flush();
+		//		PBL_SERVEI_BUS
+		serveiBusRepository.updateUsuariAuditoria(codiAntic, codiNou);
+		avisRepository.flush();
+		//		PBL_SERVEI_CAMP
+		serveiCampRepository.updateUsuariAuditoria(codiAntic, codiNou);
+		avisRepository.flush();
+		//		PBL_SERVEI_CAMP_GRUP
+		serveiCampGrupRepository.updateUsuariAuditoria(codiAntic, codiNou);
+		avisRepository.flush();
+		//		PBL_SERVEI_CONFIG
+		serveiConfigRepository.updateUsuariAuditoria(codiAntic, codiNou);
+		avisRepository.flush();
+		//		PBL_SERVEI_JUSTIF_CAMP
+		serveiJustificantCampRepository.updateUsuariAuditoria(codiAntic, codiNou);
+		avisRepository.flush();
+		//		PBL_SERVEI_REGLA
+		serveiReglaRepository.updateUsuariAuditoria(codiAntic, codiNou);
+		avisRepository.flush();
+	}
+
+	private Usuari cloneUsuari(String codiNou, Usuari usuariAntic) {
+		Usuari usuariNou = Usuari.getBuilderNoInicialitzatCodi(codiNou).build();
+		usuariNou.update(usuariAntic.getNom(), usuariAntic.getNif());
+		usuariNou.updateEmail(usuariAntic.getEmail());
+		usuariNou.updateValorsPerDefecte(
+				usuariAntic.getIdioma(),
+				usuariAntic.getProcedimentId(),
+				usuariAntic.getServeiCodi(),
+				usuariAntic.getEntitatId(),
+				usuariAntic.getDepartament(),
+				usuariAntic.getFinalitat(),
+				usuariAntic.getNumElementsPagina()
+		);
+		return usuariRepository.saveAndFlush(usuariNou);
 	}
 
 	@Transactional(rollbackFor = EntitatNotFoundException.class)

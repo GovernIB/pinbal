@@ -11,6 +11,7 @@ import es.caib.pinbal.core.service.exception.EntitatNotFoundException;
 import es.caib.pinbal.core.service.exception.EntitatUsuariNotFoundException;
 import es.caib.pinbal.core.service.exception.EntitatUsuariProtegitException;
 import es.caib.pinbal.core.service.exception.UsuariExternNotFoundException;
+import org.jboss.annotation.ejb.TransactionTimeout;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -217,5 +218,12 @@ public class UsuariServiceBean implements UsuariService {
 	public List<UsuariDto> getUsuarisEntitat(Long entitatId, String text) {
 		return delegate.getUsuarisEntitat(entitatId, text);
 	}
+
+    @Override
+	@RolesAllowed({"PBL_ADMIN"})
+	@TransactionTimeout(value = 1200)
+    public void updateUsuariCodi(String codiAntic, String codiNou) {
+        delegate.updateUsuariCodi(codiAntic, codiNou);
+    }
 
 }

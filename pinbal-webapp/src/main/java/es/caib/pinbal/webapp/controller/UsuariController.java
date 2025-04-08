@@ -9,7 +9,9 @@ import es.caib.pinbal.core.service.ProcedimentService;
 import es.caib.pinbal.core.service.ServeiService;
 import es.caib.pinbal.core.service.UsuariService;
 import es.caib.pinbal.core.service.exception.EntitatNotFoundException;
+import es.caib.pinbal.webapp.command.UsuariCodiCommand;
 import es.caib.pinbal.webapp.command.UsuariCommand;
+import es.caib.pinbal.webapp.common.AlertHelper;
 import es.caib.pinbal.webapp.common.EntitatHelper;
 import es.caib.pinbal.webapp.common.RolHelper;
 import es.caib.pinbal.webapp.common.UsuariHelper;
@@ -146,5 +148,42 @@ public class UsuariController extends BaseController{
 			resposta.add(new HtmlOption(e.name(), String.valueOf(e.getElements())));
 		}
 		return resposta;
+	}
+
+
+	///////////////////////////////////////
+
+	@RequestMapping(value = "/username", method = RequestMethod.GET)
+	public String getCanviCodi(
+			HttpServletRequest request,
+			Model model) {
+		UsuariCodiCommand command = new UsuariCodiCommand();
+		model.addAttribute(command);
+		return "usuariCodiForm";
+	}
+
+	@RequestMapping(value = "/username", method = RequestMethod.POST)
+	public String setCanviCodi(
+			HttpServletRequest request,
+			HttpServletResponse response,
+			@Valid UsuariCodiCommand command,
+			BindingResult bindingResult,
+			Model model) {
+		if (bindingResult.hasErrors()) {
+			return "usuariCodiForm";
+		}
+
+		try {
+			usuariService.updateUsuariCodi(command.getCodiAntic(), command.getCodiNou());
+			AlertHelper.success(
+					request,
+					getMessage(request, "usuari.controller.codi.modificat.ok", null));
+		} catch (Exception e) {
+			AlertHelper.error(
+					request,
+					getMessage(request, "usuari.controller.codi.modificat.error", null) + ". " + e.getMessage());
+			log.error("Error modificant el codi de l'usuari", e);
+		}
+		return "usuariCodiForm";
 	}
 }

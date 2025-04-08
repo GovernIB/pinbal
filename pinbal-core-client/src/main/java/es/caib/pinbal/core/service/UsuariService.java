@@ -265,4 +265,7 @@ public interface UsuariService {
 
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_REPRES') or hasRole('ROLE_DELEG') or hasRole('ROLE_AUDIT') or hasRole('ROLE_SUPERAUD') or hasRole('ROLE_WS')")
 	List<UsuariDto> getUsuarisEntitat(Long entitatId, String text);
+
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	void updateUsuariCodi(String codiAntic, String codiNou);
 }
