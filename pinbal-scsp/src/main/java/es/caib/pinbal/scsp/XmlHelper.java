@@ -8,23 +8,10 @@ import es.caib.pinbal.scsp.tree.Node;
 import es.caib.pinbal.scsp.tree.Tree;
 import es.scsp.bean.common.Peticion;
 import es.scsp.common.domain.core.Servicio;
+import lombok.Getter;
+import lombok.Setter;
 import org.apache.commons.io.FileUtils;
-import org.apache.ws.commons.schema.XmlSchema;
-import org.apache.ws.commons.schema.XmlSchemaAll;
-import org.apache.ws.commons.schema.XmlSchemaChoice;
-import org.apache.ws.commons.schema.XmlSchemaCollection;
-import org.apache.ws.commons.schema.XmlSchemaComplexType;
-import org.apache.ws.commons.schema.XmlSchemaElement;
-import org.apache.ws.commons.schema.XmlSchemaEnumerationFacet;
-import org.apache.ws.commons.schema.XmlSchemaFacet;
-import org.apache.ws.commons.schema.XmlSchemaGroupBase;
-import org.apache.ws.commons.schema.XmlSchemaMaxLengthFacet;
-import org.apache.ws.commons.schema.XmlSchemaMinLengthFacet;
-import org.apache.ws.commons.schema.XmlSchemaObject;
-import org.apache.ws.commons.schema.XmlSchemaParticle;
-import org.apache.ws.commons.schema.XmlSchemaSequence;
-import org.apache.ws.commons.schema.XmlSchemaSimpleType;
-import org.apache.ws.commons.schema.XmlSchemaSimpleTypeRestriction;
+import org.apache.ws.commons.schema.*;
 import org.apache.ws.commons.schema.resolver.URIResolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -507,6 +494,15 @@ public class XmlHelper {
 						Object item = iti.next();
 						afegirElementMultiple(servicio, tree, path, schema, node, (XmlSchemaParticle)item);
 					}
+				} else if (complexType.getContentModel() instanceof XmlSchemaSimpleContent) {
+					XmlSchemaSimpleContent simpleContent = (XmlSchemaSimpleContent) complexType.getContentModel();
+
+					dadesNode.setNom(element.getName());
+					dadesNode.setComplex(false);
+					dadesNode.setGroupMin(minOccurs);
+					dadesNode.setGroupMax(maxOccurs);
+
+					afegirAtributs(simpleContent, dadesNode);
 				}
 			} else {
 				dadesNode.setNom(element.getName());
@@ -541,6 +537,28 @@ public class XmlHelper {
 		} else {
 			dadesNode.setPath(pathToString(path));
 			afegirElementMultiple(servicio, tree, path, schema, pare, particle);
+		}
+	}
+
+	private void afegirAtributs(XmlSchemaSimpleContent simpleContent, DadesEspecifiquesNode dadesNode) {
+		XmlSchemaSimpleContentExtension extension = (XmlSchemaSimpleContentExtension) simpleContent.getContent();
+		if (extension.getAttributes() != null) {
+			XmlSchemaObjectCollection attributes = extension.getAttributes();
+
+			for (int i = 0; i < attributes.getCount(); i++) {
+				Object attributeObj = attributes.getItem(i);
+
+				if (attributeObj instanceof XmlSchemaAttribute) {
+					XmlSchemaAttribute attribute = (XmlSchemaAttribute) attributeObj;
+
+					// Obtenim informació de l'atribut, com el nom i tipus
+					String attributeName = attribute.getName();
+					String attributeType = attribute.getSchemaTypeName().getLocalPart();
+
+					dadesNode.addAtribut(attributeName);
+//					System.out.println("Atribut: " + attributeName + " - Tipus: " + attributeType);
+				}
+			}
 		}
 	}
 
@@ -782,6 +800,8 @@ public class XmlHelper {
 		return is;
 	}
 
+	@Getter
+	@Setter
 	public static class DadesEspecifiquesNode {
 		public static final int GROUP_TYPE_ALL = 0;
 		public static final int GROUP_TYPE_CHOICE = 1;
@@ -795,85 +815,16 @@ public class XmlHelper {
 		private int maxLength = 0;
 		private List<String> enumValues = new ArrayList<String>();
 		private String path;
-
-		public String getNom() {
-			return nom;
-		}
-
-		public void setNom(String nom) {
-			this.nom = nom;
-		}
-
-		public boolean isComplex() {
-			return complex;
-		}
-
-		public void setComplex(boolean complex) {
-			this.complex = complex;
-		}
-
-		public int getGroupType() {
-			return groupType;
-		}
-
-		public void setGroupType(int groupType) {
-			this.groupType = groupType;
-		}
-
-		public long getGroupMin() {
-			return groupMin;
-		}
-
-		public void setGroupMin(long groupMin) {
-			this.groupMin = groupMin;
-		}
-
-		public long getGroupMax() {
-			return groupMax;
-		}
-
-		public void setGroupMax(long groupMax) {
-			this.groupMax = groupMax;
-		}
-
-		public int getMinLength() {
-			return minLength;
-		}
-
-		public void setMinLength(int minLength) {
-			this.minLength = minLength;
-		}
-
-		public int getMaxLength() {
-			return maxLength;
-		}
-
-		public void setMaxLength(int maxLength) {
-			this.maxLength = maxLength;
-		}
-
-		public List<String> getEnumValues() {
-			return enumValues;
-		}
-
-		public void setEnumValues(List<String> enumValues) {
-			this.enumValues = enumValues;
-		}
+		private List<String> atributs = new ArrayList<String>();
 
 		public void addEnumValue(String value) {
 			this.enumValues.add(value);
 		}
-
+		public void addAtribut(String atribut) {
+			this.enumValues.add(atribut);
+		}
 		public boolean isEnum() {
 			return enumValues.size() > 0;
-		}
-
-		public String getPath() {
-			return path;
-		}
-
-		public void setPath(String path) {
-			this.path = path;
 		}
 
 		public String toString() {

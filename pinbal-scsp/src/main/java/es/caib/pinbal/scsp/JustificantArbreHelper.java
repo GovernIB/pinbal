@@ -3,13 +3,11 @@
  */
 package es.caib.pinbal.scsp;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-
+import es.scsp.bean.common.Emisor;
+import es.scsp.bean.common.Procedimiento;
+import es.scsp.bean.common.Solicitante;
+import es.scsp.bean.common.Titular;
+import es.scsp.bean.common.TransmisionDatos;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.MessageSource;
@@ -18,11 +16,11 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import es.scsp.bean.common.Emisor;
-import es.scsp.bean.common.Procedimiento;
-import es.scsp.bean.common.Solicitante;
-import es.scsp.bean.common.Titular;
-import es.scsp.bean.common.TransmisionDatos;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
 
 /**
  * Helper per a generar el justificant.
@@ -464,7 +462,7 @@ public class JustificantArbreHelper implements MessageSourceAware {
 
 
 
-	public class ElementArbre {
+	public static class ElementArbre {
 		private String titol;
 		private String descripcio;
 		private String xpathDatoEspecifico;
