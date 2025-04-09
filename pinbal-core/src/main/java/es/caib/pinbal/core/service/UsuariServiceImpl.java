@@ -348,20 +348,33 @@ public class UsuariServiceImpl implements UsuariService {
 
 	@Transactional(timeout = 1200)
     @Override
-    public void updateUsuariCodi(String codiAntic, String codiNou) {
+    public void updateUsuariCodi(String codiAntic, String codiNou, String nom, String nif, String email, String idioma) {
         Usuari usuariAntic = usuariRepository.findByCodi(codiAntic);
 		if (usuariAntic == null) {
 			throw new NotFoundException(codiAntic, Usuari.class);
 		}
 
-		Usuari usuariNou = cloneUsuari(codiNou, usuariAntic);
+		String uNom = nom != null && !nom.trim().isEmpty() ? nom : usuariAntic.getNom();
+		String uNif = nif != null && !nif.trim().isEmpty() ? nif : usuariAntic.getNif();
+		String uEmail = email != null && !email.trim().isEmpty() ? email : usuariAntic.getEmail();
+		String uIdioma = idioma != null && !idioma.trim().isEmpty() ? idioma : usuariAntic.getIdioma();
+
+		// Si no han indicat un codi nou, únicament actualitzem els valors de l'usuari
+		if (codiNou == null || codiNou.trim().isEmpty()) {
+			usuariAntic.update(uNom, uNif);
+			usuariAntic.updateEmail(uEmail);
+			usuariAntic.updateIdioma(uIdioma);
+			usuariRepository.saveAndFlush(usuariAntic);
+			return;
+		}
+
+		// Si han informat un codi d'usuari nou, actualitzem l'usuari i totes les seves referències en BBDD
+		Usuari usuariNou = cloneUsuari(codiNou, usuariAntic, uNom, uNif, uEmail, uIdioma);
 
 		// Actualitzam la informació de auditoria de les taules:
 		updateUsuariAuditoria(codiAntic, codiNou);
-
 		// Actualitazam els permisos assignats per ACL
 		updateUsuariPermisos(codiAntic, codiNou);
-
 		// Actualitzam les referencis a l'usuari a taules:
 		updateUsuariReferencies(codiAntic, codiNou);
 
@@ -442,12 +455,17 @@ public class UsuariServiceImpl implements UsuariService {
 		avisRepository.flush();
 	}
 
-	private Usuari cloneUsuari(String codiNou, Usuari usuariAntic) {
-		Usuari usuariNou = Usuari.getBuilderNoInicialitzatCodi(codiNou).build();
-		usuariNou.update(usuariAntic.getNom(), usuariAntic.getNif());
-		usuariNou.updateEmail(usuariAntic.getEmail());
+	private Usuari cloneUsuari(
+			String codiNou,
+			Usuari usuariAntic,
+			String nom,
+			String nif,
+			String email,
+			String idioma) {
+		Usuari usuariNou = Usuari.getBuilderInicialitzat(codiNou, nom, nif).build();
+		usuariNou.updateEmail(email);
 		usuariNou.updateValorsPerDefecte(
-				usuariAntic.getIdioma(),
+				idioma,
 				usuariAntic.getProcedimentId(),
 				usuariAntic.getServeiCodi(),
 				usuariAntic.getEntitatId(),

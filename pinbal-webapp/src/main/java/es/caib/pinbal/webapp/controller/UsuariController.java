@@ -159,6 +159,7 @@ public class UsuariController extends BaseController{
 			Model model) {
 		UsuariCodiCommand command = new UsuariCodiCommand();
 		model.addAttribute(command);
+		model.addAttribute("idiomaEnumOptions", EnumHelper.getOptionsForEnum(IdiomaEnumDto.class, "usuari.form.camp.idioma.enum."));
 		return "usuariCodiForm";
 	}
 
@@ -169,12 +170,21 @@ public class UsuariController extends BaseController{
 			@Valid UsuariCodiCommand command,
 			BindingResult bindingResult,
 			Model model) {
+
+		model.addAttribute("idiomaEnumOptions", EnumHelper.getOptionsForEnum(IdiomaEnumDto.class, "usuari.form.camp.idioma.enum."));
+
 		if (bindingResult.hasErrors()) {
 			return "usuariCodiForm";
 		}
 
 		try {
-			usuariService.updateUsuariCodi(command.getCodiAntic(), command.getCodiNou());
+			usuariService.updateUsuariCodi(
+					command.getCodiAntic(),
+					command.getCodiNou(),
+					command.getNom(),
+					command.getNif(),
+					command.getEmail(),
+					command.getIdioma());
 			AlertHelper.success(
 					request,
 					getMessage(request, "usuari.controller.codi.modificat.ok", null));

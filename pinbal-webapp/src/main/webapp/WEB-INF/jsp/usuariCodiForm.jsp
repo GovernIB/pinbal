@@ -12,6 +12,41 @@
 	<script src="<c:url value="/webjars/select2/4.0.6-rc.1/dist/js/select2.min.js"/>"></script>
 	<script src="<c:url value="/webjars/select2/4.0.6-rc.1/dist/js/i18n/${requestLocale}.js"/>"></script>
 	<script src="<c:url value="/js/webutil.common.js"/>"></script>
+	<script type="application/javascript">
+		$(document).ready(function() {
+			// Capturar el canvi de valor a 'codiAntic'
+			$('#codiAntic').on('change', function () {
+				const codiAntic = $(this).val().trim(); // Obté el valor actual
+
+				// Comprovar si el valor no està buit
+				if (codiAntic) {
+					// Crida AJAX al servei per obtenir UsuariDto
+					$.ajax({
+						url: '<c:url value="/usuariajax/usuari/item/"/>' + codiAntic,
+						type: 'GET',
+						contentType: 'application/json',
+						success: function (usuariDto) {
+							// Assignar els valors retornats als camps corresponents
+							$('#nom').val(usuariDto.nom);
+							$('#nif').val(usuariDto.nif);
+							$('#email').val(usuariDto.email);
+							$('#idioma').val(usuariDto.idioma).trigger('change');
+						},
+						error: function (xhr, status, error) {
+							console.error("Error en obtenir UsuariDto: ", error);
+							alert("No s'han trobat dades per al codi introduït.");
+						}
+					});
+				} else {
+					// Si el valor està buit, buidar els camps relacionats
+					$('#nom').val('');
+					$('#nif').val('');
+					$('#email').val('');
+					$('#idioma').val('').trigger('change');
+				}
+			});
+		});
+	</script>
 </head>
 <body>
 	<c:url value="/usuari/username" var="formAction"/>
@@ -24,6 +59,25 @@
 				<pbl:inputText name="codiNou" textKey="usuari.form.camp.nou"/>
 			</div>
 		</div>
+		<fieldset style="margin-top: 20px;">
+			<legend><spring:message code="usuari.form.valors.usuari"/></legend>
+			<div class="row">
+				<div class="col-md-6">
+					<pbl:inputText name="nom" textKey="usuari.form.camp.nom"/>
+				</div>
+				<div class="col-md-6">
+					<pbl:inputText name="nif" textKey="usuari.form.camp.nif"/>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-md-6">
+					<pbl:inputText name="email" textKey="usuari.form.camp.email"/>
+				</div>
+				<div class="col-md-6">
+					<pbl:inputSelect name="idioma" optionItems="${idiomaEnumOptions}" textKey="usuari.form.camp.idioma" optionValueAttribute="value" optionTextKeyAttribute="text" emptyOption="true"/>
+				</div>
+			</div>
+		</fieldset>
 		<div id="modal-botons" class="pull-right">
 			<button type="submit" class="btn btn-success">
 				<span class="fa fa-save"></span>

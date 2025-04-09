@@ -170,6 +170,11 @@ public class Usuari implements Serializable {
 //	public void updateIdioma(String idioma) {
 //		this.idioma = idioma;
 //	}
+
+	public void updateIdioma(String idioma) {
+		this.idioma = idioma;
+	}
+
 	public void updateValorsPerDefecte(
 			String idioma,
 			Long procedimentId,
@@ -214,6 +219,7 @@ public class Usuari implements Serializable {
 	private void addEntitat(EntitatUsuari entitat) {
 		entitats.add(entitat);
 	}
+
 
 	/**
 	 * La classe Builder emprada per a crear nous objectes de tipus Usuari.

@@ -22,7 +22,12 @@ public class UsuariCodiCommand implements Serializable {
 
 	@NotNull
 	private String codiAntic;
-	@NotNull
+//	@NotNull
 	private String codiNou;
+
+	private String nom;
+	private String nif;
+	private String email;
+	private String idioma;
 
 }
