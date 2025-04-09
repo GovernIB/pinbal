@@ -327,11 +327,45 @@ public interface ConsultaRepository extends JpaRepository<Consulta, Long> {
 
 
 
+//	@Modifying
+//	@Query(value = "UPDATE PBL_CONSULTA " +
+//			"SET CREATEDBY_CODI = CASE WHEN CREATEDBY_CODI = :codiAntic THEN :codiNou ELSE CREATEDBY_CODI END, " +
+//			"    LASTMODIFIEDBY_CODI = CASE WHEN LASTMODIFIEDBY_CODI = :codiAntic THEN :codiNou ELSE LASTMODIFIEDBY_CODI END " +
+//			"WHERE CREATEDBY_CODI = :codiAntic OR LASTMODIFIEDBY_CODI = :codiAntic",
+//			nativeQuery = true)
+//	void updateUsuariAuditoria(@Param("codiAntic") String codiAntic, @Param("codiNou") String codiNou);
+
 	@Modifying
-	@Query(value = "UPDATE PBL_CONSULTA " +
-			"SET CREATEDBY_CODI = CASE WHEN CREATEDBY_CODI = :codiAntic THEN :codiNou ELSE CREATEDBY_CODI END, " +
-			"    LASTMODIFIEDBY_CODI = CASE WHEN LASTMODIFIEDBY_CODI = :codiAntic THEN :codiNou ELSE LASTMODIFIEDBY_CODI END " +
-			"WHERE CREATEDBY_CODI = :codiAntic OR LASTMODIFIEDBY_CODI = :codiAntic",
-			nativeQuery = true)
-	void updateUsuariAuditoria(@Param("codiAntic") String codiAntic, @Param("codiNou") String codiNou);
+	@Query(value = "UPDATE PBL_CONSULTA SET CREATEDBY_CODI = :codiNou WHERE CREATEDBY_CODI = :codiAntic", nativeQuery = true)
+	void updateCreatedByCodi(@Param("codiAntic") String codiAntic, @Param("codiNou") String codiNou);
+
+	@Modifying
+	@Query(value = "UPDATE PBL_CONSULTA SET LASTMODIFIEDBY_CODI = :codiNou WHERE LASTMODIFIEDBY_CODI = :codiAntic", nativeQuery = true)
+	void updateLastModifiedByCodi(@Param("codiAntic") String codiAntic, @Param("codiNou") String codiNou);
+
+
+//	@Modifying
+//	@Query(value = "UPDATE PBL_CONSULTA SET CREATEDBY_CODI = :codiNou " +
+//			"WHERE CREATEDBY_CODI = :codiAntic " +
+//			"  AND ROWNUM <= :batchSize", nativeQuery = true)
+//	int updateCreatedByCodiBatch(@Param("codiAntic") String codiAntic,
+//								 @Param("codiNou") String codiNou,
+//								 @Param("batchSize") int batchSize);
+//
+//	@Modifying
+//	@Query(value = "UPDATE PBL_CONSULTA SET LASTMODIFIEDBY_CODI = :codiNou " +
+//			"WHERE LASTMODIFIEDBY_CODI = :codiAntic " +
+//			"  AND ROWNUM <= :batchSize", nativeQuery = true)
+//	int updateLastModifiedByCodiBatch(@Param("codiAntic") String codiAntic,
+//									  @Param("codiNou") String codiNou,
+//									  @Param("batchSize") int batchSize);
+//
+//	@Modifying
+//	@Query(value = "ALTER TABLE PBL_CONSULTA NOLOGGING", nativeQuery = true)
+//	void disableLogging();
+//
+//	@Modifying
+//	@Query(value = "ALTER TABLE PBL_CONSULTA LOGGING", nativeQuery = true)
+//	void enableLogging();
+
 }

@@ -34,7 +34,7 @@
 						},
 						error: function (xhr, status, error) {
 							console.error("Error en obtenir UsuariDto: ", error);
-							alert("No s'han trobat dades per al codi introduït.");
+							alert("Error al intentar obtenir la informació de l'usuari amb codi " + codiAntic);
 						}
 					});
 				} else {
@@ -45,8 +45,56 @@
 					$('#idioma').val('').trigger('change');
 				}
 			});
+
+			$('#codiNou').on('change', function () {
+				const codiNou = $(this).val().trim(); // Obté el valor actual
+
+				// Comprovar si el valor no està buit
+				if (codiNou) {
+					$.ajax({
+						url: '<c:url value="/usuariajax/usuari/item/"/>' + codiNou,
+						type: 'GET',
+						contentType: 'application/json',
+						success: function (usuariDto) {
+							if (usuariDto && Object.keys(usuariDto).length !== 0) {
+								alert("El nou codi " + codiNou + " ja existeix. \n" +
+										"Si utilitza aquest codi, tot el que està assignat dins l'aplicació a l'usuari a modificar quedarà assignat a aquest usuari ja existent.\n\n" +
+										"Tengui present que en aquest cas, les dades de l'usuari amb codi " + codiNou + " no es modificaran.");
+							}
+						},
+						error: function (xhr, status, error) {
+							console.error("Error en obtenir UsuariDto: ", error);
+						}
+					});
+				}
+			});
+			$('form').on('submit', function () {
+				// Mostra el spinner
+				$('#loading-overlay').show();
+			});
+
 		});
 	</script>
+	<style>
+		/* Capa semitransparent */
+		#loading-overlay {
+			position: fixed;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			background-color: rgba(0, 0, 0, 0.5);
+			z-index: 9999; /* Assegura que estigui per sobre de tot */
+			display: flex;
+			justify-content: center;
+			align-items: center;
+		}
+
+		#loading-overlay .fa-spinner {
+			color: white; /* Color blanc per al spinner */
+		}
+	</style>
+
 </head>
 <body>
 	<c:url value="/usuari/username" var="formAction"/>
@@ -86,5 +134,8 @@
 			<a href="<c:url value="/"/>" class="btn btn-default" data-modal-cancel="true"><span class="fa fa-times"></span>&nbsp;<spring:message code="comu.boto.tancar"/></a>
 		</div>
 	</form:form>
+	<div id="loading-overlay" style="display: none;">
+		<i class="fas fa-spinner fa-spin fa-3x"></i>
+	</div>
 </body>
 </html>

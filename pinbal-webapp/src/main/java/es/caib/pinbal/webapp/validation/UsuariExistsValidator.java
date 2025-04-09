@@ -35,14 +35,23 @@ public class UsuariExistsValidator implements ConstraintValidator<UsuariExists, 
 		boolean valid = true;
 		// comprova que el nom sigui únic
 		if (command.getCodiAntic() != null) {
-			UsuariDto usuari = usuariService.getDades(command.getCodiAntic());
-			if (usuari == null) {
+			UsuariDto usuariAntic = usuariService.getDades(command.getCodiAntic());
+			if (usuariAntic == null) {
 				context.disableDefaultConstraintViolation();
 				context.buildConstraintViolationWithTemplate(MessageHelper.getInstance().getMessage(anotacio.message() + ".not.found"))
 						.addNode("codiAntic")
 						.addConstraintViolation();
 				valid = false;
 			}
+
+//			UsuariDto usuariNou = usuariService.getDades(command.getCodiNou());
+//			if (usuariNou != null) {
+//				context.disableDefaultConstraintViolation();
+//				context.buildConstraintViolationWithTemplate(MessageHelper.getInstance().getMessage(anotacio.message() + ".exists"))
+//						.addNode("codiNou")
+//						.addConstraintViolation();
+//				valid = false;
+//			}
 		}
 
 		return valid;
