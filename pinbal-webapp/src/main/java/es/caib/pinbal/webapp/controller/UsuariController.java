@@ -21,6 +21,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -219,8 +220,10 @@ public class UsuariController extends BaseController{
 
 		UsuariDto usuariAntic = usuariService.getDades(codiAntic);
 		UsuariDto usuariNou = usuariService.getDades(codiNou);
+		String codiActual = SecurityContextHolder.getContext().getAuthentication() != null ? SecurityContextHolder.getContext().getAuthentication().getName() : null;
 
 		return UsuariChangeValidation.builder()
+				.usuariActual(codiActual != null && codiActual.equals(codiAntic))
 				.usuariAnticExists(usuariAntic != null)
 				.usuariNouExists(usuariNou != null)
 				.build();
@@ -254,6 +257,7 @@ public class UsuariController extends BaseController{
 	@Data
 	@Builder
 	public static class UsuariChangeValidation {
+		private boolean usuariActual;
 		private boolean usuariAnticExists;
 		private boolean usuariNouExists;
 	}

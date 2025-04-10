@@ -69,7 +69,12 @@
 				// Validar els codis via AJAX
 				$.post('<c:url value="/usuari/usernames/"/>' + codiAntic + '/validateTo/' + codiNou)
 						.done(function (response) {
-							if (!response.usuariAnticExists) {
+							if (response.usuariActual) {
+								// Codi antic és el de l'usuari actual
+								lineRow.find('.status-icon').removeClass('fa-spinner fa-spin').addClass('fa-times text-danger');
+								lineRow.find('.result').append('<span class="result-info text-danger"><spring:message code="usuari.antic.es.actual"/></span>');
+								processNextLine(index + 1);
+							} else if (!response.usuariAnticExists) {
 								// Codi antic no existeix
 								lineRow.find('.status-icon').removeClass('fa-spinner fa-spin').addClass('fa-times text-danger');
 								lineRow.find('.result').append('<span class="result-info text-danger"><spring:message code="usuari.antic.not.found"/></span>');
