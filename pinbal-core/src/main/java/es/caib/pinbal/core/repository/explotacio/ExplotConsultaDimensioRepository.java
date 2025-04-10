@@ -18,5 +18,5 @@ public interface ExplotConsultaDimensioRepository extends JpaRepository<ExplotCo
 
     @Modifying
     @Query(value = "UPDATE PBL_EXPLOT_CONSULTA_DIM SET USUARI_CODI = :codiNou WHERE USUARI_CODI = :codiAntic", nativeQuery = true)
-    void updateUsuariCodi(@Param("codiAntic") String codiAntic, @Param("codiNou") String codiNou);
+    int updateUsuariCodi(@Param("codiAntic") String codiAntic, @Param("codiNou") String codiNou);
 }

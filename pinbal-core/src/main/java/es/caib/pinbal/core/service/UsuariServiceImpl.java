@@ -347,6 +347,36 @@ public class UsuariServiceImpl implements UsuariService {
 	}
 
 	@Transactional(timeout = 1200)
+	@Override
+	public Long updateUsuariCodi(String codiAntic, String codiNou) {
+		Usuari usuariAntic = usuariRepository.findByCodi(codiAntic);
+		if (usuariAntic == null) {
+			throw new NotFoundException(codiAntic, Usuari.class);
+		}
+
+		// Si han informat un codi d'usuari nou, actualitzem l'usuari i totes les seves referències en BBDD
+		Usuari usuariNou = usuariRepository.findByCodi(codiNou);
+		if (usuariNou == null) {
+			usuariNou = cloneUsuari(codiNou, usuariAntic);
+		}
+
+		log.info(">>>>> UPDATE CODI USUARI: " + codiAntic + " -> " + codiNou);
+		Long registresModificats = 0L;
+
+		// Actualitzam la informació de auditoria de les taules:
+		registresModificats += updateUsuariAuditoria(codiAntic, codiNou);
+		// Actualitazam els permisos assignats per ACL
+		registresModificats += updateUsuariPermisos(codiAntic, codiNou);
+		// Actualitzam les referencis a l'usuari a taules:
+		registresModificats += updateUsuariReferencies(codiAntic, codiNou);
+
+		// Eliminam l'usuari antic
+		usuariRepository.delete(usuariAntic);
+
+		return registresModificats;
+	}
+
+	@Transactional(timeout = 1200)
     @Override
     public void updateUsuariCodi(String codiAntic, String codiNou, String nom, String nif, String email, String idioma) {
         Usuari usuariAntic = usuariRepository.findByCodi(codiAntic);
@@ -387,46 +417,52 @@ public class UsuariServiceImpl implements UsuariService {
 		usuariRepository.delete(usuariAntic);
 	}
 
-	private void updateUsuariPermisos(String codiAntic, String codiNou) {
-		usuariRepository.updateUsuariPermis(codiAntic, codiNou);
-		usuariRepository.flush();
+	private int updateUsuariPermisos(String codiAntic, String codiNou) {
+		return usuariRepository.updateUsuariPermis(codiAntic, codiNou);
+//		usuariRepository.flush();
 	}
 
-	private void updateUsuariReferencies(String codiAntic, String codiNou) {
+	private Long updateUsuariReferencies(String codiAntic, String codiNou) {
+		Long registresModificats = 0L;
+
 		log.info(">>> UPDATE USUARIS TAULES AMB REFERENCIES:");
 		//		PBL_CONSULTA_HIST_LIST.USUARICODI
 		Long t0 = System.currentTimeMillis();
-		llistatHistoricConsultaRepository.updateUsuariCodi(codiAntic, codiNou);
+		registresModificats += llistatHistoricConsultaRepository.updateUsuariCodi(codiAntic, codiNou);
 		log.info("> Llista historic: " + (System.currentTimeMillis() - t0) + " ms");
 		//		PBL_CONSULTA_LIST.USUARICODI
 		t0 = System.currentTimeMillis();
-		llistatConsultaRepository.updateUsuariCodi(codiAntic, codiNou);
+		registresModificats += llistatConsultaRepository.updateUsuariCodi(codiAntic, codiNou);
 		log.info("> Llista consulta: " + (System.currentTimeMillis() - t0) + " ms");
 		//		PBL_EXPLOT_CONSULTA_DIM.USUARI_CODI
 		t0 = System.currentTimeMillis();
-		explotConsultaDimensioRepository.updateUsuariCodi(codiAntic, codiNou);
+		registresModificats += explotConsultaDimensioRepository.updateUsuariCodi(codiAntic, codiNou);
 		log.info("> Dimensions: " + (System.currentTimeMillis() - t0) + " ms");
 		//		PBL_ENTITAT_USUARI.USUARI_ID
 		t0 = System.currentTimeMillis();
-		entitatUsuariRepository.updateUsuariCodi(codiAntic, codiNou);
+		registresModificats += entitatUsuariRepository.updateUsuariCodi(codiAntic, codiNou);
 		log.info("> Entitat-Usuari: " + (System.currentTimeMillis() - t0) + " ms");
+
+		return registresModificats;
 	}
 
-	private void updateUsuariAuditoria(String codiAntic, String codiNou) {
+	private Long updateUsuariAuditoria(String codiAntic, String codiNou) {
+		Long registresModificats = 0L;
+
 		log.info(">>> UPDATE USUARIS AUDITORIA:");
 		//		PBL_AVIS
 		Long t0 = System.currentTimeMillis();
-		avisRepository.updateUsuariAuditoria(codiAntic, codiNou);
+		registresModificats += avisRepository.updateUsuariAuditoria(codiAntic, codiNou);
 		log.info("> Avis: " + (System.currentTimeMillis() - t0) + " ms");
 		//		PBL_CONFIG
 		t0 = System.currentTimeMillis();
-		configRepository.updateUsuariAuditoria(codiAntic, codiNou);
+		registresModificats += configRepository.updateUsuariAuditoria(codiAntic, codiNou);
 		log.info("> Config: " + (System.currentTimeMillis() - t0) + " ms");
 		//		PBL_CONSULTA
 		t0 = System.currentTimeMillis();
 		// Dividim l'update en 2, i cream indexos a la taula per les columnes de createdby i lastmodifiedby
-		consultaRepository.updateCreatedByCodi(codiAntic, codiNou);
-		consultaRepository.updateLastModifiedByCodi(codiAntic, codiNou);
+		registresModificats += consultaRepository.updateCreatedByCodi(codiAntic, codiNou);
+		registresModificats += consultaRepository.updateLastModifiedByCodi(codiAntic, codiNou);
 //		consultaRepository.disableLogging();
 //		try {
 //			int updatedRows;
@@ -446,69 +482,71 @@ public class UsuariServiceImpl implements UsuariService {
 		//		PBL_CONSULTA_HIST
 		t0 = System.currentTimeMillis();
 		// Dividim l'update en 2, i cream indexos a la taula per les columnes de createdby i lastmodifiedby
-		historicConsultaRepository.updateCreatedByCodi(codiAntic, codiNou);
-		historicConsultaRepository.updateLastModifiedByCodi(codiAntic, codiNou);
+		registresModificats += historicConsultaRepository.updateCreatedByCodi(codiAntic, codiNou);
+		registresModificats += historicConsultaRepository.updateLastModifiedByCodi(codiAntic, codiNou);
 		log.info("> Historic consulta: " + (System.currentTimeMillis() - t0) + " ms");
 		//		PBL_ENTITAT
 		t0 = System.currentTimeMillis();
-		entitatRepository.updateUsuariAuditoria(codiAntic, codiNou);
+		registresModificats += entitatRepository.updateUsuariAuditoria(codiAntic, codiNou);
 		log.info("> Entitat: " + (System.currentTimeMillis() - t0) + " ms");
 		//		PBL_ENTITAT_SERVEI
 		t0 = System.currentTimeMillis();
-		entitatServeiRepository.updateUsuariAuditoria(codiAntic, codiNou);
+		registresModificats += entitatServeiRepository.updateUsuariAuditoria(codiAntic, codiNou);
 		log.info("> Entitat-Servei: " + (System.currentTimeMillis() - t0) + " ms");
 		//		PBL_ENTITAT_USUARI
 		t0 = System.currentTimeMillis();
-		entitatUsuariRepository.updateUsuariAuditoria(codiAntic, codiNou);
+		registresModificats += entitatUsuariRepository.updateUsuariAuditoria(codiAntic, codiNou);
 		log.info("> Entitat-Usuari: " + (System.currentTimeMillis() - t0) + " ms");
 		//		PBL_MON_INT
 		t0 = System.currentTimeMillis();
 		// Dividim l'update en 2, i cream indexos a la taula per les columnes de createdby i lastmodifiedby
-		integracioAccioRepository.updateCreatedByCodi(codiAntic, codiNou);
-		integracioAccioRepository.updateLastModifiedByCodi(codiAntic, codiNou);
+		registresModificats += integracioAccioRepository.updateCreatedByCodi(codiAntic, codiNou);
+		registresModificats += integracioAccioRepository.updateLastModifiedByCodi(codiAntic, codiNou);
 		log.info("> Monitor: " + (System.currentTimeMillis() - t0) + " ms");
 		//		PBL_MON_INT_PARAM
 		t0 = System.currentTimeMillis();
 		// Dividim l'update en 2, i cream indexos a la taula per les columnes de createdby i lastmodifiedby
-		integracioAccioParamRepository.updateCreatedByCodi(codiAntic, codiNou);
-		integracioAccioParamRepository.updateLastModifiedByCodi(codiAntic, codiNou);
+		registresModificats += integracioAccioParamRepository.updateCreatedByCodi(codiAntic, codiNou);
+		registresModificats += integracioAccioParamRepository.updateLastModifiedByCodi(codiAntic, codiNou);
 		log.info("> Monitor params: " + (System.currentTimeMillis() - t0) + " ms");
 		//		PBL_ORGAN_GESTOR
 		t0 = System.currentTimeMillis();
-		organGestorRepository.updateUsuariAuditoria(codiAntic, codiNou);
+		registresModificats += organGestorRepository.updateUsuariAuditoria(codiAntic, codiNou);
 		log.info("> Organ Gestor: " + (System.currentTimeMillis() - t0) + " ms");
 		//		PBL_PROCEDIMENT
 		t0 = System.currentTimeMillis();
-		procedimentRepository.updateUsuariAuditoria(codiAntic, codiNou);
+		registresModificats += procedimentRepository.updateUsuariAuditoria(codiAntic, codiNou);
 		log.info("> Procediment: " + (System.currentTimeMillis() - t0) + " ms");
 		//		PBL_PROCEDIMENT_SERVEI
 		t0 = System.currentTimeMillis();
-		procedimentServeiRepository.updateUsuariAuditoria(codiAntic, codiNou);
+		registresModificats += procedimentServeiRepository.updateUsuariAuditoria(codiAntic, codiNou);
 		log.info("> Procediment-Servei: " + (System.currentTimeMillis() - t0) + " ms");
 		//		PBL_SERVEI_BUS
 		t0 = System.currentTimeMillis();
-		serveiBusRepository.updateUsuariAuditoria(codiAntic, codiNou);
+		registresModificats += serveiBusRepository.updateUsuariAuditoria(codiAntic, codiNou);
 		log.info("> Servei-Bus: " + (System.currentTimeMillis() - t0) + " ms");
 		//		PBL_SERVEI_CAMP
 		t0 = System.currentTimeMillis();
-		serveiCampRepository.updateUsuariAuditoria(codiAntic, codiNou);
+		registresModificats += serveiCampRepository.updateUsuariAuditoria(codiAntic, codiNou);
 		log.info("> Servei-Camp: " + (System.currentTimeMillis() - t0) + " ms");
 		//		PBL_SERVEI_CAMP_GRUP
 		t0 = System.currentTimeMillis();
-		serveiCampGrupRepository.updateUsuariAuditoria(codiAntic, codiNou);
+		registresModificats += serveiCampGrupRepository.updateUsuariAuditoria(codiAntic, codiNou);
 		log.info("> Servei-CampGrup: " + (System.currentTimeMillis() - t0) + " ms");
 		//		PBL_SERVEI_CONFIG
 		t0 = System.currentTimeMillis();
-		serveiConfigRepository.updateUsuariAuditoria(codiAntic, codiNou);
+		registresModificats += serveiConfigRepository.updateUsuariAuditoria(codiAntic, codiNou);
 		log.info("> Servei-Config: " + (System.currentTimeMillis() - t0) + " ms");
 		//		PBL_SERVEI_JUSTIF_CAMP
 		t0 = System.currentTimeMillis();
-		serveiJustificantCampRepository.updateUsuariAuditoria(codiAntic, codiNou);
+		registresModificats += serveiJustificantCampRepository.updateUsuariAuditoria(codiAntic, codiNou);
 		log.info("> Servei-JustificantCamp: " + (System.currentTimeMillis() - t0) + " ms");
 		//		PBL_SERVEI_REGLA
 		t0 = System.currentTimeMillis();
-		serveiReglaRepository.updateUsuariAuditoria(codiAntic, codiNou);
+		registresModificats += serveiReglaRepository.updateUsuariAuditoria(codiAntic, codiNou);
 		log.info("> Servei-Regla: " + (System.currentTimeMillis() - t0) + " ms");
+
+		return registresModificats;
 	}
 
 	private Usuari cloneUsuari(
@@ -522,6 +560,23 @@ public class UsuariServiceImpl implements UsuariService {
 		usuariNou.updateEmail(email);
 		usuariNou.updateValorsPerDefecte(
 				idioma,
+				usuariAntic.getProcedimentId(),
+				usuariAntic.getServeiCodi(),
+				usuariAntic.getEntitatId(),
+				usuariAntic.getDepartament(),
+				usuariAntic.getFinalitat(),
+				usuariAntic.getNumElementsPagina()
+		);
+		return usuariRepository.saveAndFlush(usuariNou);
+	}
+
+	private Usuari cloneUsuari(
+			String codiNou,
+			Usuari usuariAntic) {
+		Usuari usuariNou = Usuari.getBuilderInicialitzat(codiNou, usuariAntic.getNom(), usuariAntic.getNif()).build();
+		usuariNou.updateEmail(usuariAntic.getEmail());
+		usuariNou.updateValorsPerDefecte(
+				usuariAntic.getIdioma(),
 				usuariAntic.getProcedimentId(),
 				usuariAntic.getServeiCodi(),
 				usuariAntic.getEntitatId(),

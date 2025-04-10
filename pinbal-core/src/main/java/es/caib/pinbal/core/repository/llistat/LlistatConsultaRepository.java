@@ -131,6 +131,6 @@ public interface LlistatConsultaRepository extends JpaRepository<LlistatConsulta
 
     @Modifying
     @Query(value = "UPDATE PBL_CONSULTA_LIST SET USUARICODI = :codiNou WHERE USUARICODI = :codiAntic", nativeQuery = true)
-    void updateUsuariCodi(@Param("codiAntic") String codiAntic, @Param("codiNou") String codiNou);
+    int updateUsuariCodi(@Param("codiAntic") String codiAntic, @Param("codiNou") String codiNou);
 
 }

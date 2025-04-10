@@ -222,6 +222,13 @@ public class UsuariServiceBean implements UsuariService {
     @Override
 	@RolesAllowed({"PBL_ADMIN"})
 	@TransactionTimeout(value = 1200)
+    public Long updateUsuariCodi(String codiAntic, String codiNou) {
+        return delegate.updateUsuariCodi(codiAntic, codiNou) ;
+    }
+
+    @Override
+	@RolesAllowed({"PBL_ADMIN"})
+	@TransactionTimeout(value = 1200)
     public void updateUsuariCodi(String codiAntic, String codiNou, String nom, String nif, String email, String idioma) {
         delegate.updateUsuariCodi(codiAntic, codiNou, nom, nif, email,idioma);
     }

@@ -17,11 +17,14 @@ import es.caib.pinbal.webapp.common.RolHelper;
 import es.caib.pinbal.webapp.common.UsuariHelper;
 import es.caib.pinbal.webapp.helper.EnumHelper;
 import es.caib.pinbal.webapp.helper.EnumHelper.HtmlOption;
+import lombok.Builder;
+import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -32,6 +35,9 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
+
+import static es.caib.pinbal.webapp.controller.UsuariController.ResultatEstatEnum.ERROR;
+import static es.caib.pinbal.webapp.controller.UsuariController.ResultatEstatEnum.OK;
 
 /**
  * Controlador per al manteniment de usuaris.
@@ -196,4 +202,71 @@ public class UsuariController extends BaseController{
 		}
 		return "usuariCodiForm";
 	}
+
+	@RequestMapping(value = "/usernames/change", method = RequestMethod.GET)
+	public String getCanviCodis(
+			HttpServletRequest request,
+			Model model) {
+		return "usuarisCanviCodi";
+	}
+
+	@RequestMapping(value = "/usernames/{codiAntic}/validateTo/{codiNou}", method = RequestMethod.POST, produces = "application/json" )
+	@ResponseBody
+	public UsuariChangeValidation validaCanviCodis(
+			HttpServletRequest request,
+			@PathVariable("codiAntic") String codiAntic,
+			@PathVariable("codiNou") String codiNou) {
+
+		UsuariDto usuariAntic = usuariService.getDades(codiAntic);
+		UsuariDto usuariNou = usuariService.getDades(codiNou);
+
+		return UsuariChangeValidation.builder()
+				.usuariAnticExists(usuariAntic != null)
+				.usuariNouExists(usuariNou != null)
+				.build();
+	}
+
+	@RequestMapping(value = "/usernames/{codiAntic}/changeTo/{codiNou}", method = RequestMethod.POST, produces = "application/json" )
+	@ResponseBody
+	public UsuariChangeResponse setCanviCodis(
+			HttpServletRequest request,
+			@PathVariable("codiAntic") String codiAntic,
+			@PathVariable("codiNou") String codiNou) {
+
+		Long t0 = System.currentTimeMillis();
+		try {
+			Long registresModificats = usuariService.updateUsuariCodi(codiAntic, codiNou);
+			return UsuariChangeResponse.builder()
+					.estat(OK)
+					.registresModificats(registresModificats)
+					.duracio(System.currentTimeMillis() - t0)
+					.build();
+		} catch (Exception e) {
+			log.error("Error modificant el codi de l'usuari", e);
+			return UsuariChangeResponse.builder()
+					.estat(ERROR)
+					.errorMessage(getMessage(request, "usuari.controller.codi.modificat.error", null) + ": " + e.getMessage())
+					.duracio(System.currentTimeMillis() - t0)
+					.build();
+		}
+	}
+
+	@Data
+	@Builder
+	public static class UsuariChangeValidation {
+		private boolean usuariAnticExists;
+		private boolean usuariNouExists;
+	}
+
+	@Data
+	@Builder
+	public static class UsuariChangeResponse {
+		private ResultatEstatEnum estat;
+		private String errorMessage;
+		private Long registresModificats;
+		private Long duracio;
+	}
+
+	public enum ResultatEstatEnum { OK, ERROR }
+
 }

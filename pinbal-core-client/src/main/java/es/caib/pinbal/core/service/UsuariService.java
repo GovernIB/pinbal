@@ -267,5 +267,8 @@ public interface UsuariService {
 	List<UsuariDto> getUsuarisEntitat(Long entitatId, String text);
 
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	Long updateUsuariCodi(String codiAntic, String codiNou);
+
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	void updateUsuariCodi(String codiAntic, String codiNou, String nom, String nif, String email, String idioma);
 }

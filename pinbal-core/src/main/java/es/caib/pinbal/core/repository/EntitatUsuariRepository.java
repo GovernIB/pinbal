@@ -137,9 +137,9 @@ public interface EntitatUsuariRepository extends JpaRepository<EntitatUsuari, Lo
 			"    LASTMODIFIEDBY_CODI = CASE WHEN LASTMODIFIEDBY_CODI = :codiAntic THEN :codiNou ELSE LASTMODIFIEDBY_CODI END " +
 			"WHERE CREATEDBY_CODI = :codiAntic OR LASTMODIFIEDBY_CODI = :codiAntic",
 			nativeQuery = true)
-	void updateUsuariAuditoria(@Param("codiAntic") String codiAntic, @Param("codiNou") String codiNou);
+	int updateUsuariAuditoria(@Param("codiAntic") String codiAntic, @Param("codiNou") String codiNou);
 
 	@Modifying
 	@Query(value = "UPDATE PBL_ENTITAT_USUARI SET USUARI_ID = :codiNou WHERE USUARI_ID = :codiAntic", nativeQuery = true)
-	void updateUsuariCodi(@Param("codiAntic") String codiAntic, @Param("codiNou") String codiNou);
+	int updateUsuariCodi(@Param("codiAntic") String codiAntic, @Param("codiNou") String codiNou);
 }

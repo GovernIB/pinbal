@@ -272,10 +272,10 @@ public interface HistoricConsultaRepository extends JpaRepository<HistoricConsul
 
 	@Modifying
 	@Query(value = "UPDATE PBL_CONSULTA_HIST SET CREATEDBY_CODI = :codiNou WHERE CREATEDBY_CODI = :codiAntic", nativeQuery = true)
-	void updateCreatedByCodi(@Param("codiAntic") String codiAntic, @Param("codiNou") String codiNou);
+	int updateCreatedByCodi(@Param("codiAntic") String codiAntic, @Param("codiNou") String codiNou);
 
 	@Modifying
 	@Query(value = "UPDATE PBL_CONSULTA_HIST SET LASTMODIFIEDBY_CODI = :codiNou WHERE LASTMODIFIEDBY_CODI = :codiAntic", nativeQuery = true)
-	void updateLastModifiedByCodi(@Param("codiAntic") String codiAntic, @Param("codiNou") String codiNou);
+	int updateLastModifiedByCodi(@Param("codiAntic") String codiAntic, @Param("codiNou") String codiNou);
 
 }
