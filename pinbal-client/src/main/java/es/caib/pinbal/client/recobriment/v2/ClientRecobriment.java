@@ -18,7 +18,7 @@ public class ClientRecobriment extends BasicAuthClientBase {
     private static final String BASE_URL_SUFIX = "/interna/recobriment/v2/";
 
 
-    protected ClientRecobriment(
+    public ClientRecobriment(
             String urlBase,
             String usuari,
             String contrasenya) {
@@ -60,7 +60,7 @@ public class ClientRecobriment extends BasicAuthClientBase {
      * Obtén les entitat accessibles
      * @return llista d'entitats a les que l'usuari autenticat té permís
      */
-    List<Entitat> getEntitats() throws IOException {
+    public List<Entitat> getEntitats() throws IOException {
         ClientResponse response = restPeticioGet("entitats", null, ClientResponse.class);
         return processListResponse(response, Entitat.class);
     }
@@ -73,7 +73,7 @@ public class ClientRecobriment extends BasicAuthClientBase {
      * @param entitatCodi
      * @return llista de procediments disponibles per l'entitat especificada a 'entitatCodi'
      */
-    List<ProcedimentBasic> getProcediments(String entitatCodi) throws IOException {
+    public List<ProcedimentBasic> getProcediments(String entitatCodi) throws IOException {
         ClientResponse response = restPeticioGet("entitats/" + entitatCodi + "/procediments", null, ClientResponse.class);
         return processListResponse(response, ProcedimentBasic.class);
     }
@@ -85,7 +85,7 @@ public class ClientRecobriment extends BasicAuthClientBase {
      * Obtén tots els serveis de Pinbal
      * @return llista de serveis disponibles a Pinbal
      */
-    List<ServeiBasic> getServeis() throws IOException {
+    public List<ServeiBasic> getServeis() throws IOException {
         ClientResponse response = restPeticioGet("serveis", null, ClientResponse.class);
         return processListResponse(response, ServeiBasic.class);
     }
@@ -95,7 +95,7 @@ public class ClientRecobriment extends BasicAuthClientBase {
      * @param entitatCodi Codi de l'entitat
      * @return llista dels serveis disponibles a Pinbal per una entitat
      */
-    List<ServeiBasic> getServeisPerEntitat(String entitatCodi) throws IOException {
+    public List<ServeiBasic> getServeisPerEntitat(String entitatCodi) throws IOException {
         ClientResponse response = restPeticioGet("entitats/" + entitatCodi + "/serveis", null, ClientResponse.class);
         return processListResponse(response, ServeiBasic.class);
     }
@@ -105,7 +105,7 @@ public class ClientRecobriment extends BasicAuthClientBase {
      * @param procedimentCodi Codi del procediment
      * @return llista de serveis disponibles a Pinbal per un procediment
      */
-    List<ServeiBasic> getServeisPerProcediment(String entitatCodi, String procedimentCodi) throws IOException {
+    public List<ServeiBasic> getServeisPerProcediment(String entitatCodi, String procedimentCodi) throws IOException {
         ClientResponse response = restPeticioGet("entitats/" + entitatCodi + "/procediments/" + procedimentCodi + "/serveis", null, ClientResponse.class);
         return processListResponse(response, ServeiBasic.class);
     }
@@ -118,7 +118,7 @@ public class ClientRecobriment extends BasicAuthClientBase {
      * @param serveiCodi Codi del servei
      * @return lista de camps que son necessaris per emplenar l’apartat de dades específiques de la petició SCSP al servei web final
      */
-    List<DadaEspecifica> getDadesEspecifiques(String serveiCodi) throws IOException {
+    public List<DadaEspecifica> getDadesEspecifiques(String serveiCodi) throws IOException {
         ClientResponse response = restPeticioGet("serveis/" + serveiCodi + "/dadesEspecifiques", null, ClientResponse.class);
         return processListResponse(response, DadaEspecifica.class);
     }
@@ -133,7 +133,7 @@ public class ClientRecobriment extends BasicAuthClientBase {
      * Se li passa el codi enum que s’obté de la cridada anterior quant el camp és de tipus enumerat.
      * També se li passa opcionalment un filtre a aplicar que pot tenir varis comportaments segons el enumerat
      */
-    List<ValorEnum> getValorsEnum(
+    public List<ValorEnum> getValorsEnum(
             String serveiCodi,
             String campCodi,
             String enumCodi,
@@ -157,7 +157,7 @@ public class ClientRecobriment extends BasicAuthClientBase {
      * @param peticio Petició síncrona
      * @return informació dels possilbes errors de validació de les dades o en la consulta, i una entitat de tipus ScspRespuesta que conté la resposta a la consulta en cas d'havers-se realitzat correctament
      */
-    PeticioRespostaSincrona peticioSincrona(String serveiCodi, PeticioSincrona peticio) throws IOException {
+    public PeticioRespostaSincrona peticioSincrona(String serveiCodi, PeticioSincrona peticio) throws IOException {
         ClientResponse response = restPeticioPost("serveis/" + serveiCodi + "/peticioSincrona", peticio, ClientResponse.class, MediaType.APPLICATION_JSON_TYPE);
         return processResponse(response, PeticioRespostaSincrona.class);
     }
@@ -168,7 +168,7 @@ public class ClientRecobriment extends BasicAuthClientBase {
      * @param peticio Petició asíncrona
      * @return informació dels possilbes errors de validació de les dades o en la consulta, i una entitat de tipus ScspConfirmacionPeticion que conté informació de la resposta en cas d'havers-se realitzat correctament
      */
-    PeticioConfirmacioAsincrona peticioAsincrona(String serveiCodi, PeticioAsincrona peticio) throws IOException {
+    public PeticioConfirmacioAsincrona peticioAsincrona(String serveiCodi, PeticioAsincrona peticio) throws IOException {
         ClientResponse response = restPeticioPost("serveis/" + serveiCodi + "/peticioAsincrona", peticio, ClientResponse.class, MediaType.APPLICATION_JSON_TYPE);
         return processResponse(response, PeticioConfirmacioAsincrona.class);
     }
@@ -181,7 +181,7 @@ public class ClientRecobriment extends BasicAuthClientBase {
      * @param idPeticio Identificador de la petició
      * @return informació de la resposta de la petició
      */
-    PeticioRespostaAsincrona getResposta(String idPeticio) throws IOException {
+    public PeticioRespostaAsincrona getResposta(String idPeticio) throws IOException {
         ClientResponse response = restPeticioGet("consultes/" + idPeticio + "/resposta", null, ClientResponse.class);
         return processResponse(response, PeticioRespostaAsincrona.class);
     }
@@ -193,7 +193,7 @@ public class ClientRecobriment extends BasicAuthClientBase {
      * @return justificant de la petició
      * @throws Exception
      */
-    ScspJustificante getJustificant(String idPeticio, String idSolicitud) throws Exception {
+    public ScspJustificante getJustificant(String idPeticio, String idSolicitud) throws Exception {
         ClientResponse response = restPeticioGet("consultes/" + idPeticio + "/solicitud/" + idSolicitud + "/justificant", null, ClientResponse.class);
         return processResponse(response, ScspJustificante.class);
     }
@@ -205,7 +205,7 @@ public class ClientRecobriment extends BasicAuthClientBase {
      * @return versió imprimible del justificant de la petició
      * @throws Exception
      */
-    ScspJustificante getJustificantImprimible(String idPeticio, String idSolicitud) throws Exception {
+    public ScspJustificante getJustificantImprimible(String idPeticio, String idSolicitud) throws Exception {
         ClientResponse response = restPeticioGet("consultes/" + idPeticio + "/solicitud/" + idSolicitud + "/justificantImprimible", null, ClientResponse.class);
         return processResponse(response, ScspJustificante.class);
     }
@@ -217,7 +217,7 @@ public class ClientRecobriment extends BasicAuthClientBase {
      * @return codi CSV del justificant de la petició a l'arxiu
      * @throws Exception
      */
-    String getJustificantCsv(String idPeticio, String idSolicitud) throws Exception {
+    public String getJustificantCsv(String idPeticio, String idSolicitud) throws Exception {
         ClientResponse response = restPeticioGet("consultes/" + idPeticio + "/solicitud/" + idSolicitud + "/justificantCsv", null, ClientResponse.class);
         return processResponse(response, String.class);
     }
@@ -229,7 +229,7 @@ public class ClientRecobriment extends BasicAuthClientBase {
      * @return codi UUID del justificant de la petició a l'arxiu
      * @throws Exception
      */
-    String getJustificantUuid(String idPeticio, String idSolicitud) throws Exception {
+    public String getJustificantUuid(String idPeticio, String idSolicitud) throws Exception {
         ClientResponse response = restPeticioGet("consultes/" + idPeticio + "/solicitud/" + idSolicitud + "/justificantUuid", null, ClientResponse.class);
         return processResponse(response, String.class);
     }
