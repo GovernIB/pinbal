@@ -57,6 +57,7 @@ import java.nio.charset.StandardCharsets;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -177,22 +178,34 @@ public class ProcedimentController extends BaseController {
 	@RequestMapping(value = "/new", method = RequestMethod.GET)
 	public String get(
 			HttpServletRequest request,
-			Model model) {
+			Model model) throws EntitatNotFoundException {
 		return get(request, (Long)null, model);
 	}
 	@RequestMapping(value = "/{procedimentId}", method = RequestMethod.GET)
 	public String get(
 			HttpServletRequest request,
 			@PathVariable Long procedimentId,
-			Model model) {
+			Model model) throws EntitatNotFoundException {
 		if (!EntitatHelper.isRepresentantEntitatActual(request))
 			return "representantNoAutoritzat";
 		EntitatDto entitat = EntitatHelper.getEntitatActual(request, entitatService);
 		if (entitat != null) {
 			ProcedimentDto procediment = null;
 			Long organId = null;
-			if (procedimentId != null)
+			if (procedimentId != null) {
 				procediment = procedimentService.findById(procedimentId);
+				if (procediment != null && procediment.getCodiSia() != null) {
+					String codiSia = procediment.getCodiSia();
+					List<CodiValor> procedimentsPerOrigen = procedimentService.findAmbEntitatPerOrigen(entitat.getId());
+					filtrarPerCodiSia(procedimentsPerOrigen, codiSia);
+					model.addAttribute("procedimentsOrigen", procedimentsPerOrigen);
+					List<CodiValor> procedimentsPerFills = procedimentService.findAmbEntitatPerFills(entitat.getId(), codiSia);
+					filtrarPerCodiSia(procedimentsPerFills, codiSia);
+					model.addAttribute("procedimentsFills", procedimentsPerFills);
+					List<String> codiSiaFills = procedimentService.findCodiSiaFills(entitat.getId(), codiSia);
+					procediment.setCodiSiaFills(codiSiaFills);
+				}
+			}
 			ProcedimentCommand command;
 			if (procediment != null) {
 				command = ProcedimentCommand.asCommand(procediment);
@@ -213,6 +226,19 @@ public class ProcedimentController extends BaseController {
 			return "redirect:../../index";
 		}
 	}
+
+	private void filtrarPerCodiSia(List<CodiValor> procediments, String codiSia) {
+		Iterator<CodiValor> iterator = procediments.iterator();
+		while (iterator.hasNext()) {
+			CodiValor codiValor = iterator.next();
+			if (codiSia.equals(codiValor.getCodi())) {
+				iterator.remove();
+				return; // Aturem quan trobem el primer element
+			}
+		}
+	}
+
+
 
 	@RequestMapping(value = "/save", method = RequestMethod.POST)
 	public String save(
@@ -237,7 +263,7 @@ public class ProcedimentController extends BaseController {
 			return "procedimentForm";
 		}
 		
-		ProcedimentDto procediment = command.asDto();
+ 		ProcedimentDto procediment = command.asDto();
 		procediment.setEntitatId(entitat.getId());
 		command.setEntitatId(entitat.getId());
 

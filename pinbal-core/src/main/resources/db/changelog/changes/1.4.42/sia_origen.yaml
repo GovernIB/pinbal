@@ -1,0 +1,11 @@
+databaseChangeLog:
+  - changeSet:
+      id: add-codi-sia-origen-column
+      author: limit
+      changes:
+        - addColumn:
+            tableName: PBL_PROCEDIMENT
+            columns:
+              - column:
+                  name: CODI_SIA_ORIGEN
+                  type: VARCHAR(64 CHAR)

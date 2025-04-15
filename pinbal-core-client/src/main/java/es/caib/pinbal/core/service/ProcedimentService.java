@@ -3,6 +3,7 @@
  */
 package es.caib.pinbal.core.service;
 
+import es.caib.pinbal.core.dto.CodiValor;
 import es.caib.pinbal.core.dto.EntitatUsuariDto;
 import es.caib.pinbal.core.dto.FiltreActiuEnumDto;
 import es.caib.pinbal.core.dto.InformeProcedimentDto;
@@ -80,6 +81,13 @@ public interface ProcedimentService {
 	 */
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_REPRES') or hasRole('ROLE_AUDIT') or hasRole('ROLE_SUPERAUD')")
 	public List<ProcedimentDto> findAmbEntitat(Long entitatId, String filtre) throws EntitatNotFoundException;
+
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_REPRES')")
+	public List<CodiValor> findAmbEntitatPerOrigen(Long entitatId) throws EntitatNotFoundException;
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_REPRES')")
+	public List<CodiValor> findAmbEntitatPerFills(Long entitatId, String codiSia) throws EntitatNotFoundException;
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_REPRES')")
+	public List<String> findCodiSiaFills(Long entitatId, String codiSia) throws EntitatNotFoundException;
 	
 	/**
 	 * Consulta els procediments segons el filtre.
@@ -370,4 +378,5 @@ public interface ProcedimentService {
 	 */
 	@PreAuthorize("hasRole('ROLE_REPRES')")
 	List<ServeiDto> serveisDisponiblesPerProcediment(Long procedimentId) throws ProcedimentNotFoundException;
+
 }

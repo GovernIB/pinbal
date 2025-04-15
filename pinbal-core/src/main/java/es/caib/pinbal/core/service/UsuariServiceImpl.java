@@ -46,6 +46,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.acls.model.AclCache;
 import org.springframework.security.acls.model.MutableAclService;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -124,6 +125,9 @@ public class UsuariServiceImpl implements UsuariService {
     private LlistatHistoricConsultaRepository llistatHistoricConsultaRepository;
     @Autowired
     private ExplotConsultaDimensioRepository explotConsultaDimensioRepository;
+
+	@Autowired
+	private AclCache aclCache;
 
 	@Transactional
 	@Override
@@ -373,6 +377,9 @@ public class UsuariServiceImpl implements UsuariService {
 		// Eliminam l'usuari antic
 		usuariRepository.delete(usuariAntic);
 
+		// Buidam la caché de permisos ACL
+		aclCache.clearCache();
+
 		return registresModificats;
 	}
 
@@ -415,6 +422,9 @@ public class UsuariServiceImpl implements UsuariService {
 
 		// Eliminam l'usuari antic
 		usuariRepository.delete(usuariAntic);
+
+		// Buidam la caché de permisos ACL
+		aclCache.clearCache();
 	}
 
 	private int updateUsuariPermisos(String codiAntic, String codiNou) {

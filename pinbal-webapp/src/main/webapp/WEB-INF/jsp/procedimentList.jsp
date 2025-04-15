@@ -67,10 +67,13 @@ $(document).ready(function() {
 				targets: [1], // codi SIA
 				width: "10%"
 			}, {
-				targets: [2, 4], // nom, departament
+				targets: [2], // codi SIA Origen
+				width: "10%"
+			}, {
+				targets: [3, 5], // nom, departament
 				width: "20%"
 			}, {
-				targets: [3], // organ
+				targets: [4], // organ
 				width: "23%",
 				render: function (data, type, row, meta) {
 					var template = $('#template-obsoleta').html();
@@ -84,7 +87,7 @@ $(document).ready(function() {
 						return Mustache.render(template, row);
 				}
 			}, {
-				targets: [6],
+				targets: [7],
 				orderable: false,
 				width: "1%",
 				render: function (data, type, row, meta) {
@@ -92,7 +95,7 @@ $(document).ready(function() {
 						return Mustache.render(template, row);
 				}
 			}, {
-				targets: [7],
+				targets: [8],
 				orderable: false,
 				width: "1%",
 				render: function (data, type, row, meta) {
@@ -101,7 +104,7 @@ $(document).ready(function() {
 						return Mustache.render(template, row);
 				}
 			}, {
-				targets: [8], // organ Actiu
+				targets: [9], // organ Actiu
 				visible: false
 			},
 		],
@@ -175,6 +178,7 @@ $(document).ready(function() {
 			<tr>
 				<th data-data="codi"><spring:message code="procediment.list.taula.columna.codi" /></th>
 				<th data-data="codiSia"><spring:message code="procediment.list.taula.columna.codisia" /></th>
+				<th data-data="codiSiaOrigen"><spring:message code="procediment.list.taula.columna.codisia.origen" /></th>
 				<th data-data="nom"><spring:message code="procediment.list.taula.columna.nom" /></th>
 				<th data-data="organGestorStr"><spring:message code="procediment.list.taula.columna.organgestor" /></th>
 				<th data-data="departament"><spring:message code="procediment.list.taula.columna.departament" /></th>

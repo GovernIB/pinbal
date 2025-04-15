@@ -38,11 +38,29 @@ public interface ProcedimentRepository extends JpaRepository<Procediment, Long> 
 			@Param("esNullFiltre") boolean esNullFiltre,
 			@Param("filtre") String filtre);
 
+	@Query(	"from Procediment p " +
+			"where (p.entitat.id = :entitatId)" +
+			" and p.codiSia is not null " +
+			" and p.codiSiaOrigen is null " +
+			"order by p.nom asc")
+	public List<Procediment> findByEntitatIdPerOrigen(@Param("entitatId") Long entitatId);
+
+	@Query(	"from Procediment p " +
+			"where (p.entitat.id = :entitatId)" +
+			" and p.codiSia is not null " +
+			" and (p.codiSiaOrigen = :codiSia or p.codiSiaOrigen is null) " +
+			" and p.codiSia not in (select distinct codiSiaOrigen from Procediment where entitat.id = :entitatId and codiSiaOrigen is not null)" +
+			"order by p.nom asc")
+	public List<Procediment> findByEntitatIdPerFills(@Param("entitatId") Long entitatId, @Param("codiSia") String codiSia);
+
 	Procediment findByEntitatAndCodi(Entitat entitat, String codi);
 
 	Procediment findByEntitatCodiAndCodi(String entitatCodi, String procedimentCodi);
 
 	Procediment findByEntitatAndCodiSia(Entitat entitat, String codiSia);
+	List<Procediment> findByEntitatAndCodiSiaOrigen(Entitat entitat, String codiSia);
+	@Query("select p.codiSia from Procediment p where p.entitat.id = ?1 and p.codiSiaOrigen = ?2")
+	List<String> findCodiSiaByEntitatAndCodiSiaOrigen(Long entitatId, String codiSia);
 
 	@Query("from Procediment p where p.entitat.id = ?1 and p.actiu = true order by p.nom asc")
 	List<Procediment> findActiusByEntitat(Long entitatId);
@@ -105,4 +123,5 @@ public interface ProcedimentRepository extends JpaRepository<Procediment, Long> 
 			"WHERE CREATEDBY_CODI = :codiAntic OR LASTMODIFIEDBY_CODI = :codiAntic",
 			nativeQuery = true)
 	int updateUsuariAuditoria(@Param("codiAntic") String codiAntic, @Param("codiNou") String codiNou);
+
 }

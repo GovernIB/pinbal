@@ -261,12 +261,18 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 			LoggerHelper.getInstance().error("No s'ha trobat el servei (codi=" + consulta.getServeiCodi() + ") del procediment (id=" + consulta.getProcedimentId() + ")", log, LoggerHelper.LoggingTipus.CONSULTA);
 			throw new ProcedimentServeiNotFoundException();
 		}
-		accioParams.put("procediment", procedimentServei.getProcediment() != null ? procedimentServei.getProcediment().getCodi() + " - " + procedimentServei.getProcediment().getNom() : "");
-		accioParams.put("servei", procedimentServei.getServeiScsp() != null ? procedimentServei.getServeiScsp().getCodi() + " - " + procedimentServei.getServeiScsp().getDescripcio() : "");
-		Entitat entitat = procedimentServei.getProcediment().getEntitat();
+		Procediment procediment = procedimentServei.getProcediment();
+		Servei serveiScsp = procedimentServei.getServeiScsp();
+
+		accioParams.put("procediment", procediment != null ? procediment.getCodi() + " - " + procediment.getNom() : "");
+		accioParams.put("servei", serveiScsp != null ? serveiScsp.getCodi() + " - " + serveiScsp.getDescripcio() : "");
+		if (procediment.getCodiSiaOrigen() != null) {
+			accioParams.put("codiSiaOrigen", procediment.getCodiSiaOrigen());
+		}
+		Entitat entitat = procediment.getEntitat();
 		if (!serveiHelper.isServeiPermesPerUsuari(
 				entitat,
-				procedimentServei.getProcediment(),
+				procediment,
 				consulta.getServeiCodi())) {
 			LoggerHelper.getInstance().error("L'usuari no te accés al servei (codi=" + auth.getName() + ")", log, LoggerHelper.LoggingTipus.CONSULTA);
 			throw new ServeiNotAllowedException();
@@ -382,8 +388,16 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 		}
 		String idPeticion = getScspHelper().generarIdPeticion(consulta.getServeiCodi());
 		LoggerHelper.getInstance().info("(init) Generada idPeticio (" + idPeticion + ") per consulta del servei (codi=" + consulta.getServeiCodi() + ")", log, LoggerHelper.LoggingTipus.CONSULTA);
-		accioParams.put("procediment", procedimentServei.getProcediment() != null ? procedimentServei.getProcediment().getCodi() + " - " + procedimentServei.getProcediment().getNom() : "");
-		accioParams.put("servei", procedimentServei.getServeiScsp() != null ? procedimentServei.getServeiScsp().getCodi() + " - " + procedimentServei.getServeiScsp().getDescripcio() : "");
+
+		Procediment procediment = procedimentServei.getProcediment();
+		Servei serveiScsp = procedimentServei.getServeiScsp();
+
+		accioParams.put("procediment", procediment != null ? procediment.getCodi() + " - " + procediment.getNom() : "");
+		accioParams.put("servei", serveiScsp != null ? serveiScsp.getCodi() + " - " + serveiScsp.getDescripcio() : "");
+		if (procediment.getCodiSiaOrigen() != null) {
+			accioParams.put("codiSiaOrigen", procediment.getCodiSiaOrigen());
+		}
+
 		integracioHelper.addAccioOk(
 				idPeticion,
 				IntegracioHelper.INTCODI_SERVEIS_SCSP,
@@ -582,8 +596,16 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 			LoggerHelper.getInstance().info("No s'ha trobat el servei (codi=" + consulta.getServeiCodi() + ") del procediment (id=" + consulta.getProcedimentId() + ")", log, LoggerHelper.LoggingTipus.CONS_MULT);
 			throw new ProcedimentServeiNotFoundException();
 		}
-		accioParams.put("procediment", procedimentServei.getProcediment() != null ? procedimentServei.getProcediment().getCodi() + " - " + procedimentServei.getProcediment().getNom() : "");
-		accioParams.put("servei", procedimentServei.getServeiScsp() != null ? procedimentServei.getServeiScsp().getCodi() + " - " + procedimentServei.getServeiScsp().getDescripcio() : "");
+
+		Procediment procediment = procedimentServei.getProcediment();
+		Servei serveiScsp = procedimentServei.getServeiScsp();
+
+		accioParams.put("procediment", procediment != null ? procediment.getCodi() + " - " + procediment.getNom() : "");
+		accioParams.put("servei", serveiScsp != null ? serveiScsp.getCodi() + " - " + serveiScsp.getDescripcio() : "");
+		if (procediment.getCodiSiaOrigen() != null) {
+			accioParams.put("codiSiaOrigen", procediment.getCodiSiaOrigen());
+		}
+
 		if (!serveiHelper.isServeiPermesPerUsuari(
 				procedimentServei.getProcediment().getEntitat(),
 				procedimentServei.getProcediment(),
@@ -724,8 +746,14 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 			LoggerHelper.getInstance().error("No s'ha trobat el servei (serveiCodi=" + serveiCodi + ") del procediment (id=" + procediment.getId() + ")", log, LoggerHelper.LoggingTipus.CONS_REC);
 			throw new ProcedimentServeiNotFoundException();
 		}
-		accioParams.put("procediment", procedimentServei.getProcediment() != null ? procedimentServei.getProcediment().getCodi() + " - " + procedimentServei.getProcediment().getNom() : "");
-		accioParams.put("servei", procedimentServei.getServeiScsp() != null ? procedimentServei.getServeiScsp().getCodi() + " - " + procedimentServei.getServeiScsp().getDescripcio() : "");
+
+		Servei serveiScsp = procedimentServei.getServeiScsp();
+		accioParams.put("procediment", procediment != null ? procediment.getCodi() + " - " + procediment.getNom() : "");
+		accioParams.put("servei", serveiScsp != null ? serveiScsp.getCodi() + " - " + serveiScsp.getDescripcio() : "");
+		if (procediment.getCodiSiaOrigen() != null) {
+			accioParams.put("codiSiaOrigen", procediment.getCodiSiaOrigen());
+		}
+
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 		usuariHelper.init(auth.getName());
 		if (!serveiHelper.isServeiPermesPerUsuari(
@@ -912,8 +940,13 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 			LoggerHelper.getInstance().error("(init) No s'ha trobat el servei (serveiCodi=" + serveiCodi + ") del procediment (id=" + procediment.getId() + ")", log, LoggerHelper.LoggingTipus.CONS_REC);
 			throw new ProcedimentServeiNotFoundException();
 		}
-		accioParams.put("procediment", procedimentServei.getProcediment() != null ? procedimentServei.getProcediment().getCodi() + " - " + procedimentServei.getProcediment().getNom() : "");
-		accioParams.put("servei", procedimentServei.getServeiScsp() != null ? procedimentServei.getServeiScsp().getCodi() + " - " + procedimentServei.getServeiScsp().getDescripcio() : "");
+
+		Servei serveiScsp = procedimentServei.getServeiScsp();
+		accioParams.put("procediment", procediment != null ? procediment.getCodi() + " - " + procediment.getNom() : "");
+		accioParams.put("servei", serveiScsp != null ? serveiScsp.getCodi() + " - " + serveiScsp.getDescripcio() : "");
+		if (procediment.getCodiSiaOrigen() != null) {
+			accioParams.put("codiSiaOrigen", procediment.getCodiSiaOrigen());
+		}
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 		usuariHelper.init(auth.getName());
 		if (!serveiHelper.isServeiPermesPerUsuari(
@@ -1159,8 +1192,13 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 			LoggerHelper.getInstance().error("No s'ha trobat el servei (serveiCodi=" + serveiCodi + ") del procediment (id=" + procediment.getId() + ")", log, LoggerHelper.LoggingTipus.CONS_REC_MULT);
 			throw new ProcedimentServeiNotFoundException();
 		}
-		accioParams.put("procediment", procedimentServei.getProcediment() != null ? procedimentServei.getProcediment().getCodi() + " - " + procedimentServei.getProcediment().getNom() : "");
-		accioParams.put("servei", procedimentServei.getServeiScsp() != null ? procedimentServei.getServeiScsp().getCodi() + " - " + procedimentServei.getServeiScsp().getDescripcio() : "");
+
+		Servei serveiScsp = procedimentServei.getServeiScsp();
+		accioParams.put("procediment", procediment != null ? procediment.getCodi() + " - " + procediment.getNom() : "");
+		accioParams.put("servei", serveiScsp != null ? serveiScsp.getCodi() + " - " + serveiScsp.getDescripcio() : "");
+		if (procediment.getCodiSiaOrigen() != null) {
+			accioParams.put("codiSiaOrigen", procediment.getCodiSiaOrigen());
+		}
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 		usuariHelper.init(auth.getName());
 		if (!serveiHelper.isServeiPermesPerUsuari(

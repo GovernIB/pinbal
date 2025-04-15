@@ -30,6 +30,44 @@
 			return organsGestorsActiu[organ.id] ? organ.text : $('<span title="<spring:message code="organgestor.list.extingit"/>">' + organ.text + ' <span class="fa fa-exclamation-triangle text-danger"></span></span>');
 		}
 	}
+
+	$(document).ready(function() {
+		// Selecció dels elements pels noms dels "selects"
+		const select1 = $('#codiSiaOrigen');
+		const select2 = $('#codiSiaFills');
+
+		select2options = {
+			theme: "bootstrap",
+			minimumResultsForSearch: 0
+		};
+
+		// Funció per deshabilitar/enhabilitar els selects basant-se en el valor de l'altre
+		function toggleSelects() {
+			if (select1.val()) {
+				select2.prop("disabled", true).select2(select2options); // Si select1 té valor, deshabilita select2
+			} else if (select2.val() && select2.val().length > 0) {
+				select1.prop("disabled", true).select2(select2options); // Si select2 té valor, deshabilita select1
+			} else {
+				// Cap dels selects té valor, per tant, tots dos estan habilitats
+				select1.prop("disabled", false).select2(select2options);
+				select2.prop("disabled", false).select2(select2options);
+			}
+		}
+
+		// Definir l'estat inicial en carregar la pàgina
+		toggleSelects();
+
+		// Detectar canvis al primer select
+		select1.on("change", function() {
+			toggleSelects();
+		});
+
+		// Detectar canvis al segon select
+		select2.on("change", function() {
+			toggleSelects();
+		});
+	});
+
 </script>
 </head>
 <body>
@@ -79,6 +117,29 @@
 								emptyOption="true" emptyOptionTextKey="procediment.form.camp.claseTramite.buit"
 								optionItems="${ procedimentClaseTramiteOptions }" optionValueAttribute="value" optionTextKeyAttribute="text"
 								required="false" labelSize="3" />
+
+				<hr/>
+				<pbl:inputSelect
+						name="codiSiaOrigen"
+						labelSize="3"
+						textKey="procediment.form.camp.codisia.origen"
+						emptyOption="true"
+						emptyOptionTextKey="procediment.form.camp.actiuCampAuto.buit"
+						optionItems="${procedimentsOrigen}"
+						optionTextAttribute="valor"
+						optionValueAttribute="codi"
+						optionMinimumResultsForSearch="0" />
+				<pbl:inputSelect
+						name="codiSiaFills"
+						labelSize="3"
+						multiple="true"
+						textKey="procediment.form.camp.codisia.fills"
+						emptyOption="true"
+						emptyOptionTextKey="procediment.form.camp.actiuCampAuto.buit"
+						optionItems="${procedimentsFills}"
+						optionTextAttribute="valor"
+						optionValueAttribute="codi"
+						optionMinimumResultsForSearch="0" />
 				<div id="modal-botons">
 					<button type="submit" class="btn btn-primary"><spring:message code="comu.boto.guardar"/></button>
 					<a href="<c:url value="/procediment"/>" class="btn btn-default" data-modal-cancel="true"><spring:message code="comu.boto.cancelar"/></a>

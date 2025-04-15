@@ -18,6 +18,7 @@ import es.caib.pinbal.core.model.ServeiCamp;
 import es.caib.pinbal.core.model.ServeiCamp.ServeiCampTipus;
 import es.caib.pinbal.core.model.ServeiConfig;
 import es.caib.pinbal.core.repository.ConsultaRepository;
+import es.caib.pinbal.core.repository.ProcedimentRepository;
 import es.caib.pinbal.core.repository.ServeiCampRepository;
 import es.caib.pinbal.core.repository.ServeiConfigRepository;
 import es.caib.pinbal.core.service.exception.ConsultaScspComunicacioException;
@@ -59,6 +60,8 @@ public class PeticioScspHelper {
 	private ServeiConfigRepository serveiConfigRepository;
 	@Autowired
 	private ServeiCampRepository serveiCampRepository;
+	@Autowired
+	private ProcedimentRepository procedimentRepository;
 	@Autowired
 	private PeticioScspEstadistiquesHelper peticionsScspEstadistiquesHelper;
 	@Autowired
@@ -271,6 +274,9 @@ public class PeticioScspHelper {
 		Solicitud solicitud = new Solicitud();
 		solicitud.setServeiCodi(procedimentServei.getServei());
 		Procediment procediment = procedimentServei.getProcediment();
+		if (procediment.getCodiSiaOrigen() != null) {
+			procediment = procedimentRepository.findByEntitatAndCodiSia(entitat, procediment.getCodiSiaOrigen());
+		}
 		solicitud.setProcedimentCodi(
 				(procedimentServei.getProcedimentCodi() != null && !("".equalsIgnoreCase(procedimentServei.getProcedimentCodi())) ? 
 						procedimentServei.getProcedimentCodi() : 
@@ -336,6 +342,9 @@ public class PeticioScspHelper {
 			ScspHelper scspHelper) throws ConsultaScspGeneracioException {
 		Solicitud solicitud = new Solicitud();
 		solicitud.setServeiCodi(serveiCodi);
+		if (procediment.getCodiSiaOrigen() != null) {
+			procediment = procedimentRepository.findByEntitatAndCodiSia(entitat, procediment.getCodiSiaOrigen());
+		}
 		solicitud.setProcedimentCodi(
 				(procedimentServei.getProcedimentCodi() != null && !("".equalsIgnoreCase(procedimentServei.getProcedimentCodi())) ? 
 						procedimentServei.getProcedimentCodi() : 
@@ -388,7 +397,11 @@ public class PeticioScspHelper {
 			for (String[] dades: consulta.getDadesPeticioMultiple()) {
 				Solicitud solicitud = new Solicitud();
 				solicitud.setServeiCodi(consulta.getServeiCodi());
+				Entitat entitat = procedimentServei.getProcediment().getEntitat();
 				Procediment procediment = procedimentServei.getProcediment();
+				if (procediment.getCodiSiaOrigen() != null) {
+					procediment = procedimentRepository.findByEntitatAndCodiSia(entitat, procediment.getCodiSiaOrigen());
+				}
 				solicitud.setProcedimentCodi(procediment.getCodi());
 				solicitud.setProcedimentNom(procediment.getNom());
 				if(isUseAutoClasse(consulta.getServeiCodi())) {

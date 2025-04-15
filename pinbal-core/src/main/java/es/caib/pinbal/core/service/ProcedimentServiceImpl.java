@@ -3,6 +3,7 @@
  */
 package es.caib.pinbal.core.service;
 
+import es.caib.pinbal.core.dto.CodiValor;
 import es.caib.pinbal.core.dto.EntitatUsuariDto;
 import es.caib.pinbal.core.dto.FiltreActiuEnumDto;
 import es.caib.pinbal.core.dto.InformeProcedimentDto;
@@ -118,11 +119,36 @@ public class ProcedimentServiceImpl implements ProcedimentService {
 				creat.getCodiSia(),
 				creat.getValorCampAutomatizado(),
 				creat.getValorCampClaseTramite()).build();
+		updateProcedimentsFills(creat, entitat, procediment);
 		cacheHelper.evictProcedimentsPerEntitat(entitat.getCodi());
 		return dtoMappingHelper.getMapperFacade().map(
 				procedimentRepository.save(procediment),
 				ProcedimentDto.class);
 	}
+
+	private void updateProcedimentsFills(ProcedimentDto dto, Entitat entitat, Procediment procediment) {
+		List<Procediment> procedimentsFills = procedimentRepository.findByEntitatAndCodiSiaOrigen(entitat, procediment.getCodiSia());
+		if (procedimentsFills != null && !procedimentsFills.isEmpty()) {
+			for (Procediment procedimentFill : procedimentsFills) {
+				if (procedimentFill != null) {
+					procedimentFill.setCodiSiaOrigen(null);
+				}
+			}
+		}
+		procediment.updateCodiSiaOrigen(dto.getCodiSiaOrigen());
+		if (dto.getCodiSiaOrigen() == null && dto.getCodiSiaFills() != null && !dto.getCodiSiaFills().isEmpty()) {
+			procediment.updateCodiSiaOrigen(null);
+			for (String codiSiaFill : dto.getCodiSiaFills()) {
+				if (codiSiaFill != null && !codiSiaFill.isEmpty()) {
+					Procediment procedimentFill = procedimentRepository.findByEntitatAndCodiSia(entitat, codiSiaFill);
+					if (procedimentFill != null) {
+						procedimentFill.updateCodiSiaOrigen(procediment.getCodiSia());
+					}
+				}
+			}
+		}
+	}
+
 
 	@Transactional(rollbackFor = ProcedimentNotFoundException.class)
 	@Override
@@ -165,6 +191,59 @@ public class ProcedimentServiceImpl implements ProcedimentService {
 						filtre == null || filtre.isEmpty(), 
 						filtre),
 				ProcedimentDto.class);
+	}
+
+	@Transactional(readOnly = true)
+    @Override
+    public List<CodiValor> findAmbEntitatPerOrigen(Long entitatId) throws EntitatNotFoundException {
+		Entitat entitat = entitatRepository.findOne(entitatId);
+		if (entitat == null)
+			throw new EntitatNotFoundException();
+
+		List<Procediment> procedimentsNotOrigen = procedimentRepository.findByEntitatIdPerOrigen(entitatId);
+		List<CodiValor> list = new ArrayList<>();
+		if (procedimentsNotOrigen == null) {
+			return list;
+		}
+		for (Procediment procediment : procedimentsNotOrigen) {
+			list.add(CodiValor.builder()
+					.codi(procediment.getCodiSia())
+					.valor(procediment.getCodi() + " - " + procediment.getNom() + " (SIA: " + procediment.getCodiSia() + ")")
+					.build());
+		}
+		return list;
+	}
+
+	@Transactional(readOnly = true)
+	@Override
+	public List<CodiValor> findAmbEntitatPerFills(Long entitatId, String codiSia) throws EntitatNotFoundException {
+		Entitat entitat = entitatRepository.findOne(entitatId);
+		if (entitat == null)
+			throw new EntitatNotFoundException();
+
+		List<Procediment> procedimentsNotOrigen = procedimentRepository.findByEntitatIdPerFills(entitatId, codiSia);
+		List<CodiValor> list = new ArrayList<>();
+		if (procedimentsNotOrigen == null) {
+			return list;
+		}
+		for (Procediment procediment : procedimentsNotOrigen) {
+			list.add(CodiValor.builder()
+					.codi(procediment.getCodiSia())
+					.valor(procediment.getCodi() + " - " + procediment.getNom() + " (SIA: " + procediment.getCodiSia() + ")")
+					.build());
+		}
+		return list;
+	}
+
+	@Transactional(readOnly = true)
+	@Override
+	public List<String> findCodiSiaFills(Long entitatId, String codiSia) throws EntitatNotFoundException {
+		Entitat entitat = entitatRepository.findOne(entitatId);
+		if (entitat == null)
+			throw new EntitatNotFoundException();
+
+		return procedimentRepository.findCodiSiaByEntitatAndCodiSiaOrigen(entitatId, codiSia);
+
 	}
 
 	@Transactional(readOnly = true)
@@ -256,7 +335,7 @@ public class ProcedimentServiceImpl implements ProcedimentService {
 				modificat.getCodiSia(),
 				modificat.getValorCampAutomatizado(),
 				modificat.getValorCampClaseTramite());
-		
+		updateProcedimentsFills(modificat, procediment.getEntitat(), procediment);
 		return dtoMappingHelper.getMapperFacade().map(
 				procediment,
 				ProcedimentDto.class);

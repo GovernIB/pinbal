@@ -3,6 +3,7 @@
  */
 package es.caib.pinbal.core.ejb;
 
+import es.caib.pinbal.core.dto.CodiValor;
 import es.caib.pinbal.core.dto.EntitatUsuariDto;
 import es.caib.pinbal.core.dto.FiltreActiuEnumDto;
 import es.caib.pinbal.core.dto.InformeProcedimentDto;
@@ -69,6 +70,25 @@ public class ProcedimentServiceBean implements ProcedimentService {
 	public List<ProcedimentDto> findAmbEntitat(Long entitatId, String filtre) throws EntitatNotFoundException {
 		return delegate.findAmbEntitat(entitatId, filtre);
 	}
+
+    @Override
+	@RolesAllowed({ "PBL_ADMIN", "PBL_REPRES" })
+    public List<CodiValor> findAmbEntitatPerOrigen(Long entitatId) throws EntitatNotFoundException {
+        return delegate.findAmbEntitatPerOrigen(entitatId);
+    }
+
+	@Override
+	@RolesAllowed({ "PBL_ADMIN", "PBL_REPRES" })
+	public List<CodiValor> findAmbEntitatPerFills(Long entitatId, String codiSia) throws EntitatNotFoundException {
+		return delegate.findAmbEntitatPerFills(entitatId, codiSia);
+	}
+
+	@Override
+	@RolesAllowed({ "PBL_ADMIN", "PBL_REPRES" })
+	public List<String> findCodiSiaFills(Long entitatId, String codiSia) throws EntitatNotFoundException {
+		return delegate.findCodiSiaFills(entitatId, codiSia);
+	}
+
 
 	@Override
 	@RolesAllowed({ "PBL_ADMIN", "PBL_REPRES", "PBL_AUDIT", "PBL_SUPERAUD" })

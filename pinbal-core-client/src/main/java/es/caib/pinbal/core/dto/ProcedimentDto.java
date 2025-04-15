@@ -37,6 +37,9 @@ public class ProcedimentDto extends AbstractIdentificable<Long> implements Seria
 	private Boolean valorCampAutomatizado;
 	private ProcedimentClaseTramiteEnumDto valorCampClaseTramite;
 
+	private String codiSiaOrigen;
+	private List<String> codiSiaFills;
+
 	private List<ProcedimentServeiSimpleDto> serveisActius = new ArrayList<ProcedimentServeiSimpleDto>();
 
 	public String getNomAmbCodi() {

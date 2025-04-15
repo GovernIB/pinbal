@@ -3,22 +3,20 @@
  */
 package es.caib.pinbal.webapp.command;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
-
-import es.caib.pinbal.webapp.helper.CommandMappingHelper;
-import org.hibernate.validator.constraints.NotEmpty;
-
 import es.caib.pinbal.core.dto.OrganGestorDto;
 import es.caib.pinbal.core.dto.ProcedimentClaseTramiteEnumDto;
 import es.caib.pinbal.core.dto.ProcedimentDto;
+import es.caib.pinbal.webapp.helper.CommandMappingHelper;
 import es.caib.pinbal.webapp.validation.CodiProcedimentNoRepetit;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import org.hibernate.validator.constraints.NotEmpty;
+
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Command per al manteniment de procediments
@@ -49,6 +47,9 @@ public class ProcedimentCommand {
 	private String codiSia;
 	private Boolean valorCampAutomatizado;
 	private ProcedimentClaseTramiteEnumDto valorCampClaseTramite;
+
+	private String codiSiaOrigen;
+	private List<String> codiSiaFills;
 
 	public static List<ProcedimentCommand> toProcedimentCommands(List<ProcedimentDto> dtos) {
 		List<ProcedimentCommand> commands = new ArrayList<ProcedimentCommand>();

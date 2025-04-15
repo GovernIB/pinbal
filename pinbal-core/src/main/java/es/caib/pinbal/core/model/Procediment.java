@@ -72,6 +72,10 @@ public class Procediment extends PinbalAuditable<Long> {
 	private String codiSia;
 
 	@Setter
+	@Column(name = "codi_sia_origen")
+	private String codiSiaOrigen;
+
+	@Setter
 	@Column(name = "valor_camp_automatizado")
 	private Boolean valorCampAutomatizado;
 
@@ -215,6 +219,10 @@ public class Procediment extends PinbalAuditable<Long> {
 		public Procediment build() {
 			return built;
 		}
+	}
+
+	public void updateCodiSiaOrigen(String codiSiaOrigen) {
+		this.codiSiaOrigen = codiSiaOrigen;
 	}
 
 	public void configurarIdPerTest(Long id) {
