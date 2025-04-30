@@ -16,6 +16,7 @@ import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinColumns;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -61,7 +62,8 @@ public abstract class SuperConsulta extends PinbalAuditable<Long> implements ICo
     protected ConsultaDto.Consentiment consentiment;
     @Column(name = "expedient_id", length = 25)
     protected String expedientId;
-    @Column(name = "dades_especifiques", length = 2048)
+    @Column(name = "dades_especifiques")
+    @Lob
     protected String dadesEspecifiques;
 
     @Column(name = "estat", nullable = false)

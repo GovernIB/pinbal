@@ -1,2 +1,8 @@
--- Changeset db/changelog/changes/1.4.42/sia_origen.yaml::add-codi-sia-origen-column::limit
-ALTER TABLE PBL_PROCEDIMENT ADD CODI_SIA_ORIGEN VARCHAR2(64 CHAR);
+-- Error API Client PINBAL Recobriment pre 1.4.42
+ALTER TABLE PBL_CONSULTA RENAME COLUMN dades_especifiques TO dades_espedifiques_aux;
+ALTER TABLE PBL_CONSULTA ADD dades_especifiques CLOB;
+ALTER TABLE PBL_CONSULTA move lob (DADES_ESPECIFIQUES) store as PBL_CONSULTA_DADESP_LOB (tablespace PINBAL_LOB);
+
+ALTER TABLE PBL_CONSULTA_HIST RENAME COLUMN dades_especifiques TO dades_espedifiques_aux;
+ALTER TABLE PBL_CONSULTA_HIST ADD dades_especifiques CLOB;
+ALTER TABLE PBL_CONSULTA_HIST move lob (DADES_ESPECIFIQUES) store as PBL_CONSULTA_HIST_DADESP_LOB (tablespace PINBAL_LOB);
