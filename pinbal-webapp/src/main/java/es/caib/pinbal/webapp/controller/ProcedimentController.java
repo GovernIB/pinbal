@@ -192,13 +192,12 @@ public class ProcedimentController extends BaseController {
 		if (entitat != null) {
 			ProcedimentDto procediment = null;
 			Long organId = null;
+			List<CodiValor> procedimentsPerOrigen = procedimentService.findAmbEntitatPerOrigen(entitat.getId());
 			if (procedimentId != null) {
 				procediment = procedimentService.findById(procedimentId);
 				if (procediment != null && procediment.getCodiSia() != null) {
 					String codiSia = procediment.getCodiSia();
-					List<CodiValor> procedimentsPerOrigen = procedimentService.findAmbEntitatPerOrigen(entitat.getId());
 					filtrarPerCodiSia(procedimentsPerOrigen, codiSia);
-					model.addAttribute("procedimentsOrigen", procedimentsPerOrigen);
 					List<CodiValor> procedimentsPerFills = procedimentService.findAmbEntitatPerFills(entitat.getId(), codiSia);
 					filtrarPerCodiSia(procedimentsPerFills, codiSia);
 					model.addAttribute("procedimentsFills", procedimentsPerFills);
@@ -206,6 +205,7 @@ public class ProcedimentController extends BaseController {
 					procediment.setCodiSiaFills(codiSiaFills);
 				}
 			}
+			model.addAttribute("procedimentsOrigen", procedimentsPerOrigen);
 			ProcedimentCommand command;
 			if (procediment != null) {
 				command = ProcedimentCommand.asCommand(procediment);
@@ -220,6 +220,51 @@ public class ProcedimentController extends BaseController {
 		} else {
 			AlertHelper.error(
 					request, 
+					getMessage(
+							request,
+							"procediment.controller.no.entitat.seleccionada"));
+			return "redirect:../../index";
+		}
+	}
+
+	@RequestMapping(value = "/{procedimentId}/clone", method = RequestMethod.GET)
+	public String cloneGet(
+			HttpServletRequest request,
+			@PathVariable Long procedimentId,
+			Model model) throws EntitatNotFoundException {
+		if (!EntitatHelper.isRepresentantEntitatActual(request))
+			return "representantNoAutoritzat";
+		EntitatDto entitat = EntitatHelper.getEntitatActual(request, entitatService);
+		if (entitat != null) {
+			ProcedimentDto procediment = procedimentService.findById(procedimentId);
+			Long organId = procediment.getOrganGestor() != null ? procediment.getOrganGestor().getId() : null;
+			ProcedimentCommand command = new ProcedimentCommand();
+			command.setEntitatId(entitat.getId());
+			command.setOrganGestorId(organId);
+			command.setDepartament(procediment.getDepartament());
+			command.setCodiSiaOrigen(procediment.getCodiSia());
+			command.setClonarPermisosOrigen(true);
+			command.setValorCampAutomatizado(procediment.getValorCampAutomatizado());
+			command.setValorCampClaseTramite(procediment.getValorCampClaseTramite());
+
+			command.setCodi("CLON - " + procediment.getCodi());
+			command.setNom("CLON - " + procediment.getNom());
+			model.addAttribute(command);
+
+			List<CodiValor> procedimentsPerOrigen = new ArrayList<>();
+			procedimentsPerOrigen.add(CodiValor.builder()
+					.codi(procediment.getCodiSia())
+					.valor(procediment.getCodi() + " - " + procediment.getNom() + " (SIA: " + procediment.getCodiSia() + ")")
+					.build());
+			List<CodiValor> procedimentsPerFills = new ArrayList<>();
+			model.addAttribute("procedimentsOrigen", procedimentsPerOrigen);
+			model.addAttribute("procedimentsFills", procedimentsPerFills);
+
+			fillFormModel(entitat.getId(), model, organId);
+			return "procedimentForm";
+		} else {
+			AlertHelper.error(
+					request,
 					getMessage(
 							request,
 							"procediment.controller.no.entitat.seleccionada"));

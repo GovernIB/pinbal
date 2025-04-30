@@ -17,6 +17,7 @@
 	<link href="<c:url value="/webjars/select2-bootstrap-theme/0.1.0-beta.10/dist/select2-bootstrap.min.css"/>" rel="stylesheet"/>
 	<script src="<c:url value="/webjars/select2/4.0.6-rc.1/dist/js/select2.min.js"/>"></script>
 	<script src="<c:url value="/webjars/select2/4.0.6-rc.1/dist/js/i18n/${requestLocale}.js"/>"></script>
+	<script src="<c:url value="/webjars/jquery/"/>"></script>
 	<script src="<c:url value="/js/webutil.common.js"/>"></script>
 <script>
 	var organsGestorsActiu = [];
@@ -30,6 +31,13 @@
 			return organsGestorsActiu[organ.id] ? organ.text : $('<span title="<spring:message code="organgestor.list.extingit"/>">' + organ.text + ' <span class="fa fa-exclamation-triangle text-danger"></span></span>');
 		}
 	}
+
+	const nouProcediment = ${empty procedimentCommand.id};
+	<%--const DIALOG_CONFIG = {--%>
+	<%--	title: "Permisos",--%>
+	<%--	modal: true,--%>
+	<%--	text: "<spring:message code='procediment.form.clonar.permisos.origen'/>"--%>
+	<%--};--%>
 
 	$(document).ready(function() {
 		// Selecció dels elements pels noms dels "selects"
@@ -66,6 +74,41 @@
 		select2.on("change", function() {
 			toggleSelects();
 		});
+
+		$('#procedimentCommand').on('submit', function(e) {
+			e.preventDefault();
+			const $form = $(this);
+			const codiOrigen = $('#codiSiaOrigen').val();
+
+			function submitFormWithPermissions(clonarPermisos) {
+				$('#clonarPermisosOrigen').val(clonarPermisos);
+				$form.unbind('submit').submit();
+			}
+
+			if (!codiOrigen || !nouProcediment) {
+				submitFormWithPermissions(false);
+				return;
+			}
+
+			if (confirm("<spring:message code='procediment.form.clonar.permisos.origen'/>")) {
+				submitFormWithPermissions(true);
+			} else {
+				submitFormWithPermissions(false);
+			}
+			// $("<div>").dialog({
+			// 	...DIALOG_CONFIG,
+			// 	buttons: {
+			// 		"Sí": function() {
+			// 			submitFormWithPermissions(true);
+			// 			$(this).dialog("close");
+			// 		},
+			// 		"No": function() {
+			// 			submitFormWithPermissions(false);
+			// 			$(this).dialog("close");
+			// 		}
+			// 	}
+			// });
+		})
 	});
 
 </script>
@@ -73,6 +116,7 @@
 <body>
 	<c:url value="/modal/procediment/save" var="formAction"/>
 	<form:form action="${formAction}" method="post" cssClass="form-horizontal" commandName="procedimentCommand">
+		<form:hidden path="clonarPermisosOrigen"/>
 		<form:hidden path="id"/>
 		<form:hidden path="entitatId"/>
 		<div class="row">

@@ -45,10 +45,12 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.acls.domain.BasePermission;
+import org.springframework.security.acls.domain.GrantedAuthoritySid;
 import org.springframework.security.acls.domain.PrincipalSid;
 import org.springframework.security.acls.model.AccessControlEntry;
 import org.springframework.security.acls.model.MutableAclService;
 import org.springframework.security.acls.model.Permission;
+import org.springframework.security.acls.model.Sid;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -120,11 +122,67 @@ public class ProcedimentServiceImpl implements ProcedimentService {
 				creat.getValorCampAutomatizado(),
 				creat.getValorCampClaseTramite()).build();
 		updateProcedimentsFills(creat, entitat, procediment);
+		procediment = procedimentRepository.save(procediment);
+
+		if (creat.getCodiSiaOrigen() != null && creat.isClonarPermisosOrigen()) {
+			Procediment procedimentOrigen = procedimentRepository.findByEntitatAndCodiSia(entitat, creat.getCodiSiaOrigen());
+			List<ProcedimentServei> procedimentServeis = procedimentServeiRepository.findActiusByProcedimentId(procedimentOrigen.getId());
+			for (ProcedimentServei procedimentServei : procedimentServeis) {
+				clonarPermisos(procedimentServei, procediment);
+			}
+		}
 		cacheHelper.evictProcedimentsPerEntitat(entitat.getCodi());
 		return dtoMappingHelper.getMapperFacade().map(
-				procedimentRepository.save(procediment),
+				procediment,
 				ProcedimentDto.class);
 	}
+
+	private void clonarPermisos(
+			ProcedimentServei origen,
+			Procediment procediment) {
+
+		// Crear el nou procedimentServei
+		ProcedimentServei desti = ProcedimentServei.getBuilder(procediment, origen.getServei()).build();
+		desti = procedimentServeiRepository.save(desti);
+
+		// Obtenir els permisos del procediment origen
+		List<AccessControlEntry> permisosOrigen = PermisosHelper.getAclSids(
+				ProcedimentServei.class,
+				origen.getId(),
+				aclService);
+
+		// Si no hi ha permisos per clonar, sortim
+		if (permisosOrigen == null || permisosOrigen.isEmpty()) {
+			return;
+		}
+
+		// Per cada permís trobat, l'assignem al procediment destí
+		for (AccessControlEntry ace : permisosOrigen) {
+			Sid sid = ace.getSid();
+			Permission permission = ace.getPermission();
+
+			if (sid instanceof PrincipalSid) {
+				// Si és un permís d'usuari
+				String username = ((PrincipalSid) sid).getPrincipal();
+				PermisosHelper.assignarPermisUsuari(
+						username,
+						ProcedimentServei.class,
+						desti.getId(),
+						permission,
+						aclService);
+			} else if (sid instanceof GrantedAuthoritySid) {
+				// Si és un permís de rol
+				String role = ((GrantedAuthoritySid) sid).getGrantedAuthority();
+				PermisosHelper.assignarPermisRol(
+						role,
+						ProcedimentServei.class,
+						desti.getId(),
+						permission,
+						aclService);
+			}
+		}
+	}
+
 
 	private void updateProcedimentsFills(ProcedimentDto dto, Entitat entitat, Procediment procediment) {
 		List<Procediment> procedimentsFills = procedimentRepository.findByEntitatAndCodiSiaOrigen(entitat, procediment.getCodiSia());

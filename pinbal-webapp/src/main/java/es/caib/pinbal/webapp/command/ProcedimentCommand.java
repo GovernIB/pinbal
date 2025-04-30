@@ -50,6 +50,7 @@ public class ProcedimentCommand {
 
 	private String codiSiaOrigen;
 	private List<String> codiSiaFills;
+	private boolean clonarPermisosOrigen;
 
 	public static List<ProcedimentCommand> toProcedimentCommands(List<ProcedimentDto> dtos) {
 		List<ProcedimentCommand> commands = new ArrayList<ProcedimentCommand>();

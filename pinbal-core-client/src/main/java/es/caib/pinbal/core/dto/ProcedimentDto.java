@@ -39,6 +39,7 @@ public class ProcedimentDto extends AbstractIdentificable<Long> implements Seria
 
 	private String codiSiaOrigen;
 	private List<String> codiSiaFills;
+	private boolean clonarPermisosOrigen;
 
 	private List<ProcedimentServeiSimpleDto> serveisActius = new ArrayList<ProcedimentServeiSimpleDto>();
 

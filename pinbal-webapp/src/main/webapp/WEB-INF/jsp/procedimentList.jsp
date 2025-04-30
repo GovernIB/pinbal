@@ -80,7 +80,7 @@ $(document).ready(function() {
 					return Mustache.render(template, row);
 				}
 			}, {
-				targets: [5], // actiu
+				targets: [6], // actiu
 				width: "10%",
 				render: function (data, type, row, meta) {
 						var template = $('#template-activa').html();
@@ -210,6 +210,9 @@ $(document).ready(function() {
 		<button class="btn btn-primary dropdown-toggle" data-toggle="dropdown"><i class="fas fa-cog"></i>&nbsp;<spring:message code="comu.accions"/>&nbsp;<span class="caret"></span></button>
 		<ul class="dropdown-menu dropdown-menu-right">
 			<li><a href="procediment/{{ id }}" data-toggle="modal" data-refresh-pagina="true"><i class="fas fa-pen"></i>&nbsp;<spring:message code="comu.boto.modificar"/></a></li>
+			{{#codiSia}}
+				<li><a href="procediment/{{ id }}/clone" data-toggle="modal" data-refresh-pagina="true"><i class="far fa-copy"></i>&nbsp;<spring:message code="comu.boto.crear.fill"/></a></li>
+			{{/codiSia}}
 			{{#actiu}}
 				<li><a href="procediment/{{ id }}/disable" ><i class="fas fa-times"></i>&nbsp;<spring:message code="comu.boto.desactivar"/></a></li>
 			{{/actiu}}
