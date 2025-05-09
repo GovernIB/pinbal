@@ -785,6 +785,28 @@ public class RecobrimentV2Helper implements ApplicationContextAware, MessageSour
 				.build();
 	}
 
+	public PeticioRespostaAsincrona toRespostaAsincrona(Consulta consulta) throws Exception {
+
+		EstatEnum estat = consulta != null && consulta.getEstat() != null
+				? EstatEnum.valorAsEnum(consulta.getEstat().name())
+				: EstatEnum.ERROR;
+		boolean multiple = consulta.isMultiple();
+		boolean error = consulta != null && consulta.getEstat() != null && EstatEnum.ERROR.equals(estat);
+		String msg = multiple && EstatEnum.PROCESSANT.equals(estat)
+				? "La petició asíncrona encara no ha rebut la resposta. Intenta recuperar la resposta després de la data estimada de resposta."
+				: EstatEnum.ERROR.equals(estat)
+				? "S'ha produït un error al processar la petició: " + consulta.getError()
+				: null;
+		Date dataEstimadaResposta = EstatEnum.PROCESSANT.equals(estat) ? consulta.getDataEsperadaResposta() : null;
+
+		return PeticioRespostaAsincrona.builder()
+				.error(error)
+				.missatge(msg)
+				.estat(estat)
+				.dataEstimadaResposta(dataEstimadaResposta)
+				.build();
+	}
+
 	public DadesComunesResposta toDadesComunesResposta(Respuesta respuesta) {
 		if (respuesta == null) return null;
 

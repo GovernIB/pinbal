@@ -33,6 +33,7 @@ import es.caib.pinbal.client.recobriment.v2.Validacio;
 import es.caib.pinbal.client.recobriment.v2.ValorEnum;
 import es.caib.pinbal.client.serveis.ServeiBasic;
 import es.caib.pinbal.core.dto.DadaEspecificaDto;
+import es.caib.pinbal.core.dto.EstatTipus;
 import es.caib.pinbal.core.dto.IdiomaEnumDto;
 import es.caib.pinbal.core.dto.JustificantDto;
 import es.caib.pinbal.core.dto.ServeiCampDto;
@@ -939,6 +940,7 @@ public class RecobrimentServiceImpl implements RecobrimentService, ApplicationCo
     }
 
 
+    @Transactional(readOnly = true)
     @Override
     public PeticioRespostaAsincrona getResposta(String idPeticion) throws RecobrimentScspException, ConsultaNotFoundException {
         try {
@@ -946,6 +948,20 @@ public class RecobrimentServiceImpl implements RecobrimentService, ApplicationCo
             if (consulta == null) {
                 throw new ConsultaNotFoundException();
             }
+
+            if (EstatTipus.Processant.equals(consulta.getEstat()) && consulta.isMultiple()) {
+                return recobrimentV2Helper.toRespostaAsincrona(consulta);
+            }
+
+            if (EstatTipus.Error.equals(consulta.getEstat())) {
+                try {
+                    Respuesta resposta = recobrimentHelper.getRespuesta(idPeticion);
+                    return recobrimentV2Helper.toRespostaAsincrona(resposta); // Si la recuperació és correcta
+                } catch (Exception ex) {
+                    return recobrimentV2Helper.toRespostaAsincrona(consulta); // Si també falla
+                }
+            }
+
             return recobrimentV2Helper.toRespostaAsincrona(recobrimentHelper.getRespuesta(idPeticion));
         } catch (ConsultaNotFoundException cnfe) {
             throw cnfe; // Torna a llançar l'excepció específica
