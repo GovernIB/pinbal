@@ -385,6 +385,9 @@ public abstract class BasicAuthClientBase {
 		if (!response.hasEntity()) {
 			return null;
 		}
+		if (String.class.equals(clazz)) {
+			return response.getEntity(clazz);
+		}
 		String jsonOutput = response.getEntity(String.class);
 		T recurs =  mapper.readValue(jsonOutput, clazz);
 		return recurs;
