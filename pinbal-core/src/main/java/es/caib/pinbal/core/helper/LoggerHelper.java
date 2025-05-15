@@ -87,6 +87,10 @@ public class LoggerHelper {
         }
     }
 
+    public static void resetLogs() {
+        logs = new HashMap<>();
+    }
+
     public enum LoggingTipus {
 
         GENERIC,
