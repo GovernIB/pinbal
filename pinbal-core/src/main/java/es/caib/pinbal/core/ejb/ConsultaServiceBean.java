@@ -428,7 +428,7 @@ public class ConsultaServiceBean implements ConsultaService {
 	}
 
 	@Override
-	@RolesAllowed({"PBL_ADMIN", "PBL_DELEG"})
+//	@RolesAllowed({"tothom", "PBL_ADMIN", "PBL_DELEG"})
 	public ArbreRespostaDto generarArbreResposta(Long consultaId) throws Exception {
 		return delegate.generarArbreResposta(consultaId);
 	}

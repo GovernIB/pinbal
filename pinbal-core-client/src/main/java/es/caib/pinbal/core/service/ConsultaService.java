@@ -714,7 +714,7 @@ public interface ConsultaService {
 			InformeRepresentantFiltreDto filtre);
 
 
-	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_DELEG')")
+//	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_DELEG')")
 	public ArbreRespostaDto generarArbreResposta(Long consultaId) throws Exception;
 
 }
