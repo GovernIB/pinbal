@@ -1,4 +1,5 @@
-# ![Logo](https://github.com/GovernIB/pinbal/raw/master/assets/pinbal_logo.png) PINBAL
+![Logo](https://github.com/GovernIB/pinbal/raw/master/assets/logo_pinbal.png) 
+# PINBAL
 La Plataforma d'Interoperabilitat de les Illes Balears (PINBAL) és una solució tecnològica desenvolupada pel Govern de les Illes Balears que fa possible la interoperabilitat entre les administracions balears i la resta de l'Estat. PINBAL permet realitzar consultes (ja sigui a través d'una aplicació web o mitjançant serveis web) al serveis disponibles a través de la Plataforma d'Intermediació de l'Estat i als serveis propis definits en l'àmbit de la Comunitat Autònoma de les Illes Balears.
 ## <a name="docs"></a> Documentació
 * [Manual d'instal·lació](https://github.com/GovernIB/pinbal/raw/pinbal-1.4/doc/pdf/00_pinbal_instalar.pdf)
