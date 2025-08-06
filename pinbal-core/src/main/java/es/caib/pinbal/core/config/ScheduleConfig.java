@@ -220,31 +220,31 @@ public class ScheduleConfig implements SchedulingConfigurer {
         
         // 7. Esborrar el monitor d'integracions
         // ///////////////////////////////////////////////////////////////////////
-        taskRegistrar.addTriggerTask(
-                new Runnable() {
-                    @SneakyThrows
-                    @Override
-                    public void run() {
-                        log.info("[SCH] autoEsborrarMonitorIntegracions");
-                        integracioAccioService.esborrarDadesAntigesMonitorIntegracio();
-                    }
-                },
-                new Trigger() {
-                    @Override
-                    public Date nextExecutionTime(TriggerContext triggerContext) {
-                    	
-                    	PeriodicTrigger trigger;
-                    	try {
-                    		trigger = new PeriodicTrigger(configHelper.getAsLong(ESBORRAR_CONTINGUT_INTEGRACIO, 3600L), TimeUnit.SECONDS);
-                    	} catch (Exception e) {
-                    		trigger = new PeriodicTrigger(3600L, TimeUnit.SECONDS);
-                    	}
-                        trigger.setFixedRate(true);
-                        Date nextExecution = trigger.nextExecutionTime(triggerContext);
-                        return nextExecution;
-                    }
-                }
-        );
+//        taskRegistrar.addTriggerTask(
+//                new Runnable() {
+//                    @SneakyThrows
+//                    @Override
+//                    public void run() {
+//                        log.info("[SCH] autoEsborrarMonitorIntegracions");
+//                        integracioAccioService.esborrarDadesAntigesMonitorIntegracio();
+//                    }
+//                },
+//                new Trigger() {
+//                    @Override
+//                    public Date nextExecutionTime(TriggerContext triggerContext) {
+//
+//                    	PeriodicTrigger trigger;
+//                    	try {
+//                    		trigger = new PeriodicTrigger(configHelper.getAsLong(ESBORRAR_CONTINGUT_INTEGRACIO, 3600L), TimeUnit.SECONDS);
+//                    	} catch (Exception e) {
+//                    		trigger = new PeriodicTrigger(3600L, TimeUnit.SECONDS);
+//                    	}
+//                        trigger.setFixedRate(true);
+//                        Date nextExecution = trigger.nextExecutionTime(triggerContext);
+//                        return nextExecution;
+//                    }
+//                }
+//        );
 
         // 8. Enviar les peticions SCSP pendents
         // //////////////////////////////////////////////////////////////

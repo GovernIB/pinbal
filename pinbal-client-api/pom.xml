@@ -6,12 +6,12 @@
 <!--    <parent>-->
 <!--        <artifactId>pinbal</artifactId>-->
 <!--        <groupId>es.caib.pinbal</groupId>-->
-<!--        <version>1.4.42.1</version>-->
+<!--        <version>1.4.42.2</version>-->
 <!--    </parent>-->
 
     <groupId>es.caib.pinbal</groupId>
     <artifactId>pinbal-client-api</artifactId>
-    <version>1.4.42.1</version>
+    <version>1.4.42.2</version>
 
     <properties>
         <hibernate.validator.version>4.1.0.Final</hibernate.validator.version>
