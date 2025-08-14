@@ -123,5 +123,25 @@ public interface IntegracioAccioRepository extends JpaRepository<IntegracioAccio
 	@Modifying
 	@Query(value = "UPDATE PBL_MON_INT SET LASTMODIFIEDBY_CODI = :codiNou WHERE LASTMODIFIEDBY_CODI = :codiAntic", nativeQuery = true)
 	int updateLastModifiedByCodi(@Param("codiAntic") String codiAntic, @Param("codiNou") String codiNou);
+
+	/**
+	 * Obtén un lot d'IDs de PBL_MON_INT anteriors a la data indicada, ordenats per ID, limitat per :batchSize.
+	 * Oracle implementation (per defecte)
+	 */
+	@Query(value = "SELECT ID FROM (SELECT ID FROM PBL_MON_INT WHERE DATA < :data ORDER BY ID) WHERE ROWNUM <= :batchSize", nativeQuery = true)
+	List<Long> findIdsBatchBefore(@Param("data") Date data, @Param("batchSize") int batchSize);
+
+	/**
+	 * PostgreSQL implementation
+	 */
+	@Query(value = "SELECT ID FROM PBL_MON_INT WHERE DATA < :data ORDER BY ID LIMIT :batchSize", nativeQuery = true)
+	List<Long> findIdsBatchBeforePostgres(@Param("data") Date data, @Param("batchSize") int batchSize);
+
+	/**
+	 * Esborra en lot registres de PBL_MON_INT per ID.
+	 */
+	@Modifying
+	@Query(value = "DELETE FROM PBL_MON_INT WHERE ID IN (:ids)", nativeQuery = true)
+	int deleteByIds(@Param("ids") List<Long> ids);
 }
 

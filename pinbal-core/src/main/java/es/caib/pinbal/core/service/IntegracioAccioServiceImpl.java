@@ -23,6 +23,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionDefinition;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallback;
+import org.springframework.transaction.support.TransactionTemplate;
 
 import javax.annotation.Resource;
 import java.util.Calendar;
@@ -53,6 +58,9 @@ public class IntegracioAccioServiceImpl implements IntegracioAccioService {
 	
 	@Resource
 	private ConfigHelper configHelper;
+	
+	@Resource
+	private PlatformTransactionManager transactionManager;
 	
 //	@Transactional(readOnly = true)
 //	public List<IntegracioAccioDto> findAll() {
@@ -174,20 +182,54 @@ public class IntegracioAccioServiceImpl implements IntegracioAccioService {
 		return total;
 	}
 	
-	@Transactional
+	@Transactional(propagation = Propagation.NOT_SUPPORTED)
 	@Override
 	public void esborrarDadesAntigesMonitorIntegracio() {
 		String diesAntiguitat = configHelper.getConfig("es.caib.pinbal.tasca.auto.exp.esborrar.monitor.dies.antiguitat", "30");
-		logger.debug("Execució de tasca programada d'esborrar dades del monitor d'integracions mab " + diesAntiguitat + " dies d'antiguitat.");
+		int batchSize = configHelper.getAsInt("es.caib.pinbal.tasca.auto.exp.esborrar.monitor.batch.size", 900);
+		logger.debug("Execució de tasca programada d'esborrar dades del monitor d'integracions amb " + diesAntiguitat + " dies d'antiguitat (batch=" + batchSize + ").");
 		try {
 			int dies = Integer.parseInt(diesAntiguitat);
 			Calendar c = new GregorianCalendar();
 			c.setTime(new Date());
 			c.add(Calendar.DATE, -dies);
 			Date data = c.getTime();
-			int n = esborrarDadesAntigues(data);
-			if (n > 0) {
-				logger.debug(n + " dades de monitor d'integració antigues esborrades.");
+
+			TransactionTemplate txTemplate = new TransactionTemplate(transactionManager);
+			txTemplate.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
+
+			int totalDeleted = 0;
+			int batch = 0;
+			while (true) {
+				List<Long> ids;
+				String dialect = configHelper.getConfig("es.caib.pinbal.hibernate.dialect", "Oracle");
+				if (dialect != null && dialect.toLowerCase().contains("postgres")) {
+					ids = integracioAccioRepository.findIdsBatchBeforePostgres(data, batchSize);
+				} else {
+					ids = integracioAccioRepository.findIdsBatchBefore(data, batchSize);
+				}
+				if (ids == null || ids.isEmpty()) {
+					break;
+				}
+				final java.util.List<Long> batchIds = ids;
+				Integer deleted = txTemplate.execute(new TransactionCallback<Integer>() {
+					@Override
+					public Integer doInTransaction(TransactionStatus status) {
+						// Esborrar primer els paràmetres per evitar FK violations
+						integracioAccioParamRepository.deleteParamsByMonIntIds(batchIds);
+						return integracioAccioRepository.deleteByIds(batchIds);
+					}
+				});
+				totalDeleted += (deleted != null ? deleted : 0);
+				batch++;
+				if (batch % 10 == 0) {
+					logger.debug("Esborrat batch {} ({} registres acumulats)", batch, totalDeleted);
+				}
+			}
+			if (totalDeleted > 0) {
+				logger.debug("{} dades de monitor d'integració antigues esborrades en {} batches.", totalDeleted, batch);
+			} else {
+				logger.debug("No s'han trobat dades de monitor d'integració a esborrar.");
 			}
 		} catch (Exception e) {
 			logger.error("Error en la tasca d'esborrar dades antigues del monitor d'integracions", e);

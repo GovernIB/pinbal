@@ -61,5 +61,20 @@ public interface IntegracioAccioParamRepository extends JpaRepository<Integracio
 	@Modifying
 	@Query(value = "UPDATE PBL_MON_INT_PARAM SET LASTMODIFIEDBY_CODI = :codiNou WHERE LASTMODIFIEDBY_CODI = :codiAntic", nativeQuery = true)
 	int updateLastModifiedByCodi(@Param("codiAntic") String codiAntic, @Param("codiNou") String codiNou);
+
+	/**
+	 * Esborra en lots els paràmetres associats a registres del monitor anteriors a la data indicada.
+	 * El lot es limita als primers N registres de PBL_MON_INT trobats (ROWNUM <= :batchSize).
+	 */
+	@Modifying
+	@Query(value = "DELETE FROM PBL_MON_INT_PARAM WHERE MON_INT_ID IN (SELECT ID FROM PBL_MON_INT WHERE DATA < :data AND ROWNUM <= :batchSize)", nativeQuery = true)
+ int deleteParamsBatchBefore(@Param("data") Date data, @Param("batchSize") int batchSize);
+
+	/**
+	 * Esborra paràmetres per una llista d'IDs de MON_INT.
+	 */
+	@Modifying
+	@Query(value = "DELETE FROM PBL_MON_INT_PARAM WHERE MON_INT_ID IN (:ids)", nativeQuery = true)
+	int deleteParamsByMonIntIds(@Param("ids") java.util.List<Long> ids);
 }
 

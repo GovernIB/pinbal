@@ -1106,7 +1106,11 @@ public class HistoricConsultaServiceImpl implements HistoricConsultaService, App
 					nomesSensePare,
 					pageable);
 		} else {
-			historicConsultaRepository.setSessionOptimizerModeToRule();
+            // Només per Oracle
+            String dialect = configHelper.getConfig("es.caib.pinbal.hibernate.dialect", "Oracle");
+            if (dialect == null || !dialect.toLowerCase().contains("postgres")) {
+                historicConsultaRepository.setSessionOptimizerModeToRule();
+            }
 			paginaConsultes = llistatHistoricConsultaRepository.findByCreatedByAndFiltrePaginat(
 					entitat.getId(),
 					usuariCodi == null,

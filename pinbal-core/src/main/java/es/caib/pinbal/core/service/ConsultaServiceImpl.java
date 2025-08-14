@@ -3076,7 +3076,11 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 					nomesSensePare,
 					pageable);
 		} else {
-			consultaRepository.setSessionOptimizerModeToRule();
+			// Només per Oracle
+			String dialect = configHelper.getConfig("es.caib.pinbal.hibernate.dialect", "Oracle");
+			if (dialect == null || !dialect.toLowerCase().contains("postgres")) {
+				consultaRepository.setSessionOptimizerModeToRule();
+			}
 			paginaConsultes = llistatConsultaRepository.findByCreatedByAndFiltrePaginat(
 					entitat.getId(),
 					usuariCodi == null,

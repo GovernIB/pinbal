@@ -231,6 +231,22 @@ public class IntegracioController extends BaseController {
 		
 		return "redirect:/integracio/" + codi;
 	}
+
+    @RequestMapping(value = "/buidar", method = RequestMethod.GET)
+    public String esborrar(HttpServletRequest request, Model model) {
+        try {
+            integracioAccioService.esborrarDadesAntigesMonitorIntegracio();
+            MissatgesHelper.success(
+                    request,
+                    getMessage(request, "integracio.buidar.success", null));
+        } catch (Exception e) {
+            String errMsg = getMessage(request, "integracio.buidar.error", new Object[] {e.getMessage()});
+            logger.error(errMsg, e);
+            MissatgesHelper.error(request, errMsg);
+        }
+
+        return "redirect:/integracio/";
+    }
 	
 //	/** Mètode per consultar les integracions i els errors.*/
 //	@ResponseBody
