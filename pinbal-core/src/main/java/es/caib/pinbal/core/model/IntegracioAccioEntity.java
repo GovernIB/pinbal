@@ -1,8 +1,12 @@
 package es.caib.pinbal.core.model;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import es.caib.pinbal.core.audit.PinbalAuditable;
+import es.caib.pinbal.core.dto.IntegracioAccioEstatEnumDto;
+import es.caib.pinbal.core.dto.IntegracioAccioTipusEnumDto;
+import lombok.Getter;
+import lombok.Setter;
+import org.apache.commons.lang.StringUtils;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -14,15 +18,9 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-
-import org.apache.commons.lang.StringUtils;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-
-import es.caib.pinbal.core.audit.PinbalAuditable;
-import es.caib.pinbal.core.dto.IntegracioAccioEstatEnumDto;
-import es.caib.pinbal.core.dto.IntegracioAccioTipusEnumDto;
-import lombok.Getter;
-import lombok.Setter;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 /**
  * Classe de model de dades que conté la informació dels organs gestors.
@@ -127,13 +125,13 @@ public class IntegracioAccioEntity extends PinbalAuditable<Long> {
 	        built.codi = StringUtils.abbreviate(codi, 64);
 	        built.idPeticio = idPeticio;
 			built.data = data;
-	        built.descripcio = StringUtils.abbreviate(descripcio, 1024);
+	        built.descripcio = StringUtils.abbreviate(descripcio, 960);
 			built.tipus = tipus;
 			built.tempsResposta = tempsResposta;
 			built.estat = estat;	    
-	        built.errorDescripcio = StringUtils.abbreviate(errorDescripcio, 1024);
-	        built.excepcioMessage = StringUtils.abbreviate(excepcioMessage, 1024);
-	        built.excepcioStacktrace = StringUtils.abbreviate(excepcioStacktrace, 2048);
+	        built.errorDescripcio = StringUtils.abbreviate(errorDescripcio, 960);
+	        built.excepcioMessage = StringUtils.abbreviate(excepcioMessage, 960);
+	        built.excepcioStacktrace = StringUtils.abbreviate(excepcioStacktrace, 1920);
 		}
 		public IntegracioAccioEntity build() {
 			return built;
