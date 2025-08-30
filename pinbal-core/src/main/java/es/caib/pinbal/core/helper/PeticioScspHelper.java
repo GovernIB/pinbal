@@ -182,7 +182,7 @@ public class PeticioScspHelper {
 		Consulta consulta = consultaRepository.getOne(consultaId);
 		String idPeticion = consulta.getScspPeticionId();
 		LoggerHelper.getInstance().info("Enviant consulta pendent (idPeticion=" + idPeticion + ")", log, LoggerHelper.LoggingTipus.CONSULTA);
-		String accioDescripcio = "nviament de la consulta pendent al servei SCSP  " + consulta.getServeiCodi() + " (pendent)";
+		String accioDescripcio = "Enviament de la consulta pendent al servei SCSP  " + consulta.getServeiCodi() + " (pendent)";
 		Map<String, String> accioParams = new HashMap<String, String>();
 		long t0 = System.currentTimeMillis();
 
