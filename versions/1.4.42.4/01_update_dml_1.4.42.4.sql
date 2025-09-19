@@ -1,0 +1,1 @@
+INSERT INTO PBL_CONFIG (KEY, VALUE, DESCRIPTION_KEY, GROUP_CODE, POSITION, SOURCE_PROPERTY, TYPE_CODE) VALUES ('es.caib.pinbal.dadescomunes.base.url', null, 'propietat.dadescomunes.base.url', 'GENERAL', 3, 'FILE', 'TEXT');
