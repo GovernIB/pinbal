@@ -3,11 +3,11 @@
  */
 package es.caib.pinbal.scsp;
 
-import es.scsp.bean.common.Emisor;
-import es.scsp.bean.common.Procedimiento;
-import es.scsp.bean.common.Solicitante;
-import es.scsp.bean.common.Titular;
-import es.scsp.bean.common.TransmisionDatos;
+import es.scsp.bean.common.respuesta.Emisor;
+import es.scsp.bean.common.respuesta.Procedimiento;
+import es.scsp.bean.common.respuesta.Solicitante;
+import es.scsp.bean.common.respuesta.Titular;
+import es.scsp.bean.common.respuesta.TransmisionDatos;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.MessageSource;

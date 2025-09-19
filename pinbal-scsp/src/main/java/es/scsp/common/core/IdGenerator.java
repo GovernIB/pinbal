@@ -16,125 +16,96 @@ import es.scsp.common.exceptions.ScspException;
 import es.scsp.common.security.ScspKeyStoreManager;
 
 @Component
-public class IdGenerator
-{
+public class IdGenerator {
 
-  @Autowired
-  @Qualifier("sessionFactory")
-  public SessionFactory sessionFactoryManager;
+    private static final Log LOG = LogFactory.getLog(IdGenerator.class);
 
-  private static final Log LOG = LogFactory.getLog(IdGenerator.class);
-  @Autowired
-  private SecuenciaIdPeticionDao secuenciaIdPeticionDao;
-  @Autowired
-  private ParametroConfiguracionDao paramDao;
-  @Autowired
-  private ScspKeyStoreManager scspKeyStoreManager;
-  @Autowired
-  private ClavePrivadaDao clavePrivadaDao;
-  
-  public String getIdPeticion(Servicio servicio)
-    throws ScspException
-  {
-    LOG.debug("Generando prefijo para el servicio " + servicio.getCodCertificado());
-    String prefix;
-    if ((servicio.getPrefijoPeticion() == null) || ("".equals(servicio.getPrefijoPeticion())))
-    {
-      ParametroConfiguracion prefijoParam = this.paramDao.select("prefijo.idpeticion");
-      if ((prefijoParam != null) && (!prefijoParam.getValor().equals("")))
-      {
-        prefix = prefijoParam.getValor();
-      }
-      else
-      {
-        String msg = "No posee asociado al servicio un prefijo para la generación del identificador de peticiones, nitiene configurado el parámetro prefijo.idpeticion en la tabla core_parametro_configuración.No se puede generar correctamente un identificador de petición";
-        
-        LOG.error(msg);
-        String[] arg = { msg };
-        throw ScspException.getScspException("0201", arg);
-      }
+    @Autowired
+    @Qualifier("sessionFactory")
+    public SessionFactory sessionFactoryManager;
+
+    @Autowired
+    private SecuenciaIdPeticionDao secuenciaIdPeticionDao;
+    @Autowired
+    private ParametroConfiguracionDao paramDao;
+    @Autowired
+    private ClavePrivadaDao clavePrivadaDao;
+
+    public String getIdPeticion(Servicio servicio) throws ScspException {
+        LOG.debug("Generando prefijo para el servicio " + servicio.getCodCertificado());
+        String prefix;
+        if (servicio.getPrefijoPeticion() != null && !"".equals(servicio.getPrefijoPeticion())) {
+            prefix = servicio.getPrefijoPeticion();
+        } else {
+            ParametroConfiguracion prefijoParam = this.paramDao.select("prefijo.idpeticion");
+            if (prefijoParam == null || prefijoParam.getValor().equals("")) {
+                String msg = "No posee asociado al servicio un prefijo para la generación del identificador de peticiones, ni tiene configurado el parámetro prefijo.idpeticion en la tabla core_parametro_configuración.No se puede generar correctamente un identificador de petición";
+                LOG.error(msg);
+                String[] arg = new String[]{msg};
+                throw ScspException.getScspException("0201", arg);
+            }
+
+            prefix = prefijoParam.getValor();
+        }
+
+        if (prefix.length() >= 3 && prefix.length() <= 9) {
+
+            /* MOD PBL */ this.secuenciaIdPeticionDao.setSessionFactory(sessionFactoryManager);
+            String secuencial = this.secuenciaIdPeticionDao.next(prefix).toString();
+            ParametroConfiguracion tipoId = this.paramDao.select("tipoId");
+            boolean versionCortaObligatoria = false;
+            int longitudSecuencial;
+            if (servicio.getVersionEsquema().endsWith("V2")) {
+                longitudSecuencial = 16 - prefix.length();
+                versionCortaObligatoria = true;
+            } else if (tipoId != null && tipoId.getValor().compareTo("long") == 0) {
+                longitudSecuencial = 26 - prefix.length();
+            } else {
+                longitudSecuencial = 16 - prefix.length();
+            }
+
+            if (secuencial.length() <= longitudSecuencial || !versionCortaObligatoria && 26 >= (prefix + secuencial).length()) {
+                for(int i = secuencial.length(); i < longitudSecuencial; ++i) {
+                    secuencial = "0" + secuencial;
+                }
+
+                return prefix + secuencial;
+            } else {
+                String msg = "Se ha excedido el tamaño máximo para el secuencial. Deberá seleccionar otro prefijo para el servicio";
+                LOG.error(msg);
+                String[] arg = new String[]{msg};
+                throw ScspException.getScspException("0201", arg);
+            }
+        } else {
+            String msg = "El tamaño del prefijo debe ser mayor o igual a 3 y menor o igual a 9";
+            LOG.error(msg);
+            String[] arg = new String[]{msg};
+            throw ScspException.getScspException("0201", arg);
+        }
     }
-    else
-    {
-      prefix = servicio.getPrefijoPeticion();
+
+    public ClavePrivadaDao getClavePrivadaDao() {
+        return this.clavePrivadaDao;
     }
-    if ((prefix.length() < 3) || (prefix.length() > 8))
-    {
-      String msg = "El tamaño del prefijo debe ser mayor o igual a 3 y menor o igual a 8";
-      
-      LOG.error(msg);
-      String[] arg = { msg };
-      throw ScspException.getScspException("0201", arg);
+
+    public void setClavePrivadaDao(ClavePrivadaDao clavePrivadaDao) {
+        this.clavePrivadaDao = clavePrivadaDao;
     }
-    this.secuenciaIdPeticionDao.setSessionFactory(sessionFactoryManager);
-    String secuencial = this.secuenciaIdPeticionDao.next(prefix).toString();
-    ParametroConfiguracion tipoId = this.paramDao.select("tipoId");
-    
-    boolean versionCortaObligatoria = false;
-    int longitudSecuencial;
-    if (servicio.getVersionEsquema().endsWith("V2"))
-    {
-      longitudSecuencial = 16 - prefix.length();
-      versionCortaObligatoria = true;
+
+    public SecuenciaIdPeticionDao getSecuenciaIdPeticionDao() {
+        return this.secuenciaIdPeticionDao;
     }
-    else
-    {
-      if ((tipoId != null) && (tipoId.getValor().compareTo("long") == 0)) {
-        longitudSecuencial = 26 - prefix.length();
-      } else {
-        longitudSecuencial = 16 - prefix.length();
-      }
+
+    public void setSecuenciaIdPeticionDao(SecuenciaIdPeticionDao secuenciaIdPeticionDao) {
+        this.secuenciaIdPeticionDao = secuenciaIdPeticionDao;
     }
-    if ((secuencial.length() > longitudSecuencial) && ((versionCortaObligatoria) || (26 < (prefix + secuencial).length())))
-    {
-      String msg = "Se ha excedido el tamaño máximo para el secuencial. Deberá seleccionar otro prefijo para el servicio";
-      LOG.error(msg);
-      String[] arg = { msg };
-      throw ScspException.getScspException("0201", arg);
+
+    public ParametroConfiguracionDao getParamDao() {
+        return this.paramDao;
     }
-    for (int i = secuencial.length(); i < longitudSecuencial; i++) {
-      secuencial = "0" + secuencial;
+
+    public void setParamDao(ParametroConfiguracionDao paramDao) {
+        this.paramDao = paramDao;
     }
-    return prefix + secuencial;
-  }
-  
-  public ClavePrivadaDao getClavePrivadaDao()
-  {
-    return this.clavePrivadaDao;
-  }
-  
-  public void setClavePrivadaDao(ClavePrivadaDao clavePrivadaDao)
-  {
-    this.clavePrivadaDao = clavePrivadaDao;
-  }
-  
-  public SecuenciaIdPeticionDao getSecuenciaIdPeticionDao()
-  {
-    return this.secuenciaIdPeticionDao;
-  }
-  
-  public void setSecuenciaIdPeticionDao(SecuenciaIdPeticionDao secuenciaIdPeticionDao)
-  {
-    this.secuenciaIdPeticionDao = secuenciaIdPeticionDao;
-  }
-  
-  public ParametroConfiguracionDao getParamDao()
-  {
-    return this.paramDao;
-  }
-  
-  public void setParamDao(ParametroConfiguracionDao paramDao)
-  {
-    this.paramDao = paramDao;
-  }
-  
-  public ScspKeyStoreManager getScspKeyStoreManager()
-  {
-    return this.scspKeyStoreManager;
-  }
-  
-  public void setScspKeyStoreManager(ScspKeyStoreManager scspKeyStoreManager)
-  {
-    this.scspKeyStoreManager = scspKeyStoreManager;
-  }
+
 }

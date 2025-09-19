@@ -8,22 +8,22 @@ import es.caib.pinbal.core.service.exception.ConsultaScspGeneracioException;
 import es.caib.pinbal.scsp.JustificantArbreHelper.ElementArbre;
 import es.caib.pinbal.scsp.XmlHelper.DadesEspecifiquesNode;
 import es.caib.pinbal.scsp.tree.Tree;
-import es.scsp.bean.common.Atributos;
-import es.scsp.bean.common.ConfirmacionPeticion;
-import es.scsp.bean.common.Consentimiento;
-import es.scsp.bean.common.DatosGenericos;
-import es.scsp.bean.common.Emisor;
-import es.scsp.bean.common.Funcionario;
-import es.scsp.bean.common.Peticion;
-import es.scsp.bean.common.Procedimiento;
-import es.scsp.bean.common.Respuesta;
-import es.scsp.bean.common.Solicitante;
-import es.scsp.bean.common.SolicitudTransmision;
-import es.scsp.bean.common.Solicitudes;
-import es.scsp.bean.common.TipoDocumentacion;
-import es.scsp.bean.common.Titular;
-import es.scsp.bean.common.Transmision;
-import es.scsp.bean.common.TransmisionDatos;
+import es.scsp.bean.common.confirmacion.ConfirmacionPeticion;
+import es.scsp.bean.common.peticion.Atributos;
+import es.scsp.bean.common.peticion.Consentimiento;
+import es.scsp.bean.common.peticion.DatosGenericos;
+import es.scsp.bean.common.peticion.Emisor;
+import es.scsp.bean.common.peticion.Funcionario;
+import es.scsp.bean.common.peticion.Peticion;
+import es.scsp.bean.common.peticion.Procedimiento;
+import es.scsp.bean.common.peticion.Solicitante;
+import es.scsp.bean.common.peticion.SolicitudTransmision;
+import es.scsp.bean.common.peticion.Solicitudes;
+import es.scsp.bean.common.peticion.TipoDocumentacion;
+import es.scsp.bean.common.peticion.Titular;
+import es.scsp.bean.common.peticion.Transmision;
+import es.scsp.bean.common.respuesta.Respuesta;
+import es.scsp.bean.common.respuesta.TransmisionDatos;
 import es.scsp.client.ClienteUnico;
 import es.scsp.common.dao.ClavePrivadaDao;
 import es.scsp.common.dao.ClavePublicaDao;
@@ -73,7 +73,6 @@ import javax.xml.transform.stream.StreamResult;
 import java.io.ByteArrayOutputStream;
 import java.io.StringWriter;
 import java.text.MessageFormat;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
@@ -136,35 +135,12 @@ public class ScspHelper {
 					addDadesEspecifiques);
 		} catch (Exception ex) {
 			throw new ConsultaScspGeneracioException(idPeticion, ex);
-			/*LOGGER.error("Error al generar nova petició SCSP síncrona (peticionId=" + idPeticion + ")", ex);
-			ResultatEnviamentPeticio estat = new ResultatEnviamentPeticio();
-			estat.setErrorGeneracio(true);
-			estat.setEstatCodi("ERR");
-			if (ex.getMessage() != null)
-				estat.setEstatDescripcio(ex.getMessage());
-			else
-				estat.setEstatDescripcio(ex.getClass().getName());
-			estat.setIdsSolicituds(
-					getIdsSolicitudes(
-							idPeticion,
-							solicituds.size()));
-			return estat;*/
 		}
 		try {
 			getClienteUnico().realizaPeticionSincrona(peticion);
 			return getResultatEnviamentPeticio(idPeticion);
 		} catch (ScspException ex) {
 			throw new ConsultaScspComunicacioException(idPeticion, ex);
-			/*LOGGER.error("Error al enviar petició SCSP síncrona (peticionId=" + idPeticion + ")", ex);
-			ResultatEnviamentPeticio estat = new ResultatEnviamentPeticio();
-			estat.setEstatCodi(ex.getScspCode());
-			estat.setErrorEnviament(true);
-			estat.setEstatDescripcio(ex.getMessage());
-			estat.setIdsSolicituds(
-					getIdsSolicitudes(
-							idPeticion,
-							solicituds.size()));
-			return estat;*/
 		}
 	}
 
@@ -187,19 +163,6 @@ public class ScspHelper {
 					addDadesEspecifiques);
 		} catch (Exception ex) {
 			throw new ConsultaScspGeneracioException(idPeticion, ex);
-			/*LOGGER.error("Error al generar nova petició SCSP síncrona (peticionId=" + idPeticion + ")", ex);
-			ResultatEnviamentPeticio estat = new ResultatEnviamentPeticio();
-			estat.setErrorGeneracio(true);
-			estat.setEstatCodi("ERR");
-			if (ex.getMessage() != null)
-				estat.setEstatDescripcio(ex.getMessage());
-			else
-				estat.setEstatDescripcio(ex.getClass().getName());
-			estat.setIdsSolicituds(
-					getIdsSolicitudes(
-							idPeticion,
-							solicituds.size()));
-			return estat;*/
 		}
 		try {
 			ConfirmacionPeticion confirmacionPeticion = getClienteUnico().realizaPeticionAsincrona(peticion);
@@ -208,16 +171,6 @@ public class ScspHelper {
 			return resultat;
 		} catch (ScspException ex) {
 			throw new ConsultaScspComunicacioException(idPeticion, ex);
-			/*LOGGER.error("Error al enviar petició SCSP asíncrona (peticionId=" + idPeticion + ")", ex);
-			ResultatEnviamentPeticio estat = new ResultatEnviamentPeticio();
-			estat.setEstatCodi(ex.getScspCode());
-			estat.setErrorEnviament(true);
-			estat.setEstatDescripcio(ex.getMessage());
-			estat.setIdsSolicituds(
-					getIdsSolicitudes(
-							idPeticion,
-							solicituds.size()));
-			return estat;*/
 		}
 	}
 
@@ -304,8 +257,7 @@ public class ScspHelper {
 				"idSolicitud=" + idSolicitud + "," +
 				"multiple=" + multiple + ")");
 		Resposta resposta = new Resposta();
-		PeticionRespuesta peticionRespuesta = getPeticionRespuestaDao().select(
-				idPeticion);
+		PeticionRespuesta peticionRespuesta = getPeticionRespuestaDao().select(idPeticion);
 		if (peticionRespuesta != null) {
 			resposta.setRespostaData(peticionRespuesta.getFechaRespuesta());
 			es.scsp.common.domain.core.Transmision transmision = null;
@@ -320,7 +272,7 @@ public class ScspHelper {
 				resposta.setUnitatTramitadora(transmision.getUnidadTramitadora());
 				resposta.setUnitatTramitadoraCodi(transmision.getCodigoUnidadTramitadora());
 				String cons = transmision.getConsentimiento();
-				if (cons.equals(Consentimiento.Si.toString()))
+				if (cons.equals(Consentimiento.SI.toString()))
 					resposta.setConsentiment(Consentiment.Si);
 				else
 					resposta.setConsentiment(Consentiment.Llei);
@@ -369,8 +321,7 @@ public class ScspHelper {
 		}
 		return resposta;
 	}
-	public Respuesta recuperarRespuestaScsp(
-			String idPeticion) throws ScspException {
+	public Respuesta recuperarRespuestaScsp(String idPeticion) throws ScspException {
 		LOGGER.debug("Recuperant respuesta SCSP (idPeticion=" + idPeticion + ")");
 		return getClienteUnico().recuperaRespuesta(idPeticion);
 	}
@@ -729,8 +680,6 @@ public class ScspHelper {
 		Peticion peticion = new Peticion();
 		// Afegeix les sol·licituds
 		Solicitudes solicitudes = new Solicitudes();
-		solicitudes.setSolicitudTransmision(
-				new ArrayList<SolicitudTransmision>());
 		int indexSolicitud = 1;
 		for (Solicitud solicitud: solicituds) {
 			solicitudes.getSolicitudTransmision().add(
@@ -751,9 +700,7 @@ public class ScspHelper {
 		atributos.setIdPeticion(idPeticion);
 		String timeStamp = DateUtils.parseISO8601(new Date());
 		atributos.setTimeStamp(timeStamp);
-		atributos.setNumElementos(
-				String.valueOf(
-						peticion.getSolicitudes().getSolicitudTransmision().size()));
+		atributos.setNumElementos(peticion.getSolicitudes().getSolicitudTransmision().size());
 		peticion.setAtributos(atributos);
 		return peticion;
 	}
@@ -783,9 +730,9 @@ public class ScspHelper {
 		solicitante.setNombreSolicitante(solicitud.getSolicitantNom());
 		solicitante.setFinalidad(generarFinalidad(solicitud));
 		if (solicitud.getConsentiment().equals(Consentiment.Si))
-			solicitante.setConsentimiento(Consentimiento.Si);
+			solicitante.setConsentimiento(Consentimiento.SI);
 		else
-			solicitante.setConsentimiento(Consentimiento.Ley);
+			solicitante.setConsentimiento(Consentimiento.LEY);
 		Funcionario funcionario = new Funcionario();
 		funcionario.setNombreCompletoFuncionario(solicitud.getFuncionariNom());
 		funcionario.setNifFuncionario(solicitud.getFuncionariNif());
@@ -797,8 +744,7 @@ public class ScspHelper {
 			procedimiento.setAutomatizado(
 					solicitud.getProcedimentValorCampAutomatizado() ? "S" : "N");
 		}
-		procedimiento.setClaseTramite(
-				solicitud.getProcedimentValorCampClaseTramite());
+		procedimiento.setClaseTramite(solicitud.getProcedimentValorCampClaseTramite().intValue());
 		solicitante.setProcedimiento(procedimiento);
 		solicitante.setUnidadTramitadora(solicitud.getUnitatTramitadora());
 		if (getXmlHelper().hasCodigoUnidadTramitadora(
@@ -820,7 +766,7 @@ public class ScspHelper {
 				else if (DocumentTipus.DNI.equals(solicitud.getTitularDocumentTipus()))
 					datosGenericos.getTitular().setTipoDocumentacion(TipoDocumentacion.DNI);
 				else if (DocumentTipus.Passaport.equals(solicitud.getTitularDocumentTipus()))
-					datosGenericos.getTitular().setTipoDocumentacion(TipoDocumentacion.Pasaporte);
+					datosGenericos.getTitular().setTipoDocumentacion(TipoDocumentacion.PASAPORTE);
 				else if (DocumentTipus.NIE.equals(solicitud.getTitularDocumentTipus()))
 					datosGenericos.getTitular().setTipoDocumentacion(TipoDocumentacion.NIE);
 			}

@@ -3,24 +3,22 @@
  */
 package es.caib.pinbal.core.service;
 
-import java.io.ByteArrayInputStream;
-import java.io.FileOutputStream;
-import java.io.InputStream;
-import java.util.Locale;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-
+import es.caib.pinbal.core.helper.JustificantHelper;
+import es.caib.pinbal.scsp.JustificantArbreHelper;
+import es.caib.pinbal.scsp.JustificantArbreHelper.ElementArbre;
+import es.scsp.bean.common.respuesta.DatosGenericos;
+import es.scsp.bean.common.respuesta.Transmision;
+import es.scsp.bean.common.respuesta.TransmisionDatos;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 
-import es.caib.pinbal.core.helper.JustificantHelper;
-import es.caib.pinbal.scsp.JustificantArbreHelper;
-import es.caib.pinbal.scsp.JustificantArbreHelper.ElementArbre;
-import es.scsp.bean.common.DatosGenericos;
-import es.scsp.bean.common.Transmision;
-import es.scsp.bean.common.TransmisionDatos;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import java.io.ByteArrayInputStream;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.util.Locale;
 
 /**
  * Test per a extreure les dades dels DatosEspecificos.

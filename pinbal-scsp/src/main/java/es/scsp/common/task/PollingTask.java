@@ -3,9 +3,9 @@
  */
 package es.scsp.common.task;
 
-import es.scsp.bean.common.Atributos;
-import es.scsp.bean.common.Solicitante;
-import es.scsp.bean.common.SolicitudRespuesta;
+import es.scsp.bean.common.solicitud.Atributos;
+import es.scsp.bean.common.solicitud.Solicitante;
+import es.scsp.bean.common.solicitud.SolicitudRespuesta;
 import es.scsp.client.ClienteUnico;
 import es.scsp.common.dao.ParametroConfiguracionDao;
 import es.scsp.common.dao.PeticionRespuestaDao;
@@ -43,17 +43,17 @@ import java.util.TimerTask;
 @Component("pollingTimerTask")
 	public class PollingTask extends TimerTask {
 	private static final Log log = LogFactory.getLog(PollingTask.class);
-	/*private static final String MSG_POLLING_INIT = "Iniciando servicio de polling.";
-	private static final String MSG_POLLING_DISABLED = "El modulo de polling esta desactivado por configuracion. No se realiza el servicio de polling.";
-	private static final String MSG_INIT_PROCESS = "Iniciando ciclo de procesamiento de solicitudes pendientes.";
-	private static final String MSG_ERROR_GET_PETICIONES_PENDIENTES = "Ha ocurrido un error mientras se recuperaba de base de datos la lista de peticiones asincronas pendientes de ser consultadas.";
-	private static final String MSG_NOHAY_PETICIONES_PENDIENTES = "No se han encontrado peticiones en base de datos pendientes de ser consultadas.";
-	private static final String MSG_PROCESANDO_IDPETICION = "Iniciando consulta asincrona de la peticion %s.";
-	private static final String MSG_FIN_PROCESADO_PETICION = "Finalizada la consulta asincrona de la peticion %s.";
-	private static final String MSG_ERR_PROCESANDO_PETICION = "Ha ocurrido en un error durante la consulta asincrona de la peticion %s.";
-	private static final String MSG_CREAR_PETICION_ASINCRONA = "Ha ocurrido un error mientras se creaba la peticion pendiente a partir de los datos de base de datos.";
-	private static final String MSG_FIN_PROCESAMIENTO = "Finalizado servicio de polling.";
-	private static final String MSG_END_CYCLE = "Finalizado ciclo de procesamiento de peticiones.";*/
+    /* MOD PBL */ //	private static final String MSG_POLLING_INIT = "Iniciando servicio de polling.";
+    /* MOD PBL */ //	private static final String MSG_POLLING_DISABLED = "El modulo de polling esta desactivado por configuracion. No se realiza el servicio de polling.";
+    /* MOD PBL */ //	private static final String MSG_INIT_PROCESS = "Iniciando ciclo de procesamiento de solicitudes pendientes.";
+    /* MOD PBL */ //	private static final String MSG_ERROR_GET_PETICIONES_PENDIENTES = "Ha ocurrido un error mientras se recuperaba de base de datos la lista de peticiones asincronas pendientes de ser consultadas.";
+    /* MOD PBL */ //	private static final String MSG_NOHAY_PETICIONES_PENDIENTES = "No se han encontrado peticiones en base de datos pendientes de ser consultadas.";
+    /* MOD PBL */ //	private static final String MSG_PROCESANDO_IDPETICION = "Iniciando consulta asincrona de la peticion %s.";
+    /* MOD PBL */ //	private static final String MSG_FIN_PROCESADO_PETICION = "Finalizada la consulta asincrona de la peticion %s.";
+    /* MOD PBL */ //	private static final String MSG_ERR_PROCESANDO_PETICION = "Ha ocurrido en un error durante la consulta asincrona de la peticion %s.";
+    /* MOD PBL */ //	private static final String MSG_CREAR_PETICION_ASINCRONA = "Ha ocurrido un error mientras se creaba la peticion pendiente a partir de los datos de base de datos.";
+    /* MOD PBL */ //	private static final String MSG_FIN_PROCESAMIENTO = "Finalizado servicio de polling.";
+    /* MOD PBL */ //	private static final String MSG_END_CYCLE = "Finalizado ciclo de procesamiento de peticiones.";
 
 	@Autowired
 	private PeticionRespuestaDao peticionRespuestaDao;
@@ -61,165 +61,141 @@ import java.util.TimerTask;
 	private ServicioDao servicioDao;
 	@Autowired
 	private ParametroConfiguracionDao parametroConfiguracionDao;
-	@Autowired
-	private TransmisionDao transmisionDao;
-	@Autowired
-	private ServeiDao serveiDao;
-	@Autowired
-	private SimpleDateFormat dateFormat;
+    /* MOD PBL */ @Autowired
+    /* MOD PBL */ private TransmisionDao transmisionDao;
+    /* MOD PBL */ @Autowired
+    /* MOD PBL */ private ServeiDao serveiDao;
+    private SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
 	@Autowired
 	private ClienteUnico clienteUnico;
 
-	private final TransactionTemplate transactionTemplate;
-	@Autowired
-	public PollingTask(PlatformTransactionManager transactionManager) {
-		transactionTemplate = new TransactionTemplate(transactionManager);
-	}
+    /* MOD PBL */ private final TransactionTemplate transactionTemplate;
+    /* MOD PBL */ @Autowired
+    /* MOD PBL */ public PollingTask(PlatformTransactionManager transactionManager) {
+    /* MOD PBL */ 	transactionTemplate = new TransactionTemplate(transactionManager);
+    /* MOD PBL */ }
 
 	public void run() {
 		log.debug("Iniciando servicio de polling.");
-		if (!isEnabled()) {
-			log.debug("El modulo de polling esta desactivado por configuracion. No se realiza el servicio de polling.");
-		} else {
+        if (!this.isEnabled()) {
+            log.debug("El modulo de polling esta desactivado por configuracion. No se realiza el servicio de polling.");
+        } else {
 			while (true) {
 				log.debug("Iniciando ciclo de procesamiento de solicitudes pendientes.");
+
 				List<PeticionRespuesta> peticiones;
 				try {
-					peticiones = transactionTemplate.execute(new TransactionCallback<List<PeticionRespuesta>>() {
-						public List<PeticionRespuesta> doInTransaction(TransactionStatus status) {
-							return peticionRespuestaDao.selectByEstado(
-									"0002",
-									Calendar.getInstance().getTime());
-						}
-					});
+					/* MOD PBL */ peticiones = transactionTemplate.execute(new TransactionCallback<List<PeticionRespuesta>>() {
+					/* MOD PBL */ 	public List<PeticionRespuesta> doInTransaction(TransactionStatus status) {
+					/* MOD PBL */ 		return peticionRespuestaDao.selectByEstado(
+					/* MOD PBL */ 				"0002",
+					/* MOD PBL */ 				Calendar.getInstance().getTime());
+					/* MOD PBL */ 	}
+					/* MOD PBL */ });
 				} catch (Exception ex) {
-					throw new RuntimeException(
-							"Ha ocurrido un error mientras se recuperaba de base de datos la lista de peticiones asincronas pendientes de ser consultadas.",
-							ex);
+                    throw new RuntimeException("Ha ocurrido un error mientras se recuperaba de base de datos la lista de peticiones asincronas pendientes de ser consultadas.", ex);
 				}
-				if (peticiones.isEmpty()) {
-					log.debug("No se han encontrado peticiones en base de datos pendientes de ser consultadas.");
-					break;
-				} else {
-					for (final PeticionRespuesta peticionRespuesta: peticiones) {
-						final String idPeticion = peticionRespuesta.getIdPeticion();
-						log.debug(String.format(
-								"Iniciando consulta asincrona de la peticion %s.",
-								new Object[] { idPeticion }));
-						final SolicitudRespuesta solicitud = new SolicitudRespuesta();
-						try {
-							Servicio servicio = getServicio(peticionRespuesta);
-							String codigoCertificado = servicio.getCodCertificado();
-							int numTransmissions = peticionRespuesta.getNumeroTransmisiones().intValue();
-							solicitud.setAtributos(new Atributos());
-							solicitud.getAtributos().setCodigoCertificado(codigoCertificado);
-							solicitud.getAtributos().setIdPeticion(peticionRespuesta.getIdPeticion());
-							solicitud.getAtributos().setNumElementos(String.valueOf(numTransmissions));
-							solicitud.getAtributos().setTimeStamp(dateFormat.format(new Date()));
 
-							if (serveiHasToSendSolicitant(codigoCertificado)) {
-								Transmision transmision = getTransmision(peticionRespuesta);
+                if (peticiones.isEmpty()) {
+                    log.debug("No se han encontrado peticiones en base de datos pendientes de ser consultadas.");
+                    log.debug("Finalizado servicio de polling.");
+                    return;
+                }
 
-								if (transmision != null) {
-									solicitud.getAtributos().setSolicitante(getSolicitante(transmision));
-                                }
-							}
+                for (final PeticionRespuesta peticionRespuesta: peticiones) {
+                    final String idPeticion = peticionRespuesta.getIdPeticion();
+                    log.debug(String.format("Iniciando consulta asincrona de la peticion %s.", idPeticion));
+                    final SolicitudRespuesta solicitud = new SolicitudRespuesta();
 
-							log.debug(String.format("Finalizada la consulta asincrona de la peticion %s.", new Object[] { idPeticion }));
-						} catch (Exception e) {
-							log.debug(
-									String.format("Ha ocurrido un error mientras se creaba la peticion pendiente a partir de los datos de base de datos.",
-											new Object[] { idPeticion }));
-							handleErrorPeticion(peticionRespuesta, e);
-						}
-						transactionTemplate.execute(new TransactionCallback<Object>() {
-							public Object doInTransaction(TransactionStatus status) {
-								try {
-									clienteUnico.realizaSolicitudRespuesta(solicitud);
-								} catch (Exception ex) {
-									log.error(
-											String.format(
-													"Ha ocurrido en un error durante la consulta asincrona de la peticion %s.",
-													new Object[] { idPeticion }), ex);
-								}
-								return null;
-							}
-						});
-					}
-				}
+                    try {
+                        /* MOD PBL */ Servicio servicio = getServicio(peticionRespuesta);
+                        String codigoCertificado = servicio.getCodCertificado();
+                        int numTransmissions = peticionRespuesta.getNumeroTransmisiones().intValue();
+                        solicitud.setAtributos(new Atributos());
+                        solicitud.getAtributos().setCodigoCertificado(codigoCertificado);
+                        solicitud.getAtributos().setIdPeticion(peticionRespuesta.getIdPeticion());
+                        solicitud.getAtributos().setNumElementos(numTransmissions);
+                        solicitud.getAtributos().setTimeStamp(dateFormat.format(new Date()));
+
+                        /* MOD PBL */ if (serveiHasToSendSolicitant(codigoCertificado)) {
+                        /* MOD PBL */ 	Transmision transmision = getTransmision(peticionRespuesta);
+                        /* MOD PBL */
+                        /* MOD PBL */ 	if (transmision != null) {
+                        /* MOD PBL */ 		solicitud.getAtributos().setSolicitante(getSolicitante(transmision));
+                        /* MOD PBL */     }
+                        /* MOD PBL */ }
+
+                        log.debug(String.format("Finalizada la consulta asincrona de la peticion %s.", idPeticion));
+                    } catch (Exception e) {
+                        log.debug(String.format("Ha ocurrido un error mientras se creaba la peticion pendiente a partir de los datos de base de datos.", idPeticion));
+                        this.handleErrorPeticion(peticionRespuesta, e);
+                    }
+
+                    /* MOD PBL */ transactionTemplate.execute(new TransactionCallback<Object>() {
+                    /* MOD PBL */ 	public Object doInTransaction(TransactionStatus status) {
+                            try {
+                                clienteUnico.realizaSolicitudRespuesta(solicitud);
+                            } catch (Exception ex) {
+                                log.error(String.format("Ha ocurrido en un error durante la consulta asincrona de la peticion %s.", idPeticion), ex);
+                                /* MOD PBL */ // this.handleErrorPeticion(peticionRespuesta, ex);
+                            }
+                            return null;
+                    /* MOD PBL */ 	}
+                    /* MOD PBL */ });
+                }
+
 				log.debug("Finalizado ciclo de procesamiento de peticiones.");
 			}
-			log.debug("Finalizado servicio de polling.");
 		}
 	}
 
-	private static Solicitante getSolicitante(Transmision transmision) {
-		Solicitante solicitante = new Solicitante();
-		solicitante.setIdentificadorSolicitante(transmision.getIdSolicitante());
-		solicitante.setNombreSolicitante(transmision.getNombreSolicitante());
-//		solicitante.setFinalidad(transmision.getFinalidad());
-//		solicitante.setConsentimiento(Consentimiento.valueOf(transmision.getConsentimiento()));
-//		solicitante.setUnidadTramitadora(transmision.getUnidadTramitadora());
-//		solicitante.setCodigoUnidadTramitadora(transmision.getCodigoUnidadTramitadora());
-//		solicitante.setIdExpediente(transmision.getExpediente());
-//
-//		Procedimiento procedimiento = new Procedimiento();
-//		procedimiento.setNombreProcedimiento(transmision.getNombreProcedimiento());
-//		procedimiento.setCodProcedimiento(transmision.getCodigoProcedimiento());
-//		if (transmision.getAutomatizado() != null) {
-//			procedimiento.setAutomatizado(transmision.getAutomatizado() == 0 ? "N" : "S");
-//		}
-//		procedimiento.setClaseTramite(transmision.getClaseTramite());
-//		solicitante.setProcedimiento(procedimiento);
-//
-//		Funcionario funcionario = new Funcionario();
-//		funcionario.setNombreCompletoFuncionario(transmision.getNombreFuncionario());
-//		funcionario.setNifFuncionario(transmision.getDocFuncionario());
-//		funcionario.setSeudonimo(transmision.getSeudonimoFuncionario());
-//		solicitante.setFuncionario(funcionario);
-		return solicitante;
-	}
+/* MOD PBL */ 	private static Solicitante getSolicitante(Transmision transmision) {
+/* MOD PBL */ 		Solicitante solicitante = new Solicitante();
+/* MOD PBL */ 		solicitante.setIdentificadorSolicitante(transmision.getIdSolicitante());
+/* MOD PBL */ 		solicitante.setNombreSolicitante(transmision.getNombreSolicitante());
+/* MOD PBL */ 		return solicitante;
+/* MOD PBL */ 	}
 
-	private Transmision getTransmision(final PeticionRespuesta peticionRespuesta) {
-		Transmision transmision = transactionTemplate.execute(new TransactionCallback<Transmision>() {
-			public Transmision doInTransaction(TransactionStatus status) {
-				List<Transmision> transmisions = null;
-				try {
-					transmisions = transmisionDao.select(peticionRespuesta);
-				} catch (ScspException e) {
-					throw new RuntimeException(e);
-				}
-				return transmisions == null || transmisions.isEmpty() ? null : transmisions.get(0);
-			}
-		});
-		return transmision;
-	}
+/* MOD PBL */ 	private Transmision getTransmision(final PeticionRespuesta peticionRespuesta) {
+/* MOD PBL */ 		Transmision transmision = transactionTemplate.execute(new TransactionCallback<Transmision>() {
+/* MOD PBL */ 			public Transmision doInTransaction(TransactionStatus status) {
+/* MOD PBL */ 				List<Transmision> transmisions = null;
+/* MOD PBL */ 				try {
+/* MOD PBL */ 					transmisions = transmisionDao.select(peticionRespuesta);
+/* MOD PBL */ 				} catch (ScspException e) {
+/* MOD PBL */ 					throw new RuntimeException(e);
+/* MOD PBL */ 				}
+/* MOD PBL */ 				return transmisions == null || transmisions.isEmpty() ? null : transmisions.get(0);
+/* MOD PBL */ 			}
+/* MOD PBL */ 		});
+/* MOD PBL */ 		return transmision;
+/* MOD PBL */ 	}
 
-	private Servicio getServicio(PeticionRespuesta peticionRespuesta) {
-		final long servicioId = peticionRespuesta.getServicio().getId();
-		Servicio servicio = transactionTemplate.execute(new TransactionCallback<Servicio>() {
-			public Servicio doInTransaction(TransactionStatus status) {
-				return servicioDao.select(
-						servicioId);
-			}
-		});
-		return servicio;
-	}
+/* MOD PBL */ 	private Servicio getServicio(PeticionRespuesta peticionRespuesta) {
+/* MOD PBL */ 		final long servicioId = peticionRespuesta.getServicio().getId();
+/* MOD PBL */ 		Servicio servicio = transactionTemplate.execute(new TransactionCallback<Servicio>() {
+/* MOD PBL */ 			public Servicio doInTransaction(TransactionStatus status) {
+/* MOD PBL */ 				return servicioDao.select(
+/* MOD PBL */ 						servicioId);
+/* MOD PBL */ 			}
+/* MOD PBL */ 		});
+/* MOD PBL */ 		return servicio;
+/* MOD PBL */ 	}
 
-	private boolean serveiHasToSendSolicitant(final String codigoCertificado) {
-		return transactionTemplate.execute(new TransactionCallback<Boolean>() {
-			public Boolean doInTransaction(TransactionStatus status) {
-				return serveiDao.serveiHasToSendSolicitant(codigoCertificado);
-			}
-		});
-	}
+/* MOD PBL */ 	private boolean serveiHasToSendSolicitant(final String codigoCertificado) {
+/* MOD PBL */ 		return transactionTemplate.execute(new TransactionCallback<Boolean>() {
+/* MOD PBL */ 			public Boolean doInTransaction(TransactionStatus status) {
+/* MOD PBL */ 				return serveiDao.serveiHasToSendSolicitant(codigoCertificado);
+/* MOD PBL */ 			}
+/* MOD PBL */ 		});
+/* MOD PBL */ 	}
 
 	private boolean isEnabled() {
-		ParametroConfiguracion enabled = transactionTemplate.execute(new TransactionCallback<ParametroConfiguracion>() {
-			public ParametroConfiguracion doInTransaction(TransactionStatus status) {
+        /* MOD PBL */ ParametroConfiguracion enabled = transactionTemplate.execute(new TransactionCallback<ParametroConfiguracion>() {
+        /* MOD PBL */ 	public ParametroConfiguracion doInTransaction(TransactionStatus status) {
 				return parametroConfiguracionDao.select("polling.enabled");
-			}
-		});
+        /* MOD PBL */ 	}
+        /* MOD PBL */ });
 		if (enabled == null) {
 			log.warn("No existe en la tabla de configuracion global el parametro polling.enabled");
 			return false;
@@ -227,35 +203,38 @@ import java.util.TimerTask;
 		return enabled.getValor().equals("true");
 	}
 
-	private void handleErrorPeticion(PeticionRespuesta peticionRespuesta,
-			Exception e) {
-		log.error("=========================================================");
-		log.error("Error al procesar la peticion asincrona");
-		log.error("IdPeticion: " + peticionRespuesta.getIdPeticion());
-		log.error("ID Certificado: " + peticionRespuesta.getServicio().getId());
-		log.error("Mensaje: " + e.getMessage());
-		log.error("StackTrace", e);
-		log.error("=========================================================");
-		try {
-			PeticionRespuesta peticionRespuestaaux = this.peticionRespuestaDao.select(peticionRespuesta.getIdPeticion());
-			if ((e instanceof ScspException)) {
-				ScspException se = (ScspException)e;
-				if (se.getScspCode().equals("0002")) {
-					log.warn("La excepción recibida posee estado 0002, implica un error en comunicaciones y reseteo posterior de estado.");
-				} else {
-					peticionRespuestaaux.setError(se.getMessage());
-				}
-				peticionRespuestaaux.setEstado(se.getScspCode());
-			} else {
-				peticionRespuestaaux.setError("0502");
-			}
-			this.peticionRespuestaDao.save(peticionRespuestaaux);
-		} catch (ScspException ex) {
-			log.error("=========================================================");
-			log.error("Error al actualizar en base de datos el estado de error de la peticion: ");
-			log.error(ex);
-			log.error("=========================================================");
-		}
-	}
+    private void handleErrorPeticion(PeticionRespuesta peticionRespuesta, Exception e) {
+        log.error("=========================================================");
+        log.error("Error al procesar la peticion asincrona");
+        log.error("IdPeticion: " + peticionRespuesta.getIdPeticion());
+        log.error("ID Certificado: " + peticionRespuesta.getServicio().getId());
+        log.error("Mensaje: " + e.getMessage());
+        log.error("StackTrace", e);
+        log.error("=========================================================");
+
+        try {
+            PeticionRespuesta peticionRespuestaaux = this.peticionRespuestaDao.select(peticionRespuesta.getIdPeticion());
+            if (e instanceof ScspException) {
+                ScspException se = (ScspException)e;
+                if (se.getScspCode().equals("0002")) {
+                    log.warn("La excepción recibida posee estado 0002, implica un error en comunicaciones y reseteo posterior de estado.");
+                } else {
+                    peticionRespuestaaux.setError(se.getMessage());
+                }
+
+                peticionRespuestaaux.setEstado(se.getScspCode());
+            } else {
+                peticionRespuestaaux.setError("0502");
+            }
+
+            this.peticionRespuestaDao.save(peticionRespuestaaux);
+        } catch (ScspException ex) {
+            log.error("=========================================================");
+            log.error("Error al actualizar en base de datos el estado de error de la peticion: ");
+            log.error(ex);
+            log.error("=========================================================");
+        }
+
+    }
 
 }

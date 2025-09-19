@@ -33,21 +33,20 @@ import es.caib.pinbal.plugins.DadesUsuari;
 import es.caib.pinbal.plugins.SistemaExternException;
 import es.caib.pinbal.scsp.ScspHelper;
 import es.caib.pinbal.scsp.XmlHelper;
-import es.scsp.bean.common.Atributos;
-import es.scsp.bean.common.ConfirmacionPeticion;
-import es.scsp.bean.common.Consentimiento;
-import es.scsp.bean.common.DatosGenericos;
-import es.scsp.bean.common.Funcionario;
-import es.scsp.bean.common.Peticion;
-import es.scsp.bean.common.Procedimiento;
-import es.scsp.bean.common.Respuesta;
-import es.scsp.bean.common.Solicitante;
-import es.scsp.bean.common.SolicitudTransmision;
-import es.scsp.bean.common.Solicitudes;
-import es.scsp.bean.common.TipoDocumentacion;
-import es.scsp.bean.common.Titular;
-import es.scsp.bean.common.Transmision;
-import es.scsp.bean.common.TransmisionDatos;
+import es.scsp.bean.common.confirmacion.ConfirmacionPeticion;
+import es.scsp.bean.common.peticion.Atributos;
+import es.scsp.bean.common.peticion.Consentimiento;
+import es.scsp.bean.common.peticion.DatosGenericos;
+import es.scsp.bean.common.peticion.Funcionario;
+import es.scsp.bean.common.peticion.Peticion;
+import es.scsp.bean.common.peticion.Procedimiento;
+import es.scsp.bean.common.peticion.SolicitudTransmision;
+import es.scsp.bean.common.peticion.Solicitudes;
+import es.scsp.bean.common.peticion.TipoDocumentacion;
+import es.scsp.bean.common.peticion.Titular;
+import es.scsp.bean.common.peticion.Transmision;
+import es.scsp.bean.common.respuesta.Respuesta;
+import es.scsp.bean.common.respuesta.TransmisionDatos;
 import es.scsp.common.domain.core.Servicio;
 import es.scsp.common.utils.DateUtils;
 import lombok.extern.slf4j.Slf4j;
@@ -272,9 +271,7 @@ public class RecobrimentV2Helper implements ApplicationContextAware, MessageSour
 		}
 
 		// Afegir SolicitudTransmision a Solicitudes
-		ArrayList<SolicitudTransmision> solicitudesTransmision = new ArrayList<>();
-		solicitudesTransmision.add(solicitudTransmision);
-		solicitudes.setSolicitudTransmision(solicitudesTransmision);
+		solicitudes.getSolicitudTransmision().add(solicitudTransmision);
 		peticion.setSolicitudes(solicitudes);
 
 		return peticion;
@@ -322,7 +319,7 @@ public class RecobrimentV2Helper implements ApplicationContextAware, MessageSour
 			// Afegir SolicitudTransmision a Solicitudes
 			solicitudesTransmision.add(solicitudTransmision);
 		}
-		solicitudes.setSolicitudTransmision(solicitudesTransmision);
+		solicitudes.getSolicitudTransmision().addAll(solicitudesTransmision);
 		peticion.setSolicitudes(solicitudes);
 
 		return peticion;
@@ -489,7 +486,7 @@ public class RecobrimentV2Helper implements ApplicationContextAware, MessageSour
 	private static Atributos crearAtributos(String idPeticion, String timeStamp, String serveiCodi, int numSolicituds) {
 		Atributos atributos = new Atributos();
 		atributos.setIdPeticion(idPeticion);
-		atributos.setNumElementos(String.valueOf(numSolicituds));
+		atributos.setNumElementos(numSolicituds);
 		atributos.setTimeStamp(timeStamp);
 		atributos.setCodigoCertificado(serveiCodi);
 		return atributos;
@@ -521,8 +518,8 @@ public class RecobrimentV2Helper implements ApplicationContextAware, MessageSour
 	}
 
 	// Crear Solicitante
-	private Solicitante crearSolicitante(DadesComunes dadesComunes, SolicitudSimple solicitud, ServeiConfig serveiConfig) {
-		Solicitante solicitante = new Solicitante();
+	private es.scsp.bean.common.peticion.Solicitante crearSolicitante(DadesComunes dadesComunes, SolicitudSimple solicitud, ServeiConfig serveiConfig) {
+		es.scsp.bean.common.peticion.Solicitante solicitante = new es.scsp.bean.common.peticion.Solicitante();
 
 		// Entitat
 		Entitat entitat = entitatRepository.findByCif(dadesComunes.getEntitatCif());
@@ -546,7 +543,7 @@ public class RecobrimentV2Helper implements ApplicationContextAware, MessageSour
 		solicitante.setNombreSolicitante(entitat.getNom());
 		solicitante.setIdExpediente(solicitud.getExpedient());
 		solicitante.setFinalidad(dadesComunes.getFinalitat());
-		solicitante.setConsentimiento(Consentimiento.valueOf(dadesComunes.getConsentiment().name()));
+		solicitante.setConsentimiento(Consentimiento.fromValue(dadesComunes.getConsentiment().name()));
 
 		return solicitante;
 	}
@@ -575,7 +572,7 @@ public class RecobrimentV2Helper implements ApplicationContextAware, MessageSour
 	private Titular crearTitular(es. caib. pinbal. client. recobriment. v2.Titular titularModel) {
 		Titular titular = new Titular();
 		if (titularModel.getDocumentTipus() != null) {
-			titular.setTipoDocumentacion(TipoDocumentacion.valueOf(titularModel.getDocumentTipus().name()));
+			titular.setTipoDocumentacion(TipoDocumentacion.fromValue(titularModel.getDocumentTipus().name()));
 		}
 		titular.setDocumentacion(titularModel.getDocumentNumero());
 		titular.setNombreCompleto(titularModel.getNomComplet());
@@ -825,7 +822,7 @@ public class RecobrimentV2Helper implements ApplicationContextAware, MessageSour
 							.build();
 					dadesComunes.setEmisor(emisor);
 				}
-				Solicitante solicitante = transmisionDatos.getDatosGenericos().getSolicitante();
+                es.scsp.bean.common.respuesta.Solicitante solicitante = transmisionDatos.getDatosGenericos().getSolicitante();
 				if (solicitante != null) {
 					Funcionari funcionari = null;
 					if (solicitante.getFuncionario() != null) {
@@ -842,9 +839,9 @@ public class RecobrimentV2Helper implements ApplicationContextAware, MessageSour
 							.procedimentCodi(solicitante.getProcedimiento() != null ? solicitante.getProcedimiento().getCodProcedimiento() : null)
 							.procedimentNom(solicitante.getProcedimiento() != null ? solicitante.getProcedimiento().getNombreProcedimiento() : null)
 							.automatitzat(solicitante.getProcedimiento() != null ? "S".equalsIgnoreCase(solicitante.getProcedimiento().getAutomatizado()) : null)
-							.classeTramit(solicitante.getProcedimiento() != null ? ClasseTramitHelper.getClasseTramitById(solicitante.getProcedimiento().getClaseTramite()) : null)
+							.classeTramit(solicitante.getProcedimiento() != null && solicitante.getProcedimiento().getClaseTramite() != null ? ClasseTramitHelper.getClasseTramitById(solicitante.getProcedimiento().getClaseTramite().shortValue()) : null)
 							.finalitat(solicitante.getFinalidad())
-							.consentiment(solicitante.getConsentimiento() != null ? DadesComunes.Consentiment.valueOf(solicitante.getConsentimiento().name()) : null)
+							.consentiment(solicitante.getConsentimiento() != null ? DadesComunes.Consentiment.valueOf(solicitante.getConsentimiento().value()) : null)
 							.funcionari(funcionari)
 							.build();
 					dadesComunes.setSolicitant(solicitant);
@@ -900,7 +897,7 @@ public class RecobrimentV2Helper implements ApplicationContextAware, MessageSour
 			return null;
 
 		List<PeticioResposta> peticioRespostes = new ArrayList<>();
-		ArrayList<TransmisionDatos> transmisionesDatos = scspRespuesta.getTransmisiones().getTransmisionDatos();
+		List<TransmisionDatos> transmisionesDatos = scspRespuesta.getTransmisiones().getTransmisionDatos();
 		for (TransmisionDatos transmisionDatos : transmisionesDatos) {
 			peticioRespostes.add(toResposta(transmisionDatos));
 		}
@@ -915,10 +912,10 @@ public class RecobrimentV2Helper implements ApplicationContextAware, MessageSour
 
 		PeticioResposta peticioResposta = new PeticioResposta();
 		if (transmisionDatos.getDatosGenericos() != null) {
-			Solicitante solicitante = transmisionDatos.getDatosGenericos().getSolicitante();
+			es.scsp.bean.common.respuesta.Solicitante solicitante = transmisionDatos.getDatosGenericos().getSolicitante();
 			peticioResposta.setExpedient(solicitante != null ? solicitante.getIdExpediente() : null);
 
-			Titular titular = transmisionDatos.getDatosGenericos().getTitular();
+			es.scsp.bean.common.respuesta.Titular titular = transmisionDatos.getDatosGenericos().getTitular();
 			if (titular != null) {
 				peticioResposta.setTitular(
 						es.caib.pinbal.client.recobriment.v2.Titular.builder()
@@ -932,7 +929,7 @@ public class RecobrimentV2Helper implements ApplicationContextAware, MessageSour
 				);
 			}
 
-			Transmision transmision = transmisionDatos.getDatosGenericos().getTransmision();
+			es.scsp.bean.common.respuesta.Transmision transmision = transmisionDatos.getDatosGenericos().getTransmision();
 			if (transmision != null) {
 				peticioResposta.setIdSolicitud(transmision.getIdSolicitud());
 				peticioResposta.setIdTransmissio(transmision.getIdTransmision());
@@ -965,7 +962,7 @@ public class RecobrimentV2Helper implements ApplicationContextAware, MessageSour
 		Date dataResposta = null;
 		Date dataEstimadaResposta = null;
 		try {
-			numPeticions = Integer.parseInt(resposta.getAtributos().getNumElementos());
+			numPeticions = resposta.getAtributos().getNumElementos();
 		} catch (Exception e) {
 			log.error("Error al convertir el número de peticions", e);
 		}

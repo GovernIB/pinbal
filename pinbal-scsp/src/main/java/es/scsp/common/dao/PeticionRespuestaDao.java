@@ -1,8 +1,3 @@
-//
-// Source code recreated from a .class file by IntelliJ IDEA
-// (powered by FernFlower decompiler)
-//
-
 package es.scsp.common.dao;
 
 import es.scsp.common.domain.core.ParametroConfiguracion;
@@ -35,9 +30,6 @@ public class PeticionRespuestaDao extends BaseDao {
     private static final Log LOG = LogFactory.getLog(PeticionRespuestaDao.class);
     private static final String ID_PETICION = "idPeticion";
     private static final String SERVICIO = "servicio";
-
-    public PeticionRespuestaDao() {
-    }
 
     public PeticionRespuesta select(String idPeticion) throws ScspException {
         Session session = this.getSessionFactory().getCurrentSession();
@@ -145,7 +137,7 @@ public class PeticionRespuestaDao extends BaseDao {
     public Long count(Servicio servicio) {
         Session session = this.getSessionFactory().getCurrentSession();
         Transaction tx = session.beginTransaction();
-        String hql = String.format("select count(*) as n from PeticionRespuesta pr where servicio.id = '%s'", servicio.getId());
+        /* MOD PBL */ String hql = String.format("select count(*) as n from PeticionRespuesta pr where servicio.id = '%s'", servicio.getId());
         Query query = session.createQuery(hql);
         Long count = (Long)query.uniqueResult();
         tx.commit();
@@ -155,7 +147,7 @@ public class PeticionRespuestaDao extends BaseDao {
     public int delete(Servicio servicio) {
         Session session = this.getSessionFactory().getCurrentSession();
         Transaction tx = session.beginTransaction();
-        String hql = String.format("delete from PeticionRespuesta where servicio.id = '%s'", servicio.getId());
+        /* MOD PBL */ String hql = String.format("delete from PeticionRespuesta where servicio.id = '%s'", servicio.getId());
         Query query = session.createQuery(hql);
         int count = query.executeUpdate();
         tx.commit();
