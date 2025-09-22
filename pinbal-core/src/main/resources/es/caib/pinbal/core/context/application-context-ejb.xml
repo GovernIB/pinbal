@@ -12,6 +12,7 @@
 				<value>es/caib/pinbal/scsp/i18n/messages</value>
 			</list>
 		</property>
+        <property name="useCodeAsDefaultMessage" value="true"/>
 	</bean>
 
 	<import resource="classpath:es/caib/pinbal/core/context/application-context-model.xml" />

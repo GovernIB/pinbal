@@ -1,0 +1,30 @@
+databaseChangeLog:
+  - changeSet:
+      id: inserir-config-dadescomunes-url
+      author: limit
+      changes:
+        - insert:
+            tableName: PBL_CONFIG_GROUP
+            columns:
+              - column:
+                  name: CODE
+                  value: DADES_COMUNS
+              - column:
+                  name: VALUE
+                  value: propietat.grup.plugins.dades.comunes
+              - column:
+                  name: DESCRIPTION_KEY
+                  value: propietat.dadescomunes.base.url
+              - column:
+                  name: POSITION
+                  valueNumeric: 6
+              - column:
+                  name: PARENT_CODE
+                  value: PLUGINS
+        - update:
+            tableName: PBL_CONFIG
+            columns:
+              - column:
+                  name: GROUP_CODE
+                  value: DADES_COMUNS
+            where: "KEY = 'es.caib.pinbal.dadescomunes.base.url'"

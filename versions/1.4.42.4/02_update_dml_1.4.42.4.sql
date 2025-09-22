@@ -1,0 +1,2 @@
+INSERT INTO PBL_CONFIG_GROUP (CODE, DESCRIPTION_KEY, POSITION, PARENT_CODE) VALUES ('DADES_COMUNS', 'propietat.grup.plugins.dades.comunes', 6, 'PLUGINS');
+UPDATE PBL_CONFIG SET GROUP_CODE = 'DADES_COMUNS' WHERE KEY = 'es.caib.pinbal.dadescomunes.base.url';
