@@ -41,7 +41,8 @@ public class IntegracioHelper {
 	public static final String INTCODI_ORGANS = "ORGANS";
 	public static final String INTCODI_USUARIS = "USUARIS";
 	public static final String INTCODI_EXPLOTACIO = "EXPLOTACIO";
-	
+	public static final String INTCODI_DADES_COMUNS = "DADES_COMUNS";
+
 	@Autowired
 	private IntegracioAccioService integracioAccioService;
 
@@ -53,6 +54,7 @@ public class IntegracioHelper {
 		integracions.add(novaIntegracio(INTCODI_ORGANS));
 		integracions.add(novaIntegracio(INTCODI_USUARIS));
 		integracions.add(novaIntegracio(INTCODI_EXPLOTACIO));
+		integracions.add(novaIntegracio(INTCODI_DADES_COMUNS));
 		return integracions;
 	}
 
@@ -187,7 +189,9 @@ public class IntegracioHelper {
 			integracio.setNom("Usuaris");
 		} else if (INTCODI_EXPLOTACIO.equals(codi)) {
 			integracio.setNom("Explotació de dades");
-		}
+		} else if (INTCODI_DADES_COMUNS.equals(codi)) {
+            integracio.setNom("Dades comunes");
+        }
 		return integracio;
 	}
 

@@ -7,13 +7,14 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import es.caib.pinbal.core.dto.IdiomaEnumDto;
+import es.caib.pinbal.core.dto.IntegracioAccioTipusEnumDto;
 import es.caib.pinbal.core.dto.dadesexternes.Municipi;
 import es.caib.pinbal.core.dto.dadesexternes.Pais;
 import es.caib.pinbal.core.dto.dadesexternes.PaisML;
 import es.caib.pinbal.core.dto.dadesexternes.Provincia;
 import es.caib.pinbal.core.dto.dadesexternes.ProvinciaML;
 import es.caib.pinbal.core.helper.ConfigHelper;
-import es.caib.pinbal.core.helper.UsuariHelper;
+import es.caib.pinbal.core.helper.IntegracioHelper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +28,9 @@ import java.text.Collator;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Implementació dels mètodes per obtenir dades de fonts
@@ -41,8 +44,8 @@ public class DadesExternesServiceImpl implements DadesExternesService {
 
 	@Autowired
 	private ConfigHelper configHelper;
-	@Autowired
-	private UsuariHelper usuariHelper;
+    @Autowired
+    private IntegracioHelper integracioHelper;
 
 	@Cacheable(value = "paisos", key = "#idioma")
 	@Override
@@ -53,8 +56,16 @@ public class DadesExternesServiceImpl implements DadesExternesService {
 		}
 
 		List<Pais> paisos = new ArrayList<>();
+
+        // Dades per el monitor
+        String accioDescripcio = "Consulta de paisos";
+        Map<String, String> accioParams = new HashMap<>();
+        accioParams.put("idioma", idioma.name());
+        long startTime = System.currentTimeMillis();
+
 		try {
 			URL url = new URL(getDadesComunesBaseUrl() + "/services/paisos/format/JSON/idioma/" + idioma.name().toLowerCase());
+            accioParams.put("url", url.toString());
 			HttpURLConnection httpConnection = (HttpURLConnection)url.openConnection();
 			httpConnection.setRequestMethod("GET");
 			httpConnection.setDoInput(true);
@@ -85,9 +96,24 @@ public class DadesExternesServiceImpl implements DadesExternesService {
 					}
 				});
 			}
+
+            integracioHelper.addAccioOk(
+                    IntegracioHelper.INTCODI_DADES_COMUNS,
+                    accioDescripcio,
+                    accioParams,
+                    IntegracioAccioTipusEnumDto.ENVIAMENT,
+                    System.currentTimeMillis() - startTime);
 			return paisos;
 		} catch (Exception ex) {
-			log.error("Error al obtenir les províncies de la font externa", ex);
+			log.error("Error al obtenir els països del servei de dades comunes", ex);
+            integracioHelper.addAccioError(
+                    IntegracioHelper.INTCODI_DADES_COMUNS,
+                    accioDescripcio,
+                    accioParams,
+                    IntegracioAccioTipusEnumDto.ENVIAMENT,
+                    System.currentTimeMillis() - startTime,
+                    "Error al obtenir els països del servei de dades comunes",
+                    ex);
 			return null;
 		}
 	}
@@ -111,8 +137,16 @@ public class DadesExternesServiceImpl implements DadesExternesService {
 		}
 
 		List<Provincia> provincies = new ArrayList<>();
+
+        // Dades per el monitor
+        String accioDescripcio = "Consulta de províncies";
+        Map<String, String> accioParams = new HashMap<>();
+        accioParams.put("idioma", idioma.name());
+        long startTime = System.currentTimeMillis();
+
 		try {
 			URL url = new URL(getDadesComunesBaseUrl() + "/services/provincies/format/JSON/idioma/" + idioma.name().toLowerCase());
+            accioParams.put("url", url.toString());
 			HttpURLConnection httpConnection = (HttpURLConnection)url.openConnection();
 			httpConnection.setRequestMethod("GET");
 			httpConnection.setDoInput(true);
@@ -141,9 +175,25 @@ public class DadesExternesServiceImpl implements DadesExternesService {
 					}
 				});
 			}
+
+            integracioHelper.addAccioOk(
+                    IntegracioHelper.INTCODI_DADES_COMUNS,
+                    accioDescripcio,
+                    accioParams,
+                    IntegracioAccioTipusEnumDto.ENVIAMENT,
+                    System.currentTimeMillis() - startTime);
+
 			return provincies;
 		} catch (Exception ex) {
-			log.error("Error al obtenir les províncies de la font externa", ex);
+			log.error("Error al obtenir les províncies del servei de dades comunes", ex);
+            integracioHelper.addAccioError(
+                    IntegracioHelper.INTCODI_DADES_COMUNS,
+                    accioDescripcio,
+                    accioParams,
+                    IntegracioAccioTipusEnumDto.ENVIAMENT,
+                    System.currentTimeMillis() - startTime,
+                    "Error al obtenir les províncies del servei de dades comunes",
+                    ex);
 			return null;
 		}
 	}
@@ -162,8 +212,16 @@ public class DadesExternesServiceImpl implements DadesExternesService {
 	public List<Municipi> findMunicipisPerProvincia(String provinciaCodi) {
 		log.debug("Cercant els municipis de la província (provinciaCodi=" + provinciaCodi + ")");
 		List<Municipi> municipis = new ArrayList<>();
+
+        // Dades per el monitor
+        String accioDescripcio = "Consulta de municipis per província";
+        Map<String, String> accioParams = new HashMap<>();
+        accioParams.put("provinciaCodi", provinciaCodi);
+        long startTime = System.currentTimeMillis();
+
 		try {
 			URL url = new URL(getDadesComunesBaseUrl() + "/services/municipis/" + provinciaCodi + "/format/JSON");
+            accioParams.put("url", url.toString());
 			HttpURLConnection httpConnection = (HttpURLConnection)url.openConnection();
 			httpConnection.setRequestMethod("GET");
 			httpConnection.setDoInput(true);
@@ -200,9 +258,25 @@ public class DadesExternesServiceImpl implements DadesExternesService {
 					}
 				});
 			}
+
+            integracioHelper.addAccioOk(
+                    IntegracioHelper.INTCODI_DADES_COMUNS,
+                    accioDescripcio,
+                    accioParams,
+                    IntegracioAccioTipusEnumDto.ENVIAMENT,
+                    System.currentTimeMillis() - startTime);
+
 			return municipis;
 		} catch (Exception ex) {
-			log.error("Error al obtenir les províncies de la font externa", ex);
+			log.error("Error al obtenir les els municipis per província del servei de dades comunes", ex);
+            integracioHelper.addAccioError(
+                    IntegracioHelper.INTCODI_DADES_COMUNS,
+                    accioDescripcio,
+                    accioParams,
+                    IntegracioAccioTipusEnumDto.ENVIAMENT,
+                    System.currentTimeMillis() - startTime,
+                    "Error al obtenir les els municipis per província del servei de dades comunes",
+                    ex);
 			return null;
 		}
 	}
