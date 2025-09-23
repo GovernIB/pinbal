@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>es.caib.pinbal</groupId>
     <artifactId>pinbal-client-api</artifactId>
-    <version>1.4.42.4</version>
+    <version>1.4.42.5</version>
 
     <properties>
         <hibernate.validator.version>4.1.0.Final</hibernate.validator.version>
