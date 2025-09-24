@@ -339,7 +339,7 @@ body {
                                                 <c:forEach var="servei" items="${sessionServeis}">
                                                     <c:if test="${servei.codi == dadesUsuariActual.serveiCodi}">
                                                         <li class="nova-consulta-item default-service" data-text="${fn:toLowerCase(servei.codi)} ${fn:toLowerCase(servei.descripcio)}">
-                                                            <a href="<c:url value="/consulta/${servei.codiUrlEncoded}/new"/>">${servei.codi} - ${servei.descripcio}</a>
+                                                            <a href="<c:url value="/consulta/${servei.codiUrlEncoded}/new"/>">${servei.descripcio} (${servei.codi})</a>
                                                         </li>
                                                     </c:if>
                                                 </c:forEach>
@@ -348,7 +348,7 @@ body {
                                             <c:forEach var="servei" items="${sessionServeis}">
                                                 <c:if test="${empty dadesUsuariActual.serveiCodi || servei.codi != dadesUsuariActual.serveiCodi}">
                                                     <li class="nova-consulta-item" data-text="${fn:toLowerCase(servei.codi)} ${fn:toLowerCase(servei.descripcio)}">
-                                                        <a href="<c:url value="/consulta/${servei.codiUrlEncoded}/new"/>">${servei.codi} - ${servei.descripcio}</a>
+                                                        <a href="<c:url value="/consulta/${servei.codiUrlEncoded}/new"/>">${servei.descripcio} (${servei.codi})</a>
                                                     </li>
                                                 </c:if>
                                             </c:forEach>

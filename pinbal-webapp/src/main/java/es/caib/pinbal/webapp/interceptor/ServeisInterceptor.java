@@ -41,7 +41,7 @@ public class ServeisInterceptor extends HandlerInterceptorAdapter {
 				LOGGER.debug("Consulta del llistat de serveis pel delegat (usuari=" + usuari + ")");
 				serveis = serveiService.findPermesosAmbProcedimentPerDelegat(entitatActual.getId(), null);
 			}
-			// Ordenar els serveis per descripció (excepte que el JSP ja col·loca el per defecte al principi)
+			// Ordenar els serveis per descripció
 			if (serveis != null) {
 				Collections.sort(serveis, new Comparator<ServeiDto>() {
 					@Override
