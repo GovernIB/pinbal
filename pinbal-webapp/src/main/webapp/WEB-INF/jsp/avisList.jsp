@@ -47,7 +47,7 @@ $(document).ready(function() {
 		processing: true,
 		serverSide: true,
 		language: {
-            "url": "js/datatable-language.json"
+            "url": '<c:url value="/js/datatable-language.json"/>',
         },
 		ajax: "avis/datatable",
 		columnDefs: [

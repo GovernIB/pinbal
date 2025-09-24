@@ -97,7 +97,11 @@ public class ConsultaCommand {
 	public ConsultaCommand(String serveiCodi) {
 		this.serveiCodi = serveiCodi;
 	}
-	
+	public ConsultaCommand(Long procedimentId, String serveiCodi) {
+        this.procedimentId = procedimentId;
+		this.serveiCodi = serveiCodi;
+	}
+
 	public static ConsultaDto asDto(ConsultaCommand command) {
 		return CommandMappingHelper.getMapperFacade().map(
 				command,

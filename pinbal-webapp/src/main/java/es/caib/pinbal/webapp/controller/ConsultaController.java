@@ -11,6 +11,7 @@ import es.caib.pinbal.core.dto.FitxerDto;
 import es.caib.pinbal.core.dto.JsonResponse;
 import es.caib.pinbal.core.dto.JustificantDto;
 import es.caib.pinbal.core.dto.NodeDto;
+import es.caib.pinbal.core.dto.ProcedimentDto;
 import es.caib.pinbal.core.dto.ServeiCampDto;
 import es.caib.pinbal.core.dto.ServeiCampDto.ServeiCampDtoTipus;
 import es.caib.pinbal.core.dto.ServeiCampGrupDto;
@@ -740,9 +741,18 @@ public class ConsultaController extends BaseController {
 
 	private void emplenarCommand(HttpServletRequest request, ConsultaCommand command, String serveiCodi,
 			EntitatDto entitat, boolean inicialitzacioCommand) throws AccesExternException, ServeiNotFoundException,
-			ScspException, IOException, ParserConfigurationException, SAXException {
+            ScspException, IOException, ParserConfigurationException, SAXException, EntitatNotFoundException {
 		command.setServeiCodi(serveiCodi);
 		UsuariDto dadesUsuari = usuariService.getDades();
+        if (dadesUsuari != null && dadesUsuari.getProcedimentId() != null) {
+            List<ProcedimentDto> procediments = procedimentService.findActiusAmbEntitatIServeiCodi(entitat.getId(), serveiCodi);
+            for (ProcedimentDto procediment : procediments) {
+                if (dadesUsuari.getProcedimentId().equals(procediment.getId())) {
+                    command.setProcedimentId(dadesUsuari.getProcedimentId());
+                    break;
+                }
+            }
+        }
 		if (dadesUsuari != null) {
 			if (inicialitzacioCommand) {
 				command.setFuncionariNom(dadesUsuari.getNom());

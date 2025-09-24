@@ -103,6 +103,34 @@ body {
 	padding-left: 12px;
 	padding-right: 12px;
 }
+.nova-consulta-menu {
+	max-height: 400px;
+	overflow-y: scroll;
+	scrollbar-gutter: stable both-edges;
+	white-space: nowrap;
+	width: 1000px;
+	min-width: 1000px;
+	max-width: 1000px;
+	left: auto;
+	right: 0;
+}
+/* Responsive: on small screens use available width instead of fixed 1000px */
+@media (max-width: 1023px) {
+	.nova-consulta-menu {
+		width: calc(100vw - 24px);
+		min-width: calc(100vw - 24px);
+		max-width: calc(100vw - 24px);
+	}
+}
+.nova-consulta-filter { padding: 8px 10px; }
+.nova-consulta-filter input { width: 100%; }
+.nova-consulta-item > a { display: block; }
+.nova-consulta-item.default-service > a { font-weight: bold; background-color: #ffe8b3; }
+.nova-consulta-item.default-service > a:hover { background-color: #ffdf99; }
+#btNovaConsulta {
+	border-top-right-radius: 4px !important;
+	border-bottom-right-radius: 4px !important;
+}
 </style>
 </head>
 <body>
@@ -296,15 +324,69 @@ body {
 									<c:if test="${countConsultesMultiplesPendents gt 0}"><span class="badge badge-warning">${countConsultesMultiplesPendents}</span></c:if>
 								</a>
 								<c:if test="${not empty sessionServeis}">
-									<div class="btn-group">
-										<button data-toggle="dropdown" class="btn btn-primary dropdown-toggle"><spring:message code="decorator.menu.consulta.nova"/> <span class="caret"></span></button>
-										<ul class="dropdown-menu">
-											<c:forEach var="servei" items="${sessionServeis}">
-												<li><a href="<c:url value="/consulta/${servei.codiUrlEncoded}/new"/>">${servei.descripcio}</a></li>
-											</c:forEach>
-										</ul>
-									</div>
-								</c:if>
+                                    <div class="btn-group">
+                                        <button id="btNovaConsulta" type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                            <spring:message code="decorator.menu.consulta.nova"/>
+                                            <span class="caret"></span>
+                                        </button>
+                                        <ul id="novaConsultaMenu" class="dropdown-menu dropdown-menu-right nova-consulta-menu" aria-labelledby="btNovaConsulta">
+                                            <li class="nova-consulta-filter">
+                                                <input type="text" id="filterServeis" class="form-control input-sm" placeholder="Cerca serveis..." autocomplete="off"/>
+                                            </li>
+                                            <li role="separator" class="divider"></li>
+                                            <!-- Servei preferit al principi -->
+                                            <c:if test="${not empty dadesUsuariActual.serveiCodi}">
+                                                <c:forEach var="servei" items="${sessionServeis}">
+                                                    <c:if test="${servei.codi == dadesUsuariActual.serveiCodi}">
+                                                        <li class="nova-consulta-item default-service" data-text="${fn:toLowerCase(servei.codi)} ${fn:toLowerCase(servei.descripcio)}">
+                                                            <a href="<c:url value="/consulta/${servei.codiUrlEncoded}/new"/>">${servei.codi} - ${servei.descripcio}</a>
+                                                        </li>
+                                                    </c:if>
+                                                </c:forEach>
+                                            </c:if>
+                                            <!-- Resta de serveis -->
+                                            <c:forEach var="servei" items="${sessionServeis}">
+                                                <c:if test="${empty dadesUsuariActual.serveiCodi || servei.codi != dadesUsuariActual.serveiCodi}">
+                                                    <li class="nova-consulta-item" data-text="${fn:toLowerCase(servei.codi)} ${fn:toLowerCase(servei.descripcio)}">
+                                                        <a href="<c:url value="/consulta/${servei.codiUrlEncoded}/new"/>">${servei.codi} - ${servei.descripcio}</a>
+                                                    </li>
+                                                </c:if>
+                                            </c:forEach>
+                                        </ul>
+                                    </div>
+                                    <script type="application/javascript">
+                                        (function() {
+                                            var $menu = $("#novaConsultaMenu");
+                                            var $input = $("#filterServeis");
+                                            // When opening the dropdown, focus filter and lock current size so it won't change while filtering
+                                            $("#btNovaConsulta").on("shown.bs.dropdown", function() {
+                                                // Clear previous text and focus
+                                                $input.val("");
+                                                $input.focus();
+                                                // Ensure all items are visible when opening
+                                                $menu.find("li.nova-consulta-item").show();
+                                            });
+                                            // Prevent closing when clicking inside the filter input
+                                            $input.on("click", function(e){ e.stopPropagation(); });
+                                            // Live filter (matches both code and description)
+                                            $input.on("keyup", function(){
+                                                var q = $(this).val().toLowerCase();
+                                                if (!q) {
+                                                    $menu.find("li.nova-consulta-item").show();
+                                                    return;
+                                                }
+                                                $menu.find("li.nova-consulta-item").each(function(){
+                                                    var txt = $(this).data("text");
+                                                    if (txt && txt.indexOf(q) !== -1) {
+                                                        $(this).show();
+                                                    } else {
+                                                        $(this).hide();
+                                                    }
+                                                });
+                                            });
+                                        })();
+                                    </script>
+                                </c:if>
 							</c:if>
 						</c:when>
 						<c:when test="${isRolActualAuditor}">
