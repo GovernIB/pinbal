@@ -7,5 +7,6 @@ public enum DadaTipusEnum {
     DATE,
     DOC_IDENTITAT,
     FILE,
-    ENUM;
+    ENUM,
+    COMPLEX;
 }

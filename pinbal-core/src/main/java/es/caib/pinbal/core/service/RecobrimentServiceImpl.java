@@ -22,6 +22,7 @@ import es.caib.pinbal.client.recobriment.model.ScspTitular.ScspTipoDocumentacion
 import es.caib.pinbal.client.recobriment.model.ScspTransmision;
 import es.caib.pinbal.client.recobriment.model.ScspTransmisionDatos;
 import es.caib.pinbal.client.recobriment.v2.DadaEspecifica;
+import es.caib.pinbal.client.recobriment.v2.DadaEspecificaBasic;
 import es.caib.pinbal.client.recobriment.v2.DadaTipusEnum;
 import es.caib.pinbal.client.recobriment.v2.EstatEnum;
 import es.caib.pinbal.client.recobriment.v2.PeticioAsincrona;
@@ -32,10 +33,12 @@ import es.caib.pinbal.client.recobriment.v2.PeticioSincrona;
 import es.caib.pinbal.client.recobriment.v2.Validacio;
 import es.caib.pinbal.client.recobriment.v2.ValorEnum;
 import es.caib.pinbal.client.serveis.ServeiBasic;
+import es.caib.pinbal.core.dto.ArbreDto;
 import es.caib.pinbal.core.dto.DadaEspecificaDto;
 import es.caib.pinbal.core.dto.EstatTipus;
 import es.caib.pinbal.core.dto.IdiomaEnumDto;
 import es.caib.pinbal.core.dto.JustificantDto;
+import es.caib.pinbal.core.dto.NodeDto;
 import es.caib.pinbal.core.dto.ServeiCampDto;
 import es.caib.pinbal.core.dto.dadesexternes.Municipi;
 import es.caib.pinbal.core.dto.dadesexternes.Pais;
@@ -63,6 +66,7 @@ import es.caib.pinbal.core.service.exception.RecobrimentScspException;
 import es.caib.pinbal.core.service.exception.RecobrimentScspValidationException;
 import es.caib.pinbal.core.service.exception.ServeiCampNotFoundException;
 import es.caib.pinbal.core.service.exception.ServeiNotFoundException;
+import es.caib.pinbal.core.service.exception.ServeiRespostaNotFoundException;
 import es.caib.pinbal.scsp.ScspHelper;
 import es.caib.pinbal.scsp.XmlHelper;
 import es.caib.pinbal.scsp.tree.Tree;
@@ -701,6 +705,50 @@ public class RecobrimentServiceImpl implements RecobrimentService, ApplicationCo
 
     @Override
     @Transactional(readOnly = true)
+    public List<DadaEspecificaBasic> getDadesEspecifiquesByServeiResposta(String serveiCodi) throws Exception {
+        log.debug("Cercant les dades especifiques de la resposta del servei (codi=" + serveiCodi + ")");
+        ServeiConfig serveiConfig = serveiConfigRepository.findByServei(serveiCodi);
+        if (serveiConfig == null)
+            throw new ServeiNotFoundException(serveiCodi);
+        if (serveiConfig.getArrelRespostaPath() == null || serveiConfig.getArrelRespostaPath().isEmpty()) {
+            throw new ServeiRespostaNotFoundException("serveiCodi");
+        }
+
+        ArbreDto<DadaEspecificaDto> arbreDadesEspecifiques = serveiService.generarArbreDadesEspecifiques(serveiCodi);
+        NodeDto<DadaEspecificaDto> nodeResposta = findNodeByPath(arbreDadesEspecifiques.getArrel(), serveiConfig.getArrelRespostaPath());
+
+        if (nodeResposta == null) {
+            throw new ServeiRespostaNotFoundException("serveiCodi");
+        }
+        
+        return toDadesEspecifiquesBasiques(nodeResposta);
+    }
+
+    private NodeDto<DadaEspecificaDto> findNodeByPath(NodeDto<DadaEspecificaDto> arbre, String path) {
+        if (arbre == null || path == null || path.isEmpty()) {
+            return null;
+        }
+
+        // Si el path coincideix amb el node actual
+        if (path.equals(arbre.getDades().getPathAmbSeparadorDefault())) {
+            return arbre;
+        }
+
+        // Cerca recursiva en els fills
+        if (arbre.getFills() != null) {
+            for (NodeDto<DadaEspecificaDto> fill : arbre.getFills()) {
+                NodeDto<DadaEspecificaDto> trobat = findNodeByPath(fill, path);
+                if (trobat != null) {
+                    return trobat;
+                }
+            }
+        }
+
+        return null;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
     @Cacheable(value = "enumerats", key = "#serveiCodi + ':' + #campPath + ':' + (#enumCodi == null ? 'null' : #enumCodi) + ':' + (#filtre == null ? 'null' : #filtre)")
     public List<ValorEnum> getValorsEnumByServei(String serveiCodi, String campPath, String enumCodi, String filtre) throws Exception {
         log.debug("Cercant els valors de l'enumerat (serveicodi={}, codi={}, filtre={})", serveiCodi, enumCodi, filtre);
@@ -1152,6 +1200,100 @@ public class RecobrimentServiceImpl implements RecobrimentService, ApplicationCo
 
         return dadesEspecifiques;
     }
+
+    private List<DadaEspecificaBasic> toDadesEspecifiquesBasiques(NodeDto<DadaEspecificaDto> node) {
+        if (node == null) return new ArrayList<>();
+
+        List<DadaEspecificaBasic> dades = new ArrayList<>();
+
+        // Convert current node
+        if (node.getDades() != null) {
+            TypeFormat tf = extractTypeAndFormat(node.getDades().getTipus());
+            DadaEspecificaBasic dada = DadaEspecificaBasic.builder()
+                    .codi(node.getDades().getPathAmbSeparadorDefault())
+                    .nom(node.getDades().getNom())
+                    .tipus(tf.tipus)
+                    .format(tf.format)
+                    .build();
+            dades.add(dada);
+        }
+
+        // Recursively process children
+        if (node.getFills() != null) {
+            for (NodeDto<DadaEspecificaDto> fill : node.getFills()) {
+                dades.addAll(toDadesEspecifiquesBasiques(fill));
+            }
+        }
+
+        return dades;
+    }
+
+    private TypeFormat extractTypeAndFormat(String tipusAmbFormat) {
+        if (tipusAmbFormat == null) {
+            return new TypeFormat(DadaTipusEnum.TEXT, null);
+        }
+
+        String tipus = null;
+        String format = null;
+        int openParenIndex = tipusAmbFormat.indexOf('(');
+        int closeParenIndex = tipusAmbFormat.indexOf(')');
+
+        if (openParenIndex > 0 && closeParenIndex > openParenIndex) {
+            format = tipusAmbFormat.substring(openParenIndex + 1, closeParenIndex);
+            tipus = tipusAmbFormat.substring(0, openParenIndex).trim();
+        }
+
+        DadaTipusEnum tipusEnum;
+        switch (tipus) {
+            case "Double":
+                tipusEnum = DadaTipusEnum.NUMERIC;
+                format = "Decimal";
+                break;
+            case "Long":
+                tipusEnum = DadaTipusEnum.NUMERIC;
+                format = "Integer";
+                break;
+            case "Date":
+                tipusEnum = DadaTipusEnum.DATE;
+                break;
+            case "Boolean":
+                tipusEnum = DadaTipusEnum.BOOLEAN;
+                break;
+            case "DocIdentitat":
+                tipusEnum = DadaTipusEnum.DOC_IDENTITAT;
+                break;
+            case "File":
+                tipusEnum = DadaTipusEnum.FILE;
+                break;
+            case "Enum":
+                tipusEnum = DadaTipusEnum.ENUM;
+                if (format != null) {
+                    format = "[" + format + "]";
+                }
+                break;
+            case "Complex":
+                tipusEnum = DadaTipusEnum.COMPLEX;
+                break;
+            default:
+                tipusEnum = DadaTipusEnum.TEXT;
+                if (format != null) {
+                    format = "MaxSize(" + format + ")";
+                }
+        }
+
+        return new TypeFormat(tipusEnum, format);
+    }
+
+    private static class TypeFormat {
+        final DadaTipusEnum tipus;
+        final String format;
+
+        TypeFormat(DadaTipusEnum tipus, String format) {
+            this.tipus = tipus;
+            this.format = format;
+        }
+    }
+
 
     private DadaTipusEnum toTipus(ServeiCampTipus tipus) {
         if (tipus == null) return null;

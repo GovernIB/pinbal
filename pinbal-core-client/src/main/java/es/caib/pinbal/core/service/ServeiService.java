@@ -434,6 +434,15 @@ public interface ServeiService {
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_DELEG')")
 	public List<ServeiCampDto> findServeiCamps(String serveiCodi) throws ServeiNotFoundException;
 
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	void marcarArrelResposta(String serveiCodi, String path);
+
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	void desmarcarArrelResposta(String serveiCodi);
+
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_DELEG')")
+	String getArrelRespostaPath(String serveiCodi);
+
 	/**
 	 * Crea un nou grup de camps pel servei.
 	 * 

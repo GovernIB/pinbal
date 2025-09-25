@@ -1238,6 +1238,36 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 				ServeiCampDto.class);
 	}
 
+	@Transactional
+	@Override
+	public void marcarArrelResposta(String serveiCodi, String path) {
+		log.debug("Marcar arrelResposta per al servei (codi=" + serveiCodi + ") i path=" + path);
+		// Desa el path seleccionat a ServeiConfig en lloc de marcar un camp
+		ServeiConfig cfg = serveiConfigRepository.findByServei(serveiCodi);
+		if (cfg != null) {
+            cfg.setArrelRespostaPath(path);
+            serveiConfigRepository.save(cfg);
+        }
+	}
+
+	@Transactional
+	@Override
+	public void desmarcarArrelResposta(String serveiCodi) {
+		log.debug("Desmarcar arrelResposta per al servei (codi=" + serveiCodi + ")");
+		ServeiConfig cfg = serveiConfigRepository.findByServei(serveiCodi);
+		if (cfg != null) {
+			cfg.setArrelRespostaPath(null);
+			serveiConfigRepository.save(cfg);
+		}
+	}
+
+	@Transactional(readOnly = true)
+	@Override
+	public String getArrelRespostaPath(String serveiCodi) {
+		ServeiConfig cfg = serveiConfigRepository.findByServei(serveiCodi);
+		return cfg != null ? cfg.getArrelRespostaPath() : null;
+	}
+
 	@Transactional(rollbackFor = ServeiNotFoundException.class)
 	@Override
 	public ServeiCampGrupDto createServeiCampGrup(ServeiCampGrupDto serveiCampGrup) throws ServeiNotFoundException {
@@ -2011,6 +2041,7 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 								new String[source.getData().getEnumValues().size()]));
 			dada.setComplexa(source.getData().isComplex());
 			dada.setTipusDadaComplexa(TipusDadaComplexaEnum.getTipus(source.getData().getGroupType()));
+            dada.setTipus(source.getData().getTipus());
 			target.setDades(dada);
 		}
 		if (source.getNumberOfChildren() > 0) {

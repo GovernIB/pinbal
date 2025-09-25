@@ -9,6 +9,7 @@ import es.caib.pinbal.api.interna.openapi.interficies.recobriment.v2.Recobriment
 import es.caib.pinbal.client.procediments.ProcedimentBasic;
 import es.caib.pinbal.client.recobriment.model.ScspJustificante;
 import es.caib.pinbal.client.recobriment.v2.DadaEspecifica;
+import es.caib.pinbal.client.recobriment.v2.DadaEspecificaBasic;
 import es.caib.pinbal.client.recobriment.v2.Entitat;
 import es.caib.pinbal.client.recobriment.v2.EstatEnum;
 import es.caib.pinbal.client.recobriment.v2.PeticioAsincrona;
@@ -180,6 +181,25 @@ public class RecobrimentRestV2Controller extends PinbalHalRestController impleme
 			throw new ServiceExecutionException(ex.getMessage(), ex);
 		}
 	}
+
+    @RequestMapping(value = "/serveis/{serveiCodi}/dadesEspecifiquesResposta", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<DadaEspecificaBasic>> getDadesEspecifiquesResposta(@PathVariable("serveiCodi") String serveiCodi) {
+        try {
+            List<DadaEspecificaBasic> dadesEspecifiques = recobrimentService.getDadesEspecifiquesByServeiResposta(serveiCodi);
+
+            if (dadesEspecifiques == null || dadesEspecifiques.isEmpty()) {
+                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            }
+            return new ResponseEntity<>(dadesEspecifiques, HttpStatus.OK);
+        } catch (ServeiNotFoundException e) {
+            throw new ResourceNotFoundException(e.getDefaultMessage(), e);
+        } catch (AccessDeniedException | AccessDenegatException ade) {
+            throw new AccessDenegatException(Arrays.asList("PBL_WS"));
+        } catch (Exception ex) {
+            log.error("Error obtenint les dades especifiques del servei " + serveiCodi, ex);
+            throw new ServiceExecutionException(ex.getMessage(), ex);
+        }
+    }
 
 	@ApiIgnore
 	@RequestMapping(value = "/serveis/{serveiCodi}/camps/**", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)

@@ -109,6 +109,9 @@ public class ServeiConfig extends PinbalAuditable<Long> {
 	@Column(name = "use_auto_classe")
 	private boolean useAutoClasse = true;
 
+	@Column(name = "arrel_resposta_path", length = 255)
+	private String arrelRespostaPath;
+
 	@Version
 	private long version = 0;
 

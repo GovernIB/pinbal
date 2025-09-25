@@ -274,6 +274,24 @@ public class ServeiServiceBean implements ServeiService {
 
 	@Override
 	@RolesAllowed("PBL_ADMIN")
+	public void marcarArrelResposta(String serveiCodi, String path) {
+		delegate.marcarArrelResposta(serveiCodi, path);
+	}
+
+	@Override
+	@RolesAllowed("PBL_ADMIN")
+	public void desmarcarArrelResposta(String serveiCodi) {
+		delegate.desmarcarArrelResposta(serveiCodi);
+	}
+
+	@Override
+	@RolesAllowed({"PBL_ADMIN", "PBL_REPRES"})
+	public String getArrelRespostaPath(String serveiCodi) {
+		return delegate.getArrelRespostaPath(serveiCodi);
+	}
+
+	@Override
+	@RolesAllowed("PBL_ADMIN")
 	public ServeiCampGrupDto createServeiCampGrup(ServeiCampGrupDto serveiCampGrup) throws ServeiNotFoundException {
 		return delegate.createServeiCampGrup(serveiCampGrup);
 	}

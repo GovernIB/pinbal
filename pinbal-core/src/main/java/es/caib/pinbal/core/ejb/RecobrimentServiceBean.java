@@ -9,6 +9,7 @@ import es.caib.pinbal.client.recobriment.model.ScspJustificante;
 import es.caib.pinbal.client.recobriment.model.ScspPeticion;
 import es.caib.pinbal.client.recobriment.model.ScspRespuesta;
 import es.caib.pinbal.client.recobriment.v2.DadaEspecifica;
+import es.caib.pinbal.client.recobriment.v2.DadaEspecificaBasic;
 import es.caib.pinbal.client.recobriment.v2.Entitat;
 import es.caib.pinbal.client.recobriment.v2.PeticioAsincrona;
 import es.caib.pinbal.client.recobriment.v2.PeticioConfirmacioAsincrona;
@@ -131,7 +132,13 @@ public class RecobrimentServiceBean implements RecobrimentService {
 		return delegate.getDadesEspecifiquesByServei(serveiCodi);
 	}
 
-	@Override
+    @Override
+    @RolesAllowed("PBL_WS")
+    public List<DadaEspecificaBasic> getDadesEspecifiquesByServeiResposta(String serveiCodi) throws Exception {
+        return delegate.getDadesEspecifiquesByServeiResposta(serveiCodi);
+    }
+
+    @Override
 	@RolesAllowed("PBL_WS")
 	public List<ValorEnum> getValorsEnumByServei(String serveiCodi, String campCodi, String enumCodi, String filtre) throws Exception {
 		return delegate.getValorsEnumByServei(serveiCodi, campCodi, enumCodi, filtre);

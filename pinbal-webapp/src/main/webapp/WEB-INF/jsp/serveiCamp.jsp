@@ -65,6 +65,10 @@
 	.rgl-valors > span {display: inline flow-root; margin-right: 4px;}
 	.rgl-title {font-size: 24px;}
 </style>
+<style>
+	/* Context menu for arbreNodes */
+	#arbreContextMenu { position: absolute; z-index: 10000; display: none; }
+</style>
 <script>
 const inicialitzarDadesEspecifiques = ${servei.pinbalIniDadesExpecifiques};
 let filaMovem;
@@ -85,6 +89,44 @@ window.onscroll = function(e) {
 };
 
 $(document).ready(function() {
+	let selectedPath = null;
+	const $ctx = $('#arbreContextMenu');
+	const $menuMarcar = $('#menuMarcar');
+	const $menuDesmarcar = $('#menuDesmarcar');
+	$('#arbreNodes').on('contextmenu', 'li', function(e) {
+		e.preventDefault();
+		const $li = $(e.target).closest('li');
+		selectedPath = $li.data('path');
+		if (!selectedPath) return;
+		const jaMarcada = $li.find('.fa-arrow-alt-circle-left').length > 0;
+		if (jaMarcada) { $menuMarcar.hide(); $menuDesmarcar.show(); }
+		else { $menuDesmarcar.hide(); $menuMarcar.show(); }
+		$ctx.css({ display: 'block', left: e.pageX, top: e.pageY });
+	});
+	$(document).click(function() { $ctx.hide(); });
+	$(window).on('scroll resize', function(){ $ctx.hide(); });
+	$('#ctxMarcarResposta').on('click', function(e){
+		e.preventDefault();
+		$ctx.hide();
+		if (!selectedPath) return;
+		$.ajax({
+			type: 'POST',
+			url: '<c:url value="/servei/${servei.codiUrlEncoded}/camp/markResposta"/>',
+			data: { path: selectedPath },
+			success: function(){ location.reload(); },
+			error: function(){ alert('<spring:message code="servei.camp.context.error.marcar"/>'); }
+		});
+	});
+	$('#ctxDesmarcarResposta').on('click', function(e){
+		e.preventDefault();
+		$ctx.hide();
+		$.ajax({
+			type: 'POST',
+			url: '<c:url value="/servei/${servei.codiUrlEncoded}/camp/unmarkResposta"/>',
+			success: function(){ location.reload(); },
+			error: function(){ alert('<spring:message code="servei.camp.context.error.desmarcar"/>'); }
+		});
+	});
 	// Confirmació al esborrar el camp
 	$('.confirm-esborrar').click(function() {
 		return confirm("<spring:message code="servei.camp.confirmacio.eliminacio.camp"/>");
@@ -495,13 +537,13 @@ $(function() {
 				<div class="btn-group pull-right">
 					<a href="#" class="btn btn-default"
 						title="<spring:message code="servei.camp.contreure.tot"/>"
-						id="accio-contreure-all"><i class="fas fa-chevron-right"></i></a> 
+						id="accio-contreure-all"><i class="fas fa-chevron-up"></i></a>
 					<a href="#" class="btn btn-default"
 						title="<spring:message code="servei.camp.expandir.tot"/>"
 						id="accio-expandir-all"><i class="fas fa-chevron-down"></i></a>
 				</div>
 				<br />
-				<ul style="list-style: none; margin: 0; padding: 0;">
+				<ul id="arbreNodes" style="list-style: none; margin: 0; padding: 0;">
 					<c:set var="nodeArbreActual" value="${arbreDadesEspecifiques.arrel}" scope="request" />
 					<jsp:include page="import/dadesEspecifiquesArbreNode.jsp" />
 				</ul>
@@ -924,5 +966,11 @@ $(function() {
 			</div>
 		</div>
 	</div>
+<div id="arbreContextMenu" class="dropdown clearfix">
+	<ul class="dropdown-menu" role="menu" style="display:block; position:static; margin-bottom:5px;">
+		<li id="menuMarcar"><a href="#" id="ctxMarcarResposta"><i class="fas fa-arrow-alt-circle-left"></i> <spring:message code="servei.camp.context.marcar.resposta"/></a></li>
+		<li id="menuDesmarcar"><a href="#" id="ctxDesmarcarResposta"><i class="far fa-square"></i> <spring:message code="servei.camp.context.desmarcar.resposta"/></a></li>
+	</ul>
+</div>
 </body>
 </html>

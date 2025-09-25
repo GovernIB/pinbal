@@ -1,20 +1,16 @@
 package es.caib.pinbal.client.recobriment.v2;
 
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
 @Data
-@Builder
+@SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
-public class DadaEspecifica {
-
-    private String codi;
-    private String nom;
-    private DadaTipusEnum tipus;
-    private String format;
+public class DadaEspecifica extends DadaEspecificaBasic {
+    // Dades exteses: codi, nom, tipus, format
     private String etiqueta;
     private String comentari;
     private String valorDefecte;
