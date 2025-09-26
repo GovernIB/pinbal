@@ -3,13 +3,12 @@
  */
 package es.caib.pinbal.core.service;
 
-import java.util.List;
-
+import es.caib.pinbal.core.dto.AvisDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
 
-import es.caib.pinbal.core.dto.AvisDto;
+import java.util.List;
 
 /**
  * Declaració dels mètodes per a la gestió d'avisos.
@@ -39,5 +38,7 @@ public interface AvisService {
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_REPRES') or hasRole('ROLE_DELEG')")
 	List<AvisDto> findActive();
 
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	List<Long> findAllIds();
 
 }

@@ -3,10 +3,11 @@
  */
 package es.caib.pinbal.core.service;
 
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-
+import es.caib.pinbal.core.dto.AvisDto;
+import es.caib.pinbal.core.helper.DtoMappingHelper;
+import es.caib.pinbal.core.model.Avis;
+import es.caib.pinbal.core.repository.AvisRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.time.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -14,11 +15,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import es.caib.pinbal.core.dto.AvisDto;
-import es.caib.pinbal.core.helper.DtoMappingHelper;
-import es.caib.pinbal.core.model.Avis;
-import es.caib.pinbal.core.repository.AvisRepository;
-import lombok.extern.slf4j.Slf4j;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
 
 /**
  * Implementació del servei de gestió d'avisos.
@@ -127,5 +126,10 @@ public class AvisServiceImpl implements AvisService {
 				avisRepository.findActive(DateUtils.truncate(new Date(), Calendar.DATE)), 
 				AvisDto.class);
 	}
+
+    @Override
+    public List<Long> findAllIds() {
+        return avisRepository.findAllIds();
+    }
 
 }
