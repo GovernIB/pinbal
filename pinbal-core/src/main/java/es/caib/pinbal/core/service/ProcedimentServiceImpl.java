@@ -37,6 +37,7 @@ import es.caib.pinbal.core.repository.ServeiRepository;
 import es.caib.pinbal.core.service.exception.EntitatNotFoundException;
 import es.caib.pinbal.core.service.exception.EntitatUsuariNotFoundException;
 import es.caib.pinbal.core.service.exception.ProcedimentNotFoundException;
+import es.caib.pinbal.core.service.exception.ProcedimentServeiExistsException;
 import es.caib.pinbal.core.service.exception.ProcedimentServeiNotFoundException;
 import es.caib.pinbal.core.service.exception.ServeiNotFoundException;
 import lombok.extern.slf4j.Slf4j;
@@ -145,46 +146,50 @@ public class ProcedimentServiceImpl implements ProcedimentService {
 		ProcedimentServei desti = ProcedimentServei.getBuilder(procediment, origen.getServei()).build();
 		desti = procedimentServeiRepository.save(desti);
 
-		// Obtenir els permisos del procediment origen
-		List<AccessControlEntry> permisosOrigen = PermisosHelper.getAclSids(
-				ProcedimentServei.class,
-				origen.getId(),
-				aclService);
+        clonarPermisosProcedimentServei(origen, desti);
+    }
 
-		// Si no hi ha permisos per clonar, sortim
-		if (permisosOrigen == null || permisosOrigen.isEmpty()) {
-			return;
-		}
+    private void clonarPermisosProcedimentServei(ProcedimentServei origen, ProcedimentServei desti) {
+        // Obtenir els permisos del procediment origen
+        List<AccessControlEntry> permisosOrigen = PermisosHelper.getAclSids(
+                ProcedimentServei.class,
+                origen.getId(),
+                aclService);
 
-		// Per cada permís trobat, l'assignem al procediment destí
-		for (AccessControlEntry ace : permisosOrigen) {
-			Sid sid = ace.getSid();
-			Permission permission = ace.getPermission();
+        // Si no hi ha permisos per clonar, sortim
+        if (permisosOrigen == null || permisosOrigen.isEmpty()) {
+            return;
+        }
 
-			if (sid instanceof PrincipalSid) {
-				// Si és un permís d'usuari
-				String username = ((PrincipalSid) sid).getPrincipal();
-				PermisosHelper.assignarPermisUsuari(
-						username,
-						ProcedimentServei.class,
-						desti.getId(),
-						permission,
-						aclService);
-			} else if (sid instanceof GrantedAuthoritySid) {
-				// Si és un permís de rol
-				String role = ((GrantedAuthoritySid) sid).getGrantedAuthority();
-				PermisosHelper.assignarPermisRol(
-						role,
-						ProcedimentServei.class,
-						desti.getId(),
-						permission,
-						aclService);
-			}
-		}
-	}
+        // Per cada permís trobat, l'assignem al procediment destí
+        for (AccessControlEntry ace : permisosOrigen) {
+            Sid sid = ace.getSid();
+            Permission permission = ace.getPermission();
+
+            if (sid instanceof PrincipalSid) {
+                // Si és un permís d'usuari
+                String username = ((PrincipalSid) sid).getPrincipal();
+                PermisosHelper.assignarPermisUsuari(
+                        username,
+                        ProcedimentServei.class,
+                        desti.getId(),
+                        permission,
+                        aclService);
+            } else if (sid instanceof GrantedAuthoritySid) {
+                // Si és un permís de rol
+                String role = ((GrantedAuthoritySid) sid).getGrantedAuthority();
+                PermisosHelper.assignarPermisRol(
+                        role,
+                        ProcedimentServei.class,
+                        desti.getId(),
+                        permission,
+                        aclService);
+            }
+        }
+    }
 
 
-	private void updateProcedimentsFills(ProcedimentDto dto, Entitat entitat, Procediment procediment) {
+    private void updateProcedimentsFills(ProcedimentDto dto, Entitat entitat, Procediment procediment) {
 		List<Procediment> procedimentsFills = procedimentRepository.findByEntitatAndCodiSiaOrigen(entitat, procediment.getCodiSia());
 		if (procedimentsFills != null && !procedimentsFills.isEmpty()) {
 			for (Procediment procedimentFill : procedimentsFills) {
@@ -971,5 +976,51 @@ public class ProcedimentServiceImpl implements ProcedimentService {
 		}
 		return serveisDto;
 	}
+
+    @Transactional
+    @Override
+    public void migrarProcedimentServei(Long procedimentId, String serveiCodiOrigen, String serveiCodiDesti) throws ProcedimentServeiNotFoundException, ProcedimentNotFoundException, ProcedimentServeiExistsException {
+
+        // 1. Comprovacions
+        // Comprovar si el procediment existeix
+        Procediment procediment = procedimentRepository.findOne(procedimentId);
+        if (procediment == null) {
+            throw new ProcedimentNotFoundException(procedimentId.toString());
+        }
+
+        // Comprovar si el procedimentServei origen existeix
+        ProcedimentServei procedimentServeiOrigen = procedimentServeiRepository.findByProcedimentIdAndServei(procedimentId, serveiCodiOrigen);
+        if (procedimentServeiOrigen == null) {
+            throw new ProcedimentServeiNotFoundException(procediment.getCodi(), serveiCodiOrigen);
+        }
+
+        // Comprovar si ja existeix el procedimentServei de destí
+        ProcedimentServei procedimentServeiDesti = procedimentServeiRepository.findByProcedimentIdAndServei(procedimentId, serveiCodiDesti);
+        if (procedimentServeiDesti != null) {
+            throw new ProcedimentServeiExistsException(procediment.getCodi(), serveiCodiDesti);
+        }
+
+        try {
+            // 2. Crear el procedimentServei de destí
+            procedimentServeiDesti = ProcedimentServei.getBuilder(procediment, serveiCodiDesti).build();
+            procedimentServeiDesti = procedimentServeiRepository.save(procedimentServeiDesti);
+
+            // 3. Clonar els permisos del procedimentServeiOrigen al procedimentServeiDesti
+            clonarPermisosProcedimentServei(procedimentServeiOrigen, procedimentServeiDesti);
+
+            // 4. Eliminar els permisos del procedimentServeiDesti
+            PermisosHelper.revocarPermisosServei(
+                    ProcedimentServei.class,
+                    procedimentServeiOrigen.getId(),
+                    aclService);
+
+            // 5. Eliminar el procedimentServei
+            procedimentServeiRepository.delete(procedimentServeiOrigen);
+        } catch (Exception e) {
+            log.error("Error migrant el procedimentServei", e);
+            throw e;
+        }
+
+    }
 
 }

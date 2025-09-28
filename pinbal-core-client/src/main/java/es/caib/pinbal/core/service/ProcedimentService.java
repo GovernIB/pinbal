@@ -15,6 +15,7 @@ import es.caib.pinbal.core.dto.ServeiDto;
 import es.caib.pinbal.core.service.exception.EntitatNotFoundException;
 import es.caib.pinbal.core.service.exception.EntitatUsuariNotFoundException;
 import es.caib.pinbal.core.service.exception.ProcedimentNotFoundException;
+import es.caib.pinbal.core.service.exception.ProcedimentServeiExistsException;
 import es.caib.pinbal.core.service.exception.ProcedimentServeiNotFoundException;
 import es.caib.pinbal.core.service.exception.ServeiNotFoundException;
 import org.springframework.data.domain.Page;
@@ -379,4 +380,6 @@ public interface ProcedimentService {
 	@PreAuthorize("hasRole('ROLE_REPRES')")
 	List<ServeiDto> serveisDisponiblesPerProcediment(Long procedimentId) throws ProcedimentNotFoundException;
 
+    @PreAuthorize("hasRole('ROLE_REPRES')")
+    void migrarProcedimentServei(Long procedimentId, String serveiCodiOrigen, String serveiCodiDesti) throws ProcedimentServeiNotFoundException, ProcedimentNotFoundException, ProcedimentServeiExistsException;
 }

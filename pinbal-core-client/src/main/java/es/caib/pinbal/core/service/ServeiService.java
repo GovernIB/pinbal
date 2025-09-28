@@ -74,7 +74,7 @@ public interface ServeiService {
 	 * @param emisor Emisor a cercar.
 	 * @param activa Si cercar actius (true) o inactius (false).
 	 * @param scspVersionEsquema Versió esquema SCSP  a cercar.
-	 * @param paginacioAmbOrdre
+	 * @param pageable
 	 * 				Paràmetres per a la paginació i ordenació dels resultats.
 	 * @return
 	 */
@@ -249,6 +249,22 @@ public interface ServeiService {
 			Long entitatId,
 			Long procedimentId,
 			String filtre) throws EntitatNotFoundException, ProcedimentNotFoundException;
+
+    /**
+     * Cerca i retorna una llista de serveis associats a una entitat que no estan vinculats
+     * a un determinat procediment.
+     *
+     * @param entitatId Identificador de l'entitat a la qual pertanyen els serveis.
+     * @param procedimentId Identificador del procediment utilitzat per excloure els serveis associats.
+     * @return Una llista de ServeiDto que conté els serveis de l'entitat especificada i
+     *         que no estan associats al procediment indicat.
+     * @throws EntitatNotFoundException Si l'entitat amb l'identificador especificat no existeix.
+     * @throws ProcedimentNotFoundException Si el procediment amb l'identificador especificat no existeix.
+     */
+    @PreAuthorize("hasRole('ROLE_REPRES')")
+    public List<ServeiDto> findAmbEntitatNotInProcediment(
+            Long entitatId,
+            Long procedimentId) throws EntitatNotFoundException, ProcedimentNotFoundException;
 	
 	/**
 	 * Llistat amb les parelles procediment-servei a les quals un usuari
@@ -772,7 +788,4 @@ public interface ServeiService {
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_DELEG')")
 	List<CampFormProperties> getGrupsByserveiRegla(String serveiCodi, String[] grupsModificats) throws ServeiNotFoundException;
 
-
-	// TODO: BORRAR en versió 1.1.43
-	void updateFitxersXsd();
 }

@@ -787,6 +787,52 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 		return resposta;
 	}
 
+    @Transactional(readOnly = true)
+    @Override
+    public List<ServeiDto> findAmbEntitatNotInProcediment(
+            Long entitatId,
+            Long procedimentId) throws EntitatNotFoundException, ProcedimentNotFoundException {
+        log.debug("Cercant els serveis (entitatId=" + entitatId + ", procedimentId=" + procedimentId + ")");
+        Entitat entitat = entitatRepository.findOne(entitatId);
+        if (entitat == null) {
+            log.debug("No s'ha trobat l'entitat (id=" + entitatId + ")");
+            throw new EntitatNotFoundException();
+        }
+        Procediment procediment = procedimentRepository.findOne(procedimentId);
+        if (procediment == null) {
+            log.debug("No s'ha trobat el procediment (id=" + procedimentId + ")");
+            throw new ProcedimentNotFoundException();
+        }
+        List<ProcedimentServei> procedimentServeis = procedimentServeiRepository.findByEntitatIdAndProcedimentId(
+                entitatId,
+                procedimentId);
+        // Serveis que es troben actualment associats al procediment
+        List<String> serveisProcediment = new ArrayList<>();
+        if (procedimentServeis != null && !procedimentServeis.isEmpty()) {
+            for (ProcedimentServei ps : procedimentServeis) {
+                serveisProcediment.add(ps.getServei());
+            }
+        }
+        // Serveis de l'entitat que no es troben actualment al procediment
+        List<String> serveis = entitatServeiRepository.findServeisByEntitatId(entitat.getId());
+        serveis.removeAll(serveisProcediment);
+
+        List<ServeiDto> resposta = new ArrayList<ServeiDto>();
+        List<Servicio> servicios = getScspHelper().findServicioAll();
+        for (Servicio servicio : servicios) {
+            boolean trobat = false;
+            for (String serveiCodi : serveis) {
+                if (serveiCodi.equals(servicio.getCodCertificado())) {
+                    trobat = true;
+                    break;
+                }
+            }
+            if (trobat)
+                resposta.add(toServeiDto(servicio));
+        }
+        return resposta;
+    }
+
 	@Transactional(readOnly = true)
 	@Override
 	public List<ProcedimentServeiDto> findPermesosAmbEntitatIUsuari(
@@ -2177,36 +2223,6 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 	private boolean isGestioXsdActiva(String serveiCodi) {
 		ServeiConfig serveiConfig = serveiConfigRepository.findByServei(serveiCodi);
 		return serveiConfig != null && serveiConfig.isActivaGestioXsd();
-	}
-
-
-	// TODO: BORRAR en versió 1.1.43
-	@Override
-	public void updateFitxersXsd() {
-		if (serveiXsdRepository.count() > 0) {
-			log.info("El mètode updateFitxersXsd() no pot ser utilitzat degut a que ja hi ha entrades a la taula de XSDs.");
-			return;
-		}
-
-		Date ara = new Date();
-		List<Servei> serveis = serveiRepository.findAll();
-
-		for (Servei servei: serveis) {
-			String serveiCodi = servei.getCodi();
-			String serveiPath = serveiXsdHelper.getPathPerServei(serveiCodi);
-
-			List<ServeiXsdDto> serveiXsdDtos = serveiXsdHelper.findAll(serveiCodi);
-			for (ServeiXsdDto serveiXsdDto: serveiXsdDtos) {
-				ServeiXsd serveiXsd = ServeiXsd.builder()
-						.servei(serveiCodi)
-						.tipus(serveiXsdDto.getTipus())
-						.nomArxiu(serveiXsdDto.getNomArxiu())
-						.path(serveiPath)
-						.dataModificacio(ara)
-						.build();
-				serveiXsdRepository.save(serveiXsd);
-			}
-		}
 	}
 
 }

@@ -172,7 +172,13 @@ public class ServeiServiceBean implements ServeiService {
 		return delegate.findAmbEntitatIProcediment(entitatId, procedimentId, filtre);
 	}
 
-	@Override
+    @Override
+    @RolesAllowed("PBL_REPRES")
+    public List<ServeiDto> findAmbEntitatNotInProcediment(Long entitatId, Long procedimentId) throws EntitatNotFoundException, ProcedimentNotFoundException {
+        return delegate.findAmbEntitatNotInProcediment(entitatId, procedimentId);
+    }
+
+    @Override
 	@RolesAllowed("PBL_REPRES")
 	public List<ProcedimentServeiDto> findPermesosAmbEntitatIUsuari(
 			Long entitatId,
@@ -497,12 +503,5 @@ public class ServeiServiceBean implements ServeiService {
 	public List<CampFormProperties> getGrupsByserveiRegla(String serveiCodi, String[] grupsModificats) throws ServeiNotFoundException {
 		return delegate.getGrupsByserveiRegla(serveiCodi, grupsModificats);
 	}
-
-
-	// TODO: BORRAR en versió 1.1.43
-    @Override
-    public void updateFitxersXsd() {
-        delegate.updateFitxersXsd();
-    }
 
 }
