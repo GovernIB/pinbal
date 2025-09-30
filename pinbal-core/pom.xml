@@ -451,7 +451,12 @@
 			<version>2.9.1</version>
 			<scope>test</scope>
 		</dependency>
-	</dependencies>
+        <dependency>
+            <groupId>io.dropwizard.metrics</groupId>
+            <artifactId>metrics-core</artifactId>
+            <version>3.2.6</version> <!-- versió compatible amb Java 7 -->
+        </dependency>
+    </dependencies>
 	<build>
 		<plugins>
 			<plugin>
