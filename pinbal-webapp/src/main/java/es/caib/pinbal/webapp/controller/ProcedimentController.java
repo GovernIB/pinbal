@@ -1008,7 +1008,8 @@ public class ProcedimentController extends BaseController {
 
         EntitatDto entitat = EntitatHelper.getEntitatActual(request, entitatService);
         ProcedimentDto procediment = procedimentService.findById(procedimentId);
-        List<ServeiDto> serveis = serveiService.findAmbEntitatNotInProcediment(entitat.getId(), procedimentId);
+//        List<ServeiDto> serveis = serveiService.findAmbEntitatNotInProcediment(entitat.getId(), procedimentId);
+        List<ServeiDto> serveis = getServeisMigrar(serveiCodi, entitat);
 
         ProcedimentServeiMigrarCommand command = new ProcedimentServeiMigrarCommand();
         command.setProcedimentId(procedimentId);
@@ -1033,7 +1034,8 @@ public class ProcedimentController extends BaseController {
         if (bindingResult.hasErrors()) {
             EntitatDto entitat = EntitatHelper.getEntitatActual(request, entitatService);
             ProcedimentDto procediment = procedimentService.findById(procedimentId);
-            List<ServeiDto> serveis = serveiService.findAmbEntitatNotInProcediment(entitat.getId(), procedimentId);
+//            List<ServeiDto> serveis = serveiService.findAmbEntitatNotInProcediment(entitat.getId(), procedimentId);
+            List<ServeiDto> serveis = getServeisMigrar(serveiCodi, entitat);
             model.addAttribute("procediment", procediment);
             model.addAttribute("serveiCodi", serveiCodi);
             model.addAttribute("serveis", serveis);
@@ -1059,6 +1061,19 @@ public class ProcedimentController extends BaseController {
                     new String[] { e.getMessage() });
         }
 
+    }
+
+    private List<ServeiDto> getServeisMigrar(String serveiCodi, EntitatDto entitat) throws EntitatNotFoundException {
+        List<ServeiDto> serveis = serveiService.findAmbEntitat(entitat.getId());
+        // Descartam el servei actual
+        Iterator<ServeiDto> iterator = serveis.iterator();
+        while (iterator.hasNext()) {
+            ServeiDto servei = iterator.next();
+            if (servei.getCodi().equals(serveiCodi)) {
+                iterator.remove();
+            }
+        }
+        return serveis;
     }
 
 
