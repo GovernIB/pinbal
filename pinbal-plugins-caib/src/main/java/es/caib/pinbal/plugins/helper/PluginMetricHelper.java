@@ -10,9 +10,7 @@ import es.caib.comanda.ms.salut.model.IntegracioPeticions;
 import es.caib.comanda.ms.salut.model.IntegracioSalut;
 import es.caib.pinbal.helper.LastRequestsFifo;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -20,8 +18,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-@Slf4j
-@RequiredArgsConstructor
 public class PluginMetricHelper {
 
 
@@ -38,14 +34,14 @@ public class PluginMetricHelper {
         plugins.add(IntegracioApp.PFI);
         plugins.add(IntegracioApp.DIR);
         plugins.add(IntegracioApp.ARX);
-        plugins.add(IntegracioApp.GDC);
+        plugins.add(IntegracioApp.CUS);
 
         getMetrica(IntegracioApp.USR);
         getMetrica(IntegracioApp.SIG);
         getMetrica(IntegracioApp.PFI);
         getMetrica(IntegracioApp.DIR);
         getMetrica(IntegracioApp.ARX);
-        getMetrica(IntegracioApp.GDC);
+        getMetrica(IntegracioApp.CUS);
     }
 
     @Getter
@@ -64,7 +60,7 @@ public class PluginMetricHelper {
         private String endpoint;
 
         public Metrics(IntegracioApp plugin) {
-            this.plugin = this.plugin;
+            this.plugin = plugin;
             // Globals al registry principal (si disponible)
             this.timerOkGlobal = registry.timer("subsistema." + plugin.name());
             this.counterErrorGlobal = registry.counter("subsistema." + plugin.name() + ".errors");

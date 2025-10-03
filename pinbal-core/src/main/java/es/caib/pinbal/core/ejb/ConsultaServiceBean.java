@@ -58,8 +58,19 @@ public class ConsultaServiceBean implements ConsultaService {
 	ConsultaService delegate;
 
 
+    @Override
+    @RolesAllowed("tothom")
+    public ConsultaDto peticioSincrona(ConsultaDto consulta) throws ProcedimentServeiNotFoundException, ServeiNotAllowedException, ConsultaScspException, ConsultaNotFoundException {
+        return delegate.peticioSincrona(consulta);
+    }
 
-	@Override
+    @Override
+    @RolesAllowed("tothom")
+    public ConsultaDto peticioAsincrona(ConsultaDto consulta) throws ProcedimentServeiNotFoundException, ServeiNotAllowedException, ConsultaScspException, ValidacioDadesPeticioException {
+        return delegate.peticioAsincrona(consulta);
+    }
+
+    @Override
 	@RolesAllowed("tothom")
 	public ConsultaDto novaConsulta(
 			ConsultaDto consulta) throws ProcedimentServeiNotFoundException, ServeiNotAllowedException, ConsultaScspException {

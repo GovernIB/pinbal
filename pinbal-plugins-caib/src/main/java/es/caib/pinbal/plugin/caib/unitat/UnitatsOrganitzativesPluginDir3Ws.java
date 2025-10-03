@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.type.TypeFactory;
+import es.caib.comanda.ms.salut.model.IntegracioApp;
 import es.caib.dir3caib.ws.api.unidad.Dir3CaibObtenerUnidadesWs;
 import es.caib.dir3caib.ws.api.unidad.Dir3CaibObtenerUnidadesWsService;
 import es.caib.dir3caib.ws.api.unidad.UnidadTF;
@@ -15,6 +16,7 @@ import es.caib.pinbal.plugin.unitat.NodeDir3;
 import es.caib.pinbal.plugin.unitat.UnitatOrganitzativa;
 import es.caib.pinbal.plugin.unitat.UnitatsOrganitzativesPlugin;
 import es.caib.pinbal.plugins.SistemaExternException;
+import es.caib.pinbal.plugins.helper.PluginMetricHelper;
 import org.apache.commons.io.IOUtils;
 
 import javax.xml.namespace.QName;
@@ -55,9 +57,14 @@ public class UnitatsOrganitzativesPluginDir3Ws implements UnitatsOrganitzativesP
     private static final String PROPERTY_CERCA_URL = "es.caib.pinbal.plugin.unitats.cerca.dir3.service.url";
     private static final String PROPERTY_CONSULTA_URL = "es.caib.pinbal.plugin.unitats.organitzatives.dir3.consulta.rest.service.url";
 
+    public UnitatsOrganitzativesPluginDir3Ws() {
+        PluginMetricHelper.addEndpoint(IntegracioApp.DIR, getServiceUrl());
+    }
+
     public Map<String, NodeDir3> organigrama(String codi) throws SistemaExternException {
         Map<String, NodeDir3> organigrama = new HashMap<String, NodeDir3>();
         try {
+            long start = System.currentTimeMillis();
             URL url = new URL(getServiceUrl() + SERVEI_ORGANIGRAMA + "?codigo=" + codi);
             HttpURLConnection httpConnection = (HttpURLConnection) url.openConnection();
             httpConnection.setRequestMethod("GET");
@@ -70,8 +77,10 @@ public class UnitatsOrganitzativesPluginDir3Ws implements UnitatsOrganitzativesP
                 NodeDir3 arrel = mapper.readValue(response, NodeDir3.class);
                 nodeToOrganigrama(arrel, organigrama);
             }
+            PluginMetricHelper.addSuccessOperation(IntegracioApp.DIR, System.currentTimeMillis() - start);
             return organigrama;
         } catch (Exception ex) {
+            PluginMetricHelper.addErrorOperation(IntegracioApp.DIR);
             throw new SistemaExternException(
                     "No s'ha pogut consultar l'organigrama de unitats organitzatives via REST ("
                             + "codiEntitat=" + codi + ")",
@@ -82,6 +91,7 @@ public class UnitatsOrganitzativesPluginDir3Ws implements UnitatsOrganitzativesP
     @Override
     public List<UnitatOrganitzativa> findAmbPare(String pareCodi) throws SistemaExternException {
         try {
+            long start = System.currentTimeMillis();
             UnidadTF unidadPare = getObtenerUnidadesService().obtenerUnidad(pareCodi, null, null);
             if (unidadPare != null) {
                 List<UnitatOrganitzativa> unitats = new ArrayList<UnitatOrganitzativa>();
@@ -98,12 +108,15 @@ public class UnitatsOrganitzativesPluginDir3Ws implements UnitatsOrganitzativesP
                 } else {
                     unitats.add(toUnitatOrganitzativa(unidadPare));
                 }
+                PluginMetricHelper.addSuccessOperation(IntegracioApp.DIR, System.currentTimeMillis() - start);
                 return unitats;
             } else {
+                PluginMetricHelper.addErrorOperation(IntegracioApp.DIR);
                 throw new SistemaExternException(
                         "No s'han trobat la unitat pare (pareCodi=" + pareCodi + ")");
             }
         } catch (Exception ex) {
+            PluginMetricHelper.addErrorOperation(IntegracioApp.DIR);
             throw new SistemaExternException("No s'han pogut consultar les unitats organitzatives via WS ("
                     + "pareCodi=" + pareCodi + ")", ex);
         }
@@ -112,6 +125,7 @@ public class UnitatsOrganitzativesPluginDir3Ws implements UnitatsOrganitzativesP
     @Override
     public UnitatOrganitzativa findAmbCodi(String codi) throws SistemaExternException {
         try {
+            long start = System.currentTimeMillis();
             UnitatOrganitzativa unitat = null;
             UnidadTF unidad = getObtenerUnidadesService().obtenerUnidad(codi, null, null);
             if (unidad != null && "V".equalsIgnoreCase(unidad.getCodigoEstadoEntidad())) {
@@ -120,10 +134,13 @@ public class UnitatsOrganitzativesPluginDir3Ws implements UnitatsOrganitzativesP
                 throw new SistemaExternException(
                         "La unitat organitzativa no està vigent (" + "codi=" + codi + ")");
             }
+            PluginMetricHelper.addSuccessOperation(IntegracioApp.DIR, System.currentTimeMillis() - start);
             return unitat;
         } catch (SistemaExternException ex) {
+            PluginMetricHelper.addErrorOperation(IntegracioApp.DIR);
             throw ex;
         } catch (Exception ex) {
+            PluginMetricHelper.addErrorOperation(IntegracioApp.DIR);
             throw new SistemaExternException(
                     "No s'ha pogut consultar la unitat organitzativa (" + "codi=" + codi + ")", ex);
         }
@@ -135,6 +152,7 @@ public class UnitatsOrganitzativesPluginDir3Ws implements UnitatsOrganitzativesP
                                                   String municipi) throws SistemaExternException {
         List<UnitatOrganitzativa> unitats = new ArrayList<UnitatOrganitzativa>();
         try {
+            long start = System.currentTimeMillis();
             URL url = new URL(getServiceCercaUrl() + "?codigo=" + codi + "&denominacion=" + denominacio
                     + "&codNivelAdministracion=" + (nivellAdministracio != null ? nivellAdministracio : "-1")
                     + "&codComunidadAutonoma=" + (comunitatAutonoma != null ? comunitatAutonoma : "-1")
@@ -151,10 +169,13 @@ public class UnitatsOrganitzativesPluginDir3Ws implements UnitatsOrganitzativesP
             unitats = mapper.readValue(httpConnection.getInputStream(), TypeFactory.defaultInstance()
                     .constructCollectionType(List.class, UnitatOrganitzativa.class));
             Collections.sort(unitats);
+            PluginMetricHelper.addSuccessOperation(IntegracioApp.DIR, System.currentTimeMillis() - start);
             return unitats;
         } catch (JsonMappingException e) {
+            PluginMetricHelper.addErrorOperation(IntegracioApp.DIR);
             // No results
         } catch (Exception ex) {
+            PluginMetricHelper.addErrorOperation(IntegracioApp.DIR);
             throw new SistemaExternException("No s'han pogut consultar les unitats organitzatives via REST ("
                     + "codi=" + codi + ", " + "denominacio=" + denominacio + ", " + "nivellAdministracio="
                     + nivellAdministracio + ", " + "comunitatAutonoma=" + comunitatAutonoma + ", "

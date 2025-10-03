@@ -15,6 +15,8 @@
 	<sec:http pattern="/api-docs**" security="none" disable-url-rewriting="true"/>
 	<sec:http pattern="/api-docs/**" security="none" disable-url-rewriting="true"/>
 	<sec:http pattern="/**/api-docs" security="none" disable-url-rewriting="true"/>
+	<sec:http pattern="/appInfo" security="none" disable-url-rewriting="true"/>
+	<sec:http pattern="/salut" security="none" disable-url-rewriting="true"/>
 	<sec:http pattern="/js/**" security="none" disable-url-rewriting="true"/>
 	<sec:http pattern="/css/**" security="none" disable-url-rewriting="true"/>
 	<sec:http pattern="/webjars/**" security="none" disable-url-rewriting="true"/>

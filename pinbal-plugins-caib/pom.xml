@@ -207,7 +207,13 @@
         <dependency>
             <groupId>io.dropwizard.metrics</groupId>
             <artifactId>metrics-core</artifactId>
-            <version>3.2.6</version> <!-- versió compatible amb Java 7 -->
+            <version>3.2.6</version>
+            <exclusions>
+                <exclusion>
+                    <artifactId>slf4j-api</artifactId>
+                    <groupId>org.slf4j</groupId>
+                </exclusion>
+            </exclusions> <!-- versió compatible amb Java 7 -->
         </dependency>
 	</dependencies>
 	<repositories>

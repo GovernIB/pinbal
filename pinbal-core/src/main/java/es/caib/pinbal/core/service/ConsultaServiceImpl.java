@@ -48,6 +48,7 @@ import es.caib.pinbal.core.helper.PeticioScspEstadistiquesHelper;
 import es.caib.pinbal.core.helper.PeticioScspHelper;
 import es.caib.pinbal.core.helper.PluginHelper;
 import es.caib.pinbal.core.helper.ServeiHelper;
+import es.caib.pinbal.core.helper.SubsistemaMetricHelper;
 import es.caib.pinbal.core.helper.UsuariHelper;
 import es.caib.pinbal.core.helper.UtilsHelper;
 import es.caib.pinbal.core.model.Consulta;
@@ -110,8 +111,10 @@ import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import org.springframework.context.ApplicationListener;
 import org.springframework.context.MessageSource;
 import org.springframework.context.MessageSourceAware;
+import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -164,7 +167,7 @@ import static org.apache.commons.lang.StringUtils.isBlank;
  */
 @Slf4j
 @Service
-public class ConsultaServiceImpl implements ConsultaService, ApplicationContextAware, MessageSourceAware {
+public class ConsultaServiceImpl implements ConsultaService, ApplicationContextAware, MessageSourceAware, ApplicationListener<ContextRefreshedEvent> {
 
 	private static final String ROLE_ADMIN = "ROLE_ADMIN";
 	private static final String ROLE_REPRES = "ROLE_REPRES";
@@ -215,17 +218,11 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 
 	@Autowired
 	private ExcelHelper excelHelper;
-
 	@Autowired
 	private EmailReportEstatHelper emailReportEstatHelper;
 	@Autowired
 	private ConfigHelper configHelper;
 
-	private ApplicationContext applicationContext;
-	private MessageSource messageSource;
-	private ScspHelper scspHelper;
-
-	private Map<Long, Object> justificantLocks = new HashMap<Long, Object>();
     @Autowired
     private ServeiRepository serveiRepository;
     @Autowired
@@ -242,8 +239,59 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
     @Autowired
     private LlistatConsultaRepository llistatConsultaRepository;
 
+    private ConsultaService self;
 
-	@Transactional(rollbackFor = {ProcedimentServeiNotFoundException.class, ServeiNotAllowedException.class, ConsultaScspException.class})
+    private ApplicationContext applicationContext;
+	private MessageSource messageSource;
+	private ScspHelper scspHelper;
+
+	private Map<Long, Object> justificantLocks = new HashMap<Long, Object>();
+
+
+    @Override
+    public ConsultaDto peticioSincrona(ConsultaDto consulta) throws ProcedimentServeiNotFoundException, ServeiNotAllowedException, ConsultaScspException, ConsultaNotFoundException {
+        String servei = consulta.getServeiCodi();
+        try {
+            long startTime = System.currentTimeMillis();
+            ConsultaDto resposta = null;
+            if (isOptimitzarTransaccionsNovaConsulta()) {
+                ConsultaDto consultaInit = self.novaConsultaInit(consulta);
+                self.novaConsultaEnviament(consultaInit.getId(), consulta);
+                resposta = self.novaConsultaEstat(consultaInit.getId());
+            } else {
+                resposta = self.novaConsulta(consulta);
+            }
+            if (resposta.isEstatError()) {
+                SubsistemaMetricHelper.addErrorOperation("CWS", servei);
+            } else {
+                SubsistemaMetricHelper.addSuccessOperation("CWS", servei, System.currentTimeMillis() - startTime);
+            }
+            return resposta;
+        } catch (Exception e) {
+            SubsistemaMetricHelper.addErrorOperation("CWS", servei);
+            throw e;
+        }
+    }
+
+    @Override
+    public ConsultaDto peticioAsincrona(ConsultaDto consulta) throws ProcedimentServeiNotFoundException, ServeiNotAllowedException, ConsultaScspException, ValidacioDadesPeticioException {
+        String servei = consulta.getServeiCodi();
+        try {
+            long startTime = System.currentTimeMillis();
+            ConsultaDto resposta = self.novaConsultaMultiple(consulta);
+            if (resposta.isEstatError()) {
+                SubsistemaMetricHelper.addErrorOperation("CWA", servei);
+            } else {
+                SubsistemaMetricHelper.addSuccessOperation("CWA", servei, System.currentTimeMillis() - startTime);
+            }
+            return resposta;
+        } catch (Exception e) {
+            SubsistemaMetricHelper.addErrorOperation("CWA", servei);
+            throw e;
+        }
+    }
+
+    @Transactional(rollbackFor = {ProcedimentServeiNotFoundException.class, ServeiNotAllowedException.class, ConsultaScspException.class})
 	@Override
 	public ConsultaDto novaConsulta(
 			ConsultaDto consulta) throws ProcedimentServeiNotFoundException, ServeiNotAllowedException, ConsultaScspException {
@@ -1533,6 +1581,7 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 			Long entitatId,
 			ConsultaFiltreDto filtre,
 			Pageable pageable) throws EntitatNotFoundException {
+
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 		log.debug("Cercant les consultes de delegat simples per a l'entitat (id=" + entitatId + ") i l'usuari (codi=" + auth.getName() + ")");
 		Entitat entitat = entitatRepository.findOne(entitatId);
@@ -1541,15 +1590,13 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 			throw new EntitatNotFoundException();
 		}
 		copiarPropertiesToDb();
-		return findByEntitatIUsuariFiltrePaginat(
-				entitat,
-				auth.getName(),
-				filtre,
-				pageable,
-				false,
-				true);
-//				false,
-//				false);
+        return findByEntitatIUsuariFiltrePaginat(
+                entitat,
+                auth.getName(),
+                filtre,
+                pageable,
+                false,
+                true);
 	}
 
 	@Transactional(readOnly = true)
@@ -2788,110 +2835,20 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 		this.messageSource = messageSource;
 	}
 
-    /*private ResultatEnviamentPeticio enviarPeticioScsp(
-			Long entitatId,
-			String serveiCodi,
-			String idPeticion,
-			List<Solicitud> solicituds,
-			boolean sincrona,
-			boolean recobriment) throws ConsultaScspGeneracioException, ConsultaScspComunicacioException {
-		initEstadistiquesCarrega();
-		if (solicituds != null && solicituds.size() > 0) {
-			Solicitud solicitud = solicituds.get(0);
-			afegirConsultaEstadistiquesCarrega(
-					entitatId,
-					solicitud.getUnitatTramitadora(),
-					solicitud.getProcedimentCodi(),
-					solicitud.getServeiCodi(),
-					recobriment,
-					carreguesAny);
-			afegirConsultaEstadistiquesCarrega(
-					entitatId,
-					solicitud.getUnitatTramitadora(),
-					solicitud.getProcedimentCodi(),
-					solicitud.getServeiCodi(),
-					recobriment,
-					carreguesMes);
-			afegirConsultaEstadistiquesCarrega(
-					entitatId,
-					solicitud.getUnitatTramitadora(),
-					solicitud.getProcedimentCodi(),
-					solicitud.getServeiCodi(),
-					recobriment,
-					carreguesDia);
-			afegirConsultaEstadistiquesCarrega(
-					entitatId,
-					solicitud.getUnitatTramitadora(),
-					solicitud.getProcedimentCodi(),
-					solicitud.getServeiCodi(),
-					recobriment,
-					carreguesHora);
-			afegirConsultaEstadistiquesCarrega(
-					entitatId,
-					solicitud.getUnitatTramitadora(),
-					solicitud.getProcedimentCodi(),
-					solicitud.getServeiCodi(),
-					recobriment,
-					carreguesMinut);
-		}
-		boolean gestioXsdActiva = isGestioXsdActiva(serveiCodi);
-		if (sincrona) {
-			return getScspHelper().enviarPeticionSincrona(
-					idPeticion,
-					solicituds,
-					gestioXsdActiva);
-		} else {
-			return getScspHelper().enviarPeticionAsincrona(
-					idPeticion,
-					solicituds,
-					gestioXsdActiva);
-		}
-	}*/
-
-    /*private void initEstadistiquesCarrega() {
-		if (carreguesAny == null) {
-			carreguesAny = Collections.synchronizedList(
-					consultaRepository.findCarrega(DateUtils.truncate(new Date(), Calendar.YEAR)));
-		}
-		if (carreguesMes == null) {
-			carreguesMes = Collections.synchronizedList(
-					consultaRepository.findCarrega(DateUtils.truncate(new Date(), Calendar.MONTH)));
-		}
-		if (carreguesDia == null) {
-			carreguesDia = Collections.synchronizedList(
-					consultaRepository.findCarrega(DateUtils.truncate(new Date(), Calendar.DAY_OF_MONTH)));
-		}
-		if (carreguesHora == null) {
-			carreguesHora = Collections.synchronizedList(
-					consultaRepository.findCarrega(DateUtils.truncate(new Date(), Calendar.HOUR_OF_DAY)));
-		}
-		if (carreguesMinut == null) {
-			carreguesMinut = Collections.synchronizedList(
-					consultaRepository.findCarrega(DateUtils.truncate(new Date(), Calendar.MINUTE)));
+	@Override
+	public void onApplicationEvent(ContextRefreshedEvent event) {
+		try {
+			this.self = applicationContext.getBean(ConsultaService.class);
+			try {
+				log.debug("[TR-DIAG] self injected on ContextRefreshed. Is AOP proxy? {} | JDK? {} | CGLIB? {}",
+						org.springframework.aop.support.AopUtils.isAopProxy(self),
+						org.springframework.aop.support.AopUtils.isJdkDynamicProxy(self),
+						org.springframework.aop.support.AopUtils.isCglibProxy(self));
+			} catch (Throwable ignore) { }
+		} catch (Throwable t) {
+			log.warn("[TR-DIAG] Could not obtain self proxy on ContextRefreshed: {}", t.toString());
 		}
 	}
-
-	private void afegirConsultaEstadistiquesCarrega(
-			Long entitatId,
-			String departamentNom,
-			String procedimentCodi,
-			String serveiCodi,
-			boolean recobriment,
-			List<CarregaDto> carregues) {
-		for (CarregaDto carrega: carregues) {
-			if (	carrega.getEntitatId().equals(entitatId) &&
-					carrega.getDepartamentNom().equals(departamentNom) &&
-					carrega.getProcedimentCodi().equals(procedimentCodi) &&
-					carrega.getServeiCodi().equals(serveiCodi)) {
-				if (!recobriment) {
-					carrega.setCountWeb(carrega.getCountWeb() + 1);
-				} else {
-					carrega.setCountRecobriment(carrega.getCountRecobriment() + 1);
-				}
-				break;
-			}
-		}
-	}*/
 
 	private InformeGeneralEstatDto toInformeGeneralEstatDto(ProcedimentServei servei, List<Object[]> consultes) {
 		InformeGeneralEstatDto dto = new InformeGeneralEstatDto();
@@ -3079,12 +3036,12 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 			// Només per Oracle
 			String dialect = configHelper.getConfig("es.caib.pinbal.hibernate.dialect", "Oracle");
 			if (dialect == null || !dialect.toLowerCase().contains("postgres")) {
-				consultaRepository.setSessionOptimizerModeToRule();
+                consultaRepository.setSessionOptimizerModeToRule();
 			}
 			paginaConsultes = llistatConsultaRepository.findByCreatedByAndFiltrePaginat(
 					entitat.getId(),
 					usuariCodi == null,
-//					(usuariCodi != null) ? usuariRepository.findOne(usuariCodi) : null,
+				//					(usuariCodi != null) ? usuariRepository.findOne(usuariCodi) : null,
 					usuariCodi,
 					filtre.getScspPeticionId() == null || filtre.getScspPeticionId().isEmpty(),
 					filtre.getScspPeticionId(),
@@ -3508,7 +3465,7 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 		}
 	}
 
-	private ConsultaDto processarConsultaScspException(
+    private ConsultaDto processarConsultaScspException(
 			ConsultaScspException ex,
 			Consulta conslt,
 			String accioDescripcio,

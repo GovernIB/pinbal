@@ -228,6 +228,7 @@ public class ConsultaController extends BaseController {
 			cols.get(1).setData("data");
 			cols.get(2).setData("procedimentCodi");
 			cols.get(3).setData("serveiCodi");
+
 			if (isHistoric(request)) {
 				page = historicConsultaService.findSimplesByFiltrePaginatPerDelegat(entitat.getId(),
 						ConsultaFiltreCommand.asDto(command), serverSideRequest.toPageable());
@@ -945,13 +946,7 @@ public class ConsultaController extends BaseController {
 	private ConsultaDto novaConsulta(ConsultaCommand command) throws ProcedimentServeiNotFoundException,
 			ConsultaNotFoundException, ServeiNotAllowedException, ConsultaScspException {
 		ConsultaDto consulta = ConsultaCommand.asDto(command);
-		if (consultaService.isOptimitzarTransaccionsNovaConsulta()) {
-			ConsultaDto consultaInit = consultaService.novaConsultaInit(consulta);
-			consultaService.novaConsultaEnviament(consultaInit.getId(), consulta);
-			return consultaService.novaConsultaEstat(consultaInit.getId());
-		} else {
-			return consultaService.novaConsulta(ConsultaCommand.asDto(command));
-		}
+        return consultaService.peticioSincrona(consulta);
 	}
 
 	private ConsultaDto novaConsultaMultiple(ConsultaCommand command, String[] campsPeticioMultiple,
@@ -961,7 +956,7 @@ public class ConsultaController extends BaseController {
 		consulta.setCampsPeticioMultiple(campsPeticioMultiple);
 		consulta.setDadesPeticioMultiple(
 				dadesPeticioMultiple.toArray(new String[dadesPeticioMultiple.size()][campsPeticioMultiple.length]));
-		return consultaService.novaConsultaMultiple(consulta);
+		return consultaService.peticioAsincrona(consulta);
 	}
 
 	private List<String[]> readFile(FitxerDto fitxer, Errors errors) throws Exception {

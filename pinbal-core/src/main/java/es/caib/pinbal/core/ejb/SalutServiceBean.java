@@ -46,7 +46,7 @@ public class SalutServiceBean implements SalutService {
     }
 
     @Override
-    public SalutInfo checkSalut(String versio, String performanceUrl) {
-        return delegate.checkSalut(versio, performanceUrl);
+    public SalutInfo checkSalut(String versio) {
+        return delegate.checkSalut(versio);
     }
 }

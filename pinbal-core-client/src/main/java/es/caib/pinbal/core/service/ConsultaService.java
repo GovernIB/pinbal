@@ -47,6 +47,11 @@ public interface ConsultaService {
 
 	public static String ERROR_SEPARADOR = "|||";
 
+    @PreAuthorize("hasRole('ROLE_DELEG')")
+    public ConsultaDto peticioSincrona(ConsultaDto consulta) throws ProcedimentServeiNotFoundException, ServeiNotAllowedException, ConsultaScspException, ConsultaNotFoundException;
+    @PreAuthorize("hasRole('ROLE_DELEG')")
+    public ConsultaDto peticioAsincrona(ConsultaDto consulta) throws ProcedimentServeiNotFoundException, ServeiNotAllowedException, ConsultaScspException, ValidacioDadesPeticioException;
+
 	/**
 	 * Realitza una consulta mitjançant les llibreries SCSP.
 	 * 

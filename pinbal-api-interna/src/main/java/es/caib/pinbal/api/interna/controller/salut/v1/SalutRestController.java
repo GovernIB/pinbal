@@ -11,12 +11,12 @@ import es.caib.pinbal.api.interna.controller.PinbalHalRestController;
 import es.caib.pinbal.core.service.SalutService;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.servlet.ServletContext;
@@ -30,7 +30,6 @@ import java.util.jar.Attributes;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
 
-@Slf4j
 @Controller
 @Api(value = "API Serveis v1", description = "Operacions relacionades amb Salut")
 public class SalutRestController extends PinbalHalRestController {
@@ -42,45 +41,6 @@ public class SalutRestController extends PinbalHalRestController {
 
     private ManifestInfo manifestInfo;
 
-//    @Autowired
-//    private GestioRestService gestioRestService;
-//
-//
-//    /**
-//     * Recupera un servei pel seu Codi.
-//     * @param serveiCodi Codi del servei.
-//     * @return Dades del servei.
-//     */
-//    @ApiVersion("1")
-//    @RequestMapping(value = "/serveis/{serveiCodi}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-//    @ApiOperation(value = "Obtén un servei pel seu codi",
-//            response = Servei.class,
-//            notes = "Aquest mètode retorna els detalls d'un servei específic identificat pel seu codi.")
-//    @ApiResponses(value = {
-//            @ApiResponse(code = 200, message = "Servei obtingut amb èxit"),
-//            @ApiResponse(code = 404, message = "Servei no trobat")
-//    })
-//    public @ResponseBody ResponseEntity<Resource<Servei>> getServei(
-//            @ApiParam(value = "Codi del servei", required = true) @PathVariable("serveiCodi") String serveiCodi) {
-//        try {
-//            Servei servei = gestioRestService.getServeiByCodi(serveiCodi);
-//            if (servei == null) {
-//                return new ResponseEntity<Resource<Servei>>(HttpStatus.NOT_FOUND);
-//            }
-//
-//            Resource<Servei> resource = new Resource<Servei>(servei);
-//            Link selfLink = ControllerLinkBuilder.linkTo(
-//                    ControllerLinkBuilder.methodOn(this.getClass()).getServei(serveiCodi)
-//            ).withSelfRel();
-//            resource.add(selfLink);
-//            return new ResponseEntity<Resource<Servei>>(resource, HttpStatus.OK);
-//        } catch (AccessDeniedException ade) {
-//            throw new AccessDenegatException(Arrays.asList("PBL_WS", "PBL_REPRES"));
-//        } catch (Exception e) {
-//            log.error("Error obtenint el servei " + serveiCodi, e);
-//            throw new ServiceExecutionException(e.getMessage(), e);
-//        }
-//    }
 
     @ApiVersion("1")
     @ApiOperation(value = "Obtén informació de l'aplicació",
@@ -91,6 +51,7 @@ public class SalutRestController extends PinbalHalRestController {
             @ApiResponse(code = 404, message = "Informació no trobada")
     })
     @RequestMapping(value = "/appInfo", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
     public AppInfo appInfo(HttpServletRequest request) throws IOException {
         ManifestInfo manifestInfo = getManifestInfo();
         return AppInfo.builder()
@@ -108,11 +69,11 @@ public class SalutRestController extends PinbalHalRestController {
 
     @ApiVersion("1")
     @RequestMapping(value = "/salut", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
     public SalutInfo health(HttpServletRequest request) throws IOException {
 
-//        var manifestInfo = getManifestInfo();
-//        return salutService.checkSalut(manifestInfo.getVersion(), request.getRequestURL().toString() + "Performance");
-        return SalutInfo.builder().build();
+        ManifestInfo manifestInfo = getManifestInfo();
+        return salutService.checkSalut(manifestInfo.getVersion());
     }
 
     private ManifestInfo getManifestInfo() throws IOException {

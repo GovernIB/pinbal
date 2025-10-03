@@ -9,9 +9,6 @@ import es.caib.comanda.ms.salut.model.SubsistemaSalut;
 import es.caib.pinbal.helper.LastRequestsFifo;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import java.util.ArrayList;
@@ -20,9 +17,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-@Slf4j
-@Component
-@RequiredArgsConstructor
+//@Component
+//@RequiredArgsConstructor
 public class SubsistemaMetricHelper {
 
 
@@ -30,13 +26,20 @@ public class SubsistemaMetricHelper {
     private static MetricRegistry localRegistry = new MetricRegistry();
 
     private static final Map<String, Metrics> METRICS = new HashMap<>();
+    static {
+        for (SubsistemesEnum s : SubsistemesEnum.values()) {
+            getMetrica(s.name());
+        }
+    }
 
 
     @Getter
     public enum SubsistemesEnum {
-        CWE("Consulta web", true),
-        CRE("Consulta REST", true),
-        CMS("Consulta massiva", false);
+        CWS("Consulta web síncrona", true),
+        CRS("Consulta REST síncrona", true),
+        CWA("Consulta web asíncrona", false),
+        CRA("Consulta REST asíncrona", false),
+        JUS("Generar justificant", false);
 
         private final String nom;
         private final boolean sistemaCritic;
@@ -46,9 +49,9 @@ public class SubsistemaMetricHelper {
             this.sistemaCritic = sistemaCritic;
         }
 
-        public static SubsistemesEnum valueOfNom(String nom) {
+        public static SubsistemesEnum valueOfCodi(String codi) {
             for (SubsistemesEnum subsistema : SubsistemesEnum.values()) {
-                if (subsistema.getNom().equals(nom)) {
+                if (subsistema.name().equals(codi)) {
                     return subsistema;
                 }
             }
@@ -182,8 +185,18 @@ public class SubsistemaMetricHelper {
         getMetrica(subsistema).addSuccess(duracio);
     }
 
+    public static void addSuccessOperation(String subsistema, String servei, long duracio) {
+        getMetrica(subsistema).addSuccess(duracio);
+        getMetrica(servei).addSuccess(duracio);
+    }
+
     public static void addErrorOperation(String subsistema) {
         getMetrica(subsistema).addError();
+    }
+
+    public static void addErrorOperation(String subsistema, String servei) {
+        getMetrica(subsistema).addError();
+        getMetrica(servei).addError();
     }
 
 
@@ -233,7 +246,7 @@ public class SubsistemaMetricHelper {
         boolean allCriticalDown = true;
 
         for (SubsistemaSalut s : subsistemes) {
-            SubsistemesEnum subsistemaEnum = SubsistemesEnum.valueOfNom(s.getCodi());
+            SubsistemesEnum subsistemaEnum = SubsistemesEnum.valueOfCodi(s.getCodi());
             boolean critic = subsistemaEnum != null && subsistemaEnum.isSistemaCritic();
 
             switch (s.getEstat()) {
@@ -254,7 +267,6 @@ public class SubsistemaMetricHelper {
                     if (critic) allCriticalDown = false;
                     break;
                 case DOWN:
-                    SubsistemesEnum subsistemesEnum = SubsistemesEnum.valueOf(s.getCodi());
                     if (critic) {
                         anyDown = true;
                     } else {
@@ -289,7 +301,7 @@ public class SubsistemaMetricHelper {
             Metrics metrica = metricaEntry.getValue();
 
             // Si no és un subsistema conegut, és un servei
-            if (SubsistemesEnum.valueOfNom(codi) == null) {
+            if (SubsistemesEnum.valueOfCodi(codi) == null) {
                 if (metrica.getEstatPeriode() == EstatSalutEnum.DOWN) {
                     serveisDownCount++;
                 } else {

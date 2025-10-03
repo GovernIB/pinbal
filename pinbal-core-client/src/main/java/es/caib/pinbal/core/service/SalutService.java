@@ -20,6 +20,6 @@ public interface SalutService {
     public List<IntegracioInfo> getIntegracions();
     public List<AppInfo> getSubsistemes();
     public List<ContextInfo> getContexts(String baseUrl);
-    public SalutInfo checkSalut(String versio, String performanceUrl);
+    public SalutInfo checkSalut(String versio);
 
 }

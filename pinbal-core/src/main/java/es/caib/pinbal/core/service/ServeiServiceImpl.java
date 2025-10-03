@@ -88,8 +88,10 @@ import org.springframework.beans.BeansException;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import org.springframework.context.ApplicationListener;
 import org.springframework.context.MessageSource;
 import org.springframework.context.MessageSourceAware;
+import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -125,7 +127,7 @@ import java.util.Set;
  */
 @Slf4j
 @Service
-public class ServeiServiceImpl implements ServeiService, ApplicationContextAware, MessageSourceAware {
+public class ServeiServiceImpl implements ServeiService, ApplicationContextAware, MessageSourceAware, ApplicationListener<ContextRefreshedEvent> {
 
 	public static final Locale DEFAULT_TRADUCCIO_LOCALE = new Locale("ca", "ES");
 	
@@ -593,7 +595,7 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 		return result; // Retornem la llista sense duplicats
 	}
 
-	// Classe auxiliar per definir els camps que determinen un duplicat
+    // Classe auxiliar per definir els camps que determinen un duplicat
 	private static class AceKey {
 		private final org.springframework.security.acls.model.Acl acl;
 		private final Sid sid;
@@ -1641,13 +1643,27 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 	public void setApplicationContext(
 			ApplicationContext applicationContext) throws BeansException {
 		this.applicationContext = applicationContext;
-		this.self = applicationContext.getBean(ServeiService.class);
 	}
 
 	@Override
 	public void setMessageSource(MessageSource messageSource) {
 		this.messageSource = messageSource;
 	}
+
+    @Override
+    public void onApplicationEvent(ContextRefreshedEvent contextRefreshedEvent) {
+        try {
+            this.self = applicationContext.getBean(ServeiService.class);
+            try {
+                log.debug("[TR-DIAG] self injected on ContextRefreshed. Is AOP proxy? {} | JDK? {} | CGLIB? {}",
+                        org.springframework.aop.support.AopUtils.isAopProxy(self),
+                        org.springframework.aop.support.AopUtils.isJdkDynamicProxy(self),
+                        org.springframework.aop.support.AopUtils.isCglibProxy(self));
+            } catch (Throwable ignore) { }
+        } catch (Throwable t) {
+            log.warn("[TR-DIAG] Could not obtain self proxy on ContextRefreshed: {}", t.toString());
+        }
+    }
 
 	@Override
 	public void xsdDelete(String codi, XsdTipusEnumDto tipus) throws IOException {

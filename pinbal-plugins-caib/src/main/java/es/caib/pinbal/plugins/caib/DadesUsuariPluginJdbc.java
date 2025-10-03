@@ -3,10 +3,12 @@
  */
 package es.caib.pinbal.plugins.caib;
 
+import es.caib.comanda.ms.salut.model.IntegracioApp;
 import es.caib.pinbal.plugin.PropertiesHelper;
 import es.caib.pinbal.plugins.DadesUsuari;
 import es.caib.pinbal.plugins.DadesUsuariPlugin;
 import es.caib.pinbal.plugins.SistemaExternException;
+import es.caib.pinbal.plugins.helper.PluginMetricHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,6 +27,10 @@ import java.util.List;
  * @author Limit Tecnologies <limit@limit.es>
  */
 public class DadesUsuariPluginJdbc implements DadesUsuariPlugin {
+
+    public DadesUsuariPluginJdbc() {
+        PluginMetricHelper.addEndpoint(IntegracioApp.USR, getDatasourceJndiName());
+    }
 
 	@Override
 	public DadesUsuari consultarAmbUsuariCodi(String usuariCodi) throws SistemaExternException {
@@ -77,10 +83,12 @@ public class DadesUsuariPluginJdbc implements DadesUsuariPlugin {
 			String sqlQuery,
 			String paramName,
 			String paramValue) throws SistemaExternException {
+
 		DadesUsuari dadesUsuari = null;
 		Connection con = null;
 		PreparedStatement ps = null;
-		try {
+        long start = System.currentTimeMillis();
+        try {
 			Context initContext = new InitialContext();
 			DataSource ds = (DataSource)initContext.lookup(getDatasourceJndiName());
 			con = ds.getConnection();
@@ -102,6 +110,7 @@ public class DadesUsuariPluginJdbc implements DadesUsuariPlugin {
 				dadesUsuari.setEmail(rs.getString(4));
 			}
 		} catch (Exception ex) {
+            PluginMetricHelper.addErrorOperation(IntegracioApp.USR);
 			throw new SistemaExternException(ex);
 		} finally {
 			try {
@@ -119,6 +128,7 @@ public class DadesUsuariPluginJdbc implements DadesUsuariPlugin {
 				consultaRolsUsuari(
 						"codi",
 						dadesUsuari.getCodi()));
+        PluginMetricHelper.addSuccessOperation(IntegracioApp.USR, System.currentTimeMillis() - start);
 		return dadesUsuari;
 	}
 	
@@ -129,7 +139,8 @@ public class DadesUsuariPluginJdbc implements DadesUsuariPlugin {
 		List<DadesUsuari> llistaUsuaris = new ArrayList<DadesUsuari>();
 		Connection con = null;
 		PreparedStatement ps = null;
-		try {
+        long start = System.currentTimeMillis();
+        try {
 			Context initContext = new InitialContext();
 			DataSource ds = (DataSource)initContext.lookup(getDatasourceJndiName());
 			con = ds.getConnection();
@@ -152,6 +163,7 @@ public class DadesUsuariPluginJdbc implements DadesUsuariPlugin {
 				llistaUsuaris.add(dadesUsuari);
 			}
 		} catch (Exception ex) {
+            PluginMetricHelper.addErrorOperation(IntegracioApp.USR);
 			throw new SistemaExternException(ex);
 		} finally {
 			try {
@@ -165,6 +177,7 @@ public class DadesUsuariPluginJdbc implements DadesUsuariPlugin {
 				LOGGER.error("Error al tancar la connexió", ex);
 			}
 		}
+        PluginMetricHelper.addSuccessOperation(IntegracioApp.USR, System.currentTimeMillis() - start);
 		return llistaUsuaris;
 	}
 
