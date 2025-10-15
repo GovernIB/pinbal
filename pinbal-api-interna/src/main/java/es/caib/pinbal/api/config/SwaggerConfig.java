@@ -34,7 +34,16 @@ public class SwaggerConfig {
                 .apiVersion("1.0")
 				.authorizationTypes(Arrays.asList(basicAuth))
                 .ignoredParameterTypes(ResponseEntity.class)
-				.includePatterns(".*/recobriment/*.*", ".*/procediments/*.*", ".*/serveis/*.*", ".*/usuaris/*.*")
+				.includePatterns(
+                        ".*/recobriment/*.*",
+                        ".*/procediments/*.*",
+                        ".*/serveis/*.*",
+                        ".*/usuaris/*.*",
+                        ".*/appInfo",
+                        ".*/salut",
+                        ".*/estadistiques",
+                        ".*/estadistiques/*.*"
+                        )
 				.useDefaultResponseMessages(false);
     }
 

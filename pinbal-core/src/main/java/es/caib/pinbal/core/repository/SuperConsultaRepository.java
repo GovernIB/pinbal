@@ -24,7 +24,9 @@ public interface SuperConsultaRepository extends JpaRepository<SuperConsulta, Lo
 
 	@Query(	"select new es.caib.pinbal.core.model.explotacio.ExplotConsultaFets( " +
 			"    c.entitat.id, " +
+			"    c.entitat.codi, " +
 			"    c.procediment.id, " +
+			"    c.procediment.codi, " +
 			"    c.serveiCodi, " +
 			"    c.createdBy.codi, " +
 			"    sum(case when c.recobriment = true and c.multiple = false and c.estat = es.caib.pinbal.core.dto.EstatTipus.Tramitada then 1 else 0 end), " +
@@ -49,7 +51,9 @@ public interface SuperConsultaRepository extends JpaRepository<SuperConsulta, Lo
 			"  and c.serveiCodi is not null " +
 			"group by " +
 			"    c.entitat.id, " +
+			"    c.entitat.codi, " +
 			"    c.procediment.id, " +
+			"    c.procediment.codi, " +
 			"    c.serveiCodi, " +
 			"    c.createdBy.codi " +
 			"order by " +
@@ -61,19 +65,31 @@ public interface SuperConsultaRepository extends JpaRepository<SuperConsulta, Lo
 			@Param("esNullData") boolean esNullData,
 			@Param("data") Date data);
 
-	@Query(	"select new es.caib.pinbal.core.model.explotacio.ExplotConsultaDimensio(c.entitat.id, c.procediment.id, c.serveiCodi, c.createdBy.codi) " +
-			"from  SuperConsulta c " +
-			"where c.procediment.id is not null " +
-			"  and c.serveiCodi is not null " +
-			"group by " +
-			"    c.entitat.id, " +
-			"    c.procediment.id, " +
-			"    c.serveiCodi, " +
-			"    c.createdBy.codi " +
-			"order by " +
-			"	 c.entitat.id, " +
-			"	 c.procediment.id, " +
-			"	 c.serveiCodi, " +
-			"	 c.createdBy.codi")
-	public List<ExplotConsultaDimensio> getDimensionsPerEstadistiques();
+//	@Query(	"select new es.caib.pinbal.core.model.explotacio.ExplotConsultaDimensio(e.id, e.codi, p.id, p.codi, c.serveiCodi, c.createdBy.codi) " +
+//			"from  SuperConsulta c " +
+//            "left outer join c.entitat e " +
+//            "left outer join c.procediment p " +
+//			"where c.procediment.id is not null " +
+//			"  and c.serveiCodi is not null " +
+//			"group by " +
+//			"    e.id, " +
+//			"    e.codi, " +
+//			"    p.id, " +
+//			"    p.codi, " +
+//			"    c.serveiCodi, " +
+//			"    c.createdBy.codi " +
+//			"order by " +
+//			"	 e.id, " +
+//			"	 p.id, " +
+//			"	 c.serveiCodi, " +
+//			"	 c.createdBy.codi")
+//	public List<ExplotConsultaDimensio> getDimensionsPerEstadistiques();
+
+    @Query("select distinct new es.caib.pinbal.core.model.explotacio.ExplotConsultaDimensio(e.id, e.codi, p.id, p.codi, c.serveiCodi, c.createdBy.codi) " +
+            "from SuperConsulta c " +
+            "join c.entitat e " +
+            "join c.procediment p " +
+            "where c.serveiCodi is not null " +
+            "order by e.id, p.id, c.serveiCodi, c.createdBy.codi")
+    List<ExplotConsultaDimensio> getDimensionsPerEstadistiques();
 }

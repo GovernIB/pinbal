@@ -41,10 +41,13 @@ public class ExplotTempsEntity extends AbstractPersistable<Long> implements Seri
 	
 	@Column(name = "setmana")
 	private Integer setmana;
+
+    @Column(name = "dia")
+    private Integer dia;
 	
-	@Column(name = "dia")
+	@Column(name = "dia_setmana")
 	@Enumerated(EnumType.STRING)
-	private DiaSetmanaEnum dia;
+	private DiaSetmanaEnum diaSetmana;
 
 	public ExplotTempsEntity() {
 		super();
@@ -65,15 +68,16 @@ public class ExplotTempsEntity extends AbstractPersistable<Long> implements Seri
 
 	private void emplenarCamps(Calendar cal) {
 		Integer diaSem = cal.get(Calendar.DAY_OF_WEEK);
-		if (diaSem.compareTo(Calendar.MONDAY)==0) { this.dia = DiaSetmanaEnum.LUN; }
-		if (diaSem.compareTo(Calendar.TUESDAY)==0) { this.dia = DiaSetmanaEnum.MAR; }
-		if (diaSem.compareTo(Calendar.WEDNESDAY)==0) { this.dia = DiaSetmanaEnum.MIE; }
-		if (diaSem.compareTo(Calendar.THURSDAY)==0) { this.dia = DiaSetmanaEnum.JUE; }
-		if (diaSem.compareTo(Calendar.FRIDAY)==0) { this.dia = DiaSetmanaEnum.VIE; }
-		if (diaSem.compareTo(Calendar.SATURDAY)==0) { this.dia = DiaSetmanaEnum.SAB; }
-		if (diaSem.compareTo(Calendar.SUNDAY)==0) { this.dia = DiaSetmanaEnum.DOM; }
+		if (diaSem.compareTo(Calendar.MONDAY)==0) { this.diaSetmana = DiaSetmanaEnum.LUN; }
+		if (diaSem.compareTo(Calendar.TUESDAY)==0) { this.diaSetmana = DiaSetmanaEnum.MAR; }
+		if (diaSem.compareTo(Calendar.WEDNESDAY)==0) { this.diaSetmana = DiaSetmanaEnum.MIE; }
+		if (diaSem.compareTo(Calendar.THURSDAY)==0) { this.diaSetmana = DiaSetmanaEnum.JUE; }
+		if (diaSem.compareTo(Calendar.FRIDAY)==0) { this.diaSetmana = DiaSetmanaEnum.VIE; }
+		if (diaSem.compareTo(Calendar.SATURDAY)==0) { this.diaSetmana = DiaSetmanaEnum.SAB; }
+		if (diaSem.compareTo(Calendar.SUNDAY)==0) { this.diaSetmana = DiaSetmanaEnum.DOM; }
 		this.data = cal.getTime();
 		this.setmana = cal.get(Calendar.WEEK_OF_YEAR);
+        this.dia = cal.get(Calendar.DAY_OF_MONTH);
 		Integer month = cal.get(Calendar.MONTH);
 		if (month.compareTo(Calendar.JANUARY)==0) { this.mes = 1; this.trimestre=1; }
 		if (month.compareTo(Calendar.FEBRUARY)==0) { this.mes = 2; this.trimestre=1; }

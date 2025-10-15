@@ -114,6 +114,8 @@ public interface ProcedimentRepository extends JpaRepository<Procediment, Long> 
 	public long countByServei(String servei);
 
 
+    @Query("select distinct p.codi from Procediment p")
+    List<String> findAllCodis();
 
 
 	@Modifying
@@ -123,5 +125,4 @@ public interface ProcedimentRepository extends JpaRepository<Procediment, Long> 
 			"WHERE CREATEDBY_CODI = :codiAntic OR LASTMODIFIEDBY_CODI = :codiAntic",
 			nativeQuery = true)
 	int updateUsuariAuditoria(@Param("codiAntic") String codiAntic, @Param("codiNou") String codiNou);
-
 }

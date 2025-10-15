@@ -3,7 +3,6 @@
  */
 package es.caib.pinbal.core.service;
 
-import es.caib.comanda.ms.salut.model.AppInfo;
 import es.caib.comanda.ms.salut.model.ContextInfo;
 import es.caib.comanda.ms.salut.model.DetallSalut;
 import es.caib.comanda.ms.salut.model.EstatSalut;
@@ -14,6 +13,8 @@ import es.caib.comanda.ms.salut.model.IntegracioSalut;
 import es.caib.comanda.ms.salut.model.Manual;
 import es.caib.comanda.ms.salut.model.MissatgeSalut;
 import es.caib.comanda.ms.salut.model.SalutInfo;
+import es.caib.comanda.ms.salut.model.SalutNivell;
+import es.caib.comanda.ms.salut.model.SubsistemaInfo;
 import es.caib.comanda.ms.salut.model.SubsistemaSalut;
 import es.caib.pinbal.core.helper.MonitorHelper;
 import es.caib.pinbal.core.helper.SubsistemaMetricHelper;
@@ -64,16 +65,16 @@ public class SalutServiceImpl implements SalutService {
     }
 
     @Override
-    public List<AppInfo> getSubsistemes() {
-        List<AppInfo> subsistemes = new ArrayList<>();
+    public List<SubsistemaInfo> getSubsistemes() {
+        List<SubsistemaInfo> subsistemes = new ArrayList<>();
         // Subsistemes per consultes i obtenció de justificant
         for(SubsistemesEnum subsistema: SubsistemesEnum.values()) {
-            subsistemes.add(AppInfo.builder().codi(subsistema.name()).nom(subsistema.getNom()).build());
+            subsistemes.add(SubsistemaInfo.builder().codi(subsistema.name()).nom(subsistema.getNom()).build());
         }
         // Un subsistema per servei actiu
         List<Servei> serveisActius = serveiRepository.findActius();
         for (Servei servei : serveisActius) {
-            subsistemes.add(AppInfo.builder().codi(servei.getCodi()).nom(servei.getDescripcio()).build());
+            subsistemes.add(SubsistemaInfo.builder().codi(servei.getCodi()).nom(servei.getDescripcio()).build());
         }
         return subsistemes;
     }
@@ -248,8 +249,17 @@ public class SalutServiceImpl implements SalutService {
         return MissatgeSalut.builder()
                 .missatge(avis.getMissatge())
                 .data(avis.getDataInici())
-                .nivell(avis.getAvisNivell().name())
+                .nivell(toSalutNivell(avis))
                 .build();
+    }
+
+    private SalutNivell toSalutNivell(Avis avis) {
+        switch (avis.getAvisNivell()) {
+            case WARNING: return SalutNivell.WARN;
+            case ERROR: return SalutNivell.ERROR;
+            case INFO:
+            default: return SalutNivell.INFO;
+        }
     }
 
 }

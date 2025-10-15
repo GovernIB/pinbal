@@ -9,6 +9,7 @@ import es.caib.pinbal.core.service.EstadisticaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ejb.interceptor.SpringBeanAutowiringInterceptor;
 
+import javax.annotation.security.RolesAllowed;
 import javax.ejb.Stateless;
 import javax.interceptor.Interceptors;
 import java.util.Date;
@@ -47,5 +48,11 @@ public class EstadisticaServiceBean implements EstadisticaService {
     @Override
     public List<RegistresEstadistics> consultaEstadistiques(Date dataInici, Date dataFi) {
         return delegate.consultaEstadistiques(dataInici, dataFi);
+    }
+
+    @Override
+    @RolesAllowed("PBL_ADMIN")
+    public String generarEstadistiques(Date dataInici, Date dataFi) {
+        return generarEstadistiques(dataInici, dataFi);
     }
 }

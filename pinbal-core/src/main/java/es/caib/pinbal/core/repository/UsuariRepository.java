@@ -37,6 +37,8 @@ public interface UsuariRepository extends JpaRepository<Usuari, String> {
 	public List<Usuari> findByCodiOrNomOrNif(@Param("text") String text);
 
 
+    @Query("select distinct u.codi from Usuari u")
+    List<String> findAllCodis();
 
 
 	@Modifying

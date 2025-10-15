@@ -15,7 +15,9 @@ public interface ExplotConsultaFetsRepository extends JpaRepository<ExplotConsul
 
     @Query("select new es.caib.pinbal.core.model.explotacio.ExplotConsultaFets(" +
             "    d.entitatId, " +
+            "    d.entitatCodi, " +
             "    d.procedimentId, " +
+            "    d.procedimentCodi, " +
             "    d.serveiCodi, " +
             "    '', " +
             "    sum(f.numRecobrimentOk), " +
@@ -41,7 +43,12 @@ public interface ExplotConsultaFetsRepository extends JpaRepository<ExplotConsul
             "   and (:esNullProcedimentId = true or d.procedimentId = :procedimentId) " +
             "   and (:esNullServeiCodi = true or d.serveiCodi = :serveiCodi) " +
             "   and (:esNullUsuari = true or d.usuariCodi = :usuari) " +
-            "group by d.entitatId, d.procedimentId, d.serveiCodi")
+            "group by " +
+            "   d.entitatId, " +
+            "   d.entitatCodi, " +
+            "   d.procedimentId, " +
+            "   d.procedimentCodi, " +
+            "   d.serveiCodi")
     public List<ExplotConsultaFets> findByFiltre(
             @Param("temps")ExplotTempsEntity temps,
             @Param("esNullEntitatId") boolean esNullEntitatId,
@@ -52,4 +59,39 @@ public interface ExplotConsultaFetsRepository extends JpaRepository<ExplotConsul
             @Param("serveiCodi") String serveiCodi,
             @Param("esNullUsuari") boolean esNullUsuari,
             @Param("usuari") String usuari);
+
+    @Query("select new es.caib.pinbal.core.model.explotacio.ExplotConsultaFets(" +
+            "    d.entitatId, " +
+            "    d.entitatCodi, " +
+            "    d.procedimentId, " +
+            "    d.procedimentCodi, " +
+            "    d.serveiCodi, " +
+            "    d.usuariCodi, " +
+            "    sum(f.numRecobrimentOk), " +
+            "    sum(f.numRecobrimentError), " +
+            "    sum(f.numRecobrimentPendent), " +
+            "    sum(f.numRecobrimentProcessant), " +
+            "    sum(f.numRecobrimentMassiuOk), " +
+            "    sum(f.numRecobrimentMassiuError), " +
+            "    sum(f.numRecobrimentMassiuPendent), " +
+            "    sum(f.numRecobrimentMassiuProcessant), " +
+            "    sum(f.numWebOk), " +
+            "    sum(f.numWebError), " +
+            "    sum(f.numWebPendent), " +
+            "    sum(f.numWebProcessant), " +
+            "    sum(f.numWebMassiuOk), " +
+            "    sum(f.numWebMassiuError), " +
+            "    sum(f.numWebMassiuPendent), " +
+            "    sum(f.numWebMassiuProcessant)) " +
+            "from ExplotConsultaFetsEntity f " +
+            "   left outer join f.consultaDimensio d " +
+            "where f.temps = :temps " +
+            "group by " +
+            "   d.entitatId, " +
+            "   d.entitatCodi, " +
+            "   d.procedimentId, " +
+            "   d.procedimentCodi, " +
+            "   d.serveiCodi, " +
+            "   d.usuariCodi")
+    List<ExplotConsultaFets> findByTemps(@Param("temps") ExplotTempsEntity temps);
 }

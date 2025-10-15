@@ -43,7 +43,7 @@ public class SalutRestController extends PinbalHalRestController {
 
 
     @ApiVersion("1")
-    @ApiOperation(value = "Obtén informació de l'aplicació",
+    @ApiOperation(value = "Obté informació de l'aplicació",
             response = AppInfo.class,
             notes = "Aquest mètode retorna informació detallada de l'aplicació.")
     @ApiResponses(value = {
@@ -68,6 +68,13 @@ public class SalutRestController extends PinbalHalRestController {
     }
 
     @ApiVersion("1")
+    @ApiOperation(value = "Obté informació de salut de l'aplicació",
+            response = SalutInfo.class,
+            notes = "Aquest mètode retorna informació detallada de salut de l'aplicació.")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Informació obtinguda amb èxit"),
+            @ApiResponse(code = 404, message = "Informació no trobada")
+    })
     @RequestMapping(value = "/salut", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public SalutInfo health(HttpServletRequest request) throws IOException {

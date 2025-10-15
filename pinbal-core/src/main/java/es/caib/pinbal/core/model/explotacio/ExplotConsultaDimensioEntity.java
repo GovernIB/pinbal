@@ -29,8 +29,14 @@ public class ExplotConsultaDimensioEntity extends AbstractPersistable<Long> impl
 	@Column(name = "entitat_id")
 	private Long entitatId;
 
+    @Column(name = "entitat_codi", length = 64)
+    private String entitatCodi;
+
 	@Column(name = "procediment_id")
 	private Long procedimentId;
+
+    @Column(name = "procediment_codi", length = 20)
+    private String procedimentCodi;
 
 	@Column(name = "servei_codi")
 	private String serveiCodi;

@@ -79,6 +79,8 @@
 			<url-pattern>/api-docs/*</url-pattern>
             <url-pattern>/appInfo</url-pattern>
             <url-pattern>/salut</url-pattern>
+            <url-pattern>/estadistiques</url-pattern>
+            <url-pattern>/estadistiques/*</url-pattern>
 			<url-pattern>/js/*</url-pattern>
 			<url-pattern>/css/*</url-pattern>
 			<url-pattern>/img/*</url-pattern>

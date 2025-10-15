@@ -243,7 +243,7 @@ public class SubsistemaMetricHelper {
         boolean anyDegraded = false;
         boolean anyWarn = false;
         boolean anyUp = false;
-        boolean allCriticalDown = true;
+//        boolean allCriticalDown = true;
 
         for (SubsistemaSalut s : subsistemes) {
             SubsistemesEnum subsistemaEnum = SubsistemesEnum.valueOfCodi(s.getCodi());
@@ -252,25 +252,29 @@ public class SubsistemaMetricHelper {
             switch (s.getEstat()) {
                 case UP:
                     anyUp = true;
-                    if (critic) allCriticalDown = false;
+//                    if (critic) allCriticalDown = false;
                     break;
                 case WARN:
                     anyWarn = true;
-                    if (critic) allCriticalDown = false;
+//                    if (critic) allCriticalDown = false;
                     break;
                 case DEGRADED:
-                    anyDegraded = true;
-                    if (critic) allCriticalDown = false;
+                    if (critic) {
+//                        allCriticalDown = false;
+                        anyDegraded = true;
+                    } else {
+                        anyWarn = true;
+                    }
                     break;
                 case ERROR:
                     anyError = true;
-                    if (critic) allCriticalDown = false;
+//                    if (critic) allCriticalDown = false;
                     break;
                 case DOWN:
                     if (critic) {
                         anyDown = true;
                     } else {
-                        anyError = true;
+                        anyWarn = true;
                     }
                     break;
                 default:
@@ -278,9 +282,10 @@ public class SubsistemaMetricHelper {
             }
         }
 
-        if (allCriticalDown) {
-            estatSubsistemes = EstatSalutEnum.DOWN;
-        } else if (anyError) {
+//        if (allCriticalDown) {
+//            estatSubsistemes = EstatSalutEnum.DOWN;
+//        } else
+        if (anyDown || anyError) {
             estatSubsistemes = EstatSalutEnum.ERROR;
         } else if(anyDegraded) {
             estatSubsistemes =EstatSalutEnum.DEGRADED;

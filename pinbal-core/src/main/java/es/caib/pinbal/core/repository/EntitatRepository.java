@@ -90,6 +90,8 @@ public interface EntitatRepository extends JpaRepository<Entitat, Long> {
 
     List<Entitat> findByActivaTrue();
 
+    @Query("select distinct e.codi from Entitat e")
+    List<String> findAllCodis();
 
 
 	@Modifying
@@ -99,4 +101,5 @@ public interface EntitatRepository extends JpaRepository<Entitat, Long> {
 			"WHERE CREATEDBY_CODI = :codiAntic OR LASTMODIFIEDBY_CODI = :codiAntic",
 			nativeQuery = true)
 	int updateUsuariAuditoria(@Param("codiAntic") String codiAntic, @Param("codiNou") String codiNou);
+
 }

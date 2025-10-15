@@ -7,6 +7,7 @@ import es.caib.comanda.ms.salut.model.AppInfo;
 import es.caib.comanda.ms.salut.model.ContextInfo;
 import es.caib.comanda.ms.salut.model.IntegracioInfo;
 import es.caib.comanda.ms.salut.model.SalutInfo;
+import es.caib.comanda.ms.salut.model.SubsistemaInfo;
 import es.caib.pinbal.core.service.SalutService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ejb.interceptor.SpringBeanAutowiringInterceptor;
@@ -36,7 +37,7 @@ public class SalutServiceBean implements SalutService {
     }
 
     @Override
-    public List<AppInfo> getSubsistemes() {
+    public List<SubsistemaInfo> getSubsistemes() {
         return delegate.getSubsistemes();
     }
 

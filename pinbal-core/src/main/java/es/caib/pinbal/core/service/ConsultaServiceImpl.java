@@ -2524,6 +2524,7 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 					System.currentTimeMillis() - t0,
 					"ERROR",
 					ex);
+            log.error("Error en el procés de generarDadesExplotacio.", ex);
 		}
 
 	}
@@ -2650,7 +2651,9 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 	private ExplotConsultaDimensioEntity toConsultaDimensioEntity(ExplotConsultaDimensio dimensio) {
 		return ExplotConsultaDimensioEntity.builder()
 				.entitatId(dimensio.getEntitatId())
+                .entitatCodi(dimensio.getEntitatCodi())
 				.procedimentId(dimensio.getProcedimentId())
+                .procedimentCodi(dimensio.getProcedimentCodi())
 				.serveiCodi(dimensio.getServeiCodi())
 				.usuariCodi(dimensio.getUsuariCodi())
 				.build();
