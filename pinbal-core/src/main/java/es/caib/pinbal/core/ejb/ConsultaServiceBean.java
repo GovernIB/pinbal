@@ -183,6 +183,12 @@ public class ConsultaServiceBean implements ConsultaService {
 	}
 
 	@Override
+	@RolesAllowed("PBL_ADMIN")
+	public FitxerDto descarregarXmlTokensZip(Long id) throws ConsultaNotFoundException {
+		return delegate.descarregarXmlTokensZip(id);
+	}
+
+	@Override
 	@RolesAllowed("tothom")
 	public JustificantDto reintentarGeneracioJustificant(
 			Long id,

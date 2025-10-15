@@ -35,6 +35,8 @@ import es.caib.pinbal.core.model.EntitatUsuari;
 import es.caib.pinbal.core.model.HistoricConsulta;
 import es.caib.pinbal.core.model.Procediment;
 import es.caib.pinbal.core.model.ProcedimentServei;
+import es.caib.pinbal.core.model.ScspToken;
+import es.caib.pinbal.core.model.ScspTokenId;
 import es.caib.pinbal.core.model.llistat.LlistatHistoricConsulta;
 import es.caib.pinbal.core.repository.EntitatRepository;
 import es.caib.pinbal.core.repository.EntitatUsuariRepository;
@@ -1430,6 +1432,64 @@ public class HistoricConsultaServiceImpl implements HistoricConsultaService, App
 		if (justificantLocks.containsKey(id)) {
 			justificantLocks.remove(id);
 		}
+	}
+
+	// ZIP descarrega de missatges XML de CORE_TOKEN_DATA per Administrador (històric)
+	@Override
+	@Transactional(readOnly = true)
+	public FitxerDto descarregarXmlTokensZip(Long id) throws ConsultaNotFoundException {
+		HistoricConsulta consulta = historicConsultaRepository.findOne(id);
+		if (consulta == null) {
+			throw new ConsultaNotFoundException();
+		}
+		String idPeticion = consulta.getScspPeticionId();
+		List<ScspToken> tokens = tokenRepository.findByIdPeticionOrderByTipoMensajeAsc(idPeticion);
+        if (tokens.isEmpty()) {
+            return null;
+        }
+		try {
+			ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			ZipOutputStream zos = new ZipOutputStream(baos);
+			Map<Integer, Integer> counters = new HashMap<Integer, Integer>();
+			for (ScspToken t : tokens) {
+				String folder = mapTipoMensajeFolder(t.getTipoMensaje());
+				Integer count = counters.get(t.getTipoMensaje());
+				if (count == null) count = 0;
+				counters.put(t.getTipoMensaje(), new Integer(count.intValue() + 1));
+				String filename;
+				if (count.intValue() == 0) filename = folder + "/" + folder + ".xml"; else filename = folder + "/" + folder + "_" + count.intValue() + ".xml";
+				zos.putNextEntry(new ZipEntry(filename));
+				byte[] data = (t.getDatos() != null ? t.getDatos().getBytes("UTF-8") : new byte[0]);
+				zos.write(data);
+				zos.closeEntry();
+			}
+			zos.close();
+			FitxerDto fitxer = new FitxerDto();
+			fitxer.setNom("XML_" + idPeticion + ".zip");
+			fitxer.setContingut(baos.toByteArray());
+			return fitxer;
+		} catch (Exception e) {
+			try {
+				ByteArrayOutputStream baos = new ByteArrayOutputStream();
+				ZipOutputStream zos = new ZipOutputStream(baos);
+				zos.close();
+				FitxerDto fitxer = new FitxerDto();
+				fitxer.setNom("XML_" + idPeticion + ".zip");
+				fitxer.setContingut(baos.toByteArray());
+				return fitxer;
+			} catch (Exception ignore) {}
+			return null;
+		}
+	}
+
+	private String mapTipoMensajeFolder(Integer tipo) {
+		if (tipo == null) return "altres";
+		if (tipo.intValue() == ScspTokenId.PETICION.intValue()) return "peticion";
+		else if (tipo.intValue() == ScspTokenId.CONFIRMACION_PETICION.intValue()) return "confirmacion-peticion";
+		else if (tipo.intValue() == ScspTokenId.SOLICITUD_RESPUESTA.intValue()) return "solicitud-respuesta";
+		else if (tipo.intValue() == ScspTokenId.RESPUESTA.intValue()) return "respuesta";
+		else if (tipo.intValue() == ScspTokenId.FAULT.intValue()) return "fault";
+		else return "altres";
 	}
 
 }

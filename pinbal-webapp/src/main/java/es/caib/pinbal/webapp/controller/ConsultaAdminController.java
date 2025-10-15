@@ -9,6 +9,7 @@ import es.caib.pinbal.core.dto.ConsultaDto;
 import es.caib.pinbal.core.dto.DadaEspecificaDto;
 import es.caib.pinbal.core.dto.EntitatDto;
 import es.caib.pinbal.core.dto.EntitatDto.EntitatTipusDto;
+import es.caib.pinbal.core.dto.FitxerDto;
 import es.caib.pinbal.core.dto.JsonResponse;
 import es.caib.pinbal.core.dto.JustificantDto;
 import es.caib.pinbal.core.dto.NodeDto;
@@ -251,6 +252,33 @@ public class ConsultaAdminController extends BaseController {
 			throw new JustificantGeneracioException();
 		}
 		writeEmbeddedPdfToResponse(justificant.getNom(), justificant.getContingut(), response);
+	}
+
+	@RequestMapping(value = "/{consultaId}/xmlZip", method = RequestMethod.GET)
+	public String xmlZip(
+			HttpServletRequest request,
+			HttpServletResponse response,
+			@PathVariable Long consultaId,
+			Model model) throws Exception {
+		try {
+            // TODO: Falta afegir informació a cada petició per saber si té missatges xml
+
+			// Només ADMIN pot descarregar
+			// Sense comprovar entitat; s'aplica seguretat a nivell de servei
+			FitxerDto fitxer = isHistoric(request)
+					? historicConsultaService.descarregarXmlTokensZip(consultaId)
+					: consultaService.descarregarXmlTokensZip(consultaId);
+			if (fitxer != null && fitxer.getContingut() != null) {
+				writeFileToResponse(fitxer.getNom(), fitxer.getContingut(), response);
+				return null;
+			} else {
+				AlertHelper.warning(request, getMessage(request, "consulta.controller.xmlzip.buit"));
+				return "redirect:../../consulta";
+			}
+		} catch (Exception ex) {
+			AlertHelper.error(request, getMessage(request, "consulta.controller.xmlzip.error"));
+			return "redirect:../../consulta";
+		}
 	}
 
 	@RequestMapping(value="/{consultaId}/justificant/previsualitzacio", method = RequestMethod.GET)
