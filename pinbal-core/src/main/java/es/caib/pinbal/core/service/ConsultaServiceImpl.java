@@ -3921,11 +3921,11 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
  			throw new ConsultaNotFoundException();
  		}
  		String idPeticion = consulta.getScspPeticionId();
- 		List<ScspToken> tokens = tokenRepository.findByIdPeticionOrderByTipoMensajeAsc(idPeticion);
-        if (tokens.isEmpty()) {
-            return null;
-        }
  		try {
+ 		    List<ScspToken> tokens = tokenRepository.findByIdPeticionOrderByTipoMensajeAsc(idPeticion);
+            if (tokens.isEmpty()) {
+                return null;
+            }
  			ByteArrayOutputStream baos = new ByteArrayOutputStream();
  			ZipOutputStream zos = new ZipOutputStream(baos);
  			Map<Integer, Integer> counters = new HashMap<Integer, Integer>();

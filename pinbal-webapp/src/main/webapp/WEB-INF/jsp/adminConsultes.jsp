@@ -287,7 +287,7 @@
 			}, {
 				targets: [10],
 				orderable: false,
-				width: "3%",
+				width: "1%",
 				render: function (data, type, row, meta) {
 					var template = $('#template-xmlzip').html();
 					return Mustache.render(template, row);
@@ -382,7 +382,7 @@
 </script>
 <script id="template-xmlzip" type="x-tmpl-mustache">
 <a class="btn btn-default btn-small" href="consulta/{{ id }}/xmlZip">
-	<i class="far fa-file-archive" title="XML" alt="XML"></i>
+	<i class="far fa-file-archive" title="<spring:message code="consulta.list.taula.xmlzip"/>" alt="XML"></i>
 </a>
 </script>
 <script id="template-details" type="x-tmpl-mustache">

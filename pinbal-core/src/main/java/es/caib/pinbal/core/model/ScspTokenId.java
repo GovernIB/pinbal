@@ -1,9 +1,11 @@
 package es.caib.pinbal.core.model;
 
 import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 
+@NoArgsConstructor
 @AllArgsConstructor
 public class ScspTokenId implements Serializable {
 

@@ -126,6 +126,13 @@ $(document).ready(function () {
 						</div>
 					</div>
 				</form>
+                <div class="row">
+                    <div class="col-md-offset-10 col-md-2">
+                        <a class="btn btn-default pull-right" style="top: -4px; position: relative;" href="<c:url value="/modal/admin/consulta/${consulta.id}/xmlZip"/>">
+                            <i class="fas fa-download"></i> <spring:message code="admin.consulta.info.xmlzip"/>
+                        </a>
+                    </div>
+                </div>
 			</div>
 		</div>		
 		
@@ -304,25 +311,29 @@ $(document).ready(function () {
 							<c:set var="dadesEspecifiquesValors" value="${consulta.dadesEspecifiquesMap}" scope="request"/>
 							<c:set var="campsPerMostrar" value="${campsSenseAgrupar}" scope="request"/>
 							<jsp:include page="import/dadesEspecifiquesForm.jsp"/>
+
 							<c:forEach var="grup" items="${grups}">
-								<fieldset id="grup_${grup.id}" class="fs-grup<c:if test='${grup.grupRegla}'> grup-regla</c:if> editable" data-nom="${grup.nom}">
-									<legend><span class="fs-grup-nom">${grup.nom}</span></legend>
-									<div class="clearfix legend-margin-bottom"></div>
-									<c:set var="campsPerMostrar" value="${campsDadesEspecifiquesAgrupats[grup.id]}" scope="request"/>
-									<jsp:include page="import/dadesEspecifiquesForm.jsp"/>
-										<%-- Subgrups --%>
-									<c:if test="${not empty grup.fills}">
-										<c:forEach var="subgrup" items="${grup.fills}">
-											<div id="grup_${subgrup.id}" class="panel panel-default fs-subgrup<c:if test='${subgrup.grupRegla}'> grup-regla</c:if> editable" data-nom="${subgrup.nom}">
-												<div class="panel-heading"><h3 class="panel-title">${subgrup.nom}</h3></div>
-												<div class="panel-body">
-													<c:set var="campsPerMostrar" value="${campsDadesEspecifiquesAgrupats[subgrup.id]}" scope="request"/>
-													<jsp:include page="import/dadesEspecifiquesForm.jsp"/>
-												</div>
-											</div>
-										</c:forEach>
-									</c:if>
-								</fieldset>
+                                <div class="clearfix legend-margin-bottom"></div>
+                                <div class="col-md-12">
+                                    <fieldset id="grup_${grup.id}" class="fs-grup<c:if test='${grup.grupRegla}'> grup-regla</c:if> editable" data-nom="${grup.nom}">
+                                        <legend><span class="fs-grup-nom">${grup.nom}</span></legend>
+                                        <div class="clearfix legend-margin-bottom"></div>
+                                        <c:set var="campsPerMostrar" value="${campsDadesEspecifiquesAgrupats[grup.id]}" scope="request"/>
+                                        <jsp:include page="import/dadesEspecifiquesForm.jsp"/>
+                                            <%-- Subgrups --%>
+                                        <c:if test="${not empty grup.fills}">
+                                            <c:forEach var="subgrup" items="${grup.fills}">
+                                                <div id="grup_${subgrup.id}" class="panel panel-default fs-subgrup<c:if test='${subgrup.grupRegla}'> grup-regla</c:if> editable" data-nom="${subgrup.nom}">
+                                                    <div class="panel-heading"><h3 class="panel-title">${subgrup.nom}</h3></div>
+                                                    <div class="panel-body">
+                                                        <c:set var="campsPerMostrar" value="${campsDadesEspecifiquesAgrupats[subgrup.id]}" scope="request"/>
+                                                        <jsp:include page="import/dadesEspecifiquesForm.jsp"/>
+                                                    </div>
+                                                </div>
+                                            </c:forEach>
+                                        </c:if>
+                                    </fieldset>
+                                </div>
 							</c:forEach>
 						</fieldset>
 					</c:if>
