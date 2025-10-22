@@ -139,6 +139,10 @@ public class ClauPrivada implements Serializable {
 	public OrganismeCessionari getOrganisme() {
 		return organisme;
 	}
+
+    public boolean isCaducada() {
+        return dataBaixa != null && new Date().after(dataBaixa);
+    }
 	
 	
 	public void update(

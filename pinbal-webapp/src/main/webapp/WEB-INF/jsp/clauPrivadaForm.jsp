@@ -67,18 +67,18 @@
 		<div class="container-fluid">
 			<div class="row">
 				<div class="col-md-12">
-					<pbl:inputText name="alies" required="true" labelSize="1" inline="false" textKey="clau.privada.form.camp.alies"/>
-					<pbl:inputText name="nom" required="true" labelSize="1" inline="false" textKey="clau.privada.form.camp.nom"/>
-					<pbl:inputText name="password" required="true" labelSize="1" inline="false" textKey="clau.privada.form.camp.password"/>
-					<pbl:inputText name="numSerie" required="true" labelSize="1" inline="false" textKey="clau.privada.form.camp.numeroserie"/>
-					<pbl:inputDate name="dataAlta" required="true" labelSize="1" inline="false" textKey="clau.privada.form.camp.data.alta"/>
-					<pbl:inputDate name="dataBaixa" required="false" labelSize="1" inline="false" textKey="clau.privada.form.camp.data.baixa"/>
+					<pbl:inputText name="alies" required="true" labelSize="2" inline="false" textKey="clau.privada.form.camp.alies"/>
+					<pbl:inputText name="nom" required="true" labelSize="2" inline="false" textKey="clau.privada.form.camp.nom"/>
+					<pbl:inputText name="password" required="true" labelSize="2" inline="false" textKey="clau.privada.form.camp.password"/>
+					<pbl:inputText name="numSerie" required="true" labelSize="2" inline="false" textKey="clau.privada.form.camp.numeroserie"/>
+					<pbl:inputDate name="dataAlta" required="true" labelSize="2" inline="false" textKey="clau.privada.form.camp.data.alta"/>
+					<pbl:inputDate name="dataBaixa" required="false" labelSize="2" inline="false" textKey="clau.privada.form.camp.data.baixa"/>
 
 					<c:set var="campPath" value="interoperabilitat"/>
 					<c:set var="campErrors"><form:errors path="${campPath}"/></c:set>
 					<div class="form-group vcenter<c:if test="${not empty campErrors}"> error</c:if>">
-						<label class="control-label col-md-1" for="${campPath}"><spring:message code="servei.form.camp.pinbal.document.obligatori"/></label>
-						<div class="col-md-11">
+						<label class="control-label col-md-2" for="${campPath}"><spring:message code="servei.form.camp.pinbal.document.obligatori"/></label>
+						<div class="col-md-10">
 							<form:checkbox path="${campPath}" id="${campPath}"/>
 							<form:errors path="${campPath}" cssClass="help-block"/>
 						</div>

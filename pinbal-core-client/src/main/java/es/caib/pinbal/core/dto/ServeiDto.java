@@ -55,6 +55,7 @@ public class ServeiDto extends AbstractIdentificable<Long> implements Serializab
 	private String scspXpathCifradoAsincrono;
 	private String scspAlgoritmoCifrado;
 	private String scspValidacionFirma;
+    private boolean useCertificatEntitat = false;
 	private String scspPrefijoPeticion;
 	private String scspEsquemas;
 	private int scspNumeroMaximoReenvios;

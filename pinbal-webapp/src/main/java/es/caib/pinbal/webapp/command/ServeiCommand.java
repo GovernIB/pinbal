@@ -69,6 +69,7 @@ public class ServeiCommand {
 	private String scspAlgoritmoCifrado;
 	@Size(max=32)
 	private String scspValidacionFirma;
+    private boolean useCertificatEntitat = false;
 	@Size(max=8)
 	private String scspPrefijoPeticion;
 	@Size(max=256)

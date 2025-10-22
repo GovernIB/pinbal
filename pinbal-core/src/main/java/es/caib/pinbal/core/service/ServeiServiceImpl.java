@@ -35,6 +35,7 @@ import es.caib.pinbal.core.helper.ServeiHelper;
 import es.caib.pinbal.core.helper.ServeiXsdHelper;
 import es.caib.pinbal.core.helper.UsuariHelper;
 import es.caib.pinbal.core.model.Entitat;
+import es.caib.pinbal.core.model.EntitatCertificat;
 import es.caib.pinbal.core.model.EntitatServei;
 import es.caib.pinbal.core.model.EntitatUsuari;
 import es.caib.pinbal.core.model.Procediment;
@@ -51,6 +52,7 @@ import es.caib.pinbal.core.model.ServeiJustificantCamp;
 import es.caib.pinbal.core.model.ServeiRegla;
 import es.caib.pinbal.core.model.ServeiXsd;
 import es.caib.pinbal.core.regles.ReglaHelper;
+import es.caib.pinbal.core.repository.EntitatCertificatRepository;
 import es.caib.pinbal.core.repository.EntitatRepository;
 import es.caib.pinbal.core.repository.EntitatServeiRepository;
 import es.caib.pinbal.core.repository.EntitatUsuariRepository;
@@ -159,6 +161,8 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 	private ServeiReglaRepository serveiReglaRepository;
 	@Resource
     private ServeiXsdRepository serveiXsdRepository;
+    @Resource
+    private EntitatCertificatRepository entitatCertificatRepository;
 
 	@Resource
 	private ServeiHelper serveiHelper;
@@ -207,6 +211,7 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 					true,
 					true,
 					false,
+                    false,
 					actiu).build();
 			serveiConfigRepository.save(serveiConfig);
 		} else {
@@ -227,7 +232,7 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 
 	@Transactional
 	@Override
-	public ServeiDto save(ServeiDto servei) {
+	public ServeiDto save(ServeiDto servei) throws ServeiNotFoundException {
 		log.debug("Guardant dades per al servicio SCSP (codi=" + servei.getCodi() + ")");
 		getScspHelper().saveServicio(toServicioScsp(servei));
 		ServeiConfig serveiConfig = serveiConfigRepository.findByServei(servei.getCodi());
@@ -253,6 +258,7 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 					servei.isPinbalAddDadesEspecifiques(),
 					servei.isUseAutoClasse(),
 					servei.isEnviarSolicitant(),
+                    servei.isUseCertificatEntitat(),
 					true).build();
 			serveiConfig.setPinbalUnitatDir3FromEntitat(servei.isPinbalUnitatDir3FromEntitat());
 			serveiConfigRepository.save(serveiConfig);
@@ -260,6 +266,7 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 		} else {
 			// Si ja està creat l'actualitza
 			rolAntic = serveiConfig.getRoleName();
+            boolean useCertificatEntitatChanged = serveiConfig.isUseCertificatEntitat() != servei.isUseCertificatEntitat();
 			serveiConfig.update(
 					servei.getPinbalCustodiaCodi(),
 					servei.getPinbalRoleName(),
@@ -286,7 +293,8 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 					servei.isPinbalIniDadesExpecifiques(),
 					servei.isPinbalAddDadesEspecifiques(),
 					servei.isUseAutoClasse(),
-					servei.isEnviarSolicitant());
+					servei.isEnviarSolicitant(),
+                    servei.isUseCertificatEntitat());
 			serveiConfig.setPinbalUnitatDir3FromEntitat(servei.isPinbalUnitatDir3FromEntitat());
 			if (servei.getFitxerAjudaNom() != null && !servei.getFitxerAjudaNom().isEmpty()) {
 				serveiConfig.updateFitxerAjuda(
@@ -294,6 +302,14 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 						servei.getFitxerAjudaMimeType(),
 						servei.getFitxerAjudaContingut());
 			}
+            if (useCertificatEntitatChanged) {
+                log.info("El camp useCertificatEntitat ha canviat al servei {}. Actualitzant ServicioOrganismoCesionario...", servei.getCodi());
+
+                actualitzarServiciosOrganismoCesionario(
+                        serveiConfig.getId(),
+                        servei.isUseCertificatEntitat()
+                );
+            }
 		}
 		// Refresca els permisos per accedir al servei
 		if (rolAntic != null && !rolAntic.isEmpty()) {
@@ -2240,5 +2256,95 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 		ServeiConfig serveiConfig = serveiConfigRepository.findByServei(serveiCodi);
 		return serveiConfig != null && serveiConfig.isActivaGestioXsd();
 	}
+
+
+
+    // Mètodes per actualitzar els Serveis d'organismes cessionaris
+    // ---------------------------------------------------------------------------------------------
+
+    /**
+     * Actualitza els ServicioOrganismoCesionario segons el valor de useCertificatEntitat
+     *
+     * @param serveiConfigId ID del ServeiConfig
+     * @param useCertificatEntitat Si true, crea SOC per cada EntitatCertificat;
+     *                             si false, només manté el SOC amb la claveFirma del servei
+     */
+    @Transactional
+    public void actualitzarServiciosOrganismoCesionario(
+            Long serveiConfigId,
+            boolean useCertificatEntitat) throws ServeiNotFoundException {
+
+        ServeiConfig serveiConfig = serveiConfigRepository.findOne(serveiConfigId);
+        if (serveiConfig == null) {
+            throw new ServeiNotFoundException(serveiConfigId.toString());
+        }
+
+        String serveiCodi = serveiConfig.getServei();
+        Servicio servicio = getServicioByCode(serveiCodi);
+
+
+        if (useCertificatEntitat) {
+            // Crear ServicioOrganismoCesionario per cada EntitatCertificat actiu
+            crearServiciosPerEntitats(serveiCodi);
+        } else {
+            // Eliminar tots els ServicioOrganismoCesionario i crear-ne un amb la claveFirma del servei
+            resetServiciosADefaultClave(servicio);
+        }
+    }
+
+    /**
+     * Crea ServicioOrganismoCesionario per cada EntitatCertificat actiu
+     */
+    private void crearServiciosPerEntitats(String serveiCodi) {
+
+        // Obtenir tots els certificats d'entitat actius
+        List<EntitatCertificat> certificats = entitatCertificatRepository.findByActiuTrue();
+
+        for (EntitatCertificat cert : certificats) {
+            Entitat entitat = cert.getEntitat();
+
+            // Si el servei no està configurat per l'entitat no crearem ServicioOrganismoCesionario
+            EntitatServei entitatServei = entitatServeiRepository.findByEntitatIdAndServei(entitat.getId(), serveiCodi);
+            if (entitatServei == null) {
+                continue;
+            }
+
+            // Assegurar que existeix OrganismoCesionario per aquesta entitat
+            scspHelper.organismoCesionarioUpdate(
+                    entitat.getCif(),
+                    entitat.getNom(),
+                    false  // No bloqueado
+            );
+
+            // Crear/actualitzar ServicioOrganismoCesionario amb el certificat de l'entitat
+            scspHelper.assignarCertificatAServei(
+                    entitat.getCif(),
+                    serveiCodi,
+                    cert.getClau().getAlies()
+            );
+        }
+    }
+
+    /**
+     * Elimina tots els ServicioOrganismoCesionario del servei i opcionalment
+     * en crea un amb la claveFirma per defecte
+     */
+    private void resetServiciosADefaultClave(Servicio servicio) {
+
+        ClavePrivada claveFirma = servicio.getClaveFirma();
+        String claveFiremaAlias = claveFirma != null ? claveFirma.getAlias() : null;
+
+
+        // Eliminar tots els ServicioOrganismoCesionario per aquest servei
+        scspHelper.eliminarTotsSeviciosOrganismo(servicio.getCodCertificado());
+
+        // Si hi ha claveFirma configurada, crear un SOC per cada entitat que tingui assignat el servei
+        // S'utilitza la claveFirma del Servicio
+        List<EntitatServei> entitatServeis = entitatServeiRepository.findByServei(servicio.getCodCertificado());
+        for (EntitatServei entitatServei : entitatServeis) {
+            scspHelper.assignarDefaultCertificatAServei(entitatServei.getEntitat().getCif(), entitatServei.getServei());
+        }
+
+    }
 
 }

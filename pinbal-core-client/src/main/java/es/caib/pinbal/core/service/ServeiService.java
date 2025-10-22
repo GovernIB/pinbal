@@ -49,7 +49,7 @@ public interface ServeiService {
 	 * @return El servei creat.
 	 */
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
-	public ServeiDto save(ServeiDto servei);
+	public ServeiDto save(ServeiDto servei) throws ServeiNotFoundException;
 
 	/**
 	 * Esborra la informació d'un servei SCSP.

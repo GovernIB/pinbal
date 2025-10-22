@@ -84,4 +84,8 @@
             id="EstadisticaService"
             jndi-name="pinbal/EstadisticaServiceBean/local"
             business-interface="es.caib.pinbal.core.service.EstadisticaService"/>
+    <jee:local-slsb
+            id="EntitatCertificatService"
+            jndi-name="pinbal/EntitatCertificatServiceBean/local"
+            business-interface="es.caib.pinbal.core.service.EntitatCertificatService"/>
 </beans>
