@@ -43,8 +43,17 @@
 		            	return data==null ? "" : moment(data).format('DD-MM-YYYY' )
 		            }
 		        },
+                {
+                    targets: [5],
+                    orderable: false,
+                    width: "1%",
+                    render: function (data, type, row, meta) {
+                        var template = $('#template-xentitat').html();
+                        return Mustache.render(template, row);
+                    }
+                },
 				{
-					targets: [4],
+					targets: [6],
 					orderable: false,
 					width: "1%",
 					render: function (data, type, row, meta) {
@@ -68,20 +77,29 @@
 			<th data-data="nom"><spring:message code="clau.privada.list.taula.columna.nom" /></th>
 			<th data-data="numSerie"><spring:message code="clau.privada.list.taula.columna.numeroserie" /></th>
 			<th data-data="dataAlta"><spring:message code="clau.privada.list.taula.columna.dataalta" /></th>
+			<th data-data="dataBaixa"><spring:message code="clau.privada.list.taula.columna.databaixa" /></th>
+			<th data-data="perEntitat"><spring:message code="clau.privada.form.camp.per.entitat" /></th>
 			<th data-data="id"></th>
 			</tr>
 		</thead>
 	</table>
 
-<script id="template-actions" type="x-tmpl-mustache">
-	<div class="btn-group">
-		<a class="btn btn-primary dropdown-toggle" data-toggle="dropdown"><i class="fas fa-cog"></i>&nbsp;<spring:message code="comu.accions"/>&nbsp;<span class="caret"></span></a>
-		<ul class="dropdown-menu dropdown-menu-right">
-			<li><a href="<c:url value="/scsp/clauprivada/{{ id }}"/>" data-toggle="modal" data-refresh-pagina="true"><i class="fas fa-pen"></i></i>&nbsp;<spring:message code="comu.boto.modificar"/></a></li>
-			<li><a href="<c:url value="/scsp/clauprivada/{{ id }}/delete"/>" class="confirm-esborrar"><i class="fas fa-trash-alt"></i>&nbsp;<spring:message code="comu.boto.esborrar"/></a></li>
-		</ul>
-	</div>
-</script>	
+    <script id="template-actions" type="x-tmpl-mustache">
+        <div class="btn-group">
+            <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown"><i class="fas fa-cog"></i>&nbsp;<spring:message code="comu.accions"/>&nbsp;<span class="caret"></span></a>
+            <ul class="dropdown-menu dropdown-menu-right">
+                <li><a href="<c:url value="/scsp/clauprivada/{{ id }}"/>" data-toggle="modal" data-refresh-pagina="true"><i class="fas fa-pen"></i></i>&nbsp;<spring:message code="comu.boto.modificar"/></a></li>
+                <li><a href="<c:url value="/scsp/clauprivada/{{ id }}/delete"/>" class="confirm-esborrar"><i class="fas fa-trash-alt"></i>&nbsp;<spring:message code="comu.boto.esborrar"/></a></li>
+            </ul>
+        </div>
+    </script>
+
+    <script id="template-xentitat" type="x-tmpl-mustache">
+        {{#perEntitat}}
+            <span class="fa fa-check"></span>
+        {{/perEntitat}}
+    </script>
+
 	<script type="text/javascript">
 		function onInvokeAction(id) {
 			setExportToLimit(id, '');

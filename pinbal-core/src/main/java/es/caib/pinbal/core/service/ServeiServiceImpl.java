@@ -34,8 +34,8 @@ import es.caib.pinbal.core.helper.PluginHelper;
 import es.caib.pinbal.core.helper.ServeiHelper;
 import es.caib.pinbal.core.helper.ServeiXsdHelper;
 import es.caib.pinbal.core.helper.UsuariHelper;
+import es.caib.pinbal.core.model.ClauPrivada;
 import es.caib.pinbal.core.model.Entitat;
-import es.caib.pinbal.core.model.EntitatCertificat;
 import es.caib.pinbal.core.model.EntitatServei;
 import es.caib.pinbal.core.model.EntitatUsuari;
 import es.caib.pinbal.core.model.Procediment;
@@ -52,7 +52,7 @@ import es.caib.pinbal.core.model.ServeiJustificantCamp;
 import es.caib.pinbal.core.model.ServeiRegla;
 import es.caib.pinbal.core.model.ServeiXsd;
 import es.caib.pinbal.core.regles.ReglaHelper;
-import es.caib.pinbal.core.repository.EntitatCertificatRepository;
+import es.caib.pinbal.core.repository.ClauPrivadaRepository;
 import es.caib.pinbal.core.repository.EntitatRepository;
 import es.caib.pinbal.core.repository.EntitatServeiRepository;
 import es.caib.pinbal.core.repository.EntitatUsuariRepository;
@@ -160,9 +160,9 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 	@Resource
 	private ServeiReglaRepository serveiReglaRepository;
 	@Resource
-    private ServeiXsdRepository serveiXsdRepository;
-    @Resource
-    private EntitatCertificatRepository entitatCertificatRepository;
+	private ServeiXsdRepository serveiXsdRepository;
+	@Resource
+	private ClauPrivadaRepository clauPrivadaRepository;
 
 	@Resource
 	private ServeiHelper serveiHelper;
@@ -304,7 +304,6 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 			}
             if (useCertificatEntitatChanged) {
                 log.info("El camp useCertificatEntitat ha canviat al servei {}. Actualitzant ServicioOrganismoCesionario...", servei.getCodi());
-
                 actualitzarServiciosOrganismoCesionario(
                         serveiConfig.getId(),
                         servei.isUseCertificatEntitat()
@@ -332,6 +331,38 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 		}
 		return servei;
 	}
+
+    // Mètodes per actualitzar els Serveis d'organismes cessionaris
+    // ---------------------------------------------------------------------------------------------
+
+    private void actualitzarServiciosOrganismoCesionario(
+            Long serveiConfigId,
+            boolean useCertificatEntitat) throws ServeiNotFoundException {
+
+        ServeiConfig serveiConfig = serveiConfigRepository.findOne(serveiConfigId);
+        if (serveiConfig == null) {
+            throw new ServeiNotFoundException(serveiConfigId.toString());
+        }
+
+        String serveiCodi = serveiConfig.getServei();
+        List<EntitatServei> entitatServeis = entitatServeiRepository.findByServei(serveiCodi);
+        for (EntitatServei entitatServei : entitatServeis) {
+            try {
+                // Obtenir clau privada de l'entitat
+                String aliesClauFirmaEntitat = null;
+                if (useCertificatEntitat) {
+                    ClauPrivada clauPrivada = clauPrivadaRepository.findTopByOrganismeCifAndPerEntitatTrueOrderByDataAltaDesc(entitatServei.getEntitat().getCif());
+                    aliesClauFirmaEntitat = clauPrivada != null ? clauPrivada.getAlies() : null;
+                }
+
+                // Actualitzar SOCs
+                scspHelper.actualitzarServeiOrganismoCesionario(entitatServei.getEntitat().getCif(), serveiCodi, aliesClauFirmaEntitat);
+            } catch (Exception e) {
+                log.error("Error actualitzant SOCs per entitat {} i servei {}: {}", entitatServei.getEntitat().getCif(), serveiCodi, e.getMessage(), e);
+            }
+        }
+
+    }
 
 	@Transactional
 	@Override
@@ -382,14 +413,22 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 	}
 
 	private void actualitzarServeisScspActiusEntitat(Entitat entitat) {
+        // Obtenir serveis actius
 		List<EntitatServei> entitatServeis = entitatServeiRepository.findByEntitat(entitat);
-		String[] serveisActius = new String[entitatServeis.size()];
-		for (int i = 0; i < serveisActius.length; i++) {
-			serveisActius[i] = entitatServeis.get(i).getServei();
+		Set<String> serveisActius = new HashSet<>();
+		for (int i = 0; i < entitatServeis.size(); i++) {
+			serveisActius.add(entitatServeis.get(i).getServei());
 		}
+
+        // Obtenir clau privada de l'entitat
+        ClauPrivada clauPrivada = clauPrivadaRepository.findTopByOrganismeCifAndPerEntitatTrueOrderByDataAltaDesc(entitat.getCif());
+        String aliesClauFirmaEntitat = clauPrivada != null ? clauPrivada.getAlies() : null;
+
+        // Actualitzar els serveis per òrgan SCSP
 		getScspHelper().actualitzarServiciosActivosOrganismoCesionario(
 				entitat.getCif(),
-				serveisActius);
+				serveisActius,
+                aliesClauFirmaEntitat);
 	}
 
 	@Transactional(readOnly = true)
@@ -2096,6 +2135,7 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 			dto.setPinbalAddDadesEspecifiques(serveiConfig.isAddDadesEspecifiques());
 			dto.setUseAutoClasse(serveiConfig.isUseAutoClasse());
 			dto.setEnviarSolicitant(serveiConfig.isEnviarSolicitant());
+            dto.setUseCertificatEntitat(serveiConfig.isUseCertificatEntitat());
 
 			dto.setDataDarreraActualitzacio(serveiConfig.getLastModifiedDate() != null ? serveiConfig.getLastModifiedDate().toDate() : null);
 		}
@@ -2256,95 +2296,5 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 		ServeiConfig serveiConfig = serveiConfigRepository.findByServei(serveiCodi);
 		return serveiConfig != null && serveiConfig.isActivaGestioXsd();
 	}
-
-
-
-    // Mètodes per actualitzar els Serveis d'organismes cessionaris
-    // ---------------------------------------------------------------------------------------------
-
-    /**
-     * Actualitza els ServicioOrganismoCesionario segons el valor de useCertificatEntitat
-     *
-     * @param serveiConfigId ID del ServeiConfig
-     * @param useCertificatEntitat Si true, crea SOC per cada EntitatCertificat;
-     *                             si false, només manté el SOC amb la claveFirma del servei
-     */
-    @Transactional
-    public void actualitzarServiciosOrganismoCesionario(
-            Long serveiConfigId,
-            boolean useCertificatEntitat) throws ServeiNotFoundException {
-
-        ServeiConfig serveiConfig = serveiConfigRepository.findOne(serveiConfigId);
-        if (serveiConfig == null) {
-            throw new ServeiNotFoundException(serveiConfigId.toString());
-        }
-
-        String serveiCodi = serveiConfig.getServei();
-        Servicio servicio = getServicioByCode(serveiCodi);
-
-
-        if (useCertificatEntitat) {
-            // Crear ServicioOrganismoCesionario per cada EntitatCertificat actiu
-            crearServiciosPerEntitats(serveiCodi);
-        } else {
-            // Eliminar tots els ServicioOrganismoCesionario i crear-ne un amb la claveFirma del servei
-            resetServiciosADefaultClave(servicio);
-        }
-    }
-
-    /**
-     * Crea ServicioOrganismoCesionario per cada EntitatCertificat actiu
-     */
-    private void crearServiciosPerEntitats(String serveiCodi) {
-
-        // Obtenir tots els certificats d'entitat actius
-        List<EntitatCertificat> certificats = entitatCertificatRepository.findByActiuTrue();
-
-        for (EntitatCertificat cert : certificats) {
-            Entitat entitat = cert.getEntitat();
-
-            // Si el servei no està configurat per l'entitat no crearem ServicioOrganismoCesionario
-            EntitatServei entitatServei = entitatServeiRepository.findByEntitatIdAndServei(entitat.getId(), serveiCodi);
-            if (entitatServei == null) {
-                continue;
-            }
-
-            // Assegurar que existeix OrganismoCesionario per aquesta entitat
-            scspHelper.organismoCesionarioUpdate(
-                    entitat.getCif(),
-                    entitat.getNom(),
-                    false  // No bloqueado
-            );
-
-            // Crear/actualitzar ServicioOrganismoCesionario amb el certificat de l'entitat
-            scspHelper.assignarCertificatAServei(
-                    entitat.getCif(),
-                    serveiCodi,
-                    cert.getClau().getAlies()
-            );
-        }
-    }
-
-    /**
-     * Elimina tots els ServicioOrganismoCesionario del servei i opcionalment
-     * en crea un amb la claveFirma per defecte
-     */
-    private void resetServiciosADefaultClave(Servicio servicio) {
-
-        ClavePrivada claveFirma = servicio.getClaveFirma();
-        String claveFiremaAlias = claveFirma != null ? claveFirma.getAlias() : null;
-
-
-        // Eliminar tots els ServicioOrganismoCesionario per aquest servei
-        scspHelper.eliminarTotsSeviciosOrganismo(servicio.getCodCertificado());
-
-        // Si hi ha claveFirma configurada, crear un SOC per cada entitat que tingui assignat el servei
-        // S'utilitza la claveFirma del Servicio
-        List<EntitatServei> entitatServeis = entitatServeiRepository.findByServei(servicio.getCodCertificado());
-        for (EntitatServei entitatServei : entitatServeis) {
-            scspHelper.assignarDefaultCertificatAServei(entitatServei.getEntitat().getCif(), entitatServei.getServei());
-        }
-
-    }
 
 }

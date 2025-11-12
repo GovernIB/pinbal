@@ -27,4 +27,7 @@ public interface ClauPrivadaRepository extends JpaRepository<ClauPrivada, Long> 
 
 	public ClauPrivada  findByNom(String nom);
 	public ClauPrivada  findByAlies(String alies);
+
+    // Cerca la darrera clau per entitat per CIF d'organisme
+    public ClauPrivada findTopByOrganismeCifAndPerEntitatTrueOrderByDataAltaDesc(String organismeCif);
 }

@@ -33,8 +33,11 @@ public class ClauPrivadaDto extends AbstractIdentificable<Long> implements Seria
 	private Date dataBaixa;
 	private Date dataAlta;
 	private boolean interoperabilitat;
-	private Long organisme;
-	
+	private Long organismeId;
+	private String organismeNom;
+	private String organismeCif;
+
+    private boolean perEntitat;
 
 	@Override
 	public String toString() {

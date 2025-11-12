@@ -22,6 +22,7 @@ import es.caib.pinbal.core.repository.ParamConfRepository;
 import es.caib.pinbal.core.service.exception.ClauPrivadaNotFoundException;
 import es.caib.pinbal.core.service.exception.ClauPublicaNotFoundException;
 import es.caib.pinbal.core.service.exception.EmissorCertNotFoundException;
+import es.caib.pinbal.core.service.exception.EntitatNotFoundException;
 import es.caib.pinbal.core.service.exception.ParamConfNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -56,6 +57,8 @@ public class ScspServiceImpl implements ScspService {
 
 	@Resource
 	private DtoMappingHelper dtoMappingHelper;
+    @Resource
+    private EntitatClauHelper entitatClauHelper;
 
 	// Funcions de la taula de emissor de paràmetres de configuració.
 	@Override
@@ -231,37 +234,58 @@ public class ScspServiceImpl implements ScspService {
 
 	@Override
 	@Transactional
-	public ClauPrivadaDto createClauPrivada(ClauPrivadaDto dto) {
+	public ClauPrivadaDto createClauPrivada(ClauPrivadaDto dto) throws EntitatNotFoundException {
 		log.debug("Creant una nova clau privada : " + dto);
-		OrganismeCessionari organisme = organismeCessionariRepository.findById(
-				dto.getOrganisme());
-		ClauPrivada entity = ClauPrivada.getBuilder(
+		OrganismeCessionari organisme = organismeCessionariRepository.findById(dto.getOrganismeId());
+
+        // Només pot haver-hi una clau perEntitat per organisme
+        desmarcaClauAntigaPerEntitat(dto, organisme);
+
+        ClauPrivada clauPrivada = ClauPrivada.getBuilder(
 				dto.getAlies(),
 				dto.getNom(),
 				dto.getPassword(),
 				dto.getNumSerie(),
 				dto.getDataBaixa(),
 				dto.getDataAlta(),
-				dto.isInteroperabilitat(),
-				organisme).build();
+                dto.isInteroperabilitat(),
+                organisme,
+                dto.isPerEntitat()).build();
+        clauPrivada = clauPrivadaRepository.save(clauPrivada);
+
+        // Si la clau és per entitat, sincronitzar serveis que usen certificat d'entitat
+        if (dto.isPerEntitat()) {
+            entitatClauHelper.sincronitzarAmbServeis(clauPrivada, organisme.getCif());
+        }
+
 		return dtoMappingHelper.getMapperFacade().map(
-				clauPrivadaRepository.save(entity),
+				clauPrivada,
 				ClauPrivadaDto.class);
 	}
 
-	@Override
+    @Override
 	@Transactional
-	public ClauPrivadaDto updateClauPrivada(ClauPrivadaDto dto) throws ClauPrivadaNotFoundException {
+	public ClauPrivadaDto updateClauPrivada(ClauPrivadaDto dto) throws ClauPrivadaNotFoundException, EntitatNotFoundException {
 		log.debug("Actualitzant la clau privada (id = " + dto.getId() +
 					 ") amb la informació: " + dto);
-		ClauPrivada entity = clauPrivadaRepository.findById(dto.getId());
-		if (entity == null) {
+		ClauPrivada clauPrivada = clauPrivadaRepository.findById(dto.getId());
+		if (clauPrivada == null) {
 			log.debug("No s'ha trobat la clau privada (id = " + dto.getId() + ")");
 			throw new ClauPrivadaNotFoundException();
 		}
-		OrganismeCessionari organisme = organismeCessionariRepository.findById(
-				dto.getOrganisme());
-		entity.update(
+
+        // TODO
+        boolean canviaPerEntitat = clauPrivada.isPerEntitat() != dto.isPerEntitat();
+        boolean canviToPerEntitat = canviaPerEntitat && dto.isPerEntitat();
+        String organismeCifOrigen = clauPrivada.getOrganisme().getCif();
+        boolean canviaOrganisme = !clauPrivada.getOrganisme().getId().equals(dto.getOrganismeId());
+
+		OrganismeCessionari organisme = organismeCessionariRepository.findById(dto.getOrganismeId());
+
+        // Només pot haver-hi una clau perEntitat per organisme
+        desmarcaClauAntigaPerEntitat(dto, organisme);
+
+		clauPrivada.update(
 				dto.getAlies(),
 				dto.getNom(),
 				dto.getPassword(),
@@ -269,24 +293,51 @@ public class ScspServiceImpl implements ScspService {
 				dto.getDataBaixa(),
 				dto.getDataAlta(),
 				dto.isInteroperabilitat(),
-				organisme);
+				organisme,
+                dto.isPerEntitat());
+
+        // Si canvia d'entitat i canvia el valor perEntitat, o es un certificat per entitat,
+        // actualitzam els serveis de les dues entitats
+        if (canviaOrganisme && canviaPerEntitat || dto.isPerEntitat()) {
+            entitatClauHelper.actualitzarServiciosOrganismos(null, organismeCifOrigen);
+            entitatClauHelper.actualitzarServiciosOrganismos(clauPrivada.isPerEntitat() ? clauPrivada : null, organisme.getCif());
+        // Si no canvia d'entitat, però canvia el valor perEntitat,
+        // actualitzam els serveis de l'entitat
+        } else if (!canviaOrganisme && canviaPerEntitat) {
+            entitatClauHelper.actualitzarServiciosOrganismos(null, organismeCifOrigen);
+        }
+
 		return dtoMappingHelper.getMapperFacade().map(
-				entity,
+				clauPrivada,
 				ClauPrivadaDto.class);
 	}
+
+    private void desmarcaClauAntigaPerEntitat(ClauPrivadaDto novaClau, OrganismeCessionari organisme) {
+        // Només pot haver-hi una clau perEntitat per organisme
+        if (novaClau.isPerEntitat()) {
+            ClauPrivada clauPrivadaPerEntitatAntiga = clauPrivadaRepository.findTopByOrganismeCifAndPerEntitatTrueOrderByDataAltaDesc(organisme.getCif());
+            if (clauPrivadaPerEntitatAntiga != null && !clauPrivadaPerEntitatAntiga.getId().equals(novaClau.getId())) {
+                clauPrivadaPerEntitatAntiga.setPerEntitat(false);
+                clauPrivadaRepository.save(clauPrivadaPerEntitatAntiga);
+            }
+        }
+    }
 
 	@Override
 	@Transactional
 	public ClauPrivadaDto deleteClauPrivada(Long id) throws ClauPrivadaNotFoundException {
 		log.debug("Esborrant la clau privada (id =" + id + ")");
-		ClauPrivada entity = clauPrivadaRepository.findById(id);
-		if (entity == null) {
+		ClauPrivada clauPrivada = clauPrivadaRepository.findById(id);
+		if (clauPrivada == null) {
 			log.debug("No s'ha trobat la clau privada (id = " + id + ")");
 			throw new ClauPrivadaNotFoundException();
 		}
-		clauPrivadaRepository.delete(entity);
+        if (clauPrivada.isPerEntitat()) {
+            entitatClauHelper.resetClauServiciosOrganismos(clauPrivada);
+        }
+		clauPrivadaRepository.delete(clauPrivada);
 		return dtoMappingHelper.getMapperFacade().map(
-				entity,
+				clauPrivada,
 				ClauPrivadaDto.class);
 	}
 
@@ -295,7 +346,7 @@ public class ScspServiceImpl implements ScspService {
 	public Page<ClauPrivadaDto> findAllClauPrivada(Pageable pageable) {
 		log.debug("Consulta de tots les claus privades");
 		Page<ClauPrivada> page = clauPrivadaRepository.findAll(pageable);
-		return dtoMappingHelper .pageEntities2pageDto(page, ClauPrivadaDto.class, pageable);
+		return dtoMappingHelper.pageEntities2pageDto(page, ClauPrivadaDto.class, pageable);
 	}
 
 	// Funcions dels organismes cessionaris
@@ -309,7 +360,27 @@ public class ScspServiceImpl implements ScspService {
 				OrganismeCessionariDto.class);
 	}
 
-	// Funcions de la taula de emissor de certificat.
+    @Override
+    @Transactional(readOnly = true)
+    public List<OrganismeCessionariDto> findAllOrganismeCessionariActiu() {
+        log.debug("Consulta de tots els organismes cessionaris actius");
+        List<OrganismeCessionari> llista = organismeCessionariRepository.findByBloquejatFalseOrderByNomAsc();
+        return dtoMappingHelper.getMapperFacade().mapAsList(
+                llista,
+                OrganismeCessionariDto.class);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public OrganismeCessionariDto findOrganismeCessionariById(Long organismeId) {
+        log.debug("Consulta organisme cessionari amb id = " + organismeId);
+        OrganismeCessionari organismeCessionari = organismeCessionariRepository.findOne(organismeId);
+        return dtoMappingHelper.getMapperFacade().map(
+                organismeCessionari,
+                OrganismeCessionariDto.class);
+    }
+
+    // Funcions de la taula de emissor de certificat.
 	@Override
 	@Transactional(readOnly = true)
 	public ClauPublicaDto findClauPublicaById(Long id) {

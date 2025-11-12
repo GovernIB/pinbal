@@ -20,6 +20,7 @@ import static org.hibernate.type.StandardBasicTypes.BOOLEAN;
 public class ServeiDao extends BaseDao {
 
 	private static final String SERVICE_REQUEST_SENT_SQL = "SELECT enviar_solicitant FROM pbl_servei_config WHERE servei_id = :serveiCodi";
+	private static final String SERVICE_USE_CERT_SQL = "SELECT use_cert_entitat FROM pbl_servei_config WHERE servei_id = :serveiCodi";
 	private static final String SERVICE_CODE_PARAM = "serveiCodi";
 
 	public boolean serveiHasToSendSolicitant(String serveiCodi) {
@@ -32,5 +33,16 @@ public class ServeiDao extends BaseDao {
 		tx.commit();
 		return Boolean.TRUE.equals(enviarSolicitant);
 	}
+
+    public boolean serveiUseCertificatEntitat(String serveiCodi) {
+        Session session = getSessionFactory().getCurrentSession();
+        Transaction tx = session.beginTransaction();
+        SQLQuery sqlQuery = session.createSQLQuery(SERVICE_USE_CERT_SQL);
+        sqlQuery.setParameter(SERVICE_CODE_PARAM, serveiCodi);
+        sqlQuery.addScalar("use_cert_entitat", BOOLEAN);
+        Object certificatPerEntitat = sqlQuery.uniqueResult();
+        tx.commit();
+        return Boolean.TRUE.equals(certificatPerEntitat);
+    }
 
 }

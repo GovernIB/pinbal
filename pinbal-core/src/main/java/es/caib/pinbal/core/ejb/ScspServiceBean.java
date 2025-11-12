@@ -12,6 +12,7 @@ import es.caib.pinbal.core.service.ScspService;
 import es.caib.pinbal.core.service.exception.ClauPrivadaNotFoundException;
 import es.caib.pinbal.core.service.exception.ClauPublicaNotFoundException;
 import es.caib.pinbal.core.service.exception.EmissorCertNotFoundException;
+import es.caib.pinbal.core.service.exception.EntitatNotFoundException;
 import es.caib.pinbal.core.service.exception.ParamConfNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -122,13 +123,13 @@ public class ScspServiceBean implements ScspService {
 
     @Override
 	@RolesAllowed("PBL_ADMIN")
-	public ClauPrivadaDto createClauPrivada(ClauPrivadaDto dto) {
+	public ClauPrivadaDto createClauPrivada(ClauPrivadaDto dto) throws EntitatNotFoundException {
 		return delegate.createClauPrivada(dto);
 	}
 
 	@Override
 	@RolesAllowed("PBL_ADMIN")
-	public ClauPrivadaDto updateClauPrivada(ClauPrivadaDto dto) throws ClauPrivadaNotFoundException {
+	public ClauPrivadaDto updateClauPrivada(ClauPrivadaDto dto) throws ClauPrivadaNotFoundException, EntitatNotFoundException {
 		return delegate.updateClauPrivada(dto);
 	}
 
@@ -150,7 +151,19 @@ public class ScspServiceBean implements ScspService {
 		return delegate.findAllOrganismeCessionari();
 	}
 
-	@Override
+    @Override
+    @RolesAllowed("PBL_ADMIN")
+    public List<OrganismeCessionariDto> findAllOrganismeCessionariActiu() {
+        return delegate.findAllOrganismeCessionariActiu();
+    }
+
+    @Override
+    @RolesAllowed("PBL_ADMIN")
+    public OrganismeCessionariDto findOrganismeCessionariById(Long organismeId) {
+        return delegate.findOrganismeCessionariById(organismeId);
+    }
+
+    @Override
 	@RolesAllowed("PBL_ADMIN")
 	public ClauPublicaDto findClauPublicaById(Long id) {
 		return delegate.findClauPublicaById(id);

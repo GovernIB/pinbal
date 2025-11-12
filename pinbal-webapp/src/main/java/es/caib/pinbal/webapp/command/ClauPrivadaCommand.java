@@ -47,7 +47,9 @@ public class ClauPrivadaCommand {
 	
 	private boolean interoperabilitat;
 	@NotNull
-	private Long organisme;
+	private Long organismeId;
+
+    private boolean perEntitat;
 	
 	
 	public static ClauPrivadaCommand asCommand(ClauPrivadaDto dto) {

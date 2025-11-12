@@ -33,10 +33,10 @@ public interface ServeiConfigRepository extends JpaRepository<ServeiConfig, Long
 
     List<ServeiConfig> findByUseCertificatEntitatTrue();
 
-    @Query("SELECT DISTINCT sc FROM ServeiConfig sc " +
-            "INNER JOIN EntitatServei es ON es.servei = sc.servei " +
-            "WHERE sc.useCertificatEntitat = true " +
-            "AND es.entitat.id = :entitatId ")
+    @Query("select sc from ServeiConfig sc " +
+            "where sc.useCertificatEntitat = true " +
+            "  and sc.servei in (select es.servei from EntitatServei es " +
+            "                    where es.entitat.id = :entitatId) ")
     List<ServeiConfig> findByUseCertificatEntitatTrueAndEntitat(@Param("entitatId") Long entitatId);
 
     @Modifying

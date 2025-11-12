@@ -83,12 +83,22 @@
 							<form:errors path="${campPath}" cssClass="help-block"/>
 						</div>
 					</div>
-					<pbl:inputSelect name="organisme" required="true" labelSize="1" inline="false" textKey="clau.privada.form.camp.organisme"
+					<pbl:inputSelect name="organismeId" required="true" labelSize="2" inline="false" textKey="clau.privada.form.camp.organisme"
 								optionItems="${organismes}"
 								optionValueAttribute="id"
 								optionTextAttribute="cadenaIdentificadora"
 								emptyOption="true"
 								emptyOptionTextKey="comu.opcio.sense.definir"/>
+
+                    <c:set var="campPath" value="perEntitat"/>
+                    <c:set var="campErrors"><form:errors path="${campPath}"/></c:set>
+                    <div class="form-group vcenter<c:if test="${not empty campErrors}"> error</c:if>">
+                        <label class="control-label col-md-2" for="${campPath}"><spring:message code="clau.privada.form.camp.per.entitat"/></label>
+                        <div class="col-md-10">
+                            <form:checkbox path="${campPath}" id="${campPath}"/> <spring:message code="clau.privada.form.camp.per.entitat.desc"/>
+                            <form:errors path="${campPath}" cssClass="help-block"/>
+                        </div>
+                    </div>
 				</div>
 			</div>
 		</div>

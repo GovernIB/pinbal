@@ -70,7 +70,7 @@ public class ServeiServiceBean implements ServeiService {
 
 	@Override
 	@RolesAllowed("PBL_ADMIN")
-	public ServeiDto save(ServeiDto servei) {
+	public ServeiDto save(ServeiDto servei) throws ServeiNotFoundException {
 		return delegate.save(servei);
 	}
 

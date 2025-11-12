@@ -11,44 +11,6 @@ databaseChangeLog:
       id: 352-01
       author: limit
       changes:
-        - createTable:
-            tableName: PBL_ENTITAT_CERTIFICAT
-            columns:
-              - column:
-                  name: ID
-                  type: BIGINT
-                  constraints:
-                    primaryKey: true
-              - column:
-                  name: ENTITAT_ID
-                  type: BIGINT
-                  constraints:
-                    nullable: false
-                    foreignKeyName: ENTITAT_CERT_ENTITAT_FK
-                    references: PBL_ENTITAT(ID)
-              - column:
-                  name: ALIAS
-                  type: VARCHAR(255 ${varcharUnit})
-              - column:
-                  name: NUMERO_SERIE
-                  type: VARCHAR(100 ${varcharUnit})
-              - column:
-                  name: CN
-                  type: VARCHAR(500 ${varcharUnit})
-              - column:
-                  name: DATA_CADUCITAT
-                  type: TIMESTAMP
-              - column:
-                  name: ACTIU
-                  type: BOOLEAN
-                  defaultValueBoolean: true
-              - column:
-                  name: DATA_ALTA
-                  type: TIMESTAMP
-              - column:
-                  name: DATA_BAIXA
-                  type: TIMESTAMP
-
         - addColumn:
             tableName: PBL_SERVEI_CONFIG
             columns:
@@ -56,3 +18,22 @@ databaseChangeLog:
                   name: use_cert_entitat
                   type: boolean
                   defaultValueBoolean: false
+
+        - addColumn:
+            tableName: CORE_CLAVE_PRIVADA
+            columns:
+              - column:
+                  name: per_entitat
+                  type: boolean
+                  defaultValueBoolean: false
+
+#  - changeSet:
+#      id: 352-02
+#      author: limit
+#      changes:
+#        - update:
+#            tableName: CORE_CLAVE_PRIVADA
+#            columns:
+#              - column:
+#                  name: per_entitat
+#                  valueBoolean: true

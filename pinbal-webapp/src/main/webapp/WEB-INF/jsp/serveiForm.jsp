@@ -612,8 +612,8 @@ function showModalXsd(element) {
                     <c:set var="campPath" value="useCertificatEntitat"/>
                     <c:set var="campErrors"><form:errors path="${campPath}"/></c:set>
                     <div class="form-group vcenter<c:if test="${not empty campErrors}"> error</c:if>">
-                        <label class="control-label col-md-4" for="${campPath}" title="<spring:message code="servei.form.camp.pinbal.use.certificat.entitat"/>"><spring:message code="servei.form.camp.pinbal.enviar.solicitant"/></label>
-                        <div class="col-md-8">
+                        <label class="control-label col-md-2" for="${campPath}" title="<spring:message code="servei.form.camp.pinbal.use.certificat.entitat"/>"><spring:message code="servei.form.camp.pinbal.use.certificat.entitat"/></label>
+                        <div class="col-md-10">
                             <form:checkbox path="${campPath}" id="${campPath}"/>
                             <form:errors path="${campPath}" cssClass="help-block"/>
                         </div>

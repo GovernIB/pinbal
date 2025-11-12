@@ -33,6 +33,7 @@ import es.scsp.common.dao.OrganismoCesionarioDao;
 import es.scsp.common.dao.ParametroConfiguracionDao;
 import es.scsp.common.dao.PeticionRespuestaDao;
 import es.scsp.common.dao.PinbalDao;
+import es.scsp.common.dao.ServeiDao;
 import es.scsp.common.dao.ServicioDao;
 import es.scsp.common.dao.ServicioOrganismoCesionarioDao;
 import es.scsp.common.dao.TipoMensajeDao;
@@ -62,8 +63,6 @@ import org.springframework.context.MessageSource;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
@@ -74,7 +73,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.StringWriter;
 import java.text.MessageFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -82,6 +80,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 
 /**
  * Mètodes d'ajuda per invocar els serveis SCSP.
@@ -95,11 +94,6 @@ public class ScspHelper {
 
     private ApplicationContext applicationContext;
     private MessageSource messageSource;
-
-	@PersistenceContext
-	private EntityManager entityManager;
-
-
 
 	public ScspHelper(
             ApplicationContext applicationContext,
@@ -634,49 +628,125 @@ public class ScspHelper {
 
 	public void actualitzarServiciosActivosOrganismoCesionario(
 			String cif,
-			String[] activos) {
-		LOGGER.debug("Guardant organismo cesionario (" +
-				"cif=" + cif + ", " +
-				"activos=" + Arrays.toString(activos) + ")");
+			Set<String> serveisActius,
+            String aliesClauFirmaEntitat) {
+		LOGGER.debug("Guardant organismo cesionario (cif=" + cif + ", serveisActius=" + serveisActius + ")");
 		OrganismoCesionario organismoCesionario = getOrganismoCesionarioAmbCif(cif);
 		List<ServicioOrganismoCesionario> serviciosOrganismoCesionario = getServicioOrganismoCesionarioDao().selectHistorico(organismoCesionario);
-		// Actualitza el camp bloqueado dels serveis existents
-		for (ServicioOrganismoCesionario servicioOrganismoCesionario: serviciosOrganismoCesionario) {
-			boolean trobat = false;
-			for (String activo: activos) {
-				if (activo != null && servicioOrganismoCesionario != null && servicioOrganismoCesionario.getServicio() != null && activo.equals(servicioOrganismoCesionario.getServicio().getCodCertificado())) {
-					trobat = true;
-					break;
-				}
-			}
-			servicioOrganismoCesionario.setBloqueado(!trobat);
-			if(!trobat) {
-				getPinbalDao().delete(servicioOrganismoCesionario);
-			}
-		}
-		// Crea els serviciosOrganismoCesionario que no existeixen
-		for (String activo: activos) {
-			boolean trobat = false;
-			for (ServicioOrganismoCesionario servicio: serviciosOrganismoCesionario) {
-				if (activo != null && servicio != null && servicio.getServicio() != null && activo.equals(servicio.getServicio().getCodCertificado())) {
-					trobat = true;
-					break;
-				}
-			}
-			if (!trobat) {
-				Servicio servicio = getServicioDao().select(activo);
-				if (servicio != null) {
-					ServicioOrganismoCesionario servicioOrganismo = new ServicioOrganismoCesionario();
-					servicioOrganismo.setOrganismo(organismoCesionario);
-					servicioOrganismo.setServicio(servicio);
-					servicioOrganismo.setClavePrivada(servicio.getClaveFirma());
-					servicioOrganismo.setFechaAlta(new Date());
-					servicioOrganismo.setBloqueado(false);
-					getPinbalDao().save(servicioOrganismo);
-				}
-			}
+
+        // Actualitza el camp bloqueado dels serveis existents
+        for (ServicioOrganismoCesionario servicioOrganismoCesionario : serviciosOrganismoCesionario) {
+            String codiCertificat = obtenirCodiCertificat(servicioOrganismoCesionario);
+            boolean esActiu = codiCertificat != null && serveisActius.contains(codiCertificat);
+
+            servicioOrganismoCesionario.setBloqueado(!esActiu);
+            if (!esActiu) {
+                getPinbalDao().delete(servicioOrganismoCesionario);
+            }
+        }
+
+        // Crea els serviciosOrganismoCesionario que no existeixen, o actualitza la clau en cas necessari
+		for (String serveiActiu: serveisActius) {
+            if (serveiActiu == null)
+                continue;
+
+            Servicio servicio = getServicioDao().select(serveiActiu);
+            if (servicio == null)
+                continue;
+
+            ServicioOrganismoCesionario serveiOrganisme = getServeiEnOrganisme(serveiActiu, serviciosOrganismoCesionario);
+            ClavePrivada clavePrivada = getClauSignatura(serveiActiu, aliesClauFirmaEntitat, servicio.getClaveFirma());
+
+            if (serveiOrganisme == null) {
+                ServicioOrganismoCesionario servicioOrganismo = new ServicioOrganismoCesionario();
+                servicioOrganismo.setOrganismo(organismoCesionario);
+                servicioOrganismo.setServicio(servicio);
+                servicioOrganismo.setClavePrivada(clavePrivada);
+                servicioOrganismo.setFechaAlta(new Date());
+                servicioOrganismo.setBloqueado(false);
+                getPinbalDao().save(servicioOrganismo);
+			} else if (clavePrivada != null) {
+                serveiOrganisme.setClavePrivada(clavePrivada);
+                getPinbalDao().save(serveiOrganisme);
+            }
 		}
 	}
+
+    public void actualitzarServeiOrganismoCesionario(
+            String cif,
+            String servei,
+            String aliesClauFirmaEntitat) {
+        LOGGER.debug("Actualitzant organisme cesionari (cif=" + cif + ", servei=" + servei + ")");
+
+        // Validacions del servei
+        if (servei == null) return;
+        Servicio servicio = getServicioDao().select(servei);
+        if (servicio == null) return;
+
+        OrganismoCesionario organismoCesionario = getOrganismoCesionarioAmbCif(cif);
+        List<ServicioOrganismoCesionario> serviciosOrganismoCesionario = getServicioOrganismoCesionarioDao().select(servicio, organismoCesionario);
+
+        // Crea els serviciosOrganismoCesionario que no existeixen, o actualitza la clau en cas necessari
+        ServicioOrganismoCesionario serveiOrganisme = getServeiEnOrganisme(servei, serviciosOrganismoCesionario);
+        ClavePrivada clavePrivada = aliesClauFirmaEntitat != null ? getClavePrivadaDao().selectByAlias(aliesClauFirmaEntitat) : null;
+        if (clavePrivada == null) {
+            clavePrivada = servicio.getClaveFirma();
+        }
+
+        if (serveiOrganisme == null) {
+            ServicioOrganismoCesionario servicioOrganismo = new ServicioOrganismoCesionario();
+            servicioOrganismo.setOrganismo(organismoCesionario);
+            servicioOrganismo.setServicio(servicio);
+            servicioOrganismo.setClavePrivada(clavePrivada);
+            servicioOrganismo.setFechaAlta(new Date());
+            servicioOrganismo.setBloqueado(false);
+            getPinbalDao().save(servicioOrganismo);
+        } else if (clavePrivada != null) {
+            serveiOrganisme.setClavePrivada(clavePrivada);
+            getPinbalDao().save(serveiOrganisme);
+        }
+    }
+
+    private String obtenirCodiCertificat(ServicioOrganismoCesionario servicioOrganismoCesionario) {
+        if (servicioOrganismoCesionario != null
+                && servicioOrganismoCesionario.getServicio() != null) {
+            return servicioOrganismoCesionario.getServicio().getCodCertificado();
+        }
+        return null;
+    }
+
+    private ServicioOrganismoCesionario getServeiEnOrganisme(String codiServei, List<ServicioOrganismoCesionario> servicios) {
+        for (ServicioOrganismoCesionario servicio : servicios) {
+            if (servicio != null
+                    && servicio.getServicio() != null
+                    && codiServei.equals(servicio.getServicio().getCodCertificado())) {
+                return servicio;
+            }
+        }
+        return null;
+    }
+
+    private ClavePrivada getClauSignatura(String servei, String aliesClauFirmaEntitat, ClavePrivada defaultClavePrivada) {
+        Boolean certificatPerEntitat = useCertificatPerEntitat(servei);
+
+        // Utilitza la clau per defecte
+        if (certificatPerEntitat == null || !certificatPerEntitat) {
+            return defaultClavePrivada;
+        }
+
+        // Utilitza la clau específica d'entitat, si existeix
+        ClavePrivada clavePrivada = getClavePrivadaDao().selectByAlias(aliesClauFirmaEntitat);
+        return clavePrivada != null ? clavePrivada : defaultClavePrivada;
+    }
+
+    private Boolean useCertificatPerEntitat(String serveiCodi) {
+        try {
+            return getServeiDao().serveiUseCertificatEntitat(serveiCodi);
+        } catch (Exception ex) {
+            LOGGER.error("Error getting useCertificatEntitat for service " + serveiCodi, ex);
+            return false;
+        }
+    }
 
     public void assignarDefaultCertificatAServei(String organismoCif, String codiServei) {
 
@@ -758,7 +828,7 @@ public class ScspHelper {
         }
 
         // Buscar ServicioOrganismoCesionario existent
-        List<ServicioOrganismoCesionario> servicios = getServicioOrganismoCesionarioDao().select(organismo);
+        List<ServicioOrganismoCesionario> servicios = getServicioOrganismoCesionarioDao().select(servicio, organismo);
 
         ServicioOrganismoCesionario servicioOrganismo = null;
         for (ServicioOrganismoCesionario so : servicios) {
@@ -790,7 +860,7 @@ public class ScspHelper {
     /**
      * Elimina tots els ServicioOrganismoCesionario per un servei
      */
-    public void eliminarTotsSeviciosOrganismo(String codiServei) {
+    public void eliminarSeviciosOrganismoServei(String codiServei) {
 
         LOGGER.debug("Eliminant tots els ServicioOrganismoCesionario del servei {}", codiServei);
 
@@ -820,6 +890,35 @@ public class ScspHelper {
 
     /**
      * Elimina tots els ServicioOrganismoCesionario per un servei
+     */
+    public void eliminarSeviciosOrganismoOrganisme(String organismoCif) {
+
+        LOGGER.debug("Eliminant tots els ServicioOrganismoCesionario de l'organisme amb cif {}", organismoCif);
+
+        // Obtenir l'organisme
+        OrganismoCesionario organismo = getOrganismoCesionarioDao().select(organismoCif);
+        if (organismo == null) {
+            LOGGER.warn("Organisme no trobat: {}", organismoCif);
+            return;
+        }
+
+        // Obtenir tots els serveis
+        List<ServicioOrganismoCesionario> servicios = getServicioOrganismoCesionarioDao().select(organismo);
+        if (servicios == null || servicios.isEmpty()) {
+            return;
+        }
+
+        int eliminats = 0;
+        for (ServicioOrganismoCesionario so : servicios) {
+            getPinbalDao().delete(so);
+            eliminats++;
+        }
+
+        LOGGER.debug("Eliminats {} ServicioOrganismoCesionario", eliminats);
+    }
+
+    /**
+     * Elimina tots els ServicioOrganismoCesionario per un organisme i servei
      */
     public void eliminarServicioOrganismo(
             String organismoCif,
@@ -1280,6 +1379,10 @@ public class ScspHelper {
 		configurarAccesScsp();
 		return (ErrorDao)applicationContext.getBean("errorDao");
 	}
+    private ServeiDao getServeiDao() {
+        configurarAccesScsp();
+        return (ServeiDao)applicationContext.getBean("serveiDao");
+    }
 	private ClienteUnico getClienteUnico() {
 		configurarAccesScsp();
 		return (ClienteUnico)applicationContext.getBean("clienteUnico");
