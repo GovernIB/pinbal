@@ -139,7 +139,7 @@ public class ClauPrivadaController extends BaseController {
 				request, 
 				getMessage(
 						request, 
-						"paramconf.controller.esborrat.ok"));
+						"clau.privada.controller.esborrat.ok"));
 		
 		return "redirect:../";
 	}

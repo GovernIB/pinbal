@@ -68,7 +68,7 @@ public class EntitatClauHelper implements ApplicationContextAware, MessageSource
      * Sincronitza un certificat d'entitat amb tots els serveis
      * que tenen useCertificatEntitat = true
      */
-    public void sincronitzarAmbServeis(ClauPrivada clauPrivada, String organismeCif) throws EntitatNotFoundException {
+    public void sincronitzarAmbServeis(String clauPrivadaAlies, String organismeCif) throws EntitatNotFoundException {
 
         Entitat entitat = entitatRepository.findByCif(organismeCif);
         if (entitat == null) {
@@ -83,10 +83,10 @@ public class EntitatClauHelper implements ApplicationContextAware, MessageSource
 
         for (ServeiConfig servei : serveisAmbCertificatPerEntitat) {
             try {
-                scspHelper.assignarCertificatAServei(
+                getScspHelper().assignarCertificatAServei(
                         entitat.getCif(),
                         servei.getServei(),
-                        clauPrivada.getAlies()
+                        clauPrivadaAlies
                 );
                 log.debug("Assignat certificat al servei {}", servei.getServei());
             } catch (Exception e) {
@@ -132,7 +132,7 @@ public class EntitatClauHelper implements ApplicationContextAware, MessageSource
         Entitat entitat = entitatRepository.findByCif(cif);
         List<EntitatServei> entitatServeis = entitatServeiRepository.findByEntitat(entitat);
         for (EntitatServei entitatServei : entitatServeis) {
-            scspHelper.assignarDefaultCertificatAServei(cif, entitatServei.getServei());
+            getScspHelper().assignarDefaultCertificatAServei(cif, entitatServei.getServei());
         }
 
     }

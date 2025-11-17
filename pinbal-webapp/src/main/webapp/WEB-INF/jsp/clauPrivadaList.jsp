@@ -44,7 +44,7 @@
 		            }
 		        },
                 {
-                    targets: [5],
+                    targets: [6],
                     orderable: false,
                     width: "1%",
                     render: function (data, type, row, meta) {
@@ -53,7 +53,7 @@
                     }
                 },
 				{
-					targets: [6],
+					targets: [7],
 					orderable: false,
 					width: "1%",
 					render: function (data, type, row, meta) {
@@ -78,6 +78,7 @@
 			<th data-data="numSerie"><spring:message code="clau.privada.list.taula.columna.numeroserie" /></th>
 			<th data-data="dataAlta"><spring:message code="clau.privada.list.taula.columna.dataalta" /></th>
 			<th data-data="dataBaixa"><spring:message code="clau.privada.list.taula.columna.databaixa" /></th>
+			<th data-data="organismeNom"><spring:message code="clau.privada.form.camp.organisme" /></th>
 			<th data-data="perEntitat"><spring:message code="clau.privada.form.camp.per.entitat" /></th>
 			<th data-data="id"></th>
 			</tr>

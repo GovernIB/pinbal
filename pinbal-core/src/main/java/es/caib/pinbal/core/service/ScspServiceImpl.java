@@ -30,6 +30,8 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionSynchronizationAdapter;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -254,8 +256,24 @@ public class ScspServiceImpl implements ScspService {
         clauPrivada = clauPrivadaRepository.save(clauPrivada);
 
         // Si la clau és per entitat, sincronitzar serveis que usen certificat d'entitat
+        // Excutar un cop persistida la clau privada!!
+        final String clauAlies = clauPrivada.getAlies();
+        final String organismeCif = organisme.getCif();
         if (dto.isPerEntitat()) {
-            entitatClauHelper.sincronitzarAmbServeis(clauPrivada, organisme.getCif());
+            TransactionSynchronizationManager.registerSynchronization(
+                    new TransactionSynchronizationAdapter() {
+                        @Override
+                        public void afterCommit() {
+                            // codi a executar després del commit
+                            try {
+                                entitatClauHelper.sincronitzarAmbServeis(clauAlies, organismeCif);
+                            } catch (EntitatNotFoundException e) {
+                                log.error("Error al assignar certificats als serveis", e);
+                                throw new RuntimeException(e);
+                            }
+                        }
+                    }
+            );
         }
 
 		return dtoMappingHelper.getMapperFacade().map(
@@ -299,7 +317,7 @@ public class ScspServiceImpl implements ScspService {
         // Si canvia d'entitat i canvia el valor perEntitat, o es un certificat per entitat,
         // actualitzam els serveis de les dues entitats
         if (canviaOrganisme && canviaPerEntitat || dto.isPerEntitat()) {
-            entitatClauHelper.actualitzarServiciosOrganismos(null, organismeCifOrigen);
+//            entitatClauHelper.actualitzarServiciosOrganismos(null, organismeCifOrigen);
             entitatClauHelper.actualitzarServiciosOrganismos(clauPrivada.isPerEntitat() ? clauPrivada : null, organisme.getCif());
         // Si no canvia d'entitat, però canvia el valor perEntitat,
         // actualitzam els serveis de l'entitat
