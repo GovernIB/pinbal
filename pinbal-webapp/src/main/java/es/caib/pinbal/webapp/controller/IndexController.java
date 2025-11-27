@@ -42,4 +42,9 @@ public class IndexController {
 	public String get() {
 		return "import/alerts";
 	}
+
+	@RequestMapping(value = "/avisos", method = RequestMethod.GET)
+	public String getAvisos() {
+		return "util/avisos";
+	}
 }

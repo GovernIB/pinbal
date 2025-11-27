@@ -15,7 +15,14 @@ function webutilClearMissatges(divMissatges) {
 	$(divMissatges).empty();
 }
 function webutilRefreshMissatges() {
-	$('#contingut-missatges').load(webutilContextPath() + "/index/missatges");
+    $('#contingut-missatges').load(webutilContextPath() + "/index/missatges");
+}
+
+function webutilRefreshAvisos() {
+    var $target = $('#contingut-avisos');
+    if ($target.length) {
+        $target.load(webutilContextPath() + "/index/avisos");
+    }
 }
 
 function webutilModalAdjustHeight(iframe) {
