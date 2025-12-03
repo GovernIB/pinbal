@@ -3,7 +3,7 @@ package es.caib.pinbal.plugins.helper;
 import com.codahale.metrics.Counter;
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.Timer;
-import es.caib.comanda.ms.salut.model.EstatByPercent;
+import es.caib.comanda.ms.salut.helper.EstatHelper;
 import es.caib.comanda.ms.salut.model.EstatSalutEnum;
 import es.caib.comanda.ms.salut.model.IntegracioApp;
 import es.caib.comanda.ms.salut.model.IntegracioPeticions;
@@ -113,7 +113,7 @@ public class PluginMetricHelper {
                 }
                 percentErrors = this.lastRequestsFifo.getErrorPercent();
             }
-            EstatSalutEnum estat = EstatByPercent.calculaEstat(percentErrors);
+            EstatSalutEnum estat = EstatHelper.calculaEstat(percentErrors);
             this.darrerEstat = estat;
             return estat;
         }

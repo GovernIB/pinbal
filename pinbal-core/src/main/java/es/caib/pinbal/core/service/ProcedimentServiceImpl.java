@@ -996,19 +996,21 @@ public class ProcedimentServiceImpl implements ProcedimentService {
 
         // Comprovar si ja existeix el procedimentServei de destí
         ProcedimentServei procedimentServeiDesti = procedimentServeiRepository.findByProcedimentIdAndServei(procedimentId, serveiCodiDesti);
-        if (procedimentServeiDesti != null) {
-            throw new ProcedimentServeiExistsException(procediment.getCodi(), serveiCodiDesti);
-        }
+//        if (procedimentServeiDesti != null) {
+//            throw new ProcedimentServeiExistsException(procediment.getCodi(), serveiCodiDesti);
+//        }
 
         try {
-            // 2. Crear el procedimentServei de destí
-            procedimentServeiDesti = ProcedimentServei.getBuilder(procediment, serveiCodiDesti).build();
-            procedimentServeiDesti = procedimentServeiRepository.save(procedimentServeiDesti);
+            if (procedimentServeiDesti == null) {
+                // 2. Crear el procedimentServei de destí
+                procedimentServeiDesti = ProcedimentServei.getBuilder(procediment, serveiCodiDesti).build();
+                procedimentServeiDesti = procedimentServeiRepository.save(procedimentServeiDesti);
+            }
 
             // 3. Clonar els permisos del procedimentServeiOrigen al procedimentServeiDesti
             clonarPermisosProcedimentServei(procedimentServeiOrigen, procedimentServeiDesti);
 
-            // 4. Eliminar els permisos del procedimentServeiDesti
+            // 4. Eliminar els permisos del procedimentServeiOrigen
             PermisosHelper.revocarPermisosServei(
                     ProcedimentServei.class,
                     procedimentServeiOrigen.getId(),

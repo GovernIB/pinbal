@@ -3,7 +3,7 @@ package es.caib.pinbal.core.helper;
 import com.codahale.metrics.Counter;
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.Timer;
-import es.caib.comanda.ms.salut.model.EstatByPercent;
+import es.caib.comanda.ms.salut.helper.EstatHelper;
 import es.caib.comanda.ms.salut.model.EstatSalutEnum;
 import es.caib.comanda.ms.salut.model.SubsistemaSalut;
 import es.caib.pinbal.helper.LastRequestsFifo;
@@ -126,7 +126,7 @@ public class SubsistemaMetricHelper {
                 }
                 percentErrors = this.lastRequestsFifo.getErrorPercent();
             }
-            EstatSalutEnum estat = EstatByPercent.calculaEstat(percentErrors);
+            EstatSalutEnum estat = EstatHelper.calculaEstat(percentErrors);
             this.darrerEstat = estat;
             return estat;
         }
@@ -317,9 +317,9 @@ public class SubsistemaMetricHelper {
 
         int serveisTotal = serveisDownCount + serveisNoDownCount;
         double percentatgeServeisDown = (serveisDownCount * 100.0) / Math.max(1L, serveisTotal);
-        EstatSalutEnum estatServeis = EstatByPercent.calculaEstat(percentatgeServeisDown);
+        EstatSalutEnum estatServeis = EstatHelper.calculaEstat(percentatgeServeisDown);
 
-        return EstatByPercent.mergeEstats(estatSubsistemes, estatServeis);
+        return EstatHelper.mergeEstats(estatSubsistemes, estatServeis);
     }
 
     @Getter
