@@ -118,7 +118,7 @@ public class SalutServiceImpl implements SalutService {
         List<IntegracioSalut> integracions = checkIntegracions();   // Integracions
         SubsistemesInfo subsistemesInfo = checkSubsistemes();       // Subsistemes
         List<SubsistemaSalut> subsistemes = subsistemesInfo.getSubsistemesSalut();
-        List<DetallSalut> altres = checkAltres();                   // Altres
+//        List<DetallSalut> altres = checkAltres();                   // Altres
         List<MissatgeSalut> missatges = checkMissatges();           // Missatges
 
         EstatSalutEnum estatGlobalSubsistemes = subsistemesInfo.getEstatGlobal();
@@ -137,7 +137,7 @@ public class SalutServiceImpl implements SalutService {
                 .bd(salutDatabase)
                 .integracions(integracions)
                 .subsistemes(subsistemes)
-                .altres(altres)
+//                .altres(altres)
                 .missatges(missatges)
                 .build();
     }

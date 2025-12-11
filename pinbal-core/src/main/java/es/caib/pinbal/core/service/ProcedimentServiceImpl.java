@@ -1018,6 +1018,10 @@ public class ProcedimentServiceImpl implements ProcedimentService {
 
             // 5. Eliminar el procedimentServei
             procedimentServeiRepository.delete(procedimentServeiOrigen);
+
+			// 6. Buidar caches afectades
+			cacheHelper.evictPermisosPerDelegat();
+			cacheHelper.evictServeisProcediment(procediment.getCodi());
         } catch (Exception e) {
             log.error("Error migrant el procedimentServei", e);
             throw e;

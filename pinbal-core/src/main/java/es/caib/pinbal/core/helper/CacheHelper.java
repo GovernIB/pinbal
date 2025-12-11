@@ -20,7 +20,7 @@ public class CacheHelper {
     @CacheEvict(value = "procediments", key = "#entitatCodi")
     public void evictProcedimentsPerEntitat(String entitatCodi){}
 
-    @CacheEvict(value = "serveis")
+    @CacheEvict(value = "serveis", allEntries = true)
     public void evictServeis(){}
 
     @CacheEvict(value = "serveisEntitat", key = "#entitatCodi")
@@ -35,6 +35,9 @@ public class CacheHelper {
     public void evictEnumeratsPerServei(String serveiCodi) {
         evictByKeyPrefix("enumerats", serveiCodi);
     }
+
+    @CacheEvict(value = "serveiPermesosPerDelegat", allEntries = true)
+    public void evictPermisosPerDelegat() {}
 
     public void evictPermisosPerDelegat(String usuariCodi) {
         evictByKeyPrefix("serveiPermesosPerDelegat", usuariCodi);
