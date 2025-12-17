@@ -1001,23 +1001,29 @@ public class ProcedimentServiceImpl implements ProcedimentService {
 //        }
 
         try {
-            if (procedimentServeiDesti == null) {
-                // 2. Crear el procedimentServei de destí
-                procedimentServeiDesti = ProcedimentServei.getBuilder(procediment, serveiCodiDesti).build();
-                procedimentServeiDesti = procedimentServeiRepository.save(procedimentServeiDesti);
-            }
+			if (procedimentServeiDesti == null) {
+				// 2. Crear el procedimentServei de destí
+				procedimentServeiDesti = ProcedimentServei.getBuilder(procediment, serveiCodiDesti).build();
+				procedimentServeiDesti = procedimentServeiRepository.save(procedimentServeiDesti);
+			}
+			procedimentServeiDesti.updateActiu(true);
 
-            // 3. Clonar els permisos del procedimentServeiOrigen al procedimentServeiDesti
-            clonarPermisosProcedimentServei(procedimentServeiOrigen, procedimentServeiDesti);
+			// 3. Clonar els permisos del procedimentServeiOrigen al procedimentServeiDesti
+			clonarPermisosProcedimentServei(procedimentServeiOrigen, procedimentServeiDesti);
 
-            // 4. Eliminar els permisos del procedimentServeiOrigen
-            PermisosHelper.revocarPermisosServei(
-                    ProcedimentServei.class,
-                    procedimentServeiOrigen.getId(),
-                    aclService);
+			// 4. Eliminar els permisos del procedimentServeiOrigen
+			PermisosHelper.revocarPermisosServei(
+					ProcedimentServei.class,
+					procedimentServeiOrigen.getId(),
+					aclService);
 
-            // 5. Eliminar el procedimentServei
-            procedimentServeiRepository.delete(procedimentServeiOrigen);
+			// 5. Eliminar el procedimentServei, si no està en ús.
+			procedimentServeiOrigen.updateActiu(false);
+			boolean hasConsultes = procedimentServeiRepository.hasConsultes(procedimentServeiOrigen);
+			boolean hasHistoricConsultes = procedimentServeiRepository.hasHistoricConsultes(procedimentServeiOrigen);
+			if (!hasConsultes && !hasHistoricConsultes) {
+				procedimentServeiRepository.delete(procedimentServeiOrigen);
+			}
 
 			// 6. Buidar caches afectades
 			cacheHelper.evictPermisosPerDelegat();
