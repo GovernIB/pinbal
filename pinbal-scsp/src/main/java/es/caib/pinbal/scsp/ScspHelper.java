@@ -1243,6 +1243,12 @@ public class ScspHelper {
 		}
 		List<es.scsp.common.domain.core.Transmision> transmisiones = getTransmisionDao().select(peticionRespuesta);
 		if (transmisiones != null) {
+			// Ordenar les transmissions per idSolicitud per garantir un ordre consistent
+			Collections.sort(transmisiones, new Comparator<es.scsp.common.domain.core.Transmision>() {
+				public int compare(es.scsp.common.domain.core.Transmision o1, es.scsp.common.domain.core.Transmision o2) {
+					return o1.getIdSolicitud().compareTo(o2.getIdSolicitud());
+				}
+			});
 			String[] idsSolicituds = new String[transmisiones.size()];
 			int i = 0;
 			for (es.scsp.common.domain.core.Transmision transmision: transmisiones) {
