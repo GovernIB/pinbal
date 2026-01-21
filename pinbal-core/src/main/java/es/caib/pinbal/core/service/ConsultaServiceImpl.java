@@ -41,7 +41,6 @@ import es.caib.pinbal.core.helper.DtoMappingHelper;
 import es.caib.pinbal.core.helper.EmailReportEstatHelper;
 import es.caib.pinbal.core.helper.ExcelHelper;
 import es.caib.pinbal.core.helper.IntegracioHelper;
-import es.caib.pinbal.core.helper.JustificantHelper;
 import es.caib.pinbal.core.helper.LoggerHelper;
 import es.caib.pinbal.core.helper.PermisosHelper;
 import es.caib.pinbal.core.helper.PeticioScspEstadistiquesHelper;
@@ -51,6 +50,7 @@ import es.caib.pinbal.core.helper.ServeiHelper;
 import es.caib.pinbal.core.helper.SubsistemaMetricHelper;
 import es.caib.pinbal.core.helper.UsuariHelper;
 import es.caib.pinbal.core.helper.UtilsHelper;
+import es.caib.pinbal.core.helper.mock.JustificantHelperFactory;
 import es.caib.pinbal.core.model.Consulta;
 import es.caib.pinbal.core.model.Entitat;
 import es.caib.pinbal.core.model.EntitatUsuari;
@@ -82,6 +82,7 @@ import es.caib.pinbal.core.repository.explotacio.ExplotConsultaFetsRepository;
 import es.caib.pinbal.core.repository.explotacio.ExplotTempsRepository;
 import es.caib.pinbal.core.repository.llistat.LlistatConsultaRepository;
 import es.caib.pinbal.core.service.exception.AccesExternException;
+import es.caib.pinbal.core.service.exception.AccessDenegatException;
 import es.caib.pinbal.core.service.exception.ConsultaNotFoundException;
 import es.caib.pinbal.core.service.exception.ConsultaScspComunicacioException;
 import es.caib.pinbal.core.service.exception.ConsultaScspEstatException;
@@ -192,7 +193,7 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 	private ExplotTempsRepository explotTempsRepository;
 
 	@Autowired
-	private JustificantHelper justificantHelper;
+	private JustificantHelperFactory justificantHelperFactory;
 	@Autowired
 	private DtoMappingHelper dtoMappingHelper;
 	@Autowired
@@ -910,7 +911,7 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 				resposta.setRespostaEstadoError(resultat.getErrorDescripcio());
 			} else {
 				// Si no hi ha error genera el justificant
-                /*justificantHelper.generarCustodiarJustificantPendent(
+                /*justificantHelperFactory.getJustificantHelper().generarCustodiarJustificantPendent(
 						saved,
 						getScspHelper());*/
 			}
@@ -1462,7 +1463,7 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 		if (!auth.getName().equals(consulta.getCreatedBy().getCodi())) {
 			log.error("La consulta (idpeticion=" + idpeticion + ", idsolicitud=" + idsolicitud + ") no pertany a aquest usuari");
-			throw new ConsultaNotFoundException();
+			throw new AccessDenegatException("Només pot accedir al justificant l'usuari que ha realitzat la consulta");
 		}
 		return obtenirJustificantComu(consulta, ambContingut, versioImprimible);
 	}
@@ -1514,7 +1515,7 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 			PdfCopy copy = new PdfCopy(pdfConcatenat, baos);
 			pdfConcatenat.open();
 			for (Consulta solicitud: consulta.getFills()) {
-				FitxerDto fitxerJustificantGenerat = justificantHelper.generar(
+				FitxerDto fitxerJustificantGenerat = justificantHelperFactory.getJustificantHelper().generar(
 						solicitud,
 						getScspHelper());
 				PdfReader pdfReader = new PdfReader(fitxerJustificantGenerat.getContingut());
@@ -1558,7 +1559,7 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
 			ZipOutputStream zos = new ZipOutputStream(baos);
 			for (Consulta solicitud: consulta.getFills()) {
-				FitxerDto fitxerJustificantGenerat = justificantHelper.generar(
+				FitxerDto fitxerJustificantGenerat = justificantHelperFactory.getJustificantHelper().generar(
 						solicitud,
 						getScspHelper());
 				ZipEntry zipEntry = new ZipEntry(fitxerJustificantGenerat.getNom());
@@ -2338,7 +2339,7 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 							peticioScspHelper.updateEstatConsulta(fill, resultat, null);
 							consultaRepository.saveAndFlush(fill);
                             /*if (EstatTipus.Tramitada.equals(filla.getEstat())) {
-								justificantHelper.generarCustodiarJustificantPendent(
+								justificantHelperFactory.getJustificantHelper().generarCustodiarJustificantPendent(
 										filla,
 										getScspHelper());
 							}*/
@@ -3214,7 +3215,7 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 							Consulta consultaRefreshed = consultaRepository.getOne(consulta.getId());
 							// Si l'estat del justificant és PENDENT o ERROR intentam tornar a generar el justificant
 							if (JustificantEstat.PENDENT.equals(consultaRefreshed.getJustificantEstat()) || JustificantEstat.ERROR.equals(consultaRefreshed.getJustificantEstat())) {
-								justificantHelper.generarCustodiarJustificantPendent(
+								justificantHelperFactory.getJustificantHelper().generarCustodiarJustificantPendent(
 										consultaRefreshed,
 										getScspHelper());
 								consultaRepository.saveAndFlush(consultaRefreshed);
@@ -3246,7 +3247,7 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 						}
 						if (!justificant.isError()) {
 							try {
-								FitxerDto justificantFitxer = justificantHelper.descarregarFitxerGenerat(
+								FitxerDto justificantFitxer = justificantHelperFactory.getJustificantHelper().descarregarFitxerGenerat(
 										consultaRefreshed,
 										getScspHelper(),
 										versioImprimible);

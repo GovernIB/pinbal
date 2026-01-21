@@ -7,6 +7,7 @@ import es.caib.pinbal.core.service.exception.ConsultaScspComunicacioException;
 import es.caib.pinbal.core.service.exception.ConsultaScspGeneracioException;
 import es.caib.pinbal.scsp.JustificantArbreHelper.ElementArbre;
 import es.caib.pinbal.scsp.XmlHelper.DadesEspecifiquesNode;
+import es.caib.pinbal.scsp.mock.ClienteUnicoFactory;
 import es.caib.pinbal.scsp.tree.Tree;
 import es.scsp.bean.common.Atributos;
 import es.scsp.bean.common.ConfirmacionPeticion;
@@ -1389,9 +1390,12 @@ public class ScspHelper {
         configurarAccesScsp();
         return (ServeiDao)applicationContext.getBean("serveiDao");
     }
+
 	private ClienteUnico getClienteUnico() {
 		configurarAccesScsp();
-		return (ClienteUnico)applicationContext.getBean("clienteUnico");
+		// Utilitzar la factory per obtenir la instància correcta segons el perfil actiu
+		ClienteUnicoFactory factory = (ClienteUnicoFactory)applicationContext.getBean(ClienteUnicoFactory.class);
+		return factory.getClienteUnico();
 	}
 
 	private JustificantArbreHelper getJustificantArbrehelper() {

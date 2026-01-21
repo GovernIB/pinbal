@@ -109,6 +109,9 @@
 	<!-- Context llibreries SCSP -->
 	<import resource="classpath:application-context-scsp.xml" />
 
+	<!-- Context mocks SCSP (només si el fitxer existeix) -->
+	<import resource="classpath:application-context-scsp-mock.xml" />
+
 	<!-- ACL -->
 	<bean id="aclService" class="org.springframework.security.acls.jdbc.JdbcMutableAclService">
 		<constructor-arg ref="dataSource" />
