@@ -22,8 +22,14 @@ public class AccessDenegatException extends RuntimeException {
 
     private List<String> rolsRequerits;
 
-    public String getMessage() {
+    public AccessDenegatException(String message) {
+        super(message);
+    }
 
+    public String getMessage() {
+        if (super.getMessage() != null) {
+            return super.getMessage();
+        }
         return "Accés denegat. Per poder accedir es requereixen els següents rols: " + unirRolsPerComa(rolsRequerits);
     }
 

@@ -46,18 +46,20 @@ import es.caib.pinbal.core.dto.dadesexternes.Provincia;
 import es.caib.pinbal.core.helper.PluginHelper;
 import es.caib.pinbal.core.helper.RecobrimentHelper;
 import es.caib.pinbal.core.helper.RecobrimentV2Helper;
-import es.caib.pinbal.core.model.Consulta;
 import es.caib.pinbal.core.model.Entitat;
 import es.caib.pinbal.core.model.ServeiCamp;
 import es.caib.pinbal.core.model.ServeiCamp.ServeiCampTipus;
 import es.caib.pinbal.core.model.ServeiCampGrup;
 import es.caib.pinbal.core.model.ServeiConfig;
+import es.caib.pinbal.core.model.SuperConsulta;
 import es.caib.pinbal.core.repository.ConsultaRepository;
 import es.caib.pinbal.core.repository.EntitatRepository;
+import es.caib.pinbal.core.repository.HistoricConsultaRepository;
 import es.caib.pinbal.core.repository.ProcedimentRepository;
 import es.caib.pinbal.core.repository.ServeiCampRepository;
 import es.caib.pinbal.core.repository.ServeiConfigRepository;
 import es.caib.pinbal.core.repository.ServeiRepository;
+import es.caib.pinbal.core.service.exception.AccessDenegatException;
 import es.caib.pinbal.core.service.exception.ConsultaNotFoundException;
 import es.caib.pinbal.core.service.exception.EntitatNotFoundException;
 import es.caib.pinbal.core.service.exception.JustificantGeneracioException;
@@ -97,6 +99,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.MessageSource;
 import org.springframework.context.MessageSourceAware;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -154,12 +157,14 @@ public class RecobrimentServiceImpl implements RecobrimentService, ApplicationCo
     private ServeiRepository serveiRepository;
     @Autowired
     private ServeiCampRepository serveiCampRepository;
-
-	private ApplicationContext applicationContext;
-	private MessageSource messageSource;
-	private ScspHelper scspHelper;
     @Autowired
     private ConsultaRepository consultaRepository;
+    @Autowired
+    private HistoricConsultaRepository historicConsultaRepository;
+
+    private ApplicationContext applicationContext;
+    private MessageSource messageSource;
+    private ScspHelper scspHelper;
 
     @Override
 	public void setApplicationContext(
@@ -992,7 +997,7 @@ public class RecobrimentServiceImpl implements RecobrimentService, ApplicationCo
     @Override
     public PeticioRespostaAsincrona getResposta(String idPeticion) throws RecobrimentScspException, ConsultaNotFoundException {
         try {
-            Consulta consulta = recobrimentV2Helper.getConsultaBypeticioId(idPeticion);
+            SuperConsulta consulta = recobrimentV2Helper.getConsultaBypeticioId(idPeticion);
             if (consulta == null) {
                 throw new ConsultaNotFoundException();
             }
@@ -1021,12 +1026,9 @@ public class RecobrimentServiceImpl implements RecobrimentService, ApplicationCo
     @Override
     public ScspJustificante getJustificant(
             String idPeticion,
-            String idSolicitud) throws RecobrimentScspException, ConsultaNotFoundException {
+            String idSolicitud) throws RecobrimentScspException, ConsultaNotFoundException, AccessDenegatException {
         try {
-            Consulta consulta = consultaRepository.findByScspPeticionIdAndScspSolicitudId(idPeticion, idSolicitud);
-            if (consulta == null) {
-                throw new ConsultaNotFoundException();
-            }
+            SuperConsulta consulta = getConsulta(idPeticion, idSolicitud, true);
             JustificantDto justificant = recobrimentHelper.getJustificante(idPeticion, idSolicitud, false, true);
             ScspJustificante justificante = new ScspJustificante();
             justificante.setNom(justificant.getNom());
@@ -1043,12 +1045,9 @@ public class RecobrimentServiceImpl implements RecobrimentService, ApplicationCo
     }
 
     @Override
-    public ScspJustificante getJustificantImprimible(String idPeticion, String idSolicitud) throws RecobrimentScspException, ConsultaNotFoundException {
+    public ScspJustificante getJustificantImprimible(String idPeticion, String idSolicitud) throws RecobrimentScspException, ConsultaNotFoundException, AccessDenegatException {
         try {
-            Consulta consulta = consultaRepository.findByScspPeticionIdAndScspSolicitudId(idPeticion, idSolicitud);
-            if (consulta == null) {
-                throw new ConsultaNotFoundException();
-            }
+            SuperConsulta consulta = getConsulta(idPeticion, idSolicitud, true);
             JustificantDto justificant = recobrimentHelper.getJustificante(idPeticion, idSolicitud, true, true);
             ScspJustificante justificante = new ScspJustificante();
             justificante.setNom(justificant.getNom());
@@ -1065,12 +1064,9 @@ public class RecobrimentServiceImpl implements RecobrimentService, ApplicationCo
     }
 
     @Override
-    public String getJustificantCsv(String idPeticion, String idSolicitud) throws RecobrimentScspException, ConsultaNotFoundException {
+    public String getJustificantCsv(String idPeticion, String idSolicitud) throws RecobrimentScspException, ConsultaNotFoundException, AccessDenegatException {
         try {
-            Consulta consulta = consultaRepository.findByScspPeticionIdAndScspSolicitudId(idPeticion, idSolicitud);
-            if (consulta == null) {
-                throw new ConsultaNotFoundException();
-            }
+            SuperConsulta consulta = getConsulta(idPeticion, idSolicitud, false);
             if (consulta.getArxiuDocumentUuid() != null && !consulta.getArxiuDocumentUuid().isEmpty()) {
                 try {
                     es.caib.plugins.arxiu.api.Document documentArxiu = pluginHelper.arxiuDocumentConsultar(
@@ -1102,12 +1098,9 @@ public class RecobrimentServiceImpl implements RecobrimentService, ApplicationCo
     }
 
     @Override
-    public String getJustificantUuid(String idPeticion, String idSolicitud) throws RecobrimentScspException, ConsultaNotFoundException {
+    public String getJustificantUuid(String idPeticion, String idSolicitud) throws RecobrimentScspException, ConsultaNotFoundException, AccessDenegatException {
         try {
-            Consulta consulta = consultaRepository.findByScspPeticionIdAndScspSolicitudId(idPeticion, idSolicitud);
-            if (consulta == null) {
-                throw new ConsultaNotFoundException();
-            }
+            SuperConsulta consulta = getConsulta(idPeticion, idSolicitud, false);
             if (consulta.getArxiuDocumentUuid() != null && !consulta.getArxiuDocumentUuid().isEmpty()) {
                 return consulta.getArxiuDocumentUuid();
             }
@@ -1123,6 +1116,23 @@ public class RecobrimentServiceImpl implements RecobrimentService, ApplicationCo
         }
     }
 
+    private SuperConsulta getConsulta(String idPeticion, String idSolicitud, boolean validateCreator) throws ConsultaNotFoundException, AccessDenegatException {
+        SuperConsulta consulta = consultaRepository.findByScspPeticionIdAndScspSolicitudId(idPeticion, idSolicitud);
+        if (consulta == null) {
+            consulta = historicConsultaRepository.findByScspPeticionIdAndScspSolicitudId(idPeticion, idSolicitud);
+        }
+        if (consulta == null) {
+            throw new ConsultaNotFoundException();
+        }
+        if (validateCreator) {
+            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+            if (!auth.getName().equals(consulta.getCreatedBy().getCodi())) {
+                log.error("La consulta (idpeticion=" + idPeticion + ", idsolicitud=" + idSolicitud + ") no pertany a aquest usuari");
+                throw new AccessDenegatException("Només pot accedir al justificant l'usuari que ha realitzat la consulta");
+            }
+        }
+        return consulta;
+    }
 
     // Conversors
     // ////////////////////////////////////////////////////
