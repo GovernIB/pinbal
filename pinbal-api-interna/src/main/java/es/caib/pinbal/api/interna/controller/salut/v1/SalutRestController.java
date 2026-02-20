@@ -1,5 +1,6 @@
 package es.caib.pinbal.api.interna.controller.salut.v1;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
 import com.wordnik.swagger.annotations.ApiResponse;
@@ -7,6 +8,7 @@ import com.wordnik.swagger.annotations.ApiResponses;
 import es.caib.comanda.ms.salut.model.AppInfo;
 import es.caib.comanda.ms.salut.model.SalutInfo;
 import es.caib.pinbal.api.config.ApiVersion;
+import es.caib.pinbal.api.config.Iso8601DateDeserializer;
 import es.caib.pinbal.api.interna.controller.PinbalHalRestController;
 import es.caib.pinbal.core.service.SalutService;
 import lombok.Builder;
@@ -16,6 +18,7 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -77,7 +80,9 @@ public class SalutRestController extends PinbalHalRestController {
     })
     @RequestMapping(value = "/salut", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public SalutInfo health(HttpServletRequest request) throws IOException {
+    public SalutInfo health(HttpServletRequest request,
+                            @JsonDeserialize(using = Iso8601DateDeserializer.class) @RequestParam(required = false) Date dataPeriode,
+                            @JsonDeserialize(using = Iso8601DateDeserializer.class) @RequestParam(required = false) Date dataTotal) throws IOException {
 
         ManifestInfo manifestInfo = getManifestInfo();
         return salutService.checkSalut(manifestInfo.getVersion());
