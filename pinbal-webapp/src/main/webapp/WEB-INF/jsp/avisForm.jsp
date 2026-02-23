@@ -30,7 +30,7 @@
 		<pbl:inputText name="assumpte" textKey="avis.form.camp.assumpte" required="true"/>
 		<pbl:inputTextarea name="missatge" textKey="avis.form.camp.missatge" required="true"/>
 		<pbl:inputDate name="dataInici" textKey="avis.form.camp.dataInici" required="true"/>
-		<pbl:inputDate name="dataFinal" textKey="avis.form.camp.dataFinal" required="true"/>
+		<pbl:inputDate name="dataFinal" textKey="avis.form.camp.dataFinal" required="false"/>
 		<pbl:inputSelect name="avisNivell" textKey="avis.form.camp.avisNivell" optionEnum="AvisNivellEnumDto" required="true"/>
 		
 <%--		<<div class="pull-right">--%>

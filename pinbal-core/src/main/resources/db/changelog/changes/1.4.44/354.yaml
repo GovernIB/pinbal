@@ -1,0 +1,17 @@
+databaseChangeLog:
+  - property:
+      name: varcharUnit
+      value: CHAR
+      dbms: oracle
+  - property:
+      name: varcharUnit
+      value: ''
+      dbms: postgresql
+  - changeSet:
+      id: 354-01
+      author: limit
+      changes:
+        - dropNotNullConstraint:
+            tableName: PBL_AVIS
+            columnName: data_final
+            columnDataType: timestamp

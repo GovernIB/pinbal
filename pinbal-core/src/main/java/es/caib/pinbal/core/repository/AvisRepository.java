@@ -24,7 +24,7 @@ public interface AvisRepository extends JpaRepository<Avis, Long> {
 			"where " +
 			"    a.actiu = true " +
 			"and a.dataInici <= :currentDate " +
-			"and a.dataFinal >= :currentDate")
+			"and (a.dataFinal is null or a.dataFinal >= :currentDate)")
 	List<Avis> findActive(@Param("currentDate") Date currentDate);
 
 
