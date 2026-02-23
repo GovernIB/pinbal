@@ -140,8 +140,8 @@ public class UsuariController extends BaseController{
 				model.addAttribute("serveis", entitatId != null ? serveiService.findAmbEntitat(entitatId) : serveiService.findActius());
 			} else {
 				model.addAttribute("entitats", EntitatHelper.getEntitats(request, entitatService, true));
-				model.addAttribute("procediments", procedimentService.findAmbEntitat(entitatActual.getId()));
-				model.addAttribute("serveis", serveiService.findAmbEntitat(entitatActual.getId()));
+				model.addAttribute("procediments", entitatActual != null ? procedimentService.findAmbEntitat(entitatActual.getId()) : new ArrayList<>());
+				model.addAttribute("serveis", entitatActual != null ? serveiService.findAmbEntitat(entitatActual.getId()) : new ArrayList<>());
 			}
 		} catch (EntitatNotFoundException e) {
 			log.error("Error recuperant procediments i serveis", e);

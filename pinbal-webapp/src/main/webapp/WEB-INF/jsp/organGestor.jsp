@@ -90,7 +90,7 @@ $(document).ready(function() {
 		serverSide: true,
 		"order": [[ 1, "asc" ]],
 		language: {
-			"url": "js/datatable-language.json"
+            "url": '<c:url value="/js/datatable-language.json"/>',
 		},
 		ajax: "organgestor/datatable",
 		columnDefs: [{

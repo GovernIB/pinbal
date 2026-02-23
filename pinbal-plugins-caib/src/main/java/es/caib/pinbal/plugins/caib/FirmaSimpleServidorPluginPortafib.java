@@ -3,11 +3,13 @@
  */
 package es.caib.pinbal.plugins.caib;
 
+import es.caib.comanda.ms.salut.model.IntegracioApp;
 import es.caib.pinbal.plugin.PropertiesHelper;
 import es.caib.pinbal.plugins.FirmaServidorPlugin;
 import es.caib.pinbal.plugins.SignaturaDades;
 import es.caib.pinbal.plugins.SignaturaResposta;
 import es.caib.pinbal.plugins.SistemaExternException;
+import es.caib.pinbal.plugins.helper.PluginMetricHelper;
 import org.fundaciobit.apisib.apifirmasimple.v1.ApiFirmaEnServidorSimple;
 import org.fundaciobit.apisib.apifirmasimple.v1.beans.FirmaSimpleAvailableProfile;
 import org.fundaciobit.apisib.apifirmasimple.v1.beans.FirmaSimpleCommonInfo;
@@ -41,6 +43,7 @@ import java.util.Properties;
 	public FirmaSimpleServidorPluginPortafib() {
 		super();
 		properties = PropertiesHelper.getProperties();
+        PluginMetricHelper.addEndpoint(IntegracioApp.PFI, getPropertyEndpoint());
 	}
 
 	public FirmaSimpleServidorPluginPortafib(Properties properties) {
@@ -57,6 +60,7 @@ import java.util.Properties;
 	public SignaturaResposta signar(SignaturaDades dades) throws SistemaExternException {
 
 		try {
+            long start = System.currentTimeMillis();
 			ApiFirmaEnServidorSimple api = new ApiFirmaEnServidorSimpleJersey(getPropertyEndpoint(), getPropertyUsername(), getPropertyPassword());
 			FirmaSimpleFile fileToSign = new FirmaSimpleFile(dades.getNom(), dades.getContentType(), dades.getContingut());
 
@@ -79,8 +83,10 @@ import java.util.Properties;
 					.perfilFirmaEni(result.getSignedFileInfo() != null ? result.getSignedFileInfo().getEniPerfilFirma() : null)
 					.build();
 
+            PluginMetricHelper.addSuccessOperation(IntegracioApp.PFI, System.currentTimeMillis() - start);
 			return resposta;
 		} catch (Exception e) {
+            PluginMetricHelper.addErrorOperation(IntegracioApp.PFI);
 			throw new RuntimeException(e);
 		}
 	}  

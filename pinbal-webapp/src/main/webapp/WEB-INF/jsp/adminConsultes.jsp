@@ -175,7 +175,8 @@
 					<th data-data="dataEsperadaResposta"><spring:message code="consulta.list.taula.der" /></th>
 					<th data-data="justificantEstat"></th><%-- 8 --%>
 					<th data-data="justificantError"></th><%-- 9 --%>
-					<th data-data="id"></th><%-- 10 --%>
+					<th data-data="id"></th><%-- 10 XML ZIP --%>
+					<th data-data="id"></th><%-- 11 DETALLS --%>
 					<th data-data="error" data-visible="false"></th>
 					<th data-data="recobriment" data-visible="false"></th>
 					<th data-data="multiple" data-visible="false"></th>
@@ -288,6 +289,14 @@
 				orderable: false,
 				width: "1%",
 				render: function (data, type, row, meta) {
+					var template = $('#template-xmlzip').html();
+					return Mustache.render(template, row);
+				}
+			}, {
+				targets: [11],
+				orderable: false,
+				width: "1%",
+				render: function (data, type, row, meta) {
 					var template = $('#template-details').html();
 					return Mustache.render(template, row);
 				}
@@ -370,6 +379,11 @@
 	</div>
 </div>
 {{/estat-error}}
+</script>
+<script id="template-xmlzip" type="x-tmpl-mustache">
+<a class="btn btn-default btn-small" href="consulta/{{ id }}/xmlZip">
+	<i class="far fa-file-archive" title="<spring:message code="consulta.list.taula.xmlzip"/>" alt="XML"></i>
+</a>
 </script>
 <script id="template-details" type="x-tmpl-mustache">
 <a href="consulta/{{ id }}" class="btn btn-default" data-toggle="modal"><i class="fas fa-search-plus"></i>&nbsp;<spring:message code="admin.consulta.list.taula.detalls"/></a>

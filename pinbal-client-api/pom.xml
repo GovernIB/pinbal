@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>es.caib.pinbal</groupId>
     <artifactId>pinbal-client-api</artifactId>
-    <version>1.4.42.5</version>
+    <version>1.4.43</version>
 
     <properties>
         <hibernate.validator.version>4.1.0.Final</hibernate.validator.version>
@@ -21,6 +21,12 @@
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-validator</artifactId>
             <version>${hibernate.validator.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-api</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>

@@ -103,9 +103,16 @@ public interface HistoricConsultaService {
 	 * @throws JustificantGeneracioException
 	 *            Si es produeixen errors al generar el justificant.
 	 */
-	@PreAuthorize("hasRole('ROLE_DELEG')")
+ @PreAuthorize("hasRole('ROLE_DELEG')")
 	public FitxerDto obtenirJustificantMultipleZip(
             Long id) throws ConsultaNotFoundException, JustificantGeneracioException;
+
+	/**
+	 * Descarrega tots els missatges XML de la consulta en un arxiu ZIP, organitzats per tipus de missatge.
+	 * @param id Atribut id de la consulta.
+	 */
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	public FitxerDto descarregarXmlTokensZip(Long id) throws ConsultaNotFoundException;
 
 	/**
 	 * Torna a intentar la generació i custòdia del justificant.

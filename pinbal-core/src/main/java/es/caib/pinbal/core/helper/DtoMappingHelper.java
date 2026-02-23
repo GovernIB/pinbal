@@ -3,17 +3,6 @@
  */
 package es.caib.pinbal.core.helper;
 
-import java.util.Date;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
-
-import org.joda.time.DateTime;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
-import org.springframework.stereotype.Component;
-
 import es.caib.pinbal.core.dto.ClauPrivadaDto;
 import es.caib.pinbal.core.dto.ConfigDto;
 import es.caib.pinbal.core.dto.ConfigGroupDto;
@@ -57,6 +46,16 @@ import ma.glasnost.orika.MappingContext;
 import ma.glasnost.orika.impl.DefaultMapperFactory;
 import ma.glasnost.orika.metadata.ClassMapBuilder;
 import ma.glasnost.orika.metadata.Type;
+import org.joda.time.DateTime;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Component;
+
+import java.util.Date;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * Helper per al mapeig de classes del model a DTOs.
@@ -185,7 +184,9 @@ public class DtoMappingHelper {
 		// Mapeig de camps de organismes cessionaris
 		mapperFactory.registerClassMap(
 				ClassMapBuilder.map(ClauPrivada.class, ClauPrivadaDto.class).
-						field("organisme.id", "organisme").
+						field("organisme.id", "organismeId").
+						field("organisme.nom", "organismeNom").
+						field("organisme.cif", "organismeCif").
 						byDefault().toClassMap());
 		mapperFactory.registerClassMap(
 				ClassMapBuilder.map(ConfigGroup.class, ConfigGroupDto.class).byDefault().toClassMap());

@@ -172,6 +172,16 @@ public interface ProcedimentServeiRepository extends JpaRepository<ProcedimentSe
 
     List<ProcedimentServei> findByServei(String serveiCodi);
 
+	@Query("select case when count(c) > 0 then true else false end " +
+			"from Consulta c " +
+			"where c.procedimentServei = :procedimentServei")
+	boolean hasConsultes(@Param("procedimentServei") ProcedimentServei procedimentServei);
+
+	@Query("select case when count(c) > 0 then true else false end " +
+			"from HistoricConsulta c " +
+			"where c.procedimentServei = :procedimentServei")
+	boolean hasHistoricConsultes(@Param("procedimentServei") ProcedimentServei procedimentServei);
+
 
 
 

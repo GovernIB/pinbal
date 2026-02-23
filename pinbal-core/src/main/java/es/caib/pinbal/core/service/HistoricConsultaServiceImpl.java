@@ -26,15 +26,17 @@ import es.caib.pinbal.core.dto.arxiu.ArxiuDetallDto;
 import es.caib.pinbal.core.helper.ArxiuHelper;
 import es.caib.pinbal.core.helper.ConfigHelper;
 import es.caib.pinbal.core.helper.DtoMappingHelper;
-import es.caib.pinbal.core.helper.JustificantHelper;
 import es.caib.pinbal.core.helper.PermisosHelper;
 import es.caib.pinbal.core.helper.PeticioScspEstadistiquesHelper;
 import es.caib.pinbal.core.helper.PluginHelper;
+import es.caib.pinbal.core.helper.mock.JustificantHelperFactory;
 import es.caib.pinbal.core.model.Entitat;
 import es.caib.pinbal.core.model.EntitatUsuari;
 import es.caib.pinbal.core.model.HistoricConsulta;
 import es.caib.pinbal.core.model.Procediment;
 import es.caib.pinbal.core.model.ProcedimentServei;
+import es.caib.pinbal.core.model.ScspToken;
+import es.caib.pinbal.core.model.ScspTokenId;
 import es.caib.pinbal.core.model.llistat.LlistatHistoricConsulta;
 import es.caib.pinbal.core.repository.EntitatRepository;
 import es.caib.pinbal.core.repository.EntitatUsuariRepository;
@@ -45,6 +47,7 @@ import es.caib.pinbal.core.repository.TokenRepository;
 import es.caib.pinbal.core.repository.UsuariRepository;
 import es.caib.pinbal.core.repository.dadesobertes.DadesObertesHistoricConsultaRepository;
 import es.caib.pinbal.core.repository.llistat.LlistatHistoricConsultaRepository;
+import es.caib.pinbal.core.service.exception.AccessDenegatException;
 import es.caib.pinbal.core.service.exception.ConsultaNotFoundException;
 import es.caib.pinbal.core.service.exception.EntitatNotFoundException;
 import es.caib.pinbal.core.service.exception.JustificantGeneracioException;
@@ -126,7 +129,7 @@ public class HistoricConsultaServiceImpl implements HistoricConsultaService, App
 	private TokenRepository tokenRepository;
 
 	@Autowired
-	private JustificantHelper justificantHelper;
+	private JustificantHelperFactory justificantHelperFactory;
 	@Autowired
 	private DtoMappingHelper dtoMappingHelper;
 	@Autowired
@@ -220,7 +223,7 @@ public class HistoricConsultaServiceImpl implements HistoricConsultaService, App
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 		if (!auth.getName().equals(consulta.getCreatedBy().getCodi())) {
 			log.error("La consulta (idpeticion=" + idpeticion + ", idsolicitud=" + idsolicitud + ") no pertany a aquest usuari");
-			throw new ConsultaNotFoundException();
+			throw new AccessDenegatException("Només pot accedir al justificant l'usuari que ha realitzat la consulta");
 		}
 		return obtenirJustificantComu(consulta, ambContingut, versioImprimible);
 	}
@@ -269,7 +272,7 @@ public class HistoricConsultaServiceImpl implements HistoricConsultaService, App
 			PdfCopy copy = new PdfCopy(pdfConcatenat, baos);
 			pdfConcatenat.open();
 			for (HistoricConsulta solicitud: consulta.getFills()) {
-				FitxerDto fitxerJustificantGenerat = justificantHelper.generar(
+				FitxerDto fitxerJustificantGenerat = justificantHelperFactory.getJustificantHelper().generar(
 						solicitud,
 						getScspHelper());
 				PdfReader pdfReader = new PdfReader(fitxerJustificantGenerat.getContingut());
@@ -313,7 +316,7 @@ public class HistoricConsultaServiceImpl implements HistoricConsultaService, App
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
 			ZipOutputStream zos = new ZipOutputStream(baos);
 			for (HistoricConsulta solicitud: consulta.getFills()) {
-				FitxerDto fitxerJustificantGenerat = justificantHelper.generar(
+				FitxerDto fitxerJustificantGenerat = justificantHelperFactory.getJustificantHelper().generar(
 						solicitud,
 						getScspHelper());
 				ZipEntry zipEntry = new ZipEntry(fitxerJustificantGenerat.getNom());
@@ -1281,7 +1284,7 @@ public class HistoricConsultaServiceImpl implements HistoricConsultaService, App
 							HistoricConsulta consultaRefreshed = historicConsultaRepository.getOne(consulta.getId());
 							// Si l'estat del justificant és PENDENT o ERROR intentam tornar a generar el justificant
 							if (JustificantEstat.PENDENT.equals(consultaRefreshed.getJustificantEstat()) || JustificantEstat.ERROR.equals(consultaRefreshed.getJustificantEstat())) {
-								justificantHelper.generarCustodiarJustificantPendent(
+								justificantHelperFactory.getJustificantHelper().generarCustodiarJustificantPendent(
 										consultaRefreshed,
 										getScspHelper());
 								historicConsultaRepository.saveAndFlush(consultaRefreshed);
@@ -1313,7 +1316,7 @@ public class HistoricConsultaServiceImpl implements HistoricConsultaService, App
 						}
 						if (!justificant.isError()) {
 							try {
-								FitxerDto justificantFitxer = justificantHelper.descarregarFitxerGenerat(
+								FitxerDto justificantFitxer = justificantHelperFactory.getJustificantHelper().descarregarFitxerGenerat(
 										consultaRefreshed,
 										getScspHelper(),
 										versioImprimible);
@@ -1430,6 +1433,64 @@ public class HistoricConsultaServiceImpl implements HistoricConsultaService, App
 		if (justificantLocks.containsKey(id)) {
 			justificantLocks.remove(id);
 		}
+	}
+
+	// ZIP descarrega de missatges XML de CORE_TOKEN_DATA per Administrador (històric)
+	@Override
+	@Transactional(readOnly = true)
+	public FitxerDto descarregarXmlTokensZip(Long id) throws ConsultaNotFoundException {
+		HistoricConsulta consulta = historicConsultaRepository.findOne(id);
+		if (consulta == null) {
+			throw new ConsultaNotFoundException();
+		}
+		String idPeticion = consulta.getScspPeticionId();
+		List<ScspToken> tokens = tokenRepository.findByIdPeticionOrderByTipoMensajeAsc(idPeticion);
+        if (tokens.isEmpty()) {
+            return null;
+        }
+		try {
+			ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			ZipOutputStream zos = new ZipOutputStream(baos);
+			Map<Integer, Integer> counters = new HashMap<Integer, Integer>();
+			for (ScspToken t : tokens) {
+				String folder = mapTipoMensajeFolder(t.getTipoMensaje());
+				Integer count = counters.get(t.getTipoMensaje());
+				if (count == null) count = 0;
+				counters.put(t.getTipoMensaje(), new Integer(count.intValue() + 1));
+				String filename;
+				if (count.intValue() == 0) filename = folder + "/" + folder + ".xml"; else filename = folder + "/" + folder + "_" + count.intValue() + ".xml";
+				zos.putNextEntry(new ZipEntry(filename));
+				byte[] data = (t.getDatos() != null ? t.getDatos().getBytes("UTF-8") : new byte[0]);
+				zos.write(data);
+				zos.closeEntry();
+			}
+			zos.close();
+			FitxerDto fitxer = new FitxerDto();
+			fitxer.setNom("XML_" + idPeticion + ".zip");
+			fitxer.setContingut(baos.toByteArray());
+			return fitxer;
+		} catch (Exception e) {
+			try {
+				ByteArrayOutputStream baos = new ByteArrayOutputStream();
+				ZipOutputStream zos = new ZipOutputStream(baos);
+				zos.close();
+				FitxerDto fitxer = new FitxerDto();
+				fitxer.setNom("XML_" + idPeticion + ".zip");
+				fitxer.setContingut(baos.toByteArray());
+				return fitxer;
+			} catch (Exception ignore) {}
+			return null;
+		}
+	}
+
+	private String mapTipoMensajeFolder(Integer tipo) {
+		if (tipo == null) return "altres";
+		if (tipo.intValue() == ScspTokenId.PETICION.intValue()) return "peticion";
+		else if (tipo.intValue() == ScspTokenId.CONFIRMACION_PETICION.intValue()) return "confirmacion-peticion";
+		else if (tipo.intValue() == ScspTokenId.SOLICITUD_RESPUESTA.intValue()) return "solicitud-respuesta";
+		else if (tipo.intValue() == ScspTokenId.RESPUESTA.intValue()) return "respuesta";
+		else if (tipo.intValue() == ScspTokenId.FAULT.intValue()) return "fault";
+		else return "altres";
 	}
 
 }

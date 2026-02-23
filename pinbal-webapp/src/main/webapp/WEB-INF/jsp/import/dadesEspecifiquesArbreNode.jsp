@@ -3,7 +3,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <c:set var="nomNode" value="${nodeArbreActual.dades.nom}"/>
-<li class="arbre-node" id="li-${nodeArbreActual.dades.pathAmbSeparadorAlternatiu}">
+<li class="arbre-node" id="li-${nodeArbreActual.dades.pathAmbSeparadorAlternatiu}" data-path="${nodeArbreActual.dades.pathAmbSeparadorDefault}">
 	<c:if test="${nodeArbreActual.dades.complexa}">
 		<i class="fas fa-chevron-down"
 			id="icon-${nodeArbreActual.dades.pathAmbSeparadorAlternatiu}"
@@ -16,6 +16,7 @@
 		</c:choose>
 	</c:if>
 	<c:set var="campTrobat" value="${false}"/>
+	<c:set var="arrelRespostaNode" value="${nodeArbreActual.dades.pathAmbSeparadorDefault == arrelRespostaPath}"/>
 	<c:forEach var="camp" items="${camps}">
 		<c:if test="${camp.path == nodeArbreActual.dades.pathAmbSeparadorDefault}"><c:set var="campTrobat" value="${true}"/></c:if>
 	</c:forEach>
@@ -35,6 +36,7 @@
 		<c:when test="${campComplexSenseNom}"><i>${nomNode}</i></c:when>
 		<c:otherwise>${nomNode}</c:otherwise>
 	</c:choose>
+	<c:if test="${arrelRespostaNode}">&nbsp;<i class="fas fa-arrow-alt-circle-left" title="Node de resposta"></i></c:if>
 <%--	<c:if test="${nodeArbreActual.dades.complexa}">--%>
 <%--		<c:choose>--%>
 <%--			<c:when test="${nodeArbreActual.dades.tipusDadaComplexa == 'ALL'}"><span class="label label-info" style="position: relative;top: -2px;" title="ALL: Es poden emplenar tots els camps, i l'ordre no importa">A</span></c:when>--%>

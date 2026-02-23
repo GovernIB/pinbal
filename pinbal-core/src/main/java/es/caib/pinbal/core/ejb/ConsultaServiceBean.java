@@ -58,8 +58,19 @@ public class ConsultaServiceBean implements ConsultaService {
 	ConsultaService delegate;
 
 
+    @Override
+    @RolesAllowed("tothom")
+    public ConsultaDto peticioSincrona(ConsultaDto consulta) throws ProcedimentServeiNotFoundException, ServeiNotAllowedException, ConsultaScspException, ConsultaNotFoundException {
+        return delegate.peticioSincrona(consulta);
+    }
 
-	@Override
+    @Override
+    @RolesAllowed("tothom")
+    public ConsultaDto peticioAsincrona(ConsultaDto consulta) throws ProcedimentServeiNotFoundException, ServeiNotAllowedException, ConsultaScspException, ValidacioDadesPeticioException {
+        return delegate.peticioAsincrona(consulta);
+    }
+
+    @Override
 	@RolesAllowed("tothom")
 	public ConsultaDto novaConsulta(
 			ConsultaDto consulta) throws ProcedimentServeiNotFoundException, ServeiNotAllowedException, ConsultaScspException {
@@ -169,6 +180,12 @@ public class ConsultaServiceBean implements ConsultaService {
 	public FitxerDto obtenirJustificantMultipleZip(
 			Long id) throws ConsultaNotFoundException, JustificantGeneracioException {
 		return delegate.obtenirJustificantMultipleZip(id);
+	}
+
+	@Override
+	@RolesAllowed("PBL_ADMIN")
+	public FitxerDto descarregarXmlTokensZip(Long id) throws ConsultaNotFoundException {
+		return delegate.descarregarXmlTokensZip(id);
 	}
 
 	@Override

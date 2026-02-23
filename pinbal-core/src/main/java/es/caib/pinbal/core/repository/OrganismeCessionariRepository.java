@@ -3,11 +3,10 @@
  */
 package es.caib.pinbal.core.repository;
 
-import java.util.List;
-
+import es.caib.pinbal.core.model.OrganismeCessionari;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import es.caib.pinbal.core.model.OrganismeCessionari;
+import java.util.List;
 
 /**
  * Especifica els mètodes que s'han d'emprar per obtenir i modificar
@@ -19,7 +18,9 @@ import es.caib.pinbal.core.model.OrganismeCessionari;
 public interface OrganismeCessionariRepository extends JpaRepository<OrganismeCessionari, Long> {
 
 	public List<OrganismeCessionari> findAll();
-	
+
+	public List<OrganismeCessionari> findByBloquejatFalseOrderByNomAsc();
+
 	public OrganismeCessionari findById(Long id);
 	
 	public OrganismeCessionari findByCif(String id);

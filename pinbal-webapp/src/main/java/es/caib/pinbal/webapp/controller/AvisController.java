@@ -3,15 +3,11 @@
  */
 package es.caib.pinbal.webapp.controller;
 
-import java.lang.reflect.InvocationTargetException;
-import java.sql.SQLException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
-import javax.naming.NamingException;
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
-
+import es.caib.pinbal.core.dto.AvisDto;
+import es.caib.pinbal.core.service.AvisService;
+import es.caib.pinbal.webapp.command.AvisCommand;
+import es.caib.pinbal.webapp.datatables.ServerSideRequest;
+import es.caib.pinbal.webapp.datatables.ServerSideResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
 import org.springframework.data.domain.Page;
@@ -25,12 +21,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import es.caib.pinbal.core.dto.AvisDto;
-import es.caib.pinbal.core.service.AvisService;
-import es.caib.pinbal.webapp.command.AvisCommand;
-import es.caib.pinbal.webapp.common.AlertHelper;
-import es.caib.pinbal.webapp.datatables.ServerSideRequest;
-import es.caib.pinbal.webapp.datatables.ServerSideResponse;
+import javax.naming.NamingException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+import javax.validation.Valid;
+import java.lang.reflect.InvocationTargetException;
+import java.sql.SQLException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Controlador per al manteniment de avisos.
@@ -44,7 +44,19 @@ public class AvisController extends BaseController {
 	@Autowired
 	private AvisService avisService;
 
-	
+	private static final String SESSION_SELECTED_IDS = "avisSelectedIds";
+
+	@SuppressWarnings("unchecked")
+	private Set<Long> getSelectedSet(HttpSession session) {
+		Object obj = session.getAttribute(SESSION_SELECTED_IDS);
+		if (obj instanceof Set) {
+			return (Set<Long>) obj;
+		}
+		Set<Long> set = new HashSet<>();
+		session.setAttribute(SESSION_SELECTED_IDS, set);
+		return set;
+	}
+
 	@RequestMapping(method = RequestMethod.GET)
 	public String get() {
 		return "avisList";
@@ -138,6 +150,95 @@ public class AvisController extends BaseController {
 				request,
 				"redirect:../../avis",
 				"avis.controller.esborrat.ok");
+	}
+
+	// --- Selecció a sessió ---
+	@RequestMapping(value = "/selection/list", method = RequestMethod.GET, produces = "application/json")
+	@ResponseBody
+	public Set<Long> selectionList(HttpServletRequest request) {
+		return new HashSet<>(getSelectedSet(request.getSession()));
+	}
+
+	@RequestMapping(value = "/selection/add", method = RequestMethod.POST)
+	@ResponseBody
+	public String selectionAdd(HttpServletRequest request) {
+		String idsStr = request.getParameter("ids");
+		Set<Long> set = getSelectedSet(request.getSession());
+		if (idsStr != null && !idsStr.isEmpty()) {
+			for (String s : idsStr.split(",")) {
+				try { set.add(Long.valueOf(s.trim())); } catch (Exception ignore) {}
+			}
+		}
+		return "OK";
+	}
+
+	@RequestMapping(value = "/selection/remove", method = RequestMethod.POST)
+	@ResponseBody
+	public String selectionRemove(HttpServletRequest request) {
+		String idsStr = request.getParameter("ids");
+		Set<Long> set = getSelectedSet(request.getSession());
+		if (idsStr != null && !idsStr.isEmpty()) {
+			for (String s : idsStr.split(",")) {
+				try { set.remove(Long.valueOf(s.trim())); } catch (Exception ignore) {}
+			}
+		}
+		return "OK";
+	}
+
+	@RequestMapping(value = "/selection/clear", method = RequestMethod.POST)
+	@ResponseBody
+	public String selectionClear(HttpServletRequest request) {
+		getSelectedSet(request.getSession()).clear();
+		return "OK";
+	}
+
+	@RequestMapping(value = "/selection/selectAll", method = RequestMethod.POST)
+	@ResponseBody
+	public String selectionSelectAll(HttpServletRequest request) {
+		Set<Long> set = getSelectedSet(request.getSession());
+        set.addAll(avisService.findAllIds());
+		return "OK";
+	}
+
+	@RequestMapping(value = "/selected/enable", method = RequestMethod.POST, produces = "application/json")
+	@ResponseBody
+	public java.util.Map<String, Object> enableSelected(HttpServletRequest request) {
+		int processed = 0;
+		for (Long id : getSelectedSet(request.getSession())) {
+			avisService.updateActiva(id, true);
+			processed++;
+		}
+		java.util.Map<String, Object> resp = new java.util.HashMap<>();
+		resp.put("action", "enable");
+		resp.put("processed", processed);
+		return resp;
+	}
+	@RequestMapping(value = "/selected/disable", method = RequestMethod.POST, produces = "application/json")
+	@ResponseBody
+	public java.util.Map<String, Object> disableSelected(HttpServletRequest request) {
+		int processed = 0;
+		for (Long id : getSelectedSet(request.getSession())) {
+			avisService.updateActiva(id, false);
+			processed++;
+		}
+		java.util.Map<String, Object> resp = new java.util.HashMap<>();
+		resp.put("action", "disable");
+		resp.put("processed", processed);
+		return resp;
+	}
+	@RequestMapping(value = "/selected/delete", method = RequestMethod.POST, produces = "application/json")
+	@ResponseBody
+	public java.util.Map<String, Object> deleteSelected(HttpServletRequest request) {
+		int processed = 0;
+		for (Long id : new HashSet<>(getSelectedSet(request.getSession()))) {
+			avisService.delete(id);
+			processed++;
+		}
+		getSelectedSet(request.getSession()).clear();
+		java.util.Map<String, Object> resp = new java.util.HashMap<>();
+		resp.put("action", "delete");
+		resp.put("processed", processed);
+		return resp;
 	}
 	
 	@InitBinder

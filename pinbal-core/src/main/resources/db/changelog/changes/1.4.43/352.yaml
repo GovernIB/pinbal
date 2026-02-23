@@ -1,0 +1,39 @@
+databaseChangeLog:
+  - property:
+      name: varcharUnit
+      value: CHAR
+      dbms: oracle
+  - property:
+      name: varcharUnit
+      value: ''
+      dbms: postgresql
+  - changeSet:
+      id: 352-01
+      author: limit
+      changes:
+        - addColumn:
+            tableName: PBL_SERVEI_CONFIG
+            columns:
+              - column:
+                  name: use_cert_entitat
+                  type: boolean
+                  defaultValueBoolean: false
+
+        - addColumn:
+            tableName: CORE_CLAVE_PRIVADA
+            columns:
+              - column:
+                  name: per_entitat
+                  type: boolean
+                  defaultValueBoolean: false
+
+#  - changeSet:
+#      id: 352-02
+#      author: limit
+#      changes:
+#        - update:
+#            tableName: CORE_CLAVE_PRIVADA
+#            columns:
+#              - column:
+#                  name: per_entitat
+#                  valueBoolean: true

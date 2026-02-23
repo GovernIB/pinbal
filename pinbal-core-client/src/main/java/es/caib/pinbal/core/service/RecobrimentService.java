@@ -9,6 +9,7 @@ import es.caib.pinbal.client.recobriment.model.ScspJustificante;
 import es.caib.pinbal.client.recobriment.model.ScspPeticion;
 import es.caib.pinbal.client.recobriment.model.ScspRespuesta;
 import es.caib.pinbal.client.recobriment.v2.DadaEspecifica;
+import es.caib.pinbal.client.recobriment.v2.DadaEspecificaBasic;
 import es.caib.pinbal.client.recobriment.v2.Entitat;
 import es.caib.pinbal.client.recobriment.v2.PeticioAsincrona;
 import es.caib.pinbal.client.recobriment.v2.PeticioConfirmacioAsincrona;
@@ -167,12 +168,19 @@ public interface RecobrimentService {
 	@PreAuthorize("hasRole('ROLE_WS')")
 	List<ServeiBasic> getServeisByProcediment(String entitatCodi, String procedimentCodi) throws ProcedimentNotFoundException;
 
-	/**
-	 * @param serveiCodi codi del servei
-	 * @return llista de camps que son necessaris per emplenar l’apartat de dades específiques de la petició SCSP
-	 */
+    /**
+     * @param serveiCodi codi del servei
+     * @return llista de camps que son necessaris per emplenar l’apartat de dades específiques de la petició SCSP
+     */
 	@PreAuthorize("hasRole('ROLE_WS')")
 	List<DadaEspecifica> getDadesEspecifiquesByServei(String serveiCodi) throws ServeiNotFoundException;
+
+    /**
+     * @param serveiCodi codi del servei
+     * @return llista de camps que es poden retornar en l’apartat de dades específiques de la resposta SCSP
+     */
+    @PreAuthorize("hasRole('ROLE_WS')")
+    List<DadaEspecificaBasic> getDadesEspecifiquesByServeiResposta(String serveiCodi) throws Exception;
 
 	/**
 	 * @param serveiCodi codi del servei
@@ -298,4 +306,5 @@ public interface RecobrimentService {
 	public String getJustificantUuid(
 			String idPeticion,
 			String idSolicitud) throws RecobrimentScspException, ConsultaNotFoundException;
+
 }

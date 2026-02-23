@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>es.caib.pinbal</groupId>
 		<artifactId>pinbal</artifactId>
-		<version>1.4.42.5</version>
+		<version>1.4.43</version>
 	</parent>
 	<artifactId>pinbal-scsp</artifactId>
 	<dependencies>
@@ -283,7 +283,11 @@
 					<groupId>org.apache.santuario</groupId>
 					<artifactId>xmlsec</artifactId>
 				</exclusion>
-			</exclusions>
+                <exclusion>
+                    <artifactId>jul-to-slf4j</artifactId>
+                    <groupId>org.slf4j</groupId>
+                </exclusion>
+            </exclusions>
 		</dependency>
 
 		<dependency>
@@ -406,6 +410,12 @@
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-api</artifactId>
+			<version>${slf4j.version}</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>jul-to-slf4j</artifactId>
 			<version>${slf4j.version}</version>
 			<scope>provided</scope>
 		</dependency>

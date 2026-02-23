@@ -109,6 +109,12 @@ public class ServeiConfig extends PinbalAuditable<Long> {
 	@Column(name = "use_auto_classe")
 	private boolean useAutoClasse = true;
 
+	@Column(name = "arrel_resposta_path", length = 255)
+	private String arrelRespostaPath;
+
+    @Column(name = "use_cert_entitat")
+    private boolean useCertificatEntitat = false;
+
 	@Version
 	private long version = 0;
 
@@ -153,6 +159,7 @@ public class ServeiConfig extends PinbalAuditable<Long> {
 			boolean addDadesEspecifiques,
 			boolean useAutoClasse,
 			boolean enviarSolicitant,
+            boolean useCertificatEntitat,
 			boolean actiu) {
 		return new Builder(
 				servei,
@@ -172,6 +179,7 @@ public class ServeiConfig extends PinbalAuditable<Long> {
 				addDadesEspecifiques,
 				useAutoClasse,
 				enviarSolicitant,
+                useCertificatEntitat,
 				actiu);
 	}
 
@@ -205,7 +213,8 @@ public class ServeiConfig extends PinbalAuditable<Long> {
 			boolean iniDadesEspecifiques,
 			boolean addDadesEspecifiques,
 			boolean useAutoClasse,
-			boolean enviarSolicitant) {
+			boolean enviarSolicitant,
+            boolean useCertificatEntitat) {
 		this.custodiaCodi = custodiaCodi;
 		this.roleName = roleName;
 		this.condicioBusClass = condicioBusClass;
@@ -232,6 +241,7 @@ public class ServeiConfig extends PinbalAuditable<Long> {
 		this.addDadesEspecifiques = addDadesEspecifiques;
 		this.useAutoClasse = useAutoClasse;
 		this.enviarSolicitant = enviarSolicitant;
+        this.useCertificatEntitat = useCertificatEntitat;
 	}
 	public void updateFitxerAjuda(
 			String fitxerAjudaNom,
@@ -281,6 +291,7 @@ public class ServeiConfig extends PinbalAuditable<Long> {
 				boolean addDadesEspecifiques,
 				boolean useAutoClasse,
 				boolean enviarSolicitant,
+                boolean useCertificatEntitat,
 				boolean actiu) {
 			built = new ServeiConfig();
 			built.servei = servei;
@@ -300,6 +311,7 @@ public class ServeiConfig extends PinbalAuditable<Long> {
 			built.addDadesEspecifiques = addDadesEspecifiques;
 			built.useAutoClasse = useAutoClasse;
 			built.enviarSolicitant = enviarSolicitant;
+            built.useCertificatEntitat = useCertificatEntitat;
 			built.actiu = actiu;
 		}
 		/**

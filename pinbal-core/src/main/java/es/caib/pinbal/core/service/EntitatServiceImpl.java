@@ -9,6 +9,7 @@ import es.caib.pinbal.core.dto.EntitatDto.EntitatTipusDto;
 import es.caib.pinbal.core.dto.OrganGestorDto;
 import es.caib.pinbal.core.helper.CacheHelper;
 import es.caib.pinbal.core.helper.DtoMappingHelper;
+import es.caib.pinbal.core.model.ClauPrivada;
 import es.caib.pinbal.core.model.Entitat;
 import es.caib.pinbal.core.model.Entitat.EntitatTipus;
 import es.caib.pinbal.core.model.EntitatServei;
@@ -16,6 +17,7 @@ import es.caib.pinbal.core.model.EntitatUsuari;
 import es.caib.pinbal.core.model.OrganGestor;
 import es.caib.pinbal.core.model.ServeiConfig;
 import es.caib.pinbal.core.model.Usuari;
+import es.caib.pinbal.core.repository.ClauPrivadaRepository;
 import es.caib.pinbal.core.repository.EntitatRepository;
 import es.caib.pinbal.core.repository.EntitatServeiRepository;
 import es.caib.pinbal.core.repository.EntitatUsuariRepository;
@@ -43,8 +45,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Implementació de EntitatService que es comunica amb la base de dades emprant
@@ -68,10 +72,12 @@ public class EntitatServiceImpl implements EntitatService, ApplicationContextAwa
 	private UsuariRepository usuariRepository;
 	@Autowired
 	private OrganismeCessionariRepository organismeCessionariRepository;
-	@Autowired
+ @Autowired
 	private DtoMappingHelper dtoMappingHelper;
 	@Autowired
 	private CacheHelper cacheHelper;
+	@Autowired
+	private ClauPrivadaRepository clauPrivadaRepository;
 
 	private ApplicationContext applicationContext;
 	private MessageSource messageSource;
@@ -276,6 +282,7 @@ public class EntitatServiceImpl implements EntitatService, ApplicationContextAwa
 				serveiCodi).build();
 		entitatServeiRepository.save(entitatServei);
 		actualitzarServeisScspActiusEntitat(entitat);
+
 		cacheHelper.evictServeisEntitat(entitat.getCodi());
 	}
 
@@ -295,6 +302,7 @@ public class EntitatServiceImpl implements EntitatService, ApplicationContextAwa
 		}
 		entitatServeiRepository.delete(entitatServei);
 		actualitzarServeisScspActiusEntitat(entitat);
+
 		cacheHelper.evictServeisEntitat(entitat.getCodi());
 	}
 
@@ -392,17 +400,24 @@ public class EntitatServiceImpl implements EntitatService, ApplicationContextAwa
 		this.messageSource = messageSource;
 	}
 
-	private void actualitzarServeisScspActiusEntitat(
-			Entitat entitat) {
-		List<EntitatServei> entitatServeis = entitatServeiRepository.findByEntitat(
-				entitat);
-		String[] serveisActius = new String[entitatServeis.size()];
-		for (int i = 0; i < serveisActius.length; i++) {
-			serveisActius[i] = entitatServeis.get(i).getServei();
+	private void actualitzarServeisScspActiusEntitat(Entitat entitat) {
+
+        // Obtenir serveis actius
+		List<EntitatServei> entitatServeis = entitatServeiRepository.findByEntitat(entitat);
+		Set<String> serveisActius = new HashSet<>();
+		for (int i = 0; i < entitatServeis.size(); i++) {
+			serveisActius.add(entitatServeis.get(i).getServei());
 		}
+
+        // Obtenir clau privada de l'entitat
+        ClauPrivada clauPrivada = clauPrivadaRepository.findTopByOrganismeCifAndPerEntitatTrueOrderByDataAltaDesc(entitat.getCif());
+        String aliesClauFirmaEntitat = clauPrivada != null ? clauPrivada.getAlies() : null;
+
+        // Actualitzar els serveis per òrgan SCSP
 		getScspHelper().actualitzarServiciosActivosOrganismoCesionario(
 				entitat.getCif(),
-				serveisActius);
+				serveisActius,
+                aliesClauFirmaEntitat);
 	}
 
 	private ScspHelper getScspHelper() {

@@ -9,6 +9,7 @@ import es.caib.pinbal.api.interna.openapi.interficies.recobriment.v2.Recobriment
 import es.caib.pinbal.client.procediments.ProcedimentBasic;
 import es.caib.pinbal.client.recobriment.model.ScspJustificante;
 import es.caib.pinbal.client.recobriment.v2.DadaEspecifica;
+import es.caib.pinbal.client.recobriment.v2.DadaEspecificaBasic;
 import es.caib.pinbal.client.recobriment.v2.Entitat;
 import es.caib.pinbal.client.recobriment.v2.EstatEnum;
 import es.caib.pinbal.client.recobriment.v2.PeticioAsincrona;
@@ -181,6 +182,25 @@ public class RecobrimentRestV2Controller extends PinbalHalRestController impleme
 		}
 	}
 
+    @RequestMapping(value = "/serveis/{serveiCodi}/dadesEspecifiquesResposta", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<DadaEspecificaBasic>> getDadesEspecifiquesResposta(@PathVariable("serveiCodi") String serveiCodi) {
+        try {
+            List<DadaEspecificaBasic> dadesEspecifiques = recobrimentService.getDadesEspecifiquesByServeiResposta(serveiCodi);
+
+            if (dadesEspecifiques == null || dadesEspecifiques.isEmpty()) {
+                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            }
+            return new ResponseEntity<>(dadesEspecifiques, HttpStatus.OK);
+        } catch (ServeiNotFoundException e) {
+            throw new ResourceNotFoundException(e.getDefaultMessage(), e);
+        } catch (AccessDeniedException | AccessDenegatException ade) {
+            throw new AccessDenegatException(Arrays.asList("PBL_WS"));
+        } catch (Exception ex) {
+            log.error("Error obtenint les dades especifiques del servei " + serveiCodi, ex);
+            throw new ServiceExecutionException(ex.getMessage(), ex);
+        }
+    }
+
 	@ApiIgnore
 	@RequestMapping(value = "/serveis/{serveiCodi}/camps/**", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<ValorEnum>> getValorsEnum(
@@ -323,10 +343,20 @@ public class RecobrimentRestV2Controller extends PinbalHalRestController impleme
 			}
 			return new ResponseEntity<>(justificant, HttpStatus.OK);
 		} catch (ConsultaNotFoundException ce) {
-			throw  new ResourceNotFoundException(ce.getMessage(), ce);
+			throw new ResourceNotFoundException(ce.getMessage(), ce);
+		} catch (AccessDenegatException ade) {
+			throw ade;
 		} catch (Exception ex) {
-			log.error("Error obtenint el justificant de la petició " + idPeticio + ", solicitud " + idSolicitud, ex);
-			throw new ServiceExecutionException(ex.getMessage(), ex);
+			// Desencapsular possibles EJBException
+			Exception unwrapped = unwrapException(ex);
+			if (unwrapped instanceof ConsultaNotFoundException) {
+				throw new ResourceNotFoundException(unwrapped.getMessage(), unwrapped);
+			}
+			if (unwrapped instanceof AccessDenegatException) {
+				throw (AccessDenegatException) unwrapped;
+			}
+			log.error("Error obtenint el justificant de la petició " + idPeticio + ", solicitud " + idSolicitud, unwrapped);
+			throw new ServiceExecutionException(unwrapped.getMessage(), unwrapped);
 		}
 	}
 
@@ -344,9 +374,19 @@ public class RecobrimentRestV2Controller extends PinbalHalRestController impleme
 			return new ResponseEntity<>(justificant, HttpStatus.OK);
 		} catch (ConsultaNotFoundException ce) {
 			throw  new ResourceNotFoundException(ce.getMessage(), ce);
+		} catch (AccessDenegatException ade) {
+			throw ade;
 		} catch (Exception ex) {
-			log.error("Error obtenint el justificant imprimible de la petició " + idPeticio + ", solicitud " + idSolicitud, ex);
-			throw new ServiceExecutionException(ex.getMessage(), ex);
+			// Desencapsular possibles EJBException
+			Exception unwrapped = unwrapException(ex);
+			if (unwrapped instanceof ConsultaNotFoundException) {
+				throw new ResourceNotFoundException(unwrapped.getMessage(), unwrapped);
+			}
+			if (unwrapped instanceof AccessDenegatException) {
+				throw (AccessDenegatException) unwrapped;
+			}
+			log.error("Error obtenint el justificant imprimible de la petició " + idPeticio + ", solicitud " + idSolicitud, unwrapped);
+			throw new ServiceExecutionException(unwrapped.getMessage(), unwrapped);
 		}
 	}
 
@@ -386,6 +426,36 @@ public class RecobrimentRestV2Controller extends PinbalHalRestController impleme
 			log.error("Error obtenint l'UUID del justificant de la petició " + idPeticio + ", solicitud " + idSolicitud, ex);
 			throw new ServiceExecutionException(ex.getMessage(), ex);
 		}
+	}
+
+	/**
+	 * Desencapsula excepcions que poden venir dins d'un EJBException.
+	 * Si l'excepció és un EJBException, retorna la causa. Sinó, retorna l'excepció original.
+	 * Utilitza reflexió per evitar dependències de javax.ejb.
+	 */
+	private Exception unwrapException(Exception ex) {
+		// Comprovar si és un EJBException per nom de classe
+		if (ex.getClass().getName().equals("javax.ejb.EJBException")) {
+			try {
+				// Utilitzar reflexió per cridar getCausedByException()
+				java.lang.reflect.Method method = ex.getClass().getMethod("getCausedByException");
+				Exception cause = (Exception) method.invoke(ex);
+				if (cause != null) {
+					return cause;
+				}
+			} catch (Exception e) {
+				// Si falla la reflexió, continuar amb el mètode estàndard
+				log.debug("No s'ha pogut desencapsular EJBException via reflexió", e);
+			}
+		}
+
+		// També desencapsular RuntimeException o qualsevol excepció que tingui causa
+		Throwable cause = ex.getCause();
+		if (cause instanceof Exception) {
+			return (Exception) cause;
+		}
+
+		return ex;
 	}
 
 }

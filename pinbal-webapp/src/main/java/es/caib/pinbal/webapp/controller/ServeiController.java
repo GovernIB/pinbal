@@ -311,6 +311,7 @@ public class ServeiController extends BaseController {
 		List<NodeDto<DadaEspecificaDto>> llistatDadesEspecifiques = arbreDadesEspecifiques.toList();
 		List<ServeiCampDto> camps = serveiService.findServeiCamps(serveiCodi);
 		model.addAttribute("camps", camps);
+		model.addAttribute("arrelRespostaPath", serveiService.getArrelRespostaPath(serveiCodi));
 		
 		// Consulta dels valors d'enumerat dels camps tipus enumerat
 		List<ServeiCampDto> campsEnum = new ArrayList<ServeiCampDto>();
@@ -412,6 +413,25 @@ public class ServeiController extends BaseController {
 			@PathVariable Long serveiCampGrupId) throws ServeiCampNotFoundException, ServeiCampGrupNotFoundException {
 		serveiService.agrupaServeiCamp(serveiCampId, serveiCampGrupId);
 		return "redirect:../../../camp";
+	}
+
+	@RequestMapping(value = "/{serveiCodi}/camp/markResposta", method = RequestMethod.POST)
+	@ResponseBody
+	public String serveiCampMarcarArrelResposta(
+			HttpServletRequest request,
+			@PathVariable String serveiCodi,
+			String path) {
+		serveiService.marcarArrelResposta(serveiCodi, path);
+		return "ok";
+	}
+
+	@RequestMapping(value = "/{serveiCodi}/camp/unmarkResposta", method = RequestMethod.POST)
+	@ResponseBody
+	public String serveiCampDesmarcarArrelResposta(
+			HttpServletRequest request,
+			@PathVariable String serveiCodi) {
+		serveiService.desmarcarArrelResposta(serveiCodi);
+		return "ok";
 	}
 
 	@RequestMapping(value = "/{serveiCodi}/camp/{serveiCampId}/desagrupar", method = RequestMethod.GET)

@@ -14,6 +14,8 @@ import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
+import java.util.Comparator;
+import java.util.Collections;
 
 
 /**
@@ -38,6 +40,17 @@ public class ServeisInterceptor extends HandlerInterceptorAdapter {
 				String usuari = request.getUserPrincipal().getName();
 				LOGGER.debug("Consulta del llistat de serveis pel delegat (usuari=" + usuari + ")");
 				serveis = serveiService.findPermesosAmbProcedimentPerDelegat(entitatActual.getId(), null);
+			}
+			// Ordenar els serveis per descripció
+			if (serveis != null) {
+				Collections.sort(serveis, new Comparator<ServeiDto>() {
+					@Override
+					public int compare(ServeiDto o1, ServeiDto o2) {
+						String d1 = o1 != null && o1.getDescripcio() != null ? o1.getDescripcio() : "";
+						String d2 = o2 != null && o2.getDescripcio() != null ? o2.getDescripcio() : "";
+						return d1.compareToIgnoreCase(d2);
+					}
+				});
 			}
 			request.setAttribute(
 					ServeiHelper.REQUEST_ATTRIBUTE_SERVEIS,

@@ -25,4 +25,9 @@ public class ProcedimentServeiNotFoundException extends Exception {
         return "Procediment-servei no trobat: " + procedimentCodi + " - " + serveiCodi;
     }
 
+    @Override
+    public String getMessage() {
+        return this.getDefaultMessage();
+    }
+
 }

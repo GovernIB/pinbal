@@ -11,6 +11,7 @@ import es.caib.pinbal.core.dto.ParamConfDto;
 import es.caib.pinbal.core.service.exception.ClauPrivadaNotFoundException;
 import es.caib.pinbal.core.service.exception.ClauPublicaNotFoundException;
 import es.caib.pinbal.core.service.exception.EmissorCertNotFoundException;
+import es.caib.pinbal.core.service.exception.EntitatNotFoundException;
 import es.caib.pinbal.core.service.exception.ParamConfNotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -209,7 +210,7 @@ public interface ScspService {
 	 * @return La clau privada creada.
 	 */
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
-	public ClauPrivadaDto createClauPrivada(ClauPrivadaDto dto);
+	public ClauPrivadaDto createClauPrivada(ClauPrivadaDto dto) throws EntitatNotFoundException;
 
 	/**
 	 * Actualitza la informació d'una clau privada
@@ -224,7 +225,7 @@ public interface ScspService {
 	 *             amb el id especificat.
 	 */
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
-	public ClauPrivadaDto updateClauPrivada(ClauPrivadaDto dto) throws ClauPrivadaNotFoundException;
+	public ClauPrivadaDto updateClauPrivada(ClauPrivadaDto dto) throws ClauPrivadaNotFoundException, EntitatNotFoundException;
 
 	/**
 	 * Esborra una clau privada.
@@ -261,9 +262,15 @@ public interface ScspService {
 	public List<OrganismeCessionariDto> findAllOrganismeCessionari();
 
 	
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    List<OrganismeCessionariDto> findAllOrganismeCessionariActiu();
+
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    OrganismeCessionariDto findOrganismeCessionariById(Long organismeId);
+
 	// Funcions de la taula de claus públiques.
-	
-	/**
+
+    /**
 	 * Consulta una clau pública donat el seu id.
 	 * 
 	 * @param id
@@ -343,5 +350,6 @@ public interface ScspService {
 	 * @return Un llistat de claus públiques.
 	 */
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
-	public Page<ClauPublicaDto> findAllClauPublica(Pageable pageable);	
+	public Page<ClauPublicaDto> findAllClauPublica(Pageable pageable);
+
 }

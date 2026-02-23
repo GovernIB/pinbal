@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>es.caib.pinbal</groupId>
 		<artifactId>pinbal</artifactId>
-		<version>1.4.42.5</version>
+		<version>1.4.43</version>
 	</parent>
 	<artifactId>pinbal-core-client</artifactId>
 	<dependencies>
@@ -88,6 +88,12 @@
 			<version>${lombok.version}</version>
 			<scope>provided</scope>
 		</dependency>
+        <dependency>
+            <groupId>es.caib.comanda</groupId>
+            <artifactId>comanda-lib</artifactId>
+            <version>0.1.0</version>
+            <classifier>java7</classifier>
+        </dependency>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>pinbal-client</artifactId>

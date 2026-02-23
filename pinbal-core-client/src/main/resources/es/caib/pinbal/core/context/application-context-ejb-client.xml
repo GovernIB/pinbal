@@ -76,4 +76,12 @@
 			id="GestioRestService"
 			jndi-name="pinbal/GestioRestServiceBean/local"
 			business-interface="es.caib.pinbal.core.service.GestioRestService"/>
+    <jee:local-slsb
+            id="SalutService"
+            jndi-name="pinbal/SalutServiceBean/local"
+            business-interface="es.caib.pinbal.core.service.SalutService"/>
+    <jee:local-slsb
+            id="EstadisticaService"
+            jndi-name="pinbal/EstadisticaServiceBean/local"
+            business-interface="es.caib.pinbal.core.service.EstadisticaService"/>
 </beans>

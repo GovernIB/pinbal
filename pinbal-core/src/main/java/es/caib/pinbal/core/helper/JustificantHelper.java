@@ -96,169 +96,177 @@ public class JustificantHelper implements MessageSourceAware {
 			IConsulta consulta,
 			ScspHelper scspHelper) {
 		log.debug("[JUSTIFICANT] Generant justificant pendent (consultaPeticioId=" + consulta.getScspPeticionId() + ", consultaSolicitudId=" + consulta.getScspSolicitudId() + ")");
-		ResultatEnviamentPeticio resultat = getResultatEnviamentPeticio(consulta, scspHelper);
-		if (resultat != null) {
-			log.debug("[JUSTIFICANT] Obtinguda resposta de la petició");
-			String serveiCodi = consulta.getProcedimentServei().getServei();
-			ServeiConfig serveiConfig = serveiConfigRepository.findByServei(serveiCodi);
-			String arxiuNom = conversioTipusDocumentHelper.nomArxiuConvertit(
-					getNomArxiuGenerat(
-							consulta.getScspPeticionId(),
-							consulta.getScspSolicitudId()),
-							JUSTIFICANT_EXTENSIO_SORTIDA);
-			log.debug("[JUSTIFICANT] Nom arxiu: {}", arxiuNom);
-			// Només signa i custòdia si està activat per paràmetre i 
-			// si encara no està custodiat
-			if (isSignarICustodiarJustificant() && !consulta.isCustodiat()) {
-				log.debug("[JUSTIFICANT] Custodiant justificant");
-				JustificantEstat justificantEstat = JustificantEstat.PENDENT;
-				boolean custodiat = false;
-				String custodiaId = null;
-				String custodiaUrl = consulta.getCustodiaUrl();
-				String justificantError = null;
-				String arxiuExpedientUuid = consulta.getArxiuExpedientUuid();
-				String arxiuDocumentUuid = consulta.getArxiuDocumentUuid();
-				try {
-					// Genera el justificant emprant la plantilla
-					log.debug("[JUSTIFICANT] Generam justificant amprant plantilla");
-					FitxerDto arxiuJustificantGenerat = generar(
-							consulta,
-							scspHelper);
-					log.debug("[JUSTIFICANT] Inici del procés de signatura i custodia del justificant de la consulta");
-					if (pluginHelper.isPluginArxiuActiu() && (consulta.getArxiuExpedientUuid() == null || consulta.getArxiuDocumentUuid() == null)) {
-						log.debug("[JUSTIFICANT] Es desarà el justificant a l'arxiu");
-						// Signa el justificant amb firma de servidor
-						FitxerDto justificantFitxer = new FitxerDto();
-						justificantFitxer.setNom(arxiuJustificantGenerat.getNom());
-						justificantFitxer.setContentType("application/pdf");
-						justificantFitxer.setContingut(arxiuJustificantGenerat.getContingut());
-						SignaturaResposta justificantFirmat = pluginHelper.firmaServidorFirmar(
-								justificantFitxer,
-								TipusFirma.PADES,
-								"Firma justificant PINBAL",
-								"ca",
-								consulta.getScspPeticionId());
-						log.debug("Firmat justificant de la consulta (consultaPeticioId=" + consulta.getScspPeticionId() + ", consultaSolicitudId=" + consulta.getScspSolicitudId() + ")");
-						// Guarda el justificant a dins l'expedient
-						Procediment procediment = consulta.getProcedimentServei().getProcediment();
-						String serieDocumental = getJustificantSerieDocumental();
-						if (consulta.getArxiuExpedientUuid() == null) {
-							// Consulta a veure si l'expedient ja està creat
-							ContingutArxiu expedientExistent = pluginHelper.arxiuExpedientCercarAmbNom(consulta.getScspPeticionId());
-							if (expedientExistent != null) {
-								arxiuExpedientUuid = expedientExistent.getIdentificador();
-							} else {
-								// Crea l'expedient
-								arxiuExpedientUuid = pluginHelper.arxiuExpedientCrear(
-										consulta.getScspPeticionId(),
-										consulta.getTitularDocumentNum(),
-										procediment.getOrganGestor().getCodi(),
-										procediment.getCodiSia(),
-										procediment.getCodi(),
-										serieDocumental);
-								log.info(
-										"Creat nou expedient a l'arxiu relacionat amb la consulta (" +
-										"id=" + consulta.getId() + ", " +
-										"scspPeticionId=" + consulta.getScspPeticionId() + ", " +
-										"scspSolicitudId=" + consulta.getScspSolicitudId() + ", " +
-										"arxiuExpedientUuid=" + arxiuExpedientUuid + ")");
-							}
-						}
-						justificantFitxer.setContingut(justificantFirmat.getContingut());
-						arxiuDocumentUuid = pluginHelper.arxiuDocumentGuardarFirmaPades(
-								consulta.getScspPeticionId(),
-								arxiuExpedientUuid,
-								consulta.getScspSolicitudId(),
-								procediment.getOrganGestor().getCodi(),
-								serieDocumental,
-								justificantFitxer,
-								ContingutOrigen.ADMINISTRACIO,
-								DocumentEstatElaboracio.ORIGINAL,
-								es.caib.plugins.arxiu.api.DocumentTipus.CERTIFICAT);
-						log.info(
-								"Guardat justificant a l'arxiu relacionat amb la consulta (" +
-								"id=" + consulta.getId() + ", " +
-								"scspPeticionId=" + consulta.getScspPeticionId() + ", " +
-								"scspSolicitudId=" + consulta.getScspSolicitudId() + ", " +
-								"arxiuExpedientUuid=" + arxiuExpedientUuid + ", " +
-								"arxiuDocumentUuid=" + arxiuDocumentUuid + ")");
-					} else {
-						log.debug("[JUSTIFICANT] Es desarà el justificant a custòdia");
-						// Reserva l'id de custòdia i genera la URL
-						String documentTipus = null;
-						if (serveiConfig != null) {
-							documentTipus = serveiConfig.getCustodiaCodi();
-						}
-						custodiaId = custodiaObtenirId(consulta);
-						if (custodiaUrl == null || custodiaUrl.isEmpty()) {
-							// Obté la URL de comprovació de signatura
-							log.debug("[JUSTIFICANT] Sol·licitud de URL per a la custòdia del justificant de la consulta");
-							custodiaUrl = pluginHelper.custodiaObtenirUrlVerificacioDocument(custodiaId);
-							log.debug("[JUSTIFICANT] Obtinguda URL per a la custòdia del justificant de la consulta (custodiaUrl=" + custodiaUrl + ")");
-						}
-						byte[] justificantFirmat;
-						if (pluginHelper.isPluginFirmaServidorActiu()) {
-							// Signa el justificant amb firma de servidor
-							FitxerDto justificantFitxer = new FitxerDto();
-							justificantFitxer.setNom(arxiuJustificantGenerat.getNom());
-							justificantFitxer.setContentType("application/pdf");
-							justificantFitxer.setContingut(arxiuJustificantGenerat.getContingut());
-							justificantFirmat = pluginHelper.firmaServidorFirmar(
-									justificantFitxer,
-									TipusFirma.PADES,
-									"Firma justificant PINBAL",
-									"ca",
-									consulta.getScspPeticionId()).getContingut();
-							log.debug("Firmat justificant de la consulta (consultaPeticioId=" + consulta.getScspPeticionId() + ", consultaSolicitudId=" + consulta.getScspSolicitudId() + ")");
-						} else {
-							// Signa el justificant amb IBKey
-							log.debug("Signatura amb IBKey del justificant de la consulta (id=" + consulta.getId() + ", consultaPeticioId=" + consulta.getScspPeticionId() + ", consultaSolicitudId=" + consulta.getScspSolicitudId() + ")");
-							ByteArrayOutputStream signedStream = new ByteArrayOutputStream();
-							pluginHelper.signaturaIbkeySignarEstamparPdf(
-									new ByteArrayInputStream(arxiuJustificantGenerat.getContingut()),
-									signedStream,
-									custodiaUrl);
-							justificantFirmat = signedStream.toByteArray();
-						}
-						// Envia el justificant a custòdia
-						log.debug("Enviament a custòdia del justificant de la consulta (id=" + consulta.getId() + ", consultaPeticioId=" + consulta.getScspPeticionId() + ", consultaSolicitudId=" + consulta.getScspSolicitudId() + ")");
-						pluginHelper.custodiaEnviarPdfSignat(
-								custodiaId,
-								arxiuNom,
-								justificantFirmat,
-								documentTipus);
-					}
-					justificantEstat = JustificantEstat.OK;
-					custodiat = true;
-				} catch (Exception ex) {
-					log.error("La generació del justificant ha produït errors (" +
-							"id=" + consulta.getScspPeticionId() + ", " +
-							"scspPeticionId=" + consulta.getScspPeticionId() + ", " +
-							"scspSolicitudId=" + consulta.getScspSolicitudId() + ")",
-							ex);
-					justificantEstat = JustificantEstat.ERROR;
-					justificantError = ExceptionUtils.getStackTrace(ex);
-				} finally {
-					consulta.updateJustificantEstat(
-							justificantEstat,
-							custodiat,
-							custodiaId,
-							custodiaUrl,
-							justificantError,
-							arxiuExpedientUuid,
-							arxiuDocumentUuid);
-				}
-			} else {
-				consulta.updateJustificantEstat(
-						JustificantEstat.OK_NO_CUSTODIA,
-						false,
-						null,
-						null,
-						null,
-						null,
-						null);
-			}
-		}
+        long startTime = System.currentTimeMillis();
+        try {
+            ResultatEnviamentPeticio resultat = getResultatEnviamentPeticio(consulta, scspHelper);
+            if (resultat != null) {
+                log.debug("[JUSTIFICANT] Obtinguda resposta de la petició");
+                String serveiCodi = consulta.getProcedimentServei().getServei();
+                ServeiConfig serveiConfig = serveiConfigRepository.findByServei(serveiCodi);
+                String arxiuNom = conversioTipusDocumentHelper.nomArxiuConvertit(
+                        getNomArxiuGenerat(
+                                consulta.getScspPeticionId(),
+                                consulta.getScspSolicitudId()),
+                        JUSTIFICANT_EXTENSIO_SORTIDA);
+                log.debug("[JUSTIFICANT] Nom arxiu: {}", arxiuNom);
+                // Només signa i custòdia si està activat per paràmetre i
+                // si encara no està custodiat
+                if (isSignarICustodiarJustificant() && !consulta.isCustodiat()) {
+                    log.debug("[JUSTIFICANT] Custodiant justificant");
+                    JustificantEstat justificantEstat = JustificantEstat.PENDENT;
+                    boolean custodiat = false;
+                    String custodiaId = null;
+                    String custodiaUrl = consulta.getCustodiaUrl();
+                    String justificantError = null;
+                    String arxiuExpedientUuid = consulta.getArxiuExpedientUuid();
+                    String arxiuDocumentUuid = consulta.getArxiuDocumentUuid();
+                    try {
+                        // Genera el justificant emprant la plantilla
+                        log.debug("[JUSTIFICANT] Generam justificant amprant plantilla");
+                        FitxerDto arxiuJustificantGenerat = generar(
+                                consulta,
+                                scspHelper);
+                        log.debug("[JUSTIFICANT] Inici del procés de signatura i custodia del justificant de la consulta");
+                        if (pluginHelper.isPluginArxiuActiu() && (consulta.getArxiuExpedientUuid() == null || consulta.getArxiuDocumentUuid() == null)) {
+                            log.debug("[JUSTIFICANT] Es desarà el justificant a l'arxiu");
+                            // Signa el justificant amb firma de servidor
+                            FitxerDto justificantFitxer = new FitxerDto();
+                            justificantFitxer.setNom(arxiuJustificantGenerat.getNom());
+                            justificantFitxer.setContentType("application/pdf");
+                            justificantFitxer.setContingut(arxiuJustificantGenerat.getContingut());
+                            SignaturaResposta justificantFirmat = pluginHelper.firmaServidorFirmar(
+                                    justificantFitxer,
+                                    TipusFirma.PADES,
+                                    "Firma justificant PINBAL",
+                                    "ca",
+                                    consulta.getScspPeticionId());
+                            log.debug("Firmat justificant de la consulta (consultaPeticioId=" + consulta.getScspPeticionId() + ", consultaSolicitudId=" + consulta.getScspSolicitudId() + ")");
+                            // Guarda el justificant a dins l'expedient
+                            Procediment procediment = consulta.getProcedimentServei().getProcediment();
+                            String serieDocumental = getJustificantSerieDocumental();
+                            if (consulta.getArxiuExpedientUuid() == null) {
+                                // Consulta a veure si l'expedient ja està creat
+                                ContingutArxiu expedientExistent = pluginHelper.arxiuExpedientCercarAmbNom(consulta.getScspPeticionId());
+                                if (expedientExistent != null) {
+                                    arxiuExpedientUuid = expedientExistent.getIdentificador();
+                                } else {
+                                    // Crea l'expedient
+                                    arxiuExpedientUuid = pluginHelper.arxiuExpedientCrear(
+                                            consulta.getScspPeticionId(),
+                                            consulta.getTitularDocumentNum(),
+                                            procediment.getOrganGestor().getCodi(),
+                                            procediment.getCodiSia(),
+                                            procediment.getCodi(),
+                                            serieDocumental);
+                                    log.info(
+                                            "Creat nou expedient a l'arxiu relacionat amb la consulta (" +
+                                                    "id=" + consulta.getId() + ", " +
+                                                    "scspPeticionId=" + consulta.getScspPeticionId() + ", " +
+                                                    "scspSolicitudId=" + consulta.getScspSolicitudId() + ", " +
+                                                    "arxiuExpedientUuid=" + arxiuExpedientUuid + ")");
+                                }
+                            }
+                            justificantFitxer.setContingut(justificantFirmat.getContingut());
+                            arxiuDocumentUuid = pluginHelper.arxiuDocumentGuardarFirmaPades(
+                                    consulta.getScspPeticionId(),
+                                    arxiuExpedientUuid,
+                                    consulta.getScspSolicitudId(),
+                                    procediment.getOrganGestor().getCodi(),
+                                    serieDocumental,
+                                    justificantFitxer,
+                                    ContingutOrigen.ADMINISTRACIO,
+                                    DocumentEstatElaboracio.ORIGINAL,
+                                    es.caib.plugins.arxiu.api.DocumentTipus.CERTIFICAT);
+                            log.info(
+                                    "Guardat justificant a l'arxiu relacionat amb la consulta (" +
+                                            "id=" + consulta.getId() + ", " +
+                                            "scspPeticionId=" + consulta.getScspPeticionId() + ", " +
+                                            "scspSolicitudId=" + consulta.getScspSolicitudId() + ", " +
+                                            "arxiuExpedientUuid=" + arxiuExpedientUuid + ", " +
+                                            "arxiuDocumentUuid=" + arxiuDocumentUuid + ")");
+                        } else {
+                            log.debug("[JUSTIFICANT] Es desarà el justificant a custòdia");
+                            // Reserva l'id de custòdia i genera la URL
+                            String documentTipus = null;
+                            if (serveiConfig != null) {
+                                documentTipus = serveiConfig.getCustodiaCodi();
+                            }
+                            custodiaId = custodiaObtenirId(consulta);
+                            if (custodiaUrl == null || custodiaUrl.isEmpty()) {
+                                // Obté la URL de comprovació de signatura
+                                log.debug("[JUSTIFICANT] Sol·licitud de URL per a la custòdia del justificant de la consulta");
+                                custodiaUrl = pluginHelper.custodiaObtenirUrlVerificacioDocument(custodiaId);
+                                log.debug("[JUSTIFICANT] Obtinguda URL per a la custòdia del justificant de la consulta (custodiaUrl=" + custodiaUrl + ")");
+                            }
+                            byte[] justificantFirmat;
+                            if (pluginHelper.isPluginFirmaServidorActiu()) {
+                                // Signa el justificant amb firma de servidor
+                                FitxerDto justificantFitxer = new FitxerDto();
+                                justificantFitxer.setNom(arxiuJustificantGenerat.getNom());
+                                justificantFitxer.setContentType("application/pdf");
+                                justificantFitxer.setContingut(arxiuJustificantGenerat.getContingut());
+                                justificantFirmat = pluginHelper.firmaServidorFirmar(
+                                        justificantFitxer,
+                                        TipusFirma.PADES,
+                                        "Firma justificant PINBAL",
+                                        "ca",
+                                        consulta.getScspPeticionId()).getContingut();
+                                log.debug("Firmat justificant de la consulta (consultaPeticioId=" + consulta.getScspPeticionId() + ", consultaSolicitudId=" + consulta.getScspSolicitudId() + ")");
+                            } else {
+                                // Signa el justificant amb IBKey
+                                log.debug("Signatura amb IBKey del justificant de la consulta (id=" + consulta.getId() + ", consultaPeticioId=" + consulta.getScspPeticionId() + ", consultaSolicitudId=" + consulta.getScspSolicitudId() + ")");
+                                ByteArrayOutputStream signedStream = new ByteArrayOutputStream();
+                                pluginHelper.signaturaIbkeySignarEstamparPdf(
+                                        new ByteArrayInputStream(arxiuJustificantGenerat.getContingut()),
+                                        signedStream,
+                                        custodiaUrl);
+                                justificantFirmat = signedStream.toByteArray();
+                            }
+                            // Envia el justificant a custòdia
+                            log.debug("Enviament a custòdia del justificant de la consulta (id=" + consulta.getId() + ", consultaPeticioId=" + consulta.getScspPeticionId() + ", consultaSolicitudId=" + consulta.getScspSolicitudId() + ")");
+                            pluginHelper.custodiaEnviarPdfSignat(
+                                    custodiaId,
+                                    arxiuNom,
+                                    justificantFirmat,
+                                    documentTipus);
+                        }
+                        justificantEstat = JustificantEstat.OK;
+                        custodiat = true;
+                        SubsistemaMetricHelper.addSuccessOperation("JUS", System.currentTimeMillis() - startTime);
+                    } catch (Exception ex) {
+                        log.error("La generació del justificant ha produït errors (" +
+                                        "id=" + consulta.getScspPeticionId() + ", " +
+                                        "scspPeticionId=" + consulta.getScspPeticionId() + ", " +
+                                        "scspSolicitudId=" + consulta.getScspSolicitudId() + ")",
+                                ex);
+                        justificantEstat = JustificantEstat.ERROR;
+                        justificantError = ExceptionUtils.getStackTrace(ex);
+                        SubsistemaMetricHelper.addErrorOperation("JUS");
+                    } finally {
+                        consulta.updateJustificantEstat(
+                                justificantEstat,
+                                custodiat,
+                                custodiaId,
+                                custodiaUrl,
+                                justificantError,
+                                arxiuExpedientUuid,
+                                arxiuDocumentUuid);
+                    }
+                } else {
+                    consulta.updateJustificantEstat(
+                            JustificantEstat.OK_NO_CUSTODIA,
+                            false,
+                            null,
+                            null,
+                            null,
+                            null,
+                            null);
+                }
+            }
+        } catch (Exception e) {
+            SubsistemaMetricHelper.addErrorOperation("JUS");
+            throw e;
+        }
 	}
 
 	public FitxerDto descarregarFitxerGenerat(

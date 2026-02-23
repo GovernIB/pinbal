@@ -70,7 +70,7 @@ public class ServeiServiceBean implements ServeiService {
 
 	@Override
 	@RolesAllowed("PBL_ADMIN")
-	public ServeiDto save(ServeiDto servei) {
+	public ServeiDto save(ServeiDto servei) throws ServeiNotFoundException {
 		return delegate.save(servei);
 	}
 
@@ -172,7 +172,13 @@ public class ServeiServiceBean implements ServeiService {
 		return delegate.findAmbEntitatIProcediment(entitatId, procedimentId, filtre);
 	}
 
-	@Override
+    @Override
+    @RolesAllowed("PBL_REPRES")
+    public List<ServeiDto> findAmbEntitatNotInProcediment(Long entitatId, Long procedimentId) throws EntitatNotFoundException, ProcedimentNotFoundException {
+        return delegate.findAmbEntitatNotInProcediment(entitatId, procedimentId);
+    }
+
+    @Override
 	@RolesAllowed("PBL_REPRES")
 	public List<ProcedimentServeiDto> findPermesosAmbEntitatIUsuari(
 			Long entitatId,
@@ -270,6 +276,24 @@ public class ServeiServiceBean implements ServeiService {
 	@RolesAllowed({"PBL_ADMIN", "tothom"})
 	public List<ServeiCampDto> findServeiCamps(String serveiCodi) throws ServeiNotFoundException {
 		return delegate.findServeiCamps(serveiCodi);
+	}
+
+	@Override
+	@RolesAllowed("PBL_ADMIN")
+	public void marcarArrelResposta(String serveiCodi, String path) {
+		delegate.marcarArrelResposta(serveiCodi, path);
+	}
+
+	@Override
+	@RolesAllowed("PBL_ADMIN")
+	public void desmarcarArrelResposta(String serveiCodi) {
+		delegate.desmarcarArrelResposta(serveiCodi);
+	}
+
+	@Override
+	@RolesAllowed({"PBL_ADMIN", "PBL_REPRES"})
+	public String getArrelRespostaPath(String serveiCodi) {
+		return delegate.getArrelRespostaPath(serveiCodi);
 	}
 
 	@Override
@@ -479,12 +503,5 @@ public class ServeiServiceBean implements ServeiService {
 	public List<CampFormProperties> getGrupsByserveiRegla(String serveiCodi, String[] grupsModificats) throws ServeiNotFoundException {
 		return delegate.getGrupsByserveiRegla(serveiCodi, grupsModificats);
 	}
-
-
-	// TODO: BORRAR en versió 1.1.43
-    @Override
-    public void updateFitxersXsd() {
-        delegate.updateFitxersXsd();
-    }
 
 }

@@ -16,6 +16,7 @@ import es.caib.pinbal.core.service.ProcedimentService;
 import es.caib.pinbal.core.service.exception.EntitatNotFoundException;
 import es.caib.pinbal.core.service.exception.EntitatUsuariNotFoundException;
 import es.caib.pinbal.core.service.exception.ProcedimentNotFoundException;
+import es.caib.pinbal.core.service.exception.ProcedimentServeiExistsException;
 import es.caib.pinbal.core.service.exception.ProcedimentServeiNotFoundException;
 import es.caib.pinbal.core.service.exception.ServeiNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -246,6 +247,12 @@ public class ProcedimentServiceBean implements ProcedimentService {
 	@RolesAllowed("PBL_REPRES")
     public List<ServeiDto> serveisDisponiblesPerProcediment(Long procedimentId) throws ProcedimentNotFoundException {
         return delegate.serveisDisponiblesPerProcediment(procedimentId);
+    }
+
+    @Override
+    @RolesAllowed("PBL_REPRES")
+    public void migrarProcedimentServei(Long procedimentId, String serveiCodiOrigen, String serveiCodiDesti) throws ProcedimentNotFoundException, ProcedimentServeiNotFoundException, ProcedimentServeiExistsException {
+        delegate.migrarProcedimentServei(procedimentId, serveiCodiOrigen, serveiCodiDesti);
     }
 
 }

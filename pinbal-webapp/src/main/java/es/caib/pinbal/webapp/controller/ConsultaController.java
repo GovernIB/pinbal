@@ -11,6 +11,7 @@ import es.caib.pinbal.core.dto.FitxerDto;
 import es.caib.pinbal.core.dto.JsonResponse;
 import es.caib.pinbal.core.dto.JustificantDto;
 import es.caib.pinbal.core.dto.NodeDto;
+import es.caib.pinbal.core.dto.ProcedimentDto;
 import es.caib.pinbal.core.dto.ServeiCampDto;
 import es.caib.pinbal.core.dto.ServeiCampDto.ServeiCampDtoTipus;
 import es.caib.pinbal.core.dto.ServeiCampGrupDto;
@@ -227,6 +228,7 @@ public class ConsultaController extends BaseController {
 			cols.get(1).setData("data");
 			cols.get(2).setData("procedimentCodi");
 			cols.get(3).setData("serveiCodi");
+
 			if (isHistoric(request)) {
 				page = historicConsultaService.findSimplesByFiltrePaginatPerDelegat(entitat.getId(),
 						ConsultaFiltreCommand.asDto(command), serverSideRequest.toPageable());
@@ -740,9 +742,18 @@ public class ConsultaController extends BaseController {
 
 	private void emplenarCommand(HttpServletRequest request, ConsultaCommand command, String serveiCodi,
 			EntitatDto entitat, boolean inicialitzacioCommand) throws AccesExternException, ServeiNotFoundException,
-			ScspException, IOException, ParserConfigurationException, SAXException {
+            ScspException, IOException, ParserConfigurationException, SAXException, EntitatNotFoundException {
 		command.setServeiCodi(serveiCodi);
 		UsuariDto dadesUsuari = usuariService.getDades();
+        if (dadesUsuari != null && dadesUsuari.getProcedimentId() != null) {
+            List<ProcedimentDto> procediments = procedimentService.findActiusAmbEntitatIServeiCodi(entitat.getId(), serveiCodi);
+            for (ProcedimentDto procediment : procediments) {
+                if (dadesUsuari.getProcedimentId().equals(procediment.getId())) {
+                    command.setProcedimentId(dadesUsuari.getProcedimentId());
+                    break;
+                }
+            }
+        }
 		if (dadesUsuari != null) {
 			if (inicialitzacioCommand) {
 				command.setFuncionariNom(dadesUsuari.getNom());
@@ -935,13 +946,7 @@ public class ConsultaController extends BaseController {
 	private ConsultaDto novaConsulta(ConsultaCommand command) throws ProcedimentServeiNotFoundException,
 			ConsultaNotFoundException, ServeiNotAllowedException, ConsultaScspException {
 		ConsultaDto consulta = ConsultaCommand.asDto(command);
-		if (consultaService.isOptimitzarTransaccionsNovaConsulta()) {
-			ConsultaDto consultaInit = consultaService.novaConsultaInit(consulta);
-			consultaService.novaConsultaEnviament(consultaInit.getId(), consulta);
-			return consultaService.novaConsultaEstat(consultaInit.getId());
-		} else {
-			return consultaService.novaConsulta(ConsultaCommand.asDto(command));
-		}
+        return consultaService.peticioSincrona(consulta);
 	}
 
 	private ConsultaDto novaConsultaMultiple(ConsultaCommand command, String[] campsPeticioMultiple,
@@ -951,7 +956,7 @@ public class ConsultaController extends BaseController {
 		consulta.setCampsPeticioMultiple(campsPeticioMultiple);
 		consulta.setDadesPeticioMultiple(
 				dadesPeticioMultiple.toArray(new String[dadesPeticioMultiple.size()][campsPeticioMultiple.length]));
-		return consultaService.novaConsultaMultiple(consulta);
+		return consultaService.peticioAsincrona(consulta);
 	}
 
 	private List<String[]> readFile(FitxerDto fitxer, Errors errors) throws Exception {

@@ -24,4 +24,9 @@ public class ProcedimentNotFoundException extends Exception {
         return "Procediment no trobat: " + codi;
     }
 
+    @Override
+    public String getMessage() {
+        return this.getDefaultMessage();
+    }
+
 }

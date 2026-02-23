@@ -3,19 +3,17 @@
  */
 package es.caib.pinbal.core.ejb;
 
-import java.util.List;
-
-import javax.annotation.security.RolesAllowed;
-import javax.ejb.Stateless;
-import javax.interceptor.Interceptors;
-
+import es.caib.pinbal.core.dto.AvisDto;
+import es.caib.pinbal.core.service.AvisService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.ejb.interceptor.SpringBeanAutowiringInterceptor;
 
-import es.caib.pinbal.core.dto.AvisDto;
-import es.caib.pinbal.core.service.AvisService;
+import javax.annotation.security.RolesAllowed;
+import javax.ejb.Stateless;
+import javax.interceptor.Interceptors;
+import java.util.List;
 
 /**
  * Implementació de AvisService com a EJB que empra una clase
@@ -71,5 +69,11 @@ public class AvisServiceBean implements AvisService {
 	public List<AvisDto> findActive() {
 		return delegate.findActive();
 	}
+
+    @Override
+	@RolesAllowed("PBL_ADMIN")
+    public List<Long> findAllIds() {
+        return delegate.findAllIds();
+    }
 
 }

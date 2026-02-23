@@ -53,7 +53,7 @@ $(document).ready(function() {
 		serverSide: true,
 		dom: "<'row'<'col-md-6'i><'col-md-6'>><'row'<'col-md-12'rt>><'row'<'col-md-6'l><'col-md-6'p>>",
 		language: {
-			"url": "js/datatable-language.json"
+            "url": '<c:url value="/js/datatable-language.json"/>',
 		},
 		ajax: "entitat/datatable",
 		columnDefs: [{

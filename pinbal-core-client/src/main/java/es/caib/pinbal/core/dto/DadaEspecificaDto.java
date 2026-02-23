@@ -3,11 +3,11 @@
  */
 package es.caib.pinbal.core.dto;
 
-import java.io.Serializable;
-
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.lang.builder.ToStringBuilder;
+
+import java.io.Serializable;
 
 /**
  * Dades d'un node de dades específiques.
@@ -38,6 +38,7 @@ public class DadaEspecificaDto implements Serializable {
 	private String[] enumeracioValors;
 	private boolean complexa;
 	private TipusDadaComplexaEnum tipusDadaComplexa;
+    private String tipus;
 
 
 

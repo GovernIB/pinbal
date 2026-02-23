@@ -489,6 +489,8 @@ public class XmlHelper {
 					dadesNode.setGroupType(groupType);
 					dadesNode.setGroupMin(minOccurs);
 					dadesNode.setGroupMax(maxOccurs);
+					// Indicam que és un tipus complex
+					dadesNode.setTipus(getComplexTypeName(groupType));
 					Iterator<?> iti = gb.getItems().getIterator();
 					while (iti.hasNext()) {
 						Object item = iti.next();
@@ -502,6 +504,14 @@ public class XmlHelper {
 					dadesNode.setGroupMin(minOccurs);
 					dadesNode.setGroupMax(maxOccurs);
 
+					// Tipus basat en el tipus base de l'extensió
+					if (simpleContent.getContent() instanceof XmlSchemaSimpleContentExtension) {
+						XmlSchemaSimpleContentExtension extension = (XmlSchemaSimpleContentExtension) simpleContent.getContent();
+						QName baseName = extension != null ? extension.getBaseTypeName() : null;
+						String baseLocal = baseName != null ? baseName.getLocalPart() : null;
+						dadesNode.setTipus(getTipusString(baseLocal, dadesNode));
+					}
+
 					afegirAtributs(simpleContent, dadesNode);
 				}
 			} else {
@@ -509,24 +519,34 @@ public class XmlHelper {
 				dadesNode.setComplex(false);
 				dadesNode.setGroupMin(minOccurs);
 				dadesNode.setGroupMax(maxOccurs);
-				XmlSchemaSimpleType simpleType = (XmlSchemaSimpleType)element.getSchemaType();
-				if (simpleType != null && simpleType.getContent() != null && simpleType.getContent() instanceof XmlSchemaSimpleTypeRestriction) {
-					XmlSchemaSimpleTypeRestriction restriction = (XmlSchemaSimpleTypeRestriction)simpleType.getContent();
+				XmlSchemaSimpleType simpleType = (XmlSchemaSimpleType) element.getSchemaType();
+				String baseLocal = null;
+				if (simpleType != null && simpleType.getContent() instanceof XmlSchemaSimpleTypeRestriction) {
+					XmlSchemaSimpleTypeRestriction restriction = (XmlSchemaSimpleTypeRestriction) simpleType.getContent();
+					if (restriction.getBaseTypeName() != null) {
+						baseLocal = restriction.getBaseTypeName().getLocalPart();
+					}
 					Iterator<XmlSchemaFacet> it = restriction.getFacets().getIterator();
 					while (it.hasNext()) {
-						XmlSchemaFacet facet = (XmlSchemaFacet)it.next();
+						XmlSchemaFacet facet = it.next();
 						if (facet instanceof XmlSchemaMinLengthFacet) {
-							XmlSchemaMinLengthFacet mlFacet = (XmlSchemaMinLengthFacet)facet;
-							dadesNode.setMinLength(new Integer((String)mlFacet.getValue()));
+							XmlSchemaMinLengthFacet mlFacet = (XmlSchemaMinLengthFacet) facet;
+							dadesNode.setMinLength(Integer.valueOf((String) mlFacet.getValue()));
 						} else if (facet instanceof XmlSchemaMaxLengthFacet) {
-							XmlSchemaMaxLengthFacet mlFacet = (XmlSchemaMaxLengthFacet)facet;
-							dadesNode.setMaxLength(new Integer((String)mlFacet.getValue()));
+							XmlSchemaMaxLengthFacet mlFacet = (XmlSchemaMaxLengthFacet) facet;
+							dadesNode.setMaxLength(Integer.valueOf((String) mlFacet.getValue()));
 						} else if (facet instanceof XmlSchemaEnumerationFacet) {
-							XmlSchemaEnumerationFacet enumFacet = (XmlSchemaEnumerationFacet)facet;
-							dadesNode.addEnumValue((String)enumFacet.getValue());
+							XmlSchemaEnumerationFacet enumFacet = (XmlSchemaEnumerationFacet) facet;
+							dadesNode.addEnumValue((String) enumFacet.getValue());
 						}
 					}
 				}
+				// Si no tenim simpleType amb restricció, provam amb el tipus referenciat
+				if (baseLocal == null && element.getSchemaTypeName() != null) {
+					baseLocal = element.getSchemaTypeName().getLocalPart();
+				}
+				// Assignam el tipus en funció del tipus base i de les propietats recollides
+				dadesNode.setTipus(getTipusString(baseLocal, dadesNode));
 			}
 			path.remove(path.size() - 1);
 			if (pare == null) {
@@ -634,11 +654,26 @@ public class XmlHelper {
 		}
 		dadesNode.setComplex(true);
 		dadesNode.setGroupType(tipus);
+		// Indicam que és un tipus complex també en els nodes auxiliars
+		dadesNode.setTipus(getComplexTypeName(tipus));
 
 		pare.addChild(node);
 
 		return node;
 	}
+
+    private String getComplexTypeName(int complexType) {
+        switch (complexType) {
+            case DadesEspecifiquesNode.GROUP_TYPE_ALL:
+                return "Complex(ALL)";
+            case DadesEspecifiquesNode.GROUP_TYPE_CHOICE:
+                return "Complex(CHOICE)";
+            case DadesEspecifiquesNode.GROUP_TYPE_SCHEMA:
+                return "Complex(SEQUENCE)";
+            default:
+                return "Complex";
+        }
+    }
 
 	private void recorrerDocument(
 			org.w3c.dom.Node node,
@@ -800,6 +835,87 @@ public class XmlHelper {
 		return is;
 	}
 
+	private String getTipusString(String baseLocal, DadesEspecifiquesNode node) {
+		// Si és un enumerat, prioritzam mostrar Enum[...]
+		if (node != null && node.isEnum()) {
+			String vals;
+			if (node.getEnumValues() != null && !node.getEnumValues().isEmpty()) {
+				StringBuilder sb = new StringBuilder();
+				for (int i = 0; i < node.getEnumValues().size(); i++) {
+					if (i > 0) sb.append(',');
+					sb.append(node.getEnumValues().get(i));
+				}
+				vals = sb.toString();
+			} else {
+				vals = "";
+			}
+			return "Enum(" + vals + ")";
+		}
+		String base = baseLocal != null ? baseLocal.toLowerCase() : null;
+		// Heurística per detectar document d'identitat pel nom del node
+		if (node != null && node.getNom() != null) {
+			String nom = node.getNom().toLowerCase();
+			if (nom.contains("nif") || nom.contains("nie") || nom.contains("dni") || nom.contains("cif")
+					|| nom.contains("docident") || nom.contains("documentident") || nom.contains("documentoident")
+					|| nom.contains("identidad") || nom.contains("identitat")) {
+				return "DocIdentitat";
+			}
+		}
+		if (base == null) {
+			// Per defecte, si no sabem el tipus, assumim String, amb longitud si escau
+			return node != null && node.getMaxLength() > 0 ? ("String(" + node.getMaxLength() + ")") : "String";
+		}
+		switch (base) {
+			case "string":
+			case "normalizedstring":
+			case "token":
+				return node != null && node.getMaxLength() > 0 ? ("String(" + node.getMaxLength() + ")") : "String";
+			case "integer":
+			case "int":
+			case "long":
+			case "short":
+			case "byte":
+			case "nonnegativeinteger":
+			case "positiveinteger":
+			case "unsignedint":
+			case "unsignedlong":
+				return "Long";
+			case "decimal":
+			case "double":
+			case "float":
+				return "Double";
+			case "boolean":
+				return "Boolean";
+			// Dates
+			case "date":
+			case "datetime":
+			case "time":
+                String dateFormat = getDateFormatForBase(base);
+                return (dateFormat != null) ? "Date(" + dateFormat + ")" : "Date";
+			// Fitxers (contingut binari)
+			case "base64binary":
+			case "hexbinary":
+				return "File";
+			default:
+				// Retornam el nom del tipus base desconegut tal qual
+				return baseLocal;
+		}
+	}
+
+	private String getDateFormatForBase(String base) {
+		switch (base) {
+			case "date":
+				return "yyyy-MM-dd";
+			case "datetime":
+				// ISO-like without timezone by default; timezone handling depends on service
+				return "yyyy-MM-dd'T'HH:mm:ss";
+			case "time":
+				return "HH:mm:ss";
+			default:
+				return null;
+		}
+	}
+
 	@Getter
 	@Setter
 	public static class DadesEspecifiquesNode {
@@ -816,12 +932,13 @@ public class XmlHelper {
 		private List<String> enumValues = new ArrayList<String>();
 		private String path;
 		private List<String> atributs = new ArrayList<String>();
+		private String tipus; // Tipus de dada (p. ex. String, String(3), Long, Double, Enum[a,b], Boolean)
 
 		public void addEnumValue(String value) {
 			this.enumValues.add(value);
 		}
 		public void addAtribut(String atribut) {
-			this.enumValues.add(atribut);
+			this.atributs.add(atribut);
 		}
 		public boolean isEnum() {
 			return enumValues.size() > 0;
@@ -855,3 +972,4 @@ public class XmlHelper {
 	private static final Logger LOGGER = LoggerFactory.getLogger(XmlHelper.class);
 
 }
+

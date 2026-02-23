@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>es.caib.pinbal</groupId>
 		<artifactId>pinbal</artifactId>
-		<version>1.4.42.5</version>
+		<version>1.4.43</version>
 	</parent>
 	<artifactId>pinbal-plugins-caib</artifactId>
 	<dependencies>
@@ -198,6 +198,24 @@
 			<version>${lombok.version}</version>
 			<scope>provided</scope>
 		</dependency>
+
+        <dependency>
+            <groupId>es.caib.comanda</groupId>
+            <artifactId>comanda-lib</artifactId>
+            <version>0.1.0</version>
+            <classifier>java7</classifier>
+        </dependency>
+        <dependency>
+            <groupId>io.dropwizard.metrics</groupId>
+            <artifactId>metrics-core</artifactId>
+            <version>3.2.6</version>
+            <exclusions>
+                <exclusion>
+                    <artifactId>slf4j-api</artifactId>
+                    <groupId>org.slf4j</groupId>
+                </exclusion>
+            </exclusions> <!-- versió compatible amb Java 7 -->
+        </dependency>
 	</dependencies>
 	<repositories>
 		<repository>

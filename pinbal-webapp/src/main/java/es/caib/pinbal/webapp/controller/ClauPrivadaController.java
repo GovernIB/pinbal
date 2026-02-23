@@ -4,6 +4,7 @@
 package es.caib.pinbal.webapp.controller;
 
 import es.caib.pinbal.core.dto.ClauPrivadaDto;
+import es.caib.pinbal.core.dto.OrganismeCessionariDto;
 import es.caib.pinbal.core.service.ScspService;
 import es.caib.pinbal.core.service.exception.ClauPrivadaNotFoundException;
 import es.caib.pinbal.core.service.exception.EntitatNotFoundException;
@@ -31,6 +32,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 
 /**
  * Controlador per al manteniment de claus privades.
@@ -68,7 +70,7 @@ public class ClauPrivadaController extends BaseController {
 	public String get(Model model) {
 		
 		model.addAttribute( new ClauPrivadaCommand() );
-		model.addAttribute( "organismes", scspService.findAllOrganismeCessionari());
+		model.addAttribute( "organismes", scspService.findAllOrganismeCessionariActiu());
 		return "clauPrivadaForm";
 	}
 	
@@ -86,8 +88,13 @@ public class ClauPrivadaController extends BaseController {
 //			model.addAttribute( clauPrivadaMapper.dtoToCommand(dto) );
 		else
 			model.addAttribute( new ClauPrivadaCommand() );
-		
-		model.addAttribute( "organismes", scspService.findAllOrganismeCessionari());
+
+        List<OrganismeCessionariDto> organismesCessionarisActius = scspService.findAllOrganismeCessionariActiu();
+        OrganismeCessionariDto organismeCessionariActual = scspService.findOrganismeCessionariById(dto.getOrganismeId());
+        if (!organismesCessionarisActius.contains(organismeCessionariActual)) {
+            organismesCessionarisActius.add(0, organismeCessionariActual);
+        }
+        model.addAttribute( "organismes", scspService.findAllOrganismeCessionari());
 		
 		return "clauPrivadaForm";
 	}
@@ -97,10 +104,10 @@ public class ClauPrivadaController extends BaseController {
 			HttpServletRequest request,
 			Model model,
 			@Valid ClauPrivadaCommand command,
-			BindingResult bindingResult) throws ClauPrivadaNotFoundException {
+			BindingResult bindingResult) throws ClauPrivadaNotFoundException, EntitatNotFoundException {
 		
 		if (bindingResult.hasErrors()) {
-			model.addAttribute( "organismes", scspService.findAllOrganismeCessionari());
+			model.addAttribute( "organismes", scspService.findAllOrganismeCessionariActiu());
 			return "clauPrivadaForm";
 		}
 		
@@ -132,7 +139,7 @@ public class ClauPrivadaController extends BaseController {
 				request, 
 				getMessage(
 						request, 
-						"paramconf.controller.esborrat.ok"));
+						"clau.privada.controller.esborrat.ok"));
 		
 		return "redirect:../";
 	}

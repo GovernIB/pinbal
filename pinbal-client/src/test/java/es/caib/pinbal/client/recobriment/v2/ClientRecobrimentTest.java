@@ -9,6 +9,7 @@ import com.sun.jersey.api.client.ClientHandlerException;
 import com.sun.jersey.api.client.UniformInterfaceException;
 import es.caib.pinbal.client.comu.LogLevel;
 import es.caib.pinbal.client.procediments.ProcedimentBasic;
+import es.caib.pinbal.client.recobriment.model.ScspJustificante;
 import es.caib.pinbal.client.serveis.ServeiBasic;
 import org.junit.Assert;
 import org.junit.Before;
@@ -49,6 +50,11 @@ public class ClientRecobrimentTest {
         String urlBase = "http://localhost:8180/pinbalapi"; // Exemples; ajusta això segons el teu entorn
         String usuari = "pblwsrep";
         String contrasenya = "pblwsrep";
+//        String usuari = "admin";
+//        String contrasenya = "admin";
+//        String urlBase = "https://proves.caib.es/pinbalapi";
+//        String usuari = "$ripea_pinbal";
+//        String contrasenya = "******";
         LogLevel logLevel = LogLevel.DEBUG;
 
 //        existingServeiCodi = "SVDDGPCIWS02";
@@ -1150,7 +1156,20 @@ public class ClientRecobrimentTest {
 
     // TESTS getJustificant
     // /////////////////////////////////////////////////////////
+    @Test
+    public void getJustificant_success() throws UniformInterfaceException, ClientHandlerException, IOException {
+        String idPeticio = "MOCK1768914676666";
 
+        try {
+            ScspJustificante respuesta = clientRecobriment.getJustificant(idPeticio, idPeticio);
+            assertNotNull(respuesta);
+            assertNotNull(respuesta.getNom());
+            assertNotNull(respuesta.getContingut());
+            System.out.println("-> getJustificant = " + objectToJsonString(respuesta));
+        } catch (Exception e) {
+            fail("Excepció no esperada: " + e.getMessage());
+        }
+    }
 
     // TESTS getJustificantImprimible
     // /////////////////////////////////////////////////////////

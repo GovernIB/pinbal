@@ -9,6 +9,7 @@
 		<pattern>/api/rest</pattern>
 		<pattern>/nodeco*</pattern>
 		<pattern>/index/missatges</pattern>
+		<pattern>/index/avisos</pattern>
 		<pattern>/log/download</pattern>
 		<pattern>/log/download/*</pattern>
 	</excludes>

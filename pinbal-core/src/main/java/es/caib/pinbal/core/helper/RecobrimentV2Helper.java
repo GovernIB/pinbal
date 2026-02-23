@@ -22,6 +22,7 @@ import es.caib.pinbal.core.model.Consulta;
 import es.caib.pinbal.core.model.Entitat;
 import es.caib.pinbal.core.model.ServeiCamp;
 import es.caib.pinbal.core.model.ServeiConfig;
+import es.caib.pinbal.core.model.SuperConsulta;
 import es.caib.pinbal.core.repository.ConsultaRepository;
 import es.caib.pinbal.core.repository.EntitatRepository;
 import es.caib.pinbal.core.repository.ProcedimentRepository;
@@ -785,7 +786,7 @@ public class RecobrimentV2Helper implements ApplicationContextAware, MessageSour
 				.build();
 	}
 
-	public PeticioRespostaAsincrona toRespostaAsincrona(Consulta consulta) throws Exception {
+	public PeticioRespostaAsincrona toRespostaAsincrona(SuperConsulta consulta) throws Exception {
 
 		EstatEnum estat = consulta != null && consulta.getEstat() != null
 				? EstatEnum.valorAsEnum(consulta.getEstat().name())
@@ -856,7 +857,7 @@ public class RecobrimentV2Helper implements ApplicationContextAware, MessageSour
 
 	// Obtenim la consulta per el seu id de petició.
 	// Aquesta consulta pot ser simple o múltiple
-	public Consulta getConsultaBypeticioId(String idPeticio) throws Exception {
+	public Consulta getConsultaBypeticioId(String idPeticio) {
 		// Obtenim la consulta múltiple
 		Consulta consulta = consultaRepository.findByScspPeticionIdAndMultipleIsTrue(idPeticio);
 		if (consulta != null)
@@ -877,7 +878,7 @@ public class RecobrimentV2Helper implements ApplicationContextAware, MessageSour
 	}
 
 	// Obtenim la consulta simple per el seu id de petició.
-	public Consulta getConsultaSimpleBypeticioId(String idPeticio) throws Exception {
+	public Consulta getConsultaSimpleBypeticioId(String idPeticio) {
 		// Obtenim totes les consultes amb idPeticio.
 		// Si és una consulta simple, només ni hauria d'haver una
 		List<Consulta> consultes = consultaRepository.findByScspPeticionId(idPeticio);

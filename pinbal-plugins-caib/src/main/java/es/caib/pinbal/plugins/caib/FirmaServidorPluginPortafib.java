@@ -3,11 +3,13 @@
  */
 package es.caib.pinbal.plugins.caib;
 
+import es.caib.comanda.ms.salut.model.IntegracioApp;
 import es.caib.pinbal.plugin.PropertiesHelper;
 import es.caib.pinbal.plugins.FirmaServidorPlugin;
 import es.caib.pinbal.plugins.SignaturaDades;
 import es.caib.pinbal.plugins.SignaturaResposta;
 import es.caib.pinbal.plugins.SistemaExternException;
+import es.caib.pinbal.plugins.helper.PluginMetricHelper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.fundaciobit.plugins.signature.api.CommonInfoSignature;
@@ -49,6 +51,8 @@ public class FirmaServidorPluginPortafib implements FirmaServidorPlugin {
 		final File base = new File(tempDir, FIRMASERVIDOR_TMPDIR);
 		base.mkdirs();
 		tempDirPath = base.getAbsolutePath();
+        // es.caib.pinbal.plugin.firmaservidor.portafib.plugins.signatureserver.portafib.api_passarela_url
+        PluginMetricHelper.addEndpoint(IntegracioApp.PFI, PropertiesHelper.getProperties().getProperty(PROPERTIES_BASE + "plugins.signatureserver.portafib.api_passarela_url", null));
 	}
 
 	@Override
@@ -57,6 +61,7 @@ public class FirmaServidorPluginPortafib implements FirmaServidorPlugin {
 		File destFile = null;
 		String uuid = UUID.randomUUID().toString();
 		try {
+            long start = System.currentTimeMillis();
 			// Guarda el contingut en un arxiu temporal
 			sourceFile = getArxiuTemporal(uuid, dades.getContingut());
 			String sourcePath = sourceFile.getAbsolutePath();
@@ -77,12 +82,14 @@ public class FirmaServidorPluginPortafib implements FirmaServidorPlugin {
 			boolean userRequiresTimeStamp = false;
 			signFile(uuid, sourcePath, destPath, signType, signMode, dades.getMotiu(), dades.getIdioma(), userRequiresTimeStamp);
 			destFile = new File(destPath);
+            PluginMetricHelper.addSuccessOperation(IntegracioApp.PFI, System.currentTimeMillis() - start);
 			return SignaturaResposta.builder()
 					.contingut(FileUtils.readFileToByteArray(destFile))
 					.nom(destFile.getName())
 					.mime("application/pdf")
 					.build();
 		} catch (Exception ex) {
+            PluginMetricHelper.addErrorOperation(IntegracioApp.PFI);
 			throw new SistemaExternException(ex);
 		} finally {
 			// Esborra els arxius temporals

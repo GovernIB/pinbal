@@ -594,31 +594,54 @@ function showModalXsd(element) {
 									 optionItems="${tipusSeguretat}" 
 									 emptyOptionTextKey="comu.opcio.sense.definir"/>
 				</div>
+                <div class="col-md-6">
+                    <pbl:inputSelect name="scspClaveFirma" textKey="servei.form.camp.scsp.clave.firma"
+                                     optionValueAttribute="alies"
+                                     optionTextAttribute="nom"
+                                     required="true"
+                                     emptyOption="true" labelSize="2"
+                                     optionItems="${clausPrivades}"
+                                     emptyOptionTextKey="comu.opcio.sense.definir"/>
+                </div>
 			</div>	
 		    <div class="row">
 				<div class="col-md-6">
-					<pbl:inputText name="scspAlgoritmoCifrado" labelSize="2" textKey="servei.form.camp.scsp.algoritmo.cifrado"/>
-					<pbl:inputSelect name="scspClaveFirma" textKey="servei.form.camp.scsp.clave.firma" 
-									 optionValueAttribute="alies"
-									 optionTextAttribute="nom"
-									 required="true"
-									 emptyOption="true" labelSize="2" 
-									 optionItems="${clausPrivades}" 
-									 emptyOptionTextKey="comu.opcio.sense.definir"/>
-					<pbl:inputText name="scspXpathCifradoSincrono" labelSize="2" textKey="servei.form.camp.scsp.xpath.cifrado.sincrono"/>
+					<pbl:inputText name="scspValidacionFirma" labelSize="2" textKey="servei.form.camp.scsp.validacion.firma"/>
 				</div>
 				<div class="col-md-6">
-					<pbl:inputText name="scspValidacionFirma" labelSize="2" textKey="servei.form.camp.scsp.validacion.firma"/>
-					<pbl:inputSelect name="scspClaveCifrado" textKey="servei.form.camp.scsp.clave.cifrado" 
-									 optionValueAttribute="alies"
-									 optionTextAttribute="nom"
-									 required="true"
-									 emptyOption="true" labelSize="2" 
-									 optionItems="${clausPubliques}" 
-									 emptyOptionTextKey="comu.opcio.sense.definir"/>
-					<pbl:inputText name="scspXpathCifradoAsincrono" labelSize="2" textKey="servei.form.camp.scsp.xpath.cifrado.asincrono"/>
+                    <c:set var="campPath" value="useCertificatEntitat"/>
+                    <c:set var="campErrors"><form:errors path="${campPath}"/></c:set>
+                    <div class="form-group vcenter<c:if test="${not empty campErrors}"> error</c:if>">
+                        <label class="control-label col-md-2" for="${campPath}" title="<spring:message code="servei.form.camp.pinbal.use.certificat.entitat"/>"><spring:message code="servei.form.camp.pinbal.use.certificat.entitat"/></label>
+                        <div class="col-md-10">
+                            <form:checkbox path="${campPath}" id="${campPath}"/>
+                            <form:errors path="${campPath}" cssClass="help-block"/>
+                        </div>
+                    </div>
 				</div>
 			</div>
+            <div class="row">
+                <div class="col-md-6">
+                    <pbl:inputText name="scspAlgoritmoCifrado" labelSize="2" textKey="servei.form.camp.scsp.algoritmo.cifrado"/>
+                </div>
+                <div class="col-md-6">
+                    <pbl:inputSelect name="scspClaveCifrado" textKey="servei.form.camp.scsp.clave.cifrado"
+                                     optionValueAttribute="alies"
+                                     optionTextAttribute="nom"
+                                     required="true"
+                                     emptyOption="true" labelSize="2"
+                                     optionItems="${clausPubliques}"
+                                     emptyOptionTextKey="comu.opcio.sense.definir"/>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <pbl:inputText name="scspXpathCifradoSincrono" labelSize="2" textKey="servei.form.camp.scsp.xpath.cifrado.sincrono"/>
+                </div>
+                <div class="col-md-6">
+                    <pbl:inputText name="scspXpathCifradoAsincrono" labelSize="2" textKey="servei.form.camp.scsp.xpath.cifrado.asincrono"/>
+                </div>
+            </div>
 		</fieldset>
 		<fieldset>
 			<legend><spring:message code="servei.form.legend.config.enviaments"/></legend>

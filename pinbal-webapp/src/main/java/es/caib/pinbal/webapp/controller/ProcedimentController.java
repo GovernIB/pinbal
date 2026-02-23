@@ -25,6 +25,7 @@ import es.caib.pinbal.core.service.exception.ServeiNotFoundException;
 import es.caib.pinbal.webapp.command.ProcedimentCommand;
 import es.caib.pinbal.webapp.command.ProcedimentFiltreCommand;
 import es.caib.pinbal.webapp.command.ProcedimentServeiCommand;
+import es.caib.pinbal.webapp.command.ProcedimentServeiMigrarCommand;
 import es.caib.pinbal.webapp.command.ProcedimentServeiPermisFiltreCommand;
 import es.caib.pinbal.webapp.command.ServeiFiltreCommand;
 import es.caib.pinbal.webapp.command.UsuariPermisiCommand;
@@ -34,6 +35,7 @@ import es.caib.pinbal.webapp.common.RequestSessionHelper;
 import es.caib.pinbal.webapp.datatables.ServerSideRequest;
 import es.caib.pinbal.webapp.datatables.ServerSideResponse;
 import es.caib.pinbal.webapp.helper.EnumHelper;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
@@ -65,6 +67,7 @@ import java.util.List;
  * 
  * @author Limit Tecnologies <limit@limit.es>
  */
+@Slf4j
 @Controller
 @RequestMapping("/procediment")
 public class ProcedimentController extends BaseController {
@@ -995,6 +998,84 @@ public class ProcedimentController extends BaseController {
 			return "false";
 		}
 	}
+
+    @RequestMapping(value = "/{procedimentId}/servei/{serveiCodi}/migrar", method = RequestMethod.GET)
+    public String serveiMigrarGet(
+            HttpServletRequest request,
+            @PathVariable Long procedimentId,
+            @PathVariable String serveiCodi,
+            Model model) throws ProcedimentNotFoundException, ServeiNotFoundException, ProcedimentServeiNotFoundException, EntitatNotFoundException {
+
+        EntitatDto entitat = EntitatHelper.getEntitatActual(request, entitatService);
+        ProcedimentDto procediment = procedimentService.findById(procedimentId);
+//        List<ServeiDto> serveis = serveiService.findAmbEntitatNotInProcediment(entitat.getId(), procedimentId);
+        List<ServeiDto> serveis = getServeisMigrar(serveiCodi, entitat);
+
+        ProcedimentServeiMigrarCommand command = new ProcedimentServeiMigrarCommand();
+        command.setProcedimentId(procedimentId);
+        command.setServeiCodiOriginal(serveiCodi);
+        model.addAttribute(new ProcedimentServeiMigrarCommand());
+        model.addAttribute("procediment", procediment);
+        model.addAttribute("serveiCodi", serveiCodi);
+        model.addAttribute("serveis", serveis);
+        return "procedimentServeiMigrar";
+
+    }
+
+    @RequestMapping(value = "/{procedimentId}/servei/{serveiCodi}/migrar", method = RequestMethod.POST)
+    public String serveiMigrarPost(
+            HttpServletRequest request,
+            @PathVariable Long procedimentId,
+            @PathVariable String serveiCodi,
+            @Valid ProcedimentServeiMigrarCommand command,
+            BindingResult bindingResult,
+            Model model) throws ProcedimentNotFoundException, ServeiNotFoundException, ProcedimentServeiNotFoundException, EntitatNotFoundException {
+
+        if (bindingResult.hasErrors()) {
+            EntitatDto entitat = EntitatHelper.getEntitatActual(request, entitatService);
+            ProcedimentDto procediment = procedimentService.findById(procedimentId);
+//            List<ServeiDto> serveis = serveiService.findAmbEntitatNotInProcediment(entitat.getId(), procedimentId);
+            List<ServeiDto> serveis = getServeisMigrar(serveiCodi, entitat);
+            model.addAttribute("procediment", procediment);
+            model.addAttribute("serveiCodi", serveiCodi);
+            model.addAttribute("serveis", serveis);
+            return "procedimentServeiMigrar";
+        }
+        // TODO: Configurar els missatges correctes
+        try {
+            // Migrar al nou servei
+            procedimentService.migrarProcedimentServei(
+                    procedimentId,
+                    serveiCodi,
+                    command.getServeiCodiDesti());
+            return getModalControllerReturnValueSuccess(
+                    request,
+                    "redirect:../../permis",
+                    "procediment.serveis.controller.migrar.ok");
+        } catch (Exception e) {
+            log.error("Error migrant servei", e);
+            return getModalControllerReturnValueError(
+                    request,
+                    "redirect:index",
+                    "procediment.serveis.controller.migrar.error",
+                    new String[] { e.getMessage() });
+        }
+
+    }
+
+    private List<ServeiDto> getServeisMigrar(String serveiCodi, EntitatDto entitat) throws EntitatNotFoundException {
+        List<ServeiDto> serveis = serveiService.findAmbEntitat(entitat.getId());
+        // Descartam el servei actual
+        Iterator<ServeiDto> iterator = serveis.iterator();
+        while (iterator.hasNext()) {
+            ServeiDto servei = iterator.next();
+            if (servei.getCodi().equals(serveiCodi)) {
+                iterator.remove();
+            }
+        }
+        return serveis;
+    }
+
 
 	private void omplirModelFiltreDataTable(
 			HttpServletRequest request,

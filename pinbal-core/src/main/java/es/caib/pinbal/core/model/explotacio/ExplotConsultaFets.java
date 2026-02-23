@@ -10,7 +10,9 @@ import lombok.Data;
 public class ExplotConsultaFets {
 
     private final Long entitatId;
+    private final String entitatCodi;
     private final Long procedimentId;
+    private final String procedimentCodi;
     private final String serveiCodi;
     private final String usuariCodi;
     private final long recOk;
@@ -40,11 +42,16 @@ public class ExplotConsultaFets {
         if (!this.serveiCodi.equals(fetAnterior.serveiCodi)) {
             throw new RuntimeException("Error al obtenir les dades estadístiques. Servei incorrecta");
         }
+        if (!this.usuariCodi.equals(fetAnterior.usuariCodi)) {
+            throw new RuntimeException("Error al obtenir les dades estadístiques. Usuari incorrecta");
+        }
         return ExplotConsultaFets.builder()
                 .entitatId(this.entitatId)
+                .entitatCodi(this.entitatCodi)
                 .procedimentId(this.procedimentId)
+                .procedimentCodi(this.procedimentCodi)
                 .serveiCodi(this.serveiCodi)
-                .recOk(this.recOk - fetAnterior.getRecError())
+                .recOk(this.recOk - fetAnterior.getRecOk())
                 .recError(this.recError - fetAnterior.getRecError())
                 .recPend(this.recPend - fetAnterior.getRecPend())
                 .recProc(this.recProc - fetAnterior.getRecProc())

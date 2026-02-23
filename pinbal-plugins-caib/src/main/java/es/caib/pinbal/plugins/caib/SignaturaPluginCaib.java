@@ -3,19 +3,21 @@
  */
 package es.caib.pinbal.plugins.caib;
 
+import es.caib.comanda.ms.salut.model.IntegracioApp;
+import es.caib.pinbal.plugin.PropertiesHelper;
+import es.caib.pinbal.plugins.SignaturaPlugin;
+import es.caib.pinbal.plugins.SistemaExternException;
+import es.caib.pinbal.plugins.helper.PluginMetricHelper;
+import es.caib.signatura.api.Signer;
+import es.caib.signatura.impl.CAIBSigner;
+import es.caib.signatura.impl.SignaturaProperties;
+import es.caib.signatura.impl.ValidadorProxy;
+
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.security.cert.CertificateExpiredException;
 import java.security.cert.CertificateNotYetValidException;
 import java.security.cert.X509Certificate;
-
-import es.caib.pinbal.plugin.PropertiesHelper;
-import es.caib.pinbal.plugins.SignaturaPlugin;
-import es.caib.pinbal.plugins.SistemaExternException;
-import es.caib.signatura.api.Signer;
-import es.caib.signatura.impl.CAIBSigner;
-import es.caib.signatura.impl.SignaturaProperties;
-import es.caib.signatura.impl.ValidadorProxy;
 
 /**
  * Implementació del plugin de signatura emprant l'API de signatura de la CAIB.
@@ -24,13 +26,18 @@ import es.caib.signatura.impl.ValidadorProxy;
  */
 public class SignaturaPluginCaib implements SignaturaPlugin {
 
-	@Override
+    public SignaturaPluginCaib() {
+        PluginMetricHelper.addEndpoint(IntegracioApp.SIG, "Local");
+    }
+
+    @Override
 	public void signarEstamparPdf(
 			InputStream contentStream,
 			OutputStream signedStream,
 			String url)
 			throws SistemaExternException {
 		try {
+            long start = System.currentTimeMillis();
 			getSigner().signPDF(
 					contentStream,
 					signedStream,
@@ -39,7 +46,9 @@ public class SignaturaPluginCaib implements SignaturaPlugin {
 					getPropertyContentTypeSignatura(),
 					url,
 					Signer.PDF_SIGN_POSITION_LEFT);
+            PluginMetricHelper.addSuccessOperation(IntegracioApp.SIG, System.currentTimeMillis() - start);
 		} catch (Exception ex) {
+            PluginMetricHelper.addErrorOperation(IntegracioApp.SIG);
 			throw new SistemaExternException("Error al signar document PDF", ex);
 		}
 	}
@@ -51,13 +60,16 @@ public class SignaturaPluginCaib implements SignaturaPlugin {
 		// http://www.caib.es/signaturacaib/docum/guia.html#_Toc310255295
 		// Signer signer = new CAIBSigner(); (el comentam perquè no s'empra)
 		// Primer miram que el certificat sigui vàlid
+        long start = System.currentTimeMillis();
 		try {
 			certificat.checkValidity();
 		} catch (CertificateExpiredException cee) {
 			System.out.println("CMSSignature Certificat rebutjat, el certificat ha caducat.");
+            PluginMetricHelper.addSuccessOperation(IntegracioApp.SIG, System.currentTimeMillis() - start);
 			return CertificatValidacioResultat.INVALID;
 		} catch (CertificateNotYetValidException cve) {
 			System.out.println("CMSSignature Certificat rebutjat, el certificat encara no és vàlid.");
+            PluginMetricHelper.addSuccessOperation(IntegracioApp.SIG, System.currentTimeMillis() - start);
 			return CertificatValidacioResultat.INVALID;
 		}
 		boolean isVerified = true;
@@ -88,11 +100,13 @@ public class SignaturaPluginCaib implements SignaturaPlugin {
 					else
 						isVerified = validador.validarFirma(certificateChain);
 				} catch (Exception ex) {
+                    PluginMetricHelper.addErrorOperation(IntegracioApp.SIG);
 					throw new SistemaExternException("Error al validar el certificat", ex);
 				} finally {
 					Thread.currentThread().setContextClassLoader(prevCL);
 				}
 			}
+            PluginMetricHelper.addSuccessOperation(IntegracioApp.SIG, System.currentTimeMillis() - start);
 			return (isVerified) ? CertificatValidacioResultat.OK : CertificatValidacioResultat.REVOCAT;
 		} catch (Exception ex) {
 			throw new SistemaExternException("Error al validar el certificat", ex);

@@ -47,6 +47,11 @@ public interface ConsultaService {
 
 	public static String ERROR_SEPARADOR = "|||";
 
+    @PreAuthorize("hasRole('ROLE_DELEG')")
+    public ConsultaDto peticioSincrona(ConsultaDto consulta) throws ProcedimentServeiNotFoundException, ServeiNotAllowedException, ConsultaScspException, ConsultaNotFoundException;
+    @PreAuthorize("hasRole('ROLE_DELEG')")
+    public ConsultaDto peticioAsincrona(ConsultaDto consulta) throws ProcedimentServeiNotFoundException, ServeiNotAllowedException, ConsultaScspException, ValidacioDadesPeticioException;
+
 	/**
 	 * Realitza una consulta mitjançant les llibreries SCSP.
 	 * 
@@ -316,9 +321,16 @@ public interface ConsultaService {
 	 * @throws JustificantGeneracioException
 	 *            Si es produeixen errors al generar el justificant.
 	 */
-	@PreAuthorize("hasRole('ROLE_DELEG')")
-	public FitxerDto obtenirJustificantMultipleZip(
-			Long id) throws ConsultaNotFoundException, JustificantGeneracioException;
+ @PreAuthorize("hasRole('ROLE_DELEG')")
+    public FitxerDto obtenirJustificantMultipleZip(
+            Long id) throws ConsultaNotFoundException, JustificantGeneracioException;
+
+    /**
+     * Descarrega tots els missatges XML de la consulta en un arxiu ZIP, organitzats per tipus de missatge.
+     * @param id Atribut id de la consulta.
+     */
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public FitxerDto descarregarXmlTokensZip(Long id) throws ConsultaNotFoundException;
 
 	/**
 	 * Torna a intentar la generació i custòdia del justificant.

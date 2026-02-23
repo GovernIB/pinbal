@@ -10,6 +10,7 @@ import es.caib.pinbal.api.config.ApiVersion;
 import es.caib.pinbal.client.procediments.ProcedimentBasic;
 import es.caib.pinbal.client.recobriment.model.ScspJustificante;
 import es.caib.pinbal.client.recobriment.v2.DadaEspecifica;
+import es.caib.pinbal.client.recobriment.v2.DadaEspecificaBasic;
 import es.caib.pinbal.client.recobriment.v2.Entitat;
 import es.caib.pinbal.client.recobriment.v2.PeticioAsincrona;
 import es.caib.pinbal.client.recobriment.v2.PeticioConfirmacioAsincrona;
@@ -139,6 +140,22 @@ public interface RecobrimentRestV2Intf {
     })
     @RequestMapping(value = "/serveis/{serveiCodi}/dadesEspecifiques", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     ResponseEntity<List<DadaEspecifica>> getDadesEspecifiques(@ApiParam(value = "Codi del servei") @PathVariable("serveiCodi") String serveiCodi);
+
+    @ApiOperation(value = "Obtén les dades específiques de resposta d'un servei",
+            notes = "Aquesta operació retorna lista de camps que poden apareixer en la resposta de la petició SCSP.",
+            response = DadaEspecificaBasic.class,
+            responseContainer = "List",
+            authorizations = @Authorization(value = "basicAuth"),
+            tags = "recobrimentV2"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Dades específiqeus obtingudes amb èxit"),
+            @ApiResponse(code = 204, message = "No s'han trobat dades específiques pel servei"),
+            @ApiResponse(code = 404, message = "Servei no trobat"),
+            @ApiResponse(code = 500, message = "Error intern del servidor")
+    })
+    @RequestMapping(value = "/serveis/{serveiCodi}/dadesEspecifiquesResposta", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    ResponseEntity<List<DadaEspecificaBasic>> getDadesEspecifiquesResposta(@ApiParam(value = "Codi del servei") @PathVariable("serveiCodi") String serveiCodi);
 
     @ApiOperation(value = "Obtén tots els valors d'un camp de tipus enumerat",
             notes = "Aquesta operació retorna llistes de valors, siguin de enumerats o de valors de dades externes. Se li passa el codi enum que s’obté de la cridada anterior quant el camp és de tipus enumerat. També se li passa opcionalment un filtre a aplicar que pot tenir varis comportaments segons el enumerat. " +

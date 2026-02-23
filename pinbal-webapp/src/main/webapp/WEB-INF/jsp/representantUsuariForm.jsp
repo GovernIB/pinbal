@@ -75,7 +75,7 @@
 				urlConsultaLlistat="${urlConsultaUsuaris}"
 				textKey="admin.consulta.list.filtre.usuari"
 				suggestValue="codi"
-				suggestText="nom"
+				suggestText="usuariCodiNomNif"
 				inline="false"
 				labelSize="2"
 				comment="usuari.form.camp.codi.comment"/>

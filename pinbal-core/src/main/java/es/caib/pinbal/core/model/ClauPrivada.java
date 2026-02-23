@@ -3,6 +3,8 @@
  */
 package es.caib.pinbal.core.model;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.hibernate.annotations.ForeignKey;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -29,6 +31,7 @@ import java.util.Date;
  * @author Limit Tecnologies <limit@limit.es>
  */
 //@SuppressWarnings("deprecation")
+@Getter
 @Entity
 @Table(name = "core_clave_privada")
 @EntityListeners(AuditingEntityListener.class)
@@ -59,6 +62,12 @@ public class ClauPrivada implements Serializable {
 	@JoinColumn(name = "organismo")
 	@ForeignKey(name = "clave_privada_org")
 	private OrganismeCessionari organisme;
+
+    // Propietat que indica si la clau és per entitat
+    // Si és per entitat, s'utilitza per signar serveis per una entitat concreta
+    @Setter
+    @Column(name = "per_entitat")
+    private boolean perEntitat;
 	
 	
 	/**
@@ -91,7 +100,8 @@ public class ClauPrivada implements Serializable {
 			Date dataBaixa,
 			Date dataAlta,
 			boolean interoperabilitat,
-			OrganismeCessionari organisme) {
+			OrganismeCessionari organisme,
+            boolean perEntitat) {
 		return new Builder(
 				alies,
 				nom,
@@ -100,45 +110,14 @@ public class ClauPrivada implements Serializable {
 				dataBaixa,
 				dataAlta,
 				interoperabilitat,
-				organisme);
+				organisme,
+                perEntitat);
 	}
 	
 	
-	public Long getId() {
-		return id;
-	}
-	
-	public String getAlies() {
-		return alies;
-	}
-	
-	public String getNom() {
-		return nom;
-	}
-	
-	public String getPassword() {
-		return password;
-	}
-	
-	public String getNumSerie() {
-		return numSerie;
-	}
-	
-	public Date getDataBaixa() {
-		return dataBaixa;
-	}
-	
-	public Date getDataAlta() {
-		return dataAlta;
-	}
-	
-	public boolean getInteroperabilitat() {
-		return interoperabilitat;
-	}
-	
-	public OrganismeCessionari getOrganisme() {
-		return organisme;
-	}
+    public boolean isCaducada() {
+        return dataBaixa != null && new Date().after(dataBaixa);
+    }
 	
 	
 	public void update(
@@ -149,7 +128,8 @@ public class ClauPrivada implements Serializable {
 			Date dataBaixa,
 			Date dataAlta,
 			boolean interoperabilitat,
-			OrganismeCessionari organisme) {
+			OrganismeCessionari organisme,
+            boolean perEntitat) {
 		this.alies = alies;
 		this.nom = nom;
 		this.password = password;
@@ -158,6 +138,7 @@ public class ClauPrivada implements Serializable {
 		this.dataAlta = dataAlta;
 		this.interoperabilitat = interoperabilitat;
 		this.organisme = organisme;
+        this.perEntitat = perEntitat;
 	}
 
 	/**
@@ -194,7 +175,8 @@ public class ClauPrivada implements Serializable {
 				Date dataBaixa,
 				Date dataAlta,
 				boolean interoperabilitat,
-				OrganismeCessionari organisme) {
+				OrganismeCessionari organisme,
+                boolean perEntitat) {
 			built = new ClauPrivada();
 			built.alies = alies;
 			built.nom = nom;
@@ -204,6 +186,7 @@ public class ClauPrivada implements Serializable {
 			built.dataAlta = dataAlta;
 			built.interoperabilitat = interoperabilitat;
 			built.organisme = organisme;
+            built.perEntitat = perEntitat;
 		}
 
 		/**

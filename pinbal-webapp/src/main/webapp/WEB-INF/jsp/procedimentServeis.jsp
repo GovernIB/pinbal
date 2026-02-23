@@ -28,6 +28,7 @@
 	<script src="<c:url value="/webjars/momentjs/2.24.0/min/moment.min.js"/>"></script>
 	<script src="<c:url value="/js/webutil.datatable.js"/>"></script>
     <script src="<c:url value="/js/webutil.common.js"/>"></script>
+    <script src="<c:url value="/js/webutil.modal.js"/>"></script>
 </head>
 <body>
 
@@ -77,6 +78,7 @@
 				<th data-data="procedimentCodi"><spring:message code="procediment.serveis.taula.columna.procediment.codi.adicional" /></th>
 				<th data-data="actiu"></th>
 				<th data-data="usuarisAmbPermis"></th>
+				<th data-data="codi"></th>
 				<th></th>
 			</tr>
 		</thead>
@@ -154,9 +156,18 @@ $(document).ready(function() {
 						var template = $('#template-permisos').html();
 						return Mustache.render(template, row);
 				}
-			}, 
+			},
+            {
+                targets: [6],
+                orderable: false,
+                width: "1%",
+                render: function (data, type, row, meta) {
+                    var template = $('#template-migrar').html();
+                    return Mustache.render(template, row);
+                }
+            },
 			{
-				targets: [6],
+				targets: [7],
 				visible: false				
 			}
 	   ],
@@ -226,5 +237,8 @@ function actualitzaCodiProcediment(servei_codi, codi_procediment) {
 		<a href="#" class="btn btn-primary disabled"><i class="icon-lock"></i>&nbsp;<spring:message code="procediment.serveis.taula.boto.permisos"/></a>
 	{{/actiu}}
 </script>
+    <script id="template-migrar" type="x-tmpl-mustache">
+        <a href="servei/{{ codi }}/migrar" class="btn btn-default" data-toggle="modal"><i class="fas fa-suitcase"></i>&nbsp; <spring:message code="procediment.serveis.taula.boto.migrar"/></a>
+    </script>
 </body>
 </html>

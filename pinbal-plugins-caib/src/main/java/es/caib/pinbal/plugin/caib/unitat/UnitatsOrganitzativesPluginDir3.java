@@ -7,11 +7,13 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.type.TypeFactory;
+import es.caib.comanda.ms.salut.model.IntegracioApp;
 import es.caib.pinbal.plugin.PropertiesHelper;
 import es.caib.pinbal.plugin.unitat.NodeDir3;
 import es.caib.pinbal.plugin.unitat.UnitatOrganitzativa;
 import es.caib.pinbal.plugin.unitat.UnitatsOrganitzativesPlugin;
 import es.caib.pinbal.plugins.SistemaExternException;
+import es.caib.pinbal.plugins.helper.PluginMetricHelper;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
@@ -48,10 +50,15 @@ public class UnitatsOrganitzativesPluginDir3 implements UnitatsOrganitzativesPlu
 	private static final String PROPERTY_SERVICE_USERNAME = "es.caib.pinbal.plugin.unitats.organitzatives.dir3.service.username";
 	private static final String PROPERTY_SERVICE_PASSWORD = "es.caib.pinbal.plugin.unitats.organitzatives.dir3.service.password";
 
+    public UnitatsOrganitzativesPluginDir3() {
+        PluginMetricHelper.addEndpoint(IntegracioApp.DIR, getServiceUrl());
+    }
+
 	@Override
 	public Map<String, NodeDir3> organigrama(String codiEntitat) throws SistemaExternException {
 		Map<String, NodeDir3> organigrama = new HashMap<>();
 		try {
+            long start = System.currentTimeMillis();
 			URL url = new URL(getServiceUrl() + SERVEI_ORGANIGRAMA + "?codigo=" + codiEntitat);
 			logger.debug("URL: " + url);
 			HttpURLConnection httpConnection = (HttpURLConnection)url.openConnection();
@@ -65,8 +72,10 @@ public class UnitatsOrganitzativesPluginDir3 implements UnitatsOrganitzativesPlu
 				NodeDir3 arrel = mapper.readValue(response, NodeDir3.class);
 				nodeToOrganigrama(arrel, organigrama);
 			}
+            PluginMetricHelper.addSuccessOperation(IntegracioApp.DIR, System.currentTimeMillis() - start);
 			return organigrama;
 		} catch (Exception ex) {
+            PluginMetricHelper.addErrorOperation(IntegracioApp.DIR);
 			throw new SistemaExternException("No s'ha pogut consultar l'organigrama de unitats organitzatives via REST (codiEntitat=" + codiEntitat + ")", ex);
 		}
 	}
@@ -79,6 +88,7 @@ public class UnitatsOrganitzativesPluginDir3 implements UnitatsOrganitzativesPlu
 	public List<UnitatOrganitzativa> findAmbPare(String pareCodi, Date dataActualitzacio, Date dataSincronitzacio) throws SistemaExternException {
 
 		try {
+            long start = System.currentTimeMillis();
 			DateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 			List<UnitatOrganitzativa> unitats = new ArrayList<>();
 			List<UnidadTF> unidades = new ArrayList<>();
@@ -99,8 +109,10 @@ public class UnitatsOrganitzativesPluginDir3 implements UnitatsOrganitzativesPlu
 					}
 				}
 			}
+            PluginMetricHelper.addSuccessOperation(IntegracioApp.DIR, System.currentTimeMillis() - start);
 			return unitats;
 		} catch (Exception ex) {
+            PluginMetricHelper.addErrorOperation(IntegracioApp.DIR);
 			throw new SistemaExternException("No s'han pogut consultar les unitats organitzatives via REST (pareCodi=" + pareCodi + ")", ex);
 		}
 	}
@@ -113,6 +125,7 @@ public class UnitatsOrganitzativesPluginDir3 implements UnitatsOrganitzativesPlu
 	public UnitatOrganitzativa findAmbCodi(String codi, Date dataActualitzacio, Date dataSincronitzacio) throws SistemaExternException {
 //		DateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 		try {
+            long start = System.currentTimeMillis();
 			UnidadTF unidad = null;
 			URL url = new URL(getServiceUrl() + SERVEI_UNITATS + "obtenerUnidad?codigo=" + codi +
 					(dataActualitzacio != null ? "&fechaActualizacion=" + dataActualitzacio : "") +
@@ -123,8 +136,10 @@ public class UnitatsOrganitzativesPluginDir3 implements UnitatsOrganitzativesPlu
 			if (response != null && response.length > 0) {
 				unidad = mapper.readValue(response, UnidadTF.class);
 			}
+            PluginMetricHelper.addSuccessOperation(IntegracioApp.DIR, System.currentTimeMillis() - start);
 			return unidad != null ? toUnitatOrganitzativa(unidad) : null;
 		} catch (Exception ex) {
+            PluginMetricHelper.addErrorOperation(IntegracioApp.DIR);
 			throw new SistemaExternException("No s'ha pogut consultar la unitat organitzativa amb codi (codi=" + codi + ")", ex);
 		}
 	}
@@ -143,6 +158,7 @@ public class UnitatsOrganitzativesPluginDir3 implements UnitatsOrganitzativesPlu
 		List<UnitatOrganitzativa> unitats = new ArrayList<>();
 		List<NodeDir3> unidades = new ArrayList<>();
 		try {
+            long start = System.currentTimeMillis();
 			URL url = new URL(getServiceUrl() + SERVEI_CERCA + "organismos?"
 					+ "codigo=" + (codi != null ? codi : "")
 					+ "&denominacion=" + (denominacio != null ? denominacio : "")
@@ -168,8 +184,10 @@ public class UnitatsOrganitzativesPluginDir3 implements UnitatsOrganitzativesPlu
 			for (NodeDir3 node: unidades) {
 				unitats.add(toUnitatOrganitzativa(node));
 			}
+            PluginMetricHelper.addSuccessOperation(IntegracioApp.DIR, System.currentTimeMillis() - start);
 			return unitats;
 		} catch (Exception ex) {
+            PluginMetricHelper.addErrorOperation(IntegracioApp.DIR);
 			throw new SistemaExternException(
 					"No s'han pogut consultar les unitats organitzatives via REST (" +
 							"denominacio=" + denominacio + ", " +

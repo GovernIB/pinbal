@@ -34,6 +34,7 @@ import es.caib.pinbal.core.helper.PluginHelper;
 import es.caib.pinbal.core.helper.ServeiHelper;
 import es.caib.pinbal.core.helper.ServeiXsdHelper;
 import es.caib.pinbal.core.helper.UsuariHelper;
+import es.caib.pinbal.core.model.ClauPrivada;
 import es.caib.pinbal.core.model.Entitat;
 import es.caib.pinbal.core.model.EntitatServei;
 import es.caib.pinbal.core.model.EntitatUsuari;
@@ -51,6 +52,7 @@ import es.caib.pinbal.core.model.ServeiJustificantCamp;
 import es.caib.pinbal.core.model.ServeiRegla;
 import es.caib.pinbal.core.model.ServeiXsd;
 import es.caib.pinbal.core.regles.ReglaHelper;
+import es.caib.pinbal.core.repository.ClauPrivadaRepository;
 import es.caib.pinbal.core.repository.EntitatRepository;
 import es.caib.pinbal.core.repository.EntitatServeiRepository;
 import es.caib.pinbal.core.repository.EntitatUsuariRepository;
@@ -88,8 +90,10 @@ import org.springframework.beans.BeansException;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import org.springframework.context.ApplicationListener;
 import org.springframework.context.MessageSource;
 import org.springframework.context.MessageSourceAware;
+import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -125,7 +129,7 @@ import java.util.Set;
  */
 @Slf4j
 @Service
-public class ServeiServiceImpl implements ServeiService, ApplicationContextAware, MessageSourceAware {
+public class ServeiServiceImpl implements ServeiService, ApplicationContextAware, MessageSourceAware, ApplicationListener<ContextRefreshedEvent> {
 
 	public static final Locale DEFAULT_TRADUCCIO_LOCALE = new Locale("ca", "ES");
 	
@@ -156,7 +160,9 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 	@Resource
 	private ServeiReglaRepository serveiReglaRepository;
 	@Resource
-    private ServeiXsdRepository serveiXsdRepository;
+	private ServeiXsdRepository serveiXsdRepository;
+	@Resource
+	private ClauPrivadaRepository clauPrivadaRepository;
 
 	@Resource
 	private ServeiHelper serveiHelper;
@@ -205,6 +211,7 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 					true,
 					true,
 					false,
+                    false,
 					actiu).build();
 			serveiConfigRepository.save(serveiConfig);
 		} else {
@@ -225,7 +232,7 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 
 	@Transactional
 	@Override
-	public ServeiDto save(ServeiDto servei) {
+	public ServeiDto save(ServeiDto servei) throws ServeiNotFoundException {
 		log.debug("Guardant dades per al servicio SCSP (codi=" + servei.getCodi() + ")");
 		getScspHelper().saveServicio(toServicioScsp(servei));
 		ServeiConfig serveiConfig = serveiConfigRepository.findByServei(servei.getCodi());
@@ -251,6 +258,7 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 					servei.isPinbalAddDadesEspecifiques(),
 					servei.isUseAutoClasse(),
 					servei.isEnviarSolicitant(),
+                    servei.isUseCertificatEntitat(),
 					true).build();
 			serveiConfig.setPinbalUnitatDir3FromEntitat(servei.isPinbalUnitatDir3FromEntitat());
 			serveiConfigRepository.save(serveiConfig);
@@ -258,6 +266,7 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 		} else {
 			// Si ja està creat l'actualitza
 			rolAntic = serveiConfig.getRoleName();
+            boolean useCertificatEntitatChanged = serveiConfig.isUseCertificatEntitat() != servei.isUseCertificatEntitat();
 			serveiConfig.update(
 					servei.getPinbalCustodiaCodi(),
 					servei.getPinbalRoleName(),
@@ -284,7 +293,8 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 					servei.isPinbalIniDadesExpecifiques(),
 					servei.isPinbalAddDadesEspecifiques(),
 					servei.isUseAutoClasse(),
-					servei.isEnviarSolicitant());
+					servei.isEnviarSolicitant(),
+                    servei.isUseCertificatEntitat());
 			serveiConfig.setPinbalUnitatDir3FromEntitat(servei.isPinbalUnitatDir3FromEntitat());
 			if (servei.getFitxerAjudaNom() != null && !servei.getFitxerAjudaNom().isEmpty()) {
 				serveiConfig.updateFitxerAjuda(
@@ -292,6 +302,13 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 						servei.getFitxerAjudaMimeType(),
 						servei.getFitxerAjudaContingut());
 			}
+            if (useCertificatEntitatChanged) {
+                log.info("El camp useCertificatEntitat ha canviat al servei {}. Actualitzant ServicioOrganismoCesionario...", servei.getCodi());
+                actualitzarServiciosOrganismoCesionario(
+                        serveiConfig.getId(),
+                        servei.isUseCertificatEntitat()
+                );
+            }
 		}
 		// Refresca els permisos per accedir al servei
 		if (rolAntic != null && !rolAntic.isEmpty()) {
@@ -314,6 +331,38 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 		}
 		return servei;
 	}
+
+    // Mètodes per actualitzar els Serveis d'organismes cessionaris
+    // ---------------------------------------------------------------------------------------------
+
+    private void actualitzarServiciosOrganismoCesionario(
+            Long serveiConfigId,
+            boolean useCertificatEntitat) throws ServeiNotFoundException {
+
+        ServeiConfig serveiConfig = serveiConfigRepository.findOne(serveiConfigId);
+        if (serveiConfig == null) {
+            throw new ServeiNotFoundException(serveiConfigId.toString());
+        }
+
+        String serveiCodi = serveiConfig.getServei();
+        List<EntitatServei> entitatServeis = entitatServeiRepository.findByServei(serveiCodi);
+        for (EntitatServei entitatServei : entitatServeis) {
+            try {
+                // Obtenir clau privada de l'entitat
+                String aliesClauFirmaEntitat = null;
+                if (useCertificatEntitat) {
+                    ClauPrivada clauPrivada = clauPrivadaRepository.findTopByOrganismeCifAndPerEntitatTrueOrderByDataAltaDesc(entitatServei.getEntitat().getCif());
+                    aliesClauFirmaEntitat = clauPrivada != null ? clauPrivada.getAlies() : null;
+                }
+
+                // Actualitzar SOCs
+                scspHelper.actualitzarServeiOrganismoCesionario(entitatServei.getEntitat().getCif(), serveiCodi, aliesClauFirmaEntitat);
+            } catch (Exception e) {
+                log.error("Error actualitzant SOCs per entitat {} i servei {}: {}", entitatServei.getEntitat().getCif(), serveiCodi, e.getMessage(), e);
+            }
+        }
+
+    }
 
 	@Transactional
 	@Override
@@ -364,14 +413,22 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 	}
 
 	private void actualitzarServeisScspActiusEntitat(Entitat entitat) {
+        // Obtenir serveis actius
 		List<EntitatServei> entitatServeis = entitatServeiRepository.findByEntitat(entitat);
-		String[] serveisActius = new String[entitatServeis.size()];
-		for (int i = 0; i < serveisActius.length; i++) {
-			serveisActius[i] = entitatServeis.get(i).getServei();
+		Set<String> serveisActius = new HashSet<>();
+		for (int i = 0; i < entitatServeis.size(); i++) {
+			serveisActius.add(entitatServeis.get(i).getServei());
 		}
+
+        // Obtenir clau privada de l'entitat
+        ClauPrivada clauPrivada = clauPrivadaRepository.findTopByOrganismeCifAndPerEntitatTrueOrderByDataAltaDesc(entitat.getCif());
+        String aliesClauFirmaEntitat = clauPrivada != null ? clauPrivada.getAlies() : null;
+
+        // Actualitzar els serveis per òrgan SCSP
 		getScspHelper().actualitzarServiciosActivosOrganismoCesionario(
 				entitat.getCif(),
-				serveisActius);
+				serveisActius,
+                aliesClauFirmaEntitat);
 	}
 
 	@Transactional(readOnly = true)
@@ -593,7 +650,7 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 		return result; // Retornem la llista sense duplicats
 	}
 
-	// Classe auxiliar per definir els camps que determinen un duplicat
+    // Classe auxiliar per definir els camps que determinen un duplicat
 	private static class AceKey {
 		private final org.springframework.security.acls.model.Acl acl;
 		private final Sid sid;
@@ -786,6 +843,52 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 		}
 		return resposta;
 	}
+
+    @Transactional(readOnly = true)
+    @Override
+    public List<ServeiDto> findAmbEntitatNotInProcediment(
+            Long entitatId,
+            Long procedimentId) throws EntitatNotFoundException, ProcedimentNotFoundException {
+        log.debug("Cercant els serveis (entitatId=" + entitatId + ", procedimentId=" + procedimentId + ")");
+        Entitat entitat = entitatRepository.findOne(entitatId);
+        if (entitat == null) {
+            log.debug("No s'ha trobat l'entitat (id=" + entitatId + ")");
+            throw new EntitatNotFoundException();
+        }
+        Procediment procediment = procedimentRepository.findOne(procedimentId);
+        if (procediment == null) {
+            log.debug("No s'ha trobat el procediment (id=" + procedimentId + ")");
+            throw new ProcedimentNotFoundException();
+        }
+        List<ProcedimentServei> procedimentServeis = procedimentServeiRepository.findByEntitatIdAndProcedimentId(
+                entitatId,
+                procedimentId);
+        // Serveis que es troben actualment associats al procediment
+        List<String> serveisProcediment = new ArrayList<>();
+        if (procedimentServeis != null && !procedimentServeis.isEmpty()) {
+            for (ProcedimentServei ps : procedimentServeis) {
+                serveisProcediment.add(ps.getServei());
+            }
+        }
+        // Serveis de l'entitat que no es troben actualment al procediment
+        List<String> serveis = entitatServeiRepository.findServeisByEntitatId(entitat.getId());
+        serveis.removeAll(serveisProcediment);
+
+        List<ServeiDto> resposta = new ArrayList<ServeiDto>();
+        List<Servicio> servicios = getScspHelper().findServicioAll();
+        for (Servicio servicio : servicios) {
+            boolean trobat = false;
+            for (String serveiCodi : serveis) {
+                if (serveiCodi.equals(servicio.getCodCertificado())) {
+                    trobat = true;
+                    break;
+                }
+            }
+            if (trobat)
+                resposta.add(toServeiDto(servicio));
+        }
+        return resposta;
+    }
 
 	@Transactional(readOnly = true)
 	@Override
@@ -1238,6 +1341,36 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 				ServeiCampDto.class);
 	}
 
+	@Transactional
+	@Override
+	public void marcarArrelResposta(String serveiCodi, String path) {
+		log.debug("Marcar arrelResposta per al servei (codi=" + serveiCodi + ") i path=" + path);
+		// Desa el path seleccionat a ServeiConfig en lloc de marcar un camp
+		ServeiConfig cfg = serveiConfigRepository.findByServei(serveiCodi);
+		if (cfg != null) {
+            cfg.setArrelRespostaPath(path);
+            serveiConfigRepository.save(cfg);
+        }
+	}
+
+	@Transactional
+	@Override
+	public void desmarcarArrelResposta(String serveiCodi) {
+		log.debug("Desmarcar arrelResposta per al servei (codi=" + serveiCodi + ")");
+		ServeiConfig cfg = serveiConfigRepository.findByServei(serveiCodi);
+		if (cfg != null) {
+			cfg.setArrelRespostaPath(null);
+			serveiConfigRepository.save(cfg);
+		}
+	}
+
+	@Transactional(readOnly = true)
+	@Override
+	public String getArrelRespostaPath(String serveiCodi) {
+		ServeiConfig cfg = serveiConfigRepository.findByServei(serveiCodi);
+		return cfg != null ? cfg.getArrelRespostaPath() : null;
+	}
+
 	@Transactional(rollbackFor = ServeiNotFoundException.class)
 	@Override
 	public ServeiCampGrupDto createServeiCampGrup(ServeiCampGrupDto serveiCampGrup) throws ServeiNotFoundException {
@@ -1565,13 +1698,27 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 	public void setApplicationContext(
 			ApplicationContext applicationContext) throws BeansException {
 		this.applicationContext = applicationContext;
-		this.self = applicationContext.getBean(ServeiService.class);
 	}
 
 	@Override
 	public void setMessageSource(MessageSource messageSource) {
 		this.messageSource = messageSource;
 	}
+
+    @Override
+    public void onApplicationEvent(ContextRefreshedEvent contextRefreshedEvent) {
+        try {
+            this.self = applicationContext.getBean(ServeiService.class);
+            try {
+                log.debug("[TR-DIAG] self injected on ContextRefreshed. Is AOP proxy? {} | JDK? {} | CGLIB? {}",
+                        org.springframework.aop.support.AopUtils.isAopProxy(self),
+                        org.springframework.aop.support.AopUtils.isJdkDynamicProxy(self),
+                        org.springframework.aop.support.AopUtils.isCglibProxy(self));
+            } catch (Throwable ignore) { }
+        } catch (Throwable t) {
+            log.warn("[TR-DIAG] Could not obtain self proxy on ContextRefreshed: {}", t.toString());
+        }
+    }
 
 	@Override
 	public void xsdDelete(String codi, XsdTipusEnumDto tipus) throws IOException {
@@ -1988,6 +2135,7 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 			dto.setPinbalAddDadesEspecifiques(serveiConfig.isAddDadesEspecifiques());
 			dto.setUseAutoClasse(serveiConfig.isUseAutoClasse());
 			dto.setEnviarSolicitant(serveiConfig.isEnviarSolicitant());
+            dto.setUseCertificatEntitat(serveiConfig.isUseCertificatEntitat());
 
 			dto.setDataDarreraActualitzacio(serveiConfig.getLastModifiedDate() != null ? serveiConfig.getLastModifiedDate().toDate() : null);
 		}
@@ -2011,6 +2159,7 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 								new String[source.getData().getEnumValues().size()]));
 			dada.setComplexa(source.getData().isComplex());
 			dada.setTipusDadaComplexa(TipusDadaComplexaEnum.getTipus(source.getData().getGroupType()));
+            dada.setTipus(source.getData().getTipus());
 			target.setDades(dada);
 		}
 		if (source.getNumberOfChildren() > 0) {
@@ -2146,36 +2295,6 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 	private boolean isGestioXsdActiva(String serveiCodi) {
 		ServeiConfig serveiConfig = serveiConfigRepository.findByServei(serveiCodi);
 		return serveiConfig != null && serveiConfig.isActivaGestioXsd();
-	}
-
-
-	// TODO: BORRAR en versió 1.1.43
-	@Override
-	public void updateFitxersXsd() {
-		if (serveiXsdRepository.count() > 0) {
-			log.info("El mètode updateFitxersXsd() no pot ser utilitzat degut a que ja hi ha entrades a la taula de XSDs.");
-			return;
-		}
-
-		Date ara = new Date();
-		List<Servei> serveis = serveiRepository.findAll();
-
-		for (Servei servei: serveis) {
-			String serveiCodi = servei.getCodi();
-			String serveiPath = serveiXsdHelper.getPathPerServei(serveiCodi);
-
-			List<ServeiXsdDto> serveiXsdDtos = serveiXsdHelper.findAll(serveiCodi);
-			for (ServeiXsdDto serveiXsdDto: serveiXsdDtos) {
-				ServeiXsd serveiXsd = ServeiXsd.builder()
-						.servei(serveiCodi)
-						.tipus(serveiXsdDto.getTipus())
-						.nomArxiu(serveiXsdDto.getNomArxiu())
-						.path(serveiPath)
-						.dataModificacio(ara)
-						.build();
-				serveiXsdRepository.save(serveiXsd);
-			}
-		}
 	}
 
 }

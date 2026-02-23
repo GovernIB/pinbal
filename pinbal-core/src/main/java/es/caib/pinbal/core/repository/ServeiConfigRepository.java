@@ -31,8 +31,13 @@ public interface ServeiConfigRepository extends JpaRepository<ServeiConfig, Long
     @Query("from ServeiConfig sc where sc.servei in (:serveisEntitat)")
     List<ServeiConfig> findByServeiIn(@Param("serveisEntitat") List<String> serveisEntitat);
 
+    List<ServeiConfig> findByUseCertificatEntitatTrue();
 
-
+    @Query("select sc from ServeiConfig sc " +
+            "where sc.useCertificatEntitat = true " +
+            "  and sc.servei in (select es.servei from EntitatServei es " +
+            "                    where es.entitat.id = :entitatId) ")
+    List<ServeiConfig> findByUseCertificatEntitatTrueAndEntitat(@Param("entitatId") Long entitatId);
 
     @Modifying
     @Query(value = "UPDATE PBL_SERVEI_CONFIG " +
@@ -41,4 +46,5 @@ public interface ServeiConfigRepository extends JpaRepository<ServeiConfig, Long
             "WHERE CREATEDBY_CODI = :codiAntic OR LASTMODIFIEDBY_CODI = :codiAntic",
             nativeQuery = true)
     int updateUsuariAuditoria(@Param("codiAntic") String codiAntic, @Param("codiNou") String codiNou);
+
 }
