@@ -31,6 +31,8 @@ public interface ServeiJustificantCampRepository extends JpaRepository<ServeiJus
 			String localeIdioma,
 			String localeRegio);
 
+	@Query("select xpath from ServeiJustificantCamp where servei = :serveiCodi and document is true ")
+    List<String> findXpathDocumentByServei(@Param("serveiCodi") String serveiCodi);
 
 
 
@@ -41,4 +43,5 @@ public interface ServeiJustificantCampRepository extends JpaRepository<ServeiJus
 			"WHERE CREATEDBY_CODI = :codiAntic OR LASTMODIFIEDBY_CODI = :codiAntic",
 			nativeQuery = true)
 	int updateUsuariAuditoria(@Param("codiAntic") String codiAntic, @Param("codiNou") String codiNou);
+
 }

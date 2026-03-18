@@ -26,6 +26,7 @@ public class ArbreRespostaDto implements Serializable {
 	private String titol;
 	private String descripcio;
 	private String xpath;
+	private boolean document;
 	private List<ArbreRespostaDto> fills;
 
 	public void addFill(ArbreRespostaDto fill) {

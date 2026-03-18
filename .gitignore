@@ -12,3 +12,4 @@
 /pinbal-client-test2/target/
 /docker-compose.yml
 /pinbal_docker.sh
+/.env

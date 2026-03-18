@@ -67,15 +67,7 @@ import es.caib.pinbal.core.model.explotacio.ExplotConsultaFets;
 import es.caib.pinbal.core.model.explotacio.ExplotConsultaFetsEntity;
 import es.caib.pinbal.core.model.explotacio.ExplotTempsEntity;
 import es.caib.pinbal.core.model.llistat.LlistatConsulta;
-import es.caib.pinbal.core.repository.ConsultaRepository;
-import es.caib.pinbal.core.repository.EntitatRepository;
-import es.caib.pinbal.core.repository.EntitatUsuariRepository;
-import es.caib.pinbal.core.repository.ProcedimentRepository;
-import es.caib.pinbal.core.repository.ProcedimentServeiRepository;
-import es.caib.pinbal.core.repository.ServeiRepository;
-import es.caib.pinbal.core.repository.SuperConsultaRepository;
-import es.caib.pinbal.core.repository.TokenRepository;
-import es.caib.pinbal.core.repository.UsuariRepository;
+import es.caib.pinbal.core.repository.*;
 import es.caib.pinbal.core.repository.dadesobertes.DadesObertesConsultaRepository;
 import es.caib.pinbal.core.repository.explotacio.ExplotConsultaDimensioRepository;
 import es.caib.pinbal.core.repository.explotacio.ExplotConsultaFetsRepository;
@@ -241,6 +233,8 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
     private DadesObertesConsultaRepository dadesObertesConsultaRepository;
     @Autowired
     private LlistatConsultaRepository llistatConsultaRepository;
+    @Autowired
+    private ServeiJustificantCampRepository serveiJustificantCampRepository;
 
     private ConsultaService self;
 
@@ -251,7 +245,7 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 	private Map<Long, Object> justificantLocks = new HashMap<Long, Object>();
 
 
-    @Override
+	@Override
     public ConsultaDto peticioSincrona(ConsultaDto consulta) throws ProcedimentServeiNotFoundException, ServeiNotAllowedException, ConsultaScspException, ConsultaNotFoundException {
         String servei = consulta.getServeiCodi();
         try {
@@ -2732,7 +2726,7 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 		try {
 			Consulta consulta = consultaRepository.findOne(consultaId);
 			ElementArbre elementArbre = scspHelper.generarArbreJustificant(consulta.getScspPeticionId(), consulta.getScspSolicitudId(), null);
-			arbreResposta = convertirElementArbre(elementArbre);
+			arbreResposta = convertirElementArbre(elementArbre, consulta.getServeiCodi());
 		} catch (Exception e) {
 			log.error("Error al obtenir l'arbre de la resposta", e);
 		}
@@ -2740,26 +2734,30 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 		return arbreResposta;
 	}
 
-	private ArbreRespostaDto convertirElementArbre(ElementArbre elementArbre) {
+	private ArbreRespostaDto convertirElementArbre(ElementArbre elementArbre, String serveiCodi) {
 		// Creem un arbre de resposta inicialment buit
 		ArbreRespostaDto arbreResposta = new ArbreRespostaDto();
 
+		// Obtenim l'xpath dels nodes tipus document
+		final List<String> xpathNodesTipusDocument = serveiJustificantCampRepository.findXpathDocumentByServei(serveiCodi);
+
 		// Funció recursiva per mapejar cada node del `Arrel` al nou arbre
-		processarElementArbre(elementArbre, arbreResposta);
+		processarElementArbre(elementArbre, arbreResposta, xpathNodesTipusDocument);
 		return arbreResposta;
 	}
 
-	private void processarElementArbre(ElementArbre origen, ArbreRespostaDto desti) {
+	private void processarElementArbre(ElementArbre origen, ArbreRespostaDto desti, List<String> xpathNodesTipusDocument) {
 		// Afegim aquest valor al node actual del destí
 		desti.setTitol(origen.getTitol());
 		desti.setDescripcio(origen.getDescripcio());
 		desti.setXpath(origen.getXpathDatoEspecifico());
+		desti.setDocument(xpathNodesTipusDocument.contains(origen.getXpathDatoEspecifico()));
 
 		// Iterem sobre els nodes fills, si existeixen, i els mapejem recursivament
 		if (origen.getFills() != null) {
 			for (ElementArbre fill : origen.getFills()) {
 				ArbreRespostaDto fillArbre = new ArbreRespostaDto();
-				processarElementArbre(fill, fillArbre);
+				processarElementArbre(fill, fillArbre, xpathNodesTipusDocument);
 				desti.addFill(fillArbre);
 			}
 		}
