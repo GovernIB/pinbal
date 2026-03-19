@@ -45,8 +45,8 @@ public interface LlistatConsultaRepository extends JpaRepository<LlistatConsulta
             "and (:esNullEstat = true or c.estat = :estat) " +
             "and (:esNullDataInici = true or c.data >= :dataInici) " +
             "and (:esNullDataFi = true or c.data <= :dataFi) " +
-            "and (:esNullTitularNom = true or c.titularNom = :titularNom) " +
-            "and (:esNullTitularDocument = true or c.titularDocumentNum = :titularDocument) " +
+            "and (:esNullTitularNom = true or lower(c.titularNom) like lower('%'||:titularNom||'%')) " +
+            "and (:esNullTitularDocument = true or lower(c.titularDocumentNum) like lower('%'||:titularDocument||'%')) " +
             "and (:esNullFuncionari = true or (lower(c.funcionariNif) like lower('%'||:funcionari||'%') or lower(c.funcionariNom) like lower('%'||:funcionari||'%'))) " +
             "and (:esNullUsuari = true or c.usuariCodi = :usuari) " +
             "and (c.multiple = :multiple) " +
@@ -91,8 +91,8 @@ public interface LlistatConsultaRepository extends JpaRepository<LlistatConsulta
             "and (:esNullEstat = true or c.estat = :estat) " +
             "and (:esNullDataInici = true or c.data >= :dataInici) " +
             "and (:esNullDataFi = true or c.data <= :dataFi) " +
-            "and (:esNullTitularNom = true or c.titularNom = :titularNom) " +
-            "and (:esNullTitularDocument = true or c.titularDocumentNum = :titularDocument) " +
+            "and (:esNullTitularNom = true or lower(c.titularNom) like lower('%'||:titularNom||'%')) " +
+            "and (:esNullTitularDocument = true or lower(c.titularDocumentNum) like lower('%'||:titularDocument||'%')) " +
             "and (:esNullFuncionari = true or (lower(c.funcionariNif) like lower('%'||:funcionari||'%') or lower(c.funcionariNom) like lower('%'||:funcionari||'%'))) " +
             "and (:esNullUsuari = true or c.usuariCodi = :usuari) " +
             "and (:esNullRecobriment = true or c.recobriment = :recobriment) " +

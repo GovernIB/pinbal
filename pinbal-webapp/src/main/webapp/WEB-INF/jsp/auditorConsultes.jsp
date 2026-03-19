@@ -193,16 +193,16 @@
 								 formatSelection="formatState"/>
 			</div>
 		</div>
-		<div class="row">	
+		<div class="row">
 			<div class="col-md-3" >
 				<div class="row">
 					<div class="col-md-6" >
 						<pbl:inputDate name="dataInici" inline="true" placeholderKey="auditor.list.filtre.data.inici"/>
-					</div>		
+					</div>
 					<div class="col-md-6" >
 						<pbl:inputDate name="dataFi" inline="true" placeholderKey="auditor.list.filtre.data.fi"/>
-					</div>		
-				</div>		
+					</div>
+				</div>
 			</div>
 			<div class="col-md-3">
 				<pbl:inputText name="funcionari" inline="true" placeholderKey="auditor.list.filtre.funcionari"/>
@@ -223,6 +223,14 @@
 					<button id="netejar-filtre" class="btn btn-default" type="button"><spring:message code="comu.boto.netejar"/></button>
 					<button id="filtrar" class="btn btn-primary" type="submit"><span class="fa fa-filter"></span> <spring:message code="comu.boto.filtrar"/></button>
 				</div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-md-3">
+				<pbl:inputText name="titularDocument" inline="true" placeholderKey="auditor.list.filtre.titular.document"/>
+			</div>
+			<div class="col-md-3">
+				<pbl:inputText name="titularNom" inline="true" placeholderKey="auditor.list.filtre.titular.nom"/>
 			</div>
 		</div>	
 	</form:form>
