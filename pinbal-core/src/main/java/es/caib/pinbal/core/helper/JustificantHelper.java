@@ -145,45 +145,58 @@ public class JustificantHelper implements MessageSourceAware {
                             Procediment procediment = consulta.getProcedimentServei().getProcediment();
                             String serieDocumental = getJustificantSerieDocumental();
                             if (consulta.getArxiuExpedientUuid() == null) {
-                                // Consulta a veure si l'expedient ja està creat
-                                ContingutArxiu expedientExistent = pluginHelper.arxiuExpedientCercarAmbNom(consulta.getScspPeticionId());
-                                if (expedientExistent != null) {
-                                    arxiuExpedientUuid = expedientExistent.getIdentificador();
-                                } else {
-                                    // Crea l'expedient
-                                    arxiuExpedientUuid = pluginHelper.arxiuExpedientCrear(
-                                            consulta.getScspPeticionId(),
-                                            consulta.getTitularDocumentNum(),
-                                            procediment.getOrganGestor().getCodi(),
-                                            procediment.getCodiSia(),
-                                            procediment.getCodi(),
-                                            serieDocumental);
+                                if (consulta.isRecobriment()) {
                                     log.info(
-                                            "Creat nou expedient a l'arxiu relacionat amb la consulta (" +
+                                            "Consulta de recobriment sense expedient, s'omet la creació d'expedient artificial a l'arxiu (" +
                                                     "id=" + consulta.getId() + ", " +
                                                     "scspPeticionId=" + consulta.getScspPeticionId() + ", " +
-                                                    "scspSolicitudId=" + consulta.getScspSolicitudId() + ", " +
-                                                    "arxiuExpedientUuid=" + arxiuExpedientUuid + ")");
+                                                    "scspSolicitudId=" + consulta.getScspSolicitudId() + ")");
+                                    // Segons el requeriment #357, si és recobriment ja s'encarrega l'aplicació
+									// de guardar el document a l'arxiu.
+                                    // En aquest cas, deixarem arxiuDocumentUuid a null.
+                                } else {
+                                    // Consulta a veure si l'expedient ja està creat
+                                    ContingutArxiu expedientExistent = pluginHelper.arxiuExpedientCercarAmbNom(consulta.getScspPeticionId());
+                                    if (expedientExistent != null) {
+                                        arxiuExpedientUuid = expedientExistent.getIdentificador();
+                                    } else {
+                                        // Crea l'expedient
+                                        arxiuExpedientUuid = pluginHelper.arxiuExpedientCrear(
+                                                consulta.getScspPeticionId(),
+                                                consulta.getTitularDocumentNum(),
+                                                procediment.getOrganGestor().getCodi(),
+                                                procediment.getCodiSia(),
+                                                procediment.getCodi(),
+                                                serieDocumental);
+                                        log.info(
+                                                "Creat nou expedient a l'arxiu relacionat amb la consulta (" +
+                                                        "id=" + consulta.getId() + ", " +
+                                                        "scspPeticionId=" + consulta.getScspPeticionId() + ", " +
+                                                        "scspSolicitudId=" + consulta.getScspSolicitudId() + ", " +
+                                                        "arxiuExpedientUuid=" + arxiuExpedientUuid + ")");
+                                    }
                                 }
                             }
-                            justificantFitxer.setContingut(justificantFirmat.getContingut());
-                            arxiuDocumentUuid = pluginHelper.arxiuDocumentGuardarFirmaPades(
-                                    consulta.getScspPeticionId(),
-                                    arxiuExpedientUuid,
-                                    consulta.getScspSolicitudId(),
-                                    procediment.getOrganGestor().getCodi(),
-                                    serieDocumental,
-                                    justificantFitxer,
-                                    ContingutOrigen.ADMINISTRACIO,
-                                    DocumentEstatElaboracio.ORIGINAL,
-                                    es.caib.plugins.arxiu.api.DocumentTipus.CERTIFICAT);
-                            log.info(
-                                    "Guardat justificant a l'arxiu relacionat amb la consulta (" +
-                                            "id=" + consulta.getId() + ", " +
-                                            "scspPeticionId=" + consulta.getScspPeticionId() + ", " +
-                                            "scspSolicitudId=" + consulta.getScspSolicitudId() + ", " +
-                                            "arxiuExpedientUuid=" + arxiuExpedientUuid + ", " +
-                                            "arxiuDocumentUuid=" + arxiuDocumentUuid + ")");
+                            if (arxiuExpedientUuid != null) {
+                                justificantFitxer.setContingut(justificantFirmat.getContingut());
+                                arxiuDocumentUuid = pluginHelper.arxiuDocumentGuardarFirmaPades(
+                                        consulta.getScspPeticionId(),
+                                        arxiuExpedientUuid,
+                                        consulta.getScspSolicitudId(),
+                                        procediment.getOrganGestor().getCodi(),
+                                        serieDocumental,
+                                        justificantFitxer,
+                                        ContingutOrigen.ADMINISTRACIO,
+                                        DocumentEstatElaboracio.ORIGINAL,
+                                        es.caib.plugins.arxiu.api.DocumentTipus.CERTIFICAT);
+                                log.info(
+                                        "Guardat justificant a l'arxiu relacionat amb la consulta (" +
+                                                "id=" + consulta.getId() + ", " +
+                                                "scspPeticionId=" + consulta.getScspPeticionId() + ", " +
+                                                "scspSolicitudId=" + consulta.getScspSolicitudId() + ", " +
+                                                "arxiuExpedientUuid=" + arxiuExpedientUuid + ", " +
+                                                "arxiuDocumentUuid=" + arxiuDocumentUuid + ")");
+                            }
                         } else {
                             log.debug("[JUSTIFICANT] Es desarà el justificant a custòdia");
                             // Reserva l'id de custòdia i genera la URL

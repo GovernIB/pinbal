@@ -385,7 +385,9 @@ public class RecobrimentHelper implements ApplicationContextAware, MessageSource
 			}
 
 			// Validació de l'identificador d'expedient
-			if (solicitante.getIdExpediente() != null && solicitante.getIdExpediente().length() > 25)
+			if (solicitante.getIdExpediente() == null || solicitante.getIdExpediente().trim().isEmpty())
+				throw getErrorValidacio(ERROR_CODE_SCSP_VALIDATION, "L'element peticion.solicitudes.solicitudTransmision.datosGenericos.solicitante.idExpediente (solicitudIndex=" + index + ") és obligatori");
+			if (solicitante.getIdExpediente().length() > 25)
 				throw getErrorValidacio(ERROR_CODE_SCSP_VALIDATION, "Camp massa llarg. L'element peticion.solicitudes.solicitudTransmision.datosGenericos.solicitante.idExpediente (solicitudIndex=" + index + ") no pot superar els 25 caràcters");
 			solicitud.setExpedientId(solicitante.getIdExpediente());
 

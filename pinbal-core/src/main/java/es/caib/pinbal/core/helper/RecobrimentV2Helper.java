@@ -189,7 +189,11 @@ public class RecobrimentV2Helper implements ApplicationContextAware, MessageSour
 //		validateCampLength(solicitudId, "solicitud.id", 64, errors);
 
 		validateTitular(titular, serveiCodi, errors);
-
+		
+		if (expedientId == null || expedientId.isEmpty()) {
+			errors.rejectValue("solicitud.expedient", "rec.val.err.expedient", "L'identificador d'expedient és obligatori");
+		}
+		
 		validateCampLength(expedientId, "solicitud.expedient", 25, errors);
 
 		validateDadesEspecifiques(dadesEspedifiques, serveiCodi, errors, serveiService);
