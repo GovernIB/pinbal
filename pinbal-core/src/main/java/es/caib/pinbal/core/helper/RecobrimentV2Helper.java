@@ -86,6 +86,7 @@ import java.util.TimeZone;
 @Slf4j
 @Component
 public class RecobrimentV2Helper implements ApplicationContextAware, MessageSourceAware {
+	private static final String PROPERTY_RECOBRIMENT_REQUEREIX_EXPEDIENTID = "es.caib.pinbal.recobriment.requereix.expedientid";
 
 	private ApplicationContext applicationContext;
 	private MessageSource messageSource;
@@ -103,6 +104,8 @@ public class RecobrimentV2Helper implements ApplicationContextAware, MessageSour
     private ServeiCampRepository serveiCampRepository;
     @Autowired
     private ConsultaRepository consultaRepository;
+    @Autowired
+    private ConfigHelper configHelper;
 
 	private XmlHelper xmlHelper;
 
@@ -190,13 +193,17 @@ public class RecobrimentV2Helper implements ApplicationContextAware, MessageSour
 
 		validateTitular(titular, serveiCodi, errors);
 		
-		if (expedientId == null || expedientId.isEmpty()) {
+		if (getPropertyRecobrimentRequereixExpedientId() && (expedientId == null || expedientId.isEmpty())) {
 			errors.rejectValue("solicitud.expedient", "rec.val.err.expedient", "L'identificador d'expedient és obligatori");
 		}
 		
 		validateCampLength(expedientId, "solicitud.expedient", 25, errors);
 
 		validateDadesEspecifiques(dadesEspedifiques, serveiCodi, errors, serveiService);
+	}
+
+	private boolean getPropertyRecobrimentRequereixExpedientId() {
+		return configHelper.getAsBoolean(PROPERTY_RECOBRIMENT_REQUEREIX_EXPEDIENTID, false);
 	}
 
 	public Map<String, List<String>> validateDadesSolicituds(List<SolicitudSimple> solicituds, String serveiCodi, ServeiService serveiService) {

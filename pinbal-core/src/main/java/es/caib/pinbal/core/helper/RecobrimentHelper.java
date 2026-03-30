@@ -75,6 +75,7 @@ import java.util.List;
 public class RecobrimentHelper implements ApplicationContextAware, MessageSourceAware {
 
 	public static final String ERROR_CODE_SCSP_VALIDATION = "0226";
+	private static final String PROPERTY_RECOBRIMENT_REQUEREIX_EXPEDIENTID = "es.caib.pinbal.recobriment.requereix.expedientid";
 
 	@Autowired
 	private ConsultaRepository consultaRepository;
@@ -385,10 +386,14 @@ public class RecobrimentHelper implements ApplicationContextAware, MessageSource
 			}
 
 			// Validació de l'identificador d'expedient
-			if (solicitante.getIdExpediente() == null || solicitante.getIdExpediente().trim().isEmpty())
+			boolean requereixExpedientId = getPropertyRecobrimentRequereixExpedientId();
+			if (requereixExpedientId &&
+					(solicitante.getIdExpediente() == null || solicitante.getIdExpediente().trim().isEmpty())) {
 				throw getErrorValidacio(ERROR_CODE_SCSP_VALIDATION, "L'element peticion.solicitudes.solicitudTransmision.datosGenericos.solicitante.idExpediente (solicitudIndex=" + index + ") és obligatori");
-			if (solicitante.getIdExpediente().length() > 25)
+			}
+			if (solicitante.getIdExpediente() != null && solicitante.getIdExpediente().length() > 25) {
 				throw getErrorValidacio(ERROR_CODE_SCSP_VALIDATION, "Camp massa llarg. L'element peticion.solicitudes.solicitudTransmision.datosGenericos.solicitante.idExpediente (solicitudIndex=" + index + ") no pot superar els 25 caràcters");
+			}
 			solicitud.setExpedientId(solicitante.getIdExpediente());
 
 			// Validació del procediment
@@ -621,6 +626,9 @@ public class RecobrimentHelper implements ApplicationContextAware, MessageSource
 	}
 	private boolean getPropertyDatosEspecificosIncloureNs() {
 		return configHelper.getAsBoolean("es.caib.pinbal.recobriment.datos.especificos.incloure.ns", false);
+	}
+	private boolean getPropertyRecobrimentRequereixExpedientId() {
+		return configHelper.getAsBoolean(PROPERTY_RECOBRIMENT_REQUEREIX_EXPEDIENTID, false);
 	}
 
 }

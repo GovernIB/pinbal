@@ -58,6 +58,9 @@ public class RecobrimentV2HelperTest {
     private PluginHelper pluginHelper;
 
     @Mock
+    private ConfigHelper configHelper;
+
+    @Mock
     private ServeiService serveiService;
 
     ScspHelper scspHelper;
