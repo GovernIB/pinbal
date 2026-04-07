@@ -1,0 +1,92 @@
+<?xml version='1.0' encoding='utf-8'?>
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/">
+    <soapenv:Header>
+        <wsse:Security xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd"
+                       xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd"
+                       soapenv:mustUnderstand="1">
+            <ds:Signature xmlns:ds="http://www.w3.org/2000/09/xmldsig#" Id="SIG-455">
+                <ds:SignedInfo>
+                    <ds:CanonicalizationMethod Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#">
+                        <ec:InclusiveNamespaces xmlns:ec="http://www.w3.org/2001/10/xml-exc-c14n#"
+                                                PrefixList="soapenv"/>
+                    </ds:CanonicalizationMethod>
+                    <ds:SignatureMethod Algorithm="http://www.w3.org/2000/09/xmldsig#rsa-sha1"/>
+                    <ds:Reference URI="#Id-1004116254">
+                        <ds:Transforms>
+                            <ds:Transform Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#">
+                                <ec:InclusiveNamespaces xmlns:ec="http://www.w3.org/2001/10/xml-exc-c14n#"
+                                                        PrefixList=""/>
+                            </ds:Transform>
+                        </ds:Transforms>
+                        <ds:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"/>
+                        <ds:DigestValue>lM76tFVJW3UpcSK350JwSAInyTE=</ds:DigestValue>
+                    </ds:Reference>
+                </ds:SignedInfo>
+                <ds:SignatureValue>
+                    H8VqDQBxt7NDDIXZRUkx0TRbOVaRRfMu6LBHE+JvNTOD1Bf9dpHIHC+nu8kka5CdsbP3GwvfkL4jPK9JnKZF6QiNQV991TTKsBvnZVm0uNKmVl/mKQAQEuBoN+2kY84nk3Sm7+8V6hMaPhH+HvlnwlE9/2Z6mdOhPsPvam0IiVZHhMKJyvLj2MtAVC79ZSL3yH9DpGgJ3/6+q/bbvBd+KopqAGX+NO7GnkWpmpSlsVtmzu0Vkt0e9uRcy4RikhYDSezcAyS909GA1V3pZA9a81EwhM7ePagrfPo2ljD0Lh5TnsGLk5E9xPqszCP7GLR3xSuw3bHqJjNraJ2hW2Rg6w==
+                </ds:SignatureValue>
+                <ds:KeyInfo Id="KI-8A0DDF155AE9C3640717733123438851364">
+                    <wsse:SecurityTokenReference wsu:Id="STR-8A0DDF155AE9C3640717733123438851365">
+                        <wsse:Reference URI="#X509-8A0DDF155AE9C3640717733123438851363"
+                                        ValueType="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-x509-token-profile-1.0#X509v3"/>
+                    </wsse:SecurityTokenReference>
+                </ds:KeyInfo>
+            </ds:Signature>
+            <wsse:BinarySecurityToken
+                    EncodingType="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-soap-message-security-1.0#Base64Binary"
+                    ValueType="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-x509-token-profile-1.0#X509v3"
+                    wsu:Id="X509-8A0DDF155AE9C3640717733123438851363">
+                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
+            </wsse:BinarySecurityToken>
+        </wsse:Security>
+    </soapenv:Header>
+    <soapenv:Body xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd"
+                  wsu:Id="Id-1004116254">
+        <Peticion xmlns="http://intermediacion.redsara.es/scsp/esquemas/V3/peticion">
+            <Atributos>
+                <IdPeticion>PINBAL00000000000000392071</IdPeticion>
+                <NumElementos>1</NumElementos>
+                <TimeStamp>2026-03-12T11:45:43.846+01:00</TimeStamp>
+                <CodigoCertificado>SVDINSSTSDPRESTACIONESWS01</CodigoCertificado>
+            </Atributos>
+            <Solicitudes>
+                <SolicitudTransmision>
+                    <DatosGenericos>
+                        <Emisor>
+                            <NifEmisor>Q2827002C</NifEmisor>
+                            <NombreEmisor>INSS</NombreEmisor>
+                        </Emisor>
+                        <Solicitante>
+                            <IdentificadorSolicitante>S0711001H</IdentificadorSolicitante>
+                            <NombreSolicitante>Govern de les Illes Balears</NombreSolicitante>
+                            <UnidadTramitadora>DGIDT</UnidadTramitadora>
+                            <CodigoUnidadTramitadora>A04027005</CodigoUnidadTramitadora>
+                            <Procedimiento>
+                                <CodProcedimiento>CODSVDR_GBA_20121107</CodProcedimiento>
+                                <NombreProcedimiento>PRUEBAS DE INTEGRACION PARA GOBIERNO DE BALEARES
+                                </NombreProcedimiento>
+                                <Automatizado>N</Automatizado>
+                                <ClaseTramite>14</ClaseTramite>
+                            </Procedimiento>
+                            <Finalidad>test</Finalidad>
+                            <Consentimiento>Si</Consentimiento>
+                            <Funcionario>
+                                <NombreCompletoFuncionario>Antonio Trobat Obrador</NombreCompletoFuncionario>
+                                <NifFuncionario>43120476F</NifFuncionario>
+                            </Funcionario>
+                        </Solicitante>
+                        <Titular>
+                            <TipoDocumentacion>NIF</TipoDocumentacion>
+                            <Documentacion>21043258Y</Documentacion>
+                        </Titular>
+                        <Transmision>
+                            <CodigoCertificado>SVDINSSTSDPRESTACIONESWS01</CodigoCertificado>
+                            <IdSolicitud>PINBAL00000000000000392071</IdSolicitud>
+                            <FechaGeneracion>2026-03-12T11:45:43.843+01:00</FechaGeneracion>
+                        </Transmision>
+                    </DatosGenericos>
+                </SolicitudTransmision>
+            </Solicitudes>
+        </Peticion>
+    </soapenv:Body>
+</soapenv:Envelope>

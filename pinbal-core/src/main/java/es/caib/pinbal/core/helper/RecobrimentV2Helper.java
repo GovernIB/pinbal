@@ -1023,11 +1023,29 @@ public class RecobrimentV2Helper implements ApplicationContextAware, MessageSour
 		}
 
 		NodeList childNodes = node.getChildNodes();
+		Map<String, Integer> totalPerNodeName = new HashMap<>();
+		Map<String, Integer> currentOccurrencePerNodeName = new HashMap<>();
+		for (int i = 0; i < childNodes.getLength(); i++) {
+			Node child = childNodes.item(i);
+			if (child.getNodeType() == Node.ELEMENT_NODE) {
+				String nodeName = child.getLocalName();
+				totalPerNodeName.put(nodeName, totalPerNodeName.getOrDefault(nodeName, 0) + 1);
+			}
+		}
+
 		for (int i = 0; i < childNodes.getLength(); i++) {
 			Node child = childNodes.item(i);
 			if (child.getNodeType() == Node.ELEMENT_NODE) {
 				String nodeName = child.getLocalName(); // Utilitza getLocalName() per obtenir el nom sense namespace
-				map.putAll(convertirXMLAMap(child, currentPath + "/" + nodeName));
+				int occurrence = currentOccurrencePerNodeName.getOrDefault(nodeName, 0) + 1;
+				currentOccurrencePerNodeName.put(nodeName, occurrence);
+
+				String pathNodeName = nodeName;
+				if (totalPerNodeName.get(nodeName) > 1 && occurrence > 1) {
+					pathNodeName = nodeName + occurrence;
+				}
+
+				map.putAll(convertirXMLAMap(child, currentPath + "/" + pathNodeName));
 			}
 		}
 		return map;

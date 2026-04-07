@@ -17,6 +17,8 @@ import es.caib.pinbal.core.service.exception.ServeiNotFoundException;
 import es.caib.pinbal.plugins.DadesUsuari;
 import es.caib.pinbal.scsp.ScspHelper;
 import es.scsp.bean.common.Peticion;
+import es.scsp.bean.common.Transmision;
+import es.scsp.bean.common.TransmisionDatos;
 import es.scsp.common.domain.core.Servicio;
 import org.junit.Before;
 import org.junit.Test;
@@ -29,8 +31,10 @@ import org.springframework.validation.BindException;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
+import javax.xml.parsers.DocumentBuilderFactory;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
@@ -460,6 +464,106 @@ public class RecobrimentV2HelperTest {
         }
         assertNotNull(exception);
         assertTrue(exception instanceof NullPointerException);
+    }
+
+    @Test
+    public void testToResposta_ConservaElementsRepetitsAmbNumeracio() throws Exception {
+        String xml = "<DatosEspecificos>" +
+                "<consultaPrestacionesResponse>" +
+                "<return>" +
+                "<listadoIpf>" +
+                "<listaPrestaciones>" +
+                "<prestacion>" +
+                "<importePrestacion>3.871,16</importePrestacion>" +
+                "<clavePropiaEntidad>000001</clavePropiaEntidad>" +
+                "<listaComplementos>" +
+                "<complemento>" +
+                "<datosComplemento>" +
+                "<importeEfectivo>282,35</importeEfectivo>" +
+                "</datosComplemento>" +
+                "</complemento>" +
+                "</listaComplementos>" +
+                "</prestacion>" +
+                "<prestacion>" +
+                "<importePrestacion>800,50</importePrestacion>" +
+                "<clavePropiaEntidad>000003</clavePropiaEntidad>" +
+                "</prestacion>" +
+                "<prestacion>" +
+                "<importePrestacion>3.871,16</importePrestacion>" +
+                "<clavePropiaEntidad>005001</clavePropiaEntidad>" +
+                "</prestacion>" +
+                "</listaPrestaciones>" +
+                "</listadoIpf>" +
+                "</return>" +
+                "</consultaPrestacionesResponse>" +
+                "</DatosEspecificos>";
+
+        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        factory.setNamespaceAware(true);
+
+        Transmision transmision = new Transmision();
+        transmision.setIdSolicitud("SOL-1");
+        transmision.setIdTransmision("TR-1");
+        transmision.setFechaGeneracion("2026-04-07T10:00:00.000+02:00");
+
+        es.scsp.bean.common.DatosGenericos datosGenericos = new es.scsp.bean.common.DatosGenericos();
+        datosGenericos.setTransmision(transmision);
+
+        TransmisionDatos transmisionDatos = new TransmisionDatos();
+        transmisionDatos.setDatosGenericos(datosGenericos);
+        transmisionDatos.setDatosEspecificos(
+                factory.newDocumentBuilder()
+                        .parse(new java.io.ByteArrayInputStream(xml.getBytes("UTF-8")))
+                        .getDocumentElement());
+
+        Map<String, String> dadesEspecifiques = recobrimentV2Helper.toResposta(transmisionDatos).getDadesEspecifiques();
+
+        assertEquals("3.871,16", dadesEspecifiques.get("DatosEspecificos/consultaPrestacionesResponse/return/listadoIpf/listaPrestaciones/prestacion/importePrestacion"));
+        assertEquals("000001", dadesEspecifiques.get("DatosEspecificos/consultaPrestacionesResponse/return/listadoIpf/listaPrestaciones/prestacion/clavePropiaEntidad"));
+        assertEquals("282,35", dadesEspecifiques.get("DatosEspecificos/consultaPrestacionesResponse/return/listadoIpf/listaPrestaciones/prestacion/listaComplementos/complemento/datosComplemento/importeEfectivo"));
+        assertEquals("800,50", dadesEspecifiques.get("DatosEspecificos/consultaPrestacionesResponse/return/listadoIpf/listaPrestaciones/prestacion2/importePrestacion"));
+        assertEquals("000003", dadesEspecifiques.get("DatosEspecificos/consultaPrestacionesResponse/return/listadoIpf/listaPrestaciones/prestacion2/clavePropiaEntidad"));
+        assertEquals("3.871,16", dadesEspecifiques.get("DatosEspecificos/consultaPrestacionesResponse/return/listadoIpf/listaPrestaciones/prestacion3/importePrestacion"));
+        assertEquals("005001", dadesEspecifiques.get("DatosEspecificos/consultaPrestacionesResponse/return/listadoIpf/listaPrestaciones/prestacion3/clavePropiaEntidad"));
+        assertFalse(dadesEspecifiques.containsKey("DatosEspecificos/consultaPrestacionesResponse/return/listadoIpf/listaPrestaciones/prestacion2/listaComplementos/complemento/datosComplemento/importeEfectivo"));
+    }
+
+    @Test
+    public void testToResposta_ConservaElementsRepetitsAmbXmlReal() throws Exception {
+        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        factory.setNamespaceAware(true);
+
+        Transmision transmision = new Transmision();
+        transmision.setIdSolicitud("PINBAL00000000000000392071");
+        transmision.setIdTransmision("105124");
+        transmision.setFechaGeneracion("2026-03-12T11:46:01.978+0100");
+
+        es.scsp.bean.common.DatosGenericos datosGenericos = new es.scsp.bean.common.DatosGenericos();
+        datosGenericos.setTransmision(transmision);
+
+        org.w3c.dom.Node datosEspecificos;
+        try (InputStream inputStream = getClass().getClassLoader().getResourceAsStream(
+                "es/caib/pinbal/core/helper/XML_PINBAL00000000000000392071/respuesta/respuesta.xml")) {
+            assertNotNull(inputStream);
+            org.w3c.dom.Document document = factory.newDocumentBuilder().parse(inputStream);
+            datosEspecificos = document.getElementsByTagNameNS("*", "DatosEspecificos").item(0);
+            assertNotNull(datosEspecificos);
+        }
+
+        TransmisionDatos transmisionDatos = new TransmisionDatos();
+        transmisionDatos.setDatosGenericos(datosGenericos);
+        transmisionDatos.setDatosEspecificos(datosEspecificos);
+
+        Map<String, String> dadesEspecifiques = recobrimentV2Helper.toResposta(transmisionDatos).getDadesEspecifiques();
+
+        assertEquals("3.871,16", dadesEspecifiques.get("DatosEspecificos/consultaPrestacionesResponse/return/listadoIpf/listaPrestaciones/prestacion/importePrestacion"));
+        assertEquals("EA00211941800000000000000000000000000001", dadesEspecifiques.get("DatosEspecificos/consultaPrestacionesResponse/return/listadoIpf/listaPrestaciones/prestacion/clavePropiaEntidad"));
+        assertEquals("282,35", dadesEspecifiques.get("DatosEspecificos/consultaPrestacionesResponse/return/listadoIpf/listaPrestaciones/prestacion/listaComplementos/complemento/datosComplemento/importeEfectivo"));
+        assertEquals("800,50", dadesEspecifiques.get("DatosEspecificos/consultaPrestacionesResponse/return/listadoIpf/listaPrestaciones/prestacion2/importePrestacion"));
+        assertEquals("EA00211941800000000000000000000000000003", dadesEspecifiques.get("DatosEspecificos/consultaPrestacionesResponse/return/listadoIpf/listaPrestaciones/prestacion2/clavePropiaEntidad"));
+        assertEquals("3.871,16", dadesEspecifiques.get("DatosEspecificos/consultaPrestacionesResponse/return/listadoIpf/listaPrestaciones/prestacion3/importePrestacion"));
+        assertEquals("EA00211941800000000000000000000000005001", dadesEspecifiques.get("DatosEspecificos/consultaPrestacionesResponse/return/listadoIpf/listaPrestaciones/prestacion3/clavePropiaEntidad"));
+        assertFalse(dadesEspecifiques.containsKey("DatosEspecificos/consultaPrestacionesResponse/return/listadoIpf/listaPrestaciones/prestacion2/listaComplementos/complemento/datosComplemento/importeEfectivo"));
     }
 
 //    @Test
