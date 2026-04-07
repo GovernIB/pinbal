@@ -42,7 +42,9 @@ public class SwaggerConfig {
                         ".*/appInfo",
                         ".*/salut",
                         ".*/estadistiques",
-                        ".*/estadistiques/*.*"
+                        ".*/estadistiques/*.*",
+						".*/logs",
+						".*/logs/*.*"
                         )
 				.useDefaultResponseMessages(false);
     }

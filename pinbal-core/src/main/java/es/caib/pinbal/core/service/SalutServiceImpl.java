@@ -3,19 +3,12 @@
  */
 package es.caib.pinbal.core.service;
 
-import es.caib.comanda.ms.salut.model.ContextInfo;
-import es.caib.comanda.ms.salut.model.DetallSalut;
-import es.caib.comanda.ms.salut.model.EstatSalut;
-import es.caib.comanda.ms.salut.model.EstatSalutEnum;
-import es.caib.comanda.ms.salut.model.IntegracioApp;
-import es.caib.comanda.ms.salut.model.IntegracioInfo;
-import es.caib.comanda.ms.salut.model.IntegracioSalut;
-import es.caib.comanda.ms.salut.model.Manual;
-import es.caib.comanda.ms.salut.model.MissatgeSalut;
-import es.caib.comanda.ms.salut.model.SalutInfo;
-import es.caib.comanda.ms.salut.model.SalutNivell;
-import es.caib.comanda.ms.salut.model.SubsistemaInfo;
-import es.caib.comanda.ms.salut.model.SubsistemaSalut;
+import es.caib.comanda.ms.log.helper.LogFileStream;
+import es.caib.comanda.ms.log.helper.LogHelper;
+import es.caib.comanda.ms.log.model.FitxerContingut;
+import es.caib.comanda.ms.log.model.FitxerInfo;
+import es.caib.comanda.ms.salut.model.*;
+import es.caib.pinbal.core.helper.ConfigHelper;
 import es.caib.pinbal.core.helper.MonitorHelper;
 import es.caib.pinbal.core.helper.SubsistemaMetricHelper;
 import es.caib.pinbal.core.helper.SubsistemaMetricHelper.SubsistemesEnum;
@@ -25,18 +18,15 @@ import es.caib.pinbal.core.model.Servei;
 import es.caib.pinbal.core.repository.AvisRepository;
 import es.caib.pinbal.core.repository.ServeiRepository;
 import es.caib.pinbal.plugins.helper.PluginMetricHelper;
-import lombok.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.time.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
+
+import static es.caib.comanda.ms.salut.helper.MonitorHelper.getInfoSistema;
 
 /**
  * Implementació dels mètodes per a gestionar l'aplicació.
@@ -51,6 +41,8 @@ public class SalutServiceImpl implements SalutService {
     private ServeiRepository serveiRepository;
     @Autowired
     private AvisRepository avisRepository;
+    @Autowired
+    private ConfigHelper configHelper;
 
 
     @Override
@@ -119,9 +111,10 @@ public class SalutServiceImpl implements SalutService {
         List<IntegracioSalut> integracions = checkIntegracions();   // Integracions
         SubsistemesInfo subsistemesInfo = checkSubsistemes();       // Subsistemes
         List<SubsistemaSalut> subsistemes = subsistemesInfo.getSubsistemesSalut();
-//        List<DetallSalut> altres = checkAltres();                   // Altres
+        InformacioSistema infoSistema = getInfoSistema();           // Informació sistemes
         List<MissatgeSalut> missatges = checkMissatges();           // Missatges
 
+        // So l'estat dels subsistemes no és UP, llavors l'estat de l'aplicació tampoc ho serà
         EstatSalutEnum estatGlobalSubsistemes = subsistemesInfo.getEstatGlobal();
         if (EstatSalutEnum.UP.equals(estatSalut.getEstat()) && !EstatSalutEnum.UP.equals(estatGlobalSubsistemes) && !EstatSalutEnum.UNKNOWN.equals(estatGlobalSubsistemes)) {
             estatSalut = EstatSalut.builder()
@@ -130,62 +123,19 @@ public class SalutServiceImpl implements SalutService {
                     .build();
         }
 
-        InformacioSistema infoServer = getInfoSistema();
-        List<DetallSalut> altres = new ArrayList<>();
-        if (infoServer != null) {
-            altres.add(DetallSalut.builder().codi("PRC").nom("Processadors").valor(infoServer.getProcessadors().toString()).build());
-            altres.add(DetallSalut.builder().codi("LAVG").nom("Càrrega del sistema").valor(infoServer.getCarregaSistema()).build());
-            altres.add(DetallSalut.builder().codi("SCPU").nom("CPU sistema").valor(infoServer.getCpuSistema()).build());
-            altres.add(DetallSalut.builder().codi("MET").nom("Memòria total").valor(infoServer.getMemoriaTotal()).build());
-            altres.add(DetallSalut.builder().codi("MED").nom("Memòria disponible").valor(infoServer.getMemoriaDisponible()).build());
-            altres.add(DetallSalut.builder().codi("EDT").nom("Espai de disc total").valor(infoServer.getEspaiDiscTotal()).build());
-            altres.add(DetallSalut.builder().codi("EDL").nom("Espai de disc lliure").valor(infoServer.getEspaiDiscLliure()).build());
-            altres.add(DetallSalut.builder().codi("SO").nom("Sistema operatiu").valor(infoServer.getSistemaOperatiu()).build());
-            altres.add(DetallSalut.builder().codi("ST").nom("Data d'arrencada").valor(infoServer.getDataArrencada()).build());
-            altres.add(DetallSalut.builder().codi("UT").nom("Temps funcionant").valor(infoServer.getTempsFuncionant()).build());
-        }
-
         return SalutInfo.builder()
                 .codi("PBL")
                 .versio(versio)
                 .data(new Date())
-                .estat(estatSalut)
-                .bd(salutDatabase)
+                .estatGlobal(estatSalut)
+                .estatBaseDeDades(salutDatabase)
                 .integracions(integracions)
                 .subsistemes(subsistemes)
-                .altres(altres)
+                .informacioSistema(infoSistema)
                 .missatges(missatges)
                 .build();
     }
 
-    private static InformacioSistema getInfoSistema() {
-        es.caib.comanda.ms.salut.helper.MonitorHelper.CpuUsage cpuUsage = es.caib.comanda.ms.salut.helper.MonitorHelper.getCpuUsage();
-        Integer cpuCores = cpuUsage.getCores();
-        String loadAverage = cpuUsage.getFormatedLoadAverage();
-        String systemCpuLoad = cpuUsage.isValidSystemCpuLoad() ? cpuUsage.getFormatedSystemCpuLoad() : null;
-        es.caib.comanda.ms.salut.helper.MonitorHelper.MemoryUsage jvmMemory = es.caib.comanda.ms.salut.helper.MonitorHelper.getJvmMemory();
-        String totalMemory = jvmMemory.getFormatedTotalMemory();
-        String freeMemory = jvmMemory.getFormatedFreeMemory();
-        es.caib.comanda.ms.salut.helper.MonitorHelper.DiskUsage rootDiskUsage = es.caib.comanda.ms.salut.helper.MonitorHelper.getRootDiskUsage();
-        String totalSpace = rootDiskUsage.getFormatedTotalSpace();
-        String freeSpace = rootDiskUsage.getFormatedFreeSpace();
-        es.caib.comanda.ms.salut.helper.MonitorHelper.SystemInfo systemInfo = es.caib.comanda.ms.salut.helper.MonitorHelper.getSystemInfo();
-        String os = systemInfo.getOs();
-        String startTime = systemInfo.getFormatedStartTime();
-        String upTime = systemInfo.getFormatedUpTime();
-        return InformacioSistema.builder()
-                .processadors(cpuCores)
-                .carregaSistema(loadAverage)
-                .cpuSistema(systemCpuLoad)
-                .memoriaTotal(totalMemory)
-                .memoriaDisponible(freeSpace)
-                .espaiDiscTotal(totalSpace)
-                .espaiDiscLliure(freeSpace)
-                .sistemaOperatiu(os)
-                .dataArrencada(startTime)
-                .tempsFuncionant(upTime)
-                .build();
-    }
 
     // Comprova l'estat de la pròpia aplicació i mesura una latència mínima d'execució
     private EstatSalut checkEstatSalut() {
@@ -307,22 +257,35 @@ public class SalutServiceImpl implements SalutService {
         }
     }
 
-    @Getter
-    @Setter
-    @Builder
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class InformacioSistema {
-        private Integer processadors;
-        private String carregaSistema;
-        private String cpuSistema;
-        private String memoriaTotal;
-        private String memoriaDisponible;
-        private String espaiDiscTotal;
-        private String espaiDiscLliure;
-        private String sistemaOperatiu;
-        private String dataArrencada;
-        private String tempsFuncionant;
+
+    // LOGS
+    // /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    @Override
+    public List<FitxerInfo> getFitxersLog() {
+        return LogHelper.llistarFitxers(getLogDir(), "pinbal");
+    }
+
+    @Override
+    public FitxerContingut getFitxerLogByNom(String nom) {
+        LogHelper.setAppNom("pinbal");
+        return LogHelper.getFitxerByNom(getLogDir(), nom);
+    }
+
+    @Override
+    public LogFileStream getFitxerLogStream(String nom) {
+        LogHelper.setAppNom("pinbal");
+        return LogHelper.getFileStreamByNom(getLogDir(), nom);
+    }
+
+    @Override
+    public List<String> getFitxerLogLinies(String nom, Long nLinies) {
+        LogHelper.setAppNom("pinbal");
+        return LogHelper.readLastNLines(getLogDir(), nom, nLinies);
+    }
+
+    private String getLogDir() {
+        return configHelper.getConfig("es.caib.pinbal.log.dir");
     }
 
 }

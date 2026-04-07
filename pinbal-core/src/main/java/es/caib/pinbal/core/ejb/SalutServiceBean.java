@@ -3,7 +3,9 @@
  */
 package es.caib.pinbal.core.ejb;
 
-import es.caib.comanda.ms.salut.model.AppInfo;
+import es.caib.comanda.ms.log.helper.LogFileStream;
+import es.caib.comanda.ms.log.model.FitxerContingut;
+import es.caib.comanda.ms.log.model.FitxerInfo;
 import es.caib.comanda.ms.salut.model.ContextInfo;
 import es.caib.comanda.ms.salut.model.IntegracioInfo;
 import es.caib.comanda.ms.salut.model.SalutInfo;
@@ -49,5 +51,25 @@ public class SalutServiceBean implements SalutService {
     @Override
     public SalutInfo checkSalut(String versio) {
         return delegate.checkSalut(versio);
+    }
+
+    @Override
+    public List<FitxerInfo> getFitxersLog() {
+        return delegate.getFitxersLog();
+    }
+
+    @Override
+    public FitxerContingut getFitxerLogByNom(String nom) {
+        return delegate.getFitxerLogByNom(nom);
+    }
+
+    @Override
+    public LogFileStream getFitxerLogStream(String nom) {
+        return delegate.getFitxerLogStream(nom);
+    }
+
+    @Override
+    public List<String> getFitxerLogLinies(String nom, Long nLinies) {
+        return delegate.getFitxerLogLinies(nom, nLinies);
     }
 }

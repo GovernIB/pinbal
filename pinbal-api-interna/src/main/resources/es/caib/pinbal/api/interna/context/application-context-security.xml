@@ -15,10 +15,7 @@
 	<sec:http pattern="/api-docs**" security="none" disable-url-rewriting="true"/>
 	<sec:http pattern="/api-docs/**" security="none" disable-url-rewriting="true"/>
 	<sec:http pattern="/**/api-docs" security="none" disable-url-rewriting="true"/>
-	<sec:http pattern="/appInfo" security="none" disable-url-rewriting="true"/>
-	<sec:http pattern="/salut" security="none" disable-url-rewriting="true"/>
-	<sec:http pattern="/estadistiques" security="none" disable-url-rewriting="true"/>
-	<sec:http pattern="/estadistiques/**" security="none" disable-url-rewriting="true"/>
+	<sec:http pattern="/salut/v1" security="none" disable-url-rewriting="true"/>
 	<sec:http pattern="/js/**" security="none" disable-url-rewriting="true"/>
 	<sec:http pattern="/css/**" security="none" disable-url-rewriting="true"/>
 	<sec:http pattern="/webjars/**" security="none" disable-url-rewriting="true"/>
@@ -34,7 +31,9 @@
 		<sec:intercept-url pattern="/usuaris" access="ROLE_WS"/>
 		<sec:intercept-url pattern="/usuaris/**" access="ROLE_WS"/>
 		<sec:intercept-url pattern="/api/entitats" access="ROLE_WS"/>
-		<sec:intercept-url pattern="/generarEstadistiques/**" access="ROLE_ADMIN"/>
+		<sec:intercept-url pattern="/salut/v1/info" access="ROLE_COM"/>
+		<sec:intercept-url pattern="/estadistiques/v1/**" access="ROLE_COM"/>
+		<sec:intercept-url pattern="/logs/v1/**" access="ROLE_COM"/>
 		<sec:intercept-url pattern="/**" access="ROLE_WS,ROLE_REPORT"/>
 		<sec:custom-filter position="PRE_AUTH_FILTER" ref="preauthFilter"/>
 		<sec:anonymous/>
@@ -63,6 +62,7 @@
 								<value>PBL_REPORT</value>
 								<value>PBL_REPRES</value>
 								<value>PBL_ADMIN</value>
+								<value>PBL_COM</value>
 								<value>tothom</value>
 							</set>
 						</property>
@@ -76,6 +76,7 @@
 								<entry key="PBL_REPORT" value="ROLE_REPORT"/>
 								<entry key="PBL_REPRES" value="ROLE_REPRES"/>
 								<entry key="PBL_ADMIN" value="ROLE_ADMIN"/>
+								<entry key="PBL_COM" value="ROLE_COM"/>
 								<entry key="tothom" value="ROLE_DELEG"/>
 							</map>
 						</property>

@@ -1,11 +1,7 @@
 package es.caib.pinbal.api.interna.controller.estadistica.v1;
 
 import com.mangofactory.swagger.annotations.ApiIgnore;
-import com.wordnik.swagger.annotations.Api;
-import com.wordnik.swagger.annotations.ApiOperation;
-import com.wordnik.swagger.annotations.ApiParam;
-import com.wordnik.swagger.annotations.ApiResponse;
-import com.wordnik.swagger.annotations.ApiResponses;
+import com.wordnik.swagger.annotations.*;
 import es.caib.comanda.ms.estadistica.model.EstadistiquesInfo;
 import es.caib.comanda.ms.estadistica.model.RegistresEstadistics;
 import es.caib.pinbal.api.config.ApiVersion;
@@ -28,6 +24,7 @@ import java.util.Date;
 import java.util.List;
 
 @Controller
+@RequestMapping("/estadistiques/v1")
 @Api(value = "API Serveis v1", description = "Operacions relacionades amb Estadístiques")
 public class EstadisticaRestController extends PinbalHalRestController {
 
@@ -39,12 +36,14 @@ public class EstadisticaRestController extends PinbalHalRestController {
     @ApiVersion("1")
     @ApiOperation(value = "Obtén informació de les estadístiques de l'aplicació",
             response = EstadistiquesInfo.class,
-            notes = "Aquest mètode retorna informació detallada de les estadístiques de l'aplicació.")
+            notes = "Aquest mètode retorna informació detallada de les estadístiques de l'aplicació.",
+            authorizations = @Authorization(value = "basicAuth"),
+            tags = "estadístiques")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Informació obtinguda amb èxit"),
             @ApiResponse(code = 404, message = "Informació no trobada")
     })
-    @RequestMapping(value = "/estadistiques/info", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/info", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public EstadistiquesInfo estadistiquesInfo(HttpServletRequest request) throws IOException {
 
@@ -55,12 +54,14 @@ public class EstadisticaRestController extends PinbalHalRestController {
     @ApiVersion("1")
     @ApiOperation(value = "Obté informació estadística del dia anterior",
             response = RegistresEstadistics.class,
-            notes = "Aquest mètode retorna informació estadística del dia anterior.")
+            notes = "Aquest mètode retorna informació estadística del dia anterior.",
+            authorizations = @Authorization(value = "basicAuth"),
+            tags = "estadístiques")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Informació obtinguda amb èxit"),
             @ApiResponse(code = 404, message = "Informació no trobada")
     })
-    @RequestMapping(value = "/estadistiques", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public RegistresEstadistics estadistiques(HttpServletRequest request) throws IOException {
 
@@ -70,12 +71,14 @@ public class EstadisticaRestController extends PinbalHalRestController {
     @ApiVersion("1")
     @ApiOperation(value = "Obté informació estadística del dia indicat",
             response = RegistresEstadistics.class,
-            notes = "Aquest mètode retorna informació estadística del dia indicat a través del paràmetre data.")
+            notes = "Aquest mètode retorna informació estadística del dia indicat a través del paràmetre data.",
+            authorizations = @Authorization(value = "basicAuth"),
+            tags = "estadístiques")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Informació obtinguda amb èxit"),
             @ApiResponse(code = 404, message = "Informació no trobada")
     })
-    @RequestMapping(value = "/estadistiques/of/{data}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/of/{data}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public RegistresEstadistics estadistiques(
             HttpServletRequest request,
@@ -89,12 +92,14 @@ public class EstadisticaRestController extends PinbalHalRestController {
     @ApiOperation(value = "Obté informació estadística del dies indicats",
             response = RegistresEstadistics.class,
             responseContainer = "List",
-            notes = "Aquest mètode retorna informació estadística del dies indicats, des de la data d'inici (paràmetre dataInici) fins a la data de fi (paràmetre dataFi), ambdós inclosos.")
+            notes = "Aquest mètode retorna informació estadística del dies indicats, des de la data d'inici (paràmetre dataInici) fins a la data de fi (paràmetre dataFi), ambdós inclosos.",
+            authorizations = @Authorization(value = "basicAuth"),
+            tags = "estadístiques")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Informació obtinguda amb èxit"),
             @ApiResponse(code = 404, message = "Informació no trobada")
     })
-    @RequestMapping(value = "/estadistiques/from/{dataInici}/to/{dataFi}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/from/{dataInici}/to/{dataFi}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public List<RegistresEstadistics> estadistiques(
             HttpServletRequest request,
@@ -107,7 +112,7 @@ public class EstadisticaRestController extends PinbalHalRestController {
     }
 
     @ApiIgnore
-    @RequestMapping(value = "/generarEstadistiques/from/{dataInici}/to/{dataFi}", method = RequestMethod.GET)
+    @RequestMapping(value = "/generar/from/{dataInici}/to/{dataFi}", method = RequestMethod.GET)
     @ResponseBody
     public String generarEstadistiques(HttpServletRequest request, @PathVariable String dataInici, @PathVariable String dataFi) throws Exception {
 

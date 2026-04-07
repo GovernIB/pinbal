@@ -1,10 +1,8 @@
 package es.caib.pinbal.api.interna.controller.salut.v1;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.wordnik.swagger.annotations.Api;
-import com.wordnik.swagger.annotations.ApiOperation;
-import com.wordnik.swagger.annotations.ApiResponse;
-import com.wordnik.swagger.annotations.ApiResponses;
+import com.wordnik.swagger.annotations.*;
+import es.caib.comanda.ms.salut.helper.MonitorHelper;
 import es.caib.comanda.ms.salut.model.AppInfo;
 import es.caib.comanda.ms.salut.model.SalutInfo;
 import es.caib.pinbal.api.config.ApiVersion;
@@ -34,6 +32,7 @@ import java.util.jar.JarFile;
 import java.util.jar.Manifest;
 
 @Controller
+@RequestMapping("/salut/v1")
 @Api(value = "API Serveis v1", description = "Operacions relacionades amb Salut")
 public class SalutRestController extends PinbalHalRestController {
 
@@ -48,12 +47,14 @@ public class SalutRestController extends PinbalHalRestController {
     @ApiVersion("1")
     @ApiOperation(value = "Obté informació de l'aplicació",
             response = AppInfo.class,
-            notes = "Aquest mètode retorna informació detallada de l'aplicació.")
+            notes = "Aquest mètode retorna informació detallada de l'aplicació.",
+            authorizations = @Authorization(value = "basicAuth"),
+            tags = "salut")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Informació obtinguda amb èxit"),
             @ApiResponse(code = 404, message = "Informació no trobada")
     })
-    @RequestMapping(value = "/appInfo", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/info", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public AppInfo appInfo(HttpServletRequest request) throws IOException {
         ManifestInfo manifestInfo = getManifestInfo();
@@ -64,6 +65,7 @@ public class SalutRestController extends PinbalHalRestController {
                 .versio(manifestInfo.getVersion())
                 .revisio(manifestInfo.getBuildScmRevision())
                 .jdkVersion(manifestInfo.getBuildJDK())
+                .versioJboss(MonitorHelper.getApplicationServerInfo())
                 .integracions(salutService.getIntegracions())
                 .subsistemes(salutService.getSubsistemes())
                 .contexts(salutService.getContexts(getBaseUrl(request)))
@@ -73,7 +75,8 @@ public class SalutRestController extends PinbalHalRestController {
     @ApiVersion("1")
     @ApiOperation(value = "Obté informació de salut de l'aplicació",
             response = SalutInfo.class,
-            notes = "Aquest mètode retorna informació detallada de salut de l'aplicació.")
+            notes = "Aquest mètode retorna informació detallada de salut de l'aplicació.",
+            tags = "salut")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Informació obtinguda amb èxit"),
             @ApiResponse(code = 404, message = "Informació no trobada")
