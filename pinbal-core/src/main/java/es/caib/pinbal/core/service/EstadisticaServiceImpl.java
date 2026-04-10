@@ -8,12 +8,9 @@ import es.caib.comanda.ms.estadistica.model.DimensioDesc;
 import es.caib.comanda.ms.estadistica.model.EstadistiquesInfo;
 import es.caib.comanda.ms.estadistica.model.Fet;
 import es.caib.comanda.ms.estadistica.model.Format;
-import es.caib.comanda.ms.estadistica.model.GenericDimensio;
-import es.caib.comanda.ms.estadistica.model.GenericFet;
 import es.caib.comanda.ms.estadistica.model.IndicadorDesc;
 import es.caib.comanda.ms.estadistica.model.RegistreEstadistic;
 import es.caib.comanda.ms.estadistica.model.RegistresEstadistics;
-import es.caib.comanda.ms.estadistica.model.Temps;
 import es.caib.pinbal.core.model.explotacio.ExplotConsultaFets;
 import es.caib.pinbal.core.model.explotacio.ExplotTempsEntity;
 import es.caib.pinbal.core.repository.EntitatRepository;
@@ -145,7 +142,7 @@ public class EstadisticaServiceImpl implements EstadisticaService {
         // Si ens envien una data futura, retornam una llista buida
         if (data.after(ahir())) {
             return RegistresEstadistics.builder()
-                    .temps(Temps.builder().data(data).build())
+                    .temps(data)
                     .fets(new ArrayList<RegistreEstadistic>()).build();
         }
 
@@ -157,7 +154,7 @@ public class EstadisticaServiceImpl implements EstadisticaService {
         List<ExplotConsultaFets> fetsAcumulatFinal = explotConsultaFetsRepository.findByTemps(tempsFinal);
 
         if (fetsAcumulatFinal == null || fetsAcumulatFinal.isEmpty()) {
-            return RegistresEstadistics.builder().temps(Temps.builder().data(data).build()).build();
+            return RegistresEstadistics.builder().temps(data).build();
         }
         List<ExplotConsultaFets> fetsAcumulatInici = explotConsultaFetsRepository.findByTemps(tempsInici);
 
@@ -275,14 +272,13 @@ public class EstadisticaServiceImpl implements EstadisticaService {
 
     private RegistresEstadistics toRegistreEstadistic(Map<EstadisticaKey, ExplotConsultaFets> fetsMap, Date data) {
         List<RegistreEstadistic> registreEstadistics = new ArrayList<>();
-        Temps temps = new Temps(data);
 
         for (Map.Entry<EstadisticaKey, ExplotConsultaFets> entryFets : fetsMap.entrySet()) {
             processarCombinacionsConsultes(entryFets, registreEstadistics);
         }
 
         return RegistresEstadistics.builder()
-                .temps(temps)
+                .temps(data)
                 .fets(registreEstadistics)
                 .build();
     }
@@ -309,12 +305,12 @@ public class EstadisticaServiceImpl implements EstadisticaService {
 
     private List<Dimensio> toDimensions(EstadisticaKey key, Tipus tipus, Origen origen) {
         List<Dimensio> dimensions = new ArrayList<>();
-        dimensions.add(GenericDimensio.builder().codi(DimEnum.ENT.name()).valor(key.getEntitatCodi()).build());
-        dimensions.add(GenericDimensio.builder().codi(DimEnum.PRC.name()).valor(key.getProcedimentCodi()).build());
-        dimensions.add(GenericDimensio.builder().codi(DimEnum.SRV.name()).valor(key.getServeiCodi()).build());
-        dimensions.add(GenericDimensio.builder().codi(DimEnum.USU.name()).valor(key.getUsuariCodi()).build());
-        dimensions.add(GenericDimensio.builder().codi(DimEnum.TIP.name()).valor(tipus.name()).build()); // Tipus.SINCRONA.name(), Tipus.ASINCRONA.name()
-        dimensions.add(GenericDimensio.builder().codi(DimEnum.ORI.name()).valor(origen.name()).build()); // Origen.WEB.name(), Origen.REST.name()
+        dimensions.add(Dimensio.builder().codi(DimEnum.ENT.name()).valor(key.getEntitatCodi()).build());
+        dimensions.add(Dimensio.builder().codi(DimEnum.PRC.name()).valor(key.getProcedimentCodi()).build());
+        dimensions.add(Dimensio.builder().codi(DimEnum.SRV.name()).valor(key.getServeiCodi()).build());
+        dimensions.add(Dimensio.builder().codi(DimEnum.USU.name()).valor(key.getUsuariCodi()).build());
+        dimensions.add(Dimensio.builder().codi(DimEnum.TIP.name()).valor(tipus.name()).build()); // Tipus.SINCRONA.name(), Tipus.ASINCRONA.name()
+        dimensions.add(Dimensio.builder().codi(DimEnum.ORI.name()).valor(origen.name()).build()); // Origen.WEB.name(), Origen.REST.name()
         return dimensions;
     }
 
@@ -326,10 +322,10 @@ public class EstadisticaServiceImpl implements EstadisticaService {
         }
 
         List<Fet> fets = new ArrayList<>();
-        fets.add(GenericFet.builder().codi(FetEnum.PND.name()).valor((double) metrics.pendent).build());
-        fets.add(GenericFet.builder().codi(FetEnum.PRC.name()).valor((double) metrics.processant).build());
-        fets.add(GenericFet.builder().codi(FetEnum.TRA.name()).valor((double) metrics.tramitada).build());
-        fets.add(GenericFet.builder().codi(FetEnum.ERR.name()).valor((double) metrics.error).build());
+        fets.add(Fet.builder().codi(FetEnum.PND.name()).valor((double) metrics.pendent).build());
+        fets.add(Fet.builder().codi(FetEnum.PRC.name()).valor((double) metrics.processant).build());
+        fets.add(Fet.builder().codi(FetEnum.TRA.name()).valor((double) metrics.tramitada).build());
+        fets.add(Fet.builder().codi(FetEnum.ERR.name()).valor((double) metrics.error).build());
         return fets;
     }
 

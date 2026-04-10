@@ -53,6 +53,6 @@ public class EstadisticaServiceBean implements EstadisticaService {
     @Override
     @RolesAllowed("PBL_ADMIN")
     public String generarEstadistiques(Date dataInici, Date dataFi) {
-        return generarEstadistiques(dataInici, dataFi);
+        return delegate.generarEstadistiques(dataInici, dataFi);
     }
 }

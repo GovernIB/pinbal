@@ -1,52 +1,29 @@
 package es.caib.pinbal.api.interna.controller.log.v1;
 
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.wordnik.swagger.annotations.Api;
-import com.wordnik.swagger.annotations.ApiOperation;
-import com.wordnik.swagger.annotations.ApiParam;
-import com.wordnik.swagger.annotations.ApiResponse;
-import com.wordnik.swagger.annotations.ApiResponses;
-import com.wordnik.swagger.annotations.Authorization;
+import com.wordnik.swagger.annotations.*;
 import es.caib.comanda.ms.exception.ComandaApiException;
 import es.caib.comanda.ms.log.helper.LogFileStream;
-import es.caib.comanda.ms.log.helper.LogHelper;
 import es.caib.comanda.ms.log.model.FitxerContingut;
 import es.caib.comanda.ms.log.model.FitxerInfo;
-import es.caib.comanda.ms.salut.model.AppInfo;
-import es.caib.comanda.ms.salut.model.SalutInfo;
 import es.caib.pinbal.api.config.ApiVersion;
-import es.caib.pinbal.api.config.Iso8601DateDeserializer;
 import es.caib.pinbal.api.interna.controller.PinbalHalRestController;
-import es.caib.pinbal.api.interna.controller.RecobrimentRestController;
-import es.caib.pinbal.client.comu.ErrorResponse;
-import es.caib.pinbal.client.recobriment.v2.Entitat;
 import es.caib.pinbal.core.service.SalutService;
 import es.caib.pinbal.core.service.exception.ResourceNotFoundException;
-import lombok.Builder;
-import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.xml.bind.DatatypeConverter;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.jar.Attributes;
-import java.util.jar.JarFile;
-import java.util.jar.Manifest;
-import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/logs/v1")
@@ -90,7 +67,7 @@ public class LogRestController extends PinbalHalRestController {
             @ApiResponse(code = 500, message = "Error intern del servidor"),
             @ApiResponse(code = 501, message = "No implementat a COMANDA. Aquest endpoint l'ha d'exposar l'APP.")
     })
-    @RequestMapping(method = RequestMethod.GET, value = "/{nomFitxer}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(method = RequestMethod.GET, value = "/{nomFitxer:.+}", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public ResponseEntity<FitxerContingut> getFitxerByNom(@ApiParam(value = "Nom del fitxer", required = true) @PathVariable("nomFitxer") String nomFitxer) {
         FitxerContingut fitxer = null;
@@ -109,7 +86,7 @@ public class LogRestController extends PinbalHalRestController {
 
     @ApiVersion("1")
     @RequestMapping(method = RequestMethod.GET,
-            value = "/{nomFitxer}/directe",
+            value = "/{nomFitxer:.+}/directe",
             produces = MediaType.APPLICATION_OCTET_STREAM_VALUE
     )
     @ResponseBody
@@ -196,7 +173,7 @@ public class LogRestController extends PinbalHalRestController {
             @ApiResponse(code = 500, message = "Error intern del servidor"),
             @ApiResponse(code = 501, message = "No implementat a COMANDA. Aquest endpoint l'ha d'exposar l'APP.")
     })
-    @RequestMapping(method = RequestMethod.GET, value = "/{nomFitxer}/linies/{nLinies}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(method = RequestMethod.GET, value = "/{nomFitxer:.+}/linies/{nLinies}", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public ResponseEntity<List<String>> getFitxerLinies(
             @ApiParam(value = "Nom del fitxer", required = true) @PathVariable("nomFitxer") String nomFitxer,

@@ -1,12 +1,10 @@
 package es.caib.pinbal.api.interna.controller.salut.v1;
 
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.wordnik.swagger.annotations.*;
 import es.caib.comanda.ms.salut.helper.MonitorHelper;
 import es.caib.comanda.ms.salut.model.AppInfo;
 import es.caib.comanda.ms.salut.model.SalutInfo;
 import es.caib.pinbal.api.config.ApiVersion;
-import es.caib.pinbal.api.config.Iso8601DateDeserializer;
 import es.caib.pinbal.api.interna.controller.PinbalHalRestController;
 import es.caib.pinbal.core.service.SalutService;
 import lombok.Builder;
@@ -64,7 +62,7 @@ public class SalutRestController extends PinbalHalRestController {
                 .data(manifestInfo.getBuildDate())
                 .versio(manifestInfo.getVersion())
                 .revisio(manifestInfo.getBuildScmRevision())
-                .jdkVersion(manifestInfo.getBuildJDK())
+                .jdkVersion(resolveJdkVersion(manifestInfo))
                 .versioJboss(MonitorHelper.getApplicationServerInfo())
                 .integracions(salutService.getIntegracions())
                 .subsistemes(salutService.getSubsistemes())
@@ -81,11 +79,11 @@ public class SalutRestController extends PinbalHalRestController {
             @ApiResponse(code = 200, message = "Informació obtinguda amb èxit"),
             @ApiResponse(code = 404, message = "Informació no trobada")
     })
-    @RequestMapping(value = "/salut", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public SalutInfo health(HttpServletRequest request,
-                            @JsonDeserialize(using = Iso8601DateDeserializer.class) @RequestParam(required = false) Date dataPeriode,
-                            @JsonDeserialize(using = Iso8601DateDeserializer.class) @RequestParam(required = false) Date dataTotal) throws IOException {
+                            @RequestParam(required = false) String dataPeriode,
+                            @RequestParam(required = false) String dataTotal) throws IOException {
 
         ManifestInfo manifestInfo = getManifestInfo();
         return salutService.checkSalut(manifestInfo.getVersion());
@@ -145,6 +143,19 @@ public class SalutRestController extends PinbalHalRestController {
                 .replacePath(null) // elimina el context path "/pinbalapi/..."
                 .build()
                 .toUriString();
+    }
+
+    private String resolveJdkVersion(ManifestInfo manifestInfo) {
+        MonitorHelper.SystemInfo systemInfo = MonitorHelper.getSystemInfo();
+
+        if (systemInfo != null) {
+            String jdkVersion = systemInfo.getJdkVersion();
+            if (jdkVersion != null && !jdkVersion.trim().isEmpty()) {
+                return jdkVersion;
+            }
+        }
+
+        return manifestInfo.getBuildJDK();
     }
 
     @Builder

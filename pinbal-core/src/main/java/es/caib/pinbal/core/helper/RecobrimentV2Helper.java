@@ -1029,7 +1029,8 @@ public class RecobrimentV2Helper implements ApplicationContextAware, MessageSour
 			Node child = childNodes.item(i);
 			if (child.getNodeType() == Node.ELEMENT_NODE) {
 				String nodeName = child.getLocalName();
-				totalPerNodeName.put(nodeName, totalPerNodeName.getOrDefault(nodeName, 0) + 1);
+				Integer total = totalPerNodeName.get(nodeName);
+				totalPerNodeName.put(nodeName, (total == null ? 0 : total) + 1);
 			}
 		}
 
@@ -1037,7 +1038,8 @@ public class RecobrimentV2Helper implements ApplicationContextAware, MessageSour
 			Node child = childNodes.item(i);
 			if (child.getNodeType() == Node.ELEMENT_NODE) {
 				String nodeName = child.getLocalName(); // Utilitza getLocalName() per obtenir el nom sense namespace
-				int occurrence = currentOccurrencePerNodeName.getOrDefault(nodeName, 0) + 1;
+				Integer currentOccurrence = currentOccurrencePerNodeName.get(nodeName);
+				int occurrence = (currentOccurrence == null ? 0 : currentOccurrence) + 1;
 				currentOccurrencePerNodeName.put(nodeName, occurrence);
 
 				String pathNodeName = nodeName;
