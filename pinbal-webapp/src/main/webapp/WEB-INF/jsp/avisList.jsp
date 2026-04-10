@@ -182,7 +182,12 @@ $(document).ready(function() {
 			{
 				targets: [2, 3],
 				width: "10%",
-				render: $.fn.dataTable.render.moment('DD/MM/YYYY')
+				render: function (data, type, row, meta) {
+					if (!data) {
+						return '';
+					}
+					return $.fn.dataTable.render.moment('DD/MM/YYYY')(data, type, row, meta);
+				}
 			},	
 			{
 				targets: [4],

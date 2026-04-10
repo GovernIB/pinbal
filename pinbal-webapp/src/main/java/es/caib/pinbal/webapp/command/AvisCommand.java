@@ -29,7 +29,6 @@ public class AvisCommand {
 	private String missatge;
 	@NotNull
 	private Date dataInici;
-	@NotNull
 	private Date dataFinal;
 	private Boolean actiu;
 	@NotNull
