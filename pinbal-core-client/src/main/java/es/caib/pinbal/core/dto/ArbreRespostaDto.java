@@ -27,6 +27,10 @@ public class ArbreRespostaDto implements Serializable {
 	private String descripcio;
 	private String xpath;
 	private boolean document;
+	private String documentContingutBase64;
+	private String documentNom;
+	private String documentMimeType;
+	private boolean documentPdf;
 	private List<ArbreRespostaDto> fills;
 
 	public void addFill(ArbreRespostaDto fill) {

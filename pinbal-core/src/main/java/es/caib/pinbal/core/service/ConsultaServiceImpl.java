@@ -35,6 +35,7 @@ import es.caib.pinbal.core.dto.RecobrimentSolicitudDto;
 import es.caib.pinbal.core.dto.RespostaAtributsDto;
 import es.caib.pinbal.core.dto.arxiu.ArxiuDetallDto;
 import es.caib.pinbal.core.helper.ArxiuHelper;
+import es.caib.pinbal.core.helper.ArbreRespostaDocumentHelper;
 import es.caib.pinbal.core.helper.ConfigHelper;
 import es.caib.pinbal.core.helper.ConsultaHelper;
 import es.caib.pinbal.core.helper.DtoMappingHelper;
@@ -2739,19 +2740,21 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 		ArbreRespostaDto arbreResposta = new ArbreRespostaDto();
 
 		// Obtenim l'xpath dels nodes tipus document
-		final List<String> xpathNodesTipusDocument = serveiJustificantCampRepository.findXpathDocumentByServei(serveiCodi);
+		final Set<String> xpathNodesTipusDocument = ArbreRespostaDocumentHelper
+				.normalitzarXpathsDocument(serveiJustificantCampRepository.findXpathDocumentByServei(serveiCodi));
 
 		// Funció recursiva per mapejar cada node del `Arrel` al nou arbre
 		processarElementArbre(elementArbre, arbreResposta, xpathNodesTipusDocument);
+		ArbreRespostaDocumentHelper.prepararDocuments(arbreResposta);
 		return arbreResposta;
 	}
 
-	private void processarElementArbre(ElementArbre origen, ArbreRespostaDto desti, List<String> xpathNodesTipusDocument) {
+	private void processarElementArbre(ElementArbre origen, ArbreRespostaDto desti, Set<String> xpathNodesTipusDocument) {
 		// Afegim aquest valor al node actual del destí
 		desti.setTitol(origen.getTitol());
 		desti.setDescripcio(origen.getDescripcio());
 		desti.setXpath(origen.getXpathDatoEspecifico());
-		desti.setDocument(xpathNodesTipusDocument.contains(origen.getXpathDatoEspecifico()));
+		desti.setDocument(ArbreRespostaDocumentHelper.esXpathDocument(origen.getXpathDatoEspecifico(), xpathNodesTipusDocument));
 
 		// Iterem sobre els nodes fills, si existeixen, i els mapejem recursivament
 		if (origen.getFills() != null) {
