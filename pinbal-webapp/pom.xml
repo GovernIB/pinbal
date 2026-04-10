@@ -480,11 +480,14 @@
 					<plugin>
 						<artifactId>maven-war-plugin</artifactId>
 						<configuration>
-							<packagingExcludes>
-								META-INF/context.xml,
-								WEB-INF/classes/log4j.xml,
-								WEB-INF/lib/jquery*,
-								WEB-INF/lib/bootstrap*,
+								<packagingExcludes>
+									META-INF/context.xml,
+									WEB-INF/classes/log4j.xml,
+									WEB-INF/lib/javax.annotation-api-*.jar,
+									WEB-INF/lib/jsr250-api-*.jar,
+									WEB-INF/lib/pinbal-core-client-*.jar,
+									WEB-INF/lib/jquery*,
+									WEB-INF/lib/bootstrap*,
 								WEB-INF/lib/font-awesome*,
 								WEB-INF/lib/datatables*,
 								WEB-INF/lib/select2*,

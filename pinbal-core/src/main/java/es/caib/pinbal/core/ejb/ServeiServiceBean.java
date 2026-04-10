@@ -3,33 +3,11 @@
  */
 package es.caib.pinbal.core.ejb;
 
-import es.caib.pinbal.core.dto.ArbreDto;
-import es.caib.pinbal.core.dto.ClauPrivadaDto;
-import es.caib.pinbal.core.dto.ClauPublicaDto;
-import es.caib.pinbal.core.dto.DadaEspecificaDto;
-import es.caib.pinbal.core.dto.EmisorDto;
-import es.caib.pinbal.core.dto.EntitatDto;
-import es.caib.pinbal.core.dto.FitxerDto;
-import es.caib.pinbal.core.dto.ProcedimentDto;
-import es.caib.pinbal.core.dto.ProcedimentServeiDto;
-import es.caib.pinbal.core.dto.ServeiBusDto;
-import es.caib.pinbal.core.dto.ServeiCampDto;
-import es.caib.pinbal.core.dto.ServeiCampGrupDto;
-import es.caib.pinbal.core.dto.ServeiDto;
-import es.caib.pinbal.core.dto.ServeiJustificantCampDto;
-import es.caib.pinbal.core.dto.ServeiXsdDto;
-import es.caib.pinbal.core.dto.XsdTipusEnumDto;
+import es.caib.pinbal.core.dto.*;
 import es.caib.pinbal.core.dto.regles.CampFormProperties;
 import es.caib.pinbal.core.dto.regles.ServeiReglaDto;
 import es.caib.pinbal.core.service.ServeiService;
-import es.caib.pinbal.core.service.exception.EntitatNotFoundException;
-import es.caib.pinbal.core.service.exception.ProcedimentNotFoundException;
-import es.caib.pinbal.core.service.exception.ScspException;
-import es.caib.pinbal.core.service.exception.ServeiAmbConsultesException;
-import es.caib.pinbal.core.service.exception.ServeiBusNotFoundException;
-import es.caib.pinbal.core.service.exception.ServeiCampGrupNotFoundException;
-import es.caib.pinbal.core.service.exception.ServeiCampNotFoundException;
-import es.caib.pinbal.core.service.exception.ServeiNotFoundException;
+import es.caib.pinbal.core.service.exception.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

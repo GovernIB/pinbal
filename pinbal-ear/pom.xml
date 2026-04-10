@@ -137,6 +137,7 @@
 				<configuration>
 					<finalName>pinbal</finalName>
 					<version>5</version>
+					<packagingExcludes>lib/javax.annotation-api-*.jar,lib/jsr250-api-*.jar</packagingExcludes>
 					<modules>
 						<ejbModule>
 							<groupId>${project.groupId}</groupId>
