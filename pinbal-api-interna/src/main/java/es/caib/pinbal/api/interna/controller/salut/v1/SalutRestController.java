@@ -31,7 +31,7 @@ import java.util.jar.Manifest;
 
 @Controller
 @RequestMapping("/salut/v1")
-@Api(value = "API Serveis v1", description = "Operacions relacionades amb Salut")
+@Api(value = "/salut/v1", description = "Operacions relacionades amb Salut")
 public class SalutRestController extends PinbalHalRestController {
 
     @Autowired

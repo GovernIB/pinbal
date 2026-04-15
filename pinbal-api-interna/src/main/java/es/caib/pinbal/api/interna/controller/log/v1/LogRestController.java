@@ -27,7 +27,7 @@ import java.util.List;
 
 @Controller
 @RequestMapping("/logs/v1")
-@Api(value = "API Serveis v1", description = "Operacions relacionades amb Logs")
+@Api(value = "/logs/v1", description = "Operacions relacionades amb Logs")
 public class LogRestController extends PinbalHalRestController {
 
     @Autowired

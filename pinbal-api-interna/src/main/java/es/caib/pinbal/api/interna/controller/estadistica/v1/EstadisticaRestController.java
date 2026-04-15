@@ -25,7 +25,7 @@ import java.util.List;
 
 @Controller
 @RequestMapping("/estadistiques/v1")
-@Api(value = "API Serveis v1", description = "Operacions relacionades amb Estadístiques")
+@Api(value = "/estadistiques/v1", description = "Operacions relacionades amb Estadístiques")
 public class EstadisticaRestController extends PinbalHalRestController {
 
     @Autowired
