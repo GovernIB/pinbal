@@ -41,6 +41,7 @@ public class ProcedimentDto extends AbstractIdentificable<Long> implements Seria
 	private List<String> codiSiaFills;
 	private boolean clonarPermisosOrigen;
 
+	@Builder.Default
 	private List<ProcedimentServeiSimpleDto> serveisActius = new ArrayList<ProcedimentServeiSimpleDto>();
 
 	public String getNomAmbCodi() {

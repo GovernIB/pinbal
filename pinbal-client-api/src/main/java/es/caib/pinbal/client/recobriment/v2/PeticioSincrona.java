@@ -13,5 +13,6 @@ public class PeticioSincrona {
 
     private DadesComunes dadesComunes;
     private SolicitudSimple solicitud;
+    private Boolean aplicacioGuardaJustificantArxiu;
 
 }

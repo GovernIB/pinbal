@@ -33,7 +33,7 @@ import java.util.Date;
 @Builder
 @NoArgsConstructor @AllArgsConstructor
 @Getter
-@EqualsAndHashCode
+@EqualsAndHashCode(callSuper = false)
 @ToString
 @Entity
 @Table(name = "pbl_servei_xsd",
@@ -58,6 +58,7 @@ public class ServeiXsd extends AbstractPersistable<Long> {
 	private Date dataModificacio;
 
 	@Version
+	@Builder.Default
 	private long version = 0;
 
 	public void updateServeiXsd() {

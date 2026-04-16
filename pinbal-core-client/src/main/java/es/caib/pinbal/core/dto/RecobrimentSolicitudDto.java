@@ -35,6 +35,7 @@ public class RecobrimentSolicitudDto implements Serializable {
 	private String titularLlinatge2;
 	private String titularNomComplet;
 	private Element dadesEspecifiques;
+	private boolean aplicacioGuardaJustificantArxiu;
 
 
 
@@ -139,6 +140,12 @@ public class RecobrimentSolicitudDto implements Serializable {
 	}
 	public void setDadesEspecifiques(Element dadesEspecifiques) {
 		this.dadesEspecifiques = dadesEspecifiques;
+	}
+	public boolean isAplicacioGuardaJustificantArxiu() {
+		return aplicacioGuardaJustificantArxiu;
+	}
+	public void setAplicacioGuardaJustificantArxiu(boolean aplicacioGuardaJustificantArxiu) {
+		this.aplicacioGuardaJustificantArxiu = aplicacioGuardaJustificantArxiu;
 	}
 
 	@Override

@@ -21,7 +21,7 @@ import java.io.Serializable;
 )
 @Getter @Setter
 @Builder @NoArgsConstructor @AllArgsConstructor
-@EqualsAndHashCode
+@EqualsAndHashCode(callSuper = false)
 public class ExplotConsultaDimensioEntity extends AbstractPersistable<Long> implements Serializable {
 
 	private static final long serialVersionUID = 2900135379128738307L;

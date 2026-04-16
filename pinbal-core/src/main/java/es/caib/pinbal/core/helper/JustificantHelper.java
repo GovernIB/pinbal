@@ -145,14 +145,14 @@ public class JustificantHelper implements MessageSourceAware {
                             Procediment procediment = consulta.getProcedimentServei().getProcediment();
                             String serieDocumental = getJustificantSerieDocumental();
                             if (consulta.getArxiuExpedientUuid() == null) {
-                                if (consulta.isRecobriment()) {
+                                if (consulta.isAplicacioGuardaJustificantArxiu()) {
                                     log.info(
-                                            "Consulta de recobriment sense expedient, s'omet la creació d'expedient artificial a l'arxiu (" +
+                                            "Consulta amb justificant gestionat per l'aplicació, s'omet la creació d'expedient artificial a l'arxiu (" +
                                                     "id=" + consulta.getId() + ", " +
                                                     "scspPeticionId=" + consulta.getScspPeticionId() + ", " +
                                                     "scspSolicitudId=" + consulta.getScspSolicitudId() + ")");
-                                    // Segons el requeriment #357, si és recobriment ja s'encarrega l'aplicació
-									// de guardar el document a l'arxiu.
+                                    // Si l'aplicació externa gestiona l'arxiu, Pinbal no crea
+									// cap expedient artificial ni desa el justificant a l'arxiu.
                                     // En aquest cas, deixarem arxiuDocumentUuid a null.
                                 } else {
                                     // Consulta a veure si l'expedient ja està creat

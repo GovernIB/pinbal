@@ -39,6 +39,7 @@ public class EntitatDto extends AbstractIdentificable<Long> implements Serializa
 	private boolean activa;
 
 	private List<EntitatUsuariDto> usuaris = new ArrayList<EntitatUsuariDto>();
+	@Builder.Default
 	private List<String> serveis = new ArrayList<String>();
 
 	public List<EntitatUsuariDto> getUsuarisAdmin() {

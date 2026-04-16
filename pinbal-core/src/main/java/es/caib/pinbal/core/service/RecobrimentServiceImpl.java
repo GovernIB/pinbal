@@ -850,7 +850,9 @@ public class RecobrimentServiceImpl implements RecobrimentService, ApplicationCo
         PeticioRespostaSincrona resposta = null;
         try {
             Peticion peticion = recobrimentV2Helper.toPeticion(peticio);
-            Respuesta scspRespuesta = recobrimentHelper.peticionSincrona(peticion);
+            Respuesta scspRespuesta = recobrimentHelper.peticionSincrona(
+                    peticion,
+                    peticio != null && Boolean.TRUE.equals(peticio.getAplicacioGuardaJustificantArxiu()));
             resposta = recobrimentV2Helper.toRespostaSincrona(scspRespuesta);
         } catch (Exception e) {
             log.error("Error al realitzar petició sincrona al servei= " +
@@ -870,7 +872,9 @@ public class RecobrimentServiceImpl implements RecobrimentService, ApplicationCo
         PeticioConfirmacioAsincrona resposta = null;
         try {
             Peticion peticion = recobrimentV2Helper.toPeticion(peticio);
-            ConfirmacionPeticion respuesta = recobrimentHelper.peticionAsincrona(peticion);
+            ConfirmacionPeticion respuesta = recobrimentHelper.peticionAsincrona(
+                    peticion,
+                    peticio != null && Boolean.TRUE.equals(peticio.getAplicacioGuardaJustificantArxiu()));
             resposta = recobrimentV2Helper.toConfirmacio(respuesta);
         } catch (Exception e) {
             log.error("Error al realitzar la petició asincrona al servei= " +

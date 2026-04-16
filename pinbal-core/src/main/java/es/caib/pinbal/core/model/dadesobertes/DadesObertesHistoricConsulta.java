@@ -85,6 +85,7 @@ public class DadesObertesHistoricConsulta {
     private DadesObertesRespostaConsulta.DadesObertesConsultaResultat resultat;
 
     @Column(name = "multiple")
+    @Builder.Default
     private boolean multiple = false;
 
 

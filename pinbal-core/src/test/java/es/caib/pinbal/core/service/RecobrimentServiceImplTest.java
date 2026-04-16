@@ -824,7 +824,7 @@ public class RecobrimentServiceImplTest {
         mockRespuesta.setAtributos(atributos);
 
         when(recobrimentV2Helper.toPeticion(any(PeticioSincrona.class))).thenReturn(new Peticion());
-        when(recobrimentHelper.peticionSincrona(any(Peticion.class))).thenReturn(mockRespuesta);
+        when(recobrimentHelper.peticionSincrona(any(Peticion.class), anyBoolean())).thenReturn(mockRespuesta);
         when(recobrimentV2Helper.toRespostaSincrona(any(Respuesta.class))).thenCallRealMethod();
 //        Mockito.when(recobrimentServiceImpl.toScspRespuesta(Mockito.any())).thenReturn(mockRespuesta);
 
@@ -851,7 +851,7 @@ public class RecobrimentServiceImplTest {
         mockRespuesta.setAtributos(atributos);
 
         when(recobrimentV2Helper.toPeticion(any(PeticioSincrona.class))).thenReturn(new Peticion());
-        when(recobrimentHelper.peticionSincrona(any(Peticion.class))).thenReturn(mockRespuesta);
+        when(recobrimentHelper.peticionSincrona(any(Peticion.class), anyBoolean())).thenReturn(mockRespuesta);
         when(recobrimentV2Helper.toRespostaSincrona(any(Respuesta.class))).thenCallRealMethod();
 //        Mockito.when(recobrimentServiceImpl.toScspRespuesta(Mockito.any())).thenReturn(mockRespuesta);
 
@@ -879,6 +879,28 @@ public class RecobrimentServiceImplTest {
         Assert.assertEquals("Unexpected error", response.getMissatge());
     }
 
+    @Test
+    public void testPeticionSincrona_AplicacioGuardaJustificantArxiu() throws Exception {
+        PeticioSincrona mockPeticio = PeticioSincrona.builder()
+                .aplicacioGuardaJustificantArxiu(true)
+                .build();
+        Respuesta mockRespuesta = new Respuesta();
+        Atributos atributos = new Atributos();
+        Estado estado = new Estado();
+        estado.setCodigoEstado("00");
+        atributos.setEstado(estado);
+        mockRespuesta.setAtributos(atributos);
+
+        when(recobrimentV2Helper.toPeticion(any(PeticioSincrona.class))).thenReturn(new Peticion());
+        when(recobrimentHelper.peticionSincrona(any(Peticion.class), anyBoolean())).thenReturn(mockRespuesta);
+        when(recobrimentV2Helper.toRespostaSincrona(any(Respuesta.class))).thenCallRealMethod();
+
+        PeticioRespostaSincrona response = recobrimentServiceImpl.peticionSincrona(mockPeticio);
+
+        Assert.assertNotNull(response);
+        verify(recobrimentHelper).peticionSincrona(any(Peticion.class), eq(true));
+    }
+
 
     // TESTS peticioAsincrona
     // /////////////////////////////////////////////////////////
@@ -892,7 +914,7 @@ public class RecobrimentServiceImplTest {
         Consulta mockConsulta = mock(Consulta.class);
 //        mockConfirmacion.setAtributos(new Atributos());
         when(recobrimentV2Helper.toPeticion(any(PeticioAsincrona.class))).thenReturn(new Peticion());
-        when(recobrimentHelper.peticionAsincrona(any(Peticion.class))).thenReturn(mockConfirmacion);
+        when(recobrimentHelper.peticionAsincrona(any(Peticion.class), anyBoolean())).thenReturn(mockConfirmacion);
         when(recobrimentV2Helper.toConfirmacio(any(ConfirmacionPeticion.class))).thenCallRealMethod();
         when(recobrimentV2Helper.getConsultaBypeticioId("PETICION_ID")).thenReturn(mockConsulta);
         when(mockConfirmacion.getAtributos()).thenReturn(mockAtributos);
@@ -922,7 +944,7 @@ public class RecobrimentServiceImplTest {
         confirmacionPeticion.setAtributos(atributos);
 
         when(recobrimentV2Helper.toPeticion(any(PeticioAsincrona.class))).thenReturn(new Peticion());
-        when(recobrimentHelper.peticionAsincrona(any(Peticion.class))).thenReturn(confirmacionPeticion);
+        when(recobrimentHelper.peticionAsincrona(any(Peticion.class), anyBoolean())).thenReturn(confirmacionPeticion);
         when(recobrimentV2Helper.toConfirmacio(any(ConfirmacionPeticion.class))).thenCallRealMethod();
 
         // Call the method

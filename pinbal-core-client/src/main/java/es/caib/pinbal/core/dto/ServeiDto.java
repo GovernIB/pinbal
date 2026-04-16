@@ -55,6 +55,7 @@ public class ServeiDto extends AbstractIdentificable<Long> implements Serializab
 	private String scspXpathCifradoAsincrono;
 	private String scspAlgoritmoCifrado;
 	private String scspValidacionFirma;
+	@Builder.Default
     private boolean useCertificatEntitat = false;
 	private String scspPrefijoPeticion;
 	private String scspEsquemas;
@@ -99,15 +100,18 @@ public class ServeiDto extends AbstractIdentificable<Long> implements Serializab
 
 	
 	private List<ServeiXsdDto> fitxersXsd;
-	
+	@Builder.Default
 	private boolean pinbalIniDadesExpecifiques = false;
 		
 	private Long numeroProcedimentsAssociats;
 
 	// Propietat per a mostrar el check actiu als llistats
+	@Builder.Default
 	private Boolean actiu = false;
 
+	@Builder.Default
 	private boolean useAutoClasse = true;
+	@Builder.Default
 	private boolean enviarSolicitant = false;
 	
 	private int usuarisAmbPermis;

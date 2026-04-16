@@ -23,7 +23,7 @@ import java.io.Serializable;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode
+@EqualsAndHashCode(callSuper = false)
 public class OrganGestorDto extends AbstractIdentificable<Long> implements Serializable {
 
 	private Long id;

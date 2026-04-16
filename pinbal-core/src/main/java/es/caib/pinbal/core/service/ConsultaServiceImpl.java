@@ -833,6 +833,7 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 							false,
 							null).
 					build();
+			conslt.updateAplicacioGuardaJustificantArxiu(solicitud.isAplicacioGuardaJustificantArxiu());
 			conslt.updateEstat(EstatTipus.Pendent);
 			Solicitud solicitudEnviar = peticioScspHelper.convertirEnSolicitud(
 					entitat,
@@ -1030,6 +1031,7 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 						false,
 						null).
 				build();
+		conslt.updateAplicacioGuardaJustificantArxiu(solicitud.isAplicacioGuardaJustificantArxiu());
 //		conslt.updateDadesEspecifiques(recobrimentV2Helper.dadesEspecifiquesToJson(solicitud.getDadesEspecifiques()));
 		if (solicitud.getDadesEspecifiques() != null) {
 			try {
@@ -1277,6 +1279,7 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 							true,
 							null).
 					build();
+			conslt.updateAplicacioGuardaJustificantArxiu(primeraSolicitud.isAplicacioGuardaJustificantArxiu());
 			conslt.updateEstat(EstatTipus.Pendent);
 			List<Solicitud> solicitudsEnviar = new ArrayList<Solicitud>();
 			for (RecobrimentSolicitudDto solicitud: solicituds) {
@@ -1359,6 +1362,7 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 								false,
 								conslt).
 						build();
+				cs.updateAplicacioGuardaJustificantArxiu(solicitud.isAplicacioGuardaJustificantArxiu());
 				cs.updateScspSolicitudId(resultat.getIdsSolicituds()[solicitudIndex++]);
 				peticioScspHelper.updateEstatConsulta(cs, resultat, null);
 				consultaRepository.save(cs);

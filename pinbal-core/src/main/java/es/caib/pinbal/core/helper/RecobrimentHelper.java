@@ -75,7 +75,6 @@ import java.util.List;
 public class RecobrimentHelper implements ApplicationContextAware, MessageSourceAware {
 
 	public static final String ERROR_CODE_SCSP_VALIDATION = "0226";
-	private static final String PROPERTY_RECOBRIMENT_REQUEREIX_EXPEDIENTID = "es.caib.pinbal.recobriment.requereix.expedientid";
 
 	@Autowired
 	private ConsultaRepository consultaRepository;
@@ -106,10 +105,15 @@ public class RecobrimentHelper implements ApplicationContextAware, MessageSource
 //	private XmlHelper xmlHelper;
 
 	public Respuesta peticionSincrona(Peticion peticion) throws ScspException {
+		return peticionSincrona(peticion, false);
+	}
+
+	public Respuesta peticionSincrona(Peticion peticion, boolean aplicacioGuardaJustificantArxiu) throws ScspException {
 		String codigoCertificado = peticion.getAtributos().getCodigoCertificado();
 		log.debug("Processant petició síncrona al servei web del recobriment (codCertificado=" + codigoCertificado + ")");
         long startTime = System.currentTimeMillis();
 		List<RecobrimentSolicitudDto> solicituds = validarIObtenirSolicituds(peticion, 1);
+		aplicarGestioJustificantArxiu(solicituds, aplicacioGuardaJustificantArxiu);
 		try {
 			ConsultaDto consulta = novaConsultaRecobriment(
 					codigoCertificado,
@@ -166,9 +170,16 @@ public class RecobrimentHelper implements ApplicationContextAware, MessageSource
 
 	public ConfirmacionPeticion peticionAsincrona(
 			Peticion peticion) throws ScspException {
+		return peticionAsincrona(peticion, false);
+	}
+
+	public ConfirmacionPeticion peticionAsincrona(
+			Peticion peticion,
+			boolean aplicacioGuardaJustificantArxiu) throws ScspException {
 		log.debug("Processant petició asíncrona al servei web del recobriment");
         long startTime = System.currentTimeMillis();
 		List<RecobrimentSolicitudDto> solicituds = validarIObtenirSolicituds(peticion, -1);
+		aplicarGestioJustificantArxiu(solicituds, aplicacioGuardaJustificantArxiu);
 		String codigoCertificado = peticion.getAtributos().getCodigoCertificado();
 		try {
 			ConsultaDto consulta = consultaService.novaConsultaRecobrimentMultiple(
@@ -386,11 +397,6 @@ public class RecobrimentHelper implements ApplicationContextAware, MessageSource
 			}
 
 			// Validació de l'identificador d'expedient
-			boolean requereixExpedientId = getPropertyRecobrimentRequereixExpedientId();
-			if (requereixExpedientId &&
-					(solicitante.getIdExpediente() == null || solicitante.getIdExpediente().trim().isEmpty())) {
-				throw getErrorValidacio(ERROR_CODE_SCSP_VALIDATION, "L'element peticion.solicitudes.solicitudTransmision.datosGenericos.solicitante.idExpediente (solicitudIndex=" + index + ") és obligatori");
-			}
 			if (solicitante.getIdExpediente() != null && solicitante.getIdExpediente().length() > 25) {
 				throw getErrorValidacio(ERROR_CODE_SCSP_VALIDATION, "Camp massa llarg. L'element peticion.solicitudes.solicitudTransmision.datosGenericos.solicitante.idExpediente (solicitudIndex=" + index + ") no pot superar els 25 caràcters");
 			}
@@ -627,8 +633,13 @@ public class RecobrimentHelper implements ApplicationContextAware, MessageSource
 	private boolean getPropertyDatosEspecificosIncloureNs() {
 		return configHelper.getAsBoolean("es.caib.pinbal.recobriment.datos.especificos.incloure.ns", false);
 	}
-	private boolean getPropertyRecobrimentRequereixExpedientId() {
-		return configHelper.getAsBoolean(PROPERTY_RECOBRIMENT_REQUEREIX_EXPEDIENTID, false);
+
+	private void aplicarGestioJustificantArxiu(
+			List<RecobrimentSolicitudDto> solicituds,
+			boolean aplicacioGuardaJustificantArxiu) {
+		for (RecobrimentSolicitudDto solicitud : solicituds) {
+			solicitud.setAplicacioGuardaJustificantArxiu(aplicacioGuardaJustificantArxiu);
+		}
 	}
 
 }

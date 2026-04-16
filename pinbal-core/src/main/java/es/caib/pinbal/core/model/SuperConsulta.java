@@ -93,6 +93,8 @@ public abstract class SuperConsulta extends PinbalAuditable<Long> implements ICo
     protected String arxiuDocumentUuid;
     @Column(name = "arxiu_expedient_tancat")
     protected boolean arxiuExpedientTancat = false;
+    @Column(name = "app_guarda_just_arx", nullable = false)
+    protected boolean aplicacioGuardaJustificantArxiu = false;
 
     @Column(name = "der")
     @Temporal(TemporalType.TIMESTAMP)
@@ -205,5 +207,9 @@ public abstract class SuperConsulta extends PinbalAuditable<Long> implements ICo
         }
         this.arxiuExpedientUuid = arxiuExpedientUuid;
         this.arxiuDocumentUuid = arxiuDocumentUuid;
+    }
+
+    public void updateAplicacioGuardaJustificantArxiu(boolean aplicacioGuardaJustificantArxiu) {
+        this.aplicacioGuardaJustificantArxiu = aplicacioGuardaJustificantArxiu;
     }
 }

@@ -15,5 +15,6 @@ public class PeticioAsincrona {
 
     private DadesComunes dadesComunes;
     private List<SolicitudSimple> solicituds;
+    private Boolean aplicacioGuardaJustificantArxiu;
 
 }

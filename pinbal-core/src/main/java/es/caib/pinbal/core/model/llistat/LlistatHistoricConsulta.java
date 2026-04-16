@@ -42,9 +42,11 @@ public class LlistatHistoricConsulta {
     private String departamentNom;
 
     @Column(name = "recobriment")
+    @Builder.Default
     private boolean recobriment = false;
 
     @Column(name = "multiple")
+    @Builder.Default
     private boolean multiple = false;
 
     @Column(name = "usuariCodi", length = 64, nullable = false)

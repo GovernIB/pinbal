@@ -23,6 +23,7 @@ public class VariableFact {
     private String varCodi;
 
     // Dades auxiliars per el càlcul de la regla
+    @Builder.Default
     private boolean aplicaReglaCondicio = false;
     private Set<String> grupsModificats;
     private Set<String> campsModificats;

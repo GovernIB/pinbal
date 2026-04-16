@@ -243,6 +243,28 @@ public class RecobrimentV2HelperTest {
     }
 
     @Test
+    public void testValidateDadesSolicitud_ExpedientOpcional() {
+        es.caib.pinbal.client.recobriment.v2.Titular titular = es.caib.pinbal.client.recobriment.v2.Titular.builder()
+                .documentTipus(es.caib.pinbal.client.recobriment.v2.Titular.DocumentTipus.NIF)
+                .documentNumero("12345678Z")
+                .build();
+
+        SolicitudSimple solicitud = SolicitudSimple.builder()
+                .titular(titular)
+                .build();
+        PeticioSincrona peticio = PeticioSincrona.builder().solicitud(solicitud).build();
+        BindException errors = new BindException(peticio, "peticio");
+
+        ServeiConfig serveiConfig = new ServeiConfig();
+        serveiConfig.setDocumentObligatori(false);
+        when(serveiConfigRepository.findByServei("SERVEI_CODI")).thenReturn(serveiConfig);
+
+        recobrimentV2Helper.validateDadesSolicitud(solicitud, "SERVEI_CODI", errors, serveiService);
+
+        assertTrue(errors.getFieldErrors("solicitud.expedient").isEmpty());
+    }
+
+    @Test
     public void testValidateDadesSolicitud_NullTitular() {
         ServeiConfig serveiConfig = new ServeiConfig();
         serveiConfig.setDocumentObligatori(true);

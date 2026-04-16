@@ -14,7 +14,7 @@ public class PosicionsDadesGeneriques {
     private int posicioTitularDocumentTipus = -1;
     private int posiciotitularDocumentNumero = -1;
     private int posicioTitularNom = -1;
-    private int posicioTitularLlinatge1 = -1;
-    private int posicioTitularLlinatge2 = -1;
-    private int posicioTitularNomComplet = -1;
+    @Builder.Default private int posicioTitularLlinatge1 = -1;
+    @Builder.Default private int posicioTitularLlinatge2 = -1;
+    @Builder.Default private int posicioTitularNomComplet = -1;
 }
