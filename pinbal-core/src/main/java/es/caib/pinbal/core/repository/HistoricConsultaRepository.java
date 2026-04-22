@@ -253,6 +253,8 @@ public interface HistoricConsultaRepository extends JpaRepository<HistoricConsul
             String scspPeticionId,
             String scspSolicitudId);
 
+	public List<HistoricConsulta> findByScspPeticionId(String scspPeticionId);
+
 	@Modifying
 	@Query(
 			value = "ALTER SESSION SET OPTIMIZER_MODE = RULE",

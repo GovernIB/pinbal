@@ -26,4 +26,6 @@ public interface IConsulta {
             String justificantError,
             String arxiuExpedientUuid,
             String arxiuDocumentUuid);
+
+    void updateArxiuExpedientUuid(String arxiuExpedientUuid);
 }

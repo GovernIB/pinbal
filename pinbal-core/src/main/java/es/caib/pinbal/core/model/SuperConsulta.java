@@ -212,4 +212,8 @@ public abstract class SuperConsulta extends PinbalAuditable<Long> implements ICo
     public void updateAplicacioGuardaJustificantArxiu(boolean aplicacioGuardaJustificantArxiu) {
         this.aplicacioGuardaJustificantArxiu = aplicacioGuardaJustificantArxiu;
     }
+
+    public void updateArxiuExpedientUuid(String arxiuExpedientUuid) {
+        this.arxiuExpedientUuid = arxiuExpedientUuid;
+    }
 }

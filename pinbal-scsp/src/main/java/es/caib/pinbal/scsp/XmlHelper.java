@@ -39,6 +39,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -130,7 +131,7 @@ public class XmlHelper {
 		Map<String, Object> dades = new HashMap<String, Object>();
 		if (xmlPeticion != null) {
 			Document doc = xmlToDocument(
-					new ByteArrayInputStream(xmlPeticion.getBytes()));
+					new ByteArrayInputStream(xmlPeticion.getBytes(StandardCharsets.UTF_8)));
 			NodeList nl = doc.getElementsByTagNameNS("*", "DatosEspecificos");
 			if (nl.getLength() > 0) {
 				List<String> path = new ArrayList<String>();
@@ -351,7 +352,7 @@ public class XmlHelper {
 	public String getXmlSolicitudTransmision(
 			String xmlPeticio,
 			String idSolicitud) throws Exception {
-		Document doc = xmlToDocument(new ByteArrayInputStream(xmlPeticio.getBytes()));
+		Document doc = xmlToDocument(new ByteArrayInputStream(xmlPeticio.getBytes(StandardCharsets.UTF_8)));
 		NodeList nlDg = doc.getElementsByTagName("IdSolicitud");
 		for (int i = 0; i < nlDg.getLength(); i++) {
 			org.w3c.dom.Node n = nlDg.item(i);
@@ -365,7 +366,7 @@ public class XmlHelper {
 	public String getXmlPeticion(
 			String xmlPeticio,
 			String idPeticion) throws Exception {
-		Document doc = xmlToDocument(new ByteArrayInputStream(xmlPeticio.getBytes()));
+		Document doc = xmlToDocument(new ByteArrayInputStream(xmlPeticio.getBytes(StandardCharsets.UTF_8)));
 		NodeList nlDg = doc.getElementsByTagName("IdPeticion");
 		for (int i = 0; i < nlDg.getLength(); i++) {
 			org.w3c.dom.Node n = nlDg.item(i);
@@ -393,6 +394,7 @@ public class XmlHelper {
 		JAXBContext context = JAXBContext.newInstance(Peticion.class);
 		Marshaller m = context.createMarshaller();
 		m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+		m.setProperty(Marshaller.JAXB_ENCODING, StandardCharsets.UTF_8.name());
 
 		StringWriter sw = new StringWriter();
 //		JAXBElement<Peticion> jePeticio = new JAXBElement<Peticion>( new QName("http://intermediacion.redsara.es/scsp/esquemas/V3/peticion", "peticion"), Peticion.class, peticio);
@@ -972,4 +974,3 @@ public class XmlHelper {
 	private static final Logger LOGGER = LoggerFactory.getLogger(XmlHelper.class);
 
 }
-

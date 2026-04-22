@@ -18,12 +18,16 @@ import com.lowagie.text.pdf.codec.Base64;
 import es.caib.pinbal.core.dto.FitxerDto;
 import es.caib.pinbal.core.dto.IntegracioAccioTipusEnumDto;
 import es.caib.pinbal.core.dto.JustificantEstat;
+import es.caib.pinbal.core.model.Consulta;
+import es.caib.pinbal.core.model.HistoricConsulta;
 import es.caib.pinbal.core.model.IConsulta;
 import es.caib.pinbal.core.model.Procediment;
 import es.caib.pinbal.core.model.ProcedimentServei;
 import es.caib.pinbal.core.model.ServeiConfig;
 import es.caib.pinbal.core.model.ServeiConfig.JustificantTipus;
 import es.caib.pinbal.core.model.ServeiJustificantCamp;
+import es.caib.pinbal.core.repository.ConsultaRepository;
+import es.caib.pinbal.core.repository.HistoricConsultaRepository;
 import es.caib.pinbal.core.repository.ServeiConfigRepository;
 import es.caib.pinbal.core.repository.ServeiJustificantCampRepository;
 import es.caib.pinbal.core.service.ServeiServiceImpl;
@@ -64,6 +68,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Helper per a generar el justificant.
@@ -89,8 +95,13 @@ public class JustificantHelper implements MessageSourceAware {
 	private IntegracioHelper integracioHelper;
 	@Autowired
 	private ConfigHelper configHelper;
+	@Autowired
+	private ConsultaRepository consultaRepository;
+	@Autowired
+	private HistoricConsultaRepository historicConsultaRepository;
 
 	private MessageSource messageSource;
+    private final ConcurrentMap<String, Object> expedientLocks = new ConcurrentHashMap<String, Object>();
 
 	public void generarCustodiarJustificantPendent(
 			IConsulta consulta,
@@ -155,26 +166,8 @@ public class JustificantHelper implements MessageSourceAware {
 									// cap expedient artificial ni desa el justificant a l'arxiu.
                                     // En aquest cas, deixarem arxiuDocumentUuid a null.
                                 } else {
-                                    // Consulta a veure si l'expedient ja està creat
-                                    ContingutArxiu expedientExistent = pluginHelper.arxiuExpedientCercarAmbNom(consulta.getScspPeticionId());
-                                    if (expedientExistent != null) {
-                                        arxiuExpedientUuid = expedientExistent.getIdentificador();
-                                    } else {
-                                        // Crea l'expedient
-                                        arxiuExpedientUuid = pluginHelper.arxiuExpedientCrear(
-                                                consulta.getScspPeticionId(),
-                                                consulta.getTitularDocumentNum(),
-                                                procediment.getOrganGestor().getCodi(),
-                                                procediment.getCodiSia(),
-                                                procediment.getCodi(),
-                                                serieDocumental);
-                                        log.info(
-                                                "Creat nou expedient a l'arxiu relacionat amb la consulta (" +
-                                                        "id=" + consulta.getId() + ", " +
-                                                        "scspPeticionId=" + consulta.getScspPeticionId() + ", " +
-                                                        "scspSolicitudId=" + consulta.getScspSolicitudId() + ", " +
-                                                        "arxiuExpedientUuid=" + arxiuExpedientUuid + ")");
-                                    }
+                                    arxiuExpedientUuid = obtenirOCrearExpedientArxiu(consulta, procediment, serieDocumental);
+                                    propagarArxiuExpedientUuidCompartit(consulta, arxiuExpedientUuid);
                                 }
                             }
                             if (arxiuExpedientUuid != null) {
@@ -281,6 +274,108 @@ public class JustificantHelper implements MessageSourceAware {
             throw e;
         }
 	}
+
+    private String obtenirOCrearExpedientArxiu(
+            IConsulta consulta,
+            Procediment procediment,
+            String serieDocumental) throws Exception {
+        String scspPeticionId = consulta.getScspPeticionId();
+        Object expedientLock = getExpedientLock(scspPeticionId);
+        try {
+            synchronized (expedientLock) {
+                ContingutArxiu expedientExistent = pluginHelper.arxiuExpedientCercarAmbNom(scspPeticionId);
+                if (expedientExistent != null) {
+                    return expedientExistent.getIdentificador();
+                }
+                try {
+                    String arxiuExpedientUuid = pluginHelper.arxiuExpedientCrear(
+                            scspPeticionId,
+                            consulta.getTitularDocumentNum(),
+                            procediment.getOrganGestor().getCodi(),
+                            procediment.getCodiSia(),
+                            procediment.getCodi(),
+                            serieDocumental);
+                    log.info(
+                            "Creat nou expedient a l'arxiu relacionat amb la consulta (" +
+                                    "id=" + consulta.getId() + ", " +
+                                    "scspPeticionId=" + consulta.getScspPeticionId() + ", " +
+                                    "scspSolicitudId=" + consulta.getScspSolicitudId() + ", " +
+                                    "arxiuExpedientUuid=" + arxiuExpedientUuid + ")");
+                    return arxiuExpedientUuid;
+                } catch (Exception ex) {
+                    if (isDuplicateExpedientException(ex)) {
+                        ContingutArxiu expedientCreatConcurrentment = pluginHelper.arxiuExpedientCercarAmbNom(scspPeticionId);
+                        if (expedientCreatConcurrentment != null) {
+                            log.warn(
+                                    "Detectada creació concurrent de l'expedient a l'arxiu; es reutilitza l'existent (" +
+                                            "id=" + consulta.getId() + ", " +
+                                            "scspPeticionId=" + consulta.getScspPeticionId() + ", " +
+                                            "scspSolicitudId=" + consulta.getScspSolicitudId() + ", " +
+                                            "arxiuExpedientUuid=" + expedientCreatConcurrentment.getIdentificador() + ")",
+                                    ex);
+                            return expedientCreatConcurrentment.getIdentificador();
+                        }
+                    }
+                    throw ex;
+                }
+            }
+        } finally {
+            releaseExpedientLock(scspPeticionId, expedientLock);
+        }
+    }
+
+    private boolean isDuplicateExpedientException(Throwable ex) {
+        String stackTrace = ExceptionUtils.getStackTrace(ex);
+        return stackTrace != null &&
+                (stackTrace.contains("Duplicate child name not allowed") || stackTrace.contains("ORA-00001"));
+    }
+
+    private void propagarArxiuExpedientUuidCompartit(
+            IConsulta consulta,
+            String arxiuExpedientUuid) {
+        if (arxiuExpedientUuid == null) {
+            return;
+        }
+        if (consulta instanceof Consulta) {
+            List<Consulta> consultes = consultaRepository.findByScspPeticionId(consulta.getScspPeticionId());
+            boolean actualitzat = false;
+            for (Consulta consultaRelacionada : consultes) {
+                if (consultaRelacionada.getArxiuExpedientUuid() == null) {
+                    consultaRelacionada.updateArxiuExpedientUuid(arxiuExpedientUuid);
+                    actualitzat = true;
+                }
+            }
+            if (actualitzat) {
+                consultaRepository.save(consultes);
+            }
+        } else if (consulta instanceof HistoricConsulta) {
+            List<HistoricConsulta> consultes = historicConsultaRepository.findByScspPeticionId(consulta.getScspPeticionId());
+            boolean actualitzat = false;
+            for (HistoricConsulta consultaRelacionada : consultes) {
+                if (consultaRelacionada.getArxiuExpedientUuid() == null) {
+                    consultaRelacionada.updateArxiuExpedientUuid(arxiuExpedientUuid);
+                    actualitzat = true;
+                }
+            }
+            if (actualitzat) {
+                historicConsultaRepository.save(consultes);
+            }
+        }
+    }
+
+    private Object getExpedientLock(String scspPeticionId) {
+        Object existingLock = expedientLocks.get(scspPeticionId);
+        if (existingLock != null) {
+            return existingLock;
+        }
+        Object newLock = new Object();
+        Object racedLock = expedientLocks.putIfAbsent(scspPeticionId, newLock);
+        return racedLock != null ? racedLock : newLock;
+    }
+
+    private void releaseExpedientLock(String scspPeticionId, Object expedientLock) {
+        expedientLocks.remove(scspPeticionId, expedientLock);
+    }
 
 	public FitxerDto descarregarFitxerGenerat(
 			IConsulta consulta,
