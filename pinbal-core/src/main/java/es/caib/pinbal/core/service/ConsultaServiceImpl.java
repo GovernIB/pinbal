@@ -123,6 +123,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionCallback;
@@ -1964,19 +1965,13 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 
 		Date dataFi = filtre.getDataFi();
 		if (filtre.getDataFi() == null) dataFi = ahir();
-		ExplotTempsEntity tempsFinal = explotTempsRepository.findFirstByData(dataFi);
+		ExplotTempsEntity tempsFinal = getExplotTempsEntity(dataFi);
+		if (tempsFinal == null) {
+			return resposta;
+		}
 
 		Map<EstadisticaKey, ExplotConsultaFets> fetsMap = new LinkedHashMap<>();
-		List<ExplotConsultaFets> fetsAcumulatFinal = explotConsultaFetsRepository.findByFiltre(
-				tempsFinal,
-				filtre.getEntitatId() == null,
-				filtre.getEntitatId(),
-				filtre.getProcedimentId() == null,
-				filtre.getProcedimentId(),
-				filtre.getServeiCodi() == null || filtre.getServeiCodi().isEmpty(),
-				filtre.getServeiCodi(),
-				filtre.getUsuariCodi() == null,
-				filtre.getUsuariCodi());
+		List<ExplotConsultaFets> fetsAcumulatFinal = getFetsByFiltre(tempsFinal, filtre);
 
 		if (fetsAcumulatFinal == null || fetsAcumulatFinal.isEmpty()) {
 			return resposta;
@@ -1987,17 +1982,8 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 		}
 
 		if (filtre.getDataInici() != null) {
-			ExplotTempsEntity tempsInicial = explotTempsRepository.findFirstByData(filtre.getDataInici());
-			List<ExplotConsultaFets> fetsAcumulatInicial = explotConsultaFetsRepository.findByFiltre(
-					tempsInicial,
-					filtre.getEntitatId() == null,
-					filtre.getEntitatId(),
-					filtre.getProcedimentId() == null,
-					filtre.getProcedimentId(),
-					filtre.getServeiCodi() == null || filtre.getServeiCodi().isEmpty(),
-					filtre.getServeiCodi(),
-					filtre.getUsuariCodi() == null,
-					filtre.getUsuariCodi());
+			ExplotTempsEntity tempsInicial = getExplotTempsEntity(filtre.getDataInici());
+			List<ExplotConsultaFets> fetsAcumulatInicial = getFetsByFiltre(tempsInicial, filtre);
 
 			if (fetsAcumulatInicial != null && !fetsAcumulatInicial.isEmpty()) {
 				for (ExplotConsultaFets fet : fetsAcumulatInicial) {
@@ -2010,6 +1996,51 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 
 		return toEstadistiquesDto(fetsMap, ordreProcediment, filtre.getEstat());
 
+	}
+
+	private ExplotTempsEntity getExplotTempsEntity(Date data) {
+		if (data == null) {
+			return null;
+		}
+
+		Date normalizedDate = this.data(data);
+		ExplotTempsEntity temps = explotTempsRepository.findFirstByData(normalizedDate);
+		if (temps == null && !normalizedDate.after(ahir())) {
+			generarDadesExplotacioEnNovaTransaccio(normalizedDate);
+			temps = explotTempsRepository.findFirstByData(normalizedDate);
+		}
+		return temps;
+	}
+
+	private List<ExplotConsultaFets> getFetsByFiltre(ExplotTempsEntity temps, EstadistiquesFiltreDto filtre) {
+		if (temps == null) {
+			return Collections.emptyList();
+		}
+
+		List<ExplotConsultaFets> fets = explotConsultaFetsRepository.findByFiltre(
+				temps,
+				filtre.getEntitatId() == null,
+				filtre.getEntitatId(),
+				filtre.getProcedimentId() == null,
+				filtre.getProcedimentId(),
+				filtre.getServeiCodi() == null || filtre.getServeiCodi().isEmpty(),
+				filtre.getServeiCodi(),
+				filtre.getUsuariCodi() == null,
+				filtre.getUsuariCodi());
+
+		return fets;
+	}
+
+	private void generarDadesExplotacioEnNovaTransaccio(final Date data) {
+		TransactionTemplate transactionTemplate = new TransactionTemplate(transactionManager);
+		transactionTemplate.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
+		transactionTemplate.execute(new TransactionCallback<Void>() {
+			@Override
+			public Void doInTransaction(TransactionStatus status) {
+				self.generarDadesExplotacio(data);
+				return null;
+			}
+		});
 	}
 
 	private List<EstadisticaDto> toEstadistiquesDto(Map<EstadisticaKey, ExplotConsultaFets> fetsMap, final boolean ordreProcediment, es.caib.pinbal.core.dto.ConsultaDto.EstatTipus filtreEstat) {
