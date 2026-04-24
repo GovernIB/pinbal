@@ -112,6 +112,7 @@
 	<modules>
 		<module>pinbal-core</module>
 		<module>pinbal-scsp</module>
+		<module>pinbal-scsp-fake</module>
 		<module>pinbal-core-client</module>
 		<module>pinbal-plugins-caib</module>
 		<module>pinbal-plugins</module>
