@@ -42,11 +42,10 @@ import es.caib.pinbal.scsp.ScspHelper;
 import es.caib.pinbal.scsp.XmlHelper;
 import es.caib.pinbal.scsp.tree.Node;
 import es.caib.pinbal.scsp.tree.Tree;
-import es.scsp.bean.common.Atributos;
-import es.scsp.bean.common.ConfirmacionPeticion;
-import es.scsp.bean.common.Estado;
-import es.scsp.bean.common.Peticion;
-import es.scsp.bean.common.Respuesta;
+import es.scsp.bean.common.confirmacion.ConfirmacionPeticion;
+import es.scsp.bean.common.peticion.Peticion;
+import es.scsp.bean.common.respuesta.Estado;
+import es.scsp.bean.common.respuesta.Respuesta;
 import es.scsp.common.exceptions.ScspException;
 import org.junit.Assert;
 import org.junit.Before;
@@ -816,7 +815,7 @@ public class RecobrimentServiceImplTest {
         // Mocking
         PeticioSincrona mockPeticio = PeticioSincrona.builder().build();
         Respuesta mockRespuesta = new Respuesta();
-        Atributos atributos = new Atributos();
+        es.scsp.bean.common.respuesta.Atributos atributos = new es.scsp.bean.common.respuesta.Atributos();
         Estado estado = new Estado();
         estado.setCodigoEstado("00");
         estado.setLiteralError(null);
@@ -843,7 +842,7 @@ public class RecobrimentServiceImplTest {
         // Mocking
         PeticioSincrona mockPeticio = PeticioSincrona.builder().build();
         Respuesta mockRespuesta = new Respuesta();
-        Atributos atributos = new Atributos();
+        es.scsp.bean.common.respuesta.Atributos atributos = new es.scsp.bean.common.respuesta.Atributos();
         Estado estado = new Estado();
         estado.setCodigoEstado("01");
         estado.setLiteralError("Validation failed");
@@ -885,7 +884,7 @@ public class RecobrimentServiceImplTest {
                 .aplicacioGuardaJustificantArxiu(true)
                 .build();
         Respuesta mockRespuesta = new Respuesta();
-        Atributos atributos = new Atributos();
+        es.scsp.bean.common.respuesta.Atributos atributos = new es.scsp.bean.common.respuesta.Atributos();
         Estado estado = new Estado();
         estado.setCodigoEstado("00");
         atributos.setEstado(estado);
@@ -910,7 +909,7 @@ public class RecobrimentServiceImplTest {
         // Mocking
         PeticioAsincrona mockPeticio = PeticioAsincrona.builder().build();
         ConfirmacionPeticion mockConfirmacion = mock(ConfirmacionPeticion.class);
-        Atributos mockAtributos = mock(Atributos.class);
+        es.scsp.bean.common.confirmacion.Atributos mockAtributos = mock(es.scsp.bean.common.confirmacion.Atributos.class);
         Consulta mockConsulta = mock(Consulta.class);
 //        mockConfirmacion.setAtributos(new Atributos());
         when(recobrimentV2Helper.toPeticion(any(PeticioAsincrona.class))).thenReturn(new Peticion());
@@ -936,8 +935,8 @@ public class RecobrimentServiceImplTest {
         // Mocking
         PeticioAsincrona mockPeticio = PeticioAsincrona.builder().build();
         ConfirmacionPeticion confirmacionPeticion = new ConfirmacionPeticion();
-        Atributos atributos = new Atributos();
-        Estado estado = new Estado();
+        es.scsp.bean.common.confirmacion.Atributos atributos = new es.scsp.bean.common.confirmacion.Atributos();
+        es.scsp.bean.common.confirmacion.Estado estado = new es.scsp.bean.common.confirmacion.Estado();
         estado.setCodigoEstado("99");
         estado.setLiteralError("Error occurred");
         atributos.setEstado(estado);
@@ -980,7 +979,7 @@ public class RecobrimentServiceImplTest {
         // Mocking
         String idPeticion = "12345";
         Respuesta mockRespuesta = new Respuesta();
-        Atributos atributos = new Atributos();
+        es.scsp.bean.common.respuesta.Atributos atributos = new es.scsp.bean.common.respuesta.Atributos();
         Estado estado = new Estado();
         estado.setCodigoEstado("003");
         atributos.setEstado(estado);

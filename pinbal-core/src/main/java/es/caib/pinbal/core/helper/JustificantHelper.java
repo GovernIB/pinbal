@@ -36,6 +36,7 @@ import es.caib.pinbal.plugins.SignaturaResposta;
 import es.caib.pinbal.scsp.JustificantArbreHelper.ElementArbre;
 import es.caib.pinbal.scsp.ResultatEnviamentPeticio;
 import es.caib.pinbal.scsp.ScspHelper;
+import es.scsp.common.exceptions.ScspException;
 import es.caib.plugins.arxiu.api.ContingutArxiu;
 import es.caib.plugins.arxiu.api.ContingutOrigen;
 import es.caib.plugins.arxiu.api.DocumentEstatElaboracio;
@@ -433,7 +434,7 @@ public class JustificantHelper implements MessageSourceAware {
 
 	public FitxerDto generar(
 			IConsulta consulta,
-			ScspHelper scspHelper) throws IOException, DocumentTemplateException, ParserConfigurationException, DocumentException {
+			ScspHelper scspHelper) throws IOException, DocumentTemplateException, ParserConfigurationException, DocumentException, ScspException {
 		log.debug("[JUSTIFICANT] Es generarà el justificant de la consulta (id=" + consulta.getId() + ", consultaPeticioId=" + consulta.getScspPeticionId() + ", consultaSolicitudId=" + consulta.getScspSolicitudId() + ")");
 		String arxiuNom = getNomArxiuGenerat(
 				consulta.getScspPeticionId(),

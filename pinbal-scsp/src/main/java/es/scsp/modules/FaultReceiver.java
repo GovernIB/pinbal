@@ -7,13 +7,17 @@ package es.scsp.modules;
 
 import es.scsp.common.exceptions.ScspException;
 import org.apache.axiom.om.OMElement;
+import org.apache.axiom.om.OMNode;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.engine.Handler;
+import org.apache.axis2.handlers.AbstractHandler;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-public class FaultReceiver extends Fault {
+import java.util.Iterator;
+
+public class FaultReceiver extends AbstractHandler {
     private static final Log LOG = LogFactory.getLog(FaultReceiver.class);
 
     public FaultReceiver() {
@@ -56,6 +60,26 @@ public class FaultReceiver extends Fault {
             codesecundario = nodeCodigoEstadoSec.getText();
         }
 
-        throw new ScspException(msg, code, codesecundario, msgsecundario);
+        throw AxisFault.makeFault(new ScspException(msg, code, codesecundario, msgsecundario));
+    }
+
+    private OMElement getChildrenWithNameRecursive(OMElement parent, String localName) {
+        if (parent == null) {
+            return null;
+        }
+        if (parent.getLocalName() != null && parent.getLocalName().equals(localName)) {
+            return parent;
+        }
+        Iterator<?> it = parent.getChildElements();
+        while (it.hasNext()) {
+            Object child = it.next();
+            if (child instanceof OMNode && child instanceof OMElement) {
+                OMElement found = getChildrenWithNameRecursive((OMElement) child, localName);
+                if (found != null) {
+                    return found;
+                }
+            }
+        }
+        return null;
     }
 }

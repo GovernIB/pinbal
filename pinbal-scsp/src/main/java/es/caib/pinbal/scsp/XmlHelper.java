@@ -6,7 +6,7 @@ package es.caib.pinbal.scsp;
 import es.caib.pinbal.core.service.exception.ConsultaScspGeneracioException;
 import es.caib.pinbal.scsp.tree.Node;
 import es.caib.pinbal.scsp.tree.Tree;
-import es.scsp.bean.common.Peticion;
+import es.scsp.bean.common.peticion.Peticion;
 import es.scsp.common.domain.core.Servicio;
 import lombok.Getter;
 import lombok.Setter;

@@ -1,20 +1,15 @@
 package es.caib.pinbal.scsp.mock;
 
-import es.scsp.bean.common.Atributos;
-import es.scsp.bean.common.ConfirmacionPeticion;
-import es.scsp.bean.common.Consentimiento;
-import es.scsp.bean.common.DatosGenericos;
-import es.scsp.bean.common.Emisor;
-import es.scsp.bean.common.Estado;
-import es.scsp.bean.common.Funcionario;
-import es.scsp.bean.common.Peticion;
-import es.scsp.bean.common.Procedimiento;
-import es.scsp.bean.common.Respuesta;
-import es.scsp.bean.common.Solicitante;
-import es.scsp.bean.common.SolicitudTransmision;
-import es.scsp.bean.common.Titular;
-import es.scsp.bean.common.TransmisionDatos;
-import es.scsp.bean.common.Transmisiones;
+import es.scsp.bean.common.confirmacion.Atributos;
+import es.scsp.bean.common.confirmacion.ConfirmacionPeticion;
+import es.scsp.bean.common.confirmacion.Estado;
+import es.scsp.bean.common.peticion.Peticion;
+import es.scsp.bean.common.peticion.Solicitante;
+import es.scsp.bean.common.peticion.SolicitudTransmision;
+import es.scsp.bean.common.peticion.Titular;
+import es.scsp.bean.common.respuesta.Respuesta;
+import es.scsp.bean.common.respuesta.TransmisionDatos;
+import es.scsp.bean.common.respuesta.Transmisiones;
 import es.scsp.client.ClienteUnico;
 import es.scsp.common.dao.PeticionRespuestaDao;
 import es.scsp.common.dao.ServicioDao;
@@ -435,12 +430,12 @@ public class ClienteUnicoMockPersistent extends ClienteUnico {
         Respuesta respuesta = new Respuesta();
 
         // Atributs
-        Atributos atributos = new Atributos();
+        es.scsp.bean.common.respuesta.Atributos atributos = new es.scsp.bean.common.respuesta.Atributos();
         atributos.setIdPeticion(peticionRespuesta.getIdPeticion());
         atributos.setTimeStamp(DateUtils.parseISO8601(peticionRespuesta.getFechaRespuesta()));
-        atributos.setNumElementos(String.valueOf(peticionRespuesta.getNumeroTransmisiones()));
+        atributos.setNumElementos(peticionRespuesta.getNumeroTransmisiones());
 
-        Estado estado = new Estado();
+        es.scsp.bean.common.respuesta.Estado estado = new es.scsp.bean.common.respuesta.Estado();
         estado.setCodigoEstado(peticionRespuesta.getEstado());
         estado.setLiteralError(peticionRespuesta.getError());
         atributos.setEstado(estado);
@@ -449,46 +444,46 @@ public class ClienteUnicoMockPersistent extends ClienteUnico {
 
         // Transmissions
         Transmisiones transmisiones = new Transmisiones();
-        transmisiones.setTransmisionDatos(new java.util.ArrayList<TransmisionDatos>());
+        transmisiones.getTransmisionDatos().clear();
         java.util.List<es.scsp.common.domain.core.Transmision> transDB = transmisionDao.select(peticionRespuesta);
 
         for (es.scsp.common.domain.core.Transmision transDBItem : transDB) {
             TransmisionDatos td = new TransmisionDatos();
 
             // Dades genèriques
-            DatosGenericos dg = new DatosGenericos();
+            es.scsp.bean.common.respuesta.DatosGenericos dg = new es.scsp.bean.common.respuesta.DatosGenericos();
 
-            es.scsp.bean.common.Transmision transmision = new es.scsp.bean.common.Transmision();
+            es.scsp.bean.common.respuesta.Transmision transmision = new es.scsp.bean.common.respuesta.Transmision();
             transmision.setIdSolicitud(transDBItem.getIdSolicitud());
             transmision.setCodigoCertificado(peticionRespuesta.getServicio().getCodCertificado());
             transmision.setFechaGeneracion(DateUtils.parseISO8601(transDBItem.getFechaGeneracion()));
             dg.setTransmision(transmision);
 
-            Solicitante solicitante = new Solicitante();
+            es.scsp.bean.common.respuesta.Solicitante solicitante = new es.scsp.bean.common.respuesta.Solicitante();
             solicitante.setIdentificadorSolicitante(transDBItem.getIdSolicitante());
             solicitante.setNombreSolicitante(transDBItem.getNombreSolicitante());
             solicitante.setUnidadTramitadora(transDBItem.getUnidadTramitadora());
             solicitante.setFinalidad(transDBItem.getFinalidad());
 
             if (transDBItem.getConsentimiento() != null && transDBItem.getConsentimiento().equals("Si")) {
-                solicitante.setConsentimiento(Consentimiento.Si);
+                solicitante.setConsentimiento(es.scsp.bean.common.respuesta.Consentimiento.SI);
             } else {
-                solicitante.setConsentimiento(Consentimiento.Ley);
+                solicitante.setConsentimiento(es.scsp.bean.common.respuesta.Consentimiento.LEY);
             }
 
-            Funcionario funcionario = new Funcionario();
+            es.scsp.bean.common.respuesta.Funcionario funcionario = new es.scsp.bean.common.respuesta.Funcionario();
             funcionario.setNifFuncionario(transDBItem.getDocFuncionario());
             funcionario.setNombreCompletoFuncionario(transDBItem.getNombreFuncionario());
             solicitante.setFuncionario(funcionario);
 
-            Procedimiento procedimiento = new Procedimiento();
+            es.scsp.bean.common.respuesta.Procedimiento procedimiento = new es.scsp.bean.common.respuesta.Procedimiento();
             procedimiento.setCodProcedimiento(transDBItem.getCodigoProcedimiento());
             procedimiento.setNombreProcedimiento(transDBItem.getNombreProcedimiento());
             solicitante.setProcedimiento(procedimiento);
 
             dg.setSolicitante(solicitante);
 
-            Titular titular = new Titular();
+            es.scsp.bean.common.respuesta.Titular titular = new es.scsp.bean.common.respuesta.Titular();
             titular.setDocumentacion(transDBItem.getDocTitular());
             titular.setNombre(transDBItem.getNombreTitular());
             titular.setApellido1(transDBItem.getApellido1Titular());
@@ -496,7 +491,7 @@ public class ClienteUnicoMockPersistent extends ClienteUnico {
             titular.setNombreCompleto(transDBItem.getNombreCompletoTitular());
             dg.setTitular(titular);
 
-            Emisor emisor = new Emisor();
+            es.scsp.bean.common.respuesta.Emisor emisor = new es.scsp.bean.common.respuesta.Emisor();
             emisor.setNifEmisor(peticionRespuesta.getServicio().getEmisor().getCif());
             emisor.setNombreEmisor(peticionRespuesta.getServicio().getEmisor().getNombre());
             dg.setEmisor(emisor);

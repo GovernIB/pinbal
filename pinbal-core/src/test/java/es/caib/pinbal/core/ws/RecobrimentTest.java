@@ -26,17 +26,17 @@ import javax.xml.ws.handler.soap.SOAPMessageContext;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import es.scsp.bean.common.Atributos;
-import es.scsp.bean.common.Consentimiento;
-import es.scsp.bean.common.DatosGenericos;
-import es.scsp.bean.common.Funcionario;
-import es.scsp.bean.common.Peticion;
-import es.scsp.bean.common.Procedimiento;
-import es.scsp.bean.common.Solicitante;
-import es.scsp.bean.common.SolicitudTransmision;
-import es.scsp.bean.common.Solicitudes;
-import es.scsp.bean.common.TipoDocumentacion;
-import es.scsp.bean.common.Titular;
+import es.scsp.bean.common.peticion.Atributos;
+import es.scsp.bean.common.peticion.Consentimiento;
+import es.scsp.bean.common.peticion.DatosGenericos;
+import es.scsp.bean.common.peticion.Funcionario;
+import es.scsp.bean.common.peticion.Peticion;
+import es.scsp.bean.common.peticion.Procedimiento;
+import es.scsp.bean.common.peticion.Solicitante;
+import es.scsp.bean.common.peticion.SolicitudTransmision;
+import es.scsp.bean.common.peticion.Solicitudes;
+import es.scsp.bean.common.peticion.TipoDocumentacion;
+import es.scsp.bean.common.peticion.Titular;
 
 
 /**
@@ -119,7 +119,7 @@ public class RecobrimentTest {
 		solicitante.setFuncionario(funcionario);
 		solicitante.setFinalidad(procedimentNom);
 		solicitante.setUnidadTramitadora(solicitanteUnidadTramitadora);
-		solicitante.setConsentimiento(Consentimiento.Si);
+		solicitante.setConsentimiento(Consentimiento.SI);
 		datosGenericos.setSolicitante(solicitante);
 		Titular titular = new Titular();
 		titular.setTipoDocumentacion(titularTipoDocumentacion);
@@ -128,7 +128,7 @@ public class RecobrimentTest {
 		solicitudTransmision.setDatosGenericos(datosGenericos);
 		solicitudTransmision.setDatosEspecificos(createDatosEspecificos());
 		solicitudesList.add(solicitudTransmision);
-		solicitudes.setSolicitudTransmision(solicitudesList);
+		solicitudes.getSolicitudTransmision().addAll(solicitudesList);
 		peticion.setSolicitudes(solicitudes);
 		recobriment.peticionSincrona(peticion);
 	}

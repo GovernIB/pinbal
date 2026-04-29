@@ -4,9 +4,9 @@
 package es.caib.pinbal.core.ws;
 
 import es.caib.pinbal.core.helper.RecobrimentHelper;
-import es.scsp.bean.common.ConfirmacionPeticion;
-import es.scsp.bean.common.Peticion;
-import es.scsp.bean.common.Respuesta;
+import es.scsp.bean.common.confirmacion.ConfirmacionPeticion;
+import es.scsp.bean.common.peticion.Peticion;
+import es.scsp.bean.common.respuesta.Respuesta;
 import es.scsp.common.exceptions.ScspException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

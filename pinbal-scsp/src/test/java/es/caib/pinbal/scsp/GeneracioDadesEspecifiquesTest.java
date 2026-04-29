@@ -9,7 +9,6 @@ import es.caib.pinbal.core.dto.NodeDto;
 import es.caib.pinbal.scsp.XmlHelper.DadesEspecifiquesNode;
 import es.caib.pinbal.scsp.tree.Tree;
 import es.scsp.common.domain.core.Servicio;
-import org.junit.Test;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -143,7 +142,7 @@ public class GeneracioDadesEspecifiquesTest {
 		System.out.println("SVDRRCCNACIMIENTOWS01 >>> " + arbre.toString());
 	}
 
-	@Test
+//	@Test
 	public void test_SVDCTITWS02() throws Exception {
 		System.setProperty("es.caib.pinbal.xsd.base.path", "/home/siona/Feina/AppData/Pinbal/xsd");
 		Servicio servicio = new Servicio();

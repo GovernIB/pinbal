@@ -3,17 +3,16 @@
  */
 package es.scsp.common.dao;
 
-import java.util.List;
-
+import es.caib.pinbal.scsp.PropertiesHelper;
+import es.scsp.common.domain.core.ParametroConfiguracion;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
-import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Component;
 
-import es.caib.pinbal.scsp.PropertiesHelper;
-import es.scsp.common.domain.core.ParametroConfiguracion;
+import javax.annotation.PostConstruct;
+import java.util.List;
 
 /**
  * Dao per a obtenir els paràmetres de la configuració de PINBAL amb
@@ -22,38 +21,29 @@ import es.scsp.common.domain.core.ParametroConfiguracion;
  * @author Limit Tecnologies <limit@limit.es>
  */
 @Component
-public class ParametroConfiguracionDao extends BaseDao {
+public class ParametroConfiguracionDao extends BaseDao<ParametroConfiguracion> {
 
-	private static final String PROP_PREFIX = "es.caib.pinbal.scsp.";
+    /* MOD PBL */ private static final String PROP_PREFIX = "es.caib.pinbal.scsp.";
+
+    @PostConstruct
+    public void initme() {
+        this.clazz = ParametroConfiguracion.class;
+    }
 
 	public ParametroConfiguracion select(String nombre) {
-		ParametroConfiguracion param = getParametroConfiguracionProperties(
-				PROP_PREFIX + nombre);
-		if (param == null) {
-			Session session = getSessionFactory().getCurrentSession();
-			Transaction tx = session.beginTransaction();
-			Criteria c = session.createCriteria(ParametroConfiguracion.class);
-			c.add(Restrictions.like("nombre", nombre));
-			param = (ParametroConfiguracion)c.uniqueResult();
-			tx.commit();
-		}
-		return param;
+        /* MOD PBL */ ParametroConfiguracion param = getParametroConfiguracionProperties(PROP_PREFIX + nombre);
+        /* MOD PBL */ if (param != null) return param;
+        return (ParametroConfiguracion)this.selectEquals("nombre", nombre);
 	}
 
-	@SuppressWarnings("unchecked")
 	public List<ParametroConfiguracion> select() {
-		Session session = getSessionFactory().getCurrentSession();
-		Transaction tx = session.beginTransaction();
-		Criteria c = session.createCriteria(ParametroConfiguracion.class);
-		c.addOrder(Order.asc("nombre"));
-		List<ParametroConfiguracion> params = c.list();
-		for (Object key: PropertiesHelper.getProperties().keySet()) {
-			String keyStr = (String)key;
-			if (keyStr.startsWith(PROP_PREFIX)) {
-				params.add(getParametroConfiguracionProperties(keyStr));
-			}
-		}
-		tx.commit();
+        List<ParametroConfiguracion> params = this.selectAll();
+		/* MOD PBL */ for (Object key: PropertiesHelper.getProperties().keySet()) {
+		/* MOD PBL */   String keyStr = (String)key;
+		/* MOD PBL */ 	if (keyStr.startsWith(PROP_PREFIX)) {
+		/* MOD PBL */ 		params.add(getParametroConfiguracionProperties(keyStr));
+		/* MOD PBL */ 	}
+		/* MOD PBL */ }
 		return params;
 	}
 
@@ -74,17 +64,16 @@ public class ParametroConfiguracionDao extends BaseDao {
 	}
 
 
-
-	private ParametroConfiguracion getParametroConfiguracionProperties(String propKey) {
-		String propValor = PropertiesHelper.getProperties().getProperty(propKey);
-		if (propValor != null) {
-			ParametroConfiguracion param = new ParametroConfiguracion();
-			param.setNombre(propKey.substring(PROP_PREFIX.length()));
-			param.setValor(PropertiesHelper.getProperties().getProperty(propKey));
-			return param;
-		} else {
-			return null;
-		}
-	}
+	/* MOD PBL */ private ParametroConfiguracion getParametroConfiguracionProperties(String propKey) {
+	/* MOD PBL */ 	String propValor = PropertiesHelper.getProperties().getProperty(propKey);
+	/* MOD PBL */ 	if (propValor != null) {
+	/* MOD PBL */ 		ParametroConfiguracion param = new ParametroConfiguracion();
+	/* MOD PBL */ 		param.setNombre(propKey.substring(PROP_PREFIX.length()));
+	/* MOD PBL */ 		param.setValor(PropertiesHelper.getProperties().getProperty(propKey));
+	/* MOD PBL */ 		return param;
+	/* MOD PBL */ 	} else {
+	/* MOD PBL */ 		return null;
+	/* MOD PBL */ 	}
+	/* MOD PBL */ }
 
 }

@@ -16,9 +16,9 @@ import es.caib.pinbal.core.service.ServeiService;
 import es.caib.pinbal.core.service.exception.ServeiNotFoundException;
 import es.caib.pinbal.plugins.DadesUsuari;
 import es.caib.pinbal.scsp.ScspHelper;
-import es.scsp.bean.common.Peticion;
-import es.scsp.bean.common.Transmision;
-import es.scsp.bean.common.TransmisionDatos;
+import es.scsp.bean.common.peticion.Peticion;
+import es.scsp.bean.common.respuesta.DatosGenericos;
+import es.scsp.bean.common.respuesta.TransmisionDatos;
 import es.scsp.common.domain.core.Servicio;
 import org.junit.Before;
 import org.junit.Test;
@@ -523,12 +523,12 @@ public class RecobrimentV2HelperTest {
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         factory.setNamespaceAware(true);
 
-        Transmision transmision = new Transmision();
+        es.scsp.bean.common.respuesta.Transmision transmision = new es.scsp.bean.common.respuesta.Transmision();
         transmision.setIdSolicitud("SOL-1");
         transmision.setIdTransmision("TR-1");
         transmision.setFechaGeneracion("2026-04-07T10:00:00.000+02:00");
 
-        es.scsp.bean.common.DatosGenericos datosGenericos = new es.scsp.bean.common.DatosGenericos();
+        DatosGenericos datosGenericos = new DatosGenericos();
         datosGenericos.setTransmision(transmision);
 
         TransmisionDatos transmisionDatos = new TransmisionDatos();
@@ -555,12 +555,12 @@ public class RecobrimentV2HelperTest {
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         factory.setNamespaceAware(true);
 
-        Transmision transmision = new Transmision();
+        es.scsp.bean.common.respuesta.Transmision transmision = new es.scsp.bean.common.respuesta.Transmision();
         transmision.setIdSolicitud("PINBAL00000000000000392071");
         transmision.setIdTransmision("105124");
         transmision.setFechaGeneracion("2026-03-12T11:46:01.978+0100");
 
-        es.scsp.bean.common.DatosGenericos datosGenericos = new es.scsp.bean.common.DatosGenericos();
+        DatosGenericos datosGenericos = new DatosGenericos();
         datosGenericos.setTransmision(transmision);
 
         org.w3c.dom.Node datosEspecificos;

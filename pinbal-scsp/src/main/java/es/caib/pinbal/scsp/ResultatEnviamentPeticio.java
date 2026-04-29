@@ -4,7 +4,7 @@
 package es.caib.pinbal.scsp;
 
 
-import es.scsp.bean.common.ConfirmacionPeticion;
+import es.scsp.bean.common.confirmacion.ConfirmacionPeticion;
 import lombok.Getter;
 import lombok.Setter;
 

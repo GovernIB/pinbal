@@ -1,19 +1,19 @@
 package es.caib.pinbal.scsp.mock;
 
-import es.scsp.bean.common.Atributos;
-import es.scsp.bean.common.ConfirmacionPeticion;
-import es.scsp.bean.common.Consentimiento;
-import es.scsp.bean.common.DatosGenericos;
-import es.scsp.bean.common.Emisor;
-import es.scsp.bean.common.Estado;
-import es.scsp.bean.common.Peticion;
-import es.scsp.bean.common.Respuesta;
-import es.scsp.bean.common.Solicitante;
-import es.scsp.bean.common.TipoDocumentacion;
-import es.scsp.bean.common.Titular;
-import es.scsp.bean.common.Transmision;
-import es.scsp.bean.common.TransmisionDatos;
-import es.scsp.bean.common.Transmisiones;
+import es.scsp.bean.common.confirmacion.Atributos;
+import es.scsp.bean.common.confirmacion.ConfirmacionPeticion;
+import es.scsp.bean.common.confirmacion.Estado;
+import es.scsp.bean.common.peticion.Consentimiento;
+import es.scsp.bean.common.peticion.DatosGenericos;
+import es.scsp.bean.common.peticion.Emisor;
+import es.scsp.bean.common.peticion.Peticion;
+import es.scsp.bean.common.peticion.Solicitante;
+import es.scsp.bean.common.peticion.TipoDocumentacion;
+import es.scsp.bean.common.peticion.Titular;
+import es.scsp.bean.common.peticion.Transmision;
+import es.scsp.bean.common.respuesta.Respuesta;
+import es.scsp.bean.common.respuesta.TransmisionDatos;
+import es.scsp.bean.common.respuesta.Transmisiones;
 import es.scsp.client.ClienteUnico;
 import es.scsp.common.exceptions.ScspException;
 import es.scsp.common.utils.DateUtils;
@@ -123,33 +123,33 @@ public class ClienteUnicoMock extends ClienteUnico {
 
         Respuesta respuesta = new Respuesta();
         Transmisiones transmisiones = new Transmisiones();
-        transmisiones.setTransmisionDatos(new java.util.ArrayList<TransmisionDatos>());
+        transmisiones.getTransmisionDatos().clear();
 
         // Crear una transmissió mock bàsica
         TransmisionDatos transmisionDatos = new TransmisionDatos();
 
         // Configurar dades genèriques
-        DatosGenericos datosGenericos = new DatosGenericos();
+        es.scsp.bean.common.respuesta.DatosGenericos datosGenericos = new es.scsp.bean.common.respuesta.DatosGenericos();
 
-        Transmision transmision = new Transmision();
+        es.scsp.bean.common.respuesta.Transmision transmision = new es.scsp.bean.common.respuesta.Transmision();
         transmision.setIdSolicitud(idPeticion + "00001");
         transmision.setCodigoCertificado("MOCK_SERVICE");
         transmision.setFechaGeneracion(DateUtils.parseISO8601(new Date()));
         datosGenericos.setTransmision(transmision);
 
-        Emisor emisor = new Emisor();
+        es.scsp.bean.common.respuesta.Emisor emisor = new es.scsp.bean.common.respuesta.Emisor();
         emisor.setNifEmisor("B07167448");
         emisor.setNombreEmisor("Mock Emisor");
         datosGenericos.setEmisor(emisor);
 
-        Solicitante solicitante = new Solicitante();
+        es.scsp.bean.common.respuesta.Solicitante solicitante = new es.scsp.bean.common.respuesta.Solicitante();
         solicitante.setIdentificadorSolicitante("B07167448");
         solicitante.setNombreSolicitante("Mock Solicitant");
-        solicitante.setConsentimiento(Consentimiento.Si);
+        solicitante.setConsentimiento(es.scsp.bean.common.respuesta.Consentimiento.SI);
         datosGenericos.setSolicitante(solicitante);
 
-        Titular titular = new Titular();
-        titular.setTipoDocumentacion(TipoDocumentacion.NIF);
+        es.scsp.bean.common.respuesta.Titular titular = new es.scsp.bean.common.respuesta.Titular();
+        titular.setTipoDocumentacion(es.scsp.bean.common.respuesta.TipoDocumentacion.NIF);
         titular.setDocumentacion("12345678Z");
         titular.setNombreCompleto("Mock Titular");
         datosGenericos.setTitular(titular);
@@ -161,11 +161,11 @@ public class ClienteUnicoMock extends ClienteUnico {
         respuesta.setTransmisiones(transmisiones);
 
         // Atributs de la resposta
-        Atributos atributos = new Atributos();
+        es.scsp.bean.common.respuesta.Atributos atributos = new es.scsp.bean.common.respuesta.Atributos();
         atributos.setIdPeticion(idPeticion);
-        atributos.setNumElementos("1");
+        atributos.setNumElementos(1);
         atributos.setTimeStamp(DateUtils.parseISO8601(new Date()));
-        atributos.setEstado(new Estado());
+        atributos.setEstado(new es.scsp.bean.common.respuesta.Estado());
         atributos.getEstado().setCodigoEstado("0003");
         atributos.getEstado().setLiteralError("OK");
         respuesta.setAtributos(atributos);

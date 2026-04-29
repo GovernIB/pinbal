@@ -99,7 +99,7 @@ import es.caib.pinbal.scsp.ScspHelper;
 import es.caib.pinbal.scsp.Solicitud;
 import es.caib.plugins.arxiu.api.Expedient;
 import es.caib.plugins.arxiu.api.ExpedientEstat;
-import es.scsp.bean.common.ConfirmacionPeticion;
+import es.scsp.bean.common.confirmacion.ConfirmacionPeticion;
 import es.scsp.common.domain.core.EmisorCertificado;
 import es.scsp.common.domain.core.Servicio;
 import lombok.extern.slf4j.Slf4j;

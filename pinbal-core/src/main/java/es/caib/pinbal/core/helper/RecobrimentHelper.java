@@ -23,17 +23,17 @@ import es.caib.pinbal.core.service.exception.ProcedimentNotFoundException;
 import es.caib.pinbal.core.service.exception.ProcedimentServeiNotFoundException;
 import es.caib.pinbal.core.service.exception.ServeiNotAllowedException;
 import es.caib.pinbal.scsp.ScspHelper;
-import es.scsp.bean.common.Atributos;
-import es.scsp.bean.common.ConfirmacionPeticion;
-import es.scsp.bean.common.DatosGenericos;
-import es.scsp.bean.common.Estado;
-import es.scsp.bean.common.Peticion;
-import es.scsp.bean.common.Respuesta;
-import es.scsp.bean.common.Solicitante;
-import es.scsp.bean.common.SolicitudTransmision;
-import es.scsp.bean.common.Titular;
-import es.scsp.bean.common.Transmision;
-import es.scsp.bean.common.TransmisionDatos;
+import es.scsp.bean.common.confirmacion.Atributos;
+import es.scsp.bean.common.confirmacion.ConfirmacionPeticion;
+import es.scsp.bean.common.confirmacion.Estado;
+import es.scsp.bean.common.peticion.DatosGenericos;
+import es.scsp.bean.common.peticion.Peticion;
+import es.scsp.bean.common.peticion.Solicitante;
+import es.scsp.bean.common.peticion.SolicitudTransmision;
+import es.scsp.bean.common.peticion.Titular;
+import es.scsp.bean.common.peticion.Transmision;
+import es.scsp.bean.common.respuesta.Respuesta;
+import es.scsp.bean.common.respuesta.TransmisionDatos;
 import es.scsp.common.exceptions.ScspException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.exception.ExceptionUtils;
@@ -200,7 +200,7 @@ public class RecobrimentHelper implements ApplicationContextAware, MessageSource
 			estado.setTiempoEstimadoRespuesta(atributs.getEstatTempsEstimatResposta());
 			atributos.setEstado(estado);
 			atributos.setIdPeticion(atributs.getPeticioId());
-			atributos.setNumElementos(atributs.getNumElements());
+			atributos.setNumElementos(Integer.parseInt(atributs.getNumElements()));
 			atributos.setTimeStamp(atributs.getTimestamp());
 			confirmacionPeticion.setAtributos(atributos);
             SubsistemaMetricHelper.addSuccessOperation("CRA", codigoCertificado, System.currentTimeMillis() - startTime);
@@ -369,10 +369,10 @@ public class RecobrimentHelper implements ApplicationContextAware, MessageSource
 			if (solicitante.getConsentimiento() == null)
 				throw getErrorValidacio(ERROR_CODE_SCSP_VALIDATION, "No s'ha trobat l'element peticion.solicitudes.solicitudTransmision.datosGenericos.solicitante.consentimiento (solicitudIndex=" + index + ")");
 			switch (solicitante.getConsentimiento()) {
-			case Si:
+			case SI:
 				solicitud.setConsentiment(Consentiment.Si);
 				break;
-			case Ley:
+			case LEY:
 				solicitud.setConsentiment(Consentiment.Llei);
 				break;
 			default:
@@ -456,13 +456,13 @@ public class RecobrimentHelper implements ApplicationContextAware, MessageSource
 					case NIF:
 						solicitud.setTitularDocumentTipus(DocumentTipus.NIF);
 						break;
-					case Pasaporte:
+                    case PASAPORTE:
 						solicitud.setTitularDocumentTipus(DocumentTipus.Passaport);
 						break;
-					case NumeroIdentificacion:
+                    case NUMERO_IDENTIFICACION:
 						solicitud.setTitularDocumentTipus(DocumentTipus.NombreIdentificacio);
 						break;
-					case Otros:
+                    case OTROS:
 						solicitud.setTitularDocumentTipus(DocumentTipus.Altres);
 						break;
 					default:
@@ -546,8 +546,7 @@ public class RecobrimentHelper implements ApplicationContextAware, MessageSource
 		}
 	}
 
-	private Respuesta recuperarRespuestaScsp(
-			String peticionId) throws TransformerException, ParserConfigurationException, SAXException, IOException {
+	private Respuesta recuperarRespuestaScsp(String peticionId) throws TransformerException, ParserConfigurationException, SAXException, IOException, ScspException {
 		Respuesta respuesta = getScspHelper().recuperarRespuestaScsp(peticionId);
 		boolean processar = getPropertyDatosEspecificosProcessar();
 		if (processar) {
@@ -641,5 +640,4 @@ public class RecobrimentHelper implements ApplicationContextAware, MessageSource
 			solicitud.setAplicacioGuardaJustificantArxiu(aplicacioGuardaJustificantArxiu);
 		}
 	}
-
 }

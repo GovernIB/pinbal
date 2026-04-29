@@ -4,7 +4,7 @@ import es.caib.pinbal.core.helper.ConfigHelper;
 import es.caib.pinbal.core.helper.RecobrimentHelper;
 import es.caib.pinbal.core.repository.ConsultaRepository;
 import es.caib.pinbal.core.repository.HistoricConsultaRepository;
-import es.scsp.bean.common.*;
+import es.scsp.bean.common.peticion.*;
 import es.scsp.common.exceptions.ScspException;
 import org.junit.Before;
 import org.junit.Rule;
@@ -50,21 +50,21 @@ public class RecobrimentHelperTest {
         Funcionario funcionari = new Funcionario();
         funcionari.setNombreCompletoFuncionario("Nom Complet Funcionari");
         funcionari.setNifFuncionario("57610215E");
-        funcionari.setSeudonimo("Funcionari");
+        funcionari.setSeudonimoEmpleadoPublico("Funcionari");
 
         // Procediment
         Procedimiento procediment = new Procedimiento();
         procediment.setNombreProcedimiento("Procediment");
         procediment.setCodProcedimiento("COD_PROC");
         procediment.setAutomatizado("No");
-        procediment.setClaseTramite((short)0);
+        procediment.setClaseTramite(0);
 
         // Solicitant
         Solicitante solicitant = new Solicitante();
         solicitant.setIdentificadorSolicitante("32549495X");
         solicitant.setNombreSolicitante("Nom Sol.licitant");
         solicitant.setFinalidad("Finalitat");
-        solicitant.setConsentimiento(Consentimiento.Si);
+        solicitant.setConsentimiento(Consentimiento.SI);
         solicitant.setFuncionario(funcionari);
         solicitant.setUnidadTramitadora("Unitat tramitadora");
         solicitant.setCodigoUnidadTramitadora("UT");
@@ -73,11 +73,10 @@ public class RecobrimentHelperTest {
         // Atributs
         Atributos atributs = new Atributos();
         atributs.setIdPeticion("000000001");
-        atributs.setNumElementos("1");
+        atributs.setNumElementos(1);
         atributs.setTimeStamp(String.valueOf(System.currentTimeMillis()));
         atributs.setCodigoCertificado("COD_CER");
 //        atributs.setEstado();
-        atributs.setSolicitante(solicitant);
         peticio.setAtributos(atributs);
 
 
@@ -118,10 +117,9 @@ public class RecobrimentHelperTest {
         SolicitudTransmision solicitudTransmisio = new SolicitudTransmision();
         solicitudTransmisio.setDatosGenericos(datosGenericos);
         solicitudTransmisio.setDatosEspecificos(datosEspecificos);
-        solicitudTransmisio.setId("000001");
 
         solicitudsTransmissio.add(solicitudTransmisio);
-        solicituds.setSolicitudTransmision(solicitudsTransmissio);
+        solicituds.getSolicitudTransmision().addAll(solicitudsTransmissio);
         peticio.setSolicitudes(solicituds);
     }
 
@@ -207,7 +205,12 @@ public class RecobrimentHelperTest {
         exceptionRule.expect(ScspException.class);
         exceptionRule.expectMessage(MSG_ERROR_SOL_TRANS_NULL);
 
-        peticio.getSolicitudes().setSolicitudTransmision(null);
+        peticio.setSolicitudes(new Solicitudes() {
+            @Override
+            public java.util.List<SolicitudTransmision> getSolicitudTransmision() {
+                return null;
+            }
+        });
         recobrimentHelper.validarIObtenirSolicituds(peticio, 1);
     }
 

@@ -7,9 +7,9 @@ import javax.jws.WebService;
 
 import org.springframework.security.access.prepost.PreAuthorize;
 
-import es.scsp.bean.common.ConfirmacionPeticion;
-import es.scsp.bean.common.Peticion;
-import es.scsp.bean.common.Respuesta;
+import es.scsp.bean.common.confirmacion.ConfirmacionPeticion;
+import es.scsp.bean.common.peticion.Peticion;
+import es.scsp.bean.common.respuesta.Respuesta;
 import es.scsp.common.exceptions.ScspException;
 
 /**

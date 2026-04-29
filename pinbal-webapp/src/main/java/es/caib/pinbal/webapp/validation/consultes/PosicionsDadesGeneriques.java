@@ -10,10 +10,11 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class PosicionsDadesGeneriques {
-    private int posicioExpedient = -1;
-    private int posicioTitularDocumentTipus = -1;
-    private int posiciotitularDocumentNumero = -1;
-    private int posicioTitularNom = -1;
+    @Builder.Default private int posicioTipusDocument = -1;
+    @Builder.Default private int posicioExpedient = -1;
+    @Builder.Default private int posicioTitularDocumentTipus = -1;
+    @Builder.Default private int posiciotitularDocumentNumero = -1;
+    @Builder.Default private int posicioTitularNom = -1;
     @Builder.Default private int posicioTitularLlinatge1 = -1;
     @Builder.Default private int posicioTitularLlinatge2 = -1;
     @Builder.Default private int posicioTitularNomComplet = -1;

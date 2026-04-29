@@ -15,19 +15,19 @@ import org.springframework.context.ApplicationContext;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import es.scsp.bean.common.Atributos;
-import es.scsp.bean.common.Consentimiento;
-import es.scsp.bean.common.DatosGenericos;
-import es.scsp.bean.common.Emisor;
-import es.scsp.bean.common.Funcionario;
-import es.scsp.bean.common.Peticion;
-import es.scsp.bean.common.Respuesta;
-import es.scsp.bean.common.Solicitante;
-import es.scsp.bean.common.SolicitudTransmision;
-import es.scsp.bean.common.Solicitudes;
-import es.scsp.bean.common.TipoDocumentacion;
-import es.scsp.bean.common.Titular;
-import es.scsp.bean.common.Transmision;
+import es.scsp.bean.common.peticion.Atributos;
+import es.scsp.bean.common.peticion.Consentimiento;
+import es.scsp.bean.common.peticion.DatosGenericos;
+import es.scsp.bean.common.peticion.Emisor;
+import es.scsp.bean.common.peticion.Funcionario;
+import es.scsp.bean.common.peticion.Peticion;
+import es.scsp.bean.common.peticion.Solicitante;
+import es.scsp.bean.common.peticion.SolicitudTransmision;
+import es.scsp.bean.common.peticion.Solicitudes;
+import es.scsp.bean.common.peticion.TipoDocumentacion;
+import es.scsp.bean.common.peticion.Titular;
+import es.scsp.bean.common.peticion.Transmision;
+import es.scsp.bean.common.respuesta.Respuesta;
 import es.scsp.client.ClienteUnico;
 import es.scsp.common.dao.EmisorCertificadoDao;
 import es.scsp.common.dao.ServicioDao;
@@ -71,7 +71,7 @@ public class CertificatResidencia {
 			String timeStamp = DateUtils.parseISO8601(new Date());
 			peticion.getAtributos().setTimeStamp(timeStamp);
 			peticion.setSolicitudes(new Solicitudes());
-			peticion.getSolicitudes().setSolicitudTransmision(
+			peticion.getSolicitudes().getSolicitudTransmision().addAll(
 					new ArrayList<SolicitudTransmision>());
 			SolicitudTransmision st = new SolicitudTransmision();
 			DatosGenericos datosGenericos = new DatosGenericos();
@@ -86,7 +86,7 @@ public class CertificatResidencia {
 			solicitante.setIdentificadorSolicitante(solicitanteCif);
 			solicitante.setNombreSolicitante(solicitanteNombre);
 			solicitante.setFinalidad(procedimentNom);
-			solicitante.setConsentimiento(Consentimiento.Si);
+			solicitante.setConsentimiento(Consentimiento.SI);
 			solicitante.setFuncionario(new Funcionario());
 			solicitante.getFuncionario().setNombreCompletoFuncionario(funcionarioNombre);
 			solicitante.getFuncionario().setNifFuncionario(funcionarioNif);
@@ -101,8 +101,7 @@ public class CertificatResidencia {
 			datosGenericos.getTransmision().setIdTransmision(idPeticion);
 			peticion.getSolicitudes().getSolicitudTransmision().add(st);
 			peticion.getAtributos().setNumElementos(
-					String.valueOf(
-							peticion.getSolicitudes().getSolicitudTransmision().size()));
+					peticion.getSolicitudes().getSolicitudTransmision().size());
 			Respuesta respuesta = clienteUnico.realizaPeticionSincrona(peticion);
 			ByteArrayOutputStream baos = clienteUnico.generaJustificanteTransmision(
 					respuesta.getTransmisiones().getTransmisionDatos().get(0),

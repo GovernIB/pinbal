@@ -72,23 +72,23 @@ import es.caib.pinbal.core.service.exception.ServeiRespostaNotFoundException;
 import es.caib.pinbal.scsp.ScspHelper;
 import es.caib.pinbal.scsp.XmlHelper;
 import es.caib.pinbal.scsp.tree.Tree;
-import es.scsp.bean.common.Atributos;
-import es.scsp.bean.common.ConfirmacionPeticion;
-import es.scsp.bean.common.Consentimiento;
-import es.scsp.bean.common.DatosGenericos;
-import es.scsp.bean.common.Emisor;
-import es.scsp.bean.common.Estado;
-import es.scsp.bean.common.Funcionario;
-import es.scsp.bean.common.Peticion;
-import es.scsp.bean.common.Procedimiento;
-import es.scsp.bean.common.Respuesta;
-import es.scsp.bean.common.Solicitante;
-import es.scsp.bean.common.SolicitudTransmision;
-import es.scsp.bean.common.Solicitudes;
-import es.scsp.bean.common.TipoDocumentacion;
-import es.scsp.bean.common.Titular;
-import es.scsp.bean.common.Transmision;
-import es.scsp.bean.common.TransmisionDatos;
+import es.scsp.bean.common.confirmacion.ConfirmacionPeticion;
+import es.scsp.bean.common.peticion.Atributos;
+import es.scsp.bean.common.peticion.Consentimiento;
+import es.scsp.bean.common.peticion.DatosGenericos;
+import es.scsp.bean.common.peticion.Emisor;
+import es.scsp.bean.common.peticion.Estado;
+import es.scsp.bean.common.peticion.Funcionario;
+import es.scsp.bean.common.peticion.Peticion;
+import es.scsp.bean.common.peticion.Procedimiento;
+import es.scsp.bean.common.peticion.Solicitante;
+import es.scsp.bean.common.peticion.SolicitudTransmision;
+import es.scsp.bean.common.peticion.Solicitudes;
+import es.scsp.bean.common.peticion.TipoDocumentacion;
+import es.scsp.bean.common.peticion.Titular;
+import es.scsp.bean.common.peticion.Transmision;
+import es.scsp.bean.common.respuesta.Respuesta;
+import es.scsp.bean.common.respuesta.TransmisionDatos;
 import es.scsp.common.exceptions.ScspException;
 import es.scsp.common.utils.DateUtils;
 import lombok.extern.slf4j.Slf4j;
@@ -319,14 +319,14 @@ public class RecobrimentServiceImpl implements RecobrimentService, ApplicationCo
             if (scspPeticion.getAtributos() != null) {
                 Atributos atributos = new Atributos();
                 atributos.setIdPeticion(scspPeticion.getAtributos().getIdPeticion());
-                atributos.setNumElementos(scspPeticion.getAtributos().getNumElementos());
+                atributos.setNumElementos(Integer.parseInt(scspPeticion.getAtributos().getNumElementos()));
                 atributos.setTimeStamp(scspPeticion.getAtributos().getTimeStamp());
                 atributos.setCodigoCertificado(scspPeticion.getAtributos().getCodigoCertificado());
                 if (scspPeticion.getAtributos().getEstado() != null) {
                     Estado estado = new Estado();
                     estado.setCodigoEstado(scspPeticion.getAtributos().getEstado().getCodigoEstado());
                     estado.setLiteralError(scspPeticion.getAtributos().getEstado().getLiteralError());
-                    estado.setLiteralErrorSec(scspPeticion.getAtributos().getEstado().getLiteralErrorSec());
+                    estado.setCodigoEstadoSecundario(scspPeticion.getAtributos().getEstado().getCodigoEstadoSecundario());
                     estado.setTiempoEstimadoRespuesta(scspPeticion.getAtributos().getEstado().getTiempoEstimadoRespuesta());
                     atributos.setEstado(estado);
                 }
@@ -339,7 +339,6 @@ public class RecobrimentServiceImpl implements RecobrimentService, ApplicationCo
                 String timeStamp = DateUtils.parseISO8601(new Date());
                 for (ScspSolicitud solicitud : scspPeticion.getSolicitudes()) {
                     SolicitudTransmision solicitudTransmision = new SolicitudTransmision();
-                    solicitudTransmision.setId(solicitud.getId());
                     if (solicitud.getDatosGenericos() != null) {
                         DatosGenericos datosGenericos = new DatosGenericos();
                         if (solicitud.getDatosGenericos().getEmisor() != null) {
@@ -364,8 +363,6 @@ public class RecobrimentServiceImpl implements RecobrimentService, ApplicationCo
                                         solicitud.getDatosGenericos().getSolicitante().getFuncionario().getNombreCompletoFuncionario());
                                 funcionario.setNifFuncionario(
                                         solicitud.getDatosGenericos().getSolicitante().getFuncionario().getNifFuncionario());
-                                funcionario.setSeudonimo(
-                                        solicitud.getDatosGenericos().getSolicitante().getFuncionario().getSeudonimo());
                                 solicitante.setFuncionario(funcionario);
                             }
                             solicitante.setUnidadTramitadora(
@@ -381,10 +378,10 @@ public class RecobrimentServiceImpl implements RecobrimentService, ApplicationCo
                             solicitante.setFinalidad(
                                     solicitud.getDatosGenericos().getSolicitante().getFinalidad());
                             if (ScspConsentimiento.Si.equals(solicitud.getDatosGenericos().getSolicitante().getConsentimiento())) {
-                                solicitante.setConsentimiento(Consentimiento.Si);
+                                solicitante.setConsentimiento(Consentimiento.SI);
                             }
                             if (ScspConsentimiento.Ley.equals(solicitud.getDatosGenericos().getSolicitante().getConsentimiento())) {
-                                solicitante.setConsentimiento(Consentimiento.Ley);
+                                solicitante.setConsentimiento(Consentimiento.LEY);
                             }
                             datosGenericos.setSolicitante(solicitante);
                         }
@@ -406,13 +403,13 @@ public class RecobrimentServiceImpl implements RecobrimentService, ApplicationCo
                                 titular.setTipoDocumentacion(TipoDocumentacion.NIF);
                             }
                             if (ScspTipoDocumentacion.Pasaporte.equals(solicitud.getDatosGenericos().getTitular().getTipoDocumentacion())) {
-                                titular.setTipoDocumentacion(TipoDocumentacion.Pasaporte);
+                                titular.setTipoDocumentacion(TipoDocumentacion.PASAPORTE);
                             }
                             if (ScspTipoDocumentacion.NumeroIdentificacion.equals(solicitud.getDatosGenericos().getTitular().getTipoDocumentacion())) {
-                                titular.setTipoDocumentacion(TipoDocumentacion.NumeroIdentificacion);
+                                titular.setTipoDocumentacion(TipoDocumentacion.NUMERO_IDENTIFICACION);
                             }
                             if (ScspTipoDocumentacion.Otros.equals(solicitud.getDatosGenericos().getTitular().getTipoDocumentacion())) {
-                                titular.setTipoDocumentacion(TipoDocumentacion.Otros);
+                                titular.setTipoDocumentacion(TipoDocumentacion.OTROS);
                             }
                             titular.setDocumentacion(solicitud.getDatosGenericos().getTitular().getDocumentacion());
                             titular.setNombreCompleto(solicitud.getDatosGenericos().getTitular().getNombreCompleto());
@@ -445,7 +442,7 @@ public class RecobrimentServiceImpl implements RecobrimentService, ApplicationCo
                     solicitudesTransmision.add(solicitudTransmision);
                     index++;
                 }
-                solicitudes.setSolicitudTransmision(solicitudesTransmision);
+                solicitudes.getSolicitudTransmision().addAll(solicitudesTransmision);
                 peticion.setSolicitudes(solicitudes);
             }
             return peticion;
@@ -460,14 +457,14 @@ public class RecobrimentServiceImpl implements RecobrimentService, ApplicationCo
             if (respuesta.getAtributos() != null) {
                 ScspAtributos atributos = new ScspAtributos();
                 atributos.setIdPeticion(respuesta.getAtributos().getIdPeticion());
-                atributos.setNumElementos(respuesta.getAtributos().getNumElementos());
+                atributos.setNumElementos(String.valueOf(respuesta.getAtributos().getNumElementos()));
                 atributos.setTimeStamp(respuesta.getAtributos().getTimeStamp());
                 atributos.setCodigoCertificado(respuesta.getAtributos().getCodigoCertificado());
                 if (respuesta.getAtributos().getEstado() != null) {
                     ScspEstado estado = new ScspEstado();
                     estado.setCodigoEstado(respuesta.getAtributos().getEstado().getCodigoEstado());
                     estado.setLiteralError(respuesta.getAtributos().getEstado().getLiteralError());
-                    estado.setLiteralErrorSec(respuesta.getAtributos().getEstado().getLiteralErrorSec());
+                    estado.setLiteralErrorSec(respuesta.getAtributos().getEstado().getLiteralErrorSecundario());
                     estado.setTiempoEstimadoRespuesta(respuesta.getAtributos().getEstado().getTiempoEstimadoRespuesta());
                     atributos.setEstado(estado);
                 }
@@ -501,8 +498,6 @@ public class RecobrimentServiceImpl implements RecobrimentService, ApplicationCo
                                         transmisionDatos.getDatosGenericos().getSolicitante().getFuncionario().getNombreCompletoFuncionario());
                                 funcionario.setNifFuncionario(
                                         transmisionDatos.getDatosGenericos().getSolicitante().getFuncionario().getNifFuncionario());
-                                funcionario.setSeudonimo(
-                                        transmisionDatos.getDatosGenericos().getSolicitante().getFuncionario().getSeudonimo());
                                 solicitante.setFuncionario(funcionario);
                             }
                             solicitante.setUnidadTramitadora(
@@ -517,10 +512,10 @@ public class RecobrimentServiceImpl implements RecobrimentService, ApplicationCo
                                     transmisionDatos.getDatosGenericos().getSolicitante().getIdExpediente());
                             solicitante.setFinalidad(
                                     transmisionDatos.getDatosGenericos().getSolicitante().getFinalidad());
-                            if (Consentimiento.Si.equals(transmisionDatos.getDatosGenericos().getSolicitante().getConsentimiento())) {
+                            if (Consentimiento.SI.equals(transmisionDatos.getDatosGenericos().getSolicitante().getConsentimiento())) {
                                 solicitante.setConsentimiento(ScspConsentimiento.Si);
                             }
-                            if (Consentimiento.Ley.equals(transmisionDatos.getDatosGenericos().getSolicitante().getConsentimiento())) {
+                            if (Consentimiento.LEY.equals(transmisionDatos.getDatosGenericos().getSolicitante().getConsentimiento())) {
                                 solicitante.setConsentimiento(ScspConsentimiento.Ley);
                             }
                             datosGenericos.setSolicitante(solicitante);
@@ -542,13 +537,13 @@ public class RecobrimentServiceImpl implements RecobrimentService, ApplicationCo
                             if (TipoDocumentacion.NIF.equals(transmisionDatos.getDatosGenericos().getTitular().getTipoDocumentacion())) {
                                 titular.setTipoDocumentacion(ScspTipoDocumentacion.NIF);
                             }
-                            if (TipoDocumentacion.Pasaporte.equals(transmisionDatos.getDatosGenericos().getTitular().getTipoDocumentacion())) {
+                            if (TipoDocumentacion.PASAPORTE.equals(transmisionDatos.getDatosGenericos().getTitular().getTipoDocumentacion())) {
                                 titular.setTipoDocumentacion(ScspTipoDocumentacion.Pasaporte);
                             }
-                            if (TipoDocumentacion.NumeroIdentificacion.equals(transmisionDatos.getDatosGenericos().getTitular().getTipoDocumentacion())) {
+                            if (TipoDocumentacion.NIF.equals(transmisionDatos.getDatosGenericos().getTitular().getTipoDocumentacion())) {
                                 titular.setTipoDocumentacion(ScspTipoDocumentacion.NumeroIdentificacion);
                             }
-                            if (TipoDocumentacion.Otros.equals(transmisionDatos.getDatosGenericos().getTitular().getTipoDocumentacion())) {
+                            if (TipoDocumentacion.NIF.equals(transmisionDatos.getDatosGenericos().getTitular().getTipoDocumentacion())) {
                                 titular.setTipoDocumentacion(ScspTipoDocumentacion.Otros);
                             }
                             titular.setDocumentacion(
@@ -599,14 +594,14 @@ public class RecobrimentServiceImpl implements RecobrimentService, ApplicationCo
             if (confirmacionPeticion.getAtributos() != null) {
                 ScspAtributos atributos = new ScspAtributos();
                 atributos.setIdPeticion(confirmacionPeticion.getAtributos().getIdPeticion());
-                atributos.setNumElementos(confirmacionPeticion.getAtributos().getNumElementos());
+                atributos.setNumElementos(String.valueOf(confirmacionPeticion.getAtributos().getNumElementos()));
                 atributos.setTimeStamp(confirmacionPeticion.getAtributos().getTimeStamp());
                 atributos.setCodigoCertificado(confirmacionPeticion.getAtributos().getCodigoCertificado());
                 if (confirmacionPeticion.getAtributos().getEstado() != null) {
                     ScspEstado estado = new ScspEstado();
                     estado.setCodigoEstado(confirmacionPeticion.getAtributos().getEstado().getCodigoEstado());
                     estado.setLiteralError(confirmacionPeticion.getAtributos().getEstado().getLiteralError());
-                    estado.setLiteralErrorSec(confirmacionPeticion.getAtributos().getEstado().getLiteralErrorSec());
+                    estado.setLiteralErrorSec(confirmacionPeticion.getAtributos().getEstado().getCodigoEstadoSecundario());
                     estado.setTiempoEstimadoRespuesta(confirmacionPeticion.getAtributos().getEstado().getTiempoEstimadoRespuesta());
                     atributos.setEstado(estado);
                 }
