@@ -1,47 +1,36 @@
 package es.caib.pinbal.api.interna.controller;
 
-import com.wordnik.swagger.annotations.Api;
-import com.wordnik.swagger.annotations.ApiOperation;
-import com.wordnik.swagger.annotations.ApiParam;
-import com.wordnik.swagger.annotations.ApiResponse;
-import com.wordnik.swagger.annotations.ApiResponses;
-import es.caib.pinbal.api.config.ApiVersion;
+import es.caib.pinbal.api.interna.api.ServeiApi;
 import es.caib.pinbal.client.serveis.Servei;
-import es.caib.pinbal.core.dto.apiresponse.ServiceExecutionException;
-import es.caib.pinbal.core.service.GestioRestService;
-import es.caib.pinbal.core.service.exception.AccessDenegatException;
+import es.caib.pinbal.logic.intf.dto.apiresponse.ServiceExecutionException;
+import es.caib.pinbal.logic.intf.service.GestioRestService;
+import es.caib.pinbal.logic.intf.service.exception.AccessDenegatException;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.Link;
-import org.springframework.hateoas.PagedResources;
-import org.springframework.hateoas.Resource;
-import org.springframework.hateoas.mvc.ControllerLinkBuilder;
+import org.springframework.hateoas.PagedModel;
+import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 @Slf4j
-@Controller
-//@RequestMapping("/entitats/{entitatCodi}")
-@Api(value = "API Serveis v1", description = "Operacions relacionades amb Serveis")
-public class ServeiRestController extends PinbalHalRestController {
+@RestController
+@RequiredArgsConstructor
+@RequestMapping("/serveis")
+public class ServeiRestController extends PinbalHalRestController implements ServeiApi {
 
-    @Autowired
-    private GestioRestService gestioRestService;
+    private final GestioRestService gestioRestService;
 
 
     /**
@@ -51,49 +40,40 @@ public class ServeiRestController extends PinbalHalRestController {
      * @param pageable Informació de paginació.
      * @return Pàgina de procediments.
      */
-    @ApiVersion("1")
-    @RequestMapping(value = "/serveis", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    @ApiOperation(value = "Obtén tots els serveis amb paginació",
-            response = PagedResources.class,
-            notes = "Els paràmetres de pàgina inclouen: " +
-                    "page (número de la pàgina, comença per 0), " +
-                    "size (mida de la pàgina), " +
-                    "sort (ordre, e.g., sort=field1,asc&sort=field2,desc)")
-    @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Serveis obtinguts amb èxit"),
-            @ApiResponse(code = 204, message = "No s'han trobat serveis")
-    })
-    public @ResponseBody ResponseEntity<PagedResources<Resource<Servei>>> getServeis(
-            @ApiParam(value = "Part del codi del servei. Per filtrar (opcional)") @RequestParam(required = false) String codi,
-            @ApiParam(value = "Part de la descripcio del servei. Per filtrar (opcional)") @RequestParam(required = false) String descripcio,
+    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+    @Override
+    // IMPORTANT: Si es modifica aquest endpoint, actualitzar també la documentació OpenAPI definida a la interfície ServeiApi.
+    public ResponseEntity<PagedModel<EntityModel<Servei>>> getServeis(
+            @RequestParam(required = false) String codi,
+            @RequestParam(required = false) String descripcio,
             @PageableDefault(size = 10) Pageable pageable) {
         try {
             Page<Servei> serveisPage = gestioRestService.findServeisPaginat(codi, descripcio, pageable);
 
             if (serveisPage == null || serveisPage.getContent().isEmpty()) {
-                return new ResponseEntity<PagedResources<Resource<Servei>>>(HttpStatus.NO_CONTENT);
+                return new ResponseEntity<PagedModel<EntityModel<Servei>>>(HttpStatus.NO_CONTENT);
             }
 
-            List<Resource<Servei>> serveiResources = new ArrayList<>();
+            List<EntityModel<Servei>> serveiResources = new ArrayList<>();
             for (Servei servei : serveisPage.getContent()) {
-                Resource<Servei> resource = new Resource<>(servei);
-                Link selfLink = ControllerLinkBuilder.linkTo(
-                        ControllerLinkBuilder.methodOn(this.getClass()).getServei(servei.getCodi())
+                EntityModel<Servei> resource = EntityModel.of(servei);
+                Link selfLink = WebMvcLinkBuilder.linkTo(
+                        WebMvcLinkBuilder.methodOn(this.getClass()).getServei(servei.getCodi())
                 ).withSelfRel();
                 resource.add(selfLink);
                 serveiResources.add(resource);
             }
 
-            Link link = ControllerLinkBuilder.linkTo(
-                    ControllerLinkBuilder.methodOn(this.getClass()).getServeis(codi, descripcio, pageable)
+            Link link = WebMvcLinkBuilder.linkTo(
+                    WebMvcLinkBuilder.methodOn(this.getClass()).getServeis(codi, descripcio, pageable)
             ).withSelfRel();
 
-            PagedResources.PageMetadata metadata = new PagedResources.PageMetadata(
+            PagedModel.PageMetadata metadata = new PagedModel.PageMetadata(
                     serveisPage.getSize(), serveisPage.getNumber(), serveisPage.getTotalElements(), serveisPage.getTotalPages()
             );
 
-            PagedResources<Resource<Servei>> pagedResources = new PagedResources<>(serveiResources, metadata, link);
-            return new ResponseEntity<PagedResources<Resource<Servei>>>(pagedResources, HttpStatus.OK);
+            PagedModel<EntityModel<Servei>> pagedResources = PagedModel.of(serveiResources, metadata, link);
+            return new ResponseEntity<PagedModel<EntityModel<Servei>>>(pagedResources, HttpStatus.OK);
 
         } catch (AccessDeniedException ade) {
             throw new AccessDenegatException(Arrays.asList("PBL_WS", "PBL_REPRES"));
@@ -108,29 +88,23 @@ public class ServeiRestController extends PinbalHalRestController {
      * @param serveiCodi Codi del servei.
      * @return Dades del servei.
      */
-    @ApiVersion("1")
-    @RequestMapping(value = "/serveis/{serveiCodi}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    @ApiOperation(value = "Obtén un servei pel seu codi",
-            response = Servei.class,
-            notes = "Aquest mètode retorna els detalls d'un servei específic identificat pel seu codi.")
-    @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Servei obtingut amb èxit"),
-            @ApiResponse(code = 404, message = "Servei no trobat")
-    })
-    public @ResponseBody ResponseEntity<Resource<Servei>> getServei(
-            @ApiParam(value = "Codi del servei", required = true) @PathVariable("serveiCodi") String serveiCodi) {
+    @GetMapping(value = "/{serveiCodi}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @Override
+    // IMPORTANT: Si es modifica aquest endpoint, actualitzar també la documentació OpenAPI definida a la interfície ServeiApi.
+    public ResponseEntity<EntityModel<Servei>> getServei(
+            @PathVariable String serveiCodi) {
         try {
             Servei servei = gestioRestService.getServeiByCodi(serveiCodi);
             if (servei == null) {
-                return new ResponseEntity<Resource<Servei>>(HttpStatus.NOT_FOUND);
+                return new ResponseEntity<EntityModel<Servei>>(HttpStatus.NOT_FOUND);
             }
 
-            Resource<Servei> resource = new Resource<Servei>(servei);
-            Link selfLink = ControllerLinkBuilder.linkTo(
-                    ControllerLinkBuilder.methodOn(this.getClass()).getServei(serveiCodi)
+            EntityModel<Servei> resource = EntityModel.of(servei);
+            Link selfLink = WebMvcLinkBuilder.linkTo(
+                    WebMvcLinkBuilder.methodOn(this.getClass()).getServei(serveiCodi)
             ).withSelfRel();
             resource.add(selfLink);
-            return new ResponseEntity<Resource<Servei>>(resource, HttpStatus.OK);
+            return new ResponseEntity<EntityModel<Servei>>(resource, HttpStatus.OK);
         } catch (AccessDeniedException ade) {
             throw new AccessDenegatException(Arrays.asList("PBL_WS", "PBL_REPRES"));
         } catch (Exception e) {

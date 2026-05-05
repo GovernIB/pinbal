@@ -5,22 +5,21 @@ import es.caib.pinbal.client.usuaris.FiltreUsuaris;
 import es.caib.pinbal.client.usuaris.PermisosServei;
 import es.caib.pinbal.client.usuaris.ProcedimentServei;
 import es.caib.pinbal.client.usuaris.UsuariEntitat;
-import es.caib.pinbal.core.dto.apiresponse.ServiceExecutionException;
-import es.caib.pinbal.core.service.GestioRestService;
-import es.caib.pinbal.core.service.exception.EntitatNotFoundException;
-import es.caib.pinbal.core.service.exception.EntitatUsuariNotFoundException;
-import es.caib.pinbal.core.service.exception.MultiplesUsuarisExternsException;
-import es.caib.pinbal.core.service.exception.ProcedimentServeiNotFoundException;
-import es.caib.pinbal.core.service.exception.UsuariExternNotFoundException;
-import es.caib.pinbal.core.service.exception.UsuariNotFoundException;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import es.caib.pinbal.logic.intf.dto.apiresponse.ServiceExecutionException;
+import es.caib.pinbal.logic.intf.service.GestioRestService;
+import es.caib.pinbal.logic.intf.service.exception.EntitatNotFoundException;
+import es.caib.pinbal.logic.intf.service.exception.EntitatUsuariNotFoundException;
+import es.caib.pinbal.logic.intf.service.exception.MultiplesUsuarisExternsException;
+import es.caib.pinbal.logic.intf.service.exception.ProcedimentServeiNotFoundException;
+import es.caib.pinbal.logic.intf.service.exception.UsuariExternNotFoundException;
+import es.caib.pinbal.logic.intf.service.exception.UsuariNotFoundException;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -39,7 +38,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class UsuariRestControllerTest {
 
     private MockMvc mockMvc;
@@ -50,10 +49,8 @@ public class UsuariRestControllerTest {
     @InjectMocks
     private UsuariRestController usuariRestController;
 
-    @Before
+    @BeforeEach
     public void setUp() {
-        MockitoAnnotations.initMocks(this);
-
         // Configurar el MockMvc amb el convertidor personalitzat
         MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter();
         converter.setObjectMapper(new ObjectMapper());
@@ -173,7 +170,7 @@ public class UsuariRestControllerTest {
         UsuariEntitat user2 = new UsuariEntitat();
         user2.setCodi("testCodi2");
 
-        Pageable pageable = new PageRequest(0, 10);
+        Pageable pageable = PageRequest.of(0, 10);
 
         Mockito.when(gestioRestService.findUsuarisPaginat(Mockito.anyString(), Mockito.any(FiltreUsuaris.class), Mockito.any(Pageable.class)))
                 .thenReturn(new PageImpl<>(Arrays.asList(user1, user2), pageable, 2));
@@ -189,7 +186,7 @@ public class UsuariRestControllerTest {
 
     @Test
     public void getUsuaris_NoContent() throws Exception {
-        Pageable pageable = new PageRequest(0, 10);
+        Pageable pageable = PageRequest.of(0, 10);
 
         Mockito.when(gestioRestService.findUsuarisPaginat(Mockito.anyString(), Mockito.any(FiltreUsuaris.class), Mockito.any(Pageable.class)))
                 .thenReturn(new PageImpl<>(new ArrayList<UsuariEntitat>(), pageable, 0));

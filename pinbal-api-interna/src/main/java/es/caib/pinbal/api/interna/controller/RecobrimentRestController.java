@@ -3,25 +3,25 @@
  */
 package es.caib.pinbal.api.interna.controller;
 
-import com.wordnik.swagger.annotations.ApiOperation;
-import com.wordnik.swagger.annotations.ApiParam;
+import es.caib.pinbal.api.interna.api.RecobrimentApi;
 import es.caib.pinbal.client.recobriment.model.ScspConfirmacionPeticion;
 import es.caib.pinbal.client.recobriment.model.ScspJustificante;
 import es.caib.pinbal.client.recobriment.model.ScspPeticion;
 import es.caib.pinbal.client.recobriment.model.ScspRespuesta;
-import es.caib.pinbal.core.service.RecobrimentService;
-import es.caib.pinbal.core.service.exception.RecobrimentScspException;
-import es.caib.pinbal.core.service.exception.RecobrimentScspValidationException;
-import org.apache.commons.lang.exception.ExceptionUtils;
-import org.springframework.beans.factory.annotation.Autowired;
+import es.caib.pinbal.logic.intf.service.RecobrimentService;
+import es.caib.pinbal.logic.intf.service.exception.RecobrimentScspException;
+import es.caib.pinbal.logic.intf.service.exception.RecobrimentScspValidationException;
+import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.activation.MimetypesFileTypeMap;
 import javax.servlet.http.HttpServletRequest;
@@ -34,81 +34,58 @@ import java.io.IOException;
  * 
  * @author Limit Tecnologies <limit@limit.es>
  */
-@Controller
+@RestController
+@RequiredArgsConstructor
 @RequestMapping("/recobriment")
-public class RecobrimentRestController {
+public class RecobrimentRestController implements RecobrimentApi {
 
+	private final RecobrimentService recobrimentService;
 
-	@ApiOperation(value = "Mètode pe comprovar si la API està activa", hidden = true)
-	@RequestMapping(
-			value= "/test",
-			method = RequestMethod.GET,
-			produces = "application/json")
+	@Override
+	@GetMapping(value= "/test", produces = "application/json")
+	// IMPORTANT: Si es modifica aquest endpoint, actualitzar també la documentació OpenAPI definida a la interfície RecobrimentApi.
 	public ResponseEntity<String> test() {
 		return new ResponseEntity<String>("Test successful", HttpStatus.OK);
 	}
 
-	@Autowired
-	private RecobrimentService recobrimentService;
 
-	@RequestMapping(
-			value= "/peticionSincrona",
-			method = RequestMethod.POST,
-			produces = "application/json")
-	@ApiOperation(
-			value = "Informe de petició síncrona de tipus SCSP",
-			notes = "Retorna una entitat de tipus ScspRespuesta i l'estatus") //, response=ArrayList.class)
+	@Override
+	@PostMapping(value= "/peticionSincrona", produces = "application/json")
+	// IMPORTANT: Si es modifica aquest endpoint, actualitzar també la documentació OpenAPI definida a la interfície RecobrimentApi.
 	public ResponseEntity<ScspRespuesta> peticionSincrona(
 			HttpServletRequest request,
-			@ApiParam(name="peticion", value="Petició de tipus SCSP")
 			@RequestBody @Valid final ScspPeticion peticion) throws RecobrimentScspException {
 		ScspRespuesta respuesta = recobrimentService.peticionSincrona(peticion);
 		return new ResponseEntity<ScspRespuesta>(respuesta, HttpStatus.OK);
 	}
 
-	@RequestMapping(
-			value= "/peticionAsincrona",
-			method = RequestMethod.POST,
-			produces = "application/json")
-	@ApiOperation(
-			value = "Informe de petició asíncrona de tipus SCSP",
-			notes = "Retorna una entitat de tipus ScspConfirmacionPeticion i l'estatus") //, response=ArrayList.class)
+	@Override
+	@PostMapping(value= "/peticionAsincrona", produces = "application/json")
+	// IMPORTANT: Si es modifica aquest endpoint, actualitzar també la documentació OpenAPI definida a la interfície RecobrimentApi.
 	public ResponseEntity<ScspConfirmacionPeticion> peticionAsincrona(
 			HttpServletRequest request,
-			@ApiParam(name="peticion", value="Petició de tipus SCSP")
 			@RequestBody @Valid final ScspPeticion peticion) throws RecobrimentScspException {
 		ScspConfirmacionPeticion respuesta = recobrimentService.peticionAsincrona(peticion);
 		return new ResponseEntity<ScspConfirmacionPeticion>(respuesta, HttpStatus.OK);
 	}
 
-	@RequestMapping(
-			value= "/getRespuesta",
-			method = RequestMethod.GET,
-			produces = "application/json")
-	@ApiOperation(
-			value = "Informe de petició de tipus SCSP",
-			notes = "Retorna una entitat de tipus ScspRespuesta i l'estatus") //, response=ArrayList.class)
+	@GetMapping(value= "/getRespuesta", produces = "application/json")
+	@Override
+	// IMPORTANT: Si es modifica aquest endpoint, actualitzar també la documentació OpenAPI definida a la interfície RecobrimentApi.
 	public ResponseEntity<ScspRespuesta> getRespuesta(
 			HttpServletRequest request,
-			@ApiParam(name="idPeticion", value="Id de petició")
 			@RequestParam final String idPeticion) throws RecobrimentScspException {
 		ScspRespuesta respuesta = recobrimentService.getRespuesta(idPeticion);
 		return new ResponseEntity<ScspRespuesta>(respuesta, HttpStatus.OK);
 	}
 
-	@RequestMapping(
-			value= "/getJustificante",
-			method = RequestMethod.GET,
-			produces = "application/json")
-	@ApiOperation(
-			value = "Justificant de petició de tipus SCSP",
-			notes = "Obté un justificant de la petició, de tipus ScspJustificante") //, response=ArrayList.class)
+	@GetMapping(value= "/getJustificante", produces = "application/json")
+	@Override
+	// IMPORTANT: Si es modifica aquest endpoint, actualitzar també la documentació OpenAPI definida a la interfície RecobrimentApi.
 	public void getJustificante(
 			HttpServletRequest request,
 			HttpServletResponse response,
-			@ApiParam(name="idPeticion", value="Id de petició")
 			@RequestParam final String idPeticion,
-			@ApiParam(name="idSolicitud", value="Id de sol·licitud")
 			@RequestParam final String idSolicitud) throws RecobrimentScspException, IOException {
 		ScspJustificante justificante = recobrimentService.getJustificante(idPeticion, idSolicitud);
 		writeFileToResponse(
@@ -118,19 +95,13 @@ public class RecobrimentRestController {
 				response);
 	}
 
-	@RequestMapping(
-			value= "/getJustificanteImprimible",
-			method = RequestMethod.GET,
-			produces = "application/json")
-	@ApiOperation(
-			value = "Versió imprimible del justificant de petició de tipus SCSP",
-			notes = "Obté la versió imprimible del justificant de la petició, de tipus ScspJustificante") //, response=ArrayList.class)
+	@GetMapping(value= "/getJustificanteImprimible", produces = "application/json")
+	@Override
+	// IMPORTANT: Si es modifica aquest endpoint, actualitzar també la documentació OpenAPI definida a la interfície RecobrimentApi.
 	public void getJustificanteImprimible(
 			HttpServletRequest request,
 			HttpServletResponse response,
-			@ApiParam(name="idPeticion", value="Id de petició")
 			@RequestParam final String idPeticion,
-			@ApiParam(name="idSolicitud", value="Id de sol·licitud")
 			@RequestParam final String idSolicitud) throws RecobrimentScspException, IOException {
 		ScspJustificante justificante = recobrimentService.getJustificanteImprimible(idPeticion, idSolicitud);
 		writeFileToResponse(
@@ -140,42 +111,31 @@ public class RecobrimentRestController {
 				response);
 	}
 
-	@RequestMapping(
-			value= "/getJustificanteCsv",
-			method = RequestMethod.GET,
-			produces = "application/json")
-	@ApiOperation(
-			value = "CSV del justificant de petició de tipus SCSP",
-			notes = "Obté el CSV del justificant de la petició, de tipus ScspJustificante") //, response=ArrayList.class)
+	@GetMapping(value= "/getJustificanteCsv", produces = "application/json")
+	@Override
+	// IMPORTANT: Si es modifica aquest endpoint, actualitzar també la documentació OpenAPI definida a la interfície RecobrimentApi.
 	public ResponseEntity<String> getJustificanteCsv(
 			HttpServletRequest request,
 			HttpServletResponse response,
-			@ApiParam(name="idPeticion", value="Id de petició")
 			@RequestParam final String idPeticion,
-			@ApiParam(name="idSolicitud", value="Id de sol·licitud")
 			@RequestParam final String idSolicitud) throws RecobrimentScspException, IOException {
 		String justificanteCsv = recobrimentService.getJustificanteCsv(idPeticion, idSolicitud);
 		return new ResponseEntity<String>("", HttpStatus.OK);
 	}
 
-	@RequestMapping(
-			value= "/getJustificanteUuId",
-			method = RequestMethod.GET,
-			produces = "application/json")
-	@ApiOperation(
-			value = "Uuid del justificant de petició de tipus SCSP",
-			notes = "Obté l'Uuid del justificant de la petició, de tipus ScspJustificante") //, response=ArrayList.class)
+	@GetMapping(value= "/getJustificanteUuId", produces = "application/json")
+	@Override
+	// IMPORTANT: Si es modifica aquest endpoint, actualitzar també la documentació OpenAPI definida a la interfície RecobrimentApi.
 	public ResponseEntity<String> getJustificanteUuid(
 			HttpServletRequest request,
 			HttpServletResponse response,
-			@ApiParam(name="idPeticion", value="Id de petició")
 			@RequestParam final String idPeticion,
-			@ApiParam(name="idSolicitud", value="Id de sol·licitud")
 			@RequestParam final String idSolicitud) throws RecobrimentScspException, IOException {
 		String justificanteUuid = recobrimentService.getJustificanteUuid(idPeticion, idSolicitud);
 		return new ResponseEntity<String>("", HttpStatus.OK);
 	}
 
+	@Override
 	@ExceptionHandler(Exception.class)
 	public ResponseEntity<ErrorResponse> handleError(
 			HttpServletRequest request,

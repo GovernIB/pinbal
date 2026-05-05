@@ -1,27 +1,26 @@
 package es.caib.pinbal.api.interna.controller.salut.v1;
 
-import com.wordnik.swagger.annotations.*;
+import es.caib.comanda.model.server.monitoring.AppInfo;
+import es.caib.comanda.model.server.monitoring.SalutInfo;
 import es.caib.comanda.ms.salut.helper.MonitorHelper;
-import es.caib.comanda.ms.salut.model.AppInfo;
-import es.caib.comanda.ms.salut.model.SalutInfo;
-import es.caib.pinbal.api.config.ApiVersion;
+import es.caib.pinbal.api.interna.api.SalutApi;
 import es.caib.pinbal.api.interna.controller.PinbalHalRestController;
-import es.caib.pinbal.core.service.SalutService;
+import es.caib.pinbal.logic.intf.service.SalutService;
 import lombok.Builder;
 import lombok.Getter;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.xml.bind.DatatypeConverter;
 import java.io.IOException;
+import java.time.OffsetDateTime;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -29,77 +28,58 @@ import java.util.jar.Attributes;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
 
-@Controller
+@RestController
+@RequiredArgsConstructor
 @RequestMapping("/salut/v1")
-@Api(value = "/salut/v1", description = "Operacions relacionades amb Salut")
-public class SalutRestController extends PinbalHalRestController {
+public class SalutRestController extends PinbalHalRestController implements SalutApi {
 
-    @Autowired
-    private ServletContext servletContext;
-    @Autowired
-    private SalutService salutService;
+    private final ServletContext servletContext;
+    private final SalutService salutService;
 
     private ManifestInfo manifestInfo;
 
-
-    @ApiVersion("1")
-    @ApiOperation(value = "Obté informació de l'aplicació",
-            response = AppInfo.class,
-            notes = "Aquest mètode retorna informació detallada de l'aplicació.",
-            authorizations = @Authorization(value = "basicAuth"),
-            tags = "salut")
-    @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Informació obtinguda amb èxit"),
-            @ApiResponse(code = 404, message = "Informació no trobada")
-    })
-    @RequestMapping(value = "/info", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
+    /**
+     * Si es modifica aquest endpoint, actualitzar també la documentació OpenAPI
+     * definida a la interfície SalutApi.
+     */
+    @Override
+    @GetMapping(value = "/info", produces = MediaType.APPLICATION_JSON_VALUE)
     public AppInfo appInfo(HttpServletRequest request) throws IOException {
         ManifestInfo manifestInfo = getManifestInfo();
-        return AppInfo.builder()
+        return new AppInfo()
                 .codi("PBL")
                 .nom("Pinbal")
-                .data(manifestInfo.getBuildDate())
+                .data(toOffsetDateTime(manifestInfo.getBuildDate()))
                 .versio(manifestInfo.getVersion())
                 .revisio(manifestInfo.getBuildScmRevision())
                 .jdkVersion(resolveJdkVersion(manifestInfo))
                 .versioJboss(MonitorHelper.getApplicationServerInfo())
                 .integracions(salutService.getIntegracions())
                 .subsistemes(salutService.getSubsistemes())
-                .contexts(salutService.getContexts(getBaseUrl(request)))
-                .build();
+                .contexts(salutService.getContexts(getBaseUrl(request)));
     }
 
-    @ApiVersion("1")
-    @ApiOperation(value = "Obté informació de salut de l'aplicació",
-            response = SalutInfo.class,
-            notes = "Aquest mètode retorna informació detallada de salut de l'aplicació.",
-            tags = "salut")
-    @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Informació obtinguda amb èxit"),
-            @ApiResponse(code = 404, message = "Informació no trobada")
-    })
-    @RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
+    /**
+     * Si es modifica aquest endpoint, actualitzar també la documentació OpenAPI
+     * definida a la interfície SalutApi.
+     */
+    @Override
+    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public SalutInfo health(HttpServletRequest request,
                             @RequestParam(required = false) String dataPeriode,
                             @RequestParam(required = false) String dataTotal) throws IOException {
-
         ManifestInfo manifestInfo = getManifestInfo();
         return salutService.checkSalut(manifestInfo.getVersion());
     }
 
     private ManifestInfo getManifestInfo() throws IOException {
-
         if (manifestInfo == null) {
             manifestInfo = buildManifestInfo();
         }
-
         return manifestInfo;
     }
 
     private ManifestInfo buildManifestInfo() throws IOException {
-
         ManifestInfo manifestInfo = ManifestInfo.builder().build();
         Manifest manifest = new Manifest(servletContext.getResourceAsStream("/" + JarFile.MANIFEST_NAME));
         Attributes manifestAtributs = manifest.getMainAttributes();
@@ -125,7 +105,6 @@ public class SalutRestController extends PinbalHalRestController {
     }
 
     public static Date getDate(String isoDate) {
-
         try {
             // Parsejem ISO-8601 simple amb javax.xml.bind DatatypeConverter.
             // Admet formats ISO comuns com "2023-07-21T10:15:30Z" o amb offset.
@@ -158,6 +137,10 @@ public class SalutRestController extends PinbalHalRestController {
         return manifestInfo.getBuildJDK();
     }
 
+    private OffsetDateTime toOffsetDateTime(Date date) {
+        return date != null ? OffsetDateTime.ofInstant(date.toInstant(), java.time.ZoneOffset.UTC) : null;
+    }
+
     @Builder
     @Getter
     public static class ManifestInfo {
@@ -168,5 +151,5 @@ public class SalutRestController extends PinbalHalRestController {
         private final String buildScmBranch;
         private final String buildScmRevision;
     }
-    
+
 }

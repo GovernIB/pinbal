@@ -1,20 +1,17 @@
 package es.caib.pinbal.api.interna.controller.estadistica.v1;
 
-import com.mangofactory.swagger.annotations.ApiIgnore;
-import com.wordnik.swagger.annotations.*;
-import es.caib.comanda.ms.estadistica.model.EstadistiquesInfo;
-import es.caib.comanda.ms.estadistica.model.RegistresEstadistics;
-import es.caib.pinbal.api.config.ApiVersion;
+import es.caib.comanda.model.server.monitoring.EstadistiquesInfo;
+import es.caib.comanda.model.server.monitoring.RegistresEstadistics;
+import es.caib.pinbal.api.interna.api.EstadisticaApi;
 import es.caib.pinbal.api.interna.controller.PinbalHalRestController;
-import es.caib.pinbal.core.service.EstadisticaService;
-import es.caib.pinbal.core.service.exception.InvalidDateFormatException;
-import org.springframework.beans.factory.annotation.Autowired;
+import es.caib.pinbal.logic.intf.service.EstadisticaService;
+import es.caib.pinbal.logic.intf.service.exception.InvalidDateFormatException;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
-import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
@@ -23,99 +20,67 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
-@Controller
+@RestController
+@RequiredArgsConstructor
 @RequestMapping("/estadistiques/v1")
-@Api(value = "/estadistiques/v1", description = "Operacions relacionades amb Estadístiques")
-public class EstadisticaRestController extends PinbalHalRestController {
+public class EstadisticaRestController extends PinbalHalRestController implements EstadisticaApi {
 
-    @Autowired
-    private EstadisticaService estadisticaService;
+    private final EstadisticaService estadisticaService;
 
     private static SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
 
-    @ApiVersion("1")
-    @ApiOperation(value = "Obtén informació de les estadístiques de l'aplicació",
-            response = EstadistiquesInfo.class,
-            notes = "Aquest mètode retorna informació detallada de les estadístiques de l'aplicació.",
-            authorizations = @Authorization(value = "basicAuth"),
-            tags = "estadístiques")
-    @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Informació obtinguda amb èxit"),
-            @ApiResponse(code = 404, message = "Informació no trobada")
-    })
-    @RequestMapping(value = "/info", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
+    /**
+     * Si es modifica aquest endpoint, actualitzar també la documentació OpenAPI
+     * definida a la interfície EstadisticaApi.
+     */
+    @Override
+    @GetMapping(value = "/info", produces = MediaType.APPLICATION_JSON_VALUE)
     public EstadistiquesInfo estadistiquesInfo(HttpServletRequest request) throws IOException {
-
         return estadisticaService.getEstadistiquesInfo();
     }
 
-
-    @ApiVersion("1")
-    @ApiOperation(value = "Obté informació estadística del dia anterior",
-            response = RegistresEstadistics.class,
-            notes = "Aquest mètode retorna informació estadística del dia anterior.",
-            authorizations = @Authorization(value = "basicAuth"),
-            tags = "estadístiques")
-    @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Informació obtinguda amb èxit"),
-            @ApiResponse(code = 404, message = "Informació no trobada")
-    })
-    @RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
+    /**
+     * Si es modifica aquest endpoint, actualitzar també la documentació OpenAPI
+     * definida a la interfície EstadisticaApi.
+     */
+    @Override
+    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public RegistresEstadistics estadistiques(HttpServletRequest request) throws IOException {
-
         return estadisticaService.consultaUltimesEstadistiques();
     }
 
-    @ApiVersion("1")
-    @ApiOperation(value = "Obté informació estadística del dia indicat",
-            response = RegistresEstadistics.class,
-            notes = "Aquest mètode retorna informació estadística del dia indicat a través del paràmetre data.",
-            authorizations = @Authorization(value = "basicAuth"),
-            tags = "estadístiques")
-    @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Informació obtinguda amb èxit"),
-            @ApiResponse(code = 404, message = "Informació no trobada")
-    })
-    @RequestMapping(value = "/of/{data}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
+    /**
+     * Si es modifica aquest endpoint, actualitzar també la documentació OpenAPI
+     * definida a la interfície EstadisticaApi.
+     */
+    @Override
+    @GetMapping(value = "/of/{data}", produces = MediaType.APPLICATION_JSON_VALUE)
     public RegistresEstadistics estadistiques(
             HttpServletRequest request,
-            @ApiParam(value = "Data de la que es volen obtenir les dades estadístiques. El format ha de ser dd-MM-yyyy", required = true)
             @PathVariable String data) throws Exception {
-
         return estadisticaService.consultaEstadistiques(toDate(data));
     }
 
-    @ApiVersion("1")
-    @ApiOperation(value = "Obté informació estadística del dies indicats",
-            response = RegistresEstadistics.class,
-            responseContainer = "List",
-            notes = "Aquest mètode retorna informació estadística del dies indicats, des de la data d'inici (paràmetre dataInici) fins a la data de fi (paràmetre dataFi), ambdós inclosos.",
-            authorizations = @Authorization(value = "basicAuth"),
-            tags = "estadístiques")
-    @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Informació obtinguda amb èxit"),
-            @ApiResponse(code = 404, message = "Informació no trobada")
-    })
-    @RequestMapping(value = "/from/{dataInici}/to/{dataFi}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
+    /**
+     * Si es modifica aquest endpoint, actualitzar també la documentació OpenAPI
+     * definida a la interfície EstadisticaApi.
+     */
+    @Override
+    @GetMapping(value = "/from/{dataInici}/to/{dataFi}", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<RegistresEstadistics> estadistiques(
             HttpServletRequest request,
-            @ApiParam(value = "Data inicial a partir de la qual volen obtenir les dades estadístiques. El format ha de ser dd-MM-yyyy", required = true)
             @PathVariable String dataInici,
-            @ApiParam(value = "Data final fins a la qual volen obtenir les dades estadístiques. El format ha de ser dd-MM-yyyy", required = true)
             @PathVariable String dataFi) throws Exception {
-
         return estadisticaService.consultaEstadistiques(toDate(dataInici), toDate(dataFi));
     }
 
-    @ApiIgnore
-    @RequestMapping(value = "/generar/from/{dataInici}/to/{dataFi}", method = RequestMethod.GET)
-    @ResponseBody
+    /**
+     * Si es modifica aquest endpoint, actualitzar també la documentació OpenAPI
+     * definida a la interfície EstadisticaApi.
+     */
+    @Override
+    @GetMapping(value = "/generar/from/{dataInici}/to/{dataFi}")
     public String generarEstadistiques(HttpServletRequest request, @PathVariable String dataInici, @PathVariable String dataFi) throws Exception {
-
         return estadisticaService.generarEstadistiques(toDate(dataInici), toDate(dataFi));
     }
 
@@ -126,5 +91,5 @@ public class EstadisticaRestController extends PinbalHalRestController {
             throw new InvalidDateFormatException("El format de la data ha de ser dd-MM-yyyy");
         }
     }
-    
+
 }

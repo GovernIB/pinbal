@@ -13,20 +13,19 @@ import es.caib.pinbal.client.recobriment.v2.PeticioRespostaSincrona;
 import es.caib.pinbal.client.recobriment.v2.PeticioSincrona;
 import es.caib.pinbal.client.recobriment.v2.ValorEnum;
 import es.caib.pinbal.client.serveis.ServeiBasic;
-import es.caib.pinbal.core.dto.apiresponse.ServiceExecutionException;
-import es.caib.pinbal.core.service.RecobrimentService;
-import es.caib.pinbal.core.service.exception.AccessDenegatException;
-import es.caib.pinbal.core.service.exception.ConsultaNotFoundException;
-import es.caib.pinbal.core.service.exception.EntitatNotFoundException;
-import es.caib.pinbal.core.service.exception.ProcedimentNotFoundException;
-import es.caib.pinbal.core.service.exception.ServeiNotFoundException;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import es.caib.pinbal.logic.intf.dto.apiresponse.ServiceExecutionException;
+import es.caib.pinbal.logic.intf.service.RecobrimentService;
+import es.caib.pinbal.logic.intf.service.exception.AccessDenegatException;
+import es.caib.pinbal.logic.intf.service.exception.ConsultaNotFoundException;
+import es.caib.pinbal.logic.intf.service.exception.EntitatNotFoundException;
+import es.caib.pinbal.logic.intf.service.exception.ProcedimentNotFoundException;
+import es.caib.pinbal.logic.intf.service.exception.ServeiNotFoundException;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
@@ -47,7 +46,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class RecobrimentRestV2ControllerTest {
 
     private MockMvc mockMvc;
@@ -58,10 +57,8 @@ public class RecobrimentRestV2ControllerTest {
     @InjectMocks
     private RecobrimentRestV2Controller recobrimentRestV2Controller;
 
-    @Before
+    @BeforeEach
     public void setUp() {
-        MockitoAnnotations.initMocks(this);
-
         // Configurar el MockMvc amb el convertidor personalitzat
         MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter();
         converter.setObjectMapper(new ObjectMapper());

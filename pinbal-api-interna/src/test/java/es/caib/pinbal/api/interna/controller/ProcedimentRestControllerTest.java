@@ -5,24 +5,23 @@ import es.caib.pinbal.client.comu.OptionalField;
 import es.caib.pinbal.client.procediments.Procediment;
 import es.caib.pinbal.client.procediments.ProcedimentPatch;
 import es.caib.pinbal.client.serveis.Servei;
-import es.caib.pinbal.core.dto.apiresponse.ServiceExecutionException;
-import es.caib.pinbal.core.service.GestioRestService;
-import es.caib.pinbal.core.service.exception.EntitatNotFoundException;
-import es.caib.pinbal.core.service.exception.ProcedimentNotFoundException;
-import es.caib.pinbal.core.service.exception.ServeiNotFoundException;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import es.caib.pinbal.logic.intf.dto.apiresponse.ServiceExecutionException;
+import es.caib.pinbal.logic.intf.service.GestioRestService;
+import es.caib.pinbal.logic.intf.service.exception.EntitatNotFoundException;
+import es.caib.pinbal.logic.intf.service.exception.ProcedimentNotFoundException;
+import es.caib.pinbal.logic.intf.service.exception.ServeiNotFoundException;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
+import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.Link;
-import org.springframework.hateoas.Resource;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -33,7 +32,6 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.validation.BindingResult;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -44,7 +42,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class ProcedimentRestControllerTest {
 
     private MockMvc mockMvc;
@@ -58,10 +56,8 @@ public class ProcedimentRestControllerTest {
     @InjectMocks
     private ProcedimentRestController procedimentRestController;
 
-    @Before
+    @BeforeEach
     public void setUp() {
-        MockitoAnnotations.initMocks(this);
-
 //        // Configuració manual de MappingJackson2HttpMessageConverter amb Jackson2HalModule
 //        MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter();
 //        ObjectMapper objectMapper = new ObjectMapper();
@@ -104,11 +100,11 @@ public class ProcedimentRestControllerTest {
 
         when(gestioRestService.create(any(Procediment.class))).thenReturn(createdProcediment);
 
-        // Crear Resource del Procediment creat
-//        Resource<Procediment> procedimentResource = new Resource<>(createdProcediment);
-        Resource<Procediment> procedimentResource = new Resource<>(
+        // Crear EntityModel del Procediment creat
+//        EntityModel<Procediment> procedimentResource = EntityModel.of(createdProcediment);
+        EntityModel<Procediment> procedimentResource = EntityModel.of(
                 createdProcediment,
-                Collections.singletonList(new Link("http://localhost/procediments/1", "self")));
+                Link.of("http://localhost/procediments/1", "self"));
 
         // Convertir Resource a JSON per la resposta esperada
         ObjectMapper objectMapper = new ObjectMapper();
@@ -176,12 +172,12 @@ public class ProcedimentRestControllerTest {
 
         when(gestioRestService.update(any(Procediment.class))).thenReturn(updatedProcediment);
 
-        // Create Resource for the updated Procediment
-        Resource<Procediment> procedimentResource = new Resource<>(
+        // Create EntityModel for the updated Procediment
+        EntityModel<Procediment> procedimentResource = EntityModel.of(
                 updatedProcediment,
-                Collections.singletonList(new Link("http://localhost/procediments/1", "self")));
+                Link.of("http://localhost/procediments/1", "self"));
 
-        // Convert Resource to JSON for the expected response
+        // Convert EntityModel to JSON for the expected response
         ObjectMapper objectMapper = new ObjectMapper();
         String expectedJson = objectMapper.writeValueAsString(procedimentResource);
 
@@ -271,9 +267,9 @@ public class ProcedimentRestControllerTest {
 
         when(gestioRestService.updateParcial(any(Long.class), any(ProcedimentPatch.class))).thenReturn(updatedProcediment);
 
-        Resource<Procediment> procedimentResource = new Resource<>(
+        EntityModel<Procediment> procedimentResource = EntityModel.of(
                 updatedProcediment,
-                Collections.singletonList(new Link("http://localhost/procediments/1", "self")));
+                Link.of("http://localhost/procediments/1", "self"));
 
         ObjectMapper objectMapper = new ObjectMapper();
         String expectedJson = objectMapper.writeValueAsString(procedimentResource);
@@ -416,7 +412,7 @@ public class ProcedimentRestControllerTest {
 
         List<Procediment> procedimentList = new ArrayList<>();
         procedimentList.add(Procediment.builder().id(1L).codi("PROC_001").nom("Test Procediment").entitatCodi(entitatCodi).organGestorDir3(organGestor).build());
-        Page<Procediment> procedimentPage = new PageImpl<>(procedimentList, new PageRequest(0, 10), 1);
+        Page<Procediment> procedimentPage = new PageImpl<>(procedimentList, PageRequest.of(0, 10), 1);
 
         when(gestioRestService.findProcedimentsPaginat(eq(entitatCodi), eq(codi), eq(nom), eq(organGestor), any(PageRequest.class))).thenReturn(procedimentPage);
 
@@ -440,9 +436,9 @@ public class ProcedimentRestControllerTest {
         String codi = "";
         String nom = "";
         String organGestor = "";
-        Page<Procediment> procedimentPage = new PageImpl<>(new ArrayList<Procediment>(), new PageRequest(0, 10), 0);
+        Page<Procediment> procedimentPage = new PageImpl<>(new ArrayList<Procediment>(), PageRequest.of(0, 10), 0);
 
-        when(gestioRestService.findProcedimentsPaginat(entitatCodi, codi, nom, organGestor, new PageRequest(0, 10))).thenReturn(procedimentPage);
+        when(gestioRestService.findProcedimentsPaginat(entitatCodi, codi, nom, organGestor, PageRequest.of(0, 10))).thenReturn(procedimentPage);
 
         mockMvc.perform(get("/procediments")
                         .param("entitatCodi", entitatCodi)
@@ -463,7 +459,7 @@ public class ProcedimentRestControllerTest {
         String nom = "";
         String organGestor = "";
 
-        when(gestioRestService.findProcedimentsPaginat(entitatCodi, codi, nom, organGestor, new PageRequest(0, 10))).thenThrow(new EntitatNotFoundException());
+        when(gestioRestService.findProcedimentsPaginat(entitatCodi, codi, nom, organGestor, PageRequest.of(0, 10))).thenThrow(new EntitatNotFoundException());
 
         mockMvc.perform(get("/procediments")
                         .param("entitatCodi", entitatCodi)
@@ -484,7 +480,7 @@ public class ProcedimentRestControllerTest {
         String nom = "";
         String organGestor = "";
 
-        when(gestioRestService.findProcedimentsPaginat(entitatCodi, codi, nom, organGestor, new PageRequest(0, 10))).thenThrow(new ServiceExecutionException("Service error"));
+        when(gestioRestService.findProcedimentsPaginat(entitatCodi, codi, nom, organGestor, PageRequest.of(0, 10))).thenThrow(new ServiceExecutionException("Service error"));
 
         mockMvc.perform(get("/procediments")
                         .param("entitatCodi", entitatCodi)
@@ -567,10 +563,9 @@ public class ProcedimentRestControllerTest {
 
         when(gestioRestService.getProcedimentAmbEntitatICodi(entitatCodi, procedimentCodi)).thenReturn(procediment);
 
-        Resource<Procediment> resource = new Resource<>(
+        EntityModel<Procediment> resource = EntityModel.of(
                 procediment,
-                Collections.singletonList(new Link("http://localhost/procediments/byCodi/" + procedimentCodi + "?entitatCodi=" + entitatCodi, "self"))
-        );
+                Link.of("http://localhost/procediments/byCodi/" + procedimentCodi + "?entitatCodi=" + entitatCodi, "self"));
 
         ObjectMapper objectMapper = new ObjectMapper();
         String expectedJson = objectMapper.writeValueAsString(resource);
@@ -623,7 +618,7 @@ public class ProcedimentRestControllerTest {
         List<Servei> serveiList = new ArrayList<>();
         serveiList.add(Servei.builder().codi("SERV_001").descripcio("Servei 1").build());
 
-        Page<Servei> serveiPage = new PageImpl<>(serveiList, new PageRequest(0, 10), 1);
+        Page<Servei> serveiPage = new PageImpl<>(serveiList, PageRequest.of(0, 10), 1);
 
         when(gestioRestService.findServeisByProcedimentPaginat(eq(procedimentId), any(PageRequest.class))).thenReturn(serveiPage);
 
@@ -641,7 +636,7 @@ public class ProcedimentRestControllerTest {
 
         Long procedimentId = 1L;
 
-        Page<Servei> serveiPage = new PageImpl<>(new ArrayList<Servei>(), new PageRequest(0, 10), 0);
+        Page<Servei> serveiPage = new PageImpl<>(new ArrayList<Servei>(), PageRequest.of(0, 10), 0);
 
         when(gestioRestService.findServeisByProcedimentPaginat(eq(procedimentId), any(PageRequest.class))).thenReturn(serveiPage);
 
@@ -694,7 +689,7 @@ public class ProcedimentRestControllerTest {
         List<Servei> serveiList = new ArrayList<>();
         serveiList.add(Servei.builder().codi("SERV_001").descripcio("Servei 1").build());
 
-        Page<Servei> serveiPage = new PageImpl<>(serveiList, new PageRequest(0, 10), 1);
+        Page<Servei> serveiPage = new PageImpl<>(serveiList, PageRequest.of(0, 10), 1);
 
         when(gestioRestService.getProcedimentAmbEntitatICodi(eq(entitatCodi), eq(procedimentCodi))).thenReturn(procediment);
         when(gestioRestService.findServeisByProcedimentPaginat(eq(procediment.getId()), any(PageRequest.class))).thenReturn(serveiPage);
@@ -719,7 +714,7 @@ public class ProcedimentRestControllerTest {
         String entitatCodi = "ENT_001";
 
         Procediment procediment = Procediment.builder().id(1L).build();
-        Page<Servei> serveiPage = new PageImpl<>(new ArrayList<Servei>(), new PageRequest(0, 10), 0);
+        Page<Servei> serveiPage = new PageImpl<>(new ArrayList<Servei>(), PageRequest.of(0, 10), 0);
 
         when(gestioRestService.getProcedimentAmbEntitatICodi(eq(entitatCodi), eq(procedimentCodi))).thenReturn(procediment);
         when(gestioRestService.findServeisByProcedimentPaginat(eq(procediment.getId()), any(PageRequest.class))).thenReturn(serveiPage);

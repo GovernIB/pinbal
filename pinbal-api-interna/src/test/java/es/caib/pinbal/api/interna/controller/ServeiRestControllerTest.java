@@ -2,14 +2,13 @@ package es.caib.pinbal.api.interna.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import es.caib.pinbal.client.serveis.Servei;
-import es.caib.pinbal.core.service.GestioRestService;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import es.caib.pinbal.logic.intf.service.GestioRestService;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -31,7 +30,7 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class ServeiRestControllerTest {
 
     private MockMvc mockMvc;
@@ -42,10 +41,8 @@ public class ServeiRestControllerTest {
     @InjectMocks
     private ServeiRestController serveiRestController;
 
-    @Before
+    @BeforeEach
     public void setUp() {
-        MockitoAnnotations.initMocks(this);
-
         // Configurar el MockMvc amb el convertidor personalitzat
         MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter();
         converter.setObjectMapper(new ObjectMapper());
@@ -75,7 +72,7 @@ public class ServeiRestControllerTest {
         servei.setCodi("testCodi");
         servei.setDescripcio("testDescripcio");
 
-        Pageable pageable = new PageRequest(0, 10);
+        Pageable pageable = PageRequest.of(0, 10);
         Page<Servei> serveiPage = new PageImpl<>(Collections.singletonList(servei), pageable, 1);
         given(gestioRestService.findServeisPaginat(anyString(), anyString(), any(Pageable.class))).willReturn(serveiPage);
 
@@ -94,7 +91,7 @@ public class ServeiRestControllerTest {
 
     @Test
     public void testGetServeis_noResults() throws Exception {
-        Pageable pageable = new PageRequest(0, 10);
+        Pageable pageable = PageRequest.of(0, 10);
         Page<Servei> serveiPage = new PageImpl<>(new ArrayList<Servei>(), pageable, 0);
         given(gestioRestService.findServeisPaginat(anyString(), anyString(), any(Pageable.class)))
                 .willReturn(serveiPage);

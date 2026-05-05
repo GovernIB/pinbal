@@ -3,7 +3,7 @@
  */
 package es.caib.pinbal.api.interna.controller.recobriment.v2;
 
-import com.mangofactory.swagger.annotations.ApiIgnore;
+import io.swagger.v3.oas.annotations.Hidden;
 import es.caib.pinbal.api.interna.controller.PinbalHalRestController;
 import es.caib.pinbal.api.interna.openapi.interficies.recobriment.v2.RecobrimentRestV2Intf;
 import es.caib.pinbal.client.procediments.ProcedimentBasic;
@@ -19,27 +19,27 @@ import es.caib.pinbal.client.recobriment.v2.PeticioRespostaSincrona;
 import es.caib.pinbal.client.recobriment.v2.PeticioSincrona;
 import es.caib.pinbal.client.recobriment.v2.ValorEnum;
 import es.caib.pinbal.client.serveis.ServeiBasic;
-import es.caib.pinbal.core.dto.apiresponse.ServiceExecutionException;
-import es.caib.pinbal.core.service.RecobrimentService;
-import es.caib.pinbal.core.service.exception.AccessDenegatException;
-import es.caib.pinbal.core.service.exception.ConsultaNotFoundException;
-import es.caib.pinbal.core.service.exception.EntitatNotFoundException;
-import es.caib.pinbal.core.service.exception.ProcedimentNotFoundException;
-import es.caib.pinbal.core.service.exception.ResourceNotFoundException;
-import es.caib.pinbal.core.service.exception.ServeiCampNotFoundException;
-import es.caib.pinbal.core.service.exception.ServeiNotFoundException;
+import es.caib.pinbal.logic.intf.dto.apiresponse.ServiceExecutionException;
+import es.caib.pinbal.logic.intf.service.RecobrimentService;
+import es.caib.pinbal.logic.intf.service.exception.AccessDenegatException;
+import es.caib.pinbal.logic.intf.service.exception.ConsultaNotFoundException;
+import es.caib.pinbal.logic.intf.service.exception.EntitatNotFoundException;
+import es.caib.pinbal.logic.intf.service.exception.ProcedimentNotFoundException;
+import es.caib.pinbal.logic.intf.service.exception.ResourceNotFoundException;
+import es.caib.pinbal.logic.intf.service.exception.ServeiCampNotFoundException;
+import es.caib.pinbal.logic.intf.service.exception.ServeiNotFoundException;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UrlPathHelper;
 
 import javax.servlet.http.HttpServletRequest;
@@ -53,16 +53,22 @@ import java.util.Map;
  * @author Limit Tecnologies <limit@limit.es>
  */
 @Slf4j
-@Controller
+@RestController
+@RequiredArgsConstructor
 @RequestMapping("/recobriment/v2")
 public class RecobrimentRestV2Controller extends PinbalHalRestController implements RecobrimentRestV2Intf {
 
 
-	@Autowired
-	private RecobrimentService recobrimentService;
+	private final RecobrimentService recobrimentService;
 
 	// Obtencio de entitats
 	// /////////////////////////////////////////////////////////////
+
+	/**
+	 * Si es modifica aquest endpoint, actualitzar també la documentació OpenAPI
+	 * definida a la interfície RecobrimentRestV2Intf.
+	 */
+	@Override
 	@RequestMapping(value = "/entitats", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<Entitat>> getEntitats() {
 		try {
@@ -82,6 +88,12 @@ public class RecobrimentRestV2Controller extends PinbalHalRestController impleme
 
 	// Obtencio de procediments
 	// /////////////////////////////////////////////////////////////
+
+	/**
+	 * Si es modifica aquest endpoint, actualitzar també la documentació OpenAPI
+	 * definida a la interfície RecobrimentRestV2Intf.
+	 */
+	@Override
 	@RequestMapping(value = "/entitats/{entitatCodi}/procediments", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<ProcedimentBasic>> getProcediments(@PathVariable("entitatCodi") String entitatCodi) {
 		try {
@@ -103,6 +115,12 @@ public class RecobrimentRestV2Controller extends PinbalHalRestController impleme
 
 	// Obtenció de serveis
 	// /////////////////////////////////////////////////////////////
+
+	/**
+	 * Si es modifica aquest endpoint, actualitzar també la documentació OpenAPI
+	 * definida a la interfície RecobrimentRestV2Intf.
+	 */
+	@Override
 	@RequestMapping(value = "/serveis", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<ServeiBasic>> getServeis() {
 		try {
@@ -120,6 +138,11 @@ public class RecobrimentRestV2Controller extends PinbalHalRestController impleme
 		}
 	}
 
+	/**
+	 * Si es modifica aquest endpoint, actualitzar també la documentació OpenAPI
+	 * definida a la interfície RecobrimentRestV2Intf.
+	 */
+	@Override
 	@RequestMapping(value = "/entitats/{entitatCodi}/serveis", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<ServeiBasic>> getServeisPerEntitat(@PathVariable("entitatCodi") String entitatCodi) {
 		try {
@@ -139,6 +162,11 @@ public class RecobrimentRestV2Controller extends PinbalHalRestController impleme
 		}
 	}
 
+	/**
+	 * Si es modifica aquest endpoint, actualitzar també la documentació OpenAPI
+	 * definida a la interfície RecobrimentRestV2Intf.
+	 */
+	@Override
 	@RequestMapping(value = "/entitats/{entitatCodi}/procediments/{procedimentCodi}/serveis", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<ServeiBasic>> getServeisPerProcediment(
 			@PathVariable("entitatCodi") String entitatCodi,
@@ -163,6 +191,11 @@ public class RecobrimentRestV2Controller extends PinbalHalRestController impleme
 	// Obtenció de dades específiques
 	// /////////////////////////////////////////////////////////////
 
+	/**
+	 * Si es modifica aquest endpoint, actualitzar també la documentació OpenAPI
+	 * definida a la interfície RecobrimentRestV2Intf.
+	 */
+	@Override
 	@RequestMapping(value = "/serveis/{serveiCodi}/dadesEspecifiques", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<DadaEspecifica>> getDadesEspecifiques(@PathVariable("serveiCodi") String serveiCodi) {
 		try {
@@ -182,6 +215,11 @@ public class RecobrimentRestV2Controller extends PinbalHalRestController impleme
 		}
 	}
 
+    /**
+     * Si es modifica aquest endpoint, actualitzar també la documentació OpenAPI
+     * definida a la interfície RecobrimentRestV2Intf.
+     */
+    @Override
     @RequestMapping(value = "/serveis/{serveiCodi}/dadesEspecifiquesResposta", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<DadaEspecificaBasic>> getDadesEspecifiquesResposta(@PathVariable("serveiCodi") String serveiCodi) {
         try {
@@ -201,7 +239,12 @@ public class RecobrimentRestV2Controller extends PinbalHalRestController impleme
         }
     }
 
-	@ApiIgnore
+	/**
+	 * Si es modifica aquest endpoint, actualitzar també la documentació OpenAPI
+	 * definida a la interfície RecobrimentRestV2Intf.
+	 */
+	@Override
+	@Hidden
 	@RequestMapping(value = "/serveis/{serveiCodi}/camps/**", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<ValorEnum>> getValorsEnum(
 			@PathVariable("serveiCodi") String serveiCodi,
@@ -231,6 +274,11 @@ public class RecobrimentRestV2Controller extends PinbalHalRestController impleme
 
 	}
 
+	/**
+	 * Si es modifica aquest endpoint, actualitzar també la documentació OpenAPI
+	 * definida a la interfície RecobrimentRestV2Intf.
+	 */
+	@Override
 	@RequestMapping(value = "/serveis/{serveiCodi}/camps/{campCodi}/enumerat/{enumCodi}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<ValorEnum>> getValorsEnum(
 			@PathVariable("serveiCodi") String serveiCodi,
@@ -262,6 +310,11 @@ public class RecobrimentRestV2Controller extends PinbalHalRestController impleme
 	// Realització de consultes
 	// /////////////////////////////////////////////////////////////
 
+	/**
+	 * Si es modifica aquest endpoint, actualitzar també la documentació OpenAPI
+	 * definida a la interfície RecobrimentRestV2Intf.
+	 */
+	@Override
 	@RequestMapping(value= "/serveis/{serveiCodi}/peticioSincrona", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<PeticioRespostaSincrona> peticioSincrona(
 			@PathVariable("serveiCodi") String serveiCodi,
@@ -285,6 +338,11 @@ public class RecobrimentRestV2Controller extends PinbalHalRestController impleme
 		}
 	}
 
+	/**
+	 * Si es modifica aquest endpoint, actualitzar també la documentació OpenAPI
+	 * definida a la interfície RecobrimentRestV2Intf.
+	 */
+	@Override
 	@RequestMapping(value= "/serveis/{serveiCodi}/peticioAsincrona", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<PeticioConfirmacioAsincrona> peticioAsincrona(
 			@PathVariable("serveiCodi") String serveiCodi,
@@ -311,6 +369,11 @@ public class RecobrimentRestV2Controller extends PinbalHalRestController impleme
 	// Obtenció de respostes
 	// /////////////////////////////////////////////////////////////
 
+	/**
+	 * Si es modifica aquest endpoint, actualitzar també la documentació OpenAPI
+	 * definida a la interfície RecobrimentRestV2Intf.
+	 */
+	@Override
 	@RequestMapping(value= "/consultes/{idPeticio}/resposta", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<PeticioRespostaAsincrona> getResposta(@PathVariable("idPeticio") String idPeticio) {
 
@@ -330,6 +393,11 @@ public class RecobrimentRestV2Controller extends PinbalHalRestController impleme
 
 	}
 
+	/**
+	 * Si es modifica aquest endpoint, actualitzar també la documentació OpenAPI
+	 * definida a la interfície RecobrimentRestV2Intf.
+	 */
+	@Override
 	@RequestMapping(value= "/consultes/{idPeticio}/solicitud/{idSolicitud}/justificant", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<ScspJustificante> getJustificant(
 			@PathVariable("idPeticio") String idPeticio,
@@ -360,6 +428,11 @@ public class RecobrimentRestV2Controller extends PinbalHalRestController impleme
 		}
 	}
 
+	/**
+	 * Si es modifica aquest endpoint, actualitzar també la documentació OpenAPI
+	 * definida a la interfície RecobrimentRestV2Intf.
+	 */
+	@Override
 	@RequestMapping(value= "/consultes/{idPeticio}/solicitud/{idSolicitud}/justificantImprimible", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<ScspJustificante> getJustificantImprimible(
 			@PathVariable("idPeticio") String idPeticio,
@@ -390,6 +463,11 @@ public class RecobrimentRestV2Controller extends PinbalHalRestController impleme
 		}
 	}
 
+	/**
+	 * Si es modifica aquest endpoint, actualitzar també la documentació OpenAPI
+	 * definida a la interfície RecobrimentRestV2Intf.
+	 */
+	@Override
 	@RequestMapping(value= "/consultes/{idPeticio}/solicitud/{idSolicitud}/justificantCsv", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<String> getJustificantCsv(
 			@PathVariable("idPeticio") String idPeticio,
@@ -409,6 +487,11 @@ public class RecobrimentRestV2Controller extends PinbalHalRestController impleme
 		}
 	}
 
+	/**
+	 * Si es modifica aquest endpoint, actualitzar també la documentació OpenAPI
+	 * definida a la interfície RecobrimentRestV2Intf.
+	 */
+	@Override
 	@RequestMapping(value= "/consultes/{idPeticio}/solicitud/{idSolicitud}/justificantUuid", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<String> getJustificantUuid(
 			@PathVariable("idPeticio") String idPeticio,

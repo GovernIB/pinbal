@@ -1,12 +1,5 @@
 package es.caib.pinbal.api.interna.openapi.interficies.recobriment.v2;
 
-import com.wordnik.swagger.annotations.Api;
-import com.wordnik.swagger.annotations.ApiOperation;
-import com.wordnik.swagger.annotations.ApiParam;
-import com.wordnik.swagger.annotations.ApiResponse;
-import com.wordnik.swagger.annotations.ApiResponses;
-import com.wordnik.swagger.annotations.Authorization;
-import es.caib.pinbal.api.config.ApiVersion;
 import es.caib.pinbal.client.procediments.ProcedimentBasic;
 import es.caib.pinbal.client.recobriment.model.ScspJustificante;
 import es.caib.pinbal.client.recobriment.v2.DadaEspecifica;
@@ -18,294 +11,300 @@ import es.caib.pinbal.client.recobriment.v2.PeticioRespostaAsincrona;
 import es.caib.pinbal.client.recobriment.v2.PeticioRespostaSincrona;
 import es.caib.pinbal.client.recobriment.v2.PeticioSincrona;
 import es.caib.pinbal.client.recobriment.v2.ValorEnum;
-import es.caib.pinbal.client.serveis.Servei;
 import es.caib.pinbal.client.serveis.ServeiBasic;
-import org.springframework.http.MediaType;
+import io.swagger.v3.oas.annotations.Hidden;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
-@Api(value = "recobrimentV2")
-@ApiVersion("2.0")
+@Tag(name = "Recobriment SCSP v2", description = "Operacions de recobriment SCSP versió 2: entitats, procediments, serveis, dades específiques i realització de consultes síncrones i asíncrones.")
 public interface RecobrimentRestV2Intf {
 
     // Obtencio d'entitats
     // /////////////////////////////////////////////////////////////
 
-    @ApiOperation(value = "Obtén les entitat",
-            notes = "Aquesta operació retorna la llista d'entitats a les que l'usuari autenticat té permís.",
-            response = Entitat.class,
-            responseContainer = "List",
-            authorizations = @Authorization(value = "basicAuth"),
-            tags = "recobrimentV2"
-    )
+    @Operation(
+            summary = "Obtenir entitats",
+            description = "Retorna la llista d'entitats a les que l'usuari autenticat té permís.",
+            operationId = "getEntitatsV2")
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Entitats obtingudes amb èxit"),
-            @ApiResponse(code = 204, message = "No s'han trobat entitats"),
-            @ApiResponse(code = 500, message = "Error intern del servidor")
+            @ApiResponse(responseCode = "200", description = "Entitats obtingudes amb èxit",
+                    content = @Content(mediaType = "application/json",
+                            array = @ArraySchema(schema = @Schema(implementation = Entitat.class)))),
+            @ApiResponse(responseCode = "204", description = "No s'han trobat entitats", content = @Content),
+            @ApiResponse(responseCode = "500", description = "Error intern del servidor", content = @Content)
     })
-    @RequestMapping(value = "/entitats", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     ResponseEntity<List<Entitat>> getEntitats();
 
     // Obtencio de procediments
     // /////////////////////////////////////////////////////////////
 
-    @ApiOperation(value = "Obtén els procediments d'una entitat",
-            notes = "Aquesta operació retorna una llista de procediments disponibles per l'entitat especificada a 'entitatCodi'.",
-            response = ProcedimentBasic.class,
-            responseContainer = "List",
-            authorizations = @Authorization(value = "basicAuth"),
-            tags = "recobrimentV2"
-    )
+    @Operation(
+            summary = "Obtenir procediments d'una entitat",
+            description = "Retorna una llista de procediments disponibles per l'entitat especificada.",
+            operationId = "getProcedimentsV2")
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Procediments obtinguts amb èxit"),
-            @ApiResponse(code = 204, message = "No s'han trobat procediments"),
-            @ApiResponse(code = 404, message = "Entitat no trobada"),
-            @ApiResponse(code = 500, message = "Error intern del servidor")
+            @ApiResponse(responseCode = "200", description = "Procediments obtinguts amb èxit",
+                    content = @Content(mediaType = "application/json",
+                            array = @ArraySchema(schema = @Schema(implementation = ProcedimentBasic.class)))),
+            @ApiResponse(responseCode = "204", description = "No s'han trobat procediments", content = @Content),
+            @ApiResponse(responseCode = "404", description = "Entitat no trobada", content = @Content),
+            @ApiResponse(responseCode = "500", description = "Error intern del servidor", content = @Content)
     })
-    @RequestMapping(value = "/entitats/{entitatCodi}/procediments", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    ResponseEntity<List<ProcedimentBasic>> getProcediments(@ApiParam(value = "Codi de l'entitat") @PathVariable("entitatCodi") String entitatCodi);
+    ResponseEntity<List<ProcedimentBasic>> getProcediments(
+            @Parameter(description = "Codi de l'entitat", required = true, example = "A04003003")
+            String entitatCodi);
 
     // Obtenció de serveis
     // /////////////////////////////////////////////////////////////
 
-    @ApiOperation(value = "Obtén tots els serveis de Pinbal",
-            notes = "Aquesta operació retorna una llista de serveis disponibles a Pinbal",
-            response = Servei.class,
-            responseContainer = "List",
-            authorizations = @Authorization(value = "basicAuth"),
-            tags = "recobrimentV2"
-    )
+    @Operation(
+            summary = "Obtenir tots els serveis",
+            description = "Retorna una llista de tots els serveis disponibles a Pinbal.",
+            operationId = "getServeisV2")
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Serveis obtinguts amb èxit"),
-            @ApiResponse(code = 204, message = "No s'han trobat serveis"),
-            @ApiResponse(code = 500, message = "Error intern del servidor")
+            @ApiResponse(responseCode = "200", description = "Serveis obtinguts amb èxit",
+                    content = @Content(mediaType = "application/json",
+                            array = @ArraySchema(schema = @Schema(implementation = ServeiBasic.class)))),
+            @ApiResponse(responseCode = "204", description = "No s'han trobat serveis", content = @Content),
+            @ApiResponse(responseCode = "500", description = "Error intern del servidor", content = @Content)
     })
-    @RequestMapping(value = "/serveis", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     ResponseEntity<List<ServeiBasic>> getServeis();
 
-    @ApiOperation(value = "Obtén tots els serveis de Pinbal per entitat",
-            notes = "Aquesta operació retorna una llista dels serveis disponibles a Pinbal d'una entitat",
-            response = Servei.class,
-            responseContainer = "List",
-            authorizations = @Authorization(value = "basicAuth"),
-            tags = "recobrimentV2"
-    )
+    @Operation(
+            summary = "Obtenir serveis per entitat",
+            description = "Retorna una llista dels serveis disponibles a Pinbal per a una entitat.",
+            operationId = "getServeisPerEntitatV2")
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Serveis obtinguts amb èxit"),
-            @ApiResponse(code = 204, message = "No s'han trobat serveis"),
-            @ApiResponse(code = 404, message = "Entitat no trobada"),
-            @ApiResponse(code = 500, message = "Error intern del servidor"),
+            @ApiResponse(responseCode = "200", description = "Serveis obtinguts amb èxit",
+                    content = @Content(mediaType = "application/json",
+                            array = @ArraySchema(schema = @Schema(implementation = ServeiBasic.class)))),
+            @ApiResponse(responseCode = "204", description = "No s'han trobat serveis", content = @Content),
+            @ApiResponse(responseCode = "404", description = "Entitat no trobada", content = @Content),
+            @ApiResponse(responseCode = "500", description = "Error intern del servidor", content = @Content)
     })
-    @RequestMapping(value = "/entitats/{entitatCodi}/serveis", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    ResponseEntity<List<ServeiBasic>> getServeisPerEntitat(@ApiParam(value = "Codi de l'entitat") @PathVariable("entitatCodi") String entitatCodi);
+    ResponseEntity<List<ServeiBasic>> getServeisPerEntitat(
+            @Parameter(description = "Codi de l'entitat", required = true, example = "A04003003")
+            String entitatCodi);
 
-    @ApiOperation(value = "Obtén tots els serveis de Pinbal per procediment",
-            notes = "Aquesta operació retorna una llista de serveis disponibles a Pinbal per un procediment",
-            response = Servei.class,
-            responseContainer = "List",
-            authorizations = @Authorization(value = "basicAuth"),
-            tags = "recobrimentV2"
-    )
+    @Operation(
+            summary = "Obtenir serveis per procediment",
+            description = "Retorna una llista de serveis disponibles a Pinbal per a un procediment d'una entitat.",
+            operationId = "getServeisPerProcedimentV2")
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Serveis obtinguts amb èxit"),
-            @ApiResponse(code = 204, message = "No s'han trobat serveis"),
-            @ApiResponse(code = 500, message = "Error intern del servidor")
+            @ApiResponse(responseCode = "200", description = "Serveis obtinguts amb èxit",
+                    content = @Content(mediaType = "application/json",
+                            array = @ArraySchema(schema = @Schema(implementation = ServeiBasic.class)))),
+            @ApiResponse(responseCode = "204", description = "No s'han trobat serveis", content = @Content),
+            @ApiResponse(responseCode = "500", description = "Error intern del servidor", content = @Content)
     })
-    @RequestMapping(value = "/entitats/{entitatCodi}/procediments/{procedimentCodi}/serveis", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<ServeiBasic>> getServeisPerProcediment(
-            @PathVariable("entitatCodi") String entitatCodi,
-            @PathVariable("procedimentCodi") String procedimentCodi);
+    ResponseEntity<List<ServeiBasic>> getServeisPerProcediment(
+            @Parameter(description = "Codi de l'entitat", required = true, example = "A04003003")
+            String entitatCodi,
+            @Parameter(description = "Codi del procediment", required = true, example = "PROC001")
+            String procedimentCodi);
 
     // Obtenció de dades específiques
     // /////////////////////////////////////////////////////////////
 
-    @ApiOperation(value = "Obtén les dades específiques d'un servei",
-            notes = "Aquesta operació retorna lista de camps que son necessaris per emplenar l’apartat de dades específiques de la petició SCSP al servei web final.",
-            response = DadaEspecifica.class,
-            responseContainer = "List",
-            authorizations = @Authorization(value = "basicAuth"),
-            tags = "recobrimentV2"
-    )
+    @Operation(
+            summary = "Obtenir dades específiques d'un servei",
+            description = "Retorna la llista de camps necessaris per emplenar l'apartat de dades específiques de la petició SCSP al servei web final.",
+            operationId = "getDadesEspecifiquesV2")
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Dades específiqeus obtingudes amb èxit"),
-            @ApiResponse(code = 204, message = "No s'han trobat dades específiques pel servei"),
-            @ApiResponse(code = 404, message = "Servei no trobat"),
-            @ApiResponse(code = 500, message = "Error intern del servidor")
+            @ApiResponse(responseCode = "200", description = "Dades específiques obtingudes amb èxit",
+                    content = @Content(mediaType = "application/json",
+                            array = @ArraySchema(schema = @Schema(implementation = DadaEspecifica.class)))),
+            @ApiResponse(responseCode = "204", description = "No s'han trobat dades específiques pel servei", content = @Content),
+            @ApiResponse(responseCode = "404", description = "Servei no trobat", content = @Content),
+            @ApiResponse(responseCode = "500", description = "Error intern del servidor", content = @Content)
     })
-    @RequestMapping(value = "/serveis/{serveiCodi}/dadesEspecifiques", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    ResponseEntity<List<DadaEspecifica>> getDadesEspecifiques(@ApiParam(value = "Codi del servei") @PathVariable("serveiCodi") String serveiCodi);
+    ResponseEntity<List<DadaEspecifica>> getDadesEspecifiques(
+            @Parameter(description = "Codi del servei", required = true, example = "SVCDATOS")
+            String serveiCodi);
 
-    @ApiOperation(value = "Obtén les dades específiques de resposta d'un servei",
-            notes = "Aquesta operació retorna lista de camps que poden apareixer en la resposta de la petició SCSP.",
-            response = DadaEspecificaBasic.class,
-            responseContainer = "List",
-            authorizations = @Authorization(value = "basicAuth"),
-            tags = "recobrimentV2"
-    )
+    @Operation(
+            summary = "Obtenir dades específiques de resposta d'un servei",
+            description = "Retorna la llista de camps que poden aparèixer en la resposta de la petició SCSP.",
+            operationId = "getDadesEspecifiquesRespostaV2")
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Dades específiqeus obtingudes amb èxit"),
-            @ApiResponse(code = 204, message = "No s'han trobat dades específiques pel servei"),
-            @ApiResponse(code = 404, message = "Servei no trobat"),
-            @ApiResponse(code = 500, message = "Error intern del servidor")
+            @ApiResponse(responseCode = "200", description = "Dades específiques de resposta obtingudes amb èxit",
+                    content = @Content(mediaType = "application/json",
+                            array = @ArraySchema(schema = @Schema(implementation = DadaEspecificaBasic.class)))),
+            @ApiResponse(responseCode = "204", description = "No s'han trobat dades específiques pel servei", content = @Content),
+            @ApiResponse(responseCode = "404", description = "Servei no trobat", content = @Content),
+            @ApiResponse(responseCode = "500", description = "Error intern del servidor", content = @Content)
     })
-    @RequestMapping(value = "/serveis/{serveiCodi}/dadesEspecifiquesResposta", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    ResponseEntity<List<DadaEspecificaBasic>> getDadesEspecifiquesResposta(@ApiParam(value = "Codi del servei") @PathVariable("serveiCodi") String serveiCodi);
+    ResponseEntity<List<DadaEspecificaBasic>> getDadesEspecifiquesResposta(
+            @Parameter(description = "Codi del servei", required = true, example = "SVCDATOS")
+            String serveiCodi);
 
-    @ApiOperation(value = "Obtén tots els valors d'un camp de tipus enumerat",
-            notes = "Aquesta operació retorna llistes de valors, siguin de enumerats o de valors de dades externes. Se li passa el codi enum que s’obté de la cridada anterior quant el camp és de tipus enumerat. També se li passa opcionalment un filtre a aplicar que pot tenir varis comportaments segons el enumerat. " +
-                    "Quan l'enumerat és PAIS o PROVINCIA, com a filtre es pot passar el valor 'CA' o 'ES' per indicar l'idioma amb el qual es volen recuperar els paisos o províncies.",
-            response = ValorEnum.class,
-            responseContainer = "List",
-            authorizations = @Authorization(value = "basicAuth"),
-            tags = "recobrimentV2"
-    )
-    @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Valors d'enumerats obtinguts amb èxit"),
-            @ApiResponse(code = 204, message = "No s'han trobat valors d'enumerat"),
-            @ApiResponse(code = 404, message = "Servei o enumerat no trobat"),
-            @ApiResponse(code = 500, message = "Error intern del servidor")
-    })
-    @RequestMapping(value = "/serveis/{serveiCodi}/camps/{campCodi}/enumerat/{enumCodi}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @Hidden
     ResponseEntity<List<ValorEnum>> getValorsEnum(
-            @ApiParam(value = "Codi del servei") @PathVariable("serveiCodi") String serveiCodi,
-            @ApiParam(value = "Codi del camp") @PathVariable("campCodi") String campCodi,
-            @ApiParam(value = "Codi de l'enumerat") @PathVariable("enumCodi") String enumCodi,
-            @ApiParam(value = "Filtre a aplicar en l’obtenció dels possibles valors de l’enumerat (opcional)") @RequestParam(required = false) String filtre);
+            String serveiCodi,
+            String filtre,
+            HttpServletRequest request);
+
+    @Operation(
+            summary = "Obtenir valors d'un camp enumerat",
+            description = "Retorna la llista de valors d'un camp de tipus enumerat d'un servei. Quan l'enumerat és PAIS o PROVINCIA, es pot passar com a filtre 'CA' o 'ES' per indicar l'idioma.",
+            operationId = "getValorsEnumV2")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Valors d'enumerats obtinguts amb èxit",
+                    content = @Content(mediaType = "application/json",
+                            array = @ArraySchema(schema = @Schema(implementation = ValorEnum.class)))),
+            @ApiResponse(responseCode = "204", description = "No s'han trobat valors d'enumerat", content = @Content),
+            @ApiResponse(responseCode = "404", description = "Servei o enumerat no trobat", content = @Content),
+            @ApiResponse(responseCode = "500", description = "Error intern del servidor", content = @Content)
+    })
+    ResponseEntity<List<ValorEnum>> getValorsEnum(
+            @Parameter(description = "Codi del servei", required = true, example = "SVCDATOS")
+            String serveiCodi,
+            @Parameter(description = "Codi del camp", required = true, example = "campNacionalitat")
+            String campCodi,
+            @Parameter(description = "Codi de l'enumerat", required = true, example = "PAIS")
+            String enumCodi,
+            @Parameter(description = "Filtre a aplicar en l'obtenció dels possibles valors de l'enumerat (opcional). Per a PAIS/PROVINCIA: 'CA' o 'ES' per indicar l'idioma.", required = false, example = "CA")
+            String filtre);
 
     // Realització de consultes
     // /////////////////////////////////////////////////////////////
 
-    @ApiOperation(
-            value = "Realització una consulta síncrona al servei indicat",
-    		notes = "Aquesta operació retorna informació dels possilbes errors de validació de les dades o en la consulta, i una entitat de tipus ScspRespuesta que conté la resposta a la consulta en cas d'havers-se realitzat correctament",
-            response = PeticioRespostaSincrona.class,
-            authorizations = @Authorization(value = "basicAuth"),
-            tags = "recobrimentV2"
-    )
+    @Operation(
+            summary = "Realitzar consulta síncrona",
+            description = "Realitza una consulta síncrona al servei indicat. Retorna informació dels possibles errors de validació o la resposta de la consulta si s'ha realitzat correctament.",
+            operationId = "peticioSincronaV2")
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Consulta realitzada. Aquesta pot retornar errors de validació, error en la consulta, o haver-se realitzat correctament"),
-            @ApiResponse(code = 404, message = "Mètode no trobat"),
-            @ApiResponse(code = 500, message = "Error intern del servidor")
+            @ApiResponse(responseCode = "200", description = "Consulta realitzada. Pot retornar errors de validació, error en la consulta, o haver-se realitzat correctament.",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = PeticioRespostaSincrona.class))),
+            @ApiResponse(responseCode = "404", description = "Mètode no trobat", content = @Content),
+            @ApiResponse(responseCode = "500", description = "Error intern del servidor", content = @Content)
     })
-    @RequestMapping(value= "/serveis/{serveiCodi}/peticioSincrona", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     ResponseEntity<PeticioRespostaSincrona> peticioSincrona(
-            @ApiParam(value = "Codi del servei") @PathVariable("serveiCodi") String serveiCodi,
-            @ApiParam(name="peticio", value="Petició síncrona") @RequestBody PeticioSincrona peticio);
+            @Parameter(description = "Codi del servei", required = true, example = "SVCDATOS")
+            String serveiCodi,
+            @RequestBody(required = true, description = "Dades de la petició síncrona",
+                    content = @Content(schema = @Schema(implementation = PeticioSincrona.class)))
+            PeticioSincrona peticio);
 
-    @ApiOperation(
-            value = "Realització d'una consulta asíncrona al servei indicat",
-            notes = "Aquesta operació retorna informació dels possilbes errors de validació de les dades o en la consulta, i una entitat de tipus ScspConfirmacionPeticion que conté informació de la resposta en cas d'havers-se realitzat correctament",
-            response = PeticioConfirmacioAsincrona.class,
-            authorizations = @Authorization(value = "basicAuth"),
-            tags = "recobrimentV2"
-    )
+    @Operation(
+            summary = "Realitzar consulta asíncrona",
+            description = "Realitza una consulta asíncrona al servei indicat. Retorna informació dels possibles errors de validació o la confirmació de la petició si s'ha enviat correctament.",
+            operationId = "peticioAsincronaV2")
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Consulta realitzada. Aquesta pot retornar errors de validació, error en la consulta, o haver-se realitzat correctament"),
-            @ApiResponse(code = 404, message = "Mètode no trobat"),
-            @ApiResponse(code = 500, message = "Error intern del servidor")
+            @ApiResponse(responseCode = "200", description = "Consulta realitzada. Pot retornar errors de validació, error en la consulta, o haver-se realitzat correctament.",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = PeticioConfirmacioAsincrona.class))),
+            @ApiResponse(responseCode = "404", description = "Mètode no trobat", content = @Content),
+            @ApiResponse(responseCode = "500", description = "Error intern del servidor", content = @Content)
     })
-    @RequestMapping(value= "/serveis/{serveiCodi}/peticioAsincrona", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     ResponseEntity<PeticioConfirmacioAsincrona> peticioAsincrona(
-            @ApiParam(value = "Codi del servei") @PathVariable("serveiCodi") String serveiCodi,
-            @ApiParam(name="peticio", value="Petició asíncrona") @RequestBody PeticioAsincrona peticio);
-
+            @Parameter(description = "Codi del servei", required = true, example = "SVCDATOS")
+            String serveiCodi,
+            @RequestBody(required = true, description = "Dades de la petició asíncrona",
+                    content = @Content(schema = @Schema(implementation = PeticioAsincrona.class)))
+            PeticioAsincrona peticio);
 
     // Obtenció de respostes
     // /////////////////////////////////////////////////////////////
 
-    @ApiOperation(
-            value = "Obtenció del resultat d'una petició asíncrona ja realitzada",
-            notes = "Aquesta operació retorna informació de la resposta de la petició asíncrona",
-            response = PeticioRespostaAsincrona.class,
-            authorizations = @Authorization(value = "basicAuth"),
-            tags = "recobrimentV2"
-    )
+    @Operation(
+            summary = "Obtenir resultat d'una petició asíncrona",
+            description = "Retorna informació de la resposta d'una petició asíncrona ja realitzada.",
+            operationId = "getRespostaV2")
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Consulta realitzada. Aquesta pot retornar errors de validació, error en la consulta, o haver-se realitzat correctament"),
-            @ApiResponse(code = 204, message = "No s'han trobat la resposta"),
-            @ApiResponse(code = 404, message = "Petició no trobat"),
-            @ApiResponse(code = 500, message = "Error intern del servidor")
+            @ApiResponse(responseCode = "200", description = "Resposta obtinguda correctament",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = PeticioRespostaAsincrona.class))),
+            @ApiResponse(responseCode = "204", description = "No s'ha trobat la resposta", content = @Content),
+            @ApiResponse(responseCode = "404", description = "Petició no trobada", content = @Content),
+            @ApiResponse(responseCode = "500", description = "Error intern del servidor", content = @Content)
     })
-    @RequestMapping(value= "/consultes/{idPeticio}/resposta", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     ResponseEntity<PeticioRespostaAsincrona> getResposta(
-            @ApiParam(value = "Identificador de la petició") @PathVariable("idPeticio") String idPeticio);
+            @Parameter(description = "Identificador de la petició", required = true, example = "PET-2025-0001")
+            String idPeticio);
 
-    @ApiOperation(
-            value = "Obtenció del justificant",
-            notes = "Obté el justificant de la petició",
-            response = ScspJustificante.class,
-            authorizations = @Authorization(value = "basicAuth"),
-            tags = "recobrimentV2"
-    )
+    @Operation(
+            summary = "Obtenir justificant",
+            description = "Obté el justificant de la petició.",
+            operationId = "getJustificantV2")
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Justificant obtingut correctament"),
-            @ApiResponse(code = 204, message = "No s'ha la consulta"),
-            @ApiResponse(code = 404, message = "Justificant no trobat"),
-            @ApiResponse(code = 500, message = "Error intern del servidor")
+            @ApiResponse(responseCode = "200", description = "Justificant obtingut correctament",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ScspJustificante.class))),
+            @ApiResponse(responseCode = "204", description = "No s'ha trobat la consulta", content = @Content),
+            @ApiResponse(responseCode = "404", description = "Justificant no trobat", content = @Content),
+            @ApiResponse(responseCode = "500", description = "Error intern del servidor", content = @Content)
     })
-    @RequestMapping(value= "/consultes/{idPeticio}/solicitud/{idSolicitud}/justificant", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     ResponseEntity<ScspJustificante> getJustificant(
-            @ApiParam(name="idPeticio", value="Id de petició") @PathVariable("idPeticio") String idPeticio,
-            @ApiParam(name="idSolicitud", value="Id de sol·licitud") @PathVariable("idSolicitud") String idSolicitud) throws Exception;
+            @Parameter(description = "Identificador de la petició", required = true, example = "PET-2025-0001")
+            String idPeticio,
+            @Parameter(description = "Identificador de la sol·licitud", required = true, example = "SOL-2025-0001")
+            String idSolicitud) throws Exception;
 
-    @ApiOperation(
-            value = "Obtenció de la versió imprimible del justificant",
-            notes = "Obté la versió imprimible del justificant de la petició",
-            response = ScspJustificante.class,
-            authorizations = @Authorization(value = "basicAuth"),
-            tags = "recobrimentV2"
-    )
+    @Operation(
+            summary = "Obtenir justificant imprimible",
+            description = "Obté la versió imprimible del justificant de la petició.",
+            operationId = "getJustificantImprimibleV2")
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Justificant obtingut correctament"),
-            @ApiResponse(code = 204, message = "No s'ha la consulta"),
-            @ApiResponse(code = 404, message = "Justificant no trobat"),
-            @ApiResponse(code = 500, message = "Error intern del servidor")
+            @ApiResponse(responseCode = "200", description = "Justificant imprimible obtingut correctament",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ScspJustificante.class))),
+            @ApiResponse(responseCode = "204", description = "No s'ha trobat la consulta", content = @Content),
+            @ApiResponse(responseCode = "404", description = "Justificant no trobat", content = @Content),
+            @ApiResponse(responseCode = "500", description = "Error intern del servidor", content = @Content)
     })
-    @RequestMapping(value= "/consultes/{idPeticio}/solicitud/{idSolicitud}/justificantImprimible", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     ResponseEntity<ScspJustificante> getJustificantImprimible(
-            @ApiParam(name="idPeticio", value="Id de petició") @PathVariable("idPeticio") String idPeticio,
-            @ApiParam(name="idSolicitud", value="Id de sol·licitud") @PathVariable("idSolicitud") String idSolicitud) throws Exception;
+            @Parameter(description = "Identificador de la petició", required = true, example = "PET-2025-0001")
+            String idPeticio,
+            @Parameter(description = "Identificador de la sol·licitud", required = true, example = "SOL-2025-0001")
+            String idSolicitud) throws Exception;
 
-    @ApiOperation(
-            value = "Obtenció del CSV del justificant",
-            notes = "Obté el codi CSV del justificant de la petició a l'arxiu",
-            response = String.class,
-            authorizations = @Authorization(value = "basicAuth"),
-            tags = "recobrimentV2"
-    )
+    @Operation(
+            summary = "Obtenir CSV del justificant",
+            description = "Obté el codi CSV del justificant de la petició.",
+            operationId = "getJustificantCsvV2")
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Justificant obtingut correctament"),
-            @ApiResponse(code = 204, message = "No s'ha la consulta"),
-            @ApiResponse(code = 404, message = "Justificant no trobat"),
-            @ApiResponse(code = 500, message = "Error intern del servidor")
+            @ApiResponse(responseCode = "200", description = "CSV del justificant obtingut correctament",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(type = "string"))),
+            @ApiResponse(responseCode = "204", description = "No s'ha trobat la consulta", content = @Content),
+            @ApiResponse(responseCode = "404", description = "Justificant no trobat", content = @Content),
+            @ApiResponse(responseCode = "500", description = "Error intern del servidor", content = @Content)
     })
-    @RequestMapping(value= "/consultes/{idPeticio}/solicitud/{idSolicitud}/justificantCsv", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     ResponseEntity<String> getJustificantCsv(
-            @ApiParam(name="idPeticio", value="Id de petició") @PathVariable("idPeticio") String idPeticio,
-            @ApiParam(name="idSolicitud", value="Id de sol·licitud") @PathVariable("idSolicitud") String idSolicitud) throws Exception;
+            @Parameter(description = "Identificador de la petició", required = true, example = "PET-2025-0001")
+            String idPeticio,
+            @Parameter(description = "Identificador de la sol·licitud", required = true, example = "SOL-2025-0001")
+            String idSolicitud) throws Exception;
 
-    @ApiOperation(
-            value = "Obtenció del UUID del justificant",
-            notes = "Obté el codi UUID del justificant de la petició a l'arxiu",
-            response = String.class,
-            authorizations = @Authorization(value = "basicAuth"),
-            tags = "recobrimentV2"
-    )
+    @Operation(
+            summary = "Obtenir UUID del justificant",
+            description = "Obté el codi UUID del justificant de la petició.",
+            operationId = "getJustificantUuidV2")
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Justificant obtingut correctament"),
-            @ApiResponse(code = 204, message = "No s'ha la consulta"),
-            @ApiResponse(code = 404, message = "Justificant no trobat"),
-            @ApiResponse(code = 500, message = "Error intern del servidor")
+            @ApiResponse(responseCode = "200", description = "UUID del justificant obtingut correctament",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(type = "string"))),
+            @ApiResponse(responseCode = "204", description = "No s'ha trobat la consulta", content = @Content),
+            @ApiResponse(responseCode = "404", description = "Justificant no trobat", content = @Content),
+            @ApiResponse(responseCode = "500", description = "Error intern del servidor", content = @Content)
     })
-    @RequestMapping(value= "/consultes/{idPeticio}/solicitud/{idSolicitud}/justificantUuid", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     ResponseEntity<String> getJustificantUuid(
-            @ApiParam(name="idPeticio", value="Id de petició") @PathVariable("idPeticio") String idPeticio,
-            @ApiParam(name="idSolicitud", value="Id de sol·licitud") @PathVariable("idSolicitud") String idSolicitud) throws Exception;
+            @Parameter(description = "Identificador de la petició", required = true, example = "PET-2025-0001")
+            String idPeticio,
+            @Parameter(description = "Identificador de la sol·licitud", required = true, example = "SOL-2025-0001")
+            String idSolicitud) throws Exception;
 
 }

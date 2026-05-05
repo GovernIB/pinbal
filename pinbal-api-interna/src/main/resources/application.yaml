@@ -1,0 +1,19 @@
+server:
+  servlet:
+    context-path: /pinbalapi/interna
+
+spring:
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
+    view:
+      prefix: /WEB_INF/jsp/
+      suffix: .jsp
+
+springdoc:
+  packages-to-scan: es.caib.pinbal.api.interna.controller
+  api-docs.path: /api-docs
+  swagger-ui:
+    path: /rest
+    operationsSorter: method
+    use-root-path: true

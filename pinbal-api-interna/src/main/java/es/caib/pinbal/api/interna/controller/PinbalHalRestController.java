@@ -1,10 +1,10 @@
 package es.caib.pinbal.api.interna.controller;
 
 import es.caib.pinbal.client.comu.ErrorResponse;
-import es.caib.pinbal.core.dto.apiresponse.ServiceExecutionException;
-import es.caib.pinbal.core.service.exception.AccessDenegatException;
-import es.caib.pinbal.core.service.exception.InvalidInputException;
-import es.caib.pinbal.core.service.exception.ResourceNotFoundException;
+import es.caib.pinbal.logic.intf.dto.apiresponse.ServiceExecutionException;
+import es.caib.pinbal.logic.intf.service.exception.AccessDenegatException;
+import es.caib.pinbal.logic.intf.service.exception.InvalidInputException;
+import es.caib.pinbal.logic.intf.service.exception.ResourceNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
