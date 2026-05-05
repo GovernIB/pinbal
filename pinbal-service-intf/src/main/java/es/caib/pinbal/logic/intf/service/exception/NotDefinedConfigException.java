@@ -1,0 +1,23 @@
+/**
+ * 
+ */
+package es.caib.pinbal.logic.intf.service.exception;
+
+/**
+ * Excepció que es llança quan s'intenta accedir a una propietat de configuració que no
+ * està definida dins la base de dades.
+ * 
+ * @author Limit Tecnologies <limit@limit.es>
+ */
+@SuppressWarnings("serial")
+public class NotDefinedConfigException extends RuntimeException {
+
+	@SuppressWarnings("unused")
+	private String message;
+
+	public NotDefinedConfigException(String key) {
+		super("Trying to get a property not defined in database: " + key);
+		this.message = super.getMessage();
+	}
+
+}

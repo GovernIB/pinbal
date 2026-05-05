@@ -1,0 +1,44 @@
+/**
+ * 
+ */
+package es.caib.pinbal.logic.intf.dto;
+
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
+
+import java.io.Serializable;
+import java.util.Date;
+
+/**
+ * Informació d'una ClauPrivada SCSP.
+ * 
+ * @author Limit Tecnologies <limit@limit.es>
+ */
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+@ToString
+public class ClauPrivadaDto extends AbstractIdentificable<Long> implements Serializable {
+	
+	private Long id;
+	private String alies;
+	private String nom;
+	private String password;
+	private String numSerie;
+	private Date dataBaixa;
+	private Date dataAlta;
+	private boolean interoperabilitat;
+	private Long organismeId;
+	private String organismeNom;
+	private String organismeCif;
+    private boolean perEntitat;
+
+	private static final long serialVersionUID = -8620175604318725073L;
+
+}
