@@ -3,35 +3,21 @@
  */
 package es.caib.pinbal.api.externa.controller;
 
+import es.caib.pinbal.api.externa.api.ExplotacioStatsApi;
 import es.caib.pinbal.api.externa.command.EstadistiquesFiltreCommand;
-import es.caib.pinbal.client.comu.DepartamentEstadistiques;
-import es.caib.pinbal.client.comu.EntitatEstadistiques;
-import es.caib.pinbal.client.comu.ProcedimentEstadistiques;
-import es.caib.pinbal.client.comu.ServeiEstadistiques;
+import es.caib.pinbal.client.comu.*;
 import es.caib.pinbal.client.comu.ServeiEstadistiques.ConsultesOkError;
-import es.caib.pinbal.client.comu.TotalAcumulat;
-import es.caib.pinbal.core.dto.CarregaDto;
-import es.caib.pinbal.core.dto.ConsultaDto.EstatTipus;
-import es.caib.pinbal.core.dto.EntitatDto;
-import es.caib.pinbal.core.dto.EstadisticaDto;
-import es.caib.pinbal.core.dto.EstadistiquesFiltreDto;
-import es.caib.pinbal.core.dto.EstadistiquesFiltreDto.EstadistiquesAgrupacioDto;
-import es.caib.pinbal.core.dto.ProcedimentDto;
-import es.caib.pinbal.core.service.ConsultaService;
-import es.caib.pinbal.core.service.EntitatService;
-import es.caib.pinbal.core.service.HistoricConsultaService;
-import es.caib.pinbal.core.service.ProcedimentService;
-import es.caib.pinbal.core.service.ServeiService;
-import es.caib.pinbal.core.service.UsuariService;
-import es.caib.pinbal.core.service.exception.EntitatNotFoundException;
-import es.caib.pinbal.core.service.exception.ProcedimentNotFoundException;
-import org.springframework.beans.factory.annotation.Autowired;
+import es.caib.pinbal.logic.intf.dto.*;
+import es.caib.pinbal.logic.intf.dto.ConsultaDto.EstatTipus;
+import es.caib.pinbal.logic.intf.dto.EstadistiquesFiltreDto.EstadistiquesAgrupacioDto;
+import es.caib.pinbal.logic.intf.service.*;
+import es.caib.pinbal.logic.intf.service.exception.EntitatNotFoundException;
+import es.caib.pinbal.logic.intf.service.exception.ProcedimentNotFoundException;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
@@ -43,28 +29,23 @@ import java.util.List;
  * 
  * @author Limit Tecnologies <limit@limit.es>
  */
-@Controller
+@RequiredArgsConstructor
+@RestController
 @RequestMapping("/stats")
-public class ExplotacioStatsRestController {
+public class ExplotacioStatsRestController implements ExplotacioStatsApi {
 
-	@Autowired
-	private EntitatService entitatService;
-	@Autowired
-	private ProcedimentService procedimentService;
-	@Autowired
-	private ServeiService serveiService;
-	@Autowired
-	private UsuariService usuariService;
-	@Autowired
-	private ConsultaService consultaService;
-	@Autowired
-	private HistoricConsultaService historicConsultaService;
+	private final EntitatService entitatService;
+	private final ProcedimentService procedimentService;
+	private final ServeiService serveiService;
+	private final UsuariService usuariService;
+	private final ConsultaService consultaService;
+	private final HistoricConsultaService historicConsultaService;
 
 
-	@RequestMapping(
-			value= "/consultes",
-			method = RequestMethod.GET,
-			produces = "application/json")
+	@Override
+	@PreAuthorize("hasRole('PBL_REPORT')")
+	@GetMapping(value= "/consultes", produces = "application/json")
+	// IMPORTANT: Si es modifica aquest endpoint, actualitzar també la documentació OpenAPI definida a la interfície ExplotacioStatsApi.
 	public ResponseEntity<List<ProcedimentEstadistiques>> consultes(
 			HttpServletRequest request,
 			@RequestParam final String entitatCodi,
@@ -125,10 +106,10 @@ public class ExplotacioStatsRestController {
 		return new ResponseEntity<List<ProcedimentEstadistiques>>(estadisticaProcediments, HttpStatus.OK);
 	}
 
-	@RequestMapping(
-			value= "/carrega",
-			method = RequestMethod.GET,
-			produces = "application/json")
+	@Override
+	@PreAuthorize("hasRole('PBL_REPORT')")
+	@GetMapping(value= "/carrega", produces = "application/json")
+	// IMPORTANT: Si es modifica aquest endpoint, actualitzar també la documentació OpenAPI definida a la interfície ExplotacioStatsApi.
 	public ResponseEntity<List<EntitatEstadistiques>> carrega(
 			HttpServletRequest request) {
 		// Informe de carrega

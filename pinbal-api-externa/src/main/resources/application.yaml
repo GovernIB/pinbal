@@ -1,0 +1,17 @@
+server:
+  servlet:
+    context-path: /pinbalapi/externa
+
+spring:
+  mvc:
+    view:
+      prefix: /WEB_INF/jsp/
+      suffix: .jsp
+
+springdoc:
+  packages-to-scan: es.caib.pinbal.api.externa.controller
+  api-docs.path: /api-docs
+  swagger-ui:
+    path: /rest
+    operationsSorter: method
+    use-root-path: true

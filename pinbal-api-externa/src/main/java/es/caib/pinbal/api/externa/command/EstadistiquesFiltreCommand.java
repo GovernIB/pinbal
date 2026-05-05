@@ -3,9 +3,9 @@
  */
 package es.caib.pinbal.api.externa.command;
 
-import es.caib.pinbal.core.dto.ConsultaDto.EstatTipus;
-import es.caib.pinbal.core.dto.EstadistiquesFiltreDto;
-import es.caib.pinbal.core.dto.EstadistiquesFiltreDto.EstadistiquesAgrupacioDto;
+import es.caib.pinbal.logic.intf.dto.ConsultaDto.EstatTipus;
+import es.caib.pinbal.logic.intf.dto.EstadistiquesFiltreDto;
+import es.caib.pinbal.logic.intf.dto.EstadistiquesFiltreDto.EstadistiquesAgrupacioDto;
 import lombok.Data;
 
 import javax.validation.constraints.Size;

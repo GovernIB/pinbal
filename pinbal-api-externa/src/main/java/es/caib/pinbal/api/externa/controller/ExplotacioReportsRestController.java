@@ -3,29 +3,22 @@
  */
 package es.caib.pinbal.api.externa.controller;
 
-import es.caib.pinbal.client.comu.DepartamentEstadistiques;
-import es.caib.pinbal.client.comu.EntitatEstadistiques;
-import es.caib.pinbal.client.comu.ProcedimentEstadistiques;
-import es.caib.pinbal.client.comu.ServeiEstadistiques;
-import es.caib.pinbal.client.comu.Usuari;
-import es.caib.pinbal.core.dto.InformeGeneralEstatDto;
-import es.caib.pinbal.core.dto.InformeProcedimentDto;
-import es.caib.pinbal.core.dto.InformeUsuariDto;
-import es.caib.pinbal.core.dto.ServeiDto;
-import es.caib.pinbal.core.service.ConsultaService;
-import es.caib.pinbal.core.service.EntitatService;
-import es.caib.pinbal.core.service.HistoricConsultaService;
-import es.caib.pinbal.core.service.ProcedimentService;
-import es.caib.pinbal.core.service.ServeiService;
-import es.caib.pinbal.core.service.UsuariService;
-import org.springframework.beans.factory.annotation.Autowired;
+import es.caib.pinbal.api.externa.api.ExplotacioReportsApi;
+import es.caib.pinbal.client.comu.*;
+import es.caib.pinbal.logic.intf.dto.InformeGeneralEstatDto;
+import es.caib.pinbal.logic.intf.dto.InformeProcedimentDto;
+import es.caib.pinbal.logic.intf.dto.InformeUsuariDto;
+import es.caib.pinbal.logic.intf.dto.ServeiDto;
+import es.caib.pinbal.logic.intf.service.*;
+import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
@@ -37,27 +30,22 @@ import java.util.List;
  * 
  * @author Limit Tecnologies <limit@limit.es>
  */
-@Controller
+@RequiredArgsConstructor
+@RestController
 @RequestMapping("/reports")
-public class ExplotacioReportsRestController {
+public class ExplotacioReportsRestController implements ExplotacioReportsApi {
 
-	@Autowired
-	private EntitatService entitatService;
-	@Autowired
-	private ProcedimentService procedimentService;
-	@Autowired
-	private ServeiService serveiService;
-	@Autowired
-	private UsuariService usuariService;
-	@Autowired
-	private ConsultaService consultaService;
-	@Autowired
-	private HistoricConsultaService historicConsultaService;
+	private final EntitatService entitatService;
+	private final ProcedimentService procedimentService;
+	private final ServeiService serveiService;
+	private final UsuariService usuariService;
+	private final ConsultaService consultaService;
+	private final HistoricConsultaService historicConsultaService;
 
-	@RequestMapping(
-			value= "/procediments",
-			method = RequestMethod.GET,
-			produces = "application/json")
+	@Override
+	@PreAuthorize("hasRole('PBL_REPORT')")
+	@GetMapping(value= "/procediments", produces = "application/json")
+	// IMPORTANT: Si es modifica aquest endpoint, actualitzar també la documentació OpenAPI definida a la interfície ExplotacioReportsApi.
 	public ResponseEntity<List<EntitatEstadistiques>> procediments(
 			HttpServletRequest request) {
 		// Informe de procediments agrupats per entitat i departament
@@ -98,10 +86,10 @@ public class ExplotacioReportsRestController {
 		return new ResponseEntity<List<EntitatEstadistiques>>(entitats, HttpStatus.OK);
 	}
 
-	@RequestMapping(
-			value= "/usuaris",
-			method = RequestMethod.GET,
-			produces = "application/json")
+	@Override
+	@PreAuthorize("hasRole('PBL_REPORT')")
+	@GetMapping(value= "/usuaris", produces = "application/json")
+	// IMPORTANT: Si es modifica aquest endpoint, actualitzar també la documentació OpenAPI definida a la interfície ExplotacioReportsApi.
 	public ResponseEntity<List<EntitatEstadistiques>> usuaris(
 			HttpServletRequest request) {
 		// Informe d'usuaris agrupats per entitat i departament
@@ -142,10 +130,10 @@ public class ExplotacioReportsRestController {
 		return new ResponseEntity<List<EntitatEstadistiques>>(entitats, HttpStatus.OK);
 	}
 
-	@RequestMapping(
-			value= "/serveis",
-			method = RequestMethod.GET,
-			produces = "application/json")
+	@Override
+	@PreAuthorize("hasRole('PBL_REPORT')")
+	@GetMapping(value= "/serveis", produces = "application/json")
+	// IMPORTANT: Si es modifica aquest endpoint, actualitzar també la documentació OpenAPI definida a la interfície ExplotacioReportsApi.
 	public ResponseEntity<List<ServeiEstadistiques>> serveis(
 			HttpServletRequest request) {
 		// Informe de seveis
@@ -161,10 +149,10 @@ public class ExplotacioReportsRestController {
 		return new ResponseEntity<List<ServeiEstadistiques>>(serveis, HttpStatus.OK);
 	}
 
-	@RequestMapping(
-			value= "/general",
-			method = RequestMethod.GET,
-			produces = "application/json")
+	@Override
+	@PreAuthorize("hasRole('PBL_REPORT')")
+	@GetMapping(value= "/general", produces = "application/json")
+	// IMPORTANT: Si es modifica aquest endpoint, actualitzar també la documentació OpenAPI definida a la interfície ExplotacioReportsApi.
 	public ResponseEntity<List<EntitatEstadistiques>> general(
 			HttpServletRequest request,
 			@RequestParam(value = "historic", required = false) boolean historic,
