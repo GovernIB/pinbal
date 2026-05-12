@@ -4,9 +4,9 @@
 package es.caib.pinbal.logic.intf.service;
 
 import es.caib.pinbal.logic.intf.dto.IdiomaEnumDto;
-import es.caib.pinbal.logic.intf.dto.dadesexternes.Municipi;
-import es.caib.pinbal.logic.intf.dto.dadesexternes.Pais;
-import es.caib.pinbal.logic.intf.dto.dadesexternes.Provincia;
+import es.caib.pinbal.plugin.dadescomuns.Municipi;
+import es.caib.pinbal.plugin.dadescomuns.Pais;
+import es.caib.pinbal.plugin.dadescomuns.Provincia;
 import org.springframework.security.access.prepost.PreAuthorize;
 
 import java.util.List;

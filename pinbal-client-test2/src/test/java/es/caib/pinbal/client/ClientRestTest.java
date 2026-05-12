@@ -25,15 +25,16 @@ import static org.junit.jupiter.api.Assertions.*;
 public class ClientRestTest {
 
     private static final String ENTITAT_CIF = "12345678Z";
-//    private static final String URL_BASE = "https://proves.caib.es/pinbalapi";
-//    private static final String USUARI = "$ripea_pinbal";
-//    private static final String CONTRASENYA = "******";
-    private static final String URL_BASE = "http://localhost:8180/pinbalapi";
-    private static final String USUARI = "admin";
-    private static final String CONTRASENYA = "admin";
+    private static final String URL_BASE = "https://proves.caib.es/pinbalapi";
+    private static final String USUARI = "$ripea_pinbal";
+    private static final String CONTRASENYA = "ripea_pinbal";
+//    private static final String URL_BASE = "http://localhost:8180/pinbalapi";
+//    private static final String USUARI = "admin";
+//    private static final String CONTRASENYA = "admin";
     private static final String CODIGO_PROCEDIMIENTO = "TEST";
     private static final String SERVEI_CODI = "SCDCPAJU";
-    private static final String PETICION_SCSP_ID = "PINBAL00000000000000000032";
+//    private static final String PETICION_SCSP_ID = "PINBAL00000000000000000032";
+    private static final String PETICION_SCSP_ID = "PINBAL00000000000000392551";
     private static final boolean ENABLE_LOGGING = true;
     private static final boolean BASIC_AUTH = true;
 
@@ -123,6 +124,20 @@ public class ClientRestTest {
         try {
             ClientRecobriment clientRecobriment = new ClientRecobriment(URL_BASE, USUARI, CONTRASENYA, LogLevel.DEBUG);
             PeticioRespostaSincrona respuesta = clientRecobriment.peticioSincrona(serveiCodi, peticioSincrona);
+            assertNotNull(respuesta);
+            assertFalse(respuesta.isError(), "La resposta indica que s'ha produit un error en l'enviament");
+            System.out.println("-> peticionSincrona = " + objectToJsonString(respuesta));
+        } catch (Exception e) {
+            fail("Excepció no esperada: " + e.getMessage());
+        }
+    }
+
+    @Test
+    public void getRespostav2() throws UniformInterfaceException, ClientHandlerException, IOException {
+
+        try {
+            ClientRecobriment clientRecobriment = new ClientRecobriment(URL_BASE, USUARI, CONTRASENYA, LogLevel.DEBUG);
+            PeticioRespostaAsincrona respuesta = clientRecobriment.getResposta(PETICION_SCSP_ID);
             assertNotNull(respuesta);
             assertFalse(respuesta.isError(), "La resposta indica que s'ha produit un error en l'enviament");
             System.out.println("-> peticionSincrona = " + objectToJsonString(respuesta));

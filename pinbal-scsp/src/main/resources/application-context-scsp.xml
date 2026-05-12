@@ -6,11 +6,11 @@
 	xmlns:context="http://www.springframework.org/schema/context"
 	xsi:schemaLocation="
 			http://www.springframework.org/schema/beans 
-	   		http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+	   		http://www.springframework.org/schema/beans/spring-beans.xsd
 	   		http://www.springframework.org/schema/context
-	   		http://www.springframework.org/schema/context/spring-context-3.0.xsd
+	   		http://www.springframework.org/schema/context/spring-context.xsd
 			http://www.springframework.org/schema/util
-			http://www.springframework.org/schema/util/spring-util-3.0.xsd">
+			http://www.springframework.org/schema/util/spring-util.xsd">
 
 	<!-- Este fichero contiene la configuracion de Spring de las librerias    -->
 	<!-- SCSP V3. Evite realizar modificaciones en este fichero ya que la     -->
@@ -32,22 +32,19 @@
 	<!-- Gestores de configuración                                            -->
 	<!-- ==================================================================== -->
 	<alias name="sPropertyPlaceholderConfigurer" alias="scspPropertyPlaceholderConfigurer" />
-	<bean class="es.scsp.common.security.PolicyBuilder">
-		<constructor-arg index="0" value="/scsp-ws-policy.xml" />
-	</bean>
 	<bean id="parametroConfiguracionDao" class="es.scsp.common.dao.ParametroConfiguracionDao"/> 
 	<alias name="clienteUnico" alias="clienteUnicoProvisional" />
 
 	<!-- ==================================================================== -->
 	<!-- Configuracion de binding.                                            -->
 	<!-- ==================================================================== -->
-	<alias name="jibxMarshaller" alias="marshaller" />
-	<alias name="jibxMarshaller" alias="unmarshaller" />
+	<alias name="jaxbMarshaller" alias="marshaller" />
+	<alias name="jaxbMarshaller" alias="unmarshaller" />
 
 	<!-- ==================================================================== -->
 	<!-- Configuracion de acceso base de datos.                               -->
 	<!-- ==================================================================== -->
-	<bean id="sessionFactory" class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
+	<bean id="sessionFactory" class="org.springframework.orm.hibernate5.LocalSessionFactoryBean">
 		<property name="dataSource" ref="dataSource" />
 		<property name="packagesToScan" value="es.scsp.common.domain.**" />
 		<property name="hibernateProperties">
@@ -55,7 +52,7 @@
 				hibernate.dialect=${config:es.caib.pinbal.hibernate.dialect}
 				hibernate.hbm2ddl.auto=${config:es.caib.pinbal.hibernate.hbm2ddl.auto}
 				hibernate.show_sql=${config:es.caib.pinbal.hibernate.show_sql}
-				hibernate.transaction.factory_class=org.hibernate.transaction.JDBCTransactionFactory
+				hibernate.transaction.coordinator_class=jdbc
 				hibernate.current_session_context_class=thread
 				hibernate.dbcp.enabled=false
 				hibernate.dbcp.initialSize=10
@@ -84,12 +81,12 @@
 	<!-- Cliente Spring de Afirma                                             -->
 	<!-- ==================================================================== -->
 	<bean id="messageFactory" class="org.springframework.ws.soap.axiom.AxiomSoapMessageFactory" />
-	<bean id="afirmaWssHandler" class="org.springframework.ws.soap.security.wss4j.Wss4jSecurityInterceptor">
+	<bean id="afirmaWssHandler" class="org.springframework.ws.soap.security.wss4j2.Wss4jSecurityInterceptor">
 		<property name="securementActions" value="Signature" />
 		<property name="securementSignatureKeyIdentifier" value="DirectReference" />
 		<property name="securementMustUnderstand" value="false" />
 		<property name="securementSignatureCrypto">
-			<bean class="org.springframework.ws.soap.security.wss4j.support.CryptoFactoryBean">
+			<bean class="org.springframework.ws.soap.security.wss4j2.support.CryptoFactoryBean">
 				<property name="keyStorePassword" value="${config:es.caib.pinbal.scsp.keystorePass}" />
 				<property name="keyStoreLocation" value="${config:es.caib.pinbal.scsp.keystoreFile}" />
 			</bean>

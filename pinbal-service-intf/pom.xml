@@ -82,6 +82,11 @@
 			<artifactId>pinbal-client-intf</artifactId>
 			<version>${project.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>pinbal-plugin-intf</artifactId>
+			<version>${project.version}</version>
+		</dependency>
 <!--		<dependency>-->
 <!--			<groupId>org.springframework.data</groupId>-->
 <!--			<artifactId>spring-data-commons</artifactId>-->
@@ -196,8 +201,8 @@
 		<repository>
 			<id>github-governib-maven-repos</id>
 			<name>GitHub GovernIB Maven Repository</name>
-			<!--url>http://governib.github.io/maven/maven/</url-->
-			<url>https://raw.githubusercontent.com/GovernIB/maven/gh-pages/maven</url>
+			<url>http://governib.github.io/maven/maven/</url>
+<!--			<url>https://raw.githubusercontent.com/GovernIB/maven/gh-pages/maven</url>-->
 		</repository>
 	</repositories>
 </project>

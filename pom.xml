@@ -4,131 +4,152 @@
 	<groupId>es.caib.pinbal</groupId>
 	<artifactId>pinbal</artifactId>
 	<version>2.0.1</version>
+	<packaging>pom</packaging>
+	<url>https://github.com/GovernIB/pinbal</url>
+	<parent>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-parent</artifactId>
+		<version>2.7.12</version>
+		<relativePath />
+	</parent>
 	<properties>
-		<spring.version>3.2.16.RELEASE</spring.version>
-		<spring-security.version>3.2.9.RELEASE</spring-security.version>
-		<spring-data-jpa.version>1.6.6.RELEASE</spring-data-jpa.version>
-		<spring-ws.version>2.2.4.RELEASE</spring-ws.version>
-		<hibernate.version>5.0.7.Final</hibernate.version>
-		<hibernate.validator.version>4.1.0.Final</hibernate.validator.version>
-		<ehcache.version>2.10.4</ehcache.version>
+		<axis2.version>1.6.4</axis2.version>
+		<poi.version>3.15</poi.version>
+		<axiom.version>1.2.15</axiom.version>
+		<rampart.version>1.6.4</rampart.version>
+		<firma.simple.version>1.0.3</firma.simple.version>
+		<dir3caib.version>1.1.1</dir3caib.version>
+		<usuaris.ldap.version>4.0.0-SNAPSHOT</usuaris.ldap.version>
+		<!--		<jersey.version>1.19.4</jersey.version>-->
+		<spring.version>${spring-framework.version}</spring.version>
+		<spring-data-jpa.version>2.7.12</spring-data-jpa.version>
+		<hibernate.validator.version>${hibernate-validator.version}</hibernate.validator.version>
+		<orika.version>1.5.4</orika.version>
+		<lombok.version>1.18.46</lombok.version>
+
+		<!--		<itext.pdf.version>5.5.13.1</itext.pdf.version>-->
+
+		<spring-boot.version>2.7.12</spring-boot.version>
+		<keycloak.version>21.1.1</keycloak.version>
+		<orika.starter.version>2.4.6</orika.starter.version>
 		<scsp.core.version>5.0.11</scsp.core.version>
 		<scsp.beans.version>5.0.11</scsp.beans.version>
 		<scsp.rampart.core.version>1.6.4.1</scsp.rampart.core.version>
-		<axis2.version>1.6.4</axis2.version>
-		<jackson.version>2.6.3</jackson.version>
-		<poi.version>3.9</poi.version>
-		<axiom.version>1.2.15</axiom.version>
-		<rampart.version>1.6.4</rampart.version>
-		<cxf.version>2.7.8</cxf.version>
-		<orika.version>1.4.5</orika.version>
-		<xdocreport.version>1.0.3</xdocreport.version>
-		<compiler.plugin.version>3.1</compiler.plugin.version>
-		<slf4j.version>1.7.7</slf4j.version>
-		<pluginsib.arxiu.version>2.0.26</pluginsib.arxiu.version>
-		<plugin.firma.simple.version>1.0.3</plugin.firma.simple.version>
-		<dir3caib.version>1.0.7</dir3caib.version>
-		<jersey.version>1.19.4</jersey.version>
-		<lombok.version>1.18.24</lombok.version>
-		<mapstruct.version>1.2.0.Final</mapstruct.version>
-		<skipTests>true</skipTests>
-		<maven.compiler.source>1.7</maven.compiler.source>
-		<maven.compiler.target>1.7</maven.compiler.target>
+		<mapstruct.version>1.5.5.Final</mapstruct.version>
+		<jackson.version>2.14.1</jackson.version>
+		<cxf.version>3.2.5.redhat-00001</cxf.version>
+		<wss4j.version>2.2.2.redhat-00002</wss4j.version>
+		<xdocreport.version>2.0.4</xdocreport.version>
+		<arxiu.api.version>2.0.27</arxiu.api.version>
+		<pluginsib.arxiu.version>${arxiu.api.version}</pluginsib.arxiu.version>
+		<comanda.api.version>1.0.0</comanda.api.version>
+		<junit.jupiter.version>5.9.3</junit.jupiter.version>
+		<java.compiler.version>11</java.compiler.version>
+		<maven.compiler.target>${java.compiler.version}</maven.compiler.target>
+		<maven.compiler.source>${java.compiler.version}</maven.compiler.source>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<build.timestamp>${maven.build.timestamp}</build.timestamp>
+		<implementation.vendor>Límit Tecnologies</implementation.vendor>
 		<version.full>${project.version}</version.full>
 	</properties>
-	<packaging>pom</packaging>
-	<url>https://github.com/GovernIB/pinbal</url>
 	<dependencyManagement>
 		<dependencies>
 			<dependency>
-				<groupId>org.springframework</groupId>
-				<artifactId>spring-aop</artifactId>
-				<version>${spring.version}</version>
+				<groupId>org.springdoc</groupId>
+				<artifactId>springdoc-openapi-ui</artifactId>
+				<version>1.8.0</version>
 			</dependency>
 			<dependency>
-				<groupId>org.springframework</groupId>
-				<artifactId>spring-aspects</artifactId>
-				<version>${spring.version}</version>
+				<groupId>org.springdoc</groupId>
+				<artifactId>springdoc-openapi-hateoas</artifactId>
+				<version>1.8.0</version>
 			</dependency>
 			<dependency>
-				<groupId>org.springframework</groupId>
-				<artifactId>spring-beans</artifactId>
-				<version>${spring.version}</version>
+				<groupId>org.springdoc</groupId>
+				<artifactId>springdoc-openapi-security</artifactId>
+				<version>1.8.0</version>
 			</dependency>
 			<dependency>
-				<groupId>org.springframework</groupId>
-				<artifactId>spring-context</artifactId>
-				<version>${spring.version}</version>
+				<groupId>com.turkraft</groupId>
+				<artifactId>spring-filter</artifactId>
+				<version>2.1.6</version>
 			</dependency>
 			<dependency>
-				<groupId>org.springframework</groupId>
-				<artifactId>spring-context-support</artifactId>
-				<version>${spring.version}</version>
+				<groupId>net.sf.jasperreports</groupId>
+				<artifactId>jasperreports</artifactId>
+				<version>6.21.4</version>
 			</dependency>
 			<dependency>
-				<groupId>org.springframework</groupId>
-				<artifactId>spring-core</artifactId>
-				<version>${spring.version}</version>
+				<groupId>net.sourceforge.dynamicreports</groupId>
+				<artifactId>dynamicreports-core</artifactId>
+				<version>6.12.1</version>
 			</dependency>
 			<dependency>
-				<groupId>org.springframework</groupId>
-				<artifactId>spring-expression</artifactId>
-				<version>${spring.version}</version>
+				<groupId>org.keycloak.bom</groupId>
+				<artifactId>keycloak-adapter-bom</artifactId>
+				<version>${keycloak.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
 			</dependency>
 			<dependency>
-				<groupId>org.springframework</groupId>
-				<artifactId>spring-jdbc</artifactId>
-				<version>${spring.version}</version>
+				<groupId>opensymphony</groupId>
+				<artifactId>sitemesh</artifactId>
+				<version>2.5.0</version>
 			</dependency>
 			<dependency>
-				<groupId>org.springframework</groupId>
-				<artifactId>spring-orm</artifactId>
-				<version>${spring.version}</version>
+				<groupId>javax.ejb</groupId>
+				<artifactId>javax.ejb-api</artifactId>
+				<version>3.2.2</version>
 			</dependency>
 			<dependency>
-				<groupId>org.springframework</groupId>
-				<artifactId>spring-oxm</artifactId>
-				<version>${spring.version}</version>
+				<groupId>commons-beanutils</groupId>
+				<artifactId>commons-beanutils</artifactId>
+				<version>1.9.4</version>
 			</dependency>
 			<dependency>
-				<groupId>org.springframework</groupId>
-				<artifactId>spring-tx</artifactId>
-				<version>${spring.version}</version>
+				<groupId>commons-io</groupId>
+				<artifactId>commons-io</artifactId>
+				<version>2.12.0</version>
 			</dependency>
 			<dependency>
-				<groupId>org.springframework</groupId>
-				<artifactId>spring-web</artifactId>
-				<version>${spring.version}</version>
+				<groupId>commons-fileupload</groupId>
+				<artifactId>commons-fileupload</artifactId>
+				<version>1.5</version>
 			</dependency>
 			<dependency>
-				<groupId>org.springframework</groupId>
-				<artifactId>spring-webmvc</artifactId>
-				<version>${spring.version}</version>
+				<groupId>org.apache.commons</groupId>
+				<artifactId>commons-collections4</artifactId>
+				<version>4.4</version>
+			</dependency>
+			<dependency>
+				<groupId>com.google.guava</groupId>
+				<artifactId>guava</artifactId>
+				<version>30.1.1-jre</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
 	<modules>
-		<module>pinbal-core</module>
-		<module>pinbal-scsp</module>
-<!--		<module>pinbal-scsp-fake</module>-->
-		<module>pinbal-core-client</module>
-		<module>pinbal-plugins-caib</module>
-		<module>pinbal-plugins</module>
-		<module>pinbal-ws-client</module>
-		<module>pinbal-webapp</module>
-		<module>pinbal-ear</module>
-		<module>pinbal-client</module>
+		<module>pinbal-back</module>
+		<module>pinbal-backend</module>
 		<module>pinbal-api-interna</module>
 		<module>pinbal-api-externa</module>
-		<module>pinbal-client-api</module>
+		<module>pinbal-service-intf</module>
+		<module>pinbal-service</module>
+		<module>pinbal-persistence</module>
+		<module>pinbal-plugin-intf</module>
+		<module>pinbal-plugin</module>
+		<module>pinbal-scsp</module>
+		<module>pinbal-ejb</module>
+		<module>pinbal-ear</module>
+		<module>pinbal-client</module>
+		<module>pinbal-client-intf</module>
 	</modules>
 	<build>
 		<plugins>
 			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-deploy-plugin</artifactId>
-				<version>2.8.1</version>
+				<version>3.1.4</version>
 				<configuration>
 					<altDeploymentRepository>internal.repo::default::file://${project.build.directory}/mvn-repo</altDeploymentRepository>
 				</configuration>
@@ -162,20 +183,48 @@
 				</executions>
 			</plugin>
 			<plugin>
-				<groupId>pl.project13.maven</groupId>
-				<artifactId>git-commit-id-plugin</artifactId>
-				<version>2.2.0</version>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>versions-maven-plugin</artifactId>
+				<version>2.8.1</version>
+			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>buildnumber-maven-plugin</artifactId>
+				<version>3.2.1</version>
+				<executions>
+					<execution>
+						<phase>validate</phase>
+						<goals>
+							<goal>create</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<doCheck>false</doCheck>
+					<doUpdate>false</doUpdate>
+					<ignoreEmptyScmUrl>true</ignoreEmptyScmUrl>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>io.github.git-commit-id</groupId>
+				<artifactId>git-commit-id-maven-plugin</artifactId>
+				<version>7.0.0</version>
 				<executions>
 					<execution>
 						<id>get-the-git-infos</id>
 						<goals>
 							<goal>revision</goal>
 						</goals>
-						<phase>validate</phase>
 					</execution>
 				</executions>
 				<configuration>
-					<dotGitDirectory>${project.basedir}/.git</dotGitDirectory>
+					<generateGitPropertiesFile>true</generateGitPropertiesFile>
+					<generateGitPropertiesFilename>${project.build.outputDirectory}/git.properties</generateGitPropertiesFilename>
+					<includeOnlyProperties>
+						<includeOnlyProperty>git.commit.id</includeOnlyProperty>
+						<includeOnlyProperty>git.build.time</includeOnlyProperty>
+						<includeOnlyProperty>git.build.version</includeOnlyProperty>
+					</includeOnlyProperties>
 				</configuration>
 			</plugin>
 		</plugins>

@@ -379,7 +379,23 @@
    <category name="es.caib.pinbal.core.service.ConsultaServiceImpl">
       <priority value="DEBUG"/>
    </category>
-   
+
+<!--   <category name="org.springframework.ejb.interceptor.SpringBeanAutowiringInterceptor">-->
+<!--      <priority value="TRACE"/>-->
+<!--   </category>-->
+<!--   <category name="org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor">-->
+<!--      <priority value="TRACE"/>-->
+<!--   </category>-->
+<!--   <category name="org.springframework.beans.factory.support.DefaultListableBeanFactory">-->
+<!--      <priority value="DEBUG"/>-->
+<!--   </category>-->
+<!--   <category name="org.springframework.context.access.ContextSingletonBeanFactoryLocator">-->
+<!--      <priority value="TRACE"/>-->
+<!--   </category>-->
+<!--   <category name="org.springframework.jndi.JndiObjectFactoryBean">-->
+<!--      <priority value="DEBUG"/>-->
+<!--   </category>-->
+
    <!-- ======================= -->
    <!-- Setup the Root category -->
    <!-- ======================= -->

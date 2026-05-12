@@ -22,12 +22,12 @@ INSERT INTO pbl_config_type (code) VALUES ('INT');
 INSERT INTO pbl_config_type (code) VALUES ('FLOAT');
 INSERT INTO pbl_config_type (code) VALUES ('PASS');
 INSERT INTO pbl_config_type (code) VALUES ('CRON');
-INSERT INTO pbl_config_type (code, value) VALUES ('USUARIS_CLASS', 'es.caib.pinbal.plugins.caib.DadesUsuariPluginJdbc');
-INSERT INTO pbl_config_type (code, value) VALUES ('SIGNATURA_CLASS', 'es.caib.pinbal.plugins.caib.SignaturaPluginCaib');
-INSERT INTO pbl_config_type (code, value) VALUES ('FIRMA_SERVIDOR_CLASS', 'es.caib.pinbal.plugins.caib.FirmaServidorPluginPortafib');
-INSERT INTO pbl_config_type (code, value) VALUES ('CUSTODIA_CLASS', 'es.caib.pinbal.plugins.caib.CustodiaPluginCaib');
+INSERT INTO pbl_config_type (code, value) VALUES ('USUARIS_CLASS', 'es.caib.pinbal.plugin.usuari.DadesUsuariPluginJdbc');
+INSERT INTO pbl_config_type (code, value) VALUES ('SIGNATURA_CLASS', 'es.caib.pinbal.plugin.signatura.SignaturaPluginCaib');
+INSERT INTO pbl_config_type (code, value) VALUES ('FIRMA_SERVIDOR_CLASS', 'es.caib.pinbal.plugin.firmaservidor.FirmaServidorPluginPortafib');
+INSERT INTO pbl_config_type (code, value) VALUES ('CUSTODIA_CLASS', 'es.caib.pinbal.plugin.custodia.CustodiaPluginCaib');
 INSERT INTO pbl_config_type (code, value) VALUES ('ARXIU_CLASS', 'es.caib.plugins.arxiu.caib.ArxiuPluginCaib');
-INSERT INTO pbl_config_type (code, value) VALUES ('UNITATS_CLASS', 'es.caib.pinbal.plugin.caib.unitat.UnitatsOrganitzativesPluginDir3');
+INSERT INTO pbl_config_type (code, value) VALUES ('UNITATS_CLASS', 'es.caib.pinbal.plugin.unitat.UnitatsOrganitzativesPluginDir3');
 INSERT INTO pbl_config_type (code, value) VALUES ('CONVERSIO_TIPUS', 'xdocreport,openoffice');
 
 INSERT INTO pbl_config (key, value, description_key, group_code, position, source_property, type_code) VALUES ('es.caib.pinbal.xsd.base.path', NULL, 'propietat.xsd.base.path', 'GENERAL', '0', 'FILE', 'TEXT');

@@ -1,5 +1,5 @@
 -- #235
-UPDATE pbl_config_type SET value = 'es.caib.pinbal.plugins.caib.FirmaServidorPluginPortafib,es.caib.pinbal.plugins.caib.FirmaSimpleServidorPluginPortafib' WHERE code = 'FIRMA_SERVIDOR_CLASS';
+UPDATE pbl_config_type SET value = 'es.caib.pinbal.plugin.firmaservidor.FirmaServidorPluginPortafib,es.caib.pinbal.plugin.firmaservidor.FirmaSimpleServidorPluginPortafib' WHERE code = 'FIRMA_SERVIDOR_CLASS';
 
 INSERT INTO pbl_config (key, value, description_key, group_code, position, source_property, type_code) VALUES ('es.caib.pinbal.plugin.firmaservidor.portafib.endpoint', NULL, 'propietat.plugin.firmaservidor.portafib.endpoint', 'FIRMA_SERVIDOR', '7', 'FILE', 'TEXT');
 INSERT INTO pbl_config (key, value, description_key, group_code, position, source_property, type_code) VALUES ('es.caib.pinbal.plugin.firmaservidor.portafib.auth.username', NULL, 'propietat.plugin.firmaservidor.portafib.auth.username', 'FIRMA_SERVIDOR', '8', 'FILE', 'TEXT');
