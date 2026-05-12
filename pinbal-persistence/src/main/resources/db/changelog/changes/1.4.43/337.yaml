@@ -1,0 +1,19 @@
+databaseChangeLog:
+  - property:
+      name: varcharUnit
+      value: CHAR
+      dbms: oracle
+  - property:
+      name: varcharUnit
+      value: ''
+      dbms: postgresql
+  - changeSet:
+      id: 337-01
+      author: limit
+      changes:
+        - addColumn:
+            tableName: pbl_servei_config
+            columns:
+              - column:
+                  name: arrel_resposta_path
+                  type: VARCHAR(255 ${varcharUnit})

@@ -1,0 +1,84 @@
+databaseChangeLog:
+- changeSet:
+    id: 1632403745823-1
+    author: limit
+    changes:
+    - modifyDataType:
+        columnName: apellido1titular
+        newDataType: VARCHAR(50)
+        tableName: core_transmision
+    - modifyDataType:
+        columnName: apellido2titular
+        newDataType: VARCHAR(50)
+        tableName: core_transmision
+    - modifyDataType:
+        columnName: nombretitular
+        newDataType: VARCHAR(50)
+        tableName: core_transmision
+    - modifyDataType:
+        columnName: nombrecompletotitular
+        newDataType: VARCHAR(160)
+        tableName: core_transmision
+    - modifyDataType:
+        columnName: nombrefuncionario
+        newDataType: VARCHAR(160)
+        tableName: core_transmision
+- changeSet:
+    id: 1632403745823-2
+    author: limit
+    changes:
+    - addColumn:
+        tableName: core_transmision
+        columns:
+        - column:
+            name: automatizado
+            type: BOOLEAN
+        - column:
+            name: clasetramite
+            type: NUMBER(2)
+- changeSet:
+    id: 1632403745823-3
+    author: limit
+    changes:
+    - setColumnRemarks:
+        tableName: core_transmision
+        columnName: automatizado 
+        remarks: Indica si el procedimiento es o no automatizado
+    - setColumnRemarks:
+        tableName: core_transmision
+        columnName: clasetramite 
+        remarks: Indica la clase del trámite
+    - update:
+        tableName: core_parametro_configuracion
+        columns:
+        - column:
+            name: valor
+            value: 4.25.0
+        where: nombre='version.datamodel.scsp'
+- changeSet:
+    id: 1632403745823-4
+    author: limit
+    changes:
+    - insert:
+        tableName: core_parametro_configuracion
+        columns:
+        - column:
+            name: nombre
+            value: nombre.ministerio
+        - column:
+            name: descripcion
+            value: Nombre del Ministerio
+        - column:
+            name: valor
+            value: Ministerio de Asuntos Económicos y Transformación Digital
+- changeSet:
+    id: 1632403745823-5
+    author: limit
+    changes:
+    - update:
+        tableName: core_req_cesionarios_servicios
+        columns:
+        - column:
+            name: bloqueado
+            valueBoolean: true
+        where: organismo in (select id from core_organismo_cesionario where bloqueado = 1)

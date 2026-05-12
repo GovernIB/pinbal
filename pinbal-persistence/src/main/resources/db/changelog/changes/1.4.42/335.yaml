@@ -1,0 +1,38 @@
+databaseChangeLog:
+  - property:
+      name: varcharUnit
+      value: CHAR
+      dbms: oracle
+  - property:
+      name: varcharUnit
+      value: ''
+      dbms: postgresql
+  - changeSet:
+      id: 1739193869
+      author: limit
+      changes:
+        - insert:
+            tableName: pbl_config
+            columns:
+              - column:
+                  name: key
+                  value: es.caib.pinbal.tasca.auto.consulta.pendent.repeticio
+              - column:
+                  name: value
+                  value: false
+              - column:
+                  name: description_key
+                  value: propietat.tasca.auto.consulta.pendent.repeticio
+              - column:
+                  name: group_code
+                  value: TASQUES
+              - column:
+                  name: position
+                  value: 7
+              - column:
+                  name: source_property
+                  value: DATABASE
+              - column:
+                  name: type_code
+                  value: TEXT
+

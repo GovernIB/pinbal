@@ -1,0 +1,85 @@
+databaseChangeLog:
+  - property:
+      name: varcharUnit
+      value: CHAR
+      dbms: oracle
+  - property:
+      name: varcharUnit
+      value: ''
+      dbms: postgresql
+  - changeSet:
+      id: 342-01
+      author: limit
+      changes:
+        - renameColumn: 
+            tableName: pbl_explot_temps
+            oldColumnName: dia
+            newColumnName: dia_setmana
+        - addColumn:
+            tableName: pbl_explot_temps
+            columns:
+              - column:
+                  name: dia
+                  type: Integer
+        - update:
+            tableName: pbl_explot_temps
+            columns:
+              - column:
+                  name: dia
+                  valueComputed: "EXTRACT(DAY FROM data)"
+  - changeSet:
+      id: 342-02
+      author: limit
+      changes:
+        - addColumn:
+            tableName: pbl_explot_consulta_dim
+            columns:
+              - column:
+                  name: entitat_codi
+                  type: VARCHAR(64 ${varcharUnit})
+              - column:
+                  name: procediment_codi
+                  type: VARCHAR(20 ${varcharUnit})
+        - update:
+            tableName: pbl_explot_consulta_dim
+            columns:
+              - column:
+                  name: entitat_codi
+                  valueComputed: "(SELECT e.codi FROM pbl_entitat e WHERE e.id = entitat_id)"
+              - column:
+                  name: procediment_codi
+                  valueComputed: "(SELECT p.codi FROM pbl_procediment p WHERE p.id = procediment_id)"
+
+  - changeSet:
+      id: 342-03
+      author: limit
+      changes:
+        # Índex simple sobre procediment_id
+        - createIndex:
+            tableName: pbl_consulta
+            indexName: pbl_cons_procediment_i
+            columns:
+              - column:
+                  name: procediment_id
+
+        # Índex simple sobre servei_codi
+        - createIndex:
+            tableName: pbl_consulta
+            indexName: pbl_cons_serveicodi_i
+            columns:
+              - column:
+                  name: servei_codi
+
+        # Índex compost per optimitzar ORDER BY
+        - createIndex:
+            tableName: pbl_consulta
+            indexName: pbl_cons_explotorder_i
+            columns:
+              - column:
+                  name: entitat_id
+              - column:
+                  name: procediment_id
+              - column:
+                  name: servei_codi
+              - column:
+                  name: createdby_codi

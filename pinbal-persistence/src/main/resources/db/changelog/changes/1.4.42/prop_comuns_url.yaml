@@ -1,0 +1,30 @@
+databaseChangeLog:
+  - changeSet:
+      id: inserir-config-dadescomunes-url
+      author: limit
+      changes:
+        - insert:
+            tableName: PBL_CONFIG
+            columns:
+              - column:
+                  name: KEY
+                  value: es.caib.pinbal.dadescomunes.base.url
+              - column:
+                  name: VALUE
+                  value: null
+                  type: string
+              - column:
+                  name: DESCRIPTION_KEY
+                  value: propietat.dadescomunes.base.url
+              - column:
+                  name: GROUP_CODE
+                  value: GENERAL
+              - column:
+                  name: POSITION
+                  valueNumeric: 3
+              - column:
+                  name: SOURCE_PROPERTY
+                  value: FILE
+              - column:
+                  name: TYPE_CODE
+                  value: TEXT

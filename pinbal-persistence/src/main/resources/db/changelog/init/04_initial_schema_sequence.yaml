@@ -1,0 +1,106 @@
+databaseChangeLog:
+- changeSet:
+    id: init-sequence-1
+    author: limit (generated)
+    changes:
+    - createSequence:
+        sequenceName: hibernate_sequence
+        startValue: 1
+- changeSet:
+    id: init-sequence-2
+    author: limit (generated)
+    changes:
+    - createSequence:
+        sequenceName: acl_sid_seq
+        startValue: 1
+- changeSet:
+    id: init-sequence-3
+    author: limit (generated)
+    changes:
+    - createSequence:
+        sequenceName: acl_class_seq
+        startValue: 1
+- changeSet:
+    id: init-sequence-4
+    author: limit (generated)
+    changes:
+    - createSequence:
+        sequenceName: acl_oid_seq
+        startValue: 1
+- changeSet:
+    id: init-sequence-5
+    author: limit (generated)
+    changes:
+    - createSequence:
+        sequenceName: acl_entry_seq
+        startValue: 1
+- changeSet:
+    id: init-sequence-6
+    author: limit (generated)
+    changes:
+    - createSequence:
+        sequenceName: id_clave_privada_sequence
+        startValue: 1
+- changeSet:
+    id: init-sequence-7
+    author: limit (generated)
+    changes:
+    - createSequence:
+        sequenceName: id_clave_publica_sequence
+        startValue: 1
+- changeSet:
+    id: init-sequence-8
+    author: limit (generated)
+    changes:
+    - createSequence:
+        sequenceName: id_emisor_sequence
+        startValue: 1
+- changeSet:
+    id: init-sequence-9
+    author: limit (generated)
+    changes:
+    - createSequence:
+        sequenceName: id_autorizacion_organismo_seq
+        startValue: 1
+- changeSet:
+    id: init-sequence-10
+    author: limit (generated)
+    changes:
+    - createSequence:
+        sequenceName: id_organismo_cesionario_seq
+        startValue: 1
+- changeSet:
+    id: init-sequence-11
+    author: limit (generated)
+    changes:
+    - createSequence:
+        sequenceName: id_servicio_sequence
+        startValue: 1
+- changeSet:
+    id: init-sequence-12
+    author: limit (generated)
+    changes:
+    - createSequence:
+        sequenceName: id_aplicacion_sequence
+        startValue: 1
+- changeSet:
+    id: init-sequence-13
+    author: limit (generated)
+    changes:
+    - createSequence:
+        sequenceName: id_autorizacion_ca_seq
+        startValue: 1
+- changeSet:
+    id: init-sequence-14
+    author: limit (generated)
+    changes:
+    - createSequence:
+        sequenceName: id_autorizacion_certific_seq
+        startValue: 1
+- changeSet:
+    id: init-sequence-15
+    author: limit (generated)
+    changes:
+    - createSequence:
+        sequenceName: id_servicio_cesionario_seq
+        startValue: 1

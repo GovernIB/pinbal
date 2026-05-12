@@ -1,0 +1,24 @@
+- Generar changelog a partir d'una base de dades existent
+---------------------------------------------------------
+1.- Crear un fitxer de properties amb el següent contingut:
+	url=jdbc:oracle:thin:@DB_HOST:1521:SID
+	username=USER
+	password=PASSWD
+	driver=oracle.jdbc.driver.OracleDriver
+	outputChangeLogFile=liquibase/liquibase-changelog.yaml
+2.- Executar la següent comanda (a on DBTYPE pot agafar els valors: oracle):
+    $ mvn liquibase:generateChangeLog -P DBTYPE
+3.- L'execució d'aquesta comanda generarà el fitxer amb el changelog a liquibase/liquibase-changelog.yaml
+
+- Generar script actualització
+------------------------------
+1.- Crear el fitxer liquibase/databasechangelog.csv amb el contingut d'un dels fitxers de la carpeta liquibase/databasechangelogs.
+    Aquest fitxer representa el punt de partida per a generar l'script d'actualització.
+2.- Executar la següent comanda (a on DBTYPE pot agafar els valors: oracle):
+    $ mvn liquibase:updateSQL -P DBTYPE
+3.- L'execució d'aquesta comanda generarà l'script d'actualització a target/liquibase/migrate.sql
+4.- També actualitzarà el contingut del fitxer liquibase/databasechangelog.csv que es podrá guardar a dins liquibase/databasechangelogs per a futures actualitzacions.
+
+- Generar script de creació de la base de dades
+-----------------------------------------------
+Aquest script es pot crear seguint el mateix mètode que per a generar l'script d'actualització però eliminant el fitxer liquibase/databasechangelog.csv.

@@ -1,0 +1,29 @@
+databaseChangeLog:
+  - changeSet:
+      id: 362-01
+      author: limit
+      changes:
+        - insert:
+            tableName: pbl_config
+            columns:
+              - column:
+                  name: key
+                  value: es.caib.pinbal.log.dir
+              - column:
+                  name: value
+                  value:
+              - column:
+                  name: description_key
+                  value: propietat.log.dir
+              - column:
+                  name: group_code
+                  value: LOGS
+              - column:
+                  name: position
+                  value: 5
+              - column:
+                  name: source_property
+                  value: DATABASE
+              - column:
+                  name: type_code
+                  value: TEXT

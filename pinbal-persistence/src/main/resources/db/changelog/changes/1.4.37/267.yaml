@@ -1,0 +1,16 @@
+databaseChangeLog:
+  - property:
+      name: fals
+      value: 0
+      dbms: oracle
+  - changeSet:
+      id: 1681312463404-1
+      author: limit
+      changes:
+        - addColumn:
+            tableName: pbl_servei_camp
+            columns:
+              - column:
+                  name: inicialitzar
+                  type: BOOLEAN
+                  defaultValue: ${fals}

@@ -1,0 +1,30 @@
+databaseChangeLog:
+- changeSet:
+    id: 1626254629134-1
+    author: limit
+    changes:
+    - addColumn:
+        columns:
+        - column:
+            name: max_peticions_min
+            type: integer
+        tableName: pbl_servei_config
+- changeSet:
+    id: 1626254629134-2
+    author: limit
+    changes:
+    - addColumn:
+        columns:
+        - column:
+            name: finalitat
+            type: varchar(250)
+        - column:
+            name: consentiment
+            type: integer
+        - column:
+            name: expedient_id
+            type: varchar(25)
+        - column:
+            name: dades_especifiques
+            type: varchar(2048)
+        tableName: pbl_consulta

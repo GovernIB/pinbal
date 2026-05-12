@@ -1,0 +1,26 @@
+databaseChangeLog:
+    - property:
+          name: db_prefix
+          value: pbl_
+    - property:
+          dbms: oracle
+          name: varcharUnit
+          value: CHAR
+    - property:
+          dbms: postgresql
+          name: varcharUnit
+          value: ''
+    - property:
+          dbms: oracle
+          name: hibernateSeqNextVal
+          value: ${db_prefix}HIBERNATE_SEQ.nextval
+    - property:
+          dbms: postgresql
+          name: hibernateSeqNextVal
+          value: nextval('${db_prefix}HIBERNATE_SEQ}
+    - includeAll:
+          path: db/changelog/init
+          errorIfMissingOrEmpty: false
+    - includeAll:
+          path: db/changelog/changes
+          errorIfMissingOrEmpty: false

@@ -1,0 +1,49 @@
+databaseChangeLog:
+- property:
+    name: varcharUnit
+    value: CHAR
+    dbms: oracle
+- property:
+    name: varcharUnit
+    value: ''
+    dbms: postgresql
+- property:
+    name: cert
+    value: 1
+    dbms: oracle
+- property:
+    name: cert
+    value: true
+    dbms: postgresql
+- property:
+    name: fals
+    value: 0
+    dbms: oracle
+- property:
+    name: fals
+    value: false
+    dbms: postgresql
+- changeSet:
+    id: 1660889406593-1
+    author: limit
+    changes:
+    - addColumn:
+        tableName: pbl_organ_gestor
+        columns:
+          - column:
+              name: estat
+              type: VARCHAR(10 ${varcharUnit})
+    - update:
+        tableName: pbl_organ_gestor
+        columns:
+          - column:
+              name: estat
+              value: 'V'
+        where: actiu=${cert}
+    - update:
+        tableName: pbl_organ_gestor
+        columns:
+          - column:
+              name: estat
+              value: 'E'
+        where: actiu=${fals}

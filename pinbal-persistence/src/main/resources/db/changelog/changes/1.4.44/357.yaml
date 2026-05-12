@@ -1,0 +1,23 @@
+databaseChangeLog:
+  - changeSet:
+      id: 357-01
+      author: limit
+      changes:
+        - addColumn:
+            tableName: pbl_consulta
+            columns:
+              - column:
+                  name: app_guarda_just_arx
+                  type: BOOLEAN
+                  defaultValueBoolean: false
+                  constraints:
+                    nullable: false
+        - addColumn:
+            tableName: pbl_consulta_hist
+            columns:
+              - column:
+                  name: app_guarda_just_arx
+                  type: BOOLEAN
+                  defaultValueBoolean: false
+                  constraints:
+                    nullable: false

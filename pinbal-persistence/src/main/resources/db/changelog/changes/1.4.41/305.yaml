@@ -1,0 +1,37 @@
+databaseChangeLog:
+  - property:
+      name: varcharUnit
+      value: CHAR
+      dbms: oracle
+  - property:
+      name: varcharUnit
+      value: ''
+      dbms: postgresql
+  - changeSet:
+      id: 1719641276940
+      author: limit
+      changes:
+        - insert:
+            tableName: pbl_config
+            columns:
+              - column:
+                  name: key
+                  value: es.caib.pinbal.plugin.dades.usuari.jdbc.query.any
+              - column:
+                  name: value
+                  value: select usu_codi, usu_nom, usu_nif, usu_codi||'@caib.es' from sc_wl_usuari where usu_codi like '%' || :text || '%' or usu_nif like '%' || :text || '%' or usu_nom like '%' || :text || '%'
+              - column:
+                  name: description_key
+                  value: propietat.plugin.dades.usuari.jdbc.query.any
+              - column:
+                  name: group_code
+                  value: USUARIS
+              - column:
+                  name: position
+                  value: 6
+              - column:
+                  name: source_property
+                  value: DATABASE
+              - column:
+                  name: type_code
+                  value: TEXT

@@ -1,0 +1,22 @@
+databaseChangeLog:
+  - changeSet:
+      id: crear-index-pbl-mon-int-data
+      author: limit
+      changes:
+        - createIndex:
+            indexName: pbl_mon_int_data_i
+            tableName: PBL_MON_INT
+            columns:
+              - column:
+                  name: data
+
+  - changeSet:
+      id: crear-index-pbl-mon-int-param-mon-int
+      author: siona
+      changes:
+        - createIndex:
+            indexName: pbl_mon_int_param_mon_int_i
+            tableName: PBL_MON_INT_PARAM
+            columns:
+              - column:
+                  name: mon_int_id

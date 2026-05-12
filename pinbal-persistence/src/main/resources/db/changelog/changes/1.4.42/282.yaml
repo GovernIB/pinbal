@@ -1,0 +1,20 @@
+databaseChangeLog:
+  - property:
+      name: varcharUnit
+      value: CHAR
+      dbms: oracle
+  - property:
+      name: varcharUnit
+      value: ''
+      dbms: postgresql
+  - changeSet:
+      id: 1727858290
+      author: limit
+      changes:
+        - addColumn:
+            tableName: pbl_usuari
+            columns:
+              - column:
+                  name: num_elements_pagina
+                  type: int
+                  defaultValue: 10

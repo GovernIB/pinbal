@@ -1,0 +1,73 @@
+databaseChangeLog:
+  - property:
+      name: varcharUnit
+      value: CHAR
+      dbms: oracle
+  - property:
+      name: varcharUnit
+      value: ''
+      dbms: postgresql
+  - changeSet:
+      id: 1738059685
+      author: limit
+      changes:
+        - createTable:
+            tableName: pbl_servei_xsd
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+
+              - column:
+                  name: servei_id
+                  type: VARCHAR(64 ${varcharUnit})
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: tipus
+                  type: VARCHAR(32 ${varcharUnit})
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: path
+                  type: VARCHAR(255 ${varcharUnit})
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: nomarxiu
+                  type: VARCHAR(255 ${varcharUnit})
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: version
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: data
+                  type: TIMESTAMP
+                  constraints:
+                    nullable: false
+
+        - addUniqueConstraint:
+            tableName: pbl_servei_xsd
+            columnNames: servei_id, tipus
+            constraintName: pbl_servei_xsd_uk
+
+        - createIndex:
+            tableName: pbl_servei_xsd
+            indexName: pbl_servei_xsd_servei_i
+            columns:
+              - column:
+                  name: servei_id
+
+        - sql:
+            sql: "GRANT SELECT, UPDATE, INSERT, DELETE ON pbl_servei_xsd TO WWW_PINBAL; "
