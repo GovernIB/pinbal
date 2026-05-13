@@ -31,6 +31,7 @@ import es.caib.pinbal.webapp.command.ConsultaFiltreCommand;
 import es.caib.pinbal.webapp.common.AlertHelper;
 import es.caib.pinbal.webapp.common.EntitatHelper;
 import es.caib.pinbal.webapp.common.RequestSessionHelper;
+import es.caib.pinbal.webapp.common.RolHelper;
 import es.caib.pinbal.webapp.datatables.ServerSideColumn;
 import es.caib.pinbal.webapp.datatables.ServerSideRequest;
 import es.caib.pinbal.webapp.datatables.ServerSideResponse;
@@ -344,6 +345,8 @@ public class ConsultaAdminController extends BaseController {
 		ConsultaDto consulta = getConsultaAdmin(consultaId, isHistoric(request));
 		model.addAttribute("consulta", consulta);
 		model.addAttribute("servei", serveiService.findAmbCodiPerAdminORepresentant(consulta.getServeiCodi()));
+		model.addAttribute("historic", isHistoric(request));
+		model.addAttribute("potRecuperarRespostaConsultaMultiple", RolHelper.isRolActualAdministrador(request));
 
 		if (consulta.isMultiple()) {
 			model.addAttribute("filles", getConsultesFilles(consultaId, isHistoric(request)));
@@ -359,6 +362,37 @@ public class ConsultaAdminController extends BaseController {
 			model.addAttribute("multiple", true);
 		}
 		return "adminConsultaInfo";
+	}
+
+	@RequestMapping(value = "/{consultaId}/recuperarResposta", method = RequestMethod.GET)
+	public String recuperarResposta(
+			HttpServletRequest request,
+			@PathVariable Long consultaId) throws ConsultaNotFoundException {
+		if (isHistoric(request)) {
+			AlertHelper.error(
+					request,
+					getMessage(
+							request,
+							"consulta.multiple.info.recuperar.resposta.historic"));
+		} else {
+			try {
+				consultaService.recuperarRespostaConsultaMultiple(consultaId);
+				AlertHelper.success(
+						request,
+						getMessage(
+								request,
+								"consulta.multiple.info.recuperar.resposta.ok"));
+			} catch (ConsultaNotFoundException ex) {
+				throw ex;
+			} catch (Exception ex) {
+				AlertHelper.error(
+						request,
+						getMessage(
+								request,
+								"consulta.multiple.info.recuperar.resposta.error") + ": " + ex.getMessage());
+			}
+		}
+		return "redirect:../" + consultaId;
 	}
 
 	private void omplirModelAmbDadesEspecifiques(

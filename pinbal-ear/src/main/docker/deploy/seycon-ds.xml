@@ -4,7 +4,7 @@
   <local-tx-datasource>
     <jndi-name>es.caib.seycon.db.wl</jndi-name>
     <!--connection-url>jdbc:oracle:thin:@10.35.3.242:1521:orcl</connection-url-->
-    <connection-url>jdbc:oracle:thin:@host.docker.internal:49161:xe</connection-url>
+    <connection-url>jdbc:oracle:thin:@host.docker.internal:1521/FREEPDB1</connection-url>
     <driver-class>oracle.jdbc.driver.OracleDriver</driver-class>
     <user-name>seycon</user-name>
     <password>seycon</password>

@@ -284,6 +284,11 @@ $('#dadesResposta').on('shown', function () {
 		</div>
 	</c:if>
 	<div id="modal-botons" class="well">
+		<c:if test="${consulta.estatProcessant and not historic}">
+			<a href="<c:url value="/consulta/multiple/${consulta.id}/recuperarResposta"/>" class="btn btn-primary">
+				<i class="fas fa-sync-alt"></i> <spring:message code="consulta.multiple.info.recuperar.resposta"/>
+			</a>
+		</c:if>
 		<a href="<c:url value="/consulta/multiple"/>" class="btn btn-default" data-modal-cancel="true"><spring:message code="comu.boto.tancar"/></a>
 	</div>
 	<div id="modal-missatge-xml" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">

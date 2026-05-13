@@ -123,6 +123,21 @@ public interface ConsultaService {
 			Long consultaId) throws ConsultaNotFoundException, ConsultaScspException;
 
 	/**
+	 * Recupera manualment la resposta d'una consulta múltiple que encara es
+	 * troba en estat processant.
+	 *
+	 * @param consultaId
+	 *            Id de la consulta múltiple.
+	 * @throws ConsultaNotFoundException
+	 *            Si la consulta especificada no existeix.
+	 * @throws ConsultaScspException
+	 *            Si hi ha hagut algun error al recuperar la resposta.
+	 */
+	@PreAuthorize("hasRole('ROLE_DELEG') or hasRole('ROLE_ADMIN')")
+	public void recuperarRespostaConsultaMultiple(
+			Long consultaId) throws ConsultaNotFoundException, ConsultaScspException;
+
+	/**
 	 * Realitza una consulta múltiple mitjançant les llibreries SCSP.
 	 * 
 	 * @param consulta

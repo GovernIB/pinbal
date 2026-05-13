@@ -101,6 +101,13 @@ public class ConsultaServiceBean implements ConsultaService {
 
 	@Override
 	@RolesAllowed("tothom")
+	public void recuperarRespostaConsultaMultiple(
+			Long consultaId) throws ConsultaNotFoundException, ConsultaScspException {
+		delegate.recuperarRespostaConsultaMultiple(consultaId);
+	}
+
+	@Override
+	@RolesAllowed("tothom")
 	public ConsultaDto novaConsultaMultiple(
 			ConsultaDto consulta) throws ValidacioDadesPeticioException, ProcedimentServeiNotFoundException, ServeiNotAllowedException, ConsultaScspException {
 		return delegate.novaConsultaMultiple(consulta);

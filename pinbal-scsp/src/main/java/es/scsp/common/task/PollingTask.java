@@ -102,49 +102,14 @@ import java.util.TimerTask;
 					break;
 				} else {
 					for (final PeticionRespuesta peticionRespuesta: peticiones) {
-						final String idPeticion = peticionRespuesta.getIdPeticion();
-						log.debug(String.format(
-								"Iniciando consulta asincrona de la peticion %s.",
-								new Object[] { idPeticion }));
-						final SolicitudRespuesta solicitud = new SolicitudRespuesta();
 						try {
-							Servicio servicio = getServicio(peticionRespuesta);
-							String codigoCertificado = servicio.getCodCertificado();
-							int numTransmissions = peticionRespuesta.getNumeroTransmisiones().intValue();
-							solicitud.setAtributos(new Atributos());
-							solicitud.getAtributos().setCodigoCertificado(codigoCertificado);
-							solicitud.getAtributos().setIdPeticion(peticionRespuesta.getIdPeticion());
-							solicitud.getAtributos().setNumElementos(String.valueOf(numTransmissions));
-							solicitud.getAtributos().setTimeStamp(dateFormat.format(new Date()));
-
-							if (serveiHasToSendSolicitant(codigoCertificado)) {
-								Transmision transmision = getTransmision(peticionRespuesta);
-
-								if (transmision != null) {
-									solicitud.getAtributos().setSolicitante(getSolicitante(transmision));
-                                }
-							}
-
-							log.debug(String.format("Finalizada la consulta asincrona de la peticion %s.", new Object[] { idPeticion }));
-						} catch (Exception e) {
-							log.debug(
-									String.format("Ha ocurrido un error mientras se creaba la peticion pendiente a partir de los datos de base de datos.",
-											new Object[] { idPeticion }));
-							handleErrorPeticion(peticionRespuesta, e);
+							processarPeticio(peticionRespuesta, false);
+						} catch (Exception ex) {
+							log.error(
+									String.format(
+											"Ha ocurrido en un error durante la consulta asincrona de la peticion %s.",
+											new Object[] { peticionRespuesta.getIdPeticion() }), ex);
 						}
-						transactionTemplate.execute(new TransactionCallback<Object>() {
-							public Object doInTransaction(TransactionStatus status) {
-								try {
-									clienteUnico.realizaSolicitudRespuesta(solicitud);
-								} catch (Exception ex) {
-									log.error(
-											String.format(
-													"Ha ocurrido en un error durante la consulta asincrona de la peticion %s.",
-													new Object[] { idPeticion }), ex);
-								}
-								return null;
-							}
-						});
 					}
 				}
 				log.debug("Finalizado ciclo de procesamiento de peticiones.");
@@ -153,30 +118,92 @@ import java.util.TimerTask;
 		}
 	}
 
+	public void processarPeticio(String idPeticion) throws Exception {
+		PeticionRespuesta peticionRespuesta = peticionRespuestaDao.select(idPeticion);
+		if (peticionRespuesta == null) {
+			throw new ScspException("0234", "No s'ha trobat la petició: " + idPeticion);
+		}
+		processarPeticio(peticionRespuesta, true);
+	}
+
+	private void processarPeticio(
+			final PeticionRespuesta peticionRespuesta,
+			final boolean propagarErrors) throws Exception {
+		final String idPeticion = peticionRespuesta.getIdPeticion();
+		log.debug(String.format(
+				"Iniciando consulta asincrona de la peticion %s.",
+				new Object[] { idPeticion }));
+		final SolicitudRespuesta solicitud = new SolicitudRespuesta();
+		try {
+			Servicio servicio = getServicio(peticionRespuesta);
+			String codigoCertificado = servicio.getCodCertificado();
+			int numTransmissions = peticionRespuesta.getNumeroTransmisiones().intValue();
+			solicitud.setAtributos(new Atributos());
+			solicitud.getAtributos().setCodigoCertificado(codigoCertificado);
+			solicitud.getAtributos().setIdPeticion(peticionRespuesta.getIdPeticion());
+			solicitud.getAtributos().setNumElementos(String.valueOf(numTransmissions));
+			solicitud.getAtributos().setTimeStamp(dateFormat.format(new Date()));
+
+			if (serveiHasToSendSolicitant(codigoCertificado)) {
+				Transmision transmision = getTransmision(peticionRespuesta);
+
+				if (transmision != null) {
+					solicitud.getAtributos().setSolicitante(getSolicitante(transmision));
+				}
+			}
+
+			log.debug(String.format("Finalizada la consulta asincrona de la peticion %s.", new Object[] { idPeticion }));
+		} catch (Exception e) {
+			log.debug(
+					String.format("Ha ocurrido un error mientras se creaba la peticion pendiente a partir de los datos de base de datos.",
+							new Object[] { idPeticion }));
+			handleErrorPeticion(peticionRespuesta, e);
+			if (propagarErrors) {
+				throw e;
+			}
+		}
+		final Exception[] executionError = new Exception[1];
+		try {
+			transactionTemplate.execute(new TransactionCallback<Object>() {
+				public Object doInTransaction(TransactionStatus status) {
+					try {
+						clienteUnico.realizaSolicitudRespuesta(solicitud);
+					} catch (Exception ex) {
+						log.error(
+								String.format(
+										"Ha ocurrido en un error durante la consulta asincrona de la peticion %s.",
+										new Object[] { idPeticion }), ex);
+						executionError[0] = ex;
+						if (propagarErrors) {
+							throw new PollingTaskException(ex);
+						}
+					}
+					return null;
+				}
+			});
+		} catch (PollingTaskException ex) {
+			if (ex.getCause() instanceof Exception) {
+				throw (Exception) ex.getCause();
+			}
+			throw ex;
+		}
+		if (executionError[0] != null) {
+			handleErrorPeticion(peticionRespuesta, executionError[0]);
+		}
+	}
+
+	private static class PollingTaskException extends RuntimeException {
+		private static final long serialVersionUID = 1L;
+
+		private PollingTaskException(Throwable cause) {
+			super(cause);
+		}
+	}
+
 	private static Solicitante getSolicitante(Transmision transmision) {
 		Solicitante solicitante = new Solicitante();
 		solicitante.setIdentificadorSolicitante(transmision.getIdSolicitante());
 		solicitante.setNombreSolicitante(transmision.getNombreSolicitante());
-//		solicitante.setFinalidad(transmision.getFinalidad());
-//		solicitante.setConsentimiento(Consentimiento.valueOf(transmision.getConsentimiento()));
-//		solicitante.setUnidadTramitadora(transmision.getUnidadTramitadora());
-//		solicitante.setCodigoUnidadTramitadora(transmision.getCodigoUnidadTramitadora());
-//		solicitante.setIdExpediente(transmision.getExpediente());
-//
-//		Procedimiento procedimiento = new Procedimiento();
-//		procedimiento.setNombreProcedimiento(transmision.getNombreProcedimiento());
-//		procedimiento.setCodProcedimiento(transmision.getCodigoProcedimiento());
-//		if (transmision.getAutomatizado() != null) {
-//			procedimiento.setAutomatizado(transmision.getAutomatizado() == 0 ? "N" : "S");
-//		}
-//		procedimiento.setClaseTramite(transmision.getClaseTramite());
-//		solicitante.setProcedimiento(procedimiento);
-//
-//		Funcionario funcionario = new Funcionario();
-//		funcionario.setNombreCompletoFuncionario(transmision.getNombreFuncionario());
-//		funcionario.setNifFuncionario(transmision.getDocFuncionario());
-//		funcionario.setSeudonimo(transmision.getSeudonimoFuncionario());
-//		solicitante.setFuncionario(funcionario);
 		return solicitante;
 	}
 
