@@ -331,20 +331,36 @@
 	{{{ icon-status }}} {{ estat }}
 </script>
 <script id="template-justificant" type="x-tmpl-mustache">
-{{#estat-pendent}}
-<a class="btn btn-default btn-small btn-justificant" href="consulta/{{ id }}/justificant">
-<i class="far fa-file-pdf" title="<spring:message code="consulta.list.taula.descarregar.pdf"/>" 
-			 alt="<spring:message code="consulta.list.taula.descarregar.pdf"/>"></i>
-</a>
-{{/estat-pendent}}
-{{#estat-ok}}
-<a class="btn btn-default btn-small btn-justificant" href="consulta/{{ id }}/justificant">
-<i class="far fa-file-pdf" title="<spring:message code="consulta.list.taula.descarregar.pdf"/>" 
-			 alt="<spring:message code="consulta.list.taula.descarregar.pdf"/>"></i>
-</a>
-{{/estat-ok}}
-{{#estat-error}}
-<div class="btn-group">
+	{{#estat-pendent}}
+	{{#multiple}}
+	<a class="btn btn-default btn-small btn-justificant-multiple" href="consulta/{{ id }}/justificantpdf">
+	<i class="far fa-file-pdf" title="<spring:message code="consulta.list.taula.descarregar.pdf"/>"
+				 alt="<spring:message code="consulta.list.taula.descarregar.pdf"/>"></i>
+	</a>
+	{{/multiple}}
+	{{^multiple}}
+	<a class="btn btn-default btn-small btn-justificant" href="consulta/{{ id }}/justificant">
+	<i class="far fa-file-pdf" title="<spring:message code="consulta.list.taula.descarregar.pdf"/>"
+				 alt="<spring:message code="consulta.list.taula.descarregar.pdf"/>"></i>
+	</a>
+	{{/multiple}}
+	{{/estat-pendent}}
+	{{#estat-ok}}
+	{{#multiple}}
+	<a class="btn btn-default btn-small btn-justificant-multiple" href="consulta/{{ id }}/justificantpdf">
+	<i class="far fa-file-pdf" title="<spring:message code="consulta.list.taula.descarregar.pdf"/>"
+				 alt="<spring:message code="consulta.list.taula.descarregar.pdf"/>"></i>
+	</a>
+	{{/multiple}}
+	{{^multiple}}
+	<a class="btn btn-default btn-small btn-justificant" href="consulta/{{ id }}/justificant">
+	<i class="far fa-file-pdf" title="<spring:message code="consulta.list.taula.descarregar.pdf"/>"
+				 alt="<spring:message code="consulta.list.taula.descarregar.pdf"/>"></i>
+	</a>
+	{{/multiple}}
+	{{/estat-ok}}
+	{{#estat-error}}
+	<div class="btn-group">
 	<a class="btn btn-default btn-small dropdown-toggle" data-toggle="dropdown">
 		<i class="fa fa-exclamation-triangle text-danger" title="<spring:message code="consulta.list.taula.justif.error"/>" alt="<spring:message code="consulta.list.taula.justif.error"/>"></i>
 		&nbsp;<span class="caret"></span>
@@ -354,14 +370,16 @@
 			<a href="#" data-toggle="modal_local" data-target="#modal-justificant-error-{{ id }}" onClick="$('#modal-justificant-error-{{ id }}').modal('toggle');">
 				<i class="fa fa-exclamation-triangle"></i>&nbsp;<spring:message code="consulta.list.taula.justif.error.veure"/>
 			</a>
-		</li>
-		<li>
-			<a href="consulta/{{ id }}/justificantReintentar" class="justificant-reintentar">
-				<i class="fa fa-redo-alt"></i>&nbsp;<spring:message code="consulta.list.taula.justif.error.reintentar"/>
-			</a>
-		</li>
-	</ul>
-</div>
+			</li>
+			{{^multiple}}
+			<li>
+				<a href="consulta/{{ id }}/justificantReintentar" class="justificant-reintentar">
+					<i class="fa fa-redo-alt"></i>&nbsp;<spring:message code="consulta.list.taula.justif.error.reintentar"/>
+				</a>
+			</li>
+			{{/multiple}}
+		</ul>
+	</div>
 <div id="modal-justificant-error-{{ id }}" class="modal fade" role="dialog">
 	<div class="modal-dialog modal-lg">
 		<!-- Modal content-->

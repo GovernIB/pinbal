@@ -200,6 +200,15 @@ public class ConsultaAdminController extends BaseController {
 		EntitatDto entitat = EntitatHelper.getEntitatActual(request, entitatService);
 		if  (entitat != null) {
 			try {
+				ConsultaDto consulta = getConsultaAdmin(consultaId, isHistoric(request));
+				if (consulta.isMultiple()) {
+					FitxerDto fitxer = getJustificantMultiplePdf(consultaId, isHistoric(request));
+					writeFileToResponse(
+							fitxer.getNom(),
+							fitxer.getContingut(),
+							response);
+					return null;
+				}
 				JustificantDto justificant = getJustificant(consultaId, isHistoric(request));
 				if (!justificant.isError()) {
 					writeFileToResponse(
@@ -233,6 +242,56 @@ public class ConsultaAdminController extends BaseController {
 							request,
 							"comu.error.no.entitat"));
 			return "redirect:../../index";
+		}
+	}
+
+	@RequestMapping(value = "/{consultaId}/justificantpdf", method = RequestMethod.GET)
+	public String justificantPdf(
+			HttpServletRequest request,
+			HttpServletResponse response,
+			@PathVariable Long consultaId,
+			Model model) throws ConsultaNotFoundException {
+		try {
+			FitxerDto fitxer = getJustificantMultiplePdf(consultaId, isHistoric(request));
+			writeFileToResponse(
+					fitxer.getNom(),
+					fitxer.getContingut(),
+					response);
+			return null;
+		} catch (ConsultaNotFoundException ex) {
+			throw ex;
+		} catch (Exception ex) {
+			AlertHelper.error(
+					request,
+					getMessage(
+							request,
+							"consulta.controller.justificant.error") + ": " + ex.getMessage());
+			return "redirect:../../consulta";
+		}
+	}
+
+	@RequestMapping(value = "/{consultaId}/justificantzip", method = RequestMethod.GET)
+	public String justificantZip(
+			HttpServletRequest request,
+			HttpServletResponse response,
+			@PathVariable Long consultaId,
+			Model model) throws ConsultaNotFoundException {
+		try {
+			FitxerDto fitxer = getJustificantMultipleZip(consultaId, isHistoric(request));
+			writeFileToResponse(
+					fitxer.getNom(),
+					fitxer.getContingut(),
+					response);
+			return null;
+		} catch (ConsultaNotFoundException ex) {
+			throw ex;
+		} catch (Exception ex) {
+			AlertHelper.error(
+					request,
+					getMessage(
+							request,
+							"consulta.controller.justificant.error") + ": " + ex.getMessage());
+			return "redirect:../../consulta";
 		}
 	}
 
@@ -459,7 +518,7 @@ public class ConsultaAdminController extends BaseController {
 			@PathVariable Long consultaId,
 			@RequestParam(value = "info", required = false) Boolean info) throws ConsultaNotFoundException {
 		EntitatDto entitat = EntitatHelper.getEntitatActual(request, entitatService);
-		if (entitat != null) {
+		if (RolHelper.isRolActualAdministrador(request) || entitat != null) {
 			try {
 				JustificantDto justificant;
 				if (isHistoric(request)) {
@@ -655,6 +714,42 @@ public class ConsultaAdminController extends BaseController {
 			}
 		}
 		return justificant;
+	}
+
+	private FitxerDto getJustificantMultiplePdf(Long consultaId, boolean historic) throws Exception {
+		FitxerDto fitxer;
+		if (historic) {
+			try {
+				fitxer = historicConsultaService.obtenirJustificantMultipleConcatenat(consultaId);
+			} catch (Exception nfe) {
+				fitxer = consultaService.obtenirJustificantMultipleConcatenat(consultaId);
+			}
+		} else {
+			try {
+				fitxer = consultaService.obtenirJustificantMultipleConcatenat(consultaId);
+			} catch (Exception nfe) {
+				fitxer = historicConsultaService.obtenirJustificantMultipleConcatenat(consultaId);
+			}
+		}
+		return fitxer;
+	}
+
+	private FitxerDto getJustificantMultipleZip(Long consultaId, boolean historic) throws Exception {
+		FitxerDto fitxer;
+		if (historic) {
+			try {
+				fitxer = historicConsultaService.obtenirJustificantMultipleZip(consultaId);
+			} catch (Exception nfe) {
+				fitxer = consultaService.obtenirJustificantMultipleZip(consultaId);
+			}
+		} else {
+			try {
+				fitxer = consultaService.obtenirJustificantMultipleZip(consultaId);
+			} catch (Exception nfe) {
+				fitxer = historicConsultaService.obtenirJustificantMultipleZip(consultaId);
+			}
+		}
+		return fitxer;
 	}
 
 }

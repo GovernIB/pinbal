@@ -87,7 +87,7 @@ public interface HistoricConsultaService {
 	 * @throws JustificantGeneracioException
 	 *            Si es produeixen errors al generar el justificant.
 	 */
-	@PreAuthorize("hasRole('ROLE_DELEG')")
+	@PreAuthorize("hasRole('ROLE_DELEG') or hasRole('ROLE_ADMIN')")
 	public FitxerDto obtenirJustificantMultipleConcatenat(
             Long id) throws ConsultaNotFoundException, JustificantGeneracioException;
 
@@ -103,7 +103,7 @@ public interface HistoricConsultaService {
 	 * @throws JustificantGeneracioException
 	 *            Si es produeixen errors al generar el justificant.
 	 */
- @PreAuthorize("hasRole('ROLE_DELEG')")
+	@PreAuthorize("hasRole('ROLE_DELEG') or hasRole('ROLE_ADMIN')")
 	public FitxerDto obtenirJustificantMultipleZip(
             Long id) throws ConsultaNotFoundException, JustificantGeneracioException;
 
@@ -127,7 +127,7 @@ public interface HistoricConsultaService {
 	 * @throws JustificantGeneracioException
 	 *            Si es produeixen errors al generar el justificant.
 	 */
-	@PreAuthorize("hasRole('ROLE_DELEG')")
+	@PreAuthorize("hasRole('ROLE_DELEG') or hasRole('ROLE_ADMIN')")
 	public JustificantDto reintentarGeneracioJustificant(
             Long id,
             boolean descarregar) throws ConsultaNotFoundException, JustificantGeneracioException;

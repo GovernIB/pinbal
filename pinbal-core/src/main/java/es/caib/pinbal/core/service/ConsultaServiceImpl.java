@@ -55,6 +55,7 @@ import org.springframework.security.acls.domain.PrincipalSid;
 import org.springframework.security.acls.model.AccessControlEntry;
 import org.springframework.security.acls.model.MutableAclService;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.CannotCreateTransactionException;
@@ -1429,7 +1430,7 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 			log.debug("No s'ha trobat la consulta (id=" + id + ")");
 			throw new ConsultaNotFoundException();
 		}
-		if (!auth.getName().equals(consulta.getCreatedBy().getCodi())) {
+		if (!isAdministrador(auth) && !auth.getName().equals(consulta.getCreatedBy().getCodi())) {
 			log.debug("La consulta (id=" + id + ") no pertany a aquest usuari");
 			throw new ConsultaNotFoundException();
 		}
@@ -1475,7 +1476,7 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 			log.debug("No s'ha trobat la consulta (id=" + id + ")");
 			throw new ConsultaNotFoundException();
 		}
-		if (!auth.getName().equals(consulta.getCreatedBy().getCodi())) {
+		if (!isAdministrador(auth) && !auth.getName().equals(consulta.getCreatedBy().getCodi())) {
 			log.debug("La consulta (id=" + id + ") no pertany a aquest usuari");
 			throw new ConsultaNotFoundException();
 		}
@@ -3543,6 +3544,18 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 					PropertiesHelper.getProperties());
 			propertiesCopiades = true;
 		}
+	}
+
+	private boolean isAdministrador(Authentication auth) {
+		if (auth == null || auth.getAuthorities() == null) {
+			return false;
+		}
+		for (GrantedAuthority authority: auth.getAuthorities()) {
+			if (authority != null && ROLE_ADMIN.equals(authority.getAuthority())) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	private ScspHelper getScspHelper() {

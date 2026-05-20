@@ -261,19 +261,19 @@ $('#dadesResposta').on('shown', function () {
 		<div class="well well-lg">
 			<h3>
 				<spring:message code="consulta.multiple.info.generar.justificantpdf"/>
-				<a href="${consulta.id}/justificantpdf" 
-					aria-label="<spring:message code="consulta.info.descarregar.pdf"/>" class="pull-right">
-					<i aria-hidden="true" class="fas fa-file-pdf"></i>
-				</a>
+					<a href="<c:url value="/admin/consulta/${consulta.id}/justificantpdf"/>"
+						aria-label="<spring:message code="consulta.info.descarregar.pdf"/>" class="pull-right">
+						<i aria-hidden="true" class="fas fa-file-pdf"></i>
+					</a>
 			</h3>
 		</div>
 		<div class="well well-lg">
 			<h3>
 				<spring:message code="consulta.multiple.info.generar.justificantzip"/>
-				<a href="${consulta.id}/justificantzip" 
-					aria-label="<spring:message code="consulta.info.descarregar.zip"/>" class="pull-right">
-					<i class="far fa-file-archive"></i>
-				</a>
+					<a href="<c:url value="/admin/consulta/${consulta.id}/justificantzip"/>"
+						aria-label="<spring:message code="consulta.info.descarregar.zip"/>" class="pull-right">
+						<i class="far fa-file-archive"></i>
+					</a>
 			</h3>
 		</div>
 	</c:if>

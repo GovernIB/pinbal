@@ -387,6 +387,9 @@ $(document).ready(function () {
 					<legend><spring:message code="consulta.info.descarregar.justificant.etiqueta"/></legend>
 
 					<c:if test="${consulta.justificantEstatError}">
+						<c:url value="/admin/consulta/${consulta.id}/justificantReintentar" var="urlJustificantReintentar">
+							<c:param name="info" value="true"/>
+						</c:url>
 						<div class="row">
 							<div class="col-md-12">
 								<strong><spring:message code="consulta.info.descarregar.justificant"/></strong>
@@ -399,7 +402,7 @@ $(document).ready(function () {
 											</a>
 										</li>
 										<li>
-											<a href="../admin/consulta/${consulta.id}/justificantReintentar?info=true" class="justificant-reintentar">
+											<a href="${urlJustificantReintentar}" class="justificant-reintentar">
 												<i class="fas fa-redo-alt"></i>&nbsp;<spring:message code="consulta.list.taula.justif.error.reintentar"/>
 											</a>
 										</li>
@@ -497,6 +500,23 @@ $(document).ready(function () {
 			</div>
 		</div>
 	</div>
+	<c:if test="${consulta.justificantEstatError}">
+	<div id="modal-justificant-error" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+		<div class="modal-dialog modal-dialog-centered" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+					<h3><spring:message code="consulta.list.taula.justif.error"/></h3>
+				</div>
+				<div class="modal-body">
+					<textarea style="width:98%" rows="18">${consulta.justificantError}</textarea>
+				</div>
+				<div class="modal-footer">
+				</div>
+			</div>
+		</div>
+	</div>
+	</c:if>
 	<div id="modal-justificant-arxiu-info" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
 		<div class="modal-dialog modal-dialog-centered" role="document">
 			<div class="modal-content">

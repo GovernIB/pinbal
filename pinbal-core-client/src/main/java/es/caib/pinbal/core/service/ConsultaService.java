@@ -320,7 +320,7 @@ public interface ConsultaService {
 	 * @throws JustificantGeneracioException
 	 *            Si es produeixen errors al generar el justificant.
 	 */
-	@PreAuthorize("hasRole('ROLE_DELEG')")
+	@PreAuthorize("hasRole('ROLE_DELEG') or hasRole('ROLE_ADMIN')")
 	public FitxerDto obtenirJustificantMultipleConcatenat(
 			Long id) throws ConsultaNotFoundException, JustificantGeneracioException;
 
@@ -336,9 +336,9 @@ public interface ConsultaService {
 	 * @throws JustificantGeneracioException
 	 *            Si es produeixen errors al generar el justificant.
 	 */
- @PreAuthorize("hasRole('ROLE_DELEG')")
-    public FitxerDto obtenirJustificantMultipleZip(
-            Long id) throws ConsultaNotFoundException, JustificantGeneracioException;
+	@PreAuthorize("hasRole('ROLE_DELEG') or hasRole('ROLE_ADMIN')")
+	public FitxerDto obtenirJustificantMultipleZip(
+			Long id) throws ConsultaNotFoundException, JustificantGeneracioException;
 
     /**
      * Descarrega tots els missatges XML de la consulta en un arxiu ZIP, organitzats per tipus de missatge.
