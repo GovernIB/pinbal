@@ -1,13 +1,9 @@
 package es.caib.pinbal.logic.helper;
 
-import es.caib.pinbal.core.dto.ArbreRespostaDto;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Locale;
-import java.util.Set;
+import es.caib.pinbal.logic.intf.dto.ArbreRespostaDto;
+
+import java.util.*;
 
 public final class ArbreRespostaDocumentHelper {
 

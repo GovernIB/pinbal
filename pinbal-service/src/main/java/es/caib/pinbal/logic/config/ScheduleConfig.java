@@ -1,9 +1,9 @@
 package es.caib.pinbal.logic.config;
 
 import es.caib.pinbal.logic.helper.ConfigHelper;
-import es.caib.pinbal.core.service.ConsultaService;
-import es.caib.pinbal.core.service.HistoricConsultaService;
-import es.caib.pinbal.core.service.IntegracioAccioService;
+import es.caib.pinbal.logic.intf.service.ConsultaService;
+import es.caib.pinbal.logic.intf.service.HistoricConsultaService;
+import es.caib.pinbal.logic.intf.service.IntegracioAccioService;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;

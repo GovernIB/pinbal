@@ -1,6 +1,6 @@
 package es.caib.pinbal.logic.model;
 
-import es.caib.pinbal.core.dto.ConfigSourceEnumDto;
+import es.caib.pinbal.logic.intf.dto.ConfigSourceEnumDto;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;

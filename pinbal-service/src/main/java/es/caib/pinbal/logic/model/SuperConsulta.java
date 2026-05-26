@@ -1,26 +1,13 @@
 package es.caib.pinbal.logic.model;
 
-import es.caib.pinbal.logic.audit.PinbalAuditable;
-import es.caib.pinbal.core.dto.ConsultaDto;
-import es.caib.pinbal.core.dto.EstatTipus;
-import es.caib.pinbal.core.dto.JustificantEstat;
+import es.caib.pinbal.logic.intf.dto.ConsultaDto;
+import es.caib.pinbal.logic.intf.dto.EstatTipus;
+import es.caib.pinbal.logic.intf.dto.JustificantEstat;
+import es.caib.pinbal.persist.audit.PinbalAuditable;
 import lombok.Getter;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
-import javax.persistence.Column;
-import javax.persistence.ConstraintMode;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.ForeignKey;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinColumns;
-import javax.persistence.Lob;
-import javax.persistence.ManyToOne;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-import javax.persistence.Version;
+import javax.persistence.*;
 import java.util.Date;
 
 @Getter

@@ -1,16 +1,15 @@
 /**
  * 
  */
-package es.caib.pinbal.logic.ws;
-
-import javax.jws.WebService;
-
-import org.springframework.security.access.prepost.PreAuthorize;
+package es.caib.pinbal.logic.intf.ws;
 
 import es.scsp.bean.common.confirmacion.ConfirmacionPeticion;
 import es.scsp.bean.common.peticion.Peticion;
 import es.scsp.bean.common.respuesta.Respuesta;
 import es.scsp.common.exceptions.ScspException;
+import org.springframework.security.access.prepost.PreAuthorize;
+
+import javax.jws.WebService;
 
 /**
  * Declaració dels mètodes per al recobriment de les peticions

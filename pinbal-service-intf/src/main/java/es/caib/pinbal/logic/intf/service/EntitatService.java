@@ -119,7 +119,7 @@ public interface EntitatService {
 	 * @return L'entitat trobada. Si no s'ha trobat cap entitat retorna null.
 	 */
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
-	public EntitatDto findTopByTipus(EntitatTipusDto codi);
+	public EntitatDto findTopByTipus(EntitatTipusDto tipus);
 	
 	/**
 	 * Consulta una entitat donat el seu cif.

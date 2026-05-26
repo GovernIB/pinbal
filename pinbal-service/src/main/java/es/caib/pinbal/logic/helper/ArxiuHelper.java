@@ -1,17 +1,7 @@
 package es.caib.pinbal.logic.helper;
 
-import es.caib.pinbal.core.dto.arxiu.ArxiuConversions;
-import es.caib.pinbal.core.dto.arxiu.ArxiuDetallDto;
-import es.caib.pinbal.core.dto.arxiu.ArxiuEstatEnumDto;
-import es.caib.pinbal.core.dto.arxiu.ArxiuFirmaDto;
-import es.caib.pinbal.core.dto.arxiu.ArxiuFirmaPerfilEnumDto;
-import es.caib.pinbal.core.dto.arxiu.ArxiuFirmaTipusEnumDto;
-import es.caib.plugins.arxiu.api.Document;
-import es.caib.plugins.arxiu.api.DocumentEstat;
-import es.caib.plugins.arxiu.api.DocumentMetadades;
-import es.caib.plugins.arxiu.api.Firma;
-import es.caib.plugins.arxiu.api.FirmaPerfil;
-import es.caib.plugins.arxiu.api.FirmaTipus;
+import es.caib.pinbal.logic.intf.dto.arxiu.*;
+import es.caib.pluginsib.arxiu.api.*;
 import lombok.extern.slf4j.Slf4j;
 
 import java.text.DateFormat;

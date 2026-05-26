@@ -3,16 +3,15 @@
  */
 package es.caib.pinbal.logic.audit;
 
-import javax.annotation.Resource;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import es.caib.pinbal.logic.model.Usuari;
+import es.caib.pinbal.logic.repository.UsuariRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.AuditorAware;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 
-import es.caib.pinbal.logic.model.Usuari;
-import es.caib.pinbal.logic.repository.UsuariRepository;
+import javax.annotation.Resource;
+import java.util.Optional;
 
 /**
  * Especifica els mètodes que s'han d'emprar per obtenir i modificar la
@@ -21,25 +20,19 @@ import es.caib.pinbal.logic.repository.UsuariRepository;
  * 
  * @author Limit Tecnologies <limit@limit.es>
  */
+@Slf4j
 public class PinbalAuditorAware implements AuditorAware<Usuari> {
 
 	@Resource
 	private UsuariRepository usuariRepository;
 
 	@Override
-	public Usuari getCurrentAuditor() {
+	public Optional<Usuari> getCurrentAuditor() {
+
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 		String auditorActual = (auth != null) ? auth.getName() : null;
-		LOGGER.debug("Obtenint l'usuari auditor per a l'usuari (codi=" + auditorActual + ")");
-		if (auditorActual == null) {
-			LOGGER.debug("Auditor actual: null");
-			return null;
-		} else {
-			Usuari usuari = usuariRepository.findOne(auditorActual);
-			return usuari;
-		}
+		log.debug("Obtenint l'usuari auditor per a l'usuari (codi=" + auditorActual + ")");
+		return auditorActual == null ? Optional.empty() : usuariRepository.findById(auditorActual);
 	}
-
-	private static final Logger LOGGER = LoggerFactory.getLogger(PinbalAuditorAware.class);
 
 }

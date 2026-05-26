@@ -3,29 +3,15 @@
  */
 package es.caib.pinbal.logic.model;
 
-import es.caib.pinbal.logic.audit.PinbalAuditable;
-import es.caib.pinbal.core.dto.ProcedimentClaseTramiteEnumDto;
-import es.caib.pinbal.core.dto.ProcedimentServeiSimpleDto;
+import es.caib.pinbal.logic.intf.dto.ProcedimentClaseTramiteEnumDto;
+import es.caib.pinbal.logic.intf.dto.ProcedimentServeiSimpleDto;
+import es.caib.pinbal.persist.audit.PinbalAuditable;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Convert;
-import javax.persistence.Entity;
-import javax.persistence.EntityListeners;
-import javax.persistence.FetchType;
-import javax.persistence.ForeignKey;
-import javax.persistence.Index;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.OrderBy;
-import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
-import javax.persistence.Version;
+import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 

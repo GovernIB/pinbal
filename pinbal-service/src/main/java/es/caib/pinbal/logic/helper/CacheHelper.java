@@ -8,7 +8,6 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 import java.util.Collection;
-import java.util.Objects;
 
 @Slf4j
 @Component
@@ -46,13 +45,13 @@ public class CacheHelper {
     public void evictByKeyPrefix(String cacheName, String keyPrefix) {
         Cache cache = cacheManager.getCache(cacheName);
         if (cache != null) {
-            net.sf.ehcache.Ehcache nativeCache = (net.sf.ehcache.Ehcache) Objects.requireNonNull(cache.getNativeCache());
-            for (Object key : nativeCache.getKeys()) {
-                String keyString = String.valueOf(key);
+            org.ehcache.Cache<Object, Object> ehCache = (org.ehcache.Cache<Object, Object>) cache.getNativeCache();
+            ehCache.forEach(entry -> {
+                String keyString = String.valueOf(entry.getKey());
                 if (keyString.startsWith(keyPrefix + ":")) {
-                    cache.evict(key);
+                    cache.evict(entry.getKey());
                 }
-            }
+            });
         }
     }
 
@@ -72,27 +71,20 @@ public class CacheHelper {
         }
     }
 
-//    public long getCacheSize(String cacheName) {
-//
-//        try {
-//            Cache cache = cacheManager.getCache(cacheName);
-//            if (cache == null) {
-//                return 0L;
-//            }
-//            javax.cache.Cache c = (javax.cache.Cache)cache.getNativeCache();
-//            return StreamSupport.stream(Spliterators.spliteratorUnknownSize(c.iterator(), Spliterator.ORDERED), false).count();
-//        } catch (Exception ex) {
-//            log.error("Error obtenint mida de la cache " + cacheName, ex);
-//            return 0L;
-//        }
-//    }
-
     public long getCacheSize(String cacheName) {
         Cache cache = cacheManager.getCache(cacheName);
-        Object nativeCache = cache.getNativeCache();
-        if (nativeCache instanceof net.sf.ehcache.Ehcache) {
-            net.sf.ehcache.Ehcache ehCache = (net.sf.ehcache.Ehcache) nativeCache;
-            return ehCache.getStatistics().getLocalHeapSizeInBytes();
+        if (cache != null) {
+            Object nativeCache = cache.getNativeCache();
+            if (nativeCache instanceof org.ehcache.Cache) {
+                org.ehcache.Cache<Object, Object> ehCache = (org.ehcache.Cache<Object, Object>) nativeCache;
+                long count = 0;
+                ehCache.forEach(entry -> {
+                });
+                for (org.ehcache.Cache.Entry<Object, Object> entry : ehCache) {
+                    count++;
+                }
+                return count;
+            }
         }
         return 0L;
     }

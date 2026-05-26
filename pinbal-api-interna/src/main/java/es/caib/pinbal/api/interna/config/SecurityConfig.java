@@ -67,6 +67,13 @@ public class SecurityConfig {
 			"/salut/v1"
 	};
 
+	private static final String[] WS_RECOBRIMENT_PATHS = {
+			"/ws/recobriment",
+			"/ws/recobriment/**",
+			"/pinbal/ws/recobriment",
+			"/pinbal/ws/recobriment/**"
+	};
+
 	@Bean
 	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 		return http
@@ -81,6 +88,7 @@ public class SecurityConfig {
 						.permitAll(false))
 				.authorizeRequests(authz -> authz.antMatchers(AUTH_WHITELIST)
 						.permitAll()
+						.antMatchers(WS_RECOBRIMENT_PATHS).hasAnyAuthority("PBL_WS", "ROLE_WS", "ROLE_PBL_WS")
 						.anyRequest().authenticated())
 				.headers(hd -> hd.frameOptions().disable())
 				.build();

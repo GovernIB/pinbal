@@ -1,24 +1,22 @@
 package es.caib.pinbal.logic.helper;
 
-import java.io.FileInputStream;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Properties;
-
-import javax.annotation.PostConstruct;
-import javax.validation.constraints.NotNull;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
-
-import es.caib.pinbal.core.dto.ConfigSourceEnumDto;
+import es.caib.pinbal.logic.intf.dto.ConfigSourceEnumDto;
+import es.caib.pinbal.logic.intf.service.exception.NotDefinedConfigException;
 import es.caib.pinbal.logic.model.Config;
 import es.caib.pinbal.logic.model.ConfigGroup;
 import es.caib.pinbal.logic.repository.ConfigGroupRepository;
 import es.caib.pinbal.logic.repository.ConfigRepository;
-import es.caib.pinbal.core.service.exception.NotDefinedConfigException;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
+
+import javax.annotation.PostConstruct;
+import javax.validation.constraints.NotNull;
+import java.io.FileInputStream;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Properties;
 
 @Component
 public class ConfigHelper {
@@ -36,10 +34,7 @@ public class ConfigHelper {
 
     @Transactional(readOnly = true)
     public String getConfig(String key) throws NotDefinedConfigException {
-        Config config = configRepository.findOne(key);
-        if (config == null) {
-            throw new NotDefinedConfigException(key);
-        }
+        Config config = configRepository.findById(key).orElseThrow(() -> new NotDefinedConfigException(key));
         return getConfig(config);
     }
 
@@ -59,7 +54,7 @@ public class ConfigHelper {
     @Transactional(readOnly = true)
     public Map<String, String> getGroupProperties(String codeGroup) {
         Map<String, String> properties = new HashMap<>();
-        ConfigGroup configGroup = configGroupRepository.findOne(codeGroup);
+        ConfigGroup configGroup = configGroupRepository.findById(codeGroup).orElse(null);
         fillGroupProperties(configGroup, properties);
         return properties;
     }

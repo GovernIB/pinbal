@@ -1,26 +1,9 @@
 package es.caib.pinbal.logic.helper;
 
-import es.caib.plugins.arxiu.api.ContingutOrigen;
-import es.caib.plugins.arxiu.api.Document;
-import es.caib.plugins.arxiu.api.DocumentEstat;
-import es.caib.plugins.arxiu.api.DocumentEstatElaboracio;
-import es.caib.plugins.arxiu.api.DocumentExtensio;
-import es.caib.plugins.arxiu.api.DocumentFormat;
-import es.caib.plugins.arxiu.api.DocumentMetadades;
-import es.caib.plugins.arxiu.api.DocumentTipus;
-import es.caib.plugins.arxiu.api.ExpedientEstat;
-import es.caib.plugins.arxiu.api.ExpedientMetadades;
-import es.caib.plugins.arxiu.api.Firma;
-import es.caib.plugins.arxiu.api.FirmaPerfil;
-import es.caib.plugins.arxiu.api.FirmaTipus;
+import es.caib.pluginsib.arxiu.api.*;
 import lombok.Getter;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Getter
 public class ArxiuDocumentMock {

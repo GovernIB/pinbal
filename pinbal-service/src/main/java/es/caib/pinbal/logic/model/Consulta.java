@@ -3,25 +3,14 @@
  */
 package es.caib.pinbal.logic.model;
 
-import es.caib.pinbal.core.dto.ConsultaDto.Consentiment;
-import es.caib.pinbal.core.dto.EstatTipus;
+import es.caib.pinbal.logic.intf.dto.ConsultaDto;
+import es.caib.pinbal.logic.intf.dto.ConsultaDto.Consentiment;
+import es.caib.pinbal.logic.intf.dto.EstatTipus;
 import lombok.Getter;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import javax.persistence.AssociationOverride;
-import javax.persistence.AssociationOverrides;
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.EntityListeners;
-import javax.persistence.FetchType;
-import javax.persistence.ForeignKey;
-import javax.persistence.Index;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.OrderBy;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
