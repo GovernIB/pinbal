@@ -1,32 +1,16 @@
 /**
  * 
  */
-package es.caib.pinbal.logic.ejb;
+package es.caib.pinbal.ejb;
 
-import es.caib.pinbal.core.dto.CodiValor;
-import es.caib.pinbal.core.dto.EntitatUsuariDto;
-import es.caib.pinbal.core.dto.FiltreActiuEnumDto;
-import es.caib.pinbal.core.dto.InformeProcedimentDto;
-import es.caib.pinbal.core.dto.PaginacioAmbOrdreDto;
-import es.caib.pinbal.core.dto.ProcedimentDto;
-import es.caib.pinbal.core.dto.ProcedimentServeiNomDto;
-import es.caib.pinbal.core.dto.ProcedimentServeiSimpleDto;
-import es.caib.pinbal.core.dto.ServeiDto;
-import es.caib.pinbal.core.service.ProcedimentService;
-import es.caib.pinbal.core.service.exception.EntitatNotFoundException;
-import es.caib.pinbal.core.service.exception.EntitatUsuariNotFoundException;
-import es.caib.pinbal.core.service.exception.ProcedimentNotFoundException;
-import es.caib.pinbal.core.service.exception.ProcedimentServeiExistsException;
-import es.caib.pinbal.core.service.exception.ProcedimentServeiNotFoundException;
-import es.caib.pinbal.core.service.exception.ServeiNotFoundException;
-import org.springframework.beans.factory.annotation.Autowired;
+import es.caib.pinbal.logic.intf.dto.*;
+import es.caib.pinbal.logic.intf.service.exception.*;
+import org.springframework.context.annotation.Primary;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.ejb.interceptor.SpringBeanAutowiringInterceptor;
 
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.Stateless;
-import javax.interceptor.Interceptors;
 import java.util.List;
 
 /**
@@ -35,59 +19,56 @@ import java.util.List;
  * 
  * @author Limit Tecnologies <limit@limit.es>
  */
+@Primary
 @Stateless
-@Interceptors(SpringBeanAutowiringInterceptor.class)
-public class ProcedimentServiceBean implements ProcedimentService {
-
-	@Autowired
-	ProcedimentService delegate;
+public class ProcedimentServiceBean extends AbstractService<es.caib.pinbal.logic.intf.service.ProcedimentService> implements es.caib.pinbal.logic.intf.service.ProcedimentService {
 
 	@Override
 	@RolesAllowed("PBL_REPRES")
 	public ProcedimentDto create(ProcedimentDto creat) throws EntitatNotFoundException {
-		return delegate.create(creat);
+		return getDelegateService().create(creat);
 	}
 
 	@Override
 	@RolesAllowed("PBL_REPRES")
 	public ProcedimentDto delete(Long procedimentId) throws ProcedimentNotFoundException {
-		return delegate.delete(procedimentId);
+		return getDelegateService().delete(procedimentId);
 	}
 
 	@Override
 	@RolesAllowed({"PBL_REPRES", "PBL_REPORT"})
 	public ProcedimentDto findAmbEntitatICodi(Long entitatId, String codi) throws EntitatNotFoundException {
-		return delegate.findAmbEntitatICodi(entitatId, codi);
+		return getDelegateService().findAmbEntitatICodi(entitatId, codi);
 	}
 
 	@Override
 	@RolesAllowed({ "PBL_ADMIN", "PBL_REPRES", "PBL_AUDIT", "PBL_SUPERAUD" })
 	public List<ProcedimentDto> findAmbEntitat(Long entitatId) throws EntitatNotFoundException {
-		return delegate.findAmbEntitat(entitatId);
+		return getDelegateService().findAmbEntitat(entitatId);
 	}
 	
 	@Override
 	@RolesAllowed({ "PBL_ADMIN", "PBL_REPRES", "PBL_AUDIT", "PBL_SUPERAUD" })
 	public List<ProcedimentDto> findAmbEntitat(Long entitatId, String filtre) throws EntitatNotFoundException {
-		return delegate.findAmbEntitat(entitatId, filtre);
+		return getDelegateService().findAmbEntitat(entitatId, filtre);
 	}
 
     @Override
 	@RolesAllowed({ "PBL_ADMIN", "PBL_REPRES" })
     public List<CodiValor> findAmbEntitatPerOrigen(Long entitatId) throws EntitatNotFoundException {
-        return delegate.findAmbEntitatPerOrigen(entitatId);
+        return getDelegateService().findAmbEntitatPerOrigen(entitatId);
     }
 
 	@Override
 	@RolesAllowed({ "PBL_ADMIN", "PBL_REPRES" })
 	public List<CodiValor> findAmbEntitatPerFills(Long entitatId, String codiSia) throws EntitatNotFoundException {
-		return delegate.findAmbEntitatPerFills(entitatId, codiSia);
+		return getDelegateService().findAmbEntitatPerFills(entitatId, codiSia);
 	}
 
 	@Override
 	@RolesAllowed({ "PBL_ADMIN", "PBL_REPRES" })
 	public List<String> findCodiSiaFills(Long entitatId, String codiSia) throws EntitatNotFoundException {
-		return delegate.findCodiSiaFills(entitatId, codiSia);
+		return getDelegateService().findCodiSiaFills(entitatId, codiSia);
 	}
 
 
@@ -102,7 +83,7 @@ public class ProcedimentServiceBean implements ProcedimentService {
 			String codiSia,
 			FiltreActiuEnumDto actiu,
 			PaginacioAmbOrdreDto paginacioParams) throws EntitatNotFoundException {
-		return delegate.findAmbFiltrePaginat(
+		return getDelegateService().findAmbFiltrePaginat(
 				entitatId,
 				codi,
 				nom,
@@ -116,25 +97,25 @@ public class ProcedimentServiceBean implements ProcedimentService {
 	@Override
 	@RolesAllowed("PBL_REPRES")
 	public ProcedimentDto findById(Long id) {
-		return delegate.findById(id);
+		return getDelegateService().findById(id);
 	}
 
 	@Override
 	@RolesAllowed("PBL_REPRES")
 	public ProcedimentDto update(ProcedimentDto modificat) throws ProcedimentNotFoundException {
-		return delegate.update(modificat);
+		return getDelegateService().update(modificat);
 	}
 
 	@Override
 	@RolesAllowed("PBL_REPRES")
 	public ProcedimentDto updateActiu(Long id, boolean actiu) throws ProcedimentNotFoundException {
-		return delegate.updateActiu(id, actiu);
+		return getDelegateService().updateActiu(id, actiu);
 	}
 
 	@Override
 	@RolesAllowed("PBL_REPRES")
 	public void serveiEnable(Long id, String serveiCodi) throws ProcedimentNotFoundException, ServeiNotFoundException {
-		delegate.serveiEnable(id, serveiCodi);
+		getDelegateService().serveiEnable(id, serveiCodi);
 	}
 
 	@Override
@@ -142,7 +123,7 @@ public class ProcedimentServiceBean implements ProcedimentService {
 	public void serveiDisable(
 			Long id,
 			String serveiCodi) throws ProcedimentNotFoundException, ProcedimentServeiNotFoundException {
-		delegate.serveiDisable(id, serveiCodi);
+		getDelegateService().serveiDisable(id, serveiCodi);
 	}
 
 	@Override
@@ -151,7 +132,7 @@ public class ProcedimentServiceBean implements ProcedimentService {
 			Long id,
 			String serveiCodi,
 			String usuariCodi) throws ProcedimentNotFoundException, ProcedimentServeiNotFoundException, EntitatUsuariNotFoundException {
-		delegate.serveiPermisAllow(id, serveiCodi, usuariCodi);
+		getDelegateService().serveiPermisAllow(id, serveiCodi, usuariCodi);
 	}
 
 	@Override
@@ -160,31 +141,31 @@ public class ProcedimentServiceBean implements ProcedimentService {
 			Long id,
 			String serveiCodi,
 			String usuariCodi) throws ProcedimentNotFoundException, ProcedimentServeiNotFoundException, EntitatUsuariNotFoundException {
-		delegate.serveiPermisDeny(id, serveiCodi, usuariCodi);
+		getDelegateService().serveiPermisDeny(id, serveiCodi, usuariCodi);
 	}
 
 	@Override
 	@RolesAllowed("PBL_REPRES")
 	public void serveiPermisDenyAll(String usuariCodi, Long entitatId) throws EntitatUsuariNotFoundException {
-		delegate.serveiPermisDenyAll(usuariCodi, entitatId);
+		getDelegateService().serveiPermisDenyAll(usuariCodi, entitatId);
 	}
 
     @Override
 	@RolesAllowed({"PBL_REPRES", "PBL_WS"})
     public void serveiPermisAllowSelected(String usuariCodi, List<ProcedimentServeiSimpleDto> procedimentsServeis, Long entitatId) throws EntitatUsuariNotFoundException, ProcedimentServeiNotFoundException {
-        delegate.serveiPermisAllowSelected(usuariCodi, procedimentsServeis, entitatId);
+        getDelegateService().serveiPermisAllowSelected(usuariCodi, procedimentsServeis, entitatId);
     }
 
     @Override
 	@RolesAllowed("PBL_REPRES")
     public void serveiPermisDenySelected(String usuariCodi, List<ProcedimentServeiSimpleDto> procedimentsServeis, Long entitatId) throws EntitatUsuariNotFoundException {
-        delegate.serveiPermisDenySelected(usuariCodi, procedimentsServeis, entitatId);
+        getDelegateService().serveiPermisDenySelected(usuariCodi, procedimentsServeis, entitatId);
     }
 
     @Override
 	@RolesAllowed("PBL_REPRES")
     public List<ProcedimentServeiNomDto> serveiDisponibles(String usuariCodi, Long procedimentId, Long entitatId) throws EntitatUsuariNotFoundException {
-        return delegate.serveiDisponibles(usuariCodi, procedimentId, entitatId);
+        return getDelegateService().serveiDisponibles(usuariCodi, procedimentId, entitatId);
     }
 
     @Override
@@ -192,39 +173,39 @@ public class ProcedimentServiceBean implements ProcedimentService {
 	public List<EntitatUsuariDto> findUsuarisAmbPermisPerServei(
 			Long id,
 			String serveiCodi) throws ProcedimentNotFoundException, ProcedimentServeiNotFoundException {
-		return delegate.findUsuarisAmbPermisPerServei(id, serveiCodi);
+		return getDelegateService().findUsuarisAmbPermisPerServei(id, serveiCodi);
 	}
 
     @Override
 	@RolesAllowed("PBL_REPRES")
     public Page<EntitatUsuariDto> findUsuarisAmbPermisPerServei(Long id, String serveiCodi, String codi, String nif, String nom, Pageable pageable) throws ProcedimentNotFoundException, ProcedimentServeiNotFoundException {
-        return delegate.findUsuarisAmbPermisPerServei(id, serveiCodi, codi, nif, nom, pageable);
+        return getDelegateService().findUsuarisAmbPermisPerServei(id, serveiCodi, codi, nif, nom, pageable);
     }
 
     @Override
-	@RolesAllowed("tothom")
+	@RolesAllowed("**")
 	public List<ProcedimentDto> findAmbEntitatPerDelegat(Long entitatId) throws EntitatNotFoundException {
-		return delegate.findAmbEntitatPerDelegat(entitatId);
+		return getDelegateService().findAmbEntitatPerDelegat(entitatId);
 	}
 
 	@Override
-	@RolesAllowed("tothom")
+	@RolesAllowed("**")
 	public List<ProcedimentDto> findActiusAmbEntitatIServeiCodi(
 			Long entitatId,
 			String serveiCodi) throws EntitatNotFoundException {
-		return delegate.findActiusAmbEntitatIServeiCodi(entitatId, serveiCodi);
+		return getDelegateService().findActiusAmbEntitatIServeiCodi(entitatId, serveiCodi);
 	}
 
 	@Override
-	@RolesAllowed("tothom")
+	@RolesAllowed("**")
 	public List<ProcedimentDto> findAmbServeiCodi(String serveiCodi) {
-		return delegate.findAmbServeiCodi(serveiCodi);
+		return getDelegateService().findAmbServeiCodi(serveiCodi);
 	}
 
 	@Override
 	@RolesAllowed({"PBL_ADMIN", "PBL_REPORT"})
 	public List<InformeProcedimentDto> informeProcedimentsAgrupatsEntitatDepartament() {
-		return delegate.informeProcedimentsAgrupatsEntitatDepartament();
+		return getDelegateService().informeProcedimentsAgrupatsEntitatDepartament();
 	}
 
 	@Override
@@ -233,26 +214,26 @@ public class ProcedimentServiceBean implements ProcedimentService {
 			Long procedimentId,
 			String serveiCodi,
 			String procedimentCodi) throws ProcedimentNotFoundException, ServeiNotFoundException {
-		return delegate.putProcedimentCodi(procedimentId, serveiCodi, procedimentCodi);
+		return getDelegateService().putProcedimentCodi(procedimentId, serveiCodi, procedimentCodi);
 
 	}
 	
 	@Override
 	@RolesAllowed("PBL_ADMIN")
 	public List<ProcedimentDto> findAll() {
-		return delegate.findAll();
+		return getDelegateService().findAll();
 	}
 
     @Override
 	@RolesAllowed("PBL_REPRES")
     public List<ServeiDto> serveisDisponiblesPerProcediment(Long procedimentId) throws ProcedimentNotFoundException {
-        return delegate.serveisDisponiblesPerProcediment(procedimentId);
+        return getDelegateService().serveisDisponiblesPerProcediment(procedimentId);
     }
 
     @Override
     @RolesAllowed("PBL_REPRES")
     public void migrarProcedimentServei(Long procedimentId, String serveiCodiOrigen, String serveiCodiDesti) throws ProcedimentNotFoundException, ProcedimentServeiNotFoundException, ProcedimentServeiExistsException {
-        delegate.migrarProcedimentServei(procedimentId, serveiCodiOrigen, serveiCodiDesti);
+        getDelegateService().migrarProcedimentServei(procedimentId, serveiCodiOrigen, serveiCodiDesti);
     }
 
 }

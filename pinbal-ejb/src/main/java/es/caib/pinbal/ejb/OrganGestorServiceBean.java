@@ -1,19 +1,14 @@
-package es.caib.pinbal.logic.ejb;
+package es.caib.pinbal.ejb;
 
-import java.util.List;
+import es.caib.pinbal.logic.intf.dto.OrganGestorDto;
+import es.caib.pinbal.logic.intf.dto.OrganGestorEstatEnum;
+import es.caib.pinbal.logic.intf.dto.PaginacioAmbOrdreDto;
+import org.springframework.context.annotation.Primary;
+import org.springframework.data.domain.Page;
 
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.Stateless;
-import javax.interceptor.Interceptors;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.ejb.interceptor.SpringBeanAutowiringInterceptor;
-
-import es.caib.pinbal.core.dto.OrganGestorDto;
-import es.caib.pinbal.core.dto.OrganGestorEstatEnum;
-import es.caib.pinbal.core.dto.PaginacioAmbOrdreDto;
-import es.caib.pinbal.core.service.OrganGestorService;
+import java.util.List;
 
 
 /**
@@ -22,41 +17,38 @@ import es.caib.pinbal.core.service.OrganGestorService;
  * 
  * @author Limit Tecnologies <limit@limit.es>
  */
+@Primary
 @Stateless
-@Interceptors(SpringBeanAutowiringInterceptor.class)
-public class OrganGestorServiceBean implements OrganGestorService {
-
-	@Autowired
-	OrganGestorService delegate;
+public class OrganGestorServiceBean extends AbstractService<es.caib.pinbal.logic.intf.service.OrganGestorService> implements es.caib.pinbal.logic.intf.service.OrganGestorService {
 
 	@Override
 	@RolesAllowed({ "PBL_ADMIN", "PBL_REPRES" })
 	public List<OrganGestorDto> findAll() {
-		return delegate.findAll();
+		return getDelegateService().findAll();
 	}
 
 	@Override
 	@RolesAllowed({ "PBL_ADMIN", "PBL_REPRES" })
 	public OrganGestorDto findItem(Long id) {
-		return delegate.findItem(id);
+		return getDelegateService().findItem(id);
 	}
 
 	@Override
 	@RolesAllowed({ "PBL_ADMIN", "PBL_REPRES" })
 	public List<OrganGestorDto> findByEntitat(Long entitatId) {
-		return delegate.findByEntitat(entitatId);
+		return getDelegateService().findByEntitat(entitatId);
 	}
 
     @Override
 	@RolesAllowed({ "PBL_ADMIN", "PBL_REPRES" })
     public List<OrganGestorDto> findActivesByEntitat(Long entitatId) {
-        return delegate.findActivesByEntitat(entitatId);
+        return getDelegateService().findActivesByEntitat(entitatId);
     }
 
     @Override
 	@RolesAllowed({ "PBL_ADMIN", "PBL_REPRES" })
 	public List<OrganGestorDto> findByEntitatAmbFiltre(Long entitatId, String filtre) {
-		return delegate.findByEntitatAmbFiltre(entitatId,filtre);
+		return getDelegateService().findByEntitatAmbFiltre(entitatId,filtre);
 	}
 
 	@Override
@@ -68,13 +60,13 @@ public class OrganGestorServiceBean implements OrganGestorService {
 			String pareCodi,
 			OrganGestorEstatEnum filtreEstat,
 			PaginacioAmbOrdreDto paginacioDto) {
-		return delegate.findPageOrgansGestorsAmbFiltrePaginat(entitatId, filtreCodi, filtreNom, pareCodi, filtreEstat, paginacioDto);
+		return getDelegateService().findPageOrgansGestorsAmbFiltrePaginat(entitatId, filtreCodi, filtreNom, pareCodi, filtreEstat, paginacioDto);
 	}
 
 	@Override
 	@RolesAllowed({ "PBL_ADMIN", "PBL_REPRES" })
 	public boolean syncDir3OrgansGestors(Long entitatId) throws Exception {
-		return delegate.syncDir3OrgansGestors(entitatId);
+		return getDelegateService().syncDir3OrgansGestors(entitatId);
 	}
 
 }

@@ -1,27 +1,16 @@
 /**
  * 
  */
-package es.caib.pinbal.logic.ejb;
+package es.caib.pinbal.ejb;
 
-import es.caib.pinbal.core.dto.ClauPrivadaDto;
-import es.caib.pinbal.core.dto.ClauPublicaDto;
-import es.caib.pinbal.core.dto.EmissorCertDto;
-import es.caib.pinbal.core.dto.OrganismeCessionariDto;
-import es.caib.pinbal.core.dto.ParamConfDto;
-import es.caib.pinbal.core.service.ScspService;
-import es.caib.pinbal.core.service.exception.ClauPrivadaNotFoundException;
-import es.caib.pinbal.core.service.exception.ClauPublicaNotFoundException;
-import es.caib.pinbal.core.service.exception.EmissorCertNotFoundException;
-import es.caib.pinbal.core.service.exception.EntitatNotFoundException;
-import es.caib.pinbal.core.service.exception.ParamConfNotFoundException;
-import org.springframework.beans.factory.annotation.Autowired;
+import es.caib.pinbal.logic.intf.dto.*;
+import es.caib.pinbal.logic.intf.service.exception.*;
+import org.springframework.context.annotation.Primary;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.ejb.interceptor.SpringBeanAutowiringInterceptor;
 
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.Stateless;
-import javax.interceptor.Interceptors;
 import java.util.List;
 
 /**
@@ -30,179 +19,176 @@ import java.util.List;
  * 
  * @author Limit Tecnologies <limit@limit.es>
  */
+@Primary
 @Stateless
-@Interceptors(SpringBeanAutowiringInterceptor.class)
-public class ScspServiceBean implements ScspService {
-
-	@Autowired
-	ScspService delegate;
+public class ScspServiceBean extends AbstractService<es.caib.pinbal.logic.intf.service.ScspService> implements es.caib.pinbal.logic.intf.service.ScspService {
 
 	@Override
 	@RolesAllowed("PBL_ADMIN")
 	public ParamConfDto findParamConfByNom(String nom) {
-		return delegate.findParamConfByNom(nom);
+		return getDelegateService().findParamConfByNom(nom);
 	}
 
 	@Override
 	@RolesAllowed("PBL_ADMIN")
 	public ParamConfDto createParamConf(ParamConfDto dto) {
-		return delegate.createParamConf(dto);
+		return getDelegateService().createParamConf(dto);
 	}
 
 	@Override
 	@RolesAllowed("PBL_ADMIN")
 	public ParamConfDto updateParamConf(ParamConfDto dto) throws ParamConfNotFoundException {
-		return delegate.updateParamConf(dto);
+		return getDelegateService().updateParamConf(dto);
 	}
 
 	@Override
 	@RolesAllowed("PBL_ADMIN")
 	public ParamConfDto deleteParamConf(String nom) throws ParamConfNotFoundException {
-		return delegate.deleteParamConf(nom);
+		return getDelegateService().deleteParamConf(nom);
 	}
 
 	@Override
 	@RolesAllowed("PBL_ADMIN")
 	public Page<ParamConfDto> findAllParamConf(Pageable pageable) {
-		return delegate.findAllParamConf(pageable);
+		return getDelegateService().findAllParamConf(pageable);
 	}
 
 	@Override
 	@RolesAllowed("PBL_ADMIN")
 	public EmissorCertDto findEmissorCertById(Long id) {
-		return delegate.findEmissorCertById(id);
+		return getDelegateService().findEmissorCertById(id);
 	}
 
 	@Override
 	@RolesAllowed("PBL_ADMIN")
 	public EmissorCertDto findEmissorCertByCif(String cif) {
-		return delegate.findEmissorCertByCif(cif);
+		return getDelegateService().findEmissorCertByCif(cif);
 	}
 
 	@Override
 	@RolesAllowed("PBL_ADMIN")
 	public EmissorCertDto createEmissorCert(EmissorCertDto dto) {
-		return delegate.createEmissorCert(dto);
+		return getDelegateService().createEmissorCert(dto);
 	}
 
 	@Override
 	@RolesAllowed("PBL_ADMIN")
 	public EmissorCertDto updateEmissorCert(EmissorCertDto dto) throws EmissorCertNotFoundException {
-		return delegate.updateEmissorCert(dto);
+		return getDelegateService().updateEmissorCert(dto);
 	}
 
 	@Override
 	@RolesAllowed("PBL_ADMIN")
 	public EmissorCertDto deleteEmissorCert(Long id) throws EmissorCertNotFoundException {
-		return delegate.deleteEmissorCert(id);
+		return getDelegateService().deleteEmissorCert(id);
 	}
 
 	@Override
 	@RolesAllowed("PBL_ADMIN")
 	public Page<EmissorCertDto> findAllEmissorCert(Pageable pageable) {
-		return delegate.findAllEmissorCert(pageable);
+		return getDelegateService().findAllEmissorCert(pageable);
 	}
 
 	@Override
 	@RolesAllowed("PBL_ADMIN")
 	public ClauPrivadaDto findClauPrivadaById(Long id) {
-		return delegate.findClauPrivadaById(id);
+		return getDelegateService().findClauPrivadaById(id);
 	}
 
     @Override
 	@RolesAllowed("PBL_ADMIN")
     public ClauPrivadaDto findClauPrivadaByNom(String nom) {
-        return delegate.findClauPrivadaByNom(nom);
+        return getDelegateService().findClauPrivadaByNom(nom);
     }
 
 	@Override
 	@RolesAllowed("PBL_ADMIN")
 	public ClauPrivadaDto findClauPrivadaByAlies(String alies) {
-		return delegate.findClauPrivadaByAlies(alies);
+		return getDelegateService().findClauPrivadaByAlies(alies);
 	}
 
     @Override
 	@RolesAllowed("PBL_ADMIN")
 	public ClauPrivadaDto createClauPrivada(ClauPrivadaDto dto) throws EntitatNotFoundException {
-		return delegate.createClauPrivada(dto);
+		return getDelegateService().createClauPrivada(dto);
 	}
 
 	@Override
 	@RolesAllowed("PBL_ADMIN")
 	public ClauPrivadaDto updateClauPrivada(ClauPrivadaDto dto) throws ClauPrivadaNotFoundException, EntitatNotFoundException {
-		return delegate.updateClauPrivada(dto);
+		return getDelegateService().updateClauPrivada(dto);
 	}
 
 	@Override
 	@RolesAllowed("PBL_ADMIN")
 	public ClauPrivadaDto deleteClauPrivada(Long id) throws ClauPrivadaNotFoundException {
-		return delegate.deleteClauPrivada(id);
+		return getDelegateService().deleteClauPrivada(id);
 	}
 
 	@Override
 	@RolesAllowed("PBL_ADMIN")
 	public Page<ClauPrivadaDto> findAllClauPrivada(Pageable pageable) {
-		return delegate.findAllClauPrivada(pageable);
+		return getDelegateService().findAllClauPrivada(pageable);
 	}
 
 	@Override
 	@RolesAllowed("PBL_ADMIN")
 	public List<OrganismeCessionariDto> findAllOrganismeCessionari() {
-		return delegate.findAllOrganismeCessionari();
+		return getDelegateService().findAllOrganismeCessionari();
 	}
 
     @Override
     @RolesAllowed("PBL_ADMIN")
     public List<OrganismeCessionariDto> findAllOrganismeCessionariActiu() {
-        return delegate.findAllOrganismeCessionariActiu();
+        return getDelegateService().findAllOrganismeCessionariActiu();
     }
 
     @Override
     @RolesAllowed("PBL_ADMIN")
     public OrganismeCessionariDto findOrganismeCessionariById(Long organismeId) {
-        return delegate.findOrganismeCessionariById(organismeId);
+        return getDelegateService().findOrganismeCessionariById(organismeId);
     }
 
     @Override
 	@RolesAllowed("PBL_ADMIN")
 	public ClauPublicaDto findClauPublicaById(Long id) {
-		return delegate.findClauPublicaById(id);
+		return getDelegateService().findClauPublicaById(id);
 	}
 
 	@Override
 	@RolesAllowed("PBL_ADMIN")
 	public ClauPublicaDto findClauPublicaByNom(String nom) {
-		return delegate.findClauPublicaByNom(nom);
+		return getDelegateService().findClauPublicaByNom(nom);
 	}
 
 	@Override
 	@RolesAllowed("PBL_ADMIN")
 	public ClauPublicaDto findClauPublicaByAlies(String alies) {
-		return delegate.findClauPublicaByAlies(alies);
+		return getDelegateService().findClauPublicaByAlies(alies);
 	}
 
 	@Override
 	@RolesAllowed("PBL_ADMIN")
 	public ClauPublicaDto createClauPublica(ClauPublicaDto dto) {
-		return delegate.createClauPublica(dto);
+		return getDelegateService().createClauPublica(dto);
 	}
 
 	@Override
 	@RolesAllowed("PBL_ADMIN")
 	public ClauPublicaDto updateClauPublica(ClauPublicaDto dto) throws ClauPublicaNotFoundException {
-		return delegate.updateClauPublica(dto);
+		return getDelegateService().updateClauPublica(dto);
 	}
 
 	@Override
 	@RolesAllowed("PBL_ADMIN")
 	public ClauPublicaDto deleteClauPublica(Long id) throws ClauPublicaNotFoundException {
-		return delegate.deleteClauPublica(id);
+		return getDelegateService().deleteClauPublica(id);
 	}
 
 	@Override
 	@RolesAllowed("PBL_ADMIN")
 	public Page<ClauPublicaDto> findAllClauPublica(Pageable pageable) {
-		return delegate.findAllClauPublica(pageable);
+		return getDelegateService().findAllClauPublica(pageable);
 	}
 
 }

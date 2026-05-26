@@ -1,25 +1,22 @@
 /**
  * 
  */
-package es.caib.pinbal.logic.ejb;
+package es.caib.pinbal.ejb;
 
-import es.caib.pinbal.core.dto.EntitatUsuariDto;
-import es.caib.pinbal.core.dto.InformeUsuariDto;
-import es.caib.pinbal.core.dto.UsuariDto;
-import es.caib.pinbal.core.service.UsuariService;
-import es.caib.pinbal.core.service.exception.EntitatNotFoundException;
-import es.caib.pinbal.core.service.exception.EntitatUsuariNotFoundException;
-import es.caib.pinbal.core.service.exception.EntitatUsuariProtegitException;
-import es.caib.pinbal.core.service.exception.UsuariExternNotFoundException;
-import org.jboss.annotation.ejb.TransactionTimeout;
-import org.springframework.beans.factory.annotation.Autowired;
+import es.caib.pinbal.logic.intf.dto.EntitatUsuariDto;
+import es.caib.pinbal.logic.intf.dto.InformeUsuariDto;
+import es.caib.pinbal.logic.intf.dto.UsuariDto;
+import es.caib.pinbal.logic.intf.service.exception.EntitatNotFoundException;
+import es.caib.pinbal.logic.intf.service.exception.EntitatUsuariNotFoundException;
+import es.caib.pinbal.logic.intf.service.exception.EntitatUsuariProtegitException;
+import es.caib.pinbal.logic.intf.service.exception.UsuariExternNotFoundException;
+import org.jboss.ejb3.annotation.TransactionTimeout;
+import org.springframework.context.annotation.Primary;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.ejb.interceptor.SpringBeanAutowiringInterceptor;
 
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.Stateless;
-import javax.interceptor.Interceptors;
 import java.util.List;
 
 /**
@@ -28,19 +25,14 @@ import java.util.List;
  * 
  * @author Limit Tecnologies <limit@limit.es>
  */
+@Primary
 @Stateless
-@Interceptors(SpringBeanAutowiringInterceptor.class)
-public class UsuariServiceBean implements UsuariService {
-
-	@Autowired
-	UsuariService delegate;
-
-
+public class UsuariServiceBean extends AbstractService<es.caib.pinbal.logic.intf.service.UsuariService> implements es.caib.pinbal.logic.intf.service.UsuariService {
 
 	@Override
-	@RolesAllowed({"PBL_ADMIN", "PBL_REPRES", "PBL_AUDIT", "PBL_SUPERAUD", "PBL_WS", "tothom"})
+	@RolesAllowed("**")
 	public void inicialitzarUsuariActual() {
-		delegate.inicialitzarUsuariActual();
+		getDelegateService().inicialitzarUsuariActual();
 	}
 
 	@Override
@@ -56,20 +48,20 @@ public class UsuariServiceBean implements UsuariService {
 			String nif,
 			String departament,
 			Pageable pageable){
-		return delegate.findAmbFiltrePaginat(id_entitat, isRepresentant, isDelegat, isAuditor,isAplicacio, 
+		return getDelegateService().findAmbFiltrePaginat(id_entitat, isRepresentant, isDelegat, isAuditor,isAplicacio, 
 											 codi, nom, nif, departament, pageable);
 	}
 	
 	@Override
-	@RolesAllowed({"PBL_ADMIN", "PBL_REPRES", "PBL_AUDIT", "PBL_SUPERAUD", "PBL_WS", "tothom"})
+	@RolesAllowed("**")
 	public UsuariDto getDades() {
-		return delegate.getDades();
+		return getDelegateService().getDades();
 	}
 
 	@Override
-	@RolesAllowed({"PBL_ADMIN", "PBL_REPRES", "PBL_AUDIT", "PBL_SUPERAUD", "PBL_WS", "tothom"})
+	@RolesAllowed("**")
 	public UsuariDto getDades(String usuariCodi) {
-		return delegate.getDades(usuariCodi);
+		return getDelegateService().getDades(usuariCodi);
 	}
 
 	@Override
@@ -85,7 +77,7 @@ public class UsuariServiceBean implements UsuariService {
 			boolean aplicacio,
 			boolean afegir,
 			boolean actiu) throws EntitatNotFoundException, UsuariExternNotFoundException {
-		delegate.actualitzarDadesAdmin(
+		getDelegateService().actualitzarDadesAdmin(
 				id,
 				codi,
 				nif,
@@ -110,7 +102,7 @@ public class UsuariServiceBean implements UsuariService {
 			boolean aplicacio,
 			boolean afegir,
 			boolean actiu) throws EntitatNotFoundException, EntitatUsuariProtegitException, UsuariExternNotFoundException {
-		delegate.actualitzarDadesRepresentant(
+		getDelegateService().actualitzarDadesRepresentant(
 				id,
 				codi,
 				nif,
@@ -130,7 +122,7 @@ public class UsuariServiceBean implements UsuariService {
 			String nif,
 			boolean auditor,
 			boolean afegir) throws EntitatNotFoundException, EntitatUsuariProtegitException, UsuariExternNotFoundException {
-		delegate.actualitzarDadesAuditor(id, codi, nif, auditor, afegir);
+		getDelegateService().actualitzarDadesAuditor(id, codi, nif, auditor, afegir);
 	}
 
 	@Override
@@ -138,99 +130,99 @@ public class UsuariServiceBean implements UsuariService {
 	public boolean establirPrincipal(
 			Long id,
 			String usuariCodi) throws EntitatNotFoundException, EntitatUsuariNotFoundException {
-		return delegate.establirPrincipal(id, usuariCodi);
+		return getDelegateService().establirPrincipal(id, usuariCodi);
 	}
 
     @Override
 	@RolesAllowed({"PBL_ADMIN", "PBL_REPRES"})
     public boolean canviActiu(Long entitatId, String usuariCodi) throws EntitatUsuariNotFoundException, EntitatNotFoundException {
-        return delegate.canviActiu(entitatId, usuariCodi);
+        return getDelegateService().canviActiu(entitatId, usuariCodi);
     }
 
     @Override
 	@RolesAllowed({"PBL_ADMIN", "PBL_REPORT"})
 	public List<InformeUsuariDto> informeUsuarisAgrupatsEntitatDepartament() {
-		return delegate.informeUsuarisAgrupatsEntitatDepartament();
+		return getDelegateService().informeUsuarisAgrupatsEntitatDepartament();
 	}
 
 	@Override
-	@RolesAllowed({"PBL_ADMIN", "PBL_REPRES", "PBL_AUDIT", "tothom"})
+	@RolesAllowed("**")
 	public UsuariDto getUsuariActual() {
-		return delegate.getUsuariActual();
+		return getDelegateService().getUsuariActual();
 	}
 
 	@Override
-	@RolesAllowed({"PBL_ADMIN", "PBL_REPRES", "PBL_AUDIT", "tothom"})
+	@RolesAllowed("**")
 	public String getIdiomaUsuariActual() {
-		return delegate.getIdiomaUsuariActual();
+		return getDelegateService().getIdiomaUsuariActual();
 	}
 
 	@Override
-	@RolesAllowed({"PBL_ADMIN", "PBL_REPRES", "PBL_AUDIT", "tothom"})
+	@RolesAllowed("**")
 	public Integer getNumElementsPaginaDefecte() {
-		return delegate.getNumElementsPaginaDefecte();
+		return getDelegateService().getNumElementsPaginaDefecte();
 	}
 
 	@Override
-	@RolesAllowed({"PBL_ADMIN", "PBL_REPRES", "PBL_AUDIT", "tothom"})
+	@RolesAllowed("**")
 	public UsuariDto updateUsuariActual(UsuariDto dto, boolean updateEntitat) {
-		return delegate.updateUsuariActual(dto, updateEntitat);
+		return getDelegateService().updateUsuariActual(dto, updateEntitat);
 	}
 
     @Override
-	@RolesAllowed({"PBL_ADMIN", "PBL_REPRES", "PBL_AUDIT", "PBL_SUPERAUD", "PBL_WS", "tothom"})
+	@RolesAllowed("**")
     public List<UsuariDto> findLikeCodiONom(String text) {
-        return delegate.findLikeCodiONom(text);
+        return getDelegateService().findLikeCodiONom(text);
     }
 
 	@Override
-	@RolesAllowed({"PBL_ADMIN", "PBL_REPRES", "PBL_AUDIT", "PBL_SUPERAUD", "PBL_WS", "tothom"})
+	@RolesAllowed("**")
 	public List<UsuariDto> findLikeCodiONomONif(String text) {
-		return delegate.findLikeCodiONomONif(text);
+		return getDelegateService().findLikeCodiONomONif(text);
 	}
 
 	@Override
-	@RolesAllowed({"PBL_ADMIN", "PBL_REPRES", "PBL_AUDIT", "PBL_SUPERAUD", "PBL_WS", "tothom"})
+	@RolesAllowed("**")
 	public EntitatUsuariDto getEntitatUsuari(Long entitatId, String usuariCodi) {
-        return delegate.getEntitatUsuari(entitatId, usuariCodi);
+        return getDelegateService().getEntitatUsuari(entitatId, usuariCodi);
     }
 
     @Override
-	@RolesAllowed({"PBL_ADMIN", "PBL_REPRES", "PBL_AUDIT", "PBL_SUPERAUD", "PBL_WS", "tothom"})
+	@RolesAllowed("**")
     public UsuariDto getUsuariExtern(String codi) throws Exception {
-        return delegate.getUsuariExtern(codi);
+        return getDelegateService().getUsuariExtern(codi);
     }
 
 	@Override
-	@RolesAllowed({"PBL_ADMIN", "PBL_REPRES", "PBL_AUDIT", "PBL_SUPERAUD", "PBL_WS", "tothom"})
+	@RolesAllowed("**")
 	public List<UsuariDto> getUsuarisExterns(String text) throws Exception {
-		return delegate.getUsuarisExterns(text);
+		return getDelegateService().getUsuarisExterns(text);
 	}
 
     @Override
-	@RolesAllowed({"PBL_ADMIN", "PBL_REPRES", "PBL_AUDIT", "PBL_SUPERAUD", "PBL_WS", "tothom"})
+	@RolesAllowed("**")
     public UsuariDto getUsuariEntitat(Long entitatId, String codi) {
-        return delegate.getUsuariEntitat(entitatId, codi);
+        return getDelegateService().getUsuariEntitat(entitatId, codi);
     }
 
 	@Override
-	@RolesAllowed({"PBL_ADMIN", "PBL_REPRES", "PBL_AUDIT", "PBL_SUPERAUD", "PBL_WS", "tothom"})
+	@RolesAllowed("**")
 	public List<UsuariDto> getUsuarisEntitat(Long entitatId, String text) {
-		return delegate.getUsuarisEntitat(entitatId, text);
+		return getDelegateService().getUsuarisEntitat(entitatId, text);
 	}
 
     @Override
 	@RolesAllowed({"PBL_ADMIN"})
 	@TransactionTimeout(value = 1200)
     public Long updateUsuariCodi(String codiAntic, String codiNou) {
-        return delegate.updateUsuariCodi(codiAntic, codiNou) ;
+        return getDelegateService().updateUsuariCodi(codiAntic, codiNou) ;
     }
 
     @Override
 	@RolesAllowed({"PBL_ADMIN"})
 	@TransactionTimeout(value = 1200)
     public void updateUsuariCodi(String codiAntic, String codiNou, String nom, String nif, String email, String idioma) {
-        delegate.updateUsuariCodi(codiAntic, codiNou, nom, nif, email,idioma);
+        getDelegateService().updateUsuariCodi(codiAntic, codiNou, nom, nif, email,idioma);
     }
 
 }

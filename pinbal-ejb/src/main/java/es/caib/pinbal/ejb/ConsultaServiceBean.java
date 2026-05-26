@@ -1,45 +1,20 @@
 /**
  * 
  */
-package es.caib.pinbal.logic.ejb;
+package es.caib.pinbal.ejb;
 
 import es.caib.pinbal.client.dadesobertes.DadesObertesResposta;
 import es.caib.pinbal.client.dadesobertes.DadesObertesRespostaConsulta;
-import es.caib.pinbal.core.dto.ArbreRespostaDto;
-import es.caib.pinbal.core.dto.CarregaDto;
-import es.caib.pinbal.core.dto.ConsultaDto;
-import es.caib.pinbal.core.dto.ConsultaFiltreDto;
-import es.caib.pinbal.core.dto.ConsultaOpenDataDto;
-import es.caib.pinbal.core.dto.EntitatDto;
-import es.caib.pinbal.core.dto.EstadisticaDto;
-import es.caib.pinbal.core.dto.EstadistiquesFiltreDto;
-import es.caib.pinbal.core.dto.FitxerDto;
-import es.caib.pinbal.core.dto.InformeGeneralEstatDto;
-import es.caib.pinbal.core.dto.InformeProcedimentServeiDto;
-import es.caib.pinbal.core.dto.InformeRepresentantFiltreDto;
-import es.caib.pinbal.core.dto.JustificantDto;
-import es.caib.pinbal.core.dto.RecobrimentSolicitudDto;
-import es.caib.pinbal.core.dto.arxiu.ArxiuDetallDto;
-import es.caib.pinbal.core.service.ConsultaService;
-import es.caib.pinbal.core.service.exception.ConsultaNotFoundException;
-import es.caib.pinbal.core.service.exception.ConsultaScspException;
-import es.caib.pinbal.core.service.exception.ConsultaScspGeneracioException;
-import es.caib.pinbal.core.service.exception.EntitatNotFoundException;
-import es.caib.pinbal.core.service.exception.JustificantGeneracioException;
-import es.caib.pinbal.core.service.exception.ProcedimentNotFoundException;
-import es.caib.pinbal.core.service.exception.ProcedimentServeiNotFoundException;
-import es.caib.pinbal.core.service.exception.ScspException;
-import es.caib.pinbal.core.service.exception.ServeiNotAllowedException;
-import es.caib.pinbal.core.service.exception.ValidacioDadesPeticioException;
-import org.jboss.annotation.ejb.TransactionTimeout;
-import org.springframework.beans.factory.annotation.Autowired;
+import es.caib.pinbal.logic.intf.dto.*;
+import es.caib.pinbal.logic.intf.dto.arxiu.ArxiuDetallDto;
+import es.caib.pinbal.logic.intf.service.exception.*;
+import org.jboss.ejb3.annotation.TransactionTimeout;
+import org.springframework.context.annotation.Primary;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.ejb.interceptor.SpringBeanAutowiringInterceptor;
 
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.Stateless;
-import javax.interceptor.Interceptors;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -51,59 +26,56 @@ import java.util.Map;
  * @author Limit Tecnologies <limit@limit.es>
  */
 @Stateless
-@Interceptors(SpringBeanAutowiringInterceptor.class)
-public class ConsultaServiceBean implements ConsultaService {
-
-	@Autowired
-	ConsultaService delegate;
+@Primary
+public class ConsultaServiceBean extends AbstractService<es.caib.pinbal.logic.intf.service.ConsultaService> implements es.caib.pinbal.logic.intf.service.ConsultaService {
 
 
     @Override
-    @RolesAllowed("tothom")
+	@RolesAllowed("**")
     public ConsultaDto peticioSincrona(ConsultaDto consulta) throws ProcedimentServeiNotFoundException, ServeiNotAllowedException, ConsultaScspException, ConsultaNotFoundException {
-        return delegate.peticioSincrona(consulta);
+        return getDelegateService().peticioSincrona(consulta);
     }
 
     @Override
-    @RolesAllowed("tothom")
+	@RolesAllowed("**")
     public ConsultaDto peticioAsincrona(ConsultaDto consulta) throws ProcedimentServeiNotFoundException, ServeiNotAllowedException, ConsultaScspException, ValidacioDadesPeticioException {
-        return delegate.peticioAsincrona(consulta);
+        return getDelegateService().peticioAsincrona(consulta);
     }
 
     @Override
-	@RolesAllowed("tothom")
+	@RolesAllowed("**")
 	public ConsultaDto novaConsulta(
 			ConsultaDto consulta) throws ProcedimentServeiNotFoundException, ServeiNotAllowedException, ConsultaScspException {
-		return delegate.novaConsulta(consulta);
+		return getDelegateService().novaConsulta(consulta);
 	}
 
 	@Override
-	@RolesAllowed("tothom")
+	@RolesAllowed("**")
 	public ConsultaDto novaConsultaInit(
 			ConsultaDto consulta) throws ProcedimentServeiNotFoundException, ServeiNotAllowedException, ConsultaScspGeneracioException {
-		return delegate.novaConsultaInit(consulta);
+		return getDelegateService().novaConsultaInit(consulta);
 	}
 
 	@Override
-	@RolesAllowed("tothom")
+	@RolesAllowed("**")
 	public void novaConsultaEnviament(
 			Long consultaId,
 			ConsultaDto consulta) throws ProcedimentServeiNotFoundException, ConsultaNotFoundException, ConsultaScspException {
-		delegate.novaConsultaEnviament(consultaId, consulta);
+		getDelegateService().novaConsultaEnviament(consultaId, consulta);
 	}
 
 	@Override
-	@RolesAllowed("tothom")
+	@RolesAllowed("**")
 	public ConsultaDto novaConsultaEstat(
 			Long consultaId) throws ConsultaNotFoundException, ConsultaScspException {
-		return delegate.novaConsultaEstat(consultaId);
+		return getDelegateService().novaConsultaEstat(consultaId);
 	}
 
 	@Override
-	@RolesAllowed("tothom")
+	@RolesAllowed("**")
 	public ConsultaDto novaConsultaMultiple(
 			ConsultaDto consulta) throws ValidacioDadesPeticioException, ProcedimentServeiNotFoundException, ServeiNotAllowedException, ConsultaScspException {
-		return delegate.novaConsultaMultiple(consulta);
+		return getDelegateService().novaConsultaMultiple(consulta);
 	}
 
 	@Override
@@ -111,7 +83,7 @@ public class ConsultaServiceBean implements ConsultaService {
 	public ConsultaDto novaConsultaRecobriment(
 			String serveiCodi,
 			RecobrimentSolicitudDto solicitud) throws EntitatNotFoundException, ProcedimentNotFoundException, ProcedimentServeiNotFoundException, ServeiNotAllowedException, ConsultaScspException {
-		return delegate.novaConsultaRecobriment(
+		return getDelegateService().novaConsultaRecobriment(
 				serveiCodi,
 				solicitud);
 	}
@@ -121,7 +93,7 @@ public class ConsultaServiceBean implements ConsultaService {
 	public ConsultaDto novaConsultaRecobrimentInit(
 			String serveiCodi,
 			RecobrimentSolicitudDto solicitud) throws EntitatNotFoundException, ProcedimentNotFoundException, ProcedimentServeiNotFoundException, ServeiNotAllowedException, ConsultaScspException {
-		return delegate.novaConsultaRecobrimentInit(
+		return getDelegateService().novaConsultaRecobrimentInit(
 				serveiCodi,
 				solicitud);
 	}
@@ -130,32 +102,32 @@ public class ConsultaServiceBean implements ConsultaService {
 	public void novaConsultaRecobrimentEnviament(
 			Long consultaId,
 			RecobrimentSolicitudDto solicitud) throws ConsultaNotFoundException, ConsultaScspException {
-		delegate.novaConsultaRecobrimentEnviament(
+		getDelegateService().novaConsultaRecobrimentEnviament(
 				consultaId,
 				solicitud);
 	}
 	@Override
 	@RolesAllowed("PBL_WS")
 	public ConsultaDto novaConsultaRecobrimentEstat(Long consultaId) throws ConsultaNotFoundException, ConsultaScspException {
-		return delegate.novaConsultaRecobrimentEstat(consultaId);
+		return getDelegateService().novaConsultaRecobrimentEstat(consultaId);
 	}
 
 	@Override
 	@RolesAllowed("PBL_WS")
 	public ConsultaDto novaConsultaRecobrimentMultiple(String serveiCodi, List<RecobrimentSolicitudDto> solicituds) throws EntitatNotFoundException, ProcedimentNotFoundException, ProcedimentServeiNotFoundException, ServeiNotAllowedException, ConsultaScspException {
-		return delegate.novaConsultaRecobrimentMultiple(serveiCodi, solicituds);
+		return getDelegateService().novaConsultaRecobrimentMultiple(serveiCodi, solicituds);
 	}
 
 	@Override
-	@RolesAllowed({"PBL_ADMIN", "tothom"})
+	@RolesAllowed("**")
 	public ArxiuDetallDto obtenirArxiuInfo(Long consultaId) {
-		return delegate.obtenirArxiuInfo(consultaId);
+		return getDelegateService().obtenirArxiuInfo(consultaId);
 	}
 
 	@Override
-	@RolesAllowed({ "PBL_ADMIN", "tothom" })
+	@RolesAllowed("**")
 	public JustificantDto obtenirJustificant(Long id, boolean isAdmin) throws ConsultaNotFoundException, JustificantGeneracioException {
-		return delegate.obtenirJustificant(id, isAdmin);
+		return getDelegateService().obtenirJustificant(id, isAdmin);
 	}
 
 	@Override
@@ -165,57 +137,57 @@ public class ConsultaServiceBean implements ConsultaService {
 			String idsolicitud,
 			boolean versioImprimible,
 			boolean ambContingut) throws ConsultaNotFoundException, JustificantGeneracioException {
-		return delegate.obtenirJustificant(idpeticion, idsolicitud, versioImprimible, ambContingut);
+		return getDelegateService().obtenirJustificant(idpeticion, idsolicitud, versioImprimible, ambContingut);
 	}
 
 	@Override
-	@RolesAllowed("tothom")
+	@RolesAllowed("**")
 	public FitxerDto obtenirJustificantMultipleConcatenat(
 			Long id) throws ConsultaNotFoundException, JustificantGeneracioException {
-		return delegate.obtenirJustificantMultipleConcatenat(id);
+		return getDelegateService().obtenirJustificantMultipleConcatenat(id);
 	}
 
 	@Override
-	@RolesAllowed("tothom")
+	@RolesAllowed("**")
 	public FitxerDto obtenirJustificantMultipleZip(
 			Long id) throws ConsultaNotFoundException, JustificantGeneracioException {
-		return delegate.obtenirJustificantMultipleZip(id);
+		return getDelegateService().obtenirJustificantMultipleZip(id);
 	}
 
 	@Override
 	@RolesAllowed("PBL_ADMIN")
 	public FitxerDto descarregarXmlTokensZip(Long id) throws ConsultaNotFoundException {
-		return delegate.descarregarXmlTokensZip(id);
+		return getDelegateService().descarregarXmlTokensZip(id);
 	}
 
 	@Override
-	@RolesAllowed("tothom")
+	@RolesAllowed("**")
 	public JustificantDto reintentarGeneracioJustificant(
 			Long id,
 			boolean descarregar,
 			boolean isAdmin) throws ConsultaNotFoundException, JustificantGeneracioException {
-		return delegate.reintentarGeneracioJustificant(id, descarregar, isAdmin);
+		return getDelegateService().reintentarGeneracioJustificant(id, descarregar, isAdmin);
 	}
 	
 	@Override
-	@RolesAllowed("tothom")
+	@RolesAllowed("**")
 	public Page<ConsultaDto> findSimplesByFiltrePaginatPerDelegat(
 			Long entitatId,
 			ConsultaFiltreDto filtre,
 			Pageable pageable) throws EntitatNotFoundException {
-		return delegate.findSimplesByFiltrePaginatPerDelegat(
+		return getDelegateService().findSimplesByFiltrePaginatPerDelegat(
 				entitatId,
 				filtre,
 				pageable);
 	}
 
 	@Override
-	@RolesAllowed("tothom")
+	@RolesAllowed("**")
 	public Page<ConsultaDto> findMultiplesByFiltrePaginatPerDelegat(
 			Long entitatId,
 			ConsultaFiltreDto filtre,
 			Pageable pageable) throws EntitatNotFoundException {
-		return delegate.findMultiplesByFiltrePaginatPerDelegat(
+		return getDelegateService().findMultiplesByFiltrePaginatPerDelegat(
 				entitatId,
 				filtre,
 				pageable);
@@ -227,7 +199,7 @@ public class ConsultaServiceBean implements ConsultaService {
 			Long entitatId,
 			ConsultaFiltreDto filtre,
 			Pageable pageable) throws EntitatNotFoundException {
-		return delegate.findByFiltrePaginatPerAuditor(
+		return getDelegateService().findByFiltrePaginatPerAuditor(
 				entitatId,
 				filtre,
 				pageable);
@@ -236,7 +208,7 @@ public class ConsultaServiceBean implements ConsultaService {
     @Override
 	@RolesAllowed("PBL_AUDIT")
     public List<ConsultaDto> findByFiltrePerAuditor(Long entitatId, ConsultaFiltreDto filtre) throws EntitatNotFoundException {
-        return delegate.findByFiltrePerAuditor(entitatId, filtre);
+        return getDelegateService().findByFiltrePerAuditor(entitatId, filtre);
     }
 
     @Override
@@ -245,7 +217,7 @@ public class ConsultaServiceBean implements ConsultaService {
 			Long entitatId,
 			ConsultaFiltreDto filtre,
 			Pageable pageable) throws EntitatNotFoundException {
-		return delegate.findByFiltrePaginatPerSuperauditor(
+		return getDelegateService().findByFiltrePaginatPerSuperauditor(
 				entitatId,
 				filtre,
 				pageable);
@@ -256,7 +228,7 @@ public class ConsultaServiceBean implements ConsultaService {
 	public Page<ConsultaDto> findByFiltrePaginatPerAdmin(
 			ConsultaFiltreDto filtre,
 			Pageable pageable) throws EntitatNotFoundException {
-		return delegate.findByFiltrePaginatPerAdmin(filtre, pageable);
+		return getDelegateService().findByFiltrePaginatPerAdmin(filtre, pageable);
 	}
 
 	@Override
@@ -267,7 +239,7 @@ public class ConsultaServiceBean implements ConsultaService {
 			Date dataFi,
 			String procedimentCodi,
 			String serveiCodi) throws EntitatNotFoundException, ProcedimentNotFoundException {
-		return delegate.findByFiltrePerOpenData(
+		return getDelegateService().findByFiltrePerOpenData(
 				entitatCodi,
 				dataInici,
 				dataFi,
@@ -277,62 +249,62 @@ public class ConsultaServiceBean implements ConsultaService {
 
     @Override
     public DadesObertesResposta findByFiltrePerOpenDataV2(ConsultaOpenDataDto consultaOpenDataDto) throws ProcedimentNotFoundException, EntitatNotFoundException {
-        return delegate.findByFiltrePerOpenDataV2(consultaOpenDataDto);
+        return getDelegateService().findByFiltrePerOpenDataV2(consultaOpenDataDto);
     }
 
     @Override
-	@RolesAllowed("tothom")
+	@RolesAllowed("**")
 	public ConsultaDto findOneDelegat(
 			Long id) throws ConsultaNotFoundException, ScspException {
-		return delegate.findOneDelegat(id);
+		return getDelegateService().findOneDelegat(id);
 	}
 
 	@Override
 	@RolesAllowed("PBL_AUDIT")
 	public ConsultaDto findOneAuditor(
 			Long id) throws ConsultaNotFoundException, ScspException {
-		return delegate.findOneAuditor(id);
+		return getDelegateService().findOneAuditor(id);
 	}
 
 	@Override
 	@RolesAllowed("PBL_SUPERAUD")
 	public ConsultaDto findOneSuperauditor(
 			Long id) throws ConsultaNotFoundException, ScspException {
-		return delegate.findOneSuperauditor(id);
+		return getDelegateService().findOneSuperauditor(id);
 	}
 
 	@Override
 	@RolesAllowed("PBL_ADMIN")
 	public ConsultaDto findOneAdmin(Long id) throws ConsultaNotFoundException, ScspException {
-		return delegate.findOneAdmin(id);
+		return getDelegateService().findOneAdmin(id);
 	}
 
 	@Override
-	@RolesAllowed("tothom")
+	@RolesAllowed("**")
 	public List<ConsultaDto> findAmbPare(
 			Long pareId) throws ConsultaNotFoundException, ScspException {
-		return delegate.findAmbPare(pareId);
+		return getDelegateService().findAmbPare(pareId);
 	}
 
 	@Override
-	@RolesAllowed("tothom")
+	@RolesAllowed("**")
 	public long countConsultesMultiplesProcessant(
 			Long entitatId) throws EntitatNotFoundException {
-		return delegate.countConsultesMultiplesProcessant(entitatId);
+		return getDelegateService().countConsultesMultiplesProcessant(entitatId);
 	}
 
 	@Override
 	@RolesAllowed({"PBL_ADMIN", "PBL_REPRES", "PBL_REPORT"})
 	public List<EstadisticaDto> findEstadistiquesByFiltre(
 			EstadistiquesFiltreDto filtre) throws EntitatNotFoundException {
-		return delegate.findEstadistiquesByFiltre(filtre);
+		return getDelegateService().findEstadistiquesByFiltre(filtre);
 	}
 
 	@Override
 	@RolesAllowed("PBL_ADMIN")
 	public Map<EntitatDto, List<EstadisticaDto>> findEstadistiquesGlobalsByFiltre(
 			EstadistiquesFiltreDto filtre) {
-		return delegate.findEstadistiquesGlobalsByFiltre(filtre);
+		return getDelegateService().findEstadistiquesGlobalsByFiltre(filtre);
 	}
 
 	@Override
@@ -342,7 +314,7 @@ public class ConsultaServiceBean implements ConsultaService {
 			Date dataInici,
 			Date dataFi,
 			int numConsultes) throws EntitatNotFoundException {
-		return delegate.auditoriaGenerarAuditor(
+		return getDelegateService().auditoriaGenerarAuditor(
 				entitatId,
 				dataInici,
 				dataFi,
@@ -354,7 +326,7 @@ public class ConsultaServiceBean implements ConsultaService {
 	public List<ConsultaDto> auditoriaConsultarAuditor(
 			Long entitatId,
 			List<Long> consultaIds) throws EntitatNotFoundException, ScspException {
-		return delegate.auditoriaConsultarAuditor(
+		return getDelegateService().auditoriaConsultarAuditor(
 				entitatId,
 				consultaIds);
 	}
@@ -366,7 +338,7 @@ public class ConsultaServiceBean implements ConsultaService {
 			Date dataFi,
 			int numEntitats,
 			int numConsultes) {
-		return delegate.auditoriaGenerarSuperauditor(
+		return getDelegateService().auditoriaGenerarSuperauditor(
 				dataInici,
 				dataFi,
 				numEntitats,
@@ -377,62 +349,62 @@ public class ConsultaServiceBean implements ConsultaService {
 	@RolesAllowed("PBL_SUPERAUD")
 	public Map<EntitatDto, List<ConsultaDto>> auditoriaConsultarSuperauditor(
 			List<Long> consultaIds) throws ScspException {
-		return delegate.auditoriaConsultarSuperauditor(consultaIds);
+		return getDelegateService().auditoriaConsultarSuperauditor(consultaIds);
 	}
 
 	@Override
 	public void autoRevisarEstatPeticionsMultiplesPendents() {
-		delegate.autoRevisarEstatPeticionsMultiplesPendents();
+		getDelegateService().autoRevisarEstatPeticionsMultiplesPendents();
 	}
 
 	@Override
 	public void autoGenerarJustificantsPendents() {
-		delegate.autoGenerarJustificantsPendents();
+		getDelegateService().autoGenerarJustificantsPendents();
 	}
 
 	@Override
 	public void autoTancarExpedientsPendents() {
-		delegate.autoTancarExpedientsPendents();
+		getDelegateService().autoTancarExpedientsPendents();
 	}
 	
 	@Override
 	public void autoGenerarEmailReportEstat() {
-		delegate.autoGenerarEmailReportEstat();
+		getDelegateService().autoGenerarEmailReportEstat();
 	}
 
 	@Override
 	public void autoEnviarPeticionsPendents() {
-		delegate.autoEnviarPeticionsPendents();
+		getDelegateService().autoEnviarPeticionsPendents();
 	}
 
 	@Override
 	@TransactionTimeout(value = 3600)
 	public void generarDadesExplotacio() {
-		delegate.generarDadesExplotacio();
+		getDelegateService().generarDadesExplotacio();
 	}
 
 	@Override
 	@TransactionTimeout(value = 3600)
     public void generarDadesExplotacio(Date data) {
-        delegate.generarDadesExplotacio(data);
+        getDelegateService().generarDadesExplotacio(data);
     }
 
     @Override
-	@RolesAllowed("tothom")
+	@RolesAllowed("**")
 	public boolean isOptimitzarTransaccionsNovaConsulta() {
-		return delegate.isOptimitzarTransaccionsNovaConsulta();
+		return getDelegateService().isOptimitzarTransaccionsNovaConsulta();
 	}
 	
 	@Override
 	@RolesAllowed({"PBL_ADMIN", "PBL_REPORT"})
 	public List<InformeGeneralEstatDto> informeGeneralEstat(Date dataInici, Date dataFi) {
-		return delegate.informeGeneralEstat(dataInici, dataFi);
+		return getDelegateService().informeGeneralEstat(dataInici, dataFi);
 	}
 
 	@Override
 	@RolesAllowed({"PBL_ADMIN", "PBL_REPORT"})
 	public List<CarregaDto> findEstadistiquesCarrega() {
-		return delegate.findEstadistiquesCarrega();
+		return getDelegateService().findEstadistiquesCarrega();
 	}
 
 	@Override
@@ -441,13 +413,13 @@ public class ConsultaServiceBean implements ConsultaService {
 			Long entitatId, 
 			String rolActual, 
 			InformeRepresentantFiltreDto filtre){
-		return delegate.informeUsuarisEntitatOrganProcedimentServei(entitatId, rolActual, filtre);
+		return getDelegateService().informeUsuarisEntitatOrganProcedimentServei(entitatId, rolActual, filtre);
 	}
 
 	@Override
-//	@RolesAllowed({"tothom", "PBL_ADMIN", "PBL_DELEG"})
+	@RolesAllowed("**")
 	public ArbreRespostaDto generarArbreResposta(Long consultaId) throws Exception {
-		return delegate.generarArbreResposta(consultaId);
+		return getDelegateService().generarArbreResposta(consultaId);
 	}
 
 }

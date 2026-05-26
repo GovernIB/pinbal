@@ -1,23 +1,20 @@
 /**
  * 
  */
-package es.caib.pinbal.logic.ejb;
+package es.caib.pinbal.ejb;
 
-import es.caib.pinbal.core.dto.*;
-import es.caib.pinbal.core.dto.regles.CampFormProperties;
-import es.caib.pinbal.core.dto.regles.ServeiReglaDto;
-import es.caib.pinbal.core.service.ServeiService;
-import es.caib.pinbal.core.service.exception.*;
-import org.springframework.beans.factory.annotation.Autowired;
+import es.caib.pinbal.logic.intf.dto.*;
+import es.caib.pinbal.logic.intf.dto.regles.CampFormProperties;
+import es.caib.pinbal.logic.intf.dto.regles.ServeiReglaDto;
+import es.caib.pinbal.logic.intf.service.exception.*;
+import org.springframework.context.annotation.Primary;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.ejb.interceptor.SpringBeanAutowiringInterceptor;
 import org.springframework.security.core.Authentication;
 
 import javax.annotation.security.PermitAll;
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.Stateless;
-import javax.interceptor.Interceptors;
 import java.io.IOException;
 import java.util.List;
 
@@ -27,76 +24,73 @@ import java.util.List;
  * 
  * @author Limit Tecnologies <limit@limit.es>
  */
+@Primary
 @Stateless
-@Interceptors(SpringBeanAutowiringInterceptor.class)
-public class ServeiServiceBean implements ServeiService {
-
-	@Autowired
-	ServeiService delegate;
+public class ServeiServiceBean extends AbstractService<es.caib.pinbal.logic.intf.service.ServeiService> implements es.caib.pinbal.logic.intf.service.ServeiService {
 
 	@Override
 	@RolesAllowed({"PBL_ADMIN", "PBL_REPRES"})
 	public ServeiDto getServeiDtoByCodi(String serveiCodi) throws ServeiNotFoundException {
-		return delegate.getServeiDtoByCodi(serveiCodi);
+		return getDelegateService().getServeiDtoByCodi(serveiCodi);
 	}
 	
 	@Override
 	@RolesAllowed({"PBL_ADMIN", "PBL_REPRES"})
 	public List<ServeiDto> getServeis(String text) {
-		return delegate.getServeis(text);
+		return getDelegateService().getServeis(text);
 	}
 
 	@Override
 	@RolesAllowed("PBL_ADMIN")
 	public ServeiDto save(ServeiDto servei) throws ServeiNotFoundException {
-		return delegate.save(servei);
+		return getDelegateService().save(servei);
 	}
 
 	@Override
 	@RolesAllowed("PBL_ADMIN")
 	public ServeiDto delete(
 			String serveiCodi) throws ServeiNotFoundException, ServeiAmbConsultesException {
-		return delegate.delete(serveiCodi);
+		return getDelegateService().delete(serveiCodi);
 	}
 
 	@Override
 	@RolesAllowed({"PBL_ADMIN", "PBL_REPRES"})
 	public ServeiDto findAmbCodiPerAdminORepresentant(
 			String codi) throws ServeiNotFoundException {
-		return delegate.findAmbCodiPerAdminORepresentant(codi);
+		return getDelegateService().findAmbCodiPerAdminORepresentant(codi);
 	}
 
 	@Override
-	@RolesAllowed("tothom")
+	@RolesAllowed("**")
 	public ServeiDto findAmbCodiPerDelegat(
 			Long entitatId,
 			String codi) throws ServeiNotFoundException {
-		return delegate.findAmbCodiPerDelegat(entitatId, codi);
+		return getDelegateService().findAmbCodiPerDelegat(entitatId, codi);
 	}
 
 	@Override
 	@RolesAllowed({"PBL_ADMIN", "PBL_REPRES"})
 	public ServeiDto findById(Long id) {
-		return delegate.findById(id);
+		return getDelegateService().findById(id);
 	}
 	
 	@Override
 	@RolesAllowed({"PBL_ADMIN", "PBL_REPORT"})
 	public List<ServeiDto> findActius() {
-		return delegate.findActius();
+		return getDelegateService().findActius();
 	}
 	
 	@Override
 	@RolesAllowed({"PBL_ADMIN", "PBL_REPORT"})
 	public List<ServeiDto> findActius(String filtre) {
-		return delegate.findActius(filtre);
+		return getDelegateService().findActius(filtre);
 	}
 
 	@Override
 	@RolesAllowed("PBL_ADMIN")
 	public Page<ServeiDto> findAmbFiltrePaginat(String codi, String descripcio, String emisor,
 			Boolean activa, String scspVersionEsquema, Pageable pageable) {
-		return delegate.findAmbFiltrePaginat(codi, descripcio, emisor, activa, scspVersionEsquema, pageable);
+		return getDelegateService().findAmbFiltrePaginat(codi, descripcio, emisor, activa, scspVersionEsquema, pageable);
 	}
 	
 	@Override
@@ -109,21 +103,21 @@ public class ServeiServiceBean implements ServeiService {
 			EntitatDto entitat,
 			ProcedimentDto procediment,
 			Pageable pageable) {
-		return delegate.findAmbFiltrePaginat(codi, descripcio, emisor, actiu, entitat, procediment, pageable);
+		return getDelegateService().findAmbFiltrePaginat(codi, descripcio, emisor, actiu, entitat, procediment, pageable);
 	}
 	
 	@Override
 	@RolesAllowed({"PBL_ADMIN", "PBL_REPRES", "PBL_AUDIT", "PBL_SUPERAUD"})
 	public List<ServeiDto> findAmbEntitat(Long entitatId)
 			throws EntitatNotFoundException {
-		return delegate.findAmbEntitat(entitatId);
+		return getDelegateService().findAmbEntitat(entitatId);
 	}
 	
 	@Override
 	@RolesAllowed({"PBL_ADMIN", "PBL_REPRES", "PBL_AUDIT", "PBL_SUPERAUD"})
 	public List<ServeiDto> findAmbEntitat(Long entitatId, String filtre)
 			throws EntitatNotFoundException {
-		return delegate.findAmbEntitat(entitatId, filtre);
+		return getDelegateService().findAmbEntitat(entitatId, filtre);
 	}
 
 	@Override
@@ -131,14 +125,14 @@ public class ServeiServiceBean implements ServeiService {
 	public List<ServeiDto> findAmbEntitatIProcediment(
 			Long entitatId,
 			Long procedimentId) throws EntitatNotFoundException, ProcedimentNotFoundException {
-		return delegate.findAmbEntitatIProcediment(entitatId, procedimentId);
+		return getDelegateService().findAmbEntitatIProcediment(entitatId, procedimentId);
 	}
 	
 	@Override
 	@RolesAllowed("PBL_ADMIN")
 	public List<ServeiDto> findAmbProcediment(
 			Long procedimentId) throws ProcedimentNotFoundException {
-		return delegate.findAmbProcediment(procedimentId);
+		return getDelegateService().findAmbProcediment(procedimentId);
 	}
 	
 	@Override
@@ -147,13 +141,13 @@ public class ServeiServiceBean implements ServeiService {
 			Long entitatId,
 			Long procedimentId,
 			String filtre) throws EntitatNotFoundException, ProcedimentNotFoundException {
-		return delegate.findAmbEntitatIProcediment(entitatId, procedimentId, filtre);
+		return getDelegateService().findAmbEntitatIProcediment(entitatId, procedimentId, filtre);
 	}
 
     @Override
     @RolesAllowed("PBL_REPRES")
     public List<ServeiDto> findAmbEntitatNotInProcediment(Long entitatId, Long procedimentId) throws EntitatNotFoundException, ProcedimentNotFoundException {
-        return delegate.findAmbEntitatNotInProcediment(entitatId, procedimentId);
+        return getDelegateService().findAmbEntitatNotInProcediment(entitatId, procedimentId);
     }
 
     @Override
@@ -161,54 +155,54 @@ public class ServeiServiceBean implements ServeiService {
 	public List<ProcedimentServeiDto> findPermesosAmbEntitatIUsuari(
 			Long entitatId,
 			String usuariCodi) throws EntitatNotFoundException {
-		return delegate.findPermesosAmbEntitatIUsuari(entitatId, usuariCodi);
+		return getDelegateService().findPermesosAmbEntitatIUsuari(entitatId, usuariCodi);
 	}
 
     @Override
 	@RolesAllowed("PBL_REPRES")
     public Integer countPermesosAmbEntitatIUsuari(Long entitatId, String usuariCodi) {
-        return delegate.countPermesosAmbEntitatIUsuari(entitatId, usuariCodi);
+        return getDelegateService().countPermesosAmbEntitatIUsuari(entitatId, usuariCodi);
     }
 
     @Override
-	@RolesAllowed("tothom")
+	@RolesAllowed("**")
 	public List<ServeiDto> findPermesosAmbProcedimentPerDelegat(
 			Long entitatId,
 			Long procedimentId) throws EntitatNotFoundException, ProcedimentNotFoundException {
-		return delegate.findPermesosAmbProcedimentPerDelegat(
+		return getDelegateService().findPermesosAmbProcedimentPerDelegat(
 				entitatId,
 				procedimentId);
 	}
 
     @Override
-	@RolesAllowed("tothom")
+	@RolesAllowed("**")
     public List<ServeiDto> getServeiPermesosPerDelegat(Long entitatId, Long procedimentId, Authentication auth) throws EntitatNotFoundException, ProcedimentNotFoundException {
-        return delegate.getServeiPermesosPerDelegat(entitatId, procedimentId, auth);
+        return getDelegateService().getServeiPermesosPerDelegat(entitatId, procedimentId, auth);
     }
 
     @Override
 	@RolesAllowed("PBL_ADMIN")
 	public List<EmisorDto> findEmisorAll() {
-		return delegate.findEmisorAll();
+		return getDelegateService().findEmisorAll();
 	}
 
 	@Override
 	@RolesAllowed("PBL_ADMIN")
 	public List<ClauPublicaDto> findClauPublicaAll() {
-		return delegate.findClauPublicaAll();
+		return getDelegateService().findClauPublicaAll();
 	}
 
 	@Override
 	@RolesAllowed("PBL_ADMIN")
 	public List<ClauPrivadaDto> findClauPrivadaAll() {
-		return delegate.findClauPrivadaAll();
+		return getDelegateService().findClauPrivadaAll();
 	}
 	
 	@Override
-	@RolesAllowed({"PBL_ADMIN", "tothom"})
+	@RolesAllowed("**")
 	public ArbreDto<DadaEspecificaDto> generarArbreDadesEspecifiques(
 			String serveiCodi) throws ServeiNotFoundException, ScspException {
-		return delegate.generarArbreDadesEspecifiques(serveiCodi);
+		return getDelegateService().generarArbreDadesEspecifiques(serveiCodi);
 	}
 
 
@@ -217,20 +211,20 @@ public class ServeiServiceBean implements ServeiService {
 	public ServeiCampDto createServeiCamp(
 			String serveiCodi,
 			String path) throws ServeiNotFoundException {
-		return delegate.createServeiCamp(serveiCodi, path);
+		return getDelegateService().createServeiCamp(serveiCodi, path);
 	}
 
 	@Override
 	@RolesAllowed("PBL_ADMIN")
 	public ServeiCampDto updateServeiCamp(
 			ServeiCampDto modificat) throws ServeiCampNotFoundException {
-		return delegate.updateServeiCamp(modificat);
+		return getDelegateService().updateServeiCamp(modificat);
 	}
 
 	@Override
 	@RolesAllowed("PBL_ADMIN")
 	public ServeiCampDto deleteServeiCamp(Long serveiCampId) throws ServeiCampNotFoundException {
-		return delegate.deleteServeiCamp(serveiCampId);
+		return getDelegateService().deleteServeiCamp(serveiCampId);
 	}
 
 	@Override
@@ -239,7 +233,7 @@ public class ServeiServiceBean implements ServeiService {
 			String serveiCodi,
 			Long serveiCampId,
 			int indexDesti) throws ServeiCampNotFoundException {
-		delegate.moveServeiCamp(serveiCodi, serveiCampId, indexDesti);
+		getDelegateService().moveServeiCamp(serveiCodi, serveiCampId, indexDesti);
 	}
 
 	@Override
@@ -247,49 +241,49 @@ public class ServeiServiceBean implements ServeiService {
 	public void agrupaServeiCamp(
 			Long serveiCampId,
 			Long serveiCampGrupId) throws ServeiCampNotFoundException, ServeiCampGrupNotFoundException {
-		delegate.agrupaServeiCamp(serveiCampId, serveiCampGrupId);
+		getDelegateService().agrupaServeiCamp(serveiCampId, serveiCampGrupId);
 	}
 
 	@Override
-	@RolesAllowed({"PBL_ADMIN", "tothom"})
+	@RolesAllowed("**")
 	public List<ServeiCampDto> findServeiCamps(String serveiCodi) throws ServeiNotFoundException {
-		return delegate.findServeiCamps(serveiCodi);
+		return getDelegateService().findServeiCamps(serveiCodi);
 	}
 
 	@Override
 	@RolesAllowed("PBL_ADMIN")
 	public void marcarArrelResposta(String serveiCodi, String path) {
-		delegate.marcarArrelResposta(serveiCodi, path);
+		getDelegateService().marcarArrelResposta(serveiCodi, path);
 	}
 
 	@Override
 	@RolesAllowed("PBL_ADMIN")
 	public void desmarcarArrelResposta(String serveiCodi) {
-		delegate.desmarcarArrelResposta(serveiCodi);
+		getDelegateService().desmarcarArrelResposta(serveiCodi);
 	}
 
 	@Override
 	@RolesAllowed({"PBL_ADMIN", "PBL_REPRES"})
 	public String getArrelRespostaPath(String serveiCodi) {
-		return delegate.getArrelRespostaPath(serveiCodi);
+		return getDelegateService().getArrelRespostaPath(serveiCodi);
 	}
 
 	@Override
 	@RolesAllowed("PBL_ADMIN")
 	public ServeiCampGrupDto createServeiCampGrup(ServeiCampGrupDto serveiCampGrup) throws ServeiNotFoundException {
-		return delegate.createServeiCampGrup(serveiCampGrup);
+		return getDelegateService().createServeiCampGrup(serveiCampGrup);
 	}
 
     @Override
 	@RolesAllowed("PBL_ADMIN")
 	public ServeiCampGrupDto updateServeiCampGrup(ServeiCampGrupDto serveiCampGrup) throws ServeiCampGrupNotFoundException {
-		return delegate.updateServeiCampGrup(serveiCampGrup);
+		return getDelegateService().updateServeiCampGrup(serveiCampGrup);
 	}
 
 	@Override
 	@RolesAllowed("PBL_ADMIN")
 	public ServeiCampGrupDto deleteServeiCampGrup(Long serveiCampGrupId) throws ServeiCampGrupNotFoundException {
-		return delegate.deleteServeiCampGrup(serveiCampGrupId);
+		return getDelegateService().deleteServeiCampGrup(serveiCampGrupId);
 	}
 
 	@Override
@@ -297,115 +291,115 @@ public class ServeiServiceBean implements ServeiService {
 	public void moveServeiCampGrup(
 			Long serveiCampGrupId,
 			boolean up) throws ServeiCampGrupNotFoundException {
-		delegate.moveServeiCampGrup(serveiCampGrupId, up);
+		getDelegateService().moveServeiCampGrup(serveiCampGrupId, up);
 	}
 
 	@Override
-	@RolesAllowed({"PBL_ADMIN", "tothom"})
+	@RolesAllowed("**")
 	public List<ServeiCampGrupDto> findServeiCampGrups(String serveiCodi) throws ServeiNotFoundException {
-		return delegate.findServeiCampGrups(serveiCodi);
+		return getDelegateService().findServeiCampGrups(serveiCodi);
 	}
 
 	@Override
-	@RolesAllowed({"PBL_ADMIN", "tothom"})
+	@RolesAllowed("**")
 	public List<ServeiCampGrupDto> findServeiCampGrupsAndSubgrups(String serveiCodi) throws ServeiNotFoundException {
-		return delegate.findServeiCampGrupsAndSubgrups(serveiCodi);
+		return getDelegateService().findServeiCampGrupsAndSubgrups(serveiCodi);
 	}
 
     @Override
-	@RolesAllowed({"PBL_ADMIN", "tothom"})
+	@RolesAllowed("**")
     public ServeiCampGrupDto serveiCampGrupFindByNom(String serveiCodi, String nom) {
-        return delegate.serveiCampGrupFindByNom(serveiCodi, nom);
+        return getDelegateService().serveiCampGrupFindByNom(serveiCodi, nom);
     }
 
     @Override
 	@RolesAllowed("PBL_ADMIN")
 	public ServeiBusDto createServeiBus(
 			ServeiBusDto creat) throws ServeiNotFoundException, EntitatNotFoundException {
-		return delegate.createServeiBus(creat);
+		return getDelegateService().createServeiBus(creat);
 	}
 
 	@Override
 	@RolesAllowed("PBL_ADMIN")
 	public ServeiBusDto updateServeiBus(
 			ServeiBusDto modificat) throws ServeiBusNotFoundException, EntitatNotFoundException {
-		return delegate.updateServeiBus(modificat);
+		return getDelegateService().updateServeiBus(modificat);
 	}
 
 	@Override
 	@RolesAllowed("PBL_ADMIN")
 	public ServeiBusDto deleteServeiBus(
 			Long serveiBusId) throws ServeiBusNotFoundException {
-		return delegate.deleteServeiBus(serveiBusId);
+		return getDelegateService().deleteServeiBus(serveiBusId);
 	}
 
 	@Override
 	@RolesAllowed("PBL_ADMIN")
 	public ServeiBusDto findServeiBusById(Long id) throws ServeiBusNotFoundException {
-		return delegate.findServeiBusById(id);
+		return getDelegateService().findServeiBusById(id);
 	}
 
 	@Override
 	@RolesAllowed("PBL_ADMIN")
 	public List<ServeiBusDto> findServeisBus(String serveiCodi) throws ServeiNotFoundException {
-		return delegate.findServeisBus(serveiCodi);
+		return getDelegateService().findServeisBus(serveiCodi);
 	}
 
 	@Override
 	@RolesAllowed("PBL_ADMIN")
 	public void addServeiJustificantCamp(
 			ServeiJustificantCampDto camp) throws ServeiNotFoundException {
-		delegate.addServeiJustificantCamp(camp);
+		getDelegateService().addServeiJustificantCamp(camp);
 	}
 
 	@Override
-	@RolesAllowed({"PBL_ADMIN", "tothom"})
+	@RolesAllowed("**")
 	public List<ServeiJustificantCampDto> findServeiJustificantCamps(
 			String serveiCodi) throws ServeiNotFoundException {
-		return delegate.findServeiJustificantCamps(serveiCodi);
+		return getDelegateService().findServeiJustificantCamps(serveiCodi);
 	}
 
 	@Override
 	@PermitAll
 	public List<String> getRolsConfigurats() {
-		return delegate.getRolsConfigurats();
+		return getDelegateService().getRolsConfigurats();
 	}
 
 	@Override
 	@RolesAllowed({"PBL_ADMIN"})
 	public List<ServeiXsdDto> xsdFindByServei(
 			String codi) throws IOException, ServeiNotFoundException {
-		return delegate.xsdFindByServei(codi);
+		return getDelegateService().xsdFindByServei(codi);
 	}
 
 	@Override
 	public void xsdDelete(
 			String codi, XsdTipusEnumDto tipus) throws IOException {
-		delegate.xsdDelete(codi, tipus);
+		getDelegateService().xsdDelete(codi, tipus);
 	}
 
 	@Override
 	public FitxerDto xsdDescarregar(
 			String codi, XsdTipusEnumDto tipus) throws IOException {
-		return delegate.xsdDescarregar(codi, tipus);
+		return getDelegateService().xsdDescarregar(codi, tipus);
 	}
 
 	@Override
 	public void xsdCreate(String codi, ServeiXsdDto xsd, byte[] contingut) throws IOException {
-		delegate.xsdCreate(codi, xsd, contingut);
+		getDelegateService().xsdCreate(codi, xsd, contingut);
 	}
 
 	@Override
 	@RolesAllowed("PBL_ADMIN")
 	public void updateVersio(String codi) {
-		delegate.updateVersio(codi);
+		getDelegateService().updateVersio(codi);
 	}
 
 	@Override
 	public void saveActiu(
 			String serveiCodi,
 			boolean actiu) {
-		delegate.saveActiu(
+		getDelegateService().saveActiu(
 				serveiCodi,
 				actiu);
 	}
@@ -413,73 +407,73 @@ public class ServeiServiceBean implements ServeiService {
 	@Override
 	@RolesAllowed("PBL_ADMIN")
 	public List<ServeiDto> findAll() {
-		return delegate.findAll();
+		return getDelegateService().findAll();
 	}
 
     @Override
 	@RolesAllowed("PBL_ADMIN")
     public ServeiReglaDto serveiReglaFindByNom(Long serveiId, String nom) {
-        return delegate.serveiReglaFindByNom(serveiId, nom);
+        return getDelegateService().serveiReglaFindByNom(serveiId, nom);
     }
 
     @Override
 	@RolesAllowed("PBL_ADMIN")
     public ServeiReglaDto serveiReglaFindById(Long reglaId) {
-        return delegate.serveiReglaFindById(reglaId);
+        return getDelegateService().serveiReglaFindById(reglaId);
     }
 
     @Override
 	@RolesAllowed("PBL_ADMIN")
     public ServeiReglaDto serveiReglaCreate(String serveiCodi, ServeiReglaDto reglaDto) throws ServeiNotFoundException {
-        return delegate.serveiReglaCreate(serveiCodi, reglaDto);
+        return getDelegateService().serveiReglaCreate(serveiCodi, reglaDto);
     }
 
 	@Override
 	@RolesAllowed("PBL_ADMIN")
 	public ServeiReglaDto serveiReglaUpdate(String serveiCodi, ServeiReglaDto reglaDto) throws ServeiNotFoundException {
-		return delegate.serveiReglaUpdate(serveiCodi, reglaDto);
+		return getDelegateService().serveiReglaUpdate(serveiCodi, reglaDto);
 	}
 
 	@Override
 	@RolesAllowed("PBL_ADMIN")
 	public void serveiReglaDelete(String serveiCodi, Long reglaId) throws ServeiNotFoundException {
-		delegate.serveiReglaDelete(serveiCodi, reglaId);
+		getDelegateService().serveiReglaDelete(serveiCodi, reglaId);
 	}
 
 	@Override
 	@RolesAllowed("PBL_ADMIN")
 	public boolean serveiReglaMoure(Long reglaId, int posicio) {
-		return delegate.serveiReglaMoure(reglaId, posicio);
+		return getDelegateService().serveiReglaMoure(reglaId, posicio);
 	}
 
     @Override
 	@RolesAllowed({"PBL_ADMIN"})
     public List<ServeiReglaDto> serveiReglesFindAll(String serveiCodi) throws ServeiNotFoundException {
-        return delegate.serveiReglesFindAll(serveiCodi);
+        return getDelegateService().serveiReglesFindAll(serveiCodi);
     }
 
     @Override
-	@RolesAllowed({"PBL_ADMIN", "tothom"})
+	@RolesAllowed("**")
     public List<Long> findCampIdsByReglesServei(String serveiCodi) throws ServeiNotFoundException {
-        return delegate.findCampIdsByReglesServei(serveiCodi);
+        return getDelegateService().findCampIdsByReglesServei(serveiCodi);
     }
 
 	@Override
-	@RolesAllowed({"PBL_ADMIN", "tothom"})
+	@RolesAllowed("**")
 	public List<Long> findGrupIdsByReglesServei(String serveiCodi) throws ServeiNotFoundException {
-		return delegate.findGrupIdsByReglesServei(serveiCodi);
+		return getDelegateService().findGrupIdsByReglesServei(serveiCodi);
 	}
 
     @Override
-	@RolesAllowed({"PBL_ADMIN", "tothom"})
+	@RolesAllowed("**")
     public List<CampFormProperties> getCampsByserveiRegla(String serveiCodi, String[] campsModificats) throws ServeiNotFoundException {
-        return delegate.getCampsByserveiRegla(serveiCodi, campsModificats);
+        return getDelegateService().getCampsByserveiRegla(serveiCodi, campsModificats);
     }
 
 	@Override
-	@RolesAllowed({"PBL_ADMIN", "tothom"})
+	@RolesAllowed("**")
 	public List<CampFormProperties> getGrupsByserveiRegla(String serveiCodi, String[] grupsModificats) throws ServeiNotFoundException {
-		return delegate.getGrupsByserveiRegla(serveiCodi, grupsModificats);
+		return getDelegateService().getGrupsByserveiRegla(serveiCodi, grupsModificats);
 	}
 
 }
