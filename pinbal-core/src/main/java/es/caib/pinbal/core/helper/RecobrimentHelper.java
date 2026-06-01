@@ -75,6 +75,8 @@ import java.util.List;
 public class RecobrimentHelper implements ApplicationContextAware, MessageSourceAware {
 
 	public static final String ERROR_CODE_SCSP_VALIDATION = "0226";
+	// Les peticions de recobriment provenen d'aplicacions de tramitacio.
+	private static final boolean APLICACIO_GUARDA_JUSTIFICANT_ARXIU = false;
 
 	@Autowired
 	private ConsultaRepository consultaRepository;
@@ -105,7 +107,7 @@ public class RecobrimentHelper implements ApplicationContextAware, MessageSource
 //	private XmlHelper xmlHelper;
 
 	public Respuesta peticionSincrona(Peticion peticion) throws ScspException {
-		return peticionSincrona(peticion, false);
+		return peticionSincrona(peticion, APLICACIO_GUARDA_JUSTIFICANT_ARXIU);
 	}
 
 	public Respuesta peticionSincrona(Peticion peticion, boolean aplicacioGuardaJustificantArxiu) throws ScspException {
@@ -170,7 +172,7 @@ public class RecobrimentHelper implements ApplicationContextAware, MessageSource
 
 	public ConfirmacionPeticion peticionAsincrona(
 			Peticion peticion) throws ScspException {
-		return peticionAsincrona(peticion, false);
+		return peticionAsincrona(peticion, APLICACIO_GUARDA_JUSTIFICANT_ARXIU);
 	}
 
 	public ConfirmacionPeticion peticionAsincrona(

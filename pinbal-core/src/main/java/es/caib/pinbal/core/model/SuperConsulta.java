@@ -94,7 +94,7 @@ public abstract class SuperConsulta extends PinbalAuditable<Long> implements ICo
     @Column(name = "arxiu_expedient_tancat")
     protected boolean arxiuExpedientTancat = false;
     @Column(name = "app_guarda_just_arx", nullable = false)
-    protected boolean aplicacioGuardaJustificantArxiu = false;
+    protected boolean aplicacioGuardaJustificantArxiu = true;
 
     @Column(name = "der")
     @Temporal(TemporalType.TIMESTAMP)
