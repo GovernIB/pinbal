@@ -66,14 +66,15 @@ public class JdbcAclService implements AclService {
 
     public List<ObjectIdentity> findChildren(ObjectIdentity parentIdentity) {
         Object[] args = {parentIdentity.getIdentifier(), parentIdentity.getType()};
-        List<ObjectIdentity> objects = jdbcTemplate.query(findChildrenSql, args,
+        List<ObjectIdentity> objects = jdbcTemplate.query(findChildrenSql,
                 new RowMapper<ObjectIdentity>() {
                     public ObjectIdentity mapRow(ResultSet rs, int rowNum) throws SQLException {
                         String javaType = rs.getString("class");
                         Long identifier = rs.getLong("obj_id");
                         return new ObjectIdentityImpl(javaType, identifier);
                     }
-                });
+                },
+                args);
         return !objects.isEmpty() ? objects : null;
     }
 

@@ -67,6 +67,10 @@ public class Config {
         return type == null ? "" : type.getCode();
     }
 
+    public boolean isEditable() {
+        return sourceProperty != null && ConfigSourceEnumDto.DATABASE.equals(sourceProperty);
+    }
+
     public void update(String value) {
         this.value = value;
     }

@@ -14,9 +14,9 @@ import javax.persistence.*;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode
+@EqualsAndHashCode( callSuper = false )
 @Entity
-@Table(name = "acl_entry")
+@Table(name = "pbl_acl_entry")
 public class AclEntryEntity extends AbstractPersistable<Long> {
 
 	@ManyToOne(optional = true, fetch = FetchType.EAGER)

@@ -180,7 +180,7 @@ public class JdbcMutableAclService extends JdbcAclService implements PinbalMutab
      */
 	protected Long createOrRetrieveClassPrimaryKey(String type, boolean allowCreate) {
 
-        var classIds = jdbcTemplate.queryForList(selectClassPrimaryKey, new Object[] {type}, Long.class);
+        var classIds = jdbcTemplate.queryForList(selectClassPrimaryKey, Long.class, new Object[] {type});
         if (!classIds.isEmpty()) {
             return classIds.get(0);
         }
@@ -216,7 +216,7 @@ public class JdbcMutableAclService extends JdbcAclService implements PinbalMutab
         } else {
             throw new IllegalArgumentException("Unsupported implementation of Sid");
         }
-        List<Long> sidIds = jdbcTemplate.queryForList(selectSidPrimaryKey, new Object[] {Boolean.valueOf(sidIsPrincipal), sidName},  Long.class);
+        List<Long> sidIds = jdbcTemplate.queryForList(selectSidPrimaryKey, Long.class, new Object[] {Boolean.valueOf(sidIsPrincipal), sidName});
         if (!sidIds.isEmpty()) {
             return sidIds.get(0);
         }

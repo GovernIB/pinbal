@@ -15,9 +15,9 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode
+@EqualsAndHashCode( callSuper = false )
 @Entity
-@Table(name = "acl_object_identity")
+@Table(name = "pbl_acl_object_identity")
 public class AclObjectIdentityEntity extends AbstractPersistable<Long> {
 
 	@ManyToOne(optional = true, fetch = FetchType.EAGER)

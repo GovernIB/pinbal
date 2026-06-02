@@ -6,7 +6,6 @@ package es.caib.pinbal.persist.entity;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.hibernate.annotations.ForeignKey;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
@@ -19,7 +18,6 @@ import java.util.Date;
  * 
  * @author Limit Tecnologies <limit@limit.es>
  */
-//@SuppressWarnings("deprecation")
 @Getter
 @Entity
 @Table(name = "core_clave_privada")
@@ -48,8 +46,7 @@ public class ClauPrivada implements Serializable {
 	private boolean interoperabilitat;
 	
 	@ManyToOne(optional = false, fetch = FetchType.LAZY)
-	@JoinColumn(name = "organismo")
-	@ForeignKey(name = "clave_privada_org")
+	@JoinColumn(name = "organismo", foreignKey = @ForeignKey(name = "clave_privada_org"))
 	private OrganismeCessionari organisme;
 
     // Propietat que indica si la clau és per entitat

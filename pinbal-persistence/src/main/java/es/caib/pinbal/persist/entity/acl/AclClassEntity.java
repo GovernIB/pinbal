@@ -14,9 +14,9 @@ import javax.persistence.Table;
  * @author Limit Tecnologies <limit@limit.es>
  */
 @Getter
-@EqualsAndHashCode
+@EqualsAndHashCode( callSuper = false )
 @Entity
-@Table(name = "acl_class")
+@Table(name = "pbl_acl_class")
 public class AclClassEntity extends AbstractPersistable<Long> {
 
 	@Column(name = "class", length = 100, nullable = false)

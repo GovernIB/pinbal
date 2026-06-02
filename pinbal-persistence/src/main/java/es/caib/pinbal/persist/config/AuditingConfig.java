@@ -3,7 +3,7 @@
  */
 package es.caib.pinbal.persist.config;
 
-import es.caib.pinbal.logic.intf.service.AplicacioService;
+import es.caib.pinbal.logic.intf.service.UsuariService;
 import es.caib.pinbal.persist.base.config.BaseAuditingConfig;
 import es.caib.pinbal.persist.base.entity.AuditableEntity;
 import es.caib.pinbal.persist.entity.Usuari;
@@ -33,7 +33,7 @@ public class AuditingConfig extends BaseAuditingConfig {
 	@Autowired
 	private UsuariRepository usuariRepository;
 	@Autowired
-	private AplicacioService aplicacioService;
+	private UsuariService usuariService;
 
 	@Bean
 	public AuditorAware<Usuari> auditorProvider() {
@@ -43,10 +43,10 @@ public class AuditingConfig extends BaseAuditingConfig {
 				return Optional.empty();
 			}
 			var usuari = usuariRepository.getByCodiReadOnlyNewTransaction(authentication.getName());
-			if (!usuari.isEmpty()) {
+			if (usuari.isPresent()) {
 				return usuari;
 			}
-			aplicacioService.crearUsuari(authentication.getName());
+			usuariService.inicialitzarUsuariActual();
 			return usuariRepository.getByCodi(authentication.getName());
 		};
 	}

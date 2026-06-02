@@ -14,15 +14,17 @@ import javax.persistence.Table;
  * @author Limit Tecnologies <limit@limit.es>
  */
 @Getter
-@EqualsAndHashCode
+@EqualsAndHashCode( callSuper = false )
 @Entity
-@Table(name = "acl_sid")
+@Table(name = "pbl_acl_sid")
 public class AclSidEntity extends AbstractPersistable<Long> {
 
 	@Column(name = "principal", nullable = false)
 	private boolean principal;
 	@Column(name = "sid", length = 100, nullable = false)
 	private String sid;
+	@Column(name = "class_id_type", length = 100)
+	private String classIdType;
 
 	private static final long serialVersionUID = -2299453443943600172L;
 
