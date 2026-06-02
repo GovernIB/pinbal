@@ -3,7 +3,7 @@
  */
 package es.caib.pinbal.scsp;
 
-import es.caib.pinbal.core.service.exception.ConsultaScspGeneracioException;
+import es.caib.pinbal.logic.intf.service.exception.ConsultaScspGeneracioException;
 import es.caib.pinbal.scsp.tree.Node;
 import es.caib.pinbal.scsp.tree.Tree;
 import es.scsp.bean.common.peticion.Peticion;
@@ -34,17 +34,9 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.StringWriter;
+import java.io.*;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Mètodes d'ajuda per a la gestió de dades específiques.
