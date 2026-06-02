@@ -4,29 +4,30 @@
 package es.caib.pinbal.logic.service;
 
 import es.caib.pinbal.client.comu.EntitatInfo;
-import es.caib.pinbal.core.dto.EntitatDto;
-import es.caib.pinbal.core.dto.EntitatDto.EntitatTipusDto;
-import es.caib.pinbal.core.dto.OrganGestorDto;
 import es.caib.pinbal.logic.helper.CacheHelper;
 import es.caib.pinbal.logic.helper.DtoMappingHelper;
-import es.caib.pinbal.logic.model.ClauPrivada;
-import es.caib.pinbal.logic.model.Entitat;
-import es.caib.pinbal.logic.model.Entitat.EntitatTipus;
-import es.caib.pinbal.logic.model.EntitatServei;
-import es.caib.pinbal.logic.model.EntitatUsuari;
-import es.caib.pinbal.logic.model.OrganGestor;
-import es.caib.pinbal.logic.model.ServeiConfig;
-import es.caib.pinbal.logic.model.Usuari;
-import es.caib.pinbal.logic.repository.ClauPrivadaRepository;
-import es.caib.pinbal.logic.repository.EntitatRepository;
-import es.caib.pinbal.logic.repository.EntitatServeiRepository;
-import es.caib.pinbal.logic.repository.EntitatUsuariRepository;
-import es.caib.pinbal.logic.repository.OrganismeCessionariRepository;
-import es.caib.pinbal.logic.repository.ServeiConfigRepository;
-import es.caib.pinbal.logic.repository.UsuariRepository;
-import es.caib.pinbal.core.service.exception.EntitatNotFoundException;
-import es.caib.pinbal.core.service.exception.EntitatServeiNotFoundException;
-import es.caib.pinbal.core.service.exception.ServeiNotFoundException;
+import es.caib.pinbal.logic.intf.dto.EntitatDto;
+import es.caib.pinbal.logic.intf.dto.EntitatDto.EntitatTipusDto;
+import es.caib.pinbal.logic.intf.dto.OrganGestorDto;
+import es.caib.pinbal.logic.intf.service.EntitatService;
+import es.caib.pinbal.logic.intf.service.exception.EntitatNotFoundException;
+import es.caib.pinbal.logic.intf.service.exception.EntitatServeiNotFoundException;
+import es.caib.pinbal.logic.intf.service.exception.ServeiNotFoundException;
+import es.caib.pinbal.persist.entity.ClauPrivada;
+import es.caib.pinbal.persist.entity.Entitat;
+import es.caib.pinbal.persist.entity.Entitat.EntitatTipus;
+import es.caib.pinbal.persist.entity.EntitatServei;
+import es.caib.pinbal.persist.entity.EntitatUsuari;
+import es.caib.pinbal.persist.entity.OrganGestor;
+import es.caib.pinbal.persist.entity.ServeiConfig;
+import es.caib.pinbal.persist.entity.Usuari;
+import es.caib.pinbal.persist.repository.ClauPrivadaRepository;
+import es.caib.pinbal.persist.repository.EntitatRepository;
+import es.caib.pinbal.persist.repository.EntitatServeiRepository;
+import es.caib.pinbal.persist.repository.EntitatUsuariRepository;
+import es.caib.pinbal.persist.repository.OrganismeCessionariRepository;
+import es.caib.pinbal.persist.repository.ServeiConfigRepository;
+import es.caib.pinbal.persist.repository.UsuariRepository;
 import es.caib.pinbal.scsp.ScspHelper;
 import es.scsp.common.domain.core.Servicio;
 import lombok.extern.slf4j.Slf4j;
@@ -110,7 +111,7 @@ public class EntitatServiceImpl implements EntitatService, ApplicationContextAwa
 	@Override
 	public EntitatDto delete(Long entitatId) throws EntitatNotFoundException {
 		log.debug("Esborrant entitat (id=" + entitatId + ")");
-		Entitat esborrada = entitatRepository.findOne(entitatId);
+		Entitat esborrada = entitatRepository.findById(entitatId).orElse(null);
 		if (esborrada == null) {
 			log.debug("No s'ha trobat l'entitat (id=" + entitatId + ")");
 			throw new EntitatNotFoundException();
@@ -128,7 +129,7 @@ public class EntitatServiceImpl implements EntitatService, ApplicationContextAwa
 		log.debug("Consulta de totes les entitats");
 		return dtoMappingHelper.getMapperFacade().mapAsList(
 				entitatRepository.findAll(
-						new Sort(Sort.Direction.ASC, "nom")),
+						Sort.by(Sort.Direction.ASC, "nom")),
 				EntitatDto.class);
 	}
 
@@ -138,7 +139,7 @@ public class EntitatServiceImpl implements EntitatService, ApplicationContextAwa
 		log.debug("Consulta de totes les entitats");
 		return dtoMappingHelper.getMapperFacade().mapAsList(
 				entitatRepository.findAll(
-						new Sort(Sort.Direction.ASC, "nom")),
+						Sort.by(Sort.Direction.ASC, "nom")),
 				EntitatInfo.class);
     }
 
@@ -164,7 +165,7 @@ public class EntitatServiceImpl implements EntitatService, ApplicationContextAwa
 				activa == null,
 				activa,
 				tipus == null || tipus.length() == 0,
-				(tipus != null && tipus.length() > 0) ? Entitat.EntitatTipus.valueOf(tipus.toString()) : null,
+				(tipus != null && tipus.length() > 0) ? EntitatTipus.valueOf(tipus.toString()) : null,
 				unitatArrel == null || unitatArrel.length() == 0,
 				unitatArrel,
 				pageable);
@@ -181,7 +182,7 @@ public class EntitatServiceImpl implements EntitatService, ApplicationContextAwa
 	public EntitatDto findById(Long id) {
 		log.debug("Consulta de l'entitat (id=" + id + ")");
 		return dtoMappingHelper.getMapperFacade().map(
-				entitatRepository.findOne(id),
+				entitatRepository.findById(id),
 				EntitatDto.class);
 	}
 
@@ -216,7 +217,7 @@ public class EntitatServiceImpl implements EntitatService, ApplicationContextAwa
 	@Override
 	public EntitatDto update(EntitatDto modificada) throws EntitatNotFoundException{
 		log.debug("Actualitzant l'entitat (id=" + modificada.getId() + ") amb la informació: " + modificada);
-		Entitat entitat = entitatRepository.findOne(modificada.getId());
+		Entitat entitat = entitatRepository.findById(modificada.getId()).orElse(null);
 		if (entitat == null) {
 			log.debug("No s'ha trobat l'entitat (id=" + modificada.getId() + ")");
 			throw new EntitatNotFoundException();
@@ -240,7 +241,7 @@ public class EntitatServiceImpl implements EntitatService, ApplicationContextAwa
 
 	@Transactional(readOnly = true)
 	public List<OrganGestorDto> getOrgansGestors(Long id) {
-		Entitat entitat = entitatRepository.findOne(id);
+		Entitat entitat = entitatRepository.findById(id).orElse(null);
 		List<OrganGestor> organs = entitat.getOrganGestors();
 		return dtoMappingHelper.convertirList(organs, OrganGestorDto.class);
 	}
@@ -249,7 +250,7 @@ public class EntitatServiceImpl implements EntitatService, ApplicationContextAwa
 	@Override
 	public EntitatDto updateActiva(Long id, boolean activa) throws EntitatNotFoundException {
 		log.debug("Desactivant l'entitat (id=" + id + ")");
-		Entitat entitat = entitatRepository.findOne(id);
+		Entitat entitat = entitatRepository.findById(id).orElse(null);
 		if (entitat == null) {
 			log.debug("No s'ha trobat l'entitat (id=" + id + ")");
 			throw new EntitatNotFoundException();
@@ -268,7 +269,7 @@ public class EntitatServiceImpl implements EntitatService, ApplicationContextAwa
 	@Override
 	public void addServei(Long id, String serveiCodi) throws EntitatNotFoundException, ServeiNotFoundException {
 		log.debug("Afegint servei (codi=" + serveiCodi + ") a l'entitat (id=" + id + ")");
-		Entitat entitat = entitatRepository.findOne(id);
+		Entitat entitat = entitatRepository.findById(id).orElse(null);
 		if (entitat == null) {
 			log.debug("No s'ha trobat l'entitat (id=" + id + ")");
 			throw new EntitatNotFoundException();
@@ -290,7 +291,7 @@ public class EntitatServiceImpl implements EntitatService, ApplicationContextAwa
 	@Override
 	public void removeServei(Long id, String serveiCodi) throws EntitatNotFoundException, EntitatServeiNotFoundException {
 		log.debug("Esborrant servei (codi=" + serveiCodi + ") de l'entitat (id=" + id + ")");
-		Entitat entitat = entitatRepository.findOne(id);
+		Entitat entitat = entitatRepository.findById(id).orElse(null);
 		if (entitat == null) {
 			log.debug("No s'ha trobat l'entitat (id=" + id + ")");
 			throw new EntitatNotFoundException();

@@ -2,9 +2,8 @@ package es.caib.pinbal.logic.helper;
 
 import lombok.AllArgsConstructor;
 import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -15,14 +14,13 @@ import javax.mail.internet.MimeMessage;
 import java.util.List;
 
 @Slf4j
+@RequiredArgsConstructor
 @Component
 public abstract class EmailHelper {
     private static final String PREFIX_PINBAL = "[PINBAL]";
 
-    @Autowired
-	private JavaMailSender mailSender;
-    @Autowired
-    private ConfigHelper configHelper;
+	private final JavaMailSender mailSender;
+    private final ConfigHelper configHelper;
 
     protected abstract String getMailHtmlBody();
     protected abstract String getMailPlainTextBody();

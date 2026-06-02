@@ -1,31 +1,32 @@
 package es.caib.pinbal.logic.service;
 
-import es.caib.pinbal.core.dto.IntegracioAccioDto;
-import es.caib.pinbal.core.dto.IntegracioAccioEstatEnumDto;
-import es.caib.pinbal.core.dto.IntegracioAccioParamDto;
-import es.caib.pinbal.core.dto.IntegracioAccioTipusEnumDto;
-import es.caib.pinbal.core.dto.IntegracioDto;
-import es.caib.pinbal.core.dto.IntegracioFiltreDto;
-import es.caib.pinbal.core.dto.PaginaDto;
-import es.caib.pinbal.core.dto.PaginacioAmbOrdreDto;
 import es.caib.pinbal.logic.helper.ConfigHelper;
 import es.caib.pinbal.logic.helper.DtoMappingHelper;
 import es.caib.pinbal.logic.helper.IntegracioHelper;
 import es.caib.pinbal.logic.helper.PaginacioHelper;
-import es.caib.pinbal.logic.model.IntegracioAccioEntity;
-import es.caib.pinbal.logic.model.IntegracioAccioParamEntity;
-import es.caib.pinbal.logic.repository.IntegracioAccioParamRepository;
-import es.caib.pinbal.logic.repository.IntegracioAccioRepository;
+import es.caib.pinbal.logic.intf.dto.IntegracioAccioDto;
+import es.caib.pinbal.logic.intf.dto.IntegracioAccioEstatEnumDto;
+import es.caib.pinbal.logic.intf.dto.IntegracioAccioParamDto;
+import es.caib.pinbal.logic.intf.dto.IntegracioAccioTipusEnumDto;
+import es.caib.pinbal.logic.intf.dto.IntegracioDto;
+import es.caib.pinbal.logic.intf.dto.IntegracioFiltreDto;
+import es.caib.pinbal.logic.intf.dto.PaginaDto;
+import es.caib.pinbal.logic.intf.dto.PaginacioAmbOrdreDto;
+import es.caib.pinbal.logic.intf.service.IntegracioAccioService;
+import es.caib.pinbal.persist.entity.IntegracioAccioEntity;
+import es.caib.pinbal.persist.entity.IntegracioAccioParamEntity;
+import es.caib.pinbal.persist.repository.IntegracioAccioParamRepository;
+import es.caib.pinbal.persist.repository.IntegracioAccioRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
 
@@ -186,7 +187,7 @@ public class IntegracioAccioServiceImpl implements IntegracioAccioService {
 	@Override
 	public void esborrarDadesAntigesMonitorIntegracio() {
 		String diesAntiguitat = configHelper.getConfig("es.caib.pinbal.tasca.auto.exp.esborrar.monitor.dies.antiguitat", "30");
-		int batchSize = configHelper.getAsInt("es.caib.pinbal.tasca.auto.exp.esborrar.monitor.batch.size", 900);
+		int batchSize = configHelper.getConfigAsInt("es.caib.pinbal.tasca.auto.exp.esborrar.monitor.batch.size", 900);
 		logger.debug("Execució de tasca programada d'esborrar dades del monitor d'integracions amb " + diesAntiguitat + " dies d'antiguitat (batch=" + batchSize + ").");
 		try {
 			int dies = Integer.parseInt(diesAntiguitat);

@@ -3,9 +3,9 @@
  */
 package es.caib.pinbal.logic.helper;
 
-import es.caib.pinbal.core.dto.FitxerDto;
-import es.caib.pinbal.core.dto.ServeiXsdDto;
-import es.caib.pinbal.core.dto.XsdTipusEnumDto;
+import es.caib.pinbal.logic.intf.dto.FitxerDto;
+import es.caib.pinbal.logic.intf.dto.ServeiXsdDto;
+import es.caib.pinbal.logic.intf.dto.XsdTipusEnumDto;
 import es.scsp.common.domain.core.Servicio;
 import org.apache.commons.io.IOUtils;
 import org.springframework.stereotype.Component;

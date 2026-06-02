@@ -3,9 +3,9 @@ package es.caib.pinbal.logic.helper;
 import com.codahale.metrics.Counter;
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.Timer;
+import es.caib.comanda.model.server.monitoring.EstatSalutEnum;
+import es.caib.comanda.model.server.monitoring.SubsistemaSalut;
 import es.caib.comanda.ms.salut.helper.EstatHelper;
-import es.caib.comanda.ms.salut.model.EstatSalutEnum;
-import es.caib.comanda.ms.salut.model.SubsistemaSalut;
 import es.caib.pinbal.plugin.LastRequestsFifo;
 import lombok.Builder;
 import lombok.Getter;
@@ -217,7 +217,7 @@ public class SubsistemaMetricHelper {
             String subsistema = metricaEntry.getKey();
             Metrics metrica = metricaEntry.getValue();
 
-            subsistemasSalut.add(SubsistemaSalut.builder()
+            subsistemasSalut.add(new SubsistemaSalut()
                     .codi(subsistema)
                     .latencia(metrica.getPeriodeMean())
                     .estat(metrica.getEstatPeriode())
@@ -226,8 +226,7 @@ public class SubsistemaMetricHelper {
                     .totalTempsMig(metrica.getTotalMean())
                     .peticionsOkUltimPeriode(metrica.getPeriodeSuccess())
                     .peticionsErrorUltimPeriode(metrica.getPeriodeError())
-                    .tempsMigUltimPeriode(metrica.getPeriodeMean())
-                    .build());
+                    .tempsMigUltimPeriode(metrica.getPeriodeMean()));
         }
 
         resetLocalTimers();

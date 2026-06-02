@@ -1,0 +1,28 @@
+spring:
+  datasource.jndi-name: java:jboss/datasources/pinbalDS
+  mail.jndi-name: java:jboss/mail/PinbalSession
+
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.Oracle12cDialect
+        hbm2ddl.auto: validate
+        show_sql: false
+        format_sql: true
+        use_sql_comments: true
+    hibernate:
+#      naming-strategy: es.caib.pinbal.persist.audit.CustomImplicitNamingStrategy
+      naming.physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+      naming.implicit-strategy: org.hibernate.boot.model.naming.ImplicitNamingStrategyJpaCompliantImpl
+    open-in-view: false
+
+  liquibase:
+    enabled: true
+    database-change-log-table: NOT_DATABASECHANGELOG
+    database-change-log-lock-table: NOT_DATABASECHANGELOGLOCK
+    change-log: classpath:/db/changelog/db.changelog-master.yaml
+    labels: none
+
+  cache.jcache.config: classpath:ehcache.xml
+
+  autoconfigure.exclude: org.springframework.boot.actuate.autoconfigure.metrics.jersey.JerseyServerMetricsAutoConfiguration

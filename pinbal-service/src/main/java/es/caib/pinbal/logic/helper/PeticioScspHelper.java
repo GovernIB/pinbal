@@ -5,24 +5,17 @@ package es.caib.pinbal.logic.helper;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import es.caib.pinbal.core.dto.ConsultaDto;
-import es.caib.pinbal.core.dto.ConsultaDto.Consentiment;
-import es.caib.pinbal.core.dto.ConsultaDto.DocumentTipus;
-import es.caib.pinbal.core.dto.EstatTipus;
-import es.caib.pinbal.core.dto.IntegracioAccioTipusEnumDto;
-import es.caib.pinbal.logic.model.Consulta;
-import es.caib.pinbal.logic.model.Entitat;
-import es.caib.pinbal.logic.model.Procediment;
-import es.caib.pinbal.logic.model.ProcedimentServei;
-import es.caib.pinbal.logic.model.ServeiCamp;
-import es.caib.pinbal.logic.model.ServeiCamp.ServeiCampTipus;
-import es.caib.pinbal.logic.model.ServeiConfig;
-import es.caib.pinbal.logic.repository.ConsultaRepository;
-import es.caib.pinbal.logic.repository.ProcedimentRepository;
-import es.caib.pinbal.logic.repository.ServeiCampRepository;
-import es.caib.pinbal.logic.repository.ServeiConfigRepository;
-import es.caib.pinbal.core.service.exception.ConsultaScspComunicacioException;
-import es.caib.pinbal.core.service.exception.ConsultaScspGeneracioException;
+import es.caib.pinbal.logic.intf.dto.ConsultaDto;
+import es.caib.pinbal.logic.intf.dto.EstatTipus;
+import es.caib.pinbal.logic.intf.dto.IntegracioAccioTipusEnumDto;
+import es.caib.pinbal.logic.intf.service.exception.ConsultaScspComunicacioException;
+import es.caib.pinbal.logic.intf.service.exception.ConsultaScspGeneracioException;
+import es.caib.pinbal.persist.entity.*;
+import es.caib.pinbal.persist.entity.ServeiCamp.ServeiCampTipus;
+import es.caib.pinbal.persist.repository.ConsultaRepository;
+import es.caib.pinbal.persist.repository.ProcedimentRepository;
+import es.caib.pinbal.persist.repository.ServeiCampRepository;
+import es.caib.pinbal.persist.repository.ServeiConfigRepository;
 import es.caib.pinbal.scsp.ResultatEnviamentPeticio;
 import es.caib.pinbal.scsp.ScspHelper;
 import es.caib.pinbal.scsp.Solicitud;
@@ -37,13 +30,7 @@ import org.w3c.dom.Element;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Helper per a controlar el ritme al qual s'envien les consultes SCSP.
@@ -326,14 +313,14 @@ public class PeticioScspHelper {
 			String serveiCodi,
 			String funcionariNom,
 			String funcionariNif,
-			DocumentTipus titularDocumentTipus,
+			ConsultaDto.DocumentTipus titularDocumentTipus,
 			String titularDocumentNum,
 			String titularNom,
 			String titularLlinatge1,
 			String titularLlinatge2,
 			String titularNomComplet,
 			String finalitat,
-			Consentiment consentiment,
+			ConsultaDto.Consentiment consentiment,
 			String departamentNom,
 			String unitatTramitadoraCodi,
 			String expedientId,
@@ -578,7 +565,7 @@ public class PeticioScspHelper {
 	}
 
 	private Map<String, Object> dadesEspecifiquesFromJson(String json) throws IOException {
-		return new ObjectMapper().readValue(json, new TypeReference<HashMap<String, String>>() {});
+		return new ObjectMapper().readValue(json, new TypeReference<HashMap<String, Object>>() {});
 	}
 
 	private void processarDadesEspecifiques(

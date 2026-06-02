@@ -3,8 +3,8 @@
  */
 package es.caib.pinbal.logic.audit;
 
-import es.caib.pinbal.logic.model.Usuari;
-import es.caib.pinbal.logic.repository.UsuariRepository;
+import es.caib.pinbal.persist.entity.Usuari;
+import es.caib.pinbal.persist.repository.UsuariRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.AuditorAware;
 import org.springframework.security.core.Authentication;

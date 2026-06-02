@@ -3,45 +3,46 @@
  */
 package es.caib.pinbal.logic.service;
 
-import es.caib.pinbal.core.dto.EntitatUsuariDto;
-import es.caib.pinbal.core.dto.InformeUsuariDto;
-import es.caib.pinbal.core.dto.UsuariDto;
 import es.caib.pinbal.logic.helper.CacheHelper;
 import es.caib.pinbal.logic.helper.DtoMappingHelper;
 import es.caib.pinbal.logic.helper.PluginHelper;
 import es.caib.pinbal.logic.helper.UsuariHelper;
-import es.caib.pinbal.logic.model.Entitat;
-import es.caib.pinbal.logic.model.EntitatUsuari;
-import es.caib.pinbal.logic.model.Usuari;
-import es.caib.pinbal.logic.repository.AvisRepository;
-import es.caib.pinbal.logic.repository.ConfigRepository;
-import es.caib.pinbal.logic.repository.ConsultaRepository;
-import es.caib.pinbal.logic.repository.EntitatRepository;
-import es.caib.pinbal.logic.repository.EntitatServeiRepository;
-import es.caib.pinbal.logic.repository.EntitatUsuariRepository;
-import es.caib.pinbal.logic.repository.HistoricConsultaRepository;
-import es.caib.pinbal.logic.repository.IntegracioAccioParamRepository;
-import es.caib.pinbal.logic.repository.IntegracioAccioRepository;
-import es.caib.pinbal.logic.repository.OrganGestorRepository;
-import es.caib.pinbal.logic.repository.ProcedimentRepository;
-import es.caib.pinbal.logic.repository.ProcedimentServeiRepository;
-import es.caib.pinbal.logic.repository.ServeiBusRepository;
-import es.caib.pinbal.logic.repository.ServeiCampGrupRepository;
-import es.caib.pinbal.logic.repository.ServeiCampRepository;
-import es.caib.pinbal.logic.repository.ServeiConfigRepository;
-import es.caib.pinbal.logic.repository.ServeiJustificantCampRepository;
-import es.caib.pinbal.logic.repository.ServeiReglaRepository;
-import es.caib.pinbal.logic.repository.UsuariRepository;
-import es.caib.pinbal.logic.repository.explotacio.ExplotConsultaDimensioRepository;
-import es.caib.pinbal.logic.repository.llistat.LlistatConsultaRepository;
-import es.caib.pinbal.logic.repository.llistat.LlistatHistoricConsultaRepository;
-import es.caib.pinbal.core.service.exception.EntitatNotFoundException;
-import es.caib.pinbal.core.service.exception.EntitatUsuariNotFoundException;
-import es.caib.pinbal.core.service.exception.EntitatUsuariProtegitException;
-import es.caib.pinbal.core.service.exception.NotFoundException;
-import es.caib.pinbal.core.service.exception.UsuariExternNotFoundException;
-import es.caib.pinbal.plugin.usuari.DadesUsuari;
+import es.caib.pinbal.logic.intf.dto.EntitatUsuariDto;
+import es.caib.pinbal.logic.intf.dto.InformeUsuariDto;
+import es.caib.pinbal.logic.intf.dto.UsuariDto;
+import es.caib.pinbal.logic.intf.service.UsuariService;
+import es.caib.pinbal.logic.intf.service.exception.EntitatNotFoundException;
+import es.caib.pinbal.logic.intf.service.exception.EntitatUsuariNotFoundException;
+import es.caib.pinbal.logic.intf.service.exception.EntitatUsuariProtegitException;
+import es.caib.pinbal.logic.intf.service.exception.NotFoundException;
+import es.caib.pinbal.logic.intf.service.exception.UsuariExternNotFoundException;
+import es.caib.pinbal.persist.entity.Entitat;
+import es.caib.pinbal.persist.entity.EntitatUsuari;
+import es.caib.pinbal.persist.entity.Usuari;
+import es.caib.pinbal.persist.repository.AvisRepository;
+import es.caib.pinbal.persist.repository.ConfigRepository;
+import es.caib.pinbal.persist.repository.ConsultaRepository;
+import es.caib.pinbal.persist.repository.EntitatRepository;
+import es.caib.pinbal.persist.repository.EntitatServeiRepository;
+import es.caib.pinbal.persist.repository.EntitatUsuariRepository;
+import es.caib.pinbal.persist.repository.HistoricConsultaRepository;
+import es.caib.pinbal.persist.repository.IntegracioAccioParamRepository;
+import es.caib.pinbal.persist.repository.IntegracioAccioRepository;
+import es.caib.pinbal.persist.repository.OrganGestorRepository;
+import es.caib.pinbal.persist.repository.ProcedimentRepository;
+import es.caib.pinbal.persist.repository.ProcedimentServeiRepository;
+import es.caib.pinbal.persist.repository.ServeiBusRepository;
+import es.caib.pinbal.persist.repository.ServeiCampGrupRepository;
+import es.caib.pinbal.persist.repository.ServeiCampRepository;
+import es.caib.pinbal.persist.repository.ServeiConfigRepository;
+import es.caib.pinbal.persist.repository.ServeiJustificantCampRepository;
+import es.caib.pinbal.persist.repository.ServeiReglaRepository;
+import es.caib.pinbal.persist.repository.UsuariRepository;
+import es.caib.pinbal.persist.repository.explotacio.ExplotConsultaDimensioRepository;
+import es.caib.pinbal.persist.repository.llistat.LlistatConsultaRepository;
+import es.caib.pinbal.persist.repository.llistat.LlistatHistoricConsultaRepository;
 import es.caib.pinbal.plugin.SistemaExternException;
+import es.caib.pinbal.plugin.usuari.DadesUsuari;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -157,7 +158,7 @@ public class UsuariServiceImpl implements UsuariService {
 				"departament=" + departament + ")");
 		Page<EntitatUsuari> paginaEntitats = entitatUsuariRepository.findByFiltre(
 				id_entitat == null,
-				entitatRepository.findOne(id_entitat),
+				entitatRepository.findById(id_entitat).orElse(null),
 				isRepresentant != null && isRepresentant == true,
 				isDelegat != null && isDelegat == true,
 				isAuditor != null && isAuditor == true,
@@ -183,7 +184,7 @@ public class UsuariServiceImpl implements UsuariService {
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 		log.debug("Consulta de les dades de l'usuari (codi=" + auth.getName() + ")");
 		return dtoMappingHelper.getMapperFacade().map(
-				usuariRepository.findOne(auth.getName()),
+				usuariRepository.findById(auth.getName()).orElse(null),
 				UsuariDto.class);
 	}
 
@@ -193,7 +194,7 @@ public class UsuariServiceImpl implements UsuariService {
 			String usuariCodi) {
 		log.debug("Consulta de les dades de l'usuari (codi=" + usuariCodi + ")");
 		return dtoMappingHelper.getMapperFacade().map(
-				usuariRepository.findOne(usuariCodi),
+				usuariRepository.findById(usuariCodi).orElse(null),
 				UsuariDto.class);
 	}
 
@@ -202,7 +203,10 @@ public class UsuariServiceImpl implements UsuariService {
 	public UsuariDto getUsuariActual() {
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 		log.debug("Obtenint usuari actual");
-		Usuari usuari = usuariRepository.findOne(auth.getName());
+		Usuari usuari = usuariRepository.findById(auth.getName()).orElse(null);
+		if (usuari == null) {
+			return null;
+		}
 		if (usuari.getEmail() == null || usuari.getEmail().isEmpty()) {
 			try {
 				DadesUsuari dadesUsuari = pluginHelper.dadesUsuariConsultarAmbUsuariCodi(auth.getName());
@@ -218,7 +222,7 @@ public class UsuariServiceImpl implements UsuariService {
 	public String getIdiomaUsuariActual() {
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 		log.debug("Obtenint idioma de usuari actual");
-		Usuari usuari = usuariRepository.findOne(auth.getName());
+		Usuari usuari = usuariRepository.findById(auth.getName()).orElse(null);
 		return usuari != null ? usuari.getIdioma() : null;
 	}
 
@@ -226,7 +230,7 @@ public class UsuariServiceImpl implements UsuariService {
 	public Integer getNumElementsPaginaDefecte() {
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 		log.debug("Obtenint numElementsPaginaDefecte de usuari actual");
-		Usuari usuari = usuariRepository.findOne(auth.getName());
+		Usuari usuari = usuariRepository.findById(auth.getName()).orElse(null);
 		return usuari != null && usuari.getNumElementsPagina() != null ? usuari.getNumElementsPagina(): 10;
 	}
 
@@ -234,8 +238,10 @@ public class UsuariServiceImpl implements UsuariService {
 	@Override
 	public UsuariDto updateUsuariActual(UsuariDto dto, boolean updateEntitat) {
 		log.debug("Actualitzant configuració de usuari actual");
-		Usuari usuari = usuariRepository.findOne(dto.getCodi());
-//		usuari.updateIdioma(dto.getIdioma());
+		Usuari usuari = usuariRepository.findById(dto.getCodi()).orElse(null);
+		if (usuari == null) {
+			return null;
+		}
 		if (updateEntitat) {
 			usuari.updateValorsPerDefecte(
 					dto.getIdioma(),
@@ -614,7 +620,7 @@ public class UsuariServiceImpl implements UsuariService {
 				"codi=" + codi + ", " +
 				"nif=" + nif + ") a l'entitat (" +
 				"id=" + id + ")");
-		Entitat entitat = entitatRepository.findOne(id);
+		Entitat entitat = entitatRepository.findById(id).orElse(null);
 		if (entitat == null) {
 			log.debug("No s'ha trobat l'entitat (id=" + id + ")");
 			throw new EntitatNotFoundException();
@@ -649,7 +655,7 @@ public class UsuariServiceImpl implements UsuariService {
 			boolean afegir,
 			boolean actiu) throws EntitatNotFoundException, EntitatUsuariProtegitException, UsuariExternNotFoundException {
 		log.debug("Actualitzant dades no auditor de l'usuari (codi=" + codi + ", nif=" + nif + ", actiu=" + actiu + ") a l'entitat (id=" + id + ")");
-		Entitat entitat = entitatRepository.findOne(id);
+		Entitat entitat = entitatRepository.findById(id).orElse(null);
 		if (entitat == null) {
 			log.debug("No s'ha trobat l'entitat (id=" + id + ")");
 			throw new EntitatNotFoundException();
@@ -694,7 +700,7 @@ public class UsuariServiceImpl implements UsuariService {
 			boolean auditor,
 			boolean afegir) throws EntitatNotFoundException, EntitatUsuariProtegitException, UsuariExternNotFoundException {
 		log.debug("Actualitzant dades auditor de l'usuari (codi=" + codi + ", nif=" + nif + ") a l'entitat (id=" + id + ")");
-		Entitat entitat = entitatRepository.findOne(id);
+		Entitat entitat = entitatRepository.findById(id).orElse(null);
 		if (entitat == null) {
 			log.debug("No s'ha trobat l'entitat (id=" + id + ")");
 			throw new EntitatNotFoundException();
@@ -736,7 +742,7 @@ public class UsuariServiceImpl implements UsuariService {
 			Long id,
 			String usuariCodi) throws EntitatNotFoundException, EntitatUsuariNotFoundException {
 		log.debug("Marca l'usuari com a principal (codi=" + usuariCodi + ") a l'entitat (id=" + id + ")");
-		Entitat entitat = entitatRepository.findOne(id);
+		Entitat entitat = entitatRepository.findById(id).orElse(null);
 		if (entitat == null) {
 			log.debug("No s'ha trobat l'entitat (id=" + id + ")");
 			throw new EntitatNotFoundException();
@@ -753,7 +759,7 @@ public class UsuariServiceImpl implements UsuariService {
     @Override
     public boolean canviActiu(Long entitatId, String usuariCodi) throws EntitatNotFoundException, EntitatUsuariNotFoundException {
 		log.debug("Activa l'usuari (codi=" + usuariCodi + ") a l'entitat (id=" + entitatId + ")");
-		Entitat entitat = entitatRepository.findOne(entitatId);
+		Entitat entitat = entitatRepository.findById(entitatId).orElse(null);
 		if (entitat == null) {
 			log.debug("No s'ha trobat l'entitat (id=" + entitatId + ")");
 			throw new EntitatNotFoundException();

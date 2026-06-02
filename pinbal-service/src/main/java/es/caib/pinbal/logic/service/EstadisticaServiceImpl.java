@@ -3,22 +3,24 @@
  */
 package es.caib.pinbal.logic.service;
 
-import es.caib.comanda.ms.estadistica.model.Dimensio;
-import es.caib.comanda.ms.estadistica.model.DimensioDesc;
-import es.caib.comanda.ms.estadistica.model.EstadistiquesInfo;
-import es.caib.comanda.ms.estadistica.model.Fet;
-import es.caib.comanda.ms.estadistica.model.Format;
-import es.caib.comanda.ms.estadistica.model.IndicadorDesc;
-import es.caib.comanda.ms.estadistica.model.RegistreEstadistic;
-import es.caib.comanda.ms.estadistica.model.RegistresEstadistics;
-import es.caib.pinbal.logic.model.explotacio.ExplotConsultaFets;
-import es.caib.pinbal.logic.model.explotacio.ExplotTempsEntity;
-import es.caib.pinbal.logic.repository.EntitatRepository;
-import es.caib.pinbal.logic.repository.ProcedimentRepository;
-import es.caib.pinbal.logic.repository.ServeiConfigRepository;
-import es.caib.pinbal.logic.repository.UsuariRepository;
-import es.caib.pinbal.logic.repository.explotacio.ExplotConsultaFetsRepository;
-import es.caib.pinbal.logic.repository.explotacio.ExplotTempsRepository;
+import es.caib.comanda.model.server.monitoring.Dimensio;
+import es.caib.comanda.model.server.monitoring.DimensioDesc;
+import es.caib.comanda.model.server.monitoring.EstadistiquesInfo;
+import es.caib.comanda.model.server.monitoring.Fet;
+import es.caib.comanda.model.server.monitoring.Format;
+import es.caib.comanda.model.server.monitoring.IndicadorDesc;
+import es.caib.comanda.model.server.monitoring.RegistreEstadistic;
+import es.caib.comanda.model.server.monitoring.RegistresEstadistics;
+import es.caib.pinbal.logic.intf.service.ConsultaService;
+import es.caib.pinbal.logic.intf.service.EstadisticaService;
+import es.caib.pinbal.persist.entity.explotacio.ExplotConsultaFets;
+import es.caib.pinbal.persist.entity.explotacio.ExplotTempsEntity;
+import es.caib.pinbal.persist.repository.EntitatRepository;
+import es.caib.pinbal.persist.repository.ProcedimentRepository;
+import es.caib.pinbal.persist.repository.ServeiConfigRepository;
+import es.caib.pinbal.persist.repository.UsuariRepository;
+import es.caib.pinbal.persist.repository.explotacio.ExplotConsultaFetsRepository;
+import es.caib.pinbal.persist.repository.explotacio.ExplotTempsRepository;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -27,6 +29,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -54,7 +58,7 @@ public class EstadisticaServiceImpl implements EstadisticaService {
     @Autowired
     private ServeiConfigRepository serveiConfigRepository;
     @Autowired
-    private ExplotTempsRepository  explotTempsRepository;
+    private ExplotTempsRepository explotTempsRepository;
     @Autowired
     private ExplotConsultaFetsRepository explotConsultaFetsRepository;
 
@@ -123,7 +127,7 @@ public class EstadisticaServiceImpl implements EstadisticaService {
 
         List<DimensioDesc> dimensions = getDimensions();
         List<IndicadorDesc> indicadors = getIndicadors();
-        return EstadistiquesInfo.builder().codi("PBL").dimensions(dimensions).indicadors(indicadors).build();
+        return new EstadistiquesInfo().codi("PBL").dimensions(dimensions).indicadors(indicadors);
     }
 
     @Override
@@ -138,12 +142,13 @@ public class EstadisticaServiceImpl implements EstadisticaService {
 
         // Si no han indicat una data, retornam les estadístiques del darrer dia (ahir)
         if (data == null) data = ahir();
+        OffsetDateTime dataOffset = data.toInstant().atOffset(ZoneOffset.UTC);
 
         // Si ens envien una data futura, retornam una llista buida
         if (data.after(ahir())) {
-            return RegistresEstadistics.builder()
-                    .temps(data)
-                    .fets(new ArrayList<RegistreEstadistic>()).build();
+            return new RegistresEstadistics()
+                    .temps(dataOffset)
+                    .fets(new ArrayList<RegistreEstadistic>());
         }
 
         Date dataInici = diaAnterior(data);
@@ -154,7 +159,7 @@ public class EstadisticaServiceImpl implements EstadisticaService {
         List<ExplotConsultaFets> fetsAcumulatFinal = explotConsultaFetsRepository.findByTemps(tempsFinal);
 
         if (fetsAcumulatFinal == null || fetsAcumulatFinal.isEmpty()) {
-            return RegistresEstadistics.builder().temps(data).build();
+            return new RegistresEstadistics().temps(dataOffset);
         }
         List<ExplotConsultaFets> fetsAcumulatInici = explotConsultaFetsRepository.findByTemps(tempsInici);
 
@@ -245,10 +250,10 @@ public class EstadisticaServiceImpl implements EstadisticaService {
 
     private List<IndicadorDesc> getIndicadors() {
         List<IndicadorDesc> indicadors = new ArrayList<>();
-        indicadors.add(IndicadorDesc.builder().codi(FetEnum.PND.name()).nom(FetEnum.PND.getNom()).descripcio(FetEnum.PND.getDescripcio()).format(Format.LONG).build());
-        indicadors.add(IndicadorDesc.builder().codi(FetEnum.PRC.name()).nom(FetEnum.PRC.getNom()).descripcio(FetEnum.PRC.getDescripcio()).format(Format.LONG).build());
-        indicadors.add(IndicadorDesc.builder().codi(FetEnum.TRA.name()).nom(FetEnum.TRA.getNom()).descripcio(FetEnum.TRA.getDescripcio()).format(Format.LONG).build());
-        indicadors.add(IndicadorDesc.builder().codi(FetEnum.ERR.name()).nom(FetEnum.ERR.getNom()).descripcio(FetEnum.ERR.getDescripcio()).format(Format.LONG).build());
+        indicadors.add(new IndicadorDesc().codi(FetEnum.PND.name()).nom(FetEnum.PND.getNom()).descripcio(FetEnum.PND.getDescripcio()).format(Format.LONG));
+        indicadors.add(new IndicadorDesc().codi(FetEnum.PRC.name()).nom(FetEnum.PRC.getNom()).descripcio(FetEnum.PRC.getDescripcio()).format(Format.LONG));
+        indicadors.add(new IndicadorDesc().codi(FetEnum.TRA.name()).nom(FetEnum.TRA.getNom()).descripcio(FetEnum.TRA.getDescripcio()).format(Format.LONG));
+        indicadors.add(new IndicadorDesc().codi(FetEnum.ERR.name()).nom(FetEnum.ERR.getNom()).descripcio(FetEnum.ERR.getDescripcio()).format(Format.LONG));
         return indicadors;
     }
 
@@ -261,12 +266,12 @@ public class EstadisticaServiceImpl implements EstadisticaService {
         List<String> origens = Arrays.asList(Origen.WEB.name(), Origen.REST.name());
 
         List<DimensioDesc> dimensions = new ArrayList<>();
-        dimensions.add(DimensioDesc.builder().codi(DimEnum.ENT.name()).nom(DimEnum.ENT.getNom()).descripcio(DimEnum.ENT.getDescripcio()).valors(entitatCodis).build());
-        dimensions.add(DimensioDesc.builder().codi(DimEnum.PRC.name()).nom(DimEnum.PRC.getNom()).descripcio(DimEnum.PRC.getDescripcio()).valors(procedimentCodis).build());
-        dimensions.add(DimensioDesc.builder().codi(DimEnum.SRV.name()).nom(DimEnum.SRV.getNom()).descripcio(DimEnum.SRV.getDescripcio()).valors(serveiCodis).build());
-        dimensions.add(DimensioDesc.builder().codi(DimEnum.USU.name()).nom(DimEnum.USU.getNom()).descripcio(DimEnum.USU.getDescripcio()).valors(usuariCodis).build());
-        dimensions.add(DimensioDesc.builder().codi(DimEnum.TIP.name()).nom(DimEnum.TIP.getNom()).descripcio(DimEnum.TIP.getDescripcio()).valors(tipus).build());
-        dimensions.add(DimensioDesc.builder().codi(DimEnum.ORI.name()).nom(DimEnum.ORI.getNom()).descripcio(DimEnum.ORI.getDescripcio()).valors(origens).build());
+        dimensions.add(new DimensioDesc().codi(DimEnum.ENT.name()).nom(DimEnum.ENT.getNom()).descripcio(DimEnum.ENT.getDescripcio()).valors(entitatCodis));
+        dimensions.add(new DimensioDesc().codi(DimEnum.PRC.name()).nom(DimEnum.PRC.getNom()).descripcio(DimEnum.PRC.getDescripcio()).valors(procedimentCodis));
+        dimensions.add(new DimensioDesc().codi(DimEnum.SRV.name()).nom(DimEnum.SRV.getNom()).descripcio(DimEnum.SRV.getDescripcio()).valors(serveiCodis));
+        dimensions.add(new DimensioDesc().codi(DimEnum.USU.name()).nom(DimEnum.USU.getNom()).descripcio(DimEnum.USU.getDescripcio()).valors(usuariCodis));
+        dimensions.add(new DimensioDesc().codi(DimEnum.TIP.name()).nom(DimEnum.TIP.getNom()).descripcio(DimEnum.TIP.getDescripcio()).valors(tipus));
+        dimensions.add(new DimensioDesc().codi(DimEnum.ORI.name()).nom(DimEnum.ORI.getNom()).descripcio(DimEnum.ORI.getDescripcio()).valors(origens));
         return dimensions;
     }
 
@@ -277,10 +282,9 @@ public class EstadisticaServiceImpl implements EstadisticaService {
             processarCombinacionsConsultes(entryFets, registreEstadistics);
         }
 
-        return RegistresEstadistics.builder()
-                .temps(data)
-                .fets(registreEstadistics)
-                .build();
+        return new RegistresEstadistics()
+                .temps(data.toInstant().atOffset(ZoneOffset.UTC))
+                .fets(registreEstadistics);
     }
 
     private void processarCombinacionsConsultes(
@@ -293,10 +297,9 @@ public class EstadisticaServiceImpl implements EstadisticaService {
                 List<Fet> fets = toFets(entryFets.getValue(), tipus, origen);
 
                 if (fets != null && !fets.isEmpty()) {
-                    RegistreEstadistic registreEstadistic = RegistreEstadistic.builder()
+                    RegistreEstadistic registreEstadistic = new RegistreEstadistic()
                             .dimensions(dimensions)
-                            .fets(fets)
-                            .build();
+                            .fets(fets);
                     registreEstadistics.add(registreEstadistic);
                 }
             }
@@ -305,12 +308,12 @@ public class EstadisticaServiceImpl implements EstadisticaService {
 
     private List<Dimensio> toDimensions(EstadisticaKey key, Tipus tipus, Origen origen) {
         List<Dimensio> dimensions = new ArrayList<>();
-        dimensions.add(Dimensio.builder().codi(DimEnum.ENT.name()).valor(key.getEntitatCodi()).build());
-        dimensions.add(Dimensio.builder().codi(DimEnum.PRC.name()).valor(key.getProcedimentCodi()).build());
-        dimensions.add(Dimensio.builder().codi(DimEnum.SRV.name()).valor(key.getServeiCodi()).build());
-        dimensions.add(Dimensio.builder().codi(DimEnum.USU.name()).valor(key.getUsuariCodi()).build());
-        dimensions.add(Dimensio.builder().codi(DimEnum.TIP.name()).valor(tipus.name()).build()); // Tipus.SINCRONA.name(), Tipus.ASINCRONA.name()
-        dimensions.add(Dimensio.builder().codi(DimEnum.ORI.name()).valor(origen.name()).build()); // Origen.WEB.name(), Origen.REST.name()
+        dimensions.add(new Dimensio().codi(DimEnum.ENT.name()).valor(key.getEntitatCodi()));
+        dimensions.add(new Dimensio().codi(DimEnum.PRC.name()).valor(key.getProcedimentCodi()));
+        dimensions.add(new Dimensio().codi(DimEnum.SRV.name()).valor(key.getServeiCodi()));
+        dimensions.add(new Dimensio().codi(DimEnum.USU.name()).valor(key.getUsuariCodi()));
+        dimensions.add(new Dimensio().codi(DimEnum.TIP.name()).valor(tipus.name())); // Tipus.SINCRONA.name(), Tipus.ASINCRONA.name()
+        dimensions.add(new Dimensio().codi(DimEnum.ORI.name()).valor(origen.name())); // Origen.WEB.name(), Origen.REST.name()
         return dimensions;
     }
 
@@ -322,10 +325,10 @@ public class EstadisticaServiceImpl implements EstadisticaService {
         }
 
         List<Fet> fets = new ArrayList<>();
-        fets.add(Fet.builder().codi(FetEnum.PND.name()).valor((double) metrics.pendent).build());
-        fets.add(Fet.builder().codi(FetEnum.PRC.name()).valor((double) metrics.processant).build());
-        fets.add(Fet.builder().codi(FetEnum.TRA.name()).valor((double) metrics.tramitada).build());
-        fets.add(Fet.builder().codi(FetEnum.ERR.name()).valor((double) metrics.error).build());
+        fets.add(new Fet().codi(FetEnum.PND.name()).valor((double) metrics.pendent));
+        fets.add(new Fet().codi(FetEnum.PRC.name()).valor((double) metrics.processant));
+        fets.add(new Fet().codi(FetEnum.TRA.name()).valor((double) metrics.tramitada));
+        fets.add(new Fet().codi(FetEnum.ERR.name()).valor((double) metrics.error));
         return fets;
     }
 

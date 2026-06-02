@@ -3,21 +3,18 @@
  */
 package es.caib.pinbal.logic.helper;
 
-import es.caib.pinbal.core.dto.FitxerDto;
-import es.caib.pinbal.core.dto.IntegracioAccioTipusEnumDto;
+import es.caib.pinbal.logic.intf.dto.FitxerDto;
+import es.caib.pinbal.logic.intf.dto.IntegracioAccioTipusEnumDto;
 import es.caib.pinbal.plugin.SistemaExternException;
-import es.caib.pinbal.plugin.PropertiesHelper;
-import es.caib.pinbal.plugin.custodia.CustodiaPlugin;
 import es.caib.pinbal.plugin.firmaservidor.FirmaServidorPlugin;
+import es.caib.pinbal.plugin.firmaservidor.FirmaServidorPlugin.TipusFirma;
 import es.caib.pinbal.plugin.firmaservidor.SignaturaDades;
-import es.caib.pinbal.plugin.signatura.SignaturaPlugin;
 import es.caib.pinbal.plugin.firmaservidor.SignaturaResposta;
 import es.caib.pinbal.plugin.unitat.NodeDir3;
 import es.caib.pinbal.plugin.unitat.UnitatOrganitzativa;
 import es.caib.pinbal.plugin.unitat.UnitatsOrganitzativesPlugin;
 import es.caib.pinbal.plugin.usuari.DadesUsuari;
 import es.caib.pinbal.plugin.usuari.DadesUsuariPlugin;
-import es.caib.pinbal.plugin.firmaservidor.FirmaServidorPlugin.TipusFirma;
 import es.caib.pluginsib.arxiu.api.*;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -26,8 +23,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Component;
 
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.*;
 
 /**
@@ -47,8 +42,6 @@ public class PluginHelper {
 
 
 	private DadesUsuariPlugin dadesUsuariPlugin;
-	private SignaturaPlugin signaturaPlugin;
-	private CustodiaPlugin custodiaPlugin;
 	private FirmaServidorPlugin firmaServidorPlugin;
 	private IArxiuPlugin arxiuPlugin;
 	private UnitatsOrganitzativesPlugin unitatsOrganitzativesPlugin;
@@ -201,72 +194,20 @@ public class PluginHelper {
 		}
 	}
 
-	public void signaturaIbkeySignarEstamparPdf(
-			InputStream contentStream,
-			OutputStream signedStream,
-			String url) throws SistemaExternException {
-		try {
-			getSignaturaPlugin().signarEstamparPdf(
-					contentStream,
-					signedStream,
-					url);
-		} catch (SistemaExternException ex) {
-			LOGGER.error("Error en el plugin de signatura", ex);
-			throw ex;
-		} catch (Exception ex) {
-			throw new SistemaExternException(
-					"Error al signar i estampar un document PDF",
-					ex);
-		}
-	}
-
-	public String custodiaObtenirUrlVerificacioDocument(
-			String documentId) throws SistemaExternException {
-		try {
-			return getCustodiaPlugin().obtenirUrlVerificacioDocument(documentId);
-		} catch (SistemaExternException ex) {
-			LOGGER.error("Error en el plugin de custodia", ex);
-			throw ex;
-		} catch (Exception ex) {
-			throw new SistemaExternException(
-					"Error al crear la instància del plugin de custòdia",
-					ex);
-		}
-	}
-
-	public void custodiaEnviarPdfSignat(
-			String documentId,
-			String arxiuNom,
-			byte[] arxiuContingut,
-			String documentTipus) throws SistemaExternException {
-		try {
-			getCustodiaPlugin().enviarPdfSignat(
-					documentId,
-					arxiuNom,
-					arxiuContingut,
-					documentTipus);
-		} catch (SistemaExternException ex) {
-			LOGGER.error("Error en el plugin de custodia", ex);
-			throw ex;
-		} catch (Exception ex) {
-			throw new SistemaExternException(
-					"Error al crear la instància del plugin de custòdia",
-					ex);
-		}
-	}
-
 	public byte[] custodiaObtenirDocument(
 			String documentId) throws SistemaExternException {
-		try {
-			return getCustodiaPlugin().obtenirDocument(documentId);
-		} catch (SistemaExternException ex) {
-			LOGGER.error("Error en el plugin de custodia", ex);
-			throw ex;
-		} catch (Exception ex) {
-			throw new SistemaExternException(
-					"Error al crear la instància del plugin de custòdia",
-					ex);
-		}
+		// TODO: Obtenir el document del ConCSV ?
+//		try {
+//			return getCustodiaPlugin().obtenirDocument(documentId);
+//		} catch (SistemaExternException ex) {
+//			LOGGER.error("Error en el plugin de custodia", ex);
+//			throw ex;
+//		} catch (Exception ex) {
+//			throw new SistemaExternException(
+//					"Error al crear la instància del plugin de custòdia",
+//					ex);
+//		}
+		return null;
 	}
 
 	public boolean isPluginFirmaServidorActiu() {
@@ -977,55 +918,28 @@ public class PluginHelper {
 	}
 
 	private DadesUsuariPlugin getDadesUsuariPlugin() throws Exception {
-		loadPluginProperties("USUARIS");
 		if (dadesUsuariPlugin == null) {
+			String propertyKeyBase =  "es.caib.pinbal.";
+			Properties propietats = configHelper.getEnvironmentProperties();
 			String pluginClass = getPropertyPluginDadesUsuari();
 			if (pluginClass != null && pluginClass.length() > 0) {
 				Class<?> clazz = Class.forName(pluginClass);
-				dadesUsuariPlugin = (DadesUsuariPlugin)clazz.newInstance();
+				dadesUsuariPlugin = (DadesUsuariPlugin)clazz.getDeclaredConstructor(String.class, Properties.class).newInstance(propertyKeyBase, propietats);
 			} else {
-				throw new SistemaExternException(
-						"La classe del plugin de dades d'usuari no està configurada");
+				throw new SistemaExternException("La classe del plugin de dades d'usuari no està configurada");
 			}
 		}
 		return dadesUsuariPlugin;
 	}
-	private SignaturaPlugin getSignaturaPlugin() throws Exception {
-		loadPluginProperties("SIGNATURA");
-		if (signaturaPlugin == null) {
-			String pluginClass = getPropertyPluginSignatura();
-			if (pluginClass != null && pluginClass.length() > 0) {
-				Class<?> clazz = Class.forName(pluginClass);
-				signaturaPlugin = (SignaturaPlugin)clazz.newInstance();
-			} else {
-				throw new SistemaExternException(
-						"La classe del plugin de signatura no està configurada");
-			}
-		}
-		return signaturaPlugin;
-	}
-	private CustodiaPlugin getCustodiaPlugin() throws Exception {
-		loadPluginProperties("CUSTODIA");
-		if (custodiaPlugin == null) {
-			String pluginClass = getPropertyPluginCustodia();
-			if (pluginClass != null && pluginClass.length() > 0) {
-				Class<?> clazz = Class.forName(pluginClass);
-				custodiaPlugin = (CustodiaPlugin)clazz.newInstance();
-			} else {
-				throw new SistemaExternException(
-						"La classe del plugin de custòdia no està configurada");
-			}
-		}
-		return custodiaPlugin;
-	}
 	private FirmaServidorPlugin getFirmaServidorPlugin() throws Exception {
-		loadPluginProperties("FIRMA_SERVIDOR");
 		if (firmaServidorPlugin == null) {
+			String propertyKeyBase =  "es.caib.pinbal.";
+			Properties propietats = configHelper.getEnvironmentProperties();
 			String pluginClass = getPropertyPluginFirmaServidor();
 			if (pluginClass != null && pluginClass.length() > 0) {
 				try {
 					Class<?> clazz = Class.forName(pluginClass);
-					firmaServidorPlugin = (FirmaServidorPlugin)clazz.newInstance();
+					firmaServidorPlugin = (FirmaServidorPlugin)clazz.getDeclaredConstructor(String.class, Properties.class).newInstance(propertyKeyBase, propietats);
 				} catch (Exception ex) {
 					throw new SistemaExternException(
 							"Error al crear la instància del plugin de firma en servidor",
@@ -1039,17 +953,14 @@ public class PluginHelper {
 		return firmaServidorPlugin;
 	}
 	private IArxiuPlugin getArxiuPlugin() throws SistemaExternException {
-		loadPluginProperties("ARXIU");
 		if (arxiuPlugin == null) {
 			String pluginClass = getPropertyPluginArxiu();
 			if (pluginClass != null && pluginClass.length() > 0) {
 				try {
+					String propertyKeyBase =  "es.caib.pinbal.";
+					Properties propietats = configHelper.getEnvironmentProperties();
 					Class<?> clazz = Class.forName(pluginClass);
-					arxiuPlugin = (IArxiuPlugin)clazz.getDeclaredConstructor(
-							String.class,
-							Properties.class).newInstance(
-							"es.caib.pinbal.",
-							PropertiesHelper.getProperties().findAll());
+					arxiuPlugin = (IArxiuPlugin)clazz.getDeclaredConstructor(String.class, Properties.class).newInstance(propertyKeyBase, propietats);
 				} catch (Exception ex) {
 					throw new SistemaExternException(
 							"Error al crear la instància del plugin d'arxiu digital",
@@ -1064,13 +975,14 @@ public class PluginHelper {
 	}
 
 	private UnitatsOrganitzativesPlugin getUnitatsOrganitzativesPlugin() throws Exception {
-		loadPluginProperties("UNITATS");
 		if (unitatsOrganitzativesPlugin == null) {
+			String propertyKeyBase =  "es.caib.pinbal.";
+			Properties propietats = configHelper.getEnvironmentProperties();
 			String pluginClass = getPropertyPluginUnitatsOrganitzatives();
 			if (pluginClass != null && pluginClass.length() > 0) {
 				try {
 					Class<?> clazz = Class.forName(pluginClass);
-					unitatsOrganitzativesPlugin = (UnitatsOrganitzativesPlugin)clazz.newInstance();
+					unitatsOrganitzativesPlugin = (UnitatsOrganitzativesPlugin)clazz.getDeclaredConstructor(String.class, Properties.class).newInstance(propertyKeyBase, propietats);
 				} catch (Exception ex) {
 					throw new SistemaExternException(
 							"Error al crear la instància del plugin d'unitats organitzatives");
@@ -1083,39 +995,35 @@ public class PluginHelper {
 		return unitatsOrganitzativesPlugin;
 	}
 
-	private final static Map<String, Boolean> propertiesLoaded = new HashMap<>();
-	private synchronized void loadPluginProperties(String codeProperties) {
-		if (!propertiesLoaded.containsKey(codeProperties) || !propertiesLoaded.get(codeProperties)) {
-			propertiesLoaded.put(codeProperties, true);
-			Map<String, String> pluginProps = configHelper.getGroupProperties(codeProperties);
-			for (Map.Entry<String, String> entry : pluginProps.entrySet() ) {
-				String value = entry.getValue() == null ? "" : entry.getValue();
-				PropertiesHelper.getProperties().setProperty(entry.getKey(), value);
-			}
-		}
-	}
-
-	public void reloadProperties(String codeProperties) {
-		if (propertiesLoaded.containsKey(codeProperties))
-			propertiesLoaded.put(codeProperties, false);
-	}
 	public void resetPlugins() {
 		dadesUsuariPlugin = null;
-		signaturaPlugin = null;
-		custodiaPlugin = null;
 		firmaServidorPlugin = null;
 		arxiuPlugin = null;
 		unitatsOrganitzativesPlugin = null;
 	}
 
+	public void resetPlugins(String grup) {
+
+		switch (grup) {
+			case "USUARIS":
+				dadesUsuariPlugin = null;
+				break;
+			case "FIRMA_SERVIDOR":
+				firmaServidorPlugin = null;
+				break;
+			case "ARXIU":
+				arxiuPlugin = null;
+				break;
+			case "UNITATS":
+				unitatsOrganitzativesPlugin = null;
+				break;
+			default:
+				break;
+		}
+	}
+
 	private String getPropertyPluginDadesUsuari() {
 		return configHelper.getConfig(PROPERTY_PLUGIN_USUARIS_CLASS);
-	}
-	private String getPropertyPluginSignatura() {
-		return configHelper.getConfig(PROPERTY_PLUGIN_SIGNATURA_CLASS);
-	}
-	private String getPropertyPluginCustodia() {
-		return configHelper.getConfig(PROPERTY_PLUGIN_CUSTODIA_CLASS);
 	}
 	private String getPropertyPluginFirmaServidor() {
 		return configHelper.getConfig(PROPERTY_PLUGIN_FIRMA_SERVIDOR_CLASS);

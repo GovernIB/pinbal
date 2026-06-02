@@ -8,9 +8,7 @@ import java.util.*;
 @Getter
 public class ArxiuDocumentMock {
 
-
    private Document document;
-
 
     public ArxiuDocumentMock() {
 

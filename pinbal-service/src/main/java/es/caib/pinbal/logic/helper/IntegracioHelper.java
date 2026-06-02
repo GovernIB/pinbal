@@ -3,16 +3,16 @@
  */
 package es.caib.pinbal.logic.helper;
 
-import es.caib.pinbal.core.dto.IntegracioAccioDto;
-import es.caib.pinbal.core.dto.IntegracioAccioEstatEnumDto;
-import es.caib.pinbal.core.dto.IntegracioAccioParamDto;
-import es.caib.pinbal.core.dto.IntegracioAccioTipusEnumDto;
-import es.caib.pinbal.core.dto.IntegracioDto;
-import es.caib.pinbal.core.service.IntegracioAccioService;
-import org.apache.commons.lang.exception.ExceptionUtils;
+import es.caib.pinbal.logic.intf.dto.IntegracioAccioDto;
+import es.caib.pinbal.logic.intf.dto.IntegracioAccioEstatEnumDto;
+import es.caib.pinbal.logic.intf.dto.IntegracioAccioParamDto;
+import es.caib.pinbal.logic.intf.dto.IntegracioAccioTipusEnumDto;
+import es.caib.pinbal.logic.intf.dto.IntegracioDto;
+import es.caib.pinbal.logic.intf.service.IntegracioAccioService;
+import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
@@ -26,6 +26,7 @@ import java.util.Map;
  * 
  * @author Limit Tecnologies <limit@limit.es>
  */
+@RequiredArgsConstructor
 @Component
 public class IntegracioHelper {
 	
@@ -43,8 +44,7 @@ public class IntegracioHelper {
 	public static final String INTCODI_EXPLOTACIO = "EXPLOTACIO";
 	public static final String INTCODI_DADES_COMUNS = "DADES_COMUNS";
 
-	@Autowired
-	private IntegracioAccioService integracioAccioService;
+	private final IntegracioAccioService integracioAccioService;
 
 	public List<IntegracioDto> findAll() {
 		List<IntegracioDto> integracions = new ArrayList<IntegracioDto>();

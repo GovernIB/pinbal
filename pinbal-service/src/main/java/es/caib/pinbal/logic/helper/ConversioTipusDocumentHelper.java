@@ -3,27 +3,6 @@
  */
 package es.caib.pinbal.logic.helper;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.ConnectException;
-
-import javax.activation.MimetypesFileTypeMap;
-
-import org.odftoolkit.odfdom.converter.core.ODFConverterException;
-import org.odftoolkit.odfdom.converter.pdf.PdfConverter;
-import org.odftoolkit.odfdom.converter.pdf.PdfOptions;
-import org.odftoolkit.odfdom.doc.OdfTextDocument;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
-import com.artofsolving.jodconverter.DefaultDocumentFormatRegistry;
-import com.artofsolving.jodconverter.DocumentConverter;
-import com.artofsolving.jodconverter.DocumentFormat;
-import com.artofsolving.jodconverter.DocumentFormatRegistry;
-import com.artofsolving.jodconverter.openoffice.connection.OpenOfficeConnection;
-import com.artofsolving.jodconverter.openoffice.connection.SocketOpenOfficeConnection;
-import com.artofsolving.jodconverter.openoffice.converter.StreamOpenOfficeDocumentConverter;
 import com.lowagie.text.Document;
 import com.lowagie.text.DocumentException;
 import com.lowagie.text.Image;
@@ -35,22 +14,39 @@ import com.lowagie.text.pdf.PdfReader;
 import com.lowagie.text.pdf.PdfStamper;
 import com.lowagie.text.pdf.PdfString;
 import com.lowagie.text.pdf.PdfWriter;
+import fr.opensagres.odfdom.converter.core.ODFConverterException;
+import fr.opensagres.odfdom.converter.pdf.PdfConverter;
+import fr.opensagres.odfdom.converter.pdf.PdfOptions;
+import lombok.RequiredArgsConstructor;
+import org.jodconverter.core.document.DefaultDocumentFormatRegistry;
+import org.jodconverter.core.document.DocumentFormat;
+import org.jodconverter.core.office.OfficeException;
+import org.jodconverter.core.office.OfficeManager;
+import org.jodconverter.core.office.OfficeUtils;
+import org.jodconverter.local.LocalConverter;
+import org.jodconverter.local.office.ExternalOfficeManager;
+import org.odftoolkit.odfdom.doc.OdfTextDocument;
+import org.springframework.stereotype.Component;
+
+import javax.activation.MimetypesFileTypeMap;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.HashMap;
 
 /**
  * Helper per a convertir documents a altres formats.
  * 
  * @author Limit Tecnologies <limit@limit.es>
  */
+@RequiredArgsConstructor
 @Component
 public class ConversioTipusDocumentHelper {
 
 	private static final String CONVERSIO_TIPUS_OPENOFFICE = "openoffice";
 	private static final String CONVERSIO_TIPUS_XDOCREPORT = "xdocreport";
 
-	private DocumentFormatRegistry documentFormatRegistry;
-
-	@Autowired
-	private ConfigHelper configHelper;
+	private final ConfigHelper configHelper;
 
 
 	public void convertir(
@@ -65,7 +61,10 @@ public class ConversioTipusDocumentHelper {
 				!extensioEntrada.equalsIgnoreCase(extensioSortida)) {
 			if (isConversioTipusOpenOffice()) {
 				DocumentFormat inputFormat = formatPerNomArxiu(arxiuNom);
-				DocumentFormat outputFormat = getDocumentFormatRegistry().getFormatByFileExtension(extensioSortida);
+				DocumentFormat outputFormat = DefaultDocumentFormatRegistry.getFormatByExtension(extensioSortida);
+				if (inputFormat == null || outputFormat == null) {
+					throw new IOException("Format de document no suportat: " + extensioEntrada + " -> " + extensioSortida);
+				}
 				convertAmbServeiOpenOffice(
 						arxiuContingut,
 						inputFormat,
@@ -100,7 +99,6 @@ public class ConversioTipusDocumentHelper {
 	public String nomArxiuConvertit(
 			String arxiuNom,
 			String extensioSortida) {
-		//DocumentFormat outputFormat = getDocumentFormatRegistry().getFormatByFileExtension(extensioSortida);
 		int indexPunt = arxiuNom.lastIndexOf(".");
 		if (indexPunt != -1) {
 			String nom = arxiuNom.substring(0, indexPunt);
@@ -139,7 +137,7 @@ public class ConversioTipusDocumentHelper {
         }
         writer.createXmpMetadata();
         document.close();
-        stamper.setMoreInfo(reader.getInfo());
+        stamper.setMoreInfo(new HashMap<>(reader.getInfo()));
         stamper.close();
     }
 
@@ -155,7 +153,7 @@ public class ConversioTipusDocumentHelper {
 	private DocumentFormat formatPerNomArxiu(String nomArxiu) {
 		String extensio = extensioPerNomArxiu(nomArxiu);
 		if (extensio != null)
-			return getDocumentFormatRegistry().getFormatByFileExtension(extensio);
+			return DefaultDocumentFormatRegistry.getFormatByExtension(extensio);
 		else
 			return null;
 	}
@@ -164,25 +162,31 @@ public class ConversioTipusDocumentHelper {
 			InputStream in,
 			DocumentFormat inputFormat,
 			OutputStream out,
-			DocumentFormat outputFormat) throws ConnectException {
+			DocumentFormat outputFormat) throws IOException {
 		String host = getOpenOfficeHost();
 		String port = getOpenOfficePort();
-		OpenOfficeConnection connection = null;
+		OfficeManager officeManager = null;
 		try {
-			connection = new SocketOpenOfficeConnection(
-					host,
-					new Integer(port));
-			connection.connect();
-			DocumentConverter converter = new StreamOpenOfficeDocumentConverter(
-					connection,
-					getDocumentFormatRegistry());
-			converter.convert(
-					in,
-					inputFormat,
-					out,
-					outputFormat);
+			officeManager = ExternalOfficeManager.builder()
+					.hostName(host)
+					.portNumbers(Integer.parseInt(port))
+					.connectFailFast(true)
+					.build();
+			officeManager.start();
+			LocalConverter.builder()
+					.officeManager(officeManager)
+					.build()
+					.convert(in)
+					.as(inputFormat)
+					.to(out)
+					.as(outputFormat)
+					.execute();
+		} catch (OfficeException ex) {
+			throw new IOException("Error convertint amb el servei OpenOffice/LibreOffice", ex);
 		} finally {
-			if (connection != null) connection.disconnect();
+			if (officeManager != null) {
+				OfficeUtils.stopQuietly(officeManager);
+			}
 		}
 	}
 
@@ -205,12 +209,6 @@ public class ConversioTipusDocumentHelper {
 	}
 	private String getOpenOfficePort() {
 		return configHelper.getConfig("es.caib.pinbal.conversio.open.office.port");
-	}
-
-	private DocumentFormatRegistry getDocumentFormatRegistry() {
-		if (documentFormatRegistry == null)
-			documentFormatRegistry = new DefaultDocumentFormatRegistry();
-		return documentFormatRegistry;
 	}
 
 }

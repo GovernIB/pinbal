@@ -2,41 +2,41 @@ package es.caib.pinbal.logic.helper;
 
 import es.caib.pinbal.client.dadesobertes.DadesObertesRespostaConsulta.DadesObertesConsultaResultat;
 import es.caib.pinbal.client.dadesobertes.DadesObertesRespostaConsulta.DadesObertesConsultaTipus;
-import es.caib.pinbal.core.dto.EstatTipus;
-import es.caib.pinbal.core.dto.IntegracioAccioTipusEnumDto;
-import es.caib.pinbal.logic.model.Consulta;
-import es.caib.pinbal.logic.model.EmissorCert;
-import es.caib.pinbal.logic.model.Entitat;
-import es.caib.pinbal.logic.model.Procediment;
-import es.caib.pinbal.logic.model.ProcedimentServei;
-import es.caib.pinbal.logic.model.Servei;
-import es.caib.pinbal.logic.model.Transmision;
-import es.caib.pinbal.logic.model.dadesobertes.DadesObertesConsulta;
-import es.caib.pinbal.logic.model.llistat.LlistatConsulta;
-import es.caib.pinbal.logic.repository.ConsultaRepository;
-import es.caib.pinbal.logic.repository.dadesobertes.DadesObertesConsultaRepository;
-import es.caib.pinbal.logic.repository.llistat.LlistatConsultaRepository;
+import es.caib.pinbal.logic.intf.dto.EstatTipus;
+import es.caib.pinbal.logic.intf.dto.IntegracioAccioTipusEnumDto;
+import es.caib.pinbal.persist.entity.Consulta;
+import es.caib.pinbal.persist.entity.EmissorCert;
+import es.caib.pinbal.persist.entity.Entitat;
+import es.caib.pinbal.persist.entity.Procediment;
+import es.caib.pinbal.persist.entity.ProcedimentServei;
+import es.caib.pinbal.persist.entity.Servei;
+import es.caib.pinbal.persist.entity.Transmision;
+import es.caib.pinbal.persist.entity.Usuari;
+import es.caib.pinbal.persist.entity.dadesobertes.DadesObertesConsulta;
+import es.caib.pinbal.persist.entity.llistat.LlistatConsulta;
+import es.caib.pinbal.persist.repository.ConsultaRepository;
+import es.caib.pinbal.persist.repository.dadesobertes.DadesObertesConsultaRepository;
+import es.caib.pinbal.persist.repository.llistat.LlistatConsultaRepository;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.ZoneId;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
 @Slf4j
+@RequiredArgsConstructor
 @Component
 public class ConsultaHelper {
 
-    @Autowired
-    private LlistatConsultaRepository llistatConsultaRepository;
-    @Autowired
-    private DadesObertesConsultaRepository dadesObertesConsultaRepository;
-    @Autowired
-    private ConsultaRepository consultaRepository;
-    @Autowired
-    private IntegracioHelper integracioHelper;
+    private final LlistatConsultaRepository llistatConsultaRepository;
+    private final DadesObertesConsultaRepository dadesObertesConsultaRepository;
+    private final ConsultaRepository consultaRepository;
+    private final IntegracioHelper integracioHelper;
 
 
     public void propagaCreacioConsulta(Consulta consulta) {
@@ -46,17 +46,19 @@ public class ConsultaHelper {
         Servei servei = consulta.getProcedimentServei().getServeiScsp();
         Transmision transmision = consulta.getTransmision();
         EmissorCert emisor = servei.getScspEmisor();
+        Usuari createdBy = consulta.getCreatedBy()
+                .orElseThrow(() -> new IllegalStateException("La consulta " + consulta.getId() + " no te usuari de creacio"));
 
         LlistatConsulta llistatConsulta = LlistatConsulta.builder()
                 .id(consulta.getId())
                 .peticioId(consulta.getScspPeticionId())
                 .solicitudId(consulta.getScspSolicitudId())
-                .data(consulta.getCreatedDate().toDate())
+                .data(Date.from(consulta.getCreatedDate().orElseThrow().atZone(ZoneId.systemDefault()).toInstant()))
                 .departamentNom(consulta.getDepartamentNom())
                 .recobriment(consulta.isRecobriment())
                 .multiple(consulta.isMultiple())
-                .usuariCodi(consulta.getCreatedBy().getCodi())
-                .usuariNom(consulta.getCreatedBy().getNom())
+                .usuariCodi(createdBy.getCodi())
+                .usuariNom(createdBy.getNom())
                 .funcionariNom(consulta.getFuncionariNom())
                 .funcionariNif(consulta.getFuncionariDocumentNum())
                 .titularNom(consulta.getTitularNomSencer())
@@ -96,7 +98,7 @@ public class ConsultaHelper {
                 .finalitat(getFinalitat(consulta.getFinalitat()))
                 .titularDocumentTipus(consulta.getTitularDocumentTipus())
                 .solicitudId(consulta.getScspSolicitudId())
-                .data(consulta.getCreatedDate().toDate())
+                .data(Date.from(consulta.getCreatedDate().orElseThrow().atZone(ZoneId.systemDefault()).toInstant()))
                 .tipus(consulta.isRecobriment() ? DadesObertesConsultaTipus.RECOBRIMENT : DadesObertesConsultaTipus.WEB)
                 .resultat(getResultat(consulta.getEstat()))
                 .multiple(consulta.isMultiple())
@@ -107,7 +109,7 @@ public class ConsultaHelper {
     public void propagaCanviConsulta(Consulta consulta) {
 
         // Per assegurar qeu no actualitzem una consulta no creada... la crearem si no existeix
-        LlistatConsulta llistatConsulta = llistatConsultaRepository.findOne(consulta.getId());
+        LlistatConsulta llistatConsulta = llistatConsultaRepository.findById(consulta.getId()).orElse(null);
         if (llistatConsulta == null) {
             propagaCreacioConsulta(consulta);
             return;
@@ -119,7 +121,7 @@ public class ConsultaHelper {
                 consulta.getError(),
                 consulta.getDataEsperadaResposta());
         llistatConsultaRepository.save(llistatConsulta);
-        DadesObertesConsulta dadesObertesConsulta = dadesObertesConsultaRepository.findOne(consulta.getId());
+        DadesObertesConsulta dadesObertesConsulta = dadesObertesConsultaRepository.findById(consulta.getId()).orElseThrow();
         dadesObertesConsulta.update(
                 getResultat(consulta.getEstat()),
                 consulta.getScspSolicitudId());

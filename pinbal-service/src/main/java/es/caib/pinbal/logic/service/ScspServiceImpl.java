@@ -3,27 +3,28 @@
  */
 package es.caib.pinbal.logic.service;
 
-import es.caib.pinbal.core.dto.ClauPrivadaDto;
-import es.caib.pinbal.core.dto.ClauPublicaDto;
-import es.caib.pinbal.core.dto.EmissorCertDto;
-import es.caib.pinbal.core.dto.OrganismeCessionariDto;
-import es.caib.pinbal.core.dto.ParamConfDto;
 import es.caib.pinbal.logic.helper.DtoMappingHelper;
-import es.caib.pinbal.logic.model.ClauPrivada;
-import es.caib.pinbal.logic.model.ClauPublica;
-import es.caib.pinbal.logic.model.EmissorCert;
-import es.caib.pinbal.logic.model.OrganismeCessionari;
-import es.caib.pinbal.logic.model.ParamConf;
-import es.caib.pinbal.logic.repository.ClauPrivadaRepository;
-import es.caib.pinbal.logic.repository.ClauPublicaRepository;
-import es.caib.pinbal.logic.repository.EmissorCertRepository;
-import es.caib.pinbal.logic.repository.OrganismeCessionariRepository;
-import es.caib.pinbal.logic.repository.ParamConfRepository;
-import es.caib.pinbal.core.service.exception.ClauPrivadaNotFoundException;
-import es.caib.pinbal.core.service.exception.ClauPublicaNotFoundException;
-import es.caib.pinbal.core.service.exception.EmissorCertNotFoundException;
-import es.caib.pinbal.core.service.exception.EntitatNotFoundException;
-import es.caib.pinbal.core.service.exception.ParamConfNotFoundException;
+import es.caib.pinbal.logic.intf.dto.ClauPrivadaDto;
+import es.caib.pinbal.logic.intf.dto.ClauPublicaDto;
+import es.caib.pinbal.logic.intf.dto.EmissorCertDto;
+import es.caib.pinbal.logic.intf.dto.OrganismeCessionariDto;
+import es.caib.pinbal.logic.intf.dto.ParamConfDto;
+import es.caib.pinbal.logic.intf.service.ScspService;
+import es.caib.pinbal.logic.intf.service.exception.ClauPrivadaNotFoundException;
+import es.caib.pinbal.logic.intf.service.exception.ClauPublicaNotFoundException;
+import es.caib.pinbal.logic.intf.service.exception.EmissorCertNotFoundException;
+import es.caib.pinbal.logic.intf.service.exception.EntitatNotFoundException;
+import es.caib.pinbal.logic.intf.service.exception.ParamConfNotFoundException;
+import es.caib.pinbal.persist.entity.ClauPrivada;
+import es.caib.pinbal.persist.entity.ClauPublica;
+import es.caib.pinbal.persist.entity.EmissorCert;
+import es.caib.pinbal.persist.entity.OrganismeCessionari;
+import es.caib.pinbal.persist.entity.ParamConf;
+import es.caib.pinbal.persist.repository.ClauPrivadaRepository;
+import es.caib.pinbal.persist.repository.ClauPublicaRepository;
+import es.caib.pinbal.persist.repository.EmissorCertRepository;
+import es.caib.pinbal.persist.repository.OrganismeCessionariRepository;
+import es.caib.pinbal.persist.repository.ParamConfRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -169,7 +170,7 @@ public class ScspServiceImpl implements ScspService {
 	public EmissorCertDto updateEmissorCert(EmissorCertDto dto) throws EmissorCertNotFoundException {
 		log.debug("Actualitzant el emissor certificat (id = " + dto.getId() +
 					 ") amb la informació: " + dto);
-		EmissorCert entity = emissorCertRepository.findById(dto.getId());
+		EmissorCert entity = emissorCertRepository.findById(dto.getId()).orElse(null);
 		if (entity == null) {
 			log.debug("No s'ha trobat el emissor certificat (id = " + dto.getId() + ")");
 			throw new EmissorCertNotFoundException();
@@ -187,7 +188,7 @@ public class ScspServiceImpl implements ScspService {
 	@Transactional
 	public EmissorCertDto deleteEmissorCert(Long id) throws EmissorCertNotFoundException {
 		log.debug("Esborrant el emissor certificat (id =" + id + ")");
-		EmissorCert entity = emissorCertRepository.findById(id);
+		EmissorCert entity = emissorCertRepository.findById(id).orElse(null);
 		if (entity == null) {
 			log.debug("No s'ha trobat el emissor certificat (id = " + id + ")");
 			throw new EmissorCertNotFoundException();
@@ -238,7 +239,7 @@ public class ScspServiceImpl implements ScspService {
 	@Transactional
 	public ClauPrivadaDto createClauPrivada(ClauPrivadaDto dto) throws EntitatNotFoundException {
 		log.debug("Creant una nova clau privada : " + dto);
-		OrganismeCessionari organisme = organismeCessionariRepository.findById(dto.getOrganismeId());
+		OrganismeCessionari organisme = organismeCessionariRepository.findById(dto.getOrganismeId()).orElseThrow();
 
         // Només pot haver-hi una clau perEntitat per organisme
         desmarcaClauAntigaPerEntitat(dto, organisme);
@@ -286,7 +287,7 @@ public class ScspServiceImpl implements ScspService {
 	public ClauPrivadaDto updateClauPrivada(ClauPrivadaDto dto) throws ClauPrivadaNotFoundException, EntitatNotFoundException {
 		log.debug("Actualitzant la clau privada (id = " + dto.getId() +
 					 ") amb la informació: " + dto);
-		ClauPrivada clauPrivada = clauPrivadaRepository.findById(dto.getId());
+		ClauPrivada clauPrivada = clauPrivadaRepository.findById(dto.getId()).orElse(null);
 		if (clauPrivada == null) {
 			log.debug("No s'ha trobat la clau privada (id = " + dto.getId() + ")");
 			throw new ClauPrivadaNotFoundException();
@@ -298,7 +299,7 @@ public class ScspServiceImpl implements ScspService {
         String organismeCifOrigen = clauPrivada.getOrganisme().getCif();
         boolean canviaOrganisme = !clauPrivada.getOrganisme().getId().equals(dto.getOrganismeId());
 
-		OrganismeCessionari organisme = organismeCessionariRepository.findById(dto.getOrganismeId());
+		OrganismeCessionari organisme = organismeCessionariRepository.findById(dto.getOrganismeId()).orElseThrow();
 
         // Només pot haver-hi una clau perEntitat per organisme
         desmarcaClauAntigaPerEntitat(dto, organisme);
@@ -345,7 +346,7 @@ public class ScspServiceImpl implements ScspService {
 	@Transactional
 	public ClauPrivadaDto deleteClauPrivada(Long id) throws ClauPrivadaNotFoundException {
 		log.debug("Esborrant la clau privada (id =" + id + ")");
-		ClauPrivada clauPrivada = clauPrivadaRepository.findById(id);
+		ClauPrivada clauPrivada = clauPrivadaRepository.findById(id).orElse(null);
 		if (clauPrivada == null) {
 			log.debug("No s'ha trobat la clau privada (id = " + id + ")");
 			throw new ClauPrivadaNotFoundException();
@@ -392,7 +393,7 @@ public class ScspServiceImpl implements ScspService {
     @Transactional(readOnly = true)
     public OrganismeCessionariDto findOrganismeCessionariById(Long organismeId) {
         log.debug("Consulta organisme cessionari amb id = " + organismeId);
-        OrganismeCessionari organismeCessionari = organismeCessionariRepository.findOne(organismeId);
+        OrganismeCessionari organismeCessionari = organismeCessionariRepository.findById(organismeId).orElse(null);
         return dtoMappingHelper.getMapperFacade().map(
                 organismeCessionari,
                 OrganismeCessionariDto.class);
@@ -446,7 +447,7 @@ public class ScspServiceImpl implements ScspService {
 	public ClauPublicaDto updateClauPublica(ClauPublicaDto dto) throws ClauPublicaNotFoundException {
 		log.debug("Actualitzant el clau publica (id = " + dto.getId() +
 					 ") amb la informació: " + dto);
-		ClauPublica entity = clauPublicaRepository.findById(dto.getId());
+		ClauPublica entity = clauPublicaRepository.findById(dto.getId()).orElse(null);
 		if (entity == null) {
 			log.debug("No s'ha trobat el clau publica (id = " + dto.getId() + ")");
 			throw new ClauPublicaNotFoundException();
@@ -466,7 +467,7 @@ public class ScspServiceImpl implements ScspService {
 	@Transactional
 	public ClauPublicaDto deleteClauPublica(Long id) throws ClauPublicaNotFoundException {
 		log.debug("Esborrant el clau publica (id =" + id + ")");
-		ClauPublica entity = clauPublicaRepository.findById(id);
+		ClauPublica entity = clauPublicaRepository.findById(id).orElse(null);
 		if (entity == null) {
 			log.debug("No s'ha trobat el clau publica (id = " + id + ")");
 			throw new ClauPublicaNotFoundException();

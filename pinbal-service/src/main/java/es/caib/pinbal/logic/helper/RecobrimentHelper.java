@@ -3,35 +3,24 @@
  */
 package es.caib.pinbal.logic.helper;
 
-import es.caib.pinbal.core.dto.ConsultaDto;
-import es.caib.pinbal.core.dto.ConsultaDto.Consentiment;
-import es.caib.pinbal.core.dto.ConsultaDto.DocumentTipus;
-import es.caib.pinbal.core.dto.JustificantDto;
-import es.caib.pinbal.core.dto.RecobrimentSolicitudDto;
-import es.caib.pinbal.core.dto.RespostaAtributsDto;
-import es.caib.pinbal.logic.model.Consulta;
-import es.caib.pinbal.logic.model.HistoricConsulta;
-import es.caib.pinbal.logic.repository.ConsultaRepository;
-import es.caib.pinbal.logic.repository.HistoricConsultaRepository;
-import es.caib.pinbal.core.service.ConsultaService;
-import es.caib.pinbal.core.service.HistoricConsultaService;
-import es.caib.pinbal.core.service.exception.ConsultaNotFoundException;
-import es.caib.pinbal.core.service.exception.ConsultaScspException;
-import es.caib.pinbal.core.service.exception.EntitatNotFoundException;
-import es.caib.pinbal.core.service.exception.JustificantGeneracioException;
-import es.caib.pinbal.core.service.exception.ProcedimentNotFoundException;
-import es.caib.pinbal.core.service.exception.ProcedimentServeiNotFoundException;
-import es.caib.pinbal.core.service.exception.ServeiNotAllowedException;
+import es.caib.pinbal.logic.intf.dto.ConsultaDto;
+import es.caib.pinbal.logic.intf.dto.ConsultaDto.Consentiment;
+import es.caib.pinbal.logic.intf.dto.ConsultaDto.DocumentTipus;
+import es.caib.pinbal.logic.intf.dto.JustificantDto;
+import es.caib.pinbal.logic.intf.dto.RecobrimentSolicitudDto;
+import es.caib.pinbal.logic.intf.dto.RespostaAtributsDto;
+import es.caib.pinbal.logic.intf.service.ConsultaService;
+import es.caib.pinbal.logic.intf.service.HistoricConsultaService;
+import es.caib.pinbal.logic.intf.service.exception.*;
+import es.caib.pinbal.persist.entity.Consulta;
+import es.caib.pinbal.persist.entity.HistoricConsulta;
+import es.caib.pinbal.persist.repository.ConsultaRepository;
+import es.caib.pinbal.persist.repository.HistoricConsultaRepository;
 import es.caib.pinbal.scsp.ScspHelper;
 import es.scsp.bean.common.confirmacion.Atributos;
 import es.scsp.bean.common.confirmacion.ConfirmacionPeticion;
 import es.scsp.bean.common.confirmacion.Estado;
-import es.scsp.bean.common.peticion.DatosGenericos;
-import es.scsp.bean.common.peticion.Peticion;
-import es.scsp.bean.common.peticion.Solicitante;
-import es.scsp.bean.common.peticion.SolicitudTransmision;
-import es.scsp.bean.common.peticion.Titular;
-import es.scsp.bean.common.peticion.Transmision;
+import es.scsp.bean.common.peticion.*;
 import es.scsp.bean.common.respuesta.Respuesta;
 import es.scsp.bean.common.respuesta.TransmisionDatos;
 import es.scsp.common.exceptions.ScspException;
@@ -627,10 +616,10 @@ public class RecobrimentHelper implements ApplicationContextAware, MessageSource
 	}
 
 	private boolean getPropertyDatosEspecificosProcessar() {
-		return configHelper.getAsBoolean("es.caib.pinbal.recobriment.datos.especificos.processar", false);
+		return configHelper.getConfigAsBoolean("es.caib.pinbal.recobriment.datos.especificos.processar", false);
 	}
 	private boolean getPropertyDatosEspecificosIncloureNs() {
-		return configHelper.getAsBoolean("es.caib.pinbal.recobriment.datos.especificos.incloure.ns", false);
+		return configHelper.getConfigAsBoolean("es.caib.pinbal.recobriment.datos.especificos.incloure.ns", false);
 	}
 
 	private void aplicarGestioJustificantArxiu(

@@ -1,24 +1,28 @@
 package es.caib.pinbal.logic.helper.mock;
 
-import com.lowagie.text.Document;
-import com.lowagie.text.DocumentException;
-import com.lowagie.text.Element;
+import com.lowagie.text.*;
 import com.lowagie.text.Font;
-import com.lowagie.text.Paragraph;
-import com.lowagie.text.Phrase;
 import com.lowagie.text.pdf.PdfPCell;
 import com.lowagie.text.pdf.PdfPTable;
 import com.lowagie.text.pdf.PdfWriter;
-import es.caib.pinbal.core.dto.FitxerDto;
-import es.caib.pinbal.core.dto.JustificantEstat;
+import es.caib.pinbal.logic.helper.ConfigHelper;
+import es.caib.pinbal.logic.helper.ConversioTipusDocumentHelper;
+import es.caib.pinbal.logic.helper.IntegracioHelper;
 import es.caib.pinbal.logic.helper.JustificantHelper;
-import es.caib.pinbal.logic.model.IConsulta;
+import es.caib.pinbal.logic.helper.PluginHelper;
+import es.caib.pinbal.logic.intf.dto.FitxerDto;
+import es.caib.pinbal.logic.intf.dto.JustificantEstat;
+import es.caib.pinbal.persist.entity.IConsulta;
+import es.caib.pinbal.persist.repository.ConsultaRepository;
+import es.caib.pinbal.persist.repository.HistoricConsultaRepository;
+import es.caib.pinbal.persist.repository.ServeiConfigRepository;
+import es.caib.pinbal.persist.repository.ServeiJustificantCampRepository;
 import es.caib.pinbal.scsp.ScspHelper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
-import java.awt.Color;
+import java.awt.*;
 import java.io.ByteArrayOutputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -45,6 +49,24 @@ public class JustificantHelperMock extends JustificantHelper {
 
     private static final String MOCK_PREFIX = "🔧 [MOCK JUSTIFICANT]";
     private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+
+    public JustificantHelperMock(ServeiJustificantCampRepository serveiJustificantCampRepository,
+                                 ServeiConfigRepository serveiConfigRepository,
+                                 ConversioTipusDocumentHelper conversioTipusDocumentHelper,
+                                 PluginHelper pluginHelper,
+                                 IntegracioHelper integracioHelper,
+                                 ConfigHelper configHelper,
+                                 ConsultaRepository consultaRepository,
+                                 HistoricConsultaRepository historicConsultaRepository) {
+        super(  serveiJustificantCampRepository,
+                serveiConfigRepository,
+                conversioTipusDocumentHelper,
+                pluginHelper,
+                integracioHelper,
+                configHelper,
+                consultaRepository,
+                historicConsultaRepository);
+    }
 
     @Override
     public void generarCustodiarJustificantPendent(

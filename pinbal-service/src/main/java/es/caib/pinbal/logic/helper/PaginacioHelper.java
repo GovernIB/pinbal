@@ -3,12 +3,11 @@
  */
 package es.caib.pinbal.logic.helper;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
-import javax.annotation.Resource;
-
+import es.caib.pinbal.logic.intf.dto.PaginaDto;
+import es.caib.pinbal.logic.intf.dto.PaginacioAmbOrdreDto;
+import es.caib.pinbal.logic.intf.dto.PaginacioAmbOrdreDto.OrdreDireccioDto;
+import es.caib.pinbal.logic.intf.dto.PaginacioAmbOrdreDto.OrdreDto;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -17,10 +16,9 @@ import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.domain.Sort.Order;
 import org.springframework.stereotype.Component;
 
-import es.caib.pinbal.core.dto.PaginaDto;
-import es.caib.pinbal.core.dto.PaginacioAmbOrdreDto;
-import es.caib.pinbal.core.dto.PaginacioAmbOrdreDto.OrdreDireccioDto;
-import es.caib.pinbal.core.dto.PaginacioAmbOrdreDto.OrdreDto;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Helper per a convertir les dades de paginació entre el DTO
@@ -28,18 +26,18 @@ import es.caib.pinbal.core.dto.PaginacioAmbOrdreDto.OrdreDto;
  * 
  * @author Limit Tecnologies <limit@limit.es>
  */
+@RequiredArgsConstructor
 @Component
 public class PaginacioHelper {
 
-	@Resource
-	private DtoMappingHelper dtoMappingHelper;
+	private final DtoMappingHelper dtoMappingHelper;
 	
 	public boolean esPaginacioActivada(PaginacioAmbOrdreDto dto) {
 		return dto.getPaginaTamany() > 0;
 	}
 
 	public <T> Pageable toSpringDataPageable(PaginacioAmbOrdreDto dto, Map<String, String[]> mapeigPropietatsOrdenacio) {
-		return new PageRequest(
+		return PageRequest.of(
 				dto.getPaginaNum(),
 				dto.getPaginaTamany(),
 				toSpringDataSort(dto.getOrdres(), mapeigPropietatsOrdenacio));
@@ -74,7 +72,7 @@ public class PaginacioHelper {
 			}
 		}
 		if (!orders.isEmpty())
-			return new Sort(orders);
+			return Sort.by(orders);
 		else
 			return null;
 	}

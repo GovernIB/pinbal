@@ -1,10 +1,10 @@
 package es.caib.pinbal.logic.helper;
 
-import es.caib.pinbal.core.dto.ServeiCampDto;
-import es.caib.pinbal.core.dto.ServeiCampGrupDto;
-import es.caib.pinbal.core.dto.regles.CampFormProperties;
-import es.caib.pinbal.core.service.ServeiService;
-import es.caib.pinbal.core.service.exception.ServeiNotFoundException;
+import es.caib.pinbal.logic.intf.dto.ServeiCampDto;
+import es.caib.pinbal.logic.intf.dto.ServeiCampGrupDto;
+import es.caib.pinbal.logic.intf.dto.regles.CampFormProperties;
+import es.caib.pinbal.logic.intf.service.ServeiService;
+import es.caib.pinbal.logic.intf.service.exception.ServeiNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.joda.time.Days;
 import org.joda.time.LocalDate;
@@ -14,20 +14,13 @@ import org.springframework.validation.Validator;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
 @Slf4j
 // Classes auxiliars
-@SuppressWarnings("rawtypes")
 public class DadesConsultaSimpleValidator implements Validator {
 
     private final ServeiService serveiService;

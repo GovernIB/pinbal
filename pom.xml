@@ -9,12 +9,12 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>2.7.12</version>
+		<version>2.7.18</version>
 		<relativePath />
 	</parent>
 	<properties>
 		<axis2.version>1.6.4</axis2.version>
-		<poi.version>3.15</poi.version>
+		<poi.version>5.2.5</poi.version>
 		<axiom.version>1.2.15</axiom.version>
 		<rampart.version>1.6.4</rampart.version>
 		<firma.simple.version>1.0.3</firma.simple.version>
@@ -39,7 +39,8 @@
 		<jackson.version>2.14.1</jackson.version>
 		<cxf.version>3.2.5.redhat-00001</cxf.version>
 		<wss4j.version>2.2.2.redhat-00002</wss4j.version>
-		<xdocreport.version>2.0.4</xdocreport.version>
+		<jodconverter.version>4.4.11</jodconverter.version>
+		<xdocreport.version>2.2.0</xdocreport.version>
 		<arxiu.api.version>2.0.27</arxiu.api.version>
 		<pluginsib.arxiu.version>${arxiu.api.version}</pluginsib.arxiu.version>
 		<comanda.api.version>1.0.0</comanda.api.version>
@@ -100,21 +101,6 @@
 				<groupId>javax.ejb</groupId>
 				<artifactId>javax.ejb-api</artifactId>
 				<version>3.2.2</version>
-			</dependency>
-			<dependency>
-				<groupId>commons-beanutils</groupId>
-				<artifactId>commons-beanutils</artifactId>
-				<version>1.9.4</version>
-			</dependency>
-			<dependency>
-				<groupId>commons-io</groupId>
-				<artifactId>commons-io</artifactId>
-				<version>2.12.0</version>
-			</dependency>
-			<dependency>
-				<groupId>commons-fileupload</groupId>
-				<artifactId>commons-fileupload</artifactId>
-				<version>1.5</version>
 			</dependency>
 			<dependency>
 				<groupId>org.apache.commons</groupId>

@@ -3,30 +3,46 @@
  */
 package es.caib.pinbal.logic.service;
 
+import es.caib.comanda.model.server.monitoring.ContextInfo;
+import es.caib.comanda.model.server.monitoring.EstatSalut;
+import es.caib.comanda.model.server.monitoring.EstatSalutEnum;
+import es.caib.comanda.model.server.monitoring.FitxerContingut;
+import es.caib.comanda.model.server.monitoring.FitxerInfo;
+import es.caib.comanda.model.server.monitoring.InformacioSistema;
+import es.caib.comanda.model.server.monitoring.IntegracioInfo;
+import es.caib.comanda.model.server.monitoring.IntegracioSalut;
+import es.caib.comanda.model.server.monitoring.Manual;
+import es.caib.comanda.model.server.monitoring.MissatgeSalut;
+import es.caib.comanda.model.server.monitoring.SalutInfo;
+import es.caib.comanda.model.server.monitoring.SalutNivell;
+import es.caib.comanda.model.server.monitoring.SubsistemaInfo;
+import es.caib.comanda.model.server.monitoring.SubsistemaSalut;
 import es.caib.comanda.ms.log.helper.LogFileStream;
 import es.caib.comanda.ms.log.helper.LogHelper;
-import es.caib.comanda.ms.log.model.FitxerContingut;
-import es.caib.comanda.ms.log.model.FitxerInfo;
-import es.caib.comanda.ms.salut.model.*;
+import es.caib.comanda.ms.salut.helper.IntegracioApp;
+import es.caib.comanda.ms.salut.helper.MonitorHelper;
 import es.caib.pinbal.logic.helper.ConfigHelper;
-import es.caib.pinbal.logic.helper.MonitorHelper;
 import es.caib.pinbal.logic.helper.SubsistemaMetricHelper;
 import es.caib.pinbal.logic.helper.SubsistemaMetricHelper.SubsistemesEnum;
 import es.caib.pinbal.logic.helper.SubsistemaMetricHelper.SubsistemesInfo;
-import es.caib.pinbal.logic.model.Avis;
-import es.caib.pinbal.logic.model.Servei;
-import es.caib.pinbal.logic.repository.AvisRepository;
-import es.caib.pinbal.logic.repository.ServeiRepository;
+import es.caib.pinbal.logic.intf.service.SalutService;
+import es.caib.pinbal.persist.entity.Avis;
+import es.caib.pinbal.persist.entity.Servei;
+import es.caib.pinbal.persist.repository.AvisRepository;
+import es.caib.pinbal.persist.repository.ServeiRepository;
 import es.caib.pinbal.plugin.PluginMetricHelper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.time.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.io.File;
-import java.util.*;
-
-import static es.caib.comanda.ms.salut.helper.MonitorHelper.getInfoSistema;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
 
 /**
  * Implementació dels mètodes per a gestionar l'aplicació.
@@ -62,12 +78,12 @@ public class SalutServiceImpl implements SalutService {
         List<SubsistemaInfo> subsistemes = new ArrayList<>();
         // Subsistemes per consultes i obtenció de justificant
         for(SubsistemesEnum subsistema: SubsistemesEnum.values()) {
-            subsistemes.add(SubsistemaInfo.builder().codi(subsistema.name()).nom(subsistema.getNom()).build());
+            subsistemes.add(new SubsistemaInfo().codi(subsistema.name()).nom(subsistema.getNom()));
         }
         // Un subsistema per servei actiu
         List<Servei> serveisActius = serveiRepository.findActius();
         for (Servei servei : serveisActius) {
-            subsistemes.add(SubsistemaInfo.builder().codi(servei.getCodi()).nom(servei.getDescripcio()).build());
+            subsistemes.add(new SubsistemaInfo().codi(servei.getCodi()).nom(servei.getDescripcio()));
         }
         return subsistemes;
     }
@@ -76,30 +92,27 @@ public class SalutServiceImpl implements SalutService {
     public List<ContextInfo> getContexts(String baseUrl) {
         List<ContextInfo> contexts = new ArrayList<>();
         List<Manual> manuals = new ArrayList<>();
-        manuals.add(Manual.builder().nom("Manual d'usuari administrador").path("https://github.com/GovernIB/pinbal/raw/pinbal-1.4/doc/pdf/01_pinbal_usuari_admin.pdf").build());
-        manuals.add(Manual.builder().nom("Manual d'usuari representant").path("https://github.com/GovernIB/pinbal/raw/pinbal-1.4/doc/pdf/02_pinbal_usuari_representant.pdf").build());
-        manuals.add(Manual.builder().nom("Manual d'usuari delegat").path("https://github.com/GovernIB/pinbal/raw/pinbal-1.4/doc/pdf/03_pinbal_usuari_delegat.pdf").build());
-        manuals.add(Manual.builder().nom("Manual d'usuari auditor").path("https://github.com/GovernIB/pinbal/raw/pinbal-1.4/doc/pdf/04_pinbal_usuari_auditor.pdf").build());
-        manuals.add(Manual.builder().nom("Manual d'usuari superauditor").path("https://github.com/GovernIB/pinbal/raw/pinbal-1.4/doc/pdf/05_pinbal_usuari_superauditor.pdf").build());
-        manuals.add(Manual.builder().nom("Manual d'integració").path("https://github.com/GovernIB/pinbal/raw/pinbal-1.4/doc/pdf/12_pinbal_integracio_restv2.pdf").build());
-        contexts.add(ContextInfo.builder()
+        manuals.add(new Manual().nom("Manual d'usuari administrador").path("https://github.com/GovernIB/pinbal/raw/pinbal-1.4/doc/pdf/01_pinbal_usuari_admin.pdf"));
+        manuals.add(new Manual().nom("Manual d'usuari representant").path("https://github.com/GovernIB/pinbal/raw/pinbal-1.4/doc/pdf/02_pinbal_usuari_representant.pdf"));
+        manuals.add(new Manual().nom("Manual d'usuari delegat").path("https://github.com/GovernIB/pinbal/raw/pinbal-1.4/doc/pdf/03_pinbal_usuari_delegat.pdf"));
+        manuals.add(new Manual().nom("Manual d'usuari auditor").path("https://github.com/GovernIB/pinbal/raw/pinbal-1.4/doc/pdf/04_pinbal_usuari_auditor.pdf"));
+        manuals.add(new Manual().nom("Manual d'usuari superauditor").path("https://github.com/GovernIB/pinbal/raw/pinbal-1.4/doc/pdf/05_pinbal_usuari_superauditor.pdf"));
+        manuals.add(new Manual().nom("Manual d'integració").path("https://github.com/GovernIB/pinbal/raw/pinbal-1.4/doc/pdf/12_pinbal_integracio_restv2.pdf"));
+        contexts.add(new ContextInfo()
                 .codi("BACK")
                 .nom("Backoffice")
                 .path(baseUrl + "/pinbal")
-                .manuals(manuals)
-                .build());
-        contexts.add(ContextInfo.builder()
+                .manuals(manuals));
+        contexts.add(new ContextInfo()
                 .codi("INT")
                 .nom("API interna")
                 .path(baseUrl + "/pinbalapi/interna")
-                .api(baseUrl + "/pinbalapi/interna/api/rest")
-                .build());
-        contexts.add(ContextInfo.builder()
+                .api(baseUrl + "/pinbalapi/interna/api/rest"));
+        contexts.add(new ContextInfo()
                 .codi("EXT")
                 .nom("API externa")
                 .path(baseUrl + "/pinbalapi/externa")
-                .api(baseUrl + "/pinbalapi/externa/api/rest")
-                .build());
+                .api(baseUrl + "/pinbalapi/externa/api/rest"));
         return contexts;
     }
 
@@ -111,29 +124,27 @@ public class SalutServiceImpl implements SalutService {
         List<IntegracioSalut> integracions = checkIntegracions();   // Integracions
         SubsistemesInfo subsistemesInfo = checkSubsistemes();       // Subsistemes
         List<SubsistemaSalut> subsistemes = subsistemesInfo.getSubsistemesSalut();
-        InformacioSistema infoSistema = getInfoSistema();           // Informació sistemes
+        InformacioSistema infoSistema = MonitorHelper.getInfoSistema(); // Informació sistemes
         List<MissatgeSalut> missatges = checkMissatges();           // Missatges
 
         // So l'estat dels subsistemes no és UP, llavors l'estat de l'aplicació tampoc ho serà
         EstatSalutEnum estatGlobalSubsistemes = subsistemesInfo.getEstatGlobal();
         if (EstatSalutEnum.UP.equals(estatSalut.getEstat()) && !EstatSalutEnum.UP.equals(estatGlobalSubsistemes) && !EstatSalutEnum.UNKNOWN.equals(estatGlobalSubsistemes)) {
-            estatSalut = EstatSalut.builder()
+            estatSalut = new EstatSalut()
                     .estat(estatGlobalSubsistemes)
-                    .latencia(estatSalut.getLatencia())
-                    .build();
+                    .latencia(estatSalut.getLatencia());
         }
 
-        return SalutInfo.builder()
+        return new SalutInfo()
                 .codi("PBL")
                 .versio(versio)
-                .data(new Date())
+                .data(OffsetDateTime.now())
                 .estatGlobal(estatSalut)
                 .estatBaseDeDades(salutDatabase)
                 .integracions(integracions)
                 .subsistemes(subsistemes)
                 .informacioSistema(infoSistema)
-                .missatges(missatges)
-                .build();
+                .missatges(missatges);
     }
 
 
@@ -145,13 +156,12 @@ public class SalutServiceImpl implements SalutService {
             // (per exemple, accés a una propietat del sistema)
             String javaVersion = System.getProperty("java.version");
             int latencyMs = (int) ((System.nanoTime() - start) / 1_000_000L);
-            return EstatSalut.builder()
+            return new EstatSalut()
                     .estat(EstatSalutEnum.UP)
-                    .latencia(latencyMs)
-                    .build();
+                    .latencia(latencyMs);
         } catch (Exception e) {
             log.error("Error checkEstatSalut", e);
-            return EstatSalut.builder().estat(EstatSalutEnum.DOWN).build();
+            return new EstatSalut().estat(EstatSalutEnum.DOWN);
         }
     }
 
@@ -167,13 +177,12 @@ public class SalutServiceImpl implements SalutService {
             long latencyMs = System.currentTimeMillis() - start;
 
             // Construcció d'EstatSalut amb la informació bàsica
-            return EstatSalut.builder()
+            return new EstatSalut()
                     .estat(EstatSalutEnum.UP)
-                    .latencia((int) latencyMs)
-                    .build();
+                    .latencia((int) latencyMs);
         } catch (Exception e) {
             log.error("Error checkDatabase", e);
-            return EstatSalut.builder().estat(EstatSalutEnum.DOWN).build();
+            return new EstatSalut().estat(EstatSalutEnum.DOWN);
         }
     }
 
@@ -200,29 +209,6 @@ public class SalutServiceImpl implements SalutService {
         return subsistemesSalut;
     }
 
-    private List<DetallSalut> checkAltres() {
-        List<DetallSalut> detalls = new ArrayList<>();
-        detalls.add(DetallSalut.builder().codi("PRC").nom("Processadors").valor(String.valueOf(Runtime.getRuntime().availableProcessors())).build());
-        detalls.add(DetallSalut.builder().codi("SCPU").nom("Càrrega del sistema").valor(MonitorHelper.getCPULoad()).build());
-        detalls.add(DetallSalut.builder().codi("MED").nom("Memòria disponible").valor(MonitorHelper.humanReadableByteCount(Runtime.getRuntime().freeMemory())).build());
-        detalls.add(DetallSalut.builder().codi("MET").nom("Memòria total").valor(MonitorHelper.humanReadableByteCount(Runtime.getRuntime().totalMemory())).build());
-
-        long totalSpace = 0L;
-        long freeSpace = 0L;
-        try {
-            File root = new File("/");
-            totalSpace = root.getTotalSpace();
-            freeSpace = root.getFreeSpace();
-        } catch (Exception ignore) {
-        }
-        detalls.add(DetallSalut.builder().codi("EDT").nom("Espai de disc total").valor(MonitorHelper.humanReadableByteCount(totalSpace)).build());
-        detalls.add(DetallSalut.builder().codi("EDL").nom("Espai de disc lliure").valor(MonitorHelper.humanReadableByteCount(freeSpace)).build());
-        String os = System.getProperty("os.name") + " " + System.getProperty("os.version") + " (" + System.getProperty("os.arch") + ")";
-        detalls.add(DetallSalut.builder().codi("SO").nom("Sistema operatiu").valor(os).build());
-
-        return detalls;
-    }
-
     private List<MissatgeSalut> checkMissatges() {
 
         List<MissatgeSalut> missatges = new ArrayList<>();
@@ -241,11 +227,10 @@ public class SalutServiceImpl implements SalutService {
     }
 
     private MissatgeSalut toMissatgeSalut(Avis avis) {
-        return MissatgeSalut.builder()
+        return new MissatgeSalut()
                 .missatge(avis.getMissatge())
-                .data(avis.getDataInici())
-                .nivell(toSalutNivell(avis))
-                .build();
+                .data(avis.getDataInici().toInstant().atOffset(ZoneOffset.UTC))
+                .nivell(toSalutNivell(avis));
     }
 
     private SalutNivell toSalutNivell(Avis avis) {

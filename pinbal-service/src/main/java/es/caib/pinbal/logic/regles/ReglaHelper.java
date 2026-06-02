@@ -1,15 +1,15 @@
 package es.caib.pinbal.logic.regles;
 
-import es.caib.pinbal.core.dto.regles.CampFormProperties;
-import es.caib.pinbal.core.dto.regles.TipusVarEnum;
-import es.caib.pinbal.core.dto.regles.VariableFact;
-import es.caib.pinbal.logic.model.Servei;
-import es.caib.pinbal.logic.model.ServeiCamp;
-import es.caib.pinbal.logic.model.ServeiCampGrup;
-import es.caib.pinbal.logic.model.ServeiRegla;
-import es.caib.pinbal.logic.repository.ServeiCampGrupRepository;
-import es.caib.pinbal.logic.repository.ServeiCampRepository;
-import es.caib.pinbal.logic.repository.ServeiReglaRepository;
+import es.caib.pinbal.logic.intf.dto.regles.CampFormProperties;
+import es.caib.pinbal.logic.intf.dto.regles.TipusVarEnum;
+import es.caib.pinbal.logic.intf.dto.regles.VariableFact;
+import es.caib.pinbal.persist.entity.Servei;
+import es.caib.pinbal.persist.entity.ServeiCamp;
+import es.caib.pinbal.persist.entity.ServeiCampGrup;
+import es.caib.pinbal.persist.entity.ServeiRegla;
+import es.caib.pinbal.persist.repository.ServeiCampGrupRepository;
+import es.caib.pinbal.persist.repository.ServeiCampRepository;
+import es.caib.pinbal.persist.repository.ServeiReglaRepository;
 import org.jeasy.rules.api.Facts;
 import org.jeasy.rules.api.Rules;
 import org.jeasy.rules.api.RulesEngine;

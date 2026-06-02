@@ -1,9 +1,9 @@
 
 package es.caib.pinbal.logic.regles.condicio;
 
-import es.caib.pinbal.core.dto.regles.ModificatEnum;
-import es.caib.pinbal.core.dto.regles.TipusVarEnum;
-import es.caib.pinbal.core.dto.regles.VariableFact;
+import es.caib.pinbal.logic.intf.dto.regles.ModificatEnum;
+import es.caib.pinbal.logic.intf.dto.regles.TipusVarEnum;
+import es.caib.pinbal.logic.intf.dto.regles.VariableFact;
 import org.jeasy.rules.annotation.Action;
 import org.jeasy.rules.annotation.Condition;
 import org.jeasy.rules.annotation.Fact;

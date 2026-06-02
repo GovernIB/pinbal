@@ -3,31 +3,29 @@
  */
 package es.caib.pinbal.logic.helper;
 
+import es.caib.pinbal.logic.intf.dto.CarregaDto;
+import es.caib.pinbal.persist.repository.ConsultaRepository;
+import es.caib.pinbal.scsp.Solicitud;
+import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.time.DateUtils;
+import org.springframework.stereotype.Component;
+
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
-import org.apache.commons.lang.time.DateUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
-import es.caib.pinbal.core.dto.CarregaDto;
-import es.caib.pinbal.core.dto.CarregaDto.CarregaDetailedCountDto;
-import es.caib.pinbal.logic.repository.ConsultaRepository;
-import es.caib.pinbal.scsp.Solicitud;
-
 /**
  * Helper per a emmagatzemar les estadístiques de càrrega de peticions SCSP.
  * 
  * @author Limit Tecnologies <limit@limit.es>
  */
+@RequiredArgsConstructor
 @Component
 public class PeticioScspEstadistiquesHelper {
 
-	@Autowired
-	private ConsultaRepository consultaRepository;
+	private final ConsultaRepository consultaRepository;
 
 	private List<CarregaDto> carreguesAny;
 	private List<CarregaDto> carreguesMes;
@@ -57,7 +55,7 @@ public class PeticioScspEstadistiquesHelper {
 			long countWebHora = getCountFromCarregues(carrega, carreguesHora, true);
 			long countWebMinut = getCountFromCarregues(carrega, carreguesMinut, true);
 			carrega.setDetailedWebCount(
-					new CarregaDetailedCountDto(
+					new CarregaDto.CarregaDetailedCountDto(
 							carregaAny.getCountWeb(),
 							countWebMes,
 							countWebDia,
@@ -68,7 +66,7 @@ public class PeticioScspEstadistiquesHelper {
 			long countRecobrimentHora = getCountFromCarregues(carrega, carreguesHora, false);
 			long countRecobrimentMinut = getCountFromCarregues(carrega, carreguesMinut, false);
 			carrega.setDetailedRecobrimentCount(
-					new CarregaDetailedCountDto(
+					new CarregaDto.CarregaDetailedCountDto(
 							carregaAny.getCountRecobriment(),
 							countRecobrimentMes,
 							countRecobrimentDia,

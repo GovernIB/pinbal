@@ -8,6 +8,7 @@ import es.caib.pinbal.logic.intf.dto.ConfigGroupDto;
 import org.springframework.context.annotation.Primary;
 import org.springframework.security.access.prepost.PreAuthorize;
 
+import javax.annotation.security.PermitAll;
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.Stateless;
 import java.util.List;
@@ -41,10 +42,22 @@ public class ConfigServiceBean extends AbstractService<es.caib.pinbal.logic.intf
 
     @Override
 	@RolesAllowed({"PBL_ADMIN"})
+    public void actualitzarPropietatsJBossBdd() {
+        getDelegateService().actualitzarPropietatsJBossBdd();
+    }
+
+    @Override
+	@RolesAllowed({"PBL_ADMIN"})
     public void reiniciarTasques() {
         getDelegateService().reiniciarTasques();
     }
-    
+
+    @Override
+	@PermitAll
+    public void propagateDbProperties() {
+        getDelegateService().propagateDbProperties();
+    }
+
     @Override
 	@PreAuthorize("isAuthenticated()")
 	public String getTempsErrorsMonitorIntegracio() {

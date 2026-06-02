@@ -1,9 +1,9 @@
 package es.caib.pinbal.logic.helper;
 
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
@@ -11,11 +11,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Slf4j
+@RequiredArgsConstructor
 @Component
 public class LoggerHelper {
 
-    @Autowired
-    ConfigHelper configHelper;
+    private final ConfigHelper configHelper;
 
     @Setter
     private static Map<LoggingTipus, Boolean> logs = new HashMap<>();
@@ -80,7 +80,7 @@ public class LoggerHelper {
     private void getLogTipus(LoggingTipus tipus) {
 
         try {
-            logs.put(tipus, configHelper.getAsBoolean(PREFIX + tipus, false));
+            logs.put(tipus, configHelper.getConfigAsBoolean(PREFIX + tipus, false));
         } catch (Exception ex) {
             logs.put(tipus, false);
             log.error("Error obtenint la config key ", ex);

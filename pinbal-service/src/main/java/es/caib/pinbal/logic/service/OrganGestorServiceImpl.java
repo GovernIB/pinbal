@@ -1,15 +1,16 @@
 package es.caib.pinbal.logic.service;
 
-import es.caib.pinbal.core.dto.OrganGestorDto;
-import es.caib.pinbal.core.dto.OrganGestorEstatEnum;
-import es.caib.pinbal.core.dto.PaginacioAmbOrdreDto;
 import es.caib.pinbal.logic.helper.DtoMappingHelper;
 import es.caib.pinbal.logic.helper.PaginacioHelper;
 import es.caib.pinbal.logic.helper.PluginHelper;
-import es.caib.pinbal.logic.model.Entitat;
-import es.caib.pinbal.logic.model.OrganGestor;
-import es.caib.pinbal.logic.repository.EntitatRepository;
-import es.caib.pinbal.logic.repository.OrganGestorRepository;
+import es.caib.pinbal.logic.intf.dto.OrganGestorDto;
+import es.caib.pinbal.logic.intf.dto.OrganGestorEstatEnum;
+import es.caib.pinbal.logic.intf.dto.PaginacioAmbOrdreDto;
+import es.caib.pinbal.logic.intf.service.OrganGestorService;
+import es.caib.pinbal.persist.entity.Entitat;
+import es.caib.pinbal.persist.entity.OrganGestor;
+import es.caib.pinbal.persist.repository.EntitatRepository;
+import es.caib.pinbal.persist.repository.OrganGestorRepository;
 import es.caib.pinbal.plugin.unitat.NodeDir3;
 import es.caib.pinbal.plugin.unitat.UnitatOrganitzativa;
 import lombok.extern.slf4j.Slf4j;
@@ -21,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -51,7 +53,7 @@ public class OrganGestorServiceImpl implements OrganGestorService {
 	@Transactional(readOnly = true)
 	public OrganGestorDto findItem(Long id) {
 		log.debug("Consulta d'un òrgan gestor (id=" + id + ")");
-		OrganGestor organGestor = organGestorRepository.findOne(id);
+		OrganGestor organGestor = organGestorRepository.findById(id).orElse(null);
 		OrganGestorDto resposta = dtoMappingHelper.convertir(organGestor, OrganGestorDto.class);
 		return resposta;
 	}
@@ -59,7 +61,10 @@ public class OrganGestorServiceImpl implements OrganGestorService {
 	@Transactional(readOnly = true)
 	public List<OrganGestorDto> findByEntitat(Long entitatId) {
 		log.debug("Consulta dels òrgans d'una entitat (entitatId=" + entitatId + ")");
-		Entitat entitat = entitatRepository.findOne(entitatId);
+		Entitat entitat = entitatRepository.findById(entitatId).orElse(null);
+		if (entitat == null) {
+			return Collections.emptyList();
+		}
 		List<OrganGestor> organs = entitat.getOrganGestors();
 		return dtoMappingHelper.convertirList(organs, OrganGestorDto.class);
 	}
@@ -82,7 +87,7 @@ public class OrganGestorServiceImpl implements OrganGestorService {
 	@Transactional
 	public boolean syncDir3OrgansGestors(Long entitatId) throws Exception {
 		log.debug("Sincronització dels òrgans d'una entitat (entitatId=" + entitatId + ")");
-		Entitat entitat = entitatRepository.findOne(entitatId);
+		Entitat entitat = entitatRepository.findById(entitatId).orElseThrow();
 		if (entitat.getUnitatArrel() == null || entitat.getUnitatArrel().isEmpty()) {
 			throw new Exception("organgestor.controller.sync.dir3.asociat.error");
 		}
@@ -134,7 +139,7 @@ public class OrganGestorServiceImpl implements OrganGestorService {
 				"filtrePareCodi=" + filtrePareCodi + ", " +
 				"filtreEstat=" + filtreEstat + ", " +
 				"paginacioDto=" + paginacioDto + ")");
-		Entitat entitat = entitatRepository.findOne(entitatId);
+		Entitat entitat = entitatRepository.findById(entitatId).orElse(null);
 
 		Map<String, String[]> ordenacioMap = new HashMap<String, String[]>();
 		ordenacioMap.put("pareCodiINom", new String[] {"pare.codi"});

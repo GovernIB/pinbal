@@ -3,46 +3,12 @@
  */
 package es.caib.pinbal.logic.helper;
 
-import es.caib.pinbal.core.dto.ClauPrivadaDto;
-import es.caib.pinbal.core.dto.ConfigDto;
-import es.caib.pinbal.core.dto.ConfigGroupDto;
-import es.caib.pinbal.core.dto.ConsultaDto;
-import es.caib.pinbal.core.dto.EntitatDto;
-import es.caib.pinbal.core.dto.EntitatUsuariDto;
-import es.caib.pinbal.core.dto.InformeUsuariDto;
-import es.caib.pinbal.core.dto.IntegracioAccioDto;
-import es.caib.pinbal.core.dto.IntegracioAccioParamDto;
-import es.caib.pinbal.core.dto.NumElementsPaginaEnum;
-import es.caib.pinbal.core.dto.OrganGestorDto;
-import es.caib.pinbal.core.dto.ProcedimentDto;
-import es.caib.pinbal.core.dto.ServeiCampDto;
-import es.caib.pinbal.core.dto.ServeiCampGrupDto;
-import es.caib.pinbal.core.dto.ServeiDto;
-import es.caib.pinbal.core.dto.UsuariDto;
-import es.caib.pinbal.core.dto.regles.ServeiReglaDto;
-import es.caib.pinbal.logic.model.ClauPrivada;
-import es.caib.pinbal.logic.model.Config;
-import es.caib.pinbal.logic.model.ConfigGroup;
-import es.caib.pinbal.logic.model.Consulta;
-import es.caib.pinbal.logic.model.Entitat;
-import es.caib.pinbal.logic.model.EntitatUsuari;
-import es.caib.pinbal.logic.model.HistoricConsulta;
-import es.caib.pinbal.logic.model.IntegracioAccioEntity;
-import es.caib.pinbal.logic.model.IntegracioAccioParamEntity;
-import es.caib.pinbal.logic.model.OrganGestor;
-import es.caib.pinbal.logic.model.Procediment;
-import es.caib.pinbal.logic.model.Servei;
-import es.caib.pinbal.logic.model.ServeiCamp;
-import es.caib.pinbal.logic.model.ServeiCampGrup;
-import es.caib.pinbal.logic.model.ServeiRegla;
-import es.caib.pinbal.logic.model.Usuari;
-import es.caib.pinbal.logic.model.llistat.LlistatConsulta;
-import es.caib.pinbal.logic.model.llistat.LlistatHistoricConsulta;
-import ma.glasnost.orika.CustomConverter;
-import ma.glasnost.orika.CustomMapper;
-import ma.glasnost.orika.MapperFacade;
-import ma.glasnost.orika.MapperFactory;
-import ma.glasnost.orika.MappingContext;
+import es.caib.pinbal.logic.intf.dto.*;
+import es.caib.pinbal.logic.intf.dto.regles.ServeiReglaDto;
+import es.caib.pinbal.persist.entity.*;
+import es.caib.pinbal.persist.entity.llistat.LlistatConsulta;
+import es.caib.pinbal.persist.entity.llistat.LlistatHistoricConsulta;
+import ma.glasnost.orika.*;
 import ma.glasnost.orika.impl.DefaultMapperFactory;
 import ma.glasnost.orika.metadata.ClassMapBuilder;
 import ma.glasnost.orika.metadata.Type;
@@ -74,23 +40,22 @@ public class DtoMappingHelper {
 		mapperFactory.registerClassMap(ClassMapBuilder.map(Servei.class, ServeiDto.class).byDefault().toClassMap());
 		mapperFactory.registerClassMap(ClassMapBuilder.map(Entitat.class, EntitatDto.class).byDefault().toClassMap());
 		mapperFactory.getConverterFactory().registerConverter(new CustomConverter<EntitatUsuari, EntitatUsuariDto>() {
-			public EntitatUsuariDto convert(EntitatUsuari source, Type<? extends EntitatUsuariDto> destinationClass) {
-				EntitatUsuariDto dto = new EntitatUsuariDto(
-						new UsuariDto(
-								source.getUsuari().getCodi(),
-								source.getUsuari().getNif(),
-								source.getUsuari().getNom(),
-								source.getUsuari().isInicialitzat(),
-								source.getUsuari().isNoInicialitzatNif(),
-								source.getUsuari().isNoInicialitzatCodi()),
-						source.getDepartament(),
-						source.isPrincipal(),
-						source.isRepresentant(),
-						source.isDelegat(),
-						source.isAuditor(),
-						source.isAplicacio(),
-						source.isActiu());
-				return dto;
+			public EntitatUsuariDto convert(EntitatUsuari source, Type<? extends EntitatUsuariDto> destinationClass, MappingContext mappingContext) {
+                return new EntitatUsuariDto(
+                        new UsuariDto(
+                                source.getUsuari().getCodi(),
+                                source.getUsuari().getNif(),
+                                source.getUsuari().getNom(),
+                                source.getUsuari().isInicialitzat(),
+                                source.getUsuari().isNoInicialitzatNif(),
+                                source.getUsuari().isNoInicialitzatCodi()),
+                        source.getDepartament(),
+                        source.isPrincipal(),
+                        source.isRepresentant(),
+                        source.isDelegat(),
+                        source.isAuditor(),
+                        source.isAplicacio(),
+                        source.isActiu());
 			}
 		});
 		// Mapeig de procediments
@@ -174,7 +139,7 @@ public class DtoMappingHelper {
 						.exclude("numElementsPagina")
 						.byDefault().toClassMap());
 		mapperFactory.getConverterFactory().registerConverter(new CustomConverter<DateTime, Date>() {
-			public Date convert(DateTime source, Type<? extends Date> destinationClass) {
+			public Date convert(DateTime source, Type<? extends Date> destinationClass, MappingContext mappingContext) {
 				return source.toDate();
 			}
 		});

@@ -4,6 +4,7 @@
 package es.caib.pinbal.logic.service;
 
 import es.caib.pinbal.logic.helper.ConfigHelper;
+import es.caib.pinbal.logic.intf.service.PropertyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

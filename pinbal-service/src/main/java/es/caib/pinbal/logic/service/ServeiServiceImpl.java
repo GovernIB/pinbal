@@ -3,29 +3,6 @@
  */
 package es.caib.pinbal.logic.service;
 
-import es.caib.pinbal.core.dto.ArbreDto;
-import es.caib.pinbal.core.dto.ClauPrivadaDto;
-import es.caib.pinbal.core.dto.ClauPublicaDto;
-import es.caib.pinbal.core.dto.DadaEspecificaDto;
-import es.caib.pinbal.core.dto.DadaEspecificaDto.TipusDadaComplexaEnum;
-import es.caib.pinbal.core.dto.EmisorDto;
-import es.caib.pinbal.core.dto.EntitatDto;
-import es.caib.pinbal.core.dto.FitxerDto;
-import es.caib.pinbal.core.dto.NodeDto;
-import es.caib.pinbal.core.dto.ProcedimentDto;
-import es.caib.pinbal.core.dto.ProcedimentServeiDto;
-import es.caib.pinbal.core.dto.ServeiBusDto;
-import es.caib.pinbal.core.dto.ServeiCampDto;
-import es.caib.pinbal.core.dto.ServeiCampDto.ServeiCampDtoTipus;
-import es.caib.pinbal.core.dto.ServeiCampGrupDto;
-import es.caib.pinbal.core.dto.ServeiDto;
-import es.caib.pinbal.core.dto.ServeiDto.EntitatTipusDto;
-import es.caib.pinbal.core.dto.ServeiDto.JustificantTipusDto;
-import es.caib.pinbal.core.dto.ServeiJustificantCampDto;
-import es.caib.pinbal.core.dto.ServeiXsdDto;
-import es.caib.pinbal.core.dto.XsdTipusEnumDto;
-import es.caib.pinbal.core.dto.regles.CampFormProperties;
-import es.caib.pinbal.core.dto.regles.ServeiReglaDto;
 import es.caib.pinbal.logic.helper.CacheHelper;
 import es.caib.pinbal.logic.helper.DtoMappingHelper;
 import es.caib.pinbal.logic.helper.PermisosHelper;
@@ -34,47 +11,71 @@ import es.caib.pinbal.logic.helper.PluginHelper;
 import es.caib.pinbal.logic.helper.ServeiHelper;
 import es.caib.pinbal.logic.helper.ServeiXsdHelper;
 import es.caib.pinbal.logic.helper.UsuariHelper;
-import es.caib.pinbal.logic.model.ClauPrivada;
-import es.caib.pinbal.logic.model.Entitat;
-import es.caib.pinbal.logic.model.EntitatServei;
-import es.caib.pinbal.logic.model.EntitatUsuari;
-import es.caib.pinbal.logic.model.Procediment;
-import es.caib.pinbal.logic.model.ProcedimentServei;
-import es.caib.pinbal.logic.model.Servei;
-import es.caib.pinbal.logic.model.ServeiBus;
-import es.caib.pinbal.logic.model.ServeiCamp;
-import es.caib.pinbal.logic.model.ServeiCamp.ServeiCampTipus;
-import es.caib.pinbal.logic.model.ServeiCampGrup;
-import es.caib.pinbal.logic.model.ServeiConfig;
-import es.caib.pinbal.logic.model.ServeiConfig.EntitatTipus;
-import es.caib.pinbal.logic.model.ServeiConfig.JustificantTipus;
-import es.caib.pinbal.logic.model.ServeiJustificantCamp;
-import es.caib.pinbal.logic.model.ServeiRegla;
-import es.caib.pinbal.logic.model.ServeiXsd;
+import es.caib.pinbal.logic.intf.dto.ArbreDto;
+import es.caib.pinbal.logic.intf.dto.ClauPrivadaDto;
+import es.caib.pinbal.logic.intf.dto.ClauPublicaDto;
+import es.caib.pinbal.logic.intf.dto.DadaEspecificaDto;
+import es.caib.pinbal.logic.intf.dto.DadaEspecificaDto.TipusDadaComplexaEnum;
+import es.caib.pinbal.logic.intf.dto.EmisorDto;
+import es.caib.pinbal.logic.intf.dto.EntitatDto;
+import es.caib.pinbal.logic.intf.dto.FitxerDto;
+import es.caib.pinbal.logic.intf.dto.NodeDto;
+import es.caib.pinbal.logic.intf.dto.ProcedimentDto;
+import es.caib.pinbal.logic.intf.dto.ProcedimentServeiDto;
+import es.caib.pinbal.logic.intf.dto.ServeiBusDto;
+import es.caib.pinbal.logic.intf.dto.ServeiCampDto;
+import es.caib.pinbal.logic.intf.dto.ServeiCampDto.ServeiCampDtoTipus;
+import es.caib.pinbal.logic.intf.dto.ServeiCampGrupDto;
+import es.caib.pinbal.logic.intf.dto.ServeiDto;
+import es.caib.pinbal.logic.intf.dto.ServeiDto.EntitatTipusDto;
+import es.caib.pinbal.logic.intf.dto.ServeiDto.JustificantTipusDto;
+import es.caib.pinbal.logic.intf.dto.ServeiJustificantCampDto;
+import es.caib.pinbal.logic.intf.dto.ServeiXsdDto;
+import es.caib.pinbal.logic.intf.dto.XsdTipusEnumDto;
+import es.caib.pinbal.logic.intf.dto.regles.CampFormProperties;
+import es.caib.pinbal.logic.intf.dto.regles.ServeiReglaDto;
+import es.caib.pinbal.logic.intf.service.ServeiService;
+import es.caib.pinbal.logic.intf.service.exception.EntitatNotFoundException;
+import es.caib.pinbal.logic.intf.service.exception.NotFoundException;
+import es.caib.pinbal.logic.intf.service.exception.ProcedimentNotFoundException;
+import es.caib.pinbal.logic.intf.service.exception.ScspException;
+import es.caib.pinbal.logic.intf.service.exception.ServeiAmbConsultesException;
+import es.caib.pinbal.logic.intf.service.exception.ServeiBusNotFoundException;
+import es.caib.pinbal.logic.intf.service.exception.ServeiCampGrupNotFoundException;
+import es.caib.pinbal.logic.intf.service.exception.ServeiCampNotFoundException;
+import es.caib.pinbal.logic.intf.service.exception.ServeiNotFoundException;
 import es.caib.pinbal.logic.regles.ReglaHelper;
-import es.caib.pinbal.logic.repository.ClauPrivadaRepository;
-import es.caib.pinbal.logic.repository.EntitatRepository;
-import es.caib.pinbal.logic.repository.EntitatServeiRepository;
-import es.caib.pinbal.logic.repository.EntitatUsuariRepository;
-import es.caib.pinbal.logic.repository.ProcedimentRepository;
-import es.caib.pinbal.logic.repository.ProcedimentServeiRepository;
-import es.caib.pinbal.logic.repository.ServeiBusRepository;
-import es.caib.pinbal.logic.repository.ServeiCampGrupRepository;
-import es.caib.pinbal.logic.repository.ServeiCampRepository;
-import es.caib.pinbal.logic.repository.ServeiConfigRepository;
-import es.caib.pinbal.logic.repository.ServeiJustificantCampRepository;
-import es.caib.pinbal.logic.repository.ServeiReglaRepository;
-import es.caib.pinbal.logic.repository.ServeiRepository;
-import es.caib.pinbal.logic.repository.ServeiXsdRepository;
-import es.caib.pinbal.core.service.exception.EntitatNotFoundException;
-import es.caib.pinbal.core.service.exception.NotFoundException;
-import es.caib.pinbal.core.service.exception.ProcedimentNotFoundException;
-import es.caib.pinbal.core.service.exception.ScspException;
-import es.caib.pinbal.core.service.exception.ServeiAmbConsultesException;
-import es.caib.pinbal.core.service.exception.ServeiBusNotFoundException;
-import es.caib.pinbal.core.service.exception.ServeiCampGrupNotFoundException;
-import es.caib.pinbal.core.service.exception.ServeiCampNotFoundException;
-import es.caib.pinbal.core.service.exception.ServeiNotFoundException;
+import es.caib.pinbal.persist.entity.ClauPrivada;
+import es.caib.pinbal.persist.entity.Entitat;
+import es.caib.pinbal.persist.entity.EntitatServei;
+import es.caib.pinbal.persist.entity.EntitatUsuari;
+import es.caib.pinbal.persist.entity.Procediment;
+import es.caib.pinbal.persist.entity.ProcedimentServei;
+import es.caib.pinbal.persist.entity.Servei;
+import es.caib.pinbal.persist.entity.ServeiBus;
+import es.caib.pinbal.persist.entity.ServeiCamp;
+import es.caib.pinbal.persist.entity.ServeiCamp.ServeiCampTipus;
+import es.caib.pinbal.persist.entity.ServeiCampGrup;
+import es.caib.pinbal.persist.entity.ServeiConfig;
+import es.caib.pinbal.persist.entity.ServeiConfig.EntitatTipus;
+import es.caib.pinbal.persist.entity.ServeiConfig.JustificantTipus;
+import es.caib.pinbal.persist.entity.ServeiJustificantCamp;
+import es.caib.pinbal.persist.entity.ServeiRegla;
+import es.caib.pinbal.persist.entity.ServeiXsd;
+import es.caib.pinbal.persist.repository.ClauPrivadaRepository;
+import es.caib.pinbal.persist.repository.EntitatRepository;
+import es.caib.pinbal.persist.repository.EntitatServeiRepository;
+import es.caib.pinbal.persist.repository.EntitatUsuariRepository;
+import es.caib.pinbal.persist.repository.ProcedimentRepository;
+import es.caib.pinbal.persist.repository.ProcedimentServeiRepository;
+import es.caib.pinbal.persist.repository.ServeiBusRepository;
+import es.caib.pinbal.persist.repository.ServeiCampGrupRepository;
+import es.caib.pinbal.persist.repository.ServeiCampRepository;
+import es.caib.pinbal.persist.repository.ServeiConfigRepository;
+import es.caib.pinbal.persist.repository.ServeiJustificantCampRepository;
+import es.caib.pinbal.persist.repository.ServeiReglaRepository;
+import es.caib.pinbal.persist.repository.ServeiRepository;
+import es.caib.pinbal.persist.repository.ServeiXsdRepository;
 import es.caib.pinbal.scsp.ScspHelper;
 import es.caib.pinbal.scsp.XmlHelper.DadesEspecifiquesNode;
 import es.caib.pinbal.scsp.tree.Node;
@@ -112,6 +113,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -339,7 +342,7 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
             Long serveiConfigId,
             boolean useCertificatEntitat) throws ServeiNotFoundException {
 
-        ServeiConfig serveiConfig = serveiConfigRepository.findOne(serveiConfigId);
+        ServeiConfig serveiConfig = serveiConfigRepository.findById(serveiConfigId).orElse(null);
         if (serveiConfig == null) {
             throw new ServeiNotFoundException(serveiConfigId.toString());
         }
@@ -389,7 +392,7 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 					ProcedimentServei.class,
 					procedimentServei.getId(),
 					aclService);
-			procedimentServeiRepository.delete(procedimentsServei);
+			procedimentServeiRepository.deleteAll(procedimentsServei);
 			cacheHelper.evictServeisProcediment(procediment.getCodi());
 		}
 
@@ -474,7 +477,7 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 	public ServeiDto findById(Long id) {
 		log.debug("Cercant el servei (id= " + id + ")");
 		return dtoMappingHelper.getMapperFacade().map(
-				serveiRepository.findOne(id),
+				serveiRepository.findById(id).orElse(null),
 				ServeiDto.class);
 	}
 
@@ -569,7 +572,7 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 
 		List<String> serveisProcedimentActiusIds = procedimentServeiRepository.findServeisProcedimenActiustServeisIds(
 				entitatRepository.findByCodi(entitat.getCodi()),
-				procedimentRepository.findOne(procediment.getId())
+				procedimentRepository.findById(procediment.getId()).orElse(null)
 		);
 		if (serveisProcedimentActiusIds != null && serveisProcedimentActiusIds.isEmpty()) {
 			serveisProcedimentActiusIds = null;
@@ -590,7 +593,7 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 
 		List<ProcedimentServei> serveisProcediment = procedimentServeiRepository.findServeisProcediment(
 				entitatRepository.findByCodi(entitat.getCodi()),
-				procedimentRepository.findOne(procediment.getId())
+				procedimentRepository.findById(procediment.getId()).orElse(null)
 		);
 		List<ServeiConfig> serveisConfig = serveiConfigRepository.findByServeiIn(serveisEntitat);
 
@@ -689,7 +692,7 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 			throws EntitatNotFoundException {
 		log.debug("Cercant els servicios actius per a l'entitat (id="
 				+ entitatId + ")");
-		Entitat entitat = entitatRepository.findOne(entitatId);
+		Entitat entitat = entitatRepository.findById(entitatId).orElse(null);
 		if (entitat == null) {
 			log.debug("No s'ha trobat l'entitat (id=" + entitatId + ")");
 			throw new EntitatNotFoundException();
@@ -716,7 +719,7 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 			throws EntitatNotFoundException {
 		log.debug("Cercant els servicios actius per a l'entitat (id="
 				+ entitatId + ") y filtre: " + filtre);
-		Entitat entitat = entitatRepository.findOne(entitatId);
+		Entitat entitat = entitatRepository.findById(entitatId).orElse(null);
 		if (entitat == null) {
 			log.debug("No s'ha trobat l'entitat (id=" + entitatId + ")");
 			throw new EntitatNotFoundException();
@@ -747,12 +750,12 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 			Long entitatId,
 			Long procedimentId) throws EntitatNotFoundException, ProcedimentNotFoundException {
 		log.debug("Cercant els servicios (entitatId=" + entitatId + ", procedimentId=" + procedimentId + ")");
-		Entitat entitat = entitatRepository.findOne(entitatId);
+		Entitat entitat = entitatRepository.findById(entitatId).orElse(null);
 		if (entitat == null) {
 			log.debug("No s'ha trobat l'entitat (id=" + entitatId + ")");
 			throw new EntitatNotFoundException();
 		}
-		Procediment procediment = procedimentRepository.findOne(procedimentId);
+		Procediment procediment = procedimentRepository.findById(procedimentId).orElse(null);
 		if (procediment == null) {
 			log.debug("No s'ha trobat el procediment (id=" + procedimentId + ")");
 			throw new ProcedimentNotFoundException();
@@ -781,7 +784,7 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 	public List<ServeiDto> findAmbProcediment(
 			Long procedimentId) throws ProcedimentNotFoundException {
 		log.debug("Cercant els servicios (procedimentId=" + procedimentId + ")");
-		Procediment procediment = procedimentRepository.findOne(procedimentId);
+		Procediment procediment = procedimentRepository.findById(procedimentId).orElse(null);
 		if (procediment == null) {
 			log.debug("No s'ha trobat el procediment (id=" + procedimentId + ")");
 			throw new ProcedimentNotFoundException();
@@ -811,12 +814,12 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 			Long procedimentId,
 			String filtre) throws EntitatNotFoundException, ProcedimentNotFoundException {
 		log.debug("Cercant els servicios (entitatId=" + entitatId + ", procedimentId=" + procedimentId + ", filtre=" + filtre + "\")");
-		Entitat entitat = entitatRepository.findOne(entitatId);
+		Entitat entitat = entitatRepository.findById(entitatId).orElse(null);
 		if (entitat == null) {
 			log.debug("No s'ha trobat l'entitat (id=" + entitatId + ")");
 			throw new EntitatNotFoundException();
 		}
-		Procediment procediment = procedimentRepository.findOne(procedimentId);
+		Procediment procediment = procedimentRepository.findById(procedimentId).orElse(null);
 		if (procediment == null) {
 			log.debug("No s'ha trobat el procediment (id=" + procedimentId + ")");
 			throw new ProcedimentNotFoundException();
@@ -850,12 +853,12 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
             Long entitatId,
             Long procedimentId) throws EntitatNotFoundException, ProcedimentNotFoundException {
         log.debug("Cercant els serveis (entitatId=" + entitatId + ", procedimentId=" + procedimentId + ")");
-        Entitat entitat = entitatRepository.findOne(entitatId);
+        Entitat entitat = entitatRepository.findById(entitatId).orElse(null);
         if (entitat == null) {
             log.debug("No s'ha trobat l'entitat (id=" + entitatId + ")");
             throw new EntitatNotFoundException();
         }
-        Procediment procediment = procedimentRepository.findOne(procedimentId);
+        Procediment procediment = procedimentRepository.findById(procedimentId).orElse(null);
         if (procediment == null) {
             log.debug("No s'ha trobat el procediment (id=" + procedimentId + ")");
             throw new ProcedimentNotFoundException();
@@ -898,7 +901,7 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 		log.debug("Cercant serveis permesos per l'usuari (" +
 				"entitatId=" + entitatId + ", " +
 				"usuariCodi=" + usuariCodi + ")");
-		Entitat entitat = entitatRepository.findOne(entitatId);
+		Entitat entitat = entitatRepository.findById(entitatId).orElse(null);
 		if (entitat == null) {
 			log.debug("No s'ha trobat l'entitat (id=" + entitatId + ")");
 			throw new EntitatNotFoundException();
@@ -970,14 +973,14 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 	@Transactional(readOnly = true)
 	@Override
 	public List<ServeiDto> getServeiPermesosPerDelegat(Long entitatId, Long procedimentId, Authentication auth) throws EntitatNotFoundException, ProcedimentNotFoundException {
-		Entitat entitat = entitatRepository.findOne(entitatId);
+		Entitat entitat = entitatRepository.findById(entitatId).orElse(null);
 		if (entitat == null) {
 			log.error("No s'ha trobat l'entitat (id=" + entitatId + ")");
 			throw new EntitatNotFoundException();
 		}
 		Procediment procediment = null;
 		if (procedimentId != null) {
-			procediment = procedimentRepository.findOne(procedimentId);
+			procediment = procedimentRepository.findById(procedimentId).orElse(null);
 			if (procediment == null)
 				throw new ProcedimentNotFoundException();
 		}
@@ -1186,20 +1189,19 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 	public ServeiCampDto updateServeiCamp(
 			ServeiCampDto modificat) throws ServeiCampNotFoundException {
 		log.debug("Modificant el camp (id=" + modificat.getId() + ") del servei");
-		ServeiCamp serveiCamp = serveiCampRepository.findOne(modificat.getId());
+		ServeiCamp serveiCamp = serveiCampRepository.findById(modificat.getId()).orElse(null);
 		if (serveiCamp == null) {
 			log.debug("No s'ha trobat el camp (id=" + modificat.getId() + ") del servei");
 			throw new ServeiCampNotFoundException();
 		}
 		ServeiCamp campPare = null;
 		if (modificat.getCampPare() != null) {
-			campPare = serveiCampRepository.findOne(
-					modificat.getCampPare().getId());
+			campPare = serveiCampRepository.findById(modificat.getCampPare().getId()).orElse(null);
 		}
 		ServeiCamp validacioDataCmpCamp2 = null;
 		if (modificat.getValidacioDataCmpCamp2() != null) {
-			validacioDataCmpCamp2 = serveiCampRepository.findOne(
-					modificat.getValidacioDataCmpCamp2().getId());
+			validacioDataCmpCamp2 = serveiCampRepository.findById(modificat.getValidacioDataCmpCamp2().getId())
+					.orElse(null);
 		}
 		serveiCamp.update(
 				toServeiTipus(modificat.getTipus()),
@@ -1236,7 +1238,7 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 	@Override
 	public ServeiCampDto deleteServeiCamp(Long serveiCampId) throws ServeiCampNotFoundException {
 		log.debug("Esborrant el camp (id=" + serveiCampId + ") del servei");
-		ServeiCamp perEsborrar = serveiCampRepository.findOne(serveiCampId);
+		ServeiCamp perEsborrar = serveiCampRepository.findById(serveiCampId).orElse(null);
 		if (perEsborrar == null) {
 			log.debug("No s'ha trobat el camp (id=" + serveiCampId + ") del servei");
 			throw new ServeiCampNotFoundException();
@@ -1267,7 +1269,7 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 			Long serveiCampId,
 			int indexDesti) throws ServeiCampNotFoundException {
 		log.debug("Movent el camp del servei (codi=" + serveiCodi + ", serveiCampId=" + serveiCampId + ", " + indexDesti + ")");
-		ServeiCamp perMoure = serveiCampRepository.findOne(serveiCampId);
+		ServeiCamp perMoure = serveiCampRepository.findById(serveiCampId).orElse(null);
 		if (perMoure == null) {
 			log.debug("No s'ha trobat el camp (id=" + serveiCampId + ") del servei");
 			throw new ServeiCampNotFoundException();
@@ -1294,7 +1296,7 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 			Long serveiCampId,
 			Long serveiCampGrupId) throws ServeiCampNotFoundException, ServeiCampGrupNotFoundException {
 		log.debug("Agrupant el camp (serveiCampId=" + serveiCampId + ", serveiCampGrupId=" + serveiCampGrupId + ")");
-		ServeiCamp perAgrupar = serveiCampRepository.findOne(serveiCampId);
+		ServeiCamp perAgrupar = serveiCampRepository.findById(serveiCampId).orElse(null);
 		if (perAgrupar == null) {
 			log.debug("No s'ha trobat el camp (id=" + serveiCampId + ")");
 			throw new ServeiCampNotFoundException();
@@ -1303,7 +1305,7 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 		// Canvia el grup
 		ServeiCampGrup grupDesti = null;
 		if (serveiCampGrupId != null) {
-			grupDesti = serveiCampGrupRepository.findOne(serveiCampGrupId);
+			grupDesti = serveiCampGrupRepository.findById(serveiCampGrupId).orElse(null);
 			if (grupDesti == null) {
 				log.debug("No s'ha trobat el grup (id=" + serveiCampGrupId + ")");
 				throw new ServeiCampGrupNotFoundException();
@@ -1382,7 +1384,7 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 		}
 		ServeiCampGrup pare = null;
 		if (serveiCampGrup.getPareId() != null) {
-			pare = serveiCampGrupRepository.findOne(serveiCampGrup.getPareId());
+			pare = serveiCampGrupRepository.findById(serveiCampGrup.getPareId()).orElse(null);
 		}
 		int grupsExistents = serveiCampGrupRepository.countByServeiAndPareOrderByOrdreAsc(
 				serveiCampGrup.getServei(),
@@ -1403,8 +1405,7 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 	@Override
 	public ServeiCampGrupDto updateServeiCampGrup(ServeiCampGrupDto serveiCampGrup) throws ServeiCampGrupNotFoundException {
 		log.debug("Modificant grup de camps (id=" + serveiCampGrup.getId() + ")");
-		ServeiCampGrup perModificar = serveiCampGrupRepository.findOne(
-				serveiCampGrup.getId());
+		ServeiCampGrup perModificar = serveiCampGrupRepository.findById(serveiCampGrup.getId()).orElse(null);
 		if (perModificar == null) {
 			log.debug("No s'ha trobat el grup de camps (id=" + serveiCampGrup.getId() + ")");
 			throw new ServeiCampGrupNotFoundException();
@@ -1420,8 +1421,7 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 	@Override
 	public ServeiCampGrupDto deleteServeiCampGrup(Long serveiCampGrupId) throws ServeiCampGrupNotFoundException {
 		log.debug("Esborrant grup de camps (id=" + serveiCampGrupId + ")");
-		ServeiCampGrup perEsborrar = serveiCampGrupRepository.findOne(
-				serveiCampGrupId);
+		ServeiCampGrup perEsborrar = serveiCampGrupRepository.findById(serveiCampGrupId).orElse(null);
 		if (perEsborrar == null) {
 			log.debug("No s'ha trobat el grup de camps (id=" + serveiCampGrupId + ")");
 			throw new ServeiCampGrupNotFoundException();
@@ -1460,8 +1460,7 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 			Long serveiCampGrupId,
 			boolean up) throws ServeiCampGrupNotFoundException {
 		log.debug("Movent grup de camps (id=" + serveiCampGrupId + ", up=" + up + ")");
-		ServeiCampGrup perMoure = serveiCampGrupRepository.findOne(
-				serveiCampGrupId);
+		ServeiCampGrup perMoure = serveiCampGrupRepository.findById(serveiCampGrupId).orElse(null);
 		if (perMoure == null) {
 			log.debug("No s'ha trobat el grup de camps (id=" + serveiCampGrupId + ")");
 			throw new ServeiCampGrupNotFoundException();
@@ -1528,7 +1527,7 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 			log.debug("No s'ha trobat el servicio (codi=" + creat.getServei() + ")");
 			throw new ServeiNotFoundException();
 		}
-		Entitat entitat = entitatRepository.findOne(creat.getEntitat().getId());
+		Entitat entitat = entitatRepository.findById(creat.getEntitat().getId()).orElse(null);
 		if (entitat == null) {
 			log.debug("No s'ha trobat l'entitat (codi=" + creat.getEntitat().getId() + ")");
 			throw new EntitatNotFoundException();
@@ -1547,12 +1546,12 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 	public ServeiBusDto updateServeiBus(
 			ServeiBusDto modificat) throws ServeiBusNotFoundException, EntitatNotFoundException {
 		log.debug("Modificant redirecció del bus pel servicio (codi=" + modificat.getServei() + ")");
-		ServeiBus serveiBus = serveiBusRepository.findOne(modificat.getId());
+		ServeiBus serveiBus = serveiBusRepository.findById(modificat.getId()).orElse(null);
 		if (serveiBus == null) {
 			log.debug("No s'ha trobat la redirecció del bus (id=" + modificat.getId() + ")");
 			throw new ServeiBusNotFoundException();
 		}
-		Entitat entitat = entitatRepository.findOne(modificat.getEntitat().getId());
+		Entitat entitat = entitatRepository.findById(modificat.getEntitat().getId()).orElse(null);
 		if (entitat == null) {
 			log.debug("No s'ha trobat l'entitat (codi=" + modificat.getEntitat().getId() + ")");
 			throw new EntitatNotFoundException();
@@ -1570,7 +1569,7 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 	public ServeiBusDto deleteServeiBus(
 			Long serveiBusId) throws ServeiBusNotFoundException {
 		log.debug("Esborrant redirecció del bus (id=" + serveiBusId + ")");
-		ServeiBus serveiBus = serveiBusRepository.findOne(serveiBusId);
+		ServeiBus serveiBus = serveiBusRepository.findById(serveiBusId).orElse(null);
 		if (serveiBus == null) {
 			log.debug("No s'ha trobat la redirecció del bus (id=" + serveiBusId + ")");
 			throw new ServeiBusNotFoundException();
@@ -1587,7 +1586,7 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 	@Override
 	public ServeiBusDto findServeiBusById(Long id) throws ServeiBusNotFoundException {
 		log.debug("Obtenint la redirecció del bus (id=" + id + ")");
-		ServeiBus serveiBus = serveiBusRepository.findOne(id);
+		ServeiBus serveiBus = serveiBusRepository.findById(id).orElse(null);
 		if (serveiBus == null) {
 			log.debug("No s'ha trobat la redirecció del bus (id=" + id + ")");
 			throw new ServeiBusNotFoundException();
@@ -1838,7 +1837,7 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 //		if (servei == null)
 //			throw new ServeiNotFoundException();
 		return dtoMappingHelper.getMapperFacade().map(
-				serveiReglaRepository.findOne(reglaId),
+				serveiReglaRepository.findById(reglaId).orElse(null),
 				ServeiReglaDto.class);
     }
 
@@ -1864,7 +1863,7 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 	@Transactional
 	public ServeiReglaDto serveiReglaUpdate(String serveiCodi, ServeiReglaDto reglaDto) throws ServeiNotFoundException {
 		Servei servei = getServeiByCodi(serveiCodi);
-		ServeiRegla regla = serveiReglaRepository.findOne(reglaDto.getId());
+		ServeiRegla regla = serveiReglaRepository.findById(reglaDto.getId()).orElse(null);
 		if (regla == null)
 			throw new NotFoundException(reglaDto.getId(), ServeiRegla.class);
 
@@ -1880,7 +1879,7 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 	@Transactional
 	public void serveiReglaDelete(String serveiCodi, Long reglaId) throws ServeiNotFoundException {
 		Servei servei = getServeiByCodi(serveiCodi);
-		ServeiRegla regla = serveiReglaRepository.findOne(reglaId);
+		ServeiRegla regla = serveiReglaRepository.findById(reglaId).orElse(null);
 		if (regla == null)
 			throw new NotFoundException(reglaId, ServeiRegla.class);
 		serveiReglaRepository.delete(regla);
@@ -1891,7 +1890,7 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 	public boolean serveiReglaMoure(Long reglaId, int posicio) {
 		log.debug("Moguent la regla (reglaId=" + reglaId + ", posicio=" + posicio + ")");
 		boolean ret = false;
-		ServeiRegla regla = serveiReglaRepository.findOne(reglaId);
+		ServeiRegla regla = serveiReglaRepository.findById(reglaId).orElse(null);
 		if (regla == null)
 			throw new NotFoundException(reglaId, ServeiRegla.class);
 
@@ -2137,12 +2136,19 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 			dto.setEnviarSolicitant(serveiConfig.isEnviarSolicitant());
             dto.setUseCertificatEntitat(serveiConfig.isUseCertificatEntitat());
 
-			dto.setDataDarreraActualitzacio(serveiConfig.getLastModifiedDate() != null ? serveiConfig.getLastModifiedDate().toDate() : null);
+			dto.setDataDarreraActualitzacio(serveiConfig.getLastModifiedDate().isPresent()
+					? toDate(serveiConfig.getLastModifiedDate().get())
+					: null);
 		}
-//		Long numeroProcedimentsAssociats = procedimentRepository.countByServei(servicio.getCodCertificado());
-//		dto.setNumeroProcedimentsAssociats(numeroProcedimentsAssociats == null ? 0 : numeroProcedimentsAssociats);
 		dto.setNumeroProcedimentsAssociats(procedimentRepository.countByServei(servicio.getCodCertificado()));
 		return dto;
+	}
+
+	private Date toDate(LocalDateTime localDateTime) {
+		if (localDateTime == null)
+			return null;
+
+		return Date.from(localDateTime.atZone(ZoneId.of("Europe/Madrid")).toInstant());
 	}
 
 	private void copiarArbreDadesEspecifiques(

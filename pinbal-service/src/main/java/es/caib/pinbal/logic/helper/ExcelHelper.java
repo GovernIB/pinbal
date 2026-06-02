@@ -1,23 +1,20 @@
 package es.caib.pinbal.logic.helper;
 
-import java.io.ByteArrayOutputStream;
-import java.util.List;
-import java.util.Locale;
-
-import org.apache.poi.hssf.usermodel.HSSFCell;
-import org.apache.poi.hssf.usermodel.HSSFCellStyle;
-import org.apache.poi.hssf.usermodel.HSSFFont;
-import org.apache.poi.hssf.usermodel.HSSFRow;
-import org.apache.poi.hssf.usermodel.HSSFSheet;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.ss.usermodel.Font;
+import es.caib.pinbal.logic.intf.dto.InformeGeneralEstatDto;
+import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.poi.hssf.usermodel.*;
+import org.apache.poi.ss.usermodel.HorizontalAlignment;
+import org.apache.poi.ss.usermodel.VerticalAlignment;
 import org.springframework.context.MessageSource;
 import org.springframework.context.MessageSourceAware;
 import org.springframework.stereotype.Component;
 
-import es.caib.pinbal.core.dto.InformeGeneralEstatDto;
-import lombok.extern.slf4j.Slf4j;
+import java.io.ByteArrayOutputStream;
+import java.util.List;
+import java.util.Locale;
 
+@Setter
 @Slf4j
 @Component
 public class ExcelHelper implements MessageSourceAware {
@@ -37,15 +34,15 @@ public class ExcelHelper implements MessageSourceAware {
 		int columnaInicial = 0;
 
 		HSSFCellStyle capsaleraEntitatStyle = workbook.createCellStyle();
-		capsaleraEntitatStyle.setAlignment(HSSFCellStyle.ALIGN_LEFT);
-		capsaleraEntitatStyle.setVerticalAlignment(HSSFCellStyle.VERTICAL_CENTER);
+		capsaleraEntitatStyle.setAlignment(HorizontalAlignment.LEFT);
+		capsaleraEntitatStyle.setVerticalAlignment(VerticalAlignment.CENTER);
 		HSSFCellStyle capsaleraStyle = workbook.createCellStyle();
-		capsaleraStyle.setAlignment(HSSFCellStyle.ALIGN_CENTER);
-		capsaleraStyle.setVerticalAlignment(HSSFCellStyle.VERTICAL_CENTER);
+		capsaleraStyle.setAlignment(HorizontalAlignment.CENTER);
+		capsaleraStyle.setVerticalAlignment(VerticalAlignment.CENTER);
 		HSSFFont capsaleraFont = workbook.createFont();
 		capsaleraFont.setFontName("Arial");
 		capsaleraFont.setFontHeightInPoints((short)10);
-		capsaleraFont.setBoldweight(Font.BOLDWEIGHT_BOLD);
+		capsaleraFont.setBold(true);
 		capsaleraStyle.setFont(capsaleraFont);
 
 		HSSFRow titolsColumna = sheet.createRow(filaInicial);
@@ -132,11 +129,7 @@ public class ExcelHelper implements MessageSourceAware {
 		
 	}
 
-	public void setMessageSource(MessageSource messageSource) {
-		this.messageSource = messageSource;
-	}
-
-	private void autoSize(
+    private void autoSize(
 			HSSFSheet sheet,
 			int numCells) {
 		for (int colNum = 0; colNum <= numCells; colNum++)

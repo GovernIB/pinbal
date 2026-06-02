@@ -3,14 +3,12 @@
  */
 package es.caib.pinbal.logic.helper;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
-
-import javax.annotation.Resource;
-
+import es.caib.pinbal.logic.helper.PermisosHelper.ObjectIdentifierExtractor;
+import es.caib.pinbal.persist.entity.*;
+import es.caib.pinbal.persist.repository.EntitatServeiRepository;
+import es.caib.pinbal.persist.repository.EntitatUsuariRepository;
+import es.caib.pinbal.persist.repository.ProcedimentServeiRepository;
+import es.caib.pinbal.persist.repository.ServeiConfigRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.acls.domain.BasePermission;
 import org.springframework.security.acls.model.MutableAclService;
@@ -19,17 +17,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
-import es.caib.pinbal.logic.helper.PermisosHelper.ObjectIdentifierExtractor;
-import es.caib.pinbal.logic.model.Entitat;
-import es.caib.pinbal.logic.model.EntitatServei;
-import es.caib.pinbal.logic.model.EntitatUsuari;
-import es.caib.pinbal.logic.model.Procediment;
-import es.caib.pinbal.logic.model.ProcedimentServei;
-import es.caib.pinbal.logic.model.ServeiConfig;
-import es.caib.pinbal.logic.repository.EntitatServeiRepository;
-import es.caib.pinbal.logic.repository.EntitatUsuariRepository;
-import es.caib.pinbal.logic.repository.ProcedimentServeiRepository;
-import es.caib.pinbal.logic.repository.ServeiConfigRepository;
+import javax.annotation.Resource;
+import java.util.*;
 
 
 /**

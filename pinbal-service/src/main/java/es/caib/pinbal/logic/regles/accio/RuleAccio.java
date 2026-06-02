@@ -1,6 +1,7 @@
 package es.caib.pinbal.logic.regles.accio;
 
-import org.jeasy.rules.support.ActivationRuleGroup;
+
+import org.jeasy.rules.support.composite.ActivationRuleGroup;
 
 public class RuleAccio extends ActivationRuleGroup {
 

@@ -1,7 +1,7 @@
 package es.caib.pinbal.logic.helper.mock;
 
 import es.caib.pinbal.logic.helper.JustificantHelper;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
@@ -17,14 +17,12 @@ import org.springframework.stereotype.Component;
  * JustificantHelper helper = justificantHelperFactory.getJustificantHelper();
  * </code>
  */
+@RequiredArgsConstructor
 @Component
 public class JustificantHelperFactory {
 
-    @Autowired
-    private ApplicationContext applicationContext;
-
-    @Autowired
-    private Environment environment;
+    private final ApplicationContext applicationContext;
+    private final Environment environment;
 
     /**
      * Obté la instància correcta de JustificantHelper segons el perfil actiu.

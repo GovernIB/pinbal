@@ -1,6 +1,7 @@
 package es.caib.pinbal.logic.regles.condicio;
 
-import org.jeasy.rules.support.ActivationRuleGroup;
+
+import org.jeasy.rules.support.composite.ActivationRuleGroup;
 
 public class RuleCondicio extends ActivationRuleGroup {
 

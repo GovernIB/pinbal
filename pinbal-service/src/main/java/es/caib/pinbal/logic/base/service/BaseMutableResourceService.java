@@ -2,8 +2,22 @@ package es.caib.pinbal.logic.base.service;
 
 import es.caib.pinbal.logic.base.helper.ResourceReferenceToEntityHelper;
 import es.caib.pinbal.logic.intf.base.annotation.ResourceConfig;
-import es.caib.pinbal.logic.intf.base.exception.*;
-import es.caib.pinbal.logic.intf.base.model.*;
+import es.caib.pinbal.logic.intf.base.exception.ActionExecutionException;
+import es.caib.pinbal.logic.intf.base.exception.AnswerRequiredException;
+import es.caib.pinbal.logic.intf.base.exception.ArtifactNotFoundException;
+import es.caib.pinbal.logic.intf.base.exception.FieldArtifactNotFoundException;
+import es.caib.pinbal.logic.intf.base.exception.ResourceAlreadyExistsException;
+import es.caib.pinbal.logic.intf.base.exception.ResourceFieldNotFoundException;
+import es.caib.pinbal.logic.intf.base.exception.ResourceNotCreatedException;
+import es.caib.pinbal.logic.intf.base.exception.ResourceNotDeletedException;
+import es.caib.pinbal.logic.intf.base.exception.ResourceNotFoundException;
+import es.caib.pinbal.logic.intf.base.exception.ResourceNotUpdatedException;
+import es.caib.pinbal.logic.intf.base.model.DownloadableFile;
+import es.caib.pinbal.logic.intf.base.model.FieldOption;
+import es.caib.pinbal.logic.intf.base.model.FileReference;
+import es.caib.pinbal.logic.intf.base.model.Resource;
+import es.caib.pinbal.logic.intf.base.model.ResourceArtifact;
+import es.caib.pinbal.logic.intf.base.model.ResourceArtifactType;
 import es.caib.pinbal.logic.intf.base.service.MutableResourceService;
 import es.caib.pinbal.logic.intf.base.util.TypeUtil;
 import es.caib.pinbal.persist.base.entity.ReorderableEntity;
@@ -12,6 +26,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Persistable;
 import org.springframework.lang.Nullable;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ReflectionUtils;
 
@@ -19,7 +34,13 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.Serializable;
 import java.lang.reflect.Field;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -32,6 +53,7 @@ import java.util.stream.Collectors;
  * @author Límit Tecnologies
  */
 @Slf4j
+@Service // Ignorada al ser abstracta
 public abstract class BaseMutableResourceService<R extends Resource<ID>, ID extends Serializable, E extends ResourceEntity<R, ID>>
 		extends BaseReadonlyResourceService<R, ID, E>
 		implements MutableResourceService<R, ID>, BaseReadonlyResourceService.OnChangeLogicProcessor<R> {

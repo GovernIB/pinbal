@@ -1,15 +1,15 @@
 package es.caib.pinbal.logic.service;
 
 import es.caib.pinbal.logic.helper.DtoMappingHelper;
-import es.caib.pinbal.logic.model.ClauPrivada;
-import es.caib.pinbal.logic.model.Entitat;
-import es.caib.pinbal.logic.model.EntitatServei;
-import es.caib.pinbal.logic.model.ServeiConfig;
-import es.caib.pinbal.logic.repository.ClauPrivadaRepository;
-import es.caib.pinbal.logic.repository.EntitatRepository;
-import es.caib.pinbal.logic.repository.EntitatServeiRepository;
-import es.caib.pinbal.logic.repository.ServeiConfigRepository;
-import es.caib.pinbal.core.service.exception.EntitatNotFoundException;
+import es.caib.pinbal.logic.intf.service.exception.EntitatNotFoundException;
+import es.caib.pinbal.persist.entity.ClauPrivada;
+import es.caib.pinbal.persist.entity.Entitat;
+import es.caib.pinbal.persist.entity.EntitatServei;
+import es.caib.pinbal.persist.entity.ServeiConfig;
+import es.caib.pinbal.persist.repository.ClauPrivadaRepository;
+import es.caib.pinbal.persist.repository.EntitatRepository;
+import es.caib.pinbal.persist.repository.EntitatServeiRepository;
+import es.caib.pinbal.persist.repository.ServeiConfigRepository;
 import es.caib.pinbal.scsp.ScspHelper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeansException;

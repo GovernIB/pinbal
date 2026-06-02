@@ -8,33 +8,37 @@ import es.caib.pinbal.client.usuaris.FiltreUsuaris;
 import es.caib.pinbal.client.usuaris.PermisosServei;
 import es.caib.pinbal.client.usuaris.ProcedimentServei;
 import es.caib.pinbal.client.usuaris.UsuariEntitat;
-import es.caib.pinbal.core.dto.EntitatDto;
-import es.caib.pinbal.core.dto.EntitatUsuariDto;
-import es.caib.pinbal.core.dto.FiltreActiuEnumDto;
-import es.caib.pinbal.core.dto.OrganGestorDto;
-import es.caib.pinbal.core.dto.PaginacioAmbOrdreDto;
-import es.caib.pinbal.core.dto.ProcedimentClaseTramiteEnumDto;
-import es.caib.pinbal.core.dto.ProcedimentDto;
-import es.caib.pinbal.core.dto.ProcedimentServeiDto;
-import es.caib.pinbal.core.dto.ProcedimentServeiSimpleDto;
-import es.caib.pinbal.core.dto.ServeiDto;
-import es.caib.pinbal.core.dto.UsuariDto;
-import es.caib.pinbal.logic.model.Entitat;
-import es.caib.pinbal.logic.model.OrganGestor;
-import es.caib.pinbal.logic.model.Usuari;
-import es.caib.pinbal.logic.repository.EntitatRepository;
-import es.caib.pinbal.logic.repository.OrganGestorRepository;
-import es.caib.pinbal.logic.repository.ProcedimentRepository;
-import es.caib.pinbal.logic.repository.UsuariRepository;
-import es.caib.pinbal.core.service.exception.EntitatNotFoundException;
-import es.caib.pinbal.core.service.exception.EntitatUsuariNotFoundException;
-import es.caib.pinbal.core.service.exception.MultiplesUsuarisExternsException;
-import es.caib.pinbal.core.service.exception.OrganNotFoundException;
-import es.caib.pinbal.core.service.exception.ProcedimentNotFoundException;
-import es.caib.pinbal.core.service.exception.ProcedimentServeiNotFoundException;
-import es.caib.pinbal.core.service.exception.ServeiNotFoundException;
-import es.caib.pinbal.core.service.exception.UsuariExternNotFoundException;
-import es.caib.pinbal.core.service.exception.UsuariNotFoundException;
+import es.caib.pinbal.logic.intf.dto.EntitatDto;
+import es.caib.pinbal.logic.intf.dto.EntitatUsuariDto;
+import es.caib.pinbal.logic.intf.dto.FiltreActiuEnumDto;
+import es.caib.pinbal.logic.intf.dto.OrganGestorDto;
+import es.caib.pinbal.logic.intf.dto.PaginacioAmbOrdreDto;
+import es.caib.pinbal.logic.intf.dto.ProcedimentClaseTramiteEnumDto;
+import es.caib.pinbal.logic.intf.dto.ProcedimentDto;
+import es.caib.pinbal.logic.intf.dto.ProcedimentServeiDto;
+import es.caib.pinbal.logic.intf.dto.ProcedimentServeiSimpleDto;
+import es.caib.pinbal.logic.intf.dto.ServeiDto;
+import es.caib.pinbal.logic.intf.dto.UsuariDto;
+import es.caib.pinbal.logic.intf.service.GestioRestService;
+import es.caib.pinbal.logic.intf.service.ProcedimentService;
+import es.caib.pinbal.logic.intf.service.ServeiService;
+import es.caib.pinbal.logic.intf.service.UsuariService;
+import es.caib.pinbal.logic.intf.service.exception.EntitatNotFoundException;
+import es.caib.pinbal.logic.intf.service.exception.EntitatUsuariNotFoundException;
+import es.caib.pinbal.logic.intf.service.exception.MultiplesUsuarisExternsException;
+import es.caib.pinbal.logic.intf.service.exception.OrganNotFoundException;
+import es.caib.pinbal.logic.intf.service.exception.ProcedimentNotFoundException;
+import es.caib.pinbal.logic.intf.service.exception.ProcedimentServeiNotFoundException;
+import es.caib.pinbal.logic.intf.service.exception.ServeiNotFoundException;
+import es.caib.pinbal.logic.intf.service.exception.UsuariExternNotFoundException;
+import es.caib.pinbal.logic.intf.service.exception.UsuariNotFoundException;
+import es.caib.pinbal.persist.entity.Entitat;
+import es.caib.pinbal.persist.entity.OrganGestor;
+import es.caib.pinbal.persist.entity.Usuari;
+import es.caib.pinbal.persist.repository.EntitatRepository;
+import es.caib.pinbal.persist.repository.OrganGestorRepository;
+import es.caib.pinbal.persist.repository.ProcedimentRepository;
+import es.caib.pinbal.persist.repository.UsuariRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -101,7 +105,7 @@ public class GestioRestServiceImpl implements GestioRestService {
     @Override
     @Transactional //(rollbackFor = {EntitatNotFoundException.class, ProcedimentNotFoundException.class})
     public Procediment updateParcial(Long procedimentId, ProcedimentPatch procedimentPatch) throws EntitatNotFoundException, ProcedimentNotFoundException, OrganNotFoundException {
-        es.caib.pinbal.logic.model.Procediment procediment = procedimentRepository.findOne(procedimentId);
+        es.caib.pinbal.persist.entity.Procediment procediment = procedimentRepository.findById(procedimentId).orElse(null);
         if (procediment == null) {
             throw new ProcedimentNotFoundException(procedimentId.toString()); // "Procediment no trobat amb ID: " + procedimentId);
         }
@@ -218,7 +222,7 @@ public class GestioRestServiceImpl implements GestioRestService {
     @Transactional(readOnly = true)
     public Page<Servei> findServeisByProcedimentPaginat(Long procedimentId, Pageable pageable) throws ProcedimentNotFoundException {
 
-        es.caib.pinbal.logic.model.Procediment procediment = procedimentRepository.getOne(procedimentId);
+        es.caib.pinbal.persist.entity.Procediment procediment = procedimentRepository.findById(procedimentId).orElse(null);
         if (procediment == null) {
             throw new ProcedimentNotFoundException(procedimentId.toString());
         }
@@ -473,7 +477,7 @@ public class GestioRestServiceImpl implements GestioRestService {
         if (procedimentDto == null)
             return null;
 
-        Entitat entitat = entitatRepository.findOne(procedimentDto.getEntitatId());
+        Entitat entitat = entitatRepository.findById(procedimentDto.getEntitatId()).orElseThrow();
 
         return Procediment.builder()
                 .id(procedimentDto.getId())
@@ -496,7 +500,7 @@ public class GestioRestServiceImpl implements GestioRestService {
             procedimentsList.add(toProcediment(dto));
         }
 
-        Pageable pageable = new PageRequest(procedimentDtos.getNumber(), procedimentDtos.getSize(), procedimentDtos.getSort());
+        Pageable pageable = PageRequest.of(procedimentDtos.getNumber(), procedimentDtos.getSize(), procedimentDtos.getSort());
         return new PageImpl<Procediment>(procedimentsList, pageable, procedimentDtos.getTotalElements());
     }
 
@@ -519,7 +523,7 @@ public class GestioRestServiceImpl implements GestioRestService {
             serveisList.add(toServei(dto));
         }
 
-        Pageable pageable = new PageRequest(serveiDtos.getNumber(), serveiDtos.getSize(), serveiDtos.getSort());
+        Pageable pageable = PageRequest.of(serveiDtos.getNumber(), serveiDtos.getSize(), serveiDtos.getSort());
         return new PageImpl<Servei>(serveisList, pageable, serveiDtos.getTotalElements());
     }
 
@@ -548,7 +552,7 @@ public class GestioRestServiceImpl implements GestioRestService {
             usuarisList.add(toUsuari(entitatCodi, dto));
         }
 
-        Pageable pageable = new PageRequest(usuariPage.getNumber(), usuariPage.getSize(), usuariPage.getSort());
+        Pageable pageable = PageRequest.of(usuariPage.getNumber(), usuariPage.getSize(), usuariPage.getSort());
         return new PageImpl<UsuariEntitat>(usuarisList, pageable, usuariPage.getTotalElements());
         
     }

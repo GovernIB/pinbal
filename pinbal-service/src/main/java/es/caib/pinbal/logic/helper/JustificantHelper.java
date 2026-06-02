@@ -14,43 +14,46 @@ import com.lowagie.text.pdf.PdfCopy;
 import com.lowagie.text.pdf.PdfGState;
 import com.lowagie.text.pdf.PdfReader;
 import com.lowagie.text.pdf.PdfStamper;
-import com.lowagie.text.pdf.codec.Base64;
-import es.caib.pinbal.core.dto.FitxerDto;
-import es.caib.pinbal.core.dto.IntegracioAccioTipusEnumDto;
-import es.caib.pinbal.core.dto.JustificantEstat;
-import es.caib.pinbal.logic.model.Consulta;
-import es.caib.pinbal.logic.model.HistoricConsulta;
-import es.caib.pinbal.logic.model.IConsulta;
-import es.caib.pinbal.logic.model.Procediment;
-import es.caib.pinbal.logic.model.ProcedimentServei;
-import es.caib.pinbal.logic.model.ServeiConfig;
-import es.caib.pinbal.logic.model.ServeiConfig.JustificantTipus;
-import es.caib.pinbal.logic.model.ServeiJustificantCamp;
-import es.caib.pinbal.logic.repository.ConsultaRepository;
-import es.caib.pinbal.logic.repository.HistoricConsultaRepository;
-import es.caib.pinbal.logic.repository.ServeiConfigRepository;
-import es.caib.pinbal.logic.repository.ServeiJustificantCampRepository;
+import es.caib.pinbal.logic.intf.dto.FitxerDto;
+import es.caib.pinbal.logic.intf.dto.IntegracioAccioTipusEnumDto;
+import es.caib.pinbal.logic.intf.dto.JustificantEstat;
+import es.caib.pinbal.logic.intf.service.exception.JustificantGeneracioException;
 import es.caib.pinbal.logic.service.ServeiServiceImpl;
+import es.caib.pinbal.persist.entity.Consulta;
+import es.caib.pinbal.persist.entity.HistoricConsulta;
+import es.caib.pinbal.persist.entity.IConsulta;
+import es.caib.pinbal.persist.entity.Procediment;
+import es.caib.pinbal.persist.entity.ProcedimentServei;
+import es.caib.pinbal.persist.entity.ServeiConfig;
+import es.caib.pinbal.persist.entity.ServeiJustificantCamp;
+import es.caib.pinbal.persist.repository.ConsultaRepository;
+import es.caib.pinbal.persist.repository.HistoricConsultaRepository;
+import es.caib.pinbal.persist.repository.ServeiConfigRepository;
+import es.caib.pinbal.persist.repository.ServeiJustificantCampRepository;
 import es.caib.pinbal.plugin.firmaservidor.FirmaServidorPlugin.TipusFirma;
 import es.caib.pinbal.plugin.firmaservidor.SignaturaResposta;
 import es.caib.pinbal.scsp.JustificantArbreHelper.ElementArbre;
 import es.caib.pinbal.scsp.ResultatEnviamentPeticio;
 import es.caib.pinbal.scsp.ScspHelper;
+import es.caib.pluginsib.arxiu.api.ContingutArxiu;
+import es.caib.pluginsib.arxiu.api.ContingutOrigen;
+import es.caib.pluginsib.arxiu.api.DocumentEstatElaboracio;
 import es.scsp.common.exceptions.ScspException;
-import es.caib.plugins.arxiu.api.ContingutArxiu;
-import es.caib.plugins.arxiu.api.ContingutOrigen;
-import es.caib.plugins.arxiu.api.DocumentEstatElaboracio;
+import fr.opensagres.xdocreport.core.XDocReportException;
+import fr.opensagres.xdocreport.document.IXDocReport;
+import fr.opensagres.xdocreport.document.registry.XDocReportRegistry;
+import fr.opensagres.xdocreport.template.IContext;
+import fr.opensagres.xdocreport.template.TemplateEngineKind;
+import fr.opensagres.xdocreport.template.freemarker.FreemarkerTemplateEngine;
 import freemarker.core.Environment;
 import freemarker.core.NonStringException;
+import freemarker.template.Configuration;
 import freemarker.template.TemplateException;
 import freemarker.template.TemplateExceptionHandler;
 import freemarker.template.TemplateModelException;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import net.sf.jooreports.templates.DocumentTemplate;
-import net.sf.jooreports.templates.DocumentTemplateException;
-import net.sf.jooreports.templates.DocumentTemplateFactory;
 import org.apache.commons.lang.exception.ExceptionUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.MessageSourceAware;
 import org.springframework.stereotype.Component;
@@ -59,18 +62,21 @@ import javax.xml.parsers.ParserConfigurationException;
 import java.awt.*;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Writer;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 /**
  * Helper per a generar el justificant.
@@ -78,28 +84,21 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author Limit Tecnologies <limit@limit.es>
  */
 @Slf4j
+@RequiredArgsConstructor
 @Component
 public class JustificantHelper implements MessageSourceAware {
 
 	private static final String PLANTILLA_ODT_RESOURCE = "/es/caib/pinbal/logic/template/justificant.odt";
 	private static final String JUSTIFICANT_EXTENSIO_SORTIDA = "pdf";
 
-	@Autowired
-	private ServeiJustificantCampRepository serveiJustificantCampRepository;
-	@Autowired
-	private ServeiConfigRepository serveiConfigRepository;
-	@Autowired
-	private ConversioTipusDocumentHelper conversioTipusDocumentHelper;
-	@Autowired
-	private PluginHelper pluginHelper;
-	@Autowired
-	private IntegracioHelper integracioHelper;
-	@Autowired
-	private ConfigHelper configHelper;
-	@Autowired
-	private ConsultaRepository consultaRepository;
-	@Autowired
-	private HistoricConsultaRepository historicConsultaRepository;
+	private final ServeiJustificantCampRepository serveiJustificantCampRepository;
+	private final ServeiConfigRepository serveiConfigRepository;
+	private final ConversioTipusDocumentHelper conversioTipusDocumentHelper;
+	private final PluginHelper pluginHelper;
+	private final IntegracioHelper integracioHelper;
+	private final ConfigHelper configHelper;
+	private final ConsultaRepository consultaRepository;
+	private final HistoricConsultaRepository historicConsultaRepository;
 
 	private MessageSource messageSource;
     private final ConcurrentMap<String, Object> expedientLocks = new ConcurrentHashMap<String, Object>();
@@ -139,7 +138,11 @@ public class JustificantHelper implements MessageSourceAware {
                                 consulta,
                                 scspHelper);
                         log.debug("[JUSTIFICANT] Inici del procés de signatura i custodia del justificant de la consulta");
-                        if (pluginHelper.isPluginArxiuActiu() && (consulta.getArxiuExpedientUuid() == null || consulta.getArxiuDocumentUuid() == null)) {
+						if (!pluginHelper.isPluginArxiuActiu()) {
+							throw new JustificantGeneracioException("Plugin arxiu no activat");
+						}
+
+                        if (consulta.getArxiuExpedientUuid() == null || consulta.getArxiuDocumentUuid() == null) {
                             log.debug("[JUSTIFICANT] Es desarà el justificant a l'arxiu");
                             // Signa el justificant amb firma de servidor
                             FitxerDto justificantFitxer = new FitxerDto();
@@ -182,7 +185,7 @@ public class JustificantHelper implements MessageSourceAware {
                                         justificantFitxer,
                                         ContingutOrigen.ADMINISTRACIO,
                                         DocumentEstatElaboracio.ORIGINAL,
-                                        es.caib.plugins.arxiu.api.DocumentTipus.CERTIFICAT);
+										es.caib.pluginsib.arxiu.api.DocumentTipus.CERTIFICAT);
                                 log.info(
                                         "Guardat justificant a l'arxiu relacionat amb la consulta (" +
                                                 "id=" + consulta.getId() + ", " +
@@ -191,51 +194,6 @@ public class JustificantHelper implements MessageSourceAware {
                                                 "arxiuExpedientUuid=" + arxiuExpedientUuid + ", " +
                                                 "arxiuDocumentUuid=" + arxiuDocumentUuid + ")");
                             }
-                        } else {
-                            log.debug("[JUSTIFICANT] Es desarà el justificant a custòdia");
-                            // Reserva l'id de custòdia i genera la URL
-                            String documentTipus = null;
-                            if (serveiConfig != null) {
-                                documentTipus = serveiConfig.getCustodiaCodi();
-                            }
-                            custodiaId = custodiaObtenirId(consulta);
-                            if (custodiaUrl == null || custodiaUrl.isEmpty()) {
-                                // Obté la URL de comprovació de signatura
-                                log.debug("[JUSTIFICANT] Sol·licitud de URL per a la custòdia del justificant de la consulta");
-                                custodiaUrl = pluginHelper.custodiaObtenirUrlVerificacioDocument(custodiaId);
-                                log.debug("[JUSTIFICANT] Obtinguda URL per a la custòdia del justificant de la consulta (custodiaUrl=" + custodiaUrl + ")");
-                            }
-                            byte[] justificantFirmat;
-                            if (pluginHelper.isPluginFirmaServidorActiu()) {
-                                // Signa el justificant amb firma de servidor
-                                FitxerDto justificantFitxer = new FitxerDto();
-                                justificantFitxer.setNom(arxiuJustificantGenerat.getNom());
-                                justificantFitxer.setContentType("application/pdf");
-                                justificantFitxer.setContingut(arxiuJustificantGenerat.getContingut());
-                                justificantFirmat = pluginHelper.firmaServidorFirmar(
-                                        justificantFitxer,
-                                        TipusFirma.PADES,
-                                        "Firma justificant PINBAL",
-                                        "ca",
-                                        consulta.getScspPeticionId()).getContingut();
-                                log.debug("Firmat justificant de la consulta (consultaPeticioId=" + consulta.getScspPeticionId() + ", consultaSolicitudId=" + consulta.getScspSolicitudId() + ")");
-                            } else {
-                                // Signa el justificant amb IBKey
-                                log.debug("Signatura amb IBKey del justificant de la consulta (id=" + consulta.getId() + ", consultaPeticioId=" + consulta.getScspPeticionId() + ", consultaSolicitudId=" + consulta.getScspSolicitudId() + ")");
-                                ByteArrayOutputStream signedStream = new ByteArrayOutputStream();
-                                pluginHelper.signaturaIbkeySignarEstamparPdf(
-                                        new ByteArrayInputStream(arxiuJustificantGenerat.getContingut()),
-                                        signedStream,
-                                        custodiaUrl);
-                                justificantFirmat = signedStream.toByteArray();
-                            }
-                            // Envia el justificant a custòdia
-                            log.debug("Enviament a custòdia del justificant de la consulta (id=" + consulta.getId() + ", consultaPeticioId=" + consulta.getScspPeticionId() + ", consultaSolicitudId=" + consulta.getScspSolicitudId() + ")");
-                            pluginHelper.custodiaEnviarPdfSignat(
-                                    custodiaId,
-                                    arxiuNom,
-                                    justificantFirmat,
-                                    documentTipus);
                         }
                         justificantEstat = JustificantEstat.OK;
                         custodiat = true;
@@ -347,7 +305,7 @@ public class JustificantHelper implements MessageSourceAware {
                 }
             }
             if (actualitzat) {
-                consultaRepository.save(consultes);
+                consultaRepository.saveAll(consultes);
             }
         } else if (consulta instanceof HistoricConsulta) {
             List<HistoricConsulta> consultes = historicConsultaRepository.findByScspPeticionId(consulta.getScspPeticionId());
@@ -359,7 +317,7 @@ public class JustificantHelper implements MessageSourceAware {
                 }
             }
             if (actualitzat) {
-                historicConsultaRepository.save(consultes);
+                historicConsultaRepository.saveAll(consultes);
             }
         }
     }
@@ -387,7 +345,7 @@ public class JustificantHelper implements MessageSourceAware {
 		String solicitudId = consulta.getScspSolicitudId();
 		ServeiConfig serveiConfig = serveiConfigRepository.findByServei(serveiCodi);
 		FitxerDto fitxerDto = new FitxerDto();
-		if (serveiConfig.getJustificantTipus() != null && JustificantTipus.ADJUNT_PDF_BASE64.equals(serveiConfig.getJustificantTipus())) {
+		if (serveiConfig.getJustificantTipus() != null && ServeiConfig.JustificantTipus.ADJUNT_PDF_BASE64.equals(serveiConfig.getJustificantTipus())) {
 			log.debug("[JUSTIFICANT] El justificant de la consulta (id=" + consulta.getId() + ", consultaPeticioId=" + consulta.getScspPeticionId() + ", consultaSolicitudId=" + consulta.getScspSolicitudId() + ") està inclòs a dins la resposta");
 			Map<String, Object> dadesEspecifiques = scspHelper.getDadesEspecifiquesResposta(
 					peticionId,
@@ -398,7 +356,7 @@ public class JustificantHelper implements MessageSourceAware {
 						getNomArxiuJustificant(
 								consulta.getScspPeticionId(),
 								consulta.getScspSolicitudId()));
-				fitxerDto.setContingut(Base64.decode(justificantB64));
+				fitxerDto.setContingut(Base64.getDecoder().decode(justificantB64));
 				return fitxerDto;
 			} else {
 				// Si no hi ha justificant a dins les dades específiques continuarà i
@@ -412,7 +370,7 @@ public class JustificantHelper implements MessageSourceAware {
 							consulta.getScspPeticionId(),
 							consulta.getScspSolicitudId()));
 			if (consulta.getArxiuDocumentUuid() != null) {
-				es.caib.plugins.arxiu.api.Document documentArxiu = pluginHelper.arxiuDocumentConsultar(
+				es.caib.pluginsib.arxiu.api.Document documentArxiu = pluginHelper.arxiuDocumentConsultar(
 						consulta.getScspPeticionId(),
 						consulta.getArxiuDocumentUuid(),
 						null,
@@ -434,7 +392,7 @@ public class JustificantHelper implements MessageSourceAware {
 
 	public FitxerDto generar(
 			IConsulta consulta,
-			ScspHelper scspHelper) throws IOException, DocumentTemplateException, ParserConfigurationException, DocumentException, ScspException {
+			ScspHelper scspHelper) throws IOException, XDocReportException, ParserConfigurationException, DocumentException, ScspException {
 		log.debug("[JUSTIFICANT] Es generarà el justificant de la consulta (id=" + consulta.getId() + ", consultaPeticioId=" + consulta.getScspPeticionId() + ", consultaSolicitudId=" + consulta.getScspSolicitudId() + ")");
 		String arxiuNom = getNomArxiuGenerat(
 				consulta.getScspPeticionId(),
@@ -601,9 +559,36 @@ public class JustificantHelper implements MessageSourceAware {
 			String serveiDescripcio,
 			List<ServeiJustificantCamp> traduccions,
 			Locale locale,
-			OutputStream out) throws IOException, DocumentTemplateException {
-		DocumentTemplateFactory documentTemplateFactory = new DocumentTemplateFactory();
-		documentTemplateFactory.getFreemarkerConfiguration().setTemplateExceptionHandler(new TemplateExceptionHandler() {
+			OutputStream out) throws IOException, XDocReportException {
+		InputStream plantilla = getClass().getResourceAsStream(PLANTILLA_ODT_RESOURCE);
+		if (plantilla == null) {
+			throw new FileNotFoundException("No s'ha trobat la plantilla del justificant: " + PLANTILLA_ODT_RESOURCE);
+		}
+		try (InputStream plantillaStream = plantilla) {
+			IXDocReport report = XDocReportRegistry.getRegistry().loadReport(
+					plantillaStream,
+					TemplateEngineKind.Freemarker);
+			configurarFreemarker(report, locale);
+
+			Map<String, Object> model = generarModel(arbre, serveiDescripcio, traduccions, locale);
+			IContext context = report.createContext();
+			context.putMap(model);
+			report.process(context, out);
+
+			return (List<NodeInfo>) model.get("nodesTipusDocument");
+		}
+	}
+
+	private void configurarFreemarker(
+			IXDocReport report,
+			Locale locale) {
+		FreemarkerTemplateEngine templateEngine = (FreemarkerTemplateEngine) report.getTemplateEngine();
+		Configuration configuration = templateEngine.getFreemarkerConfiguration();
+		configuration.setTagSyntax(Configuration.SQUARE_BRACKET_TAG_SYNTAX);
+		configuration.setDefaultEncoding("UTF-8");
+		configuration.setOutputEncoding("UTF-8");
+		configuration.setLocale((locale != null) ? locale : new Locale("ca", "ES"));
+		configuration.setTemplateExceptionHandler(new TemplateExceptionHandler() {
 			public void handleTemplateException(TemplateException te, Environment env, Writer out) throws TemplateException {
 				try {
 					if (te instanceof TemplateModelException || te instanceof NonStringException) {
@@ -617,14 +602,6 @@ public class JustificantHelper implements MessageSourceAware {
 				}
 			}
 		});
-		documentTemplateFactory.getFreemarkerConfiguration().setLocale(
-				(locale != null) ? locale : new Locale("ca", "ES"));
-		DocumentTemplate template = documentTemplateFactory.getTemplate(
-				getClass().getResourceAsStream(PLANTILLA_ODT_RESOURCE));
-		Map<String, Object> model = generarModel(arbre, serveiDescripcio, traduccions, locale);
-		template.createDocument(model, out);
-
-		return (List<NodeInfo>) model.get("nodesTipusDocument");
 	}
 
 	/*public void imprimirAmbPlantillaProva(ElementArbre arbre) throws Exception {
@@ -791,10 +768,10 @@ public class JustificantHelper implements MessageSourceAware {
 		return configHelper.getConfig("es.caib.pinbal.justificant.extensio.sortida", "pdf");
 	}
 	private boolean isConvertirPdfaJustificant() {
-		return configHelper.getAsBoolean("es.caib.pinbal.justificant.convertir.pdfa", false);
+		return configHelper.getConfigAsBoolean("es.caib.pinbal.justificant.convertir.pdfa", false);
 	}
 	private boolean isSignarICustodiarJustificant() {
-		return configHelper.getAsBoolean("es.caib.pinbal.justificant.signar.i.custodiar", false);
+		return configHelper.getConfigAsBoolean("es.caib.pinbal.justificant.signar.i.custodiar", false);
 	}
 	private String getJustificantSerieDocumental() {
 //		return configHelper.getConfig("es.caib.pinbal.justificant.serie.documental");

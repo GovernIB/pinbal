@@ -33,43 +33,46 @@ import es.caib.pinbal.client.recobriment.v2.PeticioSincrona;
 import es.caib.pinbal.client.recobriment.v2.Validacio;
 import es.caib.pinbal.client.recobriment.v2.ValorEnum;
 import es.caib.pinbal.client.serveis.ServeiBasic;
-import es.caib.pinbal.core.dto.ArbreDto;
-import es.caib.pinbal.core.dto.DadaEspecificaDto;
-import es.caib.pinbal.core.dto.EstatTipus;
-import es.caib.pinbal.core.dto.IdiomaEnumDto;
-import es.caib.pinbal.core.dto.JustificantDto;
-import es.caib.pinbal.core.dto.NodeDto;
-import es.caib.pinbal.core.dto.ServeiCampDto;
-import es.caib.pinbal.core.dto.dadesexternes.Municipi;
-import es.caib.pinbal.core.dto.dadesexternes.Pais;
-import es.caib.pinbal.core.dto.dadesexternes.Provincia;
 import es.caib.pinbal.logic.helper.PluginHelper;
 import es.caib.pinbal.logic.helper.RecobrimentHelper;
 import es.caib.pinbal.logic.helper.RecobrimentV2Helper;
-import es.caib.pinbal.logic.model.Entitat;
-import es.caib.pinbal.logic.model.ServeiCamp;
-import es.caib.pinbal.logic.model.ServeiCamp.ServeiCampTipus;
-import es.caib.pinbal.logic.model.Procediment;
-import es.caib.pinbal.logic.model.ServeiCampGrup;
-import es.caib.pinbal.logic.model.ServeiConfig;
-import es.caib.pinbal.logic.model.SuperConsulta;
-import es.caib.pinbal.logic.repository.ConsultaRepository;
-import es.caib.pinbal.logic.repository.EntitatRepository;
-import es.caib.pinbal.logic.repository.HistoricConsultaRepository;
-import es.caib.pinbal.logic.repository.ProcedimentRepository;
-import es.caib.pinbal.logic.repository.ServeiCampRepository;
-import es.caib.pinbal.logic.repository.ServeiConfigRepository;
-import es.caib.pinbal.logic.repository.ServeiRepository;
-import es.caib.pinbal.core.service.exception.AccessDenegatException;
-import es.caib.pinbal.core.service.exception.ConsultaNotFoundException;
-import es.caib.pinbal.core.service.exception.EntitatNotFoundException;
-import es.caib.pinbal.core.service.exception.JustificantGeneracioException;
-import es.caib.pinbal.core.service.exception.ProcedimentNotFoundException;
-import es.caib.pinbal.core.service.exception.RecobrimentScspException;
-import es.caib.pinbal.core.service.exception.RecobrimentScspValidationException;
-import es.caib.pinbal.core.service.exception.ServeiCampNotFoundException;
-import es.caib.pinbal.core.service.exception.ServeiNotFoundException;
-import es.caib.pinbal.core.service.exception.ServeiRespostaNotFoundException;
+import es.caib.pinbal.logic.intf.dto.ArbreDto;
+import es.caib.pinbal.logic.intf.dto.DadaEspecificaDto;
+import es.caib.pinbal.logic.intf.dto.EstatTipus;
+import es.caib.pinbal.logic.intf.dto.IdiomaEnumDto;
+import es.caib.pinbal.logic.intf.dto.JustificantDto;
+import es.caib.pinbal.logic.intf.dto.NodeDto;
+import es.caib.pinbal.logic.intf.dto.ServeiCampDto;
+import es.caib.pinbal.logic.intf.service.DadesExternesService;
+import es.caib.pinbal.logic.intf.service.RecobrimentService;
+import es.caib.pinbal.logic.intf.service.ServeiService;
+import es.caib.pinbal.logic.intf.service.exception.AccessDenegatException;
+import es.caib.pinbal.logic.intf.service.exception.ConsultaNotFoundException;
+import es.caib.pinbal.logic.intf.service.exception.EntitatNotFoundException;
+import es.caib.pinbal.logic.intf.service.exception.JustificantGeneracioException;
+import es.caib.pinbal.logic.intf.service.exception.ProcedimentNotFoundException;
+import es.caib.pinbal.logic.intf.service.exception.RecobrimentScspException;
+import es.caib.pinbal.logic.intf.service.exception.RecobrimentScspValidationException;
+import es.caib.pinbal.logic.intf.service.exception.ServeiCampNotFoundException;
+import es.caib.pinbal.logic.intf.service.exception.ServeiNotFoundException;
+import es.caib.pinbal.logic.intf.service.exception.ServeiRespostaNotFoundException;
+import es.caib.pinbal.persist.entity.Entitat;
+import es.caib.pinbal.persist.entity.Procediment;
+import es.caib.pinbal.persist.entity.ServeiCamp;
+import es.caib.pinbal.persist.entity.ServeiCamp.ServeiCampTipus;
+import es.caib.pinbal.persist.entity.ServeiCampGrup;
+import es.caib.pinbal.persist.entity.ServeiConfig;
+import es.caib.pinbal.persist.entity.SuperConsulta;
+import es.caib.pinbal.persist.repository.ConsultaRepository;
+import es.caib.pinbal.persist.repository.EntitatRepository;
+import es.caib.pinbal.persist.repository.HistoricConsultaRepository;
+import es.caib.pinbal.persist.repository.ProcedimentRepository;
+import es.caib.pinbal.persist.repository.ServeiCampRepository;
+import es.caib.pinbal.persist.repository.ServeiConfigRepository;
+import es.caib.pinbal.persist.repository.ServeiRepository;
+import es.caib.pinbal.plugin.dadescomuns.Municipi;
+import es.caib.pinbal.plugin.dadescomuns.Pais;
+import es.caib.pinbal.plugin.dadescomuns.Provincia;
 import es.caib.pinbal.scsp.ScspHelper;
 import es.caib.pinbal.scsp.XmlHelper;
 import es.caib.pinbal.scsp.tree.Tree;
@@ -1069,7 +1072,7 @@ public class RecobrimentServiceImpl implements RecobrimentService, ApplicationCo
             SuperConsulta consulta = getConsulta(idPeticion, idSolicitud, false);
             if (consulta.getArxiuDocumentUuid() != null && !consulta.getArxiuDocumentUuid().isEmpty()) {
                 try {
-                    es.caib.plugins.arxiu.api.Document documentArxiu = pluginHelper.arxiuDocumentConsultar(
+                    es.caib.pluginsib.arxiu.api.Document documentArxiu = pluginHelper.arxiuDocumentConsultar(
                             idPeticion,
                             consulta.getArxiuDocumentUuid(),
                             null,
@@ -1126,7 +1129,7 @@ public class RecobrimentServiceImpl implements RecobrimentService, ApplicationCo
         }
         if (validateCreator) {
             Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-            if (!auth.getName().equals(consulta.getCreatedBy().getCodi())) {
+            if (!auth.getName().equals(consulta.getCreatedBy().orElseThrow().getCodi())) {
                 log.error("La consulta (idpeticion=" + idPeticion + ", idsolicitud=" + idSolicitud + ") no pertany a aquest usuari");
                 throw new AccessDenegatException("Només pot accedir al justificant l'usuari que ha realitzat la consulta");
             }

@@ -4,14 +4,13 @@
 package es.caib.pinbal.logic.ws;
 
 import es.caib.pinbal.logic.helper.RecobrimentHelper;
+import es.caib.pinbal.logic.intf.ws.Recobriment;
 import es.scsp.bean.common.confirmacion.ConfirmacionPeticion;
 import es.scsp.bean.common.peticion.Peticion;
 import es.scsp.bean.common.respuesta.Respuesta;
 import es.scsp.common.exceptions.ScspException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import javax.jws.WebService;
 
 /**
  * Implementació dels mètodes per al recobriment de les peticions
@@ -20,12 +19,12 @@ import javax.jws.WebService;
  * @author Limit Tecnologies <limit@limit.es>
  */
 @Service
-@WebService(
-		name = "Recobriment",
-		serviceName = "RecobrimentService",
-		portName = "RecobrimentServicePort",
-		endpointInterface = "es.caib.pinbal.core.ws.Recobriment",
-		targetNamespace = "http://www.caib.es/pinbal/ws/recobriment")
+//@WebService(
+//		name = "Recobriment",
+//		serviceName = "RecobrimentService",
+//		portName = "RecobrimentServicePort",
+//		endpointInterface = "es.caib.pinbal.core.ws.Recobriment",
+//		targetNamespace = "http://www.caib.es/pinbal/ws/recobriment")
 public class RecobrimentImpl implements Recobriment {
 
 	@Autowired

@@ -3,22 +3,17 @@
  */
 package es.caib.pinbal.logic.service;
 
-import es.caib.pinbal.core.dto.CacheDto;
-import es.caib.pinbal.core.dto.PaginaDto;
 import es.caib.pinbal.logic.helper.CacheHelper;
 import es.caib.pinbal.logic.helper.IntegracioHelper;
 import es.caib.pinbal.logic.helper.PaginacioHelper;
+import es.caib.pinbal.logic.intf.dto.CacheDto;
+import es.caib.pinbal.logic.intf.dto.PaginaDto;
+import es.caib.pinbal.logic.intf.service.AplicacioService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Implementació dels mètodes per a gestionar l'aplicació.

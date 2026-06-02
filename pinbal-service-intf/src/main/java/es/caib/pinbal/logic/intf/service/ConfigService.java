@@ -45,8 +45,13 @@ public interface ConfigService {
 	List<String> syncFromJBossProperties();
 
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
+    void actualitzarPropietatsJBossBdd();
+
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
 	void reiniciarTasques();
-	
+
+	void propagateDbProperties();
+
 	@PreAuthorize("isAuthenticated()")
 	public String getTempsErrorsMonitorIntegracio() ;
 

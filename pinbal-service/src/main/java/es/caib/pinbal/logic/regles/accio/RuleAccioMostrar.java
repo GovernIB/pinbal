@@ -1,8 +1,8 @@
 
 package es.caib.pinbal.logic.regles.accio;
 
-import es.caib.pinbal.core.dto.regles.AccioEnum;
-import es.caib.pinbal.core.dto.regles.VariableFact;
+import es.caib.pinbal.logic.intf.dto.regles.AccioEnum;
+import es.caib.pinbal.logic.intf.dto.regles.VariableFact;
 import org.jeasy.rules.annotation.Action;
 import org.jeasy.rules.annotation.Condition;
 import org.jeasy.rules.annotation.Fact;

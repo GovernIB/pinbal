@@ -87,7 +87,7 @@ public class JustificantHelperTest {
         ResultatEnviamentPeticio resultat = new ResultatEnviamentPeticio();
         when(scspHelper.recuperarResultatEnviamentPeticio(anyString())).thenReturn(resultat);
         when(serveiConfigRepository.findByServei("SERVEI")).thenReturn(serveiConfig);
-        when(configHelper.getAsBoolean("es.caib.pinbal.justificant.signar.i.custodiar", false)).thenReturn(true);
+        when(configHelper.getConfigAsBoolean("es.caib.pinbal.justificant.signar.i.custodiar", false)).thenReturn(true);
         when(configHelper.getConfig("es.caib.pinbal.plugin.arxiu.serie.documental")).thenReturn("SERIE");
         when(conversioTipusDocumentHelper.nomArxiuConvertit(anyString(), anyString())).thenReturn("justificant.pdf");
         when(pluginHelper.isPluginArxiuActiu()).thenReturn(true);

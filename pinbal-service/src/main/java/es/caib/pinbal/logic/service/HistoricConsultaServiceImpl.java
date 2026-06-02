@@ -10,19 +10,6 @@ import com.lowagie.text.pdf.PdfCopy;
 import com.lowagie.text.pdf.PdfReader;
 import es.caib.pinbal.client.dadesobertes.DadesObertesResposta;
 import es.caib.pinbal.client.dadesobertes.DadesObertesRespostaConsulta;
-import es.caib.pinbal.core.dto.CarregaDto;
-import es.caib.pinbal.core.dto.ConsultaDto;
-import es.caib.pinbal.core.dto.ConsultaDto.Consentiment;
-import es.caib.pinbal.core.dto.ConsultaFiltreDto;
-import es.caib.pinbal.core.dto.ConsultaOpenDataDto;
-import es.caib.pinbal.core.dto.EmisorDto;
-import es.caib.pinbal.core.dto.EntitatDto;
-import es.caib.pinbal.core.dto.EstatTipus;
-import es.caib.pinbal.core.dto.FitxerDto;
-import es.caib.pinbal.core.dto.InformeGeneralEstatDto;
-import es.caib.pinbal.core.dto.JustificantDto;
-import es.caib.pinbal.core.dto.JustificantEstat;
-import es.caib.pinbal.core.dto.arxiu.ArxiuDetallDto;
 import es.caib.pinbal.logic.helper.ArxiuHelper;
 import es.caib.pinbal.logic.helper.ConfigHelper;
 import es.caib.pinbal.logic.helper.DtoMappingHelper;
@@ -30,29 +17,44 @@ import es.caib.pinbal.logic.helper.PermisosHelper;
 import es.caib.pinbal.logic.helper.PeticioScspEstadistiquesHelper;
 import es.caib.pinbal.logic.helper.PluginHelper;
 import es.caib.pinbal.logic.helper.mock.JustificantHelperFactory;
-import es.caib.pinbal.logic.model.Entitat;
-import es.caib.pinbal.logic.model.EntitatUsuari;
-import es.caib.pinbal.logic.model.HistoricConsulta;
-import es.caib.pinbal.logic.model.Procediment;
-import es.caib.pinbal.logic.model.ProcedimentServei;
-import es.caib.pinbal.logic.model.ScspToken;
-import es.caib.pinbal.logic.model.ScspTokenId;
-import es.caib.pinbal.logic.model.llistat.LlistatHistoricConsulta;
-import es.caib.pinbal.logic.repository.EntitatRepository;
-import es.caib.pinbal.logic.repository.EntitatUsuariRepository;
-import es.caib.pinbal.logic.repository.HistoricConsultaRepository;
-import es.caib.pinbal.logic.repository.ProcedimentRepository;
-import es.caib.pinbal.logic.repository.ProcedimentServeiRepository;
-import es.caib.pinbal.logic.repository.TokenRepository;
-import es.caib.pinbal.logic.repository.UsuariRepository;
-import es.caib.pinbal.logic.repository.dadesobertes.DadesObertesHistoricConsultaRepository;
-import es.caib.pinbal.logic.repository.llistat.LlistatHistoricConsultaRepository;
-import es.caib.pinbal.core.service.exception.AccessDenegatException;
-import es.caib.pinbal.core.service.exception.ConsultaNotFoundException;
-import es.caib.pinbal.core.service.exception.EntitatNotFoundException;
-import es.caib.pinbal.core.service.exception.JustificantGeneracioException;
-import es.caib.pinbal.core.service.exception.ProcedimentNotFoundException;
-import es.caib.pinbal.core.service.exception.ScspException;
+import es.caib.pinbal.logic.intf.dto.CarregaDto;
+import es.caib.pinbal.logic.intf.dto.ConsultaDto;
+import es.caib.pinbal.logic.intf.dto.ConsultaDto.Consentiment;
+import es.caib.pinbal.logic.intf.dto.ConsultaFiltreDto;
+import es.caib.pinbal.logic.intf.dto.ConsultaOpenDataDto;
+import es.caib.pinbal.logic.intf.dto.EmisorDto;
+import es.caib.pinbal.logic.intf.dto.EntitatDto;
+import es.caib.pinbal.logic.intf.dto.EstatTipus;
+import es.caib.pinbal.logic.intf.dto.FitxerDto;
+import es.caib.pinbal.logic.intf.dto.InformeGeneralEstatDto;
+import es.caib.pinbal.logic.intf.dto.JustificantDto;
+import es.caib.pinbal.logic.intf.dto.JustificantEstat;
+import es.caib.pinbal.logic.intf.dto.arxiu.ArxiuDetallDto;
+import es.caib.pinbal.logic.intf.service.HistoricConsultaService;
+import es.caib.pinbal.logic.intf.service.ProcedimentService;
+import es.caib.pinbal.logic.intf.service.exception.AccessDenegatException;
+import es.caib.pinbal.logic.intf.service.exception.ConsultaNotFoundException;
+import es.caib.pinbal.logic.intf.service.exception.EntitatNotFoundException;
+import es.caib.pinbal.logic.intf.service.exception.JustificantGeneracioException;
+import es.caib.pinbal.logic.intf.service.exception.ProcedimentNotFoundException;
+import es.caib.pinbal.logic.intf.service.exception.ScspException;
+import es.caib.pinbal.persist.entity.Entitat;
+import es.caib.pinbal.persist.entity.EntitatUsuari;
+import es.caib.pinbal.persist.entity.HistoricConsulta;
+import es.caib.pinbal.persist.entity.Procediment;
+import es.caib.pinbal.persist.entity.ProcedimentServei;
+import es.caib.pinbal.persist.entity.ScspToken;
+import es.caib.pinbal.persist.entity.ScspTokenId;
+import es.caib.pinbal.persist.entity.llistat.LlistatHistoricConsulta;
+import es.caib.pinbal.persist.repository.EntitatRepository;
+import es.caib.pinbal.persist.repository.EntitatUsuariRepository;
+import es.caib.pinbal.persist.repository.HistoricConsultaRepository;
+import es.caib.pinbal.persist.repository.ProcedimentRepository;
+import es.caib.pinbal.persist.repository.ProcedimentServeiRepository;
+import es.caib.pinbal.persist.repository.TokenRepository;
+import es.caib.pinbal.persist.repository.UsuariRepository;
+import es.caib.pinbal.persist.repository.dadesobertes.DadesObertesHistoricConsultaRepository;
+import es.caib.pinbal.persist.repository.llistat.LlistatHistoricConsultaRepository;
 import es.caib.pinbal.scsp.PropertiesHelper;
 import es.caib.pinbal.scsp.Resposta;
 import es.caib.pinbal.scsp.ScspHelper;
@@ -162,14 +164,14 @@ public class HistoricConsultaServiceImpl implements HistoricConsultaService, App
 	@Override
 	public ArxiuDetallDto obtenirArxiuInfo(Long consultaId) {
 		try {
-			HistoricConsulta consulta = historicConsultaRepository.findOne(consultaId);
+			HistoricConsulta consulta = historicConsultaRepository.findById(consultaId).orElse(null);
 			if (consulta == null) {
 				log.error("No s'ha trobat la consulta (id=" + consultaId + ")");
 				throw new ConsultaNotFoundException();
 			}
 			ArxiuDetallDto arxiuDetall = new ArxiuDetallDto();
 			boolean noMock = !"true".equalsIgnoreCase(System.getProperty("es.caib.pinbal.arxiu.document.consultar.mock"));
-			es.caib.plugins.arxiu.api.Document arxiuDocument = noMock ? pluginHelper.arxiuDocumentConsultar(
+			es.caib.pluginsib.arxiu.api.Document arxiuDocument = noMock ? pluginHelper.arxiuDocumentConsultar(
 					consulta.getScspPeticionId(),
 					consulta.getArxiuDocumentUuid(),
 					null,
@@ -188,14 +190,14 @@ public class HistoricConsultaServiceImpl implements HistoricConsultaService, App
 			Long id,
 			boolean isAdmin) throws ConsultaNotFoundException, JustificantGeneracioException {
 		log.debug("Generant justificant per a la consulta (id=" + id + ")");
-		HistoricConsulta consulta = historicConsultaRepository.findOne(id);
+		HistoricConsulta consulta = historicConsultaRepository.findById(id).orElse(null);
 		if (consulta == null) {
 			log.error("No s'ha trobat la consulta (id=" + id + ")");
 			throw new ConsultaNotFoundException();
 		}
 		if (!isAdmin) {
 			Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-			if (!auth.getName().equals(consulta.getCreatedBy().getCodi())) {
+			if (!auth.getName().equals(consulta.getCreatedBy().orElseThrow().getCodi())) {
 				log.error("La consulta (id=" + id + ") no pertany a aquest usuari");
 				throw new ConsultaNotFoundException();
 			}
@@ -221,7 +223,7 @@ public class HistoricConsultaServiceImpl implements HistoricConsultaService, App
 			throw new ConsultaNotFoundException();
 		}
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-		if (!auth.getName().equals(consulta.getCreatedBy().getCodi())) {
+		if (!auth.getName().equals(consulta.getCreatedBy().orElseThrow().getCodi())) {
 			log.error("La consulta (idpeticion=" + idpeticion + ", idsolicitud=" + idsolicitud + ") no pertany a aquest usuari");
 			throw new AccessDenegatException("Només pot accedir al justificant l'usuari que ha realitzat la consulta");
 		}
@@ -233,13 +235,13 @@ public class HistoricConsultaServiceImpl implements HistoricConsultaService, App
 			Long id,
 			boolean descarregar) throws ConsultaNotFoundException, JustificantGeneracioException {
 		log.debug("Reintentant generació del justificant per a la consulta (id=" + id + ")");
-		HistoricConsulta consulta = historicConsultaRepository.findOne(id);
+		HistoricConsulta consulta = historicConsultaRepository.findById(id).orElse(null);
 		if (consulta == null) {
 			log.error("No s'ha trobat la consulta (id=" + id + ")");
 			throw new ConsultaNotFoundException();
 		}
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-		if (!auth.getName().equals(consulta.getCreatedBy().getCodi())) {
+		if (!auth.getName().equals(consulta.getCreatedBy().orElseThrow().getCodi())) {
 			log.error("La consulta (id=" + id + ") no pertany a aquest usuari");
 			throw new ConsultaNotFoundException();
 		}
@@ -253,12 +255,12 @@ public class HistoricConsultaServiceImpl implements HistoricConsultaService, App
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 		log.debug("Generant justificant concatenat per a la consulta múltiple (id=" + id + ")");
 		copiarPropertiesToDb();
-		HistoricConsulta consulta = historicConsultaRepository.findOne(id);
+		HistoricConsulta consulta = historicConsultaRepository.findById(id).orElse(null);
 		if (consulta == null) {
 			log.debug("No s'ha trobat la consulta (id=" + id + ")");
 			throw new ConsultaNotFoundException();
 		}
-		if (!auth.getName().equals(consulta.getCreatedBy().getCodi())) {
+		if (!auth.getName().equals(consulta.getCreatedBy().orElseThrow().getCodi())) {
 			log.debug("La consulta (id=" + id + ") no pertany a aquest usuari");
 			throw new ConsultaNotFoundException();
 		}
@@ -299,12 +301,12 @@ public class HistoricConsultaServiceImpl implements HistoricConsultaService, App
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 		log.debug("Generant justificant ZIP per a la consulta múltiple (id=" + id + ")");
 		copiarPropertiesToDb();
-		HistoricConsulta consulta = historicConsultaRepository.findOne(id);
+		HistoricConsulta consulta = historicConsultaRepository.findById(id).orElse(null);
 		if (consulta == null) {
 			log.debug("No s'ha trobat la consulta (id=" + id + ")");
 			throw new ConsultaNotFoundException();
 		}
-		if (!auth.getName().equals(consulta.getCreatedBy().getCodi())) {
+		if (!auth.getName().equals(consulta.getCreatedBy().orElseThrow().getCodi())) {
 			log.debug("La consulta (id=" + id + ") no pertany a aquest usuari");
 			throw new ConsultaNotFoundException();
 		}
@@ -343,7 +345,7 @@ public class HistoricConsultaServiceImpl implements HistoricConsultaService, App
 			Pageable pageable) throws EntitatNotFoundException {
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 		log.debug("Cercant les consultes de delegat simples per a l'entitat (id=" + entitatId + ") i l'usuari (codi=" + auth.getName() + ")");
-		Entitat entitat = entitatRepository.findOne(entitatId);
+		Entitat entitat = entitatRepository.findById(entitatId).orElse(null);
 		if (entitat == null) {
 			log.debug("No s'ha trobat l'entitat (id=" + entitatId + ")");
 			throw new EntitatNotFoundException();
@@ -368,7 +370,7 @@ public class HistoricConsultaServiceImpl implements HistoricConsultaService, App
 			Pageable pageable) throws EntitatNotFoundException {
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 		log.debug("Cercant les consultes de delegat múltiples per a l'entitat (id=" + entitatId + ") i l'usuari (codi=" + auth.getName() + ")");
-		Entitat entitat = entitatRepository.findOne(entitatId);
+		Entitat entitat = entitatRepository.findById(entitatId).orElse(null);
 		if (entitat == null) {
 			log.debug("No s'ha trobat l'entitat (id=" + entitatId + ")");
 			throw new EntitatNotFoundException();
@@ -393,7 +395,7 @@ public class HistoricConsultaServiceImpl implements HistoricConsultaService, App
 			Pageable pageable) throws EntitatNotFoundException {
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 		log.debug("Cercant les consultes d'auditor per a l'entitat (id=" + entitatId + ")");
-		Entitat entitat = entitatRepository.findOne(entitatId);
+		Entitat entitat = entitatRepository.findById(entitatId).orElse(null);
 		if (entitat == null) {
 			log.debug("No s'ha trobat l'entitat (id=" + entitatId + ")");
 			throw new EntitatNotFoundException();
@@ -422,7 +424,7 @@ public class HistoricConsultaServiceImpl implements HistoricConsultaService, App
 	public List<ConsultaDto> findByFiltrePerAuditor(Long entitatId, ConsultaFiltreDto filtre) throws EntitatNotFoundException {
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 		log.debug("Cercant les consultes d'auditor per a l'entitat (id=" + entitatId + ")");
-		Entitat entitat = entitatRepository.findOne(entitatId);
+		Entitat entitat = entitatRepository.findById(entitatId).orElse(null);
 		if (entitat == null) {
 			log.debug("No s'ha trobat l'entitat (id=" + entitatId + ")");
 			throw new EntitatNotFoundException();
@@ -439,7 +441,7 @@ public class HistoricConsultaServiceImpl implements HistoricConsultaService, App
 				entitat,
 				null,
 				filtre,
-				new PageRequest(0, Integer.MAX_VALUE, new Sort(new Sort.Order(Sort.Direction.DESC, "scspPeticionId"))),
+				PageRequest.of(0, Integer.MAX_VALUE, Sort.by(new Sort.Order(Sort.Direction.DESC, "scspPeticionId"))),
 				false,
 				false,
 				false,
@@ -454,7 +456,7 @@ public class HistoricConsultaServiceImpl implements HistoricConsultaService, App
 			ConsultaFiltreDto filtre,
 			Pageable pageable) throws EntitatNotFoundException {
 		log.debug("Cercant les consultes de superauditor per a l'entitat (id=" + entitatId + ")");
-		Entitat entitat = entitatRepository.findOne(entitatId);
+		Entitat entitat = entitatRepository.findById(entitatId).orElse(null);
 		if (entitat == null) {
 			log.debug("No s'ha trobat l'entitat (id=" + entitatId + ")");
 			throw new EntitatNotFoundException();
@@ -534,7 +536,7 @@ public class HistoricConsultaServiceImpl implements HistoricConsultaService, App
 		Date dataInici = consultaOpenDataDto.getDataInici();
 		boolean isNullDataFi = consultaOpenDataDto.getDataFi() == null;
 		Date dataFi = consultaOpenDataDto.getDataFi();
-		Pageable pageable = new PageRequest(consultaOpenDataDto.getPagina(), consultaOpenDataDto.getMida());
+		Pageable pageable = PageRequest.of(consultaOpenDataDto.getPagina(), consultaOpenDataDto.getMida());
 
 		Integer numElements = dadesObertesHistoricConsultaRepository.countByOpendata(
 				esNullEntitatCodi,
@@ -606,12 +608,12 @@ public class HistoricConsultaServiceImpl implements HistoricConsultaService, App
 	public ConsultaDto findOneDelegat(Long id) throws ConsultaNotFoundException, ScspException {
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 		log.debug("Cercant les dades de la consulta (id=" + id + ")");
-		HistoricConsulta consulta = historicConsultaRepository.findOne(id);
+		HistoricConsulta consulta = historicConsultaRepository.findById(id).orElse(null);
 		if (consulta == null) {
 			log.debug("No s'ha trobat la consulta (id=" + id + ")");
 			throw new ConsultaNotFoundException();
 		}
-		if (!auth.getName().equals(consulta.getCreatedBy().getCodi())) {
+		if (!auth.getName().equals(consulta.getCreatedBy().orElseThrow().getCodi())) {
 			log.debug("La consulta (id=" + id + ") no pertany a aquest usuari");
 			throw new ConsultaNotFoundException();
 		}
@@ -625,7 +627,7 @@ public class HistoricConsultaServiceImpl implements HistoricConsultaService, App
 	public ConsultaDto findOneAuditor(Long id) throws ConsultaNotFoundException, ScspException {
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 		log.debug("Cercant les dades de la consulta (id=" + id + ")");
-		HistoricConsulta consulta = historicConsultaRepository.findOne(id);
+		HistoricConsulta consulta = historicConsultaRepository.findById(id).orElse(null);
 		if (consulta == null) {
 			log.debug("No s'ha trobat la consulta (id=" + id + ")");
 			throw new ConsultaNotFoundException();
@@ -647,7 +649,7 @@ public class HistoricConsultaServiceImpl implements HistoricConsultaService, App
 	@Override
 	public ConsultaDto findOneSuperauditor(Long id) throws ConsultaNotFoundException, ScspException {
 		log.debug("Cercant les dades de la consulta (id=" + id + ")");
-		HistoricConsulta consulta = historicConsultaRepository.findOne(id);
+		HistoricConsulta consulta = historicConsultaRepository.findById(id).orElse(null);
 		if (consulta == null) {
 			log.debug("No s'ha trobat la consulta (id=" + id + ")");
 			throw new ConsultaNotFoundException();
@@ -661,7 +663,7 @@ public class HistoricConsultaServiceImpl implements HistoricConsultaService, App
 	@Override
 	public ConsultaDto findOneAdmin(Long id) throws ConsultaNotFoundException, ScspException {
 		log.debug("Cercant les dades de la consulta (id=" + id + ")");
-		HistoricConsulta consulta = historicConsultaRepository.findOne(id);
+		HistoricConsulta consulta = historicConsultaRepository.findById(id).orElse(null);
 		if (consulta == null) {
 			log.debug("No s'ha trobat la consulta (id=" + id + ")");
 			throw new ConsultaNotFoundException();
@@ -676,7 +678,7 @@ public class HistoricConsultaServiceImpl implements HistoricConsultaService, App
 	public List<ConsultaDto> findAmbPare(
 			Long pareId) throws ConsultaNotFoundException, ScspException {
 		log.debug("Cercant les consultes amb pare (pareId=" + pareId + ")");
-		HistoricConsulta pare = historicConsultaRepository.findOne(pareId);
+		HistoricConsulta pare = historicConsultaRepository.findById(pareId).orElse(null);
 		if (pare == null) {
 			log.debug("No s'ha trobat la consulta (id=" + pareId + ")");
 			throw new ConsultaNotFoundException();
@@ -711,7 +713,7 @@ public class HistoricConsultaServiceImpl implements HistoricConsultaService, App
 				"dataInici=" + dataInici + "," +
 				"dataFi=" + dataFi + "," +
 				"numConsultes=" + numConsultes + ")");
-		Entitat entitat = entitatRepository.findOne(entitatId);
+		Entitat entitat = entitatRepository.findById(entitatId).orElse(null);
 		if (entitat == null) {
 			log.debug("No s'ha trobat l'entitat (id=" + entitatId + ")");
 			throw new EntitatNotFoundException();
@@ -743,7 +745,7 @@ public class HistoricConsultaServiceImpl implements HistoricConsultaService, App
 		log.debug("Consultant auditoria per auditor (" +
 				"entitatId=" + entitatId + "," +
 				"consultaIds=" + consultaIds + ")");
-		Entitat entitat = entitatRepository.findOne(entitatId);
+		Entitat entitat = entitatRepository.findById(entitatId).orElse(null);
 		if (entitat == null) {
 			log.debug("No s'ha trobat l'entitat (id=" + entitatId + ")");
 			throw new EntitatNotFoundException();
@@ -847,7 +849,7 @@ public class HistoricConsultaServiceImpl implements HistoricConsultaService, App
 			Long entitatId = (Long)consulta[1];
 			if (entitatActual == null || !entitatActual.getId().equals(entitatId)) {
 				entitatActual = dtoMappingHelper.getMapperFacade().map(
-						entitatRepository.findOne(entitatId),
+						entitatRepository.findById(entitatId).orElse(null),
 						EntitatDto.class);
 				consultesEntitat = new ArrayList<ConsultaDto>();
 				resposta.put(entitatActual, consultesEntitat);
@@ -876,7 +878,7 @@ public class HistoricConsultaServiceImpl implements HistoricConsultaService, App
 		log.debug("Obtenint informe general d'estats");
 		List<InformeGeneralEstatDto> resposta = new ArrayList<InformeGeneralEstatDto>();
 		List<ProcedimentServei> serveis = procedimentServeiRepository.findAll(
-				new Sort(Sort.Direction.ASC, "procediment.entitat.nom", "procediment.codi", "servei"));
+				Sort.by(Sort.Direction.ASC, "procediment.entitat.nom", "procediment.codi", "servei"));
 		List<Object[]> consultes = historicConsultaRepository.countGroupByProcedimentServeiEstat(dataInici, dataFi);
 		for (ProcedimentServei servei : serveis) {
 			resposta.add(toInformeGeneralEstatDto(servei, consultes));
@@ -900,7 +902,7 @@ public class HistoricConsultaServiceImpl implements HistoricConsultaService, App
 	public void arxivarConsultesAntigues() {
 		log.info("[ARXIU CONSULTES] Inici");
 		String dialect = configHelper.getConfig("es.caib.pinbal.hibernate.dialect", "Oracle");
-		int dies = configHelper.getAsInt("es.caib.pinbal.tasca.auto.arxivar.antiguetat.dies", 180);
+		int dies = configHelper.getConfigAsInt("es.caib.pinbal.tasca.auto.arxivar.antiguetat.dies", 180);
 		log.info("[ARXIU CONSULTES] Arxivar en {} les consultes amb una antiguitat superior a {} dies", dialect, dies);
 		int consultesArxivades = 0;
 		int consultesEliminades = 0;
@@ -1050,7 +1052,7 @@ public class HistoricConsultaServiceImpl implements HistoricConsultaService, App
 							consulta.getScspSolicitudId());
 					if (dadesEspecifiquesPeticio.isEmpty() && consulta.getDadesEspecifiques() != null && !consulta.getDadesEspecifiques().trim().isEmpty()) {
 						try {
-							dadesEspecifiquesPeticio = new ObjectMapper().readValue(consulta.getDadesEspecifiques(), new TypeReference<HashMap<String, String>>() {});
+							dadesEspecifiquesPeticio = new ObjectMapper().readValue(consulta.getDadesEspecifiques(), new TypeReference<HashMap<String, Object>>() {});
 						} catch (IOException ex) {}
 					}
 					resposta.setDadesEspecifiques(dadesEspecifiquesPeticio);
@@ -1104,7 +1106,7 @@ public class HistoricConsultaServiceImpl implements HistoricConsultaService, App
 			paginaConsultes = llistatHistoricConsultaRepository.findByProcedimentServeiProcedimentEntitatIdAndCreatedBy(
 					entitat.getId(),
 					usuariCodi == null,
-					(usuariCodi != null) ? usuariRepository.findOne(usuariCodi) : null,
+					(usuariCodi != null) ? usuariRepository.findById(usuariCodi).orElse(null) : null,
 					multiple,
 					nomesSensePare,
 					pageable);
@@ -1346,7 +1348,7 @@ public class HistoricConsultaServiceImpl implements HistoricConsultaService, App
 				}
 				if (versioImprimible) {
 					try {
-						es.caib.plugins.arxiu.api.Document documentArxiu = pluginHelper.arxiuDocumentConsultar(
+						es.caib.pluginsib.arxiu.api.Document documentArxiu = pluginHelper.arxiuDocumentConsultar(
 								consultaRefreshed.getScspPeticionId(),
 								consultaRefreshed.getArxiuDocumentUuid(),
 								null,
@@ -1439,7 +1441,7 @@ public class HistoricConsultaServiceImpl implements HistoricConsultaService, App
 	@Override
 	@Transactional(readOnly = true)
 	public FitxerDto descarregarXmlTokensZip(Long id) throws ConsultaNotFoundException {
-		HistoricConsulta consulta = historicConsultaRepository.findOne(id);
+		HistoricConsulta consulta = historicConsultaRepository.findById(id).orElse(null);
 		if (consulta == null) {
 			throw new ConsultaNotFoundException();
 		}

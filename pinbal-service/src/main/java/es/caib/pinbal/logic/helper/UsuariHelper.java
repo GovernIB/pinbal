@@ -3,14 +3,16 @@
  */
 package es.caib.pinbal.logic.helper;
 
-import es.caib.pinbal.core.dto.IdiomaEnumDto;
 import es.caib.pinbal.logic.helper.PermisosHelper.ObjectIdentifierExtractor;
-import es.caib.pinbal.logic.model.ProcedimentServei;
-import es.caib.pinbal.logic.model.Usuari;
-import es.caib.pinbal.logic.repository.ProcedimentServeiRepository;
-import es.caib.pinbal.logic.repository.UsuariRepository;
-import es.caib.pinbal.plugin.usuari.DadesUsuari;
+import es.caib.pinbal.logic.intf.dto.IdiomaEnumDto;
+import es.caib.pinbal.logic.intf.service.exception.NotFoundException;
+import es.caib.pinbal.persist.entity.ProcedimentServei;
+import es.caib.pinbal.persist.entity.Usuari;
+import es.caib.pinbal.persist.repository.ProcedimentServeiRepository;
+import es.caib.pinbal.persist.repository.UsuariRepository;
 import es.caib.pinbal.plugin.SistemaExternException;
+import es.caib.pinbal.plugin.usuari.DadesUsuari;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,7 +46,7 @@ public class UsuariHelper {
 	private ProcedimentServeiRepository procedimentServeiRepository;
 
 	@Resource
-	private PluginHelper externHelper;
+	private PluginHelper pluginHelper;
 
 	@Resource
 	private MutableAclService aclService;
@@ -61,58 +63,67 @@ public class UsuariHelper {
 	
 
 	public Usuari init(String usuariCodi) {
-		Usuari usuari = usuariRepository.findOne(usuariCodi);
-		if (usuari == null || !usuari.isInicialitzat()) {
-			// Només inicialitza els usuaris que entren per primera vegada
-			// Consulta les dades de l'usuari al sistema extern
-			DadesUsuari dadesUsuari = null;
-			try {
-				dadesUsuari = externHelper.dadesUsuariConsultarAmbUsuariCodi(usuariCodi);
-			} catch (SistemaExternException ex) {
-				LOGGER.error("Error al consultar les dades de l'usuari (codi=" + usuariCodi + ") al sistema extern", ex);
+		Usuari usuari = usuariRepository.findById(usuariCodi).orElse(null);
+		// Només inicialitza els usuaris que entren per primera vegada
+		// Consulta les dades de l'usuari al sistema extern
+		if (usuari != null) {
+			if (!usuari.isInicialitzat()) {
+				// Si l'usuari està donat d'alta però sense inicialitzar
+				DadesUsuari dadesUsuari = getDadesUsuari(usuariCodi);
+				usuari.update(
+						dadesUsuari.getNom(),
+						dadesUsuari.getNif());
 			}
+			return usuari;
+		}
+
+		DadesUsuari dadesUsuari = getDadesUsuari(usuariCodi);
+		// Si l'usuari no està donat d'alta a la taula d'usuaris
+		Usuari usuariNif = null;
+		// Cerca l'usuari amb el mateix NIF a la taula d'usuaris
+		if (dadesUsuari.getNif() != null && !dadesUsuari.getNif().isEmpty())
+			usuariNif = usuariRepository.findByNif(dadesUsuari.getNif());
+		if (usuariNif == null) {
+			// Si no hi ha cap usuari amb el mateix NIF
+			// en crea un de nou
 			if (dadesUsuari != null) {
-				if (usuari == null) {
-					// Si l'usuari no està donat d'alta a la taula d'usuaris
-					Usuari usuariNif = null;
-					// Cerca l'usuari amb el mateix NIF a la taula d'usuaris
-					if (dadesUsuari.getNif() != null && !dadesUsuari.getNif().isEmpty())
-						usuariNif = usuariRepository.findByNif(dadesUsuari.getNif());
-					if (usuariNif == null) {
-						// Si no hi ha cap usuari amb el mateix NIF
-						// en crea un de nou
-						if (dadesUsuari != null) {
-							LOGGER.debug("Creant l'usuari (codi=" + usuariCodi + ")");
-							usuari = usuariRepository.save(
-									Usuari.getBuilderInicialitzat(
-											dadesUsuari.getCodi(),
-											dadesUsuari.getNom(),
-											dadesUsuari.getNif()).build());
-						}
-					} else {
-						// Si hi ha un usuari amb el mateix NIF
-						// actualitza les seves dades
-						if (!usuariNif.isInicialitzat()) {
-							LOGGER.debug("Inicialitzant l'usuari (codi=" + usuariNif.getCodi() + ")");
-							usuari = moure(
-									usuariNif,
-									dadesUsuari,
-									usuariRepository,
-									procedimentServeiRepository,
-									aclService);
-						} else {
-							LOGGER.debug("L'usuari (codi=" + usuariNif.getCodi() + ") ja estava inicialitzat");
-						}
-					}
-				} else if (!usuari.isInicialitzat()) {
-					// Si l'usuari està donat d'alta però sense inicialitzar
-					usuari.update(
-							dadesUsuari.getNom(),
-							dadesUsuari.getNif());
-				}
+				LOGGER.debug("Creant l'usuari (codi=" + usuariCodi + ")");
+				usuari = usuariRepository.save(
+						Usuari.getBuilderInicialitzat(
+								dadesUsuari.getCodi(),
+								dadesUsuari.getNom(),
+								dadesUsuari.getNif()).build());
+			}
+		} else {
+			// Si hi ha un usuari amb el mateix NIF
+			// actualitza les seves dades
+			if (!usuariNif.isInicialitzat()) {
+				LOGGER.debug("Inicialitzant l'usuari (codi=" + usuariNif.getCodi() + ")");
+				usuari = moure(
+						usuariNif,
+						dadesUsuari,
+						usuariRepository,
+						procedimentServeiRepository,
+						aclService);
+			} else {
+				LOGGER.debug("L'usuari (codi=" + usuariNif.getCodi() + ") ja estava inicialitzat");
 			}
 		}
 		return usuari;
+	}
+
+	@NotNull
+	private DadesUsuari getDadesUsuari(String usuariCodi) {
+		DadesUsuari dadesUsuari = null;
+		try {
+			dadesUsuari = pluginHelper.dadesUsuariConsultarAmbUsuariCodi(usuariCodi);
+		} catch (SistemaExternException ex) {
+			LOGGER.error("Error al consultar les dades de l'usuari (codi=" + usuariCodi + ") al sistema extern", ex);
+		}
+		if (dadesUsuari == null) {
+			throw new NotFoundException(usuariCodi, Usuari.class);
+		}
+		return dadesUsuari;
 	}
 
 	public Usuari moure(

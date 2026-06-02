@@ -3,11 +3,11 @@ package es.caib.pinbal.plugin;
 import com.codahale.metrics.Counter;
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.Timer;
+import es.caib.comanda.model.server.monitoring.EstatSalutEnum;
+import es.caib.comanda.model.server.monitoring.IntegracioPeticions;
+import es.caib.comanda.model.server.monitoring.IntegracioSalut;
 import es.caib.comanda.ms.salut.helper.EstatHelper;
-import es.caib.comanda.ms.salut.model.EstatSalutEnum;
-import es.caib.comanda.ms.salut.model.IntegracioApp;
-import es.caib.comanda.ms.salut.model.IntegracioPeticions;
-import es.caib.comanda.ms.salut.model.IntegracioSalut;
+import es.caib.comanda.ms.salut.helper.IntegracioApp;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -184,21 +184,19 @@ public class PluginMetricHelper {
             IntegracioApp plugin = metricaEntry.getKey();
             Metrics metrica = metricaEntry.getValue();
 
-            IntegracioPeticions integracioPeticions = IntegracioPeticions.builder()
+            IntegracioPeticions integracioPeticions = new IntegracioPeticions()
                     .totalOk(metrica.getTotalSuccess())
                     .totalError(metrica.getTotalError())
                     .totalTempsMig(metrica.getTotalMean())
                     .peticionsOkUltimPeriode(metrica.getPeriodeSuccess())
                     .peticionsErrorUltimPeriode(metrica.getPeriodeError())
                     .tempsMigUltimPeriode(metrica.getPeriodeMean())
-                    .endpoint(metrica.getEndpoint())
-                    .build();
-            integracionsSalut.add(IntegracioSalut.builder()
+                    .endpoint(metrica.getEndpoint());
+            integracionsSalut.add(new IntegracioSalut()
                     .codi(plugin.name())
                     .latencia(metrica.getPeriodeMean())
                     .estat(metrica.getEstatPeriode())
-                    .peticions(integracioPeticions)
-                    .build());
+                    .peticions(integracioPeticions));
         }
 
         resetLocalTimers();

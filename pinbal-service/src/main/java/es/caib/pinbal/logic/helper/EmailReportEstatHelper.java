@@ -1,15 +1,19 @@
 package es.caib.pinbal.logic.helper;
 
-import java.util.Arrays;
-
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Component;
 
-import lombok.extern.slf4j.Slf4j;
+import java.util.Arrays;
 
 @Slf4j
 @Component
 public class EmailReportEstatHelper extends EmailHelper {
-	
+
+	public EmailReportEstatHelper(JavaMailSender mailSender, ConfigHelper configHelper) {
+		super(mailSender, configHelper);
+	}
+
 	public void sendMail(String[] emailsDestinataris, byte[] fileReportEstatExcel) {
 		
 		log.debug("Enviant correu report diari de l'estat de PINBAL");

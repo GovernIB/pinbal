@@ -1,20 +1,20 @@
 package es.caib.pinbal.logic.helper;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.Resource;
 import java.util.Collection;
 
 @Slf4j
+@RequiredArgsConstructor
 @Component
 public class CacheHelper {
 
-    @Resource
-    private CacheManager cacheManager;
+    private final CacheManager cacheManager;
 
     @CacheEvict(value = "procediments", key = "#entitatCodi")
     public void evictProcedimentsPerEntitat(String entitatCodi){}
