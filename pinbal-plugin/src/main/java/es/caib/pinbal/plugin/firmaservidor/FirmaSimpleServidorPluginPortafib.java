@@ -4,19 +4,12 @@
 package es.caib.pinbal.plugin.firmaservidor;
 
 import es.caib.comanda.ms.salut.model.IntegracioApp;
-import es.caib.pinbal.plugin.PropertiesHelper;
-import es.caib.pinbal.plugin.SistemaExternException;
 import es.caib.pinbal.plugin.PluginMetricHelper;
+import es.caib.pinbal.plugin.SistemaExternException;
 import org.fundaciobit.apisib.apifirmasimple.v1.ApiFirmaEnServidorSimple;
-import org.fundaciobit.apisib.apifirmasimple.v1.beans.FirmaSimpleAvailableProfile;
-import org.fundaciobit.apisib.apifirmasimple.v1.beans.FirmaSimpleCommonInfo;
-import org.fundaciobit.apisib.apifirmasimple.v1.beans.FirmaSimpleFile;
-import org.fundaciobit.apisib.apifirmasimple.v1.beans.FirmaSimpleFileInfoSignature;
-import org.fundaciobit.apisib.apifirmasimple.v1.beans.FirmaSimpleSignDocumentRequest;
-import org.fundaciobit.apisib.apifirmasimple.v1.beans.FirmaSimpleSignatureResult;
-import org.fundaciobit.apisib.apifirmasimple.v1.beans.FirmaSimpleSignedFileInfo;
-import org.fundaciobit.apisib.apifirmasimple.v1.beans.FirmaSimpleStatus;
+import org.fundaciobit.apisib.apifirmasimple.v1.beans.*;
 import org.fundaciobit.apisib.apifirmasimple.v1.jersey.ApiFirmaEnServidorSimpleJersey;
+import org.fundaciobit.pluginsib.core.v3.utils.AbstractPluginProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,20 +24,12 @@ import java.util.Properties;
  * 
  * @author Limit Tecnologies <limit@limit.es>
  */
-	public class FirmaSimpleServidorPluginPortafib implements FirmaServidorPlugin {
+	public class FirmaSimpleServidorPluginPortafib extends AbstractPluginProperties implements FirmaServidorPlugin {
 
-	private static final String PROPERTIES_BASE = "es.caib.pinbal.plugin.firmaservidor.portafib.";
+	private static final String PROPERTIES_BASE = "plugin.firmaservidor.portafib.";
 
-	private final Properties properties;
-
-	public FirmaSimpleServidorPluginPortafib() {
-		super();
-		properties = PropertiesHelper.getProperties();
-        PluginMetricHelper.addEndpoint(IntegracioApp.PFI, getPropertyEndpoint());
-	}
-
-	public FirmaSimpleServidorPluginPortafib(Properties properties) {
-		this.properties = properties;
+	public FirmaSimpleServidorPluginPortafib(String propertyKeyBase, Properties properties) {
+		super(propertyKeyBase, properties);
 		PluginMetricHelper.addEndpoint(IntegracioApp.PFI, getPropertyEndpoint());
 	}
 
@@ -163,31 +148,31 @@ import java.util.Properties;
 
 
 	private String getPropertyEndpoint() {
-		return properties.getProperty(PROPERTIES_BASE + "endpoint");
+		return this.getProperty(PROPERTIES_BASE + "endpoint");
 	}
 
 	private String getPropertyUsername() {
-		return properties.getProperty(PROPERTIES_BASE + "auth.username");
+		return this.getProperty(PROPERTIES_BASE + "auth.username");
 	}
 
 	private String getPropertyPassword() {
-		return properties.getProperty(PROPERTIES_BASE + "auth.password");
+		return this.getProperty(PROPERTIES_BASE + "auth.password");
 	}
 
 	private String getPropertyPerfil() {
-		return properties.getProperty(PROPERTIES_BASE + "perfil");
+		return this.getProperty(PROPERTIES_BASE + "perfil");
 	}
 
 	private String getPropertyLocation() {
-		return properties.getProperty(PROPERTIES_BASE + "location", "Palma");
+		return this.getProperty(PROPERTIES_BASE + "location", "Palma");
 	}
 
 	private String getPropertySignerEmail() {
-		return properties.getProperty(PROPERTIES_BASE + "signerEmail", "suport@caib.es");
+		return this.getProperty(PROPERTIES_BASE + "signerEmail", "suport@caib.es");
 	}
 
 	private String getPropertyUsuariFirma() {
-		return properties.getProperty(PROPERTIES_BASE + "username");
+		return this.getProperty(PROPERTIES_BASE + "username");
 	}
 
 	private static final Logger logger = LoggerFactory.getLogger(FirmaSimpleServidorPluginPortafib.class);

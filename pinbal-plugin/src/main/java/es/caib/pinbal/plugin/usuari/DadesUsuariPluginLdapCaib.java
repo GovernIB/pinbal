@@ -39,11 +39,6 @@ public class DadesUsuariPluginLdapCaib extends LdapUserInformationPlugin impleme
 		PluginMetricHelper.addEndpoint(IntegracioApp.USR, this.getProperty("pluginsib.userinformation.ldap.host_url"));
 	}
 
-	public DadesUsuariPluginLdapCaib(String propertyKeyBase) {
-		super(propertyKeyBase);
-		PluginMetricHelper.addEndpoint(IntegracioApp.USR, this.getProperty("pluginsib.userinformation.ldap.host_url"));
-	}
-
 	@Override
 	public DadesUsuari consultarAmbUsuariCodi(String usuariCodi) throws SistemaExternException {
 

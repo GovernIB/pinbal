@@ -6,9 +6,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import es.caib.comanda.ms.salut.model.IntegracioApp;
 import es.caib.pinbal.plugin.PluginMetricHelper;
 import es.caib.pinbal.plugin.SistemaExternException;
-import es.caib.pinbal.plugin.dadescomuns.*;
+import es.caib.pinbal.plugin.dadescomuns.DadesComunsPlugin;
+import es.caib.pinbal.plugin.dadescomuns.Municipi;
+import es.caib.pinbal.plugin.dadescomuns.Pais;
+import es.caib.pinbal.plugin.dadescomuns.Provincia;
 import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.util.Strings;
+import org.fundaciobit.pluginsib.core.v3.utils.AbstractPluginProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -18,11 +22,15 @@ import java.nio.charset.StandardCharsets;
 import java.text.Collator;
 import java.util.*;
 
-public class DadesComunsPluginImpl implements DadesComunsPlugin {
+public class DadesComunsPluginImpl extends AbstractPluginProperties implements DadesComunsPlugin {
 
-    private final Properties properties;
     public DadesComunsPluginImpl(Properties properties) {
-        this.properties = properties;
+        super("es.caib.pinbal.", properties);
+        PluginMetricHelper.addEndpoint(IntegracioApp.DCM, getDadesComunesBaseUrl());
+    }
+
+    public DadesComunsPluginImpl(String propertyKeyBase, Properties properties) {
+        super(propertyKeyBase, properties);
         PluginMetricHelper.addEndpoint(IntegracioApp.DCM, getDadesComunesBaseUrl());
     }
 
@@ -190,7 +198,7 @@ public class DadesComunsPluginImpl implements DadesComunsPlugin {
     }
 
     private String getDadesComunesBaseUrl() {
-        return properties.getProperty("es.caib.pinbal.dadescomunes.base.url", "https://proves.caib.es/dadescomunsfront");
+        return this.getProperty("dadescomunes.base.url", "https://proves.caib.es/dadescomunsfront");
     }
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DadesComunsPluginImpl.class);

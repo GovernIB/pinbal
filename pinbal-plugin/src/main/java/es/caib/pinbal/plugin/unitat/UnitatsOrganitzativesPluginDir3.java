@@ -8,11 +8,11 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.type.TypeFactory;
 import es.caib.comanda.ms.salut.model.IntegracioApp;
-import es.caib.pinbal.plugin.PropertiesHelper;
-import es.caib.pinbal.plugin.SistemaExternException;
 import es.caib.pinbal.plugin.PluginMetricHelper;
+import es.caib.pinbal.plugin.SistemaExternException;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.IOUtils;
+import org.fundaciobit.pluginsib.core.v3.utils.AbstractPluginProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,19 +22,14 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Implementació de proves del plugin d'unitats organitzatives.
  * 
  * @author Limit Tecnologies <limit@limit.es>
  */
-public class UnitatsOrganitzativesPluginDir3 implements UnitatsOrganitzativesPlugin {
+public class UnitatsOrganitzativesPluginDir3 extends AbstractPluginProperties implements UnitatsOrganitzativesPlugin {
 	
 	private static final String SERVEI_CERCA = "/rest/busqueda/";
 	private static final String SERVEI_CATALEG = "/rest/catalogo/";
@@ -43,11 +38,12 @@ public class UnitatsOrganitzativesPluginDir3 implements UnitatsOrganitzativesPlu
 	private static final String SERVEI_ORGANIGRAMA = "/rest/organigrama/";
 	private static final String SERVEI_OFICINES = "/rest/oficinas/";
 
-	private static final String PROPERTY_SERVICE_URL = "es.caib.pinbal.plugin.unitats.organitzatives.dir3.service.url";
-	private static final String PROPERTY_SERVICE_USERNAME = "es.caib.pinbal.plugin.unitats.organitzatives.dir3.service.username";
-	private static final String PROPERTY_SERVICE_PASSWORD = "es.caib.pinbal.plugin.unitats.organitzatives.dir3.service.password";
+	private static final String PROPERTY_SERVICE_URL = "plugin.unitats.organitzatives.dir3.service.url";
+	private static final String PROPERTY_SERVICE_USERNAME = "plugin.unitats.organitzatives.dir3.service.username";
+	private static final String PROPERTY_SERVICE_PASSWORD = "plugin.unitats.organitzatives.dir3.service.password";
 
-    public UnitatsOrganitzativesPluginDir3() {
+    public UnitatsOrganitzativesPluginDir3(String propertyKeyBase, Properties properties) {
+		super(propertyKeyBase, properties);
         PluginMetricHelper.addEndpoint(IntegracioApp.DIR, getServiceUrl());
     }
 
@@ -252,15 +248,15 @@ public class UnitatsOrganitzativesPluginDir3 implements UnitatsOrganitzativesPlu
 	}
 
 	private String getServiceUrl() {
-		return PropertiesHelper.getProperties().getProperty(PROPERTY_SERVICE_URL);
+		return this.getProperty(PROPERTY_SERVICE_URL);
 	}
 
 	private String getServiceUsername() {
-		return PropertiesHelper.getProperties().getProperty(PROPERTY_SERVICE_USERNAME);
+		return this.getProperty(PROPERTY_SERVICE_USERNAME);
 	}
 
 	private String getServicePassword() {
-		return PropertiesHelper.getProperties().getProperty(PROPERTY_SERVICE_PASSWORD);
+		return this.getProperty(PROPERTY_SERVICE_PASSWORD);
 	}
 	
 	private static final Logger logger = LoggerFactory.getLogger(UnitatsOrganitzativesPluginDir3.class);

@@ -21,12 +21,14 @@ import java.util.*;
 
 public class ArxiuPluginCaib extends es.caib.plugins.arxiu.caib.ArxiuPluginCaib implements ArxiuPlugin {
 
-    public static final String ARXIU_BASE_PROP = "es.caib.notib.plugin.arxiu.";
+    public static final String ARXIU_BASE_PROP = "plugin.arxiu.";
 
     private static final String ARXIUCAIB_BASE_PROP = ARXIU_BASE_PROP + "caib.";
     private static final String CONCSV_URL_PROP = ARXIUCAIB_BASE_PROP + "concsv.base.url";
     private static final String CONCSV_USUARI_PROP = ARXIUCAIB_BASE_PROP + "concsv.usuari";
     private static final String CONCSV_CONTRASENYA_PROP = ARXIUCAIB_BASE_PROP + "concsv.contrasenya";
+    private static final String TIMEOUT_CONNECT_PROP = ARXIUCAIB_BASE_PROP + "timeout.connect";
+    private static final String TIMEOUT_READ_PROP = ARXIUCAIB_BASE_PROP + "timeout.read";
     private static final String TIMEOUT_CONNECT = "10000";
     private static final String TIMEOUT_READ = "60000";
     private static final String ERROR_METADADES = "No ha estat possible obtenir les metadades del document amb UUID ";
@@ -296,24 +298,24 @@ public class ArxiuPluginCaib extends es.caib.plugins.arxiu.caib.ArxiuPluginCaib 
     }
 
     private String getPropertyConcsvUrl() {
-        return getPluginProperties().getProperty(CONCSV_URL_PROP);
+        return this.getProperty(CONCSV_URL_PROP);
     }
 
     private String getPropertyConcsvUsuari() {
-        return getPluginProperties().getProperty(CONCSV_USUARI_PROP);
+        return this.getProperty(CONCSV_USUARI_PROP);
     }
 
     private String getPropertyConcsvContrasenya() {
-        return getPluginProperties().getProperty(CONCSV_CONTRASENYA_PROP);
+        return this.getProperty(CONCSV_CONTRASENYA_PROP);
     }
 
     private int getPropertyTimeoutConnect() {
-        var timeout = getPluginProperties().getProperty(TIMEOUT_CONNECT, TIMEOUT_CONNECT);
+        var timeout = this.getProperty(TIMEOUT_CONNECT_PROP, TIMEOUT_CONNECT);
         return Integer.parseInt(timeout);
     }
 
     private int getPropertyTimeoutRead() {
-        var timeout = getPluginProperties().getProperty(TIMEOUT_READ, TIMEOUT_READ);
+        var timeout = this.getProperty(TIMEOUT_READ_PROP, TIMEOUT_READ);
         return Integer.parseInt(timeout);
     }
 

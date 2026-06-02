@@ -137,9 +137,14 @@
 		<!--Comanda-->
         <dependency>
             <groupId>es.caib.comanda</groupId>
-            <artifactId>comanda-api-legacy</artifactId>
+            <artifactId>comanda-api-server-monitoring</artifactId>
             <version>1.0.0</version>
         </dependency>
+		<dependency>
+			<groupId>es.caib.comanda</groupId>
+			<artifactId>comanda-api-utils</artifactId>
+			<version>1.0.0</version>
+		</dependency>
 		<!--Arxiu-->
 		<dependency>
 			<groupId>org.fundaciobit.pluginsib.arxiu</groupId>

@@ -4,9 +4,9 @@
 package es.caib.pinbal.plugin.usuari;
 
 import es.caib.comanda.ms.salut.model.IntegracioApp;
-import es.caib.pinbal.plugin.PropertiesHelper;
-import es.caib.pinbal.plugin.SistemaExternException;
 import es.caib.pinbal.plugin.PluginMetricHelper;
+import es.caib.pinbal.plugin.SistemaExternException;
+import org.fundaciobit.pluginsib.core.v3.utils.AbstractPluginProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -18,17 +18,19 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 
 /**
  * Implementació del plugin de consulta de dades d'usuaris emprant JDBC.
  * 
  * @author Limit Tecnologies <limit@limit.es>
  */
-public class DadesUsuariPluginJdbc implements DadesUsuariPlugin {
+public class DadesUsuariPluginJdbc extends AbstractPluginProperties implements DadesUsuariPlugin {
 
-    public DadesUsuariPluginJdbc() {
-        PluginMetricHelper.addEndpoint(IntegracioApp.USR, getDatasourceJndiName());
-    }
+	public DadesUsuariPluginJdbc(String propertyKeyBase, Properties properties) {
+		super(propertyKeyBase, properties);
+		PluginMetricHelper.addEndpoint(IntegracioApp.USR, getDatasourceJndiName());
+	}
 
 	@Override
 	public DadesUsuari consultarAmbUsuariCodi(String usuariCodi) throws SistemaExternException {
@@ -223,28 +225,28 @@ public class DadesUsuariPluginJdbc implements DadesUsuariPlugin {
 	}
 
 	private String getDatasourceJndiName() {
-		return PropertiesHelper.getProperties().getProperty("es.caib.pinbal.plugin.dades.usuari.jdbc.datasource.jndi.name");
+		return this.getProperty("plugin.dades.usuari.jdbc.datasource.jndi.name");
 	}
 	private String getJdbcQueryUsuariCodi() {
-		String query = PropertiesHelper.getProperties().getProperty("es.caib.pinbal.plugin.dades.usuari.jdbc.query");
+		String query = this.getProperty("plugin.dades.usuari.jdbc.query");
 		if (query == null || query.isEmpty())
-			query = PropertiesHelper.getProperties().getProperty("es.caib.pinbal.plugin.dades.usuari.jdbc.query.codi");
+			query = this.getProperty("plugin.dades.usuari.jdbc.query.codi");
 		return query;
 	}
 	private String getJdbcQueryUsuariNif() {
-		return PropertiesHelper.getProperties().getProperty("es.caib.pinbal.plugin.dades.usuari.jdbc.query.nif");
+		return this.getProperty("plugin.dades.usuari.jdbc.query.nif");
 	}
 	private String getJdbcQueryUsuariNom() {
-		return PropertiesHelper.getProperties().getProperty("es.caib.pinbal.plugin.dades.usuari.jdbc.query.nom");
+		return this.getProperty("plugin.dades.usuari.jdbc.query.nom");
 	}
 	private String getJdbcQueryUsuariAny() {
-		return PropertiesHelper.getProperties().getProperty("es.caib.pinbal.plugin.dades.usuari.jdbc.query.any");
+		return this.getProperty("plugin.dades.usuari.jdbc.query.any");
 	}
 	private String getJdbcQueryUsuariRols() {
-		return PropertiesHelper.getProperties().getProperty("es.caib.pinbal.plugin.dades.usuari.jdbc.query.rols");
+		return this.getProperty("plugin.dades.usuari.jdbc.query.rols");
 	}
 	private String getJdbcQueryUsuariGrup() {
-		return PropertiesHelper.getProperties().getProperty("es.caib.pinbal.plugin.dades.usuari.jdbc.query.grup");
+		return this.getProperty("plugin.dades.usuari.jdbc.query.grup");
 	}
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(DadesUsuariPluginJdbc.class);
