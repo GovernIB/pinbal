@@ -24,6 +24,7 @@ import java.util.regex.PatternSyntaxException;
 public class DadesConsultaSimpleValidator implements Validator {
 
     private final ServeiService serveiService;
+
     private List<ServeiCampDto> camps;
     String serveiCodi;
 

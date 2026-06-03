@@ -1,16 +1,12 @@
 package es.caib.pinbal.logic.helper;
 
-import es.caib.pinbal.core.dto.ArbreRespostaDto;
-import org.junit.Test;
+import es.caib.pinbal.logic.intf.dto.ArbreRespostaDto;
+import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 import java.util.Set;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ArbreRespostaDocumentHelperTest {
 

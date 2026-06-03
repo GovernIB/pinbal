@@ -12,33 +12,37 @@ import es.caib.pinbal.client.recobriment.v2.PeticioSincrona;
 import es.caib.pinbal.client.recobriment.v2.SolicitudSimple;
 import es.caib.pinbal.client.recobriment.v2.ValorEnum;
 import es.caib.pinbal.client.serveis.ServeiBasic;
-import es.caib.pinbal.core.dto.EstatTipus;
-import es.caib.pinbal.core.dto.IdiomaEnumDto;
-import es.caib.pinbal.core.dto.JustificantDto;
-import es.caib.pinbal.core.dto.dadesexternes.Municipi;
-import es.caib.pinbal.core.dto.dadesexternes.Pais;
-import es.caib.pinbal.core.dto.dadesexternes.Provincia;
 import es.caib.pinbal.logic.helper.RecobrimentHelper;
 import es.caib.pinbal.logic.helper.RecobrimentV2Helper;
-import es.caib.pinbal.logic.model.Consulta;
-import es.caib.pinbal.logic.model.Entitat;
-import es.caib.pinbal.logic.model.OrganGestor;
-import es.caib.pinbal.logic.model.ServeiCamp;
-import es.caib.pinbal.logic.model.ServeiConfig;
-import es.caib.pinbal.logic.model.Procediment;
-import es.caib.pinbal.logic.repository.ConsultaRepository;
-import es.caib.pinbal.logic.repository.EntitatRepository;
-import es.caib.pinbal.logic.repository.ProcedimentRepository;
-import es.caib.pinbal.logic.repository.ServeiCampRepository;
-import es.caib.pinbal.logic.repository.ServeiConfigRepository;
-import es.caib.pinbal.logic.repository.ServeiRepository;
-import es.caib.pinbal.core.service.exception.ConsultaNotFoundException;
-import es.caib.pinbal.core.service.exception.ConsultaScspGeneracioException;
-import es.caib.pinbal.core.service.exception.EntitatNotFoundException;
-import es.caib.pinbal.core.service.exception.ProcedimentNotFoundException;
-import es.caib.pinbal.core.service.exception.RecobrimentScspException;
-import es.caib.pinbal.core.service.exception.ServeiCampNotFoundException;
-import es.caib.pinbal.core.service.exception.ServeiNotFoundException;
+import es.caib.pinbal.logic.intf.dto.EstatTipus;
+import es.caib.pinbal.logic.intf.dto.IdiomaEnumDto;
+import es.caib.pinbal.logic.intf.dto.JustificantDto;
+import es.caib.pinbal.logic.intf.service.DadesExternesService;
+import es.caib.pinbal.logic.intf.service.ServeiService;
+import es.caib.pinbal.logic.intf.service.exception.ConsultaNotFoundException;
+import es.caib.pinbal.logic.intf.service.exception.ConsultaScspGeneracioException;
+import es.caib.pinbal.logic.intf.service.exception.EntitatNotFoundException;
+import es.caib.pinbal.logic.intf.service.exception.ProcedimentNotFoundException;
+import es.caib.pinbal.logic.intf.service.exception.RecobrimentScspException;
+import es.caib.pinbal.logic.intf.service.exception.ServeiCampNotFoundException;
+import es.caib.pinbal.logic.intf.service.exception.ServeiNotFoundException;
+import es.caib.pinbal.persist.entity.Consulta;
+import es.caib.pinbal.persist.entity.Entitat;
+import es.caib.pinbal.persist.entity.OrganGestor;
+import es.caib.pinbal.persist.entity.Procediment;
+import es.caib.pinbal.persist.entity.ServeiCamp;
+import es.caib.pinbal.persist.entity.ServeiConfig;
+import es.caib.pinbal.persist.entity.Usuari;
+import es.caib.pinbal.persist.repository.ConsultaRepository;
+import es.caib.pinbal.persist.repository.EntitatRepository;
+import es.caib.pinbal.persist.repository.HistoricConsultaRepository;
+import es.caib.pinbal.persist.repository.ProcedimentRepository;
+import es.caib.pinbal.persist.repository.ServeiCampRepository;
+import es.caib.pinbal.persist.repository.ServeiConfigRepository;
+import es.caib.pinbal.persist.repository.ServeiRepository;
+import es.caib.pinbal.plugin.dadescomuns.Municipi;
+import es.caib.pinbal.plugin.dadescomuns.Pais;
+import es.caib.pinbal.plugin.dadescomuns.Provincia;
 import es.caib.pinbal.scsp.ScspHelper;
 import es.caib.pinbal.scsp.XmlHelper;
 import es.caib.pinbal.scsp.tree.Node;
@@ -48,38 +52,42 @@ import es.scsp.bean.common.peticion.Peticion;
 import es.scsp.bean.common.respuesta.Estado;
 import es.scsp.bean.common.respuesta.Respuesta;
 import es.scsp.common.exceptions.ScspException;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
 import org.mockito.invocation.InvocationOnMock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.stubbing.Answer;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.validation.BindException;
 import org.springframework.validation.FieldError;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class RecobrimentServiceImplTest {
 
     @InjectMocks
-    private RecobrimentServiceImpl recobrimentServiceImpl = new RecobrimentServiceImpl();
+    private RecobrimentServiceImpl recobrimentServiceImpl;
 
     @Mock
     private EntitatRepository entitatRepository;
@@ -100,6 +108,9 @@ public class RecobrimentServiceImplTest {
     private ConsultaRepository consultaRepository;
 
     @Mock
+    private HistoricConsultaRepository historicConsultaRepository;
+
+    @Mock
     private ScspHelper scspHelper;
 
     @Mock
@@ -111,9 +122,20 @@ public class RecobrimentServiceImplTest {
     @Mock
     private DadesExternesService dadesExternesService;
 
-    @Before
+    @BeforeEach
     public void setUp() {
-        MockitoAnnotations.initMocks(this);
+        // El SecurityContextHolder és estàtic (thread-local). Alguns tests (p.ex.
+        // testGetEntitats_*) hi deixen un mock de SecurityContext que persisteix entre
+        // tests dins la mateixa classe. Si no es neteja, mockAuthentication() crida
+        // setAuthentication() sobre aquest mock (que és un no-op) i getConsulta() acaba
+        // veient l'usuari "testUser" en lloc de "username", llançant AccessDenegatException.
+        SecurityContextHolder.clearContext();
+        ReflectionTestUtils.setField(recobrimentServiceImpl, "scspHelper", scspHelper);
+    }
+
+    @AfterEach
+    public void tearDown() {
+        SecurityContextHolder.clearContext();
     }
 
 
@@ -156,12 +178,12 @@ public class RecobrimentServiceImplTest {
         List<es.caib.pinbal.client.recobriment.v2.Entitat> entitats = recobrimentServiceImpl.getEntitats();
 
         // Verify results
-        Assert.assertNotNull(entitats);
-        Assert.assertEquals(2, entitats.size());
-        Assert.assertEquals("ENT001", entitats.get(0).getCodi());
-        Assert.assertEquals("Entity 1", entitats.get(0).getNom());
-        Assert.assertEquals("ENT002", entitats.get(1).getCodi());
-        Assert.assertEquals("Entity 2", entitats.get(1).getNom());
+        Assertions.assertNotNull(entitats);
+        Assertions.assertEquals(2, entitats.size());
+        Assertions.assertEquals("ENT001", entitats.get(0).getCodi());
+        Assertions.assertEquals("Entity 1", entitats.get(0).getNom());
+        Assertions.assertEquals("ENT002", entitats.get(1).getCodi());
+        Assertions.assertEquals("Entity 2", entitats.get(1).getNom());
     }
 
     @Test
@@ -182,14 +204,13 @@ public class RecobrimentServiceImplTest {
 
         // Mock behavior
         when(SecurityContextHolder.getContext().getAuthentication().getName()).thenReturn(username);
-        when(entitatRepository.findActivesAmbUsuariCodi(username)).thenReturn(mockEntitats);
 
         // Call method
         List<es.caib.pinbal.client.recobriment.v2.Entitat> entitats = recobrimentServiceImpl.getEntitats();
 
         // Verify results
-        Assert.assertNotNull(entitats);
-        Assert.assertTrue(entitats.isEmpty());
+        Assertions.assertNotNull(entitats);
+        Assertions.assertTrue(entitats.isEmpty());
     }
 
 
@@ -231,19 +252,19 @@ public class RecobrimentServiceImplTest {
         List<ProcedimentBasic> procediments = recobrimentServiceImpl.getProcediments(entitatCodi);
 
         // Verify results
-        Assert.assertNotNull(procediments);
-        Assert.assertEquals(2, procediments.size());
+        Assertions.assertNotNull(procediments);
+        Assertions.assertEquals(2, procediments.size());
 
-        Assert.assertEquals("PRO123", procediments.get(0).getCodi());
-        Assert.assertEquals("Procediment 123", procediments.get(0).getNom());
-        Assert.assertTrue(procediments.get(0).isActiu());
+        Assertions.assertEquals("PRO123", procediments.get(0).getCodi());
+        Assertions.assertEquals("Procediment 123", procediments.get(0).getNom());
+        Assertions.assertTrue(procediments.get(0).isActiu());
 
-        Assert.assertEquals("PRO456", procediments.get(1).getCodi());
-        Assert.assertEquals("Procediment 456", procediments.get(1).getNom());
-        Assert.assertFalse(procediments.get(1).isActiu());
+        Assertions.assertEquals("PRO456", procediments.get(1).getCodi());
+        Assertions.assertEquals("Procediment 456", procediments.get(1).getNom());
+        Assertions.assertFalse(procediments.get(1).isActiu());
     }
 
-    @Test(expected = EntitatNotFoundException.class)
+    @Test
     public void testGetProcediments_EntitatNotFound() throws EntitatNotFoundException {
         // Mock data
         String entitatCodi = "XYZ789";
@@ -252,7 +273,9 @@ public class RecobrimentServiceImplTest {
         when(entitatRepository.findByCodi(entitatCodi)).thenReturn(null);
 
         // Call the method
-        recobrimentServiceImpl.getProcediments(entitatCodi);
+        assertThrows(EntitatNotFoundException.class, () ->
+                recobrimentServiceImpl.getProcediments(entitatCodi)
+        );
     }
 
     @Test
@@ -270,8 +293,8 @@ public class RecobrimentServiceImplTest {
         List<ProcedimentBasic> procediments = recobrimentServiceImpl.getProcediments(entitatCodi);
 
         // Verify results
-        Assert.assertNotNull(procediments);
-        Assert.assertTrue(procediments.isEmpty());
+        Assertions.assertNotNull(procediments);
+        Assertions.assertTrue(procediments.isEmpty());
     }
 
     // TESTS getServeis
@@ -293,15 +316,15 @@ public class RecobrimentServiceImplTest {
         List<ServeiBasic> serveis = recobrimentServiceImpl.getServeis();
 
         // Verify results
-        Assert.assertNotNull(serveis);
-        Assert.assertEquals(2, serveis.size());
-        Assert.assertEquals("S001", serveis.get(0).getCodi());
-        Assert.assertEquals("Servei 1", serveis.get(0).getDescripcio());
-        Assert.assertTrue(serveis.get(0).getActiu());
+        Assertions.assertNotNull(serveis);
+        Assertions.assertEquals(2, serveis.size());
+        Assertions.assertEquals("S001", serveis.get(0).getCodi());
+        Assertions.assertEquals("Servei 1", serveis.get(0).getDescripcio());
+        Assertions.assertTrue(serveis.get(0).getActiu());
 
-        Assert.assertEquals("S002", serveis.get(1).getCodi());
-        Assert.assertEquals("Servei 2", serveis.get(1).getDescripcio());
-        Assert.assertFalse(serveis.get(1).getActiu());
+        Assertions.assertEquals("S002", serveis.get(1).getCodi());
+        Assertions.assertEquals("Servei 2", serveis.get(1).getDescripcio());
+        Assertions.assertFalse(serveis.get(1).getActiu());
     }
 
     @Test
@@ -313,8 +336,8 @@ public class RecobrimentServiceImplTest {
         List<ServeiBasic> serveis = recobrimentServiceImpl.getServeis();
 
         // Verify results
-        Assert.assertNotNull(serveis);
-        Assert.assertTrue(serveis.isEmpty());
+        Assertions.assertNotNull(serveis);
+        Assertions.assertTrue(serveis.isEmpty());
     }
 
     // TESTS getServeisByEntitat
@@ -338,14 +361,14 @@ public class RecobrimentServiceImplTest {
         List<ServeiBasic> serveis = recobrimentServiceImpl.getServeisByEntitat(entitatCodi);
 
         // Verify results
-        Assert.assertNotNull(serveis);
-        Assert.assertEquals(2, serveis.size());
-        Assert.assertEquals("SERV001", serveis.get(0).getCodi());
-        Assert.assertEquals("Servei 1", serveis.get(0).getDescripcio());
-        Assert.assertTrue(serveis.get(0).getActiu());
-        Assert.assertEquals("SERV002", serveis.get(1).getCodi());
-        Assert.assertEquals("Servei 2", serveis.get(1).getDescripcio());
-        Assert.assertFalse(serveis.get(1).getActiu());
+        Assertions.assertNotNull(serveis);
+        Assertions.assertEquals(2, serveis.size());
+        Assertions.assertEquals("SERV001", serveis.get(0).getCodi());
+        Assertions.assertEquals("Servei 1", serveis.get(0).getDescripcio());
+        Assertions.assertTrue(serveis.get(0).getActiu());
+        Assertions.assertEquals("SERV002", serveis.get(1).getCodi());
+        Assertions.assertEquals("Servei 2", serveis.get(1).getDescripcio());
+        Assertions.assertFalse(serveis.get(1).getActiu());
     }
 
     @Test
@@ -361,11 +384,11 @@ public class RecobrimentServiceImplTest {
         List<ServeiBasic> serveis = recobrimentServiceImpl.getServeisByEntitat(entitatCodi);
 
         // Verify results
-        Assert.assertNotNull(serveis);
-        Assert.assertTrue(serveis.isEmpty());
+        Assertions.assertNotNull(serveis);
+        Assertions.assertTrue(serveis.isEmpty());
     }
 
-    @Test(expected = EntitatNotFoundException.class)
+    @Test
     public void testGetServeisByEntitat_EntitatNotFoundException() throws EntitatNotFoundException {
         // Mock data
         String entitatCodi = "ENT003";
@@ -374,7 +397,10 @@ public class RecobrimentServiceImplTest {
         when(entitatRepository.findByCodi(entitatCodi)).thenReturn(null);
 
         // Call the method
-        recobrimentServiceImpl.getServeisByEntitat(entitatCodi);
+        assertThrows(EntitatNotFoundException.class, () ->
+                recobrimentServiceImpl.getServeisByEntitat(entitatCodi)
+        );
+
     }
 
     // TESTS getServeisByProcediment
@@ -399,14 +425,14 @@ public class RecobrimentServiceImplTest {
         List<ServeiBasic> serveis = recobrimentServiceImpl.getServeisByProcediment(entitatCodi, procedimentCodi);
 
         // Verify results
-        Assert.assertNotNull(serveis);
-        Assert.assertEquals(2, serveis.size());
-        Assert.assertEquals("SERV001", serveis.get(0).getCodi());
-        Assert.assertEquals("Servei 1", serveis.get(0).getDescripcio());
-        Assert.assertTrue(serveis.get(0).getActiu());
-        Assert.assertEquals("SERV002", serveis.get(1).getCodi());
-        Assert.assertEquals("Servei 2", serveis.get(1).getDescripcio());
-        Assert.assertFalse(serveis.get(1).getActiu());
+        Assertions.assertNotNull(serveis);
+        Assertions.assertEquals(2, serveis.size());
+        Assertions.assertEquals("SERV001", serveis.get(0).getCodi());
+        Assertions.assertEquals("Servei 1", serveis.get(0).getDescripcio());
+        Assertions.assertTrue(serveis.get(0).getActiu());
+        Assertions.assertEquals("SERV002", serveis.get(1).getCodi());
+        Assertions.assertEquals("Servei 2", serveis.get(1).getDescripcio());
+        Assertions.assertFalse(serveis.get(1).getActiu());
     }
 
     @Test
@@ -423,11 +449,11 @@ public class RecobrimentServiceImplTest {
         List<ServeiBasic> serveis = recobrimentServiceImpl.getServeisByProcediment(entitatCodi, procedimentCodi);
 
         // Verify results
-        Assert.assertNotNull(serveis);
-        Assert.assertTrue(serveis.isEmpty());
+        Assertions.assertNotNull(serveis);
+        Assertions.assertTrue(serveis.isEmpty());
     }
 
-    @Test(expected = ProcedimentNotFoundException.class)
+    @Test
     public void testGetServeisByProcediment_ProcedimentNotFoundException() throws ProcedimentNotFoundException {
         // Mock data
         String entitatCodi = "ENT001";
@@ -437,7 +463,9 @@ public class RecobrimentServiceImplTest {
         when(procedimentRepository.findByEntitatCodiAndCodi(entitatCodi, procedimentCodi)).thenReturn(null);
 
         // Call method
-        recobrimentServiceImpl.getServeisByProcediment(entitatCodi, procedimentCodi);
+        assertThrows(ProcedimentNotFoundException.class, () ->
+                recobrimentServiceImpl.getServeisByProcediment(entitatCodi, procedimentCodi)
+        );
     }
 
     // TESTS getDadesEspecifiques
@@ -466,14 +494,14 @@ public class RecobrimentServiceImplTest {
         List<DadaEspecifica> dadesEspecifiques = recobrimentServiceImpl.getDadesEspecifiquesByServei(serveiCodi);
 
         // Verify results
-        Assert.assertNotNull(dadesEspecifiques);
-        Assert.assertEquals(2, dadesEspecifiques.size());
-        Assert.assertEquals("path/path1", dadesEspecifiques.get(0).getCodi());
-        Assert.assertEquals("Etiqueta 1", dadesEspecifiques.get(0).getEtiqueta());
-        Assert.assertTrue(dadesEspecifiques.get(0).isObligatori());
-        Assert.assertEquals("path/path2", dadesEspecifiques.get(1).getCodi());
-        Assert.assertEquals("Etiqueta 2", dadesEspecifiques.get(1).getEtiqueta());
-        Assert.assertFalse(dadesEspecifiques.get(1).isObligatori());
+        Assertions.assertNotNull(dadesEspecifiques);
+        Assertions.assertEquals(2, dadesEspecifiques.size());
+        Assertions.assertEquals("path/path1", dadesEspecifiques.get(0).getCodi());
+        Assertions.assertEquals("Etiqueta 1", dadesEspecifiques.get(0).getEtiqueta());
+        Assertions.assertTrue(dadesEspecifiques.get(0).isObligatori());
+        Assertions.assertEquals("path/path2", dadesEspecifiques.get(1).getCodi());
+        Assertions.assertEquals("Etiqueta 2", dadesEspecifiques.get(1).getEtiqueta());
+        Assertions.assertFalse(dadesEspecifiques.get(1).isObligatori());
     }
 
     @Test
@@ -489,11 +517,11 @@ public class RecobrimentServiceImplTest {
         List<DadaEspecifica> dadesEspecifiques = recobrimentServiceImpl.getDadesEspecifiquesByServei(serveiCodi);
 
         // Verify results
-        Assert.assertNotNull(dadesEspecifiques);
-        Assert.assertTrue(dadesEspecifiques.isEmpty());
+        Assertions.assertNotNull(dadesEspecifiques);
+        Assertions.assertTrue(dadesEspecifiques.isEmpty());
     }
 
-    @Test(expected = ServeiNotFoundException.class)
+    @Test
     public void testGetDadesEspecifiquesByServei_ServeiNotFoundException() throws ServeiNotFoundException {
         // Mock data
         String serveiCodi = "SERV003";
@@ -502,7 +530,9 @@ public class RecobrimentServiceImplTest {
         when(serveiConfigRepository.findByServei(serveiCodi)).thenReturn(null);
 
         // Call the method
-        recobrimentServiceImpl.getDadesEspecifiquesByServei(serveiCodi);
+        assertThrows(ServeiNotFoundException.class, () ->
+                recobrimentServiceImpl.getDadesEspecifiquesByServei(serveiCodi)
+        );
     }
 
     // TESTS getValorsEnum
@@ -527,10 +557,10 @@ public class RecobrimentServiceImplTest {
 
         List<ValorEnum> result = recobrimentServiceImpl.getValorsEnumByServei(serveiCodi, campCodi, enumCodi, filtre);
 
-        Assert.assertNotNull(result);
-        Assert.assertEquals(3, result.size());
-        Assert.assertEquals("ENUM001", result.get(0).getCodi());
-        Assert.assertEquals("Etiqueta A", result.get(0).getValor());
+        Assertions.assertNotNull(result);
+        Assertions.assertEquals(3, result.size());
+        Assertions.assertEquals("ENUM001", result.get(0).getCodi());
+        Assertions.assertEquals("Etiqueta A", result.get(0).getValor());
     }
 
     @Test
@@ -552,10 +582,10 @@ public class RecobrimentServiceImplTest {
 
         List<ValorEnum> result = recobrimentServiceImpl.getValorsEnumByServei(serveiCodi, campCodi, enumCodi, filtre);
 
-        Assert.assertNotNull(result);
-        Assert.assertEquals(1, result.size());
-        Assert.assertEquals("ENUM002", result.get(0).getCodi());
-        Assert.assertEquals("Etiqueta B", result.get(0).getValor());
+        Assertions.assertNotNull(result);
+        Assertions.assertEquals(1, result.size());
+        Assertions.assertEquals("ENUM002", result.get(0).getCodi());
+        Assertions.assertEquals("Etiqueta B", result.get(0).getValor());
     }
 
     private static Tree<XmlHelper.DadesEspecifiquesNode> getDadesEspecifiquesNodeTree() {
@@ -582,16 +612,18 @@ public class RecobrimentServiceImplTest {
         return arbre;
     }
 
-    @Test(expected = ServeiNotFoundException.class)
+    @Test
     public void testGetValorsEnumByServei_ServesNotFound() throws Exception {
         String serveiCodi = "INVALID";
 
         when(serveiConfigRepository.findByServei(serveiCodi)).thenReturn(null);
 
-        recobrimentServiceImpl.getValorsEnumByServei(serveiCodi, "CAMP001", "ENUM1", "Test");
+        assertThrows(ServeiNotFoundException.class, () ->
+                recobrimentServiceImpl.getValorsEnumByServei(serveiCodi, "CAMP001", "ENUM1", "Test")
+        );
     }
 
-    @Test(expected = ServeiCampNotFoundException.class)
+    @Test
     public void testGetValorsEnumByServei_CampNotFound() throws Exception {
         String serveiCodi = "SERV001";
         String campCodi = "INVALID";
@@ -601,7 +633,9 @@ public class RecobrimentServiceImplTest {
 
         when(serveiCampRepository.findByServeiAndPath(serveiCodi, campCodi)).thenReturn(null);
 
-        recobrimentServiceImpl.getValorsEnumByServei(serveiCodi, campCodi, "ENUM1", "Test");
+        assertThrows(ServeiCampNotFoundException.class, () ->
+                recobrimentServiceImpl.getValorsEnumByServei(serveiCodi, campCodi, "ENUM1", "Test")
+        );
     }
 
     @Test
@@ -623,10 +657,10 @@ public class RecobrimentServiceImplTest {
 
         List<ValorEnum> result = recobrimentServiceImpl.getValorsEnumByServei(serveiCodi, campPath, enumCodi, null);
 
-        Assert.assertNotNull(result);
-        Assert.assertEquals(2, result.size());
-        Assert.assertEquals("73", result.get(1).getCodi());
-        Assert.assertEquals("España", result.get(1).getValor());
+        Assertions.assertNotNull(result);
+        Assertions.assertEquals(2, result.size());
+        Assertions.assertEquals("73", result.get(1).getCodi());
+        Assertions.assertEquals("España", result.get(1).getValor());
     }
 
     @Test
@@ -648,10 +682,10 @@ public class RecobrimentServiceImplTest {
 
         List<ValorEnum> result = recobrimentServiceImpl.getValorsEnumByServei(serveiCodi, campPath, enumCodi, null);
 
-        Assert.assertNotNull(result);
-        Assert.assertEquals(2, result.size());
-        Assert.assertEquals("07", result.get(0).getCodi());
-        Assert.assertEquals("Illes Balears", result.get(0).getValor());
+        Assertions.assertNotNull(result);
+        Assertions.assertEquals(2, result.size());
+        Assertions.assertEquals("07", result.get(0).getCodi());
+        Assertions.assertEquals("Illes Balears", result.get(0).getValor());
     }
 
     @Test
@@ -674,14 +708,14 @@ public class RecobrimentServiceImplTest {
 
         List<ValorEnum> result = recobrimentServiceImpl.getValorsEnumByServei(serveiCodi, campPath, enumCodi, filtre);
 
-        Assert.assertNotNull(result);
-        Assert.assertEquals(2, result.size());
-        Assert.assertEquals("033", result.get(0).getCodi());
-        Assert.assertEquals("Manacor", result.get(0).getValor());
+        Assertions.assertNotNull(result);
+        Assertions.assertEquals(2, result.size());
+        Assertions.assertEquals("033", result.get(0).getCodi());
+        Assertions.assertEquals("Manacor", result.get(0).getValor());
 
     }
 
-    @Test(expected = RuntimeException.class)
+    @Test
     public void testGetValorsEnumByServei_MunicipisFiltreValueValidation() throws Exception {
         String serveiCodi = "SERV001";
         String campPath = "DatosEspecificos/minicipi";
@@ -694,10 +728,12 @@ public class RecobrimentServiceImplTest {
         ServeiCamp mockServeiCamp = mock(ServeiCamp.class);
         when(serveiCampRepository.findByServeiAndPath(serveiCodi, campPath)).thenReturn(mockServeiCamp);
 
-        recobrimentServiceImpl.getValorsEnumByServei(serveiCodi, campPath, enumCodi, filtre);
+        assertThrows(RuntimeException.class, () ->
+                recobrimentServiceImpl.getValorsEnumByServei(serveiCodi, campPath, enumCodi, filtre)
+        );
     }
 
-    @Test(expected = RuntimeException.class)
+    @Test
     public void testGetValorsEnumByServei_MunicipisFiltreValidation() throws Exception {
         String serveiCodi = "SERV001";
         String campPath = "DatosEspecificos/minicipi";
@@ -710,7 +746,9 @@ public class RecobrimentServiceImplTest {
         ServeiCamp mockServeiCamp = mock(ServeiCamp.class);
         when(serveiCampRepository.findByServeiAndPath(serveiCodi, campPath)).thenReturn(mockServeiCamp);
 
-        recobrimentServiceImpl.getValorsEnumByServei(serveiCodi, campPath, enumCodi, filtre);
+        assertThrows(RuntimeException.class, () ->
+                recobrimentServiceImpl.getValorsEnumByServei(serveiCodi, campPath, enumCodi, filtre)
+        );
     }
 
     // TESTS validatePeticio Sincrona
@@ -723,15 +761,15 @@ public class RecobrimentServiceImplTest {
         Map<String, List<String>> mockErrors = new HashMap<>(); // No errors
 
         // Mock behavior
-        doNothing().when(recobrimentV2Helper).validateDadesComunes(any(DadesComunes.class), anyString(), any(BindException.class));
-        doNothing().when(recobrimentV2Helper).validateDadesSolicitud(any(SolicitudSimple.class), anyString(), any(BindException.class), any(ServeiService.class));
+        doNothing().when(recobrimentV2Helper).validateDadesComunes(nullable(DadesComunes.class), anyString(), any(BindException.class));
+        doNothing().when(recobrimentV2Helper).validateDadesSolicitud(nullable(SolicitudSimple.class), anyString(), any(BindException.class), nullable(ServeiService.class));
 
         // Call the method
         Map<String, List<String>> result = recobrimentServiceImpl.validatePeticio("SERVEI_CODI", peticio);
 
         // Validate results
-        Assert.assertNotNull(result);
-        Assert.assertTrue(result.isEmpty());
+        Assertions.assertNotNull(result);
+        Assertions.assertTrue(result.isEmpty());
     }
 
     @Test
@@ -740,7 +778,7 @@ public class RecobrimentServiceImplTest {
         PeticioSincrona peticio = PeticioSincrona.builder().build();
 
         // Mock validation errors
-        doNothing().when(recobrimentV2Helper).validateDadesComunes(any(DadesComunes.class), anyString(), any(BindException.class));
+        doNothing().when(recobrimentV2Helper).validateDadesComunes(nullable(DadesComunes.class), anyString(), any(BindException.class));
         Mockito.doAnswer(new Answer<Void>() {
             @Override
             public Void answer(InvocationOnMock invocation) throws Throwable {
@@ -748,17 +786,17 @@ public class RecobrimentServiceImplTest {
                 bindException.addError(new FieldError("peticio", "field1", "Field1 is invalid"));
                 return null;
             }
-        }).when(recobrimentV2Helper).validateDadesSolicitud(any(SolicitudSimple.class), anyString(), any(BindException.class), any(ServeiService.class));
+        }).when(recobrimentV2Helper).validateDadesSolicitud(nullable(SolicitudSimple.class), anyString(), any(BindException.class), nullable(ServeiService.class));
 
         // Call the method
         Map<String, List<String>> result = recobrimentServiceImpl.validatePeticio("SERVEI_CODI", peticio);
 
         // Verify results
-        Assert.assertNotNull(result);
-        Assert.assertFalse(result.isEmpty());
-        Assert.assertEquals(1, result.size());
-        Assert.assertTrue(result.containsKey("field1"));
-        Assert.assertEquals("Field1 is invalid", result.get("field1").get(0));
+        Assertions.assertNotNull(result);
+        Assertions.assertFalse(result.isEmpty());
+        Assertions.assertEquals(1, result.size());
+        Assertions.assertTrue(result.containsKey("field1"));
+        Assertions.assertEquals("Field1 is invalid", result.get("field1").get(0));
     }
 
 
@@ -772,15 +810,15 @@ public class RecobrimentServiceImplTest {
         Map<String, List<String>> mockErrors = new HashMap<>(); // No errors
 
         // Mock behavior
-        doNothing().when(recobrimentV2Helper).validateDadesComunes(any(DadesComunes.class), anyString(), any(BindException.class));
-        when(recobrimentV2Helper.validateDadesSolicituds(Mockito.<List<SolicitudSimple>>any(), anyString(), any(ServeiService.class))).thenReturn(mockErrors);
+        doNothing().when(recobrimentV2Helper).validateDadesComunes(nullable(DadesComunes.class), anyString(), any(BindException.class));
+        when(recobrimentV2Helper.validateDadesSolicituds(nullable(List.class), anyString(), nullable(ServeiService.class))).thenReturn(mockErrors);
 
         // Call the method
         Map<String, List<String>> result = recobrimentServiceImpl.validatePeticio("SERVEI_CODI", peticio);
 
         // Validate results
-        Assert.assertNotNull(result);
-        Assert.assertTrue(result.isEmpty());
+        Assertions.assertNotNull(result);
+        Assertions.assertTrue(result.isEmpty());
     }
 
     @Test
@@ -793,18 +831,18 @@ public class RecobrimentServiceImplTest {
         mockErrors.put("field2", mockErrorList);
 
         // Mock validation errors
-        doNothing().when(recobrimentV2Helper).validateDadesComunes(any(DadesComunes.class), anyString(), any(BindException.class));
-        when(recobrimentV2Helper.validateDadesSolicituds(Mockito.<List<SolicitudSimple>>any(), anyString(), any(ServeiService.class))).thenReturn(mockErrors);
+        doNothing().when(recobrimentV2Helper).validateDadesComunes(nullable(DadesComunes.class), anyString(), any(BindException.class));
+        when(recobrimentV2Helper.validateDadesSolicituds(nullable(List.class), anyString(), nullable(ServeiService.class))).thenReturn(mockErrors);
 
         // Call the method
         Map<String, List<String>> result = recobrimentServiceImpl.validatePeticio("SERVEI_CODI", peticio);
 
         // Verify results
-        Assert.assertNotNull(result);
-        Assert.assertFalse(result.isEmpty());
-        Assert.assertEquals(1, result.size());
-        Assert.assertTrue(result.containsKey("field2"));
-        Assert.assertEquals("Field2 is invalid", result.get("field2").get(0));
+        Assertions.assertNotNull(result);
+        Assertions.assertFalse(result.isEmpty());
+        Assertions.assertEquals(1, result.size());
+        Assertions.assertTrue(result.containsKey("field2"));
+        Assertions.assertEquals("Field2 is invalid", result.get("field2").get(0));
     }
 
 
@@ -832,10 +870,10 @@ public class RecobrimentServiceImplTest {
         PeticioRespostaSincrona response = recobrimentServiceImpl.peticionSincrona(mockPeticio);
 
         // Assertions
-        Assert.assertNotNull(response);
-        Assert.assertFalse(response.isError());
-        Assert.assertNull(response.getMissatge());
-//        Assert.assertNotNull(response.getResposta());
+        Assertions.assertNotNull(response);
+        Assertions.assertFalse(response.isError());
+        Assertions.assertNull(response.getMissatge());
+//        Assertions.assertNotNull(response.getResposta());
     }
 
     @Test
@@ -859,9 +897,9 @@ public class RecobrimentServiceImplTest {
         PeticioRespostaSincrona response = recobrimentServiceImpl.peticionSincrona(mockPeticio);
 
         // Assertions
-        Assert.assertNotNull(response);
-        Assert.assertTrue(response.isError());
-        Assert.assertEquals("Validation failed", response.getMissatge());
+        Assertions.assertNotNull(response);
+        Assertions.assertTrue(response.isError());
+        Assertions.assertEquals("Validation failed", response.getMissatge());
     }
 
     @Test
@@ -874,9 +912,9 @@ public class RecobrimentServiceImplTest {
         PeticioRespostaSincrona response = recobrimentServiceImpl.peticionSincrona(mockPeticio);
 
         // Assertions
-        Assert.assertNotNull(response);
-        Assert.assertTrue(response.isError());
-        Assert.assertEquals("Unexpected error", response.getMissatge());
+        Assertions.assertNotNull(response);
+        Assertions.assertTrue(response.isError());
+        Assertions.assertEquals("Unexpected error", response.getMissatge());
     }
 
     @Test
@@ -897,7 +935,7 @@ public class RecobrimentServiceImplTest {
 
         PeticioRespostaSincrona response = recobrimentServiceImpl.peticionSincrona(mockPeticio);
 
-        Assert.assertNotNull(response);
+        Assertions.assertNotNull(response);
         verify(recobrimentHelper).peticionSincrona(any(Peticion.class), eq(true));
     }
 
@@ -925,10 +963,10 @@ public class RecobrimentServiceImplTest {
         PeticioConfirmacioAsincrona response = recobrimentServiceImpl.peticionAsincrona(mockPeticio);
 
         // Assertions
-        Assert.assertNotNull(response);
-        Assert.assertFalse(response.isError());
-        Assert.assertNull(response.getMissatge());
-        Assert.assertNotNull(response.getConfirmacioPeticio());
+        Assertions.assertNotNull(response);
+        Assertions.assertFalse(response.isError());
+        Assertions.assertNull(response.getMissatge());
+        Assertions.assertNotNull(response.getConfirmacioPeticio());
     }
 
     @Test
@@ -951,9 +989,9 @@ public class RecobrimentServiceImplTest {
         PeticioConfirmacioAsincrona response = recobrimentServiceImpl.peticionAsincrona(mockPeticio);
 
         // Assertions
-        Assert.assertNotNull(response);
-        Assert.assertTrue(response.isError());
-        Assert.assertEquals("Error occurred", response.getMissatge());
+        Assertions.assertNotNull(response);
+        Assertions.assertTrue(response.isError());
+        Assertions.assertEquals("Error occurred", response.getMissatge());
     }
 
     @Test
@@ -966,9 +1004,9 @@ public class RecobrimentServiceImplTest {
         PeticioConfirmacioAsincrona response = recobrimentServiceImpl.peticionAsincrona(mockPeticio);
 
         // Assertions
-        Assert.assertNotNull(response);
-        Assert.assertTrue(response.isError());
-        Assert.assertEquals("Unexpected exception", response.getMissatge());
+        Assertions.assertNotNull(response);
+        Assertions.assertTrue(response.isError());
+        Assertions.assertEquals("Unexpected exception", response.getMissatge());
     }
 
 
@@ -993,8 +1031,8 @@ public class RecobrimentServiceImplTest {
         PeticioRespostaAsincrona response = recobrimentServiceImpl.getResposta(idPeticion);
 
         // Assertions
-        Assert.assertFalse("S'ha produït un error", response.isError());
-        Assert.assertNotNull(response);
+        Assertions.assertFalse(response.isError());
+        Assertions.assertNotNull(response);
         Mockito.verify(recobrimentHelper, Mockito.times(1)).getRespuesta(Mockito.eq(idPeticion));
     }
 
@@ -1002,17 +1040,17 @@ public class RecobrimentServiceImplTest {
     public void testGetResposta_ConsultaNotFound() throws ScspException {
         // Mocking
         String idPeticion = "12345";
-        when(consultaRepository.findByScspPeticionId(idPeticion)).thenReturn(null);
+        when(recobrimentV2Helper.getConsultaBypeticioId(idPeticion)).thenReturn(null);
 
         // Call the method
         try {
             recobrimentServiceImpl.getResposta(idPeticion);
-            Assert.fail("Expected ConsultaNotFoundException was not thrown");
+            Assertions.fail("Expected ConsultaNotFoundException was not thrown");
         } catch (ConsultaNotFoundException e) {
             // Expected exception
-            Assert.assertNotNull(e);
+            Assertions.assertNotNull(e);
         } catch (Exception e) {
-            Assert.fail("Unexpected exception thrown: " + e.getMessage());
+            Assertions.fail("Unexpected exception thrown: " + e.getMessage());
         }
 
         // Verify helper is not called
@@ -1029,11 +1067,11 @@ public class RecobrimentServiceImplTest {
         // Call the method
         try {
             recobrimentServiceImpl.getResposta(idPeticion);
-            Assert.fail("Expected RuntimeException was not thrown");
+            Assertions.fail("Expected RuntimeException was not thrown");
         } catch (RecobrimentScspException e) {
-            Assert.assertTrue(e.getMessage().contains("Unexpected error"));
+            Assertions.assertTrue(e.getMessage().contains("Unexpected error"));
         } catch (Exception e) {
-            Assert.fail("Unexpected exception thrown: " + e.getMessage());
+            Assertions.fail("Unexpected exception thrown: " + e.getMessage());
         }
 
         // Verify helper is called once
@@ -1044,6 +1082,22 @@ public class RecobrimentServiceImplTest {
     // TESTS getJustificant
     // /////////////////////////////////////////////////////////
 
+    private void mockAuthentication() {
+        Authentication authentication = mock(Authentication.class);
+        lenient().when(authentication.getName()).thenReturn("username");
+        lenient().when(authentication.getCredentials()).thenReturn("password");
+        Collection authorities = Collections.singletonList(new SimpleGrantedAuthority("PBL_ADMIN"));
+        lenient().when(authentication.getAuthorities()).thenReturn(authorities);
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+    }
+    private Consulta mockConsulta() {
+        Consulta consulta = mock(Consulta.class);
+        Usuari usuari = mock(Usuari.class);
+        lenient().when(consulta.getCreatedBy()).thenReturn(Optional.of(usuari));
+        lenient().when(usuari.getCodi()).thenReturn("username");
+        return consulta;
+    }
+
     @Test
     public void testGetJustificant_Success() throws RecobrimentScspException, ConsultaNotFoundException, ScspException {
         // Mocking
@@ -1053,17 +1107,19 @@ public class RecobrimentServiceImplTest {
         when(mockJustificantDto.getNom()).thenReturn("sampleName");
         when(mockJustificantDto.getContentType()).thenReturn("application/pdf");
         when(mockJustificantDto.getContingut()).thenReturn(new byte[]{1, 2, 3});
-        when(consultaRepository.findByScspPeticionIdAndScspSolicitudId(idPeticion, idSolicitud)).thenReturn(new Consulta());
+        Consulta consulta = mockConsulta();
+        mockAuthentication();
+        when(consultaRepository.findByScspPeticionIdAndScspSolicitudId(idPeticion, idSolicitud)).thenReturn(consulta);
         when(recobrimentHelper.getJustificante(idPeticion, idSolicitud, false, true)).thenReturn(mockJustificantDto);
 
         // Call the method
         ScspJustificante result = recobrimentServiceImpl.getJustificant(idPeticion, idSolicitud);
 
         // Assertions
-        Assert.assertNotNull(result);
-        Assert.assertEquals("sampleName", result.getNom());
-        Assert.assertEquals("application/pdf", result.getContentType());
-        Assert.assertArrayEquals(new byte[]{1, 2, 3}, result.getContingut());
+        Assertions.assertNotNull(result);
+        Assertions.assertEquals("sampleName", result.getNom());
+        Assertions.assertEquals("application/pdf", result.getContentType());
+        Assertions.assertArrayEquals(new byte[]{1, 2, 3}, result.getContingut());
         Mockito.verify(recobrimentHelper, Mockito.times(1)).getJustificante(idPeticion, idSolicitud, false, true);
     }
 
@@ -1073,16 +1129,17 @@ public class RecobrimentServiceImplTest {
         String idPeticion = "12345";
         String idSolicitud = "54321";
         when(consultaRepository.findByScspPeticionIdAndScspSolicitudId(idPeticion, idSolicitud)).thenReturn(null);
+        when(historicConsultaRepository.findByScspPeticionIdAndScspSolicitudId(idPeticion, idSolicitud)).thenReturn(null);
 
         // Call the method
         try {
             recobrimentServiceImpl.getJustificant(idPeticion, idSolicitud);
-            Assert.fail("Expected ConsultaNotFoundException was not thrown");
+            Assertions.fail("Expected ConsultaNotFoundException was not thrown");
         } catch (ConsultaNotFoundException e) {
             // Expected Exception
-            Assert.assertNotNull(e);
+            Assertions.assertNotNull(e);
         } catch (Exception e) {
-            Assert.fail("Unexpected exception thrown: " + e.getMessage());
+            Assertions.fail("Unexpected exception thrown: " + e.getMessage());
         }
     }
 
@@ -1091,17 +1148,19 @@ public class RecobrimentServiceImplTest {
         // Mocking
         String idPeticion = "12345";
         String idSolicitud = "54321";
-        when(consultaRepository.findByScspPeticionIdAndScspSolicitudId(idPeticion, idSolicitud)).thenReturn(new Consulta());
+        Consulta consulta = mockConsulta();
+        mockAuthentication();
+        when(consultaRepository.findByScspPeticionIdAndScspSolicitudId(idPeticion, idSolicitud)).thenReturn(consulta);
         when(recobrimentHelper.getJustificante(anyString(), anyString(), Mockito.anyBoolean(), Mockito.anyBoolean())).thenThrow(new ScspException("Unexpected Error", "error code"));
 
         // Call the method
         try {
             recobrimentServiceImpl.getJustificant(idPeticion, idSolicitud);
-            Assert.fail("Expected RecobrimentScspException was not thrown");
+            Assertions.fail("Expected RecobrimentScspException was not thrown");
         } catch (RecobrimentScspException e) {
-            Assert.assertTrue(e.getMessage().contains("Unexpected Error"));
+            Assertions.assertTrue(e.getMessage().contains("Unexpected Error"));
         } catch (Exception e) {
-            Assert.fail("Unexpected exception thrown: " + e.getMessage());
+            Assertions.fail("Unexpected exception thrown: " + e.getMessage());
         }
     }
 
@@ -1118,17 +1177,19 @@ public class RecobrimentServiceImplTest {
         when(mockJustificantDto.getNom()).thenReturn("imprimibleName");
         when(mockJustificantDto.getContentType()).thenReturn("application/pdf");
         when(mockJustificantDto.getContingut()).thenReturn(new byte[]{4, 5, 6});
-        when(consultaRepository.findByScspPeticionIdAndScspSolicitudId(idPeticion, idSolicitud)).thenReturn(new Consulta());
+        Consulta consulta = mockConsulta();
+        mockAuthentication();
+        when(consultaRepository.findByScspPeticionIdAndScspSolicitudId(idPeticion, idSolicitud)).thenReturn(consulta);
         when(recobrimentHelper.getJustificante(idPeticion, idSolicitud, true, true)).thenReturn(mockJustificantDto);
 
         // Call the method
         ScspJustificante result = recobrimentServiceImpl.getJustificantImprimible(idPeticion, idSolicitud);
 
         // Assertions
-        Assert.assertNotNull(result);
-        Assert.assertEquals("imprimibleName", result.getNom());
-        Assert.assertEquals("application/pdf", result.getContentType());
-        Assert.assertArrayEquals(new byte[]{4, 5, 6}, result.getContingut());
+        Assertions.assertNotNull(result);
+        Assertions.assertEquals("imprimibleName", result.getNom());
+        Assertions.assertEquals("application/pdf", result.getContentType());
+        Assertions.assertArrayEquals(new byte[]{4, 5, 6}, result.getContingut());
         Mockito.verify(recobrimentHelper, Mockito.times(1)).getJustificante(idPeticion, idSolicitud, true, true);
     }
 
@@ -1142,12 +1203,12 @@ public class RecobrimentServiceImplTest {
         // Call the method
         try {
             recobrimentServiceImpl.getJustificantImprimible(idPeticion, idSolicitud);
-            Assert.fail("Expected ConsultaNotFoundException was not thrown");
+            Assertions.fail("Expected ConsultaNotFoundException was not thrown");
         } catch (ConsultaNotFoundException e) {
             // Expected Exception
-            Assert.assertNotNull(e);
+            Assertions.assertNotNull(e);
         } catch (Exception e) {
-            Assert.fail("Unexpected exception thrown: " + e.getMessage());
+            Assertions.fail("Unexpected exception thrown: " + e.getMessage());
         }
     }
 
@@ -1156,18 +1217,20 @@ public class RecobrimentServiceImplTest {
         // Mocking
         String idPeticion = "12345";
         String idSolicitud = "54321";
-        when(consultaRepository.findByScspPeticionIdAndScspSolicitudId(idPeticion, idSolicitud)).thenReturn(new Consulta());
+        Consulta consulta = mockConsulta();
+        mockAuthentication();
+        when(consultaRepository.findByScspPeticionIdAndScspSolicitudId(idPeticion, idSolicitud)).thenReturn(consulta);
         when(recobrimentHelper.getJustificante(anyString(), anyString(), Mockito.eq(true), Mockito.eq(true)))
                 .thenThrow(new ScspException("Unexpected Error Imprimible", "error code"));
 
         // Call the method
         try {
             recobrimentServiceImpl.getJustificantImprimible(idPeticion, idSolicitud);
-            Assert.fail("Expected RecobrimentScspException was not thrown");
+            Assertions.fail("Expected RecobrimentScspException was not thrown");
         } catch (RecobrimentScspException e) {
-            Assert.assertTrue(e.getMessage().contains("Unexpected Error Imprimible"));
+            Assertions.assertTrue(e.getMessage().contains("Unexpected Error Imprimible"));
         } catch (Exception e) {
-            Assert.fail("Unexpected exception thrown: " + e.getMessage());
+            Assertions.fail("Unexpected exception thrown: " + e.getMessage());
         }
     }
 
@@ -1182,15 +1245,17 @@ public class RecobrimentServiceImplTest {
         String idSolicitud = "54321";
         JustificantDto mockJustificantDto = mock(JustificantDto.class);
         when(mockJustificantDto.getArxiuCsv()).thenReturn("CSV_CODE");
-        when(consultaRepository.findByScspPeticionIdAndScspSolicitudId(idPeticion, idSolicitud)).thenReturn(new Consulta());
+        Consulta consulta = mockConsulta();
+        mockAuthentication();
+        when(consultaRepository.findByScspPeticionIdAndScspSolicitudId(idPeticion, idSolicitud)).thenReturn(consulta);
         when(recobrimentHelper.getJustificante(idPeticion, idSolicitud, true, false)).thenReturn(mockJustificantDto);
 
         // Call the method
         String result = recobrimentServiceImpl.getJustificantCsv(idPeticion, idSolicitud);
 
         // Assertions
-        Assert.assertNotNull(result);
-        Assert.assertEquals("CSV_CODE", result);
+        Assertions.assertNotNull(result);
+        Assertions.assertEquals("CSV_CODE", result);
         Mockito.verify(recobrimentHelper, Mockito.times(1)).getJustificante(idPeticion, idSolicitud, true, false);
     }
 
@@ -1200,16 +1265,17 @@ public class RecobrimentServiceImplTest {
         String idPeticion = "12345";
         String idSolicitud = "54321";
         when(consultaRepository.findByScspPeticionIdAndScspSolicitudId(idPeticion, idSolicitud)).thenReturn(null);
+        when(historicConsultaRepository.findByScspPeticionIdAndScspSolicitudId(idPeticion, idSolicitud)).thenReturn(null);
 
         // Call the method
         try {
             recobrimentServiceImpl.getJustificant(idPeticion, idSolicitud);
-            Assert.fail("Expected ConsultaNotFoundException was not thrown");
+            Assertions.fail("Expected ConsultaNotFoundException was not thrown");
         } catch (ConsultaNotFoundException e) {
             // Expected Exception
-            Assert.assertNotNull(e);
+            Assertions.assertNotNull(e);
         } catch (Exception e) {
-            Assert.fail("Unexpected exception thrown: " + e.getMessage());
+            Assertions.fail("Unexpected exception thrown: " + e.getMessage());
         }
     }
 
@@ -1218,17 +1284,19 @@ public class RecobrimentServiceImplTest {
         // Mocking
         String idPeticion = "12345";
         String idSolicitud = "54321";
-        when(consultaRepository.findByScspPeticionIdAndScspSolicitudId(idPeticion, idSolicitud)).thenReturn(new Consulta());
+        Consulta consulta = mockConsulta();
+        mockAuthentication();
+        when(consultaRepository.findByScspPeticionIdAndScspSolicitudId(idPeticion, idSolicitud)).thenReturn(consulta);
         when(recobrimentHelper.getJustificante(anyString(), anyString(), Mockito.anyBoolean(), Mockito.anyBoolean())).thenThrow(new ScspException("Unexpected Error", "error code"));
 
         // Call the method
         try {
             recobrimentServiceImpl.getJustificant(idPeticion, idSolicitud);
-            Assert.fail("Expected RecobrimentScspException was not thrown");
+            Assertions.fail("Expected RecobrimentScspException was not thrown");
         } catch (RecobrimentScspException e) {
-            Assert.assertTrue(e.getMessage().contains("Unexpected Error"));
+            Assertions.assertTrue(e.getMessage().contains("Unexpected Error"));
         } catch (Exception e) {
-            Assert.fail("Unexpected exception thrown: " + e.getMessage());
+            Assertions.fail("Unexpected exception thrown: " + e.getMessage());
         }
     }
 
@@ -1243,15 +1311,17 @@ public class RecobrimentServiceImplTest {
         String idSolicitud = "54321";
         JustificantDto mockJustificantDto = mock(JustificantDto.class);
         when(mockJustificantDto.getArxiuUuid()).thenReturn("UUID_CODE");
-        when(consultaRepository.findByScspPeticionIdAndScspSolicitudId(idPeticion, idSolicitud)).thenReturn(new Consulta());
+        Consulta consulta = mockConsulta();
+        mockAuthentication();
+        when(consultaRepository.findByScspPeticionIdAndScspSolicitudId(idPeticion, idSolicitud)).thenReturn(consulta);
         when(recobrimentHelper.getJustificante(idPeticion, idSolicitud, true, false)).thenReturn(mockJustificantDto);
 
         // Call the method
         String result = recobrimentServiceImpl.getJustificantUuid(idPeticion, idSolicitud);
 
         // Assertions
-        Assert.assertNotNull(result);
-        Assert.assertEquals("UUID_CODE", result);
+        Assertions.assertNotNull(result);
+        Assertions.assertEquals("UUID_CODE", result);
         Mockito.verify(recobrimentHelper, Mockito.times(1)).getJustificante(idPeticion, idSolicitud, true, false);
     }
 
@@ -1261,16 +1331,17 @@ public class RecobrimentServiceImplTest {
         String idPeticion = "12345";
         String idSolicitud = "54321";
         when(consultaRepository.findByScspPeticionIdAndScspSolicitudId(idPeticion, idSolicitud)).thenReturn(null);
+        when(historicConsultaRepository.findByScspPeticionIdAndScspSolicitudId(idPeticion, idSolicitud)).thenReturn(null);
 
         // Call the method
         try {
             recobrimentServiceImpl.getJustificant(idPeticion, idSolicitud);
-            Assert.fail("Expected ConsultaNotFoundException was not thrown");
+            Assertions.fail("Expected ConsultaNotFoundException was not thrown");
         } catch (ConsultaNotFoundException e) {
             // Expected Exception
-            Assert.assertNotNull(e);
+            Assertions.assertNotNull(e);
         } catch (Exception e) {
-            Assert.fail("Unexpected exception thrown: " + e.getMessage());
+            Assertions.fail("Unexpected exception thrown: " + e.getMessage());
         }
     }
 
@@ -1279,17 +1350,19 @@ public class RecobrimentServiceImplTest {
         // Mocking
         String idPeticion = "12345";
         String idSolicitud = "54321";
-        when(consultaRepository.findByScspPeticionIdAndScspSolicitudId(idPeticion, idSolicitud)).thenReturn(new Consulta());
+        Consulta consulta = mockConsulta();
+        mockAuthentication();
+        when(consultaRepository.findByScspPeticionIdAndScspSolicitudId(idPeticion, idSolicitud)).thenReturn(consulta);
         when(recobrimentHelper.getJustificante(anyString(), anyString(), Mockito.anyBoolean(), Mockito.anyBoolean())).thenThrow(new ScspException("Unexpected Error", "error code"));
 
         // Call the method
         try {
             recobrimentServiceImpl.getJustificant(idPeticion, idSolicitud);
-            Assert.fail("Expected RecobrimentScspException was not thrown");
+            Assertions.fail("Expected RecobrimentScspException was not thrown");
         } catch (RecobrimentScspException e) {
-            Assert.assertTrue(e.getMessage().contains("Unexpected Error"));
+            Assertions.assertTrue(e.getMessage().contains("Unexpected Error"));
         } catch (Exception e) {
-            Assert.fail("Unexpected exception thrown: " + e.getMessage());
+            Assertions.fail("Unexpected exception thrown: " + e.getMessage());
         }
     }
 

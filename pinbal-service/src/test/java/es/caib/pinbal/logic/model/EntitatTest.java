@@ -3,12 +3,14 @@
  */
 package es.caib.pinbal.logic.model;
 
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertNull;
+import org.junit.jupiter.api.Test;
 
-import org.junit.Test;
+import es.caib.pinbal.persist.entity.Entitat;
+import es.caib.pinbal.persist.entity.Entitat.EntitatTipus;
 
-import es.caib.pinbal.logic.model.Entitat.EntitatTipus;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Test unitari per a la classe de model Entitat.
@@ -35,10 +37,10 @@ public class EntitatTest {
 		assertEquals(NOM, built.getNom());
 		assertEquals(CIF, built.getCif());
 		assertEquals(0, built.getVersion());
-		assertNull(built.getCreatedBy());
-		assertNull(built.getCreatedDate());
-		assertNull(built.getLastModifiedBy());
-		assertNull(built.getLastModifiedDate());
+		assertTrue(built.getCreatedBy().isEmpty());
+		assertTrue(built.getCreatedDate().isEmpty());
+		assertTrue(built.getLastModifiedBy().isEmpty());
+		assertTrue(built.getLastModifiedDate().isEmpty());
 		assertNull(built.getId());
 	}
 

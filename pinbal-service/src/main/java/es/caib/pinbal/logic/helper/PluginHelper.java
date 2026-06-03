@@ -16,20 +16,27 @@ import es.caib.pinbal.plugin.unitat.UnitatsOrganitzativesPlugin;
 import es.caib.pinbal.plugin.usuari.DadesUsuari;
 import es.caib.pinbal.plugin.usuari.DadesUsuariPlugin;
 import es.caib.pluginsib.arxiu.api.*;
+import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Component;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
 
 /**
  * Helper per a interactuar amb sistemes externs.
  * 
  * @author Limit Tecnologies <limit@limit.es>
  */
+@RequiredArgsConstructor
 @Component
 public class PluginHelper {
 
@@ -40,16 +47,14 @@ public class PluginHelper {
 	private static final String PROPERTY_PLUGIN_FIRMA_SERVIDOR_CLASS = "es.caib.pinbal.plugin.firmaservidor.class";
 	private static final String PROPERTY_PLUGIN_ARXIU_CLASS = "es.caib.pinbal.plugin.arxiu.class";
 
+	private final IntegracioHelper integracioHelper;
+	private final ConfigHelper configHelper;
+
 
 	private DadesUsuariPlugin dadesUsuariPlugin;
 	private FirmaServidorPlugin firmaServidorPlugin;
 	private IArxiuPlugin arxiuPlugin;
 	private UnitatsOrganitzativesPlugin unitatsOrganitzativesPlugin;
-
-	@Autowired
-	private IntegracioHelper integracioHelper;
-	@Autowired
-	private ConfigHelper configHelper;
 
 
 	@Cacheable(value = "usuariAmbCodi", key = "#usuariCodi")

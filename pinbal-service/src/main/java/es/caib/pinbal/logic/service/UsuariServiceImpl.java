@@ -43,8 +43,8 @@ import es.caib.pinbal.persist.repository.llistat.LlistatConsultaRepository;
 import es.caib.pinbal.persist.repository.llistat.LlistatHistoricConsultaRepository;
 import es.caib.pinbal.plugin.SistemaExternException;
 import es.caib.pinbal.plugin.usuari.DadesUsuari;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.acls.model.AclCache;
@@ -55,7 +55,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -66,69 +65,42 @@ import java.util.Set;
  * @author Limit Tecnologies <limit@limit.es>
  */
 @Slf4j
+@RequiredArgsConstructor
 @Service
 public class UsuariServiceImpl implements UsuariService {
 
-	@Resource
-	private EntitatRepository entitatRepository;
-	@Resource
-	private UsuariRepository usuariRepository;
-	@Resource
-	private EntitatUsuariRepository entitatUsuariRepository;
-	@Resource
-	private ProcedimentServeiRepository procedimentServeiRepository;
-	@Resource
-	private ProcedimentRepository procedimentRepository;
+	private final EntitatUsuariRepository entitatUsuariRepository;
+    private final AvisRepository avisRepository;
+    private final ConfigRepository configRepository;
+    private final ConsultaRepository consultaRepository;
+	private final EntitatRepository entitatRepository;
+    private final EntitatServeiRepository entitatServeiRepository;
+    private final ExplotConsultaDimensioRepository explotConsultaDimensioRepository;
+    private final HistoricConsultaRepository historicConsultaRepository;
+    private final IntegracioAccioRepository integracioAccioRepository;
+    private final IntegracioAccioParamRepository integracioAccioParamRepository;
+    private final LlistatConsultaRepository llistatConsultaRepository;
+    private final LlistatHistoricConsultaRepository llistatHistoricConsultaRepository;
+    private final OrganGestorRepository organGestorRepository;
+	private final ProcedimentServeiRepository procedimentServeiRepository;
+	private final ProcedimentRepository procedimentRepository;
+    private final ServeiBusRepository serveiBusRepository;
+    private final ServeiCampRepository serveiCampRepository;
+    private final ServeiConfigRepository serveiConfigRepository;
+    private final ServeiJustificantCampRepository serveiJustificantCampRepository;
+    private final ServeiReglaRepository serveiReglaRepository;
+    private final ServeiCampGrupRepository serveiCampGrupRepository;
+	private final UsuariRepository usuariRepository;
 
-	@Resource
-	private DtoMappingHelper dtoMappingHelper;
-	@Resource
-	private UsuariHelper usuariHelper;
-	@Resource
-	private PluginHelper pluginHelper;
+    private final CacheHelper cacheHelper;
+	private final DtoMappingHelper dtoMappingHelper;
+	private final PluginHelper pluginHelper;
+	private final UsuariHelper usuariHelper;
 
-	@Resource
-	private MutableAclService aclService;
-    @Autowired
-    private CacheHelper cacheHelper;
+	private final MutableAclService aclService;
 
-    @Autowired
-    private AvisRepository avisRepository;
-    @Autowired
-    private ConfigRepository configRepository;
-    @Autowired
-    private ConsultaRepository consultaRepository;
-    @Autowired
-    private HistoricConsultaRepository historicConsultaRepository;
-    @Autowired
-    private EntitatServeiRepository entitatServeiRepository;
-    @Autowired
-    private OrganGestorRepository organGestorRepository;
-    @Autowired
-    private ServeiBusRepository serveiBusRepository;
-    @Autowired
-    private ServeiCampRepository serveiCampRepository;
-    @Autowired
-    private ServeiConfigRepository serveiConfigRepository;
-    @Autowired
-    private ServeiJustificantCampRepository serveiJustificantCampRepository;
-    @Autowired
-    private ServeiReglaRepository serveiReglaRepository;
-    @Autowired
-    private IntegracioAccioRepository integracioAccioRepository;
-    @Autowired
-    private IntegracioAccioParamRepository integracioAccioParamRepository;
-    @Autowired
-    private ServeiCampGrupRepository serveiCampGrupRepository;
-    @Autowired
-    private LlistatConsultaRepository llistatConsultaRepository;
-    @Autowired
-    private LlistatHistoricConsultaRepository llistatHistoricConsultaRepository;
-    @Autowired
-    private ExplotConsultaDimensioRepository explotConsultaDimensioRepository;
 
-	@Autowired
-	private AclCache aclCache;
+	private final AclCache aclCache;
 
 	@Transactional
 	@Override

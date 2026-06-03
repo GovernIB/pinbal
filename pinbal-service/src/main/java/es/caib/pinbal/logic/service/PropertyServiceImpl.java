@@ -5,7 +5,7 @@ package es.caib.pinbal.logic.service;
 
 import es.caib.pinbal.logic.helper.ConfigHelper;
 import es.caib.pinbal.logic.intf.service.PropertyService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 /**
@@ -13,11 +13,11 @@ import org.springframework.stereotype.Service;
  * 
  * @author Limit Tecnologies <limit@limit.es>
  */
+@RequiredArgsConstructor
 @Service
 public class PropertyServiceImpl implements PropertyService {
 
-	@Autowired
-	ConfigHelper configHelper;
+	private final ConfigHelper configHelper;
 
 	@Override
 	public String get(String key) {

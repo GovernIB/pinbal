@@ -1,25 +1,24 @@
 /**
  * 
  */
-package es.caib.pinbal.logic.repository;
+package es.caib.pinbal.persist.repository;
 
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertNull;
-import static junit.framework.Assert.assertNotNull;
-import static junit.framework.Assert.assertTrue;
+import es.caib.pinbal.persist.config.PersistenceTestConfig;
+import es.caib.pinbal.persist.entity.Entitat;
+import es.caib.pinbal.persist.model.EntitatTestUtil;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-import javax.annotation.Resource;
-
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.transaction.annotation.Transactional;
-
-import es.caib.pinbal.logic.model.Entitat;
-import es.caib.pinbal.logic.model.EntitatTestUtil;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 
 /**
@@ -27,8 +26,8 @@ import es.caib.pinbal.logic.model.EntitatTestUtil;
  * 
  * @author Limit Tecnologies <limit@limit.es>
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations={"/es/caib/pinbal/logic/context/application-context-test.xml"})
+@ExtendWith(SpringExtension.class)
+@ContextConfiguration(classes = PersistenceTestConfig.class)
 @Transactional
 public class EntitatRepositoryIntegrationTest {
 
@@ -40,8 +39,8 @@ public class EntitatRepositoryIntegrationTest {
 
 	private static Long idGuardat;
 
-	@Resource
-	EntitatRepository entitatRepository;
+	@Autowired
+    EntitatRepository entitatRepository;
 
 	@Test
     public void crud() {
@@ -54,12 +53,12 @@ public class EntitatRepositoryIntegrationTest {
 		Entitat guardada = entitatRepository.save(entitat);
 		assertNotNull(guardada);
 		idGuardat = guardada.getId();
-		Entitat obtinguda = entitatRepository.findOne(idGuardat);
+		Entitat obtinguda = entitatRepository.findById(idGuardat).orElse(null);
 		assertEntitat(guardada, obtinguda);
 		List<Entitat> entitatsAll = entitatRepository.findAll();
 		assertTrue(entitatsAll.size() > 0);
-		entitatRepository.delete(idGuardat);
-		Entitat esborrada = entitatRepository.findOne(idGuardat);
+		entitatRepository.deleteById(idGuardat);
+		Entitat esborrada = entitatRepository.findById(idGuardat).orElse(null);
 		assertNull(esborrada);
 	}
 

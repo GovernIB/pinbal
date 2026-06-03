@@ -3,29 +3,7 @@
  */
 package es.caib.pinbal.logic.ws;
 
-import java.io.IOException;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
-import javax.xml.namespace.QName;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.soap.SOAPException;
-import javax.xml.soap.SOAPMessage;
-import javax.xml.ws.BindingProvider;
-import javax.xml.ws.Service;
-import javax.xml.ws.handler.Handler;
-import javax.xml.ws.handler.MessageContext;
-import javax.xml.ws.handler.soap.SOAPHandler;
-import javax.xml.ws.handler.soap.SOAPMessageContext;
-
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-
+import es.caib.pinbal.logic.intf.ws.Recobriment;
 import es.scsp.bean.common.peticion.Atributos;
 import es.scsp.bean.common.peticion.Consentimiento;
 import es.scsp.bean.common.peticion.DatosGenericos;
@@ -37,6 +15,27 @@ import es.scsp.bean.common.peticion.SolicitudTransmision;
 import es.scsp.bean.common.peticion.Solicitudes;
 import es.scsp.bean.common.peticion.TipoDocumentacion;
 import es.scsp.bean.common.peticion.Titular;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+
+import javax.xml.namespace.QName;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.soap.SOAPException;
+import javax.xml.soap.SOAPMessage;
+import javax.xml.ws.BindingProvider;
+import javax.xml.ws.Service;
+import javax.xml.ws.handler.Handler;
+import javax.xml.ws.handler.MessageContext;
+import javax.xml.ws.handler.soap.SOAPHandler;
+import javax.xml.ws.handler.soap.SOAPMessageContext;
+import java.io.IOException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 
 /**

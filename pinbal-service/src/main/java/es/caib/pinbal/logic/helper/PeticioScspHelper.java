@@ -20,8 +20,8 @@ import es.caib.pinbal.scsp.ResultatEnviamentPeticio;
 import es.caib.pinbal.scsp.ScspHelper;
 import es.caib.pinbal.scsp.Solicitud;
 import es.scsp.bean.common.peticion.Peticion;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -38,21 +38,16 @@ import java.util.*;
  * @author Limit Tecnologies <limit@limit.es>
  */
 @Slf4j
+@RequiredArgsConstructor
 @Component
 public class PeticioScspHelper {
 
-	@Autowired
-	private ConsultaRepository consultaRepository;
-	@Autowired
-	private ServeiConfigRepository serveiConfigRepository;
-	@Autowired
-	private ServeiCampRepository serveiCampRepository;
-	@Autowired
-	private ProcedimentRepository procedimentRepository;
-	@Autowired
-	private PeticioScspEstadistiquesHelper peticionsScspEstadistiquesHelper;
-	@Autowired
-	private IntegracioHelper integracioHelper;
+	private final ConsultaRepository consultaRepository;
+	private final ServeiConfigRepository serveiConfigRepository;
+	private final ServeiCampRepository serveiCampRepository;
+	private final ProcedimentRepository procedimentRepository;
+	private final PeticioScspEstadistiquesHelper peticionsScspEstadistiquesHelper;
+	private final IntegracioHelper integracioHelper;
 
 	private static final long MILISEGONS_PER_HORA = 3600000L;
 
@@ -60,8 +55,7 @@ public class PeticioScspHelper {
 	private Map<String, Integer> consultaServeiCount = new HashMap<String, Integer>();
 	/* Emmagatzema l'inici de l'interval actual per a cada servei */
 	private Map<String, Date> consultaIntervalStart = new HashMap<String, Date>();
-    @Autowired
-    private ConsultaHelper consultaHelper;
+    private final ConsultaHelper consultaHelper;
 
 	/* Retorna true si s'ha de continuar l'enviament de la consulta, fals en cas contrari. */
 	public boolean isEnviarConsultaServei(Consulta consulta, boolean auto) {

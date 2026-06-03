@@ -9,44 +9,46 @@ import es.caib.pinbal.client.usuaris.FiltreUsuaris;
 import es.caib.pinbal.client.usuaris.PermisosServei;
 import es.caib.pinbal.client.usuaris.ProcedimentServei;
 import es.caib.pinbal.client.usuaris.UsuariEntitat;
-import es.caib.pinbal.core.dto.EmisorDto;
-import es.caib.pinbal.core.dto.EntitatDto;
-import es.caib.pinbal.core.dto.EntitatUsuariDto;
-import es.caib.pinbal.core.dto.FiltreActiuEnumDto;
-import es.caib.pinbal.core.dto.OrganGestorDto;
-import es.caib.pinbal.core.dto.PaginacioAmbOrdreDto;
-import es.caib.pinbal.core.dto.ProcedimentClaseTramiteEnumDto;
-import es.caib.pinbal.core.dto.ProcedimentDto;
-import es.caib.pinbal.core.dto.ProcedimentServeiDto;
-import es.caib.pinbal.core.dto.ProcedimentServeiSimpleDto;
-import es.caib.pinbal.core.dto.ServeiDto;
-import es.caib.pinbal.core.dto.UsuariDto;
-import es.caib.pinbal.logic.model.Entitat;
-import es.caib.pinbal.logic.model.OrganGestor;
-import es.caib.pinbal.logic.model.Usuari;
-import es.caib.pinbal.logic.repository.EntitatRepository;
-import es.caib.pinbal.logic.repository.OrganGestorRepository;
-import es.caib.pinbal.logic.repository.ProcedimentRepository;
-import es.caib.pinbal.logic.repository.UsuariRepository;
-import es.caib.pinbal.core.service.exception.EntitatNotFoundException;
-import es.caib.pinbal.core.service.exception.EntitatUsuariNotFoundException;
-import es.caib.pinbal.core.service.exception.MultiplesUsuarisExternsException;
-import es.caib.pinbal.core.service.exception.OrganNotFoundException;
-import es.caib.pinbal.core.service.exception.ProcedimentNotFoundException;
-import es.caib.pinbal.core.service.exception.ProcedimentServeiNotFoundException;
-import es.caib.pinbal.core.service.exception.ServeiNotFoundException;
-import es.caib.pinbal.core.service.exception.UsuariExternNotFoundException;
-import es.caib.pinbal.core.service.exception.UsuariNotFoundException;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import es.caib.pinbal.logic.intf.dto.EmisorDto;
+import es.caib.pinbal.logic.intf.dto.EntitatDto;
+import es.caib.pinbal.logic.intf.dto.EntitatUsuariDto;
+import es.caib.pinbal.logic.intf.dto.FiltreActiuEnumDto;
+import es.caib.pinbal.logic.intf.dto.OrganGestorDto;
+import es.caib.pinbal.logic.intf.dto.PaginacioAmbOrdreDto;
+import es.caib.pinbal.logic.intf.dto.ProcedimentClaseTramiteEnumDto;
+import es.caib.pinbal.logic.intf.dto.ProcedimentDto;
+import es.caib.pinbal.logic.intf.dto.ProcedimentServeiDto;
+import es.caib.pinbal.logic.intf.dto.ProcedimentServeiSimpleDto;
+import es.caib.pinbal.logic.intf.dto.ServeiDto;
+import es.caib.pinbal.logic.intf.dto.UsuariDto;
+import es.caib.pinbal.logic.intf.service.ProcedimentService;
+import es.caib.pinbal.logic.intf.service.ServeiService;
+import es.caib.pinbal.logic.intf.service.UsuariService;
+import es.caib.pinbal.logic.intf.service.exception.EntitatNotFoundException;
+import es.caib.pinbal.logic.intf.service.exception.EntitatUsuariNotFoundException;
+import es.caib.pinbal.logic.intf.service.exception.MultiplesUsuarisExternsException;
+import es.caib.pinbal.logic.intf.service.exception.OrganNotFoundException;
+import es.caib.pinbal.logic.intf.service.exception.ProcedimentNotFoundException;
+import es.caib.pinbal.logic.intf.service.exception.ProcedimentServeiNotFoundException;
+import es.caib.pinbal.logic.intf.service.exception.ServeiNotFoundException;
+import es.caib.pinbal.logic.intf.service.exception.UsuariExternNotFoundException;
+import es.caib.pinbal.logic.intf.service.exception.UsuariNotFoundException;
+import es.caib.pinbal.persist.entity.Entitat;
+import es.caib.pinbal.persist.entity.OrganGestor;
+import es.caib.pinbal.persist.entity.Usuari;
+import es.caib.pinbal.persist.repository.EntitatRepository;
+import es.caib.pinbal.persist.repository.OrganGestorRepository;
+import es.caib.pinbal.persist.repository.ProcedimentRepository;
+import es.caib.pinbal.persist.repository.UsuariRepository;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
 import org.mockito.invocation.InvocationOnMock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.stubbing.Answer;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -57,17 +59,19 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
-import static org.mockito.Matchers.*;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 
 //@ActiveProfiles("test")
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class GestioRestServiceImplTest {
 
     @InjectMocks
-    private GestioRestServiceImpl gestioRestServiceImpl = new GestioRestServiceImpl();
+    private GestioRestServiceImpl gestioRestServiceImpl;
 
     @Mock
     private ProcedimentRepository procedimentRepository;
@@ -85,9 +89,8 @@ public class GestioRestServiceImplTest {
     @Mock
     private UsuariService usuariService;
 
-    @Before
+    @BeforeEach
     public void setUp() {
-        MockitoAnnotations.initMocks(this);
     }
 
 
@@ -130,7 +133,7 @@ public class GestioRestServiceImplTest {
                 .build();
 
         when(entitatRepository.findByCodi("entitatCodi")).thenReturn(entitat);
-        when(entitatRepository.findOne(1L)).thenReturn(entitat);
+        when(entitatRepository.findById(1L)).thenReturn(Optional.of(entitat));
         when(organGestorRepository.findByCodiAndEntitat("organCodi", entitat)).thenReturn(organGestor);
         when(procedimentService.create(any(ProcedimentDto.class))).thenAnswer(new Answer<ProcedimentDto>() {
             @Override
@@ -145,13 +148,13 @@ public class GestioRestServiceImplTest {
 
         Procediment createdProcediment = gestioRestServiceImpl.create(procediment);
 
-        Assert.assertEquals("codi", createdProcediment.getCodi());
-        Assert.assertEquals("nom", createdProcediment.getNom());
-        Assert.assertEquals("entitatCodi", createdProcediment.getEntitatCodi());
-        Assert.assertEquals("organCodi", createdProcediment.getOrganGestorDir3());
+        Assertions.assertEquals("codi", createdProcediment.getCodi());
+        Assertions.assertEquals("nom", createdProcediment.getNom());
+        Assertions.assertEquals("entitatCodi", createdProcediment.getEntitatCodi());
+        Assertions.assertEquals("organCodi", createdProcediment.getOrganGestorDir3());
     }
 
-    @Test(expected = EntitatNotFoundException.class)
+    @Test
     public void testCreate_EntitatNotFoundException () throws EntitatNotFoundException, OrganNotFoundException {
         Procediment procediment = Procediment.builder()
                 .codi("codi")
@@ -162,10 +165,12 @@ public class GestioRestServiceImplTest {
 
         when(entitatRepository.findByCodi("entitatCodi")).thenReturn(null);
 
-        gestioRestServiceImpl.create(procediment);
+        assertThrows(EntitatNotFoundException.class, () ->
+                gestioRestServiceImpl.create(procediment)
+        );
     }
 
-    @Test(expected = OrganNotFoundException.class)
+    @Test
     public void testCreate_OrganNotFoundException () throws EntitatNotFoundException, OrganNotFoundException {
         Procediment procediment = Procediment.builder()
                 .codi("codi")
@@ -181,7 +186,9 @@ public class GestioRestServiceImplTest {
         when(entitatRepository.findByCodi("entitatCodi")).thenReturn(entitat);
         when(organGestorRepository.findByCodiAndEntitat("organCodi", entitat)).thenReturn(null);
 
-        gestioRestServiceImpl.create(procediment);
+        assertThrows(OrganNotFoundException.class, () ->
+                gestioRestServiceImpl.create(procediment)
+        );
     }
 
 
@@ -223,7 +230,7 @@ public class GestioRestServiceImplTest {
                 .build();
 
         when(entitatRepository.findByCodi("entitatCodi")).thenReturn(entitat);
-        when(entitatRepository.findOne(1L)).thenReturn(entitat);
+        when(entitatRepository.findById(1L)).thenReturn(Optional.of(entitat));
         when(organGestorRepository.findByCodiAndEntitat("organCodi", entitat)).thenReturn(organGestor);
         when(procedimentService.update(any(ProcedimentDto.class))).thenAnswer(new Answer<ProcedimentDto>() {
             @Override
@@ -238,13 +245,13 @@ public class GestioRestServiceImplTest {
 
         Procediment updatedProcediment = gestioRestServiceImpl.update(procediment);
 
-        Assert.assertEquals("codi_updated", updatedProcediment.getCodi());
-        Assert.assertEquals("nom_updated", updatedProcediment.getNom());
-        Assert.assertEquals("entitatCodi", updatedProcediment.getEntitatCodi());
-        Assert.assertEquals("organCodi", updatedProcediment.getOrganGestorDir3());
+        Assertions.assertEquals("codi_updated", updatedProcediment.getCodi());
+        Assertions.assertEquals("nom_updated", updatedProcediment.getNom());
+        Assertions.assertEquals("entitatCodi", updatedProcediment.getEntitatCodi());
+        Assertions.assertEquals("organCodi", updatedProcediment.getOrganGestorDir3());
     }
 
-    @Test(expected = EntitatNotFoundException.class)
+    @Test
     public void testUpdate_EntitatNotFoundException() throws EntitatNotFoundException, ProcedimentNotFoundException, OrganNotFoundException {
         Procediment procediment = Procediment.builder()
                 .id(1L)
@@ -256,10 +263,12 @@ public class GestioRestServiceImplTest {
 
         when(entitatRepository.findByCodi("entitatCodiNotExist")).thenReturn(null);
 
-        gestioRestServiceImpl.update(procediment);
+        assertThrows(EntitatNotFoundException.class, () ->
+                gestioRestServiceImpl.update(procediment)
+        );
     }
 
-    @Test(expected = ProcedimentNotFoundException.class)
+    @Test
     public void testUpdate_ProcedimentNotFoundException() throws EntitatNotFoundException, ProcedimentNotFoundException, OrganNotFoundException {
         Procediment procediment = Procediment.builder()
                 .id(1L)
@@ -278,14 +287,15 @@ public class GestioRestServiceImplTest {
         organGestor.setCodi("organCodi");
 
         when(entitatRepository.findByCodi("entitatCodi")).thenReturn(entitat);
-        when(entitatRepository.findOne(1L)).thenReturn(entitat);
         when(organGestorRepository.findByCodiAndEntitat("organCodi", entitat)).thenReturn(organGestor);
         when(procedimentService.update(any(ProcedimentDto.class))).thenThrow(new ProcedimentNotFoundException("1"));
 
-        gestioRestServiceImpl.update(procediment);
+        assertThrows(ProcedimentNotFoundException.class, () ->
+                gestioRestServiceImpl.update(procediment)
+        );
     }
 
-    @Test(expected = OrganNotFoundException.class)
+    @Test
     public void testUpdate_OrganNotFoundException() throws EntitatNotFoundException, ProcedimentNotFoundException, OrganNotFoundException {
         Procediment procediment = Procediment.builder()
                 .id(1L)
@@ -300,10 +310,11 @@ public class GestioRestServiceImplTest {
         entitat.setCodi("entitatCodi");
 
         when(entitatRepository.findByCodi("entitatCodi")).thenReturn(entitat);
-        when(entitatRepository.findOne(1L)).thenReturn(entitat);
         when(organGestorRepository.findByCodiAndEntitat("organCodiNotExist", entitat)).thenReturn(null);
 
-        gestioRestServiceImpl.update(procediment);
+        assertThrows(OrganNotFoundException.class, () ->
+                gestioRestServiceImpl.update(procediment)
+        );
     }
 
 
@@ -321,7 +332,7 @@ public class GestioRestServiceImplTest {
         OrganGestor organGestor = new OrganGestor();
         organGestor.setCodi("organCodi");
 
-        es.caib.pinbal.logic.model.Procediment procediment = new es.caib.pinbal.logic.model.Procediment();
+        es.caib.pinbal.persist.entity.Procediment procediment = new es.caib.pinbal.persist.entity.Procediment();
         procediment.setCodi("originalCodi");
         procediment.setNom("originalNom");
         procediment.setDepartament("originalDepartament");
@@ -340,38 +351,38 @@ public class GestioRestServiceImplTest {
                 .actiu(new OptionalField<>(false))
                 .build();
 
-        when(procedimentRepository.findOne(procedimentId)).thenReturn(procediment);
-        when(procedimentRepository.save(any(es.caib.pinbal.logic.model.Procediment.class))).thenAnswer(new Answer<es.caib.pinbal.logic.model.Procediment>() {
+        when(procedimentRepository.findById(procedimentId)).thenReturn(Optional.of(procediment));
+        when(procedimentRepository.save(any(es.caib.pinbal.persist.entity.Procediment.class))).thenAnswer(new Answer<es.caib.pinbal.persist.entity.Procediment>() {
             @Override
-            public es.caib.pinbal.logic.model.Procediment answer(InvocationOnMock invocation) throws Throwable {
+            public es.caib.pinbal.persist.entity.Procediment answer(InvocationOnMock invocation) throws Throwable {
                 Object[] args = invocation.getArguments();
-                return (es.caib.pinbal.logic.model.Procediment) args[0];
+                return (es.caib.pinbal.persist.entity.Procediment) args[0];
             }
         });
-        when(entitatRepository.findByCodi("entitatCodi")).thenReturn(entitat);
-        when(organGestorRepository.findByCodiAndEntitat("organCodi", procediment.getEntitat())).thenReturn(organGestor);
 
         Procediment updatedProcediment = gestioRestServiceImpl.updateParcial(procedimentId, procedimentPatch);
 
-        Assert.assertEquals("newCodi", updatedProcediment.getCodi());
-        Assert.assertEquals("newNom", updatedProcediment.getNom());
-        Assert.assertEquals("newDepartament", updatedProcediment.getDepartament());
-        Assert.assertEquals("newCodiSia", updatedProcediment.getCodiSia());
-        Assert.assertFalse(updatedProcediment.getValorCampAutomatizado());
-        Assert.assertFalse(updatedProcediment.isActiu());
+        Assertions.assertEquals("newCodi", updatedProcediment.getCodi());
+        Assertions.assertEquals("newNom", updatedProcediment.getNom());
+        Assertions.assertEquals("newDepartament", updatedProcediment.getDepartament());
+        Assertions.assertEquals("newCodiSia", updatedProcediment.getCodiSia());
+        Assertions.assertFalse(updatedProcediment.getValorCampAutomatizado());
+        Assertions.assertFalse(updatedProcediment.isActiu());
     }
 
-    @Test(expected = ProcedimentNotFoundException.class)
+    @Test
     public void testUpdateParcial_ProcedimentNotFound() throws EntitatNotFoundException, ProcedimentNotFoundException, OrganNotFoundException {
         Long procedimentId = 1L;
         ProcedimentPatch procedimentPatch = ProcedimentPatch.builder().build();
 
-        when(procedimentRepository.findOne(procedimentId)).thenReturn(null);
+        when(procedimentRepository.findById(procedimentId)).thenReturn(Optional.empty());
 
-        gestioRestServiceImpl.updateParcial(procedimentId, procedimentPatch);
+        assertThrows(ProcedimentNotFoundException.class, () ->
+                gestioRestServiceImpl.updateParcial(procedimentId, procedimentPatch)
+        );
     }
 
-    @Test(expected = OrganNotFoundException.class)
+    @Test
     public void testUpdateParcial_OrganNotFound() throws EntitatNotFoundException, ProcedimentNotFoundException, OrganNotFoundException {
         Long procedimentId = 1L;
         Procediment procediment = Procediment.builder()
@@ -396,7 +407,7 @@ public class GestioRestServiceImplTest {
         OrganGestor organGestor = new OrganGestor();
         organGestor.setCodi("organCodi");
 
-        es.caib.pinbal.logic.model.Procediment procedimentEntity = new es.caib.pinbal.logic.model.Procediment();
+        es.caib.pinbal.persist.entity.Procediment procedimentEntity = new es.caib.pinbal.persist.entity.Procediment();
         procedimentEntity.setCodi("originalCodi");
         procedimentEntity.setNom("originalNom");
         procedimentEntity.setDepartament("originalDepartament");
@@ -406,11 +417,12 @@ public class GestioRestServiceImplTest {
         procedimentEntity.setValorCampAutomatizado(true);
         procedimentEntity.setActiu(true);
 
-        when(procedimentRepository.findOne(procedimentId)).thenReturn(procedimentEntity);
-        when(entitatRepository.findByCodi("entitatCodi")).thenReturn(entitat);
+        when(procedimentRepository.findById(procedimentId)).thenReturn(Optional.of(procedimentEntity));
         when(organGestorRepository.findByCodiAndEntitat("nonExistentOrganCodi", procedimentEntity.getEntitat())).thenReturn(null);
 
-        gestioRestServiceImpl.updateParcial(procedimentId, procedimentPatch);
+        assertThrows(OrganNotFoundException.class, () ->
+                gestioRestServiceImpl.updateParcial(procedimentId, procedimentPatch)
+        );
     }
 
 
@@ -431,7 +443,7 @@ public class GestioRestServiceImplTest {
         Mockito.verify(procedimentService, Mockito.times(1)).serveiEnable(procedimentId, serveiCodi);
     }
 
-    @Test(expected = ProcedimentNotFoundException.class)
+    @Test
     public void testServeiEnable_ProcedimentNotFoundException() throws ProcedimentNotFoundException, ServeiNotFoundException {
         Long procedimentId = 1L;
         String serveiCodi = "serveiCodi";
@@ -440,10 +452,12 @@ public class GestioRestServiceImplTest {
         doThrow(new ProcedimentNotFoundException(procedimentId.toString())).when(procedimentService).serveiEnable(procedimentId, serveiCodi);
 
         // Method call
-        gestioRestServiceImpl.serveiEnable(procedimentId, serveiCodi);
+        assertThrows(ProcedimentNotFoundException.class, () ->
+                gestioRestServiceImpl.serveiEnable(procedimentId, serveiCodi)
+        );
     }
 
-    @Test(expected = ServeiNotFoundException.class)
+    @Test
     public void testServeiEnable_ServeiNotFoundException() throws ProcedimentNotFoundException, ServeiNotFoundException {
         Long procedimentId = 1L;
         String serveiCodi = "serveiCodi";
@@ -452,7 +466,9 @@ public class GestioRestServiceImplTest {
         doThrow(new ServeiNotFoundException(serveiCodi)).when(procedimentService).serveiEnable(procedimentId, serveiCodi);
 
         // Method call
-        gestioRestServiceImpl.serveiEnable(procedimentId, serveiCodi);
+        assertThrows(ServeiNotFoundException.class, () ->
+                gestioRestServiceImpl.serveiEnable(procedimentId, serveiCodi)
+        );
     }
 
 
@@ -465,7 +481,7 @@ public class GestioRestServiceImplTest {
         String codi = "codi";
         String nom = "nom";
         String organGestor = "organGestor";
-        Pageable pageable = new PageRequest(0, 10);
+        Pageable pageable = PageRequest.of(0, 10);
 
         PaginacioAmbOrdreDto paginacio = new PaginacioAmbOrdreDto();
         paginacio.setPaginaNum(pageable.getPageNumber());
@@ -494,32 +510,34 @@ public class GestioRestServiceImplTest {
         Page<ProcedimentDto> procedimentDtoPage = new PageImpl<>(Collections.singletonList(procedimentDto), pageable, 1);
 
         when(entitatRepository.findByCodi(entitatCodi)).thenReturn(entitat);
-        when(entitatRepository.findOne(1L)).thenReturn(entitat);
+        when(entitatRepository.findById(1L)).thenReturn(Optional.of(entitat));
         when(organGestorRepository.findByCodiAndEntitat(organGestor, entitat)).thenReturn(organ);
         when(procedimentService.findAmbFiltrePaginat(anyLong(), anyString(), anyString(), (String) isNull(), anyLong(), (String) isNull(), any(FiltreActiuEnumDto.class), any(PaginacioAmbOrdreDto.class))).thenReturn(procedimentDtoPage);
 
         Page<Procediment> page = gestioRestServiceImpl.findProcedimentsPaginat(entitatCodi, codi, nom, organGestor, pageable);
 
-        Assert.assertNotNull(page);
-        Assert.assertEquals(1, page.getContent().size());
-        Assert.assertEquals("codi", page.getContent().get(0).getCodi());
+        Assertions.assertNotNull(page);
+        Assertions.assertEquals(1, page.getContent().size());
+        Assertions.assertEquals("codi", page.getContent().get(0).getCodi());
     }
 
-    @Test(expected = EntitatNotFoundException.class)
+    @Test
     public void testFindProcedimentsPaginat_EntitatNotFoundException() throws EntitatNotFoundException, OrganNotFoundException {
         String entitatCodi = "nonExistentEntitatCodi";
-        Pageable pageable = new PageRequest(0, 10);
+        Pageable pageable = PageRequest.of(0, 10);
 
         when(entitatRepository.findByCodi(entitatCodi)).thenReturn(null);
 
-        gestioRestServiceImpl.findProcedimentsPaginat(entitatCodi, null, null, null, pageable);
+        assertThrows(EntitatNotFoundException.class, () ->
+                gestioRestServiceImpl.findProcedimentsPaginat(entitatCodi, null, null, null, pageable)
+        );
     }
 
-    @Test(expected = OrganNotFoundException.class)
+    @Test
     public void testFindProcedimentsPaginat_OrganNotFoundException() throws EntitatNotFoundException, OrganNotFoundException {
         String entitatCodi = "entitatCodi";
         String organGestor = "nonExistentOrganCodi";
-        Pageable pageable = new PageRequest(0, 10);
+        Pageable pageable = PageRequest.of(0, 10);
 
         Entitat entitat = new Entitat();
         entitat.fillIdForTesting(1L);
@@ -528,7 +546,9 @@ public class GestioRestServiceImplTest {
         when(entitatRepository.findByCodi(entitatCodi)).thenReturn(entitat);
         when(organGestorRepository.findByCodiAndEntitat(organGestor, entitat)).thenReturn(null);
 
-        gestioRestServiceImpl.findProcedimentsPaginat(entitatCodi, null, null, organGestor, pageable);
+        assertThrows(OrganNotFoundException.class, () ->
+                gestioRestServiceImpl.findProcedimentsPaginat(entitatCodi, null, null, organGestor, pageable)
+        );
     }
 
 
@@ -569,20 +589,20 @@ public class GestioRestServiceImplTest {
         entitat.setCodi("entitatCodi");
 
         when(procedimentService.findById(procedimentId)).thenReturn(procedimentDto);
-        when(entitatRepository.findOne(1L)).thenReturn(entitat);
+        when(entitatRepository.findById(1L)).thenReturn(Optional.of(entitat));
 
         Procediment procediment = gestioRestServiceImpl.getProcedimentById(procedimentId);
 
-        Assert.assertEquals(expectedProcediment.getId(), procediment.getId());
-        Assert.assertEquals(expectedProcediment.getCodi(), procediment.getCodi());
-        Assert.assertEquals(expectedProcediment.getNom(), procediment.getNom());
-        Assert.assertEquals(expectedProcediment.getDepartament(), procediment.getDepartament());
-        Assert.assertEquals(expectedProcediment.getEntitatCodi(), procediment.getEntitatCodi());
-        Assert.assertEquals(expectedProcediment.getOrganGestorDir3(), procediment.getOrganGestorDir3());
-        Assert.assertEquals(expectedProcediment.getCodiSia(), procediment.getCodiSia());
-        Assert.assertEquals(expectedProcediment.getValorCampAutomatizado(), procediment.getValorCampAutomatizado());
-        Assert.assertEquals(expectedProcediment.getValorCampClaseTramite(), procediment.getValorCampClaseTramite());
-        Assert.assertEquals(expectedProcediment.isActiu(), procediment.isActiu());
+        Assertions.assertEquals(expectedProcediment.getId(), procediment.getId());
+        Assertions.assertEquals(expectedProcediment.getCodi(), procediment.getCodi());
+        Assertions.assertEquals(expectedProcediment.getNom(), procediment.getNom());
+        Assertions.assertEquals(expectedProcediment.getDepartament(), procediment.getDepartament());
+        Assertions.assertEquals(expectedProcediment.getEntitatCodi(), procediment.getEntitatCodi());
+        Assertions.assertEquals(expectedProcediment.getOrganGestorDir3(), procediment.getOrganGestorDir3());
+        Assertions.assertEquals(expectedProcediment.getCodiSia(), procediment.getCodiSia());
+        Assertions.assertEquals(expectedProcediment.getValorCampAutomatizado(), procediment.getValorCampAutomatizado());
+        Assertions.assertEquals(expectedProcediment.getValorCampClaseTramite(), procediment.getValorCampClaseTramite());
+        Assertions.assertEquals(expectedProcediment.isActiu(), procediment.isActiu());
     }
 
     @Test
@@ -591,7 +611,7 @@ public class GestioRestServiceImplTest {
         when(procedimentService.findById(procedimentId)).thenReturn(null);
         Procediment procediment = gestioRestServiceImpl.getProcedimentById(procedimentId);
 
-        Assert.assertNull(procediment);
+        Assertions.assertNull(procediment);
     }
 
 
@@ -634,31 +654,33 @@ public class GestioRestServiceImplTest {
                 .build();
 
         when(entitatRepository.findByCodi(entitatCodi)).thenReturn(entitat);
-        when(entitatRepository.findOne(1L)).thenReturn(entitat);
+        when(entitatRepository.findById(1L)).thenReturn(Optional.of(entitat));
         when(procedimentService.findAmbEntitatICodi(1L, procedimentCodi)).thenReturn(procedimentDto);
 
         Procediment procediment = gestioRestServiceImpl.getProcedimentAmbEntitatICodi(entitatCodi, procedimentCodi);
 
-        Assert.assertEquals(expectedProcediment.getId(), procediment.getId());
-        Assert.assertEquals(expectedProcediment.getCodi(), procediment.getCodi());
-        Assert.assertEquals(expectedProcediment.getNom(), procediment.getNom());
-        Assert.assertEquals(expectedProcediment.getDepartament(), procediment.getDepartament());
-        Assert.assertEquals(expectedProcediment.getEntitatCodi(), procediment.getEntitatCodi());
-        Assert.assertEquals(expectedProcediment.getOrganGestorDir3(), procediment.getOrganGestorDir3());
-        Assert.assertEquals(expectedProcediment.getCodiSia(), procediment.getCodiSia());
-        Assert.assertEquals(expectedProcediment.getValorCampAutomatizado(), procediment.getValorCampAutomatizado());
-        Assert.assertEquals(expectedProcediment.getValorCampClaseTramite(), procediment.getValorCampClaseTramite());
-        Assert.assertEquals(expectedProcediment.isActiu(), procediment.isActiu());
+        Assertions.assertEquals(expectedProcediment.getId(), procediment.getId());
+        Assertions.assertEquals(expectedProcediment.getCodi(), procediment.getCodi());
+        Assertions.assertEquals(expectedProcediment.getNom(), procediment.getNom());
+        Assertions.assertEquals(expectedProcediment.getDepartament(), procediment.getDepartament());
+        Assertions.assertEquals(expectedProcediment.getEntitatCodi(), procediment.getEntitatCodi());
+        Assertions.assertEquals(expectedProcediment.getOrganGestorDir3(), procediment.getOrganGestorDir3());
+        Assertions.assertEquals(expectedProcediment.getCodiSia(), procediment.getCodiSia());
+        Assertions.assertEquals(expectedProcediment.getValorCampAutomatizado(), procediment.getValorCampAutomatizado());
+        Assertions.assertEquals(expectedProcediment.getValorCampClaseTramite(), procediment.getValorCampClaseTramite());
+        Assertions.assertEquals(expectedProcediment.isActiu(), procediment.isActiu());
     }
 
-    @Test(expected = EntitatNotFoundException.class)
+    @Test
     public void testGetProcedimentAmbEntitatICodi_EntitatNotFoundException() throws EntitatNotFoundException {
         String entitatCodi = "entitatCodi";
         String procedimentCodi = "procedimentCodi";
 
         when(entitatRepository.findByCodi(entitatCodi)).thenReturn(null);
 
-        gestioRestServiceImpl.getProcedimentAmbEntitatICodi(entitatCodi, procedimentCodi);
+        assertThrows(EntitatNotFoundException.class, () ->
+                gestioRestServiceImpl.getProcedimentAmbEntitatICodi(entitatCodi, procedimentCodi)
+        );
     }
 
 
@@ -671,29 +693,30 @@ public class GestioRestServiceImplTest {
         ServeiDto serveiDto = ServeiDto.builder().codi("serveiCodi").descripcio("serveiDescripcio").scspEmisor(EmisorDto.builder().nom("emisor").build()).actiu(true).build();
         List<ServeiDto> serveis = new ArrayList<ServeiDto>();
         serveis.add(serveiDto);
-        Page<ServeiDto> serveiDtoPage = new PageImpl<>(serveis, new PageRequest(0, 10), 1);
-        es.caib.pinbal.logic.model.Procediment procediment = new es.caib.pinbal.logic.model.Procediment();
+        Page<ServeiDto> serveiDtoPage = new PageImpl<>(serveis, PageRequest.of(0, 10), 1);
+        es.caib.pinbal.persist.entity.Procediment procediment = new es.caib.pinbal.persist.entity.Procediment();
         procediment.setEntitat(new Entitat());
         procediment.getEntitat().fillIdForTesting(1L);
         procediment.getEntitat().setCodi("entitatCodi");
 
-        Pageable pageable = new PageRequest(0, 10);
+        Pageable pageable = PageRequest.of(0, 10);
 
-        when(procedimentRepository.getOne(procedimentId)).thenReturn(procediment);
+        when(procedimentRepository.findById(procedimentId)).thenReturn(Optional.of(procediment));
         when(serveiService.findAmbFiltrePaginat((String)isNull(), (String)isNull(), (String)isNull(), anyBoolean(), any(EntitatDto.class), any(ProcedimentDto.class), any(Pageable.class))).thenReturn(serveiDtoPage);
 
         Page<Servei> serveiPage = gestioRestServiceImpl.findServeisByProcedimentPaginat(procedimentId, pageable);
 
-        Assert.assertEquals(1, serveiPage.getTotalElements());
-        Assert.assertEquals("serveiCodi", serveiPage.getContent().get(0).getCodi());
-        Assert.assertEquals("serveiDescripcio", serveiPage.getContent().get(0).getDescripcio());
+        Assertions.assertEquals(1, serveiPage.getTotalElements());
+        Assertions.assertEquals("serveiCodi", serveiPage.getContent().get(0).getCodi());
+        Assertions.assertEquals("serveiDescripcio", serveiPage.getContent().get(0).getDescripcio());
     }
 
-    @Test(expected = ProcedimentNotFoundException.class)
+    @Test
     public void testFindServeisByProcedimentPaginat_ProcedimentNotFoundException() throws ProcedimentNotFoundException {
         Long procedimentId = 1L;
-        when(procedimentRepository.getOne(procedimentId)).thenReturn(null);
-        gestioRestServiceImpl.findServeisByProcedimentPaginat(procedimentId, new PageRequest(0, 10));
+        assertThrows(ProcedimentNotFoundException.class, () ->
+                gestioRestServiceImpl.findServeisByProcedimentPaginat(procedimentId, PageRequest.of(0, 10))
+        );
     }
 
 
@@ -707,18 +730,18 @@ public class GestioRestServiceImplTest {
         ServeiDto serveiDto = ServeiDto.builder().codi(codi).descripcio(descripcio).actiu(true).build();
         List<ServeiDto> serveis = new ArrayList<>();
         serveis.add(serveiDto);
-        Page<ServeiDto> serveiDtoPage = new PageImpl<>(serveis, new PageRequest(0, 10), serveis.size());
+        Page<ServeiDto> serveiDtoPage = new PageImpl<>(serveis, PageRequest.of(0, 10), serveis.size());
 
         when(serveiService.findAmbFiltrePaginat(eq(codi), eq(descripcio), (String) isNull(), eq(true), (String) isNull(), any(Pageable.class)))
                 .thenReturn(serveiDtoPage);
 
-        Pageable pageable = new PageRequest(0, 10);
+        Pageable pageable = PageRequest.of(0, 10);
         Page<Servei> serveiPage = gestioRestServiceImpl.findServeisPaginat(codi, descripcio, pageable);
 
-        Assert.assertNotNull(serveiPage);
-        Assert.assertEquals(1, serveiPage.getTotalElements());
-        Assert.assertEquals(codi, serveiPage.getContent().get(0).getCodi());
-        Assert.assertEquals(descripcio, serveiPage.getContent().get(0).getDescripcio());
+        Assertions.assertNotNull(serveiPage);
+        Assertions.assertEquals(1, serveiPage.getTotalElements());
+        Assertions.assertEquals(codi, serveiPage.getContent().get(0).getCodi());
+        Assertions.assertEquals(descripcio, serveiPage.getContent().get(0).getDescripcio());
     }
 
     @Test
@@ -726,16 +749,16 @@ public class GestioRestServiceImplTest {
         String codi = "serveiCodi";
         String descripcio = "serveiDescripcio";
         List<ServeiDto> serveis = new ArrayList<>();
-        Page<ServeiDto> serveiDtoPage = new PageImpl<>(serveis, new PageRequest(0, 10), serveis.size());
+        Page<ServeiDto> serveiDtoPage = new PageImpl<>(serveis, PageRequest.of(0, 10), serveis.size());
 
         when(serveiService.findAmbFiltrePaginat(eq(codi), eq(descripcio), (String) isNull(), eq(true), (String) isNull(), any(Pageable.class)))
                 .thenReturn(serveiDtoPage);
 
-        Pageable pageable = new PageRequest(0, 10);
+        Pageable pageable = PageRequest.of(0, 10);
         Page<Servei> serveiPage = gestioRestServiceImpl.findServeisPaginat(codi, descripcio, pageable);
 
-        Assert.assertNotNull(serveiPage);
-        Assert.assertEquals(0, serveiPage.getTotalElements());
+        Assertions.assertNotNull(serveiPage);
+        Assertions.assertEquals(0, serveiPage.getTotalElements());
     }
 
 
@@ -756,9 +779,9 @@ public class GestioRestServiceImplTest {
 
         Servei servei = gestioRestServiceImpl.getServeiByCodi(serveiCodi);
 
-        Assert.assertNotNull(servei);
-        Assert.assertEquals(serveiCodi, servei.getCodi());
-        Assert.assertEquals("serveiDescripcio", servei.getDescripcio());
+        Assertions.assertNotNull(servei);
+        Assertions.assertEquals(serveiCodi, servei.getCodi());
+        Assertions.assertEquals("serveiDescripcio", servei.getDescripcio());
     }
 
     @Test
@@ -769,7 +792,7 @@ public class GestioRestServiceImplTest {
 
         Servei servei = gestioRestServiceImpl.getServeiByCodi(serveiCodi);
 
-        Assert.assertNull(servei);
+        Assertions.assertNull(servei);
     }
 
 
@@ -803,7 +826,7 @@ public class GestioRestServiceImplTest {
         gestioRestServiceImpl.createOrUpdateUsuari(usuariEntitat);
     }
 
-    @Test(expected = EntitatNotFoundException.class)
+    @Test
     public void testCreateOrUpdateUsuari_EntitatNotFoundException() throws Exception {
         UsuariEntitat usuariEntitat = UsuariEntitat.builder()
                 .entitatCodi("entitatCodi")
@@ -811,10 +834,12 @@ public class GestioRestServiceImplTest {
 
         when(entitatRepository.findByCodi("entitatCodi")).thenReturn(null);
 
-        gestioRestServiceImpl.createOrUpdateUsuari(usuariEntitat);
+        assertThrows(EntitatNotFoundException.class, () ->
+                gestioRestServiceImpl.createOrUpdateUsuari(usuariEntitat)
+        );
     }
 
-    @Test(expected = UsuariExternNotFoundException.class)
+    @Test
     public void testCreateOrUpdateUsuari_UsuariExternNotFoundException() throws Exception {
         UsuariEntitat usuariEntitat = UsuariEntitat.builder()
                 .entitatCodi("entitatCodi")
@@ -828,10 +853,12 @@ public class GestioRestServiceImplTest {
         when(entitatRepository.findByCodi("entitatCodi")).thenReturn(entitat);
         when(usuariService.getUsuarisExterns("usuariCodi")).thenReturn(new ArrayList<UsuariDto>());
 
-        gestioRestServiceImpl.createOrUpdateUsuari(usuariEntitat);
+        assertThrows(UsuariExternNotFoundException.class, () ->
+                gestioRestServiceImpl.createOrUpdateUsuari(usuariEntitat)
+        );
     }
 
-    @Test(expected = MultiplesUsuarisExternsException.class)
+    @Test
     public void testCreateOrUpdateUsuari_MultiplesUsuarisExternsException() throws Exception {
         UsuariEntitat usuariEntitat = UsuariEntitat.builder()
                 .entitatCodi("entitatCodi")
@@ -845,7 +872,9 @@ public class GestioRestServiceImplTest {
         when(entitatRepository.findByCodi("entitatCodi")).thenReturn(entitat);
         when(usuariService.getUsuarisExterns("usuariCodi")).thenReturn(Arrays.asList(new UsuariDto(), new UsuariDto()));
 
-        gestioRestServiceImpl.createOrUpdateUsuari(usuariEntitat);
+        assertThrows(MultiplesUsuarisExternsException.class, () ->
+                gestioRestServiceImpl.createOrUpdateUsuari(usuariEntitat)
+        );
     }
 
 
@@ -876,19 +905,21 @@ public class GestioRestServiceImplTest {
 
         UsuariEntitat result = gestioRestServiceImpl.getUsuariAmbEntitatICodi(entitatCodi, usuariCodi);
 
-        Assert.assertNotNull(result);
-        Assert.assertEquals(entitatCodi, result.getEntitatCodi());
-        Assert.assertEquals(usuariCodi, result.getCodi());
+        Assertions.assertNotNull(result);
+        Assertions.assertEquals(entitatCodi, result.getEntitatCodi());
+        Assertions.assertEquals(usuariCodi, result.getCodi());
     }
 
-    @Test(expected = EntitatNotFoundException.class)
+    @Test
     public void testGetUsuariAmbEntitatICodi_EntitatNotFoundException() throws EntitatNotFoundException {
         String entitatCodi = "entitatCodi";
         String usuariCodi = "usuariCodi";
 
         when(entitatRepository.findByCodi(entitatCodi)).thenReturn(null);
 
-        gestioRestServiceImpl.getUsuariAmbEntitatICodi(entitatCodi, usuariCodi);
+        assertThrows(EntitatNotFoundException.class, () ->
+                gestioRestServiceImpl.getUsuariAmbEntitatICodi(entitatCodi, usuariCodi)
+        );
     }
 
 
@@ -912,7 +943,7 @@ public class GestioRestServiceImplTest {
         gestioRestServiceImpl.serveiGrantPermis(permisosServei);
     }
 
-    @Test(expected = EntitatNotFoundException.class)
+    @Test
     public void testServeiGrantPermis_EntitatNotFoundException() throws EntitatNotFoundException, EntitatUsuariNotFoundException, ProcedimentServeiNotFoundException {
         PermisosServei permisosServei = PermisosServei.builder()
                 .usuariCodi("usuariCodi")
@@ -922,10 +953,12 @@ public class GestioRestServiceImplTest {
 
         when(entitatRepository.findByCodi("entitatCodi")).thenReturn(null);
 
-        gestioRestServiceImpl.serveiGrantPermis(permisosServei);
+        assertThrows(EntitatNotFoundException.class, () ->
+                gestioRestServiceImpl.serveiGrantPermis(permisosServei)
+        );
     }
 
-    @Test(expected = EntitatUsuariNotFoundException.class)
+    @Test
     public void testServeiGrantPermis_EntitatUsuariNotFoundException() throws EntitatNotFoundException, EntitatUsuariNotFoundException, ProcedimentServeiNotFoundException {
         PermisosServei permisosServei = PermisosServei.builder()
                 .usuariCodi("usuariCodi")
@@ -947,10 +980,12 @@ public class GestioRestServiceImplTest {
         doThrow(new EntitatUsuariNotFoundException("entitatCodi", "usuariCodi")).when(procedimentService)
                 .serveiPermisAllowSelected(eq("usuariCodi"), eq(procedimentServeiSimpleDtos), eq(entitat.getId()));
 
-        gestioRestServiceImpl.serveiGrantPermis(permisosServei);
+        assertThrows(EntitatUsuariNotFoundException.class, () ->
+                gestioRestServiceImpl.serveiGrantPermis(permisosServei)
+        );
     }
 
-    @Test(expected = ProcedimentServeiNotFoundException.class)
+    @Test
     public void testServeiGrantPermis_ProcedimentServeiNotFoundException() throws EntitatNotFoundException, EntitatUsuariNotFoundException, ProcedimentServeiNotFoundException {
         PermisosServei permisosServei = PermisosServei.builder()
                 .usuariCodi("usuariCodi")
@@ -972,7 +1007,9 @@ public class GestioRestServiceImplTest {
         doThrow(new ProcedimentServeiNotFoundException("procedimentCodi", "serveiCodi")).when(procedimentService)
                 .serveiPermisAllowSelected(eq("usuariCodi"), eq(procedimentServeiSimpleDtos), eq(entitat.getId()));
 
-        gestioRestServiceImpl.serveiGrantPermis(permisosServei);
+        assertThrows(ProcedimentServeiNotFoundException.class, () ->
+                gestioRestServiceImpl.serveiGrantPermis(permisosServei)
+        );
     }
 
 
@@ -998,22 +1035,24 @@ public class GestioRestServiceImplTest {
 
         PermisosServei result = gestioRestServiceImpl.permisosPerUsuariEntitat(entitatCodi, usuariCodi);
 
-        Assert.assertNotNull(result);
-        Assert.assertEquals(entitatCodi, result.getEntitatCodi());
-        Assert.assertEquals(usuariCodi, result.getUsuariCodi());
+        Assertions.assertNotNull(result);
+        Assertions.assertEquals(entitatCodi, result.getEntitatCodi());
+        Assertions.assertEquals(usuariCodi, result.getUsuariCodi());
     }
 
-    @Test(expected = EntitatNotFoundException.class)
+    @Test
     public void testPermisosPerUsuariEntitat_EntitatNotFoundException() throws EntitatNotFoundException, UsuariNotFoundException {
         String entitatCodi = "entitatCodi";
         String usuariCodi = "usuariCodi";
 
         when(entitatRepository.findByCodi(entitatCodi)).thenReturn(null);
 
-        gestioRestServiceImpl.permisosPerUsuariEntitat(entitatCodi, usuariCodi);
+        assertThrows(EntitatNotFoundException.class, () ->
+                gestioRestServiceImpl.permisosPerUsuariEntitat(entitatCodi, usuariCodi)
+        );
     }
 
-    @Test(expected = UsuariNotFoundException.class)
+    @Test
     public void testPermisosPerUsuariEntitat_UsuariNotFoundException() throws EntitatNotFoundException, UsuariNotFoundException {
         String entitatCodi = "entitatCodi";
         String usuariCodi = "usuariCodi";
@@ -1025,7 +1064,9 @@ public class GestioRestServiceImplTest {
         when(entitatRepository.findByCodi(entitatCodi)).thenReturn(entitat);
         when(usuariRepository.findByCodi(usuariCodi)).thenReturn(null);
 
-        gestioRestServiceImpl.permisosPerUsuariEntitat(entitatCodi, usuariCodi);
+        assertThrows(UsuariNotFoundException.class, () ->
+                gestioRestServiceImpl.permisosPerUsuariEntitat(entitatCodi, usuariCodi)
+        );
     }
 
 
@@ -1036,7 +1077,7 @@ public class GestioRestServiceImplTest {
     public void testFindUsuarisPaginat_Success() throws EntitatNotFoundException {
         String entitatCodi = "entitatCodi";
         FiltreUsuaris filtreUsuaris = FiltreUsuaris.builder().build();
-        Pageable pageable = new PageRequest(0, 10);
+        Pageable pageable = PageRequest.of(0, 10);
 
         Entitat entitat = new Entitat();
         entitat.configurarIdPerTest(1L);
@@ -1050,19 +1091,21 @@ public class GestioRestServiceImplTest {
 
         Page<UsuariEntitat> result = gestioRestServiceImpl.findUsuarisPaginat(entitatCodi, filtreUsuaris, pageable);
 
-        Assert.assertNotNull(result);
-        Assert.assertEquals(1, result.getTotalElements());
+        Assertions.assertNotNull(result);
+        Assertions.assertEquals(1, result.getTotalElements());
     }
 
-    @Test(expected = EntitatNotFoundException.class)
+    @Test
     public void testFindUsuarisPaginat_EntitatNotFoundException() throws EntitatNotFoundException {
         String entitatCodi = "entitatCodi";
         FiltreUsuaris filtreUsuaris = FiltreUsuaris.builder().build();
-        Pageable pageable = new PageRequest(0, 10);
+        Pageable pageable = PageRequest.of(0, 10);
 
         when(entitatRepository.findByCodi(entitatCodi)).thenReturn(null);
 
-        gestioRestServiceImpl.findUsuarisPaginat(entitatCodi, filtreUsuaris, pageable);
+        assertThrows(EntitatNotFoundException.class, () ->
+                gestioRestServiceImpl.findUsuarisPaginat(entitatCodi, filtreUsuaris, pageable)
+        );
     }
 
 }

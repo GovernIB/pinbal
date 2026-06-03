@@ -24,9 +24,9 @@ import es.scsp.bean.common.respuesta.Respuesta;
 import es.scsp.bean.common.respuesta.TransmisionDatos;
 import es.scsp.common.domain.core.Servicio;
 import es.scsp.common.utils.DateUtils;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.MessageSource;
@@ -50,25 +50,21 @@ import java.util.*;
  * @author Limit Tecnologies <limit@limit.es>
  */
 @Slf4j
+@RequiredArgsConstructor
 @Component
 public class RecobrimentV2Helper implements ApplicationContextAware, MessageSourceAware {
+
+    private final ServeiConfigRepository serveiConfigRepository;
+    private final PluginHelper pluginHelper;
+    private final ProcedimentRepository procedimentRepository;
+    private final EntitatRepository entitatRepository;
+    private final ServeiCampRepository serveiCampRepository;
+    private final ConsultaRepository consultaRepository;
+
+
 	private ApplicationContext applicationContext;
 	private MessageSource messageSource;
 	private ScspHelper scspHelper;
-
-    @Autowired
-    private ServeiConfigRepository serveiConfigRepository;
-    @Autowired
-    private PluginHelper pluginHelper;
-    @Autowired
-    private ProcedimentRepository procedimentRepository;
-    @Autowired
-    private EntitatRepository entitatRepository;
-    @Autowired
-    private ServeiCampRepository serveiCampRepository;
-    @Autowired
-    private ConsultaRepository consultaRepository;
-
 	private XmlHelper xmlHelper;
 
 	private static final long MILISEGONS_PER_HORA = 3600000L;

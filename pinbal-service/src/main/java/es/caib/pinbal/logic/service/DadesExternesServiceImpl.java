@@ -16,9 +16,9 @@ import es.caib.pinbal.plugin.dadescomunes.ProvinciaML;
 import es.caib.pinbal.plugin.dadescomuns.Municipi;
 import es.caib.pinbal.plugin.dadescomuns.Pais;
 import es.caib.pinbal.plugin.dadescomuns.Provincia;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
@@ -40,13 +40,12 @@ import java.util.Map;
  * @author Limit Tecnologies <limit@limit.es>
  */
 @Slf4j
+@RequiredArgsConstructor
 @Service
 public class DadesExternesServiceImpl implements DadesExternesService {
 
-	@Autowired
-	private ConfigHelper configHelper;
-    @Autowired
-    private IntegracioHelper integracioHelper;
+	private final ConfigHelper configHelper;
+    private final IntegracioHelper integracioHelper;
 
 	@Cacheable(value = "paisos", key = "#idioma")
 	@Override

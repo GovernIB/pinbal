@@ -13,11 +13,14 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.context.SecurityContextHolder;
+
+import javax.xml.ws.WebServiceContext;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -30,13 +33,16 @@ class RecobrimentBeanTest {
 
 	@Mock
 	private RecobrimentService recobrimentService;
+	@Mock
+	private WebServiceContext webServiceContext;
 
+	@InjectMocks
 	private RecobrimentBean recobrimentBean;
 
 	@BeforeEach
 	void setUp() {
-		recobrimentBean = new RecobrimentBean();
-		recobrimentBean.setSpringRecobrimentService(recobrimentService);
+//		recobrimentBean = new RecobrimentBean(recobrimentService, );
+//		recobrimentBean.setRecobrimentService(recobrimentService);
 		SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(
 				"usuari",
 				"N/A",

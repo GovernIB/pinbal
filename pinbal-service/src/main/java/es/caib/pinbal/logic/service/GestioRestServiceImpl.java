@@ -39,6 +39,7 @@ import es.caib.pinbal.persist.repository.EntitatRepository;
 import es.caib.pinbal.persist.repository.OrganGestorRepository;
 import es.caib.pinbal.persist.repository.ProcedimentRepository;
 import es.caib.pinbal.persist.repository.UsuariRepository;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -49,7 +50,6 @@ import org.springframework.data.domain.Sort.Order;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.sql.Clob;
@@ -57,30 +57,21 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
+@RequiredArgsConstructor
 @Service
 public class GestioRestServiceImpl implements GestioRestService {
 
-    @Resource
-    private ProcedimentRepository procedimentRepository;
-    @Resource
-    private EntitatRepository entitatRepository;
-    @Resource
-    private OrganGestorRepository organGestorRepository;
-    @Resource
-    private UsuariRepository usuariRepository;
+    private final ProcedimentRepository procedimentRepository;
+    private final EntitatRepository entitatRepository;
+    private final OrganGestorRepository organGestorRepository;
+    private final UsuariRepository usuariRepository;
 
-    @Resource
-    private ProcedimentService procedimentService;
-    @Resource
-    private ServeiService serveiService;
-    @Resource
-    private UsuariService usuariService;
+    private final ProcedimentService procedimentService;
+    private final ServeiService serveiService;
+    private final UsuariService usuariService;
 
     @PersistenceContext
     private EntityManager entityManager;
-
-
-
 
 
     @Override

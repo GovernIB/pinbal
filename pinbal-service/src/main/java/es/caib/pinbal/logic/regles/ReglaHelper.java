@@ -1,5 +1,6 @@
 package es.caib.pinbal.logic.regles;
 
+import lombok.RequiredArgsConstructor;
 import es.caib.pinbal.logic.intf.dto.regles.CampFormProperties;
 import es.caib.pinbal.logic.intf.dto.regles.TipusVarEnum;
 import es.caib.pinbal.logic.intf.dto.regles.VariableFact;
@@ -13,7 +14,6 @@ import es.caib.pinbal.persist.repository.ServeiReglaRepository;
 import org.jeasy.rules.api.Facts;
 import org.jeasy.rules.api.Rules;
 import org.jeasy.rules.api.RulesEngine;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -21,21 +21,16 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+@RequiredArgsConstructor
 @Component
 public class ReglaHelper {
 
-    @Autowired
-    private Rules campRules;
-    @Autowired
-    private Rules grupRules;
-    @Autowired
-    private RulesEngine rulesEngine;
-    @Autowired
-    private ServeiReglaRepository serveiReglaRepository;
-    @Autowired
-    private ServeiCampRepository serveiCampRepository;
-    @Autowired
-    private ServeiCampGrupRepository serveiCampGrupRepository;
+    private final Rules campRules;
+    private final Rules grupRules;
+    private final RulesEngine rulesEngine;
+    private final ServeiReglaRepository serveiReglaRepository;
+    private final ServeiCampRepository serveiCampRepository;
+    private final ServeiCampGrupRepository serveiCampGrupRepository;
 
     public List<CampFormProperties> getCampFormProperties(Servei servei, Set<String> campsModificats) {
         List<CampFormProperties> campFormPropertiesMap = new ArrayList<>();

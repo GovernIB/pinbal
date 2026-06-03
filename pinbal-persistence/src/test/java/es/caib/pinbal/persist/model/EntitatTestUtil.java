@@ -1,7 +1,7 @@
 /**
  * 
  */
-package es.caib.pinbal.logic.model;
+package es.caib.pinbal.persist.model;
 
 
 import es.caib.pinbal.logic.intf.dto.EntitatDto;

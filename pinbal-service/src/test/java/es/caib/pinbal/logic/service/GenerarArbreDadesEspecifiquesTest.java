@@ -57,9 +57,18 @@ public class GenerarArbreDadesEspecifiquesTest {
 				"PBL0000000000236",
 				new Locale("ca", "ES"));
 		arbreHelper.imprimirJustificantStdout(arbre);
-		JustificantHelper justificantHelper = new JustificantHelper();
+		JustificantHelper justificantHelper = new JustificantHelper(
+				null,
+				null,
+				null,
+				null,
+				null,
+				null,
+				null,
+				null
+		);
 		ResourceBundleMessageSource ms = new ResourceBundleMessageSource();
-		ms.setBasename("es/caib/pinbal/core/i18n/messages");
+		ms.setBasename("messages");
 		justificantHelper.setMessageSource(ms);
 		FileOutputStream fos = new FileOutputStream("justificant.odt");
 		justificantHelper.generarAmbPlantillaFreemarker(

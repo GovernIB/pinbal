@@ -11,7 +11,13 @@ import es.caib.pinbal.logic.intf.dto.RecobrimentSolicitudDto;
 import es.caib.pinbal.logic.intf.dto.RespostaAtributsDto;
 import es.caib.pinbal.logic.intf.service.ConsultaService;
 import es.caib.pinbal.logic.intf.service.HistoricConsultaService;
-import es.caib.pinbal.logic.intf.service.exception.*;
+import es.caib.pinbal.logic.intf.service.exception.ConsultaNotFoundException;
+import es.caib.pinbal.logic.intf.service.exception.ConsultaScspException;
+import es.caib.pinbal.logic.intf.service.exception.EntitatNotFoundException;
+import es.caib.pinbal.logic.intf.service.exception.JustificantGeneracioException;
+import es.caib.pinbal.logic.intf.service.exception.ProcedimentNotFoundException;
+import es.caib.pinbal.logic.intf.service.exception.ProcedimentServeiNotFoundException;
+import es.caib.pinbal.logic.intf.service.exception.ServeiNotAllowedException;
 import es.caib.pinbal.persist.entity.Consulta;
 import es.caib.pinbal.persist.entity.HistoricConsulta;
 import es.caib.pinbal.persist.repository.ConsultaRepository;
@@ -20,14 +26,19 @@ import es.caib.pinbal.scsp.ScspHelper;
 import es.scsp.bean.common.confirmacion.Atributos;
 import es.scsp.bean.common.confirmacion.ConfirmacionPeticion;
 import es.scsp.bean.common.confirmacion.Estado;
-import es.scsp.bean.common.peticion.*;
+import es.scsp.bean.common.peticion.DatosGenericos;
+import es.scsp.bean.common.peticion.Peticion;
+import es.scsp.bean.common.peticion.Solicitante;
+import es.scsp.bean.common.peticion.SolicitudTransmision;
+import es.scsp.bean.common.peticion.Titular;
+import es.scsp.bean.common.peticion.Transmision;
 import es.scsp.bean.common.respuesta.Respuesta;
 import es.scsp.bean.common.respuesta.TransmisionDatos;
 import es.scsp.common.exceptions.ScspException;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.MessageSource;
@@ -60,21 +71,17 @@ import java.util.List;
  * @author Limit Tecnologies <limit@limit.es>
  */
 @Slf4j
+@RequiredArgsConstructor
 @Component
 public class RecobrimentHelper implements ApplicationContextAware, MessageSourceAware {
 
 	public static final String ERROR_CODE_SCSP_VALIDATION = "0226";
 
-	@Autowired
-	private ConsultaRepository consultaRepository;
-	@Autowired
-	private HistoricConsultaRepository historicConsultaRepository;
-	@Autowired
-	private ConsultaService consultaService;
-	@Autowired
-	private HistoricConsultaService historicConsultaService;
-	@Autowired
-	private ConfigHelper configHelper;
+	private final ConsultaRepository consultaRepository;
+	private final HistoricConsultaRepository historicConsultaRepository;
+	private final ConsultaService consultaService;
+	private final HistoricConsultaService historicConsultaService;
+	private final ConfigHelper configHelper;
 
 	private ApplicationContext applicationContext;
 	private MessageSource messageSource;

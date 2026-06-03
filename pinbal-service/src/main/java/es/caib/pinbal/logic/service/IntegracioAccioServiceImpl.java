@@ -17,6 +17,7 @@ import es.caib.pinbal.persist.entity.IntegracioAccioEntity;
 import es.caib.pinbal.persist.entity.IntegracioAccioParamEntity;
 import es.caib.pinbal.persist.repository.IntegracioAccioParamRepository;
 import es.caib.pinbal.persist.repository.IntegracioAccioRepository;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
@@ -30,7 +31,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
 
-import javax.annotation.Resource;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -39,36 +39,19 @@ import java.util.List;
 import java.util.Map;
 
 @Slf4j
+@RequiredArgsConstructor
 @Service
 public class IntegracioAccioServiceImpl implements IntegracioAccioService {
-	
-	@Resource
-	private DtoMappingHelper dtoMappingHelper;
 
-	@Resource
-	private IntegracioAccioRepository integracioAccioRepository;
+	private final IntegracioAccioRepository integracioAccioRepository;
+	private final IntegracioAccioParamRepository integracioAccioParamRepository;
+
+	private final DtoMappingHelper dtoMappingHelper;
+	private final PaginacioHelper paginacioHelper;
+	private final IntegracioHelper integracioHelper;
+	private final ConfigHelper configHelper;
 	
-	@Resource
-	private IntegracioAccioParamRepository integracioAccioParamRepository;
-	
-	@Resource
-	private PaginacioHelper paginacioHelper;
-	
-	@Resource
-	private IntegracioHelper integracioHelper;
-	
-	@Resource
-	private ConfigHelper configHelper;
-	
-	@Resource
-	private PlatformTransactionManager transactionManager;
-	
-//	@Transactional(readOnly = true)
-//	public List<IntegracioAccioDto> findAll() {
-//		log.debug("Consulta de tots el monitor d'integració");
-//		List<IntegracioAccioEntity> integracioAccions = integracioAccioRepository.findAll();
-//		return dtoMappingHelper.convertirList(integracioAccions, IntegracioAccioDto.class);
-//	}
+	private final PlatformTransactionManager transactionManager;
 	
 	@Transactional(propagation = Propagation.REQUIRES_NEW)
 	@Override

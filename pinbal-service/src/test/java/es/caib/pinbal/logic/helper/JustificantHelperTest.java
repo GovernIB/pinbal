@@ -1,47 +1,46 @@
 package es.caib.pinbal.logic.helper;
 
-import es.caib.pinbal.core.dto.FitxerDto;
-import es.caib.pinbal.core.dto.JustificantEstat;
-import es.caib.pinbal.logic.model.Consulta;
-import es.caib.pinbal.logic.model.OrganGestor;
-import es.caib.pinbal.logic.model.Procediment;
-import es.caib.pinbal.logic.model.ProcedimentServei;
-import es.caib.pinbal.logic.model.ServeiConfig;
-import es.caib.pinbal.logic.repository.ConsultaRepository;
-import es.caib.pinbal.logic.repository.HistoricConsultaRepository;
-import es.caib.pinbal.logic.repository.ServeiConfigRepository;
-import es.caib.pinbal.logic.repository.ServeiJustificantCampRepository;
+import es.caib.pinbal.logic.intf.dto.FitxerDto;
+import es.caib.pinbal.logic.intf.dto.JustificantEstat;
+import es.caib.pinbal.persist.entity.Consulta;
+import es.caib.pinbal.persist.entity.OrganGestor;
+import es.caib.pinbal.persist.entity.Procediment;
+import es.caib.pinbal.persist.entity.ProcedimentServei;
+import es.caib.pinbal.persist.entity.ServeiConfig;
+import es.caib.pinbal.persist.repository.ConsultaRepository;
+import es.caib.pinbal.persist.repository.HistoricConsultaRepository;
+import es.caib.pinbal.persist.repository.ServeiConfigRepository;
+import es.caib.pinbal.persist.repository.ServeiJustificantCampRepository;
 import es.caib.pinbal.plugin.firmaservidor.FirmaServidorPlugin;
 import es.caib.pinbal.plugin.firmaservidor.SignaturaResposta;
 import es.caib.pinbal.scsp.ResultatEnviamentPeticio;
 import es.caib.pinbal.scsp.ScspHelper;
-import es.caib.plugins.arxiu.api.ContingutArxiu;
-import es.caib.plugins.arxiu.api.ContingutOrigen;
-import es.caib.plugins.arxiu.api.DocumentEstatElaboracio;
-import es.caib.plugins.arxiu.api.DocumentTipus;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import es.caib.pluginsib.arxiu.api.ContingutArxiu;
+import es.caib.pluginsib.arxiu.api.ContingutOrigen;
+import es.caib.pluginsib.arxiu.api.DocumentEstatElaboracio;
+import es.caib.pluginsib.arxiu.api.DocumentTipus;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
 import org.mockito.Spy;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Matchers.eq;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class JustificantHelperTest {
 
     @Mock
@@ -66,14 +65,12 @@ public class JustificantHelperTest {
     private ServeiConfig serveiConfig;
     @Spy
     @InjectMocks
-    private JustificantHelper justificantHelper = new JustificantHelper();
+    private JustificantHelper justificantHelper;
 
     private ProcedimentServei procedimentServei;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
-        MockitoAnnotations.initMocks(this);
-
         OrganGestor organGestor = new OrganGestor();
         organGestor.setCodi("ORG");
 
@@ -182,7 +179,7 @@ public class JustificantHelperTest {
 
         verify(consulta).updateArxiuExpedientUuid("EXP-CREAT");
         verify(consultaGermana).updateArxiuExpedientUuid("EXP-CREAT");
-        verify(consultaRepository).save(consultes);
+        verify(consultaRepository).saveAll(consultes);
         verify(historicConsultaRepository, never()).findByScspPeticionId(anyString());
     }
 
@@ -198,7 +195,6 @@ public class JustificantHelperTest {
         when(consulta.isAplicacioGuardaJustificantArxiu()).thenReturn(false);
         when(consulta.isCustodiat()).thenReturn(false);
         when(consulta.getCustodiaUrl()).thenReturn(null);
-        when(consulta.getCustodiaId()).thenReturn(null);
         return consulta;
     }
 }

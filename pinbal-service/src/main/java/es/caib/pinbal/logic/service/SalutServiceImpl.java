@@ -31,9 +31,9 @@ import es.caib.pinbal.persist.entity.Servei;
 import es.caib.pinbal.persist.repository.AvisRepository;
 import es.caib.pinbal.persist.repository.ServeiRepository;
 import es.caib.pinbal.plugin.PluginMetricHelper;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.time.DateUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.OffsetDateTime;
@@ -50,15 +50,13 @@ import java.util.List;
  * @author Limit Tecnologies <limit@limit.es>
  */
 @Slf4j
+@RequiredArgsConstructor
 @Service
 public class SalutServiceImpl implements SalutService {
 
-    @Autowired
-    private ServeiRepository serveiRepository;
-    @Autowired
-    private AvisRepository avisRepository;
-    @Autowired
-    private ConfigHelper configHelper;
+    private final AvisRepository avisRepository;
+    private final ServeiRepository serveiRepository;
+    private final ConfigHelper configHelper;
 
 
     @Override

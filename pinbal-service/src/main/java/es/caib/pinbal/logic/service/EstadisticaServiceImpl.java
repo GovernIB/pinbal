@@ -21,14 +21,13 @@ import es.caib.pinbal.persist.repository.ServeiConfigRepository;
 import es.caib.pinbal.persist.repository.UsuariRepository;
 import es.caib.pinbal.persist.repository.explotacio.ExplotConsultaFetsRepository;
 import es.caib.pinbal.persist.repository.explotacio.ExplotTempsRepository;
+import lombok.RequiredArgsConstructor;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
@@ -46,24 +45,18 @@ import java.util.Map;
  * @author Limit Tecnologies <limit@limit.es>
  */
 @Slf4j
+@RequiredArgsConstructor
 @Service
 public class EstadisticaServiceImpl implements EstadisticaService {
 
-    @Autowired
-    private UsuariRepository usuariRepository;
-    @Autowired
-    private EntitatRepository entitatRepository;
-    @Autowired
-    private ProcedimentRepository procedimentRepository;
-    @Autowired
-    private ServeiConfigRepository serveiConfigRepository;
-    @Autowired
-    private ExplotTempsRepository explotTempsRepository;
-    @Autowired
-    private ExplotConsultaFetsRepository explotConsultaFetsRepository;
+    private final UsuariRepository usuariRepository;
+    private final EntitatRepository entitatRepository;
+    private final ProcedimentRepository procedimentRepository;
+    private final ServeiConfigRepository serveiConfigRepository;
+    private final ExplotTempsRepository explotTempsRepository;
+    private final ExplotConsultaFetsRepository explotConsultaFetsRepository;
 
-    @Resource
-    private ConsultaService consultaService;
+    private final ConsultaService consultaService;
 
     public enum DimEnum {
         ENT ("Entitat", "Codi de l'entitat a la que s'ha realitzat la consulta"),

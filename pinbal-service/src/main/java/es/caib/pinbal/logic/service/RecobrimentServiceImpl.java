@@ -95,9 +95,9 @@ import es.scsp.bean.common.respuesta.Respuesta;
 import es.scsp.bean.common.respuesta.TransmisionDatos;
 import es.scsp.common.exceptions.ScspException;
 import es.scsp.common.utils.DateUtils;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -138,33 +138,24 @@ import java.util.Map;
  * @author Limit Tecnologies <limit@limit.es>
  */
 @Slf4j
+@RequiredArgsConstructor
 @Service
 public class RecobrimentServiceImpl implements RecobrimentService, ApplicationContextAware, MessageSourceAware {
 
-    @Autowired
-    private DadesExternesService dadesExternesService;
-    @Autowired
-    private ServeiService serveiService;
-    @Autowired
-    private RecobrimentHelper recobrimentHelper;
-    @Autowired
-    private RecobrimentV2Helper recobrimentV2Helper;
-    @Autowired
-    private PluginHelper pluginHelper;
-    @Autowired
-    private EntitatRepository entitatRepository;
-    @Autowired
-    private ProcedimentRepository procedimentRepository;
-    @Autowired
-    private ServeiConfigRepository serveiConfigRepository;
-    @Autowired
-    private ServeiRepository serveiRepository;
-    @Autowired
-    private ServeiCampRepository serveiCampRepository;
-    @Autowired
-    private ConsultaRepository consultaRepository;
-    @Autowired
-    private HistoricConsultaRepository historicConsultaRepository;
+    private final ConsultaRepository consultaRepository;
+    private final EntitatRepository entitatRepository;
+    private final HistoricConsultaRepository historicConsultaRepository;
+    private final ProcedimentRepository procedimentRepository;
+    private final ServeiCampRepository serveiCampRepository;
+    private final ServeiConfigRepository serveiConfigRepository;
+    private final ServeiRepository serveiRepository;
+
+    private final PluginHelper pluginHelper;
+    private final RecobrimentHelper recobrimentHelper;
+    private final RecobrimentV2Helper recobrimentV2Helper;
+
+    private final DadesExternesService dadesExternesService;
+    private final ServeiService serveiService;
 
     private ApplicationContext applicationContext;
     private MessageSource messageSource;

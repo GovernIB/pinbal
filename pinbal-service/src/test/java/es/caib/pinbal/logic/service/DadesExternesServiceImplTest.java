@@ -1,38 +1,59 @@
 package es.caib.pinbal.logic.service;
 
-import es.caib.pinbal.core.dto.IdiomaEnumDto;
-import es.caib.pinbal.core.dto.dadesexternes.Municipi;
-import es.caib.pinbal.core.dto.dadesexternes.Pais;
-import es.caib.pinbal.core.dto.dadesexternes.Provincia;
 import es.caib.pinbal.logic.helper.ConfigHelper;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import es.caib.pinbal.logic.helper.IntegracioHelper;
+import es.caib.pinbal.logic.intf.dto.IdiomaEnumDto;
+import es.caib.pinbal.logic.intf.dto.IntegracioAccioTipusEnumDto;
+import es.caib.pinbal.plugin.dadescomuns.Municipi;
+import es.caib.pinbal.plugin.dadescomuns.Pais;
+import es.caib.pinbal.plugin.dadescomuns.Provincia;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.Mockito;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
+import java.util.Map;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
+@Disabled("Es necessita connexió a un entorn funcional")
+@ExtendWith(MockitoExtension.class)
 public class DadesExternesServiceImplTest {
 
     @InjectMocks
-    private DadesExternesService dadesExternesService = new DadesExternesServiceImpl();
+    private DadesExternesServiceImpl dadesExternesService;
 
     @Mock
     private ConfigHelper configHelper;
+    @Mock
+    private IntegracioHelper integracioHelper;
 
     private final String baseUrl = "https://proves.caib.es/dadescomunsfront";
 
-    @Before
+    @BeforeEach
     public void setUp() {
-        MockitoAnnotations.initMocks(this);
         when(configHelper.getConfig("es.caib.pinbal.dadescomunes.base.url", baseUrl)).thenReturn(baseUrl);
+        lenient().doNothing().when(integracioHelper).addAccioOk(
+                anyString(), anyString(), anyString(),
+                Mockito.<Map<String, String>>any(),
+                Mockito.<IntegracioAccioTipusEnumDto>any(),
+                anyLong());
+        lenient().doNothing().when(integracioHelper).addAccioError(
+                anyString(), anyString(), anyString(),
+                Mockito.<Map<String, String>>any(),
+                Mockito.<IntegracioAccioTipusEnumDto>any(),
+                anyLong(), anyString(),
+                any(Throwable.class));
     }
 
     @Test

@@ -3,6 +3,7 @@
  */
 package es.caib.pinbal.logic.helper;
 
+import lombok.RequiredArgsConstructor;
 import es.caib.pinbal.logic.helper.PermisosHelper.ObjectIdentifierExtractor;
 import es.caib.pinbal.logic.intf.dto.IdiomaEnumDto;
 import es.caib.pinbal.logic.intf.service.exception.NotFoundException;
@@ -15,7 +16,6 @@ import es.caib.pinbal.plugin.usuari.DadesUsuari;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.acls.domain.BasePermission;
 import org.springframework.security.acls.model.MutableAclService;
 import org.springframework.security.acls.model.Permission;
@@ -26,7 +26,6 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -37,21 +36,17 @@ import java.util.List;
  * 
  * @author Limit Tecnologies <limit@limit.es>
  */
+@RequiredArgsConstructor
 @Component
 public class UsuariHelper {
 
-	@Resource
-	private UsuariRepository usuariRepository;
-	@Resource
-	private ProcedimentServeiRepository procedimentServeiRepository;
+	private final UsuariRepository usuariRepository;
+	private final ProcedimentServeiRepository procedimentServeiRepository;
 
-	@Resource
-	private PluginHelper pluginHelper;
+    private final CacheHelper cacheHelper;
+	private final PluginHelper pluginHelper;
 
-	@Resource
-	private MutableAclService aclService;
-    @Autowired
-    private CacheHelper cacheHelper;
+	private final MutableAclService aclService;
 
 
 	public Usuari getUsuariAutenticat() {

@@ -1,11 +1,9 @@
 package es.caib.pinbal.logic.helper;
 
-import es.caib.pinbal.logic.intf.service.AplicacioService;
 import es.caib.pinbal.logic.intf.service.ConfigService;
-import es.caib.pinbal.logic.intf.service.OrganGestorService;
+import lombok.RequiredArgsConstructor;
 import lombok.Synchronized;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.annotation.Profile;
 import org.springframework.context.event.ContextRefreshedEvent;
@@ -22,15 +20,11 @@ import java.util.List;
 
 @Profile("!test")
 @Slf4j
+@RequiredArgsConstructor
 @Component
 public class StartupApplicationListener implements ApplicationListener<ContextRefreshedEvent> {
 
-    @Autowired
-    private ConfigService configService;
-    @Autowired
-    private AplicacioService aplicacioService;
-    @Autowired
-    private OrganGestorService organGestorService;
+    private final ConfigService configService;
 
     private Authentication auth;
 

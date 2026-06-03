@@ -1,0 +1,7 @@
+## Copia aquest fitxer com firma-servei-test.properties i omple les credencials.
+## El fitxer .properties NO es puja al git (vegeu .gitignore del mòdul).
+es.caib.pinbal.plugin.firmaservidor.portafib.endpoint=https://dev.caib.es/portafib/common/rest/apifirmaenservidorsimple/v1/
+es.caib.pinbal.plugin.firmaservidor.portafib.auth.username=
+es.caib.pinbal.plugin.firmaservidor.portafib.auth.password=
+es.caib.pinbal.plugin.firmaservidor.portafib.perfil=PADES
+es.caib.pinbal.plugin.firmaservidor.portafib.username=afirmades-firma

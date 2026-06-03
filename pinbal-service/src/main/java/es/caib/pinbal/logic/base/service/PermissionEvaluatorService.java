@@ -4,8 +4,8 @@ import es.caib.pinbal.logic.base.helper.BasePermissionHelper;
 import es.caib.pinbal.logic.intf.base.exception.UnknownPermissionException;
 import es.caib.pinbal.logic.intf.base.model.ResourceArtifactType;
 import es.caib.pinbal.logic.intf.base.util.HttpRequestUtil;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.Nullable;
 import org.springframework.security.acls.domain.BasePermission;
 import org.springframework.security.core.Authentication;
@@ -23,11 +23,11 @@ import java.util.regex.Pattern;
  * @author Límit Tecnologies
  */
 @Slf4j
+@RequiredArgsConstructor
 @Service
 public class PermissionEvaluatorService implements es.caib.pinbal.logic.intf.base.service.PermissionEvaluatorService {
 
-	@Autowired
-	private BasePermissionHelper permissionHelper;
+	private final BasePermissionHelper permissionHelper;
 
 	@Override
 	public boolean hasPermission(

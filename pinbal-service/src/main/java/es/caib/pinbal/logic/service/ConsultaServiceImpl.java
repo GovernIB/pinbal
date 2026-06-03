@@ -52,7 +52,6 @@ import es.caib.pinbal.logic.intf.dto.RecobrimentSolicitudDto;
 import es.caib.pinbal.logic.intf.dto.RespostaAtributsDto;
 import es.caib.pinbal.logic.intf.dto.arxiu.ArxiuDetallDto;
 import es.caib.pinbal.logic.intf.service.ConsultaService;
-import es.caib.pinbal.logic.intf.service.ProcedimentService;
 import es.caib.pinbal.logic.intf.service.exception.AccesExternException;
 import es.caib.pinbal.logic.intf.service.exception.AccessDenegatException;
 import es.caib.pinbal.logic.intf.service.exception.ConsultaNotFoundException;
@@ -112,9 +111,9 @@ import es.caib.pluginsib.arxiu.api.ExpedientEstat;
 import es.scsp.bean.common.confirmacion.ConfirmacionPeticion;
 import es.scsp.common.domain.core.EmisorCertificado;
 import es.scsp.common.domain.core.Servicio;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.ApplicationListener;
@@ -174,83 +173,48 @@ import static org.apache.commons.lang.StringUtils.isBlank;
  * @author Limit Tecnologies <limit@limit.es>
  */
 @Slf4j
+@RequiredArgsConstructor
 @Service
 public class ConsultaServiceImpl implements ConsultaService, ApplicationContextAware, MessageSourceAware, ApplicationListener<ContextRefreshedEvent> {
 
 	private static final String ROLE_ADMIN = "ROLE_ADMIN";
 	private static final String ROLE_REPRES = "ROLE_REPRES";
 
-	@Autowired
-	private ConsultaRepository consultaRepository;
-	@Autowired
-	private ProcedimentRepository procedimentRepository;
-	@Autowired
-	private ProcedimentServeiRepository procedimentServeiRepository;
-	@Autowired
-	private EntitatRepository entitatRepository;
-	@Autowired
-	private UsuariRepository usuariRepository;
-	@Autowired
-	private EntitatUsuariRepository entitatUsuariRepository;
-	@Autowired
-	private TokenRepository tokenRepository;
-	@Autowired
-	private ExplotTempsRepository explotTempsRepository;
+	private final ConsultaRepository consultaRepository;
+    private final DadesObertesConsultaRepository dadesObertesConsultaRepository;
+	private final EntitatRepository entitatRepository;
+	private final EntitatUsuariRepository entitatUsuariRepository;
+    private final ExplotConsultaDimensioRepository explotConsultaDimensioRepository;
+    private final ExplotConsultaFetsRepository explotConsultaFetsRepository;
+	private final ExplotTempsRepository explotTempsRepository;
+    private final LlistatConsultaRepository llistatConsultaRepository;
+	private final ProcedimentRepository procedimentRepository;
+	private final ProcedimentServeiRepository procedimentServeiRepository;
+    private final ServeiJustificantCampRepository serveiJustificantCampRepository;
+    private final ServeiRepository serveiRepository;
+    private final SuperConsultaRepository superConsultaRepository;
+	private final TokenRepository tokenRepository;
+	private final UsuariRepository usuariRepository;
 
-	@Autowired
-	private JustificantHelperFactory justificantHelperFactory;
-	@Autowired
-	private DtoMappingHelper dtoMappingHelper;
-	@Autowired
-	private UsuariHelper usuariHelper;
-	@Autowired
-	private ServeiHelper serveiHelper;
-	@Autowired
-	private PluginHelper pluginHelper;
-	@Autowired
-	private PeticioScspEstadistiquesHelper peticioScspEstadistiquesHelper;
-	@Autowired
-	private PeticioScspHelper peticioScspHelper;
+	private final ConfigHelper configHelper;
+	private final ConsultaHelper consultaHelper;
+	private final DtoMappingHelper dtoMappingHelper;
+	private final EmailReportEstatHelper emailReportEstatHelper;
+	private final ExcelHelper excelHelper;
+	private final IntegracioHelper integracioHelper;
+	private final JustificantHelperFactory justificantHelperFactory;
+	private final PeticioScspEstadistiquesHelper peticioScspEstadistiquesHelper;
+	private final PeticioScspHelper peticioScspHelper;
+	private final PluginHelper pluginHelper;
+	private final ServeiHelper serveiHelper;
+	private final UsuariHelper usuariHelper;
 
-	@Autowired
-	private MutableAclService aclService;
+	private final MutableAclService aclService;
+	private final PlatformTransactionManager transactionManager;
 
-	@Autowired
-	private ProcedimentService procedimentService;
 
-	@Autowired
-	private IntegracioHelper integracioHelper;
-
-	@Autowired
-	private PlatformTransactionManager transactionManager;
-
-	@Autowired
-	private ExcelHelper excelHelper;
-	@Autowired
-	private EmailReportEstatHelper emailReportEstatHelper;
-	@Autowired
-	private ConfigHelper configHelper;
-
-    @Autowired
-    private ServeiRepository serveiRepository;
-    @Autowired
-    private ExplotConsultaDimensioRepository explotConsultaDimensioRepository;
-    @Autowired
-    private ExplotConsultaFetsRepository explotConsultaFetsRepository;
-    @Autowired
-    private SuperConsultaRepository superConsultaRepository;
-
-	@Autowired
-	private ConsultaHelper consultaHelper;
-    @Autowired
-    private DadesObertesConsultaRepository dadesObertesConsultaRepository;
-    @Autowired
-    private LlistatConsultaRepository llistatConsultaRepository;
-    @Autowired
-    private ServeiJustificantCampRepository serveiJustificantCampRepository;
 
     private ConsultaService self;
-
     private ApplicationContext applicationContext;
 	private MessageSource messageSource;
 	private ScspHelper scspHelper;

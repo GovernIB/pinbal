@@ -9,7 +9,7 @@ import es.scsp.bean.common.confirmacion.ConfirmacionPeticion;
 import es.scsp.bean.common.peticion.Peticion;
 import es.scsp.bean.common.respuesta.Respuesta;
 import es.scsp.common.exceptions.ScspException;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 /**
@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
  * 
  * @author Limit Tecnologies <limit@limit.es>
  */
+@RequiredArgsConstructor
 @Service
 //@WebService(
 //		name = "Recobriment",
@@ -27,8 +28,7 @@ import org.springframework.stereotype.Service;
 //		targetNamespace = "http://www.caib.es/pinbal/ws/recobriment")
 public class RecobrimentImpl implements Recobriment {
 
-	@Autowired
-	private RecobrimentHelper recobrimentHelper;
+	private final RecobrimentHelper recobrimentHelper;
 
 	@Override
 	public Respuesta peticionSincrona(

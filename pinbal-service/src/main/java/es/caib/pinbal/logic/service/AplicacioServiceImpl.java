@@ -4,16 +4,21 @@
 package es.caib.pinbal.logic.service;
 
 import es.caib.pinbal.logic.helper.CacheHelper;
-import es.caib.pinbal.logic.helper.IntegracioHelper;
 import es.caib.pinbal.logic.helper.PaginacioHelper;
 import es.caib.pinbal.logic.intf.dto.CacheDto;
 import es.caib.pinbal.logic.intf.dto.PaginaDto;
 import es.caib.pinbal.logic.intf.service.AplicacioService;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Implementació dels mètodes per a gestionar l'aplicació.
@@ -21,15 +26,12 @@ import java.util.*;
  * @author Limit Tecnologies <limit@limit.es>
  */
 @Slf4j
+@RequiredArgsConstructor
 @Service
 public class AplicacioServiceImpl implements AplicacioService {
 
-	@Resource
-	private IntegracioHelper integracioHelper;
-	@Resource
-	private CacheHelper cacheHelper;
-	@Resource
-	private PaginacioHelper paginacioHelper;
+	private final CacheHelper cacheHelper;
+	private final PaginacioHelper paginacioHelper;
 
 	private static final Map<String, Integer> ordreCaches;
 

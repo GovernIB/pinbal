@@ -25,14 +25,13 @@ import es.caib.pinbal.persist.repository.ClauPrivadaRepository;
 import es.caib.pinbal.persist.repository.EntitatRepository;
 import es.caib.pinbal.persist.repository.EntitatServeiRepository;
 import es.caib.pinbal.persist.repository.EntitatUsuariRepository;
-import es.caib.pinbal.persist.repository.OrganismeCessionariRepository;
 import es.caib.pinbal.persist.repository.ServeiConfigRepository;
 import es.caib.pinbal.persist.repository.UsuariRepository;
 import es.caib.pinbal.scsp.ScspHelper;
 import es.scsp.common.domain.core.Servicio;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.MessageSource;
@@ -58,27 +57,18 @@ import java.util.Set;
  * @author Limit Tecnologies <limit@limit.es>
  */
 @Slf4j
+@RequiredArgsConstructor
 @Service
 public class EntitatServiceImpl implements EntitatService, ApplicationContextAware, MessageSourceAware {
 
-	@Autowired
-	private EntitatRepository entitatRepository;
-	@Autowired
-	private EntitatServeiRepository entitatServeiRepository;
-	@Autowired
-	private EntitatUsuariRepository entitatUsuariRepository;
-	@Autowired
-	private ServeiConfigRepository serveiConfigRepository;
-	@Autowired
-	private UsuariRepository usuariRepository;
-	@Autowired
-	private OrganismeCessionariRepository organismeCessionariRepository;
- @Autowired
-	private DtoMappingHelper dtoMappingHelper;
-	@Autowired
-	private CacheHelper cacheHelper;
-	@Autowired
-	private ClauPrivadaRepository clauPrivadaRepository;
+	private final EntitatRepository entitatRepository;
+	private final EntitatServeiRepository entitatServeiRepository;
+	private final EntitatUsuariRepository entitatUsuariRepository;
+	private final ServeiConfigRepository serveiConfigRepository;
+	private final UsuariRepository usuariRepository;
+	private final DtoMappingHelper dtoMappingHelper;
+	private final CacheHelper cacheHelper;
+	private final ClauPrivadaRepository clauPrivadaRepository;
 
 	private ApplicationContext applicationContext;
 	private MessageSource messageSource;
@@ -372,22 +362,6 @@ public class EntitatServiceImpl implements EntitatService, ApplicationContextAwa
 		return dtoMappingHelper.getMapperFacade().mapAsList(
 				entitatRepository.findByActivaTrue(),
 				EntitatDto.class);
-	}
-
-	/**
-	 * Aquest setter només s'hauria d'emprar en les proves unitàries.
-	 * @param entitatRepository
-	 */
-	public void setEntitatRepository(EntitatRepository entitatRepository) {
-		this.entitatRepository = entitatRepository;
-	}
-
-	/**
-	 * Aquest setter només s'hauria d'emprar en les proves unitàries.
-	 * @param entitatServeiRepository
-	 */
-	public void setEntitatServeiRepository(EntitatServeiRepository entitatServeiRepository) {
-		this.entitatServeiRepository = entitatServeiRepository;
 	}
 
 	@Override

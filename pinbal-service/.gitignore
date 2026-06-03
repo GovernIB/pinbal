@@ -2,3 +2,4 @@
 /.settings/
 /.project
 /.classpath
+/src/test/resources/es/caib/pinbal/logic/plugin/firma-servei-test.properties

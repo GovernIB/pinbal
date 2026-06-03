@@ -31,7 +31,6 @@ import es.caib.pinbal.logic.intf.dto.JustificantDto;
 import es.caib.pinbal.logic.intf.dto.JustificantEstat;
 import es.caib.pinbal.logic.intf.dto.arxiu.ArxiuDetallDto;
 import es.caib.pinbal.logic.intf.service.HistoricConsultaService;
-import es.caib.pinbal.logic.intf.service.ProcedimentService;
 import es.caib.pinbal.logic.intf.service.exception.AccessDenegatException;
 import es.caib.pinbal.logic.intf.service.exception.ConsultaNotFoundException;
 import es.caib.pinbal.logic.intf.service.exception.EntitatNotFoundException;
@@ -60,9 +59,9 @@ import es.caib.pinbal.scsp.Resposta;
 import es.caib.pinbal.scsp.ScspHelper;
 import es.scsp.common.domain.core.EmisorCertificado;
 import es.scsp.common.domain.core.Servicio;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.MessageSource;
@@ -109,56 +108,37 @@ import static org.apache.commons.lang.StringUtils.isBlank;
  * @author Limit Tecnologies <limit@limit.es>
  */
 @Slf4j
+@RequiredArgsConstructor
 @Service
 public class HistoricConsultaServiceImpl implements HistoricConsultaService, ApplicationContextAware, MessageSourceAware {
 	
 	private static final String ROLE_ADMIN = "ROLE_ADMIN";
 	private static final String ROLE_REPRES = "ROLE_REPRES";
 
-	@Autowired
-	private HistoricConsultaRepository historicConsultaRepository;
-	@Autowired
-	private ProcedimentRepository procedimentRepository;
-	@Autowired
-	private ProcedimentServeiRepository procedimentServeiRepository;
-	@Autowired
-	private EntitatRepository entitatRepository;
-	@Autowired
-	private UsuariRepository usuariRepository;
-	@Autowired
-	private EntitatUsuariRepository entitatUsuariRepository;
-	@Autowired
-	private TokenRepository tokenRepository;
+	private final HistoricConsultaRepository historicConsultaRepository;
+	private final ProcedimentRepository procedimentRepository;
+	private final ProcedimentServeiRepository procedimentServeiRepository;
+	private final EntitatRepository entitatRepository;
+	private final UsuariRepository usuariRepository;
+	private final EntitatUsuariRepository entitatUsuariRepository;
+	private final TokenRepository tokenRepository;
 
-	@Autowired
-	private JustificantHelperFactory justificantHelperFactory;
-	@Autowired
-	private DtoMappingHelper dtoMappingHelper;
-	@Autowired
-	private PluginHelper pluginHelper;
-	@Autowired
-	private PeticioScspEstadistiquesHelper peticioScspEstadistiquesHelper;
-	@Autowired
-	private ConfigHelper configHelper;
+	private final JustificantHelperFactory justificantHelperFactory;
+	private final DtoMappingHelper dtoMappingHelper;
+	private final PluginHelper pluginHelper;
+	private final PeticioScspEstadistiquesHelper peticioScspEstadistiquesHelper;
+	private final ConfigHelper configHelper;
 
-	@Autowired
-	private MutableAclService aclService;
-	
-	@Autowired
-	private ProcedimentService procedimentService;
-	
-	@Autowired
-	private PlatformTransactionManager transactionManager;
+	private final MutableAclService aclService;
+	private final PlatformTransactionManager transactionManager;
 	
 	private ApplicationContext applicationContext;
 	private MessageSource messageSource;
 	private ScspHelper scspHelper;
 
 	private Map<Long, Object> justificantLocks = new HashMap<Long, Object>();
-    @Autowired
-    private DadesObertesHistoricConsultaRepository dadesObertesHistoricConsultaRepository;
-    @Autowired
-    private LlistatHistoricConsultaRepository llistatHistoricConsultaRepository;
+    private final DadesObertesHistoricConsultaRepository dadesObertesHistoricConsultaRepository;
+    private final LlistatHistoricConsultaRepository llistatHistoricConsultaRepository;
 
 
 	@Override

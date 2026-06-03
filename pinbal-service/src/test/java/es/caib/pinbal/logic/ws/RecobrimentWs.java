@@ -3,6 +3,8 @@
  */
 package es.caib.pinbal.logic.ws;
 
+import es.caib.pinbal.logic.intf.ws.Recobriment;
+
 import javax.jws.WebService;
 
 /**

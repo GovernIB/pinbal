@@ -3,13 +3,13 @@
  */
 package es.caib.pinbal.logic.helper;
 
+import lombok.RequiredArgsConstructor;
 import es.caib.pinbal.logic.helper.PermisosHelper.ObjectIdentifierExtractor;
 import es.caib.pinbal.persist.entity.*;
 import es.caib.pinbal.persist.repository.EntitatServeiRepository;
 import es.caib.pinbal.persist.repository.EntitatUsuariRepository;
 import es.caib.pinbal.persist.repository.ProcedimentServeiRepository;
 import es.caib.pinbal.persist.repository.ServeiConfigRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.acls.domain.BasePermission;
 import org.springframework.security.acls.model.MutableAclService;
 import org.springframework.security.acls.model.Permission;
@@ -17,7 +17,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.Resource;
 import java.util.*;
 
 
@@ -26,20 +25,16 @@ import java.util.*;
  * 
  * @author Limit Tecnologies <limit@limit.es>
  */
+@RequiredArgsConstructor
 @Component
 public class ServeiHelper {
 
-	@Resource
-	private ServeiConfigRepository serveiConfigRepository;
-	@Resource
-	private ProcedimentServeiRepository procedimentServeiRepository;
-	@Resource
-	private EntitatServeiRepository entitatServeiRepository;
-	@Autowired
-	private EntitatUsuariRepository entitatUsuariRepository;
+	private final ServeiConfigRepository serveiConfigRepository;
+	private final ProcedimentServeiRepository procedimentServeiRepository;
+	private final EntitatServeiRepository entitatServeiRepository;
+	private final EntitatUsuariRepository entitatUsuariRepository;
 
-	@Resource
-	private MutableAclService aclService;
+	private final MutableAclService aclService;
 
 	public boolean isServeiPermesPerUsuari(
 			Entitat entitat,

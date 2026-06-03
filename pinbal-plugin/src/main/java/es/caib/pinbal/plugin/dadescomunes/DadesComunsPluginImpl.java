@@ -3,7 +3,7 @@ package es.caib.pinbal.plugin.dadescomunes;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import es.caib.comanda.ms.salut.model.IntegracioApp;
+import es.caib.comanda.ms.salut.helper.IntegracioApp;
 import es.caib.pinbal.plugin.PluginMetricHelper;
 import es.caib.pinbal.plugin.SistemaExternException;
 import es.caib.pinbal.plugin.dadescomuns.DadesComunsPlugin;
@@ -20,7 +20,13 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.text.Collator;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
 
 public class DadesComunsPluginImpl extends AbstractPluginProperties implements DadesComunsPlugin {
 

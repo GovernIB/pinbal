@@ -1,19 +1,25 @@
 package es.caib.pinbal.logic.justificant;
 
+import fr.opensagres.xdocreport.core.XDocReportException;
+import fr.opensagres.xdocreport.document.IXDocReport;
+import fr.opensagres.xdocreport.document.registry.XDocReportRegistry;
+import fr.opensagres.xdocreport.template.IContext;
+import fr.opensagres.xdocreport.template.TemplateEngineKind;
+import fr.opensagres.xdocreport.template.freemarker.FreemarkerTemplateEngine;
 import freemarker.core.Environment;
 import freemarker.core.NonStringException;
+import freemarker.template.Configuration;
 import freemarker.template.TemplateException;
 import freemarker.template.TemplateExceptionHandler;
 import freemarker.template.TemplateModelException;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
-import net.sf.jooreports.templates.DocumentTemplate;
-import net.sf.jooreports.templates.DocumentTemplateException;
-import net.sf.jooreports.templates.DocumentTemplateFactory;
+import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Writer;
 import java.nio.file.Files;
@@ -23,29 +29,38 @@ import java.util.*;
 
 public class GenerarJustificantTest {
 
-
     private static final String PLANTILLA_ODT_RESOURCE = "/es/caib/pinbal/logic/template/justificant.odt";
 
-//    @Ignore
-//    @Test
-    public void generarJustificant() throws IOException, DocumentTemplateException {
-
-
-        DocumentTemplateFactory dtf = getDocTemplateFactory();
+    @Test
+    public void generarJustificant() throws IOException, XDocReportException {
         Locale locale = new Locale("ca", "ES");
-        dtf.getFreemarkerConfiguration().setLocale(locale);
-        DocumentTemplate template = dtf.getTemplate(getClass().getResourceAsStream(PLANTILLA_ODT_RESOURCE));
         ByteArrayOutputStream out = new ByteArrayOutputStream();
-        template.createDocument(generarModel("[SCDCPAJU] Servei de consulta de padró de convivència"), out);
-        try(OutputStream outputStream = Files.newOutputStream(Paths.get("/var/tmp/justificant-test.odt"))) {
+
+        InputStream plantilla = getClass().getResourceAsStream(PLANTILLA_ODT_RESOURCE);
+        IXDocReport report = XDocReportRegistry.getRegistry().loadReport(
+                plantilla,
+                TemplateEngineKind.Freemarker);
+
+        configurarFreemarker(report, locale);
+
+        Map<String, Object> model = generarModel("[SCDCPAJU] Servei de consulta de padró de convivència");
+        IContext context = report.createContext();
+        context.putMap(model);
+        report.process(context, out);
+
+        try (OutputStream outputStream = Files.newOutputStream(Paths.get("/var/tmp/justificant-test.odt"))) {
             out.writeTo(outputStream);
         }
     }
 
-    private DocumentTemplateFactory getDocTemplateFactory() {
-
-        DocumentTemplateFactory documentTemplateFactory = new DocumentTemplateFactory();
-        documentTemplateFactory.getFreemarkerConfiguration().setTemplateExceptionHandler(new TemplateExceptionHandler() {
+    private void configurarFreemarker(IXDocReport report, Locale locale) {
+        FreemarkerTemplateEngine templateEngine = (FreemarkerTemplateEngine) report.getTemplateEngine();
+        Configuration configuration = templateEngine.getFreemarkerConfiguration();
+        configuration.setTagSyntax(Configuration.SQUARE_BRACKET_TAG_SYNTAX);
+        configuration.setDefaultEncoding("UTF-8");
+        configuration.setOutputEncoding("UTF-8");
+        configuration.setLocale((locale != null) ? locale : new Locale("ca", "ES"));
+        configuration.setTemplateExceptionHandler(new TemplateExceptionHandler() {
             public void handleTemplateException(TemplateException te, Environment env, Writer out) throws TemplateException {
                 try {
                     if (te instanceof TemplateModelException || te instanceof NonStringException) {
@@ -59,11 +74,9 @@ public class GenerarJustificantTest {
                 }
             }
         });
-        return documentTemplateFactory;
     }
 
     private Map<String, Object> generarModel(String serveiDescripcio) {
-
         Map<String, Object> model = new HashMap<>();
         model.put("text_titol_capsalera", "Justificant de transmissió de dades");
         model.put("text_titol_servei", serveiDescripcio);
@@ -76,12 +89,13 @@ public class GenerarJustificantTest {
         model.put("text_data_eldia", "Generat el dia");
         model.put("text_data_data", formatDate(ara));
         List<NodeInfo> nodes = generarNodes();
+        List<NodeInfo> nodesTipusDocument = new ArrayList<>();
         model.put("nodes", nodes);
+        model.put("nodesTipusDocument", nodesTipusDocument);
         return model;
     }
 
     public List<NodeInfo> generarNodes() {
-
         List<NodeInfo> nodes = new ArrayList<>();
         String solicitud = "Sol·licitud";
         NodeInfo n = new NodeInfo(0, solicitud, null, "node1.xpathDadaEspecifica");
@@ -106,7 +120,6 @@ public class GenerarJustificantTest {
         nodes.add(n);
         n = new NodeInfo(0, "Expedient", "Test", "node1.xpathDadaEspecifica");
         nodes.add(n);
-
         n = new NodeInfo(0, "Dades personals", null, "node1.xpathDadaEspecifica");
         nodes.add(n);
         n = new NodeInfo(0, "Estat", null, "node1.xpathDadaEspecifica");
@@ -115,7 +128,6 @@ public class GenerarJustificantTest {
         nodes.add(n);
         n = new NodeInfo(0, "Descripció", "TRAMITADA", "node1.xpathDadaEspecifica");
         nodes.add(n);
-
         n = new NodeInfo(0, "Solicitud", null, "node1.xpathDadaEspecifica");
         nodes.add(n);
         n = new NodeInfo(0, "ProvinciaSolicitud", "07", "node1.xpathDadaEspecifica");
@@ -132,7 +144,6 @@ public class GenerarJustificantTest {
         nodes.add(n);
         n = new NodeInfo(3, "Test", "test", "node1.xpathDadaEspecifica");
         nodes.add(n);
-
         n = new NodeInfo(0, "Resultado", null, "node1.xpathDadaEspecifica");
         nodes.add(n);
         n = new NodeInfo(1, "ClaveHojaPadronal", null, "node1.xpathDadaEspecifica");
@@ -143,7 +154,6 @@ public class GenerarJustificantTest {
         nodes.add(n);
         n = new NodeInfo(2, "Hoja", "185", "node1.xpathDadaEspecifica");
         nodes.add(n);
-
         return nodes;
     }
 
@@ -160,16 +170,17 @@ public class GenerarJustificantTest {
         private String xpathDadaEspecifica;
         private String titol;
         private String descripcio;
+
         public NodeInfo(int nivell, String titol, String descripcio, String xpathDadaEspecifica) {
             super();
             this.nivell = nivell;
             this.xpathDadaEspecifica = xpathDadaEspecifica;
             this.titol = titol;
             this.descripcio = descripcio;
-
         }
+
         public boolean isFinal() {
             return descripcio != null;
         }
     }
- }
+}

@@ -3,7 +3,7 @@
  */
 package es.caib.pinbal.plugin.usuari;
 
-import es.caib.comanda.ms.salut.model.IntegracioApp;
+import es.caib.comanda.ms.salut.helper.IntegracioApp;
 import es.caib.pinbal.plugin.PluginMetricHelper;
 import es.caib.pinbal.plugin.SistemaExternException;
 import lombok.extern.slf4j.Slf4j;

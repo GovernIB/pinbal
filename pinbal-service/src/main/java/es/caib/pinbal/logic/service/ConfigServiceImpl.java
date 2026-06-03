@@ -12,8 +12,8 @@ import es.caib.pinbal.logic.intf.service.ConfigService;
 import es.caib.pinbal.persist.entity.Config;
 import es.caib.pinbal.persist.repository.ConfigGroupRepository;
 import es.caib.pinbal.persist.repository.ConfigRepository;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -29,21 +29,16 @@ import java.util.List;
  * @author Limit Tecnologies <limit@limit.es>
  */
 @Slf4j
+@RequiredArgsConstructor
 @Service
 public class ConfigServiceImpl implements ConfigService {
 
-    @Autowired
-    private ConfigGroupRepository configGroupRepository;
-    @Autowired
-    private ConfigRepository configRepository;
-    @Autowired
-    private DtoMappingHelper dtoMappingHelper;
-    @Autowired
-    private PluginHelper pluginHelper;
-    @Autowired
-    private ScheduleConfig scheduleConfig;
-	@Autowired
-	private ConfigHelper configHelper;
+    private final ConfigGroupRepository configGroupRepository;
+    private final ConfigRepository configRepository;
+    private final DtoMappingHelper dtoMappingHelper;
+    private final PluginHelper pluginHelper;
+    private final ScheduleConfig scheduleConfig;
+	private final ConfigHelper configHelper;
 
     @Override
     @Transactional

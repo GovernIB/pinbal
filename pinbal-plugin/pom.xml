@@ -166,6 +166,11 @@
 			<artifactId>tika-core</artifactId>
 			<version>3.3.0</version>
 		</dependency>
+		<!-- Bridge log4j 1.x → SLF4J: necessari per Jersey 1.x (apifirmasimple-jersey/apisib-jerseycore) -->
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>log4j-over-slf4j</artifactId>
+		</dependency>
 		<!--Firma simple en servidor-->
 		<dependency>
 			<groupId>org.fundaciobit.apisib.apifirmasimple</groupId>

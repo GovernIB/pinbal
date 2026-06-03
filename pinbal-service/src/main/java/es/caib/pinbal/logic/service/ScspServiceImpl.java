@@ -25,6 +25,7 @@ import es.caib.pinbal.persist.repository.ClauPublicaRepository;
 import es.caib.pinbal.persist.repository.EmissorCertRepository;
 import es.caib.pinbal.persist.repository.OrganismeCessionariRepository;
 import es.caib.pinbal.persist.repository.ParamConfRepository;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -34,7 +35,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionSynchronizationAdapter;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 
-import javax.annotation.Resource;
 import java.util.List;
 
 /**
@@ -44,24 +44,18 @@ import java.util.List;
  * @author Limit Tecnologies <limit@limit.es>
  */
 @Slf4j
+@RequiredArgsConstructor
 @Service
 public class ScspServiceImpl implements ScspService {
 
-	@Resource
-	private ParamConfRepository paramConfRepository;
-	@Resource
-	private EmissorCertRepository emissorCertRepository;
-	@Resource
-	private ClauPrivadaRepository clauPrivadaRepository;
-	@Resource
-	private OrganismeCessionariRepository organismeCessionariRepository;
-	@Resource
-	private ClauPublicaRepository clauPublicaRepository;
+	private final ParamConfRepository paramConfRepository;
+	private final EmissorCertRepository emissorCertRepository;
+	private final ClauPrivadaRepository clauPrivadaRepository;
+	private final OrganismeCessionariRepository organismeCessionariRepository;
+	private final ClauPublicaRepository clauPublicaRepository;
 
-	@Resource
-	private DtoMappingHelper dtoMappingHelper;
-    @Resource
-    private EntitatClauHelper entitatClauHelper;
+    private final EntitatClauHelper entitatClauHelper;
+	private final DtoMappingHelper dtoMappingHelper;
 
 	// Funcions de la taula de emissor de paràmetres de configuració.
 	@Override

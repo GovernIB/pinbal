@@ -1,6 +1,5 @@
 package es.caib.pinbal.logic.service;
 
-import es.caib.pinbal.logic.helper.DtoMappingHelper;
 import es.caib.pinbal.logic.intf.service.exception.EntitatNotFoundException;
 import es.caib.pinbal.persist.entity.ClauPrivada;
 import es.caib.pinbal.persist.entity.Entitat;
@@ -11,9 +10,9 @@ import es.caib.pinbal.persist.repository.EntitatRepository;
 import es.caib.pinbal.persist.repository.EntitatServeiRepository;
 import es.caib.pinbal.persist.repository.ServeiConfigRepository;
 import es.caib.pinbal.scsp.ScspHelper;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.MessageSource;
@@ -25,20 +24,14 @@ import java.util.List;
 import java.util.Set;
 
 @Slf4j
+@RequiredArgsConstructor
 @Service
 public class EntitatClauHelper implements ApplicationContextAware, MessageSourceAware {
 
-    @Autowired
-    private EntitatRepository entitatRepository;
-    @Autowired
-    private ServeiConfigRepository serveiConfigRepository;
-    @Autowired
-    private EntitatServeiRepository entitatServeiRepository;
-    @Autowired
-    private ClauPrivadaRepository clauPrivadaRepository;
-
-    @Autowired
-    private DtoMappingHelper dtoMappingHelper;
+    private final ClauPrivadaRepository clauPrivadaRepository;
+    private final EntitatRepository entitatRepository;
+    private final EntitatServeiRepository entitatServeiRepository;
+    private final ServeiConfigRepository serveiConfigRepository;
 
     private ApplicationContext applicationContext;
     private MessageSource messageSource;

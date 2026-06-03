@@ -15,7 +15,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -30,8 +29,7 @@ import java.util.Map;
 @Component
 public class IntegracioHelper {
 	
-	@Resource
-	private UsuariHelper usuariHelper;
+	private final UsuariHelper usuariHelper;
 
 	public static final int DEFAULT_MAX_ACCIONS = 20;
 

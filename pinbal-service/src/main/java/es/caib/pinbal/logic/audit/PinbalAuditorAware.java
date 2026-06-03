@@ -5,12 +5,12 @@ package es.caib.pinbal.logic.audit;
 
 import es.caib.pinbal.persist.entity.Usuari;
 import es.caib.pinbal.persist.repository.UsuariRepository;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.AuditorAware;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 
-import javax.annotation.Resource;
 import java.util.Optional;
 
 /**
@@ -20,11 +20,11 @@ import java.util.Optional;
  * 
  * @author Limit Tecnologies <limit@limit.es>
  */
+@RequiredArgsConstructor
 @Slf4j
 public class PinbalAuditorAware implements AuditorAware<Usuari> {
 
-	@Resource
-	private UsuariRepository usuariRepository;
+	private final UsuariRepository usuariRepository;
 
 	@Override
 	public Optional<Usuari> getCurrentAuditor() {

@@ -3,10 +3,10 @@
  */
 package es.caib.pinbal.logic.misc;
 
-import static junit.framework.Assert.assertTrue;
-
-import java.io.ByteArrayInputStream;
-import java.util.Iterator;
+import org.junit.jupiter.api.Test;
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 import javax.xml.namespace.NamespaceContext;
 import javax.xml.parsers.DocumentBuilder;
@@ -15,11 +15,10 @@ import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathFactory;
+import java.io.ByteArrayInputStream;
+import java.util.Iterator;
 
-import org.junit.Test;
-import org.w3c.dom.Document;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
+import static org.springframework.test.util.AssertionErrors.assertTrue;
 
 /**
  * @author josepg
@@ -58,7 +57,7 @@ public class DadesEspecifiquesTest {
 			public String getNamespaceURI(String prefix) {
 				return "http://www.map.es/scsp/esquemas/datosespecificos";
 			}
-			public Iterator<?> getPrefixes(String val) {
+			public Iterator<String> getPrefixes(String val) {
 				return null;
 			}
 			public String getPrefix(String uri) {

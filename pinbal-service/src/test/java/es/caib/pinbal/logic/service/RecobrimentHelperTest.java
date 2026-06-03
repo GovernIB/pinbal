@@ -2,27 +2,39 @@ package es.caib.pinbal.logic.service;
 
 import es.caib.pinbal.logic.helper.ConfigHelper;
 import es.caib.pinbal.logic.helper.RecobrimentHelper;
-import es.caib.pinbal.logic.repository.ConsultaRepository;
-import es.caib.pinbal.logic.repository.HistoricConsultaRepository;
-import es.scsp.bean.common.peticion.*;
+import es.caib.pinbal.logic.intf.service.ConsultaService;
+import es.caib.pinbal.logic.intf.service.HistoricConsultaService;
+import es.caib.pinbal.persist.repository.ConsultaRepository;
+import es.caib.pinbal.persist.repository.HistoricConsultaRepository;
+import es.scsp.bean.common.peticion.Atributos;
+import es.scsp.bean.common.peticion.Consentimiento;
+import es.scsp.bean.common.peticion.DatosGenericos;
+import es.scsp.bean.common.peticion.Emisor;
+import es.scsp.bean.common.peticion.Funcionario;
+import es.scsp.bean.common.peticion.Peticion;
+import es.scsp.bean.common.peticion.Procedimiento;
+import es.scsp.bean.common.peticion.Solicitante;
+import es.scsp.bean.common.peticion.SolicitudTransmision;
+import es.scsp.bean.common.peticion.Solicitudes;
+import es.scsp.bean.common.peticion.TipoDocumentacion;
+import es.scsp.bean.common.peticion.Titular;
+import es.scsp.bean.common.peticion.Transmision;
 import es.scsp.common.exceptions.ScspException;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.ArrayList;
 import java.util.Date;
 
-@RunWith(MockitoJUnitRunner.class)
-public class RecobrimentHelperTest {
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-    @Rule
-    public ExpectedException exceptionRule = ExpectedException.none();
+@ExtendWith(MockitoExtension.class)
+public class RecobrimentHelperTest {
 
     @Mock
     private ConsultaRepository consultaRepository;
@@ -37,13 +49,12 @@ public class RecobrimentHelperTest {
     private ConfigHelper configHelper;
 
     @InjectMocks
-    RecobrimentHelper recobrimentHelper = new RecobrimentHelper();
+    RecobrimentHelper recobrimentHelper;
 
     private Peticion peticio;
 
-    @Before
+    @BeforeEach
     public void setUp() {
-//        MockitoAnnotations.initMocks(this);
         peticio = new Peticion();
 
         // Funcionari
@@ -76,9 +87,7 @@ public class RecobrimentHelperTest {
         atributs.setNumElementos(1);
         atributs.setTimeStamp(String.valueOf(System.currentTimeMillis()));
         atributs.setCodigoCertificado("COD_CER");
-//        atributs.setEstado();
         peticio.setAtributos(atributs);
-
 
         Solicitudes solicituds = new Solicitudes();
         ArrayList<SolicitudTransmision> solicitudsTransmissio = new ArrayList<>();
@@ -111,12 +120,9 @@ public class RecobrimentHelperTest {
         datosGenericos.setTitular(titular);
         datosGenericos.setTransmision(transmissio);
 
-        // Datos específicos
-        Object datosEspecificos = null;
-
         SolicitudTransmision solicitudTransmisio = new SolicitudTransmision();
         solicitudTransmisio.setDatosGenericos(datosGenericos);
-        solicitudTransmisio.setDatosEspecificos(datosEspecificos);
+        solicitudTransmisio.setDatosEspecificos(null);
 
         solicitudsTransmissio.add(solicitudTransmisio);
         solicituds.getSolicitudTransmision().addAll(solicitudsTransmissio);
@@ -140,7 +146,6 @@ public class RecobrimentHelperTest {
     private static final String MSG_ERROR_FINALITAT_EMPTY = "L'element peticion.solicitudes.solicitudTransmision.datosGenericos.solicitante.finalidad (solicitudIndex=0) no pot ser buit";
     private static final String MSG_ERROR_FINALITAT_SIZE = "Camp massa llarg. L'element peticion.solicitudes.solicitudTransmision.datosGenericos.solicitante.finalidad (solicitudIndex=0) no pot superar els 250 caràcters";
     private static final String MSG_ERROR_CONSENT_NULL = "No s'ha trobat l'element peticion.solicitudes.solicitudTransmision.datosGenericos.solicitante.consentimiento (solicitudIndex=0)";
-    private static final String MSG_ERROR_CONSENT_ENUM = "Valor incorrecte. Els valors possibles de l'element peticion.solicitudes.solicitudTransmision.datosGenericos.solicitante.consentimiento (solicitudIndex=0) son: [Si | Llei]";
     private static final String MSG_ERROR_UNITAT_NULL = "No s'ha trobat l'element peticion.solicitudes.solicitudTransmision.datosGenericos.solicitante.unidadTramitadora (solicitudIndex=0)";
     private static final String MSG_ERROR_UNITAT_EMPTY = "L'element peticion.solicitudes.solicitudTransmision.datosGenericos.solicitante.unidadTramitadora (solicitudIndex=0) no pot ser buit";
     private static final String MSG_ERROR_UNITAT_SIZE = "Camp massa llarg. L'element peticion.solicitudes.solicitudTransmision.datosGenericos.solicitante.unidadTramitadora (solicitudIndex=0) no pot superar els 250 caràcters";
@@ -157,376 +162,317 @@ public class RecobrimentHelperTest {
     private static final String MSG_ERROR_NOM_FUNC_SIZE = "Camp massa llarg. L'element peticion.solicitudes.solicitudTransmision.datosGenericos.solicitante.funcionario.nombreCompletoFuncionario (solicitudIndex=0) no pot superar els 122 caràcters";
     private static final String MSG_ERROR_DOCUM_SIZE = "Camp massa llarg. L'element peticion.solicitudes.solicitudTransmision.datosGenericos.titular.documentacion (solicitudIndex=0) no pot superar els 14 caràcters";
     private static final String MSG_ERROR_TIP_DOC_NULL = "No s'ha trobat l'element peticion.solicitudes.solicitudTransmision.datosGenericos.titular.tipoDocumentacion (solicitudIndex=0)";
-    private static final String MSG_ERROR_TIP_DOC_ENUM = "Valor incorrecte. Els valors possibles de l'element peticion.solicitudes.solicitudTransmision.datosGenericos.titular.tipoDocumentacion (solicitudIndex=0) son: [CIF | DNI | NIF | NIE | Pasaporte | NumeroIdentificacion | Otros]";
     private static final String MSG_ERROR_TIT_NOM_SIZE = "Camp massa llarg. L'element peticion.solicitudes.solicitudTransmision.datosGenericos.titular.nombre (solicitudIndex=0) no pot superar els 40 caràcters";
     private static final String MSG_ERROR_TIT_LLIN1_SIZE = "Camp massa llarg. L'element peticion.solicitudes.solicitudTransmision.datosGenericos.titular.apellido1 (solicitudIndex=0) no pot superar els 40 caràcters";
     private static final String MSG_ERROR_TIT_LLIN2_SIZE = "Camp massa llarg. L'element peticion.solicitudes.solicitudTransmision.datosGenericos.titular.apellido2 (solicitudIndex=0) no pot superar els 40 caràcters";
     private static final String MSG_ERROR_TIT_COMP_SIZE = "Camp massa llarg. L'element peticion.solicitudes.solicitudTransmision.datosGenericos.titular.nombreCompleto (solicitudIndex=0) no pot superar els 122 caràcters";
     private static final String MSG_ERROR_SOL_TRANS_TYPE = "L'element peticion.solicitudes.solicitudTransmision.datosEspecificos (solicitudIndex=0) no és del tipus org.w3c.dom.Element";
 
-
     @Test
-    public void whenValidarIObtenirSolicitudsThenErrorPeticioNull() throws ScspException {
-        exceptionRule.expect(ScspException.class);
-        exceptionRule.expectMessage(MSG_ERROR_PETICIO_NULL);
-
-        recobrimentHelper.validarIObtenirSolicituds(null, 1);
+    public void whenValidarIObtenirSolicitudsThenErrorPeticioNull() {
+        ScspException ex = assertThrows(ScspException.class, () ->
+                recobrimentHelper.validarIObtenirSolicituds(null, 1));
+        assertTrue(ex.getMessage().contains(MSG_ERROR_PETICIO_NULL));
     }
 
     @Test
-    public void whenValidarIObtenirSolicitudsThenErrorAtributsNull() throws ScspException {
-        exceptionRule.expect(ScspException.class);
-        exceptionRule.expectMessage(MSG_ERROR_ATRIBUTS_NULL);
-
+    public void whenValidarIObtenirSolicitudsThenErrorAtributsNull() {
         peticio.setAtributos(null);
-        recobrimentHelper.validarIObtenirSolicituds(peticio, 1);
+        ScspException ex = assertThrows(ScspException.class, () ->
+                recobrimentHelper.validarIObtenirSolicituds(peticio, 1));
+        assertTrue(ex.getMessage().contains(MSG_ERROR_ATRIBUTS_NULL));
     }
 
     @Test
-    public void whenValidarIObtenirSolicitudsThenErrorCodiCertificatNull() throws ScspException {
-        exceptionRule.expect(ScspException.class);
-        exceptionRule.expectMessage(MSG_ERROR_COD_CER_NULL);
-
+    public void whenValidarIObtenirSolicitudsThenErrorCodiCertificatNull() {
         peticio.getAtributos().setCodigoCertificado(null);
-        recobrimentHelper.validarIObtenirSolicituds(peticio, 1);
+        ScspException ex = assertThrows(ScspException.class, () ->
+                recobrimentHelper.validarIObtenirSolicituds(peticio, 1));
+        assertTrue(ex.getMessage().contains(MSG_ERROR_COD_CER_NULL));
     }
 
     @Test
-    public void whenValidarIObtenirSolicitudsThenErrorSolicitudsNull() throws ScspException {
-        exceptionRule.expect(ScspException.class);
-        exceptionRule.expectMessage(MSG_ERROR_SOLICITUD_NULL);
-
+    public void whenValidarIObtenirSolicitudsThenErrorSolicitudsNull() {
         peticio.setSolicitudes(null);
-        recobrimentHelper.validarIObtenirSolicituds(peticio, 1);
+        ScspException ex = assertThrows(ScspException.class, () ->
+                recobrimentHelper.validarIObtenirSolicituds(peticio, 1));
+        assertTrue(ex.getMessage().contains(MSG_ERROR_SOLICITUD_NULL));
     }
 
     @Test
-    public void whenValidarIObtenirSolicitudsThenErrorSolicitudsTransmissioNull() throws ScspException {
-        exceptionRule.expect(ScspException.class);
-        exceptionRule.expectMessage(MSG_ERROR_SOL_TRANS_NULL);
-
+    public void whenValidarIObtenirSolicitudsThenErrorSolicitudsTransmissioNull() {
         peticio.setSolicitudes(new Solicitudes() {
             @Override
             public java.util.List<SolicitudTransmision> getSolicitudTransmision() {
                 return null;
             }
         });
-        recobrimentHelper.validarIObtenirSolicituds(peticio, 1);
+        ScspException ex = assertThrows(ScspException.class, () ->
+                recobrimentHelper.validarIObtenirSolicituds(peticio, 1));
+        assertTrue(ex.getMessage().contains(MSG_ERROR_SOL_TRANS_NULL));
     }
 
     @Test
-    public void whenValidarIObtenirSolicitudsThenErrorNombreMàximSolicituds() throws ScspException {
-        exceptionRule.expect(ScspException.class);
-        exceptionRule.expectMessage(MSG_ERROR_MAX_SOLICITUDS);
-
+    public void whenValidarIObtenirSolicitudsThenErrorNombreMàximSolicituds() {
         peticio.getSolicitudes().getSolicitudTransmision().add(new SolicitudTransmision());
-        recobrimentHelper.validarIObtenirSolicituds(peticio, 1);
+        ScspException ex = assertThrows(ScspException.class, () ->
+                recobrimentHelper.validarIObtenirSolicituds(peticio, 1));
+        assertTrue(ex.getMessage().contains(MSG_ERROR_MAX_SOLICITUDS));
     }
 
     @Test
-    public void whenValidarIObtenirSolicitudsThenErrorDadesGeneriquesNull() throws ScspException {
-        exceptionRule.expect(ScspException.class);
-        exceptionRule.expectMessage(MSG_ERROR_GENERIQUES_NULL);
-
+    public void whenValidarIObtenirSolicitudsThenErrorDadesGeneriquesNull() {
         peticio.getSolicitudes().getSolicitudTransmision().get(0).setDatosGenericos(null);
-        recobrimentHelper.validarIObtenirSolicituds(peticio, 1);
+        ScspException ex = assertThrows(ScspException.class, () ->
+                recobrimentHelper.validarIObtenirSolicituds(peticio, 1));
+        assertTrue(ex.getMessage().contains(MSG_ERROR_GENERIQUES_NULL));
     }
 
     @Test
-    public void whenValidarIObtenirSolicitudsThenErrorDadesTransmissioNull() throws ScspException {
-        exceptionRule.expect(ScspException.class);
-        exceptionRule.expectMessage(MSG_ERROR_TRANS_NULL);
-
+    public void whenValidarIObtenirSolicitudsThenErrorDadesTransmissioNull() {
         peticio.getSolicitudes().getSolicitudTransmision().get(0).getDatosGenericos().setTransmision(null);
-        recobrimentHelper.validarIObtenirSolicituds(peticio, 10);
+        ScspException ex = assertThrows(ScspException.class, () ->
+                recobrimentHelper.validarIObtenirSolicituds(peticio, 10));
+        assertTrue(ex.getMessage().contains(MSG_ERROR_TRANS_NULL));
     }
 
     @Test
-    public void whenValidarIObtenirSolicitudsThenErrorIdSolicitudNull() throws ScspException {
-        exceptionRule.expect(ScspException.class);
-        exceptionRule.expectMessage(MSG_ERROR_ID_SOL_NULL);
-
+    public void whenValidarIObtenirSolicitudsThenErrorIdSolicitudNull() {
         peticio.getSolicitudes().getSolicitudTransmision().get(0).getDatosGenericos().getTransmision().setIdSolicitud(null);
-        recobrimentHelper.validarIObtenirSolicituds(peticio, 10);
+        ScspException ex = assertThrows(ScspException.class, () ->
+                recobrimentHelper.validarIObtenirSolicituds(peticio, 10));
+        assertTrue(ex.getMessage().contains(MSG_ERROR_ID_SOL_NULL));
     }
 
     @Test
-    public void whenValidarIObtenirSolicitudsThenErrorIdSolicitudBuit() throws ScspException {
-        exceptionRule.expect(ScspException.class);
-        exceptionRule.expectMessage(MSG_ERROR_ID_SOL_EMPTY);
-
+    public void whenValidarIObtenirSolicitudsThenErrorIdSolicitudBuit() {
         peticio.getSolicitudes().getSolicitudTransmision().get(0).getDatosGenericos().getTransmision().setIdSolicitud("");
-        recobrimentHelper.validarIObtenirSolicituds(peticio, 10);
+        ScspException ex = assertThrows(ScspException.class, () ->
+                recobrimentHelper.validarIObtenirSolicituds(peticio, 10));
+        assertTrue(ex.getMessage().contains(MSG_ERROR_ID_SOL_EMPTY));
     }
 
     @Test
-    public void whenValidarIObtenirSolicitudsThenErrorIdSolicitudSize() throws ScspException {
-        exceptionRule.expect(ScspException.class);
-        exceptionRule.expectMessage(MSG_ERROR_ID_SOL_SIZE);
-
+    public void whenValidarIObtenirSolicitudsThenErrorIdSolicitudSize() {
         peticio.getSolicitudes().getSolicitudTransmision().get(0).getDatosGenericos().getTransmision().setIdSolicitud("11111111111111111111111111111111111111111111111111111111111111111111111111111111");
-        recobrimentHelper.validarIObtenirSolicituds(peticio, 10);
+        ScspException ex = assertThrows(ScspException.class, () ->
+                recobrimentHelper.validarIObtenirSolicituds(peticio, 10));
+        assertTrue(ex.getMessage().contains(MSG_ERROR_ID_SOL_SIZE));
     }
 
     @Test
-    public void whenValidarIObtenirSolicitudsThenErrorSolicitantNull() throws ScspException {
-        exceptionRule.expect(ScspException.class);
-        exceptionRule.expectMessage(MSG_ERROR_SOLICITANT_NULL);
-
+    public void whenValidarIObtenirSolicitudsThenErrorSolicitantNull() {
         peticio.getSolicitudes().getSolicitudTransmision().get(0).getDatosGenericos().setSolicitante(null);
-        recobrimentHelper.validarIObtenirSolicituds(peticio, 1);
+        ScspException ex = assertThrows(ScspException.class, () ->
+                recobrimentHelper.validarIObtenirSolicituds(peticio, 1));
+        assertTrue(ex.getMessage().contains(MSG_ERROR_SOLICITANT_NULL));
     }
 
     @Test
-    public void whenValidarIObtenirSolicitudsThenErrorIdSolicitantNull() throws ScspException {
-        exceptionRule.expect(ScspException.class);
-        exceptionRule.expectMessage(MSG_ERROR_ID_SOLIC_NULL);
-
+    public void whenValidarIObtenirSolicitudsThenErrorIdSolicitantNull() {
         peticio.getSolicitudes().getSolicitudTransmision().get(0).getDatosGenericos().getSolicitante().setIdentificadorSolicitante(null);
-        recobrimentHelper.validarIObtenirSolicituds(peticio, 1);
+        ScspException ex = assertThrows(ScspException.class, () ->
+                recobrimentHelper.validarIObtenirSolicituds(peticio, 1));
+        assertTrue(ex.getMessage().contains(MSG_ERROR_ID_SOLIC_NULL));
     }
 
     @Test
-    public void whenValidarIObtenirSolicitudsThenErrorFinalitatNull() throws ScspException {
-        exceptionRule.expect(ScspException.class);
-        exceptionRule.expectMessage(MSG_ERROR_FINALITAT_NULL);
-
+    public void whenValidarIObtenirSolicitudsThenErrorFinalitatNull() {
         peticio.getSolicitudes().getSolicitudTransmision().get(0).getDatosGenericos().getSolicitante().setFinalidad(null);
-        recobrimentHelper.validarIObtenirSolicituds(peticio, 1);
+        ScspException ex = assertThrows(ScspException.class, () ->
+                recobrimentHelper.validarIObtenirSolicituds(peticio, 1));
+        assertTrue(ex.getMessage().contains(MSG_ERROR_FINALITAT_NULL));
     }
 
     @Test
-    public void whenValidarIObtenirSolicitudsThenErrorFinalitatBuit() throws ScspException {
-        exceptionRule.expect(ScspException.class);
-        exceptionRule.expectMessage(MSG_ERROR_FINALITAT_EMPTY);
-
+    public void whenValidarIObtenirSolicitudsThenErrorFinalitatBuit() {
         peticio.getSolicitudes().getSolicitudTransmision().get(0).getDatosGenericos().getSolicitante().setFinalidad("");
-        recobrimentHelper.validarIObtenirSolicituds(peticio, 1);
+        ScspException ex = assertThrows(ScspException.class, () ->
+                recobrimentHelper.validarIObtenirSolicituds(peticio, 1));
+        assertTrue(ex.getMessage().contains(MSG_ERROR_FINALITAT_EMPTY));
     }
 
     @Test
-    public void whenValidarIObtenirSolicitudsThenErrorFinalitatSize() throws ScspException {
-        exceptionRule.expect(ScspException.class);
-        exceptionRule.expectMessage(MSG_ERROR_FINALITAT_SIZE);
-
+    public void whenValidarIObtenirSolicitudsThenErrorFinalitatSize() {
         peticio.getSolicitudes().getSolicitudTransmision().get(0).getDatosGenericos().getSolicitante().setFinalidad("11111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111");
-        recobrimentHelper.validarIObtenirSolicituds(peticio, 1);
+        ScspException ex = assertThrows(ScspException.class, () ->
+                recobrimentHelper.validarIObtenirSolicituds(peticio, 1));
+        assertTrue(ex.getMessage().contains(MSG_ERROR_FINALITAT_SIZE));
     }
 
     @Test
-    public void whenValidarIObtenirSolicitudsThenErrorConsentimentNull() throws ScspException {
-        exceptionRule.expect(ScspException.class);
-        exceptionRule.expectMessage(MSG_ERROR_CONSENT_NULL);
-
+    public void whenValidarIObtenirSolicitudsThenErrorConsentimentNull() {
         peticio.getSolicitudes().getSolicitudTransmision().get(0).getDatosGenericos().getSolicitante().setConsentimiento(null);
-        recobrimentHelper.validarIObtenirSolicituds(peticio, 1);
+        ScspException ex = assertThrows(ScspException.class, () ->
+                recobrimentHelper.validarIObtenirSolicituds(peticio, 1));
+        assertTrue(ex.getMessage().contains(MSG_ERROR_CONSENT_NULL));
     }
 
-//    @Test
-//    private void whenValidarIObtenirSolicitudsThenErrorConsentimentValor() throws ScspException {
-//        exceptionRule.expect(ScspException.class);
-//        exceptionRule.expectMessage(MSG_ERROR_CONSENT_ENUM);
-//
-//        peticio.getSolicitudes().getSolicitudTransmision().get(0).getDatosGenericos().getSolicitante().setConsentimiento(Consentimiento.valueOf("Altre"));
-//        recobrimentHelper.validarIObtenirSolicituds(peticio, 1);
-//    }
-
     @Test
-    public void whenValidarIObtenirSolicitudsThenErrorUnitatNull() throws ScspException {
-        exceptionRule.expect(ScspException.class);
-        exceptionRule.expectMessage(MSG_ERROR_UNITAT_NULL);
-
+    public void whenValidarIObtenirSolicitudsThenErrorUnitatNull() {
         peticio.getSolicitudes().getSolicitudTransmision().get(0).getDatosGenericos().getSolicitante().setUnidadTramitadora(null);
-        recobrimentHelper.validarIObtenirSolicituds(peticio, 1);
+        ScspException ex = assertThrows(ScspException.class, () ->
+                recobrimentHelper.validarIObtenirSolicituds(peticio, 1));
+        assertTrue(ex.getMessage().contains(MSG_ERROR_UNITAT_NULL));
     }
 
     @Test
-    public void whenValidarIObtenirSolicitudsThenErrorUnitatBuid() throws ScspException {
-        exceptionRule.expect(ScspException.class);
-        exceptionRule.expectMessage(MSG_ERROR_UNITAT_EMPTY);
-
+    public void whenValidarIObtenirSolicitudsThenErrorUnitatBuid() {
         peticio.getSolicitudes().getSolicitudTransmision().get(0).getDatosGenericos().getSolicitante().setUnidadTramitadora("");
-        recobrimentHelper.validarIObtenirSolicituds(peticio, 1);
+        ScspException ex = assertThrows(ScspException.class, () ->
+                recobrimentHelper.validarIObtenirSolicituds(peticio, 1));
+        assertTrue(ex.getMessage().contains(MSG_ERROR_UNITAT_EMPTY));
     }
 
     @Test
-    public void whenValidarIObtenirSolicitudsThenErrorUnitatSize() throws ScspException {
-        exceptionRule.expect(ScspException.class);
-        exceptionRule.expectMessage(MSG_ERROR_UNITAT_SIZE);
-
+    public void whenValidarIObtenirSolicitudsThenErrorUnitatSize() {
         peticio.getSolicitudes().getSolicitudTransmision().get(0).getDatosGenericos().getSolicitante().setUnidadTramitadora("11111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111");
-        recobrimentHelper.validarIObtenirSolicituds(peticio, 1);
+        ScspException ex = assertThrows(ScspException.class, () ->
+                recobrimentHelper.validarIObtenirSolicituds(peticio, 1));
+        assertTrue(ex.getMessage().contains(MSG_ERROR_UNITAT_SIZE));
     }
 
     @Test
-    public void whenValidarIObtenirSolicitudsThenErrorIdExpedientSize() throws ScspException {
-        exceptionRule.expect(ScspException.class);
-        exceptionRule.expectMessage(MSG_ERROR_ID_EXP_SIZE);
-
+    public void whenValidarIObtenirSolicitudsThenErrorIdExpedientSize() {
         peticio.getSolicitudes().getSolicitudTransmision().get(0).getDatosGenericos().getSolicitante().setIdExpediente("11111111111111111111111111111111111111111111111111111111111111111111111111111111");
-        recobrimentHelper.validarIObtenirSolicituds(peticio, 1);
+        ScspException ex = assertThrows(ScspException.class, () ->
+                recobrimentHelper.validarIObtenirSolicituds(peticio, 1));
+        assertTrue(ex.getMessage().contains(MSG_ERROR_ID_EXP_SIZE));
     }
 
     @Test
-    public void whenValidarIObtenirSolicitudsThenErrorProcedimentNull() throws ScspException {
-        exceptionRule.expect(ScspException.class);
-        exceptionRule.expectMessage(MSG_ERROR_PROC_NULL);
-
+    public void whenValidarIObtenirSolicitudsThenErrorProcedimentNull() {
         peticio.getSolicitudes().getSolicitudTransmision().get(0).getDatosGenericos().getSolicitante().setProcedimiento(null);
-        recobrimentHelper.validarIObtenirSolicituds(peticio, 1);
+        ScspException ex = assertThrows(ScspException.class, () ->
+                recobrimentHelper.validarIObtenirSolicituds(peticio, 1));
+        assertTrue(ex.getMessage().contains(MSG_ERROR_PROC_NULL));
     }
 
     @Test
-    public void whenValidarIObtenirSolicitudsThenErrorCodiProcedimentNull() throws ScspException {
-        exceptionRule.expect(ScspException.class);
-        exceptionRule.expectMessage(MSG_ERROR_COD_PROC_NULL);
-
+    public void whenValidarIObtenirSolicitudsThenErrorCodiProcedimentNull() {
         peticio.getSolicitudes().getSolicitudTransmision().get(0).getDatosGenericos().getSolicitante().getProcedimiento().setCodProcedimiento(null);
-        recobrimentHelper.validarIObtenirSolicituds(peticio, 1);
+        ScspException ex = assertThrows(ScspException.class, () ->
+                recobrimentHelper.validarIObtenirSolicituds(peticio, 1));
+        assertTrue(ex.getMessage().contains(MSG_ERROR_COD_PROC_NULL));
     }
 
     @Test
-    public void whenValidarIObtenirSolicitudsThenErrorCodiProcedimentBuit() throws ScspException {
-        exceptionRule.expect(ScspException.class);
-        exceptionRule.expectMessage(MSG_ERROR_COD_PROC_EMPTY);
-
+    public void whenValidarIObtenirSolicitudsThenErrorCodiProcedimentBuit() {
         peticio.getSolicitudes().getSolicitudTransmision().get(0).getDatosGenericos().getSolicitante().getProcedimiento().setCodProcedimiento("");
-        recobrimentHelper.validarIObtenirSolicituds(peticio, 1);
+        ScspException ex = assertThrows(ScspException.class, () ->
+                recobrimentHelper.validarIObtenirSolicituds(peticio, 1));
+        assertTrue(ex.getMessage().contains(MSG_ERROR_COD_PROC_EMPTY));
     }
 
     @Test
-    public void whenValidarIObtenirSolicitudsThenErrorFuncionariNull() throws ScspException {
-        exceptionRule.expect(ScspException.class);
-        exceptionRule.expectMessage(MSG_ERROR_FUNC_NULL);
-
+    public void whenValidarIObtenirSolicitudsThenErrorFuncionariNull() {
         peticio.getSolicitudes().getSolicitudTransmision().get(0).getDatosGenericos().getSolicitante().setFuncionario(null);
-        recobrimentHelper.validarIObtenirSolicituds(peticio, 1);
+        ScspException ex = assertThrows(ScspException.class, () ->
+                recobrimentHelper.validarIObtenirSolicituds(peticio, 1));
+        assertTrue(ex.getMessage().contains(MSG_ERROR_FUNC_NULL));
     }
 
     @Test
-    public void whenValidarIObtenirSolicitudsThenErrorNifFuncionariNull() throws ScspException {
-        exceptionRule.expect(ScspException.class);
-        exceptionRule.expectMessage(MSG_ERROR_NIF_FUNC_NULL);
-
+    public void whenValidarIObtenirSolicitudsThenErrorNifFuncionariNull() {
         peticio.getSolicitudes().getSolicitudTransmision().get(0).getDatosGenericos().getSolicitante().getFuncionario().setNifFuncionario(null);
-        recobrimentHelper.validarIObtenirSolicituds(peticio, 1);
+        ScspException ex = assertThrows(ScspException.class, () ->
+                recobrimentHelper.validarIObtenirSolicituds(peticio, 1));
+        assertTrue(ex.getMessage().contains(MSG_ERROR_NIF_FUNC_NULL));
     }
 
     @Test
-    public void whenValidarIObtenirSolicitudsThenErrorNifFuncionariBuit() throws ScspException {
-        exceptionRule.expect(ScspException.class);
-        exceptionRule.expectMessage(MSG_ERROR_NIF_FUNC_EMPTY);
-
+    public void whenValidarIObtenirSolicitudsThenErrorNifFuncionariBuit() {
         peticio.getSolicitudes().getSolicitudTransmision().get(0).getDatosGenericos().getSolicitante().getFuncionario().setNifFuncionario("");
-        recobrimentHelper.validarIObtenirSolicituds(peticio, 1);
+        ScspException ex = assertThrows(ScspException.class, () ->
+                recobrimentHelper.validarIObtenirSolicituds(peticio, 1));
+        assertTrue(ex.getMessage().contains(MSG_ERROR_NIF_FUNC_EMPTY));
     }
 
     @Test
-    public void whenValidarIObtenirSolicitudsThenErrorNitFuncionariSize() throws ScspException {
-        exceptionRule.expect(ScspException.class);
-        exceptionRule.expectMessage(MSG_ERROR_NIF_FUNC_SIZE);
-
+    public void whenValidarIObtenirSolicitudsThenErrorNitFuncionariSize() {
         peticio.getSolicitudes().getSolicitudTransmision().get(0).getDatosGenericos().getSolicitante().getFuncionario().setNifFuncionario("11111111111111111111111111111111111111111111111111111111111111111111111111111111");
-        recobrimentHelper.validarIObtenirSolicituds(peticio, 1);
+        ScspException ex = assertThrows(ScspException.class, () ->
+                recobrimentHelper.validarIObtenirSolicituds(peticio, 1));
+        assertTrue(ex.getMessage().contains(MSG_ERROR_NIF_FUNC_SIZE));
     }
 
     @Test
-    public void whenValidarIObtenirSolicitudsThenErrorNomCompletFuncionariNull() throws ScspException {
-        exceptionRule.expect(ScspException.class);
-        exceptionRule.expectMessage(MSG_ERROR_NOM_FUNC_NULL);
-
+    public void whenValidarIObtenirSolicitudsThenErrorNomCompletFuncionariNull() {
         peticio.getSolicitudes().getSolicitudTransmision().get(0).getDatosGenericos().getSolicitante().getFuncionario().setNombreCompletoFuncionario(null);
-        recobrimentHelper.validarIObtenirSolicituds(peticio, 1);
+        ScspException ex = assertThrows(ScspException.class, () ->
+                recobrimentHelper.validarIObtenirSolicituds(peticio, 1));
+        assertTrue(ex.getMessage().contains(MSG_ERROR_NOM_FUNC_NULL));
     }
 
     @Test
-    public void whenValidarIObtenirSolicitudsThenErrorNomCompletFuncionariBuit() throws ScspException {
-        exceptionRule.expect(ScspException.class);
-        exceptionRule.expectMessage(MSG_ERROR_NOM_FUNC_EMPTY);
-
+    public void whenValidarIObtenirSolicitudsThenErrorNomCompletFuncionariBuit() {
         peticio.getSolicitudes().getSolicitudTransmision().get(0).getDatosGenericos().getSolicitante().getFuncionario().setNombreCompletoFuncionario("");
-        recobrimentHelper.validarIObtenirSolicituds(peticio, 1);
+        ScspException ex = assertThrows(ScspException.class, () ->
+                recobrimentHelper.validarIObtenirSolicituds(peticio, 1));
+        assertTrue(ex.getMessage().contains(MSG_ERROR_NOM_FUNC_EMPTY));
     }
 
     @Test
-    public void whenValidarIObtenirSolicitudsThenErrorNomCompletFuncionariSize() throws ScspException {
-        exceptionRule.expect(ScspException.class);
-        exceptionRule.expectMessage(MSG_ERROR_NOM_FUNC_SIZE);
-
+    public void whenValidarIObtenirSolicitudsThenErrorNomCompletFuncionariSize() {
         peticio.getSolicitudes().getSolicitudTransmision().get(0).getDatosGenericos().getSolicitante().getFuncionario().setNombreCompletoFuncionario("1111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111");
-        recobrimentHelper.validarIObtenirSolicituds(peticio, 1);
+        ScspException ex = assertThrows(ScspException.class, () ->
+                recobrimentHelper.validarIObtenirSolicituds(peticio, 1));
+        assertTrue(ex.getMessage().contains(MSG_ERROR_NOM_FUNC_SIZE));
     }
 
     @Test
-    public void whenValidarIObtenirSolicitudsThenErrorDocumentTitularSize() throws ScspException {
-        exceptionRule.expect(ScspException.class);
-        exceptionRule.expectMessage(MSG_ERROR_DOCUM_SIZE);
-
+    public void whenValidarIObtenirSolicitudsThenErrorDocumentTitularSize() {
         peticio.getSolicitudes().getSolicitudTransmision().get(0).getDatosGenericos().getTitular().setDocumentacion("11111111111111111111111111111111111111111111111111111111111111111111111111111111");
-        recobrimentHelper.validarIObtenirSolicituds(peticio, 1);
+        ScspException ex = assertThrows(ScspException.class, () ->
+                recobrimentHelper.validarIObtenirSolicituds(peticio, 1));
+        assertTrue(ex.getMessage().contains(MSG_ERROR_DOCUM_SIZE));
     }
 
     @Test
-    public void whenValidarIObtenirSolicitudsThenErrorTipusDocumentTitularNull() throws ScspException {
-        exceptionRule.expect(ScspException.class);
-        exceptionRule.expectMessage(MSG_ERROR_TIP_DOC_NULL);
-
+    public void whenValidarIObtenirSolicitudsThenErrorTipusDocumentTitularNull() {
         peticio.getSolicitudes().getSolicitudTransmision().get(0).getDatosGenericos().getTitular().setTipoDocumentacion(null);
-        recobrimentHelper.validarIObtenirSolicituds(peticio, 1);
+        ScspException ex = assertThrows(ScspException.class, () ->
+                recobrimentHelper.validarIObtenirSolicituds(peticio, 1));
+        assertTrue(ex.getMessage().contains(MSG_ERROR_TIP_DOC_NULL));
     }
 
-//    @Test
-//    private void whenValidarIObtenirSolicitudsThenErrorTipusDocumentTitularValor() throws ScspException {
-//        exceptionRule.expect(ScspException.class);
-//        exceptionRule.expectMessage(MSG_ERROR_TIP_DOC_ENUM);
-//
-//        peticio.getSolicitudes().getSolicitudTransmision().get(0).getDatosGenericos().getTitular().setTipoDocumentacion(TipoDocumentacion.valueOf("Altre"));
-//        recobrimentHelper.validarIObtenirSolicituds(peticio, 1);
-//    }
-
     @Test
-    public void whenValidarIObtenirSolicitudsThenErrorNomTitularSize() throws ScspException {
-        exceptionRule.expect(ScspException.class);
-        exceptionRule.expectMessage(MSG_ERROR_TIT_NOM_SIZE);
-
+    public void whenValidarIObtenirSolicitudsThenErrorNomTitularSize() {
         peticio.getSolicitudes().getSolicitudTransmision().get(0).getDatosGenericos().getTitular().setNombre("11111111111111111111111111111111111111111111111111111111111111111111111111111111");
-        recobrimentHelper.validarIObtenirSolicituds(peticio, 1);
+        ScspException ex = assertThrows(ScspException.class, () ->
+                recobrimentHelper.validarIObtenirSolicituds(peticio, 1));
+        assertTrue(ex.getMessage().contains(MSG_ERROR_TIT_NOM_SIZE));
     }
 
     @Test
-    public void whenValidarIObtenirSolicitudsThenErrorLlinatge1titularSize() throws ScspException {
-        exceptionRule.expect(ScspException.class);
-        exceptionRule.expectMessage(MSG_ERROR_TIT_LLIN1_SIZE);
-
+    public void whenValidarIObtenirSolicitudsThenErrorLlinatge1titularSize() {
         peticio.getSolicitudes().getSolicitudTransmision().get(0).getDatosGenericos().getTitular().setApellido1("11111111111111111111111111111111111111111111111111111111111111111111111111111111");
-        recobrimentHelper.validarIObtenirSolicituds(peticio, 1);
+        ScspException ex = assertThrows(ScspException.class, () ->
+                recobrimentHelper.validarIObtenirSolicituds(peticio, 1));
+        assertTrue(ex.getMessage().contains(MSG_ERROR_TIT_LLIN1_SIZE));
     }
 
     @Test
-    public void whenValidarIObtenirSolicitudsThenErrorLlinatge2TitularSize() throws ScspException {
-        exceptionRule.expect(ScspException.class);
-        exceptionRule.expectMessage(MSG_ERROR_TIT_LLIN2_SIZE);
-
+    public void whenValidarIObtenirSolicitudsThenErrorLlinatge2TitularSize() {
         peticio.getSolicitudes().getSolicitudTransmision().get(0).getDatosGenericos().getTitular().setApellido2("11111111111111111111111111111111111111111111111111111111111111111111111111111111");
-        recobrimentHelper.validarIObtenirSolicituds(peticio, 1);
+        ScspException ex = assertThrows(ScspException.class, () ->
+                recobrimentHelper.validarIObtenirSolicituds(peticio, 1));
+        assertTrue(ex.getMessage().contains(MSG_ERROR_TIT_LLIN2_SIZE));
     }
 
     @Test
-    public void whenValidarIObtenirSolicitudsThenErrorNomCompletTitularSize() throws ScspException {
-        exceptionRule.expect(ScspException.class);
-        exceptionRule.expectMessage(MSG_ERROR_TIT_COMP_SIZE);
-
+    public void whenValidarIObtenirSolicitudsThenErrorNomCompletTitularSize() {
         peticio.getSolicitudes().getSolicitudTransmision().get(0).getDatosGenericos().getTitular().setNombreCompleto("1111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111");
-        recobrimentHelper.validarIObtenirSolicituds(peticio, 1);
+        ScspException ex = assertThrows(ScspException.class, () ->
+                recobrimentHelper.validarIObtenirSolicituds(peticio, 1));
+        assertTrue(ex.getMessage().contains(MSG_ERROR_TIT_COMP_SIZE));
     }
 
     @Test
-    public void whenValidarIObtenirSolicitudsThenErrorDatosEspecificsTipus() throws ScspException {
-        exceptionRule.expect(ScspException.class);
-        exceptionRule.expectMessage(MSG_ERROR_SOL_TRANS_TYPE);
-
+    public void whenValidarIObtenirSolicitudsThenErrorDatosEspecificsTipus() {
         peticio.getSolicitudes().getSolicitudTransmision().get(0).setDatosEspecificos("aaa");
-        recobrimentHelper.validarIObtenirSolicituds(peticio, 1);
+        ScspException ex = assertThrows(ScspException.class, () ->
+                recobrimentHelper.validarIObtenirSolicituds(peticio, 1));
+        assertTrue(ex.getMessage().contains(MSG_ERROR_SOL_TRANS_TYPE));
     }
-
 }

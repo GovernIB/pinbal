@@ -4,47 +4,45 @@ import es.caib.pinbal.client.recobriment.v2.DadesComunes;
 import es.caib.pinbal.client.recobriment.v2.Funcionari;
 import es.caib.pinbal.client.recobriment.v2.PeticioSincrona;
 import es.caib.pinbal.client.recobriment.v2.SolicitudSimple;
-import es.caib.pinbal.core.dto.ServeiCampDto;
-import es.caib.pinbal.logic.model.Entitat;
-import es.caib.pinbal.logic.model.Procediment;
-import es.caib.pinbal.logic.model.ServeiConfig;
-import es.caib.pinbal.logic.repository.EntitatRepository;
-import es.caib.pinbal.logic.repository.ProcedimentRepository;
-import es.caib.pinbal.logic.repository.ServeiCampRepository;
-import es.caib.pinbal.logic.repository.ServeiConfigRepository;
-import es.caib.pinbal.core.service.ServeiService;
-import es.caib.pinbal.core.service.exception.ServeiNotFoundException;
-import es.caib.pinbal.plugin.usuari.DadesUsuari;
+import es.caib.pinbal.logic.intf.dto.ServeiCampDto;
+import es.caib.pinbal.logic.intf.service.ServeiService;
+import es.caib.pinbal.logic.intf.service.exception.ServeiNotFoundException;
+import es.caib.pinbal.persist.entity.Entitat;
+import es.caib.pinbal.persist.entity.Procediment;
+import es.caib.pinbal.persist.entity.ServeiConfig;
+import es.caib.pinbal.persist.repository.EntitatRepository;
+import es.caib.pinbal.persist.repository.ProcedimentRepository;
+import es.caib.pinbal.persist.repository.ServeiCampRepository;
+import es.caib.pinbal.persist.repository.ServeiConfigRepository;
 import es.caib.pinbal.scsp.ScspHelper;
 import es.scsp.bean.common.peticion.Peticion;
 import es.scsp.bean.common.respuesta.DatosGenericos;
 import es.scsp.bean.common.respuesta.TransmisionDatos;
 import es.scsp.common.domain.core.Servicio;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.validation.BindException;
 
+import javax.xml.parsers.DocumentBuilderFactory;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
-import javax.xml.parsers.DocumentBuilderFactory;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class RecobrimentV2HelperTest {
 
 
     @InjectMocks
-    private RecobrimentV2Helper recobrimentV2Helper = new RecobrimentV2Helper();
+    private RecobrimentV2Helper recobrimentV2Helper;
 
     @Mock
     private ServeiConfigRepository serveiConfigRepository;
@@ -69,9 +67,8 @@ public class RecobrimentV2HelperTest {
 
     ScspHelper scspHelper;
 
-    @Before
+    @BeforeEach
     public void setup() {
-        MockitoAnnotations.initMocks(this);
         scspHelper = mock(ScspHelper.class);
         recobrimentV2Helper.setScspHelper(scspHelper);
     }
@@ -87,7 +84,7 @@ public class RecobrimentV2HelperTest {
         recobrimentV2Helper.validateDadesComunes(null, "SERVEI_CODI", errors);
 
         assertFalse(errors.getAllErrors().isEmpty());
-        verifyZeroInteractions(serveiConfigRepository, entitatRepository, procedimentRepository);
+        verifyNoInteractions(serveiConfigRepository, entitatRepository, procedimentRepository);
     }
 
     @Test
@@ -130,12 +127,10 @@ public class RecobrimentV2HelperTest {
         PeticioSincrona peticio = PeticioSincrona.builder().dadesComunes(dadesComunes).build();
         BindException errors = new BindException(peticio, "peticio");
 
-        when(procedimentRepository.findByEntitatAndCodi(any(Entitat.class), eq("INVALID_PROCEDIMENT"))).thenReturn(null);
-
         recobrimentV2Helper.validateDadesComunes(dadesComunes, "SERVEI_CODI", errors);
 
         assertFalse(errors.getFieldErrors("dadesComunes.procedimentCodi").isEmpty());
-        verify(procedimentRepository).findByEntitatAndCodi(any(Entitat.class), eq("INVALID_PROCEDIMENT"));
+        verify(procedimentRepository).findByEntitatAndCodi(isNull(), eq("INVALID_PROCEDIMENT"));
     }
 
     @Test
@@ -450,14 +445,9 @@ public class RecobrimentV2HelperTest {
         mockEntitat.setCif("VALID_CIF");
         mockEntitat.setNom("Valid Entitat Name");
 
-        DadesUsuari dadesUsuari = new DadesUsuari();
-        dadesUsuari.setNif("12345678Z");
-        dadesUsuari.setNom("Funcionari Name");
-
         when(serveiConfigRepository.findByServei("VALID_SERVICE_CODE")).thenReturn(new ServeiConfig());
         when(procedimentRepository.findByEntitatAndCodi(any(Entitat.class), eq("VALID_PROCEDIMENT_CODE"))).thenReturn(mockProcediment);
         when(entitatRepository.findByCif("VALID_CIF")).thenReturn(mockEntitat);
-        when(pluginHelper.dadesUsuariConsultarAmbUsuariCodi(anyString())).thenReturn(dadesUsuari);
 
         Peticion peticion = recobrimentV2Helper.toPeticion(peticioSincrona);
 

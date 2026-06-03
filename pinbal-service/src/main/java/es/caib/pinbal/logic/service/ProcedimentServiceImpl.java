@@ -41,8 +41,8 @@ import es.caib.pinbal.persist.repository.ProcedimentRepository;
 import es.caib.pinbal.persist.repository.ProcedimentServeiRepository;
 import es.caib.pinbal.persist.repository.ServeiConfigRepository;
 import es.caib.pinbal.persist.repository.ServeiRepository;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -58,7 +58,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -75,37 +74,26 @@ import java.util.Set;
  * @author Limit Tecnologies <limit@limit.es>
  */
 @Slf4j
+@RequiredArgsConstructor
 @Service
 public class ProcedimentServiceImpl implements ProcedimentService {
 
-	@Resource
-	private ProcedimentRepository procedimentRepository;
-	@Resource
-	private EntitatRepository entitatRepository;
-	@Resource
-	private EntitatServeiRepository entitatServeiRepository;
-	@Resource
-	private EntitatUsuariRepository entitatUsuariRepository;
-	@Resource
-	private ProcedimentServeiRepository procedimentServeiRepository;
-	@Resource
-	private OrganGestorRepository organGestorRepository;
-	@Resource
-    private ServeiRepository serveiRepository;
-	@Resource
-	private DtoMappingHelper dtoMappingHelper;
+	private final ProcedimentRepository procedimentRepository;
+	private final EntitatRepository entitatRepository;
+	private final EntitatServeiRepository entitatServeiRepository;
+	private final EntitatUsuariRepository entitatUsuariRepository;
+	private final ProcedimentServeiRepository procedimentServeiRepository;
+	private final OrganGestorRepository organGestorRepository;
+    private final ServeiRepository serveiRepository;
+    private final ServeiConfigRepository serveiConfigRepository;
 
-	@Resource
-	private MutableAclService aclService;
-	@Resource
-	private UsuariHelper usuariHelper;
+	private final DtoMappingHelper dtoMappingHelper;
+	private final UsuariHelper usuariHelper;
+	private final PaginacioHelper paginacioHelper;
+	private final CacheHelper cacheHelper;
 
-	@Resource
-	private PaginacioHelper paginacioHelper;
-    @Autowired
-    private ServeiConfigRepository serveiConfigRepository;
-	@Resource
-	private CacheHelper cacheHelper;
+	private final MutableAclService aclService;
+
 
 	@Transactional(rollbackFor = EntitatNotFoundException.class)
 	@Override
@@ -936,14 +924,6 @@ public class ProcedimentServiceImpl implements ProcedimentService {
 			resposta.add(informeProcediment);
 		}
 		return resposta;
-	}
-
-	/**
-	 * Aquest setter només s'hauria d'emprar en les proves unitàries.
-	 * @param procedimentRepository
-	 */
-	public void setProcedimentRepository(ProcedimentRepository procedimentRepository) {
-		this.procedimentRepository = procedimentRepository;
 	}
 
 	@Transactional(readOnly = true)

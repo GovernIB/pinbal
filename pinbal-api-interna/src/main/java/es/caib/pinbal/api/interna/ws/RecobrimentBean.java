@@ -10,15 +10,13 @@ import es.scsp.bean.common.confirmacion.ConfirmacionPeticion;
 import es.scsp.bean.common.peticion.Peticion;
 import es.scsp.bean.common.respuesta.Respuesta;
 import es.scsp.common.exceptions.ScspException;
+import lombok.RequiredArgsConstructor;
 import org.jboss.ws.api.annotation.WebContext;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.Resource;
 import javax.annotation.security.RolesAllowed;
-import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.jws.WebService;
 import javax.xml.ws.WebServiceContext;
@@ -31,6 +29,7 @@ import java.security.Principal;
  *
  * @author Limit Tecnologies <limit@limit.es>
  */
+@RequiredArgsConstructor
 @Component("recobrimentSoapBean")
 @Stateless
 @WebService(
@@ -50,35 +49,17 @@ public class RecobrimentBean implements es.caib.pinbal.logic.intf.ws.Recobriment
 
 	private static final String ERROR_CODE_SECURITY = "0227";
 
-	@EJB
-	private RecobrimentService ejbRecobrimentService;
-
-	private RecobrimentService springRecobrimentService;
-
-	@Resource
-	private WebServiceContext webServiceContext;
+	private final RecobrimentService recobrimentService;
+	private final WebServiceContext webServiceContext;
 
 	private final RecobrimentSoapMapper mapper = new RecobrimentSoapMapper();
-
-	public RecobrimentBean() {
-	}
-
-	@Autowired(required = false)
-	public void setSpringRecobrimentService(RecobrimentService springRecobrimentService) {
-		this.springRecobrimentService = springRecobrimentService;
-	}
-
-	@Resource
-	public void setWebServiceContext(WebServiceContext webServiceContext) {
-		this.webServiceContext = webServiceContext;
-	}
 
 	@Override
 	public Respuesta peticionSincrona(Peticion peticion) throws ScspException {
 		checkPermission();
 		try {
 			return mapper.toRespuesta(
-					getRecobrimentService().peticionSincrona(mapper.toScspPeticion(peticion)));
+					recobrimentService.peticionSincrona(mapper.toScspPeticion(peticion)));
 		} catch (Exception ex) {
 			throw toScspException(ex);
 		}
@@ -89,7 +70,7 @@ public class RecobrimentBean implements es.caib.pinbal.logic.intf.ws.Recobriment
 		checkPermission();
 		try {
 			return mapper.toConfirmacionPeticion(
-					getRecobrimentService().peticionAsincrona(mapper.toScspPeticion(peticion)));
+					recobrimentService.peticionAsincrona(mapper.toScspPeticion(peticion)));
 		} catch (Exception ex) {
 			throw toScspException(ex);
 		}
@@ -99,7 +80,7 @@ public class RecobrimentBean implements es.caib.pinbal.logic.intf.ws.Recobriment
 	public Respuesta getRespuesta(String idpeticion) throws ScspException {
 		checkPermission();
 		try {
-			return mapper.toRespuesta(getRecobrimentService().getRespuesta(idpeticion));
+			return mapper.toRespuesta(recobrimentService.getRespuesta(idpeticion));
 		} catch (Exception ex) {
 			throw toScspException(ex);
 		}
@@ -109,21 +90,11 @@ public class RecobrimentBean implements es.caib.pinbal.logic.intf.ws.Recobriment
 	public byte[] getJustificante(String idpeticion, String idsolicitud) throws ScspException {
 		checkPermission();
 		try {
-			ScspJustificante justificante = getRecobrimentService().getJustificante(idpeticion, idsolicitud);
+			ScspJustificante justificante = recobrimentService.getJustificante(idpeticion, idsolicitud);
 			return justificante != null ? justificante.getContingut() : null;
 		} catch (RecobrimentScspException ex) {
 			throw toScspException(ex);
 		}
-	}
-
-	private RecobrimentService getRecobrimentService() throws ScspException {
-		if (springRecobrimentService != null) {
-			return springRecobrimentService;
-		}
-		if (ejbRecobrimentService != null) {
-			return ejbRecobrimentService;
-		}
-		throw new ScspException("No s'ha pogut obtenir el servei de recobriment", ERROR_CODE_SECURITY);
 	}
 
 	private void checkPermission() throws ScspException {

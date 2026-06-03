@@ -3,9 +3,9 @@
  */
 package es.caib.pinbal.scsp;
 
-import es.caib.pinbal.core.dto.ArbreDto;
-import es.caib.pinbal.core.dto.DadaEspecificaDto;
-import es.caib.pinbal.core.dto.NodeDto;
+import es.caib.pinbal.logic.intf.dto.ArbreDto;
+import es.caib.pinbal.logic.intf.dto.DadaEspecificaDto;
+import es.caib.pinbal.logic.intf.dto.NodeDto;
 import es.caib.pinbal.scsp.XmlHelper.DadesEspecifiquesNode;
 import es.caib.pinbal.scsp.tree.Tree;
 import es.scsp.common.domain.core.Servicio;

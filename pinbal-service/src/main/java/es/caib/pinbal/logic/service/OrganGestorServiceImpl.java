@@ -13,14 +13,13 @@ import es.caib.pinbal.persist.repository.EntitatRepository;
 import es.caib.pinbal.persist.repository.OrganGestorRepository;
 import es.caib.pinbal.plugin.unitat.NodeDir3;
 import es.caib.pinbal.plugin.unitat.UnitatOrganitzativa;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -28,20 +27,16 @@ import java.util.List;
 import java.util.Map;
 
 @Slf4j
+@RequiredArgsConstructor
 @Service
 public class OrganGestorServiceImpl implements OrganGestorService {
 
-	@Resource
-	private DtoMappingHelper dtoMappingHelper;
-	@Resource
-	private OrganGestorRepository organGestorRepository;
-	@Resource
-	private EntitatRepository entitatRepository;
+	private final OrganGestorRepository organGestorRepository;
+	private final EntitatRepository entitatRepository;
 
-	@Autowired
-	private PluginHelper pluginHelper;
-	@Resource
-	private PaginacioHelper paginacioHelper;
+	private final DtoMappingHelper dtoMappingHelper;
+	private final PluginHelper pluginHelper;
+	private final PaginacioHelper paginacioHelper;
 
 	@Transactional(readOnly = true)
 	public List<OrganGestorDto> findAll() {

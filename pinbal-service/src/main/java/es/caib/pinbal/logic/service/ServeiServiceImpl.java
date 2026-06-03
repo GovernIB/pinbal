@@ -7,7 +7,6 @@ import es.caib.pinbal.logic.helper.CacheHelper;
 import es.caib.pinbal.logic.helper.DtoMappingHelper;
 import es.caib.pinbal.logic.helper.PermisosHelper;
 import es.caib.pinbal.logic.helper.PermisosHelper.ObjectIdentifierExtractor;
-import es.caib.pinbal.logic.helper.PluginHelper;
 import es.caib.pinbal.logic.helper.ServeiHelper;
 import es.caib.pinbal.logic.helper.ServeiXsdHelper;
 import es.caib.pinbal.logic.helper.UsuariHelper;
@@ -84,6 +83,7 @@ import es.scsp.common.domain.core.ClavePrivada;
 import es.scsp.common.domain.core.ClavePublica;
 import es.scsp.common.domain.core.EmisorCertificado;
 import es.scsp.common.domain.core.Servicio;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
@@ -108,7 +108,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.annotation.Resource;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -131,59 +130,36 @@ import java.util.Set;
  * @author Limit Tecnologies <limit@limit.es>
  */
 @Slf4j
+@RequiredArgsConstructor
 @Service
 public class ServeiServiceImpl implements ServeiService, ApplicationContextAware, MessageSourceAware, ApplicationListener<ContextRefreshedEvent> {
 
 	public static final Locale DEFAULT_TRADUCCIO_LOCALE = new Locale("ca", "ES");
-	
 	public static final Integer DEFAULT_FIELD_SIZE = 6;
 
-	@Resource
-	private EntitatRepository entitatRepository;
-	@Resource
-	private EntitatUsuariRepository entitatUsuariRepository;
-	@Resource
-	private ProcedimentRepository procedimentRepository;
-	@Resource
-	private ProcedimentServeiRepository procedimentServeiRepository;
-	@Resource
-	private ServeiRepository serveiRepository;
-	@Resource
-	private ServeiCampRepository serveiCampRepository;
-	@Resource
-	private ServeiCampGrupRepository serveiCampGrupRepository;
-	@Resource
-	private ServeiConfigRepository serveiConfigRepository;
-	@Resource
-	private ServeiBusRepository serveiBusRepository;
-	@Resource
-	private ServeiJustificantCampRepository serveiJustificantCampRepository;
-	@Resource
-	private EntitatServeiRepository entitatServeiRepository;
-	@Resource
-	private ServeiReglaRepository serveiReglaRepository;
-	@Resource
-	private ServeiXsdRepository serveiXsdRepository;
-	@Resource
-	private ClauPrivadaRepository clauPrivadaRepository;
+	private final EntitatRepository entitatRepository;
+	private final EntitatUsuariRepository entitatUsuariRepository;
+	private final ProcedimentRepository procedimentRepository;
+	private final ProcedimentServeiRepository procedimentServeiRepository;
+	private final ServeiRepository serveiRepository;
+	private final ServeiCampRepository serveiCampRepository;
+	private final ServeiCampGrupRepository serveiCampGrupRepository;
+	private final ServeiConfigRepository serveiConfigRepository;
+	private final ServeiBusRepository serveiBusRepository;
+	private final ServeiJustificantCampRepository serveiJustificantCampRepository;
+	private final EntitatServeiRepository entitatServeiRepository;
+	private final ServeiReglaRepository serveiReglaRepository;
+	private final ServeiXsdRepository serveiXsdRepository;
+	private final ClauPrivadaRepository clauPrivadaRepository;
 
-	@Resource
-	private ServeiHelper serveiHelper;
-	@Resource
-	private PluginHelper pluginHelper;
-	@Resource
-	private DtoMappingHelper dtoMappingHelper;
-	@Resource
-	private UsuariHelper usuariHelper;
-	@Resource
-	private ServeiXsdHelper serveiXsdHelper;
-	@Resource
-	private ReglaHelper reglaHelper;
-	@Resource
-	private CacheHelper cacheHelper;
+	private final ServeiHelper serveiHelper;
+	private final DtoMappingHelper dtoMappingHelper;
+	private final UsuariHelper usuariHelper;
+	private final ServeiXsdHelper serveiXsdHelper;
+	private final ReglaHelper reglaHelper;
+	private final CacheHelper cacheHelper;
 
-	@Resource
-	private MutableAclService aclService;
+	private final MutableAclService aclService;
 
 	private ApplicationContext applicationContext;
 	private MessageSource messageSource;
