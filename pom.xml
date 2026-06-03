@@ -26,9 +26,6 @@
 		<hibernate.validator.version>${hibernate-validator.version}</hibernate.validator.version>
 		<orika.version>1.5.4</orika.version>
 		<lombok.version>1.18.46</lombok.version>
-
-		<!--		<itext.pdf.version>5.5.13.1</itext.pdf.version>-->
-
 		<spring-boot.version>2.7.12</spring-boot.version>
 		<keycloak.version>21.1.1</keycloak.version>
 		<orika.starter.version>2.4.6</orika.starter.version>
@@ -123,7 +120,7 @@
 	</dependencyManagement>
 	<modules>
 <!--		<module>pinbal-back</module>-->
-<!--		<module>pinbal-backend</module>-->
+		<module>pinbal-backend</module>
 		<module>pinbal-api-interna</module>
 		<module>pinbal-api-externa</module>
 		<module>pinbal-service-intf</module>
