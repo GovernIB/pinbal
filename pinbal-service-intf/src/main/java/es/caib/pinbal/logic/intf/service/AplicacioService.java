@@ -23,4 +23,7 @@ public interface AplicacioService {
 
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public void removeAllCaches();
+
+	String getAppVersion();
+    void setAppVersion(String versio);
 }

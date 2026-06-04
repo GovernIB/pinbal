@@ -7,6 +7,7 @@ import es.caib.pinbal.logic.intf.dto.CacheDto;
 import es.caib.pinbal.logic.intf.dto.PaginaDto;
 import org.springframework.context.annotation.Primary;
 
+import javax.annotation.security.PermitAll;
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.Stateless;
 
@@ -37,6 +38,18 @@ public class AplicacioServiceBean extends AbstractService<es.caib.pinbal.logic.i
 	@RolesAllowed({"PBL_ADMIN"})
 	public void removeAllCaches() {
 		getDelegateService().removeAllCaches();
+	}
+
+    @Override
+	@PermitAll
+    public String getAppVersion() {
+        return getDelegateService().getAppVersion();
+    }
+
+	@Override
+	@PermitAll
+	public void setAppVersion(String versio) {
+		getDelegateService().setAppVersion(versio);
 	}
 
 

@@ -1,0 +1,7 @@
+/target/
+/.settings/
+/.project
+/.classpath
+/appserv_tomcat
+/appserv_jboss
+/src/main/webapp/META-INF/context.xml

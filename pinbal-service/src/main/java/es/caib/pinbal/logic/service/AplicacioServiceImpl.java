@@ -97,4 +97,14 @@ public class AplicacioServiceImpl implements AplicacioService {
 		cacheHelper.clearAllCaches();
 	}
 
+    @Override
+    public String getAppVersion() {
+        return CacheHelper.getAppVersion();
+    }
+
+	@Override
+	public void setAppVersion(String versio) {
+		CacheHelper.setAppVersion(versio);
+	}
+
 }

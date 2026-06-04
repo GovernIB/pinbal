@@ -1,4 +1,5 @@
-<%@page import="es.caib.pinbal.core.dto.EstadistiquesFiltreDto"%>
+<%@page import="es.caib.pinbal.logic.intf.dto.EstadistiquesFiltreDto"%>
+<%@ page import="es.caib.pinbal.back.helper.RolHelper" %>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
@@ -6,9 +7,9 @@
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
 <%@ taglib tagdir="/WEB-INF/tags/pinbal" prefix="pbl" %>
 <%
-	pageContext.setAttribute("consultaEstats", es.caib.pinbal.core.dto.ConsultaDto.EstatTipus.sortedValues());
-	pageContext.setAttribute("agrupacioValors", es.caib.pinbal.core.dto.EstadistiquesFiltreDto.EstadistiquesAgrupacioDto.values());
-	pageContext.setAttribute( "isRolActualAdministrador", es.caib.pinbal.webapp.common.RolHelper.isRolActualAdministrador(request));
+	pageContext.setAttribute("consultaEstats", es.caib.pinbal.logic.intf.dto.ConsultaDto.EstatTipus.sortedValues());
+	pageContext.setAttribute("agrupacioValors", es.caib.pinbal.logic.intf.dto.EstadistiquesFiltreDto.EstadistiquesAgrupacioDto.values());
+	pageContext.setAttribute( "isRolActualAdministrador", RolHelper.isRolActualAdministrador(request));
 //	request.setAttribute("historicSession", es.caib.pinbal.webapp.controller.EstadistiquesController.SESSION_CONSULTA_HISTORIC);
 %>
 

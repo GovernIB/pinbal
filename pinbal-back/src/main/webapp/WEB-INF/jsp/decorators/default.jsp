@@ -1,3 +1,9 @@
+<%@ page import="es.caib.pinbal.back.helper.AvisHelper" %>
+<%@ page import="es.caib.pinbal.back.helper.UsuariHelper" %>
+<%@ page import="es.caib.pinbal.back.helper.RolHelper" %>
+<%@ page import="es.caib.pinbal.back.helper.EntitatHelper" %>
+<%@ page import="es.caib.pinbal.back.helper.ServeiHelper" %>
+<%@ page import="es.caib.pinbal.back.helper.PeticionsMultiplesPendentsHelper" %>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
@@ -8,60 +14,60 @@
 <%
 	pageContext.setAttribute(
 			"sessionEntitats",
-			es.caib.pinbal.webapp.common.EntitatHelper.getEntitats(request));
+			EntitatHelper.getEntitats(request));
 	pageContext.setAttribute(
 			"sessionEntitatActualIndex",
-			es.caib.pinbal.webapp.common.EntitatHelper.getEntitatActualIndex(request));
+			EntitatHelper.getEntitatActualIndex(request));
 	pageContext.setAttribute(
 			"isRepresentantEntitatActual",
-			es.caib.pinbal.webapp.common.EntitatHelper.isRepresentantEntitatActual(request));
+			EntitatHelper.isRepresentantEntitatActual(request));
 	pageContext.setAttribute(
 			"isDelegatEntitatActual",
-			es.caib.pinbal.webapp.common.EntitatHelper.isDelegatEntitatActual(request));
+			EntitatHelper.isDelegatEntitatActual(request));
 	pageContext.setAttribute(
 			"isAuditorEntitatActual",
-			es.caib.pinbal.webapp.common.EntitatHelper.isAuditorEntitatActual(request));
+			EntitatHelper.isAuditorEntitatActual(request));
 	pageContext.setAttribute(
 			"requestParameterCanviEntitat",
-			es.caib.pinbal.webapp.common.EntitatHelper.getRequestParameterCanviEntitat());
-	if (es.caib.pinbal.webapp.common.RolHelper.isRolActualDelegat(request)) {
-		es.caib.pinbal.core.dto.EntitatDto entitat = es.caib.pinbal.webapp.common.EntitatHelper.getEntitatActual(request);
+			EntitatHelper.getRequestParameterCanviEntitat());
+	if (RolHelper.isRolActualDelegat(request)) {
+		es.caib.pinbal.core.dto.EntitatDto entitat = EntitatHelper.getEntitatActual(request);
 		if (entitat != null) {
 			pageContext.setAttribute(
 					"sessionServeis",
-					es.caib.pinbal.webapp.common.ServeiHelper.getServeis(request));
+					ServeiHelper.getServeis(request));
 		}
 	}
 	pageContext.setAttribute(
 			"dadesUsuariActual",
-			es.caib.pinbal.webapp.common.UsuariHelper.getDadesUsuariActual(request));
+			UsuariHelper.getDadesUsuariActual(request));
 	pageContext.setAttribute(
 			"rolActual",
-			es.caib.pinbal.webapp.common.RolHelper.getRolActual(request));
+			RolHelper.getRolActual(request));
 	pageContext.setAttribute(
 			"rolsUsuariActual",
-			es.caib.pinbal.webapp.common.RolHelper.getRolsUsuariActual(request));
+			RolHelper.getRolsUsuariActual(request));
 	pageContext.setAttribute(
 			"isRolActualAdministrador",
-			es.caib.pinbal.webapp.common.RolHelper.isRolActualAdministrador(request));
+			RolHelper.isRolActualAdministrador(request));
 	pageContext.setAttribute(
 			"isRolActualRepresentant",
-			es.caib.pinbal.webapp.common.RolHelper.isRolActualRepresentant(request));
+			RolHelper.isRolActualRepresentant(request));
 	pageContext.setAttribute(
 			"isRolActualDelegat",
-			es.caib.pinbal.webapp.common.RolHelper.isRolActualDelegat(request));
+			RolHelper.isRolActualDelegat(request));
 	pageContext.setAttribute(
 			"isRolActualAuditor",
-			es.caib.pinbal.webapp.common.RolHelper.isRolActualAuditor(request));
+			RolHelper.isRolActualAuditor(request));
 	pageContext.setAttribute(
 			"isRolActualSuperauditor",
-			es.caib.pinbal.webapp.common.RolHelper.isRolActualSuperauditor(request));
+			RolHelper.isRolActualSuperauditor(request));
 	pageContext.setAttribute(
 			"countConsultesMultiplesPendents",
-			es.caib.pinbal.webapp.common.PeticionsMultiplesPendentsHelper.countPendents(request));
+			PeticionsMultiplesPendentsHelper.countPendents(request));
 	pageContext.setAttribute(
 			"avisos",
-			es.caib.pinbal.webapp.helper.AvisHelper.getAvisos(request));
+			AvisHelper.getAvisos(request));
 	
 %>
 <c:set var="hiHaEntitats" value="${fn:length(sessionEntitats) > 0}"/>

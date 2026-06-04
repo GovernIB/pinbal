@@ -1,3 +1,4 @@
+<%@ page import="es.caib.pinbal.back.command.EntitatUsuariCommand" %>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
@@ -8,22 +9,22 @@
 <%
 	request.setAttribute(
 			"caracterTipusNif",
-			es.caib.pinbal.webapp.command.EntitatUsuariCommand.CARACTER_NIF);
+			EntitatUsuariCommand.CARACTER_NIF);
 	request.setAttribute(
 			"caracterTipusCodi",
-			es.caib.pinbal.webapp.command.EntitatUsuariCommand.CARACTER_CODI);
+			EntitatUsuariCommand.CARACTER_CODI);
 	request.setAttribute(
 			"caracterRolDelegat",
-			es.caib.pinbal.webapp.command.EntitatUsuariCommand.CARACTER_DELEGAT);
+			EntitatUsuariCommand.CARACTER_DELEGAT);
 	request.setAttribute(
 			"caracterRolRepresentant",
-			es.caib.pinbal.webapp.command.EntitatUsuariCommand.CARACTER_REPRESENTANT);
+			EntitatUsuariCommand.CARACTER_REPRESENTANT);
 	request.setAttribute(
 			"caracterRolAuditor",
-			es.caib.pinbal.webapp.command.EntitatUsuariCommand.CARACTER_AUDITOR);
+			EntitatUsuariCommand.CARACTER_AUDITOR);
 	request.setAttribute(
 			"caracterRolAplicacio",
-			es.caib.pinbal.webapp.command.EntitatUsuariCommand.CARACTER_APLICACIO);
+			EntitatUsuariCommand.CARACTER_APLICACIO);
 %>
 
 <html>

@@ -24,7 +24,7 @@ public interface IntegracioAccioService {
 	/**
 	 * Crea un nou item monitorIntegracio.
 	 * 
-	 * @param monitorIntegracio
+	 * @param integracioAccio
 	 *            Informació de l'item monitorIntegracio a crear.
 	 * @return El/La MonitorIntegracio creat/creada
 	 */

@@ -1,4 +1,5 @@
-<%@page import="es.caib.pinbal.core.dto.EstadistiquesFiltreDto"%>
+<%@page import="es.caib.pinbal.logic.intf.dto.EstadistiquesFiltreDto"%>
+<%@ page import="es.caib.pinbal.back.controller.ConsultaAdminController" %>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
@@ -8,7 +9,7 @@
 <%@ taglib tagdir="/WEB-INF/tags/pinbal" prefix="pbl" %>
 <%
 	request.setAttribute("consultaEstats", es.caib.pinbal.core.dto.ConsultaDto.EstatTipus.sortedValues());
-	request.setAttribute("historicSession", es.caib.pinbal.webapp.controller.ConsultaAdminController.SESSION_CONSULTA_HISTORIC);
+	request.setAttribute("historicSession", ConsultaAdminController.SESSION_CONSULTA_HISTORIC);
 %>
 <html>
 <head>

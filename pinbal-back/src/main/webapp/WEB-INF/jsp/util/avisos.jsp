@@ -1,10 +1,11 @@
+<%@ page import="es.caib.pinbal.back.helper.AvisHelper" %>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%
     // Asseguram que la llista d'avisos és present a la petició
     pageContext.setAttribute(
             "avisos",
-            es.caib.pinbal.webapp.helper.AvisHelper.getAvisos(request));
+            AvisHelper.getAvisos(request));
 %>
 <c:if test="${not empty avisos}">
     <div id="accordion">

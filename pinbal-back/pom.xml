@@ -10,99 +10,46 @@
 	</parent>
 	<artifactId>pinbal-back</artifactId>
 	<packaging>war</packaging>
+	<properties>
+		<node.version>v22.13.1</node.version>
+		<frontend.app.path>src/main/reactapp/pinbal-back</frontend.app.path>
+		<frontend.skip>false</frontend.skip>
+	</properties>
 	<dependencies>
-
-<!--		<dependency>-->
-<!--			<groupId>dom4j</groupId>-->
-<!--			<artifactId>dom4j</artifactId>-->
-<!--			<version>1.6.1</version>-->
-<!--		</dependency>-->
-<!--		<dependency>-->
-<!--			<groupId>xerces</groupId>-->
-<!--			<artifactId>xercesImpl</artifactId>-->
-<!--			<version>2.8.0</version>-->
-<!--		</dependency>-->
-
 		<dependency>
-			<groupId>javax.servlet</groupId>
-			<artifactId>servlet-api</artifactId>
-			<version>2.5</version>
-			<type>jar</type>
-			<scope>provided</scope>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>javax.servlet.jsp</groupId>
-			<artifactId>jsp-api</artifactId>
-			<version>2.1</version>
-			<scope>provided</scope>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-security</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>javax.servlet</groupId>
-			<artifactId>jstl</artifactId>
-			<version>1.1.2</version>
-			<type>jar</type>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-actuator</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>taglibs</groupId>
-			<artifactId>standard</artifactId>
-			<version>1.1.2</version>
-			<type>jar</type>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-websocket</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>javax.validation</groupId>
-			<artifactId>validation-api</artifactId>
-			<version>1.0.0.GA</version>
-		</dependency>
-		<dependency>
-			<groupId>javax.activation</groupId>
-			<artifactId>activation</artifactId> 
-			<version>1.1.1</version>
-			<type>jar</type>
+			<groupId>dev.akkinoc.spring.boot</groupId>
+			<artifactId>orika-spring-boot-starter</artifactId>
+			<version>${orika.starter.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>opensymphony</groupId>
 			<artifactId>sitemesh</artifactId>
-			<version>2.4.2</version>
-			<type>jar</type>
 		</dependency>
 		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-core</artifactId>
-			<version>${spring.version}</version>
-			<type>jar</type>
-			<exclusions>
-				<exclusion>
-					<artifactId>spring-core</artifactId>
-					<groupId>org.springframework</groupId>
-				</exclusion>
-				<exclusion>
-					<artifactId>commons-logging</artifactId>
-					<groupId>commons-logging</groupId>
-				</exclusion>
-			</exclusions>
+			<groupId>commons-beanutils</groupId>
+			<artifactId>commons-beanutils</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-webmvc</artifactId>
-			<version>${spring.version}</version>
-			<type>jar</type>
-			<exclusions>
-				<exclusion>
-					<artifactId>spring-core</artifactId>
-					<groupId>org.springframework</groupId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-		<dependency>
-			<groupId>ma.glasnost.orika</groupId>
-			<artifactId>orika-core</artifactId>
-			<version>${orika.version}</version>
-			<exclusions>
-				<exclusion>
-					<artifactId>slf4j-api</artifactId>
-					<groupId>org.slf4j</groupId>
-				</exclusion>
-			</exclusions>
+			<groupId>joda-time</groupId>
+			<artifactId>joda-time</artifactId>
+			<version>2.14.2</version>
+			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.poi</groupId>
@@ -113,207 +60,337 @@
 			<groupId>org.apache.poi</groupId>
 			<artifactId>poi-ooxml</artifactId>
 			<version>${poi.version}</version>
-			<exclusions>
-				<exclusion>
-					<groupId>dom4j</groupId>
-					<artifactId>dom4j</artifactId>
-				</exclusion>
-			</exclusions>
 		</dependency>
 		<dependency>
-			<groupId>org.springframework.security</groupId>
-			<artifactId>spring-security-config</artifactId>
-			<version>${spring-security.version}</version>
-			<type>jar</type>
-			<exclusions>
-				<exclusion>
-					<artifactId>spring-expression</artifactId>
-					<groupId>org.springframework</groupId>
-				</exclusion>
-				<exclusion>
-					<artifactId>spring-core</artifactId>
-					<groupId>org.springframework</groupId>
-				</exclusion>
-				<exclusion>
-					<artifactId>spring-aop</artifactId>
-					<groupId>org.springframework</groupId>
-				</exclusion>
-				<exclusion>
-					<artifactId>spring-context</artifactId>
-					<groupId>org.springframework</groupId>
-				</exclusion>
-				<exclusion>
-					<artifactId>spring-beans</artifactId>
-					<groupId>org.springframework</groupId>
-				</exclusion>
-			</exclusions>
+			<groupId>com.opencsv</groupId>
+			<artifactId>opencsv</artifactId>
+			<version>5.9</version>
 		</dependency>
 		<dependency>
-			<groupId>org.springframework.security</groupId>
-			<artifactId>spring-security-taglibs</artifactId>
-			<version>${spring-security.version}</version>
-			<exclusions>
-				<exclusion>
-					<artifactId>spring-aop</artifactId>
-					<groupId>org.springframework</groupId>
-				</exclusion>
-				<exclusion>
-					<artifactId>spring-jdbc</artifactId>
-					<groupId>org.springframework</groupId>
-				</exclusion>
-				<exclusion>
-					<artifactId>spring-tx</artifactId>
-					<groupId>org.springframework</groupId>
-				</exclusion>
-				<exclusion>
-					<artifactId>spring-core</artifactId>
-					<groupId>org.springframework</groupId>
-				</exclusion>
-				<exclusion>
-					<artifactId>spring-web</artifactId>
-					<groupId>org.springframework</groupId>
-				</exclusion>
-				<exclusion>
-					<artifactId>spring-expression</artifactId>
-					<groupId>org.springframework</groupId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-		<dependency>
-			<groupId>net.sf.supercsv</groupId>
-			<artifactId>super-csv</artifactId>
-			<version>2.2.0</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.odftoolkit</groupId>
-			<artifactId>simple-odf</artifactId>
-			<version>0.8.2-incubating</version>
-			<exclusions>
-				<exclusion>
-					<groupId>xerces</groupId>
-					<artifactId>xercesImpl</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>xml-apis</groupId>
-					<artifactId>xml-apis</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.slf4j</groupId>
-					<artifactId>slf4j-log4j12</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>log4j</groupId>
-					<artifactId>log4j</artifactId>
-				</exclusion>
-				<exclusion>
-					<artifactId>commons-logging</artifactId>
-					<groupId>commons-logging</groupId>
-				</exclusion>
-                <exclusion>
-                    <artifactId>slf4j-api</artifactId>
-                    <groupId>org.slf4j</groupId>
-                </exclusion>
-            </exclusions>
-		</dependency>
-		<dependency>
-			<groupId>commons-logging</groupId>
-			<artifactId>commons-logging</artifactId>
-			<version>1.1.3</version>
+			<groupId>org.odftoolkit</groupId>
+			<artifactId>odfdom-java</artifactId>
+			<version>0.13.0</version>
 		</dependency>
 <!--		<dependency>-->
-<!--			<groupId>log4j</groupId>-->
-<!--			<artifactId>log4j</artifactId>-->
-<!--			<version>1.2.17</version>-->
+<!--			<groupId>javax.servlet</groupId>-->
+<!--			<artifactId>servlet-api</artifactId>-->
+<!--			<version>2.5</version>-->
+<!--			<type>jar</type>-->
+<!--			<scope>provided</scope>-->
+<!--		</dependency>-->
+<!--		<dependency>-->
+<!--			<groupId>javax.servlet.jsp</groupId>-->
+<!--			<artifactId>jsp-api</artifactId>-->
+<!--			<version>2.1</version>-->
+<!--			<scope>provided</scope>-->
+<!--		</dependency>-->
+<!--		<dependency>-->
+<!--			<groupId>javax.servlet</groupId>-->
+<!--			<artifactId>jstl</artifactId>-->
+<!--			<version>1.1.2</version>-->
+<!--			<type>jar</type>-->
+<!--		</dependency>-->
+<!--		<dependency>-->
+<!--			<groupId>taglibs</groupId>-->
+<!--			<artifactId>standard</artifactId>-->
+<!--			<version>1.1.2</version>-->
+<!--			<type>jar</type>-->
+<!--		</dependency>-->
+<!--		<dependency>-->
+<!--			<groupId>javax.validation</groupId>-->
+<!--			<artifactId>validation-api</artifactId>-->
+<!--			<version>1.0.0.GA</version>-->
+<!--		</dependency>-->
+<!--		<dependency>-->
+<!--			<groupId>javax.activation</groupId>-->
+<!--			<artifactId>activation</artifactId> -->
+<!--			<version>1.1.1</version>-->
+<!--			<type>jar</type>-->
+<!--		</dependency>-->
+<!--		<dependency>-->
+<!--			<groupId>opensymphony</groupId>-->
+<!--			<artifactId>sitemesh</artifactId>-->
+<!--			<version>2.4.2</version>-->
+<!--			<type>jar</type>-->
+<!--		</dependency>-->
+<!--		<dependency>-->
+<!--			<groupId>org.springframework</groupId>-->
+<!--			<artifactId>spring-core</artifactId>-->
+<!--			<version>${spring.version}</version>-->
+<!--			<type>jar</type>-->
+<!--			<exclusions>-->
+<!--				<exclusion>-->
+<!--					<artifactId>spring-core</artifactId>-->
+<!--					<groupId>org.springframework</groupId>-->
+<!--				</exclusion>-->
+<!--				<exclusion>-->
+<!--					<artifactId>commons-logging</artifactId>-->
+<!--					<groupId>commons-logging</groupId>-->
+<!--				</exclusion>-->
+<!--			</exclusions>-->
+<!--		</dependency>-->
+<!--		<dependency>-->
+<!--			<groupId>org.springframework</groupId>-->
+<!--			<artifactId>spring-webmvc</artifactId>-->
+<!--			<version>${spring.version}</version>-->
+<!--			<type>jar</type>-->
+<!--			<exclusions>-->
+<!--				<exclusion>-->
+<!--					<artifactId>spring-core</artifactId>-->
+<!--					<groupId>org.springframework</groupId>-->
+<!--				</exclusion>-->
+<!--			</exclusions>-->
+<!--		</dependency>-->
+<!--		<dependency>-->
+<!--			<groupId>ma.glasnost.orika</groupId>-->
+<!--			<artifactId>orika-core</artifactId>-->
+<!--			<version>${orika.version}</version>-->
+<!--			<exclusions>-->
+<!--				<exclusion>-->
+<!--					<artifactId>slf4j-api</artifactId>-->
+<!--					<groupId>org.slf4j</groupId>-->
+<!--				</exclusion>-->
+<!--			</exclusions>-->
+<!--		</dependency>-->
+<!--		<dependency>-->
+<!--			<groupId>org.apache.poi</groupId>-->
+<!--			<artifactId>poi</artifactId>-->
+<!--			<version>${poi.version}</version>-->
+<!--		</dependency>-->
+<!--		<dependency>-->
+<!--			<groupId>org.apache.poi</groupId>-->
+<!--			<artifactId>poi-ooxml</artifactId>-->
+<!--			<version>${poi.version}</version>-->
+<!--			<exclusions>-->
+<!--				<exclusion>-->
+<!--					<groupId>dom4j</groupId>-->
+<!--					<artifactId>dom4j</artifactId>-->
+<!--				</exclusion>-->
+<!--			</exclusions>-->
+<!--		</dependency>-->
+<!--		<dependency>-->
+<!--			<groupId>org.springframework.security</groupId>-->
+<!--			<artifactId>spring-security-config</artifactId>-->
+<!--			<version>${spring-security.version}</version>-->
+<!--			<type>jar</type>-->
+<!--			<exclusions>-->
+<!--				<exclusion>-->
+<!--					<artifactId>spring-expression</artifactId>-->
+<!--					<groupId>org.springframework</groupId>-->
+<!--				</exclusion>-->
+<!--				<exclusion>-->
+<!--					<artifactId>spring-core</artifactId>-->
+<!--					<groupId>org.springframework</groupId>-->
+<!--				</exclusion>-->
+<!--				<exclusion>-->
+<!--					<artifactId>spring-aop</artifactId>-->
+<!--					<groupId>org.springframework</groupId>-->
+<!--				</exclusion>-->
+<!--				<exclusion>-->
+<!--					<artifactId>spring-context</artifactId>-->
+<!--					<groupId>org.springframework</groupId>-->
+<!--				</exclusion>-->
+<!--				<exclusion>-->
+<!--					<artifactId>spring-beans</artifactId>-->
+<!--					<groupId>org.springframework</groupId>-->
+<!--				</exclusion>-->
+<!--			</exclusions>-->
+<!--		</dependency>-->
+<!--		<dependency>-->
+<!--			<groupId>org.springframework.security</groupId>-->
+<!--			<artifactId>spring-security-taglibs</artifactId>-->
+<!--			<version>${spring-security.version}</version>-->
+<!--			<exclusions>-->
+<!--				<exclusion>-->
+<!--					<artifactId>spring-aop</artifactId>-->
+<!--					<groupId>org.springframework</groupId>-->
+<!--				</exclusion>-->
+<!--				<exclusion>-->
+<!--					<artifactId>spring-jdbc</artifactId>-->
+<!--					<groupId>org.springframework</groupId>-->
+<!--				</exclusion>-->
+<!--				<exclusion>-->
+<!--					<artifactId>spring-tx</artifactId>-->
+<!--					<groupId>org.springframework</groupId>-->
+<!--				</exclusion>-->
+<!--				<exclusion>-->
+<!--					<artifactId>spring-core</artifactId>-->
+<!--					<groupId>org.springframework</groupId>-->
+<!--				</exclusion>-->
+<!--				<exclusion>-->
+<!--					<artifactId>spring-web</artifactId>-->
+<!--					<groupId>org.springframework</groupId>-->
+<!--				</exclusion>-->
+<!--				<exclusion>-->
+<!--					<artifactId>spring-expression</artifactId>-->
+<!--					<groupId>org.springframework</groupId>-->
+<!--				</exclusion>-->
+<!--			</exclusions>-->
+<!--		</dependency>-->
+<!--		<dependency>-->
+<!--			<groupId>net.sf.supercsv</groupId>-->
+<!--			<artifactId>super-csv</artifactId>-->
+<!--			<version>2.2.0</version>-->
+<!--		</dependency>-->
+<!--		<dependency>-->
+<!--			<groupId>org.apache.odftoolkit</groupId>-->
+<!--			<artifactId>simple-odf</artifactId>-->
+<!--			<version>0.8.2-incubating</version>-->
+<!--			<exclusions>-->
+<!--				<exclusion>-->
+<!--					<groupId>xerces</groupId>-->
+<!--					<artifactId>xercesImpl</artifactId>-->
+<!--				</exclusion>-->
+<!--				<exclusion>-->
+<!--					<groupId>xml-apis</groupId>-->
+<!--					<artifactId>xml-apis</artifactId>-->
+<!--				</exclusion>-->
+<!--				<exclusion>-->
+<!--					<groupId>org.slf4j</groupId>-->
+<!--					<artifactId>slf4j-log4j12</artifactId>-->
+<!--				</exclusion>-->
+<!--				<exclusion>-->
+<!--					<groupId>log4j</groupId>-->
+<!--					<artifactId>log4j</artifactId>-->
+<!--				</exclusion>-->
+<!--				<exclusion>-->
+<!--					<artifactId>commons-logging</artifactId>-->
+<!--					<groupId>commons-logging</groupId>-->
+<!--				</exclusion>-->
+<!--                <exclusion>-->
+<!--                    <artifactId>slf4j-api</artifactId>-->
+<!--                    <groupId>org.slf4j</groupId>-->
+<!--                </exclusion>-->
+<!--            </exclusions>-->
+<!--		</dependency>-->
+<!--		<dependency>-->
+<!--			<groupId>commons-logging</groupId>-->
+<!--			<artifactId>commons-logging</artifactId>-->
+<!--			<version>1.1.3</version>-->
+<!--		</dependency>-->
+<!--		<dependency>-->
+<!--			<groupId>commons-io</groupId>-->
+<!--			<artifactId>commons-io</artifactId>-->
+<!--			<version>2.2</version>-->
+<!--		</dependency>-->
+<!--		<dependency>-->
+<!--			<groupId>org.webjars</groupId>-->
+<!--			<artifactId>jquery</artifactId>-->
+<!--			<version>1.12.4</version>-->
+<!--		</dependency>-->
+<!--		<dependency>-->
+<!--			<groupId>org.webjars</groupId>-->
+<!--			<artifactId>bootstrap</artifactId>-->
+<!--			<version>3.3.6</version>-->
+<!--		</dependency>-->
+<!--		<dependency>-->
+<!--			<groupId>org.webjars.bower</groupId>-->
+<!--			<artifactId>jasny-bootstrap</artifactId>-->
+<!--			<version>3.1.3</version>-->
+<!--		</dependency>-->
+<!--		<dependency>-->
+<!--			<groupId>org.webjars</groupId>-->
+<!--			<artifactId>font-awesome</artifactId>-->
+<!--			<version>5.13.1</version>-->
+<!--		</dependency>-->
+<!--		<dependency>-->
+<!--			<groupId>org.webjars</groupId>-->
+<!--			<artifactId>datatables</artifactId>-->
+<!--			<version>1.10.21</version>-->
+<!--		</dependency>-->
+<!--		<dependency>-->
+<!--			<groupId>org.webjars</groupId>-->
+<!--			<artifactId>datatables-plugins</artifactId>-->
+<!--			<version>1.10.20</version>-->
+<!--		</dependency>-->
+<!--		<dependency>-->
+<!--			<groupId>org.webjars</groupId>-->
+<!--			<artifactId>momentjs</artifactId>-->
+<!--			<version>2.24.0</version>-->
+<!--		</dependency>-->
+<!--		<dependency>-->
+<!--			<groupId>org.webjars.bower</groupId>-->
+<!--			<artifactId>mustache.js</artifactId>-->
+<!--			<version>3.0.1</version>-->
+<!--		</dependency>-->
+<!--		<dependency>-->
+<!--			<groupId>org.webjars.bower</groupId>-->
+<!--			<artifactId>bootstrap-datepicker</artifactId>-->
+<!--			<version>1.6.1</version>-->
+<!--		</dependency>-->
+<!--		<dependency>-->
+<!--			<groupId>org.webjars.bower</groupId>-->
+<!--			<artifactId>select2</artifactId>-->
+<!--			<version>4.0.6-rc.1</version>-->
+<!--		</dependency>-->
+<!--		<dependency>-->
+<!--			<groupId>org.webjars.bower</groupId>-->
+<!--			<artifactId>select2-bootstrap-theme</artifactId>-->
+<!--			<version>0.1.0-beta.10</version>-->
+<!--		</dependency>-->
+<!--		<dependency>-->
+<!--			<groupId>org.webjars</groupId>-->
+<!--			<artifactId>pdf-js</artifactId>-->
+<!--			<version>2.13.216</version>-->
+<!--		</dependency>-->
+<!--		<dependency>-->
+<!--			 <groupId>com.fasterxml.jackson.core</groupId>-->
+<!--			 <artifactId>jackson-core</artifactId>-->
+<!--			 <version>${jackson.version}</version>-->
+<!--		</dependency>-->
+<!--		<dependency>-->
+<!--			<groupId>com.fasterxml.jackson.core</groupId>-->
+<!--			<artifactId>jackson-databind</artifactId>-->
+<!--			<version>${jackson.version}</version>-->
+<!--		</dependency>-->
+<!--		<dependency>-->
+<!--			<groupId>com.fasterxml.jackson.core</groupId>-->
+<!--			<artifactId>jackson-annotations</artifactId>-->
+<!--			<version>${jackson.version}</version>-->
+<!--		</dependency>-->
+<!--		<dependency>-->
+<!--			<groupId>org.slf4j</groupId>-->
+<!--			<artifactId>slf4j-api</artifactId>-->
+<!--			<version>${slf4j.version}</version>-->
+<!--			<scope>provided</scope>-->
+<!--		</dependency>-->
+<!--		<dependency>-->
+<!--			<groupId>joda-time</groupId>-->
+<!--			<artifactId>joda-time</artifactId>-->
+<!--			<version>2.3</version>-->
+<!--		</dependency>-->
+
+		<!-- swagger -->
+<!--		<dependency>-->
+<!--			<groupId>com.mangofactory</groupId>-->
+<!--			<artifactId>swagger-springmvc</artifactId>-->
+<!--			<version>1.0.2</version>-->
+<!--	-->
+<!--			<exclusions>-->
+<!--				<exclusion>-->
+<!--					<artifactId>spring-web</artifactId>-->
+<!--					<groupId>org.springframework</groupId>-->
+<!--				</exclusion>-->
+<!--				<exclusion>-->
+<!--					<artifactId>org.slf4j</artifactId>-->
+<!--					<groupId>slf4j-api</groupId>-->
+<!--				</exclusion>-->
+<!--			</exclusions>-->
+<!--			-->
 <!--		</dependency>-->
 		<dependency>
-			<groupId>commons-io</groupId>
-			<artifactId>commons-io</artifactId>
-			<version>2.2</version>
-		</dependency>
-		<dependency>
-			<groupId>org.webjars</groupId>
-			<artifactId>jquery</artifactId>
-			<version>1.12.4</version>
-		</dependency>
-		<dependency>
-			<groupId>org.webjars</groupId>
-			<artifactId>bootstrap</artifactId>
-			<version>3.3.6</version>
-		</dependency>
-		<dependency>
-			<groupId>org.webjars.bower</groupId>
-			<artifactId>jasny-bootstrap</artifactId>
-			<version>3.1.3</version>
-		</dependency>
-		<dependency>
-			<groupId>org.webjars</groupId>
-			<artifactId>font-awesome</artifactId>
-			<version>5.13.1</version>
-		</dependency>
-		<dependency>
-			<groupId>org.webjars</groupId>
-			<artifactId>datatables</artifactId>
-			<version>1.10.21</version>
-		</dependency>
-		<dependency>
-			<groupId>org.webjars</groupId>
-			<artifactId>datatables-plugins</artifactId>
-			<version>1.10.20</version>
-		</dependency>
-		<dependency>
-			<groupId>org.webjars</groupId>
-			<artifactId>momentjs</artifactId>
-			<version>2.24.0</version>
-		</dependency>
-		<dependency>
-			<groupId>org.webjars.bower</groupId>
-			<artifactId>mustache.js</artifactId>
-			<version>3.0.1</version>
-		</dependency>
-		<dependency>
-			<groupId>org.webjars.bower</groupId>
-			<artifactId>bootstrap-datepicker</artifactId>
-			<version>1.6.1</version>
-		</dependency>
-		<dependency>
-			<groupId>org.webjars.bower</groupId>
-			<artifactId>select2</artifactId>
-			<version>4.0.6-rc.1</version>
-		</dependency>
-		<dependency>
-			<groupId>org.webjars.bower</groupId>
-			<artifactId>select2-bootstrap-theme</artifactId>
-			<version>0.1.0-beta.10</version>
-		</dependency>
-		<dependency>
-			<groupId>org.webjars</groupId>
-			<artifactId>pdf-js</artifactId>
-			<version>2.13.216</version>
-		</dependency>
-		<dependency>
-			 <groupId>com.fasterxml.jackson.core</groupId>
-			 <artifactId>jackson-core</artifactId>
-			 <version>${jackson.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>com.fasterxml.jackson.core</groupId>
-			<artifactId>jackson-databind</artifactId>
-			<version>${jackson.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>com.fasterxml.jackson.core</groupId>
-			<artifactId>jackson-annotations</artifactId>
-			<version>${jackson.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-api</artifactId>
-			<version>${slf4j.version}</version>
-			<scope>provided</scope>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>pinbal-service-intf</artifactId>
+			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
-			<artifactId>pinbal-core-client</artifactId>
+			<artifactId>pinbal-backend</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>pinbal-client-intf</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
@@ -322,99 +399,65 @@
 			<version>${lombok.version}</version>
 			<scope>provided</scope>
 		</dependency>
-<!--		<dependency>-->
-<!--			<groupId>org.mapstruct</groupId>-->
-<!--			<artifactId>mapstruct</artifactId>-->
-<!--			<version>${mapstruct.version}</version>-->
-<!--		</dependency>-->
-		<dependency>
-			<groupId>joda-time</groupId>
-			<artifactId>joda-time</artifactId>
-			<version>2.3</version>
-		</dependency>
-		
-		<!-- swagger -->
-		<dependency>
-			<groupId>com.mangofactory</groupId>
-			<artifactId>swagger-springmvc</artifactId>
-			<version>1.0.2</version>
-	
-			<exclusions>
-				<exclusion>
-					<artifactId>spring-web</artifactId>
-					<groupId>org.springframework</groupId>
-				</exclusion>
-				<exclusion>
-					<artifactId>org.slf4j</artifactId>
-					<groupId>slf4j-api</groupId>
-				</exclusion>
-			</exclusions>
-			
-		</dependency>
-		
+
 	</dependencies>
 	<profiles>
 		<profile>
-			<id>tomcat</id>
+			<id>ide</id>
 			<activation>
-				<file>
-					<exists>appserv_tomcat</exists>
-				</file>
 				<activeByDefault>false</activeByDefault>
 			</activation>
-			<properties>
-				<application.context>application-context-tomcat.xml</application.context>
-				<enable.tomcat.cxf.start>--&gt;</enable.tomcat.cxf.start>
-				<enable.tomcat.cxf.end>&lt;!--</enable.tomcat.cxf.end>
-				<webjars.classpath>classpath:</webjars.classpath>
-			</properties>
 			<dependencies>
 				<dependency>
-					<groupId>org.jvnet.jax-ws-commons.spring</groupId>
-					<artifactId>jaxws-spring</artifactId>
-					<version>1.9</version>
-					<exclusions>
-						<exclusion>
-							<groupId>org.springframework</groupId>
-							<artifactId>spring-core</artifactId>
-						</exclusion>
-						<exclusion>
-							<groupId>org.springframework</groupId>
-							<artifactId>spring-beans</artifactId>
-						</exclusion>
-						<exclusion>
-							<groupId>org.springframework</groupId>
-							<artifactId>spring-context</artifactId>
-						</exclusion>
-						<exclusion>
-							<groupId>org.springframework</groupId>
-							<artifactId>spring-web</artifactId>
-						</exclusion>
-					</exclusions>
+					<groupId>org.keycloak</groupId>
+					<artifactId>keycloak-core</artifactId>
 				</dependency>
 				<dependency>
-					<groupId>org.bouncycastle</groupId>
-					<artifactId>bcmail-jdk15on</artifactId>
-					<version>1.49</version>
+					<groupId>javax.ejb</groupId>
+					<artifactId>javax.ejb-api</artifactId>
 				</dependency>
 				<dependency>
-					<groupId>org.bouncycastle</groupId>
-					<artifactId>bcprov-jdk15on</artifactId>
-					<version>1.49</version>
+					<groupId>org.apache.tomcat.embed</groupId>
+					<artifactId>tomcat-embed-jasper</artifactId>
 				</dependency>
 				<dependency>
 					<groupId>${project.groupId}</groupId>
-					<artifactId>pinbal-core</artifactId>
+					<artifactId>pinbal-service</artifactId>
 					<version>${project.version}</version>
 				</dependency>
 			</dependencies>
 			<build>
+				<resources>
+					<resource>
+						<directory>src/main/webapp</directory>
+						<targetPath>META-INF/resources</targetPath>
+						<includes>
+							<include>**/*.*</include>
+						</includes>
+					</resource>
+				</resources>
 				<plugins>
 					<plugin>
-						<artifactId>maven-war-plugin</artifactId>
-						<version>2.2</version>
+						<groupId>org.springframework.boot</groupId>
+						<artifactId>spring-boot-maven-plugin</artifactId>
 						<configuration>
-							<packagingExcludes>META-INF/context.xml</packagingExcludes>
+							<mainClass>es.caib.notib.NotibBackBootApp</mainClass>
+						</configuration>
+					</plugin>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-war-plugin</artifactId>
+						<version>3.3.2</version>
+						<configuration>
+							<archive>
+								<manifestEntries>
+									<Build-Timestamp>${maven.build.timestamp}</Build-Timestamp>
+									<Implementation-Vendor>${implementation.vendor}</Implementation-Vendor>
+									<Implementation-Version>${project.version}</Implementation-Version>
+									<Implementation-SCM-Branch>${scmBranch}</Implementation-SCM-Branch>
+									<Implementation-SCM-Revision>${buildNumber}</Implementation-SCM-Revision>
+								</manifestEntries>
+							</archive>
 						</configuration>
 					</plugin>
 				</plugins>
@@ -423,94 +466,97 @@
 		<profile>
 			<id>jboss</id>
 			<activation>
-				<file>
-					<missing>appserv_tomcat</missing>
-				</file>
 				<activeByDefault>true</activeByDefault>
 			</activation>
-			<properties>
-				<application.context>application-context-jboss.xml</application.context>
-				<webjars.classpath></webjars.classpath>
-			</properties>
 			<dependencies>
 				<dependency>
-					<groupId>org.hibernate</groupId>
-					<artifactId>hibernate-validator</artifactId>
-					<version>${hibernate.validator.version}</version>
+					<groupId>org.keycloak</groupId>
+					<artifactId>keycloak-core</artifactId>
 					<scope>provided</scope>
-                    <exclusions>
-                        <exclusion>
-                            <groupId>org.slf4j</groupId>
-                            <artifactId>slf4j-api</artifactId>
-                        </exclusion>
-                    </exclusions>
+				</dependency>
+				<dependency>
+					<groupId>javax.ejb</groupId>
+					<artifactId>javax.ejb-api</artifactId>
+					<scope>provided</scope>
+				</dependency>
+				<dependency>
+					<groupId>org.apache.tomcat.embed</groupId>
+					<artifactId>tomcat-embed-jasper</artifactId>
+					<scope>provided</scope>
+				</dependency>
+				<dependency>
+					<groupId>${project.groupId}</groupId>
+					<artifactId>pinbal-client-intf</artifactId>
+					<version>${project.version}</version>
+					<scope>provided</scope>
 				</dependency>
 			</dependencies>
 			<build>
 				<plugins>
-<!--					<plugin>-->
-<!--						<groupId>org.apache.maven.plugins</groupId>-->
-<!--						<artifactId>maven-compiler-plugin</artifactId>-->
-<!--						<version>3.10.1</version>-->
-<!--						<configuration>-->
-<!--							<annotationProcessorPaths>-->
-<!--								<path>-->
-<!--									<groupId>org.projectlombok</groupId>-->
-<!--									<artifactId>lombok-mapstruct-binding</artifactId>-->
-<!--									<version>0.2.0</version>-->
-<!--								</path>-->
-<!--								<path>-->
-<!--									<groupId>org.projectlombok</groupId>-->
-<!--									<artifactId>lombok</artifactId>-->
-<!--									<version>${lombok.version}</version>-->
-<!--								</path>-->
-<!--								<path>-->
-<!--									<groupId>org.mapstruct</groupId>-->
-<!--									<artifactId>mapstruct-processor</artifactId>-->
-<!--									<version>${mapstruct.version}</version>-->
-<!--								</path>-->
-<!--							</annotationProcessorPaths>-->
-<!--							<compilerArgs>-->
-<!--								<compilerArg>-Amapstruct.defaultComponentModel=spring</compilerArg>-->
-<!--							</compilerArgs>-->
-<!--						</configuration>-->
-<!--					</plugin>-->
-					<plugin>
-						<artifactId>maven-war-plugin</artifactId>
-						<configuration>
-								<packagingExcludes>
-									META-INF/context.xml,
-									WEB-INF/classes/log4j.xml,
-									WEB-INF/lib/javax.annotation-api-*.jar,
-									WEB-INF/lib/jsr250-api-*.jar,
-									WEB-INF/lib/pinbal-core-client-*.jar,
-									WEB-INF/lib/jquery*,
-									WEB-INF/lib/bootstrap*,
-								WEB-INF/lib/font-awesome*,
-								WEB-INF/lib/datatables*,
-								WEB-INF/lib/select2*,
-								WEB-INF/lib/bootstrap-datepicker*,
-								WEB-INF/lib/bootstrap-datetimepicker*,
-								WEB-INF/lib/jsrender*,
-								WEB-INF/lib/jstree*
-								WEB-INF/lib/Sortable*
-							</packagingExcludes>
-						</configuration>
-					</plugin>
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-dependency-plugin</artifactId>
+						<artifactId>maven-war-plugin</artifactId>
+						<version>3.3.2</version>
+						<configuration>
+							<packagingExcludes>**/NotibBackBootApp.class</packagingExcludes>
+							<attachClasses>true</attachClasses>
+							<archive>
+								<manifestEntries>
+									<Build-Timestamp>${maven.build.timestamp}</Build-Timestamp>
+									<Implementation-Vendor>${implementation.vendor}</Implementation-Vendor>
+									<Implementation-Version>${project.version}</Implementation-Version>
+									<Implementation-SCM-Branch>${scmBranch}</Implementation-SCM-Branch>
+									<Implementation-SCM-Revision>${buildNumber}</Implementation-SCM-Revision>
+								</manifestEntries>
+							</archive>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		<profile>
+			<id>front</id>
+			<activation>
+				<activeByDefault>false</activeByDefault>
+			</activation>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>com.github.eirslett</groupId>
+						<artifactId>frontend-maven-plugin</artifactId>
+						<version>1.15.4</version>
+						<configuration>
+							<nodeVersion>${node.version}</nodeVersion>
+							<installDirectory>target</installDirectory>
+							<workingDirectory>${frontend.app.path}</workingDirectory>
+							<skip>${frontend.skip}</skip>
+							<environmentVariables>
+								<VITE_APP_VERSION>${project.version}</VITE_APP_VERSION>
+							</environmentVariables>
+						</configuration>
 						<executions>
 							<execution>
-								<id>unpack dependencies</id>
-								<phase>prepare-package</phase>
+								<id>install-npm</id>
+								<phase>initialize</phase>
 								<goals>
-									<goal>unpack-dependencies</goal>
+									<goal>install-node-and-npm</goal>
+								</goals>
+							</execution>
+							<execution>
+								<id>npm-install</id>
+								<phase>generate-resources</phase>
+								<goals>
+									<goal>npm</goal>
+								</goals>
+							</execution>
+							<execution>
+								<id>npm-build</id>
+								<phase>generate-resources</phase>
+								<goals>
+									<goal>npm</goal>
 								</goals>
 								<configuration>
-									<includeGroupIds>org.webjars</includeGroupIds>
-									<includes>**/*</includes>
-									<outputDirectory>${project.build.directory}/pinbal</outputDirectory>
+									<arguments>run build-jboss</arguments>
 								</configuration>
 							</execution>
 						</executions>
@@ -518,37 +564,216 @@
 				</plugins>
 			</build>
 		</profile>
+<!--		<profile>-->
+<!--			<id>tomcat</id>-->
+<!--			<activation>-->
+<!--				<file>-->
+<!--					<exists>appserv_tomcat</exists>-->
+<!--				</file>-->
+<!--				<activeByDefault>false</activeByDefault>-->
+<!--			</activation>-->
+<!--			<properties>-->
+<!--				<application.context>application-context-tomcat.xml</application.context>-->
+<!--				<enable.tomcat.cxf.start>&#45;&#45;&gt;</enable.tomcat.cxf.start>-->
+<!--				<enable.tomcat.cxf.end>&lt;!&#45;&#45;</enable.tomcat.cxf.end>-->
+<!--				<webjars.classpath>classpath:</webjars.classpath>-->
+<!--			</properties>-->
+<!--			<dependencies>-->
+<!--				<dependency>-->
+<!--					<groupId>org.jvnet.jax-ws-commons.spring</groupId>-->
+<!--					<artifactId>jaxws-spring</artifactId>-->
+<!--					<version>1.9</version>-->
+<!--					<exclusions>-->
+<!--						<exclusion>-->
+<!--							<groupId>org.springframework</groupId>-->
+<!--							<artifactId>spring-core</artifactId>-->
+<!--						</exclusion>-->
+<!--						<exclusion>-->
+<!--							<groupId>org.springframework</groupId>-->
+<!--							<artifactId>spring-beans</artifactId>-->
+<!--						</exclusion>-->
+<!--						<exclusion>-->
+<!--							<groupId>org.springframework</groupId>-->
+<!--							<artifactId>spring-context</artifactId>-->
+<!--						</exclusion>-->
+<!--						<exclusion>-->
+<!--							<groupId>org.springframework</groupId>-->
+<!--							<artifactId>spring-web</artifactId>-->
+<!--						</exclusion>-->
+<!--					</exclusions>-->
+<!--				</dependency>-->
+<!--				<dependency>-->
+<!--					<groupId>org.bouncycastle</groupId>-->
+<!--					<artifactId>bcmail-jdk15on</artifactId>-->
+<!--					<version>1.49</version>-->
+<!--				</dependency>-->
+<!--				<dependency>-->
+<!--					<groupId>org.bouncycastle</groupId>-->
+<!--					<artifactId>bcprov-jdk15on</artifactId>-->
+<!--					<version>1.49</version>-->
+<!--				</dependency>-->
+<!--				<dependency>-->
+<!--					<groupId>${project.groupId}</groupId>-->
+<!--					<artifactId>pinbal-core</artifactId>-->
+<!--					<version>${project.version}</version>-->
+<!--				</dependency>-->
+<!--			</dependencies>-->
+<!--			<build>-->
+<!--				<plugins>-->
+<!--					<plugin>-->
+<!--						<artifactId>maven-war-plugin</artifactId>-->
+<!--						<version>2.2</version>-->
+<!--						<configuration>-->
+<!--							<packagingExcludes>META-INF/context.xml</packagingExcludes>-->
+<!--						</configuration>-->
+<!--					</plugin>-->
+<!--				</plugins>-->
+<!--			</build>-->
+<!--		</profile>-->
+<!--		<profile>-->
+<!--			<id>jboss</id>-->
+<!--			<activation>-->
+<!--				<file>-->
+<!--					<missing>appserv_tomcat</missing>-->
+<!--				</file>-->
+<!--				<activeByDefault>true</activeByDefault>-->
+<!--			</activation>-->
+<!--			<properties>-->
+<!--				<application.context>application-context-jboss.xml</application.context>-->
+<!--				<webjars.classpath></webjars.classpath>-->
+<!--			</properties>-->
+<!--			<dependencies>-->
+<!--				<dependency>-->
+<!--					<groupId>org.hibernate</groupId>-->
+<!--					<artifactId>hibernate-validator</artifactId>-->
+<!--					<version>${hibernate.validator.version}</version>-->
+<!--					<scope>provided</scope>-->
+<!--                    <exclusions>-->
+<!--                        <exclusion>-->
+<!--                            <groupId>org.slf4j</groupId>-->
+<!--                            <artifactId>slf4j-api</artifactId>-->
+<!--                        </exclusion>-->
+<!--                    </exclusions>-->
+<!--				</dependency>-->
+<!--			</dependencies>-->
+<!--			<build>-->
+<!--				<plugins>-->
+<!--					<plugin>-->
+<!--						<artifactId>maven-war-plugin</artifactId>-->
+<!--						<configuration>-->
+<!--								<packagingExcludes>-->
+<!--									META-INF/context.xml,-->
+<!--									WEB-INF/classes/log4j.xml,-->
+<!--									WEB-INF/lib/javax.annotation-api-*.jar,-->
+<!--									WEB-INF/lib/jsr250-api-*.jar,-->
+<!--									WEB-INF/lib/pinbal-core-client-*.jar,-->
+<!--									WEB-INF/lib/jquery*,-->
+<!--									WEB-INF/lib/bootstrap*,-->
+<!--								WEB-INF/lib/font-awesome*,-->
+<!--								WEB-INF/lib/datatables*,-->
+<!--								WEB-INF/lib/select2*,-->
+<!--								WEB-INF/lib/bootstrap-datepicker*,-->
+<!--								WEB-INF/lib/bootstrap-datetimepicker*,-->
+<!--								WEB-INF/lib/jsrender*,-->
+<!--								WEB-INF/lib/jstree*-->
+<!--								WEB-INF/lib/Sortable*-->
+<!--							</packagingExcludes>-->
+<!--						</configuration>-->
+<!--					</plugin>-->
+<!--					<plugin>-->
+<!--						<groupId>org.apache.maven.plugins</groupId>-->
+<!--						<artifactId>maven-dependency-plugin</artifactId>-->
+<!--						<executions>-->
+<!--							<execution>-->
+<!--								<id>unpack dependencies</id>-->
+<!--								<phase>prepare-package</phase>-->
+<!--								<goals>-->
+<!--									<goal>unpack-dependencies</goal>-->
+<!--								</goals>-->
+<!--								<configuration>-->
+<!--									<includeGroupIds>org.webjars</includeGroupIds>-->
+<!--									<includes>**/*</includes>-->
+<!--									<outputDirectory>${project.build.directory}/pinbal</outputDirectory>-->
+<!--								</configuration>-->
+<!--							</execution>-->
+<!--						</executions>-->
+<!--					</plugin>-->
+<!--				</plugins>-->
+<!--			</build>-->
+<!--		</profile>-->
 	</profiles>
 	<build>
+		<resources>
+			<resource>
+				<directory>src/main/resources</directory>
+				<filtering>false</filtering>
+			</resource>
+			<resource>
+				<directory>src/main/resources</directory>
+				<includes>
+					<include>banner.txt</include>
+				</includes>
+				<filtering>true</filtering>
+			</resource>
+		</resources>
 		<plugins>
 			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-war-plugin</artifactId>
-				<version>2.2</version>
 				<configuration>
-					<warName>pinbal</warName>
 					<webResources>
-						<webResource>
-							<directory>${basedir}/src/main/webapp/WEB-INF</directory>
-							<includes>
-								<include>web.xml</include>
-								<include>pinbal-servlet.xml</include>
-							</includes>
-							<targetPath>WEB-INF</targetPath>
-							<filtering>true</filtering>
-						</webResource>
+						<resource>
+							<directory>${frontend.app.path}/dist</directory>
+							<targetPath>reactapp</targetPath>
+						</resource>
 					</webResources>
-					<archive>
-						<manifestEntries>
-							<Implementation-Version>${project.version}</Implementation-Version>
-							<Implementation-Vendor>Govern de les Illes Balears</Implementation-Vendor>
-							<Build-Timestamp>${maven.build.timestamp}</Build-Timestamp>
-							<Implementation-SCM-Branch>${git.branch}</Implementation-SCM-Branch>
-							<Implementation-SCM-Revision>${git.commit.id}</Implementation-SCM-Revision>
-							<Implementation-SCM-Version>${git.closest.tag.name}</Implementation-SCM-Version>
-						</manifestEntries>
-					</archive>
 				</configuration>
 			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-clean-plugin</artifactId>
+				<version>3.4.0</version>
+				<configuration>
+					<filesets>
+						<fileset>
+							<directory>${frontend.app.path}</directory>
+							<includes>
+								<include>**/dist/**</include>
+								<include>**/node_modules/**</include>
+							</includes>
+							<followSymlinks>false</followSymlinks>
+						</fileset>
+					</filesets>
+				</configuration>
+			</plugin>
+<!--			<plugin>-->
+<!--				<artifactId>maven-war-plugin</artifactId>-->
+<!--				<version>2.2</version>-->
+<!--				<configuration>-->
+<!--					<warName>pinbal</warName>-->
+<!--					<webResources>-->
+<!--						<webResource>-->
+<!--							<directory>${basedir}/src/main/webapp/WEB-INF</directory>-->
+<!--							<includes>-->
+<!--								<include>web.xml</include>-->
+<!--								<include>pinbal-servlet.xml</include>-->
+<!--							</includes>-->
+<!--							<targetPath>WEB-INF</targetPath>-->
+<!--							<filtering>true</filtering>-->
+<!--						</webResource>-->
+<!--					</webResources>-->
+<!--					<archive>-->
+<!--						<manifestEntries>-->
+<!--							<Implementation-Version>${project.version}</Implementation-Version>-->
+<!--							<Implementation-Vendor>Govern de les Illes Balears</Implementation-Vendor>-->
+<!--							<Build-Timestamp>${maven.build.timestamp}</Build-Timestamp>-->
+<!--							<Implementation-SCM-Branch>${git.branch}</Implementation-SCM-Branch>-->
+<!--							<Implementation-SCM-Revision>${git.commit.id}</Implementation-SCM-Revision>-->
+<!--							<Implementation-SCM-Version>${git.closest.tag.name}</Implementation-SCM-Version>-->
+<!--						</manifestEntries>-->
+<!--					</archive>-->
+<!--				</configuration>-->
+<!--			</plugin>-->
 		</plugins>
 		<finalName>pinbal</finalName>
 	</build>

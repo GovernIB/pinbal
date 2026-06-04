@@ -1,3 +1,4 @@
+<%@ tag import="es.caib.pinbal.back.helper.AlertHelper" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
@@ -18,7 +19,7 @@
 <%
 	request.setAttribute(
 		"sessionErrors",
-		session.getAttribute(es.caib.pinbal.webapp.common.AlertHelper.SESSION_ATTRIBUTE_ERROR));
+		session.getAttribute(AlertHelper.SESSION_ATTRIBUTE_ERROR));
 %>
 <c:forEach var="text" items="${sessionErrors}">
 	<c:set var="msg" value="${text}" />
@@ -43,13 +44,13 @@
 	</div>
 </c:forEach>
 <%
-	session.removeAttribute(es.caib.pinbal.webapp.common.AlertHelper.SESSION_ATTRIBUTE_ERROR);
+	session.removeAttribute(AlertHelper.SESSION_ATTRIBUTE_ERROR);
 %>
 
 <%
 	request.setAttribute(
 		"sessionWarnings",
-		session.getAttribute(es.caib.pinbal.webapp.common.AlertHelper.SESSION_ATTRIBUTE_WARNING));
+		session.getAttribute(AlertHelper.SESSION_ATTRIBUTE_WARNING));
 %>
 <c:forEach var="text" items="${sessionWarnings}">
 	<div class="alert alert-warning">
@@ -58,13 +59,13 @@
 	</div>
 </c:forEach>
 <%
-	session.removeAttribute(es.caib.pinbal.webapp.common.AlertHelper.SESSION_ATTRIBUTE_WARNING);
+	session.removeAttribute(AlertHelper.SESSION_ATTRIBUTE_WARNING);
 %>
 
 <%
 	request.setAttribute(
 		"sessionSuccesses",
-		session.getAttribute(es.caib.pinbal.webapp.common.AlertHelper.SESSION_ATTRIBUTE_SUCCESS));
+		session.getAttribute(AlertHelper.SESSION_ATTRIBUTE_SUCCESS));
 %>
 <c:forEach var="text" items="${sessionSuccesses}">
 	<div class="alert alert-success">
@@ -73,13 +74,13 @@
 	</div>
 </c:forEach>
 <%
-	session.removeAttribute(es.caib.pinbal.webapp.common.AlertHelper.SESSION_ATTRIBUTE_SUCCESS);
+	session.removeAttribute(AlertHelper.SESSION_ATTRIBUTE_SUCCESS);
 %>
 
 <%
 	request.setAttribute(
 		"sessionInfos",
-		session.getAttribute(es.caib.pinbal.webapp.common.AlertHelper.SESSION_ATTRIBUTE_INFO));
+		session.getAttribute(AlertHelper.SESSION_ATTRIBUTE_INFO));
 %>
 <c:forEach var="text" items="${sessionInfos}">
 	<div class="alert alert-info">
@@ -88,5 +89,5 @@
 	</div>
 </c:forEach>
 <%
-session.getAttribute(es.caib.pinbal.webapp.common.AlertHelper.SESSION_ATTRIBUTE_INFO);
+session.getAttribute(AlertHelper.SESSION_ATTRIBUTE_INFO);
 %>

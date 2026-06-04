@@ -78,6 +78,7 @@
 								<value>PBL_AUDIT</value>
 								<value>PBL_SUPERAUD</value>
 								<value>PBL_WS</value>
+								<value>PBL_COM</value>
 								<value>PBL_REPORT</value>
 								<value>tothom</value>
 							</set>
@@ -93,6 +94,7 @@
 								<entry key="PBL_AUDIT" value="ROLE_AUDIT"/>
 								<entry key="PBL_SUPERAUD" value="ROLE_SUPERAUD"/>
 								<entry key="PBL_WS" value="ROLE_WS"/>
+								<entry key="PBL_COM" value="ROLE_COM"/>
 								<entry key="PBL_REPORT" value="ROLE_REPORT"/>
 								<entry key="tothom" value="ROLE_DELEG"/>
 							</map>

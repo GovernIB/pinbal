@@ -1,3 +1,4 @@
+<%@ page import="es.caib.pinbal.back.helper.AlertHelper" %>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
@@ -20,44 +21,44 @@
 
 <%pageContext.setAttribute(
 		"sessionErrors",
-		session.getAttribute(es.caib.pinbal.webapp.common.AlertHelper.SESSION_ATTRIBUTE_ERROR));%>
+		session.getAttribute(AlertHelper.SESSION_ATTRIBUTE_ERROR));%>
 <c:forEach var="text" items="${sessionErrors}">
 	<div class="alert alert-danger">
 		<button class="close" data-dismiss="alert">×</button>
 		${text}
 	</div>
 </c:forEach>
-<%session.removeAttribute(es.caib.pinbal.webapp.common.AlertHelper.SESSION_ATTRIBUTE_ERROR);%>
+<%session.removeAttribute(AlertHelper.SESSION_ATTRIBUTE_ERROR);%>
 
 <%pageContext.setAttribute(
 		"sessionWarnings",
-		session.getAttribute(es.caib.pinbal.webapp.common.AlertHelper.SESSION_ATTRIBUTE_WARNING));%>
+		session.getAttribute(AlertHelper.SESSION_ATTRIBUTE_WARNING));%>
 <c:forEach var="text" items="${sessionWarnings}">
 	<div class="alert alert-warning">
 		<button class="close" data-dismiss="alert">×</button>
 		${text}
 	</div>
 </c:forEach>
-<%session.removeAttribute(es.caib.pinbal.webapp.common.AlertHelper.SESSION_ATTRIBUTE_WARNING);%>
+<%session.removeAttribute(AlertHelper.SESSION_ATTRIBUTE_WARNING);%>
 
 <%pageContext.setAttribute(
 		"sessionSuccesses",
-		session.getAttribute(es.caib.pinbal.webapp.common.AlertHelper.SESSION_ATTRIBUTE_SUCCESS));%>
+		session.getAttribute(AlertHelper.SESSION_ATTRIBUTE_SUCCESS));%>
 <c:forEach var="text" items="${sessionSuccesses}">
 	<div class="alert alert-success">
 		<button class="close" data-dismiss="alert">×</button>
 		${text}
 	</div>
 </c:forEach>
-<%session.removeAttribute(es.caib.pinbal.webapp.common.AlertHelper.SESSION_ATTRIBUTE_SUCCESS);%>
+<%session.removeAttribute(AlertHelper.SESSION_ATTRIBUTE_SUCCESS);%>
 
 <%pageContext.setAttribute(
 		"sessionInfos",
-		session.getAttribute(es.caib.pinbal.webapp.common.AlertHelper.SESSION_ATTRIBUTE_INFO));%>
+		session.getAttribute(AlertHelper.SESSION_ATTRIBUTE_INFO));%>
 <c:forEach var="text" items="${sessionInfos}">
 	<div class="alert alert-info">
 		<button class="close" data-dismiss="alert">×</button>
 		${text}
 	</div>
 </c:forEach>
-<%session.removeAttribute(es.caib.pinbal.webapp.common.AlertHelper.SESSION_ATTRIBUTE_INFO);%>
+<%session.removeAttribute(AlertHelper.SESSION_ATTRIBUTE_INFO);%>
