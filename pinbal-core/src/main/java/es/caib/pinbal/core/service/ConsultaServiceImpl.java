@@ -1389,11 +1389,6 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 			log.error("No s'ha trobat la consulta (idpeticion=" + idpeticion + ", idsolicitud=" + idsolicitud + ")");
 			throw new ConsultaNotFoundException();
 		}
-		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-		if (!auth.getName().equals(consulta.getCreatedBy().getCodi())) {
-			log.error("La consulta (idpeticion=" + idpeticion + ", idsolicitud=" + idsolicitud + ") no pertany a aquest usuari");
-			throw new AccessDenegatException("Només pot accedir al justificant l'usuari que ha realitzat la consulta");
-		}
 		return obtenirJustificantComu(consulta, ambContingut, versioImprimible);
 	}
 

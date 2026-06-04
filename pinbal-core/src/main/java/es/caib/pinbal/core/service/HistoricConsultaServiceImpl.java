@@ -47,7 +47,6 @@ import es.caib.pinbal.core.repository.TokenRepository;
 import es.caib.pinbal.core.repository.UsuariRepository;
 import es.caib.pinbal.core.repository.dadesobertes.DadesObertesHistoricConsultaRepository;
 import es.caib.pinbal.core.repository.llistat.LlistatHistoricConsultaRepository;
-import es.caib.pinbal.core.service.exception.AccessDenegatException;
 import es.caib.pinbal.core.service.exception.ConsultaNotFoundException;
 import es.caib.pinbal.core.service.exception.EntitatNotFoundException;
 import es.caib.pinbal.core.service.exception.JustificantGeneracioException;
@@ -220,11 +219,6 @@ public class HistoricConsultaServiceImpl implements HistoricConsultaService, App
 		if (consulta == null) {
 			log.error("No s'ha trobat la consulta (idpeticion=" + idpeticion + ", idsolicitud=" + idsolicitud + ")");
 			throw new ConsultaNotFoundException();
-		}
-		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-		if (!auth.getName().equals(consulta.getCreatedBy().getCodi())) {
-			log.error("La consulta (idpeticion=" + idpeticion + ", idsolicitud=" + idsolicitud + ") no pertany a aquest usuari");
-			throw new AccessDenegatException("Només pot accedir al justificant l'usuari que ha realitzat la consulta");
 		}
 		return obtenirJustificantComu(consulta, ambContingut, versioImprimible);
 	}
