@@ -11,7 +11,7 @@ import pinbalLogoDark from './assets/pinbal_logo_dark.png';
 import { BaseApp } from './components/BaseApp';
 import DrassanaFooter from './components/DrassanaFooter';
 import PinbalProvider from './components/PinbalProvider';
-import { usePinbalContext, ROLE_ADMIN, ROLE_REPRES, ROLE_AUDIT, ROLE_SUPERAUDIT ROLE_USER } from './components/PinbalContext';
+import { usePinbalContext, ROLE_ADMIN } from './components/PinbalContext';
 import theme from './theme';
 
 export const envVars = {

@@ -3,6 +3,8 @@
  */
 package es.caib.pinbal.back.config;
 
+import es.caib.pinbal.logic.intf.base.service.PermissionEvaluatorService;
+import es.caib.pinbal.logic.intf.base.service.ResourceApiService;
 import es.caib.pinbal.logic.intf.service.AplicacioService;
 import es.caib.pinbal.logic.intf.service.AvisService;
 import es.caib.pinbal.logic.intf.service.ConfigService;
@@ -88,6 +90,10 @@ public class EjbClientConfig {
 		return getLocalEjbFactoyBean(OrganGestorService.class, true);
 	}
 	@Bean
+	public LocalStatelessSessionProxyFactoryBean permissionEvaluatorService() {
+		return getLocalEjbFactoyBean(PermissionEvaluatorService.class, false);
+	}
+	@Bean
 	public LocalStatelessSessionProxyFactoryBean procedimentService() {
 		return getLocalEjbFactoyBean(ProcedimentService.class, true);
 	}
@@ -98,6 +104,10 @@ public class EjbClientConfig {
 	@Bean
 	public LocalStatelessSessionProxyFactoryBean recobrimentService() {
 		return getLocalEjbFactoyBean(RecobrimentService.class, true);
+	}
+	@Bean
+	public LocalStatelessSessionProxyFactoryBean resourceApiService() {
+		return getLocalEjbFactoyBean(ResourceApiService.class, false);
 	}
 	@Bean
 	public LocalStatelessSessionProxyFactoryBean salutService() {

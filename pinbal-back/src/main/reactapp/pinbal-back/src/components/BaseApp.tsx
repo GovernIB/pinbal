@@ -21,7 +21,7 @@ import {
     useResourceApiContext,
     useMuiFormDialogApiRef,
 } from 'reactlib';
-import { usePinbalContext, ROLE_SUPER } from './PinbalContext.ts';
+import { usePinbalContext, ROLE_ADMIN } from './PinbalContext.ts';
 import Offline from './Offline';
 import RoleSelector from './RoleSelector';
 import EntitatSelector from './EntitatSelector';
@@ -171,7 +171,7 @@ export const BaseApp: React.FC<BaseAppProps> = (props) => {
             headerAppbarBackgroundImg={appbarBackgroundImg}
             headerAdditionalComponents={[
                 <RoleSelector key="role_selector" />,
-                ...(currentRole !== ROLE_SUPER ? [<EntitatSelector key="entitat_selector" />] : []),
+                ...(currentRole !== ROLE_ADMIN ? [<EntitatSelector key="entitat_selector" />] : []),
             ]}
             headerAdditionalAuthComponents={[
                 <Box key="user_profile" sx={{ display: 'flex', justifyContent: 'center', mb: 1 }}>

@@ -1,19 +1,17 @@
 server:
-  servlet:
-    context-path: /pinbalback
-  error:
-    path: /error
+  servlet.context-path: /pinbalback
+  error.path: /error
   forward-headers-strategy: framework
 
 spring:
-#  jpa:
-#    properties:
-#      hibernate:
-#        dialect: org.hibernate.dialect.Oracle12cDialect
-#        hbm2ddl.auto: validate
-#        show_sql: false
-#        format_sql: true
-#        use_sql_comments: true
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.Oracle12cDialect
+        hbm2ddl.auto: validate
+        show_sql: false
+        format_sql: true
+        use_sql_comments: true
 #    hibernate:
 #      naming-strategy: es.caib.pinbal.persist.audit.CustomPhysicalNamingStrategy
 #      naming.physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
