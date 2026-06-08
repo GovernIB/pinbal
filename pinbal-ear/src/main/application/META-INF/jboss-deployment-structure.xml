@@ -1,0 +1,27 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<jboss-deployment-structure xmlns="urn:jboss:deployment-structure:1.2">
+	<deployment>
+		<exclude-subsystems>
+			<subsystem name="jaxrs"/>
+		</exclude-subsystems>
+		<exclusions>
+			<module name="com.fasterxml.jackson.core.jackson-core" />
+			<module name="com.fasterxml.jackson.core.jackson-databind" />
+			<module name="com.fasterxml.jackson.core.jackson-annotations" />
+			<module name="com.fasterxml.jackson.dataformat.jackson-dataformat-xml" />
+			<module name="com.fasterxml.jackson.dataformat.jackson-dataformat-yaml" />
+		</exclusions>
+		<dependencies>
+			<module name="jdk.jfr"/>
+			<module name="jdk.management"/>
+			<module name="org.bouncycastle"/>
+			<module name="org.apache.cxf"/>
+			<module name="org.apache.cxf.impl"/>
+			<module name="org.apache.ws.security"/>
+			<module name="io.undertow.core"/>
+			<module name="io.undertow.servlet" export="true"/>
+			<module name="io.undertow.websocket" export="true"/>
+		</dependencies>
+	</deployment>
+	<ear-subdeployments-isolated>true</ear-subdeployments-isolated>
+</jboss-deployment-structure>

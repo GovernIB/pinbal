@@ -1,7 +1,0 @@
-<classloading xmlns="urn:jboss:classloading:1.0"
-		domain="pinbal.ear"
-		import-all="true"
-		export-all="NON_EMPTY"
-		parent-first="false">
-</classloading>
-

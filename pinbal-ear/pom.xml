@@ -8,39 +8,14 @@
 	</parent>
 	<artifactId>pinbal-ear</artifactId>
 	<packaging>ear</packaging>
+	<properties>
+		<docker.image.name>goib/${project.parent.artifactId}</docker.image.name>
+		<docker.image.from>docker.io/goib/jboss-eap72-openshift-base:latest</docker.image.from>
+		<docker.image.platform>linux/amd64</docker.image.platform>
+		<docker.image.context>${project.basedir}/..</docker.image.context>
+		<docker.image.dockerfile>${project.basedir}/../Dockerfile</docker.image.dockerfile>
+	</properties>
 	<dependencies>
-		<dependency>
-			<groupId>org.hibernate</groupId>
-			<artifactId>hibernate-validator-legacy</artifactId>
-			<version>4.0.2.GA</version>
-			<exclusions>
-				<exclusion>
-					<artifactId>slf4j-api</artifactId>
-					<groupId>org.slf4j</groupId>
-				</exclusion>
-				<exclusion>
-					<artifactId>hibernate-core</artifactId>
-					<groupId>org.hibernate</groupId>
-				</exclusion>
-				<exclusion>
-					<artifactId>
-						hibernate-commons-annotations
-					</artifactId>
-					<groupId>org.hibernate</groupId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-		<dependency>
-			<groupId>com.fasterxml.jackson.core</groupId>
-			<artifactId>jackson-databind</artifactId>
-			<version>${jackson.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>${project.groupId}</groupId>
-			<artifactId>pinbal-core</artifactId>
-			<version>${project.version}</version>
-			<type>ejb</type>
-		</dependency>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>pinbal-back</artifactId>
@@ -59,51 +34,74 @@
 			<version>${project.version}</version>
 			<type>war</type>
 		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>pinbal-ejb</artifactId>
+			<version>${project.version}</version>
+			<type>ejb</type>
+		</dependency>
+		<!-- Dependències dels mòduls war pels skinny wars -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-web</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-security</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-oauth2-client</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-actuator</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>dev.akkinoc.spring.boot</groupId>
+			<artifactId>orika-spring-boot-starter</artifactId>
+			<version>${orika.starter.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-web</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>opensymphony</groupId>
+			<artifactId>sitemesh</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>jstl</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>commons-beanutils</groupId>
+			<artifactId>commons-beanutils</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>commons-io</groupId>
+			<artifactId>commons-io</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>commons-fileupload</groupId>
+			<artifactId>commons-fileupload</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>pinbal-service-intf</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>pinbal-backend</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>pinbal-client-intf</artifactId>
+			<version>${project.version}</version>
+		</dependency>
 	</dependencies>
-	<profiles>
-		<profile>
-			<id>unificat</id>
-			<activation>
-				<activeByDefault>false</activeByDefault>
-			</activation>
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-ear-plugin</artifactId>
-						<version>2.8</version>
-						<configuration>
-							<modules>
-								<ejbModule>
-									<groupId>${project.groupId}</groupId>
-									<artifactId>pinbal-core</artifactId>
-									<bundleFileName>pinbal.jar</bundleFileName>
-								</ejbModule>
-								<webModule>
-									<groupId>${project.groupId}</groupId>
-									<artifactId>pinbal-back</artifactId>
-									<contextRoot>/pinbal</contextRoot>
-									<bundleFileName>pinbal.war</bundleFileName>
-								</webModule>
-								<webModule>
-									<groupId>${project.groupId}</groupId>
-									<artifactId>pinbal-api-interna</artifactId>
-									<contextRoot>/pinbalapi/interna</contextRoot>
-									<bundleFileName>pinbal-api-interna.war</bundleFileName>
-								</webModule>
-								<webModule>
-									<groupId>${project.groupId}</groupId>
-									<artifactId>pinbal-api-externa</artifactId>
-									<contextRoot>/pinbalapi/externa</contextRoot>
-									<bundleFileName>pinbal-api-externa.war</bundleFileName>
-								</webModule>
-							</modules>
-						</configuration>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
-	</profiles>
 	<build>
 		<plugins>
 			<plugin>
@@ -114,18 +112,34 @@
 					<verbose>true</verbose>
 					<images>
 						<image>
-							<name>280421/%g</name>
-							<alias>${project.parent.artifactId}</alias>
+							<name>${docker.image.name}</name>
+							<alias>${docker.image.name}</alias>
 							<build>
-								<assembly>
-									<descriptorRef>artifact</descriptorRef>
-								</assembly>
+								<dockerFile>${docker.image.dockerfile}</dockerFile>
+								<contextDir>${docker.image.context}</contextDir>
+								<args>
+									<BASE_IMAGE>${docker.image.from}</BASE_IMAGE>
+									<BASE_PLATFORM>${docker.image.platform}</BASE_PLATFORM>
+								</args>
+								<buildOptions>
+									<platform>${docker.image.platform}</platform>
+								</buildOptions>
 								<dockerFile>Dockerfile</dockerFile>
 								<tags>
 									<tag>latest</tag>
 									<tag>${project.version}</tag>
 								</tags>
 							</build>
+							<run>
+								<ports>
+									<!-- Mapeig del port de debug -->
+									<port>8787:8787</port>
+								</ports>
+								<env>
+									<!-- Defineix les JAVA_OPTS per habilitar el debug -->
+									<JAVA_OPTS>-agentlib:jdwp=transport=dt_socket,address=8787,server=y,suspend=n</JAVA_OPTS>
+								</env>
+							</run>
 						</image>
 					</images>
 				</configuration>
@@ -133,22 +147,25 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-ear-plugin</artifactId>
-				<version>2.8</version>
+				<version>3.2.0</version>
 				<configuration>
-					<finalName>pinbal</finalName>
-					<version>5</version>
-					<packagingExcludes>lib/javax.annotation-api-*.jar,lib/jsr250-api-*.jar</packagingExcludes>
+					<generateApplicationXml>true</generateApplicationXml>
+					<defaultLibBundleDir>/lib</defaultLibBundleDir>
+					<includeLibInApplicationXml>false</includeLibInApplicationXml>
+					<version>6</version>
+					<initializeInOrder>true</initializeInOrder>
+					<skinnyWars>true</skinnyWars>
 					<modules>
 						<ejbModule>
 							<groupId>${project.groupId}</groupId>
-							<artifactId>pinbal-core</artifactId>
-							<bundleFileName>pinbal.jar</bundleFileName>
+							<artifactId>pinbal-ejb</artifactId>
+							<bundleFileName>pinbal-ejb.jar</bundleFileName>
 						</ejbModule>
 						<webModule>
 							<groupId>${project.groupId}</groupId>
 							<artifactId>pinbal-back</artifactId>
-							<contextRoot>/pinbal</contextRoot>
-							<bundleFileName>pinbal.war</bundleFileName>
+							<contextRoot>/pinbalback</contextRoot>
+							<bundleFileName>pinbal-back.war</bundleFileName>
 						</webModule>
 						<webModule>
 							<groupId>${project.groupId}</groupId>
@@ -163,15 +180,13 @@
 							<bundleFileName>pinbal-api-externa.war</bundleFileName>
 						</webModule>
 					</modules>
-					<artifactTypeMappings>
-						<artifactTypeMapping type="mar" mapping="jar" />
-					</artifactTypeMappings>
-					<defaultJavaBundleDir>lib/</defaultJavaBundleDir>
 					<archive>
 						<manifestEntries>
-							<project-version>${version.full}</project-version>
-							<project-buildtime>${maven.build.timestamp}</project-buildtime>
-							<SCM-Revision>${git.commit.id}</SCM-Revision>
+							<Build-Timestamp>${maven.build.timestamp}</Build-Timestamp>
+							<Implementation-Vendor>${implementation.vendor}</Implementation-Vendor>
+							<Implementation-Version>${project.version}</Implementation-Version>
+							<Implementation-SCM-Branch>${scmBranch}</Implementation-SCM-Branch>
+							<Implementation-SCM-Revision>${buildNumber}</Implementation-SCM-Revision>
 						</manifestEntries>
 					</archive>
 				</configuration>
@@ -179,4 +194,11 @@
 		</plugins>
 		<finalName>pinbal</finalName>
 	</build>
+	<repositories>
+		<repository>
+			<id>github-governib-maven-repos</id>
+			<name>GitHub GovernIB Maven Repository</name>
+			<url>https://governib.github.io/maven/maven/</url>
+		</repository>
+	</repositories>
 </project>
