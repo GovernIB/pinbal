@@ -75,8 +75,9 @@ import java.util.List;
 public class RecobrimentHelper implements ApplicationContextAware, MessageSourceAware {
 
 	public static final String ERROR_CODE_SCSP_VALIDATION = "0226";
-	// Les peticions de recobriment provenen d'aplicacions de tramitacio.
-	private static final boolean APLICACIO_GUARDA_JUSTIFICANT_ARXIU = false;
+	// Les peticions de recobriment provenen d'aplicacions de tramitació, que
+	// gestionen el justificant a l'arxiu. PINBAL no el desa a l'arxiu;
+	private static final boolean APLICACIO_GUARDA_JUSTIFICANT_ARXIU = true;
 
 	@Autowired
 	private ConsultaRepository consultaRepository;
@@ -93,18 +94,6 @@ public class RecobrimentHelper implements ApplicationContextAware, MessageSource
 	private MessageSource messageSource;
 	private ScspHelper scspHelper;
 
-//    @Autowired
-//    private ServeiConfigRepository serveiConfigRepository;
-//    @Autowired
-//    private PluginHelper pluginHelper;
-//    @Autowired
-//    private ProcedimentRepository procedimentRepository;
-//    @Autowired
-//    private EntitatRepository entitatRepository;
-//    @Autowired
-//    private ServeiCampRepository serveiCampRepository;
-//
-//	private XmlHelper xmlHelper;
 
 	public Respuesta peticionSincrona(Peticion peticion) throws ScspException {
 		return peticionSincrona(peticion, APLICACIO_GUARDA_JUSTIFICANT_ARXIU);

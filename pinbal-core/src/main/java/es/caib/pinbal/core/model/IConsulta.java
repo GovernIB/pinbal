@@ -28,4 +28,6 @@ public interface IConsulta {
             String arxiuDocumentUuid);
 
     void updateArxiuExpedientUuid(String arxiuExpedientUuid);
+
+    void updateArxiuDocumentUuid(String arxiuDocumentUuid);
 }
