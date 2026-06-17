@@ -3,7 +3,6 @@
  */
 package es.caib.pinbal.persist.config;
 
-import es.caib.pinbal.logic.intf.service.UsuariService;
 import es.caib.pinbal.persist.base.config.BaseAuditingConfig;
 import es.caib.pinbal.persist.base.entity.AuditableEntity;
 import es.caib.pinbal.persist.entity.Usuari;
@@ -15,6 +14,9 @@ import org.springframework.data.domain.AuditorAware;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
@@ -32,24 +34,32 @@ public class AuditingConfig extends BaseAuditingConfig {
 
 	@Autowired
 	private UsuariRepository usuariRepository;
-	@Autowired
-	private UsuariService usuariService;
 
 	@Bean
 	public AuditorAware<Usuari> auditorProvider() {
 		return () -> {
-			var authentication = SecurityContextHolder.getContext().getAuthentication();
-			if (authentication == null || !authentication.isAuthenticated() || "SCHEDULLER".equals(authentication.getName()) || "anonymousUser".equals(authentication.getName())) {
+			try {
+				var authentication = SecurityContextHolder.getContext().getAuthentication();
+				if (authentication == null || !authentication.isAuthenticated() || "SCHEDULLER".equals(authentication.getName()) || "anonymousUser".equals(authentication.getName()) || "INIT".equals(authentication.getName())) {
+					return Optional.empty();
+				}
+				// getByCodi participa en la transacció actual (evita REQUIRES_NEW anidat que esgota el pool)
+				var usuari = usuariRepository.getByCodi(authentication.getName());
+				if (usuari.isPresent()) {
+					return usuari;
+				}
+				// No cridem inicialitzarUsuariActual() des de l'auditor: pot invocar plugins externs
+				// que fallen i criden addAccioError, que torna a disparar l'auditor (bucle).
+				// La inicialització de l'usuari es fa durant el flux normal d'autenticació.
+				return Optional.empty();
+			} catch (Exception e) {
+				logger.warn("No s'ha pogut obtenir l'auditor actual, es deixa buit", e);
 				return Optional.empty();
 			}
-			var usuari = usuariRepository.getByCodiReadOnlyNewTransaction(authentication.getName());
-			if (usuari.isPresent()) {
-				return usuari;
-			}
-			usuariService.inicialitzarUsuariActual();
-			return usuariRepository.getByCodi(authentication.getName());
 		};
 	}
+
+	private static final Logger logger = LoggerFactory.getLogger(AuditingConfig.class);
 
 	public static class CustomAuditingEntityListener {
 		@PrePersist

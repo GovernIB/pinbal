@@ -3,21 +3,19 @@
  */
 package es.caib.pinbal.client.estadistiques;
 
-import static org.junit.Assert.assertNotNull;
-
-import java.io.IOException;
-import java.util.List;
-
-import org.junit.Test;
-
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-
 import es.caib.pinbal.client.comu.EntitatEstadistiques;
 import es.caib.pinbal.client.estadistica.ClientEstadistica;
+import org.junit.jupiter.api.Test;
+
+import java.io.IOException;
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * Test de les estadístiques de càrrega.

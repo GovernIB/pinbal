@@ -24,7 +24,7 @@ public interface DadesExternesService {
 	 * 
 	 * @return el llistat de províncies.
 	 */
-	@PreAuthorize("hasRole('ROLE_DELEG')")
+	@PreAuthorize("isAuthenticated()")
 	List<Provincia> findProvincies(IdiomaEnumDto idioma);
 
 	/**
@@ -35,7 +35,7 @@ public interface DadesExternesService {
 	 *            El codi de la província.
 	 * @return el llistat de municipis.
 	 */
-	@PreAuthorize("hasRole('ROLE_DELEG')")
+	@PreAuthorize("isAuthenticated()")
 	public List<Municipi> findMunicipisPerProvincia(String provinciaCodi);
 
 	/**

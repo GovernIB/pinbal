@@ -8,7 +8,7 @@
 
 <%	request.setAttribute(
 			"consultaEstats",
-			es.caib.pinbal.core.dto.ConsultaDto.EstatTipus.sortedValues());
+			es.caib.pinbal.logic.intf.dto.ConsultaDto.EstatTipus.sortedValues());
 %>
 <html>
 <head>
@@ -39,7 +39,7 @@
 <body>
 
 	<c:url value="/superauditor/generar" var="formAction"/>
-	<form:form action="${formAction}" method="post" cssClass="well form-filtre-table" commandName="auditoriaGenerarCommand">
+	<form:form action="${formAction}" method="post" cssClass="well form-filtre-table" modelAttribute="auditoriaGenerarCommand">
 		<div class="row">
 			<div class="col-md-3">
 				<pbl:inputDate name="dataInici" inline="true" placeholderKey="auditor.generar.filtre.camp.data.inici"/>

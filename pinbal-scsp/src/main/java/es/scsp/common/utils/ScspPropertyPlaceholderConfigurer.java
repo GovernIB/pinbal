@@ -1,40 +1,28 @@
-/**
- * 
- */
 package es.scsp.common.utils;
 
-import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import org.hibernate.Criteria;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.hibernate.Transaction;
-import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.config.PropertyPlaceholderConfigurer;
-
-import es.scsp.common.domain.core.ParametroConfiguracion;
+import org.springframework.context.EnvironmentAware;
+import org.springframework.core.env.Environment;
 import org.springframework.jdbc.datasource.lookup.JndiDataSourceLookup;
 
-import javax.annotation.PostConstruct;
 import javax.sql.DataSource;
-import java.io.FileInputStream;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.Properties;
 
 /**
- * PlaceholderConfigurer per a que les els beans de l'application
- * context de SCSP agafin els properties de la configuració de PINBAL.
- * 
+ * PlaceholderConfigurer per a que els beans de l'application context de SCSP
+ * agafin els properties de la configuració de PINBAL (des de JNDI datasource +
+ * taula core_parametro_configuracion).
+ *
  * @author Limit Tecnologies <limit@limit.es>
  */
 @Slf4j
-public class ScspPropertyPlaceholderConfigurer extends PropertyPlaceholderConfigurer {
+public class ScspPropertyPlaceholderConfigurer extends PropertyPlaceholderConfigurer implements EnvironmentAware {
 
 	private static final String SQL_UPDATE = "UPDATE core_parametro_configuracion set valor = ? WHERE nombre = ?";
 	private static final String SQL_INSERT = "INSERT INTO core_parametro_configuracion (nombre, valor, descripcion) values (?, ?, null)";
@@ -42,11 +30,16 @@ public class ScspPropertyPlaceholderConfigurer extends PropertyPlaceholderConfig
 
 	private DataSource dataSource;
 	private Properties dataBaseProperties = new Properties();
+	private Environment environment;
 
 	public ScspPropertyPlaceholderConfigurer() {}
 
-	protected String resolvePlaceholder(String placeholder, Properties props, int systemPropertiesMode) {
+	@Override
+	public void setEnvironment(Environment environment) {
+		this.environment = environment;
+	}
 
+	protected String resolvePlaceholder(String placeholder, Properties props, int systemPropertiesMode) {
 		String dataBaseValue = getProperty(placeholder);
 		if (dataBaseValue != null) {
 			return dataBaseValue;
@@ -63,19 +56,17 @@ public class ScspPropertyPlaceholderConfigurer extends PropertyPlaceholderConfig
 		if (valor != null)
 			return valor;
 
-		try {
-			Connection connection = dataSource.getConnection();
-			PreparedStatement preparedStatement = connection.prepareStatement(SQL_SELECT);
+		if (dataSource == null)
+			return null;
+
+		try (Connection connection = dataSource.getConnection();
+			 PreparedStatement preparedStatement = connection.prepareStatement(SQL_SELECT)) {
 			preparedStatement.setString(1, property);
-			ResultSet resultSet = preparedStatement.executeQuery();
-
-			if (resultSet.next()) {
-				valor = resultSet.getString("valor");
+			try (ResultSet resultSet = preparedStatement.executeQuery()) {
+				if (resultSet.next()) {
+					valor = resultSet.getString("valor");
+				}
 			}
-			resultSet.close();
-			preparedStatement.close();
-			connection.close();
-
 		} catch (Exception ex) {
 			log.debug("No ha estat possible obtenir la propietat {} de la base de dades.", property);
 		}
@@ -83,25 +74,27 @@ public class ScspPropertyPlaceholderConfigurer extends PropertyPlaceholderConfig
 		return valor;
 	}
 
+	@Override
 	public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) throws BeansException {
 		try {
 			log.info("Obtenint dataSource per a carregar les propietats de la BBDD...");
-			JndiDataSourceLookup lookup = new JndiDataSourceLookup();
-			Properties props = new Properties(System.getProperties());
-			loadProperties(props);
-			String datasourceJndi = super.resolvePlaceholder("es.caib.pinbal.datasource.jndi", props);
-			dataSource = lookup.getDataSource(datasourceJndi);
-
-			if (dataSource != null) {
-				// Carregam les propietats del fitxer a la BBDD
+			String datasourceJndi = environment != null
+					? environment.getProperty("spring.datasource.jndi-name")
+					: null;
+			if (datasourceJndi == null || datasourceJndi.isBlank()) {
+				log.warn("spring.datasource.jndi-name no definit; no es carregaran propietats SCSP de la BBDD.");
+			} else {
+				dataSource = new JndiDataSourceLookup().getDataSource(datasourceJndi);
+				Properties props = new Properties(System.getProperties());
+				loadProperties(props);
 				moveToDatabase("es.caib.pinbal.scsp.almacenamiento.ficheros", props);
 				moveToDatabase("es.caib.pinbal.scsp.keystoreFile", props);
 				moveToDatabase("es.caib.pinbal.scsp.keystorePass", props);
 				loadDatabaseProperties(dataBaseProperties);
+				log.info("... Datasource carregat correctament.");
 			}
-			log.debug("... Datasource carregat correctament.");
 		} catch (Exception ex) {
-			log.debug("... No ha estat possible carregar el Datasource.");
+			log.warn("... No ha estat possible carregar el Datasource: {}", ex.getMessage());
 		}
 		super.postProcessBeanFactory(beanFactory);
 	}
@@ -111,18 +104,16 @@ public class ScspPropertyPlaceholderConfigurer extends PropertyPlaceholderConfig
 			 PreparedStatement selectPreparedStatement = connection.prepareStatement("SELECT nombre, valor FROM core_parametro_configuracion")) {
 
 			ResultSet resultSet = selectPreparedStatement.executeQuery();
-			while(resultSet.next()) {
+			while (resultSet.next()) {
 				dataBaseProperties.put(resultSet.getString("nombre"), resultSet.getString("valor"));
 			}
 			resultSet.close();
 		} catch (Exception ex) {
 			log.debug("... No ha estat possible carregar les propietats de la BBDD.");
 		}
-
 	}
 
 	private void moveToDatabase(String property, Properties props) {
-
 		String propValue = super.resolvePlaceholder(property, props);
 
 		try (Connection connection = dataSource.getConnection();

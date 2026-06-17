@@ -48,7 +48,7 @@ public interface ServeiService {
 	 *            Informació del servei a actualitzar.
 	 * @return El servei creat.
 	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasRole('PBL_ADMIN')")
 	public ServeiDto save(ServeiDto servei) throws ServeiNotFoundException;
 
 	/**
@@ -62,7 +62,7 @@ public interface ServeiService {
 	 * @throws ServeiAmbConsultesException
 	 *             Si el servei té consultes ja fetes.
 	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasRole('PBL_ADMIN')")
 	public ServeiDto delete(String serveiCodi) throws ServeiNotFoundException, ServeiAmbConsultesException;
 
 	
@@ -103,7 +103,7 @@ public interface ServeiService {
 	 * 				Paràmetres per a la paginació i ordenació dels resultats.
 	 * @return
 	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_REPRES')")
+	@PreAuthorize("hasRole('PBL_ADMIN') or hasRole('PBL_REPRES')")
 	public Page<ServeiDto> findAmbFiltrePaginat(
 			String codi,
 			String descripcio,
@@ -121,7 +121,7 @@ public interface ServeiService {
 	 * @throws ServeiNotFoundException
 	 *             Si no s'ha trobat troba cap servei amb l'id especificat.
 	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_REPRES')")
+	@PreAuthorize("hasRole('PBL_ADMIN') or hasRole('PBL_REPRES')")
 	public ServeiDto findAmbCodiPerAdminORepresentant(String serveiCodi) throws ServeiNotFoundException;
 
 	/**
@@ -134,7 +134,7 @@ public interface ServeiService {
 	 * @throws ServeiNotFoundException
 	 *             Si no s'ha trobat troba cap servei amb l'id especificat.
 	 */
-	@PreAuthorize("hasRole('ROLE_DELEG')")
+	@PreAuthorize("isAuthenticated()")
 	public ServeiDto findAmbCodiPerDelegat(Long entitatId, String serveiCodi) throws ServeiNotFoundException;
 
 	/**
@@ -144,7 +144,7 @@ public interface ServeiService {
 	 *            Atribut id del servei a trobar.
 	 * @return El servei trobat. Si no s'ha trobat cap servei retorna null.
 	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_REPRES')")
+	@PreAuthorize("hasRole('PBL_ADMIN') or hasRole('PBL_REPRES')")
 	public ServeiDto findById(Long id);
 	
 	/**
@@ -152,7 +152,7 @@ public interface ServeiService {
 	 * 
 	 * @return Un llistat amb els serveis actius.
 	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_REPORT')")
+	@PreAuthorize("hasRole('PBL_ADMIN') or hasRole('PBL_REPORT')")
 	public List<ServeiDto> findActius();
 	
 	/**
@@ -164,7 +164,7 @@ public interface ServeiService {
 	 *            Paràmetre de filtre. 
 	 * @return Un llistat amb els serveis actius.
 	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_REPORT')")
+	@PreAuthorize("hasRole('PBL_ADMIN') or hasRole('PBL_REPORT')")
 	public List<ServeiDto> findActius(String filtre);
 
 	/**
@@ -176,7 +176,7 @@ public interface ServeiService {
 	 * @throws EntitatNotFoundException
 	 *             Si no s'ha trobat troba cap entitat amb l'id especificat.
 	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_REPRES') or hasRole('ROLE_AUDIT') or hasRole('ROLE_SUPERAUD')")
+	@PreAuthorize("hasRole('PBL_ADMIN') or hasRole('PBL_REPRES') or hasRole('PBL_AUDIT') or hasRole('PBL_SUPERAUD')")
 	public List<ServeiDto> findAmbEntitat(Long entitatId) throws EntitatNotFoundException;
 
 	/**
@@ -192,7 +192,7 @@ public interface ServeiService {
 	 * @throws EntitatNotFoundException
 	 *             Si no s'ha trobat troba cap entitat amb l'id especificat.
 	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_REPRES') or hasRole('ROLE_AUDIT') or hasRole('ROLE_SUPERAUD')")
+	@PreAuthorize("hasRole('PBL_ADMIN') or hasRole('PBL_REPRES') or hasRole('PBL_AUDIT') or hasRole('PBL_SUPERAUD')")
 	public List<ServeiDto> findAmbEntitat(Long entitatId, String filtre) throws EntitatNotFoundException;
 	
 	/**
@@ -208,7 +208,7 @@ public interface ServeiService {
 	 * @throws ProcedimentNotFoundException
 	 *             Si no s'ha trobat troba cap procediment amb l'id especificat.
 	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_REPRES') or hasRole('ROLE_AUDIT') or hasRole('ROLE_SUPERAUD')")
+	@PreAuthorize("hasRole('PBL_ADMIN') or hasRole('PBL_REPRES') or hasRole('PBL_AUDIT') or hasRole('PBL_SUPERAUD')")
 	public List<ServeiDto> findAmbEntitatIProcediment(
 			Long entitatId,
 			Long procedimentId) throws EntitatNotFoundException, ProcedimentNotFoundException;
@@ -223,7 +223,7 @@ public interface ServeiService {
 	 * @throws ProcedimentNotFoundException
 	 *             Si no s'ha trobat troba cap procediment amb l'id especificat.
 	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasRole('PBL_ADMIN')")
 	public List<ServeiDto> findAmbProcediment(
 			Long procedimentId) throws ProcedimentNotFoundException;
 	
@@ -244,7 +244,7 @@ public interface ServeiService {
 	 * @throws ProcedimentNotFoundException
 	 *             Si no s'ha trobat troba cap procediment amb l'id especificat.
 	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_REPRES') or hasRole('ROLE_AUDIT') or hasRole('ROLE_SUPERAUD')")
+	@PreAuthorize("hasRole('PBL_ADMIN') or hasRole('PBL_REPRES') or hasRole('PBL_AUDIT') or hasRole('PBL_SUPERAUD')")
 	public List<ServeiDto> findAmbEntitatIProcediment(
 			Long entitatId,
 			Long procedimentId,
@@ -261,7 +261,7 @@ public interface ServeiService {
      * @throws EntitatNotFoundException Si l'entitat amb l'identificador especificat no existeix.
      * @throws ProcedimentNotFoundException Si el procediment amb l'identificador especificat no existeix.
      */
-    @PreAuthorize("hasRole('ROLE_REPRES')")
+    @PreAuthorize("hasRole('PBL_REPRES')")
     public List<ServeiDto> findAmbEntitatNotInProcediment(
             Long entitatId,
             Long procedimentId) throws EntitatNotFoundException, ProcedimentNotFoundException;
@@ -278,12 +278,12 @@ public interface ServeiService {
 	 * @throws EntitatNotFoundException
 	 *             Si no s'ha trobat troba cap entitat amb l'id especificat.
 	 */
-	@PreAuthorize("hasRole('ROLE_REPRES')")
+	@PreAuthorize("hasRole('PBL_REPRES')")
 	public List<ProcedimentServeiDto> findPermesosAmbEntitatIUsuari(
 			Long entitatId,
 			String usuariCodi) throws EntitatNotFoundException;
 
-	@PreAuthorize("hasRole('ROLE_REPRES')")
+	@PreAuthorize("hasRole('PBL_REPRES')")
 	public Integer countPermesosAmbEntitatIUsuari(
 			Long entitatId,
 			String usuariCodi);
@@ -300,12 +300,12 @@ public interface ServeiService {
 	 * @throws ProcedimentNotFoundException
 	 *             Si no s'ha trobat troba cap procediment amb l'id especificat.
 	 */
-	@PreAuthorize("hasRole('ROLE_DELEG')")
+	@PreAuthorize("isAuthenticated()")
 	public List<ServeiDto> findPermesosAmbProcedimentPerDelegat(
 			Long entitatId,
 			Long procedimentId) throws EntitatNotFoundException, ProcedimentNotFoundException;
 
-	@PreAuthorize("hasRole('ROLE_DELEG')")
+	@PreAuthorize("isAuthenticated()")
     List<ServeiDto> getServeiPermesosPerDelegat(Long entitatId, Long procedimentId, Authentication auth) throws EntitatNotFoundException, ProcedimentNotFoundException;
 
     /**
@@ -313,7 +313,7 @@ public interface ServeiService {
 	 * 
 	 * @return Un llistat amb els emisors.
 	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasRole('PBL_ADMIN')")
 	public List<EmisorDto> findEmisorAll();
 
 	/**
@@ -321,7 +321,7 @@ public interface ServeiService {
 	 * 
 	 * @return Un llistat amb les claus publiques.
 	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasRole('PBL_ADMIN')")
 	public List<ClauPublicaDto> findClauPublicaAll();
 
 	/**
@@ -329,7 +329,7 @@ public interface ServeiService {
 	 * 
 	 * @return Un llistat amb les claus privades.
 	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasRole('PBL_ADMIN')")
 	public List<ClauPrivadaDto> findClauPrivadaAll();
 
 	/**
@@ -343,7 +343,7 @@ public interface ServeiService {
 	 * @throws ScspException
 	 *             Si hi ha hagut errors al generar l'arbre.
 	 */
-	/*@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_DELEG')")
+	/*@PreAuthorize("isAuthenticated()")
 	public ArbreDto<DadaEspecificaDto> generarArbreDadesEspecifiquesa(String serveiCodi, boolean gestioXsdActiva) throws ServeiNotFoundException, ScspException;*/
 	
 	
@@ -358,7 +358,7 @@ public interface ServeiService {
 	 * @throws ScspException
 	 *             Si hi ha hagut errors al generar l'arbre.
 	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_DELEG')")
+	@PreAuthorize("isAuthenticated()")
 	public ArbreDto<DadaEspecificaDto> generarArbreDadesEspecifiques(String serveiCodi) throws ServeiNotFoundException, ScspException;
 	
 	/**
@@ -372,7 +372,7 @@ public interface ServeiService {
 	 * @throws ServeiNotFoundException
 	 *             Si no s'ha trobat cap servei amb el codi especificat.
 	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasRole('PBL_ADMIN')")
 	public ServeiCampDto createServeiCamp(
 			String serveiCodi,
 			String path) throws ServeiNotFoundException;
@@ -386,7 +386,7 @@ public interface ServeiService {
 	 * @throws ServeiCampNotFoundException
 	 *             Si no s'ha trobat el camp amb l'id especificat.
 	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasRole('PBL_ADMIN')")
 	public ServeiCampDto updateServeiCamp(ServeiCampDto modificat) throws ServeiCampNotFoundException;
 
 	/**
@@ -398,7 +398,7 @@ public interface ServeiService {
 	 * @throws ServeiCampNotFoundException
 	 *             Si no s'ha trobat el camp amb l'id especificat.
 	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasRole('PBL_ADMIN')")
 	public ServeiCampDto deleteServeiCamp(Long serveiCampId) throws ServeiCampNotFoundException;
 
 	/**
@@ -414,7 +414,7 @@ public interface ServeiService {
 	 * @throws ServeiCampNotFoundException
 	 *             Si no s'ha trobat el camp amb l'id especificat.
 	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasRole('PBL_ADMIN')")
 	public void moveServeiCamp(
 			String serveiCodi,
 			Long serveiCampId,
@@ -433,7 +433,7 @@ public interface ServeiService {
 	 * @throws ServeiCampGrupNotFoundException
 	 *             Si no s'ha trobat el grup de camps especificat.
 	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasRole('PBL_ADMIN')")
 	public void agrupaServeiCamp(
 			Long serveiCampId,
 			Long serveiCampGrupId) throws ServeiCampNotFoundException, ServeiCampGrupNotFoundException;
@@ -447,16 +447,16 @@ public interface ServeiService {
 	 * @throws ServeiNotFoundException
 	 *             Si no s'ha trobat cap servei amb el codi especificat.
 	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_DELEG')")
+	@PreAuthorize("isAuthenticated()")
 	public List<ServeiCampDto> findServeiCamps(String serveiCodi) throws ServeiNotFoundException;
 
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasRole('PBL_ADMIN')")
 	void marcarArrelResposta(String serveiCodi, String path);
 
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasRole('PBL_ADMIN')")
 	void desmarcarArrelResposta(String serveiCodi);
 
-	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_DELEG')")
+	@PreAuthorize("isAuthenticated()")
 	String getArrelRespostaPath(String serveiCodi);
 
 	/**
@@ -468,7 +468,7 @@ public interface ServeiService {
 	 * @throws ServeiNotFoundException
 	 *             Si no s'ha trobat cap servei amb el codi especificat.
 	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasRole('PBL_ADMIN')")
 	public ServeiCampGrupDto createServeiCampGrup(ServeiCampGrupDto serveiCampGrup) throws ServeiNotFoundException;
 
 	/**
@@ -480,7 +480,7 @@ public interface ServeiService {
 	 * @throws ServeiCampGrupNotFoundException
 	 *             Si no s'ha trobat el grup de camps especificat.
 	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasRole('PBL_ADMIN')")
 	public ServeiCampGrupDto updateServeiCampGrup(ServeiCampGrupDto serveiCampGrup) throws ServeiCampGrupNotFoundException;
 
 	/**
@@ -492,7 +492,7 @@ public interface ServeiService {
 	 * @throws ServeiCampGrupNotFoundException
 	 *             Si no s'ha trobat el grup de camps especificat.
 	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasRole('PBL_ADMIN')")
 	public ServeiCampGrupDto deleteServeiCampGrup(Long serveiCampGrupId) throws ServeiCampGrupNotFoundException;
 
 	/**
@@ -507,7 +507,7 @@ public interface ServeiService {
 	 * @throws ServeiCampGrupNotFoundException
 	 *             Si no s'ha trobat el grup de camps especificat.
 	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasRole('PBL_ADMIN')")
 	public void moveServeiCampGrup(
 			Long serveiCampGrupId,
 			boolean up) throws ServeiCampGrupNotFoundException;
@@ -521,13 +521,13 @@ public interface ServeiService {
 	 * @throws ServeiNotFoundException
 	 *             Si no s'ha trobat cap servei amb el codi especificat.
 	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_DELEG')")
+	@PreAuthorize("isAuthenticated()")
 	public List<ServeiCampGrupDto> findServeiCampGrups(String serveiCodi) throws ServeiNotFoundException;
 
-	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_DELEG')")
+	@PreAuthorize("isAuthenticated()")
 	public List<ServeiCampGrupDto> findServeiCampGrupsAndSubgrups(String serveiCodi) throws ServeiNotFoundException;
 
-	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_DELEG')")
+	@PreAuthorize("isAuthenticated()")
 	public ServeiCampGrupDto serveiCampGrupFindByNom(String serveiCodi, String nom);
 
 	/**
@@ -540,7 +540,7 @@ public interface ServeiService {
 	 * @throws ServeiNotFoundException
 	 *             Si no s'ha trobat cap servei amb el codi especificat.
 	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasRole('PBL_ADMIN')")
 	public ServeiBusDto createServeiBus(
 			ServeiBusDto creat) throws ServeiNotFoundException, EntitatNotFoundException;
 
@@ -554,7 +554,7 @@ public interface ServeiService {
 	 * @throws ServeiBusNotFoundException
 	 *             Si no s'ha trobat la redirecció especificada.
 	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasRole('PBL_ADMIN')")
 	public ServeiBusDto updateServeiBus(
 			ServeiBusDto modificat) throws ServeiBusNotFoundException, EntitatNotFoundException;
 
@@ -568,7 +568,7 @@ public interface ServeiService {
 	 * @throws ServeiBusNotFoundException
 	 *             Si no s'ha trobat la redirecció especificada.
 	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasRole('PBL_ADMIN')")
 	public ServeiBusDto deleteServeiBus(
 			Long serveiBusId) throws ServeiBusNotFoundException;
 
@@ -581,7 +581,7 @@ public interface ServeiService {
 	 * @throws ServeiBusNotFoundException
 	 *             Si no s'ha trobat la redirecció especificada.
 	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasRole('PBL_ADMIN')")
 	public ServeiBusDto findServeiBusById(Long id) throws ServeiBusNotFoundException;
 
 	/**
@@ -594,7 +594,7 @@ public interface ServeiService {
 	 * @throws ServeiNotFoundException
 	 *             Si no s'ha trobat cap servei amb el codi especificat.
 	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasRole('PBL_ADMIN')")
 	public List<ServeiBusDto> findServeisBus(String serveiCodi) throws ServeiNotFoundException;
 
 	/**
@@ -606,7 +606,7 @@ public interface ServeiService {
 	 * @throws ServeiNotFoundException
 	 *             Si no s'ha trobat cap servei amb el codi especificat.
 	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasRole('PBL_ADMIN')")
 	public void addServeiJustificantCamp(
 			ServeiJustificantCampDto camp) throws ServeiNotFoundException;
 
@@ -620,7 +620,7 @@ public interface ServeiService {
 	 * @throws ServeiNotFoundException
 	 *             Si no s'ha trobat cap servei amb el codi especificat.
 	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_DELEG')")
+	@PreAuthorize("isAuthenticated()")
 	public List<ServeiJustificantCampDto> findServeiJustificantCamps(
 			String serveiCodi) throws ServeiNotFoundException;
 	
@@ -635,7 +635,7 @@ public interface ServeiService {
 	 * @throws ServeiNotFoundException 
 	 */
 	
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasRole('PBL_ADMIN')")
 	public List<ServeiXsdDto> xsdFindByServei(
 			String codi) throws IOException, ServeiNotFoundException;
 	
@@ -650,7 +650,7 @@ public interface ServeiService {
 	 *             Si no s'ha trobat cap servei amb el codi especificat.
 	 */
 	
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasRole('PBL_ADMIN')")
 	public void xsdDelete(
 			String codi,
 			XsdTipusEnumDto tipus) throws IOException;
@@ -667,7 +667,7 @@ public interface ServeiService {
 	 *             Si no s'ha trobat cap servei amb el codi especificat.
 	 */
 	
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasRole('PBL_ADMIN')")
 	public FitxerDto xsdDescarregar(
 			String codi,
 			XsdTipusEnumDto tipus) throws IOException;
@@ -685,7 +685,7 @@ public interface ServeiService {
 	 */
 	
 	
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasRole('PBL_ADMIN')")
 	public void xsdCreate(
 			String codi,
 			ServeiXsdDto xsd,
@@ -696,7 +696,7 @@ public interface ServeiService {
 	 *
 	 * @param codi Codi del servei
 	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasRole('PBL_ADMIN')")
 	public void updateVersio(String codi);
 
 	/**
@@ -706,7 +706,7 @@ public interface ServeiService {
 	 */
 	public List<String> getRolsConfigurats();
 
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasRole('PBL_ADMIN')")
 	void saveActiu(
 			String serveiCodi,
 			boolean actiu);
@@ -716,7 +716,7 @@ public interface ServeiService {
 	 * 
 	 * @return	Un llistat de serveis
 	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasRole('PBL_ADMIN')")
 	public List<ServeiDto> findAll();
 
 	/**
@@ -726,13 +726,13 @@ public interface ServeiService {
 	 * @param nom
 	 * @return
 	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasRole('PBL_ADMIN')")
 	public ServeiReglaDto serveiReglaFindByNom(Long serveiId, String nom);
 
 	/**
 	 * Obté una regla donat el servei i l'identificador
 	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasRole('PBL_ADMIN')")
 	public ServeiReglaDto serveiReglaFindById(Long reglaId);
 
 	/**
@@ -740,7 +740,7 @@ public interface ServeiService {
 	 * @param serveiCodi
 	 * @param reglaDto
 	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasRole('PBL_ADMIN')")
 	ServeiReglaDto serveiReglaCreate(String serveiCodi, ServeiReglaDto reglaDto) throws ServeiNotFoundException;
 
 	/**
@@ -748,7 +748,7 @@ public interface ServeiService {
 	 * @param serveiCodi
 	 * @param reglaDto
 	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasRole('PBL_ADMIN')")
 	ServeiReglaDto serveiReglaUpdate(String serveiCodi, ServeiReglaDto reglaDto) throws ServeiNotFoundException;
 
 	/**
@@ -756,7 +756,7 @@ public interface ServeiService {
 	 * @param serveiCodi
 	 * @param reglaId
 	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasRole('PBL_ADMIN')")
 	void serveiReglaDelete(String serveiCodi, Long reglaId) throws ServeiNotFoundException;
 
 	/**
@@ -765,7 +765,7 @@ public interface ServeiService {
 	 * @param posicio
 	 * @return
 	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasRole('PBL_ADMIN')")
 	boolean serveiReglaMoure(Long reglaId, int posicio);
 
 	/**
@@ -773,19 +773,19 @@ public interface ServeiService {
 	 * @param serveiCodi
 	 * @return
 	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasRole('PBL_ADMIN')")
 	List<ServeiReglaDto> serveiReglesFindAll(String serveiCodi) throws ServeiNotFoundException;
 
-	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_DELEG')")
+	@PreAuthorize("isAuthenticated()")
 	List<Long> findCampIdsByReglesServei(String serveiCodi) throws ServeiNotFoundException;
 
-	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_DELEG')")
+	@PreAuthorize("isAuthenticated()")
 	List<Long> findGrupIdsByReglesServei(String serveiCodi) throws ServeiNotFoundException;
 
-	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_DELEG')")
+	@PreAuthorize("isAuthenticated()")
 	List<CampFormProperties> getCampsByserveiRegla(String serveiCodi, String[] campsModificats) throws ServeiNotFoundException;
 
-	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_DELEG')")
+	@PreAuthorize("isAuthenticated()")
 	List<CampFormProperties> getGrupsByserveiRegla(String serveiCodi, String[] grupsModificats) throws ServeiNotFoundException;
 
 }

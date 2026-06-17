@@ -69,7 +69,7 @@
 	<c:url value="/usuariajax/usuari" var="urlConsultaUsuari"/>
 	<c:url value="/usuariajax/usuari/externs" var="urlConsultaUsuaris"/>
 	<c:url value="/modal/representant/usuari/save" var="formAction"/>
-	<form:form action="${formAction}" method="post" cssClass="form-horizontal" commandName="entitatUsuariCommand" role="form">
+	<form:form action="${formAction}" method="post" cssClass="form-horizontal" modelAttribute="entitatUsuariCommand" role="form">
 		<pbl:inputSuggest
 				name="codi"
 				urlConsultaInicial="${urlConsultaUsuari}"

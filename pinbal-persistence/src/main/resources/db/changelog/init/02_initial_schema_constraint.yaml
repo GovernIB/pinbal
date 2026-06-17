@@ -1,442 +1,478 @@
 databaseChangeLog:
 - changeSet:
     id: init-constraint-1
-    author: limit (generated)
+    author: Limit
+    comment: Inicialitzar constraints
     changes:
     - addForeignKeyConstraint:
+        baseTableName: pbl_acl_entry
+        baseColumnNames: sid
+        constraintName: pbl_acl_entry_acl_fk
+        referencedTableName: pbl_acl_sid
+        referencedColumnNames: id
+    - addForeignKeyConstraint:
+        baseTableName: pbl_acl_entry
+        baseColumnNames: acl_object_identity
+        constraintName: pbl_acl_entry_object_fk
+        referencedTableName: pbl_acl_object_identity
+        referencedColumnNames: id
+    - addForeignKeyConstraint:
+        baseTableName: pbl_acl_object_identity
+        baseColumnNames: object_id_class
+        constraintName: pbl_acl_oid_class_fk
+        referencedTableName: pbl_acl_class
+        referencedColumnNames: id
+    - addForeignKeyConstraint:
+        baseTableName: pbl_acl_object_identity
+        baseColumnNames: owner_sid
+        constraintName: pbl_acl_oid_owner_fk
+        referencedTableName: pbl_acl_sid
+        referencedColumnNames: id
+    - addForeignKeyConstraint:
+        baseTableName: pbl_acl_object_identity
+        baseColumnNames: parent_object
+        constraintName: pbl_acl_oid_parent_fk
+        referencedTableName: pbl_acl_object_identity
+        referencedColumnNames: id
+    - addForeignKeyConstraint:
+        baseTableName: core_clave_privada
+        baseColumnNames: organismo
+        constraintName: clave_privada_organismo
+        referencedTableName: core_organismo_cesionario
+        referencedColumnNames: id
+    - addForeignKeyConstraint:
+        baseTableName: core_modulo_configuracion
+        baseColumnNames: modulo
+        constraintName: mod_conf_modulo
+        referencedTableName: core_modulo
+        referencedColumnNames: nombre
+    - addForeignKeyConstraint:
+        baseTableName: core_modulo_configuracion
+        baseColumnNames: certificado
+        constraintName: mod_conf_servicio
+        referencedTableName: core_servicio
+        referencedColumnNames: id
+    - addForeignKeyConstraint:
+        baseTableName: core_peticion_respuesta
+        baseColumnNames: certificado
+        constraintName: pet_resp_servicio
+        referencedTableName: core_servicio
+        referencedColumnNames: id
+    - addForeignKeyConstraint:
+        baseTableName: core_req_modulo_pdf_cesionario
+        baseColumnNames: modulo
+        constraintName: fk_modulo_mod_pdf
+        referencedTableName: core_modulo
+        referencedColumnNames: nombre
+    - addForeignKeyConstraint:
+        baseTableName: core_req_modulo_pdf_cesionario
+        baseColumnNames: organismo
+        constraintName: fk_org_cesionario_mod_pdf
+        referencedTableName: core_organismo_cesionario
+        referencedColumnNames: id
+    - addForeignKeyConstraint:
+        baseTableName: core_req_modulo_pdf_cesionario
+        baseColumnNames: servicio
+        constraintName: fk_servicio_mod_pdf
+        referencedTableName: core_servicio
+        referencedColumnNames: id
+    - addForeignKeyConstraint:
+        baseTableName: core_servicio
+        baseColumnNames: clavecifrado
+        constraintName: serv_clavecifrado
+        referencedTableName: core_clave_publica
+        referencedColumnNames: id
+    - addForeignKeyConstraint:
+        baseTableName: core_servicio
+        baseColumnNames: clavefirma
+        constraintName: serv_clavefirma
+        referencedTableName: core_clave_privada
+        referencedColumnNames: id
+    - addForeignKeyConstraint:
+        baseTableName: core_servicio
+        baseColumnNames: emisor
+        constraintName: serv_emisor
+        referencedTableName: core_emisor_certificado
+        referencedColumnNames: id
+    - addForeignKeyConstraint:
+        baseTableName: core_token_data
+        baseColumnNames: idpeticion
+        constraintName: token_peticion
+        referencedTableName: core_peticion_respuesta
+        referencedColumnNames: idpeticion
+    - addForeignKeyConstraint:
+        baseTableName: core_token_data
+        baseColumnNames: tipomensaje
+        constraintName: token_tipo
+        referencedTableName: core_tipo_mensaje
+        referencedColumnNames: tipo
+    - addForeignKeyConstraint:
+        baseTableName: core_transmision
+        baseColumnNames: idpeticion
+        constraintName: trans_peticion
+        referencedTableName: core_peticion_respuesta
+        referencedColumnNames: idpeticion
+    - addForeignKeyConstraint:
+        baseTableName: pbl_config
+        baseColumnNames: group_code
+        constraintName: pbl_config_group_fk
+        referencedTableName: pbl_config_group
+        referencedColumnNames: code
+    - addForeignKeyConstraint:
+        baseTableName: pbl_consulta
+        baseColumnNames: entitat_id
+        constraintName: pbl_consulta_entitat_fk
+        referencedTableName: pbl_entitat
+        referencedColumnNames: id
+    - addForeignKeyConstraint:
+        baseTableName: pbl_consulta
         baseColumnNames: pare_id
-        baseTableName: pbl_consulta
         constraintName: pbl_consulta_pare_fk
-        referencedColumnNames: id
         referencedTableName: pbl_consulta
-    - addForeignKeyConstraint:
-        baseColumnNames: procserv_id
-        baseTableName: pbl_consulta
-        constraintName: pbl_procserv_consulta_fk
         referencedColumnNames: id
-        referencedTableName: pbl_procediment_servei
     - addForeignKeyConstraint:
+        baseTableName: pbl_consulta
+        baseColumnNames: procediment_id
+        constraintName: pbl_consulta_proced_fk
+        referencedTableName: pbl_procediment
+        referencedColumnNames: id
+    - addForeignKeyConstraint:
+        baseTableName: pbl_consulta
         baseColumnNames: createdby_codi
-        baseTableName: pbl_consulta
         constraintName: pbl_createdby_consulta_fk
-        referencedColumnNames: codi
         referencedTableName: pbl_usuari
+        referencedColumnNames: codi
     - addForeignKeyConstraint:
-        baseColumnNames: lastmodifiedby_codi
         baseTableName: pbl_consulta
+        baseColumnNames: lastmodifiedby_codi
         constraintName: pbl_lastmodifiedby_consulta_fk
-        referencedColumnNames: codi
         referencedTableName: pbl_usuari
-- changeSet:
-    id: init-constraint-2
-    author: limit (generated)
-    changes:
+        referencedColumnNames: codi
+    - addForeignKeyConstraint:
+        baseTableName: pbl_consulta
+        baseColumnNames: procserv_id
+        constraintName: pbl_procserv_consulta_fk
+        referencedTableName: pbl_procediment_servei
+        referencedColumnNames: id
+    - addForeignKeyConstraint:
+        baseTableName: pbl_consulta_hist
+        baseColumnNames: entitat_id
+        constraintName: pbl_consultah_entitat_fk
+        referencedTableName: pbl_entitat
+        referencedColumnNames: id
+    - addForeignKeyConstraint:
+        baseTableName: pbl_consulta_hist
+        baseColumnNames: procediment_id
+        constraintName: pbl_consultah_proced_fk
+        referencedTableName: pbl_procediment
+        referencedColumnNames: id
+    - addForeignKeyConstraint:
+        baseTableName: pbl_entitat
+        baseColumnNames: createdby_codi
+        constraintName: pbl_createdby_usuari_fk
+        referencedTableName: pbl_usuari
+        referencedColumnNames: codi
+    - addForeignKeyConstraint:
+        baseTableName: pbl_entitat
+        baseColumnNames: lastmodifiedby_codi
+        constraintName: pbl_lastmodifiedby_usuari_fk
+        referencedTableName: pbl_usuari
+        referencedColumnNames: codi
+    - addForeignKeyConstraint:
+        baseTableName: pbl_entitat_servei
+        baseColumnNames: createdby_codi
+        constraintName: pbl_createdby_entiserv_fk
+        referencedTableName: pbl_usuari
+        referencedColumnNames: codi
+    - addForeignKeyConstraint:
+        baseTableName: pbl_entitat_servei
+        baseColumnNames: entitat_id
+        constraintName: pbl_entitat_entiserv_fk
+        referencedTableName: pbl_entitat
+        referencedColumnNames: id
+    - addForeignKeyConstraint:
+        baseTableName: pbl_entitat_servei
+        baseColumnNames: lastmodifiedby_codi
+        constraintName: pbl_lastmodifiedby_entiserv_fk
+        referencedTableName: pbl_usuari
+        referencedColumnNames: codi
+    - addForeignKeyConstraint:
+        baseTableName: pbl_entitat_usuari
+        baseColumnNames: createdby_codi
+        constraintName: pbl_createdby_entiusr_fk
+        referencedTableName: pbl_usuari
+        referencedColumnNames: codi
+    - addForeignKeyConstraint:
+        baseTableName: pbl_entitat_usuari
+        baseColumnNames: entitat_id
+        constraintName: pbl_entitat_entiusr_fk
+        referencedTableName: pbl_entitat
+        referencedColumnNames: id
+    - addForeignKeyConstraint:
+        baseTableName: pbl_entitat_usuari
+        baseColumnNames: lastmodifiedby_codi
+        constraintName: pbl_lastmodifiedby_entiusr_fk
+        referencedTableName: pbl_usuari
+        referencedColumnNames: codi
+    - addForeignKeyConstraint:
+        baseTableName: pbl_entitat_usuari
+        baseColumnNames: usuari_id
+        constraintName: pbl_usuari_entiusr_fk
+        referencedTableName: pbl_usuari
+        referencedColumnNames: codi
+    - addForeignKeyConstraint:
+        baseTableName: pbl_explot_consulta_fet
+        baseColumnNames: dimensio_id
+        constraintName: pbl_fet_dim_fk
+        referencedTableName: pbl_explot_consulta_dim
+        referencedColumnNames: id
+    - addForeignKeyConstraint:
+        baseTableName: pbl_explot_consulta_fet
+        baseColumnNames: temps_id
+        constraintName: pbl_fet_tmp_fk
+        referencedTableName: pbl_explot_temps
+        referencedColumnNames: id
+    - addForeignKeyConstraint:
+        baseTableName: pbl_mon_int_param
+        baseColumnNames: mon_int_id
+        constraintName: dis_monintparam_monint_fk
+        referencedTableName: pbl_mon_int
+        referencedColumnNames: id
+    - addForeignKeyConstraint:
+        baseTableName: pbl_organ_gestor
+        baseColumnNames: entitat_id
+        constraintName: pbl_entitat_organ_gestor_fk
+        referencedTableName: pbl_entitat
+        referencedColumnNames: id
+    - addForeignKeyConstraint:
+        baseTableName: pbl_procediment
+        baseColumnNames: createdby_codi
+        constraintName: pbl_createdby_proced_fk
+        referencedTableName: pbl_usuari
+        referencedColumnNames: codi
+    - addForeignKeyConstraint:
+        baseTableName: pbl_procediment
+        baseColumnNames: entitat_id
+        constraintName: pbl_entitat_proced_fk
+        referencedTableName: pbl_entitat
+        referencedColumnNames: id
+    - addForeignKeyConstraint:
+        baseTableName: pbl_procediment
+        baseColumnNames: lastmodifiedby_codi
+        constraintName: pbl_lastmodifiedby_proced_fk
+        referencedTableName: pbl_usuari
+        referencedColumnNames: codi
+    - addForeignKeyConstraint:
+        baseTableName: pbl_procediment
+        baseColumnNames: organ_gestor_id
+        constraintName: pbl_organ_procediment_fk
+        referencedTableName: pbl_organ_gestor
+        referencedColumnNames: id
+    - addForeignKeyConstraint:
+        baseTableName: pbl_procediment_servei
+        baseColumnNames: createdby_codi
+        constraintName: pbl_createdby_procserv_fk
+        referencedTableName: pbl_usuari
+        referencedColumnNames: codi
+    - addForeignKeyConstraint:
+        baseTableName: pbl_procediment_servei
+        baseColumnNames: lastmodifiedby_codi
+        constraintName: pbl_lastmodifiedby_provserv_fk
+        referencedTableName: pbl_usuari
+        referencedColumnNames: codi
+    - addForeignKeyConstraint:
+        baseTableName: pbl_procediment_servei
+        baseColumnNames: procediment_id
+        constraintName: pbl_proced_procserv_fk
+        referencedTableName: pbl_procediment
+        referencedColumnNames: id
+    - addForeignKeyConstraint:
+        baseTableName: pbl_servei_bus
+        baseColumnNames: createdby_codi
+        constraintName: pbl_createdby_servei_bus_fk
+        referencedTableName: pbl_usuari
+        referencedColumnNames: codi
+    - addForeignKeyConstraint:
+        baseTableName: pbl_servei_bus
+        baseColumnNames: entitat_id
+        constraintName: pbl_entitat_servbus_fk
+        referencedTableName: pbl_entitat
+        referencedColumnNames: id
+    - addForeignKeyConstraint:
+        baseTableName: pbl_servei_bus
+        baseColumnNames: lastmodifiedby_codi
+        constraintName: pbl_lastmodby_servei_bus_fk
+        referencedTableName: pbl_usuari
+        referencedColumnNames: codi
+    - addForeignKeyConstraint:
+        baseTableName: pbl_servei_camp
+        baseColumnNames: createdby_codi
+        constraintName: pbl_createdby_srvcamp_fk
+        referencedTableName: pbl_usuari
+        referencedColumnNames: codi
+    - addForeignKeyConstraint:
+        baseTableName: pbl_servei_camp
+        baseColumnNames: lastmodifiedby_codi
+        constraintName: pbl_lastmodifiedby_srvcamp_fk
+        referencedTableName: pbl_usuari
+        referencedColumnNames: codi
+    - addForeignKeyConstraint:
+        baseTableName: pbl_servei_camp
+        baseColumnNames: camp_pare_id
+        constraintName: pbl_pare_servcamp_fk
+        referencedTableName: pbl_servei_camp
+        referencedColumnNames: id
+    - addForeignKeyConstraint:
+        baseTableName: pbl_servei_camp
+        baseColumnNames: grup_id
+        constraintName: pbl_srcgrup_srvcamp_fk
+        referencedTableName: pbl_servei_camp_grup
+        referencedColumnNames: id
+    - addForeignKeyConstraint:
+        baseTableName: pbl_servei_camp_grup
+        baseColumnNames: createdby_codi
+        constraintName: pbl_createdby_servei_grup_fk
+        referencedTableName: pbl_usuari
+        referencedColumnNames: codi
+    - addForeignKeyConstraint:
+        baseTableName: pbl_servei_camp_grup
+        baseColumnNames: pare_id
+        constraintName: pbl_grup_pare_fk
+        referencedTableName: pbl_servei_camp_grup
+        referencedColumnNames: id
+    - addForeignKeyConstraint:
+        baseTableName: pbl_servei_camp_grup
+        baseColumnNames: lastmodifiedby_codi
+        constraintName: pbl_lastmodby_servei_grup_fk
+        referencedTableName: pbl_usuari
+        referencedColumnNames: codi
+    - addForeignKeyConstraint:
+        baseTableName: pbl_servei_config
+        baseColumnNames: createdby_codi
+        constraintName: pbl_createdby_srvei_config_fk
+        referencedTableName: pbl_usuari
+        referencedColumnNames: codi
+    - addForeignKeyConstraint:
+        baseTableName: pbl_servei_config
+        baseColumnNames: lastmodifiedby_codi
+        constraintName: pbl_lastmodby_servei_config_fk
+        referencedTableName: pbl_usuari
+        referencedColumnNames: codi
+    - addForeignKeyConstraint:
+        baseTableName: pbl_servei_justif_camp
+        baseColumnNames: createdby_codi
+        constraintName: pbl_createdby_srvjus_fk
+        referencedTableName: pbl_usuari
+        referencedColumnNames: codi
+    - addForeignKeyConstraint:
+        baseTableName: pbl_servei_justif_camp
+        baseColumnNames: lastmodifiedby_codi
+        constraintName: pbl_lastmodby_srvjus_fk
+        referencedTableName: pbl_usuari
+        referencedColumnNames: codi
+    - addForeignKeyConstraint:
+        baseTableName: pbl_servei_regla
+        baseColumnNames: servei_id
+        constraintName: pbl_regla_servei_fk
+        referencedTableName: core_servicio
+        referencedColumnNames: id
+    - addForeignKeyConstraint:
+        baseTableName: pbl_servei_regla_valor_afc
+        baseColumnNames: regla_id
+        constraintName: pbl_regla_valor_afc_fk
+        referencedTableName: pbl_servei_regla
+        referencedColumnNames: id
+    - addForeignKeyConstraint:
+        baseTableName: pbl_servei_regla_valor_mod
+        baseColumnNames: regla_id
+        constraintName: pbl_regla_valor_mod_fk
+        referencedTableName: pbl_servei_regla
+        referencedColumnNames: id
+    - addForeignKeyConstraint:
+        baseTableName: core_clave_privada_externa
+        baseColumnNames: clave_privada
+        constraintName: claveprivext_clavepriv
+        referencedTableName: core_clave_privada
+        referencedColumnNames: id
+    - addForeignKeyConstraint:
+        baseTableName: core_req_ssl_cesionarios
+        baseColumnNames: servicio
+        constraintName: fk_servicio_sslcesionario
+        referencedTableName: core_servicio
+        referencedColumnNames: id
+    - addForeignKeyConstraint:
+        baseTableName: core_req_ssl_cesionarios
+        baseColumnNames: claveprivada
+        constraintName: fk_clave_priv_sslcesionario
+        referencedTableName: core_clave_privada
+        referencedColumnNames: id
+    - addForeignKeyConstraint:
+        baseTableName: core_req_ssl_cesionarios
+        baseColumnNames: organismo
+        constraintName: fk_organismo_sslcesionario
+        referencedTableName: core_organismo_cesionario
+        referencedColumnNames: id
     - addUniqueConstraint:
+        tableName: pbl_acl_class
+        columnNames: class
+        constraintName: pbl_acl_class_uk
+    - addUniqueConstraint:
+        tableName: pbl_acl_entry
+        columnNames: acl_object_identity,ace_order
+        constraintName: pbl_acl_entry_uk
+    - addUniqueConstraint:
+        tableName: pbl_acl_object_identity
+        columnNames: object_id_class,object_id_identity
+        constraintName: pbl_acl_oid_uk
+    - addUniqueConstraint:
+        tableName: pbl_acl_sid
+        columnNames: sid,principal
+        constraintName: pbl_acl_sid_uk
+    - addUniqueConstraint:
+        tableName: pbl_entitat
         columnNames: codi
         constraintName: pbl_entitat_codi_uk
-        tableName: pbl_entitat
-    - addForeignKeyConstraint:
-        baseColumnNames: createdby_codi
-        baseTableName: pbl_entitat
-        constraintName: pbl_createdby_usuari_fk
-        referencedColumnNames: codi
-        referencedTableName: pbl_usuari
-    - addForeignKeyConstraint:
-        baseColumnNames: lastmodifiedby_codi
-        baseTableName: pbl_entitat
-        constraintName: pbl_lastmodifiedby_usuari_fk
-        referencedColumnNames: codi
-        referencedTableName: pbl_usuari
-- changeSet:
-    id: init-constraint-3
-    author: limit (generated)
-    changes:
     - addUniqueConstraint:
-        columnNames: entitat_id, servei_id
-        constraintName: pbl_entitat_servei_uk
         tableName: pbl_entitat_servei
-    - addForeignKeyConstraint:
-        baseColumnNames: entitat_id
-        baseTableName: pbl_entitat_servei
-        constraintName: pbl_entitat_entiserv_fk
-        referencedColumnNames: id
-        referencedTableName: pbl_entitat
-    - addForeignKeyConstraint:
-        baseColumnNames: createdby_codi
-        baseTableName: pbl_entitat_servei
-        constraintName: pbl_createdby_entiserv_fk
-        referencedColumnNames: codi
-        referencedTableName: pbl_usuari
-    - addForeignKeyConstraint:
-        baseColumnNames: lastmodifiedby_codi
-        baseTableName: pbl_entitat_servei
-        constraintName: pbl_lastmodifiedby_entiserv_fk
-        referencedColumnNames: codi
-        referencedTableName: pbl_usuari
-- changeSet:
-    id: init-constraint-4
-    author: limit (generated)
-    changes:
-    - addForeignKeyConstraint:
-        baseColumnNames: entitat_id
-        baseTableName: pbl_entitat_usuari
-        constraintName: pbl_entitat_entiusr_fk
-        referencedColumnNames: id
-        referencedTableName: pbl_entitat
-    - addForeignKeyConstraint:
-        baseColumnNames: usuari_id
-        baseTableName: pbl_entitat_usuari
-        constraintName: pbl_usuari_entiusr_fk
-        referencedColumnNames: codi
-        referencedTableName: pbl_usuari
-    - addForeignKeyConstraint:
-        baseColumnNames: createdby_codi
-        baseTableName: pbl_entitat_usuari
-        constraintName: pbl_createdby_entiusr_fk
-        referencedColumnNames: codi
-        referencedTableName: pbl_usuari
-    - addForeignKeyConstraint:
-        baseColumnNames: lastmodifiedby_codi
-        baseTableName: pbl_entitat_usuari
-        constraintName: pbl_lastmodifiedby_entiusr_fk
-        referencedColumnNames: codi
-        referencedTableName: pbl_usuari
-- changeSet:
-    id: init-constraint-5
-    author: limit (generated)
-    changes:
+        columnNames: entitat_id,servei_id
+        constraintName: pbl_entitat_servei_uk
     - addUniqueConstraint:
-        columnNames: codi, entitat_id
-        constraintName: pbl_organ_gestor_uk
+        tableName: pbl_entitat_usuari
+        columnNames: entitat_id,usuari_id
+        constraintName: pbl_entitat_usuari_uk
+    - addUniqueConstraint:
+        tableName: pbl_explot_consulta_dim
+        columnNames: entitat_id,procediment_id,servei_codi,usuari_codi
+        constraintName: pbl_explot_consulta_dim_uk
+    - addUniqueConstraint:
         tableName: pbl_organ_gestor
-    - addForeignKeyConstraint:
-        baseColumnNames: entitat_id
-        baseTableName: pbl_organ_gestor
-        constraintName: pbl_entitat_organ_gestor_fk
-        referencedColumnNames: id
-        referencedTableName: pbl_entitat
-- changeSet:
-    id: init-constraint-6
-    author: limit (generated)
-    changes:
+        columnNames: codi,entitat_id
+        constraintName: pbl_organ_gestor_uk
     - addUniqueConstraint:
-        columnNames: entitat_id, codi
+        tableName: pbl_procediment
+        columnNames: entitat_id,codi
         constraintName: pbl_procediment_uk
-        tableName: pbl_procediment
     - addUniqueConstraint:
-        columnNames: codi, entitat_id
-        constraintName: pbl_proid_uk
-        tableName: pbl_procediment
-    - addForeignKeyConstraint:
-        baseColumnNames: entitat_id
-        baseTableName: pbl_procediment
-        constraintName: pbl_entitat_proced_fk
-        referencedColumnNames: id
-        referencedTableName: pbl_entitat
-    - addForeignKeyConstraint:
-        baseColumnNames: organ_gestor_id
-        baseTableName: pbl_procediment
-        constraintName: pbl_organ_procediment_fk
-        referencedColumnNames: id
-        referencedTableName: pbl_organ_gestor
-    - addForeignKeyConstraint:
-        baseColumnNames: createdby_codi
-        baseTableName: pbl_procediment
-        constraintName: pbl_createdby_proced_fk
-        referencedColumnNames: codi
-        referencedTableName: pbl_usuari
-    - addForeignKeyConstraint:
-        baseColumnNames: lastmodifiedby_codi
-        baseTableName: pbl_procediment
-        constraintName: pbl_lastmodifiedby_proced_fk
-        referencedColumnNames: codi
-        referencedTableName: pbl_usuari
-- changeSet:
-    id: init-constraint-7
-    author: limit (generated)
-    changes:
-    - addUniqueConstraint:
-        columnNames: procediment_id, servei_id
-        constraintName: pbl_procediment_servei_uk
         tableName: pbl_procediment_servei
-    - addForeignKeyConstraint:
-        baseColumnNames: procediment_id
-        baseTableName: pbl_procediment_servei
-        constraintName: pbl_proced_procserv_fk
-        referencedColumnNames: id
-        referencedTableName: pbl_procediment
-    - addForeignKeyConstraint:
-        baseColumnNames: createdby_codi
-        baseTableName: pbl_procediment_servei
-        constraintName: pbl_createdby_procserv_fk
-        referencedColumnNames: codi
-        referencedTableName: pbl_usuari
-    - addForeignKeyConstraint:
-        baseColumnNames: lastmodifiedby_codi
-        baseTableName: pbl_procediment_servei
-        constraintName: pbl_lastmodifiedby_provserv_fk
-        referencedColumnNames: codi
-        referencedTableName: pbl_usuari
-- changeSet:
-    id: init-constraint-8
-    author: limit (generated)
-    changes:
-    - addForeignKeyConstraint:
-        baseColumnNames: entitat_id
-        baseTableName: pbl_servei_bus
-        constraintName: pbl_entitat_servbus_fk
-        referencedColumnNames: id
-        referencedTableName: pbl_entitat
-    - addForeignKeyConstraint:
-        baseColumnNames: createdby_codi
-        baseTableName: pbl_servei_bus
-        constraintName: FK31B17CA01D90EB87
-        referencedColumnNames: codi
-        referencedTableName: pbl_usuari
-    - addForeignKeyConstraint:
-        baseColumnNames: lastmodifiedby_codi
-        baseTableName: pbl_servei_bus
-        constraintName: FK31B17CA024DDA730
-        referencedColumnNames: codi
-        referencedTableName: pbl_usuari
-- changeSet:
-    id: init-constraint-9
-    author: limit (generated)
-    changes:
+        columnNames: procediment_id,servei_id
+        constraintName: pbl_procediment_servei_uk
     - addUniqueConstraint:
-        columnNames: servei_id, path
-        constraintName: pbl_servei_camp_uk
         tableName: pbl_servei_camp
-    - addForeignKeyConstraint:
-        baseColumnNames: camp_pare_id
-        baseTableName: pbl_servei_camp
-        constraintName: pbl_pare_servcamp_fk
-        referencedColumnNames: id
-        referencedTableName: pbl_servei_camp
-    - addForeignKeyConstraint:
-        baseColumnNames: grup_id
-        baseTableName: pbl_servei_camp
-        constraintName: pbl_srcgrup_srvcamp_fk
-        referencedColumnNames: id
-        referencedTableName: pbl_servei_camp_grup
-    - addForeignKeyConstraint:
-        baseColumnNames: createdby_codi
-        baseTableName: pbl_servei_camp
-        constraintName: pbl_createdby_srvcamp_fk
-        referencedColumnNames: codi
-        referencedTableName: pbl_usuari
-    - addForeignKeyConstraint:
-        baseColumnNames: lastmodifiedby_codi
-        baseTableName: pbl_servei_camp
-        constraintName: pbl_lastmodifiedby_srvcamp_fk
-        referencedColumnNames: codi
-        referencedTableName: pbl_usuari
-- changeSet:
-    id: init-constraint-10
-    author: limit (generated)
-    changes:
-    - addForeignKeyConstraint:
-        baseColumnNames: createdby_codi
-        baseTableName: pbl_servei_camp_grup
-        constraintName: FKFB5B19E41D90EB87
-        referencedColumnNames: codi
-        referencedTableName: pbl_usuari
-    - addForeignKeyConstraint:
-        baseColumnNames: lastmodifiedby_codi
-        baseTableName: pbl_servei_camp_grup
-        constraintName: FKFB5B19E424DDA730
-        referencedColumnNames: codi
-        referencedTableName: pbl_usuari
-- changeSet:
-    id: init-constraint-11
-    author: limit (generated)
-    changes:
-    - addForeignKeyConstraint:
-        baseColumnNames: createdby_codi
-        baseTableName: pbl_servei_config
-        constraintName: FKDEB551221D90EB87
-        referencedColumnNames: codi
-        referencedTableName: pbl_usuari
-    - addForeignKeyConstraint:
-        baseColumnNames: lastmodifiedby_codi
-        baseTableName: pbl_servei_config
-        constraintName: FKDEB5512224DDA730
-        referencedColumnNames: codi
-        referencedTableName: pbl_usuari
-- changeSet:
-    id: init-constraint-12
-    author: limit (generated)
-    changes:
+        columnNames: servei_id,path
+        constraintName: pbl_servei_camp_uk
     - addUniqueConstraint:
-        columnNames: servei_id, xpath
-        constraintName: pbl_servei_justif_camp_uk
+        tableName: pbl_servei_camp_grup
+        columnNames: nom,servei_id
+        constraintName: pbl_servei_camp_grup_uk
+    - addUniqueConstraint:
         tableName: pbl_servei_justif_camp
-    - addForeignKeyConstraint:
-        baseColumnNames: createdby_codi
-        baseTableName: pbl_servei_justif_camp
-        constraintName: FKE04E98171D90EB87
-        referencedColumnNames: codi
-        referencedTableName: pbl_usuari
-    - addForeignKeyConstraint:
-        baseColumnNames: lastmodifiedby_codi
-        baseTableName: pbl_servei_justif_camp
-        constraintName: FKE04E981724DDA730
-        referencedColumnNames: codi
-        referencedTableName: pbl_usuari
-- changeSet:
-    id: init-constraint-13
-    author: limit (generated)
-    changes:
+        columnNames: servei_id,xpath
+        constraintName: pbl_servei_justif_camp_uk
     - addUniqueConstraint:
-        columnNames: sid, principal
-        constraintName: acl_sid_uk
-        tableName: acl_sid
+        tableName: pbl_servei_regla
+        columnNames: nom,servei_id
+        constraintName: pbl_servei_regla_uk
     - addUniqueConstraint:
-        columnNames: class
-        constraintName: acl_class_uk
-        tableName: acl_class
-    - addUniqueConstraint:
-        columnNames: object_id_class, object_id_identity
-        constraintName: acl_oid_uk
-        tableName: acl_object_identity
-    - addForeignKeyConstraint:
-        baseColumnNames: parent_object
-        baseTableName: acl_object_identity
-        constraintName: acl_oid_parent_fk
-        referencedColumnNames: id
-        referencedTableName: acl_object_identity
-    - addForeignKeyConstraint:
-        baseColumnNames: object_id_class
-        baseTableName: acl_object_identity
-        constraintName: acl_oid_class_fk
-        referencedColumnNames: id
-        referencedTableName: acl_class
-    - addForeignKeyConstraint:
-        baseColumnNames: owner_sid
-        baseTableName: acl_object_identity
-        constraintName: acl_oid_owner_fk
-        referencedColumnNames: id
-        referencedTableName: acl_sid
-    - addUniqueConstraint:
-        columnNames: acl_object_identity, ace_order
-        constraintName: acl_entry_uk
-        tableName: acl_entry
-    - addForeignKeyConstraint:
-        baseColumnNames: acl_object_identity
-        baseTableName: acl_entry
-        constraintName: acl_entry_object_fk
-        referencedColumnNames: id
-        referencedTableName: acl_object_identity
-    - addForeignKeyConstraint:
-        baseColumnNames: sid
-        baseTableName: acl_entry
-        constraintName: acl_entry_acl_fk
-        referencedColumnNames: id
-        referencedTableName: acl_sid
-- changeSet:
-    id: init-constraint-14
-    author: limit (generated)
-    changes:
-    - addForeignKeyConstraint:
-        baseColumnNames: organismo
-        baseTableName: core_clave_privada
-        constraintName: clave_privada_organismo
-        referencedColumnNames: id
-        referencedTableName: core_organismo_cesionario
-- changeSet:
-    id: init-constraint-15
-    author: limit (generated)
-    changes:
-    - addForeignKeyConstraint:
-        baseColumnNames: modulo
-        baseTableName: core_modulo_configuracion
-        constraintName: mod_conf_modulo
-        referencedColumnNames: nombre
-        referencedTableName: core_modulo
-    - addForeignKeyConstraint:
-        baseColumnNames: certificado
-        baseTableName: core_modulo_configuracion
-        constraintName: mod_conf_servicio
-        referencedColumnNames: id
-        referencedTableName: core_servicio
-- changeSet:
-    id: init-constraint-16
-    author: limit (generated)
-    changes:
-    - addForeignKeyConstraint:
-        baseColumnNames: modulo
-        baseTableName: core_req_modulo_pdf_cesionario
-        constraintName: fk_modulo_mod_pdf
-        referencedColumnNames: nombre
-        referencedTableName: core_modulo
-    - addForeignKeyConstraint:
-        baseColumnNames: servicio
-        baseTableName: core_req_modulo_pdf_cesionario
-        constraintName: fk_servicio_mod_pdf
-        referencedColumnNames: id
-        referencedTableName: core_servicio
-    - addForeignKeyConstraint:
-        baseColumnNames: organismo
-        baseTableName: core_req_modulo_pdf_cesionario
-        constraintName: fk_org_cesionario_mod_pdf
-        referencedColumnNames: id
-        referencedTableName: core_organismo_cesionario
-- changeSet:
-    id: init-constraint-17
-    author: limit (generated)
-    changes:
-    - addForeignKeyConstraint:
-        baseColumnNames: certificado
-        baseTableName: core_peticion_respuesta
-        constraintName: pet_resp_servicio
-        referencedColumnNames: id
-        referencedTableName: core_servicio
-- changeSet:
-    id: init-constraint-18
-    author: limit (generated)
-    changes:
-    - addForeignKeyConstraint:
-        baseColumnNames: emisor
-        baseTableName: core_servicio
-        constraintName: serv_emisor
-        referencedColumnNames: id
-        referencedTableName: core_emisor_certificado
-        validate: true
-    - addForeignKeyConstraint:
-        baseColumnNames: clavecifrado
-        baseTableName: core_servicio
-        constraintName: serv_clavecifrado
-        referencedColumnNames: id
-        referencedTableName: core_clave_publica
-    - addForeignKeyConstraint:
-        baseColumnNames: clavefirma
-        baseTableName: core_servicio
-        constraintName: serv_clavefirma
-        referencedColumnNames: id
-        referencedTableName: core_clave_privada
-- changeSet:
-    id: init-constraint-19
-    author: limit (generated)
-    changes:
-    - addForeignKeyConstraint:
-        baseColumnNames: idpeticion
-        baseTableName: core_token_data
-        constraintName: token_peticion
-        referencedColumnNames: idpeticion
-        referencedTableName: core_peticion_respuesta
-    - addForeignKeyConstraint:
-        baseColumnNames: tipomensaje
-        baseTableName: core_token_data
-        constraintName: token_tipo
-        referencedColumnNames: tipo
-        referencedTableName: core_tipo_mensaje
-- changeSet:
-    id: init-constraint-20
-    author: limit (generated)
-    changes:
-    - addForeignKeyConstraint:
-        baseColumnNames: idpeticion
-        baseTableName: core_transmision
-        constraintName: trans_peticion
-        referencedColumnNames: idpeticion
-        referencedTableName: core_peticion_respuesta
+        tableName: pbl_servei_xsd
+        columnNames: servei_id,tipus
+        constraintName: pbl_servei_xsd_uk

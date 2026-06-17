@@ -360,6 +360,32 @@
 				<filtering>false</filtering>
 			</resource>
 		</resources>
+		<plugins>
+			<!-- Patcheja scsp-core.jar a local-repo/ i ~/.m2/ eliminant les classes
+			     que pinbal-scsp sobreescriu (detectades dinàmicament dels fonts).
+			     Fase initialize: s'executa abans de qualsevol compilació i per tant
+			     afecta a tots els builds: EAR, Spring Boot directe i tests. -->
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>exec-maven-plugin</artifactId>
+				<version>3.1.0</version>
+				<executions>
+					<execution>
+						<id>patch-scsp-core-in-local-repo</id>
+						<phase>initialize</phase>
+						<goals><goal>exec</goal></goals>
+						<configuration>
+							<executable>python3</executable>
+							<arguments>
+								<argument>${project.basedir}/src/main/scripts/patch-scsp-local-repo.py</argument>
+								<argument>${project.basedir}/src/main/java</argument>
+								<argument>${project.basedir}/../local-repo</argument>
+							</arguments>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
 	</build>
 	<repositories>
 		<repository>

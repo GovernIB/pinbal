@@ -22,7 +22,7 @@
 </head>
 <body>
 	<c:set var="formAction"><c:url value="/modal/procediment/${procediment.id}/servei/${serveiCodi}/migrar"/></c:set>
-	<form:form action="${formAction}" method="post" cssClass="form-horizontal" commandName="procedimentServeiMigrarCommand" role="form">
+	<form:form action="${formAction}" method="post" cssClass="form-horizontal" modelAttribute="procedimentServeiMigrarCommand" role="form">
 		<form:hidden path="procedimentId"/>
 		<form:hidden path="serveiCodiOriginal"/>
 		<pbl:inputSelect

@@ -5,8 +5,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import com.sun.jersey.api.client.ClientHandlerException;
-import com.sun.jersey.api.client.UniformInterfaceException;
 import es.caib.pinbal.client.recobriment.model.ScspFuncionario;
 import es.caib.pinbal.client.recobriment.model.ScspJustificante;
 import es.caib.pinbal.client.recobriment.model.ScspRespuesta;
@@ -14,13 +12,13 @@ import es.caib.pinbal.client.recobriment.model.ScspSolicitante.ScspConsentimient
 import es.caib.pinbal.client.recobriment.model.ScspTitular;
 import es.caib.pinbal.client.recobriment.model.ScspTitular.ScspTipoDocumentacion;
 import es.caib.pinbal.client.recobriment.svddgpresidencialegaldocws01.ClientSvddgpresidencialegaldocws01;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.util.Arrays;
 
-import static es.caib.pinbal.client.recobriment.svddgpresidencialegaldocws01.ClientSvddgpresidencialegaldocws01.*;
-import static org.junit.Assert.assertNotNull;
+import static es.caib.pinbal.client.recobriment.svddgpresidencialegaldocws01.ClientSvddgpresidencialegaldocws01.SolicitudSvddgpresidencialegaldocws01;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * Test del client genèric del recobriment.
@@ -41,7 +39,7 @@ public class Svddgpresidencialegaldocws01Test {
 	private ClientSvddgpresidencialegaldocws01 client = new ClientSvddgpresidencialegaldocws01(URL_BASE, USUARI, CONTRASENYA, BASIC_AUTH, null, null);
 
 	@Test
-	public void peticionSincrona() throws UniformInterfaceException, ClientHandlerException, IOException {
+	public void peticionSincrona() throws Exception {
 		SolicitudSvddgpresidencialegaldocws01 solicitud = new SolicitudSvddgpresidencialegaldocws01();
 		solicitud.setIdentificadorSolicitante(ENTITAT_CIF);
 		solicitud.setCodigoProcedimiento(CODIGO_PROCEDIMIENTO);

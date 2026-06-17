@@ -322,7 +322,7 @@ function canviActiu(usuariCodi) {
 </head>
 <body>
 	<c:url value="/representant/usuari" var="formAction"/>
-	<form:form id="form-filtre" action="${formAction}" method="post" cssClass="well form-filtre-table" commandName="usuariFiltreCommand">
+	<form:form id="form-filtre" action="${formAction}" method="post" cssClass="well form-filtre-table" modelAttribute="usuariFiltreCommand">
 		<div class="row">
 		 	<div class="col-md-2">
 		 		<pbl:inputText name="codi" inline="true" placeholderKey="representant.usuaris.filtre.camp.codi" />

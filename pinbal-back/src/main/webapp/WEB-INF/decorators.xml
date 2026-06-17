@@ -1,5 +1,6 @@
 <decorators defaultdir="/WEB-INF/jsp/decorators">
 	<excludes>
+		<pattern>/reactapp*</pattern>
 		<pattern>/js*</pattern>
 		<pattern>/css*</pattern>
 		<pattern>/img*</pattern>
@@ -16,10 +17,11 @@
 	<decorator name="viewerPdfDecorator" page="viewerPdfDecorator.jsp">
 		<pattern>*/viewer.html*</pattern>
 	</decorator>
+	<decorator name="modal" page="senseCapNiPeus.jsp">
+		<pattern>/modal/*</pattern>
+		<pattern>/error</pattern>
+	</decorator>
 	<decorator name="default" page="default.jsp">
 		<pattern>/*</pattern>
-	</decorator>
-	<decorator name="modal" page="senseCapNiPeus.jsp">
-		<pattern>/modal*</pattern>
 	</decorator>
 </decorators>

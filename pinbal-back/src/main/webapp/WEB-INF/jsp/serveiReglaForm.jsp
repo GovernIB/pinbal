@@ -99,7 +99,7 @@
 	<c:when test="${empty serveiReglaCommand.id}"><c:set var="formAction"><c:url value="/modal/servei/camp/${servei.codiUrlEncoded}/regla/new"/></c:set></c:when>
 	<c:otherwise><c:set var="formAction"><c:url value="/modal/servei/camp/${servei.codiUrlEncoded}/regla/${serveiReglaCommand.id}"/></c:set></c:otherwise>
 </c:choose>
-	<form:form action="" method="post" cssClass="form-horizontal" commandName="serveiReglaCommand">
+	<form:form action="" method="post" cssClass="form-horizontal" modelAttribute="serveiReglaCommand">
 		<form:hidden path="id"/>
 		<form:hidden path="serveiId"/>
 

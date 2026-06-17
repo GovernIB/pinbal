@@ -24,10 +24,10 @@ public class Avis extends PinbalAuditable<Long> {
 	private String assumpte;
 	@Column(name = "missatge", length = 2048, nullable = false)
 	private String missatge;
-	@Temporal(TemporalType.DATE)
+	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "data_inici", nullable = false)
 	private Date dataInici;
-	@Temporal(TemporalType.DATE)
+	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "data_final")
 	private Date dataFinal;
 	@Column(name = "actiu", nullable = false)

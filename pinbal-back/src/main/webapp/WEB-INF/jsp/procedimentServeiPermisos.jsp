@@ -34,7 +34,7 @@
 	</ul>
 
 	<c:url var="formAction" value="/procediment/${procediment.id}/servei/${servei.codi}/permis"/>
-	<form:form id="form-filtre" action="${formAction}" method="post" cssClass="well" commandName="procedimentServeiPermisFiltreCommand">
+	<form:form id="form-filtre" action="${formAction}" method="post" cssClass="well" modelAttribute="procedimentServeiPermisFiltreCommand">
 		<div class="row">
 			<div class="col-md-3">
 				<pbl:inputText name="codi" inline="true" placeholderKey="entitat.usuaris.filtre.camp.codi"/>

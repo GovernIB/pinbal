@@ -12,10 +12,23 @@
 		<docker.image.name>goib/${project.parent.artifactId}</docker.image.name>
 		<docker.image.from>docker.io/goib/jboss-eap72-openshift-base:latest</docker.image.from>
 		<docker.image.platform>linux/amd64</docker.image.platform>
-		<docker.image.context>${project.basedir}/..</docker.image.context>
-		<docker.image.dockerfile>${project.basedir}/../Dockerfile</docker.image.dockerfile>
+		<docker.image.context>${project.basedir}/target/docker-ctx</docker.image.context>
+		<docker.image.dockerfile>${project.basedir}/target/docker-ctx/Dockerfile.maven</docker.image.dockerfile>
 	</properties>
 	<dependencies>
+		<!-- Embedded Tomcat must be provided: JBoss EAP uses Undertow, not Tomcat.
+		     Without this, tomcat-embed-*.jar ends up in EAR/lib/ and its InstanceManager
+		     conflicts with JBoss's UndertowJSPInstanceManager at classload time. -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-tomcat</artifactId>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.tomcat.embed</groupId>
+			<artifactId>tomcat-embed-el</artifactId>
+			<scope>provided</scope>
+		</dependency>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>pinbal-back</artifactId>
@@ -39,6 +52,11 @@
 			<artifactId>pinbal-ejb</artifactId>
 			<version>${project.version}</version>
 			<type>ejb</type>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>pinbal-plugin</artifactId>
+			<version>${project.version}</version>
 		</dependency>
 		<!-- Dependències dels mòduls war pels skinny wars -->
 		<dependency>
@@ -101,6 +119,27 @@
 			<artifactId>pinbal-client-intf</artifactId>
 			<version>${project.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>es.scsp</groupId>
+			<artifactId>scsp-core</artifactId>
+			<version>${scsp.core.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>es.scsp</groupId>
+			<artifactId>scsp-beans</artifactId>
+			<version>${scsp.core.version}</version>
+		</dependency>
+		<!-- SCSP 5.11 usa jakarta.xml.bind.*; JBoss EAP 7.2 no el proveeix -->
+		<dependency>
+			<groupId>jakarta.xml.bind</groupId>
+			<artifactId>jakarta.xml.bind-api</artifactId>
+			<version>3.0.1</version>
+		</dependency>
+		<dependency>
+			<groupId>com.sun.xml.bind</groupId>
+			<artifactId>jaxb-impl</artifactId>
+			<version>3.0.2</version>
+		</dependency>
 	</dependencies>
 	<build>
 		<plugins>
@@ -110,6 +149,8 @@
 				<version>0.45.0</version>
 				<configuration>
 					<verbose>true</verbose>
+					<!-- Si utilitzes Podman enlloc de docker has de descomentar la següent línia-->
+					<dockerHost>unix:///run/user/1000/podman/podman.sock</dockerHost>
 					<images>
 						<image>
 							<name>${docker.image.name}</name>
@@ -124,7 +165,6 @@
 								<buildOptions>
 									<platform>${docker.image.platform}</platform>
 								</buildOptions>
-								<dockerFile>Dockerfile</dockerFile>
 								<tags>
 									<tag>latest</tag>
 									<tag>${project.version}</tag>
@@ -191,6 +231,39 @@
 					</archive>
 				</configuration>
 			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-resources-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>prepare-docker-context</id>
+						<phase>package</phase>
+						<goals><goal>copy-resources</goal></goals>
+						<configuration>
+							<outputDirectory>${project.build.directory}/docker-ctx</outputDirectory>
+							<overwrite>true</overwrite>
+							<resources>
+								<resource>
+									<directory>${project.basedir}/src/main/docker</directory>
+									<includes>
+										<include>config/standalone-openshift.xml</include>
+										<include>config/pinbal/**</include>
+										<include>Dockerfile.maven</include>
+									</includes>
+									<filtering>false</filtering>
+								</resource>
+								<resource>
+									<directory>${project.build.directory}</directory>
+									<includes>
+										<include>pinbal.ear</include>
+									</includes>
+									<filtering>false</filtering>
+								</resource>
+							</resources>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
 		</plugins>
 		<finalName>pinbal</finalName>
 	</build>
@@ -199,6 +272,10 @@
 			<id>github-governib-maven-repos</id>
 			<name>GitHub GovernIB Maven Repository</name>
 			<url>https://governib.github.io/maven/maven/</url>
+		</repository>
+		<repository>
+			<id>mvn-local-repo</id>
+			<url>file://${basedir}/../local-repo</url>
 		</repository>
 	</repositories>
 </project>

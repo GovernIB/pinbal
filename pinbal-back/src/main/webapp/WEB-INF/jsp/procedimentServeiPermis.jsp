@@ -22,7 +22,7 @@
 <c:url value="/usuariajax/entitat/${entitatId}/usuaris" var="urlConsultaUsuarisEntitat"/>
 <c:set var="formAction"><c:url value="/modal/avis/save"/></c:set>
 <c:url var="formAction" value="/modal/procediment/${procedimentId}/servei/${serveiCodi}/permis/save"/>
-<form:form action="${formAction}" method="post" cssClass="form-horizontal" commandName="usuariPermisiCommand" role="form">
+<form:form action="${formAction}" method="post" cssClass="form-horizontal" modelAttribute="usuariPermisiCommand" role="form">
 	<form:hidden path="usuariNom"/>
 	<pbl:inputSuggest
 			name="usuariCodi"

@@ -1,0 +1,5180 @@
+databaseChangeLog:
+- changeSet:
+    id: 1781195289665-1
+    author: sionandreu (generated)
+    changes:
+    - createSequence:
+        maxValue: 9999999999999999999999999999
+        sequenceName: ACL_CLASS_SEQ
+        startValue: 41
+- changeSet:
+    id: 1781195289665-2
+    author: sionandreu (generated)
+    changes:
+    - createSequence:
+        maxValue: 9999999999999999999999999999
+        sequenceName: ACL_ENTRY_SEQ
+        startValue: 1162
+- changeSet:
+    id: 1781195289665-3
+    author: sionandreu (generated)
+    changes:
+    - createSequence:
+        maxValue: 9999999999999999999999999999
+        sequenceName: ACL_OID_SEQ
+        startValue: 722
+- changeSet:
+    id: 1781195289665-4
+    author: sionandreu (generated)
+    changes:
+    - createSequence:
+        maxValue: 9999999999999999999999999999
+        sequenceName: ACL_SID_SEQ
+        startValue: 201
+- changeSet:
+    id: 1781195289665-5
+    author: sionandreu (generated)
+    changes:
+    - createSequence:
+        maxValue: 9999999999999999999999999999
+        sequenceName: HIBERNATE_SEQUENCE
+        startValue: 131823
+- changeSet:
+    id: 1781195289665-6
+    author: sionandreu (generated)
+    changes:
+    - createSequence:
+        maxValue: 9999999999999999999999999999
+        sequenceName: ID_APLICACION_SEQUENCE
+        startValue: 1
+- changeSet:
+    id: 1781195289665-7
+    author: sionandreu (generated)
+    changes:
+    - createSequence:
+        maxValue: 9999999999999999999999999999
+        sequenceName: ID_AUTORIZACION_CA_SEQ
+        startValue: 1
+- changeSet:
+    id: 1781195289665-8
+    author: sionandreu (generated)
+    changes:
+    - createSequence:
+        maxValue: 9999999999999999999999999999
+        sequenceName: ID_AUTORIZACION_CERTIFIC_SEQ
+        startValue: 1
+- changeSet:
+    id: 1781195289665-9
+    author: sionandreu (generated)
+    changes:
+    - createSequence:
+        maxValue: 9999999999999999999999999999
+        sequenceName: ID_AUTORIZACION_ORGANISMO_SEQ
+        startValue: 1
+- changeSet:
+    id: 1781195289665-10
+    author: sionandreu (generated)
+    changes:
+    - createSequence:
+        maxValue: 9999999999999999999999999999
+        sequenceName: ID_CLAVE_PRIVADA_SEQUENCE
+        startValue: 1
+- changeSet:
+    id: 1781195289665-11
+    author: sionandreu (generated)
+    changes:
+    - createSequence:
+        maxValue: 9999999999999999999999999999
+        sequenceName: ID_CLAVE_PUBLICA_SEQUENCE
+        startValue: 1
+- changeSet:
+    id: 1781195289665-12
+    author: sionandreu (generated)
+    changes:
+    - createSequence:
+        maxValue: 9999999999999999999999999999
+        sequenceName: ID_EMISOR_SEQUENCE
+        startValue: 1
+- changeSet:
+    id: 1781195289665-13
+    author: sionandreu (generated)
+    changes:
+    - createSequence:
+        maxValue: 9999999999999999999999999999
+        sequenceName: ID_ORGANISMO_CESIONARIO_SEQ
+        startValue: 141
+- changeSet:
+    id: 1781195289665-14
+    author: sionandreu (generated)
+    changes:
+    - createSequence:
+        maxValue: 9999999999999999999999999999
+        sequenceName: ID_SERVICIO_CESIONARIO_SEQ
+        startValue: 642
+- changeSet:
+    id: 1781195289665-15
+    author: sionandreu (generated)
+    changes:
+    - createSequence:
+        maxValue: 9999999999999999999999999999
+        sequenceName: ID_SERVICIO_SEQUENCE
+        startValue: 482
+- changeSet:
+    id: 1781195289665-16
+    author: sionandreu (generated)
+    changes:
+    - createSequence:
+        cacheSize: 0
+        maxValue: 9999999999999999999999999999
+        sequenceName: ID_SSL_CESIONARIO_SEQ
+        startValue: 1
+- changeSet:
+    id: 1781195289665-17
+    author: sionandreu (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: ACL_CLASS_PK
+            name: ID
+            type: NUMBER(38, 0)
+        - column:
+            constraints:
+              nullable: false
+            name: CLASS
+            type: VARCHAR2(100 CHAR)
+        tableName: ACL_CLASS
+        tablespace: USERS
+- changeSet:
+    id: 1781195289665-18
+    author: sionandreu (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: ACL_ENTRY_PK
+            name: ID
+            type: NUMBER(38, 0)
+        - column:
+            constraints:
+              nullable: false
+            name: ACL_OBJECT_IDENTITY
+            type: NUMBER(38, 0)
+        - column:
+            constraints:
+              nullable: false
+            name: ACE_ORDER
+            type: NUMBER(38, 0)
+        - column:
+            constraints:
+              nullable: false
+            name: SID
+            type: NUMBER(38, 0)
+        - column:
+            constraints:
+              nullable: false
+            name: MASK
+            type: NUMBER
+        - column:
+            constraints:
+              nullable: false
+            name: GRANTING
+            type: NUMBER(1, 0)
+        - column:
+            constraints:
+              nullable: false
+            name: AUDIT_SUCCESS
+            type: NUMBER(1, 0)
+        - column:
+            constraints:
+              nullable: false
+            name: AUDIT_FAILURE
+            type: NUMBER(1, 0)
+        tableName: ACL_ENTRY
+        tablespace: USERS
+- changeSet:
+    id: 1781195289665-19
+    author: sionandreu (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: ACL_OBJECT_IDENTITY_PK
+            name: ID
+            type: NUMBER(38, 0)
+        - column:
+            constraints:
+              nullable: false
+            name: OBJECT_ID_CLASS
+            type: NUMBER(38, 0)
+        - column:
+            constraints:
+              nullable: false
+            name: OBJECT_ID_IDENTITY
+            type: NUMBER(38, 0)
+        - column:
+            name: PARENT_OBJECT
+            type: NUMBER(38, 0)
+        - column:
+            constraints:
+              nullable: false
+            name: OWNER_SID
+            type: NUMBER(38, 0)
+        - column:
+            constraints:
+              nullable: false
+            name: ENTRIES_INHERITING
+            type: NUMBER(1, 0)
+        tableName: ACL_OBJECT_IDENTITY
+        tablespace: USERS
+- changeSet:
+    id: 1781195289665-20
+    author: sionandreu (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: ACL_SID_PK
+            name: ID
+            type: NUMBER(38, 0)
+        - column:
+            constraints:
+              nullable: false
+            name: PRINCIPAL
+            type: NUMBER(1, 0)
+        - column:
+            constraints:
+              nullable: false
+            name: SID
+            type: VARCHAR2(100 CHAR)
+        tableName: ACL_SID
+        tablespace: USERS
+- changeSet:
+    id: 1781195289665-21
+    author: sionandreu (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: CORE_CACHE_CERTIFICADOS_PK
+            name: NUMSERIE
+            remarks: Número de serie del certificado
+            type: VARCHAR2(256 CHAR)
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: CORE_CACHE_CERTIFICADOS_PK
+            name: AUTORIDADCERTIF
+            remarks: Autoridad certificadora que emitió el certificado
+            type: VARCHAR2(512 CHAR)
+        - column:
+            constraints:
+              nullable: false
+            name: TIEMPOCOMPROBACION
+            remarks: Fecha en la que se realizó el proceso de validación del certificado
+              por última vez
+            type: TIMESTAMP(6)
+        - column:
+            constraints:
+              nullable: false
+            defaultValueNumeric: !!float '1'
+            name: REVOCADO
+            remarks: 'Valor booleano (1 o 0) que indicará: -1: si el proceso de validación
+              revocó el certificado. -0: si el proceso de validación aceptó el certificado'
+            type: NUMBER
+        remarks: Tabla que registra el resultado de la validación de los certificados
+          empleados en la firma de los mensajes recibidos por el requirente o por
+          el emisor. Así mismo se registra la fecha en la que se realizó dicha validación
+          para poder calcular el periodo de tiempo en la que dicha validación esta
+          vigente.
+        tableName: CORE_CACHE_CERTIFICADOS
+        tablespace: USERS
+- changeSet:
+    id: 1781195289665-22
+    author: sionandreu (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: CORE_CLAVE_PRIVADA_PK
+            name: ID
+            type: NUMBER(38, 0)
+        - column:
+            constraints:
+              nullable: false
+            name: ALIAS
+            remarks: Alias que identifica de manera unívoca a la clave privada dentro
+              del almacén de certificados que haya sido configurado en la tabla core_parametro_configuracion
+              bajo el nombre keystoreFile
+            type: VARCHAR2(256 CHAR)
+        - column:
+            constraints:
+              nullable: false
+            name: NOMBRE
+            remarks: Nombre descriptivo de la clave privada
+            type: VARCHAR2(256 CHAR)
+        - column:
+            constraints:
+              nullable: false
+            name: PASSWORD
+            remarks: Password de la clave privada necesaria para hacer uso de la misma
+            type: VARCHAR2(256 CHAR)
+        - column:
+            constraints:
+              nullable: false
+            name: NUMEROSERIE
+            remarks: Numero de serie de la clave privada
+            type: VARCHAR2(256 CHAR)
+        - column:
+            name: FECHABAJA
+            type: TIMESTAMP(6)
+        - column:
+            constraints:
+              nullable: false
+            name: FECHAALTA
+            type: TIMESTAMP(6)
+        - column:
+            name: ORGANISMO
+            type: NUMBER(38, 0)
+        - column:
+            name: INTEROPERABILIDAD
+            type: NUMBER(1, 0)
+        - column:
+            defaultValueNumeric: !!float '0'
+            name: PER_ENTITAT
+            type: NUMBER(1, 0)
+        - column:
+            constraints:
+              nullable: false
+            defaultValueNumeric: !!float '0'
+            name: BLOQUEADO
+            type: NUMBER(1, 0)
+        remarks: Esta tabla almacenará los datos de configuración necesarios para
+          acceder a las claves privadas disponibles en el almacén de certificados
+          configurado. Las claves privadas aquí configuradas serán utilizadas para
+          la firma de los mensajes emitidos
+        tableName: CORE_CLAVE_PRIVADA
+        tablespace: USERS
+- changeSet:
+    id: 1781195289665-23
+    author: sionandreu (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: CORE_CLAVE_PUBLICA_PK
+            name: ID
+            type: NUMBER(38, 0)
+        - column:
+            constraints:
+              nullable: false
+            name: ALIAS
+            remarks: Alias que identifica de manera unívoca a la clave pública dentro
+              del almacén de certificados que haya sido configurado en la tabla core_parametro_configuracion
+              bajo el nombre keystoreFile
+            type: VARCHAR2(256 CHAR)
+        - column:
+            constraints:
+              nullable: false
+            name: NOMBRE
+            remarks: Nombre descriptivo de la clave pública
+            type: VARCHAR2(256 CHAR)
+        - column:
+            constraints:
+              nullable: false
+            name: NUMEROSERIE
+            remarks: Numero de serie de la clave pública
+            type: VARCHAR2(256 CHAR)
+        - column:
+            constraints:
+              nullable: false
+            name: FECHAALTA
+            type: TIMESTAMP(6)
+        - column:
+            name: FECHABAJA
+            type: TIMESTAMP(6)
+        remarks: Esta tabla almacenará los datos de configuración necesarios para
+          acceder a las claves públicas disponibles en el almacén de certificados
+          configurado. Las claves públicas aquí configuradas serán utilizadas para
+          el posible cifrado de los  mensajes emitidos.
+        tableName: CORE_CLAVE_PUBLICA
+        tablespace: USERS
+- changeSet:
+    id: 1781195289665-24
+    author: sionandreu (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: CORE_CODIGO_ERROR_PK
+            name: CODIGO
+            remarks: Código identificativo del error
+            type: VARCHAR2(4 CHAR)
+        - column:
+            constraints:
+              nullable: false
+            name: DESCRIPCION
+            remarks: Litreral descriptivo del error
+            type: VARCHAR2(1024 CHAR)
+        remarks: Tabla que registrarálos posibles errores genéricos que toda comunicación
+          SCSP puede generar
+        tableName: CORE_CODIGO_ERROR
+        tablespace: USERS
+- changeSet:
+    id: 1781195289665-25
+    author: sionandreu (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: CORE_EMISOR_CERTIFICADO_PK
+            name: ID
+            type: NUMBER(38, 0)
+        - column:
+            constraints:
+              nullable: false
+            name: NOMBRE
+            remarks: CIF identificativo del organismo emisor de servicios
+            type: VARCHAR2(50 CHAR)
+        - column:
+            constraints:
+              nullable: false
+            name: CIF
+            remarks: Nombre descriptivo del organismo emisor de servicios
+            type: VARCHAR2(16 CHAR)
+        - column:
+            name: FECHAALTA
+            type: TIMESTAMP(6)
+        - column:
+            name: FECHABAJA
+            remarks: Fecha de Baja de emisores de certificados
+            type: TIMESTAMP(6)
+        remarks: Esta tabla almacenará los diferentes emisores de servicio configurados
+        tableName: CORE_EMISOR_CERTIFICADO
+        tablespace: USERS
+- changeSet:
+    id: 1781195289665-26
+    author: sionandreu (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: CORE_ESTADO_PETICION_PK
+            name: CODIGO
+            remarks: Código identificativo del estado
+            type: VARCHAR2(4 CHAR)
+        - column:
+            constraints:
+              nullable: false
+            name: MENSAJE
+            remarks: Literal descriptivo del estado
+            type: VARCHAR2(256 CHAR)
+        remarks: 'Tabla que almacena los posibles estados en los que se puede encontrar
+          una petición SCSP. Sus posibles valores serán: 0001 - Pendiente, 0002 -
+          En proceso, 0003 - Tramitada'
+        tableName: CORE_ESTADO_PETICION
+        tablespace: USERS
+- changeSet:
+    id: 1781195289665-27
+    author: sionandreu (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: CORE_LOG_PK
+            name: ID
+            remarks: Valor incremental autogenerado
+            type: NUMBER(19, 0)
+        - column:
+            name: FECHA
+            remarks: Fecha  en la que se generó la traza de log
+            type: TIMESTAMP(6)
+        - column:
+            name: CRITICIDAD
+            remarks: Tipo de nivel de la traza de log (WARN,INFO,DEBUG,ALL,ERROR)
+            type: VARCHAR2(10 CHAR)
+        - column:
+            name: CLASE
+            remarks: Clase que generó la traza de log registrada
+            type: VARCHAR2(256 CHAR)
+        - column:
+            name: METODO
+            remarks: Método específico de la clase que generó la traza de log
+            type: VARCHAR2(64 CHAR)
+        - column:
+            name: MENSAJE
+            remarks: Literal descriptivo del error almacenado
+            type: CLOB
+        remarks: Tabla de configurada en el appender log4j para base de datos de la
+          aplicación, donde se registrarán las posibles trazas de error
+        tableName: CORE_LOG
+        tablespace: USERS
+- changeSet:
+    id: 1781195289665-28
+    author: sionandreu (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: CORE_MODULO_PK
+            name: NOMBRE
+            remarks: Nombre del módulo
+            type: VARCHAR2(256 CHAR)
+        - column:
+            name: DESCRIPCION
+            remarks: Literal descriptivo del modulo a configurar su activación
+            type: VARCHAR2(512 CHAR)
+        - column:
+            constraints:
+              nullable: false
+            defaultValueNumeric: !!float '1'
+            name: ACTIVOENTRADA
+            remarks: Valor que indica si el módulo esta activo en la emisión de mensajes.
+              Puede tomar valor 1 (Activo) o 0 (Inactivo)
+            type: NUMBER
+        - column:
+            constraints:
+              nullable: false
+            defaultValueNumeric: !!float '1'
+            name: ACTIVOSALIDA
+            remarks: Valor que indica si el módulo esta activo en la recepción de
+              mensajes. Puede tomar valor 1 (Activo) o 0 (Inactivo).
+            type: NUMBER
+        remarks: Tabla que almacena la configuración de activación o desactivación
+          de los módulos que componen el ciclo de ejecución de las librerías SCSP
+        tableName: CORE_MODULO
+        tablespace: USERS
+- changeSet:
+    id: 1781195289665-29
+    author: sionandreu (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: CORE_MODULO_CONFIG_PK
+            name: CERTIFICADO
+            remarks: Código del certificado solicitado
+            type: NUMBER(38, 0)
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: CORE_MODULO_CONFIG_PK
+            name: MODULO
+            remarks: Nombre del módulo a configurar
+            type: VARCHAR2(256 CHAR)
+        - column:
+            constraints:
+              nullable: false
+            defaultValueNumeric: !!float '1'
+            name: ACTIVOENTRADA
+            remarks: Valor que indica si el módulo esta activo en la emisión de mensajes.
+              Puede tomar valor 1 (Activo) o 0 (Inactivo).
+            type: NUMBER
+        - column:
+            constraints:
+              nullable: false
+            defaultValueNumeric: !!float '1'
+            name: ACTIVOSALIDA
+            remarks: Valor que indica si el módulo esta activo en la recepción de
+              mensajes. Puede tomar valor 1 (Activo) o 0 (Inactivo).
+            type: NUMBER
+        remarks: Tabla que permite la sobreescritura de la configuración de activación
+          de un módulo para un servicio concreto
+        tableName: CORE_MODULO_CONFIGURACION
+        tablespace: USERS
+- changeSet:
+    id: 1781195289665-30
+    author: sionandreu (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: CORE_ORGANISMO_CESIONARIO_PK
+            name: ID
+            type: NUMBER(38, 0)
+        - column:
+            constraints:
+              nullable: false
+            name: FECHAALTA
+            type: TIMESTAMP(6)
+        - column:
+            name: FECHABAJA
+            type: TIMESTAMP(6)
+        - column:
+            constraints:
+              nullable: false
+            name: NOMBRE
+            type: VARCHAR2(50 CHAR)
+        - column:
+            constraints:
+              nullable: false
+            name: CIF
+            type: VARCHAR2(50 CHAR)
+        - column:
+            constraints:
+              nullable: false
+            defaultValueNumeric: !!float '0'
+            name: BLOQUEADO
+            type: NUMBER
+        - column:
+            name: LOGO
+            type: BLOB
+        - column:
+            name: CODIGOUNIDADTRAMITADORA
+            type: VARCHAR2(9 CHAR)
+        tableName: CORE_ORGANISMO_CESIONARIO
+        tablespace: USERS
+- changeSet:
+    id: 1781195289665-31
+    author: sionandreu (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: CORE_PARAMETRO_CONFIG_PK
+            name: NOMBRE
+            remarks: Nombre identificativo del parámetro
+            type: VARCHAR2(64 CHAR)
+        - column:
+            constraints:
+              nullable: false
+            name: VALOR
+            remarks: Valor del parámetro
+            type: VARCHAR2(512 CHAR)
+        - column:
+            name: DESCRIPCION
+            remarks: Literal descriptivo de la utilidad del parámetro
+            type: VARCHAR2(512 CHAR)
+        remarks: Tabla  que almacena aquellos parámetros de configuración que son
+          globales a todos los servicios y entornos para un mismo cliente integrador
+          de las librerias SCSP
+        tableName: CORE_PARAMETRO_CONFIGURACION
+        tablespace: USERS
+- changeSet:
+    id: 1781195289665-32
+    author: sionandreu (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: CORE_PETICION_RESPUESTA_PK
+            name: IDPETICION
+            remarks: Identificador unívoco de la petición de servicio
+            type: VARCHAR2(26 CHAR)
+        - column:
+            constraints:
+              nullable: false
+            name: CERTIFICADO
+            type: NUMBER(38, 0)
+        - column:
+            constraints:
+              nullable: false
+            name: ESTADO
+            remarks: Codigo identificativo del estado de la petición. Tomará sus valores
+              de las tablas scsp_estado_peticion y scsp_codigo_error
+            type: VARCHAR2(4 CHAR)
+        - column:
+            name: ESTADOSECUNDARIO
+            type: VARCHAR2(16 CHAR)
+        - column:
+            name: FECHAPETICION
+            remarks: Timestamp que indica la fecha en la que se generó la petición
+            type: TIMESTAMP(6)
+        - column:
+            name: FECHARESPUESTA
+            remarks: Timestamp que indica la fecha en la cual se recibió la respuesta
+              a nuestra petición
+            type: TIMESTAMP(6)
+        - column:
+            name: TER
+            remarks: Timestamp que indica la fecha a partir de la cual una petición
+              de tipo asíncrono podrá solicitar una respuesta definitiva al servicio
+            type: TIMESTAMP(6)
+        - column:
+            constraints:
+              nullable: false
+            defaultValueNumeric: !!float '0'
+            name: NUMEROENVIOS
+            remarks: Valor que indica el número de veces que se ha reenviado una petición
+              al servicio
+            type: NUMBER
+        - column:
+            constraints:
+              nullable: false
+            defaultValueNumeric: !!float '1'
+            name: NUMEROTRANSMISIONES
+            remarks: Número de Solicitudes de Transmisión que se enviaron en la petición
+            type: NUMBER
+        - column:
+            name: FECHAULTIMOSONDEO
+            remarks: Timestamp que indica la fecha del último reenvio de una petición
+              de tipo asincrono
+            type: TIMESTAMP(6)
+        - column:
+            constraints:
+              nullable: false
+            defaultValueNumeric: !!float '1'
+            name: TRANSMISIONSINCRONA
+            remarks: 'Valor binario que indica si la petición fue solicitada a un
+              servicio de tipo síncrono o asincrono. Podrá tomar los valores: 0: La
+              comunicación fue de tipo asíncrono, 1: La comunicación fue de tipo síncrono'
+            type: NUMBER
+        - column:
+            name: DESCOMPUESTA
+            remarks: 'Caracter que indica el estado del procesamiento de las transmisiones
+              de la respuesta recibida. Podrá tomar los siguientes valores:    - S:
+              Se ha procesado correctamente la respuesta, habiendo obtenido todas
+              las transmisiones en ella incluidas y registradas en la tabla core_transmision.
+              - N: No ha sido procesadas las transmisiones de la respuesta. - E: La
+              respuesta terminó correctamente  (estado 0003), pero se ha producido
+              un error al procesar sus trasmisiones'
+            type: VARCHAR2(1 CHAR)
+        - column:
+            name: ERROR
+            type: VARCHAR2(4000 CHAR)
+        - column:
+            name: ERRORSECUNDARIO
+            type: VARCHAR2(1024 CHAR)
+        remarks: Esta tabla registrará un histórico de las peticiones y respuestas
+          intercambiadas entre los requirentes y los emisores de servicios
+        tableName: CORE_PETICION_RESPUESTA
+        tablespace: USERS
+- changeSet:
+    id: 1781195289665-33
+    author: sionandreu (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: CORE_REQ_CESIONARIOS_SERV_PK
+            name: ID
+            type: NUMBER(38, 0)
+        - column:
+            name: SERVICIO
+            type: NUMBER(38, 0)
+        - column:
+            name: CLAVEPRIVADA
+            type: NUMBER(38, 0)
+        - column:
+            name: ORGANISMO
+            type: NUMBER(38, 0)
+        - column:
+            constraints:
+              nullable: false
+            name: FECHAALTA
+            type: TIMESTAMP(6)
+        - column:
+            name: FECHABAJA
+            type: TIMESTAMP(6)
+        - column:
+            constraints:
+              nullable: false
+            name: BLOQUEADO
+            type: NUMBER(1, 0)
+        - column:
+            constraints:
+              nullable: false
+            name: SSLFLAG
+            type: NUMBER(1, 0)
+        tableName: CORE_REQ_CESIONARIOS_SERVICIOS
+        tablespace: USERS
+- changeSet:
+    id: 1781195289665-34
+    author: sionandreu (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: CORE_REQ_MODULO_PDF_PK
+            name: NOMBRE
+            type: VARCHAR2(256 CHAR)
+        - column:
+            constraints:
+              nullable: false
+            defaultValueNumeric: !!float '1'
+            name: ACTIVO
+            type: NUMBER
+        - column:
+            constraints:
+              nullable: false
+            name: ORDEN
+            type: NUMBER
+        tableName: CORE_REQ_MODULO_PDF
+        tablespace: USERS
+- changeSet:
+    id: 1781195289665-35
+    author: sionandreu (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: CORE_REQ_MODPDF_CES_PK
+            name: SERVICIO
+            type: NUMBER(38, 0)
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: CORE_REQ_MODPDF_CES_PK
+            name: ORGANISMO
+            type: NUMBER(38, 0)
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: CORE_REQ_MODPDF_CES_PK
+            name: MODULO
+            type: VARCHAR2(256 CHAR)
+        - column:
+            constraints:
+              nullable: false
+            defaultValueNumeric: !!float '1'
+            name: ACTIVO
+            type: NUMBER
+        tableName: CORE_REQ_MODULO_PDF_CESIONARIO
+        tablespace: USERS
+- changeSet:
+    id: 1781195289665-36
+    author: sionandreu (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: CORE_REQ_SECUENCIA_ID_PET_PK
+            name: PREFIJO
+            remarks: Prefijo utilizado para la construccion de los identificadores.
+              Dicho valor podrá ser el prefijo especificado a ser utilizado para cada
+              servicio o ante la no existencia del mismo, el número de serie del certificado
+              digital firmante  de los mensajes.
+            type: VARCHAR2(9 CHAR)
+        - column:
+            constraints:
+              nullable: false
+            name: SECUENCIA
+            remarks: Valor secuencial que será concatenado al prefijo para generar
+              los identificadores de petición. Este secuencial será de tipo alfanumérico,
+              de tal forma que el siguiente valor a 00000009 sería 0000000A.
+            type: VARCHAR2(23 CHAR)
+        - column:
+            constraints:
+              nullable: false
+            name: FECHAGENERACION
+            remarks: Fecha en la que se registró el secuencial
+            type: TIMESTAMP(6)
+        remarks: Tabla que almacena las semillas (secuenciales) utilizadas para la
+          generación de los identificadores de peticion. Existirá un secuencial asociado
+          a cada posible prefijo o número de serie de certificado digital firmante.
+        tableName: CORE_REQ_SECUENCIA_ID_PETICION
+        tablespace: USERS
+- changeSet:
+    id: 1781195289665-37
+    author: sionandreu (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: CORE_SERVICIO_PK
+            name: ID
+            type: NUMBER(38, 0)
+        - column:
+            constraints:
+              nullable: false
+            name: CODCERTIFICADO
+            remarks: Código del certificado que lo identifica unívocamente en las
+              comunicaciones SCSP
+            type: VARCHAR2(64 CHAR)
+        - column:
+            constraints:
+              nullable: false
+            name: DESCRIPCION
+            remarks: Literal descriptivo del servicio a solicitar utilizando el código
+              de certificado
+            type: VARCHAR2(512 CHAR)
+        - column:
+            name: URLSINCRONA
+            remarks: Endpoint de acceso al servicio de tipo síncrono
+            type: VARCHAR2(256 CHAR)
+        - column:
+            name: URLASINCRONA
+            remarks: Endpoint de acceso al servicio de tipo asíncrono del certificado
+            type: VARCHAR2(256 CHAR)
+        - column:
+            name: ACTIONSINCRONA
+            remarks: Valor del Soap:Action de la petición síncrona utilizado por el
+              servidor WS en el caso de que sea necesario
+            type: VARCHAR2(256 CHAR)
+        - column:
+            name: ACTIONASINCRONA
+            remarks: Valor del Soap:Action de la petición asíncrona utilizado por
+              el servidor WS en el caso de que sea necesario
+            type: VARCHAR2(256 CHAR)
+        - column:
+            name: ACTIONSOLICITUD
+            remarks: Valor del Soap:Action de la solicitud asíncrona de respuesta
+              utilizado por el servidor WS en el caso de que sea necesario
+            type: VARCHAR2(256 CHAR)
+        - column:
+            constraints:
+              nullable: false
+            name: VERSIONESQUEMA
+            remarks: Indica la versión de esquema utilizado en los mensajes SCSP pudiendo
+              tomar los valores V2 y V3 (existe la posibilidad de añadir otros valores
+              utilizando configuraciones avandadas de binding)
+            type: VARCHAR2(32 CHAR)
+        - column:
+            constraints:
+              nullable: false
+            name: TIPOSEGURIDAD
+            remarks: Indica la politica de seguridad utilizada en la securización
+              de los mensajes, pudiendo tomar los valores [XMLSignature| WS-Security]
+            type: VARCHAR2(16 CHAR)
+        - column:
+            name: PREFIJOPETICION
+            remarks: Literal con una longitud máxima de 8 caracteres, el cual será
+              utilizado para la construcción de los identificadores de petición, anteponiendose
+              a un valor secuencial. Mediante este literal pueden personalizarse los
+              identificadores de petición haciendolos más descriptivos
+            type: VARCHAR2(9 CHAR)
+        - column:
+            name: XPATHCIFRADOSINCRONO
+            remarks: Literal que identifica el nodo del mensaje XML a cifrar en caso
+              de que los mensajes intercambiados con el emisor de servicio viajasen
+              cifrados. Se corresponde con una expresión xpath que permite localizar
+              al nodo en el mensaje XML, presentará el siguiente formato //*[local-name()="NODO_A_CIFRAR"],
+              donde "NODO_A_CIFRAR" es el local name del nodo que se desea cifrar.
+              Este nodo será empleado en el caso de realizar comunicaciones síncronas
+            type: VARCHAR2(256 CHAR)
+        - column:
+            name: XPATHCIFRADOASINCRONO
+            remarks: Literal que identifica el nodo del mensaje XML a cifrar en caso
+              de que los mensajes intercambiados con el emisor de servicio viajasen
+              cifrados. Se corresponde con una expresión xpath que permite localizar
+              al nodo en el mensaje XML, presentará el siguiente formato //*[local-name()="NODO_A_CIFRAR"],
+              donde "NODO_A_CIFRAR" es el local name del nodo que se desea cifrar.
+              Este nodo será empleado en el caso de realizar comunicaciones asíncronas
+            type: VARCHAR2(256 CHAR)
+        - column:
+            name: ESQUEMAS
+            remarks: Ruta que indica el directorio donde se encuentran los esquemas
+              (*.xsd) con el que se validará el XML de los diferentes mensajes intercambiados.
+              Esta ruta podrá tomar un valor relativo haciendo referencia al classpath
+              de la aplicación o  un path absoluto
+            type: VARCHAR2(256 CHAR)
+        - column:
+            name: CLAVECIFRADO
+            type: NUMBER(38, 0)
+        - column:
+            name: CLAVEFIRMA
+            type: NUMBER(38, 0)
+        - column:
+            name: ALGORITMOCIFRADO
+            remarks: 'Literal que identifica el algoritmo utilizado para el cifrado
+              de los mensajes enviados al emisor. Debe poseer un valor reconocido
+              por las librerías de Rampart: - Basic128Rsa15 - TripleDesRsa15  - Basic256Rsa15'
+            type: VARCHAR2(32 CHAR)
+        - column:
+            constraints:
+              nullable: false
+            name: NUMEROMAXIMOREENVIOS
+            remarks: Valor que indica en el caso del requirente, el número máximo
+              de reenvios que pueden llevarse a cabo sobre una petición asíncrona.
+              En el caso del emisor, hace referencia al número máximo de veces que
+              procesará y creará una respuesta para una petición con un mismo identificador
+            type: NUMBER
+        - column:
+            constraints:
+              nullable: false
+            name: MAXSOLICITUDESPETICION
+            remarks: Número máximo de solicitudes de transmisión que se van a permitir
+              por petición
+            type: NUMBER
+        - column:
+            name: PREFIJOIDTRANSMISION
+            remarks: Semilla empleada por el emisor para generar los identificadores
+              de transmisión de las respuestas. Será un valor alfanumérico con un
+              mínimo de 3 caracteres y un máximo de 8
+            type: VARCHAR2(9 CHAR)
+        - column:
+            constraints:
+              nullable: false
+            name: EMISOR
+            type: NUMBER(38, 0)
+        - column:
+            constraints:
+              nullable: false
+            name: FECHAALTA
+            remarks: Timestamp con la fecha en la cual el certificado se dio de alta
+              en el sistema y por lo tanto a partir de la cual se podrán emitir peticiones
+              al mismo
+            type: TIMESTAMP(6)
+        - column:
+            name: FECHABAJA
+            remarks: Timestamp con la fecha en la cual el certificado se dio de baja
+              en el sistema y por tanto a partir de la cual no se podran emitir peticiones
+              al mismo
+            type: TIMESTAMP(6)
+        - column:
+            constraints:
+              nullable: false
+            defaultValueNumeric: !!float '0'
+            name: CADUCIDAD
+            remarks: Número de dias que deberán sumarse a la fecharespuesta de una
+              petición, para calcular la fecha a partir de la cual se podrá considerar
+              que la respuesta esta caducada y se devolvera el error scsp correspondiente
+              para indicar que la respuesta ha perdido su valor
+            type: NUMBER
+        - column:
+            name: XPATHLITERALERROR
+            remarks: Xpath para recuperar el literal del error de los datos específicos
+            type: VARCHAR2(256 CHAR)
+        - column:
+            name: XPATHCODIGOERROR
+            remarks: Xpath para recuperar el codigo de error de los datos específicos
+            type: VARCHAR2(256 CHAR)
+        - column:
+            name: XPATHCODIGOERRORSECUNDARIO
+            type: VARCHAR2(256 CHAR)
+        - column:
+            constraints:
+              nullable: false
+            defaultValueNumeric: !!float '60'
+            name: TIMEOUT
+            remarks: Timeout que se establecerá para el envío de las peticiones a
+              los servicios
+            type: NUMBER
+        - column:
+            defaultValue: estricto
+            name: VALIDACIONFIRMA
+            remarks: Parámetro que indica si se admite otro tipo de firma en el servicio
+              además del configurado
+            type: VARCHAR2(32 CHAR)
+        - column:
+            name: PLANTILLAXSLT
+            type: VARCHAR2(512 CHAR)
+        - column:
+            name: SIGNER
+            type: VARCHAR2(512 BYTE)
+        remarks: Esta tabla registrará cada uno de los certificados SCSP que van a
+          ser utilizados por el sistema tanto de la parte requirente como de la parte
+          emisora
+        tableName: CORE_SERVICIO
+        tablespace: USERS
+- changeSet:
+    id: 1781195289665-38
+    author: sionandreu (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: CORE_TIPO_MENSAJE_PK
+            name: TIPO
+            remarks: Tipo identificativo del mensaje
+            type: NUMBER
+        - column:
+            constraints:
+              nullable: false
+            name: DESCRIPCION
+            remarks: Literal descriptivo del tipo de mensaje
+            type: VARCHAR2(32 CHAR)
+        remarks: 'Tabla maestra que almacena los diferentes tipos de mensajes que
+          pueden ser intercambiados a lo largo de un ciclo de comunicación SCSP. Estos
+          valores serán: 0: Peticion, 1: ConfirmacionPeticion, 2: SolicitudRespuesta,
+          3: Respuesta, 4: Fault'
+        tableName: CORE_TIPO_MENSAJE
+        tablespace: USERS
+- changeSet:
+    id: 1781195289665-39
+    author: sionandreu (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: CORE_TOKEN_DATA_PK
+            name: IDPETICION
+            remarks: Identificador de la petición a la cual est� asociado el XML
+            type: VARCHAR2(26 CHAR)
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: CORE_TOKEN_DATA_PK
+            name: TIPOMENSAJE
+            remarks: 'Tipo de mensaje almacenado que podrá ser: Peticion, Respuesta,
+              SolicitudRespuesta, ConfirmacionPeticion, Fault'
+            type: NUMBER
+        - column:
+            constraints:
+              nullable: false
+            name: DATOS
+            remarks: Bytes del mensaje almacenado
+            type: CLOB
+        - column:
+            name: CLAVE
+            remarks: Clave simétrica utilizada para el cifrado de los datos
+            type: VARCHAR2(256 CHAR)
+        - column:
+            name: MODOENCRIPTACION
+            remarks: Modo de encriptación utilizado para el proceso de cifrado. Por
+              defecto será TransportKey
+            type: VARCHAR2(32 CHAR)
+        - column:
+            name: ALGORITMOENCRIPTACION
+            remarks: 'Algoritmo empleado en la encriptación del mensaje. Podrá tomar
+              los siguientes valores: - AES128 - AES256 -DESDe'
+            type: VARCHAR2(32 CHAR)
+        remarks: Esta tabla almacenará el contenido de los mensajes intercambiados
+          en un proceso de comunicación SCSP
+        tableName: CORE_TOKEN_DATA
+        tablespace: USERS
+- changeSet:
+    id: 1781195289665-40
+    author: sionandreu (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: CORE_TRANSMISION_PK
+            name: IDSOLICITUD
+            remarks: Indentificador de la solicitud de transmisión
+            type: VARCHAR2(64 CHAR)
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: CORE_TRANSMISION_PK
+            name: IDPETICION
+            remarks: Indentificador de la petición en la que se incluyó la solicitud
+              de transmisión
+            type: VARCHAR2(26 CHAR)
+        - column:
+            name: IDTRANSMISION
+            remarks: Indentificador de la transmisión que responde a la petición de
+              servicio de la Solicitud de transmisión identificada con idSolicitud
+            type: VARCHAR2(64 CHAR)
+        - column:
+            constraints:
+              nullable: false
+            name: IDSOLICITANTE
+            remarks: CIF de organismo solicitante del servicio
+            type: VARCHAR2(10 CHAR)
+        - column:
+            name: NOMBRESOLICITANTE
+            remarks: Nombre del organismo solicitante de servicio
+            type: VARCHAR2(256 CHAR)
+        - column:
+            name: DOCTITULAR
+            remarks: Documento identificativo del titular sobre el cual se está realizando
+              la petición de servicio
+            type: VARCHAR2(30 CHAR)
+        - column:
+            name: NOMBRETITULAR
+            remarks: Nombre del titular sobre el que se realiza la petición del servicio
+            type: VARCHAR2(50 CHAR)
+        - column:
+            name: APELLIDO1TITULAR
+            remarks: Primer apellido del titular sobre el que se realiza la petición
+              del servicio
+            type: VARCHAR2(50 CHAR)
+        - column:
+            name: APELLIDO2TITULAR
+            remarks: Segundo apellido del titular sobre el que se realiza la petición
+              del servicio
+            type: VARCHAR2(50 CHAR)
+        - column:
+            name: NOMBRECOMPLETOTITULAR
+            remarks: Nombre completo del titular sobre el que se realiza la petición
+              del servicio
+            type: VARCHAR2(160 CHAR)
+        - column:
+            name: DOCFUNCIONARIO
+            remarks: Documento identificativo del funcionario que generó la solicitud
+              de transmisión
+            type: VARCHAR2(16 CHAR)
+        - column:
+            name: NOMBREFUNCIONARIO
+            remarks: Nombre del Funcionario que generó la solicitud de transmisión
+            type: VARCHAR2(160 CHAR)
+        - column:
+            name: SEUDONIMOFUNCIONARIO
+            type: VARCHAR2(32 CHAR)
+        - column:
+            name: FECHAGENERACION
+            remarks: Fecha en la que se generó la transmisión
+            type: TIMESTAMP(6)
+        - column:
+            name: UNIDADTRAMITADORA
+            remarks: Unidad Tramitadora asociada a la solicitud de transmisión
+            type: VARCHAR2(250 CHAR)
+        - column:
+            name: CODIGOUNIDADTRAMITADORA
+            type: VARCHAR2(9 CHAR)
+        - column:
+            name: CODIGOPROCEDIMIENTO
+            remarks: Código del procedimiento en base al cual se puede solicitar el
+              servicio
+            type: VARCHAR2(256 CHAR)
+        - column:
+            name: NOMBREPROCEDIMIENTO
+            remarks: Nombre del procedimiento en base al cual se puede solicitar el
+              servicio
+            type: VARCHAR2(256 CHAR)
+        - column:
+            name: EXPEDIENTE
+            remarks: Expediente asociado a la solicitud de transmisión
+            type: VARCHAR2(65 CHAR)
+        - column:
+            name: FINALIDAD
+            remarks: Finalidad por la cual se emiti� la solicitud de transmisión
+            type: VARCHAR2(256 CHAR)
+        - column:
+            name: CONSENTIMIENTO
+            remarks: 'Tipo de consentimiento asociado a la transmisión. Deberá tomar
+              uno de los dos posibles valores: Si, Ley'
+            type: VARCHAR2(3 CHAR)
+        - column:
+            name: ERROR
+            type: VARCHAR2(4000 CHAR)
+        - column:
+            name: XMLTRANSMISION
+            remarks: El XML de la transmisión. Su almacenamiento será opcional, dependiendo
+              de un parametro global almacenado en la tabla core_parametro_configuracion
+            type: CLOB
+        - column:
+            name: ESTADO
+            remarks: Estado concreto en el que se encuentra la transmisión
+            type: VARCHAR2(10 CHAR)
+        - column:
+            name: ESTADOSECUNDARIO
+            type: VARCHAR2(16 CHAR)
+        - column:
+            name: AUTOMATIZADO
+            remarks: Indica si el procedimiento es o no automatizado
+            type: NUMBER(1, 0)
+        - column:
+            name: CLASETRAMITE
+            remarks: Indica la clase del trámite
+            type: NUMBER(2, 0)
+        remarks: Esta tabla almacenará la información específica de cada transmisión
+          que haya sido incluida en una respuesta de un servicio SCSP
+        tableName: CORE_TRANSMISION
+        tablespace: USERS
+- changeSet:
+    id: 1781195289665-41
+    author: sionandreu (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+            name: ID
+            type: NUMBER(19, 0)
+        tableName: HT_PBL_CONSULTA
+        tableType: GLOBAL TEMPORARY
+- changeSet:
+    id: 1781195289665-42
+    author: sionandreu (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+            name: ID
+            type: NUMBER(19, 0)
+        tableName: HT_PBL_CONSULTA_HIST
+        tableType: GLOBAL TEMPORARY
+- changeSet:
+    id: 1781195289665-43
+    author: sionandreu (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+            name: ID
+            type: NUMBER(19, 0)
+        tableName: HT_SUPERCONSULTA
+        tableType: GLOBAL TEMPORARY
+- changeSet:
+    id: 1781195289665-44
+    author: sionandreu (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: PBL_AVIS_PK
+            name: ID
+            type: NUMBER(19, 0)
+        - column:
+            constraints:
+              nullable: false
+            name: ASSUMPTE
+            type: VARCHAR2(256 CHAR)
+        - column:
+            constraints:
+              nullable: false
+            name: MISSATGE
+            type: VARCHAR2(2048 CHAR)
+        - column:
+            constraints:
+              nullable: false
+            name: DATA_INICI
+            type: TIMESTAMP(6)
+        - column:
+            constraints:
+              nullable: false
+            name: ACTIU
+            type: NUMBER(1, 0)
+        - column:
+            constraints:
+              nullable: false
+            name: AVIS_NIVELL
+            type: VARCHAR2(10 CHAR)
+        - column:
+            name: CREATEDBY_CODI
+            type: VARCHAR2(64 CHAR)
+        - column:
+            name: CREATEDDATE
+            type: TIMESTAMP(6)
+        - column:
+            name: LASTMODIFIEDBY_CODI
+            type: VARCHAR2(64 CHAR)
+        - column:
+            name: LASTMODIFIEDDATE
+            type: TIMESTAMP(6)
+        - column:
+            name: DATA_FINAL
+            type: TIMESTAMP(6)
+        tableName: PBL_AVIS
+        tablespace: USERS
+- changeSet:
+    id: 1781195289665-45
+    author: sionandreu (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: SYS_C0010252
+            name: KEY
+            type: VARCHAR2(256 CHAR)
+        - column:
+            name: VALUE
+            type: VARCHAR2(2048 CHAR)
+        - column:
+            name: DESCRIPTION_KEY
+            type: VARCHAR2(2048 CHAR)
+        - column:
+            constraints:
+              nullable: false
+            name: GROUP_CODE
+            type: VARCHAR2(128 CHAR)
+        - column:
+            constraints:
+              nullable: false
+            name: POSITION
+            type: NUMBER(3, 0)
+        - column:
+            constraints:
+              nullable: false
+            name: SOURCE_PROPERTY
+            type: VARCHAR2(16 CHAR)
+        - column:
+            name: TYPE_CODE
+            type: VARCHAR2(128 CHAR)
+        - column:
+            name: LASTMODIFIEDBY_CODI
+            type: VARCHAR2(64 CHAR)
+        - column:
+            name: LASTMODIFIEDDATE
+            type: TIMESTAMP(6)
+        tableName: PBL_CONFIG
+        tablespace: USERS
+- changeSet:
+    id: 1781195289665-46
+    author: sionandreu (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: SYS_C009977
+            name: CODE
+            type: VARCHAR2(128 CHAR)
+        - column:
+            name: DESCRIPTION_KEY
+            type: VARCHAR2(512 CHAR)
+        - column:
+            constraints:
+              nullable: false
+            name: POSITION
+            type: NUMBER(3, 0)
+        - column:
+            name: PARENT_CODE
+            type: VARCHAR2(128 CHAR)
+        tableName: PBL_CONFIG_GROUP
+        tablespace: USERS
+- changeSet:
+    id: 1781195289665-47
+    author: sionandreu (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: SYS_C0010047
+            name: CODE
+            type: VARCHAR2(128 CHAR)
+        - column:
+            name: VALUE
+            type: VARCHAR2(2048 CHAR)
+        tableName: PBL_CONFIG_TYPE
+        tablespace: USERS
+- changeSet:
+    id: 1781195289665-48
+    author: sionandreu (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: PBL_CONSULTA_PK
+            name: ID
+            type: NUMBER(38, 0)
+        - column:
+            name: CUSTODIAT
+            type: NUMBER(1, 0)
+        - column:
+            constraints:
+              nullable: false
+            name: DEPARTAMENT
+            type: VARCHAR2(250 CHAR)
+        - column:
+            name: ERROR
+            type: VARCHAR2(4000 CHAR)
+        - column:
+            constraints:
+              nullable: false
+            name: ESTAT
+            type: NUMBER
+        - column:
+            constraints:
+              nullable: false
+            name: PETICION_ID
+            type: VARCHAR2(26 CHAR)
+        - column:
+            name: TITULAR_DOCNUM
+            type: VARCHAR2(14 CHAR)
+        - column:
+            name: TITULAR_DOCTIP
+            type: VARCHAR2(16 CHAR)
+        - column:
+            name: TITULAR_LLING1
+            type: VARCHAR2(64 CHAR)
+        - column:
+            name: TITULAR_LLING2
+            type: VARCHAR2(64 CHAR)
+        - column:
+            name: TITULAR_NOM
+            type: VARCHAR2(64 CHAR)
+        - column:
+            constraints:
+              nullable: false
+            name: PROCSERV_ID
+            type: NUMBER(38, 0)
+        - column:
+            name: RECOBRIMENT
+            type: NUMBER(1, 0)
+        - column:
+            name: TITULAR_NOMCOMPLET
+            type: VARCHAR2(122 CHAR)
+        - column:
+            name: FUNCIONARI_NOM
+            type: VARCHAR2(128 CHAR)
+        - column:
+            constraints:
+              nullable: false
+            name: FUNCIONARI_DOCNUM
+            type: VARCHAR2(16 CHAR)
+        - column:
+            name: SOLICITUD_ID
+            type: VARCHAR2(64 CHAR)
+        - column:
+            name: MULTIPLE
+            type: NUMBER(1, 0)
+        - column:
+            name: PARE_ID
+            type: NUMBER(38, 0)
+        - column:
+            name: CUSTODIA_URL
+            type: VARCHAR2(255 CHAR)
+        - column:
+            name: JUSTIFICANT_ERROR
+            type: VARCHAR2(2000 CHAR)
+        - column:
+            constraints:
+              nullable: false
+            name: JUSTIFICANT_ESTAT
+            type: NUMBER
+        - column:
+            name: CUSTODIA_ID
+            type: VARCHAR2(255 CHAR)
+        - column:
+            name: ARXIU_EXPEDIENT_UUID
+            type: VARCHAR2(100 CHAR)
+        - column:
+            name: ARXIU_DOCUMENT_UUID
+            type: VARCHAR2(100 CHAR)
+        - column:
+            name: ARXIU_EXPEDIENT_TANCAT
+            type: NUMBER(1, 0)
+        - column:
+            name: CREATEDBY_CODI
+            type: VARCHAR2(64 CHAR)
+        - column:
+            name: CREATEDDATE
+            type: TIMESTAMP(6)
+        - column:
+            name: LASTMODIFIEDBY_CODI
+            type: VARCHAR2(64 CHAR)
+        - column:
+            name: LASTMODIFIEDDATE
+            type: TIMESTAMP(6)
+        - column:
+            constraints:
+              nullable: false
+            name: VERSION
+            type: NUMBER(38, 0)
+        - column:
+            name: FINALITAT
+            type: VARCHAR2(250 CHAR)
+        - column:
+            name: CONSENTIMENT
+            type: NUMBER
+        - column:
+            name: EXPEDIENT_ID
+            type: VARCHAR2(25 CHAR)
+        - column:
+            name: DADES_ESPECIFIQUES
+            type: CLOB
+        - column:
+            name: ENTITAT_ID
+            type: NUMBER(38, 0)
+        - column:
+            name: SERVEI_CODI
+            type: VARCHAR2(64 CHAR)
+        - column:
+            name: PROCEDIMENT_ID
+            type: NUMBER(38, 0)
+        - column:
+            name: DER
+            type: TIMESTAMP(6)
+        - column:
+            name: DADES_ESPEDIFIQUES_AUX
+            type: VARCHAR2(2048 BYTE)
+        - column:
+            constraints:
+              nullable: false
+            defaultValueNumeric: !!float '0'
+            name: APP_GUARDA_JUST_ARX
+            type: NUMBER(1, 0)
+        tableName: PBL_CONSULTA
+        tablespace: USERS
+- changeSet:
+    id: 1781195289665-49
+    author: sionandreu (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: PBL_CONSULTA_DO_PK
+            name: ID
+            type: NUMBER(38, 0)
+        - column:
+            constraints:
+              nullable: false
+            name: ENTITATCODI
+            type: VARCHAR2(64 CHAR)
+        - column:
+            constraints:
+              nullable: false
+            name: ENTITATNOM
+            type: VARCHAR2(255 CHAR)
+        - column:
+            constraints:
+              nullable: false
+            name: ENTITATNIF
+            type: VARCHAR2(255 CHAR)
+        - column:
+            constraints:
+              nullable: false
+            name: ENTITATTIPUS
+            type: VARCHAR2(16 CHAR)
+        - column:
+            name: DEPARTAMENTCODI
+            type: VARCHAR2(250 CHAR)
+        - column:
+            name: DEPARTAMENTNOM
+            type: VARCHAR2(250 CHAR)
+        - column:
+            constraints:
+              nullable: false
+            name: PROCEDIMENTCODI
+            type: VARCHAR2(20 CHAR)
+        - column:
+            constraints:
+              nullable: false
+            name: PROCEDIMENTNOM
+            type: VARCHAR2(255 CHAR)
+        - column:
+            constraints:
+              nullable: false
+            name: SERVEICODI
+            type: VARCHAR2(64 CHAR)
+        - column:
+            constraints:
+              nullable: false
+            name: SERVEINOM
+            type: VARCHAR2(512 CHAR)
+        - column:
+            constraints:
+              nullable: false
+            name: EMISSORNOM
+            type: VARCHAR2(50 CHAR)
+        - column:
+            constraints:
+              nullable: false
+            name: EMISSORNIF
+            type: VARCHAR2(16 CHAR)
+        - column:
+            name: CONSENTIMENT
+            type: VARCHAR2(16 CHAR)
+        - column:
+            name: FINALITAT
+            type: VARCHAR2(250 CHAR)
+        - column:
+            name: TITULARDOCTIP
+            type: VARCHAR2(16 CHAR)
+        - column:
+            constraints:
+              nullable: false
+            name: SOLICITUDID
+            type: VARCHAR2(64 CHAR)
+        - column:
+            constraints:
+              nullable: false
+            name: DATA
+            type: TIMESTAMP(6)
+        - column:
+            constraints:
+              nullable: false
+            name: TIPUS
+            type: VARCHAR2(16 CHAR)
+        - column:
+            name: RESULTAT
+            type: VARCHAR2(16 CHAR)
+        - column:
+            name: MULTIPLE
+            type: NUMBER(1, 0)
+        tableName: PBL_CONSULTA_DO
+        tablespace: USERS
+- changeSet:
+    id: 1781195289665-50
+    author: sionandreu (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: PBL_CONSULTA_HIST_PK
+            name: ID
+            type: NUMBER(38, 0)
+        - column:
+            name: CUSTODIAT
+            type: NUMBER(1, 0)
+        - column:
+            constraints:
+              nullable: false
+            name: DEPARTAMENT
+            type: VARCHAR2(250 CHAR)
+        - column:
+            name: ERROR
+            type: VARCHAR2(4000 CHAR)
+        - column:
+            constraints:
+              nullable: false
+            name: ESTAT
+            type: NUMBER
+        - column:
+            constraints:
+              nullable: false
+            name: PETICION_ID
+            type: VARCHAR2(26 CHAR)
+        - column:
+            name: TITULAR_DOCNUM
+            type: VARCHAR2(14 CHAR)
+        - column:
+            name: TITULAR_DOCTIP
+            type: VARCHAR2(16 CHAR)
+        - column:
+            name: TITULAR_LLING1
+            type: VARCHAR2(64 CHAR)
+        - column:
+            name: TITULAR_LLING2
+            type: VARCHAR2(64 CHAR)
+        - column:
+            name: TITULAR_NOM
+            type: VARCHAR2(64 CHAR)
+        - column:
+            constraints:
+              nullable: false
+            name: PROCSERV_ID
+            type: NUMBER(38, 0)
+        - column:
+            name: RECOBRIMENT
+            type: NUMBER(1, 0)
+        - column:
+            name: TITULAR_NOMCOMPLET
+            type: VARCHAR2(122 CHAR)
+        - column:
+            name: FUNCIONARI_NOM
+            type: VARCHAR2(128 CHAR)
+        - column:
+            name: FUNCIONARI_DOCNUM
+            type: VARCHAR2(16 CHAR)
+        - column:
+            name: SOLICITUD_ID
+            type: VARCHAR2(64 CHAR)
+        - column:
+            name: MULTIPLE
+            type: NUMBER(1, 0)
+        - column:
+            name: PARE_ID
+            type: NUMBER(38, 0)
+        - column:
+            name: CUSTODIA_URL
+            type: VARCHAR2(255 CHAR)
+        - column:
+            name: JUSTIFICANT_ERROR
+            type: VARCHAR2(2000 CHAR)
+        - column:
+            constraints:
+              nullable: false
+            name: JUSTIFICANT_ESTAT
+            type: NUMBER
+        - column:
+            name: CUSTODIA_ID
+            type: VARCHAR2(255 CHAR)
+        - column:
+            name: ARXIU_EXPEDIENT_UUID
+            type: VARCHAR2(100 CHAR)
+        - column:
+            name: ARXIU_DOCUMENT_UUID
+            type: VARCHAR2(100 CHAR)
+        - column:
+            name: ARXIU_EXPEDIENT_TANCAT
+            type: NUMBER(1, 0)
+        - column:
+            name: FINALITAT
+            type: VARCHAR2(250 CHAR)
+        - column:
+            name: CONSENTIMENT
+            type: NUMBER
+        - column:
+            name: EXPEDIENT_ID
+            type: VARCHAR2(25 CHAR)
+        - column:
+            name: DADES_ESPECIFIQUES
+            type: CLOB
+        - column:
+            name: CREATEDBY_CODI
+            type: VARCHAR2(64 CHAR)
+        - column:
+            name: CREATEDDATE
+            type: TIMESTAMP(6)
+        - column:
+            name: LASTMODIFIEDBY_CODI
+            type: VARCHAR2(64 CHAR)
+        - column:
+            name: LASTMODIFIEDDATE
+            type: TIMESTAMP(6)
+        - column:
+            constraints:
+              nullable: false
+            name: VERSION
+            type: NUMBER(38, 0)
+        - column:
+            name: ENTITAT_ID
+            type: NUMBER(38, 0)
+        - column:
+            name: SERVEI_CODI
+            type: VARCHAR2(64 CHAR)
+        - column:
+            name: PROCEDIMENT_ID
+            type: NUMBER(38, 0)
+        - column:
+            name: DER
+            type: TIMESTAMP(6)
+        - column:
+            name: DADES_ESPEDIFIQUES_AUX
+            type: VARCHAR2(2048 CHAR)
+        - column:
+            constraints:
+              nullable: false
+            defaultValueNumeric: !!float '0'
+            name: APP_GUARDA_JUST_ARX
+            type: NUMBER(1, 0)
+        tableName: PBL_CONSULTA_HIST
+        tablespace: USERS
+- changeSet:
+    id: 1781195289665-51
+    author: sionandreu (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: PBL_CONSULTA_HIST_DO_PK
+            name: ID
+            type: NUMBER(38, 0)
+        - column:
+            name: ENTITATCODI
+            type: VARCHAR2(64 CHAR)
+        - column:
+            name: ENTITATNOM
+            type: VARCHAR2(255 CHAR)
+        - column:
+            name: ENTITATNIF
+            type: VARCHAR2(255 CHAR)
+        - column:
+            name: ENTITATTIPUS
+            type: VARCHAR2(16 CHAR)
+        - column:
+            name: DEPARTAMENTCODI
+            type: VARCHAR2(250 CHAR)
+        - column:
+            name: DEPARTAMENTNOM
+            type: VARCHAR2(250 CHAR)
+        - column:
+            name: PROCEDIMENTCODI
+            type: VARCHAR2(20 CHAR)
+        - column:
+            name: PROCEDIMENTNOM
+            type: VARCHAR2(255 CHAR)
+        - column:
+            name: SERVEICODI
+            type: VARCHAR2(64 CHAR)
+        - column:
+            name: SERVEINOM
+            type: VARCHAR2(512 CHAR)
+        - column:
+            name: EMISSORNOM
+            type: VARCHAR2(50 CHAR)
+        - column:
+            name: EMISSORNIF
+            type: VARCHAR2(16 CHAR)
+        - column:
+            name: CONSENTIMENT
+            type: VARCHAR2(16 CHAR)
+        - column:
+            name: FINALITAT
+            type: VARCHAR2(250 CHAR)
+        - column:
+            name: TITULARDOCTIP
+            type: VARCHAR2(16 CHAR)
+        - column:
+            name: SOLICITUDID
+            type: VARCHAR2(64 CHAR)
+        - column:
+            constraints:
+              nullable: false
+            name: DATA
+            type: TIMESTAMP(6)
+        - column:
+            name: TIPUS
+            type: VARCHAR2(16 CHAR)
+        - column:
+            name: RESULTAT
+            type: VARCHAR2(16 CHAR)
+        - column:
+            name: MULTIPLE
+            type: NUMBER(1, 0)
+        tableName: PBL_CONSULTA_HIST_DO
+        tablespace: USERS
+- changeSet:
+    id: 1781195289665-52
+    author: sionandreu (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: PBL_CONSULTA_HIST_LIST_PK
+            name: ID
+            type: NUMBER(38, 0)
+        - column:
+            constraints:
+              nullable: false
+            name: PETICIOID
+            type: VARCHAR2(26 CHAR)
+        - column:
+            name: SOLICITUDID
+            type: VARCHAR2(64 CHAR)
+        - column:
+            constraints:
+              nullable: false
+            name: DATA
+            type: TIMESTAMP(6)
+        - column:
+            name: DEPARTAMENT
+            type: VARCHAR2(250 CHAR)
+        - column:
+            name: RECOBRIMENT
+            type: NUMBER(1, 0)
+        - column:
+            name: MULTIPLE
+            type: NUMBER(1, 0)
+        - column:
+            name: USUARICODI
+            type: VARCHAR2(64 CHAR)
+        - column:
+            name: USUARINOM
+            type: VARCHAR2(200 CHAR)
+        - column:
+            name: FUNCIONARINIF
+            type: VARCHAR2(16 CHAR)
+        - column:
+            name: FUNCIONARINOM
+            type: VARCHAR2(128 CHAR)
+        - column:
+            name: TITULARNOM
+            type: VARCHAR2(122 CHAR)
+        - column:
+            name: TITULARDOCTIP
+            type: VARCHAR2(16 CHAR)
+        - column:
+            name: TITULARDOCNUM
+            type: VARCHAR2(14 CHAR)
+        - column:
+            name: PROCEDIMENTID
+            type: NUMBER(38, 0)
+        - column:
+            name: PROCEDIMENTCODI
+            type: VARCHAR2(20 CHAR)
+        - column:
+            name: PROCEDIMENTNOM
+            type: VARCHAR2(255 CHAR)
+        - column:
+            name: SERVEICODI
+            type: VARCHAR2(64 CHAR)
+        - column:
+            name: SERVEINOM
+            type: VARCHAR2(512 CHAR)
+        - column:
+            name: ESTAT
+            type: VARCHAR2(16 CHAR)
+        - column:
+            name: ERROR
+            type: VARCHAR2(4000 CHAR)
+        - column:
+            name: JUSTIFICANTESTAT
+            type: VARCHAR2(16 CHAR)
+        - column:
+            name: ENTITATID
+            type: NUMBER(38, 0)
+        - column:
+            name: ENTITATCODI
+            type: VARCHAR2(64 CHAR)
+        - column:
+            name: PAREID
+            type: NUMBER(38, 0)
+        - column:
+            name: DER
+            type: TIMESTAMP(6)
+        tableName: PBL_CONSULTA_HIST_LIST
+        tablespace: USERS
+- changeSet:
+    id: 1781195289665-53
+    author: sionandreu (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: PBL_CONSULTA_LIST_PK
+            name: ID
+            type: NUMBER(38, 0)
+        - column:
+            constraints:
+              nullable: false
+            name: PETICIOID
+            type: VARCHAR2(26 CHAR)
+        - column:
+            name: SOLICITUDID
+            type: VARCHAR2(64 CHAR)
+        - column:
+            constraints:
+              nullable: false
+            name: DATA
+            type: TIMESTAMP(6)
+        - column:
+            constraints:
+              nullable: false
+            name: DEPARTAMENT
+            type: VARCHAR2(250 CHAR)
+        - column:
+            name: RECOBRIMENT
+            type: NUMBER(1, 0)
+        - column:
+            name: MULTIPLE
+            type: NUMBER(1, 0)
+        - column:
+            constraints:
+              nullable: false
+            name: USUARICODI
+            type: VARCHAR2(64 CHAR)
+        - column:
+            name: USUARINOM
+            type: VARCHAR2(200 CHAR)
+        - column:
+            name: FUNCIONARINIF
+            type: VARCHAR2(16 CHAR)
+        - column:
+            name: FUNCIONARINOM
+            type: VARCHAR2(128 CHAR)
+        - column:
+            name: TITULARNOM
+            type: VARCHAR2(122 CHAR)
+        - column:
+            name: TITULARDOCTIP
+            type: VARCHAR2(16 CHAR)
+        - column:
+            name: TITULARDOCNUM
+            type: VARCHAR2(14 CHAR)
+        - column:
+            constraints:
+              nullable: false
+            name: PROCEDIMENTID
+            type: NUMBER(38, 0)
+        - column:
+            constraints:
+              nullable: false
+            name: PROCEDIMENTCODI
+            type: VARCHAR2(20 CHAR)
+        - column:
+            constraints:
+              nullable: false
+            name: PROCEDIMENTNOM
+            type: VARCHAR2(255 CHAR)
+        - column:
+            constraints:
+              nullable: false
+            name: SERVEICODI
+            type: VARCHAR2(64 CHAR)
+        - column:
+            constraints:
+              nullable: false
+            name: SERVEINOM
+            type: VARCHAR2(512 CHAR)
+        - column:
+            constraints:
+              nullable: false
+            name: ESTAT
+            type: VARCHAR2(16 CHAR)
+        - column:
+            name: ERROR
+            type: VARCHAR2(4000 CHAR)
+        - column:
+            name: JUSTIFICANTESTAT
+            type: VARCHAR2(16 CHAR)
+        - column:
+            constraints:
+              nullable: false
+            name: ENTITATID
+            type: NUMBER(38, 0)
+        - column:
+            constraints:
+              nullable: false
+            name: ENTITATCODI
+            type: VARCHAR2(64 CHAR)
+        - column:
+            name: PAREID
+            type: NUMBER(38, 0)
+        - column:
+            name: DER
+            type: TIMESTAMP(6)
+        tableName: PBL_CONSULTA_LIST
+        tablespace: USERS
+- changeSet:
+    id: 1781195289665-54
+    author: sionandreu (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: PBL_ENTITAT_PK
+            name: ID
+            type: NUMBER(38, 0)
+        - column:
+            constraints:
+              nullable: false
+            name: CODI
+            type: VARCHAR2(64 CHAR)
+        - column:
+            constraints:
+              nullable: false
+            name: NOM
+            type: VARCHAR2(255 CHAR)
+        - column:
+            name: RESPONSABLE
+            type: VARCHAR2(64 CHAR)
+        - column:
+            constraints:
+              nullable: false
+            name: CIF
+            type: VARCHAR2(16 CHAR)
+        - column:
+            name: TIPUS
+            type: NUMBER
+        - column:
+            name: ACTIVA
+            type: NUMBER(1, 0)
+        - column:
+            name: UNITAT_ARREL
+            type: VARCHAR2(9 CHAR)
+        - column:
+            name: CREATEDBY_CODI
+            type: VARCHAR2(64 CHAR)
+        - column:
+            name: CREATEDDATE
+            type: TIMESTAMP(6)
+        - column:
+            name: LASTMODIFIEDBY_CODI
+            type: VARCHAR2(64 CHAR)
+        - column:
+            name: LASTMODIFIEDDATE
+            type: TIMESTAMP(6)
+        - column:
+            constraints:
+              nullable: false
+            name: VERSION
+            type: NUMBER(38, 0)
+        tableName: PBL_ENTITAT
+        tablespace: USERS
+- changeSet:
+    id: 1781195289665-55
+    author: sionandreu (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: PBL_ENTITAT_SERVEI_PK
+            name: ID
+            type: NUMBER(38, 0)
+        - column:
+            name: SERVEI_ID
+            type: VARCHAR2(64 CHAR)
+        - column:
+            constraints:
+              nullable: false
+            name: ENTITAT_ID
+            type: NUMBER(38, 0)
+        - column:
+            name: CREATEDBY_CODI
+            type: VARCHAR2(64 CHAR)
+        - column:
+            name: CREATEDDATE
+            type: TIMESTAMP(6)
+        - column:
+            name: LASTMODIFIEDBY_CODI
+            type: VARCHAR2(64 CHAR)
+        - column:
+            name: LASTMODIFIEDDATE
+            type: TIMESTAMP(6)
+        - column:
+            constraints:
+              nullable: false
+            name: VERSION
+            type: NUMBER(38, 0)
+        tableName: PBL_ENTITAT_SERVEI
+        tablespace: USERS
+- changeSet:
+    id: 1781195289665-56
+    author: sionandreu (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: PBL_ENTITAT_USUARI_PK
+            name: ID
+            type: NUMBER(38, 0)
+        - column:
+            constraints:
+              nullable: false
+            name: ENTITAT_ID
+            type: NUMBER(38, 0)
+        - column:
+            constraints:
+              nullable: false
+            name: USUARI_ID
+            type: VARCHAR2(64 CHAR)
+        - column:
+            name: DEPARTAMENT
+            type: VARCHAR2(64 CHAR)
+        - column:
+            name: REPRESENTANT
+            type: NUMBER(1, 0)
+        - column:
+            name: DELEGAT
+            type: NUMBER(1, 0)
+        - column:
+            name: AUDITOR
+            type: NUMBER(1, 0)
+        - column:
+            name: APLICACIO
+            type: NUMBER(1, 0)
+        - column:
+            name: PRINCIPAL
+            type: NUMBER(1, 0)
+        - column:
+            name: CREATEDBY_CODI
+            type: VARCHAR2(64 CHAR)
+        - column:
+            name: CREATEDDATE
+            type: TIMESTAMP(6)
+        - column:
+            name: LASTMODIFIEDBY_CODI
+            type: VARCHAR2(64 CHAR)
+        - column:
+            name: LASTMODIFIEDDATE
+            type: TIMESTAMP(6)
+        - column:
+            constraints:
+              nullable: false
+            name: VERSION
+            type: NUMBER(38, 0)
+        - column:
+            constraints:
+              nullable: false
+            name: ACTIU
+            type: NUMBER(1, 0)
+        tableName: PBL_ENTITAT_USUARI
+        tablespace: USERS
+- changeSet:
+    id: 1781195289665-57
+    author: sionandreu (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: PBL_EXPLOT_CONSULTA_DIM_PK
+            name: ID
+            type: NUMBER(38, 0)
+        - column:
+            name: ENTITAT_ID
+            type: NUMBER(38, 0)
+        - column:
+            name: PROCEDIMENT_ID
+            type: NUMBER(38, 0)
+        - column:
+            name: SERVEI_CODI
+            type: VARCHAR2(64 CHAR)
+        - column:
+            name: USUARI_CODI
+            type: VARCHAR2(255 CHAR)
+        - column:
+            name: ENTITAT_CODI
+            type: VARCHAR2(64 CHAR)
+        - column:
+            name: PROCEDIMENT_CODI
+            type: VARCHAR2(20 CHAR)
+        tableName: PBL_EXPLOT_CONSULTA_DIM
+        tablespace: USERS
+- changeSet:
+    id: 1781195289665-58
+    author: sionandreu (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: PBL_EXPLOT_CONSULTA_FET_PK
+            name: ID
+            type: NUMBER(38, 0)
+        - column:
+            name: NUM_REC_OK
+            type: NUMBER(38, 0)
+        - column:
+            name: NUM_REC_ERROR
+            type: NUMBER(38, 0)
+        - column:
+            name: NUM_REC_PEND
+            type: NUMBER(38, 0)
+        - column:
+            name: NUM_REC_PROC
+            type: NUMBER(38, 0)
+        - column:
+            name: NUM_REC_MASS_OK
+            type: NUMBER(38, 0)
+        - column:
+            name: NUM_REC_MASS_ERROR
+            type: NUMBER(38, 0)
+        - column:
+            name: NUM_REC_MASS_PEND
+            type: NUMBER(38, 0)
+        - column:
+            name: NUM_REC_MASS_PROC
+            type: NUMBER(38, 0)
+        - column:
+            name: NUM_WEB_OK
+            type: NUMBER(38, 0)
+        - column:
+            name: NUM_WEB_ERROR
+            type: NUMBER(38, 0)
+        - column:
+            name: NUM_WEB_PEND
+            type: NUMBER(38, 0)
+        - column:
+            name: NUM_WEB_PROC
+            type: NUMBER(38, 0)
+        - column:
+            name: NUM_WEB_MASS_OK
+            type: NUMBER(38, 0)
+        - column:
+            name: NUM_WEB_MASS_ERROR
+            type: NUMBER(38, 0)
+        - column:
+            name: NUM_WEB_MASS_PEND
+            type: NUMBER(38, 0)
+        - column:
+            name: NUM_WEB_MASS_PROC
+            type: NUMBER(38, 0)
+        - column:
+            constraints:
+              nullable: false
+            name: DIMENSIO_ID
+            type: NUMBER(38, 0)
+        - column:
+            constraints:
+              nullable: false
+            name: TEMPS_ID
+            type: NUMBER(38, 0)
+        tableName: PBL_EXPLOT_CONSULTA_FET
+        tablespace: USERS
+- changeSet:
+    id: 1781195289665-59
+    author: sionandreu (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: PK_PBL_EXPLOT_TEMPS
+            name: ID
+            type: NUMBER(38, 0)
+        - column:
+            name: DATA
+            type: date
+        - column:
+            name: ANUALITAT
+            type: NUMBER
+        - column:
+            name: MES
+            type: NUMBER
+        - column:
+            name: TRIMESTRE
+            type: NUMBER
+        - column:
+            name: SETMANA
+            type: NUMBER
+        - column:
+            name: DIA_SETMANA
+            type: VARCHAR2(3 CHAR)
+        - column:
+            name: DIA
+            type: NUMBER(*, 0)
+        tableName: PBL_EXPLOT_TEMPS
+        tablespace: USERS
+- changeSet:
+    id: 1781195289665-60
+    author: sionandreu (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: PBL_MON_INT_PK
+            name: ID
+            type: NUMBER(19, 0)
+        - column:
+            constraints:
+              nullable: false
+            name: CODI
+            type: VARCHAR2(64 BYTE)
+        - column:
+            name: DATA
+            type: TIMESTAMP(6)
+        - column:
+            name: DESCRIPCIO
+            type: VARCHAR2(1024 CHAR)
+        - column:
+            name: TIPUS
+            type: VARCHAR2(10 BYTE)
+        - column:
+            name: TEMPS_RESPOSTA
+            type: NUMBER(19, 0)
+        - column:
+            name: ESTAT
+            type: VARCHAR2(5 BYTE)
+        - column:
+            name: CODI_USUARI
+            type: VARCHAR2(64 BYTE)
+        - column:
+            name: ERROR_DESCRIPCIO
+            type: VARCHAR2(1024 CHAR)
+        - column:
+            name: EXCEPCIO_MSG
+            type: VARCHAR2(1024 CHAR)
+        - column:
+            name: EXCEPCIO_STACKTRACE
+            type: VARCHAR2(2048 CHAR)
+        - column:
+            name: CODI_ENTITAT
+            type: VARCHAR2(64 BYTE)
+        - column:
+            name: CREATEDBY_CODI
+            type: VARCHAR2(64 BYTE)
+        - column:
+            name: CREATEDDATE
+            type: TIMESTAMP(6)
+        - column:
+            name: LASTMODIFIEDBY_CODI
+            type: VARCHAR2(64 BYTE)
+        - column:
+            name: LASTMODIFIEDDATE
+            type: TIMESTAMP(6)
+        - column:
+            name: ID_PETICIO
+            type: VARCHAR2(64 BYTE)
+        tableName: PBL_MON_INT
+        tablespace: USERS
+- changeSet:
+    id: 1781195289665-61
+    author: sionandreu (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: PBL_MON_INT_PARAM_PK
+            name: ID
+            type: NUMBER(19, 0)
+        - column:
+            constraints:
+              nullable: false
+            name: MON_INT_ID
+            type: NUMBER(19, 0)
+        - column:
+            constraints:
+              nullable: false
+            name: NOM
+            type: VARCHAR2(64 BYTE)
+        - column:
+            name: DESCRIPCIO
+            type: VARCHAR2(1024 BYTE)
+        - column:
+            name: CREATEDBY_CODI
+            type: VARCHAR2(64 BYTE)
+        - column:
+            name: CREATEDDATE
+            type: TIMESTAMP(6)
+        - column:
+            name: LASTMODIFIEDBY_CODI
+            type: VARCHAR2(64 BYTE)
+        - column:
+            name: LASTMODIFIEDDATE
+            type: TIMESTAMP(6)
+        tableName: PBL_MON_INT_PARAM
+        tablespace: USERS
+- changeSet:
+    id: 1781195289665-62
+    author: sionandreu (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: PBL_ORGAN_GESTOR_PK
+            name: ID
+            type: NUMBER(38, 0)
+        - column:
+            constraints:
+              nullable: false
+            name: CODI
+            type: VARCHAR2(64 CHAR)
+        - column:
+            constraints:
+              nullable: false
+            name: NOM
+            type: VARCHAR2(1000 CHAR)
+        - column:
+            constraints:
+              nullable: false
+            name: ENTITAT_ID
+            type: NUMBER(38, 0)
+        - column:
+            name: PARE_ID
+            type: NUMBER(38, 0)
+        - column:
+            constraints:
+              nullable: false
+            name: ACTIU
+            type: NUMBER(1, 0)
+        - column:
+            name: CREATEDBY_CODI
+            type: VARCHAR2(64 CHAR)
+        - column:
+            name: CREATEDDATE
+            type: TIMESTAMP(6)
+        - column:
+            name: LASTMODIFIEDBY_CODI
+            type: VARCHAR2(64 CHAR)
+        - column:
+            name: LASTMODIFIEDDATE
+            type: TIMESTAMP(6)
+        - column:
+            name: ESTAT
+            type: VARCHAR2(10 CHAR)
+        tableName: PBL_ORGAN_GESTOR
+        tablespace: USERS
+- changeSet:
+    id: 1781195289665-63
+    author: sionandreu (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: PBL_PROCEDIMENT_PK
+            name: ID
+            type: NUMBER(38, 0)
+        - column:
+            constraints:
+              nullable: false
+            name: CODI
+            type: VARCHAR2(20 CHAR)
+        - column:
+            constraints:
+              nullable: false
+            name: NOM
+            type: VARCHAR2(255 CHAR)
+        - column:
+            name: ACTIU
+            type: NUMBER(1, 0)
+        - column:
+            constraints:
+              nullable: false
+            name: ENTITAT_ID
+            type: NUMBER(38, 0)
+        - column:
+            name: DEPARTAMENT
+            type: VARCHAR2(64 CHAR)
+        - column:
+            name: CODI_SIA
+            type: VARCHAR2(64 CHAR)
+        - column:
+            name: ORGAN_GESTOR
+            type: VARCHAR2(64 CHAR)
+        - column:
+            name: ORGAN_GESTOR_ID
+            type: NUMBER(38, 0)
+        - column:
+            name: CREATEDBY_CODI
+            type: VARCHAR2(64 CHAR)
+        - column:
+            name: CREATEDDATE
+            type: TIMESTAMP(6)
+        - column:
+            name: LASTMODIFIEDBY_CODI
+            type: VARCHAR2(64 CHAR)
+        - column:
+            name: LASTMODIFIEDDATE
+            type: TIMESTAMP(6)
+        - column:
+            constraints:
+              nullable: false
+            name: VERSION
+            type: NUMBER(38, 0)
+        - column:
+            defaultValueNumeric: !!float '0'
+            name: VALOR_CAMP_AUTOMATIZADO
+            type: NUMBER(1, 0)
+        - column:
+            name: VALOR_CAMP_CLASETRAMITE
+            type: NUMBER
+        - column:
+            name: CODI_SIA_ORIGEN
+            type: VARCHAR2(64 CHAR)
+        tableName: PBL_PROCEDIMENT
+        tablespace: USERS
+- changeSet:
+    id: 1781195289665-64
+    author: sionandreu (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: PBL_PROCEDIMENT_SERVEI_PK
+            name: ID
+            type: NUMBER(38, 0)
+        - column:
+            name: ACTIU
+            type: NUMBER(1, 0)
+        - column:
+            name: SERVEI_ID
+            type: VARCHAR2(64 CHAR)
+        - column:
+            constraints:
+              nullable: false
+            name: PROCEDIMENT_ID
+            type: NUMBER(38, 0)
+        - column:
+            name: PROCEDIMENT_CODI
+            type: VARCHAR2(20 CHAR)
+        - column:
+            name: CREATEDBY_CODI
+            type: VARCHAR2(64 CHAR)
+        - column:
+            name: CREATEDDATE
+            type: TIMESTAMP(6)
+        - column:
+            name: LASTMODIFIEDBY_CODI
+            type: VARCHAR2(64 CHAR)
+        - column:
+            name: LASTMODIFIEDDATE
+            type: TIMESTAMP(6)
+        - column:
+            constraints:
+              nullable: false
+            name: VERSION
+            type: NUMBER(38, 0)
+        tableName: PBL_PROCEDIMENT_SERVEI
+        tablespace: USERS
+- changeSet:
+    id: 1781195289665-65
+    author: sionandreu (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: PBL_SERVEI_BUS_PK
+            name: ID
+            type: NUMBER(38, 0)
+        - column:
+            constraints:
+              nullable: false
+            name: SERVEI_ID
+            type: VARCHAR2(64 CHAR)
+        - column:
+            constraints:
+              nullable: false
+            name: URL_DESTI
+            type: VARCHAR2(255 CHAR)
+        - column:
+            constraints:
+              nullable: false
+            name: ENTITAT_ID
+            type: NUMBER(38, 0)
+        - column:
+            name: CREATEDBY_CODI
+            type: VARCHAR2(64 CHAR)
+        - column:
+            name: CREATEDDATE
+            type: TIMESTAMP(6)
+        - column:
+            name: LASTMODIFIEDBY_CODI
+            type: VARCHAR2(64 CHAR)
+        - column:
+            name: LASTMODIFIEDDATE
+            type: TIMESTAMP(6)
+        - column:
+            constraints:
+              nullable: false
+            name: VERSION
+            type: NUMBER(38, 0)
+        tableName: PBL_SERVEI_BUS
+        tablespace: USERS
+- changeSet:
+    id: 1781195289665-66
+    author: sionandreu (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: PBL_SERVEI_CAMP_PK
+            name: ID
+            type: NUMBER(38, 0)
+        - column:
+            name: COMENTARI
+            type: VARCHAR2(255 CHAR)
+        - column:
+            name: ENUM_DESCS
+            type: VARCHAR2(1024 CHAR)
+        - column:
+            name: ETIQUETA
+            type: VARCHAR2(64 CHAR)
+        - column:
+            name: MODIFICABLE
+            type: NUMBER(1, 0)
+        - column:
+            name: OBLIGATORI
+            type: NUMBER(1, 0)
+        - column:
+            name: ORDRE
+            type: NUMBER
+        - column:
+            constraints:
+              nullable: false
+            name: PATH
+            type: VARCHAR2(255 CHAR)
+        - column:
+            constraints:
+              nullable: false
+            name: SERVEI_ID
+            type: VARCHAR2(64 CHAR)
+        - column:
+            constraints:
+              nullable: false
+            name: TIPUS
+            type: NUMBER
+        - column:
+            name: VALOR_DEFECTE
+            type: VARCHAR2(64 CHAR)
+        - column:
+            name: VISIBLE
+            type: NUMBER(1, 0)
+        - column:
+            name: DATA_FORMAT
+            type: VARCHAR2(32 CHAR)
+        - column:
+            name: VALOR_PARE
+            type: VARCHAR2(64 CHAR)
+        - column:
+            name: CAMP_PARE_ID
+            type: NUMBER(38, 0)
+        - column:
+            name: GRUP_ID
+            type: NUMBER(38, 0)
+        - column:
+            name: CREATEDBY_CODI
+            type: VARCHAR2(64 CHAR)
+        - column:
+            name: CREATEDDATE
+            type: TIMESTAMP(6)
+        - column:
+            name: LASTMODIFIEDBY_CODI
+            type: VARCHAR2(64 CHAR)
+        - column:
+            name: LASTMODIFIEDDATE
+            type: TIMESTAMP(6)
+        - column:
+            constraints:
+              nullable: false
+            name: VERSION
+            type: NUMBER(38, 0)
+        - column:
+            name: VAL_REGEXP
+            type: VARCHAR2(100 CHAR)
+        - column:
+            name: VAL_MIN
+            type: NUMBER
+        - column:
+            name: VAL_MAX
+            type: NUMBER
+        - column:
+            name: VAL_DATA_CMP_OP
+            type: NUMBER
+        - column:
+            name: VAL_DATA_CMP_CAMP2_ID
+            type: NUMBER(38, 0)
+        - column:
+            name: VAL_DATA_CMP_NUM
+            type: NUMBER
+        - column:
+            name: VAL_DATA_CMP_TIPUS
+            type: NUMBER
+        - column:
+            defaultValueNumeric: !!float '0'
+            name: INICIALITZAR
+            type: NUMBER(1, 0)
+        - column:
+            name: MIDA
+            type: NUMBER(38, 0)
+        tableName: PBL_SERVEI_CAMP
+        tablespace: USERS
+- changeSet:
+    id: 1781195289665-67
+    author: sionandreu (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: PBL_SERVEI_CAMP_GRUP_PK
+            name: ID
+            type: NUMBER(38, 0)
+        - column:
+            constraints:
+              nullable: false
+            name: NOM
+            type: VARCHAR2(255 CHAR)
+        - column:
+            name: ORDRE
+            type: NUMBER
+        - column:
+            constraints:
+              nullable: false
+            name: SERVEI_ID
+            type: VARCHAR2(64 CHAR)
+        - column:
+            name: CREATEDBY_CODI
+            type: VARCHAR2(64 CHAR)
+        - column:
+            name: CREATEDDATE
+            type: TIMESTAMP(6)
+        - column:
+            name: LASTMODIFIEDBY_CODI
+            type: VARCHAR2(64 CHAR)
+        - column:
+            name: LASTMODIFIEDDATE
+            type: TIMESTAMP(6)
+        - column:
+            constraints:
+              nullable: false
+            name: VERSION
+            type: NUMBER(38, 0)
+        - column:
+            name: AJUDA
+            type: CLOB
+        - column:
+            name: PARE_ID
+            type: NUMBER(38, 0)
+        tableName: PBL_SERVEI_CAMP_GRUP
+        tablespace: USERS
+- changeSet:
+    id: 1781195289665-68
+    author: sionandreu (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: PBL_SERVEI_CONFIG_PK
+            name: ID
+            type: NUMBER(38, 0)
+        - column:
+            name: CUSTODIA_CODI
+            type: VARCHAR2(64 CHAR)
+        - column:
+            name: ROLE_NAME
+            type: VARCHAR2(64 CHAR)
+        - column:
+            constraints:
+              nullable: false
+            name: SERVEI_ID
+            type: VARCHAR2(64 CHAR)
+        - column:
+            name: CONDICIO_BUS_CLASS
+            type: VARCHAR2(255 CHAR)
+        - column:
+            name: ENTITAT_TIPUS
+            type: NUMBER
+        - column:
+            name: JUSTIFICANT_XPATH
+            type: VARCHAR2(255 CHAR)
+        - column:
+            name: JUSTIFICANT_TIPUS
+            type: NUMBER
+        - column:
+            name: PERMES_DOCTIP_DNI
+            type: NUMBER(1, 0)
+        - column:
+            name: PERMES_DOCTIP_NIE
+            type: NUMBER(1, 0)
+        - column:
+            name: PERMES_DOCTIP_NIF
+            type: NUMBER(1, 0)
+        - column:
+            name: PERMES_DOCTIP_CIF
+            type: NUMBER(1, 0)
+        - column:
+            name: PERMES_DOCTIP_PAS
+            type: NUMBER(1, 0)
+        - column:
+            name: ACTIU_CAMP_EXP
+            type: NUMBER(1, 0)
+        - column:
+            name: ACTIU_CAMP_LLIN1
+            type: NUMBER(1, 0)
+        - column:
+            name: ACTIU_CAMP_LLIN2
+            type: NUMBER(1, 0)
+        - column:
+            name: ACTIU_CAMP_NOM
+            type: NUMBER(1, 0)
+        - column:
+            name: ACTIU_CAMP_NOMCOMP
+            type: NUMBER(1, 0)
+        - column:
+            name: ACTIU_CAMP_DOC
+            type: NUMBER(1, 0)
+        - column:
+            constraints:
+              nullable: false
+            name: COMPROVAR_DOCUMENT
+            type: NUMBER(1, 0)
+        - column:
+            name: DOCUMENT_OPCIONAL
+            type: NUMBER(1, 0)
+        - column:
+            name: DOCUMENT_OBLIGATORI
+            type: NUMBER(1, 0)
+        - column:
+            name: AJUDA
+            type: CLOB
+        - column:
+            name: FITXER_AJUDA_CONTINGUT
+            type: BLOB
+        - column:
+            name: FITXER_AJUDA_MIME
+            type: VARCHAR2(255 CHAR)
+        - column:
+            name: FITXER_AJUDA_NOM
+            type: VARCHAR2(255 CHAR)
+        - column:
+            name: ACTIVA_GESTIO_XSD
+            type: NUMBER(1, 0)
+        - column:
+            name: UNITAT_DIR3
+            type: VARCHAR2(10 CHAR)
+        - column:
+            constraints:
+              nullable: false
+            name: ACTIU
+            type: NUMBER(1, 0)
+        - column:
+            constraints:
+              nullable: false
+            name: UNITAT_DIR3_FROM_ENTITAT
+            type: NUMBER(1, 0)
+        - column:
+            name: CREATEDBY_CODI
+            type: VARCHAR2(64 CHAR)
+        - column:
+            name: CREATEDDATE
+            type: TIMESTAMP(6)
+        - column:
+            name: LASTMODIFIEDBY_CODI
+            type: VARCHAR2(64 CHAR)
+        - column:
+            name: LASTMODIFIEDDATE
+            type: TIMESTAMP(6)
+        - column:
+            constraints:
+              nullable: false
+            name: VERSION
+            type: NUMBER(38, 0)
+        - column:
+            name: MAX_PETICIONS_MIN
+            type: NUMBER
+        - column:
+            defaultValueNumeric: !!float '0'
+            name: INI_DADES_ESPECIFIQUES
+            type: NUMBER(1, 0)
+        - column:
+            defaultValueNumeric: !!float '0'
+            name: USE_AUTO_CLASSE
+            type: NUMBER(1, 0)
+        - column:
+            defaultValueNumeric: !!float '1'
+            name: ADD_DADES_ESPECIFIQUES
+            type: NUMBER(1, 0)
+        - column:
+            constraints:
+              nullable: false
+            defaultValueNumeric: !!float '0'
+            name: ENVIAR_SOLICITANT
+            type: NUMBER(1, 0)
+        - column:
+            name: ARREL_RESPOSTA_PATH
+            type: VARCHAR2(255 CHAR)
+        - column:
+            defaultValueNumeric: !!float '0'
+            name: USE_CERT_ENTITAT
+            type: NUMBER(1, 0)
+        tableName: PBL_SERVEI_CONFIG
+        tablespace: USERS
+- changeSet:
+    id: 1781195289665-69
+    author: sionandreu (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: PBL_SERVEI_JUSTIF_CAMP_PK
+            name: ID
+            type: NUMBER(38, 0)
+        - column:
+            constraints:
+              nullable: false
+            name: LOCALE_IDIOMA
+            type: VARCHAR2(2 CHAR)
+        - column:
+            constraints:
+              nullable: false
+            name: LOCALE_REGIO
+            type: VARCHAR2(2 CHAR)
+        - column:
+            constraints:
+              nullable: false
+            name: SERVEI_ID
+            type: VARCHAR2(64 CHAR)
+        - column:
+            name: TRADUCCIO
+            type: VARCHAR2(255 CHAR)
+        - column:
+            constraints:
+              nullable: false
+            name: XPATH
+            type: VARCHAR2(255 CHAR)
+        - column:
+            name: CREATEDBY_CODI
+            type: VARCHAR2(64 CHAR)
+        - column:
+            name: CREATEDDATE
+            type: TIMESTAMP(6)
+        - column:
+            name: LASTMODIFIEDBY_CODI
+            type: VARCHAR2(64 CHAR)
+        - column:
+            name: LASTMODIFIEDDATE
+            type: TIMESTAMP(6)
+        - column:
+            constraints:
+              nullable: false
+            name: VERSION
+            type: NUMBER(38, 0)
+        - column:
+            constraints:
+              nullable: false
+            defaultValueNumeric: !!float '0'
+            name: DOCUMENT
+            type: NUMBER(1, 0)
+        tableName: PBL_SERVEI_JUSTIF_CAMP
+        tablespace: USERS
+- changeSet:
+    id: 1781195289665-70
+    author: sionandreu (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: PBL_SERVEI_REGLA_PK
+            name: ID
+            type: NUMBER(38, 0)
+        - column:
+            constraints:
+              nullable: false
+            name: NOM
+            type: VARCHAR2(255 CHAR)
+        - column:
+            constraints:
+              nullable: false
+            name: SERVEI_ID
+            type: NUMBER(38, 0)
+        - column:
+            constraints:
+              nullable: false
+            name: MODIFICAT
+            type: VARCHAR2(32 CHAR)
+        - column:
+            constraints:
+              nullable: false
+            name: ACCIO
+            type: VARCHAR2(32 CHAR)
+        - column:
+            constraints:
+              nullable: false
+            name: ORDRE
+            type: NUMBER
+        - column:
+            name: CREATEDBY_CODI
+            type: VARCHAR2(64 CHAR)
+        - column:
+            name: CREATEDDATE
+            type: TIMESTAMP(6)
+        - column:
+            name: LASTMODIFIEDBY_CODI
+            type: VARCHAR2(64 CHAR)
+        - column:
+            name: LASTMODIFIEDDATE
+            type: TIMESTAMP(6)
+        tableName: PBL_SERVEI_REGLA
+        tablespace: USERS
+- changeSet:
+    id: 1781195289665-71
+    author: sionandreu (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: PBL_SERVEI_REGLA_VALOR_AFC_PK
+            name: REGLA_ID
+            type: NUMBER(38, 0)
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: PBL_SERVEI_REGLA_VALOR_AFC_PK
+            name: VALOR
+            type: VARCHAR2(255 CHAR)
+        tableName: PBL_SERVEI_REGLA_VALOR_AFC
+        tablespace: USERS
+- changeSet:
+    id: 1781195289665-72
+    author: sionandreu (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: PBL_SERVEI_REGLA_VALOR_MOD_PK
+            name: REGLA_ID
+            type: NUMBER(38, 0)
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: PBL_SERVEI_REGLA_VALOR_MOD_PK
+            name: VALOR
+            type: VARCHAR2(255 CHAR)
+        tableName: PBL_SERVEI_REGLA_VALOR_MOD
+        tablespace: USERS
+- changeSet:
+    id: 1781195289665-73
+    author: sionandreu (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: PK_PBL_SERVEI_XSD
+            name: ID
+            type: NUMBER(38, 0)
+        - column:
+            constraints:
+              nullable: false
+            name: SERVEI_ID
+            type: VARCHAR2(64 CHAR)
+        - column:
+            constraints:
+              nullable: false
+            name: TIPUS
+            type: VARCHAR2(32 CHAR)
+        - column:
+            constraints:
+              nullable: false
+            name: PATH
+            type: VARCHAR2(255 CHAR)
+        - column:
+            constraints:
+              nullable: false
+            name: NOMARXIU
+            type: VARCHAR2(255 CHAR)
+        - column:
+            constraints:
+              nullable: false
+            name: VERSION
+            type: NUMBER(38, 0)
+        - column:
+            constraints:
+              nullable: false
+            name: DATA
+            type: TIMESTAMP(6)
+        tableName: PBL_SERVEI_XSD
+        tablespace: USERS
+- changeSet:
+    id: 1781195289665-74
+    author: sionandreu (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: PBL_USUARI_PK
+            name: CODI
+            type: VARCHAR2(64 CHAR)
+        - column:
+            name: NOM
+            type: VARCHAR2(200 CHAR)
+        - column:
+            name: NIF
+            type: VARCHAR2(15 CHAR)
+        - column:
+            name: EMAIL
+            type: VARCHAR2(200 CHAR)
+        - column:
+            name: IDIOMA
+            type: VARCHAR2(2 CHAR)
+        - column:
+            name: INICIALITZAT
+            type: NUMBER(1, 0)
+        - column:
+            constraints:
+              nullable: false
+            name: VERSION
+            type: NUMBER(38, 0)
+        - column:
+            name: PROCEDIMENT_ID
+            type: NUMBER(38, 0)
+        - column:
+            name: SERVEI_CODI
+            type: VARCHAR2(64 CHAR)
+        - column:
+            name: ENTITAT_ID
+            type: NUMBER(38, 0)
+        - column:
+            name: DEPARTAMENT
+            type: VARCHAR2(250 CHAR)
+        - column:
+            name: FINALITAT
+            type: VARCHAR2(250 CHAR)
+        - column:
+            defaultValueNumeric: !!float '10'
+            name: NUM_ELEMENTS_PAGINA
+            type: NUMBER
+        tableName: PBL_USUARI
+        tablespace: USERS
+- changeSet:
+    id: 1781195289665-75
+    author: sionandreu (generated)
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: CLASS
+        indexName: ACL_CLASS_UK
+        tableName: ACL_CLASS
+        unique: true
+- changeSet:
+    id: 1781195289665-76
+    author: sionandreu (generated)
+    changes:
+    - addUniqueConstraint:
+        columnNames: CLASS
+        constraintName: ACL_CLASS_UK
+        forIndexName: ACL_CLASS_UK
+        tableName: ACL_CLASS
+- changeSet:
+    id: 1781195289665-77
+    author: sionandreu (generated)
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: ACL_OBJECT_IDENTITY
+        - column:
+            name: ACE_ORDER
+        indexName: ACL_ENTRY_UK
+        tableName: ACL_ENTRY
+        unique: true
+- changeSet:
+    id: 1781195289665-78
+    author: sionandreu (generated)
+    changes:
+    - addUniqueConstraint:
+        columnNames: ACL_OBJECT_IDENTITY, ACE_ORDER
+        constraintName: ACL_ENTRY_UK
+        forIndexName: ACL_ENTRY_UK
+        tableName: ACL_ENTRY
+- changeSet:
+    id: 1781195289665-79
+    author: sionandreu (generated)
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: OBJECT_ID_CLASS
+        - column:
+            name: OBJECT_ID_IDENTITY
+        indexName: ACL_OID_UK
+        tableName: ACL_OBJECT_IDENTITY
+        unique: true
+- changeSet:
+    id: 1781195289665-80
+    author: sionandreu (generated)
+    changes:
+    - addUniqueConstraint:
+        columnNames: OBJECT_ID_CLASS, OBJECT_ID_IDENTITY
+        constraintName: ACL_OID_UK
+        forIndexName: ACL_OID_UK
+        tableName: ACL_OBJECT_IDENTITY
+- changeSet:
+    id: 1781195289665-81
+    author: sionandreu (generated)
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: SID
+        - column:
+            name: PRINCIPAL
+        indexName: ACL_SID_UK
+        tableName: ACL_SID
+        unique: true
+- changeSet:
+    id: 1781195289665-82
+    author: sionandreu (generated)
+    changes:
+    - addUniqueConstraint:
+        columnNames: SID, PRINCIPAL
+        constraintName: ACL_SID_UK
+        forIndexName: ACL_SID_UK
+        tableName: ACL_SID
+- changeSet:
+    id: 1781195289665-83
+    author: sionandreu (generated)
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: CODI
+        indexName: PBL_ENTITAT_CODI_UK
+        tableName: PBL_ENTITAT
+        unique: true
+- changeSet:
+    id: 1781195289665-84
+    author: sionandreu (generated)
+    changes:
+    - addUniqueConstraint:
+        columnNames: CODI
+        constraintName: PBL_ENTITAT_CODI_UK
+        forIndexName: PBL_ENTITAT_CODI_UK
+        tableName: PBL_ENTITAT
+- changeSet:
+    id: 1781195289665-85
+    author: sionandreu (generated)
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: ENTITAT_ID
+        - column:
+            name: SERVEI_ID
+        indexName: PBL_ENTITAT_SERVEI_UK
+        tableName: PBL_ENTITAT_SERVEI
+        unique: true
+- changeSet:
+    id: 1781195289665-86
+    author: sionandreu (generated)
+    changes:
+    - addUniqueConstraint:
+        columnNames: ENTITAT_ID, SERVEI_ID
+        constraintName: PBL_ENTITAT_SERVEI_UK
+        forIndexName: PBL_ENTITAT_SERVEI_UK
+        tableName: PBL_ENTITAT_SERVEI
+- changeSet:
+    id: 1781195289665-87
+    author: sionandreu (generated)
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: ENTITAT_ID
+        - column:
+            name: USUARI_ID
+        indexName: PBL_ENTITAT_USUARI_UK
+        tableName: PBL_ENTITAT_USUARI
+        unique: true
+- changeSet:
+    id: 1781195289665-88
+    author: sionandreu (generated)
+    changes:
+    - addUniqueConstraint:
+        columnNames: ENTITAT_ID, USUARI_ID
+        constraintName: PBL_ENTITAT_USUARI_UK
+        forIndexName: PBL_ENTITAT_USUARI_UK
+        tableName: PBL_ENTITAT_USUARI
+- changeSet:
+    id: 1781195289665-89
+    author: sionandreu (generated)
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: ENTITAT_ID
+        - column:
+            name: PROCEDIMENT_ID
+        - column:
+            name: SERVEI_CODI
+        - column:
+            name: USUARI_CODI
+        indexName: PBL_EXPLOT_CONSULTA_DIM_UK
+        tableName: PBL_EXPLOT_CONSULTA_DIM
+        unique: true
+- changeSet:
+    id: 1781195289665-90
+    author: sionandreu (generated)
+    changes:
+    - addUniqueConstraint:
+        columnNames: ENTITAT_ID, PROCEDIMENT_ID, SERVEI_CODI, USUARI_CODI
+        constraintName: PBL_EXPLOT_CONSULTA_DIM_UK
+        forIndexName: PBL_EXPLOT_CONSULTA_DIM_UK
+        tableName: PBL_EXPLOT_CONSULTA_DIM
+- changeSet:
+    id: 1781195289665-91
+    author: sionandreu (generated)
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: CODI
+        - column:
+            name: ENTITAT_ID
+        indexName: PBL_ORGAN_GESTOR_UK
+        tableName: PBL_ORGAN_GESTOR
+        unique: true
+- changeSet:
+    id: 1781195289665-92
+    author: sionandreu (generated)
+    changes:
+    - addUniqueConstraint:
+        columnNames: CODI, ENTITAT_ID
+        constraintName: PBL_ORGAN_GESTOR_UK
+        forIndexName: PBL_ORGAN_GESTOR_UK
+        tableName: PBL_ORGAN_GESTOR
+- changeSet:
+    id: 1781195289665-93
+    author: sionandreu (generated)
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: PROCEDIMENT_ID
+        - column:
+            name: SERVEI_ID
+        indexName: PBL_PROCEDIMENT_SERVEI_UK
+        tableName: PBL_PROCEDIMENT_SERVEI
+        unique: true
+- changeSet:
+    id: 1781195289665-94
+    author: sionandreu (generated)
+    changes:
+    - addUniqueConstraint:
+        columnNames: PROCEDIMENT_ID, SERVEI_ID
+        constraintName: PBL_PROCEDIMENT_SERVEI_UK
+        forIndexName: PBL_PROCEDIMENT_SERVEI_UK
+        tableName: PBL_PROCEDIMENT_SERVEI
+- changeSet:
+    id: 1781195289665-95
+    author: sionandreu (generated)
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: ENTITAT_ID
+        - column:
+            name: CODI
+        indexName: PBL_PROCEDIMENT_UK
+        tableName: PBL_PROCEDIMENT
+        unique: true
+- changeSet:
+    id: 1781195289665-96
+    author: sionandreu (generated)
+    changes:
+    - addUniqueConstraint:
+        columnNames: ENTITAT_ID, CODI
+        constraintName: PBL_PROCEDIMENT_UK
+        forIndexName: PBL_PROCEDIMENT_UK
+        tableName: PBL_PROCEDIMENT
+- changeSet:
+    id: 1781195289665-97
+    author: sionandreu (generated)
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: NOM
+        - column:
+            name: SERVEI_ID
+        indexName: PBL_SERVEI_CAMP_GRUP_UK
+        tableName: PBL_SERVEI_CAMP_GRUP
+        unique: true
+- changeSet:
+    id: 1781195289665-98
+    author: sionandreu (generated)
+    changes:
+    - addUniqueConstraint:
+        columnNames: NOM, SERVEI_ID
+        constraintName: PBL_SERVEI_CAMP_GRUP_UK
+        forIndexName: PBL_SERVEI_CAMP_GRUP_UK
+        tableName: PBL_SERVEI_CAMP_GRUP
+- changeSet:
+    id: 1781195289665-99
+    author: sionandreu (generated)
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: SERVEI_ID
+        - column:
+            name: PATH
+        indexName: PBL_SERVEI_CAMP_UK
+        tableName: PBL_SERVEI_CAMP
+        unique: true
+- changeSet:
+    id: 1781195289665-100
+    author: sionandreu (generated)
+    changes:
+    - addUniqueConstraint:
+        columnNames: SERVEI_ID, PATH
+        constraintName: PBL_SERVEI_CAMP_UK
+        forIndexName: PBL_SERVEI_CAMP_UK
+        tableName: PBL_SERVEI_CAMP
+- changeSet:
+    id: 1781195289665-101
+    author: sionandreu (generated)
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: SERVEI_ID
+        - column:
+            name: XPATH
+        indexName: PBL_SERVEI_JUSTIF_CAMP_UK
+        tableName: PBL_SERVEI_JUSTIF_CAMP
+        unique: true
+- changeSet:
+    id: 1781195289665-102
+    author: sionandreu (generated)
+    changes:
+    - addUniqueConstraint:
+        columnNames: SERVEI_ID, XPATH
+        constraintName: PBL_SERVEI_JUSTIF_CAMP_UK
+        forIndexName: PBL_SERVEI_JUSTIF_CAMP_UK
+        tableName: PBL_SERVEI_JUSTIF_CAMP
+- changeSet:
+    id: 1781195289665-103
+    author: sionandreu (generated)
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: NOM
+        - column:
+            name: SERVEI_ID
+        indexName: PBL_SERVEI_REGLA_UK
+        tableName: PBL_SERVEI_REGLA
+        unique: true
+- changeSet:
+    id: 1781195289665-104
+    author: sionandreu (generated)
+    changes:
+    - addUniqueConstraint:
+        columnNames: NOM, SERVEI_ID
+        constraintName: PBL_SERVEI_REGLA_UK
+        forIndexName: PBL_SERVEI_REGLA_UK
+        tableName: PBL_SERVEI_REGLA
+- changeSet:
+    id: 1781195289665-105
+    author: sionandreu (generated)
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: SERVEI_ID
+        - column:
+            name: TIPUS
+        indexName: PBL_SERVEI_XSD_UK
+        tableName: PBL_SERVEI_XSD
+        unique: true
+- changeSet:
+    id: 1781195289665-106
+    author: sionandreu (generated)
+    changes:
+    - addUniqueConstraint:
+        columnNames: SERVEI_ID, TIPUS
+        constraintName: PBL_SERVEI_XSD_UK
+        forIndexName: PBL_SERVEI_XSD_UK
+        tableName: PBL_SERVEI_XSD
+- changeSet:
+    id: 1781195289665-107
+    author: sionandreu (generated)
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: ORGANISMO
+        indexName: CESIONARIOS_INDEX_ORGANISMO
+        tableName: CORE_REQ_CESIONARIOS_SERVICIOS
+- changeSet:
+    id: 1781195289665-108
+    author: sionandreu (generated)
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: CODCERTIFICADO
+        indexName: CORE_SERVICIO_INDEX_CODCERT
+        tableName: CORE_SERVICIO
+- changeSet:
+    id: 1781195289665-109
+    author: sionandreu (generated)
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: EMISOR
+        indexName: CORE_SERVICIO_INDEX_EMISOR
+        tableName: CORE_SERVICIO
+- changeSet:
+    id: 1781195289665-110
+    author: sionandreu (generated)
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: IDPETICION
+        indexName: CORE_TRANSMISION_INDEX_IDPET
+        tableName: CORE_TRANSMISION
+- changeSet:
+    id: 1781195289665-111
+    author: sionandreu (generated)
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            descending: true
+            name: CREATEDDATE
+        - column:
+            name: CREATEDBY_CODI
+        indexName: PBL_CONH_CREDATCOD_I
+        tableName: PBL_CONSULTA_HIST
+- changeSet:
+    id: 1781195289665-112
+    author: sionandreu (generated)
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: DATA
+        indexName: PBL_CONSULTAHL_DATA_I
+        tableName: PBL_CONSULTA_HIST_LIST
+- changeSet:
+    id: 1781195289665-113
+    author: sionandreu (generated)
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: USUARICODI
+        indexName: PBL_CONSULTAHL_MODIFBY_I
+        tableName: PBL_CONSULTA_HIST_LIST
+- changeSet:
+    id: 1781195289665-114
+    author: sionandreu (generated)
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: CREATEDBY_CODI
+        indexName: PBL_CONSULTAH_CREATEDBY_I
+        tableName: PBL_CONSULTA_HIST
+- changeSet:
+    id: 1781195289665-115
+    author: sionandreu (generated)
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: LASTMODIFIEDBY_CODI
+        indexName: PBL_CONSULTAH_MODIFBY_I
+        tableName: PBL_CONSULTA_HIST
+- changeSet:
+    id: 1781195289665-116
+    author: sionandreu (generated)
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: CREATEDBY_CODI
+        - column:
+            name: ESTAT
+        - column:
+            name: MULTIPLE
+        indexName: PBL_CONSULTAH_MULT_I
+        tableName: PBL_CONSULTA_HIST
+- changeSet:
+    id: 1781195289665-117
+    author: sionandreu (generated)
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: PARE_ID
+        indexName: PBL_CONSULTAH_PARE_I
+        tableName: PBL_CONSULTA_HIST
+- changeSet:
+    id: 1781195289665-118
+    author: sionandreu (generated)
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: PROCSERV_ID
+        indexName: PBL_CONSULTAH_PROCSERV_I
+        tableName: PBL_CONSULTA_HIST
+- changeSet:
+    id: 1781195289665-119
+    author: sionandreu (generated)
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: USUARICODI
+        indexName: PBL_CONSULTAL_CREATBY_I
+        tableName: PBL_CONSULTA_LIST
+- changeSet:
+    id: 1781195289665-120
+    author: sionandreu (generated)
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: DATA
+        indexName: PBL_CONSULTAL_DATA_I
+        tableName: PBL_CONSULTA_LIST
+- changeSet:
+    id: 1781195289665-121
+    author: sionandreu (generated)
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: CREATEDBY_CODI
+        indexName: PBL_CONSULTA_CREATEDBY_I
+        tableName: PBL_CONSULTA
+- changeSet:
+    id: 1781195289665-122
+    author: sionandreu (generated)
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: LASTMODIFIEDBY_CODI
+        indexName: PBL_CONSULTA_MODIFBY_I
+        tableName: PBL_CONSULTA
+- changeSet:
+    id: 1781195289665-123
+    author: sionandreu (generated)
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: CREATEDBY_CODI
+        - column:
+            name: ESTAT
+        - column:
+            name: MULTIPLE
+        indexName: PBL_CONSULTA_MULT_I
+        tableName: PBL_CONSULTA
+- changeSet:
+    id: 1781195289665-124
+    author: sionandreu (generated)
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: PARE_ID
+        indexName: PBL_CONSULTA_PARE_I
+        tableName: PBL_CONSULTA
+- changeSet:
+    id: 1781195289665-125
+    author: sionandreu (generated)
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: PROCSERV_ID
+        indexName: PBL_CONSULTA_PROCSERV_I
+        tableName: PBL_CONSULTA
+- changeSet:
+    id: 1781195289665-126
+    author: sionandreu (generated)
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: ENTITAT_ID
+        - column:
+            name: PROCEDIMENT_ID
+        - column:
+            name: SERVEI_CODI
+        - column:
+            name: CREATEDBY_CODI
+        indexName: PBL_CONS_EXPLOTORDER_I
+        tableName: PBL_CONSULTA
+- changeSet:
+    id: 1781195289665-127
+    author: sionandreu (generated)
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: PROCEDIMENT_ID
+        indexName: PBL_CONS_PROCEDIMENT_I
+        tableName: PBL_CONSULTA
+- changeSet:
+    id: 1781195289665-128
+    author: sionandreu (generated)
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: SERVEI_CODI
+        indexName: PBL_CONS_SERVEICODI_I
+        tableName: PBL_CONSULTA
+- changeSet:
+    id: 1781195289665-129
+    author: sionandreu (generated)
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            descending: true
+            name: CREATEDDATE
+        - column:
+            name: CREATEDBY_CODI
+        indexName: PBL_CON_CREATEDDATCOD_I
+        tableName: PBL_CONSULTA
+- changeSet:
+    id: 1781195289665-130
+    author: sionandreu (generated)
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: ENTITAT_ID
+        indexName: PBL_ENTISERV_ENTITAT_I
+        tableName: PBL_ENTITAT_SERVEI
+- changeSet:
+    id: 1781195289665-131
+    author: sionandreu (generated)
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: SERVEI_ID
+        indexName: PBL_ENTISERV_SERVEI_I
+        tableName: PBL_ENTITAT_SERVEI
+- changeSet:
+    id: 1781195289665-132
+    author: sionandreu (generated)
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: ENTITAT_ID
+        indexName: PBL_ENTIUSR_ENTITAT_I
+        tableName: PBL_ENTITAT_USUARI
+- changeSet:
+    id: 1781195289665-133
+    author: sionandreu (generated)
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: USUARI_ID
+        indexName: PBL_ENTIUSR_USUARI_I
+        tableName: PBL_ENTITAT_USUARI
+- changeSet:
+    id: 1781195289665-134
+    author: sionandreu (generated)
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: CREATEDBY_CODI
+        indexName: PBL_MON_INT_CREATBY_I
+        tableName: PBL_MON_INT
+- changeSet:
+    id: 1781195289665-135
+    author: sionandreu (generated)
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: DATA
+        indexName: PBL_MON_INT_DATA_I
+        tableName: PBL_MON_INT
+- changeSet:
+    id: 1781195289665-136
+    author: sionandreu (generated)
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: LASTMODIFIEDBY_CODI
+        indexName: PBL_MON_INT_MODIFBY_I
+        tableName: PBL_MON_INT
+- changeSet:
+    id: 1781195289665-137
+    author: sionandreu (generated)
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: MON_INT_ID
+        indexName: PBL_MON_INT_PARAM_MON_INT_I
+        tableName: PBL_MON_INT_PARAM
+- changeSet:
+    id: 1781195289665-138
+    author: sionandreu (generated)
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: CREATEDBY_CODI
+        indexName: PBL_MON_PARAM_CREATBY_I
+        tableName: PBL_MON_INT_PARAM
+- changeSet:
+    id: 1781195289665-139
+    author: sionandreu (generated)
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: LASTMODIFIEDBY_CODI
+        indexName: PBL_MON_PARAM_MODIFBY_I
+        tableName: PBL_MON_INT_PARAM
+- changeSet:
+    id: 1781195289665-140
+    author: sionandreu (generated)
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: ENTITAT_ID
+        indexName: PBL_PROCEDIMENT_ENTITAT_I
+        tableName: PBL_PROCEDIMENT
+- changeSet:
+    id: 1781195289665-141
+    author: sionandreu (generated)
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: PROCEDIMENT_ID
+        indexName: PBL_PROCSERV_PROCED_I
+        tableName: PBL_PROCEDIMENT_SERVEI
+- changeSet:
+    id: 1781195289665-142
+    author: sionandreu (generated)
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: SERVEI_ID
+        indexName: PBL_PROCSERV_SERVEI_I
+        tableName: PBL_PROCEDIMENT_SERVEI
+- changeSet:
+    id: 1781195289665-143
+    author: sionandreu (generated)
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: SERVEI_ID
+        indexName: PBL_REGLA_SERVEI_FK_I
+        tableName: PBL_SERVEI_REGLA
+- changeSet:
+    id: 1781195289665-144
+    author: sionandreu (generated)
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: REGLA_ID
+        indexName: PBL_REGLA_VALOR_AFC_FK_I
+        tableName: PBL_SERVEI_REGLA_VALOR_AFC
+- changeSet:
+    id: 1781195289665-145
+    author: sionandreu (generated)
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: REGLA_ID
+        indexName: PBL_REGLA_VALOR_MOD_FK_I
+        tableName: PBL_SERVEI_REGLA_VALOR_MOD
+- changeSet:
+    id: 1781195289665-146
+    author: sionandreu (generated)
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: SERVEI_ID
+        indexName: PBL_SERVEI_BUS_SERVEI_I
+        tableName: PBL_SERVEI_BUS
+- changeSet:
+    id: 1781195289665-147
+    author: sionandreu (generated)
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: SERVEI_ID
+        indexName: PBL_SERVEI_CAMPGR_SERVEI_I
+        tableName: PBL_SERVEI_CAMP_GRUP
+- changeSet:
+    id: 1781195289665-148
+    author: sionandreu (generated)
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: SERVEI_ID
+        indexName: PBL_SERVEI_CAMP_SERVEI_I
+        tableName: PBL_SERVEI_CAMP
+- changeSet:
+    id: 1781195289665-149
+    author: sionandreu (generated)
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: SERVEI_ID
+        indexName: PBL_SERVEI_JUSCAM_SERVEI_I
+        tableName: PBL_SERVEI_JUSTIF_CAMP
+- changeSet:
+    id: 1781195289665-150
+    author: sionandreu (generated)
+    changes:
+    - createIndex:
+        columns:
+        - column:
+            name: SERVEI_ID
+        indexName: PBL_SERVEI_XSD_SERVEI_I
+        tableName: PBL_SERVEI_XSD
+- changeSet:
+    id: 1781195289665-151
+    author: sionandreu (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: SID
+        baseTableName: ACL_ENTRY
+        constraintName: ACL_ENTRY_ACL_FK
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: RESTRICT
+        onUpdate: RESTRICT
+        referencedColumnNames: ID
+        referencedTableName: ACL_SID
+        validate: true
+- changeSet:
+    id: 1781195289665-152
+    author: sionandreu (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: ACL_OBJECT_IDENTITY
+        baseTableName: ACL_ENTRY
+        constraintName: ACL_ENTRY_OBJECT_FK
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: RESTRICT
+        onUpdate: RESTRICT
+        referencedColumnNames: ID
+        referencedTableName: ACL_OBJECT_IDENTITY
+        validate: true
+- changeSet:
+    id: 1781195289665-153
+    author: sionandreu (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: OBJECT_ID_CLASS
+        baseTableName: ACL_OBJECT_IDENTITY
+        constraintName: ACL_OID_CLASS_FK
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: RESTRICT
+        onUpdate: RESTRICT
+        referencedColumnNames: ID
+        referencedTableName: ACL_CLASS
+        validate: true
+- changeSet:
+    id: 1781195289665-154
+    author: sionandreu (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: OWNER_SID
+        baseTableName: ACL_OBJECT_IDENTITY
+        constraintName: ACL_OID_OWNER_FK
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: RESTRICT
+        onUpdate: RESTRICT
+        referencedColumnNames: ID
+        referencedTableName: ACL_SID
+        validate: true
+- changeSet:
+    id: 1781195289665-155
+    author: sionandreu (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: PARENT_OBJECT
+        baseTableName: ACL_OBJECT_IDENTITY
+        constraintName: ACL_OID_PARENT_FK
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: RESTRICT
+        onUpdate: RESTRICT
+        referencedColumnNames: ID
+        referencedTableName: ACL_OBJECT_IDENTITY
+        validate: true
+- changeSet:
+    id: 1781195289665-156
+    author: sionandreu (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: ORGANISMO
+        baseTableName: CORE_CLAVE_PRIVADA
+        constraintName: CLAVE_PRIVADA_ORGANISMO
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: RESTRICT
+        onUpdate: RESTRICT
+        referencedColumnNames: ID
+        referencedTableName: CORE_ORGANISMO_CESIONARIO
+        validate: true
+- changeSet:
+    id: 1781195289665-157
+    author: sionandreu (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: MON_INT_ID
+        baseTableName: PBL_MON_INT_PARAM
+        constraintName: DIS_MONINTPARAM_MONINT_FK
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: RESTRICT
+        onUpdate: RESTRICT
+        referencedColumnNames: ID
+        referencedTableName: PBL_MON_INT
+        validate: true
+- changeSet:
+    id: 1781195289665-158
+    author: sionandreu (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: MODULO
+        baseTableName: CORE_REQ_MODULO_PDF_CESIONARIO
+        constraintName: FK_MODULO_MOD_PDF
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: RESTRICT
+        onUpdate: RESTRICT
+        referencedColumnNames: NOMBRE
+        referencedTableName: CORE_MODULO
+        validate: true
+- changeSet:
+    id: 1781195289665-159
+    author: sionandreu (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: ORGANISMO
+        baseTableName: CORE_REQ_MODULO_PDF_CESIONARIO
+        constraintName: FK_ORG_CESIONARIO_MOD_PDF
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: RESTRICT
+        onUpdate: RESTRICT
+        referencedColumnNames: ID
+        referencedTableName: CORE_ORGANISMO_CESIONARIO
+        validate: true
+- changeSet:
+    id: 1781195289665-160
+    author: sionandreu (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: SERVICIO
+        baseTableName: CORE_REQ_MODULO_PDF_CESIONARIO
+        constraintName: FK_SERVICIO_MOD_PDF
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: RESTRICT
+        onUpdate: RESTRICT
+        referencedColumnNames: ID
+        referencedTableName: CORE_SERVICIO
+        validate: true
+- changeSet:
+    id: 1781195289665-161
+    author: sionandreu (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: MODULO
+        baseTableName: CORE_MODULO_CONFIGURACION
+        constraintName: MOD_CONF_MODULO
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: RESTRICT
+        onUpdate: RESTRICT
+        referencedColumnNames: NOMBRE
+        referencedTableName: CORE_MODULO
+        validate: true
+- changeSet:
+    id: 1781195289665-162
+    author: sionandreu (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: CERTIFICADO
+        baseTableName: CORE_MODULO_CONFIGURACION
+        constraintName: MOD_CONF_SERVICIO
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: RESTRICT
+        onUpdate: RESTRICT
+        referencedColumnNames: ID
+        referencedTableName: CORE_SERVICIO
+        validate: true
+- changeSet:
+    id: 1781195289665-163
+    author: sionandreu (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: GROUP_CODE
+        baseTableName: PBL_CONFIG
+        constraintName: PBL_CONFIG_GROUP_FK
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: RESTRICT
+        onUpdate: RESTRICT
+        referencedColumnNames: CODE
+        referencedTableName: PBL_CONFIG_GROUP
+        validate: true
+- changeSet:
+    id: 1781195289665-164
+    author: sionandreu (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: ENTITAT_ID
+        baseTableName: PBL_CONSULTA_HIST
+        constraintName: PBL_CONSULTAH_ENTITAT_FK
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: RESTRICT
+        onUpdate: RESTRICT
+        referencedColumnNames: ID
+        referencedTableName: PBL_ENTITAT
+        validate: true
+- changeSet:
+    id: 1781195289665-165
+    author: sionandreu (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: PROCEDIMENT_ID
+        baseTableName: PBL_CONSULTA_HIST
+        constraintName: PBL_CONSULTAH_PROCED_FK
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: RESTRICT
+        onUpdate: RESTRICT
+        referencedColumnNames: ID
+        referencedTableName: PBL_PROCEDIMENT
+        validate: true
+- changeSet:
+    id: 1781195289665-166
+    author: sionandreu (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: ENTITAT_ID
+        baseTableName: PBL_CONSULTA
+        constraintName: PBL_CONSULTA_ENTITAT_FK
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: RESTRICT
+        onUpdate: RESTRICT
+        referencedColumnNames: ID
+        referencedTableName: PBL_ENTITAT
+        validate: true
+- changeSet:
+    id: 1781195289665-167
+    author: sionandreu (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: PARE_ID
+        baseTableName: PBL_CONSULTA
+        constraintName: PBL_CONSULTA_PARE_FK
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: RESTRICT
+        onUpdate: RESTRICT
+        referencedColumnNames: ID
+        referencedTableName: PBL_CONSULTA
+        validate: true
+- changeSet:
+    id: 1781195289665-168
+    author: sionandreu (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: PROCEDIMENT_ID
+        baseTableName: PBL_CONSULTA
+        constraintName: PBL_CONSULTA_PROCED_FK
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: RESTRICT
+        onUpdate: RESTRICT
+        referencedColumnNames: ID
+        referencedTableName: PBL_PROCEDIMENT
+        validate: true
+- changeSet:
+    id: 1781195289665-169
+    author: sionandreu (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: CREATEDBY_CODI
+        baseTableName: PBL_CONSULTA
+        constraintName: PBL_CREATEDBY_CONSULTA_FK
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: RESTRICT
+        onUpdate: RESTRICT
+        referencedColumnNames: CODI
+        referencedTableName: PBL_USUARI
+        validate: true
+- changeSet:
+    id: 1781195289665-170
+    author: sionandreu (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: CREATEDBY_CODI
+        baseTableName: PBL_ENTITAT_SERVEI
+        constraintName: PBL_CREATEDBY_ENTISERV_FK
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: RESTRICT
+        onUpdate: RESTRICT
+        referencedColumnNames: CODI
+        referencedTableName: PBL_USUARI
+        validate: true
+- changeSet:
+    id: 1781195289665-171
+    author: sionandreu (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: CREATEDBY_CODI
+        baseTableName: PBL_ENTITAT_USUARI
+        constraintName: PBL_CREATEDBY_ENTIUSR_FK
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: RESTRICT
+        onUpdate: RESTRICT
+        referencedColumnNames: CODI
+        referencedTableName: PBL_USUARI
+        validate: true
+- changeSet:
+    id: 1781195289665-172
+    author: sionandreu (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: CREATEDBY_CODI
+        baseTableName: PBL_PROCEDIMENT
+        constraintName: PBL_CREATEDBY_PROCED_FK
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: RESTRICT
+        onUpdate: RESTRICT
+        referencedColumnNames: CODI
+        referencedTableName: PBL_USUARI
+        validate: true
+- changeSet:
+    id: 1781195289665-173
+    author: sionandreu (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: CREATEDBY_CODI
+        baseTableName: PBL_PROCEDIMENT_SERVEI
+        constraintName: PBL_CREATEDBY_PROCSERV_FK
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: RESTRICT
+        onUpdate: RESTRICT
+        referencedColumnNames: CODI
+        referencedTableName: PBL_USUARI
+        validate: true
+- changeSet:
+    id: 1781195289665-174
+    author: sionandreu (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: CREATEDBY_CODI
+        baseTableName: PBL_SERVEI_BUS
+        constraintName: PBL_CREATEDBY_SERVEI_BUS_FK
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: RESTRICT
+        onUpdate: RESTRICT
+        referencedColumnNames: CODI
+        referencedTableName: PBL_USUARI
+        validate: true
+- changeSet:
+    id: 1781195289665-175
+    author: sionandreu (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: CREATEDBY_CODI
+        baseTableName: PBL_SERVEI_CAMP_GRUP
+        constraintName: PBL_CREATEDBY_SERVEI_GRUP_FK
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: RESTRICT
+        onUpdate: RESTRICT
+        referencedColumnNames: CODI
+        referencedTableName: PBL_USUARI
+        validate: true
+- changeSet:
+    id: 1781195289665-176
+    author: sionandreu (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: CREATEDBY_CODI
+        baseTableName: PBL_SERVEI_CAMP
+        constraintName: PBL_CREATEDBY_SRVCAMP_FK
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: RESTRICT
+        onUpdate: RESTRICT
+        referencedColumnNames: CODI
+        referencedTableName: PBL_USUARI
+        validate: true
+- changeSet:
+    id: 1781195289665-177
+    author: sionandreu (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: CREATEDBY_CODI
+        baseTableName: PBL_SERVEI_CONFIG
+        constraintName: PBL_CREATEDBY_SRVEI_CONFIG_FK
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: RESTRICT
+        onUpdate: RESTRICT
+        referencedColumnNames: CODI
+        referencedTableName: PBL_USUARI
+        validate: true
+- changeSet:
+    id: 1781195289665-178
+    author: sionandreu (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: CREATEDBY_CODI
+        baseTableName: PBL_SERVEI_JUSTIF_CAMP
+        constraintName: PBL_CREATEDBY_SRVJUS_FK
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: RESTRICT
+        onUpdate: RESTRICT
+        referencedColumnNames: CODI
+        referencedTableName: PBL_USUARI
+        validate: true
+- changeSet:
+    id: 1781195289665-179
+    author: sionandreu (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: CREATEDBY_CODI
+        baseTableName: PBL_ENTITAT
+        constraintName: PBL_CREATEDBY_USUARI_FK
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: RESTRICT
+        onUpdate: RESTRICT
+        referencedColumnNames: CODI
+        referencedTableName: PBL_USUARI
+        validate: true
+- changeSet:
+    id: 1781195289665-180
+    author: sionandreu (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: ENTITAT_ID
+        baseTableName: PBL_ENTITAT_SERVEI
+        constraintName: PBL_ENTITAT_ENTISERV_FK
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: RESTRICT
+        onUpdate: RESTRICT
+        referencedColumnNames: ID
+        referencedTableName: PBL_ENTITAT
+        validate: true
+- changeSet:
+    id: 1781195289665-181
+    author: sionandreu (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: ENTITAT_ID
+        baseTableName: PBL_ENTITAT_USUARI
+        constraintName: PBL_ENTITAT_ENTIUSR_FK
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: RESTRICT
+        onUpdate: RESTRICT
+        referencedColumnNames: ID
+        referencedTableName: PBL_ENTITAT
+        validate: true
+- changeSet:
+    id: 1781195289665-182
+    author: sionandreu (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: ENTITAT_ID
+        baseTableName: PBL_ORGAN_GESTOR
+        constraintName: PBL_ENTITAT_ORGAN_GESTOR_FK
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: RESTRICT
+        onUpdate: RESTRICT
+        referencedColumnNames: ID
+        referencedTableName: PBL_ENTITAT
+        validate: true
+- changeSet:
+    id: 1781195289665-183
+    author: sionandreu (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: ENTITAT_ID
+        baseTableName: PBL_PROCEDIMENT
+        constraintName: PBL_ENTITAT_PROCED_FK
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: RESTRICT
+        onUpdate: RESTRICT
+        referencedColumnNames: ID
+        referencedTableName: PBL_ENTITAT
+        validate: true
+- changeSet:
+    id: 1781195289665-184
+    author: sionandreu (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: ENTITAT_ID
+        baseTableName: PBL_SERVEI_BUS
+        constraintName: PBL_ENTITAT_SERVBUS_FK
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: RESTRICT
+        onUpdate: RESTRICT
+        referencedColumnNames: ID
+        referencedTableName: PBL_ENTITAT
+        validate: true
+- changeSet:
+    id: 1781195289665-185
+    author: sionandreu (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: DIMENSIO_ID
+        baseTableName: PBL_EXPLOT_CONSULTA_FET
+        constraintName: PBL_FET_DIM_FK
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: RESTRICT
+        onUpdate: RESTRICT
+        referencedColumnNames: ID
+        referencedTableName: PBL_EXPLOT_CONSULTA_DIM
+        validate: true
+- changeSet:
+    id: 1781195289665-186
+    author: sionandreu (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: TEMPS_ID
+        baseTableName: PBL_EXPLOT_CONSULTA_FET
+        constraintName: PBL_FET_TMP_FK
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: RESTRICT
+        onUpdate: RESTRICT
+        referencedColumnNames: ID
+        referencedTableName: PBL_EXPLOT_TEMPS
+        validate: true
+- changeSet:
+    id: 1781195289665-187
+    author: sionandreu (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: PARE_ID
+        baseTableName: PBL_SERVEI_CAMP_GRUP
+        constraintName: PBL_GRUP_PARE_FK
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: RESTRICT
+        onUpdate: RESTRICT
+        referencedColumnNames: ID
+        referencedTableName: PBL_SERVEI_CAMP_GRUP
+        validate: true
+- changeSet:
+    id: 1781195289665-188
+    author: sionandreu (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: LASTMODIFIEDBY_CODI
+        baseTableName: PBL_SERVEI_BUS
+        constraintName: PBL_LASTMODBY_SERVEI_BUS_FK
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: RESTRICT
+        onUpdate: RESTRICT
+        referencedColumnNames: CODI
+        referencedTableName: PBL_USUARI
+        validate: true
+- changeSet:
+    id: 1781195289665-189
+    author: sionandreu (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: LASTMODIFIEDBY_CODI
+        baseTableName: PBL_SERVEI_CONFIG
+        constraintName: PBL_LASTMODBY_SERVEI_CONFIG_FK
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: RESTRICT
+        onUpdate: RESTRICT
+        referencedColumnNames: CODI
+        referencedTableName: PBL_USUARI
+        validate: true
+- changeSet:
+    id: 1781195289665-190
+    author: sionandreu (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: LASTMODIFIEDBY_CODI
+        baseTableName: PBL_SERVEI_CAMP_GRUP
+        constraintName: PBL_LASTMODBY_SERVEI_GRUP_FK
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: RESTRICT
+        onUpdate: RESTRICT
+        referencedColumnNames: CODI
+        referencedTableName: PBL_USUARI
+        validate: true
+- changeSet:
+    id: 1781195289665-191
+    author: sionandreu (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: LASTMODIFIEDBY_CODI
+        baseTableName: PBL_SERVEI_JUSTIF_CAMP
+        constraintName: PBL_LASTMODBY_SRVJUS_FK
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: RESTRICT
+        onUpdate: RESTRICT
+        referencedColumnNames: CODI
+        referencedTableName: PBL_USUARI
+        validate: true
+- changeSet:
+    id: 1781195289665-192
+    author: sionandreu (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: LASTMODIFIEDBY_CODI
+        baseTableName: PBL_CONSULTA
+        constraintName: PBL_LASTMODIFIEDBY_CONSULTA_FK
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: RESTRICT
+        onUpdate: RESTRICT
+        referencedColumnNames: CODI
+        referencedTableName: PBL_USUARI
+        validate: true
+- changeSet:
+    id: 1781195289665-193
+    author: sionandreu (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: LASTMODIFIEDBY_CODI
+        baseTableName: PBL_ENTITAT_SERVEI
+        constraintName: PBL_LASTMODIFIEDBY_ENTISERV_FK
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: RESTRICT
+        onUpdate: RESTRICT
+        referencedColumnNames: CODI
+        referencedTableName: PBL_USUARI
+        validate: true
+- changeSet:
+    id: 1781195289665-194
+    author: sionandreu (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: LASTMODIFIEDBY_CODI
+        baseTableName: PBL_ENTITAT_USUARI
+        constraintName: PBL_LASTMODIFIEDBY_ENTIUSR_FK
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: RESTRICT
+        onUpdate: RESTRICT
+        referencedColumnNames: CODI
+        referencedTableName: PBL_USUARI
+        validate: true
+- changeSet:
+    id: 1781195289665-195
+    author: sionandreu (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: LASTMODIFIEDBY_CODI
+        baseTableName: PBL_PROCEDIMENT
+        constraintName: PBL_LASTMODIFIEDBY_PROCED_FK
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: RESTRICT
+        onUpdate: RESTRICT
+        referencedColumnNames: CODI
+        referencedTableName: PBL_USUARI
+        validate: true
+- changeSet:
+    id: 1781195289665-196
+    author: sionandreu (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: LASTMODIFIEDBY_CODI
+        baseTableName: PBL_PROCEDIMENT_SERVEI
+        constraintName: PBL_LASTMODIFIEDBY_PROVSERV_FK
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: RESTRICT
+        onUpdate: RESTRICT
+        referencedColumnNames: CODI
+        referencedTableName: PBL_USUARI
+        validate: true
+- changeSet:
+    id: 1781195289665-197
+    author: sionandreu (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: LASTMODIFIEDBY_CODI
+        baseTableName: PBL_SERVEI_CAMP
+        constraintName: PBL_LASTMODIFIEDBY_SRVCAMP_FK
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: RESTRICT
+        onUpdate: RESTRICT
+        referencedColumnNames: CODI
+        referencedTableName: PBL_USUARI
+        validate: true
+- changeSet:
+    id: 1781195289665-198
+    author: sionandreu (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: LASTMODIFIEDBY_CODI
+        baseTableName: PBL_ENTITAT
+        constraintName: PBL_LASTMODIFIEDBY_USUARI_FK
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: RESTRICT
+        onUpdate: RESTRICT
+        referencedColumnNames: CODI
+        referencedTableName: PBL_USUARI
+        validate: true
+- changeSet:
+    id: 1781195289665-199
+    author: sionandreu (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: ORGAN_GESTOR_ID
+        baseTableName: PBL_PROCEDIMENT
+        constraintName: PBL_ORGAN_PROCEDIMENT_FK
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: RESTRICT
+        onUpdate: RESTRICT
+        referencedColumnNames: ID
+        referencedTableName: PBL_ORGAN_GESTOR
+        validate: true
+- changeSet:
+    id: 1781195289665-200
+    author: sionandreu (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: CAMP_PARE_ID
+        baseTableName: PBL_SERVEI_CAMP
+        constraintName: PBL_PARE_SERVCAMP_FK
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: RESTRICT
+        onUpdate: RESTRICT
+        referencedColumnNames: ID
+        referencedTableName: PBL_SERVEI_CAMP
+        validate: true
+- changeSet:
+    id: 1781195289665-201
+    author: sionandreu (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: PROCEDIMENT_ID
+        baseTableName: PBL_PROCEDIMENT_SERVEI
+        constraintName: PBL_PROCED_PROCSERV_FK
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: RESTRICT
+        onUpdate: RESTRICT
+        referencedColumnNames: ID
+        referencedTableName: PBL_PROCEDIMENT
+        validate: true
+- changeSet:
+    id: 1781195289665-202
+    author: sionandreu (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: PROCSERV_ID
+        baseTableName: PBL_CONSULTA
+        constraintName: PBL_PROCSERV_CONSULTA_FK
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: RESTRICT
+        onUpdate: RESTRICT
+        referencedColumnNames: ID
+        referencedTableName: PBL_PROCEDIMENT_SERVEI
+        validate: true
+- changeSet:
+    id: 1781195289665-203
+    author: sionandreu (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: SERVEI_ID
+        baseTableName: PBL_SERVEI_REGLA
+        constraintName: PBL_REGLA_SERVEI_FK
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: RESTRICT
+        onUpdate: RESTRICT
+        referencedColumnNames: ID
+        referencedTableName: CORE_SERVICIO
+        validate: true
+- changeSet:
+    id: 1781195289665-204
+    author: sionandreu (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: REGLA_ID
+        baseTableName: PBL_SERVEI_REGLA_VALOR_AFC
+        constraintName: PBL_REGLA_VALOR_AFC_FK
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: RESTRICT
+        onUpdate: RESTRICT
+        referencedColumnNames: ID
+        referencedTableName: PBL_SERVEI_REGLA
+        validate: true
+- changeSet:
+    id: 1781195289665-205
+    author: sionandreu (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: REGLA_ID
+        baseTableName: PBL_SERVEI_REGLA_VALOR_MOD
+        constraintName: PBL_REGLA_VALOR_MOD_FK
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: RESTRICT
+        onUpdate: RESTRICT
+        referencedColumnNames: ID
+        referencedTableName: PBL_SERVEI_REGLA
+        validate: true
+- changeSet:
+    id: 1781195289665-206
+    author: sionandreu (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: GRUP_ID
+        baseTableName: PBL_SERVEI_CAMP
+        constraintName: PBL_SRCGRUP_SRVCAMP_FK
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: RESTRICT
+        onUpdate: RESTRICT
+        referencedColumnNames: ID
+        referencedTableName: PBL_SERVEI_CAMP_GRUP
+        validate: true
+- changeSet:
+    id: 1781195289665-207
+    author: sionandreu (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: USUARI_ID
+        baseTableName: PBL_ENTITAT_USUARI
+        constraintName: PBL_USUARI_ENTIUSR_FK
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: RESTRICT
+        onUpdate: RESTRICT
+        referencedColumnNames: CODI
+        referencedTableName: PBL_USUARI
+        validate: true
+- changeSet:
+    id: 1781195289665-208
+    author: sionandreu (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: CERTIFICADO
+        baseTableName: CORE_PETICION_RESPUESTA
+        constraintName: PET_RESP_SERVICIO
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: RESTRICT
+        onUpdate: RESTRICT
+        referencedColumnNames: ID
+        referencedTableName: CORE_SERVICIO
+        validate: true
+- changeSet:
+    id: 1781195289665-209
+    author: sionandreu (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: CLAVECIFRADO
+        baseTableName: CORE_SERVICIO
+        constraintName: SERV_CLAVECIFRADO
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: RESTRICT
+        onUpdate: RESTRICT
+        referencedColumnNames: ID
+        referencedTableName: CORE_CLAVE_PUBLICA
+        validate: true
+- changeSet:
+    id: 1781195289665-210
+    author: sionandreu (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: CLAVEFIRMA
+        baseTableName: CORE_SERVICIO
+        constraintName: SERV_CLAVEFIRMA
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: RESTRICT
+        onUpdate: RESTRICT
+        referencedColumnNames: ID
+        referencedTableName: CORE_CLAVE_PRIVADA
+        validate: true
+- changeSet:
+    id: 1781195289665-211
+    author: sionandreu (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: EMISOR
+        baseTableName: CORE_SERVICIO
+        constraintName: SERV_EMISOR
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: RESTRICT
+        onUpdate: RESTRICT
+        referencedColumnNames: ID
+        referencedTableName: CORE_EMISOR_CERTIFICADO
+        validate: true
+- changeSet:
+    id: 1781195289665-212
+    author: sionandreu (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: IDPETICION
+        baseTableName: CORE_TOKEN_DATA
+        constraintName: TOKEN_PETICION
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: RESTRICT
+        onUpdate: RESTRICT
+        referencedColumnNames: IDPETICION
+        referencedTableName: CORE_PETICION_RESPUESTA
+        validate: true
+- changeSet:
+    id: 1781195289665-213
+    author: sionandreu (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: TIPOMENSAJE
+        baseTableName: CORE_TOKEN_DATA
+        constraintName: TOKEN_TIPO
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: RESTRICT
+        onUpdate: RESTRICT
+        referencedColumnNames: TIPO
+        referencedTableName: CORE_TIPO_MENSAJE
+        validate: true
+- changeSet:
+    id: 1781195289665-214
+    author: sionandreu (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: IDPETICION
+        baseTableName: CORE_TRANSMISION
+        constraintName: TRANS_PETICION
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: RESTRICT
+        onUpdate: RESTRICT
+        referencedColumnNames: IDPETICION
+        referencedTableName: CORE_PETICION_RESPUESTA
+        validate: true
+

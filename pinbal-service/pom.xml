@@ -8,9 +8,6 @@
 	</parent>
 	<artifactId>pinbal-service</artifactId>
 	<packaging>ejb</packaging>
-	<properties>
-		<liquibase.version>4.3.3</liquibase.version>
-	</properties>
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>

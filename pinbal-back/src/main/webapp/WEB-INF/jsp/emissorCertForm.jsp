@@ -38,7 +38,7 @@
 <body>
 
 	<c:url value="/modal/scsp/emissorcert/save" var="formAction"/>
-	<form:form action="${formAction}" method="post" cssClass="form-horizontal" commandName="emissorCertCommand">
+	<form:form action="${formAction}" method="post" cssClass="form-horizontal" modelAttribute="emissorCertCommand">
 		<form:hidden path="id"/>
 		<div class="row">
 			<div class="col-md-12">

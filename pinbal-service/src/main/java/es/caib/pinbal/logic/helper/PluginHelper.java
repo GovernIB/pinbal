@@ -22,6 +22,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -42,8 +44,6 @@ public class PluginHelper {
 
 	private static final String PROPERTY_PLUGIN_UNITATS_CLASS = "es.caib.pinbal.plugin.unitats.organitzatives.class";
 	private static final String PROPERTY_PLUGIN_USUARIS_CLASS = "es.caib.pinbal.plugin.dades.usuari.class";
-	private static final String PROPERTY_PLUGIN_SIGNATURA_CLASS = "es.caib.pinbal.plugin.signatura.class";
-	private static final String PROPERTY_PLUGIN_CUSTODIA_CLASS = "es.caib.pinbal.plugin.custodia.class";
 	private static final String PROPERTY_PLUGIN_FIRMA_SERVIDOR_CLASS = "es.caib.pinbal.plugin.firmaservidor.class";
 	private static final String PROPERTY_PLUGIN_ARXIU_CLASS = "es.caib.pinbal.plugin.arxiu.class";
 
@@ -57,6 +57,7 @@ public class PluginHelper {
 	private UnitatsOrganitzativesPlugin unitatsOrganitzativesPlugin;
 
 
+	@Transactional(propagation = Propagation.NOT_SUPPORTED)
 	@Cacheable(value = "usuariAmbCodi", key = "#usuariCodi")
 	public DadesUsuari dadesUsuariConsultarAmbUsuariCodi(
 			String usuariCodi) throws SistemaExternException {
@@ -93,6 +94,7 @@ public class PluginHelper {
 		}
 	}
 
+	@Transactional(propagation = Propagation.NOT_SUPPORTED)
 	@Cacheable(value = "usuariAmbNif", key = "#usuariNif")
 	public DadesUsuari dadesUsuariConsultarAmbUsuariNif(
 			String usuariNif) throws SistemaExternException {
@@ -129,6 +131,7 @@ public class PluginHelper {
 		}
 	}
 
+	@Transactional(propagation = Propagation.NOT_SUPPORTED)
 	public DadesUsuari dadesUsuariConsultarAmbUsuariCodiOrNif(String codiOrNif) throws SistemaExternException {
 
 		DadesUsuari dadesUsuari = dadesUsuariConsultarAmbUsuariCodi(codiOrNif);
@@ -138,6 +141,7 @@ public class PluginHelper {
 		return dadesUsuari;
 	}
 
+	@Transactional(propagation = Propagation.NOT_SUPPORTED)
 	public List<DadesUsuari> dadesUsuariLikeCodiNomOrNif(String text) throws SistemaExternException {
 
 		String accioDescripcio = "Consulta d'usuari amb codi o NIF";
@@ -170,6 +174,7 @@ public class PluginHelper {
 		}
 	}
 	
+	@Transactional(propagation = Propagation.NOT_SUPPORTED)
 	public List<DadesUsuari> dadesUsuariFindAmbGrup(String grupCodi) throws SistemaExternException {
 
 		String accioDescripcio = "Consulta d'usuaris d'un grup";
@@ -924,7 +929,7 @@ public class PluginHelper {
 
 	private DadesUsuariPlugin getDadesUsuariPlugin() throws Exception {
 		if (dadesUsuariPlugin == null) {
-			String propertyKeyBase =  "es.caib.pinbal.";
+			String propertyKeyBase =  "es.caib.pinbal.plugin.dades.usuari.";
 			Properties propietats = configHelper.getEnvironmentProperties();
 			String pluginClass = getPropertyPluginDadesUsuari();
 			if (pluginClass != null && pluginClass.length() > 0) {

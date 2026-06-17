@@ -36,10 +36,10 @@ public class OrganismeCessionari implements Serializable {
 	@Column(name = "cif", length = 50)
 	private String cif;
 	@Column(name = "fechabaja")
-	@Temporal(TemporalType.DATE)
+	@Temporal(TemporalType.TIMESTAMP)
 	private Date dataBaixa;
 	@Column(name = "fechaalta")
-	@Temporal(TemporalType.DATE)
+	@Temporal(TemporalType.TIMESTAMP)
 	private Date dataAlta;
 	@Column(name = "bloqueado", nullable = false)
 	private Boolean bloquejat;

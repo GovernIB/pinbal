@@ -34,7 +34,7 @@ import java.util.Map;
  */
 public interface HistoricConsultaService {
 
-	@PreAuthorize("hasRole('ROLE_DELEG') or hasRole('ROLE_ADMIN')")
+	@PreAuthorize("isAuthenticated()")
 	ArxiuDetallDto obtenirArxiuInfo(Long consultaId);
 
 	/**
@@ -50,7 +50,7 @@ public interface HistoricConsultaService {
 	 * @throws JustificantGeneracioException
 	 *            Si es produeixen errors al generar el justificant.
 	 */
-	@PreAuthorize("hasRole('ROLE_DELEG')")
+	@PreAuthorize("isAuthenticated()")
 	public JustificantDto obtenirJustificant(
             Long id,
             boolean isAdmin) throws ConsultaNotFoundException, JustificantGeneracioException;
@@ -68,7 +68,7 @@ public interface HistoricConsultaService {
 	 * @throws JustificantGeneracioException
 	 *            Si es produeixen errors al generar el justificant.
 	 */
-	@PreAuthorize("hasRole('ROLE_WS')")
+	@PreAuthorize("hasRole('PBL_WS')")
 	public JustificantDto obtenirJustificant(
             String idpeticion,
             String idsolicitud,
@@ -87,7 +87,7 @@ public interface HistoricConsultaService {
 	 * @throws JustificantGeneracioException
 	 *            Si es produeixen errors al generar el justificant.
 	 */
-	@PreAuthorize("hasRole('ROLE_DELEG')")
+	@PreAuthorize("isAuthenticated()")
 	public FitxerDto obtenirJustificantMultipleConcatenat(
             Long id) throws ConsultaNotFoundException, JustificantGeneracioException;
 
@@ -103,7 +103,7 @@ public interface HistoricConsultaService {
 	 * @throws JustificantGeneracioException
 	 *            Si es produeixen errors al generar el justificant.
 	 */
- @PreAuthorize("hasRole('ROLE_DELEG')")
+ @PreAuthorize("isAuthenticated()")
 	public FitxerDto obtenirJustificantMultipleZip(
             Long id) throws ConsultaNotFoundException, JustificantGeneracioException;
 
@@ -111,7 +111,7 @@ public interface HistoricConsultaService {
 	 * Descarrega tots els missatges XML de la consulta en un arxiu ZIP, organitzats per tipus de missatge.
 	 * @param id Atribut id de la consulta.
 	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasRole('PBL_ADMIN')")
 	public FitxerDto descarregarXmlTokensZip(Long id) throws ConsultaNotFoundException;
 
 	/**
@@ -127,7 +127,7 @@ public interface HistoricConsultaService {
 	 * @throws JustificantGeneracioException
 	 *            Si es produeixen errors al generar el justificant.
 	 */
-	@PreAuthorize("hasRole('ROLE_DELEG')")
+	@PreAuthorize("isAuthenticated()")
 	public JustificantDto reintentarGeneracioJustificant(
             Long id,
             boolean descarregar) throws ConsultaNotFoundException, JustificantGeneracioException;
@@ -147,7 +147,7 @@ public interface HistoricConsultaService {
 	 * @throws EntitatNotFoundException
 	 *            Si l'entitat especificada no existeix.
 	 */
-	@PreAuthorize("hasRole('ROLE_DELEG')")
+	@PreAuthorize("isAuthenticated()")
 	public Page<ConsultaDto> findSimplesByFiltrePaginatPerDelegat(
             Long entitatId,
             ConsultaFiltreDto filtre,
@@ -168,7 +168,7 @@ public interface HistoricConsultaService {
 	 * @throws EntitatNotFoundException
 	 *            Si l'entitat especificada no existeix.
 	 */
-	@PreAuthorize("hasRole('ROLE_DELEG')")
+	@PreAuthorize("isAuthenticated()")
 	public Page<ConsultaDto> findMultiplesByFiltrePaginatPerDelegat(
             Long entitatId,
             ConsultaFiltreDto filtre,
@@ -188,13 +188,13 @@ public interface HistoricConsultaService {
 	 * @throws EntitatNotFoundException
 	 *            Si l'entitat especificada no existeix.
 	 */
-	@PreAuthorize("hasRole('ROLE_AUDIT')")
+	@PreAuthorize("hasRole('PBL_AUDIT')")
 	public Page<ConsultaDto> findByFiltrePaginatPerAuditor(
             Long entitatId,
             ConsultaFiltreDto filtre,
             Pageable pageable) throws EntitatNotFoundException;
 
-	@PreAuthorize("hasRole('ROLE_AUDIT')")
+	@PreAuthorize("hasRole('PBL_AUDIT')")
 	List<ConsultaDto> findByFiltrePerAuditor(Long entitatId, ConsultaFiltreDto filtre) throws EntitatNotFoundException;
 
 	/**
@@ -210,7 +210,7 @@ public interface HistoricConsultaService {
 	 * @throws EntitatNotFoundException
 	 *            Si l'entitat especificada no existeix.
 	 */
-	@PreAuthorize("hasRole('ROLE_SUPERAUD')")
+	@PreAuthorize("hasRole('PBL_SUPERAUD')")
 	public Page<ConsultaDto> findByFiltrePaginatPerSuperauditor(
             Long entitatId,
             ConsultaFiltreDto filtre,
@@ -232,7 +232,7 @@ public interface HistoricConsultaService {
 	 * @throws ProcedimentNotFoundException
 	 *            Si el procediment especificat no existeix.
 	 */
-//	@PreAuthorize("hasRole('ROLE_REPORT')")
+//	@PreAuthorize("hasRole('PBL_REPORT')")
 	public List<DadesObertesRespostaConsulta> findByFiltrePerOpenData(
             String entitatCodi,
             Date dataInici,
@@ -253,7 +253,7 @@ public interface HistoricConsultaService {
 	 * @throws EntitatNotFoundException
 	 *            Si l'entitat especificada no existeix.
 	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasRole('PBL_ADMIN')")
 	public Page<ConsultaDto> findByFiltrePaginatPerAdmin(
             ConsultaFiltreDto filtre,
             Pageable pageable) throws EntitatNotFoundException;
@@ -269,7 +269,7 @@ public interface HistoricConsultaService {
 	 * @throws ScspException
 	 *            Si es produeixen errors al accedir al SCSP.
 	 */
-	@PreAuthorize("hasRole('ROLE_DELEG')")
+	@PreAuthorize("isAuthenticated()")
 	public ConsultaDto findOneDelegat(Long id) throws ConsultaNotFoundException, ScspException;
 
 	/**
@@ -283,7 +283,7 @@ public interface HistoricConsultaService {
 	 * @throws ScspException
 	 *            Si es produeixen errors al accedir al SCSP.
 	 */
-	@PreAuthorize("hasRole('ROLE_AUDIT')")
+	@PreAuthorize("hasRole('PBL_AUDIT')")
 	public ConsultaDto findOneAuditor(Long id) throws ConsultaNotFoundException, ScspException;
 
 	/**
@@ -297,7 +297,7 @@ public interface HistoricConsultaService {
 	 * @throws ScspException
 	 *            Si es produeixen errors al accedir al SCSP.
 	 */
-	@PreAuthorize("hasRole('ROLE_SUPERAUD')")
+	@PreAuthorize("hasRole('PBL_SUPERAUD')")
 	public ConsultaDto findOneSuperauditor(Long id) throws ConsultaNotFoundException, ScspException;
 
 	/**
@@ -311,7 +311,7 @@ public interface HistoricConsultaService {
 	 * @throws ScspException
 	 *            Si es produeixen errors al accedir al SCSP.
 	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasRole('PBL_ADMIN')")
 	public ConsultaDto findOneAdmin(Long id) throws ConsultaNotFoundException, ScspException;
 
 	/**
@@ -325,7 +325,7 @@ public interface HistoricConsultaService {
 	 * @throws ScspException
 	 *            Si es produeixen errors al accedir al SCSP.
 	 */
-	@PreAuthorize("hasRole('ROLE_DELEG')")
+	@PreAuthorize("isAuthenticated()")
 	public List<ConsultaDto> findAmbPare(Long pareId) throws ConsultaNotFoundException, ScspException;
 
 	/**
@@ -333,7 +333,7 @@ public interface HistoricConsultaService {
 	 * 
 	 * @return la llista d'informació de càrrega.
 	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_REPORT')")
+	@PreAuthorize("hasRole('PBL_ADMIN') or hasRole('PBL_REPORT')")
 	public List<CarregaDto> findEstadistiquesCarrega();
 
 	/**
@@ -351,7 +351,7 @@ public interface HistoricConsultaService {
 	 * @throws EntitatNotFoundException
 	 *            Si l'entitat especificada no existeix.
 	 */
-	@PreAuthorize("hasRole('ROLE_AUDIT')")
+	@PreAuthorize("hasRole('PBL_AUDIT')")
 	public List<Long> auditoriaGenerarAuditor(
             Long entitatId,
             Date dataInici,
@@ -371,7 +371,7 @@ public interface HistoricConsultaService {
 	 * @throws ScspException
 	 *            Si es produeixen errors al accedir al SCSP.
 	 */
-	@PreAuthorize("hasRole('ROLE_AUDIT')")
+	@PreAuthorize("hasRole('PBL_AUDIT')")
 	public List<ConsultaDto> auditoriaConsultarAuditor(
             Long entitatId,
             List<Long> consultaIds) throws EntitatNotFoundException, ScspException;
@@ -389,7 +389,7 @@ public interface HistoricConsultaService {
 	 *            Nombre de consultes a seleccionar.
 	 * @return el llistat d'ids de consulta.
 	 */
-	@PreAuthorize("hasRole('ROLE_SUPERAUD')")
+	@PreAuthorize("hasRole('PBL_SUPERAUD')")
 	public List<Long> auditoriaGenerarSuperauditor(
             Date dataInici,
             Date dataFi,
@@ -405,12 +405,12 @@ public interface HistoricConsultaService {
 	 * @throws ScspException
 	 *            Si es produeixen errors al accedir al SCSP.
 	 */
-	@PreAuthorize("hasRole('ROLE_SUPERAUD')")
+	@PreAuthorize("hasRole('PBL_SUPERAUD')")
 	public Map<EntitatDto, List<ConsultaDto>> auditoriaConsultarSuperauditor(
             List<Long> consultaIds) throws ScspException;
 
 
-	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_REPORT')")
+	@PreAuthorize("hasRole('PBL_ADMIN') or hasRole('PBL_REPORT')")
 	public List<InformeGeneralEstatDto> informeGeneralEstat(
             Date dataInici,
             Date dataFi);

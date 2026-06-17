@@ -172,10 +172,6 @@
 					<artifactId>tomcat-embed-jasper</artifactId>
 				</dependency>
 				<dependency>
-					<groupId>org.keycloak</groupId>
-					<artifactId>keycloak-core</artifactId>
-				</dependency>
-				<dependency>
 					<groupId>${project.groupId}</groupId>
 					<artifactId>pinbal-service</artifactId>
 					<version>${project.version}</version>
@@ -196,7 +192,7 @@
 						<groupId>org.springframework.boot</groupId>
 						<artifactId>spring-boot-maven-plugin</artifactId>
 						<configuration>
-							<mainClass>es.caib.notib.NotibBackBootApp</mainClass>
+							<mainClass>es.caib.pinbal.PinbalBackBootApp</mainClass>
 						</configuration>
 					</plugin>
 					<plugin>
@@ -235,11 +231,6 @@
 					<scope>provided</scope>
 				</dependency>
 				<dependency>
-					<groupId>org.keycloak</groupId>
-					<artifactId>keycloak-core</artifactId>
-					<scope>provided</scope>
-				</dependency>
-				<dependency>
 					<groupId>${project.groupId}</groupId>
 					<artifactId>pinbal-client-intf</artifactId>
 					<version>${project.version}</version>
@@ -253,7 +244,7 @@
 						<artifactId>maven-war-plugin</artifactId>
 						<version>3.3.2</version>
 						<configuration>
-							<packagingExcludes>**/NotibBackBootApp.class</packagingExcludes>
+							<packagingExcludes>**/PinbalBackBootApp.class</packagingExcludes>
 							<attachClasses>true</attachClasses>
 							<archive>
 								<manifestEntries>

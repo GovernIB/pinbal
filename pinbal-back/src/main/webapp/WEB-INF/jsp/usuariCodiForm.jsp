@@ -98,7 +98,7 @@
 </head>
 <body>
 	<c:url value="/usuari/username" var="formAction"/>
-	<form:form action="${formAction}" method="post" cssClass="form-horizontal" commandName="usuariCodiCommand" role="form">
+	<form:form action="${formAction}" method="post" cssClass="form-horizontal" modelAttribute="usuariCodiCommand" role="form">
 		<div class="row">
 			<div class="col-md-6">
 				<pbl:inputText name="codiAntic" textKey="usuari.form.camp.antic"/>

@@ -40,7 +40,7 @@ public interface ProcedimentService {
 	 * @throws EntitatNotFoundException
 	 *             Si no s'ha trobat cap entitat amb l'id especificat.
 	 */
-	@PreAuthorize("hasRole('ROLE_REPRES')")
+	@PreAuthorize("hasRole('PBL_REPRES')")
 	public ProcedimentDto create(ProcedimentDto creat) throws EntitatNotFoundException;
 
 	/**
@@ -52,7 +52,7 @@ public interface ProcedimentService {
 	 * @throws ProcedimentNotFoundException
 	 *             Si no s'ha trobat cap entitat amb l'id especificat.
 	 */
-	@PreAuthorize("hasRole('ROLE_REPRES')")
+	@PreAuthorize("hasRole('PBL_REPRES')")
 	public ProcedimentDto delete(Long procedimentId) throws ProcedimentNotFoundException;
 
 	/**
@@ -64,7 +64,7 @@ public interface ProcedimentService {
 	 * @throws EntitatNotFoundException
 	 *             Si no s'ha trobat cap entitat amb l'id especificat.
 	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_REPRES') or hasRole('ROLE_AUDIT') or hasRole('ROLE_SUPERAUD')")
+	@PreAuthorize("hasRole('PBL_ADMIN') or hasRole('PBL_REPRES') or hasRole('PBL_AUDIT') or hasRole('PBL_SUPERAUD')")
 	public List<ProcedimentDto> findAmbEntitat(Long entitatId) throws EntitatNotFoundException;
 
 	/**
@@ -80,14 +80,14 @@ public interface ProcedimentService {
 	 * @throws EntitatNotFoundException
 	 *             Si no s'ha trobat cap entitat amb l'id especificat.
 	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_REPRES') or hasRole('ROLE_AUDIT') or hasRole('ROLE_SUPERAUD')")
+	@PreAuthorize("hasRole('PBL_ADMIN') or hasRole('PBL_REPRES') or hasRole('PBL_AUDIT') or hasRole('PBL_SUPERAUD')")
 	public List<ProcedimentDto> findAmbEntitat(Long entitatId, String filtre) throws EntitatNotFoundException;
 
-	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_REPRES')")
+	@PreAuthorize("hasRole('PBL_ADMIN') or hasRole('PBL_REPRES')")
 	public List<CodiValor> findAmbEntitatPerOrigen(Long entitatId) throws EntitatNotFoundException;
-	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_REPRES')")
+	@PreAuthorize("hasRole('PBL_ADMIN') or hasRole('PBL_REPRES')")
 	public List<CodiValor> findAmbEntitatPerFills(Long entitatId, String codiSia) throws EntitatNotFoundException;
-	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_REPRES')")
+	@PreAuthorize("hasRole('PBL_ADMIN') or hasRole('PBL_REPRES')")
 	public List<String> findCodiSiaFills(Long entitatId, String codiSia) throws EntitatNotFoundException;
 	
 	/**
@@ -110,7 +110,7 @@ public interface ProcedimentService {
 	 * @throws EntitatNotFoundException
 	 *             Si no s'ha trobat cap entitat amb l'id especificat.
 	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_REPRES') or hasRole('ROLE_AUDIT') or hasRole('ROLE_SUPERAUD')")
+	@PreAuthorize("hasRole('PBL_ADMIN') or hasRole('PBL_REPRES') or hasRole('PBL_AUDIT') or hasRole('PBL_SUPERAUD')")
 	public Page<ProcedimentDto> findAmbFiltrePaginat(
 			Long entitatId,
 			String codi,
@@ -132,7 +132,7 @@ public interface ProcedimentService {
 	 * @throws EntitatNotFoundException
 	 *             Si no s'ha trobat cap entitat amb l'id especificat.
 	 */
-	@PreAuthorize("hasRole('ROLE_REPRES') or hasRole('ROLE_REPORT')")
+	@PreAuthorize("hasRole('PBL_REPRES') or hasRole('PBL_REPORT')")
 	public ProcedimentDto findAmbEntitatICodi(Long entitatId, String codi) throws EntitatNotFoundException;
 
 	/**
@@ -142,7 +142,7 @@ public interface ProcedimentService {
 	 *            Atribut id del procediment a trobar.
 	 * @return El procediment trobat. Si no s'ha trobat cap procediment retorna null.
 	 */
-	@PreAuthorize("hasRole('ROLE_REPRES')")
+	@PreAuthorize("hasRole('PBL_REPRES')")
 	public ProcedimentDto findById(Long id);
 
 	/**
@@ -154,7 +154,7 @@ public interface ProcedimentService {
 	 * @throws ProcedimentNotFoundException
 	 *             Si no s'ha trobat cap procediment amb l'id especificat.
 	 */
-	@PreAuthorize("hasRole('ROLE_REPRES')")
+	@PreAuthorize("hasRole('PBL_REPRES')")
 	public ProcedimentDto update(ProcedimentDto modificat) throws ProcedimentNotFoundException;
 
 	/**
@@ -168,7 +168,7 @@ public interface ProcedimentService {
 	 * @throws ProcedimentNotFoundException
 	 *             Si no s'ha trobat cap procediment amb l'id especificat.
 	 */
-	@PreAuthorize("hasRole('ROLE_REPRES')")
+	@PreAuthorize("hasRole('PBL_REPRES')")
 	public ProcedimentDto updateActiu(Long id, boolean actiu) throws ProcedimentNotFoundException;
 
 	/**
@@ -183,7 +183,7 @@ public interface ProcedimentService {
 	 * @throws ServeiNotFoundException
 	 *            Si no hi ha cap servei disponible amb el codi especificat.
 	 */
-	@PreAuthorize("hasRole('ROLE_REPRES')")
+	@PreAuthorize("hasRole('PBL_REPRES')")
 	public void serveiEnable(Long id, String serveiCodi) throws ProcedimentNotFoundException, ServeiNotFoundException;
 	
 	/**
@@ -200,7 +200,7 @@ public interface ProcedimentService {
 	 * @throws ServeiNotFoundException
 	 *            Si no hi ha cap servei disponible amb el codi especificat.
 	 */
-	@PreAuthorize("hasRole('ROLE_REPRES')")
+	@PreAuthorize("hasRole('PBL_REPRES')")
 	public boolean putProcedimentCodi(Long procedimentId,String serveiCodi,String procedimentCodi) throws ProcedimentNotFoundException, ServeiNotFoundException;
 
 	/**
@@ -215,7 +215,7 @@ public interface ProcedimentService {
 	 * @throws ProcedimentServeiNotFoundException
 	 *            Si el procediment no té aquest servei afegit.
 	 */
-	@PreAuthorize("hasRole('ROLE_REPRES')")
+	@PreAuthorize("hasRole('PBL_REPRES')")
 	public void serveiDisable(Long id, String serveiCodi) throws ProcedimentNotFoundException, ProcedimentServeiNotFoundException;
 
 	/**
@@ -234,7 +234,7 @@ public interface ProcedimentService {
 	 * @throws EntitatUsuariNotFoundException
 	 *            Si l'usuari no està lligat a l'entitat del procediment.
 	 */
-	@PreAuthorize("hasRole('ROLE_REPRES')")
+	@PreAuthorize("hasRole('PBL_REPRES')")
 	public void serveiPermisAllow(Long id, String serveiCodi, String usuariCodi) throws ProcedimentNotFoundException, ProcedimentServeiNotFoundException, EntitatUsuariNotFoundException;
 
 	/**
@@ -253,7 +253,7 @@ public interface ProcedimentService {
 	 * @throws EntitatUsuariNotFoundException
 	 *            Si l'usuari no està lligat a l'entitat del procediment.
 	 */
-	@PreAuthorize("hasRole('ROLE_REPRES')")
+	@PreAuthorize("hasRole('PBL_REPRES')")
 	public void serveiPermisDeny(Long id, String serveiCodi, String usuariCodi) throws ProcedimentNotFoundException, ProcedimentServeiNotFoundException, EntitatUsuariNotFoundException;
 
 	/**
@@ -267,16 +267,16 @@ public interface ProcedimentService {
 	 *            Si l'usuari no està lligat a l'entitat.
 	 * @param entitatId 
 	 */
-	@PreAuthorize("hasRole('ROLE_REPRES')")
+	@PreAuthorize("hasRole('PBL_REPRES')")
 	public void serveiPermisDenyAll(String usuariCodi, Long entitatId) throws EntitatUsuariNotFoundException;
 
-	@PreAuthorize("hasRole('ROLE_REPRES') or hasRole('ROLE_WS')")
+	@PreAuthorize("hasRole('PBL_REPRES') or hasRole('PBL_WS')")
 	public void serveiPermisAllowSelected(String usuariCodi, List<ProcedimentServeiSimpleDto> procedimentsServeis, Long entitatId) throws EntitatUsuariNotFoundException, ProcedimentServeiNotFoundException;
 
-	@PreAuthorize("hasRole('ROLE_REPRES')")
+	@PreAuthorize("hasRole('PBL_REPRES')")
 	public void serveiPermisDenySelected(String usuariCodi, List<ProcedimentServeiSimpleDto> procedimentsServeis, Long entitatId) throws EntitatUsuariNotFoundException;
 
-	@PreAuthorize("hasRole('ROLE_REPRES')")
+	@PreAuthorize("hasRole('PBL_REPRES')")
 	public List<ProcedimentServeiNomDto> serveiDisponibles(String usuariCodi, Long procedimentId, Long entitatId) throws EntitatUsuariNotFoundException;
 
 	/**
@@ -292,7 +292,7 @@ public interface ProcedimentService {
 	 * @throws ProcedimentServeiNotFoundException
 	 *            Si el procediment no té aquest servei afegit.
 	 */
-	@PreAuthorize("hasRole('ROLE_REPRES')")
+	@PreAuthorize("hasRole('PBL_REPRES')")
 	public List<EntitatUsuariDto> findUsuarisAmbPermisPerServei(Long id, String serveiCodi) throws ProcedimentNotFoundException, ProcedimentServeiNotFoundException;
 
 	/**
@@ -308,7 +308,7 @@ public interface ProcedimentService {
 	 * @throws ProcedimentServeiNotFoundException
 	 *            Si el procediment no té aquest servei afegit.
 	 */
-	@PreAuthorize("hasRole('ROLE_REPRES')")
+	@PreAuthorize("hasRole('PBL_REPRES')")
 	public Page<EntitatUsuariDto> findUsuarisAmbPermisPerServei(
 			Long procedimentId,
 			String serveiCodi,
@@ -327,7 +327,7 @@ public interface ProcedimentService {
 	 * @throws EntitatNotFoundException
 	 *             Si no s'ha trobat cap entitat amb l'id especificat.
 	 */
-	@PreAuthorize("hasRole('ROLE_DELEG')")
+	@PreAuthorize("isAuthenticated()")
 	public List<ProcedimentDto> findAmbEntitatPerDelegat(Long entitatId) throws EntitatNotFoundException;
 
 	/**
@@ -341,7 +341,7 @@ public interface ProcedimentService {
 	 * @throws EntitatNotFoundException
 	 *             Si no s'ha trobat cap entitat amb l'id especificat.
 	 */
-	@PreAuthorize("hasRole('ROLE_DELEG')")
+	@PreAuthorize("isAuthenticated()")
 	public List<ProcedimentDto> findActiusAmbEntitatIServeiCodi(Long entitatId, String serveiCodi) throws EntitatNotFoundException;
 
 	/**
@@ -350,7 +350,7 @@ public interface ProcedimentService {
 	 * 
 	 * @return El llistat de dades per a generar l'informe.
 	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_REPORT')")
+	@PreAuthorize("hasRole('PBL_ADMIN') or hasRole('PBL_REPORT')")
 	public List<InformeProcedimentDto> informeProcedimentsAgrupatsEntitatDepartament();
 
 	/**
@@ -359,7 +359,7 @@ public interface ProcedimentService {
 	 * 			Codi del servei
 	 * @return	Un llistat de procediemtns
 	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasRole('PBL_ADMIN')")
 	List<ProcedimentDto> findAmbServeiCodi(String serveiCodi);
 	
 	/**
@@ -367,7 +367,7 @@ public interface ProcedimentService {
 	 * 
 	 * @return	Un llistat de procediemtns
 	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasRole('PBL_ADMIN')")
 	public List<ProcedimentDto> findAll();
 
 	/**
@@ -377,9 +377,9 @@ public interface ProcedimentService {
 	 * @param procedimentId identificador del procediment
 	 * @return Llistat de codi i nom dels serveis
 	 */
-	@PreAuthorize("hasRole('ROLE_REPRES')")
+	@PreAuthorize("hasRole('PBL_REPRES')")
 	List<ServeiDto> serveisDisponiblesPerProcediment(Long procedimentId) throws ProcedimentNotFoundException;
 
-    @PreAuthorize("hasRole('ROLE_REPRES')")
+    @PreAuthorize("hasRole('PBL_REPRES')")
     void migrarProcedimentServei(Long procedimentId, String serveiCodiOrigen, String serveiCodiDesti) throws ProcedimentServeiNotFoundException, ProcedimentNotFoundException, ProcedimentServeiExistsException;
 }

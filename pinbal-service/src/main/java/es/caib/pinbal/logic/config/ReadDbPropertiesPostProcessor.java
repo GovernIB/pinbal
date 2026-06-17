@@ -21,7 +21,7 @@ public class ReadDbPropertiesPostProcessor implements EnvironmentPostProcessor {
 //        try {
 //            log.info("Obtenint dataSource per a carregar les propietats de la BBDD...");
 //            var lookup = new JndiDataSourceLookup();
-//            var datasourceJndi = environment.getProperty("spring.datasource.jndi-name", "java:jboss/datasources/notibDS");
+//            var datasourceJndi = environment.getProperty("spring.datasource.jndi-name", "java:jboss/datasources/pinbalDS");
 //            var dataSource = lookup.getDataSource(datasourceJndi);
 //            log.info("... Datasource carregat correctament.");
 //
@@ -37,7 +37,7 @@ public class ReadDbPropertiesPostProcessor implements EnvironmentPostProcessor {
 //                    propertySource.put(clau, valor);
 //                    log.info("   ... carregada la propietat: " + clau + "=" + valor);
 //                }
-//            }notib
+//            }pinbal
 //            log.info("... Finalitzada la càrega de propietats");
 //            log.info("Afegint les propietats carregades de base de dades al entorn...");
 //            if (environment.getPropertySources().contains(DBAPP_PROPERTIES)) {

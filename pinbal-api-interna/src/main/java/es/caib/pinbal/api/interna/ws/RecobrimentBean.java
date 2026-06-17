@@ -10,13 +10,13 @@ import es.scsp.bean.common.confirmacion.ConfirmacionPeticion;
 import es.scsp.bean.common.peticion.Peticion;
 import es.scsp.bean.common.respuesta.Respuesta;
 import es.scsp.common.exceptions.ScspException;
-import lombok.RequiredArgsConstructor;
 import org.jboss.ws.api.annotation.WebContext;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Component;
 
+import javax.annotation.Resource;
 import javax.annotation.security.RolesAllowed;
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.jws.WebService;
 import javax.xml.ws.WebServiceContext;
@@ -29,8 +29,6 @@ import java.security.Principal;
  *
  * @author Limit Tecnologies <limit@limit.es>
  */
-@RequiredArgsConstructor
-@Component("recobrimentSoapBean")
 @Stateless
 @WebService(
 		name = "Recobriment",
@@ -41,7 +39,7 @@ import java.security.Principal;
 @WebContext(
 		contextRoot = "/pinbal/ws",
 		urlPattern = "/recobriment",
-		authMethod = "WSBASIC",
+		authMethod = "",
 		transportGuarantee = "NONE",
 		secureWSDLAccess = false)
 @RolesAllowed({"PBL_WS"})
@@ -49,10 +47,17 @@ public class RecobrimentBean implements es.caib.pinbal.logic.intf.ws.Recobriment
 
 	private static final String ERROR_CODE_SECURITY = "0227";
 
-	private final RecobrimentService recobrimentService;
-	private final WebServiceContext webServiceContext;
+	@EJB
+	private RecobrimentService recobrimentService;
+
+	@Resource
+	private WebServiceContext webServiceContext;
 
 	private final RecobrimentSoapMapper mapper = new RecobrimentSoapMapper();
+
+	public void setRecobrimentService(RecobrimentService recobrimentService) {
+		this.recobrimentService = recobrimentService;
+	}
 
 	@Override
 	public Respuesta peticionSincrona(Peticion peticion) throws ScspException {

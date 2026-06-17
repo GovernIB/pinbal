@@ -5,22 +5,20 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import com.sun.jersey.api.client.ClientHandlerException;
-import com.sun.jersey.api.client.UniformInterfaceException;
 import es.caib.pinbal.client.recobriment.model.ScspFuncionario;
 import es.caib.pinbal.client.recobriment.model.ScspJustificante;
 import es.caib.pinbal.client.recobriment.model.ScspRespuesta;
 import es.caib.pinbal.client.recobriment.model.ScspSolicitante.ScspConsentimiento;
 import es.caib.pinbal.client.recobriment.model.ScspTitular;
 import es.caib.pinbal.client.recobriment.model.ScspTitular.ScspTipoDocumentacion;
-import es.caib.pinbal.client.recobriment.svddgpviws02.ClientSvddgpviws02.SolicitudSvddgpviws02;
 import es.caib.pinbal.client.recobriment.svddgpviws02.ClientSvddgpviws02;
-import org.junit.Test;
+import es.caib.pinbal.client.recobriment.svddgpviws02.ClientSvddgpviws02.SolicitudSvddgpviws02;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.util.Arrays;
 
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * Test del client genèric del recobriment.
@@ -41,7 +39,7 @@ public class Svddgpviws02Test {
 	private ClientSvddgpviws02 client = new ClientSvddgpviws02(URL_BASE, USUARI, CONTRASENYA, BASIC_AUTH, null, null);
 
 	@Test
-	public void peticionSincrona() throws UniformInterfaceException, ClientHandlerException, IOException {
+	public void peticionSincrona() throws Exception {
 		SolicitudSvddgpviws02 solicitud = new SolicitudSvddgpviws02();
 		solicitud.setIdentificadorSolicitante(ENTITAT_CIF);
 		solicitud.setCodigoProcedimiento(CODIGO_PROCEDIMIENTO);

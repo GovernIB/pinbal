@@ -191,7 +191,7 @@ function showModalEditar(
 <body>
 
 	<c:url value="/auditor/usuari" var="formAction"/>
-	<form:form id="form-filtre" action="${formAction}" method="post" cssClass="well form-filtre-table" commandName="usuariFiltreCommand">
+	<form:form id="form-filtre" action="${formAction}" method="post" cssClass="well form-filtre-table" modelAttribute="usuariFiltreCommand">
 		<div class="row">
 			<div class="col-md-3">			
 				<pbl:inputText name="codi" inline="true"  placeholderKey="auditor.usuaris.filtre.camp.codi"/>

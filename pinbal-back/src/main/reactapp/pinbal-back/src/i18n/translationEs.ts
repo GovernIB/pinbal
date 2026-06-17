@@ -4,6 +4,7 @@ const translationEs = {
         noEntitat: 'Este usuario no tiene acceso a ningún entorno',
         menu: {
             home: 'Inicio',
+            adminConsulta: 'Consultas realizadas',
         },
     },
     page: {
@@ -11,6 +12,36 @@ const translationEs = {
             toolbar: {
                 title: 'Bienvenidos a PINBAL',
                 subtitle: 'Aplicación para la interoperabilidad entre las administraciones baleares y el resto del estado',
+            },
+        },
+        admin: {
+            consulta: {
+                grid: {
+                    title: 'Consultas realizadas',
+                    column: {
+                        scspPeticionId: 'ID petición',
+                        creacioData: 'Fecha creación',
+                        creacioUsuariNomCodi: 'Usuario',
+                        funcionariNomAmbDocument: 'Funcionario',
+                        procedimentCodiNom: 'Procedimiento',
+                        serveiCodiNom: 'Servicio',
+                        estat: 'Estado',
+                        dataEsperadaResposta: 'Fecha esperada respuesta',
+                        entitat: 'Entidad',
+                    },
+                    filter: {
+                        entitatId: 'Entidad',
+                        scspPeticionId: 'ID petición SCSP',
+                        procedimentCodiNom: 'Procedimiento',
+                        serveiCodiNom: 'Servicio',
+                        estat: 'Estado',
+                        dataInici: 'Fecha inicio',
+                        dataFi: 'Fecha fin',
+                        funcionariNomAmbDocument: 'Funcionario',
+                        recobriment: 'Recobrimiento',
+                        multiple: 'Múltiple',
+                    },
+                },
             },
         },
     },
@@ -36,9 +67,12 @@ const translationEs = {
         },
         RoleSelector: {
             role: {
-                NOT_SUPER: 'Superadministrador',
-                NOT_ADMIN: 'Administrador',
-                tothom: 'Usuario',
+                PBL_ADMIN: 'Administrador',
+                PBL_REPRES: 'Representante',
+                PBL_AUDIT: 'Auditor',
+                PBL_SUPERAUD: 'Superauditor',
+                PBL_DELEG: 'Delegado',
+                tothom: 'Delegado',
             },
         },
         PermissionGrid: {

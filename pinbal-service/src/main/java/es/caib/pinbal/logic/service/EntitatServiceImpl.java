@@ -172,7 +172,7 @@ public class EntitatServiceImpl implements EntitatService, ApplicationContextAwa
 	public EntitatDto findById(Long id) {
 		log.debug("Consulta de l'entitat (id=" + id + ")");
 		return dtoMappingHelper.getMapperFacade().map(
-				entitatRepository.findById(id),
+				entitatRepository.findById(id).orElseThrow(),
 				EntitatDto.class);
 	}
 

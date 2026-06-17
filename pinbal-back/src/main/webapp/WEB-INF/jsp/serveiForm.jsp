@@ -7,10 +7,10 @@
 <%
 	request.setAttribute(
 			"entitatTipusLlista",
-			es.caib.pinbal.core.dto.ServeiDto.EntitatTipusDto.values());
+			es.caib.pinbal.logic.intf.dto.ServeiDto.EntitatTipusDto.values());
 	request.setAttribute(
 			"justificantTipusLlista",
-			es.caib.pinbal.core.dto.ServeiDto.JustificantTipusDto.values());
+			es.caib.pinbal.logic.intf.dto.ServeiDto.JustificantTipusDto.values());
 %>
 <html>
 <head>
@@ -194,7 +194,7 @@ function showModalXsd(element) {
 
 	<c:url value="/servei/save" var="formAction"/>
 	<form:form action="${formAction}" method="post" cssClass="form-horizontal" 
-			   commandName="serveiCommand" enctype="multipart/form-data">
+			   modelAttribute="serveiCommand" enctype="multipart/form-data">
 		<form:hidden path="creacio"/>
 		<fieldset>
 			<div class="row">

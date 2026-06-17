@@ -37,11 +37,11 @@ public class Servei implements Serializable {
 	private EmissorCert scspEmisor;
 	
 	@Column(name = "fechaalta")
-	@Temporal(TemporalType.DATE)
+	@Temporal(TemporalType.TIMESTAMP)
 	private Date scspFechaAlta;
 	
 	@Column(name = "fechabaja")
-	@Temporal(TemporalType.DATE)
+	@Temporal(TemporalType.TIMESTAMP)
 	private Date scspFechaBaja;
 	
 	@Column(name = "caducidad")

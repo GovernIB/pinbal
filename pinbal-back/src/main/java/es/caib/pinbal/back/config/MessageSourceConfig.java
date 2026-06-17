@@ -18,7 +18,7 @@ public class MessageSourceConfig extends BaseMessageSourceConfig {
 	protected String[] getBasenames() {
 		return new String[] {
 				"messages",
-				"notib-back-messages"
+				"pinbal-back-messages"
 		};
 	}
 

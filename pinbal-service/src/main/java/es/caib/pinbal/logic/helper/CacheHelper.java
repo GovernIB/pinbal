@@ -10,6 +10,9 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Component;
 
 import java.util.Collection;
+import java.util.Spliterator;
+import java.util.Spliterators;
+import java.util.stream.StreamSupport;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -51,7 +54,7 @@ public class CacheHelper {
     public void evictByKeyPrefix(String cacheName, String keyPrefix) {
         Cache cache = cacheManager.getCache(cacheName);
         if (cache != null) {
-            org.ehcache.Cache<Object, Object> ehCache = (org.ehcache.Cache<Object, Object>) cache.getNativeCache();
+            javax.cache.Cache<Object, Object> ehCache = (javax.cache.Cache<Object, Object>) cache.getNativeCache();
             ehCache.forEach(entry -> {
                 String keyString = String.valueOf(entry.getKey());
                 if (keyString.startsWith(keyPrefix + ":")) {
@@ -78,21 +81,30 @@ public class CacheHelper {
     }
 
     public long getCacheSize(String cacheName) {
-        Cache cache = cacheManager.getCache(cacheName);
-        if (cache != null) {
-            Object nativeCache = cache.getNativeCache();
-            if (nativeCache instanceof org.ehcache.Cache) {
-                org.ehcache.Cache<Object, Object> ehCache = (org.ehcache.Cache<Object, Object>) nativeCache;
-                long count = 0;
-                ehCache.forEach(entry -> {
-                });
-                for (org.ehcache.Cache.Entry<Object, Object> entry : ehCache) {
-                    count++;
-                }
-                return count;
+        try {
+            Cache cache = cacheManager.getCache(cacheName);
+            if (cache == null) {
+                return 0L;
             }
+            javax.cache.Cache c = (javax.cache.Cache)cache.getNativeCache();
+            return StreamSupport.stream(Spliterators.<Object>spliteratorUnknownSize(c.iterator(), Spliterator.ORDERED), false).count();
+        } catch (Exception ex) {
+            log.error("Error obtenint mida de la cache " + cacheName, ex);
+            return 0L;
         }
-        return 0L;
+//        Cache cache = cacheManager.getCache(cacheName);
+//        if (cache != null) {
+//            Object nativeCache = cache.getNativeCache();
+//            if (nativeCache instanceof org.ehcache.Cache) {
+//                javax.cache.Cache<Object, Object> ehCache = (javax.cache.Cache<Object, Object>) nativeCache;
+//                long count = 0;
+//                for (javax.cache.Cache.Entry<Object, Object> entry : ehCache) {
+//                    count++;
+//                }
+//                return count;
+//            }
+//        }
+//        return 0L;
     }
 
     public long getTotalEhCacheSize() {

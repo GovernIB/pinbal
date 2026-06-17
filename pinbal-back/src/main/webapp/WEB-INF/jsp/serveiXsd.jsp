@@ -5,7 +5,7 @@
 <%@ taglib tagdir="/WEB-INF/tags/pinbal" prefix="pbl" %>
 <c:choose>
 	<c:when test="${not reloadPage}">
-	<form:form id="xsd-form" method="post" action="/servei/${serveiCodi}/xsd/save" commandName="serveiXsdCommand" role="form" enctype="multipart/form-data">	
+	<form:form id="xsd-form" method="post" action="/servei/${serveiCodi}/xsd/save" modelAttribute="serveiXsdCommand" role="form" enctype="multipart/form-data">
 		<c:set var="campPath" value="fitxerXsd"/>
 		<form:input path="codi" type="hidden" value="${serveiCodi}"/>
 		

@@ -1,27 +1,21 @@
 package es.caib.pinbal.client.comu;
 
-import com.sun.jersey.api.client.ClientRequest;
-import com.sun.jersey.api.client.ClientResponse;
-import com.sun.jersey.api.client.filter.ClientFilter;
+import javax.ws.rs.client.ClientRequestContext;
+import javax.ws.rs.client.ClientRequestFilter;
+import java.io.IOException;
 
-import javax.ws.rs.core.MediaType;
-import java.net.URI;
+/**
+ * Filter that converts PATCH requests to POST with X-HTTP-Method-Override header,
+ * for servers that do not support the PATCH HTTP method natively.
+ */
+public class PatchRequestFilter implements ClientRequestFilter {
 
-public class PatchRequestFilter extends ClientFilter {
-    @Override
-    public ClientResponse handle(ClientRequest cr) {
-        if (cr.getMethod().equalsIgnoreCase("PATCH")) {
-            cr.setMethod("POST");
-            cr.getHeaders().add("X-HTTP-Method-Override", "PATCH");
-        }
-        return getNext().handle(cr);
-    }
+	@Override
+	public void filter(ClientRequestContext requestContext) throws IOException {
+		if ("PATCH".equalsIgnoreCase(requestContext.getMethod())) {
+			requestContext.setMethod("POST");
+			requestContext.getHeaders().putSingle("X-HTTP-Method-Override", "PATCH");
+		}
+	}
 
-    public static ClientRequest createPatchRequest(URI uri, Object entity, MediaType mediaType) {
-        ClientRequest request = ClientRequest.create()
-                .type(mediaType)
-                .entity(entity)
-                .build(uri, "PATCH" );
-        return request;
-    }
 }

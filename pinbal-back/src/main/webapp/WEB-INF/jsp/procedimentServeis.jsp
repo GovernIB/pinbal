@@ -39,7 +39,7 @@
 	
 
 	<c:url value="/procediment/${procediment.id}/servei" var="formAction"/>
-	<form:form id="form-filtre" action="${formAction}" method="post" cssClass="well" commandName="serveiFiltreCommand">
+	<form:form id="form-filtre" action="${formAction}" method="post" cssClass="well" modelAttribute="serveiFiltreCommand">
 		<div class="row">
 			<div class="col-md-4">	
 				<pbl:inputText name="codi" inline="true" placeholderKey="servei.list.filtre.camp.codi"/>

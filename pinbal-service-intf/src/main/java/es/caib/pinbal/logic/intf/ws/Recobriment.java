@@ -19,8 +19,6 @@ import javax.jws.WebService;
  */
 @WebService(
 		name = "Recobriment",
-		serviceName = "RecobrimentService",
-		portName = "RecobrimentServicePort",
 		targetNamespace = "http://www.caib.es/pinbal/ws/recobriment")
 public interface Recobriment {
 
@@ -31,7 +29,7 @@ public interface Recobriment {
 	 * @return La resposta obtinguda.
 	 * @throws ScspException Si s'ha produit algun error.
 	 */
-	@PreAuthorize("hasRole('ROLE_WS')")
+	@PreAuthorize("hasRole('PBL_WS')")
 	public Respuesta peticionSincrona(
 			Peticion peticion) throws ScspException;
 
@@ -42,7 +40,7 @@ public interface Recobriment {
 	 * @return La confirmació de recepció de la petició.
 	 * @throws ScspException Si s'ha produit algun error.
 	 */
-	@PreAuthorize("hasRole('ROLE_WS')")
+	@PreAuthorize("hasRole('PBL_WS')")
 	public ConfirmacionPeticion peticionAsincrona(
 			Peticion peticion) throws ScspException;
 
@@ -53,7 +51,7 @@ public interface Recobriment {
 	 * @return La informació de la resposta si ja es troba disponible.
 	 * @throws ScspException Si s'ha produit algun error.
 	 */
-	@PreAuthorize("hasRole('ROLE_WS')")
+	@PreAuthorize("hasRole('PBL_WS')")
 	public Respuesta getRespuesta(
 			String idpeticion) throws ScspException;
 
@@ -65,7 +63,7 @@ public interface Recobriment {
 	 * @return L'estat de la resposta i la resposta si ja es troba disponible.
 	 * @throws ScspException Si s'ha produit algun error.
 	 */
-	@PreAuthorize("hasRole('ROLE_WS')")
+	@PreAuthorize("hasRole('PBL_WS')")
 	public byte[] getJustificante(
 			String idpeticion,
 			String idsolicitud) throws ScspException;

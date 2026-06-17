@@ -1,15 +1,56 @@
 databaseChangeLog:
 - changeSet:
-    id: init-trigger-1
-    author: limit (generated)
+    id: init-grant-1
+    author: Limit
+    comment: Inicialitzar permisos
     context: caib
     changes:
     - sql:
         dbms: oracle
-        sql: "GRANT SELECT, UPDATE, INSERT, DELETE ON pbl_consulta TO www_emiserv;
+        sql: "GRANT SELECT, UPDATE, INSERT, DELETE ON core_cache_certificados TO www_emiserv;
+GRANT SELECT, UPDATE, INSERT, DELETE ON core_clave_privada TO www_emiserv;
+GRANT SELECT, UPDATE, INSERT, DELETE ON core_clave_privada_externa TO www_emiserv;
+GRANT SELECT, UPDATE, INSERT, DELETE ON core_clave_publica TO www_emiserv;
+GRANT SELECT, UPDATE, INSERT, DELETE ON core_codigo_error TO www_emiserv;
+GRANT SELECT, UPDATE, INSERT, DELETE ON core_emisor_certificado TO www_emiserv;
+GRANT SELECT, UPDATE, INSERT, DELETE ON core_estado_peticion TO www_emiserv;
+GRANT SELECT, UPDATE, INSERT, DELETE ON core_log TO www_emiserv;
+GRANT SELECT, UPDATE, INSERT, DELETE ON core_modulo TO www_emiserv;
+GRANT SELECT, UPDATE, INSERT, DELETE ON core_modulo_configuracion TO www_emiserv;
+GRANT SELECT, UPDATE, INSERT, DELETE ON core_organismo_cesionario TO www_emiserv;
+GRANT SELECT, UPDATE, INSERT, DELETE ON core_parametro_configuracion TO www_emiserv;
+GRANT SELECT, UPDATE, INSERT, DELETE ON core_peticion_respuesta TO www_emiserv;
+GRANT SELECT, UPDATE, INSERT, DELETE ON core_req_cesionarios_servicios TO www_emiserv;
+GRANT SELECT, UPDATE, INSERT, DELETE ON core_req_modulo_pdf TO www_emiserv;
+GRANT SELECT, UPDATE, INSERT, DELETE ON core_req_modulo_pdf_cesionario TO www_emiserv;
+GRANT SELECT, UPDATE, INSERT, DELETE ON core_req_secuencia_id_peticion TO www_emiserv;
+GRANT SELECT, UPDATE, INSERT, DELETE ON core_req_ssl_cesionarios TO www_emiserv;
+GRANT SELECT, UPDATE, INSERT, DELETE ON core_servicio TO www_emiserv;
+GRANT SELECT, UPDATE, INSERT, DELETE ON core_tipo_mensaje TO www_emiserv;
+GRANT SELECT, UPDATE, INSERT, DELETE ON core_token_data TO www_emiserv;
+GRANT SELECT, UPDATE, INSERT, DELETE ON core_transmision TO www_emiserv;
+GRANT SELECT, UPDATE, INSERT, DELETE ON pbl_acl_class TO www_emiserv;
+GRANT SELECT, UPDATE, INSERT, DELETE ON pbl_acl_entry TO www_emiserv;
+GRANT SELECT, UPDATE, INSERT, DELETE ON pbl_acl_object_identity TO www_emiserv;
+GRANT SELECT, UPDATE, INSERT, DELETE ON pbl_acl_sid TO www_emiserv;
+GRANT SELECT, UPDATE, INSERT, DELETE ON pbl_avis TO www_emiserv;
+GRANT SELECT, UPDATE, INSERT, DELETE ON pbl_config TO www_emiserv;
+GRANT SELECT, UPDATE, INSERT, DELETE ON pbl_config_group TO www_emiserv;
+GRANT SELECT, UPDATE, INSERT, DELETE ON pbl_config_type TO www_emiserv;
+GRANT SELECT, UPDATE, INSERT, DELETE ON pbl_consulta TO www_emiserv;
+GRANT SELECT, UPDATE, INSERT, DELETE ON pbl_consulta_do TO www_emiserv;
+GRANT SELECT, UPDATE, INSERT, DELETE ON pbl_consulta_hist TO www_emiserv;
+GRANT SELECT, UPDATE, INSERT, DELETE ON pbl_consulta_hist_do TO www_emiserv;
+GRANT SELECT, UPDATE, INSERT, DELETE ON pbl_consulta_hist_list TO www_emiserv;
+GRANT SELECT, UPDATE, INSERT, DELETE ON pbl_consulta_list TO www_emiserv;
 GRANT SELECT, UPDATE, INSERT, DELETE ON pbl_entitat TO www_emiserv;
 GRANT SELECT, UPDATE, INSERT, DELETE ON pbl_entitat_servei TO www_emiserv;
 GRANT SELECT, UPDATE, INSERT, DELETE ON pbl_entitat_usuari TO www_emiserv;
+GRANT SELECT, UPDATE, INSERT, DELETE ON pbl_explot_consulta_dim TO www_emiserv;
+GRANT SELECT, UPDATE, INSERT, DELETE ON pbl_explot_consulta_fet TO www_emiserv;
+GRANT SELECT, UPDATE, INSERT, DELETE ON pbl_explot_temps TO www_emiserv;
+GRANT SELECT, UPDATE, INSERT, DELETE ON pbl_mon_int TO www_emiserv;
+GRANT SELECT, UPDATE, INSERT, DELETE ON pbl_mon_int_param TO www_emiserv;
 GRANT SELECT, UPDATE, INSERT, DELETE ON pbl_organ_gestor TO www_emiserv;
 GRANT SELECT, UPDATE, INSERT, DELETE ON pbl_procediment TO www_emiserv;
 GRANT SELECT, UPDATE, INSERT, DELETE ON pbl_procediment_servei TO www_emiserv;
@@ -18,43 +59,25 @@ GRANT SELECT, UPDATE, INSERT, DELETE ON pbl_servei_camp TO www_emiserv;
 GRANT SELECT, UPDATE, INSERT, DELETE ON pbl_servei_camp_grup TO www_emiserv;
 GRANT SELECT, UPDATE, INSERT, DELETE ON pbl_servei_config TO www_emiserv;
 GRANT SELECT, UPDATE, INSERT, DELETE ON pbl_servei_justif_camp TO www_emiserv;
+GRANT SELECT, UPDATE, INSERT, DELETE ON pbl_servei_regla TO www_emiserv;
+GRANT SELECT, UPDATE, INSERT, DELETE ON pbl_servei_regla_valor_afc TO www_emiserv;
+GRANT SELECT, UPDATE, INSERT, DELETE ON pbl_servei_regla_valor_mod TO www_emiserv;
+GRANT SELECT, UPDATE, INSERT, DELETE ON pbl_servei_xsd TO www_emiserv;
 GRANT SELECT, UPDATE, INSERT, DELETE ON pbl_usuari TO www_emiserv;
-GRANT SELECT, UPDATE, INSERT, DELETE ON acl_sid TO www_emiserv;
-GRANT SELECT, UPDATE, INSERT, DELETE ON acl_class TO www_emiserv;
-GRANT SELECT, UPDATE, INSERT, DELETE ON acl_object_identity TO www_emiserv;
-GRANT SELECT, UPDATE, INSERT, DELETE ON acl_entry TO www_emiserv;
-GRANT SELECT, UPDATE, INSERT, DELETE ON core_cache_certificados TO www_emiserv;
-GRANT SELECT, UPDATE, INSERT, DELETE ON core_clave_privada TO www_emiserv;
-GRANT SELECT, UPDATE, INSERT, DELETE ON core_clave_publica TO www_emiserv;
-GRANT SELECT, UPDATE, INSERT, DELETE ON core_codigo_error TO www_emiserv;
-GRANT SELECT, UPDATE, INSERT, DELETE ON core_emisor_certificado TO www_emiserv;
-GRANT SELECT, UPDATE, INSERT, DELETE ON core_estado_peticion TO www_emiserv;
-GRANT SELECT, UPDATE, INSERT, DELETE ON core_modulo TO www_emiserv;
-GRANT SELECT, UPDATE, INSERT, DELETE ON core_modulo_configuracion TO www_emiserv;
-GRANT SELECT, UPDATE, INSERT, DELETE ON core_req_modulo_pdf TO www_emiserv;
-GRANT SELECT, UPDATE, INSERT, DELETE ON core_req_modulo_pdf_cesionario TO www_emiserv;
-GRANT SELECT, UPDATE, INSERT, DELETE ON core_organismo_cesionario TO www_emiserv;
-GRANT SELECT, UPDATE, INSERT, DELETE ON core_parametro_configuracion TO www_emiserv;
-GRANT SELECT, UPDATE, INSERT, DELETE ON core_peticion_respuesta TO www_emiserv;
-GRANT SELECT, UPDATE, INSERT, DELETE ON core_servicio TO www_emiserv;
-GRANT SELECT, UPDATE, INSERT, DELETE ON core_tipo_mensaje TO www_emiserv;
-GRANT SELECT, UPDATE, INSERT, DELETE ON core_token_data TO www_emiserv;
-GRANT SELECT, UPDATE, INSERT, DELETE ON core_transmision TO www_emiserv;
-GRANT SELECT, UPDATE, INSERT, DELETE ON core_req_secuencia_id_peticion TO www_emiserv;
-GRANT SELECT, UPDATE, INSERT, DELETE ON core_req_cesionarios_servicios TO www_emiserv;
 
 GRANT SELECT ON hibernate_sequence TO www_emiserv;
-GRANT SELECT ON acl_sid_seq TO www_emiserv;
-GRANT SELECT ON acl_class_seq TO www_emiserv;
-GRANT SELECT ON acl_oid_seq TO www_emiserv;
-GRANT SELECT ON acl_entry_seq TO www_emiserv;
-GRANT SELECT ON id_clave_privada_sequence TO www_emiserv;
-GRANT SELECT ON id_clave_publica_sequence TO www_emiserv;
-GRANT SELECT ON id_emisor_sequence TO www_emiserv;
-GRANT SELECT ON id_autorizacion_organismo_seq TO www_emiserv;
-GRANT SELECT ON id_organismo_cesionario_seq TO www_emiserv;
-GRANT SELECT ON id_servicio_sequence TO www_emiserv;
 GRANT SELECT ON id_aplicacion_sequence TO www_emiserv;
 GRANT SELECT ON id_autorizacion_ca_seq TO www_emiserv;
 GRANT SELECT ON id_autorizacion_certific_seq TO www_emiserv;
-GRANT SELECT ON id_servicio_cesionario_seq TO www_emiserv;"
+GRANT SELECT ON id_autorizacion_organismo_seq TO www_emiserv;
+GRANT SELECT ON id_clave_privada_sequence TO www_emiserv;
+GRANT SELECT ON id_clave_publica_sequence TO www_emiserv;
+GRANT SELECT ON id_emisor_sequence TO www_emiserv;
+GRANT SELECT ON id_organismo_cesionario_seq TO www_emiserv;
+GRANT SELECT ON id_servicio_cesionario_seq TO www_emiserv;
+GRANT SELECT ON id_servicio_sequence TO www_emiserv;
+GRANT SELECT ON id_ssl_cesionario_seq TO www_emiserv;
+GRANT SELECT ON pbl_acl_class_seq TO www_emiserv;
+GRANT SELECT ON pbl_acl_entry_seq TO www_emiserv;
+GRANT SELECT ON pbl_acl_oid_seq TO www_emiserv;
+GRANT SELECT ON pbl_acl_sid_seq TO www_emiserv;"

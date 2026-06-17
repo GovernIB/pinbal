@@ -2,12 +2,16 @@ package es.caib.pinbal.client.serveis;
 
 import es.caib.pinbal.client.comu.LogLevel;
 import es.caib.pinbal.client.comu.Page;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
+
 
 public class ServeiClientTest {
 
@@ -16,7 +20,7 @@ public class ServeiClientTest {
 
     private String existingServeiCodi = "";
 
-    @Before
+    @BeforeEach
     public void setUp() {
         String urlBase = "http://localhost:8180/pinbalapi"; // Exemples; ajusta això segons el teu entorn
         String usuari = "pblwsrep";
@@ -38,8 +42,8 @@ public class ServeiClientTest {
         try {
             // Prova amb alguns paràmetres que saps que estan configurats correctament al servidor de proves
             Page<Servei> serveis = serveiClient.getServeis("SVDD", null, 0, 10, "asc");
-            assertNotNull("La pàgina de serveis no hauria de ser nul·la", serveis);
-            assertTrue("El contingut de la pàgina de serveis hauria de tenir elements", serveis.getContent().size() > 0);
+            assertNotNull(serveis, "La pàgina de serveis no hauria de ser nul·la");
+            assertTrue(serveis.getContent().size() > 0, "El contingut de la pàgina de serveis hauria de tenir elements");
         } catch (Exception e) {
             fail("La crida a getServeis ha fallat: " + e.getMessage());
         }
@@ -61,8 +65,8 @@ public class ServeiClientTest {
         try {
             // Assuming getServeis is correctly setup to return 204 with no results for these parameters
             Page<Servei> serveis = serveiClient.getServeis("codiInexistent", "descripcioInexistent", 0, 10, "asc");
-            assertNotNull("La pàgina de procediments no hauria de ser nul·la", serveis);
-            assertTrue("La llista de procediments hauria d'estar buida", serveis.getContent().isEmpty());
+            assertNotNull(serveis, "La pàgina de procediments no hauria de ser nul·la");
+            assertTrue(serveis.getContent().isEmpty(), "La llista de procediments hauria d'estar buida");
         } catch (Exception e) {
             fail("Ha fallat la verificació per a pàgina buida de serveis: " + e.getMessage());
         }
@@ -76,8 +80,8 @@ public class ServeiClientTest {
     public void testGetServei() {
         try {
             Servei servei = serveiClient.getServei(existingServeiCodi);
-            assertNotNull("El servei no hauria de ser nul", servei);
-            assertEquals("Els codis del servei haurien de coincidir", existingServeiCodi, servei.getCodi());
+            assertNotNull(servei, "El servei no hauria de ser nul");
+            assertEquals(existingServeiCodi, servei.getCodi(), "Els codis del servei haurien de coincidir");
         } catch (Exception e) {
             fail("La crida a getServei ha fallat: " + e.getMessage());
         }

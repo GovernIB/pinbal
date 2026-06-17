@@ -30,7 +30,7 @@ public class AjaxEnumController extends BaseController {
 	public List<HtmlOption> enumValorsAmbText(
 			HttpServletRequest request,
 			@PathVariable String enumClass) throws ClassNotFoundException {
-		Class<?> enumeracio = Class.forName("es.caib.pinbal.core.dto." + enumClass);
+		Class<?> enumeracio = Class.forName("es.caib.pinbal.logic.intf.dto." + enumClass);
 		StringBuilder textKeyPrefix = new StringBuilder();
 		String[] textKeys = StringUtils.splitByCharacterTypeCamelCase(enumClass);
 		for (String textKey: textKeys) {

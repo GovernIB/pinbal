@@ -41,10 +41,9 @@ public class UsuariResourceServiceImpl
 			if (usuariOptional.isPresent()) {
 				UsuariResourceEntity usuariFromDb = usuariOptional.get();
 				if (hasToUpdateUsuari(usuariFromDb, usuariFromAuth)) {
-//					usuariFromDb.setNomSencer(usuariFromAuth.getNomSencer());
-					usuariFromDb.setNom(usuariFromAuth.getNom());
-					usuariFromDb.setNif(usuariFromAuth.getNif());
-					usuariFromDb.setEmail(usuariFromAuth.getEmail());
+					if (usuariFromAuth.getNom() != null) usuariFromDb.setNom(usuariFromAuth.getNom());
+					if (usuariFromAuth.getNif() != null) usuariFromDb.setNif(usuariFromAuth.getNif());
+					if (usuariFromAuth.getEmail() != null) usuariFromDb.setEmail(usuariFromAuth.getEmail());
 					usuariResourceRepository.save(usuariFromDb);
 				}
 			} else {
@@ -77,6 +76,14 @@ public class UsuariResourceServiceImpl
 				usuariResource.setIdioma("CA");
 				return usuariResource;
 			} else if (authentication.getPrincipal() instanceof User) {
+				if (!(authentication.getDetails() instanceof PinbalAuthenticationDetails)) {
+					// Pre-auth via JBoss/Keycloak sense JWT Bearer token (navegador sense capçalera Authorization):
+					// Creim un usuari mínim amb el codi per garantir que l'usuari existeix a la BD.
+					// No tenim claims JWT per actualitzar nom/nif/email (es faran quan hi hagi token).
+					UsuariResource usuariResource = new UsuariResource();
+					usuariResource.setCodi(authentication.getName());
+					return usuariResource;
+				}
 				UsuariResource usuariResource = new UsuariResource();
 				PinbalAuthenticationDetails details = (PinbalAuthenticationDetails)authentication.getDetails();
 				usuariResource.setCodi(authentication.getName());
@@ -91,9 +98,10 @@ public class UsuariResourceServiceImpl
 	}
 
 	private boolean hasToUpdateUsuari(UsuariResourceEntity usuariFromDb, UsuariResource usuariFromAuth) {
-		return !Objects.equals(usuariFromDb.getNom(), usuariFromAuth.getNom()) ||
-			!Objects.equals(usuariFromDb.getNif(), usuariFromAuth.getNif()) ||
-			!Objects.equals(usuariFromDb.getEmail(), usuariFromAuth.getEmail());
+		// Només actualitzam camps que l'autenticació ha pogut proporcionar (no null)
+		return (usuariFromAuth.getNom() != null && !Objects.equals(usuariFromDb.getNom(), usuariFromAuth.getNom())) ||
+			(usuariFromAuth.getNif() != null && !Objects.equals(usuariFromDb.getNif(), usuariFromAuth.getNif())) ||
+			(usuariFromAuth.getEmail() != null && !Objects.equals(usuariFromDb.getEmail(), usuariFromAuth.getEmail()));
 	}
 
 }

@@ -23,7 +23,7 @@ import org.springframework.context.annotation.PropertySource;
 
 
 /**
- * Aplicació Spring Boot de NOTIB per a ser executada des de JBoss.
+ * Aplicació Spring Boot de Pinbal per a ser executada des de JBoss.
  *
  * @author Limit Tecnologies <limit@limit.es>
  */

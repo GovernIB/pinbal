@@ -1,0 +1,370 @@
+databaseChangeLog:
+- changeSet:
+      id: update-plugin-config
+      author: Limit
+      comment: Actualitza el nom de la classe del plugin de dades d'usuari JDBC (repaquet plugins.caib -> plugin.usuari), afegeix les propietats del plugin LDAP de dades d'usuari i elimina les propietats obsoletes
+      changes:
+          - update:
+                tableName: pbl_acl_class
+                columns:
+                    - column:
+                          name: class_id_type
+                          value: 'java.lang.Long'
+
+          - insert:
+                tableName: pbl_config
+                columns:
+                    - column: { name: key, value: 'es.caib.pinbal.plugin.dades.usuari.pluginsib.userinformation.ldap.host_url' }
+                    - column: { name: value, value: '' }
+                    - column: { name: description_key, value: 'propietat.dades.usuari.pluginsib.userinformation.ldap.host_url' }
+                    - column: { name: group_code, value: 'USUARIS' }
+                    - column: { name: position, valueNumeric: 0 }
+                    - column: { name: source_property, value: 'FILE' }
+                    - column: { name: type_code, value: 'TEXT' }
+          - insert:
+                tableName: pbl_config
+                columns:
+                    - column: { name: key, value: 'es.caib.pinbal.plugin.dades.usuari.pluginsib.userinformation.ldap.security_principal' }
+                    - column: { name: value, value: '' }
+                    - column: { name: description_key, value: 'propietat.dades.usuari.pluginsib.userinformation.ldap.security_principal' }
+                    - column: { name: group_code, value: 'USUARIS' }
+                    - column: { name: position, valueNumeric: 1 }
+                    - column: { name: source_property, value: 'FILE' }
+                    - column: { name: type_code, value: 'TEXT' }
+          - insert:
+                tableName: pbl_config
+                columns:
+                    - column: { name: key, value: 'es.caib.pinbal.plugin.dades.usuari.pluginsib.userinformation.ldap.security_authentication' }
+                    - column: { name: value, value: '' }
+                    - column: { name: description_key, value: 'propietat.dades.usuari.pluginsib.userinformation.ldap.security_authentication' }
+                    - column: { name: group_code, value: 'USUARIS' }
+                    - column: { name: position, valueNumeric: 2 }
+                    - column: { name: source_property, value: 'DATABASE' }
+                    - column: { name: type_code, value: 'TEXT' }
+          - insert:
+                tableName: pbl_config
+                columns:
+                    - column: { name: key, value: 'es.caib.pinbal.plugin.dades.usuari.pluginsib.userinformation.ldap.security_credentials' }
+                    - column: { name: value, value: '' }
+                    - column: { name: description_key, value: 'propietat.dades.usuari.pluginsib.userinformation.ldap.security_credentials' }
+                    - column: { name: group_code, value: 'USUARIS' }
+                    - column: { name: position, valueNumeric: 3 }
+                    - column: { name: source_property, value: 'FILE' }
+                    - column: { name: type_code, value: 'PASSWORD' }
+          - insert:
+                tableName: pbl_config
+                columns:
+                    - column: { name: key, value: 'es.caib.pinbal.plugin.dades.usuari.pluginsib.userinformation.ldap.users_context_dn' }
+                    - column: { name: value, value: '' }
+                    - column: { name: description_key, value: 'propietat.dades.usuari.pluginsib.userinformation.ldap.users_context_dn' }
+                    - column: { name: group_code, value: 'USUARIS' }
+                    - column: { name: position, valueNumeric: 4 }
+                    - column: { name: source_property, value: 'DATABASE' }
+                    - column: { name: type_code, value: 'TEXT' }
+          - insert:
+                tableName: pbl_config
+                columns:
+                    - column: { name: key, value: 'es.caib.pinbal.plugin.dades.usuari.pluginsib.userinformation.ldap.search_scope' }
+                    - column: { name: value, value: '' }
+                    - column: { name: description_key, value: 'propietat.dades.usuari.pluginsib.userinformation.ldap.search_scope' }
+                    - column: { name: group_code, value: 'USUARIS' }
+                    - column: { name: position, valueNumeric: 5 }
+                    - column: { name: source_property, value: 'DATABASE' }
+                    - column: { name: type_code, value: 'TEXT' }
+          - insert:
+                tableName: pbl_config
+                columns:
+                    - column: { name: key, value: 'es.caib.pinbal.plugin.dades.usuari.pluginsib.userinformation.ldap.attribute.username' }
+                    - column: { name: value, value: '' }
+                    - column: { name: description_key, value: 'propietat.dades.usuari.pluginsib.userinformation.ldap.attribute.username' }
+                    - column: { name: group_code, value: 'USUARIS' }
+                    - column: { name: position, valueNumeric: 6 }
+                    - column: { name: source_property, value: 'DATABASE' }
+                    - column: { name: type_code, value: 'TEXT' }
+          - insert:
+                tableName: pbl_config
+                columns:
+                    - column: { name: key, value: 'es.caib.pinbal.plugin.dades.usuari.pluginsib.userinformation.ldap.attribute.mail' }
+                    - column: { name: value, value: '' }
+                    - column: { name: description_key, value: 'propietat.dades.usuari.pluginsib.userinformation.ldap.attribute.mail' }
+                    - column: { name: group_code, value: 'USUARIS' }
+                    - column: { name: position, valueNumeric: 7 }
+                    - column: { name: source_property, value: 'DATABASE' }
+                    - column: { name: type_code, value: 'TEXT' }
+          - insert:
+                tableName: pbl_config
+                columns:
+                    - column: { name: key, value: 'es.caib.pinbal.plugin.dades.usuari.pluginsib.userinformation.ldap.attribute.administration_id' }
+                    - column: { name: value, value: '' }
+                    - column: { name: description_key, value: 'propietat.dades.usuari.pluginsib.userinformation.ldap.attribute.administration_id' }
+                    - column: { name: group_code, value: 'USUARIS' }
+                    - column: { name: position, valueNumeric: 8 }
+                    - column: { name: source_property, value: 'DATABASE' }
+                    - column: { name: type_code, value: 'TEXT' }
+          - insert:
+                tableName: pbl_config
+                columns:
+                    - column: { name: key, value: 'es.caib.pinbal.plugin.dades.usuari.pluginsib.userinformation.ldap.attribute.name' }
+                    - column: { name: value, value: '' }
+                    - column: { name: description_key, value: 'propietat.dades.usuari.pluginsib.userinformation.ldap.attribute.name' }
+                    - column: { name: group_code, value: 'USUARIS' }
+                    - column: { name: position, valueNumeric: 9 }
+                    - column: { name: source_property, value: 'DATABASE' }
+                    - column: { name: type_code, value: 'TEXT' }
+          - insert:
+                tableName: pbl_config
+                columns:
+                    - column: { name: key, value: 'es.caib.pinbal.plugin.dades.usuari.pluginsib.userinformation.ldap.attribute.surname' }
+                    - column: { name: value, value: '' }
+                    - column: { name: description_key, value: 'propietat.dades.usuari.pluginsib.userinformation.ldap.attribute.surname' }
+                    - column: { name: group_code, value: 'USUARIS' }
+                    - column: { name: position, valueNumeric: 10 }
+                    - column: { name: source_property, value: 'DATABASE' }
+                    - column: { name: type_code, value: 'TEXT' }
+          - insert:
+                tableName: pbl_config
+                columns:
+                    - column: { name: key, value: 'es.caib.pinbal.plugin.dades.usuari.pluginsib.userinformation.ldap.attribute.surname1' }
+                    - column: { name: value, value: '' }
+                    - column: { name: description_key, value: 'propietat.dades.usuari.pluginsib.userinformation.ldap.attribute.surname1' }
+                    - column: { name: group_code, value: 'USUARIS' }
+                    - column: { name: position, valueNumeric: 11 }
+                    - column: { name: source_property, value: 'DATABASE' }
+                    - column: { name: type_code, value: 'TEXT' }
+          - insert:
+                tableName: pbl_config
+                columns:
+                    - column: { name: key, value: 'es.caib.pinbal.plugin.dades.usuari.pluginsib.userinformation.ldap.attribute.surname2' }
+                    - column: { name: value, value: '' }
+                    - column: { name: description_key, value: 'propietat.dades.usuari.pluginsib.userinformation.ldap.attribute.surname2' }
+                    - column: { name: group_code, value: 'USUARIS' }
+                    - column: { name: position, valueNumeric: 12 }
+                    - column: { name: source_property, value: 'DATABASE' }
+                    - column: { name: type_code, value: 'TEXT' }
+          - insert:
+                tableName: pbl_config
+                columns:
+                    - column: { name: key, value: 'es.caib.pinbal.plugin.dades.usuari.pluginsib.userinformation.ldap.attribute.telephone' }
+                    - column: { name: value, value: '' }
+                    - column: { name: description_key, value: 'propietat.dades.usuari.pluginsib.userinformation.ldap.attribute.telephone' }
+                    - column: { name: group_code, value: 'USUARIS' }
+                    - column: { name: position, valueNumeric: 13 }
+                    - column: { name: source_property, value: 'DATABASE' }
+                    - column: { name: type_code, value: 'TEXT' }
+          - insert:
+                tableName: pbl_config
+                columns:
+                    - column: { name: key, value: 'es.caib.pinbal.plugin.dades.usuari.pluginsib.userinformation.ldap.attribute.department' }
+                    - column: { name: value, value: '' }
+                    - column: { name: description_key, value: 'propietat.dades.usuari.pluginsib.userinformation.ldap.attribute.department' }
+                    - column: { name: group_code, value: 'USUARIS' }
+                    - column: { name: position, valueNumeric: 14 }
+                    - column: { name: source_property, value: 'DATABASE' }
+                    - column: { name: type_code, value: 'TEXT' }
+          - insert:
+                tableName: pbl_config
+                columns:
+                    - column: { name: key, value: 'es.caib.pinbal.plugin.dades.usuari.pluginsib.userinformation.ldap.attribute.memberof' }
+                    - column: { name: value, value: '' }
+                    - column: { name: description_key, value: 'propietat.dades.usuari.pluginsib.userinformation.ldap.attribute.memberof' }
+                    - column: { name: group_code, value: 'USUARIS' }
+                    - column: { name: position, valueNumeric: 15 }
+                    - column: { name: source_property, value: 'DATABASE' }
+                    - column: { name: type_code, value: 'TEXT' }
+          - insert:
+                tableName: pbl_config
+                columns:
+                    - column: { name: key, value: 'es.caib.pinbal.plugin.dades.usuari.pluginsib.userinformation.ldap.attribute.prefix_role_match_memberof' }
+                    - column: { name: value, value: '' }
+                    - column: { name: description_key, value: 'propietat.dades.usuari.pluginsib.userinformation.ldap.attribute.prefix_role_match_memberof' }
+                    - column: { name: group_code, value: 'USUARIS' }
+                    - column: { name: position, valueNumeric: 16 }
+                    - column: { name: source_property, value: 'DATABASE' }
+                    - column: { name: type_code, value: 'TEXT' }
+          - insert:
+                tableName: pbl_config
+                columns:
+                    - column: { name: key, value: 'es.caib.pinbal.plugin.dades.usuari.pluginsib.userinformation.ldap.attribute.suffix_role_match_memberof' }
+                    - column: { name: value, value: '' }
+                    - column: { name: description_key, value: 'propietat.dades.usuari.pluginsib.userinformation.ldap.attribute.suffix_role_match_memberof' }
+                    - column: { name: group_code, value: 'USUARIS' }
+                    - column: { name: position, valueNumeric: 17 }
+                    - column: { name: source_property, value: 'DATABASE' }
+                    - column: { name: type_code, value: 'TEXT' }
+
+          - insert:
+                tableName: pbl_config
+                columns:
+                    - column: { name: key, value: 'es.caib.pinbal.plugin.dades.usuari.pluginsib.userinformation.keycloak.serverurl' }
+                    - column: { name: value, value: '' }
+                    - column: { name: description_key, value: 'propietat.dades.usuari.pluginsib.userinformation.keycloak.serverurl' }
+                    - column: { name: group_code, value: 'USUARIS' }
+                    - column: { name: position, valueNumeric: 18 }
+                    - column: { name: source_property, value: 'FILE' }
+                    - column: { name: type_code, value: 'TEXT' }
+          - insert:
+                tableName: pbl_config
+                columns:
+                    - column: { name: key, value: 'es.caib.pinbal.plugin.dades.usuari.pluginsib.userinformation.keycloak.realm' }
+                    - column: { name: value, value: '' }
+                    - column: { name: description_key, value: 'propietat.dades.usuari.pluginsib.userinformation.keycloak.realm' }
+                    - column: { name: group_code, value: 'USUARIS' }
+                    - column: { name: position, valueNumeric: 19 }
+                    - column: { name: source_property, value: 'DATABASE' }
+                    - column: { name: type_code, value: 'TEXT' }
+          - insert:
+                tableName: pbl_config
+                columns:
+                    - column: { name: key, value: 'es.caib.pinbal.plugin.dades.usuari.pluginsib.userinformation.keycloak.client_id' }
+                    - column: { name: value, value: '' }
+                    - column: { name: description_key, value: 'propietat.dades.usuari.pluginsib.userinformation.keycloak.client_id' }
+                    - column: { name: group_code, value: 'USUARIS' }
+                    - column: { name: position, valueNumeric: 20 }
+                    - column: { name: source_property, value: 'DATABASE' }
+                    - column: { name: type_code, value: 'TEXT' }
+          - insert:
+                tableName: pbl_config
+                columns:
+                    - column: { name: key, value: 'es.caib.pinbal.plugin.dades.usuari.pluginsib.userinformation.keycloak.password_secret' }
+                    - column: { name: value, value: '' }
+                    - column: { name: description_key, value: 'propietat.dades.usuari.pluginsib.userinformation.keycloak.password_secret' }
+                    - column: { name: group_code, value: 'USUARIS' }
+                    - column: { name: position, valueNumeric: 21 }
+                    - column: { name: source_property, value: 'FILE' }
+                    - column: { name: type_code, value: 'PASSWORD' }
+          - insert:
+                tableName: pbl_config
+                columns:
+                    - column: { name: key, value: 'es.caib.pinbal.plugin.dades.usuari.pluginsib.userinformation.keycloak.client_id_for_user_autentication' }
+                    - column: { name: value, value: '' }
+                    - column: { name: description_key, value: 'propietat.dades.usuari.pluginsib.userinformation.keycloak.client_id_for_user_autentication' }
+                    - column: { name: group_code, value: 'USUARIS' }
+                    - column: { name: position, valueNumeric: 22 }
+                    - column: { name: source_property, value: 'DATABASE' }
+                    - column: { name: type_code, value: 'TEXT' }
+          - insert:
+                tableName: pbl_config
+                columns:
+                    - column: { name: key, value: 'es.caib.pinbal.plugin.dades.usuari.pluginsib.userinformation.keycloak.debug' }
+                    - column: { name: value, value: '' }
+                    - column: { name: description_key, value: 'propietat.dades.usuari.pluginsib.userinformation.keycloak.debug' }
+                    - column: { name: group_code, value: 'USUARIS' }
+                    - column: { name: position, valueNumeric: 23 }
+                    - column: { name: source_property, value: 'DATABASE' }
+                    - column: { name: type_code, value: 'TEXT' }
+          - insert:
+                tableName: pbl_config
+                columns:
+                    - column: { name: key, value: 'es.caib.pinbal.plugin.dades.usuari.pluginsib.userinformation.keycloak.mapping.administrationID' }
+                    - column: { name: value, value: '' }
+                    - column: { name: description_key, value: 'propietat.dades.usuari.pluginsib.userinformation.keycloak.mapping.administrationID' }
+                    - column: { name: group_code, value: 'USUARIS' }
+                    - column: { name: position, valueNumeric: 24 }
+                    - column: { name: source_property, value: 'DATABASE' }
+                    - column: { name: type_code, value: 'TEXT' }
+          - insert:
+                tableName: pbl_config
+                columns:
+                    - column: { name: key, value: 'es.caib.pinbal.plugin.dades.usuari.pluginsib.userinformation.keycloak.minimumcharacterstosearch' }
+                    - column: { name: value, value: '' }
+                    - column: { name: description_key, value: 'propietat.dades.usuari.pluginsib.userinformation.keycloak.minimumcharacterstosearch' }
+                    - column: { name: group_code, value: 'USUARIS' }
+                    - column: { name: position, valueNumeric: 25 }
+                    - column: { name: source_property, value: 'DATABASE' }
+                    - column: { name: type_code, value: 'TEXT' }
+          - insert:
+                tableName: pbl_config
+                columns:
+                    - column: { name: key, value: 'es.caib.pinbal.plugin.dades.usuari.pluginsib.userinformation.keycloak.maxallowednumberofresultsinpartialsearches' }
+                    - column: { name: value, value: '' }
+                    - column: { name: description_key, value: 'propietat.dades.usuari.pluginsib.userinformation.keycloak.maxallowednumberofresultsinpartialsearches' }
+                    - column: { name: group_code, value: 'USUARIS' }
+                    - column: { name: position, valueNumeric: 26 }
+                    - column: { name: source_property, value: 'DATABASE' }
+                    - column: { name: type_code, value: 'TEXT' }
+
+          - update:
+                tableName: pbl_config_type
+                columns:
+                    - column:
+                          name: value
+                          value: 'es.caib.pinbal.plugin.usuari.DadesUsuariPluginJdbc,es.caib.pinbal.plugin.usuari.DadesUsuariPluginLdapCaib,es.caib.pinbal.plugin.usuari.DadesUsuariPluginKeycloak'
+                where: code = 'USUARIS_CLASS'
+          - update:
+              tableName: pbl_config_type
+              columns:
+                - column:
+                    name: value
+                    value: 'es.caib.pinbal.plugin.firmaservidor.FirmaSimpleServidorPluginPortafib'
+              where: code = 'FIRMA_SERVIDOR_CLASS'
+          - update:
+              tableName: pbl_config_type
+              columns:
+                - column:
+                    name: value
+                    value: 'es.caib.pinbal.plugin.arxiu.ArxiuPluginCaib'
+              where: code = 'ARXIU_CLASS'
+          - update:
+              tableName: pbl_config_type
+              columns:
+                - column:
+                    name: value
+                    value: 'es.caib.pinbal.plugin.unitat.UnitatsOrganitzativesPluginDir3'
+              where: code = 'UNITATS_CLASS'
+
+          - update:
+              tableName: pbl_config
+              columns:
+              - column:
+                  name: value
+                  value: 'es.caib.pinbal.plugin.usuari.DadesUsuariPluginJdbc'
+              where: key = 'es.caib.pinbal.plugin.dades.usuari.class' AND value = 'es.caib.pinbal.plugins.caib.DadesUsuariPluginJdbc'
+          - update:
+              tableName: pbl_config
+              columns:
+              - column:
+                  name: value
+                  value: 'es.caib.pinbal.plugin.usuari.DadesUsuariPluginLdapCaib'
+              where: key = 'es.caib.pinbal.plugin.dades.usuari.class' AND value = 'es.caib.pinbal.plugins.caib.DadesUsuariPluginLdapCaib'
+          - update:
+              tableName: pbl_config
+              columns:
+                - column:
+                    name: value
+                    value: 'es.caib.pinbal.plugin.unitat.UnitatsOrganitzativesPluginDir3'
+              where: type_code = 'UNITATS_CLASS'
+          - update:
+              tableName: pbl_config
+              columns:
+                - column:
+                    name: value
+                    value: 'es.caib.pinbal.plugin.firmaservidor.FirmaSimpleServidorPluginPortafib'
+              where: type_code = 'FIRMA_SERVIDOR_CLASS'
+          - update:
+              tableName: pbl_config
+              columns:
+                - column:
+                    name: value
+                    value: 'es.caib.pinbal.plugin.arxiu.ArxiuPluginCaib'
+              where: type_code = 'ARXIU_CLASS'
+
+
+
+          - delete:
+              tableName: pbl_config
+              where: key like 'es.caib.pinbal.plugin.custodia.%'
+          - delete:
+              tableName: pbl_config
+              where: key like 'es.caib.pinbal.plugin.signatura.%'
+          - delete:
+              tableName: pbl_config
+              where: key = 'es.caib.pinbal.plugin.firmaservidor.portafib.plugins.signatureserver.portafib.api_passarela_url'
+          - delete:
+              tableName: pbl_config
+              where: key = 'es.caib.pinbal.plugin.firmaservidor.portafib.plugins.signatureserver.portafib.api_passarela_username'
+          - delete:
+              tableName: pbl_config
+              where: key = 'es.caib.pinbal.plugin.firmaservidor.portafib.plugins.signatureserver.portafib.api_passarela_password'
+          - delete:
+              tableName: pbl_config_type
+              where: code IN ('SIGNATURA_CLASS', 'CUSTODIA_CLASS')

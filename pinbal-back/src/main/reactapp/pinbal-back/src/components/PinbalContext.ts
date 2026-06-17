@@ -1,13 +1,13 @@
 import React from 'react';
 
-export const ROLE_PREFIX = 'NOT_';
+export const ROLE_PREFIX = 'PBL_';
 export const ROLE_ADMIN = ROLE_PREFIX + 'ADMIN';
 export const ROLE_REPRES = ROLE_PREFIX + 'REPRES';
 export const ROLE_AUDIT = ROLE_PREFIX + 'AUDIT';
 export const ROLE_SUPERAUDIT = ROLE_PREFIX + 'SUPERAUDIT';
 export const ROLE_USER = 'tothom';
 
-export type NotibContextType = {
+export type PinbalContextType = {
     isReady: boolean;
     currentUser: any;
     setCurrentUser: (currentUser: any | undefined) => void;
@@ -22,7 +22,7 @@ export type NotibContextType = {
     currentEntitat?: any;
 };
 
-export const PinbalContext = React.createContext<NotibContextType | undefined>(undefined);
+export const PinbalContext = React.createContext<PinbalContextType | undefined>(undefined);
 
 export const usePinbalContext = () => {
     const context = React.useContext(PinbalContext);

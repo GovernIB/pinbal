@@ -2,6 +2,7 @@ databaseChangeLog:
 - changeSet:
     id: init-data-scsp-1
     author: limit
+    comment: Inicialitzar dades
     changes:
     - sqlFile:
-        path: ../scripts/init/initial_data_scsp.sql
+        path: db/changelog/scripts/init/initial_data_scsp.sql

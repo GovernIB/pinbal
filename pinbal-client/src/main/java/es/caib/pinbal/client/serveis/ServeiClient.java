@@ -1,13 +1,11 @@
 package es.caib.pinbal.client.serveis;
 
-import com.sun.jersey.api.client.ClientHandlerException;
-import com.sun.jersey.api.client.ClientResponse;
-import com.sun.jersey.api.client.UniformInterfaceException;
 import es.caib.pinbal.client.comu.ClientBase;
 import es.caib.pinbal.client.comu.LogLevel;
 import es.caib.pinbal.client.comu.Page;
 import lombok.extern.slf4j.Slf4j;
 
+import javax.ws.rs.core.Response;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -21,28 +19,24 @@ public class ServeiClient extends ClientBase {
         super(urlBase + BASE_URL_SUFIX, usuari, contrasenya, logLevel);
     }
 
-    public Page<Servei> getServeis(String codi, String descripcio, int page, int size, String sort)
-            throws UniformInterfaceException, ClientHandlerException, IOException {
-
-        Map<String, String> queryParams = new HashMap<String, String>();
+    public Page<Servei> getServeis(String codi, String descripcio, int page, int size, String sort) throws IOException {
+        Map<String, String> queryParams = new HashMap<>();
         queryParams.put("codi", codi);
         queryParams.put("descripcio", descripcio);
         queryParams.put("page", String.valueOf(page));
         queryParams.put("size", String.valueOf(size));
         queryParams.put("sort", sort);
 
-        ClientResponse response = restPeticioGet("/serveis", queryParams, ClientResponse.class);
+        Response response = restPeticioGet("/serveis", queryParams);
 
         return processPagedResponse(response, Servei.class, page, size, sort);
     }
 
-    public Servei getServei(String serveiCodi) throws UniformInterfaceException, ClientHandlerException, IOException {
-        ClientResponse response = restPeticioGet("/serveis/" + serveiCodi, new HashMap<String, String>(), ClientResponse.class);
+    public Servei getServei(String serveiCodi) throws IOException {
+        Response response = restPeticioGet("/serveis/" + serveiCodi, new HashMap<>());
 
         return processResponse(response, Servei.class);
     }
-
-
 
     private void logTrace(String message) {
         if (logLevel.isTraceEnabled()) log.trace(message);

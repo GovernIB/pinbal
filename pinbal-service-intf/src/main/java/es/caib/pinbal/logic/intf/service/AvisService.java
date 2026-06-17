@@ -17,28 +17,28 @@ import java.util.List;
  */
 public interface AvisService {
 
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasRole('PBL_ADMIN')")
 	AvisDto create(AvisDto avis);
 
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasRole('PBL_ADMIN')")
 	AvisDto update(AvisDto avis);
 
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasRole('PBL_ADMIN')")
 	AvisDto updateActiva(Long id, boolean activa);
 
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasRole('PBL_ADMIN')")
 	AvisDto delete(Long id);
 
-	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_REPRES') or hasRole('ROLE_DELEG')")
+	@PreAuthorize("isAuthenticated()")
 	AvisDto findById(Long id);
 
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasRole('PBL_ADMIN')")
 	Page<AvisDto> findPaginat(Pageable pageable);
 
-	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_REPRES') or hasRole('ROLE_DELEG')")
+	@PreAuthorize("isAuthenticated()")
 	List<AvisDto> findActive();
 
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasRole('PBL_ADMIN')")
 	List<Long> findAllIds();
 
 }

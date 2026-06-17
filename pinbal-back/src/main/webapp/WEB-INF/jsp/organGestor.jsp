@@ -36,7 +36,7 @@
 		</a>
 	</div>
 	<c:url value="/organgestor" var="formAction"/>
-	<form:form id="form-filtre" action="${formAction}" method="post" cssClass="well form-filtre-table" commandName="organGestorFiltreCommand">
+	<form:form id="form-filtre" action="${formAction}" method="post" cssClass="well form-filtre-table" modelAttribute="organGestorFiltreCommand">
 		<div class="row">
 			<c:if test="${isRolActualAdministrador}">
 				<div class="col-md-2">

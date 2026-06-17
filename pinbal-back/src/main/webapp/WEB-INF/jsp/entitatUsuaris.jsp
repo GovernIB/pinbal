@@ -323,7 +323,7 @@ function canviPrincipal(usuariCodi) {
 		<li class="active"><spring:message code="entitat.miques.usuaris"/></li>
 	</ul>
 	<c:url value="/entitat/${entitat.id}/usuari" var="formAction"/>
-	<form:form id="form-filtre"action="${formAction}" method="post" cssClass="well form-filtre-table" commandName="usuariFiltreCommand">
+	<form:form id="form-filtre" action="${formAction}" method="post" cssClass="well form-filtre-table" modelAttribute="usuariFiltreCommand">
 		<div class="row">
 			<div class="col-md-3">
 				<pbl:inputText name="codi" inline="true" placeholderKey="entitat.usuaris.filtre.camp.codi"/>

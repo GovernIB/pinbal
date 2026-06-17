@@ -1,4 +1,4 @@
-<%@ page import="es.caib.pinbal.core.dto.ArbreDto" %>
+<%@ page import="es.caib.pinbal.logic.intf.dto.ArbreDto" %>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
@@ -7,13 +7,13 @@
 <%
 	request.setAttribute(
 			"serveiCampTipus",
-			es.caib.pinbal.core.dto.ServeiCampDto.ServeiCampDtoTipus.values());
+			es.caib.pinbal.logic.intf.dto.ServeiCampDto.ServeiCampDtoTipus.values());
 	request.setAttribute(
 			"serveiCampValidacioOperacio",
-			es.caib.pinbal.core.dto.ServeiCampDto.ServeiCampDtoValidacioOperacio.values());
+			es.caib.pinbal.logic.intf.dto.ServeiCampDto.ServeiCampDtoValidacioOperacio.values());
 	request.setAttribute(
 			"serveiCampValidacioDataTipus",
-			es.caib.pinbal.core.dto.ServeiCampDto.ServeiCampDtoValidacioDataTipus.values());
+			es.caib.pinbal.logic.intf.dto.ServeiCampDto.ServeiCampDtoValidacioDataTipus.values());
 	request.setAttribute(
 			"llistatDadesEspecifiques",
 			((ArbreDto<?>)request.getAttribute("arbreDadesEspecifiques")).toList());

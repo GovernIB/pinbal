@@ -60,7 +60,7 @@
 <body>
 
 	<c:url value="/modal/scsp/clauprivada/save" var="formAction"/>
-	<form:form action="${formAction}" method="post" cssClass="form-horizontal" commandName="clauPrivadaCommand">
+	<form:form action="${formAction}" method="post" cssClass="form-horizontal" modelAttribute="clauPrivadaCommand">
 	
 		<form:hidden path="id"/>	
 		<fieldset>

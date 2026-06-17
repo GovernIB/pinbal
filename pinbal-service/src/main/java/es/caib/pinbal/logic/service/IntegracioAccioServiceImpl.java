@@ -18,10 +18,13 @@ import es.caib.pinbal.persist.entity.IntegracioAccioParamEntity;
 import es.caib.pinbal.persist.repository.IntegracioAccioParamRepository;
 import es.caib.pinbal.persist.repository.IntegracioAccioRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
@@ -48,11 +51,13 @@ public class IntegracioAccioServiceImpl implements IntegracioAccioService {
 
 	private final DtoMappingHelper dtoMappingHelper;
 	private final PaginacioHelper paginacioHelper;
-	private final IntegracioHelper integracioHelper;
 	private final ConfigHelper configHelper;
-	
 	private final PlatformTransactionManager transactionManager;
-	
+
+	@Setter(onMethod_ = {@Autowired, @Lazy})
+	private IntegracioHelper integracioHelper;
+
+
 	@Transactional(propagation = Propagation.REQUIRES_NEW)
 	@Override
 	public IntegracioAccioDto create(IntegracioAccioDto integracioAccio) {

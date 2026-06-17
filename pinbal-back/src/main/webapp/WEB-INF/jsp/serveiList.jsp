@@ -111,7 +111,7 @@
 </head>
 <body>
 	<c:url value="/servei" var="formAction"/>
-	<form:form id="form-filtre" action="${formAction}" method="post" cssClass="well form-filtre-table" commandName="serveiFiltreCommand">
+	<form:form id="form-filtre" action="${formAction}" method="post" cssClass="well form-filtre-table" modelAttribute="serveiFiltreCommand">
 		<div class="row">
 			<div class="col-md-2">
 				<pbl:inputText name="codi"  inline="true" placeholderKey="servei.list.filtre.camp.codi"/>	

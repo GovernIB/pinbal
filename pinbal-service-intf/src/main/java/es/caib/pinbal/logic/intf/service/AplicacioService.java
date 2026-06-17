@@ -15,13 +15,13 @@ import org.springframework.security.access.prepost.PreAuthorize;
 public interface AplicacioService {
 
 
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasRole('PBL_ADMIN')")
     public PaginaDto<CacheDto> getAllCaches();
 
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasRole('PBL_ADMIN')")
 	public void removeCache(String value);
 
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasRole('PBL_ADMIN')")
 	public void removeAllCaches();
 
 	String getAppVersion();

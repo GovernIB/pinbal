@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package es.scsp.common.dao;
 
@@ -7,8 +7,10 @@ import es.caib.pinbal.scsp.PropertiesHelper;
 import es.scsp.common.domain.core.ParametroConfiguracion;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
+import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.criterion.Restrictions;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
@@ -17,13 +19,18 @@ import java.util.List;
 /**
  * Dao per a obtenir els paràmetres de la configuració de PINBAL amb
  * prioritat a damunt els de la taula SCSP CORE_PARAMETRO_CONFIGURACION.
- * 
+ *
  * @author Limit Tecnologies <limit@limit.es>
  */
 @Component
 public class ParametroConfiguracionDao extends BaseDao<ParametroConfiguracion> {
 
     /* MOD PBL */ private static final String PROP_PREFIX = "es.caib.pinbal.scsp.";
+
+    @Autowired
+    public void setSessionFactory(SessionFactory sessionFactory) {
+        super.setSessionFactory(sessionFactory);
+    }
 
     @PostConstruct
     public void initme() {

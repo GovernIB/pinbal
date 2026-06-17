@@ -135,7 +135,7 @@ public interface RecobrimentService {
 	/**
 	 * @return llista d'entitats a les que l'usuari autenticat té permís
 	 */
-	@PreAuthorize("hasRole('ROLE_WS')")
+	@PreAuthorize("hasRole('PBL_WS')")
 	List<Entitat> getEntitats();
 
 	/**
@@ -143,13 +143,13 @@ public interface RecobrimentService {
 	 * @return llista de procediments disponibles per l'entitat especificada
 	 * @throws EntitatNotFoundException
 	 */
-	@PreAuthorize("hasRole('ROLE_WS')")
+	@PreAuthorize("hasRole('PBL_WS')")
 	List<ProcedimentBasic> getProcediments(String entitatCodi) throws EntitatNotFoundException;
 
 	/**
 	 * @return llista de tots els elements de tipus Servei configurats a PINBAL
 	 */
-	@PreAuthorize("hasRole('ROLE_WS')")
+	@PreAuthorize("hasRole('PBL_WS')")
 	List<ServeiBasic> getServeis();
 
 	/**
@@ -157,7 +157,7 @@ public interface RecobrimentService {
 	 * @return lista de tots els elements de tipus Servei d’una entitat
 	 * @throws EntitatNotFoundException
 	 */
-	@PreAuthorize("hasRole('ROLE_WS')")
+	@PreAuthorize("hasRole('PBL_WS')")
 	List<ServeiBasic> getServeisByEntitat(String entitatCodi) throws EntitatNotFoundException;
 
 	/**
@@ -165,21 +165,21 @@ public interface RecobrimentService {
 	 * @return llista de tots els elements de tipus Servei d’un procediment
 	 * @throws ProcedimentNotFoundException
 	 */
-	@PreAuthorize("hasRole('ROLE_WS')")
+	@PreAuthorize("hasRole('PBL_WS')")
 	List<ServeiBasic> getServeisByProcediment(String entitatCodi, String procedimentCodi) throws ProcedimentNotFoundException;
 
     /**
      * @param serveiCodi codi del servei
      * @return llista de camps que son necessaris per emplenar l’apartat de dades específiques de la petició SCSP
      */
-	@PreAuthorize("hasRole('ROLE_WS')")
+	@PreAuthorize("hasRole('PBL_WS')")
 	List<DadaEspecifica> getDadesEspecifiquesByServei(String serveiCodi) throws ServeiNotFoundException;
 
     /**
      * @param serveiCodi codi del servei
      * @return llista de camps que es poden retornar en l’apartat de dades específiques de la resposta SCSP
      */
-    @PreAuthorize("hasRole('ROLE_WS')")
+    @PreAuthorize("hasRole('PBL_WS')")
     List<DadaEspecificaBasic> getDadesEspecifiquesByServeiResposta(String serveiCodi) throws Exception;
 
 	/**
@@ -188,7 +188,7 @@ public interface RecobrimentService {
 	 * @param filtre filtre a aplicar en l’obtenció dels possibles valors de l’enumerat (opcional)
 	 * @return llistes de valors, siguin de enumerats o de valors de dades externes
 	 */
-	@PreAuthorize("hasRole('ROLE_WS')")
+	@PreAuthorize("hasRole('PBL_WS')")
 	List<ValorEnum> getValorsEnumByServei(String serveiCodi, String campCodi, String enumCodi, String filtre) throws Exception;
 
 	/**
@@ -198,7 +198,7 @@ public interface RecobrimentService {
 	 * @return Mapa amb els errors detectats a la petició.
 	 * La clau correspon al path del camp amb error, i el valor al missatge d'error
 	 */
-	@PreAuthorize("hasRole('ROLE_WS')")
+	@PreAuthorize("hasRole('PBL_WS')")
 	Map<String, List<String>> validatePeticio(String serveiCodi, PeticioSincrona peticio);
 
 	/**
@@ -208,7 +208,7 @@ public interface RecobrimentService {
 	 * @return Mapa amb els errors detectats a la petició.
 	 * La clau correspon al path del camp amb error, i el valor al missatge d'error
 	 */
-	@PreAuthorize("hasRole('ROLE_WS')")
+	@PreAuthorize("hasRole('PBL_WS')")
 	Map<String, List<String>> validatePeticio(String serveiCodi, PeticioAsincrona peticio);
 
 	/**
@@ -220,7 +220,7 @@ public interface RecobrimentService {
 	 * @throws RecobrimentScspException
 	 *            Si hi s'han produit excepcions al fer la petició.
 	 */
-	@PreAuthorize("hasRole('ROLE_WS')")
+	@PreAuthorize("hasRole('PBL_WS')")
 	public PeticioRespostaSincrona peticionSincrona(PeticioSincrona peticio);
 
 	/**
@@ -232,7 +232,7 @@ public interface RecobrimentService {
 	 * @throws RecobrimentScspException
 	 *            Si hi s'han produit excepcions al fer la petició.
 	 */
-	@PreAuthorize("hasRole('ROLE_WS')")
+	@PreAuthorize("hasRole('PBL_WS')")
 	public PeticioConfirmacioAsincrona peticionAsincrona(PeticioAsincrona peticio);
 
 	/**
@@ -244,7 +244,7 @@ public interface RecobrimentService {
 	 * @throws RecobrimentScspException
 	 *            Si hi s'han produit excepcions SCSP al fer la petició.
 	 */
-	@PreAuthorize("hasRole('ROLE_WS')")
+	@PreAuthorize("hasRole('PBL_WS')")
 	public PeticioRespostaAsincrona getResposta(String idPeticion) throws RecobrimentScspException, ConsultaNotFoundException;
 
 	/**
@@ -257,7 +257,7 @@ public interface RecobrimentService {
 	 * @throws RecobrimentScspException
 	 *            Si hi s'han produit excepcions SCSP al fer la petició.
 	 */
-	@PreAuthorize("hasRole('ROLE_WS')")
+	@PreAuthorize("hasRole('PBL_WS')")
 	public ScspJustificante getJustificant(
 			String idPeticion,
 			String idSolicitud) throws RecobrimentScspException, ConsultaNotFoundException;
@@ -272,7 +272,7 @@ public interface RecobrimentService {
 	 * @throws RecobrimentScspException
 	 *            Si hi s'han produit excepcions SCSP al fer la petició.
 	 */
-	@PreAuthorize("hasRole('ROLE_WS')")
+	@PreAuthorize("hasRole('PBL_WS')")
 	public ScspJustificante getJustificantImprimible(
 			String idPeticion,
 			String idSolicitud) throws RecobrimentScspException, ConsultaNotFoundException;
@@ -287,7 +287,7 @@ public interface RecobrimentService {
 	 * @throws RecobrimentScspException
 	 *            Si hi s'han produit excepcions SCSP al fer la petició.
 	 */
-	@PreAuthorize("hasRole('ROLE_WS')")
+	@PreAuthorize("hasRole('PBL_WS')")
 	public String getJustificantCsv(
 			String idPeticion,
 			String idSolicitud) throws RecobrimentScspException, ConsultaNotFoundException;
@@ -302,7 +302,7 @@ public interface RecobrimentService {
 	 * @throws RecobrimentScspException
 	 *            Si hi s'han produit excepcions SCSP al fer la petició.
 	 */
-	@PreAuthorize("hasRole('ROLE_WS')")
+	@PreAuthorize("hasRole('PBL_WS')")
 	public String getJustificantUuid(
 			String idPeticion,
 			String idSolicitud) throws RecobrimentScspException, ConsultaNotFoundException;

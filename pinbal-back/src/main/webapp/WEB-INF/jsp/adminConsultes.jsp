@@ -8,7 +8,7 @@
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
 <%@ taglib tagdir="/WEB-INF/tags/pinbal" prefix="pbl" %>
 <%
-	request.setAttribute("consultaEstats", es.caib.pinbal.core.dto.ConsultaDto.EstatTipus.sortedValues());
+	request.setAttribute("consultaEstats", es.caib.pinbal.logic.intf.dto.ConsultaDto.EstatTipus.sortedValues());
 	request.setAttribute("historicSession", ConsultaAdminController.SESSION_CONSULTA_HISTORIC);
 %>
 <html>
@@ -70,7 +70,7 @@
 </head>
 <body>
 	<div class="text-right" data-toggle="titol-check" data-titol-check-value="${historic}" data-titol-check-session-name="${historicSession}" data-titol-check-callback="checkCallback" data-titol-check-label="<spring:message code="comu.historic"/>"></div>
-		<form:form id="form-filtre" action="" class="form-horizontal" method="post" cssClass="well form-filtre-table" commandName="filtreCommand">
+		<form:form id="form-filtre" action="" class="form-horizontal" method="post" cssClass="well form-filtre-table" modelAttribute="filtreCommand">
 			<div class="row">
 				<div class="col-md-3">
 					<pbl:inputSelect name="entitatId" inline="true" placeholderKey="admin.consulta.list.filtre.entitat" 
@@ -282,9 +282,6 @@
 					}
 					return Mustache.render(template, row);
 				}
-			}, {
-				targets: [9],
-				visible: false
 			}, {
 				targets: [10],
 				orderable: false,

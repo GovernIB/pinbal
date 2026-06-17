@@ -5,15 +5,12 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import com.sun.jersey.api.client.ClientHandlerException;
-import com.sun.jersey.api.client.UniformInterfaceException;
 import es.caib.pinbal.client.comu.LogLevel;
 import es.caib.pinbal.client.procediments.ProcedimentBasic;
 import es.caib.pinbal.client.recobriment.model.ScspJustificante;
 import es.caib.pinbal.client.serveis.ServeiBasic;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -21,7 +18,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
+
 
 public class ClientRecobrimentTest {
 
@@ -45,7 +43,7 @@ public class ClientRecobrimentTest {
     private static final String FUNCIONARI_NOM = "Melcior Andreu Nadal";
     private static final String FUNCIONARI_CODI = "sandreu";
 
-    @Before
+    @BeforeEach
     public void setUp() {
         String urlBase = "http://localhost:8180/pinbalapi"; // Exemples; ajusta això segons el teu entorn
         String usuari = "pblwsrep";
@@ -74,8 +72,8 @@ public class ClientRecobrimentTest {
         List<Entitat> result = clientRecobriment.getEntitats();
 
         // Assert
-        Assert.assertNotNull(result);
-        Assert.assertFalse("The result list should not be empty", result.isEmpty());
+        assertNotNull(result);
+        assertFalse(result.isEmpty(), "The result list should not be empty");
         // Add specific assertions if expected data is known
     }
 
@@ -84,7 +82,7 @@ public class ClientRecobrimentTest {
         try {
             // Assuming getServeis is correctly setup to return 204 with no results for these parameters
             List<Entitat> result = clientRecobrimentNoContent.getEntitats();
-            assertNull("La llista de entitats hauria de ser nul·la", result);
+            assertNull(result, "La llista de entitats hauria de ser nul·la");
         } catch (Exception e) {
             fail("Ha fallat la verificació per a pàgina buida de entitats: " + e.getMessage());
         }
@@ -102,8 +100,8 @@ public class ClientRecobrimentTest {
         List<ProcedimentBasic> result = clientRecobriment.getProcediments(entitatCodi);
 
         // Assert
-        Assert.assertNotNull("The result list should not be null", result);
-        Assert.assertFalse("The result list should not be empty", result.isEmpty());
+        assertNotNull(result, "The result list should not be null");
+        assertFalse(result.isEmpty(), "The result list should not be empty");
         // Add additional assertions if necessary to match expected data
     }
 
@@ -127,7 +125,7 @@ public class ClientRecobrimentTest {
 
         try {
             List<ProcedimentBasic> procediments = clientRecobriment.getProcediments(EMPTY_ENTITAT_CODI);
-            assertNull("La llista de procediments hauria de ser nul·la", procediments);
+            assertNull(procediments, "La llista de procediments hauria de ser nul·la");
         } catch (Exception e) {
             fail("Ha fallat la verificació per a pàgina buida de procediments: " + e.getMessage());
         }
@@ -144,8 +142,8 @@ public class ClientRecobrimentTest {
         List<ServeiBasic> result = clientRecobriment.getServeis();
 
         // Assert
-        Assert.assertNotNull("The result list should not be null", result);
-        Assert.assertFalse("The result list should not be empty", result.isEmpty());
+        assertNotNull(result, "The result list should not be null");
+        assertFalse(result.isEmpty(), "The result list should not be empty");
         // Add additional assertions if necessary to match expected data
     }
 
@@ -161,8 +159,8 @@ public class ClientRecobrimentTest {
         List<ServeiBasic> result = clientRecobriment.getServeisPerEntitat(entitatCodi);
 
         // Assert
-        Assert.assertNotNull("The result list should not be null", result);
-        Assert.assertFalse("The result list should not be empty", result.isEmpty());
+        assertNotNull(result, "The result list should not be null");
+        assertFalse(result.isEmpty(), "The result list should not be empty");
         // Additional assertions can be added here for expected data
     }
 
@@ -186,7 +184,7 @@ public class ClientRecobrimentTest {
 
         try {
             List<ServeiBasic> result = clientRecobriment.getServeisPerEntitat(entitatCodi);
-            assertNull("The result list should be null for an empty response", result);
+            assertNull(result, "The result list should be null for an empty response");
         } catch (Exception e) {
             fail("Verification failed for entity with no services: " + e.getMessage());
         }
@@ -205,8 +203,8 @@ public class ClientRecobrimentTest {
         List<ServeiBasic> result = clientRecobriment.getServeisPerProcediment(entitatCodi, procedimentCodi);
 
         // Assert
-        Assert.assertNotNull("The result list should not be null", result);
-        Assert.assertFalse("The result list should not be empty", result.isEmpty());
+        assertNotNull(result, "The result list should not be null");
+        assertFalse(result.isEmpty(), "The result list should not be empty");
         // Add specific assertions if expected data is known
     }
 
@@ -232,7 +230,7 @@ public class ClientRecobrimentTest {
 
         try {
             List<ServeiBasic> result = clientRecobrimentNoContent.getServeisPerProcediment(entitatCodi, procedimentCodi);
-            assertNull("The result list should be null for an empty response", result);
+            assertNull(result, "The result list should be null for an empty response");
         } catch (Exception e) {
             fail("Verification failed for procedure with no services: " + e.getMessage());
         }
@@ -250,8 +248,8 @@ public class ClientRecobrimentTest {
         List<DadaEspecifica> result = clientRecobriment.getDadesEspecifiques(serveiCodi);
 
         // Assert
-        Assert.assertNotNull("The result list should not be null", result);
-        Assert.assertFalse("The result list should not be empty", result.isEmpty());
+        assertNotNull(result, "The result list should not be null");
+        assertFalse(result.isEmpty(), "The result list should not be empty");
         // Add specific assertions if expected data is known
     }
 
@@ -275,7 +273,7 @@ public class ClientRecobrimentTest {
 
         try {
             List<DadaEspecifica> result = clientRecobrimentNoContent.getDadesEspecifiques(serveiCodi);
-            assertNull("The result list should be null for an empty response", result);
+            assertNull(result, "The result list should be null for an empty response");
         } catch (Exception e) {
             fail("Verification failed for procedure with no services: " + e.getMessage());
         }
@@ -293,8 +291,8 @@ public class ClientRecobrimentTest {
         List<ValorEnum> result = clientRecobriment.getValorsEnum(serveiCodi, campPath, null, null);
 
         // Assert
-        Assert.assertNotNull("The result list should not be null", result);
-        Assert.assertFalse("The result list should not be empty", result.isEmpty());
+        assertNotNull(result, "The result list should not be null");
+        assertFalse(result.isEmpty(), "The result list should not be empty");
         // Add specific assertions if expected data is known
     }
 
@@ -307,12 +305,12 @@ public class ClientRecobrimentTest {
         List<ValorEnum> result = clientRecobriment.getValorsEnum(serveiCodi, campPath, "PAIS", null);
 
         // Assert
-        Assert.assertNotNull("The result list should not be null", result);
-        Assert.assertFalse("The result list should not be empty", result.isEmpty());
+        assertNotNull(result, "The result list should not be null");
+        assertFalse(result.isEmpty(), "The result list should not be empty");
         // Add specific assertions if expected data is known
-        Assert.assertEquals(244, result.size());
-        Assert.assertEquals("724", result.get(66).getCodi());
-        Assert.assertEquals("Espanya", result.get(66).getValor());
+        assertEquals(244, result.size());
+        assertEquals("724", result.get(66).getCodi());
+        assertEquals("Espanya", result.get(66).getValor());
     }
 
     @Test
@@ -324,12 +322,12 @@ public class ClientRecobrimentTest {
         List<ValorEnum> result = clientRecobriment.getValorsEnum(serveiCodi, campPath, "PROVINCIA", null);
 
         // Assert
-        Assert.assertNotNull("The result list should not be null", result);
-        Assert.assertFalse("The result list should not be empty", result.isEmpty());
+        assertNotNull(result, "The result list should not be null");
+        assertFalse(result.isEmpty(), "The result list should not be empty");
         // Add specific assertions if expected data is known
-        Assert.assertEquals(52, result.size());
-        Assert.assertEquals("07", result.get(7).getCodi());
-        Assert.assertEquals("Balears, Illes", result.get(7).getValor());
+        assertEquals(52, result.size());
+        assertEquals("07", result.get(7).getCodi());
+        assertEquals("Balears, Illes", result.get(7).getValor());
     }
 
     @Test
@@ -341,12 +339,12 @@ public class ClientRecobrimentTest {
         List<ValorEnum> result = clientRecobriment.getValorsEnum(serveiCodi, campPath, "MUNICIPI_3", "07");
 
         // Assert
-        Assert.assertNotNull("The result list should not be null", result);
-        Assert.assertFalse("The result list should not be empty", result.isEmpty());
+        assertNotNull(result, "The result list should not be null");
+        assertFalse(result.isEmpty(), "The result list should not be empty");
         // Add specific assertions if expected data is known
-        Assert.assertEquals(67, result.size());
-        Assert.assertEquals("033", result.get(33).getCodi());
-        Assert.assertEquals("Manacor", result.get(33).getValor());
+        assertEquals(67, result.size());
+        assertEquals("033", result.get(33).getCodi());
+        assertEquals("Manacor", result.get(33).getValor());
     }
 
     @Test
@@ -382,7 +380,7 @@ public class ClientRecobrimentTest {
     // /////////////////////////////////////////////////////////
 
     @Test
-    public void peticionSincrona_success() throws UniformInterfaceException, ClientHandlerException, IOException {
+    public void peticionSincrona_success() throws Exception {
         String entitatCif = EXISTING_ENTITAT_CIF;
         String procedimentCodi = EXISTING_PROCEDIMENT_CODI;
         String serveiCodi = EXISTING_SERVEI_CODI;
@@ -398,7 +396,7 @@ public class ClientRecobrimentTest {
         try {
             PeticioRespostaSincrona respuesta = clientRecobriment.peticioSincrona(serveiCodi, peticioSincrona);
             assertNotNull(respuesta);
-            assertFalse("La resposta indica que s'ha produit un error en l'enviament", respuesta.isError());
+            assertFalse(respuesta.isError(), "La resposta indica que s'ha produit un error en l'enviament");
             System.out.println("-> peticionSincrona = " + objectToJsonString(respuesta));
         } catch (Exception e) {
             fail("Excepció no esperada: " + e.getMessage());
@@ -406,7 +404,7 @@ public class ClientRecobrimentTest {
     }
 
     @Test
-    public void peticionSincrona_NullDadesComunes() throws UniformInterfaceException, ClientHandlerException, IOException {
+    public void peticionSincrona_NullDadesComunes() throws Exception {
         String entitatCif = EXISTING_ENTITAT_CIF;
         String procedimentCodi = EXISTING_PROCEDIMENT_CODI;
         String serveiCodi = EXISTING_SERVEI_CODI;
@@ -423,13 +421,13 @@ public class ClientRecobrimentTest {
         try {
             PeticioRespostaSincrona respuesta = clientRecobriment.peticioSincrona(serveiCodi, peticioSincrona);
             assertNotNull(respuesta);
-            assertTrue("La resposta indica que no s'ha produit cap error en l'enviament", respuesta.isError());
-            assertFalse("No s'ha produït error en les dades comunes", respuesta.getErrorsValidacio().get("dadesComunes").isEmpty());
+            assertTrue(respuesta.isError(), "La resposta indica que no s'ha produit cap error en l'enviament");
+            assertFalse(respuesta.getErrorsValidacio().get("dadesComunes").isEmpty(), "No s'ha produït error en les dades comunes");
             assertTrue(
-                    "No s'ha produït error en les dades comunes",
                     respuesta.getErrorsValidacio()
                             .get("dadesComunes")
-                            .contains("No s'ha trobat l'element dadesComunes")
+                            .contains("No s'ha trobat l'element dadesComunes"),
+                    "No s'ha produït error en les dades comunes"
             );
             System.out.println("-> resposta = " + objectToJsonString(respuesta));
         } catch (Exception e) {
@@ -438,7 +436,7 @@ public class ClientRecobrimentTest {
     }
 
     @Test
-    public void peticionSincrona_ServeiCodiMismatch() throws UniformInterfaceException, ClientHandlerException, IOException {
+    public void peticionSincrona_ServeiCodiMismatch() throws Exception {
         String entitatCif = EXISTING_ENTITAT_CIF;
         String procedimentCodi = EXISTING_PROCEDIMENT_CODI;
         String serveiCodi = EXISTING_SERVEI_CODI;
@@ -454,13 +452,13 @@ public class ClientRecobrimentTest {
         try {
             PeticioRespostaSincrona respuesta = clientRecobriment.peticioSincrona("ALTRE_SERVEI_CODI", peticioSincrona);
             assertNotNull(respuesta);
-            assertTrue("La resposta indica que no s'ha produit cap error en l'enviament", respuesta.isError());
-            assertNotNull("No s'ha produït error en les dades comunes", respuesta.getErrorsValidacio().get("dadesComunes.serveiCodi"));
+            assertTrue(respuesta.isError(), "La resposta indica que no s'ha produit cap error en l'enviament");
+            assertNotNull(respuesta.getErrorsValidacio().get("dadesComunes.serveiCodi"), "No s'ha produït error en les dades comunes");
             assertTrue(
-                    "No s'ha produït error en les dades comunes",
                     respuesta.getErrorsValidacio()
                             .get("dadesComunes.serveiCodi")
-                            .contains("El servei informat a la petició ALTRE_SERVEI_CODI no coindideix amb el de la solicitud " + serveiCodi)
+                            .contains("El servei informat a la petició ALTRE_SERVEI_CODI no coindideix amb el de la solicitud " + serveiCodi),
+                    "No s'ha produït error en les dades comunes"
             );
             System.out.println("-> peticionSincrona = " + objectToJsonString(respuesta));
         } catch (Exception e) {
@@ -469,7 +467,7 @@ public class ClientRecobrimentTest {
     }
 
     @Test
-    public void peticionSincrona_InvalidServeiCodi() throws UniformInterfaceException, ClientHandlerException, IOException {
+    public void peticionSincrona_InvalidServeiCodi() throws Exception {
         String entitatCif = EXISTING_ENTITAT_CIF;
         String procedimentCodi = EXISTING_PROCEDIMENT_CODI;
         String serveiCodi = "NO_EXISTING_SERVEI_CODI";
@@ -485,13 +483,13 @@ public class ClientRecobrimentTest {
         try {
             PeticioRespostaSincrona respuesta = clientRecobriment.peticioSincrona(serveiCodi, peticioSincrona);
             assertNotNull(respuesta);
-            assertTrue("La resposta indica que no s'ha produit cap error en l'enviament", respuesta.isError());
-            assertNotNull("No s'ha produït error en les dades comunes", respuesta.getErrorsValidacio().get("dadesComunes.serveiCodi"));
+            assertTrue(respuesta.isError(), "La resposta indica que no s'ha produit cap error en l'enviament");
+            assertNotNull(respuesta.getErrorsValidacio().get("dadesComunes.serveiCodi"), "No s'ha produït error en les dades comunes");
             assertTrue(
-                    "No s'ha produït error en les dades comunes",
                     respuesta.getErrorsValidacio()
                             .get("dadesComunes.serveiCodi")
-                            .contains("No s'ha trobat el servei amb codi " + serveiCodi)
+                            .contains("No s'ha trobat el servei amb codi " + serveiCodi),
+                    "No s'ha produït error en les dades comunes"
             );
             System.out.println("-> peticionSincrona = " + objectToJsonString(respuesta));
         } catch (Exception e) {
@@ -500,7 +498,7 @@ public class ClientRecobrimentTest {
     }
 
     @Test
-    public void peticionSincrona_InvalidEntitatCif() throws UniformInterfaceException, ClientHandlerException, IOException {
+    public void peticionSincrona_InvalidEntitatCif() throws Exception {
         String entitatCif = "99999999Q";
         String procedimentCodi = EXISTING_PROCEDIMENT_CODI;
         String serveiCodi = EXISTING_SERVEI_CODI;
@@ -516,13 +514,13 @@ public class ClientRecobrimentTest {
         try {
             PeticioRespostaSincrona respuesta = clientRecobriment.peticioSincrona(serveiCodi, peticioSincrona);
             assertNotNull(respuesta);
-            assertTrue("La resposta indica que no s'ha produit cap error en l'enviament", respuesta.isError());
-            assertNotNull("No s'ha produït error en les dades comunes", respuesta.getErrorsValidacio().get("dadesComunes.entitatCif"));
+            assertTrue(respuesta.isError(), "La resposta indica que no s'ha produit cap error en l'enviament");
+            assertNotNull(respuesta.getErrorsValidacio().get("dadesComunes.entitatCif"), "No s'ha produït error en les dades comunes");
             assertTrue(
-                    "No s'ha produït error en les dades comunes",
                     respuesta.getErrorsValidacio()
                             .get("dadesComunes.entitatCif")
-                            .contains("No s'ha trobat l'entitat amb el CIF " + entitatCif)
+                            .contains("No s'ha trobat l'entitat amb el CIF " + entitatCif),
+                    "No s'ha produït error en les dades comunes"
             );
             System.out.println("-> peticionSincrona = " + objectToJsonString(respuesta));
         } catch (Exception e) {
@@ -531,7 +529,7 @@ public class ClientRecobrimentTest {
     }
 
     @Test
-    public void peticionSincrona_InvalidProcedimentCodi() throws UniformInterfaceException, ClientHandlerException, IOException {
+    public void peticionSincrona_InvalidProcedimentCodi() throws Exception {
         String entitatCif = EXISTING_ENTITAT_CIF;
         String procedimentCodi = "NO_EXISTING_PROCEDIMENT_CODI";
         String serveiCodi = EXISTING_SERVEI_CODI;
@@ -547,13 +545,13 @@ public class ClientRecobrimentTest {
         try {
             PeticioRespostaSincrona respuesta = clientRecobriment.peticioSincrona(serveiCodi, peticioSincrona);
             assertNotNull(respuesta);
-            assertTrue("La resposta indica que no s'ha produit cap error en l'enviament", respuesta.isError());
-            assertNotNull("No s'ha produït error en les dades comunes", respuesta.getErrorsValidacio().get("dadesComunes.procedimentCodi"));
+            assertTrue(respuesta.isError(), "La resposta indica que no s'ha produit cap error en l'enviament");
+            assertNotNull(respuesta.getErrorsValidacio().get("dadesComunes.procedimentCodi"), "No s'ha produït error en les dades comunes");
             assertTrue(
-                    "No s'ha produït error en les dades comunes",
                     respuesta.getErrorsValidacio()
                             .get("dadesComunes.procedimentCodi")
-                            .contains("No s'ha trobat el procediment amb el codi " + procedimentCodi)
+                            .contains("No s'ha trobat el procediment amb el codi " + procedimentCodi),
+                    "No s'ha produït error en les dades comunes"
             );
             System.out.println("-> peticionSincrona = " + objectToJsonString(respuesta));
         } catch (Exception e) {
@@ -562,7 +560,7 @@ public class ClientRecobrimentTest {
     }
 
     @Test
-    public void peticionSincrona_ProcedimentEntitatMismatch() throws UniformInterfaceException, ClientHandlerException, IOException {
+    public void peticionSincrona_ProcedimentEntitatMismatch() throws Exception {
         String entitatCif = EMPTY_ENTITAT_CIF;
         String procedimentCodi = EXISTING_PROCEDIMENT_CODI;
         String serveiCodi = EXISTING_SERVEI_CODI;
@@ -578,13 +576,13 @@ public class ClientRecobrimentTest {
         try {
             PeticioRespostaSincrona respuesta = clientRecobriment.peticioSincrona(serveiCodi, peticioSincrona);
             assertNotNull(respuesta);
-            assertTrue("La resposta indica que no s'ha produit cap error en l'enviament", respuesta.isError());
-            assertNotNull("No s'ha produït error en les dades comunes", respuesta.getErrorsValidacio().get("dadesComunes.procedimentCodi"));
+            assertTrue(respuesta.isError(), "La resposta indica que no s'ha produit cap error en l'enviament");
+            assertNotNull(respuesta.getErrorsValidacio().get("dadesComunes.procedimentCodi"), "No s'ha produït error en les dades comunes");
             assertTrue(
-                    "No s'ha produït error en les dades comunes",
                     respuesta.getErrorsValidacio()
                             .get("dadesComunes.procedimentCodi")
-                            .contains("L'entitat del procediment no té el CIF indicant al camp dadesComunes.entitatCif")
+                            .contains("L'entitat del procediment no té el CIF indicant al camp dadesComunes.entitatCif"),
+                    "No s'ha produït error en les dades comunes"
             );
             System.out.println("-> peticionSincrona = " + objectToJsonString(respuesta));
         } catch (Exception e) {
@@ -593,7 +591,7 @@ public class ClientRecobrimentTest {
     }
 
     @Test
-    public void peticionSincrona_MissingConsentiment() throws UniformInterfaceException, ClientHandlerException, IOException {
+    public void peticionSincrona_MissingConsentiment() throws Exception {
         String entitatCif = EXISTING_ENTITAT_CIF;
         String procedimentCodi = EXISTING_PROCEDIMENT_CODI;
         String serveiCodi = EXISTING_SERVEI_CODI;
@@ -610,13 +608,13 @@ public class ClientRecobrimentTest {
         try {
             PeticioRespostaSincrona respuesta = clientRecobriment.peticioSincrona(serveiCodi, peticioSincrona);
             assertNotNull(respuesta);
-            assertTrue("La resposta indica que no s'ha produit cap error en l'enviament", respuesta.isError());
-            assertNotNull("No s'ha produït error en les dades comunes", respuesta.getErrorsValidacio().get("dadesComunes.consentiment"));
+            assertTrue(respuesta.isError(), "La resposta indica que no s'ha produit cap error en l'enviament");
+            assertNotNull(respuesta.getErrorsValidacio().get("dadesComunes.consentiment"), "No s'ha produït error en les dades comunes");
             assertTrue(
-                    "No s'ha produït error en les dades comunes",
                     respuesta.getErrorsValidacio()
                             .get("dadesComunes.consentiment")
-                            .contains("No s'ha trobat l'element dadesComunes.consentiment")
+                            .contains("No s'ha trobat l'element dadesComunes.consentiment"),
+                    "No s'ha produït error en les dades comunes"
             );
             System.out.println("-> peticionSincrona = " + objectToJsonString(respuesta));
         } catch (Exception e) {
@@ -625,7 +623,7 @@ public class ClientRecobrimentTest {
     }
 
     @Test
-    public void peticionSincrona_MissingFuncionari() throws UniformInterfaceException, ClientHandlerException, IOException {
+    public void peticionSincrona_MissingFuncionari() throws Exception {
         String entitatCif = EXISTING_ENTITAT_CIF;
         String procedimentCodi = EXISTING_PROCEDIMENT_CODI;
         String serveiCodi = EXISTING_SERVEI_CODI;
@@ -642,10 +640,9 @@ public class ClientRecobrimentTest {
         try {
             PeticioRespostaSincrona respuesta = clientRecobriment.peticioSincrona(serveiCodi, peticioSincrona);
             assertNotNull(respuesta);
-            assertTrue("La resposta indica que no s'ha produit cap error en l'enviament", respuesta.isError());
-            assertNotNull("No s'ha produït error en les dades comunes", respuesta.getErrorsValidacio().get("dadesComunes.funcionari"));
+            assertTrue(respuesta.isError(), "La resposta indica que no s'ha produit cap error en l'enviament");
+            assertNotNull(respuesta.getErrorsValidacio().get("dadesComunes.funcionari"), "No s'ha produït error en les dades comunes");
             assertTrue(
-                    "No s'ha produït error en les dades comunes",
                     respuesta.getErrorsValidacio()
                             .get("dadesComunes.funcionari")
                             .contains("No s'ha trobat l'element dadesComunes.funcionari"));
@@ -656,7 +653,7 @@ public class ClientRecobrimentTest {
     }
 
     @Test
-    public void peticionSincrona_InvalidFuncionari() throws UniformInterfaceException, ClientHandlerException, IOException {
+    public void peticionSincrona_InvalidFuncionari() throws Exception {
         String entitatCif = EXISTING_ENTITAT_CIF;
         String procedimentCodi = EXISTING_PROCEDIMENT_CODI;
         String serveiCodi = EXISTING_SERVEI_CODI;
@@ -673,14 +670,15 @@ public class ClientRecobrimentTest {
         try {
             PeticioRespostaSincrona respuesta = clientRecobriment.peticioSincrona(serveiCodi, peticioSincrona);
             assertNotNull(respuesta);
-            assertTrue("La resposta indica que no s'ha produit cap error en l'enviament", respuesta.isError());
-            assertNotNull("No s'ha produït error en les dades comunes", respuesta.getErrorsValidacio().get("dadesComunes.funcionari.nif"));
+            assertTrue(respuesta.isError(), "La resposta indica que no s'ha produit cap error en l'enviament");
+            assertNotNull(respuesta.getErrorsValidacio().get("dadesComunes.funcionari.nif"), "No s'ha produït error en les dades comunes");
             assertTrue(
-                    "No s'ha produït error en les dades comunes",
                     respuesta.getErrorsValidacio()
                             .get("dadesComunes.funcionari.nif")
                             .get(0)
-                            .contains("Camp massa llarg."));
+                            .contains("Camp massa llarg."),
+                    "No s'ha produït error en les dades comunes"
+            );
             System.out.println("-> peticionSincrona = " + objectToJsonString(respuesta));
         } catch (Exception e) {
             fail("Excepció no esperada: " + e.getMessage());
@@ -688,7 +686,7 @@ public class ClientRecobrimentTest {
     }
 
     @Test
-    public void peticionSincrona_MissingDepartament() throws UniformInterfaceException, ClientHandlerException, IOException {
+    public void peticionSincrona_MissingDepartament() throws Exception {
         String entitatCif = EXISTING_ENTITAT_CIF;
         String procedimentCodi = EXISTING_PROCEDIMENT_CODI;
         String serveiCodi = EXISTING_SERVEI_CODI;
@@ -705,13 +703,13 @@ public class ClientRecobrimentTest {
         try {
             PeticioRespostaSincrona respuesta = clientRecobriment.peticioSincrona(serveiCodi, peticioSincrona);
             assertNotNull(respuesta);
-            assertTrue("La resposta indica que no s'ha produit cap error en l'enviament", respuesta.isError());
-            assertNotNull("No s'ha produït error en les dades comunes", respuesta.getErrorsValidacio().get("dadesComunes.departament"));
+            assertTrue(respuesta.isError(), "La resposta indica que no s'ha produit cap error en l'enviament");
+            assertNotNull(respuesta.getErrorsValidacio().get("dadesComunes.departament"), "No s'ha produït error en les dades comunes");
             assertTrue(
-                    "No s'ha produït error en les dades comunes",
                     respuesta.getErrorsValidacio()
                             .get("dadesComunes.departament")
-                            .contains("No s'ha trobat l'element dadesComunes.departament")
+                            .contains("No s'ha trobat l'element dadesComunes.departament"),
+                    "No s'ha produït error en les dades comunes"
             );
             System.out.println("-> peticionSincrona = " + objectToJsonString(respuesta));
         } catch (Exception e) {
@@ -720,7 +718,7 @@ public class ClientRecobrimentTest {
     }
 
     @Test
-    public void peticionSincrona_DepartamentSize() throws UniformInterfaceException, ClientHandlerException, IOException {
+    public void peticionSincrona_DepartamentSize() throws Exception {
         String entitatCif = EXISTING_ENTITAT_CIF;
         String procedimentCodi = EXISTING_PROCEDIMENT_CODI;
         String serveiCodi = EXISTING_SERVEI_CODI;
@@ -742,14 +740,14 @@ public class ClientRecobrimentTest {
         try {
             PeticioRespostaSincrona respuesta = clientRecobriment.peticioSincrona(serveiCodi, peticioSincrona);
             assertNotNull(respuesta);
-            assertTrue("La resposta indica que no s'ha produit cap error en l'enviament", respuesta.isError());
-            assertNotNull("No s'ha produït error en les dades comunes", respuesta.getErrorsValidacio().get("dadesComunes.departament"));
+            assertTrue(respuesta.isError(), "La resposta indica que no s'ha produit cap error en l'enviament");
+            assertNotNull(respuesta.getErrorsValidacio().get("dadesComunes.departament"), "No s'ha produït error en les dades comunes");
             assertTrue(
-                    "No s'ha produït error en les dades comunes",
                     respuesta.getErrorsValidacio()
                             .get("dadesComunes.departament")
                             .get(0)
-                            .contains("Camp massa llarg.")
+                            .contains("Camp massa llarg."),
+                    "No s'ha produït error en les dades comunes"
             );
             System.out.println("-> peticionSincrona = " + objectToJsonString(respuesta));
         } catch (Exception e) {
@@ -758,7 +756,7 @@ public class ClientRecobrimentTest {
     }
 
     @Test
-    public void peticionSincrona_MissingFinalitat() throws UniformInterfaceException, ClientHandlerException, IOException {
+    public void peticionSincrona_MissingFinalitat() throws Exception {
         String entitatCif = EXISTING_ENTITAT_CIF;
         String procedimentCodi = EXISTING_PROCEDIMENT_CODI;
         String serveiCodi = EXISTING_SERVEI_CODI;
@@ -775,13 +773,13 @@ public class ClientRecobrimentTest {
         try {
             PeticioRespostaSincrona respuesta = clientRecobriment.peticioSincrona(serveiCodi, peticioSincrona);
             assertNotNull(respuesta);
-            assertTrue("La resposta indica que no s'ha produit cap error en l'enviament", respuesta.isError());
-            assertNotNull("No s'ha produït error en les dades comunes", respuesta.getErrorsValidacio().get("dadesComunes.finalitat"));
+            assertTrue(respuesta.isError(), "La resposta indica que no s'ha produit cap error en l'enviament");
+            assertNotNull(respuesta.getErrorsValidacio().get("dadesComunes.finalitat"), "No s'ha produït error en les dades comunes");
             assertTrue(
-                    "No s'ha produït error en les dades comunes",
                     respuesta.getErrorsValidacio()
                             .get("dadesComunes.finalitat")
-                            .contains("No s'ha trobat l'element dadesComunes.finalitat")
+                            .contains("No s'ha trobat l'element dadesComunes.finalitat"),
+                    "No s'ha produït error en les dades comunes"
             );
             System.out.println("-> peticionSincrona = " + objectToJsonString(respuesta));
         } catch (Exception e) {
@@ -790,7 +788,7 @@ public class ClientRecobrimentTest {
     }
 
     @Test
-    public void peticionSincrona_FinalitatSize() throws UniformInterfaceException, ClientHandlerException, IOException {
+    public void peticionSincrona_FinalitatSize() throws Exception {
         String entitatCif = EXISTING_ENTITAT_CIF;
         String procedimentCodi = EXISTING_PROCEDIMENT_CODI;
         String serveiCodi = EXISTING_SERVEI_CODI;
@@ -812,14 +810,14 @@ public class ClientRecobrimentTest {
         try {
             PeticioRespostaSincrona respuesta = clientRecobriment.peticioSincrona(serveiCodi, peticioSincrona);
             assertNotNull(respuesta);
-            assertTrue("La resposta indica que no s'ha produit cap error en l'enviament", respuesta.isError());
-            assertNotNull("No s'ha produït error en les dades comunes", respuesta.getErrorsValidacio().get("dadesComunes.finalitat"));
+            assertTrue(respuesta.isError(), "La resposta indica que no s'ha produit cap error en l'enviament");
+            assertNotNull(respuesta.getErrorsValidacio().get("dadesComunes.finalitat"), "No s'ha produït error en les dades comunes");
             assertTrue(
-                    "No s'ha produït error en les dades comunes",
                     respuesta.getErrorsValidacio()
                             .get("dadesComunes.finalitat")
                             .get(0)
-                            .contains("Camp massa llarg.")
+                            .contains("Camp massa llarg."),
+                    "No s'ha produït error en les dades comunes"
             );
             System.out.println("-> peticionSincrona = " + objectToJsonString(respuesta));
         } catch (Exception e) {
@@ -828,7 +826,7 @@ public class ClientRecobrimentTest {
     }
 
     @Test
-    public void peticionSincrona_NullSolicitud() throws UniformInterfaceException, ClientHandlerException, IOException {
+    public void peticionSincrona_NullSolicitud() throws Exception {
         String entitatCif = EXISTING_ENTITAT_CIF;
         String procedimentCodi = EXISTING_PROCEDIMENT_CODI;
         String serveiCodi = EXISTING_SERVEI_CODI;
@@ -845,14 +843,14 @@ public class ClientRecobrimentTest {
         try {
             PeticioRespostaSincrona respuesta = clientRecobriment.peticioSincrona(serveiCodi, peticioSincrona);
             assertNotNull(respuesta);
-            assertTrue("La resposta indica que no s'ha produit cap error en l'enviament", respuesta.isError());
-            assertNotNull("No s'ha produït error en les dades comunes", respuesta.getErrorsValidacio().get("solicitud"));
+            assertTrue(respuesta.isError(), "La resposta indica que no s'ha produit cap error en l'enviament");
+            assertNotNull(respuesta.getErrorsValidacio().get("solicitud"), "No s'ha produït error en les dades comunes");
             assertTrue(
-                    "No s'ha produït error en la solicitud",
                     respuesta.getErrorsValidacio()
                             .get("solicitud")
                             .get(0)
-                            .contains("No s'ha trobat l'element solicitud")
+                            .contains("No s'ha trobat l'element solicitud"),
+                    "No s'ha produït error en la solicitud"
             );
             System.out.println("-> peticionSincrona = " + objectToJsonString(respuesta));
         } catch (Exception e) {
@@ -861,7 +859,7 @@ public class ClientRecobrimentTest {
     }
 
     @Test
-    public void peticionSincrona_InvalidSolicitud() throws UniformInterfaceException, ClientHandlerException, IOException {
+    public void peticionSincrona_InvalidSolicitud() throws Exception {
         String entitatCif = EXISTING_ENTITAT_CIF;
         String procedimentCodi = EXISTING_PROCEDIMENT_CODI;
         String serveiCodi = EXISTING_SERVEI_CODI;
@@ -882,10 +880,9 @@ public class ClientRecobrimentTest {
         try {
             PeticioRespostaSincrona respuesta = clientRecobriment.peticioSincrona(serveiCodi, peticioSincrona);
             assertNotNull(respuesta);
-            assertTrue("La resposta indica que no s'ha produit cap error en l'enviament", respuesta.isError());
-            assertNotNull("No s'ha produït error en les dades comunes", respuesta.getErrorsValidacio().get("solicitud.expedient"));
+            assertTrue(respuesta.isError(), "La resposta indica que no s'ha produit cap error en l'enviament");
+            assertNotNull(respuesta.getErrorsValidacio().get("solicitud.expedient"), "No s'ha produït error en les dades comunes");
             assertTrue(
-                    "No s'ha produït error en la solicitud",
                     respuesta.getErrorsValidacio()
                             .get("solicitud.expedient")
                             .get(0)
@@ -897,7 +894,7 @@ public class ClientRecobrimentTest {
     }
 
     @Test
-    public void peticionSincrona_NullTitular() throws UniformInterfaceException, ClientHandlerException, IOException {
+    public void peticionSincrona_NullTitular() throws Exception {
         String entitatCif = EXISTING_ENTITAT_CIF;
         String procedimentCodi = EXISTING_PROCEDIMENT_CODI;
         String serveiCodi = EXISTING_SERVEI_CODI;
@@ -914,13 +911,14 @@ public class ClientRecobrimentTest {
         try {
             PeticioRespostaSincrona respuesta = clientRecobriment.peticioSincrona(serveiCodi, peticioSincrona);
             assertNotNull(respuesta);
-            assertTrue("La resposta indica que no s'ha produit cap error en l'enviament", respuesta.isError());
-            assertNotNull("No s'ha produït error en la solicitud", respuesta.getErrorsValidacio().get("solicitud.titular"));
+            assertTrue(respuesta.isError(), "La resposta indica que no s'ha produit cap error en l'enviament");
+            assertNotNull(respuesta.getErrorsValidacio().get("solicitud.titular"), "No s'ha produït error en la solicitud");
             assertTrue(
-                    "No s'ha produït error en la solicitud",
                     respuesta.getErrorsValidacio()
                             .get("solicitud.titular")
-                            .contains("No s'ha trobat l'element solicitud.titular"));
+                            .contains("No s'ha trobat l'element solicitud.titular"),
+                    "No s'ha produït error en la solicitud"
+            );
             System.out.println("-> peticionSincrona = " + objectToJsonString(respuesta));
         } catch (Exception e) {
             fail("Excepció no esperada: " + e.getMessage());
@@ -928,7 +926,7 @@ public class ClientRecobrimentTest {
     }
 
     @Test
-    public void peticionSincrona_InvalidTitular() throws UniformInterfaceException, ClientHandlerException, IOException {
+    public void peticionSincrona_InvalidTitular() throws Exception {
         String entitatCif = EXISTING_ENTITAT_CIF;
         String procedimentCodi = EXISTING_PROCEDIMENT_CODI;
         String serveiCodi = EXISTING_SERVEI_CODI;
@@ -945,13 +943,14 @@ public class ClientRecobrimentTest {
         try {
             PeticioRespostaSincrona respuesta = clientRecobriment.peticioSincrona(serveiCodi, peticioSincrona);
             assertNotNull(respuesta);
-            assertTrue("La resposta indica que no s'ha produit cap error en l'enviament", respuesta.isError());
-            assertNotNull("No s'ha produït error en la solicitud", respuesta.getErrorsValidacio().get("solicitud.titular.documentNumero"));
+            assertTrue(respuesta.isError(), "La resposta indica que no s'ha produit cap error en l'enviament");
+            assertNotNull(respuesta.getErrorsValidacio().get("solicitud.titular.documentNumero"), "No s'ha produït error en la solicitud");
             assertTrue(
-                    "No s'ha produït error en la solicitud",
                     respuesta.getErrorsValidacio()
                             .get("solicitud.titular.documentNumero")
-                            .contains("El valor de l'element dadesComunes.titular.documentTipus no és un DNI vàlid"));
+                            .contains("El valor de l'element dadesComunes.titular.documentTipus no és un DNI vàlid"),
+                    "No s'ha produït error en la solicitud"
+                    );
             System.out.println("-> peticionSincrona = " + objectToJsonString(respuesta));
         } catch (Exception e) {
             fail("Excepció no esperada: " + e.getMessage());
@@ -959,7 +958,7 @@ public class ClientRecobrimentTest {
     }
 
     @Test
-    public void peticionSincrona_InvalidCampDadesEspecifiques() throws UniformInterfaceException, ClientHandlerException, IOException {
+    public void peticionSincrona_InvalidCampDadesEspecifiques() throws Exception {
         String entitatCif = EXISTING_ENTITAT_CIF;
         String procedimentCodi = EXISTING_PROCEDIMENT_CODI;
         String serveiCodi = EXISTING_SERVEI_CODI;
@@ -976,13 +975,13 @@ public class ClientRecobrimentTest {
         try {
             PeticioRespostaSincrona respuesta = clientRecobriment.peticioSincrona(serveiCodi, peticioSincrona);
             assertNotNull(respuesta);
-            assertTrue("La resposta indica que no s'ha produit cap error en l'enviament", respuesta.isError());
-            assertNotNull("No s'ha produït error en les dades especifiques", respuesta.getErrorsValidacio().get("solicitud.dadesEspecifiques"));
+            assertTrue(respuesta.isError(), "La resposta indica que no s'ha produit cap error en l'enviament");
+            assertNotNull(respuesta.getErrorsValidacio().get("solicitud.dadesEspecifiques"), "No s'ha produït error en les dades especifiques");
             assertTrue(
-                    "No s'ha produït error en les dades especifiques",
                     respuesta.getErrorsValidacio()
                             .get("solicitud.dadesEspecifiques")
-                            .contains("Els següents camps no estan definits al servei: Invalid/Path")
+                            .contains("Els següents camps no estan definits al servei: Invalid/Path"),
+                    "No s'ha produït error en la solicitud"
             );
             System.out.println("-> peticionSincrona = " + objectToJsonString(respuesta));
         } catch (Exception e) {
@@ -991,7 +990,7 @@ public class ClientRecobrimentTest {
     }
 
     @Test
-    public void peticionSincrona_InvalidCampDadesEspecifiquesObligatori() throws UniformInterfaceException, ClientHandlerException, IOException {
+    public void peticionSincrona_InvalidCampDadesEspecifiquesObligatori() throws Exception {
         String entitatCif = EXISTING_ENTITAT_CIF;
         String procedimentCodi = EXISTING_PROCEDIMENT_CODI;
         String serveiCodi = EXISTING_SERVEI_CODI;
@@ -1007,17 +1006,17 @@ public class ClientRecobrimentTest {
         try {
             PeticioRespostaSincrona respuesta = clientRecobriment.peticioSincrona(serveiCodi, peticioSincrona);
             assertNotNull(respuesta);
-            assertTrue("La resposta indica que no s'ha produit cap error en l'enviament", respuesta.isError());
+            assertTrue(respuesta.isError(), "La resposta indica que no s'ha produit cap error en l'enviament");
             assertNotNull(
-                    "No s'ha produït error en les dades especifiques",
                     respuesta.getErrorsValidacio()
-                            .get("solicitud.dadesEspecifiques[DatosEspecificos/Solicitud/ProvinciaSolicitud]")
+                            .get("solicitud.dadesEspecifiques[DatosEspecificos/Solicitud/ProvinciaSolicitud]"),
+                    "No s'ha produït error en les dades especifiques"
             );
             assertTrue(
-                    "No s'ha produït error en les dades especifiques",
                     respuesta.getErrorsValidacio()
                             .get("solicitud.dadesEspecifiques[DatosEspecificos/Solicitud/ProvinciaSolicitud]")
-                            .contains("Aquest camp és obligatori")
+                            .contains("Aquest camp és obligatori"),
+                    "No s'ha produït error en les dades especifiques"
             );
             System.out.println("-> peticionSincrona = " + objectToJsonString(respuesta));
         } catch (Exception e) {
@@ -1026,7 +1025,7 @@ public class ClientRecobrimentTest {
     }
 
 //    @Test
-//    public void peticionSincrona_InvalidValorDadesEspecifiques() throws UniformInterfaceException, ClientHandlerException, IOException {
+//    public void peticionSincrona_InvalidValorDadesEspecifiques() throws Exception {
 //        String entitatCif = EXISTING_ENTITAT_CIF;
 //        String procedimentCodi = EXISTING_PROCEDIMENT_CODI;
 //        String serveiCodi = EXISTING_SERVEI_CODI;
@@ -1042,7 +1041,7 @@ public class ClientRecobrimentTest {
 //        try {
 //            PeticioRespostaSincrona respuesta = clientRecobriment.peticioSincrona(serveiCodi, peticioSincrona);
 //            assertNotNull(respuesta);
-//            assertTrue("La resposta indica que no s'ha produit cap error en l'enviament", respuesta.isError());
+//            assertTrue(respuesta.isError(), "La resposta indica que no s'ha produit cap error en l'enviament");
 //            assertNotNull(
 //                    "No s'ha produït error en les dades especifiques",
 //                    respuesta.getErrorsValidacio()
@@ -1108,7 +1107,7 @@ public class ClientRecobrimentTest {
     // TESTS peticioAsincrona
     // /////////////////////////////////////////////////////////
 //    @Test
-    public void peticionAsincrona_success() throws UniformInterfaceException, ClientHandlerException, IOException {
+    public void peticionAsincrona_success() throws Exception {
         String entitatCif = EXISTING_ENTITAT_CIF;
         String procedimentCodi = EXISTING_PROCEDIMENT_CODI;
         String serveiCodi = EXISTING_SERVEI_CODI;
@@ -1131,7 +1130,7 @@ public class ClientRecobrimentTest {
         try {
             PeticioConfirmacioAsincrona respuesta = clientRecobriment.peticioAsincrona(serveiCodi, peticioAsincrona);
             assertNotNull(respuesta);
-            assertFalse("La resposta indica que s'ha produit un error en l'enviament", respuesta.isError());
+            assertFalse(respuesta.isError(), "La resposta indica que s'ha produit un error en l'enviament");
             System.out.println("-> peticionSincrona = " + objectToJsonString(respuesta));
         } catch (Exception e) {
             fail("Excepció no esperada: " + e.getMessage());
@@ -1141,13 +1140,13 @@ public class ClientRecobrimentTest {
     // TESTS getResposta
     // /////////////////////////////////////////////////////////
     @Test
-    public void getResposta_success() throws UniformInterfaceException, ClientHandlerException, IOException {
+    public void getResposta_success() throws Exception {
         String idPeticio = "PBL00000000000000000103413";
 
         try {
             PeticioRespostaAsincrona respuesta = clientRecobriment.getResposta(idPeticio);
             assertNotNull(respuesta);
-            assertFalse("La resposta indica que s'ha produit un error en l'enviament", respuesta.isError());
+            assertFalse(respuesta.isError(), "La resposta indica que s'ha produit un error en l'enviament");
             System.out.println("-> peticionSincrona = " + objectToJsonString(respuesta));
         } catch (Exception e) {
             fail("Excepció no esperada: " + e.getMessage());
@@ -1157,7 +1156,7 @@ public class ClientRecobrimentTest {
     // TESTS getJustificant
     // /////////////////////////////////////////////////////////
     @Test
-    public void getJustificant_success() throws UniformInterfaceException, ClientHandlerException, IOException {
+    public void getJustificant_success() throws Exception {
         String idPeticio = "MOCK1768914676666";
 
         try {

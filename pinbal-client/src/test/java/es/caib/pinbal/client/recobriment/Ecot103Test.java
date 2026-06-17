@@ -5,8 +5,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import com.sun.jersey.api.client.ClientHandlerException;
-import com.sun.jersey.api.client.UniformInterfaceException;
 import es.caib.pinbal.client.recobriment.ecot103.ClientEcot103;
 import es.caib.pinbal.client.recobriment.ecot103.ClientEcot103.SolicitudEcot103;
 import es.caib.pinbal.client.recobriment.model.ScspFuncionario;
@@ -15,12 +13,12 @@ import es.caib.pinbal.client.recobriment.model.ScspRespuesta;
 import es.caib.pinbal.client.recobriment.model.ScspSolicitante.ScspConsentimiento;
 import es.caib.pinbal.client.recobriment.model.ScspTitular;
 import es.caib.pinbal.client.recobriment.model.ScspTitular.ScspTipoDocumentacion;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.util.Arrays;
 
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * Test del client genèric del recobriment.
@@ -41,7 +39,7 @@ public class Ecot103Test {
 	private ClientEcot103 client = new ClientEcot103(URL_BASE, USUARI, CONTRASENYA, BASIC_AUTH, null, null);
 
 	@Test
-	public void peticionSincrona() throws UniformInterfaceException, ClientHandlerException, IOException {
+	public void peticionSincrona() throws Exception {
 		SolicitudEcot103 solicitud = new SolicitudEcot103();
 		solicitud.setIdentificadorSolicitante(ENTITAT_CIF);
 		solicitud.setCodigoProcedimiento(CODIGO_PROCEDIMIENTO);

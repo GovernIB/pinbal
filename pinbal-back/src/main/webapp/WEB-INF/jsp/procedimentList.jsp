@@ -120,7 +120,7 @@ $(document).ready(function() {
 </head>
 <body>
 	<c:url value="/procediment" var="formAction"/>
-	<form:form id="form-filtre" action="${formAction}" method="post" cssClass="well form-filtre-table" commandName="procedimentFiltreCommand">
+	<form:form id="form-filtre" action="${formAction}" method="post" cssClass="well form-filtre-table" modelAttribute="procedimentFiltreCommand">
 		<div class="row">
 			<div class="col-md-4">
 				<pbl:inputText name="codi" inline="true" placeholderKey="procediment.list.filtre.camp.codi"/>

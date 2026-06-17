@@ -134,15 +134,17 @@ public class ConfigHelper {
     }
 
     public void reloadDbProperties() {
-
         Map<String, Object> propertySource = new HashMap<>();
         var dbProperties = configRepository.findDbProperties();
         dbProperties.forEach(p -> propertySource.put(p.getKey(), p.getValue()));
         if (environment.getPropertySources().contains(DBAPP_PROPERTIES)) {
             environment.getPropertySources().replace(DBAPP_PROPERTIES, new MapPropertySource(DBAPP_PROPERTIES, propertySource));
-            return;
+        } else {
+            environment.getPropertySources().addFirst(new MapPropertySource(DBAPP_PROPERTIES, propertySource));
         }
-        environment.getPropertySources().addFirst(new MapPropertySource(DBAPP_PROPERTIES, propertySource));
+        propertySource.forEach((k, v) -> {
+            if (v != null) System.setProperty(k, v.toString());
+        });
     }
 
     public Properties getEnvironmentProperties() {

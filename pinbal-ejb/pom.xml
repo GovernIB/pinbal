@@ -94,6 +94,11 @@
             <artifactId>pinbal-service-intf</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>es.caib.pinbal</groupId>
+            <artifactId>pinbal-service</artifactId>
+            <version>${project.version}</version>
+        </dependency>
     </dependencies>
     <build>
         <plugins>

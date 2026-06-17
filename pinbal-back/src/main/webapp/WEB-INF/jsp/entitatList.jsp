@@ -7,7 +7,7 @@
 <%
 	request.setAttribute(
 			"entitatTipusLlista",
-			es.caib.pinbal.core.dto.EntitatDto.EntitatTipusDto.values());
+			es.caib.pinbal.logic.intf.dto.EntitatDto.EntitatTipusDto.values());
 %>
 <html>
 <head>
@@ -112,7 +112,7 @@ $(document).ready(function() {
 </head>
 <body>
 	<c:url value="/entitat" var="formAction"/>
-	<form:form id="form-filtre" action="${formAction}" method="post" cssClass="well form-filtre-table" commandName="entitatFiltreCommand">
+	<form:form id="form-filtre" action="${formAction}" method="post" cssClass="well form-filtre-table" modelAttribute="entitatFiltreCommand">
 		<div class="row">
 			<div class="col-md-2" >
 				<pbl:inputText name="codi" inline="true" placeholderKey="entitat.list.filtre.camp.codi"/>

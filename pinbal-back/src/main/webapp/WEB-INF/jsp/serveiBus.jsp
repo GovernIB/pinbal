@@ -4,7 +4,7 @@
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <c:choose>
 	<c:when test="${not reloadPage}">
-		<form:form id="modal-form" commandName="serveiBusCommand">
+		<form:form id="modal-form" modelAttribute="serveiBusCommand">
 			<c:if test="${not empty serveiBusCommand.id}"><form:hidden path="id"/></c:if>
 			<form:hidden path="servei"/>
 			<c:set var="campPath" value="entitatId"/>

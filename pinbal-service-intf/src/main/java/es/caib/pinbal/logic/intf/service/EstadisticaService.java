@@ -22,6 +22,6 @@ public interface EstadisticaService {
     RegistresEstadistics consultaEstadistiques(Date data);
     List<RegistresEstadistics> consultaEstadistiques(Date dataInici, Date dataFi);
 
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('PBL_ADMIN')")
     String generarEstadistiques(Date dataInici, Date dataFi);
 }

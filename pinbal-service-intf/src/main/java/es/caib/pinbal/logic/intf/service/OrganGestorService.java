@@ -22,7 +22,7 @@ public interface OrganGestorService {
 	 * 
 	 * @return Llistat de tots els organs gestors
 	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_REPRES')")
+	@PreAuthorize("hasRole('PBL_ADMIN') or hasRole('PBL_REPRES')")
 	public List<OrganGestorDto> findAll();
 
 	/**
@@ -33,7 +33,7 @@ public interface OrganGestorService {
 	 * @return L'objecte del registre consultat.
 	 * @throws NotFoundException Si no s'ha trobat l'objecte amb l'id especificat.
 	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_REPRES')")
+	@PreAuthorize("hasRole('PBL_ADMIN') or hasRole('PBL_REPRES')")
 	public OrganGestorDto findItem(Long id) throws NotFoundException;
 
 	/**
@@ -43,7 +43,7 @@ public interface OrganGestorService {
 	 * @param entitatId Id de l'entitat.
 	 * @return Llistat dels organs gestors de l'entitat
 	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_REPRES')")
+	@PreAuthorize("hasRole('PBL_ADMIN') or hasRole('PBL_REPRES')")
 	public List<OrganGestorDto> findByEntitat(Long entitatId);
 
 	/**
@@ -53,7 +53,7 @@ public interface OrganGestorService {
 	 * @param entitatId Id de l'entitat.
 	 * @return Llistat dels organs gestors de l'entitat
 	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_REPRES')")
+	@PreAuthorize("hasRole('PBL_ADMIN') or hasRole('PBL_REPRES')")
 	public List<OrganGestorDto> findActivesByEntitat(Long entitatId);
 
 	/**
@@ -64,7 +64,7 @@ public interface OrganGestorService {
 	 * @param filtre codi o nom de l'òrgan gestor
 	 * @return Llistat dels organs gestors de l'entitat
 	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_REPRES')")
+	@PreAuthorize("hasRole('PBL_ADMIN') or hasRole('PBL_REPRES')")
 	public List<OrganGestorDto> findByEntitatAmbFiltre(Long entitatId, String filtre);
 	
 	/**
@@ -78,7 +78,7 @@ public interface OrganGestorService {
      * @param filtreEstat
      * @return La pàgina amb els organs gestors
 	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_REPRES')")
+	@PreAuthorize("hasRole('PBL_ADMIN') or hasRole('PBL_REPRES')")
 	public Page<OrganGestorDto> findPageOrgansGestorsAmbFiltrePaginat(Long entitatId, String filtreCodi, String filtreNom, String pareCodi, OrganGestorEstatEnum filtreEstat, PaginacioAmbOrdreDto paginacioDto);
 
 	/**
@@ -87,7 +87,7 @@ public interface OrganGestorService {
 	 * @param entitatId Identificador de l'entitat actual
 	 * @return Indica si la sincronització ha tengut èxit
 	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_REPRES')")
+	@PreAuthorize("hasRole('PBL_ADMIN') or hasRole('PBL_REPRES')")
 	public boolean syncDir3OrgansGestors(Long entitatId) throws Exception;
 
 }

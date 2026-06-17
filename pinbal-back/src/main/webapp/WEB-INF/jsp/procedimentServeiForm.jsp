@@ -25,7 +25,7 @@
 <!--  TODO per desar -->
 <c:url var="formAction" value="/modal/procediment/${procedimentId}/servei/save"/>
 <!--  TODO per desar -->
-<form:form action="${formAction}" method="post" cssClass="form-horizontal" commandName="procedimentServeiCommand" role="form">
+<form:form action="${formAction}" method="post" cssClass="form-horizontal" modelAttribute="procedimentServeiCommand" role="form">
 	<pbl:inputSelect
 			name="serveiCodi"
 			optionItems="${serveis}"

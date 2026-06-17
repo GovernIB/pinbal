@@ -31,7 +31,7 @@
 <body>
 
 	<c:url value="/auditor/generar" var="formAction"/>
-	<form:form action="${formAction}" method="post" cssClass="well form-filtre-table" commandName="auditoriaGenerarCommand">
+	<form:form action="${formAction}" method="post" cssClass="well form-filtre-table" modelAttribute="auditoriaGenerarCommand">
 		<form:hidden path="numEntitats"/>
 		<div class="row">
 			<div class="col-md-3">

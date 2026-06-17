@@ -122,14 +122,13 @@ const useCurrentRole = () => {
                         tokenDecoded.realm_access?.roles?.filter(
                             (r: string) => r === ROLE_USER || r.startsWith(ROLE_PREFIX)
                         ) ?? [];
-                    const rolesAvailable = ALLOWED_ROLES.filter((a) => realmRoles.includes(a));
-                    setRolesAvailable(rolesAvailable);
-                } else {
-                    const windowAuthRoles = (window as any).__AUTH_ROLES__ ?? [];
-                    const rolesAvailable = ALLOWED_ROLES.filter((a) => windowAuthRoles.includes(a));
-                    setRolesAvailable(rolesAvailable);
+                    setRolesAvailable(ALLOWED_ROLES.filter((a) => realmRoles.includes(a)));
+                    return;
                 }
             }
+            // Fallback: token absent o sense realm_access (desplegament JBoss sense Bearer header)
+            const windowAuthRoles = (window as any).__AUTH_ROLES__ ?? [];
+            setRolesAvailable(ALLOWED_ROLES.filter((a) => windowAuthRoles.includes(a)));
         }
     }, [authIsReady]);
     React.useEffect(() => {
@@ -179,6 +178,7 @@ const useCurrentEntitat = (
         isReady: apiIsReady,
         find: apiFind,
         getOne: apiGetOne,
+        currentError: apiCurrentError,
     } = useResourceApiService('entitatResource');
     const [entitatsAvailable, setEntitatsAvailable] = React.useState<any[]>();
     const [currentEntitatId, setCurrentEntitatId] = React.useState<number>();
@@ -187,9 +187,12 @@ const useCurrentEntitat = (
     const { getValue: sessionSessionGetValue, setValue: sessionSessionSetValue } =
         useSessionStorage(currentUserId, 'currentSession');
     React.useEffect(() => {
-        if (apiIsReady && currentRoleReady && currentRole != null) {
+        if (currentRoleReady && currentRole != null) {
             setCurrentEntitatId(undefined);
-            if (currentRole !== ROLE_ADMIN) {
+            if (currentRole === ROLE_ADMIN) {
+                // L'administrador no necessita seleccionar entitat
+                setEntitatsAvailable([]);
+            } else if (apiIsReady) {
                 apiFind({ unpaged: true }).then((response) => {
                     const entitatsAvailable = response.rows;
                     setEntitatsAvailable(entitatsAvailable);
@@ -206,11 +209,12 @@ const useCurrentEntitat = (
                         setCurrentEntitatId(entitatsAvailable[0].id);
                     }
                 });
-            } else {
+            } else if (apiCurrentError != null) {
+                // entitatResource no disponible al servidor: cap entitat disponible
                 setEntitatsAvailable([]);
             }
         }
-    }, [apiIsReady, currentRoleReady, currentRole]);
+    }, [apiIsReady, apiCurrentError, currentRoleReady, currentRole]);
     React.useEffect(() => {
         if (currentRole != null && currentRole !== ROLE_ADMIN && currentEntitatId != null) {
             const session = createSession(currentEntitatId);
@@ -247,7 +251,9 @@ const useCurrentEntitat = (
         (currentEntitatId == null && currentEntitatIdFromHttpHeader == null) ||
         currentEntitatId === currentEntitatIdFromHttpHeader;
     const currentEntitatReady =
-        apiIsReady && entitatsAvailable != null && entitatIdHttpHeaderInitialized;
+        currentRole === ROLE_ADMIN || apiCurrentError != null
+            ? entitatsAvailable != null && entitatIdHttpHeaderInitialized
+            : apiIsReady && entitatsAvailable != null && entitatIdHttpHeaderInitialized;
     return {
         currentEntitatId,
         currentEntitatReady,
@@ -258,7 +264,7 @@ const useCurrentEntitat = (
     };
 };
 
-const NotibProviderLoading: React.FC = () => {
+const PinbalProviderLoading: React.FC = () => {
     const { t } = useTranslation();
     return (
         <Box
@@ -306,7 +312,7 @@ export const PinbalProvider: React.FC<React.PropsWithChildren> = ({ children }) 
     };
     return (
         <PinbalContext.Provider value={contextValue}>
-            {isReady ? children : <NotibProviderLoading />}
+            {isReady ? children : <PinbalProviderLoading />}
         </PinbalContext.Provider>
     );
 };

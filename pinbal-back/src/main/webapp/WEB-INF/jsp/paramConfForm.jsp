@@ -17,7 +17,7 @@
 <body>
 
 	<c:url value="/modal/scsp/paramconf/save" var="formAction"/>
-	<form:form action="${formAction}" method="post" cssClass="form-horizontal" commandName="paramConfCommand">
+	<form:form action="${formAction}" method="post" cssClass="form-horizontal" modelAttribute="paramConfCommand">
 	
 	<form:hidden path="forcreate"/>
 		<div class="row">

@@ -17,11 +17,11 @@ import java.util.List;
  */
 public class RolHelper {
 
-	private static final String ROLE_ADMIN = "ROLE_ADMIN";
-	private static final String ROLE_REPRES = "ROLE_REPRES";
-	private static final String ROLE_DELEG = "ROLE_DELEG";
-	private static final String ROLE_AUDIT = "ROLE_AUDIT";
-	private static final String ROLE_SUPERAUD = "ROLE_SUPERAUD";
+	private static final String ROLE_ADMIN = "PBL_ADMIN";
+	private static final String ROLE_REPRES = "PBL_REPRES";
+	private static final String ROLE_DELEG = "tothom";
+	private static final String ROLE_AUDIT = "PBL_AUDIT";
+	private static final String ROLE_SUPERAUD = "PBL_SUPERAUD";
 
 	private static final String REQUEST_PARAMETER_CANVI_ROL = "canviRol";
 	private static final String SESSION_ATTRIBUTE_ROL_ACTUAL = "RolHelper.rol.actual";

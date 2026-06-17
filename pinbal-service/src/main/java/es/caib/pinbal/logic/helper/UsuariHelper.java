@@ -4,6 +4,7 @@
 package es.caib.pinbal.logic.helper;
 
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import es.caib.pinbal.logic.helper.PermisosHelper.ObjectIdentifierExtractor;
 import es.caib.pinbal.logic.intf.dto.IdiomaEnumDto;
 import es.caib.pinbal.logic.intf.service.exception.NotFoundException;
@@ -24,6 +25,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -43,10 +46,11 @@ public class UsuariHelper {
 	private final UsuariRepository usuariRepository;
 	private final ProcedimentServeiRepository procedimentServeiRepository;
 
-    private final CacheHelper cacheHelper;
-	private final PluginHelper pluginHelper;
-
+	private final CacheHelper cacheHelper;
 	private final MutableAclService aclService;
+
+	@Setter(onMethod_ = {@Autowired, @Lazy})
+	private PluginHelper pluginHelper;
 
 
 	public Usuari getUsuariAutenticat() {

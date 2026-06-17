@@ -1,22 +1,10 @@
 package es.caib.pinbal.client.recobriment;
 
-import static org.junit.Assert.assertNotNull;
-
-import java.io.IOException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Arrays;
-
-import org.junit.Test;
-
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import com.sun.jersey.api.client.ClientHandlerException;
-import com.sun.jersey.api.client.UniformInterfaceException;
-
 import es.caib.pinbal.client.recobriment.model.ScspFuncionario;
 import es.caib.pinbal.client.recobriment.model.ScspJustificante;
 import es.caib.pinbal.client.recobriment.model.ScspRespuesta;
@@ -27,6 +15,14 @@ import es.caib.pinbal.client.recobriment.model.SolicitudBaseSvdrrcc.FetRegistral
 import es.caib.pinbal.client.recobriment.model.SolicitudBaseSvdrrcc.TitularDadesAdicionals;
 import es.caib.pinbal.client.recobriment.svdrrccdefuncionws01.ClientSvdrrccdefuncionws01;
 import es.caib.pinbal.client.recobriment.svdrrccdefuncionws01.ClientSvdrrccdefuncionws01.SolicitudSvdrrccdefuncionws01;
+import org.junit.jupiter.api.Test;
+
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Arrays;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
 
 public class Svdrrccdefuncionws01 {
 
@@ -42,7 +38,7 @@ public class Svdrrccdefuncionws01 {
     private ClientSvdrrccdefuncionws01 client = new ClientSvdrrccdefuncionws01(URL_BASE, USUARI, CONTRASENYA, BASIC_AUTH, null, null);
 
     @Test
-    public void peticionSincrona() throws UniformInterfaceException, ClientHandlerException, IOException, ParseException {
+    public void peticionSincrona() throws Exception {
         SolicitudSvdrrccdefuncionws01 solicitud = new SolicitudSvdrrccdefuncionws01();
         solicitud.setIdentificadorSolicitante(ENTITAT_CIF);
         solicitud.setCodigoProcedimiento(CODIGO_PROCEDIMIENTO);

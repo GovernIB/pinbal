@@ -35,10 +35,10 @@ public class ClauPublica implements Serializable {
 	@Column(name = "numeroserie", length = 256, nullable = false)
 	private String numSerie;
 	@Column(name = "fechaalta", nullable = false)
-	@Temporal(TemporalType.DATE)
+	@Temporal(TemporalType.TIMESTAMP)
 	private Date dataAlta;
 	@Column(name = "fechabaja")
-	@Temporal(TemporalType.DATE)
+	@Temporal(TemporalType.TIMESTAMP)
 	private Date dataBaixa;
 	
 

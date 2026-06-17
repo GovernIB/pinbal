@@ -48,12 +48,6 @@
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
-			<groupId>org.keycloak</groupId>
-			<artifactId>keycloak-core</artifactId>
-			<version>${keycloak.version}</version>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
 			<groupId>es.scsp</groupId>
 			<artifactId>scsp-beans</artifactId>
 			<version>${scsp.core.version}</version>

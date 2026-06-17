@@ -64,7 +64,7 @@
 </head>
 <body>
 	<c:url value="/modal/usuari/configuracio" var="formAction"/>
-	<form:form action="${formAction}" method="post" cssClass="form-horizontal" commandName="usuariCommand" role="form">
+	<form:form action="${formAction}" method="post" cssClass="form-horizontal" modelAttribute="usuariCommand" role="form">
 		<form:hidden path="codi"/>
 		<div class="panel panel-primary">
 			<div class="panel-heading">

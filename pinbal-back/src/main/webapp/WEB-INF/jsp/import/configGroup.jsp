@@ -20,7 +20,7 @@
         <c:forEach items="${ group.configs }" var="config" varStatus="status_group">
             <c:set var = "configKey" value = "${fn:replace(config.key,'.','_')}"/>
 
-            <form:form id="filtre" method="post" cssClass="form-update-config form-horizontal" commandName="config_${configKey}">
+            <form:form id="filtre" method="post" cssClass="form-update-config form-horizontal" modelAttribute="config_${configKey}">
                 <form:hidden path="key"/>
                 <div class="form-group">
                     <label for="config_${config.key}" class="col-sm-3 control-label" style="word-wrap: break-word;"><spring:message code="${config.descriptionKey}"/></label>

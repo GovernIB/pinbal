@@ -1,0 +1,239 @@
+databaseChangeLog:
+  - changeSet:
+      id: 2.0.1.001-01
+      author: Limit
+      comment: Eliminació de les claus foranes de acl_entry i acl_object_identity com a pas previ al renomenat de les taules ACL
+      changes:
+        - dropForeignKeyConstraint:
+            baseTableName: acl_entry
+            constraintName: acl_entry_object_fk
+        - dropForeignKeyConstraint:
+            baseTableName: acl_entry
+            constraintName: acl_entry_acl_fk
+        - dropForeignKeyConstraint:
+            baseTableName: acl_object_identity
+            constraintName: acl_oid_parent_fk
+        - dropForeignKeyConstraint:
+            baseTableName: acl_object_identity
+            constraintName: acl_oid_class_fk
+        - dropForeignKeyConstraint:
+            baseTableName: acl_object_identity
+            constraintName: acl_oid_owner_fk
+
+  - changeSet:
+      id: 2.0.1.001-02
+      author: limit
+      comment: Eliminació de les restriccions d'unicitat de les taules ACL com a pas previ al renomenat
+      changes:
+        - dropUniqueConstraint:
+            tableName: acl_sid
+            constraintName: acl_sid_uk
+        - dropUniqueConstraint:
+            tableName: acl_class
+            constraintName: acl_class_uk
+        - dropUniqueConstraint:
+            tableName: acl_object_identity
+            constraintName: acl_oid_uk
+        - dropUniqueConstraint:
+            tableName: acl_entry
+            constraintName: acl_entry_uk
+
+  - changeSet:
+      id: 2.0.1.001-03
+      author: limit
+      comment: Renomenat de les taules ACL amb el prefix PBL_ seguint l'estàndard de nomenclatura dels projectes es.caib
+      changes:
+        - renameTable:
+            oldTableName: acl_sid
+            newTableName: pbl_acl_sid
+        - renameTable:
+            oldTableName: acl_class
+            newTableName: pbl_acl_class
+        - renameTable:
+            oldTableName: acl_object_identity
+            newTableName: pbl_acl_object_identity
+        - renameTable:
+            oldTableName: acl_entry
+            newTableName: pbl_acl_entry
+
+  - changeSet:
+      id: 2.0.1.001-04
+      author: limit
+      comment: Afegit de la columna class_id_type a pbl_acl_class, requerida per spring-security-acl 5.x per donar suport a identificadors d'objecte no numèrics (AclClassIdSupported)
+      changes:
+        - addColumn:
+            tableName: pbl_acl_class
+            columns:
+              - column:
+                  name: class_id_type
+                  type: VARCHAR(100)
+                  constraints:
+                    nullable: true
+
+  - changeSet:
+      id: 2.0.1.001-05
+      author: limit
+      comment: Inicialització de class_id_type a java.lang.Long per a tots els registres existents de pbl_acl_class, ja que tots els identificadors d'objecte del sistema són de tipus Long
+      changes:
+        - update:
+            tableName: pbl_acl_class
+            columns:
+              - column:
+                  name: class_id_type
+                  value: java.lang.Long
+
+  - changeSet:
+      id: 2.0.1.001-06
+      author: limit
+      comment: Recreació de les restriccions d'unicitat de les taules ACL amb el prefix PBL_
+      changes:
+        - addUniqueConstraint:
+            tableName: pbl_acl_sid
+            columnNames: sid, principal
+            constraintName: pbl_acl_sid_uk
+        - addUniqueConstraint:
+            tableName: pbl_acl_class
+            columnNames: class
+            constraintName: pbl_acl_class_uk
+        - addUniqueConstraint:
+            tableName: pbl_acl_object_identity
+            columnNames: object_id_class, object_id_identity
+            constraintName: pbl_acl_oid_uk
+        - addUniqueConstraint:
+            tableName: pbl_acl_entry
+            columnNames: acl_object_identity, ace_order
+            constraintName: pbl_acl_entry_uk
+
+  - changeSet:
+      id: 2.0.1.001-07
+      author: limit
+      comment: Recreació de les claus foranes de les taules ACL amb el prefix PBL_
+      changes:
+        - addForeignKeyConstraint:
+            baseTableName: pbl_acl_object_identity
+            baseColumnNames: parent_object
+            constraintName: pbl_acl_oid_parent_fk
+            referencedTableName: pbl_acl_object_identity
+            referencedColumnNames: id
+        - addForeignKeyConstraint:
+            baseTableName: pbl_acl_object_identity
+            baseColumnNames: object_id_class
+            constraintName: pbl_acl_oid_class_fk
+            referencedTableName: pbl_acl_class
+            referencedColumnNames: id
+        - addForeignKeyConstraint:
+            baseTableName: pbl_acl_object_identity
+            baseColumnNames: owner_sid
+            constraintName: pbl_acl_oid_owner_fk
+            referencedTableName: pbl_acl_sid
+            referencedColumnNames: id
+        - addForeignKeyConstraint:
+            baseTableName: pbl_acl_entry
+            baseColumnNames: acl_object_identity
+            constraintName: pbl_acl_entry_object_fk
+            referencedTableName: pbl_acl_object_identity
+            referencedColumnNames: id
+        - addForeignKeyConstraint:
+            baseTableName: pbl_acl_entry
+            baseColumnNames: sid
+            constraintName: pbl_acl_entry_acl_fk
+            referencedTableName: pbl_acl_sid
+            referencedColumnNames: id
+
+  - changeSet:
+      id: 2.0.1.001-08
+      author: limit
+      comment: Renombrat de les seqüències ACL amb el prefix PBL_ (Oracle 12c+ i PostgreSQL)
+      changes:
+        - sql:
+            dbms: oracle
+            sql: "ALTER SEQUENCE acl_sid_seq RENAME TO pbl_acl_sid_seq"
+        - sql:
+            dbms: oracle
+            sql: "ALTER SEQUENCE acl_class_seq RENAME TO pbl_acl_class_seq"
+        - sql:
+            dbms: oracle
+            sql: "ALTER SEQUENCE acl_oid_seq RENAME TO pbl_acl_oid_seq"
+        - sql:
+            dbms: oracle
+            sql: "ALTER SEQUENCE acl_entry_seq RENAME TO pbl_acl_entry_seq"
+        - sql:
+            dbms: postgresql
+            sql: "ALTER SEQUENCE acl_sid_seq RENAME TO pbl_acl_sid_seq"
+        - sql:
+            dbms: postgresql
+            sql: "ALTER SEQUENCE acl_class_seq RENAME TO pbl_acl_class_seq"
+        - sql:
+            dbms: postgresql
+            sql: "ALTER SEQUENCE acl_oid_seq RENAME TO pbl_acl_oid_seq"
+        - sql:
+            dbms: postgresql
+            sql: "ALTER SEQUENCE acl_entry_seq RENAME TO pbl_acl_entry_seq"
+
+  - changeSet:
+      id: 2.0.1.001-09
+      author: limit
+      comment: Renombrat de les claus primàries de les taules ACL amb el prefix PBL_ (Oracle i PostgreSQL)
+      changes:
+        - sql:
+            dbms: oracle,postgresql
+            sql: "ALTER TABLE pbl_acl_sid RENAME CONSTRAINT acl_sid_pk TO pbl_acl_sid_pk"
+        - sql:
+            dbms: oracle,postgresql
+            sql: "ALTER TABLE pbl_acl_class RENAME CONSTRAINT acl_class_pk TO pbl_acl_class_pk"
+        - sql:
+            dbms: oracle,postgresql
+            sql: "ALTER TABLE pbl_acl_object_identity RENAME CONSTRAINT acl_object_identity_pk TO pbl_acl_object_identity_pk"
+        - sql:
+            dbms: oracle,postgresql
+            sql: "ALTER TABLE pbl_acl_entry RENAME CONSTRAINT acl_entry_pk TO pbl_acl_entry_pk"
+
+  - changeSet:
+      id: 2.0.1.001-10
+      author: limit
+      comment: Eliminació dels triggers Oracle de les taules ACL antigues i creació dels nous per a les taules i seqüències PBL_ACL_
+      changes:
+        - sql:
+            dbms: oracle
+            sql: "DROP TRIGGER acl_sid_idgen"
+        - sql:
+            dbms: oracle
+            sql: "DROP TRIGGER acl_class_idgen"
+        - sql:
+            dbms: oracle
+            sql: "DROP TRIGGER acl_oid_idgen"
+        - sql:
+            dbms: oracle
+            sql: "DROP TRIGGER acl_entry_idgen"
+        - sql:
+            dbms: oracle
+            sql: "CREATE OR REPLACE TRIGGER pbl_acl_sid_idgen
+BEFORE INSERT ON pbl_acl_sid
+FOR EACH ROW
+  BEGIN
+    SELECT pbl_acl_sid_seq.NEXTVAL INTO :NEW.ID FROM DUAL;
+  END;"
+        - sql:
+            dbms: oracle
+            sql: "CREATE OR REPLACE TRIGGER pbl_acl_class_idgen
+BEFORE INSERT ON pbl_acl_class
+FOR EACH ROW
+  BEGIN
+    SELECT pbl_acl_class_seq.NEXTVAL INTO :NEW.ID FROM DUAL;
+  END;"
+        - sql:
+            dbms: oracle
+            sql: "CREATE OR REPLACE TRIGGER pbl_acl_oid_idgen
+BEFORE INSERT ON pbl_acl_object_identity
+FOR EACH ROW
+  BEGIN
+    SELECT pbl_acl_oid_seq.NEXTVAL INTO :NEW.ID FROM DUAL;
+  END;"
+        - sql:
+            dbms: oracle
+            sql: "CREATE OR REPLACE TRIGGER pbl_acl_entry_idgen
+BEFORE INSERT ON pbl_acl_entry
+FOR EACH ROW
+  BEGIN
+    SELECT pbl_acl_entry_seq.NEXTVAL INTO :NEW.ID FROM DUAL;
+  END;"

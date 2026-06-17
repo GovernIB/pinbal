@@ -6,7 +6,7 @@
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
 <%@ taglib tagdir="/WEB-INF/tags/pinbal" prefix="pbl" %>
 <%
-	request.setAttribute("consultaEstats", es.caib.pinbal.core.dto.ConsultaDto.EstatTipus.sortedValues());
+	request.setAttribute("consultaEstats", es.caib.pinbal.logic.intf.dto.ConsultaDto.EstatTipus.sortedValues());
 	request.setAttribute("historicSession", AuditorController.SESSION_CONSULTA_HISTORIC);
 %>
 <html>
@@ -165,7 +165,7 @@
 </head>
 <body>
 	<div class="text-right" data-toggle="titol-check" data-titol-check-value="${historic}" data-titol-check-session-name="${historicSession}" data-titol-check-callback="checkCallback" data-titol-check-label="<spring:message code="comu.historic"/>"></div>
-	<form:form id="form-filtre" action="" method="post" cssClass="well form-filtre-table" commandName="filtreCommand">
+	<form:form id="form-filtre" action="" method="post" cssClass="well form-filtre-table" modelAttribute="filtreCommand">
 		<div class="row">
 			<div class="col-md-3">
 			<pbl:inputText name="scspPeticionId"  inline="true" placeholderKey="consulta.list.filtre.peticion.id"/>

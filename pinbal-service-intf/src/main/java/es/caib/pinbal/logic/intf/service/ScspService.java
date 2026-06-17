@@ -38,7 +38,7 @@ public interface ScspService {
 	 *            
 	 * @return	El paràmetre de configuració trobat. Si no s'ha trobat cap retorna null.
 	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasRole('PBL_ADMIN')")
 	public ParamConfDto findParamConfByNom(String nom);
 	
 	/**
@@ -49,7 +49,7 @@ public interface ScspService {
 	 *            
 	 * @return El paràmetre de configuració creat.
 	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasRole('PBL_ADMIN')")
 	public ParamConfDto createParamConf(ParamConfDto dto);
 
 	/**
@@ -64,7 +64,7 @@ public interface ScspService {
 	 *             Si no s'ha trobat troba cap paràmetre de configuració
 	 *             amb el nom especificat.
 	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasRole('PBL_ADMIN')")
 	public ParamConfDto updateParamConf(ParamConfDto dto) throws ParamConfNotFoundException;
 
 	/**
@@ -79,7 +79,7 @@ public interface ScspService {
 	 *             Si no s'ha trobat cap paràmetre de configuració
 	 *             amb el nom especificat.
 	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasRole('PBL_ADMIN')")
 	public ParamConfDto deleteParamConf(String nom) throws ParamConfNotFoundException;
 
 	/**
@@ -87,7 +87,7 @@ public interface ScspService {
 	 * 
 	 * @return Un llistat de paràmetres de configuració.
 	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasRole('PBL_ADMIN')")
 	public Page<ParamConfDto> findAllParamConf(Pageable pageable);
 	
 	
@@ -101,7 +101,7 @@ public interface ScspService {
 	 *            
 	 * @return	L'emissor certificat trobat. Si no s'ha trobat cap retorna null.
 	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasRole('PBL_ADMIN')")
 	public EmissorCertDto findEmissorCertById(Long id);
 
 	/**
@@ -112,7 +112,7 @@ public interface ScspService {
 	 *
 	 * @return	L'emissor certificat trobat. Si no s'ha trobat cap retorna null.
 	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasRole('PBL_ADMIN')")
 	public EmissorCertDto findEmissorCertByCif(String cif);
 
 	/**
@@ -123,7 +123,7 @@ public interface ScspService {
 	 *            
 	 * @return L'emissor certificat creat.
 	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasRole('PBL_ADMIN')")
 	public EmissorCertDto createEmissorCert(EmissorCertDto dto);
 
 	/**
@@ -138,7 +138,7 @@ public interface ScspService {
 	 *             Si no s'ha trobat troba cap emissor certificat
 	 *             amb el id especificat.
 	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasRole('PBL_ADMIN')")
 	public EmissorCertDto updateEmissorCert(EmissorCertDto dto) throws EmissorCertNotFoundException;
 
 	/**
@@ -153,7 +153,7 @@ public interface ScspService {
 	 *             Si no s'ha trobat cap emissor certificat
 	 *             amb el nom especificat.
 	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasRole('PBL_ADMIN')")
 	public EmissorCertDto deleteEmissorCert(Long id) throws EmissorCertNotFoundException;
 
 	/**
@@ -161,7 +161,7 @@ public interface ScspService {
 	 * 
 	 * @return Un llistat d'emissors certificats.
 	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasRole('PBL_ADMIN')")
 	public Page<EmissorCertDto> findAllEmissorCert(Pageable pageable);
 	
 	
@@ -176,7 +176,7 @@ public interface ScspService {
 	 *            
 	 * @return	La clau privada trobada. Si no s'ha trobat cap retorna null.
 	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasRole('PBL_ADMIN')")
 	public ClauPrivadaDto findClauPrivadaById(Long id);
 
 	/**
@@ -187,7 +187,7 @@ public interface ScspService {
 	 *
 	 * @return	La clau privada trobada. Si no s'ha trobat cap retorna null.
 	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasRole('PBL_ADMIN')")
     ClauPrivadaDto findClauPrivadaByNom(String nom);
 
 	/**
@@ -198,7 +198,7 @@ public interface ScspService {
 	 *
 	 * @return	La clau privada trobada. Si no s'ha trobat cap retorna null.
 	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasRole('PBL_ADMIN')")
 	ClauPrivadaDto findClauPrivadaByAlies(String alies);
 
 	/**
@@ -209,7 +209,7 @@ public interface ScspService {
 	 *            
 	 * @return La clau privada creada.
 	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasRole('PBL_ADMIN')")
 	public ClauPrivadaDto createClauPrivada(ClauPrivadaDto dto) throws EntitatNotFoundException;
 
 	/**
@@ -224,7 +224,7 @@ public interface ScspService {
 	 *             Si no s'ha trobat troba cap clau privada
 	 *             amb el id especificat.
 	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasRole('PBL_ADMIN')")
 	public ClauPrivadaDto updateClauPrivada(ClauPrivadaDto dto) throws ClauPrivadaNotFoundException, EntitatNotFoundException;
 
 	/**
@@ -239,7 +239,7 @@ public interface ScspService {
 	 *             Si no s'ha trobat cap clau privada
 	 *             amb el nom especificat.
 	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasRole('PBL_ADMIN')")
 	public ClauPrivadaDto deleteClauPrivada(Long id) throws ClauPrivadaNotFoundException;
 
 	/**
@@ -247,7 +247,7 @@ public interface ScspService {
 	 * 
 	 * @return Un llistat de les claus privades.
 	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasRole('PBL_ADMIN')")
 	public Page<ClauPrivadaDto> findAllClauPrivada(Pageable pageable);
 
 	
@@ -258,14 +258,14 @@ public interface ScspService {
 	 * 
 	 * @return Un llistat dels organismes cessionaris
 	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasRole('PBL_ADMIN')")
 	public List<OrganismeCessionariDto> findAllOrganismeCessionari();
 
 	
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('PBL_ADMIN')")
     List<OrganismeCessionariDto> findAllOrganismeCessionariActiu();
 
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('PBL_ADMIN')")
     OrganismeCessionariDto findOrganismeCessionariById(Long organismeId);
 
 	// Funcions de la taula de claus públiques.
@@ -278,7 +278,7 @@ public interface ScspService {
 	 *            
 	 * @return	La clau pública trobada. Si no s'ha trobat cap retorna null.
 	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasRole('PBL_ADMIN')")
 	public ClauPublicaDto findClauPublicaById(Long id);
 
 	/**
@@ -289,7 +289,7 @@ public interface ScspService {
 	 *
 	 * @return	La clau privada trobada. Si no s'ha trobat cap retorna null.
 	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasRole('PBL_ADMIN')")
 	ClauPublicaDto findClauPublicaByNom(String nom);
 
 	/**
@@ -300,7 +300,7 @@ public interface ScspService {
 	 *
 	 * @return	La clau privada trobada. Si no s'ha trobat cap retorna null.
 	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasRole('PBL_ADMIN')")
 	ClauPublicaDto findClauPublicaByAlies(String alies);
 	
 	/**
@@ -311,7 +311,7 @@ public interface ScspService {
 	 *            
 	 * @return El clau pública creat.
 	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasRole('PBL_ADMIN')")
 	public ClauPublicaDto createClauPublica(ClauPublicaDto dto);
 
 	/**
@@ -326,7 +326,7 @@ public interface ScspService {
 	 *             Si no s'ha trobat troba cap clau pública
 	 *             amb el id especificat.
 	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasRole('PBL_ADMIN')")
 	public ClauPublicaDto updateClauPublica(ClauPublicaDto dto) throws ClauPublicaNotFoundException;
 
 	/**
@@ -341,7 +341,7 @@ public interface ScspService {
 	 *             Si no s'ha trobat cap clau pública
 	 *             amb el nom especificat.
 	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasRole('PBL_ADMIN')")
 	public ClauPublicaDto deleteClauPublica(Long id) throws ClauPublicaNotFoundException;
 
 	/**
@@ -349,7 +349,7 @@ public interface ScspService {
 	 * 
 	 * @return Un llistat de claus públiques.
 	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasRole('PBL_ADMIN')")
 	public Page<ClauPublicaDto> findAllClauPublica(Pageable pageable);
 
 }

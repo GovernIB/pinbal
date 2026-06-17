@@ -115,7 +115,7 @@
 </head>
 <body>
 	<c:url value="/modal/procediment/save" var="formAction"/>
-	<form:form action="${formAction}" method="post" cssClass="form-horizontal" commandName="procedimentCommand">
+	<form:form action="${formAction}" method="post" cssClass="form-horizontal" modelAttribute="procedimentCommand">
 		<form:hidden path="clonarPermisosOrigen"/>
 		<form:hidden path="id"/>
 		<form:hidden path="entitatId"/>

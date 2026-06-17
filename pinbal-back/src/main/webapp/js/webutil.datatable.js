@@ -10,6 +10,9 @@
 		}
 	});
 	$.extend(true, $.fn.dataTable.defaults, {
+		column: {
+			defaultContent: ''
+		},
 		dom: "<'row'<'col-md-6'i><'col-md-6'>><'row'<'col-md-12'rt>><'row'<'col-md-6'l><'col-md-6'p>>",
 		pageLength: length,
 		aLengthMenu: [ 10, 20, 50, 100, 250 ],

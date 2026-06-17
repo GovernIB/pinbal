@@ -1,20 +1,10 @@
 package es.caib.pinbal.client.recobriment;
 
-import static org.junit.Assert.assertNotNull;
-
-import java.io.IOException;
-import java.util.Arrays;
-
-import org.junit.Test;
-
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import com.sun.jersey.api.client.ClientHandlerException;
-import com.sun.jersey.api.client.UniformInterfaceException;
-
 import es.caib.pinbal.client.recobriment.model.ScspFuncionario;
 import es.caib.pinbal.client.recobriment.model.ScspJustificante;
 import es.caib.pinbal.client.recobriment.model.ScspRespuesta;
@@ -23,6 +13,12 @@ import es.caib.pinbal.client.recobriment.model.ScspTitular;
 import es.caib.pinbal.client.recobriment.model.ScspTitular.ScspTipoDocumentacion;
 import es.caib.pinbal.client.recobriment.q2827003atgss001.ClientQ2827003atgss001;
 import es.caib.pinbal.client.recobriment.q2827003atgss001.ClientQ2827003atgss001.SolicitudQ2827003atgss001;
+import org.junit.jupiter.api.Test;
+
+import java.io.IOException;
+import java.util.Arrays;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * Test del client genèric del recobriment.
@@ -43,7 +39,7 @@ public class Q2827003atgss001Test {
 	private ClientQ2827003atgss001 client = new ClientQ2827003atgss001(URL_BASE, USUARI, CONTRASENYA, BASIC_AUTH, null, null);
 
 	@Test
-	public void peticionSincrona() throws UniformInterfaceException, ClientHandlerException, IOException {
+	public void peticionSincrona() throws Exception {
 		SolicitudQ2827003atgss001 solicitud = new SolicitudQ2827003atgss001();
 		solicitud.setIdentificadorSolicitante(ENTITAT_CIF);
 		solicitud.setCodigoProcedimiento(CODIGO_PROCEDIMIENTO);

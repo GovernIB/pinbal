@@ -124,10 +124,12 @@ public class DadesUsuariPluginJdbc extends AbstractPluginProperties implements D
 				LOGGER.error("Error al tancar la connexió", ex);
 			}
 		}
-		dadesUsuari.setRols(
-				consultaRolsUsuari(
-						"codi",
-						dadesUsuari.getCodi()));
+		if (dadesUsuari != null) {
+			dadesUsuari.setRols(
+					consultaRolsUsuari(
+							"codi",
+							dadesUsuari.getCodi()));
+		}
         PluginMetricHelper.addSuccessOperation(IntegracioApp.USR, System.currentTimeMillis() - start);
 		return dadesUsuari;
 	}
@@ -225,28 +227,28 @@ public class DadesUsuariPluginJdbc extends AbstractPluginProperties implements D
 	}
 
 	private String getDatasourceJndiName() {
-		return this.getProperty("plugin.dades.usuari.jdbc.datasource.jndi.name");
+		return this.getProperty("jdbc.datasource.jndi.name");
 	}
 	private String getJdbcQueryUsuariCodi() {
-		String query = this.getProperty("plugin.dades.usuari.jdbc.query");
+		String query = this.getProperty("jdbc.query");
 		if (query == null || query.isEmpty())
-			query = this.getProperty("plugin.dades.usuari.jdbc.query.codi");
+			query = this.getProperty("jdbc.query.codi");
 		return query;
 	}
 	private String getJdbcQueryUsuariNif() {
-		return this.getProperty("plugin.dades.usuari.jdbc.query.nif");
+		return this.getProperty("jdbc.query.nif");
 	}
 	private String getJdbcQueryUsuariNom() {
-		return this.getProperty("plugin.dades.usuari.jdbc.query.nom");
+		return this.getProperty("jdbc.query.nom");
 	}
 	private String getJdbcQueryUsuariAny() {
-		return this.getProperty("plugin.dades.usuari.jdbc.query.any");
+		return this.getProperty("jdbc.query.any");
 	}
 	private String getJdbcQueryUsuariRols() {
-		return this.getProperty("plugin.dades.usuari.jdbc.query.rols");
+		return this.getProperty("jdbc.query.rols");
 	}
 	private String getJdbcQueryUsuariGrup() {
-		return this.getProperty("plugin.dades.usuari.jdbc.query.grup");
+		return this.getProperty("jdbc.query.grup");
 	}
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(DadesUsuariPluginJdbc.class);

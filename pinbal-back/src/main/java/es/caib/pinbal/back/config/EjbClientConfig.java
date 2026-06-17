@@ -5,6 +5,9 @@ package es.caib.pinbal.back.config;
 
 import es.caib.pinbal.logic.intf.base.service.PermissionEvaluatorService;
 import es.caib.pinbal.logic.intf.base.service.ResourceApiService;
+import es.caib.pinbal.logic.intf.resourceservice.ConsultaAdminResourceService;
+import es.caib.pinbal.logic.intf.resourceservice.EntitatResourceService;
+import es.caib.pinbal.logic.intf.resourceservice.UsuariResourceService;
 import es.caib.pinbal.logic.intf.service.AplicacioService;
 import es.caib.pinbal.logic.intf.service.AvisService;
 import es.caib.pinbal.logic.intf.service.ConfigService;
@@ -42,52 +45,52 @@ import org.springframework.ejb.access.LocalStatelessSessionProxyFactoryBean;
 @Order(Ordered.HIGHEST_PRECEDENCE)
 public class EjbClientConfig {
 
-	private static final String EJB_JNDI_PREFIX = "java:app/notib-ejb/";
+	private static final String EJB_JNDI_PREFIX = "java:app/pinbal-ejb/";
 	private static final String EJB_JNDI_SUFFIX = "Ejb";
 
 	@Bean
 	public LocalStatelessSessionProxyFactoryBean aplicacioService() {
-		return getLocalEjbFactoyBean(AplicacioService.class, true);
+		return getLocalEjbFactoyBean(AplicacioService.class, false);
 	}
 	@Bean
 	public LocalStatelessSessionProxyFactoryBean avisService() {
-		return getLocalEjbFactoyBean(AvisService.class, true);
+		return getLocalEjbFactoyBean(AvisService.class, false);
 	}
 	@Bean
 	public LocalStatelessSessionProxyFactoryBean configService() {
-		return getLocalEjbFactoyBean(ConfigService.class, true);
+		return getLocalEjbFactoyBean(ConfigService.class, false);
 	}
 	@Bean
 	public LocalStatelessSessionProxyFactoryBean consultaService() {
-		return getLocalEjbFactoyBean(ConsultaService.class, true);
+		return getLocalEjbFactoyBean(ConsultaService.class, false);
 	}
 	@Bean
 	public LocalStatelessSessionProxyFactoryBean dadesExternesService() {
-		return getLocalEjbFactoyBean(DadesExternesService.class, true);
+		return getLocalEjbFactoyBean(DadesExternesService.class, false);
 	}
 	@Bean
 	public LocalStatelessSessionProxyFactoryBean entitatService() {
-		return getLocalEjbFactoyBean(EntitatService.class, true);
+		return getLocalEjbFactoyBean(EntitatService.class, false);
 	}
 	@Bean
 	public LocalStatelessSessionProxyFactoryBean estadisticaService() {
-		return getLocalEjbFactoyBean(EstadisticaService.class, true);
+		return getLocalEjbFactoyBean(EstadisticaService.class, false);
 	}
 	@Bean
 	public LocalStatelessSessionProxyFactoryBean gestioRestService() {
-		return getLocalEjbFactoyBean(GestioRestService.class, true);
+		return getLocalEjbFactoyBean(GestioRestService.class, false);
 	}
 	@Bean
 	public LocalStatelessSessionProxyFactoryBean historicConsultaService() {
-		return getLocalEjbFactoyBean(HistoricConsultaService.class, true);
+		return getLocalEjbFactoyBean(HistoricConsultaService.class, false);
 	}
 	@Bean
 	public LocalStatelessSessionProxyFactoryBean integracioAccioService() {
-		return getLocalEjbFactoyBean(IntegracioAccioService.class, true);
+		return getLocalEjbFactoyBean(IntegracioAccioService.class, false);
 	}
 	@Bean
 	public LocalStatelessSessionProxyFactoryBean organGestorService() {
-		return getLocalEjbFactoyBean(OrganGestorService.class, true);
+		return getLocalEjbFactoyBean(OrganGestorService.class, false);
 	}
 	@Bean
 	public LocalStatelessSessionProxyFactoryBean permissionEvaluatorService() {
@@ -95,15 +98,15 @@ public class EjbClientConfig {
 	}
 	@Bean
 	public LocalStatelessSessionProxyFactoryBean procedimentService() {
-		return getLocalEjbFactoyBean(ProcedimentService.class, true);
+		return getLocalEjbFactoyBean(ProcedimentService.class, false);
 	}
 	@Bean
 	public LocalStatelessSessionProxyFactoryBean propertyService() {
-		return getLocalEjbFactoyBean(PropertyService.class, true);
+		return getLocalEjbFactoyBean(PropertyService.class, false);
 	}
 	@Bean
 	public LocalStatelessSessionProxyFactoryBean recobrimentService() {
-		return getLocalEjbFactoyBean(RecobrimentService.class, true);
+		return getLocalEjbFactoyBean(RecobrimentService.class, false);
 	}
 	@Bean
 	public LocalStatelessSessionProxyFactoryBean resourceApiService() {
@@ -111,20 +114,39 @@ public class EjbClientConfig {
 	}
 	@Bean
 	public LocalStatelessSessionProxyFactoryBean salutService() {
-		return getLocalEjbFactoyBean(SalutService.class, true);
+		return getLocalEjbFactoyBean(SalutService.class, false);
 	}
 	@Bean
 	public LocalStatelessSessionProxyFactoryBean scspService() {
-		return getLocalEjbFactoyBean(ScspService.class, true);
+		return getLocalEjbFactoyBean(ScspService.class, false);
 	}
 	@Bean
 	public LocalStatelessSessionProxyFactoryBean serveiService() {
-		return getLocalEjbFactoyBean(ServeiService.class, true);
+		return getLocalEjbFactoyBean(ServeiService.class, false);
 	}
 	@Bean
 	public LocalStatelessSessionProxyFactoryBean usuariService() {
-		return getLocalEjbFactoyBean(UsuariService.class, true);
+		return getLocalEjbFactoyBean(UsuariService.class, false);
 	}
+
+
+	// Resource Services
+
+	@Bean
+	public LocalStatelessSessionProxyFactoryBean usuariResourceService() {
+		return getLocalEjbFactoyBean(UsuariResourceService.class, true);
+	}
+
+	@Bean
+	public LocalStatelessSessionProxyFactoryBean consultaAdminResourceService() {
+		return getLocalEjbFactoyBean(ConsultaAdminResourceService.class, true);
+	}
+
+	@Bean
+	public LocalStatelessSessionProxyFactoryBean entitatResourceService() {
+		return getLocalEjbFactoyBean(EntitatResourceService.class, true);
+	}
+
 
 	private LocalStatelessSessionProxyFactoryBean getLocalEjbFactoyBean(
 		Class<?> serviceClass,

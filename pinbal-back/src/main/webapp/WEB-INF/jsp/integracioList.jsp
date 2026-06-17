@@ -4,8 +4,8 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib tagdir="/WEB-INF/tags/pinbal" prefix="pbl" %>
-<%	request.setAttribute("integracioAccioEstats", es.caib.pinbal.core.dto.IntegracioAccioEstatEnumDto.sortedValues());
-	request.setAttribute("integracioAccioTipus", es.caib.pinbal.core.dto.IntegracioAccioTipusEnumDto.sortedValues());
+<%	request.setAttribute("integracioAccioEstats", es.caib.pinbal.logic.intf.dto.IntegracioAccioEstatEnumDto.sortedValues());
+	request.setAttribute("integracioAccioTipus", es.caib.pinbal.logic.intf.dto.IntegracioAccioTipusEnumDto.sortedValues());
 %>
 
 <html>

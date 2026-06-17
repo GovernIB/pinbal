@@ -42,12 +42,12 @@ export const getEnvApiUrl = () => {
         if (envApiBaseUrl) {
             return envApiBaseUrl + envApiSuffix;
         } else {
+            const port = window.location.port ? ':' + window.location.port : '';
             return (
                 window.location.protocol +
                 '//' +
-                window.location.host +
-                ':' +
-                window.location.port +
+                window.location.hostname +
+                port +
                 envApiSuffix
             );
         }
@@ -70,6 +70,16 @@ const InnerApp: React.FC = () => {
             to: 'home',
             icon: 'home',
         },
+        ...(currentRole === ROLE_ADMIN
+            ? [
+                  {
+                      id: 'adminConsulta',
+                      title: t('app.menu.adminConsulta'),
+                      to: 'admin/consulta',
+                      icon: 'search',
+                  },
+              ]
+            : []),
     ];
     const theme = useTheme();
     const bgColor = mode === 'light' ? theme.palette.background.paper : undefined;

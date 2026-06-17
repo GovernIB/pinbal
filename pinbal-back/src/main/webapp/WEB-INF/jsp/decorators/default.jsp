@@ -31,7 +31,7 @@
 			"requestParameterCanviEntitat",
 			EntitatHelper.getRequestParameterCanviEntitat());
 	if (RolHelper.isRolActualDelegat(request)) {
-		es.caib.pinbal.core.dto.EntitatDto entitat = EntitatHelper.getEntitatActual(request);
+		es.caib.pinbal.logic.intf.dto.EntitatDto entitat = EntitatHelper.getEntitatActual(request);
 		if (entitat != null) {
 			pageContext.setAttribute(
 					"sessionServeis",

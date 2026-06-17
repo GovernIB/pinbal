@@ -94,7 +94,7 @@
 		<c:choose>
 			<c:when test="${empty estadistiquesFiltreCommand.entitatId}">
 				<c:url value="/estadistiques/canviEntitat" var="formAction"/>
-				<form:form action="${formAction}" method="post" cssClass="well form-filtre-table" commandName="estadistiquesFiltreCommand">
+				<form:form action="${formAction}" method="post" cssClass="well form-filtre-table" modelAttribute="estadistiquesFiltreCommand">
 					<div class="row">
 						<div class="col-md-2">
 							<pbl:inputSelect name="entitatId" inline="true" 
@@ -135,7 +135,7 @@
 		</c:choose>
 	</c:if>
 	<c:if test="${not empty estadistiquesFiltreCommand.entitatId}">
-		<form:form id="form-filtre" action="" method="post" cssClass="well form-filtre-table" commandName="estadistiquesFiltreCommand">
+		<form:form id="form-filtre" action="" method="post" cssClass="well form-filtre-table" modelAttribute="estadistiquesFiltreCommand">
 			<form:hidden path="entitatId"/>
 			<div class="row">
 				<div class="col-md-3">

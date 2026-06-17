@@ -18,7 +18,7 @@ import java.util.Map;
  */
 public interface IntegracioAccioService {
 	
-//	@PreAuthorize("hasRole('ROLE_ADMIN')")
+//	@PreAuthorize("hasRole('PBL_ADMIN')")
 //	public List<IntegracioAccioDto> findAll();
 	
 	/**
@@ -28,7 +28,7 @@ public interface IntegracioAccioService {
 	 *            Informació de l'item monitorIntegracio a crear.
 	 * @return El/La MonitorIntegracio creat/creada
 	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasRole('PBL_ADMIN')")
 	public IntegracioAccioDto create(IntegracioAccioDto integracioAccio);
 	
 	/**
@@ -38,7 +38,7 @@ public interface IntegracioAccioService {
 	 *            Paràmetres per a dur a terme la paginació del resultats.
 	 * @return La pàgina d'items MonitorIntegracio.
 	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasRole('PBL_ADMIN')")
 	public PaginaDto<IntegracioAccioDto> findPaginat(PaginacioAmbOrdreDto paginacioParams, IntegracioFiltreDto integracioFiltreDto);
 
 	/** Mètode per esborrar dades per a una integració específica.
@@ -46,7 +46,7 @@ public interface IntegracioAccioService {
 	 * @param codi Codi de la integració a esborrar.
 	 * @return Retorna el número de registres esborrats.
 	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasRole('PBL_ADMIN')")
 	public int delete(String codi);
 	
 	public int deleteAll();
@@ -69,9 +69,9 @@ public interface IntegracioAccioService {
 	 */
 	public List<IntegracioDto> integracioFindAll();
 
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasRole('PBL_ADMIN')")
 	List<IntegracioDto> getAll();
 
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasRole('PBL_ADMIN')")
 	IntegracioAccioDto findById(Long id);
 }

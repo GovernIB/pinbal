@@ -133,7 +133,7 @@ public class ScspServiceImpl implements ScspService {
 	public EmissorCertDto findEmissorCertById(Long id) {
 		log.debug("Consulta un emissor certificat (id = " + id + ")");
 		return dtoMappingHelper.getMapperFacade().map(
-				emissorCertRepository.findById(id),
+				emissorCertRepository.findById(id).orElseThrow(),
 				EmissorCertDto.class);
 	}
 
@@ -207,7 +207,7 @@ public class ScspServiceImpl implements ScspService {
 	public ClauPrivadaDto findClauPrivadaById(Long id) {
 		log.debug("Consulta una clau privada (id = " + id + ")");
 		return dtoMappingHelper.getMapperFacade().map(
-				clauPrivadaRepository.findById(id),
+				clauPrivadaRepository.findById(id).orElseThrow(),
 				ClauPrivadaDto.class);
 	}
 
@@ -399,7 +399,7 @@ public class ScspServiceImpl implements ScspService {
 	public ClauPublicaDto findClauPublicaById(Long id) {
 		log.debug("Consulta un clau publica (id = " + id + ")");
 		return dtoMappingHelper.getMapperFacade().map(
-				clauPublicaRepository.findById(id),
+				clauPublicaRepository.findById(id).orElseThrow(),
 				ClauPublicaDto.class);
 	}
 

@@ -2,10 +2,10 @@ package es.caib.pinbal.client.procediments;
 
 import es.caib.pinbal.client.comu.LogLevel;
 import es.caib.pinbal.client.comu.Page;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ProcedimentClientTest {
 
@@ -19,7 +19,7 @@ public class ProcedimentClientTest {
     private String existingOrganCodi = "";
     private String existingServeiCodi = "";
 
-    @Before
+    @BeforeEach
     public void setUp() {
         // Inicialitza el client amb els paràmetres adequats per al servidor real
         String urlBase = "http://localhost:8180/pinbalapi"; // Exemples; ajusta això segons el teu entorn
@@ -312,8 +312,8 @@ public class ProcedimentClientTest {
 
         try {
             Page<Procediment> procedimentPage = procedimentClient.getProcediments(entitatCodi, codi, nom, organGestor, page, size, sort);
-            assertNotNull("La pàgina de procediments no hauria de ser nul·la", procedimentPage);
-            assertFalse("La llista de procediments no hauria d'estar buida", procedimentPage.getContent().isEmpty());
+            assertNotNull(procedimentPage, "La pàgina de procediments no hauria de ser nul·la");
+            assertFalse(procedimentPage.getContent().isEmpty(), "La llista de procediments no hauria d'estar buida");
         } catch (Exception e) {
             fail("Ha fallat la recuperació dels procediments: " + e.getMessage());
         }
@@ -349,8 +349,8 @@ public class ProcedimentClientTest {
 
         try {
             Page<Procediment> procedimentPage = procedimentClient.getProcediments(entitatCodi, codi, nom, organGestor, page, size, sort);
-            assertNotNull("La pàgina de procediments no hauria de ser nul·la", procedimentPage);
-            assertTrue("La llista de procediments hauria d'estar buida", procedimentPage.getContent().isEmpty());
+            assertNotNull(procedimentPage, "La pàgina de procediments no hauria de ser nul·la");
+            assertTrue(procedimentPage.getContent().isEmpty(), "La llista de procediments hauria d'estar buida");
         } catch (Exception e) {
             fail("Ha fallat la verificació per a pàgina buida de procediments: " + e.getMessage());
         }
@@ -386,8 +386,8 @@ public class ProcedimentClientTest {
 
         try {
             Procediment procediment = procedimentClient.getProcediment(procedimentId);
-            assertNotNull("El procediment hauria de no ser nul", procediment);
-            assertEquals("Els IDs haurien de coincidir", procedimentId, procediment.getId());
+            assertNotNull(procediment, "El procediment hauria de no ser nul");
+            assertEquals(procedimentId, procediment.getId(), "Els IDs haurien de coincidir");
         } catch (Exception e) {
             fail("Ha fallat la recuperació del procediment: " + e.getMessage());
         }
@@ -430,8 +430,8 @@ public class ProcedimentClientTest {
 
         try {
             Procediment procediment = procedimentClient.getProcediment(procedimentCodi, entitatCodi);
-            assertNotNull("El procediment hauria de no ser nul", procediment);
-            assertEquals("El codi del procediment ha de coincidir", procedimentCodi, procediment.getCodi());
+            assertNotNull(procediment, "El procediment hauria de no ser nul");
+            assertEquals(procedimentCodi, procediment.getCodi(), "El codi del procediment ha de coincidir");
         } catch (Exception e) {
             fail("Ha fallat la recuperació del procediment pel codi: " + e.getMessage());
         }

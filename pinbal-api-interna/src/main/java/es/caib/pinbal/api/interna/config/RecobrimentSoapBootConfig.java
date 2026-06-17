@@ -4,6 +4,7 @@
 package es.caib.pinbal.api.interna.config;
 
 import es.caib.pinbal.api.interna.ws.RecobrimentBean;
+import es.caib.pinbal.logic.intf.service.RecobrimentService;
 import org.apache.cxf.Bus;
 import org.apache.cxf.bus.spring.SpringBus;
 import org.apache.cxf.jaxws.EndpointImpl;
@@ -45,8 +46,10 @@ public class RecobrimentSoapBootConfig {
 	}
 
 	@Bean
-	public Endpoint recobrimentSoapEndpoint(Bus bus, RecobrimentBean recobrimentBean) {
-		EndpointImpl endpoint = new EndpointImpl(bus, recobrimentBean);
+	public Endpoint recobrimentSoapEndpoint(Bus bus, RecobrimentService recobrimentService) {
+		RecobrimentBean bean = new RecobrimentBean();
+		bean.setRecobrimentService(recobrimentService);
+		EndpointImpl endpoint = new EndpointImpl(bus, bean);
 		endpoint.publish(endpointPath);
 		return endpoint;
 	}

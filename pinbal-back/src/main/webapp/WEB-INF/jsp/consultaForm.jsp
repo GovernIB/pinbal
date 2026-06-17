@@ -8,7 +8,7 @@
 <%
 	pageContext.setAttribute(
 			"consentimentValors",
-			es.caib.pinbal.core.dto.ConsultaDto.Consentiment.values());
+			es.caib.pinbal.logic.intf.dto.ConsultaDto.Consentiment.values());
 %>
 
 <c:set var="serveiMultiple" value="${servei.consultaMultiplePermesa}"/>
@@ -274,7 +274,7 @@
 	<c:url value="/consulta/${servei.codiUrlEncoded}/plantilla/ODS" var="downloadPlantillaOdsUrl"/>
 	<c:url value="/consulta/${servei.codiUrlEncoded}/new" var="formAction"/>
 	<div class="container-fluid">
-	<form:form id="consultaForm" action="${formAction}" method="post" cssClass="" commandName="consultaCommand" enctype="multipart/form-data">
+	<form:form id="consultaForm" action="${formAction}" method="post" cssClass="" modelAttribute="consultaCommand" enctype="multipart/form-data">
 		<form:hidden path="serveiCodi"/>
 		<form:hidden path="multiple" />
 		<br/>

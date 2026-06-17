@@ -16,7 +16,7 @@ public class HateoasMessageResolverConfig extends BaseHateoasMessageResolverConf
 
 	@Override
 	protected String getBasename() {
-		return "notib-back-rest-messages";
+		return "pinbal-back-rest-messages";
 	}
 
     @Override

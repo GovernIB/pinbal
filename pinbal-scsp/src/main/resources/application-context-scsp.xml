@@ -26,13 +26,20 @@
 	<!--     4.- Desactivar el proxyManager comentant properties.             -->
 
 	<context:annotation-config />
-	<context:component-scan base-package="es.scsp" />
+	<context:component-scan base-package="es.scsp">
+		<context:exclude-filter type="regex" expression="es\.scsp\.config\..*"/>
+		<!-- FOP no és al classpath; evitem ClassNotFoundException en introspeccionar FopFactorySingleton -->
+		<!-- Usem el subpaquet 'handler' per no excloure JustificanteMaker -->
+		<context:exclude-filter type="regex" expression="es\.scsp\.common\.pdf\.handler\..*"/>
+	</context:component-scan>
 
 	<!-- ==================================================================== -->
 	<!-- Gestores de configuración                                            -->
 	<!-- ==================================================================== -->
 	<alias name="sPropertyPlaceholderConfigurer" alias="scspPropertyPlaceholderConfigurer" />
-	<bean id="parametroConfiguracionDao" class="es.scsp.common.dao.ParametroConfiguracionDao"/> 
+	<bean id="parametroConfiguracionDao" class="es.scsp.common.dao.ParametroConfiguracionDao">
+		<property name="sessionFactory" ref="sessionFactory"/>
+	</bean> 
 	<alias name="clienteUnico" alias="clienteUnicoProvisional" />
 
 	<!-- ==================================================================== -->
@@ -41,11 +48,25 @@
 	<alias name="jaxbMarshaller" alias="marshaller" />
 	<alias name="jaxbMarshaller" alias="unmarshaller" />
 
+	<!-- Requerit per MessageRecover (@Autowired @Qualifier("getMarshaller")) -->
+	<bean id="getMarshaller" class="org.springframework.oxm.jaxb.Jaxb2Marshaller">
+		<property name="contextPath" value="es.scsp.bean.common.respuesta"/>
+	</bean>
+
 	<!-- ==================================================================== -->
 	<!-- Configuracion de acceso base de datos.                               -->
 	<!-- ==================================================================== -->
+	<!-- Datasource SCSP independent, sense JTA, obtinguda per JNDI.
+	     La llibreria SCSP gestiona les seves pròpies transaccions JDBC (beginTransaction/commit).
+	     jta="false" a JBoss fa que les connexions mai s'enrolin en JTA, permetent
+	     setAutoCommit(false) en qualsevol context (init Spring, EJBs CMT, PollingTask). -->
+	<bean id="scspDataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
+		<property name="jndiName" value="java:jboss/datasources/pinbalScspDS"/>
+		<property name="resourceRef" value="false"/>
+	</bean>
+
 	<bean id="sessionFactory" class="org.springframework.orm.hibernate5.LocalSessionFactoryBean">
-		<property name="dataSource" ref="mainDataSource" />
+		<property name="dataSource" ref="scspDataSource" />
 		<property name="packagesToScan" value="es.scsp.common.domain.**" />
 		<property name="hibernateProperties">
 			<value>

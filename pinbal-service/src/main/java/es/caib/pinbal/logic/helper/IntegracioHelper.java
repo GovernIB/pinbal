@@ -84,10 +84,14 @@ public class IntegracioHelper {
 		accio.setTipus(tipus);
 		accio.setTempsResposta(tempsResposta);
 		accio.setEstat(IntegracioAccioEstatEnumDto.OK);
-		
+
 //		addAccio(integracioCodi, accio);
-		integracioAccioService.create(accio);		
-		
+		try {
+			integracioAccioService.create(accio);
+		} catch (Exception e) {
+			logger.error("Error guardant accio OK al monitor d'integració ({})", integracioCodi, e);
+		}
+
 		logger.debug(descripcio + ", Parametres: " + parametres + ", Temps resposta: " + tempsResposta);
 	}
 
@@ -158,10 +162,14 @@ public class IntegracioHelper {
 		if (throwable != null){
 			accio.setExcepcioMessage(trimToMaxLength(ExceptionUtils.getMessage(throwable), 1000));
 			accio.setExcepcioStacktrace(trimToMaxLength(ExceptionUtils.getStackTrace(throwable), 2000));
-		} 
-		
+		}
+
 //		addAccio(integracioCodi, accio);
-		integracioAccioService.create(accio);
+		try {
+			integracioAccioService.create(accio);
+		} catch (Exception e) {
+			logger.error("Error guardant accio ERROR al monitor d'integració ({})", integracioCodi, e);
+		}
 	}
 
 	private String trimToMaxLength (String input, int maxLength){

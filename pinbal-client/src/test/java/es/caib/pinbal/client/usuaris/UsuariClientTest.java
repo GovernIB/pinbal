@@ -2,13 +2,13 @@ package es.caib.pinbal.client.usuaris;
 
 import es.caib.pinbal.client.comu.LogLevel;
 import es.caib.pinbal.client.comu.Page;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class UsuariClientTest {
 
@@ -20,7 +20,7 @@ public class UsuariClientTest {
     private String existingProcedimentCodi = "";
     private String existingServeiCodi = "";
 
-    @Before
+    @BeforeEach
     public void setUp() {
         // La URL base ha de corresponder-se amb el teu servidor real
         String urlBase = "http://localhost:8180/pinbalapi"; // Exemples; ajusta això segons el teu entorn
@@ -108,11 +108,11 @@ public class UsuariClientTest {
         Page<UsuariEntitat> usuarisPage = usuariClient.getUsuaris(entitatCodi, filtreUsuaris, page, size, sort);
 
         // Verifica que el resultat no sigui nul i conté dades
-        assertNotNull("La pàgina d'usuaris no hauria de ser nul", usuarisPage);
-        assertNotNull("La llista de contingut no hauria de ser nul", usuarisPage.getContent());
+        assertNotNull(usuarisPage, "La pàgina d'usuaris no hauria de ser nul");
+        assertNotNull(usuarisPage.getContent(), "La llista de contingut no hauria de ser nul");
 
         // Opcional: Comprova si s'ha recuperat almenys un usuari
-        assertTrue("Hi hauria d'haver almenys un usuari a la pàgina", usuarisPage.getContent().size() > 0);
+        assertTrue(usuarisPage.getContent().size() > 0, "Hi hauria d'haver almenys un usuari a la pàgina");
     }
 
     @Test
@@ -142,8 +142,8 @@ public class UsuariClientTest {
 
         Page<UsuariEntitat> usuarisPage = usuariClient.getUsuaris(existingEntitatCodi, filtreUsuaris, page, size, sort);
 
-        assertNotNull("La pàgina d'usuaris no hauria de ser nul", usuarisPage);
-        assertEquals("El nombre total d'usuaris hauria de ser zero", 0, usuarisPage.getContent().size());
+        assertNotNull(usuarisPage, "La pàgina d'usuaris no hauria de ser nul");
+        assertEquals(0, usuarisPage.getContent().size(), "El nombre total d'usuaris hauria de ser zero");
     }
 
     @Test
@@ -172,7 +172,7 @@ public class UsuariClientTest {
 
         try {
             UsuariEntitat usuariEntitat = usuariClient.getUsuari(usuariCodi, entitatCodi);
-            assertNotNull("L'usuari no hauria de ser nul", usuariEntitat);
+            assertNotNull(usuariEntitat, "L'usuari no hauria de ser nul");
         } catch (Exception e) {
             fail("No hauria d'haver llançat excepció: " + e.getMessage());
         }
@@ -197,7 +197,7 @@ public class UsuariClientTest {
         String entitatCodi = existingEntitatCodi;
 
         UsuariEntitat usuariEntitat = usuariClient.getUsuari(usuariCodi, entitatCodi);
-        assertNull("L'usuari hauria de ser nul quan no es troba", usuariEntitat);
+        assertNull(usuariEntitat, "L'usuari hauria de ser nul quan no es troba");
     }
 
     @Test
@@ -291,7 +291,7 @@ public class UsuariClientTest {
 
         try {
             PermisosServei permisosServei = usuariClient.getUserPermissions(usuariCodi, entitatCodi);
-            assertNotNull("Els permisos no haurien de ser nuls", permisosServei);
+            assertNotNull(permisosServei, "Els permisos no haurien de ser nuls");
         } catch (Exception e) {
             fail("No hauria d'haver llançat excepció: " + e.getMessage());
         }
@@ -316,7 +316,7 @@ public class UsuariClientTest {
         String entitatCodi = existingEntitatCodi;
 
         PermisosServei permisosServei = usuariClient.getUserPermissions(usuariCodi, entitatCodi);
-        assertNull("Els permisos haurien de ser nuls quan no es troben", permisosServei);
+        assertNull(permisosServei, "Els permisos haurien de ser nuls quan no es troben");
     }
 
     @Test

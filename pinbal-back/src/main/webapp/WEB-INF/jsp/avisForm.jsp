@@ -25,7 +25,7 @@
 </head>
 <body>
 	<c:set var="formAction"><c:url value="/modal/avis/save"/></c:set>
-	<form:form action="${formAction}" method="post" cssClass="form-horizontal" commandName="avisCommand" role="form">
+	<form:form action="${formAction}" method="post" cssClass="form-horizontal" modelAttribute="avisCommand" role="form">
 		<form:hidden path="id"/>
 		<pbl:inputText name="assumpte" textKey="avis.form.camp.assumpte" required="true"/>
 		<pbl:inputTextarea name="missatge" textKey="avis.form.camp.missatge" required="true"/>

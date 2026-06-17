@@ -47,9 +47,9 @@ public interface ConsultaService {
 
 	public static String ERROR_SEPARADOR = "|||";
 
-    @PreAuthorize("hasRole('ROLE_DELEG')")
+    @PreAuthorize("isAuthenticated()")
     public ConsultaDto peticioSincrona(ConsultaDto consulta) throws ProcedimentServeiNotFoundException, ServeiNotAllowedException, ConsultaScspException, ConsultaNotFoundException;
-    @PreAuthorize("hasRole('ROLE_DELEG')")
+    @PreAuthorize("isAuthenticated()")
     public ConsultaDto peticioAsincrona(ConsultaDto consulta) throws ProcedimentServeiNotFoundException, ServeiNotAllowedException, ConsultaScspException, ValidacioDadesPeticioException;
 
 	/**
@@ -65,7 +65,7 @@ public interface ConsultaService {
 	 * @throws ConsultaScspException
 	 *            Si hi ha hagut algun error en la consulta al servei SCSP.
 	 */
-	@PreAuthorize("hasRole('ROLE_DELEG')")
+	@PreAuthorize("isAuthenticated()")
 	public ConsultaDto novaConsulta(
 			ConsultaDto consulta) throws ProcedimentServeiNotFoundException, ServeiNotAllowedException, ConsultaScspException;
 
@@ -84,7 +84,7 @@ public interface ConsultaService {
 	 * @throws ConsultaScspGeneracioException
 	 *            Si hi ha hagut algun error generant la petició SCSP.
 	 */
-	@PreAuthorize("hasRole('ROLE_DELEG')")
+	@PreAuthorize("isAuthenticated()")
 	public ConsultaDto novaConsultaInit(
 			ConsultaDto consulta) throws ProcedimentServeiNotFoundException, ServeiNotAllowedException, ConsultaScspGeneracioException;
 
@@ -100,7 +100,7 @@ public interface ConsultaService {
 	 * @throws ConsultaScspException
 	 *            Si hi ha hagut algun error fent la consulta al servei SCSP.
 	 */
-	@PreAuthorize("hasRole('ROLE_DELEG')")
+	@PreAuthorize("isAuthenticated()")
 	public void novaConsultaEnviament(
 			Long consultaId,
 			ConsultaDto consulta) throws ProcedimentServeiNotFoundException, ConsultaNotFoundException, ConsultaScspException;
@@ -118,7 +118,7 @@ public interface ConsultaService {
 	 * @throws ConsultaScspException
 	 *            Si hi ha hagut algun error al recuperar l'estat de la consulta.
 	 */
-	@PreAuthorize("hasRole('ROLE_DELEG')")
+	@PreAuthorize("isAuthenticated()")
 	public ConsultaDto novaConsultaEstat(
 			Long consultaId) throws ConsultaNotFoundException, ConsultaScspException;
 
@@ -137,7 +137,7 @@ public interface ConsultaService {
 	 * @throws ConsultaScspException
 	 *            Si hi ha hagut algun error en la consulta al servei SCSP.
 	 */
-	@PreAuthorize("hasRole('ROLE_DELEG')")
+	@PreAuthorize("isAuthenticated()")
 	public ConsultaDto novaConsultaMultiple(
 			ConsultaDto consulta) throws ValidacioDadesPeticioException, ProcedimentServeiNotFoundException, ServeiNotAllowedException, ConsultaScspException;
 
@@ -161,7 +161,7 @@ public interface ConsultaService {
 	 * @throws ConsultaScspException
 	 *            Si hi ha hagut algun error en la consulta al servei SCSP.
 	 */
-	@PreAuthorize("hasRole('ROLE_WS')")
+	@PreAuthorize("hasRole('PBL_WS')")
 	public ConsultaDto novaConsultaRecobriment(
 			String serveiCodi,
 			RecobrimentSolicitudDto solicitud) throws EntitatNotFoundException, ProcedimentNotFoundException, ProcedimentServeiNotFoundException, ServeiNotAllowedException, ConsultaScspException;
@@ -187,7 +187,7 @@ public interface ConsultaService {
 	 * @throws ConsultaScspException
 	 *            Si hi ha hagut algun error en la consulta al servei SCSP.
 	 */
-	@PreAuthorize("hasRole('ROLE_WS')")
+	@PreAuthorize("hasRole('PBL_WS')")
 	public ConsultaDto novaConsultaRecobrimentInit(
 			String serveiCodi,
 			RecobrimentSolicitudDto solicitud) throws EntitatNotFoundException, ProcedimentNotFoundException, ProcedimentServeiNotFoundException, ServeiNotAllowedException, ConsultaScspException;
@@ -206,7 +206,7 @@ public interface ConsultaService {
 	 * @throws ConsultaScspException
 	 *            Si hi ha hagut algun error en la consulta al servei SCSP.
 	 */
-	@PreAuthorize("hasRole('ROLE_WS')")
+	@PreAuthorize("hasRole('PBL_WS')")
 	public void novaConsultaRecobrimentEnviament(
 			Long consultaId,
 			RecobrimentSolicitudDto solicitud) throws ConsultaNotFoundException, ConsultaScspException;
@@ -224,7 +224,7 @@ public interface ConsultaService {
 	 * @throws ConsultaScspException
 	 *            Si hi ha hagut algun error en la consulta al servei SCSP.
 	 */
-	@PreAuthorize("hasRole('ROLE_WS')")
+	@PreAuthorize("hasRole('PBL_WS')")
 	public ConsultaDto novaConsultaRecobrimentEstat(
 			Long consultaId) throws ConsultaNotFoundException, ConsultaScspException;
 
@@ -252,7 +252,7 @@ public interface ConsultaService {
 			String serveiCodi,
 			List<RecobrimentSolicitudDto> solicituds) throws EntitatNotFoundException, ProcedimentNotFoundException, ProcedimentServeiNotFoundException, ServeiNotAllowedException, ConsultaScspException;
 
-	@PreAuthorize("hasRole('ROLE_DELEG') or hasRole('ROLE_ADMIN')")
+	@PreAuthorize("isAuthenticated()")
     ArxiuDetallDto obtenirArxiuInfo(Long consultaId);
 
     /**
@@ -268,7 +268,7 @@ public interface ConsultaService {
 	 * @throws JustificantGeneracioException
 	 *            Si es produeixen errors al generar el justificant.
 	 */
-	@PreAuthorize("hasRole('ROLE_DELEG') or hasRole('ROLE_ADMIN')")
+	@PreAuthorize("isAuthenticated()")
 	public JustificantDto obtenirJustificant(
 			Long id,
 			boolean isAdmin) throws ConsultaNotFoundException, JustificantGeneracioException;
@@ -286,7 +286,7 @@ public interface ConsultaService {
 	 * @throws JustificantGeneracioException
 	 *            Si es produeixen errors al generar el justificant.
 	 */
-	@PreAuthorize("hasRole('ROLE_WS')")
+	@PreAuthorize("hasRole('PBL_WS')")
 	public JustificantDto obtenirJustificant(
 			String idpeticion,
 			String idsolicitud,
@@ -305,7 +305,7 @@ public interface ConsultaService {
 	 * @throws JustificantGeneracioException
 	 *            Si es produeixen errors al generar el justificant.
 	 */
-	@PreAuthorize("hasRole('ROLE_DELEG')")
+	@PreAuthorize("isAuthenticated()")
 	public FitxerDto obtenirJustificantMultipleConcatenat(
 			Long id) throws ConsultaNotFoundException, JustificantGeneracioException;
 
@@ -321,7 +321,7 @@ public interface ConsultaService {
 	 * @throws JustificantGeneracioException
 	 *            Si es produeixen errors al generar el justificant.
 	 */
- @PreAuthorize("hasRole('ROLE_DELEG')")
+ @PreAuthorize("isAuthenticated()")
     public FitxerDto obtenirJustificantMultipleZip(
             Long id) throws ConsultaNotFoundException, JustificantGeneracioException;
 
@@ -329,7 +329,7 @@ public interface ConsultaService {
      * Descarrega tots els missatges XML de la consulta en un arxiu ZIP, organitzats per tipus de missatge.
      * @param id Atribut id de la consulta.
      */
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('PBL_ADMIN')")
     public FitxerDto descarregarXmlTokensZip(Long id) throws ConsultaNotFoundException;
 
 	/**
@@ -347,7 +347,7 @@ public interface ConsultaService {
 	 * @throws JustificantGeneracioException
 	 *            Si es produeixen errors al generar el justificant.
 	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_DELEG')")
+	@PreAuthorize("isAuthenticated()")
 	public JustificantDto reintentarGeneracioJustificant(
 			Long id,
 			boolean descarregar,
@@ -368,7 +368,7 @@ public interface ConsultaService {
 	 * @throws EntitatNotFoundException
 	 *            Si l'entitat especificada no existeix.
 	 */
-	@PreAuthorize("hasRole('ROLE_DELEG')")
+	@PreAuthorize("isAuthenticated()")
 	public Page<ConsultaDto> findSimplesByFiltrePaginatPerDelegat(
 			Long entitatId,
 			ConsultaFiltreDto filtre,
@@ -389,7 +389,7 @@ public interface ConsultaService {
 	 * @throws EntitatNotFoundException
 	 *            Si l'entitat especificada no existeix.
 	 */
-	@PreAuthorize("hasRole('ROLE_DELEG')")
+	@PreAuthorize("isAuthenticated()")
 	public Page<ConsultaDto> findMultiplesByFiltrePaginatPerDelegat(
 			Long entitatId,
 			ConsultaFiltreDto filtre,
@@ -409,13 +409,13 @@ public interface ConsultaService {
 	 * @throws EntitatNotFoundException
 	 *            Si l'entitat especificada no existeix.
 	 */
-	@PreAuthorize("hasRole('ROLE_AUDIT')")
+	@PreAuthorize("hasRole('PBL_AUDIT')")
 	public Page<ConsultaDto> findByFiltrePaginatPerAuditor(
 			Long entitatId,
 			ConsultaFiltreDto filtre,
 			Pageable pageable) throws EntitatNotFoundException;
 
-	@PreAuthorize("hasRole('ROLE_AUDIT')")
+	@PreAuthorize("hasRole('PBL_AUDIT')")
 	List<ConsultaDto> findByFiltrePerAuditor(Long entitatId, ConsultaFiltreDto filtre) throws EntitatNotFoundException;
 
 	/**
@@ -431,7 +431,7 @@ public interface ConsultaService {
 	 * @throws EntitatNotFoundException
 	 *            Si l'entitat especificada no existeix.
 	 */
-	@PreAuthorize("hasRole('ROLE_SUPERAUD')")
+	@PreAuthorize("hasRole('PBL_SUPERAUD')")
 	public Page<ConsultaDto> findByFiltrePaginatPerSuperauditor(
 			Long entitatId,
 			ConsultaFiltreDto filtre,
@@ -453,7 +453,7 @@ public interface ConsultaService {
 	 * @throws ProcedimentNotFoundException
 	 *            Si el procediment especificat no existeix.
 	 */
-//	@PreAuthorize("hasRole('ROLE_REPORT')")
+//	@PreAuthorize("hasRole('PBL_REPORT')")
 	public List<DadesObertesRespostaConsulta> findByFiltrePerOpenData(
 			String entitatCodi,
 			Date dataInici,
@@ -474,7 +474,7 @@ public interface ConsultaService {
 	 * @throws EntitatNotFoundException
 	 *            Si l'entitat especificada no existeix.
 	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasRole('PBL_ADMIN')")
 	public Page<ConsultaDto> findByFiltrePaginatPerAdmin(
 			ConsultaFiltreDto filtre,
 			Pageable pageable) throws EntitatNotFoundException;
@@ -490,7 +490,7 @@ public interface ConsultaService {
 	 * @throws ScspException
 	 *            Si es produeixen errors al accedir al SCSP.
 	 */
-	@PreAuthorize("hasRole('ROLE_DELEG')")
+	@PreAuthorize("isAuthenticated()")
 	public ConsultaDto findOneDelegat(Long id) throws ConsultaNotFoundException, ScspException;
 
 	/**
@@ -504,7 +504,7 @@ public interface ConsultaService {
 	 * @throws ScspException
 	 *            Si es produeixen errors al accedir al SCSP.
 	 */
-	@PreAuthorize("hasRole('ROLE_AUDIT')")
+	@PreAuthorize("hasRole('PBL_AUDIT')")
 	public ConsultaDto findOneAuditor(Long id) throws ConsultaNotFoundException, ScspException;
 
 	/**
@@ -518,7 +518,7 @@ public interface ConsultaService {
 	 * @throws ScspException
 	 *            Si es produeixen errors al accedir al SCSP.
 	 */
-	@PreAuthorize("hasRole('ROLE_SUPERAUD')")
+	@PreAuthorize("hasRole('PBL_SUPERAUD')")
 	public ConsultaDto findOneSuperauditor(Long id) throws ConsultaNotFoundException, ScspException;
 
 	/**
@@ -532,7 +532,7 @@ public interface ConsultaService {
 	 * @throws ScspException
 	 *            Si es produeixen errors al accedir al SCSP.
 	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasRole('PBL_ADMIN')")
 	public ConsultaDto findOneAdmin(Long id) throws ConsultaNotFoundException, ScspException;
 
 	/**
@@ -546,7 +546,7 @@ public interface ConsultaService {
 	 * @throws ScspException
 	 *            Si es produeixen errors al accedir al SCSP.
 	 */
-	@PreAuthorize("hasRole('ROLE_DELEG')")
+	@PreAuthorize("isAuthenticated()")
 	public List<ConsultaDto> findAmbPare(Long pareId) throws ConsultaNotFoundException, ScspException;
 
 	/**
@@ -559,7 +559,7 @@ public interface ConsultaService {
 	 * @throws EntitatNotFoundException
 	 *             Si no s'ha trobat cap entitat amb l'id especificat.
 	 */
-	@PreAuthorize("hasRole('ROLE_DELEG')")
+	@PreAuthorize("isAuthenticated()")
 	public long countConsultesMultiplesProcessant(
 			Long entitatId) throws EntitatNotFoundException;
 
@@ -573,7 +573,7 @@ public interface ConsultaService {
 	 * @throws EntitatNotFoundException
 	 *            Si l'entitat especificada no existeix.
 	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_REPRES') or hasRole('ROLE_REPORT')")
+	@PreAuthorize("hasRole('PBL_ADMIN') or hasRole('PBL_REPRES') or hasRole('PBL_REPORT')")
 	public List<EstadisticaDto> findEstadistiquesByFiltre(EstadistiquesFiltreDto filtre) throws EntitatNotFoundException;
 
 	/**
@@ -584,7 +584,7 @@ public interface ConsultaService {
 	 * @param filtre
 	 * @return una taula hash amb les estadístiques organitzades per entitat.
 	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_REPORT')")
+	@PreAuthorize("hasRole('PBL_ADMIN') or hasRole('PBL_REPORT')")
 	public Map<EntitatDto, List<EstadisticaDto>> findEstadistiquesGlobalsByFiltre(
 			EstadistiquesFiltreDto filtre);
 
@@ -593,7 +593,7 @@ public interface ConsultaService {
 	 * 
 	 * @return la llista d'informació de càrrega.
 	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_REPORT')")
+	@PreAuthorize("hasRole('PBL_ADMIN') or hasRole('PBL_REPORT')")
 	public List<CarregaDto> findEstadistiquesCarrega();
 
 	/**
@@ -611,7 +611,7 @@ public interface ConsultaService {
 	 * @throws EntitatNotFoundException
 	 *            Si l'entitat especificada no existeix.
 	 */
-	@PreAuthorize("hasRole('ROLE_AUDIT')")
+	@PreAuthorize("hasRole('PBL_AUDIT')")
 	public List<Long> auditoriaGenerarAuditor(
 			Long entitatId,
 			Date dataInici,
@@ -631,7 +631,7 @@ public interface ConsultaService {
 	 * @throws ScspException
 	 *            Si es produeixen errors al accedir al SCSP.
 	 */
-	@PreAuthorize("hasRole('ROLE_AUDIT')")
+	@PreAuthorize("hasRole('PBL_AUDIT')")
 	public List<ConsultaDto> auditoriaConsultarAuditor(
 			Long entitatId,
 			List<Long> consultaIds) throws EntitatNotFoundException, ScspException;
@@ -649,7 +649,7 @@ public interface ConsultaService {
 	 *            Nombre de consultes a seleccionar.
 	 * @return el llistat d'ids de consulta.
 	 */
-	@PreAuthorize("hasRole('ROLE_SUPERAUD')")
+	@PreAuthorize("hasRole('PBL_SUPERAUD')")
 	public List<Long> auditoriaGenerarSuperauditor(
 			Date dataInici,
 			Date dataFi,
@@ -665,7 +665,7 @@ public interface ConsultaService {
 	 * @throws ScspException
 	 *            Si es produeixen errors al accedir al SCSP.
 	 */
-	@PreAuthorize("hasRole('ROLE_SUPERAUD')")
+	@PreAuthorize("hasRole('PBL_SUPERAUD')")
 	public Map<EntitatDto, List<ConsultaDto>> auditoriaConsultarSuperauditor(
 			List<Long> consultaIds) throws ScspException;
 
@@ -711,22 +711,22 @@ public interface ConsultaService {
 	 *
 	 * @return true si s'ha d'optimitzar en 3 peticions o false en cas contrari.
 	 */
-	@PreAuthorize("hasRole('ROLE_DELEG') or hasRole('ROLE_WS')")
+	@PreAuthorize("isAuthenticated()")
 	public boolean isOptimitzarTransaccionsNovaConsulta();
 
-	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_REPORT')")
+	@PreAuthorize("hasRole('PBL_ADMIN') or hasRole('PBL_REPORT')")
 	public List<InformeGeneralEstatDto> informeGeneralEstat(
 			Date dataInici,
 			Date dataFi);
 
-	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_REPRES')")
+	@PreAuthorize("hasRole('PBL_ADMIN') or hasRole('PBL_REPRES')")
 	public List<InformeProcedimentServeiDto> informeUsuarisEntitatOrganProcedimentServei(
 			Long entitatId,
 			String rolActual,
 			InformeRepresentantFiltreDto filtre);
 
 
-//	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_DELEG')")
+//	@PreAuthorize("isAuthenticated()")
 	public ArbreRespostaDto generarArbreResposta(Long consultaId) throws Exception;
 
 }

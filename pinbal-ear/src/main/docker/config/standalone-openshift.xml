@@ -172,8 +172,8 @@
 					</security>
 				</datasource>
 				<datasource
-				    jndi-name="${env.JBOSS_DB_JNDI_NAME:java:jboss/datasources/[app]DS}"
-                    pool-name="${env.JBOSS_DB_POOL_NAME:[app]DS}"
+				    jndi-name="java:jboss/datasources/pinbalDS"
+                    pool-name="pinbalDS"
                     enabled="true"
                     use-java-context="true">
 
@@ -189,6 +189,46 @@
 						<password>${env.JBOSS_DB_PASSWORD}</password>
 					</security>
 				</datasource>
+				<!-- Datasource SCSP sense JTA: la llibreria SCSP gestiona les seves
+				     pròpies transaccions JDBC (session.beginTransaction/commit).
+				     jta="false" evita que IronJacamar rebutgi setAutoCommit(false)
+				     quan hi ha una transacció JTA activa al context EJB o PollingTask. -->
+				<datasource
+				    jndi-name="java:jboss/datasources/pinbalScspDS"
+				    pool-name="pinbalScspDS"
+				    enabled="true"
+				    use-java-context="true"
+				    jta="false">
+
+					<connection-url>${env.JBOSS_DB_URL}</connection-url>
+					<driver>${env.JBOSS_DB_DRIVER:oracle}</driver>
+					<pool>
+						<min-pool-size>1</min-pool-size>
+						<max-pool-size>5</max-pool-size>
+					</pool>
+					<security>
+						<user-name>${env.JBOSS_DB_USERNAME}</user-name>
+						<password>${env.JBOSS_DB_PASSWORD}</password>
+					</security>
+				</datasource>
+                <datasource
+                        jndi-name="java:jboss/datasources/usuarisDS"
+                        pool-name="usuarisDS"
+                        enabled="true"
+                        use-java-context="true">
+
+                    <connection-url>${env.JBOSS_USER_DB_URL}</connection-url>
+                    <driver>${env.JBOSS_DB_DRIVER:oracle}</driver>
+                    <pool>
+                        <min-pool-size>1</min-pool-size>
+                        <max-pool-size>10</max-pool-size>
+                        <prefill>true</prefill>
+                    </pool>
+                    <security>
+                        <user-name>${env.JBOSS_USER_DB_USERNAME}</user-name>
+                        <password>${env.JBOSS_USER_DB_PASSWORD}</password>
+                    </security>
+                </datasource>
 				<drivers>
 					<driver name="h2" module="com.h2database.h2">
 						<xa-datasource-class>org.h2.jdbcx.JdbcDataSource</xa-datasource-class>
@@ -533,8 +573,8 @@
             <mail-session name="default" jndi-name="java:jboss/mail/Default">
                 <smtp-server outbound-socket-binding-ref="mail-smtp"/>
             </mail-session>
-            <mail-session name="[app]-mail" jndi-name="java:jboss/mail/[App]Session">
-                <smtp-server username="${env.JBOSS_MAIL_USERNAME}" password="${env.JBOSS_MAIL_PASSWORD}" ssl="${env.JBOSS_MAIL_SSL:true}" tls="${env.JBOSS_MAIL_TLS:true}" outbound-socket-binding-ref="[app]-smtp"/>
+            <mail-session name="pinbal-mail" jndi-name="java:jboss/mail/PinbalSession">
+                <smtp-server username="${env.JBOSS_MAIL_USERNAME}" password="${env.JBOSS_MAIL_PASSWORD}" ssl="${env.JBOSS_MAIL_SSL:true}" tls="${env.JBOSS_MAIL_TLS:true}" outbound-socket-binding-ref="pinbal-smtp"/>
             </mail-session>
         </subsystem>        <subsystem xmlns="urn:jboss:domain:messaging-activemq:4.0">
                 <server name="default">
@@ -697,7 +737,7 @@
                 <auth-server-url>${env.JBOSS_AUTH_URL}</auth-server-url>
                 <ssl-required>${env.JBOSS_AUTH_SSL_REQUIRED:EXTERNAL}</ssl-required>
             </realm>
-            <secure-deployment name="[app]-back.war">
+            <secure-deployment name="pinbal-back.war">
                 <auth-server-url>${env.JBOSS_AUTH_URL}</auth-server-url>
                 <realm>${env.JBOSS_AUTH_REALM}</realm>
                 <resource>${env.JBOSS_AUTH_CLIENTID}</resource>
@@ -706,7 +746,7 @@
                 <principal-attribute>preferred_username</principal-attribute>
                 <verify-token-audience>true</verify-token-audience>
             </secure-deployment>
-            <secure-deployment name="[app]-api-interna.war">
+            <secure-deployment name="pinbal-api-interna.war">
                 <auth-server-url>${env.JBOSS_AUTH_URL}</auth-server-url>
                 <realm>${env.JBOSS_AUTH_REALM}</realm>
                 <resource>${env.JBOSS_AUTH_CLIENTID_REST}</resource>
@@ -716,7 +756,7 @@
                 <principal-attribute>preferred_username</principal-attribute>
                 <credential name="secret">${env.JBOSS_AUTH_SECRET}</credential>
             </secure-deployment>
-            <secure-deployment name="[app]-api-externa.war">
+            <secure-deployment name="pinbal-api-externa.war">
                 <auth-server-url>${env.JBOSS_AUTH_URL}</auth-server-url>
                 <realm>${env.JBOSS_AUTH_REALM}</realm>
                 <resource>${env.JBOSS_AUTH_CLIENTID_REST_EXTERNA:${env.JBOSS_AUTH_CLIENTID_REST}}</resource>
@@ -762,7 +802,7 @@
         <outbound-socket-binding name="mail-smtp">
             <remote-destination host="localhost" port="25"/>
         </outbound-socket-binding>
-		<outbound-socket-binding name="[app]-smtp" source-port="0" fixed-source-port="false">
+		<outbound-socket-binding name="pinbal-smtp" source-port="0" fixed-source-port="false">
 			<remote-destination host="${env.JBOSS_MAIL_HOST}" port="${env.JBOSS_MAIL_PORT:25}"/>
 		</outbound-socket-binding>
     </socket-binding-group>

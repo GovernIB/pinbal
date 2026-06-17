@@ -27,7 +27,7 @@ public interface UsuariService {
 	 * Inicialitza les dades de l'usuari actual a la taula d'usuaris consultant
 	 * el plugin de dades d'usuari.
 	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_REPRES') or hasRole('ROLE_DELEG') or hasRole('ROLE_AUDIT') or hasRole('ROLE_SUPERAUD') or hasRole('ROLE_WS')")
+	@PreAuthorize("isAuthenticated()")
 	public void inicialitzarUsuariActual();
 
 	/**
@@ -41,7 +41,7 @@ public interface UsuariService {
 	 *            Paràmetres per a la paginació i ordenació dels resultats.
 	 * @return El llistat d'entitats paginat.
 	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasRole('PBL_ADMIN')")
 	public Page<EntitatUsuariDto> findAmbFiltrePaginat(
 			Long id_entitat,
 			Boolean isRepresentant,
@@ -60,7 +60,7 @@ public interface UsuariService {
 	 * 
 	 * @return Les dades de l'usuari.
 	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_REPRES') or hasRole('ROLE_DELEG') or hasRole('ROLE_AUDIT') or hasRole('ROLE_SUPERAUD') or hasRole('ROLE_WS')")
+	@PreAuthorize("isAuthenticated()")
 	public UsuariDto getDades();
 
 	/**
@@ -72,7 +72,7 @@ public interface UsuariService {
 	 * 
 	 * @return Les dades de l'usuari.
 	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_REPRES') or hasRole('ROLE_DELEG') or hasRole('ROLE_AUDIT') or hasRole('ROLE_SUPERAUD') or hasRole('ROLE_WS')")
+	@PreAuthorize("isAuthenticated()")
 	public UsuariDto getDades(
 			String usuariCodi);
 
@@ -105,7 +105,7 @@ public interface UsuariService {
 	 * @throws UsuariExternNotFoundException
 	 *            Si l'usuari no existeix al sistema extern.
 	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasRole('PBL_ADMIN')")
 	public void actualitzarDadesAdmin(
 			Long id,
 			String codi,
@@ -147,7 +147,7 @@ public interface UsuariService {
 	 * @throws UsuariExternNotFoundException
 	 *            Si l'usuari no existeix al sistema extern.
 	 */
-	@PreAuthorize("hasRole('ROLE_REPRES')")
+	@PreAuthorize("hasRole('PBL_REPRES')")
 	public void actualitzarDadesRepresentant(
 			Long id,
 			String codi,
@@ -180,7 +180,7 @@ public interface UsuariService {
 	 * @throws UsuariExternNotFoundException
 	 *            Si l'usuari no existeix al sistema extern.
 	 */
-	@PreAuthorize("hasRole('ROLE_AUDIT')")
+	@PreAuthorize("hasRole('PBL_AUDIT')")
 	public void actualitzarDadesAuditor(
 			Long id,
 			String codi,
@@ -201,7 +201,7 @@ public interface UsuariService {
 	 * @throws EntitatUsuariNotFoundException
 	 *            Si l'entitat no té aquest usuari afegit.
 	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasRole('PBL_ADMIN')")
 	public boolean establirPrincipal(
 			Long id,
 			String usuariCodi) throws EntitatNotFoundException, EntitatUsuariNotFoundException;
@@ -214,7 +214,7 @@ public interface UsuariService {
 	 *
 	 * @return true si s'usuari queda en estat actiu o false en cas contrari.
 	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_REPRES')")
+	@PreAuthorize("hasRole('PBL_ADMIN') or hasRole('PBL_REPRES')")
 	boolean canviActiu(Long entitatId, String usuariCodi) throws EntitatNotFoundException, EntitatUsuariNotFoundException;
 
 	/**
@@ -222,7 +222,7 @@ public interface UsuariService {
 	 * 
 	 * @return Les dades per a generar l'informe.
 	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_REPRES') or hasRole('ROLE_DELEG') or hasRole('ROLE_AUDIT') or hasRole('ROLE_REPORT')")
+	@PreAuthorize("isAuthenticated()")
 	public List<InformeUsuariDto> informeUsuarisAgrupatsEntitatDepartament();
 
 	/**
@@ -230,11 +230,11 @@ public interface UsuariService {
 	 * 
 	 * @return L'usuari actual.
 	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_REPRES') or hasRole('ROLE_DELEG') or hasRole('ROLE_AUDIT')")
+	@PreAuthorize("isAuthenticated()")
 	public UsuariDto getUsuariActual();
-	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_REPRES') or hasRole('ROLE_DELEG') or hasRole('ROLE_AUDIT')")
+	@PreAuthorize("isAuthenticated()")
 	public String getIdiomaUsuariActual();
-	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_REPRES') or hasRole('ROLE_DELEG') or hasRole('ROLE_AUDIT')")
+	@PreAuthorize("isAuthenticated()")
 	public Integer getNumElementsPaginaDefecte();
 
 	/**
@@ -242,33 +242,33 @@ public interface UsuariService {
 	 * 
 	 * @return L'usuari actual.
 	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_REPRES') or hasRole('ROLE_DELEG') or hasRole('ROLE_AUDIT')")
+	@PreAuthorize("isAuthenticated()")
 	public UsuariDto updateUsuariActual(UsuariDto dto, boolean updateEntitat);
 
-	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_REPRES') or hasRole('ROLE_DELEG') or hasRole('ROLE_AUDIT') or hasRole('ROLE_SUPERAUD') or hasRole('ROLE_WS')")
+	@PreAuthorize("isAuthenticated()")
     public List<UsuariDto> findLikeCodiONom(String text);
 
-	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_REPRES') or hasRole('ROLE_DELEG') or hasRole('ROLE_AUDIT') or hasRole('ROLE_SUPERAUD') or hasRole('ROLE_WS')")
+	@PreAuthorize("isAuthenticated()")
 	public List<UsuariDto> findLikeCodiONomONif(String text);
 
-	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_REPRES') or hasRole('ROLE_DELEG') or hasRole('ROLE_AUDIT') or hasRole('ROLE_SUPERAUD') or hasRole('ROLE_WS')")
+	@PreAuthorize("isAuthenticated()")
 	public EntitatUsuariDto getEntitatUsuari(Long entitatId, String usuariCodi);
 
-	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_REPRES') or hasRole('ROLE_DELEG') or hasRole('ROLE_AUDIT') or hasRole('ROLE_SUPERAUD') or hasRole('ROLE_WS')")
+	@PreAuthorize("isAuthenticated()")
     public UsuariDto getUsuariExtern(String codi) throws Exception;
 
-	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_REPRES') or hasRole('ROLE_DELEG') or hasRole('ROLE_AUDIT') or hasRole('ROLE_SUPERAUD') or hasRole('ROLE_WS')")
+	@PreAuthorize("isAuthenticated()")
 	List<UsuariDto> getUsuarisExterns(String text) throws Exception;
 
-	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_REPRES') or hasRole('ROLE_DELEG') or hasRole('ROLE_AUDIT') or hasRole('ROLE_SUPERAUD') or hasRole('ROLE_WS')")
+	@PreAuthorize("isAuthenticated()")
 	UsuariDto getUsuariEntitat(Long entitatId, String codi);
 
-	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_REPRES') or hasRole('ROLE_DELEG') or hasRole('ROLE_AUDIT') or hasRole('ROLE_SUPERAUD') or hasRole('ROLE_WS')")
+	@PreAuthorize("isAuthenticated()")
 	List<UsuariDto> getUsuarisEntitat(Long entitatId, String text);
 
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasRole('PBL_ADMIN')")
 	Long updateUsuariCodi(String codiAntic, String codiNou);
 
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasRole('PBL_ADMIN')")
 	void updateUsuariCodi(String codiAntic, String codiNou, String nom, String nif, String email, String idioma);
 }

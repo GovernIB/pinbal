@@ -1,14 +1,16 @@
 /**
- * 
+ *
  */
 package es.caib.pinbal.ejb.config;
 
+import es.caib.pinbal.logic.config.PinbalPropertySourceLoader;
 import es.caib.pinbal.logic.intf.base.config.BaseConfig;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.freemarker.FreeMarkerAutoConfiguration;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
@@ -35,6 +37,11 @@ public class EjbContextConfig {
 
 	private static boolean initialized;
 	private static ApplicationContext applicationContext;
+
+	@Bean
+	public static PinbalPropertySourceLoader pinbalPropertySourceLoader() {
+		return new PinbalPropertySourceLoader();
+	}
 
 	public static ApplicationContext getApplicationContext() {
 		if (!initialized) {

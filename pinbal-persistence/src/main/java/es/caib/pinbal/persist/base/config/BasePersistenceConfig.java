@@ -15,7 +15,6 @@ import org.springframework.jdbc.datasource.lookup.JndiDataSourceLookup;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.transaction.TransactionManager;
 import org.springframework.transaction.jta.JtaTransactionManager;
 
 import javax.sql.DataSource;
@@ -115,9 +114,9 @@ public abstract class BasePersistenceConfig {
 	@Bean
 	@Primary
 	@ConditionalOnProperty(value = PropertyConfig.PROP_PERSIST_TRANSACTION_MANAGER_ENABLED, havingValue = "true", matchIfMissing = true)
-	public TransactionManager mainTransactionManager(EntityManagerFactoryBuilder builder) {
+	public PlatformTransactionManager mainTransactionManager(EntityManagerFactoryBuilder builder) {
 		log.debug("Creating main TransactionManager...");
-		PlatformTransactionManager transactionManager;
+		final PlatformTransactionManager transactionManager;
 		if (!containerTransactionsDisabled && isJboss()) {
 			JtaTransactionManager jtaTransactionManager = new JtaTransactionManager();
 			jtaTransactionManager.setTransactionManagerName("java:/TransactionManager");

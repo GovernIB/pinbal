@@ -1,6 +1,6 @@
 
 function webutilContextPath() {
-	return '/pinbal';
+	return '/pinbalback';
 }
 function webutilModalTancarPath() {
 	return webutilContextPath() + '/modal/tancar';

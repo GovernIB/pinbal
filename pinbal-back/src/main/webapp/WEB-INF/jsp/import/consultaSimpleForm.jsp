@@ -6,22 +6,22 @@
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@ taglib tagdir="/WEB-INF/tags/pinbal" prefix="pbl" %>
 <%
-es.caib.pinbal.core.dto.ServeiDto servei = (es.caib.pinbal.core.dto.ServeiDto)request.getAttribute("servei");
-java.util.List<es.caib.pinbal.core.dto.ConsultaDto.DocumentTipus> documentTipusValors = new java.util.ArrayList<es.caib.pinbal.core.dto.ConsultaDto.DocumentTipus>();
+es.caib.pinbal.logic.intf.dto.ServeiDto servei = (es.caib.pinbal.logic.intf.dto.ServeiDto)request.getAttribute("servei");
+java.util.List<es.caib.pinbal.logic.intf.dto.ConsultaDto.DocumentTipus> documentTipusValors = new java.util.ArrayList<es.caib.pinbal.logic.intf.dto.ConsultaDto.DocumentTipus>();
 if (servei.isPinbalPermesDocumentTipusDni()) {
-	documentTipusValors.add(es.caib.pinbal.core.dto.ConsultaDto.DocumentTipus.DNI);
+	documentTipusValors.add(es.caib.pinbal.logic.intf.dto.ConsultaDto.DocumentTipus.DNI);
 }
 if (servei.isPinbalPermesDocumentTipusNif()) {
-	documentTipusValors.add(es.caib.pinbal.core.dto.ConsultaDto.DocumentTipus.NIF);
+	documentTipusValors.add(es.caib.pinbal.logic.intf.dto.ConsultaDto.DocumentTipus.NIF);
 }
 if (servei.isPinbalPermesDocumentTipusCif()) {
-	documentTipusValors.add(es.caib.pinbal.core.dto.ConsultaDto.DocumentTipus.CIF);
+	documentTipusValors.add(es.caib.pinbal.logic.intf.dto.ConsultaDto.DocumentTipus.CIF);
 }
 if (servei.isPinbalPermesDocumentTipusNie()) {
-	documentTipusValors.add(es.caib.pinbal.core.dto.ConsultaDto.DocumentTipus.NIE);
+	documentTipusValors.add(es.caib.pinbal.logic.intf.dto.ConsultaDto.DocumentTipus.NIE);
 }
 if (servei.isPinbalPermesDocumentTipusPas()) {
-	documentTipusValors.add(es.caib.pinbal.core.dto.ConsultaDto.DocumentTipus.Passaport);
+	documentTipusValors.add(es.caib.pinbal.logic.intf.dto.ConsultaDto.DocumentTipus.Passaport);
 }
 pageContext.setAttribute("documentTipusValors", documentTipusValors);
 java.util.Map<?,?> map = (java.util.Map<?,?>)request.getAttribute("campsDadesEspecifiquesAgrupats");

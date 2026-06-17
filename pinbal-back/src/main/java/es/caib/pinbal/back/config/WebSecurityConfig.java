@@ -4,12 +4,10 @@ import es.caib.pinbal.back.base.config.BaseWebSecurityConfig;
 import es.caib.pinbal.back.base.config.MethodSecurityConfig;
 import es.caib.pinbal.logic.intf.base.config.BaseConfig;
 import es.caib.pinbal.logic.intf.base.util.HttpRequestUtil;
+import es.caib.pinbal.logic.intf.keycloak.JwtClaimsHelper;
 import es.caib.pinbal.logic.intf.model.auth.PinbalAuthenticationDetails;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
-import org.keycloak.KeycloakPrincipal;
-import org.keycloak.representations.AccessToken;
-import org.keycloak.representations.IDToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
@@ -32,6 +30,8 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
@@ -105,6 +105,7 @@ public class WebSecurityConfig extends BaseWebSecurityConfig {
 							.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
 							.invalidSessionUrl("/"));
 		}
+		http.servletApi(api -> api.rolePrefix(""));
 		super.customHttpSecurityConfiguration(http);
 	}
 
@@ -169,30 +170,31 @@ public class WebSecurityConfig extends BaseWebSecurityConfig {
 				Collection<String> j2eeUserRoles = getUserRoles(context);
 				logger.debug("Roles from ServletRequest for " + context.getUserPrincipal().getName() + ": " + j2eeUserRoles);
 				PreAuthenticatedGrantedAuthoritiesWebAuthenticationDetails result;
-				if (context.getUserPrincipal() instanceof KeycloakPrincipal) {
-					KeycloakPrincipal<?> keycloakPrincipal = ((KeycloakPrincipal<?>)context.getUserPrincipal());
+				Map<String, Object> claims = JwtClaimsHelper.parseBearerToken(context.getHeader("Authorization"));
+				if (claims != null) {
 					Set<String> roles = new HashSet<>(j2eeUserRoles);
-					AccessToken.Access realmAccess = keycloakPrincipal.getKeycloakSecurityContext().getToken().getRealmAccess();
-					if (realmAccess != null && realmAccess.getRoles() != null) {
-						logger.debug("Keycloak token realm roles: " + realmAccess.getRoles());
-						realmAccess.getRoles().stream().
+					List<String> realmRoles = JwtClaimsHelper.getRealmRoles(claims);
+					if (!realmRoles.isEmpty()) {
+						logger.debug("JWT token realm roles: " + realmRoles);
+						realmRoles.stream().
 								map(r -> MethodSecurityConfig.DEFAULT_ROLE_PREFIX + r).
 								forEach(roles::add);
 					}
-					IDToken idToken = keycloakPrincipal.getKeycloakSecurityContext().getIdToken();
 					Collection<? extends GrantedAuthority> grantedAuthorities = j2eeUserRoles2GrantedAuthoritiesMapper.
 							getGrantedAuthorities(roles);
 					filterAllowedGrantedAuthorities(new HashSet<>(grantedAuthorities));
+					String preferredUsername = nameAttributeKey.equals("preferred_username") ?
+							JwtClaimsHelper.getStringClaim(claims, "preferred_username") :
+							JwtClaimsHelper.getStringClaim(claims, nameAttributeKey);
 					result = new PreauthWebAuthenticationDetails(
 							context,
 							j2eeUserRoles2GrantedAuthoritiesMapper.getGrantedAuthorities(roles),
-							keycloakPrincipal.getKeycloakSecurityContext().getIdTokenString(),
-							nameAttributeKey.equals("preferred_username") ?
-									idToken.getPreferredUsername() :
-									(String)idToken.getOtherClaims().get(nameAttributeKey),
-							idToken.getName(),
-							idToken.getEmail(),
-							(String)idToken.getOtherClaims().get("nif"),
+							context.getHeader("Authorization") != null ?
+									context.getHeader("Authorization").substring(7) : null,
+							preferredUsername,
+							JwtClaimsHelper.getStringClaim(claims, "name"),
+							JwtClaimsHelper.getStringClaim(claims, "email"),
+							JwtClaimsHelper.getStringClaim(claims, "nif"),
 							roles.toArray(new String[0]));
 				} else {
 					Collection<? extends GrantedAuthority> grantedAuthorities = j2eeUserRoles2GrantedAuthoritiesMapper.

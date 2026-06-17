@@ -30,7 +30,7 @@ public interface EntitatService {
 	 *            Informació de l'entitat a crear.
 	 * @return L'entitat creada.
 	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasRole('PBL_ADMIN')")
 	public EntitatDto create(EntitatDto creada);
 
 	/**
@@ -42,7 +42,7 @@ public interface EntitatService {
 	 * @throws EntitatNotFoundException
 	 *             Si no s'ha trobat troba cap entitat amb l'id especificat.
 	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasRole('PBL_ADMIN')")
 	public EntitatDto update(EntitatDto modificada) throws EntitatNotFoundException;
 
 	/**
@@ -54,7 +54,7 @@ public interface EntitatService {
 	 * @throws EntitatNotFoundException
 	 *             Si no s'ha trobat cap entitat amb l'id especificat.
 	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasRole('PBL_ADMIN')")
 	public EntitatDto delete(Long entitatId) throws EntitatNotFoundException;
 
 	/**
@@ -62,7 +62,7 @@ public interface EntitatService {
 	 * 
 	 * @return Un llistat d'entitats.
 	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasRole('PBL_ADMIN')")
 	public List<EntitatDto> findAll();
 
 
@@ -81,7 +81,7 @@ public interface EntitatService {
 	 * 				Unitatat arrel a cercar
 	 * @return El llistat d'entitats paginat.
 	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasRole('PBL_ADMIN')")
 	public Page<EntitatDto> findAmbFiltrePaginat(
 			String codi,
 			String nom,
@@ -98,7 +98,7 @@ public interface EntitatService {
 	 *            Atribut id de l'entitat a trobar.
 	 * @return L'entitat trobada. Si no s'ha trobat cap entitat retorna null.
 	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_REPRES') or hasRole('ROLE_DELEG') or hasRole('ROLE_AUDIT') or hasRole('ROLE_SUPERAUD')")
+	@PreAuthorize("isAuthenticated()")
 	public EntitatDto findById(Long id);
 
 	/**
@@ -108,7 +108,7 @@ public interface EntitatService {
 	 *            Atribut codi de l'entitat a trobar.
 	 * @return L'entitat trobada. Si no s'ha trobat cap entitat retorna null.
 	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasRole('PBL_ADMIN')")
 	public EntitatDto findByCodi(String codi);
 	
 	/**
@@ -118,7 +118,7 @@ public interface EntitatService {
 	 *            Atribut tipus de l'entitat a trobar.
 	 * @return L'entitat trobada. Si no s'ha trobat cap entitat retorna null.
 	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasRole('PBL_ADMIN')")
 	public EntitatDto findTopByTipus(EntitatTipusDto tipus);
 	
 	/**
@@ -128,7 +128,7 @@ public interface EntitatService {
 	 *            Atribut cif de l'entitat a trobar.
 	 * @return L'entitat trobada. Si no s'ha trobat cap entitat retorna null.
 	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasRole('PBL_ADMIN')")
 	public EntitatDto findByCif(String cif);
 
 	/**
@@ -138,7 +138,7 @@ public interface EntitatService {
 	 *            Identificador de l'entitat
 	 * @return Llista amb tots els organs gestors asociats a la entitat
 	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_REPRES')")
+	@PreAuthorize("hasRole('PBL_ADMIN') or hasRole('PBL_REPRES')")
 	public List<OrganGestorDto> getOrgansGestors(Long id);
 	
 	/**
@@ -152,7 +152,7 @@ public interface EntitatService {
 	 * @throws EntitatNotFoundException
 	 *             Si no s'ha trobat troba cap entitat amb l'id especificat.
 	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasRole('PBL_ADMIN')")
 	public EntitatDto updateActiva(Long id, boolean activa) throws EntitatNotFoundException;
 
 	/**
@@ -167,7 +167,7 @@ public interface EntitatService {
 	 * @throws ServeiNotFoundException
 	 *            Si no hi ha cap servei disponible amb el codi especificat.
 	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasRole('PBL_ADMIN')")
 	public void addServei(Long id, String serveiCodi) throws EntitatNotFoundException, ServeiNotFoundException;
 
 	/**
@@ -182,7 +182,7 @@ public interface EntitatService {
 	 * @throws EntitatServeiNotFoundException
 	 *            Si l'entitat no té aquest servei afegit.
 	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasRole('PBL_ADMIN')")
 	public void removeServei(Long id, String serveiCodi) throws EntitatNotFoundException, EntitatServeiNotFoundException;
 
 	/**
@@ -192,7 +192,7 @@ public interface EntitatService {
 	 *            Codi de l'usuari.
 	 * @return El llistat d'entitats.
 	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_REPRES') or hasRole('ROLE_DELEG') or hasRole('ROLE_AUDIT') or hasRole('ROLE_SUPERAUD')")
+	@PreAuthorize("isAuthenticated()")
 	public List<EntitatDto> findActivesAmbUsuariCodi(String usuariCodi);
 
 	/**
@@ -207,12 +207,12 @@ public interface EntitatService {
 	 * @throws ServeiNotFoundException
 	 *            Si no hi ha cap servei amb el codi especificat.
 	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasRole('PBL_ADMIN')")
 	public List<EntitatDto> findDisponiblesPerRedireccionsBus(String serveiCodi) throws ServeiNotFoundException;
 
-	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_REPRES') or hasRole('ROLE_DELEG') or hasRole('ROLE_AUDIT') or hasRole('ROLE_SUPERAUD')")
+	@PreAuthorize("isAuthenticated()")
     public Long getEntitatIdPerDefecte(String usuari);
 
-	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_SUPERAUD')")
+	@PreAuthorize("hasRole('PBL_ADMIN') or hasRole('PBL_SUPERAUD')")
 	public List<EntitatDto> findActives();
 }

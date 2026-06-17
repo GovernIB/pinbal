@@ -30,7 +30,7 @@ public class EmissorCert implements Serializable {
 	@Column(name = "cif", length = 16, nullable = false)
 	private String cif;
 	@Column(name = "fechabaja")
-	@Temporal(TemporalType.DATE)
+	@Temporal(TemporalType.TIMESTAMP)
 	private Date dataBaixa;
 	
 	

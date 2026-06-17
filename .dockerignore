@@ -1,0 +1,61 @@
+# El Dockerfile only needs:
+#   pinbal-ear/src/main/docker/config/  (JBoss configuration files)
+#   pinbal-ear/target/pinbal.ear        (the deployable EAR)
+# Everything else is excluded.
+
+# ── Module target directories ─────────────────────────────────────────────────
+pinbal-back/target
+pinbal-backend/target
+pinbal-service/target
+pinbal-service-intf/target
+pinbal-persistence/target
+pinbal-ejb/target
+pinbal-api-interna/target
+pinbal-api-externa/target
+pinbal-scsp/target
+pinbal-scsp-fake/target
+pinbal-plugin/target
+pinbal-plugin-intf/target
+pinbal-client/target
+pinbal-client-legacy/target
+pinbal-client-intf/target
+
+# ── Module source directories ─────────────────────────────────────────────────
+pinbal-back/src
+pinbal-backend/src
+pinbal-service/src
+pinbal-service-intf/src
+pinbal-persistence/src
+pinbal-ejb/src
+pinbal-api-interna/src
+pinbal-api-externa/src
+pinbal-scsp/src
+pinbal-scsp-fake/src
+pinbal-plugin/src
+pinbal-plugin-intf/src
+pinbal-client/src
+pinbal-client-legacy/src
+pinbal-client-intf/src
+
+# ── pinbal-ear: keep only docker config and the EAR artifact ─────────────────
+# Exclude all target subdirectories/files except pinbal.ear
+pinbal-ear/target/docker
+pinbal-ear/target/pinbal
+pinbal-ear/target/temp
+pinbal-ear/target/application.xml
+pinbal-ear/target/maven-archiver
+pinbal-ear/target/maven-status
+
+# Exclude pinbal-ear sources not needed by Dockerfile
+pinbal-ear/src/test
+pinbal-ear/src/main/application
+pinbal-ear/src/main/resources
+
+# ── Miscellaneous ─────────────────────────────────────────────────────────────
+local-repo
+doc
+*.iml
+.git
+.idea
+**/.gitignore
+**/node_modules

@@ -23,8 +23,6 @@ public class AclSidEntity extends AbstractPersistable<Long> {
 	private boolean principal;
 	@Column(name = "sid", length = 100, nullable = false)
 	private String sid;
-	@Column(name = "class_id_type", length = 100)
-	private String classIdType;
 
 	private static final long serialVersionUID = -2299453443943600172L;
 

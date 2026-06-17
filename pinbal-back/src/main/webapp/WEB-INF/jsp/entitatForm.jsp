@@ -8,7 +8,7 @@
 <%
 	request.setAttribute(
 			"entitatTipusLlista",
-			es.caib.pinbal.core.dto.EntitatDto.EntitatTipusDto.values());
+			es.caib.pinbal.logic.intf.dto.EntitatDto.EntitatTipusDto.values());
 %>
 <html>
 <head>
@@ -30,7 +30,7 @@
 <body>
 
 	<c:url value="/modal/entitat/save" var="formAction"/>
-	<form:form action="${formAction}" method="post" cssClass="form-horizontal" commandName="entitatCommand">
+	<form:form action="${formAction}" method="post" cssClass="form-horizontal" modelAttribute="entitatCommand">
 		<form:hidden path="id"/>
 		<div class="row">					
 			<div class="col-md-12">

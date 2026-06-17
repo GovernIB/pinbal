@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.opensymphony.sitemesh.webapp.SiteMeshFilter;
 import es.caib.pinbal.back.base.config.BaseWebMvcConfig;
+import es.caib.pinbal.back.filter.OriginalServletPathFilter;
 import es.caib.pinbal.back.interceptor.PinbalInterceptor;
 import es.caib.pinbal.back.view.AuditorGenerarCsvView;
 import es.caib.pinbal.back.view.AuditorGenerarExcelView;
@@ -32,7 +33,6 @@ import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
-import org.springframework.core.io.Resource;
 import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 import org.springframework.web.servlet.AsyncHandlerInterceptor;
 import org.springframework.web.servlet.HandlerInterceptor;
@@ -46,11 +46,9 @@ import org.springframework.web.servlet.i18n.AcceptHeaderLocaleResolver;
 import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
 import org.springframework.web.servlet.i18n.SessionLocaleResolver;
 import org.springframework.web.servlet.view.BeanNameViewResolver;
-import org.springframework.web.servlet.resource.PathResourceResolver;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
@@ -75,6 +73,15 @@ public class WebMvcConfig extends BaseWebMvcConfig {
 	private static final long MAX_UPLOAD_SIZE = 52428800;
 
 	@Bean
+	public FilterRegistrationBean<OriginalServletPathFilter> originalServletPathFilter() {
+		FilterRegistrationBean<OriginalServletPathFilter> registrationBean = new FilterRegistrationBean<>();
+		registrationBean.setFilter(new OriginalServletPathFilter());
+		registrationBean.addUrlPatterns("/*");
+		registrationBean.setOrder(1);
+		return registrationBean;
+	}
+
+	@Bean
 	public FilterRegistrationBean<SiteMeshFilter> sitemeshFilter() {
 		FilterRegistrationBean<SiteMeshFilter> registrationBean = new FilterRegistrationBean<>();
 		registrationBean.setFilter(new SiteMeshFilter());
@@ -84,36 +91,9 @@ public class WebMvcConfig extends BaseWebMvcConfig {
 	}
 
 	@Override
-	protected boolean isJsAppResourceHandlerEnabled() {
-	    return true;
-	}
-
-	@Override
-	protected String getJsAppStaticFolder() {
-	    return "/reactapp";
-	}
-
-	@Override
 	public void addResourceHandlers(ResourceHandlerRegistry registry) {
-		// ResourceHandler per a que totes les peticions desconegudes passin per l'index.html
-		registry.
-			addResourceHandler(getJsAppStaticFolder() + "/**").
-			addResourceLocations(getJsAppStaticFolder() + "/").
-			resourceChain(true).
-			addResolver(new PathResourceResolver() {
-			    @Override
-			    protected Resource getResource(String resourcePath, Resource location) throws IOException {
-				Resource requestedResource = location.createRelative(resourcePath);
-				if (requestedResource.exists() && requestedResource.isReadable()) {
-					return requestedResource;
-				} else {
-					return location.createRelative("index.html");
-				}
-			    }
-			});
-		//  - Handler de recursos per /webjars/**
 		registry.addResourceHandler("/webjars/**")
-				.addResourceLocations("/META-INF/resources/webjars/");
+				.addResourceLocations("classpath:/META-INF/resources/webjars/");
 	}
 
 	@Override

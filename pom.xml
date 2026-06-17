@@ -20,7 +20,6 @@
 		<firma.simple.version>1.0.3</firma.simple.version>
 		<dir3caib.version>1.1.1</dir3caib.version>
 		<usuaris.ldap.version>4.0.0-SNAPSHOT</usuaris.ldap.version>
-		<!--		<jersey.version>1.19.4</jersey.version>-->
 		<spring.version>${spring-framework.version}</spring.version>
 		<spring-data-jpa.version>2.7.12</spring-data-jpa.version>
 		<hibernate.validator.version>${hibernate-validator.version}</hibernate.validator.version>
@@ -131,6 +130,12 @@
 				<type>pom</type>
 				<scope>import</scope>
 			</dependency>
+			<dependency>
+				<groupId>javax.ws.rs</groupId>
+				<artifactId>jsr311-api</artifactId>
+				<version>1.1.1</version>
+				<scope>provided</scope>
+			</dependency>
 		</dependencies>
 	</dependencyManagement>
 	<modules>
@@ -147,6 +152,7 @@
 		<module>pinbal-ejb</module>
 		<module>pinbal-ear</module>
 		<module>pinbal-client</module>
+		<module>pinbal-client-legacy</module>
 		<module>pinbal-client-intf</module>
 	</modules>
 	<build>
