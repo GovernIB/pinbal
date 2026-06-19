@@ -81,6 +81,8 @@ public abstract class SuperConsulta extends PinbalAuditable<Long> implements ICo
     @Column(name = "arxiu_expedient_tancat")
     protected boolean arxiuExpedientTancat = false;
     @Column(name = "app_guarda_just_arx", nullable = false)
+    // Indica si és l'aplicació que ha fet la petició a través de recobriment
+    // qui s'encarrega de guardar el justificant a l'arxiu
     protected boolean aplicacioGuardaJustificantArxiu = false;
 
     @Column(name = "der")
@@ -202,5 +204,9 @@ public abstract class SuperConsulta extends PinbalAuditable<Long> implements ICo
 
     public void updateArxiuExpedientUuid(String arxiuExpedientUuid) {
         this.arxiuExpedientUuid = arxiuExpedientUuid;
+    }
+
+    public void updateArxiuDocumentUuid(String arxiuDocumentUuid) {
+        this.arxiuDocumentUuid = arxiuDocumentUuid;
     }
 }

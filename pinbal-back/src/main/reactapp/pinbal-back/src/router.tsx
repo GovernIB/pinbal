@@ -1,7 +1,7 @@
 import { createBrowserRouter, Navigate } from 'react-router-dom';
 import App from './App';
 import Home from './pages/Home';
-import AdminConsultaGrid from './pages/consulta/AdminConsultaGrid';
+import ConsultaGrid from './pages/consulta/ConsultaGrid';
 
 export const router = createBrowserRouter(
     [
@@ -18,8 +18,8 @@ export const router = createBrowserRouter(
                     element: <Home />,
                 },
                 {
-                    path: 'admin/consulta',
-                    element: <AdminConsultaGrid />,
+                    path: 'consulta',
+                    element: <ConsultaGrid />,
                 },
             ],
         },

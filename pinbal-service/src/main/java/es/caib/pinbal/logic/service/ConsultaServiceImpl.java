@@ -53,7 +53,6 @@ import es.caib.pinbal.logic.intf.dto.RespostaAtributsDto;
 import es.caib.pinbal.logic.intf.dto.arxiu.ArxiuDetallDto;
 import es.caib.pinbal.logic.intf.service.ConsultaService;
 import es.caib.pinbal.logic.intf.service.exception.AccesExternException;
-import es.caib.pinbal.logic.intf.service.exception.AccessDenegatException;
 import es.caib.pinbal.logic.intf.service.exception.ConsultaNotFoundException;
 import es.caib.pinbal.logic.intf.service.exception.ConsultaScspComunicacioException;
 import es.caib.pinbal.logic.intf.service.exception.ConsultaScspEstatException;
@@ -111,8 +110,10 @@ import es.caib.pluginsib.arxiu.api.ExpedientEstat;
 import es.scsp.bean.common.confirmacion.ConfirmacionPeticion;
 import es.scsp.common.domain.core.EmisorCertificado;
 import es.scsp.common.domain.core.Servicio;
+import es.scsp.common.task.PollingTask;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.exception.JDBCConnectionException;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -120,23 +121,29 @@ import org.springframework.context.ApplicationListener;
 import org.springframework.context.MessageSource;
 import org.springframework.context.MessageSourceAware;
 import org.springframework.context.event.ContextRefreshedEvent;
+import org.springframework.dao.DataAccessResourceFailureException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.jdbc.CannotGetJdbcConnectionException;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.acls.domain.PrincipalSid;
 import org.springframework.security.acls.model.AccessControlEntry;
 import org.springframework.security.acls.model.MutableAclService;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.CannotCreateTransactionException;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 import org.springframework.transaction.support.TransactionTemplate;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -144,6 +151,8 @@ import org.w3c.dom.NodeList;
 import javax.xml.ws.soap.SOAPFaultException;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.sql.SQLRecoverableException;
+import java.sql.SQLTransientConnectionException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -177,8 +186,10 @@ import static org.apache.commons.lang.StringUtils.isBlank;
 @Service
 public class ConsultaServiceImpl implements ConsultaService, ApplicationContextAware, MessageSourceAware, ApplicationListener<ContextRefreshedEvent> {
 
-	private static final String ROLE_ADMIN = "ROLE_ADMIN";
-	private static final String ROLE_REPRES = "ROLE_REPRES";
+	private static final String ROLE_ADMIN = "PBL_ADMIN";
+	private static final String ROLE_REPRES = "PBL_REPRES";
+	private static final int REVISIO_ESTAT_PETICIO_MAX_INTENTS = 2;
+	private static final long REVISIO_ESTAT_PETICIO_RETRY_DELAY_MS = 100L;
 
 	private final ConsultaRepository consultaRepository;
     private final DadesObertesConsultaRepository dadesObertesConsultaRepository;
@@ -1435,11 +1446,6 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 			log.error("No s'ha trobat la consulta (idpeticion=" + idpeticion + ", idsolicitud=" + idsolicitud + ")");
 			throw new ConsultaNotFoundException();
 		}
-		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-		if (!auth.getName().equals(consulta.getCreatedBy().orElseThrow().getCodi())) {
-			log.error("La consulta (idpeticion=" + idpeticion + ", idsolicitud=" + idsolicitud + ") no pertany a aquest usuari");
-			throw new AccessDenegatException("Només pot accedir al justificant l'usuari que ha realitzat la consulta");
-		}
 		return obtenirJustificantComu(consulta, ambContingut, versioImprimible);
 	}
 
@@ -1476,7 +1482,7 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 			log.debug("No s'ha trobat la consulta (id=" + id + ")");
 			throw new ConsultaNotFoundException();
 		}
-		if (!auth.getName().equals(consulta.getCreatedBy().orElseThrow().getCodi())) {
+		if (!isAdministrador(auth) && !auth.getName().equals(consulta.getCreatedBy().orElseThrow().getCodi())) {
 			log.debug("La consulta (id=" + id + ") no pertany a aquest usuari");
 			throw new ConsultaNotFoundException();
 		}
@@ -1522,7 +1528,7 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 			log.debug("No s'ha trobat la consulta (id=" + id + ")");
 			throw new ConsultaNotFoundException();
 		}
-		if (!auth.getName().equals(consulta.getCreatedBy().orElseThrow().getCodi())) {
+		if (!isAdministrador(auth) && !auth.getName().equals(consulta.getCreatedBy().orElseThrow().getCodi())) {
 			log.debug("La consulta (id=" + id + ") no pertany a aquest usuari");
 			throw new ConsultaNotFoundException();
 		}
@@ -2325,44 +2331,178 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 		return resposta;
 	}
 
-	@Transactional
+	@Transactional(propagation = Propagation.NOT_SUPPORTED)
 	@Override
 	public void autoRevisarEstatPeticionsMultiplesPendents() {
 		log.debug("Iniciant revisió automàtica dels estats de les peticions múltiples pendents de forma automàtica");
 		long t0 = System.currentTimeMillis();
-		List<Consulta> pendents = consultaRepository.findByEstatAndMultipleOrderByIdAsc(EstatTipus.Processant, true);
-		for (final Consulta pendent: pendents) {
-			TransactionTemplate transactionTemplate = new TransactionTemplate(transactionManager);
+		List<Object[]> pendents;	// [ConsultaId, peticioId]
+		try {
+			pendents = consultaRepository.findIdsAndScspPeticionIdsByEstatAndMultipleOrderByIdAsc(EstatTipus.Processant, true);
+		} catch (RuntimeException ex) {
+			log.error("No s'ha pogut obtenir el llistat de peticions múltiples pendents", ex);
+			return;
+		}
+		for (Object[] pendent: pendents) {
+			Long consultaId = (Long) pendent[0];
+			String scspPeticionId = (String) pendent[1];
+			try {
+				revisarEstatPeticioMultiplePendentAmbReintent(consultaId, scspPeticionId);
+			} catch (Exception ex) {
+				if (isRecoverableConnectionException(ex)) {
+					log.warn("No s'ha pogut obtenir l'estat de la consulta SCSP per un error recuperable de connexió (id=" + consultaId + ", peticionId=" + scspPeticionId + "): " + getRootCauseMessage(ex));
+					log.debug("Detall de l'error recuperable obtenint l'estat de la consulta SCSP (id=" + consultaId + ", peticionId=" + scspPeticionId + ")", ex);
+				} else {
+					log.error("No s'ha pogut obtenir l'estat de la consulta SCSP (id=" + consultaId + ", peticionId=" + scspPeticionId + ")", ex);
+				}
+			}
+		}
+		log.debug("Finalitzada revisió automàtica dels estats de les peticions múltiples pendents (" + (System.currentTimeMillis() - t0) + "ms)");
+	}
+
+	@Transactional(propagation = Propagation.NOT_SUPPORTED)
+	@Override
+	public void recuperarRespostaConsultaMultiple(
+			Long consultaId) throws ConsultaNotFoundException, ConsultaScspException {
+		LoggerHelper.getInstance().info("Recuperant manualment la resposta d'una consulta múltiple (consultaId=" + consultaId + ")", log, LoggerHelper.LoggingTipus.CONS_MULT);
+		Consulta consulta = consultaRepository.findById(consultaId).orElse(null);
+		if (consulta == null || !consulta.isMultiple()) {
+			LoggerHelper.getInstance().error("No s'ha trobat la consulta múltiple per recuperar la resposta (id=" + consultaId + ")", log, LoggerHelper.LoggingTipus.CONS_MULT);
+			throw new ConsultaNotFoundException();
+		}
+		if (!EstatTipus.Processant.equals(consulta.getEstat())) {
+			log.debug("No es recupera manualment la resposta de la consulta múltiple perquè no està en estat processant (id=" + consultaId + ", peticionId=" + consulta.getScspPeticionId() + ")");
+			return;
+		}
+		String scspPeticionId = consulta.getScspPeticionId();
+		try {
+			getPollingTask().processarPeticio(scspPeticionId);
+			revisarEstatPeticioMultiplePendentAmbReintent(consultaId, scspPeticionId);
+		} catch (Exception ex) {
+			log.error("No s'ha pogut recuperar manualment la resposta de la consulta múltiple (id=" + consultaId + ", peticionId=" + scspPeticionId + ")", ex);
+			throw new ConsultaScspEstatException(scspPeticionId, ex);
+		}
+	}
+
+	private void revisarEstatPeticioMultiplePendentAmbReintent(
+			Long consultaId,
+			String scspPeticionId) throws Exception {
+		int intent = 1;
+		while (true) {
+			try {
+				revisarEstatPeticioMultiplePendentEnNovaTransaccio(consultaId);
+				return;
+			} catch (Exception ex) {
+				if (!isRecoverableConnectionException(ex) || intent >= REVISIO_ESTAT_PETICIO_MAX_INTENTS) {
+					throw ex;
+				}
+				log.warn("Error recuperable de connexió obtenint l'estat de la consulta SCSP (id=" + consultaId + ", peticionId=" + scspPeticionId + "). Reintent " + (intent + 1) + "/" + REVISIO_ESTAT_PETICIO_MAX_INTENTS + ": " + getRootCauseMessage(ex));
+				log.debug("Detall de l'error recuperable obtenint l'estat de la consulta SCSP (id=" + consultaId + ", peticionId=" + scspPeticionId + ")", ex);
+				sleepBeforeRetry();
+				intent++;
+			}
+		}
+	}
+
+	private void revisarEstatPeticioMultiplePendentEnNovaTransaccio(final Long consultaId) throws es.scsp.common.exceptions.ScspException {
+		TransactionTemplate transactionTemplate = new TransactionTemplate(transactionManager);
+		transactionTemplate.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
+		try {
 			transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 				protected void doInTransactionWithoutResult(TransactionStatus status) {
+					// Obtenir el nom/ID de la transacció actual
+					String transactionName = TransactionSynchronizationManager.getCurrentTransactionName();
+					log.info("Transacció iniciada - Nom: {}", transactionName);
 					try {
-						ResultatEnviamentPeticio resultat = getScspHelper().recuperarResultatEnviamentPeticio(pendent.getScspPeticionId());
-						peticioScspHelper.updateEstatConsulta(pendent, resultat, null);
-						consultaRepository.saveAndFlush(pendent);
-						for (Consulta fill: pendent.getFills()) {
-							peticioScspHelper.updateEstatConsulta(fill, resultat, null);
-							consultaRepository.saveAndFlush(fill);
-                            /*if (EstatTipus.Tramitada.equals(filla.getEstat())) {
-								justificantHelperFactory.getJustificantHelper().generarCustodiarJustificantPendent(
-										filla,
-										getScspHelper());
-							}*/
-						}
-						if (EstatTipus.Tramitada.equals(pendent.getEstat())) {
-							log.info(
-									"Actualitzat l'estat de la consulta múltiple a TRAMITADA (" +
-											"id=" + pendent.getId() + ", " +
-											"scspPeticionId=" + pendent.getScspPeticionId() + ", " +
-											"scspSolicitudId=" + pendent.getScspSolicitudId() + ", " +
-											"arxiuExpedientUuid=" + pendent.getArxiuExpedientUuid() + ")");
-						}
-					} catch (Exception ex) {
-						log.error("No s'ha pogut obtenir l'estat de la consulta SCSP (peticionId=" + pendent.getScspPeticionId() + ")", ex);
+						revisarEstatPeticioMultiplePendent(consultaId);
+					} catch (RuntimeException ex) {
+						status.setRollbackOnly();
+						throw ex;
+					} catch (es.scsp.common.exceptions.ScspException ex) {
+						status.setRollbackOnly();
+						throw new RevisioEstatPeticioException(ex);
 					}
 				}
 			});
+		} catch (RevisioEstatPeticioException ex) {
+			throw (es.scsp.common.exceptions.ScspException) ex.getCause();
 		}
-		log.debug("Finalitzada revisió automàtica dels estats de les peticions múltiples pendents (" + (System.currentTimeMillis() - t0) + "ms)");
+	}
+
+	private void revisarEstatPeticioMultiplePendent(Long consultaId) throws es.scsp.common.exceptions.ScspException {
+		Consulta pendent = consultaRepository.findById(consultaId).orElse(null);
+		if (pendent == null) {
+			log.debug("No s'ha revisat l'estat de la consulta múltiple pendent perquè ja no existeix (id=" + consultaId + ")");
+			return;
+		}
+		if (!EstatTipus.Processant.equals(pendent.getEstat()) || !pendent.isMultiple()) {
+			log.debug("No s'ha revisat l'estat de la consulta múltiple pendent perquè ja no està pendent (id=" + consultaId + ", peticionId=" + pendent.getScspPeticionId() + ")");
+			return;
+		}
+		ResultatEnviamentPeticio resultat = getScspHelper().recuperarResultatEnviamentPeticio(pendent.getScspPeticionId());
+		peticioScspHelper.updateEstatConsulta(pendent, resultat, null);
+		consultaRepository.saveAndFlush(pendent);
+		for (Consulta fill: pendent.getFills()) {
+			peticioScspHelper.updateEstatConsulta(fill, resultat, null);
+			consultaRepository.saveAndFlush(fill);
+		}
+		if (EstatTipus.Tramitada.equals(pendent.getEstat())) {
+			log.info(
+					"Actualitzat l'estat de la consulta múltiple a TRAMITADA (" +
+							"id=" + pendent.getId() + ", " +
+							"scspPeticionId=" + pendent.getScspPeticionId() + ", " +
+							"scspSolicitudId=" + pendent.getScspSolicitudId() + ", " +
+							"arxiuExpedientUuid=" + pendent.getArxiuExpedientUuid() + ")");
+		}
+	}
+
+	private boolean isRecoverableConnectionException(Throwable ex) {
+		Throwable cause = ex;
+		while (cause != null) {
+			if (cause instanceof JDBCConnectionException ||
+					cause instanceof SQLRecoverableException ||
+					cause instanceof SQLTransientConnectionException ||
+					cause instanceof CannotCreateTransactionException ||
+					cause instanceof CannotGetJdbcConnectionException ||
+					cause instanceof DataAccessResourceFailureException) {
+				return true;
+			}
+			String message = cause.getMessage();
+			if (message != null) {
+				String normalizedMessage = message.toLowerCase(Locale.ROOT);
+				if (normalizedMessage.contains("conexión cerrada") ||
+						normalizedMessage.contains("closed connection") ||
+						normalizedMessage.contains("connection is closed")) {
+					return true;
+				}
+			}
+			cause = cause.getCause();
+		}
+		return false;
+	}
+
+	private String getRootCauseMessage(Throwable ex) {
+		Throwable cause = ex;
+		while (cause.getCause() != null) {
+			cause = cause.getCause();
+		}
+		return cause.getClass().getSimpleName() + ": " + cause.getMessage();
+	}
+
+	private void sleepBeforeRetry() {
+		try {
+			Thread.sleep(REVISIO_ESTAT_PETICIO_RETRY_DELAY_MS);
+		} catch (InterruptedException ex) {
+			Thread.currentThread().interrupt();
+		}
+	}
+
+	private static class RevisioEstatPeticioException extends RuntimeException {
+		private static final long serialVersionUID = -1785215394461489778L;
+
+		RevisioEstatPeticioException(Throwable cause) {
+			super(cause);
+		}
 	}
 
 	@Override
@@ -3228,7 +3368,12 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 								justificantHelperFactory.getJustificantHelper().generarCustodiarJustificantPendent(
 										consultaRefreshed,
 										getScspHelper());
-								consultaRepository.saveAndFlush(consultaRefreshed);
+								// consultaRefreshed ja és gestionada (managed) i ha estat modificada
+								// (updateJustificantEstat). Es fa flush() i NO saveAndFlush(): el merge
+								// d'una Consulta amb 'fills' (cascade=ALL) provoca un CollectionType.replace
+								// del graf pare-fills que acaba compartint la col·lecció 'fills' entre dues
+								// entitats ("Found shared references to a collection: Consulta.fills").
+								consultaRepository.flush();
 							}
 							return null;
 						}
@@ -3457,6 +3602,18 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 		}
 	}
 
+	private boolean isAdministrador(Authentication auth) {
+		if (auth == null || auth.getAuthorities() == null) {
+			return false;
+		}
+		for (GrantedAuthority authority: auth.getAuthorities()) {
+			if (authority != null && ROLE_ADMIN.equals(authority.getAuthority())) {
+				return true;
+			}
+		}
+		return false;
+	}
+
 	private ScspHelper getScspHelper() {
 		if (scspHelper == null) {
 			scspHelper = new ScspHelper(
@@ -3464,6 +3621,10 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 					messageSource);
 		}
 		return scspHelper;
+	}
+
+	private PollingTask getPollingTask() {
+		return applicationContext.getBean("pollingTimerTask", PollingTask.class);
 	}
 
 	private Object getJustificantLockForConsulta(Consulta consulta) {

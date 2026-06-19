@@ -387,6 +387,9 @@ $(document).ready(function () {
 					<legend><spring:message code="consulta.info.descarregar.justificant.etiqueta"/></legend>
 
 					<c:if test="${consulta.justificantEstatError}">
+						<c:url value="/admin/consulta/${consulta.id}/justificantReintentar" var="urlJustificantReintentar">
+							<c:param name="info" value="true"/>
+						</c:url>
 						<div class="row">
 							<div class="col-md-12">
 								<strong><spring:message code="consulta.info.descarregar.justificant"/></strong>
@@ -399,7 +402,7 @@ $(document).ready(function () {
 											</a>
 										</li>
 										<li>
-											<a href="../admin/consulta/${consulta.id}/justificantReintentar?info=true" class="justificant-reintentar">
+											<a href="${urlJustificantReintentar}" class="justificant-reintentar">
 												<i class="fas fa-redo-alt"></i>&nbsp;<spring:message code="consulta.list.taula.justif.error.reintentar"/>
 											</a>
 										</li>
@@ -432,36 +435,65 @@ $(document).ready(function () {
 							</div>
 						</c:if>
 
-						<div class="row">
+						<div class="row" style="margin-top: 15px;">
 							<div class="col-md-12">
 								<legend>
 									<spring:message code="consulta.info.descarregar.justificant.vistaPrevia"/>
+									<a id="mostrarVistaPrevia" class="btn btn-default btn-sm pull-right" style="cursor:pointer;">
+										<i class="far fa-eye"></i>&nbsp;<spring:message code="consulta.info.descarregar.justificant.vistaPrevia"/>
+									</a>
 								</legend>
-								<div id="pdf-container" class="well">
+									<%-- La vista prèvia NO es carrega en obrir el detall per evitar generar
+                                         el justificant innecessàriament; només es carrega quan l'usuari
+                                         clica el botó "Vista prèvia". --%>
+								<div id="spinner-container" style="display: none; text-align: center; padding: 20px;">
+									<i class="fas fa-spinner fa-spin fa-2x"></i>
+									<p><spring:message code="comu.opcio.carregant"/></p>
+								</div>
+								<div id="pdf-container" class="well" style="display: none;">
 									<object id="pdfObject"
-											data="${consulta.id}/justificant/inline"
-											type="application/pdf"
-											width="100%" height="500px">
+									        type="application/pdf"
+									        width="100%" height="500px">
 									</object>
 								</div>
 								<div id="error-container" style="display: none; color: #a94442; font-size: smaller;">
-									<i class="fas fa-exclamation-triangle"></i> Error: No s'ha pogut carregar el document PDF.
+									<i class="fas fa-exclamation-triangle"></i>&nbsp;<spring:message code="consulta.justificant.previsualitzacio.error"/>
 								</div>
 							</div>
 						</div>
 
 						<script>
 							document.addEventListener('DOMContentLoaded', function () {
-								const pdfObject = document.getElementById('pdfObject');
-								const errorContainer = document.getElementById('error-container');
-								const pdfContainer = document.getElementById('pdf-container');
+								var pdfObject = document.getElementById('pdfObject');
+								var errorContainer = document.getElementById('error-container');
+								var pdfContainer = document.getElementById('pdf-container');
+								var spinnerContainer = document.getElementById('spinner-container');
+								var mostrarVistaPrevia = document.getElementById('mostrarVistaPrevia');
+								var pdfLoaded = false;
 
-								// Verificar si el PDF es carrega
-								pdfObject.onerror = function () {
-									// Mostrar missatge d'error
-									errorContainer.style.display = 'block';
+								mostrarVistaPrevia.addEventListener('click', function () {
+									if (pdfLoaded) return;
+									spinnerContainer.style.display = 'block';
 									pdfContainer.style.display = 'none';
-								};
+									errorContainer.style.display = 'none';
+
+									fetch('${consulta.id}/justificant/inline')
+											.then(function(response) {
+												if (!response.ok) throw new Error('HTTP ' + response.status);
+												return response.blob();
+											})
+											.then(function(blob) {
+												var url = URL.createObjectURL(blob);
+												pdfObject.data = url;
+												spinnerContainer.style.display = 'none';
+												pdfContainer.style.display = 'block';
+												pdfLoaded = true;
+											})
+											.catch(function() {
+												spinnerContainer.style.display = 'none';
+												errorContainer.style.display = 'block';
+											});
+								});
 							});
 						</script>
 					</c:if>
@@ -497,6 +529,23 @@ $(document).ready(function () {
 			</div>
 		</div>
 	</div>
+	<c:if test="${consulta.justificantEstatError}">
+	<div id="modal-justificant-error" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+		<div class="modal-dialog modal-dialog-centered" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times</button>
+					<h3><spring:message code="consulta.list.taula.justif.error"/></h3>
+				</div>
+				<div class="modal-body">
+					<textarea style="width:98%" rows="18">${consulta.justificantError}</textarea>
+				</div>
+				<div class="modal-footer">
+				</div>
+			</div>
+		</div>
+	</div>
+	</c:if>
 	<div id="modal-justificant-arxiu-info" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
 		<div class="modal-dialog modal-dialog-centered" role="document">
 			<div class="modal-content">

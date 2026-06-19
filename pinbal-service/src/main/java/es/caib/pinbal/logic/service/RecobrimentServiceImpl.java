@@ -142,6 +142,9 @@ import java.util.Map;
 @Service
 public class RecobrimentServiceImpl implements RecobrimentService, ApplicationContextAware, MessageSourceAware {
 
+    // Les peticions de recobriment provenen d'aplicacions de tramitacio.
+    private static final boolean APLICACIO_GUARDA_JUSTIFICANT_ARXIU = false;
+
     private final ConsultaRepository consultaRepository;
     private final EntitatRepository entitatRepository;
     private final HistoricConsultaRepository historicConsultaRepository;
@@ -178,7 +181,9 @@ public class RecobrimentServiceImpl implements RecobrimentService, ApplicationCo
             ScspPeticion peticion) throws RecobrimentScspException {
         try {
             return toScspRespuesta(
-                    recobrimentHelper.peticionSincrona(toPeticion(peticion, false)));
+                    recobrimentHelper.peticionSincrona(
+                            toPeticion(peticion, false),
+                            APLICACIO_GUARDA_JUSTIFICANT_ARXIU));
         } catch (ScspException ex) {
             if (RecobrimentHelper.ERROR_CODE_SCSP_VALIDATION.equals(ex.getScspCode())) {
                 throw new RecobrimentScspValidationException(
@@ -213,7 +218,9 @@ public class RecobrimentServiceImpl implements RecobrimentService, ApplicationCo
             ScspPeticion peticion) throws RecobrimentScspException {
         try {
             return toScspConfirmacionPeticion(
-                    recobrimentHelper.peticionAsincrona(toPeticion(peticion, true)));
+                    recobrimentHelper.peticionAsincrona(
+                            toPeticion(peticion, true),
+                            APLICACIO_GUARDA_JUSTIFICANT_ARXIU));
         } catch (ScspException ex) {
             throw new RecobrimentScspException(
                     ex.getMessage(),
@@ -842,7 +849,7 @@ public class RecobrimentServiceImpl implements RecobrimentService, ApplicationCo
             Peticion peticion = recobrimentV2Helper.toPeticion(peticio);
             Respuesta scspRespuesta = recobrimentHelper.peticionSincrona(
                     peticion,
-                    peticio != null && Boolean.TRUE.equals(peticio.getAplicacioGuardaJustificantArxiu()));
+                    APLICACIO_GUARDA_JUSTIFICANT_ARXIU);
             resposta = recobrimentV2Helper.toRespostaSincrona(scspRespuesta);
         } catch (Exception e) {
             log.error("Error al realitzar petició sincrona al servei= " +
@@ -864,7 +871,7 @@ public class RecobrimentServiceImpl implements RecobrimentService, ApplicationCo
             Peticion peticion = recobrimentV2Helper.toPeticion(peticio);
             ConfirmacionPeticion respuesta = recobrimentHelper.peticionAsincrona(
                     peticion,
-                    peticio != null && Boolean.TRUE.equals(peticio.getAplicacioGuardaJustificantArxiu()));
+                    APLICACIO_GUARDA_JUSTIFICANT_ARXIU);
             resposta = recobrimentV2Helper.toConfirmacio(respuesta);
         } catch (Exception e) {
             log.error("Error al realitzar la petició asincrona al servei= " +

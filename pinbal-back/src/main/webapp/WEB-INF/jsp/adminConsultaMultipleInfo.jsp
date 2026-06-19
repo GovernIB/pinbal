@@ -261,7 +261,7 @@ $('#dadesResposta').on('shown', function () {
 		<div class="well well-lg">
 			<h3>
 				<spring:message code="consulta.multiple.info.generar.justificantpdf"/>
-				<a href="${consulta.id}/justificantpdf" 
+				<a href="<c:url value="/admin/consulta/${consulta.id}/justificantpdf"/>"
 					aria-label="<spring:message code="consulta.info.descarregar.pdf"/>" class="pull-right">
 					<i aria-hidden="true" class="fas fa-file-pdf"></i>
 				</a>
@@ -270,7 +270,7 @@ $('#dadesResposta').on('shown', function () {
 		<div class="well well-lg">
 			<h3>
 				<spring:message code="consulta.multiple.info.generar.justificantzip"/>
-				<a href="${consulta.id}/justificantzip" 
+				<a href="<c:url value="/admin/consulta/${consulta.id}/justificantzip"/>"
 					aria-label="<spring:message code="consulta.info.descarregar.zip"/>" class="pull-right">
 					<i class="far fa-file-archive"></i>
 				</a>
@@ -278,6 +278,11 @@ $('#dadesResposta').on('shown', function () {
 		</div>
 	</c:if>
 	<div id="modal-botons" class="well">
+		<c:if test="${potRecuperarRespostaConsultaMultiple and consulta.estatProcessant and not historic}">
+			<a href="<c:url value="/admin/consulta/${consulta.id}/recuperarResposta"/>" class="btn btn-primary">
+				<i class="fas fa-sync-alt"></i> <spring:message code="consulta.multiple.info.recuperar.resposta"/>
+			</a>
+		</c:if>
 		<a href="<c:url value="/admin/consulta"/>" class="btn btn-default" data-modal-cancel="true"><spring:message code="comu.boto.tancar"/></a>
 	</div>
 	<div id="modal-missatge-xml" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">

@@ -7,9 +7,12 @@ import es.caib.pinbal.persist.entity.Usuari;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.jpa.repository.QueryHints;
 import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+
+import javax.persistence.QueryHint;
 
 import java.util.List;
 import java.util.Optional;
@@ -58,6 +61,12 @@ public interface UsuariRepository extends JpaRepository<Usuari, String> {
 	@Query("from Usuari u where u.codi = :codi")
 	Optional<Usuari> getByCodiReadOnlyNewTransaction(@Param("codi") String codi);
 
+	// El proveïdor d'auditoria (AuditorAware) crida aquest mètode DINS del callback preUpdate del
+	// flush per resoldre el lastModifiedBy. Amb flushMode=AUTO (per defecte) la consulta dispararia
+	// un auto-flush, que tornaria a entrar a preUpdate -> auditor -> getByCodi -> auto-flush...
+	// provocant una recursió infinita (StackOverflowError). Amb flushMode=COMMIT la consulta no fa
+	// auto-flush però segueix participant en la transacció actual (no esgota el pool de connexions).
+	@QueryHints(@QueryHint(name = "org.hibernate.flushMode", value = "COMMIT"))
 	Optional<Usuari> getByCodi(String name);
 
 }

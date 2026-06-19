@@ -38,6 +38,7 @@ import java.util.List;
 import java.util.Map;
 
 import static org.hamcrest.CoreMatchers.containsString;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
@@ -477,6 +478,30 @@ public class RecobrimentRestV2ControllerTest {
         mockMvc.perform(post("/recobriment/v2/serveis/SERVEI001/peticioSincrona")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(new ObjectMapper().writeValueAsString(peticio)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.error").value(false));
+    }
+
+    @Test
+    public void testPeticioSincrona_IgnoraAplicacioGuardaJustificantArxiuDesfasat() throws Exception {
+        PeticioRespostaSincrona resposta = PeticioRespostaSincrona.builder().error(false).build();
+        Map<String, List<String>> respostaValidacio = new java.util.HashMap<>();
+
+        when(recobrimentService.validatePeticio(anyString(), any(PeticioSincrona.class))).thenReturn(respostaValidacio);
+        when(recobrimentService.peticionSincrona(any(PeticioSincrona.class))).thenReturn(resposta);
+
+        String peticio = "{"
+                + "\"dadesComunes\":{},"
+                + "\"solicitud\":{"
+                + "\"expedient\":\"1234\","
+                + "\"aplicacioGuardaJustificantArxiu\":false"
+                + "},"
+                + "\"aplicacioGuardaJustificantArxiu\":false"
+                + "}";
+
+        mockMvc.perform(post("/recobriment/v2/serveis/SERVEI001/peticioSincrona")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(peticio))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.error").value(false));
     }

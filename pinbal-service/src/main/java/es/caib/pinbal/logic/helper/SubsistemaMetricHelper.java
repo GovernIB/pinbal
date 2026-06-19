@@ -4,6 +4,8 @@ import com.codahale.metrics.Counter;
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.Timer;
 import es.caib.comanda.model.server.monitoring.EstatSalutEnum;
+import es.caib.comanda.model.server.monitoring.IntegracioPeticions;
+import es.caib.comanda.model.server.monitoring.IntegracioSalut;
 import es.caib.comanda.model.server.monitoring.SubsistemaSalut;
 import es.caib.comanda.ms.salut.helper.EstatHelper;
 import es.caib.pinbal.plugin.LastRequestsFifo;
@@ -175,9 +177,11 @@ public class SubsistemaMetricHelper {
         return metrica;
     }
 
-    private static void resetLocalTimers() {
-        for (Metrics metrica : METRICS.values()) {
-            metrica.resetLocalTimers();
+    private static void resetLocalTimers(boolean subsistemes) {
+        for (Map.Entry<String, Metrics> metricaEntry : METRICS.entrySet()) {
+            if (isSubsistema(metricaEntry.getKey()) == subsistemes) {
+                metricaEntry.getValue().resetLocalTimers();
+            }
         }
     }
 
@@ -187,7 +191,9 @@ public class SubsistemaMetricHelper {
 
     public static void addSuccessOperation(String subsistema, String servei, long duracio) {
         getMetrica(subsistema).addSuccess(duracio);
-        getMetrica(servei).addSuccess(duracio);
+        if (servei != null && !servei.trim().isEmpty()) {
+            getMetrica(servei).addSuccess(duracio);
+        }
     }
 
     public static void addErrorOperation(String subsistema) {
@@ -196,7 +202,9 @@ public class SubsistemaMetricHelper {
 
     public static void addErrorOperation(String subsistema, String servei) {
         getMetrica(subsistema).addError();
-        getMetrica(servei).addError();
+        if (servei != null && !servei.trim().isEmpty()) {
+            getMetrica(servei).addError();
+        }
     }
 
 
@@ -217,6 +225,10 @@ public class SubsistemaMetricHelper {
             String subsistema = metricaEntry.getKey();
             Metrics metrica = metricaEntry.getValue();
 
+            if (!isSubsistema(subsistema)) {
+                continue;
+            }
+
             subsistemasSalut.add(new SubsistemaSalut()
                     .codi(subsistema)
                     .latencia(metrica.getPeriodeMean())
@@ -229,7 +241,7 @@ public class SubsistemaMetricHelper {
                     .tempsMigUltimPeriode(metrica.getPeriodeMean()));
         }
 
-        resetLocalTimers();
+        resetLocalTimers(true);
         return subsistemasSalut;
     }
 
@@ -296,29 +308,40 @@ public class SubsistemaMetricHelper {
             estatSubsistemes = EstatSalutEnum.UNKNOWN;
         }
 
-        // Comprovam l'estat dels serveis
-        int serveisDownCount = 0;
-        int serveisNoDownCount = 0;
+        return estatSubsistemes;
+    }
+
+    public static List<IntegracioSalut> getIntegracionsSalut() {
+        List<IntegracioSalut> integracionsSalut = new ArrayList<>();
 
         for (Map.Entry<String, Metrics> metricaEntry : METRICS.entrySet()) {
-            String codi = metricaEntry.getKey();
+            String integracio = metricaEntry.getKey();
             Metrics metrica = metricaEntry.getValue();
 
-            // Si no és un subsistema conegut, és un servei
-            if (SubsistemesEnum.valueOfCodi(codi) == null) {
-                if (metrica.getEstatPeriode() == EstatSalutEnum.DOWN) {
-                    serveisDownCount++;
-                } else {
-                    serveisNoDownCount++;
-                }
+            if (isSubsistema(integracio)) {
+                continue;
             }
+
+            IntegracioPeticions integracioPeticions = new IntegracioPeticions()
+                    .totalOk(metrica.getTotalSuccess())
+                    .totalError(metrica.getTotalError())
+                    .totalTempsMig(metrica.getTotalMean())
+                    .peticionsOkUltimPeriode(metrica.getPeriodeSuccess())
+                    .peticionsErrorUltimPeriode(metrica.getPeriodeError())
+                    .tempsMigUltimPeriode(metrica.getPeriodeMean());
+            integracionsSalut.add(new IntegracioSalut()
+                    .codi(integracio)
+                    .latencia(metrica.getPeriodeMean())
+                    .estat(metrica.getEstatPeriode())
+                    .peticions(integracioPeticions));
         }
 
-        int serveisTotal = serveisDownCount + serveisNoDownCount;
-        double percentatgeServeisDown = (serveisDownCount * 100.0) / Math.max(1L, serveisTotal);
-        EstatSalutEnum estatServeis = EstatHelper.calculaEstat(percentatgeServeisDown);
+        resetLocalTimers(false);
+        return integracionsSalut;
+    }
 
-        return EstatHelper.mergeEstats(estatSubsistemes, estatServeis);
+    private static boolean isSubsistema(String codi) {
+        return SubsistemesEnum.valueOfCodi(codi) != null;
     }
 
     @Getter

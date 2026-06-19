@@ -19,12 +19,13 @@ import es.caib.comanda.model.server.monitoring.SubsistemaInfo;
 import es.caib.comanda.model.server.monitoring.SubsistemaSalut;
 import es.caib.comanda.ms.log.helper.LogFileStream;
 import es.caib.comanda.ms.log.helper.LogHelper;
-import es.caib.comanda.ms.salut.helper.IntegracioApp;
 import es.caib.comanda.ms.salut.helper.MonitorHelper;
 import es.caib.pinbal.logic.helper.ConfigHelper;
+import es.caib.pinbal.logic.helper.IntegracioHelper;
 import es.caib.pinbal.logic.helper.SubsistemaMetricHelper;
 import es.caib.pinbal.logic.helper.SubsistemaMetricHelper.SubsistemesEnum;
 import es.caib.pinbal.logic.helper.SubsistemaMetricHelper.SubsistemesInfo;
+import es.caib.pinbal.logic.intf.dto.IntegracioDto;
 import es.caib.pinbal.logic.intf.service.SalutService;
 import es.caib.pinbal.persist.entity.Avis;
 import es.caib.pinbal.persist.entity.Servei;
@@ -42,7 +43,9 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Implementació dels mètodes per a gestionar l'aplicació.
@@ -57,18 +60,26 @@ public class SalutServiceImpl implements SalutService {
     private final AvisRepository avisRepository;
     private final ServeiRepository serveiRepository;
     private final ConfigHelper configHelper;
+    private final IntegracioHelper integracioHelper;
 
 
     @Override
     public List<IntegracioInfo> getIntegracions() {
-        List<IntegracioInfo> integracions = new ArrayList<>();
-        integracions.add(new IntegracioInfo(IntegracioApp.USR.toString(), IntegracioApp.USR.getNom())); //Dades d'usuaris
-        integracions.add(new IntegracioInfo(IntegracioApp.SIG.toString(), IntegracioApp.SIG.getNom())); //Signatura
-        integracions.add(new IntegracioInfo(IntegracioApp.PFI.toString(), IntegracioApp.PFI.getNom())); //portafirmes
-        integracions.add(new IntegracioInfo(IntegracioApp.DIR.toString(), IntegracioApp.DIR.getNom())); //Unitats organitzatives
-        integracions.add(new IntegracioInfo(IntegracioApp.ARX.toString(), IntegracioApp.ARX.getNom())); //Arxiu
-        integracions.add(new IntegracioInfo(IntegracioApp.CUS.toString(), IntegracioApp.CUS.getNom())); //Custòdia
-        return integracions;
+        Map<String, IntegracioInfo> integracions = new LinkedHashMap<>();
+
+        for (IntegracioDto integracio: integracioHelper.findAll()) {
+            integracions.put(
+                    integracio.getCodi(),
+                    new IntegracioInfo(integracio.getCodi(), integracio.getNom()));
+        }
+
+        List<Servei> serveisActius = serveiRepository.findActius();
+        for (Servei servei: serveisActius) {
+            integracions.put(
+                    servei.getCodi(),
+                    new IntegracioInfo(servei.getCodi(), servei.getDescripcio()));
+        }
+        return new ArrayList<>(integracions.values());
     }
 
     @Override
@@ -77,11 +88,6 @@ public class SalutServiceImpl implements SalutService {
         // Subsistemes per consultes i obtenció de justificant
         for(SubsistemesEnum subsistema: SubsistemesEnum.values()) {
             subsistemes.add(new SubsistemaInfo().codi(subsistema.name()).nom(subsistema.getNom()));
-        }
-        // Un subsistema per servei actiu
-        List<Servei> serveisActius = serveiRepository.findActius();
-        for (Servei servei : serveisActius) {
-            subsistemes.add(new SubsistemaInfo().codi(servei.getCodi()).nom(servei.getDescripcio()));
         }
         return subsistemes;
     }
@@ -131,6 +137,9 @@ public class SalutServiceImpl implements SalutService {
             estatSalut = new EstatSalut()
                     .estat(estatGlobalSubsistemes)
                     .latencia(estatSalut.getLatencia());
+        }
+        if (EstatSalutEnum.DOWN.equals(salutDatabase.getEstat())) {
+            estatSalut.setEstat(EstatSalutEnum.ERROR);
         }
 
         return new SalutInfo()
@@ -188,7 +197,8 @@ public class SalutServiceImpl implements SalutService {
 
         List<IntegracioSalut> integracionsSalut = new ArrayList<>();
         try {
-            integracionsSalut = PluginMetricHelper.getIntegracionsSalut();
+            integracionsSalut.addAll(PluginMetricHelper.getIntegracionsSalut());
+            integracionsSalut.addAll(SubsistemaMetricHelper.getIntegracionsSalut());
         } catch (Exception e) {
             log.error("Error checkIntegracions", e);
             return Collections.emptyList();

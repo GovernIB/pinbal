@@ -330,16 +330,32 @@
 </script>
 <script id="template-justificant" type="x-tmpl-mustache">
 {{#estat-pendent}}
-<a class="btn btn-default btn-small btn-justificant" href="consulta/{{ id }}/justificant">
-<i class="far fa-file-pdf" title="<spring:message code="consulta.list.taula.descarregar.pdf"/>" 
+{{#multiple}}
+<a class="btn btn-default btn-small btn-justificant-multiple" href="consulta/{{ id }}/justificantpdf">
+<i class="far fa-file-pdf" title="<spring:message code="consulta.list.taula.descarregar.pdf"/>"
 			 alt="<spring:message code="consulta.list.taula.descarregar.pdf"/>"></i>
 </a>
+{{/multiple}}
+{{^multiple}}
+<a class="btn btn-default btn-small btn-justificant" href="consulta/{{ id }}/justificant">
+<i class="far fa-file-pdf" title="<spring:message code="consulta.list.taula.descarregar.pdf"/>"
+			 alt="<spring:message code="consulta.list.taula.descarregar.pdf"/>"></i>
+</a>
+{{/multiple}}
 {{/estat-pendent}}
 {{#estat-ok}}
-<a class="btn btn-default btn-small btn-justificant" href="consulta/{{ id }}/justificant">
-<i class="far fa-file-pdf" title="<spring:message code="consulta.list.taula.descarregar.pdf"/>" 
+{{#multiple}}
+<a class="btn btn-default btn-small btn-justificant-multiple" href="consulta/{{ id }}/justificantpdf">
+<i class="far fa-file-pdf" title="<spring:message code="consulta.list.taula.descarregar.pdf"/>"
 			 alt="<spring:message code="consulta.list.taula.descarregar.pdf"/>"></i>
 </a>
+{{/multiple}}
+{{^multiple}}
+<a class="btn btn-default btn-small btn-justificant" href="consulta/{{ id }}/justificant">
+<i class="far fa-file-pdf" title="<spring:message code="consulta.list.taula.descarregar.pdf"/>"
+			 alt="<spring:message code="consulta.list.taula.descarregar.pdf"/>"></i>
+</a>
+{{/multiple}}
 {{/estat-ok}}
 {{#estat-error}}
 <div class="btn-group">
@@ -353,20 +369,22 @@
 				<i class="fa fa-exclamation-triangle"></i>&nbsp;<spring:message code="consulta.list.taula.justif.error.veure"/>
 			</a>
 		</li>
+		{{^multiple}}
 		<li>
 			<a href="consulta/{{ id }}/justificantReintentar" class="justificant-reintentar">
 				<i class="fa fa-redo-alt"></i>&nbsp;<spring:message code="consulta.list.taula.justif.error.reintentar"/>
 			</a>
 		</li>
+		{{/multiple}}
 	</ul>
 </div>
 <div id="modal-justificant-error-{{ id }}" class="modal fade" role="dialog">
-	<div class="modal-dialog modal-lg">
-		<!-- Modal content-->
-		<div class="modal-content">
-		<div class="modal-header">
-			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-			<h3><spring:message code="consulta.list.taula.justif.error"/></h3>
+<div class="modal-dialog modal-lg">
+<!-- Modal content-->
+<div class="modal-content">
+<div class="modal-header">
+<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+<h3><spring:message code="consulta.list.taula.justif.error"/></h3>
 		</div>
 		<div class="modal-body">
 			<textarea style="width:98%" rows="18">{{ justificantError }}</textarea>

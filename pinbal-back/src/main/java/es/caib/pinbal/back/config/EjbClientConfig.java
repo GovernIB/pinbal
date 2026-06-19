@@ -5,8 +5,9 @@ package es.caib.pinbal.back.config;
 
 import es.caib.pinbal.logic.intf.base.service.PermissionEvaluatorService;
 import es.caib.pinbal.logic.intf.base.service.ResourceApiService;
-import es.caib.pinbal.logic.intf.resourceservice.ConsultaAdminResourceService;
+import es.caib.pinbal.logic.intf.resourceservice.ConsultaResourceService;
 import es.caib.pinbal.logic.intf.resourceservice.EntitatResourceService;
+import es.caib.pinbal.logic.intf.resourceservice.HistoricConsultaResourceService;
 import es.caib.pinbal.logic.intf.resourceservice.UsuariResourceService;
 import es.caib.pinbal.logic.intf.service.AplicacioService;
 import es.caib.pinbal.logic.intf.service.AvisService;
@@ -138,8 +139,13 @@ public class EjbClientConfig {
 	}
 
 	@Bean
-	public LocalStatelessSessionProxyFactoryBean consultaAdminResourceService() {
-		return getLocalEjbFactoyBean(ConsultaAdminResourceService.class, true);
+	public LocalStatelessSessionProxyFactoryBean consultaResourceService() {
+		return getLocalEjbFactoyBean(ConsultaResourceService.class, true);
+	}
+
+	@Bean
+	public LocalStatelessSessionProxyFactoryBean historicConsultaResourceService() {
+		return getLocalEjbFactoyBean(HistoricConsultaResourceService.class, true);
 	}
 
 	@Bean

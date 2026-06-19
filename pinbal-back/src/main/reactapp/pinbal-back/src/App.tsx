@@ -70,16 +70,14 @@ const InnerApp: React.FC = () => {
             to: 'home',
             icon: 'home',
         },
-        ...(currentRole === ROLE_ADMIN
-            ? [
-                  {
-                      id: 'adminConsulta',
-                      title: t('app.menu.adminConsulta'),
-                      to: 'admin/consulta',
-                      icon: 'search',
-                  },
-              ]
-            : []),
+        // La mateixa pantalla de consultes serveix per a administrador i delegat.
+        // El menú només es mostra quan l'usuari és admin o té una entitat seleccionada.
+        {
+            id: 'consulta',
+            title: t('app.menu.consulta'),
+            to: 'consulta',
+            icon: 'search',
+        },
     ];
     const theme = useTheme();
     const bgColor = mode === 'light' ? theme.palette.background.paper : undefined;

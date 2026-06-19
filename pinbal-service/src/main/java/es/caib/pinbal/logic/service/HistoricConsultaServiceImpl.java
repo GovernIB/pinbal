@@ -31,7 +31,6 @@ import es.caib.pinbal.logic.intf.dto.JustificantDto;
 import es.caib.pinbal.logic.intf.dto.JustificantEstat;
 import es.caib.pinbal.logic.intf.dto.arxiu.ArxiuDetallDto;
 import es.caib.pinbal.logic.intf.service.HistoricConsultaService;
-import es.caib.pinbal.logic.intf.service.exception.AccessDenegatException;
 import es.caib.pinbal.logic.intf.service.exception.ConsultaNotFoundException;
 import es.caib.pinbal.logic.intf.service.exception.EntitatNotFoundException;
 import es.caib.pinbal.logic.intf.service.exception.JustificantGeneracioException;
@@ -74,6 +73,7 @@ import org.springframework.security.acls.domain.PrincipalSid;
 import org.springframework.security.acls.model.AccessControlEntry;
 import org.springframework.security.acls.model.MutableAclService;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -202,11 +202,6 @@ public class HistoricConsultaServiceImpl implements HistoricConsultaService, App
 			log.error("No s'ha trobat la consulta (idpeticion=" + idpeticion + ", idsolicitud=" + idsolicitud + ")");
 			throw new ConsultaNotFoundException();
 		}
-		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-		if (!auth.getName().equals(consulta.getCreatedBy().orElseThrow().getCodi())) {
-			log.error("La consulta (idpeticion=" + idpeticion + ", idsolicitud=" + idsolicitud + ") no pertany a aquest usuari");
-			throw new AccessDenegatException("Només pot accedir al justificant l'usuari que ha realitzat la consulta");
-		}
 		return obtenirJustificantComu(consulta, ambContingut, versioImprimible);
 	}
 
@@ -221,7 +216,7 @@ public class HistoricConsultaServiceImpl implements HistoricConsultaService, App
 			throw new ConsultaNotFoundException();
 		}
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-		if (!auth.getName().equals(consulta.getCreatedBy().orElseThrow().getCodi())) {
+		if (!isAdministrador(auth) && !auth.getName().equals(consulta.getCreatedBy().orElseThrow().getCodi())) {
 			log.error("La consulta (id=" + id + ") no pertany a aquest usuari");
 			throw new ConsultaNotFoundException();
 		}
@@ -240,7 +235,7 @@ public class HistoricConsultaServiceImpl implements HistoricConsultaService, App
 			log.debug("No s'ha trobat la consulta (id=" + id + ")");
 			throw new ConsultaNotFoundException();
 		}
-		if (!auth.getName().equals(consulta.getCreatedBy().orElseThrow().getCodi())) {
+		if (!isAdministrador(auth) && !auth.getName().equals(consulta.getCreatedBy().orElseThrow().getCodi())) {
 			log.debug("La consulta (id=" + id + ") no pertany a aquest usuari");
 			throw new ConsultaNotFoundException();
 		}
@@ -286,7 +281,7 @@ public class HistoricConsultaServiceImpl implements HistoricConsultaService, App
 			log.debug("No s'ha trobat la consulta (id=" + id + ")");
 			throw new ConsultaNotFoundException();
 		}
-		if (!auth.getName().equals(consulta.getCreatedBy().orElseThrow().getCodi())) {
+		if (!isAdministrador(auth) && !auth.getName().equals(consulta.getCreatedBy().orElseThrow().getCodi())) {
 			log.debug("La consulta (id=" + id + ") no pertany a aquest usuari");
 			throw new ConsultaNotFoundException();
 		}
@@ -1392,6 +1387,18 @@ public class HistoricConsultaServiceImpl implements HistoricConsultaService, App
 					PropertiesHelper.getProperties());
 			propertiesCopiades = true;
 		}
+	}
+
+	private boolean isAdministrador(Authentication auth) {
+		if (auth == null || auth.getAuthorities() == null) {
+			return false;
+		}
+		for (GrantedAuthority authority: auth.getAuthorities()) {
+			if (authority != null && ROLE_ADMIN.equals(authority.getAuthority())) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	private ScspHelper getScspHelper() {

@@ -22,8 +22,6 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import java.text.SimpleDateFormat;
@@ -61,19 +59,20 @@ import java.util.TimerTask;
 	private ServicioDao servicioDao;
 	@Autowired
 	private ParametroConfiguracionDao parametroConfiguracionDao;
-    /* MOD PBL */ @Autowired
-    /* MOD PBL */ private TransmisionDao transmisionDao;
-    /* MOD PBL */ @Autowired
-    /* MOD PBL */ private ServeiDao serveiDao;
     private SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
 	@Autowired
 	private ClienteUnico clienteUnico;
 
-    /* MOD PBL */ private final TransactionTemplate transactionTemplate;
-    /* MOD PBL */ @Autowired
-    /* MOD PBL */ public PollingTask(PlatformTransactionManager transactionManager) {
-    /* MOD PBL */ 	transactionTemplate = new TransactionTemplate(transactionManager);
-    /* MOD PBL */ }
+    @Autowired                                                                                                          /* MOD PBL */
+    private TransmisionDao transmisionDao;                                                                              /* MOD PBL */
+    @Autowired                                                                                                          /* MOD PBL */
+    private ServeiDao serveiDao;                                                                                        /* MOD PBL */
+
+    private final TransactionTemplate transactionTemplate;                                                              /* MOD PBL */
+    @Autowired                                                                                                          /* MOD PBL */
+    public PollingTask(PlatformTransactionManager transactionManager) {                                                 /* MOD PBL */
+     	transactionTemplate = new TransactionTemplate(transactionManager);                                              /* MOD PBL */
+    }                                                                                                                   /* MOD PBL */
 
 	public void run() {
 		log.debug("Iniciando servicio de polling.");
@@ -82,126 +81,183 @@ import java.util.TimerTask;
         } else {
 			while (true) {
 				log.debug("Iniciando ciclo de procesamiento de solicitudes pendientes.");
-
 				List<PeticionRespuesta> peticiones;
-				try {
-					/* MOD PBL */ peticiones = transactionTemplate.execute(new TransactionCallback<List<PeticionRespuesta>>() {
-					/* MOD PBL */ 	public List<PeticionRespuesta> doInTransaction(TransactionStatus status) {
-					/* MOD PBL */ 		return peticionRespuestaDao.selectByEstado(
-					/* MOD PBL */ 				"0002",
-					/* MOD PBL */ 				Calendar.getInstance().getTime());
-					/* MOD PBL */ 	}
-					/* MOD PBL */ });
-				} catch (Exception ex) {
-                    throw new RuntimeException("Ha ocurrido un error mientras se recuperaba de base de datos la lista de peticiones asincronas pendientes de ser consultadas.", ex);
-				}
+                final int sizeCiclo = this.sizeCiclo();                                                                 /* MOD PBL */
+                peticiones = transactionTemplate.execute(status -> {                                    /* MOD PBL */
+                    try {
+                        return peticionRespuestaDao.selectToPolling(
+                                "0002",
+                                Calendar.getInstance().getTime(),
+                                sizeCiclo);                                                                             /* MOD PBL */
+                    } catch (ScspException ex) {
+                        throw new RuntimeException("Ha ocurrido un error mientras se recuperaba de base de datos la lista de peticiones asincronas pendientes de ser consultadas.", ex);
+                    }
+                });                                                                                                     /* MOD PBL */
 
                 if (peticiones.isEmpty()) {
                     log.debug("No se han encontrado peticiones en base de datos pendientes de ser consultadas.");
-                    log.debug("Finalizado servicio de polling.");
-                    return;
+                    break;
                 }
 
                 for (final PeticionRespuesta peticionRespuesta: peticiones) {
-                    final String idPeticion = peticionRespuesta.getIdPeticion();
-                    log.debug(String.format("Iniciando consulta asincrona de la peticion %s.", idPeticion));
-                    final SolicitudRespuesta solicitud = new SolicitudRespuesta();
-
-                    try {
-                        /* MOD PBL */ Servicio servicio = getServicio(peticionRespuesta);
-                        String codigoCertificado = servicio.getCodCertificado();
-                        int numTransmissions = peticionRespuesta.getNumeroTransmisiones().intValue();
-                        solicitud.setAtributos(new Atributos());
-                        solicitud.getAtributos().setCodigoCertificado(codigoCertificado);
-                        solicitud.getAtributos().setIdPeticion(peticionRespuesta.getIdPeticion());
-                        solicitud.getAtributos().setNumElementos(numTransmissions);
-                        solicitud.getAtributos().setTimeStamp(dateFormat.format(new Date()));
-
-                        /* MOD PBL */ if (serveiHasToSendSolicitant(codigoCertificado)) {
-                        /* MOD PBL */ 	Transmision transmision = getTransmision(peticionRespuesta);
-                        /* MOD PBL */
-                        /* MOD PBL */ 	if (transmision != null) {
-                        /* MOD PBL */ 		solicitud.getAtributos().setSolicitante(getSolicitante(transmision));
-                        /* MOD PBL */     }
-                        /* MOD PBL */ }
-
-                        log.debug(String.format("Finalizada la consulta asincrona de la peticion %s.", idPeticion));
-                    } catch (Exception e) {
-                        log.debug(String.format("Ha ocurrido un error mientras se creaba la peticion pendiente a partir de los datos de base de datos.", idPeticion));
-                        this.handleErrorPeticion(peticionRespuesta, e);
+                    try {                                                                                               /* MOD PBL */
+                        processarPeticio(peticionRespuesta, false);                                         /* MOD PBL */
+                    } catch (Exception ex) {                                                                            /* MOD PBL */
+                        log.error(                                                                                      /* MOD PBL */
+                                String.format(                                                                          /* MOD PBL */
+                                        "Ha ocurrido en un error durante la consulta asincrona de la peticion %s.",     /* MOD PBL */
+                                        peticionRespuesta.getIdPeticion()),                                             /* MOD PBL */
+                                ex);                                                                                    /* MOD PBL */
                     }
-
-                    /* MOD PBL */ transactionTemplate.execute(new TransactionCallback<Object>() {
-                    /* MOD PBL */ 	public Object doInTransaction(TransactionStatus status) {
-                            try {
-                                clienteUnico.realizaSolicitudRespuesta(solicitud);
-                            } catch (Exception ex) {
-                                log.error(String.format("Ha ocurrido en un error durante la consulta asincrona de la peticion %s.", idPeticion), ex);
-                                /* MOD PBL */ // this.handleErrorPeticion(peticionRespuesta, ex);
-                            }
-                            return null;
-                    /* MOD PBL */ 	}
-                    /* MOD PBL */ });
                 }
-
 				log.debug("Finalizado ciclo de procesamiento de peticiones.");
 			}
+            log.debug("Finalizado servicio de polling.");
 		}
 	}
 
-/* MOD PBL */ 	private static Solicitante getSolicitante(Transmision transmision) {
-/* MOD PBL */ 		Solicitante solicitante = new Solicitante();
-/* MOD PBL */ 		solicitante.setIdentificadorSolicitante(transmision.getIdSolicitante());
-/* MOD PBL */ 		solicitante.setNombreSolicitante(transmision.getNombreSolicitante());
-/* MOD PBL */ 		return solicitante;
-/* MOD PBL */ 	}
+    /* MOD PBL - Inici*/
+    public void processarPeticio(String idPeticion) throws Exception {
+        PeticionRespuesta peticionRespuesta = peticionRespuestaDao.select(idPeticion);
+        if (peticionRespuesta == null) {
+            throw new ScspException("0234", "No s'ha trobat la petició: " + idPeticion);
+        }
+        processarPeticio(peticionRespuesta, true);
+    }
 
-/* MOD PBL */ 	private Transmision getTransmision(final PeticionRespuesta peticionRespuesta) {
-/* MOD PBL */ 		Transmision transmision = transactionTemplate.execute(new TransactionCallback<Transmision>() {
-/* MOD PBL */ 			public Transmision doInTransaction(TransactionStatus status) {
-/* MOD PBL */ 				List<Transmision> transmisions = null;
-/* MOD PBL */ 				try {
-/* MOD PBL */ 					transmisions = transmisionDao.select(peticionRespuesta);
-/* MOD PBL */ 				} catch (ScspException e) {
-/* MOD PBL */ 					throw new RuntimeException(e);
-/* MOD PBL */ 				}
-/* MOD PBL */ 				return transmisions == null || transmisions.isEmpty() ? null : transmisions.get(0);
-/* MOD PBL */ 			}
-/* MOD PBL */ 		});
-/* MOD PBL */ 		return transmision;
-/* MOD PBL */ 	}
+    private void processarPeticio(
+            final PeticionRespuesta peticionRespuesta,
+            final boolean propagarErrors) throws Exception {
+        final String idPeticion = peticionRespuesta.getIdPeticion();
+        log.debug(String.format("Iniciando consulta asincrona de la peticion %s.", idPeticion ));
+        final SolicitudRespuesta solicitud = new SolicitudRespuesta();
+        try {
+            Servicio servicio = getServicio(peticionRespuesta);
+            String codigoCertificado = servicio.getCodCertificado();
+            int numTransmissions = peticionRespuesta.getNumeroTransmisiones().intValue();
+            solicitud.setAtributos(new Atributos());
+            solicitud.getAtributos().setCodigoCertificado(codigoCertificado);
+            solicitud.getAtributos().setIdPeticion(peticionRespuesta.getIdPeticion());
+            solicitud.getAtributos().setNumElementos(numTransmissions);
+            solicitud.getAtributos().setTimeStamp(dateFormat.format(new Date()));
 
-/* MOD PBL */ 	private Servicio getServicio(PeticionRespuesta peticionRespuesta) {
-/* MOD PBL */ 		final long servicioId = peticionRespuesta.getServicio().getId();
-/* MOD PBL */ 		Servicio servicio = transactionTemplate.execute(new TransactionCallback<Servicio>() {
-/* MOD PBL */ 			public Servicio doInTransaction(TransactionStatus status) {
-/* MOD PBL */ 				return servicioDao.select(
-/* MOD PBL */ 						servicioId);
-/* MOD PBL */ 			}
-/* MOD PBL */ 		});
-/* MOD PBL */ 		return servicio;
-/* MOD PBL */ 	}
+            if (serveiHasToSendSolicitant(codigoCertificado)) {
+                Transmision transmision = getTransmision(peticionRespuesta);
 
-/* MOD PBL */ 	private boolean serveiHasToSendSolicitant(final String codigoCertificado) {
-/* MOD PBL */ 		return transactionTemplate.execute(new TransactionCallback<Boolean>() {
-/* MOD PBL */ 			public Boolean doInTransaction(TransactionStatus status) {
-/* MOD PBL */ 				return serveiDao.serveiHasToSendSolicitant(codigoCertificado);
-/* MOD PBL */ 			}
-/* MOD PBL */ 		});
-/* MOD PBL */ 	}
+                if (transmision != null) {
+                    solicitud.getAtributos().setSolicitante(getSolicitante(transmision));
+                }
+            }
+
+            log.debug(String.format("Finalizada la consulta asincrona de la peticion %s.", idPeticion));
+        } catch (Exception e) {
+            log.debug(
+                    String.format("Ha ocurrido un error mientras se creaba la peticion pendiente %s a partir de los datos de base de datos.",
+                            idPeticion));
+            handleErrorPeticion(peticionRespuesta, e);
+            if (propagarErrors) {
+                throw e;
+            }
+        }
+        final Exception[] executionError = new Exception[1];
+        try {
+           transactionTemplate.execute(status -> {
+                    try {
+                        clienteUnico.realizaSolicitudRespuesta(solicitud);
+                    } catch (Exception ex) {
+                        log.error(
+                                String.format(
+                                        "Ha ocurrido en un error durante la consulta asincrona de la peticion %s.",
+                                        idPeticion), ex);
+                        executionError[0] = ex;
+                        if (propagarErrors) {
+                            throw new PollingTaskException(ex);
+                        }
+                    }
+                    return null;
+                });
+        } catch (PollingTaskException ex) {
+            if (ex.getCause() instanceof Exception) {
+                throw (Exception) ex.getCause();
+            }
+            throw ex;
+        }
+        if (executionError[0] != null) {
+            handleErrorPeticion(peticionRespuesta, executionError[0]);
+        }
+    }
+
+    private static class PollingTaskException extends RuntimeException {
+        private static final long serialVersionUID = 1L;
+
+        private PollingTaskException(Throwable cause) {
+            super(cause);
+        }
+    }
+
+ 	private static Solicitante getSolicitante(Transmision transmision) {
+ 		Solicitante solicitante = new Solicitante();
+ 		solicitante.setIdentificadorSolicitante(transmision.getIdSolicitante());
+ 		solicitante.setNombreSolicitante(transmision.getNombreSolicitante());
+ 		return solicitante;
+ 	}
+
+ 	private Transmision getTransmision(final PeticionRespuesta peticionRespuesta) {
+       return transactionTemplate.execute(status -> {
+ 			List<Transmision> transmisions = null;
+ 			try {
+ 				transmisions = transmisionDao.select(peticionRespuesta);
+ 			} catch (ScspException e) {
+ 				throw new RuntimeException(e);
+ 			}
+ 			return transmisions == null || transmisions.isEmpty() ? null : transmisions.get(0);
+ 		});
+ 	}
+
+ 	private Servicio getServicio(PeticionRespuesta peticionRespuesta) {
+ 		final long servicioId = peticionRespuesta.getServicio().getId();
+       return transactionTemplate.execute(status -> {
+ 			return servicioDao.select(
+ 					servicioId);
+ 		});
+ 	}
+
+ 	private boolean serveiHasToSendSolicitant(final String codigoCertificado) {
+       return Boolean.TRUE.equals(transactionTemplate.execute(status ->
+            serveiDao.serveiHasToSendSolicitant(codigoCertificado)
+       ));
+ 	}
+    /* MOD PBL - Fi*/
 
 	private boolean isEnabled() {
-        /* MOD PBL */ ParametroConfiguracion enabled = transactionTemplate.execute(new TransactionCallback<ParametroConfiguracion>() {
-        /* MOD PBL */ 	public ParametroConfiguracion doInTransaction(TransactionStatus status) {
-				return parametroConfiguracionDao.select("polling.enabled");
-        /* MOD PBL */ 	}
-        /* MOD PBL */ });
+        ParametroConfiguracion enabled = transactionTemplate.execute(status ->                          /* MOD PBL */
+				        parametroConfiguracionDao.select("polling.enabled")
+        );                                                                                                              /* MOD PBL */
 		if (enabled == null) {
 			log.warn("No existe en la tabla de configuracion global el parametro polling.enabled");
 			return false;
 		}
 		return enabled.getValor().equals("true");
 	}
+
+    private int sizeCiclo() {
+        ParametroConfiguracion size = transactionTemplate.execute(status ->                             /* MOD PBL */
+                        parametroConfiguracionDao.select("task.polling.size")
+        );                                                                                                              /* MOD PBL */
+        if (size == null) {
+            log.warn("No existe en la tabla de configuracion global el parametro task.polling.size");
+            log.warn("Se utilizará el valor por defecto");
+            return Integer.parseInt("50");
+        } else {
+            try {
+                return Integer.parseInt(size.getValor());
+            } catch (Exception var3) {
+                log.error(String.format("El parametro %s no es un valor correcto %s", "task.polling.size", size.getValor()));
+                log.error("Se utiliza el valor por defecto");
+                return Integer.parseInt("50");
+            }
+        }
+    }
 
     private void handleErrorPeticion(PeticionRespuesta peticionRespuesta, Exception e) {
         log.error("=========================================================");

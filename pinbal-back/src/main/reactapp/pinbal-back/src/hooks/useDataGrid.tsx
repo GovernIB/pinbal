@@ -45,10 +45,14 @@ export const useDatagridFilterProps = (
     minHeight: string = '40px',
     initialData?: any,
 ) => {
-    const [autoFindDisabled, setAutoFindDisabled] = React.useState<boolean>(true);
+    // La graella carrega la primera pàgina en entrar (equivalent a la pantalla JSP), sense
+    // exigir que s'apliqui abans cap filtre. Per a l'administrador el filtre inicial és buit;
+    // per a la resta de rols hi ha l'entitat seleccionada, però en cap cas s'ha de bloquejar
+    // la càrrega inicial deixant la graella en estat d'esquelet permanent.
+    const [autoFindDisabled, setAutoFindDisabled] = React.useState<boolean>(false);
     const handleSpringFilterChange = (springFilter: string | undefined) => {
         const springFilterEmpty = springFilter == null || springFilter === '';
-        autoFindDisabled && setAutoFindDisabled(!springFilterEmpty);
+        autoFindDisabled && setAutoFindDisabled(springFilterEmpty);
     };
     const filterComponent = (
         <MuiFilter

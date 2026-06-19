@@ -50,7 +50,7 @@ databaseChangeLog:
                     - column: { name: group_code, value: 'USUARIS' }
                     - column: { name: position, valueNumeric: 3 }
                     - column: { name: source_property, value: 'FILE' }
-                    - column: { name: type_code, value: 'PASSWORD' }
+                    - column: { name: type_code, value: 'PASS' }
           - insert:
                 tableName: pbl_config
                 columns:
@@ -231,7 +231,7 @@ databaseChangeLog:
                     - column: { name: group_code, value: 'USUARIS' }
                     - column: { name: position, valueNumeric: 21 }
                     - column: { name: source_property, value: 'FILE' }
-                    - column: { name: type_code, value: 'PASSWORD' }
+                    - column: { name: type_code, value: 'PASS' }
           - insert:
                 tableName: pbl_config
                 columns:

@@ -919,9 +919,7 @@ public class RecobrimentServiceImplTest {
 
     @Test
     public void testPeticionSincrona_AplicacioGuardaJustificantArxiu() throws Exception {
-        PeticioSincrona mockPeticio = PeticioSincrona.builder()
-                .aplicacioGuardaJustificantArxiu(true)
-                .build();
+        PeticioSincrona mockPeticio = PeticioSincrona.builder().build();
         Respuesta mockRespuesta = new Respuesta();
         es.scsp.bean.common.respuesta.Atributos atributos = new es.scsp.bean.common.respuesta.Atributos();
         Estado estado = new Estado();
@@ -936,7 +934,7 @@ public class RecobrimentServiceImplTest {
         PeticioRespostaSincrona response = recobrimentServiceImpl.peticionSincrona(mockPeticio);
 
         Assertions.assertNotNull(response);
-        verify(recobrimentHelper).peticionSincrona(any(Peticion.class), eq(true));
+        verify(recobrimentHelper).peticionSincrona(any(Peticion.class), eq(false));
     }
 
 

@@ -10,6 +10,7 @@ import es.caib.pinbal.back.datatables.ServerSideResponse;
 import es.caib.pinbal.back.helper.AlertHelper;
 import es.caib.pinbal.back.helper.EntitatHelper;
 import es.caib.pinbal.back.helper.RequestSessionHelper;
+import es.caib.pinbal.back.helper.RolHelper;
 import es.caib.pinbal.logic.intf.dto.ArbreRespostaDto;
 import es.caib.pinbal.logic.intf.dto.CodiValor;
 import es.caib.pinbal.logic.intf.dto.ConsultaDto;
@@ -45,6 +46,7 @@ import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -199,6 +201,15 @@ public class ConsultaAdminController extends BaseController {
 		EntitatDto entitat = EntitatHelper.getEntitatActual(request, entitatService);
 		if  (entitat != null) {
 			try {
+				ConsultaDto consulta = getConsultaAdmin(consultaId, isHistoric(request));
+				if (consulta.isMultiple()) {
+					FitxerDto fitxer = getJustificantMultiplePdf(consultaId, isHistoric(request));
+					writeFileToResponse(
+							fitxer.getNom(),
+							fitxer.getContingut(),
+							response);
+					return null;
+				}
 				JustificantDto justificant = getJustificant(consultaId, isHistoric(request));
 				if (!justificant.isError()) {
 					writeFileToResponse(
@@ -232,6 +243,56 @@ public class ConsultaAdminController extends BaseController {
 							request,
 							"comu.error.no.entitat"));
 			return "redirect:../../index";
+		}
+	}
+
+	@RequestMapping(value = "/{consultaId}/justificantpdf", method = RequestMethod.GET)
+	public String justificantPdf(
+			HttpServletRequest request,
+			HttpServletResponse response,
+			@PathVariable Long consultaId,
+			Model model) throws ConsultaNotFoundException {
+		try {
+			FitxerDto fitxer = getJustificantMultiplePdf(consultaId, isHistoric(request));
+			writeFileToResponse(
+					fitxer.getNom(),
+					fitxer.getContingut(),
+					response);
+			return null;
+		} catch (ConsultaNotFoundException ex) {
+			throw ex;
+		} catch (Exception ex) {
+			AlertHelper.error(
+					request,
+					getMessage(
+							request,
+							"consulta.controller.justificant.error") + ": " + ex.getMessage());
+			return "redirect:../../consulta";
+		}
+	}
+
+	@RequestMapping(value = "/{consultaId}/justificantzip", method = RequestMethod.GET)
+	public String justificantZip(
+			HttpServletRequest request,
+			HttpServletResponse response,
+			@PathVariable Long consultaId,
+			Model model) throws ConsultaNotFoundException {
+		try {
+			FitxerDto fitxer = getJustificantMultipleZip(consultaId, isHistoric(request));
+			writeFileToResponse(
+					fitxer.getNom(),
+					fitxer.getContingut(),
+					response);
+			return null;
+		} catch (ConsultaNotFoundException ex) {
+			throw ex;
+		} catch (Exception ex) {
+			AlertHelper.error(
+					request,
+					getMessage(
+							request,
+							"consulta.controller.justificant.error") + ": " + ex.getMessage());
+			return "redirect:../../consulta";
 		}
 	}
 
@@ -344,6 +405,8 @@ public class ConsultaAdminController extends BaseController {
 		ConsultaDto consulta = getConsultaAdmin(consultaId, isHistoric(request));
 		model.addAttribute("consulta", consulta);
 		model.addAttribute("servei", serveiService.findAmbCodiPerAdminORepresentant(consulta.getServeiCodi()));
+		model.addAttribute("historic", isHistoric(request));
+		model.addAttribute("potRecuperarRespostaConsultaMultiple", RolHelper.isRolActualAdministrador(request));
 
 		if (consulta.isMultiple()) {
 			model.addAttribute("filles", getConsultesFilles(consultaId, isHistoric(request)));
@@ -359,6 +422,37 @@ public class ConsultaAdminController extends BaseController {
 			model.addAttribute("multiple", true);
 		}
 		return "adminConsultaInfo";
+	}
+
+	@RequestMapping(value = "/{consultaId}/recuperarResposta", method = RequestMethod.GET)
+	public String recuperarResposta(
+			HttpServletRequest request,
+			@PathVariable Long consultaId) throws ConsultaNotFoundException {
+		if (isHistoric(request)) {
+			AlertHelper.error(
+					request,
+					getMessage(
+							request,
+							"consulta.multiple.info.recuperar.resposta.historic"));
+		} else {
+			try {
+				consultaService.recuperarRespostaConsultaMultiple(consultaId);
+				AlertHelper.success(
+						request,
+						getMessage(
+								request,
+								"consulta.multiple.info.recuperar.resposta.ok"));
+			} catch (ConsultaNotFoundException ex) {
+				throw ex;
+			} catch (Exception ex) {
+				AlertHelper.error(
+						request,
+						getMessage(
+								request,
+								"consulta.multiple.info.recuperar.resposta.error") + ": " + ex.getMessage());
+			}
+		}
+		return "redirect:../" + consultaId;
 	}
 
 	private void omplirModelAmbDadesEspecifiques(
@@ -425,7 +519,7 @@ public class ConsultaAdminController extends BaseController {
 			@PathVariable Long consultaId,
 			@RequestParam(value = "info", required = false) Boolean info) throws ConsultaNotFoundException {
 		EntitatDto entitat = EntitatHelper.getEntitatActual(request, entitatService);
-		if (entitat != null) {
+		if (RolHelper.isRolActualAdministrador(request) || entitat != null) {
 			try {
 				JustificantDto justificant;
 				if (isHistoric(request)) {
@@ -621,6 +715,42 @@ public class ConsultaAdminController extends BaseController {
 			}
 		}
 		return justificant;
+	}
+
+	private FitxerDto getJustificantMultiplePdf(Long consultaId, boolean historic) throws Exception {
+		FitxerDto fitxer;
+		if (historic) {
+			try {
+				fitxer = historicConsultaService.obtenirJustificantMultipleConcatenat(consultaId);
+			} catch (Exception nfe) {
+				fitxer = consultaService.obtenirJustificantMultipleConcatenat(consultaId);
+			}
+		} else {
+			try {
+				fitxer = consultaService.obtenirJustificantMultipleConcatenat(consultaId);
+			} catch (Exception nfe) {
+				fitxer = historicConsultaService.obtenirJustificantMultipleConcatenat(consultaId);
+			}
+		}
+		return fitxer;
+	}
+
+	private FitxerDto getJustificantMultipleZip(Long consultaId, boolean historic) throws Exception {
+		FitxerDto fitxer;
+		if (historic) {
+			try {
+				fitxer = historicConsultaService.obtenirJustificantMultipleZip(consultaId);
+			} catch (Exception nfe) {
+				fitxer = consultaService.obtenirJustificantMultipleZip(consultaId);
+			}
+		} else {
+			try {
+				fitxer = consultaService.obtenirJustificantMultipleZip(consultaId);
+			} catch (Exception nfe) {
+				fitxer = historicConsultaService.obtenirJustificantMultipleZip(consultaId);
+			}
+		}
+		return fitxer;
 	}
 
 }

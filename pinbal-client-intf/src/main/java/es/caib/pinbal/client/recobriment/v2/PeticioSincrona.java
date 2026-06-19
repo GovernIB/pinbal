@@ -1,5 +1,6 @@
 package es.caib.pinbal.client.recobriment.v2;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -9,10 +10,10 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class PeticioSincrona {
 
     private DadesComunes dadesComunes;
     private SolicitudSimple solicitud;
-    private Boolean aplicacioGuardaJustificantArxiu;
 
 }

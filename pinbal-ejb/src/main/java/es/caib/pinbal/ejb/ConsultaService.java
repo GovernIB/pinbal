@@ -5,9 +5,31 @@ package es.caib.pinbal.ejb;
 
 import es.caib.pinbal.client.dadesobertes.DadesObertesResposta;
 import es.caib.pinbal.client.dadesobertes.DadesObertesRespostaConsulta;
-import es.caib.pinbal.logic.intf.dto.*;
+import es.caib.pinbal.logic.intf.dto.ArbreRespostaDto;
+import es.caib.pinbal.logic.intf.dto.CarregaDto;
+import es.caib.pinbal.logic.intf.dto.ConsultaDto;
+import es.caib.pinbal.logic.intf.dto.ConsultaFiltreDto;
+import es.caib.pinbal.logic.intf.dto.ConsultaOpenDataDto;
+import es.caib.pinbal.logic.intf.dto.EntitatDto;
+import es.caib.pinbal.logic.intf.dto.EstadisticaDto;
+import es.caib.pinbal.logic.intf.dto.EstadistiquesFiltreDto;
+import es.caib.pinbal.logic.intf.dto.FitxerDto;
+import es.caib.pinbal.logic.intf.dto.InformeGeneralEstatDto;
+import es.caib.pinbal.logic.intf.dto.InformeProcedimentServeiDto;
+import es.caib.pinbal.logic.intf.dto.InformeRepresentantFiltreDto;
+import es.caib.pinbal.logic.intf.dto.JustificantDto;
+import es.caib.pinbal.logic.intf.dto.RecobrimentSolicitudDto;
 import es.caib.pinbal.logic.intf.dto.arxiu.ArxiuDetallDto;
-import es.caib.pinbal.logic.intf.service.exception.*;
+import es.caib.pinbal.logic.intf.service.exception.ConsultaNotFoundException;
+import es.caib.pinbal.logic.intf.service.exception.ConsultaScspException;
+import es.caib.pinbal.logic.intf.service.exception.ConsultaScspGeneracioException;
+import es.caib.pinbal.logic.intf.service.exception.EntitatNotFoundException;
+import es.caib.pinbal.logic.intf.service.exception.JustificantGeneracioException;
+import es.caib.pinbal.logic.intf.service.exception.ProcedimentNotFoundException;
+import es.caib.pinbal.logic.intf.service.exception.ProcedimentServeiNotFoundException;
+import es.caib.pinbal.logic.intf.service.exception.ScspException;
+import es.caib.pinbal.logic.intf.service.exception.ServeiNotAllowedException;
+import es.caib.pinbal.logic.intf.service.exception.ValidacioDadesPeticioException;
 import org.jboss.ejb3.annotation.TransactionTimeout;
 import org.springframework.context.annotation.Primary;
 import org.springframework.data.domain.Page;
@@ -69,6 +91,13 @@ public class ConsultaService extends AbstractService<es.caib.pinbal.logic.intf.s
 	public ConsultaDto novaConsultaEstat(
 			Long consultaId) throws ConsultaNotFoundException, ConsultaScspException {
 		return getDelegateService().novaConsultaEstat(consultaId);
+	}
+
+	@Override
+	@RolesAllowed("**")
+	public void recuperarRespostaConsultaMultiple(
+			Long consultaId) throws ConsultaNotFoundException, ConsultaScspException {
+		getDelegateService().recuperarRespostaConsultaMultiple(consultaId);
 	}
 
 	@Override

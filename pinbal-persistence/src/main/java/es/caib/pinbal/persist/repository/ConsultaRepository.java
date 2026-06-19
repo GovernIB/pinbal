@@ -212,6 +212,20 @@ public interface ConsultaRepository extends JpaRepository<Consulta, Long> {
 			EstatTipus estat,
 			boolean multiple);
 
+	@Query(	"select " +
+			"    c.id, " +
+			"    c.scspPeticionId " +
+			"from " +
+			"    Consulta c " +
+			"where " +
+			"    c.estat = :estat " +
+			"and c.multiple = :multiple " +
+			"order by " +
+			"    c.id asc")
+	public List<Object[]> findIdsAndScspPeticionIdsByEstatAndMultipleOrderByIdAsc(
+			@Param("estat") EstatTipus estat,
+			@Param("multiple") boolean multiple);
+
 	public List<Consulta> findByEstatAndMultipleAndConsentimentNotNullOrderByIdAsc(
 			EstatTipus estat,
 			boolean multiple);

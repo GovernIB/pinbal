@@ -39,6 +39,7 @@ import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -234,7 +235,9 @@ public class ConsultaMultipleController extends BaseController {
 			return "delegatNoAutoritzat";
 		EntitatDto entitat = EntitatHelper.getEntitatActual(request, entitatService);
 		if (entitat != null) {
-			ConsultaDto consulta = getConsultaDelegate(consultaId, isHistoric(request), model);
+			boolean historic = isHistoric(request);
+			ConsultaDto consulta = getConsultaDelegate(consultaId, historic, model);
+			model.addAttribute("historic", historic);
 			model.addAttribute(
 					"servei",
 					serveiService.findAmbCodiPerDelegat(
@@ -246,6 +249,50 @@ public class ConsultaMultipleController extends BaseController {
 					request,
 					getMessage(
 							request, 
+							"comu.error.no.entitat"));
+			return "redirect:../../../index";
+		}
+	}
+
+	@RequestMapping(value = "/{consultaId}/recuperarResposta", method = RequestMethod.GET)
+	public String recuperarResposta(
+			HttpServletRequest request,
+			@PathVariable Long consultaId) throws ConsultaNotFoundException {
+		if (!EntitatHelper.isDelegatEntitatActual(request))
+			return "delegatNoAutoritzat";
+		EntitatDto entitat = EntitatHelper.getEntitatActual(request, entitatService);
+		if (entitat != null) {
+			if (isHistoric(request)) {
+				AlertHelper.error(
+						request,
+						getMessage(
+								request,
+								"consulta.multiple.info.recuperar.resposta.historic"));
+			} else {
+				try {
+					consultaService.findOneDelegat(consultaId);
+					consultaService.recuperarRespostaConsultaMultiple(consultaId);
+					AlertHelper.success(
+							request,
+							getMessage(
+									request,
+									"consulta.multiple.info.recuperar.resposta.ok"));
+				} catch (ConsultaNotFoundException ex) {
+					throw ex;
+				} catch (Exception ex) {
+					AlertHelper.error(
+							request,
+							getMessage(
+									request,
+									"consulta.multiple.info.recuperar.resposta.error") + ": " + ex.getMessage());
+				}
+			}
+			return "redirect:../" + consultaId;
+		} else {
+			AlertHelper.error(
+					request,
+					getMessage(
+							request,
 							"comu.error.no.entitat"));
 			return "redirect:../../../index";
 		}
