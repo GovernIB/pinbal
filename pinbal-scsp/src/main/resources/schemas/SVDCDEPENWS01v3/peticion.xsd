@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<xs:schema xmlns="http://intermediacion.redsara.es/scsp/esquemas/V3/peticion" xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://intermediacion.redsara.es/scsp/esquemas/V3/peticion" elementFormDefault="qualified" attributeFormDefault="unqualified">
+<xs:schema xmlns:ns2="http://intermediacion.redsara.es/scsp/esquemas/datosespecificos" xmlns:ns1="http://intermediacion.redsara.es/scsp/esquemas/datosespecificos" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://intermediacion.redsara.es/scsp/esquemas/V3/peticion" targetNamespace="http://intermediacion.redsara.es/scsp/esquemas/V3/peticion" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<xs:import namespace="http://intermediacion.redsara.es/scsp/esquemas/datosespecificos" schemaLocation="datos-especificos.xsd"/>
 	<xs:element name="Apellido1">
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
@@ -32,9 +33,7 @@
 	<xs:element name="CodigoCertificado">
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
-				<xs:maxLength value="64"/>
-				<xs:minLength value="1"/>
-				<xs:whiteSpace value="collapse"/>
+				<xs:enumeration value="SVDCDEPENWS01"/>
 			</xs:restriction>
 		</xs:simpleType>
 	</xs:element>
@@ -157,17 +156,18 @@
 	<xs:element name="Procedimiento">
 		<xs:complexType>
 			<xs:sequence>
-				<xs:element ref="CodProcedimiento" minOccurs="0"/>
-				<xs:element ref="NombreProcedimiento" minOccurs="0"/>
+				<xs:element ref="CodProcedimiento"/>
+				<xs:element ref="NombreProcedimiento"/>
 			</xs:sequence>
 		</xs:complexType>
 	</xs:element>
 	<xs:element name="IdentificadorSolicitante">
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
-				<xs:maxLength value="10"/>
 				<xs:minLength value="1"/>
 				<xs:whiteSpace value="collapse"/>
+				<xs:maxLength value="10"/>
+				<xs:pattern value="[A-Za-z][0-9]{7}[0-9A-Za-z]"/>
 			</xs:restriction>
 		</xs:simpleType>
 	</xs:element>
@@ -206,18 +206,17 @@
 	<xs:element name="NifEmisor">
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
-				<xs:maxLength value="10"/>
-				<xs:minLength value="1"/>
-				<xs:whiteSpace value="collapse"/>
+				<xs:enumeration value="Q2827004I"/>
 			</xs:restriction>
 		</xs:simpleType>
 	</xs:element>
 	<xs:element name="NifFuncionario">
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
-				<xs:maxLength value="10"/>
-				<xs:whiteSpace value="collapse"/>
 				<xs:minLength value="1"/>
+				<xs:maxLength value="9"/>
+				<xs:whiteSpace value="collapse"/>
+				<xs:pattern value="([XxYyZz][0-9]{7}[a-zA-Z])|([0-9]{8}[a-zA-Z])"/>
 			</xs:restriction>
 		</xs:simpleType>
 	</xs:element>
@@ -269,7 +268,7 @@
 	<xs:element name="NumElementos">
 		<xs:simpleType>
 			<xs:restriction base="xs:int">
-				<xs:totalDigits value="7"/>
+				<xs:totalDigits value="4"/>
 				<xs:minInclusive value="0"/>
 				<xs:maxInclusive value="1000"/>
 			</xs:restriction>
@@ -289,7 +288,7 @@
 				<xs:element ref="IdentificadorSolicitante"/>
 				<xs:element ref="NombreSolicitante"/>
 				<xs:element ref="UnidadTramitadora" minOccurs="0"/>
-				<xs:element ref="Procedimiento" minOccurs="0"/>
+				<xs:element ref="Procedimiento"/>
 				<xs:element ref="Finalidad"/>
 				<xs:element ref="Consentimiento"/>
 				<xs:element ref="Funcionario"/>
@@ -332,7 +331,6 @@
 	<xs:element name="TipoDocumentacion">
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
-				<xs:enumeration value="NIF"/>
 				<xs:enumeration value="DNI"/>
 				<xs:enumeration value="Pasaporte"/>
 				<xs:enumeration value="NIE"/>

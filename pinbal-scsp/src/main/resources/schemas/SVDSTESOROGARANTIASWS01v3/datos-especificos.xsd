@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- edited with XMLSpy v2011 sp1 (http://www.altova.com) by End User (free.org) -->
 <xs:schema xmlns="http://intermediacion.redsara.es/scsp/esquemas/datosespecificos" xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://intermediacion.redsara.es/scsp/esquemas/datosespecificos" elementFormDefault="qualified" attributeFormDefault="unqualified">
 	<xs:element name="DatosEspecificos" type="DatosEspecificos"/>
 	<xs:complexType name="DatosEspecificos">
@@ -19,14 +18,14 @@
 	</xs:complexType>
 	<xs:element name="Consulta">
 		<xs:complexType>
-			<xs:sequence>
+			<xs:all>
 				<xs:element ref="ClaseGarantia" minOccurs="0"/>
 				<xs:element ref="Expediente" minOccurs="0">
 					<xs:annotation>
 						<xs:documentation>Expediente por el que se van a consultar las garantías</xs:documentation>
 					</xs:annotation>
 				</xs:element>
-				<xs:element ref="ConVivo" minOccurs="0"/>
+				<xs:element ref="ConVivo"/>
 				<xs:element ref="FechaConstitucionDesde" minOccurs="0"/>
 				<xs:element ref="FechaConstitucionHasta" minOccurs="0"/>
 				<xs:element ref="ImporteDesde" minOccurs="0"/>
@@ -35,7 +34,7 @@
 				<xs:element ref="NifGarantizado" minOccurs="0"/>
 				<xs:element ref="NumeroDepositoSIC" minOccurs="0"/>
 				<xs:element ref="Sucursal" minOccurs="0"/>
-			</xs:sequence>
+			</xs:all>
 		</xs:complexType>
 	</xs:element>
 	<xs:element name="Retorno">
@@ -43,8 +42,20 @@
 			<xs:all>
 				<xs:element ref="Estado"/>
 				<xs:element ref="Garantias" minOccurs="0"/>
+				<xs:element ref="NumTotalExistentes" minOccurs="0"/>
+				<xs:element ref="NumTotalDevueltas" minOccurs="0"/>
 			</xs:all>
 		</xs:complexType>
+	</xs:element>
+	<xs:element name="NumTotalExistentes" type="xs:int">
+		<xs:annotation>
+			<xs:documentation>Número total de garantías encontradas. Sirve para saber si hay más (y cuántas) cuando se devuelve el máximo de 250 garantías.</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="NumTotalDevueltas" type="xs:int">
+		<xs:annotation>
+			<xs:documentation>Número total de garantías devueltas.</xs:documentation>
+		</xs:annotation>
 	</xs:element>
 	<xs:element name="FechaConstitucionDesde" type="xs:date">
 		<xs:annotation>
@@ -56,14 +67,14 @@
 			<xs:documentation>Fecha de constitución desde de la que se van a consultar garantías formato: YYYY-MM-DD</xs:documentation>
 		</xs:annotation>
 	</xs:element>
-	<xs:element name="ImporteDesde" type="xs:decimal">
+	<xs:element name="ImporteDesde" type="xs:int">
 		<xs:annotation>
-			<xs:documentation>Importe de constitución desde de el que se va a consultar las garantías</xs:documentation>
+			<xs:documentation>Importe vivo desde de el que se va a consultar las garantías</xs:documentation>
 		</xs:annotation>
 	</xs:element>
-	<xs:element name="ImporteHasta" type="xs:decimal">
+	<xs:element name="ImporteHasta" type="xs:int">
 		<xs:annotation>
-			<xs:documentation>Importe de constitución hasta el que se va a consultar las garantías</xs:documentation>
+			<xs:documentation>Importe vivo hasta el que se va a consultar las garantías</xs:documentation>
 		</xs:annotation>
 	</xs:element>
 	<xs:element name="NifGarante">
@@ -90,19 +101,21 @@
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
 				<xs:minLength value="1"/>
-				<xs:maxLength value="20"/>
+				<xs:maxLength value="65"/>
 			</xs:restriction>
 		</xs:simpleType>
 	</xs:element>
 	<xs:element name="ClaseGarantia">
 		<xs:annotation>
-			<xs:documentation>Código del tipo de forma de constitución de la garantía según los valores de CODICE</xs:documentation>
+			<xs:documentation>Código del tipo de forma de constitución de la garantía según los valores de SIC3</xs:documentation>
 		</xs:annotation>
 		<xs:simpleType>
 			<xs:restriction base="xs:int">
 				<xs:enumeration value="1"/>
 				<xs:enumeration value="2"/>
+				<xs:enumeration value="3"/>
 				<xs:enumeration value="4"/>
+				<xs:enumeration value="5"/>
 				<xs:enumeration value="6"/>
 				<xs:enumeration value="7"/>
 			</xs:restriction>
@@ -195,13 +208,14 @@
 					</xs:annotation>
 				</xs:element>
 				<xs:element ref="FechaConstitucion"/>
-				<xs:element ref="TipoGarantia" minOccurs="1"/>
+				<xs:element ref="TipoGarantia"/>
 				<xs:element ref="Finalidad"/>
 				<xs:element ref="Importe"/>
 				<xs:element ref="CodigoConstitucion"/>
 				<xs:element ref="Situacion"/>
 				<xs:element ref="Sucursal"/>
 				<xs:element ref="Ejercicio"/>
+				<xs:element ref="AvalSeguro" minOccurs="0"/>
 				<xs:element ref="Normativa"/>
 				<xs:element ref="Garante"/>
 				<xs:element ref="Garantizado"/>
@@ -357,6 +371,16 @@
 		</xs:annotation>
 		<xs:simpleType>
 			<xs:restriction base="xs:gYear"/>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="AvalSeguro">
+		<xs:annotation>
+			<xs:documentation>Número de aval o seguro de caución</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:maxLength value="100"/>
+			</xs:restriction>
 		</xs:simpleType>
 	</xs:element>
 	<xs:element name="TipoGarantia">

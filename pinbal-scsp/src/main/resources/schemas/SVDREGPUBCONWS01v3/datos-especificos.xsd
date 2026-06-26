@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://intermediacion.redsara.es/scsp/esquemas/datosespecificos" targetNamespace="http://intermediacion.redsara.es/scsp/esquemas/datosespecificos" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<xs:element name="DatosEspecificos" type="DatosEspecificos">
+		<xs:annotation>
+			<xs:documentation>Datos Especificos de Registradores</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:complexType name="DatosEspecificos">
+		<xs:all>
+			<xs:element name="Respuesta">
+				<xs:complexType>
+					<xs:all>
+						<xs:element name="Estado">
+							<xs:annotation>
+								<xs:documentation>Estado de la respuesta.</xs:documentation>
+							</xs:annotation>
+							<xs:complexType>
+								<xs:all>
+									<xs:element ref="CodigoEstado"/>
+									<xs:element ref="LiteralError"/>
+									<xs:element ref="CodigoEstadoSecundario" minOccurs="0"/>
+								</xs:all>
+							</xs:complexType>
+						</xs:element>
+						<xs:element name="SituacionConcursal" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Situación concursal del titular consultado.</xs:documentation>
+							</xs:annotation>
+							<xs:complexType>
+								<xs:all>
+									<xs:element ref="ExisteInformacion"/>
+									<xs:element ref="InformacionVigente"/>
+								</xs:all>
+							</xs:complexType>
+						</xs:element>
+					</xs:all>
+				</xs:complexType>
+			</xs:element>
+		</xs:all>
+		<xs:attribute name="Id" type="xs:string" use="optional"/>
+	</xs:complexType>
+	<xs:element name="ExisteInformacion">
+		<xs:annotation>
+			<xs:documentation>Indica si existe información del titular.</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:enumeration value="SI"/>
+				<xs:enumeration value="NO"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="InformacionVigente">
+		<xs:annotation>
+			<xs:documentation>Indica si la información del titular está o no vigente.</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:enumeration value="SI"/>
+				<xs:enumeration value="NO"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="CodigoEstado">
+		<xs:annotation>
+			<xs:documentation>Código de estado de la respuesta de la solicitud.</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="5"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="LiteralError">
+		<xs:annotation>
+			<xs:documentation>Literal de estado de la respuesta de la solicitud.</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="1024"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="CodigoEstadoSecundario">
+		<xs:annotation>
+			<xs:documentation>Código secundario de estado de la respuesta de la solicitud.</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="16"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+</xs:schema>

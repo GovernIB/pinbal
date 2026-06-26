@@ -45,11 +45,14 @@ import org.springframework.web.servlet.config.annotation.ViewResolverRegistry;
 import org.springframework.web.servlet.i18n.AcceptHeaderLocaleResolver;
 import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
 import org.springframework.web.servlet.i18n.SessionLocaleResolver;
+import org.springframework.core.Ordered;
 import org.springframework.web.servlet.view.BeanNameViewResolver;
+import org.springframework.web.servlet.view.ContentNegotiatingViewResolver;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
@@ -205,6 +208,19 @@ public class WebMvcConfig extends BaseWebMvcConfig {
 	public BeanNameViewResolver beanNameViewResolver() {
 		BeanNameViewResolver resolver = new BeanNameViewResolver();
 		resolver.setOrder(0);
+		return resolver;
+	}
+
+	// Sobreescriu el ContentNegotiatingViewResolver d'Spring Boot (que recull candidats de TOTS els
+	// resolvers incloent InternalResourceViewResolver). Amb InternalResourceViewResolver al pool,
+	// per a Accept: text/html la JSP guanya sempre sobre la vista Excel (text/html q=1.0 > */* q=0.8),
+	// i el forward a la JSP inexistent retorna el path com a error. Delegant UNICAMENT al
+	// BeanNameViewResolver: Excel views es resolen via */* i les JSP normals cauen al resolver inferior.
+	@Bean
+	public ContentNegotiatingViewResolver contentNegotiatingViewResolver() {
+		ContentNegotiatingViewResolver resolver = new ContentNegotiatingViewResolver();
+		resolver.setOrder(Ordered.HIGHEST_PRECEDENCE);
+		resolver.setViewResolvers(Collections.singletonList(beanNameViewResolver()));
 		return resolver;
 	}
 

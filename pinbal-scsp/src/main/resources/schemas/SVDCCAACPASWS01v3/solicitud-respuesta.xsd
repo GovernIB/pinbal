@@ -8,17 +8,43 @@
 			</xs:restriction>
 		</xs:simpleType>
 	</xs:element>
+	<xs:element name="IdentificadorSolicitante">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:pattern value="[A-Za-z][0-9]{7}[0-9A-Za-z]"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="NombreSolicitante">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="50"/>
+				<xs:whiteSpace value="collapse"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Solicitante">
+		<xs:complexType>
+			<xs:all>
+				<xs:element ref="IdentificadorSolicitante"/>
+				<xs:element ref="NombreSolicitante"/>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
 	<xs:element name="CodigoEstado">
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
-				<xs:maxLength value="4"/>
+				<xs:length value="4"/>
 			</xs:restriction>
 		</xs:simpleType>
 	</xs:element>
 	<xs:element name="CodigoEstadoSecundario">
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
 				<xs:maxLength value="16"/>
+				<xs:whiteSpace value="collapse"/>
 			</xs:restriction>
 		</xs:simpleType>
 	</xs:element>
@@ -35,8 +61,8 @@
 	<xs:element name="IdPeticion">
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
-				<xs:maxLength value="26"/>
 				<xs:minLength value="1"/>
+				<xs:maxLength value="26"/>
 				<xs:whiteSpace value="collapse"/>
 			</xs:restriction>
 		</xs:simpleType>
@@ -44,7 +70,9 @@
 	<xs:element name="LiteralError">
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
-				<xs:maxLength value="255"/>
+				<xs:minLength value="1"/>
+				<xs:maxLength value="1024"/>
+				<xs:whiteSpace value="collapse"/>
 			</xs:restriction>
 		</xs:simpleType>
 	</xs:element>
@@ -52,7 +80,7 @@
 		<xs:simpleType>
 			<xs:restriction base="xs:int">
 				<xs:totalDigits value="4"/>
-				<xs:minInclusive value="0"/>
+				<xs:minInclusive value="1"/>
 				<xs:maxInclusive value="1000"/>
 			</xs:restriction>
 		</xs:simpleType>
@@ -88,6 +116,7 @@
 				<xs:element ref="NumElementos"/>
 				<xs:element ref="TimeStamp"/>
 				<xs:element ref="Estado" minOccurs="0"/>
+				<xs:element ref="Solicitante" minOccurs="0"/>
 				<xs:element ref="CodigoCertificado"/>
 			</xs:all>
 		</xs:complexType>

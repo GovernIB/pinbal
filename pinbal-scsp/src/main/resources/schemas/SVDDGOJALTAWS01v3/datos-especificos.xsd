@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2011 sp1 (http://www.altova.com) by End User (free.org) -->
 <xs:schema xmlns="http://intermediacion.redsara.es/scsp/esquemas/datosespecificos" xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://intermediacion.redsara.es/scsp/esquemas/datosespecificos" elementFormDefault="qualified" attributeFormDefault="unqualified">
 	<xs:element name="DatosEspecificos">
 		<xs:complexType>
@@ -25,8 +26,9 @@
 	</xs:element>
 	<xs:complexType name="SolicitudAltaType">
 		<xs:sequence>
+			<xs:element ref="NumeroSoporte" minOccurs="0"/>
 			<xs:element ref="FechaNacimiento"/>
-			<xs:element ref="Sexo"/>
+			<xs:element ref="Sexo" minOccurs="0"/>
 			<xs:element ref="CodigoProvincia"/>
 			<xs:element ref="CodigoMunicipio"/>
 			<xs:element ref="Domicilio"/>
@@ -34,6 +36,7 @@
 			<xs:element ref="Telefono" minOccurs="0"/>
 			<xs:element ref="Email" minOccurs="0"/>
 			<xs:element ref="Observaciones" minOccurs="0"/>
+			<xs:element ref="Notificacion" minOccurs="0"/>
 			<xs:element name="Documentacion" minOccurs="0">
 				<xs:complexType>
 					<xs:sequence>
@@ -43,9 +46,19 @@
 			</xs:element>
 		</xs:sequence>
 	</xs:complexType>
+	<xs:element name="NumeroSoporte">
+		<xs:annotation>
+			<xs:documentation>Número de soporte del titular</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:pattern value="[E|C]\d{8}"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
 	<xs:element name="FechaNacimiento">
 		<xs:annotation>
-			<xs:documentation>Formato de nacimiento del titular a dar de alta: DD/MM/AAAA</xs:documentation>
+			<xs:documentation>Formato de nacimiento del titular: DD/MM/AAAA</xs:documentation>
 		</xs:annotation>
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
@@ -57,7 +70,7 @@
 	</xs:element>
 	<xs:element name="Sexo">
 		<xs:annotation>
-			<xs:documentation>Sexo del titular a dar de alta</xs:documentation>
+			<xs:documentation>Sexo del titular</xs:documentation>
 		</xs:annotation>
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
@@ -72,8 +85,8 @@
 		</xs:annotation>
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
-				<xs:minLength value="2"/>
-				<xs:maxLength value="2"/>
+				<xs:whiteSpace value="collapse"/>
+				<xs:pattern value="\d{2}"/>
 			</xs:restriction>
 		</xs:simpleType>
 	</xs:element>
@@ -83,35 +96,37 @@
 		</xs:annotation>
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
-				<xs:minLength value="3"/>
-				<xs:maxLength value="3"/>
+				<xs:whiteSpace value="collapse"/>
+				<xs:pattern value="\d{3}"/>
 			</xs:restriction>
 		</xs:simpleType>
 	</xs:element>
 	<xs:element name="Domicilio">
 		<xs:annotation>
-			<xs:documentation>Domicilio del titular a dar de alta</xs:documentation>
+			<xs:documentation>Domicilio del titular</xs:documentation>
 		</xs:annotation>
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
-				<xs:maxLength value="255"/>
 				<xs:minLength value="1"/>
+				<xs:maxLength value="255"/>
+				<xs:whiteSpace value="collapse"/>
 			</xs:restriction>
 		</xs:simpleType>
 	</xs:element>
 	<xs:element name="CodigoPostal">
 		<xs:annotation>
-			<xs:documentation>Código Postal del domicilio del titular a dar de alta</xs:documentation>
+			<xs:documentation>Código Postal del domicilio del titular</xs:documentation>
 		</xs:annotation>
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
-				<xs:pattern value="0[1-9][0-9]{3}|[1-4][0-9]{4}|5[0-2][0-9]{3}"/>
+				<xs:whiteSpace value="collapse"/>
+				<xs:pattern value="[0-5][0-9][A-Za-z0-9]{0,8}"/>
 			</xs:restriction>
 		</xs:simpleType>
 	</xs:element>
 	<xs:element name="Telefono">
 		<xs:annotation>
-			<xs:documentation>Teléfono del titular a dar de alta</xs:documentation>
+			<xs:documentation>Teléfono del titular</xs:documentation>
 		</xs:annotation>
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
@@ -122,7 +137,7 @@
 	</xs:element>
 	<xs:element name="Email">
 		<xs:annotation>
-			<xs:documentation>Email del titular a dar de alta</xs:documentation>
+			<xs:documentation>Email del titular</xs:documentation>
 		</xs:annotation>
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
@@ -137,8 +152,22 @@
 		</xs:annotation>
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
-				<xs:maxLength value="500"/>
 				<xs:minLength value="1"/>
+				<xs:maxLength value="500"/>
+				<xs:whiteSpace value="collapse"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Notificacion">
+		<xs:annotation>
+			<xs:documentation>Forma de notificación de la persona
+E - Electrónico
+P - Postal</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:enumeration value="E"/>
+				<xs:enumeration value="P"/>
 			</xs:restriction>
 		</xs:simpleType>
 	</xs:element>
@@ -156,10 +185,12 @@
 	</xs:complexType>
 	<xs:element name="Documento">
 		<xs:annotation>
-			<xs:documentation>Documento adjunot en base64</xs:documentation>
+			<xs:documentation>Documento adjunto en base64</xs:documentation>
 		</xs:annotation>
 		<xs:simpleType>
-			<xs:restriction base="xs:base64Binary"/>
+			<xs:restriction base="xs:base64Binary">
+				<xs:minLength value="1"/>
+			</xs:restriction>
 		</xs:simpleType>
 	</xs:element>
 	<xs:element name="TipoDocumento">
@@ -186,8 +217,9 @@
 		</xs:annotation>
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
-				<xs:maxLength value="250"/>
 				<xs:minLength value="1"/>
+				<xs:maxLength value="250"/>
+				<xs:whiteSpace value="collapse"/>
 			</xs:restriction>
 		</xs:simpleType>
 	</xs:element>
@@ -216,21 +248,27 @@
 	<xs:element name="CodigoEstado">
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
 				<xs:maxLength value="4"/>
+				<xs:whiteSpace value="collapse"/>
 			</xs:restriction>
 		</xs:simpleType>
 	</xs:element>
 	<xs:element name="CodigoEstadoSecundario">
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
 				<xs:maxLength value="16"/>
+				<xs:whiteSpace value="collapse"/>
 			</xs:restriction>
 		</xs:simpleType>
 	</xs:element>
 	<xs:element name="LiteralError">
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
-				<xs:maxLength value="255"/>
+				<xs:minLength value="1"/>
+				<xs:maxLength value="1024"/>
+				<xs:whiteSpace value="collapse"/>
 			</xs:restriction>
 		</xs:simpleType>
 	</xs:element>

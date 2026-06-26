@@ -1,0 +1,235 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://intermediacion.redsara.es/scsp/esquemas/datosespecificos" targetNamespace="http://intermediacion.redsara.es/scsp/esquemas/datosespecificos" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<xs:element name="DatosEspecificos" type="DatosEspecificos"/>
+	<!-- Datos especificos -->
+	<xs:complexType name="DatosEspecificos">
+		<xs:choice>
+			<xs:element ref="Consulta"/>
+			<xs:element ref="Retorno"/>
+		</xs:choice>
+		<xs:attribute name="Id" type="xs:string" use="optional"/>
+	</xs:complexType>
+	<!-- Consulta -->
+	<xs:element name="Consulta">
+		<xs:annotation>
+			<xs:documentation>Datos de consulta para servicio de consulta de plantilal media</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:all>
+				<xs:element name="FechaDesde" type="FechaEntrada">
+					<xs:annotation>
+						<xs:documentation>Periodo a consultar - Fecha desde</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="FechaHasta" type="FechaEntrada">
+					<xs:annotation>
+						<xs:documentation>Periodo a consultar - Fecha hasta</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<!-- Retorno de datos especificos -->
+	<xs:element name="Retorno">
+		<xs:annotation>
+			<xs:documentation>Datos de retorno para servicio de consulta de plantilal media</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:all>
+				<xs:element ref="Estado"/>
+				<xs:element ref="Tramos" minOccurs="0"/>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Tramos">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="Tramo" maxOccurs="20"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Estado">
+		<xs:complexType>
+			<xs:all>
+				<xs:element ref="CodigoEstado"/>
+				<xs:element ref="CodigoEstadoSecundario" minOccurs="0"/>
+				<xs:element ref="LiteralError"/>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="CodigoEstado">
+		<xs:annotation>
+			<xs:documentation>Codigo de estado de la transmisión</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:maxLength value="4"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="CodigoEstadoSecundario">
+		<xs:annotation>
+			<xs:documentation>Codigo de estado secundario de la transmisión</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="10"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="LiteralError">
+		<xs:annotation>
+			<xs:documentation>Descripcion del estado</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="1024"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Tramo">
+		<xs:complexType>
+			<xs:all>
+				<xs:element ref="NumeroAfiliacion"/>
+				<xs:element ref="Regimen"/>
+				<xs:element name="FechaInicio" type="Fecha">
+					<xs:annotation>
+						<xs:documentation>Fecha de inicio del tramo</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="FechaFin" type="Fecha" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>Fecha de fin del tramo</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element ref="SETA"/>
+				<xs:element ref="CNAE"/>
+				<xs:element ref="Colectivo" minOccurs="0"/>
+				<xs:element ref="FamiliarColaborador"/>
+				<xs:element ref="Domicilio" minOccurs="0"/>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:simpleType name="Fecha">
+		<xs:restriction base="xs:date"/>
+	</xs:simpleType>
+	<xs:simpleType name="FechaEntrada">
+		<xs:restriction base="xs:gYearMonth"/>
+	</xs:simpleType>
+	<xs:element name="Domicilio">
+		<xs:complexType>
+			<xs:all>
+				<xs:element ref="CodigoPostal"/>
+				<xs:element ref="CodigoProvincia"/>
+				<xs:element ref="CodigoMunicipio"/>
+				<xs:element ref="Localidad"/>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="NumeroAfiliacion">
+		<xs:annotation>
+			<xs:documentation>Numero de afiliación a la Seguridad Social del autónomo durante el tramo</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:pattern value="\d{12}"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Regimen">
+		<xs:annotation>
+			<xs:documentation>Régimen de Seguridad Social durante el tramo.</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:pattern value="\d{4}"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="SETA">
+		<xs:annotation>
+			<xs:documentation>Indicador de si el autónomo es SETA o no durante el tramo.</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:enumeration value="S"/>
+				<xs:enumeration value="N"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="CNAE">
+		<xs:annotation>
+			<xs:documentation>Código CNAE del autónomo durante el tramo.</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:pattern value="\d{4}"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Colectivo">
+		<xs:annotation>
+			<xs:documentation>Código del colectivo al que pertenece el autónomo durante el tramo.</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="50"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="FamiliarColaborador">
+		<xs:annotation>
+			<xs:documentation>Indica si es familiar colaborador durante el tramo.</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:enumeration value="S"/>
+				<xs:enumeration value="N"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="CodigoPostal">
+		<xs:annotation>
+			<xs:documentation>Código postal del domicilio donde se lleva a cabo la actividad durante el tramo.</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:pattern value="\d{5}"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="CodigoProvincia">
+		<xs:annotation>
+			<xs:documentation>Código de la provincia del domicilio donde se lleva a cabo la actividad durante el tramo.</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:pattern value="\d{2}"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="CodigoMunicipio">
+		<xs:annotation>
+			<xs:documentation>Código del municipio del domicilio donde se lleva a cabo la actividad durante el tramo.</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:pattern value="\d{3}"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Localidad">
+		<xs:annotation>
+			<xs:documentation>Localidad del domicilio donde se lleva a cabo la actividad durante el tramo.</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="70"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+</xs:schema>

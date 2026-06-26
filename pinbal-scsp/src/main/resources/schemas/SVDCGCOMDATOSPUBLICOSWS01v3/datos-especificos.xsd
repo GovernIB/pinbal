@@ -1,0 +1,179 @@
+<xs:schema xmlns="http://intermediacion.redsara.es/scsp/esquemas/datosespecificos" xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://intermediacion.redsara.es/scsp/esquemas/datosespecificos" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<xs:element name="DatosEspecificos" type="DatosEspecificos"/>
+	<xs:complexType name="DatosEspecificos">
+		<xs:all>
+			<xs:element ref="Retorno"/>
+		</xs:all>
+		<xs:attribute name="Id" type="xs:string" use="optional"/>
+	</xs:complexType>
+	<xs:element name="Retorno">
+		<xs:complexType>
+			<xs:all>
+				<xs:element ref="Estado"/>
+				<xs:element ref="Colegiado" minOccurs="0"/>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Estado">
+		<xs:complexType>
+			<xs:all>
+				<xs:element ref="CodigoEstado"/>
+				<xs:element ref="CodigoEstadoSecundario" minOccurs="0"/>
+				<xs:element ref="Literal"/>
+				<xs:element ref="LiteralSecundario" minOccurs="0"/>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="CodigoEstado">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="4"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="CodigoEstadoSecundario">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="16"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Literal">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="1024"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="LiteralSecundario">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="1024"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Colegiado">
+		<xs:complexType>
+			<xs:all>
+				<xs:element ref="NumeroColegiado" minOccurs="0"/>
+				<xs:element ref="EstadoColegiacion"/>
+				<xs:element name="IdColegio" type="CodigoProvincia" minOccurs="0"/>
+				<xs:element ref="Direcciones" minOccurs="0"/>
+				<xs:element ref="Especialidades" minOccurs="0"/>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="NumeroColegiado">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:pattern value="\d{9}"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="EstadoColegiacion">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:enumeration value="ACTIVO"/>
+				<xs:enumeration value="INHABILITADO"/>
+				<xs:enumeration value="BAJA"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Direcciones">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="DireccionTrabajo" maxOccurs="unbounded"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="DireccionTrabajo">
+		<xs:complexType>
+			<xs:all>
+				<xs:element ref="CodigoPostal" minOccurs="0"/>
+				<xs:element ref="DireccionPostal" minOccurs="0"/>
+				<xs:element ref="Municipio" minOccurs="0"/>
+				<xs:element ref="Provincia" minOccurs="0"/>
+				<xs:element ref="TipoVia" minOccurs="0"/>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="CodigoPostal">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:pattern value="\d{5}"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="DireccionPostal">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="200"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Municipio">
+		<xs:complexType>
+			<xs:all>
+				<xs:element name="Codigo" type="CodigoMunicipio" minOccurs="0"/>
+				<xs:element name="Literal" type="LiteralMunProv"/>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Provincia">
+		<xs:complexType>
+			<xs:all>
+				<xs:element name="Codigo" type="CodigoProvincia"/>
+				<xs:element name="Literal" type="LiteralMunProv"/>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:simpleType name="CodigoProvincia">
+		<xs:restriction base="xs:string">
+			<xs:pattern value="\d{2}"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="CodigoMunicipio">
+		<xs:restriction base="xs:string">
+			<xs:pattern value="\d{5}"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="LiteralMunProv">
+		<xs:restriction base="xs:string">
+			<xs:minLength value="1"/>
+			<xs:maxLength value="70"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:element name="TipoVia">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="10"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Especialidades">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="Especialidad" maxOccurs="unbounded"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Especialidad">
+		<xs:complexType>
+			<xs:all>
+				<xs:element name="Codigo" type="CodigoEspecialidad" minOccurs="0"/>
+				<xs:element name="Literal" type="LiteralMunProv"/>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:simpleType name="CodigoEspecialidad">
+		<xs:restriction base="xs:string">
+			<xs:pattern value="\d{1,2}"/>
+		</xs:restriction>
+	</xs:simpleType>
+</xs:schema>

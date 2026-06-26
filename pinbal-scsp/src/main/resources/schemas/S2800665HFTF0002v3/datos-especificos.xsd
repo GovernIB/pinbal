@@ -18,9 +18,7 @@
 	</xs:complexType>
 	<xs:complexType name="DatosEntrada">
 		<xs:annotation>
-			<xs:documentation>Bloque de campos que
-representan los datos
-introducidos por el usuario en la petición. Sólo en el mensaje de PETICION.</xs:documentation>
+			<xs:documentation>Bloque de campos que representan los datos introducidos por el usuario en la petición. Sólo en el mensaje de PETICION.</xs:documentation>
 		</xs:annotation>
 		<xs:sequence>
 			<xs:element ref="NumProducto"/>
@@ -73,7 +71,12 @@ introducidos por el usuario en la petición. Sólo en el mensaje de PETICION.</x
 			<xs:element ref="TipoProducto"/>
 			<xs:element ref="FechaApertura"/>
 			<xs:element ref="FechaCancelacion"/>
+			<xs:element ref="FechaTraspasoEND" minOccurs="0"/>
+			<xs:element ref="NifTraspasoEND" minOccurs="0"/>
+			<xs:element ref="TipoArrendamiento" minOccurs="0"/>
+			<xs:element ref="PeriodoArrendamiento" minOccurs="0"/>
 		</xs:sequence>
+		<xs:attribute name="IbanMultiple" type="xs:boolean"/>
 	</xs:complexType>
 	<xs:complexType name="ListaNumeracion">
 		<xs:annotation>
@@ -84,8 +87,9 @@ introducidos por el usuario en la petición. Sólo en el mensaje de PETICION.</x
 				<xs:complexType>
 					<xs:sequence>
 						<xs:element ref="NumProducto"/>
-						<xs:element ref="VigenciaNumeracion"/>
+						<xs:element ref="VigenciaNumeracion" minOccurs="0"/>
 					</xs:sequence>
+					<xs:attribute name="isMultiple" type="xs:boolean"/>
 				</xs:complexType>
 			</xs:element>
 		</xs:sequence>
@@ -165,7 +169,7 @@ introducidos por el usuario en la petición. Sólo en el mensaje de PETICION.</x
 	</xs:element>
 	<xs:element name="NumProducto">
 		<xs:annotation>
-			<xs:documentation>Número del producto financiero sobre el que se realiza la consulta.</xs:documentation>
+			<xs:documentation>Número del producto financiero sobre el que se realiza la consulta. El atributo isMultiple indica si la numeración es múltiple</xs:documentation>
 		</xs:annotation>
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
@@ -195,20 +199,32 @@ introducidos por el usuario en la petición. Sólo en el mensaje de PETICION.</x
 			</xs:restriction>
 		</xs:simpleType>
 	</xs:element>
+	<xs:element name="NifTraspasoEND">
+		<xs:annotation>
+			<xs:documentation>NIF de la entidad no declarante a la que el  producto financiero fue traspasado.</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:maxLength value="20"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
 	<xs:element name="TipoProducto">
 		<xs:annotation>
-			<xs:documentation>Tipo de producto financiero: Cuenta corriente, Cuenta de ahorro, Cuenta de valores o Depósitos a plazo.</xs:documentation>
+			<xs:documentation>Tipo de producto financiero: Cuenta corriente, Cuenta de ahorro, Depósitos a plazo, Otras cuentas de pago, Cajas de seguridad.</xs:documentation>
 		</xs:annotation>
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
 				<xs:maxLength value="30"/>
 				<xs:enumeration value="Cuenta corriente"/>
 				<xs:enumeration value="Cuenta de ahorro"/>
-				<xs:enumeration value="Cuenta de valores"/>
 				<xs:enumeration value="Depósito a plazo"/>
+				<xs:enumeration value="Otra cuenta de pago"/>
+				<xs:enumeration value="Caja de seguridad"/>
 			</xs:restriction>
 		</xs:simpleType>
 	</xs:element>
+	
 	<xs:element name="FechaApertura">
 		<xs:annotation>
 			<xs:documentation>Fecha de apertura del producto financiero. Ej: 06/01/2011.</xs:documentation>
@@ -229,9 +245,41 @@ introducidos por el usuario en la petición. Sólo en el mensaje de PETICION.</x
 			</xs:restriction>
 		</xs:simpleType>
 	</xs:element>
+	<xs:element name="FechaTraspasoEND">
+		<xs:annotation>
+			<xs:documentation>Fecha de traspaso a una entidad no declarante del producto financiero. Ej: 15/12/2014.</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:maxLength value="10"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="TipoArrendamiento">
+		<xs:annotation>
+			<xs:documentation>Tipo de arrendamiento de la caja de seguridad: I, D o R</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:maxLength value="1"/>
+				<xs:enumeration value="I"/>
+				<xs:enumeration value="D"/>
+				<xs:enumeration value="R"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="PeriodoArrendamiento">
+		<xs:annotation>
+			<xs:documentation>Periodo de arrendamiento expresado en meses. Ej.: 12 (12 meses).</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:integer"/>
+		</xs:simpleType>
+	</xs:element>
+	
 	<xs:element name="VigenciaNumeracion">
 		<xs:annotation>
-			<xs:documentation>Indica si la numeración del producto es la vigente o no. En caso afirmativo contendrá el valor: VIG. En caso negativo contendrá el valor HIS.</xs:documentation>
+			<xs:documentation>Indica si la numeración del producto es la vigente o no. En caso afirmativo contendrá el valor: VIG. En caso negativo contendrá el valor HIS. Si la numeración es múltiple, no se informara el nodo</xs:documentation>
 		</xs:annotation>
 		<xs:simpleType>
 			<xs:restriction base="xs:string">

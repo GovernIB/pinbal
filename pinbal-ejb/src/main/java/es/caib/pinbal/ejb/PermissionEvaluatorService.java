@@ -8,6 +8,8 @@ import lombok.experimental.Delegate;
 import org.springframework.context.annotation.Primary;
 
 import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 
 /**
  * Implementació de PermissionEvaluatorService com a EJB que empra una clase
@@ -15,6 +17,7 @@ import javax.ejb.Stateless;
  *
  * @author Limit Tecnologies <limit@limit.es>
  */
+@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
 @Primary
 @Stateless
 public class PermissionEvaluatorService extends AbstractServiceEjb<es.caib.pinbal.logic.intf.base.service.PermissionEvaluatorService> implements es.caib.pinbal.logic.intf.base.service.PermissionEvaluatorService {

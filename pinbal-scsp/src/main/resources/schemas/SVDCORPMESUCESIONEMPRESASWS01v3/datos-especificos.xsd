@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- edited with XMLSpy v2011 sp1 (http://www.altova.com) by End User (free.org) -->
+<xs:schema xmlns="http://intermediacion.redsara.es/scsp/esquemas/datosespecificos" xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://intermediacion.redsara.es/scsp/esquemas/datosespecificos" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<xs:element name="DatosEspecificos" type="DatosEspecificos"/>
+	<xs:complexType name="DatosEspecificos">
+		<xs:choice>
+			<xs:element ref="Consulta">
+				<xs:annotation>
+					<xs:documentation>Solo en el mensaje PETICION</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element ref="Retorno">
+				<xs:annotation>
+					<xs:documentation>Solo en el mensaje RESPUESTA</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:choice>
+		<xs:attribute name="Id" type="xs:string" use="optional"/>
+	</xs:complexType>
+	<xs:element name="Consulta">
+		<xs:complexType>
+			<xs:all>
+				<xs:element name="FechaDesde" type="Fecha" minOccurs="0"/>
+				<xs:element name="FechaHasta" type="Fecha" minOccurs="0"/>
+				<xs:element ref="NIFSucesora" minOccurs="0"/>
+				<xs:element ref="TipoOperacion" minOccurs="0"/>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="EnlaceBORME">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="1024"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:simpleType name="Fecha">
+		<xs:restriction base="xs:date"/>
+	</xs:simpleType>
+	<xs:element name="IdActo">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="15"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="NIFSucesora">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="9"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="NIFSucedida">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="9"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="NumeroBoletin">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="3"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="ReferenciaBORME">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="15"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="TipoOperacion">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:enumeration value="1"/>
+				<xs:enumeration value="2"/>
+				<xs:enumeration value="3"/>
+				<xs:enumeration value="4"/>
+				<xs:enumeration value="5"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Actos">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="Acto" maxOccurs="unbounded"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Retorno">
+		<xs:complexType>
+			<xs:all>
+				<xs:element ref="Estado"/>
+				<xs:element ref="Actos" minOccurs="0"/>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Estado">
+		<xs:complexType>
+			<xs:all>
+				<xs:element ref="CodigoEstado">
+					<xs:annotation>
+						<xs:documentation>Codigo de respuesta del servicio</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element ref="CodigoEstadoSecundario" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>Contine un código más específico, que en caso de error puede aportar informacion necesaria para resolver la incidencia.</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element ref="LiteralError">
+					<xs:annotation>
+						<xs:documentation>Descripción de la Respuesta, en función del valor del campo CodigoEstado. </xs:documentation>
+					</xs:annotation>
+				</xs:element>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Acto">
+		<xs:complexType>
+			<xs:all>
+				<xs:element ref="EnlaceBORME"/>
+				<xs:element name="Fecha" type="Fecha"/>
+				<xs:element name="FechaPublicacion" type="Fecha"/>
+				<xs:element ref="IdActo"/>
+				<xs:element ref="NIFSucesora" minOccurs="0"/>
+				<xs:element ref="NIFSucedida"/>
+				<xs:element ref="NumeroBoletin"/>
+				<xs:element ref="ReferenciaBORME" minOccurs="0"/>
+				<xs:element ref="TipoOperacion"/>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="CodigoEstado">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="4"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="CodigoEstadoSecundario">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="16"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="LiteralError">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="1024"/>
+				<xs:whiteSpace value="collapse"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+</xs:schema>

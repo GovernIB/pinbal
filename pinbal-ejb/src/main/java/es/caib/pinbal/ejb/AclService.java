@@ -8,6 +8,8 @@ import org.springframework.security.acls.model.*;
 
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import java.util.List;
 import java.util.Map;
 
@@ -17,6 +19,7 @@ import java.util.Map;
  * 
  * @author Limit Tecnologies <limit@limit.es>
  */
+@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
 @Primary
 @Stateless
 public class AclService extends AbstractService<org.springframework.security.acls.model.AclService> implements org.springframework.security.acls.model.AclService {

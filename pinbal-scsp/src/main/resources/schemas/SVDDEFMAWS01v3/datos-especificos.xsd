@@ -1,0 +1,283 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://intermediacion.redsara.es/scsp/esquemas/datosespecificos" xmlns:ns1="http://justicia.es/esb/comun/xsd-schemas/V1" targetNamespace="http://intermediacion.redsara.es/scsp/esquemas/datosespecificos" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<xs:element name="DatosEspecificos" type="DatosEspecificos"/>
+	<xs:complexType name="DatosEspecificos">
+		<xs:choice>
+			<xs:element ref="Consulta">
+				<xs:annotation>
+					<xs:documentation>Solo en el mensaje de PETICION</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element ref="Retorno">
+				<xs:annotation>
+					<xs:documentation>Solo en el mensaje RESPUESTA</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:choice>
+		<xs:attribute name="Id" type="xs:string" use="optional"/>
+	</xs:complexType>
+	<xs:element name="Consulta">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="Fecha"/>
+				<xs:element name="RegistroCivil" type="RegistroConsulta" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>Registro civil del que se obtendrán los datos</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="FechaNacimiento" type="xs:date">
+		<xs:annotation>
+			<xs:documentation>Fecha de Nacimiento</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="Retorno">
+		<xs:complexType>
+			<xs:all>
+				<xs:element ref="Estado"/>
+				<xs:element ref="Fallecidos" minOccurs="0"/>
+				<xs:element name="ElementosDevueltos" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>Elementos devueltos de fallecidos</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Fallecidos">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="Fallecido" maxOccurs="unbounded"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Fallecido">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="RegistroCivil"/>
+				<xs:element ref="TipoDocumentacion" minOccurs="0"/>
+				<xs:element ref="Documentacion" minOccurs="0"/>
+				<xs:element ref="Nombre"/>
+				<xs:element ref="Apellido1"/>
+				<xs:element ref="Apellido2" minOccurs="0"/>
+				<xs:element ref="FechaNacimiento" minOccurs="0"/>
+				<xs:element ref="Nacionalidad" minOccurs="0"/>
+				<xs:element ref="FechaDefuncion"/>
+				<xs:choice>
+					<xs:sequence>
+						<xs:element ref="ProvinciaDefuncion"/>
+						<xs:element ref="PoblacionDefuncion"/>
+					</xs:sequence>
+					<xs:element ref="ConsuladoDefuncion"/>
+				</xs:choice>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="PoblacionDefuncion">
+		<xs:complexType>
+			<xs:all>
+				<xs:element name="Codigo" type="CodigoLocalidad" minOccurs="0"/>
+				<xs:element name="Literal" type="NombrePoblacionDefuncion"/>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="ConsuladoDefuncion">
+		<xs:complexType>
+			<xs:all>
+				<xs:element name="Codigo" type="CodigoNacionalidad" minOccurs="0"/>
+				<xs:element name="Literal" type="NombrePoblacionDefuncion"/>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:simpleType name="NombrePoblacionDefuncion">
+		<xs:restriction base="xs:string">
+			<xs:minLength value="1"/>
+			<xs:maxLength value="70"/>
+			<xs:whiteSpace value="collapse"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:element name="Nacionalidad">
+		<xs:complexType>
+			<xs:all>
+				<xs:element name="Codigo" type="CodigoNacionalidad" minOccurs="0"/>
+				<xs:element name="Literal" type="NombreNacionalidad"/>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="ElementosDevueltos">
+		<xs:simpleType>
+			<xs:restriction base="xs:int">
+				<xs:totalDigits value="5"/>
+				<xs:minInclusive value="0"/>
+				<xs:maxInclusive value="99999"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="ProvinciaDefuncion">
+		<xs:complexType>
+			<xs:all>
+				<xs:element name="Codigo" type="CodigoProvinciaDefuncion" minOccurs="0"/>
+				<xs:element name="Literal" type="NombreProvinciaDefuncion"/>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:simpleType name="CodigoProvinciaDefuncion">
+		<xs:restriction base="xs:int">
+			<xs:totalDigits value="2"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="NombreProvinciaDefuncion">
+		<xs:restriction base="xs:string">
+			<xs:minLength value="1"/>
+			<xs:maxLength value="70"/>
+			<xs:whiteSpace value="collapse"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="RegistroConsulta">
+		<xs:restriction base="xs:string">
+			<xs:minLength value="1"/>
+			<xs:maxLength value="12"/>
+			<xs:whiteSpace value="collapse"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:element name="Apellido1">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="50"/>
+				<xs:whiteSpace value="collapse"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Apellido2">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="50"/>
+				<xs:whiteSpace value="collapse"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Estado">
+		<xs:complexType>
+			<xs:all>
+				<xs:element ref="CodigoEstado"/>
+				<xs:element ref="CodigoEstadoSecundario" minOccurs="0"/>
+				<xs:element ref="LiteralError"/>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="CodigoEstado">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="4"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="CodigoEstadoSecundario">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="16"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="RegistroCivil">
+		<xs:complexType>
+			<xs:all>
+				<xs:element name="Codigo" type="CodigoRegistro" minOccurs="0"/>
+				<xs:element name="Literal" type="NombreRegistro"/>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:simpleType name="CodigoRegistro">
+		<xs:restriction base="xs:long">
+			<xs:totalDigits value="12"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="NombreRegistro">
+		<xs:annotation>
+			<xs:documentation>Nombre Del Registro Civil</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:minLength value="1"/>
+			<xs:maxLength value="100"/>
+			<xs:whiteSpace value="collapse"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:element name="LiteralError">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="1024"/>
+				<xs:whiteSpace value="collapse"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="TipoDocumentacion">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:enumeration value="DNI"/>
+				<xs:enumeration value="Pasaporte"/>
+				<xs:enumeration value="NIE"/>
+				<xs:enumeration value="Otros"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Nombre">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="50"/>
+				<xs:whiteSpace value="collapse"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="FechaDefuncion" type="xs:date">
+		<xs:annotation>
+			<xs:documentation>Fecha de defunción</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="Fecha" type="xs:date">
+		<xs:annotation>
+			<xs:documentation>Fecha de la que se consultarán los datos</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="Documentacion">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="14"/>
+				<xs:whiteSpace value="collapse"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:simpleType name="CodigoLocalidad">
+		<xs:annotation>
+			<xs:documentation>Codigo Poblacion INE</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:pattern value="\d{5}"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="CodigoNacionalidad">
+		<xs:annotation>
+			<xs:documentation>Codigo de Nacionalidad INE/Código de consulado</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:pattern value="\d{3}"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="NombreNacionalidad">
+		<xs:annotation>
+			<xs:documentation>Literal de la nacionalidad</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:minLength value="1"/>
+			<xs:maxLength value="75"/>
+		</xs:restriction>
+	</xs:simpleType>
+</xs:schema>

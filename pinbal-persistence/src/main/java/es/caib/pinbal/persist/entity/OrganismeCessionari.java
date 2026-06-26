@@ -43,6 +43,7 @@ public class OrganismeCessionari implements Serializable {
 	private Date dataAlta;
 	@Column(name = "bloqueado", nullable = false)
 	private Boolean bloquejat;
+	@Lob
 	@Column(name = "logo")
 	private byte[] logo;
 	

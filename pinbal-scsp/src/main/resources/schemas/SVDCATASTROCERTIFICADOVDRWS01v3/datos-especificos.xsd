@@ -1,0 +1,302 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns="http://intermediacion.redsara.es/scsp/esquemas/datosespecificos" xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://intermediacion.redsara.es/scsp/esquemas/datosespecificos" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<xs:element name="DatosEspecificos" type="DatosEspecificos"/>
+	<xs:complexType name="DatosEspecificos">
+		<xs:choice>
+			<xs:element ref="Consulta">
+				<xs:annotation>
+					<xs:documentation>Solo en el mensaje PETICION</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element ref="Retorno">
+				<xs:annotation>
+					<xs:documentation>Solo en el mensaje RESPUESTA</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:choice>
+		<xs:attribute name="Id" type="xs:string" use="optional"/>
+	</xs:complexType>
+	<xs:element name="Consulta">
+		<xs:complexType>
+			<xs:all>
+				<xs:element ref="ReferenciaCatastral">
+					<xs:annotation>
+						<xs:documentation>Referencia catastral</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element ref="Fecha" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>Fecha de consulta - Debe ser mayor a 01/01/2022</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element ref="Localizacion" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>Localización del inmueble</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element ref="InformeMotivacion" minOccurs="0"/>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Retorno">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="Estado"/>
+				<xs:element ref="DatosConsulta" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>Datos consultados</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element ref="Fecha" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>Fecha del valor de referencia</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element ref="CSV" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>CSV de los datos solicitados</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Estado">
+		<xs:complexType>
+			<xs:all>
+				<xs:element ref="CodigoEstado">
+					<xs:annotation>
+						<xs:documentation>Codigo de respuesta del servicio</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element ref="CodigoEstadoSecundario" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>Contine un código más específico, que en caso de error puede aportar informacion necesaria para resolver la incidencia.</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element ref="LiteralError">
+					<xs:annotation>
+						<xs:documentation>Descripción de la Respuesta, en función del valor del campo CodigoEstado. </xs:documentation>
+					</xs:annotation>
+				</xs:element>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="DatosConsulta">
+		<xs:complexType>
+			<xs:all>
+				<xs:element name="ReferenciaCatastral" type="ReferenciaCatastral">
+					<xs:annotation>
+						<xs:documentation>Referencia catastral</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element ref="Localizacion" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>Localización del inmueble</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="ReferenciaCatastral">
+		<xs:complexType>
+			<xs:choice>
+				<xs:element name="Referencia" type="ref">
+					<xs:annotation>
+						<xs:documentation>Referencia catastral completa</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:sequence>
+					<xs:element name="pc1" type="pc">
+						<xs:annotation>
+							<xs:documentation>Parcela catastral 1</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="pc2" type="pc">
+						<xs:annotation>
+							<xs:documentation>Parcela catastral 2</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element ref="car">
+						<xs:annotation>
+							<xs:documentation>Cargo</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="cc1" type="cc">
+						<xs:annotation>
+							<xs:documentation>Código de control 1</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="cc2" type="cc">
+						<xs:annotation>
+							<xs:documentation>Código de control 2</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+				</xs:sequence>
+			</xs:choice>
+		</xs:complexType>
+	</xs:element>
+	<xs:complexType name="ReferenciaCatastral">
+		<xs:sequence>
+			<xs:element name="Referencia" type="ref">
+				<xs:annotation>
+					<xs:documentation>Referencia catastral completa</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="pc1" type="pc">
+				<xs:annotation>
+					<xs:documentation>Parcela catastral 1</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="pc2" type="pc">
+				<xs:annotation>
+					<xs:documentation>Parcela catastral 2</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element ref="car">
+				<xs:annotation>
+					<xs:documentation>Cargo</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="cc1" type="cc">
+				<xs:annotation>
+					<xs:documentation>Código de control 1</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="cc2" type="cc">
+				<xs:annotation>
+					<xs:documentation>Código de control 2</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:simpleType name="ref">
+		<xs:restriction base="xs:string">
+			<xs:pattern value="([A-Z]|[0-9]|-){14}[0-9]{4}([A-Z]|Ñ|-){2}"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:element name="Fecha">
+		<xs:annotation>
+			<xs:documentation>Fecha de consulta</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:date"/>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="InformeMotivacion">
+		<xs:annotation>
+			<xs:documentation>Indica si se requiere el informe de motivación del valor de referencia (Por defecto No)</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:enumeration value="N"/>
+				<xs:enumeration value="S"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:simpleType name="pc">
+		<xs:restriction base="xs:string">
+			<xs:pattern value="([A-Z]|[0-9]|-){7}"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:element name="car">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:length value="4"/>
+				<xs:pattern value="([0-9])+"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:simpleType name="cc">
+		<xs:restriction base="xs:string">
+			<xs:length value="1"/>
+			<xs:pattern value="([A-Z]|Ñ|-)"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:element name="Localizacion">
+		<xs:annotation>
+			<xs:documentation>Localizacion de la finca o bien a consultar</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:all>
+				<xs:element ref="Provincia"/>
+				<xs:element ref="Municipio"/>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Provincia">
+		<xs:annotation>
+			<xs:documentation>Código de provincia</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:pattern value="\d{2}"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Municipio">
+		<xs:annotation>
+			<xs:documentation>Código de municipio</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:pattern value="\d{3}"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="CSV">
+		<xs:complexType>
+			<xs:all>
+				<xs:element name="VDR" type="csv">
+					<xs:annotation>
+						<xs:documentation>CSV del certificado del valor de referencia (o ausencia)</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="Motivacion" type="csv" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>CSV del certificado de motivación</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:simpleType name="csv">
+		<xs:annotation>
+			<xs:documentation>TipoCSV</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:minLength value="1"/>
+			<xs:maxLength value="16"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="stringnb">
+		<xs:restriction base="xs:string">
+			<xs:minLength value="1"/>
+			<xs:maxLength value="250"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:element name="CodigoEstado">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="4"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="CodigoEstadoSecundario">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="16"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="LiteralError">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="1024"/>
+				<xs:whiteSpace value="collapse"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+</xs:schema>

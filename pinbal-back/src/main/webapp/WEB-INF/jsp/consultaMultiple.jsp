@@ -218,7 +218,7 @@ $(document).ready(function() {
 			{
 				targets: [1],
 				width: "10%",
-				render: $.fn.dataTable.render.moment('x', 'DD/MM/YYYY HH:mm:ss', 'es' )
+				render: $.fn.dataTable.render.moment('YYYY-MM-DDTHH:mm:ss.SSSZ', 'DD/MM/YYYY HH:mm:ss', 'es' )
 			},
 			{
 				targets: [3],
@@ -254,7 +254,7 @@ $(document).ready(function() {
 				targets: [6],
 				width: "10%",
 				render: function (data, type, row) {
-					var formattedDate = moment(data, 'x', true);
+					var formattedDate = moment(data, 'YYYY-MM-DDTHH:mm:ss.SSSZ', true);
 					// Verifica si és vàlid
 					if (!formattedDate.isValid()) {
 						return ""; // Retorna cadena buida si la data no és vàlida

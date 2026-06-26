@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns="http://intermediacion.redsara.es/scsp/esquemas/datosespecificos" xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://intermediacion.redsara.es/scsp/esquemas/datosespecificos" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<xs:element name="DatosEspecificos" type="DatosEspecificos"/>
+	<xs:complexType name="DatosEspecificos">
+		<xs:sequence>
+			<xs:element ref="consultarIntegrantesImvRISResponse"/>
+		</xs:sequence>
+		<xs:attribute name="Id" type="xs:string" use="optional"/>
+	</xs:complexType>
+	<xs:element name="consultarIntegrantesImvRISResponse">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="return" minOccurs="0"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="return">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="codigosRespuesta" type="xs:string" minOccurs="0"/>
+				<xs:element name="literalRespuesta" type="xs:string" minOccurs="0"/>
+				<xs:element ref="listadoIpf" minOccurs="0" maxOccurs="unbounded"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="listadoIpf">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="apellidosNombre" minOccurs="0"/>
+				<xs:element name="codigoEstadoCivil" type="xs:string" minOccurs="0"/>
+				<xs:element name="codigoNacionalidad" type="xs:string" minOccurs="0"/>
+				<xs:element name="codigoSexo" type="xs:string" minOccurs="0"/>
+				<xs:element name="codigosRespuesta" type="xs:string" minOccurs="0"/>
+				<xs:element name="literalRespuesta" type="xs:string" minOccurs="0"/>
+				<xs:element ref="datosDomicilioExtranjero" minOccurs="0"/>
+				<xs:element ref="datosResidenciaNacional" minOccurs="0"/>
+				<xs:element name="fechaNacimiento" type="xs:string" minOccurs="0"/>
+				<xs:element name="fillerDatosPersona" type="xs:string" minOccurs="0"/>
+				<xs:element ref="identificativo" minOccurs="0"/>
+				<xs:element name="indicadorDatosProtegidos" type="xs:string" minOccurs="0"/>
+				<xs:element ref="listaIntegrantesUC" minOccurs="0" maxOccurs="unbounded"/>
+				<xs:element ref="listaPrestaciones" minOccurs="0"/>
+				<xs:element name="telefonoMovil" type="xs:string" minOccurs="0"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="apellidosNombre">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="apellidoPrimero" type="xs:string" minOccurs="0"/>
+				<xs:element name="apellidoSegundo" type="xs:string" minOccurs="0"/>
+				<xs:element name="nombre" type="xs:string" minOccurs="0"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="datosResidenciaNacional">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="codigoPaisResidencia" type="xs:string" minOccurs="0"/>
+				<xs:element ref="domicilioNacional" minOccurs="0"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="domicilioNacional">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="bloque" type="xs:string" minOccurs="0"/>
+				<xs:element name="codigoMunicipioResidencia" type="xs:string" minOccurs="0"/>
+				<xs:element name="codigoPostal" type="xs:string" minOccurs="0"/>
+				<xs:element name="codigoProvinciaResidencia" type="xs:string" minOccurs="0"/>
+				<xs:element name="codigoVia" type="xs:string" minOccurs="0"/>
+				<xs:element name="escalera" type="xs:string" minOccurs="0"/>
+				<xs:element name="nombreMunicipioResidencia" type="xs:string" minOccurs="0"/>
+				<xs:element name="nombreVia" type="xs:string" minOccurs="0"/>
+				<xs:element name="numeroVia" type="xs:string" minOccurs="0"/>
+				<xs:element name="piso" type="xs:string" minOccurs="0"/>
+				<xs:element name="puerta" type="xs:string" minOccurs="0"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="datosDomicilioExtranjero">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="direccionResidencia1" type="xs:string" minOccurs="0"/>
+				<xs:element name="direccionResidencia2" type="xs:string" minOccurs="0"/>
+				<xs:element name="localidadResidenciaExtranjera" type="xs:string" minOccurs="0"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="identificativo">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="codigoDuplicidad" type="xs:string" minOccurs="0"/>
+				<xs:element name="numeroDocumento" type="xs:string" minOccurs="0"/>
+				<xs:element name="tipoDocumento" type="xs:string" minOccurs="0"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="listaIntegrantesUC">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="integrante" minOccurs="0" maxOccurs="unbounded"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="integrante">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="fechaAltaInicialTitularBeneficiario" type="xs:string" minOccurs="0"/>
+				<xs:element ref="apellidosNombre" minOccurs="0"/>
+				<xs:element name="clavePropiaEntidad" type="xs:string" minOccurs="0"/>
+				<xs:element name="codigoEstadoCivil" type="xs:string" minOccurs="0"/>
+				<xs:element name="codigoNacionalidad" type="xs:string" minOccurs="0"/>
+				<xs:element name="codigoSexo" type="xs:string" minOccurs="0"/>
+				<xs:element name="codigosRespuesta" type="xs:string" minOccurs="0"/>
+				<xs:element name="literalRespuesta" type="xs:string" minOccurs="0"/>
+				<xs:element name="estadoPerceptor" type="xs:string" minOccurs="0"/>
+				<xs:element name="fechaNacimiento" type="xs:string" minOccurs="0"/>
+				<xs:element ref="identificativo" minOccurs="0"/>
+				<xs:element name="indicadorDatosProtegidos" type="xs:string" minOccurs="0"/>
+				<xs:element name="perceptor" type="xs:string" minOccurs="0"/>
+				<xs:element name="telefonoMovil" type="xs:string" minOccurs="0"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="listaPrestaciones">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="prestacion" minOccurs="0" maxOccurs="unbounded"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="prestacion">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="clavePrestacion" type="xs:string" minOccurs="0"/>
+				<xs:element name="clavePropiaEntidad" type="xs:string" minOccurs="0"/>
+				<xs:element name="codigoSituacionActual" type="xs:string" minOccurs="0"/>
+				<xs:element name="codigoUnidadConvivencia" type="xs:string" minOccurs="0"/>
+				<xs:element name="estadoPerceptor" type="xs:string" minOccurs="0"/>
+				<xs:element name="fechaAltaInicialPerceptor" type="xs:string" minOccurs="0"/>
+				<xs:element name="fechaSituacion" type="xs:string" minOccurs="0"/>
+				<xs:element name="fillerDatosEspecificos" type="xs:string" minOccurs="0"/>
+				<xs:element name="fillerPrestacion" type="xs:string" minOccurs="0"/>
+				<xs:element name="perceptor" type="xs:string" minOccurs="0"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+</xs:schema>

@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- edited with XMLSpy v2008 sp1 (http://www.altova.com) by a (a) -->
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://intermediacion.redsara.es/scsp/esquemas/datosespecificos" targetNamespace="http://intermediacion.redsara.es/scsp/esquemas/datosespecificos" elementFormDefault="qualified" attributeFormDefault="unqualified">
 	<xs:element name="DatosEspecificos" type="DatosEspecificos"/>
 	<xs:complexType name="DatosEspecificos">
@@ -13,11 +12,6 @@
 		</xs:choice>
 		<xs:attribute name="Id" type="xs:string" use="optional"/>
 	</xs:complexType>
-	<xs:element name="Consulta">
-		<xs:complexType>
-			<xs:sequence/>
-		</xs:complexType>
-	</xs:element>
 	<xs:element name="Retorno">
 		<xs:complexType>
 			<xs:sequence>
@@ -28,148 +22,70 @@
 	<xs:element name="Estado">
 		<xs:complexType>
 			<xs:all>
-				<xs:element ref="CodigoEstado" minOccurs="0"/>
+				<xs:element ref="CodigoEstado"/>
 				<xs:element ref="CodigoEstadoSecundario" minOccurs="0"/>
-				<xs:element ref="LiteralError" minOccurs="0"/>
+				<xs:element ref="LiteralError"/>
 			</xs:all>
 		</xs:complexType>
 	</xs:element>
 	<xs:element name="CodigoEstado">
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
 				<xs:maxLength value="4"/>
+				<xs:whiteSpace value="collapse"/>
 			</xs:restriction>
 		</xs:simpleType>
 	</xs:element>
 	<xs:element name="CodigoEstadoSecundario">
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
 				<xs:maxLength value="16"/>
+				<xs:whiteSpace value="collapse"/>
 			</xs:restriction>
 		</xs:simpleType>
 	</xs:element>
 	<xs:element name="LiteralError">
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
-				<xs:maxLength value="255"/>
+				<xs:minLength value="1"/>
+				<xs:maxLength value="1024"/>
+				<xs:whiteSpace value="collapse"/>
 			</xs:restriction>
 		</xs:simpleType>
 	</xs:element>
-	<xs:element name="Resultado">
-		<xs:simpleType>
-			<xs:restriction base="xs:string">
-				<xs:enumeration value="SI"/>
-				<xs:enumeration value="NO"/>
-			</xs:restriction>
-		</xs:simpleType>
-	</xs:element>
-	<xs:element name="Provincia">
-		<xs:simpleType>
-			<xs:restriction base="xs:string">
-				<xs:maxLength value="70"/>
-			</xs:restriction>
-		</xs:simpleType>
-	</xs:element>
-	<xs:element name="Municipio">
-		<xs:simpleType>
-			<xs:restriction base="xs:string">
-				<xs:maxLength value="70"/>
-			</xs:restriction>
-		</xs:simpleType>
-	</xs:element>
-	<xs:element name="Nombre">
-		<xs:simpleType>
-			<xs:restriction base="xs:string">
-				<xs:maxLength value="40"/>
-			</xs:restriction>
-		</xs:simpleType>
-	</xs:element>
-	<xs:element name="Apellido1">
-		<xs:simpleType>
-			<xs:restriction base="xs:string">
-				<xs:maxLength value="40"/>
-			</xs:restriction>
-		</xs:simpleType>
-	</xs:element>
-	<xs:element name="Apellido2">
-		<xs:simpleType>
-			<xs:restriction base="xs:string">
-				<xs:maxLength value="40"/>
-			</xs:restriction>
-		</xs:simpleType>
-	</xs:element>
-	<xs:element name="SolicitanteDatos">
-		<xs:complexType>
-			<xs:all>
-				<xs:element ref="Tipo" minOccurs="0"/>
-				<xs:element ref="Nombre" minOccurs="0"/>
-				<xs:element ref="Apellido1" minOccurs="0"/>
-				<xs:element ref="Apellido2" minOccurs="0"/>
-				<xs:element ref="IdFuncionario" minOccurs="0"/>
-				<xs:element ref="NumFuncionario" minOccurs="0"/>
-				<xs:element ref="Telefono" minOccurs="0"/>
-				<xs:element ref="Organizacion" minOccurs="0"/>
-			</xs:all>
-		</xs:complexType>
-	</xs:element>
-	<xs:element name="Tipo">
-		<xs:simpleType>
-			<xs:restriction base="xs:string">
-				<xs:enumeration value="app"/>
-				<xs:enumeration value="fun"/>
-			</xs:restriction>
-		</xs:simpleType>
-	</xs:element>
-	<xs:element name="IdFuncionario">
-		<xs:simpleType>
-			<xs:restriction base="xs:string">
-				<xs:maxLength value="10"/>
-			</xs:restriction>
-		</xs:simpleType>
-	</xs:element>
-	<xs:element name="NumFuncionario">
-		<xs:simpleType>
-			<xs:restriction base="xs:string">
-				<xs:maxLength value="25"/>
-			</xs:restriction>
-		</xs:simpleType>
-	</xs:element>
-	<xs:element name="Telefono">
-		<xs:simpleType>
-			<xs:restriction base="xs:string">
-				<xs:maxLength value="13"/>
-			</xs:restriction>
-		</xs:simpleType>
-	</xs:element>
-	<xs:element name="Organizacion">
-		<xs:complexType>
-			<xs:all>
-				<xs:element ref="CodOrganizacion"/>
-				<xs:element ref="NombreOrganizacion"/>
-			</xs:all>
-		</xs:complexType>
-	</xs:element>
-	<xs:element name="CodOrganizacion">
-		<xs:simpleType>
-			<xs:restriction base="xs:string">
-				<xs:maxLength value="64"/>
-			</xs:restriction>
-		</xs:simpleType>
-	</xs:element>
-	<xs:element name="NombreOrganizacion">
-		<xs:simpleType>
-			<xs:restriction base="xs:string">
-				<xs:maxLength value="122"/>
-			</xs:restriction>
-		</xs:simpleType>
-	</xs:element>
+	<xs:simpleType name="CodigoPais">
+		<xs:restriction base="xs:string">
+			<xs:pattern value="\d{3}"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="CodigoProvincia">
+		<xs:restriction base="xs:string">
+			<xs:whiteSpace value="collapse"/>
+			<xs:pattern value="\d{2}"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="CodigoMunicipio">
+		<xs:restriction base="xs:string">
+			<xs:whiteSpace value="collapse"/>
+			<xs:pattern value="\d{3}"/>
+		</xs:restriction>
+	</xs:simpleType>
 	<xs:element name="Solicitud">
 		<xs:annotation>
 			<xs:documentation>Solo en el mensaje de PETICION</xs:documentation>
 		</xs:annotation>
 		<xs:complexType>
 			<xs:all>
-				<xs:element ref="Espanol"/>
+				<xs:element ref="Espanol" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>Indica si la persona de la que se verifican los datos es de nacionalidad española o no. 
+Los valores posibles son:
+- s
+- n</xs:documentation>
+					</xs:annotation>
+				</xs:element>
 				<xs:element ref="Residencia"/>
 				<xs:element ref="Nacimiento" minOccurs="0"/>
 			</xs:all>
@@ -185,11 +101,37 @@
 	</xs:element>
 	<xs:element name="Nacimiento">
 		<xs:complexType>
-			<xs:all>
-				<xs:element ref="Fecha" minOccurs="0"/>
-				<xs:element ref="Provincia" minOccurs="0"/>
-				<xs:element ref="Municipio" minOccurs="0"/>
-			</xs:all>
+			<xs:sequence>
+				<xs:element ref="Fecha" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>Fecha de Nacimiento del ciudadano. 
+Formato: AAAAMMDD.</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:choice minOccurs="0">
+					<xs:element name="Pais" type="CodigoPais">
+						<xs:annotation>
+							<xs:documentation>Código del pais de nacimiento</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:sequence>
+						<xs:element name="Provincia" type="CodigoProvincia">
+							<xs:annotation>
+								<xs:documentation>Código de la Provincia en la que nació el ciudadano. Este campo irá codificado con los códigos del INE (2 dígitos). 
+Si el ciudadano es extranjero, el código de Provincia será el 66.
+https://idapadron.ine.es/ape403expl/inicio.menu</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="Municipio" type="CodigoMunicipio" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Código del municipio en el que nació el ciudadano. 
+Este campo irá codificado con los códigos del INE (3dígitos). Si el ciudadano es extranjero el Municipio irá codificado con el código INE de su  país de nacimiento.
+https://idapadron.ine.es/ape403expl/inicio.menu</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+					</xs:sequence>
+				</xs:choice>
+			</xs:sequence>
 		</xs:complexType>
 	</xs:element>
 	<xs:element name="Fecha">
@@ -202,8 +144,20 @@
 	<xs:element name="Residencia">
 		<xs:complexType>
 			<xs:all>
-				<xs:element ref="Provincia"/>
-				<xs:element ref="Municipio" minOccurs="0"/>
+				<xs:element name="Provincia" type="CodigoProvincia">
+					<xs:annotation>
+						<xs:documentation>Código de la Provincia en la que reside el ciudadano. 
+Este campo irá codificado con los códigos del INE (2 dígitos).
+https://idapadron.ine.es/ape403expl/inicio.menu</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="Municipio" type="CodigoMunicipio" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>Código del municipio de residencia  del ciudadano. 
+Este campo irá codificado con los códigos del INE (3dígitos).
+https://idapadron.ine.es/ape403expl/inicio.menu</xs:documentation>
+					</xs:annotation>
+				</xs:element>
 			</xs:all>
 		</xs:complexType>
 	</xs:element>

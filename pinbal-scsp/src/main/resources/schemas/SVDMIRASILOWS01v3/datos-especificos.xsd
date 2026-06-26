@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://intermediacion.redsara.es/scsp/esquemas/datosespecificos" targetNamespace="http://intermediacion.redsara.es/scsp/esquemas/datosespecificos" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<xs:element name="DatosEspecificos" type="DatosEspecificos"/>
+	<xs:complexType name="DatosEspecificos">
+		<xs:all>
+			<xs:element ref="Retorno"/>
+		</xs:all>
+		<xs:attribute name="Id" type="xs:string" use="optional"/>
+	</xs:complexType>
+	<xs:element name="Retorno">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="Estado"/>
+				<xs:element ref="Solicitudes" minOccurs="0"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Estado">
+		<xs:complexType>
+			<xs:all>
+				<xs:element ref="CodigoEstado"/>
+				<xs:element ref="CodigoEstadoSecundario" minOccurs="0"/>
+				<xs:element ref="LiteralError"/>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:complexType name="EstadoSolicitud">
+		<xs:all>
+			<xs:element ref="CodigoEstado"/>
+			<xs:element ref="Descripcion"/>
+		</xs:all>
+	</xs:complexType>
+	<xs:element name="Solicitudes">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="Solicitud" maxOccurs="unbounded"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Solicitud">
+		<xs:complexType>
+			<xs:all>
+				<xs:element name="Estado" type="EstadoSolicitud"/>
+				<xs:element ref="Expediente"/>
+				<xs:element ref="Recursos" minOccurs="0"/>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Expediente">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="FechaSolicitud" type="Fecha" minOccurs="0"/>
+				<xs:element ref="Resolucion" minOccurs="0"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Recursos">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="Recurso" minOccurs="0" maxOccurs="unbounded"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Recurso">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="TipoRecurso" minOccurs="0"/>
+				<xs:element name="FechaInterposicion" type="Fecha" minOccurs="0"/>
+				<xs:element name="PeticionExpedienteAdvoOAR"  type="Fecha" minOccurs="0"/>
+				<xs:element ref="Resolucion" minOccurs="0"/>
+				<xs:element ref="SuspensionCautelar" minOccurs="0"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Resolucion">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="FechaResolucion" type="Fecha" minOccurs="0"/>
+				<xs:element ref="Sentido" minOccurs="0"/>
+				<xs:element name="FechaNotificacion" type="Fecha" minOccurs="0"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="SuspensionCautelar">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="FechaSuspension" type="Fecha"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="CodigoEstado">
+		<xs:annotation>
+			<xs:documentation>Código de estado que devuelve la petición de consulta.</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="4"/>
+				<xs:whiteSpace value="collapse"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="CodigoEstadoSecundario">
+		<xs:annotation>
+			<xs:documentation>Codigo de estado secundario de la transmisión</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="10"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="LiteralError">
+		<xs:annotation>
+			<xs:documentation>Mensaje retorno con la contestación a la consulta.</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="1024"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Descripcion">
+		<xs:annotation>
+			<xs:documentation>Descripción del estado de la solicitud.</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="200"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Sentido">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="100"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="TipoRecurso">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="50"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:simpleType name="Fecha">
+		<xs:restriction base="xs:date"/>
+	</xs:simpleType>
+</xs:schema>

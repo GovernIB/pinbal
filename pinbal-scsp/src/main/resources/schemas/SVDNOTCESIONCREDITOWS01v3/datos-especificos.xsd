@@ -1,0 +1,1042 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- edited with XMLSpy v2011 sp1 (http://www.altova.com) by End User (free.org) -->
+<xs:schema xmlns="http://intermediacion.redsara.es/scsp/esquemas/datosespecificos" xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://intermediacion.redsara.es/scsp/esquemas/datosespecificos" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<xs:element name="DatosEspecificos" type="DatosEspecificos"/>
+	<xs:complexType name="DatosEspecificos">
+		<xs:choice>
+			<xs:element ref="Consulta">
+				<xs:annotation>
+					<xs:documentation>Solo en el mensaje PETICION</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element ref="Retorno">
+				<xs:annotation>
+					<xs:documentation>Solo en el mensaje RESPUESTA</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:choice>
+		<xs:attribute name="Id" type="xs:string" use="optional"/>
+	</xs:complexType>
+	<xs:element name="Consulta">
+		<xs:complexType>
+			<xs:all>
+				<xs:element ref="CSV"/>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Retorno">
+		<xs:complexType>
+			<xs:all>
+				<xs:element ref="Estado"/>
+				<xs:element ref="DatosCesionCredito" minOccurs="0"/>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="CSV" type="CSVType"/>
+	<xs:element name="Estado">
+		<xs:complexType>
+			<xs:all>
+				<xs:element ref="CodigoEstado"/>
+				<xs:element ref="CodigoEstadoSecundario" minOccurs="0"/>
+				<xs:element ref="LiteralError"/>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="CodigoEstado">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:maxLength value="4"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="CodigoEstadoSecundario">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:maxLength value="16"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="LiteralError">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:maxLength value="255"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<!-- DATOS NOTARIOS -->
+	<xs:element name="DatosCesionCredito">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="NOTIFICACION">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="CSV" type="CSVType"/>
+							<xs:element name="TIPO_DOCUMENTO">
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="CODIGO">
+											<xs:simpleType>
+												<xs:restriction base="xs:string">
+													<xs:maxLength value="5"/>
+												</xs:restriction>
+											</xs:simpleType>
+										</xs:element>
+										<xs:element name="DESCRIPCION">
+											<xs:simpleType>
+												<xs:restriction base="xs:string">
+													<xs:maxLength value="100"/>
+												</xs:restriction>
+											</xs:simpleType>
+										</xs:element>
+									</xs:sequence>
+								</xs:complexType>
+							</xs:element>
+							<xs:element name="DOCUMENTO" type="DOCUMENTOType"/>
+							<xs:element name="ACTO_JURIDICO" type="ACTO_JURIDICOType"/>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="ADMINISTRACION" minOccurs="0">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="TIPO_ADMINISTRACION" minOccurs="0">
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="CODIGO" type="xs:string"/>
+										<xs:element name="DESCRIPCION">
+											<xs:simpleType>
+												<xs:restriction base="xs:string">
+													<xs:maxLength value="100"/>
+												</xs:restriction>
+											</xs:simpleType>
+										</xs:element>
+									</xs:sequence>
+								</xs:complexType>
+							</xs:element>
+							<xs:element name="CIF" type="CIFType"/>
+							<xs:element name="NOMBRE">
+								<xs:simpleType>
+									<xs:restriction base="xs:string">
+										<xs:maxLength value="100"/>
+									</xs:restriction>
+								</xs:simpleType>
+							</xs:element>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="CEDENTES">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="CEDENTE" maxOccurs="unbounded">
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="PERSONA" type="PERSONAType"/>
+										<xs:element name="DOCUMENTO_REP" minOccurs="0" maxOccurs="unbounded">
+											<xs:complexType>
+												<xs:sequence>
+													<xs:element name="CSV" type="CSVType"/>
+													<xs:element name="NUM_PROTOCOLO" type="NUMERO_DOCUMENTOType"/>
+													<xs:element name="NUM_BIS" type="NUMERO_DOCUMENTO_BISType" minOccurs="0"/>
+													<xs:element name="FECHA_AUTORIZACION" type="FECHAType"/>
+													<xs:element name="CODIGO_ULTIMAS_VOLUNTADES" type="CODIGO_NOTARIOType"/>
+													<xs:element name="CODIGO_CATASTRO" type="CODIGO_NOTARIAType"/>
+													<xs:element name="ACTO_JURIDICO" type="ACTO_JURIDICOType"/>
+													<xs:element name="TEXTO_FACULTADES" minOccurs="0">
+														<xs:simpleType>
+															<xs:restriction base="xs:string">
+																<xs:maxLength value="1000"/>
+															</xs:restriction>
+														</xs:simpleType>
+													</xs:element>
+													<xs:element name="DATOS_INSCRIPCION" minOccurs="0">
+														<xs:simpleType>
+															<xs:restriction base="xs:string">
+																<xs:maxLength value="1000"/>
+															</xs:restriction>
+														</xs:simpleType>
+													</xs:element>
+													<xs:element name="REPRESENTACION" type="PERSONAType" maxOccurs="unbounded"/>
+												</xs:sequence>
+											</xs:complexType>
+										</xs:element>
+									</xs:sequence>
+								</xs:complexType>
+							</xs:element>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="CESIONARIOS">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="PERSONA" type="PERSONAType" maxOccurs="unbounded"/>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="CONTRATO_ADMINISTRATIVO" minOccurs="0">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="TIPO_CONTRATO">
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="CODIGO">
+											<xs:simpleType>
+												<xs:restriction base="xs:string">
+													<xs:maxLength value="5"/>
+												</xs:restriction>
+											</xs:simpleType>
+										</xs:element>
+										<xs:element name="DESCRIPCION">
+											<xs:simpleType>
+												<xs:restriction base="xs:string">
+													<xs:maxLength value="100"/>
+												</xs:restriction>
+											</xs:simpleType>
+										</xs:element>
+									</xs:sequence>
+								</xs:complexType>
+							</xs:element>
+							<xs:element name="FECHA_ADJUDICACION" type="FECHAType"/>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="CONTRATO_CESION" minOccurs="0">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="TIPO_CONTRATO">
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="CODIGO">
+											<xs:simpleType>
+												<xs:restriction base="xs:string">
+													<xs:maxLength value="5"/>
+												</xs:restriction>
+											</xs:simpleType>
+										</xs:element>
+										<xs:element name="DESCRIPCION">
+											<xs:simpleType>
+												<xs:restriction base="xs:string">
+													<xs:maxLength value="100"/>
+												</xs:restriction>
+											</xs:simpleType>
+										</xs:element>
+									</xs:sequence>
+								</xs:complexType>
+							</xs:element>
+							<xs:element name="CESION" type="CESIONType" maxOccurs="unbounded"/>
+							<xs:element name="CODIGO_CONTRATO" type="STRINGType" minOccurs="0"/>
+							<xs:element name="NUMERO_FACTURA" type="STRINGType" minOccurs="0"/>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+				<xs:element ref="DOCUMENTACION"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<!--- TIPOS NOTARIOS -->
+	<xs:simpleType name="NUMERO_DOCUMENTOType">
+		<xs:annotation>
+			<xs:documentation>Numero de documento/protocolo/asiento del Libro Registro</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:integer">
+			<xs:totalDigits value="6"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="NUMERO_DOCUMENTO_BISType">
+		<xs:annotation>
+			<xs:documentation>Numero de documento/protocolo bis</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:short">
+			<xs:totalDigits value="3"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="CODIGO_NOTARIOType">
+		<xs:annotation>
+			<xs:documentation>Codigo de ultimas voluntades del Notario</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:pattern value="[0-9]{7}"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="CODIGO_NOTARIAType">
+		<xs:annotation>
+			<xs:documentation>Codigo de catastro de la Notaria</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:pattern value="[0-9]{9}"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="CSVType">
+		<xs:annotation>
+			<xs:documentation>Código Seguro de Validación. Formato: Fecha de autorización (8 posiciones) + 16 primeros caracteres resultados de truncar el MD5 formado por Número de protocolo (6 posiciones) + Número de protocolo BIS (3 posiciones) + código catastro (9 posiciones) +  código últimas voluntades (7 posiciones) + secuencial (3 posiciones)</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:pattern value="[0-9a-zA-Z]{24}"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="FECHAType">
+		<xs:annotation>
+			<xs:documentation>Fecha (AAAA-MM-DD)</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:date"/>
+	</xs:simpleType>
+	<xs:simpleType name="CIFType">
+		<xs:annotation>
+			<xs:documentation>CIF</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="STRINGType">
+			<xs:maxLength value="10"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="NOMBREType">
+		<xs:annotation>
+			<xs:documentation>Nombre de la persona física</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:minLength value="1"/>
+			<xs:maxLength value="100"/>
+			<xs:pattern value="[^\r\n\t]*"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="APELLIDOSType">
+		<xs:annotation>
+			<xs:documentation>Apellidos de la persona física</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:minLength value="1"/>
+			<xs:maxLength value="100"/>
+			<xs:pattern value="[^\r\n\t]*"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="DIRECCIONType">
+		<xs:annotation>
+			<xs:documentation>Dirección</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="STRINGType">
+			<xs:maxLength value="100"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="TELEFONOType">
+		<xs:annotation>
+			<xs:documentation>Número de teléfono, acepta limitadores y extensión</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:maxLength value="19"/>
+			<xs:pattern value="(\+[0-9]{1,3}(\-|\.)?)?([0-9]{1,3}(\-|\.|\|)?[0-9]{1,3})+"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="FAXType">
+		<xs:annotation>
+			<xs:documentation>Número de teléfono, acepta limitadores y extensión</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:maxLength value="19"/>
+			<xs:pattern value="(\+[0-9]{1,3}(\-|\.)?)?([0-9]{1,3}(\-|\.|\|)?[0-9]{1,3})+"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="STRINGType">
+		<xs:restriction base="xs:string">
+			<xs:pattern value="[^\r\n\t]*"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="VIGENCIA_PODERType">
+		<xs:annotation>
+			<xs:documentation>Vigencia del poder (1 - subsistente, 2 - parcialmente revocado, 3 - revocado)</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="1"/>
+			<xs:enumeration value="2"/>
+			<xs:enumeration value="3"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="ACTO_JURIDICOType">
+		<xs:annotation>
+			<xs:documentation>Acto juridico segun codificacion del NIU</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:minLength value="4"/>
+			<xs:maxLength value="8"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:complexType name="DOCUMENTO_IDENTIDADType">
+		<xs:sequence>
+			<xs:element name="TIP_DOC_IDE" type="TIPO_DOCUMENTO_IDENTIDADType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Tipo de documento de identidad</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="CIR_AUS" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Circunstancias concretas concurrentes de la ausencia del documento de identidad</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="3000"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="NUM_DOC_IDE" type="NUMERO_DOCUMENTO_IDENTIDADType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Número del documento de identidad</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:simpleType name="TIPO_DOCUMENTO_IDENTIDADType">
+		<xs:annotation>
+			<xs:documentation>Tipo de documento de identidad ("1" NIF/CIF, "2" NIE, "3" Pasaporte, "4" Menores de edad que carezcan de dicho número, "5" Entidad recién constituida que carece de NIF, 
+			"6" Falta de aportación del NIF o NIF aportado pero no válido, "7" Cónyuge cotitular que no interviene, "8" Documento de identificación de extranjero, "9" Documento de persona jurídica extranjera,
+			"10" Falta de aportación de NIF o NIE, "11" Falta de aportación de NIF, "12" Tarjeta de residencia, "15" Documento de identificación distinto o ausencia de cualquiera de ellos)</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="1"/>
+			<xs:enumeration value="2"/>
+			<xs:enumeration value="3"/>
+			<xs:enumeration value="4"/>
+			<xs:enumeration value="5"/>
+			<xs:enumeration value="6"/>
+			<xs:enumeration value="7"/>
+			<xs:enumeration value="8"/>
+			<xs:enumeration value="9"/>
+			<xs:enumeration value="10"/>
+			<xs:enumeration value="11"/>
+			<xs:enumeration value="12"/>
+			<xs:enumeration value="15"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="TIPO_DOCUMENTO_IDENTIDAD_TITULARType">
+		<xs:annotation>
+			<xs:documentation>Tipo de documento de identidad ("1" NIF, "2" NIE, "3" Pasaporte, "4" Menores de edad que carezcan de dicho número, "6" Falta de aportación del NIF o NIF aportado pero no válido, "8" Documento de identificación de extranjero, "10" Falta de aportación de NIF o NIE)</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="1"/>
+			<xs:enumeration value="2"/>
+			<xs:enumeration value="3"/>
+			<xs:enumeration value="4"/>
+			<xs:enumeration value="6"/>
+			<xs:enumeration value="8"/>
+			<xs:enumeration value="10"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="NUMERO_DOCUMENTO_IDENTIDADType">
+		<xs:restriction base="STRINGType">
+			<xs:maxLength value="25"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="NIF_CIFType">
+		<xs:restriction base="STRINGType">
+			<xs:maxLength value="9"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="NOMBRE_PERSONAType">
+		<xs:restriction base="STRINGType">
+			<xs:maxLength value="40"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="APELLIDOS_PERSONAType">
+		<xs:restriction base="STRINGType">
+			<xs:maxLength value="50"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="CODIGO_PAISType">
+		<xs:restriction base="xs:string">
+			<xs:pattern value="[0-9]{3}"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="BOOLEANType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="0"/>
+			<xs:enumeration value="1"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:complexType name="DIRECCION_URBANAType">
+		<xs:sequence>
+			<xs:element name="COD_PRV" type="CODIGO_PROVINCIAType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Código INE de la provincia</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="COD_MUN" type="CODIGO_MUNICIPIOType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Código INE del municipio</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="TIP_VIA" type="TIPO_VIAType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Tipo de vía, según la codificación de Catastro</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="VIA" type="NOMBRE_VIAType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Nombre de la vía</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="NUM_VIA" type="NUMERO_VIAType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Número de la vía</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="DUP" type="DUPLICADOType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Duplicado ("D", "T", "C")</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="NUM_VIA2" type="NUMERO_VIAType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Segundo número de la vía</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="DUP2" type="DUPLICADOType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Duplicado del segundo número de la vía ("D", "T", "C")</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="BLQ" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Bloque</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="STRINGType">
+						<xs:maxLength value="4"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="ESC" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Escalera</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="STRINGType">
+						<xs:maxLength value="2"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="PLA" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Planta</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="STRINGType">
+						<xs:maxLength value="2"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="PTA" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Puerta</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="STRINGType">
+						<xs:maxLength value="3"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="APR_KM" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Aproximación postal en kilometros</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="STRINGType">
+						<xs:maxLength value="15"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="ENT_MEN" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Entidad local menor o pedanía</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="STRINGType">
+						<xs:maxLength value="15"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="RES" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Resto de dirección no estructurada</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="STRINGType">
+						<xs:maxLength value="25"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="COD_POS" type="CODIGO_POSTALType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Código postal</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="DIRECCION_EXTRANJERAType">
+		<xs:sequence>
+			<xs:element name="PAIS" type="CODIGO_PAISType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Código de país, según la codificación oficial de Países y Territorios aprobada por OM 9-12-99</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="EST_PRV" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Estado o provincia</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="STRINGType">
+						<xs:maxLength value="40"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="POB" type="POBLACIONType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Población</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="VIA" type="NOMBRE_VIAType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Nombre de la vía</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="NUM_VIA" type="NUMERO_VIAType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Número de la vía</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="DIS_POS" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Distrito postal</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="STRINGType">
+						<xs:maxLength value="10"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="DIRECCION_SUJETOType">
+		<xs:complexContent>
+			<xs:extension base="DIRECCION_URBANAType">
+				<xs:sequence>
+					<xs:element name="APTDO" minOccurs="0">
+						<xs:annotation>
+							<xs:documentation>Apartado de correos</xs:documentation>
+						</xs:annotation>
+						<xs:simpleType>
+							<xs:restriction base="STRINGType">
+								<xs:maxLength value="10"/>
+							</xs:restriction>
+						</xs:simpleType>
+					</xs:element>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:simpleType name="CODIGO_PROVINCIAType">
+		<xs:restriction base="xs:string">
+			<xs:pattern value="[0-9]{2}"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="CODIGO_MUNICIPIOType">
+		<xs:restriction base="xs:string">
+			<xs:pattern value="[0-9]{4}"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="TIPO_VIAType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="AG"/>
+			<xs:enumeration value="AL"/>
+			<xs:enumeration value="AR"/>
+			<xs:enumeration value="AU"/>
+			<xs:enumeration value="AV"/>
+			<xs:enumeration value="AY"/>
+			<xs:enumeration value="BJ"/>
+			<xs:enumeration value="BO"/>
+			<xs:enumeration value="BR"/>
+			<xs:enumeration value="CA"/>
+			<xs:enumeration value="CG"/>
+			<xs:enumeration value="CH"/>
+			<xs:enumeration value="CI"/>
+			<xs:enumeration value="CJ"/>
+			<xs:enumeration value="CL"/>
+			<xs:enumeration value="CM"/>
+			<xs:enumeration value="CN"/>
+			<xs:enumeration value="CO"/>
+			<xs:enumeration value="CP"/>
+			<xs:enumeration value="CR"/>
+			<xs:enumeration value="CS"/>
+			<xs:enumeration value="CT"/>
+			<xs:enumeration value="CU"/>
+			<xs:enumeration value="DE"/>
+			<xs:enumeration value="DP"/>
+			<xs:enumeration value="DS"/>
+			<xs:enumeration value="ED"/>
+			<xs:enumeration value="EM"/>
+			<xs:enumeration value="EN"/>
+			<xs:enumeration value="ER"/>
+			<xs:enumeration value="ES"/>
+			<xs:enumeration value="EX"/>
+			<xs:enumeration value="FC"/>
+			<xs:enumeration value="FN"/>
+			<xs:enumeration value="GL"/>
+			<xs:enumeration value="GR"/>
+			<xs:enumeration value="GV"/>
+			<xs:enumeration value="HT"/>
+			<xs:enumeration value="JR"/>
+			<xs:enumeration value="LD"/>
+			<xs:enumeration value="LG"/>
+			<xs:enumeration value="MC"/>
+			<xs:enumeration value="ML"/>
+			<xs:enumeration value="MN"/>
+			<xs:enumeration value="MS"/>
+			<xs:enumeration value="MT"/>
+			<xs:enumeration value="MZ"/>
+			<xs:enumeration value="PQ"/>
+			<xs:enumeration value="PB"/>
+			<xs:enumeration value="PD"/>
+			<xs:enumeration value="PJ"/>
+			<xs:enumeration value="PL"/>
+			<xs:enumeration value="PM"/>
+			<xs:enumeration value="PR"/>
+			<xs:enumeration value="PS"/>
+			<xs:enumeration value="PT"/>
+			<xs:enumeration value="PZ"/>
+			<xs:enumeration value="QT"/>
+			<xs:enumeration value="RB"/>
+			<xs:enumeration value="RC"/>
+			<xs:enumeration value="RD"/>
+			<xs:enumeration value="RM"/>
+			<xs:enumeration value="RP"/>
+			<xs:enumeration value="RR"/>
+			<xs:enumeration value="RU"/>
+			<xs:enumeration value="SA"/>
+			<xs:enumeration value="SD"/>
+			<xs:enumeration value="SL"/>
+			<xs:enumeration value="SN"/>
+			<xs:enumeration value="SU"/>
+			<xs:enumeration value="TN"/>
+			<xs:enumeration value="TO"/>
+			<xs:enumeration value="TR"/>
+			<xs:enumeration value="UR"/>
+			<xs:enumeration value="VR"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="NOMBRE_VIAType">
+		<xs:restriction base="STRINGType">
+			<xs:maxLength value="25"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="NUMERO_VIAType">
+		<xs:restriction base="xs:unsignedInt">
+			<xs:totalDigits value="4"/>
+			<xs:minInclusive value="0"/>
+			<xs:pattern value="0|[1-9][0-9]*"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="DUPLICADOType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="D"/>
+			<xs:enumeration value="T"/>
+			<xs:enumeration value="C"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="CODIGO_POSTALType">
+		<xs:restriction base="xs:string">
+			<xs:pattern value="[0-9]{5}"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="POBLACIONType">
+		<xs:restriction base="STRINGType">
+			<xs:maxLength value="40"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:complexType name="DOM_ESPType">
+		<xs:sequence>
+			<xs:element name="COD_PRV" type="CODIGO_PROVINCIAType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Código INE de la provincia</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="COD_MUN" type="CODIGO_MUNICIPIOType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Código INE del municipio</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="TIP_VIA" type="TIPO_VIAType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Tipo de vía, según la codificación de Catastro</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="VIA" type="NOMBRE_VIAType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Nombre de la vía</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="NUM_VIA" type="NUMERO_VIAType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Número de la vía</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="DUP" type="DUPLICADOType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Duplicado ("D", "T", "C")</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="NUM_VIA2" type="NUMERO_VIAType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Segundo número de la vía</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="DUP2" type="DUPLICADOType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Duplicado del segundo número de la vía ("D", "T", "C")</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="BLQ" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Bloque</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="STRINGType">
+						<xs:maxLength value="4"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="ESC" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Escalera</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="STRINGType">
+						<xs:maxLength value="2"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="PLA" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Planta</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="STRINGType">
+						<xs:maxLength value="2"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="PTA" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Puerta</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="STRINGType">
+						<xs:maxLength value="3"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="APR_KM" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Aproximación postal en kilometros</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="STRINGType">
+						<xs:maxLength value="15"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="ENT_MEN" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Entidad local menor o pedanía</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="STRINGType">
+						<xs:maxLength value="15"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="RES" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Resto de dirección no estructurada</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="STRINGType">
+						<xs:maxLength value="25"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="COD_POS" type="CODIGO_POSTALType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Código postal</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="APTDO" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Apartado de correos</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="STRINGType">
+						<xs:maxLength value="10"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="DOM_EXTType">
+		<xs:sequence>
+			<xs:element name="PAIS" type="CODIGO_PAISType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Código de país, según la codificación oficial de Países y Territorios aprobada por OM 9-12-99</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="EST_PRV" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Estado o provincia</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="STRINGType">
+						<xs:maxLength value="40"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="POB" type="POBLACIONType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Población</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="VIA" type="NOMBRE_VIAType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Nombre de la vía</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="NUM_VIA" type="NUMERO_VIAType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Número de la vía</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="DIS_POS" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Distrito postal</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="STRINGType">
+						<xs:maxLength value="10"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="DOC_IDEType">
+		<xs:sequence>
+			<xs:element name="TIP_DOC_IDE" minOccurs="0"/>
+			<xs:element name="CIR_AUS" minOccurs="0"/>
+			<xs:element name="NUM_DOC_IDE" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="DOCUMENTOType">
+		<xs:sequence>
+			<xs:element name="NUM_PROTOCOLO" type="NUMERO_DOCUMENTOType"/>
+			<xs:element name="NUM_BIS" type="NUMERO_DOCUMENTO_BISType" minOccurs="0"/>
+			<xs:element name="FECHA_AUTORIZACION" type="FECHAType"/>
+			<xs:element name="CODIGO_ULTIMAS_VOLUNTADES" type="CODIGO_NOTARIOType"/>
+			<xs:element name="CODIGO_CATASTRO" type="CODIGO_NOTARIAType"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="PERSONAType">
+		<xs:sequence>
+			<xs:element name="DOC_IDE" type="DOCUMENTO_IDENTIDADType"/>
+			<xs:element name="NOMBRE" type="NOMBRE_PERSONAType" minOccurs="0"/>
+			<xs:element name="APE1_RAZ_SOC" type="APELLIDOS_PERSONAType"/>
+			<xs:element name="APE2" type="APELLIDOS_PERSONAType" minOccurs="0"/>
+			<xs:element name="DOM" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Datos del domicilio</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="DOM_ESP" type="DOM_ESPType" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Datos del domicilio en España</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="DOM_EXT" type="DOM_EXTType" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Datos del domicilio en el Extranjero</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="CESIONType">
+		<xs:sequence>
+			<xs:element name="IMPORTE" type="xs:double"/>
+			<xs:element name="FECHA_INICIAL" type="FECHAType"/>
+			<xs:element name="FECHA_FINAL" type="FECHAType"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:simpleType name="DESCRIPCION_DOCUMENTOType">
+		<xs:annotation>
+			<xs:documentation>Descripción del documento</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string"/>
+	</xs:simpleType>
+	<xs:simpleType name="COPIAType">
+		<xs:annotation>
+			<xs:documentation>Documento en Base64</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:base64Binary"/>
+	</xs:simpleType>
+	<xs:simpleType name="NOMBRE_DOCUMENTOType">
+		<xs:annotation>
+			<xs:documentation>Nombre del documento</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string"/>
+	</xs:simpleType>
+	<xs:simpleType name="FECHA_DOCUMENTOType">
+		<xs:annotation>
+			<xs:documentation>Fecha del documento (AAAA-MM-DD)</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:date"/>
+	</xs:simpleType>
+	<xs:simpleType name="TAMANO_DOCUMENTOType">
+		<xs:annotation>
+			<xs:documentation>Tamaño en KB del documento</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:integer"/>
+	</xs:simpleType>
+	<xs:element name="DOCUMENTACION">
+		<xs:annotation>
+			<xs:documentation>Documentacion</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="FECHA_DOCUMENTO" type="FECHA_DOCUMENTOType">
+					<xs:annotation>
+						<xs:documentation>Fecha del documento</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="DESCRIPCION" type="DESCRIPCION_DOCUMENTOType">
+					<xs:annotation>
+						<xs:documentation>Descripción libre del documento</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="NOMBRE" type="NOMBRE_DOCUMENTOType">
+					<xs:annotation>
+						<xs:documentation>Nombre del fichero original</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="TAMANO" type="TAMANO_DOCUMENTOType">
+					<xs:annotation>
+						<xs:documentation>Tamaño en KB del documento original</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="FICHERO">
+					<xs:annotation>
+						<xs:documentation>Documento PDF en Base64</xs:documentation>
+					</xs:annotation>
+					<xs:complexType>
+						<xs:simpleContent>
+							<xs:extension base="COPIAType"/>
+						</xs:simpleContent>
+					</xs:complexType>
+				</xs:element>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+</xs:schema>

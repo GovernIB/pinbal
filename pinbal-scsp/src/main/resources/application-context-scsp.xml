@@ -48,9 +48,16 @@
 	<alias name="jaxbMarshaller" alias="marshaller" />
 	<alias name="jaxbMarshaller" alias="unmarshaller" />
 
-	<!-- Requerit per MessageRecover (@Autowired @Qualifier("getMarshaller")) -->
+	<!-- Requerit per ClienteUnico (@Qualifier("getMarshaller")) i MessageRecover: inclou tots els paquets necessaris -->
 	<bean id="getMarshaller" class="org.springframework.oxm.jaxb.Jaxb2Marshaller">
-		<property name="contextPath" value="es.scsp.bean.common.respuesta"/>
+		<property name="classesToBeBound">
+			<list>
+				<value>es.scsp.bean.common.peticion.Peticion</value>
+				<value>es.scsp.bean.common.respuesta.Respuesta</value>
+				<value>es.scsp.bean.common.solicitud.SolicitudRespuesta</value>
+				<value>es.scsp.bean.common.confirmacion.ConfirmacionPeticion</value>
+			</list>
+		</property>
 	</bean>
 
 	<!-- ==================================================================== -->

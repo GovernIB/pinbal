@@ -1,0 +1,555 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2011 sp1 (http://www.altova.com) by End User (free.org) -->
+<xs:schema xmlns="http://intermediacion.redsara.es/scsp/esquemas/datosespecificos" xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://intermediacion.redsara.es/scsp/esquemas/datosespecificos" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<xs:element name="DatosEspecificos">
+		<xs:complexType>
+			<xs:choice>
+				<xs:element ref="Ejercicio"/>
+				<xs:sequence>
+					<xs:element ref="Cabecera"/>
+					<xs:element ref="Imputaciones" minOccurs="0"/>
+					<xs:element ref="irpf" minOccurs="0"/>
+				</xs:sequence>
+			</xs:choice>
+			<xs:attribute name="Id" type="xs:string" use="optional"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Ejercicio">
+		<xs:simpleType>
+			<xs:restriction base="xs:gYear">
+				<xs:pattern value="\d{4}"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Cabecera">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="CodRet"/>
+				<xs:element ref="DescripcionError"/>
+				<xs:element ref="Referencia"/>
+				<xs:element ref="FechaEmision"/>
+				<xs:element name="Ejercicio">
+					<xs:simpleType>
+						<xs:restriction base="xs:string">
+							<xs:maxLength value="4"/>
+							<xs:minLength value="0"/>
+						</xs:restriction>
+					</xs:simpleType>
+				</xs:element>
+				<xs:element ref="TipoRespuesta"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="CodRet">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="4"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="DescripcionError">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="0"/>
+				<xs:maxLength value="100"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Referencia">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="0"/>
+				<xs:maxLength value="11"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="FechaEmision">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="0"/>
+				<xs:maxLength value="10"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="TipoRespuesta">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="0"/>
+				<xs:maxLength value="2"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Imputaciones">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="Cabecera">
+					<xs:simpleType>
+						<xs:restriction base="xs:string">
+							<xs:minLength value="0"/>
+							<xs:maxLength value="100"/>
+						</xs:restriction>
+					</xs:simpleType>
+				</xs:element>
+				<xs:element ref="DatosEconomicos" minOccurs="0" maxOccurs="100"/>
+				<xs:element name="Cola" minOccurs="0">
+					<xs:simpleType>
+						<xs:restriction base="xs:string">
+							<xs:minLength value="0"/>
+							<xs:maxLength value="100"/>
+						</xs:restriction>
+					</xs:simpleType>
+				</xs:element>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="DatosEconomicos">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="Literal"/>
+				<xs:element name="Signo" minOccurs="0"/>
+				<xs:element name="Enteros"/>
+				<xs:element name="Decimales"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Literal">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="0"/>
+				<xs:maxLength value="120"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Signo">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="0"/>
+				<xs:maxLength value="1"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Enteros">
+		<xs:simpleType>
+			<xs:restriction base="xs:long">
+				<xs:minInclusive value="0"/>
+				<xs:maxInclusive value="9999999999"/>
+				<xs:totalDigits value="10"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Decimales">
+		<xs:simpleType>
+			<xs:restriction base="xs:long">
+				<xs:minInclusive value="0"/>
+				<xs:maxInclusive value="99"/>
+				<xs:totalDigits value="2"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="irpf">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="CabeceraRenta"/>
+				<xs:element ref="NivelRenta"/>
+				<xs:element name="DatosEconomicos" minOccurs="0" maxOccurs="10">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element ref="DEGrupo" minOccurs="0"/>
+							<xs:element ref="DECasilla"/>
+							<xs:element ref="DESigno" minOccurs="0"/>
+							<xs:element ref="DEEnteros"/>
+							<xs:element ref="DEDecimales"/>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+				<xs:element ref="DatosCola" minOccurs="0"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="CabeceraRenta">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="NifSolicitante"/>
+				<xs:element ref="NombreSolicitante"/>
+				<xs:element ref="PrimerDeclarante"/>
+				<xs:element ref="SegundoTitular" minOccurs="0"/>
+				<xs:element ref="Modelo"/>
+				<xs:element ref="Tributacion"/>
+				<xs:element ref="OrigenDatos"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="NifSolicitante">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="0"/>
+				<xs:maxLength value="9"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="NombreSolicitante">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="0"/>
+				<xs:maxLength value="50"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="PrimerDeclarante">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="0"/>
+				<xs:maxLength value="100"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="SegundoTitular">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="0"/>
+				<xs:maxLength value="100"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Modelo">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="0"/>
+				<xs:maxLength value="12"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Tributacion">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="0"/>
+				<xs:maxLength value="25"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="OrigenDatos">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="0"/>
+				<xs:maxLength value="50"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="NivelRenta">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="NRLiteral"/>
+				<xs:element ref="NRSigno" minOccurs="0"/>
+				<xs:element ref="NREnteros"/>
+				<xs:element ref="NRDecimales"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="NRLiteral">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="0"/>
+				<xs:maxLength value="100"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="NRSigno">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="0"/>
+				<xs:maxLength value="1"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="NREnteros">
+		<xs:simpleType>
+			<xs:restriction base="xs:long">
+				<xs:minInclusive value="0"/>
+				<xs:maxInclusive value="9999999999"/>
+				<xs:totalDigits value="10"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="NRDecimales">
+		<xs:simpleType>
+			<xs:restriction base="xs:long">
+				<xs:minInclusive value="0"/>
+				<xs:maxInclusive value="99"/>
+				<xs:totalDigits value="2"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="DEGrupo">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="0"/>
+				<xs:maxLength value="10"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="DECasilla">
+		<xs:simpleType>
+			<xs:restriction base="xs:long">
+				<xs:minInclusive value="0"/>
+				<xs:maxInclusive value="9999"/>
+				<xs:totalDigits value="4"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="DESigno">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="0"/>
+				<xs:maxLength value="1"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="DEEnteros">
+		<xs:simpleType>
+			<xs:restriction base="xs:long">
+				<xs:minInclusive value="0"/>
+				<xs:maxInclusive value="9999999999"/>
+				<xs:totalDigits value="10"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="DEDecimales">
+		<xs:simpleType>
+			<xs:restriction base="xs:long">
+				<xs:minInclusive value="0"/>
+				<xs:maxInclusive value="99"/>
+				<xs:totalDigits value="2"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="DatosCola">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="DCDatosPersonales" minOccurs="0"/>
+				<xs:element ref="DCDatosConyuge" minOccurs="0"/>
+				<xs:element ref="DCDatosHijos" minOccurs="0"/>
+				<xs:element ref="DCDatosAscend" minOccurs="0"/>
+				<xs:element ref="DCDatosVivienda" minOccurs="0"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="DCDatosPersonales">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="DCLiteral" minOccurs="0"/>
+				<xs:element ref="DCEstadoCivil" minOccurs="0"/>
+				<xs:element ref="DCFechaNac" minOccurs="0"/>
+				<xs:element ref="DCMinusvalia" minOccurs="0"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="DCLiteral">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="0"/>
+				<xs:maxLength value="110"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="DCEstadoCivil">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="DCFecha"/>
+				<xs:element ref="DCContenido"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="DCFecha">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="0"/>
+				<xs:maxLength value="10"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="DCContenido">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="0"/>
+				<xs:maxLength value="20"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="DCFechaNac">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="0"/>
+				<xs:maxLength value="10"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="DCMinusvalia">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="0"/>
+				<xs:maxLength value="5"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="DCDatosConyuge">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="DCLiteral" minOccurs="0"/>
+				<xs:element ref="DCFechaNac" minOccurs="0"/>
+				<xs:element ref="DCMinusvalia" minOccurs="0"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="DCDatosHijos">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="DCLiteral" minOccurs="0">
+					<xs:simpleType>
+						<xs:restriction base="xs:string">
+							<xs:minLength value="0"/>
+							<xs:maxLength value="100"/>
+						</xs:restriction>
+					</xs:simpleType>
+				</xs:element>
+				<xs:element ref="DCNumHijos" minOccurs="0" maxOccurs="15"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="DCNumHijos">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="DCNombreHijo" minOccurs="0"/>
+				<xs:element ref="DCFechaNacim" minOccurs="0"/>
+				<xs:element ref="DCFechaAdopc" minOccurs="0"/>
+				<xs:element ref="DCMinusvalia" minOccurs="0"/>
+				<xs:element ref="DCVinculacion" minOccurs="0"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="DCNombreHijo">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="0"/>
+				<xs:maxLength value="100"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="DCFechaNacim">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="0"/>
+				<xs:maxLength value="10"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="DCFechaAdopc">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="0"/>
+				<xs:maxLength value="10"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="DCVinculacion">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="0"/>
+				<xs:maxLength value="10"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="DCDatosAscend">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="DCLiteral" minOccurs="0"/>
+				<xs:element name="DCNumAscend" minOccurs="0" maxOccurs="6">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element ref="DCNombreAscend" minOccurs="0"/>
+							<xs:element ref="DCFechaNacim" minOccurs="0"/>
+							<xs:element ref="DCMinusvalia" minOccurs="0"/>
+							<xs:element ref="DCVinculacion" minOccurs="0"/>
+							<xs:element ref="DCConvivencia" minOccurs="0"/>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="DCConvivencia">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="0"/>
+				<xs:maxLength value="10"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="DCNombreAscend">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="0"/>
+				<xs:maxLength value="100"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="DCDatosVivienda">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="DCLiteral" minOccurs="0"/>
+				<xs:element ref="DCNumViviendas" minOccurs="0" maxOccurs="12"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="DCNumViviendas">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="DCContrib" minOccurs="0"/>
+				<xs:element ref="DCParticipac" minOccurs="0"/>
+				<xs:element ref="DCRefCatastr" minOccurs="0"/>
+				<xs:element ref="DCSituacion" minOccurs="0"/>
+				<xs:element ref="DCTitularidad" minOccurs="0"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="DCContrib">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="0"/>
+				<xs:maxLength value="15"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="DCParticipac">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="0"/>
+				<xs:maxLength value="6"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="DCRefCatastr">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="0"/>
+				<xs:maxLength value="20"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="DCSituacion">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="0"/>
+				<xs:maxLength value="47"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="DCTitularidad">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="0"/>
+				<xs:maxLength value="20"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+</xs:schema>

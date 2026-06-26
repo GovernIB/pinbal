@@ -1,0 +1,392 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://intermediacion.redsara.es/scsp/esquemas/datosespecificos" targetNamespace="http://intermediacion.redsara.es/scsp/esquemas/datosespecificos" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<xs:element name="DatosEspecificos">
+		<xs:complexType>
+			<xs:choice>
+				<xs:element ref="Consulta"/>
+				<xs:element ref="Retorno"/>
+			</xs:choice>
+			<xs:attribute name="Id" type="xs:string" use="optional"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Consulta">
+		<xs:annotation>
+			<xs:documentation>Datos de consulta para servicio de consulta de vida Laboral</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:all>
+				<xs:element ref="FechaDesde"/>
+				<xs:element ref="FechaHasta"/>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Retorno">
+		<xs:annotation>
+			<xs:documentation>Datos de retorno para servicio de consulta de vida Laboral</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="Estado"/>
+				<xs:element ref="Consulta">
+					<xs:annotation>
+						<xs:documentation>Datos consultados</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element ref="VidaLaboral" minOccurs="0" maxOccurs="1"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Estado">
+		<xs:complexType>
+			<xs:all>
+				<xs:element name="CodigoEstado">
+					<xs:annotation>
+						<xs:documentation>Codigo de estado de la transmisión</xs:documentation>
+					</xs:annotation>
+					<xs:simpleType>
+						<xs:restriction base="xs:string">
+							<xs:maxLength value="4"/>
+						</xs:restriction>
+					</xs:simpleType>
+				</xs:element>
+				<xs:element name="CodigoEstadoSecundario" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>Codigo de estado secundario de la transmisión</xs:documentation>
+					</xs:annotation>
+					<xs:simpleType>
+						<xs:restriction base="xs:string">
+							<xs:minLength value="1"/>
+							<xs:maxLength value="10"/>
+						</xs:restriction>
+					</xs:simpleType>
+				</xs:element>
+				<xs:element name="Literal">
+					<xs:annotation>
+						<xs:documentation>Descripcion del estado</xs:documentation>
+					</xs:annotation>
+					<xs:simpleType>
+						<xs:restriction base="xs:string">
+							<xs:minLength value="1"/>
+							<xs:maxLength value="1024"/>
+						</xs:restriction>
+					</xs:simpleType>
+				</xs:element>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<!-- Datos vida laboral -->
+	<xs:element name="VidaLaboral">
+		<xs:annotation>
+			<xs:documentation>Datos de la Vida Laboral</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:all>
+				<xs:element ref="NumeroSituaciones"/>
+				<xs:element ref="Cabecera"/>
+				<xs:element ref="Resumen" minOccurs="0"/>
+				<xs:element ref="ListaSituaciones" minOccurs="0"/>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Cabecera">
+		<xs:annotation>
+			<xs:documentation>Datos generales del titular consultado</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:all>
+				<xs:element ref="ListaNumerosAfiliacion" minOccurs="0"/>
+				<xs:element ref="FechaNacimiento"/>
+				<xs:element ref="TransferenciaDerechosCEE"/>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Resumen">
+		<xs:annotation>
+			<xs:documentation>Resumen de la vida laboral</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:all>
+				<xs:element ref="Totales"/>
+				<xs:element ref="Pluriempleo"/>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Totales">
+		<xs:annotation>
+			<xs:documentation>Resumen de días totales de alta incluyendo los días de pluriempleo o pluriactividad</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:all>
+				<xs:element ref="TotalDiasAlta"/>
+				<xs:element ref="DiasPluriempleo"/>
+				<xs:element ref="AniosAlta"/>
+				<xs:element ref="MesesAlta"/>
+				<xs:element ref="DiasAlta"/>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Pluriempleo">
+		<xs:annotation>
+			<xs:documentation>Resumen de días totales de alta SIN INCLUIR los días de pluriempleo o pluriactividad</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:all>
+				<xs:element ref="TotalDiasAlta"/>
+				<xs:element ref="AniosAlta"/>
+				<xs:element ref="MesesAlta"/>
+				<xs:element ref="DiasAlta"/>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="ListaNumerosAfiliacion">
+		<xs:annotation>
+			<xs:documentation>Lista de los números de afiliación</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="NumeroAfiliacion" minOccurs="1" maxOccurs="10"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="ListaSituaciones">
+		<xs:annotation>
+			<xs:documentation>Lista de las situaciones de Vida Laboral obtenida</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="Situacion" minOccurs="1" maxOccurs="unbounded"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Situacion">
+		<xs:annotation>
+			<xs:documentation>Datos de la situación de la vida laboral</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:all>
+				<xs:element ref="NumeroAfiliacion"/>
+				<xs:element ref="Regimen" minOccurs="0"/>
+				<xs:element ref="Empresa"/>
+				<xs:element ref="CodigoCuentaCotizacion" minOccurs="0"/>
+				<xs:element ref="Provincia" minOccurs="0"/>
+				<xs:element ref="FechaAlta" minOccurs="0"/>
+				<xs:element ref="FechaEfectos" minOccurs="0"/>
+				<xs:element ref="FechaBaja" minOccurs="0"/>
+				<xs:element ref="ContratoTrabajo" minOccurs="0"/>
+				<xs:element ref="ContratoTiempoParcial" minOccurs="0"/>
+				<xs:element ref="GrupoCotizacion" minOccurs="0"/>
+				<xs:element ref="DiasAlta" minOccurs="0"/>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="FechaAlta">
+		<xs:annotation>
+			<xs:documentation>Fecha de inicio de la actividad laboral Formato AAAA-MM-DD</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:date"/>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="FechaEfectos">
+		<xs:annotation>
+			<xs:documentation>Fecha de efectos del alta de la actividad laboral Formato AAAA-MM-DD</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:date"/>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="FechaBaja">
+		<xs:annotation>
+			<xs:documentation>Fecha de finalización de la actividad laboral Formato AAAA-MM-DD</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:date"/>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Regimen">
+		<xs:annotation>
+			<xs:documentation>Régimen de de la Seguridad Social</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="50"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Empresa">
+		<xs:annotation>
+			<xs:documentation>Razón Social / Nombre de la empresa</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="75"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="CodigoCuentaCotizacion">
+		<xs:annotation>
+			<xs:documentation>Código Cuenta Cotización</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:maxLength value="11"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Provincia">
+		<xs:annotation>
+			<xs:documentation>Provincia de la empresa</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:pattern value="\d{2}"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="ContratoTrabajo">
+		<xs:annotation>
+			<xs:documentation>Identificador del contrato</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="100"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="ContratoTiempoParcial">
+		<xs:annotation>
+			<xs:documentation>Identificador del % jornada para contratos tiempo parcial nn.n</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:decimal">
+				<xs:totalDigits value="3"/>
+				<xs:fractionDigits value="1"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="GrupoCotizacion">
+		<xs:annotation>
+			<xs:documentation>Grupo de Cotización</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="10"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<!-- VILA -->
+	<xs:element name="FechaDesde">
+		<xs:annotation>
+			<xs:documentation>Fecha desde la que se realizará la consulta Formato AAAA-MM-DD</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:date"/>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="FechaHasta">
+		<xs:annotation>
+			<xs:documentation>Fecha hasta la que se realizará la consulta Formato AAAA-MM-DD</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:date"/>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="NumeroSituaciones">
+		<xs:annotation>
+			<xs:documentation>Número de situaciones devueltas</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:int">
+				<xs:minInclusive value="0"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="NumeroAfiliacion">
+		<xs:annotation>
+			<xs:documentation>Número de afiliación de la seguridad social</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:length value="12"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="FechaNacimiento">
+		<xs:annotation>
+			<xs:documentation>Fecha de nacimiento del titular consultado Formato AAAA-MM-DD</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:date"/>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="TransferenciaDerechosCEE">
+		<xs:annotation>
+			<xs:documentation>Indicador de transferencia de los derechos a países de la Unión Europea</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:enumeration value="S"/>
+				<xs:enumeration value="N"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="DiasPluriempleo">
+		<xs:annotation>
+			<xs:documentation>Dias dados de alta en los que la situación es de pluriempleo</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:int">
+				<xs:minInclusive value="0"/>
+				<xs:maxInclusive value="32000"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="TotalDiasAlta">
+		<xs:annotation>
+			<xs:documentation>Total días de alta</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:int">
+				<xs:minInclusive value="0"/>
+				<xs:maxInclusive value="32000"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="AniosAlta">
+		<xs:annotation>
+			<xs:documentation>Años de alta</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:int">
+				<xs:minInclusive value="0"/>
+				<xs:maxInclusive value="100"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="MesesAlta">
+		<xs:annotation>
+			<xs:documentation>Meses de alta</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:int">
+				<xs:minInclusive value="0"/>
+				<xs:maxInclusive value="120"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="DiasAlta">
+		<xs:annotation>
+			<xs:documentation>Dias de alta</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:int">
+				<xs:minInclusive value="0"/>
+				<xs:maxInclusive value="32000"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+</xs:schema>

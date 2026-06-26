@@ -15,6 +15,8 @@ import org.springframework.security.core.Authentication;
 import javax.annotation.security.PermitAll;
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import java.io.IOException;
 import java.util.List;
 
@@ -24,6 +26,7 @@ import java.util.List;
  * 
  * @author Limit Tecnologies <limit@limit.es>
  */
+@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
 @Primary
 @Stateless
 public class ServeiService extends AbstractService<es.caib.pinbal.logic.intf.service.ServeiService> implements es.caib.pinbal.logic.intf.service.ServeiService {
@@ -373,18 +376,21 @@ public class ServeiService extends AbstractService<es.caib.pinbal.logic.intf.ser
 	}
 
 	@Override
+	@RolesAllowed({"PBL_ADMIN"})
 	public void xsdDelete(
 			String codi, XsdTipusEnumDto tipus) throws IOException {
 		getDelegateService().xsdDelete(codi, tipus);
 	}
 
 	@Override
+	@RolesAllowed({"PBL_ADMIN"})
 	public FitxerDto xsdDescarregar(
 			String codi, XsdTipusEnumDto tipus) throws IOException {
 		return getDelegateService().xsdDescarregar(codi, tipus);
 	}
 
 	@Override
+	@RolesAllowed({"PBL_ADMIN"})
 	public void xsdCreate(String codi, ServeiXsdDto xsd, byte[] contingut) throws IOException {
 		getDelegateService().xsdCreate(codi, xsd, contingut);
 	}
@@ -396,6 +402,7 @@ public class ServeiService extends AbstractService<es.caib.pinbal.logic.intf.ser
 	}
 
 	@Override
+	@RolesAllowed("PBL_ADMIN")
 	public void saveActiu(
 			String serveiCodi,
 			boolean actiu) {

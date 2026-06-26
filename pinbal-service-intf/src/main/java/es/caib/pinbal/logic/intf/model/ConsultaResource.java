@@ -1,8 +1,10 @@
 package es.caib.pinbal.logic.intf.model;
 
 import es.caib.pinbal.logic.intf.base.annotation.ResourceAccessConstraint;
+import es.caib.pinbal.logic.intf.base.annotation.ResourceArtifact;
 import es.caib.pinbal.logic.intf.base.annotation.ResourceConfig;
 import es.caib.pinbal.logic.intf.base.model.BaseResource;
+import es.caib.pinbal.logic.intf.base.model.ResourceArtifactType;
 import es.caib.pinbal.logic.intf.base.model.ResourceReference;
 import es.caib.pinbal.logic.intf.base.permission.PermissionEnum;
 import lombok.Getter;
@@ -28,6 +30,11 @@ import java.util.Date;
         accessConstraints = @ResourceAccessConstraint(
                 type = ResourceAccessConstraint.ResourceAccessConstraintType.AUTHENTICATED,
                 grantedPermissions = { PermissionEnum.READ }
+        ),
+        artifacts = @ResourceArtifact(
+                type = ResourceArtifactType.REPORT,
+                code = "justificant",
+                requiresId = true
         )
 )
 public class ConsultaResource extends BaseResource<Long> {

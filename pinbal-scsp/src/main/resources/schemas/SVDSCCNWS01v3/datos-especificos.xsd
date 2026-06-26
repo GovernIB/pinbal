@@ -1,372 +1,607 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
-<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://intermediacion.redsara.es/scsp/esquemas/datosespecificos" xmlns:ns1="http://justicia.es/esb/comun/xsd-schemas/V1" targetNamespace="http://intermediacion.redsara.es/scsp/esquemas/datosespecificos" elementFormDefault="qualified" attributeFormDefault="unqualified">	
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://intermediacion.redsara.es/scsp/esquemas/datosespecificos" xmlns:tipos="http://intermediacion.redsara.es/scsp/esquemas/tiposdatosespecificos" xmlns:ns1="http://justicia.es/esb/comun/xsd-schemas/V1" targetNamespace="http://intermediacion.redsara.es/scsp/esquemas/datosespecificos" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<!-- imports -->
+	<xs:import namespace="http://intermediacion.redsara.es/scsp/esquemas/tiposdatosespecificos" schemaLocation="tipos-datos-especificos.xsd"/>
 	<xs:element name="DatosEspecificos" type="DatosEspecificos"/>
+	<!-- DatosEspecificos -->
 	<xs:complexType name="DatosEspecificos">
 		<xs:choice>
+			<!-- Consulta -->
 			<xs:element ref="Consulta">
 				<xs:annotation>
-					<xs:documentation>Solo en el mensaje de PETICION</xs:documentation>
+					<xs:documentation>Solo en el mensaje de PETICION
+                    </xs:documentation>
 				</xs:annotation>
 			</xs:element>
+			<!-- Retorno -->
 			<xs:element ref="Retorno">
 				<xs:annotation>
-					<xs:documentation>Solo en el mensaje RESPUESTA</xs:documentation>
+					<xs:documentation>Solo en el mensaje RESPUESTA
+                    </xs:documentation>
 				</xs:annotation>
 			</xs:element>
 		</xs:choice>
 		<xs:attribute name="Id" type="xs:string" use="optional"/>
+		<!-- Id -->
 	</xs:complexType>
+	<!-- Consulta -->
 	<xs:element name="Consulta">
 		<xs:complexType>
-			<xs:sequence>				
-				<xs:element ref="DatosAdicionalesTitularConsulta">
+			<xs:sequence>
+				<!-- DatosAdicionalesTitularConsulta -->
+				<xs:element ref="DatosAdicionalesTitularConsulta" minOccurs="1" maxOccurs="1">
 					<xs:annotation>
-						<xs:documentation>
-					Entidad que representa los datos extendidos del Titular para que cuadren con los del Inscrito.
-					* Obligatorio: Fecha del Hecho, Ausencia Segundo Apellido
-					</xs:documentation>
+						<xs:documentation> Entidad que representa los datos extendidos del Titular para que cuadren con
+                            los del Inscrito. * Obligatorio: Fecha del Hecho, Ausencia Segundo Apellido * Si no se
+                            indica una Documentacion Identificativa en el Titular se debe de informar el Sexo,
+                            Fecha-Poblacion-Provincia-Pais Nacimiento.
+                        </xs:documentation>
 					</xs:annotation>
 				</xs:element>
-				<xs:choice>
-					<xs:element ref="ConsultaPorDatosRegistrales" minOccurs="0"/>
-					<xs:element ref="ConsultaPorOtrosDatos" minOccurs="0"/>
-				</xs:choice>
+				<!-- ConsultaPorDatosRegistrales -->
+				<xs:element ref="ConsultaPorDatosRegistrales" minOccurs="0" maxOccurs="1"/>
 			</xs:sequence>
 		</xs:complexType>
 	</xs:element>
+	<!-- DatosAdicionalesTitularConsulta -->
 	<xs:element name="DatosAdicionalesTitularConsulta">
 		<xs:complexType>
 			<xs:annotation>
-				<xs:documentation>Datos Extra de Titular que se adjuntan a los Datos del Titular.</xs:documentation>
+				<xs:documentation>Datos extra del Titular que se adjuntan a los Datos del Titular.
+                </xs:documentation>
 			</xs:annotation>
-			<xs:sequence>				
-				<xs:element name="FechaHechoRegistral" type="xs:date">
+			<xs:sequence>
+				<!-- FechaHechoRegistral -->
+				<xs:element name="FechaHechoRegistral" type="tipos:FechaType" minOccurs="1" maxOccurs="1">
 					<xs:annotation>
-						<xs:documentation>Fecha del Hecho Registral</xs:documentation>
+						<xs:documentation> Fecha en la que se ha producido el Hecho Registral. Cuando es una Defuncion
+                            puede que este campo no venga informado.
+                        </xs:documentation>
 					</xs:annotation>
 				</xs:element>
-				<xs:element name="AusenciaSegundoApellido" type="xs:boolean" default="false">
+				<!-- AnioHechoRegistral -->
+				<xs:element name="AnioHechoRegistral" type="tipos:AnioType" minOccurs="0" maxOccurs="1">
 					<xs:annotation>
-						<xs:documentation>Flag que especifica si el ciudadano tiene segundo apellido, en cuyo caso, será obligatorio introducir el segundo apellido</xs:documentation>
+						<xs:documentation> Año en la que se ha producido el Hecho Registral. Cuando no venga la Fecha
+                            del Hecho Registral informado, porque puede que no se conozca el dia concreto, pero si
+                            conocemos el año, entonces se informara este campo Año Hecho Registral. NOTA: Esta opcion no
+                            esta operativa en este momento.
+                        </xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<!-- PoblacionHechoRegistral -->
+				<xs:element ref="tipos:PoblacionHechoRegistral" minOccurs="0" maxOccurs="1">
+					<xs:annotation>
+						<xs:documentation>Poblacion del hecho registral que se consulta.
+                        </xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<!-- AusenciaSegundoApellido -->
+				<xs:element name="AusenciaSegundoApellido" type="xs:boolean" default="false" minOccurs="1" maxOccurs="1">
+					<xs:annotation>
+						<xs:documentation>Flag que especifica si el ciudadano tiene segundo apellido, en cuyo caso, sera
+                            obligatorio el a ver informado el segundo apellido en el Titular.
+                        </xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<!-- Sexo -->
+				<xs:element name="Sexo" type="tipos:Sexo" minOccurs="0" maxOccurs="1">
+					<xs:annotation>
+						<xs:documentation>Sexo del titular.
+                        </xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<!-- FechaNacimiento -->
+				<xs:element ref="tipos:FechaNacimiento" minOccurs="0" maxOccurs="1">
+					<xs:annotation>
+						<xs:documentation>Fecha de nacimiento del titular. Si no se indica una Documentacion
+                            Identificativa en el Titular se debe de informar la Fecha Nacimiento.
+                        </xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<!-- PoblacionNacimiento -->
+				<xs:element name="PoblacionNacimiento" type="tipos:TipoMunicipio" minOccurs="0" maxOccurs="1">
+					<xs:annotation>
+						<xs:documentation>Poblacion de nacimiento del titular. Si no se indica una Documentacion
+                            Identificativa en el Titular se debe de informar la Poblacion Nacimiento.
+                        </xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<!-- ProvinciaNacimiento -->
+				<xs:element name="ProvinciaNacimiento" type="tipos:TipoProvincia" minOccurs="0" maxOccurs="1">
+					<xs:annotation>
+						<xs:documentation>Provincia de nacimiento del titular. Si no se indica una Documentacion
+                            Identificativa en el Titular se debe de informar la Provincia Nacimiento.
+                        </xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<!-- PaisNacimiento -->
+				<xs:element name="PaisNacimiento" type="tipos:CodigoINEPaisType" minOccurs="0" maxOccurs="1">
+					<xs:annotation>
+						<xs:documentation>Pais de nacimiento del titular. Si no se indica una Documentacion
+                            Identificativa en el Titular se debe de informar la Pais Nacimiento.
+                        </xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<!-- NombrePadre -->
+				<xs:element name="NombrePadre" type="tipos:Nombre" minOccurs="0" maxOccurs="1">
+					<xs:annotation>
+						<xs:documentation>Nombre progenitor A del titular.
+                        </xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<!-- NombreMadre -->
+				<xs:element name="NombreMadre" type="tipos:Nombre" minOccurs="0" maxOccurs="1">
+					<xs:annotation>
+						<xs:documentation>Nombre progenitor B del titular.
+                        </xs:documentation>
 					</xs:annotation>
 				</xs:element>
 			</xs:sequence>
 		</xs:complexType>
 	</xs:element>
+	<!-- ConsultaPorDatosRegistrales -->
 	<xs:element name="ConsultaPorDatosRegistrales">
 		<xs:complexType>
 			<xs:sequence>
-				<xs:element ref="RegistroCivil"/>
-				<xs:element ref="Tomo"/>
-				<xs:element ref="Pagina"/>
+				<!-- RegistroCivil -->
+				<xs:element ref="tipos:RegistroCivil" minOccurs="1" maxOccurs="1"/>
+				<!-- Tomo -->
+				<xs:element ref="tipos:Tomo" minOccurs="1" maxOccurs="1"/>
+				<!-- Pagina -->
+				<xs:element ref="tipos:Pagina" minOccurs="1" maxOccurs="1"/>
 			</xs:sequence>
 		</xs:complexType>
 	</xs:element>
-	<xs:element name="ConsultaPorOtrosDatos">
-		<xs:complexType>
-			<xs:sequence>
-				<xs:element ref="PoblacionHechoRegistral"/>
-				<xs:element ref="FechaNacimiento"/>
-				<xs:element name="PoblacionNacimiento" type="Poblacion" minOccurs="0"/>
-				<xs:element name="NombrePadre" type="Nombre" minOccurs="0"/>
-				<xs:element name="NombreMadre" type="Nombre" minOccurs="0"/>
-			</xs:sequence>
-		</xs:complexType>
-	</xs:element>
+	<!-- Retorno -->
 	<xs:element name="Retorno">
 		<xs:complexType>
 			<xs:sequence>
-				<xs:element ref="DatosAdicionalesTitularRetorno" minOccurs="0">
+				<!-- DatosInscrito -->
+				<xs:element ref="DatosInscrito" minOccurs="0" maxOccurs="1">
 					<xs:annotation>
-						<xs:documentation>Opcional si Estado no es un ERROR</xs:documentation>
+						<xs:documentation>Opcional si Estado no es un ERROR
+                        </xs:documentation>
 					</xs:annotation>
 				</xs:element>
-				<xs:element ref="DatosHechoRegistral" minOccurs="0">
+				<!-- DatosHechoRegistral -->
+				<xs:element ref="DatosHechoRegistral" minOccurs="0" maxOccurs="1">
 					<xs:annotation>
-						<xs:documentation>Opcional si Estado no es un ERROR</xs:documentation>
+						<xs:documentation>Opcional si Estado no es un ERROR
+                        </xs:documentation>
 					</xs:annotation>
 				</xs:element>
-				<xs:element ref="DatosRegistrales" minOccurs="0">
+				<!-- DatosRegistrales -->
+				<xs:element ref="DatosRegistrales" minOccurs="0" maxOccurs="1">
 					<xs:annotation>
-						<xs:documentation>Opcional si Estado no es un ERROR</xs:documentation>
+						<xs:documentation>Opcional incluso si Estado no es un ERROR
+                        </xs:documentation>
 					</xs:annotation>
 				</xs:element>
-				<xs:element ref="DatosProgenitores" minOccurs="0">
+				<!-- DatosProgenitores -->
+				<xs:element ref="DatosProgenitores" minOccurs="0" maxOccurs="1">
 					<xs:annotation>
-						<xs:documentation>Opcional si Estado no es un ERROR</xs:documentation>
+						<xs:documentation>Opcional incluso si Estado no es un ERROR
+                        </xs:documentation>
 					</xs:annotation>
 				</xs:element>
-				<xs:element name="FechaConfirmacion" type="xs:date">
+				<!-- DatosConyuge -->
+				<xs:element ref="DatosConyuge" minOccurs="0" maxOccurs="1">
 					<xs:annotation>
-						<xs:documentation>Fecha de Confirmación que permite identificar univocamente a la misma</xs:documentation>
+						<xs:documentation>Opcional incluso si Estado no es un ERROR
+                        </xs:documentation>
 					</xs:annotation>
 				</xs:element>
-				<xs:element ref="Estado" minOccurs="0"/>
+				<!-- DatosMatrimonio -->
+				<xs:element ref="DatosMatrimonio" minOccurs="0" maxOccurs="1">
+					<xs:annotation>
+						<xs:documentation>Opcional incluso si Estado no es un ERROR
+                        </xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<!-- FechaConfirmacion -->
+				<xs:element name="FechaConfirmacion" type="tipos:FechaType" minOccurs="0" maxOccurs="1">
+					<xs:annotation>
+						<xs:documentation>Fecha de Confirmación o Inscripción del Hecho
+                        </xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<!-- Estado -->
+				<xs:element ref="Estado" minOccurs="0" maxOccurs="1"/>
 			</xs:sequence>
 		</xs:complexType>
 	</xs:element>
-	<xs:element name="DatosAdicionalesTitularRetorno">
+	<!-- DatosInscrito -->
+	<xs:element name="DatosInscrito">
 		<xs:complexType>
 			<xs:sequence>
-				<xs:element name="Sexo" type="Sexo" minOccurs="0">
+				<!-- DatosIdentificativos -->
+				<xs:element name="DatosIdentificativos" type="Persona" minOccurs="1" maxOccurs="1">
 					<xs:annotation>
-						<xs:documentation>Sexo del Individuo</xs:documentation>
+						<xs:documentation>Datos Identificativos del Inscrito.
+                        </xs:documentation>
 					</xs:annotation>
 				</xs:element>
-				<xs:element ref="FechaNacimiento" minOccurs="0"/>
+				<!-- Domicilio -->
+				<xs:element name="Domicilio" type="DomicilioType" minOccurs="0" maxOccurs="1">
+					<xs:annotation>
+						<xs:documentation>Domicilio del Inscrito.
+                        </xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<!-- OtrosDatos -->
+				<xs:element name="OtrosDatos" type="OtrosDatosType" minOccurs="0" maxOccurs="1">
+					<xs:annotation>
+						<xs:documentation>Otros Datos del Inscrito.
+                        </xs:documentation>
+					</xs:annotation>
+				</xs:element>
 			</xs:sequence>
 		</xs:complexType>
 	</xs:element>
+	<!-- DatosHechoRegistral -->
 	<xs:element name="DatosHechoRegistral">
 		<xs:complexType>
 			<xs:sequence>
-				<xs:element ref="FechaHechoRegistral" minOccurs="0"/>
-				<xs:element ref="PoblacionHechoRegistral" minOccurs="0"/>
-				<xs:element name="PaisHechoRegistral" type="Pais" minOccurs="0"/>
+				<!-- FechaHechoRegistral -->
+				<xs:element ref="tipos:FechaHechoRegistral" minOccurs="0" maxOccurs="1"/>
+				<!-- AnioHechoRegistral -->
+				<xs:element ref="tipos:AnioHechoRegistral" minOccurs="0" maxOccurs="1"/>
+				<!-- HoraHechoRegistral -->
+				<xs:element ref="tipos:HoraHechoRegistral" minOccurs="0" maxOccurs="1"/>
+				<!-- PoblacionHechoRegistral -->
+				<xs:element ref="tipos:PoblacionHechoRegistral" minOccurs="0" maxOccurs="1"/>
+				<!-- ProvinciaHechoRegistral -->
+				<xs:element ref="tipos:ProvinciaHechoRegistral" minOccurs="0" maxOccurs="1"/>
+				<!-- PaisHechoRegistral -->
+				<xs:element name="PaisHechoRegistral" type="tipos:CodigoINEPaisType" minOccurs="0" maxOccurs="1"/>
+				<!-- TextoLibreLugarHecho -->
+				<xs:element name="TextoLibreLugarHecho" type="tipos:TipoString100LugarHecho" minOccurs="0" maxOccurs="1"/>
 			</xs:sequence>
 		</xs:complexType>
 	</xs:element>
-	<xs:element name="DatosRegistrales">
+	<!-- DatosMatrimonio -->
+	<xs:element name="DatosMatrimonio">
 		<xs:complexType>
 			<xs:sequence>
-				<xs:element ref="RegistroCivil"/>
-				<xs:element ref="Tomo"/>
-				<xs:element ref="Pagina"/>
+				<!-- EstadoCivilAnteriorAlMatrimonio -->
+				<xs:element ref="EstadoCivilAnteriorAlMatrimonio" minOccurs="0" maxOccurs="1">
+					<xs:annotation>
+						<xs:documentation>Estado civil, anterior al matrimonio.
+                        </xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<!-- RegimenEconomico -->
+				<xs:element name="RegimenEconomico" type="tipos:TipoString3Completo" minOccurs="0" maxOccurs="1">
+					<xs:annotation>
+						<xs:documentation> Regimen economico del matrimonio. Valores posibles: PAC Pactado LEG Legal
+                        </xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<!-- SituacionMatrimonio -->
+				<xs:element name="SituacionMatrimonio" type="tipos:TipoString3Completo" minOccurs="0" maxOccurs="1">
+					<xs:annotation>
+						<xs:documentation> Situacion matrimonio actual. Valores posibles: FAL Disuelto por Fallecimiento
+                            del Conyuge VIG En Vigor DIV Disuelto por Divorcio ANU Anulado SEP Separacion
+                        </xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<!-- FechaSituacionMatrimonio -->
+				<xs:element name="FechaSituacionMatrimonio" type="tipos:FechaType" minOccurs="0" maxOccurs="1">
+					<xs:annotation>
+						<xs:documentation>Fecha efectiva de la situacion del matrimonio actual.
+                        </xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<!-- TipoCelebracion -->
+				<xs:element name="TipoCelebracion" type="tipos:TipoString3Completo" minOccurs="0" maxOccurs="1">
+					<xs:annotation>
+						<xs:documentation> Tipo de celebracion del matrimonio. Valores posibles: CIV Civil REL Religiosa
+                        </xs:documentation>
+					</xs:annotation>
+				</xs:element>
 			</xs:sequence>
 		</xs:complexType>
 	</xs:element>
+	<!-- EstadoCivilAnteriorAlMatrimonio -->
+	<xs:element name="EstadoCivilAnteriorAlMatrimonio">
+		<xs:complexType>
+			<xs:sequence>
+				<!-- DelInscrito -->
+				<xs:element name="DelInscrito" type="tipos:EstadoCivilType" minOccurs="0" maxOccurs="1">
+					<xs:annotation>
+						<xs:documentation>Estado civil, del Inscrito, anterior al matrimonio.
+                        </xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<!-- DelConyuge -->
+				<xs:element name="DelConyuge" type="tipos:EstadoCivilType" minOccurs="0" maxOccurs="1">
+					<xs:annotation>
+						<xs:documentation>Estado civil, del Conyuge, anterior al matrimonio.
+                        </xs:documentation>
+					</xs:annotation>
+				</xs:element>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<!-- DatosRegistrales -->
+	<xs:element name="DatosRegistrales">
+		<xs:complexType>
+			<xs:sequence minOccurs="0">
+				<!-- RegistroCivil -->
+				<xs:element ref="tipos:RegistroCivil" minOccurs="1" maxOccurs="1"/>
+				<!-- Tomo -->
+				<xs:element ref="tipos:Tomo" minOccurs="1" maxOccurs="1"/>
+				<!-- Pagina -->
+				<xs:element ref="tipos:Pagina" minOccurs="1" maxOccurs="1"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<!-- DatosProgenitores -->
 	<xs:element name="DatosProgenitores">
 		<xs:complexType>
 			<xs:sequence>
-				<xs:element ref="Progenitor" minOccurs="0" maxOccurs="2"/>
+				<!-- DatosProgenitor -->
+				<xs:element ref="DatosProgenitor" minOccurs="1" maxOccurs="2"/>
 			</xs:sequence>
 		</xs:complexType>
 	</xs:element>
-	<xs:element name="Progenitor">
+	<!-- DatosProgenitor -->
+	<xs:element name="DatosProgenitor">
 		<xs:complexType>
-			<xs:sequence>
-				<xs:element name="DocumentoIdentificativo" type="DocumentoIdentificadorType" minOccurs="0">
-					<xs:annotation>
-						<xs:documentation>Documento identificador del Individuo (NIF, NIE o Pasaporte)</xs:documentation>
-					</xs:annotation>
-				</xs:element>
-				<xs:element name="Nombre" type="Nombre">
-					<xs:annotation>
-						<xs:documentation>Nombre Apellido del Individuo</xs:documentation>
-					</xs:annotation>
-				</xs:element>
-				<xs:element name="PrimerApellido" type="Apellido">
-					<xs:annotation>
-						<xs:documentation>Primer Apellido del Individuo</xs:documentation>
-					</xs:annotation>
-				</xs:element>
-				<xs:element name="SegundoApellido" type="Apellido" minOccurs="0">
-					<xs:annotation>
-						<xs:documentation>Segundo Apellido del Individuo</xs:documentation>
-					</xs:annotation>
-				</xs:element>
-				<xs:element ref="Sexo" minOccurs="0"/>
-				<xs:element ref="FechaNacimiento" minOccurs="0"/>
-			</xs:sequence>
+			<xs:complexContent>
+				<xs:extension base="Persona"/>
+				<!-- Persona -->
+			</xs:complexContent>
 		</xs:complexType>
 	</xs:element>
+	<!-- DatosConyuge -->
+	<xs:element name="DatosConyuge">
+		<xs:complexType>
+			<xs:complexContent>
+				<xs:extension base="Persona"/>
+				<!-- Persona -->
+			</xs:complexContent>
+		</xs:complexType>
+	</xs:element>
+	<!-- Persona -->
+	<xs:complexType name="Persona">
+		<xs:sequence>
+			<!-- DocumentoIdentificativo -->
+			<xs:element name="DocumentoIdentificativo" type="DocumentoIdentificadorType" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Documento identificador de la persona (NIF, NIE o Pasaporte)
+                    </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<!-- CodigoPersonalRRCC -->
+			<xs:element name="CodigoPersonalRRCC" type="tipos:TipoCodigoPersonalRRCC" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Codigo personal en el Registro Civil de la persona.
+                    </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<!-- Nombre -->
+			<xs:element name="Nombre" type="tipos:Nombre" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Nombre de la persona
+                    </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<!-- PrimerApellido -->
+			<xs:element name="PrimerApellido" type="tipos:Apellido" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Primer Apellido de la persona
+                    </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<!-- SegundoApellido -->
+			<xs:element name="SegundoApellido" type="tipos:Apellido" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Segundo Apellido de la persona
+                    </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<!-- Sexo -->
+			<xs:element ref="tipos:Sexo" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Sexo de la persona
+                    </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<!-- EstadoCivil -->
+			<xs:element name="EstadoCivil" type="tipos:EstadoCivilType" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Estado civil de la persona
+                    </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<!-- CodNacionalidadOrigen -->
+			<xs:element name="CodNacionalidadOrigen" type="tipos:CodigoINEPaisType" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Codigo de la nacionalidad origen de la persona.
+                    </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<!-- FechaNacimiento -->
+			<xs:element ref="tipos:FechaNacimiento" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Fecha de Nacimiento de la persona
+                    </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<!-- MunicipioNacimiento -->
+			<xs:element name="MunicipioNacimiento" type="tipos:TipoMunicipio" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Municipio de Nacimiento de la persona.
+                    </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<!-- ProvinciaNacimiento -->
+			<xs:element name="ProvinciaNacimiento" type="tipos:TipoProvincia" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Provincia de Nacimiento de la persona.
+                    </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<!-- PaisNacimiento -->
+			<xs:element name="PaisNacimiento" type="tipos:CodigoINEPaisType" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Codigo INE del pais de Nacimiento de la persona.
+                    </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<!-- DomicilioType -->
+	<xs:complexType name="DomicilioType">
+		<xs:sequence>
+			<!-- TipoVia -->
+			<xs:element name="TipoVia" type="tipos:TipoString5" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>En este campo se reflejara el codigo de la via, en base a los datos del INE
+                    </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<!-- NombreVia -->
+			<xs:element name="NombreVia" type="tipos:TipoString200" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Nombre de la via
+                    </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<!-- Numero -->
+			<xs:element name="Numero" type="tipos:TipoString5" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Numero en la via
+                    </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<!-- Portal -->
+			<xs:element name="Portal" type="tipos:TipoString50ConNumeros" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Numero de portal.
+                    </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<!-- Bloque -->
+			<xs:element name="Bloque" type="tipos:TipoString100" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Bloque.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<!-- Planta -->
+			<xs:element name="Planta" type="tipos:TipoString3" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Planta o Piso.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<!-- Escalera -->
+			<xs:element name="Escalera" type="tipos:TipoString50ConNumeros" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Escalera del inmueble.
+                    </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<!-- Puerta -->
+			<xs:element name="Puerta" type="tipos:TipoString10" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Puerta del inmueble.
+                    </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<!-- CodigoPostal -->
+			<xs:element name="CodigoPostal" type="tipos:TipoCodigoPostalNacional" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Codigo postal del inmueble.
+                    </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<!-- CodPais -->
+			<xs:element name="CodPais" type="tipos:CodigoINEPaisType" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Codigo INE del pais del inmueble.
+                    </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<!-- CodMunicipio -->
+			<xs:element name="CodMunicipio" type="tipos:TipoMunicipio" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Municipio del inmueble.
+                    </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<!-- CodProvincia -->
+			<xs:element name="CodProvincia" type="tipos:TipoProvincia" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Codigo de la provincia del inmueble.
+                    </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<!-- OtrosDatosType -->
+	<xs:complexType name="OtrosDatosType">
+		<xs:sequence>
+			<!-- FechaMatrimonioProgenitores -->
+			<xs:element name="FechaMatrimonioProgenitores" type="tipos:FechaType" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Fecha de Matrimonio, de los progenitores del Inscrito.
+                    </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<!-- Estado -->
 	<xs:element name="Estado">
 		<xs:complexType>
 			<xs:all>
-				<xs:element ref="CodigoEstado" minOccurs="0"/>
-				<xs:element ref="CodigoEstadoSecundario" minOccurs="0"/>
-				<xs:element ref="LiteralError" minOccurs="0"/>
+				<!-- CodigoEstado -->
+				<xs:element ref="tipos:CodigoEstado" minOccurs="0" maxOccurs="1"/>
+				<!-- CodigoEstadoSecundario -->
+				<xs:element ref="tipos:CodigoEstadoSecundario" minOccurs="0" maxOccurs="1"/>
+				<!-- LiteralError -->
+				<xs:element ref="tipos:LiteralError" minOccurs="0" maxOccurs="1"/>
 			</xs:all>
 		</xs:complexType>
 	</xs:element>
-	<xs:element name="RegistroCivil" type="IdentificadorRegistro">
-		<xs:annotation>
-			<xs:documentation>Identificador de Registro Civil</xs:documentation>
-		</xs:annotation>
-	</xs:element>
-	<xs:element name="Tomo" type="IdentificadorTomo">
-		<xs:annotation>
-			<xs:documentation>Tomo ó Libro del Registro</xs:documentation>
-		</xs:annotation>
-	</xs:element>
-	<xs:element name="Pagina" type="IdentificadorPagina">
-		<xs:annotation>
-			<xs:documentation>Folio o página del Registro</xs:documentation>
-		</xs:annotation>
-	</xs:element>
-	<xs:element name="FechaHechoRegistral" type="xs:date">
-		<xs:annotation>
-			<xs:documentation>Fecha en la que se ha producido el hecho Registral</xs:documentation>
-		</xs:annotation>
-	</xs:element>
-	<xs:element name="PoblacionHechoRegistral" type="Poblacion">
-		<xs:annotation>
-			<xs:documentation>Poblacion en la que se ha producido el hecho Registral. Codigo INE (En el caso de consultados 00 + Codiggo del Ministerio de Asuntos Exteriores)</xs:documentation>
-		</xs:annotation>
-	</xs:element>
-	<xs:element name="FechaNacimiento" type="xs:date">
-		<xs:annotation>
-			<xs:documentation>Fecha de Nacimiento</xs:documentation>
-		</xs:annotation>
-	</xs:element>
+	<!-- DocumentoIdentificadorType -->
 	<xs:complexType name="DocumentoIdentificadorType">
 		<xs:annotation>
-			<xs:documentation>
-				Esquema de Consulta por Documento Identificador: DNI ó Pasaporte ó NIE
-			</xs:documentation>
+			<xs:documentation> Esquema de Consulta por Documento Identificador: DNI ó Pasaporte ó NIE
+            </xs:documentation>
 		</xs:annotation>
 		<xs:sequence>
-			<xs:choice>
-				<xs:element name="NIF" type="NIFType">
+			<xs:choice minOccurs="0">
+				<!-- NIF -->
+				<xs:element name="NIF" type="tipos:NIFType" minOccurs="1" maxOccurs="1">
 					<xs:annotation>
-						<xs:documentation>Alternativa 1.A: Consulta por DNI</xs:documentation>
+						<xs:documentation>Alternativa 1.A: Consulta por DNI
+                        </xs:documentation>
 					</xs:annotation>
 				</xs:element>
-				<xs:element name="NIE" type="NIEType">
+				<!-- NIE -->
+				<xs:element name="NIE" type="tipos:NIEType" minOccurs="1" maxOccurs="1">
 					<xs:annotation>
-						<xs:documentation>Alternativa 1.B: Consulta por NIE</xs:documentation>
+						<xs:documentation>Alternativa 1.B: Consulta por NIE
+                        </xs:documentation>
 					</xs:annotation>
 				</xs:element>
-				<xs:element name="Pasaporte" type="PasaporteType">
+				<!-- Pasaporte -->
+				<xs:element name="Pasaporte" type="tipos:PasaporteType" minOccurs="1" maxOccurs="1">
 					<xs:annotation>
-						<xs:documentation>Alternativa 1.C: Consulta por Pasaporte</xs:documentation>
+						<xs:documentation>Alternativa 1.C: Consulta por Pasaporte
+                        </xs:documentation>
 					</xs:annotation>
 				</xs:element>
 			</xs:choice>
+			<!-- CodigoPaisEmisor -->
+			<xs:element name="CodigoPaisEmisor" type="tipos:CodigoINEPaisType" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Codigo INE del pais que ha emitido el identificador de la persona.
+                    </xs:documentation>
+				</xs:annotation>
+			</xs:element>
 		</xs:sequence>
 	</xs:complexType>
-	<xs:simpleType name="NIFType">
-		<xs:annotation>
-			<xs:documentation>Documento identificativo para ciudadanos españoles</xs:documentation>
-		</xs:annotation>
-		<xs:restriction base="xs:token">
-			<xs:minLength value="1"/>
-			<xs:maxLength value="9"/>
-			<xs:pattern value="[L,K,M,l,k,m]*[0]{1}[0-9]+[a-zA-Z]{1}"/>
-			<xs:pattern value="[L,K,M,l,k,m]*[0-9]+[a-zA-Z]{1}"/>
-		</xs:restriction>
-	</xs:simpleType>
-	<xs:simpleType name="NIEType">
-		<xs:annotation>
-			<xs:documentation>Documento identificativo para ciudadanos extranjeros</xs:documentation>
-		</xs:annotation>
-		<xs:restriction base="xs:token">
-			<xs:minLength value="1"/>
-			<xs:maxLength value="9"/>
-			<xs:pattern value="[x-zX-Z]{1}[0-9]+[a-zA-Z]{1}"/>
-		</xs:restriction>
-	</xs:simpleType>
-	<xs:simpleType name="PasaporteType">
-		<xs:annotation>
-			<xs:documentation>Documento identificativo de pasaporte</xs:documentation>
-		</xs:annotation>
-		<xs:restriction base="xs:token">
-			<xs:minLength value="1"/>
-			<xs:maxLength value="25"/>
-			<xs:pattern value="[a-zA-Z0-9]*"/>
-		</xs:restriction>
-	</xs:simpleType>
-	<xs:element name="Sexo" type="Sexo">
-		<xs:annotation>
-			<xs:documentation>Sexo del Individuo</xs:documentation>
-		</xs:annotation>
-	</xs:element>
-	<xs:element name="CodigoEstado">
-		<xs:simpleType>
-			<xs:restriction base="xs:string">
-				<xs:maxLength value="4"/>
-			</xs:restriction>
-		</xs:simpleType>
-	</xs:element>
-	<xs:element name="CodigoEstadoSecundario">
-		<xs:simpleType>
-			<xs:restriction base="xs:string">
-				<xs:maxLength value="16"/>
-			</xs:restriction>
-		</xs:simpleType>
-	</xs:element>
-	<xs:element name="LiteralError">
-		<xs:simpleType>
-			<xs:restriction base="xs:string">
-				<xs:maxLength value="255"/>
-			</xs:restriction>
-		</xs:simpleType>
-	</xs:element>
-	<xs:simpleType name="IdentificadorRegistro">
-		<xs:annotation>
-			<xs:documentation>Código del Registro Civil</xs:documentation>
-		</xs:annotation>
-		<xs:restriction base="xs:string">
-			<xs:length value="12"/>
-			<xs:pattern value="\d*"/>
-		</xs:restriction>
-	</xs:simpleType>
-	<xs:simpleType name="IdentificadorTomo">
-		<xs:annotation>
-			<xs:documentation>Identificador de Tomo ó Libro del Registro</xs:documentation>
-		</xs:annotation>
-		<xs:restriction base="xs:string">
-			<xs:maxLength value="10"/>
-			<xs:pattern value="([0-9]{5})([ ]|[_]|\w)*"/>
-		</xs:restriction>
-	</xs:simpleType>
-	<xs:simpleType name="IdentificadorPagina">
-		<xs:annotation>
-			<xs:documentation>Folio o página del Registro</xs:documentation>
-		</xs:annotation>
-		<xs:restriction base="xs:string">
-			<xs:maxLength value="10"/>
-		</xs:restriction>
-	</xs:simpleType>
-	<xs:simpleType name="Nombre">
-		<xs:restriction base="xs:string">
-			<xs:minLength value="1"/>
-			<xs:maxLength value="50"/>
-			<xs:pattern value="[A-Za-zÁáÉéÍíÓóÚúüÑñÀàÈèÌìÒòÙùÄäËëÏïÖöÜüÂâÊêÎîÔôÛûÇç·'\-\s,.()/\\]+"/>
-		</xs:restriction>
-	</xs:simpleType>
-	<xs:simpleType name="Apellido">
-		<xs:restriction base="xs:string">
-			<xs:minLength value="1"/>
-			<xs:maxLength value="50"/>
-			<xs:pattern value="[A-Za-zÁáÉéÍíÓóÚúüÑñÀàÈèÌìÒòÙùÄäËëÏïÖöÜüÂâÊêÎîÔôÛûÇç·'\-\s,.()/\\]+"/>
-		</xs:restriction>
-	</xs:simpleType>
-	<xs:simpleType name="Poblacion">
-		<xs:annotation>
-			<xs:documentation>
-			Codigo Poblacion INE
-			(En caso de un consulado: 00 + Código del Ministerio de Asuntos Exteriores)
-			</xs:documentation>
-		</xs:annotation>
-		<xs:restriction base="xs:string">
-			<xs:pattern value="\d{5}"/>
-		</xs:restriction>
-	</xs:simpleType>
-	<xs:simpleType name="Pais">
-		<xs:annotation>
-			<xs:documentation>Codigo Pais ISO3166</xs:documentation>
-		</xs:annotation>
-		<xs:restriction base="xs:string">
-			<xs:maxLength value="3"/>
-		</xs:restriction>
-	</xs:simpleType>
-	<xs:simpleType name="Sexo">
-		<xs:annotation>
-			<xs:documentation>Varon (V) o Mujer (M)</xs:documentation>
-		</xs:annotation>
-		<xs:restriction base="xs:string">
-			<xs:length value="1"/>
-			<xs:enumeration value="V">
-				<xs:annotation>
-					<xs:documentation>Varón</xs:documentation>
-				</xs:annotation>
-			</xs:enumeration>
-			<xs:enumeration value="M">
-				<xs:annotation>
-					<xs:documentation>Mujer</xs:documentation>
-				</xs:annotation>
-			</xs:enumeration>
-		</xs:restriction>
-	</xs:simpleType>
 </xs:schema>

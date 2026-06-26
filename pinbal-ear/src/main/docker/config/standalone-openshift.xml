@@ -750,7 +750,7 @@
                 <auth-server-url>${env.JBOSS_AUTH_URL}</auth-server-url>
                 <realm>${env.JBOSS_AUTH_REALM}</realm>
                 <resource>${env.JBOSS_AUTH_CLIENTID_REST}</resource>
-                <use-resource-role-mappings>true</use-resource-role-mappings>
+                <use-resource-role-mappings>false</use-resource-role-mappings>
                 <bearer-only>true</bearer-only>
                 <enable-basic-auth>true</enable-basic-auth>
                 <principal-attribute>preferred_username</principal-attribute>

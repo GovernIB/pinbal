@@ -179,7 +179,7 @@ public class JustificantHelperTest {
 
         verify(consulta).updateArxiuExpedientUuid("EXP-CREAT");
         verify(consultaGermana).updateArxiuExpedientUuid("EXP-CREAT");
-        verify(consultaRepository).saveAll(consultes);
+        verify(consultaRepository, never()).saveAll(any());
         verify(historicConsultaRepository, never()).findByScspPeticionId(anyString());
     }
 

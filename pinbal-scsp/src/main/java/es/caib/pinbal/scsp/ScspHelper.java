@@ -1013,7 +1013,9 @@ public class ScspHelper {
 			procedimiento.setAutomatizado(
 					solicitud.getProcedimentValorCampAutomatizado() ? "S" : "N");
 		}
-		procedimiento.setClaseTramite(solicitud.getProcedimentValorCampClaseTramite().intValue());
+		if (solicitud.getProcedimentValorCampClaseTramite() != null) {
+			procedimiento.setClaseTramite(solicitud.getProcedimentValorCampClaseTramite().intValue());
+		}
 		solicitante.setProcedimiento(procedimiento);
 		solicitante.setUnidadTramitadora(solicitud.getUnitatTramitadora());
 		if (getXmlHelper().hasCodigoUnidadTramitadora(

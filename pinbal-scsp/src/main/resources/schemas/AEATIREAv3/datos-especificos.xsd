@@ -206,7 +206,7 @@
 										</xs:sequence>
 									</xs:complexType>
 								</xs:element>
-								<xs:element name="DatosEconomicos" minOccurs="0" maxOccurs="2000">
+								<xs:element name="DatosEconomicos" minOccurs="0" maxOccurs="3000">
 									<xs:complexType>
 										<xs:sequence>
 											<xs:element name="DEGrupo" minOccurs="0">
@@ -511,7 +511,7 @@
 																</xs:restriction>
 															</xs:simpleType>
 														</xs:element>
-														<xs:element name="DCNumViviendas" minOccurs="0" maxOccurs="12">
+														<xs:element name="DCNumViviendas" minOccurs="0" maxOccurs="24">
 															<xs:complexType>
 																<xs:sequence>
 																	<xs:element name="DCContrib" minOccurs="0">

@@ -1,0 +1,226 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://intermediacion.redsara.es/scsp/esquemas/datosespecificos" targetNamespace="http://intermediacion.redsara.es/scsp/esquemas/datosespecificos" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<xs:element name="DatosEspecificos" type="DatosEspecificos">
+		<xs:annotation>
+			<xs:documentation>Datos Especificos del proyecto de tarjeta social universal</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:complexType name="DatosEspecificos">
+		<xs:choice>
+			<xs:element name="Comunicacion">
+				<xs:annotation>
+					<xs:documentation>Datos de la comunicación de las prestaciones</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:all>
+						<xs:element ref="DatosAdicionalesTitular"/>
+						<xs:element ref="Prestacion"/>
+					</xs:all>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="Respuesta">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="Estado" maxOccurs="5">
+							<xs:annotation>
+								<xs:documentation>Estado de la comunicación de pagos se pueden devolver hasta 5 códigos de error.</xs:documentation>
+							</xs:annotation>
+							<xs:complexType>
+								<xs:all>
+									<xs:element ref="CodigoEstado"/>
+									<xs:element ref="LiteralError"/>
+									<xs:element ref="CodigoEstadoSecundario" minOccurs="0"/>
+								</xs:all>
+							</xs:complexType>
+						</xs:element>
+						<xs:element ref="InformacionAdicional" minOccurs="0"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+		</xs:choice>
+		<xs:attribute name="Id" type="xs:string" use="optional"/>
+	</xs:complexType>
+	<xs:element name="DatosAdicionalesTitular">
+		<xs:annotation>
+			<xs:documentation>Datos adicionales del titular de las prestaciones</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:all>
+				<xs:element ref="FechaNacimiento"/>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="FechaNacimiento">
+		<xs:annotation>
+			<xs:documentation>Fecha de nacimiento de la persona perceptora de la prestación</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:date">
+				<xs:minInclusive value="1900-01-01"/>
+				<xs:pattern value="\d{4}-\d{2}-\d{2}"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Prestacion">
+		<xs:annotation>
+			<xs:documentation>Datos de la prestación</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:all>
+				<xs:element ref="ClavePropiaEntidad"/>
+				<xs:element ref="ClavePrestacion" minOccurs="1"/>
+				<xs:element ref="FechaEfectos" minOccurs="1"/>
+				<xs:element ref="TipoPago" minOccurs="1">
+					<xs:annotation>
+						<xs:documentation>Tipo de pago de la prestación:
+			U.- Único			P.- Periódico			</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element ref="SituacionActual" minOccurs="1">
+					<xs:annotation>
+						<xs:documentation>Clave que identifica la situación actual de la prestación:
+			A.- Alta			B.- Baja			S.- Suspensión			</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element ref="CodigoImportePrestacion" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>Código del importe de la perstación:
+01.- Importe bruto
+02.- Nómina de empresa
+			</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element ref="ImportePrestacion" minOccurs="0"/>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="ClavePropiaEntidad">
+		<xs:annotation>
+			<xs:documentation>Clave única que identifica el pago de una prestación, debe tener formato DIR3+Clavepropia e identifica a la prestación ya concedida</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="40"/>
+				<xs:whiteSpace value="collapse"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="ClavePrestacion">
+		<xs:annotation>
+			<xs:documentation>Clave que identifica la prestación a percibir</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="7"/>
+				<xs:whiteSpace value="collapse"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="FechaEfectos">
+		<xs:simpleType>
+			<xs:restriction base="xs:date">
+				<xs:minInclusive value="1900-01-01"/>
+				<xs:pattern value="\d{4}-\d{2}-\d{2}"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="TipoPago">
+		<xs:annotation>
+			<xs:documentation>Tipo de pago de la prestación:
+			U.- Único
+			P.- Periódico
+			</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:enumeration value="U"/>
+				<xs:enumeration value="P"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="SituacionActual">
+		<xs:annotation>
+			<xs:documentation>Clave que identifica la situación actual de la prestación:
+			A.- Alta
+			B.- Baja
+			S.- Suspensión
+			</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:enumeration value="A"/>
+				<xs:enumeration value="B"/>
+				<xs:enumeration value="S"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="CodigoImportePrestacion">
+		<xs:annotation>
+			<xs:documentation>Código del importe de la perstación:
+			01.- Importe bruto
+			02.- Nómina de empresa
+			</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:enumeration value="01"/>
+				<xs:enumeration value="02"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="ImportePrestacion">
+		<xs:annotation>
+			<xs:documentation>Importe de la la prestación a percibir en céntimos de euro</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:int">
+				<xs:minInclusive value="0"/>
+				<xs:maxInclusive value="999999999"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="CodigoEstado">
+		<xs:annotation>
+			<xs:documentation>Código de estado de la respuesta de la solicitud.</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:maxLength value="5"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="LiteralError">
+		<xs:annotation>
+			<xs:documentation>Literal de estado de la respuesta de la solicitud.</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:maxLength value="1024"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="CodigoEstadoSecundario">
+		<xs:annotation>
+			<xs:documentation>Código secundario de estado de la respuesta de la solicitud.</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:maxLength value="16"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="InformacionAdicional">
+		<xs:annotation>
+			<xs:documentation>Información adicional asociada al primer código de respuesta</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="50"/>
+				<xs:whiteSpace value="collapse"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+</xs:schema>

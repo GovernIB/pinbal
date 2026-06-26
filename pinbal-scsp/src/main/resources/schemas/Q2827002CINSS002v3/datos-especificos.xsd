@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<xs:schema targetNamespace="http://intermediacion.redsara.es/scsp/esquemas/datosespecificos" elementFormDefault="qualified" attributeFormDefault="unqualified" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://intermediacion.redsara.es/scsp/esquemas/datosespecificos">
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://intermediacion.redsara.es/scsp/esquemas/datosespecificos" targetNamespace="http://intermediacion.redsara.es/scsp/esquemas/datosespecificos" elementFormDefault="qualified" attributeFormDefault="unqualified">
 	<xs:element name="DatosEspecificos" type="DatosEspecificos"/>
 	<xs:complexType name="DatosEspecificos">
 		<xs:choice>
-			<xs:element ref="Entrada"/>
-			<xs:element ref="Salida"/>
+			<xs:element ref="Consulta"/>
+			<xs:element ref="Retorno"/>
 		</xs:choice>
 		<xs:attribute name="Id" type="xs:string" use="optional"/>
 	</xs:complexType>
-	<xs:element name="Entrada">
+	<xs:element name="Consulta">
 		<xs:complexType>
 			<xs:all>
 				<xs:element ref="FechaDesde"/>
@@ -16,7 +16,7 @@
 			</xs:all>
 		</xs:complexType>
 	</xs:element>
-	<xs:element name="Salida">
+	<xs:element name="Retorno">
 		<xs:complexType>
 			<xs:all>
 				<xs:element ref="Estado"/>
@@ -46,7 +46,7 @@
 			<xs:restriction base="xs:date"/>
 		</xs:simpleType>
 	</xs:element>
-	<xs:element name="FechaConsulta" nillable="true" type="xs:date"/>
+	<xs:element name="FechaConsulta" type="xs:date" nillable="true"/>
 	<xs:element name="DocumentoIdentificativoUnivoco" nillable="true">
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
@@ -137,9 +137,9 @@
 			</xs:restriction>
 		</xs:simpleType>
 	</xs:element>
-	<xs:element name="FechadeEfectos" nillable="true" type="xs:date"/>
-	<xs:element name="FechaFin" nillable="true" type="xs:date"/>
-	<xs:element name="FechaHechoCausante" nillable="true" type="xs:date"/>
+	<xs:element name="FechadeEfectos" type="xs:date" nillable="true"/>
+	<xs:element name="FechaFin" type="xs:date" nillable="true"/>
+	<xs:element name="FechaHechoCausante" type="xs:date" nillable="true"/>
 	<xs:element name="BaseReguladora" nillable="true">
 		<xs:simpleType>
 			<xs:restriction base="xs:integer">
@@ -170,7 +170,7 @@
 			</xs:all>
 		</xs:complexType>
 	</xs:element>
-	<xs:element name="Periododelpago" nillable="true" type="xs:date"/>
+	<xs:element name="Periododelpago" type="xs:date" nillable="true"/>
 	<xs:element name="ImporteBrutoenelmes" nillable="true">
 		<xs:simpleType>
 			<xs:restriction base="xs:integer">
@@ -192,6 +192,6 @@
 			</xs:restriction>
 		</xs:simpleType>
 	</xs:element>
-	<xs:element name="CodigoEstadoSecundario" nillable="true" type="xs:string"/>
-	<xs:element name="LiteralError" nillable="true" type="xs:string"/>
+	<xs:element name="CodigoEstadoSecundario" type="xs:string" nillable="true"/>
+	<xs:element name="LiteralError" type="xs:string" nillable="true"/>
 </xs:schema>

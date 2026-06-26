@@ -15,6 +15,8 @@ import org.springframework.context.annotation.Primary;
 
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import java.util.List;
 import java.util.Map;
 
@@ -24,6 +26,7 @@ import java.util.Map;
  * 
  * @author Limit Tecnologies <limit@limit.es>
  */
+@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
 @Primary
 @Stateless
 public class RecobrimentService extends AbstractService<es.caib.pinbal.logic.intf.service.RecobrimentService> implements es.caib.pinbal.logic.intf.service.RecobrimentService {
@@ -80,6 +83,7 @@ public class RecobrimentService extends AbstractService<es.caib.pinbal.logic.int
 	// /////////////////////////////////////////////////////////////
 
 	@Override
+	@RolesAllowed("PBL_WS")
 	public List<Entitat> getEntitats() {
 		return getDelegateService().getEntitats();
 	}

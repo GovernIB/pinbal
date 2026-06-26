@@ -13,6 +13,7 @@ import es.caib.pinbal.logic.intf.service.exception.EntitatNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -87,7 +88,7 @@ public class InformeRepresentantController extends BaseController {
 				EntitatHelper.getEntitatActual(request).getId(), 
 				RolHelper.getRolActual(request), filtre);
 		
-		Page<InformeProcedimentServeiDto> page = new PageImpl<InformeProcedimentServeiDto>(listUsuarisInforme, null, listUsuarisInforme.size());
+		Page<InformeProcedimentServeiDto> page = new PageImpl<InformeProcedimentServeiDto>(listUsuarisInforme, Pageable.unpaged(), listUsuarisInforme.size());
 		
 		return new ServerSideResponse<InformeProcedimentServeiDto, Long>(serverSideRequest, page);
 	}

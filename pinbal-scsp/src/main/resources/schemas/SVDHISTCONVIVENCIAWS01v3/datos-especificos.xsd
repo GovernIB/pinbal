@@ -1,0 +1,532 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns="http://intermediacion.redsara.es/scsp/esquemas/datosespecificos" xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://intermediacion.redsara.es/scsp/esquemas/datosespecificos" elementFormDefault="qualified">
+	<xs:element name="DatosEspecificos" type="DatosEspecificos"/>
+	<xs:complexType name="DatosEspecificos">
+		<xs:choice>
+			<xs:element ref="Consulta">
+				<xs:annotation>
+					<xs:documentation>Solo en el mensaje PETICION</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element ref="Retorno">
+				<xs:annotation>
+					<xs:documentation>Solo en el mensaje RESPUESTA</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:choice>
+		<xs:attribute name="Id" type="xs:string" use="optional"/>
+	</xs:complexType>
+	<xs:element name="Consulta">
+		<xs:complexType>
+			<xs:all>
+				<xs:element ref="CodigoComunidadAutonoma"/>
+				<xs:element ref="DatosAdicionalesTitular" minOccurs="0"/>
+				<xs:element ref="FechaDesde" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>Fecha desde la que se requiere la información Formato: AAAA-MM-DD</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element ref="FechaHasta" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>Fecha hasta la que se requiere la información Formato: AAAA-MM-DD</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="FechaDesde" type="xs:date"/>
+	<xs:element name="FechaHasta" type="xs:date"/>
+	<xs:element name="Retorno">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="Estado"/>
+				<xs:element ref="Periodos" minOccurs="0"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="CodigoError" type="xs:string"/>
+	<xs:element name="DescripcionError" type="xs:string"/>
+	<xs:element name="FechaNacimiento" type="xs:date"/>
+	<xs:element name="CodigoComunidadAutonoma">
+		<xs:annotation>
+			<xs:documentation>Utilizar los 2 dígitos del código INE.		
+· 01 - ANDALUCÍA
+· 02 - ARAGÓN
+· 03 - PRINCIPADO DE ASTURIAS
+· 04 - ISLAS BALEARES
+· 05 - CANARIAS
+· 06 - CANTABRIA
+· 07 - CASTILLA-LA MANCHA
+· 08 - CASTILLA y LEÓN
+· 09 - CATALUÑA
+· 10 - COMUNIDAD VALENCIANA
+· 11 - EXTREMADURA
+· 12 - GALICIA
+· 13 - MADRID
+· 14 - REGIÓN DE MURCIA
+· 15 - NAVARRA
+· 16 - PAÍS VASCO
+· 17 - LA RIOJA
+· 18 - CIUDAD DE CEUTA
+· 19 - CIUDAD DE MELILLA			
+			</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:enumeration value="01"/>
+				<xs:enumeration value="02"/>
+				<xs:enumeration value="03"/>
+				<xs:enumeration value="04"/>
+				<xs:enumeration value="05"/>
+				<xs:enumeration value="06"/>
+				<xs:enumeration value="07"/>
+				<xs:enumeration value="08"/>
+				<xs:enumeration value="09"/>
+				<xs:enumeration value="10"/>
+				<xs:enumeration value="11"/>
+				<xs:enumeration value="12"/>
+				<xs:enumeration value="13"/>
+				<xs:enumeration value="14"/>
+				<xs:enumeration value="15"/>
+				<xs:enumeration value="16"/>
+				<xs:enumeration value="17"/>
+				<xs:enumeration value="18"/>
+				<xs:enumeration value="19"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="DatosAdicionalesTitular" type="DatosAdicionalesTitular"/>
+	<xs:complexType name="DatosAdicionalesTitular">
+		<xs:all>
+			<xs:element ref="FechaNacimiento" minOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Fecha de nacimiento del titular de la consulta 						Formato: AAAA-MM-DD</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:all>
+	</xs:complexType>
+	<xs:complexType name="Solicitud"/>
+	<xs:element name="Periodos">
+		<xs:annotation>
+			<xs:documentation>Lista de periodos</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="Periodo" minOccurs="1" maxOccurs="unbounded"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Periodo">
+		<xs:complexType>
+			<xs:all>
+				<xs:element ref="Estado"/>
+				<xs:element ref="FechaDesde">
+					<xs:annotation>
+						<xs:documentation>Fecha de periodo Formato: AAAA-MM-DD</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element ref="FechaHasta">
+					<xs:annotation>
+						<xs:documentation>Fecha de periodo Formato: AAAA-MM-DD</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element ref="Convivencia" minOccurs="0"/>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<!-- datos convivencia -->
+	<xs:element name="Convivencia">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="DatosPersonales"/>
+				<xs:element ref="NumeroAcompanantes"/>
+				<xs:element ref="Acompanantes" minOccurs="0"/>
+				<xs:element ref="DireccionEmpadronamiento" minOccurs="0"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="DatosPersonales">
+		<xs:complexType>
+			<xs:all>
+				<xs:element ref="TipoDocumentacion" minOccurs="0"/>
+				<xs:element ref="Documentacion" minOccurs="0"/>
+				<xs:element ref="Nombre"/>
+				<xs:element ref="PrimerApellido"/>
+				<xs:element ref="SegundoApellido" minOccurs="0"/>
+				<xs:element ref="FechaNacimiento"/>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="NumeroAcompanantes">
+		<xs:simpleType>
+			<xs:restriction base="xs:integer">
+				<xs:totalDigits value="3"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Acompanantes">
+		<xs:annotation>
+			<xs:documentation>Lista de acompañantes</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="Acompanante" minOccurs="1" maxOccurs="unbounded"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Acompanante">
+		<xs:complexType>
+			<xs:all>
+				<xs:element ref="TipoDocumentacion" minOccurs="0"/>
+				<xs:element ref="Documentacion" minOccurs="0"/>
+				<xs:element ref="Nombre"/>
+				<xs:element ref="PrimerApellido"/>
+				<xs:element ref="SegundoApellido" minOccurs="0"/>
+				<xs:element ref="FechaNacimiento"/>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="DireccionEmpadronamiento">
+		<xs:complexType>
+			<xs:all>
+				<xs:element ref="Localidad"/>
+				<xs:element ref="CodigoPostal"/>
+				<xs:element ref="Via"/>
+				<xs:element ref="Numeracion"/>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Localidad">
+		<xs:complexType>
+			<xs:all>
+				<xs:element ref="CodigoProvincia"/>
+				<xs:element ref="CodigoMunicipio"/>
+				<xs:element ref="CodigoUnidadPoblacional"/>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Via">
+		<xs:complexType>
+			<xs:all>
+				<xs:element ref="TipoVia"/>
+				<xs:element ref="NombreVia"/>
+				<xs:element ref="Pseudovia" minOccurs="0"/>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Numeracion">
+		<xs:complexType>
+			<xs:all>
+				<xs:element ref="Numero" minOccurs="0"/>
+				<xs:element ref="CalificadorNumero" minOccurs="0"/>
+				<xs:element ref="NumeroSuperior" minOccurs="0"/>
+				<xs:element ref="CalificadorNumeroSuperior" minOccurs="0"/>
+				<xs:element ref="Kilometro" minOccurs="0"/>
+				<xs:element ref="Hectometro" minOccurs="0"/>
+				<xs:element ref="Bloque" minOccurs="0"/>
+				<xs:element ref="Portal" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>Portal de la dirección</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element ref="Escalera" minOccurs="0"/>
+				<xs:element ref="Planta" minOccurs="0"/>
+				<xs:element ref="Puerta" minOccurs="0"/>
+				<xs:element ref="TipoLocal" minOccurs="0"/>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<!-- fin convivencia -->
+	<xs:element name="Nombre">
+		<xs:annotation>
+			<xs:documentation>Nombre del titular o acompañante consultado</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="40"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="PrimerApellido">
+		<xs:annotation>
+			<xs:documentation>Primer apellido del titular o acompañante consultado</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="40"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="SegundoApellido">
+		<xs:annotation>
+			<xs:documentation>Segundo apellido del titular o acompañante consultado</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="40"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="CodigoPostal">
+		<xs:annotation>
+			<xs:documentation>Código postal de la dirección del titular o acompañante consultado</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:pattern value="\d{5}"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="CodigoMunicipio">
+		<xs:annotation>
+			<xs:documentation>Código de municipio del titular consultado</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:pattern value="\d{3}"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="CodigoProvincia">
+		<xs:annotation>
+			<xs:documentation>Código de provincia del titular consultado</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:pattern value="\d{2}"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="CodigoUnidadPoblacional">
+		<xs:annotation>
+			<xs:documentation>Código de unidad poblacional del titular consultado</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:pattern value="\d{7}"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="TipoDocumentacion">
+		<xs:annotation>
+			<xs:documentation>Indica el tipo de documentación del titular consultado</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:enumeration value="DNI"/>
+				<xs:enumeration value="NIE"/>
+				<xs:enumeration value="Pasaporte"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Documentacion">
+		<xs:annotation>
+			<xs:documentation>Documentacion del titular o acompañante consultado</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="30"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<!-- Direccion-->
+	<xs:element name="TipoVia">
+		<xs:annotation>
+			<xs:documentation>Tipo de vía de la dirección del titular</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="5"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="NombreVia">
+		<xs:annotation>
+			<xs:documentation>Nombre de vía de la dirección del titular</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="70"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Pseudovia">
+		<xs:annotation>
+			<xs:documentation>Nombre de pseudovia de la dirección del titular</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="50"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Kilometro">
+		<xs:annotation>
+			<xs:documentation>Kilómetro de la dirección del titular</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:integer">
+				<xs:totalDigits value="3"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Hectometro">
+		<xs:annotation>
+			<xs:documentation>Hectómetro de la dirección del titular</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:integer">
+				<xs:totalDigits value="1"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="TipoLocal">
+		<xs:annotation>
+			<xs:documentation>Tipo de local de empadronamiento</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:integer">
+				<xs:minInclusive value="1"/>
+				<xs:maxInclusive value="2"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Planta">
+		<xs:annotation>
+			<xs:documentation>Planta de la dirección</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="3"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Puerta">
+		<xs:annotation>
+			<xs:documentation>Planta de la dirección</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="4"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Bloque">
+		<xs:annotation>
+			<xs:documentation>Bloque de la dirección</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="2"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Portal">
+		<xs:annotation>
+			<xs:documentation>POrtal de la dirección</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="2"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Escalera">
+		<xs:annotation>
+			<xs:documentation>Escalera de la dirección</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="2"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Numero">
+		<xs:annotation>
+			<xs:documentation>Número de la dirección</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:integer">
+				<xs:totalDigits value="4"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="NumeroSuperior">
+		<xs:annotation>
+			<xs:documentation>Número superior de la dirección</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:integer">
+				<xs:totalDigits value="4"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="CalificadorNumero">
+		<xs:annotation>
+			<xs:documentation>Número superior de la dirección</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:length value="1"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="CalificadorNumeroSuperior">
+		<xs:annotation>
+			<xs:documentation>Calificador número superior de la dirección</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:length value="1"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Estado">
+		<xs:complexType>
+			<xs:all>
+				<xs:element ref="CodigoEstado"/>
+				<xs:element ref="CodigoEstadoSecundario" minOccurs="0"/>
+				<xs:element ref="LiteralError"/>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="CodigoEstado">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="4"/>
+				<xs:whiteSpace value="collapse"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="CodigoEstadoSecundario">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="16"/>
+				<xs:whiteSpace value="collapse"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="LiteralError">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="255"/>
+				<xs:whiteSpace value="collapse"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+</xs:schema>

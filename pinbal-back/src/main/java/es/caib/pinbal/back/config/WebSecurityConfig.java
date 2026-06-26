@@ -168,6 +168,12 @@ public class WebSecurityConfig extends BaseWebSecurityConfig {
 			@Override
 			public PreAuthenticatedGrantedAuthoritiesWebAuthenticationDetails buildDetails(HttpServletRequest context) {
 				Collection<String> j2eeUserRoles = getUserRoles(context);
+				// El rol "tothom" s'assigna automàticament a tots els usuaris autenticats: no és un rol de
+				// Keycloak (no arriba ni al JWT ni del contenidor), però és la base sobre la qual es deriven
+				// rols com el de delegat (vegeu RolHelper.getRolsUsuariActual).
+				if (!j2eeUserRoles.contains(BaseConfig.ROLE_USER)) {
+					j2eeUserRoles.add(BaseConfig.ROLE_USER);
+				}
 				logger.debug("Roles from ServletRequest for " + context.getUserPrincipal().getName() + ": " + j2eeUserRoles);
 				PreAuthenticatedGrantedAuthoritiesWebAuthenticationDetails result;
 				Map<String, Object> claims = JwtClaimsHelper.parseBearerToken(context.getHeader("Authorization"));

@@ -12,8 +12,11 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import javax.annotation.security.PermitAll;
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -24,6 +27,7 @@ import java.util.Map;
  * 
  * @author Limit Tecnologies <limit@limit.es>
  */
+@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
 @Primary
 @Stateless
 public class HistoricConsultaService extends AbstractService<es.caib.pinbal.logic.intf.service.HistoricConsultaService> implements es.caib.pinbal.logic.intf.service.HistoricConsultaService {
@@ -143,7 +147,7 @@ public class HistoricConsultaService extends AbstractService<es.caib.pinbal.logi
 	}
 
 	@Override
-//	@RolesAllowed("PBL_REPORT")
+	@PermitAll
 	public List<DadesObertesRespostaConsulta> findByFiltrePerOpenData(
 			String entitatCodi,
 			Date dataInici,
@@ -159,6 +163,7 @@ public class HistoricConsultaService extends AbstractService<es.caib.pinbal.logi
 	}
 
     @Override
+	@PermitAll
     public DadesObertesResposta findByFiltrePerOpenDataV2(ConsultaOpenDataDto consultaOpenDataDto) throws ProcedimentNotFoundException, EntitatNotFoundException {
         return getDelegateService().findByFiltrePerOpenDataV2(consultaOpenDataDto);
     }

@@ -10,12 +10,17 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
+import org.springframework.format.FormatterRegistry;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.PathMatchConfigurer;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.util.UrlPathHelper;
 
+import java.time.OffsetDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatterBuilder;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -25,6 +30,13 @@ import java.util.List;
  */
 @Configuration
 public class WebMvcConfig implements WebMvcConfigurer {
+
+	// Accepta offsets amb i sense dos punts: +02:00 i +0200
+	private static final DateTimeFormatter LENIENT_DATE_TIME = new DateTimeFormatterBuilder()
+			.append(DateTimeFormatter.ISO_LOCAL_DATE_TIME)
+			.optionalStart().appendOffsetId().optionalEnd()
+			.optionalStart().appendOffset("+HHmm", "Z").optionalEnd()
+			.toFormatter();
 
 	@Bean
 	public PageableHandlerMethodArgumentResolver pageableResolver() {
@@ -64,4 +76,18 @@ public class WebMvcConfig implements WebMvcConfigurer {
 				.featuresToDisable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
 	}
 
+	@Override
+	public void addFormatters(FormatterRegistry registry) {
+		registry.addConverter(String.class, Date.class, source -> {
+			// Normalitza les tres formes en que pot arribar el signe '+' de l'offset:
+			//   %2B / %2b → no decodificat per JBoss/proxy
+			//   ' '       → '+' no percent-encodat, decodificat com a espai
+			String normalized = source.trim()
+					.replace("%2B", "+")
+					.replace("%2b", "+")
+					.replace(" ", "+");
+			OffsetDateTime odt = OffsetDateTime.parse(normalized, LENIENT_DATE_TIME);
+			return Date.from(odt.toInstant());
+		});
+	}
 }

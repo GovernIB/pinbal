@@ -16,6 +16,7 @@ import es.caib.pinbal.logic.intf.service.exception.ServeiNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -87,7 +88,7 @@ public class EntitatServeiController extends BaseController {
 				}
 			}
 		}
-		Page<ServeiDto> page = new PageImpl<ServeiDto>(listServeis, null, listServeis.size());
+		Page<ServeiDto> page = new PageImpl<ServeiDto>(listServeis, Pageable.unpaged(), listServeis.size());
 		return new ServerSideResponse<ServeiDto, Long>(serverSideRequest, page);
 	}
 	@GetMapping("/{entitatId}/servei/{serveiCodi}/add")

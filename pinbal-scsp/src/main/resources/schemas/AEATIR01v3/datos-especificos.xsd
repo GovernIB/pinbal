@@ -1,5 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<xs:schema xmlns="http://intermediacion.redsara.es/scsp/esquemas/datosespecificos" xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://intermediacion.redsara.es/scsp/esquemas/datosespecificos" elementFormDefault="qualified" attributeFormDefault="unqualified">
+<xs:schema xmlns="http://intermediacion.redsara.es/scsp/esquemas/datosespecificos" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:r2020="http://intermediacion.redsara.es/scsp/esquemas/datosespecificos/renta2020" xmlns:r2021="http://intermediacion.redsara.es/scsp/esquemas/datosespecificos/renta2021" xmlns:r2022="http://intermediacion.redsara.es/scsp/esquemas/datosespecificos/renta2022" xmlns:r2023="http://intermediacion.redsara.es/scsp/esquemas/datosespecificos/renta2023" targetNamespace="http://intermediacion.redsara.es/scsp/esquemas/datosespecificos" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<xs:import namespace="http://intermediacion.redsara.es/scsp/esquemas/datosespecificos/renta2020" schemaLocation="datos-especificos_renta2020.xsd"/>
+	<xs:import namespace="http://intermediacion.redsara.es/scsp/esquemas/datosespecificos/renta2021" schemaLocation="datos-especificos_renta2021.xsd"/>
+	<xs:import namespace="http://intermediacion.redsara.es/scsp/esquemas/datosespecificos/renta2022" schemaLocation="datos-especificos_renta2022.xsd"/>
+	<xs:import namespace="http://intermediacion.redsara.es/scsp/esquemas/datosespecificos/renta2023" schemaLocation="datos-especificos_renta2023.xsd"/>
+	<xs:simpleType name="tipo_ImpNegativo">
+		<xs:restriction base="xs:decimal">
+			<xs:minInclusive value="-9999999999999.99"/>
+			<xs:maxInclusive value="9999999999999.99"/>
+			<xs:fractionDigits value="2"/>
+		</xs:restriction>
+	</xs:simpleType>
 	<xs:element name="DatosEspecificos">
 		<xs:complexType>
 			<xs:choice>
@@ -14,9 +25,10 @@
 							<xs:sequence>
 								<xs:element name="CodRet">
 									<xs:simpleType>
-										<xs:restriction base="xs:string">
-											<xs:minLength value="1"/>
-											<xs:maxLength value="4"/>
+										<xs:restriction base="xs:long">
+											<xs:minInclusive value="0"/>
+											<xs:maxInclusive value="9999"/>
+											<xs:totalDigits value="4"/>
 										</xs:restriction>
 									</xs:simpleType>
 								</xs:element>
@@ -190,7 +202,7 @@
 										</xs:sequence>
 									</xs:complexType>
 								</xs:element>
-								<xs:element name="DatosEconomicos" minOccurs="0" maxOccurs="2000">
+								<xs:element name="DatosEconomicos" minOccurs="0" maxOccurs="3000">
 									<xs:complexType>
 										<xs:sequence>
 											<xs:element name="DEGrupo" minOccurs="0">
@@ -495,7 +507,7 @@
 																</xs:restriction>
 															</xs:simpleType>
 														</xs:element>
-														<xs:element name="DCNumViviendas" minOccurs="0" maxOccurs="12">
+														<xs:element name="DCNumViviendas" minOccurs="0" maxOccurs="48">
 															<xs:complexType>
 																<xs:sequence>
 																	<xs:element name="DCContrib" minOccurs="0">
@@ -555,7 +567,7 @@
 																</xs:restriction>
 															</xs:simpleType>
 														</xs:element>
-														<xs:element name="DCNumInmuebles" minOccurs="0" maxOccurs="66">
+														<xs:element name="DCNumInmuebles" minOccurs="0" maxOccurs="132">
 															<xs:complexType>
 																<xs:sequence>
 																	<xs:element name="DCContrib" minOccurs="0">
@@ -618,6 +630,13 @@
 							</xs:sequence>
 						</xs:complexType>
 					</xs:element>
+					<xs:choice minOccurs="0">
+						<xs:element ref="r2020:Declaracion"/>
+						<xs:element ref="r2021:Declaracion"/>
+						<xs:element ref="r2022:Declaracion"/>
+						<xs:element ref="r2023:Declaracion"/>
+					</xs:choice>
+					<xs:element name="NivelRentaDeclaracion" type="tipo_ImpNegativo" minOccurs="0"/>
 				</xs:sequence>
 			</xs:choice>
 			<xs:attribute name="Id" type="xs:string" use="optional"/>

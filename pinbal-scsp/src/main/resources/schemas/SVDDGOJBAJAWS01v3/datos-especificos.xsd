@@ -25,7 +25,17 @@
 	</xs:element>
 	<xs:complexType name="SolicitudBajaType">
 		<xs:sequence>
+			<xs:element ref="NumeroSoporte" minOccurs="0"/>
+			<xs:element ref="FechaNacimiento"/>
+			<xs:element ref="Sexo" minOccurs="0"/>
+			<xs:element ref="CodigoProvincia"/>
+			<xs:element ref="CodigoMunicipio"/>
+			<xs:element ref="Domicilio"/>
+			<xs:element ref="CodigoPostal"/>
+			<xs:element ref="Telefono" minOccurs="0"/>
+			<xs:element ref="Email" minOccurs="0"/>
 			<xs:element ref="Observaciones" minOccurs="0"/>
+			<xs:element ref="Notificacion" minOccurs="0"/>
 			<xs:element name="Documentacion" minOccurs="0">
 				<xs:complexType>
 					<xs:sequence>
@@ -35,14 +45,128 @@
 			</xs:element>
 		</xs:sequence>
 	</xs:complexType>
+	<xs:element name="NumeroSoporte">
+		<xs:annotation>
+			<xs:documentation>Número de soporte del titular</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:pattern value="[E|C]\d{8}"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="FechaNacimiento">
+		<xs:annotation>
+			<xs:documentation>Formato de nacimiento del titular: DD/MM/AAAA</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="10"/>
+				<xs:maxLength value="10"/>
+				<xs:pattern value="([0][1-9]|[1,2][0-9]|[3][0,1])/([0][1-9]|[1][0-2])/[1-2][0-9]{3}"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Sexo">
+		<xs:annotation>
+			<xs:documentation>Sexo del titular</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:enumeration value="H"/>
+				<xs:enumeration value="M"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="CodigoProvincia">
+		<xs:annotation>
+			<xs:documentation>Utilizar los 2 dígitos del código INE</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:whiteSpace value="collapse"/>
+				<xs:pattern value="\d{2}"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="CodigoMunicipio">
+		<xs:annotation>
+			<xs:documentation>Utilizar los 3 dígitos del código INE</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:whiteSpace value="collapse"/>
+				<xs:pattern value="\d{3}"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Domicilio">
+		<xs:annotation>
+			<xs:documentation>Domicilio del titular</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="255"/>
+				<xs:whiteSpace value="collapse"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="CodigoPostal">
+		<xs:annotation>
+			<xs:documentation>Código Postal del domicilio del titular</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:whiteSpace value="collapse"/>
+				<xs:pattern value="[0-5][0-9][A-Za-z0-9]{0,8}"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Telefono">
+		<xs:annotation>
+			<xs:documentation>Teléfono del titular</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:whiteSpace value="collapse"/>
+				<xs:pattern value="(\+)?[0-9]{1,14}"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Email">
+		<xs:annotation>
+			<xs:documentation>Email del titular</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:maxLength value="100"/>
+				<xs:pattern value="[^@]+@[^\.]+\..+"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
 	<xs:element name="Observaciones">
 		<xs:annotation>
 			<xs:documentation>Observaciones para añadir comentarios sobre el trámite</xs:documentation>
 		</xs:annotation>
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
-				<xs:maxLength value="500"/>
 				<xs:minLength value="1"/>
+				<xs:maxLength value="500"/>
+				<xs:whiteSpace value="collapse"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Notificacion">
+		<xs:annotation>
+			<xs:documentation>Forma de notificación de la persona
+E - Electrónico
+P - Postal</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:enumeration value="E"/>
+				<xs:enumeration value="P"/>
 			</xs:restriction>
 		</xs:simpleType>
 	</xs:element>
@@ -60,10 +184,12 @@
 	</xs:complexType>
 	<xs:element name="Documento">
 		<xs:annotation>
-			<xs:documentation>Documento adjunot en base64</xs:documentation>
+			<xs:documentation>Documento adjunto en base64</xs:documentation>
 		</xs:annotation>
 		<xs:simpleType>
-			<xs:restriction base="xs:base64Binary"/>
+			<xs:restriction base="xs:base64Binary">
+				<xs:minLength value="1"/>
+			</xs:restriction>
 		</xs:simpleType>
 	</xs:element>
 	<xs:element name="TipoDocumento">
@@ -90,8 +216,9 @@
 		</xs:annotation>
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
-				<xs:maxLength value="250"/>
 				<xs:minLength value="1"/>
+				<xs:maxLength value="250"/>
+				<xs:whiteSpace value="collapse"/>
 			</xs:restriction>
 		</xs:simpleType>
 	</xs:element>
@@ -120,21 +247,27 @@
 	<xs:element name="CodigoEstado">
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
 				<xs:maxLength value="4"/>
+				<xs:whiteSpace value="collapse"/>
 			</xs:restriction>
 		</xs:simpleType>
 	</xs:element>
 	<xs:element name="CodigoEstadoSecundario">
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
 				<xs:maxLength value="16"/>
+				<xs:whiteSpace value="collapse"/>
 			</xs:restriction>
 		</xs:simpleType>
 	</xs:element>
 	<xs:element name="LiteralError">
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
-				<xs:maxLength value="255"/>
+				<xs:minLength value="1"/>
+				<xs:maxLength value="1024"/>
+				<xs:whiteSpace value="collapse"/>
 			</xs:restriction>
 		</xs:simpleType>
 	</xs:element>

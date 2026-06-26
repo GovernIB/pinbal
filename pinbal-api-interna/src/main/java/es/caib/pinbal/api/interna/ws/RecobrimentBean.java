@@ -39,7 +39,7 @@ import java.security.Principal;
 @WebContext(
 		contextRoot = "/pinbal/ws",
 		urlPattern = "/recobriment",
-		authMethod = "",
+		authMethod = "KEYCLOAK",
 		transportGuarantee = "NONE",
 		secureWSDLAccess = false)
 @RolesAllowed({"PBL_WS"})

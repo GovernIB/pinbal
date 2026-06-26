@@ -121,11 +121,12 @@ public class DadesUsuariPluginKeycloak extends KeyCloakUserInformationPlugin imp
 	@Override
 	public List<DadesUsuari> consultarAmbUsuariAny(String text) throws SistemaExternException {
 
-		log.info("[Keycloak] Consulta de les dades dels usuaris (text={})", text);
+		String searchText = text != null ? text.trim() : null;
+		log.info("[Keycloak] Consulta de les dades dels usuaris (text={})", searchText);
 		try {
 			long startTime = System.currentTimeMillis();
 			// Cerca per username (codi), nom i NIF simultàniament (OR)
-			SearchUsersResult result = getUsersByPartialValuesOr(text, text, text, null, text);
+			SearchUsersResult result = getUsersByPartialValuesOr(searchText, searchText, searchText, null, searchText);
 			PluginMetricHelper.addSuccessOperation(IntegracioApp.USR, System.currentTimeMillis() - startTime);
 			if (result == null || result.getUsers() == null) {
 				return new ArrayList<>();
@@ -140,7 +141,7 @@ public class DadesUsuariPluginKeycloak extends KeyCloakUserInformationPlugin imp
 					.collect(Collectors.toList());
 		} catch (Exception ex) {
 			PluginMetricHelper.addErrorOperation(IntegracioApp.USR);
-			throw new SistemaExternException("Error al consultar les dades dels usuaris (text=" + text + ")", ex);
+			throw new SistemaExternException("Error al consultar les dades dels usuaris (text=" + searchText + ")", ex);
 		}
 	}
 

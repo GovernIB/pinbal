@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- edited with XMLSpy v2011 sp1 (http://www.altova.com) by End User (free.org) -->
+<xs:schema xmlns="http://intermediacion.redsara.es/scsp/esquemas/datosespecificos" xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://intermediacion.redsara.es/scsp/esquemas/datosespecificos" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<xs:element name="DatosEspecificos">
+		<xs:complexType>
+			<xs:all>
+				<xs:element ref="Retorno">
+					<xs:annotation>
+						<xs:documentation>Solo en el mensaje RESPUESTA</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+			</xs:all>
+			<xs:attribute name="Id" type="xs:string" use="optional"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Situaciones">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="Situacion" maxOccurs="unbounded"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Retorno">
+		<xs:complexType>
+			<xs:all>
+				<xs:element ref="Estado"/>
+				<xs:element ref="Situaciones" minOccurs="0"/>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Estado">
+		<xs:complexType>
+			<xs:all>
+				<xs:element ref="CodigoEstado">
+					<xs:annotation>
+						<xs:documentation>Codigo de respuesta del servicio</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element ref="CodigoEstadoSecundario" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>Contine un código más específico, que en caso de error puede aportar informacion necesaria para resolver la incidencia.</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element ref="LiteralError">
+					<xs:annotation>
+						<xs:documentation>Descripción de la Respuesta, en función del valor del campo CodigoEstado. </xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element ref="LiteralErrorSecundario" minOccurs="0"/>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Situacion">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="NSS" type="NSSTipo" minOccurs="0"/>
+				<xs:choice>
+					<xs:element name="DatosEmpresa" type="DatosEmpresaTipo" minOccurs="0"/>
+					<xs:element name="DatosCuentaPropia" type="DatosCuentaPropiaTipo" minOccurs="0"/>
+				</xs:choice>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:complexType name="DocumentacionTrabajadorTipo">
+		<xs:all>
+			<xs:element name="TipoDocumento" type="TipoDocumentacionTrabajador">
+				<xs:annotation>
+					<xs:documentation>NIF, NIE, Pasaporte</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="NumeroDocumento" type="Documentacion"/>
+		</xs:all>
+	</xs:complexType>
+	<xs:complexType name="DocumentacionEmpresarioType">
+		<xs:all>
+			<xs:element name="TipoDocumentacion" type="DocumentacionEmpresarioTipo">
+				<xs:annotation>
+					<xs:documentation>NIF,NIE</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Documentacion" type="Documentacion"/>
+		</xs:all>
+	</xs:complexType>
+	<xs:complexType name="PersonaType">
+		<xs:all>
+			<xs:element name="Documentacion" type="DocumentacionTrabajadorTipo"/>
+			<xs:element name="Nombre" type="xs:string"/>
+			<xs:element name="Apellido1" type="xs:string" minOccurs="0"/>
+			<xs:element name="Apellido2" type="xs:string" minOccurs="0"/>
+		</xs:all>
+	</xs:complexType>
+	<xs:complexType name="DomicilioTipo">
+		<xs:all>
+			<xs:element name="Direccion" type="DireccionTipo"/>
+			<xs:element name="CodigoPostal" type="CodigoPostalTipo" minOccurs="0"/>
+			<xs:element name="CodigoLocalidad" type="CodigoLocalidadTipo" minOccurs="0"/>
+			<xs:element name="Localidad" type="LocalidadTipo" minOccurs="0"/>
+		</xs:all>
+	</xs:complexType>
+	<xs:complexType name="DatosEmpresaTipo">
+		<xs:all>
+			<xs:element name="Empresario" type="DocumentacionEmpresarioType"/>
+			<xs:element name="RazonSocial" type="xs:string"/>
+			<xs:element name="DomicilioSocial" type="DomicilioTipo" minOccurs="0"/>
+			<xs:element name="DomicilioEmpresa" type="DomicilioTipo" minOccurs="0"/>
+		</xs:all>
+	</xs:complexType>
+	<xs:complexType name="RegimenTipo">
+		<xs:all>
+			<xs:element name="Codigo" type="xs:string"/>
+			<xs:element name="Descripcion" type="xs:string"/>
+		</xs:all>
+	</xs:complexType>
+	<xs:complexType name="DatosCuentaPropiaTipo">
+		<xs:sequence>
+			<xs:element name="Regimen">
+				<xs:annotation>
+					<xs:documentation>Literal del Regimen</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:complexContent>
+						<xs:extension base="RegimenTipo"/>
+					</xs:complexContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="DomicilioResidencia" type="DomicilioTipo" minOccurs="0"/>
+			<xs:element name="DomicilioActividad" type="DomicilioTipo" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:simpleType name="DireccionTipo">
+		<xs:restriction base="xs:string">
+			<xs:minLength value="1"/>
+			<xs:maxLength value="183"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="LocalidadTipo">
+		<xs:restriction base="xs:string">
+			<xs:minLength value="1"/>
+			<xs:maxLength value="40"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="CodigoPostalTipo">
+		<xs:restriction base="xs:string">
+			<xs:minLength value="1"/>
+			<xs:maxLength value="5"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="CodigoLocalidadTipo">
+		<xs:restriction base="xs:integer"/>
+	</xs:simpleType>
+	<xs:simpleType name="TipoDocumentacionTrabajador">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="NIF"/>
+			<xs:enumeration value="NIE"/>
+			<xs:enumeration value="Pasaporte"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="DocumentacionEmpresarioTipo">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="NIF"/>
+			<xs:enumeration value="NIE"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="Documentacion">
+		<xs:restriction base="xs:string">
+			<xs:minLength value="1"/>
+			<xs:maxLength value="30"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="NSSTipo">
+		<xs:restriction base="xs:string">
+			<xs:minLength value="1"/>
+			<xs:maxLength value="12"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:element name="CodigoEstado">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="4"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="CodigoEstadoSecundario">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="16"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="LiteralError">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="1024"/>
+				<xs:whiteSpace value="collapse"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="LiteralErrorSecundario">
+		<xs:annotation>
+			<xs:documentation>Descripción de la Respuesta, en función del valor del campo CodigoEstadoSecundario.</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:maxLength value="1024"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+</xs:schema>

@@ -6,7 +6,7 @@
 				<xs:element ref="IdPeticion"/>
 				<xs:element ref="NumElementos"/>
 				<xs:element ref="TimeStamp"/>
-				<xs:element ref="Estado" minOccurs="0"/>
+				<xs:element ref="Estado"/>
 				<xs:element ref="CodigoCertificado"/>
 			</xs:all>
 		</xs:complexType>
@@ -14,50 +14,59 @@
 	<xs:element name="CodigoCertificado">
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
-				<xs:maxLength value="64"/>
+				<xs:enumeration value="SVDDGTMOVPUNTOSWS01"/>
 			</xs:restriction>
 		</xs:simpleType>
 	</xs:element>
 	<xs:element name="CodigoEstado">
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
-				<xs:maxLength value="4"/>
+				<xs:length value="4"/>
 			</xs:restriction>
 		</xs:simpleType>
 	</xs:element>
 	<xs:element name="CodigoEstadoSecundario">
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
 				<xs:maxLength value="16"/>
+				<xs:whiteSpace value="collapse"/>
 			</xs:restriction>
 		</xs:simpleType>
 	</xs:element>
 	<xs:element name="IdPeticion">
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
 				<xs:maxLength value="26"/>
+				<xs:whiteSpace value="collapse"/>
 			</xs:restriction>
 		</xs:simpleType>
 	</xs:element>
 	<xs:element name="LiteralError">
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
-				<xs:maxLength value="255"/>
+				<xs:minLength value="1"/>
+				<xs:maxLength value="1024"/>
+				<xs:whiteSpace value="collapse"/>
 			</xs:restriction>
 		</xs:simpleType>
 	</xs:element>
 	<xs:element name="LiteralErrorSec">
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
-				<xs:maxLength value="255"/>
+				<xs:minLength value="1"/>
+				<xs:maxLength value="1024"/>
+				<xs:whiteSpace value="collapse"/>
 			</xs:restriction>
 		</xs:simpleType>
 	</xs:element>
 	<xs:element name="NumElementos">
 		<xs:simpleType>
 			<xs:restriction base="xs:int">
-				<xs:totalDigits value="7"/>
-				<xs:minInclusive value="0"/>
+				<xs:totalDigits value="4"/>
+				<xs:minInclusive value="1"/>
+				<xs:maxInclusive value="1000"/>
 			</xs:restriction>
 		</xs:simpleType>
 	</xs:element>
@@ -72,16 +81,18 @@
 	<xs:element name="TimeStamp">
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
 				<xs:maxLength value="29"/>
+				<xs:whiteSpace value="collapse"/>
 			</xs:restriction>
 		</xs:simpleType>
 	</xs:element>
 	<xs:element name="Estado">
 		<xs:complexType>
 			<xs:all>
-				<xs:element ref="CodigoEstado" minOccurs="0"/>
+				<xs:element ref="CodigoEstado"/>
 				<xs:element ref="CodigoEstadoSecundario" minOccurs="0"/>
-				<xs:element ref="LiteralError" minOccurs="0"/>
+				<xs:element ref="LiteralError"/>
 				<xs:element ref="LiteralErrorSec" minOccurs="0"/>
 				<xs:element ref="TiempoEstimadoRespuesta" minOccurs="0"/>
 			</xs:all>

@@ -50,7 +50,7 @@
 										<xs:element name="LiteralError" minOccurs="0">
 											<xs:simpleType>
 												<xs:restriction base="xs:string">
-													<xs:maxLength value="255"/>
+													<xs:maxLength value="1024"/>
 												</xs:restriction>
 											</xs:simpleType>
 										</xs:element>
@@ -130,6 +130,13 @@
 																		</xs:restriction>
 																	</xs:simpleType>
 																</xs:element>
+																<xs:element name="CodigoUnidadTramitadora" minOccurs="0">
+																	<xs:simpleType>
+																		<xs:restriction base="xs:string">
+																			<xs:pattern value="([AUIJO][0-9]|CC|G[EA]|E([AC]|[0-9])|L(A|[0-9]))[0-9]{7}"/>
+																		</xs:restriction>
+																	</xs:simpleType>
+																</xs:element>
 																<xs:element name="Procedimiento" minOccurs="0">
 																	<xs:complexType>
 																		<xs:sequence>
@@ -148,6 +155,15 @@
 																					</xs:restriction>
 																				</xs:simpleType>
 																			</xs:element>
+																			<xs:element name="Automatizado" minOccurs="0">
+																				<xs:simpleType>
+																					<xs:restriction base="xs:string">
+																						<xs:enumeration value="S"/>
+																						<xs:enumeration value="N"/>
+																					</xs:restriction>
+																				</xs:simpleType>
+																			</xs:element>
+																			<xs:element name="ClaseTramite" type="xs:int" minOccurs="0"/>
 																		</xs:sequence>
 																	</xs:complexType>
 																</xs:element>
@@ -192,7 +208,7 @@
 																	<xs:simpleType>
 																		<xs:restriction base="xs:string">
 																			<xs:minLength value="1"/>
-																			<xs:maxLength value="25"/>
+																			<xs:maxLength value="65"/>
 																		</xs:restriction>
 																	</xs:simpleType>
 																</xs:element>

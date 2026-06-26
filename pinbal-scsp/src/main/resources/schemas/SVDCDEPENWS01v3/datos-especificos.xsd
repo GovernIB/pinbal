@@ -42,11 +42,55 @@
 	<xs:element name="Resolucion">
 		<xs:complexType>
 			<xs:all>
-				<xs:element ref="NumeroExpediente"/>
-				<xs:element ref="GradoyNivel"/>
-				<xs:element ref="Tipo"/>
-				<xs:element ref="FechaResolucion"/>
-				<xs:element ref="EstadoResolucion"/>
+				<xs:element ref="NumeroExpediente">
+					<xs:annotation>
+						<xs:documentation>Campo que especifica el
+número de expediente</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element ref="GradoyNivel">
+					<xs:annotation>
+						<xs:documentation>Campo que especifica el grado
+y nivel de dependencia. 
+Los posibles valores que puede tener este elemento son:
+- Grado III Nivel 2
+- Grado III Nivel 1
+- Grado II Nivel 2
+- Grado II Nivel 1
+- Grado I Nivel 2
+- Grado I Nivel 1
+- Grado I
+- Grado II 
+- Grado III </xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element ref="Tipo">
+					<xs:annotation>
+						<xs:documentation>Campo que especifica el Tipo de dependencia reconocida.
+
+Valores posibles:
+- Grado y Nivel
+- Grado y Nivel (DF1)
+
+La diferencia de “Grado y Nivel (DF1)” respecto a “Grado y Nivel” es que para los grados y niveles que todavía no aplican, debido a la progresividad que marca la Ley, no se les resuelve el Grado y Nivel como tal sino que se le aplica la Disposición Final Primera de modo que se le reconoce su dependencia pero no se puede seguir gestionando las prestaciones dado que su grado todavía no ha entrado en vigor.</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element ref="FechaResolucion">
+					<xs:annotation>
+						<xs:documentation>Campo que especifica la fecha
+en la que se reconoce el grado y nivel de dependencia del Titular consultado.
+Formato DD/MM/YYYY</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element ref="EstadoResolucion">
+					<xs:annotation>
+						<xs:documentation>Campo que especifica el estado de la resolución:
+- Firmada
+- Recurrida: la resolución ha sido previamente firmada todavía es vigente pero el Recurso o Revisión todavía no ha sido resuelto.
+- En trámite
+</xs:documentation>
+					</xs:annotation>
+				</xs:element>
 			</xs:all>
 		</xs:complexType>
 	</xs:element>

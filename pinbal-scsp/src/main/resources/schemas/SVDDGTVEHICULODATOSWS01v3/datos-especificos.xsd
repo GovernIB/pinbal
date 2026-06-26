@@ -15,9 +15,9 @@
 		</xs:annotation>
 		<xs:complexType>
 			<xs:choice>
-				<xs:element ref="Matricula" minOccurs="1" maxOccurs="1"/>
-				<xs:element ref="Bastidor" minOccurs="1" maxOccurs="1"/>
-				<xs:element ref="NIVE" minOccurs="1" maxOccurs="1"/>
+				<xs:element ref="Matricula"/>
+				<xs:element ref="Bastidor"/>
+				<xs:element ref="NIVE"/>
 			</xs:choice>
 		</xs:complexType>
 	</xs:element>
@@ -28,7 +28,7 @@
 		<xs:complexType>
 			<xs:sequence>
 				<xs:element ref="Estado"/>
-				<xs:element ref="Consulta" minOccurs="1">
+				<xs:element ref="Consulta">
 					<xs:annotation>
 						<xs:documentation>Datos consultados</xs:documentation>
 					</xs:annotation>
@@ -56,7 +56,7 @@
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
 				<xs:minLength value="1"/>
-				<xs:maxLength value="17"/>
+				<xs:maxLength value="25"/>
 				<xs:whiteSpace value="collapse"/>
 			</xs:restriction>
 		</xs:simpleType>
@@ -122,6 +122,7 @@
 				<xs:element ref="DatosTecnicos" minOccurs="0"/>
 				<xs:element ref="DatosTramites" minOccurs="0"/>
 				<xs:element ref="DatosAdministrativos" minOccurs="0"/>
+				<xs:element ref="DatosITVs" minOccurs="0"/>
 			</xs:all>
 		</xs:complexType>
 	</xs:element>
@@ -132,9 +133,9 @@
 		<xs:complexType>
 			<xs:all>
 				<xs:element ref="DescripcionVehiculo" minOccurs="0"/>
-				<xs:element ref="DomicilioVehiculoDGT" minOccurs="0"/>
-				<xs:element ref="DomicilioVehiculoINE" minOccurs="0"/>
+				<xs:element name="DomicilioFiscalVehiculo" type="Domicilio" minOccurs="0"/>
 				<xs:element ref="Indicadores" minOccurs="0"/>
+				<xs:element ref="ListaCotitulares" minOccurs="0"/>
 				<xs:element ref="Matriculacion" minOccurs="0"/>
 				<xs:element ref="Titular" minOccurs="0"/>
 			</xs:all>
@@ -150,6 +151,9 @@
 				<xs:element ref="NIVE" minOccurs="0"/>
 				<xs:element ref="Marca" minOccurs="0"/>
 				<xs:element ref="Modelo" minOccurs="0"/>
+				<xs:element ref="Servicio" minOccurs="0"/>
+				<xs:element ref="TipoIndustria" minOccurs="0"/>
+				<xs:element ref="TipoVehiculo" minOccurs="0"/>
 			</xs:all>
 		</xs:complexType>
 	</xs:element>
@@ -159,14 +163,24 @@
 		</xs:annotation>
 		<xs:complexType>
 			<xs:all>
-				<xs:element ref="Codigo" minOccurs="0"/>
-				<xs:element ref="Descripcion" minOccurs="0"/>
+				<xs:element ref="Codigo" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>Código de la marca del vehículo consultado</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element ref="Descripcion" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>Marca del vehículo consultado</xs:documentation>
+					</xs:annotation>
+				</xs:element>
 			</xs:all>
 		</xs:complexType>
 	</xs:element>
 	<xs:element name="Codigo">
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="5"/>
 				<xs:whiteSpace value="collapse"/>
 			</xs:restriction>
 		</xs:simpleType>
@@ -174,6 +188,8 @@
 	<xs:element name="Descripcion">
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="255"/>
 				<xs:whiteSpace value="collapse"/>
 			</xs:restriction>
 		</xs:simpleType>
@@ -184,52 +200,82 @@
 		</xs:annotation>
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="50"/>
 				<xs:whiteSpace value="collapse"/>
 			</xs:restriction>
 		</xs:simpleType>
 	</xs:element>
-	<xs:element name="DomicilioVehiculoDGT">
+	<xs:element name="Servicio">
 		<xs:annotation>
-			<xs:documentation>Domicilio en DGT del vehículo consultado</xs:documentation>
+			<xs:documentation>Servicio al que está destinado el vehículo</xs:documentation>
 		</xs:annotation>
 		<xs:complexType>
 			<xs:all>
-				<xs:element name="Municipio" minOccurs="0">
+				<xs:element ref="Codigo" minOccurs="0">
 					<xs:annotation>
-						<xs:documentation>Municipio del vehículo consultado en DGT</xs:documentation>
+						<xs:documentation>Código del servicio al que está destinado el vehículo</xs:documentation>
 					</xs:annotation>
-					<xs:simpleType>
-						<xs:restriction base="xs:string">
-							<xs:minLength value="1"/>
-							<xs:maxLength value="50"/>
-							<xs:whiteSpace value="collapse"/>
-						</xs:restriction>
-					</xs:simpleType>
+				</xs:element>
+				<xs:element ref="Descripcion" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>Servicio al que está destinado el vehículo</xs:documentation>
+					</xs:annotation>
 				</xs:element>
 			</xs:all>
 		</xs:complexType>
 	</xs:element>
-	<xs:element name="DomicilioVehiculoINE">
+	<xs:element name="TipoIndustria">
 		<xs:annotation>
-			<xs:documentation>Domicilio en INE del vehículo consultado</xs:documentation>
+			<xs:documentation>Tipo definido por industria</xs:documentation>
 		</xs:annotation>
 		<xs:complexType>
 			<xs:all>
-				<xs:element name="Municipio" minOccurs="0">
+				<xs:element ref="Codigo" minOccurs="0">
 					<xs:annotation>
-						<xs:documentation>Municipio del vehículo consultado en INE</xs:documentation>
+						<xs:documentation>Código del tipo definido por industria</xs:documentation>
 					</xs:annotation>
-					<xs:simpleType>
-						<xs:restriction base="xs:string">
-							<xs:minLength value="1"/>
-							<xs:maxLength value="50"/>
-							<xs:whiteSpace value="collapse"/>
-						</xs:restriction>
-					</xs:simpleType>
+				</xs:element>
+				<xs:element ref="Descripcion" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>Tipo definido por industria</xs:documentation>
+					</xs:annotation>
 				</xs:element>
 			</xs:all>
 		</xs:complexType>
 	</xs:element>
+	<xs:element name="TipoVehiculo">
+		<xs:annotation>
+			<xs:documentation>Tipo de vehículo</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:all>
+				<xs:element ref="Codigo" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>Código del tipo de vehículo</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element ref="Descripcion" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>Tipo de vehículo</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Titular">
+		<xs:complexType>
+			<xs:all>
+				<xs:element name="DomicilioNotificacion" type="Domicilio" minOccurs="1"/>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:complexType name="Domicilio">
+		<xs:choice>
+			<xs:element ref="DomicilioINE" minOccurs="1"/>
+			<xs:element ref="DomicilioDGT" minOccurs="1"/>
+		</xs:choice>
+	</xs:complexType>
 	<xs:element name="DomicilioDGT">
 		<xs:annotation>
 			<xs:documentation>Domicilio del titular del vehículo consultado en DGT</xs:documentation>
@@ -237,8 +283,15 @@
 		<xs:complexType>
 			<xs:all>
 				<xs:element ref="NombreVia" minOccurs="0"/>
-				<xs:element ref="Provincia" minOccurs="0"/>
+				<xs:element ref="Provincia" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>Provincia de la residencia del titular del vehículo consultado en DGT</xs:documentation>
+					</xs:annotation>
+				</xs:element>
 				<xs:element name="Municipio" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>Municipio de la residencia del titular del vehículo consultado en DGT</xs:documentation>
+					</xs:annotation>
 					<xs:simpleType>
 						<xs:restriction base="xs:string">
 							<xs:minLength value="1"/>
@@ -268,7 +321,11 @@
 				<xs:element ref="Puerta" minOccurs="0"/>
 				<xs:element ref="Kilometro" minOccurs="0"/>
 				<xs:element ref="Hectometro" minOccurs="0"/>
-				<xs:element ref="Provincia" minOccurs="0"/>
+				<xs:element ref="Provincia" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>Provincia de la residencia del titular del vehículo consultado en INE</xs:documentation>
+					</xs:annotation>
+				</xs:element>
 				<xs:element name="Municipio" minOccurs="0">
 					<xs:annotation>
 						<xs:documentation>Municipio de la residencia del titular del vehículo consultado en INE</xs:documentation>
@@ -288,49 +345,55 @@
 	</xs:element>
 	<xs:element name="NumeroVia">
 		<xs:annotation>
-			<xs:documentation>Número de vía de la residencia del titular del vehículo consultado en INE</xs:documentation>
+			<xs:documentation>Número de vía de la residencia del titular del vehículo consultado</xs:documentation>
 		</xs:annotation>
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
-				<xs:pattern value="\d{1,4}"/>
+				<xs:minLength value="1"/>
+				<xs:maxLength value="10"/>
+				<xs:whiteSpace value="collapse"/>
 			</xs:restriction>
 		</xs:simpleType>
 	</xs:element>
 	<xs:element name="Planta">
 		<xs:annotation>
-			<xs:documentation>Planta de la dirección de residencia del titular del vehículo consultado en INE</xs:documentation>
+			<xs:documentation>Planta de la dirección de residencia del titular del vehículo consultado</xs:documentation>
 		</xs:annotation>
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
-				<xs:maxLength value="3"/>
+				<xs:minLength value="1"/>
+				<xs:maxLength value="10"/>
+				<xs:whiteSpace value="collapse"/>
 			</xs:restriction>
 		</xs:simpleType>
 	</xs:element>
 	<xs:element name="Portal">
 		<xs:annotation>
-			<xs:documentation>Portal de la dirección de residencia del titular del vehículo consultado en INE</xs:documentation>
+			<xs:documentation>Portal de la dirección de residencia del titular del vehículo consultado</xs:documentation>
 		</xs:annotation>
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
-				<xs:maxLength value="2"/>
+				<xs:minLength value="1"/>
+				<xs:maxLength value="10"/>
+				<xs:whiteSpace value="collapse"/>
 			</xs:restriction>
 		</xs:simpleType>
 	</xs:element>
 	<xs:element name="Puerta">
 		<xs:annotation>
-			<xs:documentation>Puerta de la dirección de la residencia del titular del vehículo consultado en INE</xs:documentation>
+			<xs:documentation>Puerta de la dirección de la residencia del titular del vehículo consultado</xs:documentation>
 		</xs:annotation>
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
 				<xs:minLength value="1"/>
-				<xs:maxLength value="3"/>
+				<xs:maxLength value="4"/>
 				<xs:whiteSpace value="collapse"/>
 			</xs:restriction>
 		</xs:simpleType>
 	</xs:element>
 	<xs:element name="TipoVia">
 		<xs:annotation>
-			<xs:documentation>Código de vía de la residencia del titular del vehículo consultado en INE</xs:documentation>
+			<xs:documentation>Código de vía de la residencia del titular del vehículo consultado</xs:documentation>
 		</xs:annotation>
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
@@ -342,65 +405,65 @@
 	</xs:element>
 	<xs:element name="NombreVia">
 		<xs:annotation>
-			<xs:documentation>Nombre de vía de la residencia del titular del vehículo consultado en INE</xs:documentation>
+			<xs:documentation>Nombre de vía de la residencia del titular del vehículo consultado</xs:documentation>
 		</xs:annotation>
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
 				<xs:minLength value="1"/>
-				<xs:maxLength value="250"/>
+				<xs:maxLength value="255"/>
 				<xs:whiteSpace value="collapse"/>
 			</xs:restriction>
 		</xs:simpleType>
 	</xs:element>
 	<xs:element name="Bloque">
 		<xs:annotation>
-			<xs:documentation>Bloque de la dirección de la residencia del titular del vehículo consultado en INE</xs:documentation>
+			<xs:documentation>Bloque de la dirección de la residencia del titular del vehículo consultado</xs:documentation>
 		</xs:annotation>
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
 				<xs:minLength value="1"/>
-				<xs:maxLength value="4"/>
+				<xs:maxLength value="10"/>
 				<xs:whiteSpace value="collapse"/>
 			</xs:restriction>
 		</xs:simpleType>
 	</xs:element>
 	<xs:element name="Localidad">
 		<xs:annotation>
-			<xs:documentation>Localidad de la residencia del titular del vehículo consultado en INE</xs:documentation>
+			<xs:documentation>Localidad de la residencia del titular del vehículo consultado</xs:documentation>
 		</xs:annotation>
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
 				<xs:minLength value="1"/>
-				<xs:maxLength value="70"/>
+				<xs:maxLength value="100"/>
 				<xs:whiteSpace value="collapse"/>
 			</xs:restriction>
 		</xs:simpleType>
 	</xs:element>
 	<xs:element name="CodigoPostal">
 		<xs:annotation>
-			<xs:documentation>Código postal de la dirección de la residencia del titular del vehículo consultado en INE</xs:documentation>
+			<xs:documentation>Código postal de la dirección de la residencia del titular del vehículo consultado</xs:documentation>
 		</xs:annotation>
 		<xs:simpleType>
-			<xs:restriction base="xs:int">
-				<xs:pattern value="\d{5}"/>
+			<xs:restriction base="xs:string">
+				<xs:pattern value="\d{1,10}"/>
 			</xs:restriction>
 		</xs:simpleType>
 	</xs:element>
 	<xs:element name="Escalera">
 		<xs:annotation>
-			<xs:documentation>Escalera de la dirección de la residencia del titular del vehículo consultado en INE</xs:documentation>
+			<xs:documentation>Escalera de la dirección de la residencia del titular del vehículo consultado</xs:documentation>
 		</xs:annotation>
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
 				<xs:minLength value="1"/>
-				<xs:maxLength value="2"/>
+				<xs:maxLength value="10"/>
 				<xs:whiteSpace value="collapse"/>
 			</xs:restriction>
 		</xs:simpleType>
 	</xs:element>
 	<xs:element name="Kilometro">
 		<xs:annotation>
-			<xs:documentation>Kilómetro de vía de la residencia del titular del vehículo consultado en INE</xs:documentation>
+			<xs:documentation>Kilómetro de vía de la residencia del titular del vehículo consultado</xs:documentation>
 		</xs:annotation>
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
@@ -410,11 +473,11 @@
 	</xs:element>
 	<xs:element name="Hectometro">
 		<xs:annotation>
-			<xs:documentation>Hectómetro de vía de la residencia del titular del vehículo consultado en INE</xs:documentation>
+			<xs:documentation>Hectómetro de vía de la residencia del titular del vehículo consultado</xs:documentation>
 		</xs:annotation>
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
-				<xs:pattern value="\d{1}"/>
+				<xs:pattern value="\d{1,2}"/>
 			</xs:restriction>
 		</xs:simpleType>
 	</xs:element>
@@ -424,29 +487,45 @@
 		</xs:annotation>
 		<xs:complexType>
 			<xs:all>
-				<xs:element ref="BajaTemporal" minOccurs="0"/>
-				<xs:element ref="BajaDefinitiva" minOccurs="0"/>
+				<xs:element name="BajaTemporal" type="Indicador" minOccurs="0"/>
+				<xs:element name="BajaDefinitiva" type="Indicador" minOccurs="0"/>
+				<xs:element name="Renting" type="Indicador" minOccurs="0"/>
+				<xs:element name="LimitacionDisposicion" type="Indicador" minOccurs="0"/>
 			</xs:all>
 		</xs:complexType>
 	</xs:element>
-	<xs:element name="BajaDefinitiva">
+	<xs:simpleType name="Indicador">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="S"/>
+			<xs:enumeration value="N"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:element name="ListaCotitulares">
 		<xs:annotation>
-			<xs:documentation>Indicador de la baja definitiva del vehículo consultado</xs:documentation>
+			<xs:documentation>Lista de cotitulares del vehículo.</xs:documentation>
 		</xs:annotation>
-		<xs:simpleType>
-			<xs:restriction base="xs:string">
-				<xs:length value="1"/>
-				<xs:whiteSpace value="collapse"/>
-			</xs:restriction>
-		</xs:simpleType>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="Cotitular" maxOccurs="unbounded"/>
+			</xs:sequence>
+		</xs:complexType>
 	</xs:element>
-	<xs:element name="BajaTemporal">
+	<xs:element name="Cotitular">
+		<xs:complexType>
+			<xs:all>
+				<xs:element name="Documentacion" type="Documentacion" minOccurs="0"/>
+				<xs:element ref="Filiacion" minOccurs="0"/>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Filiacion">
 		<xs:annotation>
-			<xs:documentation>Indicador de la baja temporal del vehículo consultado</xs:documentation>
+			<xs:documentation>Datos de filiación</xs:documentation>
 		</xs:annotation>
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
-				<xs:length value="1"/>
+				<xs:minLength value="1"/>
+				<xs:maxLength value="160"/>
 				<xs:whiteSpace value="collapse"/>
 			</xs:restriction>
 		</xs:simpleType>
@@ -457,10 +536,20 @@
 		</xs:annotation>
 		<xs:complexType>
 			<xs:all>
+				<xs:element ref="FechaPrimeraMatriculacion" minOccurs="0"/>
 				<xs:element ref="FechaMatriculacion" minOccurs="0"/>
 				<xs:element ref="Matricula" minOccurs="0"/>
+				<xs:element ref="Clase" minOccurs="0"/>
 			</xs:all>
 		</xs:complexType>
+	</xs:element>
+	<xs:element name="FechaPrimeraMatriculacion">
+		<xs:annotation>
+			<xs:documentation>Fecha de la primera matriculación del vehículo</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:date"/>
+		</xs:simpleType>
 	</xs:element>
 	<xs:element name="FechaMatriculacion">
 		<xs:annotation>
@@ -470,14 +559,14 @@
 			<xs:restriction base="xs:date"/>
 		</xs:simpleType>
 	</xs:element>
-	<xs:element name="Titular">
+	<xs:element name="Clase">
 		<xs:annotation>
-			<xs:documentation>Datos del titular del vehículo consultado</xs:documentation>
+			<xs:documentation>Clase de matriculación</xs:documentation>
 		</xs:annotation>
 		<xs:complexType>
 			<xs:all>
-				<xs:element ref="DomicilioDGT" minOccurs="0"/>
-				<xs:element ref="DomicilioINE" minOccurs="0"/>
+				<xs:element ref="Codigo" minOccurs="0"/>
+				<xs:element ref="Descripcion" minOccurs="0"/>
 			</xs:all>
 		</xs:complexType>
 	</xs:element>
@@ -487,19 +576,165 @@
 		</xs:annotation>
 		<xs:complexType>
 			<xs:all>
-				<xs:element ref="NivelEmisiones" minOccurs="0"/>
+				<xs:element ref="Emisiones" minOccurs="0"/>
+				<xs:element ref="Dimensiones" minOccurs="0"/>
+				<xs:element ref="Distancias" minOccurs="0"/>
+				<xs:element ref="Variante" minOccurs="0"/>
+				<xs:element ref="Version" minOccurs="0"/>
 				<xs:element ref="Masas" minOccurs="0"/>
+				<xs:element ref="Fabricante" minOccurs="0"/>
+				<xs:element ref="Carroceria" minOccurs="0"/>
+				<xs:element ref="Homologacion" minOccurs="0"/>
 				<xs:element ref="Plazas" minOccurs="0"/>
 				<xs:element ref="Potencias" minOccurs="0"/>
+				<xs:element ref="Color" minOccurs="0"/>
 			</xs:all>
 		</xs:complexType>
 	</xs:element>
-	<xs:element name="NivelEmisiones">
+	<xs:element name="Emisiones">
+		<xs:complexType>
+			<xs:all>
+				<xs:element ref="Nivel" minOccurs="0"/>
+				<xs:element ref="CO2" minOccurs="0"/>
+				<xs:element ref="CategoriaElectrica" minOccurs="0"/>
+				<xs:element ref="AutonomiaElectrica" minOccurs="0"/>
+				<xs:element ref="Consumo" minOccurs="0"/>
+				<xs:element ref="Propulsion" minOccurs="0"/>
+				<xs:element ref="TipoAlimentacion" minOccurs="0"/>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Nivel">
 		<xs:annotation>
 			<xs:documentation>Nivel de emisiones del vehículo consultado</xs:documentation>
 		</xs:annotation>
 		<xs:simpleType>
-			<xs:restriction base="xs:string"/>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="10"/>
+				<xs:whiteSpace value="collapse"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="CO2">
+		<xs:annotation>
+			<xs:documentation>Nivel de co2 del vehículo consultado</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="10"/>
+				<xs:whiteSpace value="collapse"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="CategoriaElectrica">
+		<xs:annotation>
+			<xs:documentation>Categoría eléctrica del vehículo consultado</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="5"/>
+				<xs:whiteSpace value="collapse"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="AutonomiaElectrica">
+		<xs:annotation>
+			<xs:documentation>Autonomía eléctrica del vehículo consultado</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="10"/>
+				<xs:whiteSpace value="collapse"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Consumo">
+		<xs:annotation>
+			<xs:documentation>Consumo del vehículo consultado</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="10"/>
+				<xs:whiteSpace value="collapse"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Propulsion">
+		<xs:complexType>
+			<xs:all>
+				<xs:element ref="Codigo" minOccurs="0"/>
+				<xs:element ref="Descripcion" minOccurs="0"/>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="TipoAlimentacion">
+		<xs:complexType>
+			<xs:all>
+				<xs:element ref="Codigo" minOccurs="0"/>
+				<xs:element ref="Descripcion" minOccurs="0"/>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Dimensiones">
+		<xs:complexType>
+			<xs:all>
+				<xs:element name="Altura" type="Dimension" minOccurs="0"/>
+				<xs:element name="Anchura" type="Dimension" minOccurs="0"/>
+				<xs:element name="LongitudMaxima" type="Dimension" minOccurs="0"/>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:simpleType name="Dimension">
+		<xs:restriction base="xs:int">
+			<xs:minInclusive value="1"/>
+			<xs:maxInclusive value="999999999"/>
+			<xs:whiteSpace value="collapse"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:element name="Distancias">
+		<xs:complexType>
+			<xs:all>
+				<xs:element name="EntreEjes" type="Distancia" minOccurs="0"/>
+				<xs:element name="ViaAnterior" type="DistanciaVia" minOccurs="0"/>
+				<xs:element name="ViaPosterior" type="DistanciaVia" minOccurs="0"/>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:simpleType name="Distancia">
+		<xs:restriction base="xs:int">
+			<xs:minInclusive value="1"/>
+			<xs:maxInclusive value="999999999"/>
+			<xs:whiteSpace value="collapse"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="DistanciaVia">
+		<xs:restriction base="xs:string">
+			<xs:minLength value="1"/>
+			<xs:maxLength value="15"/>
+			<xs:whiteSpace value="collapse"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:element name="Variante">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="50"/>
+				<xs:whiteSpace value="collapse"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Version">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="50"/>
+				<xs:whiteSpace value="collapse"/>
+			</xs:restriction>
 		</xs:simpleType>
 	</xs:element>
 	<xs:element name="Masas">
@@ -547,6 +782,49 @@
 			<xs:restriction base="xs:int"/>
 		</xs:simpleType>
 	</xs:element>
+	<xs:element name="Fabricante">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="255"/>
+				<xs:whiteSpace value="collapse"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Carroceria">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="50"/>
+				<xs:whiteSpace value="collapse"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Homologacion">
+		<xs:annotation>
+			<xs:documentation>Datos de las masas del vehículo consultado</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:all>
+				<xs:element name="Categoria" type="CategoriaHomologacion" minOccurs="0"/>
+				<xs:element name="Numero" type="NumeroHomologacion" minOccurs="0"/>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:simpleType name="CategoriaHomologacion">
+		<xs:restriction base="xs:string">
+			<xs:minLength value="1"/>
+			<xs:maxLength value="10"/>
+			<xs:whiteSpace value="collapse"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="NumeroHomologacion">
+		<xs:restriction base="xs:string">
+			<xs:minLength value="1"/>
+			<xs:maxLength value="50"/>
+			<xs:whiteSpace value="collapse"/>
+		</xs:restriction>
+	</xs:simpleType>
 	<xs:element name="Plazas">
 		<xs:annotation>
 			<xs:documentation>Datos de las plazas del vehículo consultado</xs:documentation>
@@ -637,51 +915,190 @@
 			<xs:restriction base="xs:float"/>
 		</xs:simpleType>
 	</xs:element>
+	<xs:element name="Color">
+		<xs:annotation>
+			<xs:documentation>Color</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:all>
+				<xs:element ref="Codigo" minOccurs="0"/>
+				<xs:element ref="Descripcion" minOccurs="0"/>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
 	<xs:element name="DatosTramites">
 		<xs:annotation>
 			<xs:documentation>Datos de los trámites del vehículo consultado</xs:documentation>
 		</xs:annotation>
 		<xs:complexType>
 			<xs:all>
-				<xs:element ref="Baja" minOccurs="0"/>
-				<xs:element ref="FechaTransferencia" minOccurs="0"/>
+				<xs:element ref="ListaBajas" minOccurs="0"/>
+				<xs:element ref="ListaTransferencias" minOccurs="0"/>
+				<xs:element ref="ListaDuplicados" minOccurs="0"/>
 			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="ListaBajas">
+		<xs:annotation>
+			<xs:documentation>Lista de bajas que ha sufrido el vehículo.</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="Baja" maxOccurs="unbounded"/>
+			</xs:sequence>
 		</xs:complexType>
 	</xs:element>
 	<xs:element name="Baja">
 		<xs:annotation>
-			<xs:documentation>Datos de cada baja del vehículo consultado</xs:documentation>
+			<xs:documentation>Datos relativos a cada una de las bajas que ha sufrido el vehículo.</xs:documentation>
 		</xs:annotation>
 		<xs:complexType>
 			<xs:all>
-				<xs:element ref="FechaInicio" minOccurs="0"/>
-				<xs:element ref="FechaFin" minOccurs="0"/>
+				<xs:element name="TipoBaja" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>Tipo de baja.</xs:documentation>
+					</xs:annotation>
+					<xs:complexType>
+						<xs:all>
+							<xs:element ref="Codigo" minOccurs="0"/>
+							<xs:element ref="Descripcion" minOccurs="0"/>
+						</xs:all>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="FechaInicio" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>Fecha de comienzo de la baja del vehículo.</xs:documentation>
+					</xs:annotation>
+					<xs:simpleType>
+						<xs:restriction base="xs:date"/>
+					</xs:simpleType>
+				</xs:element>
+				<xs:element name="FechaFin" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>Fecha de fin del período de baja del vehículo en caso de que no sea una baja definitiva.</xs:documentation>
+					</xs:annotation>
+					<xs:simpleType>
+						<xs:restriction base="xs:date"/>
+					</xs:simpleType>
+				</xs:element>
+				<xs:element name="CausaBaja" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>Motivo de la baja.</xs:documentation>
+					</xs:annotation>
+					<xs:complexType>
+						<xs:all>
+							<xs:element ref="Codigo" minOccurs="0"/>
+							<xs:element ref="Descripcion" minOccurs="0"/>
+						</xs:all>
+					</xs:complexType>
+				</xs:element>
+				<xs:element ref="Jefatura" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>Jefatura.</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element ref="Sucursal" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>Sucursal.</xs:documentation>
+					</xs:annotation>
+				</xs:element>
 			</xs:all>
 		</xs:complexType>
 	</xs:element>
-	<xs:element name="FechaInicio">
+	<xs:element name="ListaTransferencias">
 		<xs:annotation>
-			<xs:documentation>Fecha de inicio de la baja del vehículo consultado</xs:documentation>
+			<xs:documentation>Lista de transferencia que ha sufrido el vehículo.</xs:documentation>
 		</xs:annotation>
-		<xs:simpleType>
-			<xs:restriction base="xs:date"/>
-		</xs:simpleType>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="Transferencia" maxOccurs="unbounded"/>
+			</xs:sequence>
+		</xs:complexType>
 	</xs:element>
-	<xs:element name="FechaFin">
-		<xs:annotation>
-			<xs:documentation>Fecha de fin de la baja del vehículo consultado</xs:documentation>
-		</xs:annotation>
-		<xs:simpleType>
-			<xs:restriction base="xs:date"/>
-		</xs:simpleType>
+	<xs:element name="Transferencia">
+		<xs:complexType>
+			<xs:all>
+				<xs:element name="FechaTransferencia" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>Fecha en la que se realizó la transferencia.</xs:documentation>
+					</xs:annotation>
+					<xs:simpleType>
+						<xs:restriction base="xs:date"/>
+					</xs:simpleType>
+				</xs:element>
+				<xs:element name="DocumentacionAnterior" type="Documentacion" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>Documento de identidad del titular anterior del vehículo.Puede ser CIF,NIF o NIE.</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element ref="Jefatura" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>Jefatura</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element ref="Sucursal" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>Sucursal.</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+			</xs:all>
+		</xs:complexType>
 	</xs:element>
-	<xs:element name="FechaTransferencia">
+	<xs:element name="ListaDuplicados">
 		<xs:annotation>
-			<xs:documentation>Fecha de la transferencia del vehículo consultado</xs:documentation>
+			<xs:documentation>Datos relativos a los duplicados de los permisos de circulación del vehículo</xs:documentation>
 		</xs:annotation>
-		<xs:simpleType>
-			<xs:restriction base="xs:date"/>
-		</xs:simpleType>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="Duplicado" maxOccurs="unbounded"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Duplicado">
+		<xs:annotation>
+			<xs:documentation>Datos relativos a un duplicado del permiso de circulación del vehículo</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:all>
+				<xs:element name="FechaDuplicado" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>Fecha en la que se expidió el  duplicado  del  permiso  de  circulación  del vehículo.</xs:documentation>
+					</xs:annotation>
+					<xs:simpleType>
+						<xs:restriction base="xs:date"/>
+					</xs:simpleType>
+				</xs:element>
+				<xs:element ref="Jefatura" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>Jefatura en la que se hizo el  duplicado  del  permiso  de  circulación  del vehículo.</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="RazonDuplicado" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>Razón  por  la  cual  se  expidió  el  duplicado  del  permiso  de  circulación  del vehículo.</xs:documentation>
+					</xs:annotation>
+					<xs:complexType>
+						<xs:all>
+							<xs:element ref="Codigo" minOccurs="0">
+								<xs:annotation>
+									<xs:documentation>Código de la razón  por  la  cual  se  expidió  el  duplicado  del  permiso  de  circulación  del vehículo.</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+							<xs:element ref="Descripcion" minOccurs="0">
+								<xs:annotation>
+									<xs:documentation>Razón  por  la  cual  se  expidió  el  duplicado  del  permiso  de  circulación  del vehículo.</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+						</xs:all>
+					</xs:complexType>
+				</xs:element>
+				<xs:element ref="Sucursal" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>Sucursal en la que se hizo el  duplicado  del  permiso  de  circulación  del vehículo.</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+			</xs:all>
+		</xs:complexType>
 	</xs:element>
 	<xs:element name="DatosAdministrativos">
 		<xs:annotation>
@@ -690,6 +1107,8 @@
 		<xs:complexType>
 			<xs:all>
 				<xs:element ref="ListaImpagos" minOccurs="0"/>
+				<xs:element ref="ListaEmbargos" minOccurs="0"/>
+				<xs:element ref="ListaPrecintos" minOccurs="0"/>
 			</xs:all>
 		</xs:complexType>
 	</xs:element>
@@ -699,7 +1118,7 @@
 		</xs:annotation>
 		<xs:complexType>
 			<xs:sequence>
-				<xs:element ref="Impago" minOccurs="1" maxOccurs="unbounded"/>
+				<xs:element ref="Impago" maxOccurs="unbounded"/>
 			</xs:sequence>
 		</xs:complexType>
 	</xs:element>
@@ -710,9 +1129,17 @@
 		<xs:complexType>
 			<xs:all>
 				<xs:element ref="AnioImpago" minOccurs="0"/>
-				<xs:element ref="Documentacion" minOccurs="0"/>
-				<xs:element ref="Provincia" minOccurs="0"/>
-				<xs:element ref="Municipio" minOccurs="0"/>
+				<xs:element name="Documentacion" type="Documentacion" minOccurs="0"/>
+				<xs:element ref="Provincia" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>Provincia del impago del vehículo consultado</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element ref="Municipio" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>Municipio del impago del vehículo consultado</xs:documentation>
+					</xs:annotation>
+				</xs:element>
 			</xs:all>
 		</xs:complexType>
 	</xs:element>
@@ -726,16 +1153,284 @@
 			</xs:restriction>
 		</xs:simpleType>
 	</xs:element>
-	<xs:element name="Documentacion">
+	<xs:simpleType name="Documentacion">
+		<xs:restriction base="xs:string">
+			<xs:minLength value="1"/>
+			<xs:maxLength value="9"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:element name="ListaEmbargos">
 		<xs:annotation>
-			<xs:documentation>Documentación del impago del vehículo consultado</xs:documentation>
+			<xs:documentation>Lista de los embargos que tiene el vehiculo consultado</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="Embargo" maxOccurs="unbounded"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Embargo">
+		<xs:annotation>
+			<xs:documentation>Datos del embargo que tiene el vehiculo consultado</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:all>
+				<xs:element ref="Autoridad" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>Autoridad que llevo a cabo el embargo</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element ref="Expediente" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>Número de expediente asociado al embargo</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element ref="FechaMaterializacion" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>Fecha en la que se efectuó el embargo del vehículo</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element ref="FechaTramite" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>Fecha de comienzo del precinto</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="ListaPrecintos">
+		<xs:annotation>
+			<xs:documentation>Lista de los precintos que tiene el vehiculo consultado</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="Precinto" maxOccurs="unbounded"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Precinto">
+		<xs:annotation>
+			<xs:documentation>Datos del precinto que tiene el vehiculo consultado</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:all>
+				<xs:element ref="Autoridad" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>Autoridad que llevo a cabo el precinto</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element ref="Expediente" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>Número de expediente asociado al precinto</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element ref="FechaMaterializacion" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>Fecha en la que se efectuó el precinto del vehículo</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element ref="FechaTramite" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>Fecha de comienzo del precinto</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Expediente">
+		<xs:annotation>
+			<xs:documentation>Número de expediente asociado al tramite</xs:documentation>
 		</xs:annotation>
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
-				<xs:minLength value="9"/>
-				<xs:maxLength value="30"/>
+				<xs:maxLength value="250"/>
 			</xs:restriction>
 		</xs:simpleType>
+	</xs:element>
+	<xs:element name="FechaMaterializacion">
+		<xs:annotation>
+			<xs:documentation>Fecha en la que se efectuó el trámite del vehículo</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:date"/>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="FechaTramite">
+		<xs:annotation>
+			<xs:documentation>Fecha de comienzo del trámite</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:date"/>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Autoridad">
+		<xs:annotation>
+			<xs:documentation>Autoridad que llevo a cabo el trámite</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:all>
+				<xs:element ref="Codigo" minOccurs="0"/>
+				<xs:element ref="Descripcion" minOccurs="0"/>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="DatosITVs">
+		<xs:annotation>
+			<xs:documentation>Datos relativos a cada una de las itvs que ha pasado el vehículo.</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="Itv" maxOccurs="unbounded"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Itv">
+		<xs:complexType>
+			<xs:all>
+				<xs:element ref="Anotacion" minOccurs="0"/>
+				<xs:element name="CuentaHoras" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>Cuenta horas.</xs:documentation>
+					</xs:annotation>
+					<xs:simpleType>
+						<xs:restriction base="xs:int"/>
+					</xs:simpleType>
+				</xs:element>
+				<xs:element name="Estacion" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>Estación en la que se pasó.</xs:documentation>
+					</xs:annotation>
+					<xs:simpleType>
+						<xs:restriction base="xs:string"/>
+					</xs:simpleType>
+				</xs:element>
+				<xs:element name="FechaCaducidad" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>Fecha de caducidad.</xs:documentation>
+					</xs:annotation>
+					<xs:simpleType>
+						<xs:restriction base="xs:date"/>
+					</xs:simpleType>
+				</xs:element>
+				<xs:element name="FechaFinAnterior" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>Fecha de caducidad de la anterior ITV.</xs:documentation>
+					</xs:annotation>
+					<xs:simpleType>
+						<xs:restriction base="xs:date"/>
+					</xs:simpleType>
+				</xs:element>
+				<xs:element name="FechaItv" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>Fecha en que se pasó.</xs:documentation>
+					</xs:annotation>
+					<xs:simpleType>
+						<xs:restriction base="xs:date"/>
+					</xs:simpleType>
+				</xs:element>
+				<xs:element name="Kilometraje" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>Kilometraje</xs:documentation>
+					</xs:annotation>
+					<xs:simpleType>
+						<xs:restriction base="xs:int"/>
+					</xs:simpleType>
+				</xs:element>
+				<xs:element name="MotivoItv" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>Motivo por el cual se pasó.</xs:documentation>
+					</xs:annotation>
+					<xs:complexType>
+						<xs:all>
+							<xs:element ref="Codigo" minOccurs="0"/>
+							<xs:element ref="Descripcion" minOccurs="0"/>
+						</xs:all>
+					</xs:complexType>
+				</xs:element>
+				<xs:element ref="Provincia" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>Provincia en la que se encuentra la estación en la que se pasó.</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="ResultadoItv" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>Resultado.</xs:documentation>
+					</xs:annotation>
+					<xs:complexType>
+						<xs:all>
+							<xs:element ref="Codigo" minOccurs="0"/>
+							<xs:element ref="Descripcion" minOccurs="0"/>
+						</xs:all>
+					</xs:complexType>
+				</xs:element>
+				<xs:element ref="DefectosITV" minOccurs="0"/>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Anotacion">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="1024"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="DefectosITV">
+		<xs:annotation>
+			<xs:documentation>Lista de defectos encontrados en el vehículo.</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="DefectoITV" maxOccurs="unbounded"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="DefectoITV">
+		<xs:annotation>
+			<xs:documentation>Datos relativos a cada uno de los defectos.</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:all>
+				<xs:element name="GravedadDefectoItv" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>Gravedad del defecto.</xs:documentation>
+					</xs:annotation>
+					<xs:complexType>
+						<xs:all>
+							<xs:element ref="Codigo" minOccurs="0">
+								<xs:annotation>
+									<xs:documentation>Código de la gravedad del defecto.</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+							<xs:element ref="Descripcion" minOccurs="0">
+								<xs:annotation>
+									<xs:documentation>Gravedad del defecto.</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+						</xs:all>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="TipoDefectoItv" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>Tipo de defecto</xs:documentation>
+					</xs:annotation>
+					<xs:complexType>
+						<xs:all>
+							<xs:element ref="Codigo" minOccurs="0">
+								<xs:annotation>
+									<xs:documentation>Código del tipo de defecto</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+							<xs:element ref="Descripcion" minOccurs="0">
+								<xs:annotation>
+									<xs:documentation>Tipo de defecto</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+						</xs:all>
+					</xs:complexType>
+				</xs:element>
+			</xs:all>
+		</xs:complexType>
 	</xs:element>
 	<xs:element name="Municipio">
 		<xs:complexType>
@@ -750,6 +1445,44 @@
 			<xs:all>
 				<xs:element ref="Codigo" minOccurs="0"/>
 				<xs:element ref="Descripcion" minOccurs="0"/>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Sucursal">
+		<xs:annotation>
+			<xs:documentation>Sucursal</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:all>
+				<xs:element ref="Codigo" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>Código de sucursal</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element ref="Descripcion" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>Sucursal</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Jefatura">
+		<xs:annotation>
+			<xs:documentation>Jefatura</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:all>
+				<xs:element ref="Codigo" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>Código de jefatura</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element ref="Descripcion" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>Jefatura</xs:documentation>
+					</xs:annotation>
+				</xs:element>
 			</xs:all>
 		</xs:complexType>
 	</xs:element>

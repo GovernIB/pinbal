@@ -26,7 +26,7 @@
 						</xs:element>
 						<xs:element ref="FechaDesde" minOccurs="0"/>
 						<xs:element ref="FechaHasta" minOccurs="0"/>
-						<xs:element name="DatosIdentificacion">
+						<xs:element name="DatosIdentificacion" minOccurs="0">
 							<xs:complexType>
 								<xs:all>
 									<xs:element ref="Pais"/>
@@ -147,8 +147,8 @@
 			</xs:restriction>
 		</xs:simpleType>
 	</xs:element>
-	<xs:element name="FechaDesde" type="xs:date" nillable="true"/>
-	<xs:element name="FechaHasta" type="xs:date" nillable="true"/>
+	<xs:element name="FechaDesde" type="xs:date"/>
+	<xs:element name="FechaHasta" type="xs:date"/>
 	<xs:element name="CodigoEstado">
 		<xs:simpleType>
 			<xs:restriction base="xs:string">

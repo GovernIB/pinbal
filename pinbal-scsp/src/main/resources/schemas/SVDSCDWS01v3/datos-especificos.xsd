@@ -180,7 +180,7 @@
 	</xs:element>
 	<xs:simpleType name="OrganismoType">
 		<xs:restriction base="xs:string">
-			<xs:pattern value="DGP|DGT|TGSS|INSS|AEAT|(ASTURIAS_.+)|(RIOJA_.+)|(BALEARES_.+)|(ANDALUCIA_.+)"/>
+			<xs:pattern value="DGP|DGT|TGSS|INSS|AEAT|(ASTURIAS_.+)|(RIOJA_.+)|(BALEARES_.+)|(ANDALUCIA_.+)|(CANTABRIA_.+)|(ARAGON_.+)|(VALENCIA_.+)"/>
 		</xs:restriction>
 	</xs:simpleType>
 </xs:schema>

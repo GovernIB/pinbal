@@ -12,9 +12,16 @@
 		<xs:complexType>
 			<xs:all>
 				<xs:element ref="Estado"/>
-				<xs:element name="Registro" type="xs:base64Binary" minOccurs="0"/>
+				<xs:element ref="Registro" minOccurs="0"/>
 			</xs:all>
 		</xs:complexType>
+	</xs:element>
+	<xs:element name="Registro">
+		<xs:simpleType>
+			<xs:restriction base="xs:base64Binary">
+				<xs:minLength value="1"/>
+			</xs:restriction>
+		</xs:simpleType>
 	</xs:element>
 	<xs:element name="Estado">
 		<xs:complexType>
@@ -28,21 +35,27 @@
 	<xs:element name="CodigoEstado">
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
 				<xs:maxLength value="4"/>
+				<xs:whiteSpace value="collapse"/>
 			</xs:restriction>
 		</xs:simpleType>
 	</xs:element>
 	<xs:element name="CodigoEstadoSecundario">
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
 				<xs:maxLength value="16"/>
+				<xs:whiteSpace value="collapse"/>
 			</xs:restriction>
 		</xs:simpleType>
 	</xs:element>
 	<xs:element name="LiteralError">
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
-				<xs:maxLength value="255"/>
+				<xs:minLength value="1"/>
+				<xs:maxLength value="1024"/>
+				<xs:whiteSpace value="collapse"/>
 			</xs:restriction>
 		</xs:simpleType>
 	</xs:element>

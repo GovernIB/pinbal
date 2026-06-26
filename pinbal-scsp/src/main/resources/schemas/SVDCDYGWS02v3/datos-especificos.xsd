@@ -1,25 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2011 sp1 (http://www.altova.com) by End User (free.org) -->
 <xs:schema xmlns="http://intermediacion.redsara.es/scsp/esquemas/datosespecificos" xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://intermediacion.redsara.es/scsp/esquemas/datosespecificos" elementFormDefault="qualified" attributeFormDefault="unqualified">
 	<xs:element name="DatosEspecificos" type="DatosEspecificos"/>
 	<xs:complexType name="DatosEspecificos">
-		<xs:all>
-			<xs:element name="DatosEntrada" type="DatosEntrada" minOccurs="0"/>
-			<xs:element name="DatosSalida" type="DatosSalida" minOccurs="0"/>
-			<xs:element name="Estado" type="Estado" minOccurs="0"/>
-		</xs:all>
+		<xs:choice>
+			<xs:element name="DatosEntrada" type="DatosEntrada"/>
+			<xs:sequence>
+				<xs:element name="Estado" type="Estado"/>
+				<xs:element name="DatosSalida" type="DatosSalida" minOccurs="0"/>
+			</xs:sequence>
+		</xs:choice>
 		<xs:attribute name="Id" type="xs:string" use="optional"/>
 	</xs:complexType>
 	<xs:complexType name="Estado">
 		<xs:all>
-			<xs:element ref="CodigoEstado" minOccurs="0"/>
+			<xs:element ref="CodigoEstado"/>
 			<xs:element ref="CodigoEstadoSecundario" minOccurs="0"/>
-			<xs:element ref="LiteralError" minOccurs="0"/>
-			<xs:element ref="TiempoEstimadoRespuesta" minOccurs="0"/>
+			<xs:element ref="LiteralError"/>
 		</xs:all>
 	</xs:complexType>
 	<xs:element name="CodigoEstado">
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
 				<xs:maxLength value="4"/>
 			</xs:restriction>
 		</xs:simpleType>
@@ -27,6 +30,7 @@
 	<xs:element name="CodigoEstadoSecundario">
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
 				<xs:maxLength value="16"/>
 			</xs:restriction>
 		</xs:simpleType>
@@ -34,15 +38,8 @@
 	<xs:element name="LiteralError">
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
-				<xs:maxLength value="255"/>
-			</xs:restriction>
-		</xs:simpleType>
-	</xs:element>
-	<xs:element name="TiempoEstimadoRespuesta">
-		<xs:simpleType>
-			<xs:restriction base="xs:int">
-				<xs:totalDigits value="4"/>
-				<xs:minInclusive value="0"/>
+				<xs:minLength value="1"/>
+				<xs:maxLength value="1024"/>
 			</xs:restriction>
 		</xs:simpleType>
 	</xs:element>
@@ -53,8 +50,10 @@
 					<xs:documentation>Localización según INE</xs:documentation>
 				</xs:annotation>
 			</xs:element>
-			<xs:element name="referenciaCatastral" type="rcl" minOccurs="0"/>
-			<xs:element name="referenciaRustica" type="rrl" minOccurs="0"/>
+			<xs:choice>
+				<xs:element name="referenciaCatastral" type="rcl"/>
+				<xs:element name="referenciaRustica" type="rrl"/>
+			</xs:choice>
 		</xs:sequence>
 	</xs:complexType>
 	<xs:complexType name="loine">
@@ -79,8 +78,10 @@
 			<xs:element name="pc1" type="pcatastral1"/>
 			<xs:element name="pc2" type="pcatastral2"/>
 			<xs:element name="car" type="car"/>
-			<xs:element name="cc1" type="cc" minOccurs="0"/>
-			<xs:element name="cc2" type="cc" minOccurs="0"/>
+			<xs:sequence minOccurs="0">
+				<xs:element name="cc1" type="cc"/>
+				<xs:element name="cc2" type="cc"/>
+			</xs:sequence>
 		</xs:sequence>
 	</xs:complexType>
 	<xs:complexType name="rrl">
@@ -99,9 +100,21 @@
 	</xs:complexType>
 	<xs:complexType name="DatosSalida">
 		<xs:sequence>
-			<xs:element name="pdf" type="xs:base64Binary" minOccurs="0"/>
+			<xs:element name="pdf" type="xs:base64Binary"/>
+			<xs:element ref="CSV"/>
 		</xs:sequence>
 	</xs:complexType>
+	<xs:element name="CSV">
+		<xs:annotation>
+			<xs:documentation>Código Seguro de Verificación (16 caracteres)</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="16"/>
+				<xs:maxLength value="16"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
 	<!-- Definicion de tipos simples-->
 	<xs:simpleType name="pcatastral1">
 		<xs:annotation>

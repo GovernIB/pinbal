@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<xs:schema xmlns="http://intermediacion.redsara.es/scsp/esquemas/V3/solicitudRespuesta" xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://intermediacion.redsara.es/scsp/esquemas/V3/solicitudRespuesta" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<xs:element name="CodigoCertificado">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:enumeration value="SVDCGCOMDATOSPUBLICOSWS01"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="IdentificadorSolicitante">
+		<xs:annotation>
+			<xs:documentation>Identificador del solicitante que realiza la consulta, se corresponderá con el NIF del organismo que la realiza</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:pattern value="[A-Za-z][0-9]{7}[0-9A-Za-z]"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="NombreSolicitante">
+		<xs:annotation>
+			<xs:documentation>Nombre del solicitante que realiza la consulta de datos</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="50"/>
+				<xs:whiteSpace value="collapse"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Solicitante">
+		<xs:annotation>
+			<xs:documentation>Datos del solicitante que realiza la petición</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:all>
+				<xs:element ref="IdentificadorSolicitante"/>
+				<xs:element ref="NombreSolicitante"/>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="CodigoEstado">
+		<xs:annotation>
+			<xs:documentation>Código de estado que identifica el estado de la transmisión</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:length value="4"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="CodigoEstadoSecundario">
+		<xs:annotation>
+			<xs:documentation>Código de estado secundario que identifica el estado de la transmisión con mas precisión que el código de estado</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="16"/>
+				<xs:whiteSpace value="collapse"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Estado">
+		<xs:annotation>
+			<xs:documentation>Datos informativos acerca del estado de la solicitud de respuesta</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:all>
+				<xs:element ref="CodigoEstado" minOccurs="0"/>
+				<xs:element ref="CodigoEstadoSecundario" minOccurs="0"/>
+				<xs:element ref="LiteralError" minOccurs="0"/>
+				<xs:element ref="TiempoEstimadoRespuesta" minOccurs="0"/>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="IdPeticion">
+		<xs:annotation>
+			<xs:documentation>Identificador de la petición realizada, debe ser único por sistema, y debe identificar univiocamente a la petición</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="26"/>
+				<xs:whiteSpace value="collapse"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="LiteralError">
+		<xs:annotation>
+			<xs:documentation>Literal del error o respuesta devuelta</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="1024"/>
+				<xs:whiteSpace value="collapse"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="NumElementos">
+		<xs:annotation>
+			<xs:documentation>Número de solicitudes enviadas en la petición</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:int">
+				<xs:totalDigits value="4"/>
+				<xs:minInclusive value="1"/>
+				<xs:maxInclusive value="1000"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="SolicitudRespuesta">
+		<xs:annotation>
+			<xs:documentation>Solicitud de respuesta SCSP</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:all>
+				<xs:element ref="Atributos"/>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="TiempoEstimadoRespuesta">
+		<xs:annotation>
+			<xs:documentation>Tiempo Estimado de Respuesta, de una petición asíncrona</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:int">
+				<xs:totalDigits value="4"/>
+				<xs:minInclusive value="0"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="TimeStamp">
+		<xs:annotation>
+			<xs:documentation>Fecha y hora de la solicitud de respuesta en formato TimeStamp</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="29"/>
+				<xs:whiteSpace value="collapse"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Atributos">
+		<xs:annotation>
+			<xs:documentation>Atributos del la Solicitud de Respuesta SCSP</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:all>
+				<xs:element ref="IdPeticion"/>
+				<xs:element ref="NumElementos"/>
+				<xs:element ref="TimeStamp"/>
+				<xs:element ref="Estado" minOccurs="0"/>
+				<xs:element ref="Solicitante"/>
+				<xs:element ref="CodigoCertificado"/>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+</xs:schema>

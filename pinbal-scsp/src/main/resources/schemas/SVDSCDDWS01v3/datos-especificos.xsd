@@ -81,7 +81,7 @@
 				<xs:element name="TiposDiscapacidad" minOccurs="0">
 					<xs:complexType>
 						<xs:sequence>
-							<xs:element ref="TipoDiscapacidad" minOccurs="0" maxOccurs="unbounded"/>
+							<xs:element ref="TipoDiscapacidad" maxOccurs="unbounded"/>
 						</xs:sequence>
 					</xs:complexType>
 				</xs:element>
@@ -121,8 +121,8 @@
 · 04 - ISLAS BALEARES
 · 05 - CANARIAS
 · 06 - CANTABRIA
-· 07 - CASTILLA-LA MANCHA
-· 08 - CASTILLA y LEÓN
+· 07 - CASTILLA y LEÓN
+· 08 - CASTILLA-LA MANCHA
 · 09 - CATALUÑA
 · 10 - COMUNIDAD VALENCIANA
 · 11 - EXTREMADURA
@@ -195,8 +195,6 @@
 			<xs:documentation>Formato: DD/MM/AAAA</xs:documentation>
 		</xs:annotation>
 		<xs:restriction base="xs:string">
-			<xs:minLength value="10"/>
-			<xs:maxLength value="10"/>
 			<xs:pattern value="([0][1-9]|[1,2][0-9]|[3][0,1])/([0][1-9]|[1][0-2])/[1-2][0-9]{3}"/>
 		</xs:restriction>
 	</xs:simpleType>

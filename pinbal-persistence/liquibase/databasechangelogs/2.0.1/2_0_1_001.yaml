@@ -19,6 +19,37 @@ databaseChangeLog:
         - dropForeignKeyConstraint:
             baseTableName: acl_object_identity
             constraintName: acl_oid_owner_fk
+      rollback:
+        - addForeignKeyConstraint:
+            baseTableName: acl_entry
+            baseColumnNames: acl_object_identity
+            constraintName: acl_entry_object_fk
+            referencedTableName: acl_object_identity
+            referencedColumnNames: id
+        - addForeignKeyConstraint:
+            baseTableName: acl_entry
+            baseColumnNames: sid
+            constraintName: acl_entry_acl_fk
+            referencedTableName: acl_sid
+            referencedColumnNames: id
+        - addForeignKeyConstraint:
+            baseTableName: acl_object_identity
+            baseColumnNames: parent_object
+            constraintName: acl_oid_parent_fk
+            referencedTableName: acl_object_identity
+            referencedColumnNames: id
+        - addForeignKeyConstraint:
+            baseTableName: acl_object_identity
+            baseColumnNames: object_id_class
+            constraintName: acl_oid_class_fk
+            referencedTableName: acl_class
+            referencedColumnNames: id
+        - addForeignKeyConstraint:
+            baseTableName: acl_object_identity
+            baseColumnNames: owner_sid
+            constraintName: acl_oid_owner_fk
+            referencedTableName: acl_sid
+            referencedColumnNames: id
 
   - changeSet:
       id: 2.0.1.001-02
@@ -36,6 +67,23 @@ databaseChangeLog:
             constraintName: acl_oid_uk
         - dropUniqueConstraint:
             tableName: acl_entry
+            constraintName: acl_entry_uk
+      rollback:
+        - addUniqueConstraint:
+            tableName: acl_sid
+            columnNames: sid, principal
+            constraintName: acl_sid_uk
+        - addUniqueConstraint:
+            tableName: acl_class
+            columnNames: class
+            constraintName: acl_class_uk
+        - addUniqueConstraint:
+            tableName: acl_object_identity
+            columnNames: object_id_class, object_id_identity
+            constraintName: acl_oid_uk
+        - addUniqueConstraint:
+            tableName: acl_entry
+            columnNames: acl_object_identity, ace_order
             constraintName: acl_entry_uk
 
   - changeSet:
@@ -55,6 +103,51 @@ databaseChangeLog:
         - renameTable:
             oldTableName: acl_entry
             newTableName: pbl_acl_entry
+      rollback:
+        - renameTable:
+            oldTableName: pbl_acl_entry
+            newTableName: acl_entry
+        - renameTable:
+            oldTableName: pbl_acl_object_identity
+            newTableName: acl_object_identity
+        - renameTable:
+            oldTableName: pbl_acl_class
+            newTableName: acl_class
+        - renameTable:
+            oldTableName: pbl_acl_sid
+            newTableName: acl_sid
+        - sql:
+            dbms: oracle
+            sql: "CREATE OR REPLACE TRIGGER acl_sid_idgen
+BEFORE INSERT ON acl_sid
+FOR EACH ROW
+  BEGIN
+    SELECT acl_sid_seq.NEXTVAL INTO :NEW.ID FROM DUAL;
+  END;"
+        - sql:
+            dbms: oracle
+            sql: "CREATE OR REPLACE TRIGGER acl_class_idgen
+BEFORE INSERT ON acl_class
+FOR EACH ROW
+  BEGIN
+    SELECT acl_class_seq.NEXTVAL INTO :NEW.ID FROM DUAL;
+  END;"
+        - sql:
+            dbms: oracle
+            sql: "CREATE OR REPLACE TRIGGER acl_oid_idgen
+BEFORE INSERT ON acl_object_identity
+FOR EACH ROW
+  BEGIN
+    SELECT acl_oid_seq.NEXTVAL INTO :NEW.ID FROM DUAL;
+  END;"
+        - sql:
+            dbms: oracle
+            sql: "CREATE OR REPLACE TRIGGER acl_entry_idgen
+BEFORE INSERT ON acl_entry
+FOR EACH ROW
+  BEGIN
+    SELECT acl_entry_seq.NEXTVAL INTO :NEW.ID FROM DUAL;
+  END;"
 
   - changeSet:
       id: 2.0.1.001-04
@@ -69,6 +162,10 @@ databaseChangeLog:
                   type: VARCHAR(100)
                   constraints:
                     nullable: true
+      rollback:
+        - dropColumn:
+            tableName: pbl_acl_class
+            columnName: class_id_type
 
   - changeSet:
       id: 2.0.1.001-05
@@ -81,6 +178,13 @@ databaseChangeLog:
               - column:
                   name: class_id_type
                   value: java.lang.Long
+      rollback:
+        - update:
+            tableName: pbl_acl_class
+            columns:
+              - column:
+                  name: class_id_type
+                  value: ~
 
   - changeSet:
       id: 2.0.1.001-06
@@ -102,6 +206,19 @@ databaseChangeLog:
         - addUniqueConstraint:
             tableName: pbl_acl_entry
             columnNames: acl_object_identity, ace_order
+            constraintName: pbl_acl_entry_uk
+      rollback:
+        - dropUniqueConstraint:
+            tableName: pbl_acl_sid
+            constraintName: pbl_acl_sid_uk
+        - dropUniqueConstraint:
+            tableName: pbl_acl_class
+            constraintName: pbl_acl_class_uk
+        - dropUniqueConstraint:
+            tableName: pbl_acl_object_identity
+            constraintName: pbl_acl_oid_uk
+        - dropUniqueConstraint:
+            tableName: pbl_acl_entry
             constraintName: pbl_acl_entry_uk
 
   - changeSet:
@@ -139,6 +256,22 @@ databaseChangeLog:
             constraintName: pbl_acl_entry_acl_fk
             referencedTableName: pbl_acl_sid
             referencedColumnNames: id
+      rollback:
+        - dropForeignKeyConstraint:
+            baseTableName: pbl_acl_entry
+            constraintName: pbl_acl_entry_acl_fk
+        - dropForeignKeyConstraint:
+            baseTableName: pbl_acl_entry
+            constraintName: pbl_acl_entry_object_fk
+        - dropForeignKeyConstraint:
+            baseTableName: pbl_acl_object_identity
+            constraintName: pbl_acl_oid_owner_fk
+        - dropForeignKeyConstraint:
+            baseTableName: pbl_acl_object_identity
+            constraintName: pbl_acl_oid_class_fk
+        - dropForeignKeyConstraint:
+            baseTableName: pbl_acl_object_identity
+            constraintName: pbl_acl_oid_parent_fk
 
   - changeSet:
       id: 2.0.1.001-08
@@ -169,6 +302,31 @@ databaseChangeLog:
         - sql:
             dbms: postgresql
             sql: "ALTER SEQUENCE acl_entry_seq RENAME TO pbl_acl_entry_seq"
+      rollback:
+        - sql:
+            dbms: oracle
+            sql: "ALTER SEQUENCE pbl_acl_sid_seq RENAME TO acl_sid_seq"
+        - sql:
+            dbms: oracle
+            sql: "ALTER SEQUENCE pbl_acl_class_seq RENAME TO acl_class_seq"
+        - sql:
+            dbms: oracle
+            sql: "ALTER SEQUENCE pbl_acl_oid_seq RENAME TO acl_oid_seq"
+        - sql:
+            dbms: oracle
+            sql: "ALTER SEQUENCE pbl_acl_entry_seq RENAME TO acl_entry_seq"
+        - sql:
+            dbms: postgresql
+            sql: "ALTER SEQUENCE pbl_acl_sid_seq RENAME TO acl_sid_seq"
+        - sql:
+            dbms: postgresql
+            sql: "ALTER SEQUENCE pbl_acl_class_seq RENAME TO acl_class_seq"
+        - sql:
+            dbms: postgresql
+            sql: "ALTER SEQUENCE pbl_acl_oid_seq RENAME TO acl_oid_seq"
+        - sql:
+            dbms: postgresql
+            sql: "ALTER SEQUENCE pbl_acl_entry_seq RENAME TO acl_entry_seq"
 
   - changeSet:
       id: 2.0.1.001-09
@@ -187,6 +345,19 @@ databaseChangeLog:
         - sql:
             dbms: oracle,postgresql
             sql: "ALTER TABLE pbl_acl_entry RENAME CONSTRAINT acl_entry_pk TO pbl_acl_entry_pk"
+      rollback:
+        - sql:
+            dbms: oracle,postgresql
+            sql: "ALTER TABLE pbl_acl_sid RENAME CONSTRAINT pbl_acl_sid_pk TO acl_sid_pk"
+        - sql:
+            dbms: oracle,postgresql
+            sql: "ALTER TABLE pbl_acl_class RENAME CONSTRAINT pbl_acl_class_pk TO acl_class_pk"
+        - sql:
+            dbms: oracle,postgresql
+            sql: "ALTER TABLE pbl_acl_object_identity RENAME CONSTRAINT pbl_acl_object_identity_pk TO acl_object_identity_pk"
+        - sql:
+            dbms: oracle,postgresql
+            sql: "ALTER TABLE pbl_acl_entry RENAME CONSTRAINT pbl_acl_entry_pk TO acl_entry_pk"
 
   - changeSet:
       id: 2.0.1.001-10
@@ -237,3 +408,16 @@ FOR EACH ROW
   BEGIN
     SELECT pbl_acl_entry_seq.NEXTVAL INTO :NEW.ID FROM DUAL;
   END;"
+      rollback:
+        - sql:
+            dbms: oracle
+            sql: "DROP TRIGGER pbl_acl_sid_idgen"
+        - sql:
+            dbms: oracle
+            sql: "DROP TRIGGER pbl_acl_class_idgen"
+        - sql:
+            dbms: oracle
+            sql: "DROP TRIGGER pbl_acl_oid_idgen"
+        - sql:
+            dbms: oracle
+            sql: "DROP TRIGGER pbl_acl_entry_idgen"

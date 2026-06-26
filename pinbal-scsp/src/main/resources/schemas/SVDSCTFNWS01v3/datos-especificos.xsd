@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- edited with XMLSpy v2011 sp1 (http://www.altova.com) by End User (free.org) -->
 <xs:schema xmlns="http://intermediacion.redsara.es/scsp/esquemas/datosespecificos" xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://intermediacion.redsara.es/scsp/esquemas/datosespecificos" elementFormDefault="qualified">
 	<xs:element name="DatosEspecificos" type="DatosEspecificos"/>
 	<xs:complexType name="DatosEspecificos">
@@ -43,9 +42,7 @@
 			<xs:documentation>Formato: DD/MM/AAAA</xs:documentation>
 		</xs:annotation>
 		<xs:restriction base="xs:string">
-			<xs:minLength value="10"/>
-			<xs:maxLength value="10"/>
-			<xs:pattern value="([0][1-9]|[1,2][0-9]|[3][0,1])/([0][1-9]|[1][0-2])/[1-2][0-9]{3}"/>
+			<xs:pattern value="((((0[1-9]|1[0-9]|2[0-8])/(0[1-9]|1[012]))|((29|30|31)/(0[13578]|1[02]))|((29|30)/(0[469]|11)))/(19|[2-9][0-9])\d\d)|(29/02/(19|[2-9][0-9])(00|04|08|12|16|20|24|28|32|36|40|44|48|52|56|60|64|68|72|76|80|84|88|92|96))"/>
 		</xs:restriction>
 	</xs:simpleType>
 	<xs:element name="TipoDocumentacion">
@@ -118,8 +115,8 @@
 · 04 - ISLAS BALEARES
 · 05 - CANARIAS
 · 06 - CANTABRIA
-· 07 - CASTILLA-LA MANCHA
-· 08 - CASTILLA y LEÓN
+· 07 - CASTILLA y LEÓN
+· 08 - CASTILLA-LA MANCHA
 · 09 - CATALUÑA
 · 10 - COMUNIDAD VALENCIANA
 · 11 - EXTREMADURA
@@ -205,7 +202,7 @@
 				<xs:element ref="Categoria"/>
 				<xs:element ref="TituloVigente" minOccurs="0"/>
 				<xs:element ref="FechaExpedicion" minOccurs="0"/>
-				<xs:element ref="FechaCaducidad"/>
+				<xs:element ref="FechaCaducidad" minOccurs="0"/>
 				<xs:element ref="NumeroHijos"/>
 			</xs:sequence>
 		</xs:complexType>

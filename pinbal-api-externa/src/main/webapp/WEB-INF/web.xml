@@ -4,7 +4,7 @@
          xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_4_0.xsd"
          version="4.0">
 
-	<display-name>EMISERV-API-EXTERNA</display-name>
+	<display-name>PINBAL-API-EXTERNA</display-name>
 
 	<login-config>
 		<auth-method>KEYCLOAK</auth-method>

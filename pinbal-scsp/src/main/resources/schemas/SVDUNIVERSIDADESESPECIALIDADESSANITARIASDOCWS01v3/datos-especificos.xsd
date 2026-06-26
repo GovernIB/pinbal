@@ -1,0 +1,368 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns="http://intermediacion.redsara.es/scsp/esquemas/datosespecificos" xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://intermediacion.redsara.es/scsp/esquemas/datosespecificos" elementFormDefault="qualified">
+	<xs:element name="DatosEspecificos" type="DatosEspecificos"/>
+	<xs:complexType name="DatosEspecificos">
+		<xs:all>
+			<xs:element ref="Retorno"/>
+		</xs:all>
+		<xs:attribute name="Id" type="xs:string" use="optional"/>
+	</xs:complexType>
+	<xs:element name="Retorno">
+		<xs:annotation>
+			<xs:documentation>Solo en el mensaje RESPUESTA</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="Estado"/>
+				<xs:element name="DatosTitular" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>Datos del titular del que obtenemos los títulos</xs:documentation>
+					</xs:annotation>
+					<xs:complexType>
+						<xs:all>
+							<xs:element ref="Nacimiento" minOccurs="0"/>
+						</xs:all>
+					</xs:complexType>
+				</xs:element>
+				<xs:element ref="Titulos" minOccurs="0"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<!-- Datos Titular -->
+	<xs:element name="Nacimiento">
+		<xs:annotation>
+			<xs:documentation>Datos de nacimiento del titular consultado</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:all>
+				<xs:element name="Fecha" type="FechaNaci" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>Fecha de nacimiento del titular consultado Formato YYYY-MM-DD</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element ref="Pais" minOccurs="0"/>
+				<xs:element ref="CodigoProvincia" minOccurs="0"/>
+				<xs:element ref="Provincia" minOccurs="0"/>
+				<xs:element ref="Localidad" minOccurs="0"/>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Pais">
+		<xs:annotation>
+			<xs:documentation>País de nacimiento del titular consultado</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="40"/>
+				<xs:whiteSpace value="collapse"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="CodigoProvincia">
+		<xs:annotation>
+			<xs:documentation>Código de Provincia de nacimiento del titular consultado en base a los códigos INE</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:pattern value="\d{2}"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Provincia">
+		<xs:annotation>
+			<xs:documentation>Provincia de nacimiento del titular consultado</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="30"/>
+				<xs:whiteSpace value="collapse"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Localidad">
+		<xs:annotation>
+			<xs:documentation>Localidad de nacimiento del titular consultado</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="100"/>
+				<xs:whiteSpace value="collapse"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<!-- Lista Titulos -->
+	<xs:element name="Titulos">
+		<xs:annotation>
+			<xs:documentation>Lista de títulos del titular consultado</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="Titulo" maxOccurs="unbounded"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<!-- Datos Titulacion -->
+	<xs:element name="Titulo">
+		<xs:complexType>
+			<xs:all>
+				<xs:element ref="DatosCentro" minOccurs="0"/>
+				<xs:element name="DatosTitulo">
+					<xs:annotation>
+						<xs:documentation>Datos del título</xs:documentation>
+					</xs:annotation>
+					<xs:complexType>
+						<xs:all>
+							<xs:element ref="CodigoTitulacion" minOccurs="0"/>
+							<xs:element ref="Titulacion" minOccurs="0"/>
+							<xs:element ref="CodigoTipoTitulo" minOccurs="0"/>
+							<xs:element ref="TipoTitulo" minOccurs="0"/>
+							<xs:element ref="FechaFinalizacion" minOccurs="0"/>
+							<xs:element ref="FechaExpedicion" minOccurs="0"/>
+							<xs:element ref="CodigoPaisExpedicion" minOccurs="0"/>
+							<xs:element ref="PaisExpedicion" minOccurs="0"/>
+							<xs:element ref="NumeroTitulo" minOccurs="0"/>
+							<xs:element ref="Expediente" minOccurs="0"/>
+							<xs:element ref="ViaAcceso" minOccurs="0"/>
+						</xs:all>
+					</xs:complexType>
+				</xs:element>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="CodigoTitulacion">
+		<xs:annotation>
+			<xs:documentation>Código de la titulación cursada</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="11"/>
+				<xs:whiteSpace value="collapse"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Titulacion">
+		<xs:annotation>
+			<xs:documentation>Nombre de la titulación cursada</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="1000"/>
+				<xs:whiteSpace value="collapse"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="CodigoTipoTitulo">
+		<xs:annotation>
+			<xs:documentation>Código del tipo de título que posee el titular</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="4"/>
+				<xs:whiteSpace value="collapse"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="TipoTitulo">
+		<xs:annotation>
+			<xs:documentation>Tipo de título que posee el titular</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="50"/>
+				<xs:whiteSpace value="collapse"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<!-- Datos Centro -->
+	<xs:element name="DatosCentro">
+		<xs:annotation>
+			<xs:documentation>Datos del centro que otrogó el título</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:all>
+				<xs:element ref="CodigoUniversidad" minOccurs="0"/>
+				<xs:element ref="Universidad" minOccurs="0"/>
+				<xs:element ref="CodigoCentro" minOccurs="0"/>
+				<xs:element ref="Centro" minOccurs="0"/>
+				<xs:element ref="CodigoProvincia" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>Código de Provincia del centro en base a los códigos INE</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element ref="Provincia" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>Literal de la Provincia del centro</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="CodigoUniversidad">
+		<xs:annotation>
+			<xs:documentation>Código de la Universidad donde se cursó el título</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="4"/>
+				<xs:whiteSpace value="collapse"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Universidad">
+		<xs:annotation>
+			<xs:documentation>Universidad donde se cursó el título</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="250"/>
+				<xs:whiteSpace value="collapse"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Centro">
+		<xs:annotation>
+			<xs:documentation>Centro donde se cursó el títtulo</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="250"/>
+				<xs:whiteSpace value="collapse"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="CodigoCentro">
+		<xs:annotation>
+			<xs:documentation>Código del centro donde se cursó el títtulo</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="10"/>
+				<xs:whiteSpace value="collapse"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="FechaFinalizacion" type="Fecha">
+		<xs:annotation>
+			<xs:documentation>Fecha de finalización del título, Formato YYYY-MM-DD - YYYY-MM</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="FechaExpedicion" type="Fecha">
+		<xs:annotation>
+			<xs:documentation>Fecha de expedición del título, Formato YYYY-MM-DD - YYYY-MM</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="PaisExpedicion">
+		<xs:annotation>
+			<xs:documentation>País de expedición del título</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="40"/>
+				<xs:whiteSpace value="collapse"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="CodigoPaisExpedicion">
+		<xs:annotation>
+			<xs:documentation>Código del pais de expedición del título, codificado en ISO 3166-1</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:pattern value="\d{3}"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="NumeroTitulo">
+		<xs:annotation>
+			<xs:documentation>Número del título</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="15"/>
+				<xs:whiteSpace value="collapse"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Expediente">
+		<xs:annotation>
+			<xs:documentation>Número de expediente universitario</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="27"/>
+				<xs:whiteSpace value="collapse"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="ViaAcceso">
+		<xs:annotation>
+			<xs:documentation>Vía de acceso a la titulación</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:enumeration value="ORDINARIA"/>
+				<xs:enumeration value="EXCEPCIONAL"/>
+				<xs:enumeration value="OTROS"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Estado">
+		<xs:complexType>
+			<xs:all>
+				<xs:element ref="CodigoEstado"/>
+				<xs:element ref="CodigoEstadoSecundario" minOccurs="0"/>
+				<xs:element ref="LiteralError"/>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="CodigoEstado">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="4"/>
+				<xs:whiteSpace value="collapse"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="CodigoEstadoSecundario">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="16"/>
+				<xs:whiteSpace value="collapse"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="LiteralError">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="1024"/>
+				<xs:whiteSpace value="collapse"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:simpleType name="Fecha">
+		<xs:union memberTypes="FechaNaci MesNacimiento"/>
+	</xs:simpleType>
+	<xs:simpleType name="FechaNaci">
+		<xs:restriction base="xs:date"/>
+	</xs:simpleType>
+	<xs:simpleType name="MesNacimiento">
+		<xs:restriction base="xs:gYearMonth"/>
+	</xs:simpleType>
+</xs:schema>

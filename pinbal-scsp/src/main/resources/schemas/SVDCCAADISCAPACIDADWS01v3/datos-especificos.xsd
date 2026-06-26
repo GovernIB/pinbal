@@ -1,0 +1,299 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2011 sp1 (http://www.altova.com) by End User (free.org) -->
+<xs:schema xmlns="http://intermediacion.redsara.es/scsp/esquemas/datosespecificos" xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://intermediacion.redsara.es/scsp/esquemas/datosespecificos" elementFormDefault="qualified">
+	<xs:element name="DatosEspecificos" type="DatosEspecificos"/>
+	<xs:complexType name="DatosEspecificos">
+		<xs:choice>
+			<xs:element ref="Consulta">
+				<xs:annotation>
+					<xs:documentation>Solo en el mensaje de PETICION</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element ref="Retorno">
+				<xs:annotation>
+					<xs:documentation>Solo en el mensaje RESPUESTA</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:choice>
+		<xs:attribute name="Id" type="xs:string" use="optional"/>
+	</xs:complexType>
+	<xs:element name="Consulta">
+		<xs:complexType>
+			<xs:all>
+				<xs:element ref="CodigoComunidadAutonoma"/>
+				<xs:element ref="CodigoProvincia" minOccurs="0"/>
+				<xs:element ref="Expediente" minOccurs="0"/>
+				<xs:element ref="FechaConsulta" minOccurs="0"/>
+				<xs:element ref="DatosAdicionalesTitular" minOccurs="0"/>
+				<xs:element name="ConsentimientoTiposDiscapacidad" type="Resultado">
+					<xs:annotation>
+						<xs:documentation>Indica si el ciudadno consiente que en la respuesta se proporcionen sus tipos de discapacidad. Valores posibles: S o N</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Retorno">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="Estado"/>
+				<xs:element ref="RealDecreto" minOccurs="0"/>
+				<xs:element ref="DatosAdicionalesTitularRespuesta" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>Opcional si Estado no es un ERROR</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element ref="CertificadoDatosDiscapacidad" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>Opcional si Estado no es un ERROR</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="CertificadoDatosDiscapacidad">
+		<xs:complexType>
+			<xs:all>
+				<xs:element ref="CodigoComunidadAutonoma"/>
+				<xs:element ref="CodigoProvincia" minOccurs="0"/>
+				<xs:element ref="Expediente" minOccurs="0"/>
+				<xs:element name="GradoDiscapacidad" type="Grado">
+					<xs:annotation>
+						<xs:documentation>Porcentaje del grado de discapacidad. Valores posibles: 0 a 100. </xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="TiposDiscapacidad" minOccurs="0">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element ref="TipoDiscapacidad" maxOccurs="unbounded"/>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="MovilidadReducida">
+					<xs:complexType>
+						<xs:all>
+							<xs:element name="MovilidadReducidaReconocida" type="Resultado">
+								<xs:annotation>
+									<xs:documentation>Inidca si el ciudadano consultado tiene reconocida o no la movilidad reducida. Valores posibles: S o N.</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+							<xs:element name="FechaEfectos" type="xs:date" minOccurs="0">
+								<xs:annotation>
+									<xs:documentation>Fecha efectos del reconocimiento de la movilidad reducida. Formato: YYYY-MM-DD</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+						</xs:all>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="TerceraPersona" minOccurs="0">
+					<xs:complexType>
+						<xs:all>
+							<xs:element name="TerceraPersonaReconocida" type="Resultado">
+								<xs:annotation>
+									<xs:documentation>Inidca si el ciudadano consultado tiene reconocida o no la necesidad de consurso de tercera persona. Valores posibles: S o N.</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+							<xs:element name="FechaEfectos" type="xs:date" minOccurs="0">
+								<xs:annotation>
+									<xs:documentation>Fecha efectos del reconocimiento de la necesidad de concurso de tercera persona. Formato: YYYY-MM-DD</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+						</xs:all>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="FechaEfectos" type="xs:date">
+					<xs:annotation>
+						<xs:documentation>Formato: YYYY-MM-DD</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="FechaRevision" type="xs:date" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>Formato: YYYY-MM-DD</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="ValidezPermanente" type="Resultado">
+					<xs:annotation>
+						<xs:documentation>Valores posibles S o N</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:simpleType name="Codigo2DigitosINE">
+		<xs:annotation>
+			<xs:documentation>Utilizar los 2 dígitos del código INE</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:length value="2"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:element name="RealDecreto">
+		<xs:annotation>
+			<xs:documentation>
+			Real Decreto en base al que se reconoce la discapacidad
+			1- Real Decreto 1971/1999, de 23 de diciembre, de procedimiento para el reconocimiento, declaración y calificación del grado de minusvalía.
+			2- Real Decreto 888/2022, de 18 de octubre, por el que se establece el procedimiento para el reconocimiento, declaración y calificación del grado de discapacidad.
+			</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:enumeration value="1"/>
+				<xs:enumeration value="2"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="CodigoComunidadAutonoma">
+		<xs:annotation>
+			<xs:documentation>Utilizar los 2 dígitos del código INE.		
+· 01 - ANDALUCÍA
+· 02 - ARAGÓN
+· 03 - PRINCIPADO DE ASTURIAS
+· 04 - ISLAS BALEARES
+· 05 - CANARIAS
+· 06 - CANTABRIA
+· 07 - CASTILLA y LEÓN
+· 08 - CASTILLA-LA MANCHA
+· 09 - CATALUÑA
+· 10 - COMUNIDAD VALENCIANA
+· 11 - EXTREMADURA
+· 12 - GALICIA
+· 13 - MADRID
+· 14 - REGIÓN DE MURCIA
+· 15 - NAVARRA
+· 16 - PAÍS VASCO
+· 17 - LA RIOJA
+· 18 - CIUDAD DE CEUTA
+· 19 - CIUDAD DE MELILLA			
+			</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:enumeration value="01"/>
+				<xs:enumeration value="02"/>
+				<xs:enumeration value="03"/>
+				<xs:enumeration value="04"/>
+				<xs:enumeration value="05"/>
+				<xs:enumeration value="06"/>
+				<xs:enumeration value="07"/>
+				<xs:enumeration value="08"/>
+				<xs:enumeration value="09"/>
+				<xs:enumeration value="10"/>
+				<xs:enumeration value="11"/>
+				<xs:enumeration value="12"/>
+				<xs:enumeration value="13"/>
+				<xs:enumeration value="14"/>
+				<xs:enumeration value="15"/>
+				<xs:enumeration value="16"/>
+				<xs:enumeration value="17"/>
+				<xs:enumeration value="18"/>
+				<xs:enumeration value="19"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="CodigoProvincia" type="Codigo2DigitosINE">
+		<xs:annotation>
+			<xs:documentation>Utilizar los 2 dígitos del código INE</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="Expediente">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="65"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="FechaConsulta" type="xs:date">
+		<xs:annotation>
+			<xs:documentation>Formato: YYYY-MM-DD</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="DatosAdicionalesTitular" type="DatosAdicionalesTitular"/>
+	<xs:complexType name="DatosAdicionalesTitular">
+		<xs:all>
+			<xs:element ref="FechaNacimiento" minOccurs="0"/>
+		</xs:all>
+	</xs:complexType>
+	<xs:element name="DatosAdicionalesTitularRespuesta" type="DatosAdicionalesTitular"/>
+	<xs:element name="FechaNacimiento" type="xs:date">
+		<xs:annotation>
+			<xs:documentation>Formato: YYYY-MM-DD</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:simpleType name="Resultado">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="S"/>
+			<xs:enumeration value="N"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="Grado">
+		<xs:annotation>
+			<xs:documentation>Utilizar de 1 a 3 dígitos</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:int">
+			<xs:totalDigits value="3"/>
+			<xs:minInclusive value="0"/>
+			<xs:maxInclusive value="100"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:element name="TipoDiscapacidad">
+		<xs:annotation>
+			<xs:documentation>Valores posibles: FISICA, PSIQUICA, MENTAL, SENSORIAL, INTELECTUAL</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:enumeration value="FISICA"/>
+				<xs:enumeration value="PSIQUICA"/>
+				<xs:enumeration value="MENTAL"/>
+				<xs:enumeration value="SENSORIAL"/>
+				<xs:enumeration value="INTELECTUAL"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Estado">
+		<xs:complexType>
+			<xs:all>
+				<xs:element ref="CodigoEstado"/>
+				<xs:element ref="CodigoEstadoSecundario" minOccurs="0"/>
+				<xs:element ref="LiteralError"/>
+				<xs:element ref="LiteralErrorSecundario" minOccurs="0"/>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="CodigoEstado">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="4"/>
+				<xs:whiteSpace value="collapse"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="CodigoEstadoSecundario">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="16"/>
+				<xs:whiteSpace value="collapse"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="LiteralError">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="1024"/>
+				<xs:whiteSpace value="collapse"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="LiteralErrorSecundario">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="1024"/>
+				<xs:whiteSpace value="collapse"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+</xs:schema>

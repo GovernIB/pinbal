@@ -4,7 +4,7 @@
          xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_4_0.xsd"
          version="4.0">
 
-	<display-name>apiinterna</display-name>
+	<display-name>PINBAL-API-INTERNA</display-name>
 
 	<login-config>
 		<auth-method>KEYCLOAK</auth-method>
@@ -39,6 +39,7 @@
 			<url-pattern>/api-docs/*</url-pattern>
 			<url-pattern>/webjars/*</url-pattern>
             <url-pattern>/salut/v1</url-pattern>
+            <url-pattern>/recobriment/test</url-pattern>
 		</web-resource-collection>
 	</security-constraint>
 	<security-constraint>

@@ -12,27 +12,31 @@
 	<xs:element name="Consulta">
 		<xs:complexType>
 			<xs:all>
-				<xs:element name="IdUltimoRegistroDescargado">
-					<xs:annotation>
-						<xs:documentation>ID del registro a partir del cual se hace la búsqueda de las nuevas altas, cancelaciones o modificaciones de personas y prohibiciones del RGIAJ que se quieren descargar. Este valor puede consultarse desde la aplicación Web de RGIAJ</xs:documentation>
-					</xs:annotation>
-					<xs:simpleType>
-						<xs:restriction base="xs:unsignedLong">
-							<xs:minInclusive value="1"/>
-							<xs:maxInclusive value="999999999999999999"/>
-						</xs:restriction>
-					</xs:simpleType>
-				</xs:element>
+				<xs:element ref="IdUltimoRegistroDescargado"/>
 			</xs:all>
 		</xs:complexType>
+	</xs:element>
+	<xs:element name="IdUltimoRegistroDescargado">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:pattern value="[0-9]{1,18}"/>
+			</xs:restriction>
+		</xs:simpleType>
 	</xs:element>
 	<xs:element name="Retorno">
 		<xs:complexType>
 			<xs:all>
 				<xs:element ref="Estado"/>
-				<xs:element name="Registro" type="xs:base64Binary" minOccurs="0"/>
+				<xs:element ref="Registro" minOccurs="0"/>
 			</xs:all>
 		</xs:complexType>
+	</xs:element>
+	<xs:element name="Registro">
+		<xs:simpleType>
+			<xs:restriction base="xs:base64Binary">
+				<xs:minLength value="1"/>
+			</xs:restriction>
+		</xs:simpleType>
 	</xs:element>
 	<xs:element name="Estado">
 		<xs:complexType>
@@ -46,21 +50,27 @@
 	<xs:element name="CodigoEstado">
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
 				<xs:maxLength value="4"/>
+				<xs:whiteSpace value="collapse"/>
 			</xs:restriction>
 		</xs:simpleType>
 	</xs:element>
 	<xs:element name="CodigoEstadoSecundario">
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
 				<xs:maxLength value="16"/>
+				<xs:whiteSpace value="collapse"/>
 			</xs:restriction>
 		</xs:simpleType>
 	</xs:element>
 	<xs:element name="LiteralError">
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
-				<xs:maxLength value="255"/>
+				<xs:minLength value="1"/>
+				<xs:maxLength value="1024"/>
+				<xs:whiteSpace value="collapse"/>
 			</xs:restriction>
 		</xs:simpleType>
 	</xs:element>

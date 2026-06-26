@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions targetNamespace="http://intermediacion.redsara.es/scsp/wsdl" xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:wsdl="http://intermediacion.redsara.es/scsp/wsdl" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:sf="http://intermediacion.redsara.es/scsp/esquemas/V3/soapfaultatributos" xmlns:solr="http://intermediacion.redsara.es/scsp/esquemas/V3/solicitudRespuesta" xmlns:desp="http://intermediacion.redsara.es/scsp/esquemas/datosespecificos" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:pet="http://intermediacion.redsara.es/scsp/esquemas/V3/peticion" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:conPet="http://intermediacion.redsara.es/scsp/esquemas/V3/confirmacionPeticion" xmlns:ds="http://www.w3.org/2000/09/xmldsig#" xmlns:resp="http://intermediacion.redsara.es/scsp/esquemas/V3/respuesta">
+  <types>
+    <xsd:schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+			<xsd:import namespace="http://intermediacion.redsara.es/scsp/esquemas/datosespecificos" schemaLocation="TGSS.ConsultaNumeroTrabajadores.Asincrona?xsd=datos-especificos.xsd"/>
+			<xsd:import namespace="http://intermediacion.redsara.es/scsp/esquemas/V3/peticion" schemaLocation="TGSS.ConsultaNumeroTrabajadores.Asincrona?xsd=peticion.xsd"/>
+			<xsd:import namespace="http://intermediacion.redsara.es/scsp/esquemas/V3/respuesta" schemaLocation="TGSS.ConsultaNumeroTrabajadores.Asincrona?xsd=respuesta.xsd"/>
+			<xsd:import namespace="http://intermediacion.redsara.es/scsp/esquemas/V3/solicitudRespuesta" schemaLocation="TGSS.ConsultaNumeroTrabajadores.Asincrona?xsd=solicitud-respuesta.xsd"/>
+			<xsd:import namespace="http://intermediacion.redsara.es/scsp/esquemas/V3/confirmacionPeticion" schemaLocation="TGSS.ConsultaNumeroTrabajadores.Asincrona?xsd=confirmacion-peticion.xsd"/>
+			<xsd:import namespace="http://intermediacion.redsara.es/scsp/esquemas/V3/soapfaultatributos" schemaLocation="TGSS.ConsultaNumeroTrabajadores.Asincrona?xsd=soapfaultatributos.xsd"/>
+		</xsd:schema>
+  </types>
+  <message name="respuestaMessage">
+    <part name="Respuesta" element="resp:Respuesta">
+    </part>
+  </message>
+  <message name="solicitudRespuestaMessage">
+    <part name="SolicitudRespuesta" element="solr:SolicitudRespuesta">
+    </part>
+  </message>
+  <message name="peticionMessage">
+    <part name="Peticion" element="pet:Peticion">
+    </part>
+  </message>
+  <message name="confirmacionPeticionMessage">
+    <part name="ConfirmacionPeticion" element="conPet:ConfirmacionPeticion">
+    </part>
+  </message>
+  <message name="faultSCSPMessage">
+    <part name="fault" element="sf:Atributos">
+    </part>
+  </message>
+  <portType name="TGSSConsultaNumeroTrabajadoresAsincrona">
+    <operation name="peticionAsincrona">
+      <input message="wsdl:peticionMessage">
+    </input>
+      <output message="wsdl:confirmacionPeticionMessage">
+    </output>
+      <fault name="FaultSCSP" message="wsdl:faultSCSPMessage">
+    </fault>
+    </operation>
+    <operation name="solicitudRespuesta">
+      <input message="wsdl:solicitudRespuestaMessage">
+    </input>
+      <output message="wsdl:respuestaMessage">
+    </output>
+      <fault name="FaultSCSP" message="wsdl:faultSCSPMessage">
+    </fault>
+    </operation>
+  </portType>
+  <binding name="TGSS.ConsultaNumeroTrabajadoresAsincronaBinding" type="wsdl:TGSSConsultaNumeroTrabajadoresAsincrona">
+    <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <operation name="peticionAsincrona">
+      <soap:operation soapAction="peticionAsincrona" style="document"/>
+      <input>
+        <soap:body use="literal"/>
+      </input>
+      <output>
+        <soap:body use="literal"/>
+      </output>
+      <fault name="FaultSCSP">
+        <soap:fault name="FaultSCSP" use="literal"/>
+      </fault>
+    </operation>
+    <operation name="solicitudRespuesta">
+      <soap:operation soapAction="solicitudRespuesta" style="document"/>
+      <input>
+        <soap:body use="literal"/>
+      </input>
+      <output>
+        <soap:body use="literal"/>
+      </output>
+      <fault name="FaultSCSP">
+        <soap:fault name="FaultSCSP" use="literal"/>
+      </fault>
+    </operation>
+  </binding>
+  <service name="TGSS.ConsultaNumeroTrabajadores.Asincrona">
+    <port name="TGSS.ConsultaNumeroTrabajadores.Asincrona" binding="wsdl:TGSS.ConsultaNumeroTrabajadoresAsincronaBinding">
+      <soap:address location="https://intermediacionpp.redsara.es/servicios/SVD/TGSS.ConsultaNumeroTrabajadores.Asincrona/"/>
+    </port>
+  </service>
+</definitions>

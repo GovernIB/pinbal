@@ -104,9 +104,7 @@
 		</xs:annotation>
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
-				<xs:length value="2"/>
-				<xs:pattern value="\d{2}"/>
-				<!--<xs:pattern value="(0[1-9])|([1-4][0-9])|(5[0-2])"/>-->
+				<xs:pattern value="[0-4]\d|5[0-2]"/>
 			</xs:restriction>
 		</xs:simpleType>
 	</xs:element>
@@ -158,11 +156,11 @@
 			</xs:restriction>
 		</xs:simpleType>
 	</xs:element>
-	<xs:element name="Telefono">		
+<xs:element name="Telefono">
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
+				<xs:pattern value="(\+)?[0-9]{9,14}"/>
 				<xs:whiteSpace value="collapse"/>
-				<xs:pattern value="(\+)?[0-9]{1,12}"/>
 			</xs:restriction>
 		</xs:simpleType>
 	</xs:element>

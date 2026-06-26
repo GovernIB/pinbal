@@ -1,0 +1,256 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://intermediacion.redsara.es/scsp/esquemas/datosespecificos" targetNamespace="http://intermediacion.redsara.es/scsp/esquemas/datosespecificos" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<xs:element name="DatosEspecificos">
+		<xs:complexType>
+			<xs:choice>
+				<xs:element ref="Consulta"/>
+				<xs:element ref="Retorno"/>
+			</xs:choice>
+			<xs:attribute name="Id" type="xs:string" use="optional"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Consulta">
+		<xs:complexType>
+			<xs:all>
+				<xs:element ref="DatosAdicionalesTitular"/>
+				<xs:element ref="HechoRegistral"/>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="DatosAdicionalesTitular">
+		<xs:complexType>
+			<xs:all>
+				<xs:element ref="NumeroSoporte" minOccurs="0"/>
+				<xs:element name="PaisEmisorDocumentacion" type="CodigoPais" minOccurs="0"/>
+				<xs:element ref="Sexo"/>
+				<xs:element ref="Nacimiento"/>
+				<xs:element name="NombrePadre" type="Nombre" minOccurs="0"/>
+				<xs:element name="NombreMadre" type="Nombre" minOccurs="0"/>
+				<xs:element name="Nacionalidad" type="CodigoPais" minOccurs="0"/>
+				<xs:element ref="Fallecido"/>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:complexType name="HechoRegistral">
+		<xs:all>
+			<xs:element name="Fecha" type="Fecha"/>
+			<xs:element ref="Municipio" minOccurs="0"/>
+		</xs:all>
+	</xs:complexType>
+	<xs:element name="Nacimiento">
+		<xs:complexType>
+			<xs:all>
+				<xs:element name="Fecha" type="Fecha"/>
+				<xs:element ref="Pais"/>
+				<xs:element ref="Municipio"/>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="HechoRegistral">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="Fecha" type="Fecha"/>
+				<xs:element ref="Pais"/>
+				<xs:element ref="Municipio"/>
+				<xs:sequence minOccurs="0">
+					<xs:element ref="RegistroCivil"/>
+					<xs:element ref="Tomo" minOccurs="0"/>
+					<xs:element ref="Pagina" minOccurs="0"/>
+				</xs:sequence>
+				<xs:element ref="Consulado" minOccurs="0"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Consulado">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:choice>
+					<xs:element ref="RegistroCivil"/>
+					<xs:element name="Nombre" type="Nombre"/>
+				</xs:choice>
+				<xs:element ref="Tomo" minOccurs="0"/>
+				<xs:element ref="Pagina" minOccurs="0"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<!-- Retorno -->
+	<xs:element name="Retorno">
+		<xs:complexType>
+			<xs:all>
+				<xs:element ref="Estado"/>
+				<xs:element ref="Documento" minOccurs="0"/>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<!-- Estado -->
+	<xs:element name="Estado">
+		<xs:complexType>
+			<xs:all>
+				<xs:element ref="CodigoEstado"/>
+				<xs:element ref="CodigoEstadoSecundario" minOccurs="0"/>
+				<xs:element ref="LiteralError"/>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="CodigoEstado">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="4"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="CodigoEstadoSecundario">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="16"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="LiteralError">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="1024"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Documento">
+		<xs:complexType>
+			<xs:all>
+				<xs:element ref="Contenido"/>
+				<xs:element ref="Formato"/>
+				<xs:element ref="CSV"/>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<!-- Tipos -->
+	<xs:simpleType name="Fecha">
+		<xs:restriction base="xs:date"/>
+	</xs:simpleType>
+	<xs:element name="Pais">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:pattern value="\d{3}"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Descripcion">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="200"/>
+				<xs:pattern value="[:_0-9A-Za-zÁáÉéÍíÓóÚúÑñÀàÈèÌìÒòÙùÄäËëÏïÖöÜüÂâÊêÎîÔôÛûÃãÕõÅåØøÆÐÝýÞþÇç·'\-\s,.()/\\]{1,200}"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Municipio">
+		<xs:complexType>
+			<xs:choice>
+				<xs:element name="Codigo" type="CodigoMunicipio"/>
+				<xs:element ref="Descripcion"/>
+			</xs:choice>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Fallecido">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:enumeration value="S"/>
+				<xs:enumeration value="N"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="NumeroSoporte">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:pattern value="[E|C]\d{8}"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Sexo">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:length value="1"/>
+				<xs:enumeration value="V">
+					<xs:annotation>
+						<xs:documentation>Varón</xs:documentation>
+					</xs:annotation>
+				</xs:enumeration>
+				<xs:enumeration value="M">
+					<xs:annotation>
+						<xs:documentation>Mujer</xs:documentation>
+					</xs:annotation>
+				</xs:enumeration>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="RegistroCivil">
+		<xs:simpleType>
+			<xs:restriction base="xs:token">
+				<xs:length value="12"/>
+				<xs:pattern value="\d*"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Tomo">
+		<xs:simpleType>
+			<xs:restriction base="xs:token">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="10"/>
+				<xs:pattern value="([0-9]{1,5})(([ ]|\w|_){0,5})"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Pagina">
+		<xs:simpleType>
+			<xs:restriction base="xs:token">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="5"/>
+				<xs:pattern value="(\w|_){1,5}"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:simpleType name="Nombre">
+		<xs:restriction base="xs:string">
+			<xs:minLength value="1"/>
+			<xs:maxLength value="50"/>
+			<xs:pattern value="[A-ZÁÉÍÓÚÑÀÈÌÒÙÄËÏÖÜÂÊÎÔÛÃÕÅØÆÐÝÞÇ·'\-\s,.()/\\]{1,50}"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="CodigoPais">
+		<xs:restriction base="xs:string">
+			<xs:length value="3"/>
+			<xs:pattern value="\d{3}"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="CodigoMunicipio">
+		<xs:restriction base="xs:string">
+			<xs:length value="5"/>
+			<xs:pattern value="\d{5}"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:element name="Contenido">
+		<xs:simpleType>
+			<xs:restriction base="xs:base64Binary">
+				<xs:minLength value="1"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Formato">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="50"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="CSV">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="50"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+</xs:schema>

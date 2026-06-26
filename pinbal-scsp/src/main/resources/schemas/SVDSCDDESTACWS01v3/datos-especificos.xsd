@@ -1,0 +1,226 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns="http://intermediacion.redsara.es/scsp/esquemas/datosespecificos" xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://intermediacion.redsara.es/scsp/esquemas/datosespecificos" elementFormDefault="qualified">
+	<xs:element name="DatosEspecificos" type="DatosEspecificos"/>
+	<xs:complexType name="DatosEspecificos">
+		<xs:choice>
+			<xs:element ref="Consulta" minOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Solo en el mensaje de PETICION</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element ref="Retorno">
+				<xs:annotation>
+					<xs:documentation>Solo en el mensaje RESPUESTA</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:choice>
+		<xs:attribute name="Id" type="xs:string" use="optional"/>
+	</xs:complexType>
+	<xs:element name="Consulta">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="CodigoComunidadAutonoma"/>
+				<xs:element ref="CodigoProvincia" minOccurs="0"/>
+				<xs:element ref="Expediente" minOccurs="0"/>
+				<xs:element ref="DatosAdicionalesTitular" minOccurs="0"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Retorno">
+		<xs:complexType>
+			<xs:all>
+				<xs:element ref="Estado"/>
+				<xs:element ref="DatosAdicionalesTitular" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>Opcional si Estado no es un ERROR</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element ref="CertificadoDatosDiscapacidad" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>Opcional si Estado es un ERROR</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="CertificadoDatosDiscapacidad">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="CodigoComunidadAutonoma" minOccurs="1"/>
+				<xs:element ref="CodigoProvincia" minOccurs="0"/>
+				<xs:element ref="Expediente" minOccurs="1"/>
+				<xs:element name="Movilidad" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>Puntuación y factor del ciudadano</xs:documentation>
+					</xs:annotation>
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element ref="Puntuacion" minOccurs="0"/>
+							<xs:element ref="Factor" minOccurs="0"/>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+				<xs:element ref="Grado" minOccurs="1"/>
+				<xs:element ref="AgudezaVisual" minOccurs="1"/>
+				<xs:element ref="CampoVisual" minOccurs="1"/>
+				<xs:element ref="FechaEmision" minOccurs="1"/>
+				<xs:element ref="ValidezPermanente" minOccurs="1"/>
+				<xs:element ref="FechaRevision" minOccurs="0"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="FechaEmision" type="xs:date">
+		<xs:annotation>
+			<xs:documentation>Fecha a partir de la cual es válido el dictamen. Formato: AAAA-MM-DD</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="FechaRevision" type="xs:date">
+		<xs:annotation>
+			<xs:documentation>Si la ValidezPermanente es NO, se debe retornar la fecha de revisión del certificado de discapacidad, movilidad y agudeza visual. Formato: AAAA-MM-DD</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="ValidezPermanente">
+		<xs:annotation>
+			<xs:documentation>Validez del certificado de reconocimiento de discapacidad, movilidad y agudeza visual. Valores posibles: S/N</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:enumeration value="S"/>
+				<xs:enumeration value="N"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="CodigoComunidadAutonoma">
+		<xs:annotation>
+			<xs:documentation>Utilizar los 2 dígitos del código INE</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:int">
+				<xs:minInclusive value="01"/>
+				<xs:maxInclusive value="19"/>
+				<xs:pattern value="\d{2}"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="CodigoProvincia">
+		<xs:annotation>
+			<xs:documentation>Utilizar los 2 dígitos del código INE</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:int">
+				<xs:minInclusive value="01"/>
+				<xs:maxInclusive value="52"/>
+				<xs:pattern value="\d{2}"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Expediente">
+		<xs:annotation>
+			<xs:documentation>Expediente del certificado de discapacidad</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="65"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Puntuacion">
+		<xs:annotation>
+			<xs:documentation>Puntuación de movilidad</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:integer">
+				<xs:minInclusive value="0"/>
+				<xs:maxInclusive value="15"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Factor">
+		<xs:annotation>
+			<xs:documentation>Factor de movilidad: A, B o C</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:enumeration value="A"/>
+				<xs:enumeration value="B"/>
+				<xs:enumeration value="C"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="DatosAdicionalesTitular" type="DatosAdicionalesTitular"/>
+	<xs:complexType name="DatosAdicionalesTitular">
+		<xs:sequence>
+			<xs:element ref="FechaNacimiento" minOccurs="1"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:element name="FechaNacimiento" type="xs:date">
+		<xs:annotation>
+			<xs:documentation>Fecha de nacimiento del titular. Formato: AAAA-MM-DD</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="AgudezaVisual">
+		<xs:annotation>
+			<xs:documentation>Posibles valores: S/N</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:enumeration value="S"/>
+				<xs:enumeration value="N"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="CampoVisual">
+		<xs:annotation>
+			<xs:documentation>Posibles valores: S/N</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:enumeration value="S"/>
+				<xs:enumeration value="N"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Grado">
+		<xs:annotation>
+			<xs:documentation>Porcentaje reconocido de discapacidad</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:int">
+				<xs:totalDigits value="3"/>
+				<xs:minInclusive value="0"/>
+				<xs:maxInclusive value="100"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Estado">
+		<xs:complexType>
+			<xs:all>
+				<xs:element ref="CodigoEstado"/>
+				<xs:element ref="CodigoEstadoSecundario" minOccurs="0"/>
+				<xs:element ref="LiteralError"/>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="CodigoEstado">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:maxLength value="4"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="CodigoEstadoSecundario">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:maxLength value="16"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="LiteralError">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:maxLength value="255"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+</xs:schema>

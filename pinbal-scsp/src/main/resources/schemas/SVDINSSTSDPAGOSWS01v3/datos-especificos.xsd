@@ -1,0 +1,235 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns="http://intermediacion.redsara.es/scsp/esquemas/datosespecificos" xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://intermediacion.redsara.es/scsp/esquemas/datosespecificos" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<xs:element name="DatosEspecificos" type="DatosEspecificos"/>
+	<xs:complexType name="DatosEspecificos">
+		<xs:sequence>
+			<xs:choice>
+				<xs:element ref="pagosPeticion"/>
+				<xs:element ref="pagosResponse"/>
+			</xs:choice>
+		</xs:sequence>
+		<xs:attribute name="Id" type="xs:string" use="optional">
+			<xs:annotation>
+				<xs:documentation>Identificador que identifica los datos específicos, facilita la búsqueda mas eficiente de las mismas por XPATH</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:element name="pagosPeticion">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="anio" minOccurs="0"/>
+				<xs:element ref="clavePropiaEntidad" minOccurs="0"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="anio">
+		<xs:annotation>
+			<xs:documentation>Año referente a los pagos</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:gYear"/>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="clavePropiaEntidad">
+		<xs:annotation>
+			<xs:documentation>Clave propia endidad</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="10"/>
+				<xs:maxLength value="40"/>
+				<xs:whiteSpace value="collapse"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="pagosResponse">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="return" minOccurs="0"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="return">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="codigosRespuesta" type="xs:string" minOccurs="0"/>
+				<xs:element name="literalRespuesta" type="xs:string" minOccurs="0"/>
+				<xs:element ref="listadoIpf" minOccurs="0" maxOccurs="unbounded"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="listadoIpf">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="codigosRespuesta" type="xs:string" minOccurs="0"/>
+				<xs:element name="literalRespuesta" type="xs:string" minOccurs="0"/>
+				<xs:element ref="datosPersonales" minOccurs="0" maxOccurs="1"/>
+				<xs:element ref="listaPrestaciones" minOccurs="0" maxOccurs="1"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="datosPersonales">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="apellidosNombre" minOccurs="0" maxOccurs="1"/>
+				<xs:element name="fechaNacimiento" type="xs:string" minOccurs="0"/>
+				<xs:element ref="identificativo" minOccurs="0" maxOccurs="1"/>
+				<xs:element name="identificadordatosProtegidos" type="xs:string" minOccurs="0"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="apellidosNombre">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="apellidoPrimero" type="xs:string" minOccurs="0"/>
+				<xs:element name="apellidoSegundo" type="xs:string" minOccurs="0"/>
+				<xs:element name="nombre" type="xs:string" minOccurs="0"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="identificativo">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="codigoDuplicidad" type="xs:string" minOccurs="0"/>
+				<xs:element name="numeroDocumento" type="xs:string" minOccurs="0"/>
+				<xs:element name="tipoDocumento" type="xs:string" minOccurs="0"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="listaPrestaciones">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="prestacion" minOccurs="0" maxOccurs="unbounded"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="prestacion">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="clavePropiaEntidad" type="xs:string" minOccurs="0"/>
+				<xs:element ref="datosPrestacion" minOccurs="0" maxOccurs="1"/>
+				<xs:element ref="listaComplementos" minOccurs="0" maxOccurs="1"/>
+				<xs:element ref="listaPagos" minOccurs="0" maxOccurs="1"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="datosPrestacion">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="anioUltRevalorizacion" type="xs:string" minOccurs="0"/>
+				<xs:element name="clavePrestacion" type="xs:string" minOccurs="0"/>
+				<xs:element name="codigoImporte" type="xs:string" minOccurs="0"/>
+				<xs:element name="codigoSituacionActual" type="xs:string" minOccurs="0"/>
+				<xs:element ref="entidadGestora" minOccurs="0" maxOccurs="1"/>
+				<xs:element name="fechaAltaInicial" type="xs:string" minOccurs="0"/>
+				<xs:element name="fechaSituacion" type="xs:string" minOccurs="0"/>
+				<xs:element name="fechaVencimiento" type="xs:string" minOccurs="0"/>
+				<xs:element name="importe" type="xs:string" minOccurs="0"/>
+				<xs:element name="importeInicial" type="xs:string" minOccurs="0"/>
+				<xs:element name="importeUltRevalorizacion" type="xs:string" minOccurs="0"/>
+				<xs:element name="nombrePrestacion" type="xs:string" minOccurs="0"/>
+				<xs:element name="numeroPagas" type="xs:string" minOccurs="0"/>
+				<xs:element ref="subtipo" minOccurs="0" maxOccurs="1"/>
+				<xs:element name="totalRevalorizacion" type="xs:string" minOccurs="0"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="entidadGestora">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="codigoEntidadGestora" type="xs:string" minOccurs="0"/>
+				<xs:element name="nombreEntidadGestora" type="xs:string" minOccurs="0"/>
+				<xs:element name="provinciaEntidadGestora" type="xs:string" minOccurs="0"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="subtipo">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="codigoSubtipo" type="xs:string" minOccurs="0"/>
+				<xs:element name="literalSubtipo" type="xs:string" minOccurs="0"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="listaComplementos">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="complemento" minOccurs="0" maxOccurs="unbounded"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="complemento">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="datosComplementos" minOccurs="0" maxOccurs="1"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="datosComplementos">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="anioUltRevalorizacion" type="xs:string" minOccurs="0"/>
+				<xs:element name="claveComplemento" type="xs:string" minOccurs="0"/>
+				<xs:element ref="complementoApi" minOccurs="0" maxOccurs="1"/>
+				<xs:element name="exentoIRPF" type="xs:string" minOccurs="0"/>
+				<xs:element name="fechaAltaInicial" type="xs:string" minOccurs="0"/>
+				<xs:element name="fechaSituacion" type="xs:string" minOccurs="0"/>
+				<xs:element name="importeEfectivo" type="xs:string" minOccurs="0"/>
+				<xs:element name="importeTotalRevalorizacion" type="xs:string" minOccurs="0"/>
+				<xs:element name="importeUltRevalorizacion" type="xs:string" minOccurs="0"/>
+				<xs:element name="minimoOrdinario" type="xs:string" minOccurs="0"/>
+				<xs:element name="minimoResidencia" type="xs:string" minOccurs="0"/>
+				<xs:element name="nombreComplemento" type="xs:string" minOccurs="0"/>
+				<xs:element name="situacionActual" type="xs:string" minOccurs="0"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="complementoApi">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="nifComplementoBeneficiario" type="xs:string" minOccurs="0"/>
+				<xs:element name="nombreComplementoBeneficiario" type="xs:string" minOccurs="0"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="listaPagos">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="pago" minOccurs="0" maxOccurs="1"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="pago">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="aviso" type="xs:string" minOccurs="0"/>
+				<xs:element ref="periodo" minOccurs="0" maxOccurs="unbounded"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="periodo">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="datosPago" minOccurs="0" maxOccurs="unbounded"/>
+				<xs:element name="ejercicio" type="xs:string" minOccurs="0"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="datosPago">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="clasePago" type="xs:string" minOccurs="0"/>
+				<xs:element name="codigoDeduccion" type="xs:string" minOccurs="0"/>
+				<xs:element name="descuentoImporte" type="xs:string" minOccurs="0"/>
+				<xs:element name="fechaFin" type="xs:string" minOccurs="0"/>
+				<xs:element name="fechaInicio" type="xs:string" minOccurs="0"/>
+				<xs:element name="idPagoSucesivo" type="xs:string" minOccurs="0"/>
+				<xs:element name="importeBruto" type="xs:string" minOccurs="0"/>
+				<xs:element name="importeDeduccion" type="xs:string" minOccurs="0"/>
+				<xs:element name="importeLiquido" type="xs:string" minOccurs="0"/>
+				<xs:element name="porcentajeIRPF" type="xs:string" minOccurs="0"/>
+				<xs:element name="situacionPago" type="xs:string" minOccurs="0"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+</xs:schema>

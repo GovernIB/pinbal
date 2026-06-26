@@ -1,0 +1,1459 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2011 sp1 (http://www.altova.com) by End User (free.org) -->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://intermediacion.redsara.es/scsp/esquemas/datosespecificos" targetNamespace="http://intermediacion.redsara.es/scsp/esquemas/datosespecificos" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<xs:element name="DatosEspecificos" type="DatosEspecificos">
+		<xs:annotation>
+			<xs:documentation>Datos Especificos de ROLECE</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:complexType name="DatosEspecificos">
+		<xs:all>
+			<xs:element name="Retorno">
+				<xs:complexType>
+					<xs:all>
+						<xs:element name="Estado">
+							<xs:annotation>
+								<xs:documentation>Estado de la respuesta.</xs:documentation>
+							</xs:annotation>
+							<xs:complexType>
+								<xs:all>
+									<xs:element ref="CodigoEstado"/>
+									<xs:element ref="LiteralError"/>
+									<xs:element ref="CodigoEstadoSecundario" minOccurs="0"/>
+								</xs:all>
+							</xs:complexType>
+						</xs:element>
+						<xs:element name="RegistroLicitadores" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Registro de licitadores.</xs:documentation>
+							</xs:annotation>
+							<xs:complexType>
+								<xs:all>
+									<xs:element ref="ObjetoSocial" minOccurs="0"/>
+									<xs:element ref="Entidad"/>
+									<xs:element ref="ConstitucionEmpresarial" minOccurs="0"/>
+									<xs:element ref="OrganosAdministracion" minOccurs="0"/>
+									<xs:element ref="Apoderados" minOccurs="0"/>
+									<xs:element ref="Prohibiciones" minOccurs="0"/>
+									<xs:element ref="Cuentas" minOccurs="0"/>
+									<xs:element ref="Habilitaciones" minOccurs="0"/>
+									<xs:element ref="PolizasResponsabilidad" minOccurs="0"/>
+									<xs:element ref="CifrasVolumenNegocio" minOccurs="0"/>
+									<xs:element ref="ClasificacionesVigentes" minOccurs="0"/>
+									<xs:element ref="ObligacionesTributarias" minOccurs="0"/>
+									<xs:element ref="CorrientePagoSeguridadSocial" minOccurs="0"/>
+									<xs:element ref="Evidencias" minOccurs="0"/>
+								</xs:all>
+							</xs:complexType>
+						</xs:element>
+					</xs:all>
+				</xs:complexType>
+			</xs:element>
+		</xs:all>
+		<xs:attribute name="Id" type="xs:string" use="optional"/>
+	</xs:complexType>
+	<!-- Objeto social -->
+	<xs:element name="ObjetoSocial">
+		<xs:annotation>
+			<xs:documentation>Objeto social</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:all>
+				<xs:element ref="Datos" minOccurs="0"/>
+				<xs:element ref="FechaInscripcion" minOccurs="0"/>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Datos">
+		<xs:annotation>
+			<xs:documentation>Datos del objeto social</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="Dato" minOccurs="1" maxOccurs="unbounded"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Dato">
+		<xs:annotation>
+			<xs:documentation>Dato del objeto social.</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:simpleContent>
+				<xs:restriction base="IdiomaType">
+					<xs:minLength value="1"/>
+					<xs:maxLength value="25000"/>
+				</xs:restriction>
+			</xs:simpleContent>
+		</xs:complexType>
+	</xs:element>
+	<xs:complexType name="IdiomaTextType">
+		<xs:simpleContent>
+			<xs:extension base="xs:string">
+				<xs:attribute name="Idioma" type="xs:string" use="required"/>
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+	<xs:complexType name="IdiomaType">
+		<xs:simpleContent>
+			<xs:extension base="IdiomaTextType"/>
+		</xs:simpleContent>
+	</xs:complexType>
+	<!--- Entidad -->
+	<xs:element name="Entidad">
+		<xs:annotation>
+			<xs:documentation>Datos del empresario o de la entidad</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:all>
+				<xs:element ref="Nombre"/>
+				<xs:element ref="Tipo" minOccurs="0"/>
+				<xs:element ref="CodigoNacionalidad" minOccurs="0"/>
+				<xs:element ref="Nacionalidad" minOccurs="0"/>
+				<xs:element ref="TipoDocumentacion" minOccurs="0"/>
+				<xs:element ref="Documentacion"/>
+				<xs:element ref="DomicilioSocial" minOccurs="0"/>
+				<xs:element ref="UrlWeb" minOccurs="0"/>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Nombre">
+		<xs:annotation>
+			<xs:documentation>Nombre de la entidad o persona.</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="150"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Apellidos">
+		<xs:annotation>
+			<xs:documentation>Apellidos.</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="100"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Tipo">
+		<xs:annotation>
+			<xs:documentation>Tipo de entidad y forma jurídica.</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:length value="3"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="CodigoNacionalidad">
+		<xs:annotation>
+			<xs:documentation>Código de la nacionalidad.</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:length value="2"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Nacionalidad">
+		<xs:annotation>
+			<xs:documentation>Nacionalidad.</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="50"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Documentacion">
+		<xs:annotation>
+			<xs:documentation>Documentación de la entidad</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="30"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="TipoDocumentacion">
+		<xs:annotation>
+			<xs:documentation>Tipo de documentación de la entidad</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:enumeration value="NIF"/>
+				<xs:enumeration value="NIE"/>
+				<xs:enumeration value="Pasaporte"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="DomicilioSocial">
+		<xs:annotation>
+			<xs:documentation>Domicilio social de la entidad</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:all>
+				<xs:element ref="Direccion"/>
+				<xs:element ref="Provincia" minOccurs="0"/>
+				<xs:element ref="Municipio" minOccurs="0"/>
+				<xs:element ref="CodigoPostal" minOccurs="0"/>
+				<xs:element ref="CodigoPais"/>
+				<xs:element ref="Pais" minOccurs="0"/>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Direccion">
+		<xs:annotation>
+			<xs:documentation>Direccion social de la entidad</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="250"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Provincia">
+		<xs:annotation>
+			<xs:documentation>Provincia social de la entidad</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:length value="5"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Municipio">
+		<xs:annotation>
+			<xs:documentation>Municipio de la dirección social</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="100"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="CodigoPostal">
+		<xs:annotation>
+			<xs:documentation>Código postal</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="10"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="CodigoPais">
+		<xs:annotation>
+			<xs:documentation>Código del país.</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:length value="2"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Pais">
+		<xs:annotation>
+			<xs:documentation>Nombre del país.</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="50"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="UrlWeb">
+		<xs:annotation>
+			<xs:documentation>URL de la web de la empresa.</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="250"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<!-- Constitucion empresarial -->
+	<xs:element name="ConstitucionEmpresarial">
+		<xs:annotation>
+			<xs:documentation>Constituación empresarial</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:all>
+				<xs:element ref="FechaInscripcion"/>
+				<xs:element ref="RegistroInscripcion" minOccurs="0"/>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="FechaInscripcion">
+		<xs:annotation>
+			<xs:documentation>Fecha de inscripción.</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:date"/>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="RegistroInscripcion">
+		<xs:annotation>
+			<xs:documentation>Registro de inscripción.</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="2"/>
+				<xs:maxLength value="5"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<!-- Organo  de administracion-->
+	<xs:element name="OrganosAdministracion">
+		<xs:annotation>
+			<xs:documentation>Lista de órganos de administración</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="OrganoAdministracion" minOccurs="1" maxOccurs="unbounded"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="OrganoAdministracion">
+		<xs:annotation>
+			<xs:documentation>Organo de administración</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:all>
+				<xs:element ref="NumeroProtocolo" minOccurs="0"/>
+				<xs:element ref="FechaEmision" minOccurs="0"/>
+				<xs:element ref="Cargo"/>
+				<xs:element ref="PoderRepresentacion" minOccurs="0"/>
+				<xs:element ref="LimiteCuantitativo" minOccurs="0"/>
+				<xs:element ref="LimiteTerritorial" minOccurs="0"/>
+				<xs:element name="Descripciones" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>Contenido literales acerca del administrador</xs:documentation>
+					</xs:annotation>
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="Descripcion" minOccurs="1" maxOccurs="unbounded">
+								<xs:annotation>
+									<xs:documentation>Contenido literal acerca del administrador</xs:documentation>
+								</xs:annotation>
+								<xs:complexType>
+									<xs:simpleContent>
+										<xs:restriction base="IdiomaType">
+											<xs:minLength value="1"/>
+											<xs:maxLength value="25000"/>
+										</xs:restriction>
+									</xs:simpleContent>
+								</xs:complexType>
+							</xs:element>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+				<xs:element ref="PeriodoValidez" minOccurs="0"/>
+				<xs:element ref="Notario" minOccurs="0"/>
+				<xs:element ref="Administrador"/>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="LimiteCuantitativo">
+		<xs:annotation>
+			<xs:documentation>Límite cuantitativo</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:simpleContent>
+				<xs:restriction base="MonedaType">
+					<xs:fractionDigits value="2"/>
+				</xs:restriction>
+			</xs:simpleContent>
+		</xs:complexType>
+	</xs:element>
+	<xs:complexType name="MonedaTextType">
+		<xs:simpleContent>
+			<xs:extension base="xs:decimal">
+				<xs:attribute name="Moneda" type="xs:string" use="required"/>
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+	<xs:complexType name="MonedaType">
+		<xs:simpleContent>
+			<xs:extension base="MonedaTextType"/>
+		</xs:simpleContent>
+	</xs:complexType>
+	<xs:element name="LimiteTerritorial">
+		<xs:annotation>
+			<xs:documentation>Límites territoriales</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="150"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Administrador">
+		<xs:annotation>
+			<xs:documentation>Administrador</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:all>
+				<xs:element name="TipoDocumentacion">
+					<xs:annotation>
+						<xs:documentation>Tipo de documentación del administrador</xs:documentation>
+					</xs:annotation>
+					<xs:simpleType>
+						<xs:restriction base="xs:string">
+							<xs:enumeration value="NIF"/>
+							<xs:enumeration value="NIE"/>
+							<xs:enumeration value="Pasaporte"/>
+						</xs:restriction>
+					</xs:simpleType>
+				</xs:element>
+				<xs:element ref="Documentacion">
+					<xs:annotation>
+						<xs:documentation>Documentación del administrador</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="Entidad" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>Nombre de la entidad</xs:documentation>
+					</xs:annotation>
+					<xs:simpleType>
+						<xs:restriction base="xs:string">
+							<xs:minLength value="1"/>
+							<xs:maxLength value="150"/>
+						</xs:restriction>
+					</xs:simpleType>
+				</xs:element>
+				<xs:element name="Nombre" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>Nombre del administrador</xs:documentation>
+					</xs:annotation>
+					<xs:simpleType>
+						<xs:restriction base="xs:string">
+							<xs:minLength value="1"/>
+							<xs:maxLength value="50"/>
+						</xs:restriction>
+					</xs:simpleType>
+				</xs:element>
+				<xs:element name="Apellidos" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>Apellidos del administrador</xs:documentation>
+					</xs:annotation>
+					<xs:simpleType>
+						<xs:restriction base="xs:string">
+							<xs:minLength value="1"/>
+							<xs:maxLength value="100"/>
+						</xs:restriction>
+					</xs:simpleType>
+				</xs:element>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Cargo">
+		<xs:annotation>
+			<xs:documentation>Cargo.</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:pattern value="\d{2}"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="PoderRepresentacion">
+		<xs:annotation>
+			<xs:documentation>Poder de representación</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:pattern value="\d{2}"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<!-- Apoderados -->
+	<xs:element name="Apoderados">
+		<xs:annotation>
+			<xs:documentation>Lista de apoderados</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="Apoderado" minOccurs="1" maxOccurs="unbounded"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Apoderado">
+		<xs:annotation>
+			<xs:documentation>Apoderado</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:all>
+				<xs:element ref="TipoDocumentacion"/>
+				<xs:element ref="Documentacion"/>
+				<xs:element name="Nombre">
+					<xs:annotation>
+						<xs:documentation>Nombre del apoderado</xs:documentation>
+					</xs:annotation>
+					<xs:simpleType>
+						<xs:restriction base="xs:string">
+							<xs:minLength value="1"/>
+							<xs:maxLength value="150"/>
+						</xs:restriction>
+					</xs:simpleType>
+				</xs:element>
+				<xs:element name="Apellidos" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>Apellidos del apoderado</xs:documentation>
+					</xs:annotation>
+					<xs:simpleType>
+						<xs:restriction base="xs:string">
+							<xs:minLength value="1"/>
+							<xs:maxLength value="100"/>
+						</xs:restriction>
+					</xs:simpleType>
+				</xs:element>
+				<xs:element ref="NumeroProtocolo" minOccurs="0"/>
+				<xs:element ref="FechaEmision" minOccurs="0"/>
+				<xs:element ref="ExtensionPoderes" minOccurs="0"/>
+				<xs:element ref="LimiteCuantitativo" minOccurs="0"/>
+				<xs:element ref="LimiteTerritorial" minOccurs="0"/>
+				<xs:element name="Descripciones" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>Contenido literales acerca del poder</xs:documentation>
+					</xs:annotation>
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="Descripcion" minOccurs="1" maxOccurs="unbounded">
+								<xs:annotation>
+									<xs:documentation>Contenido literal acerca del poder.</xs:documentation>
+								</xs:annotation>
+								<xs:complexType>
+									<xs:simpleContent>
+										<xs:restriction base="IdiomaType">
+											<xs:minLength value="1"/>
+											<xs:maxLength value="25000"/>
+										</xs:restriction>
+									</xs:simpleContent>
+								</xs:complexType>
+							</xs:element>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="PeriodoValidez" minOccurs="0">
+					<xs:complexType>
+						<xs:all>
+							<xs:element ref="FechaDesde" minOccurs="0"/>
+							<xs:element ref="FechaHasta"/>
+						</xs:all>
+					</xs:complexType>
+				</xs:element>
+				<xs:element ref="Notario" minOccurs="0"/>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="NumeroProtocolo">
+		<xs:annotation>
+			<xs:documentation>Número de protocolo.</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="30"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="FechaEmision">
+		<xs:annotation>
+			<xs:documentation>Fecha de emisión</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:date"/>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="ExtensionPoderes">
+		<xs:annotation>
+			<xs:documentation>Extensión de poderes.</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:length value="2"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="PeriodoValidez">
+		<xs:annotation>
+			<xs:documentation>Periodo de validez</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:all>
+				<xs:element ref="FechaDesde"/>
+				<xs:element ref="FechaHasta" minOccurs="0"/>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="FechaDesde">
+		<xs:annotation>
+			<xs:documentation>Fecha desde</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:date"/>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="FechaHasta">
+		<xs:annotation>
+			<xs:documentation>Fecha hasta</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:date"/>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="FechaInicio">
+		<xs:annotation>
+			<xs:documentation>Fecha de inicio</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:date"/>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="FechaFin">
+		<xs:annotation>
+			<xs:documentation>Fecha de fin</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:date"/>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Notario">
+		<xs:annotation>
+			<xs:documentation>Notario</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:all>
+				<xs:element name="Nombre">
+					<xs:annotation>
+						<xs:documentation>Nombre del notario</xs:documentation>
+					</xs:annotation>
+					<xs:simpleType>
+						<xs:restriction base="xs:string">
+							<xs:minLength value="1"/>
+							<xs:maxLength value="150"/>
+						</xs:restriction>
+					</xs:simpleType>
+				</xs:element>
+				<xs:element name="Apellidos" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>Apellidos del notario</xs:documentation>
+					</xs:annotation>
+					<xs:simpleType>
+						<xs:restriction base="xs:string">
+							<xs:minLength value="1"/>
+							<xs:maxLength value="100"/>
+						</xs:restriction>
+					</xs:simpleType>
+				</xs:element>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<!-- Prohibiciones -->
+	<xs:element name="Prohibiciones">
+		<xs:annotation>
+			<xs:documentation>Lista de prohibiciones</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="Prohibicion" minOccurs="1" maxOccurs="unbounded"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Prohibicion">
+		<xs:annotation>
+			<xs:documentation>Datos de cada prohibición</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:all>
+				<xs:element ref="Periodo" minOccurs="0"/>
+				<xs:element ref="Ordenante"/>
+				<xs:element ref="FechaResolucion"/>
+				<xs:element ref="Causa"/>
+				<xs:element ref="Ambito"/>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Periodo">
+		<xs:annotation>
+			<xs:documentation>Datos del periodo de la prohibición</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:all>
+				<xs:element ref="FechaInicio"/>
+				<xs:element ref="FechaFin" minOccurs="0"/>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Ordenante">
+		<xs:annotation>
+			<xs:documentation>Ordenante de la prohibición</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="250"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="FechaResolucion">
+		<xs:annotation>
+			<xs:documentation>Fecha de fin</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:date"/>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Causa">
+		<xs:annotation>
+			<xs:documentation>Causa de la prohibición</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="1500"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Ambito">
+		<xs:annotation>
+			<xs:documentation>Ámbito de la prohibición</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="250"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<!-- Cuentas -->
+	<xs:element name="Cuentas">
+		<xs:annotation>
+			<xs:documentation>Lista de cuentas</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="Cuenta" minOccurs="1" maxOccurs="unbounded"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Cuenta">
+		<xs:annotation>
+			<xs:documentation>Datos de cada cuenta</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:all>
+				<xs:element ref="Nombre">
+					<xs:annotation>
+						<xs:documentation>Nombre de la cuenta</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element ref="TipoDocumentacion">
+					<xs:annotation>
+						<xs:documentation>Tipo de documentación de la cuenta</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element ref="Documentacion">
+					<xs:annotation>
+						<xs:documentation>Documentación de la cuenta</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element ref="Ejercicio"/>
+				<xs:element ref="Periodos"/>
+				<xs:element ref="Conceptos"/>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Periodos">
+		<xs:annotation>
+			<xs:documentation>Lista de periodos de las cuentas</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="Periodo" minOccurs="1" maxOccurs="unbounded">
+					<xs:annotation>
+						<xs:documentation>Datos del periodo de la prohibición</xs:documentation>
+					</xs:annotation>
+					<xs:complexType>
+						<xs:all>
+							<xs:element ref="FechaInicio" minOccurs="0"/>
+							<xs:element ref="FechaFin"/>
+							<xs:element ref="Descripcion"/>
+						</xs:all>
+					</xs:complexType>
+				</xs:element>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Ejercicio">
+		<xs:annotation>
+			<xs:documentation>Ejercicio</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:gYear"/>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Descripcion">
+		<xs:annotation>
+			<xs:documentation>Descripcion</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="1024"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Conceptos">
+		<xs:annotation>
+			<xs:documentation>Lista de conceptos de las cuentas</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="Concepto" minOccurs="1" maxOccurs="unbounded"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Concepto">
+		<xs:annotation>
+			<xs:documentation>Concepto la cuenta</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:all>
+				<xs:element name="Tipo">
+					<xs:annotation>
+						<xs:documentation>Tipo de concepto</xs:documentation>
+					</xs:annotation>
+					<xs:simpleType>
+						<xs:restriction base="xs:string">
+							<xs:minLength value="1"/>
+							<xs:maxLength value="100"/>
+						</xs:restriction>
+					</xs:simpleType>
+				</xs:element>
+				<xs:element ref="Cantidad"/>
+				<xs:element ref="Descripcion"/>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Cantidad">
+		<xs:annotation>
+			<xs:documentation>Cantidad en céntimos de Euro</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:simpleContent>
+				<xs:restriction base="MonedaType">
+					<xs:fractionDigits value="2"/>
+				</xs:restriction>
+			</xs:simpleContent>
+		</xs:complexType>
+	</xs:element>
+	<!-- Lista polizas de responsabilidad asegurada -->
+	<xs:element name="PolizasResponsabilidad">
+		<xs:annotation>
+			<xs:documentation>Lista de pólizas de responsabilidad asegurada</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="Poliza" minOccurs="1" maxOccurs="unbounded"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Poliza">
+		<xs:annotation>
+			<xs:documentation>Datos de la póliza de administración</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:all>
+				<xs:element ref="Aseguradora"/>
+				<xs:element ref="Identificador"/>
+				<xs:element ref="Importe"/>
+				<xs:element ref="Coberturas"/>
+				<xs:element ref="FechaInicio">
+					<xs:annotation>
+						<xs:documentation>Fecha de inicio de la póliza</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element ref="FechaFin" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>Fecha de fin de la póliza</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Aseguradora">
+		<xs:annotation>
+			<xs:documentation>Aseguradora de la póliza</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="150"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Identificador">
+		<xs:annotation>
+			<xs:documentation>Identificador de la póliza</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="50"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Importe">
+		<xs:annotation>
+			<xs:documentation>Importe de la póliza</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:simpleContent>
+				<xs:restriction base="MonedaType">
+					<xs:fractionDigits value="2"/>
+				</xs:restriction>
+			</xs:simpleContent>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Coberturas">
+		<xs:annotation>
+			<xs:documentation>Coberturas de la póliza</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="Cobertura" minOccurs="1" maxOccurs="unbounded"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Cobertura">
+		<xs:annotation>
+			<xs:documentation>Cobertura de la póliza.</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:simpleContent>
+				<xs:restriction base="IdiomaType">
+					<xs:minLength value="1"/>
+					<xs:maxLength value="15000"/>
+				</xs:restriction>
+			</xs:simpleContent>
+		</xs:complexType>
+	</xs:element>
+	<!-- Lista de cifras de volumen de negocio -->
+	<xs:element name="CifrasVolumenNegocio">
+		<xs:annotation>
+			<xs:documentation>Lista de cifras de volumen de negocio</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="CifraVolumen" minOccurs="1" maxOccurs="unbounded"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="CifraVolumen">
+		<xs:annotation>
+			<xs:documentation>Cifra volumen de negocio</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:all>
+				<xs:element ref="Cantidad">
+					<xs:annotation>
+						<xs:documentation>Cantidad en Euros</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element ref="FechaDesde" minOccurs="0"/>
+				<xs:element ref="FechaHasta" minOccurs="0"/>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<!-- Lista de calsificaciones vigentes -->
+	<xs:element name="ClasificacionesVigentes">
+		<xs:annotation>
+			<xs:documentation>Lista de calsificaciones vigentes a la expedición del certificado</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="Clasificacion" minOccurs="1" maxOccurs="unbounded"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Clasificacion">
+		<xs:annotation>
+			<xs:documentation>Datos de la clasificacion vigente</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:all>
+				<xs:element ref="EntidadClasificadora"/>
+				<xs:element ref="Grupos"/>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="EntidadClasificadora">
+		<xs:annotation>
+			<xs:documentation>Entidad clasificadora</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:pattern value="\d{2}"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Grupos">
+		<xs:annotation>
+			<xs:documentation>Lista de grupos</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="Grupo" minOccurs="1" maxOccurs="unbounded"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Grupo">
+		<xs:annotation>
+			<xs:documentation>Datos del grupo</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:all>
+				<xs:element ref="NivelJerarquia" minOccurs="0"/>
+				<xs:element ref="CodigoActividad" minOccurs="0"/>
+				<xs:element ref="DescripcionActividad" minOccurs="0"/>
+				<xs:element ref="TipoContrato" minOccurs="0"/>
+				<xs:element ref="SubGrupos"/>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="SubGrupos">
+		<xs:annotation>
+			<xs:documentation>Lista de subgrupos</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="SubGrupo" minOccurs="1" maxOccurs="unbounded"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="SubGrupo">
+		<xs:annotation>
+			<xs:documentation>Datos del subgrupo</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:all>
+				<xs:element ref="NivelJerarquia" minOccurs="0"/>
+				<xs:element ref="CodigoActividad" minOccurs="0"/>
+				<xs:element ref="DescripcionActividad" minOccurs="0"/>
+				<xs:element ref="TipoContrato" minOccurs="0"/>
+				<xs:element ref="FechaOtorgamiento"/>
+				<xs:element ref="FechaVencimiento" minOccurs="0"/>
+				<xs:element ref="Categoria" minOccurs="0"/>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="NivelJerarquia">
+		<xs:annotation>
+			<xs:documentation>Nivel en la jerarquía 1 --> Grupo / 2 --> SubGrupo.</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:int">
+				<xs:minInclusive value="1"/>
+				<xs:maxInclusive value="2"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="CodigoActividad">
+		<xs:annotation>
+			<xs:documentation>Código de la actividad.</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="10"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="DescripcionActividad">
+		<xs:annotation>
+			<xs:documentation>Descripcion de la actividad.</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="150"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="TipoContrato">
+		<xs:annotation>
+			<xs:documentation>Tipo de contrato O --> Obra / S --> Servicio.</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:enumeration value="O"/>
+				<xs:enumeration value="S"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="FechaOtorgamiento">
+		<xs:annotation>
+			<xs:documentation>Fecha de otorgamiento</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:date"/>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="FechaVencimiento">
+		<xs:annotation>
+			<xs:documentation>Fecha de vencimiento</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:date"/>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Categoria">
+		<xs:annotation>
+			<xs:documentation>Categoría del subgrupo</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:all>
+				<xs:element ref="Valor"/>
+				<xs:element ref="Descripcion"/>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Valor">
+		<xs:annotation>
+			<xs:documentation>Valor.</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="10"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<!-- Lista de habiltaciones -->
+	<xs:element name="Habilitaciones">
+		<xs:annotation>
+			<xs:documentation>Lista de habilitaciones</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="Habilitacion" minOccurs="1" maxOccurs="unbounded"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Habilitacion">
+		<xs:annotation>
+			<xs:documentation>Habilitacion</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:all>
+				<xs:element ref="ID"/>
+				<xs:element ref="Denominacion" minOccurs="0"/>
+				<xs:element ref="TipoNorma" minOccurs="0"/>
+				<xs:element ref="Numero" minOccurs="0"/>
+				<xs:element ref="Anio" minOccurs="0"/>
+				<xs:element ref="Norma" minOccurs="0"/>
+				<xs:element ref="Otorgada" minOccurs="0"/>
+				<xs:element ref="FechaOtorgamiento" minOccurs="0"/>
+				<xs:element ref="FechaVencimiento" minOccurs="0"/>
+				<xs:element ref="Especialidades" minOccurs="0"/>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Denominacion">
+		<xs:annotation>
+			<xs:documentation>Denominacion de la habilitación</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:simpleContent>
+				<xs:restriction base="IdiomaType">
+					<xs:minLength value="1"/>
+					<xs:maxLength value="500"/>
+				</xs:restriction>
+			</xs:simpleContent>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="TipoNorma">
+		<xs:annotation>
+			<xs:documentation>Tipo de la norma de la habilitación</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:pattern value="\d{2}"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Numero">
+		<xs:annotation>
+			<xs:documentation>Número de la norma de la habilitación</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="10"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Anio">
+		<xs:annotation>
+			<xs:documentation>Anio de la norma.</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:gYear"/>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Norma">
+		<xs:annotation>
+			<xs:documentation>Norma de la habilitación</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="1500"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Otorgada">
+		<xs:annotation>
+			<xs:documentation>Indica quien ha otorgado la habilitación</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="250"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Especialidades">
+		<xs:annotation>
+			<xs:documentation>Especialidades de la habilitación</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:simpleContent>
+				<xs:restriction base="IdiomaType">
+					<xs:minLength value="1"/>
+					<xs:maxLength value="1500"/>
+				</xs:restriction>
+			</xs:simpleContent>
+		</xs:complexType>
+	</xs:element>
+	<!-- Lista de situación de obligaciones tributarias -->
+	<xs:element name="ObligacionesTributarias">
+		<xs:annotation>
+			<xs:documentation>Lista de situación de obligaciones tributarias</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="ObligacionTributaria" minOccurs="1" maxOccurs="unbounded"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="ObligacionTributaria">
+		<xs:annotation>
+			<xs:documentation>Datos de la obligacion tributaria</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:all>
+				<xs:element ref="IdReferencia" minOccurs="1"/>
+				<xs:element ref="AutoridadTributaria" minOccurs="1"/>
+				<xs:element ref="CorrientePago" minOccurs="1"/>
+				<xs:element ref="FechaExpedicion" minOccurs="1"/>
+				<xs:element ref="FechaVencimiento" minOccurs="1"/>
+				<xs:element ref="CSV" minOccurs="1"/>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="IdReferencia">
+		<xs:annotation>
+			<xs:documentation>Id de referencia de la obligación tributaria</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="100"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="AutoridadTributaria">
+		<xs:annotation>
+			<xs:documentation>Autoridad tributaria</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="150"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="CorrientePago">
+		<xs:annotation>
+			<xs:documentation>Indicador de si está o no al corriente de pago</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:enumeration value="true"/>
+				<xs:enumeration value="false"/>
+				<xs:enumeration value=""/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="FechaExpedicion">
+		<xs:annotation>
+			<xs:documentation>Fecha de expedición</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:date"/>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="CSV">
+		<xs:annotation>
+			<xs:documentation>Código seguro de verificación</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="100"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<!-- Situación de obligaciones seguridad social -->
+	<xs:element name="CorrientePagoSeguridadSocial">
+		<xs:annotation>
+			<xs:documentation>Datos de la obligacion con seguridad social</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:all>
+				<xs:element ref="IdReferencia" minOccurs="1"/>
+				<xs:element ref="CorrientePago" minOccurs="1"/>
+				<xs:element ref="FechaExpedicion" minOccurs="1"/>
+				<xs:element ref="FechaVencimiento" minOccurs="1"/>
+				<xs:element ref="CSV" minOccurs="1"/>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<!-- Evidencias -->
+	<xs:element name="Evidencias">
+		<xs:annotation>
+			<xs:documentation>Evidencias</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="Evidencia" minOccurs="1" maxOccurs="unbounded"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Evidencia">
+		<xs:annotation>
+			<xs:documentation>Datos de cada evidencia</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:all>
+				<xs:element ref="Documento" minOccurs="0"/>
+				<xs:element ref="Emisor" minOccurs="0"/>
+				<xs:element ref="ID" minOccurs="0"/>
+				<xs:element ref="Referencias"/>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Documento">
+		<xs:annotation>
+			<xs:documentation>Documento de la evidencia.</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="250"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Emisor">
+		<xs:annotation>
+			<xs:documentation>Emisor de la evidencia.</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="150"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="ID">
+		<xs:annotation>
+			<xs:documentation>Id de la referencia.</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="150"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Referencias">
+		<xs:annotation>
+			<xs:documentation>Referencias</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="Referencia" minOccurs="1" maxOccurs="unbounded"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Referencia">
+		<xs:annotation>
+			<xs:documentation>Referencia.</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="150"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<!-- #### -->
+	<xs:element name="CodigoEstado">
+		<xs:annotation>
+			<xs:documentation>Código de estado de la respuesta de la solicitud.</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="5"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="LiteralError">
+		<xs:annotation>
+			<xs:documentation>Literal de estado de la respuesta de la solicitud.</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="1024"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="CodigoEstadoSecundario">
+		<xs:annotation>
+			<xs:documentation>Código secundario de estado de la respuesta de la solicitud.</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="16"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+</xs:schema>

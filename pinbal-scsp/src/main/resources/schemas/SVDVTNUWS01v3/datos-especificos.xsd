@@ -129,7 +129,7 @@
 		</xs:annotation>
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
-				<xs:maxLength value="100"/>
+				<xs:maxLength value="1000"/>
 			</xs:restriction>
 		</xs:simpleType>
 	</xs:element>
@@ -171,7 +171,7 @@
 		</xs:annotation>
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
-				<xs:maxLength value="40"/>
+				<xs:maxLength value="250"/>
 			</xs:restriction>
 		</xs:simpleType>
 	</xs:element>
@@ -343,9 +343,7 @@
 			<xs:documentation>Formato: DD/MM/AAAA</xs:documentation>
 		</xs:annotation>
 		<xs:restriction base="xs:string">
-			<xs:minLength value="10"/>
-			<xs:maxLength value="10"/>
-			<xs:pattern value="([0][1-9]|[1,2][0-9]|[3][0,1])/([0][1-9]|[1][0-2])/[1-2][0-9]{3}"/>
+			<xs:pattern value="((((0[1-9]|1[0-9]|2[0-8])/(0[1-9]|1[012]))|((29|30|31)/(0[13578]|1[02]))|((29|30)/(0[469]|11)))/(19|[2-9][0-9])\d\d)|(29/02/(19|[2-9][0-9])(00|04|08|12|16|20|24|28|32|36|40|44|48|52|56|60|64|68|72|76|80|84|88|92|96))"/>
 		</xs:restriction>
 	</xs:simpleType>
 </xs:schema>

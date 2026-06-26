@@ -2,8 +2,10 @@ package es.caib.pinbal.back.controller;
 
 import es.caib.pinbal.back.base.controller.BaseUtilsController;
 import es.caib.pinbal.back.config.WebSecurityConfig;
+import es.caib.pinbal.back.helper.EntitatHelper;
 import es.caib.pinbal.logic.intf.base.config.BaseConfig;
 import es.caib.pinbal.logic.intf.base.config.PropertyConfig;
+import es.caib.pinbal.logic.intf.base.util.HttpRequestUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.InputStreamResource;
@@ -21,6 +23,8 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 @Slf4j
@@ -86,16 +90,22 @@ public class ReactController extends BaseUtilsController {
 
 	@Override
 	protected String[] getAuthRoles() {
-		return new String[] {
+		List<String> roles = new ArrayList<>(List.of(
 				BaseConfig.ROLE_ADMIN,
 				BaseConfig.ROLE_REPRES,
 				BaseConfig.ROLE_WS,
 				BaseConfig.ROLE_REPORT,
 				BaseConfig.ROLE_COM,
 				BaseConfig.ROLE_AUDIT,
-				BaseConfig.ROLE_SUPERAUDIT,
-				BaseConfig.ROLE_USER,
-		};
+				BaseConfig.ROLE_SUPERAUDIT));
+		// El rol delegat (ROLE_USER = "tothom") el tenen tots els usuaris autenticats, així que només
+		// s'ha d'oferir si l'usuari té el permís de delegat a l'entitat actual (mateixa condició que
+		// RolHelper.getRolsUsuariActual al frontal JSP). El flag de delegat de sessió ja l'ha establert
+		// PinbalInterceptor (EntitatHelper.getEntitats) en aquesta mateixa petició.
+		HttpRequestUtil.getCurrentHttpRequest()
+				.filter(EntitatHelper::isDelegatEntitatActual)
+				.ifPresent(r -> roles.add(BaseConfig.ROLE_USER));
+		return roles.toArray(new String[0]);
 	}
 
 	@Override

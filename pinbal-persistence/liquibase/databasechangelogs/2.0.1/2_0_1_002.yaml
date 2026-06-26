@@ -368,3 +368,24 @@ databaseChangeLog:
           - delete:
               tableName: pbl_config_type
               where: code IN ('SIGNATURA_CLASS', 'CUSTODIA_CLASS')
+
+- changeSet:
+      id: rename-acl-class-procediment-servei
+      author: Limit
+      comment: Actualitza el nom de classe de ProcedimentServei a pbl_acl_class (repaquet core.model -> persist.entity durant migració Spring 3)
+      changes:
+          - update:
+                tableName: pbl_acl_class
+                columns:
+                    - column:
+                          name: class
+                          value: 'es.caib.pinbal.persist.entity.ProcedimentServei'
+                where: class = 'es.caib.pinbal.core.model.ProcedimentServei'
+      rollback:
+          - update:
+                tableName: pbl_acl_class
+                columns:
+                    - column:
+                          name: class
+                          value: 'es.caib.pinbal.core.model.ProcedimentServei'
+                where: class = 'es.caib.pinbal.persist.entity.ProcedimentServei'

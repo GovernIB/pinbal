@@ -11,7 +11,6 @@ import es.caib.pinbal.logic.intf.service.HistoricConsultaService;
 import es.caib.pinbal.logic.intf.service.exception.EntitatNotFoundException;
 import es.caib.pinbal.logic.intf.service.exception.ProcedimentNotFoundException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -42,8 +41,8 @@ public class ExplotacioDadesObertesV2RestController implements ExplotacioDadesOb
 			HttpServletRequest request,
 			@RequestParam(value = "historic", required = false) boolean historic,
 			@RequestParam(required = false) final String entitatCodi,
-			@RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) final Date dataInici,
-			@RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) final Date dataFi,
+			@RequestParam final Date dataInici,
+			@RequestParam(required = false) final Date dataFi,
 			@RequestParam(required = false) final String procedimentCodi,
 			@RequestParam(required = false) final String serveiCodi,
 			@RequestParam(value = "pagina", required = false) Integer pagina,

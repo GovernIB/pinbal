@@ -12,11 +12,6 @@
 		</xs:choice>
 		<xs:attribute name="Id" type="xs:string" use="optional"/>
 	</xs:complexType>
-	<xs:element name="Consulta">
-		<xs:complexType>
-			<xs:all/>
-		</xs:complexType>
-	</xs:element>
 	<xs:element name="Retorno">
 		<xs:complexType>
 			<xs:all>
@@ -30,19 +25,17 @@
 			<xs:all>
 				<xs:element ref="CodigoEstado" minOccurs="0">
 					<xs:annotation>
-						<xs:documentation>Código de estado o error.
-Véase Tabla 1.- Códigos de Retorno del servicio de Verificación de Datos de Residencia   y Tabla 2 Códigos de error SCSP</xs:documentation>
+						<xs:documentation>Código de estado o error</xs:documentation>
 					</xs:annotation>
 				</xs:element>
 				<xs:element ref="CodigoEstadoSecundario" minOccurs="0">
 					<xs:annotation>
-						<xs:documentation>Código de error secundario para incorporar códigos de error internos de los sistemas. </xs:documentation>
+						<xs:documentation>Código de error secundario</xs:documentation>
 					</xs:annotation>
 				</xs:element>
 				<xs:element ref="LiteralError" minOccurs="0">
 					<xs:annotation>
-						<xs:documentation>Descripción de estado de la respuesta.
-Véase Tabla 1.- Códigos de Retorno del servicio de Verificación de Datos de Residencia   y Tabla 2 Códigos de error SCSP</xs:documentation>
+						<xs:documentation>Descripción de estado de la respuesta.</xs:documentation>
 					</xs:annotation>
 				</xs:element>
 			</xs:all>
@@ -447,28 +440,33 @@ Los valores posibles son:
 	</xs:element>
 	<xs:element name="Nacimiento">
 		<xs:complexType>
-			<xs:all>
+			<xs:sequence>
 				<xs:element ref="Fecha" minOccurs="0">
 					<xs:annotation>
 						<xs:documentation>Fecha de Nacimiento del ciudadano. 
 Formato: AAAAMMDD.</xs:documentation>
 					</xs:annotation>
 				</xs:element>
-				<xs:element ref="Provincia" minOccurs="0">
-					<xs:annotation>
-						<xs:documentation>Código de la Provincia en la que nació el ciudadano. Este campo irá codificado con los códigos del INE (2 dígitos). 
+				<xs:choice minOccurs="0">
+				<xs:element name="PaisNacimiento" type="CodigoPais"/>
+				<xs:sequence>
+					<xs:element ref="Provincia">
+						<xs:annotation>
+							<xs:documentation>Código de la Provincia en la que nació el ciudadano. Este campo irá codificado con los códigos del INE (2 dígitos). 
 Si el ciudadano es extranjero, el código de Provincia será el 66.
 https://idapadron.ine.es/ape403expl/inicio.menu</xs:documentation>
-					</xs:annotation>
-				</xs:element>
-				<xs:element ref="Municipio" minOccurs="0">
-					<xs:annotation>
-						<xs:documentation>Código del municipio en el que nació el ciudadano. 
+						</xs:annotation>
+					</xs:element>
+					<xs:element ref="Municipio" minOccurs="0">
+						<xs:annotation>
+							<xs:documentation>Código del municipio en el que nació el ciudadano. 
 Este campo irá codificado con los códigos del INE (3dígitos). Si el ciudadano es extranjero el Municipio irá codificado con el código INE de su  país de nacimiento.
 https://idapadron.ine.es/ape403expl/inicio.menu</xs:documentation>
-					</xs:annotation>
-				</xs:element>
-			</xs:all>
+						</xs:annotation>
+					</xs:element>
+				</xs:sequence>
+				</xs:choice>
+			</xs:sequence>
 		</xs:complexType>
 	</xs:element>
 	<xs:element name="Fecha">
@@ -481,7 +479,7 @@ https://idapadron.ine.es/ape403expl/inicio.menu</xs:documentation>
 	<xs:element name="Residencia">
 		<xs:complexType>
 			<xs:all>
-				<xs:element ref="Provincia" minOccurs="0">
+				<xs:element ref="Provincia">
 					<xs:annotation>
 						<xs:documentation>Código de la Provincia en la que reside el ciudadano. 
 Este campo irá codificado con los códigos del INE (2 dígitos).
@@ -547,4 +545,10 @@ https://idapadron.ine.es/ape403expl/inicio.menu</xs:documentation>
 			</xs:restriction>
 		</xs:simpleType>
 	</xs:element>
+	<xs:simpleType name="CodigoPais">
+		<xs:restriction base="xs:string">
+			<xs:whiteSpace value="collapse"/>
+			<xs:pattern value="\d{3}"/>
+		</xs:restriction>
+	</xs:simpleType>
 </xs:schema>

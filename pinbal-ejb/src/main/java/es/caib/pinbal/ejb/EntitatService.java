@@ -16,6 +16,8 @@ import org.springframework.data.domain.Pageable;
 
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import java.util.List;
 
 /**
@@ -24,6 +26,7 @@ import java.util.List;
  * 
  * @author Limit Tecnologies <limit@limit.es>
  */
+@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
 @Primary
 @Stateless
 public class EntitatService extends AbstractService<es.caib.pinbal.logic.intf.service.EntitatService> implements es.caib.pinbal.logic.intf.service.EntitatService {
@@ -47,6 +50,7 @@ public class EntitatService extends AbstractService<es.caib.pinbal.logic.intf.se
 	}
 
     @Override
+//	@RolesAllowed("**")
 	@RolesAllowed("PBL_WS")
     public List<EntitatInfo> getEntitatsInfo() {
         return getDelegateService().getEntitatsInfo();

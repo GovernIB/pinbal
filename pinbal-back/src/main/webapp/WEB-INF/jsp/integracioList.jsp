@@ -60,7 +60,7 @@ $(document).ready(function() {
 			{
 				targets: [2],
 				orderable: false,
-				render: $.fn.dataTable.render.moment('x', 'DD/MM/YYYY HH:mm:ss', 'es' )
+				render: $.fn.dataTable.render.moment('YYYY-MM-DDTHH:mm:ss.SSSZ', 'DD/MM/YYYY HH:mm:ss', 'es' )
 			},
 			{ 
 	            targets: [3, 4, 5],

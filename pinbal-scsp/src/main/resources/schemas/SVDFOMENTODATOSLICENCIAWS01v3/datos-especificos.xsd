@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns="http://intermediacion.redsara.es/scsp/esquemas/datosespecificos" xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://intermediacion.redsara.es/scsp/esquemas/datosespecificos" elementFormDefault="qualified">
+	<xs:element name="DatosEspecificos" type="DatosEspecificos"/>
+	<xs:complexType name="DatosEspecificos">
+		<xs:choice>
+			<xs:element ref="Consulta">
+				<xs:annotation>
+					<xs:documentation>Solo en el mensaje PETICION</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element ref="Retorno">
+				<xs:annotation>
+					<xs:documentation>Solo en el mensaje RESPUESTA</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:choice>
+		<xs:attribute name="Id" type="xs:string" use="optional"/>
+	</xs:complexType>
+	<!-- Datos de consulta -->
+	<xs:element name="Consulta">
+		<xs:complexType>
+			<xs:all>
+				<xs:element ref="Numero"/>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<!-- Datos de retorno -->
+	<xs:element name="Retorno">
+		<xs:complexType>
+			<xs:all>
+				<xs:element ref="Estado"/>
+				<xs:element ref="LicenciaInternacional" minOccurs="0"/>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<!-- Datos Estado -->
+	<xs:element name="Estado">
+		<xs:annotation>
+			<xs:documentation>Estado de la transmisión</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:all>
+				<xs:element ref="CodigoEstado"/>
+				<xs:element ref="CodigoEstadoSecundario" minOccurs="0"/>
+				<xs:element ref="LiteralError"/>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="CodigoEstado">
+		<xs:annotation>
+			<xs:documentation>Código de Estado de la transmisión</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="4"/>
+				<xs:whiteSpace value="collapse"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="CodigoEstadoSecundario">
+		<xs:annotation>
+			<xs:documentation>Código de estado secundario de la transmisión</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="16"/>
+				<xs:whiteSpace value="collapse"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="LiteralError">
+		<xs:annotation>
+			<xs:documentation>Literal del estado de la transmisión</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="5"/>
+				<xs:maxLength value="1024"/>
+				<xs:whiteSpace value="collapse"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<!-- Datos adicionales titular -->
+	<xs:element name="Titular">
+		<xs:annotation>
+			<xs:documentation>Datos adicionales del titular de la licencia de transporte</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:all>
+				<xs:element ref="Telefono" minOccurs="0"/>
+				<xs:element ref="Email" minOccurs="0"/>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Telefono">
+		<xs:annotation>
+			<xs:documentation>Teléfono del titular</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:whiteSpace value="collapse"/>
+				<xs:pattern value="(\+)?[0-9]{1,12}"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Email">
+		<xs:annotation>
+			<xs:documentation>Email del titular</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:whiteSpace value="collapse"/>
+				<xs:pattern value="[^@]+@[^\.]+\..+"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="LicenciaInternacional">
+		<xs:annotation>
+			<xs:documentation>Datos de la licencia comunitaria consultada</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:all>
+				<xs:element ref="Numero"/>
+				<xs:element ref="TipoLicencia">
+					<xs:annotation>
+						<xs:documentation>Tipo de licencia comunitaria: VIAJEROS o MERCANCÍAS</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element ref="NumeroCopias"/>
+				<xs:element ref="FechaOtorgamiento">
+					<xs:annotation>
+						<xs:documentation>Fecha de otorgamiento de la licencia comunitaria. Formato: AAAA-MM-DD</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element ref="FechaValidez">
+					<xs:annotation>
+						<xs:documentation>Fecha de validez de la licencia comunitaria. Formato: AAAA-MM-DD</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element ref="Titular" minOccurs="0"/>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Numero">
+		<xs:annotation>
+			<xs:documentation>Número de licencia comunitaria</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="15"/>
+				<xs:whiteSpace value="collapse"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="TipoLicencia">
+		<xs:annotation>
+			<xs:documentation>Tipo de licencia comunitaria</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="Codigo">
+					<xs:annotation>
+						<xs:documentation>Código del tipo de licencia comunitaria</xs:documentation>
+					</xs:annotation>
+					<xs:simpleType>
+						<xs:restriction base="xs:string">
+							<xs:enumeration value="1"/>
+							<xs:enumeration value="2"/>
+						</xs:restriction>
+					</xs:simpleType>
+				</xs:element>
+				<xs:element name="Denominacion">
+					<xs:annotation>
+						<xs:documentation>Denominación del tipo de licencia comunitaria</xs:documentation>
+					</xs:annotation>
+					<xs:simpleType>
+						<xs:restriction base="xs:string">
+							<xs:minLength value="1"/>
+							<xs:maxLength value="50"/>
+							<xs:whiteSpace value="collapse"/>
+						</xs:restriction>
+					</xs:simpleType>
+				</xs:element>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="NumeroCopias">
+		<xs:annotation>
+			<xs:documentation>Número de copias de la licencia comunitaria</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:int">
+				<xs:totalDigits value="5"/>
+				<xs:minInclusive value="1"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="FechaOtorgamiento" type="xs:date">
+		<xs:annotation>
+			<xs:documentation>Fecha de otorgamiento de la licencia</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="FechaValidez" type="xs:date">
+		<xs:annotation>
+			<xs:documentation>Fecha de válidez de la licencia</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+</xs:schema>

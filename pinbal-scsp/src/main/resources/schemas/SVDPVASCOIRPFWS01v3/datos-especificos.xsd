@@ -1,0 +1,480 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns="http://intermediacion.redsara.es/scsp/esquemas/datosespecificos" xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://intermediacion.redsara.es/scsp/esquemas/datosespecificos" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<xs:element name="DatosEspecificos" type="DatosEspecificos"/>
+	<xs:complexType name="DatosEspecificos">
+		<xs:choice>
+			<xs:element ref="Consulta">
+				<xs:annotation>
+					<xs:documentation>Solo en el mensaje de PETICION</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element ref="Retorno">
+				<xs:annotation>
+					<xs:documentation>Solo en el mensaje RESPUESTA</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:choice>
+		<xs:attribute name="Id" type="xs:string" use="optional"/>
+	</xs:complexType>
+	<xs:element name="Consulta">
+		<xs:complexType>
+			<xs:all>
+				<xs:element ref="CodigoProvincia"/>
+				<xs:element ref="Ejercicio"/>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Retorno">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="Estado"/>
+				<xs:element ref="DatosConsulta"/>
+				<xs:element ref="PresentaIRPF" minOccurs="0"/>
+				<xs:choice>
+					<xs:element ref="IRPFS" minOccurs="0"/>
+					<xs:element ref="IRPFN" minOccurs="0"/>
+				</xs:choice>
+				<xs:element ref="DatosHacienda" minOccurs="0"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="DatosConsulta">
+		<xs:complexType>
+			<xs:all>
+				<xs:element ref="CodigoProvincia"/>
+				<xs:element ref="Ejercicio"/>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Ejercicio">
+		<xs:annotation>
+			<xs:documentation>Año de consulta Formato: AAAA</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:gYear">
+				<xs:pattern value="\d{4}"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="CodigoProvincia">
+		<xs:annotation>
+			<xs:documentation>Código de provincia a consultar
+			.- 01 - Álava
+			.- 20 - Guipúzcoa
+			.- 48 - Vizcaya</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:enumeration value="01"/>
+				<xs:enumeration value="20"/>
+				<xs:enumeration value="48"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Estado">
+		<xs:complexType>
+			<xs:all>
+				<xs:element ref="CodigoEstado">
+					<xs:annotation>
+						<xs:documentation>
+Codigo de respuesta del servicio
+					</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element ref="CodigoEstadoSecundario" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>
+Contine un código más específico, que en caso de error puede aportar informacion necesaria para resolver la incidencia.
+					</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element ref="LiteralError">
+					<xs:annotation>
+						<xs:documentation>
+Descripción de la Respuesta, en función del valor del campo CodigoEstado.
+					</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="PresentaIRPF">
+		<xs:annotation>
+			<xs:documentation>Indica si ha presentado el IRPF
+			.- S - Si ha presentado la declaración de IRPF 
+			.- N - No ha presentado la declaración de IRPF</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:enumeration value="S"/>
+				<xs:enumeration value="N"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="IRPFS">
+		<xs:annotation>
+			<xs:documentation>Datos del IRPFF cuando se ha presentado</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:all>
+				<xs:element ref="TipoDeclaracion"/>
+				<xs:element ref="Discapacidad"/>
+				<xs:element name="RendimientosTrabajo" type="RendimientosTrabajoIrpfS" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>Rendimientos de trabajo</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="RendimientosCapitalMobiliario" type="RendimientosCapitalMobiliarioIrpfS" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>Rendimientos del capital mobiliario</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="RendimientosCapitalInmobiliario" type="RendimientosCapitalInmobiliarioIrpfS" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>Rendimientos del capital inmobiliario</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="RendimientosActividadesEconomicas" type="RendimientosActividadesEconomicasIrpfS" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>Rendimientos de las actividades económicas</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element ref="GananciasPatrimoniales" minOccurs="0"/>
+				<xs:element ref="BaseImponible" minOccurs="0"/>
+				<xs:element ref="Deducciones" minOccurs="0"/>
+				<xs:element ref="CuotaLiquida" minOccurs="0"/>
+				<xs:element ref="UnidadFamiliar" minOccurs="0"/>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="IRPFN">
+		<xs:annotation>
+			<xs:documentation>Datos del IRPFF cuando NO se ha presentado, son datos que figuran en la Hacienda Foral</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:all>
+				<xs:element name="RendimientosTrabajo" type="RendimientosTrabajoIrpfN" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>Rendimientos de trabajo</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="RendimientosCapitalMobiliario" type="RendimientosCapitalMobiliarioIrpfN" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>Rendimientos del capital mobiliario</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="RendimientosCapitalInmobiliario" type="RendimientosCapitalInmobiliarioIrpfN" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>Rendimientos del capital inmobiliario</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element ref="GananciasPatrimoniales" minOccurs="0"/>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="TipoDeclaracion">
+		<xs:annotation>
+			<xs:documentation>Tipología de declaración realizada
+			.- I - Individual
+			.- C - Conjunta</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:enumeration value="I"/>
+				<xs:enumeration value="C"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Discapacidad">
+		<xs:annotation>
+			<xs:documentation>Discapacidad o dependencia
+			.- S - El titular SI desgrava por discapacidad
+			.- N - El titular NO desgrava por discapacidad</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:enumeration value="S"/>
+				<xs:enumeration value="N"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:complexType name="RendimientosTrabajoIrpfS">
+		<xs:all>
+			<xs:element ref="Rendimientos" minOccurs="0"/>
+			<xs:element ref="GastosDeducibles" minOccurs="0"/>
+			<xs:element ref="Retenciones" minOccurs="0"/>
+		</xs:all>
+	</xs:complexType>
+	<xs:complexType name="RendimientosTrabajoIrpfN">
+		<xs:all>
+			<xs:element ref="Rendimientos" minOccurs="0"/>
+			<xs:element ref="Retenciones" minOccurs="0"/>
+		</xs:all>
+	</xs:complexType>
+	<xs:complexType name="RendimientosCapitalMobiliarioIrpfS">
+		<xs:annotation>
+			<xs:documentation>Solo en el mensaje RESPUESTA</xs:documentation>
+		</xs:annotation>
+		<xs:all>
+			<xs:element ref="Rendimientos" minOccurs="0"/>
+			<xs:element ref="GastosDeducibles" minOccurs="0"/>
+			<xs:element ref="Retenciones" minOccurs="0"/>
+		</xs:all>
+	</xs:complexType>
+	<xs:complexType name="RendimientosCapitalMobiliarioIrpfN">
+		<xs:all>
+			<xs:element ref="Rendimientos" minOccurs="0"/>
+			<xs:element ref="Retenciones" minOccurs="0"/>
+		</xs:all>
+	</xs:complexType>
+	<xs:complexType name="RendimientosCapitalInmobiliarioIrpfS">
+		<xs:all>
+			<xs:element ref="Rendimientos" minOccurs="0"/>
+			<xs:element ref="GastosDeducibles" minOccurs="0"/>
+			<xs:element ref="Retenciones" minOccurs="0"/>
+		</xs:all>
+	</xs:complexType>
+	<xs:complexType name="RendimientosCapitalInmobiliarioIrpfN">
+		<xs:all>
+			<xs:element ref="Rendimientos" minOccurs="0"/>
+			<xs:element ref="Retenciones" minOccurs="0"/>
+		</xs:all>
+	</xs:complexType>
+	<xs:complexType name="RendimientosActividadesEconomicasIrpfS">
+		<xs:all>
+			<xs:element ref="Rendimientos" minOccurs="0"/>
+			<xs:element ref="GastosDeducibles" minOccurs="0"/>
+			<xs:element ref="Retenciones" minOccurs="0"/>
+		</xs:all>
+	</xs:complexType>
+	<xs:complexType name="RendimientosActividadesEconomicasIrpfN">
+		<xs:all>
+			<xs:element ref="Rendimientos" minOccurs="0"/>
+			<xs:element ref="Retenciones" minOccurs="0"/>
+		</xs:all>
+	</xs:complexType>
+	<xs:element name="BaseImponible">
+		<xs:annotation>
+			<xs:documentation>Datos de la base imponible</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:all>
+				<xs:element ref="General" minOccurs="0"/>
+				<xs:element ref="Ahorro" minOccurs="0"/>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Deducciones">
+		<xs:annotation>
+			<xs:documentation>Datos de las deducciones</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:all>
+				<xs:element ref="Hijos" minOccurs="0"/>
+				<xs:element ref="Vivienda"/>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="UnidadFamiliar">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="Miembro" maxOccurs="unbounded"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Miembro">
+		<xs:complexType>
+			<xs:all>
+				<xs:element ref="TipoDocumentacion" minOccurs="0"/>
+				<xs:element ref="Documentacion" minOccurs="0"/>
+				<xs:element ref="Nombre"/>
+				<xs:element ref="Apellido1"/>
+				<xs:element ref="Apellido2" minOccurs="0"/>
+				<xs:element ref="RelacionDeclarante"/>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="TipoDocumentacion">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:enumeration value="DNI"/>
+				<xs:enumeration value="NIE"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Documentacion">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="9"/>
+				<xs:whiteSpace value="collapse"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Nombre">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="50"/>
+				<xs:whiteSpace value="collapse"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Apellido1">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="50"/>
+				<xs:whiteSpace value="collapse"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Apellido2">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="50"/>
+				<xs:whiteSpace value="collapse"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="RelacionDeclarante">
+		<xs:annotation>
+			<xs:documentation>Relación con el declarante - Valores posibles: 
+‘C’    -  Cónyuge.
+‘H’    -  Hijo/a.
+‘D’    -  Otros descendientes.
+‘A’    -  Ascendientes.</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:enumeration value="C"/>
+				<xs:enumeration value="H"/>
+				<xs:enumeration value="D"/>
+				<xs:enumeration value="A"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Rendimientos" type="Importe">
+		<xs:annotation>
+			<xs:documentation>Rendimientos brutos</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="GastosDeducibles" type="Importe">
+		<xs:annotation>
+			<xs:documentation>Gastos deducibles</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="Retenciones" type="Importe">
+		<xs:annotation>
+			<xs:documentation>Retenciones</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="GananciasPatrimoniales" type="Importe">
+		<xs:annotation>
+			<xs:documentation>Gananacias patromoniales</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="CuotaLiquida" type="Importe">
+		<xs:annotation>
+			<xs:documentation>Cuota líquida</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="General" type="Importe">
+		<xs:annotation>
+			<xs:documentation>Base imponible general</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="Ahorro" type="Importe">
+		<xs:annotation>
+			<xs:documentation>Base imponible del ahorro</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="Vivienda">
+		<xs:annotation>
+			<xs:documentation>Indica si el ciudadano se deduce por vivienda
+			.- S - Si se deduce por vivienda habitual
+			.- N - No se deduce por vivienda habitual</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:enumeration value="S"/>
+				<xs:enumeration value="N"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Hijos">
+		<xs:annotation>
+			<xs:documentation>Indica el número de hijos por los que se deduce el titular
+			.- S - Si se deduce por vivienda habitual
+			.- N - No se deduce por vivienda habitual</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:int">
+				<xs:minInclusive value="0"/>
+				<xs:maxInclusive value="99"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="DatosHacienda">
+		<xs:annotation>
+			<xs:documentation>Datos complmentarios de hacienda</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:all>
+				<xs:element ref="AltaIAE"/>
+				<xs:element ref="RentasExentas" minOccurs="0"/>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="AltaIAE">
+		<xs:annotation>
+			<xs:documentation>Indica si el ciudadano consultado está dado de alta en el IAE
+			.- S - Si está dado de alta en el IAE
+			.- N - No está dado de alta en el IAE</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:enumeration value="S"/>
+				<xs:enumeration value="N"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="RentasExentas" type="Importe">
+		<xs:annotation>
+			<xs:documentation>Total Rentas exentas</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:simpleType name="Importe">
+		<xs:annotation>
+			<xs:documentation>Formato S9(8)v99 (centieuros con signo) en caso de que haya información</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:long">
+			<xs:minInclusive value="-9999999999999"/>
+			<xs:maxInclusive value="999999999999999"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:element name="CodigoEstado">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:maxLength value="4"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="CodigoEstadoSecundario">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:maxLength value="16"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="LiteralError">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="1024"/>
+				<xs:whiteSpace value="collapse"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+</xs:schema>

@@ -9,7 +9,7 @@
 	<artifactId>pinbal-scsp</artifactId>
 	<properties>
 		<axis2.version>1.6.4</axis2.version>
-		<axiom.version>1.2.15</axiom.version>
+		<axiom.version>1.4.0</axiom.version>
 		<rampart.version>1.6.4</rampart.version>
 		<scsp.rampart.core.version>1.6.4.1</scsp.rampart.core.version>
 		<xmlschema.version>2.2.3</xmlschema.version>
@@ -288,6 +288,10 @@
 			<groupId>jakarta.xml.bind</groupId>
 			<artifactId>jakarta.xml.bind-api</artifactId>
 			<version>${jakarta.xml.bind-api.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.glassfish.jaxb</groupId>
+			<artifactId>jaxb-runtime</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.slf4j</groupId>

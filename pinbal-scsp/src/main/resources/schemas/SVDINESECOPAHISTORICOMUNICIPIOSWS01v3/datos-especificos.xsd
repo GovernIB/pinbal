@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://intermediacion.redsara.es/scsp/esquemas/datosespecificos" targetNamespace="http://intermediacion.redsara.es/scsp/esquemas/datosespecificos" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<xs:element name="DatosEspecificos" type="DatosEspecificos">
+		<xs:annotation>
+			<xs:documentation>Datos Especificos de Histórico de residencia</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:complexType name="DatosEspecificos">
+		<xs:choice>
+			<xs:element ref="Consulta"/>
+			<xs:element ref="Retorno"/>
+		</xs:choice>
+		<xs:attribute name="Id" type="xs:string" use="optional"/>
+	</xs:complexType>
+	<!-- Consulta -->
+	<xs:element name="Consulta">
+		<xs:complexType>
+			<xs:all>
+				<xs:element name="FechaHasta" type="Fecha" minOccurs="0"/>
+				<xs:element ref="Residencia" minOccurs="0"/>
+				<xs:element ref="Nacimiento" minOccurs="0"/>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<!-- Retorno -->
+	<xs:element name="Retorno">
+		<xs:complexType>
+			<xs:all>
+				<xs:element ref="Estado"/>
+				<xs:element ref="Municipios" minOccurs="0"/>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Estado">
+		<xs:annotation>
+			<xs:documentation>Estado de la respuesta.</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:all>
+				<xs:element ref="CodigoEstado"/>
+				<xs:element ref="LiteralError"/>
+				<xs:element ref="CodigoEstadoSecundario" minOccurs="0"/>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="CodigoEstado">
+		<xs:annotation>
+			<xs:documentation>Código de estado de la respuesta de la solicitud.</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="5"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="LiteralError">
+		<xs:annotation>
+			<xs:documentation>Literal de estado de la respuesta de la solicitud.</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="1024"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="CodigoEstadoSecundario">
+		<xs:annotation>
+			<xs:documentation>Código secundario de estado de la respuesta de la solicitud.</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="16"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Municipios">
+		<xs:annotation>
+			<xs:documentation>Lista de municipios en los que ha residido el titular consultado </xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="Municipio" maxOccurs="unbounded">
+					<xs:annotation>
+						<xs:documentation>Datos del municipio de residencia.</xs:documentation>
+					</xs:annotation>
+					<xs:complexType>
+						<xs:all>
+							<xs:element ref="Provincia"/>
+							<xs:element ref="Municipio"/>
+							<xs:element name="FechaDesde" type="Fecha"/>
+							<xs:element name="FechaHasta" type="Fecha" minOccurs="0"/>
+						</xs:all>
+					</xs:complexType>
+				</xs:element>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Nacimiento">
+		<xs:annotation>
+			<xs:documentation>Datos de nacimiento del titular consultado.</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="Fecha" type="Fecha" minOccurs="0"/>
+				<xs:choice minOccurs="0">
+					<xs:sequence>
+						<xs:element name="Provincia" type="CodigoProvincia"/>
+						<xs:element name="Municipio" type="CodigoMunicipio" minOccurs="0"/>
+					</xs:sequence>
+					<xs:element name="Pais" type="CodigoMunicipio"/>
+				</xs:choice>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Residencia">
+		<xs:annotation>
+			<xs:documentation>Datos de residecnia del titular consultado.</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:all>
+				<xs:element name="Provincia" type="CodigoProvincia"/>
+				<xs:element name="Municipio" type="CodigoMunicipio" minOccurs="0"/>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Provincia">
+		<xs:complexType>
+			<xs:all>
+				<xs:element name="Codigo" type="CodigoProvincia"/>
+				<xs:element name="Nombre" type="NombreProvincia" minOccurs="0"/>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Municipio">
+		<xs:complexType>
+			<xs:all>
+				<xs:element name="Codigo" type="CodigoMunicipio"/>
+				<xs:element name="Nombre" type="NombreMunicipio" minOccurs="0"/>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:simpleType name="CodigoProvincia">
+		<xs:restriction base="xs:string">
+			<xs:pattern value="\d{2}"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="NombreProvincia">
+		<xs:restriction base="xs:string">
+			<xs:minLength value="1"/>
+			<xs:maxLength value="30"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="CodigoMunicipio">
+		<xs:restriction base="xs:string">
+			<xs:pattern value="\d{3}"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="NombreMunicipio">
+		<xs:restriction base="xs:string">
+			<xs:minLength value="1"/>
+			<xs:maxLength value="70"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="Fecha">
+		<xs:restriction base="xs:date"/>
+	</xs:simpleType>
+</xs:schema>

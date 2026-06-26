@@ -11,6 +11,7 @@ import es.caib.pinbal.logic.intf.service.AplicacioService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -44,7 +45,7 @@ public class CacheController extends BaseController {
 		ServerSideRequest serverSideRequest = new ServerSideRequest(request);
 
 		PaginaDto<CacheDto> allCaches = aplicacioService.getAllCaches();
-		Page<CacheDto> page = new PageImpl<CacheDto>(allCaches.getContingut(), null, allCaches.getContingut().size());
+		Page<CacheDto> page = new PageImpl<CacheDto>(allCaches.getContingut(), Pageable.unpaged(), allCaches.getContingut().size());
 		return new ServerSideResponse<>(serverSideRequest, page);
 	}
 	

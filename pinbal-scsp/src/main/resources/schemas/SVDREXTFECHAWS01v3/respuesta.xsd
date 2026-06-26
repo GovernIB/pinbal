@@ -4,14 +4,18 @@
 	<xs:element name="Apellido1">
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
-				<xs:maxLength value="40"/> 
+				<xs:minLength value="1"/>
+				<xs:maxLength value="50"/>
+				<xs:whiteSpace value="collapse"/>
 			</xs:restriction>
 		</xs:simpleType>
 	</xs:element>
 	<xs:element name="Apellido2">
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
-				<xs:maxLength value="40"/>
+				<xs:minLength value="1"/>
+				<xs:maxLength value="50"/>
+				<xs:whiteSpace value="collapse"/>
 			</xs:restriction>
 		</xs:simpleType>
 	</xs:element>
@@ -21,7 +25,7 @@
 				<xs:element ref="IdPeticion"/>
 				<xs:element ref="NumElementos"/>
 				<xs:element ref="TimeStamp"/>
-				<xs:element ref="Estado" minOccurs="0"/>
+				<xs:element ref="Estado"/>
 				<xs:element ref="CodigoCertificado"/>
 			</xs:all>
 		</xs:complexType>
@@ -36,14 +40,16 @@
 	<xs:element name="CodigoEstado">
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
-				<xs:maxLength value="4"/>
+				<xs:length value="4"/>
 			</xs:restriction>
 		</xs:simpleType>
 	</xs:element>
 	<xs:element name="CodigoEstadoSecundario">
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
 				<xs:maxLength value="16"/>
+				<xs:whiteSpace value="collapse"/>
 			</xs:restriction>
 		</xs:simpleType>
 	</xs:element>
@@ -51,6 +57,7 @@
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
 				<xs:enumeration value="Si"/>
+				<xs:enumeration value="NoOpo"/>
 				<xs:enumeration value="Ley"/>
 			</xs:restriction>
 		</xs:simpleType>
@@ -84,9 +91,9 @@
 	<xs:element name="Estado">
 		<xs:complexType>
 			<xs:all>
-				<xs:element ref="CodigoEstado" minOccurs="0"/>
+				<xs:element ref="CodigoEstado"/>
 				<xs:element ref="CodigoEstadoSecundario" minOccurs="0"/>
-				<xs:element ref="LiteralError" minOccurs="0"/>
+				<xs:element ref="LiteralError"/>
 				<xs:element ref="TiempoEstimadoRespuesta" minOccurs="0"/>
 			</xs:all>
 		</xs:complexType>
@@ -94,8 +101,8 @@
 	<xs:element name="FechaGeneracion">
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
+				<xs:minLength value="10"/>
 				<xs:maxLength value="29"/>
-				<xs:minLength value="1"/>
 				<xs:whiteSpace value="collapse"/>
 			</xs:restriction>
 		</xs:simpleType>
@@ -103,8 +110,8 @@
 	<xs:element name="Finalidad">
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
-				<xs:maxLength value="250"/>
 				<xs:minLength value="1"/>
+				<xs:maxLength value="250"/>
 				<xs:whiteSpace value="collapse"/>
 			</xs:restriction>
 		</xs:simpleType>
@@ -112,33 +119,78 @@
 	<xs:element name="UnidadTramitadora">
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
-				<xs:maxLength value="250"/>
 				<xs:minLength value="1"/>
+				<xs:maxLength value="250"/>
+				<xs:whiteSpace value="collapse"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="CodigoUnidadTramitadora">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:pattern value="([AUIJO][0-9]|CC|G[EA]|E([AC]|[0-9])|L(A|[0-9]))[0-9]{7}"/>
 			</xs:restriction>
 		</xs:simpleType>
 	</xs:element>
 	<xs:element name="CodProcedimiento">
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
+				<xs:minLength value="3"/>
 				<xs:maxLength value="20"/>
-				<xs:minLength value="1"/>
+				<xs:whiteSpace value="collapse"/>
 			</xs:restriction>
 		</xs:simpleType>
 	</xs:element>
 	<xs:element name="NombreProcedimiento">
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
-				<xs:maxLength value="100"/>
 				<xs:minLength value="1"/>
+				<xs:maxLength value="100"/>
 				<xs:whiteSpace value="collapse"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Automatizado">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:enumeration value="S"/>
+				<xs:enumeration value="N"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="ClaseTramite">
+		<xs:simpleType>
+			<xs:restriction base="xs:int">
+				<xs:enumeration value="0"/>
+				<xs:enumeration value="2"/>
+				<xs:enumeration value="3"/>
+				<xs:enumeration value="14"/>
+				<xs:enumeration value="19"/>
+				<xs:enumeration value="20"/>
+				<xs:enumeration value="21"/>
+				<xs:enumeration value="22"/>
+				<xs:enumeration value="23"/>
+				<xs:enumeration value="24"/>
+				<xs:enumeration value="25"/>
+				<xs:enumeration value="26"/>
+				<xs:enumeration value="27"/>
+				<xs:enumeration value="28"/>
+				<xs:enumeration value="29"/>
+				<xs:enumeration value="30"/>
+				<xs:enumeration value="31"/>
+				<xs:enumeration value="32"/>
+				<xs:enumeration value="33"/>
+				<xs:enumeration value="34"/>
+				<xs:enumeration value="99"/>
 			</xs:restriction>
 		</xs:simpleType>
 	</xs:element>
 	<xs:element name="IdExpediente">
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
-				<xs:maxLength value="25"/>
 				<xs:minLength value="1"/>
+				<xs:maxLength value="65"/>
+				<xs:whiteSpace value="collapse"/>
 			</xs:restriction>
 		</xs:simpleType>
 	</xs:element>
@@ -153,17 +205,16 @@
 	<xs:element name="Procedimiento">
 		<xs:complexType>
 			<xs:sequence>
-				<xs:element ref="CodProcedimiento" minOccurs="0"/>
-				<xs:element ref="NombreProcedimiento" minOccurs="0"/>
+				<xs:element ref="CodProcedimiento"/>
+				<xs:element ref="NombreProcedimiento"/>
+				<xs:element ref="Automatizado" minOccurs="0"/>
+				<xs:element ref="ClaseTramite" minOccurs="0"/>
 			</xs:sequence>
 		</xs:complexType>
 	</xs:element>
 	<xs:element name="IdentificadorSolicitante">
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
-				<xs:minLength value="1"/>
-				<xs:whiteSpace value="collapse"/>
-				<xs:maxLength value="10"/>
 				<xs:pattern value="[A-Za-z][0-9]{7}[0-9A-Za-z]"/>
 			</xs:restriction>
 		</xs:simpleType>
@@ -171,8 +222,8 @@
 	<xs:element name="IdPeticion">
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
-				<xs:maxLength value="26"/>
 				<xs:minLength value="1"/>
+				<xs:maxLength value="26"/>
 				<xs:whiteSpace value="collapse"/>
 			</xs:restriction>
 		</xs:simpleType>
@@ -180,8 +231,8 @@
 	<xs:element name="IdSolicitud">
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
-				<xs:maxLength value="40"/>
 				<xs:minLength value="1"/>
+				<xs:maxLength value="40"/>
 				<xs:whiteSpace value="collapse"/>
 			</xs:restriction>
 		</xs:simpleType>
@@ -189,8 +240,8 @@
 	<xs:element name="IdTransmision">
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
-				<xs:maxLength value="29"/>
 				<xs:minLength value="1"/>
+				<xs:maxLength value="29"/>
 				<xs:whiteSpace value="collapse"/>
 			</xs:restriction>
 		</xs:simpleType>
@@ -198,7 +249,9 @@
 	<xs:element name="LiteralError">
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
-				<xs:maxLength value="255"/>
+				<xs:minLength value="1"/>
+				<xs:maxLength value="1024"/>
+				<xs:whiteSpace value="collapse"/>
 			</xs:restriction>
 		</xs:simpleType>
 	</xs:element>
@@ -213,41 +266,42 @@
 	<xs:element name="NifFuncionario">
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
-				<xs:minLength value="1"/>
-				<xs:maxLength value="9"/>
-				<xs:whiteSpace value="collapse"/>
-				<xs:pattern value="((([XxYyZz])[0-9]{7}([a-z]|[A-Z]))|([0-9]{8}([a-z]|[A-Z])))"/>
+				<xs:pattern value="(([XxYyZz])[0-9]{7}([a-z]|[A-Z]))|([0-9]{8}([a-z]|[A-Z]))"/>
 			</xs:restriction>
 		</xs:simpleType>
 	</xs:element>
 	<xs:element name="Nombre">
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
-				<xs:maxLength value="40"/>
+				<xs:minLength value="1"/>
+				<xs:maxLength value="50"/>
+				<xs:whiteSpace value="collapse"/>
 			</xs:restriction>
 		</xs:simpleType>
 	</xs:element>
 	<xs:element name="NombreCompleto">
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
-				<xs:maxLength value="122"/>
+				<xs:minLength value="1"/>
+				<xs:maxLength value="160"/>
+				<xs:whiteSpace value="collapse"/>
 			</xs:restriction>
 		</xs:simpleType>
 	</xs:element>
 	<xs:element name="NombreCompletoFuncionario">
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
-				<xs:maxLength value="122"/>
-				<xs:whiteSpace value="collapse"/>
 				<xs:minLength value="1"/>
+				<xs:maxLength value="160"/>
+				<xs:whiteSpace value="collapse"/>
 			</xs:restriction>
 		</xs:simpleType>
 	</xs:element>
 	<xs:element name="NombreEmisor">
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
-				<xs:maxLength value="50"/>
 				<xs:minLength value="1"/>
+				<xs:maxLength value="50"/>
 				<xs:whiteSpace value="collapse"/>
 			</xs:restriction>
 		</xs:simpleType>
@@ -255,8 +309,8 @@
 	<xs:element name="NombreSolicitante">
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
-				<xs:maxLength value="50"/>
 				<xs:minLength value="1"/>
+				<xs:maxLength value="50"/>
 				<xs:whiteSpace value="collapse"/>
 			</xs:restriction>
 		</xs:simpleType>
@@ -275,7 +329,6 @@
 			<xs:sequence>
 				<xs:element ref="Atributos"/>
 				<xs:element ref="Transmisiones" minOccurs="0"/>
-				<!-- Las transmisiones son opcionales en caso de que la repuesta no este preparada y se devuelva un TER -->
 			</xs:sequence>
 		</xs:complexType>
 	</xs:element>
@@ -285,7 +338,8 @@
 				<xs:element ref="IdentificadorSolicitante"/>
 				<xs:element ref="NombreSolicitante"/>
 				<xs:element ref="UnidadTramitadora" minOccurs="0"/>
-				<xs:element ref="Procedimiento" minOccurs="0"/>
+				<xs:element ref="CodigoUnidadTramitadora" minOccurs="0"/>
+				<xs:element ref="Procedimiento"/>
 				<xs:element ref="Finalidad"/>
 				<xs:element ref="Consentimiento"/>
 				<xs:element ref="Funcionario"/>
@@ -350,10 +404,6 @@
 			</xs:all>
 		</xs:complexType>
 	</xs:element>
-	<!-- 
-  Las transmisiones son opcionales en caso de devolver en la respuesta un nuevo TER.
-  
-  -->
 	<xs:element name="Transmisiones" nillable="false">
 		<xs:complexType>
 			<xs:sequence>

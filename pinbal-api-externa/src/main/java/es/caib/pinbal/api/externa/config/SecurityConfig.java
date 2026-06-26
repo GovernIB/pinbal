@@ -79,7 +79,9 @@ public class SecurityConfig {
         return http
                 .cors(withDefaults())
                 .csrf(AbstractHttpConfigurer::disable)
-                .addFilterBefore(preAuthenticatedProcessingFilter(), BasicAuthenticationFilter.class)
+                .addFilterBefore(
+                        preAuthenticatedProcessingFilter(),
+                        BasicAuthenticationFilter.class)
                 .authenticationProvider(preauthAuthProvider())
                 .logout(lo -> lo.addLogoutHandler(getLogoutHandler())
                         .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))

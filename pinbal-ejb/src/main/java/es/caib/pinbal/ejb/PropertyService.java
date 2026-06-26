@@ -6,6 +6,8 @@ package es.caib.pinbal.ejb;
 import org.springframework.context.annotation.Primary;
 
 import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 
 /**
  * Implementació de PropertyService que empra una clase delegada per accedir a la
@@ -13,6 +15,7 @@ import javax.ejb.Stateless;
  * 
  * @author Limit Tecnologies <limit@limit.es>
  */
+@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
 @Primary
 @Stateless
 public class PropertyService extends AbstractService<es.caib.pinbal.logic.intf.service.PropertyService> implements es.caib.pinbal.logic.intf.service.PropertyService {

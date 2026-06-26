@@ -2,15 +2,22 @@ package es.caib.pinbal.logic.resourceservice;
 
 import es.caib.pinbal.logic.base.helper.AuthenticationHelper;
 import es.caib.pinbal.logic.base.service.BaseNoDatabaseReadonlyResourceService;
+import es.caib.pinbal.logic.base.service.BaseReadonlyResourceService.ReportGenerator;
 import es.caib.pinbal.logic.intf.base.config.BaseConfig;
+import es.caib.pinbal.logic.intf.base.exception.AnswerRequiredException;
+import es.caib.pinbal.logic.intf.base.exception.ReportGenerationException;
 import es.caib.pinbal.logic.intf.base.exception.ResourceNotFoundException;
+import es.caib.pinbal.logic.intf.base.model.DownloadableFile;
+import es.caib.pinbal.logic.intf.base.model.ReportFileType;
 import es.caib.pinbal.logic.intf.base.model.ResourceReference;
 import es.caib.pinbal.logic.intf.dto.ConsultaDto;
 import es.caib.pinbal.logic.intf.dto.ConsultaFiltreDto;
+import es.caib.pinbal.logic.intf.dto.JustificantDto;
 import es.caib.pinbal.logic.intf.model.ConsultaResource;
 import es.caib.pinbal.logic.intf.model.EntitatResource;
 import es.caib.pinbal.logic.intf.resourceservice.ConsultaResourceService;
 import es.caib.pinbal.logic.intf.service.ConsultaService;
+import es.caib.pinbal.persist.base.entity.NoDatabaseResourceEntity;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -19,7 +26,13 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.annotation.PostConstruct;
+import java.io.OutputStream;
+import java.io.Serializable;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -41,6 +54,61 @@ public class ConsultaResourceServiceImpl
 
     private final ConsultaService consultaService;
     private final AuthenticationHelper authenticationHelper;
+
+    @PostConstruct
+    public void init() {
+        register("justificant",
+                new ReportGenerator<NoDatabaseResourceEntity<ConsultaResource, Long>, Serializable, JustificantDto>() {
+                    @Override
+                    public List<JustificantDto> generateData(
+                            String code,
+                            NoDatabaseResourceEntity<ConsultaResource, Long> entity,
+                            Serializable params) throws ReportGenerationException {
+                        try {
+                            boolean isAdmin = authenticationHelper.isCurrentUserInRole(BaseConfig.ROLE_ADMIN);
+                            JustificantDto justificant = consultaService.obtenirJustificant(entity.getId(), isAdmin);
+                            return (justificant != null && !justificant.isError() && justificant.getContingut() != null)
+                                    ? Collections.singletonList(justificant)
+                                    : Collections.emptyList();
+                        } catch (Exception ex) {
+                            throw new ReportGenerationException(ConsultaResource.class, entity.getId(), code, ex.getMessage(), ex);
+                        }
+                    }
+
+                    @Override
+                    public DownloadableFile generateFile(
+                            String code,
+                            List<?> data,
+                            ReportFileType fileType,
+                            OutputStream out) {
+                        if (data.isEmpty()) {
+                            return DownloadableFile.builder().build();
+                        }
+                        JustificantDto justificant = (JustificantDto) data.get(0);
+                        return DownloadableFile.builder()
+                                .name(justificant.getNom() != null ? justificant.getNom() : "justificant.pdf")
+                                .contentType(justificant.getContentType() != null ? justificant.getContentType() : "application/pdf")
+                                .content(justificant.getContingut())
+                                .build();
+                    }
+
+                    @Override
+                    public void onChange(
+                            Serializable id,
+                            Serializable previous,
+                            String fieldName,
+                            Object fieldValue,
+                            Map<String, AnswerRequiredException.AnswerValue> answers,
+                            String[] previousFieldNames,
+                            Serializable target) {
+                    }
+                });
+    }
+
+    @Override
+    protected Optional<NoDatabaseResourceEntity<ConsultaResource, Long>> entityRepositoryFindOne(Long id) {
+        return Optional.of(NoDatabaseResourceEntity.<ConsultaResource, Long>builder().id(id).build());
+    }
 
     @Override
     @Transactional(readOnly = true)

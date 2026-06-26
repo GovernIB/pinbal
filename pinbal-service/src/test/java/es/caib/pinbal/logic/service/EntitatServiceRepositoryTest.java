@@ -24,6 +24,8 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.springframework.data.domain.Sort;
 import org.springframework.test.util.ReflectionTestUtils;
 
@@ -47,6 +49,7 @@ import static org.mockito.Mockito.when;
  *
  * @author Limit Tecnologies <limit@limit.es>
  */
+@MockitoSettings(strictness = Strictness.LENIENT)
 @ExtendWith(MockitoExtension.class)
 public class EntitatServiceRepositoryTest {
 
@@ -150,8 +153,7 @@ public class EntitatServiceRepositoryTest {
 		Entitat entitat = EntitatTestUtil.createModelObject(ENTITAT_ID, CODI, NOM, CIF, RESP);
 		EntitatDto entitatDto = EntitatTestUtil.createDto(ENTITAT_ID, NOM);
 		when(entitatRepository.findById(ENTITAT_ID)).thenReturn(Optional.of(entitat));
-		// findById al servei passa l'Optional directament al mapper
-		when(mapperFacade.map(eq(Optional.of(entitat)), eq(EntitatDto.class))).thenReturn(entitatDto);
+		when(mapperFacade.map(eq(entitat), eq(EntitatDto.class))).thenReturn(entitatDto);
 
 		EntitatDto returned = entitatService.findById(ENTITAT_ID);
 

@@ -133,7 +133,10 @@ public interface ConsultaService {
 	 * @throws ConsultaScspException
 	 *            Si hi ha hagut algun error al recuperar la resposta.
 	 */
-	@PreAuthorize("hasRole('PBL_DELEG') or hasRole('PBL_ADMIN')")
+	// El delegat no és un rol global (és "tothom" + permís de delegat a l'entitat), per tant aquí només
+	// es fa una porta gruixuda (qualsevol usuari autenticat / admin) i la restricció real —que la consulta
+	// pertanyi a l'usuari, llevat que sigui admin— es comprova dins la implementació.
+	@PreAuthorize("hasRole('tothom') or hasRole('PBL_ADMIN')")
 	public void recuperarRespostaConsultaMultiple(
 			Long consultaId) throws ConsultaNotFoundException, ConsultaScspException;
 
@@ -468,7 +471,6 @@ public interface ConsultaService {
 	 * @throws ProcedimentNotFoundException
 	 *            Si el procediment especificat no existeix.
 	 */
-//	@PreAuthorize("hasRole('PBL_REPORT')")
 	public List<DadesObertesRespostaConsulta> findByFiltrePerOpenData(
 			String entitatCodi,
 			Date dataInici,

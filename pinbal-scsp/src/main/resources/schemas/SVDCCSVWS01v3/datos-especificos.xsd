@@ -47,7 +47,7 @@
 	</xs:element>
 	<xs:element name="CSV">
 		<xs:annotation>
-			<xs:documentation>Código Seguro de Verificación (16 caracteers)</xs:documentation>
+			<xs:documentation>Código Seguro de Verificación (16 caracteres)</xs:documentation>
 		</xs:annotation>
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
@@ -68,6 +68,7 @@
 	<xs:element name="CodigoEstado">
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
 				<xs:maxLength value="4"/>
 			</xs:restriction>
 		</xs:simpleType>
@@ -75,6 +76,7 @@
 	<xs:element name="CodigoEstadoSecundario">
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
 				<xs:maxLength value="16"/>
 			</xs:restriction>
 		</xs:simpleType>
@@ -82,7 +84,8 @@
 	<xs:element name="LiteralError">
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
-				<xs:maxLength value="255"/>
+				<xs:minLength value="1"/>
+				<xs:maxLength value="1024"/>
 			</xs:restriction>
 		</xs:simpleType>
 	</xs:element>

@@ -37,10 +37,11 @@ public class PaginacioHelper {
 	}
 
 	public <T> Pageable toSpringDataPageable(PaginacioAmbOrdreDto dto, Map<String, String[]> mapeigPropietatsOrdenacio) {
+		Sort sort = toSpringDataSort(dto.getOrdres(), mapeigPropietatsOrdenacio);
 		return PageRequest.of(
 				dto.getPaginaNum(),
 				dto.getPaginaTamany(),
-				toSpringDataSort(dto.getOrdres(), mapeigPropietatsOrdenacio));
+				sort != null ? sort : Sort.unsorted());
 	}
 
 	public <T> Pageable toSpringDataPageable(PaginacioAmbOrdreDto dto) {

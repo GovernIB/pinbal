@@ -14,7 +14,7 @@
 	<xs:element name="CodigoCertificado">
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
-				<xs:maxLength value="64"/>
+				<xs:enumeration value="SVDCDEPENWS01"/>
 			</xs:restriction>
 		</xs:simpleType>
 	</xs:element>
@@ -53,6 +53,8 @@
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
 				<xs:maxLength value="26"/>
+				<xs:minLength value="1"/>
+				<xs:whiteSpace value="collapse"/>
 			</xs:restriction>
 		</xs:simpleType>
 	</xs:element>
@@ -66,8 +68,9 @@
 	<xs:element name="NumElementos">
 		<xs:simpleType>
 			<xs:restriction base="xs:int">
-				<xs:totalDigits value="7"/>
+				<xs:totalDigits value="4"/>
 				<xs:minInclusive value="0"/>
+				<xs:maxInclusive value="1000"/>
 			</xs:restriction>
 		</xs:simpleType>
 	</xs:element>
@@ -82,7 +85,9 @@
 	<xs:element name="TimeStamp">
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
 				<xs:maxLength value="29"/>
+				<xs:whiteSpace value="collapse"/>
 			</xs:restriction>
 		</xs:simpleType>
 	</xs:element>

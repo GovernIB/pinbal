@@ -59,7 +59,7 @@ public final class ConsultaFiltreSpringFilterParser {
      */
     public static Pageable translateSort(Pageable pageable) {
         if (pageable == null) {
-            return null;
+            return Pageable.unpaged();
         }
         List<Sort.Order> orders = new ArrayList<>();
         for (Sort.Order order : pageable.getSort()) {

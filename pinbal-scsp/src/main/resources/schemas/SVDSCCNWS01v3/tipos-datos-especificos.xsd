@@ -1,0 +1,736 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://intermediacion.redsara.es/scsp/esquemas/tiposdatosespecificos" xmlns:ns1="http://justicia.es/esb/comun/xsd-schemas/V1" targetNamespace="http://intermediacion.redsara.es/scsp/esquemas/tiposdatosespecificos" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<!-- RegistroCivil -->
+	<xs:element name="RegistroCivil" type="IdentificadorRegistroCivil">
+		<xs:annotation>
+			<xs:documentation>Identificador de Registro Civil</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<!-- Tomo -->
+	<xs:element name="Tomo" type="IdentificadorTomo">
+		<xs:annotation>
+			<xs:documentation>Tomo o Libro del Registro</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<!-- Pagina -->
+	<xs:element name="Pagina" type="IdentificadorPagina">
+		<xs:annotation>
+			<xs:documentation>Folio o pagina del Registro</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<!-- AnioHechoRegistral -->
+	<xs:element name="AnioHechoRegistral" type="AnioType">
+		<xs:annotation>
+			<xs:documentation> Año en la que se ha producido el Hecho Registral. En las Defunciones, cuando no venga la
+                Fecha del Hecho Registral informado, porque puede que no se conozca el dia concreto, pero si conocemos
+                el año, entonces se informara este campo Año Hecho Registral.
+            </xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<!-- FechaHechoRegistral -->
+	<xs:element name="FechaHechoRegistral" type="FechaType">
+		<xs:annotation>
+			<xs:documentation> Fecha en la que se ha producido el Hecho Registral. Cuando es una defuncion puede que
+                este campo no venga informado.
+            </xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<!-- HoraHechoRegistral -->
+	<xs:element name="HoraHechoRegistral" type="HoraType">
+		<xs:annotation>
+			<xs:documentation>Hora en la que se ha producido el Hecho Registral
+            </xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<!-- PoblacionHechoRegistral -->
+	<xs:element name="PoblacionHechoRegistral" type="TipoMunicipio">
+		<xs:annotation>
+			<xs:documentation>Poblacion en la que se ha producido el Hecho Registral. Codigo INE (En el caso de
+                consultados 00 + Codigo del Ministerio de Asuntos Exteriores)
+            </xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<!-- ProvinciaHechoRegistral -->
+	<xs:element name="ProvinciaHechoRegistral" type="TipoProvincia">
+		<xs:annotation>
+			<xs:documentation>Provincia en la que se ha producido el Hecho Registral. Codigo INE (En el caso de
+                consultados 00)
+            </xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<!-- FechaNacimiento -->
+	<xs:element name="FechaNacimiento" type="FechaType">
+		<xs:annotation>
+			<xs:documentation>Fecha de Nacimiento</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<!-- AnioType -->
+	<xs:simpleType name="AnioType">
+		<xs:annotation>
+			<xs:documentation> Fecha. Formato: YYYY
+            </xs:documentation>
+		</xs:annotation>
+		<xs:union>
+			<xs:simpleType>
+				<xs:restriction base="xs:string">
+					<xs:length value="0"/>
+				</xs:restriction>
+				<!-- Criterios que se deben de cumplir -->
+			</xs:simpleType>
+			<xs:simpleType>
+				<xs:restriction base="xs:string">
+					<xs:length value="4"/>
+					<xs:pattern value="[0-9]{4}"/>
+				</xs:restriction>
+				<!-- Criterios que se deben de cumplir -->
+			</xs:simpleType>
+		</xs:union>
+		<!-- Se debe de cumplir uno de los simpleType -->
+	</xs:simpleType>
+	<!-- FechaType -->
+	<xs:simpleType name="FechaType">
+		<xs:annotation>
+			<xs:documentation> Fecha. Formato: YYYY-MM-DD
+            </xs:documentation>
+		</xs:annotation>
+		<xs:union>
+			<xs:simpleType>
+				<xs:restriction base="xs:string">
+					<xs:length value="0"/>
+				</xs:restriction>
+				<!-- Criterios que se deben de cumplir -->
+			</xs:simpleType>
+			<xs:simpleType>
+				<xs:restriction base="xs:string">
+					<xs:length value="10"/>
+					<xs:pattern value="[0-9]{4}-([0][1-9]|[1][0-2])-([0][1-9]|[1-2][0-9]|[3][0-1])"/>
+				</xs:restriction>
+				<!-- Criterios que se deben de cumplir -->
+			</xs:simpleType>
+		</xs:union>
+		<!-- Se debe de cumplir uno de los simpleType -->
+	</xs:simpleType>
+	<!-- HoraType -->
+	<xs:simpleType name="HoraType">
+		<xs:annotation>
+			<xs:documentation> Fecha. Formato: H24:MM
+            </xs:documentation>
+		</xs:annotation>
+		<xs:union>
+			<xs:simpleType>
+				<xs:restriction base="xs:string">
+					<xs:length value="0"/>
+				</xs:restriction>
+				<!-- Criterios que se deben de cumplir -->
+			</xs:simpleType>
+			<xs:simpleType>
+				<xs:restriction base="xs:string">
+					<xs:length value="5"/>
+					<xs:pattern value="([0-2][0-9]):([0-5][0-9])"/>
+				</xs:restriction>
+				<!-- Criterios que se deben de cumplir -->
+			</xs:simpleType>
+		</xs:union>
+		<!-- Se debe de cumplir uno de los simpleType -->
+	</xs:simpleType>
+	<!-- NIFType -->
+	<xs:simpleType name="NIFType">
+		<xs:annotation>
+			<xs:documentation>Documento identificativo para ciudadanos españoles</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:token">
+			<xs:minLength value="1"/>
+			<xs:maxLength value="9"/>
+			<xs:pattern value="[L,K,M,l,k,m]*[0]{1}[0-9]+[a-zA-Z]{1}"/>
+			<xs:pattern value="[L,K,M,l,k,m]*[0-9]+[a-zA-Z]{1}"/>
+		</xs:restriction>
+		<!-- Criterios que se deben de cumplir -->
+	</xs:simpleType>
+	<!-- NIEType -->
+	<xs:simpleType name="NIEType">
+		<xs:annotation>
+			<xs:documentation>Documento identificativo para ciudadanos extranjeros</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:token">
+			<xs:minLength value="1"/>
+			<xs:maxLength value="9"/>
+			<xs:pattern value="[x-zX-Z]{1}[0-9]+[a-zA-Z]{1}"/>
+		</xs:restriction>
+		<!-- Criterios que se deben de cumplir -->
+	</xs:simpleType>
+	<!-- PasaporteType -->
+	<xs:simpleType name="PasaporteType">
+		<xs:annotation>
+			<xs:documentation>Documento identificativo de pasaporte
+            </xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:token">
+			<xs:minLength value="1"/>
+			<xs:maxLength value="25"/>
+			<xs:pattern value="[a-zA-Z0-9]*"/>
+		</xs:restriction>
+		<!-- Criterios que se deben de cumplir -->
+	</xs:simpleType>
+	<!-- Sexo -->
+	<xs:element name="Sexo" type="Sexo">
+		<xs:annotation>
+			<xs:documentation>Sexo de la persona</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<!-- CodigoEstado -->
+	<xs:element name="CodigoEstado">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="4"/>
+			</xs:restriction>
+			<!-- Criterios que se deben de cumplir -->
+		</xs:simpleType>
+	</xs:element>
+	<!-- CodigoEstadoSecundario -->
+	<xs:element name="CodigoEstadoSecundario">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="16"/>
+			</xs:restriction>
+			<!-- Criterios que se deben de cumplir -->
+		</xs:simpleType>
+	</xs:element>
+	<!-- LiteralError -->
+	<xs:element name="LiteralError">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="255"/>
+			</xs:restriction>
+			<!-- Criterios que se deben de cumplir -->
+		</xs:simpleType>
+	</xs:element>
+	<!-- IdentificadorRegistroCivil -->
+	<xs:simpleType name="IdentificadorRegistroCivil">
+		<xs:annotation>
+			<xs:documentation>Código del Registro Civil</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:token">
+			<xs:minLength value="1"/>
+			<xs:maxLength value="12"/>
+			<xs:pattern value="\d*"/>
+		</xs:restriction>
+		<!-- Criterios que se deben de cumplir -->
+	</xs:simpleType>
+	<!-- IdentificadorTomo -->
+	<xs:simpleType name="IdentificadorTomo">
+		<xs:annotation>
+			<xs:documentation>Identificador de Tomo ó Libro del Registro
+            </xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:token">
+			<xs:minLength value="1"/>
+			<xs:maxLength value="10"/>
+			<xs:pattern value="([0-9]{5})([ ]|[_]|\w)*"/>
+		</xs:restriction>
+		<!-- Criterios que se deben de cumplir -->
+	</xs:simpleType>
+	<!-- IdentificadorPagina -->
+	<xs:simpleType name="IdentificadorPagina">
+		<xs:annotation>
+			<xs:documentation>Folio o página del Registro</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:token">
+			<xs:minLength value="1"/>
+			<xs:maxLength value="10"/>
+		</xs:restriction>
+		<!-- Criterios que se deben de cumplir -->
+	</xs:simpleType>
+	<!-- Nombre -->
+	<xs:simpleType name="Nombre">
+		<xs:union>
+			<xs:simpleType>
+				<xs:restriction base="xs:string">
+					<xs:length value="0"/>
+				</xs:restriction>
+				<!-- Criterios que se deben de cumplir -->
+			</xs:simpleType>
+			<xs:simpleType>
+				<xs:restriction base="xs:string">
+					<xs:minLength value="1"/>
+					<xs:maxLength value="50"/>
+					<xs:pattern value="[A-ZÁÉÍÓÚÑÀÈÌÒÙÄËÏÖÜÂÊÎÔÛÃÕÅØÆÐÝÞÇ·'\-\s,.()/\\]{1,50}"/>
+				</xs:restriction>
+				<!-- Criterios que se deben de cumplir -->
+			</xs:simpleType>
+		</xs:union>
+		<!-- Se debe de cumplir uno de los simpleType -->
+	</xs:simpleType>
+	<!-- Apellido -->
+	<xs:simpleType name="Apellido">
+		<xs:union>
+			<xs:simpleType>
+				<xs:restriction base="xs:string">
+					<xs:length value="0"/>
+				</xs:restriction>
+				<!-- Criterios que se deben de cumplir -->
+			</xs:simpleType>
+			<xs:simpleType>
+				<xs:restriction base="xs:string">
+					<xs:minLength value="1"/>
+					<xs:maxLength value="50"/>
+					<xs:pattern value="[A-ZÁÉÍÓÚÑÀÈÌÒÙÄËÏÖÜÂÊÎÔÛÃÕÅØÆÐÝÞÇ·'\-\s,.()/\\]+"/>
+				</xs:restriction>
+				<!-- Criterios que se deben de cumplir -->
+			</xs:simpleType>
+		</xs:union>
+		<!-- Se debe de cumplir uno de los simpleType -->
+	</xs:simpleType>
+	<!-- Sexo -->
+	<xs:simpleType name="Sexo">
+		<xs:annotation>
+			<xs:documentation>Varon (V) o Mujer (M)</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:length value="1"/>
+			<xs:enumeration value="V">
+				<xs:annotation>
+					<xs:documentation>Varón</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="M">
+				<xs:annotation>
+					<xs:documentation>Mujer</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+		</xs:restriction>
+		<!-- Criterios que se deben de cumplir -->
+	</xs:simpleType>
+	<!-- TipoCodigoPersonalRRCC -->
+	<xs:simpleType name="TipoCodigoPersonalRRCC">
+		<xs:annotation>
+			<xs:documentation>Codigo Personal Oficial del Registro Civil de un Persona.</xs:documentation>
+		</xs:annotation>
+		<xs:union>
+			<xs:simpleType>
+				<xs:restriction base="xs:string">
+					<xs:length value="0"/>
+				</xs:restriction>
+				<!-- Criterios que se deben de cumplir -->
+			</xs:simpleType>
+			<xs:simpleType>
+				<xs:restriction base="xs:string">
+					<xs:length value="21"/>
+					<xs:pattern value="[A-Z0-9]{21,21}"/>
+				</xs:restriction>
+				<!-- Criterios que se deben de cumplir -->
+			</xs:simpleType>
+		</xs:union>
+		<!-- Se debe de cumplir uno de los simpleType -->
+	</xs:simpleType>
+	<!-- EstadoCivilType -->
+	<xs:simpleType name="EstadoCivilType">
+		<xs:annotation>
+			<xs:documentation> Valor que indicara el codigo del estado civil de interviniente. Valores posibles: 1
+                Soltero 2 Casado 3 Viudo 4 Separado 5 Divorciado
+            </xs:documentation>
+		</xs:annotation>
+		<xs:union>
+			<xs:simpleType>
+				<xs:restriction base="xs:string">
+					<xs:length value="0"/>
+				</xs:restriction>
+				<!-- Criterios que se deben de cumplir -->
+			</xs:simpleType>
+			<xs:simpleType>
+				<xs:restriction base="xs:string">
+					<xs:length value="1"/>
+					<xs:pattern value="\d{1}"/>
+				</xs:restriction>
+				<!-- Criterios que se deben de cumplir -->
+			</xs:simpleType>
+		</xs:union>
+		<!-- Se debe de cumplir uno de los simpleType -->
+	</xs:simpleType>
+	<!-- CodigoINEPaisType -->
+	<xs:simpleType name="CodigoINEPaisType">
+		<xs:annotation>
+			<xs:documentation>Valor para indicar el codigo INE del Pais</xs:documentation>
+		</xs:annotation>
+		<xs:union>
+			<xs:simpleType>
+				<xs:restriction base="xs:string">
+					<xs:length value="0"/>
+				</xs:restriction>
+				<!-- Criterios que se deben de cumplir -->
+			</xs:simpleType>
+			<xs:simpleType>
+				<xs:restriction base="xs:string">
+					<xs:length value="3"/>
+					<xs:pattern value="\d{3}"/>
+				</xs:restriction>
+				<!-- Criterios que se deben de cumplir -->
+			</xs:simpleType>
+		</xs:union>
+		<!-- Se debe de cumplir uno de los simpleType -->
+	</xs:simpleType>
+	<!-- CodigoINEMunicipioType -->
+	<xs:simpleType name="CodigoINEMunicipioType">
+		<xs:annotation>
+			<xs:documentation>Valor para indicar el codigo INE del Municipio</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:length value="5"/>
+			<xs:pattern value="\d{5}"/>
+		</xs:restriction>
+		<!-- Criterios que se deben de cumplir -->
+	</xs:simpleType>
+	<!-- CodigoINEProvinciaType -->
+	<xs:simpleType name="CodigoINEProvinciaType">
+		<xs:annotation>
+			<xs:documentation>Valor para indicar el codigo INE de Provincia</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:length value="2"/>
+			<xs:pattern value="\d{2}"/>
+		</xs:restriction>
+		<!-- Criterios que se deben de cumplir -->
+	</xs:simpleType>
+	<!-- TipoMunicipio -->
+	<xs:complexType name="TipoMunicipio">
+		<xs:choice>
+			<!-- codigoINE -->
+			<xs:element name="codigoINE" type="CodigoINEMunicipioType" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation> Codigo INE del municipio. Esta opcion vendra informada en caso de tratarse de un
+                        municipio nacional
+                    </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<!-- descripcionExtranjero -->
+			<xs:element name="descripcionExtranjero" type="TipoString200" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation> Descripcion del Municipio Extranjero. Solo vendra informada en caso de tratarse
+                        de un municipio extranjero
+                    </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:choice>
+		<!-- Se debe de elegir uno -->
+	</xs:complexType>
+	<!-- TipoProvincia -->
+	<xs:complexType name="TipoProvincia">
+		<xs:choice>
+			<!-- codigoINE -->
+			<xs:element name="codigoINE" type="CodigoINEProvinciaType" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation> Codigo INE de la provincia. Esta opcion vendra informada en caso de tratarse de
+                        un dato nacional
+                    </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<!-- descripcionExtranjero -->
+			<xs:element name="descripcionExtranjero" type="TipoString200" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation> Descripcion de la provincia en el Extranjero. Solo vendra informada en caso de
+                        tratarse de un dato extranjero
+                    </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:choice>
+		<!-- Se debe de elegir uno -->
+	</xs:complexType>
+	<!-- TipoCodigoPostalNacional -->
+	<xs:simpleType name="TipoCodigoPostalNacional">
+		<xs:annotation>
+			<xs:documentation>Codigo Postal</xs:documentation>
+		</xs:annotation>
+		<xs:union>
+			<xs:simpleType>
+				<xs:restriction base="xs:string">
+					<xs:length value="0"/>
+				</xs:restriction>
+				<!-- Criterios que se deben de cumplir -->
+			</xs:simpleType>
+			<xs:simpleType>
+				<xs:restriction base="xs:string">
+					<xs:length value="5"/>
+					<xs:pattern value="\d{5}"/>
+				</xs:restriction>
+				<!-- Criterios que se deben de cumplir -->
+			</xs:simpleType>
+		</xs:union>
+		<!-- Se debe de cumplir uno de los simpleType -->
+	</xs:simpleType>
+	<!-- TipoGradoCapacidad -->
+	<xs:simpleType name="TipoGradoCapacidad">
+		<xs:annotation>
+			<xs:documentation>Grado Capacidad.</xs:documentation>
+		</xs:annotation>
+		<xs:union>
+			<xs:simpleType>
+				<xs:restriction base="xs:string">
+					<xs:length value="0"/>
+				</xs:restriction>
+				<!-- Criterios que se deben de cumplir -->
+			</xs:simpleType>
+			<xs:simpleType>
+				<xs:restriction base="xs:string">
+					<xs:length value="5"/>
+					<xs:pattern value="\d{5}"/>
+				</xs:restriction>
+				<!-- Criterios que se deben de cumplir -->
+			</xs:simpleType>
+		</xs:union>
+		<!-- Se debe de cumplir uno de los simpleType -->
+	</xs:simpleType>
+	<!-- TipoSituacionConcurso -->
+	<xs:simpleType name="TipoSituacionConcurso">
+		<xs:annotation>
+			<xs:documentation>Situacion Concurso.</xs:documentation>
+		</xs:annotation>
+		<xs:union>
+			<xs:simpleType>
+				<xs:restriction base="xs:string">
+					<xs:length value="0"/>
+				</xs:restriction>
+				<!-- Criterios que se deben de cumplir -->
+			</xs:simpleType>
+			<xs:simpleType>
+				<xs:restriction base="xs:string">
+					<xs:length value="5"/>
+					<xs:pattern value="\d{5}"/>
+				</xs:restriction>
+				<!-- Criterios que se deben de cumplir -->
+			</xs:simpleType>
+		</xs:union>
+		<!-- Se debe de cumplir uno de los simpleType -->
+	</xs:simpleType>
+	<!-- TipoVecindadCivil -->
+	<xs:simpleType name="TipoVecindadCivil">
+		<xs:annotation>
+			<xs:documentation>Codigo de vecindad civil del Inscrito, en esta situacion.</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:positiveInteger">
+			<xs:pattern value="\d{2}"/>
+		</xs:restriction>
+		<!-- Criterios que se deben de cumplir -->
+	</xs:simpleType>
+	<!-- TipoTutelaType -->
+	<xs:simpleType name="TipoTutelaType">
+		<xs:union>
+			<xs:simpleType>
+				<xs:restriction base="xs:string">
+					<xs:length value="0"/>
+				</xs:restriction>
+				<!-- Criterios que se deben de cumplir -->
+			</xs:simpleType>
+			<xs:simpleType>
+				<xs:restriction base="xs:string">
+					<xs:length value="3"/>
+					<xs:pattern value="\w{3}"/>
+				</xs:restriction>
+				<!-- Criterios que se deben de cumplir -->
+			</xs:simpleType>
+		</xs:union>
+		<!-- Se debe de cumplir uno de los simpleType -->
+	</xs:simpleType>
+	<!-- TipoString3Completo -->
+	<xs:simpleType name="TipoString3Completo">
+		<xs:union>
+			<xs:simpleType>
+				<xs:restriction base="xs:string">
+					<xs:length value="0"/>
+				</xs:restriction>
+				<!-- Criterios que se deben de cumplir -->
+			</xs:simpleType>
+			<xs:simpleType>
+				<xs:restriction base="xs:string">
+					<xs:length value="3"/>
+					<xs:pattern value="\w{3}"/>
+				</xs:restriction>
+				<!-- Criterios que se deben de cumplir -->
+			</xs:simpleType>
+		</xs:union>
+		<!-- Se debe de cumplir uno de los simpleType -->
+	</xs:simpleType>
+	<!-- TipoString3 -->
+	<xs:simpleType name="TipoString3">
+		<xs:union>
+			<xs:simpleType>
+				<xs:restriction base="xs:string">
+					<xs:length value="0"/>
+				</xs:restriction>
+				<!-- Criterios que se deben de cumplir -->
+			</xs:simpleType>
+			<xs:simpleType>
+				<xs:restriction base="xs:string">
+					<xs:minLength value="1"/>
+					<xs:maxLength value="3"/>
+					<xs:pattern value="\w{1,3}"/>
+				</xs:restriction>
+				<!-- Criterios que se deben de cumplir -->
+			</xs:simpleType>
+		</xs:union>
+		<!-- Se debe de cumplir uno de los simpleType -->
+	</xs:simpleType>
+	<!-- TipoString5 -->
+	<xs:simpleType name="TipoString5">
+		<xs:union>
+			<xs:simpleType>
+				<xs:restriction base="xs:string">
+					<xs:length value="0"/>
+				</xs:restriction>
+				<!-- Criterios que se deben de cumplir -->
+			</xs:simpleType>
+			<xs:simpleType>
+				<xs:restriction base="xs:string">
+					<xs:minLength value="1"/>
+					<xs:maxLength value="5"/>
+					<xs:pattern value="[\w./]{1,5}"/>
+				</xs:restriction>
+				<!-- Criterios que se deben de cumplir -->
+			</xs:simpleType>
+		</xs:union>
+		<!-- Se debe de cumplir uno de los simpleType -->
+	</xs:simpleType>
+	<!-- TipoString10 -->
+	<xs:simpleType name="TipoString10">
+		<xs:union>
+			<xs:simpleType>
+				<xs:restriction base="xs:string">
+					<xs:length value="0"/>
+				</xs:restriction>
+				<!-- Criterios que se deben de cumplir -->
+			</xs:simpleType>
+			<xs:simpleType>
+				<xs:restriction base="xs:string">
+					<xs:minLength value="1"/>
+					<xs:maxLength value="10"/>
+					<xs:pattern value="\w{1,10}"/>
+				</xs:restriction>
+				<!-- Criterios que se deben de cumplir -->
+			</xs:simpleType>
+		</xs:union>
+		<!-- Se debe de cumplir uno de los simpleType -->
+	</xs:simpleType>
+	<!-- TipoString50 -->
+	<xs:simpleType name="TipoString50">
+		<xs:union>
+			<xs:simpleType>
+				<xs:restriction base="xs:string">
+					<xs:length value="0"/>
+				</xs:restriction>
+				<!-- Criterios que se deben de cumplir -->
+			</xs:simpleType>
+			<xs:simpleType>
+				<xs:restriction base="xs:string">
+					<xs:minLength value="1"/>
+					<xs:maxLength value="50"/>
+					<xs:pattern value="[A-Za-zÁáÉéÍíÓóÚúÑñÀàÈèÌìÒòÙùÄäËëÏïÖöÜüÂâÊêÎîÔôÛûÃãÕõÅåØøÆÐÝýÞþÇç·'\-s,.()/\\]{1,50}"/>
+				</xs:restriction>
+				<!-- Criterios que se deben de cumplir -->
+			</xs:simpleType>
+		</xs:union>
+		<!-- Se debe de cumplir uno de los simpleType -->
+	</xs:simpleType>
+	<!-- TipoString50ConNumeros -->
+	<xs:simpleType name="TipoString50ConNumeros">
+		<xs:union>
+			<xs:simpleType>
+				<xs:restriction base="xs:string">
+					<xs:length value="0"/>
+				</xs:restriction>
+				<!-- Criterios que se deben de cumplir -->
+			</xs:simpleType>
+			<xs:simpleType>
+				<xs:restriction base="xs:string">
+					<xs:minLength value="1"/>
+					<xs:maxLength value="50"/>
+					<xs:pattern value="[0-9A-Za-zÁáÉéÍíÓóÚúÑñÀàÈèÌìÒòÙùÄäËëÏïÖöÜüÂâÊêÎîÔôÛûÃãÕõÅåØøÆÐÝýÞþÇç·'\-s,.()/\\]{1,50}"/>
+				</xs:restriction>
+				<!-- Criterios que se deben de cumplir -->
+			</xs:simpleType>
+		</xs:union>
+		<!-- Se debe de cumplir uno de los simpleType -->
+	</xs:simpleType>
+	<!-- TipoString100 -->
+	<xs:simpleType name="TipoString100">
+		<xs:union>
+			<xs:simpleType>
+				<xs:restriction base="xs:string">
+					<xs:length value="0"/>
+				</xs:restriction>
+				<!-- Criterios que se deben de cumplir -->
+			</xs:simpleType>
+			<xs:simpleType>
+				<xs:restriction base="xs:string">
+					<xs:minLength value="1"/>
+					<xs:maxLength value="100"/>
+					<xs:pattern value="[:_0-9A-Za-zÁáÉéÍíÓóÚúÑñÀàÈèÌìÒòÙùÄäËëÏïÖöÜüÂâÊêÎîÔôÛûÃãÕõÅåØøÆÐÝýÞþÇç·'\-\s,.()/\\]{1,100}"/>
+				</xs:restriction>
+				<!-- Criterios que se deben de cumplir -->
+			</xs:simpleType>
+		</xs:union>
+		<!-- Se debe de cumplir uno de los simpleType -->
+	</xs:simpleType>
+	<!-- TipoString100LugarHecho -->
+	<xs:simpleType name="TipoString100LugarHecho">
+		<xs:union>
+			<xs:simpleType>
+				<xs:restriction base="xs:string">
+					<xs:length value="0"/>
+				</xs:restriction>
+				<!-- Criterios que se deben de cumplir -->
+			</xs:simpleType>
+			<xs:simpleType>
+				<xs:restriction base="xs:string">
+					<xs:minLength value="1"/>
+					<xs:maxLength value="100"/>
+					<xs:pattern value="[:_0-9A-Za-zÁáÉéÍíÓóÚúÑñÀàÈèÌìÒòÙùÄäËëÏïÖöÜüÂâÊêÎîÔôÛûÃãÕõÅåØøÆÐÝýÞþÇçºª·'\-\s,.()/\\]{1,100}"/>
+				</xs:restriction>
+				<!-- Criterios que se deben de cumplir -->
+			</xs:simpleType>
+		</xs:union>
+		<!-- Se debe de cumplir uno de los simpleType -->
+	</xs:simpleType>
+	<!-- TipoString200 -->
+	<xs:simpleType name="TipoString200">
+		<xs:union>
+			<xs:simpleType>
+				<xs:restriction base="xs:string">
+					<xs:length value="0"/>
+				</xs:restriction>
+				<!-- Criterios que se deben de cumplir -->
+			</xs:simpleType>
+			<xs:simpleType>
+				<xs:restriction base="xs:string">
+					<xs:minLength value="1"/>
+					<xs:maxLength value="200"/>
+					<xs:pattern value="[:_0-9A-Za-zÁáÉéÍíÓóÚúÑñÀàÈèÌìÒòÙùÄäËëÏïÖöÜüÂâÊêÎîÔôÛûÃãÕõÅåØøÆÐÝýÞþÇç·'\-\s,.()/\\]{1,200}"/>
+				</xs:restriction>
+				<!-- Criterios que se deben de cumplir -->
+			</xs:simpleType>
+		</xs:union>
+		<!-- Se debe de cumplir uno de los simpleType -->
+	</xs:simpleType>
+	<!-- TipoString500 -->
+	<xs:simpleType name="TipoString500">
+		<xs:union>
+			<xs:simpleType>
+				<xs:restriction base="xs:string">
+					<xs:length value="0"/>
+				</xs:restriction>
+				<!-- Criterios que se deben de cumplir -->
+			</xs:simpleType>
+			<xs:simpleType>
+				<xs:restriction base="xs:string">
+					<xs:minLength value="1"/>
+					<xs:maxLength value="500"/>
+					<xs:pattern value="[:_0-9A-Za-zÁáÉéÍíÓóÚúÑñÀàÈèÌìÒòÙùÄäËëÏïÖöÜüÂâÊêÎîÔôÛûÃãÕõÅåØøÆÐÝýÞþÇç·'\-\s,.()/\\]{1,500}"/>
+					<!-- xs:pattern value="[a-zA-Z0_9àáâäãåąčćęèéêëėįìíîïłńòóôöõøùúûüųūÿýżźñçčšžÀÁÂÄÃÅĄĆČĖĘÈÉÊËÌÍÎÏĮŁŃÒÓÔÖÕØÙÚÛÜŲŪŸÝŻŹÑßÇŒÆČŠŽ∂ð 
+                        ,.'\-]{1,500}"/ -->
+				</xs:restriction>
+				<!-- Criterios que se deben de cumplir -->
+			</xs:simpleType>
+		</xs:union>
+		<!-- Se debe de cumplir uno de los simpleType -->
+	</xs:simpleType>
+</xs:schema>

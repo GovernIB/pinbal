@@ -10,6 +10,8 @@ import org.springframework.data.domain.Pageable;
 
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import java.util.List;
 
 /**
@@ -18,6 +20,7 @@ import java.util.List;
  * 
  * @author Limit Tecnologies <limit@limit.es>
  */
+@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
 @Primary
 @Stateless
 public class AvisService extends AbstractService<es.caib.pinbal.logic.intf.service.AvisService> implements es.caib.pinbal.logic.intf.service.AvisService {

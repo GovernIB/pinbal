@@ -1,0 +1,707 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns="http://intermediacion.redsara.es/scsp/esquemas/datosespecificos" xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://intermediacion.redsara.es/scsp/esquemas/datosespecificos" elementFormDefault="qualified">
+	<xs:element name="DatosEspecificos" type="DatosEspecificos"/>
+	<xs:complexType name="DatosEspecificos">
+		<xs:all>
+			<xs:element ref="Retorno">
+				<xs:annotation>
+					<xs:documentation>Solo en el mensaje RESPUESTA</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:all>
+		<xs:attribute name="Id" type="xs:string" use="optional"/>
+	</xs:complexType>
+	<!-- Datos de retorno -->
+	<xs:element name="Retorno">
+		<xs:complexType>
+			<xs:all>
+				<xs:element ref="Estado"/>
+				<xs:element ref="Titular" minOccurs="0"/>
+				<xs:element ref="Gestores" minOccurs="0"/>
+				<xs:element ref="Autorizaciones" minOccurs="0"/>
+				<xs:element ref="LicenciasInternacionales" minOccurs="0"/>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<!-- Datos Estado -->
+	<xs:element name="Estado">
+		<xs:annotation>
+			<xs:documentation>Estado de la transmisión</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:all>
+				<xs:element ref="CodigoEstado"/>
+				<xs:element ref="CodigoEstadoSecundario" minOccurs="0"/>
+				<xs:element ref="LiteralError"/>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="CodigoEstado">
+		<xs:annotation>
+			<xs:documentation>Código de Estado de la transmisión</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="4"/>
+				<xs:whiteSpace value="collapse"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="CodigoEstadoSecundario">
+		<xs:annotation>
+			<xs:documentation>Código de estado secundario de la transmisión</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="16"/>
+				<xs:whiteSpace value="collapse"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="LiteralError">
+		<xs:annotation>
+			<xs:documentation>Literal del estado de la transmisión</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="5"/>
+				<xs:maxLength value="1024"/>
+				<xs:whiteSpace value="collapse"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<!-- Datos adicionales titular -->
+	<xs:element name="Titular">
+		<xs:annotation>
+			<xs:documentation>Datos adicionales del titular consultado</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:all>
+				<xs:element ref="Telefono" minOccurs="0"/>
+				<xs:element ref="Email" minOccurs="0"/>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Telefono">
+		<xs:annotation>
+			<xs:documentation>Teléfono del titular</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:whiteSpace value="collapse"/>
+				<xs:pattern value="(\+)?[0-9]{1,12}"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Email">
+		<xs:annotation>
+			<xs:documentation>Email del titular</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:whiteSpace value="collapse"/>
+				<xs:pattern value="[^@]+@[^\.]+\..+"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<!-- Gestores -->
+	<xs:element name="Gestores">
+		<xs:annotation>
+			<xs:documentation>Lista de gestores de transporte asociados al titular</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="Gestor" maxOccurs="unbounded"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Gestor">
+		<xs:annotation>
+			<xs:documentation>Datos de cada gestor de transporte asociado al titular</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:all>
+				<xs:element ref="Documentacion"/>
+				<xs:element ref="Nombre"/>
+				<xs:element ref="Apellidos" minOccurs="0"/>
+				<xs:element ref="Titulos" minOccurs="0"/>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Documentacion">
+		<xs:annotation>
+			<xs:documentation>Documentacion del gestor de transporte</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="25"/>
+				<xs:whiteSpace value="collapse"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Nombre">
+		<xs:annotation>
+			<xs:documentation>Nombre del gestor de transporte</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="100"/>
+				<xs:whiteSpace value="collapse"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Apellidos">
+		<xs:annotation>
+			<xs:documentation>Apellidos del gestor de transporte</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="100"/>
+				<xs:whiteSpace value="collapse"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Titulos">
+		<xs:annotation>
+			<xs:documentation>Lista de títulos de competencia profesional del gestor</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="Titulo" maxOccurs="unbounded"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Titulo">
+		<xs:annotation>
+			<xs:documentation>Datos de cada título de competencia profesional del gestor</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:all>
+				<xs:element ref="TipoTitulo">
+					<xs:annotation>
+						<xs:documentation>Tipo de título de competencia profesional</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element ref="FechaObtencion"/>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="TipoTitulo">
+		<xs:annotation>
+			<xs:documentation>Tipo de título de competencia profesional</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="Codigo">
+					<xs:annotation>
+						<xs:documentation>Código del tipo título de competencia profesional</xs:documentation>
+					</xs:annotation>
+					<xs:simpleType>
+						<xs:restriction base="xs:string">
+							<xs:enumeration value="01"/>
+							<xs:enumeration value="02"/>
+							<xs:enumeration value="03"/>
+							<xs:enumeration value="04"/>
+							<xs:enumeration value="05"/>
+							<xs:enumeration value="06"/>
+							<xs:enumeration value="07"/>
+							<xs:enumeration value="08"/>
+							<xs:enumeration value="09"/>
+							<xs:enumeration value="10"/>
+						</xs:restriction>
+					</xs:simpleType>
+				</xs:element>
+				<xs:element name="Denominacion">
+					<xs:annotation>
+						<xs:documentation>Denominación del tipo título de competencia profesional</xs:documentation>
+					</xs:annotation>
+					<xs:simpleType>
+						<xs:restriction base="xs:string">
+							<xs:minLength value="1"/>
+							<xs:maxLength value="50"/>
+						</xs:restriction>
+					</xs:simpleType>
+				</xs:element>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="FechaObtencion" type="xs:date">
+		<xs:annotation>
+			<xs:documentation>Fecha de obtención del título de competencia profesional. Formato: AAAA-MM-DD</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<!-- Autorizacionas -->
+	<xs:element name="Autorizaciones">
+		<xs:annotation>
+			<xs:documentation>Lista de autorizaciones de transporte en vigor, asociadas al titular</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="Autorizacion" maxOccurs="unbounded"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Autorizacion">
+		<xs:annotation>
+			<xs:documentation>Datos de cada autorización de transporte en vigor, asociadas al titular</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:all>
+				<xs:element ref="Numero"/>
+				<xs:element ref="Serie"/>
+				<xs:element ref="OT" minOccurs="0"/>
+				<xs:element ref="Domicilio">
+					<xs:annotation>
+						<xs:documentation>Domicilio de la autorización</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element ref="FechaOtorgamiento">
+					<xs:annotation>
+						<xs:documentation>Fecha de otorgamiento de la autorización. Formato: AAAA-MM-DD</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element ref="FechaValidez">
+					<xs:annotation>
+						<xs:documentation>Fecha de validez de la autorización. Formato: AAAA-MM-DD</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element ref="Vehiculos" minOccurs="0"/>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Numero">
+		<xs:annotation>
+			<xs:documentation>Número de autorización de transporte</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="15"/>
+				<xs:whiteSpace value="collapse"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Serie">
+		<xs:annotation>
+			<xs:documentation>Serie de la autorización</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="Codigo">
+					<xs:annotation>
+						<xs:documentation>Código de la serie de la autorización</xs:documentation>
+					</xs:annotation>
+					<xs:simpleType>
+						<xs:restriction base="xs:string">
+							<xs:enumeration value="MDLE"/>
+							<xs:enumeration value="MDPE"/>
+							<xs:enumeration value="OT"/>
+							<xs:enumeration value="VDE"/>
+							<xs:enumeration value="VSE"/>
+							<xs:enumeration value="VT"/>
+							<xs:enumeration value="VTC"/>
+							<xs:enumeration value="MPCE"/>
+							<xs:enumeration value="VPCE"/>
+							<xs:enumeration value="VSPCE"/>
+						</xs:restriction>
+					</xs:simpleType>
+				</xs:element>
+				<xs:element name="Denominacion">
+					<xs:annotation>
+						<xs:documentation>Denominación de la serie de la autorización</xs:documentation>
+					</xs:annotation>
+					<xs:simpleType>
+						<xs:restriction base="xs:string">
+							<xs:minLength value="1"/>
+							<xs:maxLength value="100"/>
+						</xs:restriction>
+					</xs:simpleType>
+				</xs:element>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<!--Si autorizado para operar como operador de transporte -->
+	<xs:element name="OT">
+					<xs:annotation>
+						<xs:documentation>Autorizado como operador de transporte</xs:documentation>
+					</xs:annotation>
+					<xs:simpleType>
+						<xs:restriction base="xs:string">
+							<xs:minLength value="1"/>
+							<xs:maxLength value="100"/>
+						</xs:restriction>
+					</xs:simpleType>
+				</xs:element>
+	<!-- Datos del domicilio de la autorización -->
+	<xs:element name="Domicilio">
+		<xs:complexType>
+			<xs:all>
+				<xs:element ref="ComunidadAutonoma"/>
+				<xs:element ref="Provincia"/>
+				<xs:element ref="Municipio"/>
+				<xs:element ref="Poblacion"/>
+				<xs:element ref="CodigoPostal" minOccurs="0"/>
+				<xs:element ref="Direccion"/>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="ComunidadAutonoma">
+		<xs:annotation>
+			<xs:documentation>Comunidad autónoma del domicilio de la autorización</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:all>
+				<xs:element name="Codigo">
+					<xs:annotation>
+						<xs:documentation>Código de la comunidad autónoma del domicilio de la autorización</xs:documentation>
+					</xs:annotation>
+					<xs:simpleType>
+						<xs:restriction base="xs:string">
+							<xs:pattern value="[A-Z]{2}|[A-Z]{1}"/>
+						</xs:restriction>
+					</xs:simpleType>
+				</xs:element>
+				<xs:element name="Nombre">
+					<xs:annotation>
+						<xs:documentation>Nombre de la comunidad autónoma del domicilio de la autorización</xs:documentation>
+					</xs:annotation>
+					<xs:simpleType>
+						<xs:restriction base="xs:string">
+							<xs:minLength value="1"/>
+							<xs:maxLength value="25"/>
+							<xs:whiteSpace value="collapse"/>
+						</xs:restriction>
+					</xs:simpleType>
+				</xs:element>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Provincia">
+		<xs:annotation>
+			<xs:documentation>Provincia del domicilio de la autorización</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:all>
+				<xs:element name="Codigo">
+					<xs:annotation>
+						<xs:documentation>Código de la provincia del domicilio de la autorización</xs:documentation>
+					</xs:annotation>
+					<xs:simpleType>
+						<xs:restriction base="xs:int">
+							<xs:minInclusive value="01"/>
+							<xs:pattern value="[0-4]\d|5[0-2]"/>
+						</xs:restriction>
+					</xs:simpleType>
+				</xs:element>
+				<xs:element name="Nombre">
+					<xs:annotation>
+						<xs:documentation>Nombre de la provincia del domicilio de la autorización</xs:documentation>
+					</xs:annotation>
+					<xs:simpleType>
+						<xs:restriction base="xs:string">
+							<xs:minLength value="1"/>
+							<xs:maxLength value="25"/>
+							<xs:whiteSpace value="collapse"/>
+						</xs:restriction>
+					</xs:simpleType>
+				</xs:element>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Municipio">
+		<xs:annotation>
+			<xs:documentation>Municipio del domicilio de la autorización</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:all>
+				<xs:element name="Codigo">
+					<xs:annotation>
+						<xs:documentation>Código del municipio del domicilio de la autorización</xs:documentation>
+					</xs:annotation>
+					<xs:simpleType>
+						<xs:restriction base="xs:string">
+							<xs:whiteSpace value="collapse"/>
+							<xs:pattern value="\d{3}"/>
+						</xs:restriction>
+					</xs:simpleType>
+				</xs:element>
+				<xs:element name="Nombre">
+					<xs:annotation>
+						<xs:documentation>Nombre del municipio del domicilio de la autorización</xs:documentation>
+					</xs:annotation>
+					<xs:simpleType>
+						<xs:restriction base="xs:string">
+							<xs:minLength value="1"/>
+							<xs:maxLength value="100"/>
+							<xs:whiteSpace value="collapse"/>
+						</xs:restriction>
+					</xs:simpleType>
+				</xs:element>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Poblacion">
+		<xs:annotation>
+			<xs:documentation>Población del domicilio de la autorización</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:all>
+				<xs:element name="Codigo">
+					<xs:annotation>
+						<xs:documentation>Código de la población del domicilio de la autorización</xs:documentation>
+					</xs:annotation>
+					<xs:simpleType>
+						<xs:restriction base="xs:string">
+							<xs:whiteSpace value="collapse"/>
+							<xs:pattern value="\d{4}"/>
+						</xs:restriction>
+					</xs:simpleType>
+				</xs:element>
+				<xs:element name="Nombre">
+					<xs:annotation>
+						<xs:documentation>Nombre de la población del domicilio de la autorización</xs:documentation>
+					</xs:annotation>
+					<xs:simpleType>
+						<xs:restriction base="xs:string">
+							<xs:minLength value="1"/>
+							<xs:maxLength value="100"/>
+							<xs:whiteSpace value="collapse"/>
+						</xs:restriction>
+					</xs:simpleType>
+				</xs:element>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="CodigoPostal">
+		<xs:annotation>
+			<xs:documentation>Código postal de la dirección del domicilio de la autorización</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:whiteSpace value="collapse"/>
+				<xs:pattern value="\d{5}"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Direccion">
+		<xs:annotation>
+			<xs:documentation>Dirección del domicilio de la autorización</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="100"/>
+				<xs:whiteSpace value="collapse"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="FechaOtorgamiento" type="xs:date">
+		<xs:annotation>
+			<xs:documentation>Fecha de otorgamiento de la autorización</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="FechaValidez" type="xs:date">
+		<xs:annotation>
+			<xs:documentation>Fecha de válidez de la autorización</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="Vehiculos">
+		<xs:annotation>
+			<xs:documentation>Lista de vehículos adscritos a la autorización</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="Vehiculo" maxOccurs="unbounded"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Vehiculo">
+		<xs:annotation>
+			<xs:documentation>Datos de cada vehículo adscrito a la autorización</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:all>
+				<xs:element ref="Matricula"/>
+				<xs:element ref="TipoVehiculo"/>
+				<xs:element name="Numero">
+					<xs:annotation>
+						<xs:documentation>Número de la autorización del vehículo</xs:documentation>
+					</xs:annotation>
+					<xs:simpleType>
+						<xs:restriction base="xs:string">
+							<xs:minLength value="1"/>
+							<xs:maxLength value="17"/>
+							<xs:whiteSpace value="collapse"/>
+						</xs:restriction>
+					</xs:simpleType>
+				</xs:element>
+				<xs:element ref="FechaAdscripcion"/>
+				<xs:element ref="Observaciones" minOccurs="0"/>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Matricula">
+		<xs:annotation>
+			<xs:documentation>Matrícula del vehículo</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:pattern value="([A-Z]{1,2})(\d{6})|([A-Z]{1,2})(\d{4})([A-Z]{1,2})|(\d{4})([A-Z]{3})"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="TipoVehiculo">
+					<xs:annotation>
+						<xs:documentation>Tipo de vehículo</xs:documentation>
+					</xs:annotation>
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="Codigo">
+								<xs:annotation>
+									<xs:documentation>Código del tipo de vehículo</xs:documentation>
+								</xs:annotation>
+								<xs:simpleType>
+									<xs:restriction base="xs:string">
+										<xs:enumeration value="01"/>
+										<xs:enumeration value="02"/>
+										<xs:enumeration value="03"/>
+										<xs:enumeration value="04"/>
+										<xs:enumeration value="05"/>
+										<xs:enumeration value="06"/>
+										<xs:enumeration value="07"/>
+										<xs:enumeration value="08"/>
+										<xs:enumeration value="09"/>
+										<xs:enumeration value="10"/>
+										<xs:enumeration value="11"/>
+										<xs:enumeration value="12"/>
+										<xs:enumeration value="13"/>
+										<xs:enumeration value="14"/>
+									</xs:restriction>
+								</xs:simpleType>
+							</xs:element>
+							<xs:element name="Denominacion">
+								<xs:annotation>
+									<xs:documentation>Denominación del tipo de vehículo</xs:documentation>
+								</xs:annotation>
+								<xs:simpleType>
+									<xs:restriction base="xs:string">
+										<xs:minLength value="1"/>
+										<xs:maxLength value="25"/>
+									</xs:restriction>
+								</xs:simpleType>
+							</xs:element>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+	<xs:element name="FechaAdscripcion" type="xs:date">
+		<xs:annotation>
+			<xs:documentation>Fecha de adscripción del vehículo a la autorización de transporte. Formato: AAAA-MM-DD</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="Observaciones">
+		<xs:annotation>
+			<xs:documentation>Observaciones</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="2000"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<!-- Licencias Internacionales -->
+	<xs:element name="LicenciasInternacionales">
+		<xs:annotation>
+			<xs:documentation>Lista de licencias comunitarias asociadas al titular</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="LicenciaInternacional" maxOccurs="unbounded"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="LicenciaInternacional">
+		<xs:annotation>
+			<xs:documentation>Datos de cada licencia comunitaria asociada al titular</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:all>
+				<xs:element name="Numero">
+					<xs:annotation>
+						<xs:documentation>Número de licencia comunitaria</xs:documentation>
+					</xs:annotation>
+					<xs:simpleType>
+						<xs:restriction base="xs:string">
+							<xs:minLength value="1"/>
+							<xs:maxLength value="15"/>
+							<xs:whiteSpace value="collapse"/>
+						</xs:restriction>
+					</xs:simpleType>
+				</xs:element>
+				<xs:element ref="TipoLicencia">
+					<xs:annotation>
+						<xs:documentation>Tipo de licencia comunitaria</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element ref="NumeroCopias"/>
+				<xs:element ref="FechaOtorgamiento">
+					<xs:annotation>
+						<xs:documentation>Fecha de otorgamiento de la licencia comunitaria. Formato: AAAA-MM-DD</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element ref="FechaValidez">
+					<xs:annotation>
+						<xs:documentation>Fecha de validez de la licencia comunitaria. Formato: AAAA-MM-DD</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="TipoLicencia">
+		<xs:annotation>
+			<xs:documentation>Tipo de licencia comunitaria</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="Codigo">
+					<xs:annotation>
+						<xs:documentation>Código del tipo de licencia comunitaria</xs:documentation>
+					</xs:annotation>
+					<xs:simpleType>
+						<xs:restriction base="xs:string">
+							<xs:enumeration value="1"/>
+							<xs:enumeration value="2"/>
+						</xs:restriction>
+					</xs:simpleType>
+				</xs:element>
+				<xs:element name="Denominacion">
+					<xs:annotation>
+						<xs:documentation>Denominaciín del tipo de licencia comunitaria</xs:documentation>
+					</xs:annotation>
+					<xs:simpleType>
+						<xs:restriction base="xs:string">
+							<xs:minLength value="1"/>
+							<xs:maxLength value="50"/>
+						</xs:restriction>
+					</xs:simpleType>
+				</xs:element>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="NumeroCopias">
+		<xs:annotation>
+			<xs:documentation>Número de copias de la licencia comunitaria</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:int">
+				<xs:totalDigits value="5"/>
+				<xs:minInclusive value="1"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+</xs:schema>

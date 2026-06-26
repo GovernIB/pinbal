@@ -1,0 +1,575 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns="http://intermediacion.redsara.es/scsp/esquemas/datosespecificos" xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://intermediacion.redsara.es/scsp/esquemas/datosespecificos" elementFormDefault="qualified">
+	<xs:element name="DatosEspecificos" type="DatosEspecificos"/>
+	<xs:complexType name="DatosEspecificos">
+		<xs:choice>
+			<xs:element ref="Consulta">
+				<xs:annotation>
+					<xs:documentation>Solo en el mensaje de PETICION</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element ref="Retorno">
+				<xs:annotation>
+					<xs:documentation>Solo en el mensaje RESPUESTA</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:choice>
+		<xs:attribute name="Id" type="xs:string" use="optional"/>
+	</xs:complexType>
+	<xs:element name="Consulta">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:choice>
+					<xs:element ref="CodigoProcedimiento">
+						<xs:annotation>
+							<xs:documentation>Código del procedimiento para el que se quieren consultar las autorizaciones</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element ref="CodigoCertificado">
+						<xs:annotation>
+							<xs:documentation>Código del servicio para el que se quieren consultar las autorizaciones</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element ref="RangoFechas">
+						<xs:annotation>
+							<xs:documentation>Rango de fechas para el que se quieren consultar las autorizaciones</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+				</xs:choice>
+				<xs:element ref="IncluirBajas" minOccurs="0"/>
+				<xs:element ref="IncluirBloqueos" minOccurs="0"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<!-- Datos de Consulta -->
+	<xs:element name="IncluirBajas">
+		<xs:annotation>
+			<xs:documentation>Indica si se incluirán en la respuesta las autorizaciones dadas de baja. Valores posibles: S/N</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:enumeration value="S"/>
+				<xs:enumeration value="N"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="IncluirBloqueos">
+		<xs:annotation>
+			<xs:documentation>Indica si se incluirán en la respuesta las autorizaciones bloqueadas. Valores posibles: S/N</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:enumeration value="S"/>
+				<xs:enumeration value="N"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="FechaDesde" type="xs:date">
+		<xs:annotation>
+			<xs:documentation>Fecha desde la que se obtendrán datos de las autorizaciones. Formato: AAAA-MM-DD</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="FechaHasta" type="xs:date">
+		<xs:annotation>
+			<xs:documentation>Fecha hasta la que se obtendrán datos de las autorizaciones. Formato: AAAA-MM-DD</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="RangoFechas">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="FechaDesde"/>
+				<xs:element ref="FechaHasta" minOccurs="0"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="CodigoProcedimiento">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="3"/>
+				<xs:maxLength value="20"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="CodigoCertificado">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="64"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<!-- Datos de retorno -->
+	<xs:element name="Retorno">
+		<xs:complexType>
+			<xs:all>
+				<xs:element ref="Estado"/>
+				<xs:element ref="Organismo" minOccurs="0"/>
+				<xs:element ref="Autorizaciones" minOccurs="0"/>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<!-- Datos Estado -->
+	<xs:element name="Estado">
+		<xs:annotation>
+			<xs:documentation>Estado de la transmisión</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:all>
+				<xs:element ref="CodigoEstado"/>
+				<xs:element ref="CodigoEstadoSecundario" minOccurs="0"/>
+				<xs:element ref="LiteralError"/>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="CodigoEstado">
+		<xs:annotation>
+			<xs:documentation>Código de Estado de la transmisión</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="4"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="CodigoEstadoSecundario">
+		<xs:annotation>
+			<xs:documentation>Código de estado secundario de la transmisión</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="16"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="LiteralError">
+		<xs:annotation>
+			<xs:documentation>Literal del estado de la transmisión</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="5"/>
+				<xs:maxLength value="1024"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<!-- Datos Organismo -->
+	<xs:element name="Organismo">
+		<xs:annotation>
+			<xs:documentation>Datos del organismo solicitante de las autorizaciones</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:all>
+				<xs:element name="Nombre">
+					<xs:annotation>
+						<xs:documentation>Nombre del organismo</xs:documentation>
+					</xs:annotation>
+					<xs:simpleType>
+						<xs:restriction base="xs:string">
+							<xs:minLength value="5"/>
+							<xs:maxLength value="150"/>
+						</xs:restriction>
+					</xs:simpleType>
+				</xs:element>
+				<xs:element ref="NIF">
+					<xs:annotation>
+						<xs:documentation>NIF del organismo</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element ref="FechaAlta">
+					<xs:annotation>
+						<xs:documentation>Fecha en la que se dio de alta al organismo. Formato: AAAA-MM-DD</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element ref="FechaAltaOrganismoCesionario" minOccurs="0"/>
+				<xs:element ref="DIR3" minOccurs="0"/>
+				<xs:element ref="TipoOrganismo"/>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="FechaAltaOrganismoCesionario" type="xs:date">
+		<xs:annotation>
+			<xs:documentation>Fecha en la que el organismo fue dado de alta como cesionario en un nodo de interoperabildiad. Formato: AAAA-MM-DD</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="NIF">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:pattern value="[A-Za-z][0-9]{7}[0-9A-Za-z]"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="DIR3">
+		<xs:annotation>
+			<xs:documentation>Código DIR3 del organismo</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:pattern value="([AUIJO][0-9]|CC|G[EA]|E([AC]|[0-9])|L(A|[0-9]))[0-9]{7}"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="TipoOrganismo">
+		<xs:annotation>
+			<xs:documentation>Tipo de organismo</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:enumeration value="AGE"/>
+				<xs:enumeration value="CCAA"/>
+				<xs:enumeration value="PROVINCIAL"/>
+				<xs:enumeration value="MUNICIPAL"/>
+				<xs:enumeration value="UNIVERSIDAD"/>
+				<xs:enumeration value="CABILDO/CONSELL"/>
+				<xs:enumeration value="OTROS"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<!-- Lista autorizaciones -->
+	<xs:element name="Autorizaciones">
+		<xs:annotation>
+			<xs:documentation>Lista de autorizaciones obtenidas</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="Autorizacion" maxOccurs="unbounded"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Autorizacion">
+		<xs:annotation>
+			<xs:documentation>Datos de cada autorización obtenida</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:all>
+				<xs:element ref="Procedimiento"/>
+				<xs:element ref="ListaServicios" minOccurs="1"/>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Procedimiento">
+		<xs:annotation>
+			<xs:documentation>Datos del procedimiento en base al cual existe la autorización</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:all>
+				<xs:element ref="CodigoProcedimiento">
+					<xs:annotation>
+						<xs:documentation>Código del procedimiento</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="Nombre">
+					<xs:annotation>
+						<xs:documentation>Nombre del procedimiento</xs:documentation>
+					</xs:annotation>
+					<xs:simpleType>
+						<xs:restriction base="xs:string">
+							<xs:minLength value="3"/>
+							<xs:maxLength value="500"/>
+						</xs:restriction>
+					</xs:simpleType>
+				</xs:element>
+				<xs:element ref="Descripcion" minOccurs="0"/>
+				<xs:element ref="Tipo"/>
+				<xs:element ref="DescripcionTipo"/>
+				<xs:element ref="Consentimiento"/>
+				<xs:element ref="URL" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>URL del consentimiento</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element ref="NormasLegales"/>
+				<xs:element ref="FechaAlta">
+					<xs:annotation>
+						<xs:documentation>Fecha en la que se dio de alta el procedimiento. Formato: AAAA-MM-DD</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element ref="FechaBaja" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>Fecha en la que se dio de baja el procedimiento. Formato: AAAA-MM-DD</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element ref="MotivoBaja" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>Motivo por el que se dio de baja el procedimiento</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element ref="FechaBloqueo" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>Fecha en la que se bloqueo el procedimiento. Formato: AAAA-MM-DD</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element ref="MotivoBloqueo" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>Motivo por el que se bloqueo el procedimiento</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element ref="FechaCaducidad" minOccurs="0"/>
+				<xs:element ref="Automatizado"/>
+				<xs:element ref="Periodico"/>
+				<xs:element ref="Observaciones" minOccurs="0"/>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Descripcion">
+		<xs:annotation>
+			<xs:documentation>Descripción</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="3"/>
+				<xs:maxLength value="500"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Tipo">
+		<xs:annotation>
+			<xs:documentation>Tipo</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:enumeration value="Aduanero"/>
+				<xs:enumeration value="Afiliación y cotización a la Seguridad Social"/>
+				<xs:enumeration value="Autorizaciones, licencias, concesiones y homologaciones"/>
+				<xs:enumeration value="Ayudas, Becas y Subvenciones"/>
+				<xs:enumeration value="Certificados"/>
+				<xs:enumeration value="Contratación pública"/>
+				<xs:enumeration value="Convenios de Colaboración y Comunicaciones administrativas"/>
+				<xs:enumeration value="Gestión Económica y Patrimonial"/>
+				<xs:enumeration value="Declaraciones y comunicaciones de los interesados"/>
+				<xs:enumeration value="Inspectora"/>
+				<xs:enumeration value="Premios"/>
+				<xs:enumeration value="Prestaciones"/>
+				<xs:enumeration value="Registros y Censos"/>
+				<xs:enumeration value="Responsabilidad patrimonial y otras solicitudes de indemnización"/>
+				<xs:enumeration value="Revisión de Actos administrativos y Recursos"/>
+				<xs:enumeration value="Sancionador"/>
+				<xs:enumeration value="Sugerencias, Quejas, Denuncias e Información a los ciudadanos"/>
+				<xs:enumeration value="Tributario"/>
+				<xs:enumeration value="Otros"/>
+				<xs:enumeration value="Recursos Humanos"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="DescripcionTipo">
+		<xs:annotation>
+			<xs:documentation>Descripción del tipo de procedimiento</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="10"/>
+				<xs:maxLength value="2500"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Consentimiento">
+		<xs:annotation>
+			<xs:documentation>Tipo de consentimiento. Valores posibles: Si/Ley/AMBOS</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:enumeration value="Si"/>
+				<xs:enumeration value="Ley"/>
+				<xs:enumeration value="Ambos"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="FechaCaducidad" type="xs:date">
+		<xs:annotation>
+			<xs:documentation>Fecha de caducidad. Formato: AAAA-MM-DD</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="Automatizado">
+		<xs:annotation>
+			<xs:documentation>Indicador de si el procedimiento pertenece a un proceso automatizado. Valores posibles: S/N</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:enumeration value="S"/>
+				<xs:enumeration value="N"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Periodico">
+		<xs:annotation>
+			<xs:documentation>Indicador de si el procedimiento es periódico. Valores posibles: S/N</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:enumeration value="S"/>
+				<xs:enumeration value="N"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Observaciones">
+		<xs:annotation>
+			<xs:documentation>Observaciones del procedimiento</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="3"/>
+				<xs:maxLength value="500"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="FechaAlta" type="xs:date">
+		<xs:annotation>
+			<xs:documentation>Fecha en la que se dio de alta la autorización. Formato: AAAA-MM-DD</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="FechaBaja" type="xs:date">
+		<xs:annotation>
+			<xs:documentation>Fecha en la que se dio de baja la autorización. Formato: AAAA-MM-DD</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="FechaBloqueo" type="xs:date">
+		<xs:annotation>
+			<xs:documentation>Fecha en la que se bloqueo la autorización. Formato: AAAA-MM-DD</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="MotivoBaja">
+		<xs:annotation>
+			<xs:documentation>Motivo por el que se dio de baja la autorización</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="3"/>
+				<xs:maxLength value="1000"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="MotivoBloqueo">
+		<xs:annotation>
+			<xs:documentation>Motivo por el que se bloqueo la autorización</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="3"/>
+				<xs:maxLength value="1000"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<!-- Datos Autorizacion -->
+	<xs:element name="NormasLegales">
+		<xs:annotation>
+			<xs:documentation>Normas legales que regulan el procedimiento</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="NormaLegal" maxOccurs="unbounded"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="NormaLegal">
+		<xs:annotation>
+			<xs:documentation>Datos de la norma legal que regula el procedimiento</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="Nombre">
+					<xs:annotation>
+						<xs:documentation>Nombre</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element ref="URL" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>URL</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element ref="Articulos" minOccurs="0"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Articulos">
+		<xs:annotation>
+			<xs:documentation>Artículos de la norma legal en los que se recoge la necesidad de consultar los datos de la persona física/jurídica</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="Articulo" maxOccurs="unbounded"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Articulo">
+		<xs:annotation>
+			<xs:documentation>Datos del artículo</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="2000"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="URL">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="3"/>
+				<xs:maxLength value="2000"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="ListaServicios">
+		<xs:annotation>
+			<xs:documentation>Lista de servicios autorizados al procedimiento</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="Servicio" maxOccurs="unbounded"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Servicio">
+		<xs:annotation>
+			<xs:documentation>Datos del servicio autorizado al procedimiento</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:all>
+				<xs:element ref="CodigoCertificado">
+					<xs:annotation>
+						<xs:documentation>Código del servicio autorizado</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element ref="Nombre">
+					<xs:annotation>
+						<xs:documentation>Nombre del servicio autorizado</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element ref="FechaAlta">
+					<xs:annotation>
+						<xs:documentation>Fecha en la que se dio de alta la autorización al servicio. Formato: AAAA-MM-DD</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element ref="FechaBaja" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>Fecha en la que se dio de baja la autorización al servicio. Formato: AAAA-MM-DD</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element ref="MotivoBaja" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>Motivo por el que se dio de baja la autorización al servicio</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element ref="FechaBloqueo" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>Fecha en la que se bloqueo la autorización al servicio. Formato: AAAA-MM-DD</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element ref="MotivoBloqueo" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>Motivo por el que se bloqueo la autorización al servicio</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Nombre">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="3"/>
+				<xs:maxLength value="2000"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+</xs:schema>

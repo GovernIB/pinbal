@@ -37,7 +37,7 @@
 	<xs:element name="DatosAdicionalesTitularConsulta">
 		<xs:complexType>
 			<xs:sequence>
-				<xs:element name="FechaHechoRegistral" type="xs:date">
+				<xs:element name="FechaHechoRegistral" type="xs:date" minOccurs="0">
 					<xs:annotation>
 						<xs:documentation>Fecha del Hecho Registral</xs:documentation>
 					</xs:annotation>

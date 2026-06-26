@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- edited with XMLSpy v2011 sp1 (http://www.altova.com) by End User (free.org) -->
 <xs:schema xmlns="http://intermediacion.redsara.es/scsp/esquemas/datosespecificos" xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://intermediacion.redsara.es/scsp/esquemas/datosespecificos" elementFormDefault="qualified" attributeFormDefault="unqualified">
 	<xs:element name="DatosEspecificos" type="DatosEspecificos"/>
 	<xs:complexType name="DatosEspecificos">
@@ -20,6 +19,7 @@
 	<xs:element name="Consulta">
 		<xs:complexType>
 			<xs:sequence>
+				<xs:element ref="CodigoComunidadAutonoma"/>
 				<xs:element ref="CodigoProvincia" minOccurs="0"/>
 			</xs:sequence>
 		</xs:complexType>
@@ -28,18 +28,15 @@
 		<xs:complexType>
 			<xs:all>
 				<xs:element ref="Estado"/>
+				<xs:element ref="Incumplimientos" minOccurs="0"/>
 			</xs:all>
 		</xs:complexType>
 	</xs:element>
-	<xs:simpleType name="Fecha">
+	<xs:element name="CodigoComunidadAutonoma" type="Codigo2DigitosINE">
 		<xs:annotation>
-			<xs:documentation>Formato: DD/MM/AAAA</xs:documentation>
+			<xs:documentation>Utilizar los 2 dígitos del código INE</xs:documentation>
 		</xs:annotation>
-		<xs:restriction base="xs:string">
-			<xs:minLength value="10"/>
-			<xs:maxLength value="10"/>
-		</xs:restriction>
-	</xs:simpleType>
+	</xs:element>
 	<xs:element name="CodigoProvincia" type="Codigo2DigitosINE">
 		<xs:annotation>
 			<xs:documentation>Utilizar los 2 dígitos del código INE</xs:documentation>
@@ -52,6 +49,15 @@
 		<xs:restriction base="xs:string">
 			<xs:minLength value="2"/>
 			<xs:maxLength value="2"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="Fecha">
+		<xs:annotation>
+			<xs:documentation>Formato: DD/MM/AAAA</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:minLength value="10"/>
+			<xs:maxLength value="10"/>
 		</xs:restriction>
 	</xs:simpleType>
 	<xs:element name="Estado">
@@ -81,6 +87,52 @@ Descripción de la Respuesta, en función del valor del campo CodigoEstado.
 			</xs:all>
 		</xs:complexType>
 	</xs:element>
+	<xs:element name="Incumplimientos">
+		<xs:annotation>
+			<xs:documentation>
+			Datos de los incumplimientos en caso de ser no estar al corriente de pago
+		</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="NumeroRegistrosExistentes"/>
+				<xs:element ref="NumeroRegistrosFacilitados"/>
+				<xs:element ref="Incumplimiento" minOccurs="0" maxOccurs="unbounded"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="NumeroRegistrosExistentes">
+		<xs:annotation>
+			<xs:documentation>Número de registros de incumplimientos existentes</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:integer">
+				<xs:totalDigits value="7"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="NumeroRegistrosFacilitados">
+		<xs:annotation>
+			<xs:documentation>Número de registros de incumplimientos facilitados</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:integer">
+				<xs:totalDigits value="4"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Incumplimiento">
+		<xs:annotation>
+			<xs:documentation>Literal de los Incumplimientos al no estar al corriente de pago</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="1024"/>
+				<xs:whiteSpace value="collapse"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
 	<xs:element name="CodigoEstado">
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
@@ -98,7 +150,9 @@ Descripción de la Respuesta, en función del valor del campo CodigoEstado.
 	<xs:element name="LiteralError">
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
-				<xs:maxLength value="255"/>
+				<xs:minLength value="1"/>
+				<xs:maxLength value="1024"/>
+				<xs:whiteSpace value="collapse"/>
 			</xs:restriction>
 		</xs:simpleType>
 	</xs:element>

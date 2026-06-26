@@ -279,7 +279,7 @@
 										</xs:sequence>
 									</xs:complexType>
 								</xs:element>
-								<xs:element name="DatosCola">
+								<xs:element name="DatosCola" minOccurs="0">
 									<xs:complexType>
 										<xs:sequence>
 											<xs:element name="DCDatosPersonales" minOccurs="0">
@@ -495,7 +495,7 @@
 																</xs:restriction>
 															</xs:simpleType>
 														</xs:element>
-														<xs:element name="DCNumViviendas" minOccurs="0" maxOccurs="12">
+														<xs:element name="DCNumViviendas" minOccurs="0" maxOccurs="48">
 															<xs:complexType>
 																<xs:sequence>
 																	<xs:element name="DCContrib" minOccurs="0">

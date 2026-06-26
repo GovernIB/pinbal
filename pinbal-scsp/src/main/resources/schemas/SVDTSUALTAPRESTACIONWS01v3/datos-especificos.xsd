@@ -1,0 +1,588 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://intermediacion.redsara.es/scsp/esquemas/datosespecificos" targetNamespace="http://intermediacion.redsara.es/scsp/esquemas/datosespecificos" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<xs:element name="DatosEspecificos" type="DatosEspecificos">
+		<xs:annotation>
+			<xs:documentation>Datos Especificos del proyecto de tarjeta social universal</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:complexType name="DatosEspecificos">
+		<xs:choice>
+			<xs:element name="Comunicacion">
+				<xs:annotation>
+					<xs:documentation>Datos de la comunicación de las prestaciones</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:all>
+						<xs:element ref="DatosAdicionalesTitular"/>
+						<xs:element ref="DatosResidencia" minOccurs="1"/>
+						<xs:element ref="Prestacion"/>
+					</xs:all>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="Respuesta">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="Estado" maxOccurs="5">
+							<xs:annotation>
+								<xs:documentation>Estado de la comunicación de pagos se pueden devolver hasta 5 códigos de error.</xs:documentation>
+							</xs:annotation>
+							<xs:complexType>
+								<xs:all>
+									<xs:element ref="CodigoEstado"/>
+									<xs:element ref="LiteralError"/>
+									<xs:element ref="CodigoEstadoSecundario" minOccurs="0"/>
+								</xs:all>
+							</xs:complexType>
+						</xs:element>
+						<xs:element ref="InformacionAdicional" minOccurs="0"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+		</xs:choice>
+		<xs:attribute name="Id" type="xs:string" use="optional"/>
+	</xs:complexType>
+	<xs:element name="DatosAdicionalesTitular">
+		<xs:annotation>
+			<xs:documentation>Datos adicionales del titular de las prestaciones</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:all>
+				<xs:element ref="FechaNacimiento"/>
+				<xs:element ref="OtrosDatosPersona" minOccurs="1"/>
+				<xs:element ref="DatosProtegidos" minOccurs="0"/>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="DatosProtegidos">
+		<xs:annotation>
+			<xs:documentation>Indicador de datos protegidos de la persona perceptora de la prestación</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:enumeration value="P"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="OtrosDatosPersona">
+		<xs:annotation>
+			<xs:documentation>Datos adicionales de la persona perceptora de la prestación</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:all>
+				<xs:element ref="Nacionalidad"/>
+				<xs:element ref="Sexo" minOccurs="0"/>
+				<xs:element ref="EstadoCivil" minOccurs="0"/>
+				<xs:element ref="TelefonoMovil" minOccurs="0"/>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="DatosResidencia">
+		<xs:annotation>
+			<xs:documentation>Datos de residencia de la persona perceptora de la prestación</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:all>
+				<xs:element ref="Domicilio"/>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Domicilio">
+		<xs:annotation>
+			<xs:documentation>Datos del domicilio de la persona perceptora de la prestación</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:choice>
+				<xs:element ref="DomicilioNacional"/>
+				<xs:element ref="DomicilioExtranjero"/>
+			</xs:choice>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="DomicilioNacional">
+		<xs:annotation>
+			<xs:documentation>Datos del domicilio nacional de la persona perceptora de la prestación</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:all>
+				<xs:element ref="Provincia"/>
+				<xs:element ref="MunicipioResidencia"/>
+				<xs:element ref="PoblacionResidencia"/>
+				<xs:element ref="CodigoVia" minOccurs="0"/>
+				<xs:element ref="NombreVia" minOccurs="0"/>
+				<xs:element ref="NumeroVia" minOccurs="0"/>
+				<xs:element ref="CalificadorNumero" minOccurs="0"/>
+				<xs:element ref="Kilometro" minOccurs="0"/>
+				<xs:element ref="Hectometro" minOccurs="0"/>
+				<xs:element ref="Escalera" minOccurs="0"/>
+				<xs:element ref="Puerta" minOccurs="0"/>
+				<xs:element ref="Piso" minOccurs="0"/>
+				<xs:element ref="Bloque" minOccurs="0"/>
+				<xs:element ref="CodigoPostal" minOccurs="0"/>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="DomicilioExtranjero">
+		<xs:annotation>
+			<xs:documentation>Datos del domicilio extranjero de la persona perceptora de la prestación</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:all>
+				<xs:element ref="PaisResidencia"/>
+				<xs:element ref="DireccionResidencia1" minOccurs="0"/>
+				<xs:element ref="DireccionResidencia2" minOccurs="0"/>
+				<xs:element ref="LocalidadResidencia"/>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="PoblacionResidencia">
+		<xs:annotation>
+			<xs:documentation>Municipio de residencia de la persona perceptora de la prestación</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="CodigoPoblacion"/>
+				<xs:element ref="NombrePoblacion"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="FechaNacimiento">
+		<xs:annotation>
+			<xs:documentation>Fecha de nacimiento de la persona perceptora de la prestación</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:date">
+				<xs:minInclusive value="1900-01-01"/>
+				<xs:pattern value="\d{4}-\d{2}-\d{2}"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Nacionalidad">
+		<xs:annotation>
+			<xs:documentation>Nacionalidad de la persona perceptora de la prestación codificación ISO 3166-1 numérico</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:int">
+				<xs:pattern value="\d{3}"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Sexo">
+		<xs:annotation>
+			<xs:documentation>Sexo de la persona perceptora de la prestación:
+			1.- Varón 
+			2.- Mujer
+			</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:int">
+				<xs:enumeration value="1"/>
+				<xs:enumeration value="2"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="EstadoCivil">
+		<xs:annotation>
+			<xs:documentation>Estado civil de la persona perceptora de la prestación: 
+			1.- SOLTERO/A 
+			2.- CASADO/A
+			3.- VIUDO/A
+			4.- SEPARADO/A
+			5.- DIVORCIADO/A
+			7.- PAREJA DE HECHO
+			</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:int">
+				<xs:enumeration value="1"/>
+				<xs:enumeration value="2"/>
+				<xs:enumeration value="3"/>
+				<xs:enumeration value="4"/>
+				<xs:enumeration value="5"/>
+				<xs:enumeration value="7"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="TelefonoMovil">
+		<xs:annotation>
+			<xs:documentation>Teléfono móvil de la persona perceptora de la prestación</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:whiteSpace value="collapse"/>
+				<xs:pattern value="(\+)?[0-9]{1,13}"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="PaisResidencia">
+		<xs:annotation>
+			<xs:documentation>País de residencia de la persona perceptora de la prestación, ISO 3166-1 numérico (Exceptuando 724 España - 953 Desconocido)</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:int">
+				<xs:pattern value="\d{3}"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Provincia">
+		<xs:annotation>
+			<xs:documentation>Provincia de residencia de la persona perceptora de la prestación</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:int">
+				<xs:minInclusive value="01"/>
+				<xs:pattern value="[0-4]\d|5[0-2]|(99)"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="MunicipioResidencia">
+		<xs:annotation>
+			<xs:documentation>Municipio de residencia de la persona perceptora de la prestación</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:pattern value="\d{3}"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="CodigoPoblacion">
+		<xs:annotation>
+			<xs:documentation>Población de residencia de la persona perceptora de la prestación</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:pattern value="\d{6}"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="NombrePoblacion">
+		<xs:annotation>
+			<xs:documentation>Municipio de residencia de la persona perceptora de la prestación</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="2"/>
+				<xs:maxLength value="70"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="CodigoVia">
+		<xs:annotation>
+			<xs:documentation>Código de vía de la residencia de la persona perceptora de la prestación</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="5"/>
+				<xs:pattern value="[a-zA-ZñÑ\.]{1,5}"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="NombreVia">
+		<xs:annotation>
+			<xs:documentation>Nombre de vía de la residencia de la persona perceptora de la prestación</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="70"/>
+				<xs:whiteSpace value="collapse"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="NumeroVia">
+		<xs:annotation>
+			<xs:documentation>Número de vía de la residencia de la persona perceptora de la prestación</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:pattern value="\d{1,4}"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="CalificadorNumero">
+		<xs:annotation>
+			<xs:documentation>Calificador del número de vía de la residencia de la persona perceptora de la prestación</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:length value="1"/>
+				<xs:whiteSpace value="collapse"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Kilometro">
+		<xs:annotation>
+			<xs:documentation>Kilómetro de vía de la residencia de la persona perceptora de la prestación</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:pattern value="\d{1,3}"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Hectometro">
+		<xs:annotation>
+			<xs:documentation>Hectómetro de vía de la residencia de la persona perceptora de la prestación</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:pattern value="\d{1}"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Escalera">
+		<xs:annotation>
+			<xs:documentation>Escalera de la dirección de la residencia de la persona perceptora de la prestación</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="2"/>
+				<xs:whiteSpace value="collapse"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Puerta">
+		<xs:annotation>
+			<xs:documentation>Puerta de la dirección de la residencia de la persona perceptora de la prestación</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="3"/>
+				<xs:whiteSpace value="collapse"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Piso">
+		<xs:annotation>
+			<xs:documentation>Piso de la dirección de la residencia de la persona perceptora de la prestación</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="2"/>
+				<xs:whiteSpace value="collapse"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Bloque">
+		<xs:annotation>
+			<xs:documentation>Bloque de la dirección de la residencia de la persona perceptora de la prestación</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="4"/>
+				<xs:whiteSpace value="collapse"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="CodigoPostal">
+		<xs:annotation>
+			<xs:documentation>Código postal de la dirección de la residencia de la persona perceptora de la prestación</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:int">
+				<xs:pattern value="\d{5}"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="DireccionResidencia1">
+		<xs:annotation>
+			<xs:documentation>Dirección 1 de la residencia extranjera de la persona perceptora de la prestación</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="35"/>
+				<xs:whiteSpace value="collapse"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="DireccionResidencia2">
+		<xs:annotation>
+			<xs:documentation>Dirección 2 de la residencia extranjera de la persona perceptora de la prestación</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="35"/>
+				<xs:whiteSpace value="collapse"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="LocalidadResidencia">
+		<xs:annotation>
+			<xs:documentation>Localidad de la residencia extranjera de la persona perceptora de la prestación</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="100"/>
+				<xs:whiteSpace value="collapse"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Prestacion">
+		<xs:annotation>
+			<xs:documentation>Datos de la prestación</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:all>
+				<xs:element ref="ClavePropiaEntidad"/>
+				<xs:element ref="ClavePrestacion" minOccurs="1"/>
+				<xs:element ref="FechaSituacion" minOccurs="1"/>
+				<xs:element ref="TipoPago" minOccurs="1">
+					<xs:annotation>
+						<xs:documentation>Tipo de pago de la prestación:
+			U.- Único			P.- Periódico			</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element ref="SituacionActual" minOccurs="1">
+					<xs:annotation>
+						<xs:documentation>Clave que identifica la situación actual de la prestación:
+			A.- Alta			B.- Baja			S.- Suspensión			</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element ref="CodigoImportePrestacion" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>Código del importe de la perstación:
+01.- Importe bruto
+02.- Nómina de empresa
+			</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element ref="ImportePrestacion" minOccurs="0"/>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="ClavePropiaEntidad">
+		<xs:annotation>
+			<xs:documentation>Clave única que identifica el pago de una prestación, debe tener formato DIR3+Clavepropia e identifica a la prestación ya concedida</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="40"/>
+				<xs:whiteSpace value="collapse"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="ClavePrestacion">
+		<xs:annotation>
+			<xs:documentation>Clave que identifica la prestación a percibir</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="7"/>
+				<xs:whiteSpace value="collapse"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="FechaSituacion">
+		<xs:simpleType>
+			<xs:restriction base="xs:date">
+				<xs:minInclusive value="1900-01-01"/>
+				<xs:pattern value="\d{4}-\d{2}-\d{2}"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="TipoPago">
+		<xs:annotation>
+			<xs:documentation>Tipo de pago de la prestación:
+			U.- Único
+			P.- Periódico
+			</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:enumeration value="U"/>
+				<xs:enumeration value="P"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="SituacionActual">
+		<xs:annotation>
+			<xs:documentation>Clave que identifica la situación actual de la prestación:
+			A.- Alta
+			B.- Baja
+			S.- Suspensión
+			</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:enumeration value="A"/>
+				<xs:enumeration value="B"/>
+				<xs:enumeration value="S"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="CodigoImportePrestacion">
+		<xs:annotation>
+			<xs:documentation>Código del importe de la perstación:
+			01.- Importe bruto
+			02.- Nómina de empresa
+			</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:enumeration value="01"/>
+				<xs:enumeration value="02"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="ImportePrestacion">
+		<xs:annotation>
+			<xs:documentation>Importe de la la prestación a percibir en céntimos de euro</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:int">
+				<xs:minInclusive value="0"/>
+				<xs:maxInclusive value="999999999"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="CodigoEstado">
+		<xs:annotation>
+			<xs:documentation>Código de estado de la respuesta de la solicitud.</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:maxLength value="5"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="LiteralError">
+		<xs:annotation>
+			<xs:documentation>Literal de estado de la respuesta de la solicitud.</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:maxLength value="1024"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="CodigoEstadoSecundario">
+		<xs:annotation>
+			<xs:documentation>Código secundario de estado de la respuesta de la solicitud.</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:maxLength value="16"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="InformacionAdicional">
+		<xs:annotation>
+			<xs:documentation>Información adicional asociada al primer código de respuesta</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="50"/>
+				<xs:whiteSpace value="collapse"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+</xs:schema>

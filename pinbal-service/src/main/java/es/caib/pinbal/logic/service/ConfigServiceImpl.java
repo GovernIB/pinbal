@@ -127,12 +127,11 @@ public class ConfigServiceImpl implements ConfigService {
         for (ConfigDto config: cGroup.getConfigs()) {
             if ("PASS".equals(config.getTypeCode())){
                 config.setValue("*****");
-                continue;
-            }
-            if (ConfigSourceEnumDto.FILE.equals(config.getSourceProperty())) {
+            } else if (ConfigSourceEnumDto.FILE.equals(config.getSourceProperty())) {
                 // Les propietats de Jboss es llegeixen del fitxer de properties i si no estan definides prenen el valor especificat a la base de dades.
                 config.setValue(configHelper.getConfig(config.getKey(), config.getValue()));
             }
+            configs.add(config);
         }
         cGroup.setConfigs(configs);
         if (cGroup.getInnerConfigs() == null || cGroup.getInnerConfigs().isEmpty()) {

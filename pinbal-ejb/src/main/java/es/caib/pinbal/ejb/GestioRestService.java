@@ -13,7 +13,10 @@ import org.springframework.data.domain.Pageable;
 
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 
+@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
 @Primary
 @Stateless
 public class GestioRestService extends AbstractService<es.caib.pinbal.logic.intf.service.GestioRestService> implements es.caib.pinbal.logic.intf.service.GestioRestService {

@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- edited with XMLSpy v2008 rel. 2 (http://www.altova.com) by mazuki (darksiderg) -->
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://intermediacion.redsara.es/scsp/esquemas/datosespecificos" xmlns:puntos="http://intermediacion.redsara.es/scsp/esquemas/datosespecificos" targetNamespace="http://intermediacion.redsara.es/scsp/esquemas/datosespecificos" elementFormDefault="qualified" attributeFormDefault="unqualified">
 	<xs:element name="DatosEspecificos">
 		<xs:complexType>
@@ -24,7 +23,7 @@
 		</xs:annotation>
 		<xs:complexType>
 			<xs:sequence>
-				<xs:element ref="DetalleMovimientos" maxOccurs="unbounded"/>
+				<xs:element ref="DetalleMovimientos" minOccurs="1" maxOccurs="unbounded"/>
 			</xs:sequence>
 		</xs:complexType>
 	</xs:element>
@@ -34,12 +33,12 @@
 		</xs:annotation>
 		<xs:complexType>
 			<xs:sequence>
-				<xs:element ref="Descripcion"/>
-				<xs:element ref="FechaFirmeza"/>
-				<xs:element ref="Movimiento"/>
+				<xs:element ref="Descripcion" minOccurs="1"/>
+				<xs:element ref="FechaFirmeza" minOccurs="1"/>
+				<xs:element ref="Movimiento" minOccurs="1"/>
 				<xs:element ref="Infraccion" minOccurs="0"/>
 				<xs:element ref="Cursos" minOccurs="0"/>
-				<xs:element ref="Operacion"/>
+				<xs:element ref="Operacion" minOccurs="1"/>
 				<xs:element ref="DetallePuntos" minOccurs="0"/>
 				<xs:element ref="Organismo" minOccurs="0"/>
 			</xs:sequence>
@@ -109,9 +108,9 @@
 		</xs:annotation>
 		<xs:complexType>
 			<xs:sequence>
-				<xs:element ref="Puntos"/>
+				<xs:element ref="Puntos" minOccurs="1"/>
 				<xs:element ref="Signo"/>
-				<xs:element ref="Saldo"/>
+				<xs:element ref="Saldo" minOccurs="1"/>
 			</xs:sequence>
 		</xs:complexType>
 	</xs:element>
@@ -121,12 +120,12 @@
 		</xs:annotation>
 		<xs:complexType>
 			<xs:sequence>
-				<xs:element name="ReferenciaInfraccion" type="xs:int" minOccurs="0">
+				<xs:element name="ReferenciaInfraccion" type="xs:int" minOccurs="1">
 					<xs:annotation>
 						<xs:documentation>Referencia de la infracción que posibilita el movimiento de puntos</xs:documentation>
 					</xs:annotation>
 				</xs:element>
-				<xs:element name="FechaReferencia" type="xs:date" minOccurs="0">
+				<xs:element name="FechaReferencia" type="xs:date" minOccurs="1">
 					<xs:annotation>
 						<xs:documentation>Fecha de referencia de la infracción que posibilita el movimiento de puntos</xs:documentation>
 					</xs:annotation>
@@ -159,8 +158,8 @@
 		</xs:annotation>
 		<xs:complexType>
 			<xs:sequence>
-				<xs:element ref="FechaOperacion"/>
-				<xs:element ref="TipoOperacion"/>
+				<xs:element ref="FechaOperacion" minOccurs="1"/>
+				<xs:element ref="TipoOperacion" minOccurs="1"/>
 			</xs:sequence>
 		</xs:complexType>
 	</xs:element>
@@ -170,8 +169,8 @@
 		</xs:annotation>
 		<xs:complexType>
 			<xs:sequence>
-				<xs:element ref="NombreOrganismo"/>
-				<xs:element ref="CodigoOrganismo"/>
+				<xs:element ref="NombreOrganismo" minOccurs="1"/>
+				<xs:element ref="CodigoOrganismo" minOccurs="1"/>
 			</xs:sequence>
 		</xs:complexType>
 	</xs:element>

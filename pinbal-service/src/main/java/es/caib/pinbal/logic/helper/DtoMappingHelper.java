@@ -227,7 +227,7 @@ public class DtoMappingHelper {
 	public <S, D> Page<D> pageEntities2pageDto(Page<S> pageEntities, Class<D> destinationClass, Pageable pageable) {
 		return new PageImpl<D>(
 				this.getMapperFacade().mapAsList(pageEntities.getContent(), destinationClass),
-				pageable,
+				pageable != null ? pageable : Pageable.unpaged(),
 				pageEntities.getTotalElements());
 	}
 

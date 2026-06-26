@@ -1,0 +1,226 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns="http://intermediacion.redsara.es/scsp/esquemas/datosespecificos" xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://intermediacion.redsara.es/scsp/esquemas/datosespecificos" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<xs:element name="DatosEspecificos" type="DatosEspecificos"/>
+	<xs:complexType name="DatosEspecificos">
+		<xs:all>
+			<xs:element ref="Retorno">
+				<xs:annotation>
+					<xs:documentation>Solo en el mensaje RESPUESTA</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:all>
+		<xs:attribute name="Id" type="xs:string" use="optional"/>
+	</xs:complexType>
+	<xs:element name="Consulta">
+		<xs:complexType/>
+	</xs:element>
+	<xs:element name="Retorno">
+		<xs:complexType>
+			<xs:all>
+				<xs:element ref="Estado"/>
+				<xs:element ref="Formaciones" minOccurs="0"/>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Formaciones">
+		<xs:annotation>
+			<xs:documentation>Listado de formaciones del residente</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="Formacion" maxOccurs="unbounded"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="FechaConstituacion" type="xs:date">
+		<xs:annotation>
+			<xs:documentation>Fecha de constitución de la garantía. Formato YYYY-MM-DD</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="Estado">
+		<xs:complexType>
+			<xs:all>
+				<xs:element ref="CodigoEstado"/>
+				<xs:element ref="CodigoEstadoSecundario" minOccurs="0"/>
+				<xs:element ref="LiteralError"/>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="CodigoEstado">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="4"/>
+				<xs:whiteSpace value="collapse"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="CodigoEstadoSecundario">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="16"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="LiteralError">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="255"/>
+				<xs:whiteSpace value="collapse"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Formacion">
+		<xs:annotation>
+			<xs:documentation>Datos de la formación del residente</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:all>
+				<xs:element ref="CodigoEspecialidad"/>
+				<xs:element ref="Especialidad"/>
+				<xs:element ref="CodigoUnidadDocente"/>
+				<xs:element ref="UnidadDocente"/>
+				<xs:element ref="FechaInicioFormacion"/>
+				<xs:element ref="FechaFinFormacion"/>
+				<xs:element ref="CodigoViaAcceso"/>
+				<xs:element ref="ViaAcceso"/>
+				<xs:element ref="DuracionFormacion"/>
+				<xs:element ref="Evaluacion"/>
+				<xs:element ref="FechaOrdenConvocatoria"/>
+				<xs:element ref="CodigoTitulacionOrigen"/>
+				<xs:element ref="TitulacionOrigen"/>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="CodigoEspecialidad">
+		<xs:annotation>
+			<xs:documentation>Código de la especialidad cursada</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:int">
+				<xs:totalDigits value="10"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Especialidad">
+		<xs:annotation>
+			<xs:documentation>Especialidad cursada</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="100"/>
+				<xs:whiteSpace value="collapse"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="CodigoUnidadDocente">
+		<xs:annotation>
+			<xs:documentation>Código de la unidad docente de la especialidad</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:int">
+				<xs:totalDigits value="10"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="UnidadDocente">
+		<xs:annotation>
+			<xs:documentation>Unidad docente de la especialidad</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="100"/>
+				<xs:whiteSpace value="collapse"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="FechaInicioFormacion" type="xs:date">
+		<xs:annotation>
+			<xs:documentation>Fecha de inicio de la formación. Formato YYYY-MM-DD</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="FechaFinFormacion" type="xs:date">
+		<xs:annotation>
+			<xs:documentation>Fecha de fin de la formación. Formato YYYY-MM-DD</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="CodigoViaAcceso">
+		<xs:annotation>
+			<xs:documentation>Código de la vía de acceso a la especialidad</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:int">
+				<xs:totalDigits value="10"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="ViaAcceso">
+		<xs:annotation>
+			<xs:documentation>Vía de acceso a la especialidad</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="100"/>
+				<xs:whiteSpace value="collapse"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="DuracionFormacion">
+		<xs:annotation>
+			<xs:documentation>Duración de la formación de esa especialidad en esa convocatoria</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:int">
+				<xs:totalDigits value="2"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Evaluacion">
+		<xs:annotation>
+			<xs:documentation>Sistema de evaluación de la especialidad</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="100"/>
+				<xs:whiteSpace value="collapse"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="FechaOrdenConvocatoria" type="xs:date">
+		<xs:annotation>
+			<xs:documentation>Fecha de la convocatoria. Formato YYYY-MM-DD</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="CodigoTitulacionOrigen">
+		<xs:annotation>
+			<xs:documentation>Código de la titulación de origen</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:int">
+				<xs:totalDigits value="10"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="TitulacionOrigen">
+		<xs:annotation>
+			<xs:documentation>Titulación de origen</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:enumeration value="RADIOFISICA"/>
+				<xs:enumeration value="BIOLOGIA"/>
+				<xs:enumeration value="ENFERMERIA"/>
+				<xs:enumeration value="FARMACIA"/>
+				<xs:enumeration value="MEDICINA"/>
+				<xs:enumeration value="PSICOLOGIA"/>
+				<xs:enumeration value="QUIMICA"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+</xs:schema>

@@ -1,5 +1,6 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <jboss-deployment-structure xmlns="urn:jboss:deployment-structure:1.2">
+	<ear-subdeployments-isolated>true</ear-subdeployments-isolated>
 	<deployment>
 		<exclude-subsystems>
 			<subsystem name="jaxrs"/>
@@ -23,5 +24,4 @@
 			<module name="io.undertow.websocket" export="true"/>
 		</dependencies>
 	</deployment>
-	<ear-subdeployments-isolated>true</ear-subdeployments-isolated>
 </jboss-deployment-structure>

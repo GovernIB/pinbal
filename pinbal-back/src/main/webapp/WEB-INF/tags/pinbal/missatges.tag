@@ -2,7 +2,15 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
-<c:forEach var="attributeName" items="${pageContext.request.attributeNames}">
+<%
+    java.util.List<String> _attrNames = new java.util.ArrayList<>();
+    java.util.Enumeration<String> _en = request.getAttributeNames();
+    while (_en.hasMoreElements()) {
+        _attrNames.add(_en.nextElement());
+    }
+    request.setAttribute("_missatgesAttrNames", _attrNames);
+%>
+<c:forEach var="attributeName" items="${_missatgesAttrNames}">
 	<c:if test="${not fn:contains(attributeName, '.') && fn:contains(attributeName, 'ommand')}">
 		<spring:hasBindErrors name="${attributeName}">
 			<c:if test="${not empty errors.globalErrors}">

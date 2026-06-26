@@ -128,7 +128,7 @@
 					{
 						targets: [1],
 						width: "10%",
-						render: $.fn.dataTable.render.moment('x', 'DD/MM/YYYY HH:mm:ss', 'es' )
+						render: $.fn.dataTable.render.moment('YYYY-MM-DDTHH:mm:ss.SSSZ', 'DD/MM/YYYY HH:mm:ss', 'es' )
 					},
 					// {
 					// 	targets: [3, 5],

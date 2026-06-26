@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://intermediacion.redsara.es/scsp/esquemas/datosespecificos" targetNamespace="http://intermediacion.redsara.es/scsp/esquemas/datosespecificos" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<xs:element name="DatosEspecificos" type="DatosEspecificos">
+		<xs:annotation>
+			<xs:documentation>Datos Especificos de Registradores</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:complexType name="DatosEspecificos">
+		<xs:choice>
+			<xs:element ref="Consulta"/>
+			<xs:element ref="Retorno"/>
+		</xs:choice>
+		<xs:attribute name="Id" type="xs:string" use="optional"/>
+	</xs:complexType>
+	<xs:element name="Consulta">
+		<xs:complexType>
+			<xs:all>
+				<xs:element ref="Sociedad"/>
+				<xs:element ref="TipoRepresentacion" minOccurs="0"/>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Retorno">
+		<xs:complexType>
+			<xs:all>
+				<xs:element name="Estado">
+					<xs:annotation>
+						<xs:documentation>Estado de la respuesta.</xs:documentation>
+					</xs:annotation>
+					<xs:complexType>
+						<xs:all>
+							<xs:element ref="CodigoEstado"/>
+							<xs:element ref="LiteralError"/>
+							<xs:element ref="CodigoEstadoSecundario" minOccurs="0"/>
+						</xs:all>
+					</xs:complexType>
+				</xs:element>
+				<xs:element ref="Vigencia" minOccurs="0"/>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Sociedad">
+		<xs:complexType>
+			<xs:all>
+				<xs:element name="Documentacion" type="Documentacion"/>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="TipoRepresentacion">
+		<xs:complexType>
+			<xs:choice>
+				<xs:element ref="EscrituraNotarial"/>
+				<xs:element ref="InstanciaPrivada"/>
+			</xs:choice>
+		</xs:complexType>
+	</xs:element>
+	<xs:simpleType name="Documentacion">
+		<xs:restriction base="xs:string">
+			<xs:pattern value="([a-zA-Z]|[0-9])[0-9]{7}([a-zA-Z]|[0-9])"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:element name="EscrituraNotarial">
+		<xs:complexType>
+			<xs:all>
+				<xs:element name="Fecha" type="Fecha"/>
+				<xs:element ref="CodigoNotario" minOccurs="0"/>
+				<xs:element ref="NumeroProtocolo"/>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="InstanciaPrivada">
+		<xs:annotation>
+			<xs:documentation>Tipo de representación</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:all>
+				<xs:element name="Fecha" type="Fecha"/>
+				<xs:element name="Poderdante" type="Documentacion"/>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:simpleType name="Fecha">
+		<xs:restriction base="xs:date"/>
+	</xs:simpleType>
+	<xs:element name="CodigoNotario">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="7"/>
+				<xs:whiteSpace value="collapse"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="NumeroProtocolo">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:pattern value="([0-9]{4}/[0-9]{1,6})"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Vigencia">
+		<xs:complexType>
+			<xs:all>
+				<xs:element ref="Registro"/>
+				<xs:element ref="Vigente"/>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Registro">
+		<xs:complexType>
+			<xs:all>
+				<xs:element ref="Codigo"/>
+				<xs:element ref="Nombre"/>
+				<xs:element ref="Tipo"/>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Codigo">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="5"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Nombre">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="70"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Tipo">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="25"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Vigente">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:enumeration value="SI"/>
+				<xs:enumeration value="NO"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="CodigoEstado">
+		<xs:annotation>
+			<xs:documentation>Código de estado de la respuesta de la solicitud.</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="5"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="LiteralError">
+		<xs:annotation>
+			<xs:documentation>Literal de estado de la respuesta de la solicitud.</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="1024"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="CodigoEstadoSecundario">
+		<xs:annotation>
+			<xs:documentation>Código secundario de estado de la respuesta de la solicitud.</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="16"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+</xs:schema>

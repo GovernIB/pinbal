@@ -6,5 +6,6 @@ public enum IntegracioEnumDto {
 	SERVEIS_SCSP,
 	ORGANS,
 	USUARIS,
-	EXPLOTACIO
+	EXPLOTACIO,
+	DADES_COMUNS
 }

@@ -2370,6 +2370,16 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 			LoggerHelper.getInstance().error("No s'ha trobat la consulta múltiple per recuperar la resposta (id=" + consultaId + ")", log, LoggerHelper.LoggingTipus.CONS_MULT);
 			throw new ConsultaNotFoundException();
 		}
+		// El delegat no és un rol global: cal comprovar que la consulta pertany a l'usuari (llevat que
+		// sigui administrador). Sense aquesta comprovació qualsevol usuari autenticat podria recuperar la
+		// resposta de qualsevol consulta múltiple pel seu id.
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		boolean isAdmin = auth != null && auth.getAuthorities() != null && auth.getAuthorities().stream()
+				.anyMatch(a -> "PBL_ADMIN".equals(a.getAuthority()));
+		if (!isAdmin && (auth == null || !auth.getName().equals(consulta.getCreatedBy().orElseThrow().getCodi()))) {
+			LoggerHelper.getInstance().error("La consulta múltiple (id=" + consultaId + ") no pertany a aquest usuari", log, LoggerHelper.LoggingTipus.CONS_MULT);
+			throw new ConsultaNotFoundException();
+		}
 		if (!EstatTipus.Processant.equals(consulta.getEstat())) {
 			log.debug("No es recupera manualment la resposta de la consulta múltiple perquè no està en estat processant (id=" + consultaId + ", peticionId=" + consulta.getScspPeticionId() + ")");
 			return;

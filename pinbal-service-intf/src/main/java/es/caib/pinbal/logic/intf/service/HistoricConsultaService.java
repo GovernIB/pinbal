@@ -232,7 +232,6 @@ public interface HistoricConsultaService {
 	 * @throws ProcedimentNotFoundException
 	 *            Si el procediment especificat no existeix.
 	 */
-//	@PreAuthorize("hasRole('PBL_REPORT')")
 	public List<DadesObertesRespostaConsulta> findByFiltrePerOpenData(
             String entitatCodi,
             Date dataInici,

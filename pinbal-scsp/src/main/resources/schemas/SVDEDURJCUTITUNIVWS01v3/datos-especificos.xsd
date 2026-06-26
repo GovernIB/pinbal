@@ -1,0 +1,850 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://intermediacion.redsara.es/scsp/esquemas/datosespecificos" targetNamespace="http://intermediacion.redsara.es/scsp/esquemas/datosespecificos" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<xs:element name="DatosEspecificos">
+		<xs:complexType>
+			<xs:choice>
+				<xs:element ref="Consulta"/>
+				<xs:element ref="Retorno"/>
+			</xs:choice>
+			<xs:attribute name="Id" type="xs:string" use="optional"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Consulta">
+		<xs:annotation>
+			<xs:documentation>Datos de consulta para servicio de obtención de títulos universitarios</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:all>
+				<xs:element ref="CodigoComunidadAutonoma"/>
+				<xs:element name="CodigoUniversidad" type="CodigoEntidad" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>Código de la universidad</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element ref="CodigoCentro" minOccurs="0"/>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Retorno">
+		<xs:annotation>
+			<xs:documentation>Datos de retorno para servicio de obtención de títulos itarios</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="Estado"/>
+				<xs:element ref="Titulos" minOccurs="0"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="CodigoComunidadAutonoma">
+		<xs:annotation>
+			<xs:documentation>Código de comunidad autónoma del centro</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:enumeration value="01"/>
+				<xs:enumeration value="02"/>
+				<xs:enumeration value="03"/>
+				<xs:enumeration value="04"/>
+				<xs:enumeration value="05"/>
+				<xs:enumeration value="06"/>
+				<xs:enumeration value="07"/>
+				<xs:enumeration value="08"/>
+				<xs:enumeration value="09"/>
+				<xs:enumeration value="10"/>
+				<xs:enumeration value="11"/>
+				<xs:enumeration value="12"/>
+				<xs:enumeration value="13"/>
+				<xs:enumeration value="14"/>
+				<xs:enumeration value="15"/>
+				<xs:enumeration value="16"/>
+				<xs:enumeration value="17"/>
+				<xs:enumeration value="18"/>
+				<xs:enumeration value="19"/>
+				<xs:enumeration value="60"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Estado">
+		<xs:complexType>
+			<xs:all>
+				<xs:element name="CodigoEstado">
+					<xs:annotation>
+						<xs:documentation>Codigo de estado</xs:documentation>
+					</xs:annotation>
+					<xs:simpleType>
+						<xs:restriction base="xs:string">
+							<xs:minLength value="1"/>
+							<xs:maxLength value="4"/>
+						</xs:restriction>
+					</xs:simpleType>
+				</xs:element>
+				<xs:element name="Literal">
+					<xs:annotation>
+						<xs:documentation>Descripcion del estado</xs:documentation>
+					</xs:annotation>
+					<xs:simpleType>
+						<xs:restriction base="xs:string">
+							<xs:minLength value="1"/>
+							<xs:maxLength value="1024"/>
+						</xs:restriction>
+					</xs:simpleType>
+				</xs:element>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Titulos">
+		<xs:annotation>
+			<xs:documentation>Lista de títulos obtenidos</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="Titulo" minOccurs="1" maxOccurs="unbounded"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Titulo">
+		<xs:annotation>
+			<xs:documentation>Datos del titulo obtenido</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:all>
+				<xs:element ref="Acreditado"/>
+				<xs:element ref="TipoAcreditacion" minOccurs="0"/>
+				<xs:element ref="FechaResolucionAcreditacion" minOccurs="0"/>
+				<xs:element ref="CodigoComunidadAutonoma"/>
+				<xs:element ref="ComunidadAutonoma"/>
+				<xs:element ref="CodigoCentro"/>
+				<xs:element ref="Centro"/>
+				<xs:element ref="CodigoNaturaleza"/>
+				<xs:element ref="Naturaleza"/>
+				<xs:element name="CodigoEntidad" type="CodigoEntidad">
+					<xs:annotation>
+						<xs:documentation>Identificador de la universidad en la que se imparte el título</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element ref="Entidad"/>
+				<xs:element ref="Rol"/>
+				<xs:element ref="CodigoConjunto"/>
+				<xs:element ref="Conjunto"/>
+				<xs:element name="CodigoEstado">
+					<xs:annotation>
+						<xs:documentation>Código estado de la tramitación del título en el RUCT</xs:documentation>
+					</xs:annotation>
+					<xs:simpleType>
+						<xs:restriction base="xs:string">
+							<xs:enumeration value="P"/>
+							<xs:enumeration value="AJ"/>
+							<xs:enumeration value="ACA"/>
+							<xs:enumeration value="ACM"/>
+							<xs:enumeration value="PAC"/>
+							<xs:enumeration value="V"/>
+							<xs:enumeration value="SP"/>
+							<xs:enumeration value="A"/>
+							<xs:enumeration value="AI"/>
+						</xs:restriction>
+					</xs:simpleType>
+				</xs:element>
+				<xs:element name="Estado">
+					<xs:annotation>
+						<xs:documentation>Descripción estado de la tramitación del título en el RUCT</xs:documentation>
+					</xs:annotation>
+					<xs:simpleType>
+						<xs:restriction base="xs:string">
+							<xs:minLength value="1"/>
+							<xs:maxLength value="35"/>
+							<xs:whiteSpace value="collapse"/>
+						</xs:restriction>
+					</xs:simpleType>
+				</xs:element>
+				<xs:element ref="FechaEstado" minOccurs="0"/>
+				<xs:element ref="CodigoEstudio"/>
+				<xs:element ref="Estudio"/>
+				<xs:element ref="CodigoRama" minOccurs="0"/>
+				<xs:element ref="Rama" minOccurs="0"/>
+				<xs:element ref="CodigoTipoEstudio"/>
+				<xs:element ref="TipoEstudio" minOccurs="0"/>
+				<xs:element ref="DenominacionCorta"/>
+				<xs:element ref="CodigoSituacion"/>
+				<xs:element ref="Situacion"/>
+				<xs:element ref="CodigoTramitacion"/>
+				<xs:element ref="NivelMeces" minOccurs="0"/>
+				<xs:element ref="Habilita" minOccurs="0"/>
+				<xs:element ref="CodigoProfesionRegulada" minOccurs="0"/>
+				<xs:element ref="ProfesionRegulada" minOccurs="0"/>
+				<xs:element ref="Creditos" minOccurs="0"/>
+				<xs:element ref="FechaVerificacion" minOccurs="0"/>
+				<xs:element ref="FechaConsejoMinistros" minOccurs="0"/>
+				<xs:element ref="FechaAutorizacion" minOccurs="0"/>
+				<xs:element ref="CodigoIsced1" minOccurs="0"/>
+				<xs:element ref="Isced1" minOccurs="0"/>
+				<xs:element ref="CodigoIsced2" minOccurs="0"/>
+				<xs:element ref="Isced2" minOccurs="0"/>
+				<xs:element ref="BOE" minOccurs="0"/>
+				<xs:element ref="Plan" minOccurs="0"/>
+				<xs:element ref="TitulacionErasmus" minOccurs="0"/>
+				<xs:element ref="Consorcio" minOccurs="0"/>
+				<xs:element ref="CondicionAccesoTituloProfesional" minOccurs="0"/>
+				<xs:element ref="CodigoTituloProfesionalVinculado" minOccurs="0"/>
+				<xs:element ref="TituloProfesionalVinculado" minOccurs="0"/>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Acreditado">
+		<xs:annotation>
+			<xs:documentation>Identificador de título acreditado</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:enumeration value="S"/>
+				<xs:enumeration value="N"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="TipoAcreditacion">
+		<xs:annotation>
+			<xs:documentation>Tipo de acreditación</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:enumeration value="T"/>
+				<xs:enumeration value="I"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="FechaResolucionAcreditacion">
+		<xs:annotation>
+			<xs:documentation>Fecha de resolución de la acreditación</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:date"/>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="ComunidadAutonoma">
+		<xs:annotation>
+			<xs:documentation>Comunidad autónoma</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="50"/>
+				<xs:whiteSpace value="collapse"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="CodigoCentro">
+		<xs:annotation>
+			<xs:documentation>Código RUCT del centro</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:whiteSpace value="collapse"/>
+				<xs:pattern value="\d{8}"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Centro">
+		<xs:annotation>
+			<xs:documentation>Nombre del centro</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="150"/>
+				<xs:whiteSpace value="collapse"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="CodigoConjunto">
+		<xs:annotation>
+			<xs:documentation>Código de tipo de título conjunto</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:enumeration value="S"/>
+				<xs:enumeration value="N"/>
+				<xs:enumeration value="I"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Conjunto">
+		<xs:annotation>
+			<xs:documentation>Descripción de tipo de título conjunto</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="15"/>
+				<xs:whiteSpace value="collapse"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="CodigoEstudio">
+		<xs:annotation>
+			<xs:documentation>Código del Estudio Universitario</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:whiteSpace value="collapse"/>
+				<xs:pattern value="\d{7}"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Estudio">
+		<xs:annotation>
+			<xs:documentation>Denominación del título o estudio universitario</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="650"/>
+				<xs:whiteSpace value="collapse"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="CodigoNaturaleza">
+		<xs:annotation>
+			<xs:documentation>Código naturaleza universidad</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:int">
+				<xs:enumeration value="1"/>
+				<xs:enumeration value="2"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Naturaleza">
+		<xs:annotation>
+			<xs:documentation>Descripción naturaleza universidad</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="40"/>
+				<xs:whiteSpace value="collapse"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="CodigoRama">
+		<xs:annotation>
+			<xs:documentation>Código Rama de conocimiento</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:int">
+				<xs:enumeration value="1"/>
+				<xs:enumeration value="2"/>
+				<xs:enumeration value="3"/>
+				<xs:enumeration value="4"/>
+				<xs:enumeration value="5"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Rama">
+		<xs:annotation>
+			<xs:documentation>Descripción Rama de conocimiento</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="30"/>
+				<xs:whiteSpace value="collapse"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="CodigoSituacion">
+		<xs:annotation>
+			<xs:documentation>Código de situación del título</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:enumeration value="A"/>
+				<xs:enumeration value="B"/>
+				<xs:enumeration value="X"/>
+				<xs:enumeration value="T"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Situacion">
+		<xs:annotation>
+			<xs:documentation>Descripción situación del título</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:enumeration value="ALTA"/>
+				<xs:enumeration value="BAJA"/>
+				<xs:enumeration value="EXTINGUIDA"/>
+				<xs:enumeration value="A EXTINGUIR"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="CodigoTipoEstudio">
+		<xs:annotation>
+			<xs:documentation>Código del tipo de estudio obtenido</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:enumeration value="C"/>
+				<xs:enumeration value="G"/>
+				<xs:enumeration value="T"/>
+				<xs:enumeration value="M93"/>
+				<xs:enumeration value="M56"/>
+				<xs:enumeration value="D93"/>
+				<xs:enumeration value="D56"/>
+				<xs:enumeration value="D99"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="TipoEstudio">
+		<xs:annotation>
+			<xs:documentation>Descripción del tipo de estudio obtenido</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="50"/>
+				<xs:whiteSpace value="collapse"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="DenominacionCorta">
+		<xs:annotation>
+			<xs:documentation>Denominación corta del título</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="250"/>
+				<xs:whiteSpace value="collapse"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:simpleType name="CodigoEntidad">
+		<xs:restriction base="xs:string">
+			<xs:whiteSpace value="collapse"/>
+			<xs:pattern value="\d{3}"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:element name="Entidad">
+		<xs:annotation>
+			<xs:documentation>Descripción de la universidad en la que se imparte el título</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="60"/>
+				<xs:whiteSpace value="collapse"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="FechaEstado">
+		<xs:annotation>
+			<xs:documentation>Fecha de establecimiento del estado</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:dateTime"/>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="CodigoTramitacion">
+		<xs:annotation>
+			<xs:documentation>Identificador de tramitación de solicitud del título</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:whiteSpace value="collapse"/>
+				<xs:pattern value="\d{17}"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Rol">
+		<xs:annotation>
+			<xs:documentation>Rol de la universidad: Coordinadora o Participante</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:enumeration value="Coordinador"/>
+				<xs:enumeration value="Coordinadora"/>
+				<xs:enumeration value="Participante"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="NivelMeces">
+		<xs:annotation>
+			<xs:documentation>Código Nivel meces del título</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:int">
+				<xs:enumeration value="2"/>
+				<xs:enumeration value="3"/>
+				<xs:enumeration value="4"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Habilita">
+		<xs:annotation>
+			<xs:documentation>Habilita para profesión regulada</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:enumeration value="S"/>
+				<xs:enumeration value="N"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="CodigoProfesionRegulada">
+		<xs:annotation>
+			<xs:documentation>Código profesión regulada</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:int">
+				<xs:whiteSpace value="collapse"/>
+				<xs:minInclusive value="1"/>
+				<xs:maxInclusive value="50"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="ProfesionRegulada">
+		<xs:annotation>
+			<xs:documentation>Descripción profesión regulada</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="150"/>
+				<xs:whiteSpace value="collapse"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Creditos">
+		<xs:annotation>
+			<xs:documentation>Datos de los créditos del título</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:all>
+				<xs:element ref="CreditosFormacionBasica" minOccurs="0"/>
+				<xs:element ref="CreditosObligatorios" minOccurs="0"/>
+				<xs:element ref="CreditosOptativos" minOccurs="0"/>
+				<xs:element ref="CreditosPracticasExternas" minOccurs="0"/>
+				<xs:element ref="CreditosTrabajoFinCarrera" minOccurs="0"/>
+				<xs:element ref="CreditosTitulo" minOccurs="0"/>
+				<xs:element ref="CreditosComplementosFormativos" minOccurs="0"/>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="CreditosFormacionBasica">
+		<xs:annotation>
+			<xs:documentation>Número de créditos Formación Básica</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:int">
+				<xs:minInclusive value="0"/>
+				<xs:maxInclusive value="500"/>
+				<xs:whiteSpace value="collapse"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="CreditosObligatorios">
+		<xs:annotation>
+			<xs:documentation>Número de créditos Obligatorios</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:int">
+				<xs:minInclusive value="0"/>
+				<xs:maxInclusive value="500"/>
+				<xs:whiteSpace value="collapse"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="CreditosOptativos">
+		<xs:annotation>
+			<xs:documentation>Número de créditos Optativos</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:int">
+				<xs:minInclusive value="0"/>
+				<xs:maxInclusive value="500"/>
+				<xs:whiteSpace value="collapse"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="CreditosPracticasExternas">
+		<xs:annotation>
+			<xs:documentation>Número de créditos Prácticas Externas</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:int">
+				<xs:minInclusive value="0"/>
+				<xs:maxInclusive value="500"/>
+				<xs:whiteSpace value="collapse"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="CreditosTrabajoFinCarrera">
+		<xs:annotation>
+			<xs:documentation>Número de créditos Trabajo Fin de carrera</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:int">
+				<xs:minInclusive value="0"/>
+				<xs:maxInclusive value="500"/>
+				<xs:whiteSpace value="collapse"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="CreditosTitulo">
+		<xs:annotation>
+			<xs:documentation>Número de créditos del título</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:int">
+				<xs:minInclusive value="0"/>
+				<xs:maxInclusive value="500"/>
+				<xs:whiteSpace value="collapse"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="CreditosComplementosFormativos">
+		<xs:annotation>
+			<xs:documentation>Número de créditos complementos formativos</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:int">
+				<xs:minInclusive value="0"/>
+				<xs:maxInclusive value="500"/>
+				<xs:whiteSpace value="collapse"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="FechaVerificacion">
+		<xs:annotation>
+			<xs:documentation>Fecha de verificación del título</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:date"/>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="FechaConsejoMinistros">
+		<xs:annotation>
+			<xs:documentation>Fecha consejo de Ministros</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:date"/>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="FechaPublicacionBOE">
+		<xs:annotation>
+			<xs:documentation>Fecha Publicación en el BOE</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:date"/>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="FechaPlanEstudios">
+		<xs:annotation>
+			<xs:documentation>Fecha del plan de estudios</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:date"/>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="FechaAutorizacion">
+		<xs:annotation>
+			<xs:documentation>Fecha de autorización</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:date"/>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="CodigoIsced1">
+		<xs:annotation>
+			<xs:documentation>Clasificación Internacional Normalizada de la Educación</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:whiteSpace value="collapse"/>
+				<xs:pattern value="\d{3}"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Isced1">
+		<xs:annotation>
+			<xs:documentation>Descripción Clasificación Internacional Normalizada de la Educación</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="100"/>
+				<xs:whiteSpace value="collapse"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="CodigoIsced2">
+		<xs:annotation>
+			<xs:documentation>Clasificación Internacional Normalizada de la Educación</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:whiteSpace value="collapse"/>
+				<xs:pattern value="\d{3}"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Isced2">
+		<xs:annotation>
+			<xs:documentation>Descripción Clasificación Internacional Normalizada de la Educación</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="100"/>
+				<xs:whiteSpace value="collapse"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="BOE">
+		<xs:annotation>
+			<xs:documentation>Datos del BOE</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:all>
+				<xs:element ref="FechaPublicacionBOE" minOccurs="0"/>
+				<xs:element ref="EnlaceBOE" minOccurs="0"/>
+				<xs:element ref="FechaCorreccionBOE" minOccurs="0"/>
+				<xs:element ref="EnlaceCorreccionBOE" minOccurs="0"/>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Plan">
+		<xs:annotation>
+			<xs:documentation>Datos del Plan de Estudios</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:all>
+				<xs:element ref="FechaPlanEstudios" minOccurs="0"/>
+				<xs:element ref="EnlacePlan" minOccurs="0"/>
+				<xs:element ref="FechaCorreccionPlan" minOccurs="0"/>
+				<xs:element ref="EnlaceCorreccionPlan" minOccurs="0"/>
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="EnlaceBOE">
+		<xs:annotation>
+			<xs:documentation>Detalle enlace a BOE</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="250"/>
+				<xs:whiteSpace value="collapse"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="EnlacePlan">
+		<xs:annotation>
+			<xs:documentation>Detalle enlace a Plan</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="250"/>
+				<xs:whiteSpace value="collapse"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="FechaCorreccionBOE">
+		<xs:annotation>
+			<xs:documentation>Fecha de corrección de la publicación en BOE</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:date"/>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="EnlaceCorreccionBOE">
+		<xs:annotation>
+			<xs:documentation>Enlace a BOE de la Corrección de la publicación en BOE</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="250"/>
+				<xs:whiteSpace value="collapse"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="FechaCorreccionPlan">
+		<xs:annotation>
+			<xs:documentation>Fecha de corrección de la publicación del plan de estudios</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:date"/>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="EnlaceCorreccionPlan">
+		<xs:annotation>
+			<xs:documentation>Enlace corrección de la publicación del plan de estudios</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="250"/>
+				<xs:whiteSpace value="collapse"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="TitulacionErasmus">
+		<xs:annotation>
+			<xs:documentation>Indica si la titulación es erasmus</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:enumeration value="S"/>
+				<xs:enumeration value="N"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="Consorcio">
+		<xs:annotation>
+			<xs:documentation>Descripción del consorcio del título conjunto</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="150"/>
+				<xs:whiteSpace value="collapse"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="CondicionAccesoTituloProfesional">
+		<xs:annotation>
+			<xs:documentation>Condición de acceso para título profesional</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:enumeration value="S"/>
+				<xs:enumeration value="N"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="CodigoTituloProfesionalVinculado">
+		<xs:annotation>
+			<xs:documentation>Código título profesional vinculado</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:int">
+				<xs:minInclusive value="1"/>
+				<xs:maxInclusive value="15"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="TituloProfesionalVinculado">
+		<xs:annotation>
+			<xs:documentation>Descripción título profesional vinculado</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:maxLength value="100"/>
+				<xs:whiteSpace value="collapse"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+</xs:schema>

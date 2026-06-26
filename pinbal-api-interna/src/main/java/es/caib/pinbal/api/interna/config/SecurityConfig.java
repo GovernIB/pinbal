@@ -1,5 +1,6 @@
 package es.caib.pinbal.api.interna.config;
 
+import es.caib.pinbal.logic.intf.base.config.BaseConfig;
 import es.caib.pinbal.logic.intf.keycloak.JwtClaimsHelper;
 import es.caib.pinbal.logic.intf.keycloak.KeycloakUserDetails;
 import lombok.extern.slf4j.Slf4j;
@@ -52,7 +53,13 @@ import static org.springframework.security.config.Customizer.withDefaults;
 @EnableWebSecurity
 public class SecurityConfig {
 
-    @Value("${es.caib.pinbal.security.mappableRoles:PBL_WS,PBL_REPORT,PBL_REPRES,PBL_ADMIN,PBL_COM}")
+    @Value("${es.caib.pinbal.security.mappableRoles:" +
+            BaseConfig.ROLE_ADMIN + "," +
+            BaseConfig.ROLE_REPRES + "," +
+            BaseConfig.ROLE_WS + "," +
+            BaseConfig.ROLE_REPORT + "," +
+            BaseConfig.ROLE_COM + "," +
+            BaseConfig.ROLE_USER + "}")
     private String mappableRoles;
     @Value("${es.caib.pinbal.security.useResourceRoleMappings:false}")
     private boolean useResourceRoleMappings;
@@ -68,7 +75,8 @@ public class SecurityConfig {
             "/api-docs",
             "/api-docs/**",
             "/**/api-docs",
-            "/salut/v1"
+            "/salut/v1",
+            "/recobriment/test"
     };
 
     private static final String[] WS_RECOBRIMENT_PATHS = {
@@ -83,7 +91,9 @@ public class SecurityConfig {
         return http
                 .cors(withDefaults())
                 .csrf(AbstractHttpConfigurer::disable)
-                .addFilterBefore(preAuthenticatedProcessingFilter(), BasicAuthenticationFilter.class)
+                .addFilterBefore(
+                        preAuthenticatedProcessingFilter(),
+                        BasicAuthenticationFilter.class)
                 .authenticationProvider(preauthAuthProvider())
                 .logout(lo -> lo.addLogoutHandler(getLogoutHandler())
                         .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
@@ -91,7 +101,7 @@ public class SecurityConfig {
                         .permitAll(false))
                 .authorizeRequests(authz -> authz.antMatchers(AUTH_WHITELIST)
                         .permitAll()
-                        .antMatchers(WS_RECOBRIMENT_PATHS).hasAnyAuthority("PBL_WS", "ROLE_WS", "ROLE_PBL_WS")
+                        .antMatchers(WS_RECOBRIMENT_PATHS).hasAnyAuthority("PBL_WS")
                         .anyRequest().authenticated())
                 .headers(hd -> hd.frameOptions().disable())
                 .build();

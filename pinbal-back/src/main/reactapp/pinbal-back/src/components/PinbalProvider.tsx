@@ -110,10 +110,18 @@ const useCurrentRole = () => {
         'currentRole'
     );
     React.useEffect(() => {
-        // Obté els rols disponibles del token JWT o de __AUTH_ROLES__
+        // Obté els rols disponibles. Es prioritza __AUTH_ROLES__ (calculat al servidor): és l'única font
+        // que conté el rol sintètic "tothom"/delegat amb la comprovació del permís de delegat a l'entitat,
+        // cosa que el token JWT no pot aportar (no és un rol de Keycloak). El JWT només s'usa com a fallback
+        // quan __AUTH_ROLES__ no està disponible (p.ex. SPA standalone sense el backend JSP).
         if (authIsReady) {
             const userId = authGetUserId();
             setCurrentUserId(userId);
+            const windowAuthRoles = (window as any).__AUTH_ROLES__;
+            if (windowAuthRoles != null) {
+                setRolesAvailable(ALLOWED_ROLES.filter((a) => windowAuthRoles.includes(a)));
+                return;
+            }
             const token = authGetToken();
             if (token != null) {
                 const tokenDecoded = decodeJwt(token);
@@ -126,9 +134,7 @@ const useCurrentRole = () => {
                     return;
                 }
             }
-            // Fallback: token absent o sense realm_access (desplegament JBoss sense Bearer header)
-            const windowAuthRoles = (window as any).__AUTH_ROLES__ ?? [];
-            setRolesAvailable(ALLOWED_ROLES.filter((a) => windowAuthRoles.includes(a)));
+            setRolesAvailable([]);
         }
     }, [authIsReady]);
     React.useEffect(() => {

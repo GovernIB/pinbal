@@ -11,7 +11,6 @@ import es.caib.pinbal.logic.intf.dto.InformeUsuariDto;
 import es.caib.pinbal.logic.intf.dto.ServeiDto;
 import es.caib.pinbal.logic.intf.service.*;
 import lombok.RequiredArgsConstructor;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -156,8 +155,8 @@ public class ExplotacioReportsRestController implements ExplotacioReportsApi {
 	public ResponseEntity<List<EntitatEstadistiques>> general(
 			HttpServletRequest request,
 			@RequestParam(value = "historic", required = false) boolean historic,
-			@RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) final Date dataInici,
-			@RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) final Date dataFi) {
+			@RequestParam final Date dataInici,
+			@RequestParam final Date dataFi) {
 		// Informe general d'estat
 		List<EntitatEstadistiques> entitats = new ArrayList<EntitatEstadistiques>();
 		List<InformeGeneralEstatDto> informeGeneralFiles;

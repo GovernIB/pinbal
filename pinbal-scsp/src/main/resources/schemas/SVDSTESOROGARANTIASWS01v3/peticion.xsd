@@ -33,7 +33,6 @@
 	<xs:element name="CodigoCertificado">
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
-				<!-- Código de certificado asignado por MINHAP -->
 				<xs:enumeration value="SVDSTESOROGARANTIASWS01"/>
 			</xs:restriction>
 		</xs:simpleType>

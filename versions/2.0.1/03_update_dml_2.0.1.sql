@@ -1,5 +1,6 @@
 -- Inicialització de class_id_type a java.lang.Long per a tots els registres existents de pbl_acl_class, ja que tots els identificadors d'objecte del sistema són de tipus Long
 UPDATE pbl_acl_class SET class_id_type = 'java.lang.Long';
+UPDATE pbl_acl_class SET class = 'es.caib.pinbal.persist.entity.ProcedimentServei' WHERE class = 'es.caib.pinbal.core.model.ProcedimentServei';
 
 -- Modificació de plugins
 -- Afegir plugin usuaris LDAP

@@ -7,7 +7,10 @@ import es.caib.comanda.model.server.monitoring.*;
 import es.caib.comanda.ms.log.helper.LogFileStream;
 import org.springframework.context.annotation.Primary;
 
+import javax.annotation.security.RolesAllowed;
 import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import java.util.List;
 
 /**
@@ -16,9 +19,10 @@ import java.util.List;
  * 
  * @author Limit Tecnologies <limit@limit.es>
  */
-
+@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
 @Primary
 @Stateless
+@RolesAllowed({"PBL_COM", "PBL_ADMIN"})
 public class SalutService extends AbstractService<es.caib.pinbal.logic.intf.service.SalutService> implements es.caib.pinbal.logic.intf.service.SalutService {
 
     @Override
@@ -37,6 +41,7 @@ public class SalutService extends AbstractService<es.caib.pinbal.logic.intf.serv
     }
 
     @Override
+    @RolesAllowed("**")
     public SalutInfo checkSalut(String versio) {
         return getDelegateService().checkSalut(versio);
     }

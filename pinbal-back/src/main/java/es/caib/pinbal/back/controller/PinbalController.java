@@ -14,7 +14,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.boot.web.servlet.error.ErrorController;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
@@ -40,7 +42,7 @@ import java.util.jar.Manifest;
  */
 @Slf4j
 @Controller
-public class PinbalController extends BaseController {
+public class PinbalController extends BaseController implements ErrorController {
 
 	@Autowired
 	private ConsultaService consultaService;
@@ -88,7 +90,7 @@ public class PinbalController extends BaseController {
 		return "Done";
 	}
 
-	@GetMapping(value = "/error")
+	@RequestMapping(value = "/error")
 	public String error(HttpServletRequest request, Model model) {
 
 		var error = new ErrorObject(request);
