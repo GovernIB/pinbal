@@ -221,7 +221,7 @@ body {
 							</a>
 							<ul class="dropdown-menu">
 								<li>
-									<a href="<c:url value="/usuari/configuracio"/>" data-toggle="modal">
+									<a id="menu_user_configuracio" href="<c:url value="/usuari/configuracio"/>" data-toggle="modal">
 										<span class="fa fa-cog"></span> <spring:message code="decorator.menu.configuracio.user"/>
 									</a>
 								</li>
@@ -263,7 +263,7 @@ body {
 									</c:when>
 								</c:choose>
 								<li>
-									<a href="<c:url value="/usuari/logout"/>">
+									<a id="menu_user_logout" href="<c:url value="/usuari/logout"/>">
 										<i class="fa fa-power-off"></i> <spring:message code="decorator.menu.accions.desconectar"/>
 									</a>
 								</li>

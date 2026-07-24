@@ -8,13 +8,14 @@ import es.caib.pinbal.logic.intf.base.exception.AnswerRequiredException;
 import es.caib.pinbal.logic.intf.base.exception.ReportGenerationException;
 import es.caib.pinbal.logic.intf.base.exception.ResourceNotFoundException;
 import es.caib.pinbal.logic.intf.base.model.DownloadableFile;
+import es.caib.pinbal.logic.intf.base.model.ExportField;
 import es.caib.pinbal.logic.intf.base.model.ReportFileType;
-import es.caib.pinbal.logic.intf.base.model.ResourceReference;
+import es.caib.pinbal.logic.intf.dto.ArbreRespostaDto;
 import es.caib.pinbal.logic.intf.dto.ConsultaDto;
 import es.caib.pinbal.logic.intf.dto.ConsultaFiltreDto;
+import es.caib.pinbal.logic.intf.dto.FitxerDto;
 import es.caib.pinbal.logic.intf.dto.JustificantDto;
 import es.caib.pinbal.logic.intf.model.ConsultaResource;
-import es.caib.pinbal.logic.intf.model.EntitatResource;
 import es.caib.pinbal.logic.intf.resourceservice.ConsultaResourceService;
 import es.caib.pinbal.logic.intf.service.ConsultaService;
 import es.caib.pinbal.persist.base.entity.NoDatabaseResourceEntity;
@@ -103,6 +104,107 @@ public class ConsultaResourceServiceImpl
                             Serializable target) {
                     }
                 });
+        register("justificantZip", fitxerReportGenerator("justificantZip", id -> consultaService.obtenirJustificantMultipleZip(id)));
+        register("xmlZip", fitxerReportGenerator("xmlZip", consultaService::descarregarXmlTokensZip));
+        register("respostaArbre", jsonReportGenerator("respostaArbre", consultaService::generarArbreResposta));
+        register("justificantReintentar", jsonReportGenerator("justificantReintentar", id -> {
+            boolean isAdmin = authenticationHelper.isCurrentUserInRole(BaseConfig.ROLE_ADMIN);
+            return consultaService.reintentarGeneracioJustificant(id, false, isAdmin);
+        }));
+    }
+
+    private <T extends Serializable> ReportGenerator<NoDatabaseResourceEntity<ConsultaResource, Long>, Serializable, T> jsonReportGenerator(
+            String code,
+            JsonGenerationFunction<T> jsonFunction) {
+        return new ReportGenerator<NoDatabaseResourceEntity<ConsultaResource, Long>, Serializable, T>() {
+            @Override
+            public List<T> generateData(
+                    String reportCode,
+                    NoDatabaseResourceEntity<ConsultaResource, Long> entity,
+                    Serializable params) throws ReportGenerationException {
+                try {
+                    return Collections.singletonList(jsonFunction.apply(entity.getId()));
+                } catch (Exception ex) {
+                    throw new ReportGenerationException(ConsultaResource.class, entity.getId(), code, ex.getMessage(), ex);
+                }
+            }
+
+            @Override
+            public DownloadableFile generateFile(
+                    String reportCode,
+                    List<?> data,
+                    ReportFileType fileType,
+                    OutputStream out) {
+                return DownloadableFile.builder().build();
+            }
+
+            @Override
+            public void onChange(
+                    Serializable id,
+                    Serializable previous,
+                    String fieldName,
+                    Object fieldValue,
+                    Map<String, AnswerRequiredException.AnswerValue> answers,
+                    String[] previousFieldNames,
+                    Serializable target) {
+            }
+        };
+    }
+
+    @FunctionalInterface
+    private interface JsonGenerationFunction<T> {
+        T apply(Long id) throws Exception;
+    }
+
+    private ReportGenerator<NoDatabaseResourceEntity<ConsultaResource, Long>, Serializable, FitxerDto> fitxerReportGenerator(
+            String code,
+            FitxerGenerationFunction fitxerFunction) {
+        return new ReportGenerator<NoDatabaseResourceEntity<ConsultaResource, Long>, Serializable, FitxerDto>() {
+            @Override
+            public List<FitxerDto> generateData(
+                    String reportCode,
+                    NoDatabaseResourceEntity<ConsultaResource, Long> entity,
+                    Serializable params) throws ReportGenerationException {
+                try {
+                    return Collections.singletonList(fitxerFunction.apply(entity.getId()));
+                } catch (Exception ex) {
+                    throw new ReportGenerationException(ConsultaResource.class, entity.getId(), code, ex.getMessage(), ex);
+                }
+            }
+
+            @Override
+            public DownloadableFile generateFile(
+                    String reportCode,
+                    List<?> data,
+                    ReportFileType fileType,
+                    OutputStream out) {
+                if (data.isEmpty()) {
+                    return DownloadableFile.builder().build();
+                }
+                FitxerDto fitxer = (FitxerDto) data.get(0);
+                return DownloadableFile.builder()
+                        .name(fitxer.getNom())
+                        .contentType(fitxer.getContentType() != null ? fitxer.getContentType() : "application/zip")
+                        .content(fitxer.getContingut())
+                        .build();
+            }
+
+            @Override
+            public void onChange(
+                    Serializable id,
+                    Serializable previous,
+                    String fieldName,
+                    Object fieldValue,
+                    Map<String, AnswerRequiredException.AnswerValue> answers,
+                    String[] previousFieldNames,
+                    Serializable target) {
+            }
+        };
+    }
+
+    @FunctionalInterface
+    private interface FitxerGenerationFunction {
+        FitxerDto apply(Long id) throws Exception;
     }
 
     @Override
@@ -148,6 +250,32 @@ public class ConsultaResourceServiceImpl
         } catch (Exception e) {
             log.error("Error consultant consultes recents", e);
             return Page.empty(pageable);
+        }
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public DownloadableFile export(
+            String quickFilter,
+            String filter,
+            String[] namedQueries,
+            String[] perspectives,
+            Pageable pageable,
+            ExportField[] fields,
+            ReportFileType fileType,
+            OutputStream out) {
+        // Recurs "NoDatabase": no es pot fer servir la implementació genèrica d'export (necessita
+        // entityRepository, que aquí no existeix); es reutilitza la mateixa font de dades que findPage.
+        ConsultaFiltreDto filtreDto = ConsultaFiltreSpringFilterParser.parse(filter);
+        try {
+            Page<ConsultaDto> consultaPage = findByRol(filtreDto, pageable);
+            List<ConsultaResource> resources = consultaPage.getContent().stream()
+                    .map(this::toResource)
+                    .collect(Collectors.toList());
+            return jasperReportsHelper.export(getResourceClass(), resources, fields, fileType, out);
+        } catch (Exception e) {
+            log.error("Error exportant consultes recents", e);
+            return DownloadableFile.builder().build();
         }
     }
 
@@ -206,12 +334,12 @@ public class ConsultaResourceServiceImpl
         resource.setEntitatNom(dto.getEntitatNom());
         resource.setEntitatCif(dto.getEntitatCif());
         resource.setRespostaData(dto.getRespostaData());
-        if (dto.getEntitatId() != null) {
-            ResourceReference<EntitatResource, Long> entitatRef = ResourceReference.toResourceReference(
-                    dto.getEntitatId(),
-                    dto.getEntitatNom());
-            resource.setEntitat(entitatRef);
-        }
+        resource.setError(dto.getError());
+        resource.setHiHaPeticio(dto.isHiHaPeticio());
+        resource.setPeticioGenerada(dto.isPeticioGenerada());
+        resource.setPeticioXml(dto.getPeticioXml());
+        resource.setHiHaResposta(dto.isHiHaResposta());
+        resource.setRespostaXml(dto.getRespostaXml());
         return resource;
     }
 

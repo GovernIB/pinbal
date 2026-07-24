@@ -14,3 +14,4 @@
 /pinbal_docker.sh
 /.env
 /CLAUDE.md
+/.e2e-run/

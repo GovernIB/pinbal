@@ -45,8 +45,8 @@
 						emptyOption="true"
 						emptyOptionTextKey="comu.opcio.sense.definir"/>			
 				<div id="modal-botons">
-					<button type="submit" class="btn btn-success"><span class="fa fa-save"></span> <spring:message code="comu.boto.guardar"/></button>
-					<a href="<c:url value="/entitat"/>" class="btn btn-default" data-modal-cancel="true"><spring:message code="comu.boto.cancelar"/></a>
+					<button id="btGuardarEntitat" type="submit" class="btn btn-success"><span class="fa fa-save"></span> <spring:message code="comu.boto.guardar"/></button>
+					<a id="btCancelarEntitat" href="<c:url value="/entitat"/>" class="btn btn-default" data-modal-cancel="true"><spring:message code="comu.boto.cancelar"/></a>
 				</div>
 			</div>
 		</div>

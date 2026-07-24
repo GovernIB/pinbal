@@ -31,11 +31,43 @@ import java.util.Date;
                 type = ResourceAccessConstraint.ResourceAccessConstraintType.AUTHENTICATED,
                 grantedPermissions = { PermissionEnum.READ }
         ),
-        artifacts = @ResourceArtifact(
-                type = ResourceArtifactType.REPORT,
-                code = "justificant",
-                requiresId = true
-        )
+        artifacts = {
+                @ResourceArtifact(
+                        type = ResourceArtifactType.REPORT,
+                        code = "justificant",
+                        requiresId = true
+                ),
+                // Només aplicable a consultes múltiples: zip amb tots els justificants.
+                @ResourceArtifact(
+                        type = ResourceArtifactType.REPORT,
+                        code = "justificantZip",
+                        requiresId = true
+                ),
+                // Només per a administrador (restricció al servei de domini): zip amb tots els missatges XML.
+                @ResourceArtifact(
+                        type = ResourceArtifactType.REPORT,
+                        code = "xmlZip",
+                        requiresId = true
+                ),
+                // Arbre amb les dades de la resposta (equivalent al "dadesResposta" del JSP).
+                @ResourceArtifact(
+                        type = ResourceArtifactType.REPORT,
+                        code = "respostaArbre",
+                        requiresId = true
+                ),
+                // Reintent de generació/custòdia del justificant quan ha donat error.
+                @ResourceArtifact(
+                        type = ResourceArtifactType.REPORT,
+                        code = "justificantReintentar",
+                        requiresId = true
+                ),
+                // Metadades dels camps del filtre de la graella (veure ConsultaFiltreParams).
+                @ResourceArtifact(
+                        type = ResourceArtifactType.FILTER,
+                        code = "FILTER_CONSULTA",
+                        formClass = ConsultaFiltreParams.class
+                )
+        }
 )
 public class ConsultaResource extends BaseResource<Long> {
 
@@ -46,18 +78,20 @@ public class ConsultaResource extends BaseResource<Long> {
     private String funcionariNomAmbDocument;
     private String procedimentCodiNom;
     private String serveiCodiNom;
+    private String titularDocumentTipus;
+    private String titularDocumentNum;
+    private String titularNomComplet;
     private String estat;
     private Date dataEsperadaResposta;
     private String justificantEstat;
     private boolean recobriment;
     private boolean multiple;
-    private ResourceReference<EntitatResource, Long> entitat;
+
+    // Camp només de filtre (picker de procediment); mai es retorna emplenat.
+    private ResourceReference<ProcedimentResource, Long> procediment;
 
     // Camps addicionals del detall
     private String scspSolicitudId;
-    private String titularDocumentTipus;
-    private String titularDocumentNum;
-    private String titularNomComplet;
     private String departamentNom;
     private String finalitat;
     private String consentiment;
@@ -70,5 +104,13 @@ public class ConsultaResource extends BaseResource<Long> {
     private boolean justificantEstatError;
     private String justificantError;
     private Long pareId;
+    private String error;
+
+    // Dades per a la visualització de l'XML de la petició/resposta (consulta.info.veure.xml)
+    private boolean hiHaPeticio;
+    private boolean peticioGenerada;
+    private String peticioXml;
+    private boolean hiHaResposta;
+    private String respostaXml;
 
 }

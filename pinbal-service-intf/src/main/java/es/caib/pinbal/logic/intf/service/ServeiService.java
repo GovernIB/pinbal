@@ -788,4 +788,33 @@ public interface ServeiService {
 	@PreAuthorize("isAuthenticated()")
 	List<CampFormProperties> getGrupsByserveiRegla(String serveiCodi, String[] grupsModificats) throws ServeiNotFoundException;
 
+	/**
+	 * Actualitza únicament la descripció SCSP d'un servei, preservant la resta de la seva
+	 * configuració SCSP (URLs, seguretat, claus...).
+	 * <p>
+	 * Exposat perquè {@code ServeiResourceServiceImpl} el pugui invocar en modificar un
+	 * servei, sense passar per {@link #save(ServeiDto)} (que requereix la configuració SCSP
+	 * completa i sobreescriuria camps no coberts pel recurs REST).
+	 */
+	@PreAuthorize("hasRole('PBL_ADMIN')")
+	void scspActualitzarDescripcio(String codi, String descripcio);
+
+	/**
+	 * Consulta la descripció SCSP d'un servei (viu a {@code core_servicio}, no a la
+	 * configuració pròpia de PINBAL).
+	 * <p>
+	 * Exposat perquè {@code ServeiResourceServiceImpl} el pugui invocar en llegir un servei.
+	 */
+	@PreAuthorize("hasRole('PBL_ADMIN')")
+	String scspDescripcio(String codi);
+
+	/**
+	 * Invalida les caches de serveis (llistat general i per entitat/procediment que l'utilitzen).
+	 * <p>
+	 * Exposat perquè {@code ServeiResourceServiceImpl} el pugui invocar quan canvia l'estat
+	 * actiu d'un servei, replicant l'efecte de {@link #saveActiu(String, boolean)}.
+	 */
+	@PreAuthorize("hasRole('PBL_ADMIN')")
+	void evictCachesPerServei(String serveiCodi);
+
 }

@@ -154,7 +154,7 @@ $(document).ready(function() {
 		</div>
 	</form:form>
 	<div class="pull-right">
-		<a class="btn btn-primary" href="<c:url value="/entitat/new"/>" data-toggle="modal" data-refresh-pagina="true"><i class="fa fa-plus"></i>&nbsp;<spring:message code="entitat.list.boto.nova.entitat"/></a>
+		<a id="btNovaEntitat" class="btn btn-primary" href="<c:url value="/entitat/new"/>" data-toggle="modal" data-refresh-pagina="true"><i class="fa fa-plus"></i>&nbsp;<spring:message code="entitat.list.boto.nova.entitat"/></a>
 	</div>
 	<table id="table-entitats" class="table table-striped table-bordered" style="width: 100%">
 		<thead>

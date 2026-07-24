@@ -1,8 +1,10 @@
 package es.caib.pinbal.logic.intf.model;
 
 import es.caib.pinbal.logic.intf.base.annotation.ResourceAccessConstraint;
+import es.caib.pinbal.logic.intf.base.annotation.ResourceArtifact;
 import es.caib.pinbal.logic.intf.base.annotation.ResourceConfig;
 import es.caib.pinbal.logic.intf.base.model.BaseResource;
+import es.caib.pinbal.logic.intf.base.model.ResourceArtifactType;
 import es.caib.pinbal.logic.intf.base.model.ResourceReference;
 import es.caib.pinbal.logic.intf.base.permission.PermissionEnum;
 import es.caib.pinbal.logic.intf.dto.OrganGestorEstatEnum;
@@ -29,6 +31,12 @@ import javax.validation.constraints.Size;
         accessConstraints = @ResourceAccessConstraint(
                 type = ResourceAccessConstraint.ResourceAccessConstraintType.AUTHENTICATED,
                 grantedPermissions = { PermissionEnum.READ, PermissionEnum.WRITE }
+        ),
+        artifacts = @ResourceArtifact(
+                type = ResourceArtifactType.ACTION,
+                code = "syncDir3",
+                requiresId = false,
+                formClass = OrganGestorSyncDir3Params.class
         )
 )
 public class OrganGestorResource extends BaseResource<Long> {

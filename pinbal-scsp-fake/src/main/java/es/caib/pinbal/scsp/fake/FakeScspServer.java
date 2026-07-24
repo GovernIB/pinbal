@@ -52,6 +52,8 @@ public final class FakeScspServer {
 		"http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-x509-token-profile-1.0#X509v3";
 	private static final String BASE64_BINARY_TYPE =
 		"http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-soap-message-security-1.0#Base64Binary";
+	private static final String DEFAULT_ERROR_TRIGGER_DOC = "00000000ERR";
+	private static final String ERROR_CODIGO_ESTADO = "9999";
 
 	private FakeScspServer() {
 	}
@@ -183,7 +185,8 @@ public final class FakeScspServer {
 				+ " multiple=" + hasMultipleElements(requestInfo)
 				+ " numElementos=" + requestInfo.getNumElementos()
 				+ " idPeticio=" + requestInfo.getIdPeticion()
-				+ " idSolicitudes=" + requestInfo.getIdSolicitudes());
+				+ " idSolicitudes=" + requestInfo.getIdSolicitudes()
+				+ " documentacioTitular=" + requestInfo.getDocumentacionTitular());
 			System.out.println("[FAKE-SCSP] XML peticio:");
 			System.out.println(requestXml);
 		}
@@ -218,6 +221,7 @@ public final class FakeScspServer {
 				normalizeAsyncResponseStatus(document, requestInfo);
 				ensureIdTransmisionValues(document);
 				normalizeEncryptedSpecificData(document);
+				simulateErrorIfRequested(document, requestInfo);
 
 				Transformer transformer = TransformerFactory.newInstance().newTransformer();
 				transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "no");
@@ -331,6 +335,43 @@ public final class FakeScspServer {
 			retorno.appendChild(resultado);
 			retorno.appendChild(descripcion);
 			specificData.appendChild(retorno);
+		}
+
+		/**
+		 * Permet forçar una resposta d'error des dels tests: si el document del
+		 * titular de la petició coincideix amb {@code fake.scsp.errorTriggerDoc}
+		 * (per defecte {@value #DEFAULT_ERROR_TRIGGER_DOC}), es sobreescriu
+		 * l'estat de la resposta amb un CodigoEstado que no comença per "00",
+		 * que és el que l'aplicació interpreta com a consulta en Error.
+		 */
+		private void simulateErrorIfRequested(Document document, SoapEnvelopeInfo requestInfo) {
+			String triggerDoc = System.getProperty("fake.scsp.errorTriggerDoc", DEFAULT_ERROR_TRIGGER_DOC);
+			String titularDoc = requestInfo.getDocumentacionTitular();
+			if (titularDoc == null || !triggerDoc.equalsIgnoreCase(titularDoc.trim())) {
+				return;
+			}
+			Element bodyChild = firstElementChild(findFirstByLocalName(document.getDocumentElement(), "Body"));
+			if (bodyChild == null || !"Respuesta".equals(bodyChild.getLocalName())) {
+				return;
+			}
+			System.out.println("[FAKE-SCSP] Document titular " + titularDoc + " coincideix amb el disparador d'error;"
+				+ " es simula una resposta amb CodigoEstado d'error");
+			updateFirstElementByLocalName(document.getDocumentElement(), "CodigoEstado", ERROR_CODIGO_ESTADO);
+			updateFirstElementByLocalName(document.getDocumentElement(), "LiteralError", "Error simulat pel fake SCSP per a proves");
+		}
+
+		private Element firstElementChild(Element parent) {
+			if (parent == null) {
+				return null;
+			}
+			NodeList children = parent.getChildNodes();
+			for (int i = 0; i < children.getLength(); i++) {
+				Node child = children.item(i);
+				if (child instanceof Element) {
+					return (Element) child;
+				}
+			}
+			return null;
 		}
 
 		private void normalizeAsyncResponseStatus(Document document, SoapEnvelopeInfo requestInfo) {

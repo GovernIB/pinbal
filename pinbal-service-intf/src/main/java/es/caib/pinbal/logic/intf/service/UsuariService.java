@@ -254,6 +254,16 @@ public interface UsuariService {
 	@PreAuthorize("isAuthenticated()")
 	public EntitatUsuariDto getEntitatUsuari(Long entitatId, String usuariCodi);
 
+	/**
+	 * Consulta una relació entitat-usuari pel seu identificador.
+	 *
+	 * @param id
+	 *            Identificador de la relació entitat-usuari.
+	 * @return La relació trobada (amb l'entitatId emplenat), o null si no existeix.
+	 */
+	@PreAuthorize("hasRole('PBL_ADMIN')")
+	public EntitatUsuariDto findEntitatUsuariById(Long id);
+
 	@PreAuthorize("isAuthenticated()")
     public UsuariDto getUsuariExtern(String codi) throws Exception;
 

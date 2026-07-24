@@ -8,7 +8,7 @@
 <html>
 <head>
 	<title><spring:message code="clau.privada.list.titol"/></title>
-	
+
 	<link href="<c:url value="/webjars/datatables/1.10.21/css/dataTables.bootstrap.min.css"/>" rel="stylesheet"/>
 	<script src="<c:url value="/webjars/datatables/1.10.21/js/jquery.dataTables.min.js"/>"></script>
 	<script src="<c:url value="/webjars/datatables/1.10.21/js/dataTables.bootstrap.min.js"/>"></script>
@@ -18,14 +18,14 @@
 	<script src="<c:url value="/webjars/momentjs/2.24.0/min/moment.min.js"/>"></script>
 	<script src="<c:url value="/js/webutil.common.js"/>"></script>
 	<script src="<c:url value="/js/webutil.modal.js"/>"></script>
-	
+
 	<script>
 	$(document).ready(function() {
 		$('.confirm-esborrar').click(function() {
 			  return confirm("<spring:message code="clau.privada.list.confirmacio.esborrar"/>");
 		});
-		
-		
+
+
 	    $('#table-claus').DataTable({
 	    	autoWidth: false,
 			processing: true,
@@ -37,10 +37,10 @@
 			ajax: '<c:url value="/scsp/clauprivada/datatable"/>',
 			columnDefs: [
 		        {
-		            targets: [3],
+		            targets: [3,4],
 		            render: function (data, type, row, meta) {
 		            	console.log(data)
-		            	return data==null ? "" : moment(data).format('DD-MM-YYYY' )
+		            	return data==null ? "" : moment(data).format('DD/MM/YYYY')
 		            }
 		        },
                 {
@@ -60,7 +60,7 @@
 						var template = $('#template-actions').html();
 						return Mustache.render(template, row);
 					}
-				}, 
+				},
 		   ]
 		});
 

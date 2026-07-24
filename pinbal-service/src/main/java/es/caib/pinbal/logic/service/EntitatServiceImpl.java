@@ -7,6 +7,7 @@ import es.caib.pinbal.client.comu.EntitatInfo;
 import es.caib.pinbal.logic.helper.CacheHelper;
 import es.caib.pinbal.logic.helper.DtoMappingHelper;
 import es.caib.pinbal.logic.intf.dto.EntitatDto;
+import es.caib.pinbal.logic.intf.dto.EntitatServeiDto;
 import es.caib.pinbal.logic.intf.dto.EntitatDto.EntitatTipusDto;
 import es.caib.pinbal.logic.intf.dto.OrganGestorDto;
 import es.caib.pinbal.logic.intf.service.EntitatService;
@@ -49,6 +50,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * Implementació de EntitatService que es comunica amb la base de dades emprant
@@ -299,6 +301,28 @@ public class EntitatServiceImpl implements EntitatService, ApplicationContextAwa
 
 	@Transactional(readOnly = true)
 	@Override
+	public List<EntitatServeiDto> findServeisAssignats(Long entitatId) {
+		log.debug("Consulta dels serveis assignats a l'entitat (id=" + entitatId + ")");
+		return entitatServeiRepository.findByEntitatId(entitatId).stream().
+				map(this::toEntitatServeiDto).
+				collect(Collectors.toList());
+	}
+
+	@Transactional(readOnly = true)
+	@Override
+	public EntitatServeiDto findServeiAssignatById(Long id) {
+		log.debug("Consulta de l'assignació entitat-servei (id=" + id + ")");
+		return entitatServeiRepository.findById(id).map(this::toEntitatServeiDto).orElse(null);
+	}
+
+	private EntitatServeiDto toEntitatServeiDto(EntitatServei entitatServei) {
+		EntitatServeiDto dto = new EntitatServeiDto(entitatServei.getEntitat().getId(), entitatServei.getServei());
+		dto.setId(entitatServei.getId());
+		return dto;
+	}
+
+	@Transactional(readOnly = true)
+	@Override
 	public List<EntitatDto> findActivesAmbUsuariCodi(String usuariCodi) {
 		log.debug("Consulta de les entitats actives per a l'usuari (codi=" + usuariCodi + ")");
 		List<EntitatUsuari> entitatUsuaris = entitatUsuariRepository.findByUsuariCodi(usuariCodi);
@@ -393,6 +417,47 @@ public class EntitatServiceImpl implements EntitatService, ApplicationContextAwa
 				entitat.getCif(),
 				serveisActius,
                 aliesClauFirmaEntitat);
+	}
+
+	@Transactional
+	@Override
+	public void scspOrganismeCessionariAlta(String cif, String nom, boolean activa) {
+		getScspHelper().organismoCesionarioSave(
+				cif,
+				nom,
+				new Date(),
+				null,
+				!activa);
+	}
+
+	@Transactional
+	@Override
+	public void scspOrganismeCessionariActualitzacio(String cif, String nom, boolean activa) {
+		getScspHelper().organismoCesionarioUpdate(
+				cif,
+				nom,
+				!activa);
+	}
+
+	@Transactional
+	@Override
+	public void scspOrganismeCessionariBaixa(String cif) {
+		getScspHelper().organismoCesionarioDelete(cif);
+	}
+
+	@Transactional
+	@Override
+	public void scspSincronitzarServeisActius(Long entitatId) {
+		Entitat entitat = entitatRepository.findById(entitatId).orElse(null);
+		if (entitat != null) {
+			actualitzarServeisScspActiusEntitat(entitat);
+		}
+	}
+
+	@Transactional(readOnly = true)
+	@Override
+	public boolean scspServeiExisteix(String serveiCodi) {
+		return getScspHelper().getServicio(serveiCodi) != null;
 	}
 
 	private ScspHelper getScspHelper() {

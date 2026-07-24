@@ -9,7 +9,7 @@
 <head>
 	<title>
 		<c:choose>
-			<c:when test="${paramConfCommand.forcreate}"><spring:message code="paramconf.form.titol.crear"/></c:when>
+			<c:when test="${paramConfCommand.forcreate}"><spring:message code="paramconf.form.titol.crear"/>
 			<c:otherwise><spring:message code="paramconf.form.titol.modificar"/></c:otherwise>
 		</c:choose>
 	</title>
@@ -18,19 +18,20 @@
 
 	<c:url value="/modal/scsp/paramconf/save" var="formAction"/>
 	<form:form action="${formAction}" method="post" cssClass="form-horizontal" modelAttribute="paramConfCommand">
-	
+
 	<form:hidden path="forcreate"/>
 		<div class="row">
-			<div class="col-md-12"> 
-				<pbl:inputText name="nom" required="true" labelSize="1" inline="false" textKey="paramconf.form.camp.nom"/>
+			<div class="col-md-12">
+				<c:choose>
+					<c:when test="${paramConfCommand.forcreate}"><pbl:inputText name="nom" required="true" labelSize="1" inline="false" textKey="paramconf.form.camp.nom" /></c:when>
+					<c:otherwise><pbl:inputText name="nom" required="true" labelSize="1" inline="false" textKey="paramconf.form.camp.nom" readonly="true" /></c:otherwise>
+				</c:choose>
 				<pbl:inputText name="valor" required="true" labelSize="1" inline="false" textKey="paramconf.form.camp.valor"/>
 				<pbl:inputText name="descripcio" required="false" labelSize="1" inline="false" textKey="paramconf.form.camp.descripcio"/>
 			</div>
 		</div>
-		<%--				<div class="pull-right">--%>
 		<div id="modal-botons">
 			<button type="submit" class="btn btn-primary"><spring:message code="comu.boto.guardar"/></button>
-				<%--					<a href="<c:url value="/scsp/paramconf"/>" class="btn btn-default"><spring:message code="comu.boto.cancelar"/></a>--%>
 			<a href="#" class="btn btn-default" data-modal-cancel="true"><spring:message code="comu.boto.tancar"/></a>
 		</div>
 	</form:form>

@@ -6,6 +6,7 @@ package es.caib.pinbal.ejb;
 import es.caib.pinbal.client.comu.EntitatInfo;
 import es.caib.pinbal.logic.intf.dto.EntitatDto;
 import es.caib.pinbal.logic.intf.dto.EntitatDto.EntitatTipusDto;
+import es.caib.pinbal.logic.intf.dto.EntitatServeiDto;
 import es.caib.pinbal.logic.intf.dto.OrganGestorDto;
 import es.caib.pinbal.logic.intf.service.exception.EntitatNotFoundException;
 import es.caib.pinbal.logic.intf.service.exception.EntitatServeiNotFoundException;
@@ -147,6 +148,48 @@ public class EntitatService extends AbstractService<es.caib.pinbal.logic.intf.se
 	@RolesAllowed({"PBL_ADMIN", "PBL_REPRES"})
 	public List<OrganGestorDto> getOrgansGestors(Long id) {
 		return getDelegateService().getOrgansGestors(id);
+	}
+
+	@Override
+	@RolesAllowed("PBL_ADMIN")
+	public void scspOrganismeCessionariAlta(String cif, String nom, boolean activa) {
+		getDelegateService().scspOrganismeCessionariAlta(cif, nom, activa);
+	}
+
+	@Override
+	@RolesAllowed("PBL_ADMIN")
+	public void scspOrganismeCessionariActualitzacio(String cif, String nom, boolean activa) {
+		getDelegateService().scspOrganismeCessionariActualitzacio(cif, nom, activa);
+	}
+
+	@Override
+	@RolesAllowed("PBL_ADMIN")
+	public void scspOrganismeCessionariBaixa(String cif) {
+		getDelegateService().scspOrganismeCessionariBaixa(cif);
+	}
+
+	@Override
+	@RolesAllowed("PBL_ADMIN")
+	public void scspSincronitzarServeisActius(Long entitatId) {
+		getDelegateService().scspSincronitzarServeisActius(entitatId);
+	}
+
+	@Override
+	@RolesAllowed("PBL_ADMIN")
+	public boolean scspServeiExisteix(String serveiCodi) {
+		return getDelegateService().scspServeiExisteix(serveiCodi);
+	}
+
+	@Override
+	@RolesAllowed("PBL_ADMIN")
+	public List<EntitatServeiDto> findServeisAssignats(Long entitatId) {
+		return getDelegateService().findServeisAssignats(entitatId);
+	}
+
+	@Override
+	@RolesAllowed("PBL_ADMIN")
+	public EntitatServeiDto findServeiAssignatById(Long id) {
+		return getDelegateService().findServeiAssignatById(id);
 	}
 
 }

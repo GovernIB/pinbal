@@ -264,6 +264,16 @@ public class UsuariServiceImpl implements UsuariService {
 
 	@Transactional(readOnly = true)
 	@Override
+	public EntitatUsuariDto findEntitatUsuariById(Long id) {
+		return entitatUsuariRepository.findById(id).map(entitatUsuari -> {
+			EntitatUsuariDto dto = dtoMappingHelper.convertir(entitatUsuari, EntitatUsuariDto.class);
+			dto.setEntitatId(entitatUsuari.getEntitat().getId());
+			return dto;
+		}).orElse(null);
+	}
+
+	@Transactional(readOnly = true)
+	@Override
 	public UsuariDto getUsuariExtern(String codi) throws Exception {
 		DadesUsuari dadesUsuari = pluginHelper.dadesUsuariConsultarAmbUsuariCodi(codi);
 		return UsuariDto.builder()

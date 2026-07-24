@@ -8,12 +8,12 @@ import es.caib.pinbal.logic.intf.base.exception.AnswerRequiredException;
 import es.caib.pinbal.logic.intf.base.exception.ReportGenerationException;
 import es.caib.pinbal.logic.intf.base.exception.ResourceNotFoundException;
 import es.caib.pinbal.logic.intf.base.model.DownloadableFile;
+import es.caib.pinbal.logic.intf.base.model.ExportField;
 import es.caib.pinbal.logic.intf.base.model.ReportFileType;
-import es.caib.pinbal.logic.intf.base.model.ResourceReference;
 import es.caib.pinbal.logic.intf.dto.ConsultaDto;
 import es.caib.pinbal.logic.intf.dto.ConsultaFiltreDto;
+import es.caib.pinbal.logic.intf.dto.FitxerDto;
 import es.caib.pinbal.logic.intf.dto.JustificantDto;
-import es.caib.pinbal.logic.intf.model.EntitatResource;
 import es.caib.pinbal.logic.intf.model.HistoricConsultaResource;
 import es.caib.pinbal.logic.intf.resourceservice.HistoricConsultaResourceService;
 import es.caib.pinbal.logic.intf.service.HistoricConsultaService;
@@ -103,6 +103,104 @@ public class HistoricConsultaResourceServiceImpl
                             Serializable target) {
                     }
                 });
+        register("justificantZip", fitxerReportGenerator("justificantZip", id -> historicConsultaService.obtenirJustificantMultipleZip(id)));
+        register("xmlZip", fitxerReportGenerator("xmlZip", historicConsultaService::descarregarXmlTokensZip));
+        register("justificantReintentar", jsonReportGenerator("justificantReintentar",
+                id -> historicConsultaService.reintentarGeneracioJustificant(id, false)));
+    }
+
+    private <T extends Serializable> ReportGenerator<NoDatabaseResourceEntity<HistoricConsultaResource, Long>, Serializable, T> jsonReportGenerator(
+            String code,
+            JsonGenerationFunction<T> jsonFunction) {
+        return new ReportGenerator<NoDatabaseResourceEntity<HistoricConsultaResource, Long>, Serializable, T>() {
+            @Override
+            public List<T> generateData(
+                    String reportCode,
+                    NoDatabaseResourceEntity<HistoricConsultaResource, Long> entity,
+                    Serializable params) throws ReportGenerationException {
+                try {
+                    return Collections.singletonList(jsonFunction.apply(entity.getId()));
+                } catch (Exception ex) {
+                    throw new ReportGenerationException(HistoricConsultaResource.class, entity.getId(), code, ex.getMessage(), ex);
+                }
+            }
+
+            @Override
+            public DownloadableFile generateFile(
+                    String reportCode,
+                    List<?> data,
+                    ReportFileType fileType,
+                    OutputStream out) {
+                return DownloadableFile.builder().build();
+            }
+
+            @Override
+            public void onChange(
+                    Serializable id,
+                    Serializable previous,
+                    String fieldName,
+                    Object fieldValue,
+                    Map<String, AnswerRequiredException.AnswerValue> answers,
+                    String[] previousFieldNames,
+                    Serializable target) {
+            }
+        };
+    }
+
+    @FunctionalInterface
+    private interface JsonGenerationFunction<T> {
+        T apply(Long id) throws Exception;
+    }
+
+    private ReportGenerator<NoDatabaseResourceEntity<HistoricConsultaResource, Long>, Serializable, FitxerDto> fitxerReportGenerator(
+            String code,
+            FitxerGenerationFunction fitxerFunction) {
+        return new ReportGenerator<NoDatabaseResourceEntity<HistoricConsultaResource, Long>, Serializable, FitxerDto>() {
+            @Override
+            public List<FitxerDto> generateData(
+                    String reportCode,
+                    NoDatabaseResourceEntity<HistoricConsultaResource, Long> entity,
+                    Serializable params) throws ReportGenerationException {
+                try {
+                    return Collections.singletonList(fitxerFunction.apply(entity.getId()));
+                } catch (Exception ex) {
+                    throw new ReportGenerationException(HistoricConsultaResource.class, entity.getId(), code, ex.getMessage(), ex);
+                }
+            }
+
+            @Override
+            public DownloadableFile generateFile(
+                    String reportCode,
+                    List<?> data,
+                    ReportFileType fileType,
+                    OutputStream out) {
+                if (data.isEmpty()) {
+                    return DownloadableFile.builder().build();
+                }
+                FitxerDto fitxer = (FitxerDto) data.get(0);
+                return DownloadableFile.builder()
+                        .name(fitxer.getNom())
+                        .contentType(fitxer.getContentType() != null ? fitxer.getContentType() : "application/zip")
+                        .content(fitxer.getContingut())
+                        .build();
+            }
+
+            @Override
+            public void onChange(
+                    Serializable id,
+                    Serializable previous,
+                    String fieldName,
+                    Object fieldValue,
+                    Map<String, AnswerRequiredException.AnswerValue> answers,
+                    String[] previousFieldNames,
+                    Serializable target) {
+            }
+        };
+    }
+
+    @FunctionalInterface
+    private interface FitxerGenerationFunction {
+        FitxerDto apply(Long id) throws Exception;
     }
 
     @Override
@@ -148,6 +246,32 @@ public class HistoricConsultaResourceServiceImpl
         } catch (Exception e) {
             log.error("Error consultant consultes històriques", e);
             return Page.empty(pageable);
+        }
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public DownloadableFile export(
+            String quickFilter,
+            String filter,
+            String[] namedQueries,
+            String[] perspectives,
+            Pageable pageable,
+            ExportField[] fields,
+            ReportFileType fileType,
+            OutputStream out) {
+        // Recurs "NoDatabase": no es pot fer servir la implementació genèrica d'export (necessita
+        // entityRepository, que aquí no existeix); es reutilitza la mateixa font de dades que findPage.
+        ConsultaFiltreDto filtreDto = ConsultaFiltreSpringFilterParser.parse(filter);
+        try {
+            Page<ConsultaDto> consultaPage = findByRol(filtreDto, pageable);
+            List<HistoricConsultaResource> resources = consultaPage.getContent().stream()
+                    .map(this::toResource)
+                    .collect(Collectors.toList());
+            return jasperReportsHelper.export(getResourceClass(), resources, fields, fileType, out);
+        } catch (Exception e) {
+            log.error("Error exportant consultes històriques", e);
+            return DownloadableFile.builder().build();
         }
     }
 
@@ -206,12 +330,12 @@ public class HistoricConsultaResourceServiceImpl
         resource.setEntitatNom(dto.getEntitatNom());
         resource.setEntitatCif(dto.getEntitatCif());
         resource.setRespostaData(dto.getRespostaData());
-        if (dto.getEntitatId() != null) {
-            ResourceReference<EntitatResource, Long> entitatRef = ResourceReference.toResourceReference(
-                    dto.getEntitatId(),
-                    dto.getEntitatNom());
-            resource.setEntitat(entitatRef);
-        }
+        resource.setError(dto.getError());
+        resource.setHiHaPeticio(dto.isHiHaPeticio());
+        resource.setPeticioGenerada(dto.isPeticioGenerada());
+        resource.setPeticioXml(dto.getPeticioXml());
+        resource.setHiHaResposta(dto.isHiHaResposta());
+        resource.setRespostaXml(dto.getRespostaXml());
         return resource;
     }
 

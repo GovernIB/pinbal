@@ -148,14 +148,14 @@
 			</div>
 		</div>
 		<div id="modal-botons">
-			<button type="submit" class="btn btn-success">
+			<button id="btGuardarUsuariConfig" type="submit" class="btn btn-success">
 				<span class="fa fa-save"></span>
 				<c:choose>
 					<c:when test="${empty usuariCommand.codi}"><spring:message code="comu.boto.crear"/></c:when>
 					<c:otherwise><spring:message code="comu.boto.modificar"/></c:otherwise>
 				</c:choose>
 			</button>
-			<a href="<c:url value="/"/>" class="btn btn-default" data-modal-cancel="true"><span class="fa fa-times"></span>&nbsp;<spring:message code="comu.boto.tancar"/></a>
+			<a id="btCancelarUsuariConfig" href="<c:url value="/"/>" class="btn btn-default" data-modal-cancel="true"><span class="fa fa-times"></span>&nbsp;<spring:message code="comu.boto.tancar"/></a>
 		</div>
 	</form:form>
 </body>

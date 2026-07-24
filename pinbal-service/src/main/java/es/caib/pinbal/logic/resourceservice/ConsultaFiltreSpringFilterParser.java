@@ -90,6 +90,10 @@ public final class ConsultaFiltreSpringFilterParser {
                 case "entitatId":
                     try { filtreDto.setEntitatId(Long.parseLong(value)); } catch (NumberFormatException ignored) {}
                     break;
+                case "procediment.id":
+                case "procedimentId":
+                    try { filtreDto.setProcedimentId(Long.parseLong(value)); } catch (NumberFormatException ignored) {}
+                    break;
                 case "scspPeticionId":
                     filtreDto.setScspPeticionId(value);
                     break;
@@ -127,6 +131,12 @@ public final class ConsultaFiltreSpringFilterParser {
                     break;
                 case "serveiCodiNom":
                     filtreDto.setServeiCodi(value);
+                    break;
+                case "titularNomComplet":
+                    filtreDto.setTitularNom(value);
+                    break;
+                case "titularDocumentNum":
+                    filtreDto.setTitularDocument(value);
                     break;
                 default:
                     break;

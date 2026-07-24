@@ -190,6 +190,12 @@ public class UsuariService extends AbstractService<es.caib.pinbal.logic.intf.ser
         return getDelegateService().getEntitatUsuari(entitatId, usuariCodi);
     }
 
+	@Override
+	@RolesAllowed("PBL_ADMIN")
+	public EntitatUsuariDto findEntitatUsuariById(Long id) {
+		return getDelegateService().findEntitatUsuariById(id);
+	}
+
     @Override
 	@RolesAllowed("**")
     public UsuariDto getUsuariExtern(String codi) throws Exception {

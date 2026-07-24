@@ -199,18 +199,21 @@ final class ExampleCatalog {
 		private final String numElementos;
 		private final String idPeticion;
 		private final List<String> idSolicitudes;
+		private final String documentacionTitular;
 
 		private SoapEnvelopeInfo(
 			String bodyRoot,
 			String serviceCode,
 			String numElementos,
 			String idPeticion,
-			List<String> idSolicitudes) {
+			List<String> idSolicitudes,
+			String documentacionTitular) {
 			this.bodyRoot = bodyRoot;
 			this.serviceCode = serviceCode;
 			this.numElementos = numElementos;
 			this.idPeticion = idPeticion;
 			this.idSolicitudes = idSolicitudes;
+			this.documentacionTitular = documentacionTitular;
 		}
 
 		static SoapEnvelopeInfo fromXml(String xml) throws IOException {
@@ -227,7 +230,8 @@ final class ExampleCatalog {
 				String num = findTextByLocalName(bodyChild, "NumElementos");
 				String idPeticion = findTextByLocalName(bodyChild, "IdPeticion");
 				List<String> idSolicitudes = findTextsByLocalName(bodyChild, "IdSolicitud");
-				return new SoapEnvelopeInfo(bodyChild.getLocalName(), code, num, idPeticion, idSolicitudes);
+				String documentacionTitular = extractDocumentacionTitular(bodyChild);
+				return new SoapEnvelopeInfo(bodyChild.getLocalName(), code, num, idPeticion, idSolicitudes, documentacionTitular);
 			} catch (Exception e) {
 				throw new IOException("No s'ha pogut analitzar l'XML SCSP", e);
 			}
@@ -251,6 +255,10 @@ final class ExampleCatalog {
 
 		List<String> getIdSolicitudes() {
 			return idSolicitudes;
+		}
+
+		String getDocumentacionTitular() {
+			return documentacionTitular;
 		}
 
 		private static Element findByLocalName(Element root, String localName) {
@@ -278,6 +286,29 @@ final class ExampleCatalog {
 			return found == null ? null : found.getTextContent().trim();
 		}
 
+		/**
+		 * El document del titular apareix en llocs i formats diferents segons
+		 * el servei: com a text directe de {@code <Documentacion>} sota
+		 * {@code DatosGenericos/Titular} (esquema V3, p.ex. Q2827003ATGSS001),
+		 * o com a {@code <Documentacion><Valor>...} dins de
+		 * {@code DatosEspecificos} amb {@code DatosGenericos/Titular} buit
+		 * (esquema V2, p.ex. SCDCPAJU). Es cerca en tot el cos el primer
+		 * element {@code Documentacion} amb contingut, indistintament d'on
+		 * pengi.
+		 */
+		private static String extractDocumentacionTitular(Element bodyChild) {
+			List<Element> candidates = new ArrayList<Element>();
+			collectByLocalName(bodyChild, "Documentacion", candidates);
+			for (Element documentacion : candidates) {
+				Element valor = findByLocalName(documentacion, "Valor");
+				String text = valor != null ? valor.getTextContent().trim() : documentacion.getTextContent().trim();
+				if (text.length() > 0) {
+					return text;
+				}
+			}
+			return null;
+		}
+
 		private static List<String> findTextsByLocalName(Element root, String localName) {
 			List<String> values = new ArrayList<String>();
 			collectTextsByLocalName(root, localName, values);
@@ -296,6 +327,22 @@ final class ExampleCatalog {
 				Node child = children.item(i);
 				if (child instanceof Element) {
 					collectTextsByLocalName((Element) child, localName, values);
+				}
+			}
+		}
+
+		private static void collectByLocalName(Element root, String localName, List<Element> elements) {
+			if (root == null) {
+				return;
+			}
+			if (localName.equals(root.getLocalName())) {
+				elements.add(root);
+			}
+			NodeList children = root.getChildNodes();
+			for (int i = 0; i < children.getLength(); i++) {
+				Node child = children.item(i);
+				if (child instanceof Element) {
+					collectByLocalName((Element) child, localName, elements);
 				}
 			}
 		}

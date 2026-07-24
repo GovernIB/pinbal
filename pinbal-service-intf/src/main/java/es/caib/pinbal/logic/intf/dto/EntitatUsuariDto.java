@@ -15,6 +15,7 @@ import java.io.Serializable;
 @ToString
 public class EntitatUsuariDto extends AbstractIdentificable<Long> implements Serializable, Comparable<EntitatUsuariDto> {
 
+	private Long entitatId;
 	private UsuariDto usuari;
 	private String departament;
 	private boolean principal;

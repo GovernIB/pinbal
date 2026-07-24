@@ -197,7 +197,12 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 			serveiConfig.updateActiu(actiu);
 		}
 
-		// Buidar caches
+		evictCachesPerServei(serveiCodi);
+	}
+
+	@Transactional
+	@Override
+	public void evictCachesPerServei(String serveiCodi) {
 		cacheHelper.evictServeis();
 		List<EntitatServei> entitatServeis = entitatServeiRepository.findByServei(serveiCodi);
 		for(EntitatServei entitatServei : entitatServeis) {
@@ -207,6 +212,23 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 		for (ProcedimentServei procedimentServei: procedimentServeis) {
 			cacheHelper.evictServeisProcediment(procedimentServei.getProcediment().getCodi());
 		}
+	}
+
+	@Transactional
+	@Override
+	public void scspActualitzarDescripcio(String codi, String descripcio) {
+		Servicio servicio = getScspHelper().getServicio(codi);
+		if (servicio != null) {
+			servicio.setDescripcion(descripcio);
+			getScspHelper().saveServicio(servicio);
+		}
+	}
+
+	@Transactional(readOnly = true)
+	@Override
+	public String scspDescripcio(String codi) {
+		Servicio servicio = getScspHelper().getServicio(codi);
+		return servicio != null ? servicio.getDescripcion() : null;
 	}
 
 	@Transactional

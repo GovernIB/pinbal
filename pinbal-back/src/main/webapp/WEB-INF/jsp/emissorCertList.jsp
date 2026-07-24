@@ -7,7 +7,7 @@
 <head>
 	<title><spring:message code="emissorcert.list.titol"/></title>
 	<link href="<c:url value="/webjars/datatables/1.10.21/css/dataTables.bootstrap.min.css"/>" rel="stylesheet"/>
-	
+
 	<script src="<c:url value="/webjars/datatables/1.10.21/js/jquery.dataTables.min.js"/>"></script>
 	<script src="<c:url value="/webjars/datatables/1.10.21/js/dataTables.bootstrap.min.js"/>"></script>
 	<script src="<c:url value="/webjars/mustache.js/3.0.1/mustache.min.js"/>"></script>
@@ -18,7 +18,7 @@
 	<script src="<c:url value="/js/webutil.common.js"/>"></script>
 	<script src="<c:url value="/js/webutil.datatable.js"/>"></script>
 	<script src="<c:url value="/js/webutil.modal.js"/>"></script>
-	
+
 	<script>
 	$(document).ready(function() {
 		/* $('#netejar-filtre').click(function() {
@@ -36,7 +36,7 @@
 		$('.confirm-esborrar').click(function() {
 			  return confirm("<spring:message code="emissorcert.list.confirmacio.esborrar"/>");
 		});
-		
+
 	    $('#table-emisors').DataTable({
 	    	autoWidth: false,
 			processing: true,
@@ -47,7 +47,7 @@
 	        },
 			ajax: '<c:url value="/scsp/emissorcert/datatable"/>',
 			columnDefs: [
-				{ 
+				{
 		            targets: 0,
 		            width: "50%"
 		        },
@@ -59,9 +59,9 @@
 		            targets: [2],
 		            width: "20%",
 		            render: function (data, type, row, meta) {
-		            	
-		            	return data==null ? "" : moment(data).format('YYYY-MM-DD', 'DD/MM/YYYY', 'es' )
-		            }		            	
+
+		            	return data==null ? "" : moment(data).format('DD/MM/YYYY')
+		            }
 		        },
 				{
 					targets: [3],
@@ -71,7 +71,7 @@
 							var template = $('#template-actions').html();
 							return Mustache.render(template, row);
 					}
-				}, 
+				},
 		   ]
 		});
 	});
@@ -86,7 +86,7 @@
 				<i class="fas fa-plus"></i>&nbsp;<spring:message code="emissorcert.list.boto.nou.registre"/>
 			</a>
 		</div>
-	
+
 		<table id="table-emisors" class="table table-striped table-bordered" style="width: 100%">
 			<thead>
 				<tr>

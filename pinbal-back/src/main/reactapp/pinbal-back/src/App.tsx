@@ -11,7 +11,7 @@ import pinbalLogoDark from './assets/pinbal_logo_dark.png';
 import { BaseApp } from './components/BaseApp';
 import DrassanaFooter from './components/DrassanaFooter';
 import PinbalProvider from './components/PinbalProvider';
-import { usePinbalContext, ROLE_ADMIN } from './components/PinbalContext';
+import { usePinbalContext, ROLE_ADMIN, ROLE_REPRES } from './components/PinbalContext';
 import theme from './theme';
 
 export const envVars = {
@@ -78,6 +78,94 @@ const InnerApp: React.FC = () => {
             to: 'consulta',
             icon: 'search',
         },
+        // Manteniment d'entitats i serveis: només administradors (equivalent al menú JSP).
+        ...(currentRole === ROLE_ADMIN
+            ? [
+                  {
+                      id: 'entitats',
+                      title: t('app.menu.entitats'),
+                      to: 'entitats',
+                      icon: 'domain',
+                  },
+                  {
+                      id: 'serveis',
+                      title: t('app.menu.serveis'),
+                      to: 'serveis',
+                      icon: 'miscellaneous_services',
+                  },
+              ]
+            : []),
+        // Procediments i òrgans gestors: administradors i representants (equivalent al menú JSP).
+        ...(currentRole === ROLE_ADMIN || currentRole === ROLE_REPRES
+            ? [
+                  {
+                      id: 'procediments',
+                      title: t('app.menu.procediments'),
+                      to: 'procediments',
+                      icon: 'assignment',
+                  },
+                  {
+                      id: 'organgestors',
+                      title: t('app.menu.organGestors'),
+                      to: 'organgestors',
+                      icon: 'account_tree',
+                  },
+              ]
+            : []),
+        // Menú "Configurar": només administrador (equivalent al menú desplegable JSP menu_adm_config).
+        ...(currentRole === ROLE_ADMIN
+            ? [
+                  {
+                      id: 'configurar',
+                      title: t('app.menu.configurar'),
+                      icon: 'settings',
+                      children: [
+                          {
+                              id: 'propietats',
+                              title: t('app.menu.propietats'),
+                              to: 'propietats',
+                              icon: 'tune',
+                          },
+                          {
+                              id: 'caches',
+                              title: t('app.menu.caches'),
+                              to: 'caches',
+                              icon: 'memory',
+                          },
+                          {
+                              id: 'avisos',
+                              title: t('app.menu.avisos'),
+                              to: 'avisos',
+                              icon: 'campaign',
+                          },
+                          {
+                              id: 'paramconfs',
+                              title: t('app.menu.paramConfs'),
+                              to: 'paramconfs',
+                              icon: 'settings_applications',
+                          },
+                          {
+                              id: 'emissorcerts',
+                              title: t('app.menu.emissorCerts'),
+                              to: 'emissorcerts',
+                              icon: 'verified_user',
+                          },
+                          {
+                              id: 'claupubliques',
+                              title: t('app.menu.clauPubliques'),
+                              to: 'claupubliques',
+                              icon: 'vpn_key',
+                          },
+                          {
+                              id: 'clauprivades',
+                              title: t('app.menu.clauPrivades'),
+                              to: 'clauprivades',
+                              icon: 'key',
+                          },
+                      ],
+                  },
+              ]
+            : []),
     ];
     const theme = useTheme();
     const bgColor = mode === 'light' ? theme.palette.background.paper : undefined;

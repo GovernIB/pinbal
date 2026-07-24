@@ -6,6 +6,7 @@ package es.caib.pinbal.logic.intf.service;
 import es.caib.pinbal.client.comu.EntitatInfo;
 import es.caib.pinbal.logic.intf.dto.EntitatDto;
 import es.caib.pinbal.logic.intf.dto.EntitatDto.EntitatTipusDto;
+import es.caib.pinbal.logic.intf.dto.EntitatServeiDto;
 import es.caib.pinbal.logic.intf.dto.OrganGestorDto;
 import es.caib.pinbal.logic.intf.service.exception.EntitatNotFoundException;
 import es.caib.pinbal.logic.intf.service.exception.EntitatServeiNotFoundException;
@@ -186,6 +187,26 @@ public interface EntitatService {
 	public void removeServei(Long id, String serveiCodi) throws EntitatNotFoundException, EntitatServeiNotFoundException;
 
 	/**
+	 * Consulta els serveis SCSP assignats a una entitat.
+	 *
+	 * @param entitatId
+	 *            Atribut id de l'entitat.
+	 * @return El llistat d'assignacions entitat-servei.
+	 */
+	@PreAuthorize("hasRole('PBL_ADMIN')")
+	public List<EntitatServeiDto> findServeisAssignats(Long entitatId);
+
+	/**
+	 * Consulta una assignació entitat-servei pel seu identificador.
+	 *
+	 * @param id
+	 *            Identificador de l'assignació entitat-servei.
+	 * @return L'assignació trobada, o null si no existeix.
+	 */
+	@PreAuthorize("hasRole('PBL_ADMIN')")
+	public EntitatServeiDto findServeiAssignatById(Long id);
+
+	/**
 	 * Consulta les entitats per a un usuari.
 	 * 
 	 * @param usuariCodi
@@ -215,4 +236,49 @@ public interface EntitatService {
 
 	@PreAuthorize("hasRole('PBL_ADMIN') or hasRole('PBL_SUPERAUD')")
 	public List<EntitatDto> findActives();
+
+	/**
+	 * Dona d'alta l'organisme cessionari SCSP corresponent a una entitat.
+	 * <p>
+	 * Exposat perquè {@code EntitatResourceServiceImpl} (recurs REST) el pugui invocar en
+	 * crear una entitat, replicant l'efecte de {@link #create(EntitatDto)}.
+	 */
+	@PreAuthorize("hasRole('PBL_ADMIN')")
+	public void scspOrganismeCessionariAlta(String cif, String nom, boolean activa);
+
+	/**
+	 * Actualitza l'organisme cessionari SCSP corresponent a una entitat.
+	 * <p>
+	 * Exposat perquè {@code EntitatResourceServiceImpl} el pugui invocar en modificar una
+	 * entitat, replicant l'efecte de {@link #update(EntitatDto)} i {@link #updateActiva(Long, boolean)}.
+	 */
+	@PreAuthorize("hasRole('PBL_ADMIN')")
+	public void scspOrganismeCessionariActualitzacio(String cif, String nom, boolean activa);
+
+	/**
+	 * Esborra l'organisme cessionari SCSP corresponent a una entitat.
+	 * <p>
+	 * Exposat perquè {@code EntitatResourceServiceImpl} el pugui invocar en esborrar una
+	 * entitat, replicant l'efecte de {@link #delete(Long)}.
+	 */
+	@PreAuthorize("hasRole('PBL_ADMIN')")
+	public void scspOrganismeCessionariBaixa(String cif);
+
+	/**
+	 * Sincronitza amb SCSP els serveis actius de l'organisme cessionari d'una entitat.
+	 * <p>
+	 * Exposat perquè {@code EntitatResourceServiceImpl} el pugui invocar en modificar una
+	 * entitat, replicant l'efecte intern de {@link #update(EntitatDto)}.
+	 */
+	@PreAuthorize("hasRole('PBL_ADMIN')")
+	public void scspSincronitzarServeisActius(Long entitatId);
+
+	/**
+	 * Comprova si existeix un servei SCSP amb el codi especificat.
+	 * <p>
+	 * Exposat perquè {@code EntitatServeiResourceServiceImpl} el pugui invocar per validar
+	 * l'assignació d'un servei a una entitat, replicant la comprovació de {@link #addServei(Long, String)}.
+	 */
+	@PreAuthorize("hasRole('PBL_ADMIN')")
+	public boolean scspServeiExisteix(String serveiCodi);
 }

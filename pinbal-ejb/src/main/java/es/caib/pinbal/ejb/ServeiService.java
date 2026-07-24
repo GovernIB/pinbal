@@ -483,4 +483,22 @@ public class ServeiService extends AbstractService<es.caib.pinbal.logic.intf.ser
 		return getDelegateService().getGrupsByserveiRegla(serveiCodi, grupsModificats);
 	}
 
+	@Override
+	@RolesAllowed("PBL_ADMIN")
+	public void scspActualitzarDescripcio(String codi, String descripcio) {
+		getDelegateService().scspActualitzarDescripcio(codi, descripcio);
+	}
+
+	@Override
+	@RolesAllowed("PBL_ADMIN")
+	public String scspDescripcio(String codi) {
+		return getDelegateService().scspDescripcio(codi);
+	}
+
+	@Override
+	@RolesAllowed("PBL_ADMIN")
+	public void evictCachesPerServei(String serveiCodi) {
+		getDelegateService().evictCachesPerServei(serveiCodi);
+	}
+
 }

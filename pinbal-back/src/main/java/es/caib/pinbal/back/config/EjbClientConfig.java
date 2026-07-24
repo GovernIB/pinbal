@@ -5,9 +5,24 @@ package es.caib.pinbal.back.config;
 
 import es.caib.pinbal.logic.intf.base.service.PermissionEvaluatorService;
 import es.caib.pinbal.logic.intf.base.service.ResourceApiService;
+import es.caib.pinbal.logic.intf.resourceservice.AvisResourceService;
+import es.caib.pinbal.logic.intf.resourceservice.CacheResourceService;
+import es.caib.pinbal.logic.intf.resourceservice.ClauPrivadaResourceService;
+import es.caib.pinbal.logic.intf.resourceservice.ClauPublicaResourceService;
+import es.caib.pinbal.logic.intf.resourceservice.ConfigGroupResourceService;
+import es.caib.pinbal.logic.intf.resourceservice.ConfigResourceService;
 import es.caib.pinbal.logic.intf.resourceservice.ConsultaResourceService;
+import es.caib.pinbal.logic.intf.resourceservice.EmissorCertResourceService;
 import es.caib.pinbal.logic.intf.resourceservice.EntitatResourceService;
+import es.caib.pinbal.logic.intf.resourceservice.EntitatServeiResourceService;
+import es.caib.pinbal.logic.intf.resourceservice.EntitatUsuariResourceService;
 import es.caib.pinbal.logic.intf.resourceservice.HistoricConsultaResourceService;
+import es.caib.pinbal.logic.intf.resourceservice.OrganGestorResourceService;
+import es.caib.pinbal.logic.intf.resourceservice.OrganismeCessionariResourceService;
+import es.caib.pinbal.logic.intf.resourceservice.ParamConfResourceService;
+import es.caib.pinbal.logic.intf.resourceservice.ProcedimentResourceService;
+import es.caib.pinbal.logic.intf.resourceservice.ServeiBusResourceService;
+import es.caib.pinbal.logic.intf.resourceservice.ServeiResourceService;
 import es.caib.pinbal.logic.intf.resourceservice.UsuariResourceService;
 import es.caib.pinbal.logic.intf.service.AplicacioService;
 import es.caib.pinbal.logic.intf.service.AvisService;
@@ -151,6 +166,81 @@ public class EjbClientConfig {
 	@Bean
 	public LocalStatelessSessionProxyFactoryBean entitatResourceService() {
 		return getLocalEjbFactoyBean(EntitatResourceService.class, true);
+	}
+
+	@Bean
+	public LocalStatelessSessionProxyFactoryBean entitatServeiResourceService() {
+		return getLocalEjbFactoyBean(EntitatServeiResourceService.class, true);
+	}
+
+	@Bean
+	public LocalStatelessSessionProxyFactoryBean entitatUsuariResourceService() {
+		return getLocalEjbFactoyBean(EntitatUsuariResourceService.class, true);
+	}
+
+	@Bean
+	public LocalStatelessSessionProxyFactoryBean serveiResourceService() {
+		return getLocalEjbFactoyBean(ServeiResourceService.class, true);
+	}
+
+	@Bean
+	public LocalStatelessSessionProxyFactoryBean procedimentResourceService() {
+		return getLocalEjbFactoyBean(ProcedimentResourceService.class, true);
+	}
+
+	@Bean
+	public LocalStatelessSessionProxyFactoryBean organGestorResourceService() {
+		return getLocalEjbFactoyBean(OrganGestorResourceService.class, true);
+	}
+
+	@Bean
+	public LocalStatelessSessionProxyFactoryBean serveiBusResourceService() {
+		return getLocalEjbFactoyBean(ServeiBusResourceService.class, true);
+	}
+
+	@Bean
+	public LocalStatelessSessionProxyFactoryBean paramConfResourceService() {
+		return getLocalEjbFactoyBean(ParamConfResourceService.class, true);
+	}
+
+	@Bean
+	public LocalStatelessSessionProxyFactoryBean emissorCertResourceService() {
+		return getLocalEjbFactoyBean(EmissorCertResourceService.class, true);
+	}
+
+	@Bean
+	public LocalStatelessSessionProxyFactoryBean clauPublicaResourceService() {
+		return getLocalEjbFactoyBean(ClauPublicaResourceService.class, true);
+	}
+
+	@Bean
+	public LocalStatelessSessionProxyFactoryBean organismeCessionariResourceService() {
+		return getLocalEjbFactoyBean(OrganismeCessionariResourceService.class, true);
+	}
+
+	@Bean
+	public LocalStatelessSessionProxyFactoryBean clauPrivadaResourceService() {
+		return getLocalEjbFactoyBean(ClauPrivadaResourceService.class, true);
+	}
+
+	@Bean
+	public LocalStatelessSessionProxyFactoryBean avisResourceService() {
+		return getLocalEjbFactoyBean(AvisResourceService.class, true);
+	}
+
+	@Bean
+	public LocalStatelessSessionProxyFactoryBean cacheResourceService() {
+		return getLocalEjbFactoyBean(CacheResourceService.class, true);
+	}
+
+	@Bean
+	public LocalStatelessSessionProxyFactoryBean configGroupResourceService() {
+		return getLocalEjbFactoyBean(ConfigGroupResourceService.class, true);
+	}
+
+	@Bean
+	public LocalStatelessSessionProxyFactoryBean configResourceService() {
+		return getLocalEjbFactoyBean(ConfigResourceService.class, true);
 	}
 
 
