@@ -2,10 +2,17 @@ package es.caib.pinbal.logic.service;
 
 import es.caib.pinbal.logic.helper.ConfigHelper;
 import es.caib.pinbal.logic.helper.RecobrimentHelper;
+import es.caib.pinbal.logic.intf.dto.ConsultaDto;
+import es.caib.pinbal.logic.intf.dto.JustificantDto;
+import es.caib.pinbal.logic.intf.dto.RespostaAtributsDto;
 import es.caib.pinbal.logic.intf.service.ConsultaService;
 import es.caib.pinbal.logic.intf.service.HistoricConsultaService;
+import es.caib.pinbal.persist.entity.Consulta;
+import es.caib.pinbal.persist.entity.HistoricConsulta;
 import es.caib.pinbal.persist.repository.ConsultaRepository;
 import es.caib.pinbal.persist.repository.HistoricConsultaRepository;
+import es.caib.pinbal.scsp.ScspHelper;
+import es.scsp.bean.common.confirmacion.ConfirmacionPeticion;
 import es.scsp.bean.common.peticion.Atributos;
 import es.scsp.bean.common.peticion.Consentimiento;
 import es.scsp.bean.common.peticion.DatosGenericos;
@@ -19,6 +26,7 @@ import es.scsp.bean.common.peticion.Solicitudes;
 import es.scsp.bean.common.peticion.TipoDocumentacion;
 import es.scsp.bean.common.peticion.Titular;
 import es.scsp.bean.common.peticion.Transmision;
+import es.scsp.bean.common.respuesta.Respuesta;
 import es.scsp.common.exceptions.ScspException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -26,12 +34,20 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.ArrayList;
 import java.util.Date;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verifyNoInteractions;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 public class RecobrimentHelperTest {
@@ -474,5 +490,177 @@ public class RecobrimentHelperTest {
         ScspException ex = assertThrows(ScspException.class, () ->
                 recobrimentHelper.validarIObtenirSolicituds(peticio, 1));
         assertTrue(ex.getMessage().contains(MSG_ERROR_SOL_TRANS_TYPE));
+    }
+
+
+    // TESTS peticionSincrona
+    // /////////////////////////////////////////////////////////
+
+    @Test
+    public void whenPeticionSincronaOk_thenRetornaRespuesta() throws Exception {
+        when(consultaService.isOptimitzarTransaccionsNovaConsulta()).thenReturn(false);
+        ConsultaDto consultaDto = new ConsultaDto();
+        consultaDto.setEstat(ConsultaDto.EstatTipus.Tramitada.name());
+        consultaDto.setScspPeticionId("PETICIO_OK");
+        when(consultaService.novaConsultaRecobriment(eq("COD_CER"), any())).thenReturn(consultaDto);
+
+        Respuesta respostaEsperada = new Respuesta();
+        ScspHelper scspHelperMock = mock(ScspHelper.class);
+        when(scspHelperMock.recuperarRespuestaScsp("PETICIO_OK")).thenReturn(respostaEsperada);
+        ReflectionTestUtils.setField(recobrimentHelper, "scspHelper", scspHelperMock);
+
+        Respuesta resultat = recobrimentHelper.peticionSincrona(peticio);
+
+        assertEquals(respostaEsperada, resultat);
+    }
+
+    @Test
+    public void whenPeticionSincronaAmbErrorAmbCodi_thenLlençaScspExceptionAmbCodi() throws Exception {
+        when(consultaService.isOptimitzarTransaccionsNovaConsulta()).thenReturn(false);
+        ConsultaDto consultaDto = new ConsultaDto();
+        consultaDto.setEstat(ConsultaDto.EstatTipus.Error.name());
+        consultaDto.setScspPeticionId("PETICIO_ERROR");
+        consultaDto.setRespostaEstadoCodigo("0100");
+        consultaDto.setRespostaEstadoError("Error SCSP");
+        when(consultaService.novaConsultaRecobriment(eq("COD_CER"), any())).thenReturn(consultaDto);
+
+        ScspException ex = assertThrows(ScspException.class, () -> recobrimentHelper.peticionSincrona(peticio));
+
+        assertEquals("0100", ex.getScspCode());
+        assertEquals("Error SCSP", ex.getMessage());
+    }
+
+    @Test
+    public void whenPeticionSincronaAmbErrorSenseCodi_thenLlençaScspException0227() throws Exception {
+        when(consultaService.isOptimitzarTransaccionsNovaConsulta()).thenReturn(false);
+        ConsultaDto consultaDto = new ConsultaDto();
+        consultaDto.setEstat(ConsultaDto.EstatTipus.Error.name());
+        consultaDto.setScspPeticionId("PETICIO_ERROR2");
+        consultaDto.setError("Error sense codi");
+        when(consultaService.novaConsultaRecobriment(eq("COD_CER"), any())).thenReturn(consultaDto);
+
+        ScspException ex = assertThrows(ScspException.class, () -> recobrimentHelper.peticionSincrona(peticio));
+
+        assertEquals("0227", ex.getScspCode());
+        assertEquals("Error sense codi", ex.getMessage());
+    }
+
+
+    // TESTS peticionAsincrona
+    // /////////////////////////////////////////////////////////
+
+    @Test
+    public void whenPeticionAsincronaOk_thenRetornaConfirmacionPeticion() throws Exception {
+        RespostaAtributsDto atributsDto = new RespostaAtributsDto();
+        atributsDto.setPeticioId("PETICIO_ASINC_OK");
+        atributsDto.setEstatCodi("0000");
+        atributsDto.setEstatCodiSecundari("00");
+        atributsDto.setEstatTempsEstimatResposta(1);
+        atributsDto.setNumElements("1");
+        atributsDto.setTimestamp("123456789");
+
+        ConsultaDto consultaDto = new ConsultaDto();
+        consultaDto.setRespostaAtributs(atributsDto);
+        when(consultaService.novaConsultaRecobrimentMultiple(eq("COD_CER"), any())).thenReturn(consultaDto);
+
+        ConfirmacionPeticion resultat = recobrimentHelper.peticionAsincrona(peticio);
+
+        assertNotNull(resultat);
+        assertEquals("COD_CER", resultat.getAtributos().getCodigoCertificado());
+        assertEquals("PETICIO_ASINC_OK", resultat.getAtributos().getIdPeticion());
+        assertEquals(1, resultat.getAtributos().getNumElementos());
+    }
+
+    @Test
+    public void whenPeticionAsincronaAmbError_thenLlençaScspException() throws Exception {
+        ConsultaDto consultaDto = new ConsultaDto();
+        consultaDto.setError("Error multiple");
+        consultaDto.setRespostaEstadoCodigo("0200");
+        consultaDto.setRespostaEstadoError("Error SCSP multiple");
+        when(consultaService.novaConsultaRecobrimentMultiple(eq("COD_CER"), any())).thenReturn(consultaDto);
+
+        ScspException ex = assertThrows(ScspException.class, () -> recobrimentHelper.peticionAsincrona(peticio));
+
+        assertEquals("0200", ex.getScspCode());
+        assertEquals("Error SCSP multiple", ex.getMessage());
+    }
+
+
+    // TESTS getRespuesta
+    // /////////////////////////////////////////////////////////
+
+    @Test
+    public void whenGetRespuestaOk_thenRetornaRespuesta() throws Exception {
+        Respuesta respostaEsperada = new Respuesta();
+        ScspHelper scspHelperMock = mock(ScspHelper.class);
+        when(scspHelperMock.recuperarRespuestaScsp("PETICIO_GET")).thenReturn(respostaEsperada);
+        ReflectionTestUtils.setField(recobrimentHelper, "scspHelper", scspHelperMock);
+
+        Respuesta resultat = recobrimentHelper.getRespuesta("PETICIO_GET");
+
+        assertEquals(respostaEsperada, resultat);
+    }
+
+    @Test
+    public void whenGetRespuestaLlençaExcepcio_thenEmbolicaAScspException() throws Exception {
+        ScspHelper scspHelperMock = mock(ScspHelper.class);
+        when(scspHelperMock.recuperarRespuestaScsp("PETICIO_GET_ERROR")).thenThrow(new RuntimeException("boom"));
+        ReflectionTestUtils.setField(recobrimentHelper, "scspHelper", scspHelperMock);
+
+        ScspException ex = assertThrows(ScspException.class, () -> recobrimentHelper.getRespuesta("PETICIO_GET_ERROR"));
+
+        assertTrue(ex.getMessage().contains("boom"));
+    }
+
+
+    // TESTS getJustificante
+    // /////////////////////////////////////////////////////////
+
+    @Test
+    public void whenGetJustificanteAmbConsulta_thenUsaConsultaService() throws Exception {
+        Consulta consulta = mock(Consulta.class);
+        when(consultaRepository.findByScspPeticionIdAndScspSolicitudId("P6", "S1")).thenReturn(consulta);
+        JustificantDto justificant = JustificantDto.builder().error(false).build();
+        when(consultaService.obtenirJustificant("P6", "S1", true, true)).thenReturn(justificant);
+
+        JustificantDto resultat = recobrimentHelper.getJustificante("P6", "S1", true, true);
+
+        assertEquals(justificant, resultat);
+        verifyNoInteractions(historicConsultaService);
+    }
+
+    @Test
+    public void whenGetJustificanteNomesHistoric_thenUsaHistoricConsultaService() throws Exception {
+        when(consultaRepository.findByScspPeticionIdAndScspSolicitudId("P7", "S1")).thenReturn(null);
+        HistoricConsulta historic = mock(HistoricConsulta.class);
+        when(historicConsultaRepository.findByScspPeticionIdAndScspSolicitudId("P7", "S1")).thenReturn(historic);
+        JustificantDto justificant = JustificantDto.builder().error(false).build();
+        when(historicConsultaService.obtenirJustificant("P7", "S1", true, true)).thenReturn(justificant);
+
+        JustificantDto resultat = recobrimentHelper.getJustificante("P7", "S1", true, true);
+
+        assertEquals(justificant, resultat);
+    }
+
+    @Test
+    public void whenGetJustificanteNoTrobat_thenLlençaScspException() {
+        when(consultaRepository.findByScspPeticionIdAndScspSolicitudId("P8", "S1")).thenReturn(null);
+        when(historicConsultaRepository.findByScspPeticionIdAndScspSolicitudId("P8", "S1")).thenReturn(null);
+
+        ScspException ex = assertThrows(ScspException.class, () -> recobrimentHelper.getJustificante("P8", "S1", true, true));
+
+        assertTrue(ex.getMessage().contains("No s'ha trobat la sol·licitud"));
+    }
+
+    @Test
+    public void whenGetJustificanteAmbErrorGeneracio_thenLlençaScspException() throws Exception {
+        Consulta consulta = mock(Consulta.class);
+        when(consultaRepository.findByScspPeticionIdAndScspSolicitudId("P9", "S1")).thenReturn(consulta);
+        JustificantDto justificantError = JustificantDto.builder().error(true).errorDescripcio("No es pot generar").build();
+        when(consultaService.obtenirJustificant("P9", "S1", true, true)).thenReturn(justificantError);
+
+        ScspException ex = assertThrows(ScspException.class, () -> recobrimentHelper.getJustificante("P9", "S1", true, true));
+
+        assertTrue(ex.getMessage().contains("No es pot generar"));
     }
 }

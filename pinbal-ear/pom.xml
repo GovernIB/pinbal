@@ -14,6 +14,7 @@
 		<docker.image.platform>linux/amd64</docker.image.platform>
 		<docker.image.context>${project.basedir}/target/docker-ctx</docker.image.context>
 		<docker.image.dockerfile>${project.basedir}/target/docker-ctx/Dockerfile.maven</docker.image.dockerfile>
+		<jacoco.check.skip>true</jacoco.check.skip>
 	</properties>
 	<dependencies>
 		<!-- Embedded Tomcat must be provided: JBoss EAP uses Undertow, not Tomcat.

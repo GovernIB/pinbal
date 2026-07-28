@@ -351,6 +351,11 @@
 			<artifactId>junit</artifactId>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+			<groupId>org.mockito</groupId>
+			<artifactId>mockito-core</artifactId>
+			<scope>test</scope>
+		</dependency>
 	</dependencies>
 	<build>
 		<resources>
@@ -380,6 +385,41 @@
 								<argument>${project.basedir}/src/main/java</argument>
 								<argument>${project.basedir}/../local-repo</argument>
 							</arguments>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.jacoco</groupId>
+				<artifactId>jacoco-maven-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>jacoco-prepare-agent</id>
+						<configuration>
+							<excludes>
+								<exclude>es.scsp.*</exclude>
+								<exclude>org.apache.axis2.*</exclude>
+							</excludes>
+						</configuration>
+					</execution>
+					<execution>
+						<id>jacoco-report</id>
+						<configuration>
+							<excludes>
+								<exclude>es/scsp/**</exclude>
+								<exclude>org/apache/axis2/**</exclude>
+								<exclude>axis2/**</exclude>
+							</excludes>
+						</configuration>
+					</execution>
+					<execution>
+						<id>jacoco-check</id>
+						<configuration>
+							<excludes>
+								<exclude>es/scsp/**</exclude>
+								<exclude>org/apache/axis2/**</exclude>
+								<exclude>axis2/**</exclude>
+							</excludes>
 						</configuration>
 					</execution>
 				</executions>

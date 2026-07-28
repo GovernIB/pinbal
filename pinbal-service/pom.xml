@@ -8,6 +8,9 @@
 	</parent>
 	<artifactId>pinbal-service</artifactId>
 	<packaging>ejb</packaging>
+	<properties>
+		<jacoco.minimum.coverage>0.75</jacoco.minimum.coverage>
+	</properties>
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>

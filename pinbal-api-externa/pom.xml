@@ -11,6 +11,10 @@
     <artifactId>pinbal-api-externa</artifactId>
     <packaging>war</packaging>
 
+    <properties>
+        <jacoco.check.skip>true</jacoco.check.skip>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>

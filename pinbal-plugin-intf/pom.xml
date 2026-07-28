@@ -35,4 +35,7 @@
 		</dependency>
 	</dependencies>
 	<artifactId>pinbal-plugin-intf</artifactId>
+	<properties>
+		<jacoco.check.skip>true</jacoco.check.skip>
+	</properties>
 </project>

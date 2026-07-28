@@ -1,22 +1,34 @@
 package es.caib.pinbal.logic.helper;
 
 import es.caib.pinbal.client.recobriment.v2.DadesComunes;
+import es.caib.pinbal.client.recobriment.v2.DadesComunesResposta;
+import es.caib.pinbal.client.recobriment.v2.EstatEnum;
 import es.caib.pinbal.client.recobriment.v2.Funcionari;
+import es.caib.pinbal.client.recobriment.v2.PeticioAsincrona;
+import es.caib.pinbal.client.recobriment.v2.PeticioConfirmacioAsincrona;
+import es.caib.pinbal.client.recobriment.v2.PeticioRespostaAsincrona;
+import es.caib.pinbal.client.recobriment.v2.PeticioRespostaSincrona;
 import es.caib.pinbal.client.recobriment.v2.PeticioSincrona;
 import es.caib.pinbal.client.recobriment.v2.SolicitudSimple;
+import es.caib.pinbal.logic.intf.dto.EstatTipus;
 import es.caib.pinbal.logic.intf.dto.ServeiCampDto;
 import es.caib.pinbal.logic.intf.service.ServeiService;
 import es.caib.pinbal.logic.intf.service.exception.ServeiNotFoundException;
+import es.caib.pinbal.persist.entity.Consulta;
 import es.caib.pinbal.persist.entity.Entitat;
 import es.caib.pinbal.persist.entity.Procediment;
 import es.caib.pinbal.persist.entity.ServeiConfig;
+import es.caib.pinbal.persist.entity.SuperConsulta;
+import es.caib.pinbal.persist.repository.ConsultaRepository;
 import es.caib.pinbal.persist.repository.EntitatRepository;
 import es.caib.pinbal.persist.repository.ProcedimentRepository;
 import es.caib.pinbal.persist.repository.ServeiCampRepository;
 import es.caib.pinbal.persist.repository.ServeiConfigRepository;
 import es.caib.pinbal.scsp.ScspHelper;
+import es.scsp.bean.common.confirmacion.ConfirmacionPeticion;
 import es.scsp.bean.common.peticion.Peticion;
 import es.scsp.bean.common.respuesta.DatosGenericos;
+import es.scsp.bean.common.respuesta.Respuesta;
 import es.scsp.bean.common.respuesta.TransmisionDatos;
 import es.scsp.common.domain.core.Servicio;
 import org.junit.jupiter.api.BeforeEach;
@@ -30,6 +42,9 @@ import org.springframework.validation.BindException;
 import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -64,6 +79,9 @@ public class RecobrimentV2HelperTest {
 
     @Mock
     private ServeiService serveiService;
+
+    @Mock
+    private ConsultaRepository consultaRepository;
 
     ScspHelper scspHelper;
 
@@ -635,5 +653,367 @@ public class RecobrimentV2HelperTest {
 //        assertNotNull(peticion);
 //        assertNotNull(peticion.getSolicitudes().getSolicitudTransmision().get(0).getDatosEspecificos());
 //    }
+
+
+    // TESTS validateDadesSolicitud - validació del document del titular
+    // /////////////////////////////////////////////////////////
+
+    @Test
+    public void testValidateDadesSolicitud_TitularDniInvalid_rejecta() {
+        es.caib.pinbal.client.recobriment.v2.Titular titular = es.caib.pinbal.client.recobriment.v2.Titular.builder()
+                .documentTipus(es.caib.pinbal.client.recobriment.v2.Titular.DocumentTipus.DNI)
+                .documentNumero("12345678X")
+                .build();
+        SolicitudSimple solicitud = SolicitudSimple.builder().titular(titular).build();
+        PeticioSincrona peticio = PeticioSincrona.builder().solicitud(solicitud).build();
+        BindException errors = new BindException(peticio, "peticio");
+
+        when(serveiConfigRepository.findByServei("SERVEI_CODI")).thenReturn(new ServeiConfig());
+
+        recobrimentV2Helper.validateDadesSolicitud(solicitud, "SERVEI_CODI", errors, serveiService);
+
+        assertFalse(errors.getFieldErrors("solicitud.titular.documentNumero").isEmpty());
+        assertEquals("rec.val.err.titular.dni", errors.getFieldErrors("solicitud.titular.documentNumero").get(0).getCode());
+    }
+
+    @Test
+    public void testValidateDadesSolicitud_TitularCifInvalid_rejecta() {
+        es.caib.pinbal.client.recobriment.v2.Titular titular = es.caib.pinbal.client.recobriment.v2.Titular.builder()
+                .documentTipus(es.caib.pinbal.client.recobriment.v2.Titular.DocumentTipus.CIF)
+                .documentNumero("V0000000A")
+                .build();
+        SolicitudSimple solicitud = SolicitudSimple.builder().titular(titular).build();
+        PeticioSincrona peticio = PeticioSincrona.builder().solicitud(solicitud).build();
+        BindException errors = new BindException(peticio, "peticio");
+
+        when(serveiConfigRepository.findByServei("SERVEI_CODI")).thenReturn(new ServeiConfig());
+
+        recobrimentV2Helper.validateDadesSolicitud(solicitud, "SERVEI_CODI", errors, serveiService);
+
+        assertFalse(errors.getFieldErrors("solicitud.titular.documentNumero").isEmpty());
+        assertEquals("rec.val.err.titular.cif", errors.getFieldErrors("solicitud.titular.documentNumero").get(0).getCode());
+    }
+
+    @Test
+    public void testValidateDadesSolicitud_TitularCifValid_noRejecta() {
+        es.caib.pinbal.client.recobriment.v2.Titular titular = es.caib.pinbal.client.recobriment.v2.Titular.builder()
+                .documentTipus(es.caib.pinbal.client.recobriment.v2.Titular.DocumentTipus.CIF)
+                .documentNumero("V0000000J")
+                .build();
+        SolicitudSimple solicitud = SolicitudSimple.builder().titular(titular).build();
+        PeticioSincrona peticio = PeticioSincrona.builder().solicitud(solicitud).build();
+        BindException errors = new BindException(peticio, "peticio");
+
+        when(serveiConfigRepository.findByServei("SERVEI_CODI")).thenReturn(new ServeiConfig());
+
+        recobrimentV2Helper.validateDadesSolicitud(solicitud, "SERVEI_CODI", errors, serveiService);
+
+        assertTrue(errors.getFieldErrors("solicitud.titular.documentNumero").isEmpty());
+    }
+
+    @Test
+    public void testValidateDadesSolicitud_TitularNieInvalid_rejecta() {
+        es.caib.pinbal.client.recobriment.v2.Titular titular = es.caib.pinbal.client.recobriment.v2.Titular.builder()
+                .documentTipus(es.caib.pinbal.client.recobriment.v2.Titular.DocumentTipus.NIE)
+                .documentNumero("X1234567A")
+                .build();
+        SolicitudSimple solicitud = SolicitudSimple.builder().titular(titular).build();
+        PeticioSincrona peticio = PeticioSincrona.builder().solicitud(solicitud).build();
+        BindException errors = new BindException(peticio, "peticio");
+
+        when(serveiConfigRepository.findByServei("SERVEI_CODI")).thenReturn(new ServeiConfig());
+
+        recobrimentV2Helper.validateDadesSolicitud(solicitud, "SERVEI_CODI", errors, serveiService);
+
+        assertFalse(errors.getFieldErrors("solicitud.titular.documentNumero").isEmpty());
+        assertEquals("rec.val.err.titular.nie", errors.getFieldErrors("solicitud.titular.documentNumero").get(0).getCode());
+    }
+
+
+    // TESTS toPeticion(PeticioAsincrona)
+    // /////////////////////////////////////////////////////////
+
+    @Test
+    public void testToPeticion_PeticioAsincrona_null() throws Exception {
+        Peticion peticion = recobrimentV2Helper.toPeticion((PeticioAsincrona) null);
+        assertNull(peticion);
+    }
+
+    @Test
+    public void testToPeticion_PeticioAsincrona_multiplesSolicituds() throws Exception {
+        DadesComunes dadesComunes = DadesComunes.builder()
+                .serveiCodi("VALID_SERVICE_CODE")
+                .entitatCif("VALID_CIF")
+                .procedimentCodi("VALID_PROCEDIMENT_CODE")
+                .funcionari(Funcionari.builder().nom("FUNC123").nif("12345678Z").build())
+                .departament("Valid Department")
+                .finalitat("Valid Finality")
+                .consentiment(DadesComunes.Consentiment.Si)
+                .build();
+
+        SolicitudSimple solicitud1 = SolicitudSimple.builder().expedient("EXP1").build();
+        SolicitudSimple solicitud2 = SolicitudSimple.builder().expedient("EXP2").build();
+
+        PeticioAsincrona peticioAsincrona = PeticioAsincrona.builder()
+                .dadesComunes(dadesComunes)
+                .solicituds(Arrays.asList(solicitud1, solicitud2))
+                .build();
+
+        Procediment mockProcediment = new Procediment();
+        mockProcediment.setCodi("VALID_PROCEDIMENT_CODE");
+        mockProcediment.setNom("Valid Procediment Name");
+
+        Entitat mockEntitat = new Entitat();
+        mockEntitat.setCif("VALID_CIF");
+        mockEntitat.setNom("Valid Entitat Name");
+
+        when(serveiConfigRepository.findByServei("VALID_SERVICE_CODE")).thenReturn(new ServeiConfig());
+        when(procedimentRepository.findByEntitatAndCodi(any(Entitat.class), eq("VALID_PROCEDIMENT_CODE"))).thenReturn(mockProcediment);
+        when(entitatRepository.findByCif("VALID_CIF")).thenReturn(mockEntitat);
+
+        Peticion peticion = recobrimentV2Helper.toPeticion(peticioAsincrona);
+
+        assertNotNull(peticion);
+        assertEquals(2, peticion.getAtributos().getNumElementos());
+        assertEquals(2, peticion.getSolicitudes().getSolicitudTransmision().size());
+        assertEquals("000001", peticion.getSolicitudes().getSolicitudTransmision().get(0).getDatosGenericos().getTransmision().getIdSolicitud());
+        assertEquals("000002", peticion.getSolicitudes().getSolicitudTransmision().get(1).getDatosGenericos().getTransmision().getIdSolicitud());
+    }
+
+
+    // TESTS toRespostaSincrona
+    // /////////////////////////////////////////////////////////
+
+    @Test
+    public void testToRespostaSincrona_respuestaNull_retornaError() throws Exception {
+        PeticioRespostaSincrona resposta = recobrimentV2Helper.toRespostaSincrona(null);
+
+        assertTrue(resposta.isError());
+        assertEquals(EstatEnum.ERROR, resposta.getEstat());
+        assertEquals("No s'ha pobut recuperar la resposta.", resposta.getMissatge());
+    }
+
+    @Test
+    public void testToRespostaSincrona_ambConsultaTramitada_noError() throws Exception {
+        es.scsp.bean.common.respuesta.Atributos atributos = new es.scsp.bean.common.respuesta.Atributos();
+        atributos.setIdPeticion("PETICIO1");
+        atributos.setCodigoCertificado("SERVEI_CODI");
+        es.scsp.bean.common.respuesta.Estado estado = new es.scsp.bean.common.respuesta.Estado();
+        estado.setLiteralError("Cap error");
+        atributos.setEstado(estado);
+
+        Respuesta respuesta = new Respuesta();
+        respuesta.setAtributos(atributos);
+
+        Consulta consulta = mock(Consulta.class);
+        when(consulta.getEstat()).thenReturn(EstatTipus.Tramitada);
+        when(consultaRepository.findByScspPeticionId("PETICIO1")).thenReturn(Collections.singletonList(consulta));
+
+        PeticioRespostaSincrona resposta = recobrimentV2Helper.toRespostaSincrona(respuesta);
+
+        assertFalse(resposta.isError());
+        assertEquals(EstatEnum.TRAMITADA, resposta.getEstat());
+        assertEquals("Cap error", resposta.getMissatge());
+    }
+
+    @Test
+    public void testToRespostaSincrona_senseConsulta_codigoEstadoOk_noError() throws Exception {
+        es.scsp.bean.common.respuesta.Atributos atributos = new es.scsp.bean.common.respuesta.Atributos();
+        atributos.setIdPeticion("PETICIO2");
+        es.scsp.bean.common.respuesta.Estado estado = new es.scsp.bean.common.respuesta.Estado();
+        estado.setCodigoEstado("0000");
+        atributos.setEstado(estado);
+
+        Respuesta respuesta = new Respuesta();
+        respuesta.setAtributos(atributos);
+
+        when(consultaRepository.findByScspPeticionId("PETICIO2")).thenReturn(Collections.emptyList());
+
+        PeticioRespostaSincrona resposta = recobrimentV2Helper.toRespostaSincrona(respuesta);
+
+        assertFalse(resposta.isError());
+        assertEquals(EstatEnum.ERROR, resposta.getEstat());
+    }
+
+
+    // TESTS toConfirmacio
+    // /////////////////////////////////////////////////////////
+
+    @Test
+    public void testToConfirmacio_respostaNull_retornaNull() throws Exception {
+        assertNull(recobrimentV2Helper.toConfirmacio(null));
+    }
+
+    @Test
+    public void testToConfirmacio_ambTempsEstimat() throws Exception {
+        es.scsp.bean.common.confirmacion.Atributos atributos = new es.scsp.bean.common.confirmacion.Atributos();
+        atributos.setIdPeticion("PETICIO3");
+        atributos.setCodigoCertificado("SERVEI_CODI");
+        atributos.setNumElementos(3);
+        atributos.setTimeStamp("2026-03-12T11:46:01.978+01:00");
+        es.scsp.bean.common.confirmacion.Estado estado = new es.scsp.bean.common.confirmacion.Estado();
+        estado.setTiempoEstimadoRespuesta(2);
+        atributos.setEstado(estado);
+
+        ConfirmacionPeticion confirmacionPeticion = new ConfirmacionPeticion();
+        confirmacionPeticion.setAtributos(atributos);
+
+        Consulta consulta = mock(Consulta.class);
+        when(consulta.getEstat()).thenReturn(EstatTipus.Processant);
+        when(consultaRepository.findByScspPeticionIdAndMultipleIsTrue("PETICIO3")).thenReturn(consulta);
+
+        PeticioConfirmacioAsincrona resposta = recobrimentV2Helper.toConfirmacio(confirmacionPeticion);
+
+        assertNotNull(resposta);
+        assertEquals(EstatEnum.PROCESSANT, resposta.getEstat());
+        assertNotNull(resposta.getConfirmacioPeticio());
+        assertEquals("PETICIO3", resposta.getConfirmacioPeticio().getIdPeticio());
+        assertEquals(3, resposta.getConfirmacioPeticio().getNumSolicituds());
+        assertNotNull(resposta.getConfirmacioPeticio().getDataEstimadaResposta());
+    }
+
+
+    // TESTS toRespostaAsincrona
+    // /////////////////////////////////////////////////////////
+
+    @Test
+    public void testToRespostaAsincrona_Respuesta_processant_calculaDataEstimada() throws Exception {
+        es.scsp.bean.common.respuesta.Atributos atributos = new es.scsp.bean.common.respuesta.Atributos();
+        atributos.setIdPeticion("PETICIO4");
+        es.scsp.bean.common.respuesta.Estado estado = new es.scsp.bean.common.respuesta.Estado();
+        estado.setTiempoEstimadoRespuesta(2);
+        atributos.setEstado(estado);
+
+        Respuesta respuesta = new Respuesta();
+        respuesta.setAtributos(atributos);
+
+        Consulta consultaMultiple = mock(Consulta.class);
+        when(consultaMultiple.getEstat()).thenReturn(EstatTipus.Processant);
+        when(consultaRepository.findByScspPeticionIdAndMultipleIsTrue("PETICIO4")).thenReturn(consultaMultiple);
+
+        PeticioRespostaAsincrona resposta = recobrimentV2Helper.toRespostaAsincrona(respuesta);
+
+        assertFalse(resposta.isError());
+        assertEquals(EstatEnum.PROCESSANT, resposta.getEstat());
+        assertNotNull(resposta.getDataEstimadaResposta());
+    }
+
+    @Test
+    public void testToRespostaAsincrona_SuperConsulta_processant() throws Exception {
+        SuperConsulta consulta = mock(SuperConsulta.class);
+        when(consulta.getEstat()).thenReturn(EstatTipus.Processant);
+        when(consulta.isMultiple()).thenReturn(true);
+        Date dataEsperada = new Date();
+        when(consulta.getDataEsperadaResposta()).thenReturn(dataEsperada);
+
+        PeticioRespostaAsincrona resposta = recobrimentV2Helper.toRespostaAsincrona(consulta);
+
+        assertFalse(resposta.isError());
+        assertEquals(EstatEnum.PROCESSANT, resposta.getEstat());
+        assertEquals(dataEsperada, resposta.getDataEstimadaResposta());
+        assertEquals(
+                "La petició asíncrona encara no ha rebut la resposta. Intenta recuperar la resposta després de la data estimada de resposta.",
+                resposta.getMissatge());
+    }
+
+    @Test
+    public void testToRespostaAsincrona_SuperConsulta_error() throws Exception {
+        SuperConsulta consulta = mock(SuperConsulta.class);
+        when(consulta.getEstat()).thenReturn(EstatTipus.Error);
+        when(consulta.getError()).thenReturn("Error XYZ");
+
+        PeticioRespostaAsincrona resposta = recobrimentV2Helper.toRespostaAsincrona(consulta);
+
+        assertTrue(resposta.isError());
+        assertEquals(EstatEnum.ERROR, resposta.getEstat());
+        assertTrue(resposta.getMissatge().contains("Error XYZ"));
+    }
+
+
+    // TESTS toDadesComunesResposta
+    // /////////////////////////////////////////////////////////
+
+    @Test
+    public void testToDadesComunesResposta_completa() {
+        es.scsp.bean.common.respuesta.Atributos atributos = new es.scsp.bean.common.respuesta.Atributos();
+        atributos.setCodigoCertificado("SERVEI_CODI");
+        atributos.setIdPeticion("PETICIO5");
+
+        es.scsp.bean.common.respuesta.Emisor emisor = new es.scsp.bean.common.respuesta.Emisor();
+        emisor.setNifEmisor("87284566A");
+        emisor.setNombreEmisor("Nom emisor");
+
+        es.scsp.bean.common.respuesta.Funcionario funcionario = new es.scsp.bean.common.respuesta.Funcionario();
+        funcionario.setNombreCompletoFuncionario("Nom Funcionari");
+        funcionario.setNifFuncionario("12345678Z");
+
+        es.scsp.bean.common.respuesta.Procedimiento procedimiento = new es.scsp.bean.common.respuesta.Procedimiento();
+        procedimiento.setCodProcedimiento("COD_PROC");
+        procedimiento.setNombreProcedimiento("Procediment");
+        procedimiento.setAutomatizado("S");
+        procedimiento.setClaseTramite(0);
+
+        es.scsp.bean.common.respuesta.Solicitante solicitante = new es.scsp.bean.common.respuesta.Solicitante();
+        solicitante.setIdentificadorSolicitante("VALID_CIF");
+        solicitante.setNombreSolicitante("Nom Sol·licitant");
+        solicitante.setUnidadTramitadora("Unitat");
+        solicitante.setCodigoUnidadTramitadora("UT01");
+        solicitante.setProcedimiento(procedimiento);
+        solicitante.setFinalidad("Finalitat");
+        solicitante.setConsentimiento(es.scsp.bean.common.respuesta.Consentimiento.SI);
+        solicitante.setFuncionario(funcionario);
+
+        es.scsp.bean.common.respuesta.DatosGenericos datosGenericos = new es.scsp.bean.common.respuesta.DatosGenericos();
+        datosGenericos.setEmisor(emisor);
+        datosGenericos.setSolicitante(solicitante);
+
+        TransmisionDatos transmisionDatos = new TransmisionDatos();
+        transmisionDatos.setDatosGenericos(datosGenericos);
+
+        es.scsp.bean.common.respuesta.Transmisiones transmisiones = new es.scsp.bean.common.respuesta.Transmisiones();
+        transmisiones.getTransmisionDatos().add(transmisionDatos);
+
+        Respuesta respuesta = new Respuesta();
+        respuesta.setAtributos(atributos);
+        respuesta.setTransmisiones(transmisiones);
+
+        DadesComunesResposta dadesComunes = recobrimentV2Helper.toDadesComunesResposta(respuesta);
+
+        assertNotNull(dadesComunes);
+        assertEquals("SERVEI_CODI", dadesComunes.getServeiCodi());
+        assertEquals("PETICIO5", dadesComunes.getIdPeticio());
+        assertEquals("87284566A", dadesComunes.getEmisor().getNif());
+        assertNotNull(dadesComunes.getSolicitant());
+        assertEquals("VALID_CIF", dadesComunes.getSolicitant().getIdentificador());
+        assertEquals("COD_PROC", dadesComunes.getSolicitant().getProcedimentCodi());
+        assertTrue(dadesComunes.getSolicitant().getAutomatitzat());
+        assertEquals("12345678Z", dadesComunes.getSolicitant().getFuncionari().getNif());
+    }
+
+    @Test
+    public void testToDadesComunesResposta_null() {
+        assertNull(recobrimentV2Helper.toDadesComunesResposta(null));
+    }
+
+
+    // TESTS getConsultaBypeticioId / getConsultaSimpleBypeticioId
+    // /////////////////////////////////////////////////////////
+
+    @Test
+    public void testGetConsultaSimpleBypeticioId_multiplesConsultesLlençaExcepcio() {
+        Consulta consulta1 = mock(Consulta.class);
+        Consulta consulta2 = mock(Consulta.class);
+        when(consultaRepository.findByScspPeticionId("PETICIO6")).thenReturn(Arrays.asList(consulta1, consulta2));
+
+        assertThrows(RuntimeException.class, () -> recobrimentV2Helper.getConsultaSimpleBypeticioId("PETICIO6"));
+    }
+
+    @Test
+    public void testGetConsultaBypeticioId_trobaConsultaMultiple() {
+        Consulta consultaMultiple = mock(Consulta.class);
+        when(consultaRepository.findByScspPeticionIdAndMultipleIsTrue("PETICIO7")).thenReturn(consultaMultiple);
+
+        assertEquals(consultaMultiple, recobrimentV2Helper.getConsultaBypeticioId("PETICIO7"));
+    }
 
 }

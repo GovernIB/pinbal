@@ -14,6 +14,8 @@
 		<node.version>v22.13.1</node.version>
 		<frontend.app.path>src/main/reactapp/pinbal-back</frontend.app.path>
 		<frontend.skip>false</frontend.skip>
+		<jacoco.check.skip>false</jacoco.check.skip>
+		<jacoco.minimum.coverage>0.65</jacoco.minimum.coverage>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -154,6 +156,22 @@
 			<artifactId>lombok</artifactId>
 			<version>${lombok.version}</version>
 			<scope>provided</scope>
+		</dependency>
+
+		<!-- TESTING -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<!-- javax.activation és "provided" (el proporciona JBoss en temps d'execució); als tests
+		     cal la implementació real perquè BaseController.writeFileToResponse (via
+		     MimetypesFileTypeMap) no falli amb NoClassDefFoundError. -->
+		<dependency>
+			<groupId>javax.activation</groupId>
+			<artifactId>activation</artifactId>
+			<version>1.1.1</version>
+			<scope>test</scope>
 		</dependency>
 	</dependencies>
 	<profiles>

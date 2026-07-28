@@ -10,6 +10,10 @@
     </parent>
     <artifactId>pinbal-ejb</artifactId>
 
+    <properties>
+        <jacoco.check.skip>true</jacoco.check.skip>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>
