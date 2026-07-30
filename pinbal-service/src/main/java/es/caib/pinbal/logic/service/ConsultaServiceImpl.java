@@ -3199,9 +3199,12 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 					nomesSensePare,
 					pageable);
 		} else {
-			// Només per Oracle
+			// Només per Oracle (ALTER SESSION SET OPTIMIZER_MODE es sintaxi
+			// nativa d'Oracle; abans es cridava per a qualsevol dialecte que
+			// no fos Postgres, cosa que també l'activava incorrectament per
+			// a H2 i hi feia fallar la consulta)
 			String dialect = configHelper.getConfig("es.caib.pinbal.hibernate.dialect", "Oracle");
-			if (dialect == null || !dialect.toLowerCase().contains("postgres")) {
+			if (dialect == null || dialect.toLowerCase().contains("oracle")) {
                 consultaRepository.setSessionOptimizerModeToRule();
 			}
 			paginaConsultes = llistatConsultaRepository.findByCreatedByAndFiltrePaginat(

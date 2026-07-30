@@ -181,7 +181,7 @@
 					<driver>${env.JBOSS_DB_DRIVER:oracle}</driver>
 					<pool>
 						<min-pool-size>1</min-pool-size>
-						<max-pool-size>10</max-pool-size>
+						<max-pool-size>${env.JBOSS_DB_POOL_MAX:10}</max-pool-size>
 						<prefill>true</prefill>
 					</pool>
 					<security>
@@ -204,7 +204,7 @@
 					<driver>${env.JBOSS_DB_DRIVER:oracle}</driver>
 					<pool>
 						<min-pool-size>1</min-pool-size>
-						<max-pool-size>5</max-pool-size>
+						<max-pool-size>${env.JBOSS_DB_SCSP_POOL_MAX:5}</max-pool-size>
 					</pool>
 					<security>
 						<user-name>${env.JBOSS_DB_USERNAME}</user-name>
@@ -221,7 +221,7 @@
                     <driver>${env.JBOSS_DB_DRIVER:oracle}</driver>
                     <pool>
                         <min-pool-size>1</min-pool-size>
-                        <max-pool-size>10</max-pool-size>
+                        <max-pool-size>${env.JBOSS_USER_DB_POOL_MAX:10}</max-pool-size>
                         <prefill>true</prefill>
                     </pool>
                     <security>

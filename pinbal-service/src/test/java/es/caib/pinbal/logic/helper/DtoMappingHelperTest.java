@@ -1,9 +1,11 @@
 package es.caib.pinbal.logic.helper;
 
+import es.caib.pinbal.logic.intf.dto.ClauPrivadaDto;
 import es.caib.pinbal.logic.intf.dto.ConfigDto;
 import es.caib.pinbal.logic.intf.dto.EntitatDto;
 import es.caib.pinbal.logic.intf.dto.ProcedimentDto;
 import es.caib.pinbal.logic.intf.dto.ServeiDto;
+import es.caib.pinbal.persist.entity.ClauPrivada;
 import es.caib.pinbal.persist.entity.Config;
 import es.caib.pinbal.persist.entity.ConfigType;
 import es.caib.pinbal.persist.entity.Entitat;
@@ -43,6 +45,16 @@ public class DtoMappingHelperTest {
     @Test
     public void convertirSet_conjuntNull_retornaNull() {
         assertNull(dtoMappingHelper.convertirSet(null, ServeiDto.class));
+    }
+
+    @Test
+    public void convertir_clauPrivada_mapejaId() {
+        ClauPrivada clauPrivada = new ClauPrivada();
+        ReflectionTestUtils.setField(clauPrivada, "id", 99L);
+
+        ClauPrivadaDto dto = dtoMappingHelper.convertir(clauPrivada, ClauPrivadaDto.class);
+
+        assertEquals(99L, dto.getId());
     }
 
     @Test

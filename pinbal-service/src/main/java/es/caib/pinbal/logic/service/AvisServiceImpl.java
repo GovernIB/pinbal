@@ -116,7 +116,7 @@ public class AvisServiceImpl implements AvisService {
 	@Override
 	public List<AvisDto> findActive() {
 		return dtoMappingHelper.convertirList(
-				avisRepository.findActive(DateUtils.truncate(new Date(), Calendar.DATE)), 
+				avisRepository.findActive(DateUtils.truncate(new Date(), Calendar.DATE)),
 				AvisDto.class);
 	}
 

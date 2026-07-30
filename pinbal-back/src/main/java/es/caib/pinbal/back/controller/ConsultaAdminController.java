@@ -195,11 +195,11 @@ public class ConsultaAdminController extends BaseController {
 	@GetMapping("/{consultaId}/justificant")
 	public String justificant(HttpServletRequest request, HttpServletResponse response, @PathVariable Long consultaId, Model model) throws ConsultaNotFoundException {
 
-		if (!EntitatHelper.isDelegatEntitatActual(request)) {
+		if (!RolHelper.isRolActualAdministrador(request) && !EntitatHelper.isDelegatEntitatActual(request)) {
 			return "delegatNoAutoritzat";
 		}
 		EntitatDto entitat = EntitatHelper.getEntitatActual(request, entitatService);
-		if  (entitat != null) {
+		if  (RolHelper.isRolActualAdministrador(request) || entitat != null) {
 			try {
 				ConsultaDto consulta = getConsultaAdmin(consultaId, isHistoric(request));
 				if (consulta.isMultiple()) {
@@ -302,10 +302,10 @@ public class ConsultaAdminController extends BaseController {
 			HttpServletResponse response,
 			@PathVariable Long consultaId,
 			Model model) throws Exception {
-		if (!EntitatHelper.isDelegatEntitatActual(request)) {
+		if (!RolHelper.isRolActualAdministrador(request) && !EntitatHelper.isDelegatEntitatActual(request)) {
 			throw new AccessDenegatException(Arrays.asList("Delegat"));
 		}
-		if (EntitatHelper.getEntitatActual(request, entitatService) == null)
+		if (!RolHelper.isRolActualAdministrador(request) && EntitatHelper.getEntitatActual(request, entitatService) == null)
 			throw new EntitatNotFoundException("Actual");
 
 		JustificantDto justificant = getJustificant(consultaId, isHistoric(request));
@@ -348,10 +348,10 @@ public class ConsultaAdminController extends BaseController {
 			HttpServletRequest request,
 			@PathVariable Long consultaId) {
 
-		if (!EntitatHelper.isDelegatEntitatActual(request))
+		if (!RolHelper.isRolActualAdministrador(request) && !EntitatHelper.isDelegatEntitatActual(request))
 			return new JsonResponse(true, "delegatNoAutoritzat");
 		EntitatDto entitat = EntitatHelper.getEntitatActual(request, entitatService);
-		if (entitat == null)
+		if (!RolHelper.isRolActualAdministrador(request) && entitat == null)
 			return new JsonResponse(true, getMessage(request, "comu.error.no.entitat"));
 
 		try {

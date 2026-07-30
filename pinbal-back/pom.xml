@@ -15,7 +15,7 @@
 		<frontend.app.path>src/main/reactapp/pinbal-back</frontend.app.path>
 		<frontend.skip>false</frontend.skip>
 		<jacoco.check.skip>false</jacoco.check.skip>
-		<jacoco.minimum.coverage>0.65</jacoco.minimum.coverage>
+		<jacoco.minimum.coverage>0.7</jacoco.minimum.coverage>
 	</properties>
 	<dependencies>
 		<dependency>

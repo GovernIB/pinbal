@@ -9,7 +9,7 @@
 <head>
 	<title>
 		<c:choose>
-			<c:when test="${paramConfCommand.forcreate}"><spring:message code="paramconf.form.titol.crear"/>
+			<c:when test="${paramConfCommand.forcreate}"><spring:message code="paramconf.form.titol.crear"/></c:when>
 			<c:otherwise><spring:message code="paramconf.form.titol.modificar"/></c:otherwise>
 		</c:choose>
 	</title>

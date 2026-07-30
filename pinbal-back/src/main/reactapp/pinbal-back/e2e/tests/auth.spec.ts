@@ -22,7 +22,7 @@ test.describe('Autenticació', () => {
     });
 
     test('credencials incorrectes no donen accés a l\'aplicació', async ({ page }) => {
-        await page.goto('/');
+        await page.goto('');
         await expect(page.locator('#username')).toBeVisible({ timeout: 15_000 });
 
         await page.locator('#username').fill('usuari_e2e_inexistent');
@@ -35,7 +35,7 @@ test.describe('Autenticació', () => {
     });
 
     test('accedir a una pàgina protegida sense sessió redirigeix al login', async ({ page }) => {
-        await page.goto('/entitat');
+        await page.goto('entitat');
 
         await expect(page.locator('#username')).toBeVisible({ timeout: 15_000 });
     });

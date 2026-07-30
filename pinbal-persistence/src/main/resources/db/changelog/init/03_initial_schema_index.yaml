@@ -87,22 +87,6 @@ databaseChangeLog:
         - column:
             name: servei_codi
     - createIndex:
-        indexName: pbl_con_createddatcod_i
-        tableName: pbl_consulta
-        columns:
-        - column:
-            name: sys_nc00042$
-        - column:
-            name: createdby_codi
-    - createIndex:
-        indexName: pbl_conh_credatcod_i
-        tableName: pbl_consulta_hist
-        columns:
-        - column:
-            name: sys_nc00042$
-        - column:
-            name: createdby_codi
-    - createIndex:
         indexName: pbl_consultah_createdby_i
         tableName: pbl_consulta_hist
         columns:
@@ -286,3 +270,27 @@ databaseChangeLog:
         columns:
         - column:
             name: servei_id
+- changeSet:
+    id: init-index-2-oracle-function-based
+    author: Limit
+    dbms: oracle
+    comment: >-
+      Índexs sobre columnes virtuals generades per Oracle per a índexs
+      basats en funcions (sys_nc00042$); no traduïbles a altres motors.
+    changes:
+    - createIndex:
+        indexName: pbl_con_createddatcod_i
+        tableName: pbl_consulta
+        columns:
+        - column:
+            name: sys_nc00042$
+        - column:
+            name: createdby_codi
+    - createIndex:
+        indexName: pbl_conh_credatcod_i
+        tableName: pbl_consulta_hist
+        columns:
+        - column:
+            name: sys_nc00042$
+        - column:
+            name: createdby_codi

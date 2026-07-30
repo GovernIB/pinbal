@@ -1,7 +1,18 @@
 #!/usr/bin/env bash
 #
-# Arranca l'aplicació PINBAL (docker-compose/podman-compose), el servidor
-# fake de SCSP (pinbal-scsp-fake) i executa la suite Playwright de e2e/.
+# Arranca l'aplicació PINBAL (docker compose/podman-compose) contra una base
+# de dades H2 EFÍMERA (en memòria, servida per un contenidor auxiliar "h2"
+# definit a docker-compose.e2e.yml, sempre afegit com a overlay sobre
+# docker-compose.yml), el servidor fake de SCSP (pinbal-scsp-fake) i executa
+# la suite Playwright de e2e/. Keycloak segueix sent l'extern configurat a
+# .env (AUTH_URL/AUTH_REALM/...); no es toca.
+#
+# L'esquema i les dades de proves es creen automàticament en arrencar JBoss
+# (Liquibase, spring.liquibase.enabled=true). Com que la BD és en memòria,
+# CADA EXECUCIÓ PARTEIX D'UN ESTAT NET tan bon punt es recrea el contenidor
+# h2 (p. ex. amb --down seguit d'una nova execució, o en aturar-lo a mà); si
+# es reutilitza el mateix contenidor h2 en marxa entre execucions (comportament
+# per defecte, vegeu --down), les dades es mantenen.
 #
 # Ús:
 #   scripts/e2e/run-e2e.sh [opcions] [-- <arguments per a playwright>]
@@ -10,14 +21,12 @@
 #   --down                  Atura (compose down) l'aplicació en acabar.
 #                            Per defecte es deixa la pila engegada perquè
 #                            l'arrencada de JBoss és lenta i es puguin tornar
-#                            a executar els tests sense esperar de nou.
+#                            a executar els tests sense esperar de nou (però
+#                            l'estat de la BD H2 només es conserva mentre el
+#                            contenidor h2 segueixi en marxa).
 #   --skip-compose          No aixequi l'aplicació (assumeix que ja està en marxa).
 #   --skip-fake-build       No recompili pinbal-scsp-fake (usa el jar existent).
 #   --skip-fake             No arrenqui el fake SCSP (assumeix que ja està en marxa).
-#   --point-scsp-urls       Redirigeix a la BD els serveis SCSP coberts pel fake
-#                            (Q2827003ATGSS001, SCDCPAJU, SVDDGTVEHICULOSANCWS01,
-#                            SVDDGPCIWS02) cap al fake, i els restaura en acabar.
-#                            Requereix `sqlplus` i les credencials de BD de .env.
 #   --headed                Executa Playwright en mode "headed".
 #   --ui                    Executa Playwright en mode interactiu (--ui).
 #   -h, --help              Mostra aquesta ajuda.
@@ -27,6 +36,18 @@
 #   FAKE_SCSP_PORT (per defecte 18080)
 #   E2E_BASE_URL   (per defecte http://localhost:8080/pinbalback)
 #   APP_READY_TIMEOUT_SECONDS (per defecte 600)
+#
+# Credencials i càrrega de dades:
+#   Les credencials de pinbal-back/.../e2e/.env.e2e (E2E_ADMIN_USERNAME,
+#   E2E_DELEGAT_USERNAME, E2E_REPRESENTANT_USERNAME, E2E_AUDITOR_USERNAME;
+#   usuaris reals del Keycloak compartit) es passen a l'aplicació com a
+#   paràmetres de Liquibase perquè la càrrega de dades de e2e
+#   (pinbal-persistence/.../db/changelog/e2e/) creï els usuaris/entitats de
+#   proves corresponents a la BD H2. Aquesta mateixa càrrega ja redirigeix
+#   els serveis SCSP coberts pel fake cap a FAKE_SCSP_BASE_URL, de manera que
+#   ja NO cal cap pas manual per apuntar-los-hi (l'antiga opció
+#   --point-scsp-urls/scripts/scsp-fake/point-to-fake.sql només té sentit
+#   contra un Oracle real, fora d'aquest flux; vegeu FAKE_SCSP_SERVER.md).
 #
 set -euo pipefail
 
@@ -47,7 +68,6 @@ DOWN_AFTER=false
 SKIP_COMPOSE=false
 SKIP_FAKE_BUILD=false
 SKIP_FAKE=false
-POINT_SCSP_URLS=false
 PLAYWRIGHT_MODE="test:e2e"
 PLAYWRIGHT_EXTRA_ARGS=()
 
@@ -61,7 +81,6 @@ while [[ $# -gt 0 ]]; do
         --skip-compose) SKIP_COMPOSE=true; shift ;;
         --skip-fake-build) SKIP_FAKE_BUILD=true; shift ;;
         --skip-fake) SKIP_FAKE=true; shift ;;
-        --point-scsp-urls) POINT_SCSP_URLS=true; shift ;;
         --headed) PLAYWRIGHT_MODE="test:e2e:headed"; shift ;;
         --ui) PLAYWRIGHT_MODE="test:e2e:ui"; shift ;;
         -h|--help) sed -n '2,/^set -euo pipefail/p' "$0" | sed '$d' | sed 's/^# \{0,1\}//'; exit 0 ;;
@@ -73,18 +92,28 @@ done
 mkdir -p "$RUN_DIR"
 
 # --- Detecció de docker compose / podman-compose ---------------------------
+# Comprovar només que la CLI existeixi no basta: en entorns on l'usuari no
+# pertany al grup "docker" (soquet /var/run/docker.sock inaccessible), `docker
+# compose version` respon igualment (no toca el dimoni) però qualsevol ordre
+# real ("up", "down"...) fallaria per permisos. Per això es comprova
+# connectivitat real amb `docker info`.
 COMPOSE_CMD=()
-if command -v docker >/dev/null 2>&1 && docker compose version >/dev/null 2>&1; then
+if command -v docker >/dev/null 2>&1 && docker info >/dev/null 2>&1 && docker compose version >/dev/null 2>&1; then
     COMPOSE_CMD=(docker compose)
-elif command -v docker-compose >/dev/null 2>&1; then
+elif command -v docker-compose >/dev/null 2>&1 && docker info >/dev/null 2>&1; then
     COMPOSE_CMD=(docker-compose)
 elif command -v podman-compose >/dev/null 2>&1; then
     COMPOSE_CMD=(podman-compose)
 else
-    err "No s'ha trobat 'docker compose', 'docker-compose' ni 'podman-compose' al PATH."
+    err "No s'ha trobat 'docker compose', 'docker-compose' ni 'podman-compose' amb accés al dimoni al PATH."
     exit 1
 fi
 log "Motor de compose: ${COMPOSE_CMD[*]}"
+
+# S'afegeix sempre l'overlay docker-compose.e2e.yml, que substitueix la BD
+# Oracle externa per un H2 efímer i injecta els paràmetres de Liquibase de
+# e2e (vegeu docker-compose.e2e.yml). No modifica docker-compose.yml.
+COMPOSE_FILE_ARGS=(-f "$ROOT_DIR/docker-compose.yml" -f "$ROOT_DIR/docker-compose.e2e.yml")
 
 if [[ "$SKIP_COMPOSE" == false ]]; then
     if [[ ! -f "$ROOT_DIR/.env" ]]; then
@@ -94,7 +123,6 @@ if [[ "$SKIP_COMPOSE" == false ]]; then
 fi
 
 FAKE_SCSP_PID=""
-SCSP_URLS_POINTED=false
 
 cleanup() {
     local exit_code=$?
@@ -103,12 +131,9 @@ cleanup() {
         kill "$FAKE_SCSP_PID" 2>/dev/null || true
         wait "$FAKE_SCSP_PID" 2>/dev/null || true
     fi
-    if [[ "$SCSP_URLS_POINTED" == true ]]; then
-        restore_scsp_urls || warn "No s'han pogut restaurar les URLs SCSP originals; reviseu-ho manualment."
-    fi
     if [[ "$DOWN_AFTER" == true && "$SKIP_COMPOSE" == false ]]; then
         log "Aturant l'aplicació (compose down)..."
-        (cd "$ROOT_DIR" && "${COMPOSE_CMD[@]}" down) || warn "compose down ha fallat."
+        (cd "$ROOT_DIR" && "${COMPOSE_CMD[@]}" "${COMPOSE_FILE_ARGS[@]}" down) || warn "compose down ha fallat."
     fi
     exit "$exit_code"
 }
@@ -154,53 +179,40 @@ else
     log "Es salta l'arrencada del fake SCSP (--skip-fake)."
 fi
 
-# --- 2. Aplicació PINBAL (docker/podman compose) ----------------------------
+# --- 2. Credencials i configuració per a la càrrega de dades e2e -----------
+# Les credencials de e2e/.env.e2e es reenvien com a paràmetres de Liquibase
+# (SPRING_LIQUIBASE_PARAMETERS_* a docker-compose.e2e.yml) perquè la càrrega
+# de dades de e2e (db/changelog/e2e/) creï els usuaris/entitats de proves
+# corresponents al Keycloak compartit, i redirigeixi ella mateixa els
+# serveis SCSP coberts pel fake cap a FAKE_SCSP_BASE_URL.
+if [[ ! -f "$REACT_DIR/e2e/.env.e2e" ]]; then
+    warn "No existeix e2e/.env.e2e; es copia des de l'exemple. Ompliu les credencials abans de tornar a executar."
+    cp "$REACT_DIR/e2e/.env.e2e.example" "$REACT_DIR/e2e/.env.e2e"
+fi
+# shellcheck disable=SC1091
+set -a; source "$REACT_DIR/e2e/.env.e2e"; set +a
+export E2E_ADMIN_USERNAME="${E2E_ADMIN_USERNAME:-}"
+export E2E_DELEGAT_USERNAME="${E2E_DELEGAT_USERNAME:-}"
+export E2E_REPRESENTANT_USERNAME="${E2E_REPRESENTANT_USERNAME:-}"
+export E2E_AUDITOR_USERNAME="${E2E_AUDITOR_USERNAME:-}"
+# Usuaris fixos (no lligats a Keycloak) usats per alguns tests de llistat/
+# filtre/permisos; mateixos valors per defecte que e2e/utils/env.ts perquè
+# el codi a la BD i el que cerquen els tests coincideixin sempre.
+export E2E_USER_ACTIU_USERNAME="${E2E_USER_ACTIU_USERNAME:-E2E_USER_ACTIU}"
+export E2E_USER_INACTIU_USERNAME="${E2E_USER_INACTIU_USERNAME:-E2E_USER_INACTIU}"
+export E2E_USER_ALL_ROLES="${E2E_USER_ALL_ROLES:-pbl_all}"
+export FAKE_SCSP_BASE_URL="http://host.docker.internal:${FAKE_SCSP_PORT}"
+
+# --- 3. Aplicació PINBAL (docker/podman compose + overlay H2) --------------
 if [[ "$SKIP_COMPOSE" == false ]]; then
-    log "Aixecant l'aplicació amb ${COMPOSE_CMD[*]}..."
-    (cd "$ROOT_DIR" && "${COMPOSE_CMD[@]}" up -d)
+    log "Aixecant l'aplicació amb ${COMPOSE_CMD[*]} ${COMPOSE_FILE_ARGS[*]}..."
+    # --build assegura que la imatge local de l'overlay (h2, docker/h2/Dockerfile)
+    # es reconstrueix si el Dockerfile ha canviat; en cas contrari el motor de
+    # compose pot reutilitzar en silenci una imatge ja etiquetada i desactualitzada.
+    (cd "$ROOT_DIR" && "${COMPOSE_CMD[@]}" "${COMPOSE_FILE_ARGS[@]}" up -d --build)
     wait_for_http "$APP_BASE_URL" "$APP_READY_TIMEOUT_SECONDS" "l'aplicació PINBAL"
 else
     log "Es salta l'arrencada de l'aplicació (--skip-compose)."
-fi
-
-# --- 3. Redirigir els serveis SCSP coneguts cap al fake (opcional) ---------
-# DB_URL de .env està escrit des del punt de vista del contenidor de l'app
-# (p.ex. host.docker.internal:1521/FREEPDB1). sqlplus s'executa aquí a
-# l'amfitrió, així que cal traduir aquest host a localhost per connectar-hi.
-sqlplus_connect_string() {
-    local host_side="${DB_URL#jdbc:oracle:thin:@}"
-    host_side="${host_side/host.docker.internal/localhost}"
-    echo "${DB_USERNAME}/${DB_PASSWORD}@${host_side}"
-}
-
-point_scsp_urls() {
-    if ! command -v sqlplus >/dev/null 2>&1; then
-        warn "sqlplus no és al PATH; no es poden redirigir automàticament les URLs SCSP."
-        warn "Executeu manualment scripts/scsp-fake/point-to-fake.sql (vegeu FAKE_SCSP_SERVER.md)."
-        return 0
-    fi
-    # shellcheck disable=SC1091
-    set -a; source "$ROOT_DIR/.env"; set +a
-    local fake_base="http://host.docker.internal:$FAKE_SCSP_PORT"
-    log "Redirigint els serveis SCSP coberts pel fake cap a $fake_base..."
-    sqlplus -s "$(sqlplus_connect_string)" \
-        "@$ROOT_DIR/scripts/scsp-fake/point-to-fake.sql" "$fake_base"
-    SCSP_URLS_POINTED=true
-}
-
-restore_scsp_urls() {
-    if ! command -v sqlplus >/dev/null 2>&1; then
-        return 0
-    fi
-    # shellcheck disable=SC1091
-    set -a; source "$ROOT_DIR/.env"; set +a
-    log "Restaurant les URLs SCSP originals..."
-    sqlplus -s "$(sqlplus_connect_string)" \
-        "@$ROOT_DIR/scripts/scsp-fake/restore-original-urls.sql"
-}
-
-if [[ "$POINT_SCSP_URLS" == true ]]; then
-    point_scsp_urls
 fi
 
 # --- 4. Playwright -----------------------------------------------------------
@@ -211,10 +223,6 @@ fi
 if [[ ! -d "$HOME/.cache/ms-playwright" ]]; then
     log "Instal·lant navegadors de Playwright (chromium)..."
     (cd "$REACT_DIR" && npx playwright install --with-deps chromium)
-fi
-if [[ ! -f "$REACT_DIR/e2e/.env.e2e" ]]; then
-    warn "No existeix e2e/.env.e2e; es copia des de l'exemple. Ompliu les credencials abans de tornar a executar."
-    cp "$REACT_DIR/e2e/.env.e2e.example" "$REACT_DIR/e2e/.env.e2e"
 fi
 
 log "Executant els tests Playwright (npm run $PLAYWRIGHT_MODE)..."

@@ -11,9 +11,18 @@ import { Credentials } from './env';
  * Inicia sessió i espera que la pàgina principal de PINBAL s'hagi carregat
  * (identificada pel menú d'usuari #menu_user, sempre present un cop
  * autenticat, sigui quin sigui el rol).
+ *
+ * IMPORTANT: cada fixture de rol (`adminPage`/`delegatPage`/etc., vegeu
+ * fixtures.ts) crea el seu propi `BrowserContext` aïllat abans de cridar
+ * `login()`, precisament perquè aquesta funció NO intenta gestionar un
+ * canvi d'identitat sobre una sessió ja existent (fer-ho requeriria passar
+ * per `logout()`, que xoca amb un bug real de l'aplicació — vegeu el seu
+ * comentari). Si `login()` es crida sobre una `page` que ja té sessió
+ * d'un ALTRE usuari, el comportament no està definit; feis-la servir només
+ * amb una `page`/context nova.
  */
 export async function login(page: Page, { username, password }: Credentials): Promise<void> {
-    await page.goto('/');
+    await page.goto('');
 
     const usernameField = page.locator('#username');
     const alreadyLoggedIn = await Promise.race([
@@ -24,11 +33,27 @@ export async function login(page: Page, { username, password }: Credentials): Pr
     if (!alreadyLoggedIn) {
         await usernameField.fill(username);
         await page.locator('#password').fill(password);
-        await page.locator('#kc-login').click();
+        // El clic dispara un POST real cap a un Keycloak extern (no un mock local) seguit
+        // de la validació/creació de sessió a l'aplicació (EJB + BD): sota càrrega pot trigar
+        // més que el actionTimeout per defecte (10s) configurat per a interaccions normals
+        // dins l'aplicació, per això s'utilitza aquí un timeout més generós.
+        await page.locator('#kc-login').click({ timeout: 30_000 });
     }
 
-    await expect(page.locator('#menu_user')).toBeVisible({ timeout: 15_000 });
+    await expect(page.locator('#menu_user')).toBeVisible({ timeout: 30_000 });
 }
+
+/**
+ * BUG APLICACIÓ (vegeu BUGS_APLICACIO.md): `UsuariController.logout()`
+ * neteja totes les cookies manualment (`new Cookie(c.getName(), null)`) en
+ * lloc de fer un logout correcte contra Keycloak (`request.logout()`). Això
+ * corromp el seguiment de l'"state" OIDC de l'adaptador de Keycloak: el
+ * següent intent de login sovint acaba en un "Bad Request" ("state
+ * parameter invalid" als logs de JBoss). Aquesta funció, per tant, és
+ * fràgil — useu-la només quan el test verifiqui explícitament el
+ * comportament de tancar sessió, no com a mecanisme per canviar d'usuari
+ * dins un test (per això les fixtures de rol no la fan servir).
+ */
 
 /** Tanca la sessió actual mitjançant l'opció "Desconnectar" del menú d'usuari. */
 export async function logout(page: Page): Promise<void> {

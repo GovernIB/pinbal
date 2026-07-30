@@ -1,0 +1,960 @@
+databaseChangeLog:
+# Dades de prova per al domini "Servei" SCSP per als tests Playwright d'e2e.
+#
+# Igual que 00_e2e_seed_data.yaml, nomes s'executa contra H2 (dbms: h2 a cada
+# changeSet) i reserva el rang d'id 900000-909999.
+#
+# Un "servei" consultable via SCSP es en realitat la unio de:
+#  - core_servicio (taula legacy SCSP, clau primaria numerica `id`, codi de
+#    negoci unic `codcertificado`)
+#  - pbl_servei_config (companya 1:1, clau primaria propia `id`, FK
+#    `servei_id` VARCHAR2(256) que guarda el `codcertificado`, NO una FK
+#    numerica a core_servicio.id — confirmat a
+#    pinbal-persistence/src/main/resources/db/changelog/init/01_initial_schema_table.yaml
+#    i 02_initial_schema_constraint.yaml, on nomes core_servicio.emisor,
+#    clavefirma i clavecifrado tenen FK numerica declarada; pbl_servei_config,
+#    pbl_entitat_servei i pbl_procediment_servei enllacen amb core_servicio
+#    nomes per codi, sense FK de BD)
+#
+# Els 4 primers codis (Q2827003ATGSS001, SCDCPAJU, SVDDGTVEHICULOSANCWS01,
+# SVDDGPCIWS02) son els unics dels quals el servidor pinbal-scsp-fake te
+# exemples de resposta reals carregats (vegeu
+# pinbal-scsp-fake/src/main/resources/xml_peticions.txt i FAKE_SCSP_SERVER.md).
+# Les seves urlsincrona/urlasincrona apunten al fake amb el mateix patro que
+# scripts/scsp-fake/point-to-fake.sql: ${fakeScspBaseUrl}/servicios/<codi>/(a)sincrona.
+#
+# La resta de columnes NOT NULL de core_servicio (versionesquema,
+# tiposeguridad, numeromaximoreenvios, maxsolicitudespeticion, fechaalta,
+# caducidad, timeout, validacionfirma quan aplica) estan copiades de files
+# reals de producció trobades a scripts/bbdd/1.4.41/05_pinbal_serveis.sql
+# (INSERT INTO core_servicio ... codcertificado='Q2827003ATGSS001'/'SCDCPAJU'/
+# 'SVDDGTVEHICULOSANCWS01'/'SVDDGPCIWS02'), nomes canviant emisor (aqui
+# 900401, l'emissor sembrat a 00_e2e_seed_data.yaml) i les urls.
+- changeSet:
+    id: e2e-seed-servicios-scsp-fake
+    author: Limit
+    dbms: h2
+    comment: >-
+      core_servicio pels 4 serveis SCSP que el servidor pinbal-scsp-fake sap
+      respondre. Valors de columnes obligatories copiats de files reals de
+      producció (scripts/bbdd/1.4.41/05_pinbal_serveis.sql).
+    changes:
+    - insert:
+        tableName: core_servicio
+        columns:
+        - column: { name: id, valueNumeric: 900701 }
+        - column: { name: codcertificado, value: Q2827003ATGSS001 }
+        - column: { name: descripcion, value: "Estar al corriente de pago con la Seguridad Social" }
+        - column: { name: urlsincrona, value: "${fakeScspBaseUrl}/servicios/Q2827003ATGSS001/sincrona" }
+        - column: { name: urlasincrona, value: "${fakeScspBaseUrl}/servicios/Q2827003ATGSS001/asincrona" }
+        - column: { name: actionsincrona, value: peticionSincrona }
+        - column: { name: actionasincrona, value: peticionAsincrona }
+        - column: { name: actionsolicitud, value: solicitudRespuesta }
+        - column: { name: versionesquema, value: V3 }
+        - column: { name: tiposeguridad, value: WS-Security }
+        - column: { name: xpathcifradosincrono, value: "//*[local-name()='DatosEspecificos']" }
+        - column: { name: esquemas, value: /schemas/Q2827003ATGSS001v3 }
+        - column: { name: numeromaximoreenvios, valueNumeric: 0 }
+        - column: { name: maxsolicitudespeticion, valueNumeric: 0 }
+        - column: { name: emisor, valueNumeric: 900401 }
+        - column: { name: fechaalta, valueDate: 2024-01-01T00:00:00 }
+        - column: { name: caducidad, valueNumeric: 0 }
+        - column: { name: timeout, valueNumeric: 60 }
+        - column: { name: validacionfirma, value: estricto }
+    - insert:
+        tableName: core_servicio
+        columns:
+        - column: { name: id, valueNumeric: 900702 }
+        - column: { name: codcertificado, value: SCDCPAJU }
+        - column: { name: descripcion, value: "Servei de consulta de padró de convivència" }
+        - column: { name: urlsincrona, value: "${fakeScspBaseUrl}/servicios/SCDCPAJU/sincrona" }
+        - column: { name: urlasincrona, value: "${fakeScspBaseUrl}/servicios/SCDCPAJU/asincrona" }
+        - column: { name: actionsincrona, value: PeticionSincrona }
+        - column: { name: versionesquema, value: V3 }
+        - column: { name: tiposeguridad, value: XMLSignature }
+        - column: { name: prefijopeticion, value: PINPRE }
+        - column: { name: esquemas, value: /schemas/SCDCPAJUv3 }
+        - column: { name: numeromaximoreenvios, valueNumeric: 0 }
+        - column: { name: maxsolicitudespeticion, valueNumeric: 0 }
+        - column: { name: emisor, valueNumeric: 900401 }
+        - column: { name: fechaalta, valueDate: 2024-01-01T00:00:00 }
+        - column: { name: caducidad, valueNumeric: 0 }
+        - column: { name: timeout, valueNumeric: 0 }
+        # validacionfirma NULL a la fila real de producció d'aquest servei: no s'inclou.
+    - insert:
+        tableName: core_servicio
+        columns:
+        - column: { name: id, valueNumeric: 900703 }
+        - column: { name: codcertificado, value: SVDDGTVEHICULOSANCWS01 }
+        - column: { name: descripcion, value: "Consulta de datos de vehículos para sanciones." }
+        - column: { name: urlsincrona, value: "${fakeScspBaseUrl}/servicios/SVDDGTVEHICULOSANCWS01/sincrona" }
+        - column: { name: urlasincrona, value: "${fakeScspBaseUrl}/servicios/SVDDGTVEHICULOSANCWS01/asincrona" }
+        - column: { name: actionsincrona, value: peticionSincrona }
+        - column: { name: actionasincrona, value: peticionAsincrona }
+        - column: { name: actionsolicitud, value: solicitudRespuesta }
+        - column: { name: versionesquema, value: V3 }
+        - column: { name: tiposeguridad, value: WS-Security }
+        - column: { name: numeromaximoreenvios, valueNumeric: 0 }
+        - column: { name: maxsolicitudespeticion, valueNumeric: 0 }
+        - column: { name: emisor, valueNumeric: 900401 }
+        - column: { name: fechaalta, valueDate: 2024-01-01T00:00:00 }
+        - column: { name: caducidad, valueNumeric: 0 }
+        - column: { name: timeout, valueNumeric: 0 }
+        # validacionfirma NULL a la fila real de producció d'aquest servei: no s'inclou.
+    - insert:
+        tableName: core_servicio
+        columns:
+        - column: { name: id, valueNumeric: 900704 }
+        - column: { name: codcertificado, value: SVDDGPCIWS02 }
+        - column: { name: descripcion, value: "Consulta de datos de identidad" }
+        - column: { name: urlsincrona, value: "${fakeScspBaseUrl}/servicios/SVDDGPCIWS02/sincrona" }
+        - column: { name: urlasincrona, value: "${fakeScspBaseUrl}/servicios/SVDDGPCIWS02/asincrona" }
+        - column: { name: actionsincrona, value: peticionSincrona }
+        - column: { name: actionasincrona, value: peticionAsincrona }
+        - column: { name: actionsolicitud, value: solicitudRespuesta }
+        - column: { name: versionesquema, value: V3 }
+        - column: { name: tiposeguridad, value: WS-Security }
+        - column: { name: esquemas, value: /schemas/SVDDGPCIWS02v3 }
+        - column: { name: numeromaximoreenvios, valueNumeric: 0 }
+        - column: { name: maxsolicitudespeticion, valueNumeric: 0 }
+        - column: { name: emisor, valueNumeric: 900401 }
+        - column: { name: fechaalta, valueDate: 2024-01-01T00:00:00 }
+        - column: { name: caducidad, valueNumeric: 0 }
+        - column: { name: timeout, valueNumeric: 0 }
+        - column: { name: validacionfirma, value: estricto }
+
+- changeSet:
+    id: e2e-seed-servicios-crud
+    author: Limit
+    dbms: h2
+    comment: >-
+      Parell addicional de core_servicio/pbl_servei_config NO cobert pel fake
+      SCSP (codis inventats), nomes per als tests de CRUD/llistat/filtre
+      d'"Administrador > Gestionar > Serveis" que no arriben a invocar SCSP.
+      urlsincrona/urlasincrona son placeholders (mai s'invoquen). Els valors
+      d'enum reutilitzats (versionesquema=V3, tiposeguridad=WS-Security) son
+      valors reals vistos a la resta de serveis d'aquest fitxer, no una
+      invenció; s'apliquen aqui nomes per tenir un servei "generic" sense cap
+      integracio SCSP real al darrere.
+    changes:
+    - insert:
+        tableName: core_servicio
+        columns:
+        - column: { name: id, valueNumeric: 900705 }
+        - column: { name: codcertificado, value: E2ESERV01 }
+        - column: { name: descripcion, value: "Servei E2E CRUD U (actiu)" }
+        - column: { name: urlsincrona, value: "https://e2e-placeholder.invalid/servicios/E2ESERV01/sincrona" }
+        - column: { name: urlasincrona, value: "https://e2e-placeholder.invalid/servicios/E2ESERV01/asincrona" }
+        - column: { name: versionesquema, value: V3 }
+        - column: { name: tiposeguridad, value: WS-Security }
+        - column: { name: numeromaximoreenvios, valueNumeric: 0 }
+        - column: { name: maxsolicitudespeticion, valueNumeric: 0 }
+        - column: { name: emisor, valueNumeric: 900401 }
+        - column: { name: fechaalta, valueDate: 2024-01-01T00:00:00 }
+        - column: { name: caducidad, valueNumeric: 0 }
+        - column: { name: timeout, valueNumeric: 0 }
+    - insert:
+        tableName: core_servicio
+        columns:
+        - column: { name: id, valueNumeric: 900706 }
+        - column: { name: codcertificado, value: E2ESERV02 }
+        - column: { name: descripcion, value: "Servei E2E CRUD Dos (donat de baixa)" }
+        - column: { name: urlsincrona, value: "https://e2e-placeholder.invalid/servicios/E2ESERV02/sincrona" }
+        - column: { name: urlasincrona, value: "https://e2e-placeholder.invalid/servicios/E2ESERV02/asincrona" }
+        - column: { name: versionesquema, value: V3 }
+        - column: { name: tiposeguridad, value: WS-Security }
+        - column: { name: numeromaximoreenvios, valueNumeric: 0 }
+        - column: { name: maxsolicitudespeticion, valueNumeric: 0 }
+        - column: { name: emisor, valueNumeric: 900401 }
+        - column: { name: fechaalta, valueDate: 2024-01-01T00:00:00 }
+        - column: { name: fechabaja, valueDate: 2024-06-01T00:00:00 }
+        - column: { name: caducidad, valueNumeric: 0 }
+        - column: { name: timeout, valueNumeric: 0 }
+
+- changeSet:
+    id: e2e-seed-servei-config
+    author: Limit
+    dbms: h2
+    comment: >-
+      pbl_servei_config, una fila per cada core_servicio d'aquest fitxer
+      (enllaçada per servei_id=codcertificado, sense FK de BD). Els flags
+      booleans es copien tal qual d'una fila real de producció
+      (PBL_SERVEI_CONFIG.id=1029, servei Q2827003ATGSS001, a
+      scripts/bbdd/1.4.41/05_pinbal_serveis.sql): comprovar_document=1,
+      permes_doctip_{dni,nie,nif,cif,pas}=1, document_obligatori=1,
+      unitat_dir3_from_entitat=0, enviar_solicitant=0, actiu=1. S'apliquen de
+      manera uniforme als 6 serveis per tenir un conjunt de dades consistent
+      (servei actiu, simple, sense adjunts obligatoris addicionals, que
+      permet DNI/NIE/NIF/CIF); l'unica variacio intencionada es
+      E2ESERV02.actiu=0, per tenir un cas de servei inactiu per als tests de
+      llistat/filtre.
+    changes:
+    - insert:
+        tableName: pbl_servei_config
+        columns:
+        - column: { name: id, valueNumeric: 900801 }
+        - column: { name: servei_id, value: Q2827003ATGSS001 }
+        - column: { name: comprovar_document, valueNumeric: 1 }
+        - column: { name: permes_doctip_dni, valueNumeric: 1 }
+        - column: { name: permes_doctip_nie, valueNumeric: 1 }
+        - column: { name: permes_doctip_nif, valueNumeric: 1 }
+        - column: { name: permes_doctip_cif, valueNumeric: 1 }
+        - column: { name: permes_doctip_pas, valueNumeric: 1 }
+        - column: { name: actiu_camp_llin1, valueNumeric: 1 }
+        - column: { name: actiu_camp_llin2, valueNumeric: 1 }
+        - column: { name: actiu_camp_nom, valueNumeric: 1 }
+        - column: { name: actiu_camp_nomcomp, valueNumeric: 0 }
+        - column: { name: actiu_camp_doc, valueNumeric: 1 }
+        - column: { name: document_obligatori, valueNumeric: 1 }
+        - column: { name: activa_gestio_xsd, valueNumeric: 0 }
+        - column: { name: unitat_dir3_from_entitat, valueNumeric: 0 }
+        - column: { name: ini_dades_especifiques, valueNumeric: 0 }
+        - column: { name: use_auto_classe, valueNumeric: 0 }
+        - column: { name: add_dades_especifiques, valueNumeric: 1 }
+        - column: { name: enviar_solicitant, valueNumeric: 0 }
+        - column: { name: actiu, valueNumeric: 1 }
+        - column: { name: use_cert_entitat, valueNumeric: 0 }
+        - column: { name: version, valueNumeric: 0 }
+    - insert:
+        tableName: pbl_servei_config
+        columns:
+        - column: { name: id, valueNumeric: 900802 }
+        - column: { name: servei_id, value: SCDCPAJU }
+        - column: { name: comprovar_document, valueNumeric: 1 }
+        - column: { name: permes_doctip_dni, valueNumeric: 1 }
+        - column: { name: permes_doctip_nie, valueNumeric: 1 }
+        - column: { name: permes_doctip_nif, valueNumeric: 1 }
+        - column: { name: permes_doctip_cif, valueNumeric: 1 }
+        - column: { name: permes_doctip_pas, valueNumeric: 1 }
+        - column: { name: actiu_camp_llin1, valueNumeric: 1 }
+        - column: { name: actiu_camp_llin2, valueNumeric: 1 }
+        - column: { name: actiu_camp_nom, valueNumeric: 1 }
+        - column: { name: actiu_camp_nomcomp, valueNumeric: 0 }
+        - column: { name: actiu_camp_doc, valueNumeric: 1 }
+        - column: { name: document_obligatori, valueNumeric: 1 }
+        - column: { name: activa_gestio_xsd, valueNumeric: 0 }
+        - column: { name: unitat_dir3_from_entitat, valueNumeric: 0 }
+        - column: { name: ini_dades_especifiques, valueNumeric: 0 }
+        - column: { name: use_auto_classe, valueNumeric: 0 }
+        - column: { name: add_dades_especifiques, valueNumeric: 1 }
+        - column: { name: enviar_solicitant, valueNumeric: 0 }
+        - column: { name: actiu, valueNumeric: 1 }
+        - column: { name: use_cert_entitat, valueNumeric: 0 }
+        - column: { name: version, valueNumeric: 0 }
+    - insert:
+        tableName: pbl_servei_config
+        columns:
+        - column: { name: id, valueNumeric: 900803 }
+        - column: { name: servei_id, value: SVDDGTVEHICULOSANCWS01 }
+        - column: { name: comprovar_document, valueNumeric: 1 }
+        - column: { name: permes_doctip_dni, valueNumeric: 1 }
+        - column: { name: permes_doctip_nie, valueNumeric: 1 }
+        - column: { name: permes_doctip_nif, valueNumeric: 1 }
+        - column: { name: permes_doctip_cif, valueNumeric: 1 }
+        - column: { name: permes_doctip_pas, valueNumeric: 1 }
+        - column: { name: actiu_camp_llin1, valueNumeric: 1 }
+        - column: { name: actiu_camp_llin2, valueNumeric: 1 }
+        - column: { name: actiu_camp_nom, valueNumeric: 1 }
+        - column: { name: actiu_camp_nomcomp, valueNumeric: 0 }
+        - column: { name: actiu_camp_doc, valueNumeric: 1 }
+        - column: { name: document_obligatori, valueNumeric: 1 }
+        - column: { name: activa_gestio_xsd, valueNumeric: 0 }
+        - column: { name: unitat_dir3_from_entitat, valueNumeric: 0 }
+        - column: { name: ini_dades_especifiques, valueNumeric: 0 }
+        - column: { name: use_auto_classe, valueNumeric: 0 }
+        - column: { name: add_dades_especifiques, valueNumeric: 1 }
+        - column: { name: enviar_solicitant, valueNumeric: 0 }
+        - column: { name: actiu, valueNumeric: 1 }
+        - column: { name: use_cert_entitat, valueNumeric: 0 }
+        - column: { name: version, valueNumeric: 0 }
+    - insert:
+        tableName: pbl_servei_config
+        columns:
+        - column: { name: id, valueNumeric: 900804 }
+        - column: { name: servei_id, value: SVDDGPCIWS02 }
+        - column: { name: comprovar_document, valueNumeric: 1 }
+        - column: { name: permes_doctip_dni, valueNumeric: 1 }
+        - column: { name: permes_doctip_nie, valueNumeric: 1 }
+        - column: { name: permes_doctip_nif, valueNumeric: 1 }
+        - column: { name: permes_doctip_cif, valueNumeric: 1 }
+        - column: { name: permes_doctip_pas, valueNumeric: 1 }
+        - column: { name: actiu_camp_llin1, valueNumeric: 1 }
+        - column: { name: actiu_camp_llin2, valueNumeric: 1 }
+        - column: { name: actiu_camp_nom, valueNumeric: 1 }
+        - column: { name: actiu_camp_nomcomp, valueNumeric: 0 }
+        - column: { name: actiu_camp_doc, valueNumeric: 1 }
+        - column: { name: document_obligatori, valueNumeric: 1 }
+        - column: { name: activa_gestio_xsd, valueNumeric: 0 }
+        - column: { name: unitat_dir3_from_entitat, valueNumeric: 0 }
+        - column: { name: ini_dades_especifiques, valueNumeric: 0 }
+        - column: { name: use_auto_classe, valueNumeric: 0 }
+        - column: { name: add_dades_especifiques, valueNumeric: 1 }
+        - column: { name: enviar_solicitant, valueNumeric: 0 }
+        - column: { name: actiu, valueNumeric: 1 }
+        - column: { name: use_cert_entitat, valueNumeric: 0 }
+        - column: { name: version, valueNumeric: 0 }
+    - insert:
+        tableName: pbl_servei_config
+        columns:
+        - column: { name: id, valueNumeric: 900805 }
+        - column: { name: servei_id, value: E2ESERV01 }
+        - column: { name: comprovar_document, valueNumeric: 1 }
+        - column: { name: permes_doctip_dni, valueNumeric: 1 }
+        - column: { name: permes_doctip_nie, valueNumeric: 1 }
+        - column: { name: permes_doctip_nif, valueNumeric: 1 }
+        - column: { name: permes_doctip_cif, valueNumeric: 1 }
+        - column: { name: permes_doctip_pas, valueNumeric: 1 }
+        - column: { name: actiu_camp_llin1, valueNumeric: 1 }
+        - column: { name: actiu_camp_llin2, valueNumeric: 1 }
+        - column: { name: actiu_camp_nom, valueNumeric: 1 }
+        - column: { name: actiu_camp_nomcomp, valueNumeric: 0 }
+        - column: { name: actiu_camp_doc, valueNumeric: 1 }
+        - column: { name: document_obligatori, valueNumeric: 1 }
+        - column: { name: activa_gestio_xsd, valueNumeric: 0 }
+        - column: { name: unitat_dir3_from_entitat, valueNumeric: 0 }
+        - column: { name: ini_dades_especifiques, valueNumeric: 0 }
+        - column: { name: use_auto_classe, valueNumeric: 0 }
+        - column: { name: add_dades_especifiques, valueNumeric: 1 }
+        - column: { name: enviar_solicitant, valueNumeric: 0 }
+        - column: { name: actiu, valueNumeric: 1 }
+        - column: { name: use_cert_entitat, valueNumeric: 0 }
+        - column: { name: version, valueNumeric: 0 }
+    - insert:
+        tableName: pbl_servei_config
+        columns:
+        - column: { name: id, valueNumeric: 900806 }
+        - column: { name: servei_id, value: E2ESERV02 }
+        - column: { name: comprovar_document, valueNumeric: 1 }
+        - column: { name: permes_doctip_dni, valueNumeric: 1 }
+        - column: { name: permes_doctip_nie, valueNumeric: 1 }
+        - column: { name: permes_doctip_nif, valueNumeric: 1 }
+        - column: { name: permes_doctip_cif, valueNumeric: 1 }
+        - column: { name: permes_doctip_pas, valueNumeric: 1 }
+        - column: { name: actiu_camp_llin1, valueNumeric: 1 }
+        - column: { name: actiu_camp_llin2, valueNumeric: 1 }
+        - column: { name: actiu_camp_nom, valueNumeric: 1 }
+        - column: { name: actiu_camp_nomcomp, valueNumeric: 0 }
+        - column: { name: actiu_camp_doc, valueNumeric: 1 }
+        - column: { name: document_obligatori, valueNumeric: 1 }
+        - column: { name: activa_gestio_xsd, valueNumeric: 0 }
+        - column: { name: unitat_dir3_from_entitat, valueNumeric: 0 }
+        - column: { name: ini_dades_especifiques, valueNumeric: 0 }
+        - column: { name: use_auto_classe, valueNumeric: 0 }
+        - column: { name: add_dades_especifiques, valueNumeric: 1 }
+        - column: { name: enviar_solicitant, valueNumeric: 0 }
+        - column: { name: actiu, valueNumeric: 0 }
+        - column: { name: use_cert_entitat, valueNumeric: 0 }
+        - column: { name: version, valueNumeric: 0 }
+
+- changeSet:
+    id: e2e-seed-entitat-servei
+    author: Limit
+    dbms: h2
+    comment: >-
+      Vincula els 4 serveis coberts pel fake SCSP a l'entitat E2E Principal
+      (900001), perque els usuaris Delegat/Representant sembrats a
+      00_e2e_seed_data.yaml els puguin veure.
+    changes:
+    - insert:
+        tableName: pbl_entitat_servei
+        columns:
+        - column: { name: id, valueNumeric: 900901 }
+        - column: { name: servei_id, value: Q2827003ATGSS001 }
+        - column: { name: entitat_id, valueNumeric: 900001 }
+        - column: { name: version, valueNumeric: 0 }
+    - insert:
+        tableName: pbl_entitat_servei
+        columns:
+        - column: { name: id, valueNumeric: 900902 }
+        - column: { name: servei_id, value: SCDCPAJU }
+        - column: { name: entitat_id, valueNumeric: 900001 }
+        - column: { name: version, valueNumeric: 0 }
+    - insert:
+        tableName: pbl_entitat_servei
+        columns:
+        - column: { name: id, valueNumeric: 900903 }
+        - column: { name: servei_id, value: SVDDGTVEHICULOSANCWS01 }
+        - column: { name: entitat_id, valueNumeric: 900001 }
+        - column: { name: version, valueNumeric: 0 }
+    - insert:
+        tableName: pbl_entitat_servei
+        columns:
+        - column: { name: id, valueNumeric: 900904 }
+        - column: { name: servei_id, value: SVDDGPCIWS02 }
+        - column: { name: entitat_id, valueNumeric: 900001 }
+        - column: { name: version, valueNumeric: 0 }
+
+- changeSet:
+    id: e2e-seed-procediment-servei
+    author: Limit
+    dbms: h2
+    comment: >-
+      Associacio servei-procediment per al procediment E2E U (900201, entitat
+      E2E Principal), per exercitar el flux de "noves consultes" del Delegat i
+      de "gestio de serveis per procediment" del Representant.
+    changes:
+    - insert:
+        tableName: pbl_procediment_servei
+        columns:
+        - column: { name: id, valueNumeric: 901001 }
+        - column: { name: actiu, valueNumeric: 1 }
+        - column: { name: servei_id, value: Q2827003ATGSS001 }
+        - column: { name: procediment_id, valueNumeric: 900201 }
+        - column: { name: procediment_codi, value: E2EPROC01 }
+        - column: { name: version, valueNumeric: 0 }
+    - insert:
+        tableName: pbl_procediment_servei
+        columns:
+        - column: { name: id, valueNumeric: 901002 }
+        - column: { name: actiu, valueNumeric: 1 }
+        - column: { name: servei_id, value: SCDCPAJU }
+        - column: { name: procediment_id, valueNumeric: 900201 }
+        - column: { name: procediment_codi, value: E2EPROC01 }
+        - column: { name: version, valueNumeric: 0 }
+
+- changeSet:
+    id: e2e-seed-acl-procediment-servei-delegat
+    author: Limit
+    dbms: h2
+    preConditions:
+        onFail: MARK_RAN
+        not:
+            changeLogPropertyDefined:
+                property: e2eDelegatUsername
+                value: ''
+    comment: >-
+      Sense aixo, ProcedimentServiceImpl.findActiusAmbEntitatIServeiCodi
+      (invocat en carregar consulta/{servei}/new) filtra els
+      ProcedimentServei per PermisosHelper.filterGrantedAll(..., READ,
+      aclService, auth): sense cap fila ACL concedint permis READ sobre
+      l'objecte concret, el metode retorna llista buida encara que la
+      relacio procediment-servei existeixi (#procedimentId es renderitza
+      sense cap <option>). Es reprodueix exactament el que fa
+      PermisosHelper.assignarPermisUsuari(usuariCodi, ProcedimentServei.class,
+      id, BasePermission.READ, aclService) quan es fa des de la UI real
+      (ProcedimentServiceImpl.serveiPermisAllow): class_id_type =
+      java.lang.Long (Long.getCanonicalName(), vegeu
+      org.springframework.security.acls.jdbc.JdbcMutableAclService.
+      createOrRetrieveClassPrimaryKey), sid = el codi d'usuari amb
+      principal=true (PrincipalSid), mask=1 (BasePermission.READ).
+    changes:
+    - insert:
+        tableName: pbl_acl_class
+        columns:
+        - column: { name: id, valueNumeric: 901301 }
+        - column: { name: class, value: es.caib.pinbal.persist.entity.ProcedimentServei }
+        - column: { name: class_id_type, value: java.lang.Long }
+    - insert:
+        tableName: pbl_acl_sid
+        columns:
+        - column: { name: id, valueNumeric: 901302 }
+        - column: { name: principal, valueNumeric: 1 }
+        - column: { name: sid, value: "${e2eDelegatUsername}" }
+    - insert:
+        tableName: pbl_acl_object_identity
+        columns:
+        - column: { name: id, valueNumeric: 901304 }
+        - column: { name: object_id_class, valueNumeric: 901301 }
+        - column: { name: object_id_identity, valueNumeric: 901001 }
+        - column: { name: owner_sid, valueNumeric: 901302 }
+        - column: { name: entries_inheriting, valueNumeric: 1 }
+    - insert:
+        tableName: pbl_acl_object_identity
+        columns:
+        - column: { name: id, valueNumeric: 901305 }
+        - column: { name: object_id_class, valueNumeric: 901301 }
+        - column: { name: object_id_identity, valueNumeric: 901002 }
+        - column: { name: owner_sid, valueNumeric: 901302 }
+        - column: { name: entries_inheriting, valueNumeric: 1 }
+    - insert:
+        tableName: pbl_acl_entry
+        columns:
+        - column: { name: id, valueNumeric: 901306 }
+        - column: { name: acl_object_identity, valueNumeric: 901304 }
+        - column: { name: ace_order, valueNumeric: 0 }
+        - column: { name: sid, valueNumeric: 901302 }
+        - column: { name: mask, valueNumeric: 1 }
+        - column: { name: granting, valueNumeric: 1 }
+        - column: { name: audit_success, valueNumeric: 0 }
+        - column: { name: audit_failure, valueNumeric: 0 }
+    - insert:
+        tableName: pbl_acl_entry
+        columns:
+        - column: { name: id, valueNumeric: 901307 }
+        - column: { name: acl_object_identity, valueNumeric: 901305 }
+        - column: { name: ace_order, valueNumeric: 0 }
+        - column: { name: sid, valueNumeric: 901302 }
+        - column: { name: mask, valueNumeric: 1 }
+        - column: { name: granting, valueNumeric: 1 }
+        - column: { name: audit_success, valueNumeric: 0 }
+        - column: { name: audit_failure, valueNumeric: 0 }
+
+- changeSet:
+    id: e2e-seed-acl-procediment-servei-representant
+    author: Limit
+    dbms: h2
+    preConditions:
+        onFail: MARK_RAN
+        and:
+        - not:
+            changeLogPropertyDefined:
+                property: e2eRepresentantUsername
+                value: ''
+        - not:
+            changeLogPropertyDefined:
+                property: e2eDelegatUsername
+                value: ''
+    comment: >-
+      Mateix permis READ per al representant, afegit com a segon SID sobre
+      els mateixos object_identity creats al changeset anterior (per aixo
+      depen tambe que e2eDelegatUsername no sigui blanc: si el primer
+      changeset s'ha saltat, aquests object_identity no existeixen).
+    changes:
+    - insert:
+        tableName: pbl_acl_sid
+        columns:
+        - column: { name: id, valueNumeric: 901303 }
+        - column: { name: principal, valueNumeric: 1 }
+        - column: { name: sid, value: "${e2eRepresentantUsername}" }
+    - insert:
+        tableName: pbl_acl_entry
+        columns:
+        - column: { name: id, valueNumeric: 901308 }
+        - column: { name: acl_object_identity, valueNumeric: 901304 }
+        - column: { name: ace_order, valueNumeric: 1 }
+        - column: { name: sid, valueNumeric: 901303 }
+        - column: { name: mask, valueNumeric: 1 }
+        - column: { name: granting, valueNumeric: 1 }
+        - column: { name: audit_success, valueNumeric: 0 }
+        - column: { name: audit_failure, valueNumeric: 0 }
+    - insert:
+        tableName: pbl_acl_entry
+        columns:
+        - column: { name: id, valueNumeric: 901309 }
+        - column: { name: acl_object_identity, valueNumeric: 901305 }
+        - column: { name: ace_order, valueNumeric: 1 }
+        - column: { name: sid, valueNumeric: 901303 }
+        - column: { name: mask, valueNumeric: 1 }
+        - column: { name: granting, valueNumeric: 1 }
+        - column: { name: audit_success, valueNumeric: 0 }
+        - column: { name: audit_failure, valueNumeric: 0 }
+
+- changeSet:
+    id: e2e-seed-consultes-realitzades
+    author: Limit
+    dbms: h2
+    preConditions:
+        onFail: MARK_RAN
+        not:
+            changeLogPropertyDefined:
+                property: e2eDelegatUsername
+                value: ''
+    comment: >-
+      Consultes de mostra ja "realitzades" (una de simple i una de multiple,
+      amb els seus fills) sembrades directament via SQL en lloc de creades
+      per la UI: sota H2 la generacio d'idpeticion sempre falla (falta el
+      procediment Oracle GETSECUENCIAIDPETICION, vegeu BUGS_APLICACIO.md),
+      aixi que global-setup.ts mai aconsegueix crear-ne cap de reals.
+      procserv_id=901001 (servei Q2827003ATGSS001, procediment E2EPROC01),
+      ja amb ACL de lectura concedit al delegat/representant e2e (vegeu els
+      dos changesets anteriors). createdby_codi ha de ser exactament
+      l'usuari delegat e2e: ConsultaServiceImpl.obtenirJustificant compara
+      aquest valor amb l'usuari autenticat per decidir si pot veure el
+      justificant.
+    changes:
+    # --- Consulta simple, tramitada correctament (justificant OK) ---
+    - insert:
+        tableName: core_peticion_respuesta
+        columns:
+        - column: { name: idpeticion, value: PBL_E2E_SIMPLE_OK }
+        - column: { name: certificado, valueNumeric: 900701 }
+        - column: { name: estado, value: FIN }
+        - column: { name: numeroenvios, valueNumeric: 1 }
+        - column: { name: numerotransmisiones, valueNumeric: 1 }
+        - column: { name: transmisionsincrona, valueNumeric: 1 }
+        - column: { name: fechapeticion, valueComputed: CURRENT_TIMESTAMP }
+        - column: { name: fecharespuesta, valueComputed: CURRENT_TIMESTAMP }
+    - insert:
+        tableName: core_transmision
+        columns:
+        - column: { name: idsolicitud, value: SOL_E2E_SIMPLE_OK }
+        - column: { name: idpeticion, value: PBL_E2E_SIMPLE_OK }
+        - column: { name: idsolicitante, value: E2EENT01 }
+        - column: { name: nombresolicitante, value: "Entitat E2E" }
+        - column: { name: doctitular, value: "12345678Z" }
+        - column: { name: nombretitular, value: "Titular" }
+        - column: { name: apellido1titular, value: "E2E" }
+        - column: { name: nombrecompletotitular, value: "Titular E2E" }
+        - column: { name: consentimiento, value: "Si" }
+        - column: { name: estado, value: FIN }
+        - column: { name: fechageneracion, valueComputed: CURRENT_TIMESTAMP }
+        - column: { name: xmltransmision, value: "<Transmision><IdSolicitud>SOL_E2E_SIMPLE_OK</IdSolicitud><Resultado>OK</Resultado></Transmision>" }
+    - insert:
+        tableName: core_token_data
+        columns:
+        - column: { name: idpeticion, value: PBL_E2E_SIMPLE_OK }
+        - column: { name: tipomensaje, valueNumeric: 0 }
+        - column: { name: datos, value: "<Peticion><Atributos><IdPeticion>PBL_E2E_SIMPLE_OK</IdPeticion></Atributos><SolicitudesTransmision><SolicitudTransmision><DatosGenericos><Transmision><IdSolicitud>SOL_E2E_SIMPLE_OK</IdSolicitud></Transmision></DatosGenericos></SolicitudTransmision></SolicitudesTransmision></Peticion>" }
+    - insert:
+        tableName: pbl_consulta
+        columns:
+        - column: { name: id, valueNumeric: 901401 }
+        - column: { name: departament, value: "Departament E2E" }
+        - column: { name: estat, valueNumeric: 2 }
+        - column: { name: peticion_id, value: PBL_E2E_SIMPLE_OK }
+        - column: { name: solicitud_id, value: SOL_E2E_SIMPLE_OK }
+        - column: { name: titular_docnum, value: "12345678Z" }
+        - column: { name: titular_doctip, value: NIF }
+        - column: { name: titular_nom, value: "Titular" }
+        - column: { name: titular_lling1, value: "E2E" }
+        - column: { name: titular_nomcomplet, value: "Titular E2E" }
+        - column: { name: procserv_id, valueNumeric: 901001 }
+        - column: { name: funcionari_nom, value: "Funcionari E2E" }
+        - column: { name: funcionari_docnum, value: "11111111H" }
+        - column: { name: multiple, valueNumeric: 0 }
+        - column: { name: justificant_estat, valueNumeric: 1 }
+        - column: { name: createdby_codi, value: "${e2eDelegatUsername}" }
+        - column: { name: createddate, valueComputed: CURRENT_TIMESTAMP }
+        - column: { name: version, valueNumeric: 0 }
+        - column: { name: finalitat, value: "Consulta de prova e2e (tramitada)" }
+        - column: { name: consentiment, valueNumeric: 0 }
+        - column: { name: entitat_id, valueNumeric: 900001 }
+        - column: { name: servei_codi, value: Q2827003ATGSS001 }
+        - column: { name: procediment_id, valueNumeric: 900201 }
+        - column: { name: app_guarda_just_arx, valueNumeric: 0 }
+        - column: { name: arxiu_expedient_tancat, valueNumeric: 0 }
+        - column: { name: recobriment, valueNumeric: 0 }
+        - column: { name: custodiat, valueNumeric: 0 }
+
+    # --- Consulta simple, en Error ---
+    - insert:
+        tableName: core_peticion_respuesta
+        columns:
+        - column: { name: idpeticion, value: PBL_E2E_SIMPLE_ERROR }
+        - column: { name: certificado, valueNumeric: 900701 }
+        - column: { name: estado, value: ERROR }
+        - column: { name: numeroenvios, valueNumeric: 1 }
+        - column: { name: numerotransmisiones, valueNumeric: 0 }
+        - column: { name: transmisionsincrona, valueNumeric: 1 }
+        - column: { name: fechapeticion, valueComputed: CURRENT_TIMESTAMP }
+        - column: { name: error, value: "Error simulat de prova e2e" }
+    - insert:
+        tableName: core_transmision
+        columns:
+        - column: { name: idsolicitud, value: SOL_E2E_SIMPLE_ERROR }
+        - column: { name: idpeticion, value: PBL_E2E_SIMPLE_ERROR }
+        - column: { name: idsolicitante, value: E2EENT01 }
+        - column: { name: nombresolicitante, value: "Entitat E2E" }
+        - column: { name: doctitular, value: "00000000T" }
+        - column: { name: nombretitular, value: "Titular" }
+        - column: { name: apellido1titular, value: "Error E2E" }
+        - column: { name: nombrecompletotitular, value: "Titular Error E2E" }
+        - column: { name: consentimiento, value: "Si" }
+        - column: { name: estado, value: ERROR }
+        - column: { name: error, value: "Error simulat de prova e2e" }
+        - column: { name: fechageneracion, valueComputed: CURRENT_TIMESTAMP }
+        - column: { name: xmltransmision, value: "<Transmision><IdSolicitud>SOL_E2E_SIMPLE_ERROR</IdSolicitud><Resultado>ERROR</Resultado></Transmision>" }
+    - insert:
+        tableName: core_token_data
+        columns:
+        - column: { name: idpeticion, value: PBL_E2E_SIMPLE_ERROR }
+        - column: { name: tipomensaje, valueNumeric: 0 }
+        - column: { name: datos, value: "<Peticion><Atributos><IdPeticion>PBL_E2E_SIMPLE_ERROR</IdPeticion></Atributos><SolicitudesTransmision><SolicitudTransmision><DatosGenericos><Transmision><IdSolicitud>SOL_E2E_SIMPLE_ERROR</IdSolicitud></Transmision></DatosGenericos></SolicitudTransmision></SolicitudesTransmision></Peticion>" }
+    - insert:
+        tableName: pbl_consulta
+        columns:
+        - column: { name: id, valueNumeric: 901402 }
+        - column: { name: departament, value: "Departament E2E" }
+        - column: { name: estat, valueNumeric: 3 }
+        - column: { name: error, value: "Error simulat de prova e2e" }
+        - column: { name: peticion_id, value: PBL_E2E_SIMPLE_ERROR }
+        - column: { name: solicitud_id, value: SOL_E2E_SIMPLE_ERROR }
+        - column: { name: titular_docnum, value: "00000000T" }
+        - column: { name: titular_doctip, value: NIF }
+        - column: { name: titular_nom, value: "Titular" }
+        - column: { name: titular_lling1, value: "Error E2E" }
+        - column: { name: titular_nomcomplet, value: "Titular Error E2E" }
+        - column: { name: procserv_id, valueNumeric: 901001 }
+        - column: { name: funcionari_nom, value: "Funcionari E2E" }
+        - column: { name: funcionari_docnum, value: "11111111H" }
+        - column: { name: multiple, valueNumeric: 0 }
+        - column: { name: justificant_estat, valueNumeric: 3 }
+        - column: { name: createdby_codi, value: "${e2eDelegatUsername}" }
+        - column: { name: createddate, valueComputed: CURRENT_TIMESTAMP }
+        - column: { name: version, valueNumeric: 0 }
+        - column: { name: finalitat, value: "Consulta de prova e2e (error)" }
+        - column: { name: consentiment, valueNumeric: 0 }
+        - column: { name: entitat_id, valueNumeric: 900001 }
+        - column: { name: servei_codi, value: Q2827003ATGSS001 }
+        - column: { name: procediment_id, valueNumeric: 900201 }
+        - column: { name: app_guarda_just_arx, valueNumeric: 0 }
+        - column: { name: arxiu_expedient_tancat, valueNumeric: 0 }
+        - column: { name: recobriment, valueNumeric: 0 }
+        - column: { name: custodiat, valueNumeric: 0 }
+
+    # --- Consulta simple, tramitada pero amb el justificant en Error (per al "reintentar") ---
+    - insert:
+        tableName: core_peticion_respuesta
+        columns:
+        - column: { name: idpeticion, value: PBL_E2E_SIMPLE_JUSTERR }
+        - column: { name: certificado, valueNumeric: 900701 }
+        - column: { name: estado, value: FIN }
+        - column: { name: numeroenvios, valueNumeric: 1 }
+        - column: { name: numerotransmisiones, valueNumeric: 1 }
+        - column: { name: transmisionsincrona, valueNumeric: 1 }
+        - column: { name: fechapeticion, valueComputed: CURRENT_TIMESTAMP }
+        - column: { name: fecharespuesta, valueComputed: CURRENT_TIMESTAMP }
+    - insert:
+        tableName: core_transmision
+        columns:
+        - column: { name: idsolicitud, value: SOL_E2E_SIMPLE_JUSTERR }
+        - column: { name: idpeticion, value: PBL_E2E_SIMPLE_JUSTERR }
+        - column: { name: idsolicitante, value: E2EENT01 }
+        - column: { name: nombresolicitante, value: "Entitat E2E" }
+        - column: { name: doctitular, value: "87654321X" }
+        - column: { name: nombretitular, value: "Titular" }
+        - column: { name: apellido1titular, value: "JustErr E2E" }
+        - column: { name: nombrecompletotitular, value: "Titular JustErr E2E" }
+        - column: { name: consentimiento, value: "Si" }
+        - column: { name: estado, value: FIN }
+        - column: { name: fechageneracion, valueComputed: CURRENT_TIMESTAMP }
+        - column: { name: xmltransmision, value: "<Transmision><IdSolicitud>SOL_E2E_SIMPLE_JUSTERR</IdSolicitud><Resultado>OK</Resultado></Transmision>" }
+    - insert:
+        tableName: core_token_data
+        columns:
+        - column: { name: idpeticion, value: PBL_E2E_SIMPLE_JUSTERR }
+        - column: { name: tipomensaje, valueNumeric: 0 }
+        - column: { name: datos, value: "<Peticion><Atributos><IdPeticion>PBL_E2E_SIMPLE_JUSTERR</IdPeticion></Atributos><SolicitudesTransmision><SolicitudTransmision><DatosGenericos><Transmision><IdSolicitud>SOL_E2E_SIMPLE_JUSTERR</IdSolicitud></Transmision></DatosGenericos></SolicitudTransmision></SolicitudesTransmision></Peticion>" }
+    - insert:
+        tableName: pbl_consulta
+        columns:
+        - column: { name: id, valueNumeric: 901403 }
+        - column: { name: departament, value: "Departament E2E" }
+        - column: { name: estat, valueNumeric: 2 }
+        - column: { name: peticion_id, value: PBL_E2E_SIMPLE_JUSTERR }
+        - column: { name: solicitud_id, value: SOL_E2E_SIMPLE_JUSTERR }
+        - column: { name: titular_docnum, value: "87654321X" }
+        - column: { name: titular_doctip, value: NIF }
+        - column: { name: titular_nom, value: "Titular" }
+        - column: { name: titular_lling1, value: "JustErr E2E" }
+        - column: { name: titular_nomcomplet, value: "Titular JustErr E2E" }
+        - column: { name: procserv_id, valueNumeric: 901001 }
+        - column: { name: funcionari_nom, value: "Funcionari E2E" }
+        - column: { name: funcionari_docnum, value: "11111111H" }
+        - column: { name: multiple, valueNumeric: 0 }
+        - column: { name: justificant_estat, valueNumeric: 2 }
+        - column: { name: justificant_error, value: "Error simulat de generacio del justificant e2e" }
+        - column: { name: createdby_codi, value: "${e2eDelegatUsername}" }
+        - column: { name: createddate, valueComputed: CURRENT_TIMESTAMP }
+        - column: { name: version, valueNumeric: 0 }
+        - column: { name: finalitat, value: "Consulta de prova e2e (justificant en error)" }
+        - column: { name: consentiment, valueNumeric: 0 }
+        - column: { name: entitat_id, valueNumeric: 900001 }
+        - column: { name: servei_codi, value: Q2827003ATGSS001 }
+        - column: { name: procediment_id, valueNumeric: 900201 }
+        - column: { name: app_guarda_just_arx, valueNumeric: 0 }
+        - column: { name: arxiu_expedient_tancat, valueNumeric: 0 }
+        - column: { name: recobriment, valueNumeric: 0 }
+        - column: { name: custodiat, valueNumeric: 0 }
+
+    # --- Consulta multiple, tramitada, amb dos fills ---
+    - insert:
+        tableName: core_peticion_respuesta
+        columns:
+        - column: { name: idpeticion, value: PBL_E2E_MULTIPLE_01 }
+        - column: { name: certificado, valueNumeric: 900701 }
+        - column: { name: estado, value: FIN }
+        - column: { name: numeroenvios, valueNumeric: 1 }
+        - column: { name: numerotransmisiones, valueNumeric: 2 }
+        - column: { name: transmisionsincrona, valueNumeric: 0 }
+        - column: { name: fechapeticion, valueComputed: CURRENT_TIMESTAMP }
+        - column: { name: fecharespuesta, valueComputed: CURRENT_TIMESTAMP }
+    - insert:
+        tableName: core_transmision
+        columns:
+        - column: { name: idsolicitud, value: SOL_E2E_MULTIPLE_01 }
+        - column: { name: idpeticion, value: PBL_E2E_MULTIPLE_01 }
+        - column: { name: idsolicitante, value: E2EENT01 }
+        - column: { name: nombresolicitante, value: "Entitat E2E" }
+        - column: { name: doctitular, value: "11111111A" }
+        - column: { name: nombretitular, value: "Titular" }
+        - column: { name: apellido1titular, value: "Multiple U E2E" }
+        - column: { name: nombrecompletotitular, value: "Titular Multiple U E2E" }
+        - column: { name: consentimiento, value: "Si" }
+        - column: { name: estado, value: FIN }
+        - column: { name: fechageneracion, valueComputed: CURRENT_TIMESTAMP }
+        - column: { name: xmltransmision, value: "<Transmision><IdSolicitud>SOL_E2E_MULTIPLE_01</IdSolicitud><Resultado>OK</Resultado></Transmision>" }
+    - insert:
+        tableName: core_transmision
+        columns:
+        - column: { name: idsolicitud, value: SOL_E2E_MULTIPLE_02 }
+        - column: { name: idpeticion, value: PBL_E2E_MULTIPLE_01 }
+        - column: { name: idsolicitante, value: E2EENT01 }
+        - column: { name: nombresolicitante, value: "Entitat E2E" }
+        - column: { name: doctitular, value: "22222222B" }
+        - column: { name: nombretitular, value: "Titular" }
+        - column: { name: apellido1titular, value: "Multiple Dos E2E" }
+        - column: { name: nombrecompletotitular, value: "Titular Multiple Dos E2E" }
+        - column: { name: consentimiento, value: "Si" }
+        - column: { name: estado, value: FIN }
+        - column: { name: fechageneracion, valueComputed: CURRENT_TIMESTAMP }
+        - column: { name: xmltransmision, value: "<Transmision><IdSolicitud>SOL_E2E_MULTIPLE_02</IdSolicitud><Resultado>OK</Resultado></Transmision>" }
+    - insert:
+        tableName: core_token_data
+        columns:
+        - column: { name: idpeticion, value: PBL_E2E_MULTIPLE_01 }
+        - column: { name: tipomensaje, valueNumeric: 0 }
+        - column: { name: datos, value: "<Peticion><Atributos><IdPeticion>PBL_E2E_MULTIPLE_01</IdPeticion></Atributos><SolicitudesTransmision><SolicitudTransmision><DatosGenericos><Transmision><IdSolicitud>SOL_E2E_MULTIPLE_01</IdSolicitud></Transmision></DatosGenericos></SolicitudTransmision><SolicitudTransmision><DatosGenericos><Transmision><IdSolicitud>SOL_E2E_MULTIPLE_02</IdSolicitud></Transmision></DatosGenericos></SolicitudTransmision></SolicitudesTransmision></Peticion>" }
+    - insert:
+        tableName: pbl_consulta
+        columns:
+        - column: { name: id, valueNumeric: 901410 }
+        - column: { name: departament, value: "Departament E2E" }
+        - column: { name: estat, valueNumeric: 2 }
+        - column: { name: peticion_id, value: PBL_E2E_MULTIPLE_01 }
+        - column: { name: procserv_id, valueNumeric: 901001 }
+        - column: { name: funcionari_nom, value: "Funcionari E2E" }
+        - column: { name: funcionari_docnum, value: "11111111H" }
+        - column: { name: multiple, valueNumeric: 1 }
+        - column: { name: justificant_estat, valueNumeric: 0 }
+        - column: { name: createdby_codi, value: "${e2eDelegatUsername}" }
+        - column: { name: createddate, valueComputed: CURRENT_TIMESTAMP }
+        - column: { name: version, valueNumeric: 0 }
+        - column: { name: finalitat, value: "Consulta multiple de prova e2e" }
+        - column: { name: entitat_id, valueNumeric: 900001 }
+        - column: { name: servei_codi, value: Q2827003ATGSS001 }
+        - column: { name: procediment_id, valueNumeric: 900201 }
+        - column: { name: app_guarda_just_arx, valueNumeric: 0 }
+        - column: { name: arxiu_expedient_tancat, valueNumeric: 0 }
+        - column: { name: recobriment, valueNumeric: 0 }
+        - column: { name: custodiat, valueNumeric: 0 }
+    - insert:
+        tableName: pbl_consulta
+        columns:
+        - column: { name: id, valueNumeric: 901411 }
+        - column: { name: departament, value: "Departament E2E" }
+        - column: { name: estat, valueNumeric: 2 }
+        - column: { name: peticion_id, value: PBL_E2E_MULTIPLE_01 }
+        - column: { name: solicitud_id, value: SOL_E2E_MULTIPLE_01 }
+        - column: { name: titular_docnum, value: "11111111A" }
+        - column: { name: titular_doctip, value: NIF }
+        - column: { name: titular_nom, value: "Titular" }
+        - column: { name: titular_lling1, value: "Multiple U E2E" }
+        - column: { name: titular_nomcomplet, value: "Titular Multiple U E2E" }
+        - column: { name: procserv_id, valueNumeric: 901001 }
+        - column: { name: funcionari_nom, value: "Funcionari E2E" }
+        - column: { name: funcionari_docnum, value: "11111111H" }
+        - column: { name: multiple, valueNumeric: 0 }
+        - column: { name: pare_id, valueNumeric: 901410 }
+        - column: { name: justificant_estat, valueNumeric: 1 }
+        - column: { name: createdby_codi, value: "${e2eDelegatUsername}" }
+        - column: { name: createddate, valueComputed: CURRENT_TIMESTAMP }
+        - column: { name: version, valueNumeric: 0 }
+        - column: { name: finalitat, value: "Consulta multiple de prova e2e" }
+        - column: { name: consentiment, valueNumeric: 0 }
+        - column: { name: entitat_id, valueNumeric: 900001 }
+        - column: { name: servei_codi, value: Q2827003ATGSS001 }
+        - column: { name: procediment_id, valueNumeric: 900201 }
+        - column: { name: app_guarda_just_arx, valueNumeric: 0 }
+        - column: { name: arxiu_expedient_tancat, valueNumeric: 0 }
+        - column: { name: recobriment, valueNumeric: 0 }
+        - column: { name: custodiat, valueNumeric: 0 }
+    - insert:
+        tableName: pbl_consulta
+        columns:
+        - column: { name: id, valueNumeric: 901412 }
+        - column: { name: departament, value: "Departament E2E" }
+        - column: { name: estat, valueNumeric: 2 }
+        - column: { name: peticion_id, value: PBL_E2E_MULTIPLE_01 }
+        - column: { name: solicitud_id, value: SOL_E2E_MULTIPLE_02 }
+        - column: { name: titular_docnum, value: "22222222B" }
+        - column: { name: titular_doctip, value: NIF }
+        - column: { name: titular_nom, value: "Titular" }
+        - column: { name: titular_lling1, value: "Multiple Dos E2E" }
+        - column: { name: titular_nomcomplet, value: "Titular Multiple Dos E2E" }
+        - column: { name: procserv_id, valueNumeric: 901001 }
+        - column: { name: funcionari_nom, value: "Funcionari E2E" }
+        - column: { name: funcionari_docnum, value: "11111111H" }
+        - column: { name: multiple, valueNumeric: 0 }
+        - column: { name: pare_id, valueNumeric: 901410 }
+        - column: { name: justificant_estat, valueNumeric: 1 }
+        - column: { name: createdby_codi, value: "${e2eDelegatUsername}" }
+        - column: { name: createddate, valueComputed: CURRENT_TIMESTAMP }
+        - column: { name: version, valueNumeric: 0 }
+        - column: { name: finalitat, value: "Consulta multiple de prova e2e" }
+        - column: { name: consentiment, valueNumeric: 0 }
+        - column: { name: entitat_id, valueNumeric: 900001 }
+        - column: { name: servei_codi, value: Q2827003ATGSS001 }
+        - column: { name: procediment_id, valueNumeric: 900201 }
+        - column: { name: app_guarda_just_arx, valueNumeric: 0 }
+        - column: { name: arxiu_expedient_tancat, valueNumeric: 0 }
+        - column: { name: recobriment, valueNumeric: 0 }
+        - column: { name: custodiat, valueNumeric: 0 }
+
+- changeSet:
+    id: e2e-seed-consultes-realitzades-llistat
+    author: Limit
+    dbms: h2
+    preConditions:
+        onFail: MARK_RAN
+        not:
+            changeLogPropertyDefined:
+                property: e2eDelegatUsername
+                value: ''
+    comment: >-
+      pbl_consulta_list es una taula desnormalitzada, separada de
+      pbl_consulta, que es la que llegeixen TOTES les pantalles de llistat
+      de consultes (administrador i delegat/representant, veure
+      LlistatConsultaRepository). En produccio (Oracle) es manté sincronitzada
+      per codi/mecanisme extern a aquest repositori (no s'ha trobat cap
+      trigger ni codi Java que hi escrigui: nomes hi ha un backfill puntual
+      historic a versions/1.4.41/02_update_dml_1.4.41.sql). Com que aqui
+      sembrem pbl_consulta directament via SQL (sense passar per la UI),
+      cal fer el mateix backfill manualment, replicant exactament la
+      mateixa logica de mapeig d'aquell script per als 6 registres sembrats
+      al changeset anterior. Sense aixo, tant el llistat d'administrador com
+      el de delegat mostren sempre 0 resultats encara que pbl_consulta tingui
+      dades (recordsTotal:0 al datatable, confirmat per depuracio directa).
+    changes:
+    - sql:
+        sql: >-
+          INSERT INTO pbl_consulta_list (
+            id, peticioid, solicitudid, data, departament, recobriment,
+            multiple, usuaricodi, usuarinom, funcionarinom, funcionarinif,
+            titularnom, titulardoctip, titulardocnum, procedimentid,
+            procedimentcodi, procedimentnom, serveicodi, serveinom, estat,
+            error, justificantestat, justificanterror, entitatid, entitatcodi, pareid
+          )
+          SELECT
+            c.id,
+            c.peticion_id,
+            COALESCE(c.solicitud_id, c.peticion_id),
+            c.createddate,
+            c.departament,
+            COALESCE(c.recobriment, 0),
+            COALESCE(c.multiple, 0),
+            c.createdby_codi,
+            u.nom,
+            c.funcionari_nom,
+            c.funcionari_docnum,
+            COALESCE(c.titular_nomcomplet, ''),
+            COALESCE(c.titular_doctip, 'NIF'),
+            COALESCE(c.titular_docnum, ''),
+            p.id,
+            p.codi,
+            p.nom,
+            c.servei_codi,
+            s.descripcion,
+            CASE WHEN c.estat = 0 THEN 'Pendent' WHEN c.estat = 1 THEN 'Processant' WHEN c.estat = 2 THEN 'Tramitada' WHEN c.estat = 3 THEN 'Error' WHEN c.estat = 4 THEN 'Encua' END,
+            c.error,
+            CASE WHEN c.justificant_estat = 0 THEN 'PENDENT' WHEN c.justificant_estat = 1 THEN 'OK' WHEN c.justificant_estat = 2 THEN 'ERROR' WHEN c.justificant_estat = 3 THEN 'NO_DISPONIBLE' WHEN c.justificant_estat = 4 THEN 'OK_NO_CUSTODIA' END,
+            c.justificant_error,
+            c.entitat_id,
+            e.codi,
+            c.pare_id
+          FROM pbl_consulta c
+          LEFT OUTER JOIN pbl_entitat e ON c.entitat_id = e.id
+          LEFT OUTER JOIN pbl_procediment p ON c.procediment_id = p.id
+          LEFT OUTER JOIN core_servicio s ON c.servei_codi = s.codcertificado
+          LEFT OUTER JOIN pbl_usuari u ON c.createdby_codi = u.codi
+          WHERE c.id IN (901401, 901402, 901403, 901410, 901411, 901412)

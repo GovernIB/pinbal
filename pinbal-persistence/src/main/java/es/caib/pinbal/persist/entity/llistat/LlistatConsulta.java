@@ -89,8 +89,8 @@ public class LlistatConsulta {
     @Enumerated(EnumType.STRING)
     private JustificantEstat justificantEstat;
 
-//    @Column(name = "justificant_error", length = Consulta.ERROR_JUSTIFICANT_MAX_LENGTH)
-//    private String justificantError;
+    @Column(name = "justificanterror", length = Consulta.ERROR_JUSTIFICANT_MAX_LENGTH)
+    private String justificantError;
 
     @Column(name = "entitatId")
     private Long entitatId;

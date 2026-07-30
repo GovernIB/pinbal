@@ -52,3 +52,45 @@ databaseChangeLog:
     - createSequence:
         sequenceName: id_ssl_cesionario_seq
         startValue: 1
+- changeSet:
+    id: init-sequence-2-h2-acl-identity
+    author: Limit
+    dbms: h2
+    comment: >-
+      A Oracle, un trigger (dbms=oracle, veure 05_initial_schema_trigger.yaml)
+      autoemplena l'id de les taules ACL a partir de la seqüència. H2 no
+      suporta els triggers PL/SQL originals; en lloc d'això es fixa la
+      seqüència com a valor per defecte de la columna, cosa que permet que
+      "select xxx_seq.currval from dual" (usat per JdbcMutableAclService)
+      continuï funcionant igual que a Oracle.
+    changes:
+    - sql:
+        sql: ALTER TABLE pbl_acl_class ALTER COLUMN id SET DEFAULT NEXT VALUE FOR pbl_acl_class_seq
+    - sql:
+        sql: ALTER TABLE pbl_acl_sid ALTER COLUMN id SET DEFAULT NEXT VALUE FOR pbl_acl_sid_seq
+    - sql:
+        sql: ALTER TABLE pbl_acl_object_identity ALTER COLUMN id SET DEFAULT NEXT VALUE FOR pbl_acl_oid_seq
+    - sql:
+        sql: ALTER TABLE pbl_acl_entry ALTER COLUMN id SET DEFAULT NEXT VALUE FOR pbl_acl_entry_seq
+
+- changeSet:
+    id: init-sequence-3-h2-reserved-word-columns
+    author: Limit
+    dbms: h2
+    comment: >-
+      pbl_config.key, pbl_config.value i pbl_config_type.value son paraules
+      reservades SQL. Liquibase els autoquota preservant la caixa literal del
+      changelog (minuscula), pero Hibernate genera SQL sense cometes per a
+      aquestes columnes, i H2 normalitza els identificadors sense cometes a
+      majuscules — la consulta unquoted mai troba la columna quotada en
+      minuscula ("Column CONFIG0_.KEY not found"). Es renomenen a majuscules
+      (mateixa semantica, cap canvi de dades) perque totes dues vies hi
+      coincideixin. Oracle/PostgreSQL no pateixen aquest problema (les seves
+      convencions de quoting son diferents) per aixo nomes es fa a H2.
+    changes:
+    - sql:
+        sql: ALTER TABLE pbl_config ALTER COLUMN "key" RENAME TO "KEY"
+    - sql:
+        sql: ALTER TABLE pbl_config ALTER COLUMN "value" RENAME TO "VALUE"
+    - sql:
+        sql: ALTER TABLE pbl_config_type ALTER COLUMN "value" RENAME TO "VALUE"

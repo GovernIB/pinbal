@@ -44,6 +44,7 @@
 								optionItems="${entitats}"
 								optionValueAttribute="id"
 								optionTextAttribute="nom"
+								emptyOption="true"
 								optionMinimumResultsForSearch="0"/>
 				</div>
 			</c:if>

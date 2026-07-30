@@ -53,7 +53,30 @@ public class IdGenerator {
             /* MOD PBL */ String idPeticion;
             /* MOD PBL */ // Per evitar error si s'ha guardat una petició a la taula de peticion_respuesta, però degut a un rollback
             /* MOD PBL */ do {
-                String secuencial = this.secuenciaIdPeticionDao.next(prefix).toString();
+                String secuencial;
+                try {
+                    secuencial = this.secuenciaIdPeticionDao.next(prefix).toString();
+                } catch (Exception ex) {
+                    // MOD PBL: SecuenciaIdPeticionDao.next(...) gestiona la seva pròpia
+                    // transacció (beginTransaction/commit) però NO fa rollback si falla
+                    // (p.ex. GETSECUENCIAIDPETICION no existeix, deadlock, etc.). Sense
+                    // aquest rollback explícit, la transacció de Hibernate queda oberta
+                    // lligada al fil de JBoss actual (current_session_context_class=thread)
+                    // i qualsevol petició NO relacionada atesa després pel mateix fil
+                    // falla amb errors (NullPointerException, "Transaction already
+                    // active"...) fins que el fil es recicli.
+                    try {
+                        var transaction = sessionFactoryManager.getCurrentSession().getTransaction();
+                        if (transaction != null && transaction.isActive()) {
+                            transaction.rollback();
+                        }
+                    } catch (Exception rollbackEx) {
+                        LOG.error("Error fent rollback de la transacció després d'un error generant l'idpeticion", rollbackEx);
+                    }
+                    String msg = "Error generant l'idpeticion (prefix=" + prefix + "): " + ex.getMessage();
+                    LOG.error(msg, ex);
+                    throw ScspException.getScspException("0201", new String[]{msg});
+                }
                 ParametroConfiguracion tipoId = this.paramDao.select("tipoId");
                 boolean versionCortaObligatoria = false;
                 int longitudSecuencial;

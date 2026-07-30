@@ -1,6 +1,6 @@
-import { test, expect } from '../utils/fixtures';
-import { clickModalFooterButtonById, modalFrame, waitForModalClosed } from '../utils/modal';
-import { expectSuccessMessage } from '../utils/messages';
+import { test, expect } from '../../utils/fixtures';
+import { clickModalFooterButtonById, modalFrame, waitForModalClosed } from '../../utils/modal';
+import { expectSuccessMessage } from '../../utils/messages';
 
 /**
  * La configuració d'usuari (menú d'usuari > "Configuració") és accessible

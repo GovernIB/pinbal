@@ -106,6 +106,12 @@ public abstract class BaseAclConfig {
 		} else if (hibernateDialect.toLowerCase().contains("postgres")) {
 			mutableAclService.setClassIdentityQuery("select currval(pg_get_serial_sequence('" + tableClass + "', 'id'))");
 			mutableAclService.setSidIdentityQuery("select currval(pg_get_serial_sequence('" + tableSid + "', 'id'))");
+		} else if (hibernateDialect.toLowerCase().contains("h2")) {
+			// A H2 (usat per als entorns e2e), l'id es genera amb "default next value for" en lloc del
+			// trigger d'Oracle (veure db/changelog/init/04_initial_schema_sequence.yaml), i es recupera
+			// amb la mateixa sintaxi "seq.currval from dual" que ja funciona a Oracle.
+			mutableAclService.setClassIdentityQuery("select " + tableClass.toUpperCase() + getTableSequenceSuffix() + ".currval from dual");
+			mutableAclService.setSidIdentityQuery("select " + tableSid.toUpperCase() + getTableSequenceSuffix() + ".currval from dual");
 		} else if (hibernateDialect.toLowerCase().contains("hsql")) {
 			mutableAclService.setClassIdentityQuery("call identity()");
 			mutableAclService.setSidIdentityQuery("call identity()");

@@ -18,9 +18,20 @@ databaseChangeLog:
           dbms: postgresql
           name: hibernateSeqNextVal
           value: nextval('${db_prefix}HIBERNATE_SEQ}
+    - property:
+          dbms: h2
+          name: varcharUnit
+          value: ''
+    - property:
+          dbms: h2
+          name: hibernateSeqNextVal
+          value: ${db_prefix}HIBERNATE_SEQ.nextval
     - includeAll:
           path: db/changelog/init
           errorIfMissingOrEmpty: false
     - includeAll:
           path: db/changelog/changes
+          errorIfMissingOrEmpty: false
+    - includeAll:
+          path: db/changelog/e2e
           errorIfMissingOrEmpty: false

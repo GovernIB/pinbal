@@ -1,0 +1,40 @@
+databaseChangeLog:
+- changeSet:
+    id: 2.0.1-h2-secuencia-id-peticion-transmisio
+    author: Limit
+    dbms: h2
+    comment: >-
+      Taules comptador nomes per a H2 (entorns e2e/dev), usades per
+      es.scsp.common.dao.SecuenciaIdPeticionDao/SecuenciaIdTransmisionDao
+      (overrides locals a pinbal-scsp) com a substitut dels procediments
+      emmagatzemats d'Oracle GETSECUENCIAIDPETICION/GETSECUENCIAIDTRANSMISION,
+      absents a H2. No s'utilitzen mai contra Oracle.
+    changes:
+    - createTable:
+        tableName: pbl_e2e_seq_id_peticion
+        columns:
+        - column:
+            name: prefijo
+            type: VARCHAR(9)
+            constraints:
+              primaryKey: true
+              nullable: false
+        - column:
+            name: valor
+            type: INT
+            constraints:
+              nullable: false
+    - createTable:
+        tableName: pbl_e2e_seq_id_transmisio
+        columns:
+        - column:
+            name: prefijo
+            type: VARCHAR(9)
+            constraints:
+              primaryKey: true
+              nullable: false
+        - column:
+            name: valor
+            type: INT
+            constraints:
+              nullable: false

@@ -91,9 +91,14 @@ public class ClauPrivadaController extends BaseController {
 			model.addAttribute( new ClauPrivadaCommand() );
 
         List<OrganismeCessionariDto> organismesCessionarisActius = scspService.findAllOrganismeCessionariActiu();
-        OrganismeCessionariDto organismeCessionariActual = scspService.findOrganismeCessionariById(dto.getOrganismeId());
-        if (!organismesCessionarisActius.contains(organismeCessionariActual)) {
-            organismesCessionarisActius.add(0, organismeCessionariActual);
+        // Una clau privada sense organisme assignat (columna "organismo" nullable a
+        // la BD, tot i que l'entitat sempre en requereix un) no ha de provocar un
+        // error en obrir el formulari d'edició.
+        if (dto != null && dto.getOrganismeId() != null) {
+            OrganismeCessionariDto organismeCessionariActual = scspService.findOrganismeCessionariById(dto.getOrganismeId());
+            if (!organismesCessionarisActius.contains(organismeCessionariActual)) {
+                organismesCessionarisActius.add(0, organismeCessionariActual);
+            }
         }
         model.addAttribute( "organismes", scspService.findAllOrganismeCessionari());
 		

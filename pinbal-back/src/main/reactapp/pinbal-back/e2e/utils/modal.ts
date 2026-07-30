@@ -15,7 +15,14 @@ import { FrameLocator, Locator, Page, expect } from '@playwright/test';
  *   await waitForModalClosed(page);
  */
 
-/** Retorna el localizador de la modal Bootstrap actualment oberta. */
+/**
+ * Retorna el localizador de la modal Bootstrap actualment oberta.
+ *
+ * NOTA: aquest `div.modal` sempre porta `aria-hidden="true"` fins i tot
+ * mostrat (bug de `webutil.modal.js`/plantilla, no de Bootstrap: vegeu
+ * `clickModalFooterButton`), així que cap locator basat en rol ARIA hi
+ * funciona a dins; feu servir sempre selectors CSS/text.
+ */
 export function activeModal(page: Page): Locator {
     return page.locator('div.modal.in');
 }
@@ -35,10 +42,23 @@ export async function modalFrame(page: Page): Promise<FrameLocator> {
     return frame;
 }
 
-/** Fa clic a un botó clonat al peu de la modal (fora de l'iframe), pel seu text visible. */
+/**
+ * Fa clic a un botó clonat al peu de la modal (fora de l'iframe), pel seu text
+ * visible.
+ *
+ * NO es pot fer servir `getByRole('button', { name })` aquí: el `<div
+ * class="modal">` generat per `webutil.modal.js` porta `aria-hidden="true"`
+ * codificat a la plantilla inicial i mai s'actualitza a `false` en mostrar-se
+ * (ni el propi `webutil.modal.js` ni el Bootstrap 3.3.6 empaquetat toquen
+ * aquest atribut a `show`/`hide`; vegeu comentari a `activeModal`). Com que
+ * `aria-hidden="true"` exclou tot el subarbre de l'accessibility tree, CAP
+ * locator basat en rol ARIA (`getByRole`) hi troba mai res, encara que
+ * l'element sigui perfectament visible i clicable amb un ratolí real. Per
+ * això aquí es fa servir un selector CSS + `hasText` (no basat en ARIA).
+ */
 export async function clickModalFooterButton(page: Page, name: string | RegExp): Promise<void> {
     const modal = activeModal(page);
-    await modal.locator('.modal-footer').getByRole('button', { name }).click();
+    await modal.locator('.modal-footer button, .modal-footer a.btn', { hasText: name }).click();
 }
 
 /**

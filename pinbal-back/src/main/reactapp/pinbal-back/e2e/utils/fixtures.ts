@@ -10,6 +10,20 @@ import { credentials, requireCredentials } from './env';
  * Ús:
  *   import { test, expect } from '../utils/fixtures';
  *   test('...', async ({ delegatPage }) => { ... });
+ *
+ * IMPORTANT: cada fixture crea el seu propi `BrowserContext` aïllat (via
+ * `browser.newContext()`) en lloc de compartir la `page` integrada de
+ * Playwright. Si totes depenguessin de la mateixa `page` (com abans), un
+ * test que sol·licités dos rols alhora (p.ex. `{ adminPage, delegatPage }`)
+ * faria login DUES VEGADES sobre la MATEIXA pestanya/sessió: la segona
+ * sobreescriuria la primera. A més, forçar-hi un logout previ per
+ * "corregir-ho" xoca amb un bug real de l'aplicació (`UsuariController.
+ * logout()` neteja totes les cookies manualment en lloc de fer un logout
+ * correcte contra Keycloak, cosa que corromp el seguiment de l'"state" OIDC
+ * i provoca "Bad Request" / "state parameter invalid" al següent login;
+ * vegeu BUGS_APLICACIO.md). Amb un context per rol, cada un té la seva
+ * pròpia sessió/cookies real, com si fossin dues pestanyes de navegadors
+ * diferents — sense necessitat de cap logout entremig.
  */
 type PinbalFixtures = {
     adminPage: Page;
@@ -19,25 +33,37 @@ type PinbalFixtures = {
 };
 
 export const test = base.extend<PinbalFixtures>({
-    adminPage: async ({ page }, use) => {
+    adminPage: async ({ browser }, use) => {
         const creds = requireCredentials(credentials.admin, 'admin');
+        const context = await browser.newContext();
+        const page = await context.newPage();
         await login(page, creds);
         await use(page);
+        await context.close();
     },
-    delegatPage: async ({ page }, use) => {
+    delegatPage: async ({ browser }, use) => {
         const creds = requireCredentials(credentials.delegat, 'delegat');
+        const context = await browser.newContext();
+        const page = await context.newPage();
         await login(page, creds);
         await use(page);
+        await context.close();
     },
-    representantPage: async ({ page }, use) => {
+    representantPage: async ({ browser }, use) => {
         const creds = requireCredentials(credentials.representant, 'representant');
+        const context = await browser.newContext();
+        const page = await context.newPage();
         await login(page, creds);
         await use(page);
+        await context.close();
     },
-    auditorPage: async ({ page }, use) => {
+    auditorPage: async ({ browser }, use) => {
         const creds = requireCredentials(credentials.auditor, 'auditor');
+        const context = await browser.newContext();
+        const page = await context.newPage();
         await login(page, creds);
         await use(page);
+        await context.close();
     },
 });
 

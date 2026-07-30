@@ -39,7 +39,6 @@
 		        {
 		            targets: [3,4],
 		            render: function (data, type, row, meta) {
-		            	console.log(data)
 		            	return data==null ? "" : moment(data).format('DD/MM/YYYY')
 		            }
 		        },

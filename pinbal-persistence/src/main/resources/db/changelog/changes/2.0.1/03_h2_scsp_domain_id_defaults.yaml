@@ -1,0 +1,46 @@
+databaseChangeLog:
+- changeSet:
+    id: 2.0.1-h2-scsp-domain-id-defaults
+    author: Limit
+    dbms: h2
+    comment: >-
+      Les entitats de domini propies de la llibreria scsp-core
+      (es.scsp.common.domain.core.*, p.ex. OrganismoCesionario, ClavePrivada,
+      ClavePublica, Servicio, EmisorCertificado, i les del paquet req)
+      fan servir @GenericGenerator(strategy="native") amb un sequence_name
+      explicit. A Oracle "native" resol a sequencia i tot funciona; sota
+      H2Dialect (confirmat empiricament amb un test amb Hibernate real),
+      "native" resol a IDENTITY en lloc de sequencia, ignorant el
+      sequence_name per complet - la columna id no te cap mecanisme
+      d'autogeneracio i l'insert falla amb "NULL not allowed for column ID".
+      Mateix problema (i mateixa solucio) que init-sequence-2-h2-acl-identity
+      a 04_initial_schema_sequence.yaml per a les taules pbl_acl_*: es fixa
+      la sequencia corresponent com a valor per defecte de la columna id.
+      Les sequencies ja existeixen (04_initial_schema_sequence.yaml); aixo
+      nomes les connecta a la columna. No afecta cap altra via d'insercio
+      que ja proporcioni explicitament el valor de l'id (p.ex. les entitats
+      JPA propies de pinbal-persistence que mapegen les mateixes taules,
+      com ClauPrivada/ClauPublica, que fan servir GenerationType.AUTO i
+      sempre l'especifiquen).
+
+      Nomes es cobreixen les taules que realment existeixen a l'esquema
+      d'aquesta app (verificat contra 01_initial_schema_table.yaml): les
+      seqüències del paquet es.scsp.common.domain.emi (aplicacion,
+      autorizacion_cert/ca/organismo, taules core_em_*) no tenen taula
+      corresponent aqui - funcionalitat de la llibreria no activa en
+      aquest desplegament.
+    changes:
+    - sql:
+        sql: ALTER TABLE core_organismo_cesionario ALTER COLUMN id SET DEFAULT NEXT VALUE FOR id_organismo_cesionario_seq
+    - sql:
+        sql: ALTER TABLE core_req_cesionarios_servicios ALTER COLUMN id SET DEFAULT NEXT VALUE FOR id_servicio_cesionario_seq
+    - sql:
+        sql: ALTER TABLE core_req_ssl_cesionarios ALTER COLUMN id SET DEFAULT NEXT VALUE FOR id_ssl_cesionario_seq
+    - sql:
+        sql: ALTER TABLE core_servicio ALTER COLUMN id SET DEFAULT NEXT VALUE FOR id_servicio_sequence
+    - sql:
+        sql: ALTER TABLE core_clave_privada ALTER COLUMN id SET DEFAULT NEXT VALUE FOR id_clave_privada_sequence
+    - sql:
+        sql: ALTER TABLE core_clave_publica ALTER COLUMN id SET DEFAULT NEXT VALUE FOR id_clave_publica_sequence
+    - sql:
+        sql: ALTER TABLE core_emisor_certificado ALTER COLUMN id SET DEFAULT NEXT VALUE FOR id_emisor_sequence

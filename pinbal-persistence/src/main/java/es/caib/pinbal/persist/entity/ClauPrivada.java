@@ -44,7 +44,10 @@ public class ClauPrivada implements Serializable {
 	private Date dataAlta;
 	@Column(name = "interoperabilidad")
 	private boolean interoperabilitat;
-	
+
+	@Column(name = "bloqueado", nullable = false)
+	private boolean bloquejat;
+
 	@ManyToOne(optional = false, fetch = FetchType.LAZY)
 	@JoinColumn(name = "organismo", foreignKey = @ForeignKey(name = "clave_privada_org"))
 	private OrganismeCessionari organisme;

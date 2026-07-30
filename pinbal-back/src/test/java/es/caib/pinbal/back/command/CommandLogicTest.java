@@ -60,6 +60,14 @@ public class CommandLogicTest {
     }
 
     @Test
+    public void clauPrivadaAsDtoConservaLId() {
+        ClauPrivadaCommand command = new ClauPrivadaCommand();
+        command.setId(42L);
+        ClauPrivadaDto dto = ClauPrivadaCommand.asDto(command);
+        assertEquals(42L, dto.getId());
+    }
+
+    @Test
     public void clauPublicaAsCommandIAsDto() {
         assertNotNull(ClauPublicaCommand.asCommand(new ClauPublicaDto()));
         assertNotNull(ClauPublicaCommand.asDto(new ClauPublicaCommand()));

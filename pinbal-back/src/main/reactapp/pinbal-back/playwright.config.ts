@@ -12,10 +12,17 @@ import path from 'node:path';
  */
 loadEnv({ path: path.resolve(import.meta.dirname, 'e2e/.env.e2e'), quiet: true });
 
-const baseURL = process.env.E2E_BASE_URL ?? 'http://localhost:8080/pinbalback';
+// Es força una barra final: com que baseURL té un path (/pinbalback), sense
+// la barra final `page.goto('entitat')` (relatiu, SENSE barra inicial —
+// vegeu els comentaris a cada spec/page-object) es resoldria segons les
+// regles WHATWG de resolució d'URL retallant l'últim segment de path en
+// lloc d'afegir-s'hi. Amb la barra final, "entitat" s'annexa correctament
+// com a http://host:8080/pinbalback/entitat.
+const baseURL = (process.env.E2E_BASE_URL ?? 'http://localhost:8080/pinbalback').replace(/\/*$/, '/');
 
 export default defineConfig({
     testDir: './e2e/tests',
+    globalSetup: './e2e/global-setup.ts',
     fullyParallel: false,
     forbidOnly: !!process.env.CI,
     retries: process.env.CI ? 1 : 0,

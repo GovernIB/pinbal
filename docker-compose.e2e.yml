@@ -1,0 +1,69 @@
+version: "3"
+
+# Overlay per a scripts/e2e/run-e2e.sh: substitueix la BD Oracle externa per
+# un H2 efímer (en memòria) i injecta els paràmetres de Liquibase que la
+# càrrega de dades de e2e (db/changelog/e2e/*.yaml) necessita per crear els
+# usuaris/entitats de proves i redirigir els serveis SCSP coberts pel fake.
+#
+# Ús: docker compose -f docker-compose.yml -f docker-compose.e2e.yml up -d
+# (ja gestionat per scripts/e2e/run-e2e.sh; no cal invocar-lo a mà).
+#
+# AUTH_URL/AUTH_REALM/AUTH_CLIENTID/... es mantenen sense tocar: Keycloak
+# segueix sent extern, tal com defineix .env a l'arrel.
+
+services:
+  h2:
+    build:
+      context: ./docker/h2
+      dockerfile: Dockerfile
+    ports:
+      - "9092:9092"
+
+  pinbal:
+    depends_on:
+      - h2
+    environment:
+      - JBOSS_DB_DRIVER=h2
+      - JBOSS_DB_URL=jdbc:h2:tcp://h2:9092/mem:pinbaldb;MODE=Oracle;DB_CLOSE_DELAY=-1;DATABASE_TO_UPPER=TRUE
+      - JBOSS_DB_USERNAME=sa
+      - JBOSS_DB_PASSWORD=sa
+      - JBOSS_USER_DB_URL=jdbc:h2:tcp://h2:9092/mem:pinbaldb;MODE=Oracle;DB_CLOSE_DELAY=-1;DATABASE_TO_UPPER=TRUE
+      - JBOSS_USER_DB_USERNAME=sa
+      - JBOSS_USER_DB_PASSWORD=sa
+      # Pools de connexions augmentats respecte als valors per defecte de
+      # producció (10/5/10): l'execució concurrent de la suite Playwright
+      # esgotava el pool per defecte (IJ000655 "No managed connections
+      # available"), vegeu e2e/BUGS_APLICACIO.md.
+      - JBOSS_DB_POOL_MAX=30
+      - JBOSS_DB_SCSP_POOL_MAX=30
+      - JBOSS_USER_DB_POOL_MAX=30
+      # NB: la variable "HIBERNATE_DIALECT" del docker-compose.yml base només
+      # s'interpola (${HIBERNATE_DIALECT}) en temps de parseig, a partir de
+      # l'entorn del shell / .env arrel; no es pot sobreescriure afegint aquí
+      # una clau amb aquest nom literal. Cal sobreescriure directament les
+      # claus que l'aplicació llegeix realment:
+      - spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.H2Dialect
+      - es.caib.pinbal.hibernate.dialect=org.hibernate.dialect.H2Dialect
+      # pinbal-ejb/src/main/resources/application.properties fixa
+      # spring.jpa.properties.hibernate.hbm2ddl.auto=validate (la clau
+      # es.caib.pinbal.hibernate.hbm2ddl.auto que ja hi ha al docker-compose.yml
+      # base NO es la que Spring/Hibernate llegeix realment). Amb "validate",
+      # Hibernate comprova que cada columna tingui EXACTAMENT el tipus SQL que
+      # esperaria generar ell mateix per al dialecte configurat; per a columnes
+      # NUMBER(38,0) (Oracle) mapejades a camps Long, H2Dialect espera BIGINT
+      # pero el DDL literal "NUMBER(38,0)" del changelog es crea a H2 com a
+      # NUMERIC/DECIMAL, cosa que fa fallar la validacio igualment (encara que
+      # les dades i consultes funcionin be). Com que Liquibase ja es la font de
+      # veritat de l'esquema aqui, desactivem aquesta validacio redundant.
+      - spring.jpa.properties.hibernate.hbm2ddl.auto=none
+      - SPRING_LIQUIBASE_PARAMETERS_E2EADMINUSERNAME=${E2E_ADMIN_USERNAME:-}
+      - SPRING_LIQUIBASE_PARAMETERS_E2EDELEGATUSERNAME=${E2E_DELEGAT_USERNAME:-}
+      - SPRING_LIQUIBASE_PARAMETERS_E2EREPRESENTANTUSERNAME=${E2E_REPRESENTANT_USERNAME:-}
+      - SPRING_LIQUIBASE_PARAMETERS_E2EAUDITORUSERNAME=${E2E_AUDITOR_USERNAME:-}
+      - SPRING_LIQUIBASE_PARAMETERS_FAKESCSPBASEURL=${FAKE_SCSP_BASE_URL:-http://host.docker.internal:18080}
+      # Usuaris fixos (no lligats a Keycloak); mateixos valors per defecte que
+      # e2e/utils/env.ts perquè el codi a la BD i el que cerquen els tests
+      # coincideixin sempre.
+      - SPRING_LIQUIBASE_PARAMETERS_E2EUSERACTIUUSERNAME=${E2E_USER_ACTIU_USERNAME:-E2E_USER_ACTIU}
+      - SPRING_LIQUIBASE_PARAMETERS_E2EUSERINACTIUUSERNAME=${E2E_USER_INACTIU_USERNAME:-E2E_USER_INACTIU}
+      - SPRING_LIQUIBASE_PARAMETERS_E2EUSERALLROLESUSERNAME=${E2E_USER_ALL_ROLES:-pbl_all}
