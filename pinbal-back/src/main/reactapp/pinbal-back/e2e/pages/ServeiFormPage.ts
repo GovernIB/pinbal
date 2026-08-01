@@ -75,8 +75,20 @@ export class ServeiFormPage {
      * XSD, l'emplena i l'envia. El servidor respon per AJAX amb un JSON
      * `{error: boolean, ...}`; si tot va bé la pàgina es recarrega tota
      * sola (`location.reload()` al JS de serveiForm.jsp).
+     *
+     * IMPORTANT: `fitxer.name` (el nom del fitxer que es puja) NO és el nom
+     * amb què queda desat ni mostrat: `ServeiServiceImpl.xsdCreate()`
+     * ignora `nomArxiu` i sempre reanomena el fitxer a un nom fix segons el
+     * "tipus" triat (`ServeiXsdHelper.getXsdTipusNom()`: PETICIO ->
+     * "peticion.xsd", RESPOSTA -> "respuesta.xsd"...) — és a propòsit (la
+     * integració SCSP llegeix aquests fitxers per path/nom fix, no pel nom
+     * que li doni l'administrador). Aquesta funció sempre selecciona la
+     * primera opció real del `<select>` (`{index: 1}`, ja que l'índex 0 és
+     * el placeholder buit), que es correspon amb el primer valor de
+     * `XsdTipusEnumDto` (PETICIO) -> "peticion.xsd". Retorna aquest nom
+     * final perquè el test no l'hagi de conèixer/duplicar.
      */
-    async afegirXsd(fitxer: { name: string; content: string }): Promise<void> {
+    async afegirXsd(fitxer: { name: string; content: string }): Promise<string> {
         const page = this.page;
         await page.locator('a[href*="/xsd/new"]').click();
         const modal = page.locator('#modal-xsd-form');
@@ -88,13 +100,17 @@ export class ServeiFormPage {
             mimeType: 'text/xml',
             buffer: Buffer.from(fitxer.content, 'utf-8'),
         });
-        // La resposta és processada per JS: si no hi ha errors fa location.reload().
+        // La resposta és processada per JS: si no hi ha errors fa location.reload(). Cal
+        // registrar el listener del 'load' ABANS del clic: waitForLoadState('load'), en canvi, es
+        // resoldria immediatament (la pàgina actual ja hi és, no espera cap esdeveniment futur).
         const responsePromise = page.waitForResponse(
             (resp) => resp.url().includes('/xsd/save') && resp.request().method() === 'POST',
             { timeout: 15_000 },
         );
+        const loadPromise = page.waitForEvent('load');
         await page.locator('#modal-boto-submit-xsd').click();
         await responsePromise;
-        await page.waitForLoadState('load');
+        await loadPromise;
+        return 'peticion.xsd';
     }
 }

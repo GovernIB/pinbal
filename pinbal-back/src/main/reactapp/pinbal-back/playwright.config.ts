@@ -26,7 +26,19 @@ export default defineConfig({
     fullyParallel: false,
     forbidOnly: !!process.env.CI,
     retries: process.env.CI ? 1 : 0,
-    workers: process.env.CI ? 1 : undefined,
+    // Sense `workers` explícit, Playwright en fa servir un per nucli (o la
+    // meitat, segons la versió), que en una màquina de desenvolupament
+    // moderna pot ser 8+. Aquest entorn e2e comparteix una única instància
+    // real de JBoss + Oracle (no n'hi ha una per worker): amb 8 workers en
+    // paral·lel es van observar, de manera intermitent i no determinista,
+    // timeouts de `waitForResponse`/`waitForInitialDataTableLoad` (20s) en
+    // pantalles de llistat normals i corrents (p.ex. Òrgans gestors), que
+    // desapareixien de manera repetible limitant a 4 workers — no eren cap
+    // bug de test ni de l'aplicació, simplement més peticions concurrents
+    // de les que aquesta única instància compartida podia servir dins del
+    // timeout. En CI ja forcem 1 worker; en local limitem a un valor més
+    // conservador en lloc de deixar-ho créixer amb el nombre de nuclis.
+    workers: process.env.CI ? 1 : 4,
     reporter: [['html', { open: 'never' }], ['list']],
     timeout: 45_000,
     expect: {

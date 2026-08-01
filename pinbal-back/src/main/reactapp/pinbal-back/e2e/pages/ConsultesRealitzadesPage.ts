@@ -32,6 +32,36 @@ export class ConsultesRealitzadesPage {
         return this.page.locator('#table-consultes tbody tr').filter({ hasNot: this.page.locator('td.dataTables_empty') });
     }
 
+    /** Localitzador de la fila del llistat que conté el text donat (p.ex. un scspPeticionId). */
+    row(text: string): Locator {
+        return this.rows().filter({ hasText: text });
+    }
+
+    /**
+     * Filtra el llistat pel número de petició donat (`#scspPeticionId`) i n'espera la fila
+     * corresponent. Retorna `null` si no apareix dins el termini (consulta de mostra no
+     * sembrada/esborrada en aquest entorn) en lloc de deixar-ho a mans del cridant.
+     *
+     * Cal fer servir açò (en lloc d'escanejar `rows()`/les primeres N files) per a qualsevol
+     * consulta de mostra sembrada amb un `scspPeticionId` conegut i estable
+     * (p.ex. `PBL_E2E_SIMPLE_OK`): `rows()` només conté les files RENDERITZADES de la pàgina
+     * actual del DataTable (10 per defecte), i amb prou consultes generades per altres tests
+     * (`global-setup.ts`, altres specs) una consulta de mostra concreta pot acabar fora de la
+     * primera pàgina, fent que qualsevol cerca sense filtrar no la trobi mai encara que existeixi.
+     *
+     * NOTA: `waitForDataTableReload` (dins `filtrar()`) només espera la resposta AJAX, no el
+     * redraw del DataTable (que succeeix una mica després, en processar-ne el resultat) -- per
+     * això aquí es fa `waitFor` (amb polling) en lloc d'un simple `.count()`.
+     */
+    async cercarPerPeticio(peticionId: string, timeout = 10_000): Promise<Locator | null> {
+        await this.filtrar(async (form) => {
+            await form.locator('#scspPeticionId').fill(peticionId);
+        });
+        const fila = this.row(peticionId);
+        const trobat = await fila.first().waitFor({ state: 'visible', timeout }).then(() => true).catch(() => false);
+        return trobat ? fila : null;
+    }
+
     isEmpty(): Locator {
         return this.page.locator('#table-consultes td.dataTables_empty');
     }
@@ -93,53 +123,4 @@ export class ConsultesRealitzadesPage {
         await waitForModalClosed(this.page);
     }
 
-    /**
-     * Cerca, entre les primeres `maxFiles` files del llistat, la primera
-     * consulta SIMPLE (no múltiple) i n'obre el detall. Es distingeix una
-     * consulta simple perquè `adminConsultaInfo.jsp` (a diferència de
-     * `adminConsultaMultipleInfo.jsp`) renderitza la pestanya amb id
-     * `#dadesGeneriquesTab`. Retorna `null` si no en troba cap.
-     */
-    async obrirPrimerDetallSimple(maxFiles = 15): Promise<{ row: Locator; frame: FrameLocator } | null> {
-        const total = Math.min(await this.rows().count(), maxFiles);
-        for (let i = 0; i < total; i++) {
-            const row = this.rows().nth(i);
-            const frame = await this.obrirDetall(row);
-            if (await frame.locator('#dadesGeneriquesTab').count()) {
-                return { row, frame };
-            }
-            await this.tancarDetall();
-        }
-        return null;
-    }
-
-    /**
-     * Primera fila d'una consulta MÚLTIPLE amb el justificant (PDF concatenat)
-     * descarregable. Locator buit (count 0) si no en troba cap.
-     */
-    filaAmbJustificantMultipleDescarregable(): Locator {
-        return this.rows().filter({ has: this.page.locator('a.btn-justificant-multiple') }).first();
-    }
-
-    /**
-     * Primera fila d'una consulta SIMPLE amb el justificant descarregable.
-     * L'endpoint `/admin/consulta/{id}/justificant` exigia que
-     * l'administrador actués com a delegat de l'entitat de la consulta
-     * (`EntitatHelper.isDelegatEntitatActual`) - bug corregit: ara accepta
-     * també `RolHelper.isRolActualAdministrador` (vegeu `ConsultaAdminController`).
-     * Locator buit (count 0) si no en troba cap.
-     */
-    filaAmbJustificantSimpleDescarregable(): Locator {
-        return this.rows().filter({ has: this.page.locator('a.btn-justificant') }).first();
-    }
-
-    /** Fila (qualsevol) amb l'enllaç de descàrrega del zip de missatges XML. */
-    filaAmbXmlZip(): Locator {
-        return this.rows().filter({ has: this.page.locator('a[href*="/xmlZip"]') }).first();
-    }
-
-    /** Fila amb el justificant en estat d'error (icona d'alerta + menú "Veure error"/"Re-intentar"). */
-    filaAmbJustificantError(): Locator {
-        return this.rows().filter({ has: this.page.locator('a.justificant-reintentar') }).first();
-    }
 }

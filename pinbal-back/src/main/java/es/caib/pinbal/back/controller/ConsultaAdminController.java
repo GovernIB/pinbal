@@ -646,13 +646,13 @@ public class ConsultaAdminController extends BaseController {
 		if (historic) {
 			try {
 				consulta = historicConsultaService.findOneAdmin(consultaId);
-			} catch (Exception nfe) {
+			} catch (ConsultaNotFoundException nfe) {
 				consulta = consultaService.findOneAdmin(consultaId);
 			}
 		} else {
 			try {
 				consulta = consultaService.findOneAdmin(consultaId);
-			} catch (Exception nfe) {
+			} catch (ConsultaNotFoundException nfe) {
 				consulta = historicConsultaService.findOneAdmin(consultaId);
 			}
 		}
@@ -664,13 +664,13 @@ public class ConsultaAdminController extends BaseController {
 		if (historic) {
 			try {
 				filles = historicConsultaService.findAmbPare(consultaId);
-			} catch (Exception nfe) {
+			} catch (ConsultaNotFoundException nfe) {
 				filles = consultaService.findAmbPare(consultaId);
 			}
 		} else {
 			try {
 				filles = consultaService.findAmbPare(consultaId);
-			} catch (Exception nfe) {
+			} catch (ConsultaNotFoundException nfe) {
 				filles = historicConsultaService.findAmbPare(consultaId);
 			}
 		}
@@ -704,13 +704,13 @@ public class ConsultaAdminController extends BaseController {
 		if (historic) {
 			try {
 				justificant = historicConsultaService.obtenirJustificant(consultaId, true);
-			} catch (Exception nfe) {
+			} catch (ConsultaNotFoundException nfe) {
 				justificant = consultaService.obtenirJustificant(consultaId, true);
 			}
 		} else {
 			try {
 				justificant = consultaService.obtenirJustificant(consultaId, true);
-			} catch (Exception nfe) {
+			} catch (ConsultaNotFoundException nfe) {
 				justificant = historicConsultaService.obtenirJustificant(consultaId, true);
 			}
 		}
@@ -722,13 +722,13 @@ public class ConsultaAdminController extends BaseController {
 		if (historic) {
 			try {
 				fitxer = historicConsultaService.obtenirJustificantMultipleConcatenat(consultaId);
-			} catch (Exception nfe) {
+			} catch (ConsultaNotFoundException nfe) {
 				fitxer = consultaService.obtenirJustificantMultipleConcatenat(consultaId);
 			}
 		} else {
 			try {
 				fitxer = consultaService.obtenirJustificantMultipleConcatenat(consultaId);
-			} catch (Exception nfe) {
+			} catch (ConsultaNotFoundException nfe) {
 				fitxer = historicConsultaService.obtenirJustificantMultipleConcatenat(consultaId);
 			}
 		}
@@ -740,13 +740,13 @@ public class ConsultaAdminController extends BaseController {
 		if (historic) {
 			try {
 				fitxer = historicConsultaService.obtenirJustificantMultipleZip(consultaId);
-			} catch (Exception nfe) {
+			} catch (ConsultaNotFoundException nfe) {
 				fitxer = consultaService.obtenirJustificantMultipleZip(consultaId);
 			}
 		} else {
 			try {
 				fitxer = consultaService.obtenirJustificantMultipleZip(consultaId);
-			} catch (Exception nfe) {
+			} catch (ConsultaNotFoundException nfe) {
 				fitxer = historicConsultaService.obtenirJustificantMultipleZip(consultaId);
 			}
 		}

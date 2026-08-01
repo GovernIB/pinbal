@@ -53,8 +53,10 @@ test.describe('Estadístiques (representant)', () => {
         await page.locator('#dataFi').clear();
         await page.locator('#dataFi').pressSequentially('01/06/2024');
         await page.locator('#dataFi').press('Escape');
+        // waitForLoadState('load') es resoldria immediatament (la pàgina ja hi és, no espera cap
+        // esdeveniment futur); cal waitForEvent('load'). Vegeu el comentari a EstadistiquesPage.filtrar().
         await Promise.all([
-            page.waitForLoadState('load'),
+            page.waitForEvent('load'),
             page.locator('#filtrar').click(),
         ]);
 

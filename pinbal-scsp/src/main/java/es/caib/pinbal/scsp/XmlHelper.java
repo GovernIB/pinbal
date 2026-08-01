@@ -749,7 +749,12 @@ public class XmlHelper {
 					if (gestioXsdActiva) {
 						esquema = getPathPerFitxerXsd(servicio, arxiuNom);
 						File fitxer = new File(esquema);
-						is = FileUtils.openInputStream(fitxer);
+						// El fitxer pot no existir si s'ha esborrat des de la gestió d'XSD del
+						// servei sense desactivar "activaGestioXsd" (el flag queda actiu encara
+						// que no quedi cap fitxer). En aquest cas es recorre al fallback del
+						// recurs de classpath (vegeu is == null més avall) en lloc de deixar
+						// propagar un FileNotFoundException.
+						is = fitxer.exists() ? FileUtils.openInputStream(fitxer) : null;
 					} else {
 						esquema = "/schemas/" + servicio.getCodCertificado() + "v" + versionEsquema.substring(index + 1) + "/" + arxiuNom;
 						is = getClass().getResourceAsStream(esquema);

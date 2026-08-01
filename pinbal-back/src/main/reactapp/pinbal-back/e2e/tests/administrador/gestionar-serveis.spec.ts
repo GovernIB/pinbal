@@ -76,8 +76,14 @@ test.describe('Gestió de serveis (administrador)', () => {
 
         // --- Desactivar / activar ---
         await serveis.desactivar(codi);
+        // Comprova que l'acció disponible és ara "Activar" abans de fer-hi clic amb
+        // serveis.activar(). Cal tancar el desplegable després (Escape): activar() l'obre pel
+        // seu compte amb un clic sobre el toggle, i un clic sobre un desplegable de Bootstrap ja
+        // obert el TANCA en lloc d'obrir-lo, deixant l'enllaç "Activar" invisible just quan
+        // activar() hi vol fer clic (mateix bug que #menu_user a usuari-configuracio.spec.ts).
         await serveis.row(codi).locator('a.dropdown-toggle, button.dropdown-toggle').click();
         await expect(serveis.row(codi).getByRole('link', { name: /^activar/i })).toBeVisible();
+        await page.keyboard.press('Escape');
         await serveis.activar(codi);
 
         // --- Esborrar (neteja de dades de prova) ---
@@ -115,18 +121,24 @@ test.describe('Gestió de serveis (administrador)', () => {
         await form.submitAndExpectBackToList();
 
         await serveis.gotoEdit(codi);
-        await form.afegirXsd({
+        // El nom pujat ("e2e-schema.xsd") no es conserva: el servidor sempre reanomena el
+        // fitxer segons el "tipus" triat (vegeu el comentari d'afegirXsd a ServeiFormPage.ts),
+        // que aquí retorna el nom final real ("peticion.xsd").
+        const nomArxiuDesat = await form.afegirXsd({
             name: 'e2e-schema.xsd',
             content:
                 '<?xml version="1.0" encoding="UTF-8"?>'
                 + '<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"/>',
         });
-        await expect(page.locator('#arxiusXsd')).toContainText('e2e-schema.xsd', { timeout: 15_000 });
+        await expect(page.locator('#arxiusXsd')).toContainText(nomArxiuDesat, { timeout: 15_000 });
 
-        // Esborrar el fitxer XSD (confirm() natiu + AJAX + recàrrega de pàgina)
+        // Esborrar el fitxer XSD (confirm() natiu + AJAX + recàrrega de pàgina). Cal registrar el
+        // listener del 'load' ABANS del clic: waitForLoadState('load') es resoldria immediatament
+        // (la pàgina actual ja hi és), no esperaria la recàrrega que el clic dispara.
         page.once('dialog', (dialog) => dialog.accept());
+        const loadPromise = page.waitForEvent('load');
         await page.locator('#arxiusXsd tbody tr button').click();
-        await page.waitForLoadState('load');
+        await loadPromise;
         await expect(page.locator('#arxiusXsd')).toHaveCount(0);
 
         // --- Gestió de grups de camps ---

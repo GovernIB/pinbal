@@ -275,22 +275,20 @@ databaseChangeLog:
     author: Limit
     dbms: oracle
     comment: >-
-      Índexs sobre columnes virtuals generades per Oracle per a índexs
-      basats en funcions (sys_nc00042$); no traduïbles a altres motors.
+      Índexs sobre (createddate DESC, createdby_codi ASC) - definició real
+      confirmada contra producció. Creats amb "sql:" en lloc de createIndex
+      perquè aquesta versió s'havia capturat amb el nom intern que Oracle
+      assigna a la columna virtual oculta que sustenta la part DESC de
+      l'índex (sys_nc00042$: Oracle implementa les columnes DESC d'un índex
+      internament com una columna basada en funció, SYS_OP_DESCEND), un
+      identificador generat en temps de creació que no és reproduïble contra
+      cap altra instància d'Oracle (ni tan sols una altra base de dades de
+      producció creada de nou): fallava amb ORA-00904 en qualsevol Oracle
+      diferent d'aquell en què es va capturar.
     changes:
-    - createIndex:
-        indexName: pbl_con_createddatcod_i
-        tableName: pbl_consulta
-        columns:
-        - column:
-            name: sys_nc00042$
-        - column:
-            name: createdby_codi
-    - createIndex:
-        indexName: pbl_conh_credatcod_i
-        tableName: pbl_consulta_hist
-        columns:
-        - column:
-            name: sys_nc00042$
-        - column:
-            name: createdby_codi
+    - sql:
+        dbms: oracle
+        sql: CREATE INDEX pbl_con_createddatcod_i ON pbl_consulta (createddate DESC, createdby_codi ASC)
+    - sql:
+        dbms: oracle
+        sql: CREATE INDEX pbl_conh_credatcod_i ON pbl_consulta_hist (createddate DESC, createdby_codi ASC)

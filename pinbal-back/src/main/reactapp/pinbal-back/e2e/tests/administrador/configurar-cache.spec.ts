@@ -14,9 +14,22 @@ import { waitForDataTableReload } from '../../utils/datatable';
  * serveis/procediments/entitat).
  */
 test.describe('Configurar cache (administrador)', () => {
-    test('el llistat de caches es mostra correctament', async ({ adminPage: page }) => {
+    test('el llistat de caches es mostra correctament', async ({ adminPage: page, delegatPage }) => {
         const cache = new CachePage(page);
         await cache.goto();
+
+        // Les caches (ehcache/Spring Cache) es registren dinàmicament al primer ús d'un mètode
+        // @Cacheable, no n'hi ha cap de predeclarada: si aquest test és el primer de tota la
+        // suite a executar-se (executant en paral·lel amb altres fitxers, l'ordre no és
+        // determinista), el `CacheManager` pot no tenir encara cap cache registrada i el
+        // llistat surt buit. Igual que als altres tests d'aquest fitxer, si això passa forcem
+        // que se'n registri alguna accedint, com a delegat, al llistat de consultes simples.
+        if ((await cache.rows().count()) === 0) {
+            await waitForDataTableReload(delegatPage, async () => {
+                await delegatPage.goto('consulta');
+            });
+            await cache.reload();
+        }
 
         const count = await cache.rows().count();
         expect(count).toBeGreaterThan(0);

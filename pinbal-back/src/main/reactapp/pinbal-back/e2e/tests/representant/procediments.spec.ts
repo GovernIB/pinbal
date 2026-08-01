@@ -2,7 +2,7 @@ import { test, expect } from '../../utils/fixtures';
 import { ProcedimentsPage } from '../../pages/ProcedimentsPage';
 import { ProcedimentServeisPage } from '../../pages/ProcedimentServeisPage';
 import { ProcedimentServeiPermisosPage } from '../../pages/ProcedimentServeiPermisosPage';
-import { waitForInitialDataTableLoad } from '../../utils/datatable';
+import { waitForDataTableReload } from '../../utils/datatable';
 import { uniqueSuffix, USUARI_FIX_ACTIU_CODI } from '../../utils/env';
 
 /**
@@ -42,6 +42,11 @@ test.describe('Gestió de procediments (representant)', () => {
         await frame.locator('#nom').fill(nom);
         await frame.locator('#organGestorId').selectOption(ORGAN_GESTOR_ID, { force: true });
         await procediments.save();
+        // Amb molts procediments E2E acumulats d'execucions anteriors, el nou registre
+        // pot no aparèixer a la primera pàgina del DataTable; filtram pel seu codi.
+        await procediments.filtrar(async (form) => {
+            await form.locator('#codi').fill(codi);
+        });
 
         const fila = () => procediments.row(codi);
         await expect(fila()).toBeVisible({ timeout: 15_000 });
@@ -75,6 +80,11 @@ test.describe('Gestió de procediments (representant)', () => {
         const procediments = new ProcedimentsPage(page);
         await procediments.goto();
 
+        // Amb molts procediments E2E acumulats d'execucions anteriors, E2EPROC01 pot no
+        // aparèixer a la primera pàgina sense filtrar; filtram pel seu codi explícitament.
+        await procediments.filtrar(async (form) => {
+            await form.locator('#codi').fill('E2EPROC01');
+        });
         await expect(procediments.row('E2EPROC01')).toBeVisible({ timeout: 15_000 });
 
         await procediments.filtrar(async (form) => {
@@ -82,8 +92,11 @@ test.describe('Gestió de procediments (representant)', () => {
         });
         await expect(procediments.isEmpty()).toBeVisible({ timeout: 15_000 });
 
+        // "Netejar filtre" reinicialitza el formulari; comprovam això directament (el
+        // llistat sense filtrar pot tenir E2EPROC01 en qualsevol pàgina, no necessàriament
+        // la primera, així que no en comprovam la visibilitat aquí).
         await procediments.netejarFiltre();
-        await expect(procediments.row('E2EPROC01')).toBeVisible({ timeout: 15_000 });
+        await expect(page.locator('#codi')).toHaveValue('');
     });
 
     test('crear fill (clonar un procediment amb codiSia)', async ({ representantPage: page }) => {
@@ -102,6 +115,11 @@ test.describe('Gestió de procediments (representant)', () => {
         await frame.locator('#organGestorId').selectOption(ORGAN_GESTOR_ID, { force: true });
         await frame.locator('#codiSia').fill(codiSia);
         await procediments.save();
+        // Amb molts procediments E2E acumulats d'execucions anteriors, el nou registre
+        // pot no aparèixer a la primera pàgina del DataTable; filtram pel seu codi.
+        await procediments.filtrar(async (form) => {
+            await form.locator('#codi').fill(codiOrigen);
+        });
         await expect(procediments.row(codiOrigen)).toBeVisible({ timeout: 15_000 });
 
         expect(await procediments.teCrearFillDisponible(codiOrigen)).toBeTruthy();
@@ -114,6 +132,9 @@ test.describe('Gestió de procediments (representant)', () => {
         await frame.locator('#codi').fill(codiFill);
         await procediments.save();
 
+        await procediments.filtrar(async (form) => {
+            await form.locator('#codi').fill(codiFill);
+        });
         await expect(procediments.row(codiFill)).toBeVisible({ timeout: 15_000 });
     });
 
@@ -130,10 +151,16 @@ test.describe('Gestió de procediments (representant)', () => {
             await frame.locator('#nom').fill(nomProcediment);
             await frame.locator('#organGestorId').selectOption(ORGAN_GESTOR_ID, { force: true });
             await procediments.save();
+            // Amb molts procediments E2E acumulats d'execucions anteriors, el nou registre
+            // pot no aparèixer a la primera pàgina del DataTable; filtram pel seu codi.
+            await procediments.filtrar(async (form) => {
+                await form.locator('#codi').fill(codiProcediment);
+            });
             await expect(procediments.row(codiProcediment)).toBeVisible({ timeout: 15_000 });
 
-            await procediments.obrirServeis(codiProcediment);
-            await waitForInitialDataTableLoad(page);
+            await waitForDataTableReload(page, async () => {
+                await procediments.obrirServeis(codiProcediment);
+            });
             const procedimentId = new URL(page.url()).pathname.match(/\/procediment\/(\d+)\/servei/)?.[1];
             expect(procedimentId).toBeTruthy();
 
@@ -158,9 +185,10 @@ test.describe('Gestió de procediments (representant)', () => {
             await expect(serveis.row('SCDCPAJU')).toBeVisible({ timeout: 15_000 });
 
             // --- Permisos: Nou permís / Denegar accés / Filtre / Visualització ---
-            await serveis.obrirPermisos('SCDCPAJU');
+            await waitForDataTableReload(page, async () => {
+                await serveis.obrirPermisos('SCDCPAJU');
+            });
             const permisos = new ProcedimentServeiPermisosPage(page, procedimentId!, 'SCDCPAJU');
-            await waitForInitialDataTableLoad(page);
             await expect(permisos.isEmpty()).toBeVisible({ timeout: 15_000 });
 
             const framePermis = await permisos.openNew();
@@ -181,8 +209,9 @@ test.describe('Gestió de procediments (representant)', () => {
             await expect(permisos.isEmpty()).toBeVisible({ timeout: 15_000 });
 
             // --- Esborrar servei (tornam al llistat de serveis del procediment) ---
-            await page.goto(`procediment/${procedimentId}/servei`);
-            await waitForInitialDataTableLoad(page);
+            await waitForDataTableReload(page, async () => {
+                await page.goto(`procediment/${procedimentId}/servei`);
+            });
             await serveis.esborrar('SCDCPAJU');
         });
     });

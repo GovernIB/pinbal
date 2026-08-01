@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package es.caib.pinbal.scsp;
 
@@ -11,7 +11,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Utilitat per accedir a les entrades del fitxer de properties.
- * 
+ *
  * @author Limit Tecnologies <limit@limit.es>
  */
 public class PropertiesHelper extends Properties {
@@ -53,10 +53,15 @@ public class PropertiesHelper extends Properties {
 	}
 
 	public String getProperty(String key) {
-		if (llegirSystem)
-			return System.getProperty(key);
-		else
+		if (llegirSystem) {
+			String value = System.getProperty(key);
+			if (value == null) {
+				value = System.getenv(key);
+			}
+			return value;
+		} else {
 			return super.getProperty(key);
+		}
 	}
 	public String getProperty(String key, String defaultValue) {
 		String val = getProperty(key);

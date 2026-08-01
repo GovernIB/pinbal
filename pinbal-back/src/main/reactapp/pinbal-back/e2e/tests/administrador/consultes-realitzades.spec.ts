@@ -94,13 +94,19 @@ test.describe('Consultes realitzades (administrador) - llistat', () => {
         const llistat = new ConsultesRealitzadesPage(page);
         await llistat.goto();
 
-        const fila = llistat.filaAmbJustificantMultipleDescarregable();
-        if (!(await fila.count())) {
-            test.skip(true, 'Cap consulta múltiple amb justificant descarregable al llistat');
+        // PBL_E2E_MULTIPLE_01 (sembrada, justificantestat=OK) en lloc d'escanejar la primera
+        // pàgina del llistat sense filtrar (vegeu cercarPerPeticio()).
+        const fila = await llistat.cercarPerPeticio('PBL_E2E_MULTIPLE_01');
+        if (!fila || !(await fila.locator('a.btn-justificant-multiple').count())) {
+            test.skip(true, 'Consulta de mostra PBL_E2E_MULTIPLE_01 no trobada, o sense justificant descarregable');
             return;
         }
+        // Timeout ampliat (per defecte 10s, vegeu actionTimeout a playwright.config.ts):
+        // generar el justificant implica renderitzar la plantilla ODT i firmar-la amb
+        // la clau privada local, i sota la càrrega de diversos workers de Playwright
+        // compartint la mateixa instància de JBoss pot trigar més de 10s.
         const [download] = await Promise.all([
-            page.waitForEvent('download'),
+            page.waitForEvent('download', { timeout: 30_000 }),
             fila.locator('a.btn-justificant-multiple').click(),
         ]);
         await assertNonEmptyDownload(download);
@@ -110,13 +116,16 @@ test.describe('Consultes realitzades (administrador) - llistat', () => {
         const llistat = new ConsultesRealitzadesPage(page);
         await llistat.goto();
 
-        const fila = llistat.filaAmbJustificantSimpleDescarregable();
-        if (!(await fila.count())) {
-            test.skip(true, 'Cap consulta simple amb justificant descarregable al llistat');
+        // PBL_E2E_SIMPLE_OK (sembrada, Tramitada + justificantestat=OK) en lloc d'escanejar la
+        // primera pàgina del llistat sense filtrar (vegeu cercarPerPeticio()).
+        const fila = await llistat.cercarPerPeticio('PBL_E2E_SIMPLE_OK');
+        if (!fila || !(await fila.locator('a.btn-justificant').count())) {
+            test.skip(true, 'Consulta de mostra PBL_E2E_SIMPLE_OK no trobada, o sense justificant descarregable');
             return;
         }
+        // Timeout ampliat: vegeu comentari al test anterior (justificant múltiple).
         const [download] = await Promise.all([
-            page.waitForEvent('download'),
+            page.waitForEvent('download', { timeout: 30_000 }),
             fila.locator('a.btn-justificant').click(),
         ]);
         await assertNonEmptyDownload(download);
@@ -126,9 +135,12 @@ test.describe('Consultes realitzades (administrador) - llistat', () => {
         const llistat = new ConsultesRealitzadesPage(page);
         await llistat.goto();
 
-        const fila = llistat.filaAmbXmlZip();
-        if (!(await fila.count())) {
-            test.skip(true, 'Cap fila amb enllaç de descàrrega de zip XML al llistat');
+        // Cal una consulta amb missatges generats, preferiblement Tramitada; PBL_E2E_SIMPLE_OK
+        // (sembrada amb core_token_data tipomensaje 0 i 3) ho compleix. En lloc d'escanejar la
+        // primera pàgina del llistat sense filtrar (vegeu cercarPerPeticio()).
+        const fila = await llistat.cercarPerPeticio('PBL_E2E_SIMPLE_OK');
+        if (!fila || !(await fila.locator('a[href*="/xmlZip"]').count())) {
+            test.skip(true, 'Consulta de mostra PBL_E2E_SIMPLE_OK no trobada, o sense enllaç de descàrrega de zip XML');
             return;
         }
         const download = await clicarIEsperarDescarregaOpcional(page, () => fila.locator('a[href*="/xmlZip"]').click());
@@ -167,12 +179,15 @@ test.describe('Consultes realitzades (administrador) - detall simple', () => {
         const llistat = new ConsultesRealitzadesPage(page);
         await llistat.goto();
 
-        const detall = await llistat.obrirPrimerDetallSimple();
-        if (!detall) {
-            test.skip(true, 'Cap consulta simple trobada a les primeres files del llistat');
+        // cercarPerPeticio() filtra explícitament: sense filtrar (només mirant la primera pàgina
+        // del llistat) una consulta simple pot no aparèixer-hi amb prou consultes generades per
+        // altres tests.
+        const fila = await llistat.cercarPerPeticio('PBL_E2E_SIMPLE_OK');
+        if (!fila) {
+            test.skip(true, 'Consulta de mostra PBL_E2E_SIMPLE_OK no trobada al llistat');
             return;
         }
-        const { frame } = detall;
+        const frame = await llistat.obrirDetall(fila);
 
         await expect(frame.locator('#dadesGeneriquesTab')).toBeVisible();
         await expect(frame.locator('#dadesGeneriquesTab').getByText(/dades genèriques/i)).toBeVisible();
@@ -190,12 +205,12 @@ test.describe('Consultes realitzades (administrador) - detall simple', () => {
         const llistat = new ConsultesRealitzadesPage(page);
         await llistat.goto();
 
-        const detall = await llistat.obrirPrimerDetallSimple();
-        if (!detall) {
-            test.skip(true, 'Cap consulta simple trobada a les primeres files del llistat');
+        const fila = await llistat.cercarPerPeticio('PBL_E2E_SIMPLE_OK');
+        if (!fila) {
+            test.skip(true, 'Consulta de mostra PBL_E2E_SIMPLE_OK no trobada al llistat');
             return;
         }
-        const { frame } = detall;
+        const frame = await llistat.obrirDetall(fila);
 
         const link = frame.getByRole('link', { name: /baixa missatges xml/i });
         await expect(link).toBeVisible();
@@ -211,12 +226,12 @@ test.describe('Consultes realitzades (administrador) - detall simple', () => {
         const llistat = new ConsultesRealitzadesPage(page);
         await llistat.goto();
 
-        const detall = await llistat.obrirPrimerDetallSimple();
-        if (!detall) {
-            test.skip(true, 'Cap consulta simple trobada a les primeres files del llistat');
+        const fila = await llistat.cercarPerPeticio('PBL_E2E_SIMPLE_OK');
+        if (!fila) {
+            test.skip(true, 'Consulta de mostra PBL_E2E_SIMPLE_OK no trobada al llistat');
             return;
         }
-        const { frame } = detall;
+        const frame = await llistat.obrirDetall(fila);
 
         const linkPeticio = frame.locator('#dadesGeneriquesTab').getByRole('link', { name: /veure xml/i });
         if (await linkPeticio.count()) {
@@ -251,15 +266,28 @@ test.describe('Consultes realitzades (administrador) - detall simple', () => {
         const llistat = new ConsultesRealitzadesPage(page);
         await llistat.goto();
 
-        const detall = await llistat.obrirPrimerDetallSimple();
-        if (!detall) {
-            test.skip(true, 'Cap consulta simple trobada a les primeres files del llistat');
+        // Cal una consulta Tramitada i sense error generant el justificant perquè hi hagi
+        // contingut real per previsualitzar/descarregar; `PBL_E2E_SIMPLE_OK` (sembrada a
+        // 00_e2e_seed_data.yaml) és exactament això (a diferència de "primera fila trobada",
+        // que pot caure en una consulta pendent/en error sense res per mostrar). cercarPerPeticio()
+        // filtra explícitament: amb prou consultes generades per altres tests aquesta fila pot
+        // caure fora de la primera pàgina del llistat sense filtrar.
+        const filaOk = await llistat.cercarPerPeticio('PBL_E2E_SIMPLE_OK');
+        if (!filaOk) {
+            test.skip(true, 'Consulta de mostra PBL_E2E_SIMPLE_OK no trobada al llistat');
             return;
         }
-        const { frame } = detall;
+        const frame = await llistat.obrirDetall(filaOk);
 
+        // Igual que amb la fila del llistat: modalFrame() només garanteix que el <body> de
+        // l'iframe és visible, no que tot el seu contingut (incloent les pestanyes) ja s'hagi
+        // acabat de pintar -- un `.count()` immediatament després pot arribar massa d'hora.
         const tabJustificant = frame.getByRole('tab', { name: 'Justificant' });
-        if (!(await tabJustificant.count())) {
+        const teJustificant = await tabJustificant.first()
+            .waitFor({ state: 'visible', timeout: 10_000 })
+            .then(() => true)
+            .catch(() => false);
+        if (!teJustificant) {
             test.skip(true, 'La consulta trobada no té pestanya de justificant (no tramitada / sense justificant)');
             return;
         }
@@ -279,9 +307,12 @@ test.describe('Consultes realitzades (administrador) - detall simple', () => {
         const vistaPreviaBtn = pane.locator('#mostrarVistaPrevia');
         if (await vistaPreviaBtn.count()) {
             await vistaPreviaBtn.click();
-            const pdfContainer = pane.locator('#pdf-container');
-            const errorContainer = pane.locator('#error-container');
-            await expect(pdfContainer.or(errorContainer)).toBeVisible({ timeout: 15_000 });
+            // #pdf-container i #error-container conviuen SEMPRE al DOM (adminConsultaInfo.jsp els
+            // declara amb style="display:none"; el JS en mostra només un dels dos), així que
+            // `pdfContainer.or(errorContainer)` (que ignora la visibilitat CSS) sempre troba 2
+            // elements i viola el "strict mode". El pseudo-selector :visible sí que filtra pel
+            // que realment es mostra.
+            await expect(pane.locator('#pdf-container:visible, #error-container:visible')).toBeVisible({ timeout: 15_000 });
         }
 
         await llistat.tancarDetall();
@@ -291,8 +322,12 @@ test.describe('Consultes realitzades (administrador) - detall simple', () => {
         const llistat = new ConsultesRealitzadesPage(page);
         await llistat.goto();
 
-        const filaError = llistat.filaAmbJustificantError();
-        if (!(await filaError.count())) {
+        // cercarPerPeticio() filtra explícitament pel número de petició de la consulta de mostra
+        // sembrada amb justificant en error: sense filtrar (només mirant la pàgina carregada, 10
+        // files per defecte) pot caure fora de la primera pàgina amb prou consultes generades per
+        // altres tests (mateix problema que "Vista prèvia i descàrrega de justificant" més amunt).
+        const filaError = await llistat.cercarPerPeticio('PBL_E2E_SIMPLE_JUSTERR');
+        if (!filaError) {
             test.skip(true, 'Cap consulta amb el justificant en estat d\'error trobada al llistat');
             return;
         }
@@ -315,8 +350,20 @@ test.describe('Consultes realitzades (administrador) - detall simple', () => {
         await modalError.locator('.close').first().click();
         await expect(modalError).toBeHidden({ timeout: 10_000 });
 
+        // "Veure error" i "Re-intentar" viuen dins el MATEIX desplegable (adminConsultaInfo.jsp):
+        // en clicar-hi "Veure error" (un enllaç intern del desplegable) Bootstrap NO el tanca (el
+        // seu listener global només tanca en clicar-hi A FORA) -- però obrir/tancar la modal
+        // "#modal-justificant-error" sí que sembla desmarcar-lo com a obert. No assumim l'estat:
+        // el reobrim només si "Re-intentar" encara no és visible (mateix patró que
+        // usuari-configuracio.spec.ts / gestionar-serveis.spec.ts).
+        const reintentarLink = pane.getByRole('link', { name: /re-intentar/i });
+        if (!(await reintentarLink.isVisible())) {
+            await pane.locator('.dropdown-toggle').first().click();
+        }
+        await expect(reintentarLink).toBeVisible();
+
         // Reintent: navega (dins l'iframe) i torna a mostrar el mateix detall.
-        await pane.getByRole('link', { name: /re-intentar/i }).click();
+        await reintentarLink.click();
         await expect(frame.locator('#dadesGeneriquesTab')).toBeVisible({ timeout: 15_000 });
 
         await llistat.tancarDetall();

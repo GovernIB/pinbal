@@ -79,6 +79,17 @@ export const SCSP_FAKE_SUCCESS_DOC_2 = '87654321X';
 export const USUARI_FIX_ACTIU_CODI = process.env.E2E_USER_ACTIU_USERNAME || 'E2E_USER_ACTIU';
 export const USUARI_FIX_INACTIU_CODI = process.env.E2E_USER_INACTIU_USERNAME || 'E2E_USER_INACTIU';
 export const USUARI_FIX_ALL_ROLES_CODI = process.env.E2E_USER_ALL_ROLES || 'pbl_all';
+/**
+ * Usuari fix, codi NO configurable (a diferència dels anteriors, sempre 'E2E_USER_PERMISOS';
+ * vegeu 00_e2e_seed_data.yaml), EXCLUSIU per al test "Permisos" de
+ * representant/usuaris.spec.ts. Deliberadament diferent d'`USUARI_FIX_ACTIU_CODI`: aquell
+ * també l'usa representant/procediments.spec.ts per concedir-hi un permís concurrentment
+ * (Playwright executa fitxers en paral·lel per defecte), i com que el test de "Permisos"
+ * fa un "esborrar TOTS els permisos" (acció global per usuari, no només els creats per
+ * aquest test), compartir l'usuari amb un altre fitxer provoca una condició de carrera
+ * real i observada (recompte inesperat, o l'esborrat global afectant l'altre test).
+ */
+export const USUARI_FIX_PERMISOS_CODI = 'E2E_USER_PERMISOS';
 
 export interface ConsultaSimpleConfig {
     /** Codi d'un servei assignat a l'entitat del rol delegat, amb el camp de document del titular actiu. */

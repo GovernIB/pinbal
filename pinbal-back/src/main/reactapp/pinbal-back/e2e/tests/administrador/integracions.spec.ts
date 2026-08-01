@@ -1,7 +1,7 @@
 import { Page } from '@playwright/test';
 import { test, expect } from '../../utils/fixtures';
 import { waitForInitialDataTableLoad, waitForDataTableReload } from '../../utils/datatable';
-import { modalFrame, waitForModalClosed } from '../../utils/modal';
+import { clickModalFooterButton, modalFrame, waitForModalClosed } from '../../utils/modal';
 
 /**
  * "Integracions": monitoratge de trucades a sistemes externs (SCSP,
@@ -92,7 +92,10 @@ test.describe('Integracions (administrador)', () => {
         await filaAmbDades.getByRole('link', { name: /detalls/i }).click();
         const frame = await modalFrame(page);
         await expect(frame.locator('body')).not.toBeEmpty();
-        await frame.locator('[data-modal-cancel="true"]').click();
+        // El botó "Tancar" (data-modal-cancel="true") es clona al peu de la modal, fora de
+        // l'iframe (webutil.modal.js); l'original de dins l'iframe no és visible. Vegeu el
+        // comentari de clickModalFooterButton a utils/modal.ts.
+        await clickModalFooterButton(page, /tancar/i);
         await waitForModalClosed(page);
 
         // --- Esborrat (acció a nivell de pestanya, sense confirmació) ---

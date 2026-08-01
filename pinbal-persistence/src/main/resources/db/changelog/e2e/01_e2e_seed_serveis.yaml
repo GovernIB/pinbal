@@ -1,8 +1,11 @@
 databaseChangeLog:
 # Dades de prova per al domini "Servei" SCSP per als tests Playwright d'e2e.
 #
-# Igual que 00_e2e_seed_data.yaml, nomes s'executa contra H2 (dbms: h2 a cada
-# changeSet) i reserva el rang d'id 900000-909999.
+# Igual que 00_e2e_seed_data.yaml, nomes s'executa quan el context Liquibase
+# "e2e" esta actiu (context: e2e a cada changeSet; vegeu docker-compose.e2e.yml
+# i docker-compose.e2e-oracle.yml), independentment del motor de BD (H2 o
+# Oracle) — mai contra un entorn normal (dev/producio), on aquest context mai
+# s'activa. Reserva el rang d'id 900000-909999.
 #
 # Un "servei" consultable via SCSP es en realitat la unio de:
 #  - core_servicio (taula legacy SCSP, clau primaria numerica `id`, codi de
@@ -33,7 +36,7 @@ databaseChangeLog:
 - changeSet:
     id: e2e-seed-servicios-scsp-fake
     author: Limit
-    dbms: h2
+    context: e2e
     comment: >-
       core_servicio pels 4 serveis SCSP que el servidor pinbal-scsp-fake sap
       respondre. Valors de columnes obligatories copiats de files reals de
@@ -124,9 +127,51 @@ databaseChangeLog:
         - column: { name: validacionfirma, value: estricto }
 
 - changeSet:
+    id: e2e-seed-clau-privada-firma
+    author: Limit
+    context: e2e
+    comment: >-
+      Autoritza l'organisme cessionari de prova (P0700000A, id 900011,
+      sembrat a e2e-seed-organisme-cessionari a 00_e2e_seed_data.yaml) a
+      signar peticions pel servei Q2827003ATGSS001 (id 900701, sembrat més
+      amunt). Sense això, HandlerAliasSelector.getSignatureClavePrivada()
+      falla amb "Organismo no autorizado P0700000A ,al servicio
+      Q2827003ATGSS001" en generar el justificant d'una consulta simple
+      (vegeu e2e/BUGS_APLICACIO.md). L'alias/contrasenya apunten a una
+      entrada real del truststore muntat a /opt/webapps/keystores/
+      interoperabilitat.jks (mateix fitxer que es.caib.pinbal.scsp.
+      keystoreFile); a diferència de core_clave_privada.alias
+      "e2e-clau-privada-activa"/"-baixa" (00_e2e_seed_data.yaml, només
+      exercitades per les pantalles CRUD d'administració, mai usades per
+      signar de veritat), aquí cal un alias que existeixi al JKS perquè
+      ScspKeyStoreManager.getX509Certificate(...) el pugui carregar.
+    changes:
+    - insert:
+        tableName: core_clave_privada
+        columns:
+        - column: { name: id, valueNumeric: 900405 }
+        - column: { name: alias, value: limit_pinbal }
+        - column: { name: nombre, value: "Clau de firma E2E (limit_pinbal)" }
+        - column: { name: PASSWORD, value: tecnologies }
+        - column: { name: numeroserie, value: "82037816cdf3811" }
+        - column: { name: fechaalta, valueDate: 2024-01-01T00:00:00 }
+        - column: { name: bloqueado, valueNumeric: 0 }
+        - column: { name: interoperabilidad, valueNumeric: 0 }
+        - column: { name: per_entitat, valueNumeric: 0 }
+    - insert:
+        tableName: core_req_cesionarios_servicios
+        columns:
+        - column: { name: id, valueNumeric: 900406 }
+        - column: { name: servicio, valueNumeric: 900701 }
+        - column: { name: claveprivada, valueNumeric: 900405 }
+        - column: { name: organismo, valueNumeric: 900011 }
+        - column: { name: fechaalta, valueDate: 2024-01-01T00:00:00 }
+        - column: { name: bloqueado, valueNumeric: 0 }
+
+- changeSet:
     id: e2e-seed-servicios-crud
     author: Limit
-    dbms: h2
+    context: e2e
     comment: >-
       Parell addicional de core_servicio/pbl_servei_config NO cobert pel fake
       SCSP (codis inventats), nomes per als tests de CRUD/llistat/filtre
@@ -174,7 +219,7 @@ databaseChangeLog:
 - changeSet:
     id: e2e-seed-servei-config
     author: Limit
-    dbms: h2
+    context: e2e
     comment: >-
       pbl_servei_config, una fila per cada core_servicio d'aquest fitxer
       (enllaçada per servei_id=codcertificado, sense FK de BD). Els flags
@@ -349,7 +394,7 @@ databaseChangeLog:
 - changeSet:
     id: e2e-seed-entitat-servei
     author: Limit
-    dbms: h2
+    context: e2e
     comment: >-
       Vincula els 4 serveis coberts pel fake SCSP a l'entitat E2E Principal
       (900001), perque els usuaris Delegat/Representant sembrats a
@@ -387,7 +432,7 @@ databaseChangeLog:
 - changeSet:
     id: e2e-seed-procediment-servei
     author: Limit
-    dbms: h2
+    context: e2e
     comment: >-
       Associacio servei-procediment per al procediment E2E U (900201, entitat
       E2E Principal), per exercitar el flux de "noves consultes" del Delegat i
@@ -415,7 +460,7 @@ databaseChangeLog:
 - changeSet:
     id: e2e-seed-acl-procediment-servei-delegat
     author: Limit
-    dbms: h2
+    context: e2e
     preConditions:
         onFail: MARK_RAN
         not:
@@ -492,7 +537,7 @@ databaseChangeLog:
 - changeSet:
     id: e2e-seed-acl-procediment-servei-representant
     author: Limit
-    dbms: h2
+    context: e2e
     preConditions:
         onFail: MARK_RAN
         and:
@@ -542,7 +587,7 @@ databaseChangeLog:
 - changeSet:
     id: e2e-seed-consultes-realitzades
     author: Limit
-    dbms: h2
+    context: e2e
     preConditions:
         onFail: MARK_RAN
         not:
@@ -596,6 +641,12 @@ databaseChangeLog:
         - column: { name: tipomensaje, valueNumeric: 0 }
         - column: { name: datos, value: "<Peticion><Atributos><IdPeticion>PBL_E2E_SIMPLE_OK</IdPeticion></Atributos><SolicitudesTransmision><SolicitudTransmision><DatosGenericos><Transmision><IdSolicitud>SOL_E2E_SIMPLE_OK</IdSolicitud></Transmision></DatosGenericos></SolicitudTransmision></SolicitudesTransmision></Peticion>" }
     - insert:
+        tableName: core_token_data
+        columns:
+        - column: { name: idpeticion, value: PBL_E2E_SIMPLE_OK }
+        - column: { name: tipomensaje, valueNumeric: 3 }
+        - column: { name: datos, value: "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns=\"http://intermediacion.redsara.es/scsp/esquemas/V3/respuesta\"><soapenv:Body><Respuesta><Atributos><IdPeticion>PBL_E2E_SIMPLE_OK</IdPeticion><NumElementos>1</NumElementos><TimeStamp>2026-07-31T00:00:00.000+02:00</TimeStamp><Estado><CodigoEstado>0003</CodigoEstado><CodigoEstadoSecundario></CodigoEstadoSecundario><LiteralError>Tramitada</LiteralError><TiempoEstimadoRespuesta>0</TiempoEstimadoRespuesta></Estado><CodigoCertificado>Q2827003ATGSS001</CodigoCertificado></Atributos><Transmisiones><TransmisionDatos><DatosGenericos><Emisor><NifEmisor>S2826053G</NifEmisor><NombreEmisor>Emissor E2E</NombreEmisor></Emisor><Solicitante><IdentificadorSolicitante>P0700000A</IdentificadorSolicitante><NombreSolicitante>Entitat E2E</NombreSolicitante><Finalidad>Consulta de prova e2e (tramitada)</Finalidad><Consentimiento>Si</Consentimiento></Solicitante><Titular><TipoDocumentacion>NIF</TipoDocumentacion><Documentacion>12345678Z</Documentacion></Titular><Transmision><CodigoCertificado>Q2827003ATGSS001</CodigoCertificado><IdSolicitud>SOL_E2E_SIMPLE_OK</IdSolicitud><IdTransmision>SOL_E2E_SIMPLE_OK</IdTransmision><FechaGeneracion>2026-07-31T00:00:00.000+02:00</FechaGeneracion></Transmision></DatosGenericos><DatosEspecificos><Resultado>Al corriente de pago</Resultado></DatosEspecificos></TransmisionDatos></Transmisiones></Respuesta></soapenv:Body></soapenv:Envelope>" }
+    - insert:
         tableName: pbl_consulta
         columns:
         - column: { name: id, valueNumeric: 901401 }
@@ -621,7 +672,16 @@ databaseChangeLog:
         - column: { name: entitat_id, valueNumeric: 900001 }
         - column: { name: servei_codi, value: Q2827003ATGSS001 }
         - column: { name: procediment_id, valueNumeric: 900201 }
-        - column: { name: app_guarda_just_arx, valueNumeric: 0 }
+        # app_guarda_just_arx=1 (a diferència de la resta de consultes de mostra): amb
+        # justificant_estat=OK però custodiat=0 i sense arxiu_document_uuid, la via per
+        # defecte (0) crida pluginHelper.custodiaObtenirDocument(...), un plugin extern
+        # de custòdia sense res custodiat per aquesta consulta de mostra -> retorna null
+        # sense llançar excepció -> NPE a BaseController.writeFileToResponse (vegeu
+        # e2e/BUGS_APLICACIO.md). Amb 1, JustificantHelper.descarregarFitxerGenerat
+        # genera i firma el justificant "sota demanda" (JustificantHelper.generar,
+        # via la plantilla ODT + la clau de firma local), sense dependre de cap
+        # servei extern de custòdia.
+        - column: { name: app_guarda_just_arx, valueNumeric: 1 }
         - column: { name: arxiu_expedient_tancat, valueNumeric: 0 }
         - column: { name: recobriment, valueNumeric: 0 }
         - column: { name: custodiat, valueNumeric: 0 }
@@ -726,6 +786,12 @@ databaseChangeLog:
         - column: { name: tipomensaje, valueNumeric: 0 }
         - column: { name: datos, value: "<Peticion><Atributos><IdPeticion>PBL_E2E_SIMPLE_JUSTERR</IdPeticion></Atributos><SolicitudesTransmision><SolicitudTransmision><DatosGenericos><Transmision><IdSolicitud>SOL_E2E_SIMPLE_JUSTERR</IdSolicitud></Transmision></DatosGenericos></SolicitudTransmision></SolicitudesTransmision></Peticion>" }
     - insert:
+        tableName: core_token_data
+        columns:
+        - column: { name: idpeticion, value: PBL_E2E_SIMPLE_JUSTERR }
+        - column: { name: tipomensaje, valueNumeric: 3 }
+        - column: { name: datos, value: "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns=\"http://intermediacion.redsara.es/scsp/esquemas/V3/respuesta\"><soapenv:Body><Respuesta><Atributos><IdPeticion>PBL_E2E_SIMPLE_JUSTERR</IdPeticion><NumElementos>1</NumElementos><TimeStamp>2026-07-31T00:00:00.000+02:00</TimeStamp><Estado><CodigoEstado>0003</CodigoEstado><CodigoEstadoSecundario></CodigoEstadoSecundario><LiteralError>Tramitada</LiteralError><TiempoEstimadoRespuesta>0</TiempoEstimadoRespuesta></Estado><CodigoCertificado>Q2827003ATGSS001</CodigoCertificado></Atributos><Transmisiones><TransmisionDatos><DatosGenericos><Emisor><NifEmisor>S2826053G</NifEmisor><NombreEmisor>Emissor E2E</NombreEmisor></Emisor><Solicitante><IdentificadorSolicitante>P0700000A</IdentificadorSolicitante><NombreSolicitante>Entitat E2E</NombreSolicitante><Finalidad>Consulta de prova e2e (justificant en error)</Finalidad><Consentimiento>Si</Consentimiento></Solicitante><Titular><TipoDocumentacion>NIF</TipoDocumentacion><Documentacion>87654321X</Documentacion></Titular><Transmision><CodigoCertificado>Q2827003ATGSS001</CodigoCertificado><IdSolicitud>SOL_E2E_SIMPLE_JUSTERR</IdSolicitud><IdTransmision>SOL_E2E_SIMPLE_JUSTERR</IdTransmision><FechaGeneracion>2026-07-31T00:00:00.000+02:00</FechaGeneracion></Transmision></DatosGenericos><DatosEspecificos><Resultado>Al corriente de pago</Resultado></DatosEspecificos></TransmisionDatos></Transmisiones></Respuesta></soapenv:Body></soapenv:Envelope>" }
+    - insert:
         tableName: pbl_consulta
         columns:
         - column: { name: id, valueNumeric: 901403 }
@@ -805,6 +871,12 @@ databaseChangeLog:
         - column: { name: idpeticion, value: PBL_E2E_MULTIPLE_01 }
         - column: { name: tipomensaje, valueNumeric: 0 }
         - column: { name: datos, value: "<Peticion><Atributos><IdPeticion>PBL_E2E_MULTIPLE_01</IdPeticion></Atributos><SolicitudesTransmision><SolicitudTransmision><DatosGenericos><Transmision><IdSolicitud>SOL_E2E_MULTIPLE_01</IdSolicitud></Transmision></DatosGenericos></SolicitudTransmision><SolicitudTransmision><DatosGenericos><Transmision><IdSolicitud>SOL_E2E_MULTIPLE_02</IdSolicitud></Transmision></DatosGenericos></SolicitudTransmision></SolicitudesTransmision></Peticion>" }
+    - insert:
+        tableName: core_token_data
+        columns:
+        - column: { name: idpeticion, value: PBL_E2E_MULTIPLE_01 }
+        - column: { name: tipomensaje, valueNumeric: 3 }
+        - column: { name: datos, value: "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns=\"http://intermediacion.redsara.es/scsp/esquemas/V3/respuesta\"><soapenv:Body><Respuesta><Atributos><IdPeticion>PBL_E2E_MULTIPLE_01</IdPeticion><NumElementos>2</NumElementos><TimeStamp>2026-07-31T00:00:00.000+02:00</TimeStamp><Estado><CodigoEstado>0003</CodigoEstado><CodigoEstadoSecundario></CodigoEstadoSecundario><LiteralError>Tramitada</LiteralError><TiempoEstimadoRespuesta>0</TiempoEstimadoRespuesta></Estado><CodigoCertificado>Q2827003ATGSS001</CodigoCertificado></Atributos><Transmisiones><TransmisionDatos><DatosGenericos><Emisor><NifEmisor>S2826053G</NifEmisor><NombreEmisor>Emissor E2E</NombreEmisor></Emisor><Solicitante><IdentificadorSolicitante>P0700000A</IdentificadorSolicitante><NombreSolicitante>Entitat E2E</NombreSolicitante><Finalidad>Consulta multiple de prova e2e</Finalidad><Consentimiento>Si</Consentimiento></Solicitante><Titular><TipoDocumentacion>NIF</TipoDocumentacion><Documentacion>11111111A</Documentacion></Titular><Transmision><CodigoCertificado>Q2827003ATGSS001</CodigoCertificado><IdSolicitud>SOL_E2E_MULTIPLE_01</IdSolicitud><IdTransmision>SOL_E2E_MULTIPLE_01</IdTransmision><FechaGeneracion>2026-07-31T00:00:00.000+02:00</FechaGeneracion></Transmision></DatosGenericos><DatosEspecificos><Resultado>Al corriente de pago</Resultado></DatosEspecificos></TransmisionDatos><TransmisionDatos><DatosGenericos><Emisor><NifEmisor>S2826053G</NifEmisor><NombreEmisor>Emissor E2E</NombreEmisor></Emisor><Solicitante><IdentificadorSolicitante>P0700000A</IdentificadorSolicitante><NombreSolicitante>Entitat E2E</NombreSolicitante><Finalidad>Consulta multiple de prova e2e</Finalidad><Consentimiento>Si</Consentimiento></Solicitante><Titular><TipoDocumentacion>NIF</TipoDocumentacion><Documentacion>22222222B</Documentacion></Titular><Transmision><CodigoCertificado>Q2827003ATGSS001</CodigoCertificado><IdSolicitud>SOL_E2E_MULTIPLE_02</IdSolicitud><IdTransmision>SOL_E2E_MULTIPLE_02</IdTransmision><FechaGeneracion>2026-07-31T00:00:00.000+02:00</FechaGeneracion></Transmision></DatosGenericos><DatosEspecificos><Resultado>Al corriente de pago</Resultado></DatosEspecificos></TransmisionDatos></Transmisiones></Respuesta></soapenv:Body></soapenv:Envelope>" }
     - insert:
         tableName: pbl_consulta
         columns:
@@ -894,7 +966,7 @@ databaseChangeLog:
 - changeSet:
     id: e2e-seed-consultes-realitzades-llistat
     author: Limit
-    dbms: h2
+    context: e2e
     preConditions:
         onFail: MARK_RAN
         not:
@@ -958,3 +1030,37 @@ databaseChangeLog:
           LEFT OUTER JOIN core_servicio s ON c.servei_codi = s.codcertificado
           LEFT OUTER JOIN pbl_usuari u ON c.createdby_codi = u.codi
           WHERE c.id IN (901401, 901402, 901403, 901410, 901411, 901412)
+
+- changeSet:
+    id: e2e-disable-validar-certificado
+    author: Limit
+    context: e2e
+    comment: >-
+      Desactiva el mòdul SCSP "ValidarCertificado" (core_modulo, sembrat a
+      initial_data_scsp.sql amb activoentrada=activosalida=1) només per a
+      l'entorn e2e. Sense això, qualsevol consulta múltiple real (i, en
+      general, qualsevol resposta SCSP en direcció "salida") crida
+      HandlerVerificarCertificado.validate() (es.scsp.scsp-core:5.0.11, jar
+      compilat a local-repo/), que sempre acaba fent
+      revocationManager.comprobarCertificadoRevocacion(...) sobre el
+      certificat de signatura de la resposta. Amb el bean per defecte
+      (BasicRevocationManager): si afirma.enabled (seed 'true') fa una
+      crida SOAP real a @firma amb afirma.url seed com a placeholder '.'
+      (mai funcional), i si no, com que no hi ha custom.cert.validation.class
+      configurat, retorna directament REVOCADO (no hi ha cap via de "no
+      comprovar" amb aquest bean). El resultat és sempre
+      ScspClientInterceptorException "Se produjo un error al comprobar el
+      estado de revocacion del certificado.", que revenia com a
+      EJBException sense gestionar a la UI — reproduït enviant una consulta
+      múltiple real contra el fake SCSP en aquest entorn e2e. No hi ha cap
+      manera de fer que aquesta comprovació passi de veritat sense
+      connectivitat real a un OCSP/@firma vàlid, així que la desactivem
+      completament aquí (mateix patró que la resta d'aquest fitxer:
+      context "e2e" únicament, mai s'aplica a dev/producció).
+    changes:
+    - update:
+        tableName: core_modulo
+        columns:
+        - column: { name: activoentrada, valueNumeric: 0 }
+        - column: { name: activosalida, valueNumeric: 0 }
+        where: nombre = 'ValidarCertificado'

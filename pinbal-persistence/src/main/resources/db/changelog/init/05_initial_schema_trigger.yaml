@@ -6,38 +6,47 @@ databaseChangeLog:
     changes:
     - sql:
         dbms: oracle
+        splitStatements: false
         sql: "CREATE OR REPLACE TRIGGER pbl_acl_sid_idgen
 BEFORE INSERT ON pbl_acl_sid
 FOR EACH ROW
+WHEN (NEW.ID IS NULL)
   BEGIN
     SELECT pbl_acl_sid_seq.NEXTVAL INTO :NEW.ID FROM DUAL;
   END;"
     - sql:
         dbms: oracle
+        splitStatements: false
         sql: "CREATE OR REPLACE TRIGGER pbl_acl_class_idgen
 BEFORE INSERT ON pbl_acl_class
 FOR EACH ROW
+WHEN (NEW.ID IS NULL)
   BEGIN
     SELECT pbl_acl_class_seq.NEXTVAL INTO :NEW.ID FROM DUAL;
   END;"
     - sql:
         dbms: oracle
+        splitStatements: false
         sql: "CREATE OR REPLACE TRIGGER pbl_acl_oid_idgen
 BEFORE INSERT ON pbl_acl_object_identity
 FOR EACH ROW
+WHEN (NEW.ID IS NULL)
   BEGIN
     SELECT pbl_acl_oid_seq.NEXTVAL INTO :NEW.ID FROM DUAL;
   END;"
     - sql:
         dbms: oracle
+        splitStatements: false
         sql: "CREATE OR REPLACE TRIGGER pbl_acl_entry_idgen
 BEFORE INSERT ON pbl_acl_entry
 FOR EACH ROW
+WHEN (NEW.ID IS NULL)
   BEGIN
     SELECT pbl_acl_entry_seq.NEXTVAL INTO :NEW.ID FROM DUAL;
   END;"
     - sql:
         dbms: oracle
+        splitStatements: false
         sql: "CREATE OR REPLACE PROCEDURE getsecuenciaidpeticion (prefijo_param in varchar2, on_Secuencial out number) as rRegistro ROWID;
 begin
 select ROWID, secuencia+1 into rRegistro, on_Secuencial from core_req_secuencia_id_peticion where prefijo = prefijo_param for update;
@@ -45,5 +54,5 @@ update core_req_secuencia_id_peticion set secuencia = on_Secuencial, fechagenera
 commit;
 exception when no_data_found then on_Secuencial := 1;
 insert into core_req_secuencia_id_peticion (prefijo, secuencia,fechageneracion) values (prefijo_param, on_Secuencial,(SELECT SYSDATE FROM DUAL));
-commit; 
+commit;
 end;"

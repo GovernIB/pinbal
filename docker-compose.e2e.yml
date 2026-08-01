@@ -1,9 +1,12 @@
 version: "3"
 
-# Overlay per a scripts/e2e/run-e2e.sh: substitueix la BD Oracle externa per
-# un H2 efímer (en memòria) i injecta els paràmetres de Liquibase que la
-# càrrega de dades de e2e (db/changelog/e2e/*.yaml) necessita per crear els
-# usuaris/entitats de proves i redirigir els serveis SCSP coberts pel fake.
+# Overlay per a scripts/e2e/run-e2e.sh (--db=h2, l'opció no-per-defecte):
+# substitueix la BD Oracle externa per un H2 efímer (en memòria) i injecta els
+# paràmetres/context de Liquibase que la càrrega de dades de e2e
+# (db/changelog/e2e/*.yaml) necessita per crear els usuaris/entitats de
+# proves i redirigir els serveis SCSP coberts pel fake. Vegeu
+# docker-compose.e2e-oracle.yml pel bessó que fa el mateix contra Oracle Free
+# (l'opció per defecte de run-e2e.sh).
 #
 # Ús: docker compose -f docker-compose.yml -f docker-compose.e2e.yml up -d
 # (ja gestionat per scripts/e2e/run-e2e.sh; no cal invocar-lo a mà).
@@ -56,6 +59,12 @@ services:
       # les dades i consultes funcionin be). Com que Liquibase ja es la font de
       # veritat de l'esquema aqui, desactivem aquesta validacio redundant.
       - spring.jpa.properties.hibernate.hbm2ddl.auto=none
+      # Activa els changeSet marcats "context: e2e" a db/changelog/e2e/*.yaml
+      # (dades de demo/test): sense aquest context actiu, Liquibase els salta
+      # sempre (comportament per defecte fora d'aquest overlay). Vegeu també
+      # docker-compose.e2e-oracle.yml, que activa el mateix context contra
+      # Oracle Free.
+      - SPRING_LIQUIBASE_CONTEXTS=e2e
       - SPRING_LIQUIBASE_PARAMETERS_E2EADMINUSERNAME=${E2E_ADMIN_USERNAME:-}
       - SPRING_LIQUIBASE_PARAMETERS_E2EDELEGATUSERNAME=${E2E_DELEGAT_USERNAME:-}
       - SPRING_LIQUIBASE_PARAMETERS_E2EREPRESENTANTUSERNAME=${E2E_REPRESENTANT_USERNAME:-}
@@ -67,3 +76,30 @@ services:
       - SPRING_LIQUIBASE_PARAMETERS_E2EUSERACTIUUSERNAME=${E2E_USER_ACTIU_USERNAME:-E2E_USER_ACTIU}
       - SPRING_LIQUIBASE_PARAMETERS_E2EUSERINACTIUUSERNAME=${E2E_USER_INACTIU_USERNAME:-E2E_USER_INACTIU}
       - SPRING_LIQUIBASE_PARAMETERS_E2EUSERALLROLESUSERNAME=${E2E_USER_ALL_ROLES:-pbl_all}
+      # Conversió ODT->PDF del justificant (JustificantHelper) sense dependre
+      # d'un servei extern OpenOffice/LibreOffice (es.caib.pinbal.conversio.
+      # open.office.host/.port, no configurat en aquest entorn e2e):
+      # ConversioTipusDocumentHelper ja suporta una via alternativa 100% Java
+      # via XDocReport/odfdom-converter-pdf (mateixa llibreria, sense procés
+      # extern). Vegeu e2e/BUGS_APLICACIO.md.
+      - es.caib.pinbal.conversio.tipus=xdocreport
+      # Firma en servidor del PDF del justificant (JustificantHelper.
+      # generarIFirmarJustificant): sense cap classe configurada aquí,
+      # PluginHelper.getFirmaServidorPlugin() llança SistemaExternException
+      # ("No està configurada la classe..."). La implementació real
+      # (FirmaSimpleServidorPluginPortafib) truca el portafirmes PortaFIB, un
+      # servei extern no disponible en aquest entorn e2e; s'usa en el seu lloc
+      # FirmaServidorPluginMock, que retorna el mateix contingut sense firmar
+      # de veritat (no cal validar la firma en aquests tests). Vegeu
+      # e2e/BUGS_APLICACIO.md.
+      - es.caib.pinbal.plugin.firmaservidor.class=es.caib.pinbal.plugin.firmaservidor.FirmaServidorPluginMock
+      # Arxiu digital (JustificantHelper.desarJustificantArxiu, cridat després
+      # de firmar el justificant quan aplicacioGuardaJustificantArxiu=true):
+      # sense cap classe configurada aquí, PluginHelper.getArxiuPlugin()
+      # llança SistemaExternException ("No està configurada la classe...").
+      # La implementació real (ArxiuPluginCaib, a pinbal-plugin) truca el
+      # servei ConCSV/arxiu digital extern del CAIB, no disponible en aquest
+      # entorn e2e; s'usa en el seu lloc ArxiuPluginMock, que guarda
+      # expedients/documents en memòria sense cap servei extern. Vegeu
+      # e2e/BUGS_APLICACIO.md.
+      - es.caib.pinbal.plugin.arxiu.class=es.caib.pinbal.plugin.arxiu.ArxiuPluginMock

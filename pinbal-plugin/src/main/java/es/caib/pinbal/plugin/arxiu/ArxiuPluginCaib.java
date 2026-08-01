@@ -5,20 +5,20 @@ import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.filter.HTTPBasicAuthFilter;
 import es.caib.comanda.ms.salut.helper.IntegracioApp;
 import es.caib.pinbal.plugin.PluginMetricHelper;
-import es.caib.plugins.arxiu.api.ArxiuException;
-import es.caib.plugins.arxiu.api.ConsultaFiltre;
-import es.caib.plugins.arxiu.api.ConsultaResultat;
-import es.caib.plugins.arxiu.api.ContingutArxiu;
-import es.caib.plugins.arxiu.api.ContingutOrigen;
-import es.caib.plugins.arxiu.api.Document;
-import es.caib.plugins.arxiu.api.DocumentContingut;
-import es.caib.plugins.arxiu.api.DocumentEstatElaboracio;
-import es.caib.plugins.arxiu.api.DocumentExtensio;
-import es.caib.plugins.arxiu.api.DocumentFormat;
-import es.caib.plugins.arxiu.api.DocumentMetadades;
-import es.caib.plugins.arxiu.api.DocumentTipus;
-import es.caib.plugins.arxiu.api.Expedient;
-import es.caib.plugins.arxiu.api.Firma;
+import es.caib.pluginsib.arxiu.api.ArxiuException;
+import es.caib.pluginsib.arxiu.api.ConsultaFiltre;
+import es.caib.pluginsib.arxiu.api.ConsultaResultat;
+import es.caib.pluginsib.arxiu.api.ContingutArxiu;
+import es.caib.pluginsib.arxiu.api.ContingutOrigen;
+import es.caib.pluginsib.arxiu.api.Document;
+import es.caib.pluginsib.arxiu.api.DocumentContingut;
+import es.caib.pluginsib.arxiu.api.DocumentEstatElaboracio;
+import es.caib.pluginsib.arxiu.api.DocumentExtensio;
+import es.caib.pluginsib.arxiu.api.DocumentFormat;
+import es.caib.pluginsib.arxiu.api.DocumentMetadades;
+import es.caib.pluginsib.arxiu.api.DocumentTipus;
+import es.caib.pluginsib.arxiu.api.Expedient;
+import es.caib.pluginsib.arxiu.api.Firma;
 import org.apache.commons.io.IOUtils;
 import org.apache.tika.Tika;
 import org.apache.tika.mime.MimeTypeException;
@@ -38,7 +38,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
-public class ArxiuPluginCaib extends es.caib.plugins.arxiu.caib.ArxiuPluginCaib implements ArxiuPlugin {
+public class ArxiuPluginCaib extends es.caib.pluginsib.arxiu.caib.ArxiuPluginCaib implements ArxiuPlugin {
 
     public static final String ARXIU_BASE_PROP = "plugin.arxiu.";
 

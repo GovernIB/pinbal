@@ -1,9 +1,8 @@
 import { test, expect } from '../../utils/fixtures';
-import { waitForDataTableReload, waitForInitialDataTableLoad } from '../../utils/datatable';
+import { waitForDataTableReload } from '../../utils/datatable';
 import {
     consultaSimpleConfig,
     SCSP_FAKE_ERROR_TRIGGER_DOC,
-    SCSP_FAKE_SUCCESS_DOC,
     uniqueSuffix,
 } from '../../utils/env';
 import { modalFrame } from '../../utils/modal';
@@ -17,16 +16,18 @@ import { modalFrame } from '../../utils/modal';
  */
 test.describe('Llistat de consultes simples (delegat)', () => {
     test('el llistat de consultes simples es carrega', async ({ delegatPage: page }) => {
-        await page.goto('consulta');
-        await waitForInitialDataTableLoad(page);
+        await waitForDataTableReload(page, async () => {
+            await page.goto('consulta');
+        });
 
         await expect(page.locator('#table-consultes')).toBeVisible();
         await expect(page.locator('#form-filtre')).toBeVisible();
     });
 
     test('es pot filtrar per nom del titular i netejar el filtre', async ({ delegatPage: page }) => {
-        await page.goto('consulta');
-        await waitForInitialDataTableLoad(page);
+        await waitForDataTableReload(page, async () => {
+            await page.goto('consulta');
+        });
 
         await waitForDataTableReload(page, async () => {
             await page.locator('#titularNom').fill('Titular que no hauria d\'existir E2E');
@@ -41,8 +42,9 @@ test.describe('Llistat de consultes simples (delegat)', () => {
     });
 
     test('es pot filtrar per estat de la consulta', async ({ delegatPage: page }) => {
-        await page.goto('consulta');
-        await waitForInitialDataTableLoad(page);
+        await waitForDataTableReload(page, async () => {
+            await page.goto('consulta');
+        });
 
         await waitForDataTableReload(page, async () => {
             await page.locator('#estat').selectOption('Error', { force: true });
@@ -99,16 +101,28 @@ test.describe('Consulta simple (delegat)', () => {
         await page.locator('#departamentNom').fill('Departament E2E');
         await page.locator('#finalitat').fill(`Prova e2e ${suffix}`);
 
+        // 'Passaport' i no 'NIF': el disparador d'error del fake SCSP (SCSP_FAKE_ERROR_TRIGGER_DOC
+        // = '00000000ERR') no és un NIF de format vàlid; DocumentIdentitatValidator aplica
+        // checksum per a NIF/DNI/NIE/CIF però accepta qualsevol valor per a 'Passaport' sense cap
+        // comprovació de format. Amb 'NIF' el formulari rebutja el document abans d'arribar a
+        // SCSP ("Número de document invàlid") i la consulta mai es crea (vegeu e2e/BUGS_APLICACIO.md).
         const titularDocumentTipus = page.locator('#titularDocumentTipus');
         if (await titularDocumentTipus.count()) {
-            await titularDocumentTipus.selectOption('NIF', { force: true });
+            await titularDocumentTipus.selectOption('Passaport', { force: true });
         }
         await titularDocumentNum.fill(SCSP_FAKE_ERROR_TRIGGER_DOC);
 
         await page.locator('#consultaForm button[type="submit"]').click();
 
-        await page.goto('consulta');
-        await waitForInitialDataTableLoad(page);
+        // A diferència d'una consulta amb èxit, quan SCSP retorna un CodigoEstado d'error
+        // l'aplicació NO redirigeix al llistat: es queda al formulari mostrant l'error en línia
+        // ("La consulta ha retornat un error: [9999]...") i deixa que l'usuari en modifiqui les
+        // dades i reintenti (el que generaria una consulta NOVA, no la mateixa). Això NO vol dir
+        // que la consulta no s'hagi creat: sí que es crea i és consultable al llistat amb
+        // estat=Error -- cal anar-hi expressament a comprovar-ho, no confiar en cap redirecció.
+        await waitForDataTableReload(page, async () => {
+            await page.goto('consulta');
+        });
         await waitForDataTableReload(page, async () => {
             await page.locator('#titularDocument').fill(SCSP_FAKE_ERROR_TRIGGER_DOC);
             await page.locator('#filtrar').click();
@@ -121,35 +135,61 @@ test.describe('Consulta simple (delegat)', () => {
 });
 
 /**
- * Detall d'una consulta simple ja "Tramitada" (creada per `global-setup.ts`
- * amb el document normal `SCSP_FAKE_SUCCESS_DOC`): informació de l'arxiu,
- * vista prèvia del justificant, i reintent/vista d'error de la generació del
- * justificant. Es cerca la fila al llistat en lloc de dependre d'un id
- * concret, ja que `global-setup.ts` és tolerant a fallades i pot no haver
- * arribat a crear-la (l'entorn no tenia cap servei amb el camp de document
- * actiu, p.ex.); en aquest cas els tests es marquen com a "skipped".
+ * Detall d'una consulta simple: informació de l'arxiu, vista prèvia del
+ * justificant, i reintent/vista d'error de la generació del justificant.
+ *
+ * Es cerca sempre la consulta de mostra sembrada `PBL_E2E_SIMPLE_OK`
+ * (`scspPeticionId`, filtre `#scspPeticionId`) en lloc de filtrar per
+ * document i agafar "la primera Tramitada": ara que `global-setup.ts` crea
+ * consultes reals amb el mateix document normal de prova
+ * (`SCSP_FAKE_SUCCESS_DOC`, coincident amb el `titular_docnum` sembrat de
+ * `PBL_E2E_SIMPLE_OK`), aquell filtre podia trobar-ne més d'una i quedar-se
+ * amb la més recent (la creada dinàmicament), que no té per què tenir
+ * justificant/missatges en el mateix estat determinista que la sembrada
+ * (mateix problema ja detectat als tests d'administrador: cal apuntar a una
+ * consulta Tramitada concreta que tingui els missatges, no "la primera").
  */
 test.describe('Detall de consulta simple (delegat)', () => {
     async function obrirDetallConsultaTramitada(page: import('@playwright/test').Page) {
-        await page.goto('consulta');
-        await waitForInitialDataTableLoad(page);
         await waitForDataTableReload(page, async () => {
-            await page.locator('#titularDocument').fill(SCSP_FAKE_SUCCESS_DOC);
+            await page.goto('consulta');
+        });
+        await waitForDataTableReload(page, async () => {
+            await page.locator('#scspPeticionId').fill('PBL_E2E_SIMPLE_OK');
             await page.locator('#filtrar').click();
         });
 
-        const fila = page.locator('#table-consultes tbody tr', { hasText: 'Tramitada' }).first();
-        if (!(await fila.isVisible().catch(() => false))) {
+        // waitForDataTableReload només espera la resposta de xarxa de l'ajax del DataTable,
+        // no que aquest hagi acabat de pintar el resultat al DOM; un `.isVisible()` (sense
+        // esperar) just després és una condició de carrera que fa saltar el test encara que
+        // la fila existeixi (confirmat: la resposta ajax ja porta `recordsFiltered:1` amb les
+        // dades correctes, però el redraw del DataTable és una mica posterior). Cal `waitFor`.
+        const fila = page.locator('#table-consultes tbody tr', { hasText: 'PBL_E2E_SIMPLE_OK' }).first();
+        const trobada = await fila.waitFor({ state: 'visible', timeout: 10_000 }).then(() => true).catch(() => false);
+        if (!trobada) {
             test.skip(
                 true,
-                'No hi ha cap consulta "Tramitada" amb el document normal de prova; '
-                    + 'global-setup.ts no ha pogut crear-la en aquest entorn (vegeu els avisos al log de la suite).',
+                'No es troba la consulta de mostra "PBL_E2E_SIMPLE_OK" (sembrada per Liquibase, context e2e); '
+                    + 'vegeu 01_e2e_seed_serveis.yaml i e2e/BUGS_APLICACIO.md.',
             );
             return null;
         }
 
         await fila.getByRole('link', { name: /detalls/i }).click();
-        return modalFrame(page);
+        const frame = await modalFrame(page);
+
+        // #mostrarVistaPrevia i #justificantInfo viuen dins el tab-pane "Justificant"
+        // (#descarregaJustificantsTab, consultaInfo.jsp), amagat per defecte (Bootstrap tabs:
+        // només el primer tab, "Dades genèriques", és actiu en carregar). Sense clicar aquest
+        // tab abans, `.isVisible()` sobre aquests botons és sempre fals encara que hi siguin al
+        // DOM -- confirmat que és la causa real dels "skip" d'aquests dos tests, no manca de
+        // dades (el tab només es renderitza si `justificantEstatOk`/`Pendent`/`Error`, així que
+        // si no hi és, tampoc hi és per manca de justificant real, cas que sí cal saltar).
+        const tabJustificant = frame.getByRole('tab', { name: /justificant/i });
+        if (await tabJustificant.isVisible().catch(() => false)) {
+            await tabJustificant.click();
+        }
+        return frame;
     }
 
     test('es pot veure la vista prèvia del justificant', async ({ delegatPage: page }) => {
@@ -163,11 +203,11 @@ test.describe('Detall de consulta simple (delegat)', () => {
         }
 
         await botoVistaPrevia.click();
-        const pdfContainer = frame.locator('#pdf-container');
-        const errorContainer = frame.locator('#error-container');
-        // Segons si el justificant s'ha pogut generar/servir correctament a l'entorn,
-        // acceptem tant la vista prèvia com el missatge d'error com a resultat vàlid del clic.
-        await expect(pdfContainer.or(errorContainer)).toBeVisible({ timeout: 15_000 });
+        // #pdf-container i #error-container conviuen SEMPRE al DOM (un dels dos amb
+        // display:none): `.or()` els troba tots dos i viola el "strict mode". El
+        // pseudo-selector :visible sí que filtra pel que realment es mostra (mateix fix
+        // aplicat a consultes-realitzades.spec.ts, administrador).
+        await expect(frame.locator('#pdf-container:visible, #error-container:visible')).toBeVisible({ timeout: 15_000 });
     });
 
     test('es pot veure la informació de l\'arxiu del justificant, si està disponible', async ({ delegatPage: page }) => {
@@ -189,24 +229,30 @@ test.describe('Detall de consulta simple (delegat)', () => {
     });
 
     test('es pot reintentar i veure l\'error d\'una consulta amb error en la generació del justificant', async ({ delegatPage: page }) => {
-        await page.goto('consulta');
-        await waitForInitialDataTableLoad(page);
+        await waitForDataTableReload(page, async () => {
+            await page.goto('consulta');
+        });
 
-        // Aquesta funcionalitat només és visible per a files "Tramitada" amb
-        // el justificant en estat d'error (justificantEstat == 'error'); no hi
-        // ha manera coneguda de forçar aquest estat concret des del fake de
-        // SCSP (que només controla el resultat de la consulta, no el de la
-        // generació posterior del PDF), així que el test és merament
-        // observacional: si cap fila mostra aquest estat, se salta.
-        const filaAmbErrorJustificant = page.locator('#table-consultes tbody tr').filter({
-            has: page.locator('a.dropdown-toggle .fa-exclamation-triangle.text-danger'),
-        }).first();
+        // Aquesta funcionalitat només és visible per a files "Tramitada" amb el
+        // justificant en estat d'error; no hi ha manera coneguda de forçar aquest
+        // estat concret des del fake de SCSP (que només controla el resultat de la
+        // consulta, no el de la generació posterior del PDF), així que fem servir la
+        // consulta de mostra sembrada `PBL_E2E_SIMPLE_JUSTERR` (Liquibase, context
+        // e2e) en lloc d'escanejar "la primera fila amb aquest estat": amb prou
+        // consultes generades per altres tests, la primera fila del llistat sense
+        // filtrar pot no ser-ho (mateix problema detectat als tests d'administrador).
+        await waitForDataTableReload(page, async () => {
+            await page.locator('#scspPeticionId').fill('PBL_E2E_SIMPLE_JUSTERR');
+            await page.locator('#filtrar').click();
+        });
+        const filaAmbErrorJustificant = page.locator('#table-consultes tbody tr', { hasText: 'PBL_E2E_SIMPLE_JUSTERR' }).first();
+        const trobada = await filaAmbErrorJustificant.waitFor({ state: 'visible', timeout: 10_000 }).then(() => true).catch(() => false);
 
-        if (!(await filaAmbErrorJustificant.isVisible().catch(() => false))) {
+        if (!trobada) {
             test.skip(
                 true,
-                'Cap consulta del llistat té el justificant en estat d\'error; aquest estat no es pot forçar '
-                    + 'des del fake de SCSP (només afecta la consulta, no la generació posterior del justificant).',
+                'No es troba la consulta de mostra "PBL_E2E_SIMPLE_JUSTERR" (sembrada per Liquibase, context e2e); '
+                    + 'vegeu 01_e2e_seed_serveis.yaml i e2e/BUGS_APLICACIO.md.',
             );
             return;
         }

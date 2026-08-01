@@ -20,12 +20,26 @@ import { uniqueSuffix } from '../../utils/env';
  * massiu) fan servir un sufix únic i esborren les seves files en acabar per
  * no deixar contaminació entre execucions; els tests de només lectura (
  * llistat, barra d'avisos) es limiten a comprovar les files sembrades.
+ *
+ * `avuiDDMMYYYY()` ha de calcular el dia en UTC, NO en la zona horària local
+ * de la màquina on corre Playwright: els contenidors (JBoss + Oracle) corren
+ * en UTC (imatge base sense TZ configurada), mentre que aquest procés pot
+ * córrer en una zona horària per davant d'UTC (p.ex. Europe/Madrid,
+ * CEST=UTC+2). Durant les ~2 hores de cada dia en què ja és "demà" en hora
+ * local però encara és "avui" en UTC (22:00-00:00 UTC), calcular la data amb
+ * getDate()/getMonth()/getFullYear() (hora local) produïa una dataInici d'UN
+ * DIA EN EL FUTUR respecte al rellotge del servidor -- AvisRepository.
+ * findActive() (trunc(dataInici) <= trunc(ara-del-servidor)) descartava
+ * legítimament l'avís perquè encara no havia arribat el seu dia d'inici
+ * segons el servidor, encara que semblés "avui" localment. No és un bug de
+ * l'aplicació (verificat amb SQL directe contra Oracle): és aquest test
+ * calculant "avui" amb el rellotge equivocat.
  */
 function avuiDDMMYYYY(): string {
     const d = new Date();
-    const dd = String(d.getDate()).padStart(2, '0');
-    const mm = String(d.getMonth() + 1).padStart(2, '0');
-    return `${dd}/${mm}/${d.getFullYear()}`;
+    const dd = String(d.getUTCDate()).padStart(2, '0');
+    const mm = String(d.getUTCMonth() + 1).padStart(2, '0');
+    return `${dd}/${mm}/${d.getUTCFullYear()}`;
 }
 
 test.describe('Configurar avisos (administrador)', () => {

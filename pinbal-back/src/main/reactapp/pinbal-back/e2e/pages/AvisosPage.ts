@@ -155,8 +155,24 @@ export class AvisosPage {
         return this.row(assumpte).locator('.row-selector');
     }
 
+    /**
+     * Marca/desmarca la fila. `avisList.jsp` actualitza la icona de manera
+     * SÍNCRONA però persisteix la selecció al servidor amb un `$.post(
+     * 'avis/selection/add|remove', ...)` "fire-and-forget" (sense esperar
+     * la resposta abans de deixar interactuar l'usuari). Les accions
+     * massives (`#bulk-enable`/`#bulk-disable`) no envien els ids
+     * seleccionats al cos de la petició: el servidor els llegeix de la
+     * selecció ja persistida a sessió. Si s'obre el menú d'accions
+     * massives abans que aquesta petició de selecció hagi arribat al
+     * servidor (condició de carrera real, observada sota càrrega —
+     * diversos workers de Playwright competint pel mateix JBoss), l'avís
+     * seleccionat just abans queda fora de l'acció massiva. S'espera aquí
+     * la resposta per eliminar la condició de carrera al test.
+     */
     async seleccionar(assumpte: string): Promise<void> {
+        const responsePromise = this.page.waitForResponse((resp) => /\/avis\/selection\/(add|remove)(\?|$)/.test(resp.url()));
         await this.rowSelector(assumpte).click();
+        await responsePromise;
     }
 
     /**

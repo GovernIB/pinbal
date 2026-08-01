@@ -1,6 +1,6 @@
 import { Page } from '@playwright/test';
 import { test, expect } from '../../utils/fixtures';
-import { waitForDataTableReload, waitForInitialDataTableLoad } from '../../utils/datatable';
+import { waitForDataTableReload } from '../../utils/datatable';
 import { modalFrame } from '../../utils/modal';
 
 /**
@@ -16,8 +16,9 @@ import { modalFrame } from '../../utils/modal';
  */
 test.describe('Llistat de consultes múltiples (delegat)', () => {
     test('el llistat de consultes múltiples es carrega amb les dades esperades', async ({ delegatPage: page }) => {
-        await page.goto('consulta/multiple');
-        await waitForInitialDataTableLoad(page);
+        await waitForDataTableReload(page, async () => {
+            await page.goto('consulta/multiple');
+        });
 
         await expect(page.locator('#table-consultes')).toBeVisible();
         await expect(page.locator('#form-filtre')).toBeVisible();
@@ -29,8 +30,9 @@ test.describe('Llistat de consultes múltiples (delegat)', () => {
     });
 
     test('es pot filtrar per estat i netejar el filtre', async ({ delegatPage: page }) => {
-        await page.goto('consulta/multiple');
-        await waitForInitialDataTableLoad(page);
+        await waitForDataTableReload(page, async () => {
+            await page.goto('consulta/multiple');
+        });
 
         await waitForDataTableReload(page, async () => {
             await page.locator('#estat').selectOption('Error', { force: true });
@@ -47,8 +49,9 @@ test.describe('Llistat de consultes múltiples (delegat)', () => {
     });
 
     test('permet exportar el llistat a Excel', async ({ delegatPage: page }) => {
-        await page.goto('consulta/multiple');
-        await waitForInitialDataTableLoad(page);
+        await waitForDataTableReload(page, async () => {
+            await page.goto('consulta/multiple');
+        });
 
         const linkExcel = page.locator('a[href*="multiple/excel"]');
         await expect(linkExcel).toBeVisible();
@@ -58,8 +61,9 @@ test.describe('Llistat de consultes múltiples (delegat)', () => {
     });
 
     test('es pot alternar entre consultes recents i històriques', async ({ delegatPage: page }) => {
-        await page.goto('consulta/multiple');
-        await waitForInitialDataTableLoad(page);
+        await waitForDataTableReload(page, async () => {
+            await page.goto('consulta/multiple');
+        });
 
         // El widget "Històric" (data-toggle="titol-check" a consultaMultiple.jsp,
         // js/webutil.common.js#webutilTitolCheck) es converteix en un interruptor
@@ -86,28 +90,36 @@ test.describe('Llistat de consultes múltiples (delegat)', () => {
     });
 });
 
-/** Navega al llistat de múltiples i obre el detall de la primera fila; retorna `null` (i salta el test) si el llistat és buit. */
+/**
+ * Navega al llistat de múltiples i obre el detall de la consulta de mostra sembrada
+ * `PBL_E2E_MULTIPLE_01` (Liquibase, context e2e, sempre "Tramitada" i amb sol·licituds/
+ * missatges); retorna `null` (i salta el test) si no es troba.
+ *
+ * Es filtra explícitament per `#scspPeticionId` en lloc d'agafar "la primera fila": ara
+ * que `global-setup.ts` crea també una consulta múltiple real (mateix `Q2827003ATGSS001`),
+ * "la primera" (ordenada per data descendent) seria la creada dinàmicament, que no té
+ * per què tenir sol·licituds/missatges en el mateix estat determinista que la sembrada
+ * (mateix problema ja detectat als tests d'administrador: cal una consulta Tramitada
+ * concreta que tingui els missatges, no "la primera").
+ */
 async function obrirPrimerDetallMultiple(page: Page) {
-    await page.goto('consulta/multiple');
-    await waitForInitialDataTableLoad(page);
+    await waitForDataTableReload(page, async () => {
+        await page.goto('consulta/multiple');
+    });
+    await waitForDataTableReload(page, async () => {
+        await page.locator('#scspPeticionId').fill('PBL_E2E_MULTIPLE_01');
+        await page.locator('#filtrar').click();
+    });
 
-    // waitForInitialDataTableLoad només espera la resposta de xarxa de
-    // l'ajax del DataTable, no que aquest hagi acabat de pintar el resultat
-    // (fila buida o files reals) al DOM. Comprovar `buit.isVisible()` tot
-    // seguit, sense esperar, és una condició de carrera: si encara no s'ha
-    // pintat, `buit` és fals però la taula tampoc té encara cap fila real, i
-    // el codi seguiria per fer clic sobre una fila que no existeix (timeout).
-    // Esperem explícitament que una de les dues coses sigui visible abans de
-    // decidir si cal saltar el test.
-    const rows = page.locator('#table-consultes tbody tr');
+    const rows = page.locator('#table-consultes tbody tr', { hasText: 'PBL_E2E_MULTIPLE_01' });
     const buit = page.locator('#table-consultes td.dataTables_empty');
     await expect(rows.or(buit).first()).toBeVisible({ timeout: 15_000 });
 
     if (await buit.isVisible().catch(() => false)) {
         test.skip(
             true,
-            'No hi ha cap consulta múltiple al llistat; global-setup.ts no ha pogut crear-ne cap en aquest '
-                + 'entorn (vegeu els avisos al log de la suite).',
+            'No es troba la consulta de mostra "PBL_E2E_MULTIPLE_01" (sembrada per Liquibase, context e2e); '
+                + 'vegeu 01_e2e_seed_serveis.yaml i e2e/BUGS_APLICACIO.md.',
         );
         return null;
     }
@@ -159,9 +171,14 @@ test.describe('Detall de consulta múltiple (delegat)', () => {
             return;
         }
 
+        // El contingut de `#missatgeXml` s'omple amb `$('#modal-missatge-xml .modal-body').load(href)`
+        // (ajax pla, sense esdeveniment de navegació que `locator.click()` pugui esperar sol);
+        // cal registrar l'espera de la resposta ABANS del clic per no perdre-la per condició de carrera.
         const linkXmlPeticioFilla = primeraFila.locator('a[href*="/xmlPeticio"]');
         if (await linkXmlPeticioFilla.count()) {
+            const responsePeticio = page.waitForResponse((res) => res.url().includes('/xmlPeticio') && res.ok());
             await linkXmlPeticioFilla.click();
+            await responsePeticio;
             const modalXml = frame.locator('#modal-missatge-xml');
             await expect(modalXml).toBeVisible();
             await expect(modalXml.locator('#missatgeXml')).not.toHaveValue('');
@@ -170,7 +187,9 @@ test.describe('Detall de consulta múltiple (delegat)', () => {
 
         const linkXmlRespostaFilla = primeraFila.locator('a[href*="/xmlResposta"]');
         if (await linkXmlRespostaFilla.count()) {
+            const responsePosta = page.waitForResponse((res) => res.url().includes('/xmlResposta') && res.ok());
             await linkXmlRespostaFilla.click();
+            await responsePosta;
             const modalXml = frame.locator('#modal-missatge-xml');
             await expect(modalXml).toBeVisible();
             await expect(modalXml.locator('#missatgeXml')).not.toHaveValue('');
@@ -189,7 +208,16 @@ test.describe('Detall de consulta múltiple (delegat)', () => {
 
         const numSolicitud = (await primeraFila.locator('td').first().innerText()).trim();
 
+        // Aquest clic provoca una navegació INTERNA del mateix iframe (no una nova
+        // modal via webutil.modal.js), cap a la pàgina de detall de la sol·licitud.
+        // Cal registrar l'espera de la resposta ABANS del clic: confirmat empíricament
+        // (10/10 respostes idèntiques i correctes en cru via `page.request.get`) que el
+        // servidor sempre torna el contingut correcte de seguida; la flakiness és
+        // 100% del costat del navegador/Playwright en aquesta transició interna de
+        // l'iframe, no de l'aplicació.
+        const responseDetall = page.waitForResponse((res) => res.url().includes('/modal/consulta/') && res.ok());
         await primeraFila.getByRole('link', { name: /detalls/i }).click();
+        await responseDetall;
 
         // El detall de sol·licitud es com el detall simple (no es reprova aquí);
         // només comprovem que s'ha navegat a la sol·licitud correcta: el

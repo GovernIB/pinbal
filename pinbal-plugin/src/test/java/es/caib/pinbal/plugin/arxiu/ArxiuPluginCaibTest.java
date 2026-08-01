@@ -2,10 +2,10 @@ package es.caib.pinbal.plugin.arxiu;
 
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpServer;
-import es.caib.plugins.arxiu.api.ArxiuException;
-import es.caib.plugins.arxiu.api.Document;
-import es.caib.plugins.arxiu.api.DocumentContingut;
-import es.caib.plugins.arxiu.api.DocumentMetadades;
+import es.caib.pluginsib.arxiu.api.ArxiuException;
+import es.caib.pluginsib.arxiu.api.Document;
+import es.caib.pluginsib.arxiu.api.DocumentContingut;
+import es.caib.pluginsib.arxiu.api.DocumentMetadades;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;

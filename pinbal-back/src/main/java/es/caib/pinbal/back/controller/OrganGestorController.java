@@ -64,7 +64,12 @@ public class OrganGestorController extends BaseController {
 			return "organGestor";
 		} else {
 			if (command.getEntitatId() == null) {
-				command.setEntitatId(entitatService.findTopByTipus(EntitatTipusDto.GOVERN).getId());
+				if (RolHelper.isRolActualAdministrador(request)) {
+					command.setEntitatId(entitatService.findTopByTipus(EntitatTipusDto.GOVERN).getId());
+				} else {
+					EntitatDto entitatActual = EntitatHelper.getEntitatActual(request);
+					command.setEntitatId(entitatActual != null ? entitatActual.getId() : null);
+				}
 			}
 			RequestSessionHelper.actualitzarObjecteSessio(
 					request,

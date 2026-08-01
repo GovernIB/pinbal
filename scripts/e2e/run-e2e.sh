@@ -1,29 +1,37 @@
 #!/usr/bin/env bash
 #
 # Arranca l'aplicació PINBAL (docker compose/podman-compose) contra una base
-# de dades H2 EFÍMERA (en memòria, servida per un contenidor auxiliar "h2"
-# definit a docker-compose.e2e.yml, sempre afegit com a overlay sobre
-# docker-compose.yml), el servidor fake de SCSP (pinbal-scsp-fake) i executa
-# la suite Playwright de e2e/. Keycloak segueix sent l'extern configurat a
-# .env (AUTH_URL/AUTH_REALM/...); no es toca.
+# de dades EFÍMERA — Oracle Database Free (per defecte, contenidor "oracle"
+# definit a docker-compose.e2e-oracle.yml) o H2 en memòria (--db=h2,
+# contenidor "h2" definit a docker-compose.e2e.yml), sempre afegit com a
+# overlay sobre docker-compose.yml —, el servidor fake de SCSP
+# (pinbal-scsp-fake) i executa la suite Playwright de e2e/. Keycloak segueix
+# sent l'extern configurat a .env (AUTH_URL/AUTH_REALM/...); no es toca.
 #
 # L'esquema i les dades de proves es creen automàticament en arrencar JBoss
-# (Liquibase, spring.liquibase.enabled=true). Com que la BD és en memòria,
-# CADA EXECUCIÓ PARTEIX D'UN ESTAT NET tan bon punt es recrea el contenidor
-# h2 (p. ex. amb --down seguit d'una nova execució, o en aturar-lo a mà); si
-# es reutilitza el mateix contenidor h2 en marxa entre execucions (comportament
-# per defecte, vegeu --down), les dades es mantenen.
+# (Liquibase, spring.liquibase.enabled=true). CADA EXECUCIÓ PARTEIX D'UN
+# ESTAT NET tan bon punt es recrea el contenidor de BD (h2 o oracle: cap dels
+# dos overlays fa servir volums persistents, vegeu docker/oracle/README.md pel
+# motiu concret d'Oracle). Si es reutilitza el mateix contenidor en marxa
+# entre execucions (comportament per defecte, vegeu --down), les dades es
+# mantenen; Liquibase ja és idempotent (salta els canvis ja aplicats).
 #
 # Ús:
 #   scripts/e2e/run-e2e.sh [opcions] [-- <arguments per a playwright>]
 #
 # Opcions:
+#   --db=oracle|h2          Motor de BD a fer servir (per defecte: oracle).
+#                            La primera vegada amb Oracle cal descarregar una
+#                            imatge d'uns 5 GB (pública, no cal cap "docker
+#                            login"); un cop en caché local, arrenca en
+#                            segons, igual que H2. Vegeu docker/oracle/README.md.
 #   --down                  Atura (compose down) l'aplicació en acabar.
 #                            Per defecte es deixa la pila engegada perquè
 #                            l'arrencada de JBoss és lenta i es puguin tornar
 #                            a executar els tests sense esperar de nou (però
-#                            l'estat de la BD H2 només es conserva mentre el
-#                            contenidor h2 segueixi en marxa).
+#                            l'estat de la BD només es conserva mentre el
+#                            contenidor de BD segueixi en marxa: cap dels dos
+#                            overlays fa servir volums persistents).
 #   --skip-compose          No aixequi l'aplicació (assumeix que ja està en marxa).
 #   --skip-fake-build       No recompili pinbal-scsp-fake (usa el jar existent).
 #   --skip-fake             No arrenqui el fake SCSP (assumeix que ja està en marxa).
@@ -35,7 +43,9 @@
 #   FAKE_SCSP_HOST (per defecte 127.0.0.1)
 #   FAKE_SCSP_PORT (per defecte 18080)
 #   E2E_BASE_URL   (per defecte http://localhost:8080/pinbalback)
-#   APP_READY_TIMEOUT_SECONDS (per defecte 600)
+#   APP_READY_TIMEOUT_SECONDS (per defecte 600; considereu augmentar-lo si el
+#                              pull de la imatge d'Oracle (--db=oracle, la
+#                              primera vegada) triga més que això)
 #
 # Credencials i càrrega de dades:
 #   Les credencials de pinbal-back/.../e2e/.env.e2e (E2E_ADMIN_USERNAME,
@@ -43,11 +53,12 @@
 #   usuaris reals del Keycloak compartit) es passen a l'aplicació com a
 #   paràmetres de Liquibase perquè la càrrega de dades de e2e
 #   (pinbal-persistence/.../db/changelog/e2e/) creï els usuaris/entitats de
-#   proves corresponents a la BD H2. Aquesta mateixa càrrega ja redirigeix
-#   els serveis SCSP coberts pel fake cap a FAKE_SCSP_BASE_URL, de manera que
-#   ja NO cal cap pas manual per apuntar-los-hi (l'antiga opció
-#   --point-scsp-urls/scripts/scsp-fake/point-to-fake.sql només té sentit
-#   contra un Oracle real, fora d'aquest flux; vegeu FAKE_SCSP_SERVER.md).
+#   proves corresponents a la BD efímera (H2 o Oracle, indistintament).
+#   Aquesta mateixa càrrega ja redirigeix els serveis SCSP coberts pel fake
+#   cap a FAKE_SCSP_BASE_URL, de manera que ja NO cal cap pas manual per
+#   apuntar-los-hi (l'antiga opció --point-scsp-urls/scripts/scsp-fake/
+#   point-to-fake.sql només té sentit contra un Oracle real NO gestionat per
+#   aquest script, fora d'aquest flux; vegeu FAKE_SCSP_SERVER.md).
 #
 set -euo pipefail
 
@@ -64,6 +75,7 @@ APP_BASE_URL="${E2E_BASE_URL:-http://localhost:8080/pinbalback}"
 APP_READY_TIMEOUT_SECONDS="${APP_READY_TIMEOUT_SECONDS:-600}"
 FAKE_READY_TIMEOUT_SECONDS="${FAKE_READY_TIMEOUT_SECONDS:-60}"
 
+DB_ENGINE="oracle"
 DOWN_AFTER=false
 SKIP_COMPOSE=false
 SKIP_FAKE_BUILD=false
@@ -77,6 +89,8 @@ err()  { echo "[e2e][error] $*" >&2; }
 
 while [[ $# -gt 0 ]]; do
     case "$1" in
+        --db=*) DB_ENGINE="${1#--db=}"; shift ;;
+        --db) DB_ENGINE="$2"; shift 2 ;;
         --down) DOWN_AFTER=true; shift ;;
         --skip-compose) SKIP_COMPOSE=true; shift ;;
         --skip-fake-build) SKIP_FAKE_BUILD=true; shift ;;
@@ -88,6 +102,11 @@ while [[ $# -gt 0 ]]; do
         *) err "Opció desconeguda: $1"; exit 1 ;;
     esac
 done
+
+case "$DB_ENGINE" in
+    oracle|h2) ;;
+    *) err "Motor de BD desconegut: '$DB_ENGINE' (valors vàlids: oracle, h2)"; exit 1 ;;
+esac
 
 mkdir -p "$RUN_DIR"
 
@@ -109,11 +128,17 @@ else
     exit 1
 fi
 log "Motor de compose: ${COMPOSE_CMD[*]}"
+log "Motor de BD: $DB_ENGINE"
 
-# S'afegeix sempre l'overlay docker-compose.e2e.yml, que substitueix la BD
-# Oracle externa per un H2 efímer i injecta els paràmetres de Liquibase de
-# e2e (vegeu docker-compose.e2e.yml). No modifica docker-compose.yml.
-COMPOSE_FILE_ARGS=(-f "$ROOT_DIR/docker-compose.yml" -f "$ROOT_DIR/docker-compose.e2e.yml")
+# S'afegeix sempre un overlay que substitueix la BD Oracle externa de .env
+# per un contenidor efímer (Oracle Free o H2, segons --db) i injecta els
+# paràmetres/context de Liquibase de e2e (vegeu docker-compose.e2e-oracle.yml
+# / docker-compose.e2e.yml). No modifica docker-compose.yml.
+if [[ "$DB_ENGINE" == "oracle" ]]; then
+    COMPOSE_FILE_ARGS=(-f "$ROOT_DIR/docker-compose.yml" -f "$ROOT_DIR/docker-compose.e2e-oracle.yml")
+else
+    COMPOSE_FILE_ARGS=(-f "$ROOT_DIR/docker-compose.yml" -f "$ROOT_DIR/docker-compose.e2e.yml")
+fi
 
 if [[ "$SKIP_COMPOSE" == false ]]; then
     if [[ ! -f "$ROOT_DIR/.env" ]]; then
@@ -203,12 +228,16 @@ export E2E_USER_INACTIU_USERNAME="${E2E_USER_INACTIU_USERNAME:-E2E_USER_INACTIU}
 export E2E_USER_ALL_ROLES="${E2E_USER_ALL_ROLES:-pbl_all}"
 export FAKE_SCSP_BASE_URL="http://host.docker.internal:${FAKE_SCSP_PORT}"
 
-# --- 3. Aplicació PINBAL (docker/podman compose + overlay H2) --------------
+# --- 3. Aplicació PINBAL (docker/podman compose + overlay H2/Oracle) -------
 if [[ "$SKIP_COMPOSE" == false ]]; then
     log "Aixecant l'aplicació amb ${COMPOSE_CMD[*]} ${COMPOSE_FILE_ARGS[*]}..."
-    # --build assegura que la imatge local de l'overlay (h2, docker/h2/Dockerfile)
+    # --build assegura que la imatge local de l'overlay H2 (docker/h2/Dockerfile)
     # es reconstrueix si el Dockerfile ha canviat; en cas contrari el motor de
     # compose pot reutilitzar en silenci una imatge ja etiquetada i desactualitzada.
+    # (L'overlay Oracle no en té, cap "build:"; --build no hi té cap efecte.)
+    if [[ "$DB_ENGINE" == "oracle" ]]; then
+        log "Amb --db=oracle, si encara no teniu la imatge en caché local (~5 GB), aquest pas pot trigar una estona (vegeu docker/oracle/README.md)."
+    fi
     (cd "$ROOT_DIR" && "${COMPOSE_CMD[@]}" "${COMPOSE_FILE_ARGS[@]}" up -d --build)
     wait_for_http "$APP_BASE_URL" "$APP_READY_TIMEOUT_SECONDS" "l'aplicació PINBAL"
 else

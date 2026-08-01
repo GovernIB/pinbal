@@ -18,7 +18,6 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.BindingResult;
 
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -53,6 +52,11 @@ public class UsuariControllerTest {
         ControllerTestSupport.setField(controller, "entitatService", entitatService);
         ControllerTestSupport.setField(controller, "procedimentService", procedimentService);
         ControllerTestSupport.setField(controller, "serveiService", serveiService);
+        // Sense això, logout() prendria la branca Spring Boot (jbossHomeDir == null), que
+        // delega en WebSecurityConfig.LOGOUT_URL i mai exerceix la lògica pròpia de JBoss que
+        // aquesta classe de test verifica (invalidació de sessió + redirect a l'end_session_
+        // endpoint de Keycloak).
+        ControllerTestSupport.setField(controller, "jbossHomeDir", "/opt/jboss");
         controller.setMessageSource(ControllerTestSupport.mockMessageSourceEcoDeLaClau());
         request = ControllerTestSupport.mockRequest();
         response = mock(HttpServletResponse.class);
@@ -85,12 +89,9 @@ public class UsuariControllerTest {
     // ------------------------- logout -------------------------
 
     @Test
-    public void logoutSobreescriuLesCookiesIRedirigeix() {
-        when(request.getCookies()).thenReturn(new Cookie[]{new Cookie("JSESSIONID", "abc")});
-        when(request.getContextPath()).thenReturn("/pinbal");
-
-        assertEquals("redirect:/", controller.logout(request, response));
-        verify(response).addCookie(any());
+    public void logoutInvalidaLaSessioIRedirigeix() {
+        assertEquals("redirect:/", controller.logout(request));
+        verify(session).invalidate();
     }
 
     // ------------------------- getConfiguracio / save -------------------------

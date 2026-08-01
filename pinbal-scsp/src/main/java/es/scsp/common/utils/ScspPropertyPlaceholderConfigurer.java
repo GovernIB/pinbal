@@ -114,7 +114,15 @@ public class ScspPropertyPlaceholderConfigurer extends PropertyPlaceholderConfig
 	}
 
 	private void moveToDatabase(String property, Properties props) {
-		String propValue = super.resolvePlaceholder(property, props);
+		// environment.getProperty(...) resol tant System.getProperties() com System.getenv() (aquesta darrera
+		// és l'única via real per la qual arriben aquestes propietats quan es desplega amb docker-compose: les
+		// variables d'entorn amb noms amb punts no es tradueixen mai a System properties -D de la JVM). Sense
+		// això, la BBDD es queda amb el placeholder '.' sembrat per initial_data_scsp.sql i
+		// ScspCryptoFactoryBean falla en arrencar.
+		String propValue = environment != null ? environment.getProperty(property) : null;
+		if (propValue == null) {
+			propValue = super.resolvePlaceholder(property, props);
+		}
 
 		try (Connection connection = dataSource.getConnection();
 			 PreparedStatement selectPreparedStatement = connection.prepareStatement(SQL_SELECT);

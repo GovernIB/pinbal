@@ -62,6 +62,15 @@ export class EstadistiquesPage {
      * n'esborra el text escrit, i el valor arriba buit al servidor. Cal
      * `pressSequentially` (tecla a tecla, com un usuari real) perquè el
      * listener `keyup` del datepicker vagi construint el seu model alhora.
+     *
+     * IMPORTANT: `page.waitForLoadState('load')` NO és un listener d'un
+     * esdeveniment futur -- comprova l'estat ACTUAL de la pàgina i, si ja
+     * l'ha assolit (que sempre és el cas abans de clicar, ja que la pàgina
+     * prèvia ja ha carregat), es resol IMMEDIATAMENT sense esperar la
+     * navegació que el clic està a punt de disparar. Per això aquí NO val
+     * `Promise.all([this.page.waitForLoadState('load'), click])` (sempre
+     * guanyaria la primera promesa, ja resolta): cal `page.waitForEvent
+     * ('load')`, que sí registra un listener real per al PRÒXIM esdeveniment.
      */
     async filtrar(opcions: { dataInici?: string; dataFi?: string; estat?: string } = {}): Promise<void> {
         const form = this.page.locator('#form-filtre');
@@ -80,7 +89,7 @@ export class EstadistiquesPage {
             await form.locator('#estat').selectOption(opcions.estat, { force: true });
         }
         await Promise.all([
-            this.page.waitForLoadState('load'),
+            this.page.waitForEvent('load'),
             form.locator('#filtrar').click(),
         ]);
     }

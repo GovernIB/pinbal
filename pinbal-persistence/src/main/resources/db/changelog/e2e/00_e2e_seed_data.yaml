@@ -1,8 +1,10 @@
 databaseChangeLog:
 # Dades de demo/test per als tests Playwright d'e2e (scripts/e2e/run-e2e.sh).
 #
-# Només s'executa contra H2 (dbms: h2 a cada changeSet): mai s'aplicarà contra
-# un entorn Oracle/PostgreSQL real. Els usuaris de rol (delegat/representant/
+# Només s'executa quan el context Liquibase "e2e" està actiu (context: e2e a
+# cada changeSet; vegeu docker-compose.e2e.yml i docker-compose.e2e-oracle.yml),
+# independentment del motor de BD (H2 o Oracle) — mai contra un entorn normal
+# (dev/producció), on aquest context mai s'activa. Els usuaris de rol (delegat/representant/
 # auditor) es vinculen, via paràmetres de cadena de connexió de Liquibase
 # (e2eDelegatUsername, e2eRepresentantUsername, e2eAuditorUsername), als
 # comptes reals ja configurats a Keycloak i a
@@ -17,7 +19,7 @@ databaseChangeLog:
 - changeSet:
     id: e2e-seed-organisme-cessionari
     author: Limit
-    dbms: h2
+    context: e2e
     comment: >-
       Organisme cessionari de prova. Necessari perque ClauPrivadaCommand.organismeId
       es @NotNull: sense cap fila aqui no es pot crear cap clau privada nova
@@ -35,7 +37,7 @@ databaseChangeLog:
 - changeSet:
     id: e2e-seed-entitats
     author: Limit
-    dbms: h2
+    context: e2e
     comment: Entitats de prova per als tests Playwright
     changes:
     - insert:
@@ -64,7 +66,7 @@ databaseChangeLog:
 - changeSet:
     id: e2e-seed-usuaris-fixos
     author: Limit
-    dbms: h2
+    context: e2e
     comment: >-
       Usuaris addicionals (no lligats a un compte Keycloak concret, per aixo
       no calen preConditions com per admin/delegat/representant/auditor) per
@@ -80,6 +82,7 @@ databaseChangeLog:
         columns:
         - column: { name: codi, value: "${e2eUserActiuUsername}" }
         - column: { name: nom, value: "Usuari E2E Actiu" }
+        - column: { name: nif, value: "00000005M" }
         - column: { name: idioma, value: ca }
         - column: { name: inicialitzat, valueNumeric: 1 }
         - column: { name: version, valueNumeric: 0 }
@@ -88,6 +91,7 @@ databaseChangeLog:
         columns:
         - column: { name: codi, value: "${e2eUserInactiuUsername}" }
         - column: { name: nom, value: "Usuari E2E Inactiu" }
+        - column: { name: nif, value: "00000006Y" }
         - column: { name: idioma, value: ca }
         - column: { name: inicialitzat, valueNumeric: 1 }
         - column: { name: version, valueNumeric: 0 }
@@ -103,6 +107,7 @@ databaseChangeLog:
         columns:
         - column: { name: codi, value: E2E_USER_SENSE_ENTITAT }
         - column: { name: nom, value: "Usuari E2E Sense Entitat" }
+        - column: { name: nif, value: "00000007F" }
         - column: { name: idioma, value: ca }
         - column: { name: inicialitzat, valueNumeric: 1 }
         - column: { name: version, valueNumeric: 0 }
@@ -117,6 +122,7 @@ databaseChangeLog:
         columns:
         - column: { name: codi, value: "${e2eUserAllRolesUsername}" }
         - column: { name: nom, value: "Usuari E2E Tots els rols" }
+        - column: { name: nif, value: "00000008P" }
         - column: { name: idioma, value: ca }
         - column: { name: inicialitzat, valueNumeric: 1 }
         - column: { name: version, valueNumeric: 0 }
@@ -142,7 +148,7 @@ databaseChangeLog:
 - changeSet:
     id: e2e-seed-usuari-admin
     author: Limit
-    dbms: h2
+    context: e2e
     preConditions:
         onFail: MARK_RAN
         not:
@@ -155,6 +161,7 @@ databaseChangeLog:
         columns:
         - column: { name: codi, value: "${e2eAdminUsername}" }
         - column: { name: nom, value: "Administrador E2E" }
+        - column: { name: nif, value: "00000001R" }
         - column: { name: idioma, value: ca }
         - column: { name: inicialitzat, valueNumeric: 1 }
         - column: { name: version, valueNumeric: 0 }
@@ -162,7 +169,7 @@ databaseChangeLog:
 - changeSet:
     id: e2e-seed-usuari-delegat
     author: Limit
-    dbms: h2
+    context: e2e
     preConditions:
         onFail: MARK_RAN
         not:
@@ -175,6 +182,7 @@ databaseChangeLog:
         columns:
         - column: { name: codi, value: "${e2eDelegatUsername}" }
         - column: { name: nom, value: "Delegat E2E" }
+        - column: { name: nif, value: "00000002W" }
         - column: { name: idioma, value: ca }
         - column: { name: inicialitzat, valueNumeric: 1 }
         - column: { name: version, valueNumeric: 0 }
@@ -195,7 +203,7 @@ databaseChangeLog:
 - changeSet:
     id: e2e-seed-usuari-representant
     author: Limit
-    dbms: h2
+    context: e2e
     preConditions:
         onFail: MARK_RAN
         not:
@@ -208,6 +216,7 @@ databaseChangeLog:
         columns:
         - column: { name: codi, value: "${e2eRepresentantUsername}" }
         - column: { name: nom, value: "Representant E2E" }
+        - column: { name: nif, value: "00000003A" }
         - column: { name: idioma, value: ca }
         - column: { name: inicialitzat, valueNumeric: 1 }
         - column: { name: version, valueNumeric: 0 }
@@ -228,7 +237,7 @@ databaseChangeLog:
 - changeSet:
     id: e2e-seed-usuari-auditor
     author: Limit
-    dbms: h2
+    context: e2e
     preConditions:
         onFail: MARK_RAN
         not:
@@ -241,6 +250,7 @@ databaseChangeLog:
         columns:
         - column: { name: codi, value: "${e2eAuditorUsername}" }
         - column: { name: nom, value: "Auditor E2E" }
+        - column: { name: nif, value: "00000004G" }
         - column: { name: idioma, value: ca }
         - column: { name: inicialitzat, valueNumeric: 1 }
         - column: { name: version, valueNumeric: 0 }
@@ -261,7 +271,7 @@ databaseChangeLog:
 - changeSet:
     id: e2e-seed-entitat-usuari-fixos
     author: Limit
-    dbms: h2
+    context: e2e
     comment: Vinculacio a l'entitat E2E dels usuaris fixos (no lligats a Keycloak)
     changes:
     - insert:
@@ -309,9 +319,50 @@ databaseChangeLog:
         - column: { name: version, valueNumeric: 0 }
 
 - changeSet:
+    id: e2e-seed-usuari-permisos
+    author: Limit
+    context: e2e
+    comment: >-
+        Usuari EXCLUSIU per al test "Permisos" de representant/usuaris.spec.ts
+        (afegir/denegar/esborrar seleccionats/esborrar TOTS els permisos
+        procediment-servei). Deliberadament NO es el mateix que
+        e2eUserActiuUsername: aquell tambe l'usa representant/procediments.spec.ts
+        per concedir-hi un permis (screen diferent, "Gestio de serveis d'un
+        procediment"), i com que "esborrar tots els permisos" d'aquest test
+        es una accio GLOBAL per usuari (esborra QUALSEVOL permis seu,
+        no nomes els que ha creat aquest test), compartir l'usuari amb un
+        altre fitxer que grava/esborra permisos concurrentment (Playwright
+        executa fitxers en paral·lel per defecte) provoca una condicio de
+        carrera real i observada: el recompte esperat no quadra, o pitjor,
+        "esborrar tots" esborra el permis que l'altre test acaba de crear.
+    changes:
+    - insert:
+        tableName: pbl_usuari
+        columns:
+        - column: { name: codi, value: E2E_USER_PERMISOS }
+        - column: { name: nom, value: "Usuari E2E Permisos" }
+        - column: { name: nif, value: "00000009S" }
+        - column: { name: idioma, value: ca }
+        - column: { name: inicialitzat, valueNumeric: 1 }
+        - column: { name: version, valueNumeric: 0 }
+    - insert:
+        tableName: pbl_entitat_usuari
+        columns:
+        - column: { name: id, valueNumeric: 900107 }
+        - column: { name: entitat_id, valueNumeric: 900001 }
+        - column: { name: usuari_id, value: E2E_USER_PERMISOS }
+        - column: { name: delegat, valueNumeric: 1 }
+        - column: { name: representant, valueNumeric: 0 }
+        - column: { name: auditor, valueNumeric: 0 }
+        - column: { name: aplicacio, valueNumeric: 0 }
+        - column: { name: principal, valueNumeric: 0 }
+        - column: { name: actiu, valueNumeric: 1 }
+        - column: { name: version, valueNumeric: 0 }
+
+- changeSet:
     id: e2e-seed-organs-gestors
     author: Limit
-    dbms: h2
+    context: e2e
     comment: Organs gestors de prova
     changes:
     - insert:
@@ -327,7 +378,7 @@ databaseChangeLog:
 - changeSet:
     id: e2e-seed-procediments
     author: Limit
-    dbms: h2
+    context: e2e
     comment: Procediments de prova (entitat E2E Principal)
     changes:
     - insert:
@@ -354,7 +405,7 @@ databaseChangeLog:
 - changeSet:
     id: e2e-seed-config-lookup
     author: Limit
-    dbms: h2
+    context: e2e
     comment: >-
       Dades de referencia de PBL_CONFIG_TYPE/PBL_CONFIG_GROUP. Aquestes files
       ja existeixen a qualsevol Oracle de producció (precarregades abans que
@@ -396,7 +447,7 @@ databaseChangeLog:
 - changeSet:
     id: e2e-seed-propietats
     author: Limit
-    dbms: h2
+    context: e2e
     comment: >-
       Propietats de prova de diferents tipus. source_property='DATABASE' es
       el que fa que una propietat sigui editable des de la UI (vegeu
@@ -447,7 +498,7 @@ databaseChangeLog:
 - changeSet:
     id: e2e-seed-avisos
     author: Limit
-    dbms: h2
+    context: e2e
     comment: Avisos en els tres estats necessaris per als tests (actiu vigent, actiu caducat, inactiu)
     changes:
     - insert:
@@ -484,7 +535,7 @@ databaseChangeLog:
 - changeSet:
     id: e2e-seed-parametres-scsp
     author: Limit
-    dbms: h2
+    context: e2e
     comment: Parametres SCSP de prova (CORE_PARAMETRO_CONFIGURACION, clau primaria=nombre, per aixo la UI no permet editar-lo)
     changes:
     - insert:
@@ -503,7 +554,7 @@ databaseChangeLog:
 - changeSet:
     id: e2e-seed-emissors-i-claus
     author: Limit
-    dbms: h2
+    context: e2e
     comment: Emissors de certificat i claus publiques/privades de prova
     changes:
     - insert:
@@ -527,7 +578,7 @@ databaseChangeLog:
         - column: { name: id, valueNumeric: 900403 }
         - column: { name: alias, value: e2e-clau-privada-activa }
         - column: { name: nombre, value: "Clau Privada E2E Activa" }
-        - column: { name: password, value: e2e-changeit }
+        - column: { name: PASSWORD, value: e2e-changeit }
         - column: { name: numeroserie, value: E2E-PRIV-0001 }
         - column: { name: fechaalta, valueDate: 2024-01-01T00:00:00 }
         - column: { name: bloqueado, valueNumeric: 0 }
@@ -539,7 +590,7 @@ databaseChangeLog:
         - column: { name: id, valueNumeric: 900404 }
         - column: { name: alias, value: e2e-clau-privada-baixa }
         - column: { name: nombre, value: "Clau Privada E2E Donada de Baixa" }
-        - column: { name: password, value: e2e-changeit }
+        - column: { name: PASSWORD, value: e2e-changeit }
         - column: { name: numeroserie, value: E2E-PRIV-0002 }
         - column: { name: fechaalta, valueDate: 2023-06-15T09:30:00 }
         - column: { name: fechabaja, valueDate: 2024-03-20T16:45:00 }
@@ -550,7 +601,7 @@ databaseChangeLog:
 - changeSet:
     id: e2e-seed-explotacio
     author: Limit
-    dbms: h2
+    context: e2e
     comment: Dades de fets/dimensions d'explotacio sembrades directament (sense dependre de cap job batch) per als tests d'estadistiques
     changes:
     - insert:
@@ -595,7 +646,7 @@ databaseChangeLog:
 - changeSet:
     id: e2e-seed-explotacio-ahir
     author: Limit
-    dbms: h2
+    context: e2e
     comment: >-
       Snapshot buit (nomes pbl_explot_temps, sense fets) per a "ahir" respecte
       al moment en que s'inicialitza la BD. ConsultaServiceImpl.getExplotTempsEntity
@@ -618,7 +669,7 @@ databaseChangeLog:
 - changeSet:
     id: e2e-seed-integracions
     author: Limit
-    dbms: h2
+    context: e2e
     comment: Registres de monitoratge d'integracions de prova (llistat/detall/esborrat)
     changes:
     - insert:

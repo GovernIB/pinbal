@@ -1,0 +1,141 @@
+version: "3"
+
+# Overlay per a scripts/e2e/run-e2e.sh --db=oracle (l'opció per defecte):
+# substitueix la BD Oracle externa de .env per una instància d'Oracle
+# Database Free efímera (contenidor propi, PDB FREEPDB1) i injecta els
+# paràmetres/context de Liquibase que la càrrega de dades de e2e
+# (db/changelog/e2e/*.yaml) necessita per crear els usuaris/entitats de
+# proves i redirigir els serveis SCSP coberts pel fake. Vegeu
+# docker-compose.e2e.yml pel bessó que fa el mateix contra H2 (--db=h2).
+#
+# Imatge: docker.io/gvenzl/oracle-free:23-slim-faststart — pública (no cal
+# "docker login" enlloc), ~5 GB (la meitat que la imatge oficial
+# container-registry.oracle.com/database/free), i arrenca "healthy" en
+# segons — inclosa una BD totalment nova, ja que porta una BD pre-creada
+# dins seu (d'aquí el sufix "faststart"; vegeu docker/oracle/README.md). PDB
+# per defecte: FREEPDB1 (mateixa que fa servir habitualment l'entorn de
+# desenvolupament local, vegeu DB_URL a .env).
+#
+# Sense volum persistent (a diferència d'una primera versió d'aquest
+# overlay): verificat empíricament que aquesta imatge/tag NO sap represendre
+# el servei Oracle en un contenidor recreat (encara que sigui nou) reutilitzant
+# les dades d'un volum d'un contenidor anterior — falla sempre amb
+# "ORA-01078: failure in processing system parameters / could not open
+# parameter file .../dbs/initFREE.ora", ja provi via aquest mateix overlay
+# (--force-recreate) com amb "podman run" directe. Només un restart del
+# MATEIX contenidor (sense recrear-lo) funciona. Com que arrencar de zero ja
+# és tan ràpid com H2, no calia perseguir la persistència: cada contenidor
+# nou parteix sempre d'un estat net, igual que H2.
+#
+# APP_USER/APP_USER_PASSWORD és el mecanisme oficial d'aquesta imatge per
+# crear l'esquema d'aplicació (CONNECT/RESOURCE/CREATE VIEW/UNLIMITED
+# TABLESPACE equivalents, via el rol modern DB_DEVELOPER_ROLE): no cal cap
+# script d'inicialització propi, verificat manualment que
+# CREATE TABLE/SEQUENCE/TRIGGER/INDEX/VIEW hi funcionen sense privilegis
+# addicionals.
+#
+# Ús: docker compose -f docker-compose.yml -f docker-compose.e2e-oracle.yml up -d
+# (ja gestionat per scripts/e2e/run-e2e.sh; no cal invocar-lo a mà).
+#
+# AUTH_URL/AUTH_REALM/AUTH_CLIENTID/... es mantenen sense tocar: Keycloak
+# segueix sent extern, tal com defineix .env a l'arrel.
+
+services:
+  oracle:
+    image: docker.io/gvenzl/oracle-free:23-slim-faststart
+    platform: ${DOCKER_PLATFORM:-linux/amd64}
+    environment:
+      - ORACLE_PASSWORD=${E2E_ORACLE_SYS_PASSWORD:-E2eOraclePwd_1}
+      - APP_USER=pinbal2
+      - APP_USER_PASSWORD=${E2E_ORACLE_APP_PASSWORD:-E2eOraclePwd_1}
+    ports:
+      # Port de l'host diferent del 1521 estàndard (usat per l'Oracle de
+      # desenvolupament, vegeu DB_URL a .env: host.docker.internal:1521):
+      # així es pot tenir aquest overlay aixecat sense haver d'aturar
+      # l'Oracle de desenvolupament. La connexió interna pinbal->oracle
+      # (JBOSS_DB_URL=jdbc:oracle:thin:@oracle:1521/FREEPDB1) fa servir el
+      # nom del servei dins la xarxa de podman/docker, no aquest mapeig, així
+      # que el port intern es manté a 1521 sense cap efecte advers.
+      - "${E2E_ORACLE_HOST_PORT:-1522}:1521"
+    healthcheck:
+      # /opt/oracle/healthcheck.sh ve inclòs a la imatge i és el mecanisme
+      # oficial per determinar si la BD ja accepta connexions reals (no
+      # només que el listener respongui TCP). La imatge no declara cap
+      # HEALTHCHECK propi (verificat: `docker inspect` el mostra a null), per
+      # això cal declarar-lo aquí explícitament.
+      test: ["CMD", "/opt/oracle/healthcheck.sh"]
+      interval: 10s
+      timeout: 10s
+      retries: 60
+      start_period: 30s
+
+  pinbal:
+    depends_on:
+      oracle:
+        condition: service_healthy
+    environment:
+      - JBOSS_DB_DRIVER=oracle
+      - JBOSS_DB_URL=jdbc:oracle:thin:@oracle:1521/FREEPDB1
+      - JBOSS_DB_USERNAME=pinbal2
+      - JBOSS_DB_PASSWORD=${E2E_ORACLE_APP_PASSWORD:-E2eOraclePwd_1}
+      # Mateix esquema per a totes dues connexions, igual que l'overlay H2
+      # (JBOSS_USER_DB_URL hi apunta al mateix "sa"): les taules SC_WL_* que
+      # consultaria realment (usuarisDS, sistema Seycon extern, no gestionat
+      # per aquest projecte ni pel seu Liquibase) no existeixen en cap dels
+      # dos casos, i cap test e2e actual n'exercita el codi que les consulta.
+      - JBOSS_USER_DB_URL=jdbc:oracle:thin:@oracle:1521/FREEPDB1
+      - JBOSS_USER_DB_USERNAME=pinbal2
+      - JBOSS_USER_DB_PASSWORD=${E2E_ORACLE_APP_PASSWORD:-E2eOraclePwd_1}
+      # Pools de connexions augmentats respecte als valors per defecte de
+      # producció (10/5/10): l'execució concurrent de la suite Playwright
+      # esgotava el pool per defecte (IJ000655 "No managed connections
+      # available"), vegeu e2e/BUGS_APLICACIO.md.
+      - JBOSS_DB_POOL_MAX=30
+      - JBOSS_DB_SCSP_POOL_MAX=30
+      - JBOSS_USER_DB_POOL_MAX=30
+      - spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.Oracle12cDialect
+      - es.caib.pinbal.hibernate.dialect=org.hibernate.dialect.Oracle12cDialect
+      - spring.jpa.properties.hibernate.hbm2ddl.auto=none
+      # Activa els changeSet marcats "context: e2e" a db/changelog/e2e/*.yaml
+      # (dades de demo/test): sense aquest context actiu, Liquibase els salta
+      # sempre (comportament per defecte fora d'aquest overlay). Vegeu també
+      # docker-compose.e2e.yml, que activa el mateix context contra H2.
+      - SPRING_LIQUIBASE_CONTEXTS=e2e
+      - SPRING_LIQUIBASE_PARAMETERS_E2EADMINUSERNAME=${E2E_ADMIN_USERNAME:-}
+      - SPRING_LIQUIBASE_PARAMETERS_E2EDELEGATUSERNAME=${E2E_DELEGAT_USERNAME:-}
+      - SPRING_LIQUIBASE_PARAMETERS_E2EREPRESENTANTUSERNAME=${E2E_REPRESENTANT_USERNAME:-}
+      - SPRING_LIQUIBASE_PARAMETERS_E2EAUDITORUSERNAME=${E2E_AUDITOR_USERNAME:-}
+      - SPRING_LIQUIBASE_PARAMETERS_FAKESCSPBASEURL=${FAKE_SCSP_BASE_URL:-http://host.docker.internal:18080}
+      # Usuaris fixos (no lligats a Keycloak); mateixos valors per defecte que
+      # e2e/utils/env.ts perquè el codi a la BD i el que cerquen els tests
+      # coincideixin sempre.
+      - SPRING_LIQUIBASE_PARAMETERS_E2EUSERACTIUUSERNAME=${E2E_USER_ACTIU_USERNAME:-E2E_USER_ACTIU}
+      - SPRING_LIQUIBASE_PARAMETERS_E2EUSERINACTIUUSERNAME=${E2E_USER_INACTIU_USERNAME:-E2E_USER_INACTIU}
+      - SPRING_LIQUIBASE_PARAMETERS_E2EUSERALLROLESUSERNAME=${E2E_USER_ALL_ROLES:-pbl_all}
+      # Conversió ODT->PDF del justificant (JustificantHelper) sense dependre
+      # d'un servei extern OpenOffice/LibreOffice (es.caib.pinbal.conversio.
+      # open.office.host/.port, no configurat en aquest entorn e2e):
+      # ConversioTipusDocumentHelper ja suporta una via alternativa 100% Java
+      # via XDocReport/odfdom-converter-pdf (mateixa llibreria, sense procés
+      # extern). Vegeu e2e/BUGS_APLICACIO.md.
+      - es.caib.pinbal.conversio.tipus=xdocreport
+      # Firma en servidor del PDF del justificant (JustificantHelper.
+      # generarIFirmarJustificant): sense cap classe configurada aquí,
+      # PluginHelper.getFirmaServidorPlugin() llança SistemaExternException
+      # ("No està configurada la classe..."). La implementació real
+      # (FirmaSimpleServidorPluginPortafib) truca el portafirmes PortaFIB, un
+      # servei extern no disponible en aquest entorn e2e; s'usa en el seu lloc
+      # FirmaServidorPluginMock, que retorna el mateix contingut sense firmar
+      # de veritat (no cal validar la firma en aquests tests). Vegeu
+      # e2e/BUGS_APLICACIO.md.
+      - es.caib.pinbal.plugin.firmaservidor.class=es.caib.pinbal.plugin.firmaservidor.FirmaServidorPluginMock
+      # Arxiu digital (JustificantHelper.desarJustificantArxiu, cridat després
+      # de firmar el justificant quan aplicacioGuardaJustificantArxiu=true):
+      # sense cap classe configurada aquí, PluginHelper.getArxiuPlugin()
+      # llança SistemaExternException ("No està configurada la classe...").
+      # La implementació real (ArxiuPluginCaib, a pinbal-plugin) truca el
+      # servei ConCSV/arxiu digital extern del CAIB, no disponible en aquest
+      # entorn e2e; s'usa en el seu lloc ArxiuPluginMock, que guarda
+      # expedients/documents en memòria sense cap servei extern. Vegeu
+      # e2e/BUGS_APLICACIO.md.
+      - es.caib.pinbal.plugin.arxiu.class=es.caib.pinbal.plugin.arxiu.ArxiuPluginMock

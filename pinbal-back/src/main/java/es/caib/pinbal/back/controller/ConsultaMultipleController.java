@@ -196,7 +196,7 @@ public class ConsultaMultipleController extends BaseController {
 	
 	@RequestMapping(value = "/excel")
 	public String excel(HttpServletRequest request, Model model) throws Exception {
-		if (!RolHelper.isRolActualAdministrador(request) && !EntitatHelper.isRepresentantEntitatActual(request))
+		if (!RolHelper.isRolActualAdministrador(request) && !EntitatHelper.isRepresentantEntitatActual(request) && !RolHelper.isRolActualDelegat(request))
 			return "representantNoAutoritzat";
 		ConsultaFiltreCommand command = (ConsultaFiltreCommand) RequestSessionHelper.obtenirObjecteSessio(request,
 				SESSION_ATTRIBUTE_FILTRE);

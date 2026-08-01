@@ -1,6 +1,7 @@
+import { Page } from '@playwright/test';
 import { test, expect } from '../../utils/fixtures';
 import { clickModalFooterButton, clickModalFooterButtonById, modalFrame, waitForModalClosed } from '../../utils/modal';
-import { waitForDataTableReload, waitForInitialDataTableLoad } from '../../utils/datatable';
+import { waitForDataTableReload } from '../../utils/datatable';
 import { expectSuccessMessage } from '../../utils/messages';
 import { credentials, requireCredentials, uniqueSuffix, USUARI_FIX_ACTIU_CODI } from '../../utils/env';
 import { login, logout } from '../../utils/auth';
@@ -22,8 +23,15 @@ test.describe('Gestió d\'entitats (administrador)', () => {
         const cif = uniqueTestCif();
         const dir3 = `E${suffix}`.toUpperCase().slice(0, 9);
 
-        await page.goto('entitat');
-        await waitForInitialDataTableLoad(page);
+        // waitForInitialDataTableLoad(page), cridat COM A PAS SEPARAT després de page.goto(), és
+        // una condició de carrera: page.goto() es resol amb l'esdeveniment 'load', però la
+        // petició AJAX del DataTable (disparada per $(document).ready(), MÉS AVIAT que 'load')
+        // pot arribar i completar-se abans que el registrem -- i com que és un listener d'un únic
+        // esdeveniment FUTUR, mai la troba i acaba esgotant el timeout. Cal registrar-lo ABANS de
+        // navegar, via waitForDataTableReload().
+        await waitForDataTableReload(page, async () => {
+            await page.goto('entitat');
+        });
 
         // --- Crear ---
         await page.locator('#btNovaEntitat').click();
@@ -40,6 +48,19 @@ test.describe('Gestió d\'entitats (administrador)', () => {
         await waitForModalClosed(page);
         await expectSuccessMessage(page);
 
+        // Filtra pel codi abans de cercar la fila: amb prou entitats de prova acumulades (p.ex.
+        // per l'entitat que "gestió d'usuaris d'entitat" deixa sempre enrere, més avall en aquest
+        // mateix fitxer), la nova fila pot no aparèixer a la primera pàgina/ordre per defecte.
+        // IMPORTANT: el select "activa" (#activa) del formulari de filtre porta per defecte el
+        // valor "true" (només actives) lligat al command del servidor; si no el buidem aquí
+        // explícitament, el filtre per codi hi queda amb "activa=true" implícit, i més avall,
+        // quan aquest mateix test desactiva l'entitat, deixa de trobar-la amb el filtre encara
+        // actiu.
+        await waitForDataTableReload(page, async () => {
+            await page.locator('#codi').fill(codi);
+            await page.locator('#activa').selectOption('', { force: true });
+            await page.locator('#form-filtre button[type="submit"]').click();
+        });
         const fila = () => page.locator('#table-entitats tbody tr', { hasText: codi });
         await expect(fila()).toBeVisible({ timeout: 15_000 });
         await expect(fila()).toContainText(nomInicial);
@@ -82,8 +103,15 @@ test.describe('Gestió d\'entitats (administrador)', () => {
     });
 
     test('el llistat es pot filtrar per codi i el filtre es pot netejar', async ({ adminPage: page }) => {
-        await page.goto('entitat');
-        await waitForInitialDataTableLoad(page);
+        // waitForInitialDataTableLoad(page), cridat COM A PAS SEPARAT després de page.goto(), és
+        // una condició de carrera: page.goto() es resol amb l'esdeveniment 'load', però la
+        // petició AJAX del DataTable (disparada per $(document).ready(), MÉS AVIAT que 'load')
+        // pot arribar i completar-se abans que el registrem -- i com que és un listener d'un únic
+        // esdeveniment FUTUR, mai la troba i acaba esgotant el timeout. Cal registrar-lo ABANS de
+        // navegar, via waitForDataTableReload().
+        await waitForDataTableReload(page, async () => {
+            await page.goto('entitat');
+        });
 
         await waitForDataTableReload(page, async () => {
             await page.locator('#codi').fill('CODI_QUE_NO_HAURIA_D_EXISTIR_E2E');
@@ -123,8 +151,15 @@ test.describe('Gestió d\'entitats (administrador): usuaris i serveis', () => {
         const usuariCodi = USUARI_FIX_ACTIU_CODI;
 
         // Crea una entitat pròpia (evita tocar E2EENT01/E2EENT02, compartides amb altres tests).
-        await page.goto('entitat');
-        await waitForInitialDataTableLoad(page);
+        // waitForInitialDataTableLoad(page), cridat COM A PAS SEPARAT després de page.goto(), és
+        // una condició de carrera: page.goto() es resol amb l'esdeveniment 'load', però la
+        // petició AJAX del DataTable (disparada per $(document).ready(), MÉS AVIAT que 'load')
+        // pot arribar i completar-se abans que el registrem -- i com que és un listener d'un únic
+        // esdeveniment FUTUR, mai la troba i acaba esgotant el timeout. Cal registrar-lo ABANS de
+        // navegar, via waitForDataTableReload().
+        await waitForDataTableReload(page, async () => {
+            await page.goto('entitat');
+        });
         await page.locator('#btNovaEntitat').click();
         let frame = await modalFrame(page);
         await frame.locator('#codi').fill(codiEntitat);
@@ -138,12 +173,24 @@ test.describe('Gestió d\'entitats (administrador): usuaris i serveis', () => {
         await waitForModalClosed(page);
         await expectSuccessMessage(page);
 
+        // Filtra pel codi abans de cercar la fila: l'entitat d'aquest test només es desactiva en
+        // acabar (mai s'esborra -- no hi ha manera d'esborrar-la via UI un cop té un usuari
+        // vinculat, vegeu el comentari de neteja més avall), així que amb prou execucions
+        // d'aquest test se n'acumulen prou perquè la nova fila no aparegui necessàriament a la
+        // primera pàgina/ordre per defecte del llistat sense filtrar.
+        await waitForDataTableReload(page, async () => {
+            await page.locator('#codi').fill(codiEntitat);
+            await page.locator('#activa').selectOption('', { force: true });
+            await page.locator('#form-filtre button[type="submit"]').click();
+        });
         const filaEntitat = page.locator('#table-entitats tbody tr', { hasText: codiEntitat });
         await expect(filaEntitat).toBeVisible({ timeout: 15_000 });
 
-        // Navega a la gestió d'usuaris d'aquesta entitat.
-        await filaEntitat.getByRole('link', { name: /usuaris/i }).click();
-        await waitForInitialDataTableLoad(page);
+        // Navega a la gestió d'usuaris d'aquesta entitat. Mateix motiu que a dalt per registrar
+        // l'espera ABANS del clic (que també dispara una navegació).
+        await waitForDataTableReload(page, async () => {
+            await filaEntitat.getByRole('link', { name: /usuaris/i }).click();
+        });
 
         // --- Crear ---
         await page.locator('a[href*="/usuari/new"]').click();
@@ -215,9 +262,23 @@ test.describe('Gestió d\'entitats (administrador): usuaris i serveis', () => {
         });
 
         // --- Neteja: no es pot esborrar un vincle entitat-usuari (no hi ha aquesta acció a la UI),
-        // així que es desactiva l'entitat de prova sencera.
-        await page.goto('entitat');
-        await waitForInitialDataTableLoad(page);
+        // així que es desactiva l'entitat de prova sencera. page.goto() reinicia el llistat sense
+        // filtrar, així que cal tornar a filtrar pel codi (mateix motiu que a la creació, més amunt).
+        // waitForInitialDataTableLoad(page), cridat COM A PAS SEPARAT després de page.goto(), és
+        // una condició de carrera: page.goto() es resol amb l'esdeveniment 'load', però la
+        // petició AJAX del DataTable (disparada per $(document).ready(), MÉS AVIAT que 'load')
+        // pot arribar i completar-se abans que el registrem -- i com que és un listener d'un únic
+        // esdeveniment FUTUR, mai la troba i acaba esgotant el timeout. Cal registrar-lo ABANS de
+        // navegar, via waitForDataTableReload().
+        await waitForDataTableReload(page, async () => {
+            await page.goto('entitat');
+        });
+        await waitForDataTableReload(page, async () => {
+            await page.locator('#codi').fill(codiEntitat);
+            await page.locator('#activa').selectOption('', { force: true });
+            await page.locator('#form-filtre button[type="submit"]').click();
+        });
+        await expect(filaEntitat).toBeVisible({ timeout: 15_000 });
         await filaEntitat.locator('a.dropdown-toggle, button.dropdown-toggle').click();
         await waitForDataTableReload(page, async () => {
             await filaEntitat.getByRole('link', { name: /desactivar/i }).click();
@@ -225,8 +286,9 @@ test.describe('Gestió d\'entitats (administrador): usuaris i serveis', () => {
     });
 
     test('gestió de serveis d\'entitat: visualització i activar/desactivar', async ({ adminPage: page }) => {
-        await page.goto('entitat/900001/servei');
-        await waitForInitialDataTableLoad(page);
+        await waitForDataTableReload(page, async () => {
+            await page.goto('entitat/900001/servei');
+        });
 
         const codisEsperats = ['Q2827003ATGSS001', 'SCDCPAJU', 'SVDDGTVEHICULOSANCWS01', 'SVDDGPCIWS02'];
         for (const codi of codisEsperats) {
@@ -250,6 +312,28 @@ test.describe('Gestió d\'entitats (administrador): usuaris i serveis', () => {
         await expect(filaServei.getByRole('link', { name: /desactivar/i })).toBeVisible();
     });
 
+    /**
+     * Comprova que `nom` és una entitat ACCESSIBLE per a l'usuari (rol amb més d'una entitat
+     * disponible). `EntitatHelper` (back) selecciona l'entitat "actual" per defecte a l'índex 0
+     * de la llista que retorna el backend -- NO segons el flag `principal` -- així que quina de
+     * les entitats accessibles acaba mostrada com a "actual" (`#menu_entitat`, el toggle) i quina
+     * com a opció DINS del desplegable no és determinista des del test: cal acceptar totes dues
+     * possibilitats en lloc d'assumir sempre "dins del desplegable" (confirmat empíricament: amb
+     * el delegat vinculat a dues entitats, `#menu_entitat` pot mostrar qualsevol de les dues com a
+     * actual segons l'ordre intern amb què el backend retorna la llista).
+     */
+    async function expectEntitatAccessible(page: Page, nom: string): Promise<void> {
+        const menuEntitat = page.locator('#menu_entitat');
+        await expect(menuEntitat).toBeVisible({ timeout: 15_000 });
+        if (await menuEntitat.filter({ hasText: nom }).isVisible().catch(() => false)) {
+            return;
+        }
+        // "#menu_entitat + ul.dropdown-menu" és un dropdown de Bootstrap (display:none fins que
+        // es clica el toggle): cal obrir-lo abans de comprovar la visibilitat d'un enllaç de dins.
+        await menuEntitat.click();
+        await expect(page.locator('#menu_entitat + ul.dropdown-menu a', { hasText: nom })).toBeVisible({ timeout: 15_000 });
+    }
+
     test('si una entitat es desactiva, desapareix de les entitats accessibles del rol, i viceversa', async ({
         adminPage,
         delegatPage,
@@ -271,63 +355,78 @@ test.describe('Gestió d\'entitats (administrador): usuaris i serveis', () => {
             await adminPage.keyboard.press('Escape');
         }
 
-        // Vincula el delegat a E2EENT02 (900002) si encara no hi té accés.
-        await filaE2EENT02.getByRole('link', { name: /usuaris/i }).click();
-        await waitForInitialDataTableLoad(adminPage);
-        const delegatCodi = requireCredentials(credentials.delegat, 'delegat').username;
-        const filaDelegat = adminPage.locator('#table-users tbody tr', { hasText: delegatCodi });
-        if ((await filaDelegat.count()) === 0) {
-            await adminPage.locator('a[href*="/usuari/new"]').click();
-            const frame = await modalFrame(adminPage);
-            await frame.locator('#codi').evaluate((el: HTMLSelectElement, codi: string) => {
-                const opt = document.createElement('option');
-                opt.value = codi;
-                opt.text = codi;
-                el.appendChild(opt);
-            }, delegatCodi);
-            await frame.locator('#codi').selectOption(delegatCodi, { force: true });
-            await frame.locator('#actiu').check();
-            await frame.locator('#rolDelegat').check();
-            await clickModalFooterButton(adminPage, /guardar/i);
-            await waitForModalClosed(adminPage);
-            await expectSuccessMessage(adminPage);
+        // A partir d'aquí E2EENT02 queda ACTIVA; si qualsevol pas següent falla, el `finally`
+        // la torna a desactivar igualment. Deixar-la activa (amb el delegat encara vinculat-hi)
+        // trenca en cascada qualsevol altre test que depengui que el delegat només tingui accés
+        // a "Entitat E2E Principal" com a entitat per defecte -- exactament el que va passar la
+        // primera vegada que aquest test va fallar aquí (vegeu e2e/BUGS_APLICACIO.md).
+        try {
+            // Vincula el delegat a E2EENT02 (900002) si encara no hi té accés.
+            await waitForDataTableReload(adminPage, async () => {
+                await filaE2EENT02.getByRole('link', { name: /usuaris/i }).click();
+            });
+            const delegatCodi = requireCredentials(credentials.delegat, 'delegat').username;
+            const filaDelegat = adminPage.locator('#table-users tbody tr', { hasText: delegatCodi });
+            if ((await filaDelegat.count()) === 0) {
+                await adminPage.locator('a[href*="/usuari/new"]').click();
+                const frame = await modalFrame(adminPage);
+                await frame.locator('#codi').evaluate((el: HTMLSelectElement, codi: string) => {
+                    const opt = document.createElement('option');
+                    opt.value = codi;
+                    opt.text = codi;
+                    el.appendChild(opt);
+                }, delegatCodi);
+                await frame.locator('#codi').selectOption(delegatCodi, { force: true });
+                await frame.locator('#actiu').check();
+                await frame.locator('#rolDelegat').check();
+                await clickModalFooterButton(adminPage, /guardar/i);
+                await waitForModalClosed(adminPage);
+                await expectSuccessMessage(adminPage);
+            }
+
+            // La llista d'entitats accessibles es cacheja a la sessió HTTP: cal refer login
+            // perquè el delegat vegi el canvi (un simple reload no la refresca).
+            const delegatCreds = requireCredentials(credentials.delegat, 'delegat');
+            await logout(delegatPage);
+            await login(delegatPage, delegatCreds);
+            await expectEntitatAccessible(delegatPage, 'Entitat E2E Inactiva');
+
+            // "Vincula el delegat" ha deixat adminPage a la subpàgina "Usuaris" de l'entitat: cal
+            // tornar al llistat d'entitats perquè filaE2EENT02 (definida sobre #table-entitats) hi
+            // torni a trobar files.
+            await entitats.goto();
+
+            // Desactiva l'entitat i comprova que desapareix (l'usuari torna a tenir una única entitat accessible).
+            await filaE2EENT02.locator('a.dropdown-toggle, button.dropdown-toggle').click();
+            await waitForDataTableReload(adminPage, async () => {
+                await filaE2EENT02.getByRole('link', { name: /desactivar/i }).click();
+            });
+            await logout(delegatPage);
+            await login(delegatPage, delegatCreds);
+            await expect(delegatPage.locator('#menu_entitat')).not.toBeVisible({ timeout: 15_000 });
+
+            // Reactiva i comprova que reapareix.
+            await filaE2EENT02.locator('a.dropdown-toggle, button.dropdown-toggle').click();
+            await waitForDataTableReload(adminPage, async () => {
+                await filaE2EENT02.getByRole('link', { name: /^activar/i }).click();
+            });
+            await logout(delegatPage);
+            await login(delegatPage, delegatCreds);
+            await expectEntitatAccessible(delegatPage, 'Entitat E2E Inactiva');
+        } finally {
+            // Neteja: deixa E2EENT02 com estava originalment (inactiva, segons el seed),
+            // independentment de si el bloc anterior ha completat amb èxit.
+            await entitats.goto();
+            const filaFinal = entitats.row('E2EENT02');
+            await filaFinal.locator('a.dropdown-toggle, button.dropdown-toggle').click();
+            const desactivarLink = filaFinal.getByRole('link', { name: /desactivar/i });
+            if (await desactivarLink.isVisible().catch(() => false)) {
+                await waitForDataTableReload(adminPage, async () => {
+                    await desactivarLink.click();
+                });
+            } else {
+                await adminPage.keyboard.press('Escape').catch(() => undefined);
+            }
         }
-
-        // La llista d'entitats accessibles es cacheja a la sessió HTTP: cal refer login
-        // perquè el delegat vegi el canvi (un simple reload no la refresca).
-        const delegatCreds = requireCredentials(credentials.delegat, 'delegat');
-        await logout(delegatPage);
-        await login(delegatPage, delegatCreds);
-        await expect(delegatPage.locator('#menu_entitat')).toBeVisible({ timeout: 15_000 });
-        await expect(
-            delegatPage.locator('#menu_entitat + ul.dropdown-menu a', { hasText: 'Entitat E2E Inactiva' }),
-        ).toBeVisible({ timeout: 15_000 });
-
-        // Desactiva l'entitat i comprova que desapareix (l'usuari torna a tenir una única entitat accessible).
-        await filaE2EENT02.locator('a.dropdown-toggle, button.dropdown-toggle').click();
-        await waitForDataTableReload(adminPage, async () => {
-            await filaE2EENT02.getByRole('link', { name: /desactivar/i }).click();
-        });
-        await logout(delegatPage);
-        await login(delegatPage, delegatCreds);
-        await expect(delegatPage.locator('#menu_entitat')).not.toBeVisible({ timeout: 15_000 });
-
-        // Reactiva i comprova que reapareix.
-        await filaE2EENT02.locator('a.dropdown-toggle, button.dropdown-toggle').click();
-        await waitForDataTableReload(adminPage, async () => {
-            await filaE2EENT02.getByRole('link', { name: /^activar/i }).click();
-        });
-        await logout(delegatPage);
-        await login(delegatPage, delegatCreds);
-        await expect(delegatPage.locator('#menu_entitat')).toBeVisible({ timeout: 15_000 });
-        await expect(
-            delegatPage.locator('#menu_entitat + ul.dropdown-menu a', { hasText: 'Entitat E2E Inactiva' }),
-        ).toBeVisible({ timeout: 15_000 });
-
-        // Neteja: deixa E2EENT02 com estava originalment (inactiva, segons el seed).
-        await filaE2EENT02.locator('a.dropdown-toggle, button.dropdown-toggle').click();
-        await waitForDataTableReload(adminPage, async () => {
-            await filaE2EENT02.getByRole('link', { name: /desactivar/i }).click();
-        });
     });
 });

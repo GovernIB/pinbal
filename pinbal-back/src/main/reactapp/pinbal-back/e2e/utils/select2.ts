@@ -27,11 +27,23 @@ export async function selectAjaxSuggestOption(
 ): Promise<void> {
     await root.locator(`#${selectId}`).locator('xpath=following-sibling::span[contains(@class, "select2")][1]').click();
 
-    const openDropdown = root.locator('.select2-container--open');
+    // select2 v4 aplica la classe "select2-container--open" a DOS nodes DIFERENTS mentre el
+    // desplegable és obert: el propi widget clicat (el trigger inline) I el panell flotant que
+    // hi apareix (posicionat "position:absolute", amb el camp de cerca i els resultats a dins) --
+    // no és una condició de carrera, és el marcatge normal de select2. `.select2-container--open`
+    // sol, doncs, sempre viola el "strict mode" quan hi ha un desplegable obert; cal escopir-se
+    // al panell concret (`.select2-dropdown`, únic d'aquest node).
+    const openDropdown = root.locator('.select2-dropdown');
     await expect(openDropdown).toBeVisible({ timeout: 10_000 });
     await openDropdown.locator('.select2-search__field').fill(searchText);
 
-    const options = openDropdown.locator('.select2-results__option[role="option"]');
+    // NOTA: en aquesta app els resultats es renderitzen amb role="treeitem" (dins un <ul
+    // role="tree">), NO role="option" (el "llistbox"/"option" més habitual d'altres temes/
+    // configuracions de select2) -- filtrar per [role="option"] no trobava mai res, per a cap
+    // select "suggest" d'aquest codebase (confirmat inspeccionant l'HTML real del desplegable
+    // després d'una cerca amb resultats). La classe `.select2-results__option` per si sola ja
+    // identifica de manera fiable els resultats, sense dependre del rol ARIA concret.
+    const options = openDropdown.locator('.select2-results__option');
     const targetOption = optionText ? options.filter({ hasText: optionText }).first() : options.first();
     await expect(targetOption).toBeVisible({ timeout: 15_000 });
     await targetOption.click();

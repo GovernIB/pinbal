@@ -196,7 +196,10 @@ export class NovaConsultaPage {
             expedientId?: string;
         }>,
     ): Promise<void> {
-        const url = `/consulta/${encodeURIComponent(serveiCodi)}/plantilla/CSV`;
+        // Sense barra inicial: amb barra ("/consulta/...") l'URL relativa es resol contra
+        // l'arrel del host (perdent el context path "/pinbalback" del baseURL), pegant
+        // sempre un 404 cru del contenidor en lloc d'arribar al controller de l'aplicació.
+        const url = `consulta/${encodeURIComponent(serveiCodi)}/plantilla/CSV`;
         const response = await this.page.request.get(url);
         if (!response.ok()) {
             throw new Error(`No s'ha pogut descarregar la plantilla CSV (${response.status()}) per a ${serveiCodi}`);

@@ -3,8 +3,8 @@ import { RepresentantUsuarisPage } from '../../pages/RepresentantUsuarisPage';
 import { RepresentantUsuariPermisosPage } from '../../pages/RepresentantUsuariPermisosPage';
 import { ProcedimentsPage } from '../../pages/ProcedimentsPage';
 import { ProcedimentServeisPage } from '../../pages/ProcedimentServeisPage';
-import { waitForInitialDataTableLoad } from '../../utils/datatable';
-import { uniqueSuffix, USUARI_FIX_ACTIU_CODI, USUARI_FIX_INACTIU_CODI } from '../../utils/env';
+import { waitForDataTableReload } from '../../utils/datatable';
+import { uniqueSuffix, USUARI_FIX_ACTIU_CODI, USUARI_FIX_INACTIU_CODI, USUARI_FIX_PERMISOS_CODI } from '../../utils/env';
 
 /**
  * Usuaris (representant), `/representant/usuari` (`representantUsuaris.jsp`).
@@ -178,10 +178,16 @@ test.describe('Usuaris (representant)', () => {
             await frameProc.locator('#nom').fill(`Procediment permisos usuari E2E ${suffix}`);
             await frameProc.locator('#organGestorId').selectOption('900301', { force: true });
             await procediments.save();
+            // Amb molts procediments E2E acumulats d'execucions anteriors, el nou registre
+            // pot no aparèixer a la primera pàgina del DataTable; filtram pel seu codi.
+            await procediments.filtrar(async (form) => {
+                await form.locator('#codi').fill(codiProcediment);
+            });
             await expect(procediments.row(codiProcediment)).toBeVisible({ timeout: 15_000 });
 
-            await procediments.obrirServeis(codiProcediment);
-            await waitForInitialDataTableLoad(page);
+            await waitForDataTableReload(page, async () => {
+                await procediments.obrirServeis(codiProcediment);
+            });
             const procedimentId = new URL(page.url()).pathname.match(/\/procediment\/(\d+)\/servei/)?.[1];
             expect(procedimentId).toBeTruthy();
 
@@ -194,8 +200,17 @@ test.describe('Usuaris (representant)', () => {
             }
 
             // --- Permisos: afegir (els dos serveis d'un sol cop) ---
-            const permisos = new RepresentantUsuariPermisosPage(page, USUARI_ACTIU_CODI);
+            // Usuari EXCLUSIU d'aquest test (USUARI_FIX_PERMISOS_CODI, NO USUARI_ACTIU_CODI):
+            // vegeu el comentari a env.ts -- "esborrar tots els permisos" és una acció GLOBAL
+            // per usuari, i USUARI_ACTIU_CODI també l'usa procediments.spec.ts concurrentment.
+            const permisos = new RepresentantUsuariPermisosPage(page, USUARI_FIX_PERMISOS_CODI);
             await permisos.goto();
+            // Neteja permisos residuals d'execucions anteriors d'aquest test que no hagin
+            // arribat a l'"esborrar tots" final (p.ex. per haver fallat abans, a mig test):
+            // com que USUARI_FIX_PERMISOS_CODI és fix (no varia per execució), s'acumulen entre runs.
+            if (await permisos.rows().count()) {
+                await permisos.esborrarTots();
+            }
             const frameAfegir = await permisos.obrirAfegir();
             await permisos.afegirServei(frameAfegir, procedimentId!, ['Q2827003ATGSS001', 'SCDCPAJU']);
 

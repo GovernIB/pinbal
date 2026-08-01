@@ -29,7 +29,11 @@ function isDataTableResponse(resp: import('@playwright/test').Response): boolean
  * una pàgina de llistat. S'ha de cridar just després de `page.goto(...)`.
  */
 export async function waitForInitialDataTableLoad(page: Page): Promise<void> {
-    await page.waitForResponse(isDataTableResponse, { timeout: 20_000 });
+    // 30s (no els 20s originals): amb diversos workers de Playwright compartint
+    // la mateixa instància de JBoss + Oracle, aquesta petició pot trigar més
+    // del que trigaria en solitari (vegeu el comentari sobre `workers` a
+    // playwright.config.ts).
+    await page.waitForResponse(isDataTableResponse, { timeout: 30_000 });
 }
 
 /**
@@ -39,7 +43,7 @@ export async function waitForInitialDataTableLoad(page: Page): Promise<void> {
  * una condició de carrera entre l'acció i l'escolta de la resposta.
  */
 export async function waitForDataTableReload(page: Page, action: () => Promise<void>): Promise<void> {
-    const responsePromise = page.waitForResponse(isDataTableResponse, { timeout: 20_000 });
+    const responsePromise = page.waitForResponse(isDataTableResponse, { timeout: 30_000 });
     await action();
     await responsePromise;
 }

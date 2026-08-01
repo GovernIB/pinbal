@@ -31,6 +31,7 @@ final class ControllerTestSupport {
         HttpServletRequest request = mock(HttpServletRequest.class);
         HttpSession session = mock(HttpSession.class);
         when(request.getSession()).thenReturn(session);
+        when(request.getSession(false)).thenReturn(session);
         when(request.getLocale()).thenReturn(Locale.forLanguageTag("ca"));
         when(request.getAttribute(DispatcherServlet.WEB_APPLICATION_CONTEXT_ATTRIBUTE))
                 .thenReturn(mock(WebApplicationContext.class));

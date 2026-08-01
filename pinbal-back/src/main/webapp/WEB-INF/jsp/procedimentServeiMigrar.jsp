@@ -30,7 +30,7 @@
                 placeholderKey="admin.consulta.list.filtre.servei"
                 textKey="procediment.serveis.migrar.servei"
                 optionItems="${serveis}"
-                optionTextKeyAttribute="codiNom"
+                optionTextAttribute="codiNom"
                 optionValueAttribute="codi"
                 optionMinimumResultsForSearch="0"
                 required="true"/>

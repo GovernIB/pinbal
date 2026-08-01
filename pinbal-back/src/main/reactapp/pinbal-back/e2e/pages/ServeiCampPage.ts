@@ -20,6 +20,21 @@ export class ServeiCampPage {
         await this.page.goto(`servei/${codi}/camp`);
     }
 
+    /**
+     * Fa clic i espera la recàrrega de pàgina resultant.
+     *
+     * IMPORTANT: `page.waitForLoadState('load')` NO és un listener d'un esdeveniment futur --
+     * comprova l'estat ACTUAL de la pàgina i, com que abans del clic ja sempre l'ha assolit (la
+     * pàgina prèvia ja ha carregat), es resol IMMEDIATAMENT sense esperar la navegació que el
+     * clic dispara. Cal `page.waitForEvent('load')` (listener real del PRÒXIM esdeveniment),
+     * registrat ABANS del clic.
+     */
+    private async clicIEsperarRecarrega(click: () => Promise<void>): Promise<void> {
+        const loadPromise = this.page.waitForEvent('load');
+        await click();
+        await loadPromise;
+    }
+
     // --- Grups de camps (modal Bootstrap normal, sense iframe) ---
 
     async afegirGrup(nom: string): Promise<void> {
@@ -27,8 +42,7 @@ export class ServeiCampPage {
         await page.locator('#boto-boto-grup-nou').click();
         await expect(page.locator('#modal-grup-form')).toBeVisible({ timeout: 15_000 });
         await page.locator('#modal-grup-input-nom').fill(nom);
-        await page.locator('#modal-grup-boto-submit').click();
-        await page.waitForLoadState('load');
+        await this.clicIEsperarRecarrega(() => page.locator('#modal-grup-boto-submit').click());
         await expect(page.locator('legend', { hasText: nom })).toBeVisible({ timeout: 15_000 });
     }
 
@@ -37,8 +51,7 @@ export class ServeiCampPage {
         await page.locator(`.boto-grup-editar[data-nom="${nomActual}"]`).click();
         await expect(page.locator('#modal-grup-form')).toBeVisible({ timeout: 15_000 });
         await page.locator('#modal-grup-input-nom').fill(nomNou);
-        await page.locator('#modal-grup-boto-submit').click();
-        await page.waitForLoadState('load');
+        await this.clicIEsperarRecarrega(() => page.locator('#modal-grup-boto-submit').click());
         await expect(page.locator('legend', { hasText: nomNou })).toBeVisible({ timeout: 15_000 });
     }
 
@@ -46,8 +59,7 @@ export class ServeiCampPage {
     async esborrarUnicGrup(): Promise<void> {
         const page = this.page;
         page.once('dialog', (dialog) => dialog.accept());
-        await page.locator('.confirm-esborrar-grup').click();
-        await page.waitForLoadState('load');
+        await this.clicIEsperarRecarrega(() => page.locator('.confirm-esborrar-grup').click());
     }
 
     // --- Regles (modal amb iframe, patró estàndard) ---
@@ -82,7 +94,7 @@ export class ServeiCampPage {
     ): Promise<void> {
         const page = this.page;
         const fila = page.locator('#taula-regles tbody tr', { hasText: nom });
-        await fila.locator('a.dropdown-toggle, button.dropdown-toggle').first().click();
+        await fila.locator('[data-toggle="dropdown"]').first().click();
         await fila.getByRole('link', { name: /modificar/i }).click();
         const frame = await modalFrame(page);
         await frame.locator('#accio').selectOption(novaAccio, { force: true });
@@ -93,10 +105,9 @@ export class ServeiCampPage {
     async esborrarRegla(nom: string): Promise<void> {
         const page = this.page;
         const fila = page.locator('#taula-regles tbody tr', { hasText: nom });
-        await fila.locator('a.dropdown-toggle, button.dropdown-toggle').first().click();
+        await fila.locator('[data-toggle="dropdown"]').first().click();
         page.once('dialog', (dialog) => dialog.accept());
-        await fila.getByRole('link', { name: /esborrar/i }).click();
-        await page.waitForLoadState('load');
+        await this.clicIEsperarRecarrega(() => fila.getByRole('link', { name: /esborrar/i }).click());
     }
 
     // --- Previsualització (modal Bootstrap normal, body carregat per AJAX) ---

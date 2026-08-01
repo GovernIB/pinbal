@@ -36,6 +36,23 @@ export async function modalFrame(page: Page): Promise<FrameLocator> {
     await expect(modal).toBeVisible({ timeout: 15_000 });
     const iframe = modal.locator('iframe');
     await expect(iframe).toHaveAttribute('src', /.+/, { timeout: 15_000 });
+    // Just després d'assignar `src` (webutil.modal.js), l'iframe passa per un instant
+    // transitori a "about:blank" abans que comenci la navegació real cap al contingut;
+    // com que un <body> buit també és "visible", si el següent check es fes directament
+    // sobre `frame.locator('body')` es podria satisfer immediatament contra aquest estat
+    // transitori (el primer check síncron d'`expect().toBeVisible()` ja el dona per bo,
+    // sense arribar mai a re-comprovar contra el contingut real un cop carregat). Cal
+    // esperar explícitament que la navegació real hagi començat abans de mirar el body.
+    await expect
+        .poll(
+            async () => {
+                const handle = await iframe.elementHandle();
+                const contentFrame = await handle?.contentFrame();
+                return contentFrame?.url() ?? '';
+            },
+            { timeout: 15_000 },
+        )
+        .not.toBe('about:blank');
     const frame = modal.frameLocator('iframe');
     // Espera que el <body> de l'iframe s'hagi renderitzat (evita interactuar amb un frame en blanc).
     await expect(frame.locator('body')).toBeVisible({ timeout: 15_000 });
