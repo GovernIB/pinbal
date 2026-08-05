@@ -61,3 +61,7 @@ GRANT INSERT, SELECT, UPDATE, DELETE ON pbl_acl_sid TO WWW_PINBAL;
 GRANT INSERT, SELECT, UPDATE, DELETE ON pbl_acl_class TO WWW_PINBAL;
 GRANT INSERT, SELECT, UPDATE, DELETE ON pbl_acl_object_identity TO WWW_PINBAL;
 GRANT INSERT, SELECT, UPDATE, DELETE ON pbl_acl_entry TO WWW_PINBAL;
+
+-- Afegir la columna justificant_error a pbl_consulta/ pbl_consulta_hist
+ALTER TABLE pbl_consulta_list ADD justificanterror VARCHAR2(4000 CHAR);
+ALTER TABLE pbl_consulta_hist_list ADD justificanterror VARCHAR2(4000 CHAR);

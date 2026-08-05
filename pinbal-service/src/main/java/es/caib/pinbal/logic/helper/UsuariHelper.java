@@ -66,8 +66,13 @@ public class UsuariHelper {
 		// Només inicialitza els usuaris que entren per primera vegada
 		// Consulta les dades de l'usuari al sistema extern
 		if (usuari != null) {
-			if (!usuari.isInicialitzat()) {
-				// Si l'usuari està donat d'alta però sense inicialitzar
+			// A més del cas "mai inicialitzat", també es reintenta si el nom ha quedat buit: pot passar
+			// si la primera consulta al sistema extern (p.ex. Keycloak) va anar bé però encara no tenia
+			// les dades completes de l'usuari. El NIF no es fa servir com a senyal de reintent perquè en
+			// entorns sense NIF configurat (p.ex. dev) sempre tornaria null, provocant una consulta
+			// externa a cada login sense cap possibilitat d'arribar mai a "inicialitzat".
+			if (!usuari.isInicialitzat() || usuari.getNom() == null || usuari.getNom().isEmpty()) {
+				// Si l'usuari està donat d'alta però sense inicialitzar (o el nom encara no s'ha pogut obtenir)
 				DadesUsuari dadesUsuari = getDadesUsuari(usuariCodi);
 				usuari.update(
 						dadesUsuari.getNom(),

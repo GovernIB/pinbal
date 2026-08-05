@@ -52,7 +52,14 @@ export const AuthProvider = (props: AuthProviderProps) => {
     const logConsole = useLogConsole(LOG_PREFIX);
     const isAuthenticated = !loading && tokenRef.current != null;
     const authSrc = document.head.getElementsByTagName('script')[2].src;
-    const signOutUrl = authSrc.replace('/authToken', '/logout');
+    // NO apuntis a un "/logout" derivat genèricament (sibling de "/authToken"): aquesta app no en
+    // mapeja cap i acaba caient en el comportament per defecte de l'adaptador Keycloak de JBoss, que
+    // no fa el flux complet (id_token_hint, end_session_endpoint per descobriment) i redirigeix a un
+    // "/login?logout" que tampoc existeix (404). Cal apuntar al mateix endpoint que ja fa servir amb
+    // èxit l'enllaç "Desconnectar" de la interfície JSP clàssica (AuthController.logout()).
+    // "origen=react" fa que, un cop Keycloak acabi el logout, el navegador torni a la SPA React en
+    // lloc de l'arrel de la interfície JSP (comportament per defecte quan no s'indica cap origen).
+    const signOutUrl = authSrc.replace('/authToken', '/usuari/logout') + '?origen=react';
     const checkToken = () => {
         debug && logConsole.debug('Verificació del token iniciada');
         getToken()
@@ -130,10 +137,15 @@ export const AuthProvider = (props: AuthProviderProps) => {
     const signOut = loading
         ? undefined
         : () => {
-              fetch(signOutUrl).finally(() => {
-                  debug && logConsole.debug('Tancament de sessió');
-                  window.location.href = logoutUrl;
-              });
+              // NO facis un fetch(signOutUrl): el tancament de sessió acaba redirigint a l'endpoint
+              // d'autorització de Keycloak (origen diferent), que no exposa capçaleres CORS perquè
+              // està pensat per a una navegació real del navegador, no per a ser llegit via JS. Amb
+              // fetch(), a més, les cookies de sessió de Keycloak no s'envien mai cap a aquest origen
+              // diferent (credentials per defecte "same-origin"), de manera que la sessió SSO de
+              // Keycloak no arriba mai a tancar-se encara que la petició no fallés. Cal una navegació
+              // real perquè el navegador segueixi tota la cadena de redireccions amb les credencials.
+              debug && logConsole.debug('Tancament de sessió');
+              window.location.href = signOutUrl;
           };
     const context = {
         isLoading: loading,

@@ -61,6 +61,7 @@ public class UsuariHelperTest {
     public void getUsuariAutenticat_autentificat_retornaUsuari() throws Exception {
         Usuari usuari = mock(Usuari.class);
         when(usuari.isInicialitzat()).thenReturn(true);
+        when(usuari.getNom()).thenReturn("Nom Existent");
         when(usuariRepository.findById("usuari1")).thenReturn(Optional.of(usuari));
 
         Usuari result = usuariHelper.getUsuariAutenticat();
@@ -73,12 +74,33 @@ public class UsuariHelperTest {
     public void init_usuariJaExisteixIInicialitzat_retornaUsuari() {
         Usuari usuari = mock(Usuari.class);
         when(usuari.isInicialitzat()).thenReturn(true);
+        when(usuari.getNom()).thenReturn("Nom Existent");
         when(usuariRepository.findById("usuari1")).thenReturn(Optional.of(usuari));
 
         Usuari result = usuariHelper.init("usuari1");
 
         assertNotNull(result);
         verifyNoInteractions(pluginHelper);
+    }
+
+    @Test
+    public void init_usuariInicialitzatPeroNomBuit_reintentaConsultaSistemaExtern() throws Exception {
+        // Si el nom ha quedat buit (p.ex. una consulta anterior al sistema extern no el va poder
+        // obtenir) cal reintentar-ho en el següent login encara que "inicialitzat" ja sigui true,
+        // en lloc de deixar l'usuari sense nom per sempre.
+        Usuari usuari = mock(Usuari.class);
+        when(usuari.isInicialitzat()).thenReturn(true);
+        when(usuari.getNom()).thenReturn(null);
+        when(usuariRepository.findById("usuari1")).thenReturn(Optional.of(usuari));
+        DadesUsuari dades = new DadesUsuari();
+        dades.setNom("Nom Recuperat");
+        dades.setNif(null);
+        when(pluginHelper.dadesUsuariConsultarAmbUsuariCodi("usuari1")).thenReturn(dades);
+
+        Usuari result = usuariHelper.init("usuari1");
+
+        assertNotNull(result);
+        verify(usuari).update("Nom Recuperat", null);
     }
 
     @Test

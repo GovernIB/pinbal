@@ -96,10 +96,14 @@ services:
       - spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.Oracle12cDialect
       - es.caib.pinbal.hibernate.dialect=org.hibernate.dialect.Oracle12cDialect
       - spring.jpa.properties.hibernate.hbm2ddl.auto=none
-      # Activa els changeSet marcats "context: e2e" a db/changelog/e2e/*.yaml
-      # (dades de demo/test): sense aquest context actiu, Liquibase els salta
-      # sempre (comportament per defecte fora d'aquest overlay). Vegeu també
-      # docker-compose.e2e.yml, que activa el mateix context contra H2.
+      # pinbal-ejb/src/main/resources/application.properties desactiva
+      # Liquibase per defecte (spring.liquibase.enabled=false): fora d'un
+      # entorn e2e, JBoss no ha d'intentar mai migrar/connectar contra la BD
+      # de Liquibase en arrencar. Aquí es reactiva explícitament, i s'activen
+      # els changeSet marcats "context: e2e" a db/changelog/e2e/*.yaml (dades
+      # de demo/test dels tests). Vegeu també docker-compose.e2e.yml, que fa
+      # el mateix contra H2.
+      - SPRING_LIQUIBASE_ENABLED=true
       - SPRING_LIQUIBASE_CONTEXTS=e2e
       - SPRING_LIQUIBASE_PARAMETERS_E2EADMINUSERNAME=${E2E_ADMIN_USERNAME:-}
       - SPRING_LIQUIBASE_PARAMETERS_E2EDELEGATUSERNAME=${E2E_DELEGAT_USERNAME:-}

@@ -36,8 +36,8 @@ INSERT INTO pbl_config (key, value, description_key, group_code, position, sourc
 
 -- Actualitza les classes dels plugins
 UPDATE pbl_config_type SET value = 'es.caib.pinbal.plugin.usuari.DadesUsuariPluginJdbc,es.caib.pinbal.plugin.usuari.DadesUsuariPluginLdapCaib,es.caib.pinbal.plugin.usuari.DadesUsuariPluginKeycloak' WHERE code = 'USUARIS_CLASS';
-UPDATE pbl_config_type SET value = 'es.caib.pinbal.plugin.firmaservidor.FirmaSimpleServidorPluginPortafib' WHERE code = 'FIRMA_SERVIDOR_CLASS';
-UPDATE pbl_config_type SET value = 'es.caib.pinbal.plugin.arxiu.ArxiuPluginCaib' WHERE code = 'ARXIU_CLASS';
+UPDATE pbl_config_type SET value = 'es.caib.pinbal.plugin.firmaservidor.FirmaSimpleServidorPluginPortafib,es.caib.pinbal.plugin.firmaservidor.FirmaServidorPluginMock' WHERE code = 'FIRMA_SERVIDOR_CLASS';
+UPDATE pbl_config_type SET value = 'es.caib.pinbal.plugin.arxiu.ArxiuPluginCaib,es.caib.pinbal.plugin.arxiu.ArxiuPluginMock' WHERE code = 'ARXIU_CLASS';
 UPDATE pbl_config_type SET value = 'es.caib.pinbal.plugin.unitat.UnitatsOrganitzativesPluginDir3' WHERE code = 'UNITATS_CLASS';
 
 -- Actualitza les classes dels plugins seleccionats
@@ -56,3 +56,6 @@ DELETE FROM pbl_config WHERE key = 'es.caib.pinbal.plugin.firmaservidor.portafib
 
 -- Elimina tipus de plugins antics eliminats
 DELETE FROM pbl_config_type WHERE code IN ('SIGNATURA_CLASS', 'CUSTODIA_CLASS');
+
+-- Elimina els grups de propietats (buits) dels plugins antics eliminats
+DELETE FROM pbl_config_group WHERE code IN ('SIGNATURA', 'CUSTODIA');

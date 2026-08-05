@@ -59,11 +59,14 @@ services:
       # les dades i consultes funcionin be). Com que Liquibase ja es la font de
       # veritat de l'esquema aqui, desactivem aquesta validacio redundant.
       - spring.jpa.properties.hibernate.hbm2ddl.auto=none
-      # Activa els changeSet marcats "context: e2e" a db/changelog/e2e/*.yaml
-      # (dades de demo/test): sense aquest context actiu, Liquibase els salta
-      # sempre (comportament per defecte fora d'aquest overlay). Vegeu també
-      # docker-compose.e2e-oracle.yml, que activa el mateix context contra
-      # Oracle Free.
+      # pinbal-ejb/src/main/resources/application.properties desactiva
+      # Liquibase per defecte (spring.liquibase.enabled=false): fora d'un
+      # entorn e2e, JBoss no ha d'intentar mai migrar/connectar contra la BD
+      # de Liquibase en arrencar. Aquí es reactiva explícitament, i s'activen
+      # els changeSet marcats "context: e2e" a db/changelog/e2e/*.yaml (dades
+      # de demo/test dels tests). Vegeu també docker-compose.e2e-oracle.yml,
+      # que fa el mateix contra Oracle Free.
+      - SPRING_LIQUIBASE_ENABLED=true
       - SPRING_LIQUIBASE_CONTEXTS=e2e
       - SPRING_LIQUIBASE_PARAMETERS_E2EADMINUSERNAME=${E2E_ADMIN_USERNAME:-}
       - SPRING_LIQUIBASE_PARAMETERS_E2EDELEGATUSERNAME=${E2E_DELEGAT_USERNAME:-}

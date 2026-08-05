@@ -25,7 +25,16 @@ export default defineConfig({
     globalSetup: './e2e/global-setup.ts',
     fullyParallel: false,
     forbidOnly: !!process.env.CI,
-    retries: process.env.CI ? 1 : 0,
+    // Un reintent sempre, també fora de CI: amb els 4 workers de sota
+    // compartint una única instància real de JBoss+BD, de tant en tant un
+    // test individual topa amb el mateix tipus de contenció intermitent que
+    // ja documenta el comentari de "workers" (timeout puntual esperant una
+    // resposta normal i corrent) — no és un bug determinista del test ni de
+    // l'app: aïllat (p.ex. `npm run test:e2e:ui` executant només aquest test,
+    // sense contenció d'altres workers) sempre passa. Un reintent absorbeix
+    // aquesta flakiness d'entorn sense amagar cap fallada real: si un test
+    // falla dues vegades seguides, gairebé segur que és un bug de veritat.
+    retries: 1,
     // Sense `workers` explícit, Playwright en fa servir un per nucli (o la
     // meitat, segons la versió), que en una màquina de desenvolupament
     // moderna pot ser 8+. Aquest entorn e2e comparteix una única instància

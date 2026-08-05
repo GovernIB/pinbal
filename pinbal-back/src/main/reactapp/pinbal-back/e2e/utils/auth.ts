@@ -44,15 +44,11 @@ export async function login(page: Page, { username, password }: Credentials): Pr
 }
 
 /**
- * BUG APLICACIÓ (vegeu BUGS_APLICACIO.md): `UsuariController.logout()`
- * neteja totes les cookies manualment (`new Cookie(c.getName(), null)`) en
- * lloc de fer un logout correcte contra Keycloak (`request.logout()`). Això
- * corromp el seguiment de l'"state" OIDC de l'adaptador de Keycloak: el
- * següent intent de login sovint acaba en un "Bad Request" ("state
- * parameter invalid" als logs de JBoss). Aquesta funció, per tant, és
- * fràgil — useu-la només quan el test verifiqui explícitament el
- * comportament de tancar sessió, no com a mecanisme per canviar d'usuari
- * dins un test (per això les fixtures de rol no la fan servir).
+ * `UsuariController.logout()` feia un logout incorrecte contra Keycloak i deixava l'adaptador amb
+ * l'"state" OIDC corromput, provocant un "Bad Request" al següent login (vegeu BUGS_APLICACIO.md per
+ * al detall del bug ja corregit). Useu aquesta funció només quan el test verifiqui explícitament el
+ * comportament de tancar sessió, no com a mecanisme per canviar d'usuari dins un test (per això les
+ * fixtures de rol no la fan servir).
  */
 
 /** Tanca la sessió actual mitjançant l'opció "Desconnectar" del menú d'usuari. */

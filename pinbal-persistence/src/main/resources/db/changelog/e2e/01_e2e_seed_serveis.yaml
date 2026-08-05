@@ -1064,3 +1064,32 @@ databaseChangeLog:
         - column: { name: activoentrada, valueNumeric: 0 }
         - column: { name: activosalida, valueNumeric: 0 }
         where: nombre = 'ValidarCertificado'
+
+- changeSet:
+    id: e2e-fix-keystore-parametros
+    author: Limit
+    context: e2e
+    comment: >-
+      Corregeix 'keystoreFile'/'keystorePass' a core_parametro_configuracion,
+      sembrats per initial_data_scsp.sql amb el placeholder no funcional '.'
+      (mai pensat per funcionar de veritat, només perquè la fila existeixi).
+      Sense això, tota consulta real (simple o múltiple) contra el fake SCSP
+      falla amb "Firma no válida"/"Se produjo un error al comprobar el estado
+      de revocacion del certificado" en aquest entorn e2e — reproduït cada
+      vegada que el contenidor Oracle efímer d'aquest entorn es recrea des de
+      zero (vegeu e2e/BUGS_APLICACIO.md), ja que initial_data_scsp.sql torna
+      a inserir el placeholder a cada BD nova. Els valors d'aquí apunten al
+      mateix fitxer JKS ja usat per 'e2e-seed-clau-privada-firma' més amunt
+      en aquest fitxer (muntat a /opt/webapps/keystores/interoperabilitat.jks
+      per docker-compose.yml, alias 'limit_pinbal', contrasenya 'tecnologies').
+    changes:
+    - update:
+        tableName: core_parametro_configuracion
+        columns:
+        - column: { name: valor, value: "file:/opt/webapps/keystores/interoperabilitat.jks" }
+        where: nombre = 'keystoreFile'
+    - update:
+        tableName: core_parametro_configuracion
+        columns:
+        - column: { name: valor, value: tecnologies }
+        where: nombre = 'keystorePass'

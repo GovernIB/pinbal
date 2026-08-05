@@ -85,6 +85,25 @@ Es distingeixen tres tipus de problema:
   i sense relació amb la petició real. Rellevant també en producció
   (Oracle) si mai hi ha un problema puntual de BD en aquest procediment.
   Fix: capturar-ho i fer `rollback()` explícit abans de re-llançar.
+- **"Veure XML" de la resposta d'una consulta mostrava sempre el literal
+  `[TransmisionDatos: null]`** en lloc de l'XML real (detectat provant una
+  consulta contra el servei SVDDGPCIWS02 amb `pinbal-scsp-fake`; les dades
+  parsejades de "Dades de la resposta" es veien correctament, només
+  fallava la vista d'XML cru). Causa: bug de la llibreria vendored
+  `scsp-core` (`AlmacenarMensajeAbstract.processTransmisiones()`), arrossegat
+  des de la migració d'Axis2/AXIOM a Spring-WS amb DOM estàndard. Amb
+  Axis2/AXIOM els nodes eren `OMElement`, la implementació del qual sí
+  serialitza a XML dins `toString()`; en migrar a `org.w3c.dom.Element`
+  estàndard el codi es va deixar igual, però `Element.toString()`
+  (JDK/Xerces) no serialitza res: sempre retorna `"[NodeName: null]"` (per
+  espec DOM, `getNodeValue()` d'un element és `null`). Això feia que
+  `core_transmision.xml_transmision` es guardés sempre amb aquest literal
+  per a qualsevol consulta real, independentment del contingut de la
+  resposta. Fix: override de la classe vendor
+  (`pinbal-scsp/src/main/java/es/scsp/common/interceptors/AlmacenarMensajeAbstract.java`,
+  seguint el mateix mecanisme ja usat per `SchemaValidator.java`) que
+  serialitza el node amb `XMLUtils.nodeToString(...)` en lloc de
+  `toString()`.
 
 ### Formularis i textos
 

@@ -133,7 +133,7 @@ class DadesUsuariPluginKeycloakTest {
         DadesUsuari resultat = spy.consultarAmbUsuariCodi("usuari1");
 
         assertThat(resultat.getCodi()).isEqualTo("usuari1");
-        assertThat(resultat.getNom()).isEqualTo("Joan");
+        assertThat(resultat.getNom()).isEqualTo("Joan March");
         assertThat(resultat.getNif()).isEqualTo("12345678A");
         assertThat(resultat.getEmail()).isEqualTo("joan@test.com");
         assertThat(resultat.getRols()).containsExactly("ROL1", "ROL2");

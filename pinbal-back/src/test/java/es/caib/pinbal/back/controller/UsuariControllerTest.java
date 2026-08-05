@@ -52,11 +52,6 @@ public class UsuariControllerTest {
         ControllerTestSupport.setField(controller, "entitatService", entitatService);
         ControllerTestSupport.setField(controller, "procedimentService", procedimentService);
         ControllerTestSupport.setField(controller, "serveiService", serveiService);
-        // Sense això, logout() prendria la branca Spring Boot (jbossHomeDir == null), que
-        // delega en WebSecurityConfig.LOGOUT_URL i mai exerceix la lògica pròpia de JBoss que
-        // aquesta classe de test verifica (invalidació de sessió + redirect a l'end_session_
-        // endpoint de Keycloak).
-        ControllerTestSupport.setField(controller, "jbossHomeDir", "/opt/jboss");
         controller.setMessageSource(ControllerTestSupport.mockMessageSourceEcoDeLaClau());
         request = ControllerTestSupport.mockRequest();
         response = mock(HttpServletResponse.class);
@@ -86,13 +81,8 @@ public class UsuariControllerTest {
         when(serveiService.findAmbEntitat(1L)).thenReturn(List.of());
     }
 
-    // ------------------------- logout -------------------------
-
-    @Test
-    public void logoutInvalidaLaSessioIRedirigeix() {
-        assertEquals("redirect:/", controller.logout(request));
-        verify(session).invalidate();
-    }
+    // El tancament de sessió ("/usuari/logout") s'ha mogut a AuthController; els tests corresponents
+    // viuen ara a AuthControllerTest.
 
     // ------------------------- getConfiguracio / save -------------------------
 

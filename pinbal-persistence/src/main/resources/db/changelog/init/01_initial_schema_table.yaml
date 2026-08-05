@@ -168,7 +168,7 @@ databaseChangeLog:
             constraints:
               nullable: false
         - column:
-            name: password
+            name: PASSWORD
             type: VARCHAR2(1024 CHAR)
             constraints:
               nullable: false
@@ -523,11 +523,6 @@ databaseChangeLog:
             type: TIMESTAMP(6)
         - column:
             name: bloqueado
-            type: NUMBER(1,0)
-            constraints:
-              nullable: false
-        - column:
-            name: sslflag
             type: NUMBER(1,0)
             constraints:
               nullable: false

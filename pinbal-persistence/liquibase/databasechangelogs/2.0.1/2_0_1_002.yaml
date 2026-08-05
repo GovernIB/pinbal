@@ -295,14 +295,14 @@ databaseChangeLog:
               columns:
                 - column:
                     name: value
-                    value: 'es.caib.pinbal.plugin.firmaservidor.FirmaSimpleServidorPluginPortafib'
+                    value: 'es.caib.pinbal.plugin.firmaservidor.FirmaSimpleServidorPluginPortafib,es.caib.pinbal.plugin.firmaservidor.FirmaServidorPluginMock'
               where: code = 'FIRMA_SERVIDOR_CLASS'
           - update:
               tableName: pbl_config_type
               columns:
                 - column:
                     name: value
-                    value: 'es.caib.pinbal.plugin.arxiu.ArxiuPluginCaib'
+                    value: 'es.caib.pinbal.plugin.arxiu.ArxiuPluginCaib,es.caib.pinbal.plugin.arxiu.ArxiuPluginMock'
               where: code = 'ARXIU_CLASS'
           - update:
               tableName: pbl_config_type
@@ -368,6 +368,9 @@ databaseChangeLog:
           - delete:
               tableName: pbl_config_type
               where: code IN ('SIGNATURA_CLASS', 'CUSTODIA_CLASS')
+          - delete:
+              tableName: pbl_config_group
+              where: code IN ('SIGNATURA', 'CUSTODIA')
 
 - changeSet:
       id: rename-acl-class-procediment-servei

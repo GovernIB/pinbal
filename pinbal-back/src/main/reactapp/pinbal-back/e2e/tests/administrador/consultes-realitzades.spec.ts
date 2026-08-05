@@ -255,6 +255,9 @@ test.describe('Consultes realitzades (administrador) - detall simple', () => {
                 await expect(modalXml).toBeVisible({ timeout: 10_000 });
                 const valor = await modalXml.locator('#missatgeXml').inputValue();
                 expect(valor.trim().length).toBeGreaterThan(0);
+                // Comprova que és un missatge XML real, no la representació textual d'un
+                // element DOM sense serialitzar (p.ex. "[TransmisionDatos: null]").
+                expect(valor).toContain('<');
                 await modalXml.locator('.close').first().click();
             }
         }

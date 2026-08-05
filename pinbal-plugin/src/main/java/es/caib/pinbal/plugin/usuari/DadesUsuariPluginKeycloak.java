@@ -56,7 +56,6 @@ public class DadesUsuariPluginKeycloak extends KeyCloakUserInformationPlugin imp
 			return DadesUsuari.builder()
 					.codi(userInfo.getUsername())
 					.nom(getNomComplet(userInfo))
-					.nom(userInfo.getName())
 					.nif(userInfo.getAdministrationID())
 					.email(userInfo.getEmail())
 					.rols(getRolesByUsername(usuariCodi).getRoles())

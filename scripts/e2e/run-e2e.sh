@@ -8,13 +8,16 @@
 # (pinbal-scsp-fake) i executa la suite Playwright de e2e/. Keycloak segueix
 # sent l'extern configurat a .env (AUTH_URL/AUTH_REALM/...); no es toca.
 #
-# L'esquema i les dades de proves es creen automàticament en arrencar JBoss
-# (Liquibase, spring.liquibase.enabled=true). CADA EXECUCIÓ PARTEIX D'UN
-# ESTAT NET tan bon punt es recrea el contenidor de BD (h2 o oracle: cap dels
-# dos overlays fa servir volums persistents, vegeu docker/oracle/README.md pel
-# motiu concret d'Oracle). Si es reutilitza el mateix contenidor en marxa
-# entre execucions (comportament per defecte, vegeu --down), les dades es
-# mantenen; Liquibase ja és idempotent (salta els canvis ja aplicats).
+# L'esquema i les dades de proves es creen automàticament en arrencar JBoss:
+# Liquibase està desactivat per defecte (pinbal-ejb/application.properties,
+# perquè un JBoss normal/de producció no l'ha d'executar mai), però aquests
+# dos overlays el reactiven explícitament (SPRING_LIQUIBASE_ENABLED=true).
+# CADA EXECUCIÓ PARTEIX D'UN ESTAT NET tan bon punt es recrea el contenidor
+# de BD (h2 o oracle: cap dels dos overlays fa servir volums persistents,
+# vegeu docker/oracle/README.md pel motiu concret d'Oracle). Si es reutilitza
+# el mateix contenidor en marxa entre execucions (comportament per defecte,
+# vegeu --down), les dades es mantenen; Liquibase ja és idempotent (salta els
+# canvis ja aplicats).
 #
 # Ús:
 #   scripts/e2e/run-e2e.sh [opcions] [-- <arguments per a playwright>]
@@ -37,10 +40,26 @@
 #   --skip-fake             No arrenqui el fake SCSP (assumeix que ja està en marxa).
 #   --headed                Executa Playwright en mode "headed".
 #   --ui                    Executa Playwright en mode interactiu (--ui).
+#   --stop                  Atura tot el que pugui estar en marxa d'una
+#                            execució anterior (fake SCSP + aplicació PINBAL +
+#                            BD, tant l'overlay Oracle com l'H2, per si no se
+#                            sap amb quin es va arrencar) i surt. No aixeca
+#                            res ni executa cap test. Útil sobretot perquè,
+#                            per defecte, l'script deixa la pila engegada en
+#                            acabar (vegeu --down més amunt).
 #   -h, --help              Mostra aquesta ajuda.
 #
 # Variables d'entorn opcionals:
-#   FAKE_SCSP_HOST (per defecte 127.0.0.1)
+#   FAKE_SCSP_HOST (per defecte 127.0.0.1) — només per a la comprovació de
+#                   salut feta DES DEL HOST (wait_for_http). NO és la interfície
+#                   on escolta el procés Java: l'aplicació, dins del contenidor,
+#                   hi arriba via host.docker.internal (FAKE_SCSP_BASE_URL),
+#                   que amb el backend "netavark" de podman NO travessa cap a
+#                   un servei escoltant només a 127.0.0.1 del host (confirmat
+#                   empíricament: connexió refusada). Per això el fake SCSP
+#                   escolta sempre a FAKE_SCSP_BIND_HOST (per defecte 0.0.0.0,
+#                   totes les interfícies), no a FAKE_SCSP_HOST.
+#   FAKE_SCSP_BIND_HOST (per defecte 0.0.0.0)
 #   FAKE_SCSP_PORT (per defecte 18080)
 #   E2E_BASE_URL   (per defecte http://localhost:8080/pinbalback)
 #   APP_READY_TIMEOUT_SECONDS (per defecte 600; considereu augmentar-lo si el
@@ -70,6 +89,7 @@ FAKE_SCSP_LOG="$RUN_DIR/fake-scsp.log"
 FAKE_SCSP_PID_FILE="$RUN_DIR/fake-scsp.pid"
 
 FAKE_SCSP_HOST="${FAKE_SCSP_HOST:-127.0.0.1}"
+FAKE_SCSP_BIND_HOST="${FAKE_SCSP_BIND_HOST:-0.0.0.0}"
 FAKE_SCSP_PORT="${FAKE_SCSP_PORT:-18080}"
 APP_BASE_URL="${E2E_BASE_URL:-http://localhost:8080/pinbalback}"
 APP_READY_TIMEOUT_SECONDS="${APP_READY_TIMEOUT_SECONDS:-600}"
@@ -80,6 +100,7 @@ DOWN_AFTER=false
 SKIP_COMPOSE=false
 SKIP_FAKE_BUILD=false
 SKIP_FAKE=false
+STOP_MODE=false
 PLAYWRIGHT_MODE="test:e2e"
 PLAYWRIGHT_EXTRA_ARGS=()
 
@@ -97,6 +118,7 @@ while [[ $# -gt 0 ]]; do
         --skip-fake) SKIP_FAKE=true; shift ;;
         --headed) PLAYWRIGHT_MODE="test:e2e:headed"; shift ;;
         --ui) PLAYWRIGHT_MODE="test:e2e:ui"; shift ;;
+        --stop) STOP_MODE=true; shift ;;
         -h|--help) sed -n '2,/^set -euo pipefail/p' "$0" | sed '$d' | sed 's/^# \{0,1\}//'; exit 0 ;;
         --) shift; PLAYWRIGHT_EXTRA_ARGS=("$@"); break ;;
         *) err "Opció desconeguda: $1"; exit 1 ;;
@@ -129,6 +151,51 @@ else
 fi
 log "Motor de compose: ${COMPOSE_CMD[*]}"
 log "Motor de BD: $DB_ENGINE"
+
+# --- --stop: atura tot el que pugui estar en marxa d'una execució anterior -
+# No se sap amb quin --db es va arrencar l'última vegada (no es persisteix
+# enlloc), així que s'ataquen els dos overlays (oracle i h2): "compose down"
+# sobre un projecte/contenidors que ja no existeixen no falla, només avisa.
+if [[ "$STOP_MODE" == true ]]; then
+    log "--stop: aturant tot el que pugui estar en marxa..."
+
+    if [[ -f "$FAKE_SCSP_PID_FILE" ]]; then
+        stop_pid="$(cat "$FAKE_SCSP_PID_FILE" 2>/dev/null || true)"
+        if [[ -n "$stop_pid" ]] && kill -0 "$stop_pid" 2>/dev/null; then
+            log "Aturant el fake SCSP (pid $stop_pid, de $FAKE_SCSP_PID_FILE)..."
+            kill "$stop_pid" 2>/dev/null || true
+            wait "$stop_pid" 2>/dev/null || true
+        else
+            log "El pid de $FAKE_SCSP_PID_FILE ja no correspon a cap procés en marxa."
+        fi
+        rm -f "$FAKE_SCSP_PID_FILE"
+    fi
+    # Sempre es comprova també qui escolta realment al port, tant si hi havia
+    # fitxer de pid com si no: un pid "orfe" (procés mort però amb un altre de
+    # NOU escoltant al mateix port, arrencat a mà o per una execució anterior
+    # que no va netejar bé) no es detecta només mirant el fitxer.
+    if command -v lsof >/dev/null 2>&1; then
+        stop_pid="$(lsof -t -i "tcp:$FAKE_SCSP_PORT" -sTCP:LISTEN 2>/dev/null || true)"
+        if [[ -n "$stop_pid" ]]; then
+            log "Trobat un procés escoltant al port $FAKE_SCSP_PORT (pid $stop_pid); aturant-lo."
+            kill $stop_pid 2>/dev/null || true
+        else
+            log "Ningú escolta ja al port $FAKE_SCSP_PORT."
+        fi
+    else
+        warn "'lsof' no disponible: no es pot comprovar si queda algun procés orfe al port $FAKE_SCSP_PORT."
+    fi
+
+    log "Aturant l'aplicació i la BD (overlay Oracle)..."
+    (cd "$ROOT_DIR" && "${COMPOSE_CMD[@]}" -f "$ROOT_DIR/docker-compose.yml" -f "$ROOT_DIR/docker-compose.e2e-oracle.yml" down) \
+        || warn "compose down (oracle) ha fallat o no hi havia res a aturar."
+    log "Aturant l'aplicació i la BD (overlay H2)..."
+    (cd "$ROOT_DIR" && "${COMPOSE_CMD[@]}" -f "$ROOT_DIR/docker-compose.yml" -f "$ROOT_DIR/docker-compose.e2e.yml" down) \
+        || warn "compose down (h2) ha fallat o no hi havia res a aturar."
+
+    log "Fet."
+    exit 0
+fi
 
 # S'afegeix sempre un overlay que substitueix la BD Oracle externa de .env
 # per un contenidor efímer (Oracle Free o H2, segons --db) i injecta els
@@ -192,9 +259,15 @@ if [[ "$SKIP_FAKE" == false ]]; then
         err "No s'ha trobat cap jar a $FAKE_SCSP_DIR/target. Executeu sense --skip-fake-build."
         exit 1
     fi
-    log "Arrencant fake SCSP ($FAKE_JAR) a $FAKE_SCSP_HOST:$FAKE_SCSP_PORT..."
+    log "Arrencant fake SCSP ($FAKE_JAR) a $FAKE_SCSP_BIND_HOST:$FAKE_SCSP_PORT (comprovat des del host via $FAKE_SCSP_HOST)..."
+    # Escolta a FAKE_SCSP_BIND_HOST (0.0.0.0 per defecte), NO a FAKE_SCSP_HOST:
+    # amb el backend "netavark" de podman (i el bridge estàndard de Docker), un
+    # servei que només escolta a 127.0.0.1 del host és inabastable des de dins
+    # d'un contenidor via host.docker.internal (confirmat empíricament) -- la
+    # comprovació de salut de sota, feta des del host mateix, sí que funciona
+    # igual amb qualsevol dels dos, per això no cal canviar-la.
     nohup java \
-        -Dfake.scsp.host="$FAKE_SCSP_HOST" \
+        -Dfake.scsp.host="$FAKE_SCSP_BIND_HOST" \
         -Dfake.scsp.port="$FAKE_SCSP_PORT" \
         -jar "$FAKE_JAR" > "$FAKE_SCSP_LOG" 2>&1 &
     FAKE_SCSP_PID=$!
