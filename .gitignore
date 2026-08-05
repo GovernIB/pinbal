@@ -15,3 +15,8 @@
 /.env
 /CLAUDE.md
 /.e2e-run/
+
+# eclipse files
+.classpath
+.project
+/pinbal-client-intf/.settings

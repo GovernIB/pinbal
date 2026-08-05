@@ -38,4 +38,14 @@
 	<properties>
 		<jacoco.check.skip>true</jacoco.check.skip>
 	</properties>
+	<repositories>
+		<!-- Necessari per resoldre org.fundaciobit.pluginsib.arxiu:pluginsib-arxiu-api
+		     i el seu pare es.caib.maven:caib-artifacts-jdk11-jboss72or74, que només
+		     es publiquen aquí (igual que a pinbal-service-intf, pinbal-service, ...). -->
+		<repository>
+			<id>github-governib-maven-repos</id>
+			<name>GitHub GovernIB Maven Repository</name>
+			<url>https://governib.github.io/maven/maven/</url>
+		</repository>
+	</repositories>
 </project>
